@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+branch=wf_b0f68acd-63f-39  rva=0x004cc770  hook_name=rw_stream_write_bytes  arg_type=int_pair  evidence=log/diff_rw_stream_write_bytes.csv:GREEN-10/10
 ```
 
 ## Merged

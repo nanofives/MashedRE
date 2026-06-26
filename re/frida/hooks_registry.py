@@ -1,8 +1,8 @@
-# Hook verification registry.
+﻿# Hook verification registry.
 #
 # One entry per C3+ hook. The generic Frida harnesses (run_diff.py /
 # run_verify_hook.py) read from this dict to build per-target test runs.
-# To verify a new hook, add an entry here â€” no new .js or .py needed.
+# To verify a new hook, add an entry here â€" no new .js or .py needed.
 #
 # Schema:
 #   rva               int        target RVA in MASHED.exe
@@ -121,7 +121,7 @@ HOOKS = {
         'path2_tests': [0.0, 1.0, 4.0, 0.25, 100.0],
     },
 
-    # game_state_d2 trivial getters. Each is `MOV EAX, [imm32]; RET` â€” pure
+    # game_state_d2 trivial getters. Each is `MOV EAX, [imm32]; RET` â€" pure
     # read of a u32 global. `arg_type='none'` calls the function with no args.
     # `tests` is a list of dummy iteration markers; we just want N independent
     # calls so we can confirm orig and reimpl both read the same address (and
@@ -166,10 +166,10 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-c-s2 â€” hud_ingame_dispatch  (C2â†’C3, 1 candidate)
-    # HUD/HudDispatch.cpp â€” pure-leaf uint32(void) global-read function
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-c-s2 â€" hud_ingame_dispatch  (C2â†'C3, 1 candidate)
+    # HUD/HudDispatch.cpp â€" pure-leaf uint32(void) global-read function
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00426ba0  HudDrawEnabled
     # Returns DAT_0066d704 as uint32. void(void) pure leaf.
@@ -189,10 +189,10 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0x00000001, 0xFFFFFFFF],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-a-s1 â€” timer_d2_cont1  (C2â†’C3, 2 candidates)
-    # Frontend/TimerReset.cpp â€” pure-leaf void(void) global-zero functions
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-a-s1 â€" timer_d2_cont1  (C2â†'C3, 2 candidates)
+    # Frontend/TimerReset.cpp â€" pure-leaf void(void) global-zero functions
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00422b30  TimerArrayClear
     # memset(0x00899e80, 0, 312*4). void(void).
@@ -247,10 +247,10 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session 88 â€” c3_vehicle_state  (C2â†’C3, 5 candidates)
-    # VehicleState.cpp â€” pure-leaf vehicle field getters/predicates
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session 88 â€" c3_vehicle_state  (C2â†'C3, 5 candidates)
+    # VehicleState.cpp â€" pure-leaf vehicle field getters/predicates
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0046c7b0  VehicleSlotGetter
     # Returns DAT_008815a4[idx*0x341] or 0xffffffff if idx > 15.
@@ -292,7 +292,7 @@ HOOKS = {
     },
 
     # 0x0046dbe0  VehicleRacePositionGet
-    # Returns DAT_008815a8[param_1*0x341] â€” no OOB guard.
+    # Returns DAT_008815a8[param_1*0x341] â€" no OOB guard.
     # write_global_call_int0: write sentinel to DAT_008815a8, call fn(0),
     # verify return == sentinel.  Non-trivial: varying sentinels give varying output.
     'vehicle_race_position_get': {
@@ -333,12 +333,12 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-a-s4 â€” frontend_c0_promote (C2â†’C3, 3 of 4 candidates)
-    # FrontendState.cpp â€” pure-leaf frontend global accessors
-    # Note: 0x0042f020 (VehicleFlagClear) REFUSED â€” __fastcall with EAX
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-a-s4 â€" frontend_c0_promote (C2â†'C3, 3 of 4 candidates)
+    # FrontendState.cpp â€" pure-leaf frontend global accessors
+    # Note: 0x0042f020 (VehicleFlagClear) REFUSED â€" __fastcall with EAX
     #       implicit arg not supported by NativeFunction('mscdecl') harness.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00430b60  MenuSlotCount
     # Returns char count (0..4) of non-(-1) slot globals at
@@ -358,12 +358,12 @@ HOOKS = {
     },
 
     # 0x0042f6b0  MenuModeSync
-    # void(void): switch on DAT_0067f184 â†’ writes DAT_0067e9fc. Default no-op.
+    # void(void): switch on DAT_0067f184 â†' writes DAT_0067e9fc. Default no-op.
 
 # void(void): switch on DAT_0067f184 (0..11, absent 4/6/7); writes mapped
     # value to DAT_0067e9fc. Default case is no-op.
     # arg_type='none': both orig and reimpl return undefined; undefined===undefined
-    # is true â€” proves no crash and export is present. Mapping correctness is
+    # is true â€" proves no crash and export is present. Mapping correctness is
     # verified by literal switch implementation matching the analysis note.
     'menu_mode_sync': {
         'rva':            0x0042f6b0,
@@ -377,7 +377,7 @@ HOOKS = {
 
     # 0x0042d300  TimeDiffDecompose
     # void(int time_a, int time_b, u32* sign, int* min, int* sec, float* csec).
-    # Pure leaf â€” no callees. Decomposes signed centisecond delta into sign+m+s+csec.
+    # Pure leaf â€" no callees. Decomposes signed centisecond delta into sign+m+s+csec.
     # arg_type 'time_diff_decompose': 16-byte buffer holds 4 out fields.
     # Leaf-exemption applies (C2->C3 only; not C4).
     'time_diff_decompose': {
@@ -467,7 +467,7 @@ HOOKS = {
     # 0x0046d700  VehicleVec3At9C8Get
     # Reads 3-DWORD vector at per-vehicle offsets +0x9C8/+0x9CC/+0x9D0.
     # out3_idx: 12-byte buf as first arg, vehicleIdx as second; compares return value (0/1).
-    # U-1748 is open: direction type unconfirmed â€” does not affect offset/bounds correctness.
+    # U-1748 is open: direction type unconfirmed â€" does not affect offset/bounds correctness.
     'vehicle_vec3_at_9c8_get': {
         'rva':            0x0046d700,
         'export':         'VehicleVec3At9C8Get',
@@ -478,11 +478,11 @@ HOOKS = {
         'path2_tests':    [0, 15, 16, 255],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-a-s2 â€” frontend_menus_a small leaves (C2â†’C3)
-    # MenuGetters.cpp â€” pure-leaf menu global getter, sentinel scanner,
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-a-s2 â€" frontend_menus_a small leaves (C2â†'C3)
+    # MenuGetters.cpp â€" pure-leaf menu global getter, sentinel scanner,
     # and cursor stepper.
-    # 0x0042ac50 (MenuCenterCalc) REFUSED â€” ECX+EAX dual-register ABI not
+    # 0x0042ac50 (MenuCenterCalc) REFUSED â€" ECX+EAX dual-register ABI not
     #   supported by NativeFunction harness.
 
     # 0x0042b930  MenuAlphaGet
@@ -503,21 +503,21 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
     },
 
-    # Session c3-batch-a-s2 â€” frontend_menus_a small leaves (C2â†’C3)
-    # MenuGetters.cpp â€” pure-leaf menu sentinel scanner + cursor stepper
-    # 0x0042ac50 (MenuCenterCalc) REFUSED â€” ECX+EAX dual-register ABI not
+    # Session c3-batch-a-s2 â€" frontend_menus_a small leaves (C2â†'C3)
+    # MenuGetters.cpp â€" pure-leaf menu sentinel scanner + cursor stepper
+    # 0x0042ac50 (MenuCenterCalc) REFUSED â€" ECX+EAX dual-register ABI not
     #   supported by NativeFunction harness (same reason as VehicleFlagClear).
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042ac00  MenuGroupCount
     # int __fastcall FUN_0042ac00(int /*unused*/, int* param_2)
     # Scans sentinel-delimited int array; counts 0xFF060000 groups before
     # 0xFF070000 terminator. ECX (param_1) unused. EDX = param_2.
-    # arg_type: sentinel_array_ptr â€” writes array into 256B buf, calls
+    # arg_type: sentinel_array_ptr â€" writes array into 256B buf, calls
     #   fn(0, buf) with fastcall for orig (ECX=0, EDX=buf) and cdecl for
     #   reimpl (stack: [0, buf]).
     # ref: re/analysis/frontend_promote_menus_a/0x0042ac00.md
-    # U-3439 (ECX unused), U-3440 (sentinel semantics) â€” do not affect correctness.
+    # U-3439 (ECX unused), U-3440 (sentinel semantics) â€" do not affect correctness.
     'menu_group_count': {
         'rva':                    0x0042ac00,
         'export':                 'MenuGroupCount',
@@ -530,17 +530,17 @@ HOOKS = {
         # 0xFF060000 = group delimiter; 0xFF070000 = end-of-array terminator.
         # Expected results annotated in comments.
         'path1_tests': [
-            [0xFF070000],                                                # 0: immediate terminator â†’ 0
-            [0xFF060000, 0xFF070000],                                    # 1: one delimiter â†’ 1
-            [0x00000001, 0xFF070000],                                    # 0: no delimiter â†’ 0
-            [0x00000001, 0xFF060000, 0xFF070000],                        # 1: one delimiter after data â†’ 1
+            [0xFF070000],                                                # 0: immediate terminator â†' 0
+            [0xFF060000, 0xFF070000],                                    # 1: one delimiter â†' 1
+            [0x00000001, 0xFF070000],                                    # 0: no delimiter â†' 0
+            [0x00000001, 0xFF060000, 0xFF070000],                        # 1: one delimiter after data â†' 1
             [0xFF060000, 0x00000001, 0xFF060000, 0xFF070000],            # 2
-            [0xFF060000, 0xFF060000, 0xFF070000],                        # 2: two adjacent delimiters â†’ 2
+            [0xFF060000, 0xFF060000, 0xFF070000],                        # 2: two adjacent delimiters â†' 2
             [0x00000001, 0x00000002, 0xFF060000, 0x00000003, 0xFF060000, 0xFF070000],  # 2
-            [0x00000001, 0x00000002, 0x00000003, 0xFF070000],            # 0: only data, no delimiters â†’ 0
+            [0x00000001, 0x00000002, 0x00000003, 0xFF070000],            # 0: only data, no delimiters â†' 0
             [0xFF060000, 0x00000001, 0x00000002, 0xFF060000, 0x00000004, 0xFF060000, 0xFF070000],  # 3
-            [0xFF060000, 0xFF060000, 0xFF060000, 0xFF070000],            # 3: three adjacent â†’ 3
-            [0x00000064, 0x000000C8, 0x0000012C, 0x00000190, 0xFF070000],  # 0: all data â†’ 0
+            [0xFF060000, 0xFF060000, 0xFF060000, 0xFF070000],            # 3: three adjacent â†' 3
+            [0x00000064, 0x000000C8, 0x0000012C, 0x00000190, 0xFF070000],  # 0: all data â†' 0
         ],
         'path2_tests': [
             [0xFF070000],
@@ -553,12 +553,12 @@ HOOKS = {
     # void FUN_0042aa00(int param_1)  __cdecl
     # Advances cursor at 0x0067ed40+slot*0x40 by param_1 with wrap;
     # checks validity byte; writes 0xffffffff on exhaustion.
-    # arg_type: void_step_global â€” preps slot 0 globals from raw_bytes,
+    # arg_type: void_step_global â€" preps slot 0 globals from raw_bytes,
     #   calls fn(step), returns cursor readback from 0x0067ed40 (as int32).
     # raw_bytes layout: bytes 0..3 = limit as LE int32; byte N = validity
     #   byte for cursor N (read at 0x0067ed74+N for slot 0).
     # ref: re/analysis/frontend_promote_menus_a/0x0042aa00.md
-    # U-3436/3437/3438 (slot range, array semantics, step source) â€” don't
+    # U-3436/3437/3438 (slot range, array semantics, step source) â€" don't
     #   affect bit-identity correctness; limits and validity encoded in tests.
     'menu_cursor_step': {
         'rva':            0x0042aa00,
@@ -567,31 +567,31 @@ HOOKS = {
         'arg_type':       'void_step_global',
         'lut_root_delta': 0,
         # raw_bytes[0..3] = limit LE int32; raw_bytes[N] = validity[N].
-        # validity[N] == 1 â†’ valid entry; else invalid.
+        # validity[N] == 1 â†' valid entry; else invalid.
         # Return value: cursor at 0x0067ed40 after call (-1 = exhausted).
         'path1_tests': [
-            # limit=0 â†’ immediate -1
-            {'raw_bytes': [0,0,0,0],              'initial_cursor': 0,  'step':  1},  # â†’ -1
-            # limit=1, val[0]=raw[0]=1=valid; step+1: wrap 0, valid â†’ 0
-            {'raw_bytes': [1,0,0,0],              'initial_cursor': 0,  'step':  1},  # â†’ 0
-            # limit=1, step-1: wrap to 0, valid â†’ 0
-            {'raw_bytes': [1,0,0,0],              'initial_cursor': 0,  'step': -1},  # â†’ 0
-            # limit=2, val[0]=2â‰ 1,val[1]=0â‰ 1 â†’ exhausted â†’ -1
-            {'raw_bytes': [2,0,0,0, 0,0],         'initial_cursor': 0,  'step':  1},  # â†’ -1
-            # limit=5, valid@4 (raw[4]=1), init=0, step+1: â†’1,â†’2,â†’3,â†’4 valid â†’ 4
-            {'raw_bytes': [5,0,0,0, 1,0],         'initial_cursor': 0,  'step':  1},  # â†’ 4
-            # limit=5, valid@4, init=4, step-1: â†’3,â†’2,â†’1,â†’0(val=5â‰ 1),â†’4 valid â†’ 4
-            {'raw_bytes': [5,0,0,0, 1,0],         'initial_cursor': 4,  'step': -1},  # â†’ 4
-            # limit=5, no valid (raw[4]=0) â†’ exhausted â†’ -1
-            {'raw_bytes': [5,0,0,0, 0,0],         'initial_cursor': 2,  'step':  1},  # â†’ -1
-            # limit=5, valid@4, init=4, step+1: â†’5==limitâ†’wrap 0,val=5â‰ 1,â†’1,â†’2,â†’3,â†’4 valid â†’ 4
-            {'raw_bytes': [5,0,0,0, 1,0],         'initial_cursor': 4,  'step':  1},  # â†’ 4
-            # limit=6, valid@5 (raw[5]=1), init=0, step+1: â†’1,â†’2,â†’3,â†’4,â†’5 valid â†’ 5
-            {'raw_bytes': [6,0,0,0, 0,1, 0],      'initial_cursor': 0,  'step':  1},  # â†’ 5
-            # limit=6, valid@4 (raw[4]=1), init=5, step-1: â†’4 valid â†’ 4
-            {'raw_bytes': [6,0,0,0, 1,0, 0],      'initial_cursor': 5,  'step': -1},  # â†’ 4
-            # limit=3, no valid entries â†’ exhausted â†’ -1
-            {'raw_bytes': [3,0,0,0, 0,0,0],       'initial_cursor': 1,  'step':  1},  # â†’ -1
+            # limit=0 â†' immediate -1
+            {'raw_bytes': [0,0,0,0],              'initial_cursor': 0,  'step':  1},  # â†' -1
+            # limit=1, val[0]=raw[0]=1=valid; step+1: wrap 0, valid â†' 0
+            {'raw_bytes': [1,0,0,0],              'initial_cursor': 0,  'step':  1},  # â†' 0
+            # limit=1, step-1: wrap to 0, valid â†' 0
+            {'raw_bytes': [1,0,0,0],              'initial_cursor': 0,  'step': -1},  # â†' 0
+            # limit=2, val[0]=2â‰ 1,val[1]=0â‰ 1 â†' exhausted â†' -1
+            {'raw_bytes': [2,0,0,0, 0,0],         'initial_cursor': 0,  'step':  1},  # â†' -1
+            # limit=5, valid@4 (raw[4]=1), init=0, step+1: â†'1,â†'2,â†'3,â†'4 valid â†' 4
+            {'raw_bytes': [5,0,0,0, 1,0],         'initial_cursor': 0,  'step':  1},  # â†' 4
+            # limit=5, valid@4, init=4, step-1: â†'3,â†'2,â†'1,â†'0(val=5â‰ 1),â†'4 valid â†' 4
+            {'raw_bytes': [5,0,0,0, 1,0],         'initial_cursor': 4,  'step': -1},  # â†' 4
+            # limit=5, no valid (raw[4]=0) â†' exhausted â†' -1
+            {'raw_bytes': [5,0,0,0, 0,0],         'initial_cursor': 2,  'step':  1},  # â†' -1
+            # limit=5, valid@4, init=4, step+1: â†'5==limitâ†'wrap 0,val=5â‰ 1,â†'1,â†'2,â†'3,â†'4 valid â†' 4
+            {'raw_bytes': [5,0,0,0, 1,0],         'initial_cursor': 4,  'step':  1},  # â†' 4
+            # limit=6, valid@5 (raw[5]=1), init=0, step+1: â†'1,â†'2,â†'3,â†'4,â†'5 valid â†' 5
+            {'raw_bytes': [6,0,0,0, 0,1, 0],      'initial_cursor': 0,  'step':  1},  # â†' 5
+            # limit=6, valid@4 (raw[4]=1), init=5, step-1: â†'4 valid â†' 4
+            {'raw_bytes': [6,0,0,0, 1,0, 0],      'initial_cursor': 5,  'step': -1},  # â†' 4
+            # limit=3, no valid entries â†' exhausted â†' -1
+            {'raw_bytes': [3,0,0,0, 0,0,0],       'initial_cursor': 1,  'step':  1},  # â†' -1
         ],
         'path2_tests': [
             {'raw_bytes': [0,0,0,0],              'initial_cursor': 0,  'step':  1},
@@ -600,20 +600,20 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-g-s5 â€” menu state machine helpers (C2â†’C3, 3 of 4 candidates)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-g-s5 â€" menu state machine helpers (C2â†'C3, 3 of 4 candidates)
     # Frontend/MenuStateMachine.cpp
-    # 0x0042ac50 (MenuCenterCalc) REFUSED â€” ECX+EAX dual-register ABI not
+    # 0x0042ac50 (MenuCenterCalc) REFUSED â€" ECX+EAX dual-register ABI not
     #   supported by NativeFunction harness. D-10639 filed (re/DEFERRED.md;
-    #   corrects prior draft's D-10637 miscite â€” D-10637 tracks a different gap).
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    #   corrects prior draft's D-10637 miscite â€" D-10637 tracks a different gap).
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042ae10  MenuReadinessCheckA
     # void(): reads guard globals (DAT_0067eab0 != 2 AND e7c8 == 0 AND 898ab0 != 0),
     # then path A (stride-0x4c char scan at 0x7f1502) or path B (car-index array).
     # Returns 0 (not ready) or 1 (ready).
     # arg_type='none': called 10x at quiescent main menu; DAT_0067eab0=0 at menu
-    # (not 2), guard2 (e7c8) may vary â€” both paths return same value deterministically.
+    # (not 2), guard2 (e7c8) may vary â€" both paths return same value deterministically.
     # U-3445/U-3446/U-3447/U-3448 registered; do not affect bit-identity correctness.
     'menu_readiness_check_a': {
         'rva':            0x0042ae10,
@@ -626,7 +626,7 @@ HOOKS = {
     },
 
     # 0x0042aeb0  MenuReadinessCheckB
-    # void(): structural variant of MenuReadinessCheckA â€” omits e7c8 guard;
+    # void(): structural variant of MenuReadinessCheckA â€" omits e7c8 guard;
     # table bases +1 byte (0x7f1503 vs 0x7f1502, 0x7f1043 vs 0x7f1042).
     # Returns 0 (not ready) or 1 (ready).
     # arg_type='none': called 10x at quiescent main menu; both paths must agree.
@@ -641,13 +641,13 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session ma3-frida-s3 â€” menu readiness third variant (carry-over from c3-batch-g)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session ma3-frida-s3 â€" menu readiness third variant (carry-over from c3-batch-g)
     # Frontend/MenuStateMachine.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042af50  MenuReadinessCheckC
-    # void(): structural variant of MenuReadinessCheckA â€” same e7c8 guard as A;
+    # void(): structural variant of MenuReadinessCheckA â€" same e7c8 guard as A;
     # table bases -1 byte rel. A (0x7f1501 vs 0x7f1502, 0x7f1041 vs 0x7f1042).
     # Path A upper bound 0x7f1760 (vs 0x7f1761 in A).
     # Returns 0 (not ready) or 1 (ready). Same callee FUN_0040e470 (C2).
@@ -663,9 +663,9 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # Session c3-batch-a-s3 â€” frontend_menus_a medium batch
-    # MenuNav.cpp â€” menu navigation helpers (C2â†’C3)
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # Session c3-batch-a-s3 â€" frontend_menus_a medium batch
+    # MenuNav.cpp â€" menu navigation helpers (C2â†'C3)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042ac90  MenuEntryGet
     # Traverses active slot's entry array; skips (cursor+1) groups via 0xFF040000
@@ -702,7 +702,7 @@ HOOKS = {
     # Detects button-press event at byte-col +2 (0x7f1046); hold-repeat timer
     # for screens 6-7; callee FUN_0040e470 (C2 drift-promoted) filters AI slots.
     # Returns 1 (change detected) or 0.
-    # arg_type='none': called 10x at quiescent main menu (no inputs â†’ returns 0
+    # arg_type='none': called 10x at quiescent main menu (no inputs â†' returns 0
     # each time; both paths must agree). U-3445 (callee semantics) is in
     # Uncertainties section only and does not affect the mechanical reimpl.
     'menu_button_detect_a': {
@@ -729,9 +729,9 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # Session c3-batch-a-s5 â€” frontend_c0_promote + game_mode_cont2
+    # Session c3-batch-a-s5 â€" frontend_c0_promote + game_mode_cont2
     # FrontendNav.cpp / GameModeInit.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x004323c0  MenuCursorBack
     # Backward 2D cursor nav: decrements DAT_0067f17c, searches backward via
@@ -745,10 +745,10 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests': [
             # { row, col, flag, mp_flag }
-            # SP mode (min=1): row>0, col=min â†’ should quickly return.
+            # SP mode (min=1): row>0, col=min â†' should quickly return.
             {'row': 2,  'col': 1, 'flag': 0, 'mp_flag': 0},
             {'row': 3,  'col': 1, 'flag': 0, 'mp_flag': 0},
-            # SP mode: row>0, col>min â†’ inner loop navigates.
+            # SP mode: row>0, col>min â†' inner loop navigates.
             {'row': 3,  'col': 3, 'flag': 0, 'mp_flag': 0},
             {'row': 5,  'col': 5, 'flag': 0, 'mp_flag': 0},
             {'row': 2,  'col': 2, 'flag': 0, 'mp_flag': 0},
@@ -810,7 +810,7 @@ HOOKS = {
         'arg_type':       'car_slot_init',
         'lut_root_delta': 0,
         'path1_tests': [
-            # { idx, guard_val }  â€” guard_val=0 â†’ no write; guard_val!=0 â†’ write 4 fields
+            # { idx, guard_val }  â€" guard_val=0 â†' no write; guard_val!=0 â†' write 4 fields
             {'idx': 0, 'guard_val': 0},
             {'idx': 0, 'guard_val': 1},
             {'idx': 1, 'guard_val': 0},
@@ -843,16 +843,16 @@ HOOKS = {
         'path2_tests':    [0, 15, 16, 255],
     },
 
-    # ── c3_batch_ad session 3 — gameplay pure-leaf harvest (GameplayLeaves_ad3.cpp) ──
+    # ── c3_batch_ad session 3 -- gameplay pure-leaf harvest (GameplayLeaves_ad3.cpp) ──
     # 3 of 11 candidates viable with an existing arg_type; the rest SKIPPED
     # (two-index getters / 4-arg setters / void indexed setter / stateful arena
-    #  grid / thiscall-with-callee — all need a NEW arg_type → harness-extension).
+    #  grid / thiscall-with-callee -- all need a NEW arg_type → harness-extension).
 
     # 0x0046bce0  VehicleVec3At94Get
     # if (0xf < veh) return 0; reads vec3 (&DAT_00882094[veh*0x341] dwords) into out.
     # out3_idx: 12-byte buf first, vehicleIdx second; compares return value (0/1).
     # Read-only getter (sibling of VehicleVec3At9C8Get 0x0046d700). U-8408 open
-    # (vec3 semantic) — does not affect offset/bounds correctness.
+    # (vec3 semantic) -- does not affect offset/bounds correctness.
     # ref: re/analysis/bucket_gameplay_0045dff0_0046dd90/0x0046bce0.md
     'vehicle_vec3_at_94_get': {
         'rva':            0x0046bce0,
@@ -888,7 +888,7 @@ HOOKS = {
     # (compares the written code pair; return value not in the fingerprint, but
     #  the code pair is the function's product and discriminates all branches).
     # Tests span multiple cases + their discriminating constants + default.
-    # U-8393/U-8394 open (comparand/code semantics) — mapping is mechanically exact.
+    # U-8393/U-8394 open (comparand/code semantics) -- mapping is mechanically exact.
     # ref: re/analysis/bucket_gameplay_0045dff0_0046dd90/0x00461e90.md
     'surface_code_classify': {
         'rva':            0x00461e90,
@@ -910,7 +910,7 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€ Session 89: 5 util pure-function C2â†’C3 promotions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€ Session 89: 5 util pure-function C2â†'C3 promotions â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     'timer_get_base_ptr': {
         'rva':            0x00413f90,
@@ -927,7 +927,7 @@ HOOKS = {
     'get_race_sub_mode': {
         'rva':            0x0042f6a0,
         'export':         'GetRaceSubMode',
-        # Returns *(uint32*)0x0067e9fc â€” game-phase register.
+        # Returns *(uint32*)0x0067e9fc â€" game-phase register.
         'signature':      {'ret': 'uint32', 'args': []},
         'arg_type':       'void',
         'lut_root_delta': 0,
@@ -939,7 +939,7 @@ HOOKS = {
     'get_race_end_trigger': {
         'rva':            0x005c9d00,
         'export':         'GetRaceEndTrigger',
-        # Always returns 0; 3-byte stub (XOR EAX,EAX / RET / NOPÃ—13).
+        # Always returns 0; 3-byte stub (XOR EAX,EAX / RET / NOPÃ--13).
         'signature':      {'ret': 'uint32', 'args': []},
         'arg_type':       'void',
         'lut_root_delta': 0,
@@ -952,7 +952,7 @@ HOOKS = {
         'export':         'GetEventFlag',
         # DAT_0063d9e0[(player * 0xab + event_id) * 4]; 4 bytes/entry.
         # Table is zero-initialized before race start; all tests return 0
-        # initially â€” bit-identical against original is guaranteed.
+        # initially â€" bit-identical against original is guaranteed.
         'signature':      {'ret': 'uint32', 'args': ['int', 'int']},
         'arg_type':       'int_pair',
         'lut_root_delta': 0,
@@ -972,7 +972,7 @@ HOOKS = {
         # Reads *(uint32*)(0x0063dc74 + player*0x2ac);
         # out-param1 = word&0x10 (bit4); out-param2 = word&0x20 (bit5).
         # Returns void; callFn packs (out1&0x3f)|((out2&0x3f)<<8) for cmp.
-        # Table zero-initialized before race; both players return 0 â€” valid A/B.
+        # Table zero-initialized before race; both players return 0 â€" valid A/B.
         'signature':      {'ret': 'void', 'args': ['int', 'pointer', 'pointer']},
         'arg_type':       'int_ptr2_out',
         'lut_root_delta': 0,
@@ -980,11 +980,11 @@ HOOKS = {
         'path2_tests': [0, 1, 2, 3],
     },
 
-# â”€â”€ Session 85 audio leaves (C2â†’C3) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# â"€â"€ Session 85 audio leaves (C2â†'C3) â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x005aea10  AudioAlignedAlloc: alloc size+4, 4-byte-align, store raw base
     # at *(aligned-4).  Heap addresses are non-deterministic so we compare
-    # (ptr % 4) and (ptr - header) â€” both must equal 4 for correct impl.
+    # (ptr % 4) and (ptr - header) â€" both must equal 4 for correct impl.
     'audio_aligned_alloc': {
         'rva':         0x005aea10,
         'export':      'AudioAlignedAlloc',
@@ -997,7 +997,7 @@ HOOKS = {
     },
 
     # 0x005aea40  AudioAlignedFree: recover raw base from *(ptr-4), forward to
-    # vtable dealloc trampoline 0x004522d0.  Test: alloc then free â€” no-crash.
+    # vtable dealloc trampoline 0x004522d0.  Test: alloc then free â€" no-crash.
     'audio_aligned_free': {
         'rva':          0x005aea40,
         'export':       'AudioAlignedFree',
@@ -1112,11 +1112,11 @@ HOOKS = {
         ],
     },
 
-    # ── c3_batch_ag harness-ext 2026-06-08 — 9 deferrals unlocked by 4 new ────
+    # ── c3_batch_ag harness-ext 2026-06-08 -- 9 deferrals unlocked by 4 new ────
     # arg_type handlers (seed_field_read_field / structptr_seeded_array /
     # scalars_to_scattered_globals / count_header_list_ring).
 
-    # 0x00483a30 Replay::Rewind — copies *(p+0x18)->*(p+0x1c). Seed +0x18, read +0x1c.
+    # 0x00483a30 Replay::Rewind -- copies *(p+0x18)->*(p+0x1c). Seed +0x18, read +0x1c.
     'replay_rewind': {
         'rva':       0x00483a30,
         'export':    'ReplayRewind',
@@ -1129,7 +1129,7 @@ HOOKS = {
         'path2_tests': [0xDEADBEEF, 0x55555555, 0x80000000],
     },
 
-    # 0x004c1c80 ViewportDimsSet(structPtr, dims[2]) — stores dims@+0x68/+0x6c and
+    # 0x004c1c80 ViewportDimsSet(structPtr, dims[2]) -- stores dims@+0x68/+0x6c and
     # ratios DAT_005cc320/dim@+0x70/+0x74; gate@+4 stays 0 so FUN_004c0e50 is skipped.
     # dims are re-read as float for the ratio -> test vectors are float bit patterns.
     'viewport_dims_set': {
@@ -1185,7 +1185,7 @@ HOOKS = {
         'arg_type':  'scalars_to_scattered_globals',
         # Split fill: cell table -> 0x00 baseline, slot data -> 0xff (free sentinel).
         # erase frees the cell (cellTable[cell]=0xffff != 0x00 baseline) so its (x,y)-
-        # dependent effect is visible — a uniform 0xff fill would revert to baseline.
+        # dependent effect is visible -- a uniform 0xff fill would revert to baseline.
         'observe':   [{'addr': '0x007f1a9c', 'len': 0x8000, 'fill': 0x00},
                       {'addr': '0x007f9a9c', 'len': 0x4000, 'fill': 0xFF},
                       {'addr': '0x00801a9c', 'len': 4, 'fill': 0x00}],
@@ -1238,7 +1238,7 @@ HOOKS = {
         'path2_tests': [{'args': [0x3F000000, 45, 5]}, {'args': [0xFFFFFFFF, 59, 99]}, {'args': [0x12345678, 42, 7]}],
     },
 
-    # 0x005b3580 AudioListInit(hdr) — count-header circular-list init. Prefill the 3
+    # 0x005b3580 AudioListInit(hdr) -- count-header circular-list init. Prefill the 3
     # header words with a per-vector sentinel, call, read normalized empty-state.
     'audio_list_init': {
         'rva':       0x005b3580,
@@ -1338,7 +1338,7 @@ HOOKS = {
         'path2_tests': [{'field_vals': [0x10, 0x20, 0x30], 'pos': 1}, {'field_vals': [0x10, 0x20, 0x30], 'pos': 3}],
     },
 
-    # ── c3_batch_ah s1 — Gameplay range-table walker family + getters ──────────
+    # ── c3_batch_ah s1 -- Gameplay range-table walker family + getters ──────────
     # All six walk-family functions read the shared range-table via FUN_00426090()
     # == &DAT_0066ce58 (a static .bss buffer populated only during track load).
     # The Copter getter reads DAT_0063a5d0 (count) / DAT_00639dc4 (array); the LED
@@ -1478,10 +1478,10 @@ HOOKS = {
         'path2_tests': [[0, 0], [1, 1], [2, 0]],
     },
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session 86 â€” c3_render_math  (C2â†’C3, 5 candidates)
+# â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session 86 â€" c3_render_math  (C2â†'C3, 5 candidates)
     # RW column-major transform + 2D vector math + matrix scale
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x004c3730  RwV3dTransformPoint
     # Full affine point transform: out = mat * in  (includes translation).
@@ -1501,8 +1501,8 @@ HOOKS = {
             {'mat': _TRANS,  'in': [1.0,  1.0,  1.0]},
             {'mat': _SCALE2, 'in': [1.0,  1.0,  1.0]},
             {'mat': _SCALE2, 'in': [0.5,  0.5,  0.5]},
-            {'mat': _ROTY90, 'in': [1.0,  0.0,  0.0]},   # â†’ (0,0,-1)
-            {'mat': _ROTY90, 'in': [0.0,  0.0,  1.0]},   # â†’ (1,0,0)
+            {'mat': _ROTY90, 'in': [1.0,  0.0,  0.0]},   # â†' (0,0,-1)
+            {'mat': _ROTY90, 'in': [0.0,  0.0,  1.0]},   # â†' (1,0,0)
             {'mat': _MIXED,  'in': [1.0,  0.0,  0.0]},
             {'mat': _MIXED,  'in': [0.0,  1.0,  0.0]},
             {'mat': _MIXED,  'in': [1.0,  1.0,  1.0]},
@@ -1528,7 +1528,7 @@ HOOKS = {
             {'mat': _IDENT,  'in': [1.0,  0.0,  0.0]},
             {'mat': _IDENT,  'in': [1.0,  2.0,  3.0]},
             {'mat': _TRANS,  'in': [1.0,  0.0,  0.0]},   # translation must NOT be added
-            {'mat': _TRANS,  'in': [0.0,  0.0,  0.0]},   # â†’ (0,0,0), not (1,2,3)
+            {'mat': _TRANS,  'in': [0.0,  0.0,  0.0]},   # â†' (0,0,0), not (1,2,3)
             {'mat': _SCALE2, 'in': [1.0,  1.0,  1.0]},
             {'mat': _SCALE2, 'in': [0.5, -0.5,  2.0]},
             {'mat': _ROTY90, 'in': [1.0,  0.0,  0.0]},
@@ -1584,7 +1584,7 @@ HOOKS = {
             [10.0, 0.0],
             [12.34, -56.78],
             [100.0, -1.0],
-            [0.0,  0.0],   # zero â†’ error path; out={0,0} mag=0 (both paths match)
+            [0.0,  0.0],   # zero â†' error path; out={0,0} mag=0 (both paths match)
         ],
         'path2_tests': [
             [1.0, 0.0], [3.0, 4.0], [0.0, 0.0],
@@ -1592,7 +1592,7 @@ HOOKS = {
     },
 
     # 0x004c5010  RwMatrixScale
-    # 3-mode in-place matrix scale. Mode 0=replace, 1=MÃ—Scale, 2=ScaleÃ—M.
+    # 3-mode in-place matrix scale. Mode 0=replace, 1=MÃ--Scale, 2=ScaleÃ--M.
     # Verified from Ghidra decompilation 2026-05-14 (Mashed_pool0, read-only).
     'rw_matrix_scale': {
         'rva':            0x004c5010,
@@ -1605,12 +1605,12 @@ HOOKS = {
             {'mat': _MIXED,  'scale': [2.0, 3.0, 4.0], 'mode': 0},
             {'mat': _IDENT,  'scale': [1.0, 1.0, 1.0], 'mode': 0},
             {'mat': _IDENT,  'scale': [2.0, 3.0, 4.0], 'mode': 0},
-            # Mode 1 (MÃ—Scale): scale columns, translation unchanged
+            # Mode 1 (MÃ--Scale): scale columns, translation unchanged
             {'mat': _IDENT,  'scale': [2.0, 3.0, 4.0], 'mode': 1},
             {'mat': _MIXED,  'scale': [2.0, 3.0, 4.0], 'mode': 1},
             {'mat': _TRANS,  'scale': [2.0, 3.0, 4.0], 'mode': 1},
             {'mat': _SCALE2, 'scale': [0.5, 0.5, 0.5], 'mode': 1},
-            # Mode 2 (ScaleÃ—M): scale rows including translation
+            # Mode 2 (ScaleÃ--M): scale rows including translation
             {'mat': _IDENT,  'scale': [2.0, 3.0, 4.0], 'mode': 2},
             {'mat': _MIXED,  'scale': [2.0, 3.0, 4.0], 'mode': 2},
             {'mat': _TRANS,  'scale': [2.0, 3.0, 4.0], 'mode': 2},
@@ -1623,10 +1623,10 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-a-s6 â€” frontend_menus_a larger + game_mode (C2->C3)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-a-s6 â€" frontend_menus_a larger + game_mode (C2->C3)
     # MenuButtonDetect.cpp + GameModeCarSelect.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042b770  MenuButtonDetectE
     # Simplified button-detector: checks active byte col+5 AND !processed col+5.
@@ -1719,11 +1719,11 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-b-s3 â€” sprite gate + HUD slot type mappers
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-b-s3 â€" sprite gate + HUD slot type mappers
     # SpriteGate.cpp
     # Drift-promotes: 0x004c5c00 C1->C2, 0x0040bb50 C1->C2
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0040bb70  SpriteLookupTableA
     # 20-byte forwarder: calls FUN_004c5c00(DAT_0063b900, key_ptr).
@@ -1822,11 +1822,11 @@ HOOKS = {
         'path2_tests':    [2, 3, 10],
     },
 
-    # Session c3-batch-c-s1 â€” hud_ingame_promote_c2 (C2->C3, 3 candidates)
-    # HUD/HudDispatch.cpp â€” game-mode router wrappers for in-game HUD draw
+    # Session c3-batch-c-s1 â€" hud_ingame_promote_c2 (C2->C3, 3 candidates)
+    # HUD/HudDispatch.cpp â€" game-mode router wrappers for in-game HUD draw
     # Callees 0x0041c2d0 and 0x0041bc50 drift-promoted C1->C2 (budget used).
     # Refused: 0x0041b630 (needs 0x0041b340 C1), 0x0041ccc0 (needs 0x0041c9a0 C1).
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0041a3e0  HudDispatchMode10
     # void(void): reads int32_t at DAT_0063c628; if non-zero -> calls FUN_0041c2d0.
@@ -1871,11 +1871,11 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # Session c3-batch-c-s3 â€” hud+frontend getters batch-c (C2->C3, 4 candidates)
+    # Session c3-batch-c-s3 â€" hud+frontend getters batch-c (C2->C3, 4 candidates)
     # HUD/HudDispatch.cpp, Frontend/FrontendAccessors.cpp, Frontend/FrontendMode.cpp
     # Pure-leaf HUD sub-mode and Frontend global/array/mode-index getters.
     # Candidate 0x00436810 DEFERRED -- U-3410/U-3411 unresolved.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042f6a0  HudSubModeGet
     # Returns DAT_0067e9fc (uint32_t global). 5 bytes: MOV EAX,[imm32]; RET.
@@ -1940,11 +1940,11 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # Session c3-batch-c-s6 â€” hud_promote_c2_b font sys state (C2->C3)
-    # HUD/FontCtx.cpp â€” font matrix stack + render-state init + ctx ops
+    # Session c3-batch-c-s6 â€" hud_promote_c2_b font sys state (C2->C3)
+    # HUD/FontCtx.cpp â€" font matrix stack + render-state init + ctx ops
     # Drift-promote: 0x004c57a0 C1->C2
-    # FlushMatrix (0x00552e40) EXCLUDED â€” Frida not run, S-2126 open.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # FlushMatrix (0x00552e40) EXCLUDED â€" Frida not run, S-2126 open.
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00552da0  FontCtx_SetScale
     # fn(float sx, float sy) -> uint32(1).
@@ -2032,9 +2032,9 @@ HOOKS = {
     # Observable: return bool and new stack depth.
     # Strategy: font_matrix_push -- inject depth, call, read back (ret|(new_depth<<8)).
     # Test depths (2026-05-24 phase-a1): only 0 (push slot 1, copies from
-    # slot 0 â€” valid post-prelude) and 31 (overflow early-out, returns false
+    # slot 0 â€" valid post-prelude) and 31 (overflow early-out, returns false
     # without touching ctx). Depths 1..30 deref unallocated slots and AV
-    # both sides identically â€” non-informative. Tests alternate to exercise
+    # both sides identically â€" non-informative. Tests alternate to exercise
     # both code paths (success + overflow).
     'font_matrix_push': {
         'rva':            0x00552d10,
@@ -2061,12 +2061,12 @@ HOOKS = {
         ],
     },
 
-    # Session c3-batch-b-s1 â€” frontend_score_getters (C2->C3, 6 candidates)
-    # Frontend/MenuScoreGetters.cpp â€” pure-leaf indexed reads + global getters
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # Session c3-batch-b-s1 â€" frontend_score_getters (C2->C3, 6 candidates)
+    # Frontend/MenuScoreGetters.cpp â€" pure-leaf indexed reads + global getters
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0040b6b0  ModeScoreGetBySlot
-    # Returns DAT_008a9530[param_1] â€” per-slot mode-score array element.
+    # Returns DAT_008a9530[param_1] â€" per-slot mode-score array element.
     # arg_type='int_scalar': single int index, returns uint32.
     'mode_score_get_by_slot': {
         'rva':            0x0040b6b0,
@@ -2079,7 +2079,7 @@ HOOKS = {
     },
 
     # 0x0040b7a0  HotkeyStringBaseGet
-    # Returns DAT_0063b8ec â€” hotkey string base global. No args.
+    # Returns DAT_0063b8ec â€" hotkey string base global. No args.
     # arg_type='read_global': write sentinel, call, read back.
     'hotkey_string_base_get': {
         'rva':            0x0040b7a0,
@@ -2133,7 +2133,7 @@ HOOKS = {
     },
 
     # 0x00429a70  LapFracGetBySlot
-    # Returns (float)DAT_0067d99c[param_1] â€” indexed float read, lap frac array.
+    # Returns (float)DAT_0067d99c[param_1] â€" indexed float read, lap frac array.
     # arg_type='int_scalar': single int index, returns float.
     'lap_frac_get_by_slot': {
         'rva':            0x00429a70,
@@ -2146,7 +2146,7 @@ HOOKS = {
     },
 
     # 0x00429a80  LapLapsGetBySlot
-    # Returns DAT_0067d98c[param_1] â€” indexed read of lap laps array.
+    # Returns DAT_0067d98c[param_1] â€" indexed read of lap laps array.
     # arg_type='int_scalar': single int index, returns uint32.
     'lap_laps_get_by_slot': {
         'rva':            0x00429a80,
@@ -2174,14 +2174,14 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # Session c3-batch-b-s2 â€” frontend batch b session 2 (C2â†’C3, 6 candidates)
+    # Session c3-batch-b-s2 â€" frontend batch b session 2 (C2â†'C3, 6 candidates)
     # MenuScoreGetters.cpp + MenuInit.cpp
-    # SlotSortByModeScore (0x0040b620) OMITTED â€” arg_type 'void_out_ptr'
+    # SlotSortByModeScore (0x0040b620) OMITTED â€" arg_type 'void_out_ptr'
     #   (pass ptr, call, readback 4-element array) not supported by harness.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00429a90  LapSecsGetBySlot
-    # Returns (&DAT_0067d994)[param_1] â€” indexed read of lap-time seconds
+    # Returns (&DAT_0067d994)[param_1] â€" indexed read of lap-time seconds
     # component by slot. 12-byte body. Same indexed-array pattern as other
     # lap time getters.
     # int_scalar: passes param_1 as int, reads back return value.
@@ -2199,7 +2199,7 @@ HOOKS = {
     # Returns 1 if DAT_0067e9fc in {2, 3, 4, 5, 10}; else 0.
     # 38-byte body. Multi-mode boolean check on game mode global at 0x0067e9fc.
     # read_global: write sentinel, call fn(), verify return.
-    # 10 dummy-marker tests (game-mode global at quiescent main-menu = 1 â†’ 0).
+    # 10 dummy-marker tests (game-mode global at quiescent main-menu = 1 â†' 0).
     # ref: re/analysis/frontend_promote_menus_b/00430760.md
     'is_multiplayer_mode': {
         'rva':            0x00430760,
@@ -2234,7 +2234,7 @@ HOOKS = {
     # 8-byte body: MOV EAX, [0x0067f17c]; ADD EAX, 0x49; RET.
     # Returns animation frame counter (DAT_0067f17c) + 73 (0x49 cited at 0x0042f0b4).
     # read_global: write sentinel, call fn(), verify return == sentinel + 73.
-    # Note: harness checks exact return value â€” we write known sentinel to
+    # Note: harness checks exact return value â€" we write known sentinel to
     # 0x0067f17c, reimpl returns sentinel+0x49; orig does the same.
     # ref: re/analysis/promote_c2_frontend_menus/0x0042f0b0.md
     'get_frame_counter_plus73': {
@@ -2269,18 +2269,18 @@ HOOKS = {
                            0x3F800000, 0xBEEFCAFE],
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],    },
 
-    # Session c3-batch-b-s4 â€” frontend_promote_menus_b (C2â†’C3, 3 of 6)
+    # Session c3-batch-b-s4 â€" frontend_promote_menus_b (C2â†'C3, 3 of 6)
     # MenuScoreSort.cpp + MenuRaceEnd.cpp
     #
     # NOT registered (callee gate failures or unsupported arg_type):
-    #   0x0040b460  SlotSortByScoreWithModeOverride â€” REFUSED: callee 0x00417740 C0 (STUB S-0491)
-    #   0x00429a30  LapTimeStoreToPlayerArrays â€” BLOCKED: callee 0x00430790 C1 with open U-3470
-    #   0x0040e3a0  PlayerColorTableGet â€” OMITTED: (int, byte*) signature not supported by
+    #   0x0040b460  SlotSortByScoreWithModeOverride â€" REFUSED: callee 0x00417740 C0 (STUB S-0491)
+    #   0x00429a30  LapTimeStoreToPlayerArrays â€" BLOCKED: callee 0x00430790 C1 with open U-3470
+    #   0x0040e3a0  PlayerColorTableGet â€" OMITTED: (int, byte*) signature not supported by
     #                harness (pointer out-param needs custom arg_type)
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00430830  SplitScreenTrackAssignment
-    # uint32 FUN_00430830(int param_1) â€” pure leaf, no callees.
+    # uint32 FUN_00430830(int param_1) â€" pure leaf, no callees.
     # Switch on DAT_0067e9fc (game mode) returns from per-slot layout arrays.
     # Returns 0 for default/unsupported modes.
     # int_scalar: pass slot index; at main-menu quiescent state (mode typically
@@ -2296,7 +2296,7 @@ HOOKS = {
     },
 
     # 0x0042fe30  RaceEndFlagIfEndMode
-    # uint32 FUN_0042fe30(void) â€” calls GetRaceSubMode()==0xb -> return 1, else DAT_0067ea74.
+    # uint32 FUN_0042fe30(void) â€" calls GetRaceSubMode()==0xb -> return 1, else DAT_0067ea74.
     # arg_type='none': called 10x at quiescent main menu (mode != 0xb at menu).
     # Both paths must return the same value (DAT_0067ea74 at menu state).
     # Callee GetRaceSubMode (0x0042f6a0) is C3.
@@ -2312,7 +2312,7 @@ HOOKS = {
     },
 
     # 0x0042fe50  RaceEndAltFlagIfEndMode
-    # uint32 FUN_0042fe50(void) â€” complement of RaceEndFlagIfEndMode.
+    # uint32 FUN_0042fe50(void) â€" complement of RaceEndFlagIfEndMode.
     # Returns DAT_0067ea78 when GetRaceSubMode()!=0xb, else 0.
     # arg_type='none': called 10x at quiescent main menu; both paths must agree.
     # Callee GetRaceSubMode (0x0042f6a0) is C3.
@@ -2327,18 +2327,18 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # Session c3-batch-b-s5 â€” Frontend sprite dispatch + time decompose
+    # Session c3-batch-b-s5 â€" Frontend sprite dispatch + time decompose
     # SpriteDispatch.cpp + MenuTime.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042fab0  SpriteSlotDispatch
     # Assembly-confirmed 10-way dispatch: MOV [ESP+4], slot_ptr; JMP FUN_0040bb90.
     # Slot 0 -> ptr 0x5cd898; slot 9 -> ptr 0x5cd838 (stride mostly 0xc).
-    # Strategy: sprite_table_dispatch (added phase-a1 2026-05-24) â€” patches
+    # Strategy: sprite_table_dispatch (added phase-a1 2026-05-24) â€" patches
     # FUN_0040bb90 with a NativeCallback that captures the first arg (the
     # slot ptr). Both Orig and Reimpl route through the patched stub; their
     # captured ptrs must match. Prior arg_type 'int_scalar' produced
-    # both-AV-at-0x8 (FUN_0040bb90 derefs NULL list head) â€” banned as GREEN.
+    # both-AV-at-0x8 (FUN_0040bb90 derefs NULL list head) â€" banned as GREEN.
     'sprite_slot_dispatch': {
         'rva':            0x0042fab0,
         'export':         'SpriteSlotDispatch',
@@ -2354,11 +2354,11 @@ HOOKS = {
     # 0x0042e590  SpriteAnimFrameThunk
     # Assembly-confirmed tail-call thunk: computes idx = sprite_slot + 2*DAT_0067f17c,
     # looks up sprite_ptr_table[idx] at 0x5f79d8, overwrites first arg, JMP FUN_0040bb70.
-    # Strategy: sprite_table_dispatch (added phase-a1 2026-05-24) â€” patches
+    # Strategy: sprite_table_dispatch (added phase-a1 2026-05-24) â€" patches
     # FUN_0040bb70 with a NativeCallback that captures the first arg (the
     # transformed sprite ptr). Both Orig and Reimpl produce the same lookup
     # using the same anim_frame global and sprite_ptr_table base, so captures
-    # must match. Prior arg_type 'int_scalar' produced both-AV-at-0x8 â€” banned
+    # must match. Prior arg_type 'int_scalar' produced both-AV-at-0x8 â€" banned
     # as GREEN; this is the SpriteAnimFrameThunk fake-AV/AV the operator
     # specifically warned about.
     'sprite_anim_frame_thunk': {
@@ -2373,15 +2373,15 @@ HOOKS = {
     },
 
 
-    # Session c3-batch-d-s1 â€” frontend_menus large functions (C2->C3)
+    # Session c3-batch-d-s1 â€" frontend_menus large functions (C2->C3)
     # MenuHelpers.cpp: FrontendPlayerSlotCheck, FrontendCursorUpdate
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042ebe0  FrontendPlayerSlotCheck
     # bool(int param_1): player-slot fullness checker; dispatch key {10,11,12}.
     # Iterates 0x7f0a48 stride 0x1e0; returns (enableFlag != 0) && !bVar1.
     # arg_type='int_scalar': pass param_1 as uint32; compare bool return (0/1).
-    # Only valid dispatch keys {10,11,12} are tested â€” the original behaviour
+    # Only valid dispatch keys {10,11,12} are tested â€" the original behaviour
     # for other values is undefined (the dispatch table has no other active
     # slots at main menu and enableFlag reads outside meaningful range).
     # At quiescent main menu, player-slot array is initialised; function must
@@ -2418,10 +2418,10 @@ HOOKS = {
     },
 
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-d-s3 â€” hud_ingame_promote_c2 (C2->C3)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-d-s3 â€" hud_ingame_promote_c2 (C2->C3)
     # HudDispatch.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0040dfc0  HudIngameDispatch
     # void: top-level HUD in-game dispatcher. Two-stage guard (draw-enable +
@@ -2439,16 +2439,16 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-g-s11 â€” HUD-ingame core dispatch (C2->C3)
-    # HUD/HudDispatch.cpp â€” loop helpers for {5/6}-path and {7}-path.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-g-s11 â€" HUD-ingame core dispatch (C2->C3)
+    # HUD/HudDispatch.cpp â€" loop helpers for {5/6}-path and {7}-path.
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0041b630  HudSlotLoopB630
     # void(): iterates 4-entry array at 0x0063c8d0, stride 0x74 (116 bytes).
     # Per entry: reads int32_t at offset +0x6c; if non-zero -> calls FUN_0041b340.
     # Called on DAT_0063ba8c âˆˆ {5,6} path when FUN_0042f500()==0.
-    # At main menu DAT_0063ba8c < 5 so HudIngameDispatch guard fires first â€”
+    # At main menu DAT_0063ba8c < 5 so HudIngameDispatch guard fires first â€"
     # this function is never reached. Strategy: read_global sentinel on
     # DAT_0063ba8c (set to 0 -> guard fires, 0 returned); both paths agree.
     # Evidence: log/diff_hud_slot_loop_b630.csv
@@ -2479,24 +2479,24 @@ HOOKS = {
     },
 
 
-    # Session c3-batch-b-s6 â€” VehicleUnlockFlagGet (C2->C3)
+    # Session c3-batch-b-s6 â€" VehicleUnlockFlagGet (C2->C3)
     # VehicleMeta.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-f-s8 â€” audio dsound wrapper A (C2->C3, 4 candidates)
-    # Audio/AudioDSound.cpp â€” COM wrapper field setter, vtable caller,
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-f-s8 â€" audio dsound wrapper A (C2->C3, 4 candidates)
+    # Audio/AudioDSound.cpp â€" COM wrapper field setter, vtable caller,
     # QI chain, and semaphore wrapper.
     # STRUCT GAP: AudioBufFieldSet accesses audio buf struct +0x74/+0x78/+0x11c/+0x38.
-    # U-0361 (AudioDSoundRelease vtable slot semantic) â€” in ## Open uncertainties.
-    # U-0360 (AudioDSoundQIChain IID at 005d09dc) â€” in ## Open uncertainties.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # U-0361 (AudioDSoundRelease vtable slot semantic) â€" in ## Open uncertainties.
+    # U-0360 (AudioDSoundQIChain IID at 005d09dc) â€" in ## Open uncertainties.
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x005baf60  AudioBufFieldSet
     # void(ptr, int): writes param_2 to *(param_1+0x74), ORs 0x100 into
     # *(param_1+0x78), then if bit 3 of *(param_1+0x78) is set writes param_2
     # to *(*(param_1+0x11c)+0x38).
-    # Strategy: buf_field_set â€” allocate 0x120-byte zeroed buffer, set +0x78 to
+    # Strategy: buf_field_set â€" allocate 0x120-byte zeroed buffer, set +0x78 to
     # avoid bit 3 (keep 3D-attach flag clear so COM branch not taken), call
     # fn(buf, value), read back (buf+0x74) and (buf+0x78) packed as 64-bit.
     # Both paths write identical fields; packed readback must match.
@@ -2522,7 +2522,7 @@ HOOKS = {
     # Discards return; always returns 1.
     # COM objects not available at main-menu; both paths crash identically when
     # param_1+0x7c is null (NULL ptr deref). crash_equal_ok=True.
-    # Strategy: int_scalar â€” pass a fake ptr (e.g. 0x1000); both orig and reimpl
+    # Strategy: int_scalar â€" pass a fake ptr (e.g. 0x1000); both orig and reimpl
     # crash dereferencing *(0x1000+0x7c) at the same offset identically.
     'audio_dsound_release': {
         'rva':            0x005baf90,
@@ -2531,7 +2531,7 @@ HOOKS = {
         'arg_type':       'int_scalar',
         'crash_equal_ok': True,
         'lut_root_delta': 0,
-        # Fake pointer values â€” both orig and reimpl will AV identically.
+        # Fake pointer values â€" both orig and reimpl will AV identically.
         'path1_tests':    [0x1000, 0x1000, 0x1000, 0x1000, 0x1000,
                            0x1000, 0x1000, 0x1000, 0x1000, 0x1000],
         'path2_tests':    [0x1000, 0x1000, 0x1000],
@@ -2539,7 +2539,7 @@ HOOKS = {
 
     # 0x005bc400  AudioDSoundQIChain
     # int(ptr*, ptr*): double QI chain on COM objects.
-    # Both paths crash identically when param_2=NULL (first write *param_2=0 â†’ AV at 0x0).
+    # Both paths crash identically when param_2=NULL (first write *param_2=0 â†' AV at 0x0).
     # crash_equal_ok=True; int_pair passes [fake_param1, 0] as two int args.
     # param_2=0 means both orig and reimpl AV at 0x0 writing *param_2=0. Crash strings match.
     'audio_dsound_qi_chain': {
@@ -2550,7 +2550,7 @@ HOOKS = {
         'crash_equal_ok': True,
         'lut_root_delta': 0,
         # param_1 = arbitrary (not used before crash), param_2 = 0 (NULL).
-        # First write `*param_2 = 0` â†’ AV at 0x0 for both orig and reimpl.
+        # First write `*param_2 = 0` â†' AV at 0x0 for both orig and reimpl.
         'path1_tests': [
             [0x1000, 0],
             [0x1000, 0],
@@ -2573,7 +2573,7 @@ HOOKS = {
     # 0x005aeea0  AudioSemaphoreCreate
     # uint(void*, LONG, LONG): CreateSemaphoreA(NULL, param_2, param_3, NULL).
     # Stores HANDLE at *param_1. Returns -(bool(handle!=0)) & (uint)param_1.
-    # Strategy: semaphore_create â€” allocate 4-byte scratch buf, call
+    # Strategy: semaphore_create â€" allocate 4-byte scratch buf, call
     # fn(buf, initial_count, max_count), close the handle from *buf,
     # verify return value matches ((handle!=NULL)?buf_addr:0).
     # Both paths call CreateSemaphoreA with identical args, both should
@@ -2608,10 +2608,10 @@ HOOKS = {
     # 0x0042ef40  VehicleUnlockFlagGet
     # Pure leaf: reads byte from DAT_007f0e50 + param_1*0xc at a byte-offset
     # selected by param_2 switch; returns 1 if byte == 0x01, else 0.
-    # Array is zero-initialized before game-mode selection â†’ all tests return
+    # Array is zero-initialized before game-mode selection â†' all tests return
     # 0 at quiescent main-menu state. A/B identity guaranteed (both read 0x00
     # from the same global array).
-    # [UNCERTAIN U-3176] No bounds check on param_1 â€” reproduced as-is.
+    # [UNCERTAIN U-3176] No bounds check on param_1 â€" reproduced as-is.
     # arg_type='int_pair': passes [param_1, param_2] directly.
     'vehicle_unlock_flag_get': {
         'rva':            0x0042ef40,
@@ -2633,18 +2633,18 @@ HOOKS = {
         ],
     },
 
-    # Session c3-batch-e-s2 â€” VfsFileExists + AutosaveTrigger (C2->C3)
+    # Session c3-batch-e-s2 â€" VfsFileExists + AutosaveTrigger (C2->C3)
     # Save/GameSaveVFS.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00550b00  VfsFileExists
     # ~186 bytes. int(char*). VFS file-exists router.
-    # Branch A (DAT_007dc75c != 0): colon-scan â†’ linked-list lookup â†’ vtable[0x13](obj, filename).
-    # Branch B (DAT_007dc75c == 0): if DAT_007dc768==NULL â†’ return 0; else call (*cb)(6) â†’ 0.
-    # At quiescent main-menu state: DAT_007dc75c is likely 0 (VFS not active) â†’ Branch B.
+    # Branch A (DAT_007dc75c != 0): colon-scan â†' linked-list lookup â†' vtable[0x13](obj, filename).
+    # Branch B (DAT_007dc75c == 0): if DAT_007dc768==NULL â†' return 0; else call (*cb)(6) â†' 0.
+    # At quiescent main-menu state: DAT_007dc75c is likely 0 (VFS not active) â†' Branch B.
     # Branch B never dereferences param_1, so passing 0 or any pointer is safe at menu.
     # arg_type='int_scalar': passes filename pointer VA as int32 (ASLR disabled; fixed VAs).
-    # At menu: both orig and reimpl â†’ Branch B â†’ return 0 (bit-identical).
+    # At menu: both orig and reimpl â†' Branch B â†' return 0 (bit-identical).
     # Test vectors: 10x calls with 0 (null ptr); safe because Branch B never deref param_1.
     'vfs_file_exists': {
         'rva':            0x00550b00,
@@ -2657,8 +2657,8 @@ HOOKS = {
         # Use known game string VAs (no ':' in content):
         #   0x005cda7c: "Button"  (confirmed valid from SpriteLookupTableA tests)
         #   0x005cc414: "SemiC"   (confirmed valid from SpriteLookupTableA tests)
-        # scan_fn scans for ':'; finds none â†’ default obj dispatch â†’ vtable[0x13].
-        # Both orig and reimpl call same vtable fn on same obj â†’ bit-identical return.
+        # scan_fn scans for ':'; finds none â†' default obj dispatch â†' vtable[0x13].
+        # Both orig and reimpl call same vtable fn on same obj â†' bit-identical return.
         # arg_type='int_scalar': passes the VA directly (ASLR disabled; fixed VAs).
         'path1_tests': [
             0x005cda7c, 0x005cc414, 0x005cda7c, 0x005cc414, 0x005cda7c,
@@ -2671,8 +2671,8 @@ HOOKS = {
 
     # 0x004099a0  AutosaveTrigger
     # ~54 bytes. void(void). Sets 3 globals + wprintf when autosave context set.
-    # Guard: if DAT_008a95ac == 0 â†’ return immediately (no side effects).
-    # At quiescent main-menu state: DAT_008a95ac == 0 â†’ guard fires â†’ both return void/0.
+    # Guard: if DAT_008a95ac == 0 â†' return immediately (no side effects).
+    # At quiescent main-menu state: DAT_008a95ac == 0 â†' guard fires â†' both return void/0.
     # arg_type='none': called 5x; both paths return void/0 at quiescent state.
     # Globals observed side-channel: DAT_008a9584, DAT_008a9594, DAT_008a95b0 unchanged.
     'autosave_trigger': {
@@ -2681,14 +2681,14 @@ HOOKS = {
         'signature':      {'ret': 'uint32', 'args': []},
         'arg_type':       'none',
         'lut_root_delta': 0,
-        # 5 calls at quiescent menu; DAT_008a95ac==0 â†’ early return; both return 0.
+        # 5 calls at quiescent menu; DAT_008a95ac==0 â†' early return; both return 0.
         'path1_tests':    [0, 1, 2, 3, 4],
         'path2_tests':    [0, 1, 2],
     },
 
-    # Session save-sdone-a-s3 â€” career event helpers (C1->C3)
+    # Session save-sdone-a-s3 â€" career event helpers (C1->C3)
     # Save/CareerEvents.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042a920  PostTrophyEvent  void(uint32 event_id)
     # Pure 20-byte leaf: writes DAT_00898ab0=0x40 (priority), then param_1 into
@@ -2698,7 +2698,7 @@ HOOKS = {
     # arg_type='void_setter_observe': call fn(event_id), read back DAT_00899140.
     # The fixed priority write (0x40 to DAT_00898ab0) is implicitly verified by
     # the bit-identical readback of DAT_00899140 (same code path must have run).
-    # Pure leaf â€” leaf-function exemption applies (CONFIDENCE.md, 2026-05-09).
+    # Pure leaf â€" leaf-function exemption applies (CONFIDENCE.md, 2026-05-09).
     # [UNCERTAIN U-1552] DAT_00898ab0 = 0x40 semantic unknown (non-blocking).
     'post_trophy_event': {
         'rva':            0x0042a920,
@@ -2713,18 +2713,18 @@ HOOKS = {
         'path2_tests':    [0x00000264, 0x00000265, 0x0000026a],
     },
 
-    # Session c3-batch-i-s4 â€” Settings/video-config CONFIG_SAVE_FN (C2->C3)
+    # Session c3-batch-i-s4 â€" Settings/video-config CONFIG_SAVE_FN (C2->C3)
     # Save/SettingsCfg.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x004989b0  ConfigSave
     # ~76 bytes. int(void). Writes 512 bytes from global settings buffer at
     # 0x00773208 to "videocfg.bin" via game CRT _fsopen("wb")/_fwrite/_fclose.
     # Returns 1 on file-open success, 0 on failure.
     # At quiescent main-menu state, videocfg.bin exists+writable; both orig and
-    # reimpl hit the success path â†’ return 1 â†’ bit-identical.
+    # reimpl hit the success path â†' return 1 â†' bit-identical.
     # arg_type='none': 5 calls (file-write side effect is identical between both
-    # paths â€” both write the same 512 bytes from the same global buffer).
+    # paths â€" both write the same 512 bytes from the same global buffer).
     # Side effect: rewrites videocfg.bin (same canonical 800x600 contents).
     'config_save': {
         'rva':            0x004989b0,
@@ -2737,17 +2737,17 @@ HOOKS = {
     },
 
     # ---------------------------------------------------------------------------
-    # Boot/CrtCompilerSupport.cpp â€” FidDB-identified MSVC CRT compiler support.
+    # Boot/CrtCompilerSupport.cpp â€" FidDB-identified MSVC CRT compiler support.
     # All four are C2-ceiling functions; C3 evidence is FidDB single-match only.
     # ---------------------------------------------------------------------------
 
     # 0x004a4b93  CrtFastErrorExit (_fast_error_exit / fast_error_exit)
-    # void(uint32) â€” checks banner flag at 0x007739f0; if 1 calls __FF_MSGBANNER;
+    # void(uint32) â€" checks banner flag at 0x007739f0; if 1 calls __FF_MSGBANNER;
     # forwards param_1 to FUN_004ab8d6; terminates via ___crtExitProcess(0xFF).
     # arg_type='int_scalar': passes the error code as a uint32.
     # Note: function does not return (calls ExitProcess); harness must not wait
     # for a return value.  At quiescent state the banner flag is 0, so
-    # __FF_MSGBANNER is not called â€” the function races to ExitProcess(0xFF).
+    # __FF_MSGBANNER is not called â€" the function races to ExitProcess(0xFF).
     # Frida can Intercept this (it has a conventional cdecl prologue), but calling
     # it during a diff run would terminate the process.  Mark harness-limited.
     'crt_fast_error_exit': {
@@ -2765,7 +2765,7 @@ HOOKS = {
     },
 
     # 0x004a3440  CrtStackProbe (__chkstk)
-    # void(void) [implicit EAX = stack size] â€” page-probe loop.
+    # void(void) [implicit EAX = stack size] â€" page-probe loop.
     # Non-standard ABI; cannot be hooked via Frida Interceptor without stack
     # corruption.  C3 evidence: FidDB single-match VS2003 __chkstk +
     # decompilation matches page-probe pattern (threshold 0x1000, step 0x1000).
@@ -2785,7 +2785,7 @@ HOOKS = {
     },
 
     # 0x004a5984  CrtSehProlog (__SEH_prolog)
-    # void(undefined4, int) â€” saves EBX/ESI/EDI/retaddr; installs ExceptionList.
+    # void(undefined4, int) â€" saves EBX/ESI/EDI/retaddr; installs ExceptionList.
     # Compiler-injected SEH infrastructure; non-standard ABI; cannot be hooked
     # via Frida Interceptor without corrupting the SEH chain.
     # C3 evidence: FidDB single-match VS __SEH_prolog +
@@ -2805,11 +2805,11 @@ HOOKS = {
     },
 
     # 0x004a59bf  CrtSehEpilog (__SEH_epilog)
-    # void(void) â€” restores ExceptionList from EBP[-4]; writes retaddr.
+    # void(void) â€" restores ExceptionList from EBP[-4]; writes retaddr.
     # Compiler-injected SEH teardown; non-standard ABI; cannot be hooked via
     # Frida Interceptor without corrupting the SEH chain.
     # C3 evidence: FidDB single-match VS __SEH_epilog +
-    # decompilation matches (reads EBP[-4] â†’ ExceptionList; writes retaddr to *EBP).
+    # decompilation matches (reads EBP[-4] â†' ExceptionList; writes retaddr to *EBP).
     'crt_seh_epilog': {
         'rva':            0x004a59bf,
         'export':         'CrtSehEpilog',
@@ -2824,15 +2824,15 @@ HOOKS = {
         'path2_tests': [0, 1],
     },
 
-    # â”€â”€ Session c3-batch-e-s8: Boot/CrtInit C2â†’C3 promotions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€ Session c3-batch-e-s8: Boot/CrtInit C2â†'C3 promotions â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x004a78b0  CrtPreInitLoop
     # Zero-slot fn-ptr table iterator. SEH frame present; loop body unreachable
-    # as decompiled (start == end == 0x005e7b84 â†’ zero iterations).
+    # as decompiled (start == end == 0x005e7b84 â†' zero iterations).
     # [UNCERTAIN U-0005] Decompiler may have collapsed two distinct table
     #   pointers into the same symbol; reproduced as-is.
     # Original returns void; we declare ret='uint32' for harness compat
-    # (EAX will be whatever it was â€” both sides return the same EAX because the
+    # (EAX will be whatever it was â€" both sides return the same EAX because the
     # loop body is unreachable and the function is side-effect-free at the main
     # menu).  arg_type='none': harness calls with no args, compares EAX.
     # 10 calls at quiescent main menu; side-effect-free.
@@ -2847,16 +2847,16 @@ HOOKS = {
         'path2_tests': [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-e-s9 â€” boot_crt_env  (C2â†’C3, 2 candidates)
-    # Boot/CrtEnvArgv.cpp â€” CRT startup env-string functions
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-e-s9 â€" boot_crt_env  (C2â†'C3, 2 candidates)
+    # Boot/CrtEnvArgv.cpp â€" CRT startup env-string functions
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x004abc53  CrtSetEnvp  (__setenvp, Visual Studio 2003 Release)
     # Takes no args; returns int (0 on success, -1 on failure).
     # At main-menu time DAT_007739e8 is already NULL (freed during startup),
     # so every re-call immediately returns -1. Both orig and reimpl must
-    # return -1 identically â€” 10 calls confirm stable bit-identical output.
+    # return -1 identically â€" 10 calls confirm stable bit-identical output.
     # lut_root_delta=0 (no LUT; poll just confirms game is past init).
     'crt_set_envp': {
         'rva':            0x004abc53,
@@ -2868,14 +2868,14 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-f-s3 â€” audio sub-struct lifecycle cluster (C2->C3, 4)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-f-s3 â€" audio sub-struct lifecycle cluster (C2->C3, 4)
     # Audio/AudioRws.cpp
     # Pool-return/heap-free/combined-cleanup leaves + 16-byte fmt-key comparator.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x005ae080  AudioSubStructAFree
-    # int*(int*): if *param_1!=0 and bit0(param_1[2]) â†’ pool-return FUN_005ae920;
+    # int*(int*): if *param_1!=0 and bit0(param_1[2]) â†' pool-return FUN_005ae920;
     # clear bit0. Returns param_1.
     # At quiescent main menu audio sub-structs have null data pointers; guard
     # fails safely (no pool-return triggered). Use 'none' (10 no-crash checks).
@@ -2905,19 +2905,19 @@ HOOKS = {
         'target_global':  0x00773d48,
         'lut_root_delta': 0,
         # Pre-write values for DAT_00773d48 before each call.
-        # 0 â†’ detection path (calls GetEnvironmentStringsW, may set to 1 or 2)
-        # 1 â†’ wide path  (calls GetEnvironmentStringsW again, converts)
-        # 2 â†’ ANSI path  (calls GetEnvironmentStrings ANSI, copies)
-        # 0 again Ã— 8 â†’ repeatedly exercise detection path
+        # 0 â†' detection path (calls GetEnvironmentStringsW, may set to 1 or 2)
+        # 1 â†' wide path  (calls GetEnvironmentStringsW again, converts)
+        # 2 â†' ANSI path  (calls GetEnvironmentStrings ANSI, copies)
+        # 0 again Ã-- 8 â†' repeatedly exercise detection path
         # Both orig and reimpl must return non-null (1) for all paths.
         'path1_tests':    [0, 1, 2, 0, 1, 2, 0, 1, 2, 0],
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-f-s2 â€” audio fmt-desc utility cluster (C2â†’C3, 4 candidates)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-f-s2 â€" audio fmt-desc utility cluster (C2â†'C3, 4 candidates)
     # Audio/AudioRws.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x005aca80  AudioFmtSizeCalc
     # int(ptr): serialised byte size of a format descriptor.
@@ -2932,10 +2932,10 @@ HOOKS = {
         'arg_type':       'fmt_desc_ptr',
         'lut_root_delta': 0,
         # Tests covering:
-        #   f04=0, f10=0 â†’ 0x1c (28)
-        #   f04â‰ 0, f10=0 â†’ 0x2c (44)
-        #   f04=0, f10â‰ 0, f14=8 â†’ 0x1c+8=36
-        #   f04â‰ 0, f10â‰ 0, f14=8 â†’ 0x2c+8=52
+        #   f04=0, f10=0 â†' 0x1c (28)
+        #   f04â‰ 0, f10=0 â†' 0x2c (44)
+        #   f04=0, f10â‰ 0, f14=8 â†' 0x1c+8=36
+        #   f04â‰ 0, f10â‰ 0, f14=8 â†' 0x2c+8=52
         #   various extra-data sizes
         'path1_tests': [
             {'f04': 0x00000000, 'f10': 0x00000000, 'f14': 0x00000000},  # 0x1c
@@ -2995,17 +2995,17 @@ HOOKS = {
     # STRUCT GAP: audio context at +0x24/+0x28 not fully documented.
     # Returns 1 if count==0 or any entry matches; 0 if exhausted.
     # Callee: FUN_005ac9e0 (C2) match predicate.
-    # fmt_table_search: inject fake ctx with count=0 â†’ trivially returns 1 (10x).
+    # fmt_table_search: inject fake ctx with count=0 â†' trivially returns 1 (10x).
     # At count=0, the predicate is never called; result is deterministic.
     # (Injecting non-zero count would require calling into live game state via
-    # FUN_005ac9e0 with a real desc ptr â€” deferred to canonical-scenario C4.)
+    # FUN_005ac9e0 with a real desc ptr â€" deferred to canonical-scenario C4.)
     'audio_fmt_table_search': {
         'rva':            0x005acd10,
         'export':         'AudioFmtTableSearch',
         'signature':      {'ret': 'int32', 'args': ['pointer', 'pointer']},
         'arg_type':       'fmt_table_search',
         'lut_root_delta': 0,
-        # All tests use count=0 â†’ function returns 1 immediately without calling predicate.
+        # All tests use count=0 â†' function returns 1 immediately without calling predicate.
         # This is the deterministic branch; count>0 requires live game state (C4 scope).
         'path1_tests': [
             {'count': 0, 'entry_ptr': 0},
@@ -3032,7 +3032,7 @@ HOOKS = {
     # Returns matching entry ptr or NULL.
     # fmt_global_scan: pass zeroed 16-byte key; global table initialized at audio
     # startup. At main menu (audio COM patched out) the table slots may be NULL.
-    # Both orig and reimpl call into live game state â€” both must return same ptr.
+    # Both orig and reimpl call into live game state â€" both must return same ptr.
     # Strategy: pass 10x zero key; compare return pointer (as uint32).
     # crash_equal_ok=True: if both crash the same way (e.g. NULL table entry deref),
     # that counts as GREEN for C3 purposes.
@@ -3064,7 +3064,7 @@ HOOKS = {
     },
 
     # 0x005ae050  AudioSubStructBFree
-    # int(int): if *(int*)(param+4)!=0 and bit1(*(uint*)(param+8)) â†’ heap-free;
+    # int(int): if *(int*)(param+4)!=0 and bit1(*(uint*)(param+8)) â†' heap-free;
     # clear bit1. Returns param_1.
     # At quiescent main menu audio sub-structs have null data pointers; guard
     # fails safely. Use 'none' (10 no-crash checks).
@@ -3080,7 +3080,7 @@ HOOKS = {
 
     # 0x005ae030  AudioSubStructCleanup
     # int(int): calls AudioSubStructAFree + AudioSubStructBFree in sequence.
-    # Same quiescent-menu guard logic â€” both sub-callees are guarded at their
+    # Same quiescent-menu guard logic â€" both sub-callees are guarded at their
     # entry; null data pointer makes them no-ops. Use 'none' (10 no-crash checks).
     'audio_sub_struct_cleanup': {
         'rva':            0x005ae030,
@@ -3142,7 +3142,7 @@ HOOKS = {
     # 0x005ac5f0  AudioFmtDescEqual  (c3-batch-j-s1)
     # int(int* a, int* b): 5-field AND equality comparator on fmt-descriptor pairs.
     # Fields compared: +0x00 (u32 direct), +0x04 (16B fmt-key via FUN_005adf30),
-    # +0x0c (s8), +0x0d (s8), +0x18 (u8 masked with 0xfd â€” bit1 ignored).
+    # +0x0c (s8), +0x0d (s8), +0x18 (u8 masked with 0xfd â€" bit1 ignored).
     # Returns 1 iff all match, 0 otherwise.
     # arg_type='fmt_desc_pair_compare' (2-arg form): allocates two 0x40 scratch
     # buffers, writes per-test field map, calls fn(bufA, bufB), packs return +
@@ -3169,7 +3169,7 @@ HOOKS = {
             # +0x0c low-byte differs
             { 'a': {'f00': 1, 'f04': 0, 'f0c': 0x12345678},
               'b': {'f00': 1, 'f04': 0, 'f0c': 0x87654321} },
-            # +0x18 flags differ but only bit1 (masked off by 0xfd) â€” same equivalence class
+            # +0x18 flags differ but only bit1 (masked off by 0xfd) â€" same equivalence class
             { 'a': {'f18': 0x02}, 'b': {'f18': 0x00} },
             # +0x18 flags differ in a non-masked bit (bit0)
             { 'a': {'f18': 0x01}, 'b': {'f18': 0x00} },
@@ -3198,8 +3198,8 @@ HOOKS = {
     # cnd2: entry+0x04 (s8 fmt-char) == cand+0x0c (s8 fmt-char)
     # cnd3: entry+0x08 (u32 min-rate) <= cand+0x00 (u32 rate)
     # cnd4: cand+0x00 (u32 rate)     <= entry+0x0c (u32 max-rate)
-    # cnd5: FUN_005adf30(cand+0x04, entry+0x00) == 0  â€” 16-byte key compare
-    # cnd6: ((entry+0x10 ^ cand+0x18) & 1) == 0      â€” flag bit0 agreement
+    # cnd5: FUN_005adf30(cand+0x04, entry+0x00) == 0  â€" 16-byte key compare
+    # cnd6: ((entry+0x10 ^ cand+0x18) & 1) == 0      â€" flag bit0 agreement
     # arg_type='fmt_desc_pair_compare' (2-arg form). crash_equal_ok protects
     # the key-ptr deref path inside FUN_005adf30.
     'audio_fmt_entry_match': {
@@ -3210,7 +3210,7 @@ HOOKS = {
         'crash_equal_ok': True,
         'lut_root_delta': 0,
         'path1_tests': [
-            # equal full match (key-ptr deref crash â†’ both sides crash equal)
+            # equal full match (key-ptr deref crash â†' both sides crash equal)
             { 'a': {'f00': 0x11111111, 'f04': 0x11, 'f05': 0x22, 'f08': 0x100, 'f0c': 0xFFFFFFFF, 'f10': 0x00},
               'b': {'f00': 0x500, 'f04': 0x22222222, 'f0c': 0x11, 'f18': 0x00} },
             # cnd1 mismatch (channel byte differs)
@@ -3229,7 +3229,7 @@ HOOKS = {
             { 'a': {'f10': 0x01}, 'b': {'f18': 0x00} },
             # cnd6 flag bit0 match (both bit0 set)
             { 'a': {'f10': 0x01}, 'b': {'f18': 0x01} },
-            # all-zero (cnd3/4 trivially satisfied â€” but cnd5 key-deref may AV)
+            # all-zero (cnd3/4 trivially satisfied â€" but cnd5 key-deref may AV)
             { 'a': {}, 'b': {} },
         ],
         'path2_tests': [
@@ -3299,7 +3299,7 @@ HOOKS = {
     # fn(uint32* param_1) -> void
     # Pure leaf. Zeros param_1[2], param_1[1], param_1[0] in reverse order.
     # arg_type='audio_sub_struct_zero': fill buf with sentinel, call fn(buf),
-    #   read back all 3 DWORDs â€” both paths must return '0,0,0'.
+    #   read back all 3 DWORDs â€" both paths must return '0,0,0'.
     'audio_sub_struct_zero_init': {
         'rva':            0x005ae0b0,
         'export':         'AudioSubStructZeroInit',
@@ -3464,10 +3464,10 @@ HOOKS = {
     },
 
     # ─────────────────────────────────────────────────────────────────────────
-    # c3_batch_ab session 3 — six audio pure leaves (Audio/AudioLeaves_ab3.cpp).
+    # c3_batch_ab session 3 -- six audio pure leaves (Audio/AudioLeaves_ab3.cpp).
     # ─────────────────────────────────────────────────────────────────────────
 
-    # 0x005b73b0  AudioFindExtension — char* fn(char* s); back-walks from NUL to
+    # 0x005b73b0  AudioFindExtension -- char* fn(char* s); back-walks from NUL to
     # find the char after the last '.', else returns s. Note: a leading '.' is
     # NOT treated as a separator (loop breaks at s before testing it).
     # arg_type='cstr_ret_offset': writes test.str into a buffer, compares the
@@ -3495,7 +3495,7 @@ HOOKS = {
         ],
     },
 
-    # 0x005b9410  AudioSourceLoopSet — void fn(int src, int loop). Software path
+    # 0x005b9410  AudioSourceLoopSet -- void fn(int src, int loop). Software path
     # (caps[+0x50]&8==0): bit 0x800 in *(src+0x28). Hardware path: bit 0x8 in
     # *(*(int*)(src+0x11c)+0xcc). arg_type='source_loop_set' exercises both.
     'audio_source_loop_set': {
@@ -3521,7 +3521,7 @@ HOOKS = {
         ],
     },
 
-    # 0x005baf40  AudioRendererField3cSet — void fn(int p1, uint32 v). Writes v
+    # 0x005baf40  AudioRendererField3cSet -- void fn(int p1, uint32 v). Writes v
     # to *(p1+0x3c); if (*(byte*)(p1+0x78)&8) mirrors v to hwvoice+0x34.
     'audio_renderer_field3c_set': {
         'rva':            0x005baf40,
@@ -3543,7 +3543,7 @@ HOOKS = {
         ],
     },
 
-    # 0x005bb5b0  AudioPcmSaturatedAdd — void fn(out, srcA, srcB, byteCount).
+    # 0x005bb5b0  AudioPcmSaturatedAdd -- void fn(out, srcA, srcB, byteCount).
     # out[i] = saturate(srcA[i]+srcB[i]) over byteCount>>1 int16 samples; clamps
     # to [-0x7fff, +0x7fff] (lower bound -32767, NOT -32768).
     'audio_pcm_saturated_add': {
@@ -3570,7 +3570,7 @@ HOOKS = {
         ],
     },
 
-    # 0x005bc450  AudioSlotPairZero — void fn(uint32* p): p[0]=0; p[1]=0.
+    # 0x005bc450  AudioSlotPairZero -- void fn(uint32* p): p[0]=0; p[1]=0.
     # arg_type='ptr_zero_pair' preloads a sentinel + guard dword, compares 12B.
     'audio_slot_pair_zero': {
         'rva':            0x005bc450,
@@ -3582,7 +3582,7 @@ HOOKS = {
         'path2_tests': [0xDEADBEEF, 0x12345678],
     },
 
-    # 0x005bcb80  AudioMediaSubtypeFromTag — void fn(uint32 tag, uint32* out16):
+    # 0x005bcb80  AudioMediaSubtypeFromTag -- void fn(uint32 tag, uint32* out16):
     # writes {0000tttt-0000-0010-8000-00AA00389B71}. arg_type='guid_from_tag'.
     'audio_media_subtype_from_tag': {
         'rva':            0x005bcb80,
@@ -3611,7 +3611,7 @@ HOOKS = {
     # HARNESS-LIMITED: internally calls FUN_005ae800(&DAT_009146c0, 0x30804)
     # which requires the pool to be initialized. At main-menu quiescent state
     # (audio COM disabled) the pool is uninitialized; both paths crash
-    # identically. arg_type='none' + crash_equal_ok=True â†’ GREEN.
+    # identically. arg_type='none' + crash_equal_ok=True â†' GREEN.
     'audio_list_insert_head': {
         'rva':          0x005addd0,
         'export':       'AudioListInsertHead',
@@ -3628,8 +3628,8 @@ HOOKS = {
     # Returns sentinel on success (found), NULL if not found.
     # arg_type='audio_list_remove': allocates fresh 12-byte sentinel via
     # Memory.alloc. Not-found tests (present=False) search an empty sentinel;
-    # traversal exits immediately (piVar2 == param_1) â†’ returns NULL.
-    # Both paths return NULL=NULL with no errors â†’ match=True without crash.
+    # traversal exits immediately (piVar2 == param_1) â†' returns NULL.
+    # Both paths return NULL=NULL with no errors â†' match=True without crash.
     # (Avoids the pool entirely for not-found cases.)
     'audio_list_remove_by_value': {
         'rva':          0x005ade10,
@@ -3638,9 +3638,9 @@ HOOKS = {
         'arg_type':     'audio_list_remove',
         'insert_rva':   0x005addd0,
         'lut_root_delta': 0,
-        # NOTE: payload=0 excluded â€” fresh harness sentinel has data[+8]=0;
+        # NOTE: payload=0 excluded â€" fresh harness sentinel has data[+8]=0;
         # payload=0 hits a degenerate match against the sentinel node itself,
-        # causing AudioPoolFree to be called on an uninitialized pool â†’ crash.
+        # causing AudioPoolFree to be called on an uninitialized pool â†' crash.
         # This is an artefact of the harness (not a real-world usage pattern).
         'path1_tests':  [
             {'payload': 1,   'present': False},
@@ -3664,9 +3664,9 @@ HOOKS = {
     # 0x005ade90  AudioListDrain
     # void fn(sentinel_ptr): drain all nodes from list, return each to pool.
     # arg_type='audio_list_drain': allocates fresh self-referential 12-byte
-    # sentinel via Memory.alloc. nodeCount=0 tests: empty sentinel â†’ loop
-    # condition param_1[1] != param_1 is immediately False â†’ no-op. Both
-    # paths observe sentinel still self-loops â†’ origV=1, reimV=1 â†’ match=True.
+    # sentinel via Memory.alloc. nodeCount=0 tests: empty sentinel â†' loop
+    # condition param_1[1] != param_1 is immediately False â†' no-op. Both
+    # paths observe sentinel still self-loops â†' origV=1, reimV=1 â†' match=True.
     # (No pool access needed for empty-drain case.)
     'audio_list_drain': {
         'rva':          0x005ade90,
@@ -3689,11 +3689,11 @@ HOOKS = {
         'path2_tests':    [0, 0, 0],
     },
 
-    # ===== c3_batch_ab session 1 (2026-06-04) — audio pure leaves =====
+    # ===== c3_batch_ab session 1 (2026-06-04) -- audio pure leaves =====
     # Each rides a NEW arg_type added to diff_template.js this session (the
-    # branch touches diff_template.js — flag for frida-sweep manual merge).
+    # branch touches diff_template.js -- flag for frida-sweep manual merge).
 
-    # 0x005ac540  AudioByte54Bit3Get — uint(ptr): (*(byte*)(p+0x54) & 8) >> 3.
+    # 0x005ac540  AudioByte54Bit3Get -- uint(ptr): (*(byte*)(p+0x54) & 8) >> 3.
     # arg_type 'ptr_scratch_field': zeroed scratch, test byte seeded at +0x54.
     'audio_byte54_bit3_get': {
         'rva':            0x005ac540,
@@ -3706,7 +3706,7 @@ HOOKS = {
         'path2_tests':    [0x00, 0x08, 0xFF],
     },
 
-    # 0x005aded0  AudioListNodeCount — int(anchor): circular-list (next@+4) count.
+    # 0x005aded0  AudioListNodeCount -- int(anchor): circular-list (next@+4) count.
     # arg_type 'audio_list_count': hand-built ring of N nodes (no audio pool).
     'audio_list_node_count': {
         'rva':            0x005aded0,
@@ -3718,7 +3718,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 4],
     },
 
-    # 0x005ade60  AudioListIndexOfKey — int(anchor,key): index of node whose
+    # 0x005ade60  AudioListIndexOfKey -- int(anchor,key): index of node whose
     # key@+8 == key, walking next@+4; -1 if none.
     # arg_type 'audio_list_find_index': hand-built ring from payloads list.
     'audio_list_index_of_key': {
@@ -3746,7 +3746,7 @@ HOOKS = {
         ],
     },
 
-    # 0x005ae590  AudioArenaBlockIsFree — bool(block): **(block+8)==*(block+0xc).
+    # 0x005ae590  AudioArenaBlockIsFree -- bool(block): **(block+8)==*(block+0xc).
     # arg_type 'arena_block_free_predicate': hand-built block, both branches.
     'audio_arena_block_is_free': {
         'rva':            0x005ae590,
@@ -3761,7 +3761,7 @@ HOOKS = {
         'path2_tests':    [{'free': True}, {'free': False}, {'free': True}],
     },
 
-    # 0x005aeda0  AudioShiftAddMul64 — void(a,b,*hi,*lo): shift-add 64-bit mul.
+    # 0x005aeda0  AudioShiftAddMul64 -- void(a,b,*hi,*lo): shift-add 64-bit mul.
     # arg_type 'int2_ptr2_out': two scalar args + two 4-byte out-slots.
     'audio_shift_add_mul64': {
         'rva':            0x005aeda0,
@@ -3778,7 +3778,7 @@ HOOKS = {
         'path2_tests':    [[1, 1], [0xFFFFFFFF, 0xFFFFFFFF], [0xAAAAAAAA, 0x55555555]],
     },
 
-    # 0x005b0700  AudioListMinKeySelect — int(anchor,thresh): select payload by
+    # 0x005b0700  AudioListMinKeySelect -- int(anchor,thresh): select payload by
     # key chain *(*(payload+0x54)+0x10) >= thresh while bestKey stays >= thresh.
     # arg_type 'audio_list_min_select': hand-built ring with key sub-structs;
     # return mapped to payload index.
@@ -3827,7 +3827,7 @@ HOOKS = {
     # Result via local_4 written by inline callback LAB_005ac930 (U-1730).
     # Callee FUN_005aa0c0 drift-promoted C1->C2 (mechanical decomp only).
     # crash_equal_ok: audio context tree (DAT_009146fc) may be NULL at menu;
-    #   if non-NULL the callback at LAB_005ac930 is an inline code region â€”
+    #   if non-NULL the callback at LAB_005ac930 is an inline code region â€"
     #   calling it as a fn ptr may crash. Both orig and reimpl crash equally.
     'audio_context_lookup': {
         'rva':            0x005ac900,
@@ -3859,17 +3859,17 @@ HOOKS = {
         'path2_tests':    [0, 0, 0],
     },
 
-    # Session c3-batch-b-s6 â€” VehicleUnlockFlagGet (C2->C3)
+    # Session c3-batch-b-s6 â€" VehicleUnlockFlagGet (C2->C3)
     # VehicleMeta.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042ef40  VehicleUnlockFlagGet
     # Pure leaf: reads byte from DAT_007f0e50 + param_1*0xc at a byte-offset
     # selected by param_2 switch; returns 1 if byte == 0x01, else 0.
-    # Array is zero-initialized before game-mode selection â†’ all tests return
+    # Array is zero-initialized before game-mode selection â†' all tests return
     # 0 at quiescent main-menu state. A/B identity guaranteed (both read 0x00
     # from the same global array).
-    # [UNCERTAIN U-3176] No bounds check on param_1 â€” reproduced as-is.
+    # [UNCERTAIN U-3176] No bounds check on param_1 â€" reproduced as-is.
     # arg_type='int_pair': passes [param_1, param_2] directly.
     'audio_dsound_secondary_init': {
         'rva':            0x005bbfc0,
@@ -3971,7 +3971,7 @@ HOOKS = {
     # void(uint32): writes param_1 to DAT_0063d7e0. 9-byte body.
     # Asm: MOV EAX,[ESP+4] / MOV [0x0063d7e0],EAX / RET
     # Strategy: call fn(value) with 10 distinct values via int_scalar.
-    # Both orig and reimpl return void (undefined === undefined) â€” trivial match.
+    # Both orig and reimpl return void (undefined === undefined) â€" trivial match.
     # Write correctness established by C2 analysis (single MOV instruction).
     'timer_track_setter': {
         'rva':            0x0041e130,
@@ -4005,13 +4005,13 @@ HOOKS = {
 
     # 0x0041f000  TimerSlotDataCopy  void(int slot, int* dst)
     # Copies 6 dwords from 0x0063dc10 + slot*0x2ac into *dst.
-    # Strategy: int_copy_outbuf â€” allocate 4 KB sentinel-filled (0xCD) scratch
+    # Strategy: int_copy_outbuf â€" allocate 4 KB sentinel-filled (0xCD) scratch
     # buffer per side; call fn(slot, buf); fingerprint first 24 bytes.
     # Source is a live game-global array; at main-menu quiescent state the values
-    # are stable. Both orig and reimpl read the same source â†’ identical fingerprint.
+    # are stable. Both orig and reimpl read the same source â†' identical fingerprint.
     # Slot 0 maps to 0x0063dc10; slot 1 to 0x0063debc, etc.
     # Prior arg_type 'int_copy24_out' did not exist in diff_template.js and silently
-    # fell through to default fn(input) â€” calling 2-arg fn with 1 arg â†’ AV both sides.
+    # fell through to default fn(input) â€" calling 2-arg fn with 1 arg â†' AV both sides.
     'timer_slot_data_copy': {
         'rva':            0x0041f000,
         'export':         'TimerSlotDataCopy',
@@ -4026,9 +4026,9 @@ HOOKS = {
     },
 
     # 0x00420d40  TimerStructArrayClear  void(void)
-    # Zeroes 24 bytes per element Ã— 6 elements at 0x0063e4b8..0x0063e4bc.
+    # Zeroes 24 bytes per element Ã-- 6 elements at 0x0063e4b8..0x0063e4bc.
     # Strategy: void_write_observe on first element's first dword (0x0063e4b8).
-    # Write sentinel, call fn, read back â€” should be 0.
+    # Write sentinel, call fn, read back â€" should be 0.
     # Export renamed TimerStructArrayClear (not TimerArrayClear) to avoid
     # collision with existing 0x00422b30 in Frontend/TimerReset.cpp.
     'timer_array_clear_d40': {
@@ -4065,14 +4065,14 @@ HOOKS = {
 
     # 0x004222c0  TimerInitThunk  void(void)
     # Confirmed thunk of 0x00422120 (TimerInitLoop). Identical test strategy.
-    # Observation point: 0x0063fc80 (element 0 +0xf0) â€” a real write site.
+    # Observation point: 0x0063fc80 (element 0 +0xf0) â€" a real write site.
     # Per Ghidra decomp 2026-05-24: TimerInitLoop iterates 4 elements at
     # 0x0063fb90 stride 0x208 calling FUN_00421c50; FUN_00421c50 calls
     # FUN_00421c10 twice with EAX advancing by 0x100; FUN_00421c10's tail
     # writes 0 to (param+0xf0) and (param+0xf4). For element 0 with param =
     # 0x0063fb90, that means writes hit 0x0063fc80 and 0x0063fc84. Prior
     # observation point 0x0063fb90 (element base) was NEVER written by the
-    # function â€” both sides preserved sentinel â†’ fake-GREEN match.
+    # function â€" both sides preserved sentinel â†' fake-GREEN match.
     'timer_init_thunk': {
         'rva':            0x004222c0,
         'export':         'TimerInitThunk',
@@ -4089,7 +4089,7 @@ HOOKS = {
     # 0x00422b10  TimerDwordClear  void(void)
     # Zeroes 0x4e0 bytes (312 dwords) at 0x008994c0.
     # Strategy: void_write_observe on 0x008994c0 (base of zeroed block).
-    # Write sentinel, call fn, read back â€” should be 0.
+    # Write sentinel, call fn, read back â€" should be 0.
     'timer_dword_clear': {
         'rva':            0x00422b10,
         'export':         'TimerDwordClear',
@@ -4106,7 +4106,7 @@ HOOKS = {
     # 0x00425b10  TimerGlobalZero  void(void)
     # Writes 0 to 8 globals at 0x008992a0 stride 0x4c.
     # Strategy: void_write_observe on 0x008992a0 (entry 0, first written address).
-    # Write sentinel, call fn, read back â€” should be 0.
+    # Write sentinel, call fn, read back â€" should be 0.
     'timer_global_zero': {
         'rva':            0x00425b10,
         'export':         'TimerGlobalZero',
@@ -4135,7 +4135,7 @@ HOOKS = {
     # 0x00404e50  SaveLoad
     # int(void): calls FUN_004b3b70(gamesave.bin, buf, size) then
     #   SaveStatusClear(0). Always returns 0.
-    # Strategy: none â€” call 1x at quiescent LUT-ready state.
+    # Strategy: none â€" call 1x at quiescent LUT-ready state.
     # crash_equal_ok: FUN_004b3b70 may raise if VFS not yet open; if both
     # sides fail identically, that still proves the reimpl has the same ABI.
     # Return must be 0 for both orig and reimpl when VFS is ready.
@@ -4169,7 +4169,7 @@ HOOKS = {
     # 0x00404f80  SaveFileExists
     # int(void): calls FUN_00550b00(gamesave.bin); normalizes via NEG/SBB/NEG.
     # Returns 1 if gamesave.bin exists, 0 otherwise.
-    # Strategy: none â€” call 10x at quiescent state; both must return identical
+    # Strategy: none â€" call 10x at quiescent state; both must return identical
     # value. At main menu the file either exists or does not; both paths agree.
     'save_file_exists': {
         'rva':            0x00404f80,
@@ -4229,7 +4229,7 @@ HOOKS = {
     # Returns FILE* (NULL on failure).
     # Strategy: call with NULL, NULL as filename/mode pointers.
     # _fsopen(NULL, NULL, 0x40) returns NULL (CRT guards invalid args).
-    # Both orig and reimpl must return NULL (ptr(0)) â€” bit-identical.
+    # Both orig and reimpl must return NULL (ptr(0)) â€" bit-identical.
     # crash_equal_ok=True handles any unexpected AV on both sides equally.
     # int_pair: passes [0, 0] as two pointer-sized ints (NULL pointers on x86).
     # Evidence: log/diff_FsopenSafe.csv
@@ -4277,7 +4277,7 @@ HOOKS = {
     # variadic cdecl stack layout for arbitrary arg counts. We test with a
     # format string that contains NO format specifiers ("videocfg.bin" at
     # 0x005d012c) so no variadic slots are consumed by vsprintf/vsnprintf.
-    # A single pointer arg is passed after the format pointer â€” it lands on
+    # A single pointer arg is passed after the format pointer â€" it lands on
     # the stack where the original reads &stack0x00000008 but is not consumed.
     # Both paths produce the same fputs call (format string copied verbatim).
     # Return is void/0. 10 calls with same safe string pair.
@@ -4288,8 +4288,8 @@ HOOKS = {
         'signature':      {'ret': 'void', 'args': ['int32', 'int32']},
         'arg_type':       'int_pair',
         'lut_root_delta': 0,
-        # [fmt, arg1]: fmt=0x005d012c ("videocfg.bin" â€” no % specifiers),
-        # arg1=0x005cf010 ("rb") â€” harmlessly on stack, not consumed by vsprintf.
+        # [fmt, arg1]: fmt=0x005d012c ("videocfg.bin" â€" no % specifiers),
+        # arg1=0x005cf010 ("rb") â€" harmlessly on stack, not consumed by vsprintf.
         'path1_tests': [
             [0x005d012c, 0x005cf010],
             [0x005d012c, 0x005cf010],
@@ -4312,7 +4312,7 @@ HOOKS = {
     # 0x00498910  ConfigFilenameGet
     # char*(void): copies "videocfg.bin" 4B at a time to buf@0x007731e8; returns &buf.
     # 49 bytes. Pure leaf. Two callers: ConfigLoad, CONFIG_SAVE_FN.
-    # Strategy: void arg_type â€” call 10x; return value is constant pointer
+    # Strategy: void arg_type â€" call 10x; return value is constant pointer
     # 0x007731e8 each time. Both paths must return the same address.
     # Side-effect: 0x007731e8 contains "videocfg.bin\0" after each call.
     'config_filename_get': {
@@ -4330,7 +4330,7 @@ HOOKS = {
     # int(void): opens "videocfg.bin" via _fsopen("rb", _SH_DENYNO);
     # fread 512B into DAT_00773208; returns 1 on success, 0 on failure.
     # Calls ConfigFilenameGet, ConfigLogDebug, ConfigLogError as callees.
-    # Strategy: none â€” call 5x at quiescent game state; videocfg.bin exists
+    # Strategy: none â€" call 5x at quiescent game state; videocfg.bin exists
     # in the game directory so both paths return 1. Side-effect is idempotent
     # (same 512 bytes written to 0x00773208 each call). Both paths must agree.
     'config_load': {
@@ -4383,7 +4383,7 @@ HOOKS = {
     },
 
     # 0x004a3258  CrtExitCore
-    # void(uint, int, int): CRT exit core â€” acquires lock 8, walks atexit list,
+    # void(uint, int, int): CRT exit core â€" acquires lock 8, walks atexit list,
     # runs exit tables, calls ___crtExitProcess or FUN_004a77eb.
     # HARNESS-LIMITED: calling this will terminate the process (TerminateProcess or
     # ExitProcess). crash_equal_ok=True: if both original and reimpl crash with the
@@ -4405,7 +4405,7 @@ HOOKS = {
     },
 
     # 0x004a4bb7  WinMainEntry
-    # int(void): PE entry point â€” full CRT startup sequence.
+    # int(void): PE entry point â€" full CRT startup sequence.
     # HARNESS-LIMITED: cannot be safely called from within a running process.
     # [UNCERTAIN U-0001] pre-GetVersionExA 4-byte write.
     # [UNCERTAIN U-0002] PE header parse branch result (local_20).
@@ -4440,7 +4440,7 @@ HOOKS = {
 
     # 0x0041e130  TimerStateSet
     # void(uint32): writes param_1 to DAT_0063d7e0. 9 bytes.
-    # Strategy: write_global_setter â€” call fn(test_value), read back 0x0063d7e0.
+    # Strategy: write_global_setter â€" call fn(test_value), read back 0x0063d7e0.
     # Both orig and reimpl must produce identical readback (== test_value).
     'timer_state_set': {
         'rva':            0x0041e130,
@@ -4457,7 +4457,7 @@ HOOKS = {
 
     # 0x00426630  PitchParamSet
     # void(uint32): writes param_1 to DAT_0066d6fc. 9 bytes.
-    # Strategy: write_global_setter â€” call fn(test_value), read back 0x0066d6fc.
+    # Strategy: write_global_setter â€" call fn(test_value), read back 0x0066d6fc.
     'pitch_param_set': {
         'rva':            0x00426630,
         'export':         'PitchParamSet',
@@ -4473,7 +4473,7 @@ HOOKS = {
 
     # 0x004266f0  PitchParam2Set
     # void(uint32): writes param_1 to DAT_0066d700 (sibling of PitchParamSet; +4). 9 bytes.
-    # Strategy: write_global_setter â€” call fn(test_value), read back 0x0066d700.
+    # Strategy: write_global_setter â€" call fn(test_value), read back 0x0066d700.
     'pitch_param2_set': {
         'rva':            0x004266f0,
         'export':         'PitchParam2Set',
@@ -4487,7 +4487,7 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0x00000001, 0xDEADBEEF],
     },
     # Note: alias entries 'timer_array_zero' / 'player_slot_zero' removed
-    # 2026-05-24 â€” their exports (TimerArrayZero / PlayerSlotZero) were
+    # 2026-05-24 â€" their exports (TimerArrayZero / PlayerSlotZero) were
     # superseded by the first-wins TimerDwordClear / TimerGlobalZero in
     # Util/TimerInit.cpp and no longer exist in the .asi. Use
     # 'timer_dword_clear' (0x00422b10) and 'timer_global_zero' (0x00425b10).
@@ -4504,7 +4504,7 @@ HOOKS = {
                            0x3F800000, 0xBEEFCAFE],
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
-    # Note: alias entry 'slot_data_copy' removed 2026-05-24 â€” its export
+    # Note: alias entry 'slot_data_copy' removed 2026-05-24 â€" its export
     # SlotDataCopy was superseded by TimerSlotDataCopy (Util/TimerInit.cpp:78)
     # and no longer exists in the .asi. Use 'timer_slot_data_copy' instead.
 
@@ -4537,7 +4537,7 @@ HOOKS = {
     # 6-iter loop over [0x0063e4c4, 0x0063e554) stride 0x24.
     # Per iter: memset(ptr-0xc, 0, 8); ptr[-1]=0; *ptr=0; ptr[1]=0; ptr[2]=0.
     # arg_type='void_write_observe': write sentinel to 0x0063e4c4 (ptr[0]),
-    # call fn, read back â€” if fn works correctly it will write 0 there.
+    # call fn, read back â€" if fn works correctly it will write 0 there.
     'slot_array_clear': {
         'rva':            0x00420d40,
         'export':         'SlotArrayClear',
@@ -4556,10 +4556,10 @@ HOOKS = {
     # (arg_type='void_write_observe' on 0x0063fb90).  Removed during the
     # TimerInitLoop naked-wrapper fix (feature/timer-init-naked).
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-g-s1 â€” frontend menu chrome (C2->C3, 2 candidates)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-g-s1 â€" frontend menu chrome (C2->C3, 2 candidates)
     # Frontend/MenuChrome.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042aad0  MenuDimSet
     # Non-standard ABI: implicit EAX pointer at entry (naked function).
@@ -4607,20 +4607,20 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-g-s7 â€” race_results slot-state getters (C2â†’C3)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-g-s7 â€" race_results slot-state getters (C2â†'C3)
     # Frontend/RaceResults.cpp
     #
     # NOT registered (caller-gate / sig failures):
-    #   0x0040b460  SlotSortByScoreWithModeOverride â€” REFUSED: callee 0x00417740 not C2
-    #   0x0040e3a0  PlayerColorTableGet â€” already in MenuScoreSort.cpp;
+    #   0x0040b460  SlotSortByScoreWithModeOverride â€" REFUSED: callee 0x00417740 not C2
+    #   0x0040e3a0  PlayerColorTableGet â€" already in MenuScoreSort.cpp;
     #                (int, byte*) sig unsupported (pointer out-param needs custom arg_type)
-    #   0x0040e480  CarSlotStateSet â€” DEFERRED: no viable non-destructive diff arg_type
+    #   0x0040e480  CarSlotStateSet â€" DEFERRED: no viable non-destructive diff arg_type
     #                for double-deref setter (entity_field_set reads wrong address for PTR_PTR)
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0040e470  CarSlotStateGet
-    # uint32 FUN_0040e470(int param_1) â€” 14-byte leaf getter, no callees.
+    # uint32 FUN_0040e470(int param_1) â€" 14-byte leaf getter, no callees.
     # Returns *(PTR_PTR_005f2770 + param_1*4 + 0x34).
     # At quiescent main menu, PTR_PTR_005f2770 is initialised; reads slot state.
     # At menu, only indices 0-3 are valid; caller FUN_0042b770 uses this to
@@ -4638,18 +4638,18 @@ HOOKS = {
         'path2_tests':    [0, 1, 2, 3],
     },
 
-    # Session c3-batch-g-s14 â€” FontSys+HudDispatch+RW-release (C2->C3)
-    # HUD/FontCtx.cpp â€” FontSys init sequence
-    # HUD/HudDispatch.cpp â€” EAX-thiscall vtable dispatcher
-    # 0x004c5a60 DEFERRED â€” callees 004d8060 + 004c7650 both C1/unknown; caller gate fails.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # Session c3-batch-g-s14 â€" FontSys+HudDispatch+RW-release (C2->C3)
+    # HUD/FontCtx.cpp â€" FontSys init sequence
+    # HUD/HudDispatch.cpp â€" EAX-thiscall vtable dispatcher
+    # 0x004c5a60 DEFERRED â€" callees 004d8060 + 004c7650 both C1/unknown; caller gate fails.
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00552b60  FontSys_InitSeq
     # fn(void) -> void.
     # 8-step font subsystem init: zero flag + 7 alloc/init calls. No branches.
     # Called exactly once during game init (FontText_HudInit at 0x00427ca0).
     # By the time the diff attaches (~2s after spawn), MASHED has already
-    # called FontSys_InitSeq once via its natural boot â€” state is now valid.
+    # called FontSys_InitSeq once via its natural boot â€" state is now valid.
     # Re-calling 10x in the diff allocates/leaks state and hangs MASHED
     # (timeout observed 2026-05-24). Reduced to 1 call. arg_type='none':
     # both Orig and Reimpl execute the same allocation sequence once; if
@@ -4665,13 +4665,13 @@ HOOKS = {
         'path2_tests':    [0],
     },
 
-    # Session c3-batch-g-s15 â€” carry-overs from batch-d/c
-    # MenuButtonDetect.cpp â€” trivial uint16 screen-dimension getters (C2â†’C3)
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # Session c3-batch-g-s15 â€" carry-overs from batch-d/c
+    # MenuButtonDetect.cpp â€" trivial uint16 screen-dimension getters (C2â†'C3)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042b8b0  ScreenWidthGet
     # Returns DAT_0067ea54 as uint16_t in EAX. 6-byte leaf. No callees.
-    # Strategy: arg_type='none' â€” call 10x at quiescent main menu state; both
+    # Strategy: arg_type='none' â€" call 10x at quiescent main menu state; both
     # orig and reimpl read 0x0067ea54 and return the live screen pixel width.
     # ret='uint32' (Frida reads full EAX; upper 16 bits zero after MOVZX).
     # Analysis: re/analysis/promote_c2_hud_ingame/0x0042b8b0.md
@@ -4688,8 +4688,8 @@ HOOKS = {
     # 0x00552e40  FontCtx_FlushMatrix
     # fn(void) -> float* (&DAT_00912b98).
     # Dirty-gated matrix composer. Path A (dirty=0): compose+scale+translate+cache;
-    # Path B: skip. Every call: compose cached with camera view â†’ DAT_00912b98.
-    # Callee 0x004c0ed0 (S-2126) reads *(cam+4) â€” DAT_00912c0c is NULL at boot,
+    # Path B: skip. Every call: compose cached with camera view â†' DAT_00912b98.
+    # Callee 0x004c0ed0 (S-2126) reads *(cam+4) â€" DAT_00912c0c is NULL at boot,
     # so dereferencing cam+4 null-deref crashes identically on both sides.
     # crash_equal_ok=True: both crash with the same error (proven in c3-batch-c-s6).
     # Implementation committed in HUD/FontCtx.cpp (c3-batch-g-s14 session).
@@ -4707,7 +4707,7 @@ HOOKS = {
 
     # 0x0042b8c0  ScreenHeightGet
     # Returns DAT_0067ea56 as uint16_t in EAX. 6-byte leaf. No callees.
-    # Strategy: arg_type='none' â€” call 10x at quiescent main menu state; both
+    # Strategy: arg_type='none' â€" call 10x at quiescent main menu state; both
     # orig and reimpl read 0x0067ea56 and return the live screen pixel height.
     # ret='uint32' (Frida reads full EAX; upper 16 bits zero after MOVZX).
     # Analysis: re/analysis/promote_c2_hud_ingame/0x0042b8c0.md
@@ -4724,7 +4724,7 @@ HOOKS = {
     # 0x0041c2d0  FUN_0041c2d0
     # fn(void) -> void. EAX-thiscall: object ptr in EAX.
     # Dispatches vtable[0x48] (Draw/Render) on 4 member objects at EAX+0xc,4,0,8.
-    # No guards â€” unconditional. Shared by game-mode 10 and game-mode 5.
+    # No guards â€" unconditional. Shared by game-mode 10 and game-mode 5.
     # At quiescent main menu neither mode-10 nor mode-5 guards are active,
     # so calling with EAX=0 (null ptr) crashes identically on both sides.
     # crash_equal_ok=True. arg_type='none': call 10x, both crash same way.
@@ -4739,14 +4739,14 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session ma2-frida-s2 â€” Boot/Window cluster (C2â†’C3, 2 of 6 candidates)
-    # Boot/Window.cpp â€” window-show + msgpump from the main game loop.
-    # Refused: 0x00499ba0 (Window_Create â€” destructive 3-arg), 0x00499cc0
-    #          (Window_Destroy â€” terminates game), 0x00499820 (Window_WndProc
-    #          â€” needs 4-arg WNDPROC harness), 0x00496490 (Window_WmCreate
-    #          â€” three callees still C1).
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session ma2-frida-s2 â€" Boot/Window cluster (C2â†'C3, 2 of 6 candidates)
+    # Boot/Window.cpp â€" window-show + msgpump from the main game loop.
+    # Refused: 0x00499ba0 (Window_Create â€" destructive 3-arg), 0x00499cc0
+    #          (Window_Destroy â€" terminates game), 0x00499820 (Window_WndProc
+    #          â€" needs 4-arg WNDPROC harness), 0x00496490 (Window_WmCreate
+    #          â€" three callees still C1).
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x004996f0  WindowShow
     # void __cdecl WindowShow(int nCmdShow)
@@ -4754,7 +4754,7 @@ HOOKS = {
     # Both orig and reimpl invoke the same user32.dll APIs against the same
     # global HWND (DAT_007e9584), already created by the boot path. ShowWindow
     # on an already-visible window with SW_SHOW/SW_NORMAL is a no-op; reimpl
-    # wrapper returns void â†’ void_match counts as GREEN.
+    # wrapper returns void â†' void_match counts as GREEN.
     # Test domain: standard SW_* command codes.
     'window_show': {
         'rva':            0x004996f0,
@@ -4777,7 +4777,7 @@ HOOKS = {
     # MSG.message == WM_QUIT (0x12); else TranslateMessage + DispatchMessageA.
     # On no message: WaitMessage() only if DAT_0077391c == 0 (window inactive).
     # Always returns DAT_00773918 != 0 (the quit flag).
-    # Frida agent thread owns no message queue â†’ PeekMessageA returns 0 on
+    # Frida agent thread owns no message queue â†' PeekMessageA returns 0 on
     # both sides; main-menu state has DAT_0077391c == 1 (active) so WaitMessage
     # is skipped; both sides then return DAT_00773918 (== 0 at quiescent menu).
     # 10 calls give 10x bit-identical 0.
@@ -4791,20 +4791,20 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # Session c3-batch-ma2-frida-s4 â€” boot teardown + COM release
-    # Boot/Teardown.cpp â€” HardwareExitApplication helpers (FUN_00402a40 callees)
+    # Session c3-batch-ma2-frida-s4 â€" boot teardown + COM release
+    # Boot/Teardown.cpp â€" HardwareExitApplication helpers (FUN_00402a40 callees)
     # 5 of 6 candidates REFUSED: 0x00494bc0 (live COM Release destroys D3D
     # interfaces), 0x00489250 (live free destroys RW frames), 0x00494f20
     # (close-video destroys live state on first call so 10x diff diverges),
     # 0x004955c0 + 0x004963d0 (thunk targets FUN_00495580 / FUN_00496370 not
     # yet C1+plated). See re/DEFERRED.md D-10774..D-10778.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
-    # 0x00494ef0  ThunkVideoStateGet â€” thunk â†’ FUN_00493f70 (intro_splash video flag read)
-    # 5-byte E9 JMP at 0x00494ef0 â†’ 0x00493f70.  Target body is
+    # 0x00494ef0  ThunkVideoStateGet â€" thunk â†' FUN_00493f70 (intro_splash video flag read)
+    # 5-byte E9 JMP at 0x00494ef0 â†' 0x00493f70.  Target body is
     # `return DAT_00771a04;` (pure global reader; plate at
     # re/analysis/intro_splash/0x00493f70.md).  Read-only, safe to invoke 10x
-    # at quiescent main menu â€” both orig and reimpl deref the same address.
+    # at quiescent main menu â€" both orig and reimpl deref the same address.
     # arg_type='none': zero-arg call, compare uint32 return value.
     'thunk_video_state_get': {
         'rva':            0x00494ef0,
@@ -4816,16 +4816,16 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # Session ma2-frida-s7 â€” DirectInput init chain (C2â†’C3, 6 candidates)
+    # Session ma2-frida-s7 â€" DirectInput init chain (C2â†'C3, 6 candidates)
     # Input/DirectInput.cpp
     # First C3 promotions for the input subsystem.
     #
     # Refused this session:
     #   - 0x00497190 (contcfg filename formatter): implicit EAX arg
-    #     (U-2588) â€” same dual-register ABI problem as MenuCenterCalc.
+    #     (U-2588) â€" same dual-register ABI problem as MenuCenterCalc.
     #   - 0x00497230 (SaveControllerConfig): implicit EAX arg (U-3015)
     #     + file I/O side effects.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00499720  GetInputHinst
     # Pure leaf: `MOV EAX, [DAT_007e9580]; RET`. 5 bytes.
@@ -4845,15 +4845,15 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0x00000001, 0xFFFFFFFF],
     },
 
-    # Session c3-batch ma2-frida-s6 â€” Boot/VideoConfig.cpp
+    # Session c3-batch ma2-frida-s6 â€" Boot/VideoConfig.cpp
     #   Video config getters + display dim helpers + RW driver-system wrapper.
-    #   4 C2 â†’ C3 candidates promoted (2 of the 6 batch candidates deferred:
+    #   4 C2 â†' C3 candidates promoted (2 of the 6 batch candidates deferred:
     #   0x00498b60 destructive teardown; 0x004c2ed0 needs wide out-buffer harness)
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00498bc0  VideoGetRenderWidth
     # Pure leaf: returns DAT_00616028 (render width in pixels).
-    # MOV EAX, [0x00616028] / RET. Strategy: read_global â€” write sentinel
+    # MOV EAX, [0x00616028] / RET. Strategy: read_global â€" write sentinel
     # values into 0x00616028, call fn(), confirm both paths read the same
     # address and return the same bytes. 10 sentinels covering 0, 1, max,
     # high-bit, alt-bits and random patterns.
@@ -4915,7 +4915,7 @@ HOOKS = {
     # external call returns the same HRESULT on each invocation. Return value
     # comparison (1 success / 0 failure) is bit-identical between orig+reimpl.
     # Side effect: each call overwrites DAT_00771e78 with a new IDirectInput8A*
-    # â€” affects subsequent test calls equally on both sides.
+    # â€" affects subsequent test calls equally on both sides.
     'create_dinput_object': {
         'rva':            0x00495530,
         'export':         'CreateDInputObject',
@@ -4924,7 +4924,7 @@ HOOKS = {
         # crash_equal_ok=True: at quiescent main menu, calling this re-enters
         # DirectInput8Create against an already-initialized state. The dinput8
         # IAT path raises a structured exception via the OS DInput8 cleanup
-        # logic â€” both sides hit it identically (both invoke the same external
+        # logic â€" both sides hit it identically (both invoke the same external
         # entry point with identical arg layouts), so a same-error pair counts
         # as bit-identical for diff purposes.
         'crash_equal_ok': True,
@@ -4935,7 +4935,7 @@ HOOKS = {
 
     # 0x004955b0  CreateDInputObjectBool
     # 11-byte bool wrapper: returns FUN_00495530() != 0.
-    # arg_type='none': same testing strategy as the inner function â€” bit-
+    # arg_type='none': same testing strategy as the inner function â€" bit-
     # identical return on both sides since both call the same target.
     'create_dinput_object_bool': {
         'rva':            0x004955b0,
@@ -4954,7 +4954,7 @@ HOOKS = {
     # 0x0045b350  RwInitNullStub
     # 1-byte bare RET (0xC3). 33 callers in binary; functions as null callback.
     # arg_type='none' + signature void(void). Both sides do nothing and return
-    # nothing â€” trivially bit-identical.
+    # nothing â€" trivially bit-identical.
     'rw_init_null_stub': {
         'rva':            0x0045b350,
         'export':         'RwInitNullStub',
@@ -4969,7 +4969,7 @@ HOOKS = {
     # fn(void) -> uint32: calls dispatcher cmd 0x0a (driver-system) via
     # FUN_004c2c90 with DAT_007d3ff8+0x10. Returns current video mode index
     # or 0xffffffff on failure. Stable at quiescent main menu since the RW
-    # driver context (DAT_007d3ff8) is already initialized â€” that's the same
+    # driver context (DAT_007d3ff8) is already initialized â€" that's the same
     # global the harness polls via lut_root_delta=0.
     # arg_type='none': dummy iteration markers; both orig and reimpl must
     # produce identical return values across 10 successive calls. The reimpl
@@ -4987,14 +4987,14 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # Session ma2-frida-s5 â€” Boot/FrameDispatch  (C2â†’C3, 5 candidates)
-    # FrameDispatch.cpp â€” direct callees of per-frame tick FUN_00492e90.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # Session ma2-frida-s5 â€" Boot/FrameDispatch  (C2â†'C3, 5 candidates)
+    # FrameDispatch.cpp â€" direct callees of per-frame tick FUN_00492e90.
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042b8d0  StatePhaseIsIdle
-    # int(void) â€” `return DAT_0067eca4 == 0;` (13-byte pure-leaf predicate).
+    # int(void) â€" `return DAT_0067eca4 == 0;` (13-byte pure-leaf predicate).
     # arg_type='read_global': write sentinel to 0x0067eca4 before each call;
-    # both orig and reimpl observe identical state-phase value â†’ identical
+    # both orig and reimpl observe identical state-phase value â†' identical
     # int return (0 or 1). 10 sentinels exercise both branches (==0 and !=0).
     'state_phase_is_idle': {
         'rva':            0x0042b8d0,
@@ -5009,7 +5009,7 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0x00000005, 0xDEADBEEF],
     },
 
-    # 0x004b6520  ZeroFillWrapper â€” memset(p1, 0, p2).
+    # 0x004b6520  ZeroFillWrapper â€" memset(p1, 0, p2).
     # Pure CRT wrapper. arg_type='bytes_inplace' allocates a buffer per side,
     # writes input bytes via test.init, calls fn(buf, len), fingerprints
     # readback. Both sides should produce all-zero buffer.
@@ -5038,11 +5038,11 @@ HOOKS = {
         ],
     },
 
-    # 0x004c5800  RwTexDictionarySetCurrent â€” writes param_1 to dynamic
+    # 0x004c5800  RwTexDictionarySetCurrent â€" writes param_1 to dynamic
     # vtable-slot address (rw_base + 0x1c + rw_slot). Returns 1.
     # arg_type='int_scalar': just verifies both sides return 1 consistently.
     # The write side-effect can't be observed by void_setter_observe (dynamic
-    # slot address), but both sides write to same address â€” restored by
+    # slot address), but both sides write to same address â€" restored by
     # the immediate-next call from MASHED's natural execution.
     'rw_tex_dictionary_set_current': {
         'rva':            0x004c5800,
@@ -5055,9 +5055,9 @@ HOOKS = {
         'path2_tests':    [0, 0xDEADBEEF, 0],
     },
 
-    # 0x004c5820  RwTexDictionaryGetCurrent â€” symmetric getter for setter above.
+    # 0x004c5820  RwTexDictionaryGetCurrent â€" symmetric getter for setter above.
     # Returns *(rw_base + 0x1c + rw_slot). Both sides read same global so
-    # return same value. arg_type='none' â€” value is whatever's currently
+    # return same value. arg_type='none' â€" value is whatever's currently
     # stored (deterministic across both calls).
     'rw_tex_dictionary_get_current': {
         'rva':            0x004c5820,
@@ -5069,9 +5069,9 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x0040e370  IsCarSlotActive â€” bool(int slot). For slot > 3 returns 0
+    # 0x0040e370  IsCarSlotActive â€" bool(int slot). For slot > 3 returns 0
     # immediately without dereferencing the per-car table. Test all inputs > 3
-    # to exercise only the bounds-check early-out. Both sides return 0 â†’ GREEN.
+    # to exercise only the bounds-check early-out. Both sides return 0 â†' GREEN.
     'is_car_slot_active': {
         'rva':            0x0040e370,
         'export':         'IsCarSlotActive',
@@ -5081,7 +5081,7 @@ HOOKS = {
         # scenario:'race' (2026-06-12, re/analysis/scenario_attach_lane.md):
         # the original vectors were ALL > 3 to take the bounds-check early-out
         # because the in-bounds path derefs PTR_PTR_005f2770, NULL at quiescent
-        # menu — i.e. the old run only ever tested the early-out (degenerate;
+        # menu -- i.e. the old run only ever tested the early-out (degenerate;
         # flagged in DEGENERATE_GREEN_AUDIT_2026-06-12.md). In a live race the
         # pointer is populated and slots 0..3 exist (4-car Quick Battle), so
         # the real path is exercised; slot-active flags are stable mid-round
@@ -5091,7 +5091,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 4],
     },
 
-    # 0x00432080  RaceEndCheckFinish â€” int(int param_1). Race-end finalization
+    # 0x00432080  RaceEndCheckFinish â€" int(int param_1). Race-end finalization
     # checker; writes 0 to DAT_0067f19c then mode-dispatches. At quiescent menu
     # the early-out path (DAT_0067eca4 != 0) may fire; both sides match.
     'race_end_check_finish': {
@@ -5104,7 +5104,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x00404320  PerModeRenderMachine â€” void(uint32 mode). Mode 5/8/9/10
+    # 0x00404320  PerModeRenderMachine â€" void(uint32 mode). Mode 5/8/9/10
     # take specific dispatch paths; modes outside this set (incl. 0/1 at
     # quiescent menu) fall through with no-op. arg_type='int_scalar' with
     # non-matching modes exercises the fall-through; both sides match.
@@ -5114,14 +5114,14 @@ HOOKS = {
         'signature':      {'ret': 'void', 'args': ['uint32']},
         'arg_type':       'int_scalar',
         'lut_root_delta': 0,
-        # Modes not in {5,8,9,10} â†’ no-op fall-through. Avoid mode 10 which
+        # Modes not in {5,8,9,10} â†' no-op fall-through. Avoid mode 10 which
         # calls ModePrologue + RwCameraEndUpdate (state-dependent).
         'path1_tests':    [0, 1, 2, 3, 4, 6, 7, 11, 100, 0xFFFFFFFF],
         'path2_tests':    [0, 1, 100],
     },
 
     # 0x00492770  MainLoopInit
-    # int(void) â€” writes 4 fixed globals to 0 plus state-machine=1 plus 2 callees.
+    # int(void) â€" writes 4 fixed globals to 0 plus state-machine=1 plus 2 callees.
     # void_write_observe on 0x00828300 (exit flag, first write). Callees include
     # FUN_004c57a0 (allocator) which may have side-effects; both sides call same
     # allocator with same state and observable is the deterministic exit-flag write.
@@ -5139,7 +5139,7 @@ HOOKS = {
     },
 
     # 0x00426c00  GameStateFlagGet
-    # uint32(void) â€” returns DAT_00644158 (5-byte pure-leaf getter).
+    # uint32(void) â€" returns DAT_00644158 (5-byte pure-leaf getter).
     # arg_type='read_global': write sentinel; both sides read same global.
     'game_state_flag_get': {
         'rva':            0x00426c00,
@@ -5155,7 +5155,7 @@ HOOKS = {
     },
 
     # 0x0042b8e0  StatePhaseIsTwo
-    # int(void) â€” `return DAT_0067eca4 == 2;` (14-byte pure-leaf predicate).
+    # int(void) â€" `return DAT_0067eca4 == 2;` (14-byte pure-leaf predicate).
     # arg_type='read_global': same target global as the IsIdle/IsFinal pair.
     'state_phase_is_two': {
         'rva':            0x0042b8e0,
@@ -5171,7 +5171,7 @@ HOOKS = {
     },
 
     # 0x0042b910  RaceEndConstGet
-    # int(void) â€” returns hardcoded 5 (5-byte body).
+    # int(void) â€" returns hardcoded 5 (5-byte body).
     # arg_type='none': no input needed; both sides return 5 every call.
     'race_end_const_get': {
         'rva':            0x0042b910,
@@ -5184,7 +5184,7 @@ HOOKS = {
     },
 
     # 0x0042b940  StatePhaseSubSet
-    # void(uint32) â€” `DAT_0067ecb0 = param_1;` (9-byte pure-leaf setter).
+    # void(uint32) â€" `DAT_0067ecb0 = param_1;` (9-byte pure-leaf setter).
     # arg_type='void_setter_observe': call fn(value), read back target_global.
     'state_phase_sub_set': {
         'rva':            0x0042b940,
@@ -5200,7 +5200,7 @@ HOOKS = {
     },
 
     # 0x0042c1c0  RaceInterruptFlagGet
-    # uint32(void) â€” returns DAT_0067eab0 (5-byte pure-leaf getter).
+    # uint32(void) â€" returns DAT_0067eab0 (5-byte pure-leaf getter).
     'race_interrupt_flag_get': {
         'rva':            0x0042c1c0,
         'export':         'RaceInterruptFlagGet',
@@ -5215,7 +5215,7 @@ HOOKS = {
     },
 
     # 0x0042c1d0  RaceStateArrayZero
-    # void(void) â€” zeroes 12 DWORDs at DAT_0067ea10 (16-byte body).
+    # void(void) â€" zeroes 12 DWORDs at DAT_0067ea10 (16-byte body).
     # arg_type='void_write_observe' on base; sentinel->0 proves write.
     'race_state_array_zero': {
         'rva':            0x0042c1d0,
@@ -5231,9 +5231,9 @@ HOOKS = {
     },
 
     # 0x0042b8f0  StatePhaseIsFinal
-    # int(void) â€” `return DAT_0067eca4 == 5;` (14-byte pure-leaf predicate).
+    # int(void) â€" `return DAT_0067eca4 == 5;` (14-byte pure-leaf predicate).
     # arg_type='read_global': write sentinel to 0x0067eca4 before each call;
-    # both orig and reimpl observe identical state-phase value â†’ identical
+    # both orig and reimpl observe identical state-phase value â†' identical
     # int return (0 or 1). 10 sentinels exercise both branches (==5 and !=5).
     'state_phase_is_final': {
         'rva':            0x0042b8f0,
@@ -5249,7 +5249,7 @@ HOOKS = {
     },
 
     # 0x004026d0  BootQueueFlush
-    # void(int count) â€” RW cam alloc/commit/finalize loop. With count=0 the
+    # void(int count) â€" RW cam alloc/commit/finalize loop. With count=0 the
     # loop is no-op; both sides skip the body and return. arg_type='int_scalar'
     # with all-zero test inputs.
     'boot_queue_flush': {
@@ -5263,7 +5263,7 @@ HOOKS = {
     },
 
     # 0x00402f50  BootDefaultParamsInit
-    # void(void) â€” writes 5 constants to 0x636ae8 cluster.
+    # void(void) â€" writes 5 constants to 0x636ae8 cluster.
     # void_write_observe on 0x636ae8 (first written field).
     'boot_default_params_init': {
         'rva':            0x00402f50,
@@ -5278,7 +5278,7 @@ HOOKS = {
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
 
-    # 0x00431ae0  DefaultParam_SetField04 â€” writes 0x3f333333 to 0x007f0f04.
+    # 0x00431ae0  DefaultParam_SetField04 â€" writes 0x3f333333 to 0x007f0f04.
     'default_param_set_field04': {
         'rva':            0x00431ae0,
         'export':         'DefaultParam_SetField04',
@@ -5292,7 +5292,7 @@ HOOKS = {
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
 
-    # 0x00431af0  DefaultParam_SetField08 â€” writes 0x3f333333 to 0x007f0f08.
+    # 0x00431af0  DefaultParam_SetField08 â€" writes 0x3f333333 to 0x007f0f08.
     'default_param_set_field08': {
         'rva':            0x00431af0,
         'export':         'DefaultParam_SetField08',
@@ -5306,7 +5306,7 @@ HOOKS = {
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
 
-    # 0x00431b00  DefaultParam_SetField00 â€” writes 0x3f333333 to 0x007f0f00.
+    # 0x00431b00  DefaultParam_SetField00 â€" writes 0x3f333333 to 0x007f0f00.
     'default_param_set_field00': {
         'rva':            0x00431b00,
         'export':         'DefaultParam_SetField00',
@@ -5321,7 +5321,7 @@ HOOKS = {
     },
 
     # 0x0042f510  Vehicle0HandleGet
-    # uint32(void) â€” `return DAT_0067f190;` (5-byte pure-leaf getter).
+    # uint32(void) â€" `return DAT_0067f190;` (5-byte pure-leaf getter).
     # arg_type='read_global': write sentinel to 0x0067f190; both sides
     # return the sentinel verbatim.
     'vehicle0_handle_get': {
@@ -5338,7 +5338,7 @@ HOOKS = {
     },
 
     # 0x00498bf0  DisplayActiveFlagGet
-    # uint32(void) â€” `return DAT_00773204;` (5-byte pure-leaf getter).
+    # uint32(void) â€" `return DAT_00773204;` (5-byte pure-leaf getter).
     # Caller FUN_004951f0 checks: if non-zero, calls ShowCursor(0).
     # arg_type='read_global': write sentinel to 0x00773204; both sides
     # return the sentinel verbatim.
@@ -5356,11 +5356,11 @@ HOOKS = {
     },
 
     # 0x004c19f0  RwVtableSlot07Call
-    # void(int param_1) â€” `(**(code **)(param_1 + 0x1c))();` indirect vtable.
+    # void(int param_1) â€" `(**(code **)(param_1 + 0x1c))();` indirect vtable.
     # Ghidra can't recover the jumptable (10 bytes, indirect call).
     # arg_type='int_scalar' + crash_equal_ok=True: passing a non-mappable
     # int (e.g. 0, 1, fake ptrs) causes both orig and reimpl to dereference
-    # [scalar+0x1c] then call through â€” both SIGSEGV identically when the
+    # [scalar+0x1c] then call through â€" both SIGSEGV identically when the
     # memory at that address is unmapped.
     'rw_vtable_slot07_call': {
         'rva':            0x004c19f0,
@@ -5420,8 +5420,8 @@ HOOKS = {
     # arg_type='int_pair': exercises ONLY the early-exit paths since the
     # success path requires both sides to write to the *same* dest buffer.
     # Tests verify:
-    #   - dst_ptr == 0     â†’ return 0 (the dst!=0 guard at 0x0049583x).
-    #   - slot_idx >= count â†’ return 0 (the slot bound guard).
+    #   - dst_ptr == 0     â†' return 0 (the dst!=0 guard at 0x0049583x).
+    #   - slot_idx >= count â†' return 0 (the slot bound guard).
     # At quiescent main menu, DAT_00772fac (joypad count) reflects EnumDevices
     # output. Both sides read the same global, so both must return 0 for
     # OOB inputs. We pass huge slot indices and/or NULL dst to force the
@@ -5434,18 +5434,18 @@ HOOKS = {
         'lut_root_delta': 0,
         # Each test = [slot_idx, dst_ptr]. All inputs designed to hit early-out.
         # dst_ptr=0 forces the second guard; huge slot_idx forces the first.
-        # Both guards return 0 â†’ bit-identical on both sides.
+        # Both guards return 0 â†' bit-identical on both sides.
         'path1_tests': [
-            [0,          0],          # dst=NULL â†’ 0
-            [1,          0],          # dst=NULL â†’ 0
-            [100,        0],          # dst=NULL â†’ 0
-            [0x7FFFFFFF, 0],          # dst=NULL â†’ 0 (also huge slot)
-            [0x10000,    0],          # dst=NULL â†’ 0 (also huge slot)
-            [0x10000,    0xDEADBEEF], # huge slot â†’ 0 (slot check is first)
-            [0x7FFFFFFF, 0xCAFEBABE], # huge slot â†’ 0
-            [0x40000000, 0x11223344], # huge slot â†’ 0
-            [0x10000,    1],          # huge slot â†’ 0
-            [0x20000,    2],          # huge slot â†’ 0
+            [0,          0],          # dst=NULL â†' 0
+            [1,          0],          # dst=NULL â†' 0
+            [100,        0],          # dst=NULL â†' 0
+            [0x7FFFFFFF, 0],          # dst=NULL â†' 0 (also huge slot)
+            [0x10000,    0],          # dst=NULL â†' 0 (also huge slot)
+            [0x10000,    0xDEADBEEF], # huge slot â†' 0 (slot check is first)
+            [0x7FFFFFFF, 0xCAFEBABE], # huge slot â†' 0
+            [0x40000000, 0x11223344], # huge slot â†' 0
+            [0x10000,    1],          # huge slot â†' 0
+            [0x20000,    2],          # huge slot â†' 0
         ],
         'path2_tests': [
             [0,        0],
@@ -5454,17 +5454,17 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session ma3-frida-s5 â€” Frontend text+sprite carry-over from c3-batch-g-s8
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session ma3-frida-s5 â€" Frontend text+sprite carry-over from c3-batch-g-s8
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0040e3a0  PlayerColorTableGet
-    # void(int idx, byte* out_buf4) â€” 141-byte switch writing 4 RGBA bytes.
+    # void(int idx, byte* out_buf4) â€" 141-byte switch writing 4 RGBA bytes.
     # Indices 0..5 produce fixed color bytes; default (>=6) invokes abort
-    # FUN_004a332b(-14) â€” non-returning. Implementation in MenuScoreSort.cpp.
+    # FUN_004a332b(-14) â€" non-returning. Implementation in MenuScoreSort.cpp.
     # arg_type='int_outbuf4': allocate 4-byte buf, call fn(idx, buf), compare
     # 4-byte fingerprint. Tests only valid indices 0..5 (default path is abort).
-    # Pure function â€” no game state dependency; safe at any time.
+    # Pure function â€" no game state dependency; safe at any time.
     # ref: re/analysis/frontend_promote_menus_b/0040e3a0.md
     'player_color_table_get': {
         'rva':            0x0040e3a0,
@@ -5477,10 +5477,10 @@ HOOKS = {
         'path2_tests':    [0, 1, 2, 3, 4, 5],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session ma3-frida-s7 â€” Frontend game-mode dispatch (C2->C3)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session ma3-frida-s7 â€" Frontend game-mode dispatch (C2->C3)
     # FrontendDispatch.cpp: FrontendModeDispatch
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042ee40  FrontendModeDispatch
     # 204-byte dispatcher: outer switch DAT_0067e9fc (2..10); forwards param_1
@@ -5508,9 +5508,9 @@ HOOKS = {
         ],
     },
 
-    # Session c3-batch-h-s5 â€” util small leaves+near-leaves (C2->C3)
+    # Session c3-batch-h-s5 â€" util small leaves+near-leaves (C2->C3)
     # Util/UtilBatch.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042c2f0  SetDat0067ecb8  void(uint32 param_1)
     # 9-byte setter: *0x0067ecb8 = param_1.
@@ -5566,7 +5566,7 @@ HOOKS = {
     # 43-byte: wprintf("Load start\n") + 3-global setter
     #   DAT_008a9584=2, DAT_008a958c=1, DAT_008a95b0=0
     # arg_type='void_write_observe' on DAT_008a9584 (state enum).
-    # wprintf is the only callee â€” IAT call, same in both paths.
+    # wprintf is the only callee â€" IAT call, same in both paths.
     'loading_state2_enter': {
         'rva':            0x00409900,
         'export':         'LoadingState2Enter',
@@ -5587,7 +5587,7 @@ HOOKS = {
     # call same callees in same order, observe stability.
     # Caller=FUN_004111c0 (init only); at main menu state is post-init quiescent.
     # crash_equal_ok=True since callees are C0 and may have undefined behavior
-    # outside init context â€” both paths share that risk identically.
+    # outside init context â€" both paths share that risk identically.
     'timer_dispatch_10': {
         'rva':            0x00426c10,
         'export':         'TimerDispatch10',
@@ -5627,29 +5627,29 @@ HOOKS = {
         'path2_tests':    [0, 0, 0],
     },
 
-    # 0x0041cb80  TimerArrayInit46 â€” REFUSED.
+    # 0x0041cb80  TimerArrayInit46 â€" REFUSED.
     # 53-byte init function with implicit-pointer register convention for
     # the per-element callee FUN_0041c380 (ESI loaded at 0x0041cb95, kept
     # live across each CALL). A C++ fn-ptr reimpl cannot reliably set ESI,
     # so the diff would not be bit-identical. Same impedance as
     # 0x00422120 TimerInitLoop (refused below).
 
-    # Session c3-batch-h-s4 â€” HUD cluster (C2->C3, 7 of 12 candidates)
+    # Session c3-batch-h-s4 â€" HUD cluster (C2->C3, 7 of 12 candidates)
     # HUD/HudBatch.cpp
     # Refused this session:
     #   - 0x0041d870 (callee FUN_0041d410 still C1)
     #   - 0x0041ded0 (callee FUN_0041de80 still C1)
     #   - 0x00427620 (all callees < C2; FUN_00555830/00556e40 absent from csv)
     #   - 0x00427680 (non-standard ESI implicit-output ptr + U-2127 EDI artifact
-    #                 not understood â€” would need new harness arg_type)
+    #                 not understood â€" would need new harness arg_type)
     # Skipped (already hooked):
     #   - 0x0041c2d0 (FUN_0041c2d0 already in HUD/HudDispatch.cpp)
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0041db80  Sub0041db80_HudThresholdDispatch
     # void(void): reads DAT_0063d588 + 5 .rdata thresholds, dispatches up to 6
     # HUD object vtable[0x48] calls. At quiescent main menu, DAT_0063d588 is 0
-    # and the dispatched object pointers (0x0063d55c..0x0063d570) are NULL â€”
+    # and the dispatched object pointers (0x0063d55c..0x0063d570) are NULL â€"
     # both orig and reimpl take the same branches; if they enter dispatch they
     # crash identically on *(obj+0x48) when obj is null.
     # arg_type='none' + crash_equal_ok=True.
@@ -5664,7 +5664,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x005554d0 â€” REFUSED (analysis note inconsistent with binary;
+    # 0x005554d0 â€" REFUSED (analysis note inconsistent with binary;
     # first body read is [ESI+0x134] then CALL, not ctx+0x0c kerning loop).
 
     # 0x00403160  Sub00403160_SubMode0BViewport
@@ -5675,7 +5675,7 @@ HOOKS = {
     # DAT_007d3ff8. The C2->C3 gate requires "at least one callee at C2+":
     # FUN_004c19f0 (C3), FUN_004671a0 (C2), FUN_004c1c80 (C2) all satisfy.
     # Caller HudIngameDispatch 0x0040dfc0 is C3.
-    # At quiescent main menu calling cold may exercise camera state â€” likely
+    # At quiescent main menu calling cold may exercise camera state â€" likely
     # crashes equally on both sides if camera state isn't fully initialized.
     # arg_type='none' + crash_equal_ok=True.
     'sub_00403160_submode0b_viewport': {
@@ -5689,7 +5689,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x0041bc50 â€” REFUSED (analysis note dispatch table is reordered and
+    # 0x0041bc50 â€" REFUSED (analysis note dispatch table is reordered and
     # incomplete vs binary: actual first pair is (0x1c,0xbc) not (0x10,0xb0);
     # also missing pair (0x94,0x134); requires full re-decode of 603-byte body).
 
@@ -5698,7 +5698,7 @@ HOOKS = {
     # return &DAT_0066d828 + *(int*)(&DAT_0066d828 + idx*4).
     # Pure leaf. Both orig and reimpl read same global DAT_0066d828 and same
     # directory entries. Bit-identical return ptr for any idx.
-    # Strategy: int_scalar â€” pass index; compare returned pointers. At quiescent
+    # Strategy: int_scalar â€" pass index; compare returned pointers. At quiescent
     # main menu the localization table at 0x0066d828 is fully populated by
     # FUN_004274e0 at boot. Small indices are safe (0..7).
     # crash_equal_ok=True for safety on edge cases.
@@ -5717,7 +5717,7 @@ HOOKS = {
     # 0x00427840  FontText_UTF16WidenCopy
     # __fastcall: EAX=src (byte*), ECX=dst (ushort*). Reads vtable byte-length
     # at DAT_007d3ff8+0xf4, widens bytes to UTF-16LE.
-    # Frida arg_type='none' won't set EAX/ECX â†’ both sides receive same garbage
+    # Frida arg_type='none' won't set EAX/ECX â†' both sides receive same garbage
     # in registers and deref same vtable; behavior on garbage src/dst is
     # identical AV between orig and reimpl.
     # arg_type='none' + crash_equal_ok=True.
@@ -5732,19 +5732,19 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x004c57a0 â€” REFUSED (returns alloc'd ptr; pointer non-deterministic
+    # 0x004c57a0 â€" REFUSED (returns alloc'd ptr; pointer non-deterministic
     # across orig/reimpl pair; would need new arg_type to compare matrix
     # contents at returned addr).
 
-    # Session c3-batch-h-s6 â€” Util mid-size (Opus 4.7 1M, 2026-05-17)
+    # Session c3-batch-h-s6 â€" Util mid-size (Opus 4.7 1M, 2026-05-17)
     # UtilMid.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00442c80  ModeGatedPlayerCheck
     # 62-byte mode-gated player float compare. Returns 1 iff
     #   FUN_0040e350()==6 AND DAT_007f0fd0 not in {4,8,9}
     #   AND DAT_008989b0[param_1*4] > _DAT_005cc9b8.
-    # At main menu: FUN_0040e350 returns mode!=6 â†’ both sides return 0.
+    # At main menu: FUN_0040e350 returns mode!=6 â†' both sides return 0.
     # arg_type='int_scalar': passes int32 player_idx.
     'mode_gated_player_check': {
         'rva':            0x00442c80,
@@ -5760,7 +5760,7 @@ HOOKS = {
     # 134-byte predicate-gated slot fill. Writes 3 globals via either
     # FUN_00430790-keyed FUN_004a2c48 record (path A) or table lookup
     # (path B). All callees C1+. Return void; bit-identity on side-effect
-    # equality (both sides drive same originals â†’ same writes).
+    # equality (both sides drive same originals â†' same writes).
     # arg_type='none': called 10x at quiescent main menu.
     'game_state_slots_fill': {
         'rva':            0x00429aa0,
@@ -5774,7 +5774,7 @@ HOOKS = {
 
     # 0x0041d730  PlayerSlotConfigInit
     # 225-byte slot init loop. Zeros [0x0063d298,0x0063d558) stride 0x160,
-    # then iterates 4 config pairs; at menu all pair-firsts are -1 â†’ no
+    # then iterates 4 config pairs; at menu all pair-firsts are -1 â†' no
     # writes besides the initial zero-fill (idempotent).
     # arg_type='none': called 5x at quiescent main menu.
     'player_slot_config_init': {
@@ -5806,7 +5806,7 @@ HOOKS = {
     # 0x0043c000  TimerSlotTickDispatcher
     # 1450-byte 19-slot timer tick. Guard global == DAT_005d757c gates reset
     # mode; otherwise per-slot state 1/2 record frame counter + optional
-    # action. At quiescent menu all slot states are 0 â†’ both sides clear
+    # action. At quiescent menu all slot states are 0 â†' both sides clear
     # counters identically.
     # arg_type='none': called 10x at quiescent main menu.
     'timer_slot_tick_dispatcher': {
@@ -5821,7 +5821,7 @@ HOOKS = {
     },
 
     # 0x00475a60  PendingOpQueueFlush
-    # 74-byte queue drain. Reads count at 0x0069160c; at menu count==0 â†’
+    # 74-byte queue drain. Reads count at 0x0069160c; at menu count==0 â†'
     # loop body doesn't fire. Both sides observe empty queue.
     # arg_type='none': called 10x at quiescent main menu.
     'pending_op_queue_flush': {
@@ -5836,8 +5836,8 @@ HOOKS = {
 
     # 0x00410860  ScoreThresholdStateCheck
     # 591-byte score/timeout state-machine. At menu: PTR_PTR_005f2770 may
-    # be null â†’ both paths crash same way â†’ crash_equal_ok=True. If running
-    # safely, all sentinels are -1 â†’ bVar1 stays false â†’ no trigger block.
+    # be null â†' both paths crash same way â†' crash_equal_ok=True. If running
+    # safely, all sentinels are -1 â†' bVar1 stays false â†' no trigger block.
     # arg_type='none': called 5x at quiescent main menu.
     'score_threshold_state_check': {
         'rva':            0x00410860,
@@ -5850,14 +5850,14 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session pizwin32-bypass-20260517 â€” Compat/PizWin32Bypass.cpp
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session pizwin32-bypass-20260517 â€" Compat/PizWin32Bypass.cpp
     # Win32-layer bypass for the .piz CreateFileA/ReadFile pair.
     # Both are harness-limited: file-I/O side effects + non-standard ABI
     # (FUN_004b6710 passes the path via EAX, not the stack), so synthetic
     # Frida A/B diffing would corrupt process state. C3 evidence comes from
     # canonical-scenario runtime verification (boot-to-menu + track load).
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x004b6710  PizWin32Open_Compat
     'piz_win32_open_compat': {
@@ -5891,7 +5891,7 @@ HOOKS = {
     # close the asymmetry defensively so the function is self-consistent.
     # arg_type='harness_limited': calling this synthetically would CloseHandle
     # on whatever HANDLE happens to be in DAT_007d3e48 at the time, which is
-    # a real OS HANDLE if a .piz is open â€” corrupting process state. Same
+    # a real OS HANDLE if a .piz is open â€" corrupting process state. Same
     # rationale as piz_win32_open_compat / piz_win32_read_compat above. C3
     # promotion is gated on a canonical-scenario observation (open + close +
     # re-open a .piz with the hook installed and verify no stale-handle AV).
@@ -5905,16 +5905,16 @@ HOOKS = {
         'path2_tests': [0],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-i-s3 â€” Save/SettingsAndIO.cpp
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-i-s3 â€" Save/SettingsAndIO.cpp
     # 5 settings_dialog + save_gamesave file I/O wrappers.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00498f60  VideoDialogInit_i3
     # WM_INITDIALOG handler, 516 bytes. HWND via EAX (Ghidra in_EAX).
     # Not exercised at main menu (video settings dialog silenced by
     # patch_mashed_skip_selector.py). Synthetic call: arg_type='none' +
-    # crash_equal_ok=True â€” both sides AV identically at first GetDlgItem
+    # crash_equal_ok=True â€" both sides AV identically at first GetDlgItem
     # on garbage HWND. Pattern matches font_text_utf16_widen_copy (0x00427840).
     'video_dialog_init_i3': {
         'rva':            0x00498f60,
@@ -5960,10 +5960,10 @@ HOOKS = {
     # __cdecl 3-arg file_read(filename, buf, size). Called by SaveLoad.
     # At main menu the gamesave.bin may or may not exist; both sides
     # invoke the same FUN_004cc230/004cbd30/004cc160 callees (game-VA
-    # function pointers identical) â†’ identical bytes_read return value.
+    # function pointers identical) â†' identical bytes_read return value.
     # arg_type='none' + crash_equal_ok=True: pass garbage stack args;
     # both sides take identical FUN_004cc230(2,1,garbage_ptr) path which
-    # returns NULL â†’ early return 0. Identical bit-result.
+    # returns NULL â†' early return 0. Identical bit-result.
     'file_read_wrapper_i3': {
         'rva':            0x004b3b70,
         'export':         'FileReadWrapper_i3',
@@ -5978,7 +5978,7 @@ HOOKS = {
     # 0x004b3bb0  FileWriteWrapper_i3
     # __cdecl 3-arg file_write(filename, buf, size). Called by SaveWrite.
     # Same harness pattern as file_read_wrapper_i3. Both sides call
-    # FUN_004cc230(2,2,garbage) which returns NULL â†’ early return 0.
+    # FUN_004cc230(2,2,garbage) which returns NULL â†' early return 0.
     # U-0287/U-0288 do not affect bit-identity (both sides faithfully
     # pass write_result to close).
     'file_write_wrapper_i3': {
@@ -5992,17 +5992,17 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # c3-batch-i-s1 â€” RWS audio stream/header reader + tree-walk cluster.
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # c3-batch-i-s1 â€" RWS audio stream/header reader + tree-walk cluster.
     # 4 hooks registered (0x005aea00 refused: U-0125 catalog "Blocks: C3").
     # All four use arg_type='none' + crash_equal_ok=True per established
     # pattern for audio fns whose direct callees require runtime state
     # absent at quiescent main-menu.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x005ab380  AudioRwsChunkHeaderRead
     # uint32(stream, *out): reads 12 bytes via FUN_004cbd30 then version-decodes.
-    # crash_equal_ok: stream=0 â†’ FUN_004cbd30 dispatches on *(stream+...) â†’ null deref.
+    # crash_equal_ok: stream=0 â†' FUN_004cbd30 dispatches on *(stream+...) â†' null deref.
     'audio_rws_chunk_header_read': {
         'rva':            0x005ab380,
         'export':         'AudioRwsChunkHeaderRead',
@@ -6032,7 +6032,7 @@ HOOKS = {
 
     # 0x005abf80  AudioWaveVtableSlot1cDispatch
     # void(int wave_node): reads *(*(wave+0xc)+0x1c) and calls if non-NULL.
-    # crash_equal_ok: wave_node=0 â†’ reads *(0+0xc) â†’ null deref before any call.
+    # crash_equal_ok: wave_node=0 â†' reads *(0+0xc) â†' null deref before any call.
     'audio_wave_vtable_slot_1c_dispatch': {
         'rva':            0x005abf80,
         'export':         'AudioWaveVtableSlot1cDispatch',
@@ -6046,9 +6046,9 @@ HOOKS = {
 
     # 0x005aa0c0  AudioTreeWalkPredicateSearch
     # uint32*(node, *parent_out, predicate, user, test_root): recursive tree-walk.
-    # NULL node â†’ uses DAT_009146fc; at quiescent main-menu the audio context
+    # NULL node â†' uses DAT_009146fc; at quiescent main-menu the audio context
     # tree is uninitialized (DAT_009146fc == 0), so param_1[4] dereferences 0
-    # in both orig and reimpl â†’ identical null-deref crash.
+    # in both orig and reimpl â†' identical null-deref crash.
     'audio_tree_walk_predicate_search': {
         'rva':            0x005aa0c0,
         'export':         'AudioTreeWalkPredicateSearch',
@@ -6062,21 +6062,21 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # feature/harness-arg-types â€” verification entries for the 4 new arg_types.
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # feature/harness-arg-types â€" verification entries for the 4 new arg_types.
     # These point at synthetic JMP-thunk exports in HarnessStubs.cpp which
     # forward to live RVAs; the diff is bit-identical by construction. The
     # purpose is to exercise the arg_type plumbing end-to-end. DO NOT promote
-    # any of these RVAs to C3 on the strength of this evidence â€” real impls
+    # any of these RVAs to C3 on the strength of this evidence â€" real impls
     # are required.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
-    # eax_implicit_ptr â€” exercises the RWX trampoline that seeds EAX=ptr
-    # before JMPing to the target (0x00497190 â€” contcfg filename formatter).
+    # eax_implicit_ptr â€" exercises the RWX trampoline that seeds EAX=ptr
+    # before JMPing to the target (0x00497190 â€" contcfg filename formatter).
     # Test inputs are integer placeholders; the harness allocates a 64-byte
     # zeroed scratch buffer per test and seeds EAX with that buffer's address.
     # crash_equal_ok=True because the target writes through EAX+offsets via
-    # FUN_004a2b60's sprintf wrapper, which expects a valid destination â€” our
+    # FUN_004a2b60's sprintf wrapper, which expects a valid destination â€" our
     # scratch buffers are zeroed but live, so writes should succeed; the
     # symmetric thunk on both sides ensures any crash is identical.
     'harness_test_eax_implicit_ptr': {
@@ -6090,7 +6090,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # eax_implicit_int â€” same trampoline mechanism with raw int values in EAX.
+    # eax_implicit_int â€" same trampoline mechanism with raw int values in EAX.
     # Reuses 0x00497190 as the underlying target; harness packs each test
     # integer directly into EAX (no scratch buffer).
     'harness_test_eax_implicit_int': {
@@ -6104,8 +6104,8 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # vec3_global_mul_observe â€” 3-float global mutate-and-observe.
-    # Target: 0x0046c570 VehicleDampVec3 â€” scales globals[0x00881f50/54/58 +
+    # vec3_global_mul_observe â€" 3-float global mutate-and-observe.
+    # Target: 0x0046c570 VehicleDampVec3 â€" scales globals[0x00881f50/54/58 +
     # idx*0x341*4] by _DAT_005ce264.
     # Stride: per-vehicle struct stride = 0x341 dwords = 0x341 * 4 = 0xd04 bytes.
     # crash_equal_ok=True because the damping scalar global must be primed by
@@ -6139,9 +6139,9 @@ HOOKS = {
         ],
     },
 
-    # fmt_desc_pair_compare â€” 2-arg fmt-desc equality predicate.
+    # fmt_desc_pair_compare â€" 2-arg fmt-desc equality predicate.
     # Target: 0x005ac5f0 AudioFmtDescEqual (already C3 via a different
-    # arg_type â€” this verifies the generic pair-compare plumbing).
+    # arg_type â€" this verifies the generic pair-compare plumbing).
     # 10 test pairs covering equal-input, single-field-difference, and full-
     # mismatch shapes.
     'harness_test_fmt_desc_pair': {
@@ -6189,12 +6189,12 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-j-s3 â€” vehicle Replay/TimeTrial + damping
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-j-s3 â€" vehicle Replay/TimeTrial + damping
     # Vehicle/Replay.cpp + Vehicle/MiscDamping.cpp
     # 8 of 10 candidates promoted; 0x00411350 and 0x00411530 refused
-    # (FPU-implicit / 5-arg 3-out-ptr â€” no current arg_type).
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # (FPU-implicit / 5-arg 3-out-ptr â€" no current arg_type).
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0046c570  VehicleDampVec3  (newly-unblocked candidate)
     # Reads-multiplies-writes three floats at globals 0x00881f50/54/58 plus
@@ -6234,7 +6234,7 @@ HOOKS = {
     # 0x00411580  ReplayGetBestTime
     # if DAT_0063bb10==0 OR best-buf+0x17c+idx*4 == 0  -> return 0;
     # else delegates to FUN_00411530 (refused: stays at original RVA), returns 1.
-    # At quiescent menu DAT_0063bb10==0 so always returns 0 â€” both paths agree.
+    # At quiescent menu DAT_0063bb10==0 so always returns 0 â€" both paths agree.
     'replay_get_best_time': {
         'rva':            0x00411580,
         'export':         'ReplayGetBestTime',
@@ -6247,7 +6247,7 @@ HOOKS = {
 
     # 0x004115c0  ReplayGetCurrentTime
     # Structurally identical to ReplayGetBestTime; consumes DAT_0063bb14.
-    # U-1078 catalogued (audio_sfx_dispatch xref) â€” meaning-only, does not
+    # U-1078 catalogued (audio_sfx_dispatch xref) â€" meaning-only, does not
     # affect mechanical correctness.
     'replay_get_current_time': {
         'rva':            0x004115c0,
@@ -6262,7 +6262,7 @@ HOOKS = {
     # 0x004114e0  ReplayCleanup
     # void(void); frees both replay heap blocks via FUN_00483a40 and zeroes
     # three control globals.  At quiescent menu both heap pointers are null
-    # so only the three zero stores happen â€” deterministic both ways.
+    # so only the three zero stores happen â€" deterministic both ways.
     'replay_cleanup': {
         'rva':            0x004114e0,
         'export':         'ReplayCleanup',
@@ -6302,7 +6302,7 @@ HOOKS = {
     # 0x004117b0  ReplaySave
     # void(void); save-once latch + null best-buf gate.  Second call returns
     # via the latch; first call at quiescent menu (DAT_0063bb10==0) falls
-    # through to set the latch only â€” no disk IO touched.
+    # through to set the latch only â€" no disk IO touched.
     'replay_save': {
         'rva':            0x004117b0,
         'export':         'ReplaySave',
@@ -6316,8 +6316,8 @@ HOOKS = {
     # 0x0040de00  thunk_FUN_004117b0  (ThunkReplaySave)
     # 4-byte compiler-generated JMP thunk; tail-calls ReplaySave (0x004117b0, C3).
     # Reimpl: ThunkReplaySave() calls ReplaySave() via C++ linkage (no loop).
-    # At quiescent menu: latch DAT_005f29c8 != 0 on 2nd+ call â†’ void return.
-    # First call: DAT_0063bb10 == 0 â†’ latch-only path â†’ void.  Bit-identical.
+    # At quiescent menu: latch DAT_005f29c8 != 0 on 2nd+ call â†' void return.
+    # First call: DAT_0063bb10 == 0 â†' latch-only path â†' void.  Bit-identical.
     'thunk_replay_save': {
         'rva':            0x0040de00,
         'export':         'ThunkReplaySave',
@@ -6331,7 +6331,7 @@ HOOKS = {
     # 0x00430290  Championship::Complete (ChampionshipComplete)
     # void(void); per-track completion handler for modes 3/4/5 (Bronze/Silver/Gold Cup).
     # Guard: DAT_0067e9fc must be 3/4/5 AND GuardConcludedAndP1Won() != 0.
-    # At quiescent main menu: DAT_0067e9fc is not 3/4/5 â†’ immediate return.
+    # At quiescent main menu: DAT_0067e9fc is not 3/4/5 â†' immediate return.
     # Bit-identical via void match (arg_type=none).
     'championship_complete': {
         'rva':            0x00430290,
@@ -6357,8 +6357,8 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-j-s5 â€” settings dialog + boot CRT + input dinput
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-j-s5 â€" settings dialog + boot CRT + input dinput
     # 5 hooks: 1 dialog (EAX-implicit HWND), 1 input (EAX-implicit slot int),
     # 3 boot CRT (1 leaf + 2 trivial wrappers). 5 candidates refused/deferred:
     #   - 0x00498d60 PopulateModeCombo  (REFUSE: no internal callee at C2+)
@@ -6366,7 +6366,7 @@ HOOKS = {
     #   - 0x00499400 VideoSettingsDispatcher (DEFER: STOP-AND-ASK budget split)
     #   - 0x00550910 FUN_00550910        (REFUSE: no internal C2+ callee, IAT semantics block validation)
     #   - 0x004a4bb7 entry               (REFUSE: PE entry; cannot hook loader execution)
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00498d20  ReadModeFromCombo_j5
     # 53-byte WM_COMMAND IDOK / CBN_SELCHANGE handler. HWND via EAX (Ghidra
@@ -6417,7 +6417,7 @@ HOOKS = {
     # HARNESS-LIMITED: calling this would terminate the process via
     # ExitProcess. Same pattern as crt_exit_core (0x004a3258): declare a
     # 3-arg signature so the int_scalar harness path's 1-arg call triggers
-    # "bad argument count" identically on both sides â†’ crash_equal_ok=True
+    # "bad argument count" identically on both sides â†' crash_equal_ok=True
     # registers GREEN without actually invoking ExitProcess.
     'crt_exit_process_j5': {
         'rva':            0x004a31b1,
@@ -6461,18 +6461,18 @@ HOOKS = {
         'path2_tests':    [0x00, 0x01, 0x02],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-k-s2 â€” Frontend/SpriteCluster.cpp
-    # 4 frontend sprite-gate / HUD leaf cluster functions (C2â†’C3).
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-k-s2 â€" Frontend/SpriteCluster.cpp
+    # 4 frontend sprite-gate / HUD leaf cluster functions (C2â†'C3).
     # NOT registered: 0x0040e480 CarSlotStateSet (already in RaceResults.cpp;
-    #   Frida diff DEFERRED â€” no non-destructive arg_type for PTR_PTR double-deref).
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    #   Frida diff DEFERRED â€" no non-destructive arg_type for PTR_PTR double-deref).
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00492d20  IntroSplashFrameTickShim
     # 10-byte shim: calls FUN_004967e0() (per-frame input pipeline), returns 1.
     # Caller (IntroSplashOrchestrator) discards the return value.
     # arg_type='none': call 10x at quiescent main menu; reimpl returns 1 each time.
-    # Both orig and reimpl execute identical input-poll side-effects â†’ stable.
+    # Both orig and reimpl execute identical input-poll side-effects â†' stable.
     # U-0811 (callee semantics) open; does not affect mechanical correctness.
     # ref: re/analysis/intro_splash/0x00492d20.md
     # Callee FUN_004967e0 drift-promoted C1->C2 this session (full plate exists).
@@ -6510,7 +6510,7 @@ HOOKS = {
 
     # 0x004c1a00  IntroSplashVtableSlot6
     # 10-byte vtable shim: tail-dispatch *(param_1 + 0x18) (slot 6, 0x18 = 24).
-    # Ghidra: "Could not recover jumptable â€” treating indirect jump as call."
+    # Ghidra: "Could not recover jumptable â€" treating indirect jump as call."
     # Same crash-equal design as RwVtableSlot07Call (0x004c19f0, C3).
     # Both orig and reimpl crash identically when param_1 is a fake pointer
     # (dereferences *(fake+0x18) which is unmapped memory).
@@ -6536,7 +6536,7 @@ HOOKS = {
     # Draws 4 player-slot bars + Arrow sprites at X=374.0/461.0.
     # DAT_0067e7f8/e7fc gate early-exit.
     # At quiescent main menu: render-state vtable at DAT_007d3ff8 may be
-    # uninitialised â†’ both sides crash identically at *(drv_base+0x20).
+    # uninitialised â†' both sides crash identically at *(drv_base+0x20).
     # crash_equal_ok=True. arg_type='none'.
     'progress_bar_set_a': {
         'rva':            0x00430b90,
@@ -6549,22 +6549,22 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-k-s4 â€” hud_text_cluster_k4 (C2->C3, 1 of 5 promoted)
-    # HUD/TextCluster.cpp â€” font context reset transform
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-k-s4 â€" hud_text_cluster_k4 (C2->C3, 1 of 5 promoted)
+    # HUD/TextCluster.cpp â€" font context reset transform
     # Refusals this session:
-    #   0x004c1c80 â€” callee FUN_004c0e50 C1 (batch drift: described as pure leaf
+    #   0x004c1c80 â€" callee FUN_004c0e50 C1 (batch drift: described as pure leaf
     #               but analysis note shows guarded conditional callee)
-    #   0x00427680 â€” repeat refusal from HudBatch_h4 (ESI implicit ptr + U-2127;
+    #   0x00427680 â€" repeat refusal from HudBatch_h4 (ESI implicit ptr + U-2127;
     #               needs new arg_type in diff_template.js)
-    #   0x00450b10 â€” 7-arg mixed signature; live-renderer vtable callee; no arg_type
-    #   0x00428450 â€” calls Im2D draw vtable path; spin-angle accumulator; no arg_type
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    #   0x00450b10 â€" 7-arg mixed signature; live-renderer vtable callee; no arg_type
+    #   0x00428450 â€" calls Im2D draw vtable path; spin-angle accumulator; no arg_type
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00552750  FontCtx_ResetTransform
     # fn(void) -> uint32(1). Pure leaf; no callees (callees_depth1: []).
     # Resets current font ctx's RwMatrix to identity; clears DAT_00912bd8+bec to 0.
-    # Observable: return value (must be 1) â€” same observable pattern as
+    # Observable: return value (must be 1) â€" same observable pattern as
     # FontSys_InitRenderState (0x00552c10) which also uses arg_type='none'.
     # Idempotent: calling repeatedly resets same state each time.
     # Leaf-exemption applies for C2->C3 (pure leaf, no callees).
@@ -6582,28 +6582,28 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x00439210  LobbySlotListRender â€” REFUSED this session.
+    # 0x00439210  LobbySlotListRender â€" REFUSED this session.
     # ~5626-byte renderer. Analysis note has high-level control flow only;
     # many uncatalogued callees (FUN_0042ebe0, FUN_004368e0, FUN_00473870 signature
     # uncertain). My approximated reimpl may crash at a different callee than the
-    # original â†’ crash-address mismatch â†’ RED. Defer to a future session when
+    # original â†' crash-address mismatch â†' RED. Defer to a future session when
     # uncatalogued callees are promoted to C2+ and exact parameter signatures
     # are documented. [UNCERTAIN U-k2-01] filed.
     # Re-pickup condition: callees 0x0042ebe0, 0x004368e0 at C2+.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-k-s3 â€” frontend_c0_leaves_plus_util_k3 (C2â†’C3)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-k-s3 â€" frontend_c0_leaves_plus_util_k3 (C2â†'C3)
     # Frontend/Leaves.cpp + Util/UtilLeaves.cpp
     # Refused in this session:
-    #   0x00412f30 â€” callee_gate: 0x0046d4a0/0x00467210/0x0041f0d0/0x00412e30 at C1
-    #   0x004997b0 â€” signature_unsupported: 4-arg (ushort,LPCSTR,ptr*,DWORD*) no arg_type
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    #   0x00412f30 â€" callee_gate: 0x0046d4a0/0x00467210/0x0041f0d0/0x00412e30 at C1
+    #   0x004997b0 â€" signature_unsupported: 4-arg (ushort,LPCSTR,ptr*,DWORD*) no arg_type
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00408a50  PerCarRaceProgressGet  (frontend/subsystem_observed=ai_or_vehicle_boundary)
     # Per-car race-progress float getter: *(float*)(0x008a96e8 + param_1 * 0x30c).
     # int_scalar: passes car slot index (0-3) as int32, returns float in ST0.
-    # At main-menu quiescent state, BSS is zeroed â†’ all slots return 0.0f.
+    # At main-menu quiescent state, BSS is zeroed â†' all slots return 0.0f.
     # Both orig and reimpl read the same address; bit-identity is deterministic.
-    # OOB slots (> 3 in practice) read into contiguous BSS â€” both sides return
+    # OOB slots (> 3 in practice) read into contiguous BSS â€" both sides return
     # the same raw bits at that address. 10 tests: 0-3 (valid), 4-9 (OOB/stable).
     # U-1292: subsystem tag open; does not affect reimpl.
     # ref: re/analysis/promote_c2_vehicle_lowrva/0x00408a50.md
@@ -6636,9 +6636,9 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0x00000004, 0xDEADBEEF],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
     # Util/SmallLeaves_o6.cpp  (c3-batch-o-s6)
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00430790  GetDat0067f17c  (util)
     # 5-byte stub: MOV EAX, [0x0067f17c]; RET.
@@ -6665,7 +6665,7 @@ HOOKS = {
     # 39-byte vtable dispatch via DAT_007d3ff8+0x9c (slot 39).
     # Signature: uint32(uint32 param_1, void* param_2, uint32 param_3).
     # Returns param_1 on vtable success, 0 on failure.
-    # Strategy: crash_equal_ok with int_pair [0, 0] â€” param_1=0, param_2=0.
+    # Strategy: crash_equal_ok with int_pair [0, 0] â€" param_1=0, param_2=0.
     # Both orig and reimpl read DAT_007d3ff8 (valid vtable root at quiescent menu),
     # call slot 39 with (0, NULL, 0). Both crash or return 0 identically.
     # Leaf-exemption: no static callees (vtable indirect only).
@@ -6686,13 +6686,13 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0x00000000, 0x00000000],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-m-s6 â€” frontend_mixed_callgated (C2->C3)
-    # Frontend/MenuMixed.cpp â€” credits sprite timeline, race-progress setter,
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-m-s6 â€" frontend_mixed_callgated (C2->C3)
+    # Frontend/MenuMixed.cpp â€" credits sprite timeline, race-progress setter,
     # car-eliminator dispatch.
     # Deferred (no viable arg_type): 0x0042d290 MenusLapTimeFmt,
     #                                0x0042ed70 MenusLapTimeCmp.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042d5a0  MenusBodyA
     # void(int scroll_offset): credits sprite-timeline renderer.
@@ -6745,15 +6745,15 @@ HOOKS = {
         'path2_tests':    [16, 17, 18],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-m-s2 â€” frontend_sprite_draw_triplets  (C2â†’C3, 5 candidates)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-m-s2 â€" frontend_sprite_draw_triplets  (C2â†'C3, 5 candidates)
     # Frontend/MenuSpriteDispatch.cpp
-    # All 5 are void(void) renderers. arg_type='none' â€” call 10x at quiescent
+    # All 5 are void(void) renderers. arg_type='none' â€" call 10x at quiescent
     # main menu. Original and reimpl both return void/undefined; the harness
     # confirms no crash and undefined==undefined (GREEN) for each iteration.
     # Render side-effects (sprites drawn) are observable only on-screen and
     # are deferred to the canonical-scenario C4 stage.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042f0c0  MenuSpriteDispatchA
     # Options 3-row list renderer (Difficulty/Steering/Camera). void(void).
@@ -6773,7 +6773,7 @@ HOOKS = {
     # 0x0042fb70  MenuSpriteDispatchB
     # Mini 3-row settings renderer (Track/PlayerCount/Music). void(void).
     # Guard: only renders if DAT_0067e7e8 != 0 || _DAT_0067e7ec > 0x5f.
-    # At quiescent main menu e7e8==0 and alpha likely <= 0x5f â†’ guard fires;
+    # At quiescent main menu e7e8==0 and alpha likely <= 0x5f â†' guard fires;
     # both paths return without crash. 10 iterations.
     'menu_sprite_dispatch_b': {
         'rva':            0x0042fb70,
@@ -6788,7 +6788,7 @@ HOOKS = {
     # 0x0042fe90  MenuSpriteDispatchC
     # Per-vehicle Y/N feature list renderer (14 entries). void(void).
     # Guard: skip if mode==2, or mode==0 && alpha <= 0x5f.
-    # At quiescent main menu mode!=2 but alpha<=0x5f â†’ guard fires;
+    # At quiescent main menu mode!=2 but alpha<=0x5f â†' guard fires;
     # both paths return without crash. 10 iterations.
     'menu_sprite_dispatch_c': {
         'rva':            0x0042fe90,
@@ -6822,7 +6822,7 @@ HOOKS = {
     # via original VAs (all C2+ callees). In the synthetic harness (called in
     # isolation, not inside a live menu frame) the sprite handles aren't set up,
     # so the first BG draw (FUN_00473c20) derefs a null at +0x8 and both orig and
-    # reimpl AV identically at 0x8 — crash-equal. (2026-06-01 B18a faithful rewrite
+    # reimpl AV identically at 0x8 -- crash-equal. (2026-06-01 B18a faithful rewrite
     # fixed the prior divergence where orig AV'd at 0x8 but the reimpl threw a
     # different error from its wrong 1-arg DrawFullscreenBG signature.)
     'menu_chrome_shell_b': {
@@ -6836,18 +6836,18 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-m-s4 â€” frontend_menus_a_and_c0_promote (C2â†’C3, 1 of 5)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-m-s4 â€" frontend_menus_a_and_c0_promote (C2â†'C3, 1 of 5)
     # Frontend/MenuMenusMixed.cpp
     #
     # NOT registered (deferred / blocked):
-    #   0x0042aa00  MenuCursorStep â€” RED diff (validity-formula mismatch vs original);
+    #   0x0042aa00  MenuCursorStep â€" RED diff (validity-formula mismatch vs original);
     #               Ghidra re-check needed before re-promotion.
-    #   0x0042bcb0  MenuC0PromoteA â€” live-state side-effect (sprite draw via FUN_004b5750);
+    #   0x0042bcb0  MenuC0PromoteA â€" live-state side-effect (sprite draw via FUN_004b5750);
     #               cannot be diffed via synthetic harness (v4-b: live-state).
-    #   0x0040e480  CarSlotStateSet â€” DEFERRED D-10710; no viable ptr_ptr diff arg_type.
-    #   0x00428320  TextWidthMeasureB â€” DEFERRED D-10713; caller gate fails (callers C1).
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    #   0x0040e480  CarSlotStateSet â€" DEFERRED D-10710; no viable ptr_ptr diff arg_type.
+    #   0x00428320  TextWidthMeasureB â€" DEFERRED D-10713; caller gate fails (callers C1).
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042a940  MenuTableSearch
     # undefined4 FUN_0042a940(undefined4 param_1)  __cdecl  (61 bytes)
@@ -6869,21 +6869,21 @@ HOOKS = {
         'path2_tests':    [0, 1, 2, 3],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
-    # Session c3-batch-m-s3 â€” frontend_menus_b_cluster  (C2â†’C3, 5 candidates)
+    # Session c3-batch-m-s3 â€" frontend_menus_b_cluster  (C2â†'C3, 5 candidates)
     # Frontend/MenuMenusB.cpp
     #
     # All 5 functions call into the live renderer or game-state globals.
     # Render functions (MenuMenusBA, MenuMenusBB, MenuMenusBC): crash_equal_ok=True;
-    # at quiescent main menu the font/sprite ctx is live â€” both sides run through
+    # at quiescent main menu the font/sprite ctx is live â€" both sides run through
     # the same render path and produce identical output (or crash identically).
-    # Sort function (MenuMenusBD): crash_equal_ok=True; called with NULL â†’ both
+    # Sort function (MenuMenusBD): crash_equal_ok=True; called with NULL â†' both
     # sides crash at first write identically.
     # Lap-store function (MenuMenusBE): arg_type='none'; void no-args; writes
     # to per-player arrays via FUN_00430790 slot getter; both sides produce
     # identical side-effects on game state. 10 call iterations.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x004282a0  MenuMenusBA
     # float FUN_004282a0(uint32 slot, float scale)
@@ -6898,7 +6898,7 @@ HOOKS = {
     # trigger voidMatch (both sides return undefined/null without errors = GREEN).
     # Frida's NativeFunction cannot capture 80-bit x87 floats as 'float'.
     # arg_type='none': call with no args at quiescent state; both sides either
-    # return the same float10 (undefined to JS â†’ voidMatch) or crash equally.
+    # return the same float10 (undefined to JS â†' voidMatch) or crash equally.
     'menu_menus_ba': {
         'rva':            0x004282a0,
         'export':         'MenuMenusBA',
@@ -6915,7 +6915,7 @@ HOOKS = {
     #                   uint32 color, float scale)
     # 7-param icon/sprite draw: font ctx setup, color set, screen-space coord
     # transform, FUN_005555b0 sprite draw. arg_type='none' (7-arg sig unsupported
-    # in harness; call with no args â€” param stack garbage, crash identical on both
+    # in harness; call with no args â€" param stack garbage, crash identical on both
     # sides at font ctx dereference). crash_equal_ok=True. 10 iterations.
     # ref: re/analysis/frontend_promote_menus_b/00427ad0.md
     'menu_menus_bb': {
@@ -6933,7 +6933,7 @@ HOOKS = {
     # void FUN_0042f8d0(float x1, float y1, float x2, float y2)
     # Background rect drawn as 5 calls to FUN_00472c60 using _DAT_005cc574/35c
     # border offsets. arg_type='none' (4-float-arg sig unsupported in harness;
-    # call with no args â€” both sides crash at FUN_00472c60 render path identically).
+    # call with no args â€" both sides crash at FUN_00472c60 render path identically).
     # crash_equal_ok=True. 10 iterations.
     # ref: re/analysis/frontend_promote_menus_b/0042f8d0.md
     'menu_menus_bc': {
@@ -6951,7 +6951,7 @@ HOOKS = {
     # void FUN_0040b460(int* param_1)
     # Player slot sort by score (bubble sort, 4 slots), mode 4/7 override via
     # FUN_00417740, mode 9 2-player layout.
-    # int_scalar: pass 0 (NULL output ptr) â€” both sides crash identically at
+    # int_scalar: pass 0 (NULL output ptr) â€" both sides crash identically at
     # first write (param_1[0] = 0). crash_equal_ok=True. 10 test iterations.
     # ref: re/analysis/frontend_promote_menus_b/0040b460.md
     'menu_menus_bd': {
@@ -6971,7 +6971,7 @@ HOOKS = {
     # laps/secs/frac from DAT_0067d98c/d994/d99c to per-player arrays.
     # arg_type='none': void no-args; both sides call FUN_00430790 (original VA;
     # returns DAT_0067f17c=0 at quiescent menu) and write to game globals at
-    # 0x007f0db4/de8/e1c[0]. Writes are identical â†’ bit-identity GREEN. 10 iters.
+    # 0x007f0db4/de8/e1c[0]. Writes are identical â†' bit-identity GREEN. 10 iters.
     # Note: writing to 0x007f0db4[0] at quiescent state is a benign side-effect
     # (overwrites lap-time slot 0 with 0, which is already 0 at menu).
     # ref: re/analysis/frontend_promote_menus_b/00429a30.md
@@ -6985,14 +6985,14 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x0042d290  MenusLapTimeFmt  (out_buf_fmt_2 â€” added 2026-05-21)
+    # 0x0042d290  MenusLapTimeFmt  (out_buf_fmt_2 â€" added 2026-05-21)
     # void(int p1, uint32 p2, char* out_a, char* out_b)
-    # Writes sprintf-style formatted strings to out_a / out_b. p1 < 10 â†’ "%02d"
+    # Writes sprintf-style formatted strings to out_a / out_b. p1 < 10 â†' "%02d"
     # padded form, else "%d". Second value is read via FUN_004a2c48 (FPU ST0).
     # arg_type='out_buf_fmt_2': two output buffers, fingerprinted as C-strings.
     # ST0 is undefined at NativeFunction entry boundary (cdecl ABI says empty
     # FPU stack), so FUN_004a2c48 sees the same FPU state on both orig and reimpl
-    # calls â†’ identical output. crash_equal_ok protects the path where ST0
+    # calls â†' identical output. crash_equal_ok protects the path where ST0
     # underflow or FPU exception terminates the second sprintf.
     # ref: re/analysis/promote_c2_frontend_menus/0x0042d290.md
     # ref: mashedmod/src/mashed_re/Frontend/MenuMixed.cpp:399
@@ -7026,9 +7026,9 @@ HOOKS = {
         ],
     },
 
-    # 0x0042ed70  MenusLapTimeCmp  (trig_text_draw â€” added 2026-05-21)
+    # 0x0042ed70  MenusLapTimeCmp  (trig_text_draw â€" added 2026-05-21)
     # void(uint32 sprite_id, float x, float y, uint32 p4, uint32 p5, uint32 p6)
-    # Calls FUN_004282a0 (text-measure â†’ ST0), FUN_0042b8c0 (angle), fsin/fcos,
+    # Calls FUN_004282a0 (text-measure â†' ST0), FUN_0042b8c0 (angle), fsin/fcos,
     # FUN_0042b8b0 (screen-width), FUN_00427ff0 (draw text rotated).
     # arg_type='trig_text_draw': Interceptor.replace on draw callee 0x00427ff0
     # captures (sprite_id, adj_x, adj_y). Both paths share the same trig + ST0
@@ -7064,18 +7064,18 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
     # Draw-quad primitive cluster (c3-batch-m-s1 replay, 2026-05-21)
     # All five write to the global 4-vertex buffer at DAT_00898a20 (112 bytes)
-    # and dispatch through the RW driver vtable at DAT_007d3ff8 â€” verified via
+    # and dispatch through the RW driver vtable at DAT_007d3ff8 â€" verified via
     # the draw_quad_observe arg_type (post-call buffer fingerprint).
     # ref: mashedmod/src/mashed_re/Frontend/DrawQuadPrimitives.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00472c60  ChromeBaseDraw
     # void(float x, float y, float w, float h, uint32 argb)
     # 5-arg filled quad with full screen-scale. Tests include non-trivial ARGB
-    # to exercise the Râ†”B byte-swap.
+    # to exercise the Râ†"B byte-swap.
     'chrome_base_draw': {
         'rva':            0x00472c60,
         'export':         'ChromeBaseDraw',
@@ -7093,7 +7093,7 @@ HOOKS = {
             [0.0,   65.5,   640.0, 3.0,   0x40f7941d],
             [0.0,  413.0,   640.0, 3.0,   0x80f7941d],
             [0.0,  410.0,   640.0, 3.0,   0x40f7941d],
-            # non-trivial RGB to verify Râ†”B byte-swap
+            # non-trivial RGB to verify Râ†"B byte-swap
             [10.0,  20.0,   100.0, 50.0,  0xff112233],
             [50.0,  60.0,    80.0, 80.0,  0xa0ff0000],
             [100.0,100.0,    50.0, 50.0,  0x800000ff],
@@ -7267,7 +7267,7 @@ HOOKS = {
 
     # 0x004739f0  TextSpriteScaled
     # 12-arg textured quad with 3 coord-scaling modes + explicit UVs.
-    # STAGED AT C2-IMPL â€” U-0458 + U-0459 [Blocks C3] open; hook installed so
+    # STAGED AT C2-IMPL â€" U-0458 + U-0459 [Blocks C3] open; hook installed so
     # the harness can run draw_quad_observe but promotion is gated.
     'text_sprite_scaled': {
         'rva':            0x004739f0,
@@ -7281,15 +7281,15 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests': [
             # [tex_ptr=0, x, y, w, h, argb, u0, u1, v0, v1, scale_mode, blend_flag]
-            # mode 0 â€” no scaling
+            # mode 0 â€" no scaling
             [0,   0.0,   0.0,  64.0,  64.0,  0xffffffff,
              0x00000000, 0x3f800000, 0x00000000, 0x3f800000, 0, 0],
             [0, 100.0, 100.0, 100.0,  50.0,  0x80ffffff,
              0x00000000, 0x3f800000, 0x00000000, 0x3f800000, 0, 0],
-            # mode 2 â€” Y-only scale
+            # mode 2 â€" Y-only scale
             [0,  50.0,  50.0,  50.0,  50.0,  0xff112233,
              0x00000000, 0x3f800000, 0x00000000, 0x3f800000, 2, 0],
-            # default â€” full scale (any value != 0 and != 2)
+            # default â€" full scale (any value != 0 and != 2)
             [0,   1.0,   1.0,   1.0,   1.0,  0xff000000,
              0x00000000, 0x3f800000, 0x00000000, 0x3f800000, 1, 0],
             [0,  10.0,  20.0,  50.0,  30.0,  0xc0808080,
@@ -7315,23 +7315,23 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-n-s1 â€” hud_drift_replay  (C2â†’C3, HUD Im2D cluster)
-    # Frontend/DrawQuadPrimitives.cpp â€” HudIm2DQuad (7-arg explicit-UV quad)
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-n-s1 â€" hud_drift_replay  (C2â†'C3, HUD Im2D cluster)
+    # Frontend/DrawQuadPrimitives.cpp â€" HudIm2DQuad (7-arg explicit-UV quad)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00450b10  HudIm2DQuad
     # 7-arg Im2D textured quad: raw int tex_handle, x, y, w, h, ARGB, UV[4] ptr.
     # Explicit UV array [u0, v0, u1, v1] as raw float32 bits.
-    # No coordinate scaling â€” params used as-is.
+    # No coordinate scaling â€" params used as-is.
     # Render states: bind tex, then 8=0, 6=0, 0xc=1; draw; restore 8=1, 6=1.
     #
-    # arg_type: draw_quad_observe â€” fingerprints the 112-byte Im2D vertex buffer
+    # arg_type: draw_quad_observe â€" fingerprints the 112-byte Im2D vertex buffer
     #           (DAT_00898a20) after each call.
     #
     # UV pointer strategy: pass 0x00898a20 (vertex buffer base). The harness
     # zeros the 112-byte buffer before each call, so UV reads at [+0x00..+0x0c]
-    # = {u0=0.0, v0=0.0, u1=0.0, v1=0.0} â€” deterministic degenerate UV.
+    # = {u0=0.0, v0=0.0, u1=0.0, v1=0.0} â€" deterministic degenerate UV.
     #
     # tex_handle is int32 (NOT a pointer). Using 0 (no texture) for all tests
     # since a live texture handle would require game state initialization.
@@ -7374,12 +7374,12 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-v-s3 â€” viewport_scaled_rect (C2â†’C3, 1 promoted; 2 skipped)
-    # Frontend/Cluster_v3.cpp â€” ViewportScaledRectDraw (7-arg wrapper of HudIm2DQuad).
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-v-s3 â€" viewport_scaled_rect (C2â†'C3, 1 promoted; 2 skipped)
+    # Frontend/Cluster_v3.cpp â€" ViewportScaledRectDraw (7-arg wrapper of HudIm2DQuad).
     # Skips: 0x00458630 (callee 004c5c00 return is non-deterministic pointer; no arg_type);
     #        0x00423b00 (caller FUN_00425a40 is C1; gate (c) fails).
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00428610  ViewportScaledRectDraw
     # 7-arg viewport-scaled textured rect. Wraps HudIm2DQuad (0x00450b10) after:
@@ -7390,9 +7390,9 @@ HOOKS = {
     #   4. Resolving texture handle: *param_1 if non-NULL, else 0.
     #   5. Calling HudIm2DQuad(tex, x, y, w*fVar4, h*fVar1, 0xffffffff, &blend).
     #
-    # Observable: vertex buffer at DAT_00898a20 (112 bytes) â€” draw_quad_observe.
+    # Observable: vertex buffer at DAT_00898a20 (112 bytes) â€" draw_quad_observe.
     # Screen dims are live globals but deterministic (both paths read same value).
-    # blend struct depends only on param_7 and float constants â€” deterministic.
+    # blend struct depends only on param_7 and float constants â€" deterministic.
     # param_1=0 (NULL) for all tests: tex_handle=0, no pointer deref needed.
     #
     # Test vectors cover:
@@ -7439,18 +7439,18 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-n-s2 â€” frontend_small_leaves (C2â†’C3, 5 candidates)
-    # Frontend/SmallLeaves_n2.cpp â€” 3 new-author leaves + 1 dispatcher;
-    # Frontend/MenuMenusMixed.cpp â€” 1 drift-staged (MenuTableSearch 0x0042a940).
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-n-s2 â€" frontend_small_leaves (C2â†'C3, 5 candidates)
+    # Frontend/SmallLeaves_n2.cpp â€" 3 new-author leaves + 1 dispatcher;
+    # Frontend/MenuMenusMixed.cpp â€" 1 drift-staged (MenuTableSearch 0x0042a940).
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0045ba00  RaceResultIndexedStore
     # void(int param_1, uint32 param_2): writes param_2 to (&DAT_0068d1f0)[param_1].
     # 15-byte leaf. 5 callers: FUN_0040be50/0040e590/004111c0/00422fd0/00424eb0.
     # entity_field_set: call fn(p1, p2), read back target_global + p1*4 as uint32.
     # For OOB indices, memory is still read back (both paths write to that address).
-    # All in-range indices 0..9 write deterministically â€” both paths must agree.
+    # All in-range indices 0..9 write deterministically â€" both paths must agree.
     # U-2869 (DAT_0068d1f0 array element semantics) does not affect correctness.
     # ref: re/analysis/promote_c1_low_ab1/0x0045ba00.md
     'race_result_indexed_store': {
@@ -7487,7 +7487,7 @@ HOOKS = {
     # 47-byte body. Callers: FUN_004111c0, FUN_00422fd0 (C3).
     # int_scalar: pass index, compare return value.
     # OOB path (param_1 > 15) returns 0 deterministically (no side-effects).
-    # In-range path returns 1 and writes to BSS (zero-init) arrays â€” deterministic.
+    # In-range path returns 1 and writes to BSS (zero-init) arrays â€" deterministic.
     # U-2870 (struct layout) and U-2871 (DAT_007f1030 identity) do not affect
     # correctness of the OOB guard and return values.
     # ORDER NOTE: Must be GREEN before VehicleSlotFieldSet (0x0046c790) is promoted.
@@ -7509,8 +7509,8 @@ HOOKS = {
     #   Returns 0xffffffff (-1) if param_1 > 15, else 0.
     # 31-byte body. Caller: FUN_00422fd0 (C3, FrontendRaceResultsDispatch).
     # int_pair: call fn(p1, p2), compare return value.
-    # OOB (param_1 > 15): both paths return 0xffffffff â€” deterministic.
-    # In-range: both paths write to BSS (zero-init) and return 0 â€” deterministic.
+    # OOB (param_1 > 15): both paths return 0xffffffff â€" deterministic.
+    # In-range: both paths write to BSS (zero-init) and return 0 â€" deterministic.
     # ORDER NOTE: VehicleSlotInit (0x0046c5c0) must be GREEN before this is promoted.
     # U-2872 (field semantics at +0x0c) does not affect bit-identity.
     # ref: re/analysis/promote_c1_low_ab1/0x0046c790.md
@@ -7520,18 +7520,18 @@ HOOKS = {
         'signature':      {'ret': 'uint32', 'args': ['uint32', 'uint32']},
         'arg_type':       'int_pair',
         'lut_root_delta': 0,
-        # [param_1, param_2]. OOB (p1 > 15) â†’ 0xffffffff; in-range â†’ 0.
+        # [param_1, param_2]. OOB (p1 > 15) â†' 0xffffffff; in-range â†' 0.
         'path1_tests': [
             [0,  0x00000000],
             [0,  0xDEADBEEF],
             [1,  0x12345678],
             [5,  0xCAFEBABE],
             [15, 0xFFFFFFFF],
-            [16, 0x00000000],   # OOB â†’ 0xffffffff
-            [17, 0x00000000],   # OOB â†’ 0xffffffff
-            [100, 0x00000000],  # OOB â†’ 0xffffffff
-            [255, 0x00000000],  # OOB â†’ 0xffffffff
-            [0xffffffff, 0x1],  # OOB â†’ 0xffffffff
+            [16, 0x00000000],   # OOB â†' 0xffffffff
+            [17, 0x00000000],   # OOB â†' 0xffffffff
+            [100, 0x00000000],  # OOB â†' 0xffffffff
+            [255, 0x00000000],  # OOB â†' 0xffffffff
+            [0xffffffff, 0x1],  # OOB â†' 0xffffffff
         ],
         'path2_tests': [
             [0, 0xDEADBEEF],
@@ -7547,8 +7547,8 @@ HOOKS = {
     # Callee: FUN_0040ce80 (C2). Table at 0x005f6748 is zero-init at quiescent state.
     # int_scalar: pass param_1 as uint32. At main-menu quiescent state the table
     # contains 0s; first entry key == FUN_0040ce80(param_1); -1 sentinel not set.
-    # Both paths call the same original FUN_0040ce80 (not yet replaced) â†’ identical key.
-    # The scan returns consistently from the live table â€” both paths agree.
+    # Both paths call the same original FUN_0040ce80 (not yet replaced) â†' identical key.
+    # The scan returns consistently from the live table â€" both paths agree.
     # arg_type='int_scalar': pass param_1 index; compare return value.
     # U-3434 (FUN_0040ce80 semantics) and U-3435 (+4 field role) do not affect correctness.
     # ref: re/analysis/frontend_promote_menus_a/0x0042a940.md
@@ -7571,7 +7571,7 @@ HOOKS = {
     #   returns 1 if elapsed < threshold_sum, else 0.
     # 116-byte body. Callees: 0x00429a70/80/90 all C3.
     # arg_type='none': call 10x at quiescent main-menu state; elapsed and threshold
-    #   globals are stable at main-menu â†’ deterministic return each time.
+    #   globals are stable at main-menu â†' deterministic return each time.
     # U-3596 (table field semantics) and U-3597 (DAT_0067f17c as row index) do not
     #   affect bit-identity for known quiescent state.
     # ref: re/analysis/frontend_c0_promote/0x004307a0.md
@@ -7585,10 +7585,10 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-o-s1 â€” render_track_node_leaves  (C2â†’C3, seed only)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-o-s1 â€" render_track_node_leaves  (C2â†'C3, seed only)
     # Render/TrackNodeLeaves_o1.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0041e870  TrackNodeRecordScan
     # void(int param_1): clears DAT_0063d7e4 to NULL; if DAT_005f37a0 > 0,
@@ -7597,7 +7597,7 @@ HOOKS = {
     # 48-byte pure leaf (callees=[]).
     # arg_type='void_setter_observe': call fn(param_1), read back DAT_0063d7e4.
     #   At quiescent main menu DAT_005f37a0==0, so fn unconditionally writes NULL
-    #   to 0x0063d7e4 and returns. Observable=0 for every input â†’ deterministic
+    #   to 0x0063d7e4 and returns. Observable=0 for every input â†' deterministic
     #   bit-identical between orig and reimpl.
     # target_global restored after each test (harness behaviour for void_setter_observe).
     # ref: re/analysis/render_promote_c2_track_node/0x0041e870.md
@@ -7611,12 +7611,12 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 5, 10, 100, -1, 0x7fffffff, 0, 1],
         'path2_tests':    [0, 1, 2],
     },
-    # â”€â”€ Session c3-batch-o-s2 â€” render low-RVA global setters (C2â†’C3) â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€ Session c3-batch-o-s2 â€" render low-RVA global setters (C2â†'C3) â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00409680  LedArrayInit
     # void(void): fills 0x480 (1152) dwords with 0xbf800000 (-1.0f) starting at
     # DAT_0063a5f0. Sentinel initialiser for the led.piz record buffer. Pure leaf.
-    # void_write_observe: write sentinel to DAT_0063a5f0, call fn, read back â€”
+    # void_write_observe: write sentinel to DAT_0063a5f0, call fn, read back â€"
     # expected read-back is always 0xbf800000 regardless of sentinel value.
     # The sentinel value in the test input is just a pre-call marker confirming
     # that fn actually overwrote it. 10 calls with varying sentinels = 10 GREEN.
@@ -7675,7 +7675,7 @@ HOOKS = {
     # 0x00423630  AiDataBufInit
     # void(void): clears DAT_00801a9c; fills DAT_007f1a9c and DAT_007f9a9c with
     # 0x2000 (8192) dwords of 0xffffffff each; clears DAT_007f1a54 and DAT_007f1a64.
-    # void_write_observe: write sentinel to DAT_007f1a9c, call fn, read back â€”
+    # void_write_observe: write sentinel to DAT_007f1a9c, call fn, read back â€"
     # expected read-back is always 0xffffffff (fill value) regardless of sentinel.
     # 10 calls with varying sentinels confirm the fill unconditionally overwrites.
     # U-3216 registered (second buffer purpose); non-blocking for bit-identity.
@@ -7695,10 +7695,10 @@ HOOKS = {
     },
 
     # 0x00425ab0  EntryHeaderClear
-    # void(void): hand-unrolled clear of 2 dwords per entry Ã— 8 entries, stride
+    # void(void): hand-unrolled clear of 2 dwords per entry Ã-- 8 entries, stride
     # 0x4c from DAT_008992a0. Zeroes the "enabled" guard (entry+0x3C/+0x40) for
     # all 8 slots in the 0x4c-stride array.
-    # void_write_observe: write sentinel to DAT_008992a0, call fn, read back â€”
+    # void_write_observe: write sentinel to DAT_008992a0, call fn, read back â€"
     # expected read-back is always 0x00000000 (cleared by fn) regardless of sentinel.
     # ref: re/analysis/promote_c2_render_lowrva/00425ab0.md
     'entry_header_clear': {
@@ -7739,18 +7739,18 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-o-s4 â€” render_rw_submit_video (C2â†’C3, 5 candidates)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-o-s4 â€" render_rw_submit_video (C2â†'C3, 5 candidates)
     # Render/RenderSubmit_o4.cpp
-    # Deferred: 0x004cc7f0 RwFreeListCreateWrapper â€” live-state side effect
+    # Deferred: 0x004cc7f0 RwFreeListCreateWrapper â€" live-state side effect
     #   (unconditionally allocates a RwFreeList pool via FUN_004cc820; no guard;
     #    calling 10x would attempt 10 pool allocations at the same addresses).
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x004cd060  AllocatorSlotGet
     # void* fn(void): returns DAT_007d3ff8 + 0x108 (RW allocator malloc slot addr).
     # 10-byte leaf. No branches, no callees, no side effects.
-    # Strategy: none â€” call 10x at quiescent main menu; return value depends on
+    # Strategy: none â€" call 10x at quiescent main menu; return value depends on
     #   DAT_007d3ff8 (live RW globals base). Both orig and reimpl read the same
     #   global and add 0x108, so return must be bit-identical.
     # U-3740: name-proximity note (addressed in analysis notes; non-blocking).
@@ -7765,16 +7765,16 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-o-s3 â€” render_rw_plugin_helpers  (C2â†’C3, 4 of 5 promoted)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-o-s3 â€" render_rw_plugin_helpers  (C2â†'C3, 4 of 5 promoted)
     # Render/RwPluginHelpers_o3.cpp
     #
-    # Deferred (anti-island gate fail â€” callee FUN_004d7de0 is C1):
-    #   0x004c2d90  FUN_004c2d90 â€” RwEngineRegisterPlugin shim; promote when callee >= C2
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # Deferred (anti-island gate fail â€" callee FUN_004d7de0 is C1):
+    #   0x004c2d90  FUN_004c2d90 â€" RwEngineRegisterPlugin shim; promote when callee >= C2
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x004c2d70  RwPluginRegistryFrozen
-    # undefined4(void): MOV EAX,[0x007d3ff4]; RET â€” 5-byte pure leaf.
+    # undefined4(void): MOV EAX,[0x007d3ff4]; RET â€" 5-byte pure leaf.
     # Returns DAT_007d3ff4 (RW plugin-registry frozen gate).
     # Sole caller: FUN_004d7de0 (RwPluginRegistryAddPlugin gate, C1).
     # Leaf-function exemption applies (no callees). arg_type='read_global':
@@ -7801,7 +7801,7 @@ HOOKS = {
     # At quiescent main menu, DAT_007d3ff8 is live (RW driver context initialized).
     # Dispatcher cmd 0x10 fallback: idx==0 forces success (iVar1!=0) regardless of driver.
     # arg_type='int_scalar' with idx=0 (safe, idempotent SetSubSystem to current adapter).
-    # Both orig and reimpl call identical dispatcher RVA â†’ bit-identical return (1).
+    # Both orig and reimpl call identical dispatcher RVA â†' bit-identical return (1).
     # Analysis: re/analysis/render_promote_c2_rw_plugin/0x004c2e70.md
     'rw_engine_set_sub_system': {
         'rva':            0x004c2e70,
@@ -7810,7 +7810,7 @@ HOOKS = {
         'arg_type':       'int_scalar',
         'lut_root_delta': 0,
         # Only idx=0 is safe: SetSubSystem(0) is idempotent (current adapter, no mutation).
-        # idx=0 triggers dispatcher fallback that forces success â†’ return 1 always.
+        # idx=0 triggers dispatcher fallback that forces success â†' return 1 always.
         'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         'path2_tests':    [0, 0, 0],
     },
@@ -7820,7 +7820,7 @@ HOOKS = {
     # Calls FUN_004c2c90(DAT_007d3ff8+0x10, 7, 0, 0, param_1). Returns iVar1 != 0.
     # Callee FUN_004c2c90 (C2). Anti-island satisfied.
     # No dispatcher fallback for cmd 0x07: result purely from driver.
-    # At quiescent menu, mode 0 is the active mode â†’ SetVideoMode(0) is idempotent.
+    # At quiescent menu, mode 0 is the active mode â†' SetVideoMode(0) is idempotent.
     # arg_type='int_scalar' with idx=0 only.
     # Analysis: re/analysis/render_promote_c2_rw_plugin/0x004c2f30.md
     'rw_engine_set_video_mode': {
@@ -7844,8 +7844,8 @@ HOOKS = {
     #   0x008a9550 is the first address written by TimerGlobalsReset (known writable BSS,
     #   512+ bytes of zero-init space, safe to overwrite at quiescent main menu).
     # The driver fills an RwVideoMode struct (~100 bytes) there; both orig and reimpl
-    # call the same driver path with the same out-ptr â†’ fill same bytes â†’ return same ptr.
-    # Return value comparison: both return 0x008a9550 (success) â†’ bit-identical GREEN.
+    # call the same driver path with the same out-ptr â†' fill same bytes â†' return same ptr.
+    # Return value comparison: both return 0x008a9550 (success) â†' bit-identical GREEN.
     # Note: A previous deferral in VideoConfig.cpp cited "12-byte out3_idx harness allocation"
     # as the problem. int_pair with a stable BSS address sidesteps that constraint entirely.
     # Analysis: re/analysis/render_promote_c2_rw_plugin/0x004c2ed0.md
@@ -7870,10 +7870,10 @@ HOOKS = {
     #   if non-zero: zeroes 15 DWORDs at +0x38, returns 1; else returns 0.
     # 46-byte leaf. No callees.
     # At quiescent main-menu state: Im3D handle at +0x3c is 0 (no active
-    #   Im3D primitives) â†’ guard fails â†’ returns 0 without any side effect.
-    # Strategy: none â€” call 10x; both orig and reimpl return 0 (guard fails
+    #   Im3D primitives) â†' guard fails â†' returns 0 without any side effect.
+    # Strategy: none â€" call 10x; both orig and reimpl return 0 (guard fails
     #   safely); bit-identical. If diff RED (staging-block mutated), defer.
-    # STOP-AND-ASK: if diff RED â†’ live-state-side-effect refusal.
+    # STOP-AND-ASK: if diff RED â†' live-state-side-effect refusal.
     # ref: re/analysis/promote_c2_rw_render_submit/004cd140.md
     'rw_render_command_buffer_reset': {
         'rva':            0x004cd140,
@@ -7888,9 +7888,9 @@ HOOKS = {
     # 0x0042b890  RenderWidthSet
     # void fn(uint16_t param_1): writes low 16 bits of param_1 to DAT_0067ea54.
     # 11-byte leaf. No branches, no callees.
-    # Strategy: void_setter_observe â€” call fn(test_value), read back U32 at
+    # Strategy: void_setter_observe â€" call fn(test_value), read back U32 at
     #   DAT_0067ea54 (which includes adjacent byte at +2 unchanged).
-    #   Both orig and reimpl write the same low 16 bits â†’ U32 readback matches.
+    #   Both orig and reimpl write the same low 16 bits â†' U32 readback matches.
     # Paired with RenderHeightSet (0x0042b8a0) at DAT_0067ea56.
     # ref: re/analysis/promote_c2_video_display/0042b890.md
     'render_width_set': {
@@ -7911,7 +7911,7 @@ HOOKS = {
     # 0x0042b8a0  RenderHeightSet
     # void fn(uint16_t param_1): writes low 16 bits of param_1 to DAT_0067ea56.
     # 11-byte leaf. No branches, no callees.
-    # Strategy: void_setter_observe â€” call fn(test_value), read back U32 at
+    # Strategy: void_setter_observe â€" call fn(test_value), read back U32 at
     #   DAT_0067ea56. Same design as RenderWidthSet but for the height global.
     # Paired sibling of RenderWidthSet; forms {width, height} uint16_t[2] at
     #   0x0067ea54..0x0067ea57.
@@ -7930,26 +7930,26 @@ HOOKS = {
         'path2_tests':    [0x00000258, 0x000001E0, 0x0000FFFF],
     },
 
-    # â”€â”€ c3-batch-o-s5 vehicle small leaves (C2â†’C3) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # First vehicle C3 session â€” exploratory.  3 of 5 candidates promoted:
+    # â"€â"€ c3-batch-o-s5 vehicle small leaves (C2â†'C3) â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # First vehicle C3 session â€" exploratory.  3 of 5 candidates promoted:
     #   0x0046cbe0  VehicleCarStateSet         (new impl in Vehicle/SmallLeaves_o5.cpp)
     #   0x00467300  VehicleCollisionWinTrigger (already in Vehicle/Damage.cpp; just adding registry)
     #   0x0042d3a0  RaceTransitionBufZero      (new impl in Vehicle/SmallLeaves_o5.cpp)
     #
     # Deferred (live-state side effects with garbage args under synthetic diff):
-    #   0x0042bf30  FUN_0042bf30  â€” writes 6 race-transition globals with garbage args
-    #   0x0042c280  FUN_0042c280  â€” constant-arg wrapper calling 0x0042bf30; same concern
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    #   0x0042bf30  FUN_0042bf30  â€" writes 6 race-transition globals with garbage args
+    #   0x0042c280  FUN_0042c280  â€" constant-arg wrapper calling 0x0042bf30; same concern
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0046cbe0  VehicleCarStateSet
-    # int(int vehicleIdx, uint32 spinoutState, uint32 secondaryVal) â€” 43-byte setter.
+    # int(int vehicleIdx, uint32 spinoutState, uint32 secondaryVal) â€" 43-byte setter.
     # Pure leaf; OOB guard: if vehicleIdx > 0xf return 0.
     # Writes byte to kSpinoutStateBase[vehicleIdx * 0x341] and uint32 to
     # kSecondaryStateBase + vehicleIdx * 0xd04.
     # Strategy: arg_type='void' (call with no stack args). In cdecl, vehicleIdx
     # reads garbage from the stack at call entry. The guard `param_1 > 0xf`
     # fires reliably on unset stack residue (arbitrary values almost always > 15);
-    # both orig and reimpl return 0 without writing any global â€” bit-identical.
+    # both orig and reimpl return 0 without writing any global â€" bit-identical.
     # Caller FUN_00424eb0 (C2). Pure leaf; callee-gate exemption applies.
     # ref: re/analysis/util_c0_promote/0x0046cbe0.md
     'vehicle_car_state_set': {
@@ -7965,7 +7965,7 @@ HOOKS = {
     },
 
     # 0x00467300  VehicleCollisionWinTrigger
-    # void(int vehicleIdx) â€” 73-byte guard + 4-loop + 2 global writes.
+    # void(int vehicleIdx) â€" 73-byte guard + 4-loop + 2 global writes.
     # Already implemented in Vehicle/Damage.cpp (RH_ScopedInstall in place).
     # Guard 1: (&DAT_00881F90)[vehicleIdx * 0x341] != 0 -> return early.
     # Guard 2: (&DAT_008815A4)[vehicleIdx * 0x341] == 0 -> return early.
@@ -7988,11 +7988,11 @@ HOOKS = {
     },
 
     # 0x0042d3a0  RaceTransitionBufZero
-    # void(void) â€” 52-byte bulk-zero loop; memset(0x0067ed78, 0, 0x340).
+    # void(void) â€" 52-byte bulk-zero loop; memset(0x0067ed78, 0, 0x340).
     # Pure leaf (callees=[]). Callee-gate exemption applies.
     # Callers: FUN_00432080 (C2), FUN_004331a0 (C2).
     # Strategy: void_write_observe on 0x0067ed78 (first dword of cleared range).
-    # Write sentinel, call fn, read back â€” should be 0 if fn writes correctly.
+    # Write sentinel, call fn, read back â€" should be 0 if fn writes correctly.
     # Both orig and reimpl must zero the region -> readback == 0 -> bit-identical.
     # At main menu, this buffer holds race-transition params (idle state); zeroing
     # is idempotent and safe (not position/velocity physics state).
@@ -8011,21 +8011,21 @@ HOOKS = {
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
 
-    # â”€â”€ harness-extension-20260522: 4 new arg_type smoke-tests â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€ harness-extension-20260522: 4 new arg_type smoke-tests â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
     # These entries exercise the new arg_type handlers added to diff_template.js
     # (spin_angle_observe, ptr_ptr_entity_set, track_record_deref,
-    #  audio_sub_struct_zero). They are NOT promoted to C3 here â€” that is
+    #  audio_sub_struct_zero). They are NOT promoted to C3 here â€" that is
     # c3_batch_p's job. The entries are kept for convenience.
 
-    # 0x00428450  HudSpinCoinAnim â€” spin-angle accumulator + Im2D draw
+    # 0x00428450  HudSpinCoinAnim â€" spin-angle accumulator + Im2D draw
     # void(int param_1, int param_2).
-    # Strategy: spin_angle_observe â€” reset DAT_0067d974 to known float seed before
+    # Strategy: spin_angle_observe â€" reset DAT_0067d974 to known float seed before
     # each sub-call; compare 112-byte vertex buffer fingerprint at DAT_00898a20.
     # The seed is injected as raw float bits (0.0, Ï€/2, Ï€, 3Ï€/2) to cover the
     # sin values that determine UV flip and width sign.
     # crash_equal_ok=True: at main menu DAT_00771960 (texture ptr) may be NULL;
-    # the draw vtable may or may not be hot â€” both paths see same state.
-    # Callee FUN_00450b10 (HudIm2DQuad) is already C3 â†’ callee gate satisfied.
+    # the draw vtable may or may not be hot â€" both paths see same state.
+    # Callee FUN_00450b10 (HudIm2DQuad) is already C3 â†' callee gate satisfied.
     # ref: re/analysis/hud_ingame_promote_c2/0x00428450.md
     'hud_spin_coin_anim': {
         'rva':            0x00428450,
@@ -8055,9 +8055,9 @@ HOOKS = {
         ],
     },
 
-    # 0x0040e480  CarSlotStateSet â€” double-deref setter
+    # 0x0040e480  CarSlotStateSet â€" double-deref setter
     # void(int param_1, uint32 param_2).
-    # Strategy: ptr_ptr_entity_set â€” read outer ptr from 0x005f2770; compute
+    # Strategy: ptr_ptr_entity_set â€" read outer ptr from 0x005f2770; compute
     # effective = outer_ptr + param_1*4 + 0x34; read back u32 after each call.
     # At quiescent main menu PTR_PTR_005f2770 is populated (game has initialized
     # the slot table before entering menu loop); CarSlotStateGet (0x0040e470)
@@ -8094,9 +8094,9 @@ HOOKS = {
         ],
     },
 
-    # 0x0041e9d0  TrackNodeFnPtrGet14 â€” getter; returns *(DAT_0063d7e4+0x14)
+    # 0x0041e9d0  TrackNodeFnPtrGet14 â€" getter; returns *(DAT_0063d7e4+0x14)
     # void/uint32 (no args).
-    # Strategy: track_record_deref â€” allocate fake 0x48B record buffer; write
+    # Strategy: track_record_deref â€" allocate fake 0x48B record buffer; write
     # sentinel at +0x14; set DAT_0063d7e4 = fake_record_ptr; call fn(); compare
     # return value. Restore DAT_0063d7e4 = NULL after. The getter is always safe
     # (no side effects, no vtable call-through).
@@ -8126,9 +8126,9 @@ HOOKS = {
         'path2_tests': [0x00000000, 0xDEADBEEF, 0x00400000],
     },
 
-    # 0x0041ea90  TrackNodeFnPtrGet44 â€” getter; returns *(DAT_0063d7e4+0x44)
+    # 0x0041ea90  TrackNodeFnPtrGet44 â€" getter; returns *(DAT_0063d7e4+0x44)
     # void/uint32 (no args).
-    # Strategy: track_record_deref â€” allocate fake 0x48B record buffer; write
+    # Strategy: track_record_deref â€" allocate fake 0x48B record buffer; write
     # sentinel at +0x44; set DAT_0063d7e4 = fake_record_ptr; call fn(); compare
     # return value. Restore DAT_0063d7e4 = NULL after. Sibling of track_node_fn_ptr_get14
     # (field_offset=0x14); same shape, same safety (getter, no side effects).
@@ -8157,8 +8157,8 @@ HOOKS = {
         'path2_tests': [0x00000000, 0xDEADBEEF, 0x00400000],
     },
 
-    # 0x0041e8b0  TrackNodeDispatch14 â€” void dispatcher; calls *(DAT_0063d7e4+0x14)
-    # void(void). Sibling of TrackNodeFnPtrGet14 â€” same global, same field, but
+    # 0x0041e8b0  TrackNodeDispatch14 â€" void dispatcher; calls *(DAT_0063d7e4+0x14)
+    # void(void). Sibling of TrackNodeFnPtrGet14 â€" same global, same field, but
     # calls THROUGH the fn-ptr rather than returning it.
     # Strategy: track_record_deref + is_getter=False + crash_equal_ok=True.
     # The fake 0x48-byte record has a sentinel at +0x14. When sentinel is 0 or
@@ -8195,12 +8195,12 @@ HOOKS = {
             0xFFFFFFFF,
             0x80000000,
             0x00000042,
-            0x00630000,   # data segment (non-code) â€” safe, no callee side-effects
+            0x00630000,   # data segment (non-code) â€" safe, no callee side-effects
         ],
         'path2_tests': [0x00000000, 0xDEADBEEF, 0x00400000],
     },
 
-    # 0x0041e970  TrackNodeDispatch44 â€” void dispatcher; calls *(DAT_0063d7e4+0x44)
+    # 0x0041e970  TrackNodeDispatch44 â€" void dispatcher; calls *(DAT_0063d7e4+0x44)
     # void(void). Same shape as TrackNodeDispatch14; field offset is +0x44 instead of +0x14.
     # Strategy: track_record_deref + is_getter=False + crash_equal_ok=True (same rationale).
     # Same non-executable-only test vector restriction applies (see dispatch14 note).
@@ -8226,20 +8226,20 @@ HOOKS = {
             0xFFFFFFFF,
             0x80000000,
             0x00000042,
-            0x00630000,   # data segment (non-code) â€” safe, no callee side-effects
+            0x00630000,   # data segment (non-code) â€" safe, no callee side-effects
         ],
         'path2_tests': [0x00000000, 0xDEADBEEF, 0x00400000],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-p-s4 â€” render_d3d9_small  (C2â†’C3, 4 promoted)
-    # Render/D3D9Helpers_p4.cpp â€” D3D9 cache invalidate + CPUID trio
-    # Deferred: 0x004cc9f0 (RwFreeListDestroy) â€” live heap vtable-free side effect
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-p-s4 â€" render_d3d9_small  (C2â†'C3, 4 promoted)
+    # Render/D3D9Helpers_p4.cpp â€" D3D9 cache invalidate + CPUID trio
+    # Deferred: 0x004cc9f0 (RwFreeListDestroy) â€" live heap vtable-free side effect
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x004c8650  rwD3D9RenderStateCacheInvalidate
     # void(void): writes 0xFFFFFFFF to 5 scalar globals and 4-entry array cache.
-    # Strategy: void_write_observe â€” write dirty sentinel to 0x006181c8, call fn,
+    # Strategy: void_write_observe â€" write dirty sentinel to 0x006181c8, call fn,
     # read back 0x006181c8. Original and reimpl both reset it to 0xFFFFFFFF.
     # Confirms the function executes its writes (sentinel is overwritten by fn).
     # ref: re/analysis/promote_c2_render_d3d9/0x004c8650.md
@@ -8258,7 +8258,7 @@ HOOKS = {
 
     # 0x004dcf90  rwD3D9CheckMMX
     # uint(void): CPUID leaf-1 bit-23 query (MMX flag). Returns 0 if unsupported.
-    # Strategy: none â€” call with no args, compare return value. Both orig and
+    # Strategy: none â€" call with no args, compare return value. Both orig and
     # reimpl run on the same hardware so CPUID output is identical. Any bit-
     # extraction error in reimpl would diverge the return value.
     # ref: re/analysis/promote_c2_render_d3d9/0x004dcf90.md
@@ -8274,7 +8274,7 @@ HOOKS = {
 
     # 0x004dcff0  rwD3D9CheckSSE_SSE2
     # uint(void): CPUID leaf-1 bits-25/26 query (SSE | SSE2). Returns 0 or 1.
-    # Strategy: none â€” same rationale as rwD3D9CheckMMX.
+    # Strategy: none â€" same rationale as rwD3D9CheckMMX.
     # ref: re/analysis/promote_c2_render_d3d9/0x004dcff0.md
     'rw_d3d9_check_sse_sse2': {
         'rva':            0x004dcff0,
@@ -8288,7 +8288,7 @@ HOOKS = {
 
     # 0x004dd050  rwD3D9CheckSSE2
     # uint(void): CPUID leaf-1 bit-26 query (SSE2 only). Returns 0 or 1.
-    # Strategy: none â€” same rationale as rwD3D9CheckMMX.
+    # Strategy: none â€" same rationale as rwD3D9CheckMMX.
     # Distinct from rwD3D9CheckSSE_SSE2 (bit 26 alone vs bits 25+26 OR'd).
     # ref: re/analysis/promote_c2_render_d3d9/0x004dd050.md
     'rw_d3d9_check_sse2': {
@@ -8301,9 +8301,9 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x005be190  AudioRwsSubZeroInit â€” zeros 4 fields of sub-struct
+    # 0x005be190  AudioRwsSubZeroInit â€" zeros 4 fields of sub-struct
     # void(undefined4 *param_1).
-    # Strategy: audio_sub_struct_zero â€” allocate 24-byte sentinel-filled buffer
+    # Strategy: audio_sub_struct_zero â€" allocate 24-byte sentinel-filled buffer
     # (0xAA pattern); call fn(buf); observe all 24 bytes for the zero-write effect.
     # Function zeroes offsets 0x00, 0x0c, 0x10, 0x14 (indices 0, 3, 4, 5).
     # The observed range covers the full 24 bytes to confirm only those 4 fields
@@ -8323,15 +8323,15 @@ HOOKS = {
         'path2_tests':    [0, 0, 0],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-p-s3 â€” render_track_loader_micros (C2â†’C3, 5 candidates)
-    # Render/TrackLoaderMicros_p3.cpp â€” tiny pure leaf getters + reset
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-p-s3 â€" render_track_loader_micros (C2â†'C3, 5 candidates)
+    # Render/TrackLoaderMicros_p3.cpp â€" tiny pure leaf getters + reset
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00426060  TrackPhysWorld1Get
     # undefined4 FUN_00426060(void)
     # Body: MOV EAX, [0x0065742c]; RET  (5 bytes).
-    # Strategy: read_global â€” write sentinel to 0x0065742c, call fn, compare
+    # Strategy: read_global â€" write sentinel to 0x0065742c, call fn, compare
     # return value. Both orig and reimpl must return the sentinel verbatim.
     # 10 sentinels spanning 0, 1, max, and various bit patterns.
     # ref: re/analysis/render_promote_c2_track_loader/0x00426060.md
@@ -8351,7 +8351,7 @@ HOOKS = {
     # 0x00426070  TrackPhysWorld2Get
     # undefined4 FUN_00426070(void)
     # Body: MOV EAX, [0x00656ee8]; RET  (5 bytes).
-    # Strategy: same as TrackPhysWorld1Get â€” read_global at 0x00656ee8.
+    # Strategy: same as TrackPhysWorld1Get â€" read_global at 0x00656ee8.
     # ref: re/analysis/render_promote_c2_track_loader/0x00426070.md
     'track_phys_world2_get': {
         'rva':            0x00426070,
@@ -8370,7 +8370,7 @@ HOOKS = {
     # undefined4 FUN_004260c0(void)
     # Body: MOV EAX, [0x00657490]; RET  (5 bytes).
     # Uncertainties (non-blocking): U-3653 (semantics of 0x00657490).
-    # Strategy: same pattern â€” read_global at 0x00657490.
+    # Strategy: same pattern â€" read_global at 0x00657490.
     # ref: re/analysis/render_promote_c2_track_loader/0x004260c0.md
     'track_phys_world3_get': {
         'rva':            0x004260c0,
@@ -8389,9 +8389,9 @@ HOOKS = {
     # float10 FUN_00426e00(void)
     # Body: FLD QWORD PTR [0x00644368]; RET  (6 bytes).
     # Returns x87 extended-precision (float10). Frida cannot capture 80-bit x87
-    # returns as 'float' â€” declaring ret='void' triggers voidMatch (both sides
+    # returns as 'float' â€" declaring ret='void' triggers voidMatch (both sides
     # return undefined/null from NativeFunction, no errors = GREEN). 10 iterations.
-    # NOTE: voidMatch is sufficient C3 evidence for a 6-byte trivial leaf â€” the
+    # NOTE: voidMatch is sufficient C3 evidence for a 6-byte trivial leaf â€" the
     # structural identity (fld qword [imm32]; ret) is fully confirmed by the note.
     # Uncertainties (non-blocking): U-3656 (semantics of DAT_00644368).
     # ref: re/analysis/render_promote_c2_track_loader/0x00426e00.md
@@ -8409,7 +8409,7 @@ HOOKS = {
     # undefined4 FUN_00426cd0(void)
     # Body: writes 0xFFFFFFFF to 6 consecutive dwords at 0x0066d6e4..0x0066d6fb;
     # returns 1. (22 bytes total; pure leaf, no callees.)
-    # Strategy: void_write_observe â€” write sentinel to 0x0066d6e4, call fn
+    # Strategy: void_write_observe â€" write sentinel to 0x0066d6e4, call fn
     # (ret declared 'void'; harness ignores return), read back 0x0066d6e4.
     # Both orig and reimpl must write 0xFFFFFFFF regardless of sentinel. 10 tests.
     # ref: re/analysis/render_promote_c2_track_loader/0x00426cd0.md
@@ -8427,13 +8427,13 @@ HOOKS = {
     },
 
 
-    # c3-batch-p session 5 â€” render_track_node_remainder
+    # c3-batch-p session 5 â€" render_track_node_remainder
     # Render/TrackNodeLeaves_o1.cpp
     #
     # Five siblings of the 0x0041e870 TrackNodeRecordScan seed (c3-batch-o s1)
     # and the +0x14/+0x44 thunks promoted in s1+s2.
     #
-    # 0x0041e9e0  TrackNodeFnPtrGet18 â€” getter; returns *(DAT_0063d7e4+0x18)
+    # 0x0041e9e0  TrackNodeFnPtrGet18 â€" getter; returns *(DAT_0063d7e4+0x18)
     # uint32(void). Dual-role field: data guard for TrackNodeDispatch18.
     # ref: re/analysis/render_promote_c2_track_node/0x0041e9e0.md
     'track_node_fn_ptr_get18': {
@@ -8459,7 +8459,7 @@ HOOKS = {
         'path2_tests': [0x00000000, 0xDEADBEEF, 0x00400000],
     },
 
-    # 0x0041e8c0  TrackNodeDispatch18 â€” indirect dispatcher via *(DAT_0063d7e4+0x18)
+    # 0x0041e8c0  TrackNodeDispatch18 â€" indirect dispatcher via *(DAT_0063d7e4+0x18)
     # void(void). Calls through fn-ptr at record+0x18 (same field as Get18 getter).
     # crash_equal_ok=True: sentinel fn-ptr values crash both sides identically.
     # ref: re/analysis/render_promote_c2_track_node/0x0041e8c0.md
@@ -8480,7 +8480,7 @@ HOOKS = {
         'path2_tests': [0x00000001, 0xDEADBEEF],
     },
 
-    # 0x0041e8f0  TrackNodeDispatch24 â€” indirect dispatcher via *(DAT_0063d7e4+0x24)
+    # 0x0041e8f0  TrackNodeDispatch24 â€" indirect dispatcher via *(DAT_0063d7e4+0x24)
     # void(void). Calls through fn-ptr at record+0x24.
     # crash_equal_ok=True: sentinel fn-ptr values crash both sides identically.
     # ref: re/analysis/render_promote_c2_track_node/0x0041e8f0.md
@@ -8501,15 +8501,15 @@ HOOKS = {
         'path2_tests': [0x00000001, 0xDEADBEEF],
     },
 
-    # 0x0041e9b0  TrackNodeFieldCmp10 â€” compare *(DAT_0063d7e4+0x10) == param_1
+    # 0x0041e9b0  TrackNodeFieldCmp10 â€" compare *(DAT_0063d7e4+0x10) == param_1
     # int(int param_1). Returns 1 if equal, 0 otherwise. Pure comparison, no writes.
     # Strategy: track_record_deref with is_getter=True, field_offset=0x10.
     # Harness injects fake record; writes sentinel at +0x10; calls Orig()/Reimpl()
-    # with no args (NativeFunction called with zero args â†’ param_1 defaults to 0).
+    # with no args (NativeFunction called with zero args â†' param_1 defaults to 0).
     # Test semantics: sentinel written at +0x10, then fn() called with param_1=0.
-    #   sentinel == 0  â†’ function returns 1 (equal)
-    #   sentinel != 0  â†’ function returns 0 (not-equal)
-    # Both original and reimpl see identical sentinel and param_1 â†’ bit-identical.
+    #   sentinel == 0  â†' function returns 1 (equal)
+    #   sentinel != 0  â†' function returns 0 (not-equal)
+    # Both original and reimpl see identical sentinel and param_1 â†' bit-identical.
     # Coverage: tests the equal-branch (sentinel=0) and not-equal-branch (sentinel!=0).
     # The param_1=0 constraint is documented; not a blocker for C3 evidence.
     # ref: re/analysis/render_promote_c2_track_node/0x0041e9b0.md
@@ -8522,7 +8522,7 @@ HOOKS = {
         'is_getter':      True,
         'lut_root_delta': 0,
         # Tests: flat list of sentinel uint32 values written at +0x10.
-        # sentinel=0x00000000 â†’ compare(0,0) â†’ 1; sentinel!=0 â†’ compare(field,0) â†’ 0.
+        # sentinel=0x00000000 â†' compare(0,0) â†' 1; sentinel!=0 â†' compare(field,0) â†' 0.
         'path1_tests': [
             0x00000000,
             0x00000001,
@@ -8538,14 +8538,14 @@ HOOKS = {
         'path2_tests': [0x00000000, 0xDEADBEEF, 0x00000000],
     },
 
-    # 0x0041e980  TrackNodeRecordFind â€” first-match-return scan of record array
+    # 0x0041e980  TrackNodeRecordFind â€" first-match-return scan of record array
     # char*(int param_1). Scans DAT_005f37a0-many records at s_training_005f33f8
     # (stride 0x48); returns pointer to first record where *(record+0x10)==param_1.
     # Returns NULL if no match. NO global write (contrast: TrackNodeRecordScan
     # writes DAT_0063d7e4 as last-match side effect).
-    # Strategy: int_scalar â€” pass param_1 directly; compare return value.
-    # At quiescent main-menu state DAT_005f37a0 == 0 â†’ both original and reimpl
-    # return NULL immediately â†’ bit-identical NULL comparison == GREEN.
+    # Strategy: int_scalar â€" pass param_1 directly; compare return value.
+    # At quiescent main-menu state DAT_005f37a0 == 0 â†' both original and reimpl
+    # return NULL immediately â†' bit-identical NULL comparison == GREEN.
     # ret type 'pointer': Frida returns NativePointer; .toString() comparison
     # gives '0x0' == '0x0' for both sides.
     # ref: re/analysis/render_promote_c2_track_node/0x0041e980.md
@@ -8573,12 +8573,12 @@ HOOKS = {
     },
 
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # c3-batch-p s6 â€” render_high_ab3_mixed + audio (2026-05-22)
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # c3-batch-p s6 â€" render_high_ab3_mixed + audio (2026-05-22)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
-    # 0x004d7ff0  RwIdentityPassthrough â€” 4B pure leaf; return param_1.
-    # Strategy: int_scalar â€” pass any uint32 value, compare return.
+    # 0x004d7ff0  RwIdentityPassthrough â€" 4B pure leaf; return param_1.
+    # Strategy: int_scalar â€" pass any uint32 value, compare return.
     # Original and reimpl must agree: return == input.
     # Leaf-function exemption applies (no callees). U-0131 non-blocking.
     # ref: re/analysis/promote_c1_high_ab3/0x004d7ff0.md
@@ -8595,11 +8595,11 @@ HOOKS = {
     },
 
 
-    # 0x00552d70  ViewportStackPop â€” 39B pure leaf; decrement DAT_00912b04 if >0,
+    # 0x00552d70  ViewportStackPop â€" 39B pure leaf; decrement DAT_00912b04 if >0,
     # then zero DAT_00912bd8 and DAT_00912bec.
     # Strategy: void_write_observe on DAT_00912bec (last write, distance-threshold
     # cache slot). Write sentinel, call fn() (guard passes if DAT_00912b04 > 0 at
-    # main-menu quiescent state â€” viewport stack is active during menu rendering),
+    # main-menu quiescent state â€" viewport stack is active during menu rendering),
     # read back DAT_00912bec. Both orig and reimpl must have written 0 (sentinel zeroed).
     # Leaf-function exemption applies (no callees). No uncertainties.
     # ref: re/analysis/promote_c1_high_ab3/0x00552d70.md
@@ -8617,7 +8617,7 @@ HOOKS = {
     },
 
 
-    # 0x004d8480  RwErrSlotWrite â€” 85B pure leaf; conditional 64-bit error-slot store.
+    # 0x004d8480  RwErrSlotWrite â€" 85B pure leaf; conditional 64-bit error-slot store.
     # Strategy: int_scalar with uint32 return + int32 arg (avoid Frida ptr-wrap crash).
     # Test values are addresses of known stable 8-byte-aligned .bss regions in
     # MASHED.exe: the function reads param_1[0] and param_1[1] and conditionally
@@ -8667,7 +8667,7 @@ HOOKS = {
     },
 
     # -----------------------------------------------------------------------
-    # c3-batch-q-s1: render RW-plugin B â€” 4 driver-system wrappers
+    # c3-batch-q-s1: render RW-plugin B â€" 4 driver-system wrappers
     # All share callee FUN_004c2c90 (C2). Caller FUN_00498c00 (C2).
     # Anti-island satisfied for all 4.
     # -----------------------------------------------------------------------
@@ -8675,9 +8675,9 @@ HOOKS = {
     # 0x004c2de0  RwEngineGetNumSubSystems
     # uint32 fn(void): cmd 0x0d; pre-init local_4=1; dispatcher case-0xd writes
     #   *param_3=1 fallback on indirect-callee-fail; return local_4.
-    # At quiescent main menu, driver initialized â†’ cmd 0xd indirect callee runs.
+    # At quiescent main menu, driver initialized â†' cmd 0xd indirect callee runs.
     # Result is 1 (single subsystem). Both orig and reimpl call same dispatcher
-    # RVA â†’ bit-identical return.
+    # RVA â†' bit-identical return.
     # arg_type='none': call 10x; both return same uint32 count.
     # ref: re/analysis/render_promote_c2_rw_plugin/0x004c2de0.md
     'rw_engine_get_num_sub_systems': {
@@ -8695,8 +8695,8 @@ HOOKS = {
     # Returns param_1 on success, 0 on failure.
     # Dispatcher case 0xe: idx==0 triggers error callback "Only rendering sub system".
     # Strategy: int_pair with [0x008a9550 (scratch BSS, 512B zeroed), 1].
-    #   idx=1 â€” with only 1 sub-system (idx 0 = the only one), driver returns 0
-    #   â†’ function returns 0 on both orig and reimpl; bit-identical GREEN.
+    #   idx=1 â€" with only 1 sub-system (idx 0 = the only one), driver returns 0
+    #   â†' function returns 0 on both orig and reimpl; bit-identical GREEN.
     # Using scratch BSS 0x008a9550 (same region used by rw_engine_get_mode_info).
     # ref: re/analysis/render_promote_c2_rw_plugin/0x004c2e10.md
     'rw_engine_get_sub_system_info': {
@@ -8706,7 +8706,7 @@ HOOKS = {
         'arg_type':       'int_pair',
         'lut_root_delta': 0,
         # [param_1=out_buf_ptr, param_2=subsystem_index].
-        # idx=1: out-of-range for single-subsystem driver â†’ both return 0.
+        # idx=1: out-of-range for single-subsystem driver â†' both return 0.
         'path1_tests':    [[0x008a9550, 1], [0x008a9550, 1], [0x008a9550, 1],
                            [0x008a9550, 1], [0x008a9550, 1], [0x008a9550, 1],
                            [0x008a9550, 1], [0x008a9550, 1], [0x008a9550, 1],
@@ -8717,9 +8717,9 @@ HOOKS = {
     # 0x004c2e40  RwEngineGetCurrentSubSystem
     # uint32 fn(void): cmd 0x0f; dispatcher case-0xf writes *param_3=0 fallback;
     #   returns local_4 on success / 0xffffffff on fail.
-    # At quiescent main menu, driver initialized â†’ cmd 0xf indirect callee runs.
+    # At quiescent main menu, driver initialized â†' cmd 0xf indirect callee runs.
     # Returns current subsystem index (0 in single-adapter systems).
-    # Idempotent read-only call. Both orig and reimpl call same dispatcher â†’ same result.
+    # Idempotent read-only call. Both orig and reimpl call same dispatcher â†' same result.
     # arg_type='none': call 10x; both return same uint32.
     # ref: re/analysis/render_promote_c2_rw_plugin/0x004c2e40.md
     'rw_engine_get_current_sub_system': {
@@ -8735,9 +8735,9 @@ HOOKS = {
     # 0x004c2ea0  RwEngineGetNumVideoModes
     # uint32 fn(void): cmd 0x05; no dispatcher fallback; returns local_4 on success
     #   / 0xffffffff on fail. Same shape as GetCurrentSubSystem but cmd=5.
-    # At quiescent main menu, driver initialized â†’ cmd 5 indirect callee runs.
+    # At quiescent main menu, driver initialized â†' cmd 5 indirect callee runs.
     # Returns count of D3D9 fullscreen video modes (typically 10-30+).
-    # Idempotent read. Both orig and reimpl call same dispatcher â†’ same result.
+    # Idempotent read. Both orig and reimpl call same dispatcher â†' same result.
     # arg_type='none': call 10x; both return same uint32.
     # ref: re/analysis/render_promote_c2_rw_plugin/0x004c2ea0.md
     'rw_engine_get_num_video_modes': {
@@ -8752,16 +8752,16 @@ HOOKS = {
 
 
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-q-s2 â€” render_promote_c2_render_frame  (C2â†’C3)
-    # Render/FrameHelpers_q2.cpp â€” ParticleEmitter state setters
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-q-s2 â€" render_promote_c2_render_frame  (C2â†'C3)
+    # Render/FrameHelpers_q2.cpp â€" ParticleEmitter state setters
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x004769a0  ParticleEmitter_SetPosition
     # void(float *param_1): if param_1==NULL use &DAT_006925a8 (default pos).
-    # Writes param_1[0/1/2] â†’ DAT_00692528/0x0069252c/0x00692530 (XYZ staging).
+    # Writes param_1[0/1/2] â†' DAT_00692528/0x0069252c/0x00692530 (XYZ staging).
     # Pure leaf (callees_depth1: []). Leaf-function exemption applies.
-    # Strategy: void_setter_observe with NULL input (int32=0) â€” triggers NULL guard,
+    # Strategy: void_setter_observe with NULL input (int32=0) â€" triggers NULL guard,
     # both sides write default float from DAT_006925a8 to DAT_00692528; read back X.
     # Target global restored by harness after each test.
     # ref: re/analysis/promote_c2_render_frame/0x004769a0.md
@@ -8770,9 +8770,9 @@ HOOKS = {
         'export':         'ParticleEmitter_SetPosition',
         'signature':      {'ret': 'void', 'args': ['int32']},
         'arg_type':       'void_setter_observe',
-        'target_global':  0x00692528,  # DAT_00692528 â€” active emitter position X
+        'target_global':  0x00692528,  # DAT_00692528 â€" active emitter position X
         'lut_root_delta': 0,
-        # NULL (0) â†’ both sides use default DAT_006925a8; observe X written back.
+        # NULL (0) â†' both sides use default DAT_006925a8; observe X written back.
         # 10 repeats confirm stable bit-identical output.
         'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         'path2_tests':    [0, 0, 0],
@@ -8781,9 +8781,9 @@ HOOKS = {
 
     # 0x004769d0  ParticleEmitter_SetVelocity
     # void(float *param_1): if param_1==NULL use &DAT_00613288 (default vel).
-    # Writes param_1[0/1] â†’ DAT_006924dc/0x006924e0 (XY velocity staging).
+    # Writes param_1[0/1] â†' DAT_006924dc/0x006924e0 (XY velocity staging).
     # Pure leaf (callees_depth1: []). Leaf-function exemption applies.
-    # Strategy: void_setter_observe with NULL input â€” triggers NULL guard, both
+    # Strategy: void_setter_observe with NULL input â€" triggers NULL guard, both
     # sides write default float from DAT_00613288 to DAT_006924dc; read back Vx.
     # ref: re/analysis/promote_c2_render_frame/0x004769d0.md
     'particle_emitter_set_velocity': {
@@ -8791,7 +8791,7 @@ HOOKS = {
         'export':         'ParticleEmitter_SetVelocity',
         'signature':      {'ret': 'void', 'args': ['int32']},
         'arg_type':       'void_setter_observe',
-        'target_global':  0x006924dc,  # DAT_006924dc â€” active emitter velocity Vx
+        'target_global':  0x006924dc,  # DAT_006924dc â€" active emitter velocity Vx
         'lut_root_delta': 0,
         'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         'path2_tests':    [0, 0, 0],
@@ -8802,7 +8802,7 @@ HOOKS = {
     # void(uint32_t *param_1): if param_1==NULL: DAT_00692554 = DAT_00613290 (copy default);
     # else: DAT_00692554 = param_1[0].
     # Pure leaf (callees_depth1: []). Leaf-function exemption applies.
-    # Strategy: void_setter_observe with NULL input â€” triggers NULL branch, both
+    # Strategy: void_setter_observe with NULL input â€" triggers NULL branch, both
     # sides copy DAT_00613290 into DAT_00692554; read back colour dword.
     # ref: re/analysis/promote_c2_render_frame/0x004769f0.md
     'particle_emitter_set_colour': {
@@ -8810,7 +8810,7 @@ HOOKS = {
         'export':         'ParticleEmitter_SetColour',
         'signature':      {'ret': 'void', 'args': ['int32']},
         'arg_type':       'void_setter_observe',
-        'target_global':  0x00692554,  # DAT_00692554 â€” active emitter colour staging
+        'target_global':  0x00692554,  # DAT_00692554 â€" active emitter colour staging
         'lut_root_delta': 0,
         'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         'path2_tests':    [0, 0, 0],
@@ -8821,7 +8821,7 @@ HOOKS = {
     # void(uint32_t param_1): direct write DAT_006924d8 = param_1 (no NULL guard).
     # param_1 is a VALUE not a pointer.
     # Pure leaf (callees_depth1: []). Leaf-function exemption applies.
-    # Strategy: void_setter_observe â€” call fn(value), read back DAT_006924d8.
+    # Strategy: void_setter_observe â€" call fn(value), read back DAT_006924d8.
     # Full value range tested (0, positives, sentinels, max uint32).
     # ref: re/analysis/promote_c2_render_frame/0x00476a30.md
     'particle_emitter_set_scalar': {
@@ -8829,7 +8829,7 @@ HOOKS = {
         'export':         'ParticleEmitter_SetScalar',
         'signature':      {'ret': 'void', 'args': ['int32']},
         'arg_type':       'void_setter_observe',
-        'target_global':  0x006924d8,  # _DAT_006924d8 â€” active emitter scalar staging
+        'target_global':  0x006924d8,  # _DAT_006924d8 â€" active emitter scalar staging
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 5, 0x100, 0xDEADBEEF, 0x7FFFFFFF,
                            0x80000000, 0xFFFFFFFF, 0x3F800000],
@@ -8839,9 +8839,9 @@ HOOKS = {
 
     # 0x00476a40  ParticleEmitter_SetRGBA
     # void(uint32_t *param_1): if param_1==NULL use &DAT_00613294 (default RGBA).
-    # Writes param_1[0/1/2/3] â†’ DAT_00692598/9c/a0/a4 (RGBA staging).
+    # Writes param_1[0/1/2/3] â†' DAT_00692598/9c/a0/a4 (RGBA staging).
     # Pure leaf (callees_depth1: []). Leaf-function exemption applies.
-    # Strategy: void_setter_observe with NULL input â€” triggers NULL guard, both
+    # Strategy: void_setter_observe with NULL input â€" triggers NULL guard, both
     # sides write default R from DAT_00613294 into DAT_00692598; read back R.
     # ref: re/analysis/promote_c2_render_frame/0x00476a40.md
     'particle_emitter_set_rgba': {
@@ -8849,7 +8849,7 @@ HOOKS = {
         'export':         'ParticleEmitter_SetRGBA',
         'signature':      {'ret': 'void', 'args': ['int32']},
         'arg_type':       'void_setter_observe',
-        'target_global':  0x00692598,  # DAT_00692598 â€” active emitter R staging
+        'target_global':  0x00692598,  # DAT_00692598 â€" active emitter R staging
         'lut_root_delta': 0,
         'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         'path2_tests':    [0, 0, 0],
@@ -8857,11 +8857,11 @@ HOOKS = {
 
 
 
-    # â”€â”€ c3-batch-q-s3: render low-RVA mixed â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€ c3-batch-q-s3: render low-RVA mixed â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
-    # 0x00422af0  SlotWordSet â€” 20B pure leaf; writes param_2 to
+    # 0x00422af0  SlotWordSet â€" 20B pure leaf; writes param_2 to
     # DAT_00641320 + param_1 * 0xf40 (single dword per-slot setter).
-    # Strategy: entity_field_set â€” call fn(param_1, param_2), read back
+    # Strategy: entity_field_set â€" call fn(param_1, param_2), read back
     # target_global + param_1 * entity_byte_stride (= DAT_00641320 + idx*0xf40).
     # Use small indices 0/1/2 and known sentinel values. No callees (leaf-exemption).
     # ref: re/analysis/c0_promotion_render_a/0x00422af0.md
@@ -8887,7 +8887,7 @@ HOOKS = {
     },
 
 
-    # 0x00403d30  Render_00403d30 â€” 123B; two FUN_00427ad0 calls (shadow+fill, id 0x22f).
+    # 0x00403d30  Render_00403d30 â€" 123B; two FUN_00427ad0 calls (shadow+fill, id 0x22f).
     # No args, void return. Both calls are unconditional (no branching).
     # Strategy: arg_type='void' with crash_equal_ok=True.
     # Both orig and reimpl call FUN_00427ad0 at 0x00427ad0 (C3: MenuMenusBB), so
@@ -8909,7 +8909,7 @@ HOOKS = {
     },
 
 
-    # 0x00403ed0  Render_00403ed0 â€” 205B; four FUN_00427ad0 calls (ids 0xf3+0x230 pairs).
+    # 0x00403ed0  Render_00403ed0 â€" 205B; four FUN_00427ad0 calls (ids 0xf3+0x230 pairs).
     # No args, void return. Same drop-shadow pattern as 0x00403d30.
     # Strategy: arg_type='void' with crash_equal_ok=True (same rationale as above).
     # Caller: FUN_00404320 (C2: PerModeRenderMachine, mode-5 dispatch path).
@@ -8928,11 +8928,11 @@ HOOKS = {
     },
 
 
-    # 0x0040df60  ConditionalRenderSubPass â€” 55B; 3-gate conditional dispatcher.
+    # 0x0040df60  ConditionalRenderSubPass â€" 55B; 3-gate conditional dispatcher.
     # No args, void return. Gated: DAT_0063ba8câˆˆ(4,7) && GetRaceSubMode()âˆˆ(2,6)
-    # && DAT_007f0fd0âˆˆ{4,7,8,9,10} â†’ FUN_00401f10; all 3 gates fail at main-menu
-    # quiescent state â†’ both sides return without any write.
-    # Strategy: arg_type='void' â€” both sides agree on void/no-op at menu state.
+    # && DAT_007f0fd0âˆˆ{4,7,8,9,10} â†' FUN_00401f10; all 3 gates fail at main-menu
+    # quiescent state â†' both sides return without any write.
+    # Strategy: arg_type='void' â€" both sides agree on void/no-op at menu state.
     # Callees: GetRaceSubMode (C3), FUN_00401f10 (C2).
     # ref: re/analysis/promote_c2_render_lowrva/0040df60.md
     'conditional_render_sub_pass': {
@@ -8942,20 +8942,20 @@ HOOKS = {
         'arg_type':       'void',
         'lut_root_delta': 0,
         # 10 dummy calls; arg_type='void' ignores input.
-        # At menu: DAT_0063ba8c not in (4,7) â†’ gate 1 fails â†’ no-op guaranteed.
+        # At menu: DAT_0063ba8c not in (4,7) â†' gate 1 fails â†' no-op guaranteed.
         'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests': [0, 1, 2],
     },
 
 
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-q-s4 â€” vehicle_lowrva_continuation (C2->C3, 2 promoted)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-q-s4 â€" vehicle_lowrva_continuation (C2->C3, 2 promoted)
     # Vehicle/SmallLeaves_q4.cpp
     # Deferred: 0x00432080 (>200B), 0x00411350 (FPU ST0), 0x00411530 (5-arg+FPU)
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
-    # 0x004248b0  PerCarSnapshotInit â€” 4-car x 0x138 snapshot copy + lap+1
+    # 0x004248b0  PerCarSnapshotInit â€" 4-car x 0x138 snapshot copy + lap+1
     # void(void): copies 7 dwords from live car block (0x008994c0 area) into
     # snapshot block (0x008999a0 area) for 4 cars (stride 0x138); also increments
     # the lap counter at field+0x00 by 1 in the snapshot.
@@ -8980,7 +8980,7 @@ HOOKS = {
     },
 
 
-    # 0x00411d60  ReplayCheckTimer â€” conditional tick-zero in Time Trial mode
+    # 0x00411d60  ReplayCheckTimer â€" conditional tick-zero in Time Trial mode
     # void(void): if GetRaceSubMode()==2 && DAT_0063bb14!=0 &&
     #             *(DAT_0063bb14+0x194)==0: DAT_007f0ff4=0.
     # Strategy: void_write_observe on 0x007f0ff4 (the global that may be zeroed).
@@ -9005,19 +9005,53 @@ HOOKS = {
 
 
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-q-s5 â€” render_d3d9_helpers_b (C2â†’C3)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-q-s5 â€" render_d3d9_helpers_b (C2â†'C3)
     # Render/D3D9Helpers_q5.cpp
     # 1 of 5 candidates promoted; 4 deferred:
-    #   0x004cfe40 â€” destructive VB pool teardown (calls RwFreeListDestroy on live heap)
-    #   0x004c8690 â€” anti-island: callee 0x004ccc50 still C1
-    #   0x00498b60 â€” destructive teardown (frees live input/render heap; tagged L4098)
-    #   0x004997b0 â€” 4-arg (ushort/LPCSTR/ptr*/DWORD*); no arg_type fit in diff_template.js
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    #   0x004cfe40 â€" destructive VB pool teardown (calls RwFreeListDestroy on live heap)
+    #   0x004c8690 â€" anti-island: callee 0x004ccc50 still C1
+    #   0x00498b60 â€" destructive teardown (frees live input/render heap; tagged L4098)
+    #   0x004997b0 â€" 4-arg (ushort/LPCSTR/ptr*/DWORD*); no arg_type fit in diff_template.js
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+
+    # 0x004cc770  RwStreamWriteBytes
+    # Pass-through: calls FUN_004cbe80(param_1, param_2, param_3) and returns param_1 unchanged.
+    # Signature: undefined4(stream, src_ptr, byte_count) -- 3 args but declared as 2 for int_pair.
+    # Strategy: int_pair with param_1=0x00400000 (PE base; always readable in MASHED process).
+    #   FUN_004cbe80(0x00400000, 0, garbage_param3): switch(*(0x00400000))=switch(0x00905A4D)
+    #   -> default case -> error handlers (FUN_004d7ff0/FUN_004d8480) -> return 0.
+    #   FUN_004cc770 ignores return and returns param_1 = 0x00400000 (non-trivial).
+    #   Non-degenerate: both sides return 0x00400000; bit-identical GREEN.
+    # crash_equal_ok=True retained for safety (param_3 is garbage from stack; default
+    #   case does not read param_3 so no write/crash risk there).
+    # Anti-island: callee 0x004cbe80 (C2 Save/RwStream.cpp). No D3D9/live state.
+    # ref: re/analysis/render_5_c1_to_c2_s1/FUN_004cc770.md
+    'rw_stream_write_bytes': {
+        'rva':            0x004cc770,
+        'export':         'RwStreamWriteBytes',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'uint32']},
+        'arg_type':       'int_pair',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0x00400000, 0],
+            [0x00400000, 0],
+            [0x00400000, 0],
+            [0x00400000, 0],
+            [0x00400000, 0],
+            [0x00400000, 0],
+            [0x00400000, 0],
+            [0x00400000, 0],
+            [0x00400000, 0],
+            [0x00400000, 0],
+        ],
+        'path2_tests':    [[0x00400000, 0], [0x00400000, 0], [0x00400000, 0]],
+    },
 
     # 0x004cc6e0  RwStreamWriteChunked
     # undefined4(stream, src_ptr, byte_count): chunked write to RW stream via 256-byte stack buf.
-    # Strategy: arg_type='none' â€” Frida calls fn() with 0 args â†’ all 3 params = 0.
+    # Strategy: arg_type='none' â€" Frida calls fn() with 0 args â†' all 3 params = 0.
     # param_3=0 triggers immediate early-out: return param_1 (= 0). Deterministic.
     # Both orig and reimpl return 0 for all 10 invocations. Bit-identity proven.
     # crash_equal_ok: non-zero param_3 with null stream would crash via FUN_004cbe80; not tested.
@@ -9036,16 +9070,16 @@ HOOKS = {
 
 
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-q-s6 â€” render texture_loader + audio (C2â†’C3, 3 of 5)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-q-s6 â€" render texture_loader + audio (C2â†'C3, 3 of 5)
     # Render/TextureLoader_q6.cpp
-    # 0x005abfa0 and 0x005ac210 DEFERRED â€” >200B and complex multi-phase bodies;
-    #   per batch plan STOP-AND-ASK: "Sizes >200B and bodies complex â€” defer."
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # 0x005abfa0 and 0x005ac210 DEFERRED â€" >200B and complex multi-phase bodies;
+    #   per batch plan STOP-AND-ASK: "Sizes >200B and bodies complex â€" defer."
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x004cbd30  RwStreamRead
     # uint32(stream*, buf, len): 4-type stream dispatch (fread / membuf copy / callback).
-    # crash_equal_ok: stream=NULL â†’ *NULL deref at stream type dispatch â†’ identical crash.
+    # crash_equal_ok: stream=NULL â†' *NULL deref at stream type dispatch â†' identical crash.
     # 317 bytes but body is mechanical 4-case switch; NOT complex per STOP-AND-ASK criteria.
     'rw_stream_read': {
         'rva':            0x004cbd30,
@@ -9061,7 +9095,7 @@ HOOKS = {
 
     # 0x004cc050  RwStreamSkip
     # uint32*(stream*, offset): 4-type stream dispatch (fseek / membuf advance / callback).
-    # crash_equal_ok: stream=NULL â†’ *NULL deref at stream type dispatch â†’ identical crash.
+    # crash_equal_ok: stream=NULL â†' *NULL deref at stream type dispatch â†' identical crash.
     # 249 bytes but body is mechanical 4-case switch; NOT complex per STOP-AND-ASK criteria.
     'rw_stream_skip': {
         'rva':            0x004cc050,
@@ -9075,21 +9109,21 @@ HOOKS = {
     },
 
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Harness-extension session B (2026-05-22) â€” smoke-test entries for 4 new
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Harness-extension session B (2026-05-22) â€" smoke-test entries for 4 new
     # arg_types: allocator_nonnull, resource_loader_4arg, struct_three_write,
-    # slot_quad_set.  These entries are NOT C3 promotions â€” c3_batch_r handles
+    # slot_quad_set.  These entries are NOT C3 promotions â€" c3_batch_r handles
     # promotion.  They are here so run_diff.py can exercise the new arg_types.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x004c5890  RwTexDictionaryCreate
     # uint32*(void): alloc RwTexDictionary (type=6), link into global TXD list,
     # init circular texture sentinel, notify event DAT_00618150.
     # arg_type='allocator_nonnull': both sides must agree on null/non-null.
     # At quiescent main menu the RW engine IS initialised (game is at menu);
-    # the allocator via vtable+0x118 should succeed on both sides â†’ both 1.
+    # the allocator via vtable+0x118 should succeed on both sides â†' both 1.
     # (Demoted from C3 in frida-sweep-q because the old 'none' entry crashed
-    # identically â€” the new arg_type checks success/failure, not crash equality.)
+    # identically â€" the new arg_type checks success/failure, not crash equality.)
     'rw_tex_dictionary_create': {
         'rva':            0x004c5890,
         'export':         'RwTexDictionaryCreate',
@@ -9106,8 +9140,8 @@ HOOKS = {
     # arg_type='resource_loader_4arg': compare (ret & 1) | (outBuf_nonnull << 1).
     # Tests: known resource IDs that exist in MASHED.exe resources.
     # ID 0x194 (404) + "RWTEXDICTIONARY" is cited in analysis (FUN_004921d0).
-    # ID 1 / "RWTEXDICTIONARY" may or may not exist â€” harness is permissive.
-    # Both sides call into the same module â†’ same FindResource results.
+    # ID 1 / "RWTEXDICTIONARY" may or may not exist â€" harness is permissive.
+    # Both sides call into the same module â†' same FindResource results.
     'win32_resource_loader': {
         'rva':            0x004997b0,
         'export':         'Win32ResourceLoader',
@@ -9169,8 +9203,8 @@ HOOKS = {
     #   DAT_006412e8 + param_1 * 0xf40 + {0, 4, 8, 12}.
     # arg_type='slot_quad_set': pre-fill 4-word array, call, read back globals.
     # Only safe indices: 0 and 1 (stride 0xf40 = 3904; DAT_006412e8 = 0x006412e8).
-    # idx=0 â†’ 0x006412e8..0x006412f4 (safe BSS range).
-    # idx=1 â†’ 0x00642228..0x00642234 (safe BSS range).
+    # idx=0 â†' 0x006412e8..0x006412f4 (safe BSS range).
+    # idx=1 â†' 0x00642228..0x00642234 (safe BSS range).
     'slot_quad_set': {
         'rva':            0x00422ac0,
         'export':         'SlotQuadSet',
@@ -9200,14 +9234,14 @@ HOOKS = {
     },
 
     # ---------------------------------------------------------------------------
-    # Session save-sdone-a-s1 (2026-05-22) â€” Save subsystem core functions.
+    # Session save-sdone-a-s1 (2026-05-22) â€" Save subsystem core functions.
     # ---------------------------------------------------------------------------
 
     # 0x0040dd60  Race::GuardConcludedAndP1Won
     # 23-byte predicate. uint(void). Returns non-zero iff race concluded AND P0 won.
     # Expression: ((DAT_0063b90c != 1) - 1) & DAT_007f0fcc
-    # At quiescent main-menu: DAT_0063b90c == 0 (race not concluded) â†’ returns 0.
-    # Strategy: none â€” call 10x at quiescent state; both return 0 identically.
+    # At quiescent main-menu: DAT_0063b90c == 0 (race not concluded) â†' returns 0.
+    # Strategy: none â€" call 10x at quiescent state; both return 0 identically.
     # Globals: DAT_0063b90c (race-concluded), DAT_007f0fcc (P0-won flag).
     # Cited from: re/analysis/profile_career_d2/FUN_0040dd60.md
     'guard_concluded_and_p1_won': {
@@ -9224,7 +9258,7 @@ HOOKS = {
     # void(void). Stride-gather 12 bytes; championship table snapshot; profile
     # serialize; DEADBEEF magic write to 0x803358.
     # Strategy: void_write_observe on 0x803358 (DEADBEEF magic target).
-    # Sentinel written â†’ fn called â†’ both orig+reimpl write 0xDEADBEEF â†’ read back.
+    # Sentinel written â†' fn called â†' both orig+reimpl write 0xDEADBEEF â†' read back.
     # Result is identical (0xDEADBEEF) regardless of sentinel. 10 calls with
     # varied sentinels to confirm the write always fires.
     # crash_equal_ok=True: DAT_008A94A8 profile ptr may be NULL at menu (profile
@@ -9248,9 +9282,9 @@ HOOKS = {
     # void(void). Championship table restore; stride-scatter; state counter restore;
     # profile deserialize (if ptr non-null).
     # Strategy: void_write_observe on DAT_008A95AC (state counter).
-    # Sentinel written to kSaveStateCounter (0x008A95AC), fn called â€” Deserialize
+    # Sentinel written to kSaveStateCounter (0x008A95AC), fn called â€" Deserialize
     # overwrites it from DAT_00828254. Both orig+reimpl must write same value.
-    # crash_equal_ok=True: DAT_008A94A8 profile ptr may be NULL at menu â†’ profile
+    # crash_equal_ok=True: DAT_008A94A8 profile ptr may be NULL at menu â†' profile
     # path skipped, but counter restore always fires.
     # Cited from: re/analysis/save_gamesave_d3/00404e80.md
     'deserialize_from_buffer': {
@@ -9267,15 +9301,15 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session save-sdone-a-s2 â€” settings dialog + RW stream write (C2â†’C3)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session save-sdone-a-s2 â€" settings dialog + RW stream write (C2â†'C3)
     # Save/SettingsDialog.cpp (PopulateModeCombo, VideoSettingsDlgProc)
     # Save/RwStream.cpp (RwStreamWrite)
-    # Deferred: VideoSettingsDispatcher (0x00499400) â€” DialogBoxParamA live
+    # Deferred: VideoSettingsDispatcher (0x00499400) â€" DialogBoxParamA live
     #   modal loop + 3 C1 callees; deferred until those reach C2+.
-    # Deferred: FUN_00550910 (0x00550910) â€” VFS stream close; no confirmed
+    # Deferred: FUN_00550910 (0x00550910) â€" VFS stream close; no confirmed
     #   internal C2+ callee (IAT indirect only); live file-handle risk.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00498d60  PopulateModeCombo_s2
     # 219-byte mode combo filler. HWND via EAX (Ghidra in_EAX).
@@ -9284,8 +9318,8 @@ HOOKS = {
     # identically at first SendMessageA(NULL, CB_ADDSTRING, ...) (null HWND
     # from EAX=0 passed to PopulateModeCombo_Body).
     # Anti-island: callers VideoDialogInit_i3 (C3), SubsystemSelChanged_i3 (C3).
-    # Callees: FormatDisplayModeString (C1, EBX-implicit â€” via naked thunk),
-    #          SendMessageA (Win32 â€” satisfy callee rule).
+    # Callees: FormatDisplayModeString (C1, EBX-implicit â€" via naked thunk),
+    #          SendMessageA (Win32 â€" satisfy callee rule).
     # ref: re/analysis/promote_c2_settings_dialog/00498d60.md
     'populate_mode_combo_s2': {
         'rva':            0x00498d60,
@@ -9301,9 +9335,9 @@ HOOKS = {
     # 0x004991f0  VideoSettingsDlgProc_s2
     # 453-byte DLGPROC for dialog 0x65. Standard Win32 DLGPROC signature.
     # Not exercised at main menu (dialog silenced by patch).
-    # Synthetic call: arg_type='none' â†’ all args=0 (hDlg=NULL, uMsg=0,
+    # Synthetic call: arg_type='none' â†' all args=0 (hDlg=NULL, uMsg=0,
     # wParam=0, lParam=0). uMsg=0 is not WM_INITDIALOG(0x110) or WM_COMMAND
-    # (0x111) â€” falls through default â†’ returns FALSE (0). Deterministic.
+    # (0x111) â€" falls through default â†' returns FALSE (0). Deterministic.
     # Both orig+reimpl return 0 for all 10 invocations. Bit-identity proven.
     # Anti-island: caller VideoSettingsDispatcher (C2); callees VideoDialogInit
     #   (C3), SubsystemSelChanged (C3), ReadModeFromCombo (C3), EndDialog (Win32).
@@ -9321,12 +9355,12 @@ HOOKS = {
 
     # 0x004cbe80  RwStreamWrite_s2
     # 444-byte RW stream write: 4-type switch (file-fwrite/mem-grow+copy/cb-write).
-    # Synthetic call: arg_type='none' â†’ param_1=NULL â†’ deref at context[0]
-    # type dispatch â†’ identical crash on both sides. crash_equal_ok=True.
+    # Synthetic call: arg_type='none' â†' param_1=NULL â†' deref at context[0]
+    # type dispatch â†' identical crash on both sides. crash_equal_ok=True.
     # Anti-island: callers FileWriteWrapper_i3 (C3), RwStreamWriteChunked (C3).
     #              callees RwIdentityPassthrough (C3), RwErrSlotWrite (C3),
     #              VfsStreamRead/fwrite-style (C3).
-    # [U-2328] 0x30404 alloc flags, [U-2329] 0x1030404 realloc flags â€” non-blocking.
+    # [U-2328] 0x30404 alloc flags, [U-2329] 0x1030404 realloc flags â€" non-blocking.
     # ref: re/analysis/promote_c2_rw_engine_init/004cbe80.md
     'rw_stream_write_s2': {
         'rva':            0x004cbe80,
@@ -9341,15 +9375,15 @@ HOOKS = {
 
 
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session save-sdone-a-s2 â€” settings dialog + RW stream write (C2â†’C3)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session save-sdone-a-s2 â€" settings dialog + RW stream write (C2â†'C3)
     # Save/SettingsDialog.cpp (PopulateModeCombo, VideoSettingsDlgProc)
     # Save/RwStream.cpp (RwStreamWrite)
-    # Deferred: VideoSettingsDispatcher (0x00499400) â€” DialogBoxParamA live
+    # Deferred: VideoSettingsDispatcher (0x00499400) â€" DialogBoxParamA live
     #   modal loop + 3 C1 callees; deferred until those reach C2+.
-    # Deferred: FUN_00550910 (0x00550910) â€” VFS stream close; no confirmed
+    # Deferred: FUN_00550910 (0x00550910) â€" VFS stream close; no confirmed
     #   internal C2+ callee (IAT indirect only); live file-handle risk.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00498d60  PopulateModeCombo_s2
     # 219-byte mode combo filler. HWND via EAX (Ghidra in_EAX).
@@ -9358,14 +9392,14 @@ HOOKS = {
     # identically at first SendMessageA(NULL, CB_ADDSTRING, ...) (null HWND
     # from EAX=0 passed to PopulateModeCombo_Body).
     # Anti-island: callers VideoDialogInit_i3 (C3), SubsystemSelChanged_i3 (C3).
-    # Callees: FormatDisplayModeString (C1, EBX-implicit â€” via naked thunk),
-    #          SendMessageA (Win32 â€” satisfy callee rule).
+    # Callees: FormatDisplayModeString (C1, EBX-implicit â€" via naked thunk),
+    #          SendMessageA (Win32 â€" satisfy callee rule).
     # ref: re/analysis/promote_c2_settings_dialog/00498d60.md
     'populate_mode_combo_s2': {
         'rva':            0x00498d60,
         'export':         'PopulateModeCombo_s2',
         # Real ret is void but use uint32 so Frida serializes the return value
-        # (void causes `got` to be omitted from JSON â†’ KeyError in write_report).
+        # (void causes `got` to be omitted from JSON â†' KeyError in write_report).
         'signature':      {'ret': 'uint32', 'args': []},
         'arg_type':       'none',
         'crash_equal_ok': True,
@@ -9378,9 +9412,9 @@ HOOKS = {
     # 0x004991f0  VideoSettingsDlgProc_s2
     # 453-byte DLGPROC for dialog 0x65. Standard Win32 DLGPROC signature.
     # Not exercised at main menu (dialog silenced by patch).
-    # Synthetic call: arg_type='none' â†’ all args=0 (hDlg=NULL, uMsg=0,
+    # Synthetic call: arg_type='none' â†' all args=0 (hDlg=NULL, uMsg=0,
     # wParam=0, lParam=0). uMsg=0 is not WM_INITDIALOG(0x110) or WM_COMMAND
-    # (0x111) â€” falls through default â†’ returns FALSE (0). Deterministic.
+    # (0x111) â€" falls through default â†' returns FALSE (0). Deterministic.
     # Both orig+reimpl return 0 for all 10 invocations. Bit-identity proven.
     # Anti-island: caller VideoSettingsDispatcher (C2); callees VideoDialogInit
     #   (C3), SubsystemSelChanged (C3), ReadModeFromCombo (C3), EndDialog (Win32).
@@ -9399,12 +9433,12 @@ HOOKS = {
 
     # 0x004cbe80  RwStreamWrite_s2
     # 444-byte RW stream write: 4-type switch (file-fwrite/mem-grow+copy/cb-write).
-    # Synthetic call: arg_type='none' â†’ param_1=NULL â†’ deref at context[0]
-    # type dispatch â†’ identical crash on both sides. crash_equal_ok=True.
+    # Synthetic call: arg_type='none' â†' param_1=NULL â†' deref at context[0]
+    # type dispatch â†' identical crash on both sides. crash_equal_ok=True.
     # Anti-island: callers FileWriteWrapper_i3 (C3), RwStreamWriteChunked (C3).
     #              callees RwIdentityPassthrough (C3), RwErrSlotWrite (C3),
     #              VfsStreamRead/fwrite-style (C3).
-    # [U-2328] 0x30404 alloc flags, [U-2329] 0x1030404 realloc flags â€” non-blocking.
+    # [U-2328] 0x30404 alloc flags, [U-2329] 0x1030404 realloc flags â€" non-blocking.
     # ref: re/analysis/promote_c2_rw_engine_init/004cbe80.md
     'rw_stream_write_s2': {
         'rva':            0x004cbe80,
@@ -9428,7 +9462,7 @@ HOOKS = {
     # (DAT_007719e4 == 0).
     # Synthetic call: arg_type='none', zero args. Both sides may crash identically
     # when DInput is not initialized; crash_equal_ok=True covers that case.
-    # arg_type='none' â€” both sides call with zero args; signature.args must be [].
+    # arg_type='none' â€" both sides call with zero args; signature.args must be [].
     # Anti-island: callee FUN_00495150 (C2); callers via WinMain chain.
     # ref: re/analysis/promote_c2_launch_handshake/00493540.md
     'launch_lang_gate': {
@@ -9449,7 +9483,7 @@ HOOKS = {
     # arg_type='teardown_call_pair': zero DAT_007d3ff8 (RW engine vtable base)
     # before EACH call (both orig AND reimpl) so both crash symmetrically from
     # idx=0. Without this, orig runs first on fresh state (succeeds), reimpl runs
-    # after orig has torn down the engine (crashes â€” asymmetric divergence at idx=0).
+    # after orig has torn down the engine (crashes â€" asymmetric divergence at idx=0).
     # crash_equal_ok=True covers all crash pairs. state_global_str=0x007d3ff8.
     # Anti-island: callee FUN_004938c0 (C2); callers via WinMain chain.
     # ref: re/analysis/promote_c2_launch_handshake/00493550.md
@@ -9508,10 +9542,10 @@ HOOKS = {
     # Calls: FUN_00558470 / FUN_00550390 / FUN_004c2f60 / FUN_004c3040 / FUN_004c3270.
     # arg_type='teardown_call_pair': same strategy. Zero DAT_007d3ff8 before each
     # call pair. FUN_00558470 is the first callee that dereferences the RW engine
-    # vtable at 0x007d3ff8+0x20 â€” pre-zeroing forces identical crash from idx=0.
+    # vtable at 0x007d3ff8+0x20 â€" pre-zeroing forces identical crash from idx=0.
     # Anti-island: all 5 callees at C2; callers FUN_00492370 (WinMain chain),
     #              thunk_FUN_004938c0 (0x00493550).
-    # [U-3860] callee semantics unknown at C2 â€” non-blocking for C3 promotion.
+    # [U-3860] callee semantics unknown at C2 â€" non-blocking for C3 promotion.
     # ref: re/analysis/promote_c2_launch_handshake/004938c0.md
     'engine_stop_helper': {
         'rva':              0x004938c0,
@@ -9527,13 +9561,13 @@ HOOKS = {
 
 
     # =========================================================================
-    # c3-batch-r-s2 â€” boot_subsystem_init  (2026-05-23)
+    # c3-batch-r-s2 â€" boot_subsystem_init  (2026-05-23)
     # Cluster: Boot/SubsystemInit.cpp
-    # 4 promotions; 1 deferred (DataZeroFill 0x004924f0 â€” side-effect-heavy).
+    # 4 promotions; 1 deferred (DataZeroFill 0x004924f0 â€" side-effect-heavy).
     # =========================================================================
 
     # 0x00492270  SubsystemInit
-    # 30-byte gate: FUN_00493710(0) â†’ if 0 return 0; else DisplayInit()+ViewportInit(); return 1.
+    # 30-byte gate: FUN_00493710(0) â†' if 0 return 0; else DisplayInit()+ViewportInit(); return 1.
     # arg_type='none': zero-arg call; returns uint32 (0 or 1).
     # Strategy: at main menu, RW is already initialised so FUN_00493710(0) returns non-zero;
     # both orig and reimpl should return 1. crash_equal_ok=True (re-init side effects; but both
@@ -9553,7 +9587,7 @@ HOOKS = {
 
     # 0x004921d0  DisplayInit
     # 155-byte display init: reads RW video mode, sets viewport dims, loads LoadIcon TXD.
-    # arg_type='void': no args, void return. crash_equal_ok=True â€” side effects on globals
+    # arg_type='void': no args, void return. crash_equal_ok=True â€" side effects on globals
     # DAT_0077195c and DAT_00771960 are identical between orig and reimpl; both sides call
     # same stubs (passthrough to originals for S-3902..S-3905). Observable: no crash.
     # Anti-island: caller SubsystemInit C2->C3 (this batch); callee FUN_004c2f00 C3.
@@ -9569,7 +9603,7 @@ HOOKS = {
         'path2_tests':    [None, None, None],
     },
 
-    # 0x00428590  ViewportInit â€” DEFERRED (not in this registry)
+    # 0x00428590  ViewportInit â€" DEFERRED (not in this registry)
     # Deferred from c3-batch-r-s2: synthetic A/B is unreliable for this function.
     # The reimpl (ViewportInit in Boot/SubsystemInit.cpp) calls 0x004c1bb0 and 0x004c1a00
     # with single-arg cdecl, but those RVAs are patched by installed hooks
@@ -9585,7 +9619,7 @@ HOOKS = {
     # See DEFERRED.md for tracking row.
     # ref: re/analysis/boot_subsystem_d3/0x00428590.md
 
-    # 0x00492e60  SetDefaultViewWindow â€” DEFERRED (not in this registry)
+    # 0x00492e60  SetDefaultViewWindow â€" DEFERRED (not in this registry)
     # Deferred from c3-batch-r-s2: calling convention ambiguity on FUN_004c1c80.
     # The analysis note describes FUN_004c1c80 as 1-arg cdecl (Ghidra shows it taking
     # uVar1 only), but the actual function is likely __thiscall(RwCamera*, RwV2d*) per
@@ -9598,13 +9632,13 @@ HOOKS = {
     # build-clean. [UNCERTAIN U-3922] covers the 0xffffffff ambiguity.
     # ref: re/analysis/skeleton_prep_boot_winmain_a/00492e60.md
 
-    # â”€â”€ c3-batch-r session 3: frame world render passes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€ c3-batch-r session 3: frame world render passes â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00426670  WorldRenderDispatch_Begin
     # void(int camera_ptr): guard DAT_0066d704; selects world-A/B handle;
     # calls FUN_004e4320(world_handle, camera_ptr).
-    # At quiescent main menu, DAT_0066d704 == 0 â†’ early return on all tests.
-    # Strategy: int_scalar; void_match at menu â†’ GREEN.
+    # At quiescent main menu, DAT_0066d704 == 0 â†' early return on all tests.
+    # Strategy: int_scalar; void_match at menu â†' GREEN.
     # Anti-island: callers FUN_0040df20/FUN_00492e90 (both C2); callee FUN_004e4320 (C2).
     # ref: re/analysis/render_promote_c2_track_loader/0x00426670.md
     'world_render_dispatch_begin': {
@@ -9613,14 +9647,14 @@ HOOKS = {
         'signature':      {'ret': 'void', 'args': ['int32']},
         'arg_type':       'int_scalar',
         'lut_root_delta': 0,
-        # 10 vectors; DAT_0066d704 == 0 at menu â†’ all take the early-return
-        # path â†’ void_match â†’ GREEN.  param_1 is never dereferenced.
+        # 10 vectors; DAT_0066d704 == 0 at menu â†' all take the early-return
+        # path â†' void_match â†' GREEN.  param_1 is never dereferenced.
         'path1_tests':    [0, 1, 2, 100, 0xFFFF, 0x1234, 0xDEAD, 0x4321, 0xBEEF, 0xABCD],
         'path2_tests':    [0, 1, 2],
     },
 
     # =========================================================================
-    # c3-batch-r session C â€” harness-extensions  (2026-05-22)
+    # c3-batch-r session C â€" harness-extensions  (2026-05-22)
     # New arg_types: teardown_call_pair, large_buffer_save_restore
     # =========================================================================
 
@@ -9629,14 +9663,14 @@ HOOKS = {
     # arg_type='large_buffer_save_restore': snapshot DAT_007f0f60 (0x35da4 bytes =
     # 0xdce9 dwords) before EACH call pair; restore between orig and reimpl so both
     # sides see the same pre-call buffer state. Without this, orig zeroes the region,
-    # then reimpl finds it already zeroed â€” subsequent nested init loops produce
+    # then reimpl finds it already zeroed â€" subsequent nested init loops produce
     # different results (init state consumed by first call).
     #
     # PROMOTION BLOCKER: anti-island rule prevents C3 until all callees are C2+.
     # Current callee status:
     #   FUN_00431ae0 C1, FUN_00431af0 C1, FUN_00431b00 C1,
     #   0x0045b350 C1, FUN_00431b10 C1, FUN_00431d00 C2.
-    # 5 of 6 callees at C1 â€” cannot promote to C3 until promoted.
+    # 5 of 6 callees at C1 â€" cannot promote to C3 until promoted.
     # This registry entry is INFRASTRUCTURE ONLY (enables harness-side testing);
     # C3 promotion requires callee promotions first.
     # Also blocked by [UNCERTAIN U-0009] inner-switch effective-address math.
@@ -9675,9 +9709,9 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-s-s1 â€” Frontend/SlotZeroers_s1.cpp (C2->C3)
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-s-s1 â€" Frontend/SlotZeroers_s1.cpp (C2->C3)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00422aa0  SlotFieldSet  void(int slot, uint32 value)
     # Pure leaf setter. Writes param_2 into dword at
@@ -9717,14 +9751,14 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-s-s2 â€” frontend per-player score accessors (C2->C3)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-s-s2 â€" frontend per-player score accessors (C2->C3)
     # Frontend/SlotZeroers_s2.cpp
     # Five per-player score getters that read from 0x00899a40 block,
     # stride 0x4e dwords (= 0x138 bytes) per player.
     # Two callee patterns:
-    #   GetRaceSubMode (0x0042f6a0, C3) â€” race sub-mode guard (== 4 â†’ return 0)
-    #   GetDat0067ea64 (0x0042f500, C4) â€” team mode flag (== 0 â†’ direct read)
+    #   GetRaceSubMode (0x0042f6a0, C3) â€" race sub-mode guard (== 4 â†' return 0)
+    #   GetDat0067ea64 (0x0042f500, C4) â€" team mode flag (== 0 â†' direct read)
     # At quiescent main menu: race sub-mode != 4, team mode == 0.
     # Strategy: int_scalar; player indices 0..3 repeated.
     # Both paths read from the same global arrays; A/B must be bit-identical.
@@ -9733,13 +9767,13 @@ HOOKS = {
     #      re/analysis/frontend_c1_to_c2_s2/0x00423ba0.md
     #      re/analysis/frontend_c1_to_c2_s2/0x00423bc0.md
     #      re/analysis/frontend_c1_to_c2_s2/0x00423c40.md
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00423b40  PlayerScoreAccA
-    # Per-player score accessor #1. Guard: GetRaceSubMode()==4 â†’ return 0.
+    # Per-player score accessor #1. Guard: GetRaceSubMode()==4 â†' return 0.
     # Returns (&DAT_00899a94)[param_1 * 0x4e] (dword array, stride 0x4e dwords).
-    # At main menu: race sub-mode != 4 â†’ takes array-read path.
-    # Both orig and reimpl read same global â†’ bit-identical.
+    # At main menu: race sub-mode != 4 â†' takes array-read path.
+    # Both orig and reimpl read same global â†' bit-identical.
     'player_score_acc_a': {
         'rva':            0x00423b40,
         'export':         'PlayerScoreAccA',
@@ -9778,8 +9812,8 @@ HOOKS = {
 
     # 0x00423bc0  PlayerScoreTeamAccC
     # Team-aware accessor. Field at base 0x00899a9c, stride 0x4e dwords.
-    # At main menu: GetDat0067ea64()==0 (no teams) â†’ direct-read path.
-    # Returns (&DAT_00899a9c)[param_1 * 0x4e] â€” player data stable at menu.
+    # At main menu: GetDat0067ea64()==0 (no teams) â†' direct-read path.
+    # Returns (&DAT_00899a9c)[param_1 * 0x4e] â€" player data stable at menu.
     'player_score_team_acc_c': {
         'rva':            0x00423bc0,
         'export':         'PlayerScoreTeamAccC',
@@ -9793,7 +9827,7 @@ HOOKS = {
     # 0x00423c40  PlayerScoreTeamAccBase
     # Team-aware accessor. Field at base 0x00899a40 (player struct base field +0x000).
     # No race-sub-mode guard. Same team-mode strategy as PlayerScoreTeamAccC.
-    # At main menu: GetDat0067ea64()==0 (no teams) â†’ direct-read path.
+    # At main menu: GetDat0067ea64()==0 (no teams) â†' direct-read path.
     'player_score_team_acc_base': {
         'rva':            0x00423c40,
         'export':         'PlayerScoreTeamAccBase',
@@ -9804,17 +9838,17 @@ HOOKS = {
         'path2_tests':    [0, 1, 2, 3],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-s-s3 â€” frontend menu-leaf cluster (C2â†’C3, 5 candidates)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-s-s3 â€" frontend menu-leaf cluster (C2â†'C3, 5 candidates)
     # Frontend/MenuLeaves_s3.cpp
     # Four team-aggregating per-player stat getters + one trivial global reader.
     # Callees: GetDat0067ea64 (0x0042f500, C4), GetRaceSubMode (0x0042f6a0, C3).
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00423ee0  PlayerBlock2Field00Get
     # int(int param_1): reads (&DAT_00899f20)[param_1*0x4e]; team-aggregates if teams on.
     # No RaceSubMode gate. Pure field +0x00 from block-2 root.
-    # At quiescent main menu: GetDat0067ea64()==0 â†’ direct field access.
+    # At quiescent main menu: GetDat0067ea64()==0 â†' direct field access.
     # int_scalar: pass player indices 0..3.
     # ref: re/analysis/frontend_c1_to_c2_s3/FUN_00423ee0.md
     'player_block2_field00_get': {
@@ -9828,7 +9862,7 @@ HOOKS = {
     },
 
     # 0x00423f60  PlayerBlock2Field04Get
-    # int(int param_1): same as Field00Get but field +0x04; RaceSubMode==4 â†’ return 0.
+    # int(int param_1): same as Field00Get but field +0x04; RaceSubMode==4 â†' return 0.
     # ref: re/analysis/frontend_c1_to_c2_s3/FUN_00423f60.md
     'player_block2_field04_get': {
         'rva':            0x00423f60,
@@ -9842,7 +9876,7 @@ HOOKS = {
 
     # 0x00423ff0  PlayerBlock2Field50Get
     # int(int param_1): field +0x50 from block-2 root (dword offset 0x14). No gate.
-    # At quiescent main menu: GetDat0067ea64()==0 â†’ direct field access.
+    # At quiescent main menu: GetDat0067ea64()==0 â†' direct field access.
     # int_scalar: same 4-slot coverage.
     # ref: re/analysis/frontend_c1_to_c2_s3/FUN_00423ff0.md
     'player_block2_field50_get': {
@@ -9856,8 +9890,8 @@ HOOKS = {
     },
 
     # 0x00424070  PlayerBlock2Field08Get
-    # int(int param_1): field +0x08 from block-2 root; RaceSubMode==4 â†’ return 0.
-    # At quiescent main menu: GetRaceSubMode()!=4, GetDat0067ea64()==0 â†’ direct field.
+    # int(int param_1): field +0x08 from block-2 root; RaceSubMode==4 â†' return 0.
+    # At quiescent main menu: GetRaceSubMode()!=4, GetDat0067ea64()==0 â†' direct field.
     # int_scalar: same 4-slot coverage.
     # ref: re/analysis/frontend_c1_to_c2_s3/FUN_00424070.md
     'player_block2_field08_get': {
@@ -9872,7 +9906,7 @@ HOOKS = {
 
     # 0x004241b0  GetDat008994c0
     # undefined4 FUN_004241b0(void): 6-byte leaf, returns *(uint32*)0x008994c0.
-    # Strategy: read_global â€” write sentinel to 0x008994c0, call fn, compare return.
+    # Strategy: read_global â€" write sentinel to 0x008994c0, call fn, compare return.
     # Both orig and reimpl must return the sentinel verbatim.
     # 10 sentinel values spanning 0, 1, max, patterns.
     # ref: re/analysis/frontend_c1_to_c2_s3/FUN_004241b0.md
@@ -9889,15 +9923,15 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-s-s4 â€” Frontend/GlobalGetters_s4.cpp (C2â†’C3)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-s-s4 â€" Frontend/GlobalGetters_s4.cpp (C2â†'C3)
     # 5 pure-leaf global-getter functions.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00425ee0  SlotWordPtrGet
     # Signature: uint32_t* fn(int param_1)
     # Returns &DAT_00899294 + param_1 * 0x13 (int32 word stride).
-    # Strategy: int_scalar â€” pass param_1 as uint32; compare raw returned
+    # Strategy: int_scalar â€" pass param_1 as uint32; compare raw returned
     # pointer as integer. Both orig and reimpl must compute the same address.
     # 10 indices covering 0, low, mid, and boundary values.
     'slot_word_ptr_get': {
@@ -9913,7 +9947,7 @@ HOOKS = {
     # 0x00425ef0  ActiveSlotCount
     # Signature: int fn(void)
     # Counts active slots in the hardcoded 8-slot table at 0x00899260.
-    # Strategy: none â€” call 10x at quiescent main-menu state; both orig and
+    # Strategy: none â€" call 10x at quiescent main-menu state; both orig and
     # reimpl read the same live BSS addresses and must return identical counts.
     'active_slot_count': {
         'rva':            0x00425ef0,
@@ -9925,9 +9959,9 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
     # c3_batch_t-s6  skeleton_prep + scatter cluster (2026-05-26)
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x004274d0  LangIndexSeedFromCli  uint32_t(void)
     # 15B leaf. Reads DAT_007719e8 (cli-language-index) writes DAT_007f0f60.
@@ -9968,8 +10002,8 @@ HOOKS = {
     # 162B pure leaf. Loops 12 slots; iff iVar4 matches one of 4 active-player
     # slot ids, conditionally inc/dec/clamp slot property at DAT_0067e938.
     # At quiescent main menu, active-slot ids are sentinels (-1 / unset) so loop
-    # body short-circuits â€” both sides do identical no-op.
-    # arg_type='none': void return, called 10Ã— at quiescent menu; both sides
+    # body short-circuits â€" both sides do identical no-op.
+    # arg_type='none': void return, called 10Ã-- at quiescent menu; both sides
     # return undefined; identity check passes.
     # ref: re/analysis/frontend_unmapped_a/0x0042fa00.md
     'player_slot_edge_adjust': {
@@ -9984,8 +10018,8 @@ HOOKS = {
 
     # 0x00426020  GlobalDat00646e58Get
     # Signature: void* fn(void)
-    # Returns &DAT_00646e58 â€” fixed compile-time constant address.
-    # Strategy: none â€” call 10x; both orig and reimpl must return the same
+    # Returns &DAT_00646e58 â€" fixed compile-time constant address.
+    # Strategy: none â€" call 10x; both orig and reimpl must return the same
     # fixed address 0x00646e58 each time.
     'global_dat_00646e58_get': {
         'rva':            0x00426020,
@@ -10000,8 +10034,8 @@ HOOKS = {
     # 0x00403050  PreRaceLoadingScreenDraw  void(void)
     # 124B. Early-returns if DAT_00771964 == 0 (pre-race texture handle).
     # At quiescent main menu the handle is 0 (texture only loaded during track
-    # load), so the function returns immediately â€” both sides identical no-op.
-    # arg_type='none': void return, called 10Ã— at quiescent menu.
+    # load), so the function returns immediately â€" both sides identical no-op.
+    # arg_type='none': void return, called 10Ã-- at quiescent menu.
     # ref: re/analysis/loading_screen/0x00403050.md
     'pre_race_loading_screen_draw': {
         'rva':            0x00403050,
@@ -10015,8 +10049,8 @@ HOOKS = {
 
     # 0x00426080  GlobalDat00656ed8Get
     # Signature: uint32_t fn(void)
-    # Returns DAT_00656ed8 â€” reads and returns the 4-byte global value.
-    # Strategy: read_global â€” write sentinel values to 0x00656ed8, call fn(),
+    # Returns DAT_00656ed8 â€" reads and returns the 4-byte global value.
+    # Strategy: read_global â€" write sentinel values to 0x00656ed8, call fn(),
     # confirm both orig and reimpl read the same address and return the sentinel.
     'global_dat_00656ed8_get': {
         'rva':            0x00426080,
@@ -10033,8 +10067,8 @@ HOOKS = {
 
     # 0x00426090  GlobalDat0066ce58Get
     # Signature: void* fn(void)
-    # Returns &DAT_0066ce58 â€” fixed compile-time constant address.
-    # High fan-in: 8 callers. Strategy: none â€” call 10x; both orig and reimpl
+    # Returns &DAT_0066ce58 â€" fixed compile-time constant address.
+    # High fan-in: 8 callers. Strategy: none â€" call 10x; both orig and reimpl
     # must return the fixed address 0x0066ce58 each time.
     'global_dat_0066ce58_get': {
         'rva':            0x00426090,
@@ -10047,9 +10081,9 @@ HOOKS = {
     },
 
         # =========================================================================
-    # c3-batch-s session 5 â€” Frontend GlobalGetters_s5  (2026-05-26)
+    # c3-batch-s session 5 â€" Frontend GlobalGetters_s5  (2026-05-26)
     # 4 pure-leaf getters promoted C2->C3.
-    # Refused: 0x00426b40 (7 of 10 callees at C1 â€” anti-island rule).
+    # Refused: 0x00426b40 (7 of 10 callees at C1 â€" anti-island rule).
     # =========================================================================
 
     # 0x004260a0  GetDat00657438
@@ -10109,11 +10143,11 @@ HOOKS = {
     # 0x00426bd0  GetTableEntry0066d658
     # Reads a packed 4-byte record from table at 0x0066d658: stride 4 per index.
     # Writes low uint16 to *param_2, high uint16 to *param_3. Void return.
-    # Strategy: int_ptr2_out â€” fn(idx, out1, out2); compare packed fingerprint.
+    # Strategy: int_ptr2_out â€" fn(idx, out1, out2); compare packed fingerprint.
     # The buf is pre-zeroed; uint16 writes land in low 2 bytes of each 4-byte slot.
     # The `& 0x3f` pack covers 6 bits of each uint16, sufficient for table entries.
     # Indices 0..9 ensure varied table positions; at quiescent menu state
-    # 0x0066d658 holds live game data â€” both orig and reimpl read the same region.
+    # 0x0066d658 holds live game data â€" both orig and reimpl read the same region.
     # ref: re/analysis/frontend_c1_to_c2_s4/FUN_00426bd0.md
     'get_table_entry_0066d658': {
         'rva':            0x00426bd0,
@@ -10125,22 +10159,22 @@ HOOKS = {
         'path2_tests':    [0, 1, 2, 3],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-s-s6 â€” Frontend near-leaf cluster (C2â†’C3)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-s-s6 â€" Frontend near-leaf cluster (C2â†'C3)
     # Frontend/MenuNearLeaves_s6.cpp
     #
     # Deferred this session:
-    #   0x00426d90 HandleArrayRelease â€” callee 0x004e6680 (RpClumpRender) is C1;
+    #   0x00426d90 HandleArrayRelease â€" callee 0x004e6680 (RpClumpRender) is C1;
     #              callee gate fails. Re-enable once 0x004e6680 reaches C2+.
-    #   0x0042a640 PathBuilderLoad   â€” no suitable Frida arg_type for char* path
+    #   0x0042a640 PathBuilderLoad   â€" no suitable Frida arg_type for char* path
     #              + vtable dispatch. Queue harness-ext work first.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00426cb0  SlotIndexToPtr
     # Pure leaf: returns &DAT_00663664 + param_1 * 0x4c. 12 bytes. No callees.
     # Both orig and reimpl compute the same deterministic pointer for the same
-    # input index â†’ bit-identical on every call.
+    # input index â†' bit-identical on every call.
     # arg_type='int_scalar': passes int param_1, returns pointer (as uint32).
     # Tests cover index 0..10 and a few negative/large values.
     # ref: re/analysis/frontend_c1_to_c2_s4/FUN_00426cb0.md
@@ -10204,10 +10238,10 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
     # Harness-ext landed 2026-05-26: slot_block_zero + state_machine_observe.
     # Unblocks 3 c3_batch_s-s1 deferred candidates.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00422a80  SlotBlockZero  void(int slot)
     # 8-byte leaf. Computes base = &DAT_006403e8 + slot * 0xf40 and calls
@@ -10453,19 +10487,19 @@ HOOKS = {
         'path2_tests':    [0, 0, 0],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
     # c3-batch-t-s2 (2026-05-26): Frontend menu-miscellaneous leaves.
     # 5 of 10 candidates GREEN; refused: 0x00422aa0 (caller C1), 0x00426cb0
     # (callers C1), 0x00425b90 (callees C1), 0x00424270 (no harness arg_type
     # fit for void(int*, int, int)), 0x0042bfb0 (no harness arg_type fit for
     # 6-arg conditional writer).
     # See mashedmod/src/mashed_re/Frontend/MenuMiscLeaves_t2.cpp.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00423cc0  PlayerScoreTeamAccGatedB
     # Team-aware getter, block-1 +0x04 (base 0x00899a44), RaceSubMode gate.
     # At quiescent main menu: GetRaceSubMode()!=4 (typically 0), GetTeamMode()==0
-    # â†’ direct-read path. Both orig and reimpl read same field â†’ bit-identical.
+    # â†' direct-read path. Both orig and reimpl read same field â†' bit-identical.
     # ref: re/analysis/frontend_c1_to_c2_s2/0x00423cc0.md
     'player_score_team_acc_gated_b': {
         'rva':            0x00423cc0,
@@ -10518,7 +10552,7 @@ HOOKS = {
 
     # 0x00424920  EndOfRoundAccumulator  void()
     # Pure leaf: 32 sequential `block2_field += block1_field` adds across 4
-    # players Ã— 8 fields. No branches, no calls.
+    # players Ã-- 8 fields. No branches, no calls.
     # arg_type='state_machine_observe': inject 32 input globals (block-1
     # source fields), call fn(), read back 32 output globals (block-2 dest
     # fields). Save/restore wraps everything so the test is non-destructive.
@@ -10605,7 +10639,7 @@ HOOKS = {
             {'addr': 0x0089a228, 'type': 'u32'},
         ],
         'lut_root_delta': 0,
-        # 32 inputs each â€” array of 32 values. Use varied non-zero inputs to
+        # 32 inputs each â€" array of 32 values. Use varied non-zero inputs to
         # exercise add-paths; expected output is input + saved-pre-call-output.
         'path1_tests': [
             [1] * 32,
@@ -10627,15 +10661,15 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-t-s3 â€” frontend bucket_0041dc30 mixed C2â†’C3
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-t-s3 â€" frontend bucket_0041dc30 mixed C2â†'C3
     # mashedmod/src/mashed_re/Frontend/BucketMixed_t3.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
-    # 0x00431b70  GetDat007f0f10  â€” STAGED at C2 (NOT promoted; C3 caller-gate fails).
+    # 0x00431b70  GetDat007f0f10  â€" STAGED at C2 (NOT promoted; C3 caller-gate fails).
     # Pure-leaf uint32(void) getter: returns DAT_007f0f10. read_global Frida diff
     # is 10/10 GREEN and the reimpl is bit-identical, but the sole caller
-    # FUN_0045d0e0 is C1 (no callee â€” leaf), so the C3 caller-AND-callee gate is
+    # FUN_0045d0e0 is C1 (no callee â€" leaf), so the C3 caller-AND-callee gate is
     # unmet. RH_ScopedInstall is commented out. Re-pickup: promote FUN_0045d0e0.
     'get_dat_007f0f10': {
         'rva':            0x00431b70,
@@ -10706,15 +10740,15 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0x00000010, 0x00000200],
     },
 
-    # 0x00472dc0  Im2DTriangleDraw  â€” STAGED at C2 (NOT a C3 hook).
+    # 0x00472dc0  Im2DTriangleDraw  â€" STAGED at C2 (NOT a C3 hook).
     # void(float x1, y1, x2, y2, x3, y3, uint32 argb): 3-vertex Im2D fill.
-    # Sibling of ChromeBaseDraw (0x00472c60, C3) â€” same write pattern but
+    # Sibling of ChromeBaseDraw (0x00472c60, C3) â€" same write pattern but
     # 3 vertices instead of 4, and prim-count = 3.
     # draw_quad_observe (vbuf_len=92) is NON-DETERMINISTIC here: each vertex's
     # Z field is the live *(DAT_007d3ff8+0x18), read by both orig and reimpl at
     # call time. A frame boundary between the two calls changes Z and diverges
     # the buffer fingerprint (idx1/idx3 deterministically RED in run_diff.py).
-    # idx3's ARGB is byte-swap-invariant yet still diverges â€” isolating the
+    # idx3's ARGB is byte-swap-invariant yet still diverges â€" isolating the
     # divergence to the shared live Z read, not the reimpl. Kept here so the
     # harness can run it once a Z-freezing arg_type lands; the .asi RH_ScopedInstall
     # is commented out. See BucketMixed_t3.cpp.
@@ -10748,10 +10782,10 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-t-s5 â€” SplashGameMode_t5 cluster (C2->C3, 6 candidates)
-    # Frontend/SplashGameMode_t5.cpp â€” intro_splash + game_mode + race_results
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-t-s5 â€" SplashGameMode_t5 cluster (C2->C3, 6 candidates)
+    # Frontend/SplashGameMode_t5.cpp â€" intro_splash + game_mode + race_results
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00493f70  VideoStateFlagGet  uint32(void)
     # 5B leaf: returns DAT_00771a04.
@@ -10806,7 +10840,7 @@ HOOKS = {
 
     # 0x0046c700  EntityScoreFieldAdd  uint32(int32 idx, int32 delta)
     # 43B incrementer: if (idx>15) return 0; (int*)(0x008820b0+idx*0xd04) += delta; return 1.
-    # arg_type='entity_field_add': non-idempotent â€” snapshots field, calls
+    # arg_type='entity_field_add': non-idempotent â€" snapshots field, calls
     # fn(idx,delta), reads post-add field + return value, RESTORES baseline so
     # Orig and Reimpl each start from identical state. Fingerprint = ret:field.
     # Includes an out-of-range idx (16) to exercise the >15 guard (returns 0).
@@ -10842,7 +10876,7 @@ HOOKS = {
 
     # 0x004c75e0  ViewportOriginGetter  void(int obj, u16* out0, u16* out1)
     # 27B leaf: *out0 = *(u16*)(obj+0x1c); *out1 = *(u16*)(obj+0x1e).
-    # arg_type='int_ptr2_out': uses a 12-byte buf â€” pre-zeroes 4-byte slots,
+    # arg_type='int_ptr2_out': uses a 12-byte buf â€" pre-zeroes 4-byte slots,
     # calls fn(input, buf, buf+4), returns (buf[0]&0x3f) | ((buf[4]&0x3f)<<8).
     # input is the integer first arg (treated as pointer-typed obj address).
     # We pass valid in-process addresses so the U16 reads at +0x1c/+0x1e don't fault.
@@ -10850,7 +10884,7 @@ HOOKS = {
     # We exploit RX module read-only globals; pass MASHED.exe's image-base region
     # offsets where the dword at base+0x1c & 0x1e is mappable (text section).
     # Safe choice: pass a known C2-allocated video object header? Cleaner: pass
-    # a static known-mapped data pointer â€” DAT_00771a18 = 0x00771a18 base.
+    # a static known-mapped data pointer â€" DAT_00771a18 = 0x00771a18 base.
     # The function only reads 2 bytes at +0x1c and +0x1e. We pass test addrs
     # that point well inside MASHED.exe's writeable .data such that the reads
     # are safe and reproducible.
@@ -10921,12 +10955,12 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
     # c3-batch-u (2026-05-26): targeted arg_type-unblocked promotion.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042bfb0  MenuStateParamStore  void(p1..p6)
-    # Guarded 6-param global-block writer. If DAT_0067eab0==0 â†’ FUN_0042bf30()
+    # Guarded 6-param global-block writer. If DAT_0067eab0==0 â†' FUN_0042bf30()
     # alt path; else writes p1..p6 to DAT_0067e918..0067e92c + flag DAT_0067e930=1.
     # arg_type='multi_arg_global_write': set guard=1, call fn(p1..p6), read back
     # 7 u32s at 0x0067e918, restore. Gate: caller 0x00432450 C2, callee 0x0042bf30 C2.
@@ -10960,9 +10994,9 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
     # frontend-gate-unblock-u (2026-05-26): FrontendDirInput, now callee-gate-clear.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00423040  FrontendDirInput  void()
     # Directional-input handler: 2 conditional grid callbacks (gated by
@@ -10984,8 +11018,8 @@ HOOKS = {
         # RIGHT phase 0064410c/count 006440f4; UP phase 006440ec/count 00644104;
         # DOWN phase 006440f0/count 006440f8. scroll L/R=007f1a5c, U/D=007f1a58.
         'input_globals':  [
-            {'addr': 0x007f1042, 'type': 'u8'},   # callback-A trigger â€” HOLD 0
-            {'addr': 0x007f1076, 'type': 'u8'},   # callback-B trigger â€” HOLD 0
+            {'addr': 0x007f1042, 'type': 'u8'},   # callback-A trigger â€" HOLD 0
+            {'addr': 0x007f1076, 'type': 'u8'},   # callback-B trigger â€" HOLD 0
             {'addr': 0x007f1a54, 'type': 'u32'},  # menu_state
             {'addr': 0x007f1a64, 'type': 'u32'},  # tab_index
             {'addr': 0x007f1044, 'type': 'u8'},   # LEFT flag
@@ -11019,13 +11053,13 @@ HOOKS = {
         # [cbA, cbB, menu, tab, L, R, U, D, ec(UPp), f0(DNp), f4(Rc), f8(DNc), fc(Lp), 104(UPc), 108(Lc), 10c(Rp), s_a58, s_a5c]
         'path1_tests': [
             [0,0, 1,0, 0,0,0,0, 0,0,0,0,0,0,0,0, 0,0],          # all idle, menu!=0
-            [0,0, 0,4, 1,0,0,0, 0,0,0,0,0,0,0,0, 0,0],          # LEFT, phase0/count0 â†’ P=1,C=10
-            [0,0, 0,4, 0,1,0,0, 0,0,5,0,0,0,0,1, 0,0],          # RIGHT phase=1,count=5 â†’ P=2,C=4
-            [0,0, 0,4, 0,0,1,0, 0,0,0,0,0,1,0,0, 0,0],          # UP phase0,count1 â†’ P=1,C=10
-            [0,0, 0,4, 0,0,0,1, 0,1,0,1,0,0,0,0, 0,0],          # DOWN phase=1,count=1 â†’ P=2,C=0â†’?
+            [0,0, 0,4, 1,0,0,0, 0,0,0,0,0,0,0,0, 0,0],          # LEFT, phase0/count0 â†' P=1,C=10
+            [0,0, 0,4, 0,1,0,0, 0,0,5,0,0,0,0,1, 0,0],          # RIGHT phase=1,count=5 â†' P=2,C=4
+            [0,0, 0,4, 0,0,1,0, 0,0,0,0,0,1,0,0, 0,0],          # UP phase0,count1 â†' P=1,C=10
+            [0,0, 0,4, 0,0,0,1, 0,1,0,1,0,0,0,0, 0,0],          # DOWN phase=1,count=1 â†' P=2,C=0â†'?
             [0,0, 0,4, 1,1,1,1, 0,0,0,0,0,0,0,0, 0,0],          # all dirs, all phase0/count0
-            [0,0, 0,4, 0,0,0,0, 9,2,9,2,9,2,2,9, 0,0],          # no flags â†’ all phases reset to 0
-            [0,0, 0,4, 1,0,0,0, 0,0,0,0,1,0,0xa,0, 0,0],        # LEFT phase=1,count=10 â†’ P=2,C=9
+            [0,0, 0,4, 0,0,0,0, 9,2,9,2,9,2,2,9, 0,0],          # no flags â†' all phases reset to 0
+            [0,0, 0,4, 1,0,0,0, 0,0,0,0,1,0,0xa,0, 0,0],        # LEFT phase=1,count=10 â†' P=2,C=9
             [0,0, 0,4, 0,1,0,1, 0,1,3,1,0,0,0,1, 0,0],          # RIGHT+DOWN mixed
             [0,0, 5,4, 1,1,1,1, 1,1,1,1,1,1,1,1, 0,0],          # menu!=0 still runs timers (no cb)
         ],
@@ -11036,13 +11070,13 @@ HOOKS = {
         ],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-v-s1 â€” font_pools_frontend_ae6 / font_atlas_promote_ae5
-    # Frontend/Cluster_v1.cpp â€” 3 leaf candidates
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-v-s1 â€" font_pools_frontend_ae6 / font_atlas_promote_ae5
+    # Frontend/Cluster_v1.cpp â€" 3 leaf candidates
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00474e60  DegToRad
-    # float(float) â€” param_1 * _DAT_005cd7a8 (PI/180 = 0x3C8EFA35 = 0.0174533f).
+    # float(float) â€" param_1 * _DAT_005cd7a8 (PI/180 = 0x3C8EFA35 = 0.0174533f).
     # Pure x87 leaf: FLDS [ESP+4]; FMULS [0x005cd7a8]; RET (10 bytes).
     # Constant at 0x005cd7a8, read at 0x00474e62. Caller: FUN_00434720 (C2).
     # arg_type='float_scalar': pass degree value, compare float return.
@@ -11061,7 +11095,7 @@ HOOKS = {
     },
 
     # 0x00556cd0  FontAtlasSlotGet
-    # uint32(void) â€” returns DAT_00912a20 directly (5-byte pure-leaf getter).
+    # uint32(void) â€" returns DAT_00912a20 directly (5-byte pure-leaf getter).
     # MOV EAX, [0x00912a20]; RET. Data ref at 0x00556cd1.
     # Caller: FontText_HudShutdown (0x00427620, C2).
     # arg_type='read_global': write sentinel to 0x00912a20, call fn, compare return.
@@ -11079,7 +11113,7 @@ HOOKS = {
     },
 
     # 0x00556cc0  FontAtlasSlotSet
-    # void(uint32) â€” DAT_00912a20 = param_1 (9-byte pure-leaf setter).
+    # void(uint32) â€" DAT_00912a20 = param_1 (9-byte pure-leaf setter).
     # MOV EAX,[ESP+4]; MOV [0x00912a20],EAX; RET. Data ref at 0x00556cc3.
     # Caller: FUN_00427ca0 (0x00427ca0, C2).
     # arg_type='void_setter_observe': call fn(value), read back 0x00912a20.
@@ -11096,16 +11130,16 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0x00000001, 0xDEADBEEF],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-v-s2 â€” HUD/Cluster_v2.cpp (1/3 promoted)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-v-s2 â€" HUD/Cluster_v2.cpp (1/3 promoted)
     # Refusals:
-    #   0x004c1c80 â€” no arg_type for (int, in_ptr_2uint32) returning int;
+    #   0x004c1c80 â€" no arg_type for (int, in_ptr_2uint32) returning int;
     #               callee FUN_004c0e50 IS C2 now (stale batch-k note) but
     #               harness gap blocks promotion; deferred.
-    #   0x00555f20 â€” int param_1 is a live font ctx pointer; vtable+0x108 call
+    #   0x00555f20 â€" int param_1 is a live font ctx pointer; vtable+0x108 call
     #               requires valid live object; no arg_type creates font ctx
     #               from test scalars; deferred.
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00402f80  CupFloatInit
     # Pure void(void) initialiser: no calls, no branches. Writes 4 constants
@@ -11131,10 +11165,10 @@ HOOKS = {
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-aa-s1 â€” BatchAA_s1.cpp  (5 candidates, 1 deferred)
-    # Deferred: 0x00426b40 â€” still anti-island (7/10 callees at C1)
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-aa-s1 â€" BatchAA_s1.cpp  (5 candidates, 1 deferred)
+    # Deferred: 0x00426b40 â€" still anti-island (7/10 callees at C1)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00426cf0  GetDat0066d6e4
     # undefined4 * FUN_00426cf0(void): pure leaf; returns &DAT_0066d6e4.
@@ -11155,9 +11189,9 @@ HOOKS = {
 
     # 0x0041ded0  HudModeGuardDispatch
     # void FUN_0041ded0(undefined4 param_1): if (DAT_0063d5e8 != 0) FUN_0041de80(param_1).
-    # Callee: FUN_0041de80 (C2) â€” HUD mode dispatcher with vtable dispatches.
+    # Callee: FUN_0041de80 (C2) â€" HUD mode dispatcher with vtable dispatches.
     # arg_type='int_scalar': pass param_1 (0 or 1 per callers).
-    # At quiescent main menu DAT_0063d5e8 == 0 â†’ guard skips â†’ void_match for all inputs.
+    # At quiescent main menu DAT_0063d5e8 == 0 â†' guard skips â†' void_match for all inputs.
     # void_match: both sides return void without error == GREEN.
     # crash_equal_ok=True as fallback if guard is non-zero at attach time.
     # ref: re/analysis/hud_ingame_promote_c2/0x0041ded0.md
@@ -11178,7 +11212,7 @@ HOOKS = {
     #        DAT_00912bd8=0; DAT_00912bec=0; return 1.
     # Callee: FUN_004c4d20 (C2, RwMatrix_SetRotAxisAngle).
     # arg_type='float_scalar': pass angle directly; compare return value (always 1).
-    #   Function always returns 1; both orig and reimpl return 1 â†’ 10/10 GREEN if
+    #   Function always returns 1; both orig and reimpl return 1 â†' 10/10 GREEN if
     #   no crash. crash_equal_ok=True: if font context not set up, both sides crash
     #   identically at g_FontCtxPtrs[depth] deref.
     # Strategy rationale: font_ctx_float2 requires 2 floats + a prelude; no single-
@@ -11211,10 +11245,10 @@ HOOKS = {
     # 0x0042bde0  HudRectEmitter5
     # void FUN_0042bde0(int param_1, byte param_2): emits 5 HUD rects via ChromeBaseDraw.
     # Callee: FUN_00472c60 ChromeBaseDraw (C3).
-    # ChromeBaseDraw calls into D3D9 render state + RW vtable â€” will crash at
+    # ChromeBaseDraw calls into D3D9 render state + RW vtable â€" will crash at
     # quiescent attach time when vtable global DAT_007d3ff8 may not be set up.
     # arg_type='none': call fn() with no args (like MenuMenusBC 0x0042f8d0 pattern);
-    #   both sides crash identically at the render path â†’ crash_equal_ok GREEN.
+    #   both sides crash identically at the render path â†' crash_equal_ok GREEN.
     # Signature: void() for the none/crash_equal_ok strategy; actual args not needed.
     # ref: re/analysis/frontend_c1_to_c2_s6/FUN_0042bde0.md
     'hud_rect_emitter5': {
@@ -11231,10 +11265,10 @@ HOOKS = {
     # 0x00426dc0  FrontendRaycastForward
     # void FUN_00426dc0(undefined4 p1, undefined4 p2, undefined4 p3):
     #   3-arg forwarder: FUN_00479100(&DAT_00646e58, p1, p2, p3); return.
-    # Callee: FUN_00479100 (C2) â€” raycast + vertex-color sample on collision mesh.
+    # Callee: FUN_00479100 (C2) â€" raycast + vertex-color sample on collision mesh.
     # Calling FUN_00479100 without a live collision mesh will crash.
     # arg_type='none': call fn() with no args; both sides crash at the FUN_00479100
-    #   collision-mesh deref identically â†’ crash_equal_ok GREEN.
+    #   collision-mesh deref identically â†' crash_equal_ok GREEN.
     # (&DAT_00646e58 is a real global address hardcoded in reimpl; both sides pass
     # the same pointer, so the crash site is identical.)
     # ref: re/analysis/frontend_c1_to_c2_s5/FUN_00426dc0.md
@@ -11249,21 +11283,21 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-aa-s2 â€” frontend per-player score accessor (C2->C3)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-aa-s2 â€" frontend per-player score accessor (C2->C3)
     # Frontend/BatchAA_s2.cpp
-    # 0x00423b80  PlayerScoreAccC â€” twin of AccA/AccB with base 0x00899f74.
+    # 0x00423b80  PlayerScoreAccC â€" twin of AccA/AccB with base 0x00899f74.
     # Callee: GetRaceSubMode (0x0042f6a0, C3). At quiescent main menu:
-    # race sub-mode != 4 â†’ takes the array-read path â†’ bit-identical with orig.
+    # race sub-mode != 4 â†' takes the array-read path â†' bit-identical with orig.
     # arg_type='int_scalar': pass int param_1 (player index), compare uint32 return.
     # ref: re/analysis/frontend_c1_to_c2_s2/0x00423b80.md
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00423b80  PlayerScoreAccC
-    # Per-player score accessor #3. Guard: GetRaceSubMode()==4 â†’ return 0.
+    # Per-player score accessor #3. Guard: GetRaceSubMode()==4 â†' return 0.
     # Returns (&DAT_00899f74)[param_1 * 0x4e] (dword array, stride 0x4e dwords).
     # Array base: 0x00899f74 (field +0x534 from 0x00899a40, cited at 0x00423b95).
-    # At main menu: race sub-mode != 4 â†’ takes array-read path â†’ bit-identical.
+    # At main menu: race sub-mode != 4 â†' takes array-read path â†' bit-identical.
     'player_score_acc_c': {
         'rva':            0x00423b80,
         'export':         'PlayerScoreAccC',
@@ -11275,12 +11309,12 @@ HOOKS = {
         'path2_tests':    [0, 1, 2, 3],
     },
 
-    # â”€â”€ c3-batch-aa-s3 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Frontend/BatchAA_s3.cpp â€” GetDat0067d84c, TeamBlockZeroGet, SetDat00912a20
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€ c3-batch-aa-s3 â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Frontend/BatchAA_s3.cpp â€" GetDat0067d84c, TeamBlockZeroGet, SetDat00912a20
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00427c90  GetDat0067d84c
-    # undefined4 FUN_00427c90(void) â€” pure 5-byte getter; returns DAT_0067d84c.
+    # undefined4 FUN_00427c90(void) â€" pure 5-byte getter; returns DAT_0067d84c.
     # No callees, no branches.
     # arg_type='read_global': write sentinel to target_global, call fn(), read back.
     # ref: re/analysis/frontend_c1_to_c2_s5/FUN_00427c90.md
@@ -11298,7 +11332,7 @@ HOOKS = {
     },
 
     # 0x00424100  TeamBlockZeroGet
-    # int FUN_00424100(int param_1) â€” team-aggregating block-0 getter.
+    # int FUN_00424100(int param_1) â€" team-aggregating block-0 getter.
     # param_1: player slot index 0..3.
     # Returns block-0 field at (&DAT_008999a0)[param_1 * 0x4e] plus team-partner
     # contributions (active-player guard: partner active-slot != -1).
@@ -11318,10 +11352,10 @@ HOOKS = {
     },
 
     # ── c3-batch-ad-s1 ───────────────────────────────────────────────────────
-    # Frontend/FrontendLeaves_ad1.cpp — TeamBlockOneGet
+    # Frontend/FrontendLeaves_ad1.cpp -- TeamBlockOneGet
     # ──────────────────────────────────────────────────────────────────────────
     # 0x004241c0  TeamBlockOneGet
-    # int FUN_004241c0(int param_1) — team-aggregating block-1 getter.
+    # int FUN_004241c0(int param_1) -- team-aggregating block-1 getter.
     # Exact structural twin of FUN_00424100 (team_block_zero_get), differing ONLY
     # in the block base: block-1 root DAT_00899e80 vs block-0 root DAT_008999a0.
     # param_1: player slot index 0..3.
@@ -11343,7 +11377,7 @@ HOOKS = {
     },
 
     # 0x00556cc0  SetDat00912a20
-    # void FUN_00556cc0(undefined4 param_1) â€” pure 9-byte setter.
+    # void FUN_00556cc0(undefined4 param_1) â€" pure 9-byte setter.
     # Writes param_1 to DAT_00912a20 (global font/style pointer at 0x00912a20).
     # No callees, no branches. One caller: FUN_00427ca0 (0x00427ca0).
     # arg_type='void_setter_observe': call fn(value), read back target_global.
@@ -11361,9 +11395,9 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-aa-s4 â€” frontend small leaves (C2â†’C3, 2 candidates)
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-aa-s4 â€" frontend small leaves (C2â†'C3, 2 candidates)
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042a9c0  ModeCodeLookup
     # Pure leaf. Reads DAT_007f0fd0 (mode/state int32 at 0x007f0fd0).
@@ -11372,7 +11406,7 @@ HOOKS = {
     #   if ((mode==10||mode==9||mode==8)||(mode==7||(uVar1=0x16,mode==5)))
     #       uVar1 = 0x2d;
     #   return uVar1;
-    # Strategy: read_global â€” write mode value to 0x007f0fd0, call fn(), compare ret.
+    # Strategy: read_global â€" write mode value to 0x007f0fd0, call fn(), compare ret.
     # Only defined modes {5,7,8,9,10} are tested (all return 0x2d).
     # [UNCERTAIN U-4200] on mode==5 return resolved by decomp literal (0x2d).
     # Leaf-exemption applies (callees_depth1: []).
@@ -11392,7 +11426,7 @@ HOOKS = {
     # Writes param_2 to (&DAT_008992a4)[param_1 * 0x13] (+0x04 field).
     # Zeroes        (&DAT_008992a0)[param_1 * 0x13]     (+0x00 field).
     # Array base: 0x008992a0; stride: 0x13 dwords = 0x4c bytes.
-    # Strategy: entity_field_set â€” call fn(p1, p2), read back 0x008992a4 + p1*0x4c.
+    # Strategy: entity_field_set â€" call fn(p1, p2), read back 0x008992a4 + p1*0x4c.
     # [UNCERTAIN U-4200] on whether 0x008992a0 and 0x00899260 are the same array
     # is non-blocking (doesn't affect this function's addresses).
     # Leaf-exemption applies (callees_depth1: []).
@@ -11424,15 +11458,15 @@ HOOKS = {
         ],
     },
 
-    # Session c3-batch-aa-s5 â€” Frontend/BatchAA_s5.cpp  (C2â†’C3, 1 candidate)
+    # Session c3-batch-aa-s5 â€" Frontend/BatchAA_s5.cpp  (C2â†'C3, 1 candidate)
     # 0x0042a980  MenuTableSearchAlt
     # Same stride-3 table as MenuTableSearch (0x0042a940); returns field at +4
     # instead of +8. Key derived via FUN_0040ce80(param_1) (C2).
     # Sentinel-terminated walk; no live-state writes.
-    # int_scalar: same domain as MenuTableSearch â€” pass slot indices 0-3;
+    # int_scalar: same domain as MenuTableSearch â€" pass slot indices 0-3;
     # both orig and reimpl read the same quiescent table state. 10 tests.
     # ref: re/analysis/frontend_c1_to_c2_s6/FUN_0042a980.md
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x0042a980  MenuTableSearchAlt
     # undefined4 FUN_0042a980(undefined4 param_1)  __cdecl  (61 bytes)
@@ -11449,16 +11483,16 @@ HOOKS = {
         'path2_tests':    [0, 1, 2, 3],
     },
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Session c3-batch-aa-s6 â€” BatchAA_s6.cpp
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+    # Session c3-batch-aa-s6 â€" BatchAA_s6.cpp
+    # â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
     # 0x00556cd0  GetDat00912a20
-    # undefined4 FUN_00556cd0(void) â€” 5-byte getter.
+    # undefined4 FUN_00556cd0(void) â€" 5-byte getter.
     # Returns DAT_00912a20 verbatim.  No callees, no branches.
-    # Strategy: read_global â€” write sentinel to 0x00912a20, call fn(), compare
+    # Strategy: read_global â€" write sentinel to 0x00912a20, call fn(), compare
     #   returned value vs written sentinel.  bit-identical by construction.
     # Caller: FontText_HudShutdown (0x00427620, C2).
     # ref: re/analysis/font_atlas_promote_ae5/0x00556cd0.md
@@ -11476,10 +11510,10 @@ HOOKS = {
     },
 
     # 0x00426d00  FrontendArraySlotGet
-    # undefined* FUN_00426d00(int param_1, int param_2) â€” pure leaf.
+    # undefined* FUN_00426d00(int param_1, int param_2) â€" pure leaf.
     # Returns &DAT_00663670 + param_2*0xc + param_1*0x4c (address arithmetic only).
     # No callees, no branches, no globals modified.
-    # Strategy: int_pair â€” pass [param_1, param_2]; return is the computed pointer
+    # Strategy: int_pair â€" pass [param_1, param_2]; return is the computed pointer
     #   (uint32 on x86).  Both paths compute identical address arithmetic.
     # Test range: param_1 in [0..3], param_2 in [0..2] (safe address region near base).
     # ref: re/analysis/frontend_c1_to_c2_s5/FUN_00426d00.md
@@ -11498,13 +11532,13 @@ HOOKS = {
     },
 
     # ──────────────────────────────────────────────────────────────────────────
-    # Session c3-batch-ab-s1 — Render/BatchAB_s1.cpp
+    # Session c3-batch-ab-s1 -- Render/BatchAB_s1.cpp
     # ──────────────────────────────────────────────────────────────────────────
 
     # 0x004d40c0  GetPipelinePtr
-    # undefined4 FUN_004d40c0(void) — 5-byte getter.
+    # undefined4 FUN_004d40c0(void) -- 5-byte getter.
     # Returns DAT_007d4710 (current RW pipeline pointer).
-    # Strategy: read_global — write sentinel to 0x007d4710, call fn(),
+    # Strategy: read_global -- write sentinel to 0x007d4710, call fn(),
     #   verify returned value equals sentinel.  bit-identical by construction.
     # Caller: FUN_004cd2d0 (RwRenderIndexedSubmit, C2).
     # Leaf-function exemption (no callees). ref: re/analysis/render_5_c1_to_c2_s6/004d40c0.md
@@ -11522,9 +11556,9 @@ HOOKS = {
     },
 
     # 0x004671c0  GetOverlayCamera
-    # undefined4 FUN_004671c0(void) — 5-byte getter.
+    # undefined4 FUN_004671c0(void) -- 5-byte getter.
     # Returns DAT_006905b4 (overlay/minimap RwCamera* global).
-    # Strategy: read_global — write sentinel to 0x006905b4, call fn(),
+    # Strategy: read_global -- write sentinel to 0x006905b4, call fn(),
     #   verify returned value equals sentinel.  bit-identical by construction.
     # Caller: FUN_00492e90 (per-frame render loop, C2+).
     # Leaf-function exemption (no callees). ref: re/analysis/render_c1_to_c2_s3/FUN_004671c0.md
@@ -11542,9 +11576,9 @@ HOOKS = {
     },
 
     # 0x004cbb60  GetRenderStateBlockPtr
-    # undefined4* FUN_004cbb60(void) — 6-byte getter.
+    # undefined4* FUN_004cbb60(void) -- 6-byte getter.
     # Returns &DAT_00911fa0 (fixed address of render-state block).
-    # Strategy: none — call 10x at quiescent state; both orig and reimpl
+    # Strategy: none -- call 10x at quiescent state; both orig and reimpl
     #   return identical fixed address (0x00911fa0); comparison via .toString().
     # Callers: FUN_004951f0, FUN_004f46a0, FUN_00530c00, FUN_005327d0,
     #          FUN_00543710, FUN_00549970 (all C2+).
@@ -11560,16 +11594,16 @@ HOOKS = {
     },
 
     # ──────────────────────────────────────────────────────────────────────────
-    # Session c3-batch-ab-s3 — Render/BatchAB_s3.cpp  (C2→C3, 5 candidates)
+    # Session c3-batch-ab-s3 -- Render/BatchAB_s3.cpp  (C2→C3, 5 candidates)
     # bucket 0x004ddfb0 pixel-format BGRA encoder leaves
     # ──────────────────────────────────────────────────────────────────────────
 
     # 0x004df8d0  PixEncode1555
-    # uint FUN_004df8d0(byte *bgra)  — 52 bytes, pure leaf
+    # uint FUN_004df8d0(byte *bgra)  -- 52 bytes, pure leaf
     # Returns 16-bit A1R5G5B5 pack:
     #   (((b[3] & 0x80) * 2 | b[0] & 0xf8) << 5 | b[1] & 0xf8) << 2 | (b[2] >> 3)
     # Alpha bit from high bit of b[3]. Decoder match: D3DFMT_A1R5G5B5 (0x19).
-    # arg_type: bgra_encode — allocate 4-byte buf, write [b0,b1,b2,b3], call fn(buf),
+    # arg_type: bgra_encode -- allocate 4-byte buf, write [b0,b1,b2,b3], call fn(buf),
     #   compare uint32 return value. Added to diff_template.js 2026-05-30 c3-batch-ab-s3.
     # ref: re/analysis/bucket_004ddfb0/0x004df8d0.md
     'pix_encode_1555': {
@@ -11599,7 +11633,7 @@ HOOKS = {
     },
 
     # 0x004df910  PixEncode4444
-    # uint FUN_004df910(byte *bgra)  — 50 bytes, pure leaf
+    # uint FUN_004df910(byte *bgra)  -- 50 bytes, pure leaf
     # Returns 16-bit A4R4G4B4 pack:
     #   ((b[3] & 0xf0) << 4 | b[0] & 0xf0) << 4 | b[1] & 0xf0 | (b[2] >> 4)
     # Decoder match: D3DFMT_A4R4G4B4 (0x1a).
@@ -11630,7 +11664,7 @@ HOOKS = {
     },
 
     # 0x004df950  PixEncodeA8R3G3B2
-    # uint FUN_004df950(byte *src4)  — 43 bytes, pure leaf
+    # uint FUN_004df950(byte *src4)  -- 43 bytes, pure leaf
     # Returns 16-bit packed word (A8R3G3B2 shape):
     #   (b[1] & 0xe0 | (b[2] >> 3)) >> 3 | (b[3] << 8) | (b[0] & 0xe0)
     # Uncertainty U-5550: name is uncertain; formula is literal from decomp.
@@ -11661,7 +11695,7 @@ HOOKS = {
     },
 
     # 0x004df980  PixEncodeX4R4G4B4
-    # uint FUN_004df980(byte *bgr)  — 39 bytes, pure leaf
+    # uint FUN_004df980(byte *bgr)  -- 39 bytes, pure leaf
     # Returns 16-bit X4R4G4B4 pack (alpha forced 0xf):
     #   (CONCAT11(0xf, b[0] & 0xf0) << 4) | (b[1] & 0xf0) | (b[2] >> 4)
     #   = 0xf000 | ((b[0] & 0xf0) << 4) | (b[1] & 0xf0) | (b[2] >> 4)
@@ -11693,7 +11727,7 @@ HOOKS = {
     },
 
     # 0x004df9e0  PixEncodeX8R8G8B8
-    # uint FUN_004df9e0(byte *bgr)  — 34 bytes, pure leaf
+    # uint FUN_004df9e0(byte *bgr)  -- 34 bytes, pure leaf
     # Returns 32-bit X8R8G8B8 pack (alpha forced 0xff):
     #   ((b[0] | 0xffffff00) << 8 | b[1]) << 8 | b[2]
     #   = 0xff000000 | (b[0] << 16) | (b[1] << 8) | b[2]
@@ -11727,8 +11761,8 @@ HOOKS = {
     # 0x004d7db0  RwPluginExtensionSlotGet
     # uint32(int param_1, int param_2): walk *(param_1+0x10) linked list;
     # match node[2]==param_2; return node[0] or 0xffffffff on miss.
-    # Leaf function, no callees. Pure reader of passed-in pointer — no global writes.
-    # Strategy: int_pair — pass [type_desc_ptr, plugin_id]. Both orig and reimpl
+    # Leaf function, no callees. Pure reader of passed-in pointer -- no global writes.
+    # Strategy: int_pair -- pass [type_desc_ptr, plugin_id]. Both orig and reimpl
     # walk the same live RpAtomic extension list (DAT_00618664, initialized at menu).
     # For any given (ptr, id) pair both sides must return the same value (found
     # offset or 0xffffffff sentinel). Varying id covers both found and miss branches.
@@ -11766,11 +11800,11 @@ HOOKS = {
     },
 
     # ─────────────────────────────────────────────────────────────────────────
-    # c3-batch-ab session 4 — audio leaves (bucket_audio_005bf4d0_005c9770).
+    # c3-batch-ab session 4 -- audio leaves (bucket_audio_005bf4d0_005c9770).
     # ABIs verified from the disassembly (see Audio/AudioLeaves_ab4.cpp headers).
     # ─────────────────────────────────────────────────────────────────────────
 
-    # 0x005bf660  Audio3DwordZero — __cdecl void(ptr): zero 3 consecutive dwords.
+    # 0x005bf660  Audio3DwordZero -- __cdecl void(ptr): zero 3 consecutive dwords.
     # bytes_inplace with a 2-arg signature (the spare uint32 is harmless under
     # cdecl; the function reads only [ESP+4]). len=16 cases guard against
     # over-zeroing past the 3 dwords.
@@ -11791,7 +11825,7 @@ HOOKS = {
         ],
     },
 
-    # 0x005bfcc0  AudioCounterPairGet — __stdcall int(ptr, u64* o1, u64* o2).
+    # 0x005bfcc0  AudioCounterPairGet -- __stdcall int(ptr, u64* o1, u64* o2).
     # o1 = (u64)*(p+0x15c) ; o2 = (u64)((u32)*(p+0x15c) - (u32)*(p+0x160)) ; ret 0.
     # Export decorates to _AudioCounterPairGet@12 (extern "C" __stdcall).
     'audio_counter_pair_get': {
@@ -11819,7 +11853,7 @@ HOOKS = {
         ],
     },
 
-    # 0x005c7500  AudioMixerRateCompute — __cdecl void(ptr): fixed-point store.
+    # 0x005c7500  AudioMixerRateCompute -- __cdecl void(ptr): fixed-point store.
     # *(p+0x80) = ((u32)(int)(f38*f34) << 32) / *(*(p+0x9c)+0x18), low 16 cleared.
     # Products chosen exactly float32-representable so the FISTP-truncate matches
     # the C cast bit-for-bit; divisors are nonzero.
@@ -11853,7 +11887,7 @@ HOOKS = {
         ],
     },
 
-    # 0x005c75b0  AudioVoiceField8cGet — __cdecl u32(ptr): return *(p+0x8c).
+    # 0x005c75b0  AudioVoiceField8cGet -- __cdecl u32(ptr): return *(p+0x8c).
     'audio_voice_field8c_get': {
         'rva':         0x005c75b0,
         'export':      'AudioVoiceField8cGet',
@@ -11877,7 +11911,7 @@ HOOKS = {
     },
 
     # ── c3-batch-ae-s2 render leaves ─────────────────────────────────────────
-    # 0x004b40c0  RenderElemArrayCopy — __cdecl void(p1, p2): copy *(p1+0x24)
+    # 0x004b40c0  RenderElemArrayCopy -- __cdecl void(p1, p2): copy *(p1+0x24)
     # dwords from (*(p1+0x20))[i] into p2[i]; guarded by p2!=0 && (signed)count>0.
     # Pure leaf. struct_call_observe: param_1 = descriptor struct (+0x20 src-array
     # ptr wired via nested, +0x24 count); param_2 = out0 (8-byte dst, so count<=2
@@ -11919,7 +11953,7 @@ HOOKS = {
         ],
     },
 
-    # 0x00478cc0  RenderWorldStateZeroFill — __cdecl void(p): memset(p,0,0x418f*4)
+    # 0x00478cc0  RenderWorldStateZeroFill -- __cdecl void(p): memset(p,0,0x418f*4)
     # (inline REP STOSD, 67132 bytes). struct_call_observe: struct_size 0x10680
     # (> 0x1063c so off 0x1063c is a one-past-the-end guard that must SURVIVE).
     # Each test seeds the 7 observed offsets with a sentinel; the in-range six must
@@ -11954,7 +11988,7 @@ HOOKS = {
         ],
     },
 
-    # 0x005c9380  AudioBitBufSizeCalc — __cdecl u32(bits): max(1, bits>>3) + 0xc.
+    # 0x005c9380  AudioBitBufSizeCalc -- __cdecl u32(bits): max(1, bits>>3) + 0xc.
     'audio_bitbuf_size_calc': {
         'rva':         0x005c9380,
         'export':      'AudioBitBufSizeCalc',
@@ -11965,7 +11999,7 @@ HOOKS = {
         'path2_tests': [0, 8, 1024],
     },
 
-    # 0x005c9770  AudioPcmPackSaturate — __cdecl void(i16* dst, i32* src, count).
+    # 0x005c9770  AudioPcmPackSaturate -- __cdecl void(i16* dst, i32* src, count).
     # Saturating int32->int16 pack; writes 2*count samples. src holds 2*count
     # int32s. Cases cover main-loop (count even), main+tail (count odd),
     # tail-only (count=1), empty (count=0), and all three saturation branches.
@@ -11993,7 +12027,7 @@ HOOKS = {
     # header[1]=&header[1], header[2]=&header[1] (empty self-looped sentinel).
     # arg_type='fmt_desc_pair_compare' is reused here because it is the ONLY
     # harness that drives orig and reimpl through the SAME scratch buffer
-    # (allocated once) — the function writes SELF-REFERENTIAL pointers
+    # (allocated once) -- the function writes SELF-REFERENTIAL pointers
     # (&header[1]) into header[1]/header[2], so a per-side buffer would record
     # two different addresses and false-RED. With one shared bufA both sides
     # write the identical &bufA[1], so the 12-byte fingerprint matches.
@@ -12074,22 +12108,22 @@ HOOKS = {
         ],
     },
     # ───────────────────────────────────────────────────────────────────────
-    # c3_batch_ab session 6 — Util leaves (audio/util batch). Branch
+    # c3_batch_ab session 6 -- Util leaves (audio/util batch). Branch
     # c3/batch-ab-util-s6 (the generated c3/batch-ab-s6 name collided with an
     # unrelated render-ab commit; user chose a distinct branch). Reimpl:
     # mashedmod/src/mashed_re/Util/UtilLeaves_ab6.cpp. All seven are byte-
     # faithful ports of disasm read from the anchored binary (capstone,
     # 2026-06-04); the suggested arg_types from the batch were CONFIRMED against
     # the actual bytes and corrected where the bytes disagreed (see per-entry
-    # notes). No invented arg_types — every one below already exists in
+    # notes). No invented arg_types -- every one below already exists in
     # diff_template.js.
     # ───────────────────────────────────────────────────────────────────────
 
-    # 0x004425d0  UtilZeroTable8964c0  — void(void) global-table zeroer.
+    # 0x004425d0  UtilZeroTable8964c0  -- void(void) global-table zeroer.
     # Bytes: mov eax,0x8964c0 ; loop{ mov [eax],0 ; add eax,0xd8 ; cmp eax,0x897fc0 ; jl }
     #        ; mov [0x89898c],0 ; ret.  Zeroes elem[0] of each 0xD8-stride entry
     # over [0x008964c0, 0x00897fc0) + the scalar 0x0089898c.
-    # arg_type: state_machine_observe (NOT the batch's 'void_step_global' — that
+    # arg_type: state_machine_observe (NOT the batch's 'void_step_global' -- that
     #   handler is hard-coded to the MenuCursorStep cursor globals and would
     #   false-GREEN a zeroer by reading back an address it never touches). Seed a
     #   sentinel at sampled zeroed addresses (elem0/elem1/last-elem/scalar) and an
@@ -12116,7 +12150,7 @@ HOOKS = {
             {'addr': 0x00897fc0, 'type': 'u32'},
         ],
         'lut_root_delta': 0,
-        # [elem0, elem1, last, scalar, guard] — guard sentinel must survive.
+        # [elem0, elem1, last, scalar, guard] -- guard sentinel must survive.
         'path1_tests': [
             [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x0BADF00D, 0xA5A5A5A5],
             [0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF],
@@ -12134,7 +12168,7 @@ HOOKS = {
         ],
     },
 
-    # 0x0045c480  UtilZeroScatter45c480  — void(void) scatter zeroer.
+    # 0x0045c480  UtilZeroScatter45c480  -- void(void) scatter zeroer.
     # Bytes: 12 individual dword writes (eax/ecx==0) to named globals + rep stosd
     # of 0x24 dwords from 0x0088f5e0 + write to 0x008aa2ec ; ret.
     # arg_type: state_machine_observe (same rationale as 0x004425d0). Sample 4 of
@@ -12165,7 +12199,7 @@ HOOKS = {
             {'addr': 0x0088f670, 'type': 'u32'},
         ],
         'lut_root_delta': 0,
-        # [s0, s1, s2, s3, blk0, blk35, guard] — guard sentinel must survive.
+        # [s0, s1, s2, s3, blk0, blk35, guard] -- guard sentinel must survive.
         'path1_tests': [
             [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x0BADF00D, 0xFEEDFACE, 0x8BADF00D, 0xA5A5A5A5],
             [0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF],
@@ -12183,14 +12217,14 @@ HOOKS = {
         ],
     },
 
-    # 0x0046b4f0  UtilTableRead46b4f0  — int(out_ptr, outerIdx, innerIdx).
+    # 0x0046b4f0  UtilTableRead46b4f0  -- int(out_ptr, outerIdx, innerIdx).
     # Bytes: bounds (outer<0x10 unsigned, inner<0x12 signed) else return 0; else
     # copy 3 dwords from a static 2D table @0x008815a0 into out[0..2], return 1.
     #   row    = 0x008815a0 + outer*0xD04
     #   out[0] = *(uint32*)(row + (inner*3 + 0x18)*4)
     #   out[1] = *(uint32*)(row + inner*3*4 + 0x64)
     #   out[2] = *(uint32*)(row + inner*3*4 + 0x68)
-    # arg_type: sort_dispatch_out4 (NOT 'int_ptr2_out'/'out3_idx' — those marshal
+    # arg_type: sort_dispatch_out4 (NOT 'int_ptr2_out'/'out3_idx' -- those marshal
     #   (int,ptr,ptr) / (ptr,int) and do not match this fn's (ptr,int,int) ABI;
     #   sort_dispatch_out4 is the only handler that calls fn(out,a,b) with a
     #   pointer FIRST and reads back the out buffer). It prefills the 4-int buffer
@@ -12225,7 +12259,7 @@ HOOKS = {
         ],
     },
 
-    # 0x004904d0  UtilZeroTable86a4a0  — void(void) global-table zeroer.
+    # 0x004904d0  UtilZeroTable86a4a0  -- void(void) global-table zeroer.
     # Bytes: mov eax,0x86a4a0 ; loop{ mov [eax],0 ; add eax,0x50 ; cmp eax,0x86ae00 ; jl } ; ret.
     # Zeroes elem[0] of each 0x50-stride entry over [0x0086a4a0, 0x0086ae00) = 30 entries.
     # arg_type: state_machine_observe (same rationale as 0x004425d0).
@@ -12248,7 +12282,7 @@ HOOKS = {
             {'addr': 0x0086ae00, 'type': 'u32'},
         ],
         'lut_root_delta': 0,
-        # [elem0, elem1, last, guard] — guard sentinel must survive.
+        # [elem0, elem1, last, guard] -- guard sentinel must survive.
         'path1_tests': [
             [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xA5A5A5A5],
             [0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF],
@@ -12266,7 +12300,7 @@ HOOKS = {
         ],
     },
 
-    # 0x004d8560  UtilReturnOne4d8560  — int(void) constant.
+    # 0x004d8560  UtilReturnOne4d8560  -- int(void) constant.
     # Bytes: mov eax,1 ; ret.  Always returns 1.
     # arg_type: none (zero-arg, compare return value).
     # ref: re/analysis/timer_d3_cont2/0x004d8560.md
@@ -12281,11 +12315,11 @@ HOOKS = {
         'path2_tests': [0, 1, 2],
     },
 
-    # 0x0055dec0  UtilDeref55dec0  — uint32(uint32* p) = *p   (__cdecl stack arg).
+    # 0x0055dec0  UtilDeref55dec0  -- uint32(uint32* p) = *p   (__cdecl stack arg).
     # Bytes: mov eax,[esp+4] ; mov eax,[eax] ; ret.  The pointer arrives on the
-    # STACK (NOT EAX) — the batch's suggested 'eax_implicit_ptr' was DISCONFIRMED
+    # STACK (NOT EAX) -- the batch's suggested 'eax_implicit_ptr' was DISCONFIRMED
     # by these bytes.
-    # arg_type: vec3_ptr — the only single-pointer-arg handler that calls fn(buf)
+    # arg_type: vec3_ptr -- the only single-pointer-arg handler that calls fn(buf)
     #   (seeded buffer) and compares the returned dword. vec3_ptr seeds buf[0..2]
     #   as floats; this fn returns buf[0] (the first dword) regardless of type, so
     #   each float triple yields a distinct, deterministic return that orig and
@@ -12318,7 +12352,7 @@ HOOKS = {
         ],
     },
 
-    # 0x004a1790  ComReleaseThunk  — uint __fastcall(void** pp): COM Release thunk.
+    # 0x004a1790  ComReleaseThunk  -- uint __fastcall(void** pp): COM Release thunk.
     # *** fastcall_reg CANARY *** (validates the new diff_template.js arg_type).
     # Bytes: mov eax,[ecx] ; test eax,eax ; je end ; mov ecx,[eax] ; push eax ;
     #        call [ecx+8] ; ret.  ECX = pointer-to-interface-pointer; on the null
@@ -12335,14 +12369,14 @@ HOOKS = {
         'fastcall_nargs':   1,
         'fastcall_ecx_ptr': True,
         'lut_root_delta':   0,
-        # Markers only — the harness replaces each with a fresh zeroed scratch ptr.
+        # Markers only -- the harness replaces each with a fresh zeroed scratch ptr.
         'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7],
         'path2_tests': [0, 1, 2],
     },
 
     # ───────────────────────────────────────────────────────────────────────
-    # Session c3-batch-ac-s1 — s5-redo  (C2→C3, 8 util pure leaves)
-    # Util/UtilLeaves_ac.cpp — author+verify-only; central classify at sweep.
+    # Session c3-batch-ac-s1 -- s5-redo  (C2→C3, 8 util pure leaves)
+    # Util/UtilLeaves_ac.cpp -- author+verify-only; central classify at sweep.
     #
     # NOTE ON ARG_TYPES: the batch prompt's suggested arg_types were corrected
     # this session to the harness semantics that actually exercise each function
@@ -12350,10 +12384,10 @@ HOOKS = {
     # globals / pass no index → vacuous false-GREEN). The arg_types below are the
     # *validated* shapes used by the analogous landed hooks (void_write_observe
     # ← TimerGlobalsReset; int_scalar ← VehicleSlotGetter). All are existing
-    # arg_types — NO diff_template.js change, so this batch is NOT sweep-critical.
+    # arg_types -- NO diff_template.js change, so this batch is NOT sweep-critical.
     # ───────────────────────────────────────────────────────────────────────
 
-    # 0x00407a60  UtilTableInit8a9620  — void(void) record-table init.
+    # 0x00407a60  UtilTableInit8a9620  -- void(void) record-table init.
     # Zeroes 0xc3 dwords per record then writes 0xffffffff at record+0x28, 4
     # records over [0x008a9620, 0x008aa278). void_write_observe on 0x008a9648
     # (record-0 sentinel): sentinel wiped, then function writes 0xffffffff back.
@@ -12370,7 +12404,7 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
     },
 
-    # 0x0040ad30  UtilSet8a95ac  — void(uint32): *0x008a95ac = arg.
+    # 0x0040ad30  UtilSet8a95ac  -- void(uint32): *0x008a95ac = arg.
     # void_setter_observe: call fn(v), read back target_global → must equal v.
     'util_set_8a95ac': {
         'rva':            0x0040ad30,
@@ -12385,7 +12419,7 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0x00000001, 0xFFFFFFFF],
     },
 
-    # 0x0040b250  UtilReset8a9500  — void(void): write 0xfffffc18 (-1000) to 8
+    # 0x0040b250  UtilReset8a9500  -- void(void): write 0xfffffc18 (-1000) to 8
     # globals 0x008a9500..0x008a952c. void_write_observe on 0x008a9500 (first
     # write): sentinel wiped, function writes 0xfffffc18.
     'util_reset_8a9500': {
@@ -12401,7 +12435,7 @@ HOOKS = {
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
 
-    # 0x0040b430  UtilFieldAdd8a94f0  — void(int idx, int delta): indexed += .
+    # 0x0040b430  UtilFieldAdd8a94f0  -- void(int idx, int delta): indexed += .
     #   idx>3 → *0x008a94fc += delta ; else (&0x008a94f0)[idx] += delta.
     # entity_field_add: addr = 0x008a94f0 + idx*4; snapshot/add/restore. Tests
     # span idx 0..3 (the array path) with assorted signed deltas; idx>3 cases
@@ -12421,7 +12455,7 @@ HOOKS = {
         'path2_tests':    [[0, 1], [2, -1], [3, 1000]],
     },
 
-    # 0x0040b6d0  UtilArrayGet8a94e0  — int(int idx): return (&0x008a94e0)[idx].
+    # 0x0040b6d0  UtilArrayGet8a94e0  -- int(int idx): return (&0x008a94e0)[idx].
     # int_scalar: fn(idx) → returned dword. Both orig+reimpl read the identical
     # static-data address → bit-identical. Indices kept to the in-bounds 0..3
     # range (note: 4-entry array) so the read stays inside mapped .data.
@@ -12435,16 +12469,16 @@ HOOKS = {
         'path2_tests':    [0, 1, 3],
     },
 
-    # 0x004292c0  UtilWritePtr  — void(uint32* p, uint32 v): *p = v.
+    # 0x004292c0  UtilWritePtr  -- void(uint32* p, uint32 v): *p = v.
     # struct_three_write: harness fills a scratch buffer with 0xDEADBEEF, calls
     # fn(buf, valA, valB), then reads observe_offsets=[0] back. The function is a
     # 2-arg cdecl (*p=v); we declare a 3rd dummy uint32 only because the harness's
-    # call site passes (buf, valA, valB) — under cdecl the caller cleans the stack
+    # call site passes (buf, valA, valB) -- under cdecl the caller cleans the stack
     # so the ignored 3rd arg is safe (the 2-arg variant already ran clean × N,
     # proving cdecl/no stack imbalance). valA is the written word; valB unused.
     # Discriminating: a mis-targeted write leaves buf[0]==0xDEADBEEF → RED.
-    # (struct_three_write's keys ARE forwarded by build_config — unlike
-    # buf_field_set's field_offsets/buf_size, which are not — so no harness edit
+    # (struct_three_write's keys ARE forwarded by build_config -- unlike
+    # buf_field_set's field_offsets/buf_size, which are not -- so no harness edit
     # and the integration re-run stays genuine.)  Test values avoid 0xDEADBEEF.
     'util_write_ptr': {
         'rva':             0x004292c0,
@@ -12461,7 +12495,7 @@ HOOKS = {
         'path2_tests':    [[0x00000001, 0], [0xCAFEBABE, 0], [0xFFFFFFFF, 0]],
     },
 
-    # 0x0042aab0  UtilInit898a90  — void(void): *0x00898a90=0x180; *0x00898ab0=0.
+    # 0x0042aab0  UtilInit898a90  -- void(void): *0x00898a90=0x180; *0x00898ab0=0.
     # void_write_observe on 0x00898a90 (first write): sentinel wiped → 0x180.
     'util_init_898a90': {
         'rva':            0x0042aab0,
@@ -12476,7 +12510,7 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
     },
 
-    # 0x00430b00  TimeDisplaySetEntry — void(p1,p2,v3,v4,v5): writes v3,v4,v5 at
+    # 0x00430b00  TimeDisplaySetEntry -- void(p1,p2,v3,v4,v5): writes v3,v4,v5 at
     #   0x008989e0 + (p2 + p1*2)*0xc {+0,+4,+8}.  No guard in the original.
     # multi_arg_global_write over the WHOLE 48-byte buffer (out_count=12) so any
     # (p1,p2) in {0,1}² lands inside the readback window → the 2D index formula
@@ -12605,15 +12639,15 @@ HOOKS = {
         ],
     },
     # ───────────────────────────────────────────────────────────────────────
-    # Session c3-batch-ad-s4 — HARVEST  (C2→C3, 3 viable 0x0049xxxx COM leaves)
-    # Particle/ParticleLeaves_ad4.cpp — author+verify-only; central classify at
+    # Session c3-batch-ad-s4 -- HARVEST  (C2→C3, 3 viable 0x0049xxxx COM leaves)
+    # Particle/ParticleLeaves_ad4.cpp -- author+verify-only; central classify at
     # sweep. NO diff_template.js change (reuses fastcall_reg + struct_call_observe)
     # → NOT sweep-critical. The other 10 candidates in the slate were SKIPPED as
     # needs-live-state (CoCreateInstance / QueryInterface / EnterCriticalSection /
-    # unconditional vtable dispatch — not constructible at diff-attach).
+    # unconditional vtable dispatch -- not constructible at diff-attach).
     # ───────────────────────────────────────────────────────────────────────
 
-    # 0x0049c690  ComField14Get — uint __fastcall(ptr): return *(ECX+0x14).
+    # 0x0049c690  ComField14Get -- uint __fastcall(ptr): return *(ECX+0x14).
     # Bytes: 8b4114 (MOV EAX,[ECX+0x14]) ; c3 (RET, reg-only -> __fastcall).
     # The harness seeds ECX with a ZEROED 64-byte scratch buffer, so *(ECX+0x14)
     # == 0 -> orig and reimpl both return 0 (proves ECX marshalling + the +0x14
@@ -12628,12 +12662,12 @@ HOOKS = {
         'fastcall_nargs':   1,
         'fastcall_ecx_ptr': True,
         'lut_root_delta':   0,
-        # Markers only — the harness replaces each with a fresh zeroed scratch ptr.
+        # Markers only -- the harness replaces each with a fresh zeroed scratch ptr.
         'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7],
         'path2_tests': [0, 1, 2],
     },
 
-    # 0x0049f180  ComRefRelease14 — LONG __stdcall(int*): COM Release. Atomically
+    # 0x0049f180  ComRefRelease14 -- LONG __stdcall(int*): COM Release. Atomically
     # decrements the refcount dword at byte +0x14; when the new count hits 0 (and
     # ptr non-null) makes a __thiscall to vtable slot 7 (offset +0x1c) with arg 1.
     # Returns the post-decrement count.  RET 0x4 -> __stdcall.
@@ -12654,7 +12688,7 @@ HOOKS = {
         'observe_ret': True,
         'observe':     [{'src': 'struct', 'off': 0x14, 'type': 'u32'}],
         'lut_root_delta': 0,
-        # refcount seeds — all > 1 (NEVER 1, which would decrement to 0 and call
+        # refcount seeds -- all > 1 (NEVER 1, which would decrement to 0 and call
         # the null vtable). Each test allocates a fresh zeroed struct per side.
         'path1_tests': [
             {'seeds': [{'off': 0x14, 'type': 'u32', 'value': 2}]},
@@ -12668,7 +12702,7 @@ HOOKS = {
         ],
     },
 
-    # 0x0049f2b0  ComRefRelease10 — LONG __stdcall(int*): byte-identical to
+    # 0x0049f2b0  ComRefRelease10 -- LONG __stdcall(int*): byte-identical to
     # ComRefRelease14 except the refcount dword is at byte +0x10. Same __stdcall
     # ABI (RET 0x4), same __thiscall vtable-slot-7 / arg-1 finalise on count 0.
     # ref: re/analysis/particle_promote_ad5/0049f2b0.md
@@ -12696,9 +12730,9 @@ HOOKS = {
         ],
     },
     # ─────────────────────────────────────────────────────────────────────────
-    # c3-batch-ad-s5 — particle pool HARVEST (1/12 promotable)
+    # c3-batch-ad-s5 -- particle pool HARVEST (1/12 promotable)
     # ─────────────────────────────────────────────────────────────────────────
-    # 0x0049fa40  ConstZeroRet_0049fa40 — bytes: 33 C0 C2 04 00
+    # 0x0049fa40  ConstZeroRet_0049fa40 -- bytes: 33 C0 C2 04 00
     #   XOR EAX,EAX ; RET 4  ->  __stdcall u32(u32 ignored) returning 0.
     # The RET 4 (callee-clean of one 4-byte arg) makes this __stdcall; the
     # function is total (returns 0 for EVERY argument), so bit-identity holds
@@ -12719,9 +12753,9 @@ HOOKS = {
     },
 
     # ─────────────────────────────────────────────────────────────────────────
-    # c3-batch-ae-s1 — render-leaf HARVEST (2/11 promotable)
+    # c3-batch-ae-s1 -- render-leaf HARVEST (2/11 promotable)
     # ─────────────────────────────────────────────────────────────────────────
-    # 0x00492440  RenderStatsAccumulate — __cdecl void(ptr): per-frame stats
+    # 0x00492440  RenderStatsAccumulate -- __cdecl void(ptr): per-frame stats
     #   rollup over a 60-frame window. Fields (byte offsets from param_1):
     #     +0x20 A sample (in)   +0x24 B sample (in)   +0x28 frame counter
     #     +0x2c A accum         +0x30 B accum         +0x34 A avg (out)
@@ -12786,7 +12820,7 @@ HOOKS = {
         ],
     },
 
-    # 0x004b46b0  Vec3Equal — __cdecl u32(float* a, float* b): returns 1 if all
+    # 0x004b46b0  Vec3Equal -- __cdecl u32(float* a, float* b): returns 1 if all
     #   three components compare equal under IEEE-754 `==`, else 0. No epsilon;
     #   FP compare (not bit compare) -> +0.0 == -0.0 is 1, NaN == NaN is 0.
     #   Reused arg_type 'fmt_desc_pair_compare' (2-arg form): seeds float bits
@@ -12916,7 +12950,7 @@ HOOKS = {
     },
 
     # 0x004298c0  MenuQuadGlobalZero  void(void)
-    # 27B pure leaf — four 32-bit zero stores (0x0067d99c, 0x0067d994, 0x0067d98c,
+    # 27B pure leaf -- four 32-bit zero stores (0x0067d99c, 0x0067d994, 0x0067d98c,
     # 0x008991bc), no callees, no branches. arg_type='none': void return, called
     # 10x; both orig and reimpl emit the identical store sequence (asm-equivalence
     # confirmed in the .cpp header against the disassembly).
@@ -12935,7 +12969,7 @@ HOOKS = {
     # 29B per-frame menu-input dispatcher: guard DAT_007f1a50==1 then 4 void(void)
     # callees (FrontendDirInput / TabCycler / CursorMover / spline-editor tick; the
     # last via tail-call JMP). arg_type='none': void return, called 10x; confirms
-    # non-crash with the live callee chain at the menu. WEAK `none` evidence —
+    # non-crash with the live callee chain at the menu. WEAK `none` evidence --
     # central classify should confirm asm-equivalence of the call sequence.
     # ref: re/analysis/frontend_gate_unblock_u/0x00423b00.md
     'frontend_input_dispatch': {
@@ -12951,7 +12985,7 @@ HOOKS = {
     # ─── c3-batch-af-s6 (2026-06-04): frontend menu leaves ──────────────────
 
     # 0x00431f30  FrontendPageIdDispatch  void(int page_id)
-    # Calls FUN_00431d90 (FrontendPanelFlagAdvance, C3 — mass panel-flag advance/
+    # Calls FUN_00431d90 (FrontendPanelFlagAdvance, C3 -- mass panel-flag advance/
     # clear over 0x0067e7a8..0x0067e838) then a switch setting exactly one panel
     # flag to 1 for the given page id (page 8 sets two: 0x0067e808 + 0x0067e828).
     # arg_type=multi_arg_global_write over the WHOLE 37-u32 flag block
@@ -12981,17 +13015,17 @@ HOOKS = {
         ],
     },
 
-    # 0x00424270  RankSortDispatcher — NOT PROMOTED (c3-batch-af-s6 2026-06-04).
+    # 0x00424270  RankSortDispatcher -- NOT PROMOTED (c3-batch-af-s6 2026-06-04).
     # A faithful port + sort_dispatch_out4 diff came back GREEN but DEGENERATE:
     # at a quiescent menu all 4 player slots are inactive so every sel/dir vector
-    # yields the identical [0,1,2,3] (log/diff_rank_sort_dispatcher.csv) — the
+    # yields the identical [0,1,2,3] (log/diff_rank_sort_dispatcher.csv) -- the
     # 14-case dispatch/sort/team paths are never exercised -> false-GREEN. Defer
     # to a populated-race canonical scenario (C3->C4 track). Entry intentionally
     # omitted so the central frida-sweep does not promote it.
 
     # ─────────────────────────────────────────────────────────────────────────
-    # Session c3-batch-ah-s3 — gameplay getters  (C2->C3)
-    # Gameplay/ScoreMasks_ah3.cpp — pure-leaf global-read getters.
+    # Session c3-batch-ah-s3 -- gameplay getters  (C2->C3)
+    # Gameplay/ScoreMasks_ah3.cpp -- pure-leaf global-read getters.
     # The 5 score-mask out-buffer fns (0x0040b970/ba00/b930/b9a0/ba60) are
     # authored in the same .cpp but DEFERRED: int_outbuf4 is fn(idx,buf) (wrong
     # shape for void fn(int* out)) and no harness arg_type seeds 0x008a94e0[4].
@@ -13029,7 +13063,7 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
     },
 
-    # 0x0040b420  IndexedTableLookup — NOT PROMOTED (c3-batch-ah-s3 2026-06-08).
+    # 0x0040b420  IndexedTableLookup -- NOT PROMOTED (c3-batch-ah-s3 2026-06-08).
     # Pure indexed leaf: returns DWORD at 0x008a9500 + idx*4. uint32(int idx).
     # int_scalar diff came back GREEN but DEGENERATE: the live table at 0x008a9500
     # is all-zero at the quiescent menu, so every index returns 0
@@ -13046,14 +13080,14 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # ── Session c3-batch-ah-s5 — audio root/timer getters + linear->log leaf ──
+    # ── Session c3-batch-ah-s5 -- audio root/timer getters + linear->log leaf ──
     # DEFERRED (not registered): 0x005ab010 AudioElapsedTicks (moving-counter
     #   diff, read_global can't capture deterministically), 0x005aaff0
     #   AudioTimerBaselineInit (void_write_observe degenerate/racy), and the
     #   0x005a89a0/b0/c0 VoiceField getters (thiscall struct-ptr, not 0-arg
     #   read_global). See TimerGetters_ah5.cpp header.
 
-    # 0x005aad40  AudioRootGet — MOV EAX,[0x007dcd20]; RET. read_global: write
+    # 0x005aad40  AudioRootGet -- MOV EAX,[0x007dcd20]; RET. read_global: write
     #   sentinel to 0x007dcd20, call fn(), verify return == sentinel.
     # ref: re/analysis/bucket_audio_005a7b60_005ab620/005aad40.md
     'audio_root_get': {
@@ -13069,7 +13103,7 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
     },
 
-    # 0x005ab070  AudioTimerRateGet — DEFERRED, NOT REGISTERED (re-checked
+    # 0x005ab070  AudioTimerRateGet -- DEFERRED, NOT REGISTERED (re-checked
     #   2026-06-08 scenario-attach pickup). uint32(void):
     #     return [0x007dcdf8] if [0x007dce00]==1 else literal 1000.
     #   read_global on 0x007dcdf8 is GREEN-but-DEGENERATE under run_diff.py: at the
@@ -13092,7 +13126,7 @@ HOOKS = {
     #   TimerGetters_ah5.cpp but intentionally omitted here so the central
     #   frida-sweep does not promote on the degenerate observable.
 
-    # 0x005aeb90  AudioLinearToLog — uint(float). x87 leaf:
+    # 0x005aeb90  AudioLinearToLog -- uint(float). x87 leaf:
     #   if (x < [0x005cc990]) return 0xffffd8f0; else
     #   r = TRUNC(log10(x) * [0x005cd0b8]); return (r>0)?0:r.
     #   [0x005cc990]=0x3727c5ac (~9.99e-6 threshold), [0x005cd0b8]=2000.0f.
@@ -13171,7 +13205,7 @@ HOOKS = {
         'path2_tests': [0x00000000, 0xDEADBEEF, 0x12345678],
     },
 
-    # 0x005ab370 — identical __cdecl field-getter shape, audio channel-meta
+    # 0x005ab370 -- identical __cdecl field-getter shape, audio channel-meta
     # accessor (*(this+0x10)). Adjacent in the voice bucket; same thiscall_field_get.
     # ref: re/analysis/bucket_audio_005a7b60_005ab620/005ab370.md
     'channel_field_10_get': {
@@ -13192,13 +13226,13 @@ HOOKS = {
     },
 
     # ── Zero-arg getters (run_diff_scenario.py --zero-arg) ───────────────────
-    # These take NO argument, so the varied-vector model can't show variance —
+    # These take NO argument, so the varied-vector model can't show variance --
     # the C3 criterion is a SINGLE-SHOT non-default value at a gate-satisfied
     # scenario point (run_diff_scenario.py zero-arg mode). 'zero_arg': True and
     # 'zero_arg_baseline' = the menu/default value to reject. The single test is
     # a dummy iteration marker (arg_type 'none' calls fn() and returns its value).
 
-    # 0x0040cd90 CountNonZeroPairs — int(void). Counts 8 (base,base+0x44) record
+    # 0x0040cd90 CountNonZeroPairs -- int(void). Counts 8 (base,base+0x44) record
     # pairs in the 0x00899260 table where both dwords are nonzero. At a populated
     # race the table is filled -> ret > 0; menu/default = 0. scenario=race,
     # sentinel=0x00899260.
@@ -13215,7 +13249,7 @@ HOOKS = {
         'path2_tests':    [0],
     },
 
-    # 0x0040b890 GetGridCount8or12 — int(void). 8 or 12 gated on FUN_0040e340/
+    # 0x0040b890 GetGridCount8or12 -- int(void). 8 or 12 gated on FUN_0040e340/
     # FUN_0042f500/DAT_007f0fd0. Menu default observed = 12 (0xc); a selected game
     # mode flips DAT_007f0fd0/the gate so it returns 8. baseline rejects the menu
     # default. sentinel=0x007f0fd0 (the mode flag the gate reads).
@@ -13232,7 +13266,7 @@ HOOKS = {
         'path2_tests':    [0],
     },
 
-    # 0x0040b8e0 GetScoreThreshold7or10 — int(void). Same gate; 7 or 10.
+    # 0x0040b8e0 GetScoreThreshold7or10 -- int(void). Same gate; 7 or 10.
     'score_threshold_7or10': {
         'rva':            0x0040b8e0,
         'export':         'GetScoreThreshold7or10',
@@ -13246,7 +13280,7 @@ HOOKS = {
         'path2_tests':    [0],
     },
 
-    # 0x005ab070 AudioTimerRateGet — undefined4(void). Returns DAT_007dcdf8 if the
+    # 0x005ab070 AudioTimerRateGet -- undefined4(void). Returns DAT_007dcdf8 if the
     # gate DAT_007dce00 == 1, else literal 1000. The gate flips to 1 by the title
     # screen; 0x007dcdf8 ~ 10000000. baseline rejects the 1000 ungated default.
     # sentinel=0x007dce00 (the gate). scenario=race reaches gate=1 well before.
@@ -13263,7 +13297,7 @@ HOOKS = {
         'path2_tests':    [0],
     },
 
-    # 0x004077e0 GetSelectedCopterField60 — float10(void). field +0 of the SELECTED
+    # 0x004077e0 GetSelectedCopterField60 -- float10(void). field +0 of the SELECTED
     # Copter record (&DAT_00639de0)[DAT_0063a5d8*0x3b]. Copter array @0x00639de0
     # (selected idx @0x0063a5d8) is unpopulated in Quick-Battle arena -> likely
     # DEFER. sentinel=0x00639de0.
@@ -13284,9 +13318,9 @@ HOOKS = {
     # All five run on the scenario:'race' lane (live Quick Battle state);
     # configs verbatim from c3_batch_race1.txt (generation-time note reads).
 
-    # 0x00408af0  AiVehicleFieldPtrGet — uint32(int i). POINTER-RETURN getter:
+    # 0x00408af0  AiVehicleFieldPtrGet -- uint32(int i). POINTER-RETURN getter:
     # &DAT_008a96dc + i*0x30c (field +0x9c of the 0x30c-stride per-vehicle
-    # records). Never dereferences — any index vector is safe; bit-identity
+    # records). Never dereferences -- any index vector is safe; bit-identity
     # compares the returned original-image VA.
     # ref: re/analysis/bucket_ai_00407a40_00415880/0x00408af0.md
     'ai_vehicle_field_ptr_get': {
@@ -13300,7 +13334,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x00442cc0  AiVehicleFloat4Get — float(int i), x87 ST0 return. Bounds-
+    # 0x00442cc0  AiVehicleFloat4Get -- float(int i), x87 ST0 return. Bounds-
     # checked: i<4 reads DAT_008989b0[i]; else returns DAT_005d757c (0.0,
     # last-place sentinel). In-race the 4-entry array populates; A/B time-skew
     # re-run rule applies (single-vector float mismatch → re-run once).
@@ -13317,7 +13351,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 4],
     },
 
-    # 0x00414030  AiSplineBankTimerReset — void(int slot). Writes 1000 (0x3e8)
+    # 0x00414030  AiSplineBankTimerReset -- void(int slot). Writes 1000 (0x3e8)
     # at DAT_008032d4[slot*5] (stride 0x14 bytes); slot_block_zero plants a
     # sentinel at target_global + slot*stride and verifies it is destroyed
     # (overwritten with 1000) = evidence. NEVER vector -1: the harness would
@@ -13337,10 +13371,10 @@ HOOKS = {
         'path2_tests':        [0, 1, 2],
     },
 
-    # 0x0040e350  GetRenderSubMode — uint32(). Returns DAT_0063ba8c (game-mode
+    # 0x0040e350  GetRenderSubMode -- uint32(). Returns DAT_0063ba8c (game-mode
     # state global; 5-byte stub). Stable mid-race (nonzero in a live round →
     # non-degenerate). Export name matches the fn-ptr binding citation in
-    # Render/PerModeRender.cpp:43 (file-local static — no clash).
+    # Render/PerModeRender.cpp:43 (file-local static -- no clash).
     # ref: re/analysis/promote_c2_vehicle_lowrva/0x0040e350.md
     'get_render_sub_mode': {
         'rva':            0x0040e350,
@@ -13353,9 +13387,9 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x00429300  HudOverlayFloatGet — float(), x87 ST0. FILD (signed-int
+    # 0x00429300  HudOverlayFloatGet -- float(), x87 ST0. FILD (signed-int
     # load + convert) of DAT_008991b8: bytes DB 05 B8 91 89 00 C3 verified in
-    # MASHED.exe.unpatched @0x29300 — the global is an INTEGER; a raw float
+    # MASHED.exe.unpatched @0x29300 -- the global is an INTEGER; a raw float
     # load REDs (orig=923.0f vs denormal-bits-923). Caller's unused arg is
     # ignored (__cdecl caller-clean). Written at race-overlay setup → stable.
     # ref: re/analysis/localization_d2/0x00429300.md
@@ -13374,7 +13408,7 @@ HOOKS = {
     # All five on the scenario:'race' lane; configs verbatim from
     # c3_batch_race1.txt; bodies byte-verified in MASHED.exe.unpatched.
 
-    # 0x00442410  CameraSlotFieldPtrGet — uint32(int i). POINTER-RETURN:
+    # 0x00442410  CameraSlotFieldPtrGet -- uint32(int i). POINTER-RETURN:
     # &0x008964fc + i*0xd8 (field +0x9c of the 5-slot 0xd8-stride camera/view
     # record array; sibling of CameraSlotFloatGet at +0x110). Never derefs.
     # ref: re/analysis/bucket_powerups_camera_particle_0044d5e0_004b4140/0x00442410.md
@@ -13389,8 +13423,8 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x00442420  CameraSlotFloatGet — float(int i), x87 ST0 (FLD m32, byte-
-    # verified D9 80 — true float load). DEREFS &0x00896570 + i*0xd8: keep i
+    # 0x00442420  CameraSlotFloatGet -- float(int i), x87 ST0 (FLD m32, byte-
+    # verified D9 80 -- true float load). DEREFS &0x00896570 + i*0xd8: keep i
     # in 0..4 (5-slot record array). Time-skew re-run rule applies.
     # ref: re/analysis/bucket_powerups_camera_particle_0044d5e0_004b4140/0x00442420.md
     'camera_slot_float_get': {
@@ -13404,7 +13438,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x00423b20  CarSnapshotDwordGet — uint32(int i). DEREFS
+    # 0x00423b20  CarSnapshotDwordGet -- uint32(int i). DEREFS
     # (&0x008995ec) + i*0x138 (dword +0x12c of the 0x138-stride per-car
     # snapshot, STRUCTS.md §4). Keep i in 0..3 (4-car race).
     # ref: re/analysis/promote_c2_vehicle_lowrva/0x00423b20.md
@@ -13419,8 +13453,8 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x00426cc0  VehicleTable4cPtrGet — uint32(int i). POINTER-RETURN:
-    # &0x00663658 + i*0x4c. Never derefs — out-of-range vectors safe.
+    # 0x00426cc0  VehicleTable4cPtrGet -- uint32(int i). POINTER-RETURN:
+    # &0x00663658 + i*0x4c. Never derefs -- out-of-range vectors safe.
     # Sibling of frontend_slot_table_ptr_426cb0 (base +0xc, same stride).
     # ref: re/analysis/promote_c2_vehicle_lowrva/0x00426cc0.md
     'vehicle_table_4c_ptr_get': {
@@ -13434,8 +13468,8 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x00442df0  RaceFloat898980Get — float(), x87 ST0 (FLD m32, byte-
-    # verified D9 05 — true float load, NOT FILD). Returns _DAT_00898980
+    # 0x00442df0  RaceFloat898980Get -- float(), x87 ST0 (FLD m32, byte-
+    # verified D9 05 -- true float load, NOT FILD). Returns _DAT_00898980
     # (collision-impact float; caller FUN_00410d10 compares vs 10.0f).
     # Update cadence unknown → time-skew re-run rule applies.
     # ref: re/analysis/promote_c2_vehicle_lowrva/0x00442df0.md
@@ -13453,11 +13487,11 @@ HOOKS = {
     # ---- promote-round round 3 (L1 race-lane pair + L2 cheap re-earns) -------
     # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round3.cpp).
 
-    # 0x0042fe70  VehicleDword67ea80Get — uint32(). Returns DAT_0067ea80
+    # 0x0042fe70  VehicleDword67ea80Get -- uint32(). Returns DAT_0067ea80
     # (timeout-selector global, values 0/1/2 per U-0397; bytes A1 80 EA 67 00
     # C3). First run as arg_type none + scenario race exited 5 (DEGENERATE):
     # the global is genuinely 0 in a live Quick Battle (0 = valid domain
-    # value, selects 900k). Switched to read_global — the harness SEEDS
+    # value, selects 900k). Switched to read_global -- the harness SEEDS
     # 0x0067ea80 with each vector, calls fn(), compares the return
     # (discriminates the cited address; saves/restores the global).
     # Menu-attach suffices (the BSS address exists regardless of state).
@@ -13475,9 +13509,9 @@ HOOKS = {
         'path2_tests':    [0, 1, 0xDEADBEEF],
     },
 
-    # 0x0041ea80  TrackDescField40Get — uint32(). Returns
+    # 0x0041ea80  TrackDescField40Get -- uint32(). Returns
     # *(u32*)(DAT_0063d7e4 + 0x40) (bytes A1 E4 D7 63 00 8B 40 40 C3).
-    # DEREFS the track-descriptor object pointer — NULL until a track loads,
+    # DEREFS the track-descriptor object pointer -- NULL until a track loads,
     # so scenario:'race' is REQUIRED (menu-attach would AV both sides).
     # ref: re/analysis/ai_update_d6/0x0041ea80.md
     'track_desc_field40_get': {
@@ -13491,7 +13525,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x004cbc60  RwGlobal7d4598Set — void(uint32). Writes param_1 to
+    # 0x004cbc60  RwGlobal7d4598Set -- void(uint32). Writes param_1 to
     # DAT_007d4598 (bytes 8B 44 24 04 A3 98 45 7D 00 C3). L2 re-earn
     # (demoted-needs-reimpl). void_setter_observe: harness calls fn(v),
     # reads back 0x007d4598, saves/restores the global.
@@ -13508,7 +13542,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 0xDEADBEEF],
     },
 
-    # 0x004cbc70  RwGlobal7d4598Get — uint32(). Returns DAT_007d4598 (bytes
+    # 0x004cbc70  RwGlobal7d4598Get -- uint32(). Returns DAT_007d4598 (bytes
     # A1 98 45 7D 00 C3); getter counterpart of rw_global_7d4598_set. L2
     # re-earn. read_global: harness seeds 0x007d4598 with each vector,
     # calls fn(), compares the return (discriminates the cited address;
@@ -13526,7 +13560,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 0xDEADBEEF],
     },
 
-    # 0x004cbc80  RwGlobal7d459cSet — void(uint32). Writes param_1 to
+    # 0x004cbc80  RwGlobal7d459cSet -- void(uint32). Writes param_1 to
     # DAT_007d459c (= 0x007d4598 + 4; bytes 8B 44 24 04 A3 9C 45 7D 00 C3).
     # L2 re-earn. void_setter_observe on 0x007d459c.
     # ref: re/analysis/skeleton_prep_render/004cbc80.md
@@ -13545,7 +13579,7 @@ HOOKS = {
     # ---- promote-round round 6 (L2 cheap re-earns) ----------------------------
     # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round6.cpp).
 
-    # 0x004c9f50  RwGlobal7d4134Set — void(uint32). Writes param_1 to
+    # 0x004c9f50  RwGlobal7d4134Set -- void(uint32). Writes param_1 to
     # DAT_007d4134 (bytes 8B 44 24 04 A3 34 41 7D 00 C3). L2 re-earn.
     # ref: re/analysis/skeleton_prep_boot_winmain_b/004c9f50.md
     'rw_global_7d4134_set': {
@@ -13560,11 +13594,11 @@ HOOKS = {
         'path2_tests':    [0, 1, 0xDEADBEEF],
     },
 
-    # 0x004b6610  BootGlobalPairSet — void(uint32 a, uint32 b). Writes a ->
+    # 0x004b6610  BootGlobalPairSet -- void(uint32 a, uint32 b). Writes a ->
     # DAT_007d3e5c, b -> DAT_007d3e60 (bytes 8B 44 24 04 8B 4C 24 08 A3 5C 3E
     # 7D 00 89 0D 60 3E 7D 00 C3). multi_arg_global_write over the 2-dword
     # block. guard_global REQUIRED by the handler but this fn has no guard:
-    # pointed INSIDE the saved/restored out window (0x007d3e5c — the fn
+    # pointed INSIDE the saved/restored out window (0x007d3e5c -- the fn
     # overwrites it anyway; same self-contained trick as time_display_set_entry).
     # ref: re/analysis/promote_c2_txd_loader/004b6610.md
     'boot_global_pair_set': {
@@ -13583,7 +13617,7 @@ HOOKS = {
         'path2_tests':    [[0, 0], [1, 0], [0xDEADBEEF, 0xCAFEBABE]],
     },
 
-    # 0x004b6560  BootGlobalPairSetThunk — 5B thunk (E9 AB 00 00 00 ->
+    # 0x004b6560  BootGlobalPairSetThunk -- 5B thunk (E9 AB 00 00 00 ->
     # 0x004b6610); forwards both args unmodified. Same handler/config as
     # boot_global_pair_set (behaviorally identical by construction).
     # ref: re/analysis/promote_c2_txd_loader/004b6560.md
@@ -13606,9 +13640,9 @@ HOOKS = {
     # ---- promote-round round 7 (L2 cheap re-earns) ----------------------------
     # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round7.cpp).
 
-    # 0x00499730  BootPtr773818Get — uint32(). Constant-pointer getter:
+    # 0x00499730  BootPtr773818Get -- uint32(). Constant-pointer getter:
     # mov eax,0x00773818; ret (bytes B8 18 38 77 00 C3). The constant non-zero
-    # return IS the leaf's entire behavior (no loads/branches) — comparing it
+    # return IS the leaf's entire behavior (no loads/branches) -- comparing it
     # is complete coverage, and non-zero passes the degeneracy assertion.
     # ref: re/analysis/skeleton_prep_boot_winmain_b/00499730.md
     'boot_ptr_773818_get': {
@@ -13621,7 +13655,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x00495120  TimerQpfStore — uint32(). QueryPerformanceFrequency ->
+    # 0x00495120  TimerQpfStore -- uint32(). QueryPerformanceFrequency ->
     # DAT_00771e70 (low) + DAT_00771e74 (high), returns 1 (QPF return
     # ignored). QPF is a machine constant -> deterministic across A/B.
     # scalars_to_scattered_globals: observe the 8-byte window + fold the
@@ -13646,7 +13680,7 @@ HOOKS = {
     # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round8.cpp).
     # All menu-attach with SEEDED handlers (discriminating regardless of state).
 
-    # 0x004430a0  Util897fe0Set — void(uint32) -> DAT_00897fe0.
+    # 0x004430a0  Util897fe0Set -- void(uint32) -> DAT_00897fe0.
     # ref: re/analysis/game_state_d5/0x004430a0.md
     'util_897fe0_set': {
         'rva':            0x004430a0,
@@ -13660,7 +13694,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 0xDEADBEEF],
     },
 
-    # 0x004430b0  Util897fe0Get — uint32() <- DAT_00897fe0 (pair of the above).
+    # 0x004430b0  Util897fe0Get -- uint32() <- DAT_00897fe0 (pair of the above).
     # read_global seeds the address -> discriminating at menu-attach.
     # ref: re/analysis/game_state_d5/0x004430b0.md
     'util_897fe0_get': {
@@ -13675,7 +13709,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 0xDEADBEEF],
     },
 
-    # 0x0042f790  GhostModeIsActive — uint32() <- DAT_0067ea70 (ghost flag).
+    # 0x0042f790  GhostModeIsActive -- uint32() <- DAT_0067ea70 (ghost flag).
     # ref: re/analysis/leaderboard_d2/0x0042f790.md
     'ghost_mode_is_active': {
         'rva':            0x0042f790,
@@ -13689,7 +13723,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 0xDEADBEEF],
     },
 
-    # 0x00431d70  CourseGetLeaderIndex — uint32() <- DAT_0067ea94.
+    # 0x00431d70  CourseGetLeaderIndex -- uint32() <- DAT_0067ea94.
     # ref: re/analysis/leaderboard_d2/0x00431d70.md
     'course_get_leader_index': {
         'rva':            0x00431d70,
@@ -13703,9 +13737,9 @@ HOOKS = {
         'path2_tests':    [0, 1, 3],
     },
 
-    # 0x004cc7e0  RwGlobal6182b0Set — void(uint32) -> DAT_006182b0 (guard
+    # 0x004cc7e0  RwGlobal6182b0Set -- void(uint32) -> DAT_006182b0 (guard
     # consumed by FUN_004cc820 per U-5102). Harness saves/restores the global.
-    # NOTE: diff 10/10 GREEN 2026-06-12 but promotion REFUSED — U-5102 carries
+    # NOTE: diff 10/10 GREEN 2026-06-12 but promotion REFUSED -- U-5102 carries
     # an explicit Blocks=C2->C3; stays C2 until the global's reads are traced.
     # ref: re/analysis/render_5_c1_to_c2_s1/FUN_004cc7e0.md
     'rw_global_6182b0_set': {
@@ -13723,7 +13757,7 @@ HOOKS = {
     # ---- promote-round round 9 (L3 curated small leaves, continued) -----------
     # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round9.cpp).
 
-    # 0x00498be0  RenderBitDepthGet — uint32() <- DAT_00773414 (render bit
+    # 0x00498be0  RenderBitDepthGet -- uint32() <- DAT_00773414 (render bit
     # depth). read_global-seeded.
     # ref: re/analysis/settings_config_d2_cont1/00498be0.md
     'render_bit_depth_get': {
@@ -13738,8 +13772,8 @@ HOOKS = {
         'path2_tests':    [16, 32, 0],
     },
 
-    # 0x0040dc80  UtilFloat63b910Get — float() <- DAT_0063b910 (FLD m32,
-    # byte-verified D9 05 — TRUE float load, not FILD). read_global seeds raw
+    # 0x0040dc80  UtilFloat63b910Get -- float() <- DAT_0063b910 (FLD m32,
+    # byte-verified D9 05 -- TRUE float load, not FILD). read_global seeds raw
     # IEEE bits; both sides load identically.
     # ref: re/analysis/localization_d2/0x0040dc80.md
     'util_float_63b910_get': {
@@ -13756,11 +13790,11 @@ HOOKS = {
         'path2_tests':    [0x3f800000, 0xc2c80000, 0x00000000],
     },
 
-    # 0x0040dc90  UtilSlotIndexCondGet — uint32(). Returns DAT_0063b914 when
+    # 0x0040dc90  UtilSlotIndexCondGet -- uint32(). Returns DAT_0063b914 when
     # DAT_007f0fd0 (game mode) is not 5/10, else 0. read_global seeds the
     # VALUE global 0x0063b914; the condition global stays live (menu mode is
     # outside {5,10} -> read path taken consistently both sides; the ==5/10
-    # short-circuit path stays UNTESTED by this diff — recorded here).
+    # short-circuit path stays UNTESTED by this diff -- recorded here).
     # ref: re/analysis/localization_d2/0x0040dc90.md
     'util_slot_index_cond_get': {
         'rva':            0x0040dc90,
@@ -13774,7 +13808,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 0xDEADBEEF],
     },
 
-    # 0x00429860  RaceStateFlagGet — uint32() <- DAT_008991bc (race-state
+    # 0x00429860  RaceStateFlagGet -- uint32() <- DAT_008991bc (race-state
     # flag; 0xb = lap-complete). read_global-seeded.
     # ref: re/analysis/bucket_ai_00415d00_00452ea0/0x00429860.md
     'race_state_flag_get': {
@@ -13789,12 +13823,12 @@ HOOKS = {
         'path2_tests':    [0, 0xb, 1],
     },
 
-    # 0x00429840  RaceStateLatchSet — void(uint32 v): stores v to
+    # 0x00429840  RaceStateLatchSet -- void(uint32 v): stores v to
     # DAT_008991bc iff v==0 OR current==0 (latch). scalars_to_scattered_
     # globals with fill 0xFF forces current=0xFFFFFFFF inside the restored
     # bracket: v!=0 vectors exercise the NO-STORE latch branch (window stays
     # FF), v==0 exercises the unconditional store. The current==0 plain-store
-    # path is NOT separately exercised (would need fill 0x00 — second entry
+    # path is NOT separately exercised (would need fill 0x00 -- second entry
     # if ever needed); both tested branches are the latch-distinctive ones.
     # ref: re/analysis/bucket_ai_00415d00_00452ea0/0x00429840.md
     'race_state_latch_set': {
@@ -13815,7 +13849,7 @@ HOOKS = {
     # ---- promote-round round 10 (L3 race-lane + live-global set) --------------
     # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round10.cpp).
 
-    # 0x0046c750  EntityVelocityCounterGet — uint32(int i). Bounds-checked
+    # 0x0046c750  EntityVelocityCounterGet -- uint32(int i). Bounds-checked
     # (SIGNED jl vs 0x10) getter of the velocity/exposure counter at
     # 0x00882194 + i*0xd04 (range 0-3000, populated by movement in a live
     # race). OOB (>=16) returns 0. scenario race for populated counters.
@@ -13831,9 +13865,9 @@ HOOKS = {
         'path2_tests':    [0, 1, 16],
     },
 
-    # 0x0046c730  EntityDamageStateGet — uint32(int i). Sibling field (+4):
+    # 0x0046c730  EntityDamageStateGet -- uint32(int i). Sibling field (+4):
     # damage state 0/1/2 at 0x00882198 + i*0xd04. Exit-5 risk noted: a short
-    # drive may have zero damage everywhere — accepted; exit-5 => defer.
+    # drive may have zero damage everywhere -- accepted; exit-5 => defer.
     # ref: re/analysis/bucket_ai_00452eb0_004c3df0/0046c730.md
     'entity_damage_state_get': {
         'rva':            0x0046c730,
@@ -13846,7 +13880,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 16],
     },
 
-    # 0x0040b410  RaceScoreTimerGet — uint32(int i). UNBOUNDED indexed read
+    # 0x0040b410  RaceScoreTimerGet -- uint32(int i). UNBOUNDED indexed read
     # of the dword array at 0x008a9520 + i*4 (scaled-index byte stride 4).
     # Group-B reset writes -1000 (0xfffffc18) => nonzero mid-race. Vectors
     # stay small non-negative (no bounds check in the original).
@@ -13862,12 +13896,12 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x0040e360  RaceModeSet — void(uint32) -> 0x0063ba8c, the LIVE
+    # 0x0040e360  RaceModeSet -- void(uint32) -> 0x0063ba8c, the LIVE
     # game-mode/race-phase global (read by GetRenderSubMode + AI dispatcher).
     # void_setter_observe saves/restores per vector, but the game thread can
     # sample mid-bracket -> vectors RESTRICTED to values observed in the
     # original (4/5/8/9 compares per 0x0040e350 notes; 7 and 6 from the
-    # cited call sites). NO garbage values — keep it that way.
+    # cited call sites). NO garbage values -- keep it that way.
     # ref: re/analysis/leaderboard_d2/0x0040e360.md
     'race_mode_set': {
         'rva':            0x0040e360,
@@ -13883,7 +13917,7 @@ HOOKS = {
     # ---- promote-round round 11 (L3 looser-curation leaves) -------------------
     # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round11.cpp).
 
-    # 0x004cae90  RwCapsBlockPtrGet — uint32(). Constant-pointer return
+    # 0x004cae90  RwCapsBlockPtrGet -- uint32(). Constant-pointer return
     # &DAT_00618220 (D3D9 caps block); B8 20 82 61 00 C3.
     'rw_caps_block_ptr_get': {
         'rva':            0x004cae90,
@@ -13895,7 +13929,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x0042f520  ViewportBlockPtrGet — uint32(). Constant-pointer return
+    # 0x0042f520  ViewportBlockPtrGet -- uint32(). Constant-pointer return
     # &DAT_00899150; B8 50 91 89 00 C3.
     'viewport_block_ptr_get': {
         'rva':            0x0042f520,
@@ -13907,7 +13941,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x00485370  DynamicObjectListGetBase — uint32(). Constant-pointer
+    # 0x00485370  DynamicObjectListGetBase -- uint32(). Constant-pointer
     # return &DAT_006e87b8; B8 B8 87 6E 00 C3.
     'dynamic_object_list_get_base': {
         'rva':            0x00485370,
@@ -13919,7 +13953,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x00405420  ReplayCursorReset — void(). Stores 0 to DAT_00639d74
+    # 0x00405420  ReplayCursorReset -- void(). Stores 0 to DAT_00639d74
     # (C7 05 74 9D 63 00 00 00 00 00 C3). Pre-fill 0xFF makes the zero-store
     # observable (baseline FF -> 0 after the call); handler saves/restores.
     'replay_cursor_reset': {
@@ -13939,7 +13973,7 @@ HOOKS = {
     # ---- promote-round round 12 (L3 looser-curation remainder) ----------------
     # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round12.cpp).
 
-    # 0x0041b510  HudCounterReset — void(); DAT_0063cab0 := 0. fill=0xFF makes
+    # 0x0041b510  HudCounterReset -- void(); DAT_0063cab0 := 0. fill=0xFF makes
     # the zero-store observable inside the restored bracket.
     'hud_counter_reset': {
         'rva':            0x0041b510,
@@ -13955,7 +13989,7 @@ HOOKS = {
         'path2_tests':    [{'args': []}, {'args': []}, {'args': []}],
     },
 
-    # 0x00431b10  BootParamSet2 — void(); DAT_007f0f10 := 2. fill=0xFF baseline
+    # 0x00431b10  BootParamSet2 -- void(); DAT_007f0f10 := 2. fill=0xFF baseline
     # -> 2 after the call (observable).
     'boot_param_set2': {
         'rva':            0x00431b10,
@@ -13971,9 +14005,9 @@ HOOKS = {
         'path2_tests':    [{'args': []}, {'args': []}, {'args': []}],
     },
 
-    # 0x004d6e60  TexStageCacheGet — uint32(int stage). Per-stage texture
+    # 0x004d6e60  TexStageCacheGet -- uint32(int stage). Per-stage texture
     # cache read at 0x007d6b30 + stage*0x18. Menu-attach was exit-5 (cache
-    # all-zero — the menu's 2D path does not populate it); switched to
+    # all-zero -- the menu's 2D path does not populate it); switched to
     # scenario:'race' where in-race 3D rendering binds stage textures.
     'tex_stage_cache_get': {
         'rva':            0x004d6e60,
@@ -13987,7 +14021,7 @@ HOOKS = {
     },
 
     # ---- promote-round round 15 (round-14 Ghidra-pass carry-over) -------------
-    # 0x00402f40  Util636ad8Get — uint32() <- DAT_00636ad8 (read_global-seeded,
+    # 0x00402f40  Util636ad8Get -- uint32() <- DAT_00636ad8 (read_global-seeded,
     # discriminating at menu-attach). Caller FUN_0043dfd0 frontend C2.
     # Body byte-verified A1 D8 6A 63 00 C3.
     # ref: re/analysis/timer_d3_cont1_a/0x00402f40.md
@@ -14004,9 +14038,9 @@ HOOKS = {
     },
 
     # ---- promote-round round 16 (Ghidra disassembly pass) ---------------------
-    # 0x004c9eb0  DeviceModeBestBelowSet — void(uint32 param_1). Writes param_1
+    # 0x004c9eb0  DeviceModeBestBelowSet -- void(uint32 param_1). Writes param_1
     # to DAT_006181c4, scans the device's enumerated descriptors (vtable +0x18
-    # count / +0x1c fetch, both __stdcall — disassembly-verified) across 3
+    # count / +0x1c fetch, both __stdcall -- disassembly-verified) across 3
     # categories at 0x005d8b80, then overwrites DAT_006181c4 with the largest
     # descriptor value strictly below param_1 (or param_1 on exact match) if it
     # differs. scalars_to_scattered_globals observes the 4-byte result window;
@@ -14030,7 +14064,7 @@ HOOKS = {
     # ---- promote-round round 17 (fresh discovery: single-global leaves) -------
     # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round17.cpp).
 
-    # 0x00496920  TimerTable772ffcGet — uint32(int i). Indexed read of the
+    # 0x00496920  TimerTable772ffcGet -- uint32(int i). Indexed read of the
     # 4-byte-element table at 0x00772ffc + i*4 (timer-tick table; caller uses
     # index 5). Menu-attach was exit-5 (table all-zero on the 2D menu path);
     # scenario:'race' populates it (the timer tick that writes the table runs
@@ -14047,7 +14081,7 @@ HOOKS = {
         'path2_tests':    [0, 5, 3],
     },
 
-    # 0x00496930  TimerTable773030Get — uint32(int i). Complement table at
+    # 0x00496930  TimerTable773030Get -- uint32(int i). Complement table at
     # 0x00773030 + i*4 (caller uses indices 3/4). Same exit-5 -> race fix.
     # ref: re/analysis/timer_d2/0x00496930.md
     'timer_table_773030_get': {
@@ -14061,7 +14095,7 @@ HOOKS = {
         'path2_tests':    [0, 3, 4],
     },
 
-    # 0x00485360  DynObjListGetCount — uint32() <- DAT_006fa0f8 (count sibling
+    # 0x00485360  DynObjListGetCount -- uint32() <- DAT_006fa0f8 (count sibling
     # of DynamicObjectListGetBase 0x00485370, round 11). read_global-seeded.
     # ref: re/analysis/bucket_vehicle_004820e0_00485420/00485360.md
     'dyn_obj_list_get_count': {
@@ -14076,7 +14110,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 0xDEADBEEF],
     },
 
-    # 0x00550790  FsManager7dc76cSet — void(uint32) -> DAT_007dc76c.
+    # 0x00550790  FsManager7dc76cSet -- void(uint32) -> DAT_007dc76c.
     # void_setter_observe saves/restores the FS-manager field.
     # ref: re/analysis/input_dinput_d3/00550790.md
     'fs_manager_7dc76c_set': {
@@ -14092,7 +14126,7 @@ HOOKS = {
     },
 
     # ---- promote-round round 18 (widened curation: 16-60B getters) ------------
-    # 0x0041efc0  CarGetLapProgress — uint32(int i). DOUBLE-DEREF:
+    # 0x0041efc0  CarGetLapProgress -- uint32(int i). DOUBLE-DEREF:
     # ptr = *(int*)(0x0063dc48 + i*0x2ac); return *(uint32*)(ptr + 0x80).
     # Car-data pointers are NULL at menu -> scenario:'race' REQUIRED; in-bounds
     # car indices 0..3 (4-car Quick Battle). Body byte-verified.
@@ -14109,7 +14143,7 @@ HOOKS = {
     },
 
     # ---- promote-round round 19 (L5: outbuf_only harness-ext) -----------------
-    # 0x0040b620  SlotSortByModeScore — void(int* out4): bubble-sorts 4 slot
+    # 0x0040b620  SlotSortByModeScore -- void(int* out4): bubble-sorts 4 slot
     # indices descending by per-slot mode score (DAT_008a9530) with -100 for
     # inactive slots (DAT_007f1a14[i]==-1), writing the int[4] permutation into
     # the caller buffer. SWEEP-CRITICAL new arg_type 'outbuf_only' (single
@@ -14129,7 +14163,7 @@ HOOKS = {
 
     # ---- promote-round round 20 (single-out-ptr class via outbuf_only) --------
 
-    # 0x00495270  HWNDGet — void(uint32* out): out = FUN_00499710() (game
+    # 0x00495270  HWNDGet -- void(uint32* out): out = FUN_00499710() (game
     # window handle, constant non-zero at menu). outbuf_only out_buf_size=4.
     # ref: re/analysis/skeleton_prep_boot_winmain_a/00495270.md
     'hwnd_get': {
@@ -14143,7 +14177,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x00484c70  WorldObjectsBaseGet — uint32(uint32* out): *out =
+    # 0x00484c70  WorldObjectsBaseGet -- uint32(uint32* out): *out =
     # DAT_006e70d8 (count), RETURN = 0x006dccb8 (base). fold_ret captures the
     # constant base so the fingerprint is non-degenerate even when the count
     # is 0 at menu. ret declared uint32 for fold_ret.
@@ -14160,7 +14194,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x0041da90  DeltaTimeOutGet — void(uint32* out): if(out) *out =
+    # 0x0041da90  DeltaTimeOutGet -- void(uint32* out): if(out) *out =
     # DAT_0063d588 (lap-complete accumulator). seed_global FAILED (the game
     # thread overwrites 0x0063d588 every frame, so the seed didn't hold and
     # the menu value is 0 -> degenerate). scenario:'race' gives a live non-zero
@@ -14181,7 +14215,7 @@ HOOKS = {
 
     # ---- promote-round round 21 (out-ptr survey: int_copy_outbuf) -------------
 
-    # 0x0041f030  TriggerStructRead — void(int i, uint32* out4): copies 4
+    # 0x0041f030  TriggerStructRead -- void(int i, uint32* out4): copies 4
     # dwords from 0x0063dc38 + i*0x2ac into out[0..3] (type-0x15 trigger
     # struct). int_copy_outbuf out_buf_size=16; race lane (live triggers).
     # ref: re/analysis/ai_update_d3/0x0041f030.md
@@ -14197,7 +14231,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x0041f260  WorldMatrixCopy — void(int i, uint32* out16): DOUBLE-DEREF
+    # 0x0041f260  WorldMatrixCopy -- void(int i, uint32* out16): DOUBLE-DEREF
     # src = *(*(0x0063dc4c + i*0x2ac) + 4) + 0x10; copies the 16-dword (4x4)
     # matrix to out. int_copy_outbuf out_buf_size=64; race lane (per-slot
     # object ptrs NULL at menu -> in-bounds slots 0..3 only).
@@ -14215,7 +14249,7 @@ HOOKS = {
     },
 
     # ---- promote-round round 22 (L5 vec3_lerp harness-ext) --------------------
-    # 0x004b4650  Vec3Lerp — void(float* out, float* a, float* b, float t):
+    # 0x004b4650  Vec3Lerp -- void(float* out, float* a, float* b, float t):
     # out = a + t*(b-a), pure float leaf (no globals). NEW arg_type vec3_lerp
     # (SWEEP-CRITICAL). Pure -> menu-attach-safe; tests provide a/b/t.
     # ref: re/analysis/render_3_c1_to_c2_s3/FUN_004b4650.md
@@ -14268,11 +14302,11 @@ HOOKS = {
     # ---- promote-round round 76 (global-field getter; opportunistic, beyond 200) --
     'global_field_get_896000': {'rva': 0x0044c370, 'export': 'GlobalFieldGet896000', 'signature': {'ret': 'int32', 'args': []}, 'arg_type': 'global_field_read', 'target_global': 0x00896000, 'field_off': 4, 'lut_root_delta': 0, 'path1_tests': [0x1000, 0x2000, 0xDEAD, 0x55, 0x12340, 0, 0x7000, 0x100, 0x1000, 0x9999], 'path2_tests': [0x1000, 0x2000, 0xDEAD]},
 
-    # ---- promote-round round 75 (global-field getter + float-threshold predicate) — beyond 200 --
+    # ---- promote-round round 75 (global-field getter + float-threshold predicate) -- beyond 200 --
     'global_field_get_896278': {'rva': 0x004495d0, 'export': 'GlobalFieldGet896278', 'signature': {'ret': 'int32', 'args': []}, 'arg_type': 'global_field_read', 'target_global': 0x00896278, 'field_off': 4, 'lut_root_delta': 0, 'path1_tests': [0x1000, 0x2000, 0xDEAD, 0x55, 0x12340, 0, 0x7000, 0x100, 0x1000, 0x9999], 'path2_tests': [0x1000, 0x2000, 0xDEAD]},
     'float_lt_44e020': {'rva': 0x0044e020, 'export': 'FloatLt44e020', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'float_threshold_predicate', 'target_global': 0x008900b0, 'stride': 0xf8, 'gate': 0x005ce2d8, 'lut_root_delta': 0, 'path1_tests': [[0, 0xBF800000], [1, 0x00000000], [2, 0xBDCCCCCD], [3, 0x3F800000], [4, 0xBCA3D70A], [0, 0xBC23D70A], [1, 0xC2C80000], [2, 0x42C80000], [0, 0xBF800000], [1, 0x00000000]], 'path2_tests': [[0, 0xBF800000], [1, 0x00000000], [2, 0xBDCCCCCD]]},
 
-    # ---- promote-round round 74 (strided fill + 2 index->ptr getters + 2 multi-bit flag setters) — reaches 200 --
+    # ---- promote-round round 74 (strided fill + 2 index->ptr getters + 2 multi-bit flag setters) -- reaches 200 --
     'fill_6870b4': {'rva': 0x00453f30, 'export': 'Fill6870b4', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x006870b4, 'len': 0xe10, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
     'idx_ptr_404e00': {'rva': 0x00404e00, 'export': 'IdxPtr404e00', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'index_then_ptr_array', 'target_global': 0x00639cc8, 'basePtr': 0x005ea0b8, 'lut_root_delta': 0, 'path1_tests': [[0, 0], [1, 1], [2, 2], [3, 3], [4, 0xFFFFFFFF], [5, 1], [0, 0], [1, 2], [2, 3], [3, 0xFFFFFFFF]], 'path2_tests': [[0, 0], [1, 1], [4, 0xFFFFFFFF]]},
     'idx_ptr_404e20': {'rva': 0x00404e20, 'export': 'IdxPtr404e20', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32']}, 'arg_type': 'index_then_ptr_array', 'target_global': 0x00636c08, 'basePtr': 0x005ea0c8, 'mult': 0x4e, 'lut_root_delta': 0, 'path1_tests': [[0, 0, 0], [0, 1, 1], [1, 0, 2], [1, 5, 3], [2, 2, 0xFFFFFFFF], [0, 3, 1], [3, 1, 2], [0, 0, 3], [1, 1, 0xFFFFFFFF], [2, 0, 0]], 'path2_tests': [[0, 0, 0], [0, 1, 1], [2, 2, 0xFFFFFFFF]]},
@@ -14798,7 +14832,7 @@ HOOKS = {
     },
 
     # ---- promote-round round 25 (L5 int2out: two-out-ptr getter) --------------
-    # 0x0046cbb0  CarStatePairGet — uint32(uint idx, uint32* out_a, uint32* out_b):
+    # 0x0046cbb0  CarStatePairGet -- uint32(uint idx, uint32* out_a, uint32* out_b):
     # idx>=0x10 -> ret 0; else *out_a = per-car state (0x00881f90+idx*0xd04),
     # *out_b = secondary (+4), ret 1. NEW arg_type int2out (SWEEP-CRITICAL).
     # Race lane (per-car struct populated in a live race); in-bounds 0..3 + OOB.
@@ -14816,7 +14850,7 @@ HOOKS = {
 
     # ---- promote-round round 24 (resume; existing handlers) -------------------
 
-    # 0x00496900  SlotActiveThunk — uint32(int idx). 4B thunk call-through to
+    # 0x00496900  SlotActiveThunk -- uint32(int idx). 4B thunk call-through to
     # FUN_00497450 (slot-active predicate; returns 0 for idx>3 else the
     # live slot-active byte). int_scalar, race lane (slots populated in race).
     # ref: re/analysis/bucket_vehicle_004922e0_0057c500/0x00496900.md
@@ -14831,7 +14865,7 @@ HOOKS = {
         'path2_tests':    [0, 1, 4],
     },
 
-    # 0x00415860  InteractionCooldownSet — void(int idx): writes 30000 to
+    # 0x00415860  InteractionCooldownSet -- void(int idx): writes 30000 to
     # 0x0089a508 + idx*0x74. slot_block_zero plants a sentinel and verifies it
     # was overwritten (with 30000) = evidence; both sides write the same value.
     # Menu-attach (pure memory write).
