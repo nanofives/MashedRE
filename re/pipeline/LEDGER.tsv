@@ -2,3 +2,4 @@ round	N	landed	count	queued	count	failed	count	integration	GREEN|RED	branches	cs
 round	1	landed	0	queued	12	failed	0	integration	RED	branches	worktree-wf_8a16c4eb-52d-7,worktree-wf_8a16c4eb-52d-11,worktree-wf_8a16c4eb-52d-15,worktree-wf_8a16c4eb-52d-16,worktree-wf_8a16c4eb-52d-17,worktree-wf_8a16c4eb-52d-19,worktree-wf_8a16c4eb-52d-20,worktree-wf_8a16c4eb-52d-21,worktree-wf_8a16c4eb-52d-23,worktree-wf_8a16c4eb-52d-25,worktree-wf_8a16c4eb-52d-28,worktree-wf_8a16c4eb-52d-31
 round	1	landed	4	queued	0	failed	0	integration	GREEN	branches	worktree-wf_980e3d3a-b86-5,worktree-wf_980e3d3a-b86-6,worktree-wf_980e3d3a-b86-12,worktree-wf_980e3d3a-b86-30
 round	1	landed	4	queued	0	failed	0	integration	GREEN	branches	worktree-wf_a3b31069-bca-4,worktree-wf_a3b31069-bca-11,worktree-wf_a3b31069-bca-14,worktree-wf_a3b31069-bca-32
+round	2	landed	0	queued	1	failed	0	integration	RED	branches	worktree-wf_a3b31069-bca-44
