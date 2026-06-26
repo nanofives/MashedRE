@@ -821,7 +821,6 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 004725c0	render	FUN_004725c0	41	1	cdecl	0	int	none	1	low	0	-	0	0	1.0	ambiguous	0	0	2	0
 00472650	util	FUN_00472650	51	1	cdecl	2	int	-	0	low	1	-	0	0	1.0	ambiguous	0	0	2	0
 00472740	gameplay	FUN_00472740	210	1	cdecl	4	int	-	0	low	1	-	0	0	0.0	-	0	0	2	0
-00472820	util	FUN_00472820	121	1	cdecl	1	int	int_scalar	1	low	1	-	0	0	1.0	-	0	0	1	0
 004728a0	util	FUN_004728a0	74	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	-	0	0	0	0
 004728f0	gameplay	FUN_004728f0	184	2	cdecl	9	int	-	0	low	1	-	0	1	0.5	-	0	0	2	0
 004729b0	render	FUN_004729b0	286	4	cdecl	4	int	-	0	low	1	-	0	1	0.75	-	0	1	2	0

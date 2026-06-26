@@ -417,7 +417,6 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 005bd9e0	audio	FUN_005bd9e0	115	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	-	0	1	1	0
 005be450	audio	FUN_005be450	116	3	stdcall	1	int	int_scalar	1	low	0	Win32	0	0	0.0	-	0	0	3	0
 0047e9c0	vehicle	PhysicsSceneInitSequence	118	12	cdecl	1	int	int_scalar	1	low	0	-	0	1	0.83	-	0	1	0	0
-00472820	util	FUN_00472820	121	1	cdecl	1	int	int_scalar	1	low	1	-	0	0	1.0	-	0	0	1	0
 004c42d0	render	FUN_004c42d0	137	0	cdecl	1	int	ptr_arg_int_get	1	low	1	-	0	0	0.0	-	1	0	1	0
 005b2de0	audio	FUN_005b2de0	142	3	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	-	0	0	0	0
 0047ade0	render	FUN_0047ade0	145	4	cdecl	1	int	int_scalar	1	low	0	-	0	1	0.75	-	0	1	2	0
