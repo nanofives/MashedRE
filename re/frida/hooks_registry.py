@@ -3357,6 +3357,40 @@ HOOKS = {
             {'p2': 0xFFFFFFFF, 'p3': 0xFFFFFFFF},
         ],
     },
+    # 0x005ad540  AudioSubStructLinkBoth  (33 bytes)
+    # fn(uint32 param_1, uint32 param_2, uint32 param_3) -> uint32
+    # param_1 is a pointer to a 12-byte sub-struct (passed as uint32).
+    # Calls AudioSubStructLinkDevice(param_1, param_2) then
+    # AudioSubStructLinkBuffer(param_1, param_3). Returns param_1 unconditionally
+    # (unlike AudioSubStructDualInit which returns 0 on failure).
+    # arg_type='audio_sub_struct_dual': same scratch-buf + fingerprint strategy;
+    # with zeroed 12-byte buf both link calls succeed and retNn==1 always.
+    # Analysis: re/analysis/bucket_audio_005ab710_005af040/0x005ad540.md
+    'audio_sub_struct_link_both': {
+        'rva':            0x005ad540,
+        'export':         'AudioSubStructLinkBoth',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'uint32', 'uint32']},
+        'arg_type':       'audio_sub_struct_dual',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'p2': 0x00000000, 'p3': 0x00000000},
+            {'p2': 0x00000001, 'p3': 0x00000001},
+            {'p2': 0xDEADBEEF, 'p3': 0xCAFEBABE},
+            {'p2': 0x12345678, 'p3': 0x87654321},
+            {'p2': 0xFFFFFFFF, 'p3': 0xFFFFFFFF},
+            {'p2': 0x80000000, 'p3': 0x00000001},
+            {'p2': 0x00000001, 'p3': 0x80000000},
+            {'p2': 0x55555555, 'p3': 0xAAAAAAAA},
+            {'p2': 0x00000002, 'p3': 0x00000003},
+            {'p2': 0x3F800000, 'p3': 0x40000000},
+        ],
+        'path2_tests': [
+            {'p2': 0x00000000, 'p3': 0x00000000},
+            {'p2': 0xDEADBEEF, 'p3': 0xCAFEBABE},
+            {'p2': 0xFFFFFFFF, 'p3': 0xFFFFFFFF},
+        ],
+    },
+
     'audio_pool_block_alloc': {
         'rva':            0x005ae800,
         'export':         'AudioPoolBlockAlloc',

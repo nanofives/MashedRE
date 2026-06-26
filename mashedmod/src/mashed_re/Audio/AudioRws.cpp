@@ -1258,3 +1258,35 @@ RH_ScopedInstall(AudioSubStructThreeWrite, 0x005be140);  // re-enabled 2026-05-2
 // hooks.csv row for 005ab410 is drift-staged at C2; re-classify in this session
 // promotes it to C3 using the existing AudioRwsChunkTypeSeek implementation.
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 0x005ad540  FUN_005ad540  AudioSubStructLinkBoth  (33 bytes)
+// Signature: undefined4 FUN_005ad540(undefined4 param_1, undefined4 param_2,
+//                                    undefined4 param_3)
+//
+// Thin wrapper that applies two independent attribute setters to sub-struct
+// param_1, unconditionally:
+//   1. AudioSubStructLinkDevice(param_1, param_2)  — links device handle at [0]
+//      (FUN_005ae010 @ 0x005ae010)
+//   2. AudioSubStructLinkBuffer(param_1, param_3)  — links buffer ptr at +4
+//      (FUN_005adfe0 @ 0x005adfe0)
+// Returns param_1 unconditionally (unlike AudioSubStructDualInit @ 0x005ac7b0
+// which returns 0 if either call returns null).
+//
+// Analysis note: re/analysis/bucket_audio_005ab710_005af040/0x005ad540.md
+// ─────────────────────────────────────────────────────────────────────────────
+extern "C" __declspec(dllexport) std::uint32_t __cdecl
+AudioSubStructLinkBoth(std::uint32_t param_1,
+                       std::uint32_t param_2,
+                       std::uint32_t param_3)
+{
+    typedef std::uint32_t* (__cdecl *LinkFn)(std::uint32_t*, std::uint32_t);
+    auto* const linkDevice = reinterpret_cast<LinkFn>(0x005ae010u);  // AudioSubStructLinkDevice
+    auto* const linkBuffer = reinterpret_cast<LinkFn>(0x005adfe0u);  // AudioSubStructLinkBuffer
+
+    linkDevice(reinterpret_cast<std::uint32_t*>(param_1), param_2);
+    linkBuffer(reinterpret_cast<std::uint32_t*>(param_1), param_3);
+    return param_1;
+}
+
+RH_ScopedInstall(AudioSubStructLinkBoth, 0x005ad540);  // wf_b0f68acd r42 C2->C3
+

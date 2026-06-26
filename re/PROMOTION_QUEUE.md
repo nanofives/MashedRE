@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-26  wf_b0f68acd-r42  rvas=0x005ad540  branch=worktree-wf_b0f68acd-63f-42  evidence=log/diff_audio_sub_struct_link_both.csv  note=AudioSubStructLinkBoth 0x005ad540 C2->C3; thin 3-arg wrapper (LinkDevice+LinkBuffer, always returns param_1); audio_sub_struct_dual 10/10 GREEN non-degenerate; impl in Audio/AudioRws.cpp
 ```
 
 ## Merged
