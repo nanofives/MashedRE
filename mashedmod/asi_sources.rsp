@@ -270,3 +270,7 @@
 "Util\PromoLoop_round77.cpp"
 "Util\PromoLoop_round78.cpp"
 "Util\PromoLoop_sessionB.cpp"
+"Render\RainCameraScale.cpp"
+"Render\RainLineWidthRange.cpp"
+"Audio\AtomicExchangeStore.cpp"
+"Frontend\RaceArmReset.cpp"
