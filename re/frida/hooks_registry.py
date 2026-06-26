@@ -17264,4 +17264,38 @@ HOOKS = {
         'path1_tests':    [0, 1, 5, 10, 15, 16, 17, 255, 0xffffffff],
         'path2_tests':    [0, 15, 16, 255],
     },
+
+    # ---- promote-round wf_b0f68acd (2026-06-26) ---------------------------------
+
+    # 0x00486610  ParticleBurst4 -- void __cdecl(uint32_t param_1, uint32_t param_2)
+    # 20-byte thin wrapper: calls FUN_004864f0(param_1, param_2, 4) with fixed count 4.
+    # Returns void.
+    #
+    # Decompiler (pool13, 2026-06-26):
+    #   void FUN_00486610(undefined4 param_1, undefined4 param_2) {
+    #       FUN_004864f0(param_1, param_2, 4); }
+    #
+    # Strategy: void_write_observe on _DAT_006fe780 (0x006fe780).
+    # FUN_004864f0 guards on squared distance vs _DAT_005cc9a0 = 0x3d4ccccd = 0.05f
+    # (verified Ghidra pool13, 2026-06-26). With param_1 = 0x008a9550 (BSS scratch,
+    # zero-initialized at early-boot attach), all 16 matrix floats = 0.0f ->
+    # sq_dist = 0.0 < 0.05f -> FUN_004864f0 exits early -> _DAT_006fe780 unchanged.
+    # Non-zero sentinel written to 0x006fe780 before each call survives on both
+    # sides -> non-trivial GREEN. void_write_observe is SEEDED -> no degeneracy gate.
+    # crash_equal_ok=True in case timing shifts _DAT_005cc9a0 to 0.0 at attach.
+    # Called by FUN_00487020 (C2). Callee FUN_004864f0 (C2, particle).
+    # ref: re/analysis/particle_promote_ac1/0x00486610.md
+    'particle_burst_4': {
+        'rva':            0x00486610,
+        'export':         'ParticleBurst4',
+        'signature':      {'ret': 'void', 'args': ['uint32', 'uint32']},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x006fe780,
+        'lut_root_delta': 0,
+        'call_args':      [0x008a9550, 0],
+        'crash_equal_ok': True,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x11223344, 0xAABBCCDD,
+                           0xFEEDFACE, 0x0BADF00D, 0xC0FFEE00, 0xB00B1E00, 0xFACEB00C],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678],
+    },
 }
