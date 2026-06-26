@@ -167,7 +167,11 @@ let fmtKeyBuf     = null;  // 16-byte format key
 // Output-buffer types — allocated once, reused per call.
 let xformBufs = null;   // transform_point / transform_vector: { out, in, mat }
 let v2nBufs   = null;   // vec2_normalize:  { out, in }
+let v3nBufs   = null;   // vec3_normalize:  { out, in }
+let xfdBufs   = null;   // device_transform_dispatch: { out, mat, in }
 let matsBufs  = null;   // matrix_scale:    { mat, scale }
+let matrBufs  = null;   // matrix_rotate:   { mat, axis }
+let mriBufs   = null;   // matrix_rotate_inner: { mat, axis }
 let tmpF32    = null;   // 4-byte scratch for float→U32 extraction
 
 function readLutRoot(delta) {
@@ -220,6 +224,14 @@ function callFn(fn, input, buf) {
     if (CONFIG.arg_type === 'float_scalar') {
         return fn(input);
     }
+    // float3_scalar_ret — three scalar float args in, float return: fn(a, b, t).
+    // For pure math leaves whose signature is float f(float,float,float) (e.g. the
+    // cosine-ease lerp 0x00422440). input is a [a, b, t] triple; registry signature
+    // must be {ret:'float', args:['float','float','float']}. The framework reads the
+    // float return and fingerprints it as IEEE-754 bits (ret_kind 'float').
+    if (CONFIG.arg_type === 'float3_scalar_ret') {
+        return fn(input[0], input[1], input[2]);
+    }
     if (CONFIG.arg_type === 'vec3_ptr') {
         buf.writeFloat(input[0]);
         buf.add(4).writeFloat(input[1]);
@@ -262,9 +274,87 @@ function callFn(fn, input, buf) {
     if (CONFIG.arg_type === 'int_scalar') {
         return fn(input >>> 0);
     }
+    // ptr_arg_int_get — fn(ptr) -> int, where the single arg is a POINTER the
+    // function DEREFERENCES (enrich derefs_arg=1). int_scalar is unsafe here
+    // (a random int deref => AV); instead pass a pointer to a 256-byte scratch
+    // buffer filled with a per-test deterministic, non-zero pattern so the
+    // getter's return VARIES across test vectors (non-degenerate) while Orig and
+    // Reimpl see the IDENTICAL buffer (bit-identity holds). `input` is the
+    // per-test seed int. Single-level-deref getters (read *(ptr+k)) compare
+    // cleanly; a double-deref getter reads a bad inner pointer and faults — that
+    // throws in callFn (caught at the call site -> mismatch) and the candidate
+    // is left Queued, never falsely GREEN. NOT in SEEDED_ARG_TYPES: we rely on
+    // the natural non-degeneracy of a real deref, so a getter that ignores its
+    // arg stays trivial and is correctly rejected.
+    if (CONFIG.arg_type === 'ptr_arg_int_get') {
+        const sz = (CONFIG.struct_size | 0) || 256;
+        const seed = (input >>> 0);
+        for (let o = 0; o < sz; o += 4)
+            buf.add(o).writeU32(((seed + o * 0x01010101) >>> 0));
+        const ret = fn(buf);
+        return (ret === null || ret === undefined) ? 0
+             : (typeof ret === 'object' ? (ret.toInt32() >>> 0) : (ret >>> 0));
+    }
     // int_with_out_ptr — uint32 arg + 4-byte output buffer; returns function's return value
     if (CONFIG.arg_type === 'int_with_out_ptr') {
         return fn(input >>> 0, buf);
+    }
+    // cache_roundtrip — getter verification by SEEDING the scattered cache
+    // global(s) the getter reads, then comparing BOTH the return value AND the
+    // out-slot between orig and reimpl. This makes a getter that reads a single
+    // constant at idle (degenerate) discriminating: distinct per-test sentinels
+    // force distinct out values. The target is a pure read, so seeding is
+    // non-destructive (each test snapshots, seeds, calls, reads, restores — and
+    // both Orig and Reimpl see the identical seed). SWEEP-CRITICAL: a registry
+    // arg_type with no handler here is FATAL (run_diff pre-flight).
+    //   tests[i] = { seed:[{addr:'0x..', val:<u32>}], args:[...] }
+    //     args entries: a number is passed verbatim; `null` is the out-ptr slot
+    //     (replaced by a poisoned 4-byte buf). signature.args must match (the
+    //     out-ptr slot is 'pointer'). Fingerprint = "<ret_hex>:<out_hex>".
+    if (CONFIG.arg_type === 'cache_roundtrip') {
+        const seeds = input.seed || [];
+        const saved = seeds.map(s => ptr(s.addr).readU32() >>> 0);
+        for (let s = 0; s < seeds.length; s++) ptr(seeds[s].addr).writeU32(seeds[s].val >>> 0);
+        buf.writeU32(0xCCCCCCCC >>> 0);            // poison out-slot: a no-write stays visible
+        const callArgs = (input.args || []).map(a => (a === null ? buf : (a >>> 0)));
+        let rv = 0;
+        try {
+            const ret = fn.apply(null, callArgs);
+            rv = (ret === null || ret === undefined) ? 0
+               : (typeof ret === 'object' ? (ret.toInt32() >>> 0) : (ret >>> 0));
+        } finally {
+            for (let s = 0; s < seeds.length; s++) ptr(seeds[s].addr).writeU32(saved[s] >>> 0);
+        }
+        const outv = buf.readU32() >>> 0;
+        return ('00000000' + rv.toString(16)).slice(-8) + ':' +
+               ('00000000' + outv.toString(16)).slice(-8);
+    }
+    // cache_setter_observe — setter / flush verification: seed input globals
+    // (current cache polarity, gate flags, the dirty-queue counter, queue-slot
+    // poison), call fn(...args), then read a list of SCATTERED output globals as
+    // a packed fingerprint. Snapshots + restores every touched global so the
+    // diff is non-destructive to the live game. Distinct seeded scenarios force
+    // distinct queue/store/cache fingerprints (non-degenerate). SWEEP-CRITICAL.
+    //   tests[i] = { seed:[{addr:'0x..', val:<u32>}], args:[...], obs:['0x..', ...] }
+    //     obs may be omitted to fall back to CONFIG.obs_globals (array of hex
+    //     strings). A `null` in args is the out-ptr slot (replaced by buf).
+    if (CONFIG.arg_type === 'cache_setter_observe') {
+        const seeds = input.seed || [];
+        const obs   = input.obs || CONFIG.obs_globals || [];
+        const seedSaved = seeds.map(s => ptr(s.addr).readU32() >>> 0);
+        const obsSaved  = obs.map(a => ptr(a).readU32() >>> 0);
+        for (let s = 0; s < seeds.length; s++) ptr(seeds[s].addr).writeU32(seeds[s].val >>> 0);
+        const callArgs = (input.args || []).map(a => (a === null ? buf : (a >>> 0)));
+        let result = '';
+        try {
+            fn.apply(null, callArgs);
+            for (let o = 0; o < obs.length; o++)
+                result += ('00000000' + (ptr(obs[o]).readU32() >>> 0).toString(16)).slice(-8);
+        } finally {
+            for (let o = 0; o < obs.length; o++) ptr(obs[o]).writeU32(obsSaved[o] >>> 0);
+            for (let s = 0; s < seeds.length; s++) ptr(seeds[s].addr).writeU32(seedSaved[s] >>> 0);
+        }
+        return '0x' + (result || '0');
     }
     // write_global_call_int0 — write sentinel to target_global, call fn(0), return value
     // Use for getters where non-trivial domain requires injecting known values.
@@ -651,6 +741,83 @@ function callFn(fn, input, buf) {
         ].join(',');
     }
 
+    if (CONFIG.arg_type === 'vec3_normalize') {
+        // input: [x, y, z]; fn(out, in) -> magnitude (float). 0x004c39b0 RwV3dNormalize.
+        v3nBufs.in.writeFloat(input[0]);
+        v3nBufs.in.add(4).writeFloat(input[1]);
+        v3nBufs.in.add(8).writeFloat(input[2]);
+        v3nBufs.out.writeU32(0);
+        v3nBufs.out.add(4).writeU32(0);
+        v3nBufs.out.add(8).writeU32(0);
+        const retVal = fn(v3nBufs.out, v3nBufs.in);
+        tmpF32.writeFloat(retVal !== undefined ? retVal : 0.0);
+        return [
+            tmpF32.readU32(),               // magnitude bits
+            v3nBufs.out.readU32(),          // out[0] bits
+            v3nBufs.out.add(4).readU32(),   // out[1] bits
+            v3nBufs.out.add(8).readU32(),   // out[2] bits
+        ].join(',');
+    }
+
+    if (CONFIG.arg_type === 'device_transform_dispatch') {
+        // input: { mat: [16 floats], in: [x,y,z] }. 0x004c3df0 RwV3dTransformPoints thunk.
+        // fn(out, mat, 1, in) -> out (matches caller FUN_0046d510's call shape). Both orig
+        // and reimpl read the same device globals (0x7d3ff8/0x7d3ffc) and dispatch the same
+        // slot +0x14, so the result is identical by construction; a GREEN here validates the
+        // +0x14 offset and the global selection (a wrong offset would call a different slot).
+        for (let j = 0; j < 16; j++) xfdBufs.mat.add(j * 4).writeFloat(input.mat[j]);
+        xfdBufs.in.writeFloat(input.in[0]);
+        xfdBufs.in.add(4).writeFloat(input.in[1]);
+        xfdBufs.in.add(8).writeFloat(input.in[2]);
+        xfdBufs.out.writeU32(0);
+        xfdBufs.out.add(4).writeU32(0);
+        xfdBufs.out.add(8).writeU32(0);
+        fn(xfdBufs.out, xfdBufs.mat, 1, xfdBufs.in);
+        return [
+            xfdBufs.out.readU32(),
+            xfdBufs.out.add(4).readU32(),
+            xfdBufs.out.add(8).readU32(),
+        ].join(',');
+    }
+
+    if (CONFIG.arg_type === 'matrix_rotate') {
+        // input: { axis: [x,y,z], angle: degrees, mode: int }. 0x004c4d20 RwMatrixRotate.
+        // fn(matrix, axis, angle_deg, mode) -> matrix; compare all 16 output floats (bits).
+        for (let j = 0; j < 16; j++) matrBufs.mat.add(j * 4).writeU32(0);
+        matrBufs.axis.writeFloat(input.axis[0]);
+        matrBufs.axis.add(4).writeFloat(input.axis[1]);
+        matrBufs.axis.add(8).writeFloat(input.axis[2]);
+        fn(matrBufs.mat, matrBufs.axis, input.angle, input.mode | 0);
+        // Compare the 12 rotation/translation floats + the flags word at [3].
+        // Skip RwMatrix pad slots [7]/[11]/[15]: the Rodrigues inner builder
+        // (FUN_004c4a50) never writes them in mode 0, so they read uninitialized
+        // stack — caller-dependent garbage in the ORIGINAL too (not real output).
+        const out = [];
+        for (let j = 0; j < 16; j++) {
+            if (j === 7 || j === 11 || j === 15) continue;  // pad — uninitialized
+            out.push(matrBufs.mat.add(j * 4).readU32());
+        }
+        return out.join(',');
+    }
+
+    if (CONFIG.arg_type === 'matrix_rotate_inner') {
+        // input: { matrix:[16], axis:[3] normalized, omc:float (1-cos), sin:float, mode:int }
+        // 0x004c4a50 RwMatrixRotateInner. fn(matrix, axis_n, 1-cos, sin, mode) -> matrix.
+        // mode 0 ignores the input matrix (pure replace); modes 1/2 use it as the concat
+        // operand + dispatch the RW device matrix-mult. Skip pad [7]/[11]/[15] (uninitialized).
+        for (let j = 0; j < 16; j++) mriBufs.mat.add(j * 4).writeFloat(input.matrix[j]);
+        mriBufs.axis.writeFloat(input.axis[0]);
+        mriBufs.axis.add(4).writeFloat(input.axis[1]);
+        mriBufs.axis.add(8).writeFloat(input.axis[2]);
+        fn(mriBufs.mat, mriBufs.axis, input.omc, input.sin, input.mode | 0);
+        const out = [];
+        for (let j = 0; j < 16; j++) {
+            if (j === 7 || j === 11 || j === 15) continue;  // pad — uninitialized
+            out.push(mriBufs.mat.add(j * 4).readU32());
+        }
+        return out.join(',');
+    }
+
     if (CONFIG.arg_type === 'matrix_scale') {
         // input: { mat: [16 floats], scale: [3 floats], mode: int }
         for (let j = 0; j < 16; j++)
@@ -773,9 +940,10 @@ function runDiff() {
     const Reimpl = new NativeFunction(reimplAddr,  CONFIG.signature.ret, CONFIG.signature.args, reimplCallConv);
 
     const buf = (['vec3_ptr', 'out3_idx', 'vec2_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
-              : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
+              : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out', 'cache_roundtrip', 'cache_setter_observe'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
               : (CONFIG.arg_type === 'time_diff_decompose') ? Memory.alloc(16)
               : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256)
+              : (CONFIG.arg_type === 'ptr_arg_int_get') ? Memory.alloc((CONFIG.struct_size | 0) || 256)
               : (CONFIG.arg_type === 'fmt_desc_ptr') ? Memory.alloc(0x20)
               : null;
 
@@ -800,6 +968,21 @@ function runDiff() {
     if (CONFIG.arg_type === 'vec2_normalize') {
         v2nBufs = { out: Memory.alloc(8), in: Memory.alloc(8) };
         tmpF32  = Memory.alloc(4);
+    }
+    if (CONFIG.arg_type === 'vec3_normalize') {
+        v3nBufs = { out: Memory.alloc(12), in: Memory.alloc(12) };
+        tmpF32  = Memory.alloc(4);
+    }
+    if (CONFIG.arg_type === 'device_transform_dispatch') {
+        // generous (64B) so any device-method over-read past the 3-float payload
+        // stays inside a mapped allocation rather than faulting.
+        xfdBufs = { out: Memory.alloc(64), mat: Memory.alloc(64), in: Memory.alloc(64) };
+    }
+    if (CONFIG.arg_type === 'matrix_rotate') {
+        matrBufs = { mat: Memory.alloc(64), axis: Memory.alloc(12) };
+    }
+    if (CONFIG.arg_type === 'matrix_rotate_inner') {
+        mriBufs = { mat: Memory.alloc(64), axis: Memory.alloc(12) };
     }
     if (CONFIG.arg_type === 'matrix_scale') {
         matsBufs = { mat: Memory.alloc(64), scale: Memory.alloc(12) };
@@ -1554,6 +1737,78 @@ function runDiff() {
         return;
     }
 
+    // ── esi_idx_ecx_outbuf4 ───────────────────────────────────────────────────
+    // SWEEP-CRITICAL (new handler; frida-sweep does NOT auto-merge diff_template.js).
+    // For register-convention LEAVES like FUN_00413bc0: the integer index arrives
+    // in ESI and the out-pointer in ECX; the function writes 4 floats to
+    // [ECX..ECX+0xc] and ends with a PLAIN ret (register-only, no stack args).
+    // Neither int_outbuf4 (passes args cdecl-on-stack) nor fastcall_reg (seeds
+    // only ECX/EDX and captures EAX) can drive it. We build an 18-byte trampoline
+    // per side that PRESERVES the caller's ESI (callee-saved), seeds ESI=idx and
+    // ECX=<16-byte scratch>, CALLs the target, restores ESI, and rets; then read
+    // the 4 output floats back as a packed u32x4 fingerprint.
+    //
+    //   56                 push esi                 ; save caller ESI
+    //   BE ?? ?? ?? ??     mov  esi, imm32(idx)     ; imm patched at +2 per test
+    //   B9 ?? ?? ?? ??     mov  ecx, imm32(scratch) ; imm patched at +7 (constant)
+    //   E8 ?? ?? ?? ??     call rel32 -> target     ; rel32 at +12
+    //   5E                 pop  esi                 ; restore caller ESI
+    //   C3                 ret
+    //
+    // CONFIG.tests : scalar integer indices (incl. negatives / >=5 / the 3 case).
+    if (CONFIG.arg_type === 'esi_idx_ecx_outbuf4') {
+        const scratchO = Memory.alloc(16);
+        const scratchR = Memory.alloc(16);
+        function buildEsiTramp(targetAddr, scratchAddr) {
+            const code = Memory.alloc(Process.pageSize);
+            Memory.patchCode(code, 18, function (cw) {
+                const w = new X86Writer(cw, { pc: code });
+                w.putU8(0x56);                              // push esi
+                w.putBytes([0xBE, 0x00, 0x00, 0x00, 0x00]); // mov esi, 0  (patched +2)
+                w.putBytes([0xB9, 0x00, 0x00, 0x00, 0x00]); // mov ecx, 0  (patched +7)
+                w.putU8(0xE8);                              // call rel32
+                const rel = targetAddr.sub(code.add(16)).toInt32();
+                w.putBytes([rel & 0xff, (rel >>> 8) & 0xff,
+                            (rel >>> 16) & 0xff, (rel >>> 24) & 0xff]);
+                w.putU8(0x5E);                              // pop esi
+                w.putU8(0xC3);                              // ret
+                w.flush();
+            });
+            // ECX imm = scratch address (constant for this side); patch once.
+            code.add(7).writeU32(parseInt(scratchAddr.toString(), 16) >>> 0);
+            return code;
+        }
+        const trampO = buildEsiTramp(TARGET_ADDR, scratchO);
+        const trampR = buildEsiTramp(reimplAddr, scratchR);
+        const FnO = new NativeFunction(trampO, 'void', [], 'mscdecl');
+        const FnR = new NativeFunction(trampR, 'void', [], 'mscdecl');
+        const packU32x4 = function (p) {
+            let s = '';
+            for (let k = 0; k < 16; k += 4) {
+                const v = p.add(k).readU32() >>> 0;
+                s += ('00000000' + v.toString(16)).slice(-8);
+            }
+            return '0x' + s;
+        };
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const idx = CONFIG.tests[i] | 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            // Patch the ESI (idx) imm window on both sides.
+            trampO.add(2).writeU32(idx >>> 0);
+            trampR.add(2).writeU32(idx >>> 0);
+            // Zero the 4-float scratch on both sides before each call.
+            for (let k = 0; k < 16; k += 4) { scratchO.add(k).writeU32(0); scratchR.add(k).writeU32(0); }
+            try { FnO(); origV = packU32x4(scratchO); } catch (e) { errO = e.message; }
+            try { FnR(); reimV = packU32x4(scratchR); } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: idx,
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── vec3_lerp (promote-round-22 harness-ext, SWEEP-CRITICAL) ─────────────
     // For pure vec3 math leaves: void fn(float* out3, float* a3, float* b3,
     // float t) — writes a 3-float result computed from two input vec3s and a
@@ -2260,6 +2515,56 @@ function runDiff() {
             let origV = null, reimV = null, errO = null, errR = null;
             try { origV = callSide(Orig,   structO); } catch (e) { errO = e.message; }
             try { reimV = callSide(Reimpl, structR); } catch (e) { errR = e.message; }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: v,
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── thiscall_nested_field_get ─────────────────────────────────────────────
+    // Like thiscall_field_get, but the observed field is ONE pointer-indirection
+    // deep: ret = *(*(this + outer_off) + inner_off) [& mask, applied inside fn].
+    // thiscall_field_get can't drive these (its zeroed scratch has this+outer_off=0
+    // -> the inner deref hits the null page -> AV). Here we allocate BOTH an outer
+    // struct AND an inner buffer, write the inner ptr at this+outer_off, then seed
+    // the field at inner+inner_off. CONFIG: outer_off, inner_off, ret_kind('u32'|
+    // 'float'), struct_size, inner_size. Precedent consumer: 0x004c0b10
+    // (*(*(this+0xa0)+3) & 3). Bit-identity is integer-only (no x87 issue).
+    if (CONFIG.arg_type === 'thiscall_nested_field_get') {
+        const outerOff = CONFIG.outer_off | 0;
+        const innerOff = CONFIG.inner_off | 0;
+        const retKind  = CONFIG.ret_kind || 'u32';
+        const OS = CONFIG.struct_size || (outerOff + 16);
+        const IS = CONFIG.inner_size  || (innerOff + 16);
+        const _keep = [];
+        const seedInner = function (innerP, v) {
+            const a = innerP.add(innerOff);
+            if (retKind === 'float') a.writeFloat(v);
+            else                     a.writeU32(v >>> 0);
+        };
+        const callSide = function (Fn, structPtr) {
+            const r = Fn(structPtr);
+            if (retKind === 'float') return (typeof r === 'number') ? r : null;
+            if (r === undefined || r === null) return null;
+            return (typeof r === 'object') ? (parseInt(r.toString(), 16) >>> 0) : (r >>> 0);
+        };
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const v = CONFIG.tests[i];
+            const outerO = Memory.alloc(OS), outerR = Memory.alloc(OS);
+            const innerO = Memory.alloc(IS), innerR = Memory.alloc(IS);
+            _keep.push(outerO, outerR, innerO, innerR);
+            for (let b = 0; b < OS; b += 4) { outerO.add(b).writeU32(0); outerR.add(b).writeU32(0); }
+            for (let b = 0; b < IS; b += 4) { innerO.add(b).writeU32(0); innerR.add(b).writeU32(0); }
+            outerO.add(outerOff).writePointer(innerO);
+            outerR.add(outerOff).writePointer(innerR);
+            seedInner(innerO, v); seedInner(innerR, v);
+            let origV = null, reimV = null, errO = null, errR = null;
+            try { origV = callSide(Orig,   outerO); } catch (e) { errO = e.message; }
+            try { reimV = callSide(Reimpl, outerR); } catch (e) { errR = e.message; }
             const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
             results.push({ idx: i, input: v,
                            original: origV, reimpl: reimV,
@@ -3795,14 +4100,38 @@ function runDiff() {
             if (CONFIG.arg_type === 'void_write_observe') {
                 const gaddr = ptr(CONFIG.target_global);
                 let origRead = null, reimRead = null;
+                // Optional CONFIG.seed_globals: array of {addr:'0x..', val:<u32>}
+                // written before EACH call so a one-shot guard (e.g.
+                // DAT_0067eca4==0) or an accumulator slot is reset to a known
+                // state for both Orig and Reimpl — without it a guarded fn runs
+                // its body on the first call only and the second side no-ops,
+                // producing a spurious RED. Backward-compatible: absent => skip.
+                const seedGlobals = CONFIG.seed_globals || [];
+                const seedAll = function () {
+                    for (let s = 0; s < seedGlobals.length; s++) {
+                        ptr(seedGlobals[s].addr).writeU32(seedGlobals[s].val >>> 0);
+                    }
+                };
+                // Optional CONFIG.call_args: fixed integer args passed to both
+                // sides so the write address is deterministic for functions that
+                // index by param_1 (else param_1 is uncontrolled stack garbage).
+                // signature.args must match the arg count. Absent => call with
+                // no args (the historical void(void) behavior).
+                const callArgs = CONFIG.call_args || null;
+                const invoke = function (fn) {
+                    if (callArgs) { return fn.apply(null, callArgs); }
+                    return fn();
+                };
                 try {
+                    seedAll();
                     gaddr.writeU32(t >>> 0);
-                    Orig();
+                    invoke(Orig);
                     origRead = gaddr.readU32();
                 } catch (e) { errOrig = e.message; }
                 try {
+                    seedAll();
                     gaddr.writeU32(t >>> 0);
-                    Reimpl();
+                    invoke(Reimpl);
                     reimRead = gaddr.readU32();
                 } catch (e) { errReim = e.message; }
                 // crash_equal_ok: if both sides throw the same error string, count as match

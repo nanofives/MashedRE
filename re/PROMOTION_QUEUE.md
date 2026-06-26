@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-26  wf_b0f68acd-63f-12  rvas=0x004dfaa0  branch=worktree-wf_b0f68acd-63f-12  evidence=log/diff_pix_passthrough_16.csv  note=PixPassthrough16 C2->C3 (render/bucket_004ddfb0); pure leaf 16-bit ptr dereference; ptr_arg_int_get 10/10 GREEN non-degenerate (0x1..0xdead); cdecl single-pointer arg, no globals, no callees; D3DFORMAT 0x3c/0x75 passthrough; Render/PixPassthrough16.cpp (NEW); build.bat .asi target only.
 ```
 
 ## Merged

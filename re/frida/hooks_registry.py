@@ -14874,4 +14874,28 @@ HOOKS = {
         ],
     },
 
+    # 0x004dfaa0  PixPassthrough16 (render) -- pure leaf getter: reads 2 bytes from p
+    # and returns (p[1]<<8)|p[0] as a little-endian uint16.
+    # Analysis note: re/analysis/bucket_004ddfb0/0x004dfaa0.md
+    # Decoder match: D3DFORMAT 0x3c / 0x75 (both arms in FUN_004df750 dispatch).
+    # Calling convention: __cdecl, single pointer arg from [ESP+4], plain RET.
+    # arg_type ptr_arg_int_get: allocates a 256-byte scratch buffer filled with a
+    # deterministic per-seed pattern, calls fn(buf), compares uint32 return.
+    # Seeds produce distinct low-16-bit returns (seed & 0xFFFF) -- non-degenerate.
+    'pix_passthrough_16': {
+        'rva':            0x004dfaa0,
+        'export':         'PixPassthrough16',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'ptr_arg_int_get',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0x00000001, 0x00000002, 0x00000100, 0x00000201,
+            0x0000ffff, 0x0000abcd, 0x00001234, 0x0000cafe,
+            0x00000ff0, 0x0000dead,
+        ],
+        'path2_tests': [
+            0x00000001, 0x0000abcd, 0x0000ff00,
+        ],
+    },
+
 }

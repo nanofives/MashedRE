@@ -361,6 +361,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Util\PromoLoop_round20.cpp" ^
     "Util\PromoLoop_round21.cpp" ^
     "Render\PromoLoop_round22.cpp" ^
+    "Render\PixPassthrough16.cpp" ^
     "Util\PromoLoop_round24.cpp" ^
     "Util\PromoLoop_round25.cpp" ^
     "Util\PromoLoop_round26.cpp" ^

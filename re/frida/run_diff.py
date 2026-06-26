@@ -170,6 +170,7 @@ def float_bits(f):
 # OBSERVE-ONLY: worst case is an explicit degenerate_ok per hook, never a
 # silent false GREEN.
 SEEDED_ARG_TYPES = {
+    'cache_roundtrip', 'cache_setter_observe',
     'arena_block_free_predicate', 'audio_list_insert', 'audio_list_min_select',
     'audio_list_remove', 'audio_pool_free', 'audio_sub_struct_zero',
     'contact_history', 'count_header_list_ring', 'cursor_back',
@@ -234,7 +235,7 @@ def build_config(hook, asi_path=None):
         'export':         hook['export'],
         'signature':      hook['signature'],
         'arg_type':       hook['arg_type'],
-        'lut_root_delta': hook['lut_root_delta'],
+        'lut_root_delta': hook.get('lut_root_delta', 0),  # LUT-hook-only; default 0 polls the (already-built) sqrt LUT root for non-LUT hooks
         'tests':          hook['path1_tests'],
     }
     # Optional fields — only forwarded if present in the registry entry.
@@ -366,9 +367,26 @@ def build_config(hook, asi_path=None):
     for _k in ('seed_off', 'read_off', 'read_size', 'read_offs', 'fold_ret',
                'idx_call_str', 'idx_arrays', 'prep_call_str', 'prep_arg_types',
                'pre_fill_byte', 'list_op', 'node_link_off', 'cmp_field_off',
-               'object_size', 'init_rva_str', 'pushback_rva_str'):
+               'object_size', 'init_rva_str', 'pushback_rva_str',
+               # thiscall_nested_field_get (2026-06-25): nested struct-ptr getter.
+               'outer_off', 'inner_off', 'struct_size', 'inner_size',
+               # cache_setter_observe (2026-06-25): scattered output-global list.
+               'obs_globals'):
         if _k in hook:
             config[_k] = hook[_k]
+    # void_write_observe scenario-attach extension (c3-batch-sa2 s2, 2026-06-16):
+    #   seed_globals — list of {addr, val} written before EACH Orig/Reimpl call so
+    #     a one-shot guard / accumulator slot is reset for both sides.
+    #   call_args    — fixed integer args passed to the void_write_observe call so
+    #     the write address is deterministic for index-by-param_1 functions.
+    if 'seed_globals' in hook:
+        config['seed_globals'] = [
+            {'addr': f"0x{g['addr']:08x}" if isinstance(g.get('addr'), int) else g['addr'],
+             'val':  g['val']}
+            for g in hook['seed_globals']
+        ]
+    if 'call_args' in hook:
+        config['call_args'] = hook['call_args']
     return config
 
 
