@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-26  wf_b0f68acd-63f-44  rvas=0x005aa8a0  branch=worktree-wf_b0f68acd-63f-44  hook=audio_list_search  arg_type=int_scalar  evidence=log/diff_audio_list_search.csv:GREEN-16/16  note=AudioListSearch C2->C3 (audio, FUN_005aa8a0 42B cdecl 1-arg); global audio list scan DAT_007dccf0 via FUN_005aaac0; callback LAB_005aa8d0 reimpl (disasm 0x005aa8d0..0x005aa8f4): compares *(puVar2-1)[0] vs param_1, returns *(puVar2-1)[7] if bit 0x4 set; crash_equal_ok+degenerate_ok: DAT_007dccf0=0 at menu-attach -> puVar2-1=0xFFFFFFFC -> both paths AV "access violation accessing 0xfffffffc" (16/16 identical); same pattern as audio_output_node_cb_dispatch (PROMOTION_QUEUE 2026-06-25); candidate arg_type int_pair REJECTED (fn is 1-arg cdecl; int_scalar is correct shape); Audio/AudioListSearch_wfb0f.cpp (NEW); build.bat .asi list updated; hooks_registry key audio_list_search added. anchor BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E (original/MASHED.exe.unpatched). author+verify-only; central re-classify deferred to Collect tier.
 ```
 
 ## Merged

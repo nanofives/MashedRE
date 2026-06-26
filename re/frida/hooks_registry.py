@@ -14874,4 +14874,34 @@ HOOKS = {
         ],
     },
 
+    # ── wf_b0f68acd-63f-44 — audio list search (C2→C3) ─────────────────────────
+    # 0x005aa8a0  FUN_005aa8a0  (42 bytes, cdecl, 1 arg)
+    # Scans the global audio object list DAT_007dccf0 (walked by FUN_005aaac0) for
+    # the first node whose key field (at *(puVar2-1), 4 bytes before the "next"
+    # pointer) equals param_1, AND whose field at *(puVar2-1+0x1c) has bit 0x4 set.
+    # Returns that field value (non-zero) on match, 0 if not found.
+    # Callback reimplemented from LAB_005aa8d0 disassembly (0x005aa8d0..0x005aa8f4).
+    # degenerate_ok=True: list may be empty at menu-attach → all-zero is valid GREEN.
+    # ref: re/analysis/bucket_audio_005a7b60_005ab620/005aa8a0.md
+    'audio_list_search': {
+        'rva':            0x005aa8a0,
+        'export':         'AudioListSearch',
+        # DAT_007dccf0 is zero-initialized at menu-attach time; puVar2-1 = 0xFFFFFFFC
+        # → AV "access violation accessing 0xfffffffc" on BOTH orig and reimpl paths.
+        # crash_equal_ok: both sides crash identically → match.
+        # degenerate_ok:  all observations are None (trivial) → allow.
+        # Pattern matches audio_output_node_cb_dispatch precedent (PROMOTION_QUEUE 2026-06-25).
+        'signature':      {'ret': 'uint32', 'args': ['int']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'crash_equal_ok': True,
+        'degenerate_ok':  True,
+        'path1_tests': [
+            0, 1, 2, 3, 4, 5, 6, 7,
+            0x10, 0x20, 0x100, 0x1000,
+            0xDEADBEEF, 0xCAFEBABE, 0x7FFFFFFF, 0xFFFFFFFF,
+        ],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+
 }
