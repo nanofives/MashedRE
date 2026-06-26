@@ -114,7 +114,30 @@ def classify_dll(dll):
 
 
 # ---------------------------------------------------------------- dim 1: signature
-def infer_sig(insns, derefs_arg):
+_REGS = {"eax", "ebx", "ecx", "edx", "esi", "edi", "ebp"}
+
+
+def clean_ptr_getter(ms):
+    """True if the body is a clean single-deref getter the ptr_arg_int_get
+    harness can diff — i.e. no construct that would fault or be degenerate when
+    fed a pointer to a seeded scratch buffer.
+
+    Derived from the 2026-06-26 validation post-mortem (only 1 of ~19 sweet-spot
+    rows was a real getter): the false positives are indirect/vtable calls,
+    IAT calls, vtable tail-call jumps, and jump/lookup tables (arg-as-index).
+    Each term cites the disasm shape it rejects.
+    """
+    for mn, op in ms:
+        if mn == "call":
+            return False                       # any call (incl. call [reg+k], call [imm] IAT, call reg)
+        if mn.startswith("jmp") and ("[" in op or op.strip() in _REGS):
+            return False                       # vtable tail-call / indirect jmp / computed goto
+        if "*" in op:                          # [reg*N+..] scaled index = jump/lookup table, arg-as-index
+            return False
+    return True
+
+
+def infer_sig(insns, derefs_arg, is_clean_getter=True):
     """Heuristic 32-bit signature. Returns dict(conv, nargs, float_arg, ret,
     arg_type_today, runnable_today, sig_conf)."""
     if not insns:
@@ -188,7 +211,7 @@ def infer_sig(insns, derefs_arg):
             # Restricted to nargs==1 + int return (the validated shape); deeper
             # double-deref getters that fault are dropped by the flake-tolerant
             # collector, never falsely promoted.
-            if nargs == 1 and ret == "int":
+            if nargs == 1 and ret == "int" and is_clean_getter:
                 at = "ptr_arg_int_get"
     runnable = at is not None
     sig_conf = "low" if not ebp_frame else "med"   # esp-arg counting is less reliable
@@ -297,7 +320,7 @@ def main():
                            and "[" in o for _, o in ms)
 
         # dim 1: signature
-        sig = infer_sig(insns, derefs_arg)
+        sig = infer_sig(insns, derefs_arg, clean_ptr_getter(ms))
 
         # dim 5: fp
         fp = any(FPU_MN.match(m) or SSE_MN.search(m) for m, _ in ms)
