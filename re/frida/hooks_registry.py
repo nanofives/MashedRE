@@ -14256,6 +14256,36 @@ HOOKS = {
     # surfaced by scripts/promote_frontier.py + scripts/promote_classify.py; diffed via early_window_leaf_diff.py
     'get_771e78': {'rva': 0x00495520, 'export': 'Get771e78', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'read_global', 'target_global': 0x00771e78, 'lut_root_delta': 0, 'path1_tests': [0, 0xDEADBEEF, 0xCAFEF00D, 0x12345678, 0xFFFFFFFF, 0x80000000, 1, 0x55555555, 0xAAAAAAAA, 0], 'path2_tests': [0, 0xDEADBEEF, 0x12345678]},
     'clear_4842b0': {'rva': 0x004842b0, 'export': 'Clear4842b0', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': 0x006cfc88}, {'addr': 0x006cf068}, {'addr': 0x006cf06c}, {'addr': 0x006cfc8c}], 'lut_root_delta': 0, 'path1_tests': [0, 0, 0, 0, 0], 'path2_tests': [0, 0]},
+
+    # ---- C2->C3: FUN_00433240 RaceArmReset (frontend) ---------------------------
+    # void __cdecl(uint32). One-shot gate on 0x0067eca4: when open it latches the
+    # gate, seeds 0x0067ecb0=0x21, runs the two no-arg initializers FUN_00402f80
+    # + FUN_0042d3a0 (neither touches the observed windows: 0x636ae8..af4 and the
+    # 0x67ed78..0x67f0bc zero-block are both outside 0x67e844..0x67ecb0), clears
+    # three words, stores param_1 into 0x0067ecac, sets 0x0067ea84=1. Observe the
+    # 7 written globals; fill the gate window with 0x00 each side so the body
+    # always executes (forces the gate open) -> non-degenerate, ecac=param_1
+    # makes the fold input-sensitive. ref: re/analysis/bucket_0041dc30/0x00433240.md
+    'race_arm_reset': {
+        'rva':            0x00433240,
+        'export':         'RaceArmReset',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'scalars_to_scattered_globals',
+        'observe':        [{'addr': '0x0067eca4', 'len': 4, 'fill': 0x00},
+                           {'addr': '0x0067ecb0', 'len': 4},
+                           {'addr': '0x0067ecac', 'len': 4},
+                           {'addr': '0x0067ea84', 'len': 4},
+                           {'addr': '0x0067e844', 'len': 4},
+                           {'addr': '0x0067e9f8', 'len': 4},
+                           {'addr': '0x0067e914', 'len': 4}],
+        'lut_root_delta': 0,
+        'path1_tests':    [{'args': [0]}, {'args': [1]}, {'args': [2]},
+                           {'args': [0xDEADBEEF]}, {'args': [0xFFFFFFFF]},
+                           {'args': [0x80000000]}, {'args': [0x12345678]},
+                           {'args': [0xCAFEBABE]}, {'args': [0x55555555]},
+                           {'args': [0]}],
+        'path2_tests':    [{'args': [0]}, {'args': [1]}, {'args': [0xDEADBEEF]}],
+    },
     # 0x005c9d00 (GetRaceEndTrigger) intentionally NOT registered: 3-byte body, 5-byte
     # E9 patch corrupts the next function (demoted C3->C2 2026-05-22 crasher).
 

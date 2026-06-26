@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-25  worker-c2c3-433240  rvas=0x00433240  branch=worktree-wf_980e3d3a-b86-30  hook=race_arm_reset  arg_type=scalars_to_scattered_globals  evidence=log/diff_race_arm_reset.csv:GREEN-10/10-NONDEGEN  note=1/1 frontend C2->C3 (RaceArmReset FUN_00433240); void __cdecl(uint32) one-shot gate on 0x0067eca4. Candidate arg_type int_scalar REJECTED (void return -> degenerate); used scalars_to_scattered_globals observing the 7 written globals (0x0067eca4 gate w/ fill:0x00 forces body open each side, 0x0067ecb0=0x21, 0x0067ecac=param_1, 0x0067ea84=1, 0x0067e844/9f8/914=0). Two no-arg callees FUN_00402f80 (const-init 0x636ae8..af4) + FUN_0042d3a0 (zero-fill 0x67ed78..0x67f0bc) both write OUTSIDE the observed windows (all <=0x67ecb0). NON-degenerate: fold varies per input (ecac=param_1) -> [0]=0x29842ec4,[1]=0xdfed8df5,[2]=0x8e1f7966,... reproducible [0]@idx0==idx9. Frontend/RaceArmReset.cpp (NEW; added to build.bat .asi list after PromoLoop_round79.cpp). REUSED EXISTING arg_type (RaceStateLatchSet 0x00429840 precedent) -> NOT SWEEP-CRITICAL, no diff_template.js/run_diff.py change. Bytes byte-verified in original/MASHED.exe.unpatched (file off 0x33240); anchor BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E verified. author+verify-only; central re-classify deferred to Collect tier. U-4255 (param_1 semantics) data-semantic, non-blocking.
 ```
 
 ## Merged
