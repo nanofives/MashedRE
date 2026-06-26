@@ -17353,4 +17353,33 @@ HOOKS = {
             [42, 42],
         ],
     },
+
+    # 0x005ad540  AudioSubStructLinkBoth  (wf_b0f68acd r42, C2->C3)
+    # uint32 fn(p1,p2,p3): thin wrapper; AudioSubStructLinkDevice(p1,p2) then
+    # AudioSubStructLinkBuffer(p1,p3); returns p1 unconditionally. audio_sub_struct_dual
+    # harness (zeroed 12-byte buf -> both links succeed, retNn==1). GREEN 10/10.
+    'audio_sub_struct_link_both': {
+        'rva':            0x005ad540,
+        'export':         'AudioSubStructLinkBoth',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'uint32', 'uint32']},
+        'arg_type':       'audio_sub_struct_dual',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'p2': 0x00000000, 'p3': 0x00000000},
+            {'p2': 0x00000001, 'p3': 0x00000001},
+            {'p2': 0xDEADBEEF, 'p3': 0xCAFEBABE},
+            {'p2': 0x12345678, 'p3': 0x87654321},
+            {'p2': 0xFFFFFFFF, 'p3': 0xFFFFFFFF},
+            {'p2': 0x80000000, 'p3': 0x00000001},
+            {'p2': 0x00000001, 'p3': 0x80000000},
+            {'p2': 0x55555555, 'p3': 0xAAAAAAAA},
+            {'p2': 0x00000002, 'p3': 0x00000003},
+            {'p2': 0x3F800000, 'p3': 0x40000000},
+        ],
+        'path2_tests': [
+            {'p2': 0x00000000, 'p3': 0x00000000},
+            {'p2': 0xDEADBEEF, 'p3': 0xCAFEBABE},
+            {'p2': 0xFFFFFFFF, 'p3': 0xFFFFFFFF},
+        ],
+    },
 }
