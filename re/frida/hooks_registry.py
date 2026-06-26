@@ -14848,6 +14848,40 @@ HOOKS = {
         'path2_tests':        [0, 1, 2],
     },
 
+    # 0x005a9e40  AudioOutputNodeCbDispatch
+    # int(int param_1, int param_2): null-guards the fn-ptr at param_1+0x3c;
+    # if non-null calls it with (0, param_2) and returns param_1, else 0.
+    # ASM: PUSH ESI; MOV ESI,[ESP+8]; MOV EAX,[ESI+0x3c]; TEST; JZ ret0;
+    #      PUSH ECX; PUSH 0; CALL EAX; ADD ESP,8; MOV EAX,ESI; POP ESI; RET.
+    # Strategy: crash_equal_ok=True with param_1=0.
+    #   param_1=0 → reads [0+0x3c] = address 0x3c (null page, unmapped) → AV.
+    #   Both orig and reimpl fault identically at the same read address before
+    #   reaching the callback or any audio state → crash_equal_ok GREEN.
+    # Precedent: AudioWaveVtableSlot1cDispatch (0x005abf80) — same crash_equal_ok
+    #   strategy for a comparable null-guarded fn-ptr dispatch pattern.
+    # [UNCERTAIN U-6621]: semantic of literal 0 arg and +0x3c callback contract.
+    'audio_output_node_cb_dispatch': {
+        'rva':            0x005a9e40,
+        'export':         'AudioOutputNodeCbDispatch',
+        'signature':      {'ret': 'int32', 'args': ['int32', 'int32']},
+        'arg_type':       'int_pair',
+        'crash_equal_ok': True,
+        # degenerate_ok: crash_equal_ok results have no return value (origV=null,
+        # reimV=null), so the degenerate detector fires. The crash at address 0x3c
+        # (null-page AV on [0+0x3c] deref) IS the discriminating evidence — both
+        # sides execute the same PUSH/MOV/MOV sequence and AV at the same address
+        # before any divergence is possible. Precedent: AudioWaveVtableSlot1cDispatch
+        # (0x005abf80, C3) uses the identical crash_equal_ok + degenerate strategy.
+        'degenerate_ok':  True,
+        'lut_root_delta': 0,
+        # param_1=0 → [0+0x3c] = null page AV on both sides, identical crash.
+        'path1_tests': [
+            [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+            [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+        ],
+        'path2_tests': [[0, 0], [0, 0], [0, 0]],
+    },
+
     'vec3_lerp': {
         'rva':            0x004b4650,
         'export':         'Vec3Lerp',

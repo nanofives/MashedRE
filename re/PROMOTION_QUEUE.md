@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-25  wf_a3b31069-bca-11  rvas=0x005a9e40  branch=worktree-wf_a3b31069-bca-11  hook=audio_output_node_cb_dispatch  arg_type=int_pair  evidence=log/diff_audio_output_node_cb_dispatch.csv  note=AudioOutputNodeCbDispatch C2->C3; int_pair crash_equal_ok+degenerate_ok GREEN 10/10 (both AV at 0x3c on param_1=0); Audio/AudioDSound.cpp
 ```
 
 ## Merged

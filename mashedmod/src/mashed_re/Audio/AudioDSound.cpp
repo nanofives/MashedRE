@@ -385,3 +385,57 @@ extern "C" __declspec(dllexport) void __cdecl AudioListDrain2(int* param_1)
 // RH_ScopedInstall(AudioListDrain2, 0x005ade90);  // first-wins; superseded
 // (// frida-sweep first-wins (TimerInit.cpp/AudioRws.cpp registered first): 0x005ade90)
 
+// ---------------------------------------------------------------------------
+// 0x005a9e40  FUN_005a9e40  (0x20 bytes, 0x005a9e40–0x005a9e5f)
+// AudioOutputNodeCbDispatch — null-guarded dispatch through +0x3c callback.
+//
+// Decompilation (0x005a9e40–0x005a9e5f):
+//   cb = *(code**)(param_1 + 0x3c);   // load callback fn-ptr at offset 0x3c
+//   if (cb != NULL) {
+//     cb(0, param_2);                  // call with fixed first arg 0
+//     return param_1;                  // success: return the object ptr
+//   }
+//   return 0;                          // no callback installed -> return 0
+//
+// ASM key (0x005a9e40..0x005a9e5f):
+//   005a9e40: PUSH ESI
+//   005a9e41: MOV  ESI,[ESP+0x8]       ; ESI = param_1
+//   005a9e45: MOV  EAX,[ESI+0x3c]      ; EAX = *(param_1+0x3c) — callback ptr
+//   005a9e48: TEST EAX,EAX
+//   005a9e4a: JZ   0x005a9e5c           ; null -> return 0
+//   005a9e4c: MOV  ECX,[ESP+0xc]       ; ECX = param_2
+//   005a9e50: PUSH ECX                  ; arg1 = param_2
+//   005a9e51: PUSH 0x0                  ; arg0 = 0 (fixed)
+//   005a9e53: CALL EAX                  ; call cb(0, param_2)
+//   005a9e55: ADD  ESP,0x8             ; cdecl cleanup of 2 pushed args
+//   005a9e58: MOV  EAX,ESI            ; return param_1
+//   005a9e5a: POP  ESI
+//   005a9e5b: RET
+//   005a9e5c: XOR  EAX,EAX            ; return 0
+//   005a9e5e: POP  ESI
+//   005a9e5f: RET
+//
+// Callers: FUN_004627f0 (C2), FUN_005af860 (C2), FUN_005afa00 (C2), FUN_005afcf0 (C2).
+// Indirect callee at +0x3c is an audio callback (semantic TBD); see U-6621.
+// [UNCERTAIN U-6621]: Meaning of literal `0` first argument and +0x3c callback
+//   contract. Data-semantic open; non-blocking for bit-identical leaf dispatch.
+// ---------------------------------------------------------------------------
+extern "C" __declspec(dllexport) int __cdecl AudioOutputNodeCbDispatch(
+        int param_1, int param_2)
+{
+    // 0x005a9e45: cb = *(code**)(param_1 + 0x3c)
+    typedef int (__cdecl* CbFn)(int, int);
+    CbFn cb = *reinterpret_cast<CbFn*>(param_1 + 0x3c);
+    // 0x005a9e48: TEST EAX,EAX — null-guard
+    if (cb != nullptr) {
+        // 0x005a9e50..0x005a9e55: call cb(0, param_2); caller-cdecl cleanup
+        cb(0, param_2);
+        // 0x005a9e58: return param_1
+        return param_1;
+    }
+    // 0x005a9e5c: return 0
+    return 0;
+}
+
+RH_ScopedInstall(AudioOutputNodeCbDispatch, 0x005a9e40);
+
