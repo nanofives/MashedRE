@@ -5,3 +5,4 @@ round	1	landed	4	queued	0	failed	0	integration	GREEN	branches	worktree-wf_a3b310
 round	2	landed	0	queued	1	failed	0	integration	RED	branches	worktree-wf_a3b31069-bca-44
 
 round	1	landed	11	queued	0	failed	0	integration	GREEN	branches	worktree-wf_b0f68acd-63f-4,worktree-wf_b0f68acd-63f-7,worktree-wf_b0f68acd-63f-11,worktree-wf_b0f68acd-63f-12,worktree-wf_b0f68acd-63f-13,worktree-wf_b0f68acd-63f-14,worktree-wf_b0f68acd-63f-15,worktree-wf_b0f68acd-63f-16,worktree-wf_b0f68acd-63f-17,worktree-wf_b0f68acd-63f-26,worktree-wf_b0f68acd-63f-29
+round	2	landed	4	queued	0	failed	0	integration	GREEN	branches	worktree-wf_b0f68acd-63f-39,worktree-wf_b0f68acd-63f-40,worktree-wf_b0f68acd-63f-42,worktree-wf_b0f68acd-63f-44
