@@ -17324,4 +17324,33 @@ HOOKS = {
         ],
         'path2_tests':    [[0x00400000, 0], [0x00400000, 0], [0x00400000, 0]],
     },
+
+    # 0x00472690  RandIntInRange  (wf_b0f68acd r40, C2->C3)
+    # int(lo, hi): uniform random int in [lo,hi]; calls PRNG FUN_00534870 (STUB S-1424).
+    # int_pair with ONLY degenerate vectors (lo==hi): (x % 1)==0 so result==lo,
+    # PRNG-independent; varied lo values give distinct A==B rows. GREEN 10/10.
+    'rand_int_in_range': {
+        'rva':            0x00472690,
+        'export':         'RandIntInRange',
+        'signature':      {'ret': 'int', 'args': ['int', 'int']},
+        'arg_type':       'int_pair',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0, 0],
+            [1, 1],
+            [5, 5],
+            [10, 10],
+            [42, 42],
+            [100, 100],
+            [200, 200],
+            [999, 999],
+            [7, 7],
+            [50, 50],
+        ],
+        'path2_tests': [
+            [0, 0],
+            [5, 5],
+            [42, 42],
+        ],
+    },
 }
