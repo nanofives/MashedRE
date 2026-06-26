@@ -17,6 +17,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ```
 2026-06-25  wf_a3b31069-bca-4  rvas=0x004464c0  branch=worktree-wf_a3b31069-bca-4  evidence=log/diff_camera_entry_dispatch_all.csv  note=CameraEntry::DispatchAll race-scenario GREEN 8/8 (count=7 non-degenerate); __cdecl dispatcher stride=0xd8 count=DAT_00898994 type0/1/2->C2 callees
 2026-06-25  wf_a3b31069-bca-11  rvas=0x005a9e40  branch=worktree-wf_a3b31069-bca-11  hook=audio_output_node_cb_dispatch  arg_type=int_pair  evidence=log/diff_audio_output_node_cb_dispatch.csv  note=AudioOutputNodeCbDispatch C2->C3; int_pair crash_equal_ok+degenerate_ok GREEN 10/10 (both AV at 0x3c on param_1=0); Audio/AudioDSound.cpp
+2026-06-25  wf_a3b31069-bca-14  rvas=0x005a8960  branch=worktree-wf_a3b31069-bca-14  evidence=log/diff_audio_voice_queue_set_5a8960.csv  note=AudioVoiceQueueSet5a8960 struct_three_write 10/10 GREEN observe+0x158
 ```
 
 ## Merged
