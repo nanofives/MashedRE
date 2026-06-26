@@ -12689,6 +12689,39 @@ HOOKS = {
         ],
     },
 
+    # 0x004df9b0  PixEncodeR6G5B5
+    # uint FUN_004df9b0(byte *bgr)  — 39 bytes, pure leaf
+    # Returns 16-bit R6G5B5 pack (byte-reversed 565 vs D3DFMT_R5G6B5):
+    #   ((b[2] & 0xfc) << 6 | b[1] & 0xf8) << 2 | (b[0] >> 3)
+    # Source layout: b[0]=B (5 bits), b[1]=G (5 bits), b[2]=R (6 bits at top).
+    # Decoder match: D3DFORMAT 0x3d (non-standard; [UNCERTAIN U-5551] internal RW id).
+    # ref: re/analysis/bucket_004ddfb0/0x004df9b0.md
+    'pix_encode_r6g5b5': {
+        'rva':            0x004df9b0,
+        'export':         'PixEncodeR6G5B5',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'bgra_encode',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # [b0(B), b1(G), b2(R), b3(ignored)]  (BGR bytes)
+            [0x00, 0x00, 0x00, 0x00],   # all zeros
+            [0xff, 0xff, 0xff, 0x00],   # all channels max
+            [0xf8, 0x00, 0x00, 0x00],   # B only (5-bit, b0>>3)
+            [0x00, 0xf8, 0x00, 0x00],   # G only (5-bit, b1&0xf8)
+            [0x00, 0x00, 0xfc, 0x00],   # R only (6-bit, b2&0xfc)
+            [0xf8, 0xf8, 0xfc, 0x00],   # all channels max-aligned
+            [0x10, 0x20, 0x40, 0x00],   # low values
+            [0xaa, 0x55, 0xcc, 0x00],   # alternating
+            [0x08, 0x08, 0x04, 0x00],   # one step above truncation threshold
+            [0x80, 0x40, 0x20, 0xff],   # descending, b3 non-zero (not consumed)
+        ],
+        'path2_tests': [
+            [0xf8, 0xf8, 0xfc, 0x00],
+            [0xaa, 0x55, 0xcc, 0x00],
+            [0x00, 0x00, 0x00, 0x00],
+        ],
+    },
+
     # 0x004df9e0  PixEncodeX8R8G8B8
     # uint FUN_004df9e0(byte *bgr)  — 34 bytes, pure leaf
     # Returns 32-bit X8R8G8B8 pack (alpha forced 0xff):

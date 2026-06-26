@@ -6,6 +6,7 @@
 //   0x004df910  PixEncode4444     — 16-bit A4R4G4B4 packer from BGRA bytes
 //   0x004df950  PixEncodeA8R3G3B2 — 16-bit A8R3G3B2 packer from 4-byte src
 //   0x004df980  PixEncodeX4R4G4B4 — 16-bit X4R4G4B4 packer from BGR bytes (alpha forced 0xf)
+//   0x004df9b0  PixEncodeR6G5B5   — 16-bit R6G5B5 packer from BGR bytes (byte-reversed 565)
 //   0x004df9e0  PixEncodeX8R8G8B8 — 32-bit X8R8G8B8 packer from BGR bytes (alpha forced 0xff)
 //
 // Binary anchor (unpatched):
@@ -17,9 +18,10 @@
 //   re/analysis/bucket_004ddfb0/0x004df910.md
 //   re/analysis/bucket_004ddfb0/0x004df950.md
 //   re/analysis/bucket_004ddfb0/0x004df980.md
+//   re/analysis/bucket_004ddfb0/0x004df9b0.md
 //   re/analysis/bucket_004ddfb0/0x004df9e0.md
 //
-// All five functions are pure leaf encoders: no callees, no globals read/written,
+// All six functions are pure leaf encoders: no callees, no globals read/written,
 // no live-state access.  Each takes a pointer to a 3- or 4-byte input buffer
 // and returns a packed pixel word.
 
@@ -152,6 +154,55 @@ PixEncodeX4R4G4B4(std::uint8_t* bgr)
 }
 
 RH_ScopedInstall(PixEncodeX4R4G4B4, 0x004df980);
+
+// ---------------------------------------------------------------------------
+// 0x004df9b0  FUN_004df9b0  PixEncodeR6G5B5   (39 bytes)
+//
+// uint PixEncodeR6G5B5(byte *bgr)
+//   param_1 = pointer to 3-byte input buffer
+//   Returns 16-bit R6G5B5 packed word.
+//   Source layout (byte-reversed vs FUN_004df8a0 / D3DFMT_R5G6B5):
+//     b[0] = B channel (5 bits at result[4..0])
+//     b[1] = G channel (5 bits at result[9..5])
+//     b[2] = R channel (6 bits at result[15..10])
+//
+// Formula from re/analysis/bucket_004ddfb0/0x004df9b0.md:
+//   ((b[2] & 0xfc) << 6 | b[1] & 0xf8) << 2 | (b[0] >> 3)
+//
+// Disasm (RVA 0x004df9b0, 39 bytes, plain ret = cdecl):
+//   mov ecx,[esp+4]   ; ecx = src ptr
+//   mov al,[ecx+2]    ; AL  = b[2]
+//   mov dl,[ecx+1]    ; DL  = b[1]
+//   and eax,0xfc      ; AL &= 0xfc (6 bits)
+//   and edx,0xf8      ; DL &= 0xf8 (5 bits)
+//   shl eax,6         ; EAX <<= 6  -> bits 13..8
+//   or  eax,edx       ; | b[1]&0xf8 -> bits 7..3
+//   xor edx,edx
+//   mov dl,[ecx]      ; DL  = b[0]
+//   shl eax,2         ; EAX <<= 2  -> b[2] at 15..10, b[1] at 9..5
+//   shr edx,3         ; EDX = b[0]>>3 -> 5 bits at 4..0
+//   or  eax,edx       ; combine
+//   ret
+//
+// Constants cited in note:
+//   0xfc  — 6-bit truncation mask (b[2] keeps bits 7..2)
+//   0xf8  — 5-bit truncation mask (b[1] keeps bits 7..3)
+//
+// Decoder match: D3DFORMAT 0x3d (non-standard; [UNCERTAIN U-5551] internal RW id).
+// ---------------------------------------------------------------------------
+
+// 0x004df9b0
+extern "C" __declspec(dllexport) std::uint32_t __cdecl
+PixEncodeR6G5B5(std::uint8_t* bgr)
+{
+    std::uint32_t b0 = bgr[0];  // B (5 bits at result[4..0])
+    std::uint32_t b1 = bgr[1];  // G (5 bits at result[9..5])
+    std::uint32_t b2 = bgr[2];  // R (6 bits at result[15..10])
+    // ((b[2] & 0xfc) << 6 | b[1] & 0xf8) << 2 | (b[0] >> 3)
+    return (((b2 & 0xfcu) << 6u | b1 & 0xf8u) << 2u | (b0 >> 3u));
+}
+
+RH_ScopedInstall(PixEncodeR6G5B5, 0x004df9b0);
 
 // ---------------------------------------------------------------------------
 // 0x004df9e0  FUN_004df9e0  PixEncodeX8R8G8B8   (34 bytes)
