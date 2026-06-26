@@ -262,6 +262,17 @@ function callFn(fn, input, buf) {
     if (CONFIG.arg_type === 'int_scalar') {
         return fn(input >>> 0);
     }
+    // ptr_arg_int_get — fn(ptr) -> int; single pointer arg the fn dereferences.
+    // Pass a deterministic scratch buffer so the result varies across test vectors.
+    if (CONFIG.arg_type === 'ptr_arg_int_get') {
+        const sz = (CONFIG.struct_size | 0) || 256;
+        const seed = (input >>> 0);
+        for (let o = 0; o < sz; o += 4)
+            buf.add(o).writeU32(((seed + o * 0x01010101) >>> 0));
+        const ret = fn(buf);
+        return (ret === null || ret === undefined) ? 0
+             : (typeof ret === 'object' ? (ret.toInt32() >>> 0) : (ret >>> 0));
+    }
     // int_with_out_ptr — uint32 arg + 4-byte output buffer; returns function's return value
     if (CONFIG.arg_type === 'int_with_out_ptr') {
         return fn(input >>> 0, buf);
@@ -776,6 +787,7 @@ function runDiff() {
               : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
               : (CONFIG.arg_type === 'time_diff_decompose') ? Memory.alloc(16)
               : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256)
+              : (CONFIG.arg_type === 'ptr_arg_int_get') ? Memory.alloc((CONFIG.struct_size | 0) || 256)
               : (CONFIG.arg_type === 'fmt_desc_ptr') ? Memory.alloc(0x20)
               : null;
 

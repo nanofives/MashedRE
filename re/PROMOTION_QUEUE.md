@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-26  wf_b0f68acd-63f-14  rvas=0x004dfa40  branch=worktree-wf_b0f68acd-63f-14  evidence=log/diff_bgra_reorder_4dfa40.csv  note=C2->C3 BgraReorder4dfa40 (render); pure 34B leaf byte-permutation CONCAT31(p[3],p[0],p[1],p[2]); ptr_arg_int_get 10/10 GREEN NON-DEGEN (seeds 0x11223344->0x11443322, 0xDEADBEEF->0xDEEFBEAD etc.); Render/BgraReorder_wf.cpp; diff_template.js ported ptr_arg_int_get handler from main into worktree (buf alloc + callFn branch); anchor BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E verified.
 ```
 
 ## Merged
