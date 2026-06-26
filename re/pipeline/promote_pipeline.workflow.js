@@ -17,8 +17,9 @@ export const meta = {
 // {scriptPath}. args still override IF present.
 const A = args || {}
 const ROUNDS = A.rounds || 8             // plan->execute->collect rounds back-to-back
-const SESSIONS = A.sessions || 6         // worker sessions per round
-const PER_SESSION = A.perSession || 5    // candidates per session (30/round)
+const CLUSTER_MAX = A.clusterMax || 6    // max functions per cluster/worker
+const SESSIONS = A.sessions || 6         // (legacy) candidate-count target = SESSIONS*PER_SESSION
+const PER_SESSION = A.perSession || 5
 const AUTO_MERGE = A.autoMerge !== false // fully-autonomous: default ON
 const DRY_EXECUTE = A.dryExecute === true // author+diff+queue but never merge (validation mode)
 const MODEL = A.model || 'claude-sonnet-4-6'  // worker (Execute) model; orchestration inherits Opus
@@ -44,19 +45,55 @@ const PLAN_SCHEMA = {
     supply: { type: 'object', additionalProperties: true },
     argtype_top_gap: { type: 'string' },
     argtype_top_unblock: { type: 'number' },
-    candidates: {
+    clusters: {
       type: 'array',
       items: {
         type: 'object', additionalProperties: false,
         properties: {
-          rva: { type: 'string' }, name: { type: 'string' }, sub: { type: 'string' },
-          arg_type: { type: 'string' }, score: { type: 'number' }, session: { type: 'number' },
+          cluster_id: { type: 'number' },
+          kind: { type: 'string' },
+          subsystem: { type: 'string' },
+          members: {
+            type: 'array',
+            items: {
+              type: 'object', additionalProperties: false,
+              properties: {
+                rva: { type: 'string' }, name: { type: 'string' }, sub: { type: 'string' },
+                arg_type: { type: 'string' }, size: { type: 'string' },
+              },
+              required: ['rva', 'name', 'sub', 'arg_type'],
+            },
+          },
         },
-        required: ['rva', 'name', 'sub', 'arg_type', 'session'],
+        required: ['cluster_id', 'members'],
       },
     },
   },
-  required: ['round', 'plan_path', 'candidates'],
+  required: ['round', 'plan_path', 'clusters'],
+}
+
+const CLUSTER_VERDICT_SCHEMA = {
+  type: 'object', additionalProperties: false,
+  properties: {
+    cluster_id: { type: 'number' },
+    branch: { type: 'string' },
+    verdicts: { type: 'array', items: VERDICT_SCHEMA_INNER() },
+  },
+  required: ['verdicts'],
+}
+function VERDICT_SCHEMA_INNER() {
+  return {
+    type: 'object', additionalProperties: false,
+    properties: {
+      rva: { type: 'string' },
+      status: { type: 'string', enum: ['promoted', 'queued', 'failed'] },
+      diff: { type: 'string', enum: ['GREEN', 'RED', 'NONE'] },
+      arg_type: { type: 'string' },
+      evidence: { type: 'string' },
+      reason: { type: 'string' },
+    },
+    required: ['rva', 'status', 'diff', 'reason'],
+  }
 }
 
 const VERDICT_SCHEMA = {
@@ -86,42 +123,54 @@ const COLLECT_SCHEMA = {
   required: ['integration_diff', 'promoted_landed', 'aborted', 'notes'],
 }
 
-// ---- worker prompt builder --------------------------------------------------
-// Encodes the existing promote-c3-batch worker protocol: worktree-isolated,
-// author+verify-only (NO per-worker re-classify — the Collect tier classifies
-// centrally on main), confirmed-arg_type-ONLY (never invent an arg_type), and
-// append the result row to re/PROMOTION_QUEUE.md.
-function workerPrompt(c) {
+// ---- cluster worker prompt --------------------------------------------------
+// COST REDESIGN (2026-06-26): one worker per CLUSTER of related functions, not
+// one per function. Amortizes context-boot + ONE build + shared struct/global
+// understanding across the whole family. Workers get ground-truth asm from the
+// cheap capstone helper (scripts/dump_asm.py) — NO Ghidra session (that was ~25k
+// tokens/worker of the old cost). author+verify-only; the Collect tier classifies
+// centrally. Old per-function cost ~80k; target ~90k for a whole cluster of ~5.
+function clusterWorkerPrompt(cl) {
+  const rows = cl.members.map(m => `${m.rva}:${m.size || ''}  ${m.name}  arg_type=${m.arg_type}`)
+  const asmToks = cl.members.map(m => `${m.rva}${m.size ? ':' + m.size : ''}`).join(' ')
   return [
-    `You are a C2->C3 promotion worker in an isolated git worktree. Promote ONE function to C3.`,
-    `TARGET: ${c.rva}  ${c.name}  (subsystem: ${c.sub})  candidate arg_type: ${c.arg_type}`,
+    `You are a C2->C3 promotion CLUSTER worker in an isolated git worktree. Promote a FAMILY of related`,
+    `functions (kind=${cl.kind || '?'}, subsystem=${cl.subsystem || '?'}). Author them as ONE coherent unit.`,
+    `MEMBERS (${cl.members.length}):`,
+    ...rows.map(r => `  - ${r}`),
     ``,
-    `Binary anchor: original/MASHED.exe SHA-256 must be BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E`,
-    `(the .unpatched backup holds the anchor; the live exe is patched — that is expected).`,
+    `Anchor: original/MASHED.exe.unpatched SHA-256 = BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E`,
+    `(live MASHED.exe is patched — expected).`,
     ``,
-    `REJECT FAST (return status=queued, do NOT author) if any holds — these never diff clean:`,
-    `  * the target is a thunk / 5-byte JMP rel32 trampoline (esp. into an already-C3 target): no new behavior.`,
-    `  * the function is a destructive teardown/free/kill/release/destroy/close (frees live heap => timeout).`,
-    `  * it takes no args and returns void (nothing to feed or observe in the A/B harness).`,
-    `  * it touches COM/D3D/DSound/DInput live state.`,
-    `PROTOCOL (gta-reversed style, NO-GUESSING, cite every RVA):`,
-    `1. Read the function's decompilation (Ghidra MCP or re/console/xtwin.py) + any analysis note. Confirm the`,
-    `   signature (conv/nargs/ret). If the real signature does NOT match an arg_type that already exists in`,
-    `   re/frida/diff_template.js, DO NOT invent one — return status=queued, reason="needs arg_type <shape>".`,
-    `2. Author the hook: one file mashedmod/src/mashed_re/<Subsystem>/<Name>.cpp, inline // 0xRVA comment,`,
-    `   RH_ScopedInstall in InjectHooks, register in re/frida/hooks_registry.py, add to build.bat. Runtime-toggleable.`,
-    `3. Build: cmd /c mashedmod\\build.bat  (must compile clean).`,
-    `4. Diff: py -3.12 re/frida/run_diff.py <hook_name>  (acquires its own frida_pool slot; bit-identity A/B).`,
-    `   Status=promoted ONLY if run_diff.py actually produced a NON-DEGENERATE GREEN CSV (real A and B rows,`,
-    `   bit-identical). A static "it's obviously identical" argument is NOT acceptance — you must have a CSV.`,
-    `   If run_diff TIMES OUT or crashes (common for state-touching fns), status=queued, reason="diff timeout/crash".`,
-    `   RED or non-identical => status=queued (cite the divergence).`,
-    `5. Commit to THIS worktree branch (path-scoped git commit -- of only your files). Append ONE row to`,
-    `   re/PROMOTION_QUEUE.md under "## Queued": branch, rva, hook_name, arg_type, evidence (diff CSV path).`,
-    `   DO NOT run re-classify and DO NOT touch hooks.csv — the Collect tier does that centrally.`,
-    `6. program_close any Ghidra project you opened (lock hygiene). Kill ONLY MASHED PIDs you spawned.`,
+    `STEP 0 — get ground-truth asm for the WHOLE cluster in one cheap call (NO Ghidra, NO MCP):`,
+    `    py -3.12 scripts/dump_asm.py ${asmToks}`,
+    `  Author every reimpl FROM THIS ASM. Do NOT open Ghidra/xtwin unless the asm is genuinely ambiguous.`,
+    `  Because these are address-adjacent, they likely share a struct layout / globals — figure it out ONCE`,
+    `  and reuse across the cluster (that shared understanding is why we cluster).`,
     ``,
-    `Return the verdict object. evidence = the diff CSV path or the decomp citation that blocked it.`,
+    `For EACH member, REJECT FAST (status=queued, don't author) if: it's a thunk/5-byte JMP; a destructive`,
+    `teardown/free/kill; 0-arg void; or touches COM/D3D/DSound/DInput live state. If its true signature`,
+    `doesn't match an EXISTING arg_type in re/frida/diff_template.js, status=queued reason="needs arg_type <shape>"`,
+    `(NEVER invent an arg_type — integration RED's on invented ones).`,
+    ``,
+    `PROTOCOL (gta-reversed, NO-GUESSING, cite the RVA + asm offset for every field):`,
+    `1. Author each member's hook: mashedmod/src/mashed_re/<Subsystem>/<Name>.cpp (inline // 0xRVA),`,
+    `   RH_ScopedInstall in InjectHooks, register in re/frida/hooks_registry.py, add to asi_sources.rsp/build.bat.`,
+    `   Prefer ONE .cpp for the whole family when they share a struct (fewer files, shared header).`,
+    `2. Build ONCE for the whole cluster: cmd /c mashedmod\\build.bat (must compile clean). If one member`,
+    `   breaks the build, comment out just that member's install + registry entry (queue it) and rebuild.`,
+    `3. Diff each member: py -3.12 re/frida/run_diff.py <hook_name>. promoted ONLY on a NON-DEGENERATE GREEN`,
+    `   CSV (real A/B rows, bit-identical) — a static "obviously identical" argument is NOT acceptance.`,
+    `   rc=3 timeout / rc=4 "terminated during injection" are TRANSIENT Frida flakes — retry up to 3x before`,
+    `   giving up; if still failing, status=queued reason="diff flake/timeout".`,
+    `4. UNWIRE every non-promoted member before committing: comment out its RH_ScopedInstall + its`,
+    `   hooks_registry.py entry + its asi_sources.rsp/build.bat line, so the branch INSTALLS ONLY`,
+    `   diff-verified hooks (a queued/RED hook that rides onto main would change behavior unverified).`,
+    `   Rebuild once more to confirm the verified-only set compiles. Then path-scoped git commit -- your files.`,
+    `   For each PROMOTED member append a row to re/PROMOTION_QUEUE.md "## Queued": branch, rva, hook_name,`,
+    `   arg_type, CSV path. DO NOT re-classify or touch hooks.csv — Collect does that. Kill ONLY MASHED PIDs you spawn.`,
+    ``,
+    `Return {cluster_id:${cl.cluster_id}, branch:<your worktree branch>, verdicts:[one per member]}.`,
   ].join('\n')
 }
 
@@ -151,36 +200,44 @@ async function runRound(roundIdx) {
       `Generate the next promotion-round plan. Run, in order:`,
       `  py -3.12 scripts/promote_frontier.py`,
       `  py -3.12 scripts/promote_enrich.py`,
-      `  py -3.12 scripts/pipeline_plan.py --sessions ${SESSIONS} --per-session ${PER_SESSION} --model "${MODEL}"`,
-      `Then read the emitted re/pipeline/rounds/round_<N>_plan.json (highest N). Return:`,
-      `round, plan_path, supply, the #1 argtype_gaps entry as argtype_top_gap/argtype_top_unblock, and the`,
-      `flattened candidates (each with its session number). If 0 candidates, return an empty candidates array.`,
+      `  py -3.12 scripts/pipeline_plan.py --cluster-max ${CLUSTER_MAX} --model "${MODEL}"`,
+      `Then read the emitted re/pipeline/rounds/round_<N>_plan.json (highest N). Its "batches" array IS the`,
+      `cluster list (each has cluster_id=session, kind, subsystem, candidates=members). Return:`,
+      `round, plan_path, supply, the #1 argtype_gaps entry as argtype_top_gap/argtype_top_unblock, and`,
+      `clusters[] (map each batch -> {cluster_id, kind, subsystem, members:[{rva,name,sub,arg_type,size}]}).`,
+      `If 0 candidates, return an empty clusters array.`,
     ].join('\n'),
     { label: `plan:r${roundIdx}`, phase: 'Plan', schema: PLAN_SCHEMA }
   )
-  if (!plan || !plan.candidates || plan.candidates.length === 0) {
-    log(`round ${roundIdx}: PLAN produced 0 candidates (supply drained or all argtype-blocked). Stopping.`)
+  if (!plan || !plan.clusters || plan.clusters.length === 0) {
+    log(`round ${roundIdx}: PLAN produced 0 clusters (supply drained or all argtype-blocked). Stopping.`)
     return { round: roundIdx, drained: true, promoted: 0,
              argtype_gap: plan && plan.argtype_top_gap }
   }
-  log(`round ${roundIdx}: planned ${plan.candidates.length} candidates. ` +
+  const nCand = plan.clusters.reduce((a, c) => a + (c.members ? c.members.length : 0), 0)
+  log(`round ${roundIdx}: planned ${plan.clusters.length} clusters / ${nCand} candidates. ` +
       `Top arg_type gap "${plan.argtype_top_gap}" would unblock ${plan.argtype_top_unblock}.`)
 
-  // PHASE 2 — Execute (worktree-isolated workers; concurrency capped by the
-  // runtime + frida_pool). pipeline() so each worker's diff runs as soon as its
-  // authoring is done — no barrier.
+  // PHASE 2 — Execute: one worktree-isolated worker per CLUSTER. Each returns an
+  // array of per-member verdicts; flatten them. Concurrency capped by runtime +
+  // frida_pool. Far fewer, larger workers => boot/build/understanding amortized.
   phase('Execute')
-  const verdicts = (await parallel(
-    plan.candidates.map((c) => () =>
-      agent(workerPrompt(c), {
-        label: `promote:${c.rva}`,
+  const clusterResults = (await parallel(
+    plan.clusters.map((cl) => () =>
+      agent(clusterWorkerPrompt(cl), {
+        label: `cluster:${cl.cluster_id}:${cl.subsystem || cl.kind || ''}`,
         phase: 'Execute',
-        schema: VERDICT_SCHEMA,
+        schema: CLUSTER_VERDICT_SCHEMA,
         isolation: 'worktree',
         model: MODEL,
       })
     )
   )).filter(Boolean)
+  // attach the cluster's branch to each verdict (collect needs branch per hook)
+  const verdicts = []
+  for (const cr of clusterResults)
+    for (const v of (cr.verdicts || []))
+      verdicts.push({ ...v, branch: cr.branch })
 
   const promoted = verdicts.filter((v) => v.status === 'promoted' && v.diff === 'GREEN')
   const queued = verdicts.filter((v) => v.status === 'queued')
@@ -200,7 +257,7 @@ async function runRound(roundIdx) {
     log(`round ${roundIdx}: nothing GREEN to merge.`)
     return { round: roundIdx, promoted: 0, queued: queued.length, failed: failed.length, merged: 0 }
   }
-  const branches = promoted.map((v) => v.branch).filter(Boolean)
+  const branches = [...new Set(promoted.map((v) => v.branch).filter(Boolean))]
   const collect = await agent(
     [
       `Run the Frida-sweep MERGE for promotion round ${roundIdx}. This is the ONLY tier that writes main.`,

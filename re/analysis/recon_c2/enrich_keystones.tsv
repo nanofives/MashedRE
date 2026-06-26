@@ -42,7 +42,6 @@ rva	now_conf	parents_blocked	is_leaf	cyclic	subsystem	name
 0057c370	C1	4	0	0	third-party-library[RenderWare-Physics-3.7]	FUN_0057c370
 005459c0	C1	4	0	0	third-party-library[renderware]	FUN_005459c0
 0055ac50	C1	4	0	0	third-party-library[RenderWare-Physics-3.7]	FUN_0055ac50
-00534870	C1	4	1	0	third-party-library[renderware]	FUN_00534870
 00535910	C1	4	1	0	third-party-library[renderware]	FUN_00535910
 004e5c70	C1	4	0	0	third-party-library[renderware]	RpWorldForAllWorldSectors
 0055ade0	C1	4	0	0	third-party-library[RenderWare-Physics-3.7]	FUN_0055ade0
@@ -62,6 +61,7 @@ rva	now_conf	parents_blocked	is_leaf	cyclic	subsystem	name
 0053d090	C1	3	1	0	third-party-library[renderware]	FUN_0053d090
 004e5660	C1	3	0	0	third-party-library[renderware]	RwEngineForAllPlugins
 005356f0	C1	3	0	0	third-party-library[renderware]	FUN_005356f0
+00534870	C1	3	1	0	third-party-library[renderware]	FUN_00534870
 005493d0	C1	3	1	0	third-party-library[renderware]	FUN_005493d0
 00562560	C1	3	0	0	third-party-library[RenderWare-Physics-3.7]	FUN_00562560
 0057c420	C1	3	0	0	third-party-library[RenderWare-Physics-3.7]	FUN_0057c420

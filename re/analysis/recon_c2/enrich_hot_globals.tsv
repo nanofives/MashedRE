@@ -34,7 +34,6 @@ global	n_c2_users	region
 0x005cc564	18	rdata
 0x006bf1c8	18	data
 0x006c71d8	18	data
-0x00911ae4	18	data
 0x005cc72c	17	rdata
 0x005cc558	17	rdata
 0x005cc950	17	rdata
@@ -43,6 +42,7 @@ global	n_c2_users	region
 0x005ce18c	17	rdata
 0x005ce6b8	17	rdata
 0x006bf1cc	17	data
+0x00911ae4	17	data
 0x005cc99c	16	rdata
 0x005cc358	16	rdata
 0x005ccd6c	16	rdata
@@ -97,7 +97,6 @@ global	n_c2_users	region
 0x0063d7e4	9	data
 0x0067d83c	9	data
 0x0067e9fc	9	data
-0x008815a0	9	data
 0x006c6eb0	9	data
 0x005cc088	9	rdata
 0x007d4028	9	data
@@ -117,6 +116,7 @@ global	n_c2_users	region
 0x005f9bd8	8	data
 0x00604570	8	data
 0x0068f648	8	data
+0x008815a0	8	data
 0x005ceb90	8	rdata
 0x005cf9d0	8	rdata
 0x00618430	8	data

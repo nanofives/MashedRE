@@ -249,6 +249,47 @@ def argtype_gaps(needs_rows, top=12):
     return out
 
 
+def cluster_candidates(picked, max_size=6, prox_gap=0x800, model=""):
+    """Group score-picked candidates into coherent clusters for cluster workers.
+
+    Pass 1: sort by RVA; cut a new cluster when subsystem changes, the RVA gap to
+    the previous member exceeds prox_gap, or the cluster hits max_size. This yields
+    coherent address-adjacent families (same source TU => shared structs/globals).
+    Pass 2: families of >=3 stay as coherent clusters; leftover singletons/pairs are
+    packed into 'mixed' groups of ~max_size so a worker still amortizes its boot +
+    build across several functions even when they aren't a family.
+    """
+    by_rva = sorted(picked, key=lambda c: int(c["rva"], 16))
+    raw = []
+    cur = []
+    for c in by_rva:
+        rva = int(c["rva"], 16)
+        if cur and (c["sub"] != cur[-1]["sub"]
+                    or rva - int(cur[-1]["rva"], 16) > prox_gap
+                    or len(cur) >= max_size):
+            raw.append(cur)
+            cur = []
+        cur.append(c)
+    if cur:
+        raw.append(cur)
+
+    families = [g for g in raw if len(g) >= 3]
+    loose = [c for g in raw if len(g) < 3 for c in g]
+    mixed = [loose[i:i + max_size] for i in range(0, len(loose), max_size)]
+
+    clusters = []
+    cid = 0
+    for g in families:
+        cid += 1
+        clusters.append({"session": cid, "model": model, "kind": "family",
+                         "subsystem": g[0]["sub"], "candidates": g})
+    for g in mixed:
+        cid += 1
+        clusters.append({"session": cid, "model": model, "kind": "mixed",
+                         "subsystem": "mixed", "candidates": g})
+    return clusters
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--sessions", type=int, default=6)
@@ -259,6 +300,10 @@ def main():
                     help="drop candidates below this yield score")
     ap.add_argument("--peek", action="store_true",
                     help="print the plan but do NOT write a round file or consume candidates")
+    ap.add_argument("--cluster-max", type=int, default=6,
+                    help="max functions per cluster/worker")
+    ap.add_argument("--cluster-gap", type=lambda s: int(s, 0), default=0x800,
+                    help="max RVA gap (bytes) to keep two functions in one family cluster")
     args = ap.parse_args()
 
     runnable = load_tsv(RUNNABLE)
@@ -313,18 +358,16 @@ def main():
         })
     scored.sort(key=lambda c: -c["score"])
 
+    # Take the top-scored candidates, then CLUSTER them by address proximity +
+    # subsystem so each worker reimplements a coherent FAMILY (same source region
+    # => shared structs/globals/helpers). The compiler emits a translation unit's
+    # functions adjacently, so RVA-adjacency ~= same .c file. Reimplementing a
+    # family in one worker context amortizes the shared understanding + one build
+    # across the whole cluster (the reimpl-first strategy, cluster-generalized).
     n = args.sessions * args.per_session
     picked = scored[:n]
-    batches = []
-    for si in range(args.sessions):
-        chunk = picked[si * args.per_session:(si + 1) * args.per_session]
-        if not chunk:
-            break
-        batches.append({
-            "session": si + 1,
-            "model": args.model,
-            "candidates": chunk,
-        })
+    batches = cluster_candidates(picked, max_size=args.cluster_max,
+                                 prox_gap=args.cluster_gap, model=args.model)
 
     rnd = args.round if args.round is not None else next_round_number()
     plan = {
@@ -349,7 +392,10 @@ def main():
             json.dump(plan, f, indent=2)
         out = os.path.relpath(out, ROOT)
 
-    print(f"round {rnd}: {len(picked)} scheduled across {len(batches)} sessions "
+    fam = sum(1 for b in batches if b.get("kind") == "family")
+    mix = sum(1 for b in batches if b.get("kind") == "mixed")
+    print(f"round {rnd}: {len(picked)} scheduled across {len(batches)} clusters "
+          f"({fam} family + {mix} mixed) "
           f"(eligible {len(scored)} / runnable {len(runnable)}; "
           f"argtype-blocked {len(needs)})")
     print(f"  dropped: {dropped}")

@@ -784,7 +784,6 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 00469aa0	vehicle	VehicleContactScanUpdate	848	4	cdecl	14	int	-	0	low	1	-	0	0	0.0	ambiguous	1	1	16	0
 00469df0	vehicle	VehicleVehicleCollisionImpulse	5063	5	cdecl	13	int	-	0	low	1	-	0	0	0.4	ambiguous	1	1	27	0
 0046b1c0	vehicle	FUN_0046b1c0	810	0	cdecl	3	int	-	0	low	1	-	0	0	0.0	-	1	1	3	0
-0046baa0	util	FUN_0046baa0	572	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	1	1	0
 0046be50	gameplay	FUN_0046be50	48	0	cdecl	3	int	-	0	low	0	-	0	0	0.0	-	1	0	0	0
 0046bf50	gameplay	FUN_0046bf50	104	1	cdecl	2	int	-	0	low	1	-	0	0	0.0	-	1	1	4	0
 0046bfc0	gameplay	FUN_0046bfc0	1446	5	cdecl	13	int	-	0	low	1	-	0	0	0.4	-	1	1	9	0
@@ -821,7 +820,6 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 00472380	render	FUN_00472380	74	2	cdecl	0	int	none	1	low	0	-	0	1	0.5	ambiguous	0	1	1	0
 004725c0	render	FUN_004725c0	41	1	cdecl	0	int	none	1	low	0	-	0	0	1.0	ambiguous	0	0	2	0
 00472650	util	FUN_00472650	51	1	cdecl	2	int	-	0	low	1	-	0	0	1.0	ambiguous	0	0	2	0
-00472690	util	FUN_00472690	32	1	cdecl	2	int	int_pair	1	low	0	-	0	0	1.0	-	0	0	0	0
 00472740	gameplay	FUN_00472740	210	1	cdecl	4	int	-	0	low	1	-	0	0	0.0	-	0	0	2	0
 00472820	util	FUN_00472820	121	1	cdecl	1	int	int_scalar	1	low	1	-	0	0	1.0	-	0	0	1	0
 004728a0	util	FUN_004728a0	74	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	-	0	0	0	0
@@ -1075,7 +1073,6 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 00486370	particle	FUN_00486370	228	2	cdecl	6	int	-	0	low	1	-	0	1	0.5	-	1	1	3	0
 00486460	particle	FUN_00486460	131	1	cdecl	2	int	-	0	low	1	-	0	0	0.0	-	1	1	3	0
 004864f0	particle	FUN_004864f0	282	3	cdecl	9	int	-	0	low	1	-	0	0	0.33	-	0	1	4	0
-00486610	particle	FUN_00486610	21	1	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	-	0	0	0	0
 00486830	particle	FUN_00486830	1815	17	cdecl	0	int	-	0	med	1	-	0	0	0.06	-	1	1	30	0
 00486f50	particle	FUN_00486f50	49	1	cdecl	0	int	-	0	low	0	-	0	0	0.0	-	1	1	3	0
 00487020	render	FUN_00487020	284	5	cdecl	10	int	-	0	low	1	-	0	0	0.0	ambiguous	1	1	2	0
@@ -1088,7 +1085,6 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 00487e00	particle	FUN_00487e00	20	1	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	-	0	0	1	0
 00487e20	render	thunk_FUN_00535700	5	1	cdecl	0	void	none	1	low	0	-	0	0	1.0	-	0	0	0	0
 00487e30	render	thunk_FUN_00535910	5	1	cdecl	0	void	none	1	low	0	-	0	0	1.0	-	0	0	0	0
-00487e40	sky	FUN_00487e40	43	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	1	3	0
 00487e70	sky	FUN_00487e70	93	0	cdecl	2	int	-	0	low	0	-	0	0	0.0	ambiguous	1	0	2	0
 004880a0	sky	FUN_004880a0	295	4	cdecl	7	int	-	0	low	0	-	0	1	1.0	-	1	1	3	0
 004881d0	boot	FUN_004881d0	323	5	cdecl	7	int	-	0	low	0	-	0	1	0.8	-	1	1	4	0
@@ -1585,7 +1581,6 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 004cc4f0	render	FUN_004cc4f0	19	0	cdecl	1	int	-	0	low	0	-	0	0	0.0	-	1	0	0	0
 004cc580	render	FUN_004cc580	82	1	cdecl	6	int	-	0	low	0	-	0	0	1.0	ambiguous	1	0	0	0
 004cc5e0	render	FUN_004cc5e0	244	4	cdecl	9	int	-	0	low	0	-	0	1	0.75	ambiguous	1	0	0	0
-004cc770	render	FUN_004cc770	28	1	cdecl	2	int	int_pair	1	low	0	-	0	0	1.0	ambiguous	0	0	0	0
 004cc790	render	FUN_004cc790	80	3	cdecl	3	int	-	0	low	0	-	0	1	1.0	ok-asc	0	0	0	0
 004cc7f0	render	FUN_004cc7f0	33	1	cdecl	3	int	-	0	low	0	-	0	0	0.0	-	0	0	0	0
 004cc820	render	FUN_004cc820	433	0	cdecl	7	int	-	0	low	1	-	0	0	0.0	-	1	1	4	0
@@ -1633,7 +1628,6 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 004cfe20	render	FUN_004cfe20	25	1	cdecl	0	void	none	1	low	0	-	0	0	0.0	ambiguous	0	1	1	0
 004cfe40	render	FUN_004cfe40	149	1	cdecl	0	int	-	0	low	0	-	0	0	1.0	-	1	1	8	0
 004cfee0	render	FUN_004cfee0	28	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	1	1	0
-004cff00	render	FUN_004cff00	18	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	1	1	0
 004cff20	render	FUN_004cff20	145	2	cdecl	5	int	-	0	low	0	-	0	1	1.0	-	1	1	1	0
 004d0290	render	FUN_004d0290	94	2	cdecl	3	int	-	0	low	0	-	0	1	1.0	-	1	1	1	0
 004d0660	render	FUN_004d0660	42	0	cdecl	1	int	-	0	low	0	-	0	0	0.0	ambiguous	1	1	1	0
@@ -1738,11 +1732,6 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 004dc280	render	FUN_004dc280	127	0	cdecl	3	int	-	0	med	1	-	0	0	0.0	-	1	0	0	0
 004dcaa0	render	FUN_004dcaa0	220	0	cdecl	2	int	-	0	low	0	-	0	0	0.0	-	1	1	5	0
 004dcdc0	render	FUN_004dcdc0	456	1	fastcall/thiscall	0	int	-	0	low	0	-	0	0	1.0	-	1	1	11	0
-004df9b0	render	FUN_004df9b0	39	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	0	0	0
-004dfa10	render	FUN_004dfa10	34	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	0	0	0
-004dfa40	render	FUN_004dfa40	34	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	0	0	0
-004dfa70	render	FUN_004dfa70	34	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	0	0	0
-004dfaa0	render	FUN_004dfaa0	14	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	0	0	0
 004dfab0	render	FUN_004dfab0	86	0	cdecl	1	int	-	0	low	0	-	0	0	0.0	-	1	0	0	0
 004dfb10	render	FUN_004dfb10	75	0	cdecl	1	int	-	0	low	0	-	0	0	0.0	-	1	0	0	0
 004dfb60	render	FUN_004dfb60	81	0	cdecl	1	int	-	0	low	0	-	0	0	0.0	-	1	0	0	0
@@ -1771,10 +1760,8 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 00550da0	util	RtFSHandler::ReadAsync	369	2	cdecl	6	int	-	0	low	0	Win32	0	1	1.0	-	1	0	3	0
 00550f20	util	RtFSHandler::WriteAsync	296	1	cdecl	6	int	-	0	low	0	Win32	0	0	1.0	-	1	0	3	0
 00551050	util	RtFSHandler::Seek	62	0	cdecl	2	int	int_pair	1	low	0	Win32	0	0	0.0	-	0	0	1	0
-00551180	util	RtFSHandler::Cancel	13	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	0	0	0
 00551290	util	RtFSHandler::Destroy	23	0	cdecl	1	int	-	0	low	0	-	0	0	0.0	-	1	1	1	0
 005512d0	util	RtFSHandler::Stat	90	2	cdecl	2	int	-	0	low	0	Win32	0	1	1.0	-	1	0	1	0
-005514e0	util	RtFSHandler::IsEOF	40	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	0	0	0
 00552b60	hud	FontSys_InitSeq	45	7	cdecl	0	void	none	1	low	0	-	0	0	0.0	ambiguous	0	1	1	0
 00552b90	hud	FontSys_Shutdown	127	7	cdecl	0	int	-	0	low	0	-	0	0	0.0	-	1	1	5	0
 00552e40	hud	FontCtx_FlushMatrix	350	5	cdecl	15	int	-	0	low	1	-	0	1	0.6	-	1	1	12	0
@@ -1880,7 +1867,6 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 005aa560	audio	FUN_005aa560	568	8	cdecl	4	int	-	0	low	0	-	0	0	0.0	ambiguous	1	1	2	0
 005aa7a0	audio	FUN_005aa7a0	60	2	cdecl	2	int	-	0	low	0	-	0	0	0.0	ambiguous	1	0	0	0
 005aa7e0	audio	FUN_005aa7e0	177	1	cdecl	3	int	-	0	low	0	-	0	0	0.0	ambiguous	1	1	1	0
-005aa8a0	audio	FUN_005aa8a0	42	1	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	ambiguous	0	0	0	0
 005aa900	audio	FUN_005aa900	192	1	fastcall/thiscall	3	int	-	0	low	0	-	0	0	0.0	ambiguous	1	0	0	0
 005aaa00	audio	FUN_005aaa00	151	2	cdecl	3	int	-	0	low	0	-	0	0	0.0	ambiguous	1	0	0	0
 005aaac0	audio	FUN_005aaac0	53	0	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	ambiguous	0	1	1	0
@@ -1920,7 +1906,6 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 005ad2e0	audio	FUN_005ad2e0	58	1	cdecl	1	int	-	0	low	0	-	0	0	0.0	ambiguous	1	0	0	0
 005ad320	audio	FUN_005ad320	251	1	cdecl	5	int	-	0	low	0	-	0	0	0.0	-	1	0	0	0
 005ad420	audio	FUN_005ad420	287	3	cdecl	5	int	-	0	low	1	-	0	0	0.0	ambiguous	1	0	0	0
-005ad540	audio	FUN_005ad540	34	2	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	ambiguous	0	0	0	0
 005ad570	audio	FUN_005ad570	121	2	cdecl	1	int	-	0	low	0	-	0	0	0.0	-	1	1	2	0
 005ad5f0	audio	FUN_005ad5f0	163	3	cdecl	1	int	-	0	low	0	-	0	0	0.0	-	1	0	1	0
 005ad6a0	audio	FUN_005ad6a0	67	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	-	0	1	1	0

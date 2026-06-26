@@ -290,9 +290,7 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 00496d00	util	FUN_00496d00	10	0	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	-	0	1	1	0
 004d8550	render	rwID_PIPEMODULE_dtor	10	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	-	0	0	0	0
 005af170	audio	FUN_005af170	12	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	-	0	0	0	0
-00551180	util	RtFSHandler::Cancel	13	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	0	0	0
 0047ba00	boot	FUN_0047ba00	14	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	-	0	0	0	0
-004dfaa0	render	FUN_004dfaa0	14	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	0	0	0
 004764e0	util	FUN_004764e0	16	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	-	0	0	0	0
 004b4000	particle	FUN_004b4000	16	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	1.0	ok-asc	0	0	0	0
 004b4270	render	FUN_004b4270	16	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	-	0	0	0	0
@@ -300,7 +298,6 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 00407580	gameplay	FUN_00407580	17	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	1	1	0
 005bf670	audio	FUN_005bf670	17	0	cdecl	1	int	int_scalar	1	low	0	Win32	0	0	0.0	-	0	0	1	0
 004cf9e0	render	FUN_004cf9e0	18	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	-	0	0	0	0
-004cff00	render	FUN_004cff00	18	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	1	1	0
 005a6df0	audio	FUN_005a6df0	18	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	ok-asc	0	0	0	0
 004b6570	render	FUN_004b6570	20	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	ambiguous	0	0	0	0
 00426c50	frontend	FUN_00426c50	22	2	cdecl	1	void	int_scalar	1	low	0	-	0	0	0.0	-	0	1	1	0
@@ -335,9 +332,6 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 004935a0	render	FUN_004935a0	34	3	cdecl	1	void	int_scalar	1	low	0	-	0	0	0.0	-	0	0	1	0
 004935d0	render	FUN_004935d0	34	3	cdecl	1	void	int_scalar	1	low	0	-	0	0	0.33	-	0	0	1	0
 004b9aa0	input	FUN_004b9aa0	34	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	1.0	ok-asc	0	0	0	0
-004dfa10	render	FUN_004dfa10	34	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	0	0	0
-004dfa40	render	FUN_004dfa40	34	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	0	0	0
-004dfa70	render	FUN_004dfa70	34	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	0	0	0
 005b0b10	audio	FUN_005b0b10	34	1	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	0	0	0
 0047b200	render	FUN_0047b200	35	3	cdecl	1	int	int_scalar	1	low	0	-	0	1	0.67	ambiguous	0	1	1	0
 004853f0	smplfzx	FUN_004853f0	35	3	cdecl	1	void	int_scalar	1	low	0	-	0	0	0.0	-	0	0	1	0
@@ -347,12 +341,9 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 004b7250	input	FUN_004b7250	37	2	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	ok-asc	0	0	0	0
 00458dd0	gameplay	FUN_00458dd0	38	3	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.33	-	0	0	0	0
 0049cc40	particle	FUN_0049cc40	39	0	stdcall	1	int	int_scalar	1	low	0	Win32	0	0	0.0	-	0	1	2	0
-004df9b0	render	FUN_004df9b0	39	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	0	0	0
-005514e0	util	RtFSHandler::IsEOF	40	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	0	0	0
 005be160	audio	FUN_005be160	40	3	stdcall	1	void	int_scalar	1	low	0	-	0	0	0.0	-	0	0	0	0
 0049ff60	particle	FUN_0049ff60	41	0	stdcall	1	int	int_scalar	1	low	0	Win32	0	0	0.0	-	0	1	2	0
 005bcbb0	audio	FUN_005bcbb0	42	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	-	0	0	1	0
-00487e40	sky	FUN_00487e40	43	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	1	3	0
 00426640	render	FUN_00426640	44	3	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	-	0	1	2	0
 005b70e0	audio	FUN_005b70e0	45	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	-	0	1	1	0
 005a7e70	audio	FUN_005a7e70	46	1	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	ambiguous	0	1	1	0
@@ -439,10 +430,8 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 0045bae0	vehicle	FUN_0045bae0	181	8	cdecl	1	int	int_scalar	1	low	0	-	0	0	0.0	ok-asc	0	1	8	0
 0041ec00	gameplay	FUN_0041ec00	182	6	cdecl	1	int	int_scalar	1	low	0	-	0	1	0.5	-	0	1	5	0
 005b1500	audio	FUN_005b1500	203	3	cdecl	1	int	int_scalar	1	low	0	Win32	0	0	0.0	-	0	1	1	0
-0046baa0	util	FUN_0046baa0	572	0	cdecl	1	int	ptr_arg_int_get	1	low	0	-	0	0	0.0	-	1	1	1	0
 0047b9e0	track	FUN_0047b9e0	19	1	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	-	0	0	0	0
 00487e00	particle	FUN_00487e00	20	1	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	-	0	0	1	0
-00486610	particle	FUN_00486610	21	1	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	-	0	0	0	0
 005b7e20	audio	FUN_005b7e20	23	1	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	flag	0	0	0	0
 00452140	gameplay	FUN_00452140	24	1	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	-	0	0	1	0
 004758d0	render	FUN_004758d0	24	1	cdecl	2	int	int_pair	1	low	0	-	0	0	1.0	-	0	0	0	0
@@ -450,14 +439,10 @@ rva	sub	name	size	n_callees	conv	nargs	ret	arg_type_today	runnable_today	sig_con
 004d8530	render	rwID_PIPEMODULE_ctor	25	1	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	-	0	1	1	0
 004b44f0	util	FUN_004b44f0	26	1	cdecl	2	int	int_pair	1	low	0	-	0	0	1.0	ok-asc	0	0	0	0
 00474d60	vehicle	FUN_00474d60	28	1	cdecl	2	int	int_pair	1	low	0	-	0	0	1.0	-	0	0	0	0
-004cc770	render	FUN_004cc770	28	1	cdecl	2	int	int_pair	1	low	0	-	0	0	1.0	ambiguous	0	0	0	0
-00472690	util	FUN_00472690	32	1	cdecl	2	int	int_pair	1	low	0	-	0	0	1.0	-	0	0	0	0
 00490e50	render	FUN_00490e50	32	2	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	-	0	0	1	0
-005ad540	audio	FUN_005ad540	34	2	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	ambiguous	0	0	0	0
 004c1be0	frontend	sub_004c1be0	35	1	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	-	0	1	0	0
 004ce6c0	render	FUN_004ce6c0	39	1	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	flag	0	0	0	0
 00429290	frontend	FUN_00429290	40	5	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	-	0	0	0	0
-005aa8a0	audio	FUN_005aa8a0	42	1	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	ambiguous	0	0	0	0
 00448700	vehicle	FUN_00448700	43	1	cdecl	2	int	int_pair	1	low	0	-	0	0	0.0	-	0	1	3	0
 004721b0	gameplay	FUN_004721b0	43	2	cdecl	2	int	int_pair	1	low	0	-	0	1	0.5	-	0	0	0	0
 0040bae0	gameplay	FUN_0040bae0	44	2	cdecl	2	int	int_pair	1	low	0	-	0	1	1.0	ok-asc	0	0	0	0
