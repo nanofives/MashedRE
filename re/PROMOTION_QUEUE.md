@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-25  wf_a3b31069-bca-4  rvas=0x004464c0  branch=worktree-wf_a3b31069-bca-4  evidence=log/diff_camera_entry_dispatch_all.csv  note=CameraEntry::DispatchAll race-scenario GREEN 8/8 (count=7 non-degenerate); __cdecl dispatcher stride=0xd8 count=DAT_00898994 type0/1/2->C2 callees
 ```
 
 ## Merged
