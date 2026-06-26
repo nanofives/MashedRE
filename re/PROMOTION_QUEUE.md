@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-26  wf_b0f68acd-63f-17  rvas=0x005514e0  branch=worktree-wf_b0f68acd-63f-17  evidence=log/diff_rtfshandler_is_eof.csv  note=1 C2->C3 RtFSHandler_IsEOF (RVA 0x001514e0 / VA 0x005514e0): 39-byte EOF predicate on piz-fsmanager slot struct; cdecl fn(int* slot)->int; reads slot[2]/[3] position vs slot[0]/[1] size (64-bit signed comparison); returns 1=EOF on posLow==-1 sentinel OR posHigh>sizeHigh OR (posHigh==sizeHigh && posLow>=sizeLow); arg_type=ptr_arg_int_get struct_size=16; 4/4 GREEN non-degenerate (seeds 0->1, 0x77777777->0, 0x80000000->1, 0x77000000->0); NOTE: ptr_arg_int_get handler added to this worktree's diff_template.js (ported from main@5cbb8193); SWEEP-CRITICAL: diff_template.js and buf-alloc changes must be merged into main before integration diff.
 ```
 
 ## Merged

@@ -266,6 +266,27 @@ function callFn(fn, input, buf) {
     if (CONFIG.arg_type === 'int_with_out_ptr') {
         return fn(input >>> 0, buf);
     }
+    // ptr_arg_int_get — fn(ptr) -> int, where the single arg is a POINTER the
+    // function DEREFERENCES (enrich derefs_arg=1). int_scalar is unsafe here
+    // (a random int deref => AV); instead pass a pointer to a 256-byte scratch
+    // buffer filled with a per-test deterministic, non-zero pattern so the
+    // getter's return VARIES across test vectors (non-degenerate) while Orig and
+    // Reimpl see the IDENTICAL buffer (bit-identity holds). `input` is the
+    // per-test seed int. Single-level-deref getters (read *(ptr+k)) compare
+    // cleanly; a double-deref getter reads a bad inner pointer and faults — that
+    // throws in callFn (caught at the call site -> mismatch) and the candidate
+    // is left Queued, never falsely GREEN. NOT in SEEDED_ARG_TYPES: we rely on
+    // the natural non-degeneracy of a real deref, so a getter that ignores its
+    // arg stays trivial and is correctly rejected.
+    if (CONFIG.arg_type === 'ptr_arg_int_get') {
+        const sz = (CONFIG.struct_size | 0) || 256;
+        const seed = (input >>> 0);
+        for (let o = 0; o < sz; o += 4)
+            buf.add(o).writeU32(((seed + o * 0x01010101) >>> 0));
+        const ret = fn(buf);
+        return (ret === null || ret === undefined) ? 0
+             : (typeof ret === 'object' ? (ret.toInt32() >>> 0) : (ret >>> 0));
+    }
     // write_global_call_int0 — write sentinel to target_global, call fn(0), return value
     // Use for getters where non-trivial domain requires injecting known values.
     if (CONFIG.arg_type === 'write_global_call_int0') {
@@ -776,6 +797,7 @@ function runDiff() {
               : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
               : (CONFIG.arg_type === 'time_diff_decompose') ? Memory.alloc(16)
               : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256)
+              : (CONFIG.arg_type === 'ptr_arg_int_get') ? Memory.alloc((CONFIG.struct_size | 0) || 256)
               : (CONFIG.arg_type === 'fmt_desc_ptr') ? Memory.alloc(0x20)
               : null;
 
