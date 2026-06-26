@@ -239,6 +239,12 @@ private:
     float    fog_start_ = 0.f, fog_end_ = 100.f;
     D3DCOLOR fog_color_ = D3DCOLOR_XRGB(24, 28, 40);
     Prop     sky_;
+    // WS-E lighting: track ambient RpLight term (LIGHTS.DFF, COURSE.LUA
+    // Lights_Filename) as 0x00RRGGBB; added to world/prop baked prelight. The
+    // dim baked prelight (Arctic mean ~55,78,78) is meant to be combined with
+    // this ambient (Arctic 51,76,76) at render — without it the world is a dark
+    // void. 0 = no lights file. Parsed in Load() before the batches are built.
+    D3DCOLOR amb_world_ = 0;
 public:
     D3DCOLOR fog_color() const { return fog_color_; }
 private:

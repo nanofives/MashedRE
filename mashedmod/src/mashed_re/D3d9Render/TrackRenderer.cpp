@@ -202,12 +202,22 @@ IDirect3DTexture9* MakeTexture(IDirect3DDevice9* dev,
 // Build per-material vertex batches (+ textures) from a parsed DffModel,
 // resolving texture names across the given TXD dictionaries. Shared by the
 // car and the track props.
+//
+// WS-E lighting: `ambient` (0x00RRGGBB; 0 = none) is the track's RpLight
+// ambient term (LIGHTS.DFF, both lights flagged rpLIGHTLIGHTWORLD|ATOMICS),
+// added to each vertex's baked prelight and clamped — the RW lighting that
+// the dim baked prelight is meant to be combined with at render time. Passed
+// for world PROP atomics; left 0 for the sky dome (white prelight) and cars.
 void BuildDffBatches(IDirect3DDevice9* dev,
                      const mashed_re::Track::DffModel& model,
                      const std::vector<mashed_re::Txd::Dictionary>& dicts,
                      std::vector<std::vector<TrackRenderer::V>>* batches,
-                     std::vector<IDirect3DTexture9*>* textures) {
+                     std::vector<IDirect3DTexture9*>* textures,
+                     D3DCOLOR ambient = 0) {
     using V = TrackRenderer::V;
+    const int amb_r = (ambient >> 16) & 0xFF;
+    const int amb_g = (ambient >>  8) & 0xFF;
+    const int amb_b = (ambient      ) & 0xFF;
     textures->assign(model.materials.size(), nullptr);
     for (std::size_t mi = 0; mi < model.materials.size(); ++mi) {
         const char* want = model.materials[mi].tex_name;
@@ -231,10 +241,14 @@ void BuildDffBatches(IDirect3DDevice9* dev,
             v.z = b.verts[vi * 3 + 2];
             if (!b.prelit.empty()) {
                 const std::uint32_t p = b.prelit[vi];
+                int r = (static_cast<int>(p)       & 0xFF) + amb_r;
+                int g = (static_cast<int>(p >>  8) & 0xFF) + amb_g;
+                int bl= (static_cast<int>(p >> 16) & 0xFF) + amb_b;
+                if (r > 255) r = 255; if (g > 255) g = 255; if (bl > 255) bl = 255;
                 v.c = D3DCOLOR_ARGB(static_cast<std::uint8_t>(p >> 24),
-                                    static_cast<std::uint8_t>(p),
-                                    static_cast<std::uint8_t>(p >> 8),
-                                    static_cast<std::uint8_t>(p >> 16));
+                                    static_cast<std::uint8_t>(r),
+                                    static_cast<std::uint8_t>(g),
+                                    static_cast<std::uint8_t>(bl));
             } else {
                 v.c = 0xFFFFFFFFu;
             }
@@ -243,6 +257,51 @@ void BuildDffBatches(IDirect3DDevice9* dev,
             out.push_back(v);
         }
     }
+}
+
+// WS-E lighting: parse a track's LIGHTS.DFF (COURSE.LUA Lights_Filename) for
+// its ambient term. LIGHTS.DFF is a standard RW clump (rwID_CLUMP 0x10) whose
+// only payload is RpLight chunks (rwID_LIGHT 0x12); each light's STRUCT body is
+// { f32 radius; f32 r,g,b; f32 minusCosAngle; u32 type_flags } (type =
+// type_flags>>16: 1=DIRECTIONAL 2=AMBIENT; flags = type_flags&0xffff, bit 0x2 =
+// rpLIGHTLIGHTWORLD). Arctic LIGHTS.DFF (verified): AMBIENT (0.2,0.3,0.3) +
+// DIRECTIONAL (0.6,0.7,0.7) both flags=0x3. The WORLD BSP has NO vertex normals
+// (format 0x4001004d — TRISTRIP|TEXTURED|PRELIT|MODULATEMATERIALCOLOR, no 0x10
+// NORMALS, no 0x20 LIGHT), so RW's directional term cannot apply to it per-
+// vertex; only the directionless AMBIENT brightens the world. Returns the summed
+// AMBIENT colour (rpLIGHTLIGHTWORLD lights only) as 0x00RRGGBB; 0 if none.
+D3DCOLOR ParseLightsDffAmbient(const std::uint8_t* d, std::uint32_t len) {
+    if (!d || len < 24) return 0;
+    auto u32 = [&](std::size_t o) -> std::uint32_t {
+        std::uint32_t v; std::memcpy(&v, d + o, 4); return v;
+    };
+    auto f32 = [&](std::size_t o) -> float {
+        float v; std::memcpy(&v, d + o, 4); return v;
+    };
+    if (u32(0) != 0x10) return 0;                 // not a CLUMP
+    std::size_t end = 12 + u32(4);
+    if (end > len) end = len;
+    float ar = 0.f, ag = 0.f, ab = 0.f;
+    // CLUMP's direct children: LIGHT chunks are siblings of FRAMELIST/GEOMLIST.
+    for (std::size_t o = 12; o + 12 <= end; ) {
+        const std::uint32_t t = u32(o), sz = u32(o + 4);
+        const std::size_t body = o + 12;
+        if (t == 0x12 && body + 12 <= end && u32(body) == 0x01) {  // LIGHT->STRUCT
+            const std::size_t sb = body + 12;
+            if (sb + 24 <= end) {
+                const float r = f32(sb + 4), g = f32(sb + 8), b = f32(sb + 12);
+                const std::uint32_t tf = u32(sb + 20);
+                const std::uint32_t type = tf >> 16, flags = tf & 0xffff;
+                if (type == 2 && (flags & 0x2)) { ar += r; ag += g; ab += b; }
+            }
+        }
+        o = body + sz;
+    }
+    auto cl = [](float f) -> int {
+        int v = static_cast<int>(f * 255.f + 0.5f);
+        return v < 0 ? 0 : v > 255 ? 255 : v;
+    };
+    return D3DCOLOR_XRGB(cl(ar), cl(ag), cl(ab));
 }
 
 void MatIdentity(D3DMATRIX* m) {
@@ -430,6 +489,50 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         break;
     }
 
+    // WS-E lighting: parse the track's RpLight ambient term (COURSE.LUA
+    // Lights_Filename -> LIGHTS.DFF) BEFORE building the world batches, so it
+    // can be baked into the prelit vertex colours below. The world BSP carries
+    // no vertex normals, so RW applies only the (directionless) ambient to the
+    // static world — see ParseLightsDffAmbient.
+    amb_world_ = 0;
+    for (std::uint32_t i = 0; i < piz.count(); ++i) {
+        const char* n = piz.entry(i).name;
+        const std::size_t ln = std::strlen(n);
+        if (ln < 4 || _strnicmp(n, "COURSE", 6) != 0 ||
+            _stricmp(n + ln - 4, ".LUA") != 0)
+            continue;
+        std::uint32_t cl = 0;
+        const std::uint8_t* cb = piz.blob(i, &cl);
+        if (!cb) break;
+        char lf[64] = {};
+        const char* cs = reinterpret_cast<const char*>(cb);
+        for (std::uint32_t pos = 0; pos < cl && !lf[0]; ) {
+            std::uint32_t eol = pos;
+            while (eol < cl && cs[eol] != '\n') ++eol;
+            std::string line(cs + pos, eol - pos);
+            pos = eol + 1;
+            const std::size_t cmt = line.find("--");
+            if (cmt != std::string::npos) line.resize(cmt);
+            std::sscanf(line.c_str(), " Lights_Filename( \"%63[^\"]\" )", lf) == 1 ||
+            std::sscanf(line.c_str(), " Lights_Filename(\"%63[^\"]\")", lf);
+        }
+        if (lf[0])
+            for (std::uint32_t j = 0; j < piz.count(); ++j)
+                if (_stricmp(piz.entry(j).name, lf) == 0) {
+                    std::uint32_t dl = 0;
+                    const std::uint8_t* db = piz.blob(j, &dl);
+                    amb_world_ = ParseLightsDffAmbient(db, dl);
+                    break;
+                }
+        break;
+    }
+    if (log)
+        std::fprintf(log, "  WS-E lights: ambient=0x%06lX (RGB %lu,%lu,%lu)\n",
+                     static_cast<unsigned long>(amb_world_),
+                     static_cast<unsigned long>((amb_world_ >> 16) & 0xFF),
+                     static_cast<unsigned long>((amb_world_ >> 8) & 0xFF),
+                     static_cast<unsigned long>(amb_world_ & 0xFF));
+
     // batches per material
     batches_.assign(world.materials.size(), {});
     for (const auto& s : world.sectors) {
@@ -445,14 +548,19 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 v.x = s.verts[vi * 3 + 0];
                 v.y = s.verts[vi * 3 + 1];
                 v.z = s.verts[vi * 3 + 2];
-                // prelight is RGBA bytes; D3D diffuse is BGRA dwords
+                // prelight is RGBA bytes; D3D diffuse is BGRA dwords. WS-E:
+                // add the track's RpLight ambient (amb_world_) and clamp — the
+                // baked prelight is the dim baseline RW combines with ambient.
                 if (has_pl) {
                     const std::uint32_t p = s.prelit[vi];
-                    const std::uint8_t r = static_cast<std::uint8_t>(p),
-                                       g = static_cast<std::uint8_t>(p >> 8),
-                                       bb = static_cast<std::uint8_t>(p >> 16),
-                                       a = static_cast<std::uint8_t>(p >> 24);
-                    v.c = D3DCOLOR_ARGB(a, r, g, bb);
+                    int r = (static_cast<int>(p)       & 0xFF) + ((amb_world_ >> 16) & 0xFF);
+                    int g = (static_cast<int>(p >>  8) & 0xFF) + ((amb_world_ >>  8) & 0xFF);
+                    int bb= (static_cast<int>(p >> 16) & 0xFF) + ( amb_world_        & 0xFF);
+                    const std::uint8_t a = static_cast<std::uint8_t>(p >> 24);
+                    if (r > 255) r = 255; if (g > 255) g = 255; if (bb > 255) bb = 255;
+                    v.c = D3DCOLOR_ARGB(a, static_cast<std::uint8_t>(r),
+                                        static_cast<std::uint8_t>(g),
+                                        static_cast<std::uint8_t>(bb));
                 } else {
                     v.c = 0xFFFFFFFFu;
                 }
@@ -548,13 +656,14 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             (void)findNext;
             break;
         }
-        auto load_prop = [&](const char* dff_name, Prop* p) -> bool {
+        auto load_prop = [&](const char* dff_name, Prop* p,
+                             D3DCOLOR ambient = 0) -> bool {
             std::uint32_t dl = 0;
             const std::uint8_t* db = find_entry(dff_name, &dl);
             if (!db) return false;
             Track::DffModel m;
             if (!m.Parse(db, dl)) return false;
-            BuildDffBatches(dev, m, dicts, &p->batches, &p->textures);
+            BuildDffBatches(dev, m, dicts, &p->batches, &p->textures, ambient);
             // F3: bind each material's UVAnim-extension name to its .UVA rate.
             p->mat_scroll.assign(m.materials.size(), {});
             for (std::size_t mi = 0; mi < m.materials.size(); ++mi)
@@ -587,7 +696,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     Prop p;
                     std::uint32_t ml = 0;
                     const std::uint8_t* mb = find_entry(b, &ml);
-                    if (mb && ml >= 4 && load_prop(a, &p)) {
+                    if (mb && ml >= 4 && load_prop(a, &p, amb_world_)) {
                         const std::uint32_t cnt =
                             *reinterpret_cast<const std::uint32_t*>(mb);
                         std::size_t off = 4;
@@ -669,7 +778,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             for (const auto& c : clumps) {
                 if (excluded[c.idx]) continue;
                 Prop p;
-                if (load_prop(c.dff, &p)) {
+                if (load_prop(c.dff, &p, amb_world_)) {
                     D3DMATRIX id;
                     MatIdentity(&id);
                     p.instances.push_back(id);
@@ -2431,6 +2540,15 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     if (!sky_.batches.empty()) {
         dev->SetRenderState(D3DRS_FOGENABLE, FALSE);
         dev->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+        // WS-E skybox: SKY.DFF is a small CAMERA-LOCKED dome (Arctic radius
+        // ~1.9, centred at origin), NOT world-scale. Drawn at world origin it
+        // collapses to a distant speck in-race (camera tens of units away) ->
+        // black sky. Centre it on the camera eye so it surrounds the viewer.
+        // Translate only (clouds keep world orientation as the camera turns);
+        // z-write is off so every world surface draws over the dome.
+        D3DMATRIX skym; MatIdentity(&skym);
+        skym._41 = eye[0]; skym._42 = eye[1]; skym._43 = eye[2];
+        dev->SetTransform(D3DTS_WORLD, &skym);
         for (std::size_t mi = 0; mi < sky_.batches.size(); ++mi) {
             const auto& b = sky_.batches[mi];
             if (b.empty()) continue;
@@ -2454,6 +2572,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                                           D3DTTFF_DISABLE);
         }
         dev->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+        dev->SetTransform(D3DTS_WORLD, &worldm);  // restore identity for world
     }
     // fog (COURSE.LUA Setup_Fog) + alpha cutouts (fence/grate textures).
     // The fog range (Setup_Fog end) is calibrated for the in-game chase camera,
