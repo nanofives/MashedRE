@@ -173,6 +173,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Util\SmallLeaves_o6.cpp" ^
     "Util\UtilLeaves_ab6.cpp" ^
     "Util\UtilLeaves_ac.cpp" ^
+    "Util\RtFSHandler.cpp" ^
     "Vehicle\VehicleState.cpp" ^
     "Vehicle\ShapeOwnerHandlePool.cpp" ^
     "Vehicle\VehicleSeed.cpp" ^
@@ -348,6 +349,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Util\SmallLeaves_o6.cpp" ^
     "Util\UtilLeaves_ab6.cpp" ^
     "Util\UtilLeaves_ac.cpp" ^
+    "Util\RtFSHandler.cpp" ^
     "Render\TrackLoaderMicros_p3.cpp" ^
     "Render\FrameHelpers_q2.cpp" ^
     "Render\LowRvaMixed_q3.cpp" ^

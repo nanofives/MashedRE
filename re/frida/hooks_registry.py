@@ -5231,6 +5231,36 @@ HOOKS = {
         'path2_tests':    [0, 0, 0],
     },
 
+    # 0x005514e0  RtFSHandler_IsEOF
+    # 39-byte EOF predicate for the piz-fsmanager slot struct.
+    # Compares 64-bit position (slot[2]/slot[3] = +0x8/+0xc) vs 64-bit file
+    # size (slot[0]/slot[1] = +0x0/+0x4).  Returns 1 (EOF) when:
+    #   * posLow == -1 (SetFilePointer error sentinel); or
+    #   * posHigh > sizeHigh (signed); or
+    #   * posHigh == sizeHigh and posLow >= sizeLow (signed).
+    # Otherwise returns 0 (not EOF).
+    # Calling convention: __cdecl, single pointer arg, plain RET (no stack cleanup).
+    # arg_type: ptr_arg_int_get — allocates a struct_size scratch buffer, fills it
+    # with per-seed deterministic pattern (seed + o*0x01010101), passes ptr;
+    # return value is the int (0 or 1). struct_size=16 (covers +0x0..+0xc).
+    # Test seeds chosen for non-degeneracy:
+    #   seed=0          -> posHigh=0x0c0c0c0c > sizeHigh=0x04040404 -> returns 1
+    #   seed=0x77777777 -> posHigh=0x83838383 signed=-2089386109 < sizeHigh=0x7b7b7b7b signed=2071756667 -> returns 0
+    #   seed=0x80000000 -> posHigh=0x8c0c0c0c > sizeHigh=0x84040404 (both negative, -1946>-2079) -> returns 1
+    #   seed=0x77000000 -> posHigh=0x830c0c0c signed=-2096039924 < sizeHigh=0x7b040404 signed=2064811012 -> returns 0
+    # Evidence: log/diff_rtfshandler_is_eof.csv
+    # Subsystem: util — vtable+0x44 of piz_fsmanager_handler (see RtFSHandler::Install)
+    'rtfshandler_is_eof': {
+        'rva':            0x005514e0,
+        'export':         'RtFSHandler_IsEOF',
+        'signature':      {'ret': 'int32', 'args': ['pointer']},
+        'arg_type':       'ptr_arg_int_get',
+        'struct_size':    16,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0x77777777, 0x80000000, 0x77000000],
+        'path2_tests':    [0, 0x77777777],
+    },
+
     # 0x004a4541  FsopenSafe
     # 18-byte _fsopen wrapper: forces shflag = 0x40 (_SH_DENYNO).
     # Two-arg thunk: FsopenSafe(filename, mode) -> _fsopen(filename, mode, 0x40).
