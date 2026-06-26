@@ -14874,4 +14874,28 @@ HOOKS = {
         ],
     },
 
+    # ---- C2->C3 (audio): InterlockedExchange wrapper FUN_005aefa0 ----------
+    # LONG* fn(LONG* p1, LONG p2): atomic store *p1 = p2 (kernel32 IAT slot
+    # 0x005cc164), returns p1. cdecl, 2 args (disasm: MOV EAX,[ESP+8]; MOV
+    # ESI,[ESP+8]; PUSH EAX; PUSH ESI; CALL [0x005cc164]; MOV EAX,ESI; RET).
+    # Harness: sort_dispatch_out4 reused as a generic "scratch-ptr arg0 +
+    # scalar arg1, observe *scratch[0]" probe — it allocs its OWN 16-byte out,
+    # prefills -1, calls fn(out, sel, dir) and reads out[0..3]. Our fn writes
+    # sel into out[0] (out[1..3] stay -1; dir/arg3 is ignored — cdecl tolerates
+    # the extra pushed arg). Distinct sel per test => non-degenerate; the JS
+    # scratch means NO live game memory is touched. (cache_roundtrip is the
+    # named-correct arg_type in current main; this worktree predates it, so the
+    # equivalent observe-the-write harness present in BOTH trees is used.)
+    'audio_xchg_5aefa0': {'rva': 0x005aefa0, 'export': 'AudioAtomicExchangeStore',
+        'signature': {'ret': 'pointer', 'args': ['pointer', 'int32', 'int32']},
+        'arg_type': 'sort_dispatch_out4', 'lut_root_delta': 0,
+        'path1_tests': [
+            {'sel': 0x12345678, 'dir': 0},
+            {'sel': 0xDEADBEEF, 'dir': 0},
+            {'sel': 0x7FFFFFFF, 'dir': 0},
+            {'sel': 0x0BADF00D, 'dir': 0},
+            {'sel': 0xCAFEBABE, 'dir': 0},
+        ],
+        'path2_tests': [{'sel': 0x12345678, 'dir': 0}]},
+
 }
