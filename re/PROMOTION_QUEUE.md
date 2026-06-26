@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-26  wf_b0f68acd-63f-26  rvas=0x0046baa0  branch=worktree-wf_b0f68acd-63f-26  evidence=log/diff_vehicle_physics_state_reset.csv  note=VehiclePhysicsStateReset 0x0046baa0 C2->C3; 571B leaf; arg_type int_scalar (candidate ptr_arg_int_get was wrong - fn takes uint slot index not ptr); 9/9 GREEN non-degenerate (slots 0-15 return 1, OOB returns 0); Util/PromoLoop_round80.cpp
 ```
 
 ## Merged
