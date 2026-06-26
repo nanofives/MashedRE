@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-26  wf_b0f68acd-63f-16  rva=0x004df9b0  hook=pix_encode_r6g5b5  export=PixEncodeR6G5B5  arg_type=bgra_encode  branch=main  evidence=log/diff_pix_encode_r6g5b5.csv:GREEN-10/10-NONDEGEN  note=Render C2->C3 (PixEncodeR6G5B5 FUN_004df9b0, 39 bytes); pure leaf pixel encoder: ((b[2]&0xfc)<<6|b[1]&0xf8)<<2|(b[0]>>3), 16-bit R6G5B5 pack from BGR bytes (byte-reversed 565 vs D3DFMT_R5G6B5); cdecl fn(byte* bgr)->uint32; no callees, no globals. Added to Render/BatchAB_s3.cpp (same file as sibling pixel encoders 0x4df8d0/4df910/4df950/4df980/4df9e0). hooks_registry.py key pix_encode_r6g5b5 added. bgra_encode arg_type (pre-existing). build.bat NOT changed (BatchAB_s3.cpp already in .asi source list). 10/10 GREEN non-degenerate (9 distinct outputs). binary anchor BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E (original/MASHED.exe.unpatched). NOT SWEEP-CRITICAL (no diff_template.js/run_diff.py change). author+verify-only; central re-classify deferred to Collect tier.
 ```
 
 ## Merged
