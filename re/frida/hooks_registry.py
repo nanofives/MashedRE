@@ -17247,4 +17247,21 @@ HOOKS = {
                            0x0000FF00, 0x000000FF],
         'path2_tests':    [0x11223344, 0x00000000, 0xFFFFFFFF],
     },
+
+    # 0x0046baa0  VehiclePhysicsStateReset
+    # Zeros velocity/force/angular/contact/suspension fields for one vehicle slot (0-15)
+    # at strides 0xd04 and 0x341. Returns 0 if slot > 15; 1 on success.
+    # Non-trivial: OOB guard returns 0; valid slots return 1 (non-degenerate across tests).
+    # Note: candidate arg_type was ptr_arg_int_get but function takes uint (slot index),
+    # not a pointer â€” int_scalar is the correct arg_type.
+    # Source: Util\PromoLoop_round80.cpp / re/analysis/game_state_d5/0x0046baa0.md
+    'vehicle_physics_state_reset': {
+        'rva':            0x0046baa0,
+        'export':         'VehiclePhysicsStateReset',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 5, 10, 15, 16, 17, 255, 0xffffffff],
+        'path2_tests':    [0, 15, 16, 255],
+    },
 }

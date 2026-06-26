@@ -480,6 +480,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Util\RtFSHandlerCancel.cpp" ^
     "Render\RgbPackEncoder_wfb0f.cpp" ^
     "Render\BgraReorder_wf.cpp" ^
+    "Util\PromoLoop_round80.cpp" ^
     /link /DLL /MAP:"%OUT%\mashed_re_dev.map" /MAPINFO:EXPORTS
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
