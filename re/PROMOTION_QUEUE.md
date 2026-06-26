@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-25  wf_a3b31069-bca-14  rvas=0x005a8960  branch=worktree-wf_a3b31069-bca-14  evidence=log/diff_audio_voice_queue_set_5a8960.csv  note=AudioVoiceQueueSet5a8960 struct_three_write 10/10 GREEN observe+0x158
 ```
 
 ## Merged
