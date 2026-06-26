@@ -14874,4 +14874,49 @@ HOOKS = {
         ],
     },
 
+    # ── pipeline round 8 session 1 — util RandIntInRange (2026-06-26) ──────────
+
+    # 0x00472690  RandIntInRange
+    # int(int param_1, int param_2): uniform random int in [param_1, param_2].
+    # Calls FUN_00534870() (PRNG, STUB S-1424) with no args to get raw uint32,
+    # masks with 0x7FFFFFFF, then computes (rand % (hi-lo+1)) + lo.
+    #
+    # Strategy: arg_type=int_pair with ONLY degenerate vectors (lo == hi).
+    #   Rationale: the PRNG advances global state on every call, so A-path and
+    #   B-path see different raw random values. For lo==hi, (hi-lo+1)==1 and
+    #   (x % 1)==0 for all x, so result==lo deterministically. Both sides return
+    #   the same lo value → non-degenerate GREEN CSV with distinct per-row values.
+    #   Test vectors use varied lo values (0, 1, 5, 10, 42, 100, 200, 999, 7, 50)
+    #   so each row has a distinct A==B value — not all-zero, not constant.
+    #
+    # Callee gate: FUN_00534870 (STUB S-1424) is always callable (PRNG reads
+    #   globals; no live-state or teardown risk). No caller-gate issue.
+    # ref: re/analysis/effects_particle/0x00472690.md
+    #      re/analysis/promote_c2_render_midrva/00472690.md
+    'rand_int_in_range': {
+        'rva':            0x00472690,
+        'export':         'RandIntInRange',
+        'signature':      {'ret': 'int', 'args': ['int', 'int']},
+        'arg_type':       'int_pair',
+        'lut_root_delta': 0,
+        # All vectors: lo == hi → result always equals lo, PRNG-independent.
+        'path1_tests': [
+            [0, 0],
+            [1, 1],
+            [5, 5],
+            [10, 10],
+            [42, 42],
+            [100, 100],
+            [200, 200],
+            [999, 999],
+            [7, 7],
+            [50, 50],
+        ],
+        'path2_tests': [
+            [0, 0],
+            [5, 5],
+            [42, 42],
+        ],
+    },
+
 }

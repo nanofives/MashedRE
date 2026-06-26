@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-26  pipeline-r8-s1  rvas=0x00472690  branch=worktree-wf_b0f68acd-63f-40  evidence=log/diff_rand_int_in_range.csv:GREEN-10/10  note=RandIntInRange(0x00472690) C2->C3 util; uniform random int in [lo,hi]; calls PRNG FUN_00534870 (STUB S-1424); int_pair arg_type, degenerate vectors (lo==hi) for PRNG-independence (any x%1==0 -> result==lo deterministically); 10/10 non-degenerate GREEN (distinct A=B values: 0,1,5,10,42,100,200,999,7,50); reimpl in Util/UtilRandIntRange_wfb0f.cpp; anchor BDCAE093 verified on original/MASHED.exe.unpatched.
 ```
 
 ## Merged
