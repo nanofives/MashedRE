@@ -290,3 +290,4 @@
 "Render\RwStreamWriteBytes.cpp"
 "Util\UtilRandIntRange_wfb0f.cpp"
 "Audio\AudioListSearch_wfb0f.cpp"
+"Util\Vec3ValidateMixed_cfd622.cpp"

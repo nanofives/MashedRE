@@ -17402,4 +17402,47 @@ HOOKS = {
         ],
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
+
+    # ---- cluster wf_cfd622ea-c14-4 (2026-06-26) ------------------------------------
+
+    # 0x00472820  Vec3IsValidNonTiny  (util) — 121 bytes
+    # int __cdecl FUN_00472820(float* vec)
+    # Validates a 3-element float vector:
+    #   1. Calls FUN_004a3907 (_finite bit-check) on each component as a double;
+    #      returns 0 immediately if any is infinity or NaN.
+    #   2. Computes mag^2 = x*x + y*y + z*z via x87.
+    #   3. Compares mag^2 against threshold at DAT_005ce54c = 1.0e-6f (0x358637bd,
+    #      .rdata file offset 0x1ce54c; always valid).
+    #   4. Returns 1 if mag^2 > 1.0e-6f, else returns 0.
+    # Caller:  0x0045d7a0 (util, C2) -- satisfies C2+ caller gate.
+    # Callee:  0x004a3907 (msvc-crt-main, C2) -- satisfies C2+ callee gate.
+    # Note: candidate arg_type was int_scalar (wrong -- would AV on pointer deref).
+    #       Correct arg_type = ptr_arg_int_get (fn takes single ptr, dereferences it).
+    # struct_size=12: covers vec[0..2] (3 floats = 12 bytes).
+    # Test seeds chosen for non-degenerate mix of 0/1 returns:
+    #   0x00000000 -> (0.0f, subnormal, subnormal) -> mag^2~0 -> returns 0
+    #   0x3F800000 -> (1.0f, ~260f, ~66568f)       -> mag^2 >> 1e-6 -> returns 1
+    #   0x7F800000 -> (+Inf, ...) -> finite check fails -> returns 0
+    #   0x3F000000 -> (0.5f, ~130f, ~34818f)        -> mag^2 >> 1e-6 -> returns 1
+    #   0xFF800000 -> (-Inf, ...) -> finite check fails -> returns 0
+    #   0x7FC00000 -> (qNaN, ...) -> finite check fails -> returns 0
+    #   0x40000000 -> (2.0f, ~512f, ~131072f)       -> mag^2 >> 1e-6 -> returns 1
+    #   0x00010000 -> (very small, ...) -> mag^2~0 -> returns 0
+    #   0x38000000 -> (3.05e-5f, ~0.0078f, ~2.0f)  -> mag^2~4 > 1e-6 -> returns 1
+    #   0x3E800000 -> (0.25f, ~66f, ~17409f)        -> mag^2 >> 1e-6 -> returns 1
+    # Evidence: log/diff_vec3_is_valid_non_tiny.csv
+    # Reimpl: Util/Vec3ValidateMixed_cfd622.cpp (new)
+    'vec3_is_valid_non_tiny': {
+        'rva':            0x00472820,
+        'export':         'Vec3IsValidNonTiny',
+        'signature':      {'ret': 'int32', 'args': ['pointer']},
+        'arg_type':       'ptr_arg_int_get',
+        'struct_size':    12,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x3F800000, 0x7F800000, 0x3F000000,
+                           0xFF800000, 0x7FC00000, 0x40000000, 0x00010000,
+                           0x38000000, 0x3E800000],
+        'path2_tests':    [0x3F800000, 0x00000000, 0x7F800000],
+    },
+
 }
