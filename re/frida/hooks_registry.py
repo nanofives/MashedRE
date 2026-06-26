@@ -17382,4 +17382,24 @@ HOOKS = {
             {'p2': 0xFFFFFFFF, 'p3': 0xFFFFFFFF},
         ],
     },
+
+    # 0x005aa8a0  AudioListSearch  (wf_b0f68acd r44, C2->C3)
+    # uint32 fn(int) 42B cdecl: scans global audio list DAT_007dccf0 via FUN_005aaac0;
+    # callback LAB_005aa8d0 reimpl. DAT_007dccf0=0 at menu-attach -> puVar2-1=0xfffffffc
+    # -> both orig and reimpl AV identically. crash_equal_ok + degenerate_ok. GREEN 16/16.
+    'audio_list_search': {
+        'rva':            0x005aa8a0,
+        'export':         'AudioListSearch',
+        'signature':      {'ret': 'uint32', 'args': ['int']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'crash_equal_ok': True,
+        'degenerate_ok':  True,
+        'path1_tests': [
+            0, 1, 2, 3, 4, 5, 6, 7,
+            0x10, 0x20, 0x100, 0x1000,
+            0xDEADBEEF, 0xCAFEBABE, 0x7FFFFFFF, 0xFFFFFFFF,
+        ],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
 }
