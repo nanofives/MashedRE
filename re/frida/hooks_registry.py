@@ -17298,4 +17298,30 @@ HOOKS = {
                            0xFEEDFACE, 0x0BADF00D, 0xC0FFEE00, 0xB00B1E00, 0xFACEB00C],
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678],
     },
+
+    # 0x004cc770  RwStreamWriteBytes  (wf_b0f68acd r39, C2->C3)
+    # 3-arg pass-through: calls FUN_004cbe80(p1,p2,p3), returns p1 unchanged.
+    # int_pair with p1=0x00400000 (PE base, always readable); default error case -> 0;
+    # wrapper ignores callee return and returns p1=0x00400000 (non-degenerate). GREEN 10/10.
+    'rw_stream_write_bytes': {
+        'rva':            0x004cc770,
+        'export':         'RwStreamWriteBytes',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'uint32']},
+        'arg_type':       'int_pair',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0x00400000, 0],
+            [0x00400000, 0],
+            [0x00400000, 0],
+            [0x00400000, 0],
+            [0x00400000, 0],
+            [0x00400000, 0],
+            [0x00400000, 0],
+            [0x00400000, 0],
+            [0x00400000, 0],
+            [0x00400000, 0],
+        ],
+        'path2_tests':    [[0x00400000, 0], [0x00400000, 0], [0x00400000, 0]],
+    },
 }
