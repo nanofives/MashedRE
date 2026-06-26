@@ -16464,6 +16464,25 @@ HOOKS = {
         'path2_tests':        [0, 1, 2],
     },
 
+    # 0x004464c0  CameraEntryDispatchAll (util, race) — void(param_1): loops
+    #   DAT_008964c0 (stride 0xd8, count DAT_00898994) and dispatches by
+    #   type field [entry+4]: 0->FUN_00445aa0, 1->FUN_00441d40, 2->FUN_00442440.
+    #   Callers: FUN_00446520 (util C2), FUN_00448700 (vehicle C2, passes
+    #   &DAT_00897fe0 as param_1 in its 100-iter call loop).
+    #   __cdecl; param_1 at [ESP+0x10] after PUSH EBX/ESI/EDI (0x004464ce).
+    #   EAX = count at return (re-read at 0x00446508 last iteration).
+    #   Diff strategy: race scenario (count > 0, entries init'd by game).
+    #   Test value 0x00897fe0 = &DAT_00897fe0, the valid param_1 from
+    #   FUN_00448700's 100-iter call loop. uint32 ret captures count (non-trivial).
+    'camera_entry_dispatch_all': {
+        'rva': 0x004464c0, 'export': 'CameraEntryDispatchAll',
+        'signature': {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'path1_tests': [0x00897fe0, 0x00897fe0, 0x00897fe0, 0x00897fe0,
+                        0x00897fe0, 0x00897fe0, 0x00897fe0, 0x00897fe0],
+        'path2_tests': [0x00897fe0, 0x00897fe0, 0x00897fe0],
+    },
+
     'vec3_lerp': {
         'rva':            0x004b4650,
         'export':         'Vec3Lerp',
