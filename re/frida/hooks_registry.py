@@ -17189,4 +17189,24 @@ HOOKS = {
                            0xabcdef12, 0x80402010, 0x55aa55aa, 0x11223344, 0xcafebabe],
         'path2_tests':    [0x12345678, 0x00000000, 0xdeadbeef],
     },
+
+    # 0x004dfa40  BgraReorder4dfa40 (render) â€” PURE LEAF 34B byte-permutation encoder.
+    # undefined4 FUN_004dfa40(undefined1 *param_1):
+    #   return CONCAT31(CONCAT21(CONCAT11(param_1[3],*param_1),param_1[1]),param_1[2])
+    # i.e. result = (p[3]<<24)|(p[0]<<16)|(p[1]<<8)|p[2]
+    # Reads first 4 bytes of the pointer; no globals, no callees.
+    # Caller: FUN_004e02d0 (C2, render). D3DFMT_A8R8G8B8 (0x15) converter.
+    # struct_size=4 so the ptr_arg_int_get harness only needs 4 bytes.
+    'bgra_reorder_4dfa40': {
+        'rva':            0x004dfa40,
+        'export':         'BgraReorder4dfa40',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'ptr_arg_int_get',
+        'struct_size':    4,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x11223344, 0xAABBCCDD, 0x00000000, 0xFFFFFFFF,
+                           0xDEADBEEF, 0x01020304, 0xFF000000, 0x00FF0000,
+                           0x0000FF00, 0x000000FF],
+        'path2_tests':    [0x11223344, 0x00000000, 0xFFFFFFFF],
+    },
 }
