@@ -252,8 +252,37 @@ def check_zombie_games(_heal):
             "kill ONLY ones you spawned (multi-session rule)", False)
 
 
-CHECKS = [check_crlf, check_worktrees, check_ghidra_locks, check_frida_pool,
-          check_verify_scratch, check_render_capability, check_zombie_games]
+def check_original_intact(_heal):
+    """Diagnose-only: is the immutable original/ install present? Catches the
+    WORKTREE-SYMLINK-WIPE incident INSTANTLY instead of after asset-load failures."""
+    od = os.path.join(ROOT, "original")
+    anchor = os.path.join(od, "MASHED.exe.unpatched")
+    toast = os.path.join(od, "TOASTART")
+    if not os.path.isdir(od) or not os.listdir(od):
+        return ("original", "BLOCKED",
+                "original/ is EMPTY or missing — game install wiped/not present. "
+                "Restore from the install archive, then re-apply scripts/patch_mashed_* + shim.", False)
+    miss = [n for n, p in (("MASHED.exe.unpatched", anchor), ("TOASTART/", toast))
+            if not os.path.exists(p)]
+    if miss:
+        return ("original", "BLOCKED", f"original/ present but MISSING {miss} — incomplete install.", False)
+    return ("original", "OK", "anchor + TOASTART present", False)
+
+
+def is_reparse(p):
+    """True if p is a junction/symlink (reparse point) — must NOT be recursed into."""
+    try:
+        import stat as _stat
+        st = os.lstat(p)
+        return bool(getattr(st, "st_file_attributes", 0) & _stat.FILE_ATTRIBUTE_REPARSE_POINT) \
+            or os.path.islink(p)
+    except OSError:
+        return False
+
+
+CHECKS = [check_original_intact, check_crlf, check_worktrees, check_ghidra_locks,
+          check_frida_pool, check_verify_scratch, check_render_capability,
+          check_zombie_games]
 
 
 def cmd_doctor(args):
@@ -360,6 +389,39 @@ def cmd_scan(args):
     return 0
 
 
+def cmd_wt_remove(args):
+    """The ONLY sanctioned way to remove a worktree. NEVER uses --force.
+
+    A worktree may contain a junction/symlink to an out-of-tree immutable dir
+    (e.g. `original/` -> the game install). `git worktree remove --force` follows
+    that link and deletes the TARGET (the WORKTREE-SYMLINK-WIPE incident, 2026-06-27).
+    This strips every reparse point in the worktree FIRST (rmdir removes the link
+    ONLY, never recurses into the target), THEN `git worktree remove` WITHOUT --force
+    (which refuses on a dirty tree — a feature; resolve manually, don't force)."""
+    wt = os.path.abspath(args.path)
+    if not os.path.isdir(wt):
+        print(f"wt-remove: {wt} not a directory")
+        return 2
+    stripped = []
+    for name in os.listdir(wt):
+        p = os.path.join(wt, name)
+        if os.path.isdir(p) and is_reparse(p):
+            # rmdir on a junction removes the link only; it does NOT touch the target.
+            rc, out = sh(["cmd", "/c", "rmdir", p])
+            stripped.append(name + ("" if rc == 0 else f"(FAILED:{out.strip()[:40]})"))
+    if stripped:
+        print(f"wt-remove: stripped reparse points (link-only, target safe): {stripped}")
+    rc, out = sh(["git", "worktree", "remove", wt])   # NO --force, ever
+    if rc != 0:
+        print(f"wt-remove: `git worktree remove` refused (likely dirty):\n{out.strip()}\n"
+              f"Resolve the worktree's changes and retry. DO NOT use --force "
+              f"(it wipes junction targets like original/).")
+        return rc
+    print(f"wt-remove: removed {wt} safely (no --force).")
+    sh(["git", "worktree", "prune"])
+    return 0
+
+
 def cmd_issues(args):
     for s in SIGNATURES:
         print(f"## {s['id']}\n  signature: /{s['pattern']}/\n  cause: {s['cause']}\n"
@@ -384,9 +446,11 @@ def main():
     sub.add_parser("probe-render")
     sc = sub.add_parser("scan"); sc.add_argument("file")
     sub.add_parser("issues")
+    wr = sub.add_parser("wt-remove"); wr.add_argument("path")
     args = ap.parse_args()
     fn = {"doctor": cmd_doctor, "heal": cmd_heal, "run": cmd_run,
-          "probe-render": cmd_probe_render, "scan": cmd_scan, "issues": cmd_issues}[args.sub]
+          "probe-render": cmd_probe_render, "scan": cmd_scan, "issues": cmd_issues,
+          "wt-remove": cmd_wt_remove}[args.sub]
     # strip the leading "--" REMAINDER leaves on `run`
     if args.sub == "run" and args.cmd and args.cmd[0] == "--":
         args.cmd = args.cmd[1:]

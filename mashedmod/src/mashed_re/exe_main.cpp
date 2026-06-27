@@ -4925,6 +4925,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // exe's own directory (mashedmod\build -> mashedmod -> repo root) until it
     // is, and chdir there. A cwd that already has the assets wins untouched.
     {
+        // MASHED_ROOT (abs path to the main repo) lets a worktree build read the
+        // main repo's original/ assets WITHOUT a junction — junctions into a
+        // worktree are how `git worktree remove --force` wiped original/ once
+        // (re/diag/KNOWN_ISSUES.md WORKTREE-SYMLINK-WIPE). Set it for worktree runs.
+        {
+            char rootEnv[MAX_PATH] = {};
+            if (GetEnvironmentVariableA("MASHED_ROOT", rootEnv, sizeof(rootEnv)) > 0)
+                SetCurrentDirectoryA(rootEnv);
+        }
         const char kMarker[] = "original\\TOASTART\\Common\\Frontend.piz";
         if (GetFileAttributesA(kMarker) == INVALID_FILE_ATTRIBUTES) {
             char dir[MAX_PATH];

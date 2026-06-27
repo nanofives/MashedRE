@@ -36,8 +36,18 @@ Each worktree has its own:
 - **Bound Ghidra pool slot** (recorded in `.worktrees/<name>/.pool_slot`).
 - **Bound Frida log dir** (`log/<worktree-name>/`).
 
+> ⚠️ **NEVER junction/symlink `original/` (or any shared immutable dir) into a
+> worktree, and NEVER `git worktree remove --force`.** A junction inside a worktree
+> + `--force` removal deletes the junction's TARGET — this WIPED the real `original/`
+> install once (re/diag/KNOWN_ISSUES.md `WORKTREE-SYMLINK-WIPE`, 2026-06-27). The
+> standalone reads main's assets WITHOUT a junction: the exe self-locates the repo
+> root by walking up from its own path, or set `MASHED_ROOT=<abs path to main repo>`
+> when running a worktree build. Remove worktrees ONLY via
+> `py -3.12 scripts/diag.py wt-remove <path>` (strips reparse points first, never --force).
+
 Workspaces share:
-- `original/` (immutable; symlinked or accessed by absolute path).
+- `original/` (immutable) — accessed by the exe's self-locate or `MASHED_ROOT` env.
+  **Do NOT junction/symlink it into the worktree** (see warning above).
 - `Mashed.gpr` master and `mashed_pool/` (single physical pool serves all worktrees; the binding is logical).
 - The Ghidra binary at `TD5RE\ghidra_12.0.3_PUBLIC\`.
 
@@ -82,8 +92,8 @@ git merge --no-ff "phase5/audio" -m "Merge audio sweep (S-DoD satisfied)"
 SLOT=$(cat ".worktrees/$NAME/.pool_slot")
 bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
 
-# 6. Tear down the worktree.
-git worktree remove ".worktrees/$NAME"
+# 6. Tear down the worktree — SAFE removal only (never --force; strips reparse points).
+py -3.12 scripts/diag.py wt-remove ".worktrees/$NAME"
 git branch -d "phase5/audio"
 ```
 
@@ -92,7 +102,10 @@ git branch -d "phase5/audio"
 ```bash
 NAME=failed-spike
 SLOT=$(cat ".worktrees/$NAME/.pool_slot" 2>/dev/null)
-git worktree remove ".worktrees/$NAME" --force
+# SAFE removal — NEVER `git worktree remove --force` (it follows an `original`
+# junction and wipes the real install; see WORKTREE-SYMLINK-WIPE). diag wt-remove
+# strips any reparse points first, then removes without --force.
+py -3.12 scripts/diag.py wt-remove ".worktrees/$NAME"
 git branch -D "$(git config -f .worktrees/$NAME/.git/config worktree.branch 2>/dev/null || echo experimental/$NAME)"
 [ -n "$SLOT" ] && bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
 ```

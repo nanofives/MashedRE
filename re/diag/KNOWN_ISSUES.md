@@ -62,13 +62,21 @@ The single place that records every recurring execution failure: its **signature
   Everything else (git-tracked source, trackers, `mashed_pool/`, `log/`) was untouched.
 - **Root cause:** force-removing a worktree that contains a symlink/junction to an
   out-of-tree immutable dir recurses through the link on Windows.
-- **Fix (done):** `diag.py check_worktrees` is now **DIAGNOSE-ONLY — it NEVER auto-
-  removes** a worktree. Prune manually, and ALWAYS delete the worktree's `original`
-  symlink FIRST: `rm .worktrees/<wt>/original` (removes the link only) **before**
-  `git worktree remove`. Never `--force`-remove a worktree that still has the link.
-- **Recovery:** `original/` is gitignored (not recoverable from git). Restore it from
-  the game install / source archive (the user has done this before — see
-  [[feedback-never-touch-original-dir]]). Then re-apply the boot patches + shim.
+- **Prevention (structural, 2026-06-27):**
+  1. `diag.py check_worktrees` is **DIAGNOSE-ONLY — never auto-removes**.
+  2. **Remove worktrees only via `py -3.12 scripts/diag.py wt-remove <path>`** — it
+     strips reparse points (junctions) link-only via `rmdir` FIRST, then
+     `git worktree remove` **without `--force`**. NEVER `git worktree remove --force`.
+  3. The standalone reads main's assets WITHOUT a junction: it self-locates the repo
+     root by walking up from the exe, or honors **`MASHED_ROOT=<abs main repo>`**
+     (exe_main.cpp). So worktrees never need an `original` junction — don't create one.
+  4. The `worktree` skill was updated (no `--force`, no junction, wt-remove).
+  5. `diag.py doctor` now has an **`original` integrity check** that flags an empty/
+     missing install as BLOCKED instantly (catches a wipe the moment it happens).
+- **Recovery:** `original/` is gitignored (not recoverable from git). Restore a clean
+  install into `original/`, then run **`py -3.12 scripts/repatch_original.py`**
+  (re-applies the 9 boot patches + canonical videocfg; idempotent) and finish with
+  `build_d3d9_shim.bat` + `setup_mashed_compat.ps1`. See [[feedback-never-touch-original-dir]].
 
 ## ORPHAN-WORKTREE — dead subagents leave worktrees + branches
 - **Signature:** `.claude/worktrees/agent-*` or `.worktrees/*` entries whose owning
