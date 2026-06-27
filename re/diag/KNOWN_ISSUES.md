@@ -53,6 +53,23 @@ The single place that records every recurring execution failure: its **signature
 - **Fallback:** read ground truth without Ghidra: `py -3.12 re/tools/console/xtwin.py
   0x<rva>` (Xbox twin) or capstone (`py -3.12 scripts/dump_asm.py 0x<rva>:<size>`).
 
+## WORKTREE-SYMLINK-WIPE — `git worktree remove --force` deleted original/ (INCIDENT 2026-06-27)
+- **What happened:** the `worktree` skill **symlinks `original/`** (the immutable game
+  install) into each worktree so subagents can read assets (SKILL.md line 40). diag
+  `doctor`'s auto-prune ran `git worktree remove --force <path>`, which **followed the
+  `original/` symlink and recursively deleted the REAL assets** — anchor
+  (`MASHED.exe.unpatched`), every `.piz`, `launch.exe`, the d3d9 shim, `videocfg`.
+  Everything else (git-tracked source, trackers, `mashed_pool/`, `log/`) was untouched.
+- **Root cause:** force-removing a worktree that contains a symlink/junction to an
+  out-of-tree immutable dir recurses through the link on Windows.
+- **Fix (done):** `diag.py check_worktrees` is now **DIAGNOSE-ONLY — it NEVER auto-
+  removes** a worktree. Prune manually, and ALWAYS delete the worktree's `original`
+  symlink FIRST: `rm .worktrees/<wt>/original` (removes the link only) **before**
+  `git worktree remove`. Never `--force`-remove a worktree that still has the link.
+- **Recovery:** `original/` is gitignored (not recoverable from git). Restore it from
+  the game install / source archive (the user has done this before — see
+  [[feedback-never-touch-original-dir]]). Then re-apply the boot patches + shim.
+
 ## ORPHAN-WORKTREE — dead subagents leave worktrees + branches
 - **Signature:** `.claude/worktrees/agent-*` or `.worktrees/*` entries whose owning
   task/agent is no longer running; `git worktree list` grows unboundedly.

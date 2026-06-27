@@ -128,6 +128,13 @@ def check_crlf(heal):
 
 
 def check_worktrees(heal):
+    # SAFETY (2026-06-27 incident): worktrees created by the `worktree` skill
+    # SYMLINK `original/` (the immutable game install) into themselves. `git
+    # worktree remove --force` follows that symlink and DELETES THE REAL original/
+    # assets. This wiped the anchor + all .piz once. Worktree pruning is therefore
+    # DIAGNOSE-ONLY here — NEVER auto-removed. Prune manually after FIRST deleting
+    # the worktree's `original` symlink (see KNOWN_ISSUES ORPHAN-WORKTREE).
+    heal = False
     out = git("worktree", "list", "--porcelain")
     wts = []
     cur = {}
