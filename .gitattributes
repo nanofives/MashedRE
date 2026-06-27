@@ -1,35 +1,7 @@
-# Merge drivers for frida-sweep / ghidra-sweep append-only files.
-#
-# These four files are touched by EVERY parallel-fanout worker branch and
-# conflict predictably at sweep time. The conflict pattern is always
-# "union of additions" (each branch adds dict entries / log lines / build
-# entries near the end of the file). `merge=union` is git's built-in
-# driver that keeps both sides without conflict markers — equivalent to
-# the manual mechanical resolution the frida-sweep skill describes.
-#
-# Caveat: union merges naively concatenate conflicting hunks. For these
-# four files that's exactly right because each branch ADDS in different
-# regions. If two branches ever modify the SAME line (e.g. rename an
-# existing entry), union will duplicate it — surface the resulting
-# syntactic issue in build / re-classify and resolve by hand.
-#
-# These do NOT apply to merges from main into a worktree (which never
-# conflict in the first place). They apply at the frida-sweep `git merge`
-# step where worker branches converge.
-
-mashedmod/build.bat              merge=union
-re/analysis/CHANGELOG.md         merge=union
-re/PROMOTION_QUEUE.md            merge=union
-
-# hooks.csv is per-row data with strict format. Auto-union is too risky
-# (could produce duplicate-RVA rows or torn rows). Keep manual resolution.
-#
-# re/frida/hooks_registry.py was REMOVED from the union set 2026-05-26 after
-# the c3_batch_t sweep: it is a multi-line nested-dict structure, and when
-# worker branches inherit a shared baseline (all branched from the same main),
-# union splices new dict entries INTO the middle of inherited entries — every
-# splice truncated an entry body and broke Python syntax (4 manual repairs
-# needed that sweep). build.bat / CHANGELOG.md / PROMOTION_QUEUE.md stay on
-# union because their entries are single self-contained lines. hooks_registry.py
-# now uses default 3-way merge — conflicts there get hand-resolved (keep both
-# dict entries, one closing brace), same as hooks.csv.
+# Keep pipeline/diag scripts LF — CRLF \r are control chars the Workflow approval
+# dialog rejects (see re/diag/KNOWN_ISSUES.md WF-CRLF).
+re/pipeline/*.js text eol=lf
+re/pipeline/**/*.js text eol=lf
+scripts/diag.py text eol=lf
+scripts/pipeline_plan.py text eol=lf
+scripts/dump_asm.py text eol=lf
