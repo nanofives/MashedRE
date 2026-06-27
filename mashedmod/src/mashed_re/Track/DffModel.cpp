@@ -85,6 +85,25 @@ void FrameXform(const std::vector<Frame>& frames, int idx, const float in[3],
     out[0] = v[0]; out[1] = v[1]; out[2] = v[2];
 }
 
+// WS-E s2: model-space transform of a DIRECTION (vertex normal) through the
+// frame parent chain — rotation only, no translation. RW frame matrices are
+// orthonormal (rigid), so the rotation transforms normals correctly without a
+// normal matrix (caller renormalises after the N·L dot anyway).
+void FrameXformNormal(const std::vector<Frame>& frames, int idx,
+                      const float in[3], float out[3]) {
+    float v[3] = {in[0], in[1], in[2]};
+    int i = idx;
+    while (i >= 0) {
+        const Frame& f = frames[static_cast<std::size_t>(i)];
+        const float x = f.rot[0]*v[0] + f.rot[3]*v[1] + f.rot[6]*v[2];
+        const float y = f.rot[1]*v[0] + f.rot[4]*v[1] + f.rot[7]*v[2];
+        const float z = f.rot[2]*v[0] + f.rot[5]*v[1] + f.rot[8]*v[2];
+        v[0] = x; v[1] = y; v[2] = z;
+        i = f.parent;
+    }
+    out[0] = v[0]; out[1] = v[1]; out[2] = v[2];
+}
+
 }  // namespace
 
 bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
@@ -142,11 +161,14 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
 
     struct Geo {
         std::vector<float> verts;            // model-space AFTER atomic bake
+        std::vector<float> normals;          // WS-E s2: per-vertex (empty if none)
         std::vector<float> uvs;
         std::vector<std::uint32_t> prelit;
         std::vector<std::uint16_t> tris;     // mat,v0,v1,v2
         std::uint32_t mat_base = 0;          // into this->materials
         std::uint32_t nmats = 0;
+        bool lit = false;                    // WS-E s2: rpGEOMETRYLIGHT (0x20)
+        bool modmat = false;                 // WS-E s2: MODULATEMATERIALCOLOR(0x40)
     };
     std::vector<Geo> geos;
     std::size_t q = gst.payload + gst.size;
@@ -161,6 +183,8 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
         const std::int32_t  nmorph = r.i32(gs.payload + 12);
         std::size_t p = gs.payload + 16;
         Geo geo;
+        geo.lit    = (flags & 0x20u) != 0;   // rpGEOMETRYLIGHT
+        geo.modmat = (flags & 0x40u) != 0;   // rpGEOMETRYMODULATEMATERIALCOLOR
         if (!(flags & 0x01000000u)) {  // !NATIVE
             if (flags & 0x08u) {       // PRELIT
                 geo.prelit.resize(static_cast<std::size_t>(nverts));
@@ -202,7 +226,17 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                     }
                     p += static_cast<std::size_t>(nverts) * 12;
                 }
-                if (hn) p += static_cast<std::size_t>(nverts) * 12;
+                if (hn) {
+                    // WS-E s2: capture morph-target 0's per-vertex normals (RW
+                    // stores them as 3 f32 right after positions). Previously
+                    // skipped; needed for the directional N·L term on atomics.
+                    if (mt == 0) {
+                        geo.normals.resize(static_cast<std::size_t>(nverts) * 3);
+                        std::memcpy(geo.normals.data(), data + p,
+                                    static_cast<std::size_t>(nverts) * 12);
+                    }
+                    p += static_cast<std::size_t>(nverts) * 12;
+                }
             }
         }
         if (geo.verts.size() != static_cast<std::size_t>(nverts) * 3 ||
@@ -282,6 +316,10 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
             // transformed vertex positions for this atomic (+ its own bbox)
             float abox[6] = {1e9f, 1e9f, 1e9f, -1e9f, -1e9f, -1e9f};
             std::vector<float> w(nverts * 3);
+            // WS-E s2: world-space (frame-baked) per-vertex normals, parallel to
+            // w. Empty when the geometry carries none.
+            const bool have_n = geo.normals.size() == nverts * 3;
+            std::vector<float> wn(have_n ? nverts * 3 : 0);
             for (std::size_t v = 0; v < nverts; ++v) {
                 float out[3];
                 FrameXform(frames, fi, &geo.verts[v * 3], out);
@@ -292,6 +330,11 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                     if (out[k] < abox[k])     abox[k] = out[k];
                     if (out[k] > abox[3 + k]) abox[3 + k] = out[k];
                 }
+                if (have_n) {
+                    float no[3];
+                    FrameXformNormal(frames, fi, &geo.normals[v * 3], no);
+                    wn[v * 3 + 0] = no[0]; wn[v * 3 + 1] = no[1]; wn[v * 3 + 2] = no[2];
+                }
             }
             total_verts += static_cast<std::uint32_t>(nverts);
             total_tris  += static_cast<std::uint32_t>(geo.tris.size() / 4);
@@ -300,6 +343,8 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                 DffBatch b;
                 b.material = geo.mat_base + (geo.nmats ? mi : 0);
                 b.atomic = found_atomics - 1;
+                b.lit          = geo.lit && have_n;   // WS-E s2
+                b.modulate_mat = geo.modmat;          // WS-E s2
                 std::memcpy(b.abox, abox, sizeof(abox));
                 for (std::size_t i = 0; i < geo.tris.size() / 4; ++i) {
                     if (geo.nmats && geo.tris[i * 4] != mi) continue;
@@ -314,6 +359,11 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                         b.uvs.push_back(geo.uvs.empty() ? 0.f : geo.uvs[vi * 2 + 1]);
                         if (!geo.prelit.empty())
                             b.prelit.push_back(geo.prelit[vi]);
+                        if (have_n) {
+                            b.normals.push_back(wn[vi * 3 + 0]);
+                            b.normals.push_back(wn[vi * 3 + 1]);
+                            b.normals.push_back(wn[vi * 3 + 2]);
+                        }
                     }
                 }
                 if (!b.tris.empty()) batches.push_back(std::move(b));

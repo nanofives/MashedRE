@@ -32,6 +32,18 @@ struct DffBatch {
     std::vector<float> uvs;        // u,v per vertex (zeros if untextured)
     std::vector<std::uint32_t> prelit;  // RGBA per vertex (empty if absent)
     std::vector<std::uint16_t> tris;    // v0,v1,v2 triples
+    // WS-E s2: per-vertex world-space NORMALS, frame-rotation-baked like verts
+    // (empty when the owning geometry carries no rpGEOMETRYNORMALS 0x10). Sized
+    // to verts (x,y,z per vertex) when present — feeds the directional N·L term.
+    std::vector<float> normals;
+    // WS-E s2: owning geometry's RW flags that govern lighting at render:
+    //   lit          = rpGEOMETRYLIGHT (0x20) AND normals present -> RW applies
+    //                  ambient + directional N·L to this batch (else prelit only).
+    //   modulate_mat = rpGEOMETRYMODULATEMATERIALCOLOR (0x40) -> the lit colour
+    //                  is multiplied by the material's own RGBA (e.g. car livery
+    //                  panels, flags 0x73).
+    bool lit          = false;
+    bool modulate_mat = false;
 };
 
 class DffModel {

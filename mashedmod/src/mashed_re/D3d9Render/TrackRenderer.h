@@ -245,6 +245,15 @@ private:
     // this ambient (Arctic 51,76,76) at render — without it the world is a dark
     // void. 0 = no lights file. Parsed in Load() before the batches are built.
     D3DCOLOR amb_world_ = 0;
+    // WS-E s2 lighting: the track's DIRECTIONAL RpLight (LIGHTS.DFF type-1) —
+    // sun colour as 0x00RRGGBB and its world-space direction (the light frame's
+    // at-vector, i.e. the direction the light travels). Applied as N·L to ATOMIC
+    // (prop/car) batches that carry vertex normals + rpGEOMETRYLIGHT — the static
+    // world has no normals so it cannot receive it (see Task-1 combine notes).
+    // Arctic LIGHTS.DFF (asset-verified): colour (0.6,0.7,0.7)=(153,178,178),
+    // dir (0.577,-0.577,-0.577), flags 0x3 (lights atomics+world). 0 = none.
+    D3DCOLOR sun_color_  = 0;
+    float    sun_dir_[3] = {0.f, 0.f, 0.f};
 public:
     D3DCOLOR fog_color() const { return fog_color_; }
 private:
