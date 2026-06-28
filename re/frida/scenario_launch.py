@@ -115,7 +115,11 @@ send({kind:'ready'});
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--track", type=int, default=0, help="engine track index (0=Arctic)")
+    ap.add_argument("--track", type=int, default=0,
+                    help="engine track index 0..12 (NOT Course_Id/filename; RE'd via "
+                         "ptr table 0x005f2728 -> 0x005f33f8): 0=Training 1=Egypt "
+                         "2=Neustein 3=Arctic 4=Highway 5=Sands 6=SuperG 7=Roundabout "
+                         "8=Storm 9=Forest 10=Dump 11=Warzone 12=City")
     ap.add_argument("--mode", type=int, default=10, help="game-mode (10=QuickRace, 2=TimeTrial)")
     ap.add_argument("--cars", type=int, default=1, help="active car slots (slot 0 = player; rest AI)")
     ap.add_argument("--car", type=int, default=0, help="player car/character index (DAT_0067ea98)")
