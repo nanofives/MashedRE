@@ -19,6 +19,7 @@
 #include "ContactSolvers.h"
 
 namespace mashed_re {
+namespace Vehicle { long long* PerfBatchTestCounter(); }  // WS-A s3 perf (VehiclePhysicsRun.cpp)
 namespace Collision {
 
 // Batch storage (the DAT_00828320 equivalent — the original's batch base global).
@@ -67,6 +68,7 @@ int ProduceTerrainBatch(const float* center, float radius,
                         const CollTriangle* tris, int triCount)
 {
     g_terrainBatch = reinterpret_cast<int*>(s_batchStorage);
+    if (long long* pc = Vehicle::PerfBatchTestCounter()) *pc += triCount;  // PERF: scan size
     int count = 0;
     const int cap = (int)(sizeof(s_batchStorage) / sizeof(s_batchStorage[0]));
     for (int t = 0; t < triCount && count < cap; ++t) {

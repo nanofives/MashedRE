@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <string>
+#include <unordered_map>   // WS-A s3 PERF: static-geometry vertex-buffer cache
 
 #include "../Piz/PizReader.h"
 #include "../Track/TrackWorld.h"
@@ -519,8 +520,11 @@ void QuatPosMatrix(const float q[4], const float p[3], D3DMATRIX* m) {
 
 }  // namespace
 
+namespace { void InvalidateBatchCache(); }  // WS-A s3 PERF (defined before Render)
+
 bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                          const char* log_path) {
+    InvalidateBatchCache();   // drop any prior track's cached VBs (reload safety)
     std::FILE* log = log_path ? std::fopen(log_path, "a") : nullptr;
     auto fail = [&](const char* why) {
         if (log) { std::fprintf(log, "R4 track load FAILED: %s\n", why); std::fclose(log); }
@@ -2627,8 +2631,90 @@ void TrackRenderer::camera(float eye[3], float at[3]) const {
     for (int i = 0; i < 3; ++i) { eye[i] = last_eye_[i]; at[i] = last_at_[i]; }
 }
 
+namespace {
+// ===========================================================================
+// WS-A s3 PERF: persistent vertex-buffer cache for STATIC geometry batches.
+//
+// Profiling (MASHED_RENDER_PROF, Arctic + car + 3 AI liveries) attributed the
+// in-race CPU frame as: cars 45.8ms, world 12.2ms, props 1.5ms, particles
+// 0.4ms — i.e. the cost is the per-frame DrawPrimitiveUP calls, dominated by
+// the 4 cars + wheels (each part = its own UP call). DrawPrimitiveUP is the
+// deprecated user-pointer path: every call re-uploads the vertices into a
+// driver scratch buffer and can stall the pipeline. These batches are STATIC
+// (built at Load, never mutated during Render; cars/wheels only change their
+// WORLD matrix), so we upload each once into a D3DPOOL_MANAGED vertex buffer
+// and draw it with DrawPrimitive — same vertices, same order, same textures,
+// identical pixels, but no per-frame re-upload.
+//
+// Keyed by the batch vector's data() pointer (stable per track session). Reused
+// batches (e.g. car_batches_ drawn once per AI car under different transforms)
+// share one VB. Invalidated on track (re)load so a recycled address can't draw
+// stale geometry. Only the STATIC passes use this; the dynamic billboard passes
+// (particles/pickups, rebuilt every frame) keep DrawPrimitiveUP.
+// ===========================================================================
+constexpr DWORD kBatchFVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;  // == TrackRenderer::kFVF
+struct CachedVB { IDirect3DVertexBuffer9* vb = nullptr; UINT verts = 0; };
+std::unordered_map<const void*, CachedVB> g_vbCache;
+
+void InvalidateBatchCache() {
+    for (auto& kv : g_vbCache) if (kv.second.vb) kv.second.vb->Release();
+    g_vbCache.clear();
+}
+
+// Draw one static batch via its cached VB (created on first use). Falls back to
+// DrawPrimitiveUP if VB creation/lock fails. The caller sets FVF / texture /
+// world transform exactly as before — only the vertex SOURCE changes.
+void DrawBatch(IDirect3DDevice9* dev, const std::vector<TrackRenderer::V>& b) {
+    if (b.empty()) return;
+    const UINT nv = (UINT)b.size();
+    auto it = g_vbCache.find(b.data());
+    if (it == g_vbCache.end() || it->second.verts != nv) {
+        if (it != g_vbCache.end()) {
+            if (it->second.vb) it->second.vb->Release();
+            g_vbCache.erase(it);
+        }
+        const UINT bytes = nv * (UINT)sizeof(TrackRenderer::V);
+        IDirect3DVertexBuffer9* vb = nullptr;
+        if (SUCCEEDED(dev->CreateVertexBuffer(bytes, D3DUSAGE_WRITEONLY, kBatchFVF,
+                                              D3DPOOL_MANAGED, &vb, nullptr)) && vb) {
+            void* dst = nullptr;
+            if (SUCCEEDED(vb->Lock(0, bytes, &dst, 0)) && dst) {
+                std::memcpy(dst, b.data(), bytes);
+                vb->Unlock();
+                it = g_vbCache.emplace(b.data(), CachedVB{ vb, nv }).first;
+            } else {
+                if (vb) vb->Release();
+                dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST, nv / 3, b.data(),
+                                     sizeof(TrackRenderer::V));
+                return;
+            }
+        } else {
+            dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST, nv / 3, b.data(),
+                                 sizeof(TrackRenderer::V));
+            return;
+        }
+    }
+    dev->SetStreamSource(0, it->second.vb, 0, (UINT)sizeof(TrackRenderer::V));
+    dev->DrawPrimitive(D3DPT_TRIANGLELIST, 0, nv / 3);
+}
+}  // namespace
+
 void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     if (!ready_) return;
+    // WS-A s3 render-section profiler (env MASHED_RENDER_PROF): attribute the
+    // 3D frame's CPU cost to sky/world/props/copters/cars/particles so the real
+    // hot path is measured. QPC; logs render_prof.log. Off unless the env is set.
+    static const bool s_rprof = (std::getenv("MASHED_RENDER_PROF") != nullptr);
+    static LARGE_INTEGER s_rqf = []{ LARGE_INTEGER f;
+        QueryPerformanceFrequency(&f); return f; }();
+    auto RT  = []{ LARGE_INTEGER c; QueryPerformanceCounter(&c); return c.QuadPart; };
+    auto RMs = [](long long a, long long b){
+        return (double)(b - a) * 1000.0 / (double)s_rqf.QuadPart; };
+    double d_world = 0, d_props = 0, d_car = 0, d_part = 0, d_other = 0;
+    long long _rt0 = s_rprof ? RT() : 0;
+    long long _mk  = _rt0;
+    auto MARK = [&](double& acc){ if (s_rprof) { long long n = RT();
+        acc += RMs(_mk, n); _mk = n; } };
     // F3 A/B verification toggle: suppress all UV-scroll texture transforms.
     static const bool s_uvscroll_off = std::getenv("MASHED_NO_UVSCROLL") != nullptr;
     // Camera: auto-orbit by default; any movement input switches to free
@@ -2776,9 +2862,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS,
                                           D3DTTFF_COUNT2);
             }
-            dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
-                                 static_cast<UINT>(b.size() / 3),
-                                 b.data(), sizeof(V));
+            DrawBatch(dev, b);
             if (scroll)
                 dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS,
                                           D3DTTFF_DISABLE);
@@ -2794,10 +2878,24 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // sliver we saw). Apply fog only when following the car (chase/race cam);
     // the overview cameras render unfogged so the whole track is visible.
     const bool chase_cam = car_ready_ && !free_;
-    if (fog_on_ && chase_cam) {
+    // WS-A s3 PERF/FOG: the in-race perf fix puts the device on HARDWARE vertex
+    // processing. The chase-camera fog (COURSE.LUA Setup_Fog) was calibrated under
+    // SOFTWARE vertex processing, where it rendered the Arctic chase view dark
+    // (measured mean ~54). Under HW T&L the same FOGSTART/END collapse the close
+    // chase view to a full fog_color WHITEOUT (measured chase mean ~221 with BOTH
+    // vertex and table fog — the small fog_end_ saturates the near-ground to fog
+    // colour). The correct, fast render is the UNFOGGED view: the overview path is
+    // already deliberately unfogged and renders the track cleanly (mean ~48), and
+    // the original SW-VP chase was itself dark (~54), so dropping the washing fog
+    // loses ~nothing visually. Re-deriving HW-correct fog ranges is WS-E (visual)
+    // work; opt back in for that with MASHED_CHASE_FOG=1.
+    static const bool s_chase_fog = (std::getenv("MASHED_CHASE_FOG") != nullptr);
+    if (fog_on_ && chase_cam && s_chase_fog) {
         dev->SetRenderState(D3DRS_FOGENABLE, TRUE);
         dev->SetRenderState(D3DRS_FOGCOLOR, fog_color_);
-        dev->SetRenderState(D3DRS_FOGVERTEXMODE, D3DFOG_LINEAR);
+        dev->SetRenderState(D3DRS_FOGVERTEXMODE, D3DFOG_NONE);
+        dev->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_LINEAR);  // pixel fog (HW T&L safe)
+        dev->SetRenderState(D3DRS_RANGEFOGENABLE, FALSE);
         DWORD fs, fe;
         std::memcpy(&fs, &fog_start_, 4);
         std::memcpy(&fe, &fog_end_, 4);
@@ -2805,11 +2903,13 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         dev->SetRenderState(D3DRS_FOGEND, fe);
     } else {
         dev->SetRenderState(D3DRS_FOGENABLE, FALSE);
+        dev->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_NONE);
     }
     dev->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
     dev->SetRenderState(D3DRS_ALPHAREF, 0x30);
     dev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 
+    MARK(d_other);   // setup + sky + fog state
     // WS-E1: skip the spike's world-geometry batches when the RW world render path
     // drew the world (the `if` gates the entire for-statement; inert today).
     if (!rw_world)
@@ -2831,15 +2931,14 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         }
         if (!textures_[mi])
             dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG2);
-        dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
-                             static_cast<UINT>(b.size() / 3),
-                             b.data(), sizeof(V));
+        DrawBatch(dev, b);
         if (!textures_[mi])
             dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
         if (scroll)
             dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
     }
 
+    MARK(d_world);   // static world geometry batches_ (DrawPrimitiveUP)
     // R6: track props — instanced DFF batches (tyre walls, crates, sea,
     // freighter...) under their MTS / identity world matrices.
     for (const auto& p : props_) {
@@ -2864,9 +2963,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 if (!p.textures[mi])
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_SELECTARG2);
-                dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
-                                     static_cast<UINT>(b.size() / 3),
-                                     b.data(), sizeof(V));
+                DrawBatch(dev, b);
                 if (!p.textures[mi])
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_MODULATE);
@@ -2877,6 +2974,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         }
     }
 
+    MARK(d_props);   // instanced track props
     // F2: animated copters — the model DFF under the per-frame HAnim transform
     // (COURSE.LUA SetCopter / KTCSCRIPT.LUA KTC_NewCopter; flight path = the
     // bound .ANM). Looped on the race clock t (the .ANM durations are seconds).
@@ -2899,15 +2997,14 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             dev->SetTexture(0, m.textures[mi]);
             if (!m.textures[mi])
                 dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG2);
-            dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
-                                 static_cast<UINT>(b.size() / 3),
-                                 b.data(), sizeof(V));
+            DrawBatch(dev, b);
             if (!m.textures[mi])
                 dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
         }
     }
     dev->SetTransform(D3DTS_WORLD, &worldm);
 
+    MARK(d_other);   // copters
     // R5: the car — model-space batches under a yaw+translate world matrix.
     if (car_ready_) {
         D3DMATRIX carm;
@@ -2935,9 +3032,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             dev->SetTexture(0, car_textures_[mi]);
             if (!car_textures_[mi])
                 dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG2);
-            dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
-                                 static_cast<UINT>(b.size() / 3),
-                                 b.data(), sizeof(V));
+            DrawBatch(dev, b);
             if (!car_textures_[mi])
                 dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
         }
@@ -2973,9 +3068,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 if (!tex)
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_SELECTARG2);
-                dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
-                                     static_cast<UINT>(b.size() / 3),
-                                     b.data(), sizeof(V));
+                DrawBatch(dev, b);
                 if (!tex)
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_MODULATE);
@@ -3010,9 +3103,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 if (!texs[mi])
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_SELECTARG2);
-                dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
-                                     static_cast<UINT>(b.size() / 3),
-                                     b.data(), sizeof(V));
+                DrawBatch(dev, b);
                 if (!texs[mi])
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_MODULATE);
@@ -3042,9 +3133,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                     const auto& b = part.second;
                     if (b.empty()) continue;
                     dev->SetTexture(0, car_textures_[part.first]);
-                    dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
-                                         static_cast<UINT>(b.size() / 3),
-                                         b.data(), sizeof(V));
+                    DrawBatch(dev, b);
                 }
             }
         }
@@ -3052,11 +3141,15 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     }
 
     dev->SetTexture(0, nullptr);
+    MARK(d_car);     // player + AI cars + wheels
 
     // In-race particles (weather + car dust): update with the per-frame dt and
     // draw camera-facing billboards. Depth-test ON so geometry occludes them;
     // depth-write OFF so they blend. Only while actually racing (car present).
-    if (parts_.ambient() != ParticleSystem::None || car_ready_) {
+    // MASHED_NO_PARTICLES=1 suppresses the whole pass (A/B + the dust/snow bloom
+    // is a separate WS-E tuning issue; this isolates the world/car render).
+    static const bool s_no_particles = (std::getenv("MASHED_NO_PARTICLES") != nullptr);
+    if (!s_no_particles && (parts_.ambient() != ParticleSystem::None || car_ready_)) {
         const float dt = (last_t_ < 0.f) ? 0.f : (t - last_t_);
         last_t_ = t;
         float fwd[3] = {at[0]-eye[0], at[1]-eye[1], at[2]-eye[2]};
@@ -3067,9 +3160,30 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         if (pickups_.enabled()) pickups_.Render(dev, eye, at);
     }
 
+    MARK(d_part);    // particles + pickups
+
     dev->SetRenderState(D3DRS_FOGENABLE, FALSE);
     dev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
     dev->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);  // back to the 2D menu path
+
+    if (s_rprof) {
+        static std::FILE* lf = nullptr; static bool op = false; static int fn = 0;
+        if (!op) { lf = std::fopen("render_prof.log", "w");
+            if (lf) std::fprintf(lf, "frame,total_ms,world_ms,props_ms,car_ms,part_ms,other_ms,"
+                                     "world_batches,world_verts\n");
+            op = true; }
+        // one-shot world size (static): count non-empty batches + total verts.
+        static int s_wb = -1, s_wv = -1;
+        if (s_wb < 0) { s_wb = 0; s_wv = 0;
+            for (const auto& b : batches_) { if (!b.empty()) { ++s_wb; s_wv += (int)b.size(); } } }
+        const double total = RMs(_rt0, RT());
+        if (lf && fn < 6000) {
+            std::fprintf(lf, "%d,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%d,%d\n",
+                fn, total, d_world, d_props, d_car, d_part, d_other, s_wb, s_wv);
+            std::fflush(lf);
+        }
+        ++fn;
+    }
 }
 
 }  // namespace D3d9Render

@@ -1687,11 +1687,27 @@ bool InitD3D9() {
     // back-buffer format to the live desktop — this recovers the common
     // D3DERR_INVALIDCALL from an incompatible depth/format at a non-native mode.
     struct Attempt { D3DDEVTYPE type; DWORD flags; const char* name; };
-    const Attempt attempts[] = {
+    // WS-A s3 PERF: prefer HARDWARE vertex processing (GPU T&L). The in-race 3D
+    // render submits ~50k static world verts + the cars EVERY frame; with the
+    // prior first choice SOFTWARE_VERTEXPROCESSING (mirroring Mashed's 2004
+    // init) the CPU transformed all of them each frame, leaving the in-race
+    // view CPU-bound at ~9 fps (profiled: render 60-110ms, physics only 0.5ms).
+    // HARDWARE VP offloads transform/lighting to the GPU. Falls back to SW VP
+    // then REF if HW VP is unavailable (the old behaviour). MASHED_FORCE_SWVP=1
+    // restores the legacy SW-first order (escape hatch).
+    static const bool s_force_swvp =
+        (GetEnvironmentVariableA("MASHED_FORCE_SWVP", nullptr, 0) > 0);
+    const Attempt attempts_hw[3] = {
+        { D3DDEVTYPE_HAL, D3DCREATE_HARDWARE_VERTEXPROCESSING, "HAL/HW" },
+        { D3DDEVTYPE_HAL, D3DCREATE_SOFTWARE_VERTEXPROCESSING, "HAL/SW" },
+        { D3DDEVTYPE_REF, D3DCREATE_SOFTWARE_VERTEXPROCESSING, "REF/SW" },
+    };
+    const Attempt attempts_sw[3] = {
         { D3DDEVTYPE_HAL, D3DCREATE_SOFTWARE_VERTEXPROCESSING, "HAL/SW" },
         { D3DDEVTYPE_HAL, D3DCREATE_HARDWARE_VERTEXPROCESSING, "HAL/HW" },
         { D3DDEVTYPE_REF, D3DCREATE_SOFTWARE_VERTEXPROCESSING, "REF/SW" },
     };
+    const Attempt* attempts = s_force_swvp ? attempts_sw : attempts_hw;
     for (int variant = 0; variant < 2; ++variant) {
         if (variant == 1) {
             // Variant B: no auto depth-stencil, explicit live back-buffer fmt.
@@ -1699,7 +1715,8 @@ bool InitD3D9() {
             g_pp.AutoDepthStencilFormat = D3DFMT_UNKNOWN;
             if (dm.Format != D3DFMT_UNKNOWN) g_pp.BackBufferFormat = dm.Format;
         }
-        for (const Attempt& a : attempts) {
+        for (int ai = 0; ai < 3; ++ai) {
+            const Attempt& a = attempts[ai];
             for (int retry = 0; retry < 3; ++retry) {
                 HRESULT hr = g_d3d->CreateDevice(D3DADAPTER_DEFAULT, a.type,
                                                  g_hwnd, a.flags, &g_pp, &g_device);
@@ -1922,6 +1939,17 @@ bool RenderFrame() {
     const bool results = (mashed_re::Race::GameFlow_Mode() ==
                           mashed_re::Race::GameMode::Results);
     if ((g_track_view || in_race || results) && g_track.ready()) {
+        // WS-A s3 frame profiler (env MASHED_FRAME_PROF): wall-clock attribution of
+        // the in-race frame to UpdateCar / Render / Present, to locate the real hot
+        // path (the physics step measured ~0.5ms — NOT the bottleneck). QPC-based.
+        static const bool s_fprof =
+            (GetEnvironmentVariableA("MASHED_FRAME_PROF", nullptr, 0) > 0);
+        static LARGE_INTEGER s_qf = []{ LARGE_INTEGER f;
+            QueryPerformanceFrequency(&f); return f; }();
+        auto QpcMs = [](LARGE_INTEGER a, LARGE_INTEGER b){
+            return (double)(b.QuadPart - a.QuadPart) * 1000.0 / (double)s_qf.QuadPart; };
+        LARGE_INTEGER tF0; if (s_fprof) QueryPerformanceCounter(&tF0);
+        double msUpd = 0.0, msRender = 0.0, msPresent = 0.0;
         g_device->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
                         g_track.fog_color(), 1.0f, 0);  // horizon = fog color
         g_device->BeginScene();
@@ -2003,7 +2031,9 @@ bool RenderFrame() {
                 // arrows belong to the car now; keep camera-look on the mouse
                 ci.yaw_delta = 0.f; ci.pitch_delta = 0.f;
             }
+            LARGE_INTEGER uA, uB; if (s_fprof) QueryPerformanceCounter(&uA);
             g_track.UpdateCar(di);
+            if (s_fprof) { QueryPerformanceCounter(&uB); msUpd = QpcMs(uA, uB); }
             // engine note (real permdict eng1) rises with speed
             mashed_re::Audio::EngineSetRpm(
                 g_track.car_speed() / (g_track.world_radius() * 0.25f + 1e-3f));
@@ -2087,7 +2117,9 @@ bool RenderFrame() {
                 }
             }
         }
+        LARGE_INTEGER rA, rB; if (s_fprof) QueryPerformanceCounter(&rA);
         g_track.Render(g_device, t, &ci);
+        if (s_fprof) { QueryPerformanceCounter(&rB); msRender = QpcMs(rA, rB); }
         // [SCAFFOLD] R6 HUD overlay — invented pips/banner; the REAL game
         // uses team badges + score bars + "+1/-1" points on a Current
         // Standings screen (verify/parity3d/orig_race_t03.png). Replace via
@@ -2264,7 +2296,24 @@ bool RenderFrame() {
                 std::fclose(lf);
             }
         }
+        LARGE_INTEGER pA, pB; if (s_fprof) QueryPerformanceCounter(&pA);
         g_device->Present(nullptr, nullptr, nullptr, nullptr);
+        if (s_fprof) {
+            QueryPerformanceCounter(&pB); msPresent = QpcMs(pA, pB);
+            LARGE_INTEGER tF1; QueryPerformanceCounter(&tF1);
+            const double frameMs = QpcMs(tF0, tF1);
+            static std::FILE* s_ff = nullptr; static bool s_op = false;
+            if (!s_op) { s_ff = std::fopen("frame_prof.log", "w");
+                if (s_ff) std::fprintf(s_ff, "frame,frame_ms,upd_ms,render_ms,present_ms\n");
+                s_op = true; }
+            static int s_fn = 0;
+            if (s_ff && s_fn < 6000) {
+                std::fprintf(s_ff, "%d,%.3f,%.3f,%.3f,%.3f\n",
+                             s_fn, frameMs, msUpd, msRender, msPresent);
+                std::fflush(s_ff);
+            }
+            ++s_fn;
+        }
         return true;
     }
 
