@@ -1830,26 +1830,16 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         Vehicle::VehiclePhysics_StepPlayer(in.dt, io);
         car_vel_[0] = io.vel[0]; car_vel_[1] = io.vel[1]; car_vel_[2] = io.vel[2];
         car_speed_  = io.speed;
-        car_yaw_ = io.yaw;   // WS-A8-STEER: physics-integrated heading (+0x9c0)
-        // G2 (2026-06-18): do NOT cap speed here. A6a's grip-clamp #6 (Integrate2.cpp
-        // 324-348) self-limits speed + damps angular velocity against thresholds tuned
-        // for the chain's NATURAL internal velocity scale (32768, low-speed-stop at 16);
-        // an external cap to ~kTop pushes the car permanently into the over-damp /
-        // full-stop regime and KILLS the yaw rate. Let the chain run at its scale; convert
-        // to world units only for the POSITION step via kWorldVel (internal->world).
-        // [U-A8-WORLDVEL] the chain integrates velocity in its own internal length
-        // scale (self-limits ~150); the standalone track (original .piz geometry) is
-        // small, so convert internal->world for the POSITION step. Scaled WITH kYawScale
-        // (VehiclePhysicsRun) by the same factor so the turn radius (path shape) is
-        // preserved — both linear + angular advance proportionally slower. Env-tunable
-        // (MASHED_WORLDVEL) for runtime calibration without a rebuild.
-        static const float kWorldVel = [] {
-            const char* e = std::getenv("MASHED_WORLDVEL");
-            float v = e ? (float)std::atof(e) : 0.22f;   // calibrated 2026-06-18 (smooth lap)
-            return (v > 0.f) ? v : 0.22f;
-        }();
-        const float nx = car_pos_[0] + car_vel_[0] * kWorldVel * in.dt;
-        const float nz = car_pos_[2] + car_vel_[2] * kWorldVel * in.dt;
+        car_yaw_ = io.yaw;   // WS-A coupling: recovered chain-grip heading (+0x9c0)
+        // WS-A COUPLING (2026-06-29): the POSITION step now advances along the heading
+        // at the recovered coupling's WORLD body speed (io.drive_speed) — replacing the
+        // degenerate kWorldVel gain on the chain's internal velocity (which, with the
+        // hard 45 cap, pinned instantly). drive_speed is the inertial, soft-capped body
+        // speed from the recovered PD law (FUN_0047eb30; re/analysis/vehicle_coupling.md);
+        // full lateral grip -> velocity along forward, so steering curves the path.
+        const float dfx = std::cos(car_yaw_), dfz = std::sin(car_yaw_);
+        const float nx = car_pos_[0] + dfx * io.drive_speed * in.dt;
+        const float nz = car_pos_[2] + dfz * io.drive_speed * in.dt;
         bool nok = false;
         const float ngy = GroundHeight(nx, nz, &nok);
         if (nok) { car_pos_[0] = nx; car_pos_[2] = nz; car_pos_[1] = ngy + car_ground_off_; }
@@ -1938,7 +1928,6 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // already in descriptor format (ctrl[0]/[1]=steer, ctrl[4]=accel, ctrl[5]=brake),
         // exactly what the chain's input[] expects -> no lossy remap.
         const bool phys = Vehicle::VehiclePhysics_Enabled();
-        const float kWorldVelAi = AiPhysWorldVel();
         for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci) {
             AiCar& a = ai_cars_[static_cast<std::size_t>(ci)];
             const int v = ci + 1;
@@ -1971,8 +1960,11 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 a.vel[0] = io.vel[0]; a.vel[1] = io.vel[1]; a.vel[2] = io.vel[2];
                 a.yaw = io.yaw;
                 a.cur_speed = std::sqrt(io.vel[0]*io.vel[0] + io.vel[2]*io.vel[2]);
-                const float nx2 = a.pos[0] + io.vel[0] * kWorldVelAi * in.dt;
-                const float nz2 = a.pos[2] + io.vel[2] * kWorldVelAi * in.dt;
+                // WS-A COUPLING (2026-06-29): advance along the heading at the recovered
+                // coupling's world body speed (io.drive_speed), not the old kWorldVelAi gain.
+                const float afx = std::cos(a.yaw), afz = std::sin(a.yaw);
+                const float nx2 = a.pos[0] + afx * io.drive_speed * in.dt;
+                const float nz2 = a.pos[2] + afz * io.drive_speed * in.dt;
                 bool aok = false;
                 const float ay = GroundHeight(nx2, nz2, &aok);
                 if (aok) { a.pos[0] = nx2; a.pos[2] = nz2; a.pos[1] = ay + car_ground_off_; }

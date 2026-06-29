@@ -52,6 +52,13 @@ constexpr int         kMaxSubstep = 50;        // 0x32 (ms chunk cap)
 unsigned char g_records[16 * kRec];            // the 0xd04 record array (mirror of DAT_008815a0)
 bool          g_inited = false;
 
+// WS-A COUPLING (2026-06-29): persistent WORLD forward body speed per car — the
+// rigid body the recovered coupling law (FUN_0047eb30) drives. The chain's INTERNAL
+// velocity persists in the record (+0x9b0, g_records); this is the inertial world
+// speed that follows it through the recovered PD relaxation (gain 20). See
+// re/analysis/vehicle_coupling.md.
+float         g_bodySpeed[16] = { 0.f };
+
 // Terrain contact soup (built from the track collision triangles) the B4 wheel
 // solver's broadphase walks via Collision::g_worldTris.
 std::vector<Collision::CollTriangle> g_worldTriStore;
@@ -100,6 +107,7 @@ bool VehiclePhysics_Enabled() {
 
 void VehiclePhysics_Init(int carCount, int trackType) {
     std::memset(g_records, 0, sizeof(g_records));
+    for (int s = 0; s < 16; ++s) g_bodySpeed[s] = 0.f;   // WS-A coupling: reset rigid bodies
     // The integrator's "other cars" base (DAT_008815a0) -> our standalone array.
     g_vehicleArrayBase = reinterpret_cast<int*>(g_records);
     if (carCount < 1)  carCount = 1;
@@ -385,42 +393,150 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         }
     }
 
-    // [U-A8-SPEEDCAP] The verbatim chain self-limits LATERAL velocity (grip-clamp #6,
-    // Integrate2.cpp 324-348) but not STRAIGHT-line speed — the drive force ramps the
-    // internal velocity unbounded (observed 77->553 going straight), far past the small
-    // standalone collision strip. Cap the chain VELOCITY MAGNITUDE here (env MASHED_SPEEDCAP,
-    // default 60) — applied AFTER the chunk loop so the chain's own grip/yaw dynamics run
-    // at full fidelity; only the carried-over velocity is bounded. Kept well above the
-    // grip-clamp's low-speed full-stop (16) so it does NOT re-trigger the over-damp that
-    // killed +0x9c0 before the contact-load fix. 0 disables.
+    // WS-A COUPLING (2026-06-29): anti-overflow safety clamp ONLY. The OLD code
+    // hard-clamped record +0x9b0 to 45 here, which destroyed the accel ramp (the
+    // chain pinned to 45 instantly). The recovered law's SOFT top-speed asymptote
+    // (below) governs the visible top speed now, so this clamp is set high — far
+    // above where the tanh saturates — purely to stop the ported chain's unbounded
+    // straight-line ramp (+0x9b0 grows ~77->553+, Integrate2 grip-clamp #6 limits
+    // only LATERAL speed) from overflowing the round-tripped car_vel_ over a long run.
     {
-        static const float kSpeedCapBase = [] {
-            const char* e = std::getenv("MASHED_SPEEDCAP");
-            return e ? (float)std::atof(e) : 45.0f;   // calibrated 2026-06-18 (smooth lap)
+        constexpr float kSafetyInternal = 1500.0f;   // >> tanh-saturation point (~3*top/scale)
+        float vx = F(r, off::kVelocity + 0), vy = F(r, off::kVelocity + 4), vz = F(r, off::kVelocity + 8);
+        float sp = std::sqrt(vx*vx + vy*vy + vz*vz);
+        if (sp > kSafetyInternal && sp > 1e-4f) {
+            float s = kSafetyInternal / sp;
+            F(r, off::kVelocity + 0) = vx * s;
+            F(r, off::kVelocity + 4) = vy * s;
+            F(r, off::kVelocity + 8) = vz * s;
+            F(r, off::kSpeed) = kSafetyInternal;
+        }
+    }
+
+    // ========================================================================
+    // WS-A COUPLING (2026-06-29): the recovered first-party chain->body coupling
+    // law (FUN_0047eb30 — re/analysis/vehicle_coupling.md), replacing the degenerate
+    // hard kSpeedCap clamp + TrackRenderer's kWorldVel/kYawScale gains.
+    //
+    // The original springs an RW-Physics proxy body to the chain's render position
+    // with PD gain _DAT_005ccd6c=20.0 and a velocity lookahead
+    // _DAT_005cd8fc*_DAT_005cf014 = 300*0.0002 = 0.06 s, then reads the integrated
+    // body transform back (renderPos=bodyPos) — a 2-body CLOSED loop. Transcribed
+    // open-loop onto a single body it DIVERGES (simulated: the +vel*0.06 lookahead
+    // self-amplifies ~1.2x/tick with no readback to cancel the 20*(anchor-pos) term).
+    // So this is the faithful single-body REDUCTION: the car body follows the chain's
+    // force-integrated velocity (+0x9b0 = the real accel ramp / throttle response)
+    // through the recovered PD relaxation (gain 20 -> inertia + smooth ramp), with a
+    // SOFT top-speed asymptote replacing the hard 45 clamp (the hard clamp is what
+    // produced "instant pin to 45"). Direction = the chain-grip heading (+0x9c0)
+    // with full lateral grip; speed emitted in WORLD units (io.drive_speed).
+    // ========================================================================
+    {
+        const float dtSec = dt;            // StepCar's dt is ALREADY seconds (in.dt;
+                                           // the chain converts to ms via frameMs).
+
+        // forward axis from the integrated heading (TrackRenderer convention forward={cos,0,sin}).
+        const float fwdx = std::cos(io.yaw), fwdz = std::sin(io.yaw);
+        // chain force-integrated velocity (+0x9b0), HORIZONTAL part (internal units).
+        // The chain ramps |+0x9b0| from 0 over ~2 s (the real throttle force ramp);
+        // its horizontal magnitude is the body's forward speed, its direction is the
+        // heading the grip is driving the car toward.
+        const float cvx = F(r, off::kVelocity + 0);
+        const float cvz = F(r, off::kVelocity + 8);
+        const float horizSpeed = std::sqrt(cvx*cvx + cvz*cvz);   // internal, >=0
+        const float fwdDot     = cvx*fwdx + cvz*fwdz;            // signed (reverse < 0)
+        const float vsign      = (fwdDot >= 0.f) ? 1.0f : -1.0f;
+
+        // internal -> world unit scale: the ONE linear calibration. The original
+        // needs none (RW proxy + render share world units); the standalone chain
+        // self-limits in internal units, so convert. The chain's horizontal-speed
+        // RAMP (0 -> ~1440 over ~2 s) maps LINEARLY to the world speed ramp, so the
+        // accel ramp is the chain's real force-integration ramp (not an instant pin).
+        // Env MASHED_CHAINSCALE (replaces the old TrackRenderer kWorldVel).
+        static const float kChainScale = [] {
+            const char* e = std::getenv("MASHED_CHAINSCALE");
+            float v = e ? (float)std::atof(e) : 0.0083f;  // ~12 world top at the chain's ~1440 internal
+            return (v > 0.f) ? v : 0.0083f;
         }();
-        // [G4] Per-car cap spread: AI opponents get slightly different top speeds so the
-        // field SEPARATES on track (the elimination rule fires only when the race camera's
-        // required zoom saturates at 10.0 — i.e. cars spread far apart; identical cars cluster
-        // and never resolve a round). A documented standalone substitute for the un-ported
-        // per-AI skill/rubber-band variation (FUN_004177b0/FUN_00417180). Slot 0 (player) =
-        // full base so a human races at the base pace; opponents 1..3 vary. Env MASHED_AI_SPREAD=0
-        // disables (all cars = base).
+        // world top-speed clamp (the natural top, chain_internal*scale, sits just under
+        // it so the ramp is smooth, not a hard pin). Old effective top was 45*0.22 ~= 10
+        // world u/s; keep that scale. Env MASHED_TOPSPEED.
+        static const float kTopSpeedBase = [] {
+            const char* e = std::getenv("MASHED_TOPSPEED");
+            float v = e ? (float)std::atof(e) : 12.0f;
+            return (v > 0.f) ? v : 12.0f;
+        }();
+        // [G4] per-car top-speed spread (unchanged intent: AI tops differ so the
+        // field SEPARATES on track — the elimination rule needs cars to spread).
+        // Slot 0 (player) = base; opponents 1..3 vary. Env MASHED_AI_SPREAD=0 disables.
         static const bool kSpread = [] {
             const char* e = std::getenv("MASHED_AI_SPREAD");
-            return !(e && (e[0] == '0'));   // on unless explicitly "0"
+            return !(e && (e[0] == '0'));
         }();
         static const float kSlotCapMul[4] = { 1.00f, 0.86f, 1.00f, 0.92f };
-        const float kSpeedCap = kSpeedCapBase *
+        const float kTopSpeed = kTopSpeedBase *
             ((kSpread && slot >= 1 && slot <= 3) ? kSlotCapMul[slot] : 1.0f);
-        if (kSpeedCap > 0.f) {
-            float vx = F(r, off::kVelocity + 0), vy = F(r, off::kVelocity + 4), vz = F(r, off::kVelocity + 8);
-            float sp = std::sqrt(vx*vx + vy*vy + vz*vz);
-            if (sp > kSpeedCap && sp > 1e-4f) {
-                float s = kSpeedCap / sp;
-                F(r, off::kVelocity + 0) = vx * s;
-                F(r, off::kVelocity + 4) = vy * s;
-                F(r, off::kVelocity + 8) = vz * s;
-                F(r, off::kSpeed) = kSpeedCap;
+        float desiredSp = vsign * horizSpeed * kChainScale;       // world, signed
+        if (desiredSp >  kTopSpeed)        desiredSp =  kTopSpeed;
+        if (desiredSp < -kTopSpeed * 0.4f) desiredSp = -kTopSpeed * 0.4f;   // reverse slower
+
+        // recovered PD relaxation (gain _DAT_005ccd6c @0x005ccd6c = 20.0): the body
+        // speed approaches the desired speed at rate 20/s -> inertia (coasts on
+        // release). At low fps (a -> 1) it tracks desiredSp, whose own ramp is the
+        // chain's; at high fps it adds the recovered 0.05 s smoothing.
+        constexpr float kPdGain = 20.0f;     // _DAT_005ccd6c
+        float a = kPdGain * dtSec;
+        if (a > 1.0f) a = 1.0f;
+        float& bs = g_bodySpeed[slot];
+        bs += (desiredSp - bs) * a;
+
+        // recovered ANGULAR law (FUN_0047eb30): the body faces its VELOCITY heading
+        // (the original sets body angVel.y = wrapped(bodyHeading - velHeading); the
+        // body rotates to align forward with where the chain velocity points). This
+        // is BOUNDED (|heading error| <= pi) so it is framerate-stable, unlike the old
+        // yawRate*frameMs integration which spun at low fps. The chain's grip (A6a)
+        // curves the velocity direction with the steer input -> facing it turns the
+        // car. Env MASHED_ALIGNRATE = how fast the nose snaps to velocity (1/s).
+        static const float kAlignRate = [] {
+            const char* e = std::getenv("MASHED_ALIGNRATE");
+            float v = e ? (float)std::atof(e) : 7.0f;
+            return (v > 0.f) ? v : 7.0f;
+        }();
+        constexpr float kTwoPi = 6.2831853f, kPi = 3.14159265f;
+        if (fwdDot > 0.f && horizSpeed > 1e-3f) {     // moving forward with real velocity
+            float velHeading = std::atan2(cvz, cvx);  // forward={cos,0,sin} -> heading=atan2(z,x)
+            float err = velHeading - io.yaw;
+            while (err >  kPi) err -= kTwoPi;
+            while (err < -kPi) err += kTwoPi;
+            const float frac = 1.0f - std::exp(-kAlignRate * dtSec);   // fps-independent
+            io.yaw += err * frac;
+        }
+        while (io.yaw >  kTwoPi) io.yaw -= kTwoPi;
+        while (io.yaw < -kTwoPi) io.yaw += kTwoPi;
+
+        // OUT: coupled WORLD forward speed (signed). TrackRenderer integrates
+        // pos += {cos,0,sin(io.yaw)} * io.drive_speed * dt (no kWorldVel).
+        io.drive_speed = bs;
+
+        // TEMP coupling diag (env MASHED_COUPLING_DIAG): the chain velocity vector,
+        // its forward projection, the yaw rate, and the emitted body speed — to
+        // calibrate the coupling. Slot 0 only.
+        {
+            static const bool s_cd = (std::getenv("MASHED_COUPLING_DIAG") != nullptr);
+            if (s_cd && slot == 0) {
+                static int cn = 0;
+                if (cn < 2000) {
+                    const float cvy = F(r, off::kVelocity + 4);
+                    if (std::FILE* lf = std::fopen("coupling_diag.log", "a")) {
+                        std::fprintf(lf, "cv=(%.2f,%.2f,%.2f) horiz=%.2f fwdDot=%.2f "
+                            "desired=%.3f bs=%.3f frameMs=%.1f yaw=%.4f velH=%.4f\n",
+                            cvx, cvy, cvz, horizSpeed, fwdDot, desiredSp, bs,
+                            frameMs, io.yaw,
+                            (horizSpeed > 1e-3f ? std::atan2(cvz, cvx) : 0.f));
+                        std::fclose(lf);
+                    }
+                    ++cn;
+                }
             }
         }
     }
@@ -446,45 +562,13 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         }
     }
 #endif  /* TEMP diag */
-    // --- adapter OUT: read back the integrated body state ---
+    // --- adapter OUT: read back the chain's INTERNAL velocity (round-trips through
+    // record +0x9b0 to seed next frame, and feeds car_vel_ consumers — the AI host).
+    // The visible world motion is io.drive_speed + io.yaw, set by the coupling above.
     io.vel[0] = F(r, off::kVelocity + 0);
     io.vel[1] = F(r, off::kVelocity + 4);
     io.vel[2] = F(r, off::kVelocity + 8);
     io.speed  = F(r, off::kSpeed);
-
-    // WS-A8-STEER: PHYSICS-real heading. The chain integrates the body angular
-    // velocity into +0x9bc (vec3, world frame) — A6a FUN_00467650 (Integrate2.cpp
-    // 0x9bc/0x9c0/0x9c4) accrues the per-wheel lateral-grip cross-product torque
-    // there. The steer input drives it: input[0]/[1] -> A4 front-wheel steer angle
-    // (+0x1a8/+0x26c) -> A5 rotates the wheel forward axes -> A6a's grip yaws the
-    // body. Our body forward (+0x9d4 = {cos,0,sin}) is about world-up (Y), so the Y
-    // component of the angular velocity (+0x9c0) is the yaw rate. Advance io.yaw by
-    // it over the frame — this REPLACES the kinematic steer*kSteer*dt stopgap.
-    //
-    // [U-A8-YAWSCALE] In the original the orientation is integrated from +0x9bc by
-    // the RW-Physics rigid-body integrator (the FUN_0055xxxx RW-Physics/qhull island,
-    // applied to the RW frame matrix — NOT a first-party function; the standalone has
-    // no RW node so we fold +0x9c0 into io.yaw ourselves). The exact rate->orientation
-    // scale that engine uses is therefore not recoverable from a first-party decomp;
-    // kYawScale is the one tunable here. 1.0 integrates +0x9c0 directly as rad over
-    // the frame ms; the follow-up runtime smoke (WS-PHYS-SMOKE) calibrates it to match
-    // the original's turn radius. The STEER PATH is physics; only this gain is tuned.
-    constexpr std::size_t kAngVelY  = 0x9c0;   // angular-velocity Y = yaw rate
-    // [U-A8-YAWSCALE] integrate the chain yaw rate (+0x9c0) over the frame ms. Matched
-    // to kWorldVel (TrackRenderer) by the SAME factor so slowing the world pace keeps
-    // the turn radius (= world_speed / yaw_rate) constant. Env-tunable (MASHED_YAWSCALE)
-    // for runtime calibration without a rebuild; default tracks kWorldVel's 0.12.
-    static const float kYawScale = [] {
-        const char* e = std::getenv("MASHED_YAWSCALE");
-        float v = e ? (float)std::atof(e) : 0.34f;   // calibrated 2026-06-18 (smooth lap)
-        return (v > 0.f) ? v : 0.34f;
-    }();
-    const float yawRate = F(r, kAngVelY);
-    io.yaw += yawRate * frameMs * kYawScale;
-    // keep yaw bounded so the synthesized forward stays well-conditioned
-    constexpr float kTwoPi = 6.2831853f;
-    while (io.yaw >  kTwoPi) io.yaw -= kTwoPi;
-    while (io.yaw < -kTwoPi) io.yaw += kTwoPi;
 }
 
 }  // namespace mashed_re::Vehicle
