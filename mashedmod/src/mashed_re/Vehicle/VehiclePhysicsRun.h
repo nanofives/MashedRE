@@ -80,6 +80,13 @@ struct PlayerCarIO {
     // the car is on the track via its own GroundHeight collision; when set, the
     // chain marks the 4 wheels grounded so the drive/suspension blocks engage.
     int grounded;           // 1 = car is in ground contact (caller's GroundHeight ok)
+    // WS-A COUPLING (2026-06-29): the recovered chain->body coupling law
+    // (FUN_0047eb30; re/analysis/vehicle_coupling.md) emits a WORLD-space forward
+    // body speed here. `vel`/`speed` stay the chain's INTERNAL velocity (they
+    // round-trip through record +0x9b0); `drive_speed` is the coupled, soft-capped,
+    // inertial world speed the caller integrates as pos += {cos,0,sin(yaw)}*this*dt
+    // (REPLACES the degenerate kWorldVel gain). 0 until the first physics step.
+    float drive_speed;      // out: coupled world forward speed (signed; <0 = reverse)
 };
 
 bool VehiclePhysics_Enabled();                       // MASHED_REAL_PHYSICS set once
