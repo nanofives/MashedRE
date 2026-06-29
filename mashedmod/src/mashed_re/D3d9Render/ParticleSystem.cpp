@@ -106,6 +106,7 @@ void ParticleSystem::Update(float dt, const float camEye[3], const float camFwd[
         if (spawn > 18) spawn = 18;                          // was 60
         for (int i = 0; i < spawn; ++i) {
             P* p = Spawn();
+            p->kind = 0;   // ambient weather
             const float spread = R * 0.45f;
             // seed in a box centered a bit ahead of the camera
             const float ax = camFwd[0] * R * 0.18f, az = camFwd[2] * R * 0.18f;
@@ -131,28 +132,49 @@ void ParticleSystem::Update(float dt, const float camEye[3], const float camFwd[
         }
     }
 
-    // car dust: spawn behind/under the car proportional to speed. WS-E s3: TAMED
-    // the same way — this snow-spray plume sat right under the camera and was the
-    // brightest contributor to the center bloom. Lower rate/cap/alpha/size so it
-    // reads as a faint kick-up, not a white blob.
+    // car dust: spawn behind/under the car proportional to speed.
+    //
+    // WS-E s4 BLOOM FIX (2026-06-29): this car-spray plume — NOT the ambient
+    // weather — is what washes out the close ground-chase view. Measured: with
+    // the chase eye ~1.3 world units from the car (car_len ~0.7) the spray's
+    // near-camera coverage peaked ~9-12 (single billboards overfilling the view
+    // at cov~2.3) while the ambient weather's near-camera coverage was ~0.0-0.1
+    // (it spawns R*0.30 above + R*0.45 wide, far from the eye). Two root causes,
+    // both fixed here:
+    //   1. SIZE was scaled by the TRACK radius R (~55), so each billboard was
+    //      ~R*0.007..0.014 = 0.4..0.8u — about a whole car-length wide — yet it
+    //      spawns right at the car, ~1.3u from the chase lens. The spray must be
+    //      car-proportionate, not track-proportionate: shrunk ~4x to R*0.0018..
+    //      0.0035 (~0.10..0.19u, a fraction of the car).
+    //   2. It puffed UP at R*0.03..0.08/s, climbing 1..6u over its life — well
+    //      above the car into the camera's sightline (the bloom sat ABOVE the
+    //      car). Cut the rise to R*0.005..0.02 so it stays a low ground kick-up;
+    //      shorter life so it clears before stacking.
+    // Plus: lower alpha, cap count, and tint to match the weather (white snow vs
+    // tan dust) instead of always snow-white. The Render() near-camera fade is
+    // the robust backstop so no spray billboard can ever wall the lens.
     if (carPos && carSpeed > R * 0.03f) {
-        const float rate = 22.f * (carSpeed / (R * 0.25f));  // was 60
+        const float rate = 22.f * (carSpeed / (R * 0.25f));
         dustAccum_ += rate * dt;
         int spawn = static_cast<int>(dustAccum_);
         dustAccum_ -= spawn;
-        if (spawn > 12) spawn = 12;                          // was 30
+        if (spawn > 8) spawn = 8;                            // was 12
+        const bool dustTrack = (amb_ == Dust);
         for (int i = 0; i < spawn; ++i) {
             P* p = Spawn();
+            p->kind = 1;   // car-dust spray
             p->pos[0] = carPos[0] + (Frand() - 0.5f) * R * 0.02f;
-            p->pos[1] = carPos[1] + Frand() * R * 0.01f;
+            p->pos[1] = carPos[1] + Frand() * R * 0.005f;    // low; was R*0.01
             p->pos[2] = carPos[2] + (Frand() - 0.5f) * R * 0.02f;
-            p->vel[0] = (Frand() - 0.5f) * R * 0.08f;
-            p->vel[1] =  R * (0.03f + Frand() * 0.05f);     // puff up
-            p->vel[2] = (Frand() - 0.5f) * R * 0.08f;
-            p->size = R * (0.007f + Frand() * 0.007f);       // was 0.012..0.024
-            const std::uint8_t a = static_cast<std::uint8_t>(45 + Frand() * 55.f);   // was 110..190
-            p->col = (static_cast<std::uint32_t>(a) << 24) | 0x00D8E0E8u;  // snow-spray white
-            p->maxlife = p->life = 0.7f + Frand() * 0.6f;
+            p->vel[0] = (Frand() - 0.5f) * R * 0.05f;        // was 0.08
+            p->vel[1] =  R * (0.005f + Frand() * 0.015f);    // low kick; was 0.03..0.08
+            p->vel[2] = (Frand() - 0.5f) * R * 0.05f;
+            p->size = R * (0.0018f + Frand() * 0.0017f);     // ~0.10..0.19u; was 0.4..0.8u
+            const std::uint8_t a = static_cast<std::uint8_t>(25 + Frand() * 40.f);  // was 45..100
+            // tint with the weather: tan on desert dust, white snow-spray else.
+            p->col = (static_cast<std::uint32_t>(a) << 24) |
+                     (dustTrack ? 0x00C8B890u : 0x00D8E0E8u);
+            p->maxlife = p->life = 0.5f + Frand() * 0.4f;    // was 0.7..1.3
         }
     }
 }
@@ -161,6 +183,7 @@ void ParticleSystem::SpawnBurst(const float pos[3], int n, std::uint32_t col,
                                 float speed, float size, float life) {
     for (int i = 0; i < n; ++i) {
         P* p = Spawn();
+        p->kind = 2;   // fx burst
         p->pos[0] = pos[0]; p->pos[1] = pos[1]; p->pos[2] = pos[2];
         p->vel[0] = (Frand() - 0.5f) * 2.f * speed;
         p->vel[1] = (Frand() * 0.8f + 0.2f) * speed;     // bias up
@@ -174,6 +197,7 @@ void ParticleSystem::SpawnBurst(const float pos[3], int n, std::uint32_t col,
 void ParticleSystem::SpawnTrail(const float pos[3], std::uint32_t col,
                                 float size, float life) {
     P* p = Spawn();
+    p->kind = 2;   // fx trail
     p->pos[0] = pos[0]; p->pos[1] = pos[1]; p->pos[2] = pos[2];
     p->vel[0] = (Frand() - 0.5f) * size * 2.f;
     p->vel[1] = (Frand() - 0.5f) * size * 2.f;
@@ -200,6 +224,18 @@ void ParticleSystem::Render(IDirect3DDevice9* dev, const float camEye[3],
     float right[3]; cross3(wup, fwd, right); norm3(right);
     float up[3];    cross3(fwd, right, up);
 
+    // WS-E s4 BLOOM FIX: near-camera fade. A particle that drifts close to the
+    // eye subtends a huge screen angle and stacks with its neighbours into a
+    // solid wall right in the lens — this was the close ground-chase white-out.
+    // Fade weather/spray billboards to zero alpha as they approach the eye so no
+    // particle can ever wall the view, regardless of emitter or framerate. The
+    // band is track-radius-relative (worldR_): full alpha beyond ~R*0.030, gone
+    // within ~R*0.010 (~0.55u at Arctic R=55 — just inside the chase rig, which
+    // sits ~1.3u back, so the trailing kick-up stays visible while in-lens motes
+    // vanish). FX (kind==2: explosions/comet trails) are deliberate and brief —
+    // exempt them so a power-up blast at the car isn't dimmed.
+    const float nearFull = worldR_ * 0.030f;
+    const float nearZero = worldR_ * 0.010f;
     verts_.clear();
     verts_.reserve(static_cast<size_t>(alive()) * 6);
     for (const auto& p : pool_) {
@@ -207,6 +243,16 @@ void ParticleSystem::Render(IDirect3DDevice9* dev, const float camEye[3],
         // fade alpha over life (in/out)
         const float lf = p.life / (p.maxlife > 1e-3f ? p.maxlife : 1.f);  // 1->0
         float fade = lf < 0.25f ? (lf / 0.25f) : 1.f;                     // fade out tail
+        if (p.kind != 2 && nearFull > nearZero) {
+            const float dx = p.pos[0]-camEye[0], dy = p.pos[1]-camEye[1],
+                        dz = p.pos[2]-camEye[2];
+            const float dist = std::sqrt(dx*dx + dy*dy + dz*dz);
+            if (dist < nearFull) {
+                float nf = (dist - nearZero) / (nearFull - nearZero);
+                if (nf < 0.f) nf = 0.f; else if (nf > 1.f) nf = 1.f;
+                fade *= nf;                       // 0 in the lens .. 1 past nearFull
+            }
+        }
         const std::uint32_t baseA = (p.col >> 24) & 0xFF;
         const std::uint32_t a = static_cast<std::uint32_t>(baseA * fade);
         const D3DCOLOR c = (a << 24) | (p.col & 0x00FFFFFF);
