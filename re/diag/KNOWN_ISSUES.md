@@ -100,6 +100,20 @@ The single place that records every recurring execution failure: its **signature
 - **Fallback / permanent:** `.gitattributes` pins `* .js eol=lf` for pipeline scripts
   (added by diag once).
 
+## BUILD-BASH-CMD-NOOP — `cmd /c build.bat > LOG` in Bash silently doesn't compile
+- **Signature:** the build "succeeds" (exit 0 or 1) but `mashedmod/build/mashed_re.exe`
+  mtime is UNCHANGED and the log file contains only the Windows shell banner
+  (`Microsoft Windows [Versión ...]`) — no compile lines. Your code change isn't in
+  the running exe (e.g. device stays HAL/SW after a HW-VP change).
+- **Root cause:** in Git-Bash, `cmd /c mashedmod\build.bat > LOG 2>&1` mangles `/c` and/
+  or the redirect captures only a spawned interactive shell's banner — build.bat never
+  actually runs the compiler. The piped form (`cmd //c "...build.bat" 2>&1 | grep`) and
+  the PowerShell tool both compile fine; subagents' builds are unaffected.
+- **Self-heal:** none (invocation pattern). **ALWAYS build via the PowerShell tool**
+  (`& cmd /c "mashedmod\build.bat"`) — see memory project-frame-limiter-speed-fix.
+- **Verify a build actually happened:** check the exe mtime is fresh AND, for a device/
+  render change, grep mashed_re.log for `CreateDevice(HAL/HW` vs `HAL/SW`.
+
 ## VERIFY-SCRATCH-DIRTY — game runs dirty tracked verify screenshots
 - **Signature:** `git status` shows only `verify/r5|r6/*.bmp` (or `verify/**/*.png`)
   modified after a `MASHED_DRIVE_DEMO`/race run.
