@@ -917,7 +917,11 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                                        " Course_Id(%d)", &idx) == 1) {
                     course_id_ = idx;   // -> Common/LED.piz LE<id>.LED
                 } else {
-                    // Setup_Fog(start_frac, end, r, g, b) — track fog wiring
+                    // Setup_Fog(near, far, r, g, b) — track fog wiring. args 1/2
+                    // are ABSOLUTE camera-space fog distances (near < far), NOT a
+                    // fraction. (Asset survey: Arctic 0.1/70, Egypt 20/100,
+                    // Highway 50/300, training 20/360, Storm 20/100, sands
+                    // 250/255 — every track has near < far.)
                     float fa = 0.f, fb = 0.f; int fr = 0, fg2 = 0, fb2 = 0;
                     char sk[64] = {};
                     if (std::sscanf(line.c_str(),
@@ -927,7 +931,16 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                                     " Setup_Fog(%f,%f,%d,%d,%d)",
                                     &fa, &fb, &fr, &fg2, &fb2) == 5) {
                         fog_on_ = true;
-                        fog_start_ = fa * fb;   // start = fraction of range
+                        // WS-E TRACKFIX (2026-06-29): fog_start_ = fa (the near
+                        // distance), NOT fa*fb. The old `fa*fb` only stayed valid
+                        // for Arctic (0.1*70 = 7 < 70); for every track with
+                        // fa >= 1 it produced fog_start_ > fog_end_, INVERTING the
+                        // D3D linear-fog ramp (factor = (end-d)/(end-start) goes
+                        // negative for near d) so ALL near geometry clamped to
+                        // factor 0 = full fog colour. That is the blown-out frame
+                        // (Egypt/Highway/training/sands == the exact fog colour)
+                        // and the black frame (Storm, fog colour 0,0,0).
+                        fog_start_ = fa;
                         fog_end_   = fb;
                         fog_color_ = D3DCOLOR_XRGB(fr & 0xFF, fg2 & 0xFF,
                                                    fb2 & 0xFF);
