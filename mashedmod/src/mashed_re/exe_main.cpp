@@ -1960,6 +1960,26 @@ bool RenderFrame() {
         const float dt = (s_prev == 0) ? 0.f
                        : static_cast<float>(now - s_prev) * 0.001f;
         s_prev = now;
+        // WS-A s4: high-resolution real frame-delta feeding the FIXED-timestep car
+        // sim accumulator at the UpdateCar call below. The GetTickCount `dt` above
+        // (~15.6ms granularity) stays the clock for camera/demo/`t` scheduling
+        // (unchanged), but the *physics* is stepped at a fixed 60 Hz off this QPC
+        // delta so the drive feel is render-fps-independent and matches the original's
+        // 60fps-capped cadence (the original is frame-coupled, shim-capped at 60 —
+        // see project-frame-limiter-speed-fix). Today's variable GetTickCount dt makes
+        // the sim a lumpy ~64 Hz (frames with dt==0 early-return, occasional 31ms
+        // double-steps) — jittery and non-deterministic run-to-run. MASHED_SIM_HZ
+        // overrides the rate; =0 reverts to the old variable-dt single step (A/B hatch).
+        static LARGE_INTEGER s_simPrev = []{ LARGE_INTEGER q;
+            QueryPerformanceCounter(&q); return q; }();
+        LARGE_INTEGER s_simNow; QueryPerformanceCounter(&s_simNow);
+        double sim_real_dt = (double)(s_simNow.QuadPart - s_simPrev.QuadPart)
+                           / (double)s_qf.QuadPart;
+        s_simPrev = s_simNow;
+        if (sim_real_dt > 0.25) sim_real_dt = 0.25;  // clamp: no spiral after a stall
+        static const int s_simHz = []{ char b[16];
+            DWORD n = GetEnvironmentVariableA("MASHED_SIM_HZ", b, sizeof b);
+            return n ? atoi(b) : 60; }();
         // Free camera: WASD move, Q/E down/up, arrows OR right-button mouse
         // look, R = back to auto-orbit.
         mashed_re::D3d9Render::TrackRenderer::CamInput ci;
@@ -2032,8 +2052,49 @@ bool RenderFrame() {
                 ci.yaw_delta = 0.f; ci.pitch_delta = 0.f;
             }
             LARGE_INTEGER uA, uB; if (s_fprof) QueryPerformanceCounter(&uA);
-            g_track.UpdateCar(di);
+            int simStepsThisFrame = 0;
+            if (s_simHz <= 0) {
+                // A/B hatch (MASHED_SIM_HZ=0): original variable-dt single step.
+                g_track.UpdateCar(di);   // di.dt already == the GetTickCount dt
+                simStepsThisFrame = 1;
+            } else {
+                // FIXED-timestep accumulator: advance the car sim in exact 1/s_simHz s
+                // real-time steps, 0..N this render frame (decoupled from render fps).
+                // Input (di.accel/di.steer) was sampled once above and is held across
+                // the frame's sub-steps. Cap at 6 (=10 fps floor) so a hitch can't
+                // spiral; the 0.25s clamp on sim_real_dt is the matching ceiling.
+                const float kSimStep = 1.0f / (float)s_simHz;
+                static double s_simAccum = 0.0;
+                s_simAccum += sim_real_dt;
+                while (s_simAccum >= (double)kSimStep && simStepsThisFrame < 6) {
+                    di.dt = kSimStep;
+                    g_track.UpdateCar(di);
+                    s_simAccum -= (double)kSimStep;
+                    ++simStepsThisFrame;
+                }
+            }
             if (s_fprof) { QueryPerformanceCounter(&uB); msUpd = QpcMs(uA, uB); }
+            // WS-A s4 proof: log render-fps vs sim-Hz once/sec during calibration so
+            // the trace shows the sim is decoupled at a fixed rate regardless of how
+            // fast the render loop spins.
+            if (s_play_demo) {
+                static double s_winT0 = -1.0;
+                static int s_winFrames = 0, s_winSteps = 0;
+                ++s_winFrames; s_winSteps += simStepsThisFrame;
+                const double tnow = (double)now * 0.001;
+                if (s_winT0 < 0.0) s_winT0 = tnow;
+                if (tnow - s_winT0 >= 1.0) {
+                    const double span = tnow - s_winT0;
+                    if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+                        std::fprintf(lf, "SIMHZ render_fps=%.1f sim_hz=%.1f "
+                                     "(frames=%d steps=%d span=%.2fs cfg=%d)\n",
+                                     s_winFrames / span, s_winSteps / span,
+                                     s_winFrames, s_winSteps, span, s_simHz);
+                        std::fclose(lf);
+                    }
+                    s_winT0 = tnow; s_winFrames = 0; s_winSteps = 0;
+                }
+            }
             // engine note (real permdict eng1) rises with speed
             mashed_re::Audio::EngineSetRpm(
                 g_track.car_speed() / (g_track.world_radius() * 0.25f + 1e-3f));
