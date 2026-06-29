@@ -2201,6 +2201,17 @@ bool RenderFrame() {
             DumpBackbufferBMP(car ? "verify/r5/car_3_weave.bmp"
                                   : "verify/r4/arctic_fly_3.bmp");
         }
+        // WS-E s3: two later frames (car at speed) so a ~22s run captures the
+        // ground chase + tamed dust once the car is actually moving down-track.
+        static bool s_shot_late[2] = {};
+        if (car && !s_shot_late[0] && t >= 9.0f) {
+            s_shot_late[0] = true;
+            DumpBackbufferBMP("verify/r5/car_4_chase.bmp");
+        }
+        if (car && !s_shot_late[1] && t >= 16.0f) {
+            s_shot_late[1] = true;
+            DumpBackbufferBMP("verify/r5/car_5_chase.bmp");
+        }
         // R6 round telemetry/captures: each elimination + the winner + 2
         // periodic frames of the shared camera.
         if (g_track.round_mode_) {
@@ -5280,6 +5291,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                     // 1..3 for the AI cars.
                     g_track.LoadCarLiveries(g_device, cpiz, "ADVANTAGE",
                                             kLogPath);
+                    // WS-E s3: enable track weather in the dev car view so the
+                    // Arctic/Storm precipitation renders (the original Arctic has
+                    // faint falling snow). Same mapping as RaceSession::Begin
+                    // (Course_Id 0=Arctic, 6=Storm -> snow; else dust). The
+                    // emitter is tamed in ParticleSystem.cpp so it reads as subtle
+                    // motes, not a white wall. MASHED_NO_WEATHER=1 disables it.
+                    if (GetEnvironmentVariableA("MASHED_NO_WEATHER", nullptr, 0) == 0) {
+                        const int cid = g_track.course_id();
+                        const int ptype = (cid == 0 || cid == 6) ? 1 : 2;
+                        g_track.SetAmbientParticles(ptype);
+                    }
                     // R6: MASHED_ROUND=1 -> first-to-3-rounds match (countdown,
                     // elimination, score, results). MASHED_ROUND=N sets the
                     // round target.

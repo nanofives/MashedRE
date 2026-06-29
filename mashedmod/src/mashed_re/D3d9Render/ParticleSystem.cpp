@@ -91,18 +91,24 @@ void ParticleSystem::Update(float dt, const float camEye[3], const float camFwd[
 
     const float R = worldR_;
 
-    // ambient weather around the camera (snow/dust motes), biased ahead of view
+    // ambient weather around the camera (snow/dust motes), biased ahead of view.
+    // WS-E s3 (2026-06-28): TAMED to kill the blown-out white center bloom. The
+    // emitter is alpha-blended (SRCALPHA/INVSRCALPHA in Render), so many bright,
+    // high-alpha billboards stacked near the camera saturated toward solid white.
+    // Cut: spawn rate ~3x, per-frame cap ~3x, per-particle alpha ~4x, flake size.
+    // Result = sparse, faint motes (matching the original's subtle precipitation),
+    // not a white wall. (See re/analysis WS-E render notes.)
     if (amb_ != None) {
-        const float rate = (amb_ == Snow) ? 110.f : 70.f;   // particles/sec
+        const float rate = (amb_ == Snow) ? 35.f : 24.f;    // particles/sec (was 110/70)
         snowAccum_ += rate * dt;
         int spawn = static_cast<int>(snowAccum_);
         snowAccum_ -= spawn;
-        if (spawn > 60) spawn = 60;
+        if (spawn > 18) spawn = 18;                          // was 60
         for (int i = 0; i < spawn; ++i) {
             P* p = Spawn();
             const float spread = R * 0.45f;
             // seed in a box centered a bit ahead of the camera
-            const float ax = camFwd[0] * R * 0.20f, az = camFwd[2] * R * 0.20f;
+            const float ax = camFwd[0] * R * 0.18f, az = camFwd[2] * R * 0.18f;
             p->pos[0] = camEye[0] + ax + (Frand() - 0.5f) * 2.f * spread;
             p->pos[1] = camEye[1] + R * 0.30f + Frand() * R * 0.15f;   // above
             p->pos[2] = camEye[2] + az + (Frand() - 0.5f) * 2.f * spread;
@@ -110,28 +116,31 @@ void ParticleSystem::Update(float dt, const float camEye[3], const float camFwd[
                 p->vel[0] = (Frand() - 0.5f) * R * 0.06f;     // slight wind
                 p->vel[1] = -R * (0.12f + Frand() * 0.06f);   // fall
                 p->vel[2] = (Frand() - 0.5f) * R * 0.06f;
-                p->size = R * (0.0025f + Frand() * 0.0030f);  // fine flakes
-                const std::uint8_t a = static_cast<std::uint8_t>(150 + Frand() * 70.f);
+                p->size = R * (0.0015f + Frand() * 0.0020f);  // fine flakes (smaller)
+                const std::uint8_t a = static_cast<std::uint8_t>(35 + Frand() * 50.f);  // was 150..220
                 p->col = (static_cast<std::uint32_t>(a) << 24) | 0x00FFFFFFu;  // white
             } else {  // Dust
                 p->vel[0] = (Frand() - 0.5f) * R * 0.04f;
                 p->vel[1] = -R * (0.04f + Frand() * 0.03f);
                 p->vel[2] = (Frand() - 0.5f) * R * 0.04f;
-                p->size = R * (0.010f + Frand() * 0.010f);
-                const std::uint8_t a = static_cast<std::uint8_t>(80 + Frand() * 60.f);
+                p->size = R * (0.007f + Frand() * 0.007f);
+                const std::uint8_t a = static_cast<std::uint8_t>(35 + Frand() * 40.f);   // was 80..140
                 p->col = (static_cast<std::uint32_t>(a) << 24) | 0x00B0A080u;  // tan
             }
             p->maxlife = p->life = 2.0f + Frand() * 2.0f;
         }
     }
 
-    // car dust: spawn behind/under the car proportional to speed
+    // car dust: spawn behind/under the car proportional to speed. WS-E s3: TAMED
+    // the same way — this snow-spray plume sat right under the camera and was the
+    // brightest contributor to the center bloom. Lower rate/cap/alpha/size so it
+    // reads as a faint kick-up, not a white blob.
     if (carPos && carSpeed > R * 0.03f) {
-        const float rate = 60.f * (carSpeed / (R * 0.25f));
+        const float rate = 22.f * (carSpeed / (R * 0.25f));  // was 60
         dustAccum_ += rate * dt;
         int spawn = static_cast<int>(dustAccum_);
         dustAccum_ -= spawn;
-        if (spawn > 30) spawn = 30;
+        if (spawn > 12) spawn = 12;                          // was 30
         for (int i = 0; i < spawn; ++i) {
             P* p = Spawn();
             p->pos[0] = carPos[0] + (Frand() - 0.5f) * R * 0.02f;
@@ -140,8 +149,8 @@ void ParticleSystem::Update(float dt, const float camEye[3], const float camFwd[
             p->vel[0] = (Frand() - 0.5f) * R * 0.08f;
             p->vel[1] =  R * (0.03f + Frand() * 0.05f);     // puff up
             p->vel[2] = (Frand() - 0.5f) * R * 0.08f;
-            p->size = R * (0.012f + Frand() * 0.012f);
-            const std::uint8_t a = static_cast<std::uint8_t>(110 + Frand() * 80.f);
+            p->size = R * (0.007f + Frand() * 0.007f);       // was 0.012..0.024
+            const std::uint8_t a = static_cast<std::uint8_t>(45 + Frand() * 55.f);   // was 110..190
             p->col = (static_cast<std::uint32_t>(a) << 24) | 0x00D8E0E8u;  // snow-spray white
             p->maxlife = p->life = 0.7f + Frand() * 0.6f;
         }

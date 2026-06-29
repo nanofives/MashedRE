@@ -104,6 +104,7 @@ public:
     }
     float car_speed() const { return car_speed_; }
     float car_yaw()   const { return car_yaw_; }
+    int   course_id() const { return course_id_; }   // COURSE.LUA Course_Id(N)
 
     // Enable track-weather particles (0=none, 1=snow, 2=dust). Called when a
     // race begins; the field is drawn at the end of the 3D pass.
@@ -273,6 +274,9 @@ private:
     float car_yaw_     = 0.f;
     float car_speed_   = 0.f;
     float car_ground_off_ = 0.f;   // model bbox min-Y -> wheels on ground
+    float car_len_    = 1.f;       // car model long-axis extent (chase-cam scale)
+    float car_height_ = 0.5f;      // car model height extent (chase-cam scale)
+    bool  car_long_is_x_ = true;   // car model nose axis: true=+X, false=+Z
 
     // visual wheels: split from the body by per-atomic bbox heuristic
     // (disc-shaped, lateral-thin, at the 4 ground corners). Verts stored
