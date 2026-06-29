@@ -86,3 +86,7 @@ tmp/
 /re/console/**/*.elf
 /re/console/**/*.xbe
 /re/console/**/*.bin
+
+# local backup of the original install
+/original backup.zip
+*.zip
