@@ -99,6 +99,16 @@ public:
     // Downward raycast on the collision world. Returns ground Y at (x,z); ok
     // set false when no triangle is under the point.
     float GroundHeight(float x, float z, bool* ok) const;
+    // Off-mesh recovery: scan a ring of `radius` around (px,pz) for an on-mesh
+    // escape heading, preferring the one nearest curYaw. Returns false if the whole
+    // ring is off-mesh. Used to steer a wedged car back onto the drivable surface
+    // without depending on the gate ribbon. (TrackRenderer.cpp)
+    bool FindOnMeshHeading(float px, float pz, float curYaw, float radius,
+                           float& outYaw) const;
+    // Gate-independent off-mesh recovery: car_pos_ is still the last on-mesh point
+    // (the edge); steer toward an on-mesh heading and nudge the position inward so
+    // the car never permanently freezes against an edge. Mutates car_pos_/yaw/vel.
+    void  RecoverOffMesh();
     void  car_pos(float out[3]) const {
         out[0] = car_pos_[0]; out[1] = car_pos_[1]; out[2] = car_pos_[2];
     }

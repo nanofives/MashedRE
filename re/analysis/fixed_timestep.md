@@ -74,5 +74,12 @@ Run: muted Arctic play-demo (`MASHED_TRACK_VIEW=1 MASHED_CAR=1 MASHED_PLAY_DEMO=
 - Standalone replay is not implemented yet (`Vehicle/Replay.cpp` hooks the original only).
   When added, it must key off **sim-step count**, not render frames (the accumulator emits
   0..N steps per frame).
-- Egypt off-track freeze (gates-less recovery, `TrackRenderer.cpp:1851-1868`) is unrelated
-  to the timestep — separate workstream.
+- ~~Egypt off-track freeze (gates-less recovery, `TrackRenderer.cpp:1851-1868`)~~ **FIXED
+  2026-06-29 (WS-A s5).** Added `TrackRenderer::RecoverOffMesh()` + `FindOnMeshHeading()`:
+  when the next step lands off-mesh and `gates_` is empty, a 16-ray ring probe finds an
+  on-mesh escape heading near the current one and nudges the position inward (committing
+  only an on-mesh landing) — gate-independent, so the car never permanently freezes against
+  an edge. Wired into both off-mesh branches (real-physics + scaffold). Measured (same
+  Arctic play-demo): post-td15 window went from frozen (1 position, speed 0) to **77/77
+  unique positions, max speed 15.5, mean 5.77** — the car drives off the dock, recovers,
+  and keeps going (ends at (-48.1,-59.9) instead of stuck at (-25.2,59.9)).

@@ -1364,6 +1364,55 @@ float TrackRenderer::GroundHeight(float x, float z, bool* ok) const {
     return HeightOnSoup(col_verts_, col_tris_, x, z, ok);
 }
 
+// 16-ray ring probe for an on-mesh escape heading, preferring the one nearest curYaw.
+bool TrackRenderer::FindOnMeshHeading(float px, float pz, float curYaw,
+                                     float radius, float& outYaw) const {
+    const int   kRays = 16;
+    const float kPi   = 3.14159265358979f;
+    bool found = false; float bestDev = 1e9f, bestYaw = curYaw;
+    for (int i = 0; i < kRays; ++i) {
+        const float a = (2.f * kPi) * static_cast<float>(i) / static_cast<float>(kRays);
+        bool ok = false;
+        GroundHeight(px + std::cos(a) * radius, pz + std::sin(a) * radius, &ok);
+        if (!ok) continue;
+        float d = a - curYaw;
+        while (d >  kPi) d -= 2.f * kPi;
+        while (d < -kPi) d += 2.f * kPi;
+        d = (d < 0.f) ? -d : d;
+        if (d < bestDev) { bestDev = d; bestYaw = a; found = true; }
+    }
+    outYaw = bestYaw;
+    return found;
+}
+
+// Gate-independent off-mesh recovery (called from the off-mesh branches of UpdateCar).
+// car_pos_ is still the last ON-MESH point (the edge) — only the attempted next step
+// went off. Find an on-mesh heading near the current one, nudge the position a little
+// inward (committing only an on-mesh landing), and redirect heading + a modest forward
+// speed. Guarantees the car never permanently freezes against an edge; the player's
+// steering (or the chain) then carries it back to the interior.
+void TrackRenderer::RecoverOffMesh() {
+    float ry; float rad = 0.f;
+    if      (FindOnMeshHeading(car_pos_[0], car_pos_[2], car_yaw_, 1.2f, ry)) rad = 1.2f;
+    else if (FindOnMeshHeading(car_pos_[0], car_pos_[2], car_yaw_, 0.5f, ry)) rad = 0.5f;
+    if (rad <= 0.f) {                 // fully stranded (isolated point) — rare
+        car_vel_[0] = car_vel_[2] = 0.f; car_speed_ = 0.f; return;
+    }
+    float mx = car_pos_[0] + std::cos(ry) * 0.3f;
+    float mz = car_pos_[2] + std::sin(ry) * 0.3f;
+    bool mok = false; float my = GroundHeight(mx, mz, &mok);
+    if (!mok) {                       // small step landed off; jump to the verified ring point
+        mx = car_pos_[0] + std::cos(ry) * rad;
+        mz = car_pos_[2] + std::sin(ry) * rad;
+        my = GroundHeight(mx, mz, &mok);
+    }
+    if (mok) { car_pos_[0] = mx; car_pos_[2] = mz; car_pos_[1] = my + car_ground_off_; }
+    const float sp = (car_speed_ > 4.f ? car_speed_ * 0.5f : 4.f);
+    car_yaw_ = ry;
+    car_vel_[0] = std::cos(ry) * sp; car_vel_[2] = std::sin(ry) * sp;
+    car_speed_  = sp;
+}
+
 float TrackRenderer::GroundProbe(float x, float z, bool* ok,
                                  float normal[3]) const {
     // Like GroundHeight but also returns the hit triangle's (upward) normal
@@ -1864,8 +1913,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                     car_vel_[0] = dx/dl * sp; car_vel_[2] = dz/dl * sp;
                     car_yaw_ = std::atan2(dz, dx); car_speed_ = sp;
                 } else { car_vel_[0] = car_vel_[2] = 0.f; car_speed_ = 0.f; }
-            } else { car_vel_[0] *= 0.5f; car_vel_[2] *= 0.5f;
-                     car_speed_ = std::sqrt(car_vel_[0]*car_vel_[0] + car_vel_[2]*car_vel_[2]); }
+            } else { RecoverOffMesh(); }   // no gates (track-view / pre-race): active steer-back
         }
     } else {
     const float fwd[3] = {std::cos(car_yaw_), 0.f, std::sin(car_yaw_)};
@@ -1901,8 +1949,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         car_pos_[0] = nx; car_pos_[2] = nz;
         car_pos_[1] = gy + car_ground_off_;
     } else {
-        car_speed_ = 0.f;   // island edge / off-collision: stop
-        car_vel_[0] = car_vel_[2] = 0.f;
+        RecoverOffMesh();   // island edge / off-collision: steer back instead of freezing
     }
     }  // end MASHED_REAL_PHYSICS else (scaffold body)
     UpdateRace(in.dt);
