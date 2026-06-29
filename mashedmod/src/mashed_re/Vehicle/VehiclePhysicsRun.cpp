@@ -13,10 +13,60 @@
 #include <cmath>
 #include <cstdio>
 #include <vector>
+#include <chrono>     // WS-A s3 perf profiler (steady_clock == QPC on MSVC)
 // #define MASHED_PHYS_DIAG 1   /* enable the steer-chain diag block (G2 drive debug) */
 
 namespace mashed_re {
 namespace Vehicle {
+
+// ===========================================================================
+// WS-A s3 (PERF): env-gated frame-cost profiler. Attributes the in-race frame
+// time to the physics step vs the per-wheel terrain probe so the hot path is
+// MEASURED, not assumed. Writes a per-frame CSV to phys_prof.log (cwd-relative;
+// = the MASHED_ROOT main repo for worktree runs). Off unless MASHED_PHYS_PROF
+// is set, so normal/shipping runs pay nothing.
+//   MASHED_PHYS_NOCONTACT=1 — skip the wheel-contact solver (flat-ground
+//   substitute) to isolate the probe cost via an A/B run.
+// ===========================================================================
+namespace prof {
+inline double NowMs() {
+    return std::chrono::duration<double, std::milli>(
+        std::chrono::steady_clock::now().time_since_epoch()).count();
+}
+static const bool g_on        = (std::getenv("MASHED_PHYS_PROF")      != nullptr);
+static const bool g_noContact = (std::getenv("MASHED_PHYS_NOCONTACT") != nullptr);
+// Per-frame accumulators (summed across StepPlayer(0)+StepCar(1..3); flushed at
+// the next slot-0 step, which is the frame boundary — player always steps first).
+double    f_physMs   = 0.0;  // total time inside StepCar bodies this frame
+double    f_probeMs  = 0.0;  // total time inside SolveWheelContacts this frame
+long long f_triTests = 0;    // ProbeGround per-triangle tests this frame
+long long f_batchTests = 0;  // ProduceTerrainBatch per-triangle tests this frame
+int       f_substeps = 0;    // substep iterations this frame
+int       f_cars     = 0;    // cars stepped this frame
+float     f_wallMs   = 0.f;  // frame wall dt (the dt passed to slot 0)
+int       g_triCount = 0;    // terrain soup triangle count (set at SetWorld)
+int       g_frame    = 0;    // logged-frame counter
+bool      g_have     = false;// a frame is in progress
+void Flush() {
+    if (!g_on || !g_have) return;
+    static std::FILE* lf = nullptr;
+    static bool opened = false;
+    if (!opened) { lf = std::fopen("phys_prof.log", "w");
+                   if (lf) std::fprintf(lf, "frame,wall_ms,phys_ms,probe_ms,tri_tests,batch_tests,substeps,cars,tris\n");
+                   opened = true; }
+    if (lf && g_frame < 6000) {
+        std::fprintf(lf, "%d,%.3f,%.3f,%.3f,%lld,%lld,%d,%d,%d\n",
+            g_frame, f_wallMs, f_physMs, f_probeMs, f_triTests, f_batchTests,
+            f_substeps, f_cars, g_triCount);
+        std::fflush(lf);
+    }
+    ++g_frame;
+    f_physMs = f_probeMs = 0.0; f_triTests = f_batchTests = 0;
+    f_substeps = 0; f_cars = 0;
+}
+}  // namespace prof
+// Exposed so the broadphase (ContactProducer.cpp) can add its per-tri test count.
+long long* PerfBatchTestCounter() { return prof::g_on ? &prof::f_batchTests : nullptr; }
 
 // Chain entry points (defined in their .cpp; declared here to avoid a header churn).
 int  VehicleInit(int slot, int trackType);                                       // A3 0x0046b540
@@ -98,6 +148,7 @@ void VehiclePhysics_SetWorld(const float* verts, int vertCount,
     }
     Collision::g_worldTris     = g_worldTriStore.empty() ? nullptr : g_worldTriStore.data();
     Collision::g_worldTriCount = static_cast<int>(g_worldTriStore.size());
+    prof::g_triCount = Collision::g_worldTriCount;
 }
 
 bool VehiclePhysics_Enabled() {
@@ -173,6 +224,7 @@ bool  g_cGrounded     = false;
 static bool ProbeGround(float x, float z, float& gy, float* n /*[3]*/) {
     bool found = false; float best = -1e30f;
     n[0] = 0.f; n[1] = 1.f; n[2] = 0.f;
+    if (prof::g_on) prof::f_triTests += (long long)g_worldTriStore.size();  // PERF: scan size
     for (const Collision::CollTriangle& tr : g_worldTriStore) {
         const float* a = tr.v0; const float* b = tr.v1; const float* c = tr.v2;
         const float d00x = b[0]-a[0], d00z = b[2]-a[2];
@@ -224,6 +276,20 @@ static void ReassertContacts(unsigned char* r) {
 // Run the ported FUN_0046f6c0 over the track tris (replaces SetGrounded).
 static void SolveWheelContacts(unsigned char* r, const PlayerCarIO& io, int substep) {
     int* self = reinterpret_cast<int*>(r);
+
+    // PERF A/B (MASHED_PHYS_NOCONTACT): skip the terrain probe + solver entirely
+    // (flat-ground substitute) to isolate the probe cost — measures the doom-loop
+    // floor with contacts disabled. Not a shipping path; profiling only.
+    if (prof::g_noContact) {
+        g_cGrounded = (io.grounded != 0);
+        for (int w = 0; w < 4; ++w) {
+            g_cOnMesh[w] = false;
+            g_cNormal[w][0] = 0.f; g_cNormal[w][1] = 1.f; g_cNormal[w][2] = 0.f;
+        }
+        g_cAvgN[0] = 0.f; g_cAvgN[1] = 1.f; g_cAvgN[2] = 0.f;
+        ReassertContacts(r);
+        return;
+    }
 
     // 1. yaw rotation for the wheel-mount world placement (BuildYawMatrix: right@[0],[2];
     //    forward/at@[8],[10]; no roll/pitch — the blessed flat substitute).
@@ -302,6 +368,14 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     if (slot < 0 || slot >= 16) return;
     unsigned char* r = rec(slot);
 
+    // PERF (MASHED_PHYS_PROF): slot 0 == frame boundary (player steps first). Flush
+    // the previous frame's accumulators, then time this car's whole physics body.
+    const double t_phys0 = prof::g_on ? prof::NowMs() : 0.0;
+    if (prof::g_on) {
+        if (slot == 0) { prof::Flush(); prof::g_have = true; prof::f_wallMs = dt * 1000.0f; }
+        ++prof::f_cars;
+    }
+
     // --- adapter IN: world velocity, forward (= {cos,0,sin} per TrackRenderer), speed ---
     F(r, off::kVelocity + 0) = io.vel[0];
     F(r, off::kVelocity + 4) = io.vel[1];
@@ -357,7 +431,9 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         // WS-A contacts: run the REAL ported wheel-contact solver (FUN_0046f6c0) over the
         // track tris instead of the flat SetGrounded substitute -> per-wheel slope normals
         // (+0x200) + per-wheel grounding (-> A5's mass/grounded_count load = weight transfer).
+        const double tp0 = prof::g_on ? prof::NowMs() : 0.0;
         SolveWheelContacts(r, io, guard);
+        if (prof::g_on) { prof::f_probeMs += prof::NowMs() - tp0; ++prof::f_substeps; }
         g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
         VehicleControlIntegrate(reinterpret_cast<int*>(r), chunkMs, input, xform);
         // A6a's drive block can clear wheel states in some branches; re-assert from the
@@ -569,6 +645,8 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     io.vel[1] = F(r, off::kVelocity + 4);
     io.vel[2] = F(r, off::kVelocity + 8);
     io.speed  = F(r, off::kSpeed);
+
+    if (prof::g_on) prof::f_physMs += prof::NowMs() - t_phys0;   // PERF: whole-step cost
 }
 
 }  // namespace mashed_re::Vehicle
