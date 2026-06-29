@@ -53,6 +53,7 @@ private:
         float        vel[3] = {0, 0, 0};
         float        life = 0.f, maxlife = 1.f, size = 1.f;
         std::uint32_t col = 0xffffffffu;
+        int          kind = 0;  // particle class: 0=ambient 1=car-spray 2=fx
     };
     struct PV { float x, y, z; D3DCOLOR c; float u, v; };
 
