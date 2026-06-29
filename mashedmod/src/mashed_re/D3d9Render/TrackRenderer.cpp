@@ -1523,6 +1523,14 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
         }
     }
     car_ground_off_ = -model.bbox[1];   // lift so model min-Y sits on ground
+    // WS-E s3: car model size -> chase-camera scale. The Arctic geometry loads at
+    // a small unit scale (car ~0.7 units long), so the chase rig is derived from
+    // the car's own bbox rather than absolute units.
+    car_len_    = (cdx > cdz ? cdx : cdz);
+    if (car_len_ < 0.05f) car_len_ = 0.05f;
+    car_height_ = model.bbox[4] - model.bbox[1];
+    if (car_height_ < 0.02f) car_height_ = 0.02f;
+    car_long_is_x_ = long_is_x;   // nose axis for the body-render orientation
 
     // REAL start line when the AI gates parsed: gate 0 center (LAPDATA's
     // Lap_Line(0)), facing gate 1 — the race direction.
@@ -2646,20 +2654,33 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         at[0] = eye_[0] + std::cos(yaw_) * cp;
         at[1] = eye_[1] + sp;
         at[2] = eye_[2] + std::sin(yaw_) * cp;
-    } else if (round_mode_ && car_ready_) {
-        // VERBATIM-PORTED shared race camera (Race/RaceCamera.cpp, from
-        // 0x00446520) — updated in UpdateRace(); consumed here. Replaces
-        // the invented centroid camera.
-        const float* cp = race_cam_.pos();
-        const float* ct = race_cam_.target();
-        for (int i = 0; i < 3; ++i) { eye[i] = cp[i]; at[i] = ct[i]; }
     } else if (car_ready_) {
-        // chase cam: behind and above the car, looking at it
-        const float back = 7.0f, up = 3.0f;
-        eye[0] = car_pos_[0] - std::cos(car_yaw_) * back;
-        eye[1] = car_pos_[1] + up;
-        eye[2] = car_pos_[2] - std::sin(car_yaw_) * back;
-        at[0] = car_pos_[0]; at[1] = car_pos_[1] + 0.8f; at[2] = car_pos_[2];
+        // WS-E s3 GROUND CHASE (2026-06-28): a behind-the-car chase rig — the
+        // distilled single-follow form of the RE'd shared race camera
+        // (re/analysis/race_camera/race_camera.md; director FUN_00446520 +
+        // Camera::Apply 0x00441760). The standalone's shared-pack race_cam_
+        // (race_cam_.pos()/target()) is built to frame ALL FOUR cars, so it sits
+        // in a high orbit looking down — wrong for the single-car standalone view
+        // and the reference Arctic frame (car bottom-centre, ground-level, looking
+        // down the road). Here we follow the player car directly: eye 4.75 behind
+        // + 3.3 above, look-at 0.15 above the car and ~2 units down-track
+        // (=> ~25 deg down-tilt). race_cam_ is still advanced in UpdateRace() for
+        // the elimination/zoom rule; only the RENDER eye/target is overridden.
+        // Distances scale with the car's loaded size (car_len_ ~0.7 units on the
+        // small-scale Arctic geometry): the original rig's absolute 4.75/3.3 would
+        // sit ~8 car-lengths back here and shrink the car to a speck. In car-length
+        // units the original chase is ~1.5 behind / ~1.0 above, look-at ~1.5 ahead
+        // and ~half a car-height up (=> ~15-20 deg down-tilt, car at bottom-centre).
+        const float fwd[3] = {std::cos(car_yaw_), 0.f, std::sin(car_yaw_)};
+        const float L = car_len_;
+        const float kBack = L * 1.5f, kUp = L * 1.0f, kAhead = L * 1.5f;
+        const float kAtY = car_height_ * 0.5f;
+        eye[0] = car_pos_[0] - fwd[0] * kBack;
+        eye[1] = car_pos_[1] + kUp;
+        eye[2] = car_pos_[2] - fwd[2] * kBack;
+        at[0]  = car_pos_[0] + fwd[0] * kAhead;
+        at[1]  = car_pos_[1] + kAtY;
+        at[2]  = car_pos_[2] + fwd[2] * kAhead;
     } else {
         // Auto-orbit around the racing-line focus (gate centroid/extent), not
         // the bbox midpoint — keeps the track framed and at the surface Y. Eye
@@ -2676,11 +2697,11 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
 
     D3DMATRIX viewm, projm, worldm;
     MatLookAtLH(&viewm, eye, at);
-    // round mode: FOV from the camera struct's view-window 0.6 (cam[0x16],
-    // Camera::Apply 0x00441760/FUN_00441700): fovy = 2*atan(vw * h/w).
-    const float fovy = (round_mode_ && car_ready_ && !free_)
-        ? 2.f * std::atan(race_cam_.view_window() * 600.f / 800.f)
-        : 1.0472f /*60 deg*/;
+    // WS-E s3: a single 60-deg vertical FOV for all standalone cameras. (The old
+    // round-mode branch derived FOV from race_cam_'s view-window 0.6 -> ~48 deg,
+    // but that camera framed the whole pack from a high orbit and is now replaced
+    // by the ground chase above.)
+    const float fovy = 1.0472f;  // 60 deg
     MatPerspectiveFovLH(&projm, fovy, 800.f / 600.f,
                         0.05f, radius_ * 8.f);
     MatIdentity(&worldm);
@@ -2875,8 +2896,20 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         D3DMATRIX carm;
         MatIdentity(&carm);
         const float cy = std::cos(car_yaw_), sy2 = std::sin(car_yaw_);
-        carm._11 =  cy;  carm._13 = sy2;
-        carm._31 = -sy2; carm._33 = cy;
+        // WS-E s3: orient the body so the car's LONG (nose) axis points along the
+        // travel/heading direction F=(cos yaw, sin yaw). For this Advantage model
+        // the nose is model +Z (front wheels at +Z => long_is_x=false), but the
+        // old matrix mapped model +X -> F, rendering the car ~90 deg sideways — so
+        // the new ground chase saw its flank, not its rear. Map the nose axis to F
+        // (and the other axis to F's right) per long_is_x. Wheels inherit carm, so
+        // their spin/steer stay aligned.
+        if (car_long_is_x_) {
+            carm._11 =  cy;  carm._13 = sy2;   // model +X (nose) -> F
+            carm._31 = -sy2; carm._33 = cy;    // model +Z -> left
+        } else {
+            carm._31 =  cy;  carm._33 = sy2;   // model +Z (nose) -> F
+            carm._11 = sy2;  carm._13 = -cy;   // model +X -> right
+        }
         carm._41 = car_pos_[0]; carm._42 = car_pos_[1]; carm._43 = car_pos_[2];
         dev->SetTransform(D3DTS_WORLD, &carm);
         for (std::size_t mi = 0; mi < car_batches_.size(); ++mi) {
@@ -2942,8 +2975,13 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             D3DMATRIX am;
             MatIdentity(&am);
             const float ac = std::cos(a.yaw), as = std::sin(a.yaw);
-            am._11 =  ac; am._13 = as;
-            am._31 = -as; am._33 = ac;
+            if (car_long_is_x_) {            // nose=+X (see player carm above)
+                am._11 =  ac; am._13 = as;
+                am._31 = -as; am._33 = ac;
+            } else {                         // nose=+Z
+                am._31 =  ac; am._33 = as;
+                am._11 =  as; am._13 = -ac;
+            }
             am._41 = a.pos[0]; am._42 = a.pos[1]; am._43 = a.pos[2];
             dev->SetTransform(D3DTS_WORLD, &am);
             const auto& bats = var ? var->batches : car_batches_;
