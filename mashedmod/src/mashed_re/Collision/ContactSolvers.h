@@ -35,6 +35,18 @@ int  ProduceTerrainBatch(const float* center, float radius,
 extern const CollTriangle* g_worldTris;
 extern int                 g_worldTriCount;
 
+// The 4 transformed wheel-contact world positions (DAT_0088e620; the classifier
+// FUN_0046cc40 reads them). In the original these are filled by the RW device
+// transform FUN_004c3d90 (stubbed inert standalone), so the WS-A contact wiring
+// fills them itself from the wheel mounts before calling WheelContactSolver.
+extern float g_wheelContactPos[12];
+
+// DAT_00881560 — per-wheel suspension/steer scratch (12 floats) the wheel solver's
+// reset loop populates and the force integrator (A5) reuses for its steer-feedback
+// normal. Exposed so the WS-A contact wiring can save/restore it across the solver
+// call (the standalone steer path is a separate calibrated substitute).
+extern float g_suspScratch[12];
+
 // 0x0046f6c0 — the wheel solver / contact orchestrator: runs the broadphase +
 // classifier and the per-wheel 3-state machine that sets the wheel states the
 // force integrator (FUN_0046ddb0) reads as the grounded count.

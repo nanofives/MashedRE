@@ -109,44 +109,179 @@ void VehiclePhysics_Init(int carCount, int trackType) {
     g_inited = true;
 }
 
-// Mark all 4 wheels grounded (state=1) + grounded count=4.0, or airborne (state=0,
-// count=0). STANDALONE SUBSTITUTE for the un-portable RW contact orchestrator
-// FUN_0046f6c0 (it sets the wheel states self+0x198/0x25c/0x320/0x3e4 from the RW
-// BSP broadphase FUN_00538c80 + device transform FUN_004c3d90 of the wheel mounts;
-// both are stubbed standalone, so without this the wheels never ground -> the A6a
-// drive block (gated on the wheel state p[-3]!=0) and the suspension block (gated on
-// grounded count +0x9e0 == 0x40800000 = 4.0) never fire -> the car cannot move).
-// The grounded fact comes from the caller's own GroundHeight collision (PlayerCarIO).
-static void SetGrounded(unsigned char* r, bool grounded) {
-    const int s = grounded ? 1 : 0;
-    I(r, off::kWheel0State) = s;
-    I(r, off::kWheel1State) = s;
-    I(r, off::kWheel2State) = s;
-    I(r, off::kWheel3State) = s;
-    // grounded count is a FLOAT count of grounded wheels at byte +0x9e0 (int idx
-    // 0x278); 4.0 (0x40800000) is the all-grounded sentinel A6a/A5 gate on.
-    F(r, off::kGroundedCnt) = grounded ? 4.0f : 0.0f;
+// ===========================================================================
+// WS-A CONTACTS (2026-06-29): replace the flat-ground SetGrounded substitute with
+// the ported first-party wheel-contact solver Collision::WheelContactSolver
+// (FUN_0046f6c0) run over the track collision tris fed via VehiclePhysics_SetWorld.
+//
+// What the original chain consumes from contacts (all RVA-cited this session,
+// Ghidra pool0 read_only, MASHED.exe BDCAE0…):
+//   * wheel STATE  byte +0x198 + w*0xc4  — FUN_0046f6c0's 3-state machine sets it;
+//     A5 FUN_0046ddb0 Phase 0 sums the states into the grounded count, Phase 6
+//     gates the per-wheel suspension on it (pf[-0x17]==0 -> wheel not in contact).
+//   * contact NORMAL vec3 +0x200 + w*0xc4 — the classifier FUN_0046cc40 writes the
+//     contacted triangle's face normal here (local_90[0x1b..0x1d]); A5 Phase 6
+//     reads it as pf[3..5] and builds the per-wheel suspension force along it
+//     (pf[8]=fc*pf[3], pf[9]=(pf[4]-1)*fc, pf[10]=fc*pf[5]). THIS is "slope normals".
+//   * contact LOAD  +0x20c + w*0xc4 (A5 pf[6]) — NOT supplied by the contact solver:
+//     A5 itself WRITES it in Phase 5 (ws[0].outSlot=0x83 -> +0x20c) =
+//     (mass / grounded_count) * g_suspDtTerm + lateral_proj. So WEIGHT TRANSFER is
+//     intrinsic to A5: fewer grounded wheels -> more load each; the lateral proj
+//     adds cornering transfer. The old SetGrounded load=1.0 write was overwritten
+//     by A5 Phase 5 (moot) — we no longer write +0x20c at all.
+//
+// So the behavioural change is the per-wheel NORMAL (slope) + per-wheel GROUNDING
+// (which feeds A5's mass/grounded_count load = weight transfer). The wheel-mount
+// world positions are a substitute (BuildYawMatrix yaw rotation, no roll/pitch —
+// adequate on flat, approximate on slopes; blessed for this step).
+// ===========================================================================
+namespace {
+constexpr std::size_t kWheelStride  = 0xc4;     // per-wheel record stride (0x31 ints)
+constexpr std::size_t kWheelState0  = 0x198;    // wheel-0 state (== off::kWheel0State)
+constexpr std::size_t kContactNorm0 = 0x200;    // wheel-0 contact normal (A5 pf[3..5])
+constexpr std::size_t kMountX0      = 0x16c;    // wheel-0 mount x (FUN_0046b540 +0x16c)
+constexpr std::size_t kMountZ0      = 0x174;    // wheel-0 mount z (FUN_0046b540 +0x174)
+constexpr float       kProbeScale   = 0.277779f;// _DAT_005cea60 (FUN_0046f6c0 reset: probe = mount*this)
+constexpr float       kPenetration  = 0.05f;    // seat probe this far below the surface (classifier
+                                                // depth band [_DAT_005cea5c -0.25, _DAT_005cc564 0.25))
+inline std::size_t wheelStateOff (int w) { return kWheelState0  + (std::size_t)w * kWheelStride; }
+inline std::size_t wheelNormOff  (int w) { return kContactNorm0 + (std::size_t)w * kWheelStride; }
+inline std::size_t wheelMountXOff(int w) { return kMountX0      + (std::size_t)w * kWheelStride; }
+inline std::size_t wheelMountZOff(int w) { return kMountZ0      + (std::size_t)w * kWheelStride; }
 
-    // [U-A8-CONTACTLOAD] (G2 2026-06-18) Standalone substitute for the per-frame RW
-    // broadphase contact query (FUN_00538c80 + callback LAB_00468b80) that the original
-    // runs: it fills each wheel's contact NORMAL at +0x200/+0x204/+0x208 (A5 Phase-6
-    // pf[3..5], FUN_0046ddb0 @0x46e6xx) and contact LOAD/depth at +0x20c (pf[6]).
-    // Evidence (a6_diag.log): block#4 fired n4=4 but wrote w0f=(0,0,0) because A5 set
-    // the grip coefficients pf[1]/pf[2]/pf[7] (+0x1f8/+0x1fc/+0x210) from pf[6]*pf[4]
-    // = LOAD*normal.y, and LOAD was 0 -> A6a block#4 lbc/l98 = 0 -> zero suspension/grip
-    // force -> no lateral grip -> no yaw torque (+0x9c0 stayed exactly 0) -> the car
-    // could not turn. The flat Arctic ground normal is exactly world-up (0,1,0); kRestLoad
-    // is the rest suspension compression the broadphase would report — a documented
-    // standalone tunable (cf. kYawScale) that scales the overall grip stiffness.
-    constexpr float kRestLoad = 1.0f;   // [U-A8-CONTACTLOAD] calibrate via runtime drive
-    const float load = grounded ? kRestLoad : 0.0f;
-    for (int w = 0; w < 4; ++w) {
-        const std::size_t nb = 0x200u + static_cast<std::size_t>(w) * 0xc4u;  // contact frame base
-        F(r, nb + 0x0) = 0.0f;                       // contact normal.x
-        F(r, nb + 0x4) = grounded ? 1.0f : 0.0f;     // contact normal.y (world up on flat)
-        F(r, nb + 0x8) = 0.0f;                       // contact normal.z
-        F(r, nb + 0xc) = load;                       // +0x20c contact load/depth (pf[6])
+// Per-call contact cache (StepCar processes one car fully before the next, so a
+// single buffer is safe): lets the post-A4 re-assert restore the same states+normals
+// without re-running the broadphase.
+bool  g_cOnMesh[4]    = { false, false, false, false };
+float g_cNormal[4][3] = { {0,1,0}, {0,1,0}, {0,1,0}, {0,1,0} };
+float g_cAvgN[3]      = { 0.f, 1.f, 0.f };   // averaged on-mesh normal (edge fallback)
+bool  g_cGrounded     = false;
+}  // namespace
+
+// Highest collision triangle under world XZ (x,z) from the soup VehiclePhysics_SetWorld
+// built (g_worldTriStore, with precomputed face normals). Returns ground Y + UPWARD
+// face normal. Standalone substitute for the un-portable RW BSP broadphase walk
+// FUN_00538c80 (same COLLI*.BSP triangles); mirrors TrackRenderer::GroundProbe.
+static bool ProbeGround(float x, float z, float& gy, float* n /*[3]*/) {
+    bool found = false; float best = -1e30f;
+    n[0] = 0.f; n[1] = 1.f; n[2] = 0.f;
+    for (const Collision::CollTriangle& tr : g_worldTriStore) {
+        const float* a = tr.v0; const float* b = tr.v1; const float* c = tr.v2;
+        const float d00x = b[0]-a[0], d00z = b[2]-a[2];
+        const float d01x = c[0]-a[0], d01z = c[2]-a[2];
+        const float den = d00x*d01z - d01x*d00z;
+        if (den > -1e-9f && den < 1e-9f) continue;
+        const float px = x-a[0], pz = z-a[2];
+        const float u = (px*d01z - d01x*pz) / den;
+        const float v = (d00x*pz - px*d00z) / den;
+        if (u < 0.f || v < 0.f || u+v > 1.f) continue;
+        const float y = a[1] + u*(b[1]-a[1]) + v*(c[1]-a[1]);
+        if (y > best) {
+            best = y; found = true;
+            const float s = (tr.normal[1] < 0.f) ? -1.f : 1.f;   // force upward (drive surface)
+            n[0] = tr.normal[0]*s; n[1] = tr.normal[1]*s; n[2] = tr.normal[2]*s;
+        }
     }
+    gy = best; return found;
+}
+
+// Apply the cached contact result to the record: write each wheel's REAL per-wheel
+// terrain normal (A5 pf[3..5]), set its grounded state, and recompute the grounded
+// count (+0x9e0). DRIVABILITY GATE: the car-on-track fact (caller's GroundHeight,
+// io.grounded) grounds ALL 4 wheels — matching the old SetGrounded gate — because
+// A5 Phase 0 (FUN_0046ddb0) RE-DERIVES the grounded count from the wheel states, so
+// demoting an off-mesh wheel to state 0 halves A5's drive force (Phase 1 `!=4 ->
+// *0.5`) and weakens the front-wheel steer, which wedged the car at track edges
+// (Arctic regression). Off-mesh wheels at the edge fall back to the averaged on-mesh
+// (slope) normal; on-mesh wheels keep their own per-wheel terrain normal — so slope
+// normals are preserved while drivability matches the old flat path.
+static void ReassertContacts(unsigned char* r) {
+    float gc = 0.f;
+    for (int w = 0; w < 4; ++w) {
+        if (g_cGrounded) {
+            if (I(r, wheelStateOff(w)) == 0) I(r, wheelStateOff(w)) = 1;   // ground (on-track gate)
+            const float* nrm = g_cOnMesh[w] ? g_cNormal[w] : g_cAvgN;      // real per-wheel, or slope avg
+            const std::size_t nb = wheelNormOff(w);
+            F(r, nb + 0x0) = nrm[0];              // contact normal.x  (A5 Phase 6 pf[3])
+            F(r, nb + 0x4) = nrm[1];              // contact normal.y  (A5 Phase 6 pf[4])
+            F(r, nb + 0x8) = nrm[2];              // contact normal.z  (A5 Phase 6 pf[5])
+        } else {
+            I(r, wheelStateOff(w)) = 0;           // airborne (caller's GroundHeight failed)
+        }
+        if (I(r, wheelStateOff(w)) != 0) gc += 1.f;
+    }
+    F(r, off::kGroundedCnt) = gc;   // +0x9e0; 4.0 (0x40800000) == all-grounded sentinel
+}
+
+// Run the ported FUN_0046f6c0 over the track tris (replaces SetGrounded).
+static void SolveWheelContacts(unsigned char* r, const PlayerCarIO& io, int substep) {
+    int* self = reinterpret_cast<int*>(r);
+
+    // 1. yaw rotation for the wheel-mount world placement (BuildYawMatrix: right@[0],[2];
+    //    forward/at@[8],[10]; no roll/pitch — the blessed flat substitute).
+    float rot[16]; BuildYawMatrix(io.yaw, rot);
+
+    // 2. per wheel: world XZ of the 0.2778-scaled suspension probe (FUN_0046f6c0's reset
+    //    loop scales the mount by _DAT_005cea60), then query the real terrain.
+    g_cGrounded = (io.grounded != 0);
+    float avgN[3] = { 0.f, 0.f, 0.f }; int nOn = 0; float sumGY = 0.f; int nGY = 0;
+    for (int w = 0; w < 4; ++w) {
+        const float mx = F(r, wheelMountXOff(w)) * kProbeScale;
+        const float mz = F(r, wheelMountZOff(w)) * kProbeScale;
+        const float wx = io.pos[0] + rot[0]*mx + rot[8]*mz;    // + right.x*mx + at.x*mz
+        const float wz = io.pos[2] + rot[2]*mx + rot[10]*mz;   // + right.z*mx + at.z*mz
+        float gyw = 0.f, nw[3];
+        const bool ok = ProbeGround(wx, wz, gyw, nw);
+        g_cOnMesh[w] = ok;
+        g_cNormal[w][0] = ok ? nw[0] : 0.f;
+        g_cNormal[w][1] = ok ? nw[1] : 1.f;
+        g_cNormal[w][2] = ok ? nw[2] : 0.f;
+        float* wcp = &Collision::g_wheelContactPos[w * 3];     // DAT_0088e620 (classifier reads this)
+        wcp[0] = wx; wcp[2] = wz;
+        if (ok) {
+            wcp[1] = gyw - kPenetration;                       // just below surface -> depth in band
+            avgN[0] += nw[0]; avgN[1] += nw[1]; avgN[2] += nw[2]; ++nOn;
+            sumGY += gyw; ++nGY;
+        } else {
+            wcp[1] = io.pos[1] + 1.0e4f;                       // far above any tri -> no contact
+        }
+    }
+    if (nOn > 0) { avgN[0] /= nOn; avgN[1] /= nOn; avgN[2] /= nOn; }
+    else { avgN[0] = 0.f; avgN[1] = 1.f; avgN[2] = 0.f; }
+    g_cAvgN[0] = avgN[0]; g_cAvgN[1] = avgN[1]; g_cAvgN[2] = avgN[2];  // edge fallback (ReassertContacts)
+
+    // 3. solver preconditions. iVar12 = self + self[0x26b]*0x40 + 0x928 (wheel-ring
+    //    matrix double-buffer, init self[0x26b]=1); the broadphase query centre is
+    //    iVar12+0x30..0x38. Seat its Y at ground level so the ground-tri plane distance
+    //    < the init radius (+0x4a4) and the broadphase gathers it.
+    const int sel = I(r, 0x9ac);   // self[0x26b]
+    float* centre = reinterpret_cast<float*>(r + (std::size_t)sel * 0x40 + 0x928 + 0x30);
+    centre[0] = io.pos[0];
+    centre[1] = (nGY > 0) ? (sumGY / nGY) : io.pos[1];
+    centre[2] = io.pos[2];
+    // +0x9c8/+0x9cc/+0x9d0: the classifier's approach direction (FUN_0046cc40 gate
+    // _DAT_005cc99c=0.3 < faceNormal . this). No first-party writer for it exists in the
+    // ported A5/A6 chain ([UNCERTAIN] which original fn fills it); seed it with the
+    // averaged ground normal so the ground triangle passes the approach test.
+    F(r, 0x9c8) = avgN[0]; F(r, 0x9cc) = avgN[1]; F(r, 0x9d0) = avgN[2];
+
+    // 4. the real first-party solver: 3-state machine + broadphase + classifier +
+    //    velocity-friction impulse + airborne drift + grounded count. `world` is unused
+    //    by the port (ProduceTerrainBatch reads Collision::g_worldTris directly).
+    //    The solver's reset loop overwrites the shared DAT_00881560 scratch with the
+    //    wheel mounts, which A5 Phase 5 (FUN_0046ddb0) would then feed into its steer-
+    //    feedback TriangleFaceNormal — perturbing the standalone's SEPARATELY-calibrated
+    //    steer path (kYawScale/kWorldVel) and bleeding speed in turns (Arctic regression).
+    //    This task changes CONTACTS, not the steer integrator, so isolate the scratch:
+    //    save it, run the solver, restore it (the steer path is unchanged from baseline).
+    float savedScratch[12];
+    std::memcpy(savedScratch, Collision::g_suspScratch, sizeof(savedScratch));
+    unsigned char world[16] = { 0 };
+    Collision::WheelContactSolver(self, world, substep);
+    std::memcpy(Collision::g_suspScratch, savedScratch, sizeof(savedScratch));
+
+    // 5. apply the cached result (states + real per-wheel normals + grounded count).
+    ReassertContacts(r);
 }
 
 void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
@@ -211,15 +346,43 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     int guard = 0;
     while (remMs > 0.0f && guard++ < 64) {
         float chunkMs = (remMs < (float)kMaxSubstep) ? remMs : (float)kMaxSubstep;
-        // Stand-in for FUN_0046f6c0: ground the wheels from the caller's collision so
-        // the verbatim A6a drive/suspension blocks engage (see SetGrounded).
-        SetGrounded(r, io.grounded != 0);
+        // WS-A contacts: run the REAL ported wheel-contact solver (FUN_0046f6c0) over the
+        // track tris instead of the flat SetGrounded substitute -> per-wheel slope normals
+        // (+0x200) + per-wheel grounding (-> A5's mass/grounded_count load = weight transfer).
+        SolveWheelContacts(r, io, guard);
         g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
         VehicleControlIntegrate(reinterpret_cast<int*>(r), chunkMs, input, xform);
-        // A6a's drive block clears the wheel state in some branches; re-assert the
-        // grounded count so the next chunk's suspension block stays engaged.
-        SetGrounded(r, io.grounded != 0);
+        // A6a's drive block can clear wheel states in some branches; re-assert from the
+        // cached contact result (no re-broadphase) so the next chunk stays engaged.
+        ReassertContacts(r);
         remMs -= chunkMs;
+    }
+
+    // WS-A contacts telemetry: per-wheel contact NORMAL (+0x200) + LOAD (+0x20c, A5
+    // Phase-5 weight-transfer slot) + STATE (+0x198), to prove they VARY with terrain
+    // (slope vs flat). Gated by MASHED_CONTACT_DIAG so normal runs stay quiet.
+    {
+        static const bool s_diag = (std::getenv("MASHED_CONTACT_DIAG") != nullptr);
+        if (s_diag) {
+            static int dn = 0;
+            if (dn < 4000) {
+                if (std::FILE* lf = std::fopen("contact_diag.log", "a")) {
+                    std::fprintf(lf, "slot=%d gnd=%d gc=%.0f pos=(%.2f,%.2f,%.2f) sp=%.2f",
+                        slot, io.grounded, F(r, off::kGroundedCnt),
+                        io.pos[0], io.pos[1], io.pos[2], io.speed);
+                    for (int w = 0; w < 4; ++w) {
+                        const std::size_t nb = wheelNormOff(w);
+                        std::fprintf(lf, " | w%d st=%d n=(%.3f,%.3f,%.3f) ld=%.4f",
+                            w, I(r, wheelStateOff(w)),
+                            F(r, nb + 0), F(r, nb + 4), F(r, nb + 8),
+                            F(r, nb + 0xc));   // +0x20c load (A5 pf[6])
+                    }
+                    std::fprintf(lf, "\n");
+                    std::fclose(lf);
+                }
+                ++dn;
+            }
+        }
     }
 
     // [U-A8-SPEEDCAP] The verbatim chain self-limits LATERAL velocity (grip-clamp #6,
