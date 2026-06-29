@@ -2878,29 +2878,39 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // sliver we saw). Apply fog only when following the car (chase/race cam);
     // the overview cameras render unfogged so the whole track is visible.
     const bool chase_cam = car_ready_ && !free_;
-    // WS-A s3 PERF/FOG: the in-race perf fix puts the device on HARDWARE vertex
-    // processing. The chase-camera fog (COURSE.LUA Setup_Fog) was calibrated under
-    // SOFTWARE vertex processing, where it rendered the Arctic chase view dark
-    // (measured mean ~54). Under HW T&L the same FOGSTART/END collapse the close
-    // chase view to a full fog_color WHITEOUT (measured chase mean ~221 with BOTH
-    // vertex and table fog — the small fog_end_ saturates the near-ground to fog
-    // colour). The correct, fast render is the UNFOGGED view: the overview path is
-    // already deliberately unfogged and renders the track cleanly (mean ~48), and
-    // the original SW-VP chase was itself dark (~54), so dropping the washing fog
-    // loses ~nothing visually. Re-deriving HW-correct fog ranges is WS-E (visual)
-    // work; opt back in for that with MASHED_CHASE_FOG=1.
-    static const bool s_chase_fog = (std::getenv("MASHED_CHASE_FOG") != nullptr);
-    if (fog_on_ && chase_cam && s_chase_fog) {
+    // WS-E FOG (2026-06-29): restore the in-race distance fog as the DEFAULT.
+    // Background: the WS-A s3 perf fix moved the device to HARDWARE vertex
+    // processing (9->180 fps). Under HW T&L, *vertex* fog (D3DRS_FOGVERTEXMODE)
+    // white-washes our pre-lit world/car verts, which is why the perf merge gated
+    // ALL chase fog off behind MASHED_CHASE_FOG. The HW-correct path is *table*
+    // (pixel) fog: FOGVERTEXMODE = NONE, FOGTABLEMODE = LINEAR, computed per-pixel
+    // from interpolated depth — independent of vertex format, so it does NOT wash
+    // out. The earlier "table fog also measured ~221 whiteout" reading pre-dated
+    // the WS-E trackfix (commit f3091cdb): the old `fa*fb` near-plane parse
+    // INVERTED the linear ramp for every track with near >= 1, clamping all near
+    // geometry to full fog colour. With the corrected parse (fog_start_ = near,
+    // fog_end_ = far, near < far on every track) the ramp is monotone: near
+    // geometry clear, distance fades to the track fog colour. The projection
+    // (MatPerspectiveFovLH above) emits w = eye-space z (m._34 = 1), so on
+    // WFOG-capable hardware FOGSTART/FOGEND are the Setup_Fog absolute camera
+    // distances directly.
+    //
+    // Fog applies only to the chase/race cam (chase_cam): the orbit/overview
+    // cameras sit a full track-radius back, well beyond fog_end_, and would wash
+    // the whole track to fog colour — those render unfogged. Set MASHED_NO_FOG=1
+    // to disable the distance fog entirely (escape hatch).
+    static const bool s_no_fog = (std::getenv("MASHED_NO_FOG") != nullptr);
+    if (fog_on_ && chase_cam && !s_no_fog) {
         dev->SetRenderState(D3DRS_FOGENABLE, TRUE);
         dev->SetRenderState(D3DRS_FOGCOLOR, fog_color_);
-        dev->SetRenderState(D3DRS_FOGVERTEXMODE, D3DFOG_NONE);
-        dev->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_LINEAR);  // pixel fog (HW T&L safe)
+        dev->SetRenderState(D3DRS_FOGVERTEXMODE, D3DFOG_NONE);   // NOT vertex fog (HW T&L washes)
+        dev->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_LINEAR);  // table/pixel fog (HW-correct)
         dev->SetRenderState(D3DRS_RANGEFOGENABLE, FALSE);
         DWORD fs, fe;
         std::memcpy(&fs, &fog_start_, 4);
         std::memcpy(&fe, &fog_end_, 4);
-        dev->SetRenderState(D3DRS_FOGSTART, fs);
-        dev->SetRenderState(D3DRS_FOGEND, fe);
+        dev->SetRenderState(D3DRS_FOGSTART, fs);   // Setup_Fog near (abs cam dist)
+        dev->SetRenderState(D3DRS_FOGEND, fe);     // Setup_Fog far  (abs cam dist)
     } else {
         dev->SetRenderState(D3DRS_FOGENABLE, FALSE);
         dev->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_NONE);
