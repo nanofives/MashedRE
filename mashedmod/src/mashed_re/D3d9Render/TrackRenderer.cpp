@@ -191,8 +191,14 @@ inline D3DCOLOR LightAtomicVertex(const AtomicLight& lt, bool lit, bool modmat,
     } else if (!prelit) {
         r = g = b = 1.f;                            // untextured/unlit fallback
     } else {
-        // prelit, non-lit (e.g. glass): add the track ambient like the world
-        // prelit path so it sits in the same exposure as the lit geometry.
+        // prelit, non-lit (e.g. glass / sea): keep the track ambient as a fill so
+        // the prop sits at the same exposure as the lit geometry. WS-E s4 NOTE:
+        // strictly per RW a non-lit prelit atomic gets NO runtime ambient (sea.dff
+        // GEOM flags 0x0001000f have no rpGEOMETRYLIGHT 0x20), but zeroing it here
+        // darkens the big Arctic sea clump to near-black (whole-frame lum ~24 in
+        // the sea-heavy chase view) — further from the original's exposure than
+        // keeping the fill. The dominant teal cast lived in the WORLD path (fixed
+        // above); fog was measured negligible here, so the fill stays.
         r += lt.amb[0]; g += lt.amb[1]; b += lt.amb[2];
     }
     if (modmat) {
@@ -706,19 +712,25 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 v.x = s.verts[vi * 3 + 0];
                 v.y = s.verts[vi * 3 + 1];
                 v.z = s.verts[vi * 3 + 2];
-                // prelight is RGBA bytes; D3D diffuse is BGRA dwords. WS-E:
-                // add the track's RpLight ambient (amb_world_) and clamp — the
-                // baked prelight is the dim baseline RW combines with ambient.
+                // prelight is RGBA bytes; D3D diffuse is BGRA dwords.
+                // WS-E s4 colour-grade fix: render the BAKED prelit colours
+                // AS-IS — do NOT re-add the track RpLight ambient at frame time.
+                // The world BSP geometry carries no rpGEOMETRYLIGHT flag (format
+                // 0x4001004d, see comment at ParseLightsDffAmbient), so RenderWare
+                // renders its prelit colours directly; the ambient is baked into
+                // them offline, not re-applied per frame. s1/s2 added amb_world_
+                // (Arctic (51,76,76) = cool/teal, B=G>>R) to every world vertex,
+                // double-counting the ambient and dragging the whole frame teal
+                // (B-highest, lum +~7). DECISIVE evidence it is not runtime-added:
+                // the original Arctic frame measures B as the LOWEST channel
+                // (29.8 < R 34.7, G 34.8); had the original re-added (51,76,76),
+                // its B would be the HIGHEST like the cool standalone — it is not.
                 if (has_pl) {
                     const std::uint32_t p = s.prelit[vi];
-                    int r = (static_cast<int>(p)       & 0xFF) + ((amb_world_ >> 16) & 0xFF);
-                    int g = (static_cast<int>(p >>  8) & 0xFF) + ((amb_world_ >>  8) & 0xFF);
-                    int bb= (static_cast<int>(p >> 16) & 0xFF) + ( amb_world_        & 0xFF);
-                    const std::uint8_t a = static_cast<std::uint8_t>(p >> 24);
-                    if (r > 255) r = 255; if (g > 255) g = 255; if (bb > 255) bb = 255;
-                    v.c = D3DCOLOR_ARGB(a, static_cast<std::uint8_t>(r),
-                                        static_cast<std::uint8_t>(g),
-                                        static_cast<std::uint8_t>(bb));
+                    v.c = D3DCOLOR_ARGB(static_cast<std::uint8_t>(p >> 24),
+                                        static_cast<std::uint8_t>(p),         // R
+                                        static_cast<std::uint8_t>(p >> 8),    // G
+                                        static_cast<std::uint8_t>(p >> 16));  // B
                 } else {
                     v.c = 0xFFFFFFFFu;
                 }
