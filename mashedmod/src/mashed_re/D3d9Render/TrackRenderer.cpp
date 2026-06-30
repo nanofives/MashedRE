@@ -1839,9 +1839,17 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // track-radius-relative). See HANDLING_V2_2026-06-10.md.
     float       kTop      = radius_ * 0.25f;
     if (boost_timer_ > 0.f) kTop *= 1.4f;   // Boost power-up: +40% top speed
-    const float kDrag     = 0.21f;          // HARVESTED coast decay
-    const float kThrottle = kTop * 0.42f;   // top=kThrottle/kDrag=2x kTop ->
-                                            // clamped; ~3.3s spool (faithful)
+    const float kDrag     = 0.21f;          // HARVESTED coast decay (throttle-OFF), weighty
+    // Throttle factor: was 0.42 (reached kTop in ~3.3s). CALIBRATED 2026-06-30 against the
+    // original via the in-race injector (re/frida/capture_player_dynamics.py, Arctic): the
+    // original accelerates to ~top in ~2.2s from GO (63% in ~1s), so the old value was ~1.4x
+    // too sluggish. 0.58 reaches kTop in ~2.2s. Raising it ONLY speeds the approach to the
+    // clamp — top speed (kTop clamp) and the weighty coast decay (kDrag, throttle-off) are
+    // unchanged. Env MASHED_THROTTLE_K overrides (=0.42 reverts). re/analysis/feel_calibration.md.
+    static const float s_throttleK = []{ char b[16];
+        DWORD n = GetEnvironmentVariableA("MASHED_THROTTLE_K", b, sizeof b);
+        float f = n ? (float)atof(b) : 0.58f; return (f > 0.f) ? f : 0.58f; }();
+    const float kThrottle = kTop * s_throttleK;
     const float kGrip     = 6.0f;    // strong (slide ~2% of fwd, harvested)
     const float kSteer    = 2.2f;
     const float kGravity  = radius_ * 0.12f;
