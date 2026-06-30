@@ -59,4 +59,13 @@ void Ai_SetHost(const Host* host);
 // race-line spline count (DAT_00801ca0 > 3); inert if the .AI splines are unloaded.
 void Ai_Standalone_Tick();
 
+// Faithful racing-line lookahead target for vehicle v at world (ownX,ownZ): selects
+// the vehicle's spline bank (FUN_00418560) and runs the ported FUN_00443dc0 lookahead
+// (Catmull-Rom closest-param + forward walk + LOS step-back). Writes the target XZ and
+// returns true; returns false (target untouched) if the .AI banks aren't loaded. This is
+// the "where to go" used by the standalone faithful-nav + robust-motion opponent drive
+// (the verbatim ControlStep bands' accel+brake deadlock against the approximate physics
+// chain is bypassed — see re/analysis/ai_spline_lookahead.md). Requires Ai_SetHost first.
+bool Ai_ComputeTarget(int v, float ownX, float ownZ, float* outTx, float* outTz);
+
 } // namespace Ai

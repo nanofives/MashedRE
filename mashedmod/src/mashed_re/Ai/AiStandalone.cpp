@@ -189,11 +189,29 @@ void SplineLookahead(std::uintptr_t spline, float ownX, float ownZ, int v, float
     }
 
     // ---- Phase 2: per-vehicle index continuity (DAT_008032d4 + v*0x14) ----
+    // The original's "reject a jump >1" rule (anti-shortcut) assumes the stored index is
+    // roughly where the car was. The standalone never seeds it at spline placement, so a
+    // mid-track-spawned (or respawned, or knocked-off) car whose stored index is stale gets
+    // pinned forever. Self-heal: if the car is now FAR from the stored point (>6 local
+    // segment lengths, mirroring the old s_prog lost-reseed), accept the true nearest;
+    // otherwise apply the original jump-reject.
     {
         const std::uintptr_t idxAddr = 0x008032d4u + static_cast<std::uintptr_t>(v) * 0x14u;
-        const int prev = I32(idxAddr);
-        const int diff = nearest - prev;
-        if (diff != 1 - count && (diff < -1 || 1 < diff) && prev < count) nearest = prev;
+        int prev = I32(idxAddr);
+        bool reseed = (prev < 0 || prev >= count);
+        if (!reseed) {
+            const int pn = (prev + 1) % count;
+            const float sx = F32(spline + (std::uintptr_t)pn*8)     - F32(spline + (std::uintptr_t)prev*8);
+            const float sz = F32(spline + (std::uintptr_t)pn*8 + 4) - F32(spline + (std::uintptr_t)prev*8 + 4);
+            const float segLen2 = sx*sx + sz*sz;
+            const float dx = F32(spline + (std::uintptr_t)prev*8)     - ownX;
+            const float dz = F32(spline + (std::uintptr_t)prev*8 + 4) - ownZ;
+            if (dx*dx + dz*dz > segLen2 * 36.0f) reseed = true;   // car teleported (spawn/respawn/knock-off)
+        }
+        if (!reseed) {
+            const int diff = nearest - prev;
+            if (diff != 1 - count && (diff < -1 || 1 < diff)) nearest = prev;
+        }
         I32(idxAddr) = nearest;
     }
 
@@ -553,6 +571,21 @@ void Ai_SetHost(const Host* host)
         s_host = Host{ h_zero_i, h_zero_i, h_zero_i, h_zero_i,
                        h_zero_iv, h_zero_iv, h_zero_i, h_zero_xz, h_zero_xz, h_los_clear };
     }
+}
+
+// Faithful racing-line lookahead target for vehicle v (see AiStandalone.h). Selects the
+// vehicle's spline bank then runs the ported FUN_00443dc0 lookahead. The "where to go"
+// for the standalone faithful-nav + robust-motion opponent drive.
+bool Ai_ComputeTarget(int v, float ownX, float ownZ, float* outTx, float* outTz)
+{
+    if (I32(kSplineRaceCnt) <= 3) return false;   // .AI banks not loaded
+    std::uintptr_t spline = SelectSpline(v);       // FUN_00418560 bank pick (race line)
+    if (I32(spline + 0x200) <= 0) return false;    // empty bank
+    float out[2] = { ownX, ownZ };
+    SplineLookahead(spline, ownX, ownZ, v, out);   // FUN_00443dc0 (Phases 1-8)
+    *outTx = out[0];
+    *outTz = out[1];
+    return true;
 }
 
 // FUN_00418860 — per-frame tick. Guard on race-line count; rubber-band STUB.

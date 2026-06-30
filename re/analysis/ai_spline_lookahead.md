@@ -97,5 +97,37 @@ Decision fork for "opponents that complete laps" (stop-and-ask):
 
 This change (faithful `SplineLookahead` + `los_clear`) is the necessary navigation half and
 is committed regardless of which fork is chosen — it is the real target source for both (A)
-and (B). It is NOT yet merged to main (the race is not yet better than the gate-ribbon
-baseline on its own).
+and (B).
+
+## RESOLUTION — Option B chosen + DONE (2026-06-30): faithful nav + robust motion
+User picked (B). Opponents now drive the FAITHFUL racing-line target with a robust motion
+model, default once the `.AI` banks load. Pieces (TrackRenderer.cpp / AiStandalone.cpp):
+- `Ai::Ai_ComputeTarget(v, ownX, ownZ)` exposes the faithful lookahead (SelectSpline + the
+  ported `FUN_00443dc0`) as the AI's "where to go".
+- The opponent drive (`faithful_nav` branch in `UpdateCar`) replaces the verbatim
+  descriptor-band / physics-chain path: steer toward the target (turn-rate) + velocity-shaped
+  speed FLOORED at 45% cruise (no accel+brake brake-latch deadlock). `.AI` loads by default
+  (`MASHED_GATE_RIBBON_AI=1` reverts to the gate ribbon).
+- Robustness layers added after measuring real failure modes (`MASHED_LAP_DIAG` / `MASHED_AI_DIAG`):
+  1. **Self-healing index continuity** — reseed the per-vehicle progress index (`DAT_008032d4`)
+     when the car is >6 segment-lengths from the stored point (covers mid-track spawn /
+     respawn / knock-off; the original seeds it at spline placement, the standalone didn't).
+  2. **Forward-progress safety net** — where the racing line passes near itself (start/finish),
+     the geometric-nearest seed can land on the wrong leg and the target points BACKWARD;
+     if the target opposes the gate-ribbon race direction (>~105°), retarget the next gate.
+  3. **Ring-probe off-mesh recovery** (mirrors the player's `RecoverOffMesh`) — on an off-mesh
+     step, find an on-mesh heading near the target and COMMIT a nudge, jumping to the verified
+     ring point if the small nudge lands in a gap (escapes thin mesh islands).
+  4. **Anti-stuck marshal recovery** — if a car's gate progress stalls >2.5s (a lookahead
+     corner-case the racing line skirts), relocate to the next gate ahead on the ribbon,
+     facing forward, at cruise. Robust by construction (every trigger advances +2 gates).
+- AI cars spawn as a small starting grid just ahead of the start line on the forward-seeding
+  side, facing the race direction (was: scattered at gates 2/4/6, which seeded one car onto
+  the spline's return leg).
+
+**Verified (Arctic, no-round, 120 s, all-AI-driven):** all 3 opponents race the full racing
+line and complete laps — a1 lap 3, a2 lap 3, a3 lap 4 — smooth monotonic progress, no freezes
+(was: 0-1 of 3 before). Round mode renders the 4-car standings + elimination scoring
+(verify/_ai_race_optionB.png). Player feel is UNCHANGED — the player still uses its own motion
+path; only opponents changed. The fully-faithful path (Option A: verbatim bands on a C4 physics
+chain) remains future work.
