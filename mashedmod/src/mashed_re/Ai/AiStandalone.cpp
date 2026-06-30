@@ -55,11 +55,12 @@ namespace {
 int  h_zero_i()                 { return 0; }
 int  h_zero_iv(int)             { return 0; }
 void h_zero_xz(int, float* a, float* b) { *a = 0.0f; *b = 0.0f; }
+int  h_los_clear(float, float, float, float) { return 1; }   // no-op = always clear
 
 Host s_host = {
     h_zero_i, h_zero_i, h_zero_i, h_zero_i,
     h_zero_iv, h_zero_iv, h_zero_i,
-    h_zero_xz, h_zero_xz,
+    h_zero_xz, h_zero_xz, h_los_clear,
 };
 
 inline float bits_to_f(std::uint32_t b) { float f; std::memcpy(&f, &b, 4); return f; }
@@ -127,40 +128,164 @@ float SteerAngleError(int v, float targetX, float targetZ)
     return err;
 }
 
-// ---------------------------------------------------------------------------
-// FUN_00443dc0 (core, loop 1) — nearest spline point to (px,pz). Faithful.
-// spline layout: points = float2 at (spline + i*8); count at (spline + 0x200).
-// The curvature-walk refinement + wall-march tail are STUBBED (see ledger).
-// Returns nearest index, or -1 if the bank is empty.
-// ---------------------------------------------------------------------------
-int SplineNearestIndex(std::uintptr_t spline, float px, float pz)
+// ===========================================================================
+// FUN_00443300 — Catmull-Rom cubic spline interpolation (XZ) over 4 wrapped
+// control points P0..P3 = pts[idx-1..idx+2]. Verbatim (consts memory_read pool0
+// 2026-06-30; see re/analysis/ai_spline_lookahead.md): 0x005cc31c=3.0,
+// 0x005cc358=5.0, 0x005cc35c=4.0, 0x005cc32c=0.5; param clamped to [0,1]
+// (0x005cc320=1.0 / DAT_005d757c=0).
+// ===========================================================================
+void CatmullRom(std::uintptr_t spline, int idx, float t, float* outX, float* outZ)
 {
-    int count = I32(spline + 0x200);
-    if (count <= 0) return -1;
-    int best = 0;
-    float bestD = 1.0e9f;                    // orig seed 100000.0
-    for (int i = 0; i < count; ++i) {
-        float dx = F32(spline + i * 8)     - px;
-        float dz = F32(spline + i * 8 + 4) - pz;
-        float d  = dx * dx + dz * dz;
-        if (d < bestD) { bestD = d; best = i; }
-    }
-    return best;
+    const int count = I32(spline + 0x200);
+    if (count <= 0) { *outX = 0.f; *outZ = 0.f; return; }
+    int i0 = idx - 1; if (i0 < 0)      i0 += count;   // P0
+    int i1 = i0 + 1;  if (i1 >= count) i1 -= count;   // P1 (= idx)
+    int i2 = i1 + 1;  if (i2 >= count) i2 -= count;   // P2
+    int i3 = i2 + 1;  if (i3 >= count) i3 -= count;   // P3
+    float t0 = t; if (t0 > 1.0f) t0 = 1.0f; else if (t0 < 0.0f) t0 = 0.0f;
+    const float t2 = t0 * t0;
+    auto comp = [&](std::uintptr_t o) -> float {
+        const float P0 = F32(spline + static_cast<std::uintptr_t>(i0) * 8 + o);
+        const float P1 = F32(spline + static_cast<std::uintptr_t>(i1) * 8 + o);
+        const float P2 = F32(spline + static_cast<std::uintptr_t>(i2) * 8 + o);
+        const float P3 = F32(spline + static_cast<std::uintptr_t>(i3) * 8 + o);
+        return (2.0f * P1 + (P2 - P0) * t0
+                + (((P1 * 3.0f - P0) - P2 * 3.0f) + P3) * t2 * t0
+                + ((P2 * 4.0f + (2.0f * P0 - P1 * 5.0f)) - P3) * t2) * 0.5f;
+    };
+    *outX = comp(0);
+    *outZ = comp(4);
 }
 
-// mode-0 follow lookahead: BOUNDED raw-point advance (the FUN_00443dc0 curvature
-// walk + FUN_00443300 interpolation refinement are TODO). Advance kLookahead raw
-// points from nearest. [U-C-BANDS / lookahead-refine pending].
-const int kLookahead = 1;   // [G4] closer target -> small bearing error -> the ControlStep
-                            // "mildly off" full-steer band (err 30..180) rarely fires, so the
-                            // car drives FORWARD along the line instead of orbiting a far point.
+// Normalize a 2-float (XZ) vector in place (standalone equiv of FUN_004c3c60,
+// which uses a fast-rsqrt LUT; std::sqrt is bit-equivalent for nav use).
+inline void Normalize2(float* v) {
+    const float m2 = v[0]*v[0] + v[1]*v[1];
+    if (m2 > 0.0f) { const float inv = 1.0f / std::sqrt(m2); v[0] *= inv; v[1] *= inv; }
+}
 
-void TargetPoint(std::uintptr_t spline, int nearestIdx, float* tx, float* tz)
+// ===========================================================================
+// FUN_00443dc0 (param_5=1, param_6=0) — spline lookahead target finder. STAGE 1:
+// Phases 1-7 (nearest -> per-vehicle index continuity -> Catmull-Rom closest-param
+// ternary search -> 16-point forward walk scored by path/own alignment -> max pick).
+// Replaces the crude 1-raw-point [G4] s_prog crutch so the target stays ON the
+// (Catmull-smoothed) racing line and the verbatim ControlStep bands stop full-locking
+// at corners. The Phase-8 LOS wall-march (tile grid 0x007f1a9c/0x007f9a9c) is a
+// follow-up. Writes target XZ to out[0],out[1]. NO-GUESSING: consts cited above.
+// ===========================================================================
+void SplineLookahead(std::uintptr_t spline, float ownX, float ownZ, int v, float* out)
 {
-    int count = I32(spline + 0x200);
-    int idx = (nearestIdx + kLookahead) % count;
-    *tx = F32(spline + idx * 8);
-    *tz = F32(spline + idx * 8 + 4);
+    const int count = I32(spline + 0x200);
+    if (count <= 0) { out[0] = ownX; out[1] = ownZ; return; }
+
+    // ---- Phase 1: nearest control point ----
+    int nearest = 0; float bestD = 100000.0f;     // orig seed 100000.0
+    for (int i = 0; i < count; ++i) {
+        const float dx = F32(spline + static_cast<std::uintptr_t>(i)*8)     - ownX;
+        const float dz = F32(spline + static_cast<std::uintptr_t>(i)*8 + 4) - ownZ;
+        const float d  = dx*dx + dz*dz;
+        if (d < bestD) { nearest = i; bestD = d; }
+    }
+
+    // ---- Phase 2: per-vehicle index continuity (DAT_008032d4 + v*0x14) ----
+    // The original's "reject a jump >1" rule (anti-shortcut) assumes the stored index is
+    // roughly where the car was. The standalone never seeds it at spline placement, so a
+    // mid-track-spawned (or respawned, or knocked-off) car whose stored index is stale gets
+    // pinned forever. Self-heal: if the car is now FAR from the stored point (>6 local
+    // segment lengths, mirroring the old s_prog lost-reseed), accept the true nearest;
+    // otherwise apply the original jump-reject.
+    {
+        const std::uintptr_t idxAddr = 0x008032d4u + static_cast<std::uintptr_t>(v) * 0x14u;
+        int prev = I32(idxAddr);
+        bool reseed = (prev < 0 || prev >= count);
+        if (!reseed) {
+            const int pn = (prev + 1) % count;
+            const float sx = F32(spline + (std::uintptr_t)pn*8)     - F32(spline + (std::uintptr_t)prev*8);
+            const float sz = F32(spline + (std::uintptr_t)pn*8 + 4) - F32(spline + (std::uintptr_t)prev*8 + 4);
+            const float segLen2 = sx*sx + sz*sz;
+            const float dx = F32(spline + (std::uintptr_t)prev*8)     - ownX;
+            const float dz = F32(spline + (std::uintptr_t)prev*8 + 4) - ownZ;
+            if (dx*dx + dz*dz > segLen2 * 36.0f) reseed = true;   // car teleported (spawn/respawn/knock-off)
+        }
+        if (!reseed) {
+            const int diff = nearest - prev;
+            if (diff != 1 - count && (diff < -1 || 1 < diff)) nearest = prev;
+        }
+        I32(idxAddr) = nearest;
+    }
+
+    // ---- Phase 3: sub-segment select (this+0.01 vs prev+0.99) ----
+    float cx, cz;
+    CatmullRom(spline, nearest, 0.01f, &cx, &cz);   // 0x3c23d70a
+    float d0 = (cx-ownX)*(cx-ownX) + (cz-ownZ)*(cz-ownZ);
+    int prevIdx = nearest - 1; if (prevIdx < 0) prevIdx += count;
+    float qx, qz;
+    CatmullRom(spline, prevIdx, 0.99f, &qx, &qz);   // 0x3f7d70a4
+    if ((qx-ownX)*(qx-ownX) + (qz-ownZ)*(qz-ownZ) < d0) { cx=qx; cz=qz; nearest=prevIdx; }
+    (void)cx; (void)cz;
+
+    // ---- Phase 4: ternary search for the closest param in [0,1] (16 iters) ----
+    const float kThird = bits_to_f(0x3eaaaa9fu);   // _DAT_005ce034 (~1/3)
+    float hi = 1.0f, lo = 0.0f;
+    float hx, hz, lx, lz;
+    CatmullRom(spline, nearest, 1.0f, &hx, &hz);
+    float dHi = (hx-ownX)*(hx-ownX) + (hz-ownZ)*(hz-ownZ);
+    CatmullRom(spline, nearest, 0.0f, &lx, &lz);
+    float dLo = (lx-ownX)*(lx-ownX) + (lz-ownZ)*(lz-ownZ);
+    for (int it = 0; it < 16; ++it) {
+        if (dHi <= dLo) {
+            lo = (lo + lo + hi) * kThird;
+            CatmullRom(spline, nearest, lo, &lx, &lz);
+            dLo = (lx-ownX)*(lx-ownX) + (lz-ownZ)*(lz-ownZ);
+        } else {
+            hi = (hi + hi + lo) * kThird;
+            CatmullRom(spline, nearest, hi, &hx, &hz);
+            dHi = (hx-ownX)*(hx-ownX) + (hz-ownZ)*(hz-ownZ);
+        }
+    }
+    float param, startX, startZ;
+    if (dHi <= dLo) { param = hi; startX = hx; startZ = hz; }
+    else            { param = lo; startX = lx; startZ = lz; }
+
+    // ---- Phase 6: forward-walk 16 points; score by path/own alignment ----
+    const float kStep = bits_to_f(0x3d4ccccdu);    // _DAT_005cc9a0 (0.05)
+    int   seg   = nearest;
+    float prevX = startX, prevZ = startZ;
+    float pts[32];      // 16 (x,z) lookahead points
+    float metric[16];
+    for (int i = 0; i < 16; ++i) {
+        param += kStep;
+        if (param > 1.0f) { param -= 1.0f; if (++seg == count) seg = 0; }
+        float wx, wz;
+        CatmullRom(spline, seg, param, &wx, &wz);
+        float seg2[2] = { wx - prevX, wz - prevZ };  Normalize2(seg2);
+        float bak[2]  = { prevX - ownX, prevZ - ownZ }; Normalize2(bak);
+        float m = seg2[0]*bak[0] + seg2[1]*bak[1];
+        if (m < 0.0f) m = -param;     // DAT_005d757c=0
+        if (m > 1.0f) m = 1.0f;       // _DAT_005cc320=1.0
+        metric[i] = m;
+        pts[i*2] = wx; pts[i*2 + 1] = wz;
+        prevX = wx; prevZ = wz;
+    }
+
+    // ---- Phase 7: target = the max-aligned lookahead point (strict-<, first wins) --
+    int best = 0; float bestM = 0.0f;   // init DAT_005d757c=0
+    for (int i = 0; i < 16; ++i) if (bestM < metric[i]) { bestM = metric[i]; best = i; }
+
+    // ---- Phase 8: LOS wall-march. The original marches own->target across the AI
+    // tile grid (0x007f1a9c/0x007f9a9c) and, while a wall blocks the line, steps the
+    // target back 2 lookahead points until reachable (or the closest point). Here the
+    // host's los_clear backs the same logic with the track collision. This keeps the
+    // target on a drivable straight line, so the verbatim ControlStep bands don't
+    // full-lock / brake-latch at corners (the on-mesh stall root cause, 2026-06-30).
+    for (int guard = 0; guard < 8; ++guard) {
+        if (s_host.los_clear(ownX, ownZ, pts[best*2], pts[best*2 + 1])) break;
+        if (best <= 1) { best = 0; break; }   // fall back to the closest forward point
+        best -= 2;                              // step the target back (orig: iVar8 -= 2)
+    }
+    out[0] = pts[best*2];
+    out[1] = pts[best*2 + 1];
 }
 
 // ===========================================================================
@@ -217,47 +342,15 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
     //     15220 + LOS 00416060 + wall 00415d00). STUBBED → mode 0; target = the
     //     FUN_004161e0 seed (spline lookahead). Port the helpers in a follow-up. ---
     int mode = 0;
-    float tx = ownX, tz = ownZ;
-    // [G4] MONOTONIC waypoint follower (standalone nav aid; the original's curvature-walk
-    // FUN_00443300 / FUN_00443dc0 tail is stubbed). Re-searching the NEAREST spline point
-    // each frame let a circling car "stick" near spawn (nearest never advances) so it never
-    // drove a full lap. Instead keep a per-car progress index that ONLY moves forward:
-    // advance when the car reaches its current waypoint, target a few points ahead for smooth
-    // steering, and re-seed to nearest if the car is far off its waypoint (spawn / knocked
-    // off). This makes the AI drive the full racing line -> laps + elimination can resolve.
-    static int s_prog[4] = {0, 0, 0, 0};
-    const int count = I32(spline + 0x200);
-    if (count > 1 && v >= 0 && v < 4) {
-        // mean inter-point spacing (for the lost-reseed threshold only).
-        float total = 0.f;
-        for (int k = 0; k < count; ++k) {
-            int b = (k + 1) % count;
-            float ax = F32(spline + k * 8) - F32(spline + b * 8);
-            float az = F32(spline + k * 8 + 4) - F32(spline + b * 8 + 4);
-            total += std::sqrt(ax * ax + az * az);
-        }
-        float meanSp = total / static_cast<float>(count);
-        if (meanSp < 1.0f) meanSp = 1.0f;
-        int cur = ((s_prog[v] % count) + count) % count;
-        int nxt = (cur + 1) % count;
-        float cx = F32(spline + cur * 8), cz = F32(spline + cur * 8 + 4);
-        float nx = F32(spline + nxt * 8), nz = F32(spline + nxt * 8 + 4);
-        float dc = (cx - ownX) * (cx - ownX) + (cz - ownZ) * (cz - ownZ);
-        float dn = (nx - ownX) * (nx - ownX) + (nz - ownZ) * (nz - ownZ);
-        const float lost = meanSp * 6.0f;
-        if (dc > lost * lost) {                  // genuinely lost (spawn/knocked off) -> reseed
-            int nrst = SplineNearestIndex(spline, ownX, ownZ);
-            if (nrst >= 0) s_prog[v] = nrst;
-        } else if (dn <= dc) {                   // closer to the NEXT waypoint -> advance forward
-            s_prog[v] = s_prog[v] + 1;           // monotonic; scale-free (no arrive radius)
-        }
-        int tgt = ((s_prog[v] + kLookahead) % count + count) % count;
-        tx = F32(spline + tgt * 8);
-        tz = F32(spline + tgt * 8 + 4);
-    } else {
-        int nearest = SplineNearestIndex(spline, ownX, ownZ);   // fallback
-        if (nearest >= 0) TargetPoint(spline, nearest, &tx, &tz);
-    }
+    // FAITHFUL spline lookahead (FUN_00443dc0, param_5=1 param_6=0) — replaces the
+    // [G4] crude 1-raw-point s_prog crutch. Nearest -> per-vehicle index continuity ->
+    // Catmull-Rom closest-param -> 16-point forward walk -> max-aligned pick, so the
+    // target tracks the (smoothed) racing line and the verbatim bands below stop
+    // full-locking the steer at corners (the stall root cause measured 2026-06-30).
+    // re/analysis/ai_spline_lookahead.md. Phase-8 LOS wall-march is a follow-up.
+    float look[2] = { ownX, ownZ };
+    SplineLookahead(spline, ownX, ownZ, v, look);
+    float tx = look[0], tz = look[1];
     I32(a74(0x0089a52cu, v)) = mode;                // commit behaviour mode
 
     const float err = SteerAngleError(v, tx, tz);  // FUN_00415e20, [0,360)
@@ -342,9 +435,9 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
             static int s_nn = 0;
             if (s_nav && v == 1 && (s_nn % 30) == 0 && s_nn < 1200) {
                 if (std::FILE* lf = std::fopen("ai_nav.log", "a")) {
-                    std::fprintf(lf, "NAV v1 prog=%d own=(%.1f,%.1f) tgt=(%.1f,%.1f) err=%.0f "
+                    std::fprintf(lf, "NAV v1 own=(%.1f,%.1f) tgt=(%.1f,%.1f) err=%.0f "
                                  "spd=%.1f vel=(%.1f,%.1f) ctrl[%d,%d,%d,%d]\n",
-                                 s_prog[1] % (count > 0 ? count : 1), ownX, ownZ, tx, tz, err,
+                                 ownX, ownZ, tx, tz, err,
                                  speed, vx, vz, ctrl[0], ctrl[1], ctrl[4], ctrl[5]);
                     std::fclose(lf);
                 }
@@ -476,8 +569,23 @@ void Ai_SetHost(const Host* host)
     if (host) s_host = *host;
     else {
         s_host = Host{ h_zero_i, h_zero_i, h_zero_i, h_zero_i,
-                       h_zero_iv, h_zero_iv, h_zero_i, h_zero_xz, h_zero_xz };
+                       h_zero_iv, h_zero_iv, h_zero_i, h_zero_xz, h_zero_xz, h_los_clear };
     }
+}
+
+// Faithful racing-line lookahead target for vehicle v (see AiStandalone.h). Selects the
+// vehicle's spline bank then runs the ported FUN_00443dc0 lookahead. The "where to go"
+// for the standalone faithful-nav + robust-motion opponent drive.
+bool Ai_ComputeTarget(int v, float ownX, float ownZ, float* outTx, float* outTz)
+{
+    if (I32(kSplineRaceCnt) <= 3) return false;   // .AI banks not loaded
+    std::uintptr_t spline = SelectSpline(v);       // FUN_00418560 bank pick (race line)
+    if (I32(spline + 0x200) <= 0) return false;    // empty bank
+    float out[2] = { ownX, ownZ };
+    SplineLookahead(spline, ownX, ownZ, v, out);   // FUN_00443dc0 (Phases 1-8)
+    *outTx = out[0];
+    *outTz = out[1];
+    return true;
 }
 
 // FUN_00418860 — per-frame tick. Guard on race-line count; rubber-band STUB.

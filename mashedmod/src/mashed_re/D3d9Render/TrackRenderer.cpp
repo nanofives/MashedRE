@@ -52,6 +52,10 @@ struct AiBridgeState {
     bool  loaded;
 };
 AiBridgeState g_aib = {};
+// Active TrackRenderer for the AI host's LOS query (set each frame in the real_ai
+// block). The aib_* host fns are context-free, so the GroundHeight raycast they need
+// for the spline lookahead's wall-march reaches the instance through this pointer.
+const TrackRenderer* g_aiTrack = nullptr;
 
 void aib_own_xz(int v, float* x, float* z) {
     if (v < 0 || v > 3) { *x = *z = 0.f; return; }
@@ -68,6 +72,24 @@ int aib_round_type()       { return 3; }                // AI-enabled round (FUN
 int aib_game_mode_fd0()    { return 0; }
 int aib_track_index()      { return g_aib.course; }
 int aib_ai_target_enable() { return 1; }
+// LOS clearance for the lookahead wall-march (FUN_00443dc0 Phase 8): march the
+// straight segment (ax,az)->(bx,bz) and report blocked (0) if any intermediate
+// sample leaves the drivable surface. Backs Ai::Host::los_clear with the track
+// collision (GroundHeight) instead of the original's AI tile grid.
+int aib_los_clear(float ax, float az, float bx, float bz) {
+    if (!g_aiTrack) return 1;
+    const float dx = bx - ax, dz = bz - az;
+    const float dist = std::sqrt(dx*dx + dz*dz);
+    if (dist < 1e-4f) return 1;
+    const int n = 10;
+    for (int i = 1; i < n; ++i) {
+        const float t = static_cast<float>(i) / static_cast<float>(n);
+        bool ok = false;
+        g_aiTrack->GroundHeight(ax + dx*t, az + dz*t, &ok);
+        if (!ok) return 0;
+    }
+    return 1;
+}
 
 // (1) load AI<course>.AI from Common/AI.piz into the controller image.
 bool Ai_BridgeLoad(int course, const char* trackPizPath) {
@@ -105,6 +127,7 @@ bool Ai_BridgeLoad(int course, const char* trackPizPath) {
     Ai::Host h = {
         aib_game_sub_mode, aib_round_type, aib_game_mode_fd0, aib_track_index,
         aib_alive, aib_veh_type, aib_ai_target_enable, aib_own_xz, aib_own_vel_xz,
+        aib_los_clear,
     };
     Ai::Ai_SetHost(&h);
     return true;
@@ -1114,12 +1137,14 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         }
     }
 
-    // WS-AI-BRIDGE: load AI<course>.AI -> controller image so Ai_Standalone_Tick is
-    // non-inert (gated on MASHED_REAL_AI; gate-ribbon stays the driver otherwise).
+    // WS-AI-BRIDGE / Option B: load AI<course>.AI -> controller image so the faithful
+    // racing-line lookahead (Ai_ComputeTarget) is available. Loaded by DEFAULT now (the
+    // opponents drive the real line); MASHED_GATE_RIBBON_AI=1 forces the legacy gate-ribbon
+    // scaffold (A/B hatch). A load failure also falls back to the gate ribbon.
     {
-        static const bool s_real_ai_load = (std::getenv("MASHED_REAL_AI") != nullptr);
+        static const bool s_gate_ribbon = (std::getenv("MASHED_GATE_RIBBON_AI") != nullptr);
         g_aib.course  = course_id_;
-        g_aib.loaded  = s_real_ai_load ? Ai_BridgeLoad(course_id_, piz_path) : false;
+        g_aib.loaded  = s_gate_ribbon ? false : Ai_BridgeLoad(course_id_, piz_path);
     }
 
     // render-world soup for spawn validation (visible-surface heights)
@@ -1624,20 +1649,37 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
             car_yaw_ = std::atan2(g1[2] - g0[2], g1[0] - g0[0]);
             car_speed_ = 0.f;
             car_ready_ = true;
-            // stretch: 3 AI cars seeded a few gates ahead, looping the path
+            // 3 AI opponents as a starting GRID just ahead of the start line, on the
+            // unambiguous forward leg of the racing-line spline, all facing the race
+            // direction. (The old "scatter at gates 2/4/6" put a car at a spot where the
+            // spline passes near itself, so the faithful lookahead's geometric-nearest seed
+            // landed on the wrong leg and the car drove backward into a jitter trap.)
             ai_cars_.clear();
-            for (int i = 0; i < 3 && gates_.size() > 8; ++i) {
-                AiCar a{};
-                const std::size_t g = static_cast<std::size_t>(2 + i * 2);
-                a.pos[0] = gates_[g].center[0];
-                a.pos[2] = gates_[g].center[2];
-                bool aok = false;
-                const float ay = GroundHeight(a.pos[0], a.pos[2], &aok);
-                a.pos[1] = (aok ? ay : gates_[g].center[1]) + car_ground_off_;
-                a.target = static_cast<int>(g + 1);
-                a.speed  = radius_ * (0.10f + 0.02f * static_cast<float>(i));
-                a.yaw    = 0.f;
-                ai_cars_.push_back(a);
+            if (gates_.size() > 8) {
+                const float* gg0 = gates_[0].center;
+                const float* gg1 = gates_[1].center;
+                float fx = gg1[0] - gg0[0], fz = gg1[2] - gg0[2];
+                const float fl = std::sqrt(fx*fx + fz*fz);
+                if (fl > 1e-3f) { fx /= fl; fz /= fl; }
+                const float rx = fz, rz = -fx;               // track "right" (perp to forward)
+                const float baseYaw = std::atan2(fz, fx);    // race direction
+                const float unit = (car_len_ > 0.05f ? car_len_ : 0.5f);
+                const float lane = unit * 1.6f, row = unit * 2.2f;
+                const float lat[3] = { +0.7f, +1.7f, +0.7f }; // 2-wide grid on the forward-seeding side
+                const float lon[3] = {  1.f,   1.f,  2.4f };  // (front row + one behind), staggered ahead
+                for (int i = 0; i < 3; ++i) {
+                    AiCar a{};
+                    float px = gg0[0] + rx*lane*lat[i] + fx*row*lon[i];
+                    float pz = gg0[2] + rz*lane*lat[i] + fz*row*lon[i];
+                    bool aok = false; float ay = GroundHeight(px, pz, &aok);
+                    if (!aok) { px = gg0[0]; pz = gg0[2]; ay = GroundHeight(px, pz, &aok); }
+                    a.pos[0] = px; a.pos[2] = pz;
+                    a.pos[1] = (aok ? ay : gg0[1]) + car_ground_off_;
+                    a.target = 1;
+                    a.speed  = radius_ * (0.10f + 0.02f * static_cast<float>(i));
+                    a.yaw    = baseYaw;
+                    ai_cars_.push_back(a);
+                }
             }
             if (log) {
                 std::fprintf(log, "R6 car spawn at REAL start line: gate0="
@@ -1838,12 +1880,21 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // later in this fn); one-frame lag is negligible. Requires the .AI bridge (real AI) loaded.
     static const bool s_ai_player = (std::getenv("MASHED_AI_DRIVES_PLAYER") != nullptr);
     if (s_ai_player && g_aib.loaded && Ai::I32(Ai::kSplineRaceCnt) > 3) {
-        const int slot = Ai::I32(Ai::kSlotTableBase + 0 * Ai::kSlotTableStride);
-        const std::uint8_t* c = reinterpret_cast<const std::uint8_t*>(
-            Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(slot) * Ai::kCtrlBlockStride);
-        steer = (static_cast<float>(c[0]) - static_cast<float>(c[1])) / 255.0f;
-        accel = c[4] ? static_cast<float>(c[4]) / 255.0f
-                     : -(static_cast<float>(c[5]) / 255.0f);
+        // Drive the player via the SAME faithful racing-line target + robust steer the
+        // opponents use (lets a full field run headless for verification). No verbatim
+        // bands -> no accel+brake deadlock; the player's own motion path integrates it.
+        g_aiTrack = this;   // bind the LOS host before Ai_ComputeTarget
+        float tx, tz;
+        if (Ai::Ai_ComputeTarget(0, car_pos_[0], car_pos_[2], &tx, &tz)) {
+            float dx = tx - car_pos_[0], dz = tz - car_pos_[2];
+            float ye = std::atan2(dz, dx) - car_yaw_;
+            while (ye >  3.14159265f) ye -= 6.28318531f;
+            while (ye < -3.14159265f) ye += 6.28318531f;
+            steer = ye / 0.5f;
+            if (steer >  1.f) steer =  1.f;
+            if (steer < -1.f) steer = -1.f;
+            accel = 1.0f;
+        }
     }
 
     // WS-A8 (2026-06-17): when MASHED_REAL_PHYSICS is on, drive the player car
@@ -1953,124 +2004,143 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     }
     }  // end MASHED_REAL_PHYSICS else (scaffold body)
     UpdateRace(in.dt);
-    // WS-AI-BRIDGE (2026-06-17): when MASHED_REAL_AI is on AND the .AI race-line banks
-    // loaded (kSplineRaceCnt>3), the standalone AI controller (Ai_Standalone_Tick) drives
-    // the opponents via its ctrl-block output; otherwise the gate-ribbon scaffold drives.
-    static const bool s_real_ai = (std::getenv("MASHED_REAL_AI") != nullptr);
+    // Option B (2026-06-30): opponents drive the FAITHFUL racing-line target
+    // (Ai_ComputeTarget = SelectSpline + ported FUN_00443dc0 lookahead) with a robust
+    // turn-rate + velocity-shaped-speed motion model, by default once the .AI banks load
+    // (re/analysis/ai_spline_lookahead.md). This races the real line without the verbatim
+    // ControlStep bands' accel+brake deadlock against the approximate physics chain. The
+    // gate-ribbon scaffold is the fallback (no .AI, or MASHED_GATE_RIBBON_AI=1).
     const int ng = static_cast<int>(gates_.size());
-    const bool real_ai = s_real_ai && g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3);
-    if (real_ai) {
-        // (a) snapshot car world pos/vel for the controller host (v0=player, v1..3=ai).
-        g_aib.pos[0][0] = car_pos_[0]; g_aib.pos[0][1] = car_pos_[2];
-        g_aib.vel[0][0] = car_vel_[0]; g_aib.vel[0][1] = car_vel_[2];
-        g_aib.alive[0] = 1;
-        for (int i = 0; i < 3 && i < static_cast<int>(ai_cars_.size()); ++i) {
-            const AiCar& a = ai_cars_[static_cast<std::size_t>(i)];
-            g_aib.pos[i + 1][0] = a.pos[0]; g_aib.pos[i + 1][1] = a.pos[2];
-            g_aib.vel[i + 1][0] = std::cos(a.yaw) * a.cur_speed;
-            g_aib.vel[i + 1][1] = std::sin(a.yaw) * a.cur_speed;
-            g_aib.alive[i + 1] = (round_mode_ && !race_[i + 1].alive) ? 0 : 1;
-        }
-        // (b) run the real controller — writes per-vehicle ctrl blocks.
-        Ai::Ai_Standalone_Tick();
-        // (c) G3 adapter: feed each opponent's AI descriptor ctrl bytes into the SAME
-        // physics chain as the player (VehiclePhysics_StepCar on slots 1..3), replacing
-        // the old kinematic turn-rate/accel-band approximation. The AI ctrl block is
-        // already in descriptor format (ctrl[0]/[1]=steer, ctrl[4]=accel, ctrl[5]=brake),
-        // exactly what the chain's input[] expects -> no lossy remap.
-        const bool phys = Vehicle::VehiclePhysics_Enabled();
+    const bool faithful_nav = g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3);
+    if (faithful_nav) {
+        g_aiTrack = this;   // bind the LOS host (aib_los_clear -> GroundHeight)
         for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci) {
             AiCar& a = ai_cars_[static_cast<std::size_t>(ci)];
             const int v = ci + 1;
             if (round_mode_ && !race_[ci + 1].alive) {
                 a.cur_speed = 0.f; a.vel[0] = a.vel[1] = a.vel[2] = 0.f; continue;
             }
-            if (a.spin > 0.f) {   // spun out by a missile/mine: kinematic spin in place
+            if (a.spin > 0.f) {   // spun out by a missile/mine: spin in place
                 a.spin -= in.dt; a.yaw += 12.0f * in.dt;
                 a.cur_speed = 0.f; a.vel[0] = a.vel[1] = a.vel[2] = 0.f; continue;
             }
             if (a.slow > 0.f) a.slow -= in.dt;
-            const int slot = Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride);
-            const std::uint8_t* ctrl = reinterpret_cast<const std::uint8_t*>(
-                Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(slot) * Ai::kCtrlBlockStride);
-            if (phys) {
-                // --- REAL physics: AI descriptor bytes -> the verbatim chain (StepCar) ---
-                Vehicle::PlayerCarIO io{};
-                io.pos[0] = a.pos[0]; io.pos[1] = a.pos[1]; io.pos[2] = a.pos[2];
-                io.vel[0] = a.vel[0]; io.vel[1] = a.vel[1]; io.vel[2] = a.vel[2];
-                io.yaw    = a.yaw;
-                io.speed  = std::sqrt(a.vel[0]*a.vel[0] + a.vel[2]*a.vel[2]);
-                std::uint8_t accel = ctrl[4];
-                if (a.slow > 0.f) accel = static_cast<std::uint8_t>(accel * 0.35f);  // shock power-up
-                io.input[4] = accel;            // accelerator byte
-                io.input[5] = ctrl[5];          // brake byte
-                io.steer = (static_cast<float>(ctrl[0]) - static_cast<float>(ctrl[1])) / 255.0f;
-                bool gok = false; GroundHeight(a.pos[0], a.pos[2], &gok);
-                io.grounded = gok ? 1 : 0;
-                Vehicle::VehiclePhysics_StepCar(v, in.dt, io);
-                a.vel[0] = io.vel[0]; a.vel[1] = io.vel[1]; a.vel[2] = io.vel[2];
-                a.yaw = io.yaw;
-                a.cur_speed = std::sqrt(io.vel[0]*io.vel[0] + io.vel[2]*io.vel[2]);
-                // WS-A COUPLING (2026-06-29): advance along the heading at the recovered
-                // coupling's world body speed (io.drive_speed), not the old kWorldVelAi gain.
-                const float afx = std::cos(a.yaw), afz = std::sin(a.yaw);
-                const float nx2 = a.pos[0] + afx * io.drive_speed * in.dt;
-                const float nz2 = a.pos[2] + afz * io.drive_speed * in.dt;
-                bool aok = false;
-                const float ay = GroundHeight(nx2, nz2, &aok);
-                if (aok) { a.pos[0] = nx2; a.pos[2] = nz2; a.pos[1] = ay + car_ground_off_; }
-                else {   // [U-A8-OFFTRACK] ACTIVE steer-back toward the next gate (pull the car
-                         // back onto the track ribbon; see the player path for the rationale).
-                    if (!gates_.empty()) {
-                        const int n = static_cast<int>(gates_.size());
-                        const float* g = gates_[static_cast<std::size_t>((race_[v].gate + 3) % n)].center;  // a few AHEAD
-                        float dx = g[0] - a.pos[0], dz = g[2] - a.pos[2];
-                        float dl = std::sqrt(dx*dx + dz*dz);
-                        if (dl > 1e-3f) {
-                            const float sp = a.cur_speed * 0.6f;
-                            a.vel[0] = dx/dl * sp; a.vel[2] = dz/dl * sp;
-                            a.yaw = std::atan2(dz, dx); a.cur_speed = sp;
-                        } else { a.vel[0] = a.vel[2] = 0.f; a.cur_speed = 0.f; }
-                    } else { a.vel[0] *= 0.5f; a.vel[2] *= 0.5f;
-                             a.cur_speed = std::sqrt(a.vel[0]*a.vel[0] + a.vel[2]*a.vel[2]); }
+            // anti-stuck marshal recovery: if a car's gate progress stalls (a lookahead
+            // corner-case can pin it at a track feature the racing line skirts), relocate it
+            // to the next gate ahead on the correctly-ordered ribbon, facing forward, at
+            // cruise speed. Robust by construction — every trigger advances it +2 gates, so
+            // no car can stay stuck. (re/analysis/ai_spline_lookahead.md)
+            if (ng >= 2) {
+                if (race_[v].gate != a.prog_gate) { a.prog_gate = race_[v].gate; a.stuck_t = 0.f; }
+                else { a.stuck_t += in.dt; }
+                if (a.stuck_t > 2.5f) {
+                    const int gA = (race_[v].gate + 2) % ng;
+                    const int gB = (race_[v].gate + 3) % ng;
+                    const float* gp = gates_[static_cast<std::size_t>(gA)].center;
+                    bool rok = false; const float gy2 = GroundHeight(gp[0], gp[2], &rok);
+                    if (rok) {
+                        a.pos[0] = gp[0]; a.pos[2] = gp[2]; a.pos[1] = gy2 + car_ground_off_;
+                        a.yaw = std::atan2(gates_[static_cast<std::size_t>(gB)].center[2] - gp[2],
+                                           gates_[static_cast<std::size_t>(gB)].center[0] - gp[0]);
+                        a.cur_speed = a.speed * 0.6f;
+                    }
+                    a.stuck_t = 0.f;
                 }
-            } else {
-                // --- physics off: keep the lightweight kinematic ctrl->motion mapping ---
-                const float steer = (ctrl[0] ? 1.f : 0.f) - (ctrl[1] ? 1.f : 0.f);
-                a.yaw += steer * 2.4f * in.dt;
-                float tgt = a.speed * (static_cast<float>(ctrl[4]) / 255.0f);
-                if (ctrl[5]) tgt = 0.f;
-                if (a.slow > 0.f) tgt *= 0.35f;
-                a.cur_speed += (tgt - a.cur_speed) * (2.5f * in.dt > 1.f ? 1.f : 2.5f * in.dt);
-                const float nx2 = a.pos[0] + std::cos(a.yaw) * a.cur_speed * in.dt;
-                const float nz2 = a.pos[2] + std::sin(a.yaw) * a.cur_speed * in.dt;
-                bool aok = false;
-                const float ay = GroundHeight(nx2, nz2, &aok);
-                if (aok) { a.pos[0] = nx2; a.pos[2] = nz2; a.pos[1] = ay + car_ground_off_; }
             }
+            // "where to go": the faithful racing-line lookahead target (falls back to the
+            // gate ribbon point if the bank is momentarily empty).
+            float tx, tz;
+            if (!Ai::Ai_ComputeTarget(v, a.pos[0], a.pos[2], &tx, &tz)) {
+                if (ng < 1) continue;
+                const float* g = gates_[static_cast<std::size_t>(a.target) % ng].center;
+                tx = g[0]; tz = g[2];
+            }
+            // forward-progress safety net: where the racing-line spline passes near itself
+            // (e.g. by the start/finish), the geometric-nearest seed can land on the wrong
+            // leg and the lookahead points BACKWARD, sending the car the wrong way into a
+            // seam jitter-trap. The gate ribbon (race_[v].gate) is correctly ordered, so if
+            // the target opposes the local race direction, retarget the next gate ahead.
+            if (ng >= 2) {
+                const int gi = ((race_[v].gate % ng) + ng) % ng;
+                const int gj = (gi + 1) % ng;
+                const float gfx = gates_[(std::size_t)gj].center[0] - gates_[(std::size_t)gi].center[0];
+                const float gfz = gates_[(std::size_t)gj].center[2] - gates_[(std::size_t)gi].center[2];
+                const float tdx0 = tx - a.pos[0], tdz0 = tz - a.pos[2];
+                const float gfl = std::sqrt(gfx*gfx + gfz*gfz);
+                const float tdl = std::sqrt(tdx0*tdx0 + tdz0*tdz0);
+                if (gfl > 1e-3f && tdl > 1e-3f &&
+                    (gfx*tdx0 + gfz*tdz0) / (gfl * tdl) < -0.25f) {   // target >~105deg off race dir
+                    tx = gates_[(std::size_t)gj].center[0];
+                    tz = gates_[(std::size_t)gj].center[2];
+                }
+            }
+            // "how to move": steer toward the target (turn-rate) + velocity-shaped speed,
+            // scrubbing for a sharp heading error but FLOORED at 45% cruise so the car
+            // never fully stops (the verbatim bands' brake-latch deadlock cannot occur).
+            float dx = tx - a.pos[0], dz = tz - a.pos[2];
+            float yerr = std::atan2(dz, dx) - a.yaw;
+            while (yerr >  3.14159265f) yerr -= 6.28318531f;
+            while (yerr < -3.14159265f) yerr += 6.28318531f;
+            a.yaw += yerr * (6.0f * in.dt > 1.f ? 1.f : 6.0f * in.dt);
+            float ae = (yerr < 0.f ? -yerr : yerr);
+            float align = 1.f - ae / 1.5707963f;      // 1 aligned -> 0 at >=90deg off
+            if (align < 0.f) align = 0.f;
+            float tgt = a.speed * (0.45f + 0.55f * align);
+            if (a.slow > 0.f) tgt *= 0.35f;            // shock power-up: throttled
+            a.cur_speed += (tgt - a.cur_speed) * (2.5f * in.dt > 1.f ? 1.f : 2.5f * in.dt);
+            const float nx2 = a.pos[0] + std::cos(a.yaw) * a.cur_speed * in.dt;
+            const float nz2 = a.pos[2] + std::sin(a.yaw) * a.cur_speed * in.dt;
+            bool aok = false;
+            const float ay = GroundHeight(nx2, nz2, &aok);
+            if (aok) { a.pos[0] = nx2; a.pos[2] = nz2; a.pos[1] = ay + car_ground_off_; }
+            else {
+                // off-mesh step: the racing-line target leads off the drivable surface here.
+                // Just redirecting the heading (without moving) left the car frozen facing a
+                // wall. Ring-probe for an on-mesh heading near the target bearing and COMMIT a
+                // nudge — exactly as the player's RecoverOffMesh does — so the car follows the
+                // edge back onto the line instead of pinning. (re/analysis/ai_spline_lookahead.md)
+                const float want = std::atan2(dz, dx);
+                float ry; float rad = 0.f;
+                if      (FindOnMeshHeading(a.pos[0], a.pos[2], want, 1.2f, ry)) rad = 1.2f;
+                else if (FindOnMeshHeading(a.pos[0], a.pos[2], want, 0.5f, ry)) rad = 0.5f;
+                const float fl = a.speed * 0.4f;
+                a.cur_speed = (a.cur_speed * 0.5f > fl) ? a.cur_speed * 0.5f : fl;
+                if (rad > 0.f) {
+                    float mx = a.pos[0] + std::cos(ry) * 0.3f;
+                    float mz = a.pos[2] + std::sin(ry) * 0.3f;
+                    bool mok = false; float my = GroundHeight(mx, mz, &mok);
+                    if (!mok) {   // the small nudge landed in a gap; jump to the verified ring
+                        mx = a.pos[0] + std::cos(ry) * rad;     // point (on-mesh by construction)
+                        mz = a.pos[2] + std::sin(ry) * rad;     // so the car leaves the island.
+                        my = GroundHeight(mx, mz, &mok);
+                    }
+                    if (mok) { a.pos[0] = mx; a.pos[2] = mz; a.pos[1] = my + car_ground_off_; }
+                    a.yaw = ry;
+                }
+            }
+            a.vel[0] = std::cos(a.yaw) * a.cur_speed;
+            a.vel[1] = 0.f;
+            a.vel[2] = std::sin(a.yaw) * a.cur_speed;
         }
-        // G3 one-shot diagnostic: confirm the .AI loaded + the controller is producing
-        // descriptor bytes for each opponent (env MASHED_AI_DIAG -> mashed_re.log).
+        // diagnostic (env MASHED_AI_DIAG -> mashed_re.log, ~every 30 frames): pos/yaw/speed
+        // so a stalled car's trajectory is visible. Read-only (does NOT call
+        // Ai_ComputeTarget, which would double-update the continuity index this frame).
         {
             static const bool s_aidiag = (std::getenv("MASHED_AI_DIAG") != nullptr);
             static int s_aidn = 0;
-            if (s_aidiag && s_aidn < 40) {
+            if (s_aidiag && (s_aidn % 30) == 0) {
                 if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
-                    std::fprintf(lf, "AI-DIAG splineCnt=%d", Ai::I32(Ai::kSplineRaceCnt));
+                    std::fprintf(lf, "AI-DIAG f=%d splineCnt=%d", s_aidn, Ai::I32(Ai::kSplineRaceCnt));
                     for (int ci = 0; ci < static_cast<int>(ai_cars_.size()) && ci < 3; ++ci) {
-                        const int v = ci + 1;
-                        const int slot = Ai::I32(Ai::kSlotTableBase + (std::uintptr_t)v * Ai::kSlotTableStride);
-                        const std::uint8_t* c = reinterpret_cast<const std::uint8_t*>(
-                            Ai::kCtrlBlockBase + (std::uintptr_t)slot * Ai::kCtrlBlockStride);
                         const AiCar& a = ai_cars_[(std::size_t)ci];
-                        std::fprintf(lf, " | v%d ctrl[%d,%d,%d,%d] spd=%.1f pos=(%.0f,%.0f)",
-                                     v, c[0], c[1], c[4], c[5], a.cur_speed, a.pos[0], a.pos[2]);
+                        std::fprintf(lf, " | v%d spd=%.1f pos=(%.1f,%.1f) yaw=%.2f",
+                                     ci + 1, a.cur_speed, a.pos[0], a.pos[2], a.yaw);
                     }
                     std::fprintf(lf, "\n");
                     std::fclose(lf);
                 }
-                ++s_aidn;
             }
+            ++s_aidn;
         }
     } else {
     // AI v2: follow the gate ribbon with a lateral lane offset, braking for

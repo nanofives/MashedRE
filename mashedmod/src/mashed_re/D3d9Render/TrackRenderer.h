@@ -313,6 +313,8 @@ private:
         float spin = 0.f;              // >0: spun out (missile/mine hit)
         float slow = 0.f;              // >0: shocked (capped speed)
         float vel[3] = {0.f,0.f,0.f};  // G3: persistent world velocity (real-physics AI)
+        float stuck_t  = 0.f;          // s since this car last advanced a gate (anti-stuck)
+        int   prog_gate = -1;          // last observed race gate (anti-stuck progress watch)
     };
     std::vector<AiCar> ai_cars_;
 
