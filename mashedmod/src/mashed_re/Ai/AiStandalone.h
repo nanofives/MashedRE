@@ -43,6 +43,13 @@ struct Host {
     // original: FUN_0046d4a0 (struct ptr, +0x30/+0x38) / FUN_0046d510 (velocity).
     void  (*own_xz)(int v, float* x, float* z);
     void  (*own_vel_xz)(int v, float* vx, float* vz);
+    // Line-of-sight clearance for the spline lookahead's wall-march (FUN_00443dc0
+    // Phase 8). Returns 1 if the straight segment (ax,az)->(bx,bz) stays on the
+    // drivable surface, 0 if it crosses off-track. The original marches the AI tile
+    // grid (DAT_007f1a9c/DAT_007f9a9c); the standalone bridge backs this with the
+    // track collision (GroundHeight). Default no-op returns 1 (= always clear), so
+    // the lookahead keeps its farthest target when unbound.
+    int   (*los_clear)(float ax, float az, float bx, float bz);
 };
 
 // Install the host (call once at race start). Passing nullptr restores no-op defaults.

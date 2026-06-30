@@ -52,6 +52,10 @@ struct AiBridgeState {
     bool  loaded;
 };
 AiBridgeState g_aib = {};
+// Active TrackRenderer for the AI host's LOS query (set each frame in the real_ai
+// block). The aib_* host fns are context-free, so the GroundHeight raycast they need
+// for the spline lookahead's wall-march reaches the instance through this pointer.
+const TrackRenderer* g_aiTrack = nullptr;
 
 void aib_own_xz(int v, float* x, float* z) {
     if (v < 0 || v > 3) { *x = *z = 0.f; return; }
@@ -68,6 +72,24 @@ int aib_round_type()       { return 3; }                // AI-enabled round (FUN
 int aib_game_mode_fd0()    { return 0; }
 int aib_track_index()      { return g_aib.course; }
 int aib_ai_target_enable() { return 1; }
+// LOS clearance for the lookahead wall-march (FUN_00443dc0 Phase 8): march the
+// straight segment (ax,az)->(bx,bz) and report blocked (0) if any intermediate
+// sample leaves the drivable surface. Backs Ai::Host::los_clear with the track
+// collision (GroundHeight) instead of the original's AI tile grid.
+int aib_los_clear(float ax, float az, float bx, float bz) {
+    if (!g_aiTrack) return 1;
+    const float dx = bx - ax, dz = bz - az;
+    const float dist = std::sqrt(dx*dx + dz*dz);
+    if (dist < 1e-4f) return 1;
+    const int n = 10;
+    for (int i = 1; i < n; ++i) {
+        const float t = static_cast<float>(i) / static_cast<float>(n);
+        bool ok = false;
+        g_aiTrack->GroundHeight(ax + dx*t, az + dz*t, &ok);
+        if (!ok) return 0;
+    }
+    return 1;
+}
 
 // (1) load AI<course>.AI from Common/AI.piz into the controller image.
 bool Ai_BridgeLoad(int course, const char* trackPizPath) {
@@ -105,6 +127,7 @@ bool Ai_BridgeLoad(int course, const char* trackPizPath) {
     Ai::Host h = {
         aib_game_sub_mode, aib_round_type, aib_game_mode_fd0, aib_track_index,
         aib_alive, aib_veh_type, aib_ai_target_enable, aib_own_xz, aib_own_vel_xz,
+        aib_los_clear,
     };
     Ai::Ai_SetHost(&h);
     return true;
@@ -1960,6 +1983,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     const int ng = static_cast<int>(gates_.size());
     const bool real_ai = s_real_ai && g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3);
     if (real_ai) {
+        g_aiTrack = this;   // bind the LOS host (aib_los_clear -> GroundHeight)
         // (a) snapshot car world pos/vel for the controller host (v0=player, v1..3=ai).
         g_aib.pos[0][0] = car_pos_[0]; g_aib.pos[0][1] = car_pos_[2];
         g_aib.vel[0][0] = car_vel_[0]; g_aib.vel[0][1] = car_vel_[2];
@@ -2054,23 +2078,25 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         {
             static const bool s_aidiag = (std::getenv("MASHED_AI_DIAG") != nullptr);
             static int s_aidn = 0;
-            if (s_aidiag && s_aidn < 40) {
+            // periodic (~every 30 frames) position+ctrl trace over the whole run so a
+            // stalled car's trajectory is visible (donut-circle vs frozen off-mesh).
+            if (s_aidiag && (s_aidn % 30) == 0) {
                 if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
-                    std::fprintf(lf, "AI-DIAG splineCnt=%d", Ai::I32(Ai::kSplineRaceCnt));
+                    std::fprintf(lf, "AI-DIAG f=%d splineCnt=%d", s_aidn, Ai::I32(Ai::kSplineRaceCnt));
                     for (int ci = 0; ci < static_cast<int>(ai_cars_.size()) && ci < 3; ++ci) {
                         const int v = ci + 1;
                         const int slot = Ai::I32(Ai::kSlotTableBase + (std::uintptr_t)v * Ai::kSlotTableStride);
                         const std::uint8_t* c = reinterpret_cast<const std::uint8_t*>(
                             Ai::kCtrlBlockBase + (std::uintptr_t)slot * Ai::kCtrlBlockStride);
                         const AiCar& a = ai_cars_[(std::size_t)ci];
-                        std::fprintf(lf, " | v%d ctrl[%d,%d,%d,%d] spd=%.1f pos=(%.0f,%.0f)",
-                                     v, c[0], c[1], c[4], c[5], a.cur_speed, a.pos[0], a.pos[2]);
+                        std::fprintf(lf, " | v%d ctrl[%d,%d,%d,%d] spd=%.1f pos=(%.1f,%.1f) yaw=%.2f",
+                                     v, c[0], c[1], c[4], c[5], a.cur_speed, a.pos[0], a.pos[2], a.yaw);
                     }
                     std::fprintf(lf, "\n");
                     std::fclose(lf);
                 }
-                ++s_aidn;
             }
+            ++s_aidn;
         }
     } else {
     // AI v2: follow the gate ribbon with a lateral lane offset, braking for
