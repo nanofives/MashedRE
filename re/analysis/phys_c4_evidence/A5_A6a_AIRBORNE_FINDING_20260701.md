@@ -30,15 +30,18 @@ A5's GROUNDED path stays bit-identical (288/288 GREEN in the combined batch, and
 grounded majority of the 253 rows here). So A5 = **grounded C4-clean, airborne 1-ULP
 float10 residual (unshimmed).**
 
-## A6a VehicleWheelDrivetrainUpdate (0x00467650) — airborne still UNEXERCISED
+## A6a VehicleWheelDrivetrainUpdate (0x00467650) — airborne MEASURED, CLEAN ✅
 
 A6a reached C4 on 2026-07-01 by shimming its GROUNDED suspension-force float10 residual
-(72/72 GREEN, all grounded — see CHANGELOG). Its AIRBORNE path was not reached then and
-was not reached in this session either (0 airborne frames across the 8-warp combined
-A5+A6a+A6b batch — those runs happened to produce no jumps; the 3× self-test overhead
-appears to lower the jump-hit rate). Given A6a's airborne suspension path is the same
-math family as A5's, it **plausibly carries the same 1-ULP residual** — but that is
-`[UNCERTAIN]`: **not measured**. A6a's C4 is currently grounded-only-verified.
+(72/72 GREEN, all grounded — see CHANGELOG). Its AIRBORNE path was then measured on
+Warzone (A6a-only, `--track 11 --cars 4 --hooks 0x00467650`, 6 warps): **20 airborne
+frames (AI slot 2, grounded=0.0), ALL `ndiff=0` bit-identical, 0 RED.** So A6a is now
+BOTH-BRANCH verified (grounded 72/72 + airborne 20/20). Contrary to the earlier
+inference, A6a's airborne path carries **no** float10 residual — its grounded x87 shims
+(SuspOrient/SuspDotInv/SuspBaseBc/SuspForceStore) cover the airborne suspension path too.
+The 1-ULP residual is **A5-only** (A5 was never shimmed — its grounded path was GREEN
+without shims, but its airborne susp-force exposes the x87 rounding). Evidence:
+`A6a_airborne_natural_GREEN_20260701.txt`. A6a's airborne-unmeasured caveat is CLEARED.
 
 ## Confidence implication (needs a decision — NOT changed unilaterally)
 
