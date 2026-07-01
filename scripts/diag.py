@@ -172,7 +172,8 @@ def check_worktrees(heal):
         sh(["git", "worktree", "prune"])
     detail = []
     if pruned:
-        detail.append(("pruned " if heal else "prunable ") + ", ".join(pruned))
+        detail.append(("pruned " if heal else "prunable (use `diag.py wt-remove --all-stale`) ")
+                      + ", ".join(pruned))
     if flagged:
         detail.append("KEPT (unmerged work): " + ", ".join(flagged))
     if not pruned and not flagged:
@@ -389,19 +390,9 @@ def cmd_scan(args):
     return 0
 
 
-def cmd_wt_remove(args):
-    """The ONLY sanctioned way to remove a worktree. NEVER uses --force.
-
-    A worktree may contain a junction/symlink to an out-of-tree immutable dir
-    (e.g. `original/` -> the game install). `git worktree remove --force` follows
-    that link and deletes the TARGET (the WORKTREE-SYMLINK-WIPE incident, 2026-06-27).
-    This strips every reparse point in the worktree FIRST (rmdir removes the link
-    ONLY, never recurses into the target), THEN `git worktree remove` WITHOUT --force
-    (which refuses on a dirty tree — a feature; resolve manually, don't force)."""
-    wt = os.path.abspath(args.path)
-    if not os.path.isdir(wt):
-        print(f"wt-remove: {wt} not a directory")
-        return 2
+def _safe_remove_wt(wt):
+    """Strip reparse points link-only, unlock, then `git worktree remove` WITHOUT
+    --force. Returns (ok, msg). NEVER uses --force — see WORKTREE-SYMLINK-WIPE."""
     stripped = []
     for name in os.listdir(wt):
         p = os.path.join(wt, name)
@@ -409,16 +400,96 @@ def cmd_wt_remove(args):
             # rmdir on a junction removes the link only; it does NOT touch the target.
             rc, out = sh(["cmd", "/c", "rmdir", p])
             stripped.append(name + ("" if rc == 0 else f"(FAILED:{out.strip()[:40]})"))
-    if stripped:
-        print(f"wt-remove: stripped reparse points (link-only, target safe): {stripped}")
-    rc, out = sh(["git", "worktree", "remove", wt])   # NO --force, ever
+    note = f" [stripped reparse: {', '.join(stripped)}]" if stripped else ""
+    sh(["git", "worktree", "unlock", wt])              # harmless if not locked
+    rc, out = sh(["git", "worktree", "remove", wt])    # NO --force, ever
     if rc != 0:
-        print(f"wt-remove: `git worktree remove` refused (likely dirty):\n{out.strip()}\n"
-              f"Resolve the worktree's changes and retry. DO NOT use --force "
-              f"(it wipes junction targets like original/).")
-        return rc
-    print(f"wt-remove: removed {wt} safely (no --force).")
+        return False, f"refused (likely dirty){note}: {out.strip()[:120]}"
+    return True, f"removed{note}"
+
+
+def _list_worktrees():
+    """Parse `git worktree list --porcelain` -> [{path, branch}] excluding main."""
+    out = git("worktree", "list", "--porcelain")
+    wts, cur = [], {}
+    for line in out.splitlines():
+        if line.startswith("worktree "):
+            if cur:
+                wts.append(cur)
+            cur = {"path": line.split(" ", 1)[1], "branch": ""}
+        elif line.startswith("branch "):
+            cur["branch"] = line.split(" ", 1)[1].replace("refs/heads/", "")
+    if cur:
+        wts.append(cur)
+    main_path = os.path.normcase(os.path.normpath(ROOT))
+    return [w for w in wts
+            if os.path.normcase(os.path.normpath(w["path"])) != main_path]
+
+
+def cmd_wt_remove(args):
+    """The ONLY sanctioned way to remove worktrees. NEVER uses --force.
+
+    A worktree may contain a junction/symlink to an out-of-tree immutable dir
+    (e.g. `original/` -> the game install). `git worktree remove --force` follows
+    that link and recursively deletes the TARGET (WORKTREE-SYMLINK-WIPE incidents
+    2026-06-27 and 2026-07-01). This strips every top-level reparse point FIRST
+    (rmdir removes the link ONLY, never recurses into the target), THEN
+    `git worktree remove` WITHOUT --force (refuses on a dirty tree — a feature:
+    dirty worktrees may hold uncommitted worker output; salvage-commit it onto
+    the worktree's own branch, then retry).
+
+    --all-stale: bulk-remove every worktree that is CLEAN, not branch-ahead of
+    main, and git-inactive for >= --min-age-days (default 3). Dirty/ahead/young
+    worktrees are reported and KEPT."""
+    if not args.all_stale:
+        if not args.path:
+            print("wt-remove: need a path or --all-stale")
+            return 2
+        wt = os.path.abspath(args.path)
+        if not os.path.isdir(wt):
+            print(f"wt-remove: {wt} not a directory")
+            return 2
+        ok, msg = _safe_remove_wt(wt)
+        print(f"wt-remove: {wt}: {msg}")
+        if not ok:
+            print("Resolve the worktree's changes and retry. DO NOT use --force "
+                  "(it wipes junction targets like original/).")
+            return 1
+        sh(["git", "worktree", "prune"])
+        return 0
+
+    # --all-stale: deepest paths first so nested worktrees go before parents.
+    removed, kept = [], []
+    now_ts = datetime.datetime.now().timestamp()
+    for w in sorted(_list_worktrees(), key=lambda w: -len(w["path"])):
+        wt, br = w["path"], w["branch"]
+        if not os.path.isdir(wt):
+            continue
+        rc, dirty = sh(["git", "-C", wt, "status", "--porcelain"])
+        if dirty.strip():
+            kept.append(f"{wt} [dirty — salvage-commit onto {br or '?'} first]")
+            continue
+        if br:
+            ahead = git("log", "--oneline", f"main..{br}")
+            if ahead.strip():
+                n = len(ahead.splitlines())
+                kept.append(f"{wt} [{br} {n} commit(s) ahead of main — merge first]")
+                continue
+        rc, gd = sh(["git", "-C", wt, "rev-parse", "--git-dir"])
+        idx = os.path.join(gd.strip(), "index")
+        if os.path.exists(idx):
+            age_days = (now_ts - os.path.getmtime(idx)) / 86400
+            if age_days < args.min_age_days:
+                kept.append(f"{wt} [git-active {age_days:.1f}d ago — may be live]")
+                continue
+        ok, msg = _safe_remove_wt(wt)
+        (removed if ok else kept).append(f"{wt} [{msg}]")
     sh(["git", "worktree", "prune"])
+    print(f"wt-remove --all-stale: removed {len(removed)}, kept {len(kept)}")
+    for line in removed:
+        print(f"  removed: {line}")
+    for line in kept:
+        print(f"  KEPT:    {line}")
     return 0
 
 
@@ -446,7 +517,9 @@ def main():
     sub.add_parser("probe-render")
     sc = sub.add_parser("scan"); sc.add_argument("file")
     sub.add_parser("issues")
-    wr = sub.add_parser("wt-remove"); wr.add_argument("path")
+    wr = sub.add_parser("wt-remove"); wr.add_argument("path", nargs="?")
+    wr.add_argument("--all-stale", action="store_true")
+    wr.add_argument("--min-age-days", type=int, default=3)
     args = ap.parse_args()
     fn = {"doctor": cmd_doctor, "heal": cmd_heal, "run": cmd_run,
           "probe-render": cmd_probe_render, "scan": cmd_scan, "issues": cmd_issues,
