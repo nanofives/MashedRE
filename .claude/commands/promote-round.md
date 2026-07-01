@@ -49,7 +49,8 @@ unfinished candidate, finish or defer it first.
   unlocked RVAs (`re/analysis/scenario_attach_probe_2026-06-12.json`), minus
   ledger done/deferred. Read each note; ship only candidates whose recovered
   signature maps to an arg_type that EXISTS in `re/frida/diff_template.js`
-  today. Live-state candidates get `'scenario': 'race'`.
+  today — check `re/frida/ARG_TYPES.md` (generated index), not the 232 KB
+  template itself. Live-state candidates get `'scenario': 'race'`.
 - **L2 — cheap re-earns**: regenerate `py -3.12 scripts/c2_gate_audit.py`;
   the `demoted-needs-reimpl` RVA list. Analysis exists; author reimpl +
   standard (or race) diff.
@@ -67,7 +68,8 @@ unfinished candidate, finish or defer it first.
 - **L5 — harness extension** (at most ONE per round, only when L0–L4 give <3
   candidates AND the ledger wishlist shows one extension unlocking ≥10 rows):
   implement the handler in `diff_template.js`, validate it on ONE hook before
-  using it for more. New arg_types are SWEEP-CRITICAL — say so in the commit.
+  using it for more. New arg_types are SWEEP-CRITICAL — say so in the commit,
+  and regenerate the index: `py -3.12 scripts\gen_arg_types_index.py`.
 
 ### 3. Author + verify (per candidate)
 - Cluster file `mashedmod/src/mashed_re/<Subsystem>/PromoLoop_<roundN>.cpp`;

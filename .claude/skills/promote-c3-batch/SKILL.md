@@ -119,7 +119,7 @@ Always write the model id verbatim into the batch row (`Model: Sonnet 4.6 (claud
    ```
    c3_batch_h session 3 lost 9 of 12 candidates here (depth-1 callees still C1). Catching this at batch-generation time saves the entire session.
 
-6. **Harness arg_type compatibility filter.** The candidate's signature must already be expressible in `re/frida/diff_template.js`. Authoring a new arg_type belongs in a dedicated harness-extension session, NOT inside a promotion batch.
+6. **Harness arg_type compatibility filter.** The candidate's signature must already be expressible in `re/frida/diff_template.js`. Authoring a new arg_type belongs in a dedicated harness-extension session, NOT inside a promotion batch. Human/session lookup: read `re/frida/ARG_TYPES.md` (generated index — do NOT Read the 232 KB template for lookups; regenerate the index with `py -3.12 scripts\gen_arg_types_index.py` after adding a handler).
    ```bash
    # Pull the currently-supported arg_types directly from the harness (source of truth — list grows per-batch).
    supported=$(grep -oE "arg_type === '[a-z_0-9]+'" re/frida/diff_template.js \
