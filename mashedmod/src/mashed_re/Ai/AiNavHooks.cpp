@@ -59,14 +59,47 @@ const std::uintptr_t kArmFlagBase  = 0x0089a500u;   // FUN_00416230 slot, stride
 
 // ── live callee forwards (all present, >=C3; forwarded so mine and orig call the
 // identical originals; with MASHED_HOOK_ONLY=0x00443dc0 no other hook installs) ──
-typedef void  (__cdecl* fn_spline_t)(int, int, float, float*);   // FUN_00443300 (WS-R6-A)
-typedef void  (__cdecl* fn_arm_t)   (int, int);                  // FUN_00416230 Table89a500Set
-typedef float (__cdecl* fn_len_t)   (float*);                    // FUN_004c3bf0 Vec2Length
-typedef void  (__cdecl* fn_norm_t)  (float*, float*);            // FUN_004c3c60 Vec2Normalize
+// CRITICAL x87-ABI note: FUN_004c3c60 (Vec2Normalize) and FUN_004c3bf0 (Vec2Length)
+// each RETURN A float10 IN ST0 (verified in Ghidra: both signatures return float10).
+// On x86 the caller must pop ST0 after such a call — even when the return is unused.
+// If the fn-ptr is declared `void`, the SSE2-built caller never emits the fstp, so
+// ST0 leaks one slot per call; Vec2Norm runs 2x/forward-walk-iteration, overflowing
+// the 8-deep x87 stack after ~2 iterations -> every later x87 result is the indefinite
+// NaN 0xffc00000 (measured: walk candidates 2..15 had NaN x + NaN score, so the argmax
+// could never pick the far lookahead -> systematic wrong target; and the unbalanced
+// stack on RETURN corrupted the caller's FPU -> the race froze). Declaring the fn-ptrs
+// as returning `float` makes the compiler pop ST0 (as float32) after each call.
+typedef void  (__cdecl* fn_spline_t)(int, int, float, float*);   // FUN_00443300 (WS-R6-A) — void, no ST0
+typedef void  (__cdecl* fn_arm_t)   (int, int);                  // FUN_00416230 Table89a500Set — void
+typedef float (__cdecl* fn_len_t)   (float*);                    // FUN_004c3bf0 Vec2Length -> float10 in ST0
+typedef float (__cdecl* fn_norm_t)  (float*, float*);            // FUN_004c3c60 Vec2Normalize -> float10 in ST0
 inline void  Spline(int b, int i, float t, float* o) { reinterpret_cast<fn_spline_t>(0x00443300)(b, i, t, o); }
 inline void  Arm   (int v, int f)                    { reinterpret_cast<fn_arm_t>(0x00416230)(v, f); }
 inline float Vec2Len(float* v)                       { return reinterpret_cast<fn_len_t>(0x004c3bf0)(v); }
-inline void  Vec2Norm(float* d, float* s)            { reinterpret_cast<fn_norm_t>(0x004c3c60)(d, s); }
+// return the (unused) float10-as-float so the compiler emits the ST0 pop at the call site
+inline float Vec2Norm(float* d, float* s)            { return reinterpret_cast<fn_norm_t>(0x004c3c60)(d, s); }
+
+// ── x87 single-rounding emulation (WS-R6-B fix, 2026-07-01) ─────────────────
+// The original FUN_00443dc0 is x87: it computes a*a+b*b (and the dot) keeping the
+// products/sum in one 80-bit ST register and rounds to float32 ONCE, at the store.
+// This .asi compiles SSE2 (build.bat has no /arch flag; MSVC x86 default = SSE2),
+// which rounds each product to float32 BEFORE adding — a double-rounding that
+// differs from x87 by ~2^-24. In the chaotically-sensitive golden-section search
+// (and the seed iVar10 flip / dot-score argmax) that flips `<` comparisons on
+// nearly every call (measurement #1: 84/85 large diffs; the robust nearest-scan
+// argmin was the only match). Computing these expressions in `double` and rounding
+// once at the float32 store reproduces x87's single-rounding to ~2^-53 (vs x87's
+// 2^-64) — the residual flips are vanishingly rare (the "rare boundary divergence"
+// the scope predicts for C3). The two hand-written x87 leaves in the chain
+// (FUN_00443300 spline, FUN_004c3bf0/004c3c60 Vec2) are forwarded verbatim, so
+// only THIS function's inline arithmetic needed the emulation. Operand order
+// matches the decomp exactly. Full analysis: R6_FUN_00443dc0_SCOPE_20260701.md.
+inline double D2(float dx, float dz) {                        // a*a + b*b  (dist^2)
+    return static_cast<double>(dx) * dx + static_cast<double>(dz) * dz;
+}
+inline double Dot2(float ax, float az, float bx, float bz) {  // a.x*b.x + a.z*b.z
+    return static_cast<double>(ax) * bx + static_cast<double>(az) * bz;
+}
 
 // Wall-check tile sample (asm-decoded; both ray-march branches share this tail).
 // round-half-away-from-zero of coord*4, then -0x10; SAR tile index; sub-cell wall 0/3.
@@ -137,12 +170,13 @@ void NavLookahead(int param_1, float* param_2, float* param_3,
     local_1a0 = pt16c[0] - param_2[0];
     iVar8 = iVar10 + -1;
     local_19c = pt16c[1] - param_2[1];
-    local_190 = local_1a0 * local_1a0 + local_19c * local_19c;
+    local_190 = static_cast<float>(D2(local_1a0, local_19c));   // dist^2 @ (iVar10, 0.01), float32
     if (iVar8 < 0) iVar8 = count + -1;
     Spline(param_1, iVar8, k0_99, pt174);
     local_1a0 = pt174[0] - param_2[0];
     local_19c = pt174[1] - param_2[1];
-    if (local_1a0 * local_1a0 + local_19c * local_19c < local_190) {
+    // x87 compares the fresh 80-bit dist^2 (unrounded) to the float32-stored local_190
+    if (D2(local_1a0, local_19c) < static_cast<double>(local_190)) {
         pt16c[0] = pt174[0]; pt16c[1] = pt174[1]; iVar10 = iVar8;
     }
     local_18c = kOne;
@@ -150,25 +184,27 @@ void NavLookahead(int param_1, float* param_2, float* param_3,
     local_1a0 = pt148[0] - param_2[0];
     local_19c = pt148[1] - param_2[1];
     local_180 = kZero;
-    local_164f = local_1a0 * local_1a0 + local_19c * local_19c;
+    local_164f = static_cast<float>(D2(local_1a0, local_19c));
     Spline(param_1, iVar10, kZero, pt188);
     local_1a0 = pt188[0] - param_2[0];
     iVar8 = 0x10;
     local_19c = pt188[1] - param_2[1];
-    local_194f = local_1a0 * local_1a0 + local_19c * local_19c;
+    local_194f = static_cast<float>(D2(local_1a0, local_19c));
     do {   // 16-step binary subdivision toward the closest-approach t
         if (local_164f <= local_194f) {
-            local_180 = (local_180 + local_180 + local_18c) * k0_333;
+            local_180 = static_cast<float>((static_cast<double>(local_180) + local_180 + local_18c)
+                                           * static_cast<double>(k0_333));
             Spline(param_1, iVar10, local_180, pt188);
             local_1a0 = pt188[0] - param_2[0];
             local_19c = pt188[1] - param_2[1];
-            local_194f = local_1a0 * local_1a0 + local_19c * local_19c;
+            local_194f = static_cast<float>(D2(local_1a0, local_19c));
         } else {
-            local_18c = (local_18c + local_18c + local_180) * k0_333;
+            local_18c = static_cast<float>((static_cast<double>(local_18c) + local_18c + local_180)
+                                           * static_cast<double>(k0_333));
             Spline(param_1, iVar10, local_18c, pt148);
             local_1a0 = pt148[0] - param_2[0];
             local_19c = pt148[1] - param_2[1];
-            local_164f = local_1a0 * local_1a0 + local_19c * local_19c;
+            local_164f = static_cast<float>(D2(local_1a0, local_19c));
         }
         iVar8 = iVar8 + -1;
     } while (iVar8 != 0);
@@ -197,10 +233,10 @@ void NavLookahead(int param_1, float* param_2, float* param_3,
         pt174[0] = pt188[0] - param_2[0];            // dir2 = cur - veh
         pt174[1] = pt188[1] - param_2[1];
         Vec2Norm(pt174, pt174);
-        fVar9 = pt150[0] * pt174[0] + pt150[1] * pt174[1];   // dot
-        if (fVar9 < kZero) fVar9 = -local_190;
-        if (kOne < fVar9) fVar9 = kOne;
-        local_40[iVar8] = fVar9;
+        double dotd = Dot2(pt150[0], pt150[1], pt174[0], pt174[1]);   // dir1·dir2 (x87 single-round)
+        if (dotd < 0.0) dotd = -static_cast<double>(local_190);       // neg dot -> -t (float32 t, exact)
+        if (1.0 < dotd) dotd = 1.0;
+        local_40[iVar8] = static_cast<float>(dotd);
         pt188[1] = pt16c[1];      // cur = next (Z first, matching decomp order)
         pfVar7[0] = pt16c[0];
         pt188[0] = pt16c[0];      // cur = next (X)
@@ -230,16 +266,16 @@ void NavLookahead(int param_1, float* param_2, float* param_3,
         if (local_180 <= kZero) {
             goto branchA;
         } else {
-            float t = kZero;
+            double t = 0.0;   // x87 keeps the marching param in 80-bit ST across the loop
             do {
                 if (bVar3) goto afterMarch;
-                pt188[0] = pt174[0] * (kOne / local_180) * t + param_2[0];
-                pt188[1] = (kOne / local_180) * pt174[1] * t + param_2[1];
+                pt188[0] = static_cast<float>(static_cast<double>(pt174[0]) * (static_cast<double>(kOne) / local_180) * t + param_2[0]);
+                pt188[1] = static_cast<float>((static_cast<double>(kOne) / local_180) * pt174[1] * t + param_2[1]);
                 if ((pt188[0] != pt150[0]) && (pt188[1] != pt150[1])) {
                     if (WallAt(pt188[0], pt188[1])) { bVar3 = true; local_164i = 1; }
                 }
-                t = t + k0_25;
-            } while (t < local_180);
+                t = t + static_cast<double>(k0_25);
+            } while (t < static_cast<double>(local_180));
             if (!bVar3) goto branchA;
             goto afterMarch;
         }
@@ -249,23 +285,23 @@ void NavLookahead(int param_1, float* param_2, float* param_3,
         pt174[1] = param_3[1] - param_2[1];
         local_180 = Vec2Len(pt174);
         bVar3 = false;
-        pt16c[0] = pt174[1] * (kOne / local_180);          // dz_norm
-        local_160 = param_2[0] - pt16c[0] * k0_25;         // back-offset start X
-        pt148[0] = (kOne / local_180) * pt174[0];          // dx_norm
-        local_15c = param_2[1] - pt148[0] * k0_25;         // back-offset start Z
+        pt16c[0] = pt174[1] * (kOne / local_180);          // dz_norm (single op: x87==SSE2)
+        local_160 = static_cast<float>(static_cast<double>(param_2[0]) - static_cast<double>(pt16c[0]) * k0_25);  // back-offset start X
+        pt148[0] = (kOne / local_180) * pt174[0];          // dx_norm (single op)
+        local_15c = static_cast<float>(static_cast<double>(param_2[1]) - static_cast<double>(pt148[0]) * k0_25);  // back-offset start Z
         pt150[0] = local_160;
         pt150[1] = local_15c;
         if (kZero < local_180) {
-            float t = kZero;
+            double t = 0.0;
             do {
                 if (bVar3) break;
-                pt188[0] = pt148[0] * t + local_160;
-                pt188[1] = pt16c[0] * t + local_15c;
+                pt188[0] = static_cast<float>(static_cast<double>(pt148[0]) * t + local_160);
+                pt188[1] = static_cast<float>(static_cast<double>(pt16c[0]) * t + local_15c);
                 if ((pt188[0] != local_160) && (pt188[1] != local_15c)) {
                     if (WallAt(pt188[0], pt188[1])) { bVar3 = true; local_164i = 1; }
                 }
-                t = t + k0_25;
-            } while (t < local_180);
+                t = t + static_cast<double>(k0_25);
+            } while (t < static_cast<double>(local_180));
             goto afterMarch;
         }
         local_194i = 1;   // degenerate zero-length
@@ -355,11 +391,20 @@ void NavDispatch(int spline, float* vehXZ, float* outXZ, int aiCarIdx, int useCa
             SelfTestLog(line);
         }
     } else {
-        // WIP (WS-R6-B): NavLookahead diverges from the original (measured 2026-07-01:
-        // 84/85 large diffs — seed/subdivision/walk divergence, not float10 ULP; see
-        // R6_FUN_00443dc0_SCOPE_20260701.md). Until localized+fixed, the installed hook
-        // is a SAFE PASSTHROUGH to the original so a default .asi run is unchanged; the
-        // reimpl is exercised (and A/B-measured) only under MASHED_AI_SPLINE_SELFTEST.
+        // WS-R6-B status (2026-07-01, run3): the catastrophic divergence was root-caused
+        // and FIXED — FUN_004c3c60 (Vec2Norm) returns float10 in ST0 but was declared
+        // `void`, so the SSE2-built caller never popped ST0; 2 calls/iter overflowed the
+        // x87 stack -> NaN walk candidates + FPU corruption (AI froze). With the fn-ptr
+        // fixed to a value return (ST0 popped), the A/B went 100% -> ~37% mismatch and the
+        // AI drives. The RESIDUAL 37% is the predicted float10 issue: the dot/dist^2 kernels
+        // run in `double` (~2^-53) not true x87 80-bit (2^-64), so on near-tied lookahead
+        // scores the argmax flips (58% of mismatches are sub-ULP inert; ~15% of all calls
+        // are large flips, clustered at the degenerate race-start geometry). Bit-identity
+        // needs the full naked-asm x87 body (as originally scoped) — the whole
+        // winner-t -> walk-t -> Spline -> Vec2Norm -> dot chain feeds the argmax, so partial
+        // x87 can't close it. Until that lands, the installed hook is a SAFE PASSTHROUGH so a
+        // default .asi run matches the original exactly; the reimpl is A/B-measured only under
+        // MASHED_AI_SPLINE_SELFTEST. Detail: R6_FUN_00443dc0_SCOPE_20260701.md.
         OrigNavLookahead(spline, vehXZ, outXZ, aiCarIdx, useCache, debugRender);
     }
 }
