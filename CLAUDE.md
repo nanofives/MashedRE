@@ -262,6 +262,18 @@ Synthetic Frida A/B with the hook bypassed (env-var disabled) is **C3** evidence
 
 **Skills are entry points.** Use the skill catalog (below) by name; if no skill fits, ask before inventing a new one.
 
+## Token economy (session discipline)
+
+Measured 30-day audit 2026-07-01 (memory `project-token-economy-audit-2026-07`): cost is dominated by long sessions, not config — every token added to context is re-billed on every later turn of the session. Rules:
+
+- **Split work into focused sessions** at phase boundaries (measure → port → verify → merge). End a finished phase with a ready-to-paste kickoff prompt for the next session instead of continuing in-place.
+- **Never Read raw agent/task transcripts** (`tasks\*.output`, `agent-*.jsonl`). Use the agent's returned summary; follow up via SendMessage to the same agent.
+- **Delegate read-heavy exploration to subagents** (Ghidra chain-chasing, log spelunking, multi-file surveys). A subagent's context is discarded on return; anything read in the main session is re-billed every turn until the session ends.
+- **Route mechanical lanes to cheaper models**: scribe transcription, tracker edits, log parsing, batch leaf decodes → Sonnet (or Haiku); keep the top-tier model for RE judgment work. 92% of June's output tokens ran on Opus — most of the mechanical share didn't need to.
+- **arg_type lookup goes through `re/frida/ARG_TYPES.md`** (generated index), not `diff_template.js` (232 KB — it was Read 361 times in June). Open `diff_template.js` only to author a new handler, and regenerate the index after (`py -3.12 scripts\gen_arg_types_index.py`).
+- **State lookups via one-liners, not full-file Reads**: `hooks.csv` / `promote_frontier.tsv` with PowerShell filters; `re/analysis/CHANGELOG.md` head only (newest entries at top; pre-2026-06-15 history lives in `re/analysis/archive/`).
+- **Screenshots**: compare via `re/tools/imgdiff.py` / the parity harness; don't re-Read the same PNG repeatedly; crop to the region of interest before reading.
+
 ## Roadmap, DoD, and trackers
 
 **Current phase (ROADMAP v2, 2026-06-09):** the project pivoted to **standalone-first, demand-driven** development — see `ROADMAP.md` v2 (phases R0–R8) and `re/analysis/AUDIT_2026-06-09.md`. Phase R0 (repair & re-baseline) executed 2026-06-09; active work is R1 (C4 re-validation lane, tracker `re/analysis/C4_REVALIDATION.md` — 101 suspect C4 rows incl. the Vec3 trio await installed-hook canonical re-validation) and R2 (menu completion in the standalone). The v1 "Phase 4/5" framing and per-subsystem percentage gates are retired; batch fanout pipelines are demoted to opportunistic use (first-party C1 = 0; C2→C3 batch yield collapsed to 8/48 — do not run a batch with predicted yield under ~30%).
