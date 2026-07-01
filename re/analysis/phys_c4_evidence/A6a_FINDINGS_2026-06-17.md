@@ -79,3 +79,32 @@ const is a bit-exact float32 subtract.
   are not type-C `-0x69e1a6`/`-0xe17f4c`), the brake branch (input[5]!=0 && input[4]==0 — the
   throttle-only demo never brakes; BrakeForceAccum + call#7 transcribed, unhit), the spinning
   power-up vel-damp (`tId==-1`/`-0x373738`), and the boost-state machine (`+0xbf8`==1/2).
+
+## [U-A6A-FLOAT10] — RESOLUTION FULLY SPECIFIED (2026-07-01)
+Disassembled the wheel-force store block (0x004682a7..0x00468337, branch1 local_94&0x100==0)
++ the high-load else (0x00468240..0x004682a5). The SOLE residual: the original keeps **f5 in
+an x87 register (float10) across the three products** local_ac*f5 (0x4682fc), local_a8*f5
+(0x46830a), f5*local_a4 (0x468318), rounding to f32 only on the FSTP into wheel[0x1c/1d/1e]
+(0x468327/0x468331/0x468337). The C transcription (PhysicsChainHooks.cpp:1753/1760/1764)
+stores f5 to a `float` first → the products use f32 f5 → 1-8 ULP on wNfx (local_ac path is the
+significant one; the near-zero Y rounds identically).
+
+Key stack slots (branch1): [ESP+0x28]=local_c8 [0x2c]=local_c4 [0x30]=local_c0 [0x34]=local_bc
+[0x1c]=local_d4 [0x44]=local_ac [0x48]=local_a8 [0x4c]=local_a4 [0x50/54/58]=local_a0/9c/98.
+Exact op order (branch1, local_94==0 sub-path):
+  local_98 = pv[0x16]*pv[0x1b]*SuspScale   (ST, 0x4682ab-b6)
+  local_a0 = local_c8*local_98 (FSTP f32); local_9c = local_c4*local_98 (FSTP f32);
+  local_98 = local_98*local_c0 (FSTP f32)  (0x4682b7-d2)
+  f4 = local_d4*speed (ST); if (f4 < 0x005cd120) f5 = f4*0x005ce18c*local_bc  ELSE f5 = local_bc
+       -- f5 stays in ST (0x4682d3-fb)
+  local_a0 = local_ac*f5 + local_a0  (FSTP f32, f5 reused from ST1)   0x4682fc
+  local_9c = local_a8*f5 + local_9c  (FSTP f32, f5 from ST1)          0x46830a
+  ST0 = f5*local_a4 + local_98        (kept in ST, NOT stored)         0x468318
+  wheel[0x1c]=local_a0+wheel[0x1c]; wheel[0x1d]=local_9c+wheel[0x1d];
+  wheel[0x1e]=ST0+wheel[0x1e]         0x468320-337
+
+FIX = one naked-asm shim (pattern: the existing GearCvtCompute/DriveForceAccum/Accum60 shims in
+PhysicsChainHooks.cpp) reproducing 0x4682a7..0x468337 with f5 in ST across the 3 products, then
+re-run `re/frida/phys_c4_telemetry.py hooked A6a_Entry,0x00467650` (self-test) → expect 96/96
+GREEN → re-classify A6a C2->C4. All other A6a divergence classes already closed (this is the
+last one). A3/A4/A5 already C4; A6b C3 (needs a natural-airborne track for canonical C4).
