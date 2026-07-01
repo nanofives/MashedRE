@@ -201,6 +201,7 @@
 "Ai\AiTargeting.cpp"
 "Ai\AiSplineHooks.cpp"
 "Ai\AiNavHooks.cpp"
+"Ai\AiLineOfSight.cpp"
 "Ai\AiStandalone.cpp"
 "Vehicle\PromoLoop_round2.cpp"
 "Render\PromoLoop_round3.cpp"
