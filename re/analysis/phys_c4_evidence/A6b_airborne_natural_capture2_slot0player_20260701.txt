@@ -1,0 +1,9 @@
+[0] slot=0 dt=42480000 air=0 state=0 xform=1 ndiff=0 OK
+[1] slot=1 dt=42480000 air=0 state=0 xform=1 ndiff=0 OK
+[2] slot=2 dt=42480000 air=0 state=0 xform=1 ndiff=0 OK
+[3] slot=3 dt=42480000 air=0 state=0 xform=1 ndiff=0 OK
+[4] slot=0 dt=42480000 air=0 state=0 xform=1 ndiff=0 OK
+[5] slot=1 dt=42480000 air=0 state=0 xform=1 ndiff=0 OK
+[6] slot=2 dt=42480000 air=0 state=0 xform=1 ndiff=0 OK
+[7] slot=3 dt=42480000 air=0 state=0 xform=1 ndiff=0 OK
+[8] slot=0 dt=42480000 air=1 state=2 xform=1 ndiff=0 OK
