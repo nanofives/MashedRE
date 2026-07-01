@@ -1322,6 +1322,288 @@ __declspec(naked) void BrakeForceAccum(float /*local_cc*/, float /*brake*/, floa
         ret
     }
 }
+// ── suspension force base local_bc — VERBATIM x87 ([U-A6A-FLOAT10]) ──────────
+// local_bc = ((pv[0x15]*pv[0x1b]*SuspScale) * le4) * 0.0009766, kept in x87 float10
+// across the whole product, rounded to f32 only on the return (disasm 0x46814f,
+// 0x468152, 0x468155, 0x468174, 0x468185). le4 is the CLAMPED value (clamp at
+// 0x46816c precedes the FMUL). A plain-C `a*b*c*d*e` can round an intermediate to
+// f32, drifting local_bc -> f5 -> the wheel force (call 24 w2fx 8 ULP). wheel=arg1
+// reads +0x54 (pv[0x15]) and +0x6c (pv[0x1b]); le4=arg2.  EAX/ECX scratch.
+__declspec(naked) float SuspBaseBc(float* /*wheel*/, float /*le4clamped*/) {
+    __asm {
+        mov   eax, dword ptr [esp+4]       // wheel
+        fld   dword ptr [eax+0x54]         // 0x46814f pv[0x15]
+        fmul  dword ptr [eax+0x6c]         // 0x468152 * pv[0x1b]
+        mov   ecx, 0x0088e5f0
+        fmul  dword ptr [ecx]              // 0x468155 * SuspScale (float10)
+        fmul  dword ptr [esp+8]            // 0x468174 * le4 (clamped)
+        mov   ecx, 0x005cea0c
+        fmul  dword ptr [ecx]              // 0x468185 * 0.0009766 = local_bc (float10)
+        ret                                // ST0 -> f32 return (matches FSTP 0x46819b)
+    }
+}
+// ── orientation-spin le0/ldc/ld8 — VERBATIM x87 ([U-A6A-FLOAT10] far-upstream) ──
+// Reproduces 0x00468077..0x004680f2 (the complex spin branch, after the axis-angle
+// transform). TWO float10/rounding subtleties a plain-C transcription gets wrong,
+// each a per-call ULP hazard on le0/ldc/ld8 -> s0/s2 -> the dot -> the wheel force
+// (call 24 w2fx 8 ULP via cancellation):
+//   (1) f-product ORDER: f = ((angspeed*0.0199045) * f1) * 360, where P=angspeed*
+//       0.0199045 is formed FIRST (0x468077-7d) then multiplied by the clamped
+//       f1=max(speed*0.008, 8.0) (0x4680a7) then *360 (0x4680ae) — all float10. A C
+//       `f1 * angspeed * 0.0199045 * 360` reassociates and drifts.
+//   (2) ASYMMETRIC f32 rounding: le0_t*f is kept float10 across its `- vel.x` FSUB
+//       (0x4680b8->0x4680ce), but ldc_t*f and ld8_t*f are STORED to f32 first
+//       (0x4680c0/0x4680ca) then reloaded and subtracted. A C `dst[i]*f - vel[i]`
+//       keeps all three float10 -> ldc/ld8 drift 1 ULP.
+// dst=arg1 (le0_t/ldc_t/ld8_t, the transform output, f32); record=arg2 (ESI) reads
+// speed(+0x9e4) angspeed(+0x9e8) vel.x/y/z(+0x9b0/b4/b8); out=arg3 -> {le0,ldc,ld8}
+// (out[1]/out[2] double as the f32 scratch, exactly as [ESP+0x18]/[0x1c]). Disasm
+// Mashed_pool0 RO 2026-07-01. EAX/ECX scratch; EBX/ESI/EDI saved.
+__declspec(naked) void SuspOrient(float* /*dst*/, void* /*record*/, float* /*out*/) {
+    __asm {
+        push  ebx
+        push  esi
+        push  edi
+        // args (post 3 pushes = 12 + ret): dst=[esp+16] record=[esp+20] out=[esp+24]
+        mov   edi, dword ptr [esp+16]      // dst (le0_t/ldc_t/ld8_t)
+        mov   esi, dword ptr [esp+20]      // record (ESI)
+        mov   ebx, dword ptr [esp+24]      // out
+        fld   dword ptr [esi+0x9e8]        // 0x468077 angspeed
+        mov   ecx, 0x005cea18
+        fmul  dword ptr [ecx]              // 0x46807d * 0.0199045 = P (ST, float10)
+        fld   dword ptr [esi+0x9e4]        // 0x468086 speed
+        mov   ecx, 0x005cea14
+        fmul  dword ptr [ecx]              // 0x46808c * 0.008 = f1 (ST0); ST1=P
+        mov   ecx, 0x005cc9f4
+        fcom  dword ptr [ecx]              // 0x468092 f1 : 8.0
+        fnstsw ax                          // 0x468098
+        test  ah, 0x5                      // 0x46809a
+        jp    so_noclamp                   // 0x46809d f1 >= 8.0 -> keep
+        fstp  st(0)                        // 0x46809f pop f1
+        fld   dword ptr [ecx]              // 0x4680a1 f1 = 8.0
+    so_noclamp:
+        fmulp st(1), st(0)                 // 0x4680a7 P * f1 -> ST0
+        mov   ecx, 0x005ccac4
+        fmul  dword ptr [ecx]              // 0x4680ae * 360.0 = f (ST, float10)
+        fld   dword ptr [edi+0]            // 0x4680b4 le0_t
+        fmul  st(0), st(1)                 // 0x4680b8 le0_t * f (float10, kept)
+        fld   dword ptr [edi+4]            // 0x4680ba ldc_t
+        fmul  st(0), st(2)                 // 0x4680be ldc_t * f
+        fstp  dword ptr [ebx+4]            // 0x4680c0 out[1] = round_f32(ldc_t*f); pop
+        fld   dword ptr [edi+8]            // 0x4680c4 ld8_t
+        fmul  st(0), st(2)                 // 0x4680c8 ld8_t * f
+        fstp  dword ptr [ebx+8]            // 0x4680ca out[2] = round_f32(ld8_t*f); pop
+        fsub  dword ptr [esi+0x9b0]        // 0x4680ce (le0_t*f float10) - vel.x = le0
+        fstp  dword ptr [ebx+0]            // 0x4680d4 out[0] = le0 (f32); pop
+        fstp  st(0)                        // 0x4680d8 pop f
+        fld   dword ptr [ebx+4]            // 0x4680da reload round_f32(ldc_t*f)
+        fsub  dword ptr [esi+0x9b4]        // 0x4680de - vel.y = ldc
+        fstp  dword ptr [ebx+4]            // 0x4680e4 out[1] = ldc (f32)
+        fld   dword ptr [ebx+8]            // 0x4680e8 reload round_f32(ld8_t*f)
+        fsub  dword ptr [esi+0x9b8]        // 0x4680ec - vel.z = ld8
+        fstp  dword ptr [ebx+8]            // 0x4680f2 out[2] = ld8 (f32)
+        pop   edi
+        pop   esi
+        pop   ebx
+        ret
+    }
+}
+// ── suspension dot/inverse precompute — VERBATIM x87 ([U-A6A-FLOAT10] upstream) ──
+// Reproduces 0x00468127..0x00468206. The original keeps THREE values in x87 float10
+// that a plain-C transcription rounds to f32 (each a per-call ULP hazard on the wheel
+// force; e.g. call 24 w2fx was 8 ULP after the store-block fix alone):
+//   * fInv = 1.0/le4 stays in ST across s0=le0*fInv, s1=ldc*fInv, s2=fInv*ld8 (only
+//     s0,s1 round to f32; 0x46812d..0x46814b),
+//   * s2 stays in ST (bottom of stack) through the dot AND local_a4 = s2 - local_c0
+//     (never stored to f32; 0x46814b..0x468202),
+//   * the dot stays in ST across local_c8/c4/c0 = dot*pv[0x1f/0x20/0x21] (0x4681c5..e0);
+//     the addition order is (fwd.x*s0 + fwd.y*s1) + fwd.z*s2 (0x46819f..0x4681c3).
+// le4 is the UNCLAMPED value (fInv predates the 1024 clamp at 0x46816c). out[6] =
+// {local_c8, local_c4, local_c0, local_ac, local_a8, local_a4} (f32). wheel=EDI reads
+// pv[0x1f/0x20/0x21] (+0x7c/0x80/0x84); record=ESI reads fwd.x/y/z (+0x9d4/0x9d8/0x9dc).
+// Disasm Mashed_pool0 RO 2026-07-01. EAX/ECX scratch; EBX/ESI/EDI saved.
+__declspec(naked) void SuspDotInv(float /*le0*/, float /*ldc*/, float /*ld8*/, float /*le4*/,
+                                  float* /*wheel*/, void* /*record*/, float* /*out*/) {
+    __asm {
+        push  ebx
+        push  esi
+        push  edi
+        sub   esp, 8                       // [esp]=s0f  [esp+4]=s1f  (f32 scratch)
+        // args (post 3 pushes + sub 8 = 20-byte prologue, +ret): le0=[esp+24]
+        //   ldc=[esp+28] ld8=[esp+32] le4=[esp+36] wheel=[esp+40] record=[esp+44] out=[esp+48]
+        mov   edi, dword ptr [esp+40]      // wheel  (EDI)
+        mov   esi, dword ptr [esp+44]      // record (ESI)
+        mov   ebx, dword ptr [esp+48]      // out
+        mov   ecx, 0x005cc320
+        fld   dword ptr [ecx]              // 0x468127 1.0
+        fdiv  dword ptr [esp+36]           // 0x46812d / le4 = fInv (ST, float10)
+        fld   dword ptr [esp+24]           // 0x468131 le0
+        fmul  st(0), st(1)                 // 0x468135 le0 * fInv = s0
+        fstp  dword ptr [esp]              // 0x468137 s0f (f32); ST0=fInv
+        fld   dword ptr [esp+28]           // 0x46813e ldc
+        fmul  st(0), st(1)                 // 0x468142 ldc * fInv = s1
+        fstp  dword ptr [esp+4]            // 0x468144 s1f (f32); ST0=fInv
+        fmul  dword ptr [esp+32]           // 0x46814b fInv * ld8 = s2 (ST, float10)
+        // dot = (fwd.x*s0 + fwd.y*s1) + fwd.z*s2   (s2 kept in ST bottom)
+        fld   dword ptr [esi+0x9d8]        // 0x46819f fwd.y
+        fmul  dword ptr [esp+4]            // 0x4681a5 * s1f
+        fld   dword ptr [esi+0x9d4]        // 0x4681ac fwd.x
+        fmul  dword ptr [esp]              // 0x4681b2 * s0f
+        faddp st(1), st(0)                 // 0x4681b9 fwd.x*s0 + fwd.y*s1
+        fld   dword ptr [esi+0x9dc]        // 0x4681bb fwd.z
+        fmul  st(0), st(2)                 // 0x4681c1 * s2 (ST2)
+        faddp st(1), st(0)                 // 0x4681c3 dot; ST0=dot ST1=s2
+        fld   st(0)                        // 0x4681c5 dup dot
+        fmul  dword ptr [edi+0x7c]         // 0x4681c7 dot * pv[0x1f]
+        fstp  dword ptr [ebx+0]            // 0x4681ca out[0]=local_c8 (f32)
+        fld   st(0)                        // 0x4681ce dup dot
+        fmul  dword ptr [edi+0x80]         // 0x4681d0 dot * pv[0x20]
+        fstp  dword ptr [ebx+4]            // 0x4681d6 out[1]=local_c4 (f32)
+        fmul  dword ptr [edi+0x84]         // 0x4681da dot * pv[0x21] (consumes dot)
+        fstp  dword ptr [ebx+8]            // 0x4681e0 out[2]=local_c0 (f32); ST0=s2
+        fld   dword ptr [esp]              // 0x4681e4 s0f
+        fsub  dword ptr [ebx+0]            // 0x4681eb s0 - local_c8 = local_ac
+        fstp  dword ptr [ebx+12]           // 0x4681ef out[3]=local_ac (f32)
+        fld   dword ptr [esp+4]            // 0x4681f3 s1f
+        fsub  dword ptr [ebx+4]            // 0x4681fa s1 - local_c4 = local_a8
+        fstp  dword ptr [ebx+16]           // 0x4681fe out[4]=local_a8 (f32)
+        fsub  dword ptr [ebx+8]            // 0x468202 s2(float10) - local_c0 = local_a4
+        fstp  dword ptr [ebx+20]           // 0x468206 out[5]=local_a4 (f32); ST empty
+        add   esp, 8
+        pop   edi
+        pop   esi
+        pop   ebx
+        ret
+    }
+}
+// ── suspension-force store block — VERBATIM x87 ([U-A6A-FLOAT10] final chain) ──
+// Reproduces 0x004682a7..0x00468337 (branch1, local_94&0x100==0) and the high-load
+// else 0x00468234..0x004682a5, merging at the shared tail 0x00468320. Residual
+// (RED 93/96, calls 24/82/84): the original keeps f5 — and local_98, and the else's
+// f4 and f5*local_a4 — in x87 registers as float10 across the per-axis products,
+// rounding to float32 only on the FSTP into wheel[0x1c/0x1d/0x1e] (+0x70/74/78).
+// A plain-C store rounds f5 to float32 first -> 1-8 ULP on wNfx. Disasm Mashed_pool0
+// RO 2026-07-01. sbuf mirrors the ORIGINAL post-restore stack frame ([ESP+off] ->
+// [ebx+off]); wheel=EDI, record=ESI, bVar13=EBP (the original regs, 1:1):
+//   sbuf: 0x1c=local_d4 0x28=c8 0x2c=c4 0x30=c0 0x34=local_bc
+//         0x44=local_ac 0x48=local_a8 0x4c=local_a4
+//         0x50=local_a0 0x54=local_9c 0x58=local_98 0x5c=(int)local_94
+__declspec(naked) void SuspForceStore(void* /*sbuf*/, float* /*wheel*/, void* /*record*/, int /*bVar13*/) {
+    __asm {
+        push  ebx
+        push  esi
+        push  edi
+        push  ebp
+        // args (post 4 pushes + retaddr, +20): sbuf=[esp+20] wheel=[esp+24]
+        //   record=[esp+28] bVar13=[esp+32]
+        mov   ebx, dword ptr [esp+20]      // sbuf   (original ESP-frame base)
+        mov   edi, dword ptr [esp+24]      // wheel  (original EDI)
+        mov   esi, dword ptr [esp+28]      // record (original ESI)
+        mov   ebp, dword ptr [esp+32]      // bVar13 (original EBP)
+        mov   eax, dword ptr [ebx+0x5c]    // EAX = local_94  (0x468217)
+        test  eax, 0x100                   // 0x46821d/232: (local_94 & 0x100)==0 -> branch1
+        jnz   sfs_else
+        // ===== branch1 (0x004682a7) =====
+        test  eax, eax                     // 0x4682a7
+        jnz   sfs_b1_f5def                 // 0x4682a9  local_94!=0 -> f5=local_bc
+        // ---- local_94==0 sub-path (0x004682ab) ----
+        fld   dword ptr [edi+0x58]         // 0x4682ab pv[0x16]
+        fmul  dword ptr [edi+0x6c]         // 0x4682ae * pv[0x1b]
+        mov   ecx, 0x0088e5f0
+        fmul  dword ptr [ecx]              // 0x4682b1 * SuspScale -> local_98 (ST, float10)
+        fld   dword ptr [ebx+0x28]         // 0x4682b7 local_c8
+        fmul  st(0), st(1)                 // 0x4682bb * local_98
+        fstp  dword ptr [ebx+0x50]         // 0x4682bd local_a0 (f32); ST0=local_98
+        fld   dword ptr [ebx+0x2c]         // 0x4682c1 local_c4
+        fmul  st(0), st(1)                 // 0x4682c5 * local_98
+        fstp  dword ptr [ebx+0x54]         // 0x4682c7 local_9c (f32); ST0=local_98
+        fmul  dword ptr [ebx+0x30]         // 0x4682cb local_98 * local_c0
+        fstp  dword ptr [ebx+0x58]         // 0x4682cf local_98 (f32); ST empty
+        fld   dword ptr [ebx+0x1c]         // 0x4682d3 local_d4
+        fmul  dword ptr [esi+0x9e4]        // 0x4682d7 * speed = f4 (ST, float10)
+        mov   ecx, 0x005cd120
+        fcom  dword ptr [ecx]              // 0x4682dd f4 : 50.0
+        fnstsw ax                          // 0x4682e3
+        test  ah, 0x5                      // 0x4682e5
+        jp    sfs_b1_f5pop                 // 0x4682e8  f4 >= 50.0 -> pop f4, f5=local_bc
+        mov   ecx, 0x005ce18c
+        fmul  dword ptr [ecx]              // 0x4682ea f4 * 0.02
+        fmul  dword ptr [ebx+0x34]         // 0x4682f0 * local_bc = f5 (ST, float10)
+        jmp   sfs_b1_prod                  // 0x4682f4
+    sfs_b1_f5pop:
+        fstp  st(0)                        // 0x4682f6 pop f4
+    sfs_b1_f5def:
+        fld   dword ptr [ebx+0x34]         // 0x4682f8 f5 = local_bc
+    sfs_b1_prod:
+        // ---- branch1 products (0x004682fc), f5 in ST0 (float10) ----
+        fld   dword ptr [ebx+0x44]         // 0x4682fc local_ac
+        fmul  st(0), st(1)                 // 0x468300 local_ac * f5
+        fadd  dword ptr [ebx+0x50]         // 0x468302 + local_a0
+        fstp  dword ptr [ebx+0x50]         // 0x468306 local_a0 (f32); ST0=f5
+        fld   dword ptr [ebx+0x48]         // 0x46830a local_a8
+        fmul  st(0), st(1)                 // 0x46830e local_a8 * f5
+        fadd  dword ptr [ebx+0x54]         // 0x468310 + local_9c
+        fstp  dword ptr [ebx+0x54]         // 0x468314 local_9c (f32); ST0=f5
+        fmul  dword ptr [ebx+0x4c]         // 0x468318 f5 * local_a4
+        fadd  dword ptr [ebx+0x58]         // 0x46831c + local_98 -> new f5 (ST, float10)
+        jmp   sfs_tail
+        // ===== high-load else (0x00468234) =====
+    sfs_else:
+        test  ebp, ebp                     // 0x468234 bVar13 (ZF survives the FPU ops -> JZ)
+        fld   dword ptr [ebx+0x34]         // 0x468236 local_bc
+        mov   ecx, 0x005ce264
+        fmul  dword ptr [ecx]              // 0x46823a * 0.85 = f5 (ST, float10)
+        fld   dword ptr [ebx+0x44]         // 0x468240 local_ac
+        fmul  st(0), st(1)                 // 0x468244 local_ac * f5
+        fstp  dword ptr [ebx+0x50]         // 0x468246 (f32); ST0=f5
+        fld   dword ptr [ebx+0x48]         // 0x46824a local_a8
+        fmul  st(0), st(1)                 // 0x46824e local_a8 * f5
+        fstp  dword ptr [ebx+0x54]         // 0x468250 (f32); ST0=f5
+        fmul  dword ptr [ebx+0x4c]         // 0x468254 f5 * local_a4 (ST, float10; -> ST1 below)
+        fld   dword ptr [edi+0x6c]         // 0x468258 pv[0x1b]
+        mov   ecx, 0x005cc31c
+        fmul  dword ptr [ecx]              // 0x46825b * 3.0
+        mov   ecx, 0x0088e5f0
+        fmul  dword ptr [ecx]              // 0x468261 * SuspScale
+        fimul dword ptr [ebx+0x5c]         // 0x468267 * (int)local_94
+        mov   ecx, 0x005cea08
+        fmul  dword ptr [ecx]              // 0x46826b * 0.0019531
+        mov   ecx, 0x005ccabc
+        fmul  dword ptr [ecx]              // 0x468271 * 1.1 = f4 (ST0); ST1 = f5*local_a4
+        jz    sfs_el_c8                    // 0x468277 !bVar13 -> skip *0.5
+        mov   ecx, 0x005cc32c
+        fmul  dword ptr [ecx]              // 0x468279 f4 * 0.5
+    sfs_el_c8:
+        fld   dword ptr [ebx+0x28]         // 0x46827f local_c8; ST0=c8 ST1=f4 ST2=f5*a4
+        fmul  st(0), st(1)                 // 0x468283 c8 * f4
+        fadd  dword ptr [ebx+0x50]         // 0x468285 + local_ac*f5
+        fstp  dword ptr [ebx+0x50]         // 0x468289 local_a0 (f32); ST0=f4 ST1=f5*a4
+        fld   dword ptr [ebx+0x2c]         // 0x46828d local_c4
+        fmul  st(0), st(1)                 // 0x468291 c4 * f4
+        fadd  dword ptr [ebx+0x54]         // 0x468293 + local_a8*f5
+        fstp  dword ptr [ebx+0x54]         // 0x468297 local_9c (f32); ST0=f4 ST1=f5*a4
+        fld   dword ptr [ebx+0x30]         // 0x46829b local_c0; ST0=c0 ST1=f4 ST2=f5*a4
+        fmul  st(0), st(1)                 // 0x46829f c0 * f4
+        faddp st(2), st(0)                 // 0x4682a1 ST2 = f5*a4 + c0*f4 = new f5; pop
+        fstp  st(0)                        // 0x4682a3 pop f4 -> ST0 = new f5
+        // 0x4682a5 JMP 0x468320 -> fall into shared tail
+    sfs_tail:
+        // ===== shared tail (0x00468320), ST0 = new f5 =====
+        fld   dword ptr [ebx+0x50]         // 0x468320 local_a0
+        fadd  dword ptr [edi+0x70]         // 0x468324 + wheel[0x1c]
+        fstp  dword ptr [edi+0x70]         // 0x468327 wheel[0x1c] (f32); ST0=new f5
+        fld   dword ptr [ebx+0x54]         // 0x46832a local_9c
+        fadd  dword ptr [edi+0x74]         // 0x46832e + wheel[0x1d]
+        fstp  dword ptr [edi+0x74]         // 0x468331 wheel[0x1d] (f32); ST0=new f5
+        fadd  dword ptr [edi+0x78]         // 0x468334 new f5 + wheel[0x1e]
+        fstp  dword ptr [edi+0x78]         // 0x468337 wheel[0x1e] (f32)
+        pop   ebp
+        pop   edi
+        pop   esi
+        pop   ebx
+        ret
+    }
+}
 // linear-velocity redistribution factor (disasm tail 0x46857c..0x468648).
 //   d   = (float10)local_d0 - mag10(lvec)
 //   if (d == 0)  -> *b8/*b4 unchanged, lin_b0 = (float10)local_b0
@@ -1716,13 +1998,11 @@ void A6a_Body(int* self, int param_1, float dt, std::uint8_t* input) {
                 Live_004c4d20(m40, reinterpret_cast<float*>((char*)v + 0x9bc), Cf(0x43870000), 0); // 270.0
                 float src[3] = { a6F(piVar12, -9), a6F(piVar12, -8), a6F(piVar12, -7) }, dst[3];
                 Live_004c3df0(dst, src, 1, m40);
-                le0 = dst[0]; ldc = dst[1]; ld8 = dst[2];
-                float f = Fb(v, 0x9e4) * A6_005cea14;
-                if (f < A6_005cc9f4) f = A6_005cc9f4;
-                f = f * Fb(v, 0x9e8) * A6_005cea18 * A6_005ccac4;
-                le0 = le0 * f - Fb(v, 0x9b0);
-                ldc = ldc * f - Fb(v, 0x9b4);
-                ld8 = ld8 * f - Fb(v, 0x9b8);
+                // [U-A6A-FLOAT10] far-upstream: the f-product order and the asymmetric
+                // f32 rounding of ldc_t*f / ld8_t*f (le0_t*f stays float10) — verbatim.
+                float orient[3];   // { le0, ldc, ld8 }
+                SuspOrient(dst, v, orient);
+                le0 = orient[0]; ldc = orient[1]; ld8 = orient[2];
                 float tmp[3] = { le0, ldc, ld8 };
                 le4 = Live_004c3ac0(tmp);
             } else {
@@ -1730,53 +2010,46 @@ void A6a_Body(int* self, int param_1, float dt, std::uint8_t* input) {
                 le0 = -Fb(v, 0x9b0); ldc = -Fb(v, 0x9b4); ld8 = -Fb(v, 0x9b8);
             }
             if (A6_005cd03c < le4 && Ib(v, 0x9e0) == 0x40800000) {
-                float fInv = A6_005cc320 / le4;
-                float s0 = le0 * fInv, s1 = ldc * fInv;
-                float s2 = fInv * ld8;   // pre-computed (ASM ST2); reused by local_c0 & local_a4
-                if (A6_005cea10 < le4) le4 = Cf(0x44800000);   // 1024.0
+                // [U-A6A-FLOAT10] upstream: fInv, s2 and the drive-dir dot must stay
+                // in x87 float10 across s0/s1/s2, local_c8/c4/c0 and local_a4 (a plain-C
+                // store rounds them to f32 first -> per-call ULP drift on the wheel force,
+                // e.g. call 24 w2fx). SuspDotInv reproduces 0x00468127..0x00468206
+                // verbatim. le4 here is UNCLAMPED (fInv predates the 1024 clamp).
+                float dotv[6];   // {local_c8, local_c4, local_c0, local_ac, local_a8, local_a4}
+                SuspDotInv(le0, ldc, ld8, le4, reinterpret_cast<float*>(piVar12), v, dotv);
+                float local_c8 = dotv[0], local_c4 = dotv[1], local_c0 = dotv[2];
+                float local_ac = dotv[3], local_a8 = dotv[4], local_a4 = dotv[5];
+                if (A6_005cea10 < le4) le4 = Cf(0x44800000);   // 1024.0 (clamp for local_bc/Accum60)
                 float local_98 = 0, local_9c = 0, local_a0 = 0;
-                float local_bc = a6F(piVar12, 0x15) * a6F(piVar12, 0x1b) * A6_SuspScale() * le4 * A6_005cea0c;
-                // dot = fwd.z*s2 + fwd.x*s0 + fwd.y*s1 (ASM 0x4681c1: fwd.z*(inv*ld8))
-                float local_c0 = Fb(v, 0x9dc) * s2 + Fb(v, 0x9d4) * s0 + Fb(v, 0x9d8) * s1;
-                float local_c8 = local_c0 * a6F(piVar12, 0x1f);
-                float local_c4 = local_c0 * a6F(piVar12, 0x20);
-                local_c0 = local_c0 * a6F(piVar12, 0x21);
-                float local_ac = s0 - local_c8;
-                float local_a8 = s1 - local_c4;
-                float local_a4 = s2 - local_c0;
+                // local_bc kept in x87 float10 across the full product [U-A6A-FLOAT10]
+                float local_bc = SuspBaseBc(reinterpret_cast<float*>(piVar12), le4);
                 float acvec[3] = { local_ac, local_a8, local_a4 };
                 float local_d4 = Live_004c3ac0(acvec);   // f32 magnitude (local_d4 uses)
                 unsigned local_94 = (unsigned)piVar12[-1];
                 // local_60 += mag10(acvec)*le4 (float10 FMA, rounded f32) [U-A6A-FLOAT10]
                 local_60 = Accum60(acvec, le4, local_60);
-                if ((local_94 & 0x100) == 0) {
-                    float f5 = local_bc;
-                    if (local_94 == 0) {
-                        local_98 = a6F(piVar12, 0x16) * a6F(piVar12, 0x1b) * A6_SuspScale();
-                        local_a0 = local_c8 * local_98;
-                        local_9c = local_c4 * local_98;
-                        local_98 = local_98 * local_c0;
-                        float f4 = local_d4 * Fb(v, 0x9e4);
-                        if (f4 < A6_005cd120) f5 = f4 * A6_005ce18c * local_bc;
-                    }
-                    local_a0 = local_ac * f5 + local_a0;
-                    local_9c = local_a8 * f5 + local_9c;
-                    f5 = f5 * local_a4 + local_98;
-                    Fb(piVar12, 0x70) = local_a0 + Fb(piVar12, 0x70);
-                    Fb(piVar12, 0x74) = local_9c + Fb(piVar12, 0x74);
-                    Fb(piVar12, 0x78) = f5 + Fb(piVar12, 0x78);
-                } else {
-                    float f5 = local_bc * A6_005ce264;
-                    float f4 = a6F(piVar12, 0x1b) * A6_005cc31c * A6_SuspScale() * (float)(int)local_94 *
-                               A6_005cea08 * A6_005ccabc;
-                    if (bVar13) f4 = f4 * A6_005cc32c;
-                    local_a0 = local_c8 * f4 + local_ac * f5;
-                    local_9c = local_c4 * f4 + local_a8 * f5;
-                    f5 = local_c0 * f4 + f5 * local_a4;
-                    Fb(piVar12, 0x70) = local_a0 + Fb(piVar12, 0x70);
-                    Fb(piVar12, 0x74) = local_9c + Fb(piVar12, 0x74);
-                    Fb(piVar12, 0x78) = f5 + Fb(piVar12, 0x78);
-                }
+                // [U-A6A-FLOAT10] final chain: the wheel-force store keeps f5 (and,
+                // in the local_94==0 sub-path, local_98; and, in the high-load else,
+                // f4 and f5*local_a4) in x87 float10 across the per-axis products,
+                // rounding to float32 only on the FSTP into wheel[0x1c/0x1d/0x1e].
+                // A plain-C store rounds f5 to f32 first -> 1-8 ULP on wNfx (calls
+                // 24/82/84 of 96). SuspForceStore reproduces 0x004682a7..0x00468337
+                // (branch1) + 0x00468234..0x004682a5 (else) verbatim. sbuf mirrors the
+                // original post-restore stack frame ([ESP+off] slots; disasm above).
+                unsigned char sbuf[0x60];
+                *reinterpret_cast<float*>(sbuf + 0x1c) = local_d4;
+                *reinterpret_cast<float*>(sbuf + 0x28) = local_c8;
+                *reinterpret_cast<float*>(sbuf + 0x2c) = local_c4;
+                *reinterpret_cast<float*>(sbuf + 0x30) = local_c0;
+                *reinterpret_cast<float*>(sbuf + 0x34) = local_bc;
+                *reinterpret_cast<float*>(sbuf + 0x44) = local_ac;
+                *reinterpret_cast<float*>(sbuf + 0x48) = local_a8;
+                *reinterpret_cast<float*>(sbuf + 0x4c) = local_a4;
+                *reinterpret_cast<float*>(sbuf + 0x50) = local_a0;   // 0 (recomputed in-shim)
+                *reinterpret_cast<float*>(sbuf + 0x54) = local_9c;   // 0
+                *reinterpret_cast<float*>(sbuf + 0x58) = local_98;   // 0
+                *reinterpret_cast<int*>  (sbuf + 0x5c) = (int)local_94;
+                SuspForceStore(sbuf, reinterpret_cast<float*>(piVar12), v, (int)bVar13);
             }
         }
 

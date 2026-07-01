@@ -108,3 +108,41 @@ PhysicsChainHooks.cpp) reproducing 0x4682a7..0x468337 with f5 in ST across the 3
 re-run `re/frida/phys_c4_telemetry.py hooked A6a_Entry,0x00467650` (self-test) → expect 96/96
 GREEN → re-classify A6a C2->C4. All other A6a divergence classes already closed (this is the
 last one). A3/A4/A5 already C4; A6b C3 (needs a natural-airborne track for canonical C4).
+
+## Verdict: GREEN — 72/72 bit-identical (2026-07-01). A6a promoted C2 -> C4.
+Evidence: `re/analysis/phys_c4_evidence/A6a_selftest_72of72_GREEN.txt` (clean build, no debug;
+reproduced across 3 canonical Arctic Quick-Battle races; branch coverage accel=32 brake=32
+coast=8 all grounded gm=6/5/4; airborne=0 — the suspension block is grounded-gated `+0x9e0==
+0x40800000` so it never runs airborne, and A6b covers the airborne integration separately).
+
+### CORRECTION to the 2026-07-01 "RESOLUTION FULLY SPECIFIED" section above.
+The f5 store-block shim was NECESSARY but NOT SUFFICIENT — it closed 2 of the 3 residual calls
+(82, 84). Call 24 (w2fx, 8 ULP) was a DIFFERENT, farther-upstream float10 class the earlier
+disasm missed. Full root cause: the original keeps SIX values in x87 float10 that a plain-C
+transcription rounds to float32 (each a per-call ULP hazard on the wheel force; wheel-2 call-24
+was exposed via catastrophic cancellation, w70 = local_a0[~212] + w70pre[~-177.6] = ~34.9, so a
+1-ULP error in local_a0@212 shows as 8 ULP@34.9). Four naked shims now close all six chains
+(PhysicsChainHooks.cpp; each cites its RVAs):
+  1. **SuspOrient** (0x00468077..0x004680f2) — the far-upstream cause of call 24. TWO subtleties:
+     (a) f-product ORDER: original forms `P=angspeed*0.0199045` FIRST then `(P*f1)*360`
+         (0x468077-7d, 0x4680a7-ae); C `f1*angspeed*0.0199045*360` reassociates.
+     (b) ASYMMETRIC f32 rounding: le0_t*f stays float10 across `- vel.x` (0x4680b8->0x4680ce),
+         but ldc_t*f / ld8_t*f are STORED to f32 first (0x4680c0/0x4680ca) then reloaded and
+         subtracted. ld8 feeds s2=fInv*ld8 -> the dominant dot term -> local_c8 -> the force.
+  2. **SuspDotInv** (0x00468127..0x00468206) — fInv (1/le4) kept float10 across s0/s1/s2; s2 kept
+     float10 through the dot AND local_a4; the dot kept float10 across local_c8/c4/c0; addition
+     order (fwd.x*s0 + fwd.y*s1) + fwd.z*s2.
+  3. **SuspBaseBc** (0x0046814f..0x00468185) — local_bc = pv15*pv1b*Susp*le4*const kept float10.
+  4. **SuspForceStore** (0x004682a7..0x00468337 branch1 + 0x00468234..0x004682a5 else) — local_98
+     kept float10 across its 3 products; f5 kept float10 across local_ac*f5 / local_a8*f5 /
+     f5*local_a4 (the originally-specified fix); the high-load else keeps f4 and f5*local_a4
+     float10 too.
+NB the store block itself was proven float-precision-faithful in isolation (a Python float64 AND
+float32 model of the store chain both reproduced MINE, so the divergence was purely in the INPUTS
+fed to it — traced to SuspOrient). One shim bug found + fixed en route: SuspDotInv had an off-by-4
+arg-offset (20-byte prologue -> arg0 at [esp+24] not [esp+20]) that read a wild `wheel` pointer
+and crashed on the first gate-hit call; the 16-byte-prologue SuspForceStore was correct.
+
+Acceptance per re/CONFIDENCE.md + CLAUDE.md: installed inline-JMP at 0x00467650 LIVE (A6a_Entry),
+canonical scenario, in-process A/B (Call_OrigA6a original body vs A6a_Body mine) bit-compared on
+the 0xd04 record + per-wheel fields. NOT synthetic/bypassed. C4 granted.
