@@ -31,65 +31,21 @@ See `re/INJECTION.md` for why we still need a hook harness during dev (it lets u
 
 ## Runtime state (what it takes to boot Mashed on this hardware)
 
-Stock `MASHED.exe` does not boot to main menu on Win11 + modern GPUs. A clean checkout becomes bootable only after applying:
+Stock `MASHED.exe` does not boot to main menu on Win11 + modern GPUs. One-command setup/recovery: `py -3.12 scripts/repatch_original.py` (idempotent) applies everything below. **Full root-cause narratives + evidence: `re/analysis/BOOT_PATCHES.md`** — read it before touching any boot behavior. Summary:
 
-1. **Seven on-disk binary patches** to `original/MASHED.exe` (idempotent; each script self-checks). `original/MASHED.exe.unpatched` is the backup that matches the SHA-256 anchor — never delete it.
-   - ~~`scripts/patch_mashed_skip_powerups.py`~~ — **DO NOT APPLY.** Root-caused 2026-06-01 as boot crash #2 (the NOP at 0x40295d causes a downstream stack-imbalance ret-to-0). Removing it made baseline boot to the real main menu (verify/boot_powerups_removed.png). The script now refuses to apply and un-applies if found.
-   - `scripts/patch_mashed_show_windowed.py` — unhides `[Window]` entries in the video selector.
-   - `scripts/patch_mashed_skip_audio_com.py` — neutralizes `FUN_005bc750` (real null-deref fix).
-   - `scripts/patch_mashed_skip_selector.py` — silent video selector.
-   - `scripts/patch_mashed_skip_controller_dialog.py` — silent controller selector.
-   - `scripts/patch_mashed_fix_camera_res.py` — **display-independence fix (2026-06-13).** Forces the screen-dim getters `FUN_00498bc0`/`FUN_00498bd0` to return 640×480 (the shim's forced backbuffer) instead of the auto-selected desktop video mode. Without it, MASHED builds the active camera's frameBuffer raster at the desktop resolution (e.g. 2560×1440); that render-target raster fails to create against the shim's 640×480 backbuffer → null camera raster → AV at 0x004c7785 ~4 s into boot. This made boot depend on the monitor topology. Root cause + evidence: `re/analysis/BOOT_CRASH_ROOTCAUSE_2026-06-13.md`. COUPLED to the shim's 640×480 (keep in sync). Reversible via `--restore`.
-   - `scripts/patch_mashed_disable_log.py` — **boot fix (2026-06-20).** Neutralizes the 3 boot-path file-log functions (`FUN_00496490` open→ret0, `FUN_00496400` printf→ret, `FUN_004963e0` write je→jmp). After a ~2026-06-10 Windows servicing update, stock boot AVs ~4 s in at `RtlEnterCriticalSection` (ntdll+0x542f0, ECX=0x5477): the log `FILE*` global `DAT_00772fbc` (PE-init 0) holds garbage `0x5453` at boot (layout-dependent wild write), so the log `fputs()` enters a bad critical section. **This is NOT heap** — the 06-10 ntdll layout shift made `+0x542f0` = `RtlEnterCriticalSection`, so the prior "RtlpHeap / EMULATEHEAP heap-inversion" reading (see runtime item 3) is WRONG for this crash; no compat shim (EMULATEHEAP / page heap / segment heap) fixes it. Logging to `mashed.log` is cosmetic; disabling it boots to the menu (`verify/_boot_fixed_menu.png`). Caveats: it MASKS the broken log (the wild write still happens, harmless once readers are no-ops, source not yet root-caused); Frida-**spawn** still crashes (perturbs layout) so record via **attach-after-boot**. Reversible (`--restore`; full backup `MASHED.exe.prelogpatch`). Root cause + evidence: [[project-boot-crash-static-init-not-heap]]. **Partial alone (~80% boot — a lottery over which fopen caller hit the garbage first); the reliable root fix is `patch_mashed_fix_fopen.py` below.**
-   - `scripts/patch_mashed_fix_fopen.py` — **ROOT boot fix (2026-06-20); makes boot reliable (8/8).** The same crash class generalized: the fopen wrapper `FUN_004a4541` (`_fsopen`) returns a garbage `FILE*` (`~0x5453`, i.e. `< 0x10000`) to **all 6 of its callers** on direct launch, so boot is a lottery over which caller runs first (the log was just the most common). Valid `FILE*`s are always `≥ 0x10000` (static `_iob` in .data + heap allocs are high; null page is `0..0x10000`), so this redirects `FUN_004a4541` (jmp) to a 0xCC code cave at RVA `0x50f6c4` that does the original `_fsopen` call then `if (result < 0x10000) result = 0` — every caller already guards `if (fp != NULL)` and skips cleanly. Verified: boots to menu 8/8, menu renders (`verify/_boot_fixed_fopen.png`). Frida-**spawn** still crashes (perturbs layout) → record via **attach-after-boot** (`re/frida/record_attach.py`). Reversible (`--restore`; backup `MASHED.exe.prefopenpatch`). See [[project-boot-crash-static-init-not-heap]].
-   - `scripts/patch_mashed_fix_joypad.py` — **boot fix (2026-06-21); reliable boot WITH a game controller connected.** With a pad attached, stock boot AVs ~4 s in at `0x00495883` inside the per-device input poll `FUN_00495870` (`mov eax,[edi]`, `edi=[esi]`=garbage `0x3eb33333` = the float `0.35f` reinterpreted — one device-array slot's interface pointer is bad). The caller `FUN_00495fe0` loops `[0x772fac]` devices over the 4-slot array `0x771e88` (stride `0x448`) and derefs each slot's pointer unconditionally; keyboard-only boots fine (so the crash is "intermittent" = pad-dependent). Fix: redirect `FUN_00495870`'s entry (jmp) to a 39-byte 0xCC cave at RVA `0x508bd5` that re-runs the prologue, loads `[esi]`, and skips the whole poll (`add esp,0x6c; ret`, matching the real plain-`ret` epilogue at `0x495edd`) when the pointer is misaligned (`test al,3`) or `IsBadReadPtr` (IAT `0x5cc168`) — else jmps back to `0x495878`. The /GS cookie (in `eax`) is preserved across the probe. Verified **boots 8/8 with a controller connected** (was 0/6). Reversible (`--restore`; backup `MASHED.exe.prejoypadpatch`). See [[project-replay-determinism-and-boot-patches]].
-   - `scripts/patch_mashed_skip_movies.py` — **OPTIONAL: skip small.mpg's DirectShow graph (2026-06-21; CORRECTED + verified 2026-06-22).** Boot-init `FUN_00402750` has two movie roots: `0x402838 call FUN_00495350` (intro loop — MUST keep running, it also pumps the D3D present/render loop later boot code needs; NOPping it AVs ~`0x402879`, 5/5) and `0x40283f call FUN_00494c80` (small.mpg). This NOPs **only the 5-byte `call` at `0x40283f`** and **KEEPS the `push 0` at `0x40283d`**. ⚠️ CALLING-CONVENTION CORRECTION: the original version NOP'd 7 B (incl. the `push 0`) believing `FUN_00494c80` is stdcall — it is NOT. `FUN_00494c80` ends in a plain `ret` (`c3` @ `0x494ed8`; cdecl/void, cleans nothing). The `push 0` is a **deferred-cleanup stack slot** popped later by the batch `add esp,0x24` @ `0x402888` (boot-init also uses esp-relative locals `lea [esp+0x24]`/`[esp+0x2c]` just before it). Removing the `push 0` shifted `esp` by 4 → over-pop → **deterministic 4-byte stack imbalance → `eip=0` crash ~menu+several-sec** (`esp=0x1afe50`/`ecx=0xff000000` — the long-chased signature; NOT joysticks, NOT the movies, NOT a "menu→race fps" crash). Proven 2026-06-22: with the `push 0` kept, small.mpg-skip is stable (menu +32 s, no crash). The script auto-detects/repairs the old broken 7-NOP form. **Redundant for the intro-skip goal** — `patch_mashed_skip_intro.py` (empties) is the preferred intro-skip and lets `FUN_00494c80` run normally. Reversible (`--restore`; backup `MASHED.exe.premoviepatch`).
-   - `scripts/patch_mashed_skip_intro.py` — **PREFERRED intro-skip (file-based; re-validated 2026-06-22).** Replaces the 5 intro `.mpg` files in `original/toastart/pc/movies/` with empty 1-frame MPEGs (originals backed up to `movies/backup/`). The empties play instantly (boot→menu <2 s) and are **stable** on the clean 7-boot baseline (menu +32 s, no crash, real menu renders — user-confirmed). The earlier claim that the empties crash the DirectShow path was WRONG: that crash was `patch_mashed_skip_movies.py`'s stack-imbalance bug (above), which had been applied alongside the empties. `FUN_00494c80` runs normally with the empties (small.mpg is a valid 1-frame movie). Reversible via `--restore`. Approach borrowed from SciLor's MashedRunner (re/prior_art/MashedRunner/Intro.cs).
-2. **Canonical `videocfg.bin`** copied from `scripts/canonical/videocfg_windowed.bin` (800×600).
-3. **One-time per-machine compat shim** via `scripts/setup_mashed_compat.ps1`.
-   Must NOT include `DISABLEDXMAXIMIZEDWINDOWEDMODE` while the d3d9 shim is deployed
-   (the AcLayers d3d9 hooks deadlock against our proxy at process init).
-   `EMULATEHEAP` is **BUILD-DEPENDENT and the relationship INVERTS across Win11
-   builds** — the setup script now toggles it on `[Environment]::OSVersion.Build`:
-   - **Build 26100** (EMULATEHEAP dropped 2026-06-16): `WIN98RTM`+`EMULATEHEAP`
-     together heap-corrupt MASHED at CRT init → `0xC0000005` WRITE in
-     `ntdll!RtlpHeap` (+0x542f0); boots clean WITHOUT EMULATEHEAP.
-   - **Build 26200+** (EMULATEHEAP re-added 2026-06-16, after an overnight feature
-     update 26100→26200 + reboot re-broke boot): now the **native** heap is what
-     MASHED's legacy CRT init corrupts (IDENTICAL signature: ntdll +0x542f0,
-     `ECX=0x5477`, heap base 0x30000, CRT ret-chain
-     0x4ac660/0x4a5f49/0x4a4274/0x49644c) **regardless of compat layer / apphelp /
-     our .asi / our d3d9 proxy** (proven by isolation). EMULATEHEAP's legacy heap
-     emulation side-steps it. Working layer on 26200+ = `~ RUNASINVOKER WIN98RTM
-     HIGHDPIAWARE EMULATEHEAP` (boots + `run_diff` GREEN). See
-     [[project-emulateheap-boot-av]].
+1. **Nine on-disk binary patches** to `original/MASHED.exe` (idempotent, self-checking, each reversible via `--restore`). `original/MASHED.exe.unpatched` is the backup matching the SHA-256 anchor — never delete it. `patch_mashed_skip_powerups.py` is **RETIRED** (caused boot crash #2; refuses to apply).
+   - `show_windowed`, `skip_audio_com`, `skip_selector`, `skip_controller_dialog` — dialog/COM silencers.
+   - `fix_camera_res` — screen-dim getters forced to 640×480; COUPLED to the d3d9 shim's backbuffer.
+   - `disable_log` — neutralize the broken boot file-log (partial fix alone, ~80% boot).
+   - `fix_fopen` — **ROOT boot fix**: NULL out garbage `FILE*` (<0x10000) from `FUN_004a4541`; boots 8/8.
+   - `fix_joypad` — guard the garbage device pointer in `FUN_00495870`; boots 8/8 with a controller.
+   - `skip_intro` — **PREFERRED intro-skip**: replaces the 5 intro `.mpg` with empty 1-frame movies.
+   - `skip_movies` — OPTIONAL small.mpg-call NOP; MUST keep the `push 0` at `0x40283d` (stack-imbalance history in BOOT_PATCHES.md); redundant next to `skip_intro`.
+2. **Canonical `videocfg.bin`** from `scripts/canonical/videocfg_windowed.bin` (800×600).
+3. **Per-machine compat shim** via `scripts/setup_mashed_compat.ps1` — EMULATEHEAP is build-dependent (script toggles by OS build); never `DISABLEDXMAXIMIZEDWINDOWEDMODE` while the d3d9 shim is deployed. If MASHED suddenly AVs at boot: parse the newest crash dump with `scripts/parse_minidump.py`, re-run the setup script, clear the PCA Store — full decision tree in BOOT_PATCHES.md.
+4. **d3d9 shim** via `mashedmod\build_d3d9_shim.bat` — forces windowed 640×480 CreateDevice and hosts the frame limiter (`MASHED_FPS_CAP`, default 60; `MASHED_FPS_LOG=1` → `log/fps_limiter.txt`). Auto-copies the real d3d9 to `original\d3d9_real.dll`.
 
-   **If MASHED suddenly AVs at boot** (Frida attach fails `VirtualAllocEx 0x5`):
-   (a) parse the newest `%LOCALAPPDATA%\CrashDumps\MASHED.exe.*.dmp` with
-   `scripts/parse_minidump.py` — identical `ECX=0x5477` / CRT ret-chain ==
-   the heap-inversion class above → re-run `setup_mashed_compat.ps1` (it picks
-   EMULATEHEAP by build) or flip `$useEmulateHeap` if the inversion point moved;
-   (b) else check the layer for stray `EMULATEHEAP`/`DISABLEDXMAXIMIZEDWINDOWEDMODE`;
-   (c) else **clear the PCA Store** (`AppCompatFlags\Compatibility Assistant\Store`):
-   after a crash storm the Program Compatibility Assistant applies its own
-   heap/FTH-style shim *outside* the Layers key — `setup_mashed_compat.ps1` clears
-   both, re-run it to recover.
-4. **d3d9 shim** built and deployed via `mashedmod\build_d3d9_shim.bat`. This proxy
-   intercepts `IDirect3D9::CreateDevice` to force `Windowed=TRUE`+640×480 — without
-   it, MASHED runs fullscreen, and the resolution-mode switch between launches
-   causes monitor flicker. 640×480 matches the lowest fullscreen mode so HUD/
-   sprite assets render without stretching. The build script auto-copies
-   `SysWOW64\d3d9.dll` to `original\d3d9_real.dll` (one-time; loader-dedup
-   workaround). The proxy also hosts a **frame limiter** in its `Present` hook
-   (installed unconditionally): MASHED is frame-COUPLED with no native cap, so it
-   runs ~360 FPS / ~6× too fast on modern GPUs — the limiter paces `Present` to a
-   target FPS. Tunable via env `MASHED_FPS_CAP` (default **60**; lower e.g. 30 for
-   slower play; 0 disables). `MASHED_FPS_LOG=1` logs measured FPS to
-   `log/fps_limiter.txt`. Rebuild the shim after editing. See
-   [[project-frame-limiter-speed-fix]].
-
-End state: double-click `MASHED.exe` → main menu in a windowed 800×600 D3D9 backbuffer,
-no dialogs, no monitor mode switch, no flicker, no audio, ~5 s boot.
+End state: double-click `MASHED.exe` → main menu in a windowed D3D9 backbuffer, no dialogs, no monitor mode switch, ~5 s boot.
 
 If the SHA-256 of `MASHED.exe` no longer matches the version anchor *and* `MASHED.exe.unpatched` exists, the patches are already applied — that is expected; do not "fix" it by reverting. The anchor is preserved on `.unpatched`.
 
@@ -239,6 +195,7 @@ Multiple Claude sessions may run concurrently, each spawning its own `MASHED.exe
 Rules (mandatory — a violation killed another session's TTD race capture mid-record on 2026-06-17):
 - **Track the PIDs you spawn; kill ONLY those.** Never blanket-kill by name — no `Stop-Process -Name MASHED`, no `taskkill /im MASHED.exe`, no "kill all MASHED before my run". That terminates other sessions' games (forced-kill shows as guest exit `0xFFFFFFFF`).
 - **Never auto-attach to "first MASHED by name".** Target an explicit PID (the one you spawned). Tools that record/attach must take an explicit PID and refuse to guess when several MASHED are running.
+- **Remove worktrees ONLY via `py -3.12 scripts/diag.py wt-remove <path>` (or `--all-stale`).** NEVER `git worktree remove --force` in any form — skill worktrees junction `original/`, and `--force` follows the junction and wipes the real game install (incidents 2026-06-27 and 2026-07-01; `re/diag/KNOWN_ISSUES.md` WORKTREE-SYMLINK-WIPE).
 - See the **multi-session** skill for capture-window coordination. Detail: memory `feedback_multisession_mashed_kill_by_pid`.
 
 ### Confidence promotion (NO overclaiming)
@@ -276,7 +233,7 @@ Measured 30-day audit 2026-07-01 (memory `project-token-economy-audit-2026-07`):
 
 ## Roadmap, DoD, and trackers
 
-**Current phase (ROADMAP v2, 2026-06-09):** the project pivoted to **standalone-first, demand-driven** development — see `ROADMAP.md` v2 (phases R0–R8) and `re/analysis/AUDIT_2026-06-09.md`. Phase R0 (repair & re-baseline) executed 2026-06-09; active work is R1 (C4 re-validation lane, tracker `re/analysis/C4_REVALIDATION.md` — 101 suspect C4 rows incl. the Vec3 trio await installed-hook canonical re-validation) and R2 (menu completion in the standalone). The v1 "Phase 4/5" framing and per-subsystem percentage gates are retired; batch fanout pipelines are demoted to opportunistic use (first-party C1 = 0; C2→C3 batch yield collapsed to 8/48 — do not run a batch with predicted yield under ~30%).
+**Current phase (ROADMAP v2, 2026-06-09):** **standalone-first, demand-driven** — see `ROADMAP.md` (phases R0–R8) and `re/analysis/AUDIT_2026-06-09.md`. R0–R5 are closed (re-baseline, C4 truth, menu, track/vehicle data, world render, drivable car); active work is **R6 (race loop)** — WS-R6 AI control chain — with R7 (full game systems) opened. The v1 percentage gates are retired; port what the active slice executes. Batch fanout pipelines are opportunistic only (first-party C1 = 0; the flat C2→C3 lane is mined out — round 11 planned 0 eligible; do not run a batch with predicted yield under ~30%).
 
 - `ROADMAP.md` — phases (0..6), Definition of Done at function/subsystem/project levels.
 - `re\CONFIDENCE.md` — C0..C4 rubric; the only gate for status changes.
@@ -298,10 +255,8 @@ Loaded automatically from `.claude\skills\`:
 - **re-classify** — promote/demote a function on the C0..C4 ladder; updates `hooks.csv`, `STUBS.md`, `UNCERTAINTIES.md`, `re/analysis/CHANGELOG.md` in one transaction. Refuses promotions that lack evidence.
 - **worktree** — git worktrees for isolated per-effort RE work; binds each worktree to a Ghidra pool slot.
 - **multi-session** — etiquette and conflict resolution when multiple Claude sessions run concurrently.
-- **discover-c1-batch** — generates a Ghidra-side parallel-fanout batch file (`batch_<letter>.txt`) of Claude Code prompts for C0→C1 discovery, C1→C2 mechanical promotion, DEFERRED drains, and struct-extraction sessions (default 6 sessions × 20 RVAs = ~120 RVAs per batch). Pairs with `ghidra-sweep`. Trigger: "make a ghidra batch" / "plan a c1 fanout" / "drain DEFERRED into a batch".
-- **ghidra-sweep** — drain all queued rows in `re/SCRIBE_QUEUE.md` into the master Ghidra project (the follow-up Opus session after a `discover-c1-batch` fanout). Trigger: "run the ghidra sweep" / "drain the scribe queue".
-- **promote-c3-batch** — generates a Frida-side parallel-fanout batch file (`c3_batch_<letter>.txt`) of Claude Code prompts for C2→C3 promotion sessions (default 6 sessions × 5 candidates = 30 promotions). Pairs with `frida-sweep`. Trigger: "make a c3 batch" / "plan a c3 fanout".
-- **frida-sweep** — drain all queued rows in `re/PROMOTION_QUEUE.md` (the follow-up Sonnet session after a `promote-c3-batch` fanout). Merges N worktree branches, resolves the three predictable text-file conflicts, rebuilds the canonical `.asi`, and runs the integration Frida diff against every promoted hook. Trigger: "run the frida sweep" / "merge the c3 batch" / "drain the promotion queue".
+- **discover-c1-batch** — Ghidra-side parallel-fanout batch generator (C0→C1 discovery, C1→C2 mechanical, DEFERRED drains, struct extraction). Pairs with `ghidra-sweep` (drains `re/SCRIBE_QUEUE.md` into the master project).
+- **promote-c3-batch** — Frida-side parallel-fanout batch generator for C2→C3 promotion sessions. Pairs with `frida-sweep` (drains `re/PROMOTION_QUEUE.md`: merges worktree branches, rebuilds the canonical `.asi`, integration-diffs every promoted hook).
 
 ## Prior art (read-only, vendored under `re\prior_art\`)
 
