@@ -199,6 +199,7 @@
 "Ai\PromoLoop_round1.cpp"
 "Ai\AiController.cpp"
 "Ai\AiTargeting.cpp"
+"Ai\AiSplineHooks.cpp"
 "Ai\AiStandalone.cpp"
 "Vehicle\PromoLoop_round2.cpp"
 "Render\PromoLoop_round3.cpp"
