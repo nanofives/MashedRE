@@ -1,0 +1,170 @@
+[
+ {
+  "file": "orig_grid.bmp",
+  "t": 0.0,
+  "heading": 1.57011,
+  "speed": 0
+ },
+ {
+  "file": "orig_donut_01.bmp",
+  "t": 1.13,
+  "heading": 0.03502,
+  "speed": 1098.071
+ },
+ {
+  "file": "orig_donut_02.bmp",
+  "t": 1.84,
+  "heading": -0.25618,
+  "speed": 4.172
+ },
+ {
+  "file": "orig_donut_03.bmp",
+  "t": 2.56,
+  "heading": -0.25363,
+  "speed": 3.649
+ },
+ {
+  "file": "orig_donut_04.bmp",
+  "t": 3.27,
+  "heading": -0.25114,
+  "speed": 15.162
+ },
+ {
+  "file": "orig_donut_05.bmp",
+  "t": 3.99,
+  "heading": -0.24868,
+  "speed": 15.311
+ },
+ {
+  "file": "orig_donut_06.bmp",
+  "t": 4.7,
+  "heading": -0.24595,
+  "speed": 4.086
+ },
+ {
+  "file": "orig_donut_07.bmp",
+  "t": 5.41,
+  "heading": -0.24314,
+  "speed": 4.25
+ },
+ {
+  "file": "orig_donut_08.bmp",
+  "t": 6.13,
+  "heading": -0.23993,
+  "speed": 15.853
+ },
+ {
+  "file": "orig_donut_09.bmp",
+  "t": 6.84,
+  "heading": -0.23675,
+  "speed": 4.617
+ },
+ {
+  "file": "orig_donut_10.bmp",
+  "t": 7.56,
+  "heading": -0.2327,
+  "speed": 16.271
+ },
+ {
+  "file": "orig_donut_11.bmp",
+  "t": 8.27,
+  "heading": -0.22929,
+  "speed": 5.104
+ },
+ {
+  "file": "orig_donut_12.bmp",
+  "t": 8.99,
+  "heading": -0.22516,
+  "speed": 5.25
+ },
+ {
+  "file": "orig_donut_13.bmp",
+  "t": 9.7,
+  "heading": -0.22106,
+  "speed": 5.501
+ },
+ {
+  "file": "orig_donut_14.bmp",
+  "t": 10.42,
+  "heading": -0.21715,
+  "speed": 5.693
+ },
+ {
+  "file": "orig_donut_15.bmp",
+  "t": 11.13,
+  "heading": -0.21278,
+  "speed": 5.928
+ },
+ {
+  "file": "orig_donut_16.bmp",
+  "t": 11.85,
+  "heading": -0.20822,
+  "speed": 17.632
+ },
+ {
+  "file": "orig_donut_17.bmp",
+  "t": 12.56,
+  "heading": -0.20514,
+  "speed": 17.84
+ },
+ {
+  "file": "orig_donut_18.bmp",
+  "t": 13.27,
+  "heading": -0.20042,
+  "speed": 6.578
+ },
+ {
+  "file": "orig_donut_19.bmp",
+  "t": 13.99,
+  "heading": -0.19305,
+  "speed": 18.415
+ },
+ {
+  "file": "orig_donut_20.bmp",
+  "t": 14.7,
+  "heading": -0.18696,
+  "speed": 7.432
+ },
+ {
+  "file": "orig_donut_21.bmp",
+  "t": 15.42,
+  "heading": -0.18372,
+  "speed": 7.56
+ },
+ {
+  "file": "orig_donut_22.bmp",
+  "t": 16.13,
+  "heading": -0.17979,
+  "speed": 7.728
+ },
+ {
+  "file": "orig_donut_23.bmp",
+  "t": 16.85,
+  "heading": -0.17538,
+  "speed": 19.558
+ },
+ {
+  "file": "orig_donut_24.bmp",
+  "t": 17.56,
+  "heading": -0.1708,
+  "speed": 19.79
+ },
+ {
+  "file": "orig_donut_25.bmp",
+  "t": 18.27,
+  "heading": -0.16701,
+  "speed": 8.339
+ },
+ {
+  "file": "orig_donut_26.bmp",
+  "t": 18.99,
+  "heading": -0.16357,
+  "speed": 8.515
+ },
+ {
+  "file": "orig_donut_27.bmp",
+  "t": 19.7,
+  "heading": -0.15893,
+  "speed": 8.705
+ }
+]

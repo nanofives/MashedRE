@@ -1020,6 +1020,19 @@ bool RunRaceDemoStep(int /*phase*/) {
         char path[160];
         std::snprintf(path, sizeof(path), "verify/race1/%s.bmp", tag);
         NavDemoLog(step, tag, DumpBackbufferBMP(path));
+        // WS-E lighting acceptance: log the player heading at capture time so
+        // standalone shots can be heading-matched against original-side shots.
+        // Standalone forward = {cos(yaw),0,sin(yaw)} (VehiclePhysicsRun adapter),
+        // original heading = atan2(fwd +0x9dc, fwd +0x9d4) — same convention, so
+        // wrapped car_yaw() compares directly with capture_relight_parity.py.
+        if (inrace && g_track.car_ready()) {
+            const float y = std::atan2(std::sin(g_track.car_yaw()),
+                                       std::cos(g_track.car_yaw()));
+            if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+                std::fprintf(lf, "RELIGHT_CAP tag=%s heading=%.5f\n", tag, y);
+                std::fclose(lf);
+            }
+        }
     };
     switch (step) {
         case 0:  // settle on Challenge Select for ~0.6s, snapshot it, then Enter
@@ -1044,13 +1057,23 @@ bool RunRaceDemoStep(int /*phase*/) {
                 static bool s_capt[2] = {};
                 if (s_demo_drive) {
                     // donut: heading sweeps 360 deg in place, car stays in the
-                    // open grid area; two captures at different headings.
+                    // open grid area. WS-E acceptance: capture when the wrapped
+                    // yaw first enters each target window — the targets are the
+                    // ORIGINAL-side shot headings (capture_relight_parity.py
+                    // shots.json: orig_donut_01 = 0.00428, orig_donut_14 =
+                    // -0.21650) so the pair is heading-matched, not time-matched.
                     g_keys[DIK_UP]   |= 0x80;            // held accel
                     g_keys[DIK_LEFT] |= 0x80;            // held steer
-                    if (el >= 8000  && !s_capt[0]) { s_capt[0] = true;
-                                                     cap("01_turned_a"); }
-                    if (el >= 10500 && !s_capt[1]) { s_capt[1] = true;
-                                                     cap("01_turned_b"); }
+                    const float yw = std::atan2(std::sin(g_track.car_yaw()),
+                                                std::cos(g_track.car_yaw()));
+                    if (el >= 3000 && !s_capt[0] &&
+                        std::fabs(yw - 0.00428f) < 0.05f) {
+                        s_capt[0] = true; cap("01_turned_a");
+                    }
+                    if (el >= 3000 && !s_capt[1] &&
+                        std::fabs(yw - (-0.21650f)) < 0.05f) {
+                        s_capt[1] = true; cap("01_turned_b");
+                    }
                 }
                 if (el >= 1800 && !s_cap[0]) { s_cap[0] = true; cap("01_grid");   }
                 if (el >= 4200 && !s_cap[1]) { s_cap[1] = true; cap("01_inrace_track"); }

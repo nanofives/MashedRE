@@ -46,6 +46,12 @@ const VehicleEntry kVehicles[] = {
     { "original/TOASTART/VEHICLES/Formula.piz",  "FORMULA"   },
     { "original/TOASTART/VEHICLES/Kustom.piz",   "KUSTOM"    },
     { "original/TOASTART/VEHICLES/Shorty.piz",   "SHORTY"    },
+    { "original/TOASTART/VEHICLES/Shuriken.piz", "SHURIKEN"  },
+    { "original/TOASTART/VEHICLES/Sputter.piz",  "SPUTTER"   },
+    // Stallion = the original's default player car (CreateFile log, WS-E
+    // lighting acceptance probe 2026-07-02: quick-launch car-0 opens
+    // VEHICLES\STALLION.PIZ).
+    { "original/TOASTART/VEHICLES/Stallion.piz", "STALLION"  },
 };
 const int kVehicleCount = static_cast<int>(sizeof(kVehicles) / sizeof(kVehicles[0]));
 

@@ -511,3 +511,15 @@ Port changes (`mashedmod/src/mashed_re/D3d9Render/TrackRenderer.{h,cpp}`, env
    Menus byte-stable (mean 0.01). Evidence: `verify/ws_e_lighting/rplight_ab/`.
    Pixel parity vs ORIGINAL captures remains open — tracked as the acceptance gate for
    this worktree's merge.
+4. **Acceptance gate CLOSED (2026-07-02, same worktree):** heading-matched
+   comparison vs the real `MASHED.exe` (Arctic TimeTrial, Stallion both sides,
+   Δheading ≤ 0.02 rad) — `verify/ws_e_lighting/orig_parity/{README.md,compare.py}`.
+   Roof band (like-for-like panel): original sweeps +8.6 R across headings
+   {+1.57, +0.04, −0.17}, relit tracks it end-to-end within 0.1 R (worst
+   per-heading gap 2.6 R), legacy bake flat (diverges to 9.6 R). Full-car grid
+   pair: relit Δ0.1 R vs original. Toggle localized to car pixels (imgdiff
+   0.8–1.4 mean). Full-frame diffs stay RED for non-lighting reasons (camera
+   pose at turned headings, HUD, mask population) — attributed in the README.
+   Ground truth found on the way: the original's quick-launch car-0 is
+   VEHICLES\STALLION.PIZ (CreateFile log) — added to the standalone catalogue
+   (MASHED_CAR_SEL=12) with Shuriken/Sputter.
