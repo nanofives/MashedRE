@@ -155,3 +155,13 @@ The single place that records every recurring execution failure: its **signature
   carry the mitigation). Then re-run `setup_mashed_compat.ps1` (non-elevated) to normalize
   HKCU, and boot. A non-elevated session CANNOT clear the HKLM entry ("Requested registry
   access is not allowed"). First seen 2026-07-01 (WS-R6-D session).
+- **DECISIVE no-elevation test (do this FIRST — from memory `project_dwm_mitigation_breaks_shim`):**
+  set `$env:__COMPAT_LAYER="RunAsInvoker WIN98RTM HighDpiAware EmulateHeap"` then launch
+  MASHED. This OVERRIDES the registry Layers merge (HKCU *and* HKLM) for that launch, no
+  admin needed. If it now boots → AppCompat/DWM was the cause (either always launch with that
+  env var, or clear the HKLM entry with elevation for a permanent fix). If it STILL crashes →
+  it is NOT AppCompat but the **GPU-driver wedge** (see that memory): ~15+ rapid MASHED
+  spawns/session thrash the UMD → identical 0xC0000005 pre-CreateDevice signature, and ONLY a
+  **reboot** clears it. The WS-R6-D session did FAR more than 15 spawns, so the GPU wedge is a
+  strong candidate here — try the `__COMPAT_LAYER` test before assuming the HKLM entry is the
+  culprit. scenario_launch.py does not set `__COMPAT_LAYER`; export it in the shell first.
