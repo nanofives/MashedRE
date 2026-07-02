@@ -195,3 +195,29 @@ Five new function IDs ready to write back to master:
 - `FUN_00479330` → `course_loader` (partial; subsystem=render/track)
 
 Scribe separately; do NOT scribe from this session.
+
+---
+
+## CORRECTION 2026-07-02 (session: RW lighting research follow-up, Mashed_pool0 read-only)
+
+The sub-type reading above (lines ~85-88, ~130: "1=AMBIENT, 2=DIRECTIONAL") is **wrong —
+reversed**. Re-decompile + disassembly of `FUN_00479330` (0x00479330) shows MASHED follows
+the standard RW enum: **1 = rpLIGHTDIRECTIONAL, 2 = rpLIGHTAMBIENT**. Three independent
+in-function witnesses:
+
+1. `PUSH 0x2` @ 0x00479951 → `RpLightCreate(2)` @ 0x0047996b → stored `course+0x105e0`,
+   color from `DAT_006132dc` = (0.25,0.25,0.25,1.0), **frameless** → ambient.
+2. `PUSH 0x1` @ 0x0047999e → `RpLightCreate(1)` @ 0x004799a0 → stored `course+0x105e4`,
+   color from `DAT_006132ec` = (0.75,0.75,0.75,1.0), **frame attached** (`FUN_004c0b30` @
+   0x004799c0, `FUN_004c0740` @ 0x004799cd) and rotated 60.0f (0x42700000) about (1,0,0)
+   via `FUN_004c1520` @ 0x004799e8 → directional.
+3. The `Ambient_RGB` override block (0x0047990b-0x0047994c) applies the course-description
+   floats (`param_3+0x76..0x78`) to the `course+0x105e0` light, creating it with
+   `RpLightCreate(2)` @ 0x00479917 if absent → subtype 2 receives Ambient_RGB.
+
+Additional fact missed above: **all three creation/extraction paths force the flags byte to
+0x01 (rpLIGHTLIGHTATOMICS only)** — `MOV byte [reg+2],0x1` @ 0x00479922, 0x00479987,
+0x004799bc, and in the DFF-extraction loop — overriding DFF stream flags (Arctic assets
+carry 0x3). Runtime lights therefore illuminate atomics only, never world geometry.
+
+Full write-up: `re/prior_art/notes/rw_lighting_research_2026-07.md` §5.3, §8.
