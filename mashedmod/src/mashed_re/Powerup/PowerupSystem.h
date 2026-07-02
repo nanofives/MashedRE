@@ -102,6 +102,19 @@ public:
     // (orig: contact FUN_004b4cd0 + FUN_004b4650/5080 + FX FUN_00465e80(0x17)).
     virtual void DropOilSlick(const float pos[3]) = 0;
 
+    // DEACT/teardown leaf — shared by every per-type DEACT fn (entry+0x10). The
+    // original DEACTs detach the held weapon's on-car attachment from the RW scene
+    // graph (RwFrameRemoveChild — GUN 0x4566f0 lock-indicator, MISSILE 0x455390,
+    // OIL 0x456e00, MORTAR 0x453630) and/or stop the active FX (R_FLAME 0x45a8b0
+    // -> FUN_004661a0(0x16)); DRUM/P_MINE/SHOTGUN/FLASH DEACTs only flip a pool
+    // state byte (the dropped hazard/projectile lives on independently — see
+    // powerup_effects_decomp.md §5). The spike has no persistent on-car weapon
+    // model, so the standalone teardown is a small dissipation puff at the firing
+    // car (the visible "weapon stowed/FX off" event) plus any per-type continuous
+    // emitter shutdown the host owns. `code` = the Code enum value; `pos` = the
+    // firing car's world position.
+    virtual void EffectEnd(int code, const float pos[3]) = 0;
+
     // Owner self-effects some types apply (boost-on-fire / brief shield).
     virtual void SfxByName(const char* name, float vol) = 0;
 

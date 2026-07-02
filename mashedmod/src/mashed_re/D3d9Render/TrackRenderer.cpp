@@ -2341,6 +2341,34 @@ public:
         m.life = 25.0f;
         t_->mines_.push_back(m);
     }
+    // DEACT/teardown leaf (orig per-type DEACTs entry+0x10: GUN 0x4566f0 lock-
+    // indicator RwFrameRemoveChild, MISSILE 0x455390, OIL 0x456e00, MORTAR 0x453630
+    // detach; R_FLAME 0x45a8b0 stop-FX FUN_004661a0(0x16); DRUM/P_MINE/SHOTGUN/FLASH
+    // flip a pool state byte). The spike has no on-car weapon attachment model, so
+    // the visible teardown is a brief dissipation puff at the firing car, coloured
+    // per weapon to match its FIRE FX; the dropped hazards/projectiles persist on
+    // their own life timers (matching the original — DEACT only detaches the on-car
+    // model, never the in-flight instances).
+    void EffectEnd(int code, const float pos[3]) override {
+        const float r = R();
+        float sp[3] = { pos[0], pos[1] + r * 0.02f, pos[2] };
+        std::uint32_t col; int n; float spd, sz;
+        switch (code) {
+            case Powerup::kGun:     col = 0xc0ffe080u; n = 8;  spd = r*0.04f; sz = r*0.008f; break;
+            case Powerup::kMissile: col = 0xc0ff8020u; n = 10; spd = r*0.05f; sz = r*0.010f; break;
+            case Powerup::kMortar:  col = 0xc0ff6020u; n = 10; spd = r*0.05f; sz = r*0.012f; break;
+            case Powerup::kRFlame:  col = 0xa0ff8020u; n = 14; spd = r*0.06f; sz = r*0.012f; break;
+            case Powerup::kShotgun: col = 0xc0ffe040u; n = 8;  spd = r*0.05f; sz = r*0.010f; break;
+            case Powerup::kFlash:   col = 0xa0ffffffu; n = 12; spd = r*0.07f; sz = r*0.010f; break;
+            case Powerup::kOil:     // detaches drip + drops the per-owner trail
+                t_->pu_oil_has_ = false;
+                col = 0xa0403020u; n = 6; spd = r*0.03f; sz = r*0.012f; break;
+            case Powerup::kDrum:
+            case Powerup::kPMine:
+            default:                col = 0xa0c0c0c0u; n = 6;  spd = r*0.04f; sz = r*0.010f; break;
+        }
+        t_->parts_.SpawnBurst(sp, n, col, spd, sz, 0.35f);
+    }
     void SfxByName(const char* name, float vol) override { Audio::SfxPlay(name, vol); }
     // OIL distance gate (orig: |pos-lastDrop|^2 >= _DAT_005cc56c, trail per owner).
     bool OilDropDue(int /*owner*/, const float pos[3]) override {
