@@ -71,6 +71,11 @@ void       Campaign_SetAutosave(bool on);
 // Course_Id (cracked from each track's COURSE.LUA).
 void       Campaign_TrackPizPath(int trackIdx, char* buf, int cap);
 int        Campaign_TrackCourseId(int trackIdx);
+// [D-11054] cup-tier launch gate: column `col` of the live cup/unlock table
+// row for `trackIdx` ((&DAT_007f0a40)[col + track*0xc] — the check the
+// original race-launch runs at FUN_0043dfd0 with col = FUN_004309b0()'s
+// mode->column map: mode 3->1, 4->2, 5->5, 6..9->3, 10->0xb, 2->0).
+bool       Campaign_TierUnlocked(int trackIdx, int col);
 
 }  // namespace Race
 }  // namespace mashed_re

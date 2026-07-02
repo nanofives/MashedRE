@@ -28,6 +28,7 @@
 #include <vector>
 
 #include "../Race/RaceCamera.h"
+#include "../Race/RuleEngine.h"
 #include "../Track/TrackData.h"
 #include "ParticleSystem.h"
 #include "PickupField.h"
@@ -435,6 +436,17 @@ public:
     int   round_no_ = 0;
     int   race_mode_ = 0;         // 0 = elimination, 1 = laps
     int   lap_target_ = 3;        // laps mode: laps to finish
+    // [D-11052] rule engine state (Race/RuleEngine). rule_ = DAT_007f0fd0;
+    // rulep_ holds the finish order / rule-10 timer / rule-5 collect counters;
+    // rule_engine_on_ latches MASHED_RULE_ENGINE (default ON, "0" reverts).
+    int   rule_ = 0;
+    bool  rule_engine_on_ = false;
+    bool  match_draw_ = false;
+    float rule10_bonus_ = 0.f;    // per-checkpoint time award (FUN_004046a0)
+    std::uint32_t rule10_hit_mask_ = 0;  // lap lines awarded this lap (FUN_004039f0
+                                         // resets the flags when floor(metric0) changes)
+    int   rule10_lap_seen_ = -1;
+    Race::RuleEngine::Persist rulep_;
     bool  human_drive_ = false;   // true: player car uses input (not auto-follow)
     float countdown_ = 0.f;       // >0 = pre-go freeze (seconds remaining)
     // F4: race clock (seconds since GO) + per-Split_Sector split times for the
@@ -495,6 +507,20 @@ public:
     }
     int   race_mode()  const { return race_mode_; }
     int   lap_target() const { return lap_target_; }
+    // ---- [WS-G rules debt, D-11052] full per-rule win-condition engine
+    // (Race/RuleEngine — FUN_00410d10 + FUN_00410510 + the FUN_004177b0
+    // metric/finish-order updater). SetRaceRule arms it with the real
+    // DAT_007f0fd0 rule when a race begins; MASHED_RULE_ENGINE=0 reverts to
+    // the two-objective collapse above. Rule 10 seeds its countdown from the
+    // course id (FUN_004046a0).
+    void  SetRaceRule(int rule);
+    int   race_rule() const { return rule_; }
+    float rule_timer() const { return rulep_.timer; }   // rule-10 HUD countdown
+    bool  match_draw() const { return match_draw_; }    // EvaluateResult == -1
+    // Rule-5 collectible feed (DAT_0063a5d0/DAT_0063a5d4 equivalents): the
+    // pickup/prop layer registers a total and reports collections.
+    void  SetCollectibles(int total) { rulep_.collectTotal = total; rulep_.collectDone = 0; }
+    void  OnCollect() { ++rulep_.collectDone; }
     // true: the player car is driven by input (a human races); false: the
     // exhibition auto-follow drives it. Set when a race begins.
     void  SetHumanDrive(bool h) { human_drive_ = h; }
