@@ -3,6 +3,9 @@
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
 Entries dated before 2026-06-15 are archived in `re/analysis/archive/CHANGELOG_pre20260615.md` (3644 lines). Newest entries first, below.
 
+2026-07-02  0x00417640  FUN_00417640  C2->C3  WS-R6 AbAiPost A/B: 7937 natural + 7937 forced + 7937 forced2 (3969 brake/3968 coast) calls, 0 mism; log/ai_ab_poststep_00417640_c3.log
+2026-07-02  0x00418560  FUN_00418560  C2->C3  WS-R6 AbAiVehStep A/B rules 0/4/8: 23555 calls, 0 confirmed mism; mode-8 arg bug caught+fixed (FUN_00417da0 takes 4 args); log/ai_ab_vehstep_00418560_rule*.log
+2026-07-02  0x00418860  FUN_00418860  C2->C3  WS-R6 AbAiTick A/B rule0 + mode4/rule7: 6530 calls, 0 confirmed mism; log/ai_ab_tick_00418860_*.log
 2026-07-02  0x004dc300  FUN_004dc300  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dc300.md
 2026-07-02  0x004dc370  FUN_004dc370  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dc370.md
 2026-07-02  0x004dc410  FUN_004dc410  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dc410.md

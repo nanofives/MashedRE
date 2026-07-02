@@ -15,9 +15,12 @@
 // the dev .asi (hook) target only; the standalone exe keeps the scaffold until
 // the full callee closure + tuning-const harvest land.
 //
-// Verification lane: scenario:'race' installed-hook canonical observation
-// (re/analysis/scenario_attach_lane.md) — the AI tick is a live-state machine,
-// not a run_diff isolatable leaf.
+// Verification: C3 via snapshot/restore A/B drivers (AiControllerAB.cpp,
+// AbAiPost/AbAiVehStep/AbAiTick) installed at the target RVAs in live scenario
+// races, 2026-07-02 — all three GREEN (0 confirmed mismatches across ~44k
+// paired calls; per-branch coverage counters in log/ai_ab_*.log). The rule-8
+// run caught + fixed a mode-8 dispatch bug (FUN_00417da0 takes the same 4 args
+// as FUN_00416250; the C1 plate's no-arg reading was wrong).
 //
 // Byte→axis map: re/analysis/ai_ctrl_byte_map_RESOLVED_2026-06-16.md
 //   [0]/[1]=steer  [3]=fire  [4]=accel  [5]=brake  [6]/[7]=scratch
@@ -65,7 +68,6 @@ inline int  call_0040e350() { return reinterpret_cast<fn_iv_t>(0x0040e350)(); } 
 inline void call_00413fe0() { reinterpret_cast<fn_vv_t>(0x00413fe0)(); } // AI state reset
 inline int  call_0040e4a0() { return reinterpret_cast<fn_iv_t>(0x0040e4a0)(); } // elapsed time
 inline void call_00417180(int v) { reinterpret_cast<fn_vi_t>(0x00417180)(v); } // bank switcher
-inline void call_00417da0() { reinterpret_cast<fn_vv_t>(0x00417da0)(); } // mode-8 step
 inline int  call_00426c00() { return reinterpret_cast<fn_iv_t>(0x00426c00)(); } // track index
 inline int  call_00407a40(int v) { return reinterpret_cast<fn_ii_t>(0x00407a40)(v); } // per-veh data
 inline float call_00452eb0() { return reinterpret_cast<fn_fv_t>(0x00452eb0)(); }
@@ -82,6 +84,15 @@ inline void call_00416a30(void* s, int v, std::uint8_t* c) {
 }
 inline void call_00416250(void* s, int v, std::uint8_t* c) {
     reinterpret_cast<fn_step_t>(0x00416250)(s, v, c, kCtrlStepArg4);
+}
+// Mode-8 variant takes the SAME 4 args: the original pushes
+// (puVar9, vehicle, ctrl, 0x42c80000) BEFORE the mode-8 branch at 0x00418776..
+// 0x0041877d and both call sites (0x00418780 FUN_00417da0 / 0x004187b7
+// FUN_00416250) consume them; FUN_00417da0 reads [ebp+8]/[ebp+0xc] at
+// 0x00417de0/0x00417db1. The C1 plate's no-arg reading was WRONG (caught
+// 2026-07-02 by the AbAiVehStep rule-8 A/B run: the no-arg call AV'd).
+inline void call_00417da0(void* s, int v, std::uint8_t* c) {
+    reinterpret_cast<fn_step_t>(0x00417da0)(s, v, c, kCtrlStepArg4);
 }
 inline void call_00417640(int v, std::uint8_t* c) {
     reinterpret_cast<void(__cdecl*)(int, std::uint8_t*)>(0x00417640)(v, c);
@@ -250,7 +261,7 @@ void __cdecl AiVehicleStep(int param_1)
     if (fd0 == 4 || fd0 == 9) {
         call_00416a30(puVar9, param_1, pbVar12);
     } else if (fd0 == 8) {
-        call_00417da0();
+        call_00417da0(puVar9, param_1, pbVar12);
         if (call_00426c00() == 0x21) {
             int dv = call_00407a40(param_1);
             if (dv < 0x44 && 0x37 < dv) {
