@@ -68,6 +68,17 @@ public:
     // Vertex layout shared by world/car/prop batches (public so file-scope
     // builder helpers can use it).
     struct V { float x, y, z; D3DCOLOR c; float u, v; };
+    // WS-E vehicle lighting (RpLight subset): per-vertex relight source,
+    // parallel to a batch's V array. Lit vertices (rpGEOMETRYLIGHT + normals)
+    // get their diffuse recomputed per frame in world space:
+    //   c = clamp(base + sunmul * max(0, N_model . L_model)),
+    // where base = prelight + ambient (float, pre-clamp) and sunmul = sun
+    // colour, both already multiplied by materialRGB/255 where the geometry
+    // carries MODULATEMATERIALCOLOR. L_model = R * L_world per drawn instance
+    // (exact: instance rotations are orthonormal). relit==0 vertices keep the
+    // baked V colour. Public so file-scope builder helpers can fill it.
+    struct RelitSrc { float n[3]; float base[3]; float sunmul[3];
+                      std::uint32_t relit; };
     // Current camera eye/target (for HUD/debug and the car-mode chase cam).
     void camera(float eye[3], float at[3]) const;
     float world_center(int axis) const { return center_[axis]; }
@@ -265,6 +276,20 @@ private:
     // dir (0.577,-0.577,-0.577), flags 0x3 (lights atomics+world). 0 = none.
     D3DCOLOR sun_color_  = 0;
     float    sun_dir_[3] = {0.f, 0.f, 0.f};
+    // WS-E vehicle lighting (RpLight subset, env MASHED_RPLIGHT, default ON;
+    // =0 reverts to the legacy load-time model-space bake). Faithful
+    // FUN_00479330 (0x00479330) light acquisition: float-precision colours
+    // (unquantized), default lights when COURSE.LUA has no Lights_Filename
+    // (DAT_006132dc ambient 0.25/0.25/0.25, DAT_006132ec directional
+    // 0.75/0.75/0.75 rotated 60 deg about +X => at=(0,-sin60,cos60)), DFF
+    // lights keyed on the subtype byte alone (no stream-flag filter,
+    // last-wins), Ambient_RGB override (DFF branch only, any component >
+    // DAT_005d757c = 0.0f). has_sun_dir_ gates the per-frame relight pass.
+    bool  rp_light_on_  = false;
+    bool  has_sun_dir_  = false;
+    float amb_f_[3]     = {0.f, 0.f, 0.f};   // ambient RGB, float
+    float sun_f_[3]     = {0.f, 0.f, 0.f};   // directional RGB, float
+    float sun_L_[3]     = {0.f, 0.f, 0.f};   // unit world dir TO the light
 public:
     D3DCOLOR fog_color() const { return fog_color_; }
 private:
@@ -272,11 +297,15 @@ private:
     // car model + state
     std::vector<std::vector<V>>     car_batches_;
     std::vector<IDirect3DTexture9*> car_textures_;
+    // WS-E vehicle lighting: relight sources parallel to car_batches_
+    // (empty inner vector = batch is not runtime-lit, draw static).
+    std::vector<std::vector<RelitSrc>> car_relit_;
     // AI livery variants (index 0 = livery 1 = AI car 0, etc.); full models
     // with wheels baked in — the spin overlay only applies to the player.
     struct CarVariant {
         std::vector<std::vector<V>>     batches;
         std::vector<IDirect3DTexture9*> textures;
+        std::vector<std::vector<RelitSrc>> relit;   // parallel to batches
     };
     std::vector<CarVariant> car_variants_;
     bool  car_ready_   = false;
@@ -293,6 +322,9 @@ private:
     // pivot-relative; spun around the lateral axle, front pair steered.
     struct CarWheel {
         std::vector<std::pair<std::uint32_t, std::vector<V>>> parts;
+        // WS-E vehicle lighting: relight sources parallel to parts (empty
+        // inner vector = part not runtime-lit).
+        std::vector<std::vector<RelitSrc>> parts_relit;
         float pivot[3] = {};
         float radius   = 0.3f;
         bool  front    = false;
@@ -301,6 +333,12 @@ private:
     std::vector<CarWheel> wheels_;
     float wheel_spin_ = 0.f;
     float steer_vis_  = 0.f;
+
+    // WS-E vehicle lighting: relit car/wheel/AI draw pass (replaces the
+    // static car section of Render when MASHED_RPLIGHT is on and the track
+    // has a directional light). Packs every relit batch of every instance
+    // into one dynamic-VB upload, then draws in the exact legacy order.
+    void RenderCarsRelit(IDirect3DDevice9* dev, const D3DMATRIX& worldm);
 
     // stretch: AI cars following the gate loop at fixed speed (share the
     // player's model batches; placeholder until the real AI port)

@@ -1035,6 +1035,23 @@ bool RunRaceDemoStep(int /*phase*/) {
             if (inrace) {
                 if (t_ms == 0) t_ms = GetTickCount();
                 const DWORD el = GetTickCount() - t_ms;
+                // WS-E vehicle lighting: MASHED_DEMO_DRIVE=1 holds accel with
+                // an oscillating steer so the player car actually TURNS —
+                // required to see world-fixed (vs body-fixed) sun shading.
+                // Pair with MASHED_DRIVE_HOLD; captures 01_turned_a/b below.
+                static const bool s_demo_drive =
+                    GetEnvironmentVariableA("MASHED_DEMO_DRIVE", nullptr, 0) > 0;
+                static bool s_capt[2] = {};
+                if (s_demo_drive) {
+                    // donut: heading sweeps 360 deg in place, car stays in the
+                    // open grid area; two captures at different headings.
+                    g_keys[DIK_UP]   |= 0x80;            // held accel
+                    g_keys[DIK_LEFT] |= 0x80;            // held steer
+                    if (el >= 8000  && !s_capt[0]) { s_capt[0] = true;
+                                                     cap("01_turned_a"); }
+                    if (el >= 10500 && !s_capt[1]) { s_capt[1] = true;
+                                                     cap("01_turned_b"); }
+                }
                 if (el >= 1800 && !s_cap[0]) { s_cap[0] = true; cap("01_grid");   }
                 if (el >= 4200 && !s_cap[1]) { s_cap[1] = true; cap("01_inrace_track"); }
                 if (el >= 6600 && !s_cap[2]) {

@@ -235,6 +235,114 @@ inline D3DCOLOR LightAtomicVertex(const AtomicLight& lt, bool lit, bool modmat,
     return D3DCOLOR_ARGB(a, cl(r), cl(g), cl(b));
 }
 
+// WS-E vehicle lighting (RpLight subset). Toggle: MASHED_RPLIGHT (default ON;
+// =0 reverts to the legacy load-time model-space bake + quantized colours).
+bool RpLightEnabled() {
+    static const bool v = [] {
+        const char* e = std::getenv("MASHED_RPLIGHT");
+        return !(e && e[0] == '0' && e[1] == '\0');
+    }();
+    return v;
+}
+
+// Float-precision AtomicLight (RpLight colours are RwRGBAReal floats; the
+// legacy MakeAtomicLight quantizes them through D3DCOLOR first). `L` is the
+// precomputed unit world direction TO the light (= -lightDir).
+inline AtomicLight MakeAtomicLightF(const float amb[3], const float sun[3],
+                                    bool has_sun, const float L[3]) {
+    AtomicLight lt;
+    lt.amb[0] = amb[0]; lt.amb[1] = amb[1]; lt.amb[2] = amb[2];
+    lt.sun[0] = sun[0]; lt.sun[1] = sun[1]; lt.sun[2] = sun[2];
+    lt.L[0] = L[0]; lt.L[1] = L[1]; lt.L[2] = L[2];
+    lt.has_sun = has_sun &&
+        (L[0]*L[0] + L[1]*L[1] + L[2]*L[2]) > 0.5f;   // unit or zero
+    return lt;
+}
+
+// Static part of LightAtomicVertex for the per-frame relit path: base =
+// prelight + ambient (pre-clamp floats, x material where MODULATE). The
+// directional term is added per frame by RelightBatch. Only meaningful for
+// lit-with-normals vertices (callers bake everything else via
+// LightAtomicVertex, which already never adds sun to them).
+inline void LightAtomicVertexBase(const AtomicLight& lt, bool modmat,
+                                  const std::uint8_t mat[4],
+                                  const std::uint32_t* prelit,
+                                  float out_base[3], std::uint8_t* out_a) {
+    float r = 0.f, g = 0.f, b = 0.f;
+    std::uint8_t a = 255;
+    if (prelit) {
+        const std::uint32_t p = *prelit;            // RW byte order: R,G,B,A
+        r = ( p        & 0xFF) / 255.f;
+        g = ((p >>  8) & 0xFF) / 255.f;
+        b = ((p >> 16) & 0xFF) / 255.f;
+        a = static_cast<std::uint8_t>(p >> 24);
+    }
+    r += lt.amb[0]; g += lt.amb[1]; b += lt.amb[2];
+    if (modmat) {
+        r *= mat[0]/255.f; g *= mat[1]/255.f; b *= mat[2]/255.f;
+    }
+    out_base[0] = r; out_base[1] = g; out_base[2] = b;
+    *out_a = a;
+}
+
+inline D3DCOLOR PackClamped(const float rgb[3], std::uint8_t a) {
+    auto cl = [](float f) -> std::uint8_t {
+        int v = static_cast<int>(f*255.f + 0.5f);
+        return static_cast<std::uint8_t>(v < 0 ? 0 : v > 255 ? 255 : v);
+    };
+    return D3DCOLOR_ARGB(a, cl(rgb[0]), cl(rgb[1]), cl(rgb[2]));
+}
+
+// Build one relit vertex source (normalized model-space normal + pre-clamp
+// base + material-premultiplied sun colour) and return the packed base colour
+// for the static V (what the vertex shows when the sun term is zero).
+inline D3DCOLOR MakeRelitVert(const AtomicLight& lt, bool modmat,
+                              const std::uint8_t mat[4],
+                              const std::uint32_t* pl, const float nrm[3],
+                              TrackRenderer::RelitSrc* out) {
+    float nx = nrm[0], ny = nrm[1], nz = nrm[2];
+    const float n2 = nx*nx + ny*ny + nz*nz;
+    if (n2 > 1e-12f) { const float inv = 1.f/std::sqrt(n2);
+                       nx*=inv; ny*=inv; nz*=inv; }
+    out->n[0] = nx; out->n[1] = ny; out->n[2] = nz;
+    std::uint8_t a = 255;
+    LightAtomicVertexBase(lt, modmat, mat, pl, out->base, &a);
+    out->sunmul[0] = lt.sun[0]; out->sunmul[1] = lt.sun[1];
+    out->sunmul[2] = lt.sun[2];
+    if (modmat) {
+        out->sunmul[0] *= mat[0]/255.f;
+        out->sunmul[1] *= mat[1]/255.f;
+        out->sunmul[2] *= mat[2]/255.f;
+    }
+    out->relit = 1;
+    return PackClamped(out->base, a);
+}
+
+// Per-frame relight kernel: append `baked` to `dst` and overwrite the diffuse
+// of relit vertices with base + sunmul * max(0, N . Lm). Lm = unit TO-light
+// direction in the instance's MODEL space (n . Lm == n_world . L_world for
+// the orthonormal instance rotations used by the car/wheel draws).
+inline void RelightAppend(std::vector<TrackRenderer::V>& dst,
+                          const std::vector<TrackRenderer::V>& baked,
+                          const std::vector<TrackRenderer::RelitSrc>& src,
+                          const float Lm[3]) {
+    const std::size_t at = dst.size();
+    dst.insert(dst.end(), baked.begin(), baked.end());
+    const std::size_t n = src.size() < baked.size() ? src.size()
+                                                    : baked.size();
+    for (std::size_t i = 0; i < n; ++i) {
+        const auto& s = src[i];
+        if (!s.relit) continue;
+        float ndl = s.n[0]*Lm[0] + s.n[1]*Lm[1] + s.n[2]*Lm[2];
+        if (ndl < 0.f) ndl = 0.f;
+        const float rgb[3] = { s.base[0] + s.sunmul[0]*ndl,
+                               s.base[1] + s.sunmul[1]*ndl,
+                               s.base[2] + s.sunmul[2]*ndl };
+        TrackRenderer::V& v = dst[at + i];
+        v.c = PackClamped(rgb, static_cast<std::uint8_t>(v.c >> 24));
+    }
+}
+
 // Expand a Txd::Texture base mip (PAL4 / PAL8 / ARGB8888) into a fresh
 // A8R8G8B8 D3D9 texture. TXD palettes are RGBA byte order (per TxdDecoder's
 // PAL8 path in QuadRenderer); D3D wants BGRA dwords.
@@ -290,12 +398,19 @@ IDirect3DTexture9* MakeTexture(IDirect3DDevice9* dev,
 // COLOR), prelit batches get prelight (+ambient), others fall back to white.
 // nullptr reproduces the legacy unlit behaviour (prelight as-is, else white) —
 // used for the frontend chrome models that are not in a lit track scene.
+// WS-E vehicle lighting: `relit_out` (optional, parallel to *batches) makes
+// lit-with-normals vertices bake WITHOUT the directional term (base =
+// prelight+ambient) and emits a RelitSrc per vertex so the sun is applied per
+// frame in world space (RelightAppend). Non-lit vertices bake exactly as
+// before and get relit=0.
 void BuildDffBatches(IDirect3DDevice9* dev,
                      const mashed_re::Track::DffModel& model,
                      const std::vector<mashed_re::Txd::Dictionary>& dicts,
                      std::vector<std::vector<TrackRenderer::V>>* batches,
                      std::vector<IDirect3DTexture9*>* textures,
-                     const AtomicLight* lt = nullptr) {
+                     const AtomicLight* lt = nullptr,
+                     std::vector<std::vector<TrackRenderer::RelitSrc>>* relit_out
+                         = nullptr) {
     using V = TrackRenderer::V;
     textures->assign(model.materials.size(), nullptr);
     for (std::size_t mi = 0; mi < model.materials.size(); ++mi) {
@@ -309,10 +424,16 @@ void BuildDffBatches(IDirect3DDevice9* dev,
                 }
     }
     batches->assign(model.materials.size(), {});
+    if (relit_out) relit_out->assign(model.materials.size(), {});
     for (const auto& b : model.batches) {
         auto& out = (*batches)[b.material];
         const std::uint8_t* matRGBA = model.materials[b.material].rgba;
         const bool has_n  = !b.normals.empty();
+        // per-frame relighting applies to lit+normal-bearing vertices when a
+        // directional light exists; everything else keeps the static bake.
+        const bool relight = relit_out && lt && lt->has_sun && b.lit && has_n;
+        std::vector<TrackRenderer::RelitSrc>* rout =
+            relit_out ? &(*relit_out)[b.material] : nullptr;
         const std::size_t n = b.tris.size();
         for (std::size_t i = 0; i < n; ++i) {
             const std::uint16_t vi = b.tris[i];
@@ -321,7 +442,17 @@ void BuildDffBatches(IDirect3DDevice9* dev,
             v.y = b.verts[vi * 3 + 1];
             v.z = b.verts[vi * 3 + 2];
             const std::uint32_t* pl = b.prelit.empty() ? nullptr : &b.prelit[vi];
-            if (lt) {
+            if (relight) {
+                TrackRenderer::RelitSrc s = {};
+                v.c = MakeRelitVert(*lt, b.modulate_mat, matRGBA, pl,
+                                    &b.normals[vi * 3], &s);
+                rout->push_back(s);
+            } else if (rout) {
+                rout->push_back(TrackRenderer::RelitSrc{});
+            }
+            if (relight) {
+                // colour already set above (base, sun applied per frame)
+            } else if (lt) {
                 const float* nrm = has_n ? &b.normals[vi * 3] : nullptr;
                 v.c = LightAtomicVertex(*lt, b.lit, b.modulate_mat, matRGBA,
                                         pl, nrm);
@@ -337,6 +468,15 @@ void BuildDffBatches(IDirect3DDevice9* dev,
             v.u = b.uvs[vi * 2 + 0];
             v.v = b.uvs[vi * 2 + 1];
             out.push_back(v);
+        }
+    }
+    if (relit_out) {
+        // drop all-static parallel arrays so those batches stay on the
+        // cached-VB path (empty inner vector == "not runtime-lit")
+        for (auto& r : *relit_out) {
+            bool any = false;
+            for (const auto& s : r) if (s.relit) { any = true; break; }
+            if (!any) r.clear();
         }
     }
 }
@@ -481,6 +621,103 @@ bool ParseLightsDffDirectional(const std::uint8_t* d, std::uint32_t len,
         o = body + sz;
     }
     return false;
+}
+
+// WS-E vehicle lighting: faithful FUN_00479330 (0x00479330) DFF-branch light
+// extraction. The original collects EVERY clump light (RpClumpForAllLights
+// via FUN_004b4010; callback LAB_004b3f20 is 13 instructions with NO filter —
+// code units read 2026-07-02, Mashed_pool14), keys on the light's subtype
+// byte alone (light+0x01: 1=DIRECTIONAL, 2=AMBIENT — three in-function
+// witnesses, see re/prior_art/notes/rw_lighting_research_2026-07.md §8.1),
+// applies NO stream-flag test, and stores last-wins per subtype (plain scalar
+// stores into course+0x105e0/+0x105e4). In the stream the subtype is
+// typeAndFlags>>16. Directional direction = the light frame's parent-chain
+// at-vector (same layout walk as ParseLightsDffDirectional above). Colours
+// returned as floats (RwRGBAReal precision — the original never quantizes).
+void ParseLightsDffFaithful(const std::uint8_t* d, std::uint32_t len,
+                            float out_amb[3], bool* has_amb,
+                            float out_sun[3], float out_dir[3],
+                            bool* has_sun) {
+    *has_amb = false;
+    *has_sun = false;
+    if (!d || len < 24) return;
+    auto u32 = [&](std::size_t o) -> std::uint32_t {
+        std::uint32_t v; std::memcpy(&v, d + o, 4); return v;
+    };
+    auto i32 = [&](std::size_t o) -> std::int32_t {
+        std::int32_t v; std::memcpy(&v, d + o, 4); return v;
+    };
+    auto f32 = [&](std::size_t o) -> float {
+        float v; std::memcpy(&v, d + o, 4); return v;
+    };
+    if (u32(0) != 0x10) return;                        // not a CLUMP
+    std::size_t end = 12 + u32(4);
+    if (end > len) end = len;
+    if (12 + 12 > end || u32(12) != 0x01) return;      // CLUMP STRUCT
+    std::size_t o = 12 + 12 + u32(16);
+    struct Fr { float rot[9]; std::int32_t parent; };
+    std::vector<Fr> frames;
+    if (o + 12 <= end && u32(o) == 0x0E) {             // FRAMELIST
+        const std::size_t flb = o + 12, flsz = u32(o + 4);
+        if (flb + 12 <= end && u32(flb) == 0x01) {
+            const std::size_t fstb = flb + 12;
+            const std::int32_t nf = i32(fstb);
+            std::size_t q = fstb + 4;
+            for (std::int32_t i = 0; i < nf && q + 0x38 <= end; ++i) {
+                Fr f;
+                for (int k = 0; k < 9; ++k) f.rot[k] = f32(q + k * 4u);
+                f.parent = i32(q + 48);
+                frames.push_back(f);
+                q += 0x38;
+            }
+        }
+        o = flb + flsz;
+    }
+    std::int32_t pending_frame = -1;
+    for (; o + 12 <= end; ) {
+        const std::uint32_t t = u32(o), sz = u32(o + 4);
+        const std::size_t body = o + 12;
+        if (t == 0x01 && sz == 4) {
+            pending_frame = i32(body);
+        } else if (t == 0x12 && body + 12 <= end && u32(body) == 0x01) {
+            const std::size_t sb = body + 12;
+            if (sb + 24 <= end) {
+                const float r = f32(sb + 4), g = f32(sb + 8), b = f32(sb + 12);
+                const std::uint32_t type = u32(sb + 20) >> 16;
+                if (type == 2) {                       // AMBIENT — last wins
+                    out_amb[0] = r; out_amb[1] = g; out_amb[2] = b;
+                    *has_amb = true;
+                } else if (type == 1) {                // DIRECTIONAL — last wins
+                    out_sun[0] = r; out_sun[1] = g; out_sun[2] = b;
+                    // frame's world at-vector (parent-chain composed); a
+                    // frameless stream light keeps the previous/zero dir —
+                    // shipped LIGHTS.DFF directionals all carry a frame.
+                    if (pending_frame >= 0 &&
+                        pending_frame < static_cast<std::int32_t>(frames.size())) {
+                        float v[3] = {frames[pending_frame].rot[6],
+                                      frames[pending_frame].rot[7],
+                                      frames[pending_frame].rot[8]};
+                        for (int fi = pending_frame; fi >= 0; ) {
+                            const float* m = frames[fi].rot;
+                            const float x = m[0]*v[0] + m[3]*v[1] + m[6]*v[2];
+                            const float y = m[1]*v[0] + m[4]*v[1] + m[7]*v[2];
+                            const float z = m[2]*v[0] + m[5]*v[1] + m[8]*v[2];
+                            const std::int32_t pa = frames[fi].parent;
+                            if (pa == fi) break;        // guard
+                            if (pa < 0) { v[0]=x; v[1]=y; v[2]=z; break; }
+                            v[0]=x; v[1]=y; v[2]=z; fi = pa;
+                        }
+                        const float l = std::sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]);
+                        if (l > 1e-6f) { v[0]/=l; v[1]/=l; v[2]/=l; }
+                        out_dir[0]=v[0]; out_dir[1]=v[1]; out_dir[2]=v[2];
+                    }
+                    *has_sun = true;
+                }
+            }
+            pending_frame = -1;
+        }
+        o = body + sz;
+    }
 }
 
 void MatIdentity(D3DMATRIX* m) {
@@ -671,12 +908,28 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         break;
     }
 
-    // WS-E lighting: parse the track's RpLight ambient term (COURSE.LUA
+    // WS-E lighting: parse the track's RpLight set (COURSE.LUA
     // Lights_Filename -> LIGHTS.DFF) BEFORE building the world batches, so it
     // can be baked into the prelit vertex colours below. The world BSP carries
     // no vertex normals, so RW applies only the (directionless) ambient to the
     // static world — see ParseLightsDffAmbient.
+    //
+    // WS-E vehicle lighting (MASHED_RPLIGHT, default ON): faithful
+    // FUN_00479330 (0x00479330) acquisition — float colours, no stream-flag
+    // filter, last-wins per subtype, default lights when no Lights_Filename,
+    // Ambient_RGB override in the DFF branch only. =0 reverts to the legacy
+    // quantized first/summed extraction below.
+    rp_light_on_ = RpLightEnabled();
     amb_world_ = 0;
+    sun_color_ = 0;
+    sun_dir_[0] = sun_dir_[1] = sun_dir_[2] = 0.f;
+    has_sun_dir_ = false;
+    amb_f_[0] = amb_f_[1] = amb_f_[2] = 0.f;
+    sun_f_[0] = sun_f_[1] = sun_f_[2] = 0.f;
+    sun_L_[0] = sun_L_[1] = sun_L_[2] = 0.f;
+    char  lights_fn[64] = {};
+    float amb_cfg[3] = {0.f, 0.f, 0.f};   // COURSE.LUA Ambient_RGB(r,g,b)
+    bool  has_amb_cfg = false;
     for (std::uint32_t i = 0; i < piz.count(); ++i) {
         const char* n = piz.entry(i).name;
         const std::size_t ln = std::strlen(n);
@@ -686,32 +939,90 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         std::uint32_t cl = 0;
         const std::uint8_t* cb = piz.blob(i, &cl);
         if (!cb) break;
-        char lf[64] = {};
         const char* cs = reinterpret_cast<const char*>(cb);
-        for (std::uint32_t pos = 0; pos < cl && !lf[0]; ) {
+        for (std::uint32_t pos = 0; pos < cl; ) {
             std::uint32_t eol = pos;
             while (eol < cl && cs[eol] != '\n') ++eol;
             std::string line(cs + pos, eol - pos);
             pos = eol + 1;
             const std::size_t cmt = line.find("--");
             if (cmt != std::string::npos) line.resize(cmt);
-            std::sscanf(line.c_str(), " Lights_Filename( \"%63[^\"]\" )", lf) == 1 ||
-            std::sscanf(line.c_str(), " Lights_Filename(\"%63[^\"]\")", lf);
+            if (!lights_fn[0]) {
+                std::sscanf(line.c_str(), " Lights_Filename( \"%63[^\"]\" )",
+                            lights_fn) == 1 ||
+                std::sscanf(line.c_str(), " Lights_Filename(\"%63[^\"]\")",
+                            lights_fn);
+            }
+            // Ambient_RGB -> handler 0x0047aad0 -> course-description floats
+            // +0x76..0x78 (config-table entry 0x00440d10). No shipped course
+            // sets it; call syntax follows the other config calls.
+            if (!has_amb_cfg &&
+                std::sscanf(line.c_str(), " Ambient_RGB( %f , %f , %f",
+                            &amb_cfg[0], &amb_cfg[1], &amb_cfg[2]) == 3)
+                has_amb_cfg = true;
         }
-        if (lf[0])
-            for (std::uint32_t j = 0; j < piz.count(); ++j)
-                if (_stricmp(piz.entry(j).name, lf) == 0) {
-                    std::uint32_t dl = 0;
-                    const std::uint8_t* db = piz.blob(j, &dl);
-                    amb_world_ = ParseLightsDffAmbient(db, dl);
-                    // WS-E s2: also extract the directional sun (colour + dir)
-                    // for the atomic (prop/car) N·L term.
-                    sun_color_ = 0;
-                    sun_dir_[0] = sun_dir_[1] = sun_dir_[2] = 0.f;
-                    ParseLightsDffDirectional(db, dl, &sun_color_, sun_dir_);
-                    break;
-                }
         break;
+    }
+    const std::uint8_t* lights_db = nullptr;
+    std::uint32_t       lights_dl = 0;
+    if (lights_fn[0])
+        for (std::uint32_t j = 0; j < piz.count(); ++j)
+            if (_stricmp(piz.entry(j).name, lights_fn) == 0) {
+                lights_db = piz.blob(j, &lights_dl);
+                break;
+            }
+    if (!rp_light_on_) {
+        // legacy path (pre-RpLight-subset behaviour, byte-identical)
+        if (lights_db) {
+            amb_world_ = ParseLightsDffAmbient(lights_db, lights_dl);
+            ParseLightsDffDirectional(lights_db, lights_dl, &sun_color_,
+                                      sun_dir_);
+        }
+    } else if (!lights_db) {
+        // FUN_00479330 default branch (course_block[0x2640] empty,
+        // LAB_00479951): frameless ambient from DAT_006132dc =
+        // (0.25,0.25,0.25,1.0) + directional from DAT_006132ec =
+        // (0.75,0.75,0.75,1.0) on a fresh frame rotated 60.0f (0x42700000)
+        // about (1,0,0), combine 0 (replace). at-row of the axis-angle matrix
+        // (FUN_004c4d20 deg->rad 0x3c8efa35, FUN_004c4a50 element formulas):
+        // (0, -sin60, cos60).
+        amb_f_[0] = amb_f_[1] = amb_f_[2] = 0.25f;
+        sun_f_[0] = sun_f_[1] = sun_f_[2] = 0.75f;
+        sun_dir_[0] = 0.f;
+        sun_dir_[1] = -0.8660254f;   // -sin(60 deg)
+        sun_dir_[2] = 0.5f;          //  cos(60 deg)
+        has_sun_dir_ = true;
+    } else {
+        // FUN_00479330 DFF branch: every clump light, subtype byte only,
+        // last-wins; then the Ambient_RGB override (this branch only) when
+        // any component exceeds DAT_005d757c = 0.0f, replacing/creating the
+        // ambient light's colour (FUN_004e4900 @ 0x00479944).
+        bool has_amb = false;
+        ParseLightsDffFaithful(lights_db, lights_dl, amb_f_, &has_amb,
+                               sun_f_, sun_dir_, &has_sun_dir_);
+        if (has_amb_cfg &&
+            (amb_cfg[0] > 0.f || amb_cfg[1] > 0.f || amb_cfg[2] > 0.f)) {
+            amb_f_[0] = amb_cfg[0]; amb_f_[1] = amb_cfg[1];
+            amb_f_[2] = amb_cfg[2];
+        }
+    }
+    if (rp_light_on_) {
+        // packed mirrors for the legacy consumers (world prelit fill, logs)
+        auto cl255 = [](float f) -> int {
+            int v = static_cast<int>(f * 255.f + 0.5f);
+            return v < 0 ? 0 : v > 255 ? 255 : v;
+        };
+        amb_world_ = D3DCOLOR_XRGB(cl255(amb_f_[0]), cl255(amb_f_[1]),
+                                   cl255(amb_f_[2]));
+        if (has_sun_dir_) {
+            sun_color_ = D3DCOLOR_XRGB(cl255(sun_f_[0]), cl255(sun_f_[1]),
+                                       cl255(sun_f_[2]));
+            float lx = -sun_dir_[0], ly = -sun_dir_[1], lz = -sun_dir_[2];
+            const float ll = std::sqrt(lx*lx + ly*ly + lz*lz);
+            if (ll > 1e-6f) { sun_L_[0] = lx/ll; sun_L_[1] = ly/ll;
+                              sun_L_[2] = lz/ll; }
+            else            { has_sun_dir_ = false; }
+        }
     }
     if (log)
         std::fprintf(log,
@@ -856,8 +1167,9 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         // WS-E s2: the track's atomic light set (ambient + directional sun),
         // applied to prop atomics by the RW lighting model. The sky dome passes
         // nullptr (it is a prelit camera-locked backdrop, not a lit atomic).
-        const AtomicLight track_light =
-            MakeAtomicLight(amb_world_, sun_color_, sun_dir_);
+        const AtomicLight track_light = rp_light_on_
+            ? MakeAtomicLightF(amb_f_, sun_f_, has_sun_dir_, sun_L_)
+            : MakeAtomicLight(amb_world_, sun_color_, sun_dir_);
         auto load_prop = [&](const char* dff_name, Prop* p,
                              const AtomicLight* lt = nullptr) -> bool {
             std::uint32_t dl = 0;
@@ -1327,8 +1639,9 @@ void TrackRenderer::LoadCopters(IDirect3DDevice9* dev, Piz::Archive& piz,
         CopterModel cm;
         // WS-E s2: copters are lit atomics (normals + rpGEOMETRYLIGHT) — light
         // them with the track's directional sun + ambient like the props/cars.
-        const AtomicLight copter_light =
-            MakeAtomicLight(amb_world_, sun_color_, sun_dir_);
+        const AtomicLight copter_light = rp_light_on_
+            ? MakeAtomicLightF(amb_f_, sun_f_, has_sun_dir_, sun_L_)
+            : MakeAtomicLight(amb_world_, sun_color_, sun_dir_);
         BuildDffBatches(dev, m, dicts, &cm.batches, &cm.textures, &copter_light);
         copter_models_.push_back(std::move(cm));
         model_names.emplace_back(want);
@@ -1561,10 +1874,17 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
     BuildDffBatches(dev, model, dicts, &all_batches, &car_textures_);
     // WS-E s2: the track's atomic light set drives the car's directional shading
     // (RW lights the body panels — normals + rpGEOMETRYLIGHT — per LIGHTS.DFF).
-    const AtomicLight car_light =
-        MakeAtomicLight(amb_world_, sun_color_, sun_dir_);
+    // WS-E vehicle lighting: under MASHED_RPLIGHT the directional term is NOT
+    // baked here — lit vertices get RelitSrc entries and are relit per frame
+    // in world space (RW lights atomics by their current LTM, not once at
+    // load; the legacy bake froze the shading to the body).
+    const AtomicLight car_light = rp_light_on_
+        ? MakeAtomicLightF(amb_f_, sun_f_, has_sun_dir_, sun_L_)
+        : MakeAtomicLight(amb_world_, sun_color_, sun_dir_);
+    const bool car_relight = rp_light_on_ && car_light.has_sun;
     // body batches exclude wheel atomics; wheels collected pivot-relative
     car_batches_.assign(model.materials.size(), {});
+    car_relit_.assign(model.materials.size(), {});
     wheels_.clear();
     if (nwheels == 4) {
         for (int q = 0; q < 4; ++q) {
@@ -1590,9 +1910,16 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
         // colour where MODULATEMATERIALCOLOR — e.g. livery panels).
         const std::uint8_t* matRGBA = model.materials[b.material].rgba;
         const bool has_n = !b.normals.empty();
+        // WS-E vehicle lighting: lit batches get per-vertex relight sources
+        // (sun applied per frame in world space); everything else bakes as
+        // before. `rs` stays in lockstep with `vs` whenever relighting is on
+        // so merged per-material arrays keep parallel indexing.
+        const bool relit_b = car_relight && b.lit && has_n;
         std::vector<V> vs;
+        std::vector<RelitSrc> rs;
         const std::size_t n = b.tris.size();
         vs.reserve(n);
+        if (car_relight) rs.reserve(n);
         for (std::size_t i = 0; i < n; ++i) {
             const std::uint16_t vi = b.tris[i];
             V v;
@@ -1601,11 +1928,26 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
             v.z = b.verts[vi * 3 + 2];
             const std::uint32_t* pl = b.prelit.empty() ? nullptr : &b.prelit[vi];
             const float* nrm = has_n ? &b.normals[vi * 3] : nullptr;
-            v.c = LightAtomicVertex(car_light, b.lit, b.modulate_mat, matRGBA,
-                                    pl, nrm);
+            if (relit_b) {
+                RelitSrc s = {};
+                v.c = MakeRelitVert(car_light, b.modulate_mat, matRGBA, pl,
+                                    nrm, &s);
+                rs.push_back(s);
+            } else {
+                if (car_relight) rs.push_back(RelitSrc{});
+                v.c = LightAtomicVertex(car_light, b.lit, b.modulate_mat,
+                                        matRGBA, pl, nrm);
+            }
             v.u = b.uvs[vi * 2 + 0];
             v.v = b.uvs[vi * 2 + 1];
             vs.push_back(v);
+        }
+        if (!relit_b && car_relight && !is_wheel &&
+            car_relit_[b.material].empty()) {
+            // no lit vertex and the material has no relit content so far —
+            // stay on the static path (the append below backfills zeros if a
+            // later batch brings relit content to this material).
+            rs.clear();
         }
         if (is_wheel) {
             for (auto& w : wheels_) {
@@ -1617,12 +1959,22 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
                         v.x -= w.pivot[0]; v.y -= w.pivot[1]; v.z -= w.pivot[2];
                     }
                     w.parts.emplace_back(b.material, std::move(vs));
+                    w.parts_relit.push_back(relit_b ? std::move(rs)
+                                                    : std::vector<RelitSrc>{});
                     break;
                 }
             }
         } else {
             auto& out = car_batches_[b.material];
+            auto& rout = car_relit_[b.material];
+            if (!rs.empty() && rout.empty() && !out.empty()) {
+                // material had earlier static-only batches; backfill zeros to
+                // restore parallel indexing before appending relit content.
+                rout.resize(out.size());
+            }
             out.insert(out.end(), vs.begin(), vs.end());
+            if (!rs.empty())
+                rout.insert(rout.end(), rs.begin(), rs.end());
         }
     }
     car_ground_off_ = -model.bbox[1];   // lift so model min-Y sits on ground
@@ -1793,8 +2145,11 @@ bool TrackRenderer::LoadCarLiveries(IDirect3DDevice9* dev,
     car_variants_.resize(3);
     // WS-E s2: AI-car liveries are lit by the same track atomic light as the
     // player car (directional sun + ambient on their normal-bearing body panels).
-    const AtomicLight car_light =
-        MakeAtomicLight(amb_world_, sun_color_, sun_dir_);
+    // WS-E vehicle lighting: relight sources emitted per variant (per-frame
+    // world-space sun on the AI bodies) when MASHED_RPLIGHT is on.
+    const AtomicLight car_light = rp_light_on_
+        ? MakeAtomicLightF(amb_f_, sun_f_, has_sun_dir_, sun_L_)
+        : MakeAtomicLight(amb_world_, sun_color_, sun_dir_);
     int loaded = 0;
     for (int li = 1; li <= 3; ++li) {
         char want[64];
@@ -1811,7 +2166,8 @@ bool TrackRenderer::LoadCarLiveries(IDirect3DDevice9* dev,
         Track::DffModel model;
         if (!model.Parse(dff, dl)) continue;
         CarVariant& v = car_variants_[static_cast<std::size_t>(li - 1)];
-        BuildDffBatches(dev, model, dicts, &v.batches, &v.textures, &car_light);
+        BuildDffBatches(dev, model, dicts, &v.batches, &v.textures, &car_light,
+                        rp_light_on_ ? &v.relit : nullptr);
         ++loaded;
     }
     if (log) {
@@ -2809,9 +3165,46 @@ constexpr DWORD kBatchFVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;  // == Tr
 struct CachedVB { IDirect3DVertexBuffer9* vb = nullptr; UINT verts = 0; };
 std::unordered_map<const void*, CachedVB> g_vbCache;
 
+// WS-E vehicle lighting: shared dynamic VB for the per-frame relit vehicle
+// batches. ALL relit geometry of ALL car instances is packed into ONE
+// Lock(DISCARD)/upload per frame — per-batch UP calls were the measured
+// in-race hotspot (profiling note above), so the relit path must not
+// reintroduce them.
+IDirect3DVertexBuffer9* g_rlVb    = nullptr;
+UINT                    g_rlVbCap = 0;   // capacity in vertices
+
 void InvalidateBatchCache() {
     for (auto& kv : g_vbCache) if (kv.second.vb) kv.second.vb->Release();
     g_vbCache.clear();
+    if (g_rlVb) { g_rlVb->Release(); g_rlVb = nullptr; g_rlVbCap = 0; }
+}
+
+// Upload the packed relit vertices; returns false on failure (callers fall
+// back to DrawPrimitiveUP from the CPU copy).
+bool UploadRelit(IDirect3DDevice9* dev,
+                 const std::vector<TrackRenderer::V>& verts) {
+    if (verts.empty()) return false;
+    const UINT nv = (UINT)verts.size();
+    if (!g_rlVb || g_rlVbCap < nv) {
+        if (g_rlVb) { g_rlVb->Release(); g_rlVb = nullptr; }
+        UINT cap = g_rlVbCap ? g_rlVbCap : 4096;
+        while (cap < nv) cap *= 2;
+        if (FAILED(dev->CreateVertexBuffer(
+                cap * (UINT)sizeof(TrackRenderer::V),
+                D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, kBatchFVF,
+                D3DPOOL_DEFAULT, &g_rlVb, nullptr)) || !g_rlVb) {
+            g_rlVb = nullptr; g_rlVbCap = 0;
+            return false;
+        }
+        g_rlVbCap = cap;
+    }
+    void* dst = nullptr;
+    if (FAILED(g_rlVb->Lock(0, nv * (UINT)sizeof(TrackRenderer::V), &dst,
+                            D3DLOCK_DISCARD)) || !dst)
+        return false;
+    std::memcpy(dst, verts.data(), nv * sizeof(TrackRenderer::V));
+    g_rlVb->Unlock();
+    return true;
 }
 
 // Draw one static batch via its cached VB (created on first use). Falls back to
@@ -2851,6 +3244,177 @@ void DrawBatch(IDirect3DDevice9* dev, const std::vector<TrackRenderer::V>& b) {
     dev->DrawPrimitive(D3DPT_TRIANGLELIST, 0, nv / 3);
 }
 }  // namespace
+
+// WS-E vehicle lighting: relit car draw pass. Mirrors the legacy car section
+// below (player body -> player wheels -> AI cars [-> AI wheels]) with the
+// SAME draw order, matrices, textures and TSS wraps; only the vertex SOURCE
+// of runtime-lit batches changes — their diffuse is recomputed for this
+// frame's instance orientation (sun in model space, RelightAppend) and packed
+// into one dynamic-VB upload. Static batches (glass, prelit) keep the cached
+// VBs. RW ground truth: the original lights atomics by their CURRENT frame
+// LTM every time the pipeline runs — a load-time bake freezes the shading to
+// the body, which is wrong the moment the car yaws.
+void TrackRenderer::RenderCarsRelit(IDirect3DDevice9* dev,
+                                    const D3DMATRIX& worldm) {
+    // pass 1: transforms + packed relight + draw list (scratch reused)
+    static std::vector<V>         rl_verts;
+    static std::vector<D3DMATRIX> rl_xf;
+    struct Draw { const std::vector<V>* stat; UINT first, count;
+                  IDirect3DTexture9* tex; int xf; bool tss_wrap; };
+    static std::vector<Draw>      rl_draws;
+    rl_verts.clear(); rl_xf.clear(); rl_draws.clear();
+
+    auto emit = [&](const std::vector<V>& baked,
+                    const std::vector<RelitSrc>* src, int xf,
+                    IDirect3DTexture9* tex, bool tss_wrap) {
+        if (baked.empty()) return;
+        if (src && !src->empty()) {
+            const D3DMATRIX& m = rl_xf[static_cast<std::size_t>(xf)];
+            // L_model[i] = row_i(R) . L_world (row-vector convention; the
+            // instance rotations are orthonormal, so n.Lm == n_world.L_world)
+            const float Lm[3] = {
+                m._11*sun_L_[0] + m._12*sun_L_[1] + m._13*sun_L_[2],
+                m._21*sun_L_[0] + m._22*sun_L_[1] + m._23*sun_L_[2],
+                m._31*sun_L_[0] + m._32*sun_L_[1] + m._33*sun_L_[2] };
+            const UINT first = (UINT)rl_verts.size();
+            RelightAppend(rl_verts, baked, *src, Lm);
+            rl_draws.push_back({nullptr, first, (UINT)baked.size(), tex, xf,
+                                tss_wrap});
+        } else {
+            rl_draws.push_back({&baked, 0, 0, tex, xf, tss_wrap});
+        }
+    };
+
+    // player body — matrix identical to the legacy section (WS-E s3)
+    D3DMATRIX carm;
+    MatIdentity(&carm);
+    {
+        const float cy = std::cos(car_yaw_), sy2 = std::sin(car_yaw_);
+        if (car_long_is_x_) {
+            carm._11 =  cy;  carm._13 = sy2;
+            carm._31 = -sy2; carm._33 = cy;
+        } else {
+            carm._31 =  cy;  carm._33 = sy2;
+            carm._11 = sy2;  carm._13 = -cy;
+        }
+        carm._41 = car_pos_[0]; carm._42 = car_pos_[1]; carm._43 = car_pos_[2];
+    }
+    rl_xf.push_back(carm);
+    for (std::size_t mi = 0; mi < car_batches_.size(); ++mi)
+        emit(car_batches_[mi],
+             mi < car_relit_.size() ? &car_relit_[mi] : nullptr,
+             0, car_textures_[mi], true);
+
+    // player wheels: spin (+steer on the front pair) under carm
+    for (const auto& w : wheels_) {
+        D3DMATRIX local;
+        MatIdentity(&local);
+        const float c = std::cos(wheel_spin_), s = std::sin(wheel_spin_);
+        if (w.lateral_is_x) {
+            local._22 = c; local._23 = s; local._32 = -s; local._33 = c;
+        } else {
+            local._11 = c; local._12 = s; local._21 = -s; local._22 = c;
+        }
+        if (w.front && steer_vis_ != 0.f) {
+            D3DMATRIX steer;
+            MatIdentity(&steer);
+            const float cs = std::cos(steer_vis_), ss = std::sin(steer_vis_);
+            steer._11 = cs; steer._13 = ss; steer._31 = -ss; steer._33 = cs;
+            MatMul(&local, local, steer);
+        }
+        D3DMATRIX tp;
+        MatIdentity(&tp);
+        tp._41 = w.pivot[0]; tp._42 = w.pivot[1]; tp._43 = w.pivot[2];
+        MatMul(&local, local, tp);
+        D3DMATRIX wm;
+        MatMul(&wm, local, carm);
+        rl_xf.push_back(wm);
+        const int xf_w = static_cast<int>(rl_xf.size()) - 1;
+        for (std::size_t pi = 0; pi < w.parts.size(); ++pi)
+            emit(w.parts[pi].second,
+                 pi < w.parts_relit.size() ? &w.parts_relit[pi] : nullptr,
+                 xf_w, car_textures_[w.parts[pi].first], true);
+    }
+
+    // AI cars: livery variant when loaded, else the shared body + wheels
+    for (const auto& a : ai_cars_) {
+        const std::size_t li = static_cast<std::size_t>(&a - ai_cars_.data());
+        const CarVariant* var =
+            (li < car_variants_.size() &&
+             !car_variants_[li].batches.empty()) ? &car_variants_[li]
+                                                 : nullptr;
+        D3DMATRIX am;
+        MatIdentity(&am);
+        const float ac = std::cos(a.yaw), as = std::sin(a.yaw);
+        if (car_long_is_x_) {
+            am._11 =  ac; am._13 = as;
+            am._31 = -as; am._33 = ac;
+        } else {
+            am._31 =  ac; am._33 = as;
+            am._11 =  as; am._13 = -ac;
+        }
+        am._41 = a.pos[0]; am._42 = a.pos[1]; am._43 = a.pos[2];
+        rl_xf.push_back(am);
+        const int xf_a = static_cast<int>(rl_xf.size()) - 1;
+        const auto& bats = var ? var->batches : car_batches_;
+        const auto& texs = var ? var->textures : car_textures_;
+        const auto& rel  = var ? var->relit    : car_relit_;
+        for (std::size_t mi = 0; mi < bats.size(); ++mi)
+            emit(bats[mi], mi < rel.size() ? &rel[mi] : nullptr,
+                 xf_a, texs[mi], true);
+        if (var) continue;   // variant models carry their wheels baked in
+        for (const auto& w : wheels_) {
+            D3DMATRIX local;
+            MatIdentity(&local);
+            const float c2 = std::cos(wheel_spin_), s2 = std::sin(wheel_spin_);
+            if (w.lateral_is_x) {
+                local._22 = c2; local._23 = s2;
+                local._32 = -s2; local._33 = c2;
+            } else {
+                local._11 = c2; local._12 = s2;
+                local._21 = -s2; local._22 = c2;
+            }
+            D3DMATRIX tp;
+            MatIdentity(&tp);
+            tp._41 = w.pivot[0]; tp._42 = w.pivot[1]; tp._43 = w.pivot[2];
+            MatMul(&local, local, tp);
+            D3DMATRIX wm2;
+            MatMul(&wm2, local, am);
+            rl_xf.push_back(wm2);
+            const int xf_w2 = static_cast<int>(rl_xf.size()) - 1;
+            // legacy AI wheels do not TSS-wrap null textures — keep that.
+            for (std::size_t pi = 0; pi < w.parts.size(); ++pi)
+                emit(w.parts[pi].second,
+                     pi < w.parts_relit.size() ? &w.parts_relit[pi] : nullptr,
+                     xf_w2, car_textures_[w.parts[pi].first], false);
+        }
+    }
+
+    // pass 2: one upload, then draw in the recorded (legacy) order
+    const bool vb_ok = UploadRelit(dev, rl_verts);
+    int cur_xf = -1;
+    for (const auto& d : rl_draws) {
+        if (d.xf != cur_xf) {
+            dev->SetTransform(D3DTS_WORLD, &rl_xf[static_cast<std::size_t>(d.xf)]);
+            cur_xf = d.xf;
+        }
+        dev->SetTexture(0, d.tex);
+        if (d.tss_wrap && !d.tex)
+            dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG2);
+        if (d.stat) {
+            DrawBatch(dev, *d.stat);
+        } else if (vb_ok) {
+            dev->SetStreamSource(0, g_rlVb, 0, (UINT)sizeof(V));
+            dev->DrawPrimitive(D3DPT_TRIANGLELIST, d.first, d.count / 3);
+        } else {
+            dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST, d.count / 3,
+                                 rl_verts.data() + d.first, sizeof(V));
+        }
+        if (d.tss_wrap && !d.tex)
+            dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    }
+    dev->SetTransform(D3DTS_WORLD, &worldm);
+}
 
 void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     if (!ready_) return;
@@ -3169,7 +3733,12 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
 
     MARK(d_other);   // copters
     // R5: the car — model-space batches under a yaw+translate world matrix.
-    if (car_ready_) {
+    // WS-E vehicle lighting: with MASHED_RPLIGHT + a track directional light,
+    // the car section runs through the relit pass (per-frame world-space sun
+    // on the lit batches; identical draw order/states, packed dynamic VB).
+    if (car_ready_ && rp_light_on_ && has_sun_dir_) {
+        RenderCarsRelit(dev, worldm);
+    } else if (car_ready_) {
         D3DMATRIX carm;
         MatIdentity(&carm);
         const float cy = std::cos(car_yaw_), sy2 = std::sin(car_yaw_);

@@ -402,22 +402,29 @@ These screenshots are consistent with, and do not contradict, any claim in §§1
      RGBA (0.75, 0.75, 0.75, 1.0)
    Only used when a course has no `Lights_Filename`; default directional orientation =
    frame rotated 60.0f (0x42700000) about axis (1,0,0), combine op 0 (0x004799db-0x004799e8).
-3. **Vehicle-specific surface properties** — §5.2 assumes coefficients 1.0 per the
-   TrackRenderer comment (verified for track materials). Not yet confirmed for vehicle DFF
-   materials; check the RpMaterialChunkInfo surfaceProps of a car DFF before assuming they
-   drop out.
+3. **RESOLVED 2026-07-02 — vehicle surface properties are all (1.0, 1.0, 1.0).**
+   Asset sweep over `original/TOASTART/VEHICLES/{Advantag,Atmos,BamBam,Bullet}.piz`
+   (every .DFF: 6 liveries + ARMS + LIGHTS + DEBRIS + GHOST per archive): every
+   RpMaterialChunkInfo surfaceProps triple is exactly (1.0,1.0,1.0) — the
+   coefficients drop out of the vehicle bake, as §5.2 assumed. Car geometry
+   format words observed: 0x73 / 0x10037 (LIGHT|NORMALS body), 0x1000f (prelit
+   unlit glass), 0x200b3 (dual-UV LIGHT|NORMALS — the env-map path, item 4).
 4. **Specular env-map path unported** — if vehicle visual parity ever fails on paint
    highlights, FUN_00541b50's TSS setup is the missing piece, not RpLights.
-5. **NEW 2026-07-02 — latent DFF-flag-filter divergence in the port.** The port's LIGHTS.DFF
-   parsers gate on stream flags: ambient requires `flags & 0x2`
-   (`TrackRenderer.cpp:377`), directional requires `flags & 0x1` (`TrackRenderer.cpp:451`).
-   The original's loader branch applies **no stream-flag filter** — it takes every clump
-   light, keys on the subtype byte alone, and overwrites the runtime flags with 0x01
-   (`FUN_00479330` DFF branch; disassembly 2026-07-02). [UNCERTAIN] whether the collector
-   `FUN_004b4010` (C2) filters internally — not re-checked this session. No behavioral
-   difference on shipped assets (Arctic lights carry flags 0x3, both filters pass), but a
-   LIGHTS.DFF with other flag bits would diverge. Fix is trivial (drop the flag tests) if
-   parity ever demands it.
+5. **RESOLVED 2026-07-02 (WS-E vehicle lighting, Mashed_pool14) — the collector
+   does NOT filter, and the port now has a faithful path.** `FUN_004b4010` is a
+   thin `RpClumpForAllLights` wrapper; its callback `LAB_004b3f20` (not a
+   defined function — read as code units 0x004b3f20-0x004b3f41) is 13
+   instructions: `array[count++] = light` (count-only when the array ptr is
+   NULL). No test of any light field. The original takes EVERY clump light,
+   keys on the subtype byte alone, stores last-wins per subtype (decomp
+   verbatim of the loop), and forces flags := 0x01 + RpWorldAddLight for every
+   light regardless of subtype. The port's faithful extraction
+   (`ParseLightsDffFaithful`, env MASHED_RPLIGHT default ON) drops the
+   stream-flag tests and matches last-wins; the legacy filtered parsers remain
+   under MASHED_RPLIGHT=0. Asset sweep of all 13 track LIGHTS.DFF: each has
+   exactly one type-1 + one type-2 light, all stream flags 0x3 — no shipped
+   behavioral delta from the filter removal.
 6. 19 web claims remain formally unverified (session-limit outage). The load-bearing ones
    are all `[LOCAL]`-corroborated above; the only material claims resting solely on
    unverified web sources are the §2 attenuation formulas (irrelevant while Mashed uses
@@ -449,3 +456,58 @@ Local:
 - `mashedmod/src/mashed_re/D3d9Render/TrackRenderer.{cpp,h}`, `Track/DffModel.{cpp,h}`
 - `verify/ws_e_lighting/*.png`
 - `hooks.csv` rows 130, 746-748, 751, 753, 1951, 2277-2285, 2312
+
+---
+
+## 10. Implementation record — WS-E vehicle lighting (2026-07-02, worktree r6/ws-e-vehicle-lighting)
+
+New `[MASHED-RE]` facts established this session (Mashed_pool14, read-only; decomp +
+code-unit listing + memory_read):
+
+- **`DAT_005d757c` = 0x00000000 = 0.0f** (memory_read) — the `Ambient_RGB` override
+  threshold: the override fires when ANY of the three course floats (`param_3+0x76..0x78`)
+  is `> 0.0f`.
+- **`Ambient_RGB` applies in the DFF branch ONLY.** Decomp verbatim of `FUN_00479330`:
+  the override block (0x0047990b-0x0047994c per the D2 note; decompiled as the tail of the
+  `else` arm) is inside `else` of `if (param_2[0x2640] == '\0')` — it runs only when
+  `Lights_Filename` IS set, after the DFF lights were extracted, creating the ambient
+  (`RpLightCreate(2)`, flags := 1, `RpWorldAddLight`) if the DFF had none, then setting its
+  colour via `FUN_004e4900(light, param_3+0x76)`. The default-lights branch is mutually
+  exclusive with it.
+- **Default sun direction derived from decomp, not convention:** `FUN_004c1520` (frame
+  rotate) → `FUN_004c4d20` (angle × `_DAT_005cd7a8` = 0x3c8efa35 ≈ pi/180; axis normalised;
+  sin/cos) → `FUN_004c4a50` (`[C1] RwMatrixRotate (axis-angle worker)`; element formulas
+  read from decomp; `_DAT_005cc320` = 1.0f). For axis (1,0,0), 60.0f, combine 0 (plain
+  16-float copy into the frame matrix), the at-row = **(0, -sin60, cos60) =
+  (0, -0.8660254, 0.5)**.
+- **`RpLightCreate` (0x004e4dd0) defaults:** colour (1,1,1,1), flags byte = 3, radius 0,
+  privateFlags byte = 1; `FUN_004e4900` = colour setter incl. the grey flag
+  (`privateFlags=1` iff r==g==b — rpLIGHTPRIVATENOCHROMA).
+- **`LAB_004b3f20`** — see §8.5 (collector callback, no filter).
+
+Port changes (`mashedmod/src/mashed_re/D3d9Render/TrackRenderer.{h,cpp}`, env
+**`MASHED_RPLIGHT`** default ON, `=0` reverts to the legacy pre-session behaviour):
+
+1. **Faithful light acquisition** (`Load()`): float-precision colours; `ParseLightsDffFaithful`
+   (subtype-keyed, no stream-flag filter, last-wins); default lights (0.25³ ambient +
+   0.75³ directional at (0,-sin60,cos60)) when no `Lights_Filename`; `Ambient_RGB(r,g,b)`
+   COURSE.LUA override (DFF branch only, `> 0.0f` per component). No shipped course
+   exercises the default branch or the override (asset sweep: all 13 have
+   `Lights_Filename("Lights.dff")`, none set `Ambient_RGB`).
+2. **Per-frame world-space vehicle relighting.** The legacy port baked N·L at load in
+   model space — shading frozen to the body (wrong the moment the car yaws; RW lights
+   atomics by their current frame LTM). Now lit-with-normals batches of the player car,
+   wheels and AI cars carry per-vertex relight sources (normal, base = prelight+ambient,
+   material-premultiplied sun) and their diffuse is recomputed each frame with the sun
+   transformed into the instance's model space (`RenderCarsRelit`; exact under the
+   orthonormal instance rotations). All relit geometry of all instances is packed into ONE
+   dynamic-VB upload per frame (per-batch UP calls were the measured in-race hotspot);
+   draw order/states identical to the legacy section. Copters/props keep the static bake
+   (deferred — static placements, divergence is constant per instance).
+3. **Verification (A/B, standalone race demo + new `MASHED_DEMO_DRIVE` donut driver):**
+   car-body region means (Arctic, chase cam) — at spawn heading toggle delta ≈ ±0.2;
+   mid-donut (rotated heading) **delta = +12.2 R / +6.7 G / +7.0 B** (panel turned toward
+   the sun brightens only under the relit path); after re-grid delta ≈ ±0.25 again.
+   Menus byte-stable (mean 0.01). Evidence: `verify/ws_e_lighting/rplight_ab/`.
+   Pixel parity vs ORIGINAL captures remains open — tracked as the acceptance gate for
+   this worktree's merge.
