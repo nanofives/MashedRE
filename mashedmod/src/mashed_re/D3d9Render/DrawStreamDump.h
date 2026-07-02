@@ -39,5 +39,25 @@ void DrawStreamDump_OnDraw(const void* verts, int count, int tex_handle,
                            bool alpha_on, int src_blend, int dst_blend,
                            void* bridge_ret);
 
+// ── Race 3D geometry-presence summary (camera-independent) ────────────────
+// MASHED_DBG_DRAWSTREAM3D=<N | N:M | 1> captures, for race-render frames N..M,
+// the loaded 3D geometry per category into log/drawstream3d_re.json:
+//   { "f<frame>": { "<cat>": {"batches":B, "verts":V, "textured":T}, ... } }
+// This is the diagnostic the pixel/vertex channels CANNOT be for a race: the RE
+// and original race cameras differ, so a pixel diff is dominated by view, not
+// content. Counts of submitted geometry per category are camera-INVARIANT —
+// they answer "is the skydome / world / car even submitted, and is it
+// textured?" (the dark-void symptom = sky batches=0 or textured=0). `1`
+// defaults to frames 60..62 (a stable early-race window past track load).
+//
+// Call Race3DBegin() once per rendered race frame (frame delimiter); then
+// Race3DCat() once per category with its non-empty batch count, total vertex
+// count, and how many of those batches have a bound texture. Cheap no-op unless
+// the env var is set and the current frame is in range. (TrackRenderer::Render
+// is only invoked during a race, so this never fires for the menu.)
+void DrawStreamDump_Race3DBegin();
+void DrawStreamDump_Race3DCat(const char* cat, unsigned batches,
+                              unsigned verts, unsigned textured);
+
 }  // namespace D3d9Render
 }  // namespace mashed_re

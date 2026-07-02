@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "_doc": "Declarative manifest of comparable states for the whole-game parity sweep (re/parity/sweep.py). One entry per state both binaries can be driven to. P0 covers settled MENU screens (draw2d + pixel); boot/loading/race/results land in P1-P3. Each scenario's `screen` is the logical nav-screen id used by BOTH sides: the RE side parks there via MASHED_GOTO; the original side pushes it via FUN_0043d2a0 under Frida. `determinism` gates how strictly the differ runs and whether the scenario feeds C4 targeting (nondeterministic = excluded). Tolerances/rotate_a defaults mirror re/analysis/parity_tooling.md's settled-screen recipe.",
+
+  "defaults": {
+    "phase": "menu",
+    "determinism": "settled",
+    "capture": ["draw2d", "pixel"],
+    "settle_ms": 2500,
+    "frames": 4,
+    "rotate_a": "0x42e65a",
+    "severity_weight": 1.0,
+    "tolerances": {
+      "scale_a": 1.0,
+      "scale_b": 0.8,
+      "tol_pos": 1.0,
+      "tol_size": 1.0,
+      "tol_color": 0,
+      "tol_alpha": 0,
+      "tol_anim": 4,
+      "min_alpha": 0,
+      "exclude_tex": [9]
+    }
+  },
+
+  "scenarios": [
+    { "id": "menu.s1",  "screen": 1,  "severity_weight": 1.5, "notes": "main menu (root) — clean-baseline GREEN reference" },
+    { "id": "menu.s2",  "screen": 2,  "notes": "Single Player (Challenge Cup / Quick Battle / Time Trial)" },
+    { "id": "menu.s3",  "screen": 3,  "notes": "Multi Player (Standard / Team)" },
+    { "id": "menu.s4",  "screen": 4,  "notes": "kind-2 submenu (no sid-specific code yet per nav_coverage)" },
+    { "id": "menu.s7",  "screen": 7,  "notes": "Player Color Select — 6 car tiles + colour swatches" },
+    { "id": "menu.s8",  "screen": 8,  "notes": "kind-2 with bespoke sid handling" },
+    { "id": "menu.s15", "screen": 15, "notes": "reachable submenu" },
+    { "id": "menu.s16", "screen": 16, "notes": "reachable submenu" },
+    { "id": "menu.s18", "screen": 18, "notes": "reachable submenu" },
+    { "id": "menu.s19", "screen": 19, "notes": "Options — sliders / Load-Save enable" },
+    { "id": "menu.s24", "screen": 24, "notes": "reachable submenu" },
+    { "id": "menu.s29", "screen": 29, "notes": "reachable submenu" },
+    { "id": "menu.s30", "screen": 30, "notes": "Gamma — single slider" },
+    { "id": "menu.s31", "screen": 31, "notes": "kind-4 widget screen (31/33 lack handling 19/32 have)" },
+    { "id": "menu.s32", "screen": 32, "notes": "Autosave on/off toggle" },
+    { "id": "menu.s33", "screen": 33, "notes": "title layer (logo + press-button) — curscreen 0x21" }
+  ],
+
+  "_planned": {
+    "_doc": "Not driven in P0. P1 = boot/loading pixel-only (boot_frame driver). P2 = in-race 2D HUD (nav_race driver). P3 = in-race 3D world (flythrough + startgrid, draw3d channel). Listed here so the manifest documents the full intended coverage; sweep.py skips any scenario whose driver is not yet implemented.",
+    "scenarios": [
+      { "id": "boot.splash",            "phase": "boot",    "determinism": "deterministic",    "capture": ["pixel"],            "driver": "boot_frame", "frame": 60 },
+      { "id": "loading.race",           "phase": "loading", "determinism": "settled",          "capture": ["pixel"],            "driver": "boot_frame" },
+      { "id": "race.arctic.hud.f120",   "phase": "race",    "determinism": "nondeterministic", "capture": ["draw2d"],           "driver": "nav_race", "track": "arctic", "frame": 120 },
+      { "id": "race.arctic.flythrough", "phase": "race",    "determinism": "deterministic",    "capture": ["draw3d", "pixel"],  "driver": "flythrough", "track": "arctic", "campose": "cam0" },
+      { "id": "race.arctic.startgrid",  "phase": "race",    "determinism": "deterministic",    "capture": ["draw3d", "pixel"],  "driver": "nav_race", "track": "arctic", "frame": 0 },
+      { "id": "results.cup",            "phase": "results", "determinism": "settled",          "capture": ["draw2d", "pixel"],  "driver": "nav_race" }
+    ]
+  }
+}

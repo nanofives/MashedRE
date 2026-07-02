@@ -102,7 +102,95 @@ void WriteOut() {
     g_frames.clear();
 }
 
+// ── Race 3D geometry-presence summary (MASHED_DBG_DRAWSTREAM3D) ───────────
+constexpr char kOutPath3D[] = "log/drawstream3d_re.json";
+
+struct CatRec3D { std::string cat; unsigned batches, verts, textured; };
+struct Frame3D  { int index; std::vector<CatRec3D> cats; };
+
+int  g_state3d      = -1;
+int  g_fs3d         = 0;
+int  g_fe3d         = 0;
+int  g_fc3d         = -1;
+bool g_written3d    = false;
+std::vector<Frame3D> g_frames3d;
+
+void ParseEnv3DOnce() {
+    if (g_state3d != -1) return;
+    char buf[32] = {};
+    if (GetEnvironmentVariableA("MASHED_DBG_DRAWSTREAM3D", buf, sizeof(buf)) == 0) {
+        g_state3d = 0;
+        return;
+    }
+    int a = 0, b = 0;
+    if (std::sscanf(buf, "%d:%d", &a, &b) == 2 && a >= 0 && b >= a) {
+        g_fs3d = a; g_fe3d = b;
+    } else if (std::sscanf(buf, "%d", &a) == 1 && a > 1) {
+        g_fs3d = a; g_fe3d = a;
+    } else {
+        g_fs3d = 60; g_fe3d = 62;   // "1"/truthy: stable early-race window
+    }
+    g_state3d = 1;
+}
+
+bool Capturing3D() {
+    return g_state3d == 1 && !g_written3d &&
+           g_fc3d >= g_fs3d && g_fc3d <= g_fe3d;
+}
+
+void WriteOut3D() {
+    g_written3d = true;
+    CreateDirectoryA("log", nullptr);
+    std::FILE* f = std::fopen(kOutPath3D, "w");
+    if (!f) return;
+    std::fputs("{\n", f);
+    for (std::size_t fi = 0; fi < g_frames3d.size(); ++fi) {
+        const Frame3D& fr = g_frames3d[fi];
+        std::fprintf(f, " \"f%d\": {", fr.index);
+        for (std::size_t ci = 0; ci < fr.cats.size(); ++ci) {
+            const CatRec3D& c = fr.cats[ci];
+            std::fprintf(f, "%s\"%s\": {\"batches\": %u, \"verts\": %u, "
+                         "\"textured\": %u}", ci ? ", " : "",
+                         c.cat.c_str(), c.batches, c.verts, c.textured);
+        }
+        std::fprintf(f, "}%s\n", fi + 1 < g_frames3d.size() ? "," : "");
+    }
+    std::fputs("}\n", f);
+    std::fclose(f);
+    if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+        std::fprintf(lf, "DRAWSTREAM3D wrote %u frames f%d..f%d -> %s\n",
+                     static_cast<unsigned>(g_frames3d.size()),
+                     g_fs3d, g_fe3d, kOutPath3D);
+        std::fclose(lf);
+    }
+    g_frames3d.clear();
+}
+
 }  // namespace
+
+void DrawStreamDump_Race3DBegin() {
+    ParseEnv3DOnce();
+    if (g_state3d == 0 || g_written3d) return;
+    ++g_fc3d;
+    if (g_fc3d > g_fe3d) {
+        if (!g_frames3d.empty()) WriteOut3D();
+        return;
+    }
+    if (Capturing3D()) {
+        Frame3D fr;
+        fr.index = g_fc3d;
+        g_frames3d.push_back(fr);
+    }
+}
+
+void DrawStreamDump_Race3DCat(const char* cat, unsigned batches,
+                              unsigned verts, unsigned textured) {
+    if (!Capturing3D() || g_frames3d.empty()) return;
+    CatRec3D c;
+    c.cat = cat ? cat : "?";
+    c.batches = batches; c.verts = verts; c.textured = textured;
+    g_frames3d.back().cats.push_back(c);
+}
 
 void DrawStreamDump_OnFrameBegin() {
     ParseEnvOnce();
