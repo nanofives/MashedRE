@@ -3,6 +3,78 @@
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
 Entries dated before 2026-06-15 are archived in `re/analysis/archive/CHANGELOG_pre20260615.md` (3644 lines). Newest entries first, below.
 
+2026-07-02  0x004dc300  FUN_004dc300  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dc300.md
+2026-07-02  0x004dc370  FUN_004dc370  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dc370.md
+2026-07-02  0x004dc410  FUN_004dc410  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dc410.md
+2026-07-02  0x004dc4a0  FUN_004dc4a0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dc4a0.md
+2026-07-02  0x004dc530  FUN_004dc530  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dc530.md
+2026-07-02  0x004dc5b0  FUN_004dc5b0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dc5b0.md
+2026-07-02  0x004dc750  FUN_004dc750  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dc750.md
+2026-07-02  0x004dc8a0  FUN_004dc8a0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dc8a0.md
+2026-07-02  0x004dc8e0  FUN_004dc8e0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dc8e0.md
+2026-07-02  0x004dc970  FUN_004dc970  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dc970.md
+2026-07-02  0x004dc9e0  FUN_004dc9e0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dc9e0.md; resolves S-1161 + D-3401 (callee FUN_004dcaa0 already C2)
+2026-07-02  0x004dcb80  FUN_004dcb80  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dcb80.md
+2026-07-02  0x004dcbb0  FUN_004dcbb0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dcbb0.md
+2026-07-02  0x004dcd30  FUN_004dcd30  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dcd30.md
+2026-07-02  0x004dcd50  FUN_004dcd50  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s1/0x004dcd50.md
+2026-07-02  0x004dd0b0  FUN_004dd0b0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s2/0x004dd0b0.md
+2026-07-02  0x004dd150  FUN_004dd150  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s2/0x004dd150.md
+2026-07-02  0x004ddcb0  FUN_004ddcb0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s2/0x004ddcb0.md
+2026-07-02  0x004ddd60  FUN_004ddd60  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s2/0x004ddd60.md
+2026-07-02  0x004ddfb0  FUN_004ddfb0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s2/0x004ddfb0.md
+2026-07-02  0x004de1b0  FUN_004de1b0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s2/0x004de1b0.md
+2026-07-02  0x004de390  FUN_004de390  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s2/0x004de390.md
+2026-07-02  0x004de800  FUN_004de800  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s2/0x004de800.md
+2026-07-02  0x004dee20  FUN_004dee20  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s2/0x004dee20.md
+2026-07-02  0x004dee40  FUN_004dee40  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s2/0x004dee40.md
+2026-07-02  0x004df120  FUN_004df120  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s2/0x004df120.md
+2026-07-02  0x004df750  FUN_004df750  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s2/0x004df750.md
+2026-07-02  0x004df870  FUN_004df870  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s2/0x004df870.md
+2026-07-02  0x004df8a0  FUN_004df8a0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s2/0x004df8a0.md
+2026-07-02  0x004e08b0  FUN_004e08b0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s4/004e08b0.md
+2026-07-02  0x004e0920  FUN_004e0920  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s4/004e0920.md
+2026-07-02  0x004e1290  FUN_004e1290  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s4/004e1290.md
+2026-07-02  0x004e12a0  FUN_004e12a0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s4/004e12a0.md
+2026-07-02  0x004e12b0  FUN_004e12b0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s4/004e12b0.md
+2026-07-02  0x004e13f0  FUN_004e13f0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s4/004e13f0.md
+2026-07-02  0x004e14a0  FUN_004e14a0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s4/004e14a0.md
+2026-07-02  0x004e15f0  FUN_004e15f0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s4/004e15f0.md
+2026-07-02  0x004e1670  FUN_004e1670  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s4/004e1670.md
+2026-07-02  0x004e1710  FUN_004e1710  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s4/004e1710.md
+2026-07-02  0x004e1780  FUN_004e1780  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s4/004e1780.md
+2026-07-02  0x004e17e0  FUN_004e17e0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s4/004e17e0.md
+2026-07-02  0x004e18f0  FUN_004e18f0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s4/004e18f0.md
+2026-07-02  0x004e1960  FUN_004e1960  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s4/004e1960.md
+2026-07-02  0x004e19f0  FUN_004e19f0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s5/004e19f0.md
+2026-07-02  0x004e1a90  FUN_004e1a90  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s5/004e1a90.md
+2026-07-02  0x004e1ac0  FUN_004e1ac0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s5/004e1ac0.md
+2026-07-02  0x004e1b00  FUN_004e1b00  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s5/004e1b00.md
+2026-07-02  0x004e1b30  FUN_004e1b30  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s5/004e1b30.md
+2026-07-02  0x004e1b60  FUN_004e1b60  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s5/004e1b60.md
+2026-07-02  0x004e1c90  FUN_004e1c90  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s5/004e1c90.md
+2026-07-02  0x004e1ce0  FUN_004e1ce0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s5/004e1ce0.md
+2026-07-02  0x004e1d20  FUN_004e1d20  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s5/004e1d20.md
+2026-07-02  0x004e1e70  FUN_004e1e70  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s5/004e1e70.md
+2026-07-02  0x004e2030  FUN_004e2030  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s5/004e2030.md
+2026-07-02  0x004e2090  FUN_004e2090  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s5/004e2090.md
+2026-07-02  0x004e2420  FUN_004e2420  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s5/004e2420.md
+2026-07-02  0x004e2470  FUN_004e2470  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s5/004e2470.md
+2026-07-02  0x004e2500  FUN_004e2500  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s5/004e2500.md
+2026-07-02  0x004e2530  FUN_004e2530  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s6/0x004e2530.md
+2026-07-02  0x004e2650  FUN_004e2650  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s6/0x004e2650.md
+2026-07-02  0x004e2930  FUN_004e2930  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s6/0x004e2930.md
+2026-07-02  0x004e2b60  FUN_004e2b60  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s6/0x004e2b60.md
+2026-07-02  0x004e2bf0  FUN_004e2bf0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s6/0x004e2bf0.md
+2026-07-02  0x004e2fa0  FUN_004e2fa0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s6/0x004e2fa0.md
+2026-07-02  0x004e2ff0  FUN_004e2ff0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s6/0x004e2ff0.md
+2026-07-02  0x004e3160  FUN_004e3160  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s6/0x004e3160.md
+2026-07-02  0x004e33c0  FUN_004e33c0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s6/0x004e33c0.md
+2026-07-02  0x004e3410  FUN_004e3410  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s6/0x004e3410.md
+2026-07-02  0x004e3470  FUN_004e3470  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s6/0x004e3470.md
+2026-07-02  0x004e4130  FUN_004e4130  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s6/0x004e4130.md
+2026-07-02  0x004e41b0  FUN_004e41b0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s6/0x004e41b0.md
+2026-07-02  0x004e42a0  FUN_004e42a0  C1->C2  batch-render-7 salvage merge (worktree purge 2026-07-01); plate re/analysis/render_7_c1_to_c2_s6/0x004e42a0.md
 2026-07-02  0x004148b0  FUN_004148b0  C2->C3  WS-R6-D leader/catch-up timer; reimpl Ai/AiLeaderTimer.cpp (raw-asm verbatim port); LeaderAB snapshot/restore A/B driven at orchestrator entry 0x00416250, non-perturbing (both per-vehicle ints rolled back): scenario=race track0/6cars 4097 calls 0 mism ALL-GREEN clean build + 2049/0 instrumented run (log/diff_ai_leadertimer_004148b0_c3.log); driver install verified via MASHED_HOOK_MANIFEST; orchestrator param_2=vehIdx@[esp+8] runtime-verified vs stock (1576-call Frida probe); callees 0040e470 C3/00442cc0 C3/0046d4a0 C3/004a2c48 C2, caller 00416250 C2; U-1431+U-7569 data-semantic non-blocking. Session also root-caused the 2026-07-01 boot blocker: retired skip_powerups 25-NOP block was LIVE on original/MASHED.exe (eip=0 esp=0x1afe50 ecx=0xff000000 stack-imbalance signature) — NOT the HKLM DWM entry (falsified by __COMPAT_LAYER + junction-path tests), NOT a GPU wedge (mashed_re.exe rendered fine); fixed via patch_mashed_skip_powerups.py un-apply
 2026-06-26  frida-sweep-20260626-wf_cfd622ea-r1  frida-sweep-release  branches=1 merged (worktree-wf_cfd622ea-c14-4)  integration-diff=GREEN hooks=1 (run_diff_parallel, 0 mismatches: Vec3IsValidNonTiny)  +1 C3. NOTE: branch predates asi_sources.rsp build refactor -> obsolete inline build.bat .asi list discarded; restored main's .rsp-based build.bat + registered Util/Vec3ValidateMixed_cfd622.cpp into mashedmod/asi_sources.rsp; diff_template.js ptr_arg_int_get handler already on main (commit 5cbb8193) -> kept ours (branch copy was redundant comment-only variant).
 2026-06-26  0x00472820  Vec3IsValidNonTiny  C2->C3  frida-sweep-20260626-wf_cfd622ea-r1 merge worktree-wf_cfd622ea-c14-4; reimpl Util/Vec3ValidateMixed_cfd622.cpp; integration run_diff_parallel GREEN 10/10 bit-identical NON-DEGEN (5 ones/5 zeros) with canonical .asi installed (log/diff_vec3_is_valid_non_tiny.csv); arg_type ptr_arg_int_get (existing); caller FUN_0045d7a0 C2 + FUN_004728a0 C2 + callee FUN_004a3907 C2 gates satisfied; U-3486 x87-compare artifact resolved by bit-identical repro

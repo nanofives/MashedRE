@@ -348,7 +348,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1069 | 0x00448700 FUN_00448700 | 0x00448700 FUN_00448700 | race_state | passthrough | 2026-05-03 | depends on FUN_004464c0 (S-1004 still open); 100-loop semantics unclear until FUN_004464c0 mapped |
 | S-1070 | 0x004927c0 FUN_004927c0 | 0x004927c0 race_complete | race_state | passthrough | 2026-05-03 | unrecognized DataDB; U-1013 U-1014 need Frida before analysis can proceed |
 | S-1160 | 0x004cc820 FUN_004cc820 | 0x004cc7f0 FUN_004cc7f0 | render | passthrough | 2026-05-03 | depth-3 callee; 6-arg call; 4th/5th args are literals 1 and 0; D-3400 |
-| S-1161 | 0x004dcaa0 FUN_004dcaa0 | 0x004dc9e0 FUN_004dc9e0 | render | passthrough | 2026-05-03 | depth-3 callee; called as FUN_004dcaa0(0x40000, out_ptr); likely CreateVertexBuffer helper; D-3401 |
+| S-1161 | 0x004dcaa0 FUN_004dcaa0 | 0x004dc9e0 FUN_004dc9e0 | render | RESOLVED 2026-07-02 | 2026-05-03 | target FUN_004dcaa0 C2 (promote_c2_render_d3d9 2026-05-13); caller FUN_004dc9e0 C2 (batch-render-7-s1 salvage merge); D-3401 resolved |
 | S-1162 | DAT_007d46e0 | 0x004d1d70 FUN_004d1d70 | render | global | 2026-05-03 | D3D resource tracking linked-list head; node layout unknown |
 | S-1163 | DAT_00911ae4 | 0x004d1d70 FUN_004d1d70 | render | global | 2026-05-03 | base pointer for D3D resource lookup array; array element layout unknown |
 | S-1120 | 0x0042b950 FUN_0042b950 | 0x004030d0 FUN_004030d0 | util | passthrough | 2026-05-03 | called unconditionally after FUN_00472640(0); depth-2 from timer |
