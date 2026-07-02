@@ -199,6 +199,8 @@
 "Ai\PromoLoop_round1.cpp"
 "Ai\AiController.cpp"
 "Ai\AiControllerAB.cpp"
+"Ai\AiControlStep.cpp"
+"Ai\AiPreTick.cpp"
 "Ai\AiTargeting.cpp"
 "Ai\AiSplineHooks.cpp"
 "Ai\AiNavHooks.cpp"

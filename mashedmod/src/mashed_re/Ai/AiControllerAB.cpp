@@ -42,6 +42,11 @@
 //        dwords + the whole ring [*(ctx+0), *(ctx+0xc)) (cap 64 KiB).
 //   W7 (AbAiTick only) *(u32*)0x005f2770 + 0x34 + v*4, v=0..3
 //        (FUN_0040e480 CarSlotStateSet disasm: mov [edx+ecx*4+0x34], eax).
+//   W8 0x0063bd90 (4 B)  FUN_00417180 random-variation dedup counter
+//        (0x00417350/0x0041735e). ADDED 2026-07-02: it was missing from the
+//        trio's windows, so an un-restored MINE-side write there could make
+//        the ORIG side skip a (rare, ~1/16 of 3000-tick periods) RNG draw —
+//        a plausible source of the rule-0 raw transients. Now snapshotted.
 //
 // A GREEN here is synthetic-scenario A/B with the hook installed at the target
 // RVA driving natural call sites/arguments in a live race => C3 evidence
@@ -62,11 +67,16 @@
 #include <cstdlib>
 #include <cstring>
 
-// Ported functions under test (AiController.cpp).
+// Ported functions under test (AiController.cpp, AiControlStep.cpp, AiPreTick.cpp).
 extern "C" {
 void __cdecl AiPostStepPowerupBrake(int param_1, std::uint8_t* param_2);
 void __cdecl AiVehicleStep(int param_1);
 void __cdecl AiTickLoop(void);
+void __cdecl AiControlStep(void* spline, int veh, std::uint8_t* ctrl);
+void __cdecl AiControlStepM49(void* spline, int veh, std::uint8_t* ctrl);
+void __cdecl AiControlStepM8(void* spline, int veh, std::uint8_t* ctrl);
+void __cdecl AiBankSwitch(int veh);
+void __cdecl AiPreTick(void);
 }
 
 namespace {
@@ -155,6 +165,7 @@ void BuildSegs(bool withCarSlots) {
         std::uint32_t t = *reinterpret_cast<std::uint32_t*>(0x005f2770u);
         if (t) SegAdd(static_cast<std::uintptr_t>(t) + 0x34u, 0x10);
     }
+    SegAdd(0x0063bd90u, 4);                           // W8 FUN_00417180 dedup counter
 }
 
 std::uint32_t Capture(std::uint8_t* buf) {
@@ -511,10 +522,256 @@ void __cdecl AbAiTick(void) {
     }
 }
 
+// ════════════════════════════════════════════════════════════════════════════
+// WS-R6 final drain (2026-07-02): drivers for the five remaining C2 targets.
+// Same snapshot windows (BuildSegs(false) + W8) and retry-once discipline as
+// AbAiVehStep. Prologue bytes verified against original\MASHED.exe.unpatched
+// this session:
+//   0x00416250 / 0x00416a30 / 0x00417da0:  55 8b ec 83 e4 f8
+//   0x00417180:  53 55 56 8b 74 24 10
+//   0x004177b0:  83 ec 08 53 55 56
+// ════════════════════════════════════════════════════════════════════════════
+
+void* g_orig_416256 = reinterpret_cast<void*>(0x00416256);
+__declspec(naked) void __cdecl OrigCtlMain(void*, int, std::uint8_t*) {
+    __asm {
+        push ebp                        // 0x00416250
+        mov  ebp, esp                   // 0x00416251
+        and  esp, 0xfffffff8            // 0x00416253
+        jmp  dword ptr [g_orig_416256]  // resume at SUB ESP,0x44
+    }
+}
+void* g_orig_416a36 = reinterpret_cast<void*>(0x00416a36);
+__declspec(naked) void __cdecl OrigCtl49(void*, int, std::uint8_t*) {
+    __asm {
+        push ebp                        // 0x00416a30
+        mov  ebp, esp
+        and  esp, 0xfffffff8
+        jmp  dword ptr [g_orig_416a36]
+    }
+}
+void* g_orig_417da6 = reinterpret_cast<void*>(0x00417da6);
+__declspec(naked) void __cdecl OrigCtl8(void*, int, std::uint8_t*) {
+    __asm {
+        push ebp                        // 0x00417da0
+        mov  ebp, esp
+        and  esp, 0xfffffff8
+        jmp  dword ptr [g_orig_417da6]
+    }
+}
+void* g_orig_417187 = reinterpret_cast<void*>(0x00417187);
+__declspec(naked) void __cdecl OrigBank(int) {
+    __asm {
+        push ebx                        // 0x00417180
+        push ebp                        // 0x00417181
+        push esi                        // 0x00417182
+        mov  esi, dword ptr [esp + 0x10] // 0x00417183 (arg1; 5-byte JMP ends mid-insn)
+        jmp  dword ptr [g_orig_417187]  // resume at IMUL ESI,ESI,0x74
+    }
+}
+void* g_orig_4177b5 = reinterpret_cast<void*>(0x004177b5);
+__declspec(naked) void __cdecl OrigPreTick() {
+    __asm {
+        sub  esp, 0x8                   // 0x004177b0
+        push ebx                        // 0x004177b3
+        push ebp                        // 0x004177b4
+        jmp  dword ptr [g_orig_4177b5]  // resume at PUSH ESI
+    }
+}
+
+// ── shared control-step A/B worker (retry-once; see AbAiVehStep comment) ────
+struct CtlStat {
+    const char* log;
+    long calls, mism, rawMism, layoutOnce;
+    long modeHist[11];   // committed mode after ORIG (0x0089a52c+v*0x74; M49 never commits)
+};
+CtlStat g_ctlMain = { "ai_ab_ctl250.log",  0, 0, 0, 0, {0} };
+CtlStat g_ctl49   = { "ai_ab_ctl6a30.log", 0, 0, 0, 0, {0} };
+CtlStat g_ctl8    = { "ai_ab_ctl7da0.log", 0, 0, 0, 0, {0} };
+
+typedef void (__cdecl* ctl_fn_t)(void*, int, std::uint8_t*);
+
+void CtlAB(CtlStat& st, ctl_fn_t mine, ctl_fn_t orig, bool commits,
+           void* spline, int v, std::uint8_t* ctrl) {
+    if (v < 0 || v > 3) { orig(spline, v, ctrl); return; }  // out-of-model: original only
+    BuildSegs(false);
+    LayoutLogOnce(st.log, &st.layoutOnce);
+    std::uint32_t len = Capture(g_save);
+
+    ++st.calls;
+    for (int attempt = 0; attempt < 2; ++attempt) {
+        if (attempt) Restore(g_save);                   // retry from same pre-state
+        mine(spline, v, ctrl);                          // MINE
+        Capture(g_mine);
+        Restore(g_save);
+        orig(spline, v, ctrl);                          // ORIG (commits)
+        Capture(g_orig);
+
+        std::uintptr_t addr = 0; int seg = -1; std::uint8_t vm = 0, vo = 0;
+        long d = FirstDiff(len, &addr, &seg, &vm, &vo);
+        if (d < 0) break;
+        std::uint32_t mask = SegDiffMask(len);
+        long raw = ++st.rawMism;
+        if (attempt) ++st.mism;
+        if (raw <= kMaxMismLog) {
+            char line[256];
+            wsprintfA(line, "[%ld] %s v=%d seg=%d addr=0x%08x mine=%02x orig=%02x bufoff=%ld segmask=0x%x\r\n",
+                      st.calls, attempt ? "MISMATCH-CONFIRMED" : "mism-raw(retrying)",
+                      v, seg, (unsigned)addr, vm, vo, d, mask);
+            AbLog(st.log, line);
+        }
+        if (attempt) break;
+    }
+    if (commits) {
+        int mo = *reinterpret_cast<int*>(0x0089a52cu + static_cast<std::uintptr_t>(v) * 0x74u);
+        if (mo >= 0 && mo <= 10) ++st.modeHist[mo];
+    }
+
+    if ((st.calls & 0xff) == 1) {
+        char line[320];
+        wsprintfA(line, "[%ld] calls=%ld mism=%ld rawmism=%ld modes[%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld] %s\r\n",
+                  st.calls, st.calls, st.mism, st.rawMism,
+                  st.modeHist[0], st.modeHist[1], st.modeHist[2], st.modeHist[3],
+                  st.modeHist[4], st.modeHist[5], st.modeHist[6], st.modeHist[7],
+                  st.modeHist[8], st.modeHist[9], st.modeHist[10],
+                  st.mism ? "" : "ALL-GREEN");
+        AbLog(st.log, line);
+    }
+}
+
+// (caller FUN_00418560 pushes a 4th arg 0x42c80000; none of the bodies reads
+//  it, and __cdecl caller-cleanup makes it transparent to these 3-arg drivers)
+void __cdecl AbAiCtlMain(void* s, int v, std::uint8_t* c) { CtlAB(g_ctlMain, &AiControlStep,    &OrigCtlMain, true,  s, v, c); }
+void __cdecl AbAiCtl49 (void* s, int v, std::uint8_t* c) { CtlAB(g_ctl49,   &AiControlStepM49, &OrigCtl49,   false, s, v, c); }
+void __cdecl AbAiCtl8  (void* s, int v, std::uint8_t* c) { CtlAB(g_ctl8,    &AiControlStepM8,  &OrigCtl8,    true,  s, v, c); }
+
+// ── 0x00417180 AbAiBank ─────────────────────────────────────────────────────
+const char* kBankLog = "ai_ab_bank.log";
+long g_bankCalls = 0, g_bankMism = 0, g_bankRawMism = 0, g_bankLayoutOnce = 0;
+// Coverage: switch-request branch (0x0089a500+v*0x74 != 0), timer-running
+// early-return (0 < timer < 9000), random-variation period gate
+// ((DAT_007f0ff8/3000 & 0xf) == 0xf with dedup miss -> RNG draw).
+long g_bankReq = 0, g_bankTimer = 0, g_bankRand = 0;
+
+void __cdecl AbAiBank(int v) {
+    if (v < 0 || v > 3) { OrigBank(v); return; }
+    BuildSegs(false);
+    LayoutLogOnce(kBankLog, &g_bankLayoutOnce);
+    std::uint32_t len = Capture(g_save);
+
+    ++g_bankCalls;
+    {
+        std::uintptr_t s = static_cast<std::uintptr_t>(v) * 0x74u;
+        if (*reinterpret_cast<int*>(0x0089a500u + s) != 0) ++g_bankReq;
+        int t = *reinterpret_cast<int*>(0x0089a504u + s);
+        if (t != 0 && t < 9000) ++g_bankTimer;
+        int period = *reinterpret_cast<int*>(0x007f0ff8u) / 3000;
+        if ((period & 0xf) == 0xf && *reinterpret_cast<int*>(0x0063bd90u) != period) ++g_bankRand;
+    }
+    for (int attempt = 0; attempt < 2; ++attempt) {
+        if (attempt) Restore(g_save);
+        AiBankSwitch(v);                                // MINE
+        Capture(g_mine);
+        Restore(g_save);
+        OrigBank(v);                                    // ORIG (commits)
+        Capture(g_orig);
+
+        std::uintptr_t addr = 0; int seg = -1; std::uint8_t vm = 0, vo = 0;
+        long d = FirstDiff(len, &addr, &seg, &vm, &vo);
+        if (d < 0) break;
+        std::uint32_t mask = SegDiffMask(len);
+        long raw = ++g_bankRawMism;
+        if (attempt) ++g_bankMism;
+        if (raw <= kMaxMismLog) {
+            char line[256];
+            wsprintfA(line, "[%ld] %s v=%d seg=%d addr=0x%08x mine=%02x orig=%02x bufoff=%ld segmask=0x%x\r\n",
+                      g_bankCalls, attempt ? "MISMATCH-CONFIRMED" : "mism-raw(retrying)",
+                      v, seg, (unsigned)addr, vm, vo, d, mask);
+            AbLog(kBankLog, line);
+        }
+        if (attempt) break;
+    }
+
+    if ((g_bankCalls & 0xff) == 1) {
+        char line[224];
+        wsprintfA(line, "[%ld] calls=%ld mism=%ld rawmism=%ld cov[req=%ld timer=%ld rand=%ld] %s\r\n",
+                  g_bankCalls, g_bankCalls, g_bankMism, g_bankRawMism,
+                  g_bankReq, g_bankTimer, g_bankRand,
+                  g_bankMism ? "" : "ALL-GREEN");
+        AbLog(kBankLog, line);
+    }
+}
+
+// ── 0x004177b0 AbAiPreTick ──────────────────────────────────────────────────
+const char* kPreLog = "ai_ab_pretick.log";
+long g_preCalls = 0, g_preMism = 0, g_preRawMism = 0, g_preLayoutOnce = 0;
+// Coverage: fd0 histogram cells for the mode-9/mode-4 scaling branches, the
+// powerup-doubling branch, the mode-6 flag machine (flag pre-state), and the
+// probability-roll reachability (flag==0 pre-call in race mode 6).
+long g_preFd4 = 0, g_preFd9 = 0, g_preFd8 = 0, g_preFdElse = 0,
+     g_prePow = 0, g_preFlag0 = 0, g_preFlag1 = 0, g_preFlag2 = 0;
+
+// NAME NOTE: registered as "AbAiPre7b0", NOT "AbAiPreTick" — MASHED_HOOK_ONLY
+// matches by substring, and "AbAiPreTick" CONTAINS the port hook's name
+// "AiPreTick", which made a HOOK_ONLY=AbAiPreTick run install BOTH at
+// 0x004177b0 (the port clobbered the driver; caught 2026-07-02 when the run
+// produced no log).
+void __cdecl AbAiPreTick(void) {
+    BuildSegs(false);
+    LayoutLogOnce(kPreLog, &g_preLayoutOnce);
+    std::uint32_t len = Capture(g_save);
+
+    ++g_preCalls;
+    {
+        std::uint32_t fd0 = *reinterpret_cast<std::uint32_t*>(0x007f0fd0u);
+        if (fd0 == 4) ++g_preFd4; else if (fd0 == 9) ++g_preFd9;
+        else if (fd0 == 8) ++g_preFd8; else ++g_preFdElse;
+        int anyPow = 0;
+        for (int v = 0; v < 4; ++v)
+            if (reinterpret_cast<int (__cdecl*)(int)>(0x00454a30)(v) != 0) anyPow = 1;
+        if (anyPow) ++g_prePow;
+        int fl = *reinterpret_cast<int*>(0x0089a368u);
+        if (fl == 0) ++g_preFlag0; else if (fl == 1) ++g_preFlag1; else if (fl == 2) ++g_preFlag2;
+    }
+    for (int attempt = 0; attempt < 2; ++attempt) {
+        if (attempt) Restore(g_save);
+        AiPreTick();                                    // MINE
+        Capture(g_mine);
+        Restore(g_save);
+        OrigPreTick();                                  // ORIG (commits)
+        Capture(g_orig);
+
+        std::uintptr_t addr = 0; int seg = -1; std::uint8_t vm = 0, vo = 0;
+        long d = FirstDiff(len, &addr, &seg, &vm, &vo);
+        if (d < 0) break;
+        std::uint32_t mask = SegDiffMask(len);
+        long raw = ++g_preRawMism;
+        if (attempt) ++g_preMism;
+        if (raw <= kMaxMismLog) {
+            char line[256];
+            wsprintfA(line, "[%ld] %s seg=%d addr=0x%08x mine=%02x orig=%02x bufoff=%ld segmask=0x%x\r\n",
+                      g_preCalls, attempt ? "MISMATCH-CONFIRMED" : "mism-raw(retrying)",
+                      seg, (unsigned)addr, vm, vo, d, mask);
+            AbLog(kPreLog, line);
+        }
+        if (attempt) break;
+    }
+
+    if ((g_preCalls & 0x3f) == 1) {
+        char line[288];
+        wsprintfA(line, "[%ld] calls=%ld mism=%ld rawmism=%ld cov[fd4=%ld fd9=%ld fd8=%ld fdelse=%ld pow=%ld flag0=%ld flag1=%ld flag2=%ld] %s\r\n",
+                  g_preCalls, g_preCalls, g_preMism, g_preRawMism,
+                  g_preFd4, g_preFd9, g_preFd8, g_preFdElse,
+                  g_prePow, g_preFlag0, g_preFlag1, g_preFlag2,
+                  g_preMism ? "" : "ALL-GREEN");
+        AbLog(kPreLog, line);
+    }
+}
+
 // ── env-gated registration (NOT RH_ScopedInstall: these must never register
 //    in a normal full-install run — they collide with the port hooks at the
-//    same RVAs). MASHED_AI_AB=1 registers all three; MASHED_HOOK_ONLY=<name>
-//    then installs exactly one. ──
+//    same RVAs). MASHED_AI_AB=1 registers all; MASHED_HOOK_ONLY=<name>
+//    then installs exactly one. Run each driver in a SEPARATE run. ──
 struct AbAiReg {
     AbAiReg() {
         const char* s = std::getenv("MASHED_AI_AB");
@@ -522,6 +779,11 @@ struct AbAiReg {
         HookSystem::Register(0x00417640u, reinterpret_cast<void*>(&AbAiPost),    "AbAiPost");
         HookSystem::Register(0x00418560u, reinterpret_cast<void*>(&AbAiVehStep), "AbAiVehStep");
         HookSystem::Register(0x00418860u, reinterpret_cast<void*>(&AbAiTick),    "AbAiTick");
+        HookSystem::Register(0x00416250u, reinterpret_cast<void*>(&AbAiCtlMain), "AbAiCtlMain");
+        HookSystem::Register(0x00416a30u, reinterpret_cast<void*>(&AbAiCtl49),   "AbAiCtl49");
+        HookSystem::Register(0x00417da0u, reinterpret_cast<void*>(&AbAiCtl8),    "AbAiCtl8");
+        HookSystem::Register(0x00417180u, reinterpret_cast<void*>(&AbAiBank),    "AbAiBank");
+        HookSystem::Register(0x004177b0u, reinterpret_cast<void*>(&AbAiPreTick), "AbAiPre7b0");
     }
 };
 AbAiReg s_abAiReg;

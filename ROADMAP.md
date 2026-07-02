@@ -199,7 +199,7 @@ qhull + reconstruct the RW-Physics call surface); input (DirectInput path alread
 works; camera follows faithfully; physics behavior diff-checked against original telemetry
 (Frida trace of the original race vs standalone logs on matched inputs where feasible).
 
-### Phase R6 — Race loop ★ flagship demo (IN PROGRESS — divergence-closure 1 landed 2026-06-10)
+### Phase R6 — Race loop ★ flagship demo (EXIT DEMO PASSED 2026-07-02, automated driver)
 **Landed 2026-06-10 (verbatim ports, re/analysis/race_camera/):** the shared race
 camera (FUN_00446520 + Common/LED.piz per-gate angles — format cracked), the real
 elimination rule (camera required-zoom saturation at 10.0, FUN_00410d10), real car
@@ -208,6 +208,21 @@ selection (liveries of one model, FUN_0040d110), and the points system + match r
 ledger #3–#6 CLOSED (re/analysis/DIVERGENCE_LEDGER_3D.md). Remaining in-phase:
 handling/AI verbatim ports (needs the in-race input injector), the standings-drawer
 presentation, the vehicle-lighting consumer (entry points pinned, ledger #9).
+**Landed 2026-07-02 (WS-R6 final drain):** the .asi-side AI control chain is fully
+C3 — control steps FUN_00416250 / FUN_00416a30 / FUN_00417da0, bank switcher
+FUN_00417180, pre-tick FUN_004177b0 (Ai/AiControlStep.cpp + Ai/AiPreTick.cpp;
+snapshot/restore A/B drivers, 0 raw + 0 confirmed mismatches across ~35k paired
+calls; log/ai_ab_*.log). Exit criterion demonstrated end-to-end on mashed_re.exe
+(automated MASHED_RACE_DEMO driver, 2026-07-02 15:31): boot → menu → Challenge
+Select (default selection) → race vs 3 AI → 7 elimination rounds → match won by
+car1 at t=62.7s (score>11 rule) → results + progression → back to menu → clean
+exit. Evidence: verify/r6/round{1..7}_{go,result}.bmp + match_result.bmp/png +
+verify/race1/00_results.bmp/png + mashed_re.log R6 telemetry. Literal-criterion
+residue: an interactively-navigated track/car selection and a continuous screen
+recording (the automated run parks on Challenge Select via MASHED_GOTO=6 and
+captures per-stage frames instead). Note: the standalone races on the WS-C
+faithful-lookahead AI (AiStandalone.cpp); the newly-C3 chain is the verbatim
+.asi reference for its convergence.
 **Goal:** complete a full race against AI in the standalone.
 **Activities:** race state machine (countdown/laps/checkpoints/finish — gameplay subsystem's
 C2 pool becomes the demand-driven port list); in-race HUD; minimal AI opponents (`.AI`

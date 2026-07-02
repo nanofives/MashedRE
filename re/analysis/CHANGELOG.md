@@ -3,6 +3,11 @@
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
 Entries dated before 2026-06-15 are archived in `re/analysis/archive/CHANGELOG_pre20260615.md` (3644 lines). Newest entries first, below.
 
+2026-07-02  0x00416250  FUN_00416250  C2->C3  WS-R6 AbAiCtlMain A/B rule0: 6914 calls, 0 raw + 0 confirmed mism; modes 0/1/3/7; log/ai_ab_ctl250_00416250_rule0.log
+2026-07-02  0x00416a30  FUN_00416a30  C2->C3  WS-R6 AbAiCtl49 A/B rule4: 10497 calls, 0 raw + 0 confirmed mism; log/ai_ab_ctl6a30_00416a30_rule4.log
+2026-07-02  0x00417da0  FUN_00417da0  C2->C3  WS-R6 AbAiCtl8 A/B rule8: 7937 calls, 0 raw + 0 confirmed mism; modes 0/1/2/3/7; log/ai_ab_ctl7da0_00417da0_rule8.log
+2026-07-02  0x00417180  FUN_00417180  C2->C3  WS-R6 AbAiBank A/B rule0: 11778 calls, 0 raw + 0 confirmed mism; req/timer/rand branches all natural; log/ai_ab_bank_00417180_rule0.log
+2026-07-02  0x004177b0  FUN_004177b0  C2->C3  WS-R6 AbAiPre7b0 A/B rules 0+4: 8002 calls, 0 raw + 0 confirmed mism; flag machine + prob rolls + mode-4 ladder covered; log/ai_ab_pretick_004177b0_rule0_4.log
 2026-07-02  0x00417640  FUN_00417640  C2->C3  WS-R6 AbAiPost A/B: 7937 natural + 7937 forced + 7937 forced2 (3969 brake/3968 coast) calls, 0 mism; log/ai_ab_poststep_00417640_c3.log
 2026-07-02  0x00418560  FUN_00418560  C2->C3  WS-R6 AbAiVehStep A/B rules 0/4/8: 23555 calls, 0 confirmed mism; mode-8 arg bug caught+fixed (FUN_00417da0 takes 4 args); log/ai_ab_vehstep_00418560_rule*.log
 2026-07-02  0x00418860  FUN_00418860  C2->C3  WS-R6 AbAiTick A/B rule0 + mode4/rule7: 6530 calls, 0 confirmed mism; log/ai_ab_tick_00418860_*.log

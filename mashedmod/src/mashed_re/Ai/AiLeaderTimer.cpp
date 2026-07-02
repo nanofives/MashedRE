@@ -140,60 +140,6 @@ __declspec(naked) int OrigLeader(int, void*, int*, int) {
     }
 }
 
-// ── snapshot/restore A/B self-test (env MASHED_AI_LEADER_SELFTEST) ───────────
-inline int SelfTestEnabled() {
-    static int v = -1;
-    if (v < 0) { const char* s = std::getenv("MASHED_AI_LEADER_SELFTEST"); v = (s && s[0]) ? 1 : 0; }
-    return v;
-}
-void SelfTestLog(const char* s) {
-    HANDLE h = CreateFileA("ai_leader_selftest.log", FILE_APPEND_DATA, FILE_SHARE_READ,
-                           nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-    if (h == INVALID_HANDLE_VALUE) return;
-    DWORD wrote; WriteFile(h, s, (DWORD)std::strlen(s), &wrote, nullptr); CloseHandle(h);
-}
-long g_calls = 0, g_mismatch = 0;
-const long kMaxCompare = 40000;
-
-// Snapshot/restore A/B: FUN_004148b0 is stateful (writes the 2 per-vehicle ints + *outXZ).
-// Snapshot the 2 ints, run mine (scratch out), capture, restore, run orig (scratch out),
-// capture, restore to ORIGINAL so the driven call is non-perturbing, then compare
-// return + both int-writes + the (return-1) output. This is the reusable orchestrator
-// pattern. vehIdx = param_4.
-int LeaderAB(int p1, void* p2, int vehIdx) {
-    int save_t = TimerAt(vehIdx), save_r = RankAt(vehIdx);
-
-    int mine_out[2] = {0, 0};
-    int m = LeaderTimer(p1, p2, mine_out, vehIdx);
-    int mine_t = TimerAt(vehIdx), mine_r = RankAt(vehIdx);
-
-    TimerAt(vehIdx) = save_t; RankAt(vehIdx) = save_r;   // restore before orig
-
-    int orig_out[2] = {0, 0};
-    int o = OrigLeader(p1, p2, orig_out, vehIdx);
-    int orig_t = TimerAt(vehIdx), orig_r = RankAt(vehIdx);
-
-    TimerAt(vehIdx) = save_t; RankAt(vehIdx) = save_r;   // roll back — non-perturbing
-
-    ++g_calls;
-    bool outMismatch = (o == 1) && (mine_out[0] != orig_out[0] || mine_out[1] != orig_out[1]);
-    if (m != o || mine_t != orig_t || mine_r != orig_r || outMismatch) {
-        ++g_mismatch;
-        char line[224];
-        wsprintfA(line, "[%ld] MISMATCH v=%d ret o=%d m=%d  timer o=%d m=%d  rank o=%d m=%d  out o=(%08x,%08x) m=(%08x,%08x)\r\n",
-                  g_calls, vehIdx, o, m, orig_t, mine_t, orig_r, mine_r,
-                  orig_out[0], orig_out[1], mine_out[0], mine_out[1]);
-        SelfTestLog(line);
-    }
-    if ((g_calls & 0xff) == 1) {
-        char line[128];
-        wsprintfA(line, "[%ld] calls=%ld mism=%ld %s\r\n", g_calls, g_calls, g_mismatch,
-                  g_mismatch ? "" : "ALL-GREEN");
-        SelfTestLog(line);
-    }
-    return o;
-}
-
 // ── SAFE-PASSTHROUGH hook installed at 0x004148b0 (game's own calls) ─────────
 // When only this leaf is hooked (not the orchestrator driver), just run the original so
 // game behavior is unchanged. The A/B verification is driven from the orchestrator entry.
@@ -205,32 +151,12 @@ __declspec(naked) void AiLeader_Entry() {
     }
 }
 
-// ── coverage driver at the orchestrator entry FUN_00416250 (WS-R6-D) ─────────
-// param_1=[esp+4], param_2(vehIdx)=[esp+8]. Drive the snapshot/restore A/B for this
-// vehicle (non-perturbing), then run the original orchestrator. FUN_004148b0's real args
-// are (aiLine=orch.param_1, out, out, vehIdx=orch.param_2); it ignores p1/p2, so we pass
-// the orchestrator's param_1 and null scratch pointers. Only installs under
-// MASHED_HOOK_ONLY=0x00416250.
-void* g_orch_416256 = reinterpret_cast<void*>(0x00416256);
-int g_driverP1 = 0;
-__declspec(naked) void OrchLeaderCoverage_Entry() {
-    __asm {
-        pushad
-        mov  eax, dword ptr [esp + 0x28]   // param_2 = vehIdx ([S+8]; 0x20 pushad + 8)
-        push eax                            // vehIdx (3rd arg, cdecl right-to-left)
-        push 0                              // p2 (unused by FUN_004148b0)
-        push 0                              // p1 (unused by FUN_004148b0)
-        call LeaderAB                       // LeaderAB(0, 0, vehIdx); non-perturbing
-        add  esp, 0x0c
-        popad
-        push ebp
-        mov  ebp, esp
-        and  esp, 0xfffffff8
-        jmp  dword ptr [g_orch_416256]
-    }
-}
+// The LeaderAB snapshot/restore harness + OrchLeaderCoverage_Entry driver at
+// 0x00416250 (the C3 verification apparatus for this port, 2026-07-01) were
+// REMOVED 2026-07-02 when the orchestrator port landed at that RVA
+// (Ai/AiControlStep.cpp AiControlStep). Evidence + code: git history
+// (commit 5811fd0c) and log/diff_ai_leadertimer_004148b0_c3.log.
 
 }  // namespace
 
 RH_ScopedInstall(AiLeader_Entry, 0x004148b0);
-RH_ScopedInstall(OrchLeaderCoverage_Entry, 0x00416250);  // coverage driver (remove at orch port)
