@@ -1,7 +1,7 @@
 # arg_type index (GENERATED — do not hand-edit)
 
 Regenerate: `py -3.12 scripts\gen_arg_types_index.py`
-Handlers: 112 in `re/frida/diff_template.js` + 184 early-window-only in `re/frida/early_window_leaf_diff.py` | registry uses: 1042 across 289 distinct arg_types.
+Handlers: 112 in `re/frida/diff_template.js` + 184 early-window-only in `re/frida/early_window_leaf_diff.py` | registry uses: 1042 across 287 distinct arg_types.
 
 Answer "does an arg_type exist for this signature?" HERE. Open
 diff_template.js only to author a NEW handler (its header comments,
@@ -16,7 +16,7 @@ A registry entry naming an arg_type with no handler in EITHER harness
 | `int_scalar` | 274 | 135 | int_scalar — single uint32 arg, any integer return type |
 | `read_global` | 219 | 96 |  |
 | `void_write_observe` | 4101 | 51 | This detects whether both functions write the same value to the same address; the sentinel also confirms the function actually touches that address (if it do... |
-| `void_setter_observe` | 369 | 36 | Use for void(uint32) setters that write param_1 directly to a global. Strategy: call fn(value), read back target_global. Both orig and reimpl must have writt... |
+| `void_setter_observe` | 369 | 40 | Use for void(uint32) setters that write param_1 directly to a global. Strategy: call fn(value), read back target_global. Both orig and reimpl must have writt... |
 | `scalars_to_scattered_globals` | 3921 | 30 | Tests: list of { args:[...] } (or a raw array of args). Unlocks: 0x00417450/0x00417530 sparse-grid (fixed globals + 1/0 return), 0x004299d0 TimeRecord (3 sca... |
 | `int_pair` | 246 | 23 | int_pair — two uint32 args |
 | `state_machine_observe` | 558 | 13 |  Returns a hex string packing all output globals (32 bits each) so BigInt-sized observables don't lose precision through JSON. |
@@ -327,12 +327,3 @@ per-entry in hooks_registry.py comments.
 
 - `harness_limited` (7 uses) — Calling the function synthetically is unsafe or impossible (process-terminating CRT glue, SEH/stack-probe prologs, live-OS-handle piz compat shims). Evidence lane documented per-entry.
 - `register_abi_record` (1 uses) — Register-ABI hot-path physics record functions (EAX=0xd04 vehicle record, >1000 calls/s). C4 lane = installed-hook canonical-race telemetry (re/frida/phys_c4_telemetry.py + MASHED_PHYS_C4_SELFTEST), never run_diff.
-
-## Registry arg_types with NO dispatch handler anywhere (true orphans)
-
-Not in diff_template.js, not in early_window_leaf_diff.py, not a
-recognized marker. FATAL at run_diff pre-flight; treat any hook using
-one as NOT diffable until the entry is fixed or a handler is authored.
-
-- `int_write_observe` (1 uses)
-- `write_global_setter` (3 uses)
