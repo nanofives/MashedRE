@@ -18,6 +18,31 @@
 *.log
 *.csv.gz
 
+# --- verify/ convention (cruft triage 2026-07-02, re/diag/cruft_triage_2026-07-02.md) ---
+# verify/ ROOT = scratch (ignored); durable cited evidence lives in committed
+# subsystem subfolders (verify/boot/, verify/font/, verify/menu_crash/, ...).
+/verify/*
+!/verify/*/
+# Regenerable capture pools (dir-cited by analysis notes; rebuild via the
+# parity / nav-coverage harnesses — do not commit, ~100 MB of captures)
+/verify/allscreens/
+/verify/cmp/
+/verify/orig_screens/
+/verify/std_screens/
+/verify/p2/
+/verify/frontend_ref/
+
+# --- Extracted asset dumps (rebuild via the piz skill / re/tools extractors) ---
+/extracted/
+
+# --- Standalone runtime saves written at repo root by mashed_re.exe ---
+/mashed_re_gamesave.bin
+/mashed_re_progress.bin
+/mashed_re_settings.bin
+
+# --- Hygiene-gate stamp (scripts/hygiene_gate.ps1) ---
+/re/diag/hygiene_last_run.txt
+
 # --- Scribe-protocol runtime files (regenerated each session) ---
 /.last_master_sync
 /master.WIP-*

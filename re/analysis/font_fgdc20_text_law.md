@@ -109,7 +109,7 @@ record window with clean margins (E ink profile in-window:
   the original's 640×480 (cell scale 1.03×) LINEAR and POINT are visually
   identical, and with the corrected 0x43c atlas base LINEAR renders clean
   solid glyphs matching the original's weight
-  (verify/font_cmp_exit_offsetfix.png).
+  (verify/font/font_cmp_exit_offsetfix.png).
 - (CORRECTION: an earlier intermediate state of this note claimed the
   original was point-sampled and added a half-texel UV inset — both were
   compensations for the 4-column atlas shift and are reverted.)
@@ -117,7 +117,7 @@ record window with clean margins (E ink profile in-window:
   −0.5 correction was briefly added against the glyph-edge "ticks", but
   those were the atlas pixel-base bug; with the atlas fixed, the shift only
   moved all texture content ~half a texel up-left vs the original (anaglyph
-  evidence verify/font_anaglyph_exit.png → exit2.png).
+  evidence verify/font/font_anaglyph_exit.png → exit2.png).
 - **Presentation enhancement (NOT RE law)**: the atlas coverage map is
   supersampled 2× with Catmull-Rom at load and edge-hardened with a
   smoothstep S-curve, fixed point 0.5 (`kAtlasSS`/`kT0`/`kT1`,
@@ -145,7 +145,7 @@ comparisons. Keyboard injection does NOT advance the original's title.
 1. ~~Stroke weight lighter~~ / ~~in-cell atlas bleed ticks~~ — **RESOLVED
    2026-06-12 evening**: both were the 4-column atlas shift (pixels read
    from +0x438 instead of +0x43c). With the correct base + LINEAR, weight
-   and edges match the original (verify/font_cmp_exit_offsetfix.png,
+   and edges match the original (verify/font/font_cmp_exit_offsetfix.png,
    font_cmp_items_offsetfix.png).
 2. Original watermark not visible at f1900 (mid-transition synthetic-push
    frame); verify whether settled scr1 draws the 0x41 watermark in the

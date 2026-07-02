@@ -128,6 +128,6 @@ model, default once the `.AI` banks load. Pieces (TrackRenderer.cpp / AiStandalo
 **Verified (Arctic, no-round, 120 s, all-AI-driven):** all 3 opponents race the full racing
 line and complete laps — a1 lap 3, a2 lap 3, a3 lap 4 — smooth monotonic progress, no freezes
 (was: 0-1 of 3 before). Round mode renders the 4-car standings + elimination scoring
-(verify/_ai_race_optionB.png). Player feel is UNCHANGED — the player still uses its own motion
+(verify/ai/_ai_race_optionB.png). Player feel is UNCHANGED — the player still uses its own motion
 path; only opponents changed. The fully-faithful path (Option A: verbatim bands on a C4 physics
 chain) remains future work.

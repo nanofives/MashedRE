@@ -532,7 +532,7 @@ what is *supposed* to load+set `FGDC20.TXD` current (search refs to the font TXD
 
 ## Screenshot status (goal: verified main-menu shot) — NOT achieved
 
-- `empire_splash_t007.png` (this dir; copied from `verify/scene_t007.png`, run 3) shows
+- `empire_splash_t007.png` (this dir; copied from `verify/menu_crash/scene_t007.png`, run 3) shows
   the **Empire Interactive splash (`empire.mpg` intro)** rendering in the MASHED window →
   renderer + intro pipeline work; the window is live, not frozen-black. (`verify/` is
   overwritten each `observe_runtime.ps1` run; this copy is the frozen evidence.)
