@@ -1,0 +1,782 @@
+{
+ "armed": true,
+ "err": null,
+ "seg": {
+  "calls": 4602,
+  "agree": 4602,
+  "mis": 0,
+  "ret1": 6,
+  "byRule": {
+   "0": {
+    "calls": 4602,
+    "agree": 4602,
+    "mis": 0,
+    "ret1": 6
+   }
+  }
+ },
+ "ev": {
+  "calls": 6,
+  "agree": 6,
+  "mis": 0,
+  "byRule": {
+   "0": {
+    "calls": 6,
+    "agree": 6,
+    "mis": 0
+   }
+  }
+ },
+ "ord": {
+  "calls": 6654,
+  "agree": 6654,
+  "mis": 0,
+  "appends": 0,
+  "resets": 0
+ },
+ "misrec": [],
+ "samp": [
+  {
+   "fn": "seg",
+   "rule": 0,
+   "got": 1,
+   "want": 1,
+   "en": {
+    "rule": 0,
+    "participants": 2,
+    "metric": [
+     1.3373863697052002,
+     1.3742284774780273,
+     -1,
+     -1
+    ],
+    "score": [
+     5,
+     3,
+     4,
+     4
+    ],
+    "alive": [
+     true,
+     false,
+     false,
+     false
+    ],
+    "motion": [
+     0,
+     255,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1000,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     false,
+     false
+    ]
+   },
+   "exActive": [
+    true,
+    true,
+    false,
+    false
+   ],
+   "exAlive": [
+    true,
+    false,
+    false,
+    false
+   ]
+  },
+  {
+   "fn": "ev",
+   "rule": 0,
+   "got": 0,
+   "fccGot": 0,
+   "pred": {
+    "ret": 0
+   },
+   "en": {
+    "rule": 0,
+    "participants": 2,
+    "metric": [
+     1.3373863697052002,
+     1.3742284774780273,
+     -1,
+     -1
+    ],
+    "score": [
+     5,
+     3,
+     4,
+     4
+    ],
+    "alive": [
+     true,
+     false,
+     false,
+     false
+    ],
+    "motion": [
+     0,
+     255,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1000,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "fn": "seg",
+   "rule": 0,
+   "got": 1,
+   "want": 1,
+   "en": {
+    "rule": 0,
+    "participants": 2,
+    "metric": [
+     1.6057308912277222,
+     1.683990716934204,
+     -1,
+     -1
+    ],
+    "score": [
+     5,
+     3,
+     4,
+     4
+    ],
+    "alive": [
+     true,
+     true,
+     false,
+     false
+    ],
+    "motion": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1000,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     false,
+     false
+    ]
+   },
+   "exActive": [
+    true,
+    true,
+    false,
+    false
+   ],
+   "exAlive": [
+    false,
+    true,
+    false,
+    false
+   ]
+  },
+  {
+   "fn": "ev",
+   "rule": 0,
+   "got": 0,
+   "fccGot": 0,
+   "pred": {
+    "ret": 0
+   },
+   "en": {
+    "rule": 0,
+    "participants": 2,
+    "metric": [
+     1.6057308912277222,
+     1.683990716934204,
+     -1,
+     -1
+    ],
+    "score": [
+     4,
+     4,
+     4,
+     4
+    ],
+    "alive": [
+     false,
+     true,
+     false,
+     false
+    ],
+    "motion": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1000,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "fn": "seg",
+   "rule": 0,
+   "got": 1,
+   "want": 1,
+   "en": {
+    "rule": 0,
+    "participants": 2,
+    "metric": [
+     1.9413328170776367,
+     2.0007002353668213,
+     -1,
+     -1
+    ],
+    "score": [
+     3,
+     5,
+     4,
+     4
+    ],
+    "alive": [
+     false,
+     true,
+     false,
+     false
+    ],
+    "motion": [
+     255,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1000,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     false,
+     false
+    ]
+   },
+   "exActive": [
+    true,
+    true,
+    false,
+    false
+   ],
+   "exAlive": [
+    false,
+    true,
+    false,
+    false
+   ]
+  },
+  {
+   "fn": "ev",
+   "rule": 0,
+   "got": 0,
+   "fccGot": 0,
+   "pred": {
+    "ret": 0
+   },
+   "en": {
+    "rule": 0,
+    "participants": 2,
+    "metric": [
+     1.9413328170776367,
+     2.0007002353668213,
+     -1,
+     -1
+    ],
+    "score": [
+     3,
+     5,
+     4,
+     4
+    ],
+    "alive": [
+     false,
+     true,
+     false,
+     false
+    ],
+    "motion": [
+     255,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1000,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "fn": "seg",
+   "rule": 0,
+   "got": 1,
+   "want": 1,
+   "en": {
+    "rule": 0,
+    "participants": 2,
+    "metric": [
+     2.332214832305908,
+     2.3885984420776367,
+     -1,
+     -1
+    ],
+    "score": [
+     2,
+     6,
+     4,
+     4
+    ],
+    "alive": [
+     false,
+     true,
+     false,
+     false
+    ],
+    "motion": [
+     255,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1000,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     false,
+     false
+    ]
+   },
+   "exActive": [
+    true,
+    true,
+    false,
+    false
+   ],
+   "exAlive": [
+    false,
+    true,
+    false,
+    false
+   ]
+  },
+  {
+   "fn": "ev",
+   "rule": 0,
+   "got": 0,
+   "fccGot": 0,
+   "pred": {
+    "ret": 0
+   },
+   "en": {
+    "rule": 0,
+    "participants": 2,
+    "metric": [
+     2.332214832305908,
+     2.3885984420776367,
+     -1,
+     -1
+    ],
+    "score": [
+     2,
+     6,
+     4,
+     4
+    ],
+    "alive": [
+     false,
+     true,
+     false,
+     false
+    ],
+    "motion": [
+     255,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1000,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "fn": "seg",
+   "rule": 0,
+   "got": 1,
+   "want": 1,
+   "en": {
+    "rule": 0,
+    "participants": 2,
+    "metric": [
+     2.678230047225952,
+     2.726637363433838,
+     -1,
+     -1
+    ],
+    "score": [
+     2,
+     6,
+     4,
+     4
+    ],
+    "alive": [
+     true,
+     true,
+     false,
+     false
+    ],
+    "motion": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1000,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     false,
+     false
+    ]
+   },
+   "exActive": [
+    true,
+    true,
+    false,
+    false
+   ],
+   "exAlive": [
+    false,
+    true,
+    false,
+    false
+   ]
+  },
+  {
+   "fn": "ev",
+   "rule": 0,
+   "got": 0,
+   "fccGot": 0,
+   "pred": {
+    "ret": 0
+   },
+   "en": {
+    "rule": 0,
+    "participants": 2,
+    "metric": [
+     2.678230047225952,
+     2.726637363433838,
+     -1,
+     -1
+    ],
+    "score": [
+     1,
+     7,
+     4,
+     4
+    ],
+    "alive": [
+     false,
+     true,
+     false,
+     false
+    ],
+    "motion": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1000,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "fn": "seg",
+   "rule": 0,
+   "got": 1,
+   "want": 1,
+   "en": {
+    "rule": 0,
+    "participants": 2,
+    "metric": [
+     3.1772282123565674,
+     3.2908637523651123,
+     -1,
+     -1
+    ],
+    "score": [
+     1,
+     7,
+     4,
+     4
+    ],
+    "alive": [
+     true,
+     true,
+     false,
+     false
+    ],
+    "motion": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1000,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     false,
+     false
+    ]
+   },
+   "exActive": [
+    true,
+    true,
+    false,
+    false
+   ],
+   "exAlive": [
+    false,
+    true,
+    false,
+    false
+   ]
+  },
+  {
+   "fn": "ev",
+   "rule": 0,
+   "got": 2,
+   "fccGot": 0,
+   "pred": {
+    "ret": 2,
+    "fcc": 0
+   },
+   "en": {
+    "rule": 0,
+    "participants": 2,
+    "metric": [
+     3.1772282123565674,
+     3.2908637523651123,
+     -1,
+     -1
+    ],
+    "score": [
+     0,
+     8,
+     4,
+     4
+    ],
+    "alive": [
+     false,
+     true,
+     false,
+     false
+    ],
+    "motion": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1000,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     false,
+     false
+    ]
+   }
+  }
+ ],
+ "lastOrder": [
+  -1,
+  -1,
+  -1,
+  -1
+ ],
+ "run": {
+  "track": 1,
+  "mode": 10,
+  "cars": 2,
+  "rule": 0,
+  "hold": 100,
+  "pid": 69620,
+  "ts": "2026-07-02 15:38:16"
+ }
+}

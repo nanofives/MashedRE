@@ -1,0 +1,183 @@
+{
+ "armed": true,
+ "err": null,
+ "seg": {
+  "calls": 411,
+  "agree": 411,
+  "mis": 0,
+  "ret1": 1,
+  "byRule": {
+   "0": {
+    "calls": 151,
+    "agree": 151,
+    "mis": 0,
+    "ret1": 0
+   },
+   "8": {
+    "calls": 260,
+    "agree": 260,
+    "mis": 0,
+    "ret1": 1
+   }
+  }
+ },
+ "ev": {
+  "calls": 1,
+  "agree": 1,
+  "mis": 0,
+  "byRule": {
+   "8": {
+    "calls": 1,
+    "agree": 1,
+    "mis": 0
+   }
+  }
+ },
+ "ord": {
+  "calls": 1036,
+  "agree": 1036,
+  "mis": 0,
+  "appends": 1,
+  "resets": 1
+ },
+ "misrec": [],
+ "samp": [
+  {
+   "fn": "seg",
+   "rule": 8,
+   "got": 1,
+   "want": 1,
+   "en": {
+    "rule": 8,
+    "participants": 4,
+    "metric": [
+     -0.10611027479171753,
+     -0.10041534900665283,
+     -0.10983741283416748,
+     -0.10294932126998901
+    ],
+    "score": [
+     6,
+     6,
+     6,
+     6
+    ],
+    "alive": [
+     true,
+     true,
+     true,
+     true
+    ],
+    "motion": [
+     1,
+     1,
+     1,
+     1
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 0,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "exActive": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "exAlive": [
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "fn": "ev",
+   "rule": 8,
+   "got": -1,
+   "fccGot": 0,
+   "pred": {
+    "ret": -1,
+    "fcc": 0
+   },
+   "en": {
+    "rule": 8,
+    "participants": 4,
+    "metric": [
+     -0.10611027479171753,
+     -0.10041534900665283,
+     -0.10983741283416748,
+     -0.10294932126998901
+    ],
+    "score": [
+     6,
+     6,
+     6,
+     6
+    ],
+    "alive": [
+     true,
+     true,
+     true,
+     true
+    ],
+    "motion": [
+     1,
+     1,
+     1,
+     1
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 0,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  }
+ ],
+ "lastOrder": [
+  -1,
+  -1,
+  -1,
+  -1
+ ],
+ "run": {
+  "track": 1,
+  "mode": 10,
+  "cars": 4,
+  "rule": 8,
+  "hold": 45,
+  "pid": 27516,
+  "ts": "2026-07-02 15:29:30"
+ }
+}

@@ -2871,6 +2871,14 @@ void TrackRenderer::StartRound() {
     round_alive_ = kRaceCars;
     round_winner_ = -1;
     for (int i = 0; i < kRaceCars; ++i) race_[i] = RaceCar{};
+    // U-9005 RESOLVED (rules oracle 2026-07-02, log/rules_oracle_rule8.json
+    // round-resets=1): the original DOES re-init the finish order on the
+    // per-round restart path (order [0,-1,-1,-1] observed reset to all -1.0f
+    // across a round cycle with no track reload). Mirror FUN_00414060's
+    // slot reset per round. The rule-10 countdown is NOT re-seeded per round
+    // (3 back-to-back expiry rounds observed with a stale timer) — leave it.
+    for (int s = 0; s < Race::RuleEngine::kCars; ++s)
+        rulep_.finishOrder[s] = Race::RuleEngine::kEmptySlot;
     // F4: reset the race clock + the player's per-lap split records.
     race_time_ = 0.f;
     for (int k = 0; k < kMaxSplits; ++k) { split_time_[k] = 0.f; split_done_[k] = false; }
@@ -2954,9 +2962,9 @@ void TrackRenderer::InitPickups() {
 // (FUN_004046a0; difficulty _DAT_0089a360 fed as 0.0 — the fresh-race default
 // before the FUN_00414060 rubber-band seed, which is not modeled standalone).
 // Finish order / timers reset here (FUN_00414060 runs on the race-SETUP path:
-// FUN_0042c960 -> FUN_004111c0 -> FUN_00414060). (U-9005: whether the
-// original also re-inits the finish order on the per-round restart path
-// (thunk_FUN_004194f0) is unverified — the engine resets per match only.)
+// FUN_0042c960 -> FUN_004111c0 -> FUN_00414060). (U-9005 RESOLVED 2026-07-02:
+// the original ALSO re-inits the finish order per round restart — witnessed
+// live, rules oracle round-resets=1 — so StartRound() now mirrors that.)
 void TrackRenderer::SetRaceRule(int rule) {
     rule_ = rule;
     const char* e = std::getenv("MASHED_RULE_ENGINE");
