@@ -1,13 +1,14 @@
 # arg_type index (GENERATED — do not hand-edit)
 
 Regenerate: `py -3.12 scripts\gen_arg_types_index.py`
-Handlers: 109 in `re/frida/diff_template.js` | registry uses: 1042 across 289 distinct arg_types.
+Handlers: 112 in `re/frida/diff_template.js` + 184 early-window-only in `re/frida/early_window_leaf_diff.py` | registry uses: 1042 across 289 distinct arg_types.
 
 Answer "does an arg_type exist for this signature?" HERE. Open
 diff_template.js only to author a NEW handler (its header comments,
 lines 1-150, document test-vector shapes per family), then rerun this script.
-A registry entry naming an arg_type with no handler here is FATAL at
-run_diff pre-flight (see `worker-invented arg_types` feedback memory).
+A registry entry naming an arg_type with no handler in EITHER harness
+(and not a recognized marker) is FATAL at run_diff pre-flight (see
+`worker-invented arg_types` feedback memory).
 
 | arg_type | diff_template.js line | registry uses | note |
 |---|---|---|---|
@@ -44,6 +45,8 @@ run_diff pre-flight (see `worker-invented arg_types` feedback memory).
 | `audio_sub_struct_dual` | 3301 | 2 | LinkBuffer(p1,p3); returns p1 on success, 0 on failure. With a zeroed 12-byte scratch buf both cleanups are no-ops and both link calls write to the buffer. T... |
 | `audio_sub_struct_link` | 3261 | 2 | Prior arg_type 'audio_sub_struct_link' did not exist in this file and fell through to default fn(input), passing a bare uint32 as the pointer arg — both side... |
 | `audio_sub_struct_zero` | 3476 | 2 |  |
+| `bytes_inplace_3` | 1149 | 2 |  |
+| `eax_implicit_int` | 2398 | 2 | scratch buffers (so dereferences inside the target don't AV). The harness allocates N scratch buffers (32 bytes each) and rewrites the input list so each tes... |
 | `entity_field_add` | 452 | 2 | the residue of the first call. Snapshot the field, call fn(idx,delta), pack (return_value, post-add field) into a fingerprint, then RESTORE the field so Orig... |
 | `fastcall_reg` | 2609 | 2 | a 2-element [ecxVal, edxVal] (nargs==2, int mode). For a ptr register the value is replaced by a scratch-buffer address. |
 | `font_ctx_float2` | 1548 | 2 | FontSys_InitRenderState (0x00552c10) once before the test loop to guarantee g_FontCtxPtrs[0] is allocated. Without this, the function derefs a NULL slot ptr ... |
@@ -108,6 +111,7 @@ run_diff pre-flight (see `worker-invented arg_types` feedback memory).
 | `thread_desc_init` | 1891 | 1 | Strategy: allocate 5x4=20 byte scratch buf; fill with sentinel 0xDEAD????; call fn(buf, p2, p3, p4); read back 5 fields; return packed fingerprint. Both orig... |
 | `time_diff_decompose` | 259 | 1 | time_diff_decompose — fn(int time_a, int time_b, u32* sign, int* min, int* sec, float* csec). void return; four out-ptrs in a single 16-byte buf. input: [tim... |
 | `transform_point` | 714 | 1 |  |
+| `transform_vector` | 714 | 1 |  |
 | `trig_text_draw` | 2957 | 1 | CONFIG.draw_callee_rva_str: hex addr of the draw callee (default '0x00427ff0'). Signature of the callee is void(uint32, float, float). Tests: [sprite_id, x, ... |
 | `uint32_scalar` | 700 | 1 | float_scalar |
 | `vec2_normalize` | 729 | 1 |  |
@@ -121,193 +125,214 @@ run_diff pre-flight (see `worker-invented arg_types` feedback memory).
 | `audio_pool_free` | 2067 | 0 | Allocate a node via FUN_005ae800(&DAT_009146c0, tag), then free it. Success = 1 (no crash), 0 on crash. Both orig and reimpl must return 1. CONFIG: alloc_rva... |
 | `music_vol_set` | 3441 | 0 | runs zero iterations and the secondary branch is skipped. Tests: flat list of float volume values. Observable: low-24 fingerprint of buf packed with (sentine... |
 
-## Registry arg_types with NO dispatch handler in diff_template.js
+## Early-window-only arg_types (pure-leaf pre-crash lane)
 
-run_diff.py pre-flight refuses these (FATAL) unless the name happens to
-appear elsewhere in the JS. Most are historical worker entries that
-predate the 2026-06-12 pre-flight and were never run; treat any hook
-using one as NOT diffable until a handler is authored.
+Dispatched by `re/frida/early_window_leaf_diff.py` (PURE_LEAF_ARGTYPES),
+NOT by diff_template.js — `run_diff.py` pre-flight refuses them; that is
+correct, their lane is `py -3.12 re\frida\early_window_leaf_diff.py <hook>`.
+Evidence tag in hooks.csv: `green-earlywindow-rN`.
 
-- `aabb_sphere_overlap` (1 uses)
-- `abs_ranges_setter` (4 uses)
-- `abs_region_zeroer` (1 uses)
-- `abs_scan_flag` (1 uses)
-- `abs_table_state_setter` (1 uses)
-- `abstable_ptr_zero` (1 uses)
-- `any_slot_nonzero` (1 uses)
-- `arg_default_memcpy_abs` (1 uses)
-- `arg_flag_branch_getter` (1 uses)
-- `arg_scattered_globals` (1 uses)
-- `arg_table_linear_search` (1 uses)
-- `arg_to_global_ret` (1 uses)
-- `array_fill_2way` (1 uses)
-- `bitfield_range_set` (1 uses)
-- `bitmap_alloc_slot` (1 uses)
-- `bitmap_blit` (1 uses)
-- `bounded_struct_push` (1 uses)
-- `bounded_table_signselect_clamp` (1 uses)
-- `bounded_thunk_orflag` (1 uses)
-- `byte_args_to_globals` (1 uses)
-- `byte_counter_struct` (1 uses)
-- `byte_idx_table_bitclear` (1 uses)
-- `bytes_inplace_3` (2 uses)
-- `case_insensitive_ncmp` (1 uses)
-- `circular_dll_search` (1 uses)
-- `circular_list_search_node` (1 uses)
-- `circular_str_search_ci` (1 uses)
-- `cond_deref_get` (1 uses)
-- `cond_table_get` (1 uses)
-- `const_return` (5 uses)
-- `container_record_set` (3 uses)
-- `copy_arg_to_globals` (1 uses)
-- `deref_byte_flag` (1 uses)
-- `deref_float_field_rmw` (1 uses)
-- `deref_p1field_glob_set` (6 uses)
-- `deref_struct_set` (10 uses)
-- `dll_get_nth` (1 uses)
-- `dll_head_insert` (1 uses)
-- `dll_insert_head` (1 uses)
-- `dll_merge_swap` (1 uses)
-- `dll_remove_count` (1 uses)
-- `dll_unlink` (1 uses)
-- `double_deref_ptr_get` (1 uses)
-- `double_deref_vec3_get` (2 uses)
-- `double_indexed_float_mul` (1 uses)
-- `eax_dest_memcpy_init` (1 uses)
-- `eax_ecx_float_hash` (1 uses)
-- `eax_ecx_insert` (7 uses)
-- `eax_edi_out` (1 uses)
-- `eax_implicit_int` (2 uses)
-- `eax_implicit_void` (2 uses)
-- `eax_out_2float` (1 uses)
-- `eax_struct_deref_write` (1 uses)
-- `eax_struct_stack_out` (1 uses)
-- `ebx_edi_global_find` (1 uses)
-- `edx_ebx_edi_find` (1 uses)
-- `engine_register_funcs` (1 uses)
-- `eq_predicate_get` (1 uses)
-- `esi_edx_predicate` (1 uses)
-- `esi_global_search` (2 uses)
-- `esi_struct_init` (2 uses)
-- `fastcall_float_clamp` (1 uses)
-- `find_node_struct_copy` (1 uses)
-- `flag_branch_struct_2way` (1 uses)
-- `flag_multibit` (3 uses)
-- `float_2ptr_ret` (2 uses)
-- `float_planes6_predicate` (1 uses)
-- `float_table_read` (2 uses)
-- `float_threshold_predicate` (1 uses)
-- `float_vec3_lerp_out` (1 uses)
-- `gated_args_to_globals` (1 uses)
-- `gated_int_predicate` (1 uses)
-- `gated_record_eq2` (2 uses)
-- `global4_bool_out` (2 uses)
-- `global_2level_list_search` (1 uses)
-- `global_dll_insert_head` (1 uses)
-- `global_field_read` (12 uses)
-- `global_fieldoff_clear` (1 uses)
-- `global_fieldoff_set` (1 uses)
-- `global_float_predicate` (1 uses)
-- `global_float_step` (1 uses)
-- `global_indexed_float` (1 uses)
-- `global_ptr_strided_clear` (1 uses)
-- `global_ptrtable_match` (1 uses)
-- `global_rec_clear_ret` (1 uses)
-- `global_swap` (1 uses)
-- `global_switch_member` (1 uses)
-- `global_table_linear_search` (1 uses)
-- `grid_getter_multiout` (1 uses)
-- `harness_limited` (7 uses)
-- `heap_alloc_aligned` (1 uses)
-- `idx2_record_condset` (1 uses)
-- `idx2_table_get` (3 uses)
-- `idx2_table_get_outlast` (1 uses)
-- `idx_src_abs_memcpy` (1 uses)
-- `idx_table_out` (1 uses)
-- `index_then_ptr_array` (2 uses)
-- `indexed_bit_toggle` (1 uses)
-- `indexed_bound_array_get` (1 uses)
-- `indexed_const2_set` (1 uses)
-- `indexed_float_accum16` (1 uses)
-- `indexed_float_sq` (1 uses)
-- `indexed_float_sum2` (1 uses)
-- `indexed_global_2lvl` (1 uses)
-- `indexed_global_field_read` (2 uses)
-- `indexed_global_field_write` (2 uses)
-- `indexed_global_idiv` (1 uses)
-- `indexed_masked_get_out` (1 uses)
-- `indexed_table_set` (9 uses)
-- `indexed_vec_set` (2 uses)
-- `int2_scalar` (2 uses)
+| arg_type | registry uses | note |
+|---|---|---|
+| `range_init` | 14 | void fn(): writes a contiguous global range [tgt, tgt+len) — snapshot whole range |
+| `global_field_read` | 12 | fn(): return *(*(global)+field_off) — point global at a seeded buffer |
+| `near_leaf_seed_multi_obs` | 12 | void fn(void): NEAR-LEAF that reads pure C3 getters and conditionally writes SEVERAL absolute globals. cfg.observe_addrs=[...]. seed_sets[t]={globals:[[addr,val],...]}; seed, call, snapshot all observe_addrs. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via path toggles (do-nothing vs compute) |
+| `deref_struct_set` | 10 | void fn(ptr p, scalar...): writes deterministic values into fields of p. alloc+seed buffer, pass as p, call with nscalar args, snapshot observe offsets. test=[a0(,a1,a2)] |
+| `indexed_table_set` | 9 | void fn(i,val): *(tgt + i*stride) = val (fixed i=set_idx, vary val) |
+| `eax_ecx_insert` | 7 | fn(EAX=container, ECX=item): cross-link insert. trampoline sets EAX+ECX, seed both bufs (eax_seed/ecx_seed [{off,val}]), call, snapshot eax_observe/ecx_observe offsets in both + ret. reimpl naked __asm reading EAX+ECX. test ignored (single call) |
+| `deref_p1field_glob_set` | 6 | fn(p1[, p2/v]): base=*(u32*)(*(u32*)(p1+p1_off)+*(u32*)glob); reimpl writes base fields. seed glob=0, p1->atab->base, optional p2 in-ptr(n) or scalar; snapshot base observe. test ignored |
+| `seed_globals_arg_multiobs` | 6 | void fn(int arg): PURE LEAF global-cascade. Per cfg.seed_sets[t]={arg, globals:[[a,v]...]} seed input globals (+ queue/sentinel), call f(arg), observe cfg.observe_addrs (list, joined). non-degen via distinct seed states/arg producing distinct write patterns |
+| `const_return` | 5 | fn(): return <fixed constant> — no input, no state; call + compare |
+| `struct_const_init` | 5 | [u32] fn([passthrough,] ptr p): writes deterministic consts/computed to p's fields. alloc 0x400 buf, snapshot observe offsets (+ret if passthrough). test ignored |
+| `abs_ranges_setter` | 4 | void fn(scalars...): writes to ABSOLUTE globals (no ptr args). Reset cfg.abs_ranges [{addr,dwords}] to 0, call fn(test scalars), snapshot the same ranges, compare. nscalar from cfg. test=[a0(,a1,a2)] (varied -> non-degen). reimpl __cdecl reads/writes the absolute globals directly |
+| `ptr_out_table_get` | 4 | u32 fn(out_ptr,idx): if(idx>=bound) return 0; out[0..n-1]=*(u32*)(base+idx*stride+j*4); return 1 |
+| `container_record_set` | 3 | void fn(container,..): base=container[0],idx=container[2]; addr=base+idx*0x30; write args into addr+offs. shape p/f/pp |
+| `flag_multibit` | 3 | void fn(idx,b1,b2[,b3]): RMW flag word at base+idx*stride via reimpl bit logic. test=[idx,b1,b2(,b3),seed] |
+| `idx2_table_get` | 3 | u32 fn(out_ptr,i1,i2): if(i1>=bound||i2>=bound2) return 0; *out=*(u32*)(base+(i1*mult+i2)*stride); return 1 |
+| `near_leaf_seed_globals` | 3 | u32 fn(void): NEAR-LEAF that reads pure global getters (C3 callees) and returns a derived int. seed_sets[t]={globals:[[abs_addr,val],...]} written before the call; compare int return. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via different global seeds |
+| `near_leaf_seed_outbuf` | 3 | NEAR-LEAF reading seedable abs table(s) via C3 getter callee(s), writing a small out-buffer arg and/or returning a derived int. cfg.out_size/out_argpos/out_observe/fold_ret/argkinds. seed_sets[t]={seeds:[[addr,val],...], args:[int,...]}; out-buf alloc'd fresh per side (sentinel 0xEE) at out_argpos, int args from scenario. snapshot out_observe offsets (+ ret if fold_ret). reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via per-scenario table seeds -> distinct out/return |
+| `ptr_fields_clear` | 3 | void fn(ptr): zero fields of a struct arg; check observe offsets |
+| `table_bool_predicate` | 3 | u32 fn(i): if(bound>=0 && (int)i<=bound) return 0; return (*(u32*)(tgt+i*stride+off0) {==|!=} 0)?1:0. test=[idx,slotval] |
+| `double_deref_vec3_get` | 2 | void fn(i,out*): rec=*(tgt+i*stride); t=*(rec+rec_off); out[k]=*(t+out_off+k*4) for k<span. test=idx |
+| `eax_implicit_void` | 2 | void fn() with `this` in EAX — trampoline sets EAX=buf, check observed fields |
+| `esi_global_search` | 2 | u32 fn(ESI=key): linear-search a global table (count at glob, base tgt, stride) for entry[+0]==key; return an index-derived pointer or 0. ORIG called via `mov esi,key; jmp` trampoline; reimpl is __cdecl(key) reading the same globals (compares result, not ABI). Seed count=4, zero 4 entries, table[idx*stride]=key, key=0xC0DE0000|idx. test=idx (0..3 -> distinct matched addr -> non-degen) |
+| `esi_struct_init` | 2 | void fn(ESI=p): NEAR-LEAF struct initializer; pointer is a REGISTER arg in ESI. Orig driven via esi-trampoline (mov esi,buf; jmp rva); Reim is plain __cdecl(void* p) (stack arg) -> compares observable buffer writes (behavior, not ABI). Per cfg.scenarios[t]={seed}: seed cfg.bufsize buf=seed, call, observe full buffer hex dwords. non-degen via the structured post-state (memset region + distinct const fields) + seed variation (proves full memset coverage) |
+| `float_2ptr_ret` | 2 | float fn(a*, b*): pure float of two vec3 args (dot/clamp/etc.), returns ST0. Seed a,b from cfg.seed_pairs[t]={a:[3 floats],b:[3 floats]} (plain numbers), call, compare float return as u32 bit pattern. Reimpl is VERBATIM naked __asm (bit-identical x87). test=index into seed_pairs (varied -> non-degen). signature ret MUST be 'float' |
+| `float_table_read` | 2 | fn(i): return *(float*)(base+i*stride) — seed_table bits read as float |
+| `gated_record_eq2` | 2 | u32 fn(): g=*(int*)gate; rec=base+g*stride; return (*(rec+off0)==v0 && *(rec+off1)==v1)?1:0. test=[gidx,s0,s1] |
+| `global4_bool_out` | 2 | void fn(out): reads N globals at base[k], writes out[k]=predicate(base[k])?1:0. test indexes cfg.seedvecs |
+| `index_then_ptr_array` | 2 | fn(args): comp=mult?a0*mult+a1:a0; idx=*(int*)(base_idx+comp*4); if(idx==-1) return 0; return *(u32*)(basePtr+idx*4). test=[a0(,a1),idxval] |
+| `indexed_global_field_read` | 2 | u32 fn(): return *(u32*)(*(u32*)tgt + *(u32*)glob + field_off). seed tgt->buf, glob->idx(nonzero), place test at buf[idx+field_off]. verifies base ptr + index global + field_off. test=value |
+| `indexed_global_field_write` | 2 | int fn(v): *(u32*)(*(u32*)tgt + *(u32*)glob + field_off)=v; return const/v. seed tgt->buf, glob->idx; call; observe slot|ret. test=v |
+| `indexed_vec_set` | 2 | void fn(idx,in): addr=base+idx*stride; if(in) write n dwords from in to addr+j*4 else zero them |
+| `int2_scalar` | 2 | pure function of TWO int args (no memory) — tests are [p1,p2] pairs |
+| `ptr_buffer_op` | 2 | void fn(ptr p): memset/memcpy-from-abs over a buffer at p. alloc buf_dwords*4, fill sentinel 0xA5A5A5A5, call fn(buf), snapshot observe_offs. test ignored |
+| `table_ret_ptrout` | 2 | u32 fn(idx,out): addr=base+idx*stride; if(out) *out=*(u32*)(addr+off0); return *(u32*)(addr+off1) |
+| `thiscall_struct_from_table` | 2 | __thiscall fn(this): idx=this[idx_off]; record=tbl+idx*tbl_stride; derive into this fields. orig=thiscall(ECX), reimpl=__cdecl(self). seed this+table, snapshot observe_offs. test=value |
+| `two_global_predicate` | 2 | u32 fn(): reads gate global + tgt global, returns membership (1/0). test=[g1seed,g2seed] |
+| `aabb_sphere_overlap` | 1 | int fn(box* arg1, sphere* arg2): box={min.xyz@0,4,8; max.xyz@0xc,0x10,0x14}; sphere={center.xyz@0,4,8; radius@0xc}. block1: center strictly inside box on all 3 axes -> 1; else block2: box expanded by radius contains center -> 1 else 0. all straight-line fld/fcomp (no fld-st(N), no globals). plain __cdecl. seed_sets[t]={box:[6 floats], sph:[4 floats]}; snapshot int ret. reimpl VERBATIM naked __asm. non-degen via inside(1)/far-outside(0) mix |
+| `abs_region_zeroer` | 1 | void fn(): strided record-array zeroer (base glob, stride 0x8c) that also writes record index (word) to [+0x1c], + trailing tgt=0. Pure writer; sentinel-fill ONLY the observed offsets (base[0], base[0x1c]=idx0, rec1[0x1c]=idx1, rec5[0x1c]=idx5, base[0x64], tgt), call, snapshot, compare. non-degen via the per-record index |
+| `abs_scan_flag` | 1 | void fn(): scans an absolute dword range; if any nonzero, sets flag global=0xff (else leaves it). Reset scan range (glob, span dwords) to 0 + flag(tgt) to a 0x11 sentinel; test0 seeds one nonzero at glob+idx (-> flag 0xff), test1 all-zero (-> flag stays 0x11). observe flag. non-degen 0xff vs 0x11 |
+| `abs_table_state_setter` | 1 | u32 fn(i, arg2): if(i<0||i>=0x19) return 0; rec=glob+i*0x50; if(arg2==0){rec[0x20]=3;rec[0x1c]=0} elif(rec[0x20]==3){rec[0x20]=1;rec[0x1c]=0} else {rec[0x1c]=0}; return 1. tests cover the 3 branches + OOB; seed rec[0x20]=pre, rec[0x1c]=0xEE; snapshot rec[0x20]|rec[0x1c]|ret. non-degen |
+| `abstable_ptr_zero` | 1 | void fn(idx): ptr=*(u32*)(abstable+idx*4); operate on a buffer at ptr. seed abstable[idx]=&scratch, fill sentinel, call fn(idx), observe scratch at observe_offs. test ignored |
+| `any_slot_nonzero` | 1 | u32 fn(): return any(observe[k].addr nonzero)?1:0. test=index to set nonzero (-1=all zero) |
+| `arg_default_memcpy_abs` | 1 | void fn(src): if(!src) src=glob(default); memcpy(tgt, src, copy_dwords*4). test0: src=&buf(markers)->dest=markers; test1: src=0->dest=copy of default. reset dest sentinel; snapshot dest dwords. non-degen across the two tests |
+| `arg_flag_branch_getter` | 1 | u32 fn(arg*): pure getter; if(arg[0x20]){ p=arg[0]; f=p[0x40]&0xfffffff; return (arg[0x1c]&2)?f+arg[0x20]+4:f+arg[0x20]; } else return (arg[0x1c]&2)?arg+0x2c:arg+0x28. Seed arg fields per cfg.seed_sets[t]={c,flag,f}; SHARED arg+p bufs (so arg+0x2c/0x28 compare equal). test=index over the 4 branches (non-degen) |
+| `arg_scattered_globals` | 1 | void fn(arg): observe globals after call, vary arg (switch/branch setter -> distinct globals per arg) |
+| `arg_table_linear_search` | 1 | int fn(key, table*, count): for i<count if(table[i*stride_dw]==key) return i; return -1. test=[key,placeAt,count] |
+| `arg_to_global_ret` | 1 | u32 fn(v): reimpl writes *tgt + returns (deterministic fn of v). seed tgt sentinel, call, check tgt+ret. test=v |
+| `array_fill_2way` | 1 | void fn(p, src): count=p[0xc]; if(!count) return; arr1=p[0]; arr2=p[4]; for i in [0,count): *(arr1+i*12)=*src (vec3 copy); *(arr2+i*12)={0,0,0}. seed count=3, p[0]=&arr1,p[4]=&arr2, src markers; snapshot arr1[0..count]+arr2[0..count]. non-degen via markers + zeros |
+| `bitfield_range_set` | 1 | void fn(uint8** pbuf, uint startbit, uint nbits, int fill): PURE LEAF. buf=*pbuf; sets bits [startbit,startbit+nbits) of the bit-array buf to (fill!=0); full bytes set 0xFF/0x00, partial bytes RMW per-bit preserving outside bits. Per cfg.scenarios[t]={startbit,nbits,fill,seed}: seed 24-byte buf=seed, call, observe all 24 bytes hex. non-degen via varied range/fill/seed (full-byte + partial + boundary cases) |
+| `bitmap_alloc_slot` | 1 | u32 fn(): scan bitmap 0x6bf198 for first clear bit idx<0x100; if found rec=0x693198+idx*0x2c0; rec[0x2b0]=0,[0x2b8]=0,[0x2b4]=1,[0x2bc]=30.0f; set the bit; return idx+1; else 0. seed bitmap so first-clear=K (tests K=5,0); snapshot rec fields|bitmap byte|ret. non-degen |
+| `bitmap_blit` | 1 | int fn(dst* arg1, src* arg2): dst{[4]=channels,[8]=rows,[0xc]=width_bits,[0x10]=dst_stride,[0x14]=dst_px,[0x18]=dst_pal}; src{[0xc]=pal_bits,[0x10]=src_stride,[0x14]=src_px,[0x18]=src_pal}. blockA: if both palettes && pal_bits<=8 copy (2^pal_bits)*4 bytes. blockB: bpr=((width_bits+7)>>3)*channels; per row copy bpr bytes src->dst advancing by strides. returns 1. plain __cdecl. seed_sets[t]={rows,width_bits,channels,dstride,sstride,pal_bits,palette}; snapshot dst_px[0x40]+dst_pal[0x40] hex. reimpl VERBATIM naked __asm. non-degen via varied dims/palette |
+| `bounded_struct_push` | 1 | void fn(p, arg2, arg3): top=p[8]; cap=p[4]; if(top>=cap){p[8]=cap; return;} buf=p[0]; off=top*0x30; rec=buf+off+4; rec[0..8]=arg2 vec3; buf[off+0x1c]=0; buf[off+0..3]=arg3[0..3]; p[8]=top+1; p[0x54]=1. store-only. t0 push(top=0), t1 full(top=cap=4). snapshot entry+p[8]+p[0x54]. non-degen |
+| `bounded_table_signselect_clamp` | 1 | int fn(uint idx, int val): PURE LEAF. if(idx>=0x10) ret 0; b=*(u8*)(t2Tbl + (*(int*)(t1Tbl+idx*16))*0x4c); slot=&t3Tbl[idx*t3Stride]; *slot += (float)b>C ? +val : -val; clamp[0,0xbb8]; ret 1. Per cfg.scenarios[t]={idx,val,byte,slot}: seed t1[idx]=0,t2[0]=byte,t3[idx]=slot; observe ret:slotval. non-degen via +/- + clamp + bounds |
+| `bounded_thunk_orflag` | 1 | int fn(uint idx, uint a2): NEAR-LEAF bounds-checked adjustor thunk -> C3. if(idx<0xc8 && (s=*(int*)(cfg.tbl+idx*4))) -> if(a2) s[2]|=4. Build s at cfg.tbl[5]; per cfg.scenarios[t]={idx,a2,s2}: seed s[2], observe s[2]. non-degen via or/no-or/bounds |
+| `byte_args_to_globals` | 1 | void fn(u8 a,u8 b,..): write byte args to byte globals (observe addrs). test=[a,b,..] |
+| `byte_counter_struct` | 1 | void fn(p): a=p[0]+1; if(a>=p[3]) a-=p[3]; p[0]=a&0xff; p[1]=(p[1]-1)&0xff. seed p[0],p[1],p[3] per cfg.seed_sets[t]={b0,b1,b3}; observe p[0]|p[1]. non-degen via varied seeds incl the wrap |
+| `byte_idx_table_bitclear` | 1 | void fn(p): if(p[1]!=p[3]){ off=p[1]+p[0]; if(off>=p[3]) off-=p[3]; p[1]++; ptr=p[4]+off*0x14; } else ptr=0; *ptr&=~8. seed p[0]/p[1]/p[3](b1!=b3), p[4]=&tbl, tbl[off*0x14]=0xFF; observe tbl[off*0x14]|p[1]. (main path only; else-branch derefs null in both.) non-degen via off+p[1]++ |
+| `case_insensitive_ncmp` | 1 | int fn(char* s1, char* s2, int n): bounded case-insensitive compare with a CUSTOM inline-ASCII toupper. ASYMMETRIC: s1 applies &0xdf to 0x5b-0x60 (cmp 0x41 jl-skip), s2 skips them (cmp 0x41 jg-skip) -> a backtick 0x60 yields s1=0x40 vs s2=0x60 (ret 0x20, NOT 0). Returns 0 if first n upper-folded chars equal, else toupper(s1)-toupper(s2). plain __cdecl (no trampoline). seed_sets[t]={s1,s2,n}; snapshot int ret. reimpl VERBATIM naked __asm. non-degen via equal/neg/pos/n-bound/asymmetry cases |
+| `circular_dll_search` | 1 | u32 fn(p, key): circular list at p[0x10] (sentinel=p+0x10), node[0]=next, object=node-0x18; returns object whose addr==key, else 0. build 3-obj circular list, test=0 -> find obj1, else bogus. READ-ONLY (simple A/B). faithful __cdecl port |
+| `circular_list_search_node` | 1 | u32 fn(list, key): walk circular list (sentinel=list, *list=first, node[0]=next); each node: if *(node-0x44)==key return node-0x4c; else next; return 0. build 3-object circular list (node=obj+0x4c, key at obj+8), test0 key=match->obj addr, test1 key=nomatch->0. shared bufs. non-degen |
+| `circular_str_search_ci` | 1 | void* fn(list* arg1, char* query): circular list at arg1[8] (sentinel=&arg1[8]); node[0]=next, node+8=key string, object=node-8; case-insensitive compare ('a'-'z' folded +0xe0); return object(node-8) on full match else 0. plain __cdecl, no global/float. build a 3-node circular list (alpha/beta/gamma); seed_sets[t]={q}; snapshot returned ptr. reimpl VERBATIM naked __asm. non-degen via match(distinct node ptrs)/miss(0)/prefix(0) |
+| `cond_deref_get` | 1 | u32 fn(ptr p): if(*(u32*)(p+gate_off)) return *(u32*)(p+val_off); else 0. test=[gateval,val] |
+| `cond_table_get` | 1 | u32 fn(idx): rec=base+idx*stride; return *(rec+offf) ? *(rec+off1) : *(rec+off0) |
+| `copy_arg_to_globals` | 1 | void fn(ptr p): copy len(observe) dwords from p to observe[k].addr globals. test ignored |
+| `deref_byte_flag` | 1 | void fn(ptr p, set): b=*(u8*)(p+field_off); set?b|=bit:b&=~bit; store. test=[set,seedbyte] |
+| `deref_float_field_rmw` | 1 | void fn(ptr p,float f): *(float*)(p+field_off) -= f (seedf initial). test=fval |
+| `dll_get_nth` | 1 | u32 fn(p, cont, idx): DLL get Nth (fwd from p[0x20]=head if idx<count/2 else bwd from p[0x24]=tail; count=cont[8]); node[0]=next,node[4]=prev; returns node-0x2c. build 5-node DLL, test=idx. READ-ONLY. faithful __cdecl port |
+| `dll_head_insert` | 1 | void fn(struct* p): PURE LEAF intrusive DLL head-insert. node=p[0xa0]; if((node[3]&3)==0) insert at head of list *cfg.glob (sentinel @+0xbc; node+8=next,node+0xc=prev). node[3]|=3; p[3]|=0xc. Build p/node/G/H bufs, seed *glob=&G, G[0xbc]=H, node[3]=scenario flag; observe node+8,+0xc,+3,p[3],G[0xbc],H[4] (addresses same both sides). non-degen via insert vs skip |
+| `dll_insert_head` | 1 | void fn(list, node): if(node[4]) unlink; node[4]=list; node[0xc]=list+8; old=*(list+8); node[8]=old; *(old+4)=&node[8]; *(list+8)=&node[8] (intrusive insert-at-head; links point to the &node[8] field). Test: empty list (*(list+8)=list+8) + node[4]=0 (skip unlink). Shared bufs; snapshot node[4]|node[8]|node[0xc]|*(list+8)|*(list+0xc). test ignored |
+| `dll_merge_swap` | 1 | void fn(void): PURE LEAF circular-list merge+swap on table entry base=*glob_a+*glob_b. seed *glob_a=&mybuf, *glob_b=0; mybuf+0x20=B,+0x24=A,+8=sentinel; empty-B (Bnode[0]=Bnode) -> early-exit swap path. Per cfg.scenarios[t]={swap}: assign A/B roles; observe mybuf+0x20|+0x24|+8. non-degen via role swap (verbatim naked reimpl, swap path) |
+| `dll_remove_count` | 1 | void fn(list, node): list[0]--; A=node[0x24]; B=node[0x20]; *A=B; *(B+4)=A. (A pure-read search loop precedes it but converges either way; skipped by an EMPTY list list[4]=list+4.) Build list+node+A+B (shared bufs both sides so pointers compare equal), call, snapshot list[0]|A[0]|B[4]. test ignored |
+| `dll_unlink` | 1 | void fn(list, node+0xc): doubly-linked-list unlink (node[0]=next,node[4]=prev,list[8]=head,list[0xc]=sentinel). build 3-node DLL fresh each side, remove middle, snapshot the relinked pointers, compare. faithful __cdecl port |
+| `double_deref_ptr_get` | 1 | void fn(out*,idx): rec=*(tgt+idx*stride); *out=*(rec+rec_off)+add. test=idx |
+| `double_indexed_float_mul` | 1 | float fn(int idx): PURE LEAF. c=*(int*)(idx*S+aTbl); d=*(int*)(idx*S+bTbl); e=d+c*4; return *(float*)(fTbl+e*4) * *(float*)K. Seed idx=0: aTbl=0, bTbl=t (e=t), fTbl+t*4=float(t+1); compare float return. non-degen via varied e (K read-only const) |
+| `eax_dest_memcpy_init` | 1 | void fn(EAX=dest, src, arg2*, arg3, arg4): dest[0x54]=0; dest[0x48]=0; dest[0x4c]=arg3; dest[0x58]=1; dest[0x50]=arg4; memcpy(dest,src,16 dwords); dest[0x40]=*arg2. ORIG via `mov eax,dest; jmp` trampoline (4 stack args); REIMPL __cdecl(dest,src,arg2,arg3,arg4). seed src markers + a2 val; snapshot dest[0..0x3f]+[0x40,0x48,0x4c,0x50,0x54,0x58]. non-degen |
+| `eax_ecx_float_hash` | 1 | float fn(EAX=a, ECX=b): if(a) b&=a; x=(b<<13)^b; h=((x*x*0x3d73+0xc0ae5)*x - 0x2df722f3) & 0x7fffffff; return fild(h) * .rdata(0x5cd314) (dead fadd 0x5cc94c branch since h>=0). integer noise-hash -> float. ORIG via mov eax/ecx + call trampoline (ret float st0); REIMPL naked __cdecl(a,b)->float reading stack args + scratch slot, EXACT integer/fild/fmul. seed_pairs[t]=[a,b]; snapshot float32 bits. non-degen via distinct hashes |
+| `eax_edi_out` | 1 | void fn(EAX=v, EDI=out*): writes out[0..2] computed from v. ORIG via `mov eax,v; mov edi,outbuf; jmp` trampoline; REIMPL __cdecl(v, out) (compares out[0..2], not ABI). test=v (varied -> distinct outputs -> non-degen). use for integer fns whose magic-multiply == plain C integer division |
+| `eax_out_2float` | 1 | void fn(EAX=out ptr, float a1@[esp+4], float a2@[esp+8]): PURE LEAF EAX-implicit output. Trampoline `mov eax,outbuf; jmp target`, NativeFunction(void,['float','float']). Per cfg.scenarios[t]={a1,a2}: call, observe outbuf[0]|outbuf[1] (float bits). non-degen via varied a1/a2 |
+| `eax_struct_deref_write` | 1 | void fn(EAX=s): PURE LEAF. if(s[0x1b4]==s[0x1b8]) return; s[0x1b8]=s[0x1b4]; for 12 offsets write table[idx](@cfg.tbl) into chain s[OFF]->+0x18->+0x20->*->+4. Trampoline mov eax,sbuf; jmp target. All 12 offsets -> one chain P1->P2->P3->P4; seed table[idx]; per cfg.scenarios[t]={idx,prev}: observe s[0x1b8]|P4[4]. non-degen via index-changed vs no-op |
+| `eax_struct_stack_out` | 1 | void fn(EAX=struct ptr, [esp+4]=out ptr): compute from struct fields into *out. trampoline `mov eax,sbuf; jmp`, NativeFunction(void,['pointer']) called w/ obuf. seed eax_seed into sbuf, observe out_observe in obuf. reimpl naked __asm |
+| `ebx_edi_global_find` | 1 | u32 fn(EBX=key, EDI=n): idx=*(glob); arr=*(tgt + idx*0x40); same walk as edx_ebx_edi_find. seed idx=0 + arr ptr + build arr. ORIG via call-trampoline (push edi/ebx; mov ebx/edi; call; pop ebx/edi; ret); REIMPL __cdecl(key,n). test=n. non-degen |
+| `edx_ebx_edi_find` | 1 | u32 fn(EDX=arr, EBX=key, EDI=n): walk arr (terminated 0xff070000); find (n+1)-th element==key, return the FOLLOWING element; else -1. ORIG via a CALL-trampoline that saves/restores callee-saved ebx,edi (push edi/ebx; mov edx/ebx/edi; call; pop ebx/edi; ret); REIMPL __cdecl(arr,key,n). test=n (0->1st match's next, 1->2nd). non-degen |
+| `engine_register_funcs` | 1 | int fn(void): PURE LEAF straight-line; stores fixed funcptr constants into (*cfg.glob)+cfg.observe_offs; ret 1. seed *glob=struct (sentinel-filled), observe ret + struct[observe_offs]. non-degen via the distinct registered constants (snapshot != all-same) |
+| `eq_predicate_get` | 1 | u32 fn(p1,p2): if(*(int*)gate<gatemax && p2>=0) return tbl[p1*stride]==tbl[p2*stride]?1:0; return 0 |
+| `esi_edx_predicate` | 1 | u32 fn(ESI=s, EDX=e): a=s[0x10];c=e[0x10]; if(a==c||a==e[0x14]){ b=s[0x14]; return (b==c||b==e[0x14])?1:0; } return 0. ORIG via `mov esi,s; mov edx,e; jmp` trampoline; REIMPL __cdecl(s,e). seed fields for match(t0->1)/no-match(t1->0). non-degen |
+| `fastcall_float_clamp` | 1 | void __fastcall fn(ECX=idx, EDX=base, [esp+4]=val float): v(80bit)=val+base[idx]; base[idx]=(float32)v (fst keeps st0); if v(80bit) > 50.0 (fcomp vs .rdata 0x5cd120) base[idx]=50.0f. ORIG via mov ecx/edx + push valbits + call trampoline; REIMPL naked __cdecl reading cdecl stack args (idx,base,val) but EXACT x87 (fld/fadd/fst/fcomp 0x5cd120) so the 80-bit compare matches. seed_sets[t]={idx,cur,val}; snapshot base[idx] u32. non-degen via clamp + pass-through paths |
+| `find_node_struct_copy` | 1 | int fn(struct* p1, void** p2): PURE LEAF. walk p2's list for node (node[8]==p1[8] && node[0]==0x10b)||node[0]==0; copy 0x67 dwords p1->node; copy p1[0x16c]*9 dwords from p1[0x14]->node+0x19c; ret 1. Build p1(pat)/node(matched first)/src2 bufs, p1[0x16c]=1; observe node[0]|node[0x66]|node[0x67]|ret. non-degen via varied pat (verbatim naked, found-first path) |
+| `flag_branch_struct_2way` | 1 | void fn(p, arg2): if(p[0x94][0x50]&8){ sub=p[0x11c]; sub[0x88]=0; sub[0x8c]=arg2; } else { s=p[0x84]; val=(s[0x38]>>3)*s[0x39]*arg2; p[0x8c]=p[0x90]=val; p[0x88]=arg2; p[0x28]|=0x400; }. test0 flag set, test1 clear. seed p[0x94]=&f,p[0x11c]=&sub,p[0x84]=&s; snapshot sub[0x88]|sub[0x8c]|p[0x8c]|p[0x90]|p[0x88]|p[0x28]. non-degen |
+| `float_planes6_predicate` | 1 | u32 fn(obj*, point*): 6 planes at obj+0x94 stride 0x14 (x,y,z,w); for each test dot(plane.xyz,point.xyz)-plane.w vs -point.w; return 1 if all pass else 0. Seed from cfg.seed_sets[t]={point:[4 floats], planes:[6 lists of 4 floats]}; distinct plane.w verifies the 0x14 stride. Reimpl is VERBATIM naked __asm. test=index (results vary 0/1 -> non-degen) |
+| `float_threshold_predicate` | 1 | u32 fn(idx): return (*(float*)(base+idx*stride) < *(float*)gate) ? 1 : 0. test=[idx,recordbits,threshbits] |
+| `float_vec3_lerp_out` | 1 | void fn(out*, a*, b*, float t): out[k] = a[k] + t*(b[k]-a[k]) per component (pure x87). Seed a,b vec3 (cfg.seed_a/seed_b = 3 u32 float-bit-patterns) + t (cfg.t_bits), call, observe out[0..2] as u32 bit patterns. Reimpl is VERBATIM naked __asm (bit-identical x87; a C float reimpl would round differently). seed-controlled -> non-degen by construction |
+| `gated_args_to_globals` | 1 | void fn(p1..p6): if(*(int*)gate==0){ write args+consts to observe globals; conditional on aux }. test=[p1..p6,auxseed] |
+| `gated_int_predicate` | 1 | u32 fn(arg): if(*(int*)gate==gateval) <switch membership> else 0. test=[arg,gateseed] |
+| `global_2level_list_search` | 1 | int fn(key): g=*(glob); node=g[4]; while(node){ e=node[0]; if(e && e[8]==key) return e[0xc]; node=node[8]; } return -1. seed *glob=&cont, cont[4]=&node, node[0]=&entry, entry[8]=KEY, entry[0xc]=RESULT, node[8]=0. test0 key=KEY (->RESULT), test1 key=KEY^1 (->-1). non-degen |
+| `global_dll_insert_head` | 1 | u32 fn(arg): node=arg+0x28; node[0]=*glob; node[4]=glob(addr const); (*glob)[4]=node; *glob=node; node[0xc]&=~1; return 1. seed *glob=&S, arg[0x34](=node[0xc])=0xF; shared arg+S bufs; snapshot node[0]|node[4]|S[4]|*glob|node[0xc]|ret. test ignored |
+| `global_fieldoff_clear` | 1 | u32 fn(arg): V=*(glob); entry=*(arg+V); if(!entry) return 0; if(!entry[0]) return arg; e4=entry[4]; if(e4) arg[0x48]=e4; entry[4]=0; entry[0]=0; return arg. seed *glob=V(0x10), arg[V]=&entry(test0)/0(test1), entry[0]=1,entry[4]=0x77; shared arg+entry bufs; snapshot arg[0x48]|entry[0]|entry[4]|ret. non-degen via ret(arg/0)+arg[0x48]+the clearing |
+| `global_fieldoff_set` | 1 | u32 fn(arg): V=*(glob); entry=*(arg+V); if(!entry) return 0; if(entry[0]) return arg; entry[4]=arg[0x48]; arg[0x48]=0x557b70; entry[0]=1; return arg. tests: t0 entry[0]=0(set), t1 entry null, t2 entry[0]=5(early ret). seed arg[0x48]=0x66; shared arg+entry bufs; snapshot entry[4]|arg[0x48]|entry[0]|ret. non-degen |
+| `global_float_predicate` | 1 | u32 fn(): if(*(int*)gate==0) return 0; return (*(float*)thr <= *(float*)(*(tgt)+rec_off))?1:0. test=[gateval,thrbits,valbits] |
+| `global_float_step` | 1 | void fn(float target): if(*tgt<target) *tgt+=step; if(target<*tgt) *tgt-=step. test=[seedbits,targetfloat] |
+| `global_indexed_float` | 1 | float fn(): idx=*(int*)gate; return *(float*)(base+idx*stride) — single FLD, x87-safe |
+| `global_ptr_strided_clear` | 1 | void fn(): for i in [0,len) step stride: *(u32*)(*(u32*)glob + i)=0. seed *glob=&buf, snapshot strided |
+| `global_ptrtable_match` | 1 | u32 fn(arg1, arg2*): for idx in 0..3: e=*(tbl+idx*4); if(e && e[0xc]==1 && e[0x28]==arg1 && arg2[4]==idx) return 1; return 0. Seed tbl[2]=&entry (.bss), entry[0xc]=1, entry[0x28]=KEY, arg2[4]= (test0: 2 -> match -> 1 ; test1: 3 -> no match -> 0). non-degen via 1/0 |
+| `global_rec_clear_ret` | 1 | u32 fn(arg1, arg2): rec=*(glob)+arg2; if(rec[0xc]){ rec[0xc]=0; rec[8]=0; return arg1; } return 0. seed *glob=&buf, buf[idx+0xc]= (test0: nonzero -> zeroes + return arg1 ; test1: 0 -> return 0). observe buf[idx+8]|buf[idx+0xc]|ret. non-degen via ret + the zeroing |
+| `global_swap` | 1 | u32 fn(v): old=*tgt; *tgt=v; return old. test=[oldseed,v] |
+| `global_switch_member` | 1 | u32 fn(): reads *(int*)gate, returns switch-membership (1/0). seed gate; test = gate value |
+| `global_table_linear_search` | 1 | int fn(key): if(key<=0) return -1; for i<count if(*(int*)(tgt+i*stride)==key) return i; return -1. test=[key,placeAt] |
+| `grid_getter_multiout` | 1 | u32 fn(i,j,out1,_,_,out2,out3): bounds-check i<*b1, j<*b2; idx=i*mul1+j; out1[0..1]=out1_t[*][idx*s12], out2[0..1]=out2_t[*][idx*s12], out3[0]=out3_t[*][(i*mul3+j)*s3]; return 1. Seed bounds large + the indexed table slots per cfg.grid; call with 3 out-bufs; observe outs+ret. test=marker (varied -> non-degen) |
+| `heap_alloc_aligned` | 1 | void* fn(heap* arg1, size, align): aligned first-fit allocator over an embedded block list. arg1[8]=first block, arg1[0xc]=sentinel; block[0]=next/end, block[8]=used. free=block[0]-used-block-0xc; if free>=size+0xc align cur top (block[8]+block) up to align, splice a new block, new[8]=size, return new+0xc; else 0. plain __cdecl. heap = one page-aligned block (end=base+0x100, used=0x10). seed_sets[t]={size,align}; snapshot ret-base + block0[0] + newblock fields. reimpl VERBATIM naked __asm. non-degen via alloc(diff align)/fail(too big) |
+| `idx2_record_condset` | 1 | void fn(int i, int j, int v): PURE LEAF. off=(j+5i)*recStride; *(int*)(baseB+off)=v; if(*(float*)(baseA+off)==0.0) *(int*)(baseA+off)=0x3c23d70a. Per cfg.scenarios[t]={i,j,v,cur}: seed baseA+off=cur(float), call, observe A|B. non-degen via cur==0 vs !=0 + varied v/index |
+| `idx2_table_get_outlast` | 1 | u32 fn(i1,i2,out*): if(i1>=bound||i2>=bound2) return 0; *out=*(u32*)(tgt+(i1*mult+i2)*stride); return 1. test=[i1,i2] |
+| `idx_src_abs_memcpy` | 1 | void fn(idx, src): if(src) memcpy(tgt+idx*stride, src, copy_dwords*4). seed src distinct, reset abs dest, call, observe abs dest. test=idx. reimpl __cdecl(idx,src) |
+| `idx_table_out` | 1 | void fn(idx, out*): *out = (value from static abs table indexed by idx). call w/ outbuf, observe out[0]. test=idx (varied -> non-degen from static table) |
+| `indexed_bit_toggle` | 1 | void fn(idx,set): flag=*(u32*)(base+idx*stride+field_off); set?flag|=bit:flag&=~bit; store. test=[idx,set,seed] |
+| `indexed_bound_array_get` | 1 | u32 fn(i): if(i>*(u32*)glob) return 0; cont=*(u32*)tgt; arr=*(u32*)(cont+field_off); return *(u32*)(arr+i*4). seed glob=large bound, tgt->contbuf, contbuf[field_off]->arrbuf, arrbuf[idx*4]=test; call fn(idx). verifies bound global + container ptr + field_off + array index. test=value (varied) |
+| `indexed_const2_set` | 1 | void fn(idx): *(u32*)(base+idx*stride+off0)=v0; *(u32*)(base+idx*stride+off1)=v1 (consts baked in reimpl) |
+| `indexed_float_accum16` | 1 | int fn(float* out, uint i, uint j): PURE LEAF. if(i>=0x10||j>=4) ret 0; else acc=init + 16 floats at tbl_base+i*iStride+j*jStride+regionOff; acc*=K; *out=acc; ret 1. Per cfg.scenarios[t]={i,j,fill}: seed 16 floats=fill+k at the region, observe ret:outbits. non-degen via varied fill/index + a bounds (ret 0) case |
+| `indexed_float_sq` | 1 | void fn(i,float f): *(float*)(tgt+i*stride)=f*f. test=[idx,fval] |
+| `indexed_float_sum2` | 1 | float fn(int idx): PURE LEAF. p=(float*)(cfg.tgt + idx*cfg.stride); return p[0]+p[1]. Seed two distinct floats at slot+0/+4 per idx; compare float return (exact). non-degen via varied idx -> distinct sums |
+| `indexed_global_2lvl` | 1 | u32 fn(): base=*(u32*)tgt; idx=*(u32*)glob; edx=*(u32*)(base+idx+mid_off); return *(u32*)(base+edx*4+idx). seed tgt->buf, glob->idx(nonzero), place edx_val at buf[idx+mid_off], place test at buf[edx_val*4+idx]. verifies base+index global+mid_off+the *4 scale. test=value (varied) |
+| `indexed_global_idiv` | 1 | u32 fn(arg): d=*(int*)(tgt+arg*stride); q=num/d (signed idiv); clamp. Seed d=test value at slot (fixed arg=idx), call fn(idx), compare ret. test=divisor (varied -> distinct quotients -> non-degen). reimpl __cdecl(arg) does signed C division (matches idiv trunc-toward-zero). avoid d=0 |
+| `indexed_masked_get_out` | 1 | void fn(i, out*): if(out) *out=*(u32*)(tgt+i*stride) & mask. test=[idx,slotval] |
+| `linear_scan_find` | 1 | int fn(key): for k in [0,count@gate): if(*(int*)(base+k*stride)==key) return k; return -1. test=[key,placeAt] |
+| `list_node_const_init` | 1 | void fn(p, arg2): s=p[0x18]; count=s[0x24]; arr=s[0x20] (array of node ptrs); for i<count: node=arr[i]; node[4]=*arg2; node[0xc]=node[0x10]=1.0f; node[0x14]=0.5f (consts stored, no arith). seed p/s/arr/3 nodes/val; snapshot each node[4,0xc,0x10,0x14]. non-degen |
+| `list_walk_self_write` | 1 | void fn(p, value): node=*p; while(node!=*node) node=*node (walk linked list until a self-pointing node); *(uint32*)(*0x911ae4 + node)=value. global 0x911ae4 is .bss-zero at suspended-spawn so target=terminal node addr -> writes value to terminal[0]. build a chain p->n0->..->n[len-1](self). seed_sets[t]={len,value}; snapshot terminal[0]. reimpl VERBATIM naked __asm. non-degen via distinct values |
+| `load_be32` | 1 | int fn(ptr p): return big-endian u32 from p[0..3]. test = dword to seed |
+| `multi_array_scatter` | 1 | void fn(struct* p): PURE LEAF. if(p[0xc]>=p[8]) return; else scatter REAL source globals into 7 optional arrays (ptr fields at p+0x10/14/18/1c/20/24/28) indexed by counter p[0xc] (strides 12/8/4/64/4/16/32), then counter++. Per cfg.scenarios[t]={counter,bound}: build struct + 7 bufs, observe arr[k] at counter-slot + counter. source globals REAL (both sides identical). non-degen via distinct globals + counter |
+| `multi_deref_global_set` | 1 | void fn(p1, p2): val=*(p2?p2:0x613290); g=*0x7dc57c; e=p1[4]; obj=*(e+g); obj[0xc4]=val; n=*(*(e[0x18])[0x20]); if(n) n[4]=val; obj[0x40]|=0x2000. seed g=0 + nested chain (p1[4]=&E, E[0]=&obj, E[0x18]=&X, X[0x20]=&Ncell, Ncell=&N); t0 p2=&val n!=0, t1 p2=0(default) n=0. snapshot obj[0xc4]|N[4]|obj[0x40]. non-degen |
+| `multi_state_list_setter` | 1 | void fn(p): state=p[0x48]; state1: if(p[0x14]){ *(p[0x18])=p[0x14]; *(p[0x14]+4)=p[0x18]; p[0x18]=0; p[0x14]=0; } p[0x50]=3; state2: p[0x50]=6; state3: p[0x50]=5; else no change. Seed p[0x48]=state(test), p[0x50]=0x11 sentinel, state1 also p[0x14]=&A,p[0x18]=&B; shared p+A+B bufs; snapshot p[0x50]|p[0x14]|p[0x18]|A[4]|B[0]. test=state in {1,2,3,0} (non-degen) |
+| `near_leaf_abs_table` | 1 | void fn(arg): NEAR-LEAF parent that loops calling a C3 callee which writes an ABSOLUTE record table. cfg.tbl_base/tbl_stride/tbl_count/observe(offsets). At suspended-spawn the callee is unhooked -> both orig+reimpl call the real callee -> valid diff. seed_sets[t]={arg, preset:[[off,val],...]} (preset written into every record before the call, after zeroing). snapshot observe-offsets for records 0/mid/last. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via arg + preset variation |
+| `near_leaf_accum_table` | 1 | void fn(a1, float val, a3): NEAR-LEAF that accumulates val into a float table slot tbl_base+a1*rec_stride+a3*4 via a C3 fastcall callee (base[a3]=min(val+base[a3],50)). cfg.tbl_base/rec_stride. seed_sets[t]={a1,val,a3,seed}; seed slot, call, observe slot bits. reimpl = verbatim naked port. non-degen via varied val/seed -> different clamped float |
+| `near_leaf_arr_to_table` | 1 | void fn(int* arg): NEAR-LEAF that writes arg[i] into an absolute table[base+i*stride] (i in 0..len(vals)-1) via a C3 setter callee. cfg.tbl_base/tbl_stride. seed_sets[t]={vals:[...]}; build arg buffer + zero table entries, call parent, snapshot table entries. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via varied vals |
+| `near_leaf_dot_plane` | 1 | void fn(arg1, arg2): NEAR-LEAF dot product. idx=arg1[0x20]; rec=C3-pure-callee(idx)=idx*tbl_stride+tbl_base; dp=arg2[0x20]*rec[0]+arg2[0x24]*rec[4]+arg2[0x28]*rec[8]; arg1[0xac]=dp; dp<const?arg1[0xa8]++:0. cfg.tbl_base/tbl_stride. seed_sets[t]={idx,normal:[3],point:[3],a8}. seed table rec + arg1[0x20]/[0xa8] + arg2 point; snapshot arg1[0xac](bits)+[0xa8]. reimpl = verbatim naked x87 port. non-degen via varied point/normal -> different dp |
+| `near_leaf_global_str_search` | 1 | void* fn(query): NEAR-LEAF wrapper = C3 circular-list case-insensitive search(*cfg.glob, query). build 3-node alpha/beta/gamma circular list, set *cfg.glob=list head; seed_sets[t]={q}; compare returned ptr. reimpl = verbatim naked port. non-degen via match(distinct node ptrs)/miss(0) |
+| `near_leaf_memcmp16` | 1 | int fn(_, arg2, arg3): NEAR-LEAF = !FUN(a=*arg2,b=arg3) where the C3 callee memcmp's 16 bytes at a/b (0 if equal else +/-1). returns 1 iff the 16 bytes match. seed_sets[t]={eq, diffat}; build bufP via holder *arg2, bufQ as arg3; equal->1, differ->0. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via equal/differ |
+| `near_leaf_memset2` | 1 | void fn(dest, count): NEAR-LEAF = C3 memset(dest, 0, count). seed_sets[t]={count}; dest pre-filled 0xCC, snapshot dest[0x20] (first count bytes -> 0, rest 0xCC). reimpl = verbatim naked port. non-degen via varied count (zero-extent) |
+| `near_leaf_ptr_array_search` | 1 | int fn(key, gate): NEAR-LEAF that searches arr=*cfg.glob (cfg.count ptrs) for arr[i] with *arr[i]==key; returns derived addr or 0. C3 getter callee returns the array base. seed_sets[t]={gate,key,at_idx}; build arr of ptr->struct (struct[0]=distinct key), place key at at_idx, seed glob. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via found(addr)/gate0/notfound |
+| `near_leaf_record_builder` | 1 | void fn(_, arg2, _, arg4): NEAR-LEAF that builds a record at rec_base+arg2*rec_stride + writes a C3-setter table. cfg.rec_base/rec_stride/tbl_base/tbl_stride. seed_sets[t]={arg2,arg4,v0,v1}; seed rec[0]=v0,rec[4]=v1,rec[8]=sentinel + zero observed tbl slots; call f(0,arg2,0,arg4); observe rec[8] + tbl[arg2] + tbl[arg2+0xa]. reimpl = verbatim naked port. non-degen via varied arg2/arg4/v0 |
+| `near_leaf_seed_arg_obs` | 1 | void fn(arg): NEAR-LEAF that reads pure global getters (C3) and conditionally writes an ABSOLUTE global. cfg.obs_addr. seed_sets[t]={globals:[[addr,val],...], arg}; seed, call with arg, snapshot *obs_addr. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via seeds/arg |
+| `near_leaf_seed_ret` | 1 | u32 fn(void): NEAR-LEAF that READS a seedable absolute table (via a C3 callee) and returns a derived int. cfg.tbl_base/tbl_stride/tbl_count. seed_sets[t]={preset:[[idx,val],...]} (zero count entries then write val to entry idx). call parent (no args), compare int return. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via different table seeds -> different return |
+| `near_leaf_struct_array_predicate` | 1 | int fn(void): NEAR-LEAF predicate over a pointer array at cfg.glob (cfg.count entries). For each p: checks fields via C3 getters -> returns 1/0. seed_sets[t]={entries:[{null:bool}|{fields:[[off,val],...]}]}; build structs (cfg.struct_size), set field offs, set glob[k]=struct or null; compare int return. reimpl = verbatim naked port. non-degen via null/match-early/all-pass |
+| `nested_list_search` | 1 | uint fn(int key): PURE LEAF nested circular-list search at *cfg.glob (sentinel=glob). outer node O1=outerBuf+0x20; inner head @O1-0xc, sentinel O1-0x10, link +4, payload +8, payload[0xc] compared to key. returns key if found else 0. Build 1 outer + 1 inner + payload; per cfg.scenarios[t]={pval,key}: observe return. non-degen via found(key) vs not-found(0) |
+| `nested_struct_op` | 1 | void fn(ptr p): p has a nested ptr p[link_off]=&sub; fn RMWs p fields + writes into sub. alloc p+sub, link, seed p_seed, fill sub sentinel, call, observe observe_p (in p) + observe_sub (in sub). reimpl __cdecl(p). test ignored |
+| `particle_pool_alloc` | 1 | void fn(int* a1, int a2): PURE LEAF particle-pool alloc at cfg.glob (10 slots stride 0x24). scan for free (slot[+0]==0) else evict max(slot[+0x1c]); write a1[0..2]/a2/255f/used into chosen slot. Seed pool (cfg.scenarios[t]={used:[idxs],pris:[...]}); a1=[0x111,0x222,0x333],a2=0x444; observe slot[+0]/[+4] of slots 0/1/9. non-degen via which slot written |
+| `pixel_max_alpha` | 1 | int fn(struct* s): PURE LEAF per-pixel alpha=max(R,G,B). mode=s[0xc]: 4|8 -> (1<<mode) pixels @s[0x18]+2; 0x20 -> s[8]rows x s[4]cols @s[0x14]+2 (base+=s[0x10]); else no-op. ret s. Build base buf with RGB pattern; per cfg.scenarios[t]={mode,rows,cols,stride}: observe base[3]|base[7]|base[0x43]|ret. non-degen via mode (processed vs sentinel alphas) |
+| `pool_freelist_init` | 1 | void fn(pool* arg1): N=arg1[0x16c]; zero (N+2)*0x24 buf at arg1[0x14]; build circular freelist of N+1 nodes (stride 0x24) via node[0x1c]; arg1[0x18]=buf, head arg1[0x1c]=buf, tail arg1[0x20], tail wraps to buf; arg1[0x168/0x170/0x194]=0, arg1[0x198]=1. plain __cdecl. seed_sets[t]={n}; snapshot pool fields + node links. reimpl VERBATIM naked __asm. non-degen via varied N (different ring sizes/links) |
+| `pool_insert_snapshot` | 1 | fn(mgr_ptr, key): pool/list insert — reset+call+full-state snapshot diff |
+| `pool_remove_snapshot` | 1 | fn(mgr_ptr, key): pool/list remove — build list via orig insert, then remove, snapshot |
+| `ptr_compute_get` | 1 | u32 fn(out,idx): if(idx>=bound) return 0; t=*(u32*)(idxtbl+idx*stride); *out=base+idx*stride+t*tscale; return 1 |
+| `ptr_table_field_read` | 1 | fn(i): return *(*(tgt))[i] + field_off  (pointer-to-table + field) |
+| `quad_buffer_build` | 1 | int fn(void* out, uint maxsize, struct* rec): PURE LEAF 2-pass quad builder. rec[0x14]=count, rec[0x18]=arr; per record P=*(arr+0x14+k*0x28), sub=P[0xd]; if sum*4>maxsize ret 0 else write count*sub blocks of 4x16 entries {ri,si,0,1.0f} at out+counter*64, ret counter*4. Per cfg.scenarios[t]={subs:[...],maxsize}: build rec+arr+P bufs, observe ret + out dwords. non-degen via subs + bounds |
+| `record_array_filter_update` | 1 | void fn(arg1, arg2, arg3, arg4, arg5, arg6): scan arg2[4] records (stride 0x10 from arg1+0x18; A@+0,B@+4,C@+8,D@+0xc). rowRange from arg3 (-1->[0,arg2[8]) else exact); colRange from arg5 (-1->[0,4) else exact). match: (A&0x7fffffff) in rowRange && C in colRange && (B==arg4||arg4<0) -> D=arg6, A|=sign. then *arg1|=0x10. plain __cdecl 6 args. fixed 4-record array; seed_sets[t]={arg3,arg4,arg5,arg6}; snapshot *arg1 + per-record (A,D). reimpl VERBATIM naked __asm. non-degen via varied filters -> different update sets |
+| `reg_scalar_compute` | 1 | fn with SCALAR register args (EAX[,ECX,EDX]); returns value in EAX. trampoline sets regs per test [a,c(,d)], compare ret. varies inputs (hits all branches). reimpl naked __asm |
+| `ring_copy_5ab980` | 1 | void fn(arg): esi=arg[0xc]-*0x7dd610; cnt=*0x7dd614-esi; if(cnt>=arg[0x14]) cnt=arg[0x14]; memcpy(arg[0x18], 0x7dce08+esi, cnt); arg[0x18]+=cnt; arg[0x14]-=cnt. seed g610/g614 + ring markers + arg fields; snapshot dest dwords|arg[0x18]|arg[0x14]. non-degen |
+| `seed_indirect_ctx_obs` | 1 | u32 fn(void): ctx = (*(ptr_array))[depth] where depth_global=idx; writes fixed values into ctx[offsets] (+ OR a flags field) + zeros direct globals. Seed: alloc ctx buf, write its addr to ptr_array[depth_idx], depth_global=depth_idx, pre-fill ctx 0xEEEEEEEE, seed ctx[ctx_seed_off]=0xC0DE0000|(t<<8) for the OR-test. snapshot ctx[observe_offs] # globals[observe_globals]. non-degen via varied OR seed (matrix consts proven by !=sentinel) |
+| `stack_pop_snapshot` | 1 | fn(stk): array-stack pop {top,cap,buf}; reset+call+snapshot+ret |
+| `stack_push_snapshot` | 1 | fn(stk,val): array-stack push; reset+call+snapshot+ret |
+| `state_list_insert` | 1 | void fn(p, _, state_src): state=*state_src; sub=p[0x20]; if(state==1 && sub[0x28]!=3) sub[0x28]=8; elif(state==3 && sub[0x28]!=5) sub[0x28]=4; sub[0x20]=state; old=p[0x14]; if(old){*(p[0x18])=old; *(old+4)=p[0x18];} node=p[0x24]+0xc; nx=*node; p[0x18]=node; p[0x14]=nx; *(nx+4)=&p[0x14]; *node=&p[0x14]. test state 1/3 (p[0x14]=0 empty list). shared bufs; snapshot sub+list ptrs. non-degen |
+| `store_be32` | 1 | void fn(ptr p, u32 v): p[0..3] = big-endian bytes of v. test = v |
+| `strided_color_fill` | 1 | void fn(): base=*0x771530+0x1d; for 896 entries (stride 0x20): p[-1]=*0x616030, p[0]=*0x616032, p[1]=*0x616031, p[2]=*0x616033 (BGRA swizzle from a global color). seed base ptr + 4 color bytes; observe entries 0,1,895. non-degen via swizzle pattern + loop coverage |
+| `struct_delta_flag_init` | 1 | u32 fn(out,a,b,c,d): copies d.xy->out[0x10/0x14], a.xy->out[0x40/0x44]; deltas out[0x28]=c[0]-d[0], out[0x2c]=c[4]-d[4], out[0x58]=b[0]-a[0], out[0x5c]=b[4]-a[4]; fcomp each vs 0x5d757c -> out[0x64] |=2 or &=~2; return out. seed a/b/c/d xy; snapshot out fields+flag+ret. reimpl VERBATIM naked __asm (single fsubs + fcomp). non-degen |
+| `struct_div_mod_compute` | 1 | u32 fn(arg1,arg2,arg3,arg4,arg5): div=*(arg1[0x18]+arg4*0x28+0x20); q=arg2/div(unsigned); rem=arg2%div; *arg5=rem; return *(arg1[0x10]+arg3*0x20+0x1c)+arg1[0x20]*q+rem. seed arg1 ptrs+tables+mult per cfg.seed_sets[t]={val,div}; arg3=1,arg4=2 fixed; snapshot *arg5|ret. non-degen via varied val/div |
+| `struct_init_3arg_sub` | 1 | void fn(a, b, dest): dest[0]=b; dest[4]=a[4]; zero dest[8,0x10,0x18,0x1c,0x20,0x24,0x28]; dest[0xc]=1.0f; dest[0x14]=0.01f; sub=dest[0x60]; sub[0x3c]=0,[0x40]=0,[0x44]=0,[0x38]=1,[0x48]=0,[0x50]=1. seed a[4],b,dest[0x60]=&sub; snapshot dest+sub fields. non-degen |
+| `struct_list_float_set` | 1 | void fn(struct*, float vol): struct+0x38=vol; walk circular list at struct+0xc (sentinel=struct+0xc) setting node+0x14|=0x40; if struct+0x11c!=0 -> secondary+0x30=vol raw bits. Build 1-node self-circular list + a secondary; vol=0.5+t*0.25; seed node+0x14=0xA0000|(t<<8). snapshot struct+0x38|node+0x14|secondary+0x30. non-degen via varied vol + flags seed |
+| `struct_tag_equals` | 1 | int fn(a,b): PURE LEAF tagged-union dword equality. Two 0x80 bufs filled equal, tag at [0], optional one-field perturbation per cfg.scenarios[t]={tag,diff}. compare int return (0/1). non-degen via alternating equal/unequal across tag branches |
+| `struct_to_out_build` | 1 | void fn(out*, p2): reads p2 fields (seeded per cfg.seed [{off,bits}]), writes out[0..span-1]. snapshot out. test ignored |
+| `succ_approx_quantize` | 1 | void fn(int arg1, int* p2, int* p3): PURE LEAF successive-approx quantizer. ecx=range tbl[*p3], updates *p2 (quantized recon, clamp) and *p3 (+= deltaTbl[flags]). Per cfg.scenarios[t]={arg1,cur,idx,range}: seed p2/p3 bufs + rangeTbl[idx] + deltaTbl[0..15]; observe *p2|*p3. non-degen via varied arg1 (target) -> distinct flags/outputs |
+| `table_accum_clamp` | 1 | void fn(a1, p2, p3): idx=*p3; d=((int16)tblA[0x634498][idx]*(2*(a1&7)+1))>>3(logical); *p2 += (a1&8)?-d:+d, clamp[-32768,32767]; *p3 += (int16)tblB[0x634478][a1], clamp[0,88]. tables are absolute .rdata (read identically both sides). seed_sets[t]={a1,v2,v3}; snapshot *p2|*p3. reimpl VERBATIM naked __asm. non-degen via varied a1/idx + both clamps |
+| `table_clear` | 1 | void fn(i): zero an absolute table slot [target_global + i*4] |
+| `thunk_cond_or` | 1 | uint fn(p, a2, a3): NEAR-LEAF adjustor thunk -> C3 cond-or. s=p[0x18]; if(a3) s[8]|=a2; return s[8]. Build p/s; s[8]=seed; per cfg.scenarios[t]={a2,a3,seed}: observe ret|s[8]. non-degen via a3!=0 (or'd) vs a3==0 (unchanged) |
+| `thunk_field_copy` | 1 | void fn(p, out): NEAR-LEAF adjustor thunk -> C3 copy. s=p[0x18]; copy s[0x24] dwords from *(s[0x20]) to out. Build p/s/src/out; s[0x24]=count, s[0x20]=src (pattern); observe out[0..count-1]. non-degen via varied src pattern |
+| `thunk_float_sub` | 1 | void fn(uint idx, float fval): NEAR-LEAF adjustor thunk -> C3 float-sub. *(float*)(cfg.tbl + idx*cfg.stride + cfg.field_off) -= fval. Per cfg.scenarios[t]={idx,seed,fval}: seed field, observe field bits = seed-fval. non-degen via varied seed/fval/idx |
+| `thunk_list_count` | 1 | uint fn(p): NEAR-LEAF adjustor thunk -> C3 circular-list count at (p+0xc) (linked +4, sentinel=head). Build a circular list of cfg.scenarios[t].n nodes; observe return = n. non-degen via varied n |
+| `thunk_node_write` | 1 | void fn(p, a2, a3): NEAR-LEAF adjustor thunk -> C3 0x476cb0. node = (*cfg.glob)[p[0x14]]; node[0xa4]=a2; node[0xa8]=a3; node[0x40]|=0x10000000. Build p/table/node; *glob=table; table[0]=node; p[0x14]=0; node[0x40]=seed; per cfg.scenarios[t]={a2,a3}: observe node[0xa4]|node[0xa8]|node[0x40]. non-degen via varied a2/a3 |
+| `trie_walk` | 1 | u32 fn(node, key, depth): while(depth){ depth--; idx=key&0xf; key>>=4; node=*(node+idx*4+0x1c); } return (node & 0xffffff00) | node[0x18] (byte in AL, dirty upper=node ptr). build depth-2 trie w/ 2 paths (keys 0x21->leaf1[0x18]=0x77, 0x35->leaf2[0x18]=0x88); shared bufs; compare ret. non-degen |
+| `vec16_copy_set` | 1 | u32 fn(idx,in): if(idx>=bound) return 0; copy n dwords from in to TWO contiguous regions at base+idx*stride |
+| `void_global_transition` | 1 | void fn(): if(*(int*)tgt==from) *(int*)tgt=to. test=[seed] -> seed *tgt, call, snapshot |
+| `byte_format_hexdump` | 0 | void fn(struct* arg1, char* out, void* arg3): for 4 bytes at arg1[0x11c..0x11f] write printable ([0x29,0x5a]|[0x61,0x7a]) directly else "[XX]" via .rdata hex table 0x5e336c; if arg3!=0 append ": "+0x10 dwords from arg3 (last byte nulled) else null-term. plain __cdecl. seed_sets[t]={bytes:[4], payload:bool}; snapshot out[0x70] hex. reimpl VERBATIM naked __asm. non-degen via printable/nonprintable/payload mix |
+| `cond_global_set` | 0 | void fn(v): if (v==0 || *tgt==0) *tgt=v — tests are [seed,arg] pairs (seed *tgt first) |
+| `deref_field_write` | 0 | fn(ptr p1, u32 p2): *(*(p1+outer_off)+inner_off)=p2 — harness allocs+links buffers |
+| `deref_table_read` | 0 | fn(ptr p1, u32 i): return (*p1)[i] — harness allocs+seeds an array behind p1 |
+| `indexed_abs_dualout` | 0 | u32 fn(i, out1*, out2*): if(i>=bound[immediate]) return 0; *out1=*(tbl1+i*stride); *out2=*(tbl2+i*stride); return 1. Seed the two abs table slots (incl .bss, which is committed/writable+zero) at i*stride, call, observe out1|out2|ret. test=in-bounds i (varied -> seeded markers differ -> non-degen) |
+| `near_leaf_list_search` | 0 | u32 fn(key): NEAR-LEAF wrapper = C3 list-search(cfg.glob, key) walking *(glob[0x10]) via node[0x30], returns node[0] where node[8]==key else -1. seed_sets[t]={empty:bool, query, nodes:[[key,val],...]}; build nodes (node[0]=val,[8]=key,[0x30]=next), set glob[0x10]=head or 0; compare u32 return. reimpl = verbatim naked port. non-degen via found(val)/empty(-1)/miss(-1) |
+| `struct_ctor_big` | 0 | void fn(p): deterministic constructor writing consts/self-relative-ptrs/zeros to p's fields (no live reads). Uses ONE shared sentinel buffer (cfg.buf_dwords) so self-relative pointer writes (p+const) compare equal between sides; snapshot cfg.observe offsets. For ctors too big for struct_const_init's 0x400 buf. test ignored |
+| `struct_table5_search` | 0 | u32 fn(p1, p2): if(!p1&&!p2) return 0; count=p1[0x1d0]; if(count<=0) return 0; tbl=p1[0x1d4]; search entries (5 bytes: dword key @+0, byte val @+4) BACKWARD from tbl+count*5-5 for *p2; return (u8)entry[4] or 0. seed count=4, distinct keys/vals, p2 key (test0 match->val, test1 nomatch->0). non-degen |
+
+## Marker arg_types (deliberately non-diffable)
+
+Not handlers and never will be: the arg_type field is used as a sentinel
+documenting WHY no synthetic diff exists. Evidence lanes are documented
+per-entry in hooks_registry.py comments.
+
+- `harness_limited` (7 uses) — Calling the function synthetically is unsafe or impossible (process-terminating CRT glue, SEH/stack-probe prologs, live-OS-handle piz compat shims). Evidence lane documented per-entry.
+- `register_abi_record` (1 uses) — Register-ABI hot-path physics record functions (EAX=0xd04 vehicle record, >1000 calls/s). C4 lane = installed-hook canonical-race telemetry (re/frida/phys_c4_telemetry.py + MASHED_PHYS_C4_SELFTEST), never run_diff.
+
+## Registry arg_types with NO dispatch handler anywhere (true orphans)
+
+Not in diff_template.js, not in early_window_leaf_diff.py, not a
+recognized marker. FATAL at run_diff pre-flight; treat any hook using
+one as NOT diffable until the entry is fixed or a handler is authored.
+
 - `int_write_observe` (1 uses)
-- `linear_scan_find` (1 uses)
-- `list_node_const_init` (1 uses)
-- `list_walk_self_write` (1 uses)
-- `load_be32` (1 uses)
-- `multi_array_scatter` (1 uses)
-- `multi_deref_global_set` (1 uses)
-- `multi_state_list_setter` (1 uses)
-- `near_leaf_abs_table` (1 uses)
-- `near_leaf_accum_table` (1 uses)
-- `near_leaf_arr_to_table` (1 uses)
-- `near_leaf_dot_plane` (1 uses)
-- `near_leaf_global_str_search` (1 uses)
-- `near_leaf_memcmp16` (1 uses)
-- `near_leaf_memset2` (1 uses)
-- `near_leaf_ptr_array_search` (1 uses)
-- `near_leaf_record_builder` (1 uses)
-- `near_leaf_seed_arg_obs` (1 uses)
-- `near_leaf_seed_globals` (3 uses)
-- `near_leaf_seed_multi_obs` (12 uses)
-- `near_leaf_seed_outbuf` (3 uses)
-- `near_leaf_seed_ret` (1 uses)
-- `near_leaf_struct_array_predicate` (1 uses)
-- `nested_list_search` (1 uses)
-- `nested_struct_op` (1 uses)
-- `particle_pool_alloc` (1 uses)
-- `pixel_max_alpha` (1 uses)
-- `pool_freelist_init` (1 uses)
-- `pool_insert_snapshot` (1 uses)
-- `pool_remove_snapshot` (1 uses)
-- `ptr_buffer_op` (2 uses)
-- `ptr_compute_get` (1 uses)
-- `ptr_fields_clear` (3 uses)
-- `ptr_out_table_get` (4 uses)
-- `ptr_table_field_read` (1 uses)
-- `quad_buffer_build` (1 uses)
-- `range_init` (14 uses)
-- `record_array_filter_update` (1 uses)
-- `reg_scalar_compute` (1 uses)
-- `register_abi_record` (1 uses)
-- `ring_copy_5ab980` (1 uses)
-- `seed_globals_arg_multiobs` (6 uses)
-- `seed_indirect_ctx_obs` (1 uses)
-- `stack_pop_snapshot` (1 uses)
-- `stack_push_snapshot` (1 uses)
-- `state_list_insert` (1 uses)
-- `store_be32` (1 uses)
-- `strided_color_fill` (1 uses)
-- `struct_const_init` (5 uses)
-- `struct_delta_flag_init` (1 uses)
-- `struct_div_mod_compute` (1 uses)
-- `struct_init_3arg_sub` (1 uses)
-- `struct_list_float_set` (1 uses)
-- `struct_tag_equals` (1 uses)
-- `struct_to_out_build` (1 uses)
-- `succ_approx_quantize` (1 uses)
-- `table_accum_clamp` (1 uses)
-- `table_bool_predicate` (3 uses)
-- `table_clear` (1 uses)
-- `table_ret_ptrout` (2 uses)
-- `thiscall_struct_from_table` (2 uses)
-- `thunk_cond_or` (1 uses)
-- `thunk_field_copy` (1 uses)
-- `thunk_float_sub` (1 uses)
-- `thunk_list_count` (1 uses)
-- `thunk_node_write` (1 uses)
-- `transform_vector` (1 uses)
-- `trie_walk` (1 uses)
-- `two_global_predicate` (2 uses)
-- `vec16_copy_set` (1 uses)
-- `void_global_transition` (1 uses)
 - `write_global_setter` (3 uses)
