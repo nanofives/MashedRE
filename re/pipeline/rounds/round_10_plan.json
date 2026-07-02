@@ -1,0 +1,523 @@
+{
+  "round": 10,
+  "supply": {
+    "runnable_today": 501,
+    "needs_argtype": 1417,
+    "scored_eligible": 26,
+    "scheduled": 26
+  },
+  "dropped": {
+    "blocked_c3": 0,
+    "in_queue": 58,
+    "low_score": 0,
+    "dup": 0,
+    "thunk": 16,
+    "destructive": 8,
+    "no_argtype": 208,
+    "void_ret": 17,
+    "no_args": 0,
+    "prior_round": 168
+  },
+  "batches": [
+    {
+      "session": 1,
+      "model": "claude-sonnet-4-6",
+      "kind": "family",
+      "subsystem": "audio",
+      "candidates": [
+        {
+          "rva": "0x005b0b10",
+          "name": "FUN_005b0b10",
+          "sub": "audio",
+          "size": "34",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "ptr_arg_int_get",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:ptr_arg_int_get,deref-arg,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x005b11f0",
+          "name": "FUN_005b11f0",
+          "sub": "audio",
+          "size": "65",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "ptr_arg_int_get",
+          "sig_conf": "low",
+          "score": 9.0,
+          "why": "arg:ptr_arg_int_get,deref-arg,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x005b1500",
+          "name": "FUN_005b1500",
+          "sub": "audio",
+          "size": "203",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 7.0,
+          "why": "arg:int_scalar,reads-global,sig:low,no-fp"
+        }
+      ]
+    },
+    {
+      "session": 2,
+      "model": "claude-sonnet-4-6",
+      "kind": "mixed",
+      "subsystem": "mixed",
+      "candidates": [
+        {
+          "rva": "0x00407580",
+          "name": "FUN_00407580",
+          "sub": "gameplay",
+          "size": "17",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "ptr_arg_int_get",
+          "sig_conf": "low",
+          "score": 10.0,
+          "why": "arg:ptr_arg_int_get,deref-arg,reads-global,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x00452140",
+          "name": "FUN_00452140",
+          "sub": "gameplay",
+          "size": "24",
+          "conv": "cdecl",
+          "nargs": "2",
+          "ret": "int",
+          "arg_type": "int_pair",
+          "sig_conf": "low",
+          "score": 7.0,
+          "why": "arg:int_pair,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x0045bae0",
+          "name": "FUN_0045bae0",
+          "sub": "vehicle",
+          "size": "181",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 7.0,
+          "why": "arg:int_scalar,reads-global,sig:low,no-fp"
+        },
+        {
+          "rva": "0x004722e0",
+          "name": "FUN_004722e0",
+          "sub": "gameplay",
+          "size": "37",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "ptr_arg_int_get",
+          "sig_conf": "low",
+          "score": 10.0,
+          "why": "arg:ptr_arg_int_get,deref-arg,reads-global,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x00472820",
+          "name": "FUN_00472820",
+          "sub": "util",
+          "size": "121",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 4.0,
+          "why": "arg:int_scalar,sig:low,fp-risk"
+        },
+        {
+          "rva": "0x004758d0",
+          "name": "FUN_004758d0",
+          "sub": "render",
+          "size": "24",
+          "conv": "cdecl",
+          "nargs": "2",
+          "ret": "int",
+          "arg_type": "int_pair",
+          "sig_conf": "low",
+          "score": 7.0,
+          "why": "arg:int_pair,sig:low,right-size,no-fp"
+        }
+      ]
+    },
+    {
+      "session": 3,
+      "model": "claude-sonnet-4-6",
+      "kind": "mixed",
+      "subsystem": "mixed",
+      "candidates": [
+        {
+          "rva": "0x0047ae80",
+          "name": "FUN_0047ae80",
+          "sub": "render",
+          "size": "104",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 4.0,
+          "why": "arg:int_scalar,sig:low,right-size,fp-risk,rw-orch"
+        },
+        {
+          "rva": "0x0047b9e0",
+          "name": "FUN_0047b9e0",
+          "sub": "track",
+          "size": "19",
+          "conv": "cdecl",
+          "nargs": "2",
+          "ret": "int",
+          "arg_type": "int_pair",
+          "sig_conf": "low",
+          "score": 7.0,
+          "why": "arg:int_pair,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x0047e9c0",
+          "name": "PhysicsSceneInitSequence",
+          "sub": "vehicle",
+          "size": "118",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 7.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp,rw-orch"
+        },
+        {
+          "rva": "0x00485c20",
+          "name": "FUN_00485c20",
+          "sub": "smplfzx",
+          "size": "353",
+          "conv": "cdecl",
+          "nargs": "2",
+          "ret": "int",
+          "arg_type": "int_pair",
+          "sig_conf": "low",
+          "score": 4.0,
+          "why": "arg:int_pair,sig:low,huge,no-fp"
+        },
+        {
+          "rva": "0x00487e00",
+          "name": "FUN_00487e00",
+          "sub": "particle",
+          "size": "20",
+          "conv": "cdecl",
+          "nargs": "2",
+          "ret": "int",
+          "arg_type": "int_pair",
+          "sig_conf": "low",
+          "score": 7.0,
+          "why": "arg:int_pair,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x0049cf00",
+          "name": "FUN_0049cf00",
+          "sub": "particle",
+          "size": "58",
+          "conv": "stdcall",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 4.0,
+          "why": "arg:int_scalar,sig:low,right-size,no-fp,com"
+        }
+      ]
+    },
+    {
+      "session": 4,
+      "model": "claude-sonnet-4-6",
+      "kind": "mixed",
+      "subsystem": "mixed",
+      "candidates": [
+        {
+          "rva": "0x004b7330",
+          "name": "FUN_004b7330",
+          "sub": "input",
+          "size": "161",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 7.0,
+          "why": "arg:int_scalar,reads-global,sig:low,no-fp"
+        },
+        {
+          "rva": "0x004c40b0",
+          "name": "FUN_004c40b0",
+          "sub": "render",
+          "size": "35",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "ptr_arg_int_get",
+          "sig_conf": "low",
+          "score": 10.0,
+          "why": "arg:ptr_arg_int_get,deref-arg,reads-global,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x004cd500",
+          "name": "FUN_004cd500",
+          "sub": "render",
+          "size": "71",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "ptr_arg_int_get",
+          "sig_conf": "low",
+          "score": 10.0,
+          "why": "arg:ptr_arg_int_get,deref-arg,reads-global,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x004d84e0",
+          "name": "RwResourcesEmptyArena_PopSlot",
+          "sub": "render",
+          "size": "74",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "ptr_arg_int_get",
+          "sig_conf": "low",
+          "score": 10.0,
+          "why": "arg:ptr_arg_int_get,deref-arg,reads-global,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x00546b10",
+          "name": "FUN_00546b10",
+          "sub": "vehicle",
+          "size": "214",
+          "conv": "cdecl",
+          "nargs": "2",
+          "ret": "int",
+          "arg_type": "int_pair",
+          "sig_conf": "low",
+          "score": 4.0,
+          "why": "arg:int_pair,sig:low,fp-risk"
+        },
+        {
+          "rva": "0x005ae7e0",
+          "name": "FUN_005ae7e0",
+          "sub": "audio",
+          "size": "30",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "ptr_arg_int_get",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:ptr_arg_int_get,deref-arg,sig:low,right-size,no-fp"
+        }
+      ]
+    },
+    {
+      "session": 5,
+      "model": "claude-sonnet-4-6",
+      "kind": "mixed",
+      "subsystem": "mixed",
+      "candidates": [
+        {
+          "rva": "0x005aea60",
+          "name": "FUN_005aea60",
+          "sub": "audio",
+          "size": "111",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "ptr_arg_int_get",
+          "sig_conf": "low",
+          "score": 10.0,
+          "why": "arg:ptr_arg_int_get,deref-arg,reads-global,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x005b7e20",
+          "name": "FUN_005b7e20",
+          "sub": "audio",
+          "size": "23",
+          "conv": "cdecl",
+          "nargs": "2",
+          "ret": "int",
+          "arg_type": "int_pair",
+          "sig_conf": "low",
+          "score": 7.0,
+          "why": "arg:int_pair,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x005bc890",
+          "name": "FUN_005bc890",
+          "sub": "audio",
+          "size": "102",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 3.0,
+          "why": "arg:int_scalar,sig:low,leaf,right-size,fp-risk,com"
+        },
+        {
+          "rva": "0x005bc920",
+          "name": "FUN_005bc920",
+          "sub": "audio",
+          "size": "387",
+          "conv": "cdecl",
+          "nargs": "2",
+          "ret": "int",
+          "arg_type": "int_pair",
+          "sig_conf": "low",
+          "score": 4.0,
+          "why": "arg:int_pair,sig:low,huge,no-fp"
+        },
+        {
+          "rva": "0x005bf350",
+          "name": "FUN_005bf350",
+          "sub": "audio",
+          "size": "31",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "ptr_arg_int_get",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:ptr_arg_int_get,deref-arg,sig:low,right-size,no-fp"
+        }
+      ]
+    }
+  ],
+  "argtype_gaps": [
+    {
+      "shape": "cdecl nargs=1 ret=int int",
+      "would_unblock": 174,
+      "example_rvas": [
+        "004cbb50",
+        "00550af0",
+        "0049de60",
+        "005b0f40"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=0 ret=int int",
+      "would_unblock": 130,
+      "example_rvas": [
+        "00489240",
+        "005aea50",
+        "0040ab40",
+        "0040ac80"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=2 ret=int int",
+      "would_unblock": 125,
+      "example_rvas": [
+        "0040d020",
+        "00556ca0",
+        "0047cde0",
+        "00550c30"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=3 ret=int int",
+      "would_unblock": 115,
+      "example_rvas": [
+        "00476860",
+        "005b3b60",
+        "005b1140",
+        "005b1160"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=4 ret=int int",
+      "would_unblock": 61,
+      "example_rvas": [
+        "005a6280",
+        "005a7f70",
+        "005b8570",
+        "005b9e30"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=2 ret=int fp",
+      "would_unblock": 47,
+      "example_rvas": [
+        "00495080",
+        "0046cc10",
+        "004cb490",
+        "0041f060"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=3 ret=int fp",
+      "would_unblock": 43,
+      "example_rvas": [
+        "0041f1e0",
+        "0045dff0",
+        "00477f00",
+        "004780c0"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=1 ret=int fp",
+      "would_unblock": 36,
+      "example_rvas": [
+        "00417740",
+        "0047acd0",
+        "0047ad00",
+        "004173b0"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=4 ret=int fp",
+      "would_unblock": 33,
+      "example_rvas": [
+        "004b4cd0",
+        "004b4e70",
+        "004417e0",
+        "00411350"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=5 ret=int fp",
+      "would_unblock": 33,
+      "example_rvas": [
+        "004b4b20",
+        "004820e0",
+        "005bbd50",
+        "00476320"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=13 ret=int fp",
+      "would_unblock": 30,
+      "example_rvas": [
+        "0048a4e0",
+        "004b5080",
+        "00497060",
+        "0041c180"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=6 ret=int int",
+      "would_unblock": 28,
+      "example_rvas": [
+        "00490fb0",
+        "00491030",
+        "00472ad0",
+        "004b4b60"
+      ]
+    }
+  ]
+}
