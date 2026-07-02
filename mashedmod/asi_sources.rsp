@@ -204,6 +204,7 @@
 "Ai\AiLineOfSight.cpp"
 "Ai\AiWallLateral.cpp"
 "Ai\AiWallAhead.cpp"
+"Ai\AiLeaderTimer.cpp"
 "Ai\AiStandalone.cpp"
 "Vehicle\PromoLoop_round2.cpp"
 "Render\PromoLoop_round3.cpp"

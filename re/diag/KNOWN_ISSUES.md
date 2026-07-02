@@ -132,3 +132,26 @@ The single place that records every recurring execution failure: its **signature
   `scripts/parse_minidump.py`. See CLAUDE.md "Runtime state" + the boot memories.
 - **Self-heal:** `diag.py doctor` reports dump presence + points at the patch scripts;
   it does NOT auto-apply binary patches (too consequential to automate).
+
+---
+
+## HKLM-DWM-MITIGATION — boot crash (0xC0000005) from a SYSTEM-level compat layer
+- **Signature:** MASHED.exe launches then `game exited while waiting for menu (phase 1)`
+  (or a phase-0 timeout) on EVERY boot, even STOCK (`MASHED_RE_NO_AUTO_HOOK=1`, or the
+  `.asi` renamed away). `log/fps_limiter.txt` is STALE (game never rendered). `diag doctor`
+  still reports `render OK` (that field is the last *successful* CreateDevice, not current).
+- **Root cause:** repeated launch/kill crash cycles (e.g. a long Frida/scenario session)
+  make Windows PCA add `DWM8And16BitMitigation` to the AppCompat **Layers** — and not only
+  under HKCU (which `setup_mashed_compat.ps1` rewrites) but under **HKLM**
+  (`HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers`, value name =
+  full path to `original\MASHED.exe`, data `$ DWM8And16BitMitigation`). The system-level
+  entry takes precedence and breaks the d3d9 shim → CreateDevice AV → the process exits
+  before the menu. Related: memory `project_dwm_mitigation_breaks_shim` (HKCU-only case).
+- **Self-heal:** NONE. `repatch_original.py`, rebuilding the d3d9 shim, and
+  `setup_mashed_compat.ps1` (HKCU layer + PCA Store clear) do NOT touch HKLM.
+- **Manual fallback (REQUIRES ELEVATION):** in an **Administrator** PowerShell run
+  `Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers' -Name 'C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe' -Force`
+  (repeat for any `.worktrees\*` / `.claude\worktrees\*\original\MASHED.exe` names that also
+  carry the mitigation). Then re-run `setup_mashed_compat.ps1` (non-elevated) to normalize
+  HKCU, and boot. A non-elevated session CANNOT clear the HKLM entry ("Requested registry
+  access is not allowed"). First seen 2026-07-01 (WS-R6-D session).
