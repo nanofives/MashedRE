@@ -5127,11 +5127,15 @@ HOOKS = {
                            0x3F800000, 0xBEEFCAFE],
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
+    # arg_type was 'int_write_observe' (no handler anywhere; argtype-orphans
+    # triage 2026-07). Pre-screen (Mashed_pool0): 10 bytes, MOV EAX,[ESP+4];
+    # MOV [0x008a95a0],EAX; RET — param_1 verbatim to one fixed global, no
+    # other side effects => exact void_setter_observe contract.
     'save_status_clear': {
         'rva':            0x004099e0,
         'export':         'SaveStatusClear',
         'signature':      {'ret': 'void', 'args': ['uint32']},
-        'arg_type':       'int_write_observe',
+        'arg_type':       'void_setter_observe',
         'target_global':  0x008a95a0,
         'lut_root_delta': 0,
         'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
@@ -5478,13 +5482,13 @@ HOOKS = {
 
     # 0x0041e130  TimerStateSet
     # void(uint32): writes param_1 to DAT_0063d7e0. 9 bytes.
-    # Strategy: write_global_setter â€” call fn(test_value), read back 0x0063d7e0.
+    # Strategy: void_setter_observe (was misnamed 'write_global_setter', no such handler; argtype-orphans triage 2026-07) â€” call fn(test_value), read back 0x0063d7e0.
     # Both orig and reimpl must produce identical readback (== test_value).
     'timer_state_set': {
         'rva':            0x0041e130,
         'export':         'TimerStateSet',
         'signature':      {'ret': 'void', 'args': ['uint32']},
-        'arg_type':       'write_global_setter',
+        'arg_type':       'void_setter_observe',
         'target_global':  0x0063d7e0,
         'lut_root_delta': 0,
         'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
@@ -5495,12 +5499,12 @@ HOOKS = {
 
     # 0x00426630  PitchParamSet
     # void(uint32): writes param_1 to DAT_0066d6fc. 9 bytes.
-    # Strategy: write_global_setter â€” call fn(test_value), read back 0x0066d6fc.
+    # Strategy: void_setter_observe (was misnamed 'write_global_setter', no such handler; argtype-orphans triage 2026-07) â€” call fn(test_value), read back 0x0066d6fc.
     'pitch_param_set': {
         'rva':            0x00426630,
         'export':         'PitchParamSet',
         'signature':      {'ret': 'void', 'args': ['uint32']},
-        'arg_type':       'write_global_setter',
+        'arg_type':       'void_setter_observe',
         'target_global':  0x0066d6fc,
         'lut_root_delta': 0,
         'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
@@ -5511,12 +5515,12 @@ HOOKS = {
 
     # 0x004266f0  PitchParam2Set
     # void(uint32): writes param_1 to DAT_0066d700 (sibling of PitchParamSet; +4). 9 bytes.
-    # Strategy: write_global_setter â€” call fn(test_value), read back 0x0066d700.
+    # Strategy: void_setter_observe (was misnamed 'write_global_setter', no such handler; argtype-orphans triage 2026-07) â€” call fn(test_value), read back 0x0066d700.
     'pitch_param2_set': {
         'rva':            0x004266f0,
         'export':         'PitchParam2Set',
         'signature':      {'ret': 'void', 'args': ['uint32']},
-        'arg_type':       'write_global_setter',
+        'arg_type':       'void_setter_observe',
         'target_global':  0x0066d700,
         'lut_root_delta': 0,
         'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
