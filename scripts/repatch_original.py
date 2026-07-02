@@ -78,6 +78,27 @@ def main():
         print("--check: not applying patches. Re-run without --check to apply.")
         return 0
 
+    # Guard: the RETIRED skip_powerups 25-NOP block must NOT be on the binary
+    # (boot crash #2: stack-imbalance ret-to-0, eip=0/esp=0x1afe50/ecx=0xff000000).
+    # Found LIVE on 2026-07-02 after it resurfaced mid-session on 2026-07-01 and
+    # broke boot; this recovery script previously never checked it. The retired
+    # script un-applies when the NOPs are present (rc=0) and "refuses" on a clean
+    # binary (rc=1, expected) — both are healthy states here.
+    guard = os.path.join(ROOT, "scripts", "patch_mashed_skip_powerups.py")
+    if os.path.exists(guard):
+        r = subprocess.run([sys.executable, guard], cwd=ROOT,
+                           capture_output=True, text=True)
+        out = (r.stdout or "") + (r.stderr or "")
+        if "UN-APPLIED" in out:
+            print("  FIXED retired skip_powerups NOPs were LIVE — un-applied "
+                  "(this breaks boot: eip=0 stack-imbalance).")
+        elif "refusing to apply retired patch" in out:
+            print("  OK  retired skip_powerups not present (clean).")
+        else:
+            print(f"  WARN skip_powerups guard unexpected output (rc={r.returncode}):")
+            for ln in out.strip().splitlines():
+                print(f"       {ln}")
+
     print("\n=== applying boot patches (idempotent) ===")
     failed = []
     for p in PATCHES:

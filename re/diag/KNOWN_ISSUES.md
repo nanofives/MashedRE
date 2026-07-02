@@ -135,7 +135,42 @@ The single place that records every recurring execution failure: its **signature
 
 ---
 
+## RETIRED-POWERUPS-NOPS-LIVE — boot crash eip=0 (stack-imbalance ret-to-0)
+- **Signature:** stock boot exits pre-menu every time; crash catcher
+  (`re/frida/poll_attach_catch_crash.py`) shows **eip=0x0, esp=0x1afe50,
+  ecx=0xff000000**, read AV at 0x0, return addr 0x4a4d38 (CRT band) — the
+  long-chased stack-imbalance signature from BOOT_PATCHES.md (skip_movies
+  section). No WER dump is written. `mashed_re.exe` (standalone) renders fine.
+- **Root cause:** the RETIRED `skip_powerups` 25-NOP block was LIVE on
+  `original\MASHED.exe` at 0x295d (VA 0x40295d) — boot crash #2
+  (BOOT_PATCHES.md). How it got re-applied mid-session 2026-07-01 is
+  [UNCERTAIN] (the script itself refuses to apply); detected 2026-07-02 by
+  byte-diffing `MASHED.exe` vs `MASHED.exe.unpatched` and mapping every diff
+  run to a known patch site — 0x295d was the one unexplained run.
+- **Detection recipe:** byte-diff current vs `.unpatched`; expected sites are
+  ~15 small runs (show_windowed/skip_audio_com/skip_selector/
+  skip_controller_dialog @0x951xx+0x98dbc, fix_camera_res @0x98bc0/0x98bd0,
+  disable_log @0x963e7/0x96400/0x96490, fix_fopen @0xa4541+0x10f6c4,
+  fix_joypad @0x95870+0x108bd5, skip_audio_com @0x1bc750). ANY other run =
+  foreign bytes.
+- **Self-heal:** `py -3.12 scripts/repatch_original.py` — since 2026-07-02 it
+  runs the retired script's un-apply guard first ("FIXED retired
+  skip_powerups NOPs were LIVE"). Direct fix:
+  `py -3.12 scripts/patch_mashed_skip_powerups.py` (un-applies when NOPs found).
+
+---
+
 ## HKLM-DWM-MITIGATION — boot crash (0xC0000005) from a SYSTEM-level compat layer
+- **⚠️ DIAGNOSIS CORRECTED 2026-07-02:** the 2026-07-01 incident this entry was
+  written for was actually RETIRED-POWERUPS-NOPS-LIVE (above). The Layers theory
+  was falsified: (a) `__COMPAT_LAYER` decisive test still crashed; (b) a
+  junction-path launch (exe path with NO matching Layers entry) still crashed;
+  (c) after the NOP un-apply, boot works WITH the HKLM `$ DWM8And16BitMitigation`
+  entry AND an HKCU string carrying `DWM8And16BitMitigation` still present.
+  The GPU-wedge theory was also ruled out for that incident (`mashed_re.exe`
+  D3D9 rendered fine, no reboot needed). The HKLM entry may still matter in
+  other configurations — keep the tests below — but it is NOT sufficient to
+  break boot on this machine as of 2026-07-02.
 - **Signature:** MASHED.exe launches then `game exited while waiting for menu (phase 1)`
   (or a phase-0 timeout) on EVERY boot, even STOCK (`MASHED_RE_NO_AUTO_HOOK=1`, or the
   `.asi` renamed away). `log/fps_limiter.txt` is STALE (game never rendered). `diag doctor`
