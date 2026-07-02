@@ -67,6 +67,26 @@ Beyond 8 on Sonnet, compaction is likely mid-session. A compaction in the middle
 
 Always write the model id verbatim into the batch row (`Model: Sonnet 4.6 (claude-sonnet-4-6) — hard cap N RVAs` or `Model: Opus 4.7 1M (claude-opus-4-7[1m]) — hard cap N RVAs`). Future-you will thank current-you when comparing token spend across batches.
 
+### Dispatch via project agents (2026-07-01 — token-economy routing)
+
+The main C3 worker (hook authoring + Frida diff) is RE judgment work and stays
+on the standing Opus preference above — there is no project agent for it. But
+the **mechanical sub-lanes** MUST dispatch the project agent types defined in
+`.claude/agents/` (each pins its model; do not override it) instead of default
+agents whenever they are farmed out via the Agent tool — by the generator, by a
+worker session, or by the end-of-batch sweep:
+
+| Sub-lane | `subagent_type` | Pinned model |
+|---|---|---|
+| Candidate pre-screen: signature / arg_type verdicts vs `re/frida/ARG_TYPES.md` for pure leaves | `leaf-decoder` | sonnet |
+| Diff-CSV / build-log verdict reads (GREEN / RED / INCONCLUSIVE-DEGENERATE, mismatch rows, first build error) | `log-parser` | haiku |
+| Central re-classify transaction transcription (hooks.csv / STUBS / CHANGELOG / note-frontmatter edits) | `tracker-editor` | sonnet |
+| Analysis-note plate fixes surfaced by the filters (frontmatter drift, U-ID filing) | `scribe-transcriber` | sonnet |
+
+The agent definitions already carry the standing guardrails (no `original/`
+writes, worktree removal only via `diag.py wt-remove`, targeted git adds, no
+invented arg_types), so dispatch prompts don't need to restate them.
+
 ## Candidate selection algorithm
 
 **All filter steps below run at batch-generation time, not at worker-session time.** The 2026-05-17 c3_batch_h post-mortem showed that mentioning these filters in prose without applying them programmatically produced sessions full of un-promotable RVAs (3 of 6 sessions landed 0 promotions). Each step has a runnable recipe — use it before emitting the batch file.
