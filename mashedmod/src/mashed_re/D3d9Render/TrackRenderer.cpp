@@ -2954,9 +2954,9 @@ void TrackRenderer::InitPickups() {
 // (FUN_004046a0; difficulty _DAT_0089a360 fed as 0.0 — the fresh-race default
 // before the FUN_00414060 rubber-band seed, which is not modeled standalone).
 // Finish order / timers reset here (FUN_00414060 runs on the race-SETUP path:
-// FUN_0042c960 -> FUN_004111c0 -> FUN_00414060). [UNCERTAIN] whether the
+// FUN_0042c960 -> FUN_004111c0 -> FUN_00414060). (U-9005: whether the
 // original also re-inits the finish order on the per-round restart path
-// (thunk_FUN_004194f0) — the engine resets per match only.
+// (thunk_FUN_004194f0) is unverified — the engine resets per match only.)
 void TrackRenderer::SetRaceRule(int rule) {
     rule_ = rule;
     const char* e = std::getenv("MASHED_RULE_ENGINE");

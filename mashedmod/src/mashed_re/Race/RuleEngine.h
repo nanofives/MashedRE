@@ -70,9 +70,9 @@ struct Cars {
                                  // (FUN_00407a20 + FUN_00408ad0 * _DAT_005cc328)
     int   motion0 = 0;           // vehicle[0] +0x9f0 kMotionState (FUN_0046cbb0 out1)
     int   motion1 = 0;           // vehicle[1] +0x9f0 (rule 9 reads car 1 too)
-    int   snapshot1 = 0;         // FUN_00423b20(1): dword 0x008995ec+0x138 [UNCERTAIN
-                                 // U: semantics unresolved; original ends the rule-9
-                                 // segment when nonzero. Standalone feeds 0.]
+    int   snapshot1 = 0;         // FUN_00423b20(1): dword 0x008995ec+0x138 (U-9004:
+                                 // semantics unresolved; original ends the rule-9
+                                 // segment when nonzero. Standalone feeds 0.)
 };
 
 // Persistent (cross-tick) rule state.
