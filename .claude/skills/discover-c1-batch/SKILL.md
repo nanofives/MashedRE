@@ -91,6 +91,28 @@ Running all three drops the brute-force pool from ~3,800 unmapped to ~2,500–2,
 
 Write the model id verbatim into each session block (`Model: Sonnet 4.6 (claude-sonnet-4-6) — hard cap N RVAs`).
 
+### Dispatch via project agents (2026-07-01 — token-economy routing)
+
+When the batch (or any slice of it) is executed by **dispatching subagents from
+an orchestrating session** via the Agent tool — instead of human-pasted parallel
+sessions — do NOT use default/general-purpose agents. Dispatch the project agent
+types defined in `.claude/agents/` (each pins its model; do not override it):
+
+| Work shape | `subagent_type` | Pinned model |
+|---|---|---|
+| first-pass / cont bucket worker | `scribe-transcriber` | sonnet |
+| bucket where ALL candidates are pure leaves (`callees_depth1: []`) | `leaf-decoder` | sonnet |
+| promote-c2 worker | `scribe-transcriber` | sonnet |
+| struct-extract worker | `scribe-transcriber` | sonnet |
+| log / post-mortem tallies (batch yield counts, sweep verdicts) | `log-parser` | haiku |
+| central SCRIBE_QUEUE / DEFERRED / hooks.csv row mutations | `tracker-editor` | sonnet |
+
+The agent definitions already carry the standing guardrails (no `original/`
+writes, worktree removal only via `diag.py wt-remove`, targeted git adds, no
+invented arg_types — `re/frida/ARG_TYPES.md` is the lookup), so Agent-tool
+dispatch prompts don't need to restate them. Session blocks emitted for
+human-pasted sessions still must.
+
 ## Candidate selection algorithm
 
 The skill pulls candidates from several sources depending on requested work type:
@@ -205,6 +227,8 @@ Session <N> — <bucket>  (<WORK-TYPE>, <K>-RVA <drain|sweep>)
 
 Pool slot:   Mashed_pool<S> (pre-assigned)
 Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap <CAP> RVAs (this session: <K>)
+Agent type:  scribe-transcriber (leaf-decoder if the bucket is pure leaves) —
+             applies when dispatched via the Agent tool instead of a pasted session
 Skill used:  parallel-fanout first-pass  |  parallel-fanout promote-c2  |  struct-extract
 Bucket dir:  re/analysis/<bucket>/
 Drains to:   re/SCRIBE_QUEUE.md (Queued); ghidra-sweep picks up later
