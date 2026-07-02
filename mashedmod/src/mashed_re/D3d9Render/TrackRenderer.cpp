@@ -2871,6 +2871,14 @@ void TrackRenderer::StartRound() {
     round_alive_ = kRaceCars;
     round_winner_ = -1;
     for (int i = 0; i < kRaceCars; ++i) race_[i] = RaceCar{};
+    // U-9005 RESOLVED (rules oracle 2026-07-02, log/rules_oracle_rule8.json
+    // round-resets=1): the original DOES re-init the finish order on the
+    // per-round restart path (order [0,-1,-1,-1] observed reset to all -1.0f
+    // across a round cycle with no track reload). Mirror FUN_00414060's
+    // slot reset per round. The rule-10 countdown is NOT re-seeded per round
+    // (3 back-to-back expiry rounds observed with a stale timer) — leave it.
+    for (int s = 0; s < Race::RuleEngine::kCars; ++s)
+        rulep_.finishOrder[s] = Race::RuleEngine::kEmptySlot;
     // F4: reset the race clock + the player's per-lap split records.
     race_time_ = 0.f;
     for (int k = 0; k < kMaxSplits; ++k) { split_time_[k] = 0.f; split_done_[k] = false; }
@@ -2945,6 +2953,27 @@ void TrackRenderer::InitPickups() {
     for (const auto& g : gates_)
         spots.push_back({g.center[0], g.center[1], g.center[2]});
     pickups_.Init(spots, R);
+}
+
+// [D-11052] arm the per-rule win-condition engine for the race that is about
+// to start. rule = the real DAT_007f0fd0 race rule (0..10) derived by
+// Race/RaceModes. MASHED_RULE_ENGINE=0 reverts to the legacy two-objective
+// collapse. Rule 10 seeds its countdown + checkpoint bonus from the course id
+// (FUN_004046a0; difficulty _DAT_0089a360 fed as 0.0 — the fresh-race default
+// before the FUN_00414060 rubber-band seed, which is not modeled standalone).
+// Finish order / timers reset here (FUN_00414060 runs on the race-SETUP path:
+// FUN_0042c960 -> FUN_004111c0 -> FUN_00414060). (U-9005 RESOLVED 2026-07-02:
+// the original ALSO re-inits the finish order per round restart — witnessed
+// live, rules oracle round-resets=1 — so StartRound() now mirrors that.)
+void TrackRenderer::SetRaceRule(int rule) {
+    rule_ = rule;
+    const char* e = std::getenv("MASHED_RULE_ENGINE");
+    rule_engine_on_ = !(e && e[0] == '0');
+    rulep_ = Race::RuleEngine::Persist{};             // FUN_00414060: slots=-1.0
+    rulep_.timer = Race::RuleEngine::Rule10Seed(course_id_, 0.f, &rule10_bonus_);
+    rule10_hit_mask_ = 0;
+    rule10_lap_seen_ = -1;
+    match_draw_ = false;
 }
 
 // 0x0040b290 (standard path, mode 0 / no teams): prev snapshot, signed delta
@@ -3111,6 +3140,86 @@ void TrackRenderer::UpdateRace(float dt) {
     for (int i = 0; i < kRaceCars; ++i)        // DAT_008a9510 decay
         if (delta_timer_[i] > 0.f) delta_timer_[i] -= dt * 1000.f;
 
+    // ---- [D-11052] per-rule win-condition engine (Race/RuleEngine): the
+    // FUN_004177b0 metric/finish-order update, the FUN_00410d10 segment check
+    // (per-rule pre-blocks + elimination gating + last-man logic) and — on
+    // segment end — the FUN_00410510 result evaluation, following the caller
+    // contract of FUN_00411170 (result != 0 -> match over; == 0 -> next
+    // round). MASHED_RULE_ENGINE=0 reverts to the legacy collapse below.
+    if (rule_engine_on_) {
+        if (match_winner_ >= 0) return;        // result declared (FUN_00443080)
+        namespace RE = Race::RuleEngine;
+        RE::Cars rc;
+        rc.participants = kRaceCars;           // DAT_008a94d0 (standalone round = 4)
+        for (int i = 0; i < kRaceCars; ++i) {
+            rc.active[i] = (P2[i] != nullptr);
+            rc.alive[i]  = race_[i].alive && rc.active[i];
+            rc.score[i]  = scores_[i];
+            // DAT_0089a880[i] = lapCounter + lapFrac% * 0.01 (FUN_004177b0).
+            const float pct = std::fmod(race_[i].progress, static_cast<float>(n))
+                              / static_cast<float>(n);
+            rc.metric[i] = static_cast<float>(race_[i].laps) + pct;
+        }
+        RE::UpdateFinishOrder(rule_, rc, rulep_);
+
+        // Rule-10 countdown (FUN_004039f0): -= dt; checkpoint award once per
+        // lap-line gate per lap (flag reset when the lap counter advances).
+        if (rule_ == 10 && countdown_ <= 0.f) {
+            RE::Rule10Tick(rulep_, dt);
+            if (race_[0].laps != rule10_lap_seen_) {
+                rule10_lap_seen_ = race_[0].laps;
+                rule10_hit_mask_ = 0;
+            }
+            if (rule10_bonus_ > 0.f) {
+                int li = 0;
+                for (int g : lap_data_.lap_lines) {
+                    const std::uint32_t bit = 1u << li++;
+                    if ((rule10_hit_mask_ & bit) == 0 && race_[0].gate > g &&
+                        race_[0].gate <= g + 2) {   // [gate, gate+1) window equiv
+                        rule10_hit_mask_ |= bit;
+                        rulep_.timer += rule10_bonus_;
+                    }
+                    if (li >= 6) break;             // 6-entry table (0x004046a0)
+                }
+            }
+        }
+
+        if (round_winner_ >= 0) return;        // round-end hold (results delay)
+        bool runElim = false;
+        const int seg = RE::SegmentCheck(rule_, rc, rulep_,
+                                         /*resultDeclared=*/false, &runElim);
+        if (runElim && countdown_ <= 0.f) {
+            const int victim = race_cam_.EliminationCheck(cc);
+            if (victim >= 0 && race_[victim].alive) {
+                race_[victim].alive = false;
+                --round_alive_;
+                if (victim > 0 && victim - 1 < static_cast<int>(ai_cars_.size()))
+                    ai_cars_[static_cast<std::size_t>(victim - 1)].speed = 0.f;
+                ScoreOnElimination(victim);    // FUN_0040eee0(victim, 1)
+            }
+        }
+        // re-snapshot alive flags after any elimination this tick
+        for (int i = 0; i < kRaceCars; ++i)
+            rc.alive[i] = race_[i].alive && rc.active[i];
+        if (seg == 1 ||
+            RE::SegmentCheck(rule_, rc, rulep_, false, &runElim) == 1) {
+            bool p0 = false;
+            const int r = RE::EvaluateResult(rule_, rc, rulep_, &p0);
+            if (r > 0) {                       // match over, winner r-1
+                match_winner_ = r - 1;
+            } else if (r == -1) {              // over with no winner (draw /
+                match_winner_ = 0;             // player failed); results text
+                match_draw_ = true;            // shows RACE OVER via match_draw
+            } else {                           // r == 0: next round
+                for (int i = 0; i < kRaceCars; ++i)
+                    if (race_[i].alive) { round_winner_ = i; break; }
+                if (round_winner_ < 0) round_winner_ = 0;  // all dead: equalized
+            }
+        }
+        return;
+    }
+
+    // ---- legacy two-objective collapse (MASHED_RULE_ENGINE=0) -------------
     // Laps mode: no elimination — first car to complete lap_target_ laps wins.
     if (race_mode_ == 1) {
         if (match_winner_ < 0 && countdown_ <= 0.f)

@@ -1,0 +1,48 @@
+{
+ "armed": true,
+ "err": null,
+ "seg": {
+  "calls": 277,
+  "agree": 277,
+  "mis": 0,
+  "ret1": 0,
+  "byRule": {
+   "5": {
+    "calls": 277,
+    "agree": 277,
+    "mis": 0,
+    "ret1": 0
+   }
+  }
+ },
+ "ev": {
+  "calls": 0,
+  "agree": 0,
+  "mis": 0,
+  "byRule": {}
+ },
+ "ord": {
+  "calls": 540,
+  "agree": 540,
+  "mis": 0,
+  "appends": 0,
+  "resets": 0
+ },
+ "misrec": [],
+ "samp": [],
+ "lastOrder": [
+  -1,
+  -1,
+  -1,
+  -1
+ ],
+ "run": {
+  "track": 1,
+  "mode": 10,
+  "cars": 4,
+  "rule": 5,
+  "hold": 40,
+  "pid": 33228,
+  "ts": "2026-07-02 15:35:48"
+ }
+}

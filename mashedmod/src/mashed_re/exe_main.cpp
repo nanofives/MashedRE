@@ -1468,6 +1468,38 @@ bool UpdateMenuSelection() {
     }
     if (down_now && !down_prev) { Nav_MoveCursor(+1); mashed_re::Audio::SfxPlay("menu navigation", 0.7f); }
     if (up_now   && !up_prev)   { Nav_MoveCursor(-1); mashed_re::Audio::SfxPlay("menu navigation", 0.7f); }
+    // [D-11054] Cup-tier selection on the challenge screens (sid 6/7):
+    // LEFT/RIGHT cycles the mode selection through the ring sel 1<->2<->5,
+    // i.e. game mode 3<->4<->5 via FUN_0042f6b0 — the verbatim screen-6/7
+    // LEFT/RIGHT handlers of FUN_0043dfd0 (harvest FUN_0043dfd0.c L1370-1400
+    // LEFT: 5->2, 2->1, 1 stops; L1605-1645 RIGHT: 1->2, 2->5, 5 stops; the
+    // ring moves are UNGATED — the unlock cell gates the LAUNCH, harvest
+    // L406-407 + FUN_004309b0 mode->column map). MASHED_CUP_TIERS=0 reverts.
+    {
+        static const bool s_tiers = [] {
+            const char* e = std::getenv("MASHED_CUP_TIERS");
+            return !(e && e[0] == '0');
+        }();
+        const int tsid = Nav_ScreenId();
+        if (s_tiers && (tsid == 6 || tsid == 7)) {
+            int& gm = mashed_re::Frontend::Nav_GameState().game_mode;
+            const int cur_gm = (gm == 0) ? 3 : gm;   // unset -> mode 3 (this
+                                                     // screen's launch default)
+            if (cur_gm >= 3 && cur_gm <= 5) {
+                int next = cur_gm;
+                if (rgt_now && !rgt_prev) {          // sel 1->2, 2->5
+                    if (cur_gm == 3) next = 4; else if (cur_gm == 4) next = 5;
+                }
+                if (lft_now && !lft_prev) {          // sel 5->2, 2->1
+                    if (cur_gm == 5) next = 4; else if (cur_gm == 4) next = 3;
+                }
+                if (next != cur_gm) {
+                    gm = next;
+                    mashed_re::Audio::SfxPlay("menu navigation", 0.7f);
+                }
+            }
+        }
+    }
     if (ent_now  && !ent_prev) {
         mashed_re::Audio::SfxPlay("menu selection", 0.8f);   // real menu SFX
         // Load Game / Save Game (Options screen 8, rows 2/3) open the real
@@ -1503,26 +1535,50 @@ bool UpdateMenuSelection() {
             if (GetEnvironmentVariableA("MASHED_TRACK_SEL", ts, sizeof(ts)) > 0)
                 trackSel = std::atoi(ts);
             mashed_re::Race::Campaign_SetSelectedTrack(trackSel);
+            // [item 4 / WS-G2] real frontend game mode (DAT_0067e9fc via the
+            // menu game-state) drives the race. The Single-/Multi-Player mode
+            // items now SET game_mode on select (MenuNavSM ApplyActionGameMode,
+            // faithful to FUN_0043dfd0): Challenge Cup->3, Quick Race->10,
+            // Time Attack->2, Top Dog/Team Game->6. 0/unset (e.g. a dev jump
+            // straight to challenge-select) -> 3 (Championship/Challenge Cup,
+            // this screen's mode). MASHED_GAME_MODE forces a specific mode for
+            // verification (each real mode launches with its own rule below).
+            // (Resolved BEFORE the track load so the tier launch gate below
+            // can refuse without switching the loaded world.)
+            int launchMode = mashed_re::Frontend::Nav_GameState().game_mode;
+            if (launchMode == 0) launchMode = 3;
+            bool modeForced = false;           // dev override bypasses the gate
+            char gm[8] = {};
+            if (GetEnvironmentVariableA("MASHED_GAME_MODE", gm, sizeof(gm)) > 0) {
+                int g = std::atoi(gm);
+                if (g >= 2 && g <= 10) { launchMode = g; modeForced = true; }
+            }
+            // [D-11054] cup-tier LAUNCH gate (FUN_0043dfd0 harvest L406-407:
+            // `if ((&DAT_007f0a40)[FUN_004309b0() + track*0xc] == 0) ->
+            // blocked`; FUN_004309b0 (0x004309b0): mode 4 -> col 2, mode 5 ->
+            // col 5). Mode 3 keeps the existing Campaign unlock flow (the
+            // fresh-save fallback lives there). MASHED_GAME_MODE-forced modes
+            // bypass the gate (dev/verification). MASHED_CUP_TIERS=0 reverts.
+            {
+                static const bool s_tiers2 = [] {
+                    const char* e = std::getenv("MASHED_CUP_TIERS");
+                    return !(e && e[0] == '0');
+                }();
+                if (s_tiers2 && !modeForced &&
+                    (launchMode == 4 || launchMode == 5)) {
+                    const int col = (launchMode == 4) ? 2 : 5;
+                    if (!mashed_re::Race::Campaign_TierUnlocked(trackSel, col)) {
+                        mashed_re::Audio::SfxPlay("menu navigation", 0.5f);
+                        return false;                // tier locked: no launch
+                    }
+                }
+            }
             char piz[160];
             RaceTrackPizPath(mashed_re::Race::Campaign_SelectedTrack(), piz, sizeof(piz));
             if (g_track.Load(g_device, piz, kLogPath)) {
                 mashed_re::Race::RaceConfig cfg;
                 cfg.trackId  = mashed_re::Race::Campaign_SelectedTrack();
-                // [item 4 / WS-G2] real frontend game mode (DAT_0067e9fc via the
-                // menu game-state) drives the race. The Single-/Multi-Player mode
-                // items now SET game_mode on select (MenuNavSM ApplyActionGameMode,
-                // faithful to FUN_0043dfd0): Challenge Cup->3, Quick Race->10,
-                // Time Attack->2, Top Dog/Team Game->6. 0/unset (e.g. a dev jump
-                // straight to challenge-select) -> 3 (Championship/Challenge Cup,
-                // this screen's mode). MASHED_GAME_MODE forces a specific mode for
-                // verification (each real mode launches with its own rule below).
-                cfg.gameMode = mashed_re::Frontend::Nav_GameState().game_mode;
-                if (cfg.gameMode == 0) cfg.gameMode = 3;
-                char gm[8] = {};
-                if (GetEnvironmentVariableA("MASHED_GAME_MODE", gm, sizeof(gm)) > 0) {
-                    int g = std::atoi(gm);
-                    if (g >= 2 && g <= 10) cfg.gameMode = g;
-                }
+                cfg.gameMode = launchMode;
                 // Player vehicle from the frontend car-select cursor
                 // (DAT_0067ea98, player-0 slot — GameModeCarSelect). MASHED_CAR_SEL
                 // overrides for dev/verification. Clamped to the vehicle table;
@@ -1546,6 +1602,30 @@ bool UpdateMenuSelection() {
                 // RE map: re/analysis/game_mode_rules_REmap_20260616.md.
                 cfg.raceRule = mashed_re::Race::RaceModes::RaceRule(cfg.gameMode,
                                                                     cfg.trackId);
+                // [D-11053] MP/quick-race rule dispatch (race-launch action
+                // 0xff420000, FUN_0043dfd0; byte-verified 0x0043f792..0x0043f7cf:
+                // MOV EAX,[0x0067ea88]; length 0 -> rule 0 @0x0043f7a7, 1 ->
+                // rule 1 @0x0043f7b8, 2 -> rule 2 @0x0043f7c5 + team flag
+                // DAT_0067ea64=1 @0x0043f7ca — teams are a standalone residual).
+                // Applies to the MP family (modes 6..9); mode 10 (quick race)
+                // leaves rule 0 (its 0xff420000 branch writes no rule). Game
+                // length = nav ea88 (DAT_0067ea88), MASHED_GAME_LENGTH overrides;
+                // MASHED_MP_RULES=0 reverts to the championship-path rule.
+                {
+                    static const bool s_mprules = [] {
+                        const char* e = std::getenv("MASHED_MP_RULES");
+                        return !(e && e[0] == '0');
+                    }();
+                    if (s_mprules && cfg.gameMode >= 6 && cfg.gameMode <= 9) {
+                        int glen = mashed_re::Frontend::Nav_GameState().ea88;
+                        char gl[8] = {};
+                        if (GetEnvironmentVariableA("MASHED_GAME_LENGTH", gl,
+                                                    sizeof(gl)) > 0)
+                            glen = std::atoi(gl);
+                        cfg.raceRule =
+                            mashed_re::Race::RaceModes::RaceRuleFromGameLength(glen);
+                    }
+                }
                 cfg.raceMode = mashed_re::Race::RaceModes::RaceModeForObjective(
                                    cfg.raceRule);
                 // Dev overrides (verification only), applied after the real
@@ -2262,7 +2342,10 @@ bool RenderFrame() {
                     DrawMashedString(b, 400.f, 250.f, 120.f, 0xff80e0ffu);
                 } else if (g_track.match_winner() >= 0) {
                     wchar_t b[24];
-                    swprintf(b, 24, L"CAR %d WINS", g_track.match_winner() + 1);
+                    // [D-11052] EvaluateResult == -1 (ended with no winner —
+                    // draw / player failed; FUN_00410510 LAB_00410801 path).
+                    if (g_track.match_draw()) swprintf(b, 24, L"RACE OVER");
+                    else swprintf(b, 24, L"CAR %d WINS", g_track.match_winner() + 1);
                     DrawMashedString(b, 400.f, 60.f, 48.f, 0xff80e0ffu);
                 } else if (g_track.round_winner() >= 0) {
                     DrawMashedString(L"CURRENT STANDINGS", 400.f, 60.f, 36.f,
@@ -2276,6 +2359,15 @@ bool RenderFrame() {
                     swprintf(lp, 32, L"LAP %d/%d   POS %d/4",
                              lap, g_track.lap_target(), g_track.car_position(0));
                     DrawMashedString(lp, 470.f, 24.f, 22.f, 0xffffffffu);
+                }
+                // [D-11052] rule-10 checkpoint countdown (DAT_007f0fe4 HUD).
+                if (g_track.race_rule() == 10 && g_track.countdown() <= 0.f &&
+                    g_track.match_winner() < 0) {
+                    wchar_t tm[24];
+                    const float t = g_track.rule_timer();
+                    swprintf(tm, 24, L"TIME %.1f", t > 0.f ? t : 0.f);
+                    DrawMashedString(tm, 400.f, 24.f, 26.f,
+                                     t < 5.f ? 0xff6060ffu : 0xffffffffu);
                 }
                 // Power-up HUD: held kind + fire hint (bottom-left), then any
                 // active effect badges above it.

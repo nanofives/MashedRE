@@ -95,6 +95,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Race\RaceSession.cpp" ^
     "Race\GameFlow.cpp" ^
     "Race\RaceModes.cpp" ^
+    "Race\RuleEngine.cpp" ^
     "Audio\RwsBank.cpp" ^
     "Audio\AudioEngine.cpp" ^
     "D3d9Render\QuadRenderer.cpp" ^

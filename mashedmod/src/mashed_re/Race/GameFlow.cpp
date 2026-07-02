@@ -193,6 +193,17 @@ const Cup& Campaign_CurrentCup() {
     return g_cup;
 }
 
+// [D-11054] cup-tier launch gate — see GameFlow.h. Reads the same live table
+// the gamesave loader populates (fresh/blank save: all zero -> tiers locked,
+// which is the correct fresh-game state; mode 3 launches are gated by the
+// existing Campaign_CurrentCup unlock logic, not this).
+bool Campaign_TierUnlocked(int trackIdx, int col) {
+    if (trackIdx < 0 || trackIdx >= kCupTrackCount) return false;
+    if (col < 0 || col >= 12) return false;
+    const std::int32_t* unlockTbl = reinterpret_cast<const std::int32_t*>(0x007f0a40);
+    return unlockTbl[trackIdx * 12 + col] != 0;
+}
+
 void Campaign_LoadProgress() {
     using namespace mashed_re::Save;
     if (g_progLoaded) return;

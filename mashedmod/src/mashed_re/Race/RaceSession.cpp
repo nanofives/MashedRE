@@ -118,6 +118,10 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         track->StartMatch(3);
         // Race objective from the chosen game mode (0 = elimination, 1 = laps).
         track->SetRaceMode(m_cfg.raceMode, m_cfg.laps);
+        // [D-11052] arm the per-rule win-condition engine with the real race
+        // rule (DAT_007f0fd0 equivalent, derived by Race/RaceModes). Must run
+        // AFTER the track load so the rule-10 seed sees the course id.
+        track->SetRaceRule(m_cfg.raceRule);
         // Track-weather particles: snow on the frozen tracks, dust elsewhere
         // (1=snow, 2=dust). Arctic=0, Storm=6 are the snowy/stormy areas.
         const int tid = m_cfg.trackId;
