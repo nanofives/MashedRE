@@ -45,9 +45,9 @@ exe/asi source change.
   recipe. Updated hand-off #3.
 - [OPEN] **it6 — extend `build_menustr_test.bat` / add a badges_test gate** to run+gate
   like navsm (build-only today). Low value; do late.
-- [OPEN] **it9 — combined standalone unit-test gate.** A `run_all_tests` script that
-  builds+runs the existing harnesses (navsm, Race/tests/ruleengine_test, racemodes_test)
-  and gates on FAIL — one regression command. Safe infra; medium value.
+- [DONE `4d0c66e0`] **it9 — combined standalone unit-test gate.** `mashedmod\run_tests.bat`:
+  builds+runs navsm + ruleengine_test + racemodes_test, gates on each exit code + build
+  success. Verified ALL GREEN, exit 0.
 - [DONE `f16d3d8f`] **it7 — .asi MixedC3Sweep obj collision.** Diagnosed: only Render+Audio
   MixedC3Sweep.cpp were in `asi_sources.rsp`; Render (compiled first) was overwritten by
   Audio before link, so its obj was always dropped (its only hook, RwFreeListCreate, is
