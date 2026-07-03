@@ -167,13 +167,17 @@ int main() {
     std::printf("    [has_savedata=1] item3 enabled? %d : %s\n", Nav_ItemEnabled(3),
                 Nav_ItemEnabled(3) ? "OK (enabled)" : "FAIL");
 
-    // Screen 8: items 2,3 greyed at fresh (FUN_00492d10()!=1).
-    Nav_GameStateReset(); Nav_Init();
-    Nav_Select();   // root item 1 -> push 8 (cursor at item1 default? ensure)
+    // Screen 8 (Options): Load/Save (items 2,3) stay ENABLED at fresh menu.
+    // CORRECTED 2026-07-03: the original's PlaceCursor case-8 disable path only
+    // fires when the save system is NOT ready (FUN_00492d10()!=1); LIVE-PROBED
+    // 2026-06-12 the original holds DAT_00771968==1 at its menu (save ready even
+    // with a blank gamesave), so Load/Save are ENABLED. The standalone's save
+    // layer (R2-2) is functional -> same. (The prior assertion expected them
+    // greyed; that predated the probe and was stale — MenuNavSM.cpp case 8.)
     Nav_GameStateReset(); Nav_Init(); Nav(8, kNavPush);
-    avail_dump("screen8 fresh (items 2,3 greyed)", 8);
+    avail_dump("screen8 fresh (items 2,3 = Load/Save, ENABLED)", 8);
     std::printf("    -> item2=%d item3=%d : %s\n", Nav_ItemEnabled(2), Nav_ItemEnabled(3),
-                (!Nav_ItemEnabled(2) && !Nav_ItemEnabled(3)) ? "OK" : "FAIL");
+                (Nav_ItemEnabled(2) && Nav_ItemEnabled(3)) ? "OK" : "FAIL");
     // cursor must NOT land on a disabled item.
     std::printf("    -> cursor=%d enabled? %s\n", Nav_Cursor(),
                 (Nav_Cursor() >= 0 && Nav_ItemEnabled(Nav_Cursor())) ? "OK" : "FAIL");
