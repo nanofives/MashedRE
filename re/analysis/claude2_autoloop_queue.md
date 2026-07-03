@@ -23,12 +23,9 @@ exe/asi source change.
 ## Lanes
 
 - [DONE `bd92c046`] **it1 — menu-SM regression harness + stale screen-8 test fix.**
-- [OPEN] **it2 — build.bat LNK4042 dedupe.** The `mashed_re.exe` source list in
-  `mashedmod\build.bat` lists ~13 files twice (CarWorldContacts, CarCarContacts,
-  ContactProducer, WheelContactSolver, ContactStubs, ForceIntegrator,
-  ForceIntegratorStubs, Vec3, RwV3dNormalize, RwV3dTransformPointsCPU, RwMatrixRotate,
-  RwMatrixRotateInner, MixedC3Sweep) → LNK4042 warnings. Remove the duplicate lines
-  (keep first occurrence), rebuild, confirm `Build OK` + fewer/no LNK4042. Safe hygiene.
+- [DONE `86aab145`] **it2 — build.bat LNK4042 dedupe.** Removed 12 duplicate exe source
+  lines; Build OK; exe-link LNK4042 13→1. (Remaining 1 = the `.asi` MixedC3Sweep
+  same-basename collision → new lane it7.)
 - [OPEN] **it3 — D-11057 config-edit env-gated live wiring (Part B advance).** In
   `exe_main` add a LEFT/RIGHT handler for screens 18/24, gated behind `MASHED_CONFIG_EDIT`
   (default OFF), calling `Nav_ConfigEditWrap(ed40[row], dir)`. The `ed40[row]→selector`
@@ -43,5 +40,10 @@ exe/asi source change.
   (Does NOT resolve the array question — that needs Ghidra — just narrows it.)
 - [OPEN] **it6 — extend `build_menustr_test.bat` / add a badges_test gate** to run+gate
   like navsm (build-only today). Low value; do late.
+- [OPEN] **it7 — .asi MixedC3Sweep obj collision.** Audio/Frontend/Input/Render/Util each
+  have a `MixedC3Sweep.cpp` → one `MixedC3Sweep.obj` (LNK4042 in the .asi link). Fix with
+  per-dir `/Fo` subdirs (or rename to `<Subsystem>MixedC3Sweep.cpp`) in `asi_sources.rsp`/
+  `build.bat`. Verify `Build OK` + LNK4042 → 0. Moderate risk (touches .asi obj layout) —
+  do carefully, build-verify. Low priority.
 
 Append new OPEN lanes as they're discovered; never remove the hard-limits block.
