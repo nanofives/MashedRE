@@ -35,10 +35,10 @@ exe/asi source change.
   `re/analysis/video_playback_scoping_2026-07-03.md`: recommend `deferred-not-needed` for
   the standalone S-DoD (MpegVideoTexture already plays frontend.mpg; legacy DirectShow chain
   has no standalone consumer). Verbatim diff + small.mpg trace = MCP-gated → hand-off.
-- [OPEN] **it5 — Fable-facing survey: D-11056 rule-5 collectTotal reader.** From source +
-  the d11056 notes, map the candidate call-sites/xrefs that read the rule-5 win-predicate
-  total, so Fable's one Ghidra session is scoped. Pure read/draft; reduces Fable tokens.
-  (Does NOT resolve the array question — that needs Ghidra — just narrows it.)
+- [DONE `2493db3a`] **it5 — D-11056 rule-5 reader survey + array resolution.**
+  `re/analysis/d11056_rule5_reader_survey_2026-07-03.md`: reader chain mapped; synthesized a
+  provisional answer (rule-5 total = KTC_NewCopter copter array, not a pickup array); Fable's
+  remaining MCP set narrowed to 2 xrefs + 2 decodes (hand-off #5).
 - [OPEN] **it6 — extend `build_menustr_test.bat` / add a badges_test gate** to run+gate
   like navsm (build-only today). Low value; do late.
 - [OPEN] **it7 — .asi MixedC3Sweep obj collision.** Audio/Frontend/Input/Render/Util each
