@@ -222,8 +222,12 @@ int ActionToScreen(std::uint32_t action, int slot_kind) {
         case 0xff2e0000u: return 4;    // L816 -> LAB_0043f1fd -> push 4
         case 0xff2d0000u:              // L400 -> LAB_0043f21d
         case 0xff2f0000u: return 10;   // L287
-        case 0xff300000u:              // L849 -> ecdc=1 -> LAB_0043f203 -> push 4
-        case 0xff310000u: return 4;    // L853 -> ecdc=2 -> LAB_0043f203 -> push 4
+        case 0xff300000u:              // L849: DAT_0067ecdc=1 -> LAB_0043f203 -> push 4
+            g_game_state.flag_ecdc = 1;
+            return 4;
+        case 0xff310000u:              // L853: DAT_0067ecdc=2 -> LAB_0043f203 -> push 4
+            g_game_state.flag_ecdc = 2;
+            return 4;
         case 0xff360000u: return 0xb;  // L863
         case 0xff380000u: return 0xd;  // L867
         case 0xff3b0000u: return 6;    // L914
