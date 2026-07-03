@@ -183,24 +183,12 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Vehicle\SmallLeaves_o5.cpp" ^
     "Vehicle\SmallLeaves_q4.cpp" ^
     "Vehicle\MiscDamping.cpp" ^
-    "Collision\CarWorldContacts.cpp" ^
-    "Collision\CarCarContacts.cpp" ^
-    "Collision\ContactProducer.cpp" ^
-    "Collision\WheelContactSolver.cpp" ^
-    "Collision\ContactStubs.cpp" ^
-    "Vehicle\ForceIntegrator.cpp" ^
-    "Vehicle\ForceIntegratorStubs.cpp" ^
     "GameState\StateAccessors.cpp" ^
-    "Math\Vec3.cpp" ^
     "Math\RwSqrt.cpp" ^
     "Math\FPURound.cpp" ^
     "Math\RwV2d.cpp" ^
     "Math\RwV3dTransform.cpp" ^
-    "Math\RwV3dNormalize.cpp" ^
     "Math\RwV3dTransformPoints.cpp" ^
-    "Math\RwV3dTransformPointsCPU.cpp" ^
-    "Math\RwMatrixRotate.cpp" ^
-    "Math\RwMatrixRotateInner.cpp" ^
     "Math\RwMatrixScale.cpp" ^
     "Frontend\Cluster_v1.cpp" ^
     "Frontend\BatchAA_s1.cpp" ^
