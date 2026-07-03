@@ -7,13 +7,16 @@
 # Drives MASHED into a Quick-Battle race (nav_agent.js recipe, same as
 # nav_to_race.py / phys_c4_telemetry.py), lets it settle, then writes the d3d9
 # shim's MASHED_ORIG_BBDUMP_REQ request file. The shim dumps the current
-# backbuffer AND a "<bmp>.draw3d.json" sibling with that frame's draw-call and
-# primitive totals. Compared against the RE's MASHED_DBG_DRAWSTREAM3D totals, the
-# camera-INVARIANT metric (total primitives/frame) answers: is the RE missing
-# geometry (dark-void cause), or is the divergence lighting/material?
+# backbuffer; a "<bmp>.draw3d.json" sibling with that frame's draw-call and
+# primitive totals is OPTIONAL. When present, compared against the RE's
+# MASHED_DBG_DRAWSTREAM3D totals, the camera-INVARIANT metric (total
+# primitives/frame) answers: is the RE missing geometry (dark-void cause), or
+# is the divergence lighting/material?
 #
-# Requires the instrumented d3d9 shim deployed to original/ (the draw-slot
-# counters are only present in the parity build of d3d9_shim.cpp).
+# SHIM LIMITATION: the current d3d9 shim implements BBDUMP only — no draw-slot
+# counters / draw3d.json writer exists yet (P3 plan). Until an instrumented
+# shim ships, this script captures BMP + campose and reports the draw totals
+# as unavailable (exit 0); nonzero exits are reserved for missing BMP/campose.
 #
 # Usage: py -3.12 re/frida/race_draw_burst.py [--out verify/parity_race/orig_race.bmp]
 import argparse, os, shutil, subprocess, sys, time
@@ -75,7 +78,6 @@ def main():
         sys.exit(f"original MASHED.exe not found at {EXE}")
     if not (ORIG / "d3d9.dll").exists():
         sys.exit(f"d3d9 shim missing at {ORIG/'d3d9.dll'}")
-    canon = ROOT.parents[-1]  # placeholder; resolved below
     canon = (ROOT / "scripts" / "canonical" / "videocfg_windowed.bin")
     if not canon.exists():
         canon = ORIG.parent / "scripts" / "canonical" / "videocfg_windowed.bin"
@@ -140,6 +142,7 @@ def main():
         time.sleep(args.settle)
         # Read the original's race-camera pose (source of truth; D3D matrices are
         # identity under RW). Write it next to the capture for RE same-view replay.
+        cam_ok = False
         try:
             camscr = sess.create_script(CAM_JS)
             camscr.on("message", lambda m, d: None)
@@ -150,17 +153,27 @@ def main():
             print(f"  CAMPOSE eye=({cp[0]:.2f},{cp[1]:.2f},{cp[2]:.2f}) "
                   f"at=({cp[3]:.2f},{cp[4]:.2f},{cp[5]:.2f})")
             print(f"  MASHED_CAM_POSE={pose}")
+            cam_ok = True
         except Exception as e:
             print(f"  campose read failed: {e}")
         # Trigger the shim: write the request file; the next Present dumps the
-        # backbuffer + the draw3d.json sibling for that frame.
+        # backbuffer. draw3d.json is optional (see SHIM LIMITATION above).
         req.write_text(str(out_bmp) + "\n")
-        if wait(lambda: out_json.exists(), 10):
-            rc = 0
-            print("  CAPTURED")
-            print(out_json.read_text())
+        wait(lambda: out_bmp.exists() and not req.exists(), 10)
+        if not out_bmp.exists():
+            print("  TIMEOUT waiting for backbuffer dump")
+            rc = 3
+        elif not cam_ok:
+            print("  BMP captured but campose read failed — no same-view replay possible")
+            rc = 4
         else:
-            print("  TIMEOUT waiting for draw3d.json (shim may lack draw counters)")
+            rc = 0
+            if out_json.exists():
+                print("  CAPTURED")
+                print(out_json.read_text())
+            else:
+                print("  draw3d totals unavailable — d3d9 shim has no draw counters yet "
+                      "(P3 plan); BMP+campose captured OK")
     finally:
         try: scr.unload()
         except Exception: pass

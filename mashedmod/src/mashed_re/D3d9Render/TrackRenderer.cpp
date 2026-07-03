@@ -17,6 +17,7 @@
 #include "../Txd/TxdDecoder.h"
 #include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
 #include "RwWorldRender.h"          // WS-E1: RW world render path (behind MASHED_RW_RENDER)
+#include "DrawStreamDump.h"         // parity harness: MASHED_DBG_DRAWSTREAM3D race-3D summary
 #include "../Ai/AiStandalone.h"     // WS-C-WIRE: standalone AI tick (behind MASHED_REAL_AI)
 #include "../Vehicle/VehiclePhysicsRun.h"  // WS-A8: ported physics chain (behind MASHED_REAL_PHYSICS)
 #include "../Ai/AiState.h"          // WS-AI-BRIDGE: ctrl-block / slot-table / spline addrs
@@ -2974,6 +2975,23 @@ void TrackRenderer::SetRaceRule(int rule) {
     rule10_hit_mask_ = 0;
     rule10_lap_seen_ = -1;
     match_draw_ = false;
+    // [D-11056] rule-5 fallback: SetCollectibles/OnCollect have no callers
+    // yet (no collectible feed), so collectTotal stays 0, CollectAllDone
+    // (0x00405890: total==0 -> false) can never fire, and SegmentCheck(5)
+    // skips the elimination block — nothing could ever end the round. Until
+    // the feed lands, disable the rule engine for THIS race only (per-race
+    // flag; the rule_engine_on_ master latch is untouched) so the legacy
+    // laps/elimination collapse in UpdateRace terminates rounds. Re-armed
+    // true here on every new race.
+    rule_engine_race_on_ = true;
+    if (rule_ == 5 && rulep_.collectTotal == 0) {
+        rule_engine_race_on_ = false;
+        if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+            std::fprintf(lf, "rule-5 collectible feed absent (D-11056) -- "
+                             "legacy flow fallback\n");
+            std::fclose(lf);
+        }
+    }
 }
 
 // 0x0040b290 (standard path, mode 0 / no teams): prev snapshot, signed delta
@@ -3146,7 +3164,7 @@ void TrackRenderer::UpdateRace(float dt) {
     // segment end — the FUN_00410510 result evaluation, following the caller
     // contract of FUN_00411170 (result != 0 -> match over; == 0 -> next
     // round). MASHED_RULE_ENGINE=0 reverts to the legacy collapse below.
-    if (rule_engine_on_) {
+    if (rule_engine_on_ && rule_engine_race_on_) {   // [D-11056] per-race gate
         if (match_winner_ >= 0) return;        // result declared (FUN_00443080)
         namespace RE = Race::RuleEngine;
         RE::Cars rc;
@@ -3174,8 +3192,12 @@ void TrackRenderer::UpdateRace(float dt) {
                 int li = 0;
                 for (int g : lap_data_.lap_lines) {
                     const std::uint32_t bit = 1u << li++;
+                    // width-1.0 window (0x004039f0.md step 8: *piVar3 <=
+                    // fVar5 < *piVar3 + 1.0). Fast multi-gate advance
+                    // (>1 gate/tick) can skip it — exactly as the original's
+                    // sampled window can; do NOT add crossing-tracking.
                     if ((rule10_hit_mask_ & bit) == 0 && race_[0].gate > g &&
-                        race_[0].gate <= g + 2) {   // [gate, gate+1) window equiv
+                        race_[0].gate <= g + 1) {
                         rule10_hit_mask_ |= bit;
                         rulep_.timer += rule10_bonus_;
                     }
@@ -3198,9 +3220,15 @@ void TrackRenderer::UpdateRace(float dt) {
                 ScoreOnElimination(victim);    // FUN_0040eee0(victim, 1)
             }
         }
-        // re-snapshot alive flags after any elimination this tick
-        for (int i = 0; i < kRaceCars; ++i)
+        // re-snapshot alive flags AND scores after any elimination this tick:
+        // the original's elimination scoring (FUN_0040eee0) runs INSIDE the
+        // segment check and FUN_00410510 then reads the live DAT_008a94e0
+        // scores in the same tick (0x00410d10.md l.56; FUN_00410510.md
+        // Phase 1) — EvaluateResult must not see the pre-elimination snapshot.
+        for (int i = 0; i < kRaceCars; ++i) {
             rc.alive[i] = race_[i].alive && rc.active[i];
+            rc.score[i] = scores_[i];          // ScoreOnElimination -> ScoreAward
+        }
         if (seg == 1 ||
             RE::SegmentCheck(rule_, rc, rulep_, false, &runElim) == 1) {
             bool p0 = false;
@@ -3522,11 +3550,38 @@ void TrackRenderer::RenderCarsRelit(IDirect3DDevice9* dev,
         if (d.tss_wrap && !d.tex)
             dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
     }
+    // MASHED_DBG_DRAWSTREAM3D "cars" tally (relit path): rl_draws IS the
+    // submitted draw list (emit() drops empty batches), so the counts match
+    // the legacy section's per-DrawBatch tally exactly. Race3DCat early-outs
+    // when the channel is off.
+    {
+        unsigned ds_b = 0, ds_v = 0, ds_t = 0;
+        for (const auto& d : rl_draws) {
+            ++ds_b;
+            ds_v += d.stat ? static_cast<unsigned>(d.stat->size()) : d.count;
+            if (d.tex) ++ds_t;
+        }
+        DrawStreamDump_Race3DCat("cars", ds_b, ds_v, ds_t);
+    }
     dev->SetTransform(D3DTS_WORLD, &worldm);
 }
 
 void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     if (!ready_) return;
+    // Parity 3D channel (MASHED_DBG_DRAWSTREAM3D) frame delimiter: Render() is
+    // the standalone's single race-scene entry — exe_main's race branch calls
+    // it exactly once per rendered frame, and it never runs for the menu.
+    DrawStreamDump_Race3DBegin();
+    // Per-category geometry tallies for the channel: summed beside every
+    // DrawBatch submit below and flushed once per category via Race3DCat
+    // (sky/world/props/copters/cars). A few dozen integer adds per frame;
+    // Race3DBegin/Cat early-out on g_state3d when the channel is off.
+    unsigned ds_b = 0, ds_v = 0, ds_t = 0;
+    auto ds_tally = [&](const std::vector<V>& b, IDirect3DTexture9* tex) {
+        ++ds_b; ds_v += static_cast<unsigned>(b.size()); if (tex) ++ds_t; };
+    auto ds_flush = [&](const char* cat) {
+        DrawStreamDump_Race3DCat(cat, ds_b, ds_v, ds_t);
+        ds_b = ds_v = ds_t = 0; };
     // WS-A s3 render-section profiler (env MASHED_RENDER_PROF): attribute the
     // 3D frame's CPU cost to sky/world/props/copters/cars/particles so the real
     // hot path is measured. QPC; logs render_prof.log. Off unless the env is set.
@@ -3689,6 +3744,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                                           D3DTTFF_COUNT2);
             }
             DrawBatch(dev, b);
+            ds_tally(b, sky_.textures[mi]);
             if (scroll)
                 dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS,
                                           D3DTTFF_DISABLE);
@@ -3696,6 +3752,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         dev->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
         dev->SetTransform(D3DTS_WORLD, &worldm);  // restore identity for world
     }
+    ds_flush("sky");   // zeros when no sky clump loaded = the dark-void signal
     // fog (COURSE.LUA Setup_Fog) + alpha cutouts (fence/grate textures).
     // The fog range (Setup_Fog end) is calibrated for the in-game chase camera,
     // which sits a few units behind the car. The orbit/free OVERVIEW cameras sit
@@ -3768,11 +3825,13 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         if (!textures_[mi])
             dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG2);
         DrawBatch(dev, b);
+        ds_tally(b, textures_[mi]);
         if (!textures_[mi])
             dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
         if (scroll)
             dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
     }
+    ds_flush("world");   // reports zeros when rw_world drew instead (inert today)
 
     MARK(d_world);   // static world geometry batches_ (DrawPrimitiveUP)
     // R6: track props — instanced DFF batches (tyre walls, crates, sea,
@@ -3800,6 +3859,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_SELECTARG2);
                 DrawBatch(dev, b);
+                ds_tally(b, p.textures[mi]);
                 if (!p.textures[mi])
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_MODULATE);
@@ -3809,6 +3869,8 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             }
         }
     }
+
+    ds_flush("props");
 
     MARK(d_props);   // instanced track props
     // F2: animated copters — the model DFF under the per-frame HAnim transform
@@ -3834,19 +3896,22 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             if (!m.textures[mi])
                 dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG2);
             DrawBatch(dev, b);
+            ds_tally(b, m.textures[mi]);
             if (!m.textures[mi])
                 dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
         }
     }
     dev->SetTransform(D3DTS_WORLD, &worldm);
+    ds_flush("copters");
 
     MARK(d_other);   // copters
     // R5: the car — model-space batches under a yaw+translate world matrix.
     // WS-E vehicle lighting: with MASHED_RPLIGHT + a track directional light,
     // the car section runs through the relit pass (per-frame world-space sun
     // on the lit batches; identical draw order/states, packed dynamic VB).
-    if (car_ready_ && rp_light_on_ && has_sun_dir_) {
-        RenderCarsRelit(dev, worldm);
+    const bool relit_cars = car_ready_ && rp_light_on_ && has_sun_dir_;
+    if (relit_cars) {
+        RenderCarsRelit(dev, worldm);   // emits its own "cars" Race3DCat tally
     } else if (car_ready_) {
         D3DMATRIX carm;
         MatIdentity(&carm);
@@ -3874,6 +3939,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             if (!car_textures_[mi])
                 dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG2);
             DrawBatch(dev, b);
+            ds_tally(b, car_textures_[mi]);
             if (!car_textures_[mi])
                 dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
         }
@@ -3910,6 +3976,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_SELECTARG2);
                 DrawBatch(dev, b);
+                ds_tally(b, tex);
                 if (!tex)
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_MODULATE);
@@ -3945,6 +4012,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_SELECTARG2);
                 DrawBatch(dev, b);
+                ds_tally(b, texs[mi]);
                 if (!texs[mi])
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_MODULATE);
@@ -3975,11 +4043,14 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                     if (b.empty()) continue;
                     dev->SetTexture(0, car_textures_[part.first]);
                     DrawBatch(dev, b);
+                    ds_tally(b, car_textures_[part.first]);
                 }
             }
         }
         dev->SetTransform(D3DTS_WORLD, &worldm);
     }
+    if (!relit_cars)
+        ds_flush("cars");   // relit path reports inside RenderCarsRelit
 
     dev->SetTexture(0, nullptr);
     MARK(d_car);     // player + AI cars + wheels

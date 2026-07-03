@@ -2531,8 +2531,15 @@ bool RenderFrame() {
                 s_bb = (v > 1) ? v : 200;
             }
         }
-        if (s_bb > 0 && --s_bb == 1)
-            DumpBackbufferBMP("verify/dbg_backbuffer.bmp");
+        if (s_bb > 0 && --s_bb == 1) {
+            // MASHED_DBG_BBDUMP_OUT overrides the shared default path so
+            // concurrent sessions don't clobber each other's dump.
+            char bbp[260] = {};
+            DumpBackbufferBMP(
+                GetEnvironmentVariableA("MASHED_DBG_BBDUMP_OUT", bbp,
+                                        sizeof(bbp)) > 0
+                    ? bbp : "verify/dbg_backbuffer.bmp");
+        }
     }
     // On-demand capture for the dual-nav parity harness: env MASHED_DBG_BBDUMP_REQ
     // names a request file; when it exists, its first line is the target .bmp path

@@ -56,7 +56,6 @@ constexpr int   kCars         = 4;
 constexpr float kFinishMetric = 3.0f;    // _DAT_005cc31c
 constexpr float kRule10Metric = 2.0f;    // _DAT_005cc574
 constexpr float kRule9Gap     = 0.9f;    // _DAT_005cc9c8
-constexpr float kMetricFrac   = 0.01f;   // _DAT_005cc328
 constexpr float kEmptySlot    = -1.0f;   // _DAT_005cc33c
 constexpr float kTimerDefault = 30.0f;   // FUN_004046a0 default branch
 
@@ -69,7 +68,8 @@ struct Cars {
     float metric[kCars] = {};    // DAT_0089a880: laps + lapFrac% * 0.01
                                  // (FUN_00407a20 + FUN_00408ad0 * _DAT_005cc328)
     int   motion0 = 0;           // vehicle[0] +0x9f0 kMotionState (FUN_0046cbb0 out1)
-    int   motion1 = 0;           // vehicle[1] +0x9f0 (rule 9 reads car 1 too)
+                                 // (rule 9 reads car 1's METRIC via FUN_00417730,
+                                 // covered by metric[1] — 0x00410d10.md case 9)
     int   snapshot1 = 0;         // FUN_00423b20(1): dword 0x008995ec+0x138 (U-9004:
                                  // semantics unresolved; original ends the rule-9
                                  // segment when nonzero. Standalone feeds 0.)
@@ -115,8 +115,10 @@ inline void Rule10Tick(Persist& p, float dt) { p.timer -= dt; }
 //                             the standalone's RaceCamera EliminationCheck
 //                             models that timing).
 // Return: 1 = segment over (call EvaluateResult), 0 = race continues.
-// `resultDeclared` = FUN_00443080() != 0 (a result was already set): the
-// original returns 0 immediately (case FUN_00443080()==1 at 0x00410d10 head).
+// `resultDeclared` = (FUN_00443080() == 1) (a result was already set): the
+// original's head gate is the exact comparison `if (FUN_00443080() == 1)
+// return 0;` (0x00410d13; re/analysis/vehicle_damage_d2/0x00410d10.md l.29) —
+// any other nonzero return falls through into the rule switch.
 int SegmentCheck(int rule, const Cars& c, const Persist& p,
                  bool resultDeclared, bool* runElimination);
 

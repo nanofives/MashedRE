@@ -70,7 +70,7 @@ track flythrough — no AI/physics/animation) sidestep this entirely.
 - **P0** menu/results, settled (built; reuses the 2D path, zero new C++).
 - **P1** boot/loading frames, pixel-only (`boot_frame` driver).
 - **P2** in-race 2D HUD (`nav_race` driver; reuses the P0 comparators).
-- **P3** in-race 3D world — new `DrawStreamDump_OnDraw3D` (RE) + a
+- **P3** in-race 3D world — `DrawStreamDump_Race3DBegin`/`DrawStreamDump_Race3DCat` (RE) + a
   `0x004e1007` `DrawIndexedPrimitive` burst (original), led by the deterministic
   static-camera flythrough. The biggest divergence and the biggest C4 payoff
   (render subsystem is large and under-promoted).

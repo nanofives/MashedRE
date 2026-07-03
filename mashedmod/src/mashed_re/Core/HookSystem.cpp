@@ -48,6 +48,20 @@ static bool RestoreBytes(std::uint8_t* target, const std::uint8_t saved[5]) {
     return true;
 }
 
+// Loud failure line: raw WriteFile append (same loader-lock-safe pattern as
+// ManifestLine below) to a fixed cwd-relative log, plus OutputDebugStringA so
+// it also shows under a debugger/Frida.
+static void LoudLog(const char* line) {
+    OutputDebugStringA(line);
+    HANDLE h = CreateFileA("hook_dual_install.log", FILE_APPEND_DATA,
+                           FILE_SHARE_READ, nullptr, OPEN_ALWAYS,
+                           FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (h == INVALID_HANDLE_VALUE) return;
+    DWORD wrote = 0;
+    WriteFile(h, line, static_cast<DWORD>(std::strlen(line)), &wrote, nullptr);
+    CloseHandle(h);
+}
+
 bool Install(std::size_t index) {
     auto& reg = Registry();
     if (index >= reg.size()) return false;
@@ -55,6 +69,30 @@ bool Install(std::size_t index) {
     if (h.installed) return true;
     auto* target      = reinterpret_cast<std::uint8_t*>(h.target_rva);
     auto* replacement = reinterpret_cast<std::uint8_t*>(h.replacement);
+    // Dual-install guard: if the target already starts with an E9 JMP, another
+    // hook owns this RVA (two registry entries at one RVA, e.g. a port hook +
+    // an A/B driver). Saving that E9 as "original prologue" would corrupt
+    // uninstall/trampolines — refuse the second install, loudly. (None of our
+    // registered targets legitimately begins with E9; prologues are anchored
+    // per hook file.)
+    if (target[0] == 0xE9) {
+        const char* first = "<not in registry: foreign/unknown E9>";
+        for (const HookEntry& other : reg) {
+            if (&other != &h && other.installed &&
+                other.target_rva == h.target_rva) {
+                first = other.name ? other.name : "?";
+                break;
+            }
+        }
+        char buf[256];
+        wsprintfA(buf,
+                  "[HookSystem] DUAL-INSTALL REFUSED at 0x%08X: already hooked "
+                  "by '%s'; NOT installing '%s' (would save E9 as prologue)\r\n",
+                  static_cast<unsigned>(h.target_rva), first,
+                  h.name ? h.name : "?");
+        LoudLog(buf);
+        return false;
+    }
     if (!PatchJmp(target, replacement, h.saved_prologue)) return false;
     h.installed = true;
     return true;
@@ -92,18 +130,45 @@ static void ManifestLine(const char* path, std::size_t idx,
 //
 // Crash bisection:
 //   MASHED_HOOK_LO / MASHED_HOOK_HI  install only registry indices [LO, HI)
-//   MASHED_HOOK_SKIP                 names to skip (substring denylist)
+//   MASHED_HOOK_SKIP                 names/0xRVAs to skip (exact-token denylist)
 //   MASHED_HOOK_MANIFEST=<path>      append an index->rva->name manifest (opt-in)
 //
 // C3->C4 canonical verification (the important one):
-//   MASHED_HOOK_ONLY=<list>          install ONLY hooks whose name OR 0xRVA appears
-//                                    in this comma/space list (allowlist). This is
-//                                    how a C4 batch installs just its candidate
-//                                    set live (inline-JMP) while every other
-//                                    function stays original -> a clean per-hook
-//                                    "modded vs original" canonical scenario that
-//                                    sidesteps the full-install multi-bug field.
+//   MASHED_HOOK_ONLY=<list>          install ONLY hooks whose registered name or
+//                                    "0x%08x" RVA token EQUALS a token of this
+//                                    comma/space list (allowlist; exact-token
+//                                    match — names case-sensitive, RVA tokens
+//                                    case-insensitive; substring matching removed
+//                                    2026-07-03 after "AiPreTick" inside
+//                                    "AbAiPreTick" co-installed two hooks at
+//                                    0x004177b0). This is how a C4 batch installs
+//                                    just its candidate set live (inline-JMP)
+//                                    while every other function stays original ->
+//                                    a clean per-hook "modded vs original"
+//                                    canonical scenario that sidesteps the
+//                                    full-install multi-bug field.
 // Precedence: ONLY (if set) wins; otherwise LO/HI range; SKIP applies on top.
+
+// Exact-token list match for MASHED_HOOK_ONLY / MASHED_HOOK_SKIP. `list` is
+// split on commas/spaces/tabs; a hook matches iff some token EQUALS its
+// registered name (strcmp, case-sensitive) or its "0x%08x" RVA token
+// (case-insensitive, so 0X.../uppercase hex CLI input still selects).
+// Sentinels like "__none__" / "ZZ_NO_HOOK_ZZ" equal no token -> match nothing.
+static bool TokenMatch(const char* list, const char* name, const char* rvatok) {
+    const std::size_t name_len  = name ? std::strlen(name) : 0;
+    const std::size_t rvatok_len = std::strlen(rvatok);
+    for (const char* p = list; *p;) {
+        while (*p == ',' || *p == ' ' || *p == '\t') ++p;
+        const char* tok = p;
+        while (*p && *p != ',' && *p != ' ' && *p != '\t') ++p;
+        const std::size_t len = static_cast<std::size_t>(p - tok);
+        if (!len) continue;
+        if (name_len == len && std::memcmp(tok, name, len) == 0) return true;
+        if (rvatok_len == len && _strnicmp(tok, rvatok, len) == 0) return true;
+    }
+    return false;
+}
+
 void InstallAll() {
     const std::size_t n = Registry().size();
     std::size_t lo = 0, hi = n;
@@ -118,16 +183,16 @@ void InstallAll() {
 
     for (std::size_t i = 0; i < n; ++i) {
         const HookEntry& e = Registry()[i];
+        char rvatok[16];
+        wsprintfA(rvatok, "0x%08x", static_cast<unsigned>(e.target_rva));
         bool want;
         if (only && only[0]) {
-            // allowlist: match by name substring or by "0x%08x" RVA token
-            char rvatok[16];
-            wsprintfA(rvatok, "0x%08x", static_cast<unsigned>(e.target_rva));
-            want = (e.name && std::strstr(only, e.name)) || std::strstr(only, rvatok);
+            // allowlist: exact name token or exact "0x%08x" RVA token
+            want = TokenMatch(only, e.name, rvatok);
         } else {
             want = (i >= lo && i < hi);
         }
-        if (want && skip && skip[0] && e.name && std::strstr(skip, e.name)) {
+        if (want && skip && skip[0] && TokenMatch(skip, e.name, rvatok)) {
             want = false;
         }
         bool ok = want && Install(i);

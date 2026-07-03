@@ -131,7 +131,7 @@ function orReadCars(){
 // RuleEngine::SegmentCheck transcribed (pre-blocks on ENTRY state; the
 // alive-count tail on EXIT state — the elimination block runs inside the call).
 function predSegment(en, exActive, exAlive){
-  if (en.declRaw !== 0) return 0;              // port: resultDeclared != 0
+  if (en.declRaw === 1) return 0;              // 0x00410d10 head law: FUN_00443080() == 1 -> return 0
   switch (en.rule){
   case 4: if (!(en.metric[0] < K.FIN)) return 1; break;
   case 5: if (!en.alive[0]) return 1;
@@ -404,6 +404,14 @@ def main():
                     help="seconds into the hold before applying --poke-lap/--poke-collect")
     args = ap.parse_args()
 
+    if args.oracle and args.hooks:
+        print("error: --oracle cannot be combined with --hooks. The oracle must observe the "
+              "live ORIGINAL functions (FUN_00410d10/FUN_00410510/FUN_004177b0); --hooks can "
+              "install the ported law (e.g. 0x004177b0, 0x00410510) over those very functions, "
+              "so the oracle would validate the port against its own transcription — a vacuous "
+              "GREEN. Run the oracle against the stock original (no --hooks).")
+        return 2
+
     if not EXE.exists():
         print(f"error: {EXE} not found"); return 2
 
@@ -531,11 +539,16 @@ def main():
                 except Exception:
                     raw = oracle_cache          # game/script died — use last snapshot
                     print("  (oracle: live fetch failed, using last incremental snapshot)")
+                if raw is None:
+                    print("  oracle: no oracle snapshot captured — game exited before the first "
+                          "incremental snapshot; no evidence file written")
+                    raise SystemExit
                 st = json.loads(raw)
                 out = ROOT / "log" / f"rules_oracle_rule{args.rule}.json"
                 out.parent.mkdir(exist_ok=True)
                 st["run"] = {"track": args.track, "mode": args.mode, "cars": args.cars,
                              "rule": args.rule, "hold": args.hold, "pid": pid,
+                             "hooks": args.hooks or None,
                              "ts": time.strftime("%Y-%m-%d %H:%M:%S")}
                 out.write_text(json.dumps(st, indent=1))
                 seg, ev, ordr = st["seg"], st["ev"], st["ord"]

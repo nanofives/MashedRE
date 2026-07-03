@@ -139,12 +139,22 @@ def merged(defaults, scenario):
     return out
 
 
+_BLANK_WARNED = set()   # one-time warning keys for bmp_is_blank
+
+
 def bmp_is_blank(path: Path) -> bool:
     """A backbuffer that is entirely one colour (all-black / all-white) means the
     capture never reached a rendered state — guards the degenerate-GREEN class
     (plan R7). Cheap: sample the BMP pixel bytes, bail as soon as two differ."""
     try:
         from PIL import Image
+    except ImportError:
+        if "pillow" not in _BLANK_WARNED:
+            _BLANK_WARNED.add("pillow")
+            log("    WARNING: Pillow not installed — backbuffer pixels cannot be "
+                "verified; treating captures as blank (ok_pixel=False, fail closed)")
+        return True
+    try:
         im = Image.open(path).convert("RGB")
         first = None
         for px in im.getdata():
@@ -153,8 +163,12 @@ def bmp_is_blank(path: Path) -> bool:
             elif px != first:
                 return False
         return True
-    except Exception:
-        return False   # cannot prove blank -> treat as non-blank (do not fail open)
+    except Exception as e:
+        if "unreadable" not in _BLANK_WARNED:
+            _BLANK_WARNED.add("unreadable")
+            log(f"    WARNING: unreadable BMP {path}: {e} — treating as blank "
+                "(ok_pixel=False, fail closed)")
+        return True   # cannot prove non-blank -> treat as blank (fail closed)
 
 
 def wait_for_artifact(path: Path, since: float, timeout: float) -> bool:
@@ -179,15 +193,23 @@ def capture_re(sc, bundle: Path, spawned, re_cwd: Path, dry: bool):
     res = {"draw2d": None, "pixel": None, "ok_draw2d": False, "ok_pixel": False}
     cap = sc.get("capture", [])
     screen = sc["screen"]
-    ds_out = re_cwd / "log" / "drawstream_re.json"
-    bb_out = re_cwd / "verify" / "dbg_backbuffer.bmp"
+    # Per-run artifact paths inside THIS scenario's bundle dir. Env contract
+    # with the standalone: MASHED_DBG_DRAWSTREAM_OUT / MASHED_DBG_BBDUMP_OUT
+    # (and MASHED_DBG_DRAWSTREAM3D_OUT for the 3D stream) override the fixed
+    # log/drawstream_re.json + verify/dbg_backbuffer.bmp paths, each read via
+    # getenv at write time. Unique per-run paths keep concurrent sweep sessions
+    # from cross-contaminating each other through the shared files.
+    ds_out = (bundle / "drawstream_re.json").resolve()
+    bb_out = (bundle / "dbg_backbuffer.bmp").resolve()
 
     env = dict(os.environ)
     env["MASHED_GOTO"] = str(screen)
     if "draw2d" in cap:
         env["MASHED_DBG_DRAWSTREAM"] = "200:203"
+        env["MASHED_DBG_DRAWSTREAM_OUT"] = str(ds_out)
     if "pixel" in cap:
         env["MASHED_DBG_BBDUMP"] = "203"
+        env["MASHED_DBG_BBDUMP_OUT"] = str(bb_out)
 
     if dry:
         log(f"    [re] DRY would spawn {RE_EXE.name} cwd={re_cwd} "
@@ -197,13 +219,9 @@ def capture_re(sc, bundle: Path, spawned, re_cwd: Path, dry: bool):
     if not RE_EXE.exists():
         log(f"    [re] ERROR: {RE_EXE} not built (run mashedmod\\build.bat)")
         return res
-    # Remove stale artifacts so we detect THIS run's fresh output.
-    for p in (ds_out, bb_out):
-        try: p.unlink()
-        except OSError: pass
-    ds_out.parent.mkdir(parents=True, exist_ok=True)
-    bb_out.parent.mkdir(parents=True, exist_ok=True)
-
+    # Paths are per-run (bundle-local), so no shared-path pre-delete is needed;
+    # wait_for_artifact's size/mtime check stays as a sanity layer against a
+    # stale bundle when a run dir is resumed.
     since = time.time()
     proc = subprocess.Popen(
         [str(RE_EXE)], cwd=str(re_cwd), env=env,

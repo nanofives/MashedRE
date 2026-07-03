@@ -49,6 +49,13 @@ void ParseEnvOnce() {
         g_state = 0;
         return;
     }
+    if (buf[0] == '0' && buf[1] == '\0') {
+        // Explicit "=0" means OFF (repo toggle convention — MASHED_RPLIGHT,
+        // MASHED_RULE_ENGINE, MASHED_CUP_TIERS); without this it would fall
+        // into the truthy default window and ARM the capture.
+        g_state = 0;
+        return;
+    }
     int a = 0, b = 0;
     if (std::sscanf(buf, "%d:%d", &a, &b) == 2 && a > 1 && b >= a) {
         g_frameStart = a; g_frameEnd = b;
@@ -68,8 +75,15 @@ bool Capturing() {
 
 void WriteOut() {
     g_written = true;
+    // MASHED_DBG_DRAWSTREAM_OUT overrides the shared default path so
+    // concurrent sessions don't clobber each other's capture. Read at write
+    // time (fires once per run) — no caching needed.
+    char ovr[260] = {};
+    const char* out = kOutPath;
+    if (GetEnvironmentVariableA("MASHED_DBG_DRAWSTREAM_OUT", ovr, sizeof(ovr)) > 0)
+        out = ovr;
     CreateDirectoryA("log", nullptr);
-    std::FILE* f = std::fopen(kOutPath, "w");
+    std::FILE* f = std::fopen(out, "w");
     if (!f) return;
     std::fputs("{\n", f);
     for (std::size_t fi = 0; fi < g_frames.size(); ++fi) {
@@ -96,7 +110,7 @@ void WriteOut() {
         std::fprintf(lf, "DRAWSTREAM wrote %u frames (%u draws) f%d..f%d -> %s\n",
                      static_cast<unsigned>(g_frames.size()),
                      static_cast<unsigned>(total),
-                     g_frameStart, g_frameEnd, kOutPath);
+                     g_frameStart, g_frameEnd, out);
         std::fclose(lf);
     }
     g_frames.clear();
@@ -122,6 +136,11 @@ void ParseEnv3DOnce() {
         g_state3d = 0;
         return;
     }
+    if (buf[0] == '0' && buf[1] == '\0') {
+        // Explicit "=0" means OFF (repo toggle convention) — see ParseEnvOnce.
+        g_state3d = 0;
+        return;
+    }
     int a = 0, b = 0;
     if (std::sscanf(buf, "%d:%d", &a, &b) == 2 && a >= 0 && b >= a) {
         g_fs3d = a; g_fe3d = b;
@@ -140,8 +159,14 @@ bool Capturing3D() {
 
 void WriteOut3D() {
     g_written3d = true;
+    // MASHED_DBG_DRAWSTREAM3D_OUT overrides the shared default path (multi-
+    // session safety) — see WriteOut().
+    char ovr[260] = {};
+    const char* out = kOutPath3D;
+    if (GetEnvironmentVariableA("MASHED_DBG_DRAWSTREAM3D_OUT", ovr, sizeof(ovr)) > 0)
+        out = ovr;
     CreateDirectoryA("log", nullptr);
-    std::FILE* f = std::fopen(kOutPath3D, "w");
+    std::FILE* f = std::fopen(out, "w");
     if (!f) return;
     std::fputs("{\n", f);
     for (std::size_t fi = 0; fi < g_frames3d.size(); ++fi) {
@@ -160,7 +185,7 @@ void WriteOut3D() {
     if (std::FILE* lf = std::fopen(kLogPath, "a")) {
         std::fprintf(lf, "DRAWSTREAM3D wrote %u frames f%d..f%d -> %s\n",
                      static_cast<unsigned>(g_frames3d.size()),
-                     g_fs3d, g_fe3d, kOutPath3D);
+                     g_fs3d, g_fe3d, out);
         std::fclose(lf);
     }
     g_frames3d.clear();

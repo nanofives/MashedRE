@@ -50,6 +50,7 @@ const RVA_RESOLVER = 0x00497310;
 let NAV = [], SETTLE = 7000, DWELL = 1500, t0 = 0, lastSlot = -99, GATE = 0;
 const SAMP = {};            // targetRva -> {sig: count}
 const CUR = {};             // targetRva -> in-flight seq array or null
+let inflight = 0;           // >0 while a target call is in flight; gates hot-callee decode
 
 function setDelta(){ const m = Process.findModuleByName('MASHED.exe') || Process.enumerateModules()[0];
   DELTA = m.base.toUInt32() - IMGBASE; }
@@ -182,8 +183,8 @@ rpc.exports = {
       if (!te.entry){ send({kind:'err', msg:'no target entry '+rva.toString(16)+' jmp='+te.jmp}); continue; }
       (function(key){
         Interceptor.attach(te.entry, {
-          onEnter(a){ CUR[key] = []; },
-          onLeave(r){ if (CUR[key]){ CUR[key].push('eax='+nrm(r.toUInt32())); record(key, CUR[key].join(' ')); } CUR[key] = null; }
+          onEnter(a){ CUR[key] = []; inflight++; },
+          onLeave(r){ inflight--; if (CUR[key]){ CUR[key].push('eax='+nrm(r.toUInt32())); record(key, CUR[key].join(' ')); } CUR[key] = null; }
         });
       })(rva);
     }
@@ -192,6 +193,7 @@ rpc.exports = {
       const crva = calleeList[i][0]>>>0; const na = calleeList[i][1]|0;
       (function(cr, n){
         try { Interceptor.attach(abs(cr), { onEnter(a){
+          if (!inflight) return;   // skip decode on every process-wide call outside a target capture
           const sp = this.context.esp; let parts = ['c'+cr.toString(16)];
           for (let j=0;j<n;j++){ try { parts.push(nrm(sp.add(4+j*4).readU32())); } catch(e){ parts.push('?'); } }
           const tok = '['+parts.join(',')+']';
@@ -254,8 +256,32 @@ def capture(mode, rvas, callee_union, nav, settle, dwell, seconds):
     dev, pid, sess, scr = _spawn(mode, rvas if mode == "on" else [])
     samples, jmp = {}, {}
     try:
-        scr.exports_sync.setupcap(rvas, callee_union, mode, nav, settle, dwell)
-        dev.resume(pid)
+        if mode == "on":
+            # The .asi's inline E9 JMPs only exist after the process entry runs: resume FIRST,
+            # wait for the hooks to install, THEN attach (same asymmetry as the ON-discover
+            # phase above and canonical_c4_stalkerdiff.py). setupcap before resume would read
+            # no 0xE9 -> "no target entry" -> permanently empty ON samples.
+            dev.resume(pid)
+            deadline = time.time() + 14                       # wait for .asi load + hook install
+            installed = False
+            while time.time() < deadline:
+                if psutil and not psutil.pid_exists(pid): break
+                try:
+                    if all(scr.exports_sync.jmpbyte(r) == 0xe9 for r in rvas):
+                        installed = True; time.sleep(0.5); break
+                except Exception: pass
+                time.sleep(0.5)
+            if not installed:
+                for r in rvas:
+                    try: jmp[r] = scr.exports_sync.jmpbyte(r)
+                    except Exception: jmp[r] = -1
+                missing = [r for r in rvas if jmp.get(r) != 0xe9]
+                print(f"   hook-never-installed: no 0xE9 within 14s at {[hex(r) for r in missing]}; skipping ON capture")
+                return samples, jmp
+            scr.exports_sync.setupcap(rvas, callee_union, mode, nav, settle, dwell)
+        else:
+            scr.exports_sync.setupcap(rvas, callee_union, mode, nav, settle, dwell)
+            dev.resume(pid)
         t = time.time() + seconds
         while time.time() < t:
             if psutil and not psutil.pid_exists(pid): print("   exited early"); break

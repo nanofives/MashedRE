@@ -14,7 +14,8 @@
 // sides must produce bit-identical write surfaces.
 //
 // Registration is gated on MASHED_AI_AB=1 (else this file registers nothing),
-// and exactly ONE driver is selected per run via MASHED_HOOK_ONLY=<name>.
+// and exactly ONE driver is selected per run via MASHED_HOOK_ONLY=<name> —
+// registration is REFUSED (ai_ab_refused.log) if MASHED_HOOK_ONLY is unset.
 // Run the three drivers in SEPARATE runs — never together (an installed
 // AbAiVehStep would intercept the RVA calls made by AiTickLoop's A/B).
 // NOTE: MASHED_HOOK_ONLY=0x00418560/0x00418860/0x00417640 (RVA form) would
@@ -712,10 +713,11 @@ long g_preFd4 = 0, g_preFd9 = 0, g_preFd8 = 0, g_preFdElse = 0,
      g_prePow = 0, g_preFlag0 = 0, g_preFlag1 = 0, g_preFlag2 = 0;
 
 // NAME NOTE: registered as "AbAiPre7b0", NOT "AbAiPreTick" — MASHED_HOOK_ONLY
-// matches by substring, and "AbAiPreTick" CONTAINS the port hook's name
+// USED TO match by substring, and "AbAiPreTick" CONTAINS the port hook's name
 // "AiPreTick", which made a HOOK_ONLY=AbAiPreTick run install BOTH at
 // 0x004177b0 (the port clobbered the driver; caught 2026-07-02 when the run
-// produced no log).
+// produced no log). HookSystem matching is exact-token since 2026-07-03; the
+// name stays "AbAiPre7b0" so existing run recipes keep working.
 void __cdecl AbAiPreTick(void) {
     BuildSegs(false);
     LayoutLogOnce(kPreLog, &g_preLayoutOnce);
@@ -771,11 +773,24 @@ void __cdecl AbAiPreTick(void) {
 // ── env-gated registration (NOT RH_ScopedInstall: these must never register
 //    in a normal full-install run — they collide with the port hooks at the
 //    same RVAs). MASHED_AI_AB=1 registers all; MASHED_HOOK_ONLY=<name>
-//    then installs exactly one. Run each driver in a SEPARATE run. ──
+//    then installs exactly one. Run each driver in a SEPARATE run.
+//    ENFORCED: if MASHED_HOOK_ONLY is unset/empty, registration is REFUSED
+//    (logged to ai_ab_refused.log) — see guard in the ctor below. ──
 struct AbAiReg {
     AbAiReg() {
         const char* s = std::getenv("MASHED_AI_AB");
         if (!s || !s[0]) return;
+        // One-driver-per-run guard: without MASHED_HOOK_ONLY, InstallAll would
+        // install ALL 8 drivers together (and collide with the port hooks at
+        // the same RVAs). Refuse to register instead of relying on the comment.
+        const char* only = std::getenv("MASHED_HOOK_ONLY");
+        if (!only || !only[0]) {
+            AbLog("ai_ab_refused.log",
+                  "MASHED_AI_AB requires MASHED_HOOK_ONLY=<one driver> - "
+                  "drivers not registered, see one-driver-per-run rule "
+                  "(AiControllerAB.cpp)\r\n");
+            return;
+        }
         HookSystem::Register(0x00417640u, reinterpret_cast<void*>(&AbAiPost),    "AbAiPost");
         HookSystem::Register(0x00418560u, reinterpret_cast<void*>(&AbAiVehStep), "AbAiVehStep");
         HookSystem::Register(0x00418860u, reinterpret_cast<void*>(&AbAiTick),    "AbAiTick");

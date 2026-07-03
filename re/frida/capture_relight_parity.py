@@ -39,11 +39,15 @@ REQF = OUTD / "orig_bbdump.req"
 def shoot(path, timeout=6.0):
     try:
         target = Path(path).resolve()
+        target.unlink(missing_ok=True)   # a stale BMP from a prior run must not pass as fresh
         REQF.write_text(str(target) + "\n")
         end = time.time() + timeout
         # the shim polls the req file each Present, dumps, then deletes it
         while time.time() < end and REQF.exists():
             time.sleep(0.1)
+        if REQF.exists():
+            print(f"  [shot] WARNING: shim did not process the dump request for {target.name}")
+            return False
         return target.exists()
     except Exception as e:
         print("  [shot] err", e); return False
@@ -206,10 +210,12 @@ def main():
         time.sleep(1.5)
         ci=E.sample()
         p = OUTD/"orig_grid.bmp"
-        if shoot(p):
-            shots.append({"file":p.name,"t":0.0,"heading":round(ci.get("heading",0),5),
+        if "err" in ci or ci.get("heading") is None:
+            print(f"  [shot] WARNING: skipping {p.name} — sample failed: {ci.get('err')}")
+        elif shoot(p):
+            shots.append({"file":p.name,"t":0.0,"heading":round(ci["heading"],5),
                           "speed":round(ci.get("speed",0),3)})
-            print(f"  [shot] {p.name} heading={ci.get('heading'):.5f}")
+            print(f"  [shot] {p.name} heading={ci['heading']:.5f}")
         # donut: held steer + SPEED-CAPPED accel (full accel launched the car down
         # the straight into a crash on the first attempt); shot every --shot-every s,
         # each tagged with the live heading
@@ -245,12 +251,12 @@ def main():
         try:
             if (not psutil) or psutil.pid_exists(pid): dev.kill(pid)
         except Exception: pass
-
-    if shots:
-        with open(OUTD/"shots.json","w") as f: json.dump(shots, f, indent=1)
-        print(f"  wrote {len(shots)} shots -> {OUTD}\\shots.json")
-    else:
-        print("  NO shots captured")
+        # write shots.json even if the run aborted — partial captures stay usable
+        if shots:
+            with open(OUTD/"shots.json","w") as f: json.dump(shots, f, indent=1)
+            print(f"  wrote {len(shots)} shots -> {OUTD}\\shots.json")
+        else:
+            print("  NO shots captured")
     return rc
 
 if __name__ == "__main__":

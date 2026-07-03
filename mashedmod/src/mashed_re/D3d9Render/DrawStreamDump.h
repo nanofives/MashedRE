@@ -1,8 +1,10 @@
 // Mashed RE — env-gated draw-stream dump (parity harness, standalone side).
 //
 // MASHED_DBG_DRAWSTREAM=<N | N:M | 1> captures every bridge Im2D draw of
-// frontend frames N..M (`1` = frame 200, matching MASHED_DBG_BBDUMP's timing)
-// into log/drawstream_re.json using the SAME record schema as the
+// frontend frames N..M (`1` = frame 200, matching MASHED_DBG_BBDUMP's timing;
+// `0` = off, repo toggle convention) into log/drawstream_re.json
+// (MASHED_DBG_DRAWSTREAM_OUT overrides the path — multi-session safety),
+// using the SAME record schema as the
 // original-side capture (re/frida/menu_draw_dump.py -> log/menu_draw_dump.json):
 //
 //   { "f<frame>": [ {"v": "<hex vert blob>",
@@ -41,7 +43,8 @@ void DrawStreamDump_OnDraw(const void* verts, int count, int tex_handle,
 
 // ── Race 3D geometry-presence summary (camera-independent) ────────────────
 // MASHED_DBG_DRAWSTREAM3D=<N | N:M | 1> captures, for race-render frames N..M,
-// the loaded 3D geometry per category into log/drawstream3d_re.json:
+// the loaded 3D geometry per category into log/drawstream3d_re.json
+// (MASHED_DBG_DRAWSTREAM3D_OUT overrides the path; `0` = off):
 //   { "f<frame>": { "<cat>": {"batches":B, "verts":V, "textured":T}, ... } }
 // This is the diagnostic the pixel/vertex channels CANNOT be for a race: the RE
 // and original race cameras differ, so a pixel diff is dominated by view, not

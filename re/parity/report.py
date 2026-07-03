@@ -158,12 +158,22 @@ def bump_stat(stats, emit, sc, matched):
         e["phases"].append(ph)
 
 
+_PIL_WARNED = False
+
+
 def diff_pixel(sc, orig_png, re_png, grid, cell_thr, ink_mask=False, ink_thr=90):
+    """-> list of pixel-region rows, or None when the pixel channel CANNOT run
+    (Pillow missing). The caller scores None as PIXEL-MISSING, never GREEN."""
+    global _PIL_WARNED
     rows = []
     try:
         from PIL import Image, ImageChops
-    except Exception:
-        return rows
+    except ImportError:
+        if not _PIL_WARNED:
+            _PIL_WARNED = True
+            print("WARNING: Pillow missing — pixel channel CANNOT run; "
+                  "affected scenarios are scored PIXEL-MISSING, not GREEN")
+        return None
     a = Image.open(orig_png).convert("RGB")
     b = Image.open(re_png).convert("RGB")
     if b.size != a.size:
@@ -236,7 +246,7 @@ def main():
     all_rows = []
     emitter_stats = {}
     scen_out = {}
-    n_green = n_total = 0
+    n_green = n_total = n_pixel_missing = 0
     for sid, entry in index["scenarios"].items():
         sc = entry["scenario"]
         re_c, orig_c = entry.get("re"), entry.get("orig")
@@ -256,15 +266,26 @@ def main():
         elif "draw2d" in sc.get("capture", []):
             status = "ERROR"
         if "pixel" in sc.get("capture", []) and pix_ok:
-            rows += diff_pixel(sc, orig_c["pixel"], re_c["pixel"], grid,
+            prows = diff_pixel(sc, orig_c["pixel"], re_c["pixel"], grid,
                                args.pixel_cell_threshold, args.pixel_ink,
                                args.pixel_ink_threshold)
+            if prows is None:               # pixel channel could not run
+                if status != "ERROR":
+                    status = "PIXEL-MISSING"
+            else:
+                rows += prows
         elif "pixel" in sc.get("capture", []) and status != "ERROR":
             status = "PIXEL-MISSING"
 
         n_total += 1
-        verdict = ("ERROR" if status == "ERROR"
-                   else "GREEN" if not rows else "RED")
+        # A scenario whose pixel channel is missing/blank is never GREEN.
+        if status == "ERROR":
+            verdict = "ERROR"
+        elif status == "PIXEL-MISSING":
+            verdict = "PIXEL-MISSING"
+            n_pixel_missing += 1
+        else:
+            verdict = "GREEN" if not rows else "RED"
         if verdict == "GREEN":
             n_green += 1
         scen_out[sid] = {"verdict": verdict, "status": status,
@@ -278,6 +299,7 @@ def main():
         "run": str(run), "ts": index.get("ts"),
         "summary": {
             "scenarios": n_total, "green": n_green,
+            "pixel_missing": n_pixel_missing,
             "pct_green": round(100.0 * n_green / n_total, 1) if n_total else 0.0,
             "total_rows": len(all_rows),
         },
@@ -289,8 +311,8 @@ def main():
     _write_md(run, report, args.top)
     print(f"-> {run / 'report.json'}")
     print(f"-> {run / 'report.md'}")
-    print(f"VERDICT: {n_green}/{n_total} scenarios GREEN, "
-          f"{len(all_rows)} divergence rows")
+    print(f"VERDICT: {n_green}/{n_total} scenarios GREEN "
+          f"({n_pixel_missing} PIXEL-MISSING), {len(all_rows)} divergence rows")
     return 0
 
 
@@ -305,7 +327,8 @@ def _write_md(run, report, top):
     s = report["summary"]
     L = [f"# Parity sweep report — {report.get('ts','')}", "",
          f"**{s['green']}/{s['scenarios']} scenarios GREEN** "
-         f"({s['pct_green']}%) — {s['total_rows']} divergence rows", "",
+         f"({s['pct_green']}%, {s.get('pixel_missing', 0)} PIXEL-MISSING) — "
+         f"{s['total_rows']} divergence rows", "",
          "## Per-scenario", "",
          "| scenario | verdict | rows | breakdown |",
          "|---|---|---|---|"]

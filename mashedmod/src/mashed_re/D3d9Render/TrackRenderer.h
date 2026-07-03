@@ -439,8 +439,12 @@ public:
     // [D-11052] rule engine state (Race/RuleEngine). rule_ = DAT_007f0fd0;
     // rulep_ holds the finish order / rule-10 timer / rule-5 collect counters;
     // rule_engine_on_ latches MASHED_RULE_ENGINE (default ON, "0" reverts).
+    // rule_engine_race_on_ is the per-race effective gate — SetRaceRule
+    // clears it when the rule-5 collectible feed is absent (D-11056) so the
+    // legacy flow can terminate the race; re-armed on every SetRaceRule.
     int   rule_ = 0;
     bool  rule_engine_on_ = false;
+    bool  rule_engine_race_on_ = true;
     bool  match_draw_ = false;
     float rule10_bonus_ = 0.f;    // per-checkpoint time award (FUN_004046a0)
     std::uint32_t rule10_hit_mask_ = 0;  // lap lines awarded this lap (FUN_004039f0
