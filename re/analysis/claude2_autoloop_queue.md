@@ -39,12 +39,21 @@ exe/asi source change.
   `re/analysis/d11056_rule5_reader_survey_2026-07-03.md`: reader chain mapped; synthesized a
   provisional answer (rule-5 total = KTC_NewCopter copter array, not a pickup array); Fable's
   remaining MCP set narrowed to 2 xrefs + 2 decodes (hand-off #5).
+- [OPEN] **it8 — Fable-scoping survey: D-11057 config-edit ed40[] + increment handler
+  (hand-off #3).** Mirror the it5 rule-5 survey: from `frontend_config_screens_REmap_
+  20260614.md` + the `FUN_0043dfd0.c` harvest + the d11057 confirm note, enumerate exactly
+  what Fable must pull to fill the s18/s24 `ed40[row]→selector` map + `ea94` range + the
+  increment handler (0x00440283..0x00440820), so it activates `Nav_ConfigEditWrap`. Pure
+  read/draft; directly shrinks the MCP tail. Higher value than it6 — do first.
 - [OPEN] **it6 — extend `build_menustr_test.bat` / add a badges_test gate** to run+gate
   like navsm (build-only today). Low value; do late.
-- [OPEN] **it7 — .asi MixedC3Sweep obj collision.** Audio/Frontend/Input/Render/Util each
-  have a `MixedC3Sweep.cpp` → one `MixedC3Sweep.obj` (LNK4042 in the .asi link). Fix with
-  per-dir `/Fo` subdirs (or rename to `<Subsystem>MixedC3Sweep.cpp`) in `asi_sources.rsp`/
-  `build.bat`. Verify `Build OK` + LNK4042 → 0. Moderate risk (touches .asi obj layout) —
-  do carefully, build-verify. Low priority.
+- [OPEN] **it9 — combined standalone unit-test gate.** A `run_all_tests` script that
+  builds+runs the existing harnesses (navsm, Race/tests/ruleengine_test, racemodes_test)
+  and gates on FAIL — one regression command. Safe infra; medium value.
+- [DONE `f16d3d8f`] **it7 — .asi MixedC3Sweep obj collision.** Diagnosed: only Render+Audio
+  MixedC3Sweep.cpp were in `asi_sources.rsp`; Render (compiled first) was overwritten by
+  Audio before link, so its obj was always dropped (its only hook, RwFreeListCreate, is
+  MASS-DISABLED anyway). Removed the redundant Render entry → BYTE-IDENTICAL linked .asi,
+  LNK4042 13→0. File kept in tree; needs a unique obj name if re-enabled.
 
 Append new OPEN lanes as they're discovered; never remove the hard-limits block.
