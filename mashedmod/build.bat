@@ -193,6 +193,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "GameState\StateAccessors.cpp" ^
     "Math\Vec3.cpp" ^
     "Math\RwSqrt.cpp" ^
+    "Math\FPURound.cpp" ^
     "Math\RwV2d.cpp" ^
     "Math\RwV3dTransform.cpp" ^
     "Math\RwV3dNormalize.cpp" ^
