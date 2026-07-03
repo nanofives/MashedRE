@@ -26,14 +26,15 @@ exe/asi source change.
 - [DONE `86aab145`] **it2 — build.bat LNK4042 dedupe.** Removed 12 duplicate exe source
   lines; Build OK; exe-link LNK4042 13→1. (Remaining 1 = the `.asi` MixedC3Sweep
   same-basename collision → new lane it7.)
-- [OPEN] **it3 — D-11057 config-edit env-gated live wiring (Part B advance).** In
-  `exe_main` add a LEFT/RIGHT handler for screens 18/24, gated behind `MASHED_CONFIG_EDIT`
-  (default OFF), calling `Nav_ConfigEditWrap(ed40[row], dir)`. The `ed40[row]→selector`
-  map is a single clearly-marked table (default: all-rows→no-op) for Fable to fill from
-  the Ghidra dump (hand-off #3). Gated-off = zero live-behavior risk; build-verify only.
-- [OPEN] **it4 — video-playback subsystem scoping doc.** The 4 C2 video rows: from
-  existing notes + source, write a scoping doc (deferred-not-needed vs port + rationale)
-  to feed the M1 decision. Pure analysis; no wiring.
+- [RE-SCOPED → Fable] **it3 — D-11057 config-edit live wiring.** Deferred as a worker lane:
+  it would land *inert* code (a no-op until Fable fills the `ed40[row]→selector` table from
+  the Ghidra dump — and filling it here = guessing, violates NO-GUESSING). Better applied by
+  Fable in one shot alongside the ed40[] harvest (hand-off #3). The confirmed primitive
+  (`Nav_ConfigEditWrap`) + tests already landed (commit a8924d1b).
+- [DONE `166ad210`] **it4 — video-playback subsystem scoping doc.**
+  `re/analysis/video_playback_scoping_2026-07-03.md`: recommend `deferred-not-needed` for
+  the standalone S-DoD (MpegVideoTexture already plays frontend.mpg; legacy DirectShow chain
+  has no standalone consumer). Verbatim diff + small.mpg trace = MCP-gated → hand-off.
 - [OPEN] **it5 — Fable-facing survey: D-11056 rule-5 collectTotal reader.** From source +
   the d11056 notes, map the candidate call-sites/xrefs that read the rule-5 win-predicate
   total, so Fable's one Ghidra session is scoped. Pure read/draft; reduces Fable tokens.
