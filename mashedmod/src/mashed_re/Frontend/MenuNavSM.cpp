@@ -155,8 +155,20 @@ const MenuGameState kFreshState = {
     0,                   // cur_track_set
     { 0 },               // unlock_track[]
     { 0 },               // unlock_car[]
+    0,                   // ea6c  (DAT_0067ea6c; fresh menu = image-zero)
+    0,                   // ed4c  (DAT_0067ed4c)
+    1,                   // ea74  game-type (s18/s24 probe default; wrap 0..2)
+    1,                   // ea90  (s18/s24 probe default; wrap 1..4)
+    0,                   // ea94  vehicle   (s18/s24 probe default)
 };
 MenuGameState g_game_state = kFreshState;
+
+// [D-11057] continue-cup module state (standalone analogues of the FUN_0043dfd0
+// side effects that live outside MenuGameState).
+int g_pending_cup_modal    = 0;  // CupModal armed by Nav_ContinueCupBegin
+int g_cup_continue_variant = 1;  // FUN_004307a0 stand-in (1 = single 0x135;
+                                 // 0 = two-choice 0x136). Default = single until
+                                 // the DAT_00614718 threshold table is harvested.
 
 // FUN_0042bb60 (0x0042bb60) - team-composition validator. Counts active team
 // slots (DAT_007f1a14/24/34/44 >= 0); for each, reads its team byte
@@ -252,8 +264,10 @@ int ActionToScreen(std::uint32_t action, int slot_kind) {
         // (B) state-gated dispatches (now FAITHFULLY ported; queries reproduce the
         // fresh-main-menu branch the real game takes).
         case 0xff240000u:
-            // L292-331. game_mode 0 -> else (ea6c=4) -> LAB_0043e736; ecdc==0 &&
-            // ed6c==0 -> push 7. Other states open confirm dialogs (no nav here).
+            // L292-331 continue-cup. The LIVE select path routes 0xff240000 to
+            // Nav_ContinueCupBegin (full arm + modal side-channel); this case is
+            // the pure-routing summary kept for the reachability BFS / NavTest:
+            // fresh (ecdc==0 && ed6c==0) -> push 7, otherwise a modal (no nav).
             if (g_game_state.flag_ecdc == 0 && g_game_state.flag_ed6c == 0) return 7;
             return kActNone; // confirm dialog / state set: no nav in standalone
         case 0xff3c0000u:
@@ -1018,6 +1032,101 @@ void ApplyActionGameMode(std::uint32_t action) {
     }
 }
 
+// --------------------------------------------------------------------------
+// [D-11057] Continue-cup confirmation chain — verbatim port of the FUN_0043dfd0
+// action-0xff240000 arm (harvest re/analysis/standalone_menu_sm/harvest/
+// FUN_0043dfd0.c L291-331; Fable Ghidra confirm 2026-07-03). All RVAs are lines
+// within FUN_0043dfd0 unless noted.
+// --------------------------------------------------------------------------
+
+// FUN_004307a0 (ElapsedVsThresholdCheck, C2 0x004307a0) stand-in: chooses the
+// modal variant. Original returns 1 when race-elapsed < the per-track threshold
+// (DAT_00614718 table, 3 floats/track). That table is zeroed in the image-padded
+// standalone, so the live comparison can't run here — return the caller-set
+// default. [UNCERTAIN U-3596/U-3597: threshold table not harvested.]
+int Q_CupContinueVariant() { return g_cup_continue_variant; }
+
+bool Nav_ContinueCupBegin() {
+    MenuGameState& gs = g_game_state;
+    // L292-297: game_mode (DAT_0067e9fc) 6 or 2 gates the ea6c toggle; only
+    // ea6c==4 falls through to the advance block. Any other ea6c -> no action.
+    if (gs.game_mode == 6 || gs.game_mode == 2) {
+        if (gs.ea6c == 1) { gs.ea6c = 2; return false; } // L293-295: toggle, no nav
+        if (gs.ea6c != 4) return false;                  // else: no advance
+        // ea6c == 4 -> L296 goto LAB_0043e736 (advance)
+    } else {
+        gs.ea6c = 4;                                     // L299
+        // fall through to LAB_0043e736 (advance)
+    }
+    // LAB_0043e736 advance block (L300-331).
+    if (gs.flag_ecdc == 0) {                             // L301
+        if (gs.flag_ed6c == 0) {                         // L302: no modal, advance
+            // L303 DAT_0067f1a8 = 0 (presentation flag; no standalone consumer).
+            gs.ea6c = 5;                                 // L308
+            Nav(7, kNavPush);                            // L304 FUN_0043d2a0(7,0)
+            if (gs.flag_ed6c == 2) gs.game_mode = 3;     // L305-306 (never here; verbatim)
+            return true;                                 // advanced
+        }
+        // L310-321: ed6c != 0 -> variant-gated confirmation modal.
+        if (Q_CupContinueVariant() == 0) {               // L311-312
+            g_pending_cup_modal = kCupModalTwoChoice;     // L313 FUN_0042bf30(0x136,0xff270000,2,0x2e,0x2f,0)
+            gs.flag_ed6c = 2;                            // L314
+            gs.ea6c = 5;                                 // L315
+        } else {
+            g_pending_cup_modal = kCupModalSingle;        // L318 FUN_0042bf30(0x135,0xff280000,1,0x2d,0,0)
+            gs.flag_ed6c = 1;                            // L319
+            gs.ea6c = 5;                                 // L320
+        }
+        return false;                                    // modal armed, no nav
+    }
+    // L324-331: ecdc != 0 -> restart-race confirm (ed4c selects the body id).
+    g_pending_cup_modal = (gs.ed4c == 0) ? kCupModalRestart38 // L325 FUN_0042bf30(0x38,...)
+                                         : kCupModalRestartA9; // L329 FUN_0042bf30(0xa9,...)
+    gs.ea6c = 5;                                         // L326/330
+    return false;
+}
+
+int Nav_TakePendingCupModal() {
+    const int m = g_pending_cup_modal;
+    g_pending_cup_modal = kCupModalNone;
+    return m;
+}
+
+void Nav_ContinueCupConfirm() {
+    // FUN_0043dfd0 modal-confirm site (Fable confirm note): FUN_0043d2a0(7,0);
+    // if (DAT_0067ed6c == 2) DAT_0067e9fc = 3 (two-choice -> SM state 3).
+    if (g_game_state.flag_ed6c == 2) g_game_state.game_mode = 3;
+    Nav(7, kNavPush);
+}
+
+void Nav_SetCupContinueVariant(int v) { g_cup_continue_variant = v ? 1 : 0; }
+
+// --------------------------------------------------------------------------
+// [D-11057] game-config option-row edit primitive (decrement/increment-with-
+// wrap; FUN_0043dfd0 dec handler at 0x00440283+, Fable confirm note). Confirmed
+// selector->target->wrap arms only; the ed40[] item->selector contents, ea94's
+// range, and the live screen wiring need the Ghidra dump (see FABLE HAND-OFF).
+// --------------------------------------------------------------------------
+bool Nav_ConfigEditWrap(int sel, int dir) {
+    if (dir == 0) return false;
+    const int step = (dir < 0) ? -1 : +1;
+    MenuGameState& gs = g_game_state;
+    auto wrap = [](int v, int lo, int hi, int st) {
+        const int span = hi - lo + 1;                    // inclusive [lo..hi]
+        return lo + (((v - lo) + st) % span + span) % span;
+    };
+    switch (sel) {                                       // EDI = DAT_0067ed40[item]
+    case 1: { int n = wrap(gs.ea74, 0, 2, step); if (n == gs.ea74) return false; gs.ea74 = n; return true; }
+    case 2: { int n = wrap(gs.ea90, 1, 4, step); if (n == gs.ea90) return false; gs.ea90 = n; return true; }
+    case 3:
+        // ea94 (DAT_0067ea94, vehicle): wrap RANGE not yet harvested. Left
+        // unedited to avoid a guessed range (NO-GUESSING). See FABLE HAND-OFF.
+        return false;
+    default:
+        return false;
+    }
+}
+
 bool Nav_Select() {
     const NavSlot& s = g_stack[g_nav_depth];
     if (s.cursor < 0 || s.cursor >= s.item_count) return false;
@@ -1029,6 +1138,12 @@ bool Nav_Select() {
     // Reversed map (FUN_0043dfd0): read the highlighted item's action code from
     // the descriptor table (FUN_0042ac90), then dispatch it (ActionToScreen).
     const std::uint32_t action = ItemActionCode(s.desc_table, s.cursor);
+    // [D-11057] continue-cup action (0xff240000) has a dedicated dispatcher: it
+    // may advance (push screen 7) itself or arm a confirmation modal for the
+    // caller (Nav_TakePendingCupModal). Handled before the generic routing.
+    if (action == 0xff240000u) {
+        return Nav_ContinueCupBegin();
+    }
     // WS-G2: apply the action's game-mode side effect before the nav dispatch
     // (faithful to FUN_0043dfd0, which writes DAT_0067e9fc inline in the action
     // handler, before the FUN_0043d2a0 child-screen push).

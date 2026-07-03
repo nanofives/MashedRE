@@ -1365,6 +1365,15 @@ void ModalGo(int step) {
                  g_modal_button_id = -1;                                 // no button
                  g_modal_timer_ms = GetTickCount();              break; // auto-advance
         case 40: g_modal_body_id = 0x34;  g_modal_yesno = true;  break; // quit-game confirm
+        // [D-11057] continue-cup confirmation (FUN_0043dfd0 0xff240000 arm).
+        // 50 = single-confirm (body 0x135, 1 button 0x2d "Continue"); 51 =
+        // two-choice (body 0x136, buttons 0x2e/0x2f -> Yes/No). Both advance the
+        // cup on confirm (Nav_ContinueCupConfirm -> push screen 7 + e9fc=3 when
+        // ed6c==2). [residual: the 0x2e/0x2f button glyphs render as the standard
+        // Yes/No; exact glyph parity is a FABLE HAND-OFF item.]
+        case 50: g_modal_body_id = 0x135; g_modal_yesno = false;
+                 g_modal_button_id = 0x2d;                       break; // single Continue
+        case 51: g_modal_body_id = 0x136; g_modal_yesno = true;  break; // two-choice Yes/No
         default: g_modal_body_id = 0; g_modal_step = 0; g_modal_yesno = false; break;
     }
 }
@@ -1448,6 +1457,9 @@ bool UpdateMenuSelection() {
             if (g_modal_step == 40) {                // quit-to-Windows confirm
                 if (yes)      return true;           // Yes -> quit
                 else if (no)  ModalGo(0);            // No -> dismiss
+            } else if (g_modal_step == 51) {         // [D-11057] continue-cup two-choice
+                if (yes)      { mashed_re::Frontend::Nav_ContinueCupConfirm(); ModalGo(0); }
+                else if (no)  ModalGo(0);            // No -> dismiss (stay)
             } else if (yes) {
                 // [WS-G4/G5] perform the real save/load at the confirm, then
                 // advance the modal: Load (10) re-reads the real gamesave ->
@@ -1462,7 +1474,13 @@ bool UpdateMenuSelection() {
             }
             else if (no)  ModalGo(0);                            // No: dismiss
         } else {
-            if (yes || no) ModalGo(0);                           // Continue/dismiss
+            if (yes || no) {
+                // [D-11057] continue-cup single-confirm (step 50): Continue
+                // advances the cup (push screen 7); other single-Continue modals
+                // just dismiss.
+                if (g_modal_step == 50) mashed_re::Frontend::Nav_ContinueCupConfirm();
+                ModalGo(0);                                      // Continue/dismiss
+            }
         }
         return false;
     }
@@ -1644,6 +1662,18 @@ bool UpdateMenuSelection() {
             }
         } else {
             Nav_Select();                  // push child screen
+            // [D-11057] the continue-cup action (0xff240000, e.g. the cup-
+            // standings "Continue" item) may have armed a confirmation modal
+            // instead of navigating. Open the standalone modal for it.
+            switch (mashed_re::Frontend::Nav_TakePendingCupModal()) {
+                case mashed_re::Frontend::kCupModalSingle:
+                    ModalGo(50); g_modal_alpha = 0; break;
+                case mashed_re::Frontend::kCupModalTwoChoice:
+                    ModalGo(51); g_modal_alpha = 0; break;
+                // kCupModalRestart38/A9 (ecdc!=0 restart-race confirm) are not
+                // opened here yet — see FABLE HAND-OFF (needs the restart flow).
+                default: break;
+            }
         }
     }
     // Dev screen-cycle (PageUp/PageDown): jump to prev/next screen id so every

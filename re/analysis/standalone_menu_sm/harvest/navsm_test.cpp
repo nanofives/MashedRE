@@ -353,5 +353,118 @@ int main() {
 
     std::printf("  Piece 4: %s (%d failures)\n", g2_fail ? "RED" : "GREEN", g2_fail);
 
+    // ----------------------------------------------------------------------
+    // Piece 5 (D-11057) — continue-cup confirmation chain (FUN_0043dfd0
+    // 0xff240000 arm). Verifies the ed6c tri-state routing + ea6c gate + the
+    // two-choice confirm's e9fc=3 write, against the verbatim decomp.
+    // ----------------------------------------------------------------------
+    std::printf("\n=== Piece 5 (D-11057): continue-cup chain ===\n");
+    int cc_fail = 0;
+    auto ccheck = [&](const char* what, bool ok) {
+        std::printf("  [%s] %-40s : %s\n", ok ? "ok" : "FAIL", what, ok ? "OK" : "FAIL");
+        if (!ok) ++cc_fail;
+    };
+
+    // (a) fresh (game_mode 0, ecdc==0, ed6c==0) -> advance: push 7, ea6c=5.
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    {
+        bool adv = Nav_ContinueCupBegin();
+        ccheck("fresh -> advance (returns true)", adv);
+        ccheck("fresh -> screen 7", Nav_ScreenId() == 7);
+        ccheck("fresh -> ea6c==5", Nav_GameState().ea6c == 5);
+        ccheck("fresh -> no modal armed", Nav_TakePendingCupModal() == kCupModalNone);
+    }
+
+    // (b) ecdc==0, ed6c!=0, variant=1 (default) -> single-confirm modal 0x135,
+    //     ed6c set to 1, ea6c=5, NO nav.
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_SetCupContinueVariant(1);
+    Nav_GameState().flag_ed6c = 3;   // any nonzero -> modal path
+    {
+        int before = Nav_ScreenId();
+        bool adv = Nav_ContinueCupBegin();
+        ccheck("ed6c!=0 variant1 -> no advance", !adv);
+        ccheck("ed6c!=0 variant1 -> screen unchanged", Nav_ScreenId() == before);
+        ccheck("ed6c!=0 variant1 -> single modal 0x135", Nav_TakePendingCupModal() == kCupModalSingle);
+        ccheck("ed6c!=0 variant1 -> ed6c=1", Nav_GameState().flag_ed6c == 1);
+    }
+
+    // (c) ecdc==0, ed6c!=0, variant=0 -> two-choice modal 0x136, ed6c=2.
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_SetCupContinueVariant(0);
+    Nav_GameState().flag_ed6c = 3;
+    {
+        bool adv = Nav_ContinueCupBegin();
+        ccheck("ed6c!=0 variant0 -> no advance", !adv);
+        ccheck("ed6c!=0 variant0 -> two-choice modal 0x136", Nav_TakePendingCupModal() == kCupModalTwoChoice);
+        ccheck("ed6c!=0 variant0 -> ed6c=2", Nav_GameState().flag_ed6c == 2);
+        // confirm the two-choice modal -> advance push 7 + e9fc(game_mode)=3.
+        Nav_ContinueCupConfirm();
+        ccheck("two-choice confirm -> screen 7", Nav_ScreenId() == 7);
+        ccheck("two-choice confirm -> e9fc(game_mode)=3", Nav_GameState().game_mode == 3);
+    }
+
+    // (d) game_mode 6/2 gate: ea6c==1 -> toggled to 2, NO advance; ea6c==4 -> advance.
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_GameState().game_mode = 6; Nav_GameState().ea6c = 1;
+    {
+        int before = Nav_ScreenId();
+        bool adv = Nav_ContinueCupBegin();
+        ccheck("mode6 ea6c1 -> no advance", !adv && Nav_ScreenId() == before);
+        ccheck("mode6 ea6c1 -> ea6c toggled to 2", Nav_GameState().ea6c == 2);
+    }
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_GameState().game_mode = 2; Nav_GameState().ea6c = 4;  // ==4 falls through
+    {
+        bool adv = Nav_ContinueCupBegin();
+        ccheck("mode2 ea6c4 -> advance push 7", adv && Nav_ScreenId() == 7);
+    }
+
+    // (e) ecdc!=0 -> restart-race confirm modal (ed4c selects the body).
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_GameState().flag_ecdc = 1; Nav_GameState().ed4c = 0;
+    {
+        Nav_ContinueCupBegin();
+        ccheck("ecdc!=0 ed4c0 -> restart modal 0x38", Nav_TakePendingCupModal() == kCupModalRestart38);
+    }
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_GameState().flag_ecdc = 1; Nav_GameState().ed4c = 1;
+    {
+        Nav_ContinueCupBegin();
+        ccheck("ecdc!=0 ed4c1 -> restart modal 0xa9", Nav_TakePendingCupModal() == kCupModalRestartA9);
+    }
+    std::printf("  Piece 5: %s (%d failures)\n", cc_fail ? "RED" : "GREEN", cc_fail);
+
+    // ----------------------------------------------------------------------
+    // Piece 6 (D-11057) — game-config wrap-edit primitive (confirmed arms only).
+    // ea74 wrap 0..2, ea90 wrap 1..4; ea94 deferred (no guessed range).
+    // ----------------------------------------------------------------------
+    std::printf("\n=== Piece 6 (D-11057): config wrap-edit primitive ===\n");
+    int ce_fail = 0;
+    auto echeck = [&](const char* what, bool ok) {
+        std::printf("  [%s] %-40s : %s\n", ok ? "ok" : "FAIL", what, ok ? "OK" : "FAIL");
+        if (!ok) ++ce_fail;
+    };
+    // ea74 (sel 1) wrap 0..2: dec 0->2, inc 2->0.
+    Nav_GameStateReset();
+    Nav_GameState().ea74 = 0; Nav_ConfigEditWrap(1, -1);
+    echeck("ea74 dec 0->2", Nav_GameState().ea74 == 2);
+    Nav_GameState().ea74 = 2; Nav_ConfigEditWrap(1, +1);
+    echeck("ea74 inc 2->0", Nav_GameState().ea74 == 0);
+    Nav_GameState().ea74 = 1; Nav_ConfigEditWrap(1, +1);
+    echeck("ea74 inc 1->2", Nav_GameState().ea74 == 2);
+    // ea90 (sel 2) wrap 1..4: dec 1->4, inc 4->1.
+    Nav_GameState().ea90 = 1; Nav_ConfigEditWrap(2, -1);
+    echeck("ea90 dec 1->4", Nav_GameState().ea90 == 4);
+    Nav_GameState().ea90 = 4; Nav_ConfigEditWrap(2, +1);
+    echeck("ea90 inc 4->1", Nav_GameState().ea90 == 1);
+    Nav_GameState().ea90 = 2; Nav_ConfigEditWrap(2, +1);
+    echeck("ea90 inc 2->3", Nav_GameState().ea90 == 3);
+    // ea94 (sel 3) deferred: no change (range not harvested).
+    Nav_GameState().ea94 = 0;
+    echeck("ea94 sel3 deferred -> no change", !Nav_ConfigEditWrap(3, +1) && Nav_GameState().ea94 == 0);
+    Nav_GameStateReset();
+    std::printf("  Piece 6: %s (%d failures)\n", ce_fail ? "RED" : "GREEN", ce_fail);
+
     return 0;
 }

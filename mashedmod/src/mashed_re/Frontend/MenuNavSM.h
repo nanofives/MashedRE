@@ -83,12 +83,27 @@ struct MenuGameState {
     // grey-out (FUN_00432800) state. Fresh-menu defaults below.
     int  has_savedata;      // DAT_007f0f2c (screen 1 item 3 enable; 0 = none)
     int  has_profiles;      // DAT_007f0ad4 (screen 2 item 1 enable; 0 = none)
-    int  ea88;              // DAT_0067ea88 (screen 0x12 gating)
+    int  ea88;              // DAT_0067ea88 (screen 0x12 gating; also MP game-length)
     int  ea7c;              // DAT_0067ea7c
     int  ea84;              // DAT_0067ea8c-adjacent player-count code (DAT_0067ea8c)
     int  cur_track_set;     // DAT_007f17c-indexed track count (unlock array head)
     int  unlock_track[1];   // DAT_007f0a50[DAT_0067f17c*0x30] (0 = locked)
     int  unlock_car[1];     // DAT_007f0a58[DAT_0067f17c*0x30] (0 = locked)
+
+    // [D-11057] continue-cup / tier-progression state (FUN_0043dfd0 0xff240000
+    // arm; harvest FUN_0043dfd0.c L291-331). ecdc/ed6c already above.
+    int  ea6c;              // DAT_0067ea6c (cup-continue phase latch: 4 arming,
+                            //   5 armed/shown; 1->2 toggle in the game_mode 6/2 gate)
+    int  ed4c;             // DAT_0067ed4c (selects the ecdc!=0 restart-confirm
+                            //   variant: 0 -> body 0x38, else -> body 0xa9)
+
+    // [D-11057] game-config option-row values (screens 18/24; frontend_config_
+    // screens_REmap_20260614.md). Edited LEFT/RIGHT with wrap via the
+    // decrement/increment handler at 0x00440283+, target selected by
+    // DAT_0067ed40[item]. Fresh defaults are the s18/s24 jumped-to probe values.
+    int  ea74;              // DAT_0067ea74 game-type   (ed40==1; wrap 0..2)
+    int  ea90;              // DAT_0067ea90             (ed40==2; wrap 1..4)
+    int  ea94;              // DAT_0067ea94 vehicle     (ed40==3; wrap range [UNCERTAIN])
 };
 
 // Access / reset the standalone game state (defaults = fresh main menu).
@@ -138,6 +153,52 @@ bool Nav_Select();
 
 // Pop one level. Returns true if a pop happened (false at root).
 bool Nav_Back();
+
+// --- [D-11057] continue-cup confirmation chain -----------------------------
+// Confirmation modal the caller (exe_main's standalone modal system) must open
+// after the continue-cup action (0xff240000) arms one. Values mirror the
+// FUN_0042bf30 dialogs the original opens in the FUN_0043dfd0 0xff240000 arm.
+enum CupModal : int {
+    kCupModalNone      = 0,
+    kCupModalSingle    = 1,  // body 0x135, 1 button 0x2d      (single "Continue")
+    kCupModalTwoChoice = 2,  // body 0x136, 2 buttons 0x2e/0x2f (Yes/No)
+    kCupModalRestart38 = 3,  // body 0x38 (ecdc!=0, ed4c==0)    [not opened by caller yet]
+    kCupModalRestartA9 = 4,  // body 0xa9 (ecdc!=0, ed4c!=0)    [not opened by caller yet]
+};
+
+// Begin the continue-cup action (verbatim port of FUN_0043dfd0's 0xff240000
+// arm). Called from Nav_Select when the highlighted item's action == 0xff240000.
+// Mutates ea6c/ed6c/e9fc(game_mode) exactly as the original, and EITHER performs
+// the advance push (screen 7) itself and returns true, OR arms a confirmation
+// modal (retrieve via Nav_TakePendingCupModal) and returns false (no nav).
+bool Nav_ContinueCupBegin();
+
+// Retrieve + clear the pending continue-cup modal armed by Nav_ContinueCupBegin.
+// Returns kCupModalNone when none is pending.
+int  Nav_TakePendingCupModal();
+
+// Called when a continue-cup confirmation modal (single 0x135 / two-choice
+// 0x136) is CONFIRMED. Verbatim: FUN_0043d2a0(7,0); if (ed6c==2) e9fc=3.
+void Nav_ContinueCupConfirm();
+
+// Standalone analogue of FUN_004307a0 (ElapsedVsThresholdCheck): selects the
+// modal variant (return 0 -> two-choice 0x136; nonzero -> single 0x135). The
+// original compares race-elapsed time vs a per-track threshold table
+// (DAT_00614718) that is zeroed in the image-padded standalone; until Fable
+// wires the live check this returns g_cup_continue_variant (default 1 = single).
+// [UNCERTAIN U-3596/U-3597 — DAT_00614718 threshold table not harvested.]
+void Nav_SetCupContinueVariant(int v);
+
+// --- [D-11057] game-config option-row editing (screens 18/24) --------------
+// Confirmed decrement/increment-with-wrap over the option-row value selected by
+// DAT_0067ed40[item] (FUN_0043dfd0 dec handler at 0x00440283+). `sel` is the
+// per-item selector value (EDI = DAT_0067ed40[item]); `dir` is -1 (LEFT/dec) or
+// +1 (RIGHT/inc). Wrap ranges are verbatim from the d11057 confirm note:
+//   sel==1 -> ea74 wrap 0..2 ; sel==2 -> ea90 wrap 1..4 ; sel==3 -> ea94 [see below].
+// Returns true if a value changed. NOTE: the ed40[] item->selector contents,
+// ea94's wrap range, and the live screen-row wiring are NOT yet harvested — this
+// is the confirmed edit PRIMITIVE only; see FABLE HAND-OFF before live-wiring.
+bool Nav_ConfigEditWrap(int sel, int dir);
 
 // --- accessors for the renderer --------------------------------------------
 
