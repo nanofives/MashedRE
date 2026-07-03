@@ -43,8 +43,23 @@ exe/asi source change.
   `re/analysis/d11057_config_edit_scoping_2026-07-03.md`: narrowed hand-off #3 to 2 Ghidra
   pulls (reference_to 0x0067ed40 + decode 0x00440283..0x00440820) + the standalone wiring
   recipe. Updated hand-off #3.
-- [OPEN] **it6 — extend `build_menustr_test.bat` / add a badges_test gate** to run+gate
-  like navsm (build-only today). Low value; do late.
+- [DONE `19bf08ae`] **it6 — menustr + badges folded into `run_tests.bat`** (asset-dependent
+  group; both gate on exit code, confirmed passing). `run_tests.bat` now covers 5 harnesses.
+
+---
+
+## LOOP COMPLETE (2026-07-03)
+
+All worker-doable unblocked lanes are drained (it1/it2/it4/it5/it6/it7/it8/it9 DONE; it3
+re-scoped to Fable). **Everything remaining is the MCP-gated Fable tail** — see the FABLE
+HAND-OFF in `re/analysis/d11057_claude2_handoff_2026-07-03.md` (continue-cup runtime verify
++ ed6c-arming writer #1; DAT_00614718 threshold #2; config-edit ed40[]/increment 2 pulls #3;
+__ftol unification+verify #4; rule-5 xrefs #5; video verbatim/decision #6). The loop
+self-terminated (no ScheduleWakeup) rather than manufacture marginal work.
+
+To resume worker-side later: append a new OPEN lane here (another Fable-scoping survey, a
+build/test-infra improvement, or a doc) and re-run `/loop`. Regression gate for any menu-SM
+or Race change: `mashedmod\run_tests.bat` (exit 0 = all GREEN).
 - [DONE `4d0c66e0`] **it9 — combined standalone unit-test gate.** `mashedmod\run_tests.bat`:
   builds+runs navsm + ruleengine_test + racemodes_test, gates on each exit code + build
   success. Verified ALL GREEN, exit 0.
