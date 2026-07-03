@@ -39,12 +39,10 @@ exe/asi source change.
   `re/analysis/d11056_rule5_reader_survey_2026-07-03.md`: reader chain mapped; synthesized a
   provisional answer (rule-5 total = KTC_NewCopter copter array, not a pickup array); Fable's
   remaining MCP set narrowed to 2 xrefs + 2 decodes (hand-off #5).
-- [OPEN] **it8 — Fable-scoping survey: D-11057 config-edit ed40[] + increment handler
-  (hand-off #3).** Mirror the it5 rule-5 survey: from `frontend_config_screens_REmap_
-  20260614.md` + the `FUN_0043dfd0.c` harvest + the d11057 confirm note, enumerate exactly
-  what Fable must pull to fill the s18/s24 `ed40[row]→selector` map + `ea94` range + the
-  increment handler (0x00440283..0x00440820), so it activates `Nav_ConfigEditWrap`. Pure
-  read/draft; directly shrinks the MCP tail. Higher value than it6 — do first.
+- [DONE `041169c6`] **it8 — D-11057 config-edit (s18/s24) Fable-scoping survey.**
+  `re/analysis/d11057_config_edit_scoping_2026-07-03.md`: narrowed hand-off #3 to 2 Ghidra
+  pulls (reference_to 0x0067ed40 + decode 0x00440283..0x00440820) + the standalone wiring
+  recipe. Updated hand-off #3.
 - [OPEN] **it6 — extend `build_menustr_test.bat` / add a badges_test gate** to run+gate
   like navsm (build-only today). Low value; do late.
 - [OPEN] **it9 — combined standalone unit-test gate.** A `run_all_tests` script that
