@@ -3,6 +3,10 @@
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
 Entries dated before 2026-06-15 are archived in `re/analysis/archive/CHANGELOG_pre20260615.md` (3644 lines). Newest entries first, below.
 
+2026-07-03  sweep-20260703-1744  scribe-release  buckets=1 drained  errors=0
+2026-07-03  sweep-20260703-1744  scribe-release  bucket=race_rules_d1  writes=10 plates/10 bookmarks/0 renames  errors=0
+2026-07-03  sweep-20260703-1744  scribe-claim  buckets=1 queued (race_rules_d1), 0 skipped-HOLD
+2026-07-03  0x004a2c48  FUN_004a2c48  C2->C3  __ftol x87 round-to-i64; verbatim naked port FPURound_4a2c48; BYTE-IDENTICAL all 117B (0x004a2c48..0x004a2cbc) match orig (anchor BDCAE093)+raw listing; FISTP+FILD+FSUBP +/-1 residual (NOT FRNDINT); leaf callee-gate exempt, C3 AI callers (AiControlStep/AiLeaderTimer/AiPreTick)
 2026-07-02  0x00416250  FUN_00416250  C2->C3  WS-R6 AbAiCtlMain A/B rule0: 6914 calls, 0 raw + 0 confirmed mism; modes 0/1/3/7; log/ai_ab_ctl250_00416250_rule0.log
 2026-07-02  0x00416a30  FUN_00416a30  C2->C3  WS-R6 AbAiCtl49 A/B rule4: 10497 calls, 0 raw + 0 confirmed mism; log/ai_ab_ctl6a30_00416a30_rule4.log
 2026-07-02  0x00417da0  FUN_00417da0  C2->C3  WS-R6 AbAiCtl8 A/B rule8: 7937 calls, 0 raw + 0 confirmed mism; modes 0/1/2/3/7; log/ai_ab_ctl7da0_00417da0_rule8.log
