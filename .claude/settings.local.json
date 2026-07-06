@@ -40,7 +40,9 @@
       "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(bash scripts/ghidra_assert.sh scribe-check)",
-      "mcp__ghidra__comment_get"
+      "mcp__ghidra__comment_get",
+      "Bash(git checkout *)",
+      "Bash(git commit -q -m ' *)"
     ]
   },
   "enabledMcpjsonServers": [

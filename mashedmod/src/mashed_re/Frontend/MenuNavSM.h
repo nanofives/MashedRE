@@ -83,12 +83,43 @@ struct MenuGameState {
     // grey-out (FUN_00432800) state. Fresh-menu defaults below.
     int  has_savedata;      // DAT_007f0f2c (screen 1 item 3 enable; 0 = none)
     int  has_profiles;      // DAT_007f0ad4 (screen 2 item 1 enable; 0 = none)
-    int  ea88;              // DAT_0067ea88 (screen 0x12 gating)
+    int  ea88;              // DAT_0067ea88 GameLength (sel==6 screen18; also MP game-length
+                            //   rule source, WS-G1). Wrap depends on DAT_007f0a5c[track_set]
+                            //   (unavailable standalone; assumed 0/false -> wrap {0,1,2} via
+                            //   dec skips 2, inc visits it — see Nav_ConfigEditWrap [UNCERTAIN])
     int  ea7c;              // DAT_0067ea7c
     int  ea84;              // DAT_0067ea8c-adjacent player-count code (DAT_0067ea8c)
     int  cur_track_set;     // DAT_007f17c-indexed track count (unlock array head)
     int  unlock_track[1];   // DAT_007f0a50[DAT_0067f17c*0x30] (0 = locked)
     int  unlock_car[1];     // DAT_007f0a58[DAT_0067f17c*0x30] (0 = locked)
+
+    // [D-11057] continue-cup / tier-progression state (FUN_0043dfd0 0xff240000
+    // arm; harvest FUN_0043dfd0.c L291-331). ecdc/ed6c already above.
+    int  ea6c;              // DAT_0067ea6c (cup-continue phase latch: 4 arming,
+                            //   5 armed/shown; 1->2 toggle in the game_mode 6/2 gate)
+    int  ed4c;             // DAT_0067ed4c (selects the ecdc!=0 restart-confirm
+                            //   variant: 0 -> body 0x38, else -> body 0xa9)
+
+    // [D-11057] game-config option-row values (screens 18/24; frontend_config_
+    // screens_REmap_20260614.md). Edited LEFT/RIGHT with wrap via the
+    // decrement/increment handler (both dumped in full 2026-07-04, Mashed_pool15,
+    // FUN_0043dfd0.c dec L1449-1487/L1506-1548, inc L1685-1719/L1738-1781),
+    // dispatched by screen-kind (DAT_0067ed3c[depth], switch cases 0x12=18 /
+    // 0x18=24) then by the row selector `iVar8 = DAT_0067ed40[depth]` (read
+    // directly as the dispatch value — NOT a separate lookup table; see
+    // Nav_ConfigEditWrap). Fresh defaults are the s18/s24 jumped-to probe values.
+    int  ea74;              // DAT_0067ea74 game-type   (sel==1 both screens; wrap 0..2)
+    int  ea90;              // DAT_0067ea90             (sel==2 screen24 only; wrap 1..4)
+    int  ea94;              // DAT_0067ea94 vehicle     (sel==4 screen18/sel==3 screen24;
+                             //   wrap 0..0xc, orig skips FUN_00430830()==0 slots — that
+                             //   skip is NOT ported, see Nav_ConfigEditWrap [UNCERTAIN])
+    int  ea80;              // DAT_0067ea80 PowerUps    (sel==2 screen18; wrap 0..2)
+    int  ea78;              // DAT_0067ea78 toggle bool (sel==5 screen18, XOR 1)
+    int  ea98;              // DAT_0067ea98 Opp1        (sel==4 screen24; wrap 0..6,
+                             //   orig also calls FUN_00431b80(1) — not ported [UNCERTAIN])
+    int  ea9c;              // DAT_0067ea9c Opp2        (sel==5 screen24; wrap 0..6, ditto)
+    int  eaa0;              // DAT_0067eaa0 Opp3        (sel==6 screen24; wrap 0..6, ditto)
+    int  eaac;              // DAT_0067eaac toggle bool (sel==7 screen24, XOR 1)
 };
 
 // Access / reset the standalone game state (defaults = fresh main menu).
@@ -138,6 +169,60 @@ bool Nav_Select();
 
 // Pop one level. Returns true if a pop happened (false at root).
 bool Nav_Back();
+
+// --- [D-11057] continue-cup confirmation chain -----------------------------
+// Confirmation modal the caller (exe_main's standalone modal system) must open
+// after the continue-cup action (0xff240000) arms one. Values mirror the
+// FUN_0042bf30 dialogs the original opens in the FUN_0043dfd0 0xff240000 arm.
+enum CupModal : int {
+    kCupModalNone      = 0,
+    kCupModalSingle    = 1,  // body 0x135, 1 button 0x2d      (single "Continue")
+    kCupModalTwoChoice = 2,  // body 0x136, 2 buttons 0x2e/0x2f (Yes/No)
+    kCupModalRestart38 = 3,  // body 0x38 (ecdc!=0, ed4c==0)    [not opened by caller yet]
+    kCupModalRestartA9 = 4,  // body 0xa9 (ecdc!=0, ed4c!=0)    [not opened by caller yet]
+};
+
+// Begin the continue-cup action (verbatim port of FUN_0043dfd0's 0xff240000
+// arm). Called from Nav_Select when the highlighted item's action == 0xff240000.
+// Mutates ea6c/ed6c/e9fc(game_mode) exactly as the original, and EITHER performs
+// the advance push (screen 7) itself and returns true, OR arms a confirmation
+// modal (retrieve via Nav_TakePendingCupModal) and returns false (no nav).
+bool Nav_ContinueCupBegin();
+
+// Retrieve + clear the pending continue-cup modal armed by Nav_ContinueCupBegin.
+// Returns kCupModalNone when none is pending.
+int  Nav_TakePendingCupModal();
+
+// Called when a continue-cup confirmation modal (single 0x135 / two-choice
+// 0x136) is CONFIRMED. Verbatim: FUN_0043d2a0(7,0); if (ed6c==2) e9fc=3.
+void Nav_ContinueCupConfirm();
+
+// Standalone analogue of FUN_004307a0 (ElapsedVsThresholdCheck): selects the
+// modal variant (return 0 -> two-choice 0x136; nonzero -> single 0x135). The
+// original compares race-elapsed time vs a per-track threshold table
+// (DAT_00614718) that is zeroed in the image-padded standalone; until Fable
+// wires the live check this returns g_cup_continue_variant (default 1 = single).
+// [UNCERTAIN U-3596/U-3597 — DAT_00614718 threshold table not harvested.]
+void Nav_SetCupContinueVariant(int v);
+
+// --- [D-11057] game-config option-row editing (screens 18/24) --------------
+// Verbatim decrement/increment-with-wrap over the option-row value selected by
+// the screen-kind (`screen_id`: 18 or 24; DAT_0067ed3c[depth] switch cases
+// 0x12/0x18) and the row selector (`sel`; DAT_0067ed40[depth], read directly as
+// the dispatch value — the original does NOT use a separate row->selector
+// lookup table, see MenuNavSM.h/.cpp D-11057 comments). `dir` is -1 (LEFT/dec)
+// or +1 (RIGHT/inc). Both directions confirmed 2026-07-04 (Mashed_pool15) via
+// full decode of FUN_0043dfd0's dec (0x00440283+) and inc handlers:
+//   screen 18: sel 1->ea74(0..2) 2->ea80(0..2) 3->ea7c(0..4) 4->ea94(0..0xc)
+//              5->ea78(toggle) 6->ea88(GameLength, see MenuGameState comment).
+//   screen 24: sel 1->ea74(0..2) 2->ea90(1..4) 3->ea94(0..0xc) 4->ea98(0..6)
+//              5->ea9c(0..6) 6->eaa0(0..6) 7->eaac(toggle).
+// Returns true if a value changed. NOT ported (see per-field [UNCERTAIN] notes
+// in MenuGameState): the ea94 skip-invalid-vehicle check (orig calls
+// FUN_00430830, an original-address hook incompatible with the standalone
+// process), the FUN_00431b80(1) opponent-refresh side effect, and ea88's
+// FUN_0042f500 recheck gate + track-set-dependent upper bound.
+bool Nav_ConfigEditWrap(int screen_id, int sel, int dir);
 
 // --- accessors for the renderer --------------------------------------------
 

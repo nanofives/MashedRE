@@ -12,13 +12,15 @@
 // casts. The WS-C-WIRE session binds Host to the standalone race state.
 //
 // STATUS: PHASED standalone reimpl, PENDING diff-original C4. Faithful: the
-// tick/step/bank-select spine + the nearest-point lookahead core. Structural
-// (constants flagged [UNCERTAIN]): the steering-angle calc (FUN_00415e20).
-// STUBBED with RVA TODO (see .cpp header): the full targeting behaviour tree
-// (modes 1..10), the 4/9/8 control-step variants, rubber-banding (FUN_004177b0),
-// the bank-switch timer/RNG (FUN_00417180 detail), powerup activation
-// (FUN_00415220), the spline interpolation+curvature-walk+wall-march refinement
-// (FUN_00443300 / tail of FUN_00443dc0), and the .AI parser.
+// tick/step/bank-select spine + the nearest-point lookahead core + the 4/9/8
+// control-step variants + bank-switch timer/RNG + post-step powerup-brake
+// (P4a 2026-07-04) + pre-tick rubber-banding/rubber-band flag machine + the
+// override-replay tail + the CarSlotStateSet alive-poke (P4b 2026-07-04).
+// Structural (constants flagged [UNCERTAIN]): the steering-angle calc
+// (FUN_00415e20). STUBBED with RVA TODO (see .cpp header): the full targeting
+// behaviour tree (modes 1..10), powerup activation (FUN_00415220), the spline
+// interpolation+curvature-walk+wall-march refinement (FUN_00443300 / tail of
+// FUN_00443dc0), and the .AI parser.
 //
 // Anchored to MASHED.exe SHA-256:
 //   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E

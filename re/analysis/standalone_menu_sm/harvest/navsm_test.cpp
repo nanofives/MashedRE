@@ -167,13 +167,17 @@ int main() {
     std::printf("    [has_savedata=1] item3 enabled? %d : %s\n", Nav_ItemEnabled(3),
                 Nav_ItemEnabled(3) ? "OK (enabled)" : "FAIL");
 
-    // Screen 8: items 2,3 greyed at fresh (FUN_00492d10()!=1).
-    Nav_GameStateReset(); Nav_Init();
-    Nav_Select();   // root item 1 -> push 8 (cursor at item1 default? ensure)
+    // Screen 8 (Options): Load/Save (items 2,3) stay ENABLED at fresh menu.
+    // CORRECTED 2026-07-03: the original's PlaceCursor case-8 disable path only
+    // fires when the save system is NOT ready (FUN_00492d10()!=1); LIVE-PROBED
+    // 2026-06-12 the original holds DAT_00771968==1 at its menu (save ready even
+    // with a blank gamesave), so Load/Save are ENABLED. The standalone's save
+    // layer (R2-2) is functional -> same. (The prior assertion expected them
+    // greyed; that predated the probe and was stale — MenuNavSM.cpp case 8.)
     Nav_GameStateReset(); Nav_Init(); Nav(8, kNavPush);
-    avail_dump("screen8 fresh (items 2,3 greyed)", 8);
+    avail_dump("screen8 fresh (items 2,3 = Load/Save, ENABLED)", 8);
     std::printf("    -> item2=%d item3=%d : %s\n", Nav_ItemEnabled(2), Nav_ItemEnabled(3),
-                (!Nav_ItemEnabled(2) && !Nav_ItemEnabled(3)) ? "OK" : "FAIL");
+                (Nav_ItemEnabled(2) && Nav_ItemEnabled(3)) ? "OK" : "FAIL");
     // cursor must NOT land on a disabled item.
     std::printf("    -> cursor=%d enabled? %s\n", Nav_Cursor(),
                 (Nav_Cursor() >= 0 && Nav_ItemEnabled(Nav_Cursor())) ? "OK" : "FAIL");
@@ -352,6 +356,164 @@ int main() {
     modecheck("flow: MP item0 -> mode6", Nav_GameState().game_mode, 6);
 
     std::printf("  Piece 4: %s (%d failures)\n", g2_fail ? "RED" : "GREEN", g2_fail);
+
+    // ----------------------------------------------------------------------
+    // Piece 5 (D-11057) — continue-cup confirmation chain (FUN_0043dfd0
+    // 0xff240000 arm). Verifies the ed6c tri-state routing + ea6c gate + the
+    // two-choice confirm's e9fc=3 write, against the verbatim decomp.
+    // ----------------------------------------------------------------------
+    std::printf("\n=== Piece 5 (D-11057): continue-cup chain ===\n");
+    int cc_fail = 0;
+    auto ccheck = [&](const char* what, bool ok) {
+        std::printf("  [%s] %-40s : %s\n", ok ? "ok" : "FAIL", what, ok ? "OK" : "FAIL");
+        if (!ok) ++cc_fail;
+    };
+
+    // (a) fresh (game_mode 0, ecdc==0, ed6c==0) -> advance: push 7, ea6c=5.
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    {
+        bool adv = Nav_ContinueCupBegin();
+        ccheck("fresh -> advance (returns true)", adv);
+        ccheck("fresh -> screen 7", Nav_ScreenId() == 7);
+        ccheck("fresh -> ea6c==5", Nav_GameState().ea6c == 5);
+        ccheck("fresh -> no modal armed", Nav_TakePendingCupModal() == kCupModalNone);
+    }
+
+    // (b) ecdc==0, ed6c!=0, variant=1 (default) -> single-confirm modal 0x135,
+    //     ed6c set to 1, ea6c=5, NO nav.
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_SetCupContinueVariant(1);
+    Nav_GameState().flag_ed6c = 3;   // any nonzero -> modal path
+    {
+        int before = Nav_ScreenId();
+        bool adv = Nav_ContinueCupBegin();
+        ccheck("ed6c!=0 variant1 -> no advance", !adv);
+        ccheck("ed6c!=0 variant1 -> screen unchanged", Nav_ScreenId() == before);
+        ccheck("ed6c!=0 variant1 -> single modal 0x135", Nav_TakePendingCupModal() == kCupModalSingle);
+        ccheck("ed6c!=0 variant1 -> ed6c=1", Nav_GameState().flag_ed6c == 1);
+    }
+
+    // (c) ecdc==0, ed6c!=0, variant=0 -> two-choice modal 0x136, ed6c=2.
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_SetCupContinueVariant(0);
+    Nav_GameState().flag_ed6c = 3;
+    {
+        bool adv = Nav_ContinueCupBegin();
+        ccheck("ed6c!=0 variant0 -> no advance", !adv);
+        ccheck("ed6c!=0 variant0 -> two-choice modal 0x136", Nav_TakePendingCupModal() == kCupModalTwoChoice);
+        ccheck("ed6c!=0 variant0 -> ed6c=2", Nav_GameState().flag_ed6c == 2);
+        // confirm the two-choice modal -> advance push 7 + e9fc(game_mode)=3.
+        Nav_ContinueCupConfirm();
+        ccheck("two-choice confirm -> screen 7", Nav_ScreenId() == 7);
+        ccheck("two-choice confirm -> e9fc(game_mode)=3", Nav_GameState().game_mode == 3);
+    }
+
+    // (d) game_mode 6/2 gate: ea6c==1 -> toggled to 2, NO advance; ea6c==4 -> advance.
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_GameState().game_mode = 6; Nav_GameState().ea6c = 1;
+    {
+        int before = Nav_ScreenId();
+        bool adv = Nav_ContinueCupBegin();
+        ccheck("mode6 ea6c1 -> no advance", !adv && Nav_ScreenId() == before);
+        ccheck("mode6 ea6c1 -> ea6c toggled to 2", Nav_GameState().ea6c == 2);
+    }
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_GameState().game_mode = 2; Nav_GameState().ea6c = 4;  // ==4 falls through
+    {
+        bool adv = Nav_ContinueCupBegin();
+        ccheck("mode2 ea6c4 -> advance push 7", adv && Nav_ScreenId() == 7);
+    }
+
+    // (e) ecdc!=0 -> restart-race confirm modal (ed4c selects the body).
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_GameState().flag_ecdc = 1; Nav_GameState().ed4c = 0;
+    {
+        Nav_ContinueCupBegin();
+        ccheck("ecdc!=0 ed4c0 -> restart modal 0x38", Nav_TakePendingCupModal() == kCupModalRestart38);
+    }
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_GameState().flag_ecdc = 1; Nav_GameState().ed4c = 1;
+    {
+        Nav_ContinueCupBegin();
+        ccheck("ecdc!=0 ed4c1 -> restart modal 0xa9", Nav_TakePendingCupModal() == kCupModalRestartA9);
+    }
+    std::printf("  Piece 5: %s (%d failures)\n", cc_fail ? "RED" : "GREEN", cc_fail);
+
+    // ----------------------------------------------------------------------
+    // Piece 6 (D-11057) — game-config wrap-edit primitive. Full screen18/24
+    // selector tables confirmed 2026-07-04 (Mashed_pool15, full dec+inc decode
+    // of FUN_0043dfd0's 0x00440283+ handler).
+    // ----------------------------------------------------------------------
+    std::printf("\n=== Piece 6 (D-11057): config wrap-edit primitive ===\n");
+    int ce_fail = 0;
+    auto echeck = [&](const char* what, bool ok) {
+        std::printf("  [%s] %-40s : %s\n", ok ? "ok" : "FAIL", what, ok ? "OK" : "FAIL");
+        if (!ok) ++ce_fail;
+    };
+    // ea74 (sel 1, both screens) wrap 0..2: dec 0->2, inc 2->0.
+    Nav_GameStateReset();
+    Nav_GameState().ea74 = 0; Nav_ConfigEditWrap(18, 1, -1);
+    echeck("s18 ea74 dec 0->2", Nav_GameState().ea74 == 2);
+    Nav_GameState().ea74 = 2; Nav_ConfigEditWrap(24, 1, +1);
+    echeck("s24 ea74 inc 2->0", Nav_GameState().ea74 == 0);
+    Nav_GameState().ea74 = 1; Nav_ConfigEditWrap(18, 1, +1);
+    echeck("s18 ea74 inc 1->2", Nav_GameState().ea74 == 2);
+    // s18 sel2 -> ea80 wrap 0..2.
+    Nav_GameState().ea80 = 0; Nav_ConfigEditWrap(18, 2, -1);
+    echeck("s18 ea80 dec 0->2", Nav_GameState().ea80 == 2);
+    Nav_GameState().ea80 = 2; Nav_ConfigEditWrap(18, 2, +1);
+    echeck("s18 ea80 inc 2->0", Nav_GameState().ea80 == 0);
+    // s18 sel3 -> ea7c wrap 0..4.
+    Nav_GameState().ea7c = 0; Nav_ConfigEditWrap(18, 3, -1);
+    echeck("s18 ea7c dec 0->4", Nav_GameState().ea7c == 4);
+    Nav_GameState().ea7c = 4; Nav_ConfigEditWrap(18, 3, +1);
+    echeck("s18 ea7c inc 4->0", Nav_GameState().ea7c == 0);
+    // s18 sel4 -> ea94 wrap 0..0xc (vehicle; skip-invalid NOT ported).
+    Nav_GameState().ea94 = 0; Nav_ConfigEditWrap(18, 4, -1);
+    echeck("s18 ea94 dec 0->0xc", Nav_GameState().ea94 == 0xc);
+    Nav_GameState().ea94 = 0xc; Nav_ConfigEditWrap(18, 4, +1);
+    echeck("s18 ea94 inc 0xc->0", Nav_GameState().ea94 == 0);
+    // s18 sel5 -> ea78 toggle, both directions XOR.
+    Nav_GameState().ea78 = 0; Nav_ConfigEditWrap(18, 5, -1);
+    echeck("s18 ea78 dec toggle 0->1", Nav_GameState().ea78 == 1);
+    Nav_ConfigEditWrap(18, 5, +1);
+    echeck("s18 ea78 inc toggle 1->0", Nav_GameState().ea78 == 0);
+    // s18 sel6 -> ea88 GameLength: trackflag==0 assumption collapses to a
+    // plain 0<->1 toggle both directions (see MenuNavSM.cpp comment).
+    Nav_GameState().ea88 = 0; Nav_ConfigEditWrap(18, 6, -1);
+    echeck("s18 ea88 dec toggle 0->1", Nav_GameState().ea88 == 1);
+    Nav_ConfigEditWrap(18, 6, +1);
+    echeck("s18 ea88 inc toggle 1->0", Nav_GameState().ea88 == 0);
+    // s24 sel2 -> ea90 wrap 1..4: dec 1->4, inc 4->1.
+    Nav_GameState().ea90 = 1; Nav_ConfigEditWrap(24, 2, -1);
+    echeck("s24 ea90 dec 1->4", Nav_GameState().ea90 == 4);
+    Nav_GameState().ea90 = 4; Nav_ConfigEditWrap(24, 2, +1);
+    echeck("s24 ea90 inc 4->1", Nav_GameState().ea90 == 1);
+    Nav_GameState().ea90 = 2; Nav_ConfigEditWrap(24, 2, +1);
+    echeck("s24 ea90 inc 2->3", Nav_GameState().ea90 == 3);
+    // s24 sel3 -> ea94 wrap 0..0xc (same vehicle field as s18 sel4).
+    Nav_GameState().ea94 = 0; Nav_ConfigEditWrap(24, 3, -1);
+    echeck("s24 ea94 dec 0->0xc", Nav_GameState().ea94 == 0xc);
+    // s24 sel4/5/6 -> ea98/ea9c/eaa0 (Opp1/2/3) wrap 0..6.
+    Nav_GameState().ea98 = 0; Nav_ConfigEditWrap(24, 4, -1);
+    echeck("s24 ea98 dec 0->6", Nav_GameState().ea98 == 6);
+    Nav_GameState().ea98 = 6; Nav_ConfigEditWrap(24, 4, +1);
+    echeck("s24 ea98 inc 6->0", Nav_GameState().ea98 == 0);
+    Nav_GameState().ea9c = 0; Nav_ConfigEditWrap(24, 5, -1);
+    echeck("s24 ea9c dec 0->6", Nav_GameState().ea9c == 6);
+    Nav_GameState().eaa0 = 0; Nav_ConfigEditWrap(24, 6, -1);
+    echeck("s24 eaa0 dec 0->6", Nav_GameState().eaa0 == 6);
+    // s24 sel7 -> eaac toggle, both directions XOR.
+    Nav_GameState().eaac = 0; Nav_ConfigEditWrap(24, 7, -1);
+    echeck("s24 eaac dec toggle 0->1", Nav_GameState().eaac == 1);
+    Nav_ConfigEditWrap(24, 7, +1);
+    echeck("s24 eaac inc toggle 1->0", Nav_GameState().eaac == 0);
+    // Unknown screen id / selector -> no-op.
+    Nav_GameState().ea74 = 1;
+    echeck("unknown screen -> no change", !Nav_ConfigEditWrap(7, 1, +1) && Nav_GameState().ea74 == 1);
+    echeck("unknown sel -> no change", !Nav_ConfigEditWrap(18, 9, +1) && Nav_GameState().ea74 == 1);
+    Nav_GameStateReset();
+    std::printf("  Piece 6: %s (%d failures)\n", ce_fail ? "RED" : "GREEN", ce_fail);
 
     return 0;
 }
