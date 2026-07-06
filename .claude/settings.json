@@ -6,8 +6,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "pwsh",
-            "args": ["-NoProfile", "-File", "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\scripts\\hygiene_gate.ps1"],
+            "command": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\scripts\\hygiene_gate.ps1"],
             "timeout": 120,
             "statusMessage": "Mashed RE hygiene sweep (throttled, fires at most every 3 days)"
           }

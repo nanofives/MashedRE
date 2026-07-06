@@ -225,11 +225,45 @@ Measured 30-day audit 2026-07-01 (memory `project-token-economy-audit-2026-07`):
 
 - **Split work into focused sessions** at phase boundaries (measure → port → verify → merge). End a finished phase with a ready-to-paste kickoff prompt for the next session instead of continuing in-place.
 - **Never Read raw agent/task transcripts** (`tasks\*.output`, `agent-*.jsonl`). Use the agent's returned summary; follow up via SendMessage to the same agent.
-- **Delegate read-heavy exploration to subagents** (Ghidra chain-chasing, log spelunking, multi-file surveys). A subagent's context is discarded on return; anything read in the main session is re-billed every turn until the session ends.
+- **Delegate read-heavy exploration OFF this account.** Pure-text lanes (multi-file source surveys, `re\analysis\` reads, tracker/CHANGELOG scans) → the **account2 worker** via `delegate.ps1 -Repo Mashed` (see "Delegating read-only analysis" below); it costs this session's quota **nothing**. MCP-bound lanes (Ghidra chain-chasing, Frida) can't run on the worker — use a `[local]` subagent so its context is at least discarded on return. Either way, anything read in the main session is re-billed every turn until the session ends.
 - **Route mechanical lanes to cheaper models**: scribe transcription, tracker edits, log parsing, batch leaf decodes → Sonnet (or Haiku); keep the top-tier model for RE judgment work. 92% of June's output tokens ran on Opus — most of the mechanical share didn't need to.
 - **arg_type lookup goes through `re/frida/ARG_TYPES.md`** (generated index), not `diff_template.js` (232 KB — it was Read 361 times in June). Open `diff_template.js` only to author a new handler, and regenerate the index after (`py -3.12 scripts\gen_arg_types_index.py`).
 - **State lookups via one-liners, not full-file Reads**: `hooks.csv` / `promote_frontier.tsv` with PowerShell filters; `re/analysis/CHANGELOG.md` head only (newest entries at top; pre-2026-06-15 history lives in `re/analysis/archive/`).
 - **Screenshots**: compare via `re/tools/imgdiff.py` / the parity harness; don't re-Read the same PNG repeatedly; crop to the region of interest before reading.
+
+## Delegating read-only analysis to the worker account (repo-fleet / account2)
+
+Workspace policy (Proyectos): pure read-only analysis goes to the **worker account (account2 / Accenture)** —
+headless, never prompts, and it does **not** spend this session's (account3) quota. Invoke it:
+
+```
+pwsh -NoProfile -File "C:\Users\maria\Desktop\Proyectos\.claude\skills\repo-fleet\scripts\delegate.ps1" -Prompt "<task>" -Repo Mashed [-Model sonnet]
+```
+
+The worker has **Read/Grep/Glob only** — no MCP, no shell, no writes — so split Mashed work by tool needs:
+
+**Delegate to the worker (text-only, real volume here):**
+- multi-file surveys of `mashedmod\src\mashed_re\` — call-site maps, "which hooks touch X", subsystem inventories
+- cross-referencing `re\prior_art\` (SciLor repos) and `re\analysis\` notes against our port
+- tracker/report READS — filter/summarize `hooks.csv`, `STUBS.md`, `UNCERTAINTIES.md`, `DEFERRED.md`, `CHANGELOG.md`
+- drafting docs/summaries from existing sources
+
+**Keep local** (in-session, or a `[local]` subagent): anything using **Ghidra or Frida MCP** (decomp, live-project
+RVA chasing, behavioral diffs), builds, running `MASHED.exe`, patch scripts, `re-classify`/tracker **writes**, git, edits.
+
+A plain local subagent under Proyectos is auto-denied by the agent-gate and redirected here; add `[local]` only for
+the keep-local cases above (e.g. a subagent that must call Ghidra MCP).
+
+**This is the PRIMARY cost lever, not a minor one.** A 5-session audit (2026-07-03) found **Read = 91% of tool-result
+volume, 0% MCP, ~151M cache-read tokens** — i.e. raw files pulled into the main context and re-billed every turn are
+what dominate cost. Therefore:
+- Do **NOT** wholesale-`Read`/`Grep` source, `re\analysis\` notes, or trackers into the main session just to
+  *explore / understand / locate*. Delegate the read-and-distill to the worker and bring back only its summary — a
+  5 KB answer in context costs ~nothing to re-bill; 75 KB of raw file does not.
+- Reserve in-session `Read` for the specific files you are **about to edit**, where you genuinely need the bytes in
+  context. That slice is small.
+- Exploration via a subagent is fine too — the gate routes it here automatically — but prefer a direct
+  `delegate.ps1` call for anything survey-shaped.
 
 ## Roadmap, DoD, and trackers
 

@@ -115,3 +115,6 @@ tmp/
 # local backup of the original install
 /original backup.zip
 *.zip
+
+# Claude Code local memory (per-machine, not shared)
+CLAUDE.local.md
