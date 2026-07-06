@@ -71,6 +71,79 @@ function armInput(){ if(inputArmed) return; inputArmed = true;
     onLeave(ret){ if(this.p===0 && this.c===pressCtrl && Date.now()<pressUntil) ret.replace(ptr(0xff)); }
   }); } catch(e){ send({kind:'err', msg:'armInput '+e}); } }
 
+// --- D1 SPIKE (2026-07-06): proxy-body step live-vs-bypassed ---------------
+// Settles COLLISION_GATE_BRIEF_D1_2026-07.md Open-Unknown #1: is the RW-Physics
+// proxy-body world (system 2) load-bearing for RENDERED car motion?
+// Bypass = Interceptor.replace of VehiclePhysicsWorldStep 0x0047eb30
+// (bool(void), globals-only; its own DAT_006ce274==0 guard path returns 0, so a
+// constant-0 replacement is the "no physics world" path callers already
+// tolerate — re/analysis/vehicle_promote_c2_b/0047eb30.md). Armed MID-race
+// (after spawn) so world init + the frame-0x7b qhull hull build (FUN_0047d3c0,
+// called from inside 0x0047eb30) complete normally; only steady-state stepping
+// dies. Control runs arm a call counter instead (60/s — far under the 1000/s
+// hot-path limit). Never both on one target (attach+replace conflict).
+const PSTEP_RVA = 0x0047eb30;    // VehiclePhysicsWorldStep (C2)
+const PWORLD    = 0x006ce274;    // physics world ptr (its guard global)
+// IN-RACE DRIVE INJECTOR (ported from capture_player_dynamics.py — the proven
+// path): the cook FUN_00496530 zeroes player p's descriptor block
+// (0x007f1038 + p*0x4c) then rewrites it; the physics (A4 FUN_00470670) reads
+// block[4]=accel, block[2]/[3]=steer (+[0xe]/[0xf] active flags). Forcing the
+// block ON LEAVE survives the cook. Armed only on demand (spike runs) — it
+// clobbers real input with zeros when idle, so oracle runs must not arm it.
+const COOK_RVA = 0x00496530;
+const BLK0 = 0x007f1038;
+let gAccel = 0, gSteer = 0, cookArmed = false;
+function armCook(){ if (cookArmed) return 'already on'; cookArmed = true;
+  try { Interceptor.attach(ga(COOK_RVA), { onLeave(){ const b = ga(BLK0); if (!b) return;
+    b.add(4).writeU8(gAccel ? 0xff : 0);
+    b.add(2).writeU8(gSteer > 0 ? 0xff : 0);
+    b.add(3).writeU8(gSteer < 0 ? 0xff : 0);
+    b.add(0x0e).writeU8(gSteer > 0 ? 0xff : 0);
+    b.add(0x0f).writeU8(gSteer < 0 ? 0xff : 0);
+  }}); return 'cook injector armed (0x00496530)'; }
+  catch(e){ return 'ERR '+e; } }
+let stepCalls = 0, bypassOn = false, stepCounterOn = false;
+function armStepCounter(){
+  if (stepCounterOn) return 'already on';
+  if (bypassOn) return 'ERR bypass already armed';
+  try { Interceptor.attach(ga(PSTEP_RVA), { onEnter(){ stepCalls++; } });
+        stepCounterOn = true; return 'step counter armed (0x0047eb30)'; }
+  catch(e){ return 'ERR '+e; }
+}
+function armBypass(){
+  if (bypassOn) return 'already on';
+  if (stepCounterOn) return 'ERR counter already attached — bypass runs must not arm it';
+  try {
+    const cb = new NativeCallback(function(){ stepCalls++; return 0; }, 'int', [], 'mscdecl');
+    Interceptor.replace(ga(PSTEP_RVA), cb);
+    globalThis._keepBypassCb = cb;   // keepAlive — Frida reclaims otherwise (feedback_frida_keepalive_scratch_buffers)
+    bypassOn = true; return 'BYPASS ON: 0x0047eb30 -> ret 0';
+  } catch(e){ return 'ERR '+e; }
+}
+// 10 Hz telemetry of the player car record. Offsets (worker extraction
+// 2026-07-06, cited to vehicle_coupling.md / capture_player_dynamics.py /
+// diff_mostsep_pair.py): render pos = +0x928 matrix block words [0xc..0xe]
+// (bytes +0x958/+0x95c/+0x960 — THE surface the proxy readback writes);
+// vel +0x9b0..b8; yaw rate +0x9c0; fwd.x/z +0x9d4/+0x9dc (heading);
+// grounded +0x9e0 (4.0 = all wheels); scalar speed +0x9e4; airflag +0xb20.
+const TEL = { on:false, t0:0, rows:[] };
+function telSample(){
+  try {
+    const r = ga(CARREC);
+    TEL.rows.push([ Date.now()-TEL.t0, ga(PHASE).readU8(),
+      r.add(0x958).readFloat(), r.add(0x95c).readFloat(), r.add(0x960).readFloat(),
+      r.add(0x9b0).readFloat(), r.add(0x9b4).readFloat(), r.add(0x9b8).readFloat(),
+      r.add(0x9e4).readFloat(), r.add(0x9c0).readFloat(),
+      r.add(0x9d4).readFloat(), r.add(0x9dc).readFloat(),
+      r.add(0x9e0).readFloat(), r.add(0xb20).readU32(),
+      stepCalls, bypassOn ? 1 : 0, ga(PWORLD).readU32() !== 0 ? 1 : 0 ]);
+  } catch(e){ /* sample dropped */ }
+}
+function telStart(){ if (TEL.on) return 'already on';
+  TEL.on = true; TEL.t0 = Date.now(); setInterval(telSample, 100);
+  return 'telemetry started (10 Hz)'; }
+// ---------------------------------------------------------------------------
+
 // --- WS-G rules-debt ORACLE (2026-07-02, D-11052 verification) -------------
 // Validates the standalone RuleEngine port (mashedmod/src/mashed_re/Race/
 // RuleEngine.cpp) against the LIVE ORIGINAL: hooks FUN_00410d10 (segment
@@ -307,6 +380,15 @@ function armOracle(){
 rpc.exports = {
   ready: function(){ return modBase() ? 1 : 0; },
   armOracle: function(){ return armOracle(); },
+  armBypass: function(){ return armBypass(); },
+  armStepCounter: function(){ return armStepCounter(); },
+  armCook: function(){ return armCook(); },
+  drive: function(accel, steer){ gAccel = accel; gSteer = steer; return 1; },
+  telStart: function(){ return telStart(); },
+  telemetry: function(){ return JSON.stringify({
+    cols: ['t_ms','phase','px','py','pz','vx','vy','vz','speed','yawRate',
+           'fwdx','fwdz','grounded','airflag','stepCalls','bypass','worldPtr'],
+    rows: TEL.rows }); },
   pokeTimer: function(v){ try { ga(0x007f0fe4).writeFloat(v); return 1; } catch(e){ return 'ERR '+e; } },
   // lap counter row 0x008a9620 stride 0x30c field +0x28 (U-8988 resolution);
   // FUN_004177b0 recomputes metric[car] from it next tick -> finisher edges
@@ -402,6 +484,19 @@ def main():
                          "after --poke-delay s. CONTRIVED (C3-grade).")
     ap.add_argument("--poke-delay", type=int, default=10,
                     help="seconds into the hold before applying --poke-lap/--poke-collect")
+    ap.add_argument("--bypass-proxy", action="store_true",
+                    help="D1 spike: Interceptor.replace VehiclePhysicsWorldStep 0x0047eb30 "
+                         "with 'return 0' (the function's own null-world guard path) after "
+                         "--bypass-at seconds of racing. Settles whether the RW-Physics "
+                         "proxy-body world is load-bearing for rendered motion "
+                         "(COLLISION_GATE_BRIEF_D1_2026-07.md Open-Unknown #1).")
+    ap.add_argument("--bypass-at", type=float, default=3.0,
+                    help="seconds into the hold before arming --bypass-proxy (lets world "
+                         "init + the one-shot qhull hull build finish normally)")
+    ap.add_argument("--spike-telemetry", default="",
+                    help="tag: sample the player car at 10 Hz (render pos/vel/speed/yaw-rate/"
+                         "heading/grounded) and write log/d1_spike_<tag>.json. In control "
+                         "runs (no --bypass-proxy) also arms a 0x0047eb30 call counter.")
     args = ap.parse_args()
 
     if args.oracle and args.hooks:
@@ -496,10 +591,25 @@ def main():
             rc = 0
         else:
             print("\n  VERDICT: phase 3 reached but VehicleSpawnInit never fired — spawn incomplete.")
+        if args.spike_telemetry:
+            print("  [spike]", E.tel_start())
+            print("  [spike]", E.arm_cook())
+            print("  [spike] drive: full accel, straight ->", E.drive(1, 0))
+            if not args.bypass_proxy:
+                print("  [spike]", E.arm_step_counter())
         print(f"\n  racing {args.hold}s — pulsing control 4 (confirm/accel) to skip the start intro + continue rounds...")
         t0 = time.time(); t = t0 + args.hold; n = 0; poked = False; oracle_cache = None
+        tel_cache = None; bypass_armed = False; exited_early = False; steer_on = False
         while time.time() < t:
-            if psutil and not psutil.pid_exists(pid): print("\n  game exited."); break
+            if psutil and not psutil.pid_exists(pid):
+                print("\n  game exited."); exited_early = True; break
+            if args.bypass_proxy and not bypass_armed and time.time() - t0 >= args.bypass_at:
+                bypass_armed = True
+                print(f"\n  [spike] +{time.time()-t0:.1f}s", E.arm_bypass())
+            if args.spike_telemetry and not steer_on and time.time() - t0 >= 8.0:
+                steer_on = True
+                try: print(f"\n  [spike] +{time.time()-t0:.1f}s drive: accel + steer ->", E.drive(1, 1))
+                except Exception: pass
             try: E.press(4, 250)            # pulse: 250ms held, ~0.35s gap -> edges for round-end prompts
             except Exception: pass
             if (args.poke_lap or args.poke_collect) and not poked \
@@ -530,8 +640,34 @@ def main():
             if args.oracle and n % 3 == 0:
                 try: oracle_cache = E.oracle_stats()   # crash-proof incremental snapshot
                 except Exception: pass
+            if args.spike_telemetry and n % 3 == 0:
+                try: tel_cache = E.telemetry()         # crash-proof incremental snapshot
+                except Exception: pass
             time.sleep(0.6)
         print()
+        if args.spike_telemetry:
+            try:
+                import json
+                try: raw = E.telemetry()
+                except Exception:
+                    raw = tel_cache
+                    print("  (spike: live telemetry fetch failed, using last snapshot)")
+                if raw is None:
+                    print("  spike: NO telemetry captured")
+                else:
+                    st = json.loads(raw)
+                    st["run"] = {"tag": args.spike_telemetry, "bypass": args.bypass_proxy,
+                                 "bypass_at": args.bypass_at if args.bypass_proxy else None,
+                                 "track": args.track, "mode": args.mode, "cars": args.cars,
+                                 "hold": args.hold, "pid": pid, "exited_early": exited_early,
+                                 "ts": time.strftime("%Y-%m-%d %H:%M:%S")}
+                    out = ROOT / "log" / f"d1_spike_{args.spike_telemetry}.json"
+                    out.parent.mkdir(exist_ok=True)
+                    out.write_text(json.dumps(st))
+                    print(f"  spike telemetry: {len(st['rows'])} samples"
+                          f"  exited_early={exited_early}  -> {out}")
+            except Exception as ex:
+                print(f"  spike telemetry dump failed: {ex}")
         if args.oracle:
             try:
                 import json

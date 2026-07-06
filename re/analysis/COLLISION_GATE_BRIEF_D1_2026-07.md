@@ -89,6 +89,14 @@ Every row in the band is library-tagged, C1/C2, **unported** — consistent with
 
 ## OPEN-UNKNOWNS (what a 1-session spike could resolve)
 
+> **#1 ANSWERED 2026-07-06 — YES, LOAD-BEARING.** The spike ran same-day
+> (`D1_SPIKE_PROXY_BYPASS_2026-07-06.md`, log/d1_spike_*.json): bypassing
+> `VehiclePhysicsWorldStep` 0x0047eb30 in the live original produces a reproducible
+> terminal wedge (2/2 runs, ~8–9 s after bypass; 3-wheel grounded, full throttle,
+> zero motion, no recovery) plus ~halved heading response — while 2/2 control runs
+> never wedge. Failure mode is wedge/no-recovery, NOT the standalone-style runaway,
+> so the standalone's divergence is a second, separate gap (the reduction itself).
+
 1. **Is system 2 actually load-bearing for the *rendered* car motion, or only for internal stability?** `COLLISION_GATE_BRIEF` step 2 (the deferred empirical test) was never run to conclusion; WS-A8 strongly implies yes but did not isolate it. A single Frida spike comparing render-struct velocity with the proxy body forced live vs bypassed would settle A-vs-B decisively. **This is the highest-value spike and it is cheap.**
 2. **Can a single-body PD reduction be tuned to match original telemetry within tolerance?** WS-A8 left this "open-ended"; one calibration session against captured original telemetry would bound B's feasibility.
 3. **Full island caller closure** — `COLLISION_GATE_BRIEF` [UNCERTAIN]: only the `FUN_0057ca30` qhull entry's single caller was proven; the other ~165 KB of the island was not exhaustively caller-swept. Only matters if A is chosen.
