@@ -335,9 +335,23 @@ body+wheel sim. Foundation: `re/analysis/vehicle_physics_cluster.md`.
 ### WS-B — Collision / RW-Physics (item 1; prereq for WS-A handling)
 The per-wheel + car↔car contacts feed WS-A. The original vendors RW-Physics 3.7 +
 qhull-2002.1 ([[qhull-rwphysics-island]], 0x57c5b0..0x5a5820).
-- **B1** Decide vendor-real-qhull vs port-the-used-subset (architecture gate;
-  stop-and-ask). **B2** car↔world contact query. **B3** car↔car contacts.
+- **B1 RESOLVED 2026-07-06 — OPTION A (user-ratified).** Contact half was ratified
+  Option B 2026-06-16 and is built (B2/B3 C2, self-tests PASS); the D1 spike
+  (`re/analysis/D1_SPIKE_PROXY_BYPASS_2026-07-06.md`) proved the RW-Physics
+  proxy-body world ("system 2": 0x0047eb30 driver + 0x55-band integrator + 4 qhull
+  hull bodies) is LOAD-BEARING for rendered motion (2/2 terminal wedge + halved
+  heading response when bypassed). Decision: **vendor qhull-2002.1 (public domain,
+  load-time only) + reconstruct system 2's call surface** — new lane **B5** below.
+  Brief: `re/analysis/COLLISION_GATE_BRIEF_D1_2026-07.md`.
+  **B2** car↔world contact query. **B3** car↔car contacts.
   **B4** wire as the contact source for WS-A; diff vs original contact telemetry.
+- **B5 (system-2 reconstruction, Option A):** B5a demand-closure + plating of what
+  0x0047eb30/0x0047f840 actually reach in the 0x55 band (+ island caller closure,
+  brief Open-Unknowns #3/#4); B5b vendor qhull-2002.1 + FUN_0057ca30 bridge + 4-body
+  build chain (FUN_0047d3c0→FUN_004826d0→FUN_00481e00); B5c per-tick integrator
+  subset (FUN_0055dff0/0055ac00/0055deb0/0055c000) + body accessor FUN_0057c210;
+  B5d coupling bridge 0x0047eb30 verbatim; B5e wire into the standalone + re-run the
+  drive-hold harness expecting wedge-free sustained drive, then A8 becomes a true diff.
 
 ### WS-C — AI drivers (item 1)
 Replaces the gate-ribbon lane-follower scaffold. Real = **FUN_00418860 family**

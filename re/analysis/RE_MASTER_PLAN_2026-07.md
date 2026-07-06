@@ -183,9 +183,12 @@ plan + the 2026-07-03 tracker parse.
 
 Resolve these before the dependent work, not mid-stream. Each is a genuine fork with material cost.
 
-- **D1 — WS-B1 collision architecture:** vendor real qhull-2002.1 (faster to working, larger binary,
-  less "verbatim") vs port the RW-Physics contact subset (true to F-DoD, much larger effort). *Blocks
-  WS-A handling, WS-D, WS-J.* **Highest leverage. Decide first in M2.**
+- ~~**D1 — WS-B1 collision architecture**~~ **RESOLVED 2026-07-06 — OPTION A, user-ratified.** The
+  same-day spike (`D1_SPIKE_PROXY_BYPASS_2026-07-06.md`) proved system 2 (proxy-body world) is
+  load-bearing for rendered motion (2/2 terminal wedge when bypassed, halved heading response);
+  Option B's reduction would have to fake damping + wedge recovery + turn assist and its naive form
+  diverges in ~1 s. Route: vendor qhull-2002.1 + reconstruct system 2's call surface — ROADMAP WS-B
+  lane **B5a..B5e**. (Contacts stay the already-built Option-B ports of 2026-06-16.)
 - **D2 — Renderer commitment:** RW-subset verbatim (ratified Option B, but 770 rows + 217 stubs of
   work) vs accept `librw` as the shipping renderer to save months (deviates from pure verbatim, but the
   D3D9 spike proves a non-RW renderer is viable). Confirm before sinking M3 tokens.
