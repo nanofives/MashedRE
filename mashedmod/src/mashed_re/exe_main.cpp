@@ -982,6 +982,44 @@ bool RunParityWalk(int phase) {
     return false;
 }
 
+// D-11057 config-edit verification driver (env MASHED_CFGEDIT_DEMO=1). Jumps
+// straight to the game-setup screens (18/24) via Nav_DevGoto (in-process, no
+// OS input needed — bypasses the g_active focus gate like the other demos),
+// moves the cursor onto a config row with injected DOWN edges, then exercises
+// RIGHT/LEFT through the REAL input path (UpdateMenuSelection's D-11057
+// config-edit block), capturing a settled BMP after each edit. Pair with
+// MASHED_DBG_CONFIGEDIT=1 to also get a text log line per applied edit
+// (sid/cursor/all field values) in mashed_re.log. Captures land in
+// verify/cfgedit_*.bmp. Returns true when finished (caller quits).
+bool g_cfgedit_demo = false;
+bool RunConfigEditDemo(int /*phase*/) {
+    using namespace mashed_re::Frontend;
+    static int step = 0, cool = 0;
+    if (g_frontend_phase < 3) { g_frontend_phase = 3; LogoOverlayFadeSet(0xff, -1); }
+    if (cool > 0) { --cool; return false; }
+    auto cap = [&](const char* tag) {
+        char path[160];
+        std::snprintf(path, sizeof(path), "verify/cfgedit_%s.bmp", tag);
+        NavDemoLog(step, tag, DumpBackbufferBMP(path));
+    };
+    switch (step) {
+        case 0: Nav_DevGoto(18); step = 1; cool = 10; return false;
+        case 1: cap("s18_entry"); NavDemoTap(DIK_DOWN); step = 2; cool = 6; return false;    // cursor -> row1 (ea74)
+        case 2: cap("s18_row1_before"); NavDemoTap(DIK_RIGHT); step = 3; cool = 6; return false;
+        case 3: NavDemoTap(DIK_RIGHT); step = 4; cool = 6; return false;
+        case 4: cap("s18_row1_after2right"); NavDemoTap(DIK_LEFT); step = 5; cool = 6; return false;
+        case 5: cap("s18_row1_after1left"); NavDemoTap(DIK_DOWN); step = 6; cool = 6; return false; // cursor -> row2 (ea80)
+        case 6: cap("s18_row2_before"); NavDemoTap(DIK_RIGHT); step = 7; cool = 6; return false;
+        case 7: cap("s18_row2_afterright"); Nav_DevGoto(24); step = 8; cool = 10; return false;
+        case 8: cap("s24_entry"); NavDemoTap(DIK_DOWN); step = 9; cool = 6; return false;    // cursor -> row1 (ea74)
+        case 9: NavDemoTap(DIK_DOWN); step = 10; cool = 6; return false;                     // cursor -> row2 (ea90)
+        case 10: cap("s24_row2_before"); NavDemoTap(DIK_RIGHT); step = 11; cool = 6; return false;
+        case 11: cap("s24_row2_afterright"); NavDemoTap(DIK_LEFT); step = 12; cool = 6; return false;
+        case 12: cap("s24_row2_after1left"); NavDemoLog(step, "done", true); return true;
+        default: return true;
+    }
+}
+
 // ROUND-1 race-flow verification driver (env MASHED_RACE_DEMO=1, paired with
 // MASHED_GOTO=6 so we start parked on the Challenge Select screen). This proves
 // the goal end-to-end through the REAL code paths: it injects an Enter edge
@@ -1385,7 +1423,7 @@ bool UpdateMenuSelection() {
     // reads GLOBAL key state even when our window isn't focused — meaning keys
     // pressed in another app were driving the menu. Gate all input on window
     // focus (g_active, set by WM_ACTIVATE); the nav-demo driver bypasses this.
-    if (!g_active && !g_nav_demo && !g_race_demo) return false;
+    if (!g_active && !g_nav_demo && !g_race_demo && !g_cfgedit_demo) return false;
     const bool up_now    = (g_keys[DIK_UP]        & 0x80) != 0;
     const bool up_prev   = (g_keys_prev[DIK_UP]   & 0x80) != 0;
     const bool down_now  = (g_keys[DIK_DOWN]      & 0x80) != 0;
@@ -1734,6 +1772,54 @@ bool UpdateMenuSelection() {
             // the first six liveries; red selected by default).
             if (rgt_now && !rgt_prev) g_csel_p1_car = (g_csel_p1_car + 1) % 6;
             if (lft_now && !lft_prev) g_csel_p1_car = (g_csel_p1_car + 5) % 6;
+        }
+    }
+    // [D-11057] Game-setup config screens (sid 18/24): LEFT/RIGHT edits the
+    // highlighted row via Nav_ConfigEditWrap, mirroring the confirmed
+    // FUN_0043dfd0 decrement/increment handler (0x00440283+; full dec+inc
+    // decode 2026-07-04, Mashed_pool15). Cursor position IS the row selector —
+    // CONFIRMED (not assumed): the draw-side row renderer FUN_0043af10 has two
+    // per-screen computed-jump row tables (screen18 @0x0043b3f4: ea74,ea80,
+    // ea7c,ea94,ea78,ea88; screen24 @0x0043b217: ea74,ea90,ea94,ea98,ea9c,
+    // eaa0,eaac) whose 0-based order matches the edit-side 1-based selector
+    // order exactly (row N draws the same global sel==N+1 edits) — same
+    // sequence, no separate row->selector lookup exists in the original.
+    // kT18's kv item list has exactly 6 config rows (msgids 0x56/0x24c/0x103/
+    // 0xfe/0xdb/0x24d, cursor 1..6) and kT24 has 7 (0x56/0xfd/0xfe/0x100/0x101/
+    // 0x102/0x24d, cursor 1..7) — both match their draw/edit table sizes
+    // exactly, so every selector is cursor-reachable on both screens.
+    // Behaviorally confirmed 2026-07-04 (RunConfigEditDemo, MASHED_CFGEDIT_DEMO):
+    // real DOWN/RIGHT/LEFT edges through this exact code path produced ea74
+    // 1->2->0 (wrap) ->2 (wrap back), ea80 0->1, and ea90 1->2->1 on the
+    // correct screen — see mashed_re.log NAV_DEMO/[DBG cfgedit] lines.
+    // Edge-triggered (one step per press), matching the original's per-input
+    // dispatch. MASHED_CONFIG_EDIT=0 reverts (dev/verification).
+    {
+        static const bool s_cfgedit = [] {
+            const char* e = std::getenv("MASHED_CONFIG_EDIT");
+            return !(e && e[0] == '0');
+        }();
+        const int sid = mashed_re::Frontend::Nav_ScreenId();
+        const int cur = mashed_re::Frontend::Nav_Cursor();
+        if (s_cfgedit && (sid == 18 || sid == 24) && cur >= 0) {
+            bool changed = false;
+            if (rgt_now && !rgt_prev) changed = mashed_re::Frontend::Nav_ConfigEditWrap(sid, cur, +1);
+            if (lft_now && !lft_prev) changed = mashed_re::Frontend::Nav_ConfigEditWrap(sid, cur, -1) || changed;
+            if (changed) mashed_re::Audio::SfxPlay("menu navigation", 0.7f);
+            // DEBUG (MASHED_DBG_CONFIGEDIT): log every applied edit so the D-11057
+            // selector tables can be verified from a live run without pixel-reading
+            // the (not yet faithfully rendered) row values.
+            if (changed && GetEnvironmentVariableA("MASHED_DBG_CONFIGEDIT", nullptr, 0)) {
+                if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+                    const auto& gs = mashed_re::Frontend::Nav_GameState();
+                    std::fprintf(lf,
+                        "[DBG cfgedit] sid=%d cur=%d ea74=%d ea80=%d ea7c=%d ea90=%d ea94=%d "
+                        "ea78=%d ea88=%d ea98=%d ea9c=%d eaa0=%d eaac=%d\n",
+                        sid, cur, gs.ea74, gs.ea80, gs.ea7c, gs.ea90, gs.ea94,
+                        gs.ea78, gs.ea88, gs.ea98, gs.ea9c, gs.eaa0, gs.eaac);
+                    std::fclose(lf);
+                }
+            }
         }
     }
     // Mirror the nav cursor into the legacy global for any code still reading it.
@@ -5257,6 +5343,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     g_nav_demo = (GetEnvironmentVariableA("MASHED_NAV_DEMO", nullptr, 0) != 0);
     g_parity   = (GetEnvironmentVariableA("MASHED_PARITY",   nullptr, 0) != 0);
     g_race_demo= (GetEnvironmentVariableA("MASHED_RACE_DEMO", nullptr, 0) != 0);
+    g_cfgedit_demo = (GetEnvironmentVariableA("MASHED_CFGEDIT_DEMO", nullptr, 0) != 0);
 
     // B17: snapshot the low-address arena before ANYTHING runs (no piz heap,
     // no window, no d3d9). This is the pristine layout we get to reserve from.
@@ -5736,6 +5823,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         }
         if (g_race_demo) {
             if (RunRaceDemoStep(nav_demo_phase)) { PostQuitMessage(0); }
+            ++nav_demo_phase;
+        }
+        if (g_cfgedit_demo) {
+            if (RunConfigEditDemo(nav_demo_phase)) { PostQuitMessage(0); }
             ++nav_demo_phase;
         }
         UpdateTitleFromKeyboard();

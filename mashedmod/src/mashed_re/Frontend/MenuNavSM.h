@@ -83,7 +83,10 @@ struct MenuGameState {
     // grey-out (FUN_00432800) state. Fresh-menu defaults below.
     int  has_savedata;      // DAT_007f0f2c (screen 1 item 3 enable; 0 = none)
     int  has_profiles;      // DAT_007f0ad4 (screen 2 item 1 enable; 0 = none)
-    int  ea88;              // DAT_0067ea88 (screen 0x12 gating; also MP game-length)
+    int  ea88;              // DAT_0067ea88 GameLength (sel==6 screen18; also MP game-length
+                            //   rule source, WS-G1). Wrap depends on DAT_007f0a5c[track_set]
+                            //   (unavailable standalone; assumed 0/false -> wrap {0,1,2} via
+                            //   dec skips 2, inc visits it — see Nav_ConfigEditWrap [UNCERTAIN])
     int  ea7c;              // DAT_0067ea7c
     int  ea84;              // DAT_0067ea8c-adjacent player-count code (DAT_0067ea8c)
     int  cur_track_set;     // DAT_007f17c-indexed track count (unlock array head)
@@ -99,11 +102,24 @@ struct MenuGameState {
 
     // [D-11057] game-config option-row values (screens 18/24; frontend_config_
     // screens_REmap_20260614.md). Edited LEFT/RIGHT with wrap via the
-    // decrement/increment handler at 0x00440283+, target selected by
-    // DAT_0067ed40[item]. Fresh defaults are the s18/s24 jumped-to probe values.
-    int  ea74;              // DAT_0067ea74 game-type   (ed40==1; wrap 0..2)
-    int  ea90;              // DAT_0067ea90             (ed40==2; wrap 1..4)
-    int  ea94;              // DAT_0067ea94 vehicle     (ed40==3; wrap range [UNCERTAIN])
+    // decrement/increment handler (both dumped in full 2026-07-04, Mashed_pool15,
+    // FUN_0043dfd0.c dec L1449-1487/L1506-1548, inc L1685-1719/L1738-1781),
+    // dispatched by screen-kind (DAT_0067ed3c[depth], switch cases 0x12=18 /
+    // 0x18=24) then by the row selector `iVar8 = DAT_0067ed40[depth]` (read
+    // directly as the dispatch value — NOT a separate lookup table; see
+    // Nav_ConfigEditWrap). Fresh defaults are the s18/s24 jumped-to probe values.
+    int  ea74;              // DAT_0067ea74 game-type   (sel==1 both screens; wrap 0..2)
+    int  ea90;              // DAT_0067ea90             (sel==2 screen24 only; wrap 1..4)
+    int  ea94;              // DAT_0067ea94 vehicle     (sel==4 screen18/sel==3 screen24;
+                             //   wrap 0..0xc, orig skips FUN_00430830()==0 slots — that
+                             //   skip is NOT ported, see Nav_ConfigEditWrap [UNCERTAIN])
+    int  ea80;              // DAT_0067ea80 PowerUps    (sel==2 screen18; wrap 0..2)
+    int  ea78;              // DAT_0067ea78 toggle bool (sel==5 screen18, XOR 1)
+    int  ea98;              // DAT_0067ea98 Opp1        (sel==4 screen24; wrap 0..6,
+                             //   orig also calls FUN_00431b80(1) — not ported [UNCERTAIN])
+    int  ea9c;              // DAT_0067ea9c Opp2        (sel==5 screen24; wrap 0..6, ditto)
+    int  eaa0;              // DAT_0067eaa0 Opp3        (sel==6 screen24; wrap 0..6, ditto)
+    int  eaac;              // DAT_0067eaac toggle bool (sel==7 screen24, XOR 1)
 };
 
 // Access / reset the standalone game state (defaults = fresh main menu).
@@ -190,15 +206,23 @@ void Nav_ContinueCupConfirm();
 void Nav_SetCupContinueVariant(int v);
 
 // --- [D-11057] game-config option-row editing (screens 18/24) --------------
-// Confirmed decrement/increment-with-wrap over the option-row value selected by
-// DAT_0067ed40[item] (FUN_0043dfd0 dec handler at 0x00440283+). `sel` is the
-// per-item selector value (EDI = DAT_0067ed40[item]); `dir` is -1 (LEFT/dec) or
-// +1 (RIGHT/inc). Wrap ranges are verbatim from the d11057 confirm note:
-//   sel==1 -> ea74 wrap 0..2 ; sel==2 -> ea90 wrap 1..4 ; sel==3 -> ea94 [see below].
-// Returns true if a value changed. NOTE: the ed40[] item->selector contents,
-// ea94's wrap range, and the live screen-row wiring are NOT yet harvested — this
-// is the confirmed edit PRIMITIVE only; see FABLE HAND-OFF before live-wiring.
-bool Nav_ConfigEditWrap(int sel, int dir);
+// Verbatim decrement/increment-with-wrap over the option-row value selected by
+// the screen-kind (`screen_id`: 18 or 24; DAT_0067ed3c[depth] switch cases
+// 0x12/0x18) and the row selector (`sel`; DAT_0067ed40[depth], read directly as
+// the dispatch value — the original does NOT use a separate row->selector
+// lookup table, see MenuNavSM.h/.cpp D-11057 comments). `dir` is -1 (LEFT/dec)
+// or +1 (RIGHT/inc). Both directions confirmed 2026-07-04 (Mashed_pool15) via
+// full decode of FUN_0043dfd0's dec (0x00440283+) and inc handlers:
+//   screen 18: sel 1->ea74(0..2) 2->ea80(0..2) 3->ea7c(0..4) 4->ea94(0..0xc)
+//              5->ea78(toggle) 6->ea88(GameLength, see MenuGameState comment).
+//   screen 24: sel 1->ea74(0..2) 2->ea90(1..4) 3->ea94(0..0xc) 4->ea98(0..6)
+//              5->ea9c(0..6) 6->eaa0(0..6) 7->eaac(toggle).
+// Returns true if a value changed. NOT ported (see per-field [UNCERTAIN] notes
+// in MenuGameState): the ea94 skip-invalid-vehicle check (orig calls
+// FUN_00430830, an original-address hook incompatible with the standalone
+// process), the FUN_00431b80(1) opponent-refresh side effect, and ea88's
+// FUN_0042f500 recheck gate + track-set-dependent upper bound.
+bool Nav_ConfigEditWrap(int screen_id, int sel, int dir);
 
 // --- accessors for the renderer --------------------------------------------
 

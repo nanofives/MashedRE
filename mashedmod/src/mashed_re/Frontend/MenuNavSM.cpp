@@ -160,6 +160,12 @@ const MenuGameState kFreshState = {
     1,                   // ea74  game-type (s18/s24 probe default; wrap 0..2)
     1,                   // ea90  (s18/s24 probe default; wrap 1..4)
     0,                   // ea94  vehicle   (s18/s24 probe default)
+    0,                   // ea80  PowerUps  (s18/s24 probe default; wrap 0..2)
+    0,                   // ea78  toggle    (not probed; [UNCERTAIN] default 0)
+    4,                   // ea98  Opp1      (s18/s24 probe default; wrap 0..6)
+    2,                   // ea9c  Opp2      (s18/s24 probe default; wrap 0..6)
+    3,                   // eaa0  Opp3      (s18/s24 probe default; wrap 0..6)
+    0,                   // eaac  toggle    (not probed; [UNCERTAIN] default 0)
 };
 MenuGameState g_game_state = kFreshState;
 
@@ -222,6 +228,13 @@ int ActionToScreen(std::uint32_t action, int slot_kind) {
     switch (action) {
         // (A) unconditional pushes -----------------------------------------
         case 0xff430000u: return 0x13; // L1116
+        // L1137-1143 (Mashed_pool15, 2026-07-04): the FULL original handler is
+        // `DAT_0067f1a8=0; FUN_0043d2a0(7,0); if(ed6c==2) e9fc=3` — i.e. this is
+        // the SAME body as Nav_ContinueCupConfirm(). Nav_Select() special-cases
+        // this action (below) to call Nav_ContinueCupConfirm() directly, so this
+        // entry is the reachability-BFS/NavTest routing summary only (kT21 item
+        // "0x18"; ed6c==0 there in practice, so the omitted side effect is inert
+        // for that screen; retained here for NavTest_ActionToScreen callers).
         case 0xff490000u: return 7;    // L1138
         case 0xff4b0000u: return 1;    // L1133
         case 0xff4d0000u: return 4;    // L941
@@ -234,10 +247,22 @@ int ActionToScreen(std::uint32_t action, int slot_kind) {
         case 0xff2e0000u: return 4;    // L816 -> LAB_0043f1fd -> push 4
         case 0xff2d0000u:              // L400 -> LAB_0043f21d
         case 0xff2f0000u: return 10;   // L287
-        case 0xff300000u:              // L849: DAT_0067ecdc=1 -> LAB_0043f203 -> push 4
+        // L850/854 (Mashed_pool15, 2026-07-04 full decode): dispatch is a plain
+        // nested if/else range-narrowing ladder over the raw action code
+        // (`uVar10 == 0xff300000` / `uVar10 != 0xff310000`) — literal equality,
+        // not a shifted/jump-table index. This resolves the prior [UNCERTAIN]
+        // (d11057_fable_ghidra_confirm_2026-07-03.md): the ladder shape is just
+        // Ghidra's rendering of the compiler's sorted-range dispatch; nothing
+        // about the ecdc=1/2 comparisons themselves is indirect.
+        // Both arms also fill DAT_0067eaf0..0067eb7f (12x uint32 @ stride 0xc,
+        // L857-861/L858-862) with 0xffffffff before the shared
+        // `goto LAB_0043f203` (FUN_0043d2a0(4,0); DAT_0067ea68=1). No standalone
+        // consumer reads that span (same as DAT_0067f1a8/ea68 elsewhere in this
+        // file) — not ported.
+        case 0xff300000u:              // L850: DAT_0067ecdc=1 -> LAB_0043f203 -> push 4
             g_game_state.flag_ecdc = 1;
             return 4;
-        case 0xff310000u:              // L853: DAT_0067ecdc=2 -> LAB_0043f203 -> push 4
+        case 0xff310000u:              // L855: DAT_0067ecdc=2 -> LAB_0043f203 -> push 4
             g_game_state.flag_ecdc = 2;
             return 4;
         case 0xff360000u: return 0xb;  // L863
@@ -1103,11 +1128,16 @@ void Nav_SetCupContinueVariant(int v) { g_cup_continue_variant = v ? 1 : 0; }
 
 // --------------------------------------------------------------------------
 // [D-11057] game-config option-row edit primitive (decrement/increment-with-
-// wrap; FUN_0043dfd0 dec handler at 0x00440283+, Fable confirm note). Confirmed
-// selector->target->wrap arms only; the ed40[] item->selector contents, ea94's
-// range, and the live screen wiring need the Ghidra dump (see FABLE HAND-OFF).
+// wrap). Verbatim port of FUN_0043dfd0's screen-kind-gated dec (0x00440283+,
+// L1449-1487 screen18 / L1506-1548 screen24) and inc (L1685-1719 screen18 /
+// L1738-1781 screen24) handlers — full decode 2026-07-04, Mashed_pool15,
+// read-only. `screen_id` selects which handler (18 or 24; DAT_0067ed3c[depth]
+// switch cases 0x12/0x18); `sel` is the row selector, read directly from
+// DAT_0067ed40[depth] with NO separate row->selector table (confirmed: the
+// switch dispatches on the raw stored value, e.g. FUN_0042aa00's cursor-move
+// writes that same slot). `dir` is -1 (LEFT/dec) or +1 (RIGHT/inc).
 // --------------------------------------------------------------------------
-bool Nav_ConfigEditWrap(int sel, int dir) {
+bool Nav_ConfigEditWrap(int screen_id, int sel, int dir) {
     if (dir == 0) return false;
     const int step = (dir < 0) ? -1 : +1;
     MenuGameState& gs = g_game_state;
@@ -1115,16 +1145,54 @@ bool Nav_ConfigEditWrap(int sel, int dir) {
         const int span = hi - lo + 1;                    // inclusive [lo..hi]
         return lo + (((v - lo) + st) % span + span) % span;
     };
-    switch (sel) {                                       // EDI = DAT_0067ed40[item]
-    case 1: { int n = wrap(gs.ea74, 0, 2, step); if (n == gs.ea74) return false; gs.ea74 = n; return true; }
-    case 2: { int n = wrap(gs.ea90, 1, 4, step); if (n == gs.ea90) return false; gs.ea90 = n; return true; }
-    case 3:
-        // ea94 (DAT_0067ea94, vehicle): wrap RANGE not yet harvested. Left
-        // unedited to avoid a guessed range (NO-GUESSING). See FABLE HAND-OFF.
-        return false;
-    default:
-        return false;
+    auto set = [](int& field, int n, int old) { if (n == old) return false; field = n; return true; };
+
+    if (screen_id == 18) {
+        switch (sel) {
+        case 1: return set(gs.ea74, wrap(gs.ea74, 0, 2, step), gs.ea74);
+        case 2: return set(gs.ea80, wrap(gs.ea80, 0, 2, step), gs.ea80);
+        case 3: return set(gs.ea7c, wrap(gs.ea7c, 0, 4, step), gs.ea7c);
+        case 4:
+            // ea94 (vehicle): orig wraps 0..0xc but SKIPS slots where
+            // FUN_00430830(candidate)==0 (a "valid vehicle" predicate). That
+            // callee is a hook over original-process-only addresses
+            // (0x007f0axx, MenuScoreSort.cpp SplitScreenTrackAssignment) with
+            // no standalone equivalent table — skip-invalid is NOT ported
+            // [UNCERTAIN]; every slot in 0..0xc is treated as selectable.
+            return set(gs.ea94, wrap(gs.ea94, 0, 0xc, step), gs.ea94);
+        case 5: gs.ea78 = gs.ea78 ^ 1; return true;   // toggle, both directions XOR
+        case 6:
+            // ea88 (GameLength): orig wrap upper bound depends on
+            // DAT_007f0a5c[track_set*0x30] (an unlock flag; unavailable
+            // standalone, assumed 0 as with unlock_track/unlock_car
+            // elsewhere) plus a FUN_0042f500 (GetDat0067ea64) recheck gate.
+            // Under trackflag==0 the confirmed dec/inc arms collapse to a
+            // plain 0<->1 toggle (dec: 0->1,1->0,2->1; inc: 0->1,1->0(via
+            // transient 2); "2" is never a resting value) — [UNCERTAIN]
+            // if trackflag would be nonzero on a real save/track-set.
+            gs.ea88 = gs.ea88 ? 0 : 1;
+            return true;
+        default: return false;
+        }
     }
+    if (screen_id == 24) {
+        switch (sel) {
+        case 1: return set(gs.ea74, wrap(gs.ea74, 0, 2, step), gs.ea74);
+        case 2: return set(gs.ea90, wrap(gs.ea90, 1, 4, step), gs.ea90);
+        case 3:
+            // ea94 (vehicle): same skip-invalid caveat as screen18 sel4 above.
+            return set(gs.ea94, wrap(gs.ea94, 0, 0xc, step), gs.ea94);
+        case 4:
+            // ea98 (Opp1): orig also calls FUN_00431b80(1) (car-select cursor
+            // mover, 0x00431b80, C2) after the wrap — not ported [UNCERTAIN].
+            return set(gs.ea98, wrap(gs.ea98, 0, 6, step), gs.ea98);
+        case 5: return set(gs.ea9c, wrap(gs.ea9c, 0, 6, step), gs.ea9c);   // Opp2, ditto
+        case 6: return set(gs.eaa0, wrap(gs.eaa0, 0, 6, step), gs.eaa0);   // Opp3, ditto
+        case 7: gs.eaac = gs.eaac ^ 1; return true;   // toggle, both directions XOR
+        default: return false;
+        }
+    }
+    return false;
 }
 
 bool Nav_Select() {
@@ -1143,6 +1211,18 @@ bool Nav_Select() {
     // caller (Nav_TakePendingCupModal). Handled before the generic routing.
     if (action == 0xff240000u) {
         return Nav_ContinueCupBegin();
+    }
+    // [D-11057] 0xff490000 is the continue-cup modal's own confirm action
+    // (FUN_0043dfd0.c L1137-1143, Mashed_pool15 2026-07-04: identical body to
+    // Nav_ContinueCupConfirm — push 7, e9fc=3 iff ed6c==2). The standalone's
+    // modal system (exe_main ModalGo) already calls Nav_ContinueCupConfirm()
+    // directly on button-confirm, so this only matters if 0xff490000 is ever
+    // reached via a normal item select (kT21); intercepted here for exact
+    // parity with any such path (ed6c==0 there in practice, so it's a no-op
+    // beyond the plain push).
+    if (action == 0xff490000u) {
+        Nav_ContinueCupConfirm();
+        return true;
     }
     // WS-G2: apply the action's game-mode side effect before the nav dispatch
     // (faithful to FUN_0043dfd0, which writes DAT_0067e9fc inline in the action

@@ -440,8 +440,9 @@ int main() {
     std::printf("  Piece 5: %s (%d failures)\n", cc_fail ? "RED" : "GREEN", cc_fail);
 
     // ----------------------------------------------------------------------
-    // Piece 6 (D-11057) — game-config wrap-edit primitive (confirmed arms only).
-    // ea74 wrap 0..2, ea90 wrap 1..4; ea94 deferred (no guessed range).
+    // Piece 6 (D-11057) — game-config wrap-edit primitive. Full screen18/24
+    // selector tables confirmed 2026-07-04 (Mashed_pool15, full dec+inc decode
+    // of FUN_0043dfd0's 0x00440283+ handler).
     // ----------------------------------------------------------------------
     std::printf("\n=== Piece 6 (D-11057): config wrap-edit primitive ===\n");
     int ce_fail = 0;
@@ -449,24 +450,68 @@ int main() {
         std::printf("  [%s] %-40s : %s\n", ok ? "ok" : "FAIL", what, ok ? "OK" : "FAIL");
         if (!ok) ++ce_fail;
     };
-    // ea74 (sel 1) wrap 0..2: dec 0->2, inc 2->0.
+    // ea74 (sel 1, both screens) wrap 0..2: dec 0->2, inc 2->0.
     Nav_GameStateReset();
-    Nav_GameState().ea74 = 0; Nav_ConfigEditWrap(1, -1);
-    echeck("ea74 dec 0->2", Nav_GameState().ea74 == 2);
-    Nav_GameState().ea74 = 2; Nav_ConfigEditWrap(1, +1);
-    echeck("ea74 inc 2->0", Nav_GameState().ea74 == 0);
-    Nav_GameState().ea74 = 1; Nav_ConfigEditWrap(1, +1);
-    echeck("ea74 inc 1->2", Nav_GameState().ea74 == 2);
-    // ea90 (sel 2) wrap 1..4: dec 1->4, inc 4->1.
-    Nav_GameState().ea90 = 1; Nav_ConfigEditWrap(2, -1);
-    echeck("ea90 dec 1->4", Nav_GameState().ea90 == 4);
-    Nav_GameState().ea90 = 4; Nav_ConfigEditWrap(2, +1);
-    echeck("ea90 inc 4->1", Nav_GameState().ea90 == 1);
-    Nav_GameState().ea90 = 2; Nav_ConfigEditWrap(2, +1);
-    echeck("ea90 inc 2->3", Nav_GameState().ea90 == 3);
-    // ea94 (sel 3) deferred: no change (range not harvested).
-    Nav_GameState().ea94 = 0;
-    echeck("ea94 sel3 deferred -> no change", !Nav_ConfigEditWrap(3, +1) && Nav_GameState().ea94 == 0);
+    Nav_GameState().ea74 = 0; Nav_ConfigEditWrap(18, 1, -1);
+    echeck("s18 ea74 dec 0->2", Nav_GameState().ea74 == 2);
+    Nav_GameState().ea74 = 2; Nav_ConfigEditWrap(24, 1, +1);
+    echeck("s24 ea74 inc 2->0", Nav_GameState().ea74 == 0);
+    Nav_GameState().ea74 = 1; Nav_ConfigEditWrap(18, 1, +1);
+    echeck("s18 ea74 inc 1->2", Nav_GameState().ea74 == 2);
+    // s18 sel2 -> ea80 wrap 0..2.
+    Nav_GameState().ea80 = 0; Nav_ConfigEditWrap(18, 2, -1);
+    echeck("s18 ea80 dec 0->2", Nav_GameState().ea80 == 2);
+    Nav_GameState().ea80 = 2; Nav_ConfigEditWrap(18, 2, +1);
+    echeck("s18 ea80 inc 2->0", Nav_GameState().ea80 == 0);
+    // s18 sel3 -> ea7c wrap 0..4.
+    Nav_GameState().ea7c = 0; Nav_ConfigEditWrap(18, 3, -1);
+    echeck("s18 ea7c dec 0->4", Nav_GameState().ea7c == 4);
+    Nav_GameState().ea7c = 4; Nav_ConfigEditWrap(18, 3, +1);
+    echeck("s18 ea7c inc 4->0", Nav_GameState().ea7c == 0);
+    // s18 sel4 -> ea94 wrap 0..0xc (vehicle; skip-invalid NOT ported).
+    Nav_GameState().ea94 = 0; Nav_ConfigEditWrap(18, 4, -1);
+    echeck("s18 ea94 dec 0->0xc", Nav_GameState().ea94 == 0xc);
+    Nav_GameState().ea94 = 0xc; Nav_ConfigEditWrap(18, 4, +1);
+    echeck("s18 ea94 inc 0xc->0", Nav_GameState().ea94 == 0);
+    // s18 sel5 -> ea78 toggle, both directions XOR.
+    Nav_GameState().ea78 = 0; Nav_ConfigEditWrap(18, 5, -1);
+    echeck("s18 ea78 dec toggle 0->1", Nav_GameState().ea78 == 1);
+    Nav_ConfigEditWrap(18, 5, +1);
+    echeck("s18 ea78 inc toggle 1->0", Nav_GameState().ea78 == 0);
+    // s18 sel6 -> ea88 GameLength: trackflag==0 assumption collapses to a
+    // plain 0<->1 toggle both directions (see MenuNavSM.cpp comment).
+    Nav_GameState().ea88 = 0; Nav_ConfigEditWrap(18, 6, -1);
+    echeck("s18 ea88 dec toggle 0->1", Nav_GameState().ea88 == 1);
+    Nav_ConfigEditWrap(18, 6, +1);
+    echeck("s18 ea88 inc toggle 1->0", Nav_GameState().ea88 == 0);
+    // s24 sel2 -> ea90 wrap 1..4: dec 1->4, inc 4->1.
+    Nav_GameState().ea90 = 1; Nav_ConfigEditWrap(24, 2, -1);
+    echeck("s24 ea90 dec 1->4", Nav_GameState().ea90 == 4);
+    Nav_GameState().ea90 = 4; Nav_ConfigEditWrap(24, 2, +1);
+    echeck("s24 ea90 inc 4->1", Nav_GameState().ea90 == 1);
+    Nav_GameState().ea90 = 2; Nav_ConfigEditWrap(24, 2, +1);
+    echeck("s24 ea90 inc 2->3", Nav_GameState().ea90 == 3);
+    // s24 sel3 -> ea94 wrap 0..0xc (same vehicle field as s18 sel4).
+    Nav_GameState().ea94 = 0; Nav_ConfigEditWrap(24, 3, -1);
+    echeck("s24 ea94 dec 0->0xc", Nav_GameState().ea94 == 0xc);
+    // s24 sel4/5/6 -> ea98/ea9c/eaa0 (Opp1/2/3) wrap 0..6.
+    Nav_GameState().ea98 = 0; Nav_ConfigEditWrap(24, 4, -1);
+    echeck("s24 ea98 dec 0->6", Nav_GameState().ea98 == 6);
+    Nav_GameState().ea98 = 6; Nav_ConfigEditWrap(24, 4, +1);
+    echeck("s24 ea98 inc 6->0", Nav_GameState().ea98 == 0);
+    Nav_GameState().ea9c = 0; Nav_ConfigEditWrap(24, 5, -1);
+    echeck("s24 ea9c dec 0->6", Nav_GameState().ea9c == 6);
+    Nav_GameState().eaa0 = 0; Nav_ConfigEditWrap(24, 6, -1);
+    echeck("s24 eaa0 dec 0->6", Nav_GameState().eaa0 == 6);
+    // s24 sel7 -> eaac toggle, both directions XOR.
+    Nav_GameState().eaac = 0; Nav_ConfigEditWrap(24, 7, -1);
+    echeck("s24 eaac dec toggle 0->1", Nav_GameState().eaac == 1);
+    Nav_ConfigEditWrap(24, 7, +1);
+    echeck("s24 eaac inc toggle 1->0", Nav_GameState().eaac == 0);
+    // Unknown screen id / selector -> no-op.
+    Nav_GameState().ea74 = 1;
+    echeck("unknown screen -> no change", !Nav_ConfigEditWrap(7, 1, +1) && Nav_GameState().ea74 == 1);
+    echeck("unknown sel -> no change", !Nav_ConfigEditWrap(18, 9, +1) && Nav_GameState().ea74 == 1);
     Nav_GameStateReset();
     std::printf("  Piece 6: %s (%d failures)\n", ce_fail ? "RED" : "GREEN", ce_fail);
 

@@ -1555,7 +1555,9 @@ void TrackRenderer::LoadCopters(IDirect3DDevice9* dev, Piz::Archive& piz,
 
     // slot -> .anm filename; (model, slot) bindings
     char anm[16][64] = {};
-    struct Bind { char model[32]; int slot; };
+    // gameplay=true: KTC_NewCopter (KTCSCRIPT.LUA, rule-5 feed); false:
+    // SetCopter (COURSE.LUA, scenery-only, D-11056/U-8997).
+    struct Bind { char model[32]; int slot; bool gameplay; };
     std::vector<Bind> binds;
     auto scan_lua = [&](const char* txt, std::size_t len) {
         std::size_t pos = 0;
@@ -1586,7 +1588,7 @@ void TrackRenderer::LoadCopters(IDirect3DDevice9* dev, Piz::Archive& piz,
                 if (std::sscanf(k, "KTC_NewCopter( \"%31[^\"]\" %*[ ,]%d",
                                 nm, &slot) == 2 && slot >= 0) {
                     Bind b{}; std::snprintf(b.model, sizeof(b.model), "%s", nm);
-                    b.slot = slot; binds.push_back(b);
+                    b.slot = slot; b.gameplay = true; binds.push_back(b);
                 }
             }
         }
@@ -1662,12 +1664,17 @@ void TrackRenderer::LoadCopters(IDirect3DDevice9* dev, Piz::Archive& piz,
         AnimCopter c;
         c.model = mi;
         c.anim = std::move(ha);
+        c.gameplay = b.gameplay;
         copters_.push_back(std::move(c));
         ++loaded;
     }
-    if (log) std::fprintf(log,
-        "  F2 copters: %d flying, %zu models from %s\n",
-        loaded, copter_models_.size(), perm.c_str());
+    if (log) {
+        int gameplay_n = 0;
+        for (const auto& c : copters_) if (c.gameplay) ++gameplay_n;
+        std::fprintf(log,
+            "  F2 copters: %d flying, %zu models from %s (%d gameplay/rule-5)\n",
+            loaded, copter_models_.size(), perm.c_str(), gameplay_n);
+    }
 }
 
 namespace {
@@ -2880,6 +2887,10 @@ void TrackRenderer::StartRound() {
     // (3 back-to-back expiry rounds observed with a stale timer) — leave it.
     for (int s = 0; s < Race::RuleEngine::kCars; ++s)
         rulep_.finishOrder[s] = Race::RuleEngine::kEmptySlot;
+    // [D-11056] re-arm the rule-5 collectible feed each round (collectTotal
+    // is fixed per-track by SetRaceRule; only the per-round done state resets).
+    rulep_.collectDone = 0;
+    for (auto& c : copters_) c.done = false;
     // F4: reset the race clock + the player's per-lap split records.
     race_time_ = 0.f;
     for (int k = 0; k < kMaxSplits; ++k) { split_time_[k] = 0.f; split_done_[k] = false; }
@@ -2975,19 +2986,33 @@ void TrackRenderer::SetRaceRule(int rule) {
     rule10_hit_mask_ = 0;
     rule10_lap_seen_ = -1;
     match_draw_ = false;
-    // [D-11056] rule-5 fallback: SetCollectibles/OnCollect have no callers
-    // yet (no collectible feed), so collectTotal stays 0, CollectAllDone
-    // (0x00405890: total==0 -> false) can never fire, and SegmentCheck(5)
-    // skips the elimination block — nothing could ever end the round. Until
-    // the feed lands, disable the rule engine for THIS race only (per-race
+    // [D-11056] rule-5 collectible feed (U-8997 RESOLVED 2026-07-04): total =
+    // the KTC_NewCopter gameplay copters loaded for this track (registrar
+    // FUN_00405780's per-object DAT_0063a5d0 increments, one per KTC_NewCopter
+    // command; confirmed disjoint from KTC_AddPickUp's separate FUN_00405730
+    // registrar). Each copter reports done via OnCollect() on completing one
+    // flight-path traversal (UpdateRace), mirroring FUN_004064c0's per-object
+    // DAT_0063a5d4 completion tick. See
+    // re/analysis/d11056_fable_ghidra_findings_2026-07-03.md.
+    {
+        int collect_total = 0;
+        for (auto& c : copters_) {
+            c.done = false;
+            if (c.gameplay) ++collect_total;
+        }
+        SetCollectibles(collect_total);
+    }
+    // Fallback: a track assigned rule 5 with zero KTC_NewCopter copters could
+    // never satisfy CollectAllDone (0x00405890: total==0 -> false), stalling
+    // the round forever. Disable the rule engine for THIS race only (per-race
     // flag; the rule_engine_on_ master latch is untouched) so the legacy
-    // laps/elimination collapse in UpdateRace terminates rounds. Re-armed
-    // true here on every new race.
+    // laps/elimination collapse in UpdateRace terminates rounds instead.
+    // Re-armed true here on every new race.
     rule_engine_race_on_ = true;
     if (rule_ == 5 && rulep_.collectTotal == 0) {
         rule_engine_race_on_ = false;
         if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
-            std::fprintf(lf, "rule-5 collectible feed absent (D-11056) -- "
+            std::fprintf(lf, "rule-5: track has no KTC_NewCopter collectibles -- "
                              "legacy flow fallback\n");
             std::fclose(lf);
         }
@@ -3122,6 +3147,18 @@ void TrackRenderer::UpdateRace(float dt) {
 
     if (!round_mode_) return;   // race rules only run during a match (both modes
                                 // update the shared camera below).
+
+    // [D-11056] rule-5 collectible feed: a KTC_NewCopter gameplay copter
+    // "collects" by completing one traversal of its bound flight path —
+    // mirrors FUN_004064c0's per-object completion tick (unconditional on
+    // rule, like the original; only rule 5's predicate reads collectDone).
+    for (auto& c : copters_) {
+        if (!c.gameplay || c.done) continue;
+        if (c.anim.duration > 0.f && race_time_ >= c.anim.duration) {
+            c.done = true;
+            OnCollect();
+        }
+    }
 
     // ---- VERBATIM-PORTED camera + elimination (replaces the ">7 gates"
     // scaffold). Adapters: standalone race state -> RaceCamCar quantities

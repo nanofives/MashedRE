@@ -248,7 +248,10 @@ private:
         std::vector<IDirect3DTexture9*> textures;
     };
     std::vector<CopterModel> copter_models_;
-    struct AnimCopter { int model = -1; Track::HAnim anim; };
+    // gameplay=true: bound via KTCSCRIPT.LUA KTC_NewCopter (rule-5 collectible
+    // feed, D-11056/U-8997); done=true once it has completed one traversal of
+    // its flight path this round (UpdateRace -> OnCollect()).
+    struct AnimCopter { int model = -1; Track::HAnim anim; bool gameplay = false; bool done = false; };
     std::vector<AnimCopter>  copters_;
     // Parse the copter wiring from the track piz's COURSE.LUA + KTCSCRIPT.LUA,
     // load the bound .ANM paths (track piz) and model DFFs (Common/Perm.piz).
@@ -521,8 +524,15 @@ public:
     int   race_rule() const { return rule_; }
     float rule_timer() const { return rulep_.timer; }   // rule-10 HUD countdown
     bool  match_draw() const { return match_draw_; }    // EvaluateResult == -1
-    // Rule-5 collectible feed (DAT_0063a5d0/DAT_0063a5d4 equivalents): the
-    // pickup/prop layer registers a total and reports collections.
+    // Rule-5 collectible feed (DAT_0063a5d0/DAT_0063a5d4 equivalents). U-8997
+    // RESOLVED 2026-07-04 (Ghidra Mashed_pool14): the sole feeder is the
+    // KTC_NewCopter track-script command (F2 gameplay copters in copters_,
+    // AnimCopter::gameplay==true) — confirmed disjoint from KTC_AddPickUp,
+    // which calls a different registrar (FUN_00405730) touching unrelated
+    // globals. total = count of loaded KTC_NewCopter copters (SetRaceRule);
+    // each reports done via OnCollect() on completing one flight-path
+    // traversal (UpdateRace), mirroring FUN_004064c0's per-object completion
+    // tick. See re/analysis/d11056_fable_ghidra_findings_2026-07-03.md.
     void  SetCollectibles(int total) { rulep_.collectTotal = total; rulep_.collectDone = 0; }
     void  OnCollect() { ++rulep_.collectDone; }
     // true: the player car is driven by input (a human races); false: the

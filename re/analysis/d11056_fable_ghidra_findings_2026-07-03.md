@@ -46,15 +46,76 @@ fn-ptr. **The `KTC_NewCopter` command is the sole feeder of `FUN_00405780`.**
 completion-updater + spline/render updates); it never calls `FUN_00405780` and never increments
 `DAT_0063a5d0`. Spawn/registration happens solely at KTC-parse time via 0x0047b720.
 
-## Open question (blocks the fix decision) — [UNCERTAIN]
-Does the **rule-5 win predicate's `collectTotal`** count the copter objects fed by `KTC_NewCopter`
-(→ `DAT_0063a5d0`), or the `KTC_AddPickUp` objects (a different array)? The only feeder of
-`DAT_0063a5d0` via `FUN_00405780` is `KTC_NewCopter`; whether rule-5 reads that array or the pickup
-array is unresolved. **Next step (Fable/Ghidra):** find what the rule-5 SegmentCheck/CollectAllDone
-path reads for its total, and whether `KTC_AddPickUp` (0x0047b7d0) populates that same array.
+## Resolved 2026-07-04 (Ghidra, Mashed_pool14): rule-5 reads the copter array exclusively
 
-## Fix path (once the array question is resolved)
-Standalone wiring options: (a) run the `KTC_NewCopter` (and/or `KTC_AddPickUp`) handler per matching
-command while parsing the track's KTC script; or (b) call `FUN_00405780(name, idxArray, count)` (and
-the pickup registrar) directly per object during track load. Feed `collectTotal` from whichever array
-the rule-5 predicate actually reads.
+`FUN_00405890` (rule-5 win predicate) decompiles to:
+```c
+bool FUN_00405890(void)
+{
+  if (DAT_0063a5d0 == 0) { return false; }
+  return DAT_0063a5d4 == DAT_0063a5d0;
+}
+```
+Both operands are `DAT_0063a5d0`/`DAT_0063a5d4` — the copter/waypoint-object counters.
+
+`reference_to 0x0063a5d0` (20 xrefs) confirms the only writers are `FUN_00405780` (0x00405879, the
+registrar's `DAT_0063a5d0 = DAT_0063a5d0 + 1`) and `FUN_004074a0` (0x004074fa, wipe-all reset to 0
+at track load). `FUN_00405780`'s decompile confirms it writes the copter record into the
+`DAT_00639d80`-based array (stride `0xec`, indexed by the pre-increment value of `DAT_0063a5d0`) and
+then increments `DAT_0063a5d0` — i.e. `DAT_0063a5d0` is the **total registered copter count**.
+
+`FUN_004064c0` (the per-object per-frame completion tick over that same array, `this`-pointer
+`in_EAX`) contains the sole writer of `DAT_0063a5d4`: `DAT_0063a5d4 = DAT_0063a5d4 + 1;` gated on
+`*(int*)(in_EAX+0x48) == 0 && _DAT_005cc320 <= local_1c` (first-time completion of that copter's
+waypoint list). So `DAT_0063a5d4` is the **completed-copter count**, incremented once per copter
+object as it finishes its route.
+
+**`KTC_AddPickUp` (0x0047b7d0) does NOT feed this pair.** Disassembly of its body (it is not a bound
+Ghidra FUNCTION object, so `decomp_function` errors — same artifact as `KTC_NewCopter`) shows it
+tokenizes 5 floats via `CALL 0x004b7090`/`FSTP`, then calls **`CALL 0x00405730`** — a different
+registrar entirely. `FUN_00405730`'s decompile:
+```c
+void FUN_00405730(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+{
+  int iVar1 = (&DAT_0063a478)[param_1];
+  int iVar3 = (iVar1 + param_1 * 10) * 0xc;
+  undefined4 uVar2 = FUN_00458e00(param_2,param_3);
+  *(undefined4 *)(&DAT_0063a228 + iVar3) = uVar2;
+  (&DAT_0063a478)[param_1] = iVar1 + 1;
+  *(undefined4 *)(&DAT_0063a220 + iVar3) = param_4;
+  *(undefined4 *)(&DAT_0063a224 + iVar3) = param_4;
+}
+```
+It writes into `DAT_0063a220`/`0x0063a224`/`0x0063a228`/`0x0063a478` — an address range disjoint from
+`DAT_00639d80`/`DAT_0063a5d0`/`DAT_0063a5d4`. `KTC_AddPickUp` objects are confirmed to be an
+unrelated pool that never reaches the rule-5 predicate.
+
+**Conclusion:** the rule-5 `collectTotal`/`collectDone` pair is fed exclusively by the
+`KTC_NewCopter` chain (`FUN_00405780` registrar incrementing `DAT_0063a5d0`; `FUN_004064c0`
+per-object completion tick incrementing `DAT_0063a5d4`). `KTC_AddPickUp` is out of scope for rule-5.
+Closes U-8997; unblocks D-11056.
+
+### Definitive xref closure (both arrays, per the reader-survey's minimal check list)
+
+`reference_to 0x0063a5d0` (20 xrefs) and `reference_to 0x0063a5d4` (5 xrefs) exhaustively
+account for every write:
+- `DAT_0063a5d0`: written only by `FUN_00405780` (0x00405786/0x004057e4 read, 0x00405879
+  `+= 1`) and `FUN_004074a0` (0x004074fa, full wipe to 0).
+- `DAT_0063a5d4`: written only by `FUN_004064c0` (0x004066ea read, 0x00406703 `+= 1`, the
+  completion tick) and two reset sites — `FUN_004074a0` (0x00407500, full wipe) and a
+  **newly-decompiled `FUN_004073b0`** (0x0040748c): a per-object field reset over the
+  `DAT_00639d80` array (indices `0..DAT_0063a5d0-1`, i.e. it does NOT touch the total count)
+  that ends with `DAT_0063a5d4 = 0; DAT_0063a5d8 = 0;`. This is a **per-round soft reset**
+  (re-arm completion state, keep the registered-object count) as distinct from
+  `FUN_004074a0`'s full wipe (new track/race) — structurally the same two-tier reset the
+  standalone now implements (`SetRaceRule` = full `SetCollectibles(total)`; `StartRound` =
+  `collectDone`/per-copter `done` soft reset only). No unexplained writer exists for either
+  counter; the "which array" question is closed with full xref coverage, not just call-graph
+  coverage (which is known to miss unbound-function edges per the `KTC_NewCopter` case above).
+
+## Fix path
+Standalone wiring: run the `KTC_NewCopter` handler logic per matching command while parsing the
+track's KTC script — for each `KTC_NewCopter` object, register it (name + waypoint-index list) into
+the standalone's collectible-count state, incrementing `collectTotal`; increment `collectDone` when a
+copter's route completes (mirrors `FUN_004064c0`'s first-time-completion gate). `KTC_AddPickUp` is not
+part of this feed and needs no changes for rule-5.

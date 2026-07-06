@@ -27,12 +27,46 @@
 //                      memory_read pool11). Residual: [U-C-STEER-MAG] exact ESP-slot
 //                      / FPU-rounding of the ROUND(ST0) magnitude; [U-C-RATE0/1] the
 //                      two rate floats FUN_0046d6a0/6d0 (speed substituted; rate1=0).
+//   DONE (P4a 2026-07-04): FUN_00416a30/FUN_00417da0 control-step mode-4/9/8
+//                      variants (ControlStepM49/ControlStepM8) — same
+//                      simplification as ControlStep (targeting chain forced
+//                      mode 0 via SplineLookahead; mode-10/mode-6 predicate
+//                      overrides omitted, same stubbed predicates below).
+//                      FUN_00417180 bank-switch timer/RNG (BankSwitch) —
+//                      verbatim state machine; FUN_00472650 PRNG substituted
+//                      with std::rand() (documented approximation, out of
+//                      scope). FUN_00417640 post-step powerup-brake
+//                      (PostStepPowerupBrake) — verbatim gates; the dead
+//                      displacement/Vec3Magnitude computation elided (see
+//                      function comment); rate operand pinned via the shared
+//                      [U-C-RATE1]=0 substitute so the brake branch is
+//                      currently unreachable (always coasts).
+//   DONE (P4b 2026-07-04): FUN_004177b0 pre-tick rubber-banding
+//                      (AiPreTickRubberBand) — race-metric/finish-order-slot
+//                      update + mode-9/mode-4 speed rubber-banding + powerup
+//                      speed doubling + slow-line difficulty-flag state
+//                      machine, verbatim from asm (all previously-undecoded
+//                      U-8993 constants memory_read this session; U-8992/
+//                      U-8993/U-8994 left open, semantic/structural,
+//                      non-blocking). FUN_00472650 PRNG substituted with a
+//                      deterministic `return lo` stand-in (ForceIntegratorStubs.cpp
+//                      precedent) — only feeds the difficulty-flag probability
+//                      roll. FUN_0040e480 (CarSlotStateSet) alive-poke wired
+//                      into Ai_Standalone_Tick, individually gated on
+//                      car_alive per FUN_00418860's fresh decomp (corrects the
+//                      older plate's unconditional pseudocode). ControlStep's
+//                      m==5 (drum/oil) and m==2 (cross-product align, via
+//                      FUN_00408af0) tails ported (both currently unreachable —
+//                      `mode` stays hardcoded 0 pending the targeting-helper
+//                      port, same dead-tail status as the existing m==7/9
+//                      tails); m==2's vel[1] (vertical velocity) has no Host
+//                      accessor and is approximated 0.0f [UNCERTAIN]. VehicleStep's
+//                      override-replay tail (+0x40..0x4c, FUN_00418560's last
+//                      block) ported — clean integer logic, no callees.
 //   STUBBED (RVA TODO, port in WS-C follow-ups):
 //     FUN_00414570/00415880/00414a70/00414c30/004150e0/00414f00/004148b0/00415020
 //                  targeting + LOS helpers (modes 1..10) FUN_00416060 LOS  FUN_00415d00 wall
-//     FUN_00416a30 / FUN_00417da0      control-step variants (modes 4/9 / 8)
-//     FUN_004177b0 pre-tick rubber-banding  FUN_00417180 bank-switch timer/RNG
-//     FUN_00417640 powerup-brake  FUN_00415220 powerup activation  FUN_00417cf0 mode-8
+//     FUN_00415220 powerup activation  FUN_00417cf0 mode-8
 //     FUN_00443300 spline interpolation + FUN_00443dc0 curvature-walk/wall-march tail
 //     .AI parser (populates the 0x00801aa0 spline arrays + 0x007f1a9c tile grid)
 //   With targeting helpers stubbed, `mode`=0 (race-line follow); the REAL bands now
@@ -313,6 +347,40 @@ const float kRate1Brake    = 2000.0f;    // _DAT_005cd0b8
 const float kMode9BrakeA   = 1750.0f;    // _DAT_005cd0dc
 const float kMode9BrakeB   = 1250.0f;    // _DAT_005cd0d8
 const float kZeroF         = 0.0f;       // DAT_005d757c
+// ---- FUN_00417640 (PostStepPowerupBrake) additional constant (memory_read pool14 2026-07-04) ----
+const float kPowerupBrakeRateGate = 100.0f; // _DAT_005cc568
+// ---- FUN_00417180 (BankSwitch) additional constant (memory_read pool14 2026-07-04) ----
+const float kBankRandGate  = 0.5f;       // _DAT_005cc32c
+// ---- ControlStep m==5/m==2 tail constants (memory_read Mashed_pool13, session
+// d643c6ce5d6446ac8121c86ef902b00b, 2026-07-04; cited at FUN_00416250 0x004168a4+,
+// cross-checked against Ai/AiControlStep.cpp's verbatim .asi-hook reference port) ----
+const float kMode5AccelGate = 4.0f;      // _DAT_005cc35c
+const float kMode5BrakeGate = 6.0f;      // _DAT_005cd0a0
+const float kMode2AbsDotHi  = 0.9f;      // _DAT_005cc9c8
+const float kMode2AbsDotLo  = 0.8f;      // _DAT_005cc9bc
+// ---- FUN_004177b0 (AI pre-tick: race-metric + rubber-banding) constants
+// (memory_read Mashed_pool13, session d643c6ce5d6446ac8121c86ef902b00b, 2026-07-04;
+// cross-checked against re/analysis/race_rules_d1/0x004177b0.md + Ai/AiPreTick.cpp's
+// verbatim .asi-hook reference port. This is the byte-level decode U-8993 asked for
+// [U-8992]/[U-8993] stay open as-is — semantic, non-blocking.) ----
+const float kRaceMetricScale = 0.01f;    // _DAT_005cc328  (lap-fraction scale)
+const float kFinishThreshold = 3.0f;     // _DAT_005cc31c  (finish-order append gate)
+const float kSlotSentinel    = -1.0f;    // _DAT_005cc33c  (empty finish-slot sentinel)
+const float kMode9Thresh1    = 1.5f;     // _DAT_005cc348
+const float kMode9Thresh2    = 0.75f;    // _DAT_005cc950  (shared w/ mode-4 formula)
+const float kMode9Thresh3    = 0.025f;   // _DAT_005cc9a4
+const float kMode9Thresh4    = 2.0f;     // _DAT_005cc574  (shared w/ slow-line band-0)
+const float kMode4Mul1       = 0.1f;     // _DAT_005cc56c
+const float kMode4Mul2a      = 0.16666667f; // _DAT_005cc8f4 (~1/6)
+const float kMode4Mul2b      = 0.33333334f; // _DAT_005ccac8 (~1/3)
+const float kMode4SubHi      = 0.15f;    // _DAT_005cc8f0
+const float kMode4SubLo      = 0.25f;    // _DAT_005cc564
+const float kTickScale       = 0.00033333333f; // _DAT_005cc948 (~1/3000)
+const float kSlowBand1       = 12.0f;    // _DAT_005cc354
+const float kSlowBand2       = 22.0f;    // _DAT_005cd0f8
+const float kSlowBand3       = 42.0f;    // _DAT_005cd0f4
+const float kSlowBand4Lo     = 60.0f;    // _DAT_005cc728
+const float kSlowBand4Hi     = 62.0f;    // _DAT_005cd0f0
 // per-vehicle state arrays (ORIGINAL image-pad addresses; writable in the exe):
 //   stride 0x14: 0x008032d8 hist(other) / 0x008032dc hist(this) / 0x008032e0 prevSpeed
 //   stride 0x74: 0x0089a4ec timerState / 0x0089a4f0 timerStart / 0x0089a4f4 storedSteer
@@ -513,9 +581,283 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
         if (kMode9BrakeA < rate1) { ctrl[4] = 0; ctrl[5] = 0xff; }   // [U-C-RATE1]
         if (kMode9BrakeB < rate1) { ctrl[4] = 0; }
     }
-    // m==5 (drum/oil) + m==2 (cross-product align, needs FUN_00408af0) tails: TODO.
+    else if (m == 5) {
+        // FUN_00416250 mode-5 tail (0x004168a4..0x00416900): drum/oil-slick recovery
+        // wiggle. m5 = per-vehicle field at kAiStateBase+0x1c (0x0089a4e8; AiState.h's
+        // "+0x1c frustration timer" comment cites 0x0089a4e4 -- 4 bytes off from the
+        // address this listing actually reads; this port follows the live listing).
+        const float m5 = F32(a74(0x0089a4e8u, v));
+        if (!(m5 <= kMode5AccelGate)) ctrl[4] = 0;             // 0x004168aa/b7
+        if (!(m5 <= kMode5BrakeGate)) ctrl[5] = 0x40;          // 0x004168c1/ce
+        const int q = I32(0x007f0ff8u) / 0x3c;                 // race-timer /60 idiom
+        if (q & 0x20) ctrl[0] = 0xff; else ctrl[1] = 0xff;     // alternating steer wiggle
+    }
+    else if (m == 2) {
+        // FUN_00416250 mode-2 tail (0x00416942..0x004169e0): cross-product heading
+        // align vs. the FUN_00408af0 per-vehicle field-3 vector. pf = &DAT_008a96dc +
+        // v*0x30c (pure address, no deref -- AiVehicleFieldPtrGet/PromoLoop_round1.cpp).
+        // [UNCERTAIN U-9009] the original's vel[1] (Y/vertical velocity, FUN_0046d510) has
+        // no Host accessor (own_vel_xz is planar XZ only, matching SteerAngleError's own
+        // y/z-term-zeroing precedent); approximated 0.0f. Currently unreachable anyway:
+        // `mode` is hardcoded 0 above (targeting helpers 1..10 unported), so mode==2
+        // never executes yet -- same dead-tail status as mode==7/9 above.
+        const std::uintptr_t pf = 0x008a96dcu + static_cast<std::uintptr_t>(v) * 0x30cu; // FUN_00408af0
+        const float pf0 = F32(pf), pf1 = F32(pf + 4), pf2 = F32(pf + 8);
+        float velx, velz; s_host.own_vel_xz(v, &velx, &velz);
+        const float vely = 0.0f;   // [UNCERTAIN] vertical velocity unavailable via Host
+        const float dot   = pf1 * vely + velx * pf0 + velz * pf2;
+        const float cross = velx * pf2 - velz * pf0;
+        float absdot = dot;
+        if (dot < kZeroF) absdot = -dot;
+        if (cross < kZeroF) {
+            if (absdot < kMode2AbsDotHi) ctrl[1] = 0;
+            if (absdot < kMode2AbsDotLo) ctrl[0] = 0xff;
+        } else {
+            if (absdot < kMode2AbsDotHi) ctrl[0] = 0;
+            if (absdot < kMode2AbsDotLo) ctrl[1] = 0xff;
+        }
+    }
 
     // ---- final game-mode gate (race-class modes 6/5/9/10/11 keep throttle) ----
+    if (gameMode != 6 && gameMode != 5 && gameMode != 9 &&
+        gameMode != 10 && gameMode != 11) {
+        ctrl[4] = 0; ctrl[5] = 0;
+    }
+}
+
+// ===========================================================================
+// FUN_00416a30 — control-step mode-4/9 variant (hooks.csv: AiControlStepM49,
+// C3 2026-07-02; verbatim decomp+disasm re/analysis/wsr6_port_prep/
+// 0x00416a30_decomp.md). Verified instruction-identical to FUN_00416250 for
+// the STEER/ACCEL/BRAKE bands and the mode-7/9 tails; the only differences
+// are in the targeting chain (no mode-10 block, mode-6 uses FUN_00415220
+// instead of FUN_004148b0, NO commit to 0x0089a52c) — all downstream of the
+// SAME predicate/LOS helpers (FUN_00414570/15880/14a70/14c30/14f00/148b0/
+// 15220/16060/15d00) already STUBBED above (ControlStep's targeting chain
+// forces mode=0 via SplineLookahead in their place). Ported here with the
+// identical simplification, so the ONE portable, non-stubbed structural
+// delta vs ControlStep is: this variant never writes the behaviour-mode
+// record. Kept as an independent copy (not templated with ControlStep) so
+// editing one cannot silently change the other's already-tuned behavior.
+// ===========================================================================
+void ControlStepM49(std::uintptr_t spline, int v, std::uint8_t* ctrl)
+{
+    const int gameMode = s_host.game_sub_mode();
+    float ownX, ownZ;  s_host.own_xz(v, &ownX, &ownZ);
+    float vx, vz;      s_host.own_vel_xz(v, &vx, &vz);
+    const float speed = std::sqrt(vx*vx + vz*vz);
+    const float rate1 = 0.0f;                        // [U-C-RATE1] (shared w/ ControlStep)
+
+    float look[2] = { ownX, ownZ };
+    SplineLookahead(spline, ownX, ownZ, v, look);
+    const float tx = look[0], tz = look[1];
+    // (no commit to 0x0089a52c here — the real delta vs ControlStep)
+
+    const float err = SteerAngleError(v, tx, tz);
+    const int   frame = I32(0x007f0ff4u);
+
+    // ---- STEER bands (instruction-identical to ControlStep) ----
+    if (err < kSteerSplit) {
+        F32(a14(0x008032d8u, v)) = 360.0f;
+        F32(a14(0x008032dcu, v)) = err;
+        if (err > kSteerDeadband) {
+            const int st = I32(a74(0x0089a4ecu, v));
+            const int el = frame - I32(a74(0x0089a4f0u, v));
+            if (st == 1 || el > kSettleFrames - 1) {
+                float mag = err * speed * kSteerMagScale;
+                if (rate1 <= k20f) mag *= kSteerExtra;
+                if (mag > kSteerMagClamp) mag = kSteerMagClamp;
+                ctrl[0] = RoundST0(mag);
+                I32(a74(0x0089a4f4u, v)) = (long)std::lround(mag);
+                I32(a74(0x0089a4ecu, v)) = 1;
+                I32(a74(0x0089a4f0u, v)) = frame;
+            } else {
+                float cs = (float)(kSettleFrames - el) * kCounterScale
+                           * (float)I32(a74(0x0089a4f4u, v));
+                ctrl[1] = RoundST0(cs);
+            }
+        }
+    }
+    if (err > kSteerSplit) {
+        F32(a14(0x008032dcu, v)) = 0.0f;
+        F32(a14(0x008032d8u, v)) = err;
+        if (err < kSteer359) {
+            const int st = I32(a74(0x0089a4ecu, v));
+            const int el = frame - I32(a74(0x0089a4f0u, v));
+            if (st == 2 || el > kSettleFrames - 1) {
+                float mag = err * speed * kSteerMagScale;
+                if (rate1 <= k20f) mag *= kSteerExtra;
+                if (mag > kSteerMagClamp) mag = kSteerMagClamp;
+                ctrl[1] = RoundST0(mag);
+                I32(a74(0x0089a4f4u, v)) = (long)std::lround(mag);
+                I32(a74(0x0089a4ecu, v)) = 2;
+                I32(a74(0x0089a4f0u, v)) = frame;
+            } else {
+                float cs = (float)(kSettleFrames - el) * kCounterScale
+                           * (float)I32(a74(0x0089a4f4u, v));
+                ctrl[0] = RoundST0(cs);
+            }
+        }
+    }
+
+    // ---- ACCEL / BRAKE bands (instruction-identical to ControlStep) ----
+    ctrl[4] = 0xff;
+    const float prevSpeed = F32(a14(0x008032e0u, v));
+    F32(a14(0x008032e0u, v)) = speed;
+    if (kBrakeSpeedDel < speed - prevSpeed && kBrakeMinSpeed < speed) {
+        ctrl[4] = 0; ctrl[5] = 0xff;
+    }
+    if (k20f < err && kRate1Brake < rate1) { ctrl[4] = 0; ctrl[5] = 0xff; }
+    if (err < kSteerSplit && kAccelErrLo < err) {
+        ctrl[4] = 0xff; ctrl[5] = 0xff; ctrl[0] = 0xff;
+    }
+    if (kSteerSplit < err && err < kAccelErrHi) {
+        ctrl[4] = 0xff; ctrl[5] = 0xff; ctrl[1] = 0xff;
+    }
+
+    // ---- mode-6 block (asm 0x00416c51..): the DAT_0088fc88==0 zero-fields
+    // path is portable (no stub needed); the else-path needs FUN_00415220
+    // ("powerup activation", STUBBED above) -> TODO.
+    if (gameMode == 6 && s_host.ai_target_enable() == 0) {
+        if (I32(0x0088fc88u + static_cast<std::uintptr_t>(v) * 0xb4u) == 0) {
+            I32(a74(0x0089a51cu, v)) = 0;
+            I32(a74(0x0089a520u, v)) = 0;
+            I32(a74(0x0089a524u, v)) = 0;
+        }
+        // else: FUN_00415220 mode-8 activation — STUB (TODO), needs targeting chain.
+    }
+
+    // ---- behaviour-mode tails: mode is always 0 in this instantiation
+    // (targeting stubbed; this variant never commits anyway) — m==7/9 tails
+    // are unreachable here, matching ControlStep's own dead-tail note.
+    const int m = I32(a74(0x0089a52cu, v));
+    if (m == 7) { ctrl[4] = 0x40; }
+    else if (m == 9) {
+        if (kMode9BrakeA < rate1) { ctrl[4] = 0; ctrl[5] = 0xff; }
+        if (kMode9BrakeB < rate1) { ctrl[4] = 0; }
+    }
+
+    // ---- final game-mode gate ----
+    if (gameMode != 6 && gameMode != 5 && gameMode != 9 &&
+        gameMode != 10 && gameMode != 11) {
+        ctrl[4] = 0; ctrl[5] = 0;
+    }
+}
+
+// ===========================================================================
+// FUN_00417da0 — control-step mode-8 variant (hooks.csv: AiControlStepM8, C3
+// 2026-07-02; verbatim decomp+disasm re/analysis/wsr6_port_prep/
+// 0x00417da0_decomp.md). Verified instruction-identical to FUN_00416250 for
+// the STEER/ACCEL/BRAKE bands and the mode-7/9 tails (hooks.csv: "CALL
+// 0x00417cf0 replaces CALL 0x004148b0... debug-override block ABSENT...
+// mode-10 block + mode commit PRESENT"). FUN_00417cf0 (mode-8 predicate) and
+// the mode-10 block (FUN_00414f00) are downstream of the same STUBBED
+// targeting-chain predicates as ControlStep, so they are omitted here with
+// the same simplification (mode forced 0 via SplineLookahead). With that
+// simplification applied uniformly, the ONLY portable structural delta left
+// vs ControlStepM49 is the mode commit (present here, matching ControlStep;
+// absent in ControlStepM49) — this function is otherwise identical to
+// ControlStepM49's body.
+// ===========================================================================
+void ControlStepM8(std::uintptr_t spline, int v, std::uint8_t* ctrl)
+{
+    const int gameMode = s_host.game_sub_mode();
+    float ownX, ownZ;  s_host.own_xz(v, &ownX, &ownZ);
+    float vx, vz;      s_host.own_vel_xz(v, &vx, &vz);
+    const float speed = std::sqrt(vx*vx + vz*vz);
+    const float rate1 = 0.0f;                        // [U-C-RATE1] (shared w/ ControlStep)
+
+    float look[2] = { ownX, ownZ };
+    SplineLookahead(spline, ownX, ownZ, v, look);
+    const float tx = look[0], tz = look[1];
+    I32(a74(0x0089a52cu, v)) = 0;                    // commit behaviour mode (present for this variant)
+
+    const float err = SteerAngleError(v, tx, tz);
+    const int   frame = I32(0x007f0ff4u);
+
+    // ---- STEER bands (instruction-identical to ControlStep) ----
+    if (err < kSteerSplit) {
+        F32(a14(0x008032d8u, v)) = 360.0f;
+        F32(a14(0x008032dcu, v)) = err;
+        if (err > kSteerDeadband) {
+            const int st = I32(a74(0x0089a4ecu, v));
+            const int el = frame - I32(a74(0x0089a4f0u, v));
+            if (st == 1 || el > kSettleFrames - 1) {
+                float mag = err * speed * kSteerMagScale;
+                if (rate1 <= k20f) mag *= kSteerExtra;
+                if (mag > kSteerMagClamp) mag = kSteerMagClamp;
+                ctrl[0] = RoundST0(mag);
+                I32(a74(0x0089a4f4u, v)) = (long)std::lround(mag);
+                I32(a74(0x0089a4ecu, v)) = 1;
+                I32(a74(0x0089a4f0u, v)) = frame;
+            } else {
+                float cs = (float)(kSettleFrames - el) * kCounterScale
+                           * (float)I32(a74(0x0089a4f4u, v));
+                ctrl[1] = RoundST0(cs);
+            }
+        }
+    }
+    if (err > kSteerSplit) {
+        F32(a14(0x008032dcu, v)) = 0.0f;
+        F32(a14(0x008032d8u, v)) = err;
+        if (err < kSteer359) {
+            const int st = I32(a74(0x0089a4ecu, v));
+            const int el = frame - I32(a74(0x0089a4f0u, v));
+            if (st == 2 || el > kSettleFrames - 1) {
+                float mag = err * speed * kSteerMagScale;
+                if (rate1 <= k20f) mag *= kSteerExtra;
+                if (mag > kSteerMagClamp) mag = kSteerMagClamp;
+                ctrl[1] = RoundST0(mag);
+                I32(a74(0x0089a4f4u, v)) = (long)std::lround(mag);
+                I32(a74(0x0089a4ecu, v)) = 2;
+                I32(a74(0x0089a4f0u, v)) = frame;
+            } else {
+                float cs = (float)(kSettleFrames - el) * kCounterScale
+                           * (float)I32(a74(0x0089a4f4u, v));
+                ctrl[0] = RoundST0(cs);
+            }
+        }
+    }
+
+    // ---- ACCEL / BRAKE bands (instruction-identical to ControlStep) ----
+    ctrl[4] = 0xff;
+    const float prevSpeed = F32(a14(0x008032e0u, v));
+    F32(a14(0x008032e0u, v)) = speed;
+    if (kBrakeSpeedDel < speed - prevSpeed && kBrakeMinSpeed < speed) {
+        ctrl[4] = 0; ctrl[5] = 0xff;
+    }
+    if (k20f < err && kRate1Brake < rate1) { ctrl[4] = 0; ctrl[5] = 0xff; }
+    if (err < kSteerSplit && kAccelErrLo < err) {
+        ctrl[4] = 0xff; ctrl[5] = 0xff; ctrl[0] = 0xff;
+    }
+    if (kSteerSplit < err && err < kAccelErrHi) {
+        ctrl[4] = 0xff; ctrl[5] = 0xff; ctrl[1] = 0xff;
+    }
+
+    // ---- mode-6 block: the DAT_0088fc88==0 zero-fields path is portable;
+    // the mode==0 inner block (FUN_00417cf0 predicate + FUN_00415020 spawn
+    // check) and the else-path (FUN_00415220) need STUBBED targeting
+    // predicates -> TODO.
+    if (gameMode == 6 && s_host.ai_target_enable() == 0) {
+        if (I32(0x0088fc88u + static_cast<std::uintptr_t>(v) * 0xb4u) == 0) {
+            I32(a74(0x0089a51cu, v)) = 0;
+            I32(a74(0x0089a520u, v)) = 0;
+            I32(a74(0x0089a524u, v)) = 0;
+        }
+        // else: FUN_00415220 mode-8 activation — STUB (TODO), needs targeting chain.
+    }
+
+    // ---- behaviour-mode tails: mode is always 0 in this instantiation
+    // (targeting stubbed) — m==7/9 tails are unreachable here, matching
+    // ControlStep's own dead-tail note.
+    const int m = I32(a74(0x0089a52cu, v));
+    if (m == 7) { ctrl[4] = 0x40; }
+    else if (m == 9) {
+        if (kMode9BrakeA < rate1) { ctrl[4] = 0; ctrl[5] = 0xff; }
+        if (kMode9BrakeB < rate1) { ctrl[4] = 0; }
+    }
+
+    // ---- final game-mode gate ----
     if (gameMode != 6 && gameMode != 5 && gameMode != 9 &&
         gameMode != 10 && gameMode != 11) {
         ctrl[4] = 0; ctrl[5] = 0;
@@ -545,21 +887,388 @@ std::uintptr_t SelectSpline(int v)
     }
 }
 
+// FUN_00414030(-1) — AiSplineBankTimerReset (hooks.csv C3): "sets
+// DAT_008032d4[v*5]=1000; param=-1 resets all 5 slots". Every BankSwitch call
+// site below passes -1, so only that path is ported (matches the C3 evidence:
+// "param=-1 fill path UNTESTED by the harness" — U-7564, flagged
+// data-semantic non-blocking). 0x008032d4 is the SAME per-vehicle spline-
+// index-continuity field SplineLookahead's Phase 2 reads/writes; forcing it
+// to 1000 (>= any real spline count) makes the next lookahead reseed to the
+// true-nearest point, matching a "reset" semantic.
+inline void SplineBankTimerReset() {
+    for (int vv = 0; vv < 4; ++vv) {
+        I32(0x008032d4u + static_cast<std::uintptr_t>(vv) * 0x14u) = 1000;
+    }
+}
+
+// FUN_00472650(0, hiBits) — original PRNG (float10-ST0), NOT one of the 4
+// ported RVAs. Substituted with std::rand()/RAND_MAX (documented
+// approximation, same precedent as Normalize2's std::sqrt substitute for the
+// original's fast-rsqrt LUT above). Only feeds BankSwitch's once-per-~9000-
+// frame cosmetic spline-index variety roll — does not affect steer/accel/
+// brake output.
+inline float RandUnit() {
+    return static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) + 1.0f);
+}
+
+// ===========================================================================
+// FUN_00417180 — AI spline-bank switcher (hooks.csv: AiBankSwitch, C3
+// 2026-07-02; verbatim decomp+disasm re/analysis/wsr6_port_prep/
+// 0x00417180_decomp.md). Per-vehicle state machine: services a pending
+// line-type switch request (race/inside/slow/cheat cycling with per-type
+// count-check), runs the switch-in timer (up to 9000 host-tick units), then
+// (once idle) applies the DAT_0089a368 slow-line-flag reset and a low-
+// frequency (~every 9000 frames) random spline-index variation roll. Raw-asm
+// corrections already folded in via the Ai/AiPreTick.cpp reference port: the
+// type-0/type-3 branches call the timer-reset on BOTH count-check outcomes;
+// type-2/type-1 test the line-type read ONCE into a local while type-0/
+// type-3 RE-READ memory.
+// ===========================================================================
+void BankSwitch(int v)
+{
+    const std::uintptr_t s = static_cast<std::uintptr_t>(v) * 0x74u;
+
+    if (I32(0x0089a500u + s) != 0) {                        // switch request pending
+        const int t = I32(kAiLineType + s);                 // read ONCE (t==2/t==1 test this copy)
+        I32(0x0089a504u + s) = 1;                            // start timer
+        if (t == 2) {                                        // slow lines
+            int idx = I32(kAiSplineIndex + s) + 1;
+            I32(kAiSplineIndex + s) = idx;
+            if (idx > 2) I32(kAiSplineIndex + s) = 0;
+            SplineBankTimerReset();
+        }
+        if (t == 1) {                                        // inside lines
+            int idx = I32(kAiSplineIndex + s) + 1;
+            I32(kAiSplineIndex + s) = idx;
+            if (idx > 2 || I32(kSplineInsideCnt + static_cast<std::uintptr_t>(idx) * kSplineStride) < 4) {
+                I32(kAiLineType + s) = 2;
+                I32(kAiSplineIndex + s) = 0;
+            }
+        }
+        if (I32(kAiLineType + s) == 0) {                     // race lines (RE-READS memory)
+            int idx = I32(kAiSplineIndex + s) + 1;
+            I32(kAiSplineIndex + s) = idx;
+            if (idx > 2 || I32(kSplineRaceCnt + static_cast<std::uintptr_t>(idx) * kSplineStride) < 4) {
+                I32(kAiLineType + s) = 1;
+                I32(kAiSplineIndex + s) = 0;
+            }
+            SplineBankTimerReset();                          // called on BOTH outcomes
+        }
+        if (I32(kAiLineType + s) == 3) {                     // cheat lines (RE-READS memory)
+            int idx = I32(kAiSplineIndex + s) + 1;
+            I32(kAiSplineIndex + s) = idx;
+            if (idx > 2 || I32(kSplineCheatCnt + static_cast<std::uintptr_t>(idx) * kSplineStride) < 4) {
+                I32(kAiLineType + s) = 0;
+                I32(kAiSplineIndex + s) = 0;
+            }
+            SplineBankTimerReset();                          // called on BOTH outcomes
+        }
+        I32(0x0089a500u + s) = 0;                            // clear request
+    }
+
+    // switch-in timer
+    const int timer = I32(0x0089a504u + s);
+    if (timer != 0 && timer < 9000) {
+        I32(0x0089a504u + s) = timer + I32(0x007f1008u);
+        return;
+    }
+    I32(0x0089a504u + s) = 0;
+
+    // line-type reset by DAT_0089a368 (shared slow-line-targeting flag; set by
+    // FUN_004177b0 AiPreTick, out of scope — currently always 0 in the
+    // standalone since AiPreTick isn't wired, so this always forces type=0).
+    if (I32(0x0089a368u) == 0) I32(kAiLineType + s) = 0;
+    if (I32(0x0089a368u) == 2) I32(kAiLineType + s) = 0;
+    if (I32(0x0089a368u) == 1) {
+        if (I32(kAiLineType + s) != 2) SplineBankTimerReset();
+        I32(kAiLineType + s) = 2;
+    }
+
+    // low-frequency random spline-index variation
+    const int period = I32(0x007f0ff8u) / 3000;
+    if ((period & 0xf) == 0xf) {
+        if (I32(0x0063bd90u) != period) {
+            if (RandUnit() < kBankRandGate) {                // _DAT_005cc32c = 0.5
+                I32(kAiSplineIndex + s) = I32(kAiSplineIndex + s) + 1;
+                SplineBankTimerReset();
+            }
+        }
+        I32(0x0063bd90u) = period;
+    } else {
+        I32(0x0063bd90u) = 0;
+    }
+}
+
+// ===========================================================================
+// FUN_00417640 — post-step powerup-brake override (hooks.csv:
+// AiPostStepPowerupBrake, C3 2026-07-02; re/analysis/ai_update/
+// 0x00417640.md). Gates: track_index()==0x21, PowerupRangeGet()<=30.0 (=
+// _DAT_005cc72c == kAccelErrLo above), behaviour-mode != 10,
+// Table88ff50Get(v)!=0. The active branch's displacement-to-target +
+// Vec3Magnitude computation (FUN_00452160/FUN_0046d4a0/FUN_004c3ac0) is
+// PROVABLY DEAD in the original — its C3-verified reference port
+// (AiController.cpp::AiPostStepPowerupBrake) computes it but the result is
+// never read afterward (discarded return, displacement floats never
+// consumed by the branch below) — so it is OMITTED here, the same
+// dead-artifact-elision precedent AiControlStep.cpp's own header documents
+// ("FST [ESP+0x18] of the mode-2 dot product... not mirrored"). The
+// rate-like float from FUN_0046d6d0 reuses ControlStep's [U-C-RATE1]=0.0f
+// substitute (the SAME callee, not a new uncertainty): since the brake gate
+// needs kPowerupBrakeRateGate (100.0, _DAT_005cc568) < rate and rate is
+// pinned 0, the gate is provably always false — this function always coasts
+// (ctrl[4]=0, ctrl[5]=0) once its predicate gates pass, pending
+// FUN_0046d6d0's port. FUN_0046d570 (local_10, C2, not one of the 4 ported
+// RVAs) is therefore a dead operand too and is not stubbed.
+// ===========================================================================
+void PostStepPowerupBrake(int v, std::uint8_t* ctrl)
+{
+    if (s_host.track_index() != 0x21) return;                       // FUN_00426c00 gate
+    if (F32(0x00684de0u) > kAccelErrLo) return;                      // PowerupRangeGet > 30.0 -> skip
+    if (I32(a74(0x0089a52cu, v)) == 10) return;                      // mode-10 skip
+    if (I32(0x0088ff50u + static_cast<std::uintptr_t>(v) * 4u) == 0) return; // Table88ff50Get == 0 -> skip
+
+    const float rate = 0.0f;   // FUN_0046d6d0 [U-C-RATE1] (shared substitute w/ ControlStep)
+    if (kPowerupBrakeRateGate < rate) {   // local_10<90.0 term is dead (rate pinned 0)
+        ctrl[4] = 0; ctrl[5] = 0xff;
+        return;
+    }
+    ctrl[4] = 0; ctrl[5] = 0;
+}
+
+// ===========================================================================
+// FUN_0040e480 — CarSlotStateSet (hooks.csv C2, drift-promoted 2026-05-14;
+// re/analysis/c0_promotion_frontend_a/0x0040e480.md). Body: `*(undefined4 *)
+// (PTR_PTR_005f2770 + param_1*4 + 0x34) = param_2;` -- ONE dereference of the
+// global pointer at 0x005f2770 (all 40 references via `reference_to` this
+// session are READ, never WRITE, so the pointer's value is a load-time .data
+// constant, not something original CODE initializes -- safe to dereference
+// directly in the image-pad, same as any other kSpline*/kAiState* address).
+// U-3431 (struct identity at PTR_PTR_005f2770) stays open, non-blocking.
+// ---------------------------------------------------------------------------
+inline void CarSlotStateSet(int v, std::int32_t state)
+{
+    const std::uintptr_t base = static_cast<std::uintptr_t>(U32(0x005f2770u));
+    I32(base + static_cast<std::uintptr_t>(v) * 4u + 0x34u) = state;
+}
+
+// FUN_0046dd80/0046dd90 getter/setter pair used by AiPreTickRubberBand: reads
+// the single global DAT_0061313c and round-trips it (optionally scaled) into
+// car v's vehicle-struct field at 0x008815a0 + v*0xd04 + 0x154 (== 0x008816f4
+// for v=0; Vehicle/VehicleStruct.h's `Vc::off::kGearTorque1`, WS-A1). Kept as
+// local direct-address helpers (not a Host callback) since both addresses are
+// fixed .data locations, consistent with this file's existing convention.
+inline float GearConstGet()               { return F32(0x0061313cu); }
+inline void  GearConstSet(int v, float f) { F32(0x008815a0u + static_cast<std::uintptr_t>(v) * 0xd04u + 0x154u) = f; }
+
+// x87 ST0 round-to-int approximation (project convention for STANDALONE ports:
+// RaceCamera.cpp's BankersRound / this file's own RoundST0 both use std::lround
+// rather than reproducing FUN_004a2c48's exact CW-round + residual-correction
+// bit pattern -- see Math/FPURound.cpp's header for why that's a HOOK-build-only
+// bit-identity requirement, not a standalone one).
+inline int RoundToInt(float x) { return static_cast<int>(std::lround(x)); }
+
+// FUN_00472650(lo,hi) ranged-random float -- NOT one of the 4 ported RVAs for
+// this session. Same deterministic stand-in precedent as ForceIntegratorStubs.cpp's
+// Fi_RandRange (`return lo;`): only feeds the slow-line difficulty-flag probability
+// roll below, not steer/accel/brake output.
+inline float RandFloatStub(float lo, float /*hi*/) { return lo; }
+
+// ===========================================================================
+// FUN_004177b0 — AiPreTick: per-frame race-metric update (lap-count + lap-
+// fraction per car, feeding the finish-order candidate slots for rules
+// {4,7,8,9}) + mode-9/mode-4 AI speed rubber-banding + powerup-alive speed
+// doubling + the DAT_0089a368 slow-line difficulty-flag state machine. Sole
+// caller FUN_00418860, once per frame before the per-vehicle AI step loop
+// (re/analysis/race_rules_d1/0x004177b0.md, C1; verbatim reference port
+// Ai/AiPreTick.cpp for the .asi hook build, session 2026-07-02/07-04).
+// [U-8992]/[U-8993]/[U-8994] stay open as-is (semantic/structural, Blocks:
+// none) -- the constants those uncertainties left undecoded were memory_read
+// this session (see the const block above) and are used directly below; that
+// is a byte-level decode, not the semantic resolution U-8992 asks for.
+// ===========================================================================
+void AiPreTickRubberBand()
+{
+    if (s_host.ai_target_enable() != 0) I32(0x0089a368u) = 2;   // FUN_00443080 gate
+
+    // ---- phase 2: race-angle array + finish-order candidate slots, v=0..3 ----
+    int fd0 = 0;
+    for (int v = 0; v < 4; ++v) {
+        const float spd = GearConstGet();                        // FUN_0046dd80
+        GearConstSet(v, spd);                                    // FUN_0046dd90 (round-trip)
+        const int   a20 = I32(0x008a9648u + static_cast<std::uintptr_t>(v) * 0x30cu); // FUN_00407a20 lap counter
+        const float a20f = static_cast<float>(a20);
+        const float ra = F32(0x008a96ecu + static_cast<std::uintptr_t>(v) * 0x30cu);  // FUN_00408ad0
+        fd0 = I32(kGameModeFd0);
+        const float val = ra * kRaceMetricScale + a20f;
+        F32(0x0089a880u + static_cast<std::uintptr_t>(v) * 4u) = val;                 // FUN_00417730 storage
+        if (fd0 == 4 || fd0 == 9 || fd0 == 7 || fd0 == 8) {
+            if (!(val < kFinishThreshold)) {
+                const float fv = static_cast<float>(v);
+                int recorded = 0;
+                if (F32(0x0089a870u) == fv) recorded = 1;
+                if (F32(0x0089a874u) == fv) recorded = 1;
+                if (F32(0x0089a878u) == fv) recorded = 1;
+                if (F32(0x0089a87cu) == fv) {
+                    // already recorded in slot 4 -- nothing to do
+                } else if (recorded == 0) {
+                    if      (F32(0x0089a870u) == kSlotSentinel) F32(0x0089a870u) = fv;
+                    else if (F32(0x0089a874u) == kSlotSentinel) F32(0x0089a874u) = fv;
+                    else if (F32(0x0089a878u) == kSlotSentinel) F32(0x0089a878u) = fv;
+                    else if (F32(0x0089a87cu) == kSlotSentinel) F32(0x0089a87cu) = fv;
+                }
+            }
+        }
+    }
+
+    // ---- phase 3: mode-9 speed scaling, vehicle 1 ----
+    if (fd0 == 9) {
+        float mult = 1.0f;
+        const float ang = F32(0x0089a880u + 4u);              // FUN_00417730(1)
+        if (ang < kMode9Thresh1) mult = 0.95f;
+        if (ang < kMode9Thresh2) mult = 0.9f;
+        if (ang < kMode9Thresh3) mult = 0.25f;
+        if (!(ang <= kMode9Thresh4)) mult = 1.15f;
+        const float spd = GearConstGet();
+        GearConstSet(1, spd * mult);
+        fd0 = I32(kGameModeFd0);
+    }
+
+    // ---- phase 3b: mode-4 speed scaling, vehicles 1..3 ----
+    if (fd0 == 4) {
+        for (int v = 1; v < 4; ++v) {
+            float mult = 1.0f;
+            const float ang = F32(0x0089a880u + static_cast<std::uintptr_t>(v) * 4u);
+            if (!(ang <= kMode9Thresh2)) {                     // 0.75 (shared address)
+                mult = (kBrakeMinSpeed - F32(0x0089a360u)) * kMode4Mul1 * kMode4Mul2a + kSteerDeadband;
+            }
+            if (!(ang <= kMode9Thresh4)) {                     // 2.0 (shared address)
+                mult = (kBrakeMinSpeed - F32(0x0089a360u)) * kMode4Mul1 * kMode4Mul2b + mult;
+            }
+            if (ang < kBankRandGate) {                          // 0.5 (shared address)
+                mult = mult - kMode4SubHi;
+            }
+            if (ang < kSteerExtra) {                            // 0.05 (shared address)
+                mult = mult - kMode4SubLo;
+            }
+            const float spd = GearConstGet();
+            GearConstSet(v, spd * mult);
+        }
+    }
+
+    // ---- phase 4: powerup-alive speed doubling ----
+    bool any = false;
+    for (int v = 0; v < 4; ++v) {
+        if (I32(0x00688304u + static_cast<std::uintptr_t>(v) * 0x18u) != 0) any = true; // FUN_00454a30
+    }
+    if (any) {
+        for (int v = 0; v < 4; ++v) {
+            if (s_host.veh_type(v) == 2) {
+                const float spd = GearConstGet();
+                GearConstSet(v, spd + spd);
+            }
+        }
+    }
+
+    // ---- phase 5: slow-line difficulty-flag state machine ----
+    const int m = I32(kGameModeFd0);
+    if (m == 4 || m == 9) { I32(0x0089a368u) = 2; return; }
+    if (m == 8)           { I32(0x0089a368u) = 0; return; }
+    if (s_host.game_sub_mode() != 6) return;
+
+    if (I32(0x0089a368u) == 2) {
+        const int t = I32(0x0089a36cu) + I32(kOverrideStep);
+        I32(0x0089a36cu) = t;
+        if (t > 180000) { I32(0x0089a368u) = 1; I32(0x0089a36cu) = 0; }
+    }
+
+    const int row = RoundToInt(F32(0x0089a360u));              // FUN_004a2c48 (approx)
+    int ecx = 0, edx = 0;
+    const float tickscale = static_cast<float>(I32(kFrame0ff8)) * kTickScale;
+    const float diff = tickscale - F32(0x0089a370u);
+
+    if (!(diff <= kSteerDeadband)) {                            // 1.0
+        if (tickscale < kMode9Thresh4) { edx = 0; ecx = 1; }    // 2.0
+    }
+    if (!(diff <= kBrakeMinSpeed)) {                            // 10.0
+        if (tickscale < kSlowBand1) { edx = 1; ecx = 1; }       // 12.0
+        if (!(tickscale <= k20f)) {                             // 20.0
+            if (tickscale < kSlowBand2) { edx = 2; ecx = 1; }   // 22.0
+        }
+        if (!(diff <= k20f)) {
+            if (tickscale < kSlowBand3) { edx = 3; ecx = 1; }   // 42.0
+            if (!(diff <= k20f)) {
+                if (!(tickscale <= kSlowBand4Lo) && tickscale < kSlowBand4Hi) { // 60/62
+                    edx = 4; ecx = 1;
+                }
+            }
+        }
+    }
+
+    if (ecx != 0) {
+        F32(0x0089a370u) = tickscale;
+        I32(0x0089a374u) = edx;
+        for (std::uintptr_t a = 0x0089a4c4u; a < 0x0089a694u; a += 0x74u) {
+            I32(a + 4u) = 0;
+            I32(a)      = 0;
+        }
+    }
+    if (I32(0x0089a368u) != 0) return;
+    if (ecx == 0) return;
+
+    const std::uintptr_t off = static_cast<std::uintptr_t>(row * 5 + edx) * 4u;
+    const float prob1 = static_cast<float>(I32(0x005f30a0u + off));
+    const float rnd1 = RandFloatStub(0.0f, 100.0f);            // FUN_00472650(0,100.0f) approx
+    if (!(rnd1 > prob1)) {
+        I32(0x0089a368u) = 1;
+        for (std::uintptr_t a = 0x0089a4c0u; a < 0x0089a690u; a += 0x74u) I32(a) = 0;
+        return;
+    }
+    const float prob2 = static_cast<float>(I32(0x005f3180u + off));
+    const float rnd2 = RandFloatStub(0.0f, 100.0f);
+    if (!(rnd2 > prob2)) {
+        I32(0x0089a368u) = 2;
+    }
+}
+
 void VehicleStep(int v)
 {
     int slot = I32(kSlotTableBase + static_cast<std::uintptr_t>(v) * kSlotTableStride);
     std::uint8_t* ctrl = reinterpret_cast<std::uint8_t*>(kCtrlBlockBase + static_cast<std::uintptr_t>(slot) * kCtrlBlockStride);
     ctrl[0] = ctrl[1] = ctrl[4] = ctrl[5] = ctrl[6] = ctrl[7] = 0;
 
-    // FUN_00417180 bank-switch timer/RNG: STUB (TODO) — type/index left as-is.
+    BankSwitch(v);                            // FUN_00417180
     std::uintptr_t spline = SelectSpline(v);
 
-    int fd0 = s_host.game_mode_fd0();
-    // modes 4/9 (FUN_00416a30) and 8 (FUN_00417da0) variants: STUB → main step.
-    (void)fd0;
-    ControlStep(spline, v, ctrl);   // FUN_00416250 (bands real; targeting stubbed)
-    // FUN_00417640 post-step powerup-brake: STUB (TODO).
-    // override-replay (+0x40..0x4c): STUB (TODO) — clean integer logic, low risk.
+    const int fd0 = s_host.game_mode_fd0();
+    if (fd0 == 4 || fd0 == 9) {
+        ControlStepM49(spline, v, ctrl);      // FUN_00416a30
+    } else if (fd0 == 8) {
+        ControlStepM8(spline, v, ctrl);       // FUN_00417da0
+    } else {
+        ControlStep(spline, v, ctrl);         // FUN_00416250 (bands real; targeting stubbed)
+    }
+    PostStepPowerupBrake(v, ctrl);            // FUN_00417640
+
+    // override-replay (+0x40..0x4c) -- FUN_00418560 tail (0x00418790..0x00418844,
+    // decomp Mashed_pool13 session d643c6ce5d6446ac8121c86ef902b00b 2026-07-04).
+    // While the per-vehicle override timer (kAiOverrideTimer, +0x30) is running it
+    // counts down by the frame-delta (kOverrideStep) and REPLACES ctrl[0,1,4,5]
+    // with the stored bytes (kAiReplayB0/B1/B4/B5, +0x40..0x4c); either way (timer
+    // running or not) the (possibly just-overridden) ctrl bytes are saved back into
+    // that same storage for next frame -- clean integer logic, no callees.
+    if (I32(a74(kAiOverrideTimer, v)) != 0) {
+        int t = I32(a74(kAiOverrideTimer, v)) - I32(kOverrideStep);
+        if (t < 0) t = 0;
+        I32(a74(kAiOverrideTimer, v)) = t;
+        ctrl[0] = static_cast<std::uint8_t>(I32(a74(kAiReplayB0, v)));
+        ctrl[1] = static_cast<std::uint8_t>(I32(a74(kAiReplayB1, v)));
+        ctrl[4] = static_cast<std::uint8_t>(I32(a74(kAiReplayB4, v)));
+        ctrl[5] = static_cast<std::uint8_t>(I32(a74(kAiReplayB5, v)));
+    }
+    I32(a74(kAiReplayB0, v)) = ctrl[0];
+    I32(a74(kAiReplayB1, v)) = ctrl[1];
+    I32(a74(kAiReplayB4, v)) = ctrl[4];
+    I32(a74(kAiReplayB5, v)) = ctrl[5];
 }
 
 } // namespace
@@ -597,9 +1306,18 @@ void Ai_Standalone_Tick()
     int fd0 = s_host.game_mode_fd0();
     bool aiRound = (r == 3 || r == 4 || r == 5 || r == 10 ||
                     fd0 == 4 || fd0 == 9 || fd0 == 8 || fd0 == 10);
-    (void)aiRound;  // CarSlotStateSet alive-poke (FUN_0040e480) = host/entity TODO.
+    // CarSlotStateSet alive-poke (FUN_0040e480) -- FUN_00418860's fresh decomp
+    // (Mashed_pool13, session d643c6ce5d6446ac8121c86ef902b00b, 2026-07-04) shows
+    // each of the 3 calls individually gated on FUN_0046c7b0(v)==1 (car_alive), NOT
+    // unconditional as the older ai_path_following-20260512 plate's condensed
+    // pseudocode implied -- corrected here against the live listing.
+    if (aiRound) {
+        if (s_host.car_alive(1) == 1) CarSlotStateSet(1, 2);
+        if (s_host.car_alive(2) == 1) CarSlotStateSet(2, 2);
+        if (s_host.car_alive(3) == 1) CarSlotStateSet(3, 2);
+    }
 
-    // FUN_004177b0 pre-tick rubber-banding: STUB (TODO).
+    AiPreTickRubberBand();   // FUN_004177b0
 
     for (int v = 0; v < 4; ++v) {
         int t = s_host.veh_type(v);
