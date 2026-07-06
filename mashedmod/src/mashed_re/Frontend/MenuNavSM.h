@@ -207,12 +207,14 @@ void Nav_ContinueCupConfirm();
 // from the GameFlow results-dismissal boundary (exe_main), cup modes only.
 void Nav_PushContinueCup();
 
-// Standalone analogue of FUN_004307a0 (ElapsedVsThresholdCheck): selects the
-// modal variant (return 0 -> two-choice 0x136; nonzero -> single 0x135). The
-// original compares race-elapsed time vs a per-track threshold table
-// (DAT_00614718) that is zeroed in the image-padded standalone; until Fable
-// wires the live check this returns g_cup_continue_variant (default 1 = single).
-// [UNCERTAIN U-3596/U-3597 — DAT_00614718 threshold table not harvested.]
+// Live port of FUN_004307a0 (ElapsedVsThresholdCheck, 0x004307a0) — selects
+// the modal variant (0 -> two-choice 0x136; nonzero -> single 0x135) by
+// comparing race-elapsed seconds against the per-track DAT_00614718 threshold
+// table (harvested 2026-07-06: row 0 = 15.0 s, rows 1..12 = 59.99 s; law +
+// citations at the definition). Feed the finished race via
+// Nav_SetCupContinueRace(trackIdx, elapsedSec) before the standings push;
+// without race data it falls back to the settable default (dev/verification).
+void Nav_SetCupContinueRace(int trackIdx, float elapsedSec);
 void Nav_SetCupContinueVariant(int v);
 
 // --- [D-11057] game-config option-row editing (screens 18/24) --------------

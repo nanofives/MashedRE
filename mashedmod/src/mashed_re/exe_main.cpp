@@ -1472,6 +1472,14 @@ bool UpdateMenuSelection() {
                     s_cupstandings &&
                     gm == mashed_re::Race::GameMode::Results &&
                     (raceMode == 3 || raceMode == 4 || raceMode == 5);
+                // [D-11059(c)] feed the finished race to the live
+                // ElapsedVsThresholdCheck port (FUN_004307a0) BEFORE the exit
+                // tears the session down, so Q_CupContinueVariant selects the
+                // faithful modal variant when the Continue chain needs one.
+                if (cupResults)
+                    mashed_re::Frontend::Nav_SetCupContinueRace(
+                        mashed_re::Race::GameFlow_Session().config().trackId,
+                        g_track.race_time());
                 mashed_re::Race::GameFlow_RequestExit();
                 if (cupResults) mashed_re::Frontend::Nav_PushContinueCup();
             }

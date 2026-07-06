@@ -1064,12 +1064,37 @@ void ApplyActionGameMode(std::uint32_t action) {
 // within FUN_0043dfd0 unless noted.
 // --------------------------------------------------------------------------
 
-// FUN_004307a0 (ElapsedVsThresholdCheck, C2 0x004307a0) stand-in: chooses the
-// modal variant. Original returns 1 when race-elapsed < the per-track threshold
-// (DAT_00614718 table, 3 floats/track). That table is zeroed in the image-padded
-// standalone, so the live comparison can't run here — return the caller-set
-// default. [UNCERTAIN U-3596/U-3597: threshold table not harvested.]
-int Q_CupContinueVariant() { return g_cup_continue_variant; }
+// FUN_004307a0 (ElapsedVsThresholdCheck, 0x004307a0), live port [D-11059(c)].
+// Verbatim law (decomp pool13 2026-07-06): row = DAT_0067f17c * 0xc into the
+// DAT_00614718 table (3 floats/row); threshold = t0 * K + t2 + t1 with
+// K = DAT_005cc728 = 60.0f (0x42700000, read 0x005cc728); elapsed =
+// FUN_00429a70(0) + FUN_00429a80(0) * 60 + FUN_00429a90(0) — the player-0
+// race clock split as fraction (DAT_0067d99c) / minutes (DAT_0067d98c) /
+// seconds (DAT_0067d994). Returns 1 when elapsed < threshold (-> single
+// modal 0x135), else 0 (-> two-choice 0x136).
+// Table harvested via memory_read 0x00614718 (13 rows, stride 0xc; data at
+// +0x9c is pointers, so exactly 13 rows):
+//   row 0:      {0.0, 15.0(0x41700000), 0.0}        -> threshold 15.0 s
+//   rows 1..12: {0.0, 59.0(0x426c0000), 0.99(0x3f7d70a4)} -> 59.99 s
+// t0 == 0.0 on every row, so the *60 term is inert in the shipped data; the
+// summed per-row thresholds below are exact.
+static const float kCupContinueThreshold[13] = {
+    15.0f,           // row 0 (0.0*60 + 0.0 + 15.0)
+    59.99f, 59.99f, 59.99f, 59.99f, 59.99f, 59.99f,   // rows 1..6
+    59.99f, 59.99f, 59.99f, 59.99f, 59.99f, 59.99f};  // rows 7..12
+int g_cc_track   = -1;    // track/area row (DAT_0067f17c analogue); -1 = unset
+float g_cc_elapsed = 0.f; // player-0 race-elapsed seconds at race end
+
+void Nav_SetCupContinueRace(int trackIdx, float elapsedSec) {
+    g_cc_track   = trackIdx;
+    g_cc_elapsed = elapsedSec;
+}
+
+int Q_CupContinueVariant() {
+    if (g_cc_track >= 0 && g_cc_track < 13)
+        return (g_cc_elapsed < kCupContinueThreshold[g_cc_track]) ? 1 : 0;
+    return g_cup_continue_variant;   // no race data set: caller-set default
+}
 
 bool Nav_ContinueCupBegin() {
     MenuGameState& gs = g_game_state;

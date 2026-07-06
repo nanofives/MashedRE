@@ -437,6 +437,46 @@ int main() {
         Nav_ContinueCupBegin();
         ccheck("ecdc!=0 ed4c1 -> restart modal 0xa9", Nav_TakePendingCupModal() == kCupModalRestartA9);
     }
+    // (f) [D-11059(c)] live ElapsedVsThresholdCheck (FUN_004307a0 port):
+    //     harvested DAT_00614718 thresholds — row 0 = 15.0 s, rows 1..12 =
+    //     59.99 s. elapsed < threshold -> variant 1 (single 0x135), else 0
+    //     (two-choice 0x136). Unset race data (-1) -> settable default.
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_GameState().flag_ed6c = 3;                 // modal path exercises the variant
+    Nav_SetCupContinueRace(0, 10.0f);              // 10.0 < 15.0 -> single
+    {
+        Nav_ContinueCupBegin();
+        ccheck("live t0 e10 -> single modal 0x135", Nav_TakePendingCupModal() == kCupModalSingle);
+    }
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_GameState().flag_ed6c = 3;
+    Nav_SetCupContinueRace(0, 20.0f);              // 20.0 >= 15.0 -> two-choice
+    {
+        Nav_ContinueCupBegin();
+        ccheck("live t0 e20 -> two-choice modal 0x136", Nav_TakePendingCupModal() == kCupModalTwoChoice);
+    }
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_GameState().flag_ed6c = 3;
+    Nav_SetCupContinueRace(7, 59.0f);              // 59.0 < 59.99 -> single
+    {
+        Nav_ContinueCupBegin();
+        ccheck("live t7 e59 -> single modal 0x135", Nav_TakePendingCupModal() == kCupModalSingle);
+    }
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_GameState().flag_ed6c = 3;
+    Nav_SetCupContinueRace(7, 60.5f);              // 60.5 >= 59.99 -> two-choice
+    {
+        Nav_ContinueCupBegin();
+        ccheck("live t7 e60.5 -> two-choice modal 0x136", Nav_TakePendingCupModal() == kCupModalTwoChoice);
+    }
+    Nav_SetCupContinueRace(-1, 0.f);               // unset -> default path again
+    Nav_GameStateReset(); Nav_Init(); Nav(5, kNavPush);
+    Nav_GameState().flag_ed6c = 3;
+    Nav_SetCupContinueVariant(1);
+    {
+        Nav_ContinueCupBegin();
+        ccheck("unset race -> settable default (single)", Nav_TakePendingCupModal() == kCupModalSingle);
+    }
     std::printf("  Piece 5: %s (%d failures)\n", cc_fail ? "RED" : "GREEN", cc_fail);
 
     // ----------------------------------------------------------------------
