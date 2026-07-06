@@ -255,6 +255,11 @@ off Fable. Gated by claude2's "Ask" install rules + disabled bypass-mode (fragil
 T1 (§7) before relying on it**; if it works, promote Frida-CLI verification and Ghidra-headless decode
 to claude2 and shrink account3 to interactive-MCP + judgment only.
 
+> **T1 RESULT 2026-07-06: SHELL-BLOCKED.** The delegate worker's tool set is Read/Grep/Glob only —
+> no shell tool exists in its harness at all (blocked before Accenture policy even applies). This
+> experimental lane is CLOSED: claude2 stays read-and-draft; all verification/execution stays on
+> account3. (Also measured: delegate.ps1 kills workers at 900 s — split big read jobs accordingly.)
+
 ### Standing rules (unchanged)
 - **One workstream = one focused session** (worktree + Ghidra pool slot); end each with a ready-to-paste
   kickoff prompt for the next; split at measure → port → verify → merge boundaries so context doesn't re-bill.
@@ -273,12 +278,9 @@ to claude2 and shrink account3 to interactive-MCP + judgment only.
 Every item below leads with a **claude2** delegation (survey/decode/draft) and reserves account3/Fable
 for the MCP + judgment tail, per §6.
 
-- **T1 — Delegation-reach test (do first; ~2 min).** From account3, `delegate.ps1 -Repo Mashed` a
-  trivial *shell* task to claude2 (e.g. `py -3.12 --version`, then a dry `import frida` check, then
-  `py -3.12 re/frida/run_diff.py --help`). Confirms whether claude2 can execute shell at all under the
-  Accenture "Ask"/no-bypass rules. **If it runs:** escalate to a real `re/frida/run_diff.py <leaf>` on
-  claude2 and move Frida-CLI verification off Fable (§6 experimental lane). **If it prompts/hangs:**
-  claude2 stays read-only-and-draft; keep verification on account3.
+- ~~**T1 — Delegation-reach test (do first; ~2 min).**~~ **DONE 2026-07-06: SHELL-BLOCKED** — the
+  worker has no shell tool at all (Read/Grep/Glob only); §6 experimental lane closed, verification
+  stays on account3.
 1. **Decision session — WS-B1 collision architecture (D1).** *claude2:* summarize the qhull-island +
    RW-Physics cluster notes and lay out both options (effort/fidelity/binary-size). *account3/you:*
    decide. Cheap; unblocks the entire physics pole.

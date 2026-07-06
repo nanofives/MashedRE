@@ -31,14 +31,12 @@ idling or reviving dead batch lanes.
 4. **Discovery drains** — demand map §4 lists **1,788 undiscovered RVAs** inside the race slice's
    static call-closure (no hooks.csv row). Run `ghidra-sweep` SCRIBE_QUEUE drains (11 queued as
    of 2026-07-03) and demand-map discovery sessions; budget discovery alongside promotion.
-5. **T1 delegation-reach test** (master plan §7, ~2 min) — test whether claude2/account2 can run
-   shell (`py -3.12 --version` → `import frida` → `run_diff.py --help`). If yes, promote
-   Frida-CLI verification + Ghidra-headless decode off this account entirely; if it prompts or
-   hangs, claude2 stays read-and-draft only.
-6. **Parity-harness coverage** — keep `nav_coverage.py` green on any newly wired screen; extend
+5. **Parity-harness coverage** — keep `nav_coverage.py` green on any newly wired screen; extend
    `drawlist_diff.py` / `imgdiff.py` recipes where new visual surfaces land (see
    `re/analysis/parity_tooling.md` "Known asymmetries" before trusting a RED).
 
 ## Done
 
-*(move completed items here with date + CHANGELOG pointer)*
+- **T1 delegation-reach test — DONE 2026-07-06: SHELL-BLOCKED.** The account2 worker has no shell
+  tool at all (Read/Grep/Glob only); the master plan §6 experimental lane is closed — verification
+  and execution stay on account3. Verdict recorded in RE_MASTER_PLAN_2026-07.md §6/§7.
