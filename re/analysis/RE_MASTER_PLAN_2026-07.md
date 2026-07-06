@@ -5,6 +5,22 @@ Companion to `ROADMAP.md` (v2, phases R0–R8). ROADMAP defines the *gates*; thi
 token-cheap operating model for a solo dev. Numbers are parsed from the trackers 2026-07-03, not
 estimated. Re-open this each session (or have the account2 worker summarize it) instead of re-deriving.
 
+> **Status update 2026-07-06 (foundation reset session):**
+> - **R6 CLOSED** (exit demo 2026-07-02; literal-criterion residue filed **D-11060/D-11061**).
+>   Active phase: **R7 scaffold→verbatim conversion** on this plan's route. ROADMAP + CLAUDE.md updated.
+> - §7 queue: item 3 (D-11056) and item 4 (D-11057) **DONE 2026-07-04**; item 5's `__ftol` head
+>   **DONE 2026-07-03** (C3, byte-identical). Next up: **T1** (delegation-reach test), the **D1/D5
+>   gates**, and WS-PHYS-DRIVE-STABILIZE.
+> - Repo foundation: `ws-r6-ai-control-chain` merged to main (3b6b6bd7, build green both targets);
+>   branch triage — 80 merged + 39 stale unmerged deleted, all tips preserved in
+>   `log/branches_backup_2026-07-06.bundle`, salvage candidates kept (`promote-c4`,
+>   `ws-visual-polish`, `harness/ext-ag-arg-types`, `b6/transform`); tracker strike-pass (36
+>   stale-RESOLVED rows struck); STUBS.md got a per-subsystem open-stub census (NOTE: the
+>   "~980 open stubs are audio" reading from the 2026-07-06 survey was WRONG — audio is only
+>   ~90 open rows; render/boot/util/particle dominate, see the census block); stray root pool
+>   marker removed.
+>   Standing between-slices work now lives in **`re/HARNESS_BACKLOG.md`**.
+
 ---
 
 ## 1. Where we actually are
@@ -14,7 +30,7 @@ end-to-end on `mashed_re.exe` (R6 exit demo passed 2026-07-02: boot → menu →
 elimination rounds → match won → results → progression → exit). But most in-race logic is still
 **SCAFFOLD** — placeholder behavior, not the 1:1 verbatim port that F/S/P-DoD require.
 
-Confidence snapshot — **5,864 hook rows**: C1 927 · C2 3,926 · C3 850 · C4 161 (C3+ = 1,011, 17.2%).
+Confidence snapshot (refreshed 2026-07-06) — **5,864 hook rows**: C1 927 · C2 3,925 · C3 851 · C4 161 (C3+ = 1,012, 17.3%).
 Of these, **~2,116 rows are third-party library** (RenderWare, MSVC CRT, Lua, RW-Physics, qhull, D3DX9)
 and are *out of scope for porting* by policy — so first-party is ~3,748 rows, and the real "how much
 verbatim work remains" number is the first-party sub-C3 pool, not the raw 83%.
@@ -81,10 +97,11 @@ Goal: every mode, menu path, power-up, save/unlock, audio cue, and screen works 
 Mostly WS-G / WS-D / WS-J / WS-F tails + the known gaps below. Delivers a testable, motivating,
 fully-playable build and de-risks "does the whole loop hold together" before the expensive depth work.
 Contents:
-- Close **D-11056 / U-8997** — rule-5 collectible feed (rule-5 races are currently *unwinnable*
-  standalone; small, self-contained). *(Already mitigated to a legacy-flow fallback in the last review
-  fix, so no soft-lock ships in the meantime.)*
-- Close **D-11057** — cup-progression tier advance + continue-cup + game-length config screens (WS-G2).
+- ~~Close **D-11056 / U-8997** — rule-5 collectible feed~~ **DONE 2026-07-04** (KTC_NewCopter chain
+  traced with definitive xref closure; TrackRenderer feed landed; suites GREEN).
+- ~~Close **D-11057** — cup-progression tier advance + continue-cup + game-length config screens
+  (WS-G2)~~ **DONE 2026-07-04** (Nav_ConfigEditWrap + config-edit demo landed; residue narrowed to
+  **D-11059**: GameFlow reachability, overlay rewire U-9013, threshold table).
 - **WS-G4** — remaining menu screens/options paths.
 - **WS-D** power-ups: replace stand-in numeric rates with the real values; finish per-type wiring that
   isn't blocked on WS-B/E.
@@ -268,14 +285,16 @@ for the MCP + judgment tail, per §6.
 2. **WS-PHYS-DRIVE-STABILIZE (WAVE16).** *claude2:* survey the standalone drive path + WAVE16 notes and
    draft the sustained-drive harness. *account3:* run it, Frida-diff, root-cause the erratic speed
    (0/260/0) + steer sign/scale. The live blocker to WS-A8.
-3. **D-11056 / U-8997 — rule-5 collectible feed.** *claude2:* trace the collectible-object registrar
-   (0x00405780, zero static callers) across the sources + decomp text account3 provides, and draft the
-   feed wiring. *account3:* Ghidra-confirm, wire, verify. Self-contained M1 win.
-4. **D-11057 — cup-progression tier advance + game-length screens (WS-G2).** *claude2:* survey + draft;
-   *account3:* wire + verify. Finishes campaign-progression breadth.
-5. **`__ftol` 0x004a2c48 + the top demand-map §3 leaves.** Highest-in-degree STUB the slice calls
-   everywhere. *account3:* one Ghidra pull → *claude2:* first-draft ports of the leaf cluster →
-   *account3:* review + `diff-original`. Pairs with draining SCRIBE_QUEUE (11) via `ghidra-sweep`.
+3. ~~**D-11056 / U-8997 — rule-5 collectible feed.**~~ **DONE 2026-07-04** — chain traced
+   (KTC_NewCopter → FUN_00405780 → DAT_0063a5d0/d4, definitive xref closure), TrackRenderer feed
+   landed, suites GREEN.
+4. ~~**D-11057 — cup-progression tier advance + game-length screens (WS-G2).**~~ **DONE 2026-07-04**
+   — full dec/inc decode of both config screens, Nav_ConfigEditWrap landed + behavioral demo GREEN;
+   follow-on gaps narrowed to **D-11059**.
+5. **Top demand-map §3 leaves.** (The `__ftol` head item 0x004a2c48 went **C3 2026-07-03**,
+   byte-identical `FPURound_4a2c48`.) *account3:* one Ghidra pull → *claude2:* first-draft ports of
+   the leaf cluster → *account3:* review + `diff-original`. Pairs with draining SCRIBE_QUEUE (11)
+   via `ghidra-sweep`.
 
 Then reassess against the chosen milestone order.
 

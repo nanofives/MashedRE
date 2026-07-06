@@ -199,7 +199,7 @@ qhull + reconstruct the RW-Physics call surface); input (DirectInput path alread
 works; camera follows faithfully; physics behavior diff-checked against original telemetry
 (Frida trace of the original race vs standalone logs on matched inputs where feasible).
 
-### Phase R6 — Race loop ★ flagship demo (EXIT DEMO PASSED 2026-07-02, automated driver)
+### Phase R6 — Race loop ★ flagship demo (CLOSED 2026-07-06; exit demo passed 2026-07-02)
 **Landed 2026-06-10 (verbatim ports, re/analysis/race_camera/):** the shared race
 camera (FUN_00446520 + Common/LED.piz per-gate angles — format cracked), the real
 elimination rule (camera required-zoom saturation at 10.0, FUN_00410d10), real car
@@ -220,7 +220,9 @@ exit. Evidence: verify/r6/round{1..7}_{go,result}.bmp + match_result.bmp/png +
 verify/race1/00_results.bmp/png + mashed_re.log R6 telemetry. Literal-criterion
 residue: an interactively-navigated track/car selection and a continuous screen
 recording (the automated run parks on Challenge Select via MASHED_GOTO=6 and
-captures per-stage frames instead). Note: the standalone races on the WS-C
+captures per-stage frames instead) — filed as D-11060/D-11061 on phase close
+2026-07-06 (re-pickup: M1 breadth pass / next unlocked-desktop verification
+session). Note: the standalone races on the WS-C
 faithful-lookahead AI (AiStandalone.cpp); the newly-C3 chain is the verbatim
 .asi reference for its convergence.
 **Goal:** complete a full race against AI in the standalone.
@@ -230,7 +232,7 @@ scripts from R3 + ai subsystem); Mashed's signature camera-pull elimination rule
 **Exit criteria:** boot → menu → select track/car → finish a race vs AI, end-to-end on
 `mashed_re.exe` alone, screen-recorded.
 
-### Phase R7 — Full game systems
+### Phase R7 — Full game systems (ACTIVE since 2026-07-06 — scaffold→verbatim conversion; route: re/analysis/RE_MASTER_PLAN_2026-07.md)
 **Scaffold landed 2026-06-15/16 (SCAFFOLD, not verbatim):** the full race loop,
 results/progression, elimination+laps modes, particles, pickups (real
 POWERUPS_GOLD placement), power-up effects, and **real audio** (both RWS formats

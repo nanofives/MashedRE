@@ -267,7 +267,7 @@ what dominate cost. Therefore:
 
 ## Roadmap, DoD, and trackers
 
-**Current phase (ROADMAP v2, 2026-06-09):** **standalone-first, demand-driven** — see `ROADMAP.md` (phases R0–R8) and `re/analysis/AUDIT_2026-06-09.md`. R0–R5 are closed (re-baseline, C4 truth, menu, track/vehicle data, world render, drivable car); active work is **R6 (race loop)** — WS-R6 AI control chain — with R7 (full game systems) opened. The v1 percentage gates are retired; port what the active slice executes. Batch fanout pipelines are opportunistic only (first-party C1 = 0; the flat C2→C3 lane is mined out — round 11 planned 0 eligible; do not run a batch with predicted yield under ~30%).
+**Current phase (ROADMAP v2, 2026-06-09):** **standalone-first, demand-driven** — see `ROADMAP.md` (phases R0–R8) and `re/analysis/AUDIT_2026-06-09.md`. R0–R6 are closed (re-baseline, C4 truth, menu, track/vehicle data, world render, drivable car, race loop — exit demo 2026-07-02, closed 2026-07-06 with residue D-11060/D-11061); active work is **R7 (full game systems)** — scaffold→verbatim conversion. Strategic route + milestones + next-sessions queue: `re/analysis/RE_MASTER_PLAN_2026-07.md`; standing between-slices work: `re/HARNESS_BACKLOG.md`. The v1 percentage gates are retired; port what the active slice executes. Batch fanout pipelines are opportunistic only (first-party C1 = 0; the flat C2→C3 lane is mined out — round 11 planned 0 eligible; do not run a batch with predicted yield under ~30%).
 
 - `ROADMAP.md` — phases (0..6), Definition of Done at function/subsystem/project levels.
 - `re\CONFIDENCE.md` — C0..C4 rubric; the only gate for status changes.

@@ -9,6 +9,29 @@ A "stub" is one of:
 
 Each stub gets one row. Resolve by reversing the target function (preferred) or by promoting the stub to `DEFERRED.md` with a wontfix rationale (rare).
 
+## Status summary (census 2026-07-06 — foundation reset)
+
+**1,118 open rows / 138 struck.** S-DoD is gated *per subsystem* — read this census, not the raw
+row count. Open rows by subsystem column (13 rows have a shifted/older column format and are
+counted under their literal 4th cell):
+
+| render | boot | util | particle | audio | vehicle | frontend | hud (+font/gameplay) | track | input | save | ai | gameplay | physics | race_state | video | io | misformatted |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 224 | 197 | 139 | 111 | 90 | 86 | 59 | 68 | 42 | 41 | 20 | 9 | 6 | 5 | 5 | 2 | 1 | 13 |
+
+A large share of the open rows are **library-band passthroughs, not first-party port targets**
+(library-skip policy, `re/CONFIDENCE.md` + CLAUDE.md skip bands): the `boot` block is dominated
+by MSVC-CRT depth-3 helpers (e.g. S-0021 `__ms_p5_mp_test_fdiv`, S-0023 `___endstdio`, S-0025
+`__lock`), and the `audio` block by the RwaDSSource/RwaDSRenderer DirectShow cluster
+(`0x005bcbb0..0x005bf470`, batch_ah/batch_ai, e.g. S-5703/S-5705/S-5708). These gate only their
+own subsystem's S-DoD (or resolve as `deferred-not-needed` at P-DoD time); they do not block the
+active R7 conversion lanes. The live first-party burn-down signal is the render / particle /
+vehicle / frontend / hud share — which tracks the WS-E and M1/M2 milestone work in
+`re/analysis/RE_MASTER_PLAN_2026-07.md`.
+
+*(Census is a read aid only; rows remain the source of truth. Refresh the counts at milestone
+boundaries alongside the master plan §1 snapshot.)*
+
 ## Active stubs
 
 | ID | RVA called | Caller (RVA / name) | Subsystem | Type | Inserted | Notes |
