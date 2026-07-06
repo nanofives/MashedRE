@@ -9,8 +9,9 @@ estimated. Re-open this each session (or have the account2 worker summarize it) 
 > - **R6 CLOSED** (exit demo 2026-07-02; literal-criterion residue filed **D-11060/D-11061**).
 >   Active phase: **R7 scaffold→verbatim conversion** on this plan's route. ROADMAP + CLAUDE.md updated.
 > - §7 queue: item 3 (D-11056) and item 4 (D-11057) **DONE 2026-07-04**; item 5's `__ftol` head
->   **DONE 2026-07-03** (C3, byte-identical). Next up: **T1** (delegation-reach test), the **D1/D5
->   gates**, and WS-PHYS-DRIVE-STABILIZE.
+>   **DONE 2026-07-03** (C3, byte-identical). T1 **DONE 2026-07-06** (shell-blocked). Gates **D1**
+>   (Option A, lane B5a..B5e) and **D5** (M1 breadth-first) both **RESOLVED 2026-07-06**.
+>   Next up: the **M1 breadth tail** (§7 queue, reordered per D5), then WS-PHYS-DRIVE-STABILIZE.
 > - Repo foundation: `ws-r6-ai-control-chain` merged to main (3b6b6bd7, build green both targets);
 >   branch triage — 80 merged + 39 stale unmerged deleted, all tips preserved in
 >   `log/branches_backup_2026-07-06.bundle`, salvage candidates kept (`promote-c4`,
@@ -125,10 +126,9 @@ M2, so it can run as the parallel track / change-of-pace whenever the physics la
 Per-subsystem stub/uncertainty burn-down to empty, drop the `.asi` from the ship build matrix,
 clean full playthrough of every track/vehicle/mode, packaging + README.
 
-> **Reorder fork (your call — see gate D5):** if *faithful feel* matters more to you than *breadth
-> soonest*, swap M1 and M2 — resolve WS-B1 and drive the physics spine first. My recommendation is
-> M1-first (cheaper, delivers a playable game sooner, gives M2/M3 a complete test harness), but this
-> is a genuine priorities decision and it's yours.
+> **Reorder fork — DECIDED (gate D5, 2026-07-06): M1-first, user-ratified.** M1 breadth tail runs
+> before the M2 physics spine (cheaper, delivers a playable game sooner, gives M2/M3 a complete
+> test harness).
 
 ---
 
@@ -197,8 +197,10 @@ Resolve these before the dependent work, not mid-stream. Each is a genuine fork 
 - **D4 — Airborne bit-identity:** accept the A5 airborne 1-ULP float10 residual (U-8991) as
   C4-grounded (recommended — it's faithful within FP tolerance) vs invest in the naked-asm float10 shim
   for strict bit-identity.
-- **D5 — Milestone order:** M1 breadth-first (recommended) vs M2 depth-first (if "faithful feel" is
-  the priority).
+- ~~**D5 — Milestone order**~~ **RESOLVED 2026-07-06 — M1 BREADTH-FIRST, user-ratified** (the
+  plan's recommendation). Route: finish the M1 tail (WS-G4, WS-D unblocked slice, WS-J M1 slice,
+  video-playback scope, WS-I in/out via D3, WS-F D-11058) before the M2 physics pole. The M2 opener
+  (WS-PHYS-DRIVE-STABILIZE + B5a..B5e) stays queued behind the tail, not dropped.
 
 ---
 
@@ -284,24 +286,38 @@ for the MCP + judgment tail, per §6.
 - ~~**T1 — Delegation-reach test (do first; ~2 min).**~~ **DONE 2026-07-06: SHELL-BLOCKED** — the
   worker has no shell tool at all (Read/Grep/Glob only); §6 experimental lane closed, verification
   stays on account3.
-1. **Decision session — WS-B1 collision architecture (D1).** *claude2:* summarize the qhull-island +
-   RW-Physics cluster notes and lay out both options (effort/fidelity/binary-size). *account3/you:*
-   decide. Cheap; unblocks the entire physics pole.
-2. **WS-PHYS-DRIVE-STABILIZE (WAVE16).** *claude2:* survey the standalone drive path + WAVE16 notes and
-   draft the sustained-drive harness. *account3:* run it, Frida-diff, root-cause the erratic speed
-   (0/260/0) + steer sign/scale. The live blocker to WS-A8.
-3. ~~**D-11056 / U-8997 — rule-5 collectible feed.**~~ **DONE 2026-07-04** — chain traced
+1. ~~**Decision session — WS-B1 collision architecture (D1).**~~ **DONE 2026-07-06 — Option A
+   ratified** (vendor qhull + reconstruct system 2; spike `D1_SPIKE_PROXY_BYPASS_2026-07-06.md`;
+   ROADMAP lane B5a..B5e).
+2. ~~**D-11056 / U-8997 — rule-5 collectible feed.**~~ **DONE 2026-07-04** — chain traced
    (KTC_NewCopter → FUN_00405780 → DAT_0063a5d0/d4, definitive xref closure), TrackRenderer feed
    landed, suites GREEN.
-4. ~~**D-11057 — cup-progression tier advance + game-length screens (WS-G2).**~~ **DONE 2026-07-04**
+3. ~~**D-11057 — cup-progression tier advance + game-length screens (WS-G2).**~~ **DONE 2026-07-04**
    — full dec/inc decode of both config screens, Nav_ConfigEditWrap landed + behavioral demo GREEN;
    follow-on gaps narrowed to **D-11059**.
-5. **Top demand-map §3 leaves.** (The `__ftol` head item 0x004a2c48 went **C3 2026-07-03**,
-   byte-identical `FPURound_4a2c48`.) *account3:* one Ghidra pull → *claude2:* first-draft ports of
-   the leaf cluster → *account3:* review + `diff-original`. Pairs with draining SCRIBE_QUEUE (11)
-   via `ghidra-sweep`.
 
-Then reassess against the chosen milestone order.
+**M1 breadth tail (D5 ratified 2026-07-06: this runs FIRST, in this order):**
+
+4. **WS-G4 — remaining menu screens/options paths.** *claude2:* inventory unported screens vs the
+   nav-coverage report; *account3:* port + parity-harness each. Includes the D-11059 residue
+   (GameFlow reachability, overlay rewire U-9013, threshold table).
+5. **WS-D unblocked slice** — replace stand-in numeric power-up rates with real values; per-type
+   wiring not gated on WS-B/E.
+6. **WS-J M1 slice** — char→engine-bank map + music-state transitions (impact/skid FX stay M2).
+7. **Video playback scope** — port the 4-function video subsystem or `deferred-not-needed` with
+   rationale if the menus never require it.
+8. **Gate D3 (WS-I)** — decide split-screen local MP in/out for v1.0; wire or defer accordingly.
+9. **WS-F tail — D-11058** LapData `Lap_Line_End` (find the consumer or `deferred-not-needed`).
+
+**Then the M2 opener (queued behind the tail per D5, not dropped):**
+
+10. **WS-PHYS-DRIVE-STABILIZE (WAVE16).** *claude2:* survey the standalone drive path + WAVE16 notes and
+    draft the sustained-drive harness. *account3:* run it, Frida-diff, root-cause the erratic speed
+    (0/260/0) + steer sign/scale. The live blocker to WS-A8. Then lane **B5a..B5e** (D1 Option A).
+
+**Between-slices filler:** top demand-map §3 leaves (the `__ftol` head 0x004a2c48 went **C3
+2026-07-03**, byte-identical `FPURound_4a2c48`) + drain SCRIBE_QUEUE (11) via `ghidra-sweep`;
+pull from `re/HARNESS_BACKLOG.md` in ROI order when a slice stalls.
 
 ---
 
