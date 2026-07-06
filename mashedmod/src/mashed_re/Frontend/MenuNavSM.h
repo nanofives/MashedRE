@@ -197,6 +197,16 @@ int  Nav_TakePendingCupModal();
 // 0x136) is CONFIRMED. Verbatim: FUN_0043d2a0(7,0); if (ed6c==2) e9fc=3.
 void Nav_ContinueCupConfirm();
 
+// [D-11059(a)] Post-race cup-standings entry: arms the cup-continue latch
+// (ea6c=4, the pre-state Nav_ContinueCupBegin's game_mode-6/2 gate requires)
+// and pushes screen 5 (kT5) so the verbatim 0xff240000 Continue chain is
+// reachable in a live playthrough. STANDALONE FLOW WIRING, not a verbatim
+// port: the original's screen-5 push site and its post-race DAT_0067ea6c=4
+// writer live OUTSIDE FUN_0043dfd0 and are unharvested
+// (d11057_claude2_handoff_2026-07-03.md gap #1) [UNCERTAIN U-9014]. Called
+// from the GameFlow results-dismissal boundary (exe_main), cup modes only.
+void Nav_PushContinueCup();
+
 // Standalone analogue of FUN_004307a0 (ElapsedVsThresholdCheck): selects the
 // modal variant (return 0 -> two-choice 0x136; nonzero -> single 0x135). The
 // original compares race-elapsed time vs a per-track threshold table

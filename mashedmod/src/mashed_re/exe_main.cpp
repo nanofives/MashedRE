@@ -1076,6 +1076,18 @@ bool RunRaceDemoStep(int /*phase*/) {
         case 0:  // settle on Challenge Select for ~0.6s, snapshot it, then Enter
             CreateDirectoryA("verify\\race1", nullptr);
             if (g_frontend_phase < 3 || g_modal_step != 0) return false;
+            // [D-11059(a)] a cup round's results-dismissal now lands on the
+            // cup-standings screen (kT5). Capture it (screen-5 reachability
+            // evidence), then re-park on Challenge Select for the next round.
+            if (frontend && mashed_re::Frontend::Nav_ScreenId() == 5) {
+                if (t_ms == 0) { t_ms = GetTickCount(); return false; }
+                if (GetTickCount() - t_ms < 600) return false;
+                char sn[24];
+                std::snprintf(sn, sizeof sn, "%02d_cupstandings", cupRound);
+                cap(sn);
+                mashed_re::Frontend::Nav_DevGoto(6);
+                t_ms = 0; cool = 20; return false;
+            }
             if (t_ms == 0) { t_ms = GetTickCount(); return false; }
             if (GetTickCount() - t_ms < 600) return false;
             cap("00_challengeselect");
@@ -1438,7 +1450,31 @@ bool UpdateMenuSelection() {
         const mashed_re::Race::GameMode gm = mashed_re::Race::GameFlow_Mode();
         if (gm == mashed_re::Race::GameMode::InRace ||
             gm == mashed_re::Race::GameMode::Results) {
-            if (esc_now && !esc_prev) mashed_re::Race::GameFlow_RequestExit();
+            if (esc_now && !esc_prev) {
+                // [D-11059(a)] Dismissing the RESULTS of a completed cup race
+                // (championship 3 / tier cups 4/5 — the D-11054 mode->column
+                // family) lands on the cup-standings screen (kT5) so the
+                // verbatim continue-cup chain (0xff240000 ->
+                // Nav_ContinueCupBegin) is reachable in a live playthrough.
+                // Results is only entered via the match-winner path
+                // (GameFlow_RequestResults), so a mid-race Esc (gm==InRace)
+                // still exits straight to the menu — no push on aborts.
+                // Launch mode is read from the session config (survives into
+                // Results; Nav_GameState().game_mode can be mutated by the
+                // continue-cup confirm itself). MASHED_CUP_STANDINGS=0 reverts.
+                static const bool s_cupstandings = [] {
+                    const char* e = std::getenv("MASHED_CUP_STANDINGS");
+                    return !(e && e[0] == '0');
+                }();
+                const int raceMode =
+                    mashed_re::Race::GameFlow_Session().config().gameMode;
+                const bool cupResults =
+                    s_cupstandings &&
+                    gm == mashed_re::Race::GameMode::Results &&
+                    (raceMode == 3 || raceMode == 4 || raceMode == 5);
+                mashed_re::Race::GameFlow_RequestExit();
+                if (cupResults) mashed_re::Frontend::Nav_PushContinueCup();
+            }
             return false;
         }
     }

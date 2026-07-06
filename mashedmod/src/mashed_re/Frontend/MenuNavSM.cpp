@@ -1126,6 +1126,14 @@ void Nav_ContinueCupConfirm() {
 
 void Nav_SetCupContinueVariant(int v) { g_cup_continue_variant = v ? 1 : 0; }
 
+// [D-11059(a)] See MenuNavSM.h — standalone flow wiring (original push site
+// unharvested, [UNCERTAIN U-9014]). ea6c=4 mirrors the "arming" latch value
+// the L296 champ-mode gate of Nav_ContinueCupBegin consumes.
+void Nav_PushContinueCup() {
+    g_game_state.ea6c = 4;
+    Nav(5, kNavPush);
+}
+
 // --------------------------------------------------------------------------
 // [D-11057] game-config option-row edit primitive (decrement/increment-with-
 // wrap). Verbatim port of FUN_0043dfd0's screen-kind-gated dec (0x00440283+,
