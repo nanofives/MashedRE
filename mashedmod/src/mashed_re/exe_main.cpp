@@ -3790,20 +3790,27 @@ bool RenderFrame() {
         // --- Game Mode setup (18 MP / 24 SP): the nav item list (above) draws
         // each option row's plate + LABEL; this overlay adds the right-aligned
         // "value" text per row. The value's message id is computed from the
-        // game-setup state via the VERBATIM FUN_0043af10 per-row switch (the
-        // iStack_38==0x18 SP branch vs the MP else-branch), reading the probed
-        // jumped-to default state (re/frida/probe_gamemode_state.py 2026-06-14):
-        //   ea74=1 ea7c=0 ea80=0 ea88=0 ea90=1 ea94=0 ea98=4 ea9c=2 eaa0=3 ea78=0
-        // Opponent names come from the local_1c msgid table in FUN_0043af10;
-        // Vehicle from the 0x5f6748 table (slot0 -> msgid 0x105). Strings render
-        // through GetMenuMessage (ENGLISH.DAT) so they are the real localized
-        // values (0x5b=Standard, 0xd4=Rookie, 0x105=Hammerhead, 0x7c/7a/7b=Gold/
-        // Bluejay/Melon, 0x25e=One-against-all). Value right edge + row Y come
-        // from the nav records so the value tracks the label exactly.
+        // LIVE game-setup state (Nav_GameState(), edited by Nav_ConfigEditWrap
+        // on LEFT/RIGHT — U-9013) via the VERBATIM FUN_0043af10 per-row switch
+        // (the iStack_38==0x18 SP branch vs the MP else-branch). kFreshState
+        // equals the probed jumped-to defaults (re/frida/probe_gamemode_state.py
+        // 2026-06-14: ea74=1 ea7c=0 ea80=0 ea88=0 ea90=1 ea94=0 ea98=4 ea9c=2
+        // eaa0=3 ea78=0), so first-entry rendering is unchanged vs the parity
+        // references. Opponent names come from the local_1c msgid table in
+        // FUN_0043af10; Vehicle stays the slot-0 msgid 0x104 (the slot->msgid
+        // 0x5f6748 table is runtime-populated — U-8979 — so the dynamic ea94
+        // mapping remains a residual, see the vehicle-preview note below).
+        // Strings render through GetMenuMessage (ENGLISH.DAT) so they are the
+        // real localized values (0x5b=Standard, 0xd4=Rookie, 0x104=Hammerhead,
+        // 0x7c/7a/7b=Gold/Bluejay/Melon, 0x25e=One-against-all). Value right
+        // edge + row Y come from the nav records so the value tracks the label.
         if ((Nav_ScreenId() == 18 || Nav_ScreenId() == 24) && g_bridge_installed) {
             const bool sp = (Nav_ScreenId() == 24);
-            const int ea74 = 1, ea7c = 0, ea80 = 0, ea88 = 0, ea90 = 1;
-            const int ea98 = 4, ea9c = 2, eaa0 = 3, ea78 = 0, eaac = 0;
+            const auto& gs = Nav_GameState();
+            const int ea74 = gs.ea74, ea7c = gs.ea7c, ea80 = gs.ea80,
+                      ea88 = gs.ea88, ea90 = gs.ea90;
+            const int ea98 = gs.ea98, ea9c = gs.ea9c, eaa0 = gs.eaa0,
+                      ea78 = gs.ea78, eaac = gs.eaac;
             static const int local_1c[7] = {0x7f, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e};
             // (label msgid, value msgid; value -1 = action row, no value). Value
             // msgids are the VERBATIM FUN_0043af10 per-row switch (0x18 SP branch
@@ -3839,12 +3846,15 @@ bool RenderFrame() {
             const float plateH = 26.0f, bt = 1.0f * kVScale;
             const float cell = 0.6f * 0.0708f * 480.f * kVScale;
             std::uint32_t uvf[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
+            // Selected row follows the live nav cursor (fresh entry = 0, same
+            // as the parity references).
+            const int selRow = (Nav_Cursor() >= 0) ? Nav_Cursor() : 0;
             for (int r = 0; r < nrows; ++r) {
                 const float cy = y0 + r * pitch;                 // row centre (virtual)
                 const float pt = (cy - plateH * 0.5f) * kVScale; // plate top
                 const float pw = plateW * kVScale, px = plateX * kVScale;
-                const std::uint32_t fill = (r == 0) ? 0xa0146ef0u   // selected = orange
-                                                    : 0x40f8d0e8u;  // idle = blue
+                const std::uint32_t fill = (r == selRow) ? 0xa0146ef0u   // selected = orange
+                                                         : 0x40f8d0e8u;  // idle = blue
                 HudIm2DQuad(0, px, pt, pw, plateH * kVScale, fill, uvf);
                 HudIm2DQuad(0, px, pt, pw, bt, 0xff1050b4u, uvf);
                 HudIm2DQuad(0, px, pt + plateH * kVScale - bt, pw, bt, 0xff1050b4u, uvf);
