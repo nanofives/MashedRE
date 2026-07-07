@@ -132,6 +132,20 @@ OIL=0x45b350, MORTAR=0x453690.)
     a register-passed type that the decompiler can't surface — it pushes `0x10` on the
     stack but the ESI type is invisible). Likely BLANK rolls a random one of the 9, and
     MINE(6)/DETONATOR(8) alias onto P_MINE(12)/DRUM(10) — **NOT confirmed this session.**
+    - *Addendum 2026-07-06 (pool13, instruction-level):* the pickup-collect call site is
+      `0x0045bd47` → `FUN_0045c010(playerIdx, 0x10)`. `FUN_0045c010` (0x0045c010..0x0045c028)
+      is a playerIdx→slot converter: `slot = 0x0088fbe0 + idx*0xb4` (IMUL 0x0045c014,
+      ADD 0x0045c01a) then JMP `FUN_0045bfa0` — so the pushed `0x10` is the (unread by
+      FUN_0045bfa0) SECOND stack arg, and the TYPE still rides ESI, set upstream of the
+      pickup-box block. ESI writers ahead of the call inside the dispatcher segment
+      0x0045bba0..0x0045bd47: `LEA ESI,[EDI-0x20]` (0x0045bbd6), `MOV ESI,EBP`
+      (0x0045bc96, on the box-state==2 branch), `LEA ESI,[EDI-0x90]` (0x0045bcf1) — all
+      pointer-shaped on their paths; the type load dominating the 0x0045bd47 path was NOT
+      located. Pickup-box state machine: `DAT_0068d1f0[boxIdx]` (0x0045bc6b): state 4 skip,
+      2 → set 3 + FUN_0045bac0, 3 skip, else contact path (guards on the per-player input
+      bytes 0x7f1055/0x7f1515 at 0x0045bd24/0x0045bd32). Next probe: trace EBP/ESI setup
+      in the loop head above 0x0045bc60, and the writer that populates the box's type from
+      the LUA code (incl. any 21→random / 6→12 / 8→10 mapping) before the collect.
 
 ---
 

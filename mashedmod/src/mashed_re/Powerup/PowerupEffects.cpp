@@ -37,10 +37,16 @@ namespace tune {
     constexpr float kMortarRate   = 0.4f;  // REAL: (&DAT_00684e48)[] = 0x3ecccccd (FUN_004533b0)
     constexpr int   kShotgunPellets = 4;   // REAL: +0x10 = 4 (FUN_0045b200)
     constexpr float kOilDrop        = 0.1f;// REAL: _DAT_005cc56c = 0.1 -> supply 1.0/0.1 = 10 drops (FUN_00457800)
-    // STAND-INS (world-scale / frame-count in the original; host-scaled here):
-    constexpr float kFlameDuration  = 1.2f;// real gate = +0x14 frame counter >4 (FUN_0045a850); ~playable
+    // REAL (harvested pool13 2026-07-06, instruction-cited at the R_FLAME /
+    // MORTAR sections below):
+    constexpr int   kFlameBursts         = 5;     // REAL: +0x14 shutoff JL 5 (0x0045a86c)
+    constexpr int   kFlameSparksPerBurst = 5;     // REAL: sub rollover CMP 5 (0x0045aa27)
+    constexpr float kFlameSparkPeriod    = 0.02f; // REAL: +0x8 re-arm 0x3ca3d70a (0x0045aa4a)
+    constexpr float kFlameMeterStep      = 0.04f; // REAL: DAT_005cd18c (FMUL 0x0045a93c)
+    constexpr float kMortarFwdFactor     = 0.13f; // REAL: _DAT_005cd02c (FMUL 0x00453494/4a0/4ac)
+    constexpr float kMortarVelFactor     = 0.9f;  // REAL: _DAT_005cc9c8 (FMUL 0x004534bb/4cd/4e5)
+    // STAND-IN (world-scale in the original; host-scaled here):
     constexpr float kMissileSpeed   = 0.6f;// real aim = trig * _DAT_005ce480/005ccad0/005cd988 (FUN_00455150)
-    constexpr float kMortarSpeed    = 0.5f;// real = fwd*_DAT_005cd02c(0.13) + ownerVel*_DAT_005cc9c8(0.9) (FUN_004533b0)
 }
 
 // helper: forward unit vec from the firing car (owner +0x20 fwd; fall back to yaw)
@@ -135,12 +141,25 @@ void PMine_Tick(PowerupSystem&, float) {}    // 0x4582f0
 
 // ============================== R_FLAME (16) ===============================
 // arm 0x45a7c0 / fire 0x45a850 / canfire 0x45a890 / deact 0x45a8b0 / tick 0x45ae80
-// Flamethrower jet: burns while held, depletes after a short duration.
-void RFlame_Arm(PowerupSystem&, Slot& s) {   // orig FX FUN_00465e80(0x16)
-    s.charge = tune::kFlameDuration; s.jetState = 0;
+// Rear flame: a BURST weapon, not a continuous timer (verbatim budget decoded
+// pool13 2026-07-06, instruction-cited): 5 bursts (major counter +0x14,
+// shutoff JL 5 at 0x0045a86c); each burst = 5 spark emissions (sub counter
+// +0x18, rollover CMP 5 at 0x0045aa27 inside the emission stepper
+// FUN_0045a950 — sole caller: tick FUN_0045ae80 — which also clears the jet
+// flag +0x1c and resets sub at 0x0045aa2f..0x0045aa36, i.e. each burst ends
+// itself); emissions are cooldown-gated at 0.02 s (+0x8 re-armed with
+// 0x3ca3d70a at 0x0045aa4a; stepper gates on +0x1c!=0 at 0x0045a9c0 and on
+// +0x8 vs 0.0 at 0x0045a9f0). Charge meter (helper LAB_0045a910):
+// ((5 - major)*5 - sub) * DAT_005cd18c(0.04) -> 1.0 .. 0.0.
+// Slot mapping: ammo=major(+0x14), subState=sub(+0x18), jetState=+0x1c,
+// cooldown=+0x8, charge=derived meter.
+void RFlame_Arm(PowerupSystem&, Slot& s) {   // 0x45a7c0: +0x08=0.02 (0x3ca3d70a), FX FUN_00465e80(0x16)
+    s.ammo = 0; s.subState = 0; s.jetState = 0;
+    s.cooldown = tune::kFlameSparkPeriod;
+    s.charge = 1.0f;
 }
-bool RFlame_CanFire(PowerupSystem&, Slot& s) {  // 0x45a890: pool[0]==0 (depleted)
-    return s.charge <= 0.f;
+bool RFlame_CanFire(PowerupSystem&, Slot& s) {  // 0x45a890: pool[0]==0 (depleted latch,
+    return s.ammo >= tune::kFlameBursts;        //   set by fire's major>=5 arm 0x0045a875)
 }
 void RFlame_Deact(PowerupSystem& sys, Slot&) {  // 0x45a8b0: jet off + stop FX FUN_004661a0(0x16)
     float fwd[3]; OwnerForward(sys.owner(), fwd);
@@ -149,18 +168,35 @@ void RFlame_Deact(PowerupSystem& sys, Slot&) {  // 0x45a8b0: jet off + stop FX F
 }
 void RFlame_Fire(PowerupSystem& sys, Slot& s, int mode) {  // 0x45a850
     float fwd[3]; OwnerForward(sys.owner(), fwd);
-    if (s.charge <= 0.f) {                    // orig: +0x14>4 -> shut off, clear pool
+    if (s.ammo >= tune::kFlameBursts) {       // +0x14 >= 5 (JL 5, 0x0045a86c): shut off
         sys.backend()->FlameJet(sys.owner().pos, fwd, false);
+        s.jetState = 0;                       // +0x1c = 0 (0x0045a86e)
         return;
     }
-    if (mode != kFireSecondary) {             // orig: param_2 != 1 -> jet on
+    if (mode != kFireSecondary) {             // param_2 != 1 -> jet on (+0x1c=1, 0x0045a88c)
         sys.backend()->FlameJet(sys.owner().pos, fwd, true);
         s.jetState = 1;
     }
 }
-void RFlame_Tick(PowerupSystem& sys, float dt) {  // 0x45ae80: spark sim + deplete
-    if (sys.slot().activeCode == kRFlame && sys.slot().jetState)
-        sys.slot().charge -= dt;
+void RFlame_Tick(PowerupSystem& sys, float dt) {  // emission stepper FUN_0045a950 (from tick 0x45ae80)
+    Slot& s = sys.slot();
+    if (s.activeCode != kRFlame || !s.jetState) return;  // gate +0x1c != 0 (0x0045a9c0)
+    // [UNCERTAIN U-9015] the original's +0x8 cooldown DECREMENT site was not
+    // pinned (only the 0.0 compare 0x0045a9f0 and the 0.02 re-arm 0x0045aa4a
+    // are); per-frame dt decrement assumed here.
+    s.cooldown -= dt;
+    if (s.cooldown > 0.f) return;                        // gate +0x8 vs 0.0 (0x0045a9f0)
+    s.cooldown = tune::kFlameSparkPeriod;                // re-arm 0.02 (0x0045aa4a)
+    ++s.subState;                                        // sub++ (0x0045aa24/0x0045aa2a)
+    if (s.subState >= tune::kFlameSparksPerBurst) {      // CMP 5 (0x0045aa27)
+        ++s.ammo;                                        // major++ (0x0045aa2f/30)
+        s.jetState = 0;                                  // +0x1c = 0 (0x0045aa33): burst self-ends
+        s.subState = 0;                                  // +0x18 = 0 (0x0045aa36)
+        float fwd[3]; OwnerForward(sys.owner(), fwd);
+        sys.backend()->FlameJet(sys.owner().pos, fwd, false);
+    }
+    s.charge = static_cast<float>((tune::kFlameBursts - s.ammo) * tune::kFlameSparksPerBurst
+                                  - s.subState) * tune::kFlameMeterStep;  // meter LAB_0045a910
 }
 
 // ============================== SHOTGUN (17) ===============================
@@ -229,10 +265,16 @@ void Mortar_Fire(PowerupSystem& sys, Slot& s, int mode) {  // 0x4533b0: mode==1,
     s.cooldown = tune::kMortarRate;
     float fwd[3]; OwnerForward(sys.owner(), fwd);
     const float* v = sys.owner().vel;
-    // orig (no lock): vel = fwd*_DAT_005cd02c + ownerVel*_DAT_005cc9c8 (lob).
-    float vel[3] = { fwd[0] * tune::kMortarSpeed + v[0] * 0.5f,
-                     0.4f,                                   // upward arc component
-                     fwd[2] * tune::kMortarSpeed + v[2] * 0.5f };
+    // VERBATIM straight branch of 0x4533b0 (no target lock — JNZ 0x0045348b
+    // not taken): vel[i] = fwd[i] * _DAT_005cd02c(0.13)  [FMULs 0x00453491..
+    // 0x004534b2] + ownerVel[i] * _DAT_005cc9c8(0.9)  [0x004534b5..0x004534f4],
+    // ALL THREE components. No separate upward-arc term exists in the original
+    // (the previous 0.4f here was invented and is removed; vertical motion
+    // comes from the car's own fwd[1]/vel[1]). The other branch is TARGET-
+    // AIMED via FUN_0045a110 (not random) — un-ported, target=-1 below.
+    float vel[3] = { fwd[0] * tune::kMortarFwdFactor + v[0] * tune::kMortarVelFactor,
+                     fwd[1] * tune::kMortarFwdFactor + v[1] * tune::kMortarVelFactor,
+                     fwd[2] * tune::kMortarFwdFactor + v[2] * tune::kMortarVelFactor };
     sys.backend()->SpawnMortar(sys.owner().pos, vel, /*target=*/-1);
     sys.backend()->SfxByName("explosion1", 0.6f);
 }

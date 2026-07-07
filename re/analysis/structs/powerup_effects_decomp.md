@@ -254,3 +254,28 @@ MORTAR ammo 3 / rate 0.4s, SHOTGUN 4 pellets, **OIL 0.1 supply-decrement (10 dro
 The projectile launch *velocities* (MISSILE/MORTAR) and the R_FLAME duration stay
 host-scaled stand-ins (world-coordinate / frame-count domain — not portable to the
 radius-relative backend); the real model is cited in code for the verbatim de-stub.
+
+---
+
+## Addendum 2026-07-06 (pool13, instruction-level; WS-D unblocked slice)
+
+- **MORTAR fire 0x4533b0, straight branch** (target lookup == -1; `JNZ 0x0045348b`
+  not taken): `vel[i] = fwd[i](owner+0x20/24/28) * _DAT_005cd02c(0.13)` [FMULs
+  0x00453494/0x004534a0/0x004534ac] `+ ownerVel[i](owner+0x90/94/98) *
+  _DAT_005cc9c8(0.9)` [FMULs 0x004534bb/0x004534cd/0x004534e5] — ALL THREE
+  components; **no separate upward/arc term**. The other branch (LAB_004534fa)
+  is TARGET-AIMED (FUN_0045a110(owner+0xb0) target pos minus own pos), not
+  "random arc" — the section-2 wording "or random arc" is corrected by this.
+- **R_FLAME budget** (fire 0x45a850 + emission stepper FUN_0045a950, sole
+  caller = tick FUN_0045ae80): 5 bursts (major +0x14, shutoff `JL 5` 0x0045a86c,
+  depleted latch pool[0]=0 at 0x0045a875); burst = 5 spark emissions (sub +0x18,
+  rollover `CMP 5` 0x0045aa27; rollover clears jet +0x1c and sub at
+  0x0045aa2f..0x0045aa36 — bursts self-end); emission cooldown +0x8 re-armed to
+  0.02 (0x3ca3d70a, 0x0045aa4a; compare vs 0.0 at 0x0045a9f0; +0x1c gate at
+  0x0045a9c0, EBX zeroed 0x0045a9b5). Charge meter helper LAB_0045a910:
+  `((5 - major)*5 - sub) * DAT_005cd18c(0.04)`. The +0x8 DECREMENT site is
+  unpinned → U-9015.
+- Ported into `Powerup/PowerupEffects.cpp` (tune:: kFlameBursts/
+  kFlameSparksPerBurst/kFlameSparkPeriod/kFlameMeterStep/kMortarFwdFactor/
+  kMortarVelFactor); the invented mortar 0.4f upward term and the 1.2 s
+  kFlameDuration wall-clock stand-in are REMOVED.
