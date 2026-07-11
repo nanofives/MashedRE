@@ -307,7 +307,15 @@ for the MCP + judgment tail, per §6.
    2026-07-10 slice #2: R_FLAME dt-decrement pinned (U-9015 resolved) + MORTAR cooldown-init fixed).
    Remaining power-up work (MISSILE velocity, projectile pools, RW scene-graph leaves, U-WSD-3
    collect-site type source) moves to the WS-B/E-gated M2 backlog.
-6. **WS-J M1 slice** — char→engine-bank map + music-state transitions (impact/skid FX stay M2).
+6. ~~**WS-J M1 slice** — char→engine-bank map + music-state transitions (impact/skid FX stay M2).~~
+   **DONE 2026-07-11** — scope-corrected: the "engine-bank" map is the char-index→VOICE-bank
+   table (RED/BLUEJAY/MELON/GOLD/PINK/SHADOW per the 2026-06-16 REmap note's terminology fix),
+   not vehicle→engine-class (that gap is real but unresolved, filed U-9016, deferred to M2
+   vehicle-audio-fidelity backlog). Pinned + hooked FUN_004625b0 (C2→C3, GREEN Frida A/B).
+   Harvested the original's real per-frame music-envelope dispatch (FUN_00466b50) and cited it
+   against the standalone's 3 existing MusicSetState boundaries; live MASHED_RACE_DEMO run
+   confirms all 3 fire correctly across multiple cup rounds. Win/lose audio distinction
+   unconfirmed either way (U-9017, non-blocking).
 7. **Video playback scope** — port the 4-function video subsystem or `deferred-not-needed` with
    rationale if the menus never require it.
 8. **Gate D3 (WS-I)** — decide split-screen local MP in/out for v1.0; wire or defer accordingly.
