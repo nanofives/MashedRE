@@ -45,6 +45,8 @@ namespace tune {
     constexpr float kFlameMeterStep      = 0.04f; // REAL: DAT_005cd18c (FMUL 0x0045a93c)
     constexpr float kMortarFwdFactor     = 0.13f; // REAL: _DAT_005cd02c (FMUL 0x00453494/4a0/4ac)
     constexpr float kMortarVelFactor     = 0.9f;  // REAL: _DAT_005cc9c8 (FMUL 0x004534bb/4cd/4e5)
+    // REAL (harvested pool14 2026-07-10, instruction-cited, WS-D unblocked slice #2):
+    constexpr float kMortarCooldownInit  = -1.0f; // REAL: MORTAR arm +0x10 = 0xbf800000 (0x0045337a)
     // STAND-IN (world-scale in the original; host-scaled here):
     constexpr float kMissileSpeed   = 0.6f;// real aim = trig * _DAT_005ce480/005ccad0/005cd988 (FUN_00455150)
 }
@@ -181,9 +183,13 @@ void RFlame_Fire(PowerupSystem& sys, Slot& s, int mode) {  // 0x45a850
 void RFlame_Tick(PowerupSystem& sys, float dt) {  // emission stepper FUN_0045a950 (from tick 0x45ae80)
     Slot& s = sys.slot();
     if (s.activeCode != kRFlame || !s.jetState) return;  // gate +0x1c != 0 (0x0045a9c0)
-    // [UNCERTAIN U-9015] the original's +0x8 cooldown DECREMENT site was not
-    // pinned (only the 0.0 compare 0x0045a9f0 and the 0.02 re-arm 0x0045aa4a
-    // are); per-frame dt decrement assumed here.
+    // U-9015 RESOLVED (pool14 2026-07-10): tick FUN_0045ae80's outer per-slot
+    // loop walks the pool with a record pointer ESI = recordBase+4 (confirmed:
+    // loop start &DAT_0068bd04, stride SUB ESI,0x68 at 0x0045aeb3, terminal
+    // compare `CMP ESI,0x68bb64` at 0x0045af07 == DAT_0068bb60(pool base)+4).
+    // The decrement `FLD [ESI+0x4]; FSUB [_DAT_007f100c]; FSTP [ESI+0x4]` at
+    // 0x0045aedd is therefore recordBase+0x8 -- exactly the assumed +0x8
+    // cooldown field; per-frame dt decrement confirmed, not assumed.
     s.cooldown -= dt;
     if (s.cooldown > 0.f) return;                        // gate +0x8 vs 0.0 (0x0045a9f0)
     s.cooldown = tune::kFlameSparkPeriod;                // re-arm 0.02 (0x0045aa4a)
@@ -252,8 +258,8 @@ void Oil_Tick(PowerupSystem&, float) {}      // 0x4577b0
 // ============================== MORTAR (7) =================================
 // arm 0x453350 / fire 0x4533b0 / canfire 0x453610 / deact 0x453630 / tick 0x453b80
 // Lobbed mortar: fire on SECONDARY (mode==1), rate-gated, ammo-limited.
-void Mortar_Arm(PowerupSystem&, Slot& s) {   // orig ammo=3, cooldown=-1.0
-    s.ammo = tune::kMortarAmmo; s.cooldown = 0.f;
+void Mortar_Arm(PowerupSystem&, Slot& s) {   // 0x00453350: +0xc=3 (0x00453373), +0x10=-1.0 (0xbf800000, 0x0045337a)
+    s.ammo = tune::kMortarAmmo; s.cooldown = tune::kMortarCooldownInit;
 }
 bool Mortar_CanFire(PowerupSystem&, Slot& s) { return s.ammo < 1; }  // 0x453610: ammo<1
 void Mortar_Deact(PowerupSystem& sys, Slot&) {  // 0x453630: detach mortar tube attachment

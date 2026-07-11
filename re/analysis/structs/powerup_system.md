@@ -146,6 +146,20 @@ OIL=0x45b350, MORTAR=0x453690.)
       bytes 0x7f1055/0x7f1515 at 0x0045bd24/0x0045bd32). Next probe: trace EBP/ESI setup
       in the loop head above 0x0045bc60, and the writer that populates the box's type from
       the LUA code (incl. any 21→random / 6→12 / 8→10 mapping) before the collect.
+    - *Addendum 2026-07-10 (pool14, WS-D unblocked slice #2):* independently traced the
+      pickup/box state machine `DAT_0068d1f0[boxIdx]` consumers at the collect site
+      (0x0045bc6b..0x0045bdc1) to field-map them against `PowerupSystem.h`'s documented
+      slot layout: state==2's guard reads `[EDI+0x18]` — confirmed == `slot+0x90+0x18` =
+      `slot+0xa8` = **activeCode** (per the doc's slot map) — if a power-up is already
+      active it forces `FUN_0045bac0` (deactivate) before the state auto-advances 2→3
+      (0x0045bc85); state==3 is a no-op wait frame (0x0045bca5 JZ skip); state==4 skips
+      entirely (0x0045bc75 JZ skip). The armed/contact-sweep gate downstream (0x0045bcab)
+      reads `[EDI+0x1c]` == `slot+0xac` = **armed**, matching the doc's field map exactly.
+      The three ESI writers named in the prior addendum (0x0045bbd6, 0x0045bc96,
+      0x0045bcf1) were re-confirmed to be slot/transform pointers only (transform-refresh
+      ptr, the deactivate-call's slot arg, and the sweep-fail deactivate's slot arg,
+      respectively) — none carries a type value. **No new type-source located; U-WSD-3
+      stays open.** Next probe unchanged: trace EBP/ESI setup above 0x0045bc60.
 
 ---
 
