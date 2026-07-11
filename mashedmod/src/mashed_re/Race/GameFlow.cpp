@@ -133,6 +133,9 @@ void GameFlow_RequestExit() {
     if (g_mode == GameMode::Frontend) return;
     g_session.End();
     g_mode = GameMode::Frontend;
+    // 0x00466b50 mode dispatch: exit-to-menu-shaped modes (0/6) snap the
+    // FUN_0045dbe0-driven envelope to 0 (dir=2) -- see
+    // re/analysis/audio_music_state_dispatch_20260711.md.
     Audio::MusicSetState(Audio::MusicState::Menu);   // back to menu music
     log("RequestExit -> Frontend");
 }
@@ -140,6 +143,9 @@ void GameFlow_RequestExit() {
 void GameFlow_RequestResults() {
     if (g_mode != GameMode::InRace) return;
     g_mode = GameMode::Results;       // session stays active (scene + scores held)
+    // 0x00466b50 mode 5 (stream-drain/post-race) snaps the FUN_0045dbe0
+    // envelope to 0 once all 4 audio streams report state 3 for >=3 frames;
+    // no win/lose distinction found in that branch (see U-9017).
     Audio::MusicSetState(Audio::MusicState::Results);  // duck the race music
     log("RequestResults -> Results");
 }
@@ -153,6 +159,9 @@ void GameFlow_Update(float dt) {
             if (++g_loadFrames > 30) {
                 g_session.Begin(g_pending, g_pendingTrack, g_pendingDev);
                 g_mode = GameMode::InRace;
+                // 0x00466b50 modes 3/7 (CreateStream 0x00462dd0 + per-car
+                // opponent-AI loop) are the heaviest per-frame audio body --
+                // the strongest race-loop signal in the mode dispatch.
                 Audio::MusicSetState(Audio::MusicState::Race);  // cdaudio race music
                 log("LoadingRace -> InRace");
             }

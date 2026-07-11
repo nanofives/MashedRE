@@ -17449,4 +17449,24 @@ HOOKS = {
         'path2_tests':    [0x3F800000, 0x00000000, 0x7F800000],
     },
 
+    # ---- WS-J M1 slice (2026-07-11): char-voice-bank path builder ----
+    # 0x004625b0 void __cdecl FUN_004625b0(int langCode): builds 6 localized
+    # "toastaudio\pc\audio\pcdics\<lang>\<NAME>.rws" paths (RED/BLUEJAY/MELON/
+    # GOLD/PINK/SHADOW) into DAT_00690158 (stride 0x80, 6*0x80=0x300 bytes =
+    # 0xC0 dwords). Only caller FUN_004669b0 passes DAT_007f0f60. See
+    # re/analysis/bucket_audio_0042f760_00465b20/004625b0.md and
+    # re/analysis/audio_character_banks_REmap_20260616.md.
+    # Reimpl: Audio/AudioCharacterBankPaths.cpp (new).
+    'audio_char_bank_paths_4625b0': {
+        'rva':            0x004625b0,
+        'export':         'AudioCharacterBankPathsBuild',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'abs_ranges_setter',
+        'nscalar':        1,
+        'abs_ranges':     [{'addr': 0x00690158, 'dwords': 0xC0}],
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4],
+        'path2_tests':    [0],
+    },
+
 }

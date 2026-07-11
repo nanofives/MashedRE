@@ -26,6 +26,7 @@
 "Util\EventTable.cpp"
 "Util\TimerInit.cpp"
 "Audio\AudioMemory.cpp"
+"Audio\AudioCharacterBankPaths.cpp"
 "Audio\AudioRws.cpp"
 "Audio\AudioLeaves_ab2.cpp"
 "Audio\RwsStream.cpp"
