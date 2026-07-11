@@ -301,8 +301,12 @@ for the MCP + judgment tail, per §6.
 4. **WS-G4 — remaining menu screens/options paths.** *claude2:* inventory unported screens vs the
    nav-coverage report; *account3:* port + parity-harness each. Includes the D-11059 residue
    (GameFlow reachability, overlay rewire U-9013, threshold table).
-5. **WS-D unblocked slice** — replace stand-in numeric power-up rates with real values; per-type
-   wiring not gated on WS-B/E.
+5. ~~**WS-D unblocked slice** — replace stand-in numeric power-up rates with real values; per-type
+   wiring not gated on WS-B/E.~~ **DONE 2026-07-10** — all 9 types inventoried; every unblocked
+   numeric rate is now bit-faithful (2026-07-06 slice #1: MORTAR velocity + R_FLAME burst budget;
+   2026-07-10 slice #2: R_FLAME dt-decrement pinned (U-9015 resolved) + MORTAR cooldown-init fixed).
+   Remaining power-up work (MISSILE velocity, projectile pools, RW scene-graph leaves, U-WSD-3
+   collect-site type source) moves to the WS-B/E-gated M2 backlog.
 6. **WS-J M1 slice** — char→engine-bank map + music-state transitions (impact/skid FX stay M2).
 7. **Video playback scope** — port the 4-function video subsystem or `deferred-not-needed` with
    rationale if the menus never require it.
