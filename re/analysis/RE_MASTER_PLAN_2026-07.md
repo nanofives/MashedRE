@@ -316,10 +316,33 @@ for the MCP + judgment tail, per §6.
    against the standalone's 3 existing MusicSetState boundaries; live MASHED_RACE_DEMO run
    confirms all 3 fire correctly across multiple cup rounds. Win/lose audio distinction
    unconfirmed either way (U-9017, non-blocking).
-7. **Video playback scope** — port the 4-function video subsystem or `deferred-not-needed` with
-   rationale if the menus never require it.
-8. **Gate D3 (WS-I)** — decide split-screen local MP in/out for v1.0; wire or defer accordingly.
-9. **WS-F tail — D-11058** LapData `Lap_Line_End` (find the consumer or `deferred-not-needed`).
+7. ~~**Video playback scope** — port the 4-function video subsystem or `deferred-not-needed` with
+   rationale if the menus never require it.~~ **DONE 2026-07-11 (deferred-not-needed)** — filed
+   DEFERRED.md D-11062. The 4 video-plumbing RVAs (0x0049dd60/0x004942b0/0x00494320/0x00494480)
+   drive only IntroSplashOrchestrator (mass-disabled, never installed) and the small.mpg attract
+   loop; grep-confirmed no GameFlow/RaceSession/menu-nav consumer of their state globals. The one
+   load-bearing video (frontend.mpg backdrop) is already ported via MpegVideoTexture.h/.cpp,
+   independent of these RVAs. Re-pickup: v1.0 wants intro movies shipped, or a GameFlow consumer of
+   0x00771a0x turns up.
+8. ~~**Gate D3 (WS-I)** — decide split-screen local MP in/out for v1.0; wire or defer accordingly.~~
+   **DONE 2026-07-11 (OUT for v1.0)** — filed DEFERRED.md D-11063. Split-screen render pipeline
+   (PerPlayerViewportRender + friends) stays C1-C2, nothing ported; MP mode/rule-selection logic is
+   already C3/C4 and unaffected. One open original-side unknown (U-1908, per-player viewport-rect
+   assignment) blocks a real port attempt regardless. Standalone renderer/camera/input/HUD are
+   single-viewport-by-construction — adding split-screen is new work, not a toggle.
+9. ~~**WS-F tail — D-11058** LapData `Lap_Line_End` (find the consumer or `deferred-not-needed`).~~
+   **DONE 2026-07-13 (no consumer — exhaustively confirmed)** — closed DEFERRED.md D-11058. Traced
+   the Lua-command registration (string 0x005cdda4 → handler LAB_0047a7d0) to its write target: a
+   flat LAPDATA event array at `[DAT_006bf1d8+counter*4+0x159c0]` shared with the "Lap_Line" handler
+   (real gate indices) — Lap_Line_End writes a -1 terminator sentinel into it. Program-wide
+   `search_instructions("159c0")` = exactly 3 hits (all writes, all in the parse-time handler
+   cluster 0x0047a790-0x0047a860); `reference_to` on both backing globals shows zero reads anywhere
+   else in the binary. The array is write-only across all of MASHED.exe — no code change needed,
+   TrackData.cpp already discards it as a no-op terminator, faithful to the original's own
+   write-only/no-consumer behavior.
+
+**M1 TAIL CLOSED 2026-07-13** — all 9 items (D-11056, D-11057, WS-G4, WS-D unblocked slice,
+WS-J M1 slice, video playback, gate D3, D-11058) done. Next up per D5: the M2 opener below.
 
 **Then the M2 opener (queued behind the tail per D5, not dropped):**
 
