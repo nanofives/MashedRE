@@ -147,6 +147,11 @@
 #include <cstdio>
 #include <cstring>
 #include <climits>
+#include <vector>       // 2026-07-14: watchdogged InitD3D9 attempt list
+#include <thread>       // 2026-07-14: CreateDevice hang watchdog (detached worker)
+#include <atomic>       // 2026-07-14: watchdog completion flag
+#include <memory>       // 2026-07-14: shared_ptr keeps the worker's result alive
+#include <utility>      // 2026-07-14: std::swap for attempt ordering
 
 #include "Piz/PizReader.h"
 #include "Rws/RwsChunkWalker.h"
@@ -1934,6 +1939,43 @@ void WriteMashedInputGlobalsFromKeyboard() {
     }
 }
 
+// 2026-07-14 (WS-PHYS-DRIVE-STABILIZE re-measure): on this machine's driver
+// (NVIDIA RTX 5070 Ti, 2560x1440@164, 32.0.15.9186) IDirect3D9::CreateDevice on
+// D3DDEVTYPE_HAL BLOCKS and never returns — a plain retry loop hangs the whole
+// app. This runs one CreateDevice on a detached worker thread and waits with a
+// timeout: rc 1 = created (devOut/ppOut set), 0 = clean failure (hrOut set),
+// -1 = hung (worker abandoned; its shared_ptr result keeps itself alive so the
+// leaked thread never touches freed memory). The leaked thread + half-made
+// device are reclaimed when the process exits.
+namespace {
+struct D3DCreateResult {
+    std::atomic<bool>     done{false};
+    HRESULT               hr = E_FAIL;
+    IDirect3DDevice9*     dev = nullptr;
+    D3DPRESENT_PARAMETERS pp{};
+};
+int CreateDeviceWatched(IDirect3D9* d3d, D3DDEVTYPE type, HWND hwnd, DWORD flags,
+                        const D3DPRESENT_PARAMETERS& ppIn, DWORD timeoutMs,
+                        HRESULT& hrOut, IDirect3DDevice9*& devOut,
+                        D3DPRESENT_PARAMETERS& ppOut) {
+    auto st = std::make_shared<D3DCreateResult>();
+    st->pp = ppIn;
+    std::thread([st, d3d, type, hwnd, flags]() {
+        IDirect3DDevice9* dev = nullptr;
+        HRESULT hr = d3d->CreateDevice(D3DADAPTER_DEFAULT, type, hwnd, flags, &st->pp, &dev);
+        st->hr = hr; st->dev = dev;
+        st->done.store(true, std::memory_order_release);
+    }).detach();
+    const ULONGLONG deadline = GetTickCount64() + timeoutMs;
+    while (!st->done.load(std::memory_order_acquire)) {
+        if (GetTickCount64() >= deadline) return -1;   // hung; leak the worker
+        Sleep(15);
+    }
+    hrOut = st->hr; devOut = st->dev; ppOut = st->pp;
+    return SUCCEEDED(st->hr) ? 1 : 0;
+}
+}  // namespace
+
 bool InitD3D9() {
     g_d3d = Direct3DCreate9(D3D_SDK_VERSION);
     if (!g_d3d) return false;
@@ -1961,64 +2003,99 @@ bool InitD3D9() {
         }
     }
 
-    // Robust device creation. Two param variants x several device types, each
-    // retried, every HRESULT logged. Variant B drops the auto depth-stencil
-    // (only the 3D track path needs it; the menu doesn't) and matches the
-    // back-buffer format to the live desktop — this recovers the common
+    // Robust, WATCHDOGGED device creation (2026-07-14). Two param variants x
+    // several device types; every attempt runs through CreateDeviceWatched so a
+    // driver-level CreateDevice HANG (observed on the RTX 5070 Ti / 164 Hz here —
+    // HAL device creation never returns) is abandoned after a timeout instead of
+    // freezing the app. Variant B drops the auto depth-stencil and matches the
+    // back-buffer format to the live desktop — recovers the common
     // D3DERR_INVALIDCALL from an incompatible depth/format at a non-native mode.
-    struct Attempt { D3DDEVTYPE type; DWORD flags; const char* name; };
-    // WS-A s3 PERF: prefer HARDWARE vertex processing (GPU T&L). The in-race 3D
-    // render submits ~50k static world verts + the cars EVERY frame; with the
-    // prior first choice SOFTWARE_VERTEXPROCESSING (mirroring Mashed's 2004
-    // init) the CPU transformed all of them each frame, leaving the in-race
-    // view CPU-bound at ~9 fps (profiled: render 60-110ms, physics only 0.5ms).
-    // HARDWARE VP offloads transform/lighting to the GPU. Falls back to SW VP
-    // then REF if HW VP is unavailable (the old behaviour). MASHED_FORCE_SWVP=1
-    // restores the legacy SW-first order (escape hatch).
-    static const bool s_force_swvp =
-        (GetEnvironmentVariableA("MASHED_FORCE_SWVP", nullptr, 0) > 0);
-    const Attempt attempts_hw[3] = {
-        { D3DDEVTYPE_HAL, D3DCREATE_HARDWARE_VERTEXPROCESSING, "HAL/HW" },
-        { D3DDEVTYPE_HAL, D3DCREATE_SOFTWARE_VERTEXPROCESSING, "HAL/SW" },
-        { D3DDEVTYPE_REF, D3DCREATE_SOFTWARE_VERTEXPROCESSING, "REF/SW" },
+    // On the first HANG we stop hammering HAL and jump straight to REF (a
+    // software rasterizer on a different driver path). If everything hangs we
+    // fail fast (return false) so the app exits cleanly, not forever-hung.
+    //   MASHED_D3D_TIMEOUT_MS — per-attempt watchdog, ms (default 6000).
+    //   MASHED_D3D_REF        — try the REF software device FIRST.
+    //   MASHED_D3D_NOVSYNC    — PRESENT_INTERVAL_IMMEDIATE (drop vsync; a DWM /
+    //                           high-refresh interaction is a hang suspect).
+    //   MASHED_FORCE_SWVP     — legacy SW-vertex-processing-first order.
+    auto envSet = [](const char* k) -> bool {
+        return GetEnvironmentVariableA(k, nullptr, 0) > 0;
     };
-    const Attempt attempts_sw[3] = {
-        { D3DDEVTYPE_HAL, D3DCREATE_SOFTWARE_VERTEXPROCESSING, "HAL/SW" },
-        { D3DDEVTYPE_HAL, D3DCREATE_HARDWARE_VERTEXPROCESSING, "HAL/HW" },
-        { D3DDEVTYPE_REF, D3DCREATE_SOFTWARE_VERTEXPROCESSING, "REF/SW" },
+    DWORD timeoutMs = 6000;
+    { char b[32]; DWORD n = GetEnvironmentVariableA("MASHED_D3D_TIMEOUT_MS", b, sizeof(b));
+      if (n > 0 && n < sizeof(b)) { long v = std::strtol(b, nullptr, 10); if (v > 0) timeoutMs = (DWORD)v; } }
+    const bool s_force_swvp = envSet("MASHED_FORCE_SWVP");
+    const bool force_ref    = envSet("MASHED_D3D_REF");
+    if (envSet("MASHED_D3D_NOVSYNC")) g_pp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+
+    const DWORD VS_ONE = D3DPRESENT_INTERVAL_ONE, VS_IMM = D3DPRESENT_INTERVAL_IMMEDIATE;
+    struct Attempt { D3DDEVTYPE type; DWORD flags; DWORD vsync; const char* name; };
+    // vsync == 0 -> keep g_pp.PresentationInterval; else override for this attempt.
+    std::vector<Attempt> list = {
+        { D3DDEVTYPE_HAL, D3DCREATE_HARDWARE_VERTEXPROCESSING, 0,      "HAL/HW"     },
+        { D3DDEVTYPE_HAL, D3DCREATE_HARDWARE_VERTEXPROCESSING, VS_IMM, "HAL/HW-imm" },
+        { D3DDEVTYPE_HAL, D3DCREATE_SOFTWARE_VERTEXPROCESSING, 0,      "HAL/SW"     },
+        { D3DDEVTYPE_REF, D3DCREATE_SOFTWARE_VERTEXPROCESSING, VS_IMM, "REF/SW"     },
     };
-    const Attempt* attempts = s_force_swvp ? attempts_sw : attempts_hw;
-    for (int variant = 0; variant < 2; ++variant) {
-        if (variant == 1) {
-            // Variant B: no auto depth-stencil, explicit live back-buffer fmt.
+    if (s_force_swvp) std::swap(list[0], list[2]);      // legacy SW-first order
+    if (force_ref) { Attempt r = list.back(); list.pop_back(); list.insert(list.begin(), r); }
+
+    bool anyHung = false;
+    for (int depthVariant = 0; depthVariant < 2; ++depthVariant) {
+        if (depthVariant == 1) {
             g_pp.EnableAutoDepthStencil = FALSE;
             g_pp.AutoDepthStencilFormat = D3DFMT_UNKNOWN;
             if (dm.Format != D3DFMT_UNKNOWN) g_pp.BackBufferFormat = dm.Format;
         }
-        for (int ai = 0; ai < 3; ++ai) {
-            const Attempt& a = attempts[ai];
-            for (int retry = 0; retry < 3; ++retry) {
-                HRESULT hr = g_d3d->CreateDevice(D3DADAPTER_DEFAULT, a.type,
-                                                 g_hwnd, a.flags, &g_pp, &g_device);
-                if (std::FILE* log = std::fopen(kLogPath, "a")) {
-                    std::fprintf(log,
-                        "InitD3D9: CreateDevice(%s,var%d) try %d -> hr=0x%08lX%s\n",
-                        a.name, variant, retry, static_cast<unsigned long>(hr),
-                        SUCCEEDED(hr) ? " OK" : "");
-                    std::fclose(log);
-                }
-                if (SUCCEEDED(hr)) {
-                    // Note if we fell back to no-depth (the track path must
-                    // re-create its own depth surface if it ever runs).
-                    g_depth_disabled = (variant == 1);
-                    return true;
-                }
-                Sleep(120);
+        for (const Attempt& a : list) {
+            D3DPRESENT_PARAMETERS pp = g_pp;
+            if (a.vsync != 0) pp.PresentationInterval = a.vsync;
+            HRESULT hr = E_FAIL; IDirect3DDevice9* dev = nullptr; D3DPRESENT_PARAMETERS ppOut = pp;
+            int rc = CreateDeviceWatched(g_d3d, a.type, g_hwnd, a.flags, pp, timeoutMs, hr, dev, ppOut);
+            if (std::FILE* log = std::fopen(kLogPath, "a")) {
+                std::fprintf(log,
+                    "InitD3D9: CreateDevice(%s,depth%c,vs%s) -> %s hr=0x%08lX%s\n",
+                    a.name, depthVariant == 0 ? 'A' : 'B',
+                    (a.vsync == VS_IMM ? "imm" : (a.vsync == VS_ONE ? "one" : "def")),
+                    rc == 1 ? "OK" : (rc == -1 ? "HUNG" : "fail"),
+                    static_cast<unsigned long>(hr), rc == 1 ? " OK" : "");
+                std::fclose(log);
             }
+            if (rc == 1) {
+                g_device = dev;
+                g_pp = ppOut;                        // remember the params that worked
+                g_depth_disabled = (depthVariant == 1);
+                return true;
+            }
+            if (rc == -1) {                          // hung: HAL driver wedged — try REF once, then give up
+                anyHung = true;
+                if (a.type != D3DDEVTYPE_REF) {
+                    D3DPRESENT_PARAMETERS rp = g_pp;
+                    rp.PresentationInterval   = VS_IMM;
+                    rp.EnableAutoDepthStencil = FALSE;
+                    rp.AutoDepthStencilFormat = D3DFMT_UNKNOWN;
+                    if (dm.Format != D3DFMT_UNKNOWN) rp.BackBufferFormat = dm.Format;
+                    HRESULT rhr = E_FAIL; IDirect3DDevice9* rdev = nullptr; D3DPRESENT_PARAMETERS rpo = rp;
+                    int rrc = CreateDeviceWatched(g_d3d, D3DDEVTYPE_REF, g_hwnd,
+                                  D3DCREATE_SOFTWARE_VERTEXPROCESSING, rp, timeoutMs, rhr, rdev, rpo);
+                    if (std::FILE* log = std::fopen(kLogPath, "a")) {
+                        std::fprintf(log, "InitD3D9: CreateDevice(REF/SW,post-hang) -> %s hr=0x%08lX%s\n",
+                            rrc == 1 ? "OK" : (rrc == -1 ? "HUNG" : "fail"),
+                            static_cast<unsigned long>(rhr), rrc == 1 ? " OK" : "");
+                        std::fclose(log);
+                    }
+                    if (rrc == 1) { g_device = rdev; g_pp = rpo; g_depth_disabled = true; return true; }
+                }
+                goto init_failed;
+            }
+            // rc == 0: clean failure — try the next attempt / depth variant.
         }
     }
-    g_d3d->Release();
-    g_d3d = nullptr;
+init_failed:
+    // Only release g_d3d if no worker thread is still hung using it (releasing it
+    // out from under a live CreateDevice thread would use-after-free). On a hang
+    // we intentionally leak it — the process exits right after a failed InitD3D9.
+    if (!anyHung && g_d3d) { g_d3d->Release(); g_d3d = nullptr; }
     return false;
 }
 
