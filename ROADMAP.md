@@ -241,8 +241,11 @@ section below for the session-by-session breakdown of converting these scaffolds
 to verbatim + the remaining data/mode/verify work (WS-A..K).
 **Goal:** everything else the menu promises actually works.
 **Activities:** all party/battle modes; powerups; particles; audio (RWS playback — audio
-subsystem is 510 C2 / 74 C3 already); save/unlock flows; video playback; multiplayer-local
-(split-screen); remaining menu paths wired to real subsystems; polish.
+subsystem is 510 C2 / 74 C3 already); save/unlock flows; remaining menu paths wired to real
+subsystems; polish. Descoped 2026-07-11: video playback (deferred-not-needed, D-11062) and
+multiplayer-local split-screen (OUT for v1.0, gate D3 → D-11063).
+**M1 status:** the RE_MASTER_PLAN M1 breadth tail (9 items) CLOSED 2026-07-13; next per gate D5
+is the M2 opener (WS-PHYS-DRIVE-STABILIZE → lane B5a..B5e).
 **Exit criteria:** every menu path functional; every mode playable; S-DoD for every
 subsystem.
 
@@ -279,9 +282,10 @@ kept but demoted:
 
 ## Sizing reality check (revised)
 
-First-party surface is 3,649 functions; 527 are C3+ today (14.4%). The demand-driven model
-means we do **not** need all 3,122 remaining C2s — only the executed subset, ported in
-slice order. The expensive unknowns are concentrated, not spread: renderer (R4) and physics
+(Counts below are the 2026-06 snapshot; current numbers live in RE_MASTER_PLAN_2026-07.md §1 —
+as of 2026-07-14: 5,895 rows, C3+ = 1,013.) First-party surface is ~3,649 functions. The
+demand-driven model means we do **not** need every remaining C2 — only the executed subset,
+ported in slice order. The expensive unknowns are concentrated, not spread: renderer (R4) and physics
 (R5) are the two architecture cliffs; everything else is the proven port-verify-screenshot
 loop. Horizon to P-DoD remains 12–24 months solo. Don't promise dates — promise phase exits.
 

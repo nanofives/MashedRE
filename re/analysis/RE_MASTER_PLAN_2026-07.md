@@ -31,7 +31,8 @@ end-to-end on `mashed_re.exe` (R6 exit demo passed 2026-07-02: boot → menu →
 elimination rounds → match won → results → progression → exit). But most in-race logic is still
 **SCAFFOLD** — placeholder behavior, not the 1:1 verbatim port that F/S/P-DoD require.
 
-Confidence snapshot (refreshed 2026-07-06) — **5,864 hook rows**: C1 927 · C2 3,925 · C3 851 · C4 161 (C3+ = 1,012, 17.3%).
+Confidence snapshot (refreshed 2026-07-14) — **5,895 hook rows**: C1 927 · C2 3,924 · C3 852 · C4 161
+(+31 blank-confidence util rows; C3+ = 1,013, 17.2%).
 Of these, **~2,116 rows are third-party library** (RenderWare, MSVC CRT, Lua, RW-Physics, qhull, D3DX9)
 and are *out of scope for porting* by policy — so first-party is ~3,748 rows, and the real "how much
 verbatim work remains" number is the first-party sub-C3 pool, not the raw 83%.
@@ -48,13 +49,13 @@ Authoritative source: `re/analysis/SESSION_VERIFICATION_AUDIT_2026-06-16.md`.
 | AI control chain (as `.asi` reference) | **VERBATIM C3** | 8 fns C3'd; ~35k paired A/B calls, 0 mismatch. |
 | AI *driving the standalone* | **SCAFFOLD** | Runs faithful-lookahead `AiStandalone.cpp`, not the verbatim chain. Gated on WS-A8. |
 | Vehicle physics / handling | **SCAFFOLD → PARTIAL** | Kinematic in standalone; real RW-Physics ported to `.asi` (A5/A6 C4 grounded) but drive is unstable/uncalibrated. |
-| Collision | **SCAFFOLD** | Ground raycast only. Real = RW-Physics contact system (WS-B), architecture gate still open. |
+| Collision | **SCAFFOLD** | Ground raycast only. Real = RW-Physics contact system (WS-B); architecture gate D1 resolved 2026-07-06 (Option A, lane B5a..B5e). |
 | Renderer | **SCAFFOLD (D3D9 spike) + PARTIAL** | Dev viewer renders textured tracks+cars; shipping RW-subset verbatim (WS-E) barely started. **770/965 render rows < C3, 217 open stubs.** |
-| Power-ups | **PARTIAL (C2 scaffold-structure)** | Dispatcher + 9 types ported structurally; leaves stubbed; numeric rates are stand-ins. |
+| Power-ups | **PARTIAL (C2 scaffold-structure)** | Dispatcher + 9 types ported structurally; all unblocked numeric rates bit-faithful (M1 slice done 2026-07-10); leaves + MISSILE velocity/pools are WS-B/E-gated M2 backlog. |
 | Particles | **SCAFFOLD** | Invented visuals. |
-| Audio | **DATA-VERIFIED / PARTIAL** | Both RWS formats cracked; plays. Char-bank map + impact FX + music-state transitions remain. |
-| Video playback | **NONE** | 4 C2 rows, 0 ported. |
-| Multiplayer / split-screen | **NONE** | R7 tail; online out of scope for v1.0. |
+| Audio | **DATA-VERIFIED / PARTIAL** | Both RWS formats cracked; plays. Char→voice-bank map + music-state transitions done 2026-07-11; impact FX (WS-B-gated) + vehicle→engine-class (U-9016) remain. |
+| Video playback | **DEFERRED-NOT-NEEDED** | D-11062 (2026-07-11): 4 C2 rows drive only disabled intro/attract paths; frontend.mpg backdrop already ported independently. |
+| Multiplayer / split-screen | **OUT for v1.0** | D-11063 (2026-07-11, gate D3); online also out. MP rule layer itself is C3/C4 and live. |
 
 **The two long poles:** (1) **Renderer WS-E** — largest, least-mature subsystem; (2) **Physics+Collision
 WS-A/B** — the standalone doesn't yet drive on real physics. Everything else is the proven
@@ -103,14 +104,22 @@ Contents:
 - ~~Close **D-11057** — cup-progression tier advance + continue-cup + game-length config screens
   (WS-G2)~~ **DONE 2026-07-04** (Nav_ConfigEditWrap + config-edit demo landed; residue narrowed to
   **D-11059**: GameFlow reachability, overlay rewire U-9013, threshold table).
-- **WS-G4** — remaining menu screens/options paths.
-- **WS-D** power-ups: replace stand-in numeric rates with the real values; finish per-type wiring that
-  isn't blocked on WS-B/E.
-- **WS-J** audio: char→engine-bank map + music-state transitions (skip impact FX — those need WS-B).
-- **Video playback**: scope and port the 4-function video subsystem (or `deferred-not-needed` with
-  rationale if the menus never require it).
-- **WS-I** split-screen local MP: decide in/out for v1.0 (gate below), wire if in.
-- **WS-F** tail: **D-11058** LapData `Lap_Line_End` (find the consumer or `deferred-not-needed`).
+- ~~**WS-G4** — remaining menu screens/options paths.~~ **DONE 2026-07-06** (D-11059 a/b/c closed;
+  §7 item 4).
+- ~~**WS-D** power-ups: replace stand-in numeric rates with the real values; finish per-type wiring that
+  isn't blocked on WS-B/E.~~ **DONE 2026-07-10** (§7 item 5).
+- ~~**WS-J** audio: char→engine-bank map + music-state transitions (skip impact FX — those need WS-B).~~
+  **DONE 2026-07-11** (§7 item 6; scope-corrected to char→VOICE-bank; vehicle→engine-class filed U-9016).
+- ~~**Video playback**: scope and port the 4-function video subsystem (or `deferred-not-needed` with
+  rationale if the menus never require it).~~ **DONE 2026-07-11 — deferred-not-needed** (D-11062; §7 item 7).
+- ~~**WS-I** split-screen local MP: decide in/out for v1.0 (gate below), wire if in.~~ **DONE
+  2026-07-11 — OUT for v1.0** (gate D3 resolved; D-11063; §7 item 8).
+- ~~**WS-F** tail: **D-11058** LapData `Lap_Line_End` (find the consumer or `deferred-not-needed`).~~
+  **DONE 2026-07-13 — no consumer, exhaustively confirmed** (§7 item 9).
+
+**M1 tail CLOSED 2026-07-13** (see §7 banner). What M1 still owes before "playable whole game" can be
+*demonstrated*: the open R6-residue rows **D-11060** (interactive track/car select in a live
+playthrough) and **D-11061** (continuous full-loop screen recording).
 
 ### M2 — "Faithful race" (physics/collision depth) — BIGGEST INVESTMENT
 The critical path **WS-B1 gate → WS-B → WS-A core → WS-A8 wire → WS-C verbatim-AI drive.** Race *feel*
@@ -144,10 +153,10 @@ plan + the 2026-07-03 tracker parse.
   payoff: real physics driving the standalone). *Blocked on A2 (done) + WS-B.* The immediate blocker is
   the **WAVE16 drive bring-up** (below) — real-physics drive is currently unstable (speed 0/260/0) and
   the steer sign/scale is uncalibrated.
-- **WS-B Collision / RW-Physics** — **B1 architecture gate (STOP-AND-ASK, still open):** vendor real
-  qhull-2002.1 vs port the RW-Physics contact subset. B2 car↔world, B3 car↔car, B4 wire+diff.
-  *Prereq for WS-A handling, WS-D projectiles, WS-J impact FX.* **This gate is the single highest-leverage
-  decision in the project — make it first in M2.**
+- **WS-B Collision / RW-Physics** — **B1 architecture gate RESOLVED 2026-07-06 (D1, Option A):**
+  vendor qhull-2002.1 + reconstruct system 2 → ROADMAP lane **B5a..B5e**. B2 car↔world, B3 car↔car, B4 wire+diff.
+  *Prereq for WS-A handling, WS-D projectiles, WS-J impact FX.* (The gate was the single
+  highest-leverage decision in the project; decided ahead of M2 as planned.)
 - **WS-C AI drivers** — C1 blueprint ✅, C2 verbatim port ✅ (now C3), **C3 wire+diff** the verbatim
   chain onto the canonical race (replaces the scaffold `AiStandalone.cpp`). *Gated on WS-A8* (needs real
   physics under the AI to diff position).
@@ -156,16 +165,18 @@ plan + the 2026-07-03 tracker parse.
 - **WS-E Renderer (RW-subset verbatim; librw = fallback)** — E1 world path, E2 material/multi-TXD, E3
   RpWorld lighting + vehicle-lighting consumer (ledger #9), E4 immediate-mode/2D, E5 wire+parity.
   770/965 rows < C3, 217 stubs — expect this to be the longest single lane. Runs independently.
-- **WS-F Data formats** — SPL/ANM/UVA/LAPDATA/MTS cracked and mostly DATA-VERIFIED. Loose end: **D-11058**
-  `Lap_Line_End`. Otherwise parallel/complete.
-- **WS-G Modes & frontend** — G1 rules ✅, G2 wire modes (mostly done; residual **D-11057**), G3 cup
-  place-names (needs Frida), **G4 remaining screens/options**, G5 gamesave ✅.
+- **WS-F Data formats** — SPL/ANM/UVA/LAPDATA/MTS cracked and mostly DATA-VERIFIED. ~~Loose end:
+  **D-11058** `Lap_Line_End`.~~ D-11058 closed 2026-07-13 (write-only, no consumer). Parallel/complete.
+- **WS-G Modes & frontend** — G1 rules ✅, G2 wire modes ✅ (D-11057 closed 2026-07-04), G3 cup
+  place-names (needs Frida), G4 remaining screens/options ✅ (D-11059 closed 2026-07-06), G5 gamesave ✅.
 - **WS-H Verification / C4 lane** — ongoing; every landed port gets a `diff-original`. The C4-campaign
   tooling + parity pipeline already exist (`re/parity/`, the `canonical_c4_*` harnesses — just
   hardened in the 2026-07-03 review).
-- **WS-I Multiplayer** — R7 tail; **online out of scope for v1.0**; split-screen = gate D3.
-- **WS-J Audio remainder** — char→engine-bank map, music-state transitions (M1); impact/skid FX need
-  WS-B collision events (M2-adjacent).
+- **WS-I Multiplayer** — **online out of scope for v1.0**; split-screen **OUT for v1.0** (gate D3
+  resolved 2026-07-11, D-11063).
+- **WS-J Audio remainder** — char→voice-bank map ✅ + music-state transitions ✅ (M1 slice done
+  2026-07-11); impact/skid FX need WS-B collision events (M2-adjacent); vehicle→engine-class map
+  open (U-9016, M2 vehicle-audio backlog).
 
 ### Discovery & queues
 - **Demand map §3** (`re/analysis/r6_demand_map_2026-07.md`) is the port queue: 730 ranked C2 gaps the
@@ -192,8 +203,11 @@ Resolve these before the dependent work, not mid-stream. Each is a genuine fork 
 - **D2 — Renderer commitment:** RW-subset verbatim (ratified Option B, but 770 rows + 217 stubs of
   work) vs accept `librw` as the shipping renderer to save months (deviates from pure verbatim, but the
   D3D9 spike proves a non-RW renderer is viable). Confirm before sinking M3 tokens.
-- **D3 — Multiplayer scope for v1.0:** split-screen local MP in or out? (Online is already out.) In =
-  a real WS-I lane; out = `deferred-not-needed` and one fewer mode in the P-DoD playthrough.
+- ~~**D3 — Multiplayer scope for v1.0:** split-screen local MP in or out? (Online is already out.) In =
+  a real WS-I lane; out = `deferred-not-needed` and one fewer mode in the P-DoD playthrough.~~
+  **RESOLVED 2026-07-11 — OUT for v1.0, user-decided** (DEFERRED.md **D-11063**; §7 item 8).
+  Split-screen render pipeline stays C1-C2 unported; MP mode/rule logic (already C3/C4) unaffected.
+  Re-pickup: v1.0 explicitly wants shipped split-screen, or U-1908 resolves incidentally.
 - **D4 — Airborne bit-identity:** accept the A5 airborne 1-ULP float10 residual (U-8991) as
   C4-grounded (recommended — it's faithful within FP tolerance) vs invest in the naked-asm float10 shim
   for strict bit-identity.
@@ -298,9 +312,17 @@ for the MCP + judgment tail, per §6.
 
 **M1 breadth tail (D5 ratified 2026-07-06: this runs FIRST, in this order):**
 
-4. **WS-G4 — remaining menu screens/options paths.** *claude2:* inventory unported screens vs the
+4. ~~**WS-G4 — remaining menu screens/options paths.** *claude2:* inventory unported screens vs the
    nav-coverage report; *account3:* port + parity-harness each. Includes the D-11059 residue
-   (GameFlow reachability, overlay rewire U-9013, threshold table).
+   (GameFlow reachability, overlay rewire U-9013, threshold table).~~ **DONE 2026-07-06** — all
+   three D-11059 legs closed same day (CHANGELOG 2026-07-06 ×3): (b) U-9013 RESOLVED, s18/s24
+   config overlay reads live `Nav_GameState()` + cursor (MASHED_CFGEDIT_DEMO GREEN, fresh-state
+   parity imgdiff 0.00); (a) continue-cup screen 5 reachable in a live natural-results cup run
+   (`Nav_PushContinueCup`, captures `verify/race1/`; entry-trigger residue filed U-9014); (c)
+   DAT_00614718 13-row threshold table harvested + ported (`kCupContinueThreshold`, navsm_test
+   Piece 5(f) GREEN). D-11059 struck in DEFERRED.md. Interactive-playthrough residue is NOT
+   WS-G4's — it lives in the still-open **D-11060/D-11061** (R6 exit residue; re-pickup = first
+   interactive full-playthrough session / unlocked-desktop recording).
 5. ~~**WS-D unblocked slice** — replace stand-in numeric power-up rates with real values; per-type
    wiring not gated on WS-B/E.~~ **DONE 2026-07-10** — all 9 types inventoried; every unblocked
    numeric rate is now bit-faithful (2026-07-06 slice #1: MORTAR velocity + R_FLAME burst budget;
