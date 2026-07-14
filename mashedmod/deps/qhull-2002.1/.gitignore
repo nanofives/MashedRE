@@ -1,0 +1,3 @@
+# Build artifacts — reproducible via build_qhull.bat
+obj/
+*.lib

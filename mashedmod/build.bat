@@ -15,6 +15,18 @@ if not exist "%OUT%" mkdir "%OUT%"
 call %VCVARS% >nul
 if errorlevel 1 (echo [ERROR] vcvars32.bat failed & exit /b 1)
 
+REM Vendored qhull-2002.1 (RWP-3.7's embedded convex-hull lib; B5b). Build the
+REM static lib once (x87 /arch:IA32 for bit-identity with the original) if absent.
+REM Linked into both targets; only referenced once the RwpQHullWrapper bridge
+REM (FUN_0057ca30) .cpp is compiled in. See deps\qhull-2002.1\build_qhull.bat and
+REM re\analysis\B5b_RWP37_QHULL_VENDOR_2026-07-14.md.
+set QHULL_LIB=%ROOT%deps\qhull-2002.1\qhull_2002_1.lib
+if not exist "%QHULL_LIB%" (
+    echo === Building vendored qhull-2002.1 static lib ===
+    call "%ROOT%deps\qhull-2002.1\build_qhull.bat"
+    if errorlevel 1 (echo [ERROR] qhull lib build failed & exit /b 1)
+)
+
 REM ===========================================================================
 REM Phase C status (2026-05-25):
 REM   - LINK GATE MET: an experimental full-source-set build (every reimpl in
@@ -205,14 +217,14 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Frontend\MenuLeaves_af5.cpp" ^
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO ^
     /MAP:"%OUT%\mashed_re.map" ^
-    user32.lib d3d9.lib dsound.lib
+    user32.lib d3d9.lib dsound.lib "%QHULL_LIB%"
 popd
 if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)
 
 echo === Building mashed_re_dev.asi ===
 pushd "%SRC%"
 cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" @"%ROOT%asi_sources.rsp" ^
-    /link /DLL /MAP:"%OUT%\mashed_re_dev.map" /MAPINFO:EXPORTS
+    /link /DLL /MAP:"%OUT%\mashed_re_dev.map" /MAPINFO:EXPORTS "%QHULL_LIB%"
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
 
