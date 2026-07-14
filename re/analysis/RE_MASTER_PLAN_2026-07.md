@@ -391,7 +391,17 @@ WS-J M1 slice, video playback, gate D3, D-11058) done. Next up per D5: the M2 op
       → B5d coupling bridge `0x0047eb30` verbatim (two-body PD loop, gain 20 @`0x005ccd6c`) → B5e wire into
       the standalone + re-run the drive-hold harness (wedge-free sustained drive), at which point **WS-A8
       becomes a true diff and WS-PHYS-STEER-CALIB folds into B5e**. Then WS-C verbatim-AI drive.
-    - **Active next step: B5a** (Ghidra plating, read-only).
+    - **B5a — DONE 2026-07-14** (`re/analysis/B5a_SYSTEM2_PLATING_2026-07-14.md` §B5a PLATING RESULTS):
+      demand-closed static map of the 0x55-band integrator quartet + 4-body build chain + qhull bridge
+      plated; global identity reconciled (`DAT_006ce274`=world, `DAT_006c9a78[0..3]`=body-handle keys,
+      `DAT_007dc8d8`=body-pointer table — three distinct globals). **OU#3 CLOSED**: qhull island
+      `[0x0057c5b0,0x005a5910)` (306 fns) has exactly one external entry, `FUN_0057ca30 ← FUN_00481e00`
+      (system-2 build path) → B5b is a self-contained vendor unit. **OU#4 ISOLATED**: integrator proper
+      writes zero absolute globals (all pointer-indirect); per-frame footprint = 4 proxy-body state arrays
+      (`0x007e9de0` stride 0x404, via per-frame solve `FUN_0047ea40→FUN_0047e9c0`) + world/body-table +
+      vehicle readback + driver bookkeeping; timestep `DAT_0061331c=0.05`, PD gain `_DAT_005ccd6c=20.0`.
+    - **Active next step: B5b** — vendor qhull-2002.1; sole bridge `FUN_0057ca30`; wire the 4-body build
+      chain `FUN_0047d3c0 → FUN_004826d0 → FUN_00481e00 → FUN_0057ca30`.
 
 **Between-slices filler:** top demand-map §3 leaves (the `__ftol` head 0x004a2c48 went **C3
 2026-07-03**, byte-identical `FPURound_4a2c48`) + drain SCRIBE_QUEUE (11) via `ghidra-sweep`;
