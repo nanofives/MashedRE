@@ -11,7 +11,8 @@ estimated. Re-open this each session (or have the account2 worker summarize it) 
 > - §7 queue: item 3 (D-11056) and item 4 (D-11057) **DONE 2026-07-04**; item 5's `__ftol` head
 >   **DONE 2026-07-03** (C3, byte-identical). T1 **DONE 2026-07-06** (shell-blocked). Gates **D1**
 >   (Option A, lane B5a..B5e) and **D5** (M1 breadth-first) both **RESOLVED 2026-07-06**.
->   Next up: the **M1 breadth tail** (§7 queue, reordered per D5), then WS-PHYS-DRIVE-STABILIZE.
+>   M1 breadth tail **CLOSED 2026-07-13**. WS-PHYS-DRIVE-STABILIZE **diagnosis DONE 2026-07-14**
+>   (§7 item 10); the drive-stability FIX = WS-B lane **B5a..B5e**. Next up: **B5a** (system-2 plating).
 > - Repo foundation: `ws-r6-ai-control-chain` merged to main (3b6b6bd7, build green both targets);
 >   branch triage — 80 merged + 39 stale unmerged deleted, all tips preserved in
 >   `log/branches_backup_2026-07-06.bundle`, salvage candidates kept (`promote-c4`,
@@ -150,9 +151,11 @@ plan + the 2026-07-03 tracker parse.
 - **WS-A Vehicle physics** — biggest, mostly sequential. A1 struct ✅, A2 RW-math ✅(C4), A3 spawn
   chain, A4 control-input (0x00470670), **A5 core (0x0046ddb0)** C4-grounded / airborne 1-ULP residual
   (U-8991, accepted), A6 (0x00467650/0x00468980) C4, A7 tuning-const harvest, **A8 wire+diff** (the
-  payoff: real physics driving the standalone). *Blocked on A2 (done) + WS-B.* The immediate blocker is
-  the **WAVE16 drive bring-up** (below) — real-physics drive is currently unstable (speed 0/260/0) and
-  the steer sign/scale is uncalibrated.
+  payoff: real physics driving the standalone). *Blocked on A2 (done) + WS-B.* WS-PHYS-DRIVE-STABILIZE
+  **diagnosis complete 2026-07-14** (§7 item 10): real-physics drive is unstable because the internal
+  velocity ramps unbounded to the 1500 clamp on throttle (the missing two-body proxy loop = system 2),
+  NOT the stale "0/260/0" scaffold pattern; steer channel is RVA-confirmed correct. The FIX is WS-B
+  lane B5a..B5e; A8 and steer-calib fold into B5e.
 - **WS-B Collision / RW-Physics** — **B1 architecture gate RESOLVED 2026-07-06 (D1, Option A):**
   vendor qhull-2002.1 + reconstruct system 2 → ROADMAP lane **B5a..B5e**. B2 car↔world, B3 car↔car, B4 wire+diff.
   *Prereq for WS-A handling, WS-D projectiles, WS-J impact FX.* (The gate was the single
@@ -368,9 +371,27 @@ WS-J M1 slice, video playback, gate D3, D-11058) done. Next up per D5: the M2 op
 
 **Then the M2 opener (queued behind the tail per D5, not dropped):**
 
-10. **WS-PHYS-DRIVE-STABILIZE (WAVE16).** *claude2:* survey the standalone drive path + WAVE16 notes and
-    draft the sustained-drive harness. *account3:* run it, Frida-diff, root-cause the erratic speed
-    (0/260/0) + steer sign/scale. The live blocker to WS-A8. Then lane **B5a..B5e** (D1 Option A).
+10. **WS-PHYS-DRIVE-STABILIZE (WAVE16) — DIAGNOSIS COMPLETE 2026-07-14; the FIX is B5a..B5e.**
+    RECONCILED 2026-07-14 (this item previously read "root-cause + fix the erratic speed, *then* lane
+    B5a..B5e" — self-contradictory: the drive instability's root cause **is** the missing system-2
+    two-body proxy loop, which B5a..B5e reconstructs, so the fix is not a separable pre-B5a step. §3
+    M2 critical path and §4 both already order WS-B/B5 *before* WS-A8. Corrected to match ROADMAP §WS-B
+    lane B5a..B5e.)
+    - **Measurement/diagnosis — DONE** (`re/analysis/INITD3D9_HANG_AND_REMEASURE_2026-07-14.md`,
+      `WSPHYS_DRIVEHOLD_2026-07-06.md`): current real-physics symptom is the WS-A8 two-body coupling
+      divergence — on throttle onset the internal velocity (`+0x9e4`) ramps unbounded to the 1500 clamp
+      while visible motion stays soft-capped; the runaway ends the race in ~0.3 s so steering can't be
+      exercised. (The old "0/260/0" is the *scaffold* pattern, already corrected — race-round resets,
+      not physics.) Steer channel RVA-confirmed: A4 `FUN_00470670` reads descriptor [0]/[1] → the
+      standalone port matches, so "dead steering" is a coupling gap, not a channel bug. Boot instrument
+      hardened (InitD3D9 CreateDevice watchdog) so the standalone reaches InRace on this GPU.
+    - **The FIX = lane B5a..B5e** (ROADMAP §WS-B, D1 Option A): B5a demand-closure/plating of the 0x55-band
+      surface `0x0047eb30`/`0x0047f840` reach (+ island caller closure, brief Open-Unknowns #3/#4) →
+      B5b vendor qhull-2002.1 + `FUN_0057ca30` bridge + 4-body build chain → B5c per-tick integrator subset
+      → B5d coupling bridge `0x0047eb30` verbatim (two-body PD loop, gain 20 @`0x005ccd6c`) → B5e wire into
+      the standalone + re-run the drive-hold harness (wedge-free sustained drive), at which point **WS-A8
+      becomes a true diff and WS-PHYS-STEER-CALIB folds into B5e**. Then WS-C verbatim-AI drive.
+    - **Active next step: B5a** (Ghidra plating, read-only).
 
 **Between-slices filler:** top demand-map §3 leaves (the `__ftol` head 0x004a2c48 went **C3
 2026-07-03**, byte-identical `FPURound_4a2c48`) + drain SCRIBE_QUEUE (11) via `ghidra-sweep`;

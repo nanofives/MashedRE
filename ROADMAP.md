@@ -245,7 +245,10 @@ subsystem is 510 C2 / 74 C3 already); save/unlock flows; remaining menu paths wi
 subsystems; polish. Descoped 2026-07-11: video playback (deferred-not-needed, D-11062) and
 multiplayer-local split-screen (OUT for v1.0, gate D3 → D-11063).
 **M1 status:** the RE_MASTER_PLAN M1 breadth tail (9 items) CLOSED 2026-07-13; next per gate D5
-is the M2 opener (WS-PHYS-DRIVE-STABILIZE → lane B5a..B5e).
+is the M2 opener. **WS-PHYS-DRIVE-STABILIZE diagnosis DONE 2026-07-14** (root cause = the missing
+system-2 two-body proxy loop; the fix is not a separable pre-B5 step but B5a..B5e itself — see
+RE_MASTER_PLAN §7 item 10 + `INITD3D9_HANG_AND_REMEASURE_2026-07-14.md`). **Active next: B5a**
+(system-2 call-surface plating) → B5b..B5e → A8 true-diff + steer-calib.
 **Exit criteria:** every menu path functional; every mode playable; S-DoD for every
 subsystem.
 
