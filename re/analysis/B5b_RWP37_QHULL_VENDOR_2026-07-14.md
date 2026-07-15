@@ -127,41 +127,51 @@ Offline replay (`Collision/b5b_qhull_selftest.cpp` — vendored qhull-2002.1 REA
 ported bridge, `deps/qhull-2002.1/build_b5b_selftest.bat`) fed each captured cloud back
 through `QhullBuildHull` and diffed the output slab vs the captured original:
 
+**Key config discovery — RWP built qhull with `REALepsilon = 1e-6` (not stock `FLT_EPSILON`).**
+The first replay diverged (nFacets 226 vs 230). Reading the ORIGINAL's live `qh_qh` precision
+globals at `qh_new_qhull` onLeave (`re/frida/capture_qhull_hull.py`, `FUN_0058f520` hook)
+proved the original's `qh DISTround = 2.9622792681e-6` — **exactly 8.389× (= 1e-6/FLT_EPSILON)
+larger** than the stock-`FLT_EPSILON` build's `3.531e-7`. `DISTround` is the coplanar-merge
+threshold; the loosened epsilon merges 4 more near-coplanar facets. Setting
+`#define REALepsilon 1e-6` in the vendored `user.h` (2nd required edit) makes the vendored
+build compute `DISTround = 2.96227927e-6` — matching the original to full float precision.
+
+Result **after** the `REALepsilon=1e-6` fix (all 4 bodies):
+
 | field (slab offset) | original | vendored+ported | verdict |
 |---|---|---|---|
 | numpoints (input) | 117 | 117 (byte-identical cloud) | **MATCH** |
-| nVerts (`+0x1c`) | 117 | 117 | **MATCH** (all input points are hull vertices) |
-| vertex array (`+0x8c`, 117×vec3) | — | — | **DIFFER** (same 117-point set, different qhull vertex_list order) |
-| nFacets (`+0x1e`) | **226** | **230** | **DIVERGE Δ+4** |
-| nEdges (`+0x20`) | **682** | **690** | **DIVERGE Δ+8** |
+| nVerts (`+0x1c`) | 117 | 117 | **MATCH** |
+| vertex array (`+0x8c`, 117×vec3) | — | — | **BIT-IDENTICAL** |
+| nFacets (`+0x1e`) | 226 | 226 | **MATCH** |
+| nEdges (`+0x20`) | 682 | 682 | **MATCH** |
+| `qh DISTround` | 2.9622792681e-6 | 2.96227927e-6 | **MATCH** |
+| facet normals (`+0x700`, 226×vec3) | — | — | **≤1 ULP** (maxAbsDiff = 1.19209e-7 = FLT_EPSILON; facet order identical) |
 
-Both hulls are topologically valid closed convex hulls (Euler V−E+F = 2 for both:
-117−341+226=2 ; 117−345+230=2). The divergence is **stable and deterministic** — identical
-across x87 precision-control modes (`_PC_24/53/64`) and across build flags
-(`/fp:precise /Ox`, `/fp:strict /Od`). 
+**Residual = the irreducible sub-ULP cross-compiler FP floor.** With the epsilon matched, the
+hull is vertex-bit-identical, count-identical, and facet-order-identical; the only remaining
+difference is the facet plane **normals**, which agree to **≤1 ULP** (`qh_setfacetplane`'s
+Gaussian elimination rounds sub-ULP differently between the MSVC-2022 and the ~2003 build).
+This is the same 1-ULP FP-codegen floor already accepted as C4 for the RW-math leaves
+(memory `project-wsa2-rwmath-bitident`), not a triangulation/config divergence.
 
-**Root cause (NO-GUESSING, evidence-based):** the divergence is entirely inside the qhull
-*library*, not the ported RwpQHullWrapper bridge/packaging. qhull-2002.1's initial-simplex
-selection (`qh_maxsimplex`) and coplanar-facet merge decisions are knife-edge FP-codegen
-sensitive; the vendored MSVC-2022 x87 build and the original ~2003 RWP MSVC build resolve
-~4 borderline coplanar-merge predicates differently, producing the same vertex SET but a
-different triangulation (4 fewer merges) and a different vertex_list order. This is qhull's
-well-known cross-compiler non-reproducibility and is **not fixable** without the original
-object code. The **ported bridge + packaging are faithful**: given identical qhull facets
-they produce an identical slab (proven by the deterministic, layout-exact packaging port).
-
-**Verdict:** the vendored qhull + ported bridge reproduce the original's hull **vertex set
-exactly** (the geometrically load-bearing data) and a topologically-valid hull differing only
-in triangulation granularity (Δ4 coplanar merges) — a **documented per-field divergence**, the
-outcome the B5b acceptance explicitly permits. Whether the Δ4-facet triangulation affects car
-behavior is a B5e behavioral question (expected negligible: same collision shape).
+**Verdict:** the vendored qhull (REALfloat=1 **+ REALepsilon=1e-6**, x87) + ported bridge
+reproduce the original's 4 body hulls to **bit-identical vertices + counts + facet order, with
+normals matching to ≤1 ULP** — functionally bit-identical, residual at the irreducible FP
+floor. The ported bridge/packaging are faithful (given identical qhull facets they produce an
+identical slab). Not claiming byte-perfect C4 (the ≤1-ULP normal residual is real and cited);
+this is the strongest reproduction achievable across compilers and far exceeds the
+"documented divergence" fallback.
 
 ## 6. Status
 - Deliverable #1 (vendor qhull-2002.1 + build, REALfloat=1 x87) **DONE + verified**.
 - Deliverable #2/#3 (port bridge + 4-body build chain) **DONE + compile-verified**;
   qhull path runs end-to-end (self-test: valid hull from a point cloud).
-- Acceptance **DONE — documented divergence** (vertex set exact; Δ4-facet qhull-library
-  triangulation divergence, root-caused). NOT strict bit-identity (no overclaim).
+- Acceptance **DONE — reproduced to the FP floor.** After discovering RWP's
+  `REALepsilon=1e-6` (proven by the original's live `DISTround`), the vendored+ported hull is
+  **vertex-bit-identical + count-identical + facet-order-identical**, normals ≤1 ULP. Two
+  vendored-source edits total (`REALfloat=1`, `REALepsilon=1e-6`), both cited. Residual = the
+  irreducible sub-ULP cross-compiler FP floor (not a divergence to close).
 - Remaining for the FULL system-2 (B5c/B5d): port the RWP integrator
   (`RwpIntegrate_vanilla.c`, 0x55-band) + GJK support (`RwpGjk.c` `FUN_0055c000`) + the
   material/world helpers extern-declared in `CollisionBuildDeps.h`, then wire the build

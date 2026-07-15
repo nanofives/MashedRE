@@ -16,7 +16,39 @@
 #include <vector>
 #include <float.h>   // _controlfp — match the game's x87 precision-control word
 
+extern "C" {
+#include "qhull_a.h"   // for --diag (inspect qhull's computed merge/precision globals)
+}
+
 using namespace mashed_re::Collision;
+
+// --diag: run qh_new_qhull directly and print the merge/precision config qhull computed.
+static int diag_cloud(int n, float* pts) {
+    const char* opt = std::getenv("MASHED_QHULL_OPT");
+    if (!opt) opt = "qhull s Pp";
+    printf("[diag] n=%d opt=\"%s\"\n", n, opt);
+    int rc = qh_new_qhull(3, n, pts, False, const_cast<char*>(opt), 0, 0);
+    printf("  rc=%d  nFacets=%d nVertices=%d\n", rc, qh num_facets, qh num_vertices);
+    printf("  MERGING=%d MERGEexact=%d  DISTround=%.9g  MAXcoplanar=%.9g  MINoutside=%.9g\n",
+           qh MERGING, qh MERGEexact, qh DISTround, qh MAXcoplanar, qh MINoutside);
+    printf("  premerge_centrum=%.9g postmerge_centrum=%.9g  premerge_cos=%.9g postmerge_cos=%.9g cos_max=%.9g\n",
+           qh premerge_centrum, qh postmerge_centrum, qh premerge_cos, qh postmerge_cos, qh cos_max);
+    printf("  MAXabs_coord=%.9g  MAXwidth=%.9g  min_vertex=%.9g  hull_dim=%d  REALepsilon=%.9g\n",
+           qh MAXabs_coord, qh MAXwidth, qh min_vertex, qh hull_dim, (double)REALepsilon);
+    // raw max |coord| of the input, for comparison to qh maxmaxcoord
+    { float mx = 0; for (int i=0;i<n*3;++i){ float a = pts[i]<0?-pts[i]:pts[i]; if (a>mx) mx=a; }
+      printf("  raw max|coord|=%.9g\n", (double)mx); }
+    // qhT field offsets relative to facet_list (whose original VA is 0x0091459c). Lets a
+    // Frida read of the ORIGINAL's qh_qh compare DISTround/premerge/MERGING/maxmaxcoord.
+    char* fl = (char*)&qh facet_list;
+    printf("  [offsets vs facet_list @orig 0x0091459c]  DISTround %+d  premerge_centrum %+d"
+           "  postmerge_centrum %+d  MERGING %+d  MAXcoplanar %+d  MINoutside %+d\n",
+           (int)((char*)&qh DISTround - fl), (int)((char*)&qh premerge_centrum - fl),
+           (int)((char*)&qh postmerge_centrum - fl), (int)((char*)&qh MERGING - fl),
+           (int)((char*)&qh MAXcoplanar - fl), (int)((char*)&qh MINoutside - fl));
+    qh_freeqhull(!qh_ALL); { int a,b; qh_memfreeshort(&a,&b); }
+    return rc;
+}
 
 // ---- externs QhullBridge needs that are NOT qhull (RWP, un-ported) ----
 extern "C" void FUN_00563940(void* /*slab*/) { /* RWP finalize — no-op for the harness */ }
@@ -73,6 +105,15 @@ int main(int argc, char** argv) {
         if (pc) { if (!std::strcmp(pc,"53")) mode=_PC_53; else if (!std::strcmp(pc,"64")) mode=_PC_64; }
         _controlfp(mode, _MCW_PC);
     }
+    if (argc >= 3 && std::strcmp(argv[1], "--diag") == 0) {
+        FILE* f = std::fopen(argv[2], "rb");
+        if (!f) { printf("cannot open %s\n", argv[2]); return 2; }
+        int n = 0; std::fread(&n, 4, 1, f);
+        std::vector<float> cloud((size_t)n * 3);
+        std::fread(cloud.data(), 4, (size_t)n * 3, f);
+        std::fclose(f);
+        return diag_cloud(n, cloud.data());
+    }
     if (argc >= 3 && std::strcmp(argv[1], "--replay") == 0) {
         // captured-cloud file: [int32 n][n*3 float32].  Optional argv[3] = original slab
         // to diff against (bit-identity C4 acceptance).
@@ -124,6 +165,17 @@ int main(int argc, char** argv) {
                 }
                 if (nbad == 0) printf("  GREEN: bit-identical hull (counts + data region [0x8c:%u] match)\n", msz);
                 else printf("  RED: %u data byte(s) differ, first at offset 0x%x\n", nbad, firstBad);
+                // characterise the normals sub-array (facet plane normals): ULP-diff (FP)
+                // vs reordered/different. relative offset = header[3] - slab base.
+                unsigned normOff = *(unsigned*)(mine+0x0c) - (unsigned)mine;
+                unsigned nF = *(unsigned short*)(mine+0x1e);
+                if (normOff + nF*12 <= msz) {
+                    const float* nO = (const float*)(orig.data()+normOff);
+                    const float* nM = (const float*)(mine+normOff);
+                    float maxd = 0; int exact = 0;
+                    for (unsigned i=0;i<nF*3;++i){ float d=nO[i]-nM[i]; if(d<0)d=-d; if(d>maxd)maxd=d; if(nO[i]==nM[i])exact++; }
+                    printf("  normals[%u @+0x%x]: exact=%d/%u  maxAbsDiff=%g\n", nF, normOff, exact, nF*3, (double)maxd);
+                }
             } else if (ok) {
                 printf("  RED: count mismatch\n");
             }

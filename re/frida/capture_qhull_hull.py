@@ -64,17 +64,51 @@ function armQhull(){
           const rp = ptr(ret.toInt32());
           if (!rp.isNull()) { size = rp.readU32(); if (size > 0 && size < 0x400000) slab = rp.readByteArray(size); }
         } catch(e){}
+        // read the original's qh_qh precision globals (set by qh_new_qhull this call;
+        // qh_freeqhull ran inside FUN_0057ca30 but the static qhT scalars persist).
+        let g = {};
+        try {
+          g.DISTround         = ga(0x00914464).readFloat();
+          g.premerge_centrum  = ga(0x00913ea0).readFloat();
+          g.postmerge_centrum = ga(0x00913ea4).readFloat();
+          g.MERGING           = ga(0x00913e9c).readS32();
+          g.MAXcoplanar       = ga(0x00913e90).readFloat();
+          g.MINoutside        = ga(0x00913e2c).readFloat();
+        } catch(e){ g.err = ''+e; }
         caps.push({ n: this.n, size: size,
                     cloud: cloud ? Array.from(new Uint8Array(cloud)) : null,
                     slab:  slab  ? Array.from(new Uint8Array(slab))  : null });
         send({kind:'qhull', idx: caps.length-1, n: this.n, size: size,
-              haveCloud: !!cloud, haveSlab: !!slab});
+              haveCloud: !!cloud, haveSlab: !!slab, qh: g});
       }
     });
     qhullArmed = true; return 'armed FUN_0057ca30';
   } catch(e){ return 'ERR '+e; }
 }
 armQhull();   // arm immediately at load, before the race triggers the build
+
+// Hook qh_new_qhull (FUN_0058f520) to read the computed precision globals PRE-free
+// (FUN_0057ca30 calls qh_freeqhull after this returns). Validates the base via facet_list.
+let qnqArmed = false;
+function armQnq(){
+  if (qnqArmed) return;
+  try {
+    Interceptor.attach(ga(0x0058f520), { onLeave(){
+      let g = {};
+      try {
+        g.facet_list = ga(0x0091459c).readU32();      // non-null => base offsets valid
+        g.DISTround         = ga(0x00914464).readFloat();
+        g.premerge_centrum  = ga(0x00913ea0).readFloat();
+        g.MERGING           = ga(0x00913e9c).readS32();
+        g.MAXcoplanar       = ga(0x00913e90).readFloat();
+        g.num_facets        = ga(0x009145d0).readS32();
+      } catch(e){ g.err = ''+e; }
+      send({kind:'qnq', qh: g});
+    }});
+    qnqArmed = true;
+  } catch(e){ send({kind:'err', msg:'armQnq '+e}); }
+}
+armQnq();
 
 rpc.exports = {
   ready: function(){ return modBase() ? 1 : 0; },
@@ -143,7 +177,10 @@ def main():
         if p.get("kind") == "qhull":
             print(f"  [qhull] call#{p['idx']} n={p['n']} size={p['size']} "
                   f"cloud={p['haveCloud']} slab={p['haveSlab']}")
+            print(f"          qh_qh: {p.get('qh')}")
             got.append(p['idx'])
+        elif p.get("kind") == "qnq":
+            print(f"  [qh_new_qhull PRE-free] {p.get('qh')}")
         elif p.get("kind") == "ready":
             print("  [agent] ready")
 

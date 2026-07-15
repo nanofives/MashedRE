@@ -75,7 +75,12 @@
 #define realT float
 #define REALmax FLT_MAX
 #define REALmin FLT_MIN
-#define REALepsilon FLT_EPSILON
+/* Mashed RE B5b: the original RWP-3.7 build loosened REALepsilon from stock FLT_EPSILON
+   (1.19209e-7) to 1e-6 — proven by reading the ORIGINAL's qh DISTround live
+   (2.9622792681e-6, exactly 8.389x = 1e-6/FLT_EPSILON larger than the stock build).
+   This is the coplanar-merge threshold; the loosened value merges 4 more near-coplanar
+   facets, reproducing the original's hull. See re/analysis/B5b_RWP37_QHULL_VENDOR. */
+#define REALepsilon 1e-6
 #define qh_REALdigits 8   /* maximum number of significant digits */
 #define qh_REAL_1 "%6.8g "
 #define qh_REAL_2n "%6.8g %6.8g\n"
