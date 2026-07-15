@@ -1,3 +1,12 @@
+2026-07-15  0x0047eb30  VehiclePhysicsWorldStep  C2->C3  re/analysis/B5d_COUPLING_BRIDGE_2026-07-15.md (verbatim bridge port + canonical bridge-driven race)
+2026-07-15  0x0057c210  RwpBodyTableLookup  C2->C3  re/analysis/B5d_COUPLING_BRIDGE_2026-07-15.md (verbatim bridge port + canonical bridge-driven race)
+2026-07-15  0x0055ac00  RwpShapeActiveBitSet  C2->C3  re/analysis/B5d_COUPLING_BRIDGE_2026-07-15.md (verbatim bridge port + canonical bridge-driven race)
+2026-07-15  0x0047ea40  PhysicsSceneStepWrapper  C2->C3  re/analysis/B5d_COUPLING_BRIDGE_2026-07-15.md (verbatim bridge port + canonical bridge-driven race)
+2026-07-15  0x0055b800  RwpBodyMatrixRefresh  C2->C3  re/analysis/B5d_COUPLING_BRIDGE_2026-07-15.md (verbatim bridge port + canonical bridge-driven race)
+2026-07-15  0x0055c000  RwpGjkSupportMap  C2->C3  re/analysis/B5d_COUPLING_BRIDGE_2026-07-15.md (verbatim bridge port + canonical bridge-driven race)
+2026-07-15  0x0055deb0  RwpWorldSolverHandle  C2->C3  re/analysis/B5d_COUPLING_BRIDGE_2026-07-15.md (verbatim bridge port + canonical bridge-driven race)
+2026-07-15  0x0055dff0  RwpBodyRefreshGate  C2->C3  re/analysis/B5d_COUPLING_BRIDGE_2026-07-15.md (verbatim bridge port + canonical bridge-driven race)
+2026-07-15  0x0055e200  RwpSolverContextSet  C2->C3  re/analysis/B5d_COUPLING_BRIDGE_2026-07-15.md (verbatim bridge port + canonical bridge-driven race)
 # Analysis Changelog
 2026-07-15  0x0057c210  RwpBodyTableLookup  C1->C2  re/analysis/B5c_RWP37_INTEGRATOR_SUBSET_2026-07-15.md (clean-room port RwpIntegrator.cpp; build+canonical-race verified)
 2026-07-15  0x0055ac00  RwpShapeActiveBitSet  C1->C2  re/analysis/B5c_RWP37_INTEGRATOR_SUBSET_2026-07-15.md (clean-room port RwpIntegrator.cpp; build+canonical-race verified)

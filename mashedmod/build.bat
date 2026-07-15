@@ -97,6 +97,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Vehicle\AeroStabilize.cpp" ^
     "Vehicle\VehicleInit.cpp" ^
     "Vehicle\VehiclePhysicsRun.cpp" ^
+    "Vehicle\VehicleCouplingBridge.cpp" ^
     "Collision\ContactStubs.cpp" ^
     "Collision\ContactProducer.cpp" ^
     "Collision\CarWorldContacts.cpp" ^

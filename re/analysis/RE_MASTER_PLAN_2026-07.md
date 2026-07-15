@@ -429,9 +429,20 @@ WS-J M1 slice, video playback, gate D3, D-11058) done. Next up per D5: the M2 op
       `reference_to`=1 READ / 0 WRITE — no runtime writer; `sqrtf(0.0)` port bug fixed. Acceptance: canonical
       track-0 QuickRace with ONLY the 8 hooks installed ran clean 30 s, 4 grounded bodies physically simulated,
       no regression (C2 + behavioral; C4 per-field bit-diff is delivered by B5d's live coupling-driver diff).
-    - **Active next step: B5d** — coupling bridge `0x0047eb30` verbatim (two-body PD loop, gain 20 @`0x005ccd6c`,
-      0.06 s lookahead; `vehicle_coupling.md` is the port source). It drives the B5c subset each tick and
-      provides the per-field body-state integration diff (C4 upgrade for the B5c helpers).
+    - **B5d — PORT DONE 2026-07-15** (`re/analysis/B5d_COUPLING_BRIDGE_2026-07-15.md`). Verbatim clean-room
+      port of the coupling bridge `FUN_0047eb30` (`Vehicle/VehicleCouplingBridge.cpp`, RH_ScopedInstall;
+      two-body PD loop, gain 20 @`0x005ccd6c`, 0.06 s lookahead) — full decomp + full disasm
+      `0x0047eb30..0x0047f1db`, every callee an RVA thunk so the bridge routes into the B5c ports via their
+      inline-JMP hooks. Built into BOTH targets. Corrections from live decomp: readback gate is `record+0x14`
+      (not `+0x1c`, `vehicle_coupling.md:95`), the `FUN_0055deb0`/`FUN_0047ea40` solver calls ARE in-bridge, and
+      the render-helper pre-branch args resolved (all 2-arg). **Acceptance:** canonical track-0 QuickRace with
+      the bridge + all 8 B5c hooks installed drove the coupling surface ~240×/s for 35 s — clean, evolving
+      physics, no regression. Promoted the bridge + 8 B5c helpers **C2→C3** (behavioral integration, hooks
+      installed). **OPEN (not claimed C4):** the per-field bit-identical body-state diff (angular fields carry a
+      documented x87 ULP floor) — next focused session. **STOP-AND-ASK gate raised** (B5d note §5): the deferred
+      `FUN_0047e9c0` solver island is sized (**137 first-party fns / ~81 KB static, a lower bound** — vtable
+      dispatch uncounted; near-zero library content) with options (A) full clean-room vs (B) reduced faithful
+      subset — **B5e cannot ship on RVA thunks**, so this is a real architecture decision for the user.
 
 **Between-slices filler:** top demand-map §3 leaves (the `__ftol` head 0x004a2c48 went **C3
 2026-07-03**, byte-identical `FPURound_4a2c48`) + drain SCRIBE_QUEUE (11) via `ghidra-sweep`;
