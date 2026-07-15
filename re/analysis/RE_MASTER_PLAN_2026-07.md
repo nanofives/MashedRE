@@ -439,10 +439,15 @@ WS-J M1 slice, video playback, gate D3, D-11058) done. Next up per D5: the M2 op
       the bridge + all 8 B5c hooks installed drove the coupling surface ~240×/s for 35 s — clean, evolving
       physics, no regression. Promoted the bridge + 8 B5c helpers **C2→C3** (behavioral integration, hooks
       installed). **OPEN (not claimed C4):** the per-field bit-identical body-state diff (angular fields carry a
-      documented x87 ULP floor) — next focused session. **STOP-AND-ASK gate raised** (B5d note §5): the deferred
-      `FUN_0047e9c0` solver island is sized (**137 first-party fns / ~81 KB static, a lower bound** — vtable
-      dispatch uncounted; near-zero library content) with options (A) full clean-room vs (B) reduced faithful
-      subset — **B5e cannot ship on RVA thunks**, so this is a real architecture decision for the user.
+      documented x87 ULP floor) — next focused session. **STOP-AND-ASK gate raised + ANSWERED 2026-07-15 → Option (A) full clean-room
+      island.** The deferred `FUN_0047e9c0` solver island is sized (**137 first-party fns / ~81 KB static, a
+      lower bound** — vtable dispatch uncounted; near-zero library content). User chose **(A)**: transcribe the
+      entire RWP solver island verbatim for bit-identical C4 collision/contact physics (broadphase 0055a1f0,
+      partition 00560260, CCD 00561390, LCP constraint core 00570090 [10.5 KB], + vtable-dispatch targets).
+    - **B5e — full clean-room RWP solver island (OPEN, next big lane).** Largest single-lane port in the project
+      (renderer-scale, multi-session). Blocks true standalone collision/contact physics. Companion open thread:
+      **B5d C4 per-field body-state diff** (bridge + 8 hooks vs stock original, deterministic drive; read via
+      `FUN_0057c210((&DAT_006c9a78)[i])` chain) — can run before or alongside B5e to lock the coupling surface at C4.
 
 **Between-slices filler:** top demand-map §3 leaves (the `__ftol` head 0x004a2c48 went **C3
 2026-07-03**, byte-identical `FPURound_4a2c48`) + drain SCRIBE_QUEUE (11) via `ghidra-sweep`;
