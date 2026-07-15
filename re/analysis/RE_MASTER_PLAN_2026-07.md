@@ -445,9 +445,11 @@ WS-J M1 slice, video playback, gate D3, D-11058) done. Next up per D5: the M2 op
       entire RWP solver island verbatim for bit-identical C4 collision/contact physics (broadphase 0055a1f0,
       partition 00560260, CCD 00561390, LCP constraint core 00570090 [10.5 KB], + vtable-dispatch targets).
     - **B5e — full clean-room RWP solver island (OPEN, next big lane).** Largest single-lane port in the project
-      (renderer-scale, multi-session). Blocks true standalone collision/contact physics. Companion open thread:
-      **B5d C4 per-field body-state diff** (bridge + 8 hooks vs stock original, deterministic drive; read via
-      `FUN_0057c210((&DAT_006c9a78)[i])` chain) — can run before or alongside B5e to lock the coupling surface at C4.
+      (renderer-scale, multi-session). Blocks true standalone collision/contact physics. **B5d's C4 per-field
+      body-state diff is FOLDED INTO B5e's verify phase** (decided 2026-07-15): once the island is a real port
+      (thunks replaced) the whole-loop bit-identity diff — read via `FUN_0057c210((&DAT_006c9a78)[i])` chain,
+      angular fields at the documented x87 ULP floor — validates the coupling surface (bridge + 8 helpers) AND
+      the solver together, so the bridge/helpers reach C4 as part of B5e acceptance rather than a separate lane.
 
 **Between-slices filler:** top demand-map §3 leaves (the `__ftol` head 0x004a2c48 went **C3
 2026-07-03**, byte-identical `FPURound_4a2c48`) + drain SCRIBE_QUEUE (11) via `ghidra-sweep`;
