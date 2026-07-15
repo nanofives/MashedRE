@@ -414,10 +414,24 @@ WS-J M1 slice, video playback, gate D3, D-11058) done. Next up per D5: the M2 op
       8.389×=1e-6/FLT_EPSILON larger). With `REALfloat=1` + `REALepsilon=1e-6` the vendored+ported hull is
       **vertex-bit-identical, counts identical (117/226/682), facet-order identical, normals ≤1 ULP**
       (maxAbsDiff=1.19e-7 = the RW-math sub-ULP C4 floor). Ports NOT yet in build.bat (RWP helper externs land in B5c).
-    - **Active next step: B5c** — port the per-tick integrator subset (`RwpIntegrate_vanilla.c`, 0x55-band:
-      `FUN_0055dff0/0055ac00/0055deb0/0055c000`) + GJK support (`RwpGjk.c` `FUN_0055c000`) + body accessor
-      `FUN_0057c210` + the material/world RWP helpers extern-declared in
-      `mashedmod/src/mashed_re/Collision/CollisionBuildDeps.h`, then wire the build chain into build.bat.
+    - **B5c — DONE 2026-07-15** (`re/analysis/B5c_RWP37_INTEGRATOR_SUBSET_2026-07-15.md`). Narrow-subset
+      scope ratified with the user after two inherited errors were corrected from live decomp: (1) `0x007e9de0`
+      is a 256-slot event-MARKER draw-stream ring (scalar write-index + `FUN_0047def0/0047d640` emitters), NOT
+      proxy-body state; (2) the B5a-named helpers are coupling-side, and the true per-tick step `FUN_0047e9c0`
+      is the whole 12-stage RWP solver island — DEFERRED to a new lane. Clean-room ported the subset
+      (`FUN_0057c210/0055deb0/0055ac00/0055b800/0055dff0/0055c000/0055e200/0047ea40`) into
+      `Collision/RwpIntegrator.cpp` (RH_ScopedInstall hooks); resolved `FUN_0055dff0`'s pre-branch args
+      (`dff0(body,idx)` → tail-call `0055b800(*(M+idx*0xc+4), *(+8))`) and the `FUN_0055dec0` 4-arg-vs-leaf
+      conflict (it IS `return *world`; extra cdecl args discarded). Build-integration closed: the 4 Collision
+      TUs + isolated `QhullBridge_{exe,asi}.obj` enter build.bat + asi_sources.rsp; **BOTH targets build clean**
+      (RwpBuildExterns.cpp resolves the RWP externs — RVA thunks + placeholder storage). Cone-table [UNCERTAIN]
+      CLOSED: `_DAT_005cf240` is the **double 120.0** (`FLD qword`; Ghidra mis-typed the low dword float 0.0),
+      `reference_to`=1 READ / 0 WRITE — no runtime writer; `sqrtf(0.0)` port bug fixed. Acceptance: canonical
+      track-0 QuickRace with ONLY the 8 hooks installed ran clean 30 s, 4 grounded bodies physically simulated,
+      no regression (C2 + behavioral; C4 per-field bit-diff is delivered by B5d's live coupling-driver diff).
+    - **Active next step: B5d** — coupling bridge `0x0047eb30` verbatim (two-body PD loop, gain 20 @`0x005ccd6c`,
+      0.06 s lookahead; `vehicle_coupling.md` is the port source). It drives the B5c subset each tick and
+      provides the per-field body-state integration diff (C4 upgrade for the B5c helpers).
 
 **Between-slices filler:** top demand-map §3 leaves (the `__ftol` head 0x004a2c48 went **C3
 2026-07-03**, byte-identical `FPURound_4a2c48`) + drain SCRIBE_QUEUE (11) via `ghidra-sweep`;

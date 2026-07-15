@@ -27,6 +27,17 @@ if not exist "%QHULL_LIB%" (
     if errorlevel 1 (echo [ERROR] qhull lib build failed & exit /b 1)
 )
 
+REM B5c: the RwpQHullWrapper bridge (Collision\QhullBridge.cpp) is the ONLY TU that
+REM includes the vendored qhull headers. Compile it in ISOLATION with the qhull include
+REM path into a per-target .obj so qhull's generic headers (io.h, mem.h, stat.h) never
+REM shadow the CRT/other headers of the ~200 other TUs. The .obj is then linked into each
+REM target. One .obj per target because the EH model differs (exe /EHa vs asi /EHsc).
+set QINC=%ROOT%deps\qhull-2002.1\src
+cl /nologo /EHa  /W3 /O2 /c /I "%QINC%" /Fo"%OUT%\QhullBridge_exe.obj" "%SRC%\Collision\QhullBridge.cpp"
+if errorlevel 1 (echo [ERROR] QhullBridge exe-obj compile failed & exit /b 1)
+cl /nologo /EHsc /W3 /O2 /c /I "%QINC%" /Fo"%OUT%\QhullBridge_asi.obj" "%SRC%\Collision\QhullBridge.cpp"
+if errorlevel 1 (echo [ERROR] QhullBridge asi-obj compile failed & exit /b 1)
+
 REM ===========================================================================
 REM Phase C status (2026-05-25):
 REM   - LINK GATE MET: an experimental full-source-set build (every reimpl in
@@ -91,6 +102,10 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Collision\CarWorldContacts.cpp" ^
     "Collision\CarCarContacts.cpp" ^
     "Collision\WheelContactSolver.cpp" ^
+    "Collision\RwpIntegrator.cpp" ^
+    "Collision\RwpBuildExterns.cpp" ^
+    "Collision\CollisionBodyCreate.cpp" ^
+    "Collision\PhysicsWorldBuild.cpp" ^
     "Math\RwV3dTransformPointsCPU.cpp" ^
     "Math\RwMatrixRotate.cpp" ^
     "Math\RwMatrixRotateInner.cpp" ^
@@ -215,6 +230,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Render\RenderStateSettersA.cpp" ^
     "Frontend\FrontendLeaves_ad2.cpp" ^
     "Frontend\MenuLeaves_af5.cpp" ^
+    "%OUT%\QhullBridge_exe.obj" ^
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO ^
     /MAP:"%OUT%\mashed_re.map" ^
     user32.lib d3d9.lib dsound.lib "%QHULL_LIB%"
@@ -224,6 +240,7 @@ if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)
 echo === Building mashed_re_dev.asi ===
 pushd "%SRC%"
 cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" @"%ROOT%asi_sources.rsp" ^
+    "%OUT%\QhullBridge_asi.obj" ^
     /link /DLL /MAP:"%OUT%\mashed_re_dev.map" /MAPINFO:EXPORTS "%QHULL_LIB%"
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)

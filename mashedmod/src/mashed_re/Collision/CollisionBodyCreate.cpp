@@ -23,8 +23,13 @@ extern "C" int   DAT_006ce818;       // 0x006ce818 cached sample count (lazy-ini
 extern "C" float DAT_006ce278;       // 0x006ce278 sample table base (stride 3 floats)
 // Cone constants (raw bytes @ RVA; see memory_read 0x005cf238 = 01 00 7a 04 | 0a d7 e3 3f | 00 00 00 00).
 extern "C" float _DAT_005cf23c;      // 0x005cf23c 1.78     (0x3fe3d70a) cone step numerator
-extern "C" float _DAT_005cf240;      // 0x005cf240 0.0      (0x00000000) sqrt denominator [UNCERTAIN: 0.0 static -> sqrt(0)=0 -> +inf; runtime-written elsewhere]
-extern "C" float _DAT_005cf238;      // 0x005cf238 DENORMAL (0x047a0001) type-1 scale mul  [UNCERTAIN]
+// 0x005cf240 is an 8-byte DOUBLE = 120.0 (0x405e000000000000), read as `FLD qword` at
+// 0x00481e14. Ghidra mis-typed the LOW dword as float 0.0 (the "_-overlap" warning); B5b
+// inherited that and computed sqrtf(0.0). RESOLVED 2026-07-15 (B5c note §5): reference_to
+// 0x005cf240 = exactly 1 READ (0x00481e14), 0 WRITE — a static .rdata constant, no runtime
+// writer. Inlined below as the literal double; the mis-typed extern is retired.
+static const double kConeSqrtDivisor_005cf240 = 120.0;
+extern "C" float _DAT_005cf238;      // 0x005cf238 DENORMAL (0x047a0001) real float const, type-1 scale mul (read `FMUL m32fp` 0x00481f40)
 extern "C" float _DAT_005ce2f4;      // 0x005ce2f4 pi       (0x40490fdb) latitude max
 extern "C" float _DAT_005cd2c0;      // 0x005cd2c0 2*pi     (0x40c90fdb) longitude span
 extern "C" float DAT_005d757c;       // 0x005d757c 0.0      latitude start / mesh threshold
@@ -49,11 +54,11 @@ int PhysicsCollisionBodyCreate(int scene, int linkFlag)
 void* ConeCastHullBuild(int shape, float scale, void* mtx)
 {
     // ---- lazy cone-direction sample table build (once; guard DAT_006ce818 == 0) ----
-    // [UNCERTAIN] With the STATIC value _DAT_005cf240 == 0.0, step == 1.78/sqrt(0) == +inf and
-    // (step < pi) is false, so this whole block is skipped and the table must already be
-    // populated by a runtime writer. Transcribed verbatim; resolve the runtime globals in B5c.
-    if (DAT_006ce818 == 0) {                                            // 0x00481e09
-        float step = _DAT_005cf23c / sqrtf(_DAT_005cf240);             // 0x00481e1a
+    // RESOLVED (B5c): 0x005cf240 is the double 120.0, so step = 1.78/sqrt(120) = 0.1625 < pi
+    // and this cone-build block RUNS, populating ~120 dirs (cap 0x78 at 0x00481eb0). There is
+    // NO runtime writer (the earlier "populated elsewhere" note was the sqrtf(0.0) mis-read).
+    if (DAT_006ce818 == 0) {                                            // 0x00481e0c
+        float step = (float)((double)_DAT_005cf23c / sqrt(kConeSqrtDivisor_005cf240)); // 0x00481e14..e1c FLD qword/FSQRT/FDIVR
         double lat0 = (double)DAT_005d757c;                            // fVar12 (latitude carry)
         double lat  = (double)step;                                    // fVar13
         if (step < _DAT_005ce2f4) {                                    // step < pi

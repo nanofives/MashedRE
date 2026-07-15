@@ -355,10 +355,14 @@ qhull-2002.1 ([[qhull-rwphysics-island]], 0x57c5b0..0x5a5820).
 - **B5 (system-2 reconstruction, Option A):** B5a demand-closure + plating of what
   0x0047eb30/0x0047f840 actually reach in the 0x55 band (+ island caller closure,
   brief Open-Unknowns #3/#4); B5b vendor qhull-2002.1 + FUN_0057ca30 bridge + 4-body
-  build chain (FUN_0047d3c0→FUN_004826d0→FUN_00481e00); B5c per-tick integrator
-  subset (FUN_0055dff0/0055ac00/0055deb0/0055c000) + body accessor FUN_0057c210;
-  B5d coupling bridge 0x0047eb30 verbatim; B5e wire into the standalone + re-run the
-  drive-hold harness expecting wedge-free sustained drive, then A8 becomes a true diff.
+  build chain (FUN_0047d3c0→FUN_004826d0→FUN_00481e00); **B5c DONE 2026-07-15** —
+  per-tick integrator SUBSET ported (FUN_0057c210/0055deb0/0055ac00/0055b800/0055dff0/
+  0055c000/0055e200/0047ea40 → Collision/RwpIntegrator.cpp), 4 build TUs wired into
+  build.bat both targets, cone-table [UNCERTAIN] closed (_DAT_005cf240 = double 120.0,
+  no writer), canonical-race acceptance clean (the full 12-stage FUN_0047e9c0 solver
+  island is DEFERRED to a new lane); **B5d next** — coupling bridge 0x0047eb30 verbatim
+  (drives the B5c subset; gives the C4 body-state diff); B5e wire into the standalone +
+  re-run the drive-hold harness expecting wedge-free sustained drive, then A8 true diff.
 
 ### WS-C — AI drivers (item 1)
 Replaces the gate-ribbon lane-follower scaffold. Real = **FUN_00418860 family**

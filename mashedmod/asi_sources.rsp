@@ -301,3 +301,7 @@
 "Util\UtilRandIntRange_wfb0f.cpp"
 "Audio\AudioListSearch_wfb0f.cpp"
 "Util\Vec3ValidateMixed_cfd622.cpp"
+"Collision\RwpIntegrator.cpp"
+"Collision\RwpBuildExterns.cpp"
+"Collision\CollisionBodyCreate.cpp"
+"Collision\PhysicsWorldBuild.cpp"

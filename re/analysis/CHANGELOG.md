@@ -1,4 +1,11 @@
 # Analysis Changelog
+2026-07-15  0x0057c210  RwpBodyTableLookup  C1->C2  re/analysis/B5c_RWP37_INTEGRATOR_SUBSET_2026-07-15.md (clean-room port RwpIntegrator.cpp; build+canonical-race verified)
+2026-07-15  0x0055ac00  RwpShapeActiveBitSet  C1->C2  re/analysis/B5c_RWP37_INTEGRATOR_SUBSET_2026-07-15.md (clean-room port RwpIntegrator.cpp; build+canonical-race verified)
+2026-07-15  0x0055b800  RwpBodyMatrixRefresh  C1->C2  re/analysis/B5c_RWP37_INTEGRATOR_SUBSET_2026-07-15.md (clean-room port RwpIntegrator.cpp; build+canonical-race verified)
+2026-07-15  0x0055c000  RwpGjkSupportMap  C1->C2  re/analysis/B5c_RWP37_INTEGRATOR_SUBSET_2026-07-15.md (clean-room port RwpIntegrator.cpp; build+canonical-race verified)
+2026-07-15  0x0055deb0  RwpWorldSolverHandle  C1->C2  re/analysis/B5c_RWP37_INTEGRATOR_SUBSET_2026-07-15.md (clean-room port RwpIntegrator.cpp; build+canonical-race verified)
+2026-07-15  0x0055dff0  RwpBodyRefreshGate  C1->C2  re/analysis/B5c_RWP37_INTEGRATOR_SUBSET_2026-07-15.md (clean-room port RwpIntegrator.cpp; build+canonical-race verified)
+2026-07-15  0x0055e200  RwpSolverContextSet  C1->C2  re/analysis/B5c_RWP37_INTEGRATOR_SUBSET_2026-07-15.md (clean-room port RwpIntegrator.cpp; build+canonical-race verified)
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
 Entries dated before 2026-06-15 are archived in `re/analysis/archive/CHANGELOG_pre20260615.md` (3644 lines). Newest entries first, below.
