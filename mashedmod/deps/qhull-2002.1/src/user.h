@@ -62,7 +62,14 @@
    REALfloat =   1      all numbers are 'float' type
              =   0      all numbers are 'double' type
 */
-#define REALfloat 0
+#define REALfloat 1  /* Mashed RE B5b: MUST be 1 (float) to match the original RWP-3.7
+                        build. Proven by the facetT layout in the decomp of FUN_0057c670
+                        (facet->normal at +0xc, next at +0x1c, ridges at +0x24, visitid at
+                        +0x34) and vertexT (point at +8, visitid at +0x10) — these offsets
+                        only hold when coordT/realT == float (4-byte). The point cloud fed
+                        to qh_new_qhull is float[]. With the qhull default (double) the
+                        layout and the point interpretation would both diverge. Sole edit to
+                        the vendored source; see re/analysis/B5b_RWP37_QHULL_VENDOR_2026-07-14.md. */
 
 #if (REALfloat == 1)
 #define realT float

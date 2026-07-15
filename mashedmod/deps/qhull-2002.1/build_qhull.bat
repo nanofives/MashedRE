@@ -24,7 +24,7 @@ set VCVARS="C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Au
 set HERE=%~dp0
 set SRC=%HERE%src
 set OBJ=%HERE%obj
-set LIB=%HERE%qhull_2002_1.lib
+set OUTLIB=%HERE%qhull_2002_1.lib
 
 if not exist "%OBJ%" mkdir "%OBJ%"
 
@@ -43,11 +43,9 @@ cl %CFLAGS% /Fo"%OBJ%\\" ^
 if errorlevel 1 (echo [ERROR] qhull compile failed & popd & exit /b 1)
 popd
 
-set LIBOBJS=
-for %%f in ("%OBJ%\*.obj") do call set LIBOBJS=%%LIBOBJS%% "%%f"
-lib /nologo /OUT:"%LIB%" %LIBOBJS%
+lib /nologo /OUT:"%OUTLIB%" "%OBJ%\geom.obj" "%OBJ%\geom2.obj" "%OBJ%\global.obj" "%OBJ%\io.obj" "%OBJ%\mem.obj" "%OBJ%\merge.obj" "%OBJ%\poly.obj" "%OBJ%\poly2.obj" "%OBJ%\qhull.obj" "%OBJ%\qset.obj" "%OBJ%\stat.obj" "%OBJ%\user.obj"
 if errorlevel 1 (echo [ERROR] lib failed & exit /b 1)
 
 echo === qhull_2002_1.lib OK ===
-dir /b "%LIB%"
+dir /b "%OUTLIB%"
 endlocal
