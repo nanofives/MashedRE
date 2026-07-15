@@ -400,8 +400,24 @@ WS-J M1 slice, video playback, gate D3, D-11058) done. Next up per D5: the M2 op
       writes zero absolute globals (all pointer-indirect); per-frame footprint = 4 proxy-body state arrays
       (`0x007e9de0` stride 0x404, via per-frame solve `FUN_0047ea40→FUN_0047e9c0`) + world/body-table +
       vehicle readback + driver bookkeeping; timestep `DAT_0061331c=0.05`, PD gain `_DAT_005ccd6c=20.0`.
-    - **Active next step: B5b** — vendor qhull-2002.1; sole bridge `FUN_0057ca30`; wire the 4-body build
-      chain `FUN_0047d3c0 → FUN_004826d0 → FUN_00481e00 → FUN_0057ca30`.
+    - **B5b — DONE 2026-07-14** (`re/analysis/B5b_RWP37_QHULL_VENDOR_2026-07-14.md`). Decisive discovery:
+      "system 2" = **RenderWare Physics 3.7** in full (45 RCS `$Id` strings, `//Physics/Rwp37Active/`);
+      bridge `FUN_0057ca30`=`RwpQHullWrapper.c`, GJK `FUN_0055c000`=`RwpGjk.c`, integrator=`RwpIntegrate_vanilla.c`.
+      Vendored stock **qhull-2002.1** (pinned by embedded banner "2002.1 2002/8/20") under
+      `mashedmod/deps/qhull-2002.1/`, built x87 `/arch:IA32` + **`REALfloat=1`** (float coordT — required for
+      the facetT/vertexT layout), wired into build.bat (commit e3b65c8a). Clean-room ported `FUN_0057ca30`
+      (bridge) + `FUN_00563840`/`FUN_0057c670` (slab alloc/packaging) + the 4-body build chain
+      `FUN_0047d3c0/004826d0/00481e00`, all compile-verified (commit de3d9441). **Acceptance
+      (commit 7378ea3f): documented divergence** — Frida-captured the original's 4 `FUN_0057ca30` calls at
+      track load (n=117 pts, 14508-byte slab); vendored qhull + ported bridge reproduce the **vertex SET
+      exactly** but diverge in triangulation (nFacets 226 vs 230, Δ+4 coplanar merges; vertex_list order),
+      deterministic across all FP flags — qhull's cross-compiler non-reproducibility inside the *library*,
+      not the faithful bridge. NOT strict bit-identity (no overclaim); the permitted documented-divergence
+      outcome. Ports NOT yet in build.bat (RWP helper externs land in B5c).
+    - **Active next step: B5c** — port the per-tick integrator subset (`RwpIntegrate_vanilla.c`, 0x55-band:
+      `FUN_0055dff0/0055ac00/0055deb0/0055c000`) + GJK support (`RwpGjk.c` `FUN_0055c000`) + body accessor
+      `FUN_0057c210` + the material/world RWP helpers extern-declared in
+      `mashedmod/src/mashed_re/Collision/CollisionBuildDeps.h`, then wire the build chain into build.bat.
 
 **Between-slices filler:** top demand-map §3 leaves (the `__ftol` head 0x004a2c48 went **C3
 2026-07-03**, byte-identical `FPURound_4a2c48`) + drain SCRIBE_QUEUE (11) via `ghidra-sweep`;
