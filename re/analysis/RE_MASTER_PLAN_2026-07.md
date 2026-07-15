@@ -408,12 +408,12 @@ WS-J M1 slice, video playback, gate D3, D-11058) done. Next up per D5: the M2 op
       the facetT/vertexT layout), wired into build.bat (commit e3b65c8a). Clean-room ported `FUN_0057ca30`
       (bridge) + `FUN_00563840`/`FUN_0057c670` (slab alloc/packaging) + the 4-body build chain
       `FUN_0047d3c0/004826d0/00481e00`, all compile-verified (commit de3d9441). **Acceptance
-      (commit 7378ea3f): documented divergence** — Frida-captured the original's 4 `FUN_0057ca30` calls at
-      track load (n=117 pts, 14508-byte slab); vendored qhull + ported bridge reproduce the **vertex SET
-      exactly** but diverge in triangulation (nFacets 226 vs 230, Δ+4 coplanar merges; vertex_list order),
-      deterministic across all FP flags — qhull's cross-compiler non-reproducibility inside the *library*,
-      not the faithful bridge. NOT strict bit-identity (no overclaim); the permitted documented-divergence
-      outcome. Ports NOT yet in build.bat (RWP helper externs land in B5c).
+      (commits 7378ea3f/ad7781a4): reproduced to the FP floor** — Frida-captured the original's 4 `FUN_0057ca30`
+      calls at track load (n=117 pts, 14508-byte slab). Key finding: RWP built qhull with **`REALepsilon=1e-6`**
+      (not stock FLT_EPSILON) — proven by reading the original's live `qh DISTround`=2.9622792681e-6 (exactly
+      8.389×=1e-6/FLT_EPSILON larger). With `REALfloat=1` + `REALepsilon=1e-6` the vendored+ported hull is
+      **vertex-bit-identical, counts identical (117/226/682), facet-order identical, normals ≤1 ULP**
+      (maxAbsDiff=1.19e-7 = the RW-math sub-ULP C4 floor). Ports NOT yet in build.bat (RWP helper externs land in B5c).
     - **Active next step: B5c** — port the per-tick integrator subset (`RwpIntegrate_vanilla.c`, 0x55-band:
       `FUN_0055dff0/0055ac00/0055deb0/0055c000`) + GJK support (`RwpGjk.c` `FUN_0055c000`) + body accessor
       `FUN_0057c210` + the material/world RWP helpers extern-declared in
