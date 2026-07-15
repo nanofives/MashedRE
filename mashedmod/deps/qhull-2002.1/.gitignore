@@ -1,3 +1,4 @@
-# Build artifacts — reproducible via build_qhull.bat
+# Build artifacts — reproducible via build_qhull.bat / build_b5b_selftest.bat
 obj/
 *.lib
+b5b_selftest/

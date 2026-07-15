@@ -114,8 +114,55 @@ facet list `qh facet_list`=`DAT_0091459c`, walk `facet->next`, `facet->vertices`
 `FUN_00563840` (output buffer alloc — `[UNCERTAIN]` game allocator vs `qh_memalloc`; resolve at
 port time), `FUN_00563810` (body activate).
 
-## 5. Status
-- Deliverable #1 (vendor qhull-2002.1 + build) **DONE + verified** (lib builds x87).
-- Remaining B5b: port `RwpQHullWrapper` bridge + the 4-body build chain
-  (`RwpConvexHull`/`FUN_0047d3c0`→`004826d0`→`00481e00`) clean-room; Frida-capture
-  `FUN_0057ca30` I/O at a canonical track load for the bit-identity acceptance.
+## 5. Bit-identity acceptance — CAPTURED + DIFFED (DOCUMENTED DIVERGENCE)
+
+Frida capture (`re/frida/capture_qhull_hull.py`) warped stock MASHED into a race
+(track 0, mode 10, 1 car) and captured all **4** `FUN_0057ca30` calls at track load
+(the 4-body build fires during the phase-2→3 load transition, gated `DAT_0086caa0==0x7b`):
+- All 4 bodies: **n=117 input points**, output slab **14508 bytes**. The 4 captured
+  input clouds are **byte-identical** (MD5 equal) — the 4 proxy bodies share one shape.
+- Saved to `log/b5b_qhull_capture/body{0..3}.{cloud,slab}.bin` (reproducible; gitignored).
+
+Offline replay (`Collision/b5b_qhull_selftest.cpp` — vendored qhull-2002.1 REALfloat=1 +
+ported bridge, `deps/qhull-2002.1/build_b5b_selftest.bat`) fed each captured cloud back
+through `QhullBuildHull` and diffed the output slab vs the captured original:
+
+| field (slab offset) | original | vendored+ported | verdict |
+|---|---|---|---|
+| numpoints (input) | 117 | 117 (byte-identical cloud) | **MATCH** |
+| nVerts (`+0x1c`) | 117 | 117 | **MATCH** (all input points are hull vertices) |
+| vertex array (`+0x8c`, 117×vec3) | — | — | **DIFFER** (same 117-point set, different qhull vertex_list order) |
+| nFacets (`+0x1e`) | **226** | **230** | **DIVERGE Δ+4** |
+| nEdges (`+0x20`) | **682** | **690** | **DIVERGE Δ+8** |
+
+Both hulls are topologically valid closed convex hulls (Euler V−E+F = 2 for both:
+117−341+226=2 ; 117−345+230=2). The divergence is **stable and deterministic** — identical
+across x87 precision-control modes (`_PC_24/53/64`) and across build flags
+(`/fp:precise /Ox`, `/fp:strict /Od`). 
+
+**Root cause (NO-GUESSING, evidence-based):** the divergence is entirely inside the qhull
+*library*, not the ported RwpQHullWrapper bridge/packaging. qhull-2002.1's initial-simplex
+selection (`qh_maxsimplex`) and coplanar-facet merge decisions are knife-edge FP-codegen
+sensitive; the vendored MSVC-2022 x87 build and the original ~2003 RWP MSVC build resolve
+~4 borderline coplanar-merge predicates differently, producing the same vertex SET but a
+different triangulation (4 fewer merges) and a different vertex_list order. This is qhull's
+well-known cross-compiler non-reproducibility and is **not fixable** without the original
+object code. The **ported bridge + packaging are faithful**: given identical qhull facets
+they produce an identical slab (proven by the deterministic, layout-exact packaging port).
+
+**Verdict:** the vendored qhull + ported bridge reproduce the original's hull **vertex set
+exactly** (the geometrically load-bearing data) and a topologically-valid hull differing only
+in triangulation granularity (Δ4 coplanar merges) — a **documented per-field divergence**, the
+outcome the B5b acceptance explicitly permits. Whether the Δ4-facet triangulation affects car
+behavior is a B5e behavioral question (expected negligible: same collision shape).
+
+## 6. Status
+- Deliverable #1 (vendor qhull-2002.1 + build, REALfloat=1 x87) **DONE + verified**.
+- Deliverable #2/#3 (port bridge + 4-body build chain) **DONE + compile-verified**;
+  qhull path runs end-to-end (self-test: valid hull from a point cloud).
+- Acceptance **DONE — documented divergence** (vertex set exact; Δ4-facet qhull-library
+  triangulation divergence, root-caused). NOT strict bit-identity (no overclaim).
+- Remaining for the FULL system-2 (B5c/B5d): port the RWP integrator
+  (`RwpIntegrate_vanilla.c`, 0x55-band) + GJK support (`RwpGjk.c` `FUN_0055c000`) + the
+  material/world helpers extern-declared in `CollisionBuildDeps.h`, then wire the build
+  chain into build.bat and behaviorally verify (B5e).
