@@ -170,9 +170,14 @@ extern "C" void __cdecl FUN_00563f60(int param_1,ushort param_2)
 
 // ---------------------------------------------------------------------------
 // 0x00564040  Collects all unique pair-IDs that key param_2 is hashed with, filtered by
-//             bitmap param_4. Stores into output buffer param_3.
+//             bitmap param_4. Stores into output buffer param_3. RETURNS the collected
+//             count — K3 correction 2026-07-16: the original leaves the count in EAX on
+//             every path (XOR EAX,EAX @0x00564057; reload @0x0056409a; the sort block
+//             0x005640c2..0x005640f3 never writes EAX; live at RET 0x005640fa), and the
+//             K3 broadphase callers FUN_0055a1f0 (@0x0055a331) / FUN_0055a9a0
+//             (@0x0055aa08) consume it. Was ported `void` at K1.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_00564040(int param_1,ushort param_2,int param_3,int param_4,int param_5)
+extern "C" uint __cdecl FUN_00564040(int param_1,ushort param_2,int param_3,int param_4,int param_5)
 
 {
   ushort uVar1;
@@ -192,6 +197,9 @@ extern "C" void __cdecl FUN_00564040(int param_1,ushort param_2,int param_3,int 
     }
     iVar3 = *(int *)(param_1 + 8);
   }
+  // The sort bound below is the decomp's reuse of local_4 (EBX = count-1 chain,
+  // 0x005640c7..0x005640f3); the RETURNED count is the untouched [ESP+0x10] value.
+  uint count = local_4;
   if (param_5 != 0) {
     while (1 < local_4) {
       local_4 = local_4 - 1;
@@ -209,7 +217,7 @@ extern "C" void __cdecl FUN_00564040(int param_1,ushort param_2,int param_3,int 
       }
     }
   }
-  return;
+  return count;
 }
 
 // ---------------------------------------------------------------------------

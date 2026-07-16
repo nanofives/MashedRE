@@ -97,7 +97,7 @@ DONE-ALREADY (excluded): 004c3ac0 (C4), 004c3b30 (C4), 004c45f0, 004d7ff0, 004d8
 |---|---|---|---|---|---|
 | **K1** ✅ | 005601f0:109 00563e70:239 00563f60:221 00564040:187 005641b0:351 00564310:663 00565120:60 00565160:67 005651b0:70 00565200:94 00565550:22 00565ef0:171 00565fa0:167 00566200:411 005667c0:109 00566830:163 005675d0:91 005684c0:149 00568560:143 | 3487 | 19 | — | — |
 | **K2** ✅ | 004c4600:111 004c51a0:323 004c52f0:378 00546b10:214 00546bf0:93 00546c50:93 00546cb0:93 | 1305 | 7 | DONE | 3 |
-| K3 | 0055a1f0:1957 0055a9a0:397 0055abb0:73 0055ae50:27 0055b750:173 0055bae0:133 0055bd70:14 0055c0f0:318 0055c2d0:175 | 3267 | 9 | K1 | 4 |
+| **K3** ✅ | 0055a1f0:1957 0055a9a0:397 0055abb0:73 0055ae50:27 0055b750:173 0055bae0:133 0055bd70:14 0055c0f0:318 0055c2d0:175 | 3267 | 9 | K1 | 4 |
 | K4 | 005646c0:1465 00564c80:1179 00565260:747 | 3391 | 3 | K1 | — |
 | K5 | 0055ab30:117 0055e050:44 0055bb70:115 0055bd80:85 0055c230:154 | 515 | 5 | K2 K3 K4 | 3 |
 | K6 | 0056bb80:337 0056bce0:260 0056bdf0:135 0056be80:534 0056c0a0:618 0056c310:614 | 2498 | 6 | DONE | — |
@@ -190,4 +190,23 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   (`log/b5e-solver-island/b5e_k2_acceptance_2026-07-16.log`). Trio 00546bf0/c50/cb0
   re-classified C1→C2; 004c4600/004c51a0/004c52f0/00546b10 were already C2 (note appended,
   status→ported).
-- OPEN next: K3 (broadphase cluster, 9 fns, deps K1) → K4….
+- **K3 DONE 2026-07-16**: 9 broadphase fns clean-room ported to
+  `Collision/RwpSolverBroadphase3.cpp` (verbatim from `re/analysis/b5e/decomp/`, every body
+  re-verified against live disasm on pool14 — the file header lists 8 NO-GUESSING findings,
+  notably: **K1 latent defect fixed** — original `FUN_00564040` returns the pair count in EAX
+  on every path (XOR @0x00564057, reload @0x0056409a, live at RET 0x005640fa) but K1 ported it
+  `void` while FUN_0055a1f0 (@0x0055a331) / FUN_0055a9a0 (@0x0055aa08) consume it;
+  RwpSolverLeaves1.cpp signature corrected void→uint with a pre-sort count snapshot (the
+  decomp's `local_4` is decremented by the sort block). Also: `FUN_0055bd70` is an
+  arg-forwarding tail JMP through desc+0x10 (ported `__declspec(naked)` — a C call would pin
+  the unknown arg count); `FUN_0055ae50`'s decomp printed an argless call but the disasm
+  rewrites both arg slots (`*param_1`, word `param_2+0x20`) before tail-JMPing FUN_00565550;
+  x87 grouping/rounding maps recovered for the 5 float bodies (FUN_0055c0f0 stores its
+  direction-z with FST keeping the UNROUNDED 80-bit value for the plane-offset dot;
+  FUN_0055c2d0's rotated point must be a contiguous float[4] block — callee indexes through
+  &loc[1]). Body-object dispatches (obj[0]+0x10/+0x14) and volume-descriptor dispatches
+  (+0x08/+0x10/+0x20) stay routed through the REAL tables until KV lands. Built BOTH targets
+  clean; canonical bridge-driven QuickRace GREEN with bridge+B5c8+K1+K2+K3 = 44 hooks
+  installed (`log/b5e-solver-island/b5e_k3_acceptance_2026-07-16.log`). The 9 fns
+  re-classified C1→C2; 00564040 correction noted in hooks.csv (stays C2).
+- OPEN next: K4 (005646c0:1465 00564c80:1179 00565260:747, deps K1) → K5….
