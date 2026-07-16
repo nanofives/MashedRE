@@ -306,6 +306,7 @@
 "Collision\RwpSolverLeaves1.cpp"
 "Collision\RwpSolverMath2.cpp"
 "Collision\RwpSolverBroadphase3.cpp"
+"Collision\RwpSolverCore4.cpp"
 "Collision\RwpBuildExterns.cpp"
 "Collision\CollisionBodyCreate.cpp"
 "Collision\PhysicsWorldBuild.cpp"

@@ -98,7 +98,7 @@ DONE-ALREADY (excluded): 004c3ac0 (C4), 004c3b30 (C4), 004c45f0, 004d7ff0, 004d8
 | **K1** ✅ | 005601f0:109 00563e70:239 00563f60:221 00564040:187 005641b0:351 00564310:663 00565120:60 00565160:67 005651b0:70 00565200:94 00565550:22 00565ef0:171 00565fa0:167 00566200:411 005667c0:109 00566830:163 005675d0:91 005684c0:149 00568560:143 | 3487 | 19 | — | — |
 | **K2** ✅ | 004c4600:111 004c51a0:323 004c52f0:378 00546b10:214 00546bf0:93 00546c50:93 00546cb0:93 | 1305 | 7 | DONE | 3 |
 | **K3** ✅ | 0055a1f0:1957 0055a9a0:397 0055abb0:73 0055ae50:27 0055b750:173 0055bae0:133 0055bd70:14 0055c0f0:318 0055c2d0:175 | 3267 | 9 | K1 | 4 |
-| K4 | 005646c0:1465 00564c80:1179 00565260:747 | 3391 | 3 | K1 | — |
+| **K4** ✅ | 005646c0:1465 00564c80:1179 00565260:747 | 3391 | 3 | K1 | — |
 | K5 | 0055ab30:117 0055e050:44 0055bb70:115 0055bd80:85 0055c230:154 | 515 | 5 | K2 K3 K4 | 3 |
 | K6 | 0056bb80:337 0056bce0:260 0056bdf0:135 0056be80:534 0056c0a0:618 0056c310:614 | 2498 | 6 | DONE | — |
 | K7 | 0056c580:861 0056c8e0:434 0056caa0:1262 0056cf90:216 0056d070:724 | 3497 | 5 | — | — |
@@ -209,4 +209,22 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   clean; canonical bridge-driven QuickRace GREEN with bridge+B5c8+K1+K2+K3 = 44 hooks
   installed (`log/b5e-solver-island/b5e_k3_acceptance_2026-07-16.log`). The 9 fns
   re-classified C1→C2; 00564040 correction noted in hooks.csv (stays C2).
-- OPEN next: K4 (005646c0:1465 00564c80:1179 00565260:747, deps K1) → K5….
+- **K4 DONE 2026-07-16**: 3 octree fns (overlap query / insert / remove) clean-room ported to
+  `Collision/RwpSolverCore4.cpp` (verbatim from `re/analysis/b5e/decomp/`, every body
+  re-verified against live disasm on pool0 — the file header lists 6 NO-GUESSING findings,
+  notably: **FUN_00565260's recount loop @0x0056546a..0x00565486 is degenerate in the
+  ORIGINAL** — the chain cursor never advances, the flag byte of the FIRST chain node is
+  re-tested (counts to 0x1f if set, never terminates if clear); decomp faithful, transcribed
+  verbatim, do not "fix". Also: FUN_005646c0's split decomp locals (local_2800[5]+
+  afStack_27ec[2554]; local_2aa4[4]+local_2a94/90/8c) are single contiguous stack blocks,
+  merged with aliases (same class as K3's FUN_0055c2d0 finding); FUN_00564c80's two CONCAT22s
+  are real partial-register artifacts (@0x00564dc1, @0x00564f68) kept verbatim, both RETs
+  return param_1; all x87 stores are single-rounding FMUL/FADD chains — plain float exprs
+  bit-identical on the x87 build; __chkstk @0x005646c5 = compiler stack probe, not
+  transcribed. Built BOTH targets clean (RwpSolverCore4.cpp: no warnings); canonical
+  bridge-driven QuickRace GREEN with bridge+B5c8+K1+K2+K3+K4 = 47 hooks installed
+  (`log/b5e-solver-island/b5e_k4_acceptance_2026-07-16.log`; profile matches the K3 run —
+  same mode-10 round-transition shape). The 3 fns re-classified C1→C2. NOTE: pool14's
+  Ghidra lock is leaked in-JVM (known MCP issue) — this session fell back to pool0.
+- OPEN next: K5 (0055ab30:117 0055e050:44 0055bb70:115 0055bd80:85 0055c230:154, deps
+  K2 K3 K4, 3 indirect) → K6….
