@@ -96,7 +96,7 @@ DONE-ALREADY (excluded): 004c3ac0 (C4), 004c3b30 (C4), 004c45f0, 004d7ff0, 004d8
 | id | members (rva:size) | B | fns | deps | ind |
 |---|---|---|---|---|---|
 | **K1** ✅ | 005601f0:109 00563e70:239 00563f60:221 00564040:187 005641b0:351 00564310:663 00565120:60 00565160:67 005651b0:70 00565200:94 00565550:22 00565ef0:171 00565fa0:167 00566200:411 005667c0:109 00566830:163 005675d0:91 005684c0:149 00568560:143 | 3487 | 19 | — | — |
-| K2 | 004c4600:111 004c51a0:323 004c52f0:378 00546b10:214 00546bf0:93 00546c50:93 00546cb0:93 | 1305 | 7 | DONE | 3 |
+| **K2** ✅ | 004c4600:111 004c51a0:323 004c52f0:378 00546b10:214 00546bf0:93 00546c50:93 00546cb0:93 | 1305 | 7 | DONE | 3 |
 | K3 | 0055a1f0:1957 0055a9a0:397 0055abb0:73 0055ae50:27 0055b750:173 0055bae0:133 0055bd70:14 0055c0f0:318 0055c2d0:175 | 3267 | 9 | K1 | 4 |
 | K4 | 005646c0:1465 00564c80:1179 00565260:747 | 3391 | 3 | K1 | — |
 | K5 | 0055ab30:117 0055e050:44 0055bb70:115 0055bd80:85 0055c230:154 | 515 | 5 | K2 K3 K4 | 3 |
@@ -175,4 +175,19 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
 - Cluster queue K1..K24 + KV1..KV3 ratified into §3 (worker-drafted, coverage-verified).
 - K1 ported + built both targets; canonical-race acceptance **GREEN 2026-07-16** (§4); the 19
   leaves re-classified C1→C2; standalone rand rebind = D-11064.
-- OPEN next: K2 (RW-math quat/matrix, 7 fns, retires the 3 RwpBuildExterns thunks) → K3….
+- **K2 DONE 2026-07-16**: 7 RW matrix/quat fns clean-room ported to
+  `Collision/RwpSolverMath2.cpp` (verbatim from `re/analysis/b5e/decomp/`, every body
+  re-verified against live disasm on pool14 — the file header lists 8 NO-GUESSING findings,
+  notably: FUN_004c51a0's mode-1 x87 summation order is `(m8·v2 + m4·v1) + m0·v0 + m12`
+  (0x004c522a..0x004c5241), NOT the decomp's printed left-to-right order; and the decomp's
+  `uRam0000000c` in the error path is a literal near-null RMW of absolute address 0xc
+  (0x004c51dd..0x004c51ec), transcribed verbatim). Indirect calls: the RwMatrix module-slot
+  mult (+8) bound void(__cdecl*)(out,a,b) per the landed RwMatrixRotateInner.cpp precedent;
+  FUN_00546b10's internal dispatch bound to the cluster's own trio; FUN_004c3b30 = the C4
+  FastSqrt port. The 3 RwpBuildExterns.cpp RVA thunks (FUN_004c52f0/004c51a0/00546b10)
+  RETIRED. Built BOTH targets clean; canonical bridge-driven QuickRace GREEN with
+  bridge+B5c8+K1+K2 = 35 hooks installed
+  (`log/b5e-solver-island/b5e_k2_acceptance_2026-07-16.log`). Trio 00546bf0/c50/cb0
+  re-classified C1→C2; 004c4600/004c51a0/004c52f0/00546b10 were already C2 (note appended,
+  status→ported).
+- OPEN next: K3 (broadphase cluster, 9 fns, deps K1) → K4….

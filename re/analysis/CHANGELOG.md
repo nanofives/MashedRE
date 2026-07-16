@@ -1,3 +1,6 @@
+2026-07-16  0x00546bf0  FUN_00546bf0  C1->C2  re/analysis/B5e_SOLVER_ISLAND_2026-07-15.md (K2 clean-room port RwpSolverMath2.cpp; canonical bridge-driven race clean, hooks installed)
+2026-07-16  0x00546c50  FUN_00546c50  C1->C2  re/analysis/B5e_SOLVER_ISLAND_2026-07-15.md (K2 clean-room port RwpSolverMath2.cpp; canonical bridge-driven race clean, hooks installed)
+2026-07-16  0x00546cb0  FUN_00546cb0  C1->C2  re/analysis/B5e_SOLVER_ISLAND_2026-07-15.md (K2 clean-room port RwpSolverMath2.cpp; canonical bridge-driven race clean, hooks installed)
 2026-07-16  0x005601f0  FUN_005601f0  C1->C2  re/analysis/B5e_SOLVER_ISLAND_2026-07-15.md (K1 clean-room port RwpSolverLeaves1.cpp 9ca04374; canonical bridge-driven race clean, hooks installed)
 2026-07-16  0x00563e70  FUN_00563e70  C1->C2  re/analysis/B5e_SOLVER_ISLAND_2026-07-15.md (K1 clean-room port RwpSolverLeaves1.cpp 9ca04374; canonical bridge-driven race clean, hooks installed)
 2026-07-16  0x00563f60  FUN_00563f60  C1->C2  re/analysis/B5e_SOLVER_ISLAND_2026-07-15.md (K1 clean-room port RwpSolverLeaves1.cpp 9ca04374; canonical bridge-driven race clean, hooks installed)

@@ -57,11 +57,10 @@ void* FUN_00482140(void* hull, int flag)    { return reinterpret_cast<void*(__cd
 void  FUN_00563810(void* hull)              { reinterpret_cast<void(__cdecl*)(void*)>(0x00563810u)(hull); }
 void  FUN_00563940(void* slab)              { reinterpret_cast<void(__cdecl*)(void*)>(0x00563940u)(slab); }
 
-// RW-Graphics matrix callees used by RwpIntegrator.cpp's FUN_0055b800 port, and the
-// deferred 12-stage RWP world step. RVA-forwarding so the .asi A/B is bit-identical.
-unsigned* FUN_004c52f0(unsigned* d, unsigned* s, int op) { return reinterpret_cast<unsigned*(__cdecl*)(unsigned*,unsigned*,int)>(0x004c52f0u)(d, s, op); }
-void      FUN_004c51a0(float* m, float* v, int op)       { reinterpret_cast<void(__cdecl*)(float*,float*,int)>(0x004c51a0u)(m, v, op); }
-unsigned  FUN_00546b10(float* q, float* m)               { return reinterpret_cast<unsigned(__cdecl*)(float*,float*)>(0x00546b10u)(q, m); }
+// RW-Graphics matrix callees used by RwpIntegrator.cpp's FUN_0055b800 port: the
+// FUN_004c52f0/004c51a0/00546b10 RVA thunks were RETIRED by B5e cluster K2 — real
+// clean-room ports now live in Collision/RwpSolverMath2.cpp (same extern "C" names).
+// The island root below stays a thunk until K24.
 void      FUN_0047e9c0(int ctx, unsigned a2)             { reinterpret_cast<void(__cdecl*)(int,unsigned)>(0x0047e9c0u)(ctx, a2); }
 
 // 0x0055dec0 — confirmed leaf `return *param_1` (extra cdecl args discarded).
