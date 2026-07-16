@@ -46,8 +46,9 @@ Static transitive call closure from `0x0047e9c0`, exclusions: marker passes
   (CCD/impact), 0055a1f0:1957 (broadphase), 0056f350:1918.
 - **Excluded edges** (3, `island_excluded_edges.tsv`): root → the two marker passes;
   `FUN_00564310 → _rand@0x005c229b` (CRT band — port note: `_rand` is CRT `rand()`; the port
-  must call the SAME generator state as the original for bit-identity [UNCERTAIN — resolve at
-  FUN_00564310's cluster: which RNG state the original reads]).
+  must call the SAME generator state as the original for bit-identity. RESOLVED at K1: the port
+  routes through `s_rand_orig = 0x005c229b` (shared original CRT state under the `.asi`);
+  standalone rebind deferred as D-11064).
 - `__chkstk@0x004a3440` is inside the closure (called by FUN_005646c0) — stack-probe intrinsic;
   handled by the compiler in the port, not transcribed.
 
@@ -157,19 +158,21 @@ NO-GUESSING verifications done against live pool0 disasm before accepting the dr
 7. **`FUN_00566830` bit-select expression** matches disasm exactly
    (`SHL/OR` chain `0x0056688d..0x005668ae`, second index uses the UPDATED first index).
 
-**Acceptance state: BLOCKED-ENV, not run.** The canonical bridge-driven QuickRace
-(`--hooks` bridge + B5c 8 + all 19 K1 RVAs) could not run this session: the desktop was
-locked/display asleep — `diag.py probe-render` returned `hr=0x8876086A` (D3D9-NOTAVAIL), and
-MASHED self-exits (−1) before the menu with NO crash dump, canonical `.asi` control identical.
-Environment recovery already applied (repatch_original, setup_mashed_compat, diag doctor —
-all green except render). The worktree `.asi` is built and ready; the canonical `.asi` backup
-is at `original\mashed_re_dev.asi.pre-b5e-cluster1`. **First action next session (with an
-awake display): deploy the worktree `.asi` and run the §0 per-cluster acceptance command.**
+**Acceptance state: GREEN (2026-07-16).** With the display awake (`probe-render` hr=0), the
+worktree `.asi` was deployed and the canonical bridge-driven QuickRace ran with `--hooks`
+bridge + B5c 8 + all 19 K1 RVAs (28 hooks): RACE RUNNING (phase 3), car spawned `grounded=4`,
+full 35 s simulated, trajectory profile matching a bridge+B5c8-only control run on the same
+`.asi` (`log/b5e-solver-island/b5e_k1_acceptance_retry_2026-07-16.log`, control
+`b5e_k1_control_bridgeB5c8_2026-07-16.log`). One earlier K1 attempt timed out at phase 2 — an
+environment flake, not a K1 defect (the next control attempt failed to even attach; both
+retries clean). The 19 leaves re-classified C1→C2 (hooks.csv + CHANGELOG 2026-07-16);
+FUN_00564310's standalone rand rebind filed as DEFERRED D-11064. Canonical `.asi` restored
+from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
 
 ## 5. Status
 
 - Island census exported + committed (89bbf488); vtable reach resolved + committed (bce5a9ce).
 - Cluster queue K1..K24 + KV1..KV3 ratified into §3 (worker-drafted, coverage-verified).
-- K1 ported + built both targets; canonical-race acceptance BLOCKED-ENV (display asleep) — run
-  it before claiming K1 swap-clean; only then re-classify the 19 leaves C1→C2.
-- OPEN next: K1 acceptance race → re-classify → K2 (RW-math quat/matrix, retires 3 thunks).
+- K1 ported + built both targets; canonical-race acceptance **GREEN 2026-07-16** (§4); the 19
+  leaves re-classified C1→C2; standalone rand rebind = D-11064.
+- OPEN next: K2 (RW-math quat/matrix, 7 fns, retires the 3 RwpBuildExterns thunks) → K3….
