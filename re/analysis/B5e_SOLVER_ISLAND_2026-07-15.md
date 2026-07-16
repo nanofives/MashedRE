@@ -99,7 +99,7 @@ DONE-ALREADY (excluded): 004c3ac0 (C4), 004c3b30 (C4), 004c45f0, 004d7ff0, 004d8
 | **K2** ✅ | 004c4600:111 004c51a0:323 004c52f0:378 00546b10:214 00546bf0:93 00546c50:93 00546cb0:93 | 1305 | 7 | DONE | 3 |
 | **K3** ✅ | 0055a1f0:1957 0055a9a0:397 0055abb0:73 0055ae50:27 0055b750:173 0055bae0:133 0055bd70:14 0055c0f0:318 0055c2d0:175 | 3267 | 9 | K1 | 4 |
 | **K4** ✅ | 005646c0:1465 00564c80:1179 00565260:747 | 3391 | 3 | K1 | — |
-| K5 | 0055ab30:117 0055e050:44 0055bb70:115 0055bd80:85 0055c230:154 | 515 | 5 | K2 K3 K4 | 3 |
+| **K5** ✅ | 0055ab30:117 0055e050:44 0055bb70:115 0055bd80:85 0055c230:154 | 515 | 5 | K2 K3 K4 | 3 |
 | K6 | 0056bb80:337 0056bce0:260 0056bdf0:135 0056be80:534 0056c0a0:618 0056c310:614 | 2498 | 6 | DONE | — |
 | K7 | 0056c580:861 0056c8e0:434 0056caa0:1262 0056cf90:216 0056d070:724 | 3497 | 5 | — | — |
 | K8 | 0056d350:158 0056d3f0:2375 0056dd40:2357 0056ed60:463 0056e680:1756 | 7109 | 5 | — | — |
@@ -226,5 +226,27 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   (`log/b5e-solver-island/b5e_k4_acceptance_2026-07-16.log`; profile matches the K3 run —
   same mode-10 round-transition shape). The 3 fns re-classified C1→C2. NOTE: pool14's
   Ghidra lock is leaked in-JVM (known MCP issue) — this session fell back to pool0.
-- OPEN next: K5 (0055ab30:117 0055e050:44 0055bb70:115 0055bd80:85 0055c230:154, deps
-  K2 K3 K4, 3 indirect) → K6….
+- **K5 DONE 2026-07-16**: 5 glue fns (octree re-index / bounds refresh / gated
+  matrix-combine wrappers / rotated descriptor query) clean-room ported to
+  `Collision/RwpSolverGlue5.cpp` (verbatim from `re/analysis/b5e/decomp/`, every body
+  re-verified against live disasm on pool0 — the file header lists 6 NO-GUESSING findings,
+  notably: **FUN_0055c230's x87 row summation order differs from the decomp's printed
+  text** (every row is `(m[r+1]*v1 + m[r]*v0) + m[r+2]*v2`, FADDPs @0x0055c24f..0x0055c289
+  — same class as the K2 finding, same shape as K3's FUN_0055c2d0); FUN_0055ab30 has two
+  stale-high-half pushes (@0x0055ab5d PUSH EDX with only DX loaded, @0x0055ab74..78
+  MOV AX over live param_3) — both PROVEN masked in FUN_00565260/FUN_00564c80, so the
+  decomp's ushort args are bit-identical; FUN_0055e050's obj[0]+0x18 body dispatch is
+  cdecl 2-arg with batched ADD ESP,0x14 cleanup @0x0055e072; FUN_0055bd80's desc+0x10
+  dispatch is cdecl 4-arg (ADD ESP,0x10 @0x0055bdcd) — the concrete-arity twin of K3's
+  FUN_0055bd70 naked forwarder; FUN_0055c230's rotated point is a contiguous float[3]
+  (K3-note-6 class) and its desc+0x18 dispatch is cdecl 4-arg returning int. All three
+  indirect dispatches stay routed through the REAL tables (0x0062403c / 0x5e4f50 band)
+  until KV lands. Built BOTH targets clean (RwpSolverGlue5.cpp: no warnings); canonical
+  bridge-driven QuickRace GREEN twice with bridge+B5c8+K1..K5 = 52 hooks installed —
+  run 1 telemetry profile identical to the K4 run
+  (`log/b5e-solver-island/b5e_k5_acceptance_2026-07-16.log`), run 2 with
+  `MASHED_HOOK_MANIFEST` giving POSITIVE install evidence: 52/52 hooks `installed=1`
+  incl. all 5 K5 RVAs (`b5e_k5_hook_manifest_2026-07-16.txt`,
+  `b5e_k5_acceptance_manifest_2026-07-16.log`). The 5 fns re-classified C1→C2.
+- OPEN next: K6 (0056bb80:337 0056bce0:260 0056bdf0:135 0056be80:534 0056c0a0:618
+  0056c310:614, deps DONE, no indirect) → K7….

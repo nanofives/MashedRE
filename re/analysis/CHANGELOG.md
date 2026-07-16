@@ -1,3 +1,8 @@
+2026-07-16  0x0055ab30  FUN_0055ab30  C1->C2  re/analysis/B5e_SOLVER_ISLAND_2026-07-15.md (K5 clean-room port RwpSolverGlue5.cpp; canonical bridge-driven race GREEN, 52 hooks installed, manifest-verified)
+2026-07-16  0x0055e050  FUN_0055e050  C1->C2  re/analysis/B5e_SOLVER_ISLAND_2026-07-15.md (K5 clean-room port RwpSolverGlue5.cpp; canonical bridge-driven race GREEN, 52 hooks installed, manifest-verified)
+2026-07-16  0x0055bb70  FUN_0055bb70  C1->C2  re/analysis/B5e_SOLVER_ISLAND_2026-07-15.md (K5 clean-room port RwpSolverGlue5.cpp; canonical bridge-driven race GREEN, 52 hooks installed, manifest-verified)
+2026-07-16  0x0055bd80  FUN_0055bd80  C1->C2  re/analysis/B5e_SOLVER_ISLAND_2026-07-15.md (K5 clean-room port RwpSolverGlue5.cpp; canonical bridge-driven race GREEN, 52 hooks installed, manifest-verified)
+2026-07-16  0x0055c230  FUN_0055c230  C1->C2  re/analysis/B5e_SOLVER_ISLAND_2026-07-15.md (K5 clean-room port RwpSolverGlue5.cpp; canonical bridge-driven race GREEN, 52 hooks installed, manifest-verified)
 2026-07-16  0x005646c0  FUN_005646c0  C1->C2  re/analysis/B5e_SOLVER_ISLAND_2026-07-15.md (K4 clean-room port RwpSolverCore4.cpp; canonical bridge-driven race GREEN, 47 hooks installed)
 2026-07-16  0x00564c80  FUN_00564c80  C1->C2  re/analysis/B5e_SOLVER_ISLAND_2026-07-15.md (K4 clean-room port RwpSolverCore4.cpp; canonical bridge-driven race GREEN, 47 hooks installed)
 2026-07-16  0x00565260  FUN_00565260  C1->C2  re/analysis/B5e_SOLVER_ISLAND_2026-07-15.md (K4 clean-room port RwpSolverCore4.cpp; canonical bridge-driven race GREEN, 47 hooks installed)
