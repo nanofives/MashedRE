@@ -1,0 +1,4 @@
+from_rva	to_rva	reason
+0047e9c0	0047d640	marker
+0047e9c0	0047def0	marker
+00564310	005c229b	library-crt
