@@ -321,6 +321,26 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   68 hooks, `MASHED_HOOK_MANIFEST` POSITIVE 68/68 `installed=1` incl all 5 K8 RVAs (idx 1106–1110)
   (`log/b5e-solver-island/b5e_k8_acceptance_2026-07-17.log`, `b5e_k8_hook_manifest_2026-07-17.txt`).
   The 5 fns re-classified C1→C2; deep-sum associativity folded into U-9020.
-- OPEN next: K9 (0056ef30:133 0056efc0:83 0056f020:113 0056f0a0:328 0056f1f0:338 0056fad0:186
-  00567c00:49, 7 fns / 1230 B, deps DONE; within-cluster f0a0→f1f0, 67c00→ef30) → K10…. (K6
-  unblocked K13; K7/K8 DONE.)
+- K9 ported (7 fns / 1230 B) → `Collision/RwpSolverCore9.cpp`; canonical-race acceptance
+  **GREEN 2026-07-17**. The 0x0056e/f contact-batch bookkeeping leaves: ef30 (26-counter reset),
+  efc0 (indexed scatter+zero), f020 (advance/4-align+cursor bump), f0a0 (4-pad a batch via
+  f1f0(&DAT_005e5738)), f1f0 (Jacobian-row emit / 9-array SoA scatter), fad0 (cross-product basis
+  builder), 67c00 (batch-header reset, calls ef30). **Every body re-verified vs live pool14 disasm
+  2026-07-17**: all 7 __cdecl (RET C3 at each body_end); 6 are pure integer/pointer (transcribed
+  verbatim); fad0 is the only float body — all cross terms are single `a*b - c*d` FSUBP (minuend =
+  first product, verified @0x0056fb08/fb17/fb26 + fb66/fb75/fb84), `_DAT_005cc33c` = -1.0 (so
+  param_1[8..10] = -param_2), no multi-term associativity. f0a0→f1f0 passes the constant
+  `DAT_005e5738` row-template (bound by absolute address; standalone rebind = KV/lane-end). Built
+  BOTH targets clean (RwpSolverCore9.cpp: no diagnostics; added to build.bat exe list **and**
+  asi_sources.rsp); canonical bridge-driven QuickRace GREEN with bridge+B5c8+K1..K9 = 75 hooks,
+  `MASHED_HOOK_MANIFEST` POSITIVE 75/75 `installed=1` incl all 7 K9 RVAs (idx 1111–1117)
+  (`log/b5e-solver-island/b5e_k9_acceptance_2026-07-17.log` + `..._retry_...`,
+  `b5e_k9_hook_manifest_2026-07-17.txt`). **NB the trajectory is control-pulse-timing sensitive
+  run-to-run** (run 1 reconverged to the K6-family +9 s [-83.7,0.2,331.1]; run 2 took a different
+  bounded path, rounds advancing 12→16) — so the per-cluster accept gate is *hook-install +
+  sim-health* (both runs: phase-3 reached, car spawned, full 35 s, bounded physics, no NaN/crash/
+  freeze), NOT a deterministic trajectory. A contact-batching defect would blow the sim up, not
+  follow a bounded alternate path. The 7 fns re-classified C1→C2.
+- OPEN next: K10 (0056f350:1918 0056fb90:770 0056fea0:483, 3 fns / 3171 B, deps K2 K3 K9; has 1
+  indirect-call member 0056f350) → K11…. (K6 unblocked K13; K7/K8/K9 DONE. K10's 0056f350 has a
+  vtable/fn-ptr dispatch — first indirect-call cluster since K5; route the REAL table until KV.)

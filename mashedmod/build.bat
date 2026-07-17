@@ -112,6 +112,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Collision\RwpSolverIntegrate6.cpp" ^
     "Collision\RwpSolverCore7.cpp" ^
     "Collision\RwpSolverCore8.cpp" ^
+    "Collision\RwpSolverCore9.cpp" ^
     "Collision\RwpBuildExterns.cpp" ^
     "Collision\CollisionBodyCreate.cpp" ^
     "Collision\PhysicsWorldBuild.cpp" ^
