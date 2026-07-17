@@ -297,5 +297,30 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   transition. (The first attempt sat at vel=[0,0,0] — an intro-skip/control-pulse flake, not a K7
   defect; the retry got the car moving; a 9-hook control timed out at phase 2, the same
   environment flake noted for K1.) The 5 fns re-classified C1→C2; deferred-associativity = U-9020.
-- OPEN next: K8 (0056d350:158 0056d3f0:2375 0056dd40:2357 0056ed60:463 0056e680:1756, 5 fns /
-  7109 B, deps DONE; within-cluster d3f0→d350, e680→ed60) → K9…. (K6 unblocked K13; K7 now DONE.)
+- K8 ported (5 fns / 7109 B) → `Collision/RwpSolverCore8.cpp`; canonical-race acceptance
+  **GREEN 2026-07-17** (first try). The 0x0056d/e constraint pre-solve stage: d350 (row-transform
+  helper), d3f0 (x87-scalar constraint normalize/Gram pass, calls d350), **dd40 (the SSE2 twin of
+  d3f0** — CPU-dispatched alongside it by the un-ported FUN_00560260/K13; owner chose faithful SSE
+  port over x87-approx), ed60 (3×3 congruence A^T·B·A), e680 (inertia/impulse assembly, calls
+  ed60). **Every body re-verified vs live pool14 disasm 2026-07-17.** NO-GUESSING findings:
+  (1) all 5 __cdecl (RET bytes verified). (2) d350's three 3-term dots group REVERSE-PAIR
+  `(v6*p+v5*p)+v4*p` (FADDP @0x0056d3a5/d3c1/d3df) — CORRECTED vs printed. (3) d3f0 has no register
+  params — 12-byte-strided stack args; ported with a positional 29-slot dword ABI (used offsets
+  0x04/0x14/0x20/0x2c/0x38/0x44/0x50/0x5c/0x60/0x68/0x74). **Two contiguous-buffer bugs found+fixed
+  via C4700**: d350's output (local_84[7], idx 0/1/2/4/5/6 written, 3 = gap) and ed60's output
+  (local_30[11]) must be single stack arrays, not separate locals. (4) dd40 SSE: the
+  `(float)puVar8[3]` is a bit-REINTERPRET (MOV+MOVSS @0x0056de15), not int→float — fixed; lane
+  masks _DAT_005e5a60 = FFFFFFFF×3|0 (identity on lanes 0-2); reciprocal-sqrt reproduced exactly
+  via `_mm_rsqrt_ss` + Newton (_DAT_005e5a20=3.0, _DAT_005e5a30=0.5); -FLT_MAX sentinel =
+  _DAT_005e5a70(0x80000000) ^ 0x7f7fffff. (5) constants: DAT_005d757c=0.0, PTR_DAT_005ceabc=FLT_MIN,
+  _DAT_005cc564=0.25. dd40/d3f0 are CPU-dispatch twins — only one executes per CPU; both installed,
+  and whichever ran produced a trajectory **BIT-IDENTICAL to the K6 reference at every sample
+  (incl. airborne +13 s [2322.9,-23.2,2510.9])** — strong evidence the SSE reimplementation is
+  faithful. Built BOTH targets clean (RwpSolverCore8.cpp: no diagnostics; added to build.bat exe
+  list **and** asi_sources.rsp); canonical bridge-driven QuickRace GREEN with bridge+B5c8+K1..K8 =
+  68 hooks, `MASHED_HOOK_MANIFEST` POSITIVE 68/68 `installed=1` incl all 5 K8 RVAs (idx 1106–1110)
+  (`log/b5e-solver-island/b5e_k8_acceptance_2026-07-17.log`, `b5e_k8_hook_manifest_2026-07-17.txt`).
+  The 5 fns re-classified C1→C2; deep-sum associativity folded into U-9020.
+- OPEN next: K9 (0056ef30:133 0056efc0:83 0056f020:113 0056f0a0:328 0056f1f0:338 0056fad0:186
+  00567c00:49, 7 fns / 1230 B, deps DONE; within-cluster f0a0→f1f0, 67c00→ef30) → K10…. (K6
+  unblocked K13; K7/K8 DONE.)
