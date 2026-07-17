@@ -42,9 +42,9 @@ idling or reviving dead batch lanes.
    **Next pulls:** (a) onboard B5e-class integrator/solver math leaves as they reach C3 — add a
    `veccap_registry` entry per function, no tool code changes; (b) wire a `capture_vectors` live
    arg-collection scenario for in-race functions (menu idle doesn't call physics — reuse
-   `scenario_launch.py` to reach a race before the collect window); (c) OPTIONAL one-time elevated
-   Task-Scheduler lane for unattended TTD *recording* (query side already scripted on
-   `log/ttd/*.run`). Finding VECCAP-1 (LUT validator rejected high-heap layouts → silent CPU
+   `scenario_launch.py` to reach a race before the collect window); (c) TTD *recording* elevation lane: DEFERRED by owner 2026-07-17 ("the other two lanes are
+   enough") — do not re-raise unless a task specifically needs fresh TTD tapes; query side
+   already scripted on `log/ttd/*.run`. Finding VECCAP-1 (LUT validator rejected high-heap layouts → silent CPU
    fallback in 4 Math TUs) RESOLVED via Math/RwLutGuard.h; re-verified.
 
 ## Done
