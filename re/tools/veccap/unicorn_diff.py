@@ -26,7 +26,7 @@ from unicorn.x86_const import UC_X86_REG_ESP
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 sys.path.insert(0, str(HERE))
-from veccap_registry import FUNCS, STATIC_READS, is_degenerate  # noqa: E402
+from veccap_registry import FUNCS, STATIC_READS, is_degenerate, n_a, has_scalar  # noqa: E402
 
 MASHED_EXE = ROOT / 'original' / 'MASHED.exe'
 IMAGE_BASE = 0x00400000
@@ -77,13 +77,15 @@ def build_uc(capture):
     return uc
 
 
-def build_stub(uc, rva):
-    """Static caller stub: `call target ; fstp dword [RESULT]`. Args are placed
+def build_stub(uc, rva, has_ret=True):
+    """Static caller stub: `call target [; fstp dword [RESULT]]`. Args are placed
     directly on the stack per vector (cdecl reads them at [ESP+4]...), so the
     stub never self-modifies — Unicorn/QEMU caches translated blocks and would
-    otherwise reuse a stale immediate."""
+    otherwise reuse a stale immediate. Void-return kinds (v_out_in) leave nothing
+    on ST0, so the fstp is omitted — an fstp there would underflow the x87 stack."""
     code = b'\xe8' + struct.pack('<i', rva - (STUB + 5))   # call rel32
-    code += b'\xd9\x1d' + struct.pack('<I', RESULT)        # fstp dword [RESULT]
+    if has_ret:
+        code += b'\xd9\x1d' + struct.pack('<I', RESULT)    # fstp dword [RESULT]
     end = STUB + len(code)
     code += b'\x90'
     uc.mem_write(STUB, code)
@@ -101,9 +103,10 @@ def main():
     total_fail = 0
     for name, fd in capture['funcs'].items():
         cfg = FUNCS[name]
-        uc = build_uc(capture)
-        stub_end = build_stub(uc, fd['rva'])
         kind = fd['kind']
+        has_ret = kind not in ('v_out_in', 'v_out_2in')
+        uc = build_uc(capture)
+        stub_end = build_stub(uc, fd['rva'], has_ret)
         fail = skipped = shown = 0
         for i, rec in enumerate(fd['vectors']):
             floats = [struct.unpack('<f', struct.pack('<I', b))[0] for b in rec['v_bits']]
@@ -118,13 +121,24 @@ def main():
             elif kind == 'f_ptrN':
                 uc.mem_write(ARGBUF, struct.pack(f"<{fd['n_in']}I", *rec['v_bits']))
                 uc.mem_write(esp, struct.pack('<I', ARGBUF))
-            else:  # f_out_in: cdecl (out, in) -> [ESP]=out, [ESP+4]=in
+            elif kind == 'v_out_2in':
+                # cdecl (out, in1, in2 [, scalar]); in2 = in1 + n_a (contiguous ARGBUF)
+                uc.mem_write(ARGBUF, struct.pack(f"<{fd['n_in']}I", *rec['v_bits']))
+                uc.mem_write(OUTBUF, b'\xcc' * (fd['n_out'] * 4))
+                in2 = ARGBUF + n_a(cfg) * 4
+                if has_scalar(cfg):
+                    uc.mem_write(esp, struct.pack('<IIII', OUTBUF, ARGBUF, in2,
+                                                  rec['v_bits'][fd['n_in'] - 1]))
+                else:
+                    uc.mem_write(esp, struct.pack('<III', OUTBUF, ARGBUF, in2))
+            else:  # f_out_in / v_out_in: cdecl (out, in) -> [ESP]=out, [ESP+4]=in
                 uc.mem_write(ARGBUF, struct.pack(f"<{fd['n_in']}I", *rec['v_bits']))
                 uc.mem_write(OUTBUF, b'\xcc' * (fd['n_out'] * 4))
                 uc.mem_write(esp, struct.pack('<II', OUTBUF, ARGBUF))
             uc.reg_write(UC_X86_REG_ESP, esp)
             uc.emu_start(STUB, stub_end, timeout=2_000_000, count=1_000_000)
-            got_ret = struct.unpack('<I', uc.mem_read(RESULT, 4))[0]
+            # void kinds write no RESULT -> neutralize the ret compare
+            got_ret = struct.unpack('<I', uc.mem_read(RESULT, 4))[0] if has_ret else rec['ret_bits']
             got_out = list(struct.unpack(f"<{fd['n_out']}I",
                                          uc.mem_read(OUTBUF, fd['n_out'] * 4))) if fd['n_out'] else []
             if got_ret != rec['ret_bits'] or got_out != rec['out_bits']:

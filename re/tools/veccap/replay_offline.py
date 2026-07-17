@@ -14,7 +14,7 @@ import pefile
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 sys.path.insert(0, str(HERE))
-from veccap_registry import FUNCS, STATIC_READS, KIND_IDS, is_degenerate  # noqa: E402
+from veccap_registry import FUNCS, STATIC_READS, KIND_IDS, is_degenerate, n_a, has_scalar  # noqa: E402
 
 VCVARS = r'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars32.bat'
 MASHED_EXE = ROOT / 'original' / 'MASHED.exe'
@@ -55,9 +55,10 @@ def pack(json_path: Path, bin_path: Path):
         for name, fd in d['funcs'].items():
             cfg = FUNCS[name]
             vecs = fd['vectors']
-            f.write(struct.pack('<32s5I', cfg['export'].encode(),
+            # record: name, kind, rva, n_in, n_out, n_a, sflag, n_vectors
+            f.write(struct.pack('<32s7I', cfg['export'].encode(),
                                 KIND_IDS[fd['kind']], fd['rva'],
-                                fd['n_in'], fd['n_out'], len(vecs)))
+                                fd['n_in'], fd['n_out'], n_a(cfg), has_scalar(cfg), len(vecs)))
             n_deg = 0
             for v in vecs:
                 floats = [struct.unpack('<f', struct.pack('<I', b))[0] for b in v['v_bits']]

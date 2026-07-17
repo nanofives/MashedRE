@@ -23,7 +23,7 @@ from pathlib import Path
 import frida
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from veccap_registry import FUNCS, synth_inputs, n_in, n_out  # noqa: E402
+from veccap_registry import FUNCS, synth_inputs, n_in, n_out, n_a, has_scalar  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[3]
 MASHED_EXE = ROOT / 'original' / 'MASHED.exe'
@@ -71,7 +71,7 @@ rpc.exports = {
                 if (kind === 'f_f') {
                     liveArgs.push([args[0].toUInt32()]);          // raw f32 bits
                 } else {
-                    const p = (kind === 'f_out_in') ? args[1] : args[0];
+                    const p = (kind === 'f_out_in' || kind === 'v_out_in') ? args[1] : args[0];
                     const v = [];
                     for (let i = 0; i < nIn; i++) v.push(p.add(i * 4).readU32());
                     liveArgs.push(v);                              // raw f32 bits
@@ -86,7 +86,9 @@ rpc.exports = {
     },
     // vectors arrive as arrays of raw f32 bit-patterns (u32); returns
     // per-vector { ret_bits, out_bits[] }.
-    truth(rvaStr, kind, nIn, nOut, vectors) {
+    // nA = first-buffer float count for v_out_2in; sflag = last input float is a
+    // by-value scalar cdecl arg. Both zero for the single-buffer kinds.
+    truth(rvaStr, kind, nIn, nOut, nA, sflag, vectors) {
         const target = ptr(rvaStr);
         const inBuf  = scratch;
         const outBuf = scratch.add(0x40);
@@ -95,16 +97,25 @@ rpc.exports = {
         let fn;
         if (kind === 'f_f')            fn = new NativeFunction(target, 'float', ['uint32']);
         else if (kind === 'f_ptrN')    fn = new NativeFunction(target, 'float', ['pointer']);
+        else if (kind === 'v_out_in')  fn = new NativeFunction(target, 'void',  ['pointer', 'pointer']);
+        else if (kind === 'v_out_2in') fn = new NativeFunction(target, 'void',
+                                            sflag ? ['pointer', 'pointer', 'pointer', 'float']
+                                                  : ['pointer', 'pointer', 'pointer']);
         else /* f_out_in */            fn = new NativeFunction(target, 'float', ['pointer', 'pointer']);
         for (const v of vectors) {
-            for (let i = 0; i < nIn; i++) inBuf.add(i * 4).writeU32(v[i]);
+            for (let i = 0; i < nIn; i++) inBuf.add(i * 4).writeU32(v[i]);   // in1|in2|scalar contiguous
             for (let i = 0; i < nOut; i++) outBuf.add(i * 4).writeU32(0xcccccccc);
-            let r;
-            if (kind === 'f_f')         r = fn(v[0]);               // bits pass through as u32 arg
-            else if (kind === 'f_ptrN') r = fn(inBuf);
-            else                        r = fn(outBuf, inBuf);
-            retBuf.writeFloat(r);
-            const rec = { ret_bits: retBuf.readU32(), out_bits: [] };
+            let retBits = 0;
+            if (kind === 'f_f')             { retBuf.writeFloat(fn(v[0])); retBits = retBuf.readU32(); }
+            else if (kind === 'f_ptrN')     { retBuf.writeFloat(fn(inBuf)); retBits = retBuf.readU32(); }
+            else if (kind === 'v_out_in')   { fn(outBuf, inBuf); }        // void return -> ret_bits stays 0
+            else if (kind === 'v_out_2in')  {
+                const in2 = inBuf.add(nA * 4);                            // second buffer = slice of inBuf
+                if (sflag) fn(outBuf, inBuf, in2, inBuf.add((nIn - 1) * 4).readFloat());
+                else       fn(outBuf, inBuf, in2);
+            }
+            else                            { retBuf.writeFloat(fn(outBuf, inBuf)); retBits = retBuf.readU32(); }
+            const rec = { ret_bits: retBits, out_bits: [] };
             for (let i = 0; i < nOut; i++) rec.out_bits.push(outBuf.add(i * 4).readU32());
             results.push(rec);
         }
@@ -148,6 +159,7 @@ def main():
         for name, cfg in FUNCS.items():
             rva = f"0x{cfg['rva']:08x}"
             ni, no = n_in(cfg), n_out(cfg)
+            na, sflag = n_a(cfg), has_scalar(cfg)
             live_bits = []
             if cfg.get('live_capture'):
                 script.exports_sync.start(rva, cfg['kind'], ni, COLLECT_MAX)
@@ -158,7 +170,7 @@ def main():
             for src, batch in (('live', live_bits), ('synth', synth_bits)):
                 if not batch:
                     continue
-                truths = script.exports_sync.truth(rva, cfg['kind'], ni, no, batch)
+                truths = script.exports_sync.truth(rva, cfg['kind'], ni, no, na, sflag, batch)
                 vectors += [{'v_bits': v, 'ret_bits': t['ret_bits'],
                              'out_bits': t['out_bits'], 'src': src}
                             for v, t in zip(batch, truths)]

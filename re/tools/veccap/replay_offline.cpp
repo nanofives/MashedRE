@@ -52,12 +52,22 @@ extern "C" float __cdecl FastInvSqrt(float x);
 extern "C" float __cdecl Vec2Length(const float* v);
 extern "C" float __cdecl Vec2Normalize(float* out, const float* in);
 extern "C" float __cdecl RwV3dNormalize(float* out, const float* in);
+// B5e solver-island pure leaves — copied from r7/b5e-solver-island
+// (Collision/RwpSolverLeaves1.cpp). Void return, out-buffer compared only.
+extern "C" void __cdecl FUN_00566830(float* out, const float* in);                 // v_out_in
+extern "C" void __cdecl FUN_00565ef0(float* out, const float* a, const float* b);  // v_out_2in
+extern "C" void __cdecl FUN_00565fa0(float* out, const float* a, const float* b, float s);
 
-enum Kind : std::uint32_t { KIND_F_F = 1, KIND_F_PTRN = 2, KIND_F_OUT_IN = 3 };
+enum Kind : std::uint32_t {
+    KIND_F_F = 1, KIND_F_PTRN = 2, KIND_F_OUT_IN = 3, KIND_V_OUT_IN = 4, KIND_V_OUT_2IN = 5
+};
 
 typedef float (__cdecl* FnFF)(float);
 typedef float (__cdecl* FnFPtr)(const float*);
 typedef float (__cdecl* FnFOutIn)(float*, const float*);
+typedef void  (__cdecl* FnVOutIn)(float*, const float*);
+typedef void  (__cdecl* FnVOut2In)(float*, const float*, const float*);
+typedef void  (__cdecl* FnVOut2InS)(float*, const float*, const float*, float);
 
 struct ExportRow { const char* name; void* fn; };
 static const ExportRow kExports[] = {
@@ -67,6 +77,9 @@ static const ExportRow kExports[] = {
     { "Vec2Length",     reinterpret_cast<void*>(&Vec2Length) },
     { "Vec2Normalize",  reinterpret_cast<void*>(&Vec2Normalize) },
     { "RwV3dNormalize", reinterpret_cast<void*>(&RwV3dNormalize) },
+    { "FUN_00566830",   reinterpret_cast<void*>(&FUN_00566830) },
+    { "FUN_00565ef0",   reinterpret_cast<void*>(&FUN_00565ef0) },
+    { "FUN_00565fa0",   reinterpret_cast<void*>(&FUN_00565fa0) },
 };
 
 // Ensure [addr, addr+size) is committed writable memory. Works page-by-page so
@@ -166,9 +179,10 @@ int main(int argc, char** argv) {
     std::uint32_t total_fail = 0;
     for (std::uint32_t fi = 0; fi < n_funcs; ++fi) {
         char name[32] = {};
-        std::uint32_t kind, rva, ni, no, nv;
+        std::uint32_t kind, rva, ni, no, na, sflag, nv;
         if (!ReadN(f, name, 32) || !ReadN(f, &kind, 4) || !ReadN(f, &rva, 4) ||
-            !ReadN(f, &ni, 4) || !ReadN(f, &no, 4) || !ReadN(f, &nv, 4)) {
+            !ReadN(f, &ni, 4) || !ReadN(f, &no, 4) || !ReadN(f, &na, 4) ||
+            !ReadN(f, &sflag, 4) || !ReadN(f, &nv, 4)) {
             std::printf("SETUP-FAIL: func header %u\n", fi); return 2;
         }
         void* fn = nullptr;
@@ -178,7 +192,7 @@ int main(int argc, char** argv) {
 
         std::uint32_t fail = 0, skipped = 0, shown = 0;
         for (std::uint32_t i = 0; i < nv; ++i) {
-            std::uint32_t in_bits[8], ret_exp, out_exp[8];
+            std::uint32_t in_bits[16], ret_exp, out_exp[16];
             std::uint8_t flags;
             if (!ReadN(f, in_bits, ni * 4) || !ReadN(f, &ret_exp, 4) ||
                 !ReadN(f, out_exp, no * 4) || !ReadN(f, &flags, 1)) {
@@ -186,17 +200,26 @@ int main(int argc, char** argv) {
             }
             if (flags & 2u) { ++skipped; continue; }   // degenerate -> live-only path
 
-            float in_f[8], out_f[8];
+            float in_f[16], out_f[16];
             std::memcpy(in_f, in_bits, ni * 4);
-            for (std::uint32_t k = 0; k < no; ++k) out_f[k] = 0.0f;
+            // seed out with the SAME 0xcc sentinel the capture used, so out slots a
+            // function leaves untouched (e.g. AABB padding index 3) compare equal.
+            std::memset(out_f, 0xcc, no * 4);
 
-            float r;
+            float r = 0.0f;
+            const bool has_ret = (kind != KIND_V_OUT_IN && kind != KIND_V_OUT_2IN);
             if (kind == KIND_F_F)           r = reinterpret_cast<FnFF>(fn)(in_f[0]);
             else if (kind == KIND_F_PTRN)   r = reinterpret_cast<FnFPtr>(fn)(in_f);
-            else                            r = reinterpret_cast<FnFOutIn>(fn)(out_f, in_f);
+            else if (kind == KIND_F_OUT_IN) r = reinterpret_cast<FnFOutIn>(fn)(out_f, in_f);
+            else if (kind == KIND_V_OUT_IN) reinterpret_cast<FnVOutIn>(fn)(out_f, in_f);
+            else {                          // KIND_V_OUT_2IN: in2 = in_f + n_a (contiguous)
+                const float* in2 = in_f + na;
+                if (sflag) reinterpret_cast<FnVOut2InS>(fn)(out_f, in_f, in2, in_f[ni - 1]);
+                else       reinterpret_cast<FnVOut2In>(fn)(out_f, in_f, in2);
+            }
 
-            std::uint32_t ret_got;
-            std::memcpy(&ret_got, &r, 4);
+            std::uint32_t ret_got = ret_exp;  // void kinds: neutralize the ret compare
+            if (has_ret) std::memcpy(&ret_got, &r, 4);
             bool bad = (ret_got != ret_exp);
             for (std::uint32_t k = 0; k < no && !bad; ++k) {
                 std::uint32_t got_k;
