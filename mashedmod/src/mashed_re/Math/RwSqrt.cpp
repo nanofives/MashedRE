@@ -56,25 +56,19 @@ static constexpr std::uint32_t  kInvSqrtRootDelta = 4;
 // FastSqrt=std::sqrt). In the dev .asi the LUT IS live, so the original bit-identical
 // path is taken unchanged (the C4 leaf is preserved).
 //
-// Image span (validity window for the root pointer): PE base .. ~0xb50000 (the exe
-// is /BASE:0x10000 image-padded through the original RVA range; the real RW LUT, when
-// built by the engine in the .asi, lives well inside MASHED's static data).
-static constexpr std::uintptr_t kImgLo = 0x00010000u;
-static constexpr std::uintptr_t kImgHi = 0x00b40000u;
+// VECCAP-1 fix (2026-07-16): the "in-image" range check above proved wrong in
+// the dev .asi — the live RW LUT is a HEAP allocation and lands above the old
+// kImgHi=0xb40000 bound under current layouts, silently degrading these hooks
+// to the non-bit-identical CPU fallbacks (veccap faithful replay caught it).
+// The shared readability+sentinel guard (RwLutGuard.h) accepts any placement
+// of the REAL tables and still rejects the standalone's garbage chain.
+#include "RwLutGuard.h"
 
-// Returns the LUT root pointer if (and only if) it is a valid in-image aligned
-// table; otherwise nullptr (-> CPU fallback). `delta` = 0 (sqrt) / 4 (inv-sqrt).
+// Returns the validated LUT root, or nullptr (-> CPU fallback).
+// `delta` = 0 (sqrt) / 4 (inv-sqrt).
 static inline const std::uint32_t* RwSqrtLutRoot(std::uint32_t delta) {
-    const std::uint32_t rw_globals = *reinterpret_cast<std::uint32_t*>(kRwGlobalsBase);
-    const std::uint32_t rw_offset  = *reinterpret_cast<std::uint32_t*>(kRwSqrtTableSlot);
-    const std::uintptr_t slotAddr  = (std::uintptr_t)rw_globals + rw_offset + delta;
-    // the slot holding the root pointer must itself be inside the image
-    if (slotAddr < kImgLo || slotAddr + 4u > kImgHi) return nullptr;
-    const std::uint32_t root = *reinterpret_cast<std::uint32_t*>(slotAddr);
-    // the root must be a non-null, aligned, in-image table base; a 0x1000-entry table
-    // is indexed up to root+0xfff*4, so require the whole span to be in-image.
-    if (root < kImgLo || (std::uintptr_t)root + 0x1000u * 4u > kImgHi) return nullptr;
-    return reinterpret_cast<const std::uint32_t*>(root);
+    return delta == kInvSqrtRootDelta ? RwLutGuard::InvSqrtRoot()
+                                      : RwLutGuard::SqrtRoot();
 }
 
 extern "C" __declspec(dllexport) float __cdecl FastInvSqrt(float x) {

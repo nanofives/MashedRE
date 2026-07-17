@@ -29,19 +29,14 @@
 static constexpr std::uintptr_t kRwGlobalsBase   = 0x007d3ff8;
 static constexpr std::uintptr_t kRwSqrtTableSlot = 0x007d3ffc;
 
-// WS-PHYS-CRASH-FIX (2026-06-17): same null RW-LUT failure mode as Math/RwSqrt.cpp
-// (no RwEngineOpen standalone -> unbuilt LUT -> null table deref -> AV). Resolve +
-// validate the root; nullptr -> std::sqrt fallback (dev .asi keeps the LUT path).
-static constexpr std::uintptr_t kImgLo = 0x00010000u;
-static constexpr std::uintptr_t kImgHi = 0x00b40000u;
+// WS-PHYS-CRASH-FIX (2026-06-17) + VECCAP-1 fix (2026-07-16): the LUT root is
+// resolved+validated by the shared readability+sentinel guard (RwLutGuard.h) —
+// the old in-image range check silently rejected legitimate high-heap layouts
+// and degraded this hook to the non-bit-identical std::sqrt fallback.
+// nullptr -> std::sqrt fallback (standalone, no RwEngineOpen).
+#include "RwLutGuard.h"
 static inline const std::uint32_t* Vec3LutRoot() {
-    const std::uint32_t rw_globals = *reinterpret_cast<std::uint32_t*>(kRwGlobalsBase);
-    const std::uint32_t rw_offset  = *reinterpret_cast<std::uint32_t*>(kRwSqrtTableSlot);
-    const std::uintptr_t slotAddr  = (std::uintptr_t)rw_globals + rw_offset;
-    if (slotAddr < kImgLo || slotAddr + 4u > kImgHi) return nullptr;
-    const std::uint32_t root = *reinterpret_cast<std::uint32_t*>(slotAddr);
-    if (root < kImgLo || (std::uintptr_t)root + 0x1000u * 4u > kImgHi) return nullptr;
-    return reinterpret_cast<const std::uint32_t*>(root);
+    return RwLutGuard::SqrtRoot();
 }
 
 extern "C" __declspec(dllexport) float __cdecl Vec3Magnitude(const float* v) {

@@ -34,6 +34,18 @@ idling or reviving dead batch lanes.
 5. **Parity-harness coverage** — keep `nav_coverage.py` green on any newly wired screen; extend
    `drawlist_diff.py` / `imgdiff.py` recipes where new visual surfaces land (see
    `re/analysis/parity_tooling.md` "Known asymmetries" before trusting a RED).
+6. **veccap offline verification lane (BUILT + registry-driven, 2026-07-16 — `re/tools/veccap/`)** —
+   one live capture (args + read-region snapshot + in-process ground truth), then unlimited
+   offline iteration via (a) the ported-TU replayer exe and (b) the Unicorn original-code differ
+   (x87 verified bit-exact). Registry-driven (`veccap_registry.py`): the RW fast-sqrt family
+   (6 fns / 3 signature kinds) is onboarded and GREEN (offline 6/6 both modes, Unicorn 6/6).
+   **Next pulls:** (a) onboard B5e-class integrator/solver math leaves as they reach C3 — add a
+   `veccap_registry` entry per function, no tool code changes; (b) wire a `capture_vectors` live
+   arg-collection scenario for in-race functions (menu idle doesn't call physics — reuse
+   `scenario_launch.py` to reach a race before the collect window); (c) OPTIONAL one-time elevated
+   Task-Scheduler lane for unattended TTD *recording* (query side already scripted on
+   `log/ttd/*.run`). Finding VECCAP-1 (LUT validator rejected high-heap layouts → silent CPU
+   fallback in 4 Math TUs) RESOLVED via Math/RwLutGuard.h; re-verified.
 
 ## Done
 

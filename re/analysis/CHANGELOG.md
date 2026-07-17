@@ -1,3 +1,4 @@
+2026-07-16  0x004c3ac0,0x004c3b30,0x004c3b90,0x004c39b0,0x004c3bf0  RW-LUT family  FIX(no level change)  re/tools/veccap/README.md (VECCAP-1: kImgHi range guard silently rejected high-heap LUT layouts -> non-bit-identical CPU fallback; replaced with readability+sentinel guard Math/RwLutGuard.h; re-verified offline faithful replay 874/874 + live A/B 3x513/513 PASS)
 2026-07-15  0x0047eb30  VehiclePhysicsWorldStep  C2->C3  re/analysis/B5d_COUPLING_BRIDGE_2026-07-15.md (verbatim bridge port + canonical bridge-driven race)
 2026-07-15  0x0057c210  RwpBodyTableLookup  C2->C3  re/analysis/B5d_COUPLING_BRIDGE_2026-07-15.md (verbatim bridge port + canonical bridge-driven race)
 2026-07-15  0x0055ac00  RwpShapeActiveBitSet  C2->C3  re/analysis/B5d_COUPLING_BRIDGE_2026-07-15.md (verbatim bridge port + canonical bridge-driven race)

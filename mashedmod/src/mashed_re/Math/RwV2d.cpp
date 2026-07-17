@@ -33,20 +33,15 @@ typedef void  (__cdecl *RwErrRecordFn)(float*);
 static constexpr std::uintptr_t kFUN_004d7ff0 = 0x004d7ff0u;
 static constexpr std::uintptr_t kFUN_004d8480 = 0x004d8480u;
 
-// WS-PHYS-CRASH-FIX (2026-06-17): same null RW-LUT failure mode as Math/RwSqrt.cpp
-// (standalone has no RwEngineOpen -> unbuilt LUT -> null table deref -> AV). Resolve
-// + validate the root; nullptr -> std::sqrt fallback (dev .asi keeps the LUT path).
-static constexpr std::uintptr_t kImgLo = 0x00010000u;
-static constexpr std::uintptr_t kImgHi = 0x00b40000u;
+// WS-PHYS-CRASH-FIX (2026-06-17) + VECCAP-1 fix (2026-07-16): LUT root resolved
+// and validated by the shared readability+sentinel guard (RwLutGuard.h); the old
+// in-image range check silently rejected legitimate high-heap layouts and forced
+// the non-bit-identical CPU fallback. nullptr -> std::sqrt fallback (standalone,
+// no RwEngineOpen).
+#include "RwLutGuard.h"
 static inline const std::uint32_t* lut_root(std::uint32_t delta)
 {
-    const std::uint32_t globals = *reinterpret_cast<const std::uint32_t*>(kRwGlobalsBase);
-    const std::uint32_t offset  = *reinterpret_cast<const std::uint32_t*>(kRwSqrtTableSlot);
-    const std::uintptr_t slotAddr = (std::uintptr_t)globals + offset + delta;
-    if (slotAddr < kImgLo || slotAddr + 4u > kImgHi) return nullptr;
-    const std::uint32_t root = *reinterpret_cast<std::uint32_t*>(slotAddr);
-    if (root < kImgLo || (std::uintptr_t)root + 0x1000u * 4u > kImgHi) return nullptr;
-    return reinterpret_cast<const std::uint32_t*>(root);
+    return delta == 4u ? RwLutGuard::InvSqrtRoot() : RwLutGuard::SqrtRoot();
 }
 
 // 0x004c3bf0
