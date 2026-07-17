@@ -269,5 +269,33 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   (`log/b5e-solver-island/b5e_k6_acceptance_2026-07-17.log`,
   `b5e_k6_hook_manifest_2026-07-17.txt`). The 6 fns re-classified C1→C2; U-9018/U-9019 filed
   (both non-blocking data-semantic, largely resolved by the port).
-- OPEN next: K7 (0056c580:861 0056c8e0:434 0056caa0:1262 0056cf90:216 0056d070:724, 5 fns /
-  3497 B, deps DONE) → K8…. (K6 unblocks K13.)
+- K7 ported (5 fns / 3497 B) → `Collision/RwpSolverCore7.cpp`; canonical-race acceptance
+  **GREEN 2026-07-17**. The 0x0056c group-B stage: c580 (per-body jacobian/inertia transform
+  loop), c8e0 (single-body 3×(mat4·vec4) accumulate), caa0 (constraint accumulate/scatter, calls
+  c8e0 4× per contact), cf90 (0x60-byte record gather), d070 (island partition index-build, calls
+  cf90). **Every body re-verified against live pool14 disasm 2026-07-17** (pool0 was locked by
+  another session; pool14 acquired via the pool script). NO-GUESSING findings: (1) all 5 __cdecl
+  (RET at 0x0056c8dc/0x0056ca91/0x0056cf8d/0x0056d067/0x0056d343). (2) cf90 is a pure 24-dword
+  integer copy — all 24 source offsets checked verbatim vs disasm 0x0056cf90..0x0056d064, exact.
+  (3) d070 pure integer/pointer index-build, no x87. (4) caa0 float ops are ALL 2-term adds
+  (single FADD, bit-exact) + four contiguous float[8] gather blocks (K3/K4 block class). (5)
+  c580/c8e0 are deeply-interleaved x87 (3 parallel accumulators FSTP'd to float32 per partial):
+  traced the [ESP+0x84/0x88/0x8c] (c580) accumulator + FADDP chains and **CORRECTED** c580 fVar2
+  = `p[8]*p[1]+(p[4]*p[0]+p[-1]*p[0])`, fVar3 = `p[9]*p[1]+(p[5]*p[0]+p[1]*p[-1])` (product-init
+  accumulators @c5ea/c5f7 → t1+(t2+t3), NOT the printed left-assoc), and the 3 matrix-row stores
+  = `A*M10+(B*M14+C*M18)` (FADDP chain @c7e0/c7ea, c803/c80d, c826/c830); c580 fVar5 = printed
+  `(t1+t2)+t3` CONFIRMED. The remaining 5+-deep interleaved sums (c580 fVar7/1/6/8/9/10 +
+  pfVar14[2/3/4]; all c8e0 5-term stores) retain the decomp's printed order and carry the accepted
+  ≤1-ULP x87 partial-rounding floor → **U-9020**, to settle at the lane-end per-field diff. No
+  indirect calls (island_dag ind=0, confirmed via function_callees: 3 leaves, caa0→c8e0 only,
+  d070→cf90 only). Built BOTH targets clean (RwpSolverCore7.cpp: no warnings; added to build.bat
+  exe list **and** asi_sources.rsp); canonical bridge-driven QuickRace GREEN with bridge+B5c8+K1..K7
+  = 63 hooks, `MASHED_HOOK_MANIFEST` POSITIVE 63/63 `installed=1` incl all 5 K7 RVAs (idx
+  1101–1105) (`log/b5e-solver-island/b5e_k7_acceptance_retry2_2026-07-17.log`,
+  `b5e_k7_hook_manifest_2026-07-17.txt`). Trajectory matches K6: +4 s / +9 s velocities
+  bit-identical, +13 s carries the airborne x87 residual, +18 s→ identical grounded=0 round
+  transition. (The first attempt sat at vel=[0,0,0] — an intro-skip/control-pulse flake, not a K7
+  defect; the retry got the car moving; a 9-hook control timed out at phase 2, the same
+  environment flake noted for K1.) The 5 fns re-classified C1→C2; deferred-associativity = U-9020.
+- OPEN next: K8 (0056d350:158 0056d3f0:2375 0056dd40:2357 0056ed60:463 0056e680:1756, 5 fns /
+  7109 B, deps DONE; within-cluster d3f0→d350, e680→ed60) → K9…. (K6 unblocked K13; K7 now DONE.)
