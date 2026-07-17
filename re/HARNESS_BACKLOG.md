@@ -39,8 +39,18 @@ idling or reviving dead batch lanes.
    offline iteration via (a) the ported-TU replayer exe and (b) the Unicorn original-code differ
    (x87 verified bit-exact). Registry-driven (`veccap_registry.py`): the RW fast-sqrt family
    (6 fns / 3 signature kinds) is onboarded and GREEN (offline 6/6 both modes, Unicorn 6/6).
-   **Next pulls:** (a) onboard B5e-class integrator/solver math leaves as they reach C3 — add a
-   `veccap_registry` entry per function, no tool code changes; (b) wire a `capture_vectors` live
+   **Next pulls:** (a) onboard B5e-class integrator/solver math leaves — **first 3 done 2026-07-17**:
+   the pure void-return AABB/vector leaves `FUN_00566830` (perp-vector), `FUN_00565ef0` (AABB
+   min/max merge), `FUN_00565fa0` (AABB span+scalar) from `r7/b5e-solver-island` cluster K1. Needed
+   two new registry kinds (`v_out_in`, `v_out_2in` — void return, out-buffer compare; the 3 existing
+   kinds are all float32-return so none fit) + the ported TU `Collision/RwpSolverLeaves1.cpp` copied
+   verbatim from b5e (replay build needs the source; it is not yet on main). Result: **offline replay
+   9/9 PASS both modes, Unicorn 9/9 PASS** (513 synthetic vectors each; menu-idle never calls physics
+   so live_capture=False — ground truth via in-process original call). Evidence = per-leaf bit-identity
+   toward C3, NOT the diff-original gate; leaves stay C1/main, C2/b5e. Remaining K1 leaves are pointer/
+   list/`rand()` glue (out of veccap scope); the float10-return normalize `FUN_005667c0` is deferred
+   (needs 80-bit ST0 return capture). Adding more leaves that fit `v_out_in`/`v_out_2in` = registry
+   entry only, no tool change. (b) wire a `capture_vectors` live
    arg-collection scenario for in-race functions (menu idle doesn't call physics — reuse
    `scenario_launch.py` to reach a race before the collect window); (c) TTD *recording* elevation lane: DEFERRED by owner 2026-07-17 ("the other two lanes are
    enough") — do not re-raise unless a task specifically needs fresh TTD tapes; query side

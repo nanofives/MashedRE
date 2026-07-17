@@ -5,8 +5,8 @@ Additions to the promotion pipeline so that C3/C4-style verification can iterate
 remain the final promotion gate; these tools attack the iteration cost before it.
 
 **Now registry-driven** (`veccap_registry.py`): one declarative entry per
-function drives all three tools. Onboarded batch = the RW fast-sqrt family
-(6 functions, 3 signature kinds):
+function drives all three tools. Onboarded so far = the RW fast-sqrt family
+(6 fns) + the first B5e solver-island pure leaves (3 fns / 2 new void kinds):
 
 | function | rva | kind | notes |
 |----------|-----|------|-------|
@@ -16,17 +16,31 @@ function drives all three tools. Onboarded batch = the RW fast-sqrt family
 | Vec2Length | 0x004c3bf0 | f_ptrN (2) | |
 | Vec2Normalize | 0x004c3c60 | f_out_in (2→2) | degenerate path calls RW error stubs |
 | RwV3dNormalize | 0x004c39b0 | f_out_in (3→3) | degenerate path calls RW error stubs |
+| FUN_00566830 | 0x00566830 | v_out_in (3→3) | B5e perp-vector; pure; synthetic-only |
+| FUN_00565ef0 | 0x00565ef0 | v_out_2in (7+7→7) | B5e AABB min/max merge; out idx 3 = padding |
+| FUN_00565fa0 | 0x00565fa0 | v_out_2in (3+3+scalar→7) | B5e AABB span; inflate scalar = last input |
 
-Latest run (2026-07-16): **offline replay 6/6 PASS both modes (3076 vectors);
-Unicorn differ 6/6 PASS**.
+Latest run (2026-07-17): **offline replay 9/9 PASS both modes; Unicorn differ
+9/9 PASS**. The 3 B5e leaves are C1 on main / C2 on `r7/b5e-solver-island`;
+their ported TU (`Collision/RwpSolverLeaves1.cpp`) was copied verbatim from that
+branch so the replay build can compile it. veccap is **per-leaf bit-identity
+evidence toward C3, NOT the diff-original promotion gate.**
 
 To onboard a new function: add an entry to `veccap_registry.FUNCS` (rva, export,
 signature kind, source TU) and, if it reads new statics, to `STATIC_READS`. The
-capture/replay/unicorn tools pick it up with no code change. Signature kinds:
+capture/replay/unicorn tools pick it up with no code change **when it fits an
+existing kind**. Signature kinds:
 `f_f` (float→float), `f_ptrN` (float*→float, n reads), `f_out_in`
-(out,in→float, compares return AND out-buffer). Functions whose degenerate
-branch calls live-only stubs set `degenerate_stubs: True`; those vectors are
-skipped offline and **counted**, never silently dropped.
+(out,in→float, compares return AND out-buffer), `v_out_in` (VOID, out,in →
+compare out-buffer only), `v_out_2in` (VOID, out,in1,in2[,scalar] → compare
+out-buffer only; `n_a` = in1 float count, in2 is the contiguous slice after it,
+`scalar: True` consumes the last packed float as a by-value cdecl arg). The
+export string in the registry **must match the C++ symbol exactly, case-included**
+(the replay linker resolves by name; capture/unicorn resolve by RVA). Functions
+whose degenerate branch calls live-only stubs set `degenerate_stubs: True`; those
+vectors are skipped offline and **counted**, never silently dropped. Out-buffer
+slots a function leaves untouched (e.g. AABB padding index 3) are seeded with the
+`0xcc` capture sentinel in all three tools so they compare equal.
 
 ## History — the three pilots
 
