@@ -248,5 +248,26 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   `MASHED_HOOK_MANIFEST` giving POSITIVE install evidence: 52/52 hooks `installed=1`
   incl. all 5 K5 RVAs (`b5e_k5_hook_manifest_2026-07-16.txt`,
   `b5e_k5_acceptance_manifest_2026-07-16.log`). The 5 fns re-classified C1→C2.
-- OPEN next: K6 (0056bb80:337 0056bce0:260 0056bdf0:135 0056be80:534 0056c0a0:618
-  0056c310:614, deps DONE, no indirect) → K7….
+- K6 ported (6 fns / 2498 B) → `Collision/RwpSolverIntegrate6.cpp`; canonical-race acceptance
+  **GREEN 2026-07-17**. The quaternion-integration cluster: bb80 (rotate-by-axis-angle, x87
+  FSIN/FCOS block), bce0 (small-angle integrate + FSQRT renorm), bdf0 (body-list scaled
+  accumulate), be80 (single-body orientation+matrix), c0a0/c310 (body-list orientation+matrix,
+  indexed- vs walked-source). **Every body re-verified against live pool0 disasm 2026-07-17**
+  (notes 3/4a/4b/6/7a/7b/8 all confirmed at their cited RVAs) — this pass **found and fixed** two
+  defects the draft header had over-claimed as verbatim: c0a0/c310 were truncated drafts with
+  placeholder "WRONG scaffolding" lines (full matrix-store block + position-advance tail
+  dropped) — completed verbatim from the C1 decomp; and note-7b's "fully right-associated"
+  characterization was corrected (the binary combines `{q0²,q1²}` first, left-combining; the
+  right-assoc C form is the *commutative* match — bit-identical, whereas the decomp's PRINTED
+  order is wrong). Build issues cleared: added the TU to BOTH targets (build.bat exe list **and**
+  `asi_sources.rsp` — the .asi builds from the response file, missed on the first pass so the K6
+  hooks weren't registered), `#include <cmath>`/`std::sqrtl` for bce0's FSQRT, and the K3
+  Broadphase3 C4554 `>>` precedence warning silenced with semantics-preserving parens (line 298,
+  already-correct `((int)local_8+local_10)>>5`). Built BOTH targets clean; canonical bridge-driven
+  QuickRace GREEN with bridge+B5c8+K1..K6 = 58 hooks, `MASHED_HOOK_MANIFEST` POSITIVE 58/58
+  `installed=1` incl. all 6 K6 RVAs (indices 1095–1100)
+  (`log/b5e-solver-island/b5e_k6_acceptance_2026-07-17.log`,
+  `b5e_k6_hook_manifest_2026-07-17.txt`). The 6 fns re-classified C1→C2; U-9018/U-9019 filed
+  (both non-blocking data-semantic, largely resolved by the port).
+- OPEN next: K7 (0056c580:861 0056c8e0:434 0056caa0:1262 0056cf90:216 0056d070:724, 5 fns /
+  3497 B, deps DONE) → K8…. (K6 unblocks K13.)

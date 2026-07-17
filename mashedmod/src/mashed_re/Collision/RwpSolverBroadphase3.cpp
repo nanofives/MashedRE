@@ -295,7 +295,7 @@ LAB_0055a515:
                 *puVar9 = *puVar9 & ~(1 << ((byte)*(ushort *)(piVar12 + 8) & 0x1f));
                 *(int *)(iVar2 + 0x4c) = *(int *)(iVar2 + 0x4c) + -1;
               }
-              puVar9 = (uint *)(*(int *)(iVar2 + 0x60) + ((int)local_8 + local_10 >> 5) * 4);
+              puVar9 = (uint *)(*(int *)(iVar2 + 0x60) + (((int)local_8 + local_10) >> 5) * 4);
               *puVar9 = *puVar9 & ~(1 << ((byte)local_10 & 0x1f));
             }
           }
