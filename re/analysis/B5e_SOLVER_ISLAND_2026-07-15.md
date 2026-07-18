@@ -341,6 +341,32 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   sim-health* (both runs: phase-3 reached, car spawned, full 35 s, bounded physics, no NaN/crash/
   freeze), NOT a deterministic trajectory. A contact-batching defect would blow the sim up, not
   follow a bounded alternate path. The 7 fns re-classified C1→C2.
-- OPEN next: K10 (0056f350:1918 0056fb90:770 0056fea0:483, 3 fns / 3171 B, deps K2 K3 K9; has 1
-  indirect-call member 0056f350) → K11…. (K6 unblocked K13; K7/K8/K9 DONE. K10's 0056f350 has a
-  vtable/fn-ptr dispatch — first indirect-call cluster since K5; route the REAL table until KV.)
+- K10 ported (3 fns / 3171 B) → `Collision/RwpSolverCore10.cpp`; canonical-race acceptance
+  **GREEN 2026-07-17**. The per-manifold constraint-row generator + its two basis helpers: f350
+  (iterates the contact points, resolves both bodies, calls FUN_0055b750/K3 for per-body point
+  velocity + FUN_0056fad0/K9 for the jacobian basis, sets friction/penetration limits, emits the
+  row via FUN_0056f1f0/K9 up to 3× [normal + 2 friction], then advances via FUN_0056f0a0/K9),
+  fb90 (relative-motion basis / contact-frame double-cover, calls FUN_00546b10/K2), fea0
+  (quaternion product → double-cover 3×3 + half-scaled derivative). **Every body re-verified vs
+  live pool14 disasm 2026-07-17.** Key findings: (1) all 3 __cdecl. (2) **f350's census
+  "indirect-call" flag is spurious** — all 9 CALLs are DIRECT (E8 rel to 0055b750/fad0/f1f0/f0a0);
+  no `CALL reg/mem`, no fn-ptr to bind. (3) **FIXED multiple Ghidra float-type-confusion
+  mis-renders** (param_2 typed float* but holds a mixed struct): `param_2[0x2b]` is a RAW INT
+  count/index (MOV @0x0056f366, loop `CMP EDI,EBX` @faae — the naive float read would convert to 0
+  and never loop), `param_2[0x2d]/[0x2f]` are RAW INT body-manager pointers (MOV @f39d/f3c9),
+  `pfVar9[3]` (puVar3) is a RAW pointer (MOV @f4a2 — a float→ptr cast wouldn't even compile), and
+  fb90's `(float)piVar10[2/3/4]` are RAW-BIT reinterprets not int→float converts (MOV @fbd3). Only
+  `param_2[0x34]` (FMUL @f37b) is genuinely float. (4) `local_78` is one contiguous mixed-type row
+  buffer (fad0 fills [0..0xe], f350 sets limits [0x10..0x18], f1f0 consumes) — ported as
+  `undefined4[27]` with typed writes. (5) constants: _DAT_005e456c=-1e-3, _DAT_005cc9b4=0.99,
+  _DAT_005e520c=0.7071(1/√2); data tables 005e57a4/b0/c4/d0 by abs addr. Built BOTH targets clean;
+  canonical bridge-driven QuickRace GREEN with bridge+B5c8+K1..K10 = 78 hooks, `MASHED_HOOK_MANIFEST`
+  POSITIVE 78/78 `installed=1` incl all 3 K10 RVAs (idx 1118–1120)
+  (`log/b5e-solver-island/b5e_k10_acceptance_2026-07-17.log`, `b5e_k10_hook_manifest_...txt`). Sim
+  healthy across the full 35 s into round 2 (spawnFired 12→16, bounded physics, no NaN/crash);
+  +9 s reconverged to the K6-family invariant [-83.7,0.2,331.1] — strong evidence the constraint-row
+  generator port is faithful (a defect here would blow up the contact solver). The 3 fns
+  re-classified C1→C2.
+- OPEN next: K11 (00567f00:1460 00567c60:670 005685f0:431 00568dd0:505 00568fd0:354, 5 fns /
+  3420 B, deps none [leaves]; within-cluster 00567c60→00567f00) → K12…. (K6 unblocked K13;
+  K7/K8/K9/K10 DONE.)
