@@ -466,6 +466,24 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   &local_XX into vec3-R/W callees → declared as arrays (word-boundary regex rename avoids local_10⊂local_100
   hazard); C4700 gone.** Manifest 90/90 (idx 1132), sim healthy full 35s into ROUND 2 (spawnFired 12→16),
   bounded. Deploy backup .pre-b5e-k15. NEXT cluster: K16 (10 fns/2822B, deps none).
+- **K16 (10 fns/2822B, contact-manifold + GJK-simplex + broadphase helpers; deps none) — DONE
+  C1→C2 2026-07-18 (RwpSolverCore16.cpp; race GREEN 99 hooks).** RVAs 005735f0 (cross-plane offset),
+  00575120 (contact insert L1-dedup), 005751f0 (perp-dist ratio, float10 ST0), 00576640 (broadphase
+  pair-gen, 2 filter matrices), 00579b50 (manifold coplanarity), 00579c00 (simplex weighted centroid),
+  00579d50 (support-map delta+dot float10; calls un-ported B5c extern FUN_0055c000), 00579e50 (per-vertex
+  dot update), 00579ee0 (incremental Gram matrix), 0057ae20 (offset accessor +0x30). x87 verbatim; consts
+  DAT_005d757c=0.0/_DAT_005cc320=1.0/_DAT_005cc56c=0.1/_DAT_005cc32c=0.5/_DAT_005cea1c=-9.99999975e-06.
+  Traps: 005751f0+00579d50 float10 ST0 returns (declared non-void); 00576640 `(float)param_1[0x1c]` is a
+  float REINTERPRET not int-conv (disasm-confirmed plain `MOV [EAX+0x70]` @0x0057664a); **FIXED
+  CONTIGUOUS-STACK-BUFFER bug (K8/K10 class) in 00579d50: neg[3]=local_18/14/10, outc[3]=local_c/8/4 passed
+  as vec3 out-params to FUN_0055c000 → arrayed.** ABS→fabsf. Install-observe manifest 99/99 installed=1
+  (K16 idx 1133–1142); SIM-HEALTH race bounded/finite/no-NaN/no-crash full 35s, physics ticking.
+  **A wall-slide steady-state `[-49.3,0,-58.0]` (car stays round 1) that first looked K16-caused was PROVEN
+  SCENARIO-VARIANCE** — it reproduces IDENTICALLY with AND without K16 (bisection: both K16 halves slid;
+  no-K16 control re-run ALSO slid; the single "advance to round 2" was the outlier, occurring both with
+  K15 and with base89). K16 is behaviorally indistinguishable from the 89-hook baseline. Deploy backup
+  .pre-b5e-k16. Evidence: log/b5e-solver-island/b5e_k16_{acceptance,ISOLATION_no-k16,rerun2}_2026-07-18.log
+  + b5e_k16_hook_manifest_2026-07-18.txt. NEXT cluster: K17 (9 fns/7429B, deps K1 K2 K3 K16).
   (historical port detail:)
 - **K13 (FUN_00560260) — PORTED + BUILT 2026-07-18 (both targets compile+link clean); NOT YET C2.**
   Method: set all 16 __cdecl callee sigs on pool0 clone → re-decompiled → the 14 DIRECT calls
