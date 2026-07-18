@@ -440,6 +440,17 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   Race after: 84 hooks (bridge+B5c8+K1..K11 + 0x00570090). NB run `diag.py doctor` FIRST if the boot
   self-exits (frida-pool/zombie wedge, not display). (K6 unblocked K13; K7/K8/K9/K10/K11 DONE.)
 
+- **K13 (FUN_00560260) — DONE C1→C2 2026-07-18 (RwpSolverPartition13.cpp; race GREEN 85 hooks).**
+  Port method as below. The 3 KV callback frames (param_11=53w, param_13×2=69w) were DISASM-DECODED
+  @0x560a9c/0x560c5a/0x560d90 (disasm + raw decomp agree on every word; full spec + exact arg orders in
+  `re/analysis/b5e/K13_PORT_RECON_2026-07-18.md`) and reproduced as by-value structs (Kv11Frame/Kv13Frame)
+  — passing a struct by value under __cdecl is ABI-identical to the original hand-built frame. SIM-HEALTH
+  race GREEN 2026-07-18: scenario_launch --track 0 --mode 10 --cars 4 --hold 35, 85-hook set, manifest
+  85/85 installed=1 (FUN_00560260 idx 1127 confirmed via canonical_install_observe), phase-3 + 4 cars +
+  full 35s bounded physics no NaN/crash/freeze, telemetry matches K12 (a wrong KV frame would blow up the
+  velocity-integrate → sim explosion; it ran clean). K13 .asi deployed to main original\ (backup
+  .pre-b5e-k13). Per-field bit-identity deferred to lane-end. NEXT cluster: K14.
+  (historical port detail:)
 - **K13 (FUN_00560260) — PORTED + BUILT 2026-07-18 (both targets compile+link clean); NOT YET C2.**
   Method: set all 16 __cdecl callee sigs on pool0 clone → re-decompiled → the 14 DIRECT calls
   transcribed verbatim (arg order = C param order), body from RAW decomp (int* param_9 + reinterpret

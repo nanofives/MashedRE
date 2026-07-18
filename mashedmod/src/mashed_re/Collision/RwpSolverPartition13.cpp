@@ -28,25 +28,29 @@
 //  TRAP 2 — *param_9 and param_3[0x49] hold the dt FLOAT bits (raw-copied at
 //    0x560235); reinterpret, do not convert.
 //
-//  [UNCERTAIN U-K13-KV] — the 3 caller-supplied `code*` callbacks (param_11 ×1,
-//    param_13 ×2 = the KV1..KV3 scene velocity-integrate targets, UNPORTED →
-//    resolve to ORIGINAL code on the .asi) each build a LARGE by-value outgoing
-//    stack frame (param_11: 53 words; param_13: 4 ptr args + ~50-word tail) that
-//    the decompiler only partly types. Their per-word VALUES are enumerated in
-//    K13_PORT_RECON (from the raw decomp), but the exact by-offset ORDER of the
-//    two param_13 tails is not yet disasm-verified. Per owner decision
-//    (2026-07-18) these invocations are STUBBED here (real side-effect writes
-//    kept; the indirect CALL made with no reconstructed frame) and PINNED via a
-//    live Frida stack read at [ESP..] on each CALL in the original at race time.
-//    Until pinned, the .asi K13 hook must NOT be trusted past a callback.
-//    Unported direct callees FUN_005675d0/FUN_0056c310/FUN_0056bdf0 also resolve
-//    to ORIGINAL on the .asi (fine for the A/B).
+//  KV callbacks (param_11 ×1, param_13 ×2 = the KV1..KV3 scene velocity-integrate
+//    targets, UNPORTED → resolve to ORIGINAL on the .asi) each build a LARGE by-value
+//    outgoing frame (param_11: 53 words; param_13: 4 ptr args + 65-word tail) that
+//    the decompiler collapses. FULLY DECODED FROM DISASM 2026-07-18 (arg orders
+//    computed @0x560a9c/0x560c5a/0x560d90; disasm + raw decomp agree on every word;
+//    full spec in K13_PORT_RECON) and reproduced here as by-value structs (Kv11Frame/
+//    Kv13Frame) — passing a struct by value under __cdecl pushes its words contiguously,
+//    ABI-identical to the original frame. Unported direct callees FUN_005675d0/
+//    FUN_0056c310/FUN_0056bdf0 also resolve to ORIGINAL on the .asi (fine for the A/B).
 // ============================================================================
 #include "../Core/HookSystem.h"
 #include <cmath>       // sqrtf — x87 FSQRT floor (penetration-resolve loop)
+#include <cstring>     // memcpy — KV callback by-value frame builders
 
 namespace mashed_re {
 namespace Collision {
+
+// KV callback outgoing frames — DISASM-verified by-value stack blocks
+// (re/analysis/b5e/K13_PORT_RECON_2026-07-18.md; exact arg orders computed from disasm
+// @0x560a9c / 0x560c5a / 0x560d90). Passing a struct by value under __cdecl pushes its words
+// contiguously = ABI-identical to the original's hand-built frame.
+struct Kv11Frame { int w[53]; };   // param_11: 53 words
+struct Kv13Frame { int w[69]; };   // param_13: 4 explicit ptr args + 65-word tail
 
 typedef unsigned char  byte;
 typedef unsigned short ushort;
@@ -300,12 +304,19 @@ FUN_00560260(int *param_1,int *param_2,undefined4 *param_3,int *param_4,int *par
     FUN_0056d070(param_5, *param_3, param_3[1], param_3[2], param_3[3], param_3[0x37], param_3[0x38],
                  param_3[0x39], (int *)param_3[0x3a], param_3[0x3b], param_3[0x3c]);
 
-    // ---- [UNCERTAIN U-K13-KV] param_11 KV callback @0x560a9c -------------------
-    // Original builds a 53-word by-value outgoing frame:
-    //   param_5[0x25..0x27], param_5[0..0x21], param_3[4..0xc],
-    //   param_3[0x46..0x48], param_3[0x43..0x45], param_3[0x49]  (K13_PORT_RECON).
-    // STUBBED per owner decision — PIN via live Frida stack read before race.
-    ((void (__cdecl *)())param_11)();
+    // ---- param_11 KV callback @0x560a9c — DISASM-verified 53-word by-value frame ----
+    {
+      Kv11Frame f;
+      f.w[0]=(int)param_5[0x25]; f.w[1]=(int)param_5[0x26]; f.w[2]=(int)param_5[0x27];
+      memcpy(&f.w[3], &param_5[0], 34*sizeof(int));            // param_5[0..0x21]
+      f.w[37]=(int)param_3[4];    f.w[38]=(int)param_3[5];    f.w[39]=(int)param_3[6];
+      f.w[40]=(int)param_3[7];    f.w[41]=(int)param_3[8];    f.w[42]=(int)param_3[9];
+      f.w[43]=(int)param_3[0xa];  f.w[44]=(int)param_3[0xb];  f.w[45]=(int)param_3[0xc];
+      f.w[46]=(int)param_3[0x46]; f.w[47]=(int)param_3[0x47]; f.w[48]=(int)param_3[0x48];
+      f.w[49]=(int)param_3[0x43]; f.w[50]=(int)param_3[0x44]; f.w[51]=(int)param_3[0x45];
+      f.w[52]=(int)param_3[0x49];
+      ((void (__cdecl *)(Kv11Frame))param_11)(f);
+    }
 
     puVar14 = param_3;
     param_3 = (undefined4 *)0x0;                               // reused as index (raw)
@@ -337,20 +348,42 @@ FUN_00560260(int *param_1,int *param_2,undefined4 *param_3,int *param_4,int *par
     puVar14[0x4e] = param_9[1];
     puVar14[0x50] = param_9[0x17];
     _DAT_00913284 = 0;
-    // ---- [UNCERTAIN U-K13-KV] param_13 call #1 @~0x560ab? ---------------------
-    // explicit args (param_4, param_4+6, param_4+0x15, param_6) + ~50-word by-value
-    // tail (K13_PORT_RECON). STUBBED with the 4 typed args — PIN tail via capture.
-    ((void (__cdecl *)(void *,void *,void *,int))param_13)(param_4, param_4 + 6,
-                                                           param_4 + 0x15, param_6);
+    // ---- param_13 KV callback #1 @0x560c5a — 4 ptr args + 65-word tail (DISASM-verified) ----
+    {
+      Kv13Frame f;
+      f.w[0]=(int)param_4; f.w[1]=(int)(param_4+6); f.w[2]=(int)(param_4+0x15); f.w[3]=(int)param_6;
+      memcpy(&f.w[4], &param_5[0], 34*sizeof(int));            // param_5[0..0x21]
+      f.w[38]=(int)puVar14[0x46]; f.w[39]=(int)puVar14[0x47]; f.w[40]=(int)puVar14[0x48];
+      f.w[41]=(int)puVar14[0xd];  f.w[42]=(int)puVar14[0xe];  f.w[43]=(int)puVar14[0xf];
+      f.w[44]=(int)puVar14[0x10]; f.w[45]=(int)puVar14[0x11]; f.w[46]=(int)puVar14[0x12];
+      f.w[47]=(int)param_5[0x22]; f.w[48]=(int)param_5[0x23]; f.w[49]=(int)param_5[0x24];
+      f.w[50]=(int)puVar14[0x1c]; f.w[51]=(int)puVar14[0x1d]; f.w[52]=(int)puVar14[0x1e];
+      f.w[53]=(int)puVar14;
+      memcpy(&f.w[54], &puVar14[0x49], 14*sizeof(int));        // puVar14[0x49..0x56]
+      f.w[68]=(int)param_12;
+      ((void (__cdecl *)(Kv13Frame))param_13)(f);
+    }
     // 0x00560c90  (leaf, hooked) — 5 args
     FUN_005601f0(param_7, param_4[6], param_4[7], param_4[8], param_2);
     // param_13 KV callback #2 — real side effects kept; frame [UNCERTAIN]
     puVar14[0x4e] = param_9[2];
     puVar14[0x50] = param_9[0x18];
     _DAT_00913284 = 1;
-    // ---- [UNCERTAIN U-K13-KV] param_13 call #2 @~0x560b?? ---------------------
-    ((void (__cdecl *)(void *,void *,void *,int))param_13)(param_4 + 3, param_4 + 9,
-                                                           param_4 + 0x18, param_6);
+    // ---- param_13 KV callback #2 @0x560d90 — 4 ptr args + 65-word tail (DISASM-verified) ----
+    {
+      Kv13Frame f;
+      f.w[0]=(int)(param_4+3); f.w[1]=(int)(param_4+9); f.w[2]=(int)(param_4+0x18); f.w[3]=(int)param_6;
+      memcpy(&f.w[4], &param_5[0], 34*sizeof(int));            // param_5[0..0x21]
+      f.w[38]=(int)puVar14[0x46]; f.w[39]=(int)puVar14[0x47]; f.w[40]=(int)puVar14[0x48];
+      f.w[41]=(int)puVar14[0x13]; f.w[42]=(int)puVar14[0x14]; f.w[43]=(int)puVar14[0x15];
+      f.w[44]=(int)puVar14[0x16]; f.w[45]=(int)puVar14[0x17]; f.w[46]=(int)puVar14[0x18];
+      f.w[47]=(int)param_5[0x25]; f.w[48]=(int)param_5[0x26]; f.w[49]=(int)param_5[0x27];
+      f.w[50]=(int)puVar14[0x1f]; f.w[51]=(int)puVar14[0x20]; f.w[52]=(int)puVar14[0x21];
+      f.w[53]=(int)puVar14;
+      memcpy(&f.w[54], &puVar14[0x49], 14*sizeof(int));        // puVar14[0x49..0x56]
+      f.w[68]=(int)param_12;
+      ((void (__cdecl *)(Kv13Frame))param_13)(f);
+    }
     // 0x00560e25  (K7) — 18 args
     FUN_0056caa0(piVar8[0x12], piVar8[0x13], param_4 + 0xc, param_4 + 0xf, param_4 + 0x12,
                  piVar8[0xc], (int *)piVar8[0xd], *(int *)puVar14, puVar14[1], puVar14[2],
