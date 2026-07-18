@@ -439,3 +439,37 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   `_DAT_005ceae4`, `DAT_005d757c`=0.0, `0x3f4ccccd`=0.8, FLT_MAX sentinels — read each before use.
   Race after: 84 hooks (bridge+B5c8+K1..K11 + 0x00570090). NB run `diag.py doctor` FIRST if the boot
   self-exits (frida-pool/zombie wedge, not display). (K6 unblocked K13; K7/K8/K9/K10/K11 DONE.)
+
+- GROUNDWORK next: K13 (00560260:0xDD0=3536 B, body_end 0x00561030). **This is the top-level ISLAND-
+  SOLVE STEP ORCHESTRATOR** — NOT a leaf partition. Single caller `FUN_00561040`. Signature (13 params,
+  decompiler-recovered): `void FUN_00560260(int* p1[solver-ctx piVar8], int* p2, undefined4* p3[state
+  arr, indexed 0x00..0x56], undefined4* p4, undefined4* p5, u4 p6, u4 p7, int p8[island list; +4=count,
+  +0x10=base], undefined4* p9[config; +0x13..+0x1a dt/flags, [0x16]==2 selects integrator], u4 p10,
+  code* p11[KV callback], u4 p12, code* p13[KV velocity-integrate callback])`. Flow per island (loop
+  over p8[+4] islands, stride 0x28): accumulate forces → `FUN_00567c00`(K9) → per contact/joint
+  `FUN_0056efc0`(K9)+`FUN_00570090`(**K12**) → per-joint `FUN_0056f350`(K10) → `FUN_0056f020`(K9);
+  then `FUN_0056e680`(K8 inertia) → `FUN_005675d0`[UNPORTED] → integrator `FUN_0056dd40`(K8, if
+  p9[0x16]==2) / `FUN_0056d3f0`(K8, else) → `FUN_0056d070`(K7) → `(*p11)()` → clamp loop → `(*p13)(p4,
+  p4+6,p4+0x15,p6)` velocity-integrate → `FUN_005601f0`[hooked] → `(*p13)(p4+3,...)` → `FUN_0056caa0`
+  (K7) → `FUN_0056c580`(K7); tail (always): `FUN_0056c310`[UNPORTED] → `FUN_0056bdf0`[UNPORTED] →
+  penetration-resolve loop (`FUN_005667c0`=K1 normalize, `_DAT_005e5258` threshold, `PTR_DAT_005ceabc`
+  guard, `_DAT_005cc33c` sign) → final per-body force-clear loop.
+  **ABI TRAP (the hard part, [[feedback-ghidra-prebranch-args]] at scale):** the decomp prints every
+  callee as `FUN_xxx()` with NO args because the callees carry `unknown` conv — the real args are
+  PUSHed / pre-placed on the stack and Ghidra models them as `pfStack_50/54/58/5c…`/`iStack_60…` stores
+  (incl. a return-address literal per call). ROSETTA-VERIFIED via the K12 call @0x560590: real disasm =
+  `PUSH ECX; PUSH 0x0; PUSH EAX; PUSH EBX; CALL 0x00570090; ADD ESP,0x10` → `FUN_00570090(EBX=solver-
+  ctx, EAX=*(piVar12[2]+idx*4)=manifold, 0.0f, ECX=dt)`, __cdecl 4-arg caller-cleaned. So the PORT must
+  reconstruct EACH of the ~16 call sites from disasm — OR (cheaper) set the now-known K1/K7/K8/K9/K10/
+  K12 callee SIGNATURES in a WRITABLE master/clone and re-decompile so Ghidra associates the args. The
+  2 indirect calls are via fn-ptr PARAMS p11/p13 (the standalone KV1..KV3 targets) — caller-supplied, so
+  for the .asi A/B they resolve to ORIGINAL code; NO KV port needed for the K13 race. Unported direct
+  callees FUN_005675d0/FUN_0056c310/FUN_0056bdf0 also resolve to original on the .asi (fine for A/B).
+  K13 PORT is a full focused session (≈K12 scale, harder ABI). **KICKOFF for the port session:**
+  "B5e K13 — port FUN_00560260 (island-solve orchestrator, 3536 B) on r7/b5e-solver-island (pool0/14).
+  Read B5e_SOLVER_ISLAND §5 'GROUNDWORK next: K13' first. Set the K1/K7/K8/K9/K10/K12 callee signatures
+  in a writable clone, re-decompile to recover the 16 stack-arg call sites (Rosetta: K12 call @0x560590
+  = 4-arg __cdecl), port to Collision/RwpSolverPartition13.cpp, wire into build.bat+asi_sources.rsp,
+  build both. p11/p13 are fn-ptr params (KV, caller-supplied); FUN_005675d0/c310/bdf0 stay original on
+  the .asi. Race-accept: 85 hooks (bridge+B5c8+K1..K12 + 0x00560260); run diag.py doctor FIRST and a
+  stock no-hooks CONTROL if the boot self-exits (env wedge, not code). Commit DONE, re-classify C1→C2."
