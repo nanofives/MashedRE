@@ -367,6 +367,29 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   +9 s reconverged to the K6-family invariant [-83.7,0.2,331.1] — strong evidence the constraint-row
   generator port is faithful (a defect here would blow up the contact solver). The 3 fns
   re-classified C1→C2.
-- OPEN next: K11 (00567f00:1460 00567c60:670 005685f0:431 00568dd0:505 00568fd0:354, 5 fns /
-  3420 B, deps none [leaves]; within-cluster 00567c60→00567f00) → K12…. (K6 unblocked K13;
-  K7/K8/K9/K10 DONE.)
+- K11 **PORTED + BUILT clean (both targets), race-acceptance BLOCKED on boot/display env — NOT
+  yet C2** (2026-07-17). The 5 fns → `Collision/RwpSolverCore11.cpp`: 67f00 (contact-island
+  union-find / disjoint-set path-compression merge, 9-arg stack ABI, calls K1 005684c0/00568560 +
+  cluster 005685f0), 67c60 (island partition finalize, calls 67f00), 5685f0 (disjoint-set list
+  merge), 68dd0 (contact-cache scatter build pass), 68fd0 (contact-cache max query). Every body
+  re-verified vs live pool14 disasm 2026-07-17: all 5 __cdecl (RET C3). Findings: (1) 67f00's
+  9-arg stack ABI ported positionally; its K1/cluster calls pass Ghidra-loose int/ptr types, bound
+  via all-int ABI-shim externs (identical 32-bit __cdecl ABI). (2) **68dd0/68fd0 float-as-pointer
+  de-confusion** (K10 class): the contact-node struct is typed float* but `[0x2c]`(shape ptr),
+  `[0x2d]/[0x2f]`(body ptrs), `[0x37]`(list-next) are raw pointers, and `*pfVar1=(float)pfVar12` /
+  `param_1=(int*)fVar4` are bit stores — fixed. The 3-term dot @0x00568f38 is reverse-pair FADDP,
+  the LAB path FCHS-negates. (3) **decomp bug fixed**: the two second-loop bitset tests in 67f00
+  dropped a deref level (offset rendered outside `*(uint*)`); disasm @0x00568211 shows
+  `*(uint*)(*(int*)(*(int*)(*piVar5+0x24)+0x60) + (uVar1>>5)*4) & (1<<(uVar1&0x1f))` — corrected to
+  the offset-inside form (matching the first loop). Both targets built clean (RwpSolverCore11.cpp:
+  no diagnostics; wired into build.bat + asi_sources.rsp). **RACE BLOCKED**: the 83-hook race
+  (bridge+B5c8+K1..K11) could not run — `MASHED.exe` self-exits before the menu (no crash dump),
+  and the block reproduces with the **known-good K6 `.asi` + the 9-hook baseline** and survives a
+  `setup_mashed_compat.ps1` re-run, so it is the d3d9-device-unavailable / display-asleep boot
+  wedge (`feedback_d3d9_shim_wedges_gpu_driver`), NOT a K11 defect. K11 stays C1 until an active
+  display lets the acceptance race run; the 5 fns are NOT re-classified. (Manifest evidence: the
+  K11 `.asi` loaded and installed all 83 hooks before the boot exit.)
+- OPEN next: **run the K11 acceptance race once an active display is restored** (83 hooks =
+  bridge+B5c8+K1..K11; the 5 K11 RVAs 00567f00/00567c60/005685f0/00568dd0/00568fd0), then
+  re-classify C1→C2 and commit K11 DONE. Then K12 (00570090:10500 constraint/LCP core, own cluster,
+  deps K1 K9 K10).
