@@ -367,8 +367,11 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   +9 s reconverged to the K6-family invariant [-83.7,0.2,331.1] — strong evidence the constraint-row
   generator port is faithful (a defect here would blow up the contact solver). The 3 fns
   re-classified C1→C2.
-- K11 **PORTED + BUILT clean (both targets), race-acceptance BLOCKED on boot/display env — NOT
-  yet C2** (2026-07-17). The 5 fns → `Collision/RwpSolverCore11.cpp`: 67f00 (contact-island
+- K11 **DONE — race GREEN 2026-07-17** (was briefly blocked by a stale frida-pool/zombie-MASHED
+  wedge — MASHED self-exited pre-menu even with the K6 baseline; `diag.py doctor` HEALED the
+  frida pool + confirmed `render OK, CreateDevice hr=0` [display was fine], after which the race
+  ran clean — NOT a display/d3d9 issue and NOT a K11 defect). The 5 fns →
+  `Collision/RwpSolverCore11.cpp`: 67f00 (contact-island
   union-find / disjoint-set path-compression merge, 9-arg stack ABI, calls K1 005684c0/00568560 +
   cluster 005685f0), 67c60 (island partition finalize, calls 67f00), 5685f0 (disjoint-set list
   merge), 68dd0 (contact-cache scatter build pass), 68fd0 (contact-cache max query). Every body
@@ -388,8 +391,11 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   `setup_mashed_compat.ps1` re-run, so it is the d3d9-device-unavailable / display-asleep boot
   wedge (`feedback_d3d9_shim_wedges_gpu_driver`), NOT a K11 defect. K11 stays C1 until an active
   display lets the acceptance race run; the 5 fns are NOT re-classified. (Manifest evidence: the
-  K11 `.asi` loaded and installed all 83 hooks before the boot exit.)
-- OPEN next: **run the K11 acceptance race once an active display is restored** (83 hooks =
-  bridge+B5c8+K1..K11; the 5 K11 RVAs 00567f00/00567c60/005685f0/00568dd0/00568fd0), then
-  re-classify C1→C2 and commit K11 DONE. Then K12 (00570090:10500 constraint/LCP core, own cluster,
-  deps K1 K9 K10).
+  K11 `.asi` loaded and installed all 83 hooks before the boot exit.) **RESOLVED**: `diag.py
+  doctor` cleaned the stale frida pool + zombie MASHED; the 83-hook race then ran GREEN
+  (`log/b5e-solver-island/b5e_k11_acceptance_2026-07-17.log`, manifest 83/83 idx 1121–1125), sim
+  healthy full 35 s into round 3 (spawnFired 12→16→20), +9 s bit-identical to the K6-family
+  invariant. The 5 fns re-classified C1→C2.
+- OPEN next: K12 (00570090:10500 — the constraint/LCP solver core, own cluster, 1 fn / 10,500 B,
+  deps K1 K9 K10). This is the single largest island function (the PGS/LCP inner solver) — budget a
+  focused session. (K6 unblocked K13; K7/K8/K9/K10/K11 DONE.)
