@@ -440,7 +440,23 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   Race after: 84 hooks (bridge+B5c8+K1..K11 + 0x00570090). NB run `diag.py doctor` FIRST if the boot
   self-exits (frida-pool/zombie wedge, not display). (K6 unblocked K13; K7/K8/K9/K10/K11 DONE.)
 
-- GROUNDWORK next: K13 (00560260:0xDD0=3536 B, body_end 0x00561030). **This is the top-level ISLAND-
+- **K13 (FUN_00560260) — PORTED + BUILT 2026-07-18 (both targets compile+link clean); NOT YET C2.**
+  Method: set all 16 __cdecl callee sigs on pool0 clone → re-decompiled → the 14 DIRECT calls
+  transcribed verbatim (arg order = C param order), body from RAW decomp (int* param_9 + reinterpret
+  floats). Traps handled: integrator selector is INTEGER `param_9[0x16]==2` (dd40 SSE vs d3f0 x87);
+  `1.0/(float)param_3[0x49]` reinterprets dt bits. File `Collision/RwpSolverPartition13.cpp` wired into
+  build.bat + asi_sources.rsp. Full reconstruction + citations: `re/analysis/b5e/K13_PORT_RECON_2026-07-18.md`.
+  **[UNCERTAIN U-K13-KV] — the 3 `code*` KV callbacks (param_11 ×1, param_13 ×2) build large by-value
+  outgoing frames (param_11=53 words; param_13=4 ptr args + ~50-word tail) that the decompiler
+  mis/partly-models. Owner decision (2026-07-18): STUB the indirect CALLs (real side-effect writes kept),
+  PIN the frames via a live Frida stack read at each CALL in the original at race time.** DO NOT deploy the
+  K13 .asi over main's working K12 .asi until the frames are pinned (a stubbed callback → garbage stack →
+  crash past the first callback). Deploy step was skipped (worktree has no original\ junction — expected).
+  **NEXT (race session, display up):** (1) pin the 3 KV frames via Frida capture (values enumerated in
+  K13_PORT_RECON; verify by-offset order), fill them in, rebuild; (2) deploy; (3) race-accept 85 hooks
+  (bridge+B5c8+K1..K12 + 0x00560260) via scenario_launch, `diag.py doctor` FIRST + stock control if boot
+  self-exits; (4) on GREEN re-classify K13 C1→C2. Commits on r7/b5e-solver-island (worktree).
+- GROUNDWORK (superseded by the PORTED+BUILT block above): K13 (00560260:0xDD0=3536 B, body_end 0x00561030). **This is the top-level ISLAND-
   SOLVE STEP ORCHESTRATOR** — NOT a leaf partition. Single caller `FUN_00561040`. Signature (13 params,
   decompiler-recovered): `void FUN_00560260(int* p1[solver-ctx piVar8], int* p2, undefined4* p3[state
   arr, indexed 0x00..0x56], undefined4* p4, undefined4* p5, u4 p6, u4 p7, int p8[island list; +4=count,
