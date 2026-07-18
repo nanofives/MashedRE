@@ -449,7 +449,14 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   85/85 installed=1 (FUN_00560260 idx 1127 confirmed via canonical_install_observe), phase-3 + 4 cars +
   full 35s bounded physics no NaN/crash/freeze, telemetry matches K12 (a wrong KV frame would blow up the
   velocity-integrate → sim explosion; it ran clean). K13 .asi deployed to main original\ (backup
-  .pre-b5e-k13). Per-field bit-identity deferred to lane-end. NEXT cluster: K14.
+  .pre-b5e-k13). Per-field bit-identity deferred to lane-end.
+- **K14 (4 x87-float leaves) — DONE C1→C2 2026-07-18 (commit 45e41a0c, RwpSolverCore14.cpp; race GREEN
+  89 hooks).** 00577be0 line-param clamp / 00577cb0 polygon edge probe (tail-calls be0) / 00577ec0
+  segment-segment closest-approach clamp (capsule core; float-in-POINTER-var reuse split to `float p1sel`,
+  disasm-confirmed x87 @0x578005+) / 005784a0 contact-array dedup/insert (_DAT_005ce54c=1.0006e-06 eps,
+  _DAT_005cd03c=9.99999e-05). No external deps (cb0->be0 intra-cluster). Manifest 89/89 (idx 1128-1131),
+  sim full 35s bounded, telemetry matches K12/K13. Deploy backup .pre-b5e-k14. NEXT cluster: K15
+  (00576880:4958, own cluster, deps K1 K14).
   (historical port detail:)
 - **K13 (FUN_00560260) — PORTED + BUILT 2026-07-18 (both targets compile+link clean); NOT YET C2.**
   Method: set all 16 __cdecl callee sigs on pool0 clone → re-decompiled → the 14 DIRECT calls
