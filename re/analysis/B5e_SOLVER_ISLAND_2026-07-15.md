@@ -396,7 +396,21 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   (`log/b5e-solver-island/b5e_k11_acceptance_2026-07-17.log`, manifest 83/83 idx 1121–1125), sim
   healthy full 35 s into round 3 (spawnFired 12→16→20), +9 s bit-identical to the K6-family
   invariant. The 5 fns re-classified C1→C2.
-- OPEN next: K12 (00570090:10500 — own cluster, 1 fn / 10,500 B, deps K1 K9 K10). **ANALYSIS DONE
+- K12 PORTED + BUILT 2026-07-18 (RwpSolverCore12.cpp, 1 fn 0x00570090 / 10,500 B) — both targets
+  compile CLEAN, wired into build.bat + asi_sources.rsp, and the 84-hook manifest verifies 84/84
+  INSTALLED (idx 1126 FUN_00570090 flag=1, `log/b5e-solver-island/b5e_k12_hook_manifest_2026-07-18.txt`;
+  the canonical-install-observe boot ran the full K12 .asi to menu with no boot crash). **Race
+  SIM-HEALTH still PENDING → NOT YET C2**: the 84-hook scenario_launch race + a stock no-hooks CONTROL
+  both self-exit pre-menu with NO crash dump after 4 diag-doctor heals + a 75 s settle — the
+  environmental d3d9/display wedge signature ([[feedback-d3d9-shim-wedges-gpu-driver]]), NOT a K12
+  code fault (FUN_00570090 is a race-time physics fn, never runs pre-menu; control fails identically).
+  Re-run `scenario_launch --track 0 --mode 10 --cars 4 --hold 35 --hooks <84-list from
+  b5e_k12_hook_manifest names>` once the display/GPU is active; on GREEN, re-classify C1→C2. Port
+  notes: 3 float[27] row buffers (memcpy DAT_005e5738 template) + fb90/fea0/5667c0 I/O frames; the
+  Ghidra float10 fVar19/fVar20 inlined to +/-FLT_MAX (memory_read-confirmed sentinels), all
+  "int-bit" slot stores are exact float literals (0.8f/-FLT_MAX/0.0f), slot-reuse split into typed
+  vars. Decomp analysis (original K12 map) retained below.
+- (superseded) prior K12 pre-port note: **ANALYSIS DONE
   2026-07-17 (fresh focused session recommended for the port).** Decomp = 1120 lines
   (`re/analysis/b5e/decomp/FUN_00570090.c`). It is NOT an LCP inner-solver — it is the **big
   per-manifold constraint-ROW GENERATOR** (the K10/f350 analogue for the joint/contact with many
