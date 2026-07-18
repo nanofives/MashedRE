@@ -396,6 +396,32 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   (`log/b5e-solver-island/b5e_k11_acceptance_2026-07-17.log`, manifest 83/83 idx 1121–1125), sim
   healthy full 35 s into round 3 (spawnFired 12→16→20), +9 s bit-identical to the K6-family
   invariant. The 5 fns re-classified C1→C2.
-- OPEN next: K12 (00570090:10500 — the constraint/LCP solver core, own cluster, 1 fn / 10,500 B,
-  deps K1 K9 K10). This is the single largest island function (the PGS/LCP inner solver) — budget a
-  focused session. (K6 unblocked K13; K7/K8/K9/K10/K11 DONE.)
+- OPEN next: K12 (00570090:10500 — own cluster, 1 fn / 10,500 B, deps K1 K9 K10). **ANALYSIS DONE
+  2026-07-17 (fresh focused session recommended for the port).** Decomp = 1120 lines
+  (`re/analysis/b5e/decomp/FUN_00570090.c`). It is NOT an LCP inner-solver — it is the **big
+  per-manifold constraint-ROW GENERATOR** (the K10/f350 analogue for the joint/contact with many
+  DOF: normal + 2 friction + twist + swing + linear/angular limits + motors). Structure: a long
+  sequence of `if`-branches gated by the joint config flags at `param_2+0x4c+0x3c`/`+0x8c`, each
+  branch (a) memcpy's the 27-float `DAT_005e5738` row template into `local_29c` / `local_d8` /
+  `local_6c`, (b) fills the Jacobian rows (2-term cross products / 3-term dots) + clamp limits, then
+  (c) emits via `FUN_0056f1f0`(K9); ends with `FUN_0056f0a0`(K9). Body_end 0x00572993 (RET);
+  __cdecl (verify byte). Callees (ALL direct, no indirect): `FUN_005667c0`(K1, returns a REAL
+  float10 magnitude @line 421), `FUN_0056fb90`/`FUN_0056fea0`(K10, the two basis builders @lines
+  168/171/198), `FUN_0056f1f0`/`FUN_0056f0a0`(K9). **KEY DE-RISK (the hard part): the `float10
+  fVar19/fVar20` + `extraout_ST1` + `(float10)FUN_0056f1f0(...)` are Ghidra x87-stack-liveness
+  ARTIFACTS, not real return values** — `fVar19 = _DAT_005ceac0 = 0x7f7fffff = FLT_MAX` and
+  `fVar20 = _DAT_005e5050 = 0xff7fffff = -FLT_MAX` (memory_read confirmed), the two x87-resident
+  default clamp limits held across the void f1f0 calls. So port them as constants
+  (`local_240=(float)fVar19` → `FLT_MAX`, `local_244=(float)fVar20` → `-FLT_MAX`) and DROP the
+  `fVar20=(float10)FUN_0056f1f0(...)` / `fVar19=extraout_ST1` lines. The ONE real float10 is
+  `FUN_005667c0` @421 (a magnitude; `fVar1=(float)fVar19` uses it). Other traps to handle (all K10
+  class): float-in-pointer-var reuse (`local_2a0=(float*)(local_2fc*local_2fc)` then
+  `(float)local_2a0`; same for `local_2ec`/`pfVar13`/`local_228`/`local_2a0` in the restitution
+  block ~lines 1018-1054); `local_318`/`local_300` are float-holding-int loop counters/bitmasks
+  (`local_300 = 1.12104e-44` = int bits 8 → the `& uVar11` flag walk; port as int); the row-buffer
+  locals (`local_29c[27]`/`local_d8`/`local_6c`) are contiguous mixed float/undefined4 like f350's
+  local_78. Constants seen: `_DAT_005cc320`=1.0, `_DAT_005cc32c`=0.5, `_DAT_005cc56c`/`_DAT_005e57dc`
+  (softness), `_DAT_005cc34c`/`_DAT_005cc35c`/`_DAT_005cc31c`/`_DAT_005cc574`/`_DAT_005cc328`/
+  `_DAT_005ceae4`, `DAT_005d757c`=0.0, `0x3f4ccccd`=0.8, FLT_MAX sentinels — read each before use.
+  Race after: 84 hooks (bridge+B5c8+K1..K11 + 0x00570090). NB run `diag.py doctor` FIRST if the boot
+  self-exits (frida-pool/zombie wedge, not display). (K6 unblocked K13; K7/K8/K9/K10/K11 DONE.)
