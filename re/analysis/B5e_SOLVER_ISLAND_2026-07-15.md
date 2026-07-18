@@ -455,8 +455,17 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   segment-segment closest-approach clamp (capsule core; float-in-POINTER-var reuse split to `float p1sel`,
   disasm-confirmed x87 @0x578005+) / 005784a0 contact-array dedup/insert (_DAT_005ce54c=1.0006e-06 eps,
   _DAT_005cd03c=9.99999e-05). No external deps (cb0->be0 intra-cluster). Manifest 89/89 (idx 1128-1131),
-  sim full 35s bounded, telemetry matches K12/K13. Deploy backup .pre-b5e-k14. NEXT cluster: K15
-  (00576880:4958, own cluster, deps K1 K14).
+  sim full 35s bounded, telemetry matches K12/K13. Deploy backup .pre-b5e-k14.
+- **K15 (FUN_00576880:4958, polygon↔polygon SAT/edge-edge closest-feature DRIVER; deps K1+K14) — DONE
+  C1→C2 2026-07-18 (RwpSolverCore15.cpp; race GREEN 90 hooks).** x87 verbatim; census decomp already had
+  all call args (leaf callees). Traps: param_11[0x1f]/[0x3f] FLAG reinterpret `*(uint*)&param_11[N] & 0x20`
+  (disasm @0x577732 byte-flag), FUN_005667c0 float10 ST0-pop (declared non-void), ABS→fabsf/SQRT→sqrtf,
+  consts _DAT_005e4568=-1e-6/_DAT_005e4564=1.0000010/_DAT_005ceac0=FLT_MAX/_DAT_005cc32c=0.5. **FIXED a
+  CONTIGUOUS-STACK-BUFFER bug (K8/K10 class, C4700 tell): 7 consecutive-offset vec3 groups (gF=[f8,f4,f0]
+  gE=[ec,e8,e4] gD=[d0,cc,c8] gA=[ac,a8,a4] gN=[94,90,8c] gO=[a0,9c,98] gP=[18,14,10]) were passed as
+  &local_XX into vec3-R/W callees → declared as arrays (word-boundary regex rename avoids local_10⊂local_100
+  hazard); C4700 gone.** Manifest 90/90 (idx 1132), sim healthy full 35s into ROUND 2 (spawnFired 12→16),
+  bounded. Deploy backup .pre-b5e-k15. NEXT cluster: K16 (10 fns/2822B, deps none).
   (historical port detail:)
 - **K13 (FUN_00560260) — PORTED + BUILT 2026-07-18 (both targets compile+link clean); NOT YET C2.**
   Method: set all 16 __cdecl callee sigs on pool0 clone → re-decompiled → the 14 DIRECT calls

@@ -1,15 +1,11 @@
 // ============================================================================
-//  ⚠ WIP — NOT RACE-READY (2026-07-18). Structure/logic ported verbatim and BUILDS
-//  clean, but a CONTIGUOUS-STACK-BUFFER bug remains (K8/K10 class): the decomp passes
-//  `&local_XX` to vec3-reading/writing callees, so these separate C floats must be
-//  ARRAYS. C4700 on local_a8/local_a4 confirms it (written via &local_ac by be0/cb0).
-//  7 vec3 groups to array before racing (by consecutive stack offset):
-//    [local_f8,local_f4,local_f0] [local_ec,local_e8,local_e4] [local_d0,local_cc,local_c8]
-//    [local_ac,local_a8,local_a4] [local_94,local_90,local_8c] [local_a0,local_9c,local_98]
-//    [local_18,local_14,local_10]  (the ec0/be0/5784a0 dir-input & point-out params).
-//  NOTE the local_10 ⊂ local_100 substring hazard when renaming. The ec0 scalar out-
-//  params (local_100/local_fc/local_c0/local_4c) are SINGLE floats — leave separate.
-//  Do NOT deploy/race this .asi until the groups are arrayed and C4700 is gone.
+//  CONTIGUOUS-STACK-BUFFER fix APPLIED (2026-07-18, K8/K10 class): the decomp passed
+//  `&local_XX` into vec3-reading/writing callees (be0/cb0 write the output point;
+//  ec0/be0 read the direction; 5784a0 reads the new point), so the 7 consecutively-
+//  offset local groups are ONE stack array each — declared gF/gE/gD/gA/gN/gO/gP[3]:
+//    gF=[f8,f4,f0] gE=[ec,e8,e4] gD=[d0,cc,c8] gA=[ac,a8,a4] gN=[94,90,8c]
+//    gO=[a0,9c,98] gP=[18,14,10]. (C4700 on the a8/a4 slots was the tell.) The ec0
+//    scalar out-params (local_100/local_fc/local_c0/local_4c) stay SEPARATE floats.
 // ============================================================================
 //  RwpSolverCore15.cpp  —  B5e solver-island cluster K15
 //  Ported function: FUN_00576880 (0x00576880, 4958 B) — the RWP-3.7 narrow-phase
@@ -83,34 +79,16 @@ FUN_00576880(float *param_1,uint param_2,float *param_3,uint param_4,float param
   uint local_104;
   float local_100;
   float local_fc;
-  float local_f8;
-  float local_f4;
-  float local_f0;
-  float local_ec;
-  float local_e8;
-  float local_e4;
   float local_e0;
   float local_dc;
   float local_d8;
   int local_d4;
-  float local_d0;
-  float local_cc;
-  float local_c8;
   float local_c4;
   float local_c0;
   float local_bc;
   float local_b8;
   uint local_b4;
   uint local_b0;
-  float local_ac;
-  float local_a8;
-  float local_a4;
-  float local_a0;
-  float local_9c;
-  float local_98;
-  float local_94;
-  float local_90;
-  float local_8c;
   uint local_88;
   float local_84;
   float local_80;
@@ -138,9 +116,13 @@ FUN_00576880(float *param_1,uint param_2,float *param_3,uint param_4,float param
   uint local_28;
   float local_20;
   float local_1c;
-  float local_18;
-  float local_14;
-  float local_10;
+  float gF[3];
+  float gE[3];
+  float gD[3];
+  float gA[3];
+  float gN[3];
+  float gO[3];
+  float gP[3];
   float local_4;
 
   local_b4 = param_2 + param_4;
@@ -185,26 +167,26 @@ FUN_00576880(float *param_1,uint param_2,float *param_3,uint param_4,float param
   if (param_2 == 1) {
     *param_9 = 0;
     if (param_4 == 1) {
-      local_ec = *param_3;
-      local_e8 = param_3[1];
-      local_e4 = param_3[2];
+      gE[0] = *param_3;
+      gE[1] = param_3[1];
+      gE[2] = param_3[2];
       *param_10 = 0;
     }
     else if (param_4 == 2) {
-      local_f8 = param_3[4] - *param_3;
-      local_f4 = param_3[5] - param_3[1];
-      local_f0 = param_3[6] - param_3[2];
-      uVar11 = FUN_00577be0(param_3,&local_f8,0.0f,1.0f,param_1,&local_ec);
+      gF[0] = param_3[4] - *param_3;
+      gF[1] = param_3[5] - param_3[1];
+      gF[2] = param_3[6] - param_3[2];
+      uVar11 = FUN_00577be0(param_3,&gF[0],0.0f,1.0f,param_1,&gE[0]);
       *param_10 = uVar11;
     }
     else {
-      uVar11 = FUN_00577cb0(param_3,param_4,param_7,param_1,&local_ec,&local_b0);
+      uVar11 = FUN_00577cb0(param_3,param_4,param_7,param_1,&gE[0],&local_b0);
       *param_10 = uVar11;
       if (uVar11 == 2) {
         if (local_b4 <= local_104) {
           return local_104;
         }
-        pfVar4 = &local_ec;
+        pfVar4 = &gE[0];
 LAB_00576bbe:
         FUN_005784a0(&local_104,param_12,pfVar4,param_7,param_6);
         return local_104;
@@ -212,74 +194,74 @@ LAB_00576bbe:
       if (uVar11 == 1) {
         pfVar4 = param_3 + ((int)((local_b0 - param_4) + 1) >> 0x1f & local_b0 + 1) * 4;
         param_3 = param_3 + local_b0 * 4;
-        local_f8 = *pfVar4 - *param_3;
-        local_f4 = pfVar4[1] - param_3[1];
-        local_f0 = pfVar4[2] - param_3[2];
+        gF[0] = *pfVar4 - *param_3;
+        gF[1] = pfVar4[1] - param_3[1];
+        gF[2] = pfVar4[2] - param_3[2];
       }
     }
     local_c0 = 0.0f;
-    local_e0 = *param_1 - local_ec;
-    local_ac = *param_1;
-    local_a8 = param_1[1];
-    local_dc = param_1[1] - local_e8;
-    local_d8 = param_1[2] - local_e4;
-    local_a4 = param_1[2];
+    local_e0 = *param_1 - gE[0];
+    gA[0] = *param_1;
+    gA[1] = param_1[1];
+    local_dc = param_1[1] - gE[1];
+    local_d8 = param_1[2] - gE[2];
+    gA[2] = param_1[2];
     local_c4 = local_d8 * local_d8 + local_e0 * local_e0 + local_dc * local_dc;
   }
   else if (param_4 == 1) {
     *param_10 = 0;
     if (param_2 == 2) {
-      local_d0 = param_1[4] - *param_1;
-      local_cc = param_1[5] - param_1[1];
-      local_c8 = param_1[6] - param_1[2];
-      uVar11 = FUN_00577be0(param_1,&local_d0,0.0f,1.0f,param_3,&local_ac);
+      gD[0] = param_1[4] - *param_1;
+      gD[1] = param_1[5] - param_1[1];
+      gD[2] = param_1[6] - param_1[2];
+      uVar11 = FUN_00577be0(param_1,&gD[0],0.0f,1.0f,param_3,&gA[0]);
       *param_9 = uVar11;
     }
     else {
-      uVar11 = FUN_00577cb0(param_1,param_2,param_7,param_3,&local_ac,&local_b0);
+      uVar11 = FUN_00577cb0(param_1,param_2,param_7,param_3,&gA[0],&local_b0);
       *param_9 = uVar11;
       if (uVar11 == 2) {
         if (local_b4 <= local_104) {
           return local_104;
         }
-        pfVar4 = &local_ac;
+        pfVar4 = &gA[0];
         goto LAB_00576bbe;
       }
       if (uVar11 == 1) {
         pfVar4 = param_1 + ((int)((local_b0 - param_2) + 1) >> 0x1f & local_b0 + 1) * 4;
         param_1 = param_1 + local_b0 * 4;
-        local_d0 = *pfVar4 - *param_1;
-        local_cc = pfVar4[1] - param_1[1];
-        local_c8 = pfVar4[2] - param_1[2];
+        gD[0] = *pfVar4 - *param_1;
+        gD[1] = pfVar4[1] - param_1[1];
+        gD[2] = pfVar4[2] - param_1[2];
       }
     }
-    local_e0 = local_ac - *param_3;
-    local_ec = *param_3;
-    local_e8 = param_3[1];
-    local_e4 = param_3[2];
+    local_e0 = gA[0] - *param_3;
+    gE[0] = *param_3;
+    gE[1] = param_3[1];
+    gE[2] = param_3[2];
     local_c0 = 0.0f;
-    local_dc = local_a8 - param_3[1];
-    local_d8 = local_a4 - param_3[2];
+    local_dc = gA[1] - param_3[1];
+    local_d8 = gA[2] - param_3[2];
     local_c4 = local_d8 * local_d8 + local_e0 * local_e0 + local_dc * local_dc;
   }
   else if (local_b4 < 5) {
-    local_d0 = param_1[4] - *param_1;
-    local_cc = param_1[5] - param_1[1];
-    local_c8 = param_1[6] - param_1[2];
-    local_f8 = param_3[4] - *param_3;
-    local_f4 = param_3[5] - param_3[1];
-    local_f0 = param_3[6] - param_3[2];
-    FUN_00577ec0(param_3,&local_f8,0.0f,1.0f,param_1,&local_d0,0.0f,1.0f,&local_100,&local_fc,
+    gD[0] = param_1[4] - *param_1;
+    gD[1] = param_1[5] - param_1[1];
+    gD[2] = param_1[6] - param_1[2];
+    gF[0] = param_3[4] - *param_3;
+    gF[1] = param_3[5] - param_3[1];
+    gF[2] = param_3[6] - param_3[2];
+    FUN_00577ec0(param_3,&gF[0],0.0f,1.0f,param_1,&gD[0],0.0f,1.0f,&local_100,&local_fc,
                  &local_c0);
-    local_ac = local_fc * local_d0 + *param_1;
-    local_a8 = local_fc * local_cc + param_1[1];
-    local_a4 = local_fc * local_c8 + param_1[2];
-    local_ec = local_100 * local_f8 + *param_3;
-    local_e8 = local_100 * local_f4 + param_3[1];
-    local_e4 = local_100 * local_f0 + param_3[2];
-    local_e0 = local_ac - local_ec;
-    local_dc = local_a8 - local_e8;
-    local_d8 = local_a4 - local_e4;
+    gA[0] = local_fc * gD[0] + *param_1;
+    gA[1] = local_fc * gD[1] + param_1[1];
+    gA[2] = local_fc * gD[2] + param_1[2];
+    gE[0] = local_100 * gF[0] + *param_3;
+    gE[1] = local_100 * gF[1] + param_3[1];
+    gE[2] = local_100 * gF[2] + param_3[2];
+    local_e0 = gA[0] - gE[0];
+    local_dc = gA[1] - gE[1];
+    local_d8 = gA[2] - gE[2];
     *param_9 = (uint)(local_fc * local_fc != local_fc);
     *param_10 = (uint)(local_100 * local_100 != local_100);
     local_c4 = local_d8 * local_d8 + local_e0 * local_e0 + local_dc * local_dc;
@@ -309,26 +291,26 @@ LAB_00576bbe:
         if (iVar10 != 2) {
           pfVar4 = param_1 + local_60 * 4;
           pfVar6 = param_1 + local_88 * 4;
-          local_a0 = *pfVar4 - *pfVar6;
-          local_9c = pfVar4[1] - pfVar6[1];
-          local_98 = pfVar4[2] - pfVar6[2];
+          gO[0] = *pfVar4 - *pfVar6;
+          gO[1] = pfVar4[1] - pfVar6[1];
+          gO[2] = pfVar4[2] - pfVar6[2];
         }
         if (iVar10 != 1) {
           pfVar4 = param_3 + local_78 * 4;
           pfVar6 = param_3 + local_7c * 4;
-          local_94 = *pfVar4 - *pfVar6;
-          local_90 = pfVar4[1] - pfVar6[1];
-          local_8c = pfVar4[2] - pfVar6[2];
+          gN[0] = *pfVar4 - *pfVar6;
+          gN[1] = pfVar4[1] - pfVar6[1];
+          gN[2] = pfVar4[2] - pfVar6[2];
         }
         pfVar4 = param_1 + local_88 * 4;
         pfVar6 = param_3 + local_7c * 4;
-        FUN_00577ec0(pfVar6,&local_94,0.0f,1.0f,pfVar4,&local_a0,0.0f,1.0f,&local_fc,
+        FUN_00577ec0(pfVar6,&gN[0],0.0f,1.0f,pfVar4,&gO[0],0.0f,1.0f,&local_fc,
                      &local_100,&local_4c);
-        local_4 = local_100 * local_98 + pfVar4[2];
-        local_20 = local_fc * local_90 + pfVar6[1];
-        local_1c = local_fc * local_8c + pfVar6[2];
-        local_58 = (local_100 * local_a0 + *pfVar4) - (local_fc * local_94 + *pfVar6);
-        local_54 = (local_100 * local_9c + pfVar4[1]) - local_20;
+        local_4 = local_100 * gO[2] + pfVar4[2];
+        local_20 = local_fc * gN[1] + pfVar6[1];
+        local_1c = local_fc * gN[2] + pfVar6[2];
+        local_58 = (local_100 * gO[0] + *pfVar4) - (local_fc * gN[0] + *pfVar6);
+        local_54 = (local_100 * gO[1] + pfVar4[1]) - local_20;
         local_50 = local_4 - local_1c;
         fVar1 = local_50 * local_50 + local_58 * local_58 + local_54 * local_54;
         if ((fVar1 < local_c4 + _DAT_005ce54c) &&
@@ -349,18 +331,18 @@ LAB_00576bbe:
         local_3c = param_1[local_60 * 4] - *pfVar6;
         local_38 = param_1[local_60 * 4 + 1] - pfVar6[1];
         local_34 = param_1[local_60 * 4 + 2] - pfVar6[2];
-        local_5c = (local_94 * param_7[1] - local_90 * *param_7) * local_98 +
-                   (local_90 * param_7[2] - local_8c * param_7[1]) * local_a0 +
-                   (local_8c * *param_7 - local_94 * param_7[2]) * local_9c;
+        local_5c = (gN[0] * param_7[1] - gN[1] * *param_7) * gO[2] +
+                   (gN[1] * param_7[2] - gN[2] * param_7[1]) * gO[0] +
+                   (gN[2] * *param_7 - gN[0] * param_7[2]) * gO[1];
         local_b8 = ((*pfVar9 - *pfVar4) * param_7[1] - (pfVar9[1] - pfVar4[1]) * *param_7) *
-                   local_98 +
+                   gO[2] +
                    ((pfVar9[1] - pfVar4[1]) * param_7[2] - (pfVar9[2] - pfVar4[2]) * param_7[1]) *
-                   local_a0 +
+                   gO[0] +
                    ((pfVar9[2] - pfVar4[2]) * *param_7 - (*pfVar9 - *pfVar4) * param_7[2]) *
-                   local_9c;
-        local_bc = (local_3c * param_7[1] - local_38 * *param_7) * local_8c +
-                   (local_38 * param_7[2] - local_34 * param_7[1]) * local_94 +
-                   (local_34 * *param_7 - local_3c * param_7[2]) * local_90;
+                   gO[1];
+        local_bc = (local_3c * param_7[1] - local_38 * *param_7) * gN[2] +
+                   (local_38 * param_7[2] - local_34 * param_7[1]) * gN[0] +
+                   (local_34 * *param_7 - local_3c * param_7[2]) * gN[1];
         if ((iVar10 == 0) ||
            (((local_b8 * local_48 < DAT_005d757c == (local_b8 * local_48 == DAT_005d757c) &&
              (local_bc * local_44 < DAT_005d757c == (local_bc * local_44 == DAT_005d757c))) ||
@@ -378,19 +360,19 @@ LAB_00577480:
           fVar2 = (pfVar4[1] - pfVar6[1]) * param_7[2] - (pfVar4[2] - pfVar6[2]) * param_7[1];
           local_30 = (pfVar4[2] - pfVar6[2]) * *param_7 - (*pfVar4 - *pfVar6) * param_7[2];
           fVar1 = (*pfVar4 - *pfVar6) * param_7[1] - (pfVar4[1] - pfVar6[1]) * *param_7;
-          local_80 = (local_30 * local_90 + fVar1 * local_8c + fVar2 * local_94) *
+          local_80 = (local_30 * gN[1] + fVar1 * gN[2] + fVar2 * gN[0]) *
                      (_DAT_005cc320 / local_5c);
-          local_84 = (fVar1 * local_98 + fVar2 * local_a0 + local_30 * local_9c) *
+          local_84 = (fVar1 * gO[2] + fVar2 * gO[0] + local_30 * gO[1]) *
                      (_DAT_005cc320 / local_5c);
           if ((((local_80 <= _DAT_005e4568) || (_DAT_005e4564 <= local_80)) ||
               (local_84 <= _DAT_005e4568)) || (_DAT_005e4564 <= local_84)) goto LAB_00577479;
-          local_18 = local_80 * local_a0 + *pfVar4;
-          local_14 = local_80 * local_9c + pfVar4[1];
-          local_10 = local_80 * local_98 + pfVar4[2];
+          gP[0] = local_80 * gO[0] + *pfVar4;
+          gP[1] = local_80 * gO[1] + pfVar4[1];
+          gP[2] = local_80 * gO[2] + pfVar4[2];
           if (local_b4 <= local_104) {
             return local_104;
           }
-          iVar10 = FUN_005784a0(&local_104,param_12,&local_18,param_7,param_6);
+          iVar10 = FUN_005784a0(&local_104,param_12,&gP[0],param_7,param_6);
           if (iVar10 != 0) {
             return local_104;
           }
@@ -501,20 +483,20 @@ LAB_005778a4:
           }
           pfVar4 = param_1 + ((int)((local_28 - param_2) + 1) >> 0x1f & local_28 + 1) * 4;
           param_1 = param_1 + local_28 * 4;
-          local_d0 = *pfVar4 - *param_1;
-          local_cc = pfVar4[1] - param_1[1];
-          local_c8 = pfVar4[2] - param_1[2];
+          gD[0] = *pfVar4 - *param_1;
+          gD[1] = pfVar4[1] - param_1[1];
+          gD[2] = pfVar4[2] - param_1[2];
           uVar11 = (int)((local_40 - param_4) + 1) >> 0x1f & local_40 + 1;
-          local_f8 = param_3[uVar11 * 4] - param_3[local_40 * 4];
+          gF[0] = param_3[uVar11 * 4] - param_3[local_40 * 4];
           pfVar4 = param_3 + local_40 * 4;
-          local_f4 = param_3[uVar11 * 4 + 1] - pfVar4[1];
-          local_f0 = param_3[uVar11 * 4 + 2] - pfVar4[2];
-          local_ac = local_70 * local_d0 + *param_1;
-          local_a8 = local_70 * local_cc + param_1[1];
-          local_a4 = local_70 * local_c8 + param_1[2];
-          local_ec = local_68 * local_f8 + *pfVar4;
-          local_e8 = local_68 * local_f4 + pfVar4[1];
-          local_e4 = local_68 * local_f0 + pfVar4[2];
+          gF[1] = param_3[uVar11 * 4 + 1] - pfVar4[1];
+          gF[2] = param_3[uVar11 * 4 + 2] - pfVar4[2];
+          gA[0] = local_70 * gD[0] + *param_1;
+          gA[1] = local_70 * gD[1] + param_1[1];
+          gA[2] = local_70 * gD[2] + param_1[2];
+          gE[0] = local_68 * gF[0] + *pfVar4;
+          gE[1] = local_68 * gF[1] + pfVar4[1];
+          gE[2] = local_68 * gF[2] + pfVar4[2];
           *param_9 = local_2c;
           *param_10 = local_b0;
           goto LAB_005776fc;
@@ -535,11 +517,11 @@ LAB_005776fc:
     param_7[1] = fVar1 * local_dc;
     param_7[2] = fVar1 * local_d8;
     param_6 = (param_5 + *param_8) * _DAT_005cc32c +
-              fVar1 * local_d8 * local_e4 +
-              local_e0 * fVar1 * local_ec + fVar1 * local_dc * local_e8;
+              fVar1 * local_d8 * gE[2] +
+              local_e0 * fVar1 * gE[0] + fVar1 * local_dc * gE[1];
   }
   if (local_104 < local_b4) {
-    FUN_005784a0(&local_104,param_12,&local_ec,param_7,param_6);
+    FUN_005784a0(&local_104,param_12,&gE[0],param_7,param_6);
   }
   if ((local_c0 <= DAT_005d757c) || (uVar11 <= local_104)) {
     if (*param_9 == 0) {
@@ -550,19 +532,19 @@ LAB_005776fc:
     }
   }
   else {
-    local_ec = local_c0 * local_f8 + local_ec;
-    local_e8 = local_c0 * local_f4 + local_e8;
-    local_e4 = local_c0 * local_f0 + local_e4;
-    FUN_005784a0(&local_104,param_12,&local_ec,param_7,param_6);
+    gE[0] = local_c0 * gF[0] + gE[0];
+    gE[1] = local_c0 * gF[1] + gE[1];
+    gE[2] = local_c0 * gF[2] + gE[2];
+    FUN_005784a0(&local_104,param_12,&gE[0],param_7,param_6);
     *param_10 = 1;
     *param_9 = 1;
   }
-  fVar1 = param_7[2] * local_cc - param_7[1] * local_c8;
-  fVar3 = local_c8 * *param_7 - param_7[2] * local_d0;
-  fVar2 = param_7[1] * local_d0 - local_cc * *param_7;
-  *param_11 = fVar3 * local_c8 - fVar2 * local_cc;
-  param_11[1] = fVar2 * local_d0 - fVar1 * local_c8;
-  param_11[2] = fVar1 * local_cc - fVar3 * local_d0;
+  fVar1 = param_7[2] * gD[1] - param_7[1] * gD[2];
+  fVar3 = gD[2] * *param_7 - param_7[2] * gD[0];
+  fVar2 = param_7[1] * gD[0] - gD[1] * *param_7;
+  *param_11 = fVar3 * gD[2] - fVar2 * gD[1];
+  param_11[1] = fVar2 * gD[0] - fVar1 * gD[2];
+  param_11[2] = fVar1 * gD[1] - fVar3 * gD[0];
   FUN_005667c0(param_11,param_11);
 LAB_00577ad6:
   fVar1 = *param_11 * _DAT_005cc33c;
@@ -571,7 +553,7 @@ LAB_00577ad6:
   param_11[1] = fVar3;
   fVar2 = param_11[2] * _DAT_005cc33c;
   param_11[2] = fVar2;
-  param_11[3] = fVar2 * local_a4 + fVar1 * local_ac + fVar3 * local_a8;
+  param_11[3] = fVar2 * gA[2] + fVar1 * gA[0] + fVar3 * gA[1];
   if (*param_10 == 0) {
     param_11[0x20] = *param_7;
     param_11[0x21] = param_7[1];
@@ -579,15 +561,15 @@ LAB_00577ad6:
   }
   else {
     pfVar4 = param_11 + 0x20;
-    fVar1 = param_7[2] * local_f4 - param_7[1] * local_f0;
-    fVar3 = local_f0 * *param_7 - param_7[2] * local_f8;
-    fVar2 = param_7[1] * local_f8 - local_f4 * *param_7;
-    *pfVar4 = fVar3 * local_f0 - fVar2 * local_f4;
-    param_11[0x21] = fVar2 * local_f8 - fVar1 * local_f0;
-    param_11[0x22] = fVar1 * local_f4 - fVar3 * local_f8;
+    fVar1 = param_7[2] * gF[1] - param_7[1] * gF[2];
+    fVar3 = gF[2] * *param_7 - param_7[2] * gF[0];
+    fVar2 = param_7[1] * gF[0] - gF[1] * *param_7;
+    *pfVar4 = fVar3 * gF[2] - fVar2 * gF[1];
+    param_11[0x21] = fVar2 * gF[0] - fVar1 * gF[2];
+    param_11[0x22] = fVar1 * gF[1] - fVar3 * gF[0];
     FUN_005667c0(pfVar4,pfVar4);
   }
-  param_11[0x23] = param_11[0x22] * local_e4 + param_11[0x20] * local_ec + param_11[0x21] * local_e8;
+  param_11[0x23] = param_11[0x22] * gE[2] + param_11[0x20] * gE[0] + param_11[0x21] * gE[1];
   return local_104;
 }
 
