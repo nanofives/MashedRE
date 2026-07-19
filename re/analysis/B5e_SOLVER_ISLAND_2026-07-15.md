@@ -538,6 +538,36 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   NaN/crash/freeze (b5e_k18_acceptance_FINAL_2026-07-19.log). Wall-slide `[-49.3,0,-58.0]` = same
   scenario-variance proven under K16/K17. Deploy backup .pre-b5e-k18. Per-field bit-identity deferred to
   lane-end. NEXT cluster: K19 (see queue §3). Lane: K1..K18 all DONE C2.
+- **K19 (3 fns/890B, narrow-phase drivers/wrappers; deps K15 K18) — DONE C1→C2 2026-07-19
+  (RwpSolverCore19.cpp; race GREEN 117 hooks).** RVAs 00578e50 (105B, SAT-axis narrow-phase wrapper:
+  runs K18 FUN_00578610 over the pair, gate on depth<tol, then two-shape dispatch FUN_005757d0),
+  0057adb0 (105B, TOI narrow-phase wrapper: identical flow but the axis test is K18 conservative-
+  advancement FUN_0057a9a0), 005752b0 (680B, box/box narrow-phase driver: builds the per-shape type
+  indices from +0x54/+0xd4, runs the K15 SAT driver FUN_00576880, writes the manifold header, runs the
+  K18 clip FUN_00574ad0, fills per-point friction/restitution + picks the reference normal). x87 verbatim;
+  no new consts. All 5 callees (K15/K18) already ported → externed only.
+  **DISASM-RESOLVED CONVENTIONS: the two wrappers push SEVEN __cdecl args to their K18 callee (ADD ESP,0x1c
+  after CALL @0x578e88/@0x57ade8); K18's FUN_00578610 body reads only 6 params but the wrapper pushes a
+  7th (param_5) which caller-cleanup discards — reproduced via a 7-param extern (C linkage resolves by
+  name, not arity), with every arg typed to its exact value so no int<->float conversion is introduced.
+  005752b0 — sVar1/sVar2 are ZERO-extended (XOR EAX,EAX / MOV AX,word @0x5752c0..0x5752d1) → declared
+  `ushort` so (uint)sVar matches the pushed dword; the point-count at record+0xac (param_3[0x2b]) is an
+  INTEGER (written 0 via MOV [EDI+0xac],EBP; compared !=0 / looped as int) — Ghidra mistyped it float via
+  param_3 being float*; FUN_00576880 args +0x50/+0xd0/+0x10c pushed as raw dwords → externed undefined4 for
+  byte-exact pushes.**
+  **NO contiguous-buffer trap: the three out-ptrs &local_108/&local_114/&local_110 (FUN_00576880 args)
+  land at NON-adjacent stack slots and each reads back a single scalar; local_100[256] is a proper array.**
+  Install-observe manifest **117/117 installed=1** (installed set EXACTLY equals the K19 island, 0 missing/
+  0 extra; log/b5e-solver-island/b5e_k19_hook_manifest_2026-07-19.txt). SIM-HEALTH race track 0 / 4 cars:
+  phase 3, spawnFired 12→16 / grounded 4, full 35s, bounded/finite, no NaN/crash/freeze
+  (b5e_k19_acceptance_FINAL_2026-07-19.log). **BISECTION CONTROL vs K18-baseline(114): the baseline ran the
+  SAME healthy envelope (identical phase/spawn progression, bit-identical `+9s vel=[-83.7,0.2,331.1]`, both
+  full 35s, both re-spawn at +23s → spawnFired 16); later-frame magnitude differences are run-to-run RNG
+  nondeterminism the baseline exhibits too (this baseline settled differently from K18's earlier
+  `[-49.3,0,-58.0]` run — so trajectory-value is not a valid gate; health is). K19 shows NO early-exit — the
+  failure mode a per-fn bug would produce — confirming K19 stays within the baseline healthy envelope**
+  (b5e_k19_control_k18base_2026-07-19.log). Deploy backup .pre-b5e-k19 (the 114-hook K18 .asi). Per-field
+  bit-identity deferred to lane-end. NEXT cluster: K20 (see queue §3). Lane: K1..K19 all DONE C2.
   (historical port detail:)
 - **K13 (FUN_00560260) — PORTED + BUILT 2026-07-18 (both targets compile+link clean); NOT YET C2.**
   Method: set all 16 __cdecl callee sigs on pool0 clone → re-decompiled → the 14 DIRECT calls

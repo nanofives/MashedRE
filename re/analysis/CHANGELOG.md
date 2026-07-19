@@ -1,3 +1,6 @@
+2026-07-19  0x00578e50  FUN_00578e50  C1->C2  RwpSolverCore19.cpp (SAT-axis narrow-phase wrapper; 7-arg __cdecl call to K18 FUN_00578610) — race GREEN 117 hooks + SIM-HEALTH; B5e K19
+2026-07-19  0x0057adb0  FUN_0057adb0  C1->C2  RwpSolverCore19.cpp (TOI narrow-phase wrapper; 7-arg __cdecl call to K18 FUN_0057a9a0) — race GREEN 117 hooks; B5e K19
+2026-07-19  0x005752b0  FUN_005752b0  C1->C2  RwpSolverCore19.cpp (box/box narrow-phase driver; K15 FUN_00576880 SAT + manifold + K18 FUN_00574ad0 clip; ushort/int mistype fixes) — race GREEN 117 hooks; B5e K19
 2026-07-19  0x005757d0  FUN_005757d0  C1->C2  RwpSolverCore18.cpp (2-shape narrow-phase dispatch) — race GREEN 114 hooks + SIM-HEALTH; B5e K18
 2026-07-19  0x0056b7a0  FUN_0056b7a0  C1->C2  RwpSolverCore18.cpp (broad-phase pair emit, dual 7-float AABB gate) — race GREEN 114 hooks; B5e K18
 2026-07-19  0x00574ad0  FUN_00574ad0  C1->C2  RwpSolverCore18.cpp (poly-vs-plane clip + fan reduce, float10) — race GREEN 114 hooks; B5e K18
