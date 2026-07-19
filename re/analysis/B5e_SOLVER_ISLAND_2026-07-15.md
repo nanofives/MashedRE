@@ -484,6 +484,31 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   K15 and with base89). K16 is behaviorally indistinguishable from the 89-hook baseline. Deploy backup
   .pre-b5e-k16. Evidence: log/b5e-solver-island/b5e_k16_{acceptance,ISOLATION_no-k16,rerun2}_2026-07-18.log
   + b5e_k16_hook_manifest_2026-07-18.txt. NEXT cluster: K17 (9 fns/7429B, deps K1 K2 K3 K16).
+- **K17 (9 fns/7429B, GJK support/distance + manifold BVH-expansion + coplanar-merge; deps K1 K2 K3 K16)
+  — DONE C1→C2 2026-07-19 (RwpSolverCore17.cpp; race GREEN 108 hooks).** RVAs 00575b60 (face-normal orient
+  vs support extremes), 00575fe0 (recursive BVH contact-node expansion, 1631B), 00578b20/00578bd0/00578cb0
+  (2-shape / face-A / face-B support-span deltas, float10 ST0), 00578d90 (edge-edge separating-axis +
+  normalize), 00578ff0 (manifold coplanar-merge + 4-point tetra reduce, 2386B), 0057a250 (GJK/EPA
+  penetration iteration, 1037B), 0057a660 (GJK initial-axis selection, float10). x87 verbatim; consts
+  _DAT_005cc33c=-1.0/_005cc328=0.01/_005cc558=0.001/_005cc9b4=0.99/_005cd03c=1e-4/_005ccabc=1.1/
+  _005ce1d4=1.01/_005ce54c=1e-6/PTR_DAT_005ceabc=1.175e-38 (all memory-read). Callees FUN_005667c0/566200/
+  566830/004c4600/0055bd70/0055c2d0 (K1-K3) + K16 externed (defined in sibling TUs, same .asi).
+  **DISASM-RESOLVED REINTERPRETS (Ghidra mistyped as float): 00578ff0 — contact counts at +0xac load via
+  FILD (0x579642/0x5796e4/0x57963b) integer→float; the `fVar17`/`fVar16` list-walks are int pointer chases
+  (MOV [.+0xdc]; TEST EAX; DEC EAX @0x579732/0x5797d2/0x5797cb); `local_b4`/+0xa8 are int counter/flag
+  (INC EAX/TEST EAX @0x579534/0x5793e9). 00575fe0 — `pfVar10[0x17]=(float)&DAT_005e5db0` is a literal-addr
+  store `MOV [EBX+0x5c],0x5e5db0` (0x576344); all `(**code)()` are __cdecl (caller-cleans).** Contiguous
+  stack buffers arrayed: 0057a250 simplex[6]=local_18[4]+local_8/4 + vec3 out-params sp[3]/cand[3]; 0057a660
+  loc[6]=local_50..3c + local_38[6] + AABB bb[7] (gap@+0x14); 00575fe0 AABB local_20[7]. Scratch-slot reuse
+  (incoming ptr slots → FUN_0055c2d0 out-floats a4/a5): 00575b60/578b20/578bd0; 0057a660 reuses param_2 as
+  float acc (pfVar3=saved out); 0057a250 reuses param_4 (ptr saved iVar5) as float fAcc. ABS→fabsf (float) /
+  fabsl (float10). Build: added `undefined2` typedef (only fix). Install-observe manifest **108/108
+  installed=1** (all 9 K17 present); SIM-HEALTH race track 0 / 4 cars: phase 3, spawnFired 12 / grounded 4,
+  full 35s, physics ticking bounded/finite (`[358,0,-1302]`→`[2328,-23,2478]`→`[-49.3,0,-58.0]`), no
+  NaN/crash/freeze. Wall-slide steady-state `[-49.3,0,-58.0]` = **same scenario-variance proven under K16**
+  (identical settle with/without cluster). Deploy backup .pre-b5e-k17. Env note: monitor-sleep no-display
+  wedge blocked the race mid-session (clean process exit, hooks still install=1); resolved by user waking the
+  display. NEXT cluster: K18 (see queue §3).
   (historical port detail:)
 - **K13 (FUN_00560260) — PORTED + BUILT 2026-07-18 (both targets compile+link clean); NOT YET C2.**
   Method: set all 16 __cdecl callee sigs on pool0 clone → re-decompiled → the 14 DIRECT calls
