@@ -509,6 +509,35 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   (identical settle with/without cluster). Deploy backup .pre-b5e-k17. Env note: monitor-sleep no-display
   wedge blocked the race mid-session (clean process exit, hooks still install=1); resolved by user waking the
   display. NEXT cluster: K18 (see queue §3).
+- **K18 (6 fns/5543B, pair dispatch + BVH manifold recursion + SAT hull axis + CA-TOI + poly clip; deps K1 K2
+  K3 K5 K16 K17) — DONE C1→C2 2026-07-19 (RwpSolverCore18.cpp; race GREEN 114 hooks).** RVAs 005757d0
+  (2-shape narrow-phase dispatch, support x2), 0056b7a0 (broad-phase pair emit w/ dual 7-float AABB overlap
+  gate), 00574ad0 (polygon-vs-plane clip + convex fan reduce, 1615B, float10 area), 00575c60 (recursive BVH
+  manifold expansion, 890B — exact twin of K17 FUN_00575fe0), 00578610 (SAT convex-hull separating axis,
+  1287B, float10), 0057a9a0 (conservative-advancement TOI iterate, 1035B, float10). x87 verbatim; new consts
+  memory-read: _005cc9a0=0.05 / _005cc9dc=0.95 / _005ceac0=3.4028235e38 (FLT_MAX) / _005e5050=-3.4028235e38
+  (-FLT_MAX); reused 005cc328=0.01 / 005cc32c=0.5 / 005cc33c=-1.0 / 005d757c=0.0 / 005cc320=1.0 / 005ce54c=1e-6.
+  All 16 callees (K1/K2/K3/K5/K16/K17) already ported → externed only.
+  **DISASM-RESOLVED CONVENTIONS: 005757d0 — FUN_0055c230 __cdecl 5-arg (ADD ESP,0x14); 3 negated floats =
+  1 contiguous vec3. 0056b7a0 — FUN_0055bd80 4-arg / FUN_0055abb0 3-arg / FUN_0055ae50 2-arg cdecl; two
+  independent 7-float AABBs (gap@[3]); `local_44`=`MOV word[ESP+0x20],0xffff` partial-init (low16 only,
+  high-half faithful leftover). 00575c60 — CALL 0x00575fe0 10-arg cdecl, vtable [.+0x10] cdecl 4-arg
+  (rwp_support4), FUN_004c4600 3-arg; param_3 is Ghidra-mistyped float* actually walked as a POINTER-ARRAY
+  (stride 3) — reinterpreted via `*(u4**)param_3`. 00578610 — vtable [.+0x1c] hull-fetch cdecl 4-arg (ADD
+  ESP,0x20 for the pair); fStack_100+afStack_fc = ONE 12-float edge buffer (walk starts edgeB+1);
+  fStack_138/134/130 contiguous cross-product vec3. FUN_00575120 arg2 is a FLOAT value (Ghidra typed u4) —
+  extern declared `float` so the correct 4 bytes are pushed.**
+  **BUG FOUND + FIXED (bisection-caught): 00578610 faceN — FUN_00578bd0/cb0 write a CONTIGUOUS vec3 through
+  `&fStack_124` (asm: param_4[0..2] ← [ESP+0x30/34/38]); it was first mis-declared as 3 separate float
+  scalars, so the callee's 3-float write corrupted the stack and param_4[1]/[2] read stale → wrong separating
+  axis → race exited at ~13s. K17-baseline(108) control ran the full 35s while 114 exited at 13s, isolating
+  the fault to K18; per-fn bisection pinned it to 00578610; redeclared `float faceN[3]` → full 35s.** (Same
+  contiguous-buffer trap class as K8/K10/K15/K17.) Install-observe manifest **114/114 installed=1** (all 6 K18
+  present; log/b5e-solver-island/b5e_k18_hook_manifest_2026-07-19.txt); SIM-HEALTH race track 0 / 4 cars:
+  phase 3, spawnFired 12 / grounded 4, full 35s, bounded/finite (`[2322,-23,2510]`→`[-49.3,0,-58.0]`), no
+  NaN/crash/freeze (b5e_k18_acceptance_FINAL_2026-07-19.log). Wall-slide `[-49.3,0,-58.0]` = same
+  scenario-variance proven under K16/K17. Deploy backup .pre-b5e-k18. Per-field bit-identity deferred to
+  lane-end. NEXT cluster: K19 (see queue §3). Lane: K1..K18 all DONE C2.
   (historical port detail:)
 - **K13 (FUN_00560260) — PORTED + BUILT 2026-07-18 (both targets compile+link clean); NOT YET C2.**
   Method: set all 16 __cdecl callee sigs on pool0 clone → re-decompiled → the 14 DIRECT calls

@@ -1,3 +1,9 @@
+2026-07-19  0x005757d0  FUN_005757d0  C1->C2  RwpSolverCore18.cpp (2-shape narrow-phase dispatch) — race GREEN 114 hooks + SIM-HEALTH; B5e K18
+2026-07-19  0x0056b7a0  FUN_0056b7a0  C1->C2  RwpSolverCore18.cpp (broad-phase pair emit, dual 7-float AABB gate) — race GREEN 114 hooks; B5e K18
+2026-07-19  0x00574ad0  FUN_00574ad0  C1->C2  RwpSolverCore18.cpp (poly-vs-plane clip + fan reduce, float10) — race GREEN 114 hooks; B5e K18
+2026-07-19  0x00575c60  FUN_00575c60  C1->C2  RwpSolverCore18.cpp (recursive BVH manifold expansion, cdecl vtable) — race GREEN 114 hooks; B5e K18
+2026-07-19  0x00578610  FUN_00578610  C1->C2  RwpSolverCore18.cpp (SAT convex-hull separating axis, float10; faceN vec3 fix) — race GREEN 114 hooks; B5e K18
+2026-07-19  0x0057a9a0  FUN_0057a9a0  C1->C2  RwpSolverCore18.cpp (conservative-advancement TOI iterate, float10) — race GREEN 114 hooks; B5e K18
 2026-07-19  0x00575B60  FUN_00575b60  C1->C2  RwpSolverCore17.cpp (face-normal orient vs support extremes) x87 verbatim; race GREEN 108 hooks manifest 108/108; wall-slide=scenario-variance (same as K16); B5e K17
 2026-07-19  0x00575FE0  FUN_00575fe0  C1->C2  RwpSolverCore17.cpp (recursive BVH contact-node expansion (cdecl vtable + literal-addr store)) x87 verbatim; race GREEN 108 hooks manifest 108/108; wall-slide=scenario-variance (same as K16); B5e K17
 2026-07-19  0x00578B20  FUN_00578b20  C1->C2  RwpSolverCore17.cpp (2-shape support-span delta (float10)) x87 verbatim; race GREEN 108 hooks manifest 108/108; wall-slide=scenario-variance (same as K16); B5e K17
