@@ -1,3 +1,5 @@
+2026-07-19  0x00575880  FUN_00575880  C1->C2  RwpSolverCore20.cpp (single-pair narrow-phase driver; reserves manifold slot, K19 SAT/TOI wrapper, shape-block copy + FUN_0055c2d0 axis-orient; param_1 pointer-mistyped-float fix + 2 reused out-floats) — race GREEN + SIM-HEALTH + bisection bit-identical thru +18s; B5e K20
+2026-07-19  0x00575560  FUN_00575560  C1->C2  RwpSolverCore20.cpp (pair-batch driver; loops FUN_005752b0 per pair capped param_5-1, FUN_00578ff0 reduce, threads contacts onto body lists; raw-dword->float callee args) — race GREEN + SIM-HEALTH; B5e K20
 2026-07-19  0x00578e50  FUN_00578e50  C1->C2  RwpSolverCore19.cpp (SAT-axis narrow-phase wrapper; 7-arg __cdecl call to K18 FUN_00578610) — race GREEN 117 hooks + SIM-HEALTH; B5e K19
 2026-07-19  0x0057adb0  FUN_0057adb0  C1->C2  RwpSolverCore19.cpp (TOI narrow-phase wrapper; 7-arg __cdecl call to K18 FUN_0057a9a0) — race GREEN 117 hooks; B5e K19
 2026-07-19  0x005752b0  FUN_005752b0  C1->C2  RwpSolverCore19.cpp (box/box narrow-phase driver; K15 FUN_00576880 SAT + manifold + K18 FUN_00574ad0 clip; ushort/int mistype fixes) — race GREEN 117 hooks; B5e K19

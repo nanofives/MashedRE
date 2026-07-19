@@ -568,6 +568,40 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   failure mode a per-fn bug would produce — confirming K19 stays within the baseline healthy envelope**
   (b5e_k19_control_k18base_2026-07-19.log). Deploy backup .pre-b5e-k19 (the 114-hook K18 .asi). Per-field
   bit-identity deferred to lane-end. NEXT cluster: K20 (see queue §3). Lane: K1..K19 all DONE C2.
+- **K20 (2 fns/1350B, narrow-phase pair drivers; deps K3 K17 K19) — DONE C1→C2 2026-07-19
+  (commit pending; RwpSolverCore20.cpp).** FUN_00575880 (732B) single-pair driver: reserves a manifold slot
+  from the world pool (world+0x2c/+0x30/+0x34), runs the K19 SAT (FUN_00578e50) or TOI (FUN_0057adb0)
+  wrapper (chosen by the 0x10 flag on either body's shape), copies both shape blocks into the record, and
+  for shape-A rotates its local axis into world space + orients the normal via K3 FUN_0055c2d0; shape-B
+  fixup via K17 FUN_00575b60. FUN_00575560 (618B) pair-batch driver: walks param_3 pairs (+0x120 stride),
+  builds ≤param_5-1 manifolds via K19 FUN_005752b0, reduces via K17 FUN_00578ff0, then threads surviving
+  contacts onto the two bodies' contact lists (world+0x64 pool); a shape's 0x20 (trigger) flag skips solving
+  and records the raw overlap only.
+  **DISASM-RESOLVED TRAPS (pool14): (1) FUN_00575880 incoming param_1 is a POINTER (World*) that Ghidra
+  mistyped `float` (only `(int)param_1+off` + one FLD of [param_1+0x74]) → ported as `int world`, with the
+  Ghidra-reused `param_1 = *(float*)(world+0x74)` (0x5758c1) split into the float local `local_p1`, which then
+  doubles as the 1st FUN_0055c2d0 out-float (&local_p1 @0x575a4f, read back in `param_4 - fVar8 < fVar8 -
+  local_p1`); the incoming float param_4 (depth) likewise doubles as the 2nd out-float (K17/K19 scratch-slot
+  reuse). (2) FUN_00578e50/0057adb0 called with 5 __cdecl args (ADD ESP,0x14); 5th arg = raw dword
+  [world+0x74] (PUSH EDX, no FLD) → externed with a `float` 5th param for a byte-exact push (K19 body only
+  forwards it). (3) FUN_005752b0 arg2 = raw dword [world+0x70] and FUN_00578ff0 arg6 = raw dword [world+0x74]
+  → read as `*(float*)` to feed K19/K17's float params without int→float conversion; FUN_00578ff0 6-arg (ADD
+  ESP,0x18).** All 5 callees already ported (K3/K17/K19) → externed only.
+  **ACCEPTANCE (post-reboot 2026-07-19):** clean build both targets; both K20 RVAs baked into the .asi
+  (count=1, 820224 B). SIM-HEALTH race track 0 / 4 cars: phase 3, VERDICT [OK], spawnFired 12→16 / grounded 4,
+  full 33s, bounded/finite, no NaN/crash/freeze (b5e_k20_acceptance_FINAL_2026-07-19.log). **BISECTION CONTROL
+  vs K19-baseline(117 .asi): both GREEN + the trajectory is BIT-IDENTICAL through +18s (+4s [374.9,0,-1223.2],
+  +9s [-83.7,0.2,331.1], +13s [2322.9,-23.2,2510.9], +18s [0,0,0] all match exactly), diverging only at +23s
+  where RNG kicks in — proving the K20 ports reproduce baseline behavior; both full 33s, no early-exit**
+  (b5e_k20_control_k19base_2026-07-19.log). Install-observe **118/119**: both K20 hooks install=1; the single
+  miss (0x5752b0, a *K19* hook) is a pre-existing harness install-ordering flake — it installs clean SOLO
+  (JMP-LIVE) and the miss reproduces identically on the untouched K19 baseline .asi (which logged 117/117 in
+  the prior session), so it is NOT a K20 defect. NB env: the K20 SIM-HEALTH race was initially blocked by a
+  system-wide DirectShow-intro boot hang (quartz.dll, phase-0, reproduced with no .asi); root-caused to a
+  wedged GPU/DirectShow state (TdrLevel=0 machine-wide + ~15 MASHED respawns this session) and cleared by a
+  reboot — see memory [[project-boot-hang-directshow-intro]]. Deploy backup .pre-b5e-k20 (the 117-hook K19
+  .asi). Per-field bit-identity C4 deferred to lane-end. NEXT cluster: K21 (see queue §3). Lane: K1..K20 all
+  DONE C2.
   (historical port detail:)
 - **K13 (FUN_00560260) — PORTED + BUILT 2026-07-18 (both targets compile+link clean); NOT YET C2.**
   Method: set all 16 __cdecl callee sigs on pool0 clone → re-decompiled → the 14 DIRECT calls
