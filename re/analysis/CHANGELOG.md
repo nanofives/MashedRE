@@ -1,3 +1,4 @@
+2026-07-20  0x00561040  FUN_00561040  C1->C2  RwpSolverCore23.cpp (pair-record slicer -> K13 FUN_00560260; ONE contiguous frame[30] desc[0..21]+block[22..29] — piVar8[0x16]/[0x17]=block[0]/[1], separate arrays crashed at spawn) — race GREEN 134 hooks 2x moving + SIM-HEALTH; B5e K23
 2026-07-20  0x0055fe50  FUN_0055fe50  C1->C2  RwpSolverCore23.cpp (broadphase kick; 10-arg FUN_0055a1f0 K3) — race GREEN 133 hooks + SIM-HEALTH + K22-baseline bisection; B5e K23
 2026-07-20  0x0055fea0  FUN_0055fea0  C1->C2  RwpSolverCore23.cpp (body-array pass + pair pump FUN_00568990 K21) — race GREEN 133 hooks; B5e K23
 2026-07-20  0x0055ff70  FUN_0055ff70  C1->C2  RwpSolverCore23.cpp (world-sweep guard FUN_0056bb30 K21) — race GREEN 133 hooks; B5e K23

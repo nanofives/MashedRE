@@ -1,8 +1,8 @@
 // ============================================================================
-//  RwpSolverCore23.cpp  —  B5e solver-island cluster K23  (7 of 9 fns)
-//  Verbatim RWP-3.7 per-island solver-step DRIVERS/WRAPPERS (the mechanical
-//  7 of the K23 cluster). Each is `int __cdecl F(int solverCtx)` returning the
-//  context (EAX), mirroring the K21/K22 driver idiom.
+//  RwpSolverCore23.cpp  —  B5e solver-island cluster K23  (8 of 9 fns)
+//  Verbatim RWP-3.7 per-island solver-step DRIVERS/WRAPPERS. Each is
+//  `int __cdecl F(int solverCtx)` returning the context (EAX), mirroring the
+//  K21/K22 driver idiom.
 //
 //    FUN_0055fe50 (0x0055fe50, 77 B)  — 1-line broadphase kick: 10-arg call to
 //                                        FUN_0055a1f0 (K3) with fields resolved
@@ -29,18 +29,8 @@
 //    FUN_00561e60 (0x00561e60, 31 B)  — 1-line wrapper → FUN_00568fd0 (K11).
 //    FUN_00561e80 (0x00561e80, 31 B)  — 1-line wrapper → FUN_00568dd0 (K11).
 //
-//  DEFERRED (2 fns, both to the focused K23 session):
-//   1) FUN_00561040 (0x00561040, 566 B) — outer pair-record slicer → K13
-//      orchestrator FUN_00560260. The 22-dword descriptor frame is well-
-//      understood (values at even slots = puVar1[0,2,4,6,8,0xa,0xc,0x10,0x12,
-//      0x14]; odd slots = &block; slots [14]/[15] uninit), BUT the arg8 block
-//      (&local_14) is read by K13 FUN_00560260 via param_8+4 (=count) AND
-//      param_8+0x10, which in the original reaches [ESP+0x90] — the current
-//      pair-record base written at 0x5611a2. So the by-value frame spans past a
-//      naive 5-dword block; a 5-dword model CRASHED at spawn (2026-07-20). Needs
-//      the exact [ESP] frame-layout reconstruction (map every slot K13's
-//      param_1/param_8 read against FUN_00561040's stores).
-//   2) FUN_00561390 (0x00561390, 2239 B) — the CCD + impact-
+//  DEFERRED (1 fn, to a focused session):
+//   FUN_00561390 (0x00561390, 2239 B) — the CCD + impact-
 //  resolution monster. All its ABI unknowns are resolved (see
 //  re/analysis/b5e/K23_PORT_RECON_2026-07-20.md and the 2026-07-20 session note):
 //    * local_40 is the 4th float of FUN_0055bb70's param_3 OUTPUT buffer
@@ -98,6 +88,10 @@ extern "C" void __cdecl FUN_00567c60(undefined4,undefined4,undefined4,undefined4
                                      undefined4,undefined4,undefined4,undefined4,undefined4);   // 0x00567c60
 extern "C" undefined4 __cdecl FUN_00568dd0(undefined4,undefined4);                              // 0x00568dd0 (K11)
 extern "C" undefined4 __cdecl FUN_00568fd0(undefined4,undefined4);                              // 0x00568fd0 (K11)
+// K13 island solve-step orchestrator — 14 dword params (14th vestigial, see note).
+extern "C" int __cdecl FUN_00560260(undefined4,undefined4,undefined4,undefined4,undefined4,
+                                    undefined4,undefined4,undefined4,undefined4,undefined4,
+                                    undefined4,undefined4,undefined4,undefined4);                // 0x00560260 (K13)
 extern "C" uint __cdecl FUN_00568990(int,int,uint,int,uint);                                    // 0x00568990 (K21)
 extern "C" int  __cdecl FUN_0056bb30(int);                                                      // 0x0056bb30 (K21)
 
@@ -114,6 +108,7 @@ extern "C" int __cdecl FUN_0055fe50(int param_1);
 extern "C" int __cdecl FUN_0055fea0(int param_1);
 extern "C" int __cdecl FUN_0055ff70(int param_1);
 extern "C" int __cdecl FUN_0055ff90(int param_1);
+extern "C" int __cdecl FUN_00561040(int param_1);
 extern "C" int __cdecl FUN_00561c50(int param_1);
 extern "C" int __cdecl FUN_00561e60(int param_1);
 extern "C" int __cdecl FUN_00561e80(int param_1);
@@ -285,6 +280,101 @@ LAB_005601b3:
 }
 
 // ---------------------------------------------------------------------------
+// 0x00561040  Outer pair-record slicer → K13 island orchestrator FUN_00560260.
+//   Builds the exact by-value stack frame the original passes as arg1/arg8.
+//   CRITICAL: the descriptor and the block are ONE CONTIGUOUS array — K13's
+//   FUN_00560260 (`piVar8 = param_1`) reads piVar8[0x16] (=block[0], used as a
+//   write BASE at line 172 `*(piVar8[0x16]+piVar8[0x17]*4)=…`) and piVar8[0x17]
+//   (=block[1], the out counter). In the original those land at [ESP+0x74]/
+//   [ESP+0x78] — i.e. block[0]/[1] immediately follow descriptor[21]. A SEPARATE
+//   block array makes piVar8[0x16] read past the descriptor → garbage base →
+//   write crash (observed intermittently at spawn once real contacts existed).
+//   So `frame[30]`:
+//     [0..21]  = descriptor: even slots = puVar1[0,2,4,6,8,0xa,0xc,0x10,0x12,
+//                0x14]; odd slots = &frame[22] (block base — K13 reads these
+//                pointer slots too); [14]/[15] uninit (original skips them).
+//     [22]=block[0]=local_20  [23]=block[1]=local_1c(OUT: FUN_00560260 sets 0,++)
+//     [24]=block[2]=local_18  [25]=block[3]=local_14  [26]=block[4]=local_10
+//     [27]/[28]=block[5]/[6] uninit  [29]=block[7]=pair-record base
+//   arg1 = frame; arg8 = &frame[25] (=&local_14): K13 reads param_8+4=frame[26]
+//   (count) and param_8+0x10=frame[29] (base), then derefs base+0x14.
+//   14-arg __cdecl call (arg14 = ctx+0x408 vestigial — FUN_00560260 reads 13).
+// ---------------------------------------------------------------------------
+extern "C" int __cdecl FUN_00561040(int param_1)
+{
+  undefined4 *puVar1;
+  int iVar2;
+  uint uVar3;
+  int iVar4;
+  int *piVar5;
+  int local_84;                 // pairs in this slice
+  int local_80;                 // running pair index
+  undefined4 frame[30];         // descriptor[0..21] + block[22..29] — ONE contiguous frame
+
+  local_80 = 0;
+  puVar1 = *(undefined4 **)(**(int **)(param_1 + 0x70) + 0x10);
+  frame[0]  = puVar1[0];
+  puVar1[0x17] = 0;
+  frame[1]  = (undefined4)(frame + 22);
+  frame[2]  = puVar1[2];
+  frame[3]  = (undefined4)(frame + 22);
+  frame[4]  = puVar1[4];
+  frame[5]  = (undefined4)(frame + 22);
+  frame[6]  = puVar1[6];
+  frame[7]  = (undefined4)(frame + 22);
+  frame[8]  = puVar1[8];
+  frame[9]  = (undefined4)(frame + 22);
+  frame[10] = puVar1[10];
+  frame[11] = (undefined4)(frame + 22);
+  frame[12] = puVar1[0xc];
+  frame[13] = (undefined4)(frame + 22);
+  // frame[14], frame[15] left UNINITIALISED (original never writes [ESP+0x54]/[0x58]).
+  frame[16] = puVar1[0x10];
+  frame[17] = (undefined4)(frame + 22);
+  frame[18] = puVar1[0x12];
+  frame[19] = (undefined4)(frame + 22);
+  frame[20] = puVar1[0x14];
+  frame[21] = (undefined4)(frame + 22);
+  iVar4 = *(int *)(param_1 + 200);
+  if (iVar4 != 0) {
+    do {
+      uVar3 = 0;
+      local_84 = 0;
+      if (local_80 == iVar4) {
+        return 0;
+      }
+      piVar5 = (int *)(*(int *)(param_1 + 0xd4) + local_80 * 0x28 + 0x1c);
+      iVar2 = local_80;
+      do {
+        uVar3 = uVar3 + *piVar5;
+        if (*(uint *)(param_1 + 0x48) < uVar3) break;
+        piVar5 = piVar5 + 10;
+        local_84 = local_84 + 1;
+        iVar2 = iVar2 + 1;
+      } while (iVar2 != iVar4);
+      if (local_84 == 0) {
+        return 0;
+      }
+      frame[29] = (undefined4)(*(int *)(param_1 + 0xd4) + local_80 * 0x28);  // block[7] pair-record base
+      frame[25] = *(undefined4 *)(param_1 + 0xc4);                          // block[3] local_14
+      frame[26] = (undefined4)local_84;                                     // block[4] local_10 (count)
+      frame[22] = (undefined4)(puVar1[0x16] + puVar1[0x17] * 4);            // block[0] local_20
+      frame[24] = (undefined4)(puVar1[0x18] - puVar1[0x17]);               // block[2] local_18
+      FUN_00560260((undefined4)frame,(undefined4)(param_1 + 0x9c),(undefined4)(param_1 + 0x168),
+                   (undefined4)(param_1 + 0xfc),(undefined4)(param_1 + 0x2c4),
+                   (undefined4)(param_1 + 0x364),(undefined4)(param_1 + 0xa8),(undefined4)(frame + 25),
+                   (undefined4)param_1,*(undefined4 *)(**(int **)(param_1 + 0x70) + 0xc),
+                   *(undefined4 *)(param_1 + 0xf4),*(undefined4 *)(param_1 + 0xf8),
+                   *(undefined4 *)(param_1 + 0x404),(undefined4)(param_1 + 0x408));
+      puVar1[0x17] = puVar1[0x17] + frame[23];                              // += block[1] local_1c (OUT)
+      iVar4 = *(int *)(param_1 + 200);
+      local_80 = local_80 + local_84;
+    } while (local_80 != iVar4);
+  }
+  return param_1;
+}
+
+// ---------------------------------------------------------------------------
 // 0x00561c50  Pair-record AABB gate + active-bit set (FUN_0055ac00, DONE).
 // ---------------------------------------------------------------------------
 extern "C" int __cdecl FUN_00561c50(int param_1)
@@ -379,16 +469,13 @@ extern "C" int __cdecl FUN_00561e80(int param_1)
   return param_1;
 }
 
-// --- gta-reversed-style hook registration — CLUSTER 23 (7 of 9). ---
-//   FUN_00561040 DEFERRED with the monster (see header): its FUN_00560260 arg8
-//   (&local_14) is read by K13 as a structured block via param_8+4 / param_8+0x10
-//   (the latter reaches the pair-record base the original writes at 0x5611a2), so
-//   the by-value frame is larger than a 5-dword block — a first-pass 5-dword model
-//   crashed at spawn. Needs the K12/K17 full-listing frame reconstruction.
+// --- gta-reversed-style hook registration — CLUSTER 23 (8 of 9). ---
+//   FUN_00561390 (the CCD monster) remains DEFERRED to a focused session.
 RH_ScopedInstall(FUN_0055fe50, 0x0055fe50);
 RH_ScopedInstall(FUN_0055fea0, 0x0055fea0);
 RH_ScopedInstall(FUN_0055ff70, 0x0055ff70);
 RH_ScopedInstall(FUN_0055ff90, 0x0055ff90);
+RH_ScopedInstall(FUN_00561040, 0x00561040);
 RH_ScopedInstall(FUN_00561c50, 0x00561c50);
 RH_ScopedInstall(FUN_00561e60, 0x00561e60);
 RH_ScopedInstall(FUN_00561e80, 0x00561e80);
