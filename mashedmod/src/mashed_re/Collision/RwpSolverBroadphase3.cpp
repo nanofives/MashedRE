@@ -295,7 +295,7 @@ LAB_0055a515:
                 *puVar9 = *puVar9 & ~(1 << ((byte)*(ushort *)(piVar12 + 8) & 0x1f));
                 *(int *)(iVar2 + 0x4c) = *(int *)(iVar2 + 0x4c) + -1;
               }
-              puVar9 = (uint *)(*(int *)(iVar2 + 0x60) + ((int)local_8 + local_10 >> 5) * 4);
+              puVar9 = (uint *)(*(int *)(iVar2 + 0x60) + (((int)local_8 + local_10) >> 5) * 4);
               *puVar9 = *puVar9 & ~(1 << ((byte)local_10 & 0x1f));
             }
           }
@@ -571,7 +571,10 @@ extern "C" void __cdecl FUN_0055b750(int *param_1,float *param_2,float *param_3)
 //             grouping + z-row rounding in verification note 5. Dispatch lands in the
 //             REAL descriptor tables (0x5e4f50 band) until KV3.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_0055bae0(int param_1,float *param_2,undefined4 param_3)
+// Returns the mutable point (EAX = the +0x08 getter's result, 0x0055baf6 TEST EAX,EAX;
+// preserved through the transform to the RET) — needed by K21 FUN_00561280, which tests it.
+// Was typed void in K3; the value was always in EAX, so return-ignoring callers are unaffected.
+extern "C" float * __cdecl FUN_0055bae0(int param_1,float *param_2,undefined4 param_3)
 {
   float *pfVar10;
 
@@ -587,6 +590,7 @@ extern "C" void __cdecl FUN_0055bae0(int param_1,float *param_2,undefined4 param
     pfVar10[1] = (float)((float10)param_2[0xd] + sy);                        // FADD ST0,ST1
     pfVar10[2] = param_2[0xe] + sz;                                          // float + float
   }
+  return pfVar10;                                                            // 0x0055bb61 RET, EAX=pfVar10
 }
 
 // ---------------------------------------------------------------------------

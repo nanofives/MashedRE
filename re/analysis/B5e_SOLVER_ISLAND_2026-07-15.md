@@ -248,5 +248,407 @@ from `original\mashed_re_dev.asi.pre-b5e-cluster1` after the runs.
   `MASHED_HOOK_MANIFEST` giving POSITIVE install evidence: 52/52 hooks `installed=1`
   incl. all 5 K5 RVAs (`b5e_k5_hook_manifest_2026-07-16.txt`,
   `b5e_k5_acceptance_manifest_2026-07-16.log`). The 5 fns re-classified C1→C2.
-- OPEN next: K6 (0056bb80:337 0056bce0:260 0056bdf0:135 0056be80:534 0056c0a0:618
-  0056c310:614, deps DONE, no indirect) → K7….
+- K6 ported (6 fns / 2498 B) → `Collision/RwpSolverIntegrate6.cpp`; canonical-race acceptance
+  **GREEN 2026-07-17**. The quaternion-integration cluster: bb80 (rotate-by-axis-angle, x87
+  FSIN/FCOS block), bce0 (small-angle integrate + FSQRT renorm), bdf0 (body-list scaled
+  accumulate), be80 (single-body orientation+matrix), c0a0/c310 (body-list orientation+matrix,
+  indexed- vs walked-source). **Every body re-verified against live pool0 disasm 2026-07-17**
+  (notes 3/4a/4b/6/7a/7b/8 all confirmed at their cited RVAs) — this pass **found and fixed** two
+  defects the draft header had over-claimed as verbatim: c0a0/c310 were truncated drafts with
+  placeholder "WRONG scaffolding" lines (full matrix-store block + position-advance tail
+  dropped) — completed verbatim from the C1 decomp; and note-7b's "fully right-associated"
+  characterization was corrected (the binary combines `{q0²,q1²}` first, left-combining; the
+  right-assoc C form is the *commutative* match — bit-identical, whereas the decomp's PRINTED
+  order is wrong). Build issues cleared: added the TU to BOTH targets (build.bat exe list **and**
+  `asi_sources.rsp` — the .asi builds from the response file, missed on the first pass so the K6
+  hooks weren't registered), `#include <cmath>`/`std::sqrtl` for bce0's FSQRT, and the K3
+  Broadphase3 C4554 `>>` precedence warning silenced with semantics-preserving parens (line 298,
+  already-correct `((int)local_8+local_10)>>5`). Built BOTH targets clean; canonical bridge-driven
+  QuickRace GREEN with bridge+B5c8+K1..K6 = 58 hooks, `MASHED_HOOK_MANIFEST` POSITIVE 58/58
+  `installed=1` incl. all 6 K6 RVAs (indices 1095–1100)
+  (`log/b5e-solver-island/b5e_k6_acceptance_2026-07-17.log`,
+  `b5e_k6_hook_manifest_2026-07-17.txt`). The 6 fns re-classified C1→C2; U-9018/U-9019 filed
+  (both non-blocking data-semantic, largely resolved by the port).
+- K7 ported (5 fns / 3497 B) → `Collision/RwpSolverCore7.cpp`; canonical-race acceptance
+  **GREEN 2026-07-17**. The 0x0056c group-B stage: c580 (per-body jacobian/inertia transform
+  loop), c8e0 (single-body 3×(mat4·vec4) accumulate), caa0 (constraint accumulate/scatter, calls
+  c8e0 4× per contact), cf90 (0x60-byte record gather), d070 (island partition index-build, calls
+  cf90). **Every body re-verified against live pool14 disasm 2026-07-17** (pool0 was locked by
+  another session; pool14 acquired via the pool script). NO-GUESSING findings: (1) all 5 __cdecl
+  (RET at 0x0056c8dc/0x0056ca91/0x0056cf8d/0x0056d067/0x0056d343). (2) cf90 is a pure 24-dword
+  integer copy — all 24 source offsets checked verbatim vs disasm 0x0056cf90..0x0056d064, exact.
+  (3) d070 pure integer/pointer index-build, no x87. (4) caa0 float ops are ALL 2-term adds
+  (single FADD, bit-exact) + four contiguous float[8] gather blocks (K3/K4 block class). (5)
+  c580/c8e0 are deeply-interleaved x87 (3 parallel accumulators FSTP'd to float32 per partial):
+  traced the [ESP+0x84/0x88/0x8c] (c580) accumulator + FADDP chains and **CORRECTED** c580 fVar2
+  = `p[8]*p[1]+(p[4]*p[0]+p[-1]*p[0])`, fVar3 = `p[9]*p[1]+(p[5]*p[0]+p[1]*p[-1])` (product-init
+  accumulators @c5ea/c5f7 → t1+(t2+t3), NOT the printed left-assoc), and the 3 matrix-row stores
+  = `A*M10+(B*M14+C*M18)` (FADDP chain @c7e0/c7ea, c803/c80d, c826/c830); c580 fVar5 = printed
+  `(t1+t2)+t3` CONFIRMED. The remaining 5+-deep interleaved sums (c580 fVar7/1/6/8/9/10 +
+  pfVar14[2/3/4]; all c8e0 5-term stores) retain the decomp's printed order and carry the accepted
+  ≤1-ULP x87 partial-rounding floor → **U-9020**, to settle at the lane-end per-field diff. No
+  indirect calls (island_dag ind=0, confirmed via function_callees: 3 leaves, caa0→c8e0 only,
+  d070→cf90 only). Built BOTH targets clean (RwpSolverCore7.cpp: no warnings; added to build.bat
+  exe list **and** asi_sources.rsp); canonical bridge-driven QuickRace GREEN with bridge+B5c8+K1..K7
+  = 63 hooks, `MASHED_HOOK_MANIFEST` POSITIVE 63/63 `installed=1` incl all 5 K7 RVAs (idx
+  1101–1105) (`log/b5e-solver-island/b5e_k7_acceptance_retry2_2026-07-17.log`,
+  `b5e_k7_hook_manifest_2026-07-17.txt`). Trajectory matches K6: +4 s / +9 s velocities
+  bit-identical, +13 s carries the airborne x87 residual, +18 s→ identical grounded=0 round
+  transition. (The first attempt sat at vel=[0,0,0] — an intro-skip/control-pulse flake, not a K7
+  defect; the retry got the car moving; a 9-hook control timed out at phase 2, the same
+  environment flake noted for K1.) The 5 fns re-classified C1→C2; deferred-associativity = U-9020.
+- K8 ported (5 fns / 7109 B) → `Collision/RwpSolverCore8.cpp`; canonical-race acceptance
+  **GREEN 2026-07-17** (first try). The 0x0056d/e constraint pre-solve stage: d350 (row-transform
+  helper), d3f0 (x87-scalar constraint normalize/Gram pass, calls d350), **dd40 (the SSE2 twin of
+  d3f0** — CPU-dispatched alongside it by the un-ported FUN_00560260/K13; owner chose faithful SSE
+  port over x87-approx), ed60 (3×3 congruence A^T·B·A), e680 (inertia/impulse assembly, calls
+  ed60). **Every body re-verified vs live pool14 disasm 2026-07-17.** NO-GUESSING findings:
+  (1) all 5 __cdecl (RET bytes verified). (2) d350's three 3-term dots group REVERSE-PAIR
+  `(v6*p+v5*p)+v4*p` (FADDP @0x0056d3a5/d3c1/d3df) — CORRECTED vs printed. (3) d3f0 has no register
+  params — 12-byte-strided stack args; ported with a positional 29-slot dword ABI (used offsets
+  0x04/0x14/0x20/0x2c/0x38/0x44/0x50/0x5c/0x60/0x68/0x74). **Two contiguous-buffer bugs found+fixed
+  via C4700**: d350's output (local_84[7], idx 0/1/2/4/5/6 written, 3 = gap) and ed60's output
+  (local_30[11]) must be single stack arrays, not separate locals. (4) dd40 SSE: the
+  `(float)puVar8[3]` is a bit-REINTERPRET (MOV+MOVSS @0x0056de15), not int→float — fixed; lane
+  masks _DAT_005e5a60 = FFFFFFFF×3|0 (identity on lanes 0-2); reciprocal-sqrt reproduced exactly
+  via `_mm_rsqrt_ss` + Newton (_DAT_005e5a20=3.0, _DAT_005e5a30=0.5); -FLT_MAX sentinel =
+  _DAT_005e5a70(0x80000000) ^ 0x7f7fffff. (5) constants: DAT_005d757c=0.0, PTR_DAT_005ceabc=FLT_MIN,
+  _DAT_005cc564=0.25. dd40/d3f0 are CPU-dispatch twins — only one executes per CPU; both installed,
+  and whichever ran produced a trajectory **BIT-IDENTICAL to the K6 reference at every sample
+  (incl. airborne +13 s [2322.9,-23.2,2510.9])** — strong evidence the SSE reimplementation is
+  faithful. Built BOTH targets clean (RwpSolverCore8.cpp: no diagnostics; added to build.bat exe
+  list **and** asi_sources.rsp); canonical bridge-driven QuickRace GREEN with bridge+B5c8+K1..K8 =
+  68 hooks, `MASHED_HOOK_MANIFEST` POSITIVE 68/68 `installed=1` incl all 5 K8 RVAs (idx 1106–1110)
+  (`log/b5e-solver-island/b5e_k8_acceptance_2026-07-17.log`, `b5e_k8_hook_manifest_2026-07-17.txt`).
+  The 5 fns re-classified C1→C2; deep-sum associativity folded into U-9020.
+- K9 ported (7 fns / 1230 B) → `Collision/RwpSolverCore9.cpp`; canonical-race acceptance
+  **GREEN 2026-07-17**. The 0x0056e/f contact-batch bookkeeping leaves: ef30 (26-counter reset),
+  efc0 (indexed scatter+zero), f020 (advance/4-align+cursor bump), f0a0 (4-pad a batch via
+  f1f0(&DAT_005e5738)), f1f0 (Jacobian-row emit / 9-array SoA scatter), fad0 (cross-product basis
+  builder), 67c00 (batch-header reset, calls ef30). **Every body re-verified vs live pool14 disasm
+  2026-07-17**: all 7 __cdecl (RET C3 at each body_end); 6 are pure integer/pointer (transcribed
+  verbatim); fad0 is the only float body — all cross terms are single `a*b - c*d` FSUBP (minuend =
+  first product, verified @0x0056fb08/fb17/fb26 + fb66/fb75/fb84), `_DAT_005cc33c` = -1.0 (so
+  param_1[8..10] = -param_2), no multi-term associativity. f0a0→f1f0 passes the constant
+  `DAT_005e5738` row-template (bound by absolute address; standalone rebind = KV/lane-end). Built
+  BOTH targets clean (RwpSolverCore9.cpp: no diagnostics; added to build.bat exe list **and**
+  asi_sources.rsp); canonical bridge-driven QuickRace GREEN with bridge+B5c8+K1..K9 = 75 hooks,
+  `MASHED_HOOK_MANIFEST` POSITIVE 75/75 `installed=1` incl all 7 K9 RVAs (idx 1111–1117)
+  (`log/b5e-solver-island/b5e_k9_acceptance_2026-07-17.log` + `..._retry_...`,
+  `b5e_k9_hook_manifest_2026-07-17.txt`). **NB the trajectory is control-pulse-timing sensitive
+  run-to-run** (run 1 reconverged to the K6-family +9 s [-83.7,0.2,331.1]; run 2 took a different
+  bounded path, rounds advancing 12→16) — so the per-cluster accept gate is *hook-install +
+  sim-health* (both runs: phase-3 reached, car spawned, full 35 s, bounded physics, no NaN/crash/
+  freeze), NOT a deterministic trajectory. A contact-batching defect would blow the sim up, not
+  follow a bounded alternate path. The 7 fns re-classified C1→C2.
+- K10 ported (3 fns / 3171 B) → `Collision/RwpSolverCore10.cpp`; canonical-race acceptance
+  **GREEN 2026-07-17**. The per-manifold constraint-row generator + its two basis helpers: f350
+  (iterates the contact points, resolves both bodies, calls FUN_0055b750/K3 for per-body point
+  velocity + FUN_0056fad0/K9 for the jacobian basis, sets friction/penetration limits, emits the
+  row via FUN_0056f1f0/K9 up to 3× [normal + 2 friction], then advances via FUN_0056f0a0/K9),
+  fb90 (relative-motion basis / contact-frame double-cover, calls FUN_00546b10/K2), fea0
+  (quaternion product → double-cover 3×3 + half-scaled derivative). **Every body re-verified vs
+  live pool14 disasm 2026-07-17.** Key findings: (1) all 3 __cdecl. (2) **f350's census
+  "indirect-call" flag is spurious** — all 9 CALLs are DIRECT (E8 rel to 0055b750/fad0/f1f0/f0a0);
+  no `CALL reg/mem`, no fn-ptr to bind. (3) **FIXED multiple Ghidra float-type-confusion
+  mis-renders** (param_2 typed float* but holds a mixed struct): `param_2[0x2b]` is a RAW INT
+  count/index (MOV @0x0056f366, loop `CMP EDI,EBX` @faae — the naive float read would convert to 0
+  and never loop), `param_2[0x2d]/[0x2f]` are RAW INT body-manager pointers (MOV @f39d/f3c9),
+  `pfVar9[3]` (puVar3) is a RAW pointer (MOV @f4a2 — a float→ptr cast wouldn't even compile), and
+  fb90's `(float)piVar10[2/3/4]` are RAW-BIT reinterprets not int→float converts (MOV @fbd3). Only
+  `param_2[0x34]` (FMUL @f37b) is genuinely float. (4) `local_78` is one contiguous mixed-type row
+  buffer (fad0 fills [0..0xe], f350 sets limits [0x10..0x18], f1f0 consumes) — ported as
+  `undefined4[27]` with typed writes. (5) constants: _DAT_005e456c=-1e-3, _DAT_005cc9b4=0.99,
+  _DAT_005e520c=0.7071(1/√2); data tables 005e57a4/b0/c4/d0 by abs addr. Built BOTH targets clean;
+  canonical bridge-driven QuickRace GREEN with bridge+B5c8+K1..K10 = 78 hooks, `MASHED_HOOK_MANIFEST`
+  POSITIVE 78/78 `installed=1` incl all 3 K10 RVAs (idx 1118–1120)
+  (`log/b5e-solver-island/b5e_k10_acceptance_2026-07-17.log`, `b5e_k10_hook_manifest_...txt`). Sim
+  healthy across the full 35 s into round 2 (spawnFired 12→16, bounded physics, no NaN/crash);
+  +9 s reconverged to the K6-family invariant [-83.7,0.2,331.1] — strong evidence the constraint-row
+  generator port is faithful (a defect here would blow up the contact solver). The 3 fns
+  re-classified C1→C2.
+- K11 **DONE — race GREEN 2026-07-17** (was briefly blocked by a stale frida-pool/zombie-MASHED
+  wedge — MASHED self-exited pre-menu even with the K6 baseline; `diag.py doctor` HEALED the
+  frida pool + confirmed `render OK, CreateDevice hr=0` [display was fine], after which the race
+  ran clean — NOT a display/d3d9 issue and NOT a K11 defect). The 5 fns →
+  `Collision/RwpSolverCore11.cpp`: 67f00 (contact-island
+  union-find / disjoint-set path-compression merge, 9-arg stack ABI, calls K1 005684c0/00568560 +
+  cluster 005685f0), 67c60 (island partition finalize, calls 67f00), 5685f0 (disjoint-set list
+  merge), 68dd0 (contact-cache scatter build pass), 68fd0 (contact-cache max query). Every body
+  re-verified vs live pool14 disasm 2026-07-17: all 5 __cdecl (RET C3). Findings: (1) 67f00's
+  9-arg stack ABI ported positionally; its K1/cluster calls pass Ghidra-loose int/ptr types, bound
+  via all-int ABI-shim externs (identical 32-bit __cdecl ABI). (2) **68dd0/68fd0 float-as-pointer
+  de-confusion** (K10 class): the contact-node struct is typed float* but `[0x2c]`(shape ptr),
+  `[0x2d]/[0x2f]`(body ptrs), `[0x37]`(list-next) are raw pointers, and `*pfVar1=(float)pfVar12` /
+  `param_1=(int*)fVar4` are bit stores — fixed. The 3-term dot @0x00568f38 is reverse-pair FADDP,
+  the LAB path FCHS-negates. (3) **decomp bug fixed**: the two second-loop bitset tests in 67f00
+  dropped a deref level (offset rendered outside `*(uint*)`); disasm @0x00568211 shows
+  `*(uint*)(*(int*)(*(int*)(*piVar5+0x24)+0x60) + (uVar1>>5)*4) & (1<<(uVar1&0x1f))` — corrected to
+  the offset-inside form (matching the first loop). Both targets built clean (RwpSolverCore11.cpp:
+  no diagnostics; wired into build.bat + asi_sources.rsp). **RACE BLOCKED**: the 83-hook race
+  (bridge+B5c8+K1..K11) could not run — `MASHED.exe` self-exits before the menu (no crash dump),
+  and the block reproduces with the **known-good K6 `.asi` + the 9-hook baseline** and survives a
+  `setup_mashed_compat.ps1` re-run, so it is the d3d9-device-unavailable / display-asleep boot
+  wedge (`feedback_d3d9_shim_wedges_gpu_driver`), NOT a K11 defect. K11 stays C1 until an active
+  display lets the acceptance race run; the 5 fns are NOT re-classified. (Manifest evidence: the
+  K11 `.asi` loaded and installed all 83 hooks before the boot exit.) **RESOLVED**: `diag.py
+  doctor` cleaned the stale frida pool + zombie MASHED; the 83-hook race then ran GREEN
+  (`log/b5e-solver-island/b5e_k11_acceptance_2026-07-17.log`, manifest 83/83 idx 1121–1125), sim
+  healthy full 35 s into round 3 (spawnFired 12→16→20), +9 s bit-identical to the K6-family
+  invariant. The 5 fns re-classified C1→C2.
+- K12 PORTED + BUILT 2026-07-18 (RwpSolverCore12.cpp, 1 fn 0x00570090 / 10,500 B) — both targets
+  compile CLEAN, wired into build.bat + asi_sources.rsp, and the 84-hook manifest verifies 84/84
+  INSTALLED (idx 1126 FUN_00570090 flag=1, `log/b5e-solver-island/b5e_k12_hook_manifest_2026-07-18.txt`;
+  the canonical-install-observe boot ran the full K12 .asi to menu with no boot crash). **Race
+  SIM-HEALTH still PENDING → NOT YET C2**: the 84-hook scenario_launch race + a stock no-hooks CONTROL
+  both self-exit pre-menu with NO crash dump after 4 diag-doctor heals + a 75 s settle — the
+  environmental d3d9/display wedge signature ([[feedback-d3d9-shim-wedges-gpu-driver]]), NOT a K12
+  code fault (FUN_00570090 is a race-time physics fn, never runs pre-menu; control fails identically).
+  Re-run `scenario_launch --track 0 --mode 10 --cars 4 --hold 35 --hooks <84-list from
+  b5e_k12_hook_manifest names>` once the display/GPU is active; on GREEN, re-classify C1→C2. Port
+  notes: 3 float[27] row buffers (memcpy DAT_005e5738 template) + fb90/fea0/5667c0 I/O frames; the
+  Ghidra float10 fVar19/fVar20 inlined to +/-FLT_MAX (memory_read-confirmed sentinels), all
+  "int-bit" slot stores are exact float literals (0.8f/-FLT_MAX/0.0f), slot-reuse split into typed
+  vars. Decomp analysis (original K12 map) retained below.
+- (superseded) prior K12 pre-port note: **ANALYSIS DONE
+  2026-07-17 (fresh focused session recommended for the port).** Decomp = 1120 lines
+  (`re/analysis/b5e/decomp/FUN_00570090.c`). It is NOT an LCP inner-solver — it is the **big
+  per-manifold constraint-ROW GENERATOR** (the K10/f350 analogue for the joint/contact with many
+  DOF: normal + 2 friction + twist + swing + linear/angular limits + motors). Structure: a long
+  sequence of `if`-branches gated by the joint config flags at `param_2+0x4c+0x3c`/`+0x8c`, each
+  branch (a) memcpy's the 27-float `DAT_005e5738` row template into `local_29c` / `local_d8` /
+  `local_6c`, (b) fills the Jacobian rows (2-term cross products / 3-term dots) + clamp limits, then
+  (c) emits via `FUN_0056f1f0`(K9); ends with `FUN_0056f0a0`(K9). Body_end 0x00572993 (RET);
+  __cdecl (verify byte). Callees (ALL direct, no indirect): `FUN_005667c0`(K1, returns a REAL
+  float10 magnitude @line 421), `FUN_0056fb90`/`FUN_0056fea0`(K10, the two basis builders @lines
+  168/171/198), `FUN_0056f1f0`/`FUN_0056f0a0`(K9). **KEY DE-RISK (the hard part): the `float10
+  fVar19/fVar20` + `extraout_ST1` + `(float10)FUN_0056f1f0(...)` are Ghidra x87-stack-liveness
+  ARTIFACTS, not real return values** — `fVar19 = _DAT_005ceac0 = 0x7f7fffff = FLT_MAX` and
+  `fVar20 = _DAT_005e5050 = 0xff7fffff = -FLT_MAX` (memory_read confirmed), the two x87-resident
+  default clamp limits held across the void f1f0 calls. So port them as constants
+  (`local_240=(float)fVar19` → `FLT_MAX`, `local_244=(float)fVar20` → `-FLT_MAX`) and DROP the
+  `fVar20=(float10)FUN_0056f1f0(...)` / `fVar19=extraout_ST1` lines. The ONE real float10 is
+  `FUN_005667c0` @421 (a magnitude; `fVar1=(float)fVar19` uses it). Other traps to handle (all K10
+  class): float-in-pointer-var reuse (`local_2a0=(float*)(local_2fc*local_2fc)` then
+  `(float)local_2a0`; same for `local_2ec`/`pfVar13`/`local_228`/`local_2a0` in the restitution
+  block ~lines 1018-1054); `local_318`/`local_300` are float-holding-int loop counters/bitmasks
+  (`local_300 = 1.12104e-44` = int bits 8 → the `& uVar11` flag walk; port as int); the row-buffer
+  locals (`local_29c[27]`/`local_d8`/`local_6c`) are contiguous mixed float/undefined4 like f350's
+  local_78. Constants seen: `_DAT_005cc320`=1.0, `_DAT_005cc32c`=0.5, `_DAT_005cc56c`/`_DAT_005e57dc`
+  (softness), `_DAT_005cc34c`/`_DAT_005cc35c`/`_DAT_005cc31c`/`_DAT_005cc574`/`_DAT_005cc328`/
+  `_DAT_005ceae4`, `DAT_005d757c`=0.0, `0x3f4ccccd`=0.8, FLT_MAX sentinels — read each before use.
+  Race after: 84 hooks (bridge+B5c8+K1..K11 + 0x00570090). NB run `diag.py doctor` FIRST if the boot
+  self-exits (frida-pool/zombie wedge, not display). (K6 unblocked K13; K7/K8/K9/K10/K11 DONE.)
+
+- **K13 (FUN_00560260) — DONE C1→C2 2026-07-18 (RwpSolverPartition13.cpp; race GREEN 85 hooks).**
+  Port method as below. The 3 KV callback frames (param_11=53w, param_13×2=69w) were DISASM-DECODED
+  @0x560a9c/0x560c5a/0x560d90 (disasm + raw decomp agree on every word; full spec + exact arg orders in
+  `re/analysis/b5e/K13_PORT_RECON_2026-07-18.md`) and reproduced as by-value structs (Kv11Frame/Kv13Frame)
+  — passing a struct by value under __cdecl is ABI-identical to the original hand-built frame. SIM-HEALTH
+  race GREEN 2026-07-18: scenario_launch --track 0 --mode 10 --cars 4 --hold 35, 85-hook set, manifest
+  85/85 installed=1 (FUN_00560260 idx 1127 confirmed via canonical_install_observe), phase-3 + 4 cars +
+  full 35s bounded physics no NaN/crash/freeze, telemetry matches K12 (a wrong KV frame would blow up the
+  velocity-integrate → sim explosion; it ran clean). K13 .asi deployed to main original\ (backup
+  .pre-b5e-k13). Per-field bit-identity deferred to lane-end.
+- **K14 (4 x87-float leaves) — DONE C1→C2 2026-07-18 (commit 45e41a0c, RwpSolverCore14.cpp; race GREEN
+  89 hooks).** 00577be0 line-param clamp / 00577cb0 polygon edge probe (tail-calls be0) / 00577ec0
+  segment-segment closest-approach clamp (capsule core; float-in-POINTER-var reuse split to `float p1sel`,
+  disasm-confirmed x87 @0x578005+) / 005784a0 contact-array dedup/insert (_DAT_005ce54c=1.0006e-06 eps,
+  _DAT_005cd03c=9.99999e-05). No external deps (cb0->be0 intra-cluster). Manifest 89/89 (idx 1128-1131),
+  sim full 35s bounded, telemetry matches K12/K13. Deploy backup .pre-b5e-k14.
+- **K15 (FUN_00576880:4958, polygon↔polygon SAT/edge-edge closest-feature DRIVER; deps K1+K14) — DONE
+  C1→C2 2026-07-18 (RwpSolverCore15.cpp; race GREEN 90 hooks).** x87 verbatim; census decomp already had
+  all call args (leaf callees). Traps: param_11[0x1f]/[0x3f] FLAG reinterpret `*(uint*)&param_11[N] & 0x20`
+  (disasm @0x577732 byte-flag), FUN_005667c0 float10 ST0-pop (declared non-void), ABS→fabsf/SQRT→sqrtf,
+  consts _DAT_005e4568=-1e-6/_DAT_005e4564=1.0000010/_DAT_005ceac0=FLT_MAX/_DAT_005cc32c=0.5. **FIXED a
+  CONTIGUOUS-STACK-BUFFER bug (K8/K10 class, C4700 tell): 7 consecutive-offset vec3 groups (gF=[f8,f4,f0]
+  gE=[ec,e8,e4] gD=[d0,cc,c8] gA=[ac,a8,a4] gN=[94,90,8c] gO=[a0,9c,98] gP=[18,14,10]) were passed as
+  &local_XX into vec3-R/W callees → declared as arrays (word-boundary regex rename avoids local_10⊂local_100
+  hazard); C4700 gone.** Manifest 90/90 (idx 1132), sim healthy full 35s into ROUND 2 (spawnFired 12→16),
+  bounded. Deploy backup .pre-b5e-k15. NEXT cluster: K16 (10 fns/2822B, deps none).
+- **K16 (10 fns/2822B, contact-manifold + GJK-simplex + broadphase helpers; deps none) — DONE
+  C1→C2 2026-07-18 (RwpSolverCore16.cpp; race GREEN 99 hooks).** RVAs 005735f0 (cross-plane offset),
+  00575120 (contact insert L1-dedup), 005751f0 (perp-dist ratio, float10 ST0), 00576640 (broadphase
+  pair-gen, 2 filter matrices), 00579b50 (manifold coplanarity), 00579c00 (simplex weighted centroid),
+  00579d50 (support-map delta+dot float10; calls un-ported B5c extern FUN_0055c000), 00579e50 (per-vertex
+  dot update), 00579ee0 (incremental Gram matrix), 0057ae20 (offset accessor +0x30). x87 verbatim; consts
+  DAT_005d757c=0.0/_DAT_005cc320=1.0/_DAT_005cc56c=0.1/_DAT_005cc32c=0.5/_DAT_005cea1c=-9.99999975e-06.
+  Traps: 005751f0+00579d50 float10 ST0 returns (declared non-void); 00576640 `(float)param_1[0x1c]` is a
+  float REINTERPRET not int-conv (disasm-confirmed plain `MOV [EAX+0x70]` @0x0057664a); **FIXED
+  CONTIGUOUS-STACK-BUFFER bug (K8/K10 class) in 00579d50: neg[3]=local_18/14/10, outc[3]=local_c/8/4 passed
+  as vec3 out-params to FUN_0055c000 → arrayed.** ABS→fabsf. Install-observe manifest 99/99 installed=1
+  (K16 idx 1133–1142); SIM-HEALTH race bounded/finite/no-NaN/no-crash full 35s, physics ticking.
+  **A wall-slide steady-state `[-49.3,0,-58.0]` (car stays round 1) that first looked K16-caused was PROVEN
+  SCENARIO-VARIANCE** — it reproduces IDENTICALLY with AND without K16 (bisection: both K16 halves slid;
+  no-K16 control re-run ALSO slid; the single "advance to round 2" was the outlier, occurring both with
+  K15 and with base89). K16 is behaviorally indistinguishable from the 89-hook baseline. Deploy backup
+  .pre-b5e-k16. Evidence: log/b5e-solver-island/b5e_k16_{acceptance,ISOLATION_no-k16,rerun2}_2026-07-18.log
+  + b5e_k16_hook_manifest_2026-07-18.txt. NEXT cluster: K17 (9 fns/7429B, deps K1 K2 K3 K16).
+- **K17 (9 fns/7429B, GJK support/distance + manifold BVH-expansion + coplanar-merge; deps K1 K2 K3 K16)
+  — DONE C1→C2 2026-07-19 (RwpSolverCore17.cpp; race GREEN 108 hooks).** RVAs 00575b60 (face-normal orient
+  vs support extremes), 00575fe0 (recursive BVH contact-node expansion, 1631B), 00578b20/00578bd0/00578cb0
+  (2-shape / face-A / face-B support-span deltas, float10 ST0), 00578d90 (edge-edge separating-axis +
+  normalize), 00578ff0 (manifold coplanar-merge + 4-point tetra reduce, 2386B), 0057a250 (GJK/EPA
+  penetration iteration, 1037B), 0057a660 (GJK initial-axis selection, float10). x87 verbatim; consts
+  _DAT_005cc33c=-1.0/_005cc328=0.01/_005cc558=0.001/_005cc9b4=0.99/_005cd03c=1e-4/_005ccabc=1.1/
+  _005ce1d4=1.01/_005ce54c=1e-6/PTR_DAT_005ceabc=1.175e-38 (all memory-read). Callees FUN_005667c0/566200/
+  566830/004c4600/0055bd70/0055c2d0 (K1-K3) + K16 externed (defined in sibling TUs, same .asi).
+  **DISASM-RESOLVED REINTERPRETS (Ghidra mistyped as float): 00578ff0 — contact counts at +0xac load via
+  FILD (0x579642/0x5796e4/0x57963b) integer→float; the `fVar17`/`fVar16` list-walks are int pointer chases
+  (MOV [.+0xdc]; TEST EAX; DEC EAX @0x579732/0x5797d2/0x5797cb); `local_b4`/+0xa8 are int counter/flag
+  (INC EAX/TEST EAX @0x579534/0x5793e9). 00575fe0 — `pfVar10[0x17]=(float)&DAT_005e5db0` is a literal-addr
+  store `MOV [EBX+0x5c],0x5e5db0` (0x576344); all `(**code)()` are __cdecl (caller-cleans).** Contiguous
+  stack buffers arrayed: 0057a250 simplex[6]=local_18[4]+local_8/4 + vec3 out-params sp[3]/cand[3]; 0057a660
+  loc[6]=local_50..3c + local_38[6] + AABB bb[7] (gap@+0x14); 00575fe0 AABB local_20[7]. Scratch-slot reuse
+  (incoming ptr slots → FUN_0055c2d0 out-floats a4/a5): 00575b60/578b20/578bd0; 0057a660 reuses param_2 as
+  float acc (pfVar3=saved out); 0057a250 reuses param_4 (ptr saved iVar5) as float fAcc. ABS→fabsf (float) /
+  fabsl (float10). Build: added `undefined2` typedef (only fix). Install-observe manifest **108/108
+  installed=1** (all 9 K17 present); SIM-HEALTH race track 0 / 4 cars: phase 3, spawnFired 12 / grounded 4,
+  full 35s, physics ticking bounded/finite (`[358,0,-1302]`→`[2328,-23,2478]`→`[-49.3,0,-58.0]`), no
+  NaN/crash/freeze. Wall-slide steady-state `[-49.3,0,-58.0]` = **same scenario-variance proven under K16**
+  (identical settle with/without cluster). Deploy backup .pre-b5e-k17. Env note: monitor-sleep no-display
+  wedge blocked the race mid-session (clean process exit, hooks still install=1); resolved by user waking the
+  display. NEXT cluster: K18 (see queue §3).
+- **K18 (6 fns/5543B, pair dispatch + BVH manifold recursion + SAT hull axis + CA-TOI + poly clip; deps K1 K2
+  K3 K5 K16 K17) — DONE C1→C2 2026-07-19 (RwpSolverCore18.cpp; race GREEN 114 hooks).** RVAs 005757d0
+  (2-shape narrow-phase dispatch, support x2), 0056b7a0 (broad-phase pair emit w/ dual 7-float AABB overlap
+  gate), 00574ad0 (polygon-vs-plane clip + convex fan reduce, 1615B, float10 area), 00575c60 (recursive BVH
+  manifold expansion, 890B — exact twin of K17 FUN_00575fe0), 00578610 (SAT convex-hull separating axis,
+  1287B, float10), 0057a9a0 (conservative-advancement TOI iterate, 1035B, float10). x87 verbatim; new consts
+  memory-read: _005cc9a0=0.05 / _005cc9dc=0.95 / _005ceac0=3.4028235e38 (FLT_MAX) / _005e5050=-3.4028235e38
+  (-FLT_MAX); reused 005cc328=0.01 / 005cc32c=0.5 / 005cc33c=-1.0 / 005d757c=0.0 / 005cc320=1.0 / 005ce54c=1e-6.
+  All 16 callees (K1/K2/K3/K5/K16/K17) already ported → externed only.
+  **DISASM-RESOLVED CONVENTIONS: 005757d0 — FUN_0055c230 __cdecl 5-arg (ADD ESP,0x14); 3 negated floats =
+  1 contiguous vec3. 0056b7a0 — FUN_0055bd80 4-arg / FUN_0055abb0 3-arg / FUN_0055ae50 2-arg cdecl; two
+  independent 7-float AABBs (gap@[3]); `local_44`=`MOV word[ESP+0x20],0xffff` partial-init (low16 only,
+  high-half faithful leftover). 00575c60 — CALL 0x00575fe0 10-arg cdecl, vtable [.+0x10] cdecl 4-arg
+  (rwp_support4), FUN_004c4600 3-arg; param_3 is Ghidra-mistyped float* actually walked as a POINTER-ARRAY
+  (stride 3) — reinterpreted via `*(u4**)param_3`. 00578610 — vtable [.+0x1c] hull-fetch cdecl 4-arg (ADD
+  ESP,0x20 for the pair); fStack_100+afStack_fc = ONE 12-float edge buffer (walk starts edgeB+1);
+  fStack_138/134/130 contiguous cross-product vec3. FUN_00575120 arg2 is a FLOAT value (Ghidra typed u4) —
+  extern declared `float` so the correct 4 bytes are pushed.**
+  **BUG FOUND + FIXED (bisection-caught): 00578610 faceN — FUN_00578bd0/cb0 write a CONTIGUOUS vec3 through
+  `&fStack_124` (asm: param_4[0..2] ← [ESP+0x30/34/38]); it was first mis-declared as 3 separate float
+  scalars, so the callee's 3-float write corrupted the stack and param_4[1]/[2] read stale → wrong separating
+  axis → race exited at ~13s. K17-baseline(108) control ran the full 35s while 114 exited at 13s, isolating
+  the fault to K18; per-fn bisection pinned it to 00578610; redeclared `float faceN[3]` → full 35s.** (Same
+  contiguous-buffer trap class as K8/K10/K15/K17.) Install-observe manifest **114/114 installed=1** (all 6 K18
+  present; log/b5e-solver-island/b5e_k18_hook_manifest_2026-07-19.txt); SIM-HEALTH race track 0 / 4 cars:
+  phase 3, spawnFired 12 / grounded 4, full 35s, bounded/finite (`[2322,-23,2510]`→`[-49.3,0,-58.0]`), no
+  NaN/crash/freeze (b5e_k18_acceptance_FINAL_2026-07-19.log). Wall-slide `[-49.3,0,-58.0]` = same
+  scenario-variance proven under K16/K17. Deploy backup .pre-b5e-k18. Per-field bit-identity deferred to
+  lane-end. NEXT cluster: K19 (see queue §3). Lane: K1..K18 all DONE C2.
+- **K19 (3 fns/890B, narrow-phase drivers/wrappers; deps K15 K18) — DONE C1→C2 2026-07-19
+  (RwpSolverCore19.cpp; race GREEN 117 hooks).** RVAs 00578e50 (105B, SAT-axis narrow-phase wrapper:
+  runs K18 FUN_00578610 over the pair, gate on depth<tol, then two-shape dispatch FUN_005757d0),
+  0057adb0 (105B, TOI narrow-phase wrapper: identical flow but the axis test is K18 conservative-
+  advancement FUN_0057a9a0), 005752b0 (680B, box/box narrow-phase driver: builds the per-shape type
+  indices from +0x54/+0xd4, runs the K15 SAT driver FUN_00576880, writes the manifold header, runs the
+  K18 clip FUN_00574ad0, fills per-point friction/restitution + picks the reference normal). x87 verbatim;
+  no new consts. All 5 callees (K15/K18) already ported → externed only.
+  **DISASM-RESOLVED CONVENTIONS: the two wrappers push SEVEN __cdecl args to their K18 callee (ADD ESP,0x1c
+  after CALL @0x578e88/@0x57ade8); K18's FUN_00578610 body reads only 6 params but the wrapper pushes a
+  7th (param_5) which caller-cleanup discards — reproduced via a 7-param extern (C linkage resolves by
+  name, not arity), with every arg typed to its exact value so no int<->float conversion is introduced.
+  005752b0 — sVar1/sVar2 are ZERO-extended (XOR EAX,EAX / MOV AX,word @0x5752c0..0x5752d1) → declared
+  `ushort` so (uint)sVar matches the pushed dword; the point-count at record+0xac (param_3[0x2b]) is an
+  INTEGER (written 0 via MOV [EDI+0xac],EBP; compared !=0 / looped as int) — Ghidra mistyped it float via
+  param_3 being float*; FUN_00576880 args +0x50/+0xd0/+0x10c pushed as raw dwords → externed undefined4 for
+  byte-exact pushes.**
+  **NO contiguous-buffer trap: the three out-ptrs &local_108/&local_114/&local_110 (FUN_00576880 args)
+  land at NON-adjacent stack slots and each reads back a single scalar; local_100[256] is a proper array.**
+  Install-observe manifest **117/117 installed=1** (installed set EXACTLY equals the K19 island, 0 missing/
+  0 extra; log/b5e-solver-island/b5e_k19_hook_manifest_2026-07-19.txt). SIM-HEALTH race track 0 / 4 cars:
+  phase 3, spawnFired 12→16 / grounded 4, full 35s, bounded/finite, no NaN/crash/freeze
+  (b5e_k19_acceptance_FINAL_2026-07-19.log). **BISECTION CONTROL vs K18-baseline(114): the baseline ran the
+  SAME healthy envelope (identical phase/spawn progression, bit-identical `+9s vel=[-83.7,0.2,331.1]`, both
+  full 35s, both re-spawn at +23s → spawnFired 16); later-frame magnitude differences are run-to-run RNG
+  nondeterminism the baseline exhibits too (this baseline settled differently from K18's earlier
+  `[-49.3,0,-58.0]` run — so trajectory-value is not a valid gate; health is). K19 shows NO early-exit — the
+  failure mode a per-fn bug would produce — confirming K19 stays within the baseline healthy envelope**
+  (b5e_k19_control_k18base_2026-07-19.log). Deploy backup .pre-b5e-k19 (the 114-hook K18 .asi). Per-field
+  bit-identity deferred to lane-end. NEXT cluster: K20 (see queue §3). Lane: K1..K19 all DONE C2.
+- **K20 (2 fns/1350B, narrow-phase pair drivers; deps K3 K17 K19) — DONE C1→C2 2026-07-19
+  (commit pending; RwpSolverCore20.cpp).** FUN_00575880 (732B) single-pair driver: reserves a manifold slot
+  from the world pool (world+0x2c/+0x30/+0x34), runs the K19 SAT (FUN_00578e50) or TOI (FUN_0057adb0)
+  wrapper (chosen by the 0x10 flag on either body's shape), copies both shape blocks into the record, and
+  for shape-A rotates its local axis into world space + orients the normal via K3 FUN_0055c2d0; shape-B
+  fixup via K17 FUN_00575b60. FUN_00575560 (618B) pair-batch driver: walks param_3 pairs (+0x120 stride),
+  builds ≤param_5-1 manifolds via K19 FUN_005752b0, reduces via K17 FUN_00578ff0, then threads surviving
+  contacts onto the two bodies' contact lists (world+0x64 pool); a shape's 0x20 (trigger) flag skips solving
+  and records the raw overlap only.
+  **DISASM-RESOLVED TRAPS (pool14): (1) FUN_00575880 incoming param_1 is a POINTER (World*) that Ghidra
+  mistyped `float` (only `(int)param_1+off` + one FLD of [param_1+0x74]) → ported as `int world`, with the
+  Ghidra-reused `param_1 = *(float*)(world+0x74)` (0x5758c1) split into the float local `local_p1`, which then
+  doubles as the 1st FUN_0055c2d0 out-float (&local_p1 @0x575a4f, read back in `param_4 - fVar8 < fVar8 -
+  local_p1`); the incoming float param_4 (depth) likewise doubles as the 2nd out-float (K17/K19 scratch-slot
+  reuse). (2) FUN_00578e50/0057adb0 called with 5 __cdecl args (ADD ESP,0x14); 5th arg = raw dword
+  [world+0x74] (PUSH EDX, no FLD) → externed with a `float` 5th param for a byte-exact push (K19 body only
+  forwards it). (3) FUN_005752b0 arg2 = raw dword [world+0x70] and FUN_00578ff0 arg6 = raw dword [world+0x74]
+  → read as `*(float*)` to feed K19/K17's float params without int→float conversion; FUN_00578ff0 6-arg (ADD
+  ESP,0x18).** All 5 callees already ported (K3/K17/K19) → externed only.
+  **ACCEPTANCE (post-reboot 2026-07-19):** clean build both targets; both K20 RVAs baked into the .asi
+  (count=1, 820224 B). SIM-HEALTH race track 0 / 4 cars: phase 3, VERDICT [OK], spawnFired 12→16 / grounded 4,
+  full 33s, bounded/finite, no NaN/crash/freeze (b5e_k20_acceptance_FINAL_2026-07-19.log). **BISECTION CONTROL
+  vs K19-baseline(117 .asi): both GREEN + the trajectory is BIT-IDENTICAL through +18s (+4s [374.9,0,-1223.2],
+  +9s [-83.7,0.2,331.1], +13s [2322.9,-23.2,2510.9], +18s [0,0,0] all match exactly), diverging only at +23s
+  where RNG kicks in — proving the K20 ports reproduce baseline behavior; both full 33s, no early-exit**
+  (b5e_k20_control_k19base_2026-07-19.log). Install-observe **118/119**: both K20 hooks install=1; the single
+  miss (0x5752b0, a *K19* hook) is a pre-existing harness install-ordering flake — it installs clean SOLO
+  (JMP-LIVE) and the miss reproduces identically on the untouched K19 baseline .asi (which logged 117/117 in
+  the prior session), so it is NOT a K20 defect. NB env: the K20 SIM-HEALTH race was initially blocked by a
+  system-wide DirectShow-intro boot hang (quartz.dll, phase-0, reproduced with no .asi); root-caused to a
+  wedged GPU/DirectShow state (TdrLevel=0 machine-wide + ~15 MASHED respawns this session) and cleared by a
+  reboot — see memory [[project-boot-hang-directshow-intro]]. Deploy backup .pre-b5e-k20 (the 117-hook K19
+  .asi). Per-field bit-identity C4 deferred to lane-end. NEXT cluster: K21 (see queue §3). Lane: K1..K20 all
+  DONE C2.
+  (historical port detail:)
+- **K13 (FUN_00560260) — PORTED + BUILT 2026-07-18 (both targets compile+link clean); NOT YET C2.**
+  Method: set all 16 __cdecl callee sigs on pool0 clone → re-decompiled → the 14 DIRECT calls
+  transcribed verbatim (arg order = C param order), body from RAW decomp (int* param_9 + reinterpret
+  floats). Traps handled: integrator selector is INTEGER `param_9[0x16]==2` (dd40 SSE vs d3f0 x87);
+  `1.0/(float)param_3[0x49]` reinterprets dt bits. File `Collision/RwpSolverPartition13.cpp` wired into
+  build.bat + asi_sources.rsp. Full reconstruction + citations: `re/analysis/b5e/K13_PORT_RECON_2026-07-18.md`.
+  **[UNCERTAIN U-K13-KV] — the 3 `code*` KV callbacks (param_11 ×1, param_13 ×2) build large by-value
+  outgoing frames (param_11=53 words; param_13=4 ptr args + ~50-word tail) that the decompiler
+  mis/partly-models. Owner decision (2026-07-18): STUB the indirect CALLs (real side-effect writes kept),
+  PIN the frames via a live Frida stack read at each CALL in the original at race time.** DO NOT deploy the
+  K13 .asi over main's working K12 .asi until the frames are pinned (a stubbed callback → garbage stack →
+  crash past the first callback). Deploy step was skipped (worktree has no original\ junction — expected).
+  **NEXT (race session, display up):** (1) pin the 3 KV frames via Frida capture (values enumerated in
+  K13_PORT_RECON; verify by-offset order), fill them in, rebuild; (2) deploy; (3) race-accept 85 hooks
+  (bridge+B5c8+K1..K12 + 0x00560260) via scenario_launch, `diag.py doctor` FIRST + stock control if boot
+  self-exits; (4) on GREEN re-classify K13 C1→C2. Commits on r7/b5e-solver-island (worktree).
+- GROUNDWORK (superseded by the PORTED+BUILT block above): K13 (00560260:0xDD0=3536 B, body_end 0x00561030). **This is the top-level ISLAND-
+  SOLVE STEP ORCHESTRATOR** — NOT a leaf partition. Single caller `FUN_00561040`. Signature (13 params,
+  decompiler-recovered): `void FUN_00560260(int* p1[solver-ctx piVar8], int* p2, undefined4* p3[state
+  arr, indexed 0x00..0x56], undefined4* p4, undefined4* p5, u4 p6, u4 p7, int p8[island list; +4=count,
+  +0x10=base], undefined4* p9[config; +0x13..+0x1a dt/flags, [0x16]==2 selects integrator], u4 p10,
+  code* p11[KV callback], u4 p12, code* p13[KV velocity-integrate callback])`. Flow per island (loop
+  over p8[+4] islands, stride 0x28): accumulate forces → `FUN_00567c00`(K9) → per contact/joint
+  `FUN_0056efc0`(K9)+`FUN_00570090`(**K12**) → per-joint `FUN_0056f350`(K10) → `FUN_0056f020`(K9);
+  then `FUN_0056e680`(K8 inertia) → `FUN_005675d0`[UNPORTED] → integrator `FUN_0056dd40`(K8, if
+  p9[0x16]==2) / `FUN_0056d3f0`(K8, else) → `FUN_0056d070`(K7) → `(*p11)()` → clamp loop → `(*p13)(p4,
+  p4+6,p4+0x15,p6)` velocity-integrate → `FUN_005601f0`[hooked] → `(*p13)(p4+3,...)` → `FUN_0056caa0`
+  (K7) → `FUN_0056c580`(K7); tail (always): `FUN_0056c310`[UNPORTED] → `FUN_0056bdf0`[UNPORTED] →
+  penetration-resolve loop (`FUN_005667c0`=K1 normalize, `_DAT_005e5258` threshold, `PTR_DAT_005ceabc`
+  guard, `_DAT_005cc33c` sign) → final per-body force-clear loop.
+  **ABI TRAP (the hard part, [[feedback-ghidra-prebranch-args]] at scale):** the decomp prints every
+  callee as `FUN_xxx()` with NO args because the callees carry `unknown` conv — the real args are
+  PUSHed / pre-placed on the stack and Ghidra models them as `pfStack_50/54/58/5c…`/`iStack_60…` stores
+  (incl. a return-address literal per call). ROSETTA-VERIFIED via the K12 call @0x560590: real disasm =
+  `PUSH ECX; PUSH 0x0; PUSH EAX; PUSH EBX; CALL 0x00570090; ADD ESP,0x10` → `FUN_00570090(EBX=solver-
+  ctx, EAX=*(piVar12[2]+idx*4)=manifold, 0.0f, ECX=dt)`, __cdecl 4-arg caller-cleaned. So the PORT must
+  reconstruct EACH of the ~16 call sites from disasm — OR (cheaper) set the now-known K1/K7/K8/K9/K10/
+  K12 callee SIGNATURES in a WRITABLE master/clone and re-decompile so Ghidra associates the args. The
+  2 indirect calls are via fn-ptr PARAMS p11/p13 (the standalone KV1..KV3 targets) — caller-supplied, so
+  for the .asi A/B they resolve to ORIGINAL code; NO KV port needed for the K13 race. Unported direct
+  callees FUN_005675d0/FUN_0056c310/FUN_0056bdf0 also resolve to original on the .asi (fine for A/B).
+  K13 PORT is a full focused session (≈K12 scale, harder ABI). **KICKOFF for the port session:**
+  "B5e K13 — port FUN_00560260 (island-solve orchestrator, 3536 B) on r7/b5e-solver-island (pool0/14).
+  Read B5e_SOLVER_ISLAND §5 'GROUNDWORK next: K13' first. Set the K1/K7/K8/K9/K10/K12 callee signatures
+  in a writable clone, re-decompile to recover the 16 stack-arg call sites (Rosetta: K12 call @0x560590
+  = 4-arg __cdecl), port to Collision/RwpSolverPartition13.cpp, wire into build.bat+asi_sources.rsp,
+  build both. p11/p13 are fn-ptr params (KV, caller-supplied); FUN_005675d0/c310/bdf0 stay original on
+  the .asi. Race-accept: 85 hooks (bridge+B5c8+K1..K12 + 0x00560260); run diag.py doctor FIRST and a
+  stock no-hooks CONTROL if the boot self-exits (env wedge, not code). Commit DONE, re-classify C1→C2."
