@@ -132,6 +132,18 @@ typedef int     (__cdecl *RwpBodyFn1c)(int *);
 #define K23_DAT_005cc574 (*(const float *)0x005cc574u)
 #define K23_DAT_005cc320 (*(const float *)0x005cc320u)
 
+// --- K24 root FUN_0047e9c0 callees (besides the 9 K23 drivers defined below) ---
+// 0x0055e200 solver-context set — ported hook (RwpIntegrator.cpp, extern "C" symbol
+// RwpSolverContextSet: `*ctx = value`).
+extern "C" void __cdecl RwpSolverContextSet(unsigned *ctx, unsigned value);                      // 0x0055e200 (DONE)
+// 0x0047d640 / 0x0047def0 — per-frame on-screen event-marker emitters (draw-stream, NOT physics
+// state; EXCLUDED from the island per island_excluded_edges.tsv). Call the ORIGINAL via RVA
+// fn-ptr so the root's control flow stays verbatim without pulling non-physics code into the port.
+static inline void FUN_0047d640(int a,undefined4 b,undefined4 c)                                  // 0x0047d640 (marker, original)
+{ reinterpret_cast<void(__cdecl *)(int,undefined4,undefined4)>(0x0047d640u)(a,b,c); }
+static inline void FUN_0047def0(int a,undefined4 b,undefined4 c)                                  // 0x0047def0 (marker, original)
+{ reinterpret_cast<void(__cdecl *)(int,undefined4,undefined4)>(0x0047def0u)(a,b,c); }
+
 // FUN_0055ac00 (0x0055ac00) is NOT ported — it stays original; call it through a raw
 // function pointer to its RVA (same idiom as VehicleCouplingBridge::rwpActiveBit), so no
 // unresolved-external symbol is introduced. (.asi: valid in MASHED.exe address space.)
@@ -150,6 +162,7 @@ extern "C" int __cdecl FUN_00561c50(int param_1);
 extern "C" int __cdecl FUN_00561e60(int param_1);
 extern "C" int __cdecl FUN_00561e80(int param_1);
 extern "C" int __cdecl FUN_00561390(int param_1);
+extern "C" void __cdecl FUN_0047e9c0(int param_1, undefined4 param_2);   // K24 root
 
 // ---------------------------------------------------------------------------
 // 0x0055fe50  Broadphase kick — 10-arg call to FUN_0055a1f0 (K3).
@@ -841,7 +854,34 @@ LAB_00561536:
   return param_1;
 }
 
-// --- gta-reversed-style hook registration — CLUSTER 23 (9 of 9 — COMPLETE). ---
+// ---------------------------------------------------------------------------
+// 0x0047e9c0  Root RWP world step (B5e cluster K24) — the solver-island entry
+//   point (FUN_0047ea40 -> here per tick). A fixed, branchless 12-call sequence
+//   over the solver context: context-set, then the 9 K23 stage drivers in the
+//   original order, with the two EXCLUDED marker-emitter passes (FUN_0047d640 at
+//   stage 6, FUN_0047def0 at stage 10 — draw-stream, not physics) interleaved
+//   verbatim via RVA fn-ptr. Retires the RwpBuildExterns.cpp FUN_0047e9c0 thunk;
+//   installing this hook makes the ENTIRE ported island run per tick. Args to the
+//   markers are (ctx, *(ctx+0x8c), *(ctx+0x90)) — disasm 0x0047e9e8..0047e9f7.
+// ---------------------------------------------------------------------------
+extern "C" void __cdecl FUN_0047e9c0(int param_1, undefined4 param_2)
+{
+  RwpSolverContextSet((unsigned *)param_1, param_2);
+  FUN_0055fe50(param_1);
+  FUN_0055fea0(param_1);
+  FUN_0055ff90(param_1);
+  FUN_0055ff70(param_1);
+  FUN_0047d640(param_1,*(undefined4 *)(param_1 + 0x8c),*(undefined4 *)(param_1 + 0x90));
+  FUN_00561e60(param_1);
+  FUN_00561040(param_1);
+  FUN_00561e80(param_1);
+  FUN_0047def0(param_1,*(undefined4 *)(param_1 + 0x8c),*(undefined4 *)(param_1 + 0x90));
+  FUN_00561390(param_1);
+  FUN_00561c50(param_1);
+}
+
+// --- gta-reversed-style hook registration — CLUSTER 23 (9/9) + K24 root. ---
+RH_ScopedInstall(FUN_0047e9c0, 0x0047e9c0);
 RH_ScopedInstall(FUN_00561390, 0x00561390);
 RH_ScopedInstall(FUN_0055fe50, 0x0055fe50);
 RH_ScopedInstall(FUN_0055fea0, 0x0055fea0);

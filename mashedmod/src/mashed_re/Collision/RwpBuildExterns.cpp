@@ -60,8 +60,8 @@ void  FUN_00563940(void* slab)              { reinterpret_cast<void(__cdecl*)(vo
 // RW-Graphics matrix callees used by RwpIntegrator.cpp's FUN_0055b800 port: the
 // FUN_004c52f0/004c51a0/00546b10 RVA thunks were RETIRED by B5e cluster K2 — real
 // clean-room ports now live in Collision/RwpSolverMath2.cpp (same extern "C" names).
-// The island root below stays a thunk until K24.
-void      FUN_0047e9c0(int ctx, unsigned a2)             { reinterpret_cast<void(__cdecl*)(int,unsigned)>(0x0047e9c0u)(ctx, a2); }
+// The island root FUN_0047e9c0 thunk was RETIRED by B5e cluster K24 — the real
+// clean-room port now lives in Collision/RwpSolverCore23.cpp (same extern "C" name).
 
 // 0x0055dec0 — confirmed leaf `return *param_1` (extra cdecl args discarded).
 void* FUN_0055dec0(void* world, int /*node*/, int /*minus1*/, int /*two*/) { return *reinterpret_cast<void**>(world); }
