@@ -1,3 +1,5 @@
+2026-07-20  0x00573670  FUN_00573670  C1->C2  RwpSolverCore22.cpp (544B swept-pair edge-list pump; K3/K5 transforms, K18 00575c60 x2, K16 00576640 manifold, K21 005729a0 TOI per manifold) — race GREEN 126 hooks + SIM-HEALTH + K21-baseline bisection; B5e K22
+2026-07-20  0x0056b9d0  FUN_0056b9d0  C1->C2  RwpSolverCore22.cpp (95B per-body entry; K18 0056b7a0 scratch prime -> FUN_00573670) — race GREEN 126 hooks; B5e K22
 2026-07-20  0x00561280  FUN_00561280  C1->C2  RwpSolverCore21.cpp (contact-point world-projection + path accumulator; gated by K5 FUN_0055bb70 EAX-test) — race GREEN 124 hooks + SIM-HEALTH + K20-baseline bisection; B5e K21
 2026-07-20  0x00568990  FUN_00568990  C1->C2  RwpSolverCore21.cpp (pair-list narrow-phase pump; K3/K5 transforms, K18 00575c60 x2, K16 00576640 manifold-gen, K20 drive+batch) — race GREEN 124 hooks; B5e K21
 2026-07-20  0x005729a0  FUN_005729a0  C1->C2  RwpSolverCore21.cpp (3138B swept-pair conservative-advancement TOI loop; 2 KV +0x24 RwpVolFn24 float10 frames) — race GREEN 124 hooks; B5e K21
