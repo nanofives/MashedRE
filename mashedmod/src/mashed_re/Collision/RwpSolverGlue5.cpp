@@ -68,7 +68,7 @@ typedef long double    float10;     // x87 80-bit extended — MSVC = 64-bit dou
 // --- K2 (RwpSolverMath2.cpp) / K3 (RwpSolverBroadphase3.cpp) / K4 (RwpSolverCore4.cpp)
 //     callees — declarations match the definitions exactly. ---
 extern "C" undefined4 * __cdecl FUN_004c4600(undefined4 *param_1,undefined4 *param_2,undefined4 *param_3);
-extern "C" void __cdecl FUN_0055bae0(int param_1,float *param_2,undefined4 param_3);
+extern "C" float * __cdecl FUN_0055bae0(int param_1,float *param_2,undefined4 param_3);
 extern "C" void __cdecl FUN_0055c0f0(float *param_1,float *param_2);
 extern "C" int  __cdecl FUN_00564c80(int param_1, uint param_2, float *param_3);
 extern "C" void __cdecl FUN_00565260(int param_1, uint param_2);
@@ -123,7 +123,10 @@ extern "C" int * __cdecl FUN_0055e050(int *param_1)
 //             a 0x40-byte local (FUN_004c4600) and transforms through FUN_0055bae0;
 //             otherwise forwards param_2 (or param_1 when param_2==0) unmodified.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_0055bb70(int param_1,int param_2,undefined4 param_3)
+// Each branch tail-returns FUN_0055bae0's result (0x0055bbb4/0x0055bbca/0x0055bbe2 RET, EAX
+// forwarded) — needed by K21 FUN_00561280, which tests it. Was typed void; return-ignoring
+// callers (e.g. FUN_00575c60's cousins) are unaffected because the value was always in EAX.
+extern "C" float * __cdecl FUN_0055bb70(int param_1,int param_2,undefined4 param_3)
 {
   undefined4 *uVar1;
   undefined1 local_40 [64];
@@ -132,14 +135,11 @@ extern "C" void __cdecl FUN_0055bb70(int param_1,int param_2,undefined4 param_3)
      ((*(uint *)(param_1 + 0xc) & 0x20000) == 0)) {
     if (param_2 != 0) {
       uVar1 = FUN_004c4600((undefined4 *)local_40,(undefined4 *)param_1,(undefined4 *)param_2);  // 0x0055bb99
-      FUN_0055bae0(param_1,(float *)uVar1,param_3);                          // 0x0055bba8
-      return;
+      return FUN_0055bae0(param_1,(float *)uVar1,param_3);                   // 0x0055bba8
     }
-    FUN_0055bae0(param_1,(float *)param_1,param_3);                          // 0x0055bbbe
-    return;
+    return FUN_0055bae0(param_1,(float *)param_1,param_3);                   // 0x0055bbbe
   }
-  FUN_0055bae0(param_1,(float *)param_2,param_3);                            // 0x0055bbd6
-  return;
+  return FUN_0055bae0(param_1,(float *)param_2,param_3);                     // 0x0055bbd6
 }
 
 // ---------------------------------------------------------------------------
