@@ -444,6 +444,25 @@ send({kind:'ready'});
 '''
 
 
+def _keep_display_awake():
+    """Stop the screensaver / display-sleep from tearing down the D3D device mid-race, and
+    nudge the input queue to dismiss an already-active screensaver. Scoped to THIS process:
+    ES_CONTINUOUS holds the request until the harness exits; no global power settings touched.
+    Distinct from the reboot-only DirectShow-intro wedge — this only cures the display-asleep
+    'no active display' CreateDevice failure (hr=0x8876086A / ChangeDisplaySettings=-1)."""
+    try:
+        import ctypes
+        ES_CONTINUOUS, ES_SYSTEM_REQUIRED, ES_DISPLAY_REQUIRED = 0x80000000, 0x00000001, 0x00000002
+        ctypes.windll.kernel32.SetThreadExecutionState(
+            ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED)
+        MOUSEEVENTF_MOVE = 0x0001                      # relative wake nudge (dismiss active saver)
+        ctypes.windll.user32.mouse_event(MOUSEEVENTF_MOVE, 1, 0, 0, 0)
+        ctypes.windll.user32.mouse_event(MOUSEEVENTF_MOVE, -1, 0, 0, 0)
+        print("  [keep-awake] display-sleep suppressed + wake nudge sent")
+    except Exception as e:
+        print(f"  [keep-awake] skipped: {e}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--track", type=int, default=0,
@@ -519,6 +538,7 @@ def main():
         env.pop("MASHED_RE_NO_AUTO_HOOK", None)
     else:
         env["MASHED_RE_NO_AUTO_HOOK"] = "1"     # stock original, no installed hooks
+    _keep_display_awake()
     dev = frida.get_local_device()
     proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
     pid = proc.pid
