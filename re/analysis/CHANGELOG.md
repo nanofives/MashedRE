@@ -1,3 +1,10 @@
+2026-07-20  0x0055fe50  FUN_0055fe50  C1->C2  RwpSolverCore23.cpp (broadphase kick; 10-arg FUN_0055a1f0 K3) — race GREEN 133 hooks + SIM-HEALTH + K22-baseline bisection; B5e K23
+2026-07-20  0x0055fea0  FUN_0055fea0  C1->C2  RwpSolverCore23.cpp (body-array pass + pair pump FUN_00568990 K21) — race GREEN 133 hooks; B5e K23
+2026-07-20  0x0055ff70  FUN_0055ff70  C1->C2  RwpSolverCore23.cpp (world-sweep guard FUN_0056bb30 K21) — race GREEN 133 hooks; B5e K23
+2026-07-20  0x0055ff90  FUN_0055ff90  C1->C2  RwpSolverCore23.cpp (arena mark + island-active-flag walk; FUN_00567c60 K11) — race GREEN 133 hooks; B5e K23
+2026-07-20  0x00561c50  FUN_00561c50  C1->C2  RwpSolverCore23.cpp (pair-record AABB gate + active-bit set FUN_0055ac00) — race GREEN 133 hooks; B5e K23
+2026-07-20  0x00561e60  FUN_00561e60  C1->C2  RwpSolverCore23.cpp (wrapper -> FUN_00568fd0 K11) — race GREEN 133 hooks; B5e K23
+2026-07-20  0x00561e80  FUN_00561e80  C1->C2  RwpSolverCore23.cpp (wrapper -> FUN_00568dd0 K11) — race GREEN 133 hooks; B5e K23
 2026-07-20  0x00573670  FUN_00573670  C1->C2  RwpSolverCore22.cpp (544B swept-pair edge-list pump; K3/K5 transforms, K18 00575c60 x2, K16 00576640 manifold, K21 005729a0 TOI per manifold) — race GREEN 126 hooks + SIM-HEALTH + K21-baseline bisection; B5e K22
 2026-07-20  0x0056b9d0  FUN_0056b9d0  C1->C2  RwpSolverCore22.cpp (95B per-body entry; K18 0056b7a0 scratch prime -> FUN_00573670) — race GREEN 126 hooks; B5e K22
 2026-07-20  0x00561280  FUN_00561280  C1->C2  RwpSolverCore21.cpp (contact-point world-projection + path accumulator; gated by K5 FUN_0055bb70 EAX-test) — race GREEN 124 hooks + SIM-HEALTH + K20-baseline bisection; B5e K21

@@ -325,6 +325,7 @@
 "Collision\RwpSolverCore20.cpp"
 "Collision\RwpSolverCore21.cpp"
 "Collision\RwpSolverCore22.cpp"
+"Collision\RwpSolverCore23.cpp"
 "Collision\RwpBuildExterns.cpp"
 "Collision\CollisionBodyCreate.cpp"
 "Collision\PhysicsWorldBuild.cpp"
