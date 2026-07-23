@@ -26,11 +26,10 @@
 // Forward declarations for callees
 // ---------------------------------------------------------------------------
 
-// 0x0042f500  GetDat0067ea64  — C4 (GameState/StateAccessors.cpp)
-// uint32_t __cdecl GetDat0067ea64(void)
+// 0x0042f500  GetDat0067ea64  — C4 (GameState/StateAccessors.cpp); call the ported
+// export directly instead of trampolining to the raw original RVA (account2 rewire).
 // Returns DAT_0067ea64 — team-mode flag (0 = no teams).
-static auto* const s_GetTeamMode =
-    reinterpret_cast<std::int32_t(__cdecl*)(void)>(0x0042f500);
+extern "C" std::uint32_t __cdecl GetDat0067ea64(void);
 
 // 0x0042f6a0  GetRaceSubMode  — C3 (GameState/StateAccessors.cpp)
 // uint32_t __cdecl GetRaceSubMode(void)
@@ -87,7 +86,7 @@ extern "C" __declspec(dllexport) std::int32_t __cdecl PlayerBlock2Field00Get(
     const unsigned field_dword_offset = 0u;
 
     // Step 1: team-mode gate.
-    if (s_GetTeamMode() == 0) {
+    if (GetDat0067ea64() == 0) {
         // No teams — return this player's field directly.
         return *reinterpret_cast<std::int32_t*>(
             k_Block2Root + (k_Block2Stride * static_cast<unsigned>(param_1) + field_dword_offset) * 4u);
@@ -150,7 +149,7 @@ extern "C" __declspec(dllexport) std::int32_t __cdecl PlayerBlock2Field04Get(
     const unsigned field_dword_offset = 1u;
 
     // Step 2: team-mode gate.
-    if (s_GetTeamMode() == 0) {
+    if (GetDat0067ea64() == 0) {
         return *reinterpret_cast<std::int32_t*>(
             k_Block2Root + (k_Block2Stride * static_cast<unsigned>(param_1) + field_dword_offset) * 4u);
     }
@@ -206,7 +205,7 @@ extern "C" __declspec(dllexport) std::int32_t __cdecl PlayerBlock2Field50Get(
     const unsigned field_dword_offset = 0x14u;
 
     // Step 1: team-mode gate.
-    if (s_GetTeamMode() == 0) {
+    if (GetDat0067ea64() == 0) {
         return *reinterpret_cast<std::int32_t*>(
             k_Block2Root + (k_Block2Stride * static_cast<unsigned>(param_1) + field_dword_offset) * 4u);
     }
@@ -269,7 +268,7 @@ extern "C" __declspec(dllexport) std::int32_t __cdecl PlayerBlock2Field08Get(
     const unsigned field_dword_offset = 2u;
 
     // Step 2: team-mode gate.
-    if (s_GetTeamMode() == 0) {
+    if (GetDat0067ea64() == 0) {
         return *reinterpret_cast<std::int32_t*>(
             k_Block2Root + (k_Block2Stride * static_cast<unsigned>(param_1) + field_dword_offset) * 4u);
     }
