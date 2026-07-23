@@ -64,16 +64,16 @@
 // ref: re/analysis/frontend_c1_to_c2_s3/FUN_004241c0.md
 // ---------------------------------------------------------------------------
 
-// Forward declaration for team-mode flag getter. [0x0042f500, C4]
-typedef std::int32_t (__cdecl *PFN_GetTeamModeFlag)();
-static const PFN_GetTeamModeFlag s_GetTeamModeFlag_ad1 =
-    reinterpret_cast<PFN_GetTeamModeFlag>(0x0042f500u);
+// Team-mode flag getter 0x0042f500 is our ported C4 export GetDat0067ea64
+// (GameState/StateAccessors.cpp) -- call the port directly rather than
+// trampolining through the original image.
+extern "C" std::uint32_t __cdecl GetDat0067ea64();   // 0x0042f500
 
 // 0x004241c0
 extern "C" __declspec(dllexport) std::int32_t __cdecl TeamBlockOneGet(std::int32_t param_1)
 {
     // Step 1: if not team mode, return block-1 field directly. [0x004241c0]
-    if (s_GetTeamModeFlag_ad1() == 0) {
+    if (GetDat0067ea64() == 0) {
         // (&DAT_00899e80)[param_1 * 0x4e] — stride 0x4e int32s.
         return reinterpret_cast<const std::int32_t*>(0x00899e80u)[param_1 * 0x4e];
     }
