@@ -50,6 +50,11 @@ static int b5cSelfTestEnabled() {
                  v = (n > 0 && n < sizeof buf && buf[0]) ? 1 : 0; }
     return v;
 }
+// Only self-test while a race is actually running (session-phase 0x00771968 == 3).
+// The leaf helpers ALSO fire during load-time world build (FUN_00481e00), where the
+// Uninstall/call-original churn is unsafe pre-spawn — gate every A/B on phase 3.
+// (Never reached on the exe: b5cSelfTestEnabled() short-circuits first.)
+static bool b5cInRace() { return *(volatile unsigned char*)0x00771968u == 3; }
 static int b5cHookIndex(std::uintptr_t rva) {
     for (std::size_t i = 0; i < HookSystem::Count(); ++i)
         if (HookSystem::At(i).target_rva == rva) return (int)i;
@@ -62,6 +67,13 @@ static void b5cLog(const char* s) {
     DWORD wrote; WriteFile(h, s, (DWORD)lstrlenA(s), &wrote, nullptr); CloseHandle(h);
 }
 static bool g_b5cInSelfTest = false;   // re-entrancy guard (orig call must not re-enter)
+
+// Gate parity capture: when set, RwpBodyMatrixRefresh_impl records whether it was
+// reached (count) and with which args — used to A/B RwpBodyRefreshGate's decision.
+static bool  g_gateCapture   = false;
+static int   g_gateCaptureN  = 0;
+static int*  g_gateCaptureA0 = nullptr;
+static void* g_gateCaptureA1 = nullptr;
 
 // ---- RW-Graphics matrix callees used by FUN_0055b800 (extern; RwpBuildExterns.cpp
 //      forwards to the real RVA under the .asi so the A/B is bit-identical). ----
@@ -82,9 +94,37 @@ extern "C" void      FUN_0047e9c0(int solverCtx, unsigned arg2);                
 // 0x0057c210  RwpMgr — body accessor. Byte-offset read into the body-pointer
 // table DAT_007dc8d8. Verbatim: `return *(undefined4*)(DAT_007dc8d8 + param_1)`.
 // ---------------------------------------------------------------------------
-extern "C" int __cdecl RwpBodyTableLookup(int key)
+static int RwpBodyTableLookup_impl(int key)
 {
     return *(int*)(MASHED_DAT_007dc8d8 + key);                  // 0x0057c212
+}
+
+// Shared per-leaf sample counter cap + log line for the return-value / single-write
+// leaves. Each leaf keeps its own counter so a hot leaf can't starve the others.
+static const int kB5cLeafMax = 48;
+static void b5cLeafLog(const char* fn, int n, int idx, int ndiff, const char* det)
+{
+    char hdr[160];
+    wsprintfA(hdr, "[%d] fn=%s idx=%d ndiff=%d%s%s\r\n",
+              n, fn, idx, ndiff, ndiff ? "" : " OK", (ndiff && det) ? det : "");
+    b5cLog(hdr);
+}
+
+static int g_b5cTblCount = 0;
+extern "C" int __cdecl RwpBodyTableLookup(int key)
+{
+    if (!b5cSelfTestEnabled() || !b5cInRace() || g_b5cInSelfTest ||g_b5cTblCount >= kB5cLeafMax)
+        return RwpBodyTableLookup_impl(key);
+    g_b5cInSelfTest = true;
+    int idx = b5cHookIndex(0x0057c210u), origRet = 0;
+    if (idx >= 0) { HookSystem::Uninstall((std::size_t)idx);
+        origRet = reinterpret_cast<int(__cdecl*)(int)>(0x0057c210u)(key);
+        HookSystem::Install((std::size_t)idx); }
+    int mineRet = RwpBodyTableLookup_impl(key);
+    char det[64]; wsprintfA(det, " o=%08x,n=%08x", origRet, mineRet);
+    b5cLeafLog("RwpBodyTableLookup", g_b5cTblCount++, idx, (mineRet != origRet) ? 1 : 0, det);
+    g_b5cInSelfTest = false;
+    return mineRet;
 }
 
 // ---------------------------------------------------------------------------
@@ -92,9 +132,26 @@ extern "C" int __cdecl RwpBodyTableLookup(int key)
 // The 2nd arg (dt = DAT_0061331c) is passed at the call site but ignored by this
 // getter's body (cited 0x0055deb0). Kept in the signature to match the ABI.
 // ---------------------------------------------------------------------------
-extern "C" int __cdecl RwpWorldSolverHandle(int world, float /*dt*/)
+static int RwpWorldSolverHandle_impl(int world)
 {
     return *(int*)(world + 4);                                  // 0x0055deb0
+}
+
+static int g_b5cWshCount = 0;
+extern "C" int __cdecl RwpWorldSolverHandle(int world, float dt)
+{
+    if (!b5cSelfTestEnabled() || !b5cInRace() || g_b5cInSelfTest ||g_b5cWshCount >= kB5cLeafMax)
+        return RwpWorldSolverHandle_impl(world);
+    g_b5cInSelfTest = true;
+    int idx = b5cHookIndex(0x0055deb0u), origRet = 0;
+    if (idx >= 0) { HookSystem::Uninstall((std::size_t)idx);
+        origRet = reinterpret_cast<int(__cdecl*)(int, float)>(0x0055deb0u)(world, dt);
+        HookSystem::Install((std::size_t)idx); }
+    int mineRet = RwpWorldSolverHandle_impl(world);
+    char det[64]; wsprintfA(det, " o=%08x,n=%08x", origRet, mineRet);
+    b5cLeafLog("RwpWorldSolverHandle", g_b5cWshCount++, idx, (mineRet != origRet) ? 1 : 0, det);
+    g_b5cInSelfTest = false;
+    return mineRet;
 }
 
 // ---------------------------------------------------------------------------
@@ -102,7 +159,7 @@ extern "C" int __cdecl RwpWorldSolverHandle(int world, float /*dt*/)
 //   param_1 = bitset owner (bitset at +0x5c), param_2 = body (shape idx at +0x20),
 //   param_3 = set flag.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl RwpShapeActiveBitSet(int bitsetOwner, int body, int set)
+static void RwpShapeActiveBitSet_impl(int bitsetOwner, int body, int set)
 {
     unsigned short sidx = *(unsigned short*)(body + 0x20);
     unsigned* p = (unsigned*)(*(int*)(bitsetOwner + 0x5c) + (unsigned)(sidx >> 5) * 4);
@@ -111,6 +168,28 @@ extern "C" void __cdecl RwpShapeActiveBitSet(int bitsetOwner, int body, int set)
         return;
     }
     *p = *p & ~(1u << ((unsigned char)sidx & 0x1f));            // 0x0055ac3e
+}
+
+static int g_b5cBitCount = 0;
+extern "C" void __cdecl RwpShapeActiveBitSet(int bitsetOwner, int body, int set)
+{
+    if (!b5cSelfTestEnabled() || !b5cInRace() || g_b5cInSelfTest ||g_b5cBitCount >= kB5cLeafMax)
+        { RwpShapeActiveBitSet_impl(bitsetOwner, body, set); return; }
+    g_b5cInSelfTest = true;
+    // the single word this function read-modify-writes (stable addr across both runs)
+    unsigned short sidx = *(unsigned short*)(body + 0x20);
+    unsigned* p = (unsigned*)(*(int*)(bitsetOwner + 0x5c) + (unsigned)(sidx >> 5) * 4);
+    unsigned snap = *p;
+    int idx = b5cHookIndex(0x0055ac00u);
+    if (idx >= 0) { HookSystem::Uninstall((std::size_t)idx);
+        reinterpret_cast<void(__cdecl*)(int, int, int)>(0x0055ac00u)(bitsetOwner, body, set);
+        HookSystem::Install((std::size_t)idx); }
+    unsigned orig = *p;
+    *p = snap;                                                 // restore input
+    RwpShapeActiveBitSet_impl(bitsetOwner, body, set);
+    char det[80]; wsprintfA(det, " o=%08x,n=%08x", orig, *p);
+    b5cLeafLog("RwpShapeActiveBitSet", g_b5cBitCount++, idx, (*p != orig) ? 1 : 0, det);
+    g_b5cInSelfTest = false;
 }
 
 // ---------------------------------------------------------------------------
@@ -123,6 +202,7 @@ extern "C" void __cdecl RwpShapeActiveBitSet(int bitsetOwner, int body, int set)
 // ---------------------------------------------------------------------------
 static int* RwpBodyMatrixRefresh_impl(int* param_1, void* param_2)
 {
+    if (g_gateCapture) { ++g_gateCaptureN; g_gateCaptureA0 = param_1; g_gateCaptureA1 = param_2; }
     int mtxBase  = **(int**)(*param_1 + 0x10);                   // **(owner+0x10)
     int mtxSlot  = param_1[1] * 0x40 + mtxBase;                  // idx*0x40 + base
     FUN_004c52f0((unsigned*)mtxSlot, (unsigned*)param_2, 0);     // 0x0055b811 combine op0 = copy
@@ -139,7 +219,7 @@ static const int kB5cMtxMax = 64;   // sampled-call cap (matches A4 per-branch q
 
 extern "C" int* __cdecl RwpBodyMatrixRefresh(int* param_1, void* param_2)
 {
-    if (!b5cSelfTestEnabled() || g_b5cInSelfTest || g_b5cMtxCount >= kB5cMtxMax)
+    if (!b5cSelfTestEnabled() || !b5cInRace() || g_b5cInSelfTest ||g_b5cMtxCount >= kB5cMtxMax)
         return RwpBodyMatrixRefresh_impl(param_1, param_2);
 
     g_b5cInSelfTest = true;
@@ -202,7 +282,7 @@ extern "C" int* __cdecl RwpBodyMatrixRefresh(int* param_1, void* param_2)
 //   M = *(body+0x10);  e = M + (idx & 0xffff)*0xc;
 //   FUN_0055b800(*(e+4), *(e+8));                           tail call (0x0055e03d JMP)
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl RwpBodyRefreshGate(int body, int idx)
+static void RwpBodyRefreshGate_impl(int body, int idx)
 {
     int owner = *(int*)(body + 0x24);                           // 0x0055dff4
     if (owner == 0) return;
@@ -213,6 +293,36 @@ extern "C" void __cdecl RwpBodyRefreshGate(int body, int idx)
     int M = *(int*)(body + 0x10);                              // 0x0055e020
     int e = M + (idx & 0xffff) * 0xc;                          // 0x0055e023..e02b
     RwpBodyMatrixRefresh(*(int**)(e + 4), *(void**)(e + 8));   // 0x0055e03d JMP 0x0055b800
+}
+
+// Decision+args parity A/B: verify the gate reaches (or skips) the matrix refresh
+// identically and with identical tail-call args. The matrix write itself is already
+// proven bit-identical above, so decision+args parity is the gate's remaining logic.
+static int g_b5cGateCount = 0;
+extern "C" void __cdecl RwpBodyRefreshGate(int body, int idx)
+{
+    if (!b5cSelfTestEnabled() || !b5cInRace() || g_b5cInSelfTest ||g_b5cGateCount >= kB5cLeafMax)
+        { RwpBodyRefreshGate_impl(body, idx); return; }
+    g_b5cInSelfTest = true;                 // matrix wrapper -> _impl (no nested A/B); capture still fires
+    int gidx = b5cHookIndex(0x0055dff0u);
+    // (A) ORIGINAL gate (its tail-jmp reaches the still-hooked matrix wrapper -> _impl -> capture)
+    g_gateCapture = true;
+    g_gateCaptureN = 0; g_gateCaptureA0 = nullptr; g_gateCaptureA1 = nullptr;
+    if (gidx >= 0) { HookSystem::Uninstall((std::size_t)gidx);
+        reinterpret_cast<void(__cdecl*)(int, int)>(0x0055dff0u)(body, idx);
+        HookSystem::Install((std::size_t)gidx); }
+    int   oN = g_gateCaptureN; int* oA0 = g_gateCaptureA0; void* oA1 = g_gateCaptureA1;
+    // (B) MY gate
+    g_gateCaptureN = 0; g_gateCaptureA0 = nullptr; g_gateCaptureA1 = nullptr;
+    RwpBodyRefreshGate_impl(body, idx);
+    int   mN = g_gateCaptureN; int* mA0 = g_gateCaptureA0; void* mA1 = g_gateCaptureA1;
+    g_gateCapture = false;
+    int ndiff = (oN != mN ? 1 : 0) + (oA0 != mA0 ? 1 : 0) + (oA1 != mA1 ? 1 : 0);
+    char det[160]; wsprintfA(det, " calls:o=%d,n=%d a0:o=%08x,n=%08x a1:o=%08x,n=%08x",
+        oN, mN, (unsigned)(std::uintptr_t)oA0, (unsigned)(std::uintptr_t)mA0,
+        (unsigned)(std::uintptr_t)oA1, (unsigned)(std::uintptr_t)mA1);
+    b5cLeafLog("RwpBodyRefreshGate", g_b5cGateCount++, gidx, ndiff, det);
+    g_b5cInSelfTest = false;
 }
 
 // ---------------------------------------------------------------------------
@@ -247,9 +357,28 @@ extern "C" void* __cdecl FUN_0055c000(int shape, float* mtx, float* dir, void* o
 // ---------------------------------------------------------------------------
 // 0x0055e200  RwpMgr — solver-context set. `*param_1 = param_2` (cited 0x0055e205).
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl RwpSolverContextSet(unsigned* ctx, unsigned value)
+static void RwpSolverContextSet_impl(unsigned* ctx, unsigned value)
 {
     *ctx = value;                                             // 0x0055e205
+}
+
+static int g_b5cCtxCount = 0;
+extern "C" void __cdecl RwpSolverContextSet(unsigned* ctx, unsigned value)
+{
+    if (!b5cSelfTestEnabled() || !b5cInRace() || g_b5cInSelfTest ||g_b5cCtxCount >= kB5cLeafMax)
+        { RwpSolverContextSet_impl(ctx, value); return; }
+    g_b5cInSelfTest = true;
+    unsigned snap = *ctx;
+    int idx = b5cHookIndex(0x0055e200u);
+    if (idx >= 0) { HookSystem::Uninstall((std::size_t)idx);
+        reinterpret_cast<void(__cdecl*)(unsigned*, unsigned)>(0x0055e200u)(ctx, value);
+        HookSystem::Install((std::size_t)idx); }
+    unsigned orig = *ctx;
+    *ctx = snap;                                              // restore input
+    RwpSolverContextSet_impl(ctx, value);
+    char det[64]; wsprintfA(det, " o=%08x,n=%08x", orig, *ctx);
+    b5cLeafLog("RwpSolverContextSet", g_b5cCtxCount++, idx, (*ctx != orig) ? 1 : 0, det);
+    g_b5cInSelfTest = false;
 }
 
 // ---------------------------------------------------------------------------
