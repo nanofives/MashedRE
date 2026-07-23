@@ -20,17 +20,18 @@ void Register(std::uintptr_t /*target_rva*/, void* /*replacement*/, const char* 
     // No-op: the standalone exe is the implementation; there is nothing to patch.
 }
 
-// Phase C2: if any of these turn out to be referenced by the exe-side .cpp set
-// (which they aren't today, per the Phase B audit), uncomment.
-
-// bool Install  (std::size_t /*index*/) { return false; }
-// bool Uninstall(std::size_t /*index*/) { return false; }
-// void InstallAll  () { /* no-op */ }
-// void UninstallAll() { /* no-op */ }
-// std::size_t       Count() { return 0; }
-// const HookEntry&  At(std::size_t /*index*/) {
-//     static HookEntry s_empty{0, nullptr, "", {0,0,0,0,0}, false};
-//     return s_empty;
-// }
+// Phase C2: referenced by the exe-side .cpp set as of 2026-07-23 (the B5c
+// in-process C4 self-test in Collision/RwpIntegrator.cpp references
+// Count/At/Install/Uninstall; that code is runtime-gated OFF on the exe by
+// MASHED_PHYS_C4_SELFTEST, but the symbols must resolve at link time). No-op here.
+bool Install  (std::size_t /*index*/) { return false; }
+bool Uninstall(std::size_t /*index*/) { return false; }
+void InstallAll  () { /* no-op */ }
+void UninstallAll() { /* no-op */ }
+std::size_t       Count() { return 0; }
+const HookEntry&  At(std::size_t /*index*/) {
+    static HookEntry s_empty{0, nullptr, "", {0,0,0,0,0}, false};
+    return s_empty;
+}
 
 } // namespace HookSystem

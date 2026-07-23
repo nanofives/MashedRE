@@ -25,9 +25,43 @@
 // (FUN_004c52f0/004c51a0/00546b10), which are extern (bit-identity A/B under the .asi calls
 // the real game math at RVA — RwpBuildExterns.cpp forwards them). No transcendentals here.
 #include "../Core/HookSystem.h"
+#include <cstdlib>   // getenv
+#include <cstring>   // memcpy
 
 namespace mashed_re {
 namespace Collision {
+
+// ═══════════════════════════════════════════════════════════════════════════
+// B5c IN-PROCESS BIT-IDENTITY SELF-TEST  (env MASHED_PHYS_C4_SELFTEST)
+// ───────────────────────────────────────────────────────────────────────────
+// Verbatim-thunk C4 harness for the B5c integrator subset (mirrors the A4
+// PhysicsChainHooks selftest). For a sampled subset of live per-tick calls:
+// snapshot the function's output region, run the ORIGINAL (reached by temporarily
+// HookSystem::Uninstall-ing our inline-JMP — single-threaded physics so it is
+// safe — then Install-ing it back), capture its output, restore the region, run
+// OUR port, and bit-compare per 32-bit field -> ndiff. Logs
+// original/phys_c4_b5c_selftest.log ("[n] fn=.. ndiff=N OK"). ZERO Frida overhead
+// (CLAUDE.md: Interceptor on this hot path destabilizes MASHED). Inert on the exe
+// (env unset + HookSystemNoOp Uninstall/Install/At/Count return 0/false).
+// ═══════════════════════════════════════════════════════════════════════════
+static int b5cSelfTestEnabled() {
+    static int v = -1;
+    if (v < 0) { char buf[8]; DWORD n = GetEnvironmentVariableA("MASHED_PHYS_C4_SELFTEST", buf, sizeof buf);
+                 v = (n > 0 && n < sizeof buf && buf[0]) ? 1 : 0; }
+    return v;
+}
+static int b5cHookIndex(std::uintptr_t rva) {
+    for (std::size_t i = 0; i < HookSystem::Count(); ++i)
+        if (HookSystem::At(i).target_rva == rva) return (int)i;
+    return -1;
+}
+static void b5cLog(const char* s) {
+    HANDLE h = CreateFileA("phys_c4_b5c_selftest.log", FILE_APPEND_DATA, FILE_SHARE_READ,
+                           nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (h == INVALID_HANDLE_VALUE) return;
+    DWORD wrote; WriteFile(h, s, (DWORD)lstrlenA(s), &wrote, nullptr); CloseHandle(h);
+}
+static bool g_b5cInSelfTest = false;   // re-entrancy guard (orig call must not re-enter)
 
 // ---- RW-Graphics matrix callees used by FUN_0055b800 (extern; RwpBuildExterns.cpp
 //      forwards to the real RVA under the .asi so the A/B is bit-identical). ----
@@ -87,7 +121,7 @@ extern "C" void __cdecl RwpShapeActiveBitSet(int bitsetOwner, int body, int set)
 // Writes the body's 0x40-byte world matrix slot (idx*0x40 + **(owner+0x10)) and the
 // 0x10-byte quaternion slot (idx*0x10 + (*(owner+0x10))[4]). All pointer-indirect.
 // ---------------------------------------------------------------------------
-extern "C" int* __cdecl RwpBodyMatrixRefresh(int* param_1, void* param_2)
+static int* RwpBodyMatrixRefresh_impl(int* param_1, void* param_2)
 {
     int mtxBase  = **(int**)(*param_1 + 0x10);                   // **(owner+0x10)
     int mtxSlot  = param_1[1] * 0x40 + mtxBase;                  // idx*0x40 + base
@@ -96,6 +130,64 @@ extern "C" int* __cdecl RwpBodyMatrixRefresh(int* param_1, void* param_2)
     int quatBase = (*(int**)(*param_1 + 0x10))[4];              // (owner+0x10)[4]
     FUN_00546b10((float*)(param_1[1] * 0x10 + quatBase), (float*)mtxSlot); // matrix->quat
     return param_1;
+}
+
+// C4 self-test wrapper: bit-identity A/B of the 0x40-byte world-matrix slot +
+// 0x10-byte quaternion slot this function writes (the only memory it mutates).
+static int  g_b5cMtxCount = 0;
+static const int kB5cMtxMax = 64;   // sampled-call cap (matches A4 per-branch quotas)
+
+extern "C" int* __cdecl RwpBodyMatrixRefresh(int* param_1, void* param_2)
+{
+    if (!b5cSelfTestEnabled() || g_b5cInSelfTest || g_b5cMtxCount >= kB5cMtxMax)
+        return RwpBodyMatrixRefresh_impl(param_1, param_2);
+
+    g_b5cInSelfTest = true;
+    // output regions — identical address math to the impl (idx*0x40 + **(owner+0x10),
+    // idx*0x10 + (*(owner+0x10))[4]).
+    unsigned char* mtxSlot  =
+        (unsigned char*)(std::uintptr_t)(param_1[1] * 0x40 + **(int**)(*param_1 + 0x10));
+    unsigned char* quatSlot =
+        (unsigned char*)(std::uintptr_t)(param_1[1] * 0x10 + (*(int**)(*param_1 + 0x10))[4]);
+
+    unsigned char snapMtx[0x40], snapQuat[0x10], origMtx[0x40], origQuat[0x10];
+    std::memcpy(snapMtx, mtxSlot, 0x40);
+    std::memcpy(snapQuat, quatSlot, 0x10);
+
+    // (1) ORIGINAL 0x0055b800 via temporary uninstall (single-threaded physics -> safe)
+    int idx = b5cHookIndex(0x0055b800u);
+    if (idx >= 0) {
+        HookSystem::Uninstall((std::size_t)idx);
+        reinterpret_cast<int*(__cdecl*)(int*, void*)>(0x0055b800u)(param_1, param_2);
+        HookSystem::Install((std::size_t)idx);
+    }
+    std::memcpy(origMtx, mtxSlot, 0x40);
+    std::memcpy(origQuat, quatSlot, 0x10);
+
+    // (2) restore inputs, run OUR port
+    std::memcpy(mtxSlot, snapMtx, 0x40);
+    std::memcpy(quatSlot, snapQuat, 0x10);
+    int* r = RwpBodyMatrixRefresh_impl(param_1, param_2);
+
+    // (3) per-32-bit-field bit-compare
+    int ndiff = 0; char det[256]; int p = 0;
+    for (int i = 0; i < 0x40; i += 4)
+        if (*(unsigned*)(mtxSlot + i) != *(unsigned*)(origMtx + i)) {
+            ndiff++; if (p < 200) p += wsprintfA(det + p, " m+0x%x:o=%08x,n=%08x",
+                            i, *(unsigned*)(origMtx + i), *(unsigned*)(mtxSlot + i)); }
+    for (int i = 0; i < 0x10; i += 4)
+        if (*(unsigned*)(quatSlot + i) != *(unsigned*)(origQuat + i)) {
+            ndiff++; if (p < 200) p += wsprintfA(det + p, " q+0x%x:o=%08x,n=%08x",
+                            i, *(unsigned*)(origQuat + i), *(unsigned*)(quatSlot + i)); }
+
+    char hdr[128];
+    wsprintfA(hdr, "[%d] fn=RwpBodyMatrixRefresh idx=%d ndiff=%d%s\r\n",
+              g_b5cMtxCount, idx, ndiff, ndiff ? "" : " OK");
+    b5cLog(hdr);
+    if (ndiff) { det[p] = 0; b5cLog("   "); b5cLog(det); b5cLog("\r\n"); }
+    ++g_b5cMtxCount;
+    g_b5cInSelfTest = false;
+    return r;
 }
 
 // ---------------------------------------------------------------------------
