@@ -403,3 +403,8 @@ void __cdecl IntroSplashOrchestrator() {
 }
 
 // MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(IntroSplashOrchestrator, 0x00495350);
+// 2026-07-23 account3 canonical-verify: subset-install (MASHED_HOOK_ONLY=0x00495350) CRASHES at boot —
+// access-violation from the IntroSplashVtableSlot6 dispatch `call [edi+0x18]` (asm 0x1001187d, source ~L351),
+// edi=OrigVehicle0Get(0) render-target handle whose +0x18 vtable slot is garbage (0x25ff5dec) at intro time
+// (log/crash_eip.txt). NOT caused by the S-0801/S-0803 rewire (both rewired calls are downstream, never
+// reached — disasm-proven). Orchestrator stays MASS-DISABLED; C2->C3 canonical observation REFUSED.
