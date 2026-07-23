@@ -22,6 +22,10 @@
 #include "../Core/HookSystem.h"
 #include <cstdint>
 
+// ScreenHeightGet is our ported C4 export (0x0042b8c0, MenuButtonDetect.cpp) --
+// call the port directly rather than trampolining through the original image.
+extern "C" std::uint32_t __cdecl ScreenHeightGet();   // 0x0042b8c0
+
 // ---------------------------------------------------------------------------
 // Shared constants (cited from 0x00428610 body and sibling analysis in
 // DrawQuadPrimitives.cpp).
@@ -34,10 +38,10 @@ namespace {
 constexpr std::uintptr_t kScaleX = 0x005cd5a8u;
 constexpr std::uintptr_t kScaleY = 0x005cc560u;
 
-// ScreenWidthGet / ScreenHeightGet — 0-arg, already C3 (hooks.csv).
+// ScreenWidthGet — 0-arg, C3 (hooks.csv); still trampolined (target <C4).
+// ScreenHeightGet (0x0042b8c0) is now C4 and called directly (fwd decl above).
 using ShortGetter_t = std::uint16_t(__cdecl*)();
 auto* const s_ScreenWidthGet  = reinterpret_cast<ShortGetter_t>(0x0042b8b0u);
-auto* const s_ScreenHeightGet = reinterpret_cast<ShortGetter_t>(0x0042b8c0u);
 
 // HudIm2DQuad — 0x00450b10; C3; the terminal draw call.
 // Signature (from DrawQuadPrimitives.cpp + hooks.csv):
@@ -128,7 +132,7 @@ extern "C" __declspec(dllexport) void __cdecl ViewportScaledRectDraw(
     const float scale_x = *reinterpret_cast<float*>(kScaleX);  // ≈ 0.001
     const float scale_y = *reinterpret_cast<float*>(kScaleY);  // ≈ 0.000833
     const float fVar4   = static_cast<float>(static_cast<int>(s_ScreenWidthGet()))  * scale_x;
-    const float fVar1   = static_cast<float>(static_cast<int>(s_ScreenHeightGet())) * scale_y;
+    const float fVar1   = static_cast<float>(static_cast<int>(ScreenHeightGet())) * scale_y;
 
     // ── Step 2: colour struct defaults (cited at 0x00428610 body). ───────────
     // Four floats on stack; order as cited in analysis note.
