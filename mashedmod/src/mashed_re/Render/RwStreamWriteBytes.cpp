@@ -44,12 +44,12 @@
 // Analysis note: re/analysis/render_5_c1_to_c2_s1/FUN_004cc770.md
 // ---------------------------------------------------------------------------
 
-// Callee at fixed RVA -- call through original image address.
-// Signature matches Save/RwStream.cpp RwStreamWrite_s2 declaration.
+// Callee 0x004cbe80 is our ported RwStreamWrite_s2 (Save/RwStream.cpp, C4/impl) --
+// call the port directly rather than trampolining through the original image.
 // [0x004cc770 body -> 0x004cbe80]
-typedef std::uint32_t(__cdecl *FUN_004cbe80_t)(std::uint32_t, const void*, std::uint32_t);
-static const FUN_004cbe80_t s_FUN_004cbe80 =
-    reinterpret_cast<FUN_004cbe80_t>(0x004cbe80u);
+extern "C" void* __cdecl RwStreamWrite_s2(std::uint32_t* param_1,
+                                          std::uint32_t* param_2,
+                                          std::uint32_t  param_3);
 
 // 0x004cc770
 extern "C" __declspec(dllexport) std::uint32_t __cdecl RwStreamWriteBytes(
@@ -58,7 +58,9 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RwStreamWriteBytes(
     std::uint32_t  param_3)   // byte count                [0x004cc770 param_3]
 {
     // Call stream write dispatcher; discard return value. [0x004cc770: CALL FUN_004cbe80]
-    s_FUN_004cbe80(param_1, reinterpret_cast<const void*>(param_2), param_3);
+    RwStreamWrite_s2(reinterpret_cast<std::uint32_t*>(param_1),
+                     reinterpret_cast<std::uint32_t*>(param_2),
+                     param_3);
 
     // Always return param_1. [0x004cc783: MOV EAX, param_1; RET]
     return param_1;
