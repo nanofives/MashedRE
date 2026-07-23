@@ -33,11 +33,10 @@
 // Forward declarations for callees
 // ---------------------------------------------------------------------------
 
-// 0x0042f500  GetDat0067ea64  — C4 (GameState/StateAccessors.cpp)
-// std::int32_t __cdecl GetDat0067ea64(void)
+// 0x0042f500  GetDat0067ea64  — C4 (GameState/StateAccessors.cpp); call the ported
+// export directly instead of trampolining to the raw original RVA (account2 rewire).
 // Returns DAT_0067ea64 — team-mode flag (0 = no teams).
-static auto* const s_GetTeamMode =
-    reinterpret_cast<std::int32_t(__cdecl*)(void)>(0x0042f500);
+extern "C" std::uint32_t __cdecl GetDat0067ea64(void);
 
 // 0x0042f6a0  GetRaceSubMode  — C3 (Util/GameStateGetters.cpp)
 // std::int32_t __cdecl GetRaceSubMode(void)
@@ -88,7 +87,7 @@ extern "C" __declspec(dllexport) std::int32_t __cdecl PlayerScoreTeamAccGatedB(s
     std::int32_t mode = s_GetRaceSubMode();          // @ 0x00423cc6
     if (mode == 4) return 0;                         // @ 0x00423ccc
 
-    std::int32_t iVar2 = s_GetTeamMode();            // @ 0x00423cd2
+    std::int32_t iVar2 = static_cast<std::int32_t>(GetDat0067ea64());            // @ 0x00423cd2
 
     std::int32_t* const score_base = reinterpret_cast<std::int32_t*>(0x00899a44u);
     std::int32_t* const team_base  = reinterpret_cast<std::int32_t*>(k_TeamIdRoot);
@@ -141,7 +140,7 @@ RH_ScopedInstall(PlayerScoreTeamAccGatedB, 0x00423cc0);
 
 // 0x00423d50
 extern "C" __declspec(dllexport) std::int32_t __cdecl PlayerScoreTeamAccBaseB(std::int32_t param_1) {
-    std::int32_t iVar2 = s_GetTeamMode();           // @ 0x00423d56
+    std::int32_t iVar2 = static_cast<std::int32_t>(GetDat0067ea64());           // @ 0x00423d56
 
     std::int32_t* const score_base = reinterpret_cast<std::int32_t*>(0x00899a90u);
     std::int32_t* const team_base  = reinterpret_cast<std::int32_t*>(k_TeamIdRoot);
@@ -198,7 +197,7 @@ extern "C" __declspec(dllexport) std::int32_t __cdecl PlayerScoreTeamAccGatedC(s
     std::int32_t mode = s_GetRaceSubMode();          // @ 0x00423dd6
     if (mode == 4) return 0;                         // @ 0x00423ddc
 
-    std::int32_t iVar2 = s_GetTeamMode();            // @ 0x00423de2
+    std::int32_t iVar2 = static_cast<std::int32_t>(GetDat0067ea64());            // @ 0x00423de2
 
     std::int32_t* const score_base = reinterpret_cast<std::int32_t*>(0x00899a48u);
     std::int32_t* const team_base  = reinterpret_cast<std::int32_t*>(k_TeamIdRoot);
@@ -249,7 +248,7 @@ RH_ScopedInstall(PlayerScoreTeamAccGatedC, 0x00423dd0);
 
 // 0x00423e60
 extern "C" __declspec(dllexport) std::int32_t __cdecl PlayerScoreTeamAccCumB(std::int32_t param_1) {
-    std::int32_t iVar2 = s_GetTeamMode();           // @ 0x00423e66
+    std::int32_t iVar2 = static_cast<std::int32_t>(GetDat0067ea64());           // @ 0x00423e66
 
     std::int32_t* const score_base = reinterpret_cast<std::int32_t*>(0x00899f7cu);
     std::int32_t* const team_base  = reinterpret_cast<std::int32_t*>(k_TeamIdRoot);
