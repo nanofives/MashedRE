@@ -6,6 +6,10 @@
 #include "../Core/HookSystem.h"
 #include <cstdint>
 
+// 0x0046c7b0 VehicleSlotGetter — C4 port in Vehicle/VehicleState.cpp; call it
+// directly instead of trampolining to the raw original RVA (account2 rewire).
+extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);
+
 // ── getters ────────────────────────────────────────────────────────────────
 
 // 0x0040dc70  FUN_0040dc70  (5 bytes)  undefined4(void)
@@ -101,7 +105,7 @@ extern "C" __declspec(dllexport) void __cdecl PlayerScoreMaxTest(uint32_t* param
         if (param_2 == 0) {
             take = true;
         } else {
-            take = (reinterpret_cast<int(__cdecl*)(int)>(0x0046c7b0)(iVar2) != 0);
+            take = (VehicleSlotGetter(iVar2) != 0);
         }
         if (take && iVar3 < score[iVar2]) iVar3 = score[iVar2];
     }
@@ -122,7 +126,7 @@ extern "C" __declspec(dllexport) void __cdecl PlayerScoreGateInvert(int param_1)
     int iVar2 = 0;
     do {
         *reinterpret_cast<uint32_t*>(param_1 + iVar2 * 4) = 0;
-        int iVar1 = reinterpret_cast<int(__cdecl*)(int)>(0x0046c7b0)(iVar2);
+        std::uint32_t iVar1 = VehicleSlotGetter(iVar2);
         if (iVar1 == 0) *reinterpret_cast<uint32_t*>(param_1 + iVar2 * 4) = 1;
         iVar2 = iVar2 + 1;
     } while (iVar2 < 4);
