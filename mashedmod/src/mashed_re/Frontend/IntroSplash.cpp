@@ -342,39 +342,49 @@ void __cdecl IntroSplashOrchestrator() {
                 }
                 pcVar4 += kInputStride;
             }
-        }
+            // 2026-07-23 account3 FIDELITY fix: the render-state + vtable-slot-6 +
+            // quad-render calls below are gated on OrigInputCheck(0) != 0 in the
+            // ORIGINAL (FUN_00494480 result wraps FUN_004c1bb0 / FUN_004c1a00 / inner
+            // block). The prior port closed this `if` after the input-scan loop, so
+            // those calls ran outside the gate — a real structural divergence from
+            // 0x00495350, now corrected. NOTE: this is behaviorally a no-op at runtime
+            // because FUN_00494480 unconditionally returns 1 (the gate is always
+            // taken), so it does NOT fix the intro-boot crash — see the crash note at
+            // the registration site below (garbage render-target +0x18, root cause
+            // still open).
 
-        // e. Render-state setter.
-        IntroSplashRenderState(uVar2, &rgba_block, 1u);
+            // e. Render-state setter.
+            IntroSplashRenderState(uVar2, &rgba_block, 1u);
 
-        // f. Vtable slot 6 gate.
-        const int iVar3_gate = IntroSplashVtableSlot6(static_cast<int>(uVar2));
-        if (iVar3_gate != 0) {
-            // Reset vertex fields per decompilation (re-initialised each iteration).
-            vert_pos[0]   = 0u;           // uStack_20
-            vert_pos[1]   = 0u;           // uStack_1c
-            vert_scale[0] = 0x3f800000u;  // uStack_28 = 1.0f
-            vert_scale[1] = 0x3f800000u;  // uStack_24 = 1.0f
+            // f. Vtable slot 6 gate.
+            const int iVar3_gate = IntroSplashVtableSlot6(static_cast<int>(uVar2));
+            if (iVar3_gate != 0) {
+                // Reset vertex fields per decompilation (re-initialised each iteration).
+                vert_pos[0]   = 0u;           // uStack_20
+                vert_pos[1]   = 0u;           // uStack_1c
+                vert_scale[0] = 0x3f800000u;  // uStack_28 = 1.0f
+                vert_scale[1] = 0x3f800000u;  // uStack_24 = 1.0f
 
-            // Compute aspect ratios from dimension globals (interpreted as floats).
-            // dim_a[0] = DAT_007719ec = local_30;  dim_a[1] = DAT_007719f0 = fStack_2c
-            // dim_b[0] = DAT_007719f4 = local_38;  dim_b[1] = DAT_007719f8 = fStack_34
-            // fStack_3c = local_30 / local_38 = dim_a[0] / dim_b[0]
-            // fStack_40 = fStack_2c / fStack_34 = dim_a[1] / dim_b[1]
-            const float fStack_3c = *reinterpret_cast<const float*>(&dim_a[0])
-                                  / *reinterpret_cast<const float*>(&dim_b[0]);
-            const float fStack_40 = *reinterpret_cast<const float*>(&dim_a[1])
-                                  / *reinterpret_cast<const float*>(&dim_b[1]);
+                // Compute aspect ratios from dimension globals (interpreted as floats).
+                // dim_a[0] = DAT_007719ec = local_30;  dim_a[1] = DAT_007719f0 = fStack_2c
+                // dim_b[0] = DAT_007719f4 = local_38;  dim_b[1] = DAT_007719f8 = fStack_34
+                // fStack_3c = local_30 / local_38 = dim_a[0] / dim_b[0]
+                // fStack_40 = fStack_2c / fStack_34 = dim_a[1] / dim_b[1]
+                const float fStack_3c = *reinterpret_cast<const float*>(&dim_a[0])
+                                      / *reinterpret_cast<const float*>(&dim_b[0]);
+                const float fStack_40 = *reinterpret_cast<const float*>(&dim_a[1])
+                                      / *reinterpret_cast<const float*>(&dim_b[1]);
 
-            // 0x00493fc0 body ignores its two float args (U-0814); the ported
-            // AspectRatioGlobalGet() reads DAT_00771a18 directly. Keep the ratio
-            // computations above for decomp fidelity but mark them unconsumed.
-            (void)fStack_3c;
-            (void)fStack_40;
-            const uint32 uVar5 = AspectRatioGlobalGet();   // ported 0x00493fc0 (was OrigAspectHelper)
-            // FUN_00493fd0(uVar2, &uStack_20, &uStack_28, 0, uVar5)
-            OrigQuadRender(uVar2, vert_pos, vert_scale, 0, uVar5);
-            OrigRwSlot07(static_cast<int>(uVar2));  // FUN_004c19f0
+                // 0x00493fc0 body ignores its two float args (U-0814); the ported
+                // AspectRatioGlobalGet() reads DAT_00771a18 directly. Keep the ratio
+                // computations above for decomp fidelity but mark them unconsumed.
+                (void)fStack_3c;
+                (void)fStack_40;
+                const uint32 uVar5 = AspectRatioGlobalGet();   // ported 0x00493fc0 (was OrigAspectHelper)
+                // FUN_00493fd0(uVar2, &uStack_20, &uStack_28, 0, uVar5)
+                OrigQuadRender(uVar2, vert_pos, vert_scale, 0, uVar5);
+                OrigRwSlot07(static_cast<int>(uVar2));  // FUN_004c19f0
+            }
         }
 
         // g. HWND getter.
@@ -404,7 +414,14 @@ void __cdecl IntroSplashOrchestrator() {
 
 // MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(IntroSplashOrchestrator, 0x00495350);
 // 2026-07-23 account3 canonical-verify: subset-install (MASHED_HOOK_ONLY=0x00495350) CRASHES at boot —
-// access-violation from the IntroSplashVtableSlot6 dispatch `call [edi+0x18]` (asm 0x1001187d, source ~L351),
-// edi=OrigVehicle0Get(0) render-target handle whose +0x18 vtable slot is garbage (0x25ff5dec) at intro time
-// (log/crash_eip.txt). NOT caused by the S-0801/S-0803 rewire (both rewired calls are downstream, never
-// reached — disasm-proven). Orchestrator stays MASS-DISABLED; C2->C3 canonical observation REFUSED.
+// access-violation from the (inlined) IntroSplashVtableSlot6 dispatch `call [edi+0x18]` (asm 0x10011887),
+// edi=OrigVehicle0Get(0)=FUN_004671a0(0) render-target handle whose +0x18 slot is garbage (0x25ff5dec) at
+// intro time. NOT the S-0801/S-0803 rewire (both rewired getters are downstream, never reached — disasm).
+// The mis-nested-gate fix above (was a real fidelity bug) did NOT fix it: FUN_00494480 unconditionally
+// returns 1, so the gate is always entered — the crash persists at the same dispatch.
+// GROUND TRUTH (re/frida trace, .asi loaded + 0 hooks -> original orchestrator runs): the ORIGINAL
+// FUN_004c1a00 sees param_1=0x4f2e9dc with *(param_1+0x18)=0x4e3850 (valid MASHED.exe+0xe3850 code ptr),
+// 5/5 iterations, boots fine. So .asi loading is passive; the corruption is specific to OUR orchestrator
+// reimpl driving the sequence. Sub-fn reimpls (RenderState/VtableSlot6) are faithful + inlined. Exact
+// writer of the garbage +0x18 is UNRESOLVED (needs a memory watchpoint on uVar2+0x18; function hooks can't
+// observe the inlined calls). Orchestrator stays MASS-DISABLED; C2->C3 canonical observation REFUSED.
