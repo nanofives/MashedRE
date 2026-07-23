@@ -61,11 +61,12 @@
 // ref: re/analysis/promote_c2_render_d3d9/0x004cc6e0.md
 // ---------------------------------------------------------------------------
 
-// Forward declaration of callee (resolved via its RVA at runtime through the hook table;
-// we call the callee directly by RVA since it's in the original image during dev).
-// Signature: undefined4 FUN_004cbe80(undefined4 stream, void* buf, uint count)
-typedef std::uint32_t(__cdecl *FUN_004cbe80_t)(std::uint32_t, const void*, std::uint32_t);
-static const FUN_004cbe80_t s_FUN_004cbe80 = reinterpret_cast<FUN_004cbe80_t>(0x004cbe80u);
+// Callee 0x004cbe80 is our ported RwStreamWrite_s2 (Save/RwStream.cpp, C4/impl) --
+// call the port directly rather than trampolining through the original image.
+// Port returns the stream ptr on success, NULL on failure (was compared == 0 here).
+extern "C" void* __cdecl RwStreamWrite_s2(std::uint32_t* param_1,
+                                          std::uint32_t* param_2,
+                                          std::uint32_t  param_3);
 
 // 0x004cc6e0
 extern "C" __declspec(dllexport) std::uint32_t __cdecl RwStreamWriteChunked(
@@ -90,7 +91,9 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RwStreamWriteChunked(
         memcpy(local_100, src, chunk);
 
         // Step 4: write the chunk via RW stream write dispatcher. [0x004cc6e0 body → 0x004cbe80]
-        if (s_FUN_004cbe80(param_1, local_100, chunk) == 0u) {
+        if (RwStreamWrite_s2(reinterpret_cast<std::uint32_t*>(param_1),
+                             reinterpret_cast<std::uint32_t*>(local_100),
+                             chunk) == nullptr) {
             // Write failure → return 0. [0x004cc6e0 body: failure branch]
             return 0u;
         }
