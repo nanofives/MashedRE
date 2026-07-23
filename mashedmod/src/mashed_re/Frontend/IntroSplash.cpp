@@ -27,6 +27,15 @@
 typedef std::uint32_t  uint32;
 typedef std::uint8_t   uint8;
 
+// ─── Ported callees implemented in SplashGameMode_t5.cpp ─────────────────────
+// Resolved 2026-07-23 (account2 Lane-A): these two intro-splash callees now have
+// C4/C3-verified reimplementations, so IntroSplashOrchestrator calls them
+// directly instead of trampolining to the original RVA — retires STUBS S-0801
+// and S-0803. Both bodies are 5-byte global getters that ignore their stack args
+// (see SplashGameMode_t5.cpp; U-0814).
+extern "C" std::uint32_t __cdecl VideoStateFlagGet(void);      // 0x00493f70
+extern "C" std::uint32_t __cdecl AspectRatioGlobalGet(void);   // 0x00493fc0
+
 // Callee stubs — forward to original RVAs (boot-time trampolines via function pointer).
 // Declared as function pointers to the original addresses so the linker doesn't
 // need to know about them. All calls within IntroSplashOrchestrator that go to
@@ -62,11 +71,7 @@ static uint32 OrigHwndGet() {
     return reinterpret_cast<Fn>(static_cast<std::uintptr_t>(0x00499710u))();
 }
 
-// 0x00493f70  FUN_00493f70 — global reader: (int) -> int (0 = video done)
-static int OrigVideoDone(int param) {
-    typedef int (__cdecl* Fn)(int);
-    return reinterpret_cast<Fn>(static_cast<std::uintptr_t>(0x00493f70u))(param);
-}
+// 0x00493f70 — now called directly via ported VideoStateFlagGet (see fwd decl above).
 
 // 0x00494460  FUN_00494460 — close video: (int) -> void
 static void OrigVideoClose(int param) {
@@ -74,11 +79,7 @@ static void OrigVideoClose(int param) {
     reinterpret_cast<Fn>(static_cast<std::uintptr_t>(0x00494460u))(param);
 }
 
-// 0x00493fc0  FUN_00493fc0 — aspect ratio helper: (float, float) -> uint32
-static uint32 OrigAspectHelper(float a, float b) {
-    typedef uint32 (__cdecl* Fn)(float, float);
-    return reinterpret_cast<Fn>(static_cast<std::uintptr_t>(0x00493fc0u))(a, b);
-}
+// 0x00493fc0 — now called directly via ported AspectRatioGlobalGet (see fwd decl above).
 
 // 0x00493fd0  FUN_00493fd0 — textured quad render: (uint32, uint32*, uint32*, int, uint32) -> void
 static void OrigQuadRender(uint32 a, uint32* b, uint32* c, int d, uint32 e) {
@@ -365,7 +366,12 @@ void __cdecl IntroSplashOrchestrator() {
             const float fStack_40 = *reinterpret_cast<const float*>(&dim_a[1])
                                   / *reinterpret_cast<const float*>(&dim_b[1]);
 
-            const uint32 uVar5 = OrigAspectHelper(fStack_3c, fStack_40);
+            // 0x00493fc0 body ignores its two float args (U-0814); the ported
+            // AspectRatioGlobalGet() reads DAT_00771a18 directly. Keep the ratio
+            // computations above for decomp fidelity but mark them unconsumed.
+            (void)fStack_3c;
+            (void)fStack_40;
+            const uint32 uVar5 = AspectRatioGlobalGet();   // ported 0x00493fc0 (was OrigAspectHelper)
             // FUN_00493fd0(uVar2, &uStack_20, &uStack_28, 0, uVar5)
             OrigQuadRender(uVar2, vert_pos, vert_scale, 0, uVar5);
             OrigRwSlot07(static_cast<int>(uVar2));  // FUN_004c19f0
@@ -381,7 +387,7 @@ void __cdecl IntroSplashOrchestrator() {
         Sleep(5);
 
         // j. Check if current video is done or skip triggered.
-        const int iVar3_done = OrigVideoDone(0);
+        const std::uint32_t iVar3_done = VideoStateFlagGet();   // ported 0x00493f70 (was OrigVideoDone)
         if (iVar3_done == 0 || bVar1) {
             OrigVideoClose(0);
             ++iVar6;

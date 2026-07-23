@@ -11,13 +11,16 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 
 ## Status summary (census 2026-07-06 — foundation reset)
 
-**1,118 open rows / 138 struck.** S-DoD is gated *per subsystem* — read this census, not the raw
+**1,113 open rows / 143 struck.** (2026-07-23: 5 intro-splash stubs struck as standalone account2
+work — S-0802/S-0810/S-0811 stale passthroughs, plus S-0801/S-0803 rewired to ported symbols
+(build-verified). All target functions already impl/C3-C4; see those rows. Original 2026-07-06
+census was 1,118 / 138.) S-DoD is gated *per subsystem* — read this census, not the raw
 row count. Open rows by subsystem column (13 rows have a shifted/older column format and are
 counted under their literal 4th cell):
 
 | render | boot | util | particle | audio | vehicle | frontend | hud (+font/gameplay) | track | input | save | ai | gameplay | physics | race_state | video | io | misformatted |
 |---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 224 | 197 | 139 | 111 | 90 | 86 | 59 | 68 | 42 | 41 | 20 | 9 | 6 | 5 | 5 | 2 | 1 | 13 |
+| 224 | 197 | 139 | 111 | 90 | 86 | 54 | 68 | 42 | 41 | 20 | 9 | 6 | 5 | 5 | 2 | 1 | 13 |
 
 A large share of the open rows are **library-band passthroughs, not first-party port targets**
 (library-skip policy, `re/CONFIDENCE.md` + CLAUDE.md skip bands): the `boot` block is dominated
@@ -312,15 +315,15 @@ boundaries alongside the master plan §1 snapshot.)*
 | S-0681 | 0x004af400 | 0x004af2d4 FUN_004af2d4 | util | passthrough | 2026-05-02 | _ValidateExecute; CRT IsBadCodePtr-style validator for function pointer; gates chain-to-old-filter path in FUN_004af2d4 |
 | S-0660 | 0x004a4170 | 0x004950b0 FUN_004950b0 | util | passthrough | 2026-05-02 | __alldiv; MSVC 64-bit integer division runtime helper embedded in binary |
 | S-0661 | 0x004a4220 | 0x004950b0 FUN_004950b0 | util | passthrough | 2026-05-02 | __allmul; MSVC 64-bit integer multiply runtime helper embedded in binary |
-| S-0801 | 0x00493f70 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00493f70; video completion check; returns 0 when done |
-| S-0802 | 0x00493f80 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00493f80; reads two floats (video dims) into out-params |
-| S-0803 | 0x00493fc0 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00493fc0; takes two floats; returns scale/aspect value |
+| ~~S-0801~~ | ~~0x00493f70~~ | ~~0x00495350 FUN_00495350~~ | frontend | resolved | 2026-07-23 | RESOLVED (account2 rewire, build-verified exit 0): OrigVideoDone trampoline replaced with direct call to ported VideoStateFlagGet (impl/C4) at IntroSplash.cpp:~384. Reads same DAT_00771a04, compared ==0 — behavior preserved. Struck outside orchestrator's own promotion sweep (00495350 still C2, Frida-gated). |
+| ~~S-0802~~ | ~~0x00493f80~~ | ~~0x00495350 FUN_00495350~~ | frontend | resolved | 2026-07-23 | RESOLVED (account2 standalone hygiene): 0x00493f80 IntroVideoDimGetter is impl/C4; IntroSplashOrchestrator calls it directly (IntroSplash.cpp:316,394) — no passthrough remains. Struck outside the orchestrator's own promotion sweep (00495350 still C2, Frida-gated). |
+| ~~S-0803~~ | ~~0x00493fc0~~ | ~~0x00495350 FUN_00495350~~ | frontend | resolved | 2026-07-23 | RESOLVED (account2 rewire, build-verified exit 0): OrigAspectHelper trampoline replaced with direct call to ported AspectRatioGlobalGet (impl/C4) at IntroSplash.cpp:~368. Body ignores the two float args (U-0814) so arg-drop is behavior-preserving; ratio computations kept for decomp fidelity. Struck outside orchestrator's own promotion sweep (00495350 still C2, Frida-gated). |
 | S-0804 | 0x00493fd0 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00493fd0; render draw call; takes (render_target, float4_rect, float4_scale, 0, scale_val) |
 | S-0805 | 0x00494460 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00494460; stops/closes current video stream; arg 0 |
 | S-0806 | 0x00494480 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00494480; gates render/scan paths; arg 0; non-zero=active |
 | S-0807 | 0x00494a80 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00494a80; starts video by index; args (0, index, 0) |
-| S-0810 | 0x004c1a00 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_004c1a00; takes render target; non-zero return gates draw call |
-| S-0811 | 0x004c1bb0 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_004c1bb0; takes (render_target, color_bytes_ptr, 1); sets render state |
+| ~~S-0810~~ | ~~0x004c1a00~~ | ~~0x00495350 FUN_00495350~~ | frontend | resolved | 2026-07-23 | RESOLVED (account2 standalone hygiene): 0x004c1a00 IntroSplashVtableSlot6 is impl/C3; IntroSplashOrchestrator calls it directly (IntroSplash.cpp:350) — no passthrough remains. Struck outside the orchestrator's own promotion sweep (00495350 still C2, Frida-gated). |
+| ~~S-0811~~ | ~~0x004c1bb0~~ | ~~0x00495350 FUN_00495350~~ | frontend | resolved | 2026-07-23 | RESOLVED (account2 standalone hygiene): 0x004c1bb0 IntroSplashRenderState is impl/C3; IntroSplashOrchestrator calls it directly (IntroSplash.cpp:347) — no passthrough remains. Struck outside the orchestrator's own promotion sweep (00495350 still C2, Frida-gated). |
 | S-0812 | 0x004c1be0 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_004c1be0; takes (render_target, FUN_00499710_result); purpose unknown |
 | S-0813 | 0x004967e0 | 0x00492d20 FUN_00492d20 | frontend | passthrough | 2026-05-02 | FUN_004967e0; 283 bytes; sole callee of shim FUN_00492d20; depth-2 from INTRO_FN; D-2320 |
 | S-0860 | 0x005507b0 FUN_005507b0 | 0x004cc230 FUN_004cc230 | frontend | passthrough | 2026-05-02 | PIZ archive file-open; called as FUN_005507b0(filename, piz_base); depth-2 of stream-open (localization path) |

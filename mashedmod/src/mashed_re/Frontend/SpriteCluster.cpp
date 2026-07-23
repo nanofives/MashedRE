@@ -25,6 +25,18 @@
 #include "../Core/HookSystem.h"
 #include <cstdint>
 
+// ─── Ported callees (C4) — resolved 2026-07-23 (account2 Lane-A rewire) ──────
+// These 6 callees now have C4 (Frida-verified) reimplementations, so the call
+// sites below call them directly instead of trampolining to the original RVA.
+// Containers ProgressBarSetA (0x00430b90) and LobbySlotListRender (0x00439210)
+// are C3 — no C4 diff to invalidate. Signatures match the retired s_FUN_ typedefs.
+extern "C" std::uint32_t __cdecl ScreenHeightGet();     // 0x0042b8c0  MenuButtonDetect.cpp
+extern "C" std::uint32_t __cdecl GetDat0067ea64();      // 0x0042f500  StateAccessors.cpp
+extern "C" void*         __cdecl SpriteSlotGate(int);   // 0x0042ee00  SpriteGate.cpp
+extern "C" int           __cdecl HudSlotTypePlayer0();  // 0x00430a10  SpriteGate.cpp
+extern "C" int           __cdecl HudSlotTypePlayer1();  // 0x00430a60  SpriteGate.cpp
+extern "C" int           __cdecl HudSlotTypePlayer2();  // 0x00430ab0  SpriteGate.cpp
+
 // ============================================================================
 // Callee stubs — called via original VAs; NOT replaced in this cluster.
 // ============================================================================
@@ -77,10 +89,7 @@ using FUN_0042b8b0_t = std::uint32_t (__cdecl*)();
 static FUN_0042b8b0_t const s_FUN_0042b8b0 =
     reinterpret_cast<FUN_0042b8b0_t>(0x0042b8b0u);
 
-// FUN_0042b8c0  ScreenHeightGet  C3
-using FUN_0042b8c0_t = std::uint32_t (__cdecl*)();
-static FUN_0042b8c0_t const s_FUN_0042b8c0 =
-    reinterpret_cast<FUN_0042b8c0_t>(0x0042b8c0u);
+// FUN_0042b8c0 ScreenHeightGet — now called directly (ported C4, see fwd decl above).
 
 // ============================================================================
 // Callee stubs for 0x00439210 (LobbySlotListRender) — uncatalogued callees
@@ -99,10 +108,7 @@ using FUN_00430760_t = int (__cdecl*)();
 static FUN_00430760_t const s_FUN_00430760 =
     reinterpret_cast<FUN_00430760_t>(0x00430760u);
 
-// FUN_0042f500  returns DAT_0067ea64  C1
-using FUN_0042f500_t = int (__cdecl*)();
-static FUN_0042f500_t const s_FUN_0042f500 =
-    reinterpret_cast<FUN_0042f500_t>(0x0042f500u);
+// FUN_0042f500 GetDat0067ea64 — now called directly (ported C4, see fwd decl above).
 
 // FUN_00436810  local player slot occupancy  uncatalogued
 using FUN_00436810_t = int (__cdecl*)(int);
@@ -129,25 +135,8 @@ using FUN_0042ef40_t = int (__cdecl*)(int, int);
 static FUN_0042ef40_t const s_FUN_0042ef40 =
     reinterpret_cast<FUN_0042ef40_t>(0x0042ef40u);
 
-// FUN_00430a10  HudSlotTypePlayer0  C3
-using FUN_00430a10_t = int (__cdecl*)();
-static FUN_00430a10_t const s_FUN_00430a10 =
-    reinterpret_cast<FUN_00430a10_t>(0x00430a10u);
-
-// FUN_00430a60  HudSlotTypePlayer1  C3
-using FUN_00430a60_t = int (__cdecl*)();
-static FUN_00430a60_t const s_FUN_00430a60 =
-    reinterpret_cast<FUN_00430a60_t>(0x00430a60u);
-
-// FUN_00430ab0  HudSlotTypePlayer2  C3
-using FUN_00430ab0_t = int (__cdecl*)();
-static FUN_00430ab0_t const s_FUN_00430ab0 =
-    reinterpret_cast<FUN_00430ab0_t>(0x00430ab0u);
-
-// FUN_0042ee00  SpriteSlotGate  C4
-using FUN_0042ee00_t = void* (__cdecl*)(int);
-static FUN_0042ee00_t const s_FUN_0042ee00 =
-    reinterpret_cast<FUN_0042ee00_t>(0x0042ee00u);
+// FUN_00430a10/60/ab0 HudSlotTypePlayer0/1/2 + FUN_0042ee00 SpriteSlotGate —
+// now called directly (ported C4, see fwd decls above).
 
 // FUN_00472dc0  triangle draw  C1
 using FUN_00472dc0_t = void (__cdecl*)(float, float, float, float, float, float, std::uint32_t);
@@ -364,7 +353,7 @@ extern "C" __declspec(dllexport) void __cdecl ProgressBarSetA() {
     // 0x00430bf0: screen width for arrow X formula
     const int screen_w = static_cast<int>(s_FUN_0042b8b0());
     // 0x00430bf6: unused screen height (read but result discarded for early layout)
-    (void)s_FUN_0042b8c0();
+    (void)ScreenHeightGet();   // ported 0x0042b8c0 (was s_FUN_0042b8c0)
 
     // 0x00430c00: Arrow sprite handle
     void* arrow_sprite = SpriteLookupC("Arrow");
@@ -555,7 +544,7 @@ extern "C" __declspec(dllexport) void __cdecl LobbySlotListRender() {
     const std::int32_t scroll_off   = *reinterpret_cast<const std::int32_t*>(0x0067f180u);
     const std::int32_t selected_id  = *reinterpret_cast<const std::int32_t*>(0x0067f184u);
     const std::int32_t game_mode    = *reinterpret_cast<const std::int32_t*>(0x0067e9fcu);
-    const std::int32_t online_flag  = s_FUN_0042f500();
+    const std::int32_t online_flag  = static_cast<std::int32_t>(GetDat0067ea64());  // ported 0x0042f500
 
     // 0x00439260: header section (if FUN_00430760()==0)
     if (s_FUN_00430760() == 0) {
@@ -646,7 +635,7 @@ extern "C" __declspec(dllexport) void __cdecl LobbySlotListRender() {
             const std::int32_t unlock_val =
                 *reinterpret_cast<const std::int32_t*>(
                     0x007f0a50u + static_cast<std::uint32_t>(iStack_78) * 0x30u);
-            void* player_icon = s_FUN_0042ee00(unlock_val);
+            void* player_icon = SpriteSlotGate(unlock_val);  // ported 0x0042ee00
             if (player_icon) {
                 s_FUN_00473870(player_icon, 100.0f, row_Y, 16.0f, 16.0f, slot_color, 0);
             }
@@ -657,9 +646,9 @@ extern "C" __declspec(dllexport) void __cdecl LobbySlotListRender() {
         // Pass 1: FUN_00430a60() — same for second player slot
         // Pass 2 (note says "Pass 2"): FUN_00430ab0() — third slot
         {
-            const int type0 = s_FUN_00430a10();
-            const int type1 = s_FUN_00430a60();
-            const int type2 = s_FUN_00430ab0();
+            const int type0 = HudSlotTypePlayer0();  // ported 0x00430a10
+            const int type1 = HudSlotTypePlayer1();  // ported 0x00430a60
+            const int type2 = HudSlotTypePlayer2();  // ported 0x00430ab0
             (void)type0; (void)type1; (void)type2;
             // Ready-state indicators use DAT_007f0a40 per-player-slot table
             // (cited at 0x007f0a40); drawing handled by callee results above.
