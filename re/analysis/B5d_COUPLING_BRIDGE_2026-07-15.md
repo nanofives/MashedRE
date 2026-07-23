@@ -126,3 +126,38 @@ Sizing (transitive static-call closure from `0x0047e9c0`, Ghidra walk 2026-07-15
 - OPEN (next session): the per-field bit-identity body-state diff → C4 (§4).
 - STOP-AND-ASK: the FUN_0047e9c0 solver-island architecture gate (§5) — sized, awaiting the user's
   A-vs-B decision before B5e.
+
+## 7. C4 mechanism realized + the thunk-callee gate RULING (2026-07-23, account3)
+
+The §4 per-field body-state diff was realized as an **in-process bit-identity self-test**
+(the A4 `PhysicsChainHooks` pattern, but reaching the original via `HookSystem::Uninstall`→
+call-RVA→`Install` — single-threaded physics, no bespoke naked-asm). `Collision/RwpIntegrator.cpp`
+now carries a `_impl` + self-test wrapper for the 6 A/B-able B5c fns, gated on session-phase
+`0x00771968 == 3` (race-only; the leaf helpers also fire during load-time world build
+`FUN_00481e00`, where the Uninstall/Install churn is unsafe pre-spawn).
+
+**RESULT so far:** `RwpBodyMatrixRefresh` (0x0055b800) = **64/64 `ndiff=0` GREEN** (0x40 world-
+matrix slot + 0x10 quaternion slot bit-identical vs original, canonical QuickRace, inline-JMP
+live; commit 63d10c5c, `log/phys_c4_b5c_matrixrefresh_GREEN.log`). The 5 remaining leaves are
+built + gated (commit cd1d5f14) but await a fresh GREEN run — this session's boot state degraded
+after many spawn/kill cycles (`project_boot_hang_directshow_intro`; needs a reboot).
+
+**RULING — RVA-thunk callees do NOT block C4** (asked+decided 2026-07-23):
+A port reaches C4 even though its body calls helpers via RVA thunks (`RwpBuildExterns`) **iff the
+callee is identified + mapped + C2+ classified** (a real reversed function), NOT an unreversed
+placeholder. Grounds: (1) CONFIDENCE.md L32 C4 gate = "clean Frida CSV diff on a canonical
+scenario; No stubs in the implementation" — a *stub* (STUBS.md) is a placeholder into a
+NOT-YET-REVERSED fn; `RwpBodyMatrixRefresh`'s callees `FUN_004c52f0` (RwMatrixCombine, render C2),
+`FUN_004c51a0` (RwMatrixTranslate, render C2), `FUN_00546b10` (vehicle C2) are all mapped+ported+C2,
+so the gate is met; (2) the in-process A/B *exercises* the callees (both orig and port call them),
+so the port's control-flow + arg-marshaling is verified bit-for-bit; (3) precedent: A4
+`VehicleControlUpdate` 0x00470670 is C4 with RVA-thunk callees in its body; (4)
+`feedback_c4_verifies_logic_not_standalone` — C4 attests .asi logic bit-identity, standalone
+callee-reachability is a separate track.
+
+**Scope of the ruling:** unblocks C3→C4 for `RwpBodyMatrixRefresh` + the 5 pure-leaf B5c fns
+(leaves have no callees → trivially clean body) **once each is GREEN-verified**. **Excluded** (stay
+C3, different reasons): `RwpSceneStepWrapper` 0x0047ea40 (tail-calls the DEFERRED, unreversed solver
+`FUN_0047e9c0` — that IS an unreversed-island call, and it is not a clean per-frame A/B) and
+`FUN_0055c000` (load-time-only, not per-frame A/B-able). A callee that is an unmapped/C0 placeholder
+WOULD block C4.
