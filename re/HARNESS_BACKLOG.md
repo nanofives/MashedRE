@@ -57,8 +57,17 @@ idling or reviving dead batch lanes.
    so live_capture=False — ground truth via in-process original call). Evidence = per-leaf bit-identity
    toward C3, NOT the diff-original gate; leaves stay C1/main, C2/b5e. Remaining K1 leaves are pointer/
    list/`rand()` glue (out of veccap scope); the float10-return normalize `FUN_005667c0` is deferred
-   (needs 80-bit ST0 return capture). Adding more leaves that fit `v_out_in`/`v_out_2in` = registry
-   entry only, no tool change. (b) wire a `capture_vectors` live
+   (needs 80-bit ST0 return capture). **UPDATE 2026-07-24 (account2):** onboarded the 3 K2
+   mat→quat Shoemake branches `FUN_00546bf0/c50/cb0` (`v_out_in` 11→4, `Collision/RwpSolverMath2.cpp`
+   on main) — Unicorn 12/12 PASS + replay 12/12 both modes. These are the first **float10-chained**
+   leaves → **closes the README Pilot-2 Unicorn caveat for float10 callees** (FSIN/FCOS transcendentals
+   still open). NOTE the "registry entry only" claim held only for ≤3-float `v_out_in`; a wider leaf
+   needed `synth_inputs` generalized for n_in>3, and a `.rdata`-const reader needs a `STATIC_READS`
+   append + a `replay_offline.cpp` extern+`kExports` row (unicorn maps the whole image → no change).
+   FUN_00566200 (AABB×matrix, `v_out_2in` n_in=22) was TRIED 2026-07-24 → **FINDING VECCAP-2**: the
+   port is not x87-faithful (Unicorn PASS, replay FAIL 490/513 even bounded); buffers were widened
+   (kept) but the entry is backed out pending a disasm-order/float10 re-transcribe on account3
+   (`re/analysis/plans/veccap_finding_2026-07-24.md`). (b) wire a `capture_vectors` live
    arg-collection scenario for in-race functions (menu idle doesn't call physics — reuse
    `scenario_launch.py` to reach a race before the collect window); (c) TTD *recording* elevation lane: DEFERRED by owner 2026-07-17 ("the other two lanes are
    enough") — do not re-raise unless a task specifically needs fresh TTD tapes; query side

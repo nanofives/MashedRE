@@ -57,6 +57,12 @@ extern "C" float __cdecl RwV3dNormalize(float* out, const float* in);
 extern "C" void __cdecl FUN_00566830(float* out, const float* in);                 // v_out_in
 extern "C" void __cdecl FUN_00565ef0(float* out, const float* a, const float* b);  // v_out_2in
 extern "C" void __cdecl FUN_00565fa0(float* out, const float* a, const float* b, float s);
+extern "C" void __cdecl FUN_00566200(float* out, const float* a, const float* b);  // v_out_2in (AABB x 4x4, n_in=22)
+// B5e K2 (Collision/RwpSolverMath2.cpp) matrix->quaternion Shoemake branches — v_out_in,
+// float10-chained (validate the Unicorn differ; replay may show the accepted <=1-ULP gap).
+extern "C" void __cdecl FUN_00546bf0(float* out, const float* in);                 // v_out_in
+extern "C" void __cdecl FUN_00546c50(float* out, const float* in);                 // v_out_in
+extern "C" void __cdecl FUN_00546cb0(float* out, const float* in);                 // v_out_in
 
 enum Kind : std::uint32_t {
     KIND_F_F = 1, KIND_F_PTRN = 2, KIND_F_OUT_IN = 3, KIND_V_OUT_IN = 4, KIND_V_OUT_2IN = 5
@@ -80,6 +86,10 @@ static const ExportRow kExports[] = {
     { "FUN_00566830",   reinterpret_cast<void*>(&FUN_00566830) },
     { "FUN_00565ef0",   reinterpret_cast<void*>(&FUN_00565ef0) },
     { "FUN_00565fa0",   reinterpret_cast<void*>(&FUN_00565fa0) },
+    { "FUN_00546bf0",   reinterpret_cast<void*>(&FUN_00546bf0) },
+    { "FUN_00546c50",   reinterpret_cast<void*>(&FUN_00546c50) },
+    { "FUN_00546cb0",   reinterpret_cast<void*>(&FUN_00546cb0) },
+    { "FUN_00566200",   reinterpret_cast<void*>(&FUN_00566200) },
 };
 
 // Ensure [addr, addr+size) is committed writable memory. Works page-by-page so
@@ -192,7 +202,7 @@ int main(int argc, char** argv) {
 
         std::uint32_t fail = 0, skipped = 0, shown = 0;
         for (std::uint32_t i = 0; i < nv; ++i) {
-            std::uint32_t in_bits[16], ret_exp, out_exp[16];
+            std::uint32_t in_bits[32], ret_exp, out_exp[32];   // 32: n_in up to 22 (FUN_00566200)
             std::uint8_t flags;
             if (!ReadN(f, in_bits, ni * 4) || !ReadN(f, &ret_exp, 4) ||
                 !ReadN(f, out_exp, no * 4) || !ReadN(f, &flags, 1)) {
@@ -200,7 +210,7 @@ int main(int argc, char** argv) {
             }
             if (flags & 2u) { ++skipped; continue; }   // degenerate -> live-only path
 
-            float in_f[16], out_f[16];
+            float in_f[32], out_f[32];
             std::memcpy(in_f, in_bits, ni * 4);
             // seed out with the SAME 0xcc sentinel the capture used, so out slots a
             // function leaves untouched (e.g. AABB padding index 3) compare equal.

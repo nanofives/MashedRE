@@ -19,12 +19,26 @@ function drives all three tools. Onboarded so far = the RW fast-sqrt family
 | FUN_00566830 | 0x00566830 | v_out_in (3→3) | B5e perp-vector; pure; synthetic-only |
 | FUN_00565ef0 | 0x00565ef0 | v_out_2in (7+7→7) | B5e AABB min/max merge; out idx 3 = padding |
 | FUN_00565fa0 | 0x00565fa0 | v_out_2in (3+3+scalar→7) | B5e AABB span; inflate scalar = last input |
+| FUN_00546bf0 | 0x00546bf0 | v_out_in (11→4) | B5e K2 mat→quat (X-largest Shoemake); float10-chained + FastSqrt |
+| FUN_00546c50 | 0x00546c50 | v_out_in (11→4) | B5e K2 mat→quat (Y-largest); float10-chained |
+| FUN_00546cb0 | 0x00546cb0 | v_out_in (11→4) | B5e K2 mat→quat (Z-largest); float10-chained |
 
-Latest run (2026-07-17): **offline replay 9/9 PASS both modes; Unicorn differ
-9/9 PASS**. The 3 B5e leaves are C1 on main / C2 on `r7/b5e-solver-island`;
-their ported TU (`Collision/RwpSolverLeaves1.cpp`) was copied verbatim from that
-branch so the replay build can compile it. veccap is **per-leaf bit-identity
-evidence toward C3, NOT the diff-original promotion gate.**
+Latest run (2026-07-24): **offline replay 12/12 PASS both modes; Unicorn differ
+12/12 PASS**. Added the 3 K2 matrix→quaternion Shoemake branches
+(`Collision/RwpSolverMath2.cpp`, already on main) — the first **float10 (x87
+80-bit) chained** leaves onboarded (they read 1.0f/0.5f from `.rdata`, in
+STATIC_READS, and call the C4 `FastSqrt`). This **closes the Pilot-2 Unicorn
+caveat below**: the emulator reproduces a float10-chained callee bit-for-bit
+(513/513 each). The anticipated ≤1-ULP replay gap did **not** appear — every
+value rounds through a `float32` result, so MSVC's `long double` codegen stayed
+bit-identical to the original 80-bit chain. The earlier 3 B5e leaves are C1 on
+main / C2 on `r7/b5e-solver-island`; ported TUs
+(`Collision/RwpSolverLeaves1.cpp`, `RwpSolverMath2.cpp`) are on main so the
+replay build compiles them. Onboarding a leaf that reads a `.rdata` const now
+means **appending to `STATIC_READS`** (keep index 0 = the threshold) **and adding
+its extern + `kExports` row in `replay_offline.cpp`** (unicorn needs no change —
+it maps the whole image). veccap is **per-leaf bit-identity evidence toward C3,
+NOT the diff-original promotion gate.**
 
 To onboard a new function: add an entry to `veccap_registry.FUNCS` (rva, export,
 signature kind, source TU) and, if it reads new statics, to `STATIC_READS`. The
@@ -98,9 +112,13 @@ live-captured ground truth. **Result: PASS 873/873** — Unicorn's x87
 (FLD/FMUL/FADD/FSTP + the LUT integer path) reproduced the live original
 bit-for-bit. No game, no Frida, ~seconds for 873 vectors.
 
-Caveat: one function so far. Before trusting the emulator as an oracle for
-promotion evidence, validate on FSIN/FCOS-class transcendentals and a
-float10-chained callee (the known x87 danger zones).
+Caveat (PARTIALLY RESOLVED 2026-07-24): the **float10-chained callee** danger
+zone is now validated — the 3 K2 mat→quat Shoemake branches (float10 x87 chain
+→ FastSqrt → division, 513 vectors each) emulate bit-for-bit vs live ground
+truth. Unicorn inits x87 to its default control word and it matched the game's
+for these chains (no FLDCW needed). **Still open** before trusting the emulator
+as a general promotion oracle: **FSIN/FCOS-class transcendentals** (not yet
+exercised — no registry entry uses them).
 
 ## Pilot 3 — scripted TTD record + offline query
 

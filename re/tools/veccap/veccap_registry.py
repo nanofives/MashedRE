@@ -28,6 +28,9 @@ import struct
 # ON DISK (file offsets via pefile), so no live capture is needed for them.
 STATIC_READS = [
     {'addr': 0x005D757C, 'size': 4},   # magnitude epsilon/threshold (RwV2d + RwV3dNormalize)
+    # ---- MUST stay APPENDED (packer + unicorn read STATIC_READS[0] as the threshold). ----
+    {'addr': 0x005CC320, 'size': 4},   # 1.0f  — _DAT_005cc320 (K2 quat Shoemake, RwpSolverMath2)
+    {'addr': 0x005CC32C, 'size': 4},   # 0.5f  — _DAT_005cc32c (K2 quat Shoemake, RwpSolverMath2)
 ]
 
 # every entry shares the RW LUT region snapshot (sqrt + inv-sqrt tables)
@@ -83,6 +86,38 @@ FUNCS = {
         'n_a': 3, 'n_in': 7, 'n_out': 7, 'scalar': True,
         'sources': ['Collision/RwpSolverLeaves1.cpp'], 'live_capture': False, 'degenerate_stubs': False,
     },
+    # FUN_00566200 (0x00566200, v_out_2in n_a=7 n_in=22 n_out=7) was TRIED 2026-07-24 and
+    # is NOT onboarded — FINDING VECCAP-2: its port is not x87-faithful. Unicorn PASS
+    # (original machine code) but offline replay FAIL 490/513 even on bounded ~[-8,8]
+    # well-conditioned inputs (not an overflow artifact — bounded synth still failed).
+    # Neither float32 nor double recompute of the decompiled expression matches ground
+    # truth, so the literal decomp sum-order/precision is not x87-faithful (the same
+    # hazard RwpSolverMath2.cpp documents: "disasm sum order differs from the decomp's
+    # printed order"). Fix = disasm-order + float10-intermediate verification (Ghidra →
+    # account3), then re-add here with 'synth_domain': 'bounded'. The buffer widening
+    # (replay [32], capture scratch 0x200) + the bounded synth path stay — they enable
+    # any future n_in>16 leaf. See re/analysis/plans/veccap_finding_2026-07-24.md.
+    # --- B5e K2 (RwpSolverMath2.cpp) matrix->quaternion Shoemake branches. FLOAT10
+    #     (x87 80-bit) chained + call the C4 FastSqrt (0x004c3b30). Pure apart from two
+    #     .rdata consts (0x005cc320=1.0f, 0x005cc32c=0.5f, in STATIC_READS) — no globals,
+    #     no rand, no live-only stubs. void(out quat[4], in matrix): reads matrix
+    #     indices 0,1,2,4,5,6,8,9,10 (=> n_in 11), writes quat[0..3] (=> n_out 4).
+    #     Onboarded to VALIDATE the Unicorn differ on a float10-chained callee (README
+    #     Pilot-2 caveat). Replay side may show the accepted <=1-ULP float10 gap
+    #     (MSVC 64-bit long double vs original 80-bit); Unicorn (original machine code)
+    #     is the bit-exact oracle. ---
+    'rwp_mat2quat_x': {
+        'rva': 0x00546BF0, 'export': 'FUN_00546bf0', 'kind': 'v_out_in', 'n_in': 11, 'n_out': 4,
+        'sources': ['Collision/RwpSolverMath2.cpp'], 'live_capture': False, 'degenerate_stubs': False,
+    },
+    'rwp_mat2quat_y': {
+        'rva': 0x00546C50, 'export': 'FUN_00546c50', 'kind': 'v_out_in', 'n_in': 11, 'n_out': 4,
+        'sources': ['Collision/RwpSolverMath2.cpp'], 'live_capture': False, 'degenerate_stubs': False,
+    },
+    'rwp_mat2quat_z': {
+        'rva': 0x00546CB0, 'export': 'FUN_00546cb0', 'kind': 'v_out_in', 'n_in': 11, 'n_out': 4,
+        'sources': ['Collision/RwpSolverMath2.cpp'], 'live_capture': False, 'degenerate_stubs': False,
+    },
 }
 
 # v_out_2in split accessors: n_a = buffer-1 floats, n_b = buffer-2 floats,
@@ -117,6 +152,15 @@ def synth_inputs(cfg):
     n = n_in(cfg)
     out = []
     for i in range(SYNTH_COUNT):
+        if cfg.get('synth_domain') == 'bounded':
+            # deterministic values in ~[-8, 8] — no overflow for cancellation-heavy
+            # leaves (see rwp_aabb_xform). Applies to any kind.
+            v = []
+            for j in range(n):
+                u = ((i * 7 + j) * 2654435761) & 0xFFFFFFFF
+                v.append((u / 2.0**32 * 2.0 - 1.0) * 8.0)
+            out.append(v)
+            continue
         base = struct.unpack('<f', struct.pack(
             '<I', (0x3D800000 + i * 0x00123457) & 0x7F7FFFFF))[0]
         if cfg['kind'] == 'f_f':
@@ -125,6 +169,17 @@ def synth_inputs(cfg):
         elif cfg['kind'] == 'v_out_2in':
             # multi-buffer kinds need n distinct floats (the 3-value template below
             # only fills n<=3); vary exponent+sign per (vector, position).
+            v = []
+            for j in range(n):
+                b = struct.unpack('<f', struct.pack(
+                    '<I', (0x3D800000 + (i * 7 + j) * 0x00123457) & 0x7F7FFFFF))[0]
+                v.append(b if (i + j) % 2 else -b)
+            out.append(v)
+        elif n > 3:
+            # f_ptrN / f_out_in / v_out_in with a wide input (e.g. the K2 mat->quat
+            # leaves read an 11-float matrix): fill n floats with the same per-(vector,
+            # position) exponent+sign walk used by v_out_2in above. The <=3 formula
+            # below only yields 3 elements, so it can't feed these.
             v = []
             for j in range(n):
                 b = struct.unpack('<f', struct.pack(

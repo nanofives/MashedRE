@@ -41,7 +41,7 @@ function _hex(buf) {
     return parts.join('');
 }
 
-const scratch = Memory.alloc(0x100);
+const scratch = Memory.alloc(0x200);
 const _keepAlive = [scratch];
 let liveArgs = [];
 let listener = null;
@@ -91,8 +91,8 @@ rpc.exports = {
     truth(rvaStr, kind, nIn, nOut, nA, sflag, vectors) {
         const target = ptr(rvaStr);
         const inBuf  = scratch;
-        const outBuf = scratch.add(0x40);
-        const retBuf = scratch.add(0x80);
+        const outBuf = scratch.add(0x100);   // inBuf holds up to 64 floats (n_in=22 = 88B) w/o overlap
+        const retBuf = scratch.add(0x180);
         const results = [];
         let fn;
         if (kind === 'f_f')            fn = new NativeFunction(target, 'float', ['uint32']);
