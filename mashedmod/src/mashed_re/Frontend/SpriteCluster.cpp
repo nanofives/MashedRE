@@ -54,32 +54,32 @@ static FUN_0042ac50_t const s_FUN_0042ac50 =
 // FUN_0040bb50  SpriteLookupC  (this file; forward declaration below)
 //   — called by ProgressBarSetA via original until this reimpl is installed.
 
-// FUN_004739f0  textured-quad draw  C1
+// FUN_004739f0  TextSpriteScaled (textured-quad draw)  C2   [hooks.csv 2026-07-24]
 using FUN_004739f0_t = void (__cdecl*)(void*, float, float, float, float, std::uint32_t, float, float, float, float, int, int);
 static FUN_004739f0_t const s_FUN_004739f0 =
     reinterpret_cast<FUN_004739f0_t>(0x004739f0u);
 
-// FUN_00472c60  filled-quad draw  C1
+// FUN_00472c60  ChromeBaseDraw (filled-quad draw)  C3   [hooks.csv 2026-07-24]
 using FUN_00472c60_t = void (__cdecl*)(float, float, float, float, std::uint32_t);
 static FUN_00472c60_t const s_FUN_00472c60 =
     reinterpret_cast<FUN_00472c60_t>(0x00472c60u);
 
-// FUN_00427e00  sprite by ID  C1
+// FUN_00427e00  sprite by ID  C2   [hooks.csv 2026-07-24]
 using FUN_00427e00_t = void (__cdecl*)(int, float, float, std::uint32_t, float, int);
 static FUN_00427e00_t const s_FUN_00427e00 =
     reinterpret_cast<FUN_00427e00_t>(0x00427e00u);
 
-// FUN_004282a0  text size  (uncatalogued — call via original)
+// FUN_004282a0  MenuMenusBA (text size)  C3   [hooks.csv 2026-07-24]
 using FUN_004282a0_t = void (__cdecl*)();
 static FUN_004282a0_t const s_FUN_004282a0 =
     reinterpret_cast<FUN_004282a0_t>(0x004282a0u);
 
-// FUN_004a2c48  FPU rounding  C1  __cdecl() -> int64 (via FPU ST0)
+// FUN_004a2c48  FPU rounding  C3  __cdecl() -> int64 (via FPU ST0)   [hooks.csv 2026-07-24]
 using FUN_004a2c48_t = std::int64_t (__cdecl*)();
 static FUN_004a2c48_t const s_FUN_004a2c48 =
     reinterpret_cast<FUN_004a2c48_t>(0x004a2c48u);
 
-// FUN_00473870  7-param textured-quad draw  C1
+// FUN_00473870  TextSpriteUVExplicit (7-param textured-quad draw)  C3   [hooks.csv 2026-07-24]
 using FUN_00473870_t = void (__cdecl*)(void*, float, float, float, float, std::uint32_t, int);
 static FUN_00473870_t const s_FUN_00473870 =
     reinterpret_cast<FUN_00473870_t>(0x00473870u);
@@ -98,24 +98,24 @@ static FUN_0042b8b0_t const s_FUN_0042b8b0 =
 using FUN_void_t   = void (__cdecl*)();
 using FUN_voidA_t  = void* (__cdecl*)();
 
-// FUN_004368e0  player alpha/color setup  C1
+// FUN_004368e0  player alpha/color setup  C2   [hooks.csv 2026-07-24]
 using FUN_004368e0_t = void (__cdecl*)(int, std::uint8_t, std::uint32_t);
 static FUN_004368e0_t const s_FUN_004368e0 =
     reinterpret_cast<FUN_004368e0_t>(0x004368e0u);
 
-// FUN_00430760  multiplayer check  uncatalogued
+// FUN_00430760  IsMultiplayerMode (multiplayer check)  C3   [hooks.csv 2026-07-24]
 using FUN_00430760_t = int (__cdecl*)();
 static FUN_00430760_t const s_FUN_00430760 =
     reinterpret_cast<FUN_00430760_t>(0x00430760u);
 
 // FUN_0042f500 GetDat0067ea64 — now called directly (ported C4, see fwd decl above).
 
-// FUN_00436810  local player slot occupancy  uncatalogued
+// FUN_00436810  LocalPlayerSlotCheck (local player slot occupancy)  C3   [hooks.csv 2026-07-24]
 using FUN_00436810_t = int (__cdecl*)(int);
 static FUN_00436810_t const s_FUN_00436810 =
     reinterpret_cast<FUN_00436810_t>(0x00436810u);
 
-// FUN_0042ebe0  AI/remote slot occupancy  uncatalogued
+// FUN_0042ebe0  FrontendPlayerSlotCheck (AI/remote slot occupancy)  C4   [hooks.csv 2026-07-24]
 using FUN_0042ebe0_t = int (__cdecl*)(int);
 static FUN_0042ebe0_t const s_FUN_0042ebe0 =
     reinterpret_cast<FUN_0042ebe0_t>(0x0042ebe0u);
@@ -125,7 +125,7 @@ using FUN_0042ee40_t = void* (__cdecl*)(int);
 static FUN_0042ee40_t const s_FUN_0042ee40 =
     reinterpret_cast<FUN_0042ee40_t>(0x0042ee40u);
 
-// FUN_004391b0  powerup/overlay sprite  C1
+// FUN_004391b0  powerup/overlay sprite  C2   [hooks.csv 2026-07-24]
 using FUN_004391b0_t = void* (__cdecl*)();
 static FUN_004391b0_t const s_FUN_004391b0 =
     reinterpret_cast<FUN_004391b0_t>(0x004391b0u);
@@ -138,7 +138,7 @@ static FUN_0042ef40_t const s_FUN_0042ef40 =
 // FUN_00430a10/60/ab0 HudSlotTypePlayer0/1/2 + FUN_0042ee00 SpriteSlotGate —
 // now called directly (ported C4, see fwd decls above).
 
-// FUN_00472dc0  triangle draw  C1
+// FUN_00472dc0  triangle draw  C2   [hooks.csv 2026-07-24]
 using FUN_00472dc0_t = void (__cdecl*)(float, float, float, float, float, float, std::uint32_t);
 static FUN_00472dc0_t const s_FUN_00472dc0 =
     reinterpret_cast<FUN_00472dc0_t>(0x00472dc0u);
@@ -286,17 +286,19 @@ extern "C" __declspec(dllexport) void* __cdecl SpriteLookupC(const char* key) {
 //   DAT_007d3ff8 -> ptr -> +0x20 -> fn(mode, val)
 //
 // Callee table (cited from analysis note):
-//   0x0042ac00  MenuGroupCount  C3  — player count
-//   0x0042ac50  FUN_0042ac50    C2  — layout Y base (__fastcall, takes count)
-//   0x0040bb50  SpriteLookupC       — sprite by name ("Arrow")
-//   0x004739f0  FUN_004739f0    C1  — textured-quad draw (12 params)
-//   0x00472c60  FUN_00472c60    C1  — filled-quad (5 params)
-//   0x00427e00  FUN_00427e00    C1  — sprite by ID (6 params)
-//   0x004282a0  uncatalogued        — text size (called once for slot-3 path)
-//   0x004a2c48  FUN_004a2c48    C1  — FPU rounding
-//   0x00473870  FUN_00473870    C1  — 7-param sprite draw (right-arrow)
-//   0x0042b8b0  ScreenWidthGet  C3  — screen X scale
-//   0x0042b8c0  ScreenHeightGet C3  — screen Y scale
+//   0x0042ac00  MenuGroupCount       C3  — player count
+//   0x0042ac50  FUN_0042ac50         C3  — layout Y base (__fastcall, takes count)
+//   0x0040bb50  SpriteLookupC        C3  — sprite by name ("Arrow")
+//   0x004739f0  TextSpriteScaled     C2  — textured-quad draw (12 params)
+//   0x00472c60  ChromeBaseDraw       C3  — filled-quad (5 params)
+//   0x00427e00  FUN_00427e00         C2  — sprite by ID (6 params)
+//   0x004282a0  MenuMenusBA          C3  — text size (called once for slot-3 path)
+//   0x004a2c48  FUN_004a2c48         C3  — FPU rounding
+//   0x00473870  TextSpriteUVExplicit C3  — 7-param sprite draw (right-arrow)
+//   0x0042b8b0  ScreenWidthGet       C3  — screen X scale
+//   0x0042b8c0  ScreenHeightGet      C4  — screen Y scale
+// [callee C-levels refreshed vs hooks.csv 2026-07-24 (account3 C4 prep) — all C2+,
+//  so ProgressBarSetA/LobbySlotListRender are C4-ready per the thunk-callee ruling]
 //
 // ref: re/analysis/hud_frontend_d2/0x00430b90.md
 
@@ -656,4 +658,8 @@ extern "C" __declspec(dllexport) void __cdecl LobbySlotListRender() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(LobbySlotListRender, 0x00439210);
+// Re-enabled 2026-07-24 (account3 C4 prep): C4 needs the inline-JMP live for a canonical
+// diff. Safe — this hook was already install-verified (C2->C3 implicit-survival sweep
+// 2026-05-23: installed via RH_ScopedInstall, MASHED reached menu + survived 30s idle).
+// (Was MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred.)
+RH_ScopedInstall(LobbySlotListRender, 0x00439210);
