@@ -18,13 +18,16 @@ census was 1,118 / 138. 2026-07-24: 4 more stale-stub strikes (account2 Lane-A g
 **1,111 open / 145 struck** — S-1483 (hud: RwMatrixRotate→RwMatrixRotateInner direct C++ call),
 S-3653 (save: ThunkReplaySave→ReplaySave direct C++ linkage), S-1442+S-2410 (vehicle/input:
 ZeroFillWrapper inlines FUN_004b64e0 as std::memset). No code change; each already calls the
-ported symbol directly or inlines it.) S-DoD is gated *per subsystem* — read this census, not the raw
+ported symbol directly or inlines it. 2026-07-24 (2nd strike, inlined-callee scan): 2 more →
+**1,109 open / 147 struck** — S-3931/S-3932 (frontend: LogoOverlayDraw C4 body inlines the
+FUN_00473220/FUN_004733b0 inner gradient-quad draws; no trampoline in src).)
+S-DoD is gated *per subsystem* — read this census, not the raw
 row count. Open rows by subsystem column (13 rows have a shifted/older column format and are
 counted under their literal 4th cell):
 
 | render | boot | util | particle | audio | vehicle | frontend | hud (+font/gameplay) | track | input | save | ai | gameplay | physics | race_state | video | io | misformatted |
 |---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 224 | 197 | 139 | 111 | 90 | 85 | 54 | 67 | 42 | 40 | 19 | 9 | 6 | 5 | 5 | 2 | 1 | 13 |
+| 224 | 197 | 139 | 111 | 90 | 85 | 52 | 67 | 42 | 40 | 19 | 9 | 6 | 5 | 5 | 2 | 1 | 13 |
 
 A large share of the open rows are **library-band passthroughs, not first-party port targets**
 (library-skip policy, `re/CONFIDENCE.md` + CLAUDE.md skip bands): the `boot` block is dominated
@@ -912,8 +915,8 @@ boundaries alongside the master plan §1 snapshot.)*
 | S-3928 | 0x00428610 FUN_00428610 | 0x00428760 FUN_00428760 | hud | passthrough | 2026-05-20 | 7-arg sprite/rect draw; receives 6 forwarded params + literal 0 as param_7; sole callee of 0x00428760; not yet reversed to C2; batch-ab-s1 |
 | S-3929 | 0x00494ee0 thunk_FUN_004d8560 | 0x00473c20 FUN_00473c20 | frontend | passthrough | 2026-05-20 | called with arg 0; returns int; result selects texture handle path (DAT_00771a50 vs DAT_00771a54); depth-2; batch-ab-s2 |
 | S-3930 | 0x0045b350 FUN_0045b350 | 0x00473c20 FUN_00473c20 | frontend | passthrough | 2026-05-20 | zero-length function per U-0069; called 3x at end of draw with args 0/1/0; role unknown; depth-2; batch-ab-s2 |
-| S-3931 | 0x00473220 FUN_00473220 | 0x00473ee0 FUN_00473ee0 | frontend | passthrough | 2026-05-20 | 6-param inner draw (0x189 bytes); called twice per outer loop iteration; depth-2; batch-ab-s2 |
-| S-3932 | 0x004733b0 FUN_004733b0 | 0x00473ee0 FUN_00473ee0 | frontend | passthrough | 2026-05-20 | 6-param draw with fixed dim constants; called at function entry; depth-2; batch-ab-s2 |
+| ~~S-3931~~ | ~~0x00473220 FUN_00473220~~ | ~~0x00473ee0 FUN_00473ee0~~ | frontend | resolved | 2026-07-24 | RESOLVED (account2 inlined-callee stale strike, no code change): the 0x00473ee0 reimpl (LogoOverlayTwin ABI adapter -> LogoOverlayDraw, DrawQuadPrimitives.cpp, hooks.csv 00473ee0 = verified/C4) INLINES FUN_00473220's gradient-quad draw (second color on V1/V3) as the shared body at DrawQuadPrimitives.cpp:573-696 (`second_on_v1v3` branch). 0x00473220 appears ONLY in comments — no reinterpret_cast/RVA trampoline anywhere in src. C4 gate ("no stubs in implementation") already implies resolved; inlining verified bit-identical via logo_overlay_diff.py Im2D A/B. Found via account2 Lane-A inlined-callee stale scan. |
+| ~~S-3932~~ | ~~0x004733b0 FUN_004733b0~~ | ~~0x00473ee0 FUN_00473ee0~~ | frontend | resolved | 2026-07-24 | RESOLVED (account2 inlined-callee stale strike, no code change): same C4-verified LogoOverlayDraw body inlines FUN_004733b0's gradient-quad draw (second color on V0/V2) at DrawQuadPrimitives.cpp:573-696 (`else` branch, DAT_00898a30/_DAT_00898a68). 0x004733b0 appears ONLY in comments — no trampoline in src. Twin of S-3931 (same 0x00473ee0 body). Found via account2 Lane-A inlined-callee stale scan. |
 | S-3933 | 0x004942b0 FUN_004942b0 | 0x00494480 FUN_00494480 | frontend | passthrough | 2026-05-20 | video tick; 167-byte body; called unconditionally at entry; depth-2; batch-ab-s2 |
 | S-3934 | 0x004938e0 FUN_004938e0 | 0x00494480 FUN_00494480 | frontend | passthrough | 2026-05-20 | takes video-handle value from FUN_00493fc0 return; depth-2; batch-ab-s2 |
 | S-3935 | 0x00494f40 FUN_00494f40 | 0x00494fd0 FUN_00494fd0 | render | passthrough | 2026-05-20 | gamma LUT generator; takes two stack out-param values from GetGammaRamp call; depth-2; batch-ab-s2 |
