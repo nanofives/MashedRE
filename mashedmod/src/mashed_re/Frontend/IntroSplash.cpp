@@ -321,6 +321,12 @@ void __cdecl IntroSplashOrchestrator() {
         bool bVar1 = false;
 
         // b. Get render-target handle.
+        // NB (2026-07-24): an EDI-register-clobber hypothesis was tested here with a
+        // `volatile` uVar2 (forcing a stack reload for the VtableSlot6 dispatch) and
+        // REFUTED — the codegen changed to `mov eax,[esp];mov eax,[eax+0x18]` yet the
+        // crash stayed the IDENTICAL 0x25ff5dec, proving uVar2 was always correct and
+        // the render-target object's +0x18 method slot is genuinely unbound at intro
+        // time in the hooked run (see the registration-site note below).
         const uint32 uVar2 = OrigVehicle0Get(0);
 
         // c. Per-frame input tick (return discarded).
@@ -425,3 +431,10 @@ void __cdecl IntroSplashOrchestrator() {
 // reimpl driving the sequence. Sub-fn reimpls (RenderState/VtableSlot6) are faithful + inlined. Exact
 // writer of the garbage +0x18 is UNRESOLVED (needs a memory watchpoint on uVar2+0x18; function hooks can't
 // observe the inlined calls). Orchestrator stays MASS-DISABLED; C2->C3 canonical observation REFUSED.
+// 2026-07-24 UPDATE: the EDI-register-clobber hypothesis was tested (volatile uVar2 -> stack reload) and
+// REFUTED — same 0x25ff5dec crash with uVar2 provably correct. ROOT CAUSE (revised): the render-target
+// object (DAT_006905b0, from FUN_004671a0(0)) has an UNBOUND +0x18 method pointer at intro-boot in the
+// hooked run. That slot is set by the binder at 0x004e3800 (writes [obj+0x10/0x18/0x1c]=0x4e38a0/0x4e3850/
+// 0x4e3880), dispatched indirectly (xref 0x004e3491). In the stock run (0-hook) the slot is bound (0x4e3850,
+// Frida ground truth); with our orchestrator hooked it is not. Next step to close it: a MEMORY WATCHPOINT on
+// uVar2+0x18 (now feasible — canonical boot restored 2026-07-24) to catch the bind-vs-dispatch ordering.
