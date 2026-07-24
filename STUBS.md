@@ -14,13 +14,17 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 **1,113 open rows / 143 struck.** (2026-07-23: 5 intro-splash stubs struck as standalone account2
 work — S-0802/S-0810/S-0811 stale passthroughs, plus S-0801/S-0803 rewired to ported symbols
 (build-verified). All target functions already impl/C3-C4; see those rows. Original 2026-07-06
-census was 1,118 / 138.) S-DoD is gated *per subsystem* — read this census, not the raw
+census was 1,118 / 138. 2026-07-24: 4 more stale-stub strikes (account2 Lane-A global scan) →
+**1,111 open / 145 struck** — S-1483 (hud: RwMatrixRotate→RwMatrixRotateInner direct C++ call),
+S-3653 (save: ThunkReplaySave→ReplaySave direct C++ linkage), S-1442+S-2410 (vehicle/input:
+ZeroFillWrapper inlines FUN_004b64e0 as std::memset). No code change; each already calls the
+ported symbol directly or inlines it.) S-DoD is gated *per subsystem* — read this census, not the raw
 row count. Open rows by subsystem column (13 rows have a shifted/older column format and are
 counted under their literal 4th cell):
 
 | render | boot | util | particle | audio | vehicle | frontend | hud (+font/gameplay) | track | input | save | ai | gameplay | physics | race_state | video | io | misformatted |
 |---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 224 | 197 | 139 | 111 | 90 | 86 | 54 | 68 | 42 | 41 | 20 | 9 | 6 | 5 | 5 | 2 | 1 | 13 |
+| 224 | 197 | 139 | 111 | 90 | 85 | 54 | 67 | 42 | 40 | 19 | 9 | 6 | 5 | 5 | 2 | 1 | 13 |
 
 A large share of the open rows are **library-band passthroughs, not first-party port targets**
 (library-skip policy, `re/CONFIDENCE.md` + CLAUDE.md skip bands): the `boot` block is dominated
@@ -407,7 +411,7 @@ boundaries alongside the master plan §1 snapshot.)*
 | S-1482 | 0x00553f40 | 0x005540d0 FUN_005540d0 | hud | passthrough | 2026-05-03 | glyph-data upload/lock; recursive on node[5] |
 | S-1482 | 0x005c4c60 | 0x00553f40 FUN_00553f40 | hud | passthrough | 2026-05-03 | resize/alloc cnt×0x18 Im2D vertex buffer |
 | S-1482 | 0x0055deb0 | 0x00553f40 FUN_00553f40 | hud | passthrough | 2026-05-03 | get vertex count from glyph-data block |
-| S-1483 | 0x004c4a50 | 0x004c4d20 FUN_004c4d20 | hud | passthrough | 2026-05-03 | angle-axis matrix builder; D-4364 |
+| ~~S-1483~~ | ~~0x004c4a50~~ | ~~0x004c4d20 FUN_004c4d20~~ | hud | resolved | 2026-07-24 | RESOLVED (account2 stale-stub strike, no code change): RwMatrixRotate (0x004c4d20, verified/C4) calls the ported RwMatrixRotateInner (0x004c4a50, verified/C4) as a direct C++ symbol at Math/RwMatrixRotate.cpp:79 — no reinterpret_cast/RVA trampoline in the file (file's "verbatim from Ghidra" note = transcription fidelity, not inline-JMP routing). hooks.csv 004c4d20 note already records "supersedes prior S-1483 stub status ... called by C++ symbol". Found via account2 Lane-A global stale scan (open-stub × caller-installed × callee-installed). |
 | S-1485 | 0x00556e90 | 0x00556d70 FUN_00556d70 | hud | passthrough | 2026-05-03 | set font-style RGBA color |
 | S-1485 | 0x00557110 | 0x00556d70 FUN_00556d70 | hud | passthrough | 2026-05-03 | set font-style secondary param to zero |
 | S-1360 | 0x005aabe0 | 0x005ba720 FUN_005ba720 + 0x005ba760 FUN_005ba760 | audio | passthrough | 2026-05-03 | FUN_005aabe0; called with *param_1; return value gates CoInitialize/CoUninitialize; audio_dsound_d2 |
@@ -429,7 +433,7 @@ boundaries alongside the master plan §1 snapshot.)*
 | S-1440 | 0x004c0e50 FUN_004c0e50 | 0x004b3bf0 FUN_004b3bf0 | vehicle | passthrough | 2026-05-03 | init material/geometry ref after model load; called on *(atomic+4) result of FUN_004e7420 |
 | S-1441 | 0x004547c0 FUN_004547c0 | 0x004548a0 FUN_004548a0 | vehicle | passthrough | 2026-05-03 | per-entry activator for DepthCharge struct-A (stride 0x2c, 0x00688240..0x006882f0); ESI-implicit; D-4240 |
 | S-1441 | 0x00454170 FUN_00454170 | 0x004548a0 FUN_004548a0 | vehicle | passthrough | 2026-05-03 | per-entry activator for DepthCharge struct-B (stride 0x44, 0x00688020..0x00688240); ESI-implicit; D-4241 |
-| S-1442 | 0x004b64e0 FUN_004b64e0 | 0x004b6520 FUN_004b6520 | vehicle | passthrough | 2026-05-03 | underlying 3-arg memset impl: (dst, val=0, size); thin wrapper over CRT memset |
+| ~~S-1442~~ | ~~0x004b64e0 FUN_004b64e0~~ | ~~0x004b6520 FUN_004b6520~~ | vehicle | resolved | 2026-07-24 | RESOLVED (account2 stale-stub strike, no code change): ZeroFillWrapper (0x004b6520, impl/C3) inlines the FUN_004b64e0 zero-fill as std::memset(p1,0,p2) at Util/TimerSlot.cpp:34 — the 0x004b64e0 passthrough is gone (callee also separately ported C3, Input/MemsetInline_ag1.cpp). hooks.csv 004b6520 note records "std::memset(p1,0,p2)==orig FUN_004b64e0(p1,0,p2)" (Frida GREEN at promotion); inlined callee counts as resolved. Twin row S-2410 = same call site. Found via account2 Lane-A global stale scan. |
 | S-1443 | 0x004e66d0 FUN_004e66d0 | 0x004b3fc0 0x004b3f90 0x004b5320 0x004b5580 0x00474d60 | vehicle | passthrough | 2026-05-03 | RW ForAll dispatcher: (obj, callback, userdata); iterates sub-objects calling callback; core RW ForAll pattern |
 | S-1445 | 0x004c0b70 FUN_004c0b70 | 0x004c0b30 FUN_004c0b30 | vehicle | passthrough | 2026-05-03 | post-alloc init for RW type 0x3000e object; called immediately after vtable alloc |
 | S-1446 | 0x004c0ad0 FUN_004c0ad0 | 0x004c1040 FUN_004c1040 | vehicle | passthrough | 2026-05-03 | propagate root-frame reference through children; called per child during RW frame reparent |
@@ -552,7 +556,7 @@ boundaries alongside the master plan §1 snapshot.)*
 | S-2407 | 0x004b7250 FUN_004b7250 | 0x004c0510 FUN_004c0510 | input | passthrough | 2026-05-06 | args (param_1, &DAT_00617f34); depth-3; D-7127 |
 | S-2408 | 0x004ba210 FUN_004ba210 | 0x004b7480 FUN_004b7480 | input | passthrough | 2026-05-06 | args (param_1, 1); depth-3; D-7128 |
 | S-2409 | 0x004b9850 FUN_004b9850 | 0x004b7480 FUN_004b7480 | input | passthrough | 2026-05-06 | args (param_1); depth-3; D-7129 |
-| S-2410 | 0x004b64e0 FUN_004b64e0 | 0x004b6520 FUN_004b6520 | input | passthrough | 2026-05-06 | receives (param_1, 0, param_2); 57 bytes; depth-3; D-7130 |
+| ~~S-2410~~ | ~~0x004b64e0 FUN_004b64e0~~ | ~~0x004b6520 FUN_004b6520~~ | input | resolved | 2026-07-24 | RESOLVED (account2 stale-stub strike, no code change): same 0x004b6520->0x004b64e0 call site as S-1442 — ZeroFillWrapper inlines it as std::memset (Util/TimerSlot.cpp:34); no passthrough remains. Found via account2 Lane-A global stale scan. |
 | S-2541 | 0x00401570 FUN_00401570 | 0x00401ee0 FUN_00401ee0 | frontend | passthrough | 2026-05-06 | table scan: iterates DAT_00636578 stride 0x68 (13 entries) matching entry[0x38]==param_1; result→DAT_00636ac0; 36b; depth-3 of title_screen_d2; D-7305 |
 | S-2542 | 0x00401da0 FUN_00401da0 | 0x00401ee0 FUN_00401ee0 | frontend | passthrough | 2026-05-06 | RW matrix setup+dirty for DAT_00636ac0 object; identity+translate+rotAxisAngle(-30+accum)+scale+translate; calls FUN_004c1480; 308b; depth-3 of title_screen_d2; D-7305 |
 | S-2543 | 0x004c1480 FUN_004c1480 | 0x00401da0 FUN_00401da0 | render | passthrough | 2026-05-06 | calls FUN_004c52f0(param_1+0x10); links param_1+0xa0 into dirty list@DAT_007d3ff8+0xbc; sets flag bits 3 and 0xc; 145b; depth-4; D-7540 |
@@ -762,7 +766,7 @@ boundaries alongside the master plan §1 snapshot.)*
 | S-3650 | 0x0042f6a0 FUN_0042f6a0 | 0x0040dbd0 | util | passthrough | 2026-05-12 | switch discriminant; also used in FUN_0040b180/FUN_00410860/FUN_00414060; not in hooks.csv yet; timer_d3_cont1_a |
 | S-3651 | 0x0041e080 FUN_0041e080 | 0x0040dbd0 | util | passthrough | 2026-05-12 | case-2 action in FUN_0040dbd0; timer_d3_cont1_a |
 | S-3652 | 0x0041b520 FUN_0041b520 | 0x0040dbd0 | util | passthrough | 2026-05-12 | default-tail action in FUN_0040dbd0; timer_d3_cont1_a |
-| S-3653 | 0x004117b0 FUN_004117b0 | 0x0040de00 | save | passthrough | 2026-05-12 | thunk target body of thunk_FUN_004117b0 @ 0x0040de00; one-shot replay save; timer_d3_cont1_a |
+| ~~S-3653~~ | ~~0x004117b0 FUN_004117b0~~ | ~~0x0040de00~~ | save | resolved | 2026-07-24 | RESOLVED (account2 stale-stub strike, no code change): ThunkReplaySave (0x0040de00, C4) calls the ported ReplaySave (0x004117b0, impl/C3) directly via C++ linkage at Save/ReplayThunk.cpp:46 (extern decl :40) — no RVA trampoline. Target-body stubs S-3654/S-3655/S-3656 (inside ReplaySave, Vehicle/Replay.cpp) remain open and are unaffected. Found via account2 Lane-A global stale scan. |
 | S-3654 | 0x00430820 FUN_00430820 | 0x004117b0 | save | passthrough | 2026-05-12 | pre-write gate in replay save body; result checked == 0; timer_d3_cont1_a |
 | S-3655 | 0x00483ca0 FUN_00483ca0 | 0x004117b0 | save | passthrough | 2026-05-12 | replay_write(handle, DAT_008a94a8) in replay save body; timer_d3_cont1_a |
 | S-3656 | 0x004099a0 FUN_004099a0 | 0x004117b0 | save | passthrough | 2026-05-12 | post-save action in replay save body; no args; timer_d3_cont1_a |
