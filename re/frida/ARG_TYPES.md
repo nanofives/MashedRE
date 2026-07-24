@@ -1,7 +1,7 @@
 # arg_type index (GENERATED — do not hand-edit)
 
 Regenerate: `py -3.12 scripts\gen_arg_types_index.py`
-Handlers: 112 in `re/frida/diff_template.js` + 184 early-window-only in `re/frida/early_window_leaf_diff.py` | registry uses: 1042 across 287 distinct arg_types.
+Handlers: 112 in `re/frida/diff_template.js` + 184 early-window-only in `re/frida/early_window_leaf_diff.py` | registry uses: 1043 across 287 distinct arg_types.
 
 Answer "does an arg_type exist for this signature?" HERE. Open
 diff_template.js only to author a NEW handler (its header comments,
@@ -142,9 +142,9 @@ Evidence tag in hooks.csv: `green-earlywindow-rN`.
 | `eax_ecx_insert` | 7 | fn(EAX=container, ECX=item): cross-link insert. trampoline sets EAX+ECX, seed both bufs (eax_seed/ecx_seed [{off,val}]), call, snapshot eax_observe/ecx_observe offsets in both + ret. reimpl naked __asm reading EAX+ECX. test ignored (single call) |
 | `deref_p1field_glob_set` | 6 | fn(p1[, p2/v]): base=*(u32*)(*(u32*)(p1+p1_off)+*(u32*)glob); reimpl writes base fields. seed glob=0, p1->atab->base, optional p2 in-ptr(n) or scalar; snapshot base observe. test ignored |
 | `seed_globals_arg_multiobs` | 6 | void fn(int arg): PURE LEAF global-cascade. Per cfg.seed_sets[t]={arg, globals:[[a,v]...]} seed input globals (+ queue/sentinel), call f(arg), observe cfg.observe_addrs (list, joined). non-degen via distinct seed states/arg producing distinct write patterns |
+| `abs_ranges_setter` | 5 | void fn(scalars...): writes to ABSOLUTE globals (no ptr args). Reset cfg.abs_ranges [{addr,dwords}] to 0, call fn(test scalars), snapshot the same ranges, compare. nscalar from cfg. test=[a0(,a1,a2)] (varied -> non-degen). reimpl __cdecl reads/writes the absolute globals directly |
 | `const_return` | 5 | fn(): return <fixed constant> — no input, no state; call + compare |
 | `struct_const_init` | 5 | [u32] fn([passthrough,] ptr p): writes deterministic consts/computed to p's fields. alloc 0x400 buf, snapshot observe offsets (+ret if passthrough). test ignored |
-| `abs_ranges_setter` | 4 | void fn(scalars...): writes to ABSOLUTE globals (no ptr args). Reset cfg.abs_ranges [{addr,dwords}] to 0, call fn(test scalars), snapshot the same ranges, compare. nscalar from cfg. test=[a0(,a1,a2)] (varied -> non-degen). reimpl __cdecl reads/writes the absolute globals directly |
 | `ptr_out_table_get` | 4 | u32 fn(out_ptr,idx): if(idx>=bound) return 0; out[0..n-1]=*(u32*)(base+idx*stride+j*4); return 1 |
 | `container_record_set` | 3 | void fn(container,..): base=container[0],idx=container[2]; addr=base+idx*0x30; write args into addr+offs. shape p/f/pp |
 | `flag_multibit` | 3 | void fn(idx,b1,b2[,b3]): RMW flag word at base+idx*stride via reimpl bit logic. test=[idx,b1,b2(,b3),seed] |

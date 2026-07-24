@@ -20,6 +20,14 @@ idling or reviving dead batch lanes.
    every addition (`py -3.12 scripts\gen_arg_types_index.py`; lookups go through
    `re/frida/ARG_TYPES.md`, never the 232 KB template). Candidate source: rows whose promotion
    blocker was recorded as missing/unsupported arg shape (`promote_frontier.tsv`, c2c3 lessons).
+   - **NEXT PULL (identified 2026-07-24, account2):** build the **x87 80-bit ST0 float-return
+     capture handler** — it unlocks 6 of the 9 named-shape frontier rows (3 sin-getters
+     0x00431b20/b50/b60 + 3 RwV3d bbox accessors 0x004c4270/42d0/4360) AND is the same capability
+     veccap item 6 defers `FUN_005667c0` for. Full refined frontier classification (which rows are
+     handler-blocked vs veccap-onboardable vs bespoke) in
+     `re/analysis/plans/frontier_shape_refinement_2026-07-24.md`. Also flagged: 0x004b4550 (3D
+     centroid) is a veccap-onboardable (item 6, offline, no Frida). Authoring the handler needs
+     Frida to verify → account3 (account2 produced the target analysis only).
 2. **Callee-gate cascade** — when a leaf lands C3, re-check its C2 callers whose only failing C3
    gate was "callee below C2+": each new C3 leaf can unlock a caller chain. Mechanical scan;
    route to a cheap model.
