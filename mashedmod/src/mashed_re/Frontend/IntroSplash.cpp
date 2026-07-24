@@ -431,6 +431,14 @@ void __cdecl IntroSplashOrchestrator() {
 // reimpl driving the sequence. Sub-fn reimpls (RenderState/VtableSlot6) are faithful + inlined. Exact
 // writer of the garbage +0x18 is UNRESOLVED (needs a memory watchpoint on uVar2+0x18; function hooks can't
 // observe the inlined calls). Orchestrator stays MASS-DISABLED; C2->C3 canonical observation REFUSED.
+// 2026-07-24 ROOT CAUSE CLOSED: a boot-time RW OBJECT-LIFECYCLE ORDERING sensitivity (NOT register/logic).
+// [uVar2+0x18] is a RenderWare PLUGIN method ptr, bound at object-CREATE by the plugin-registry constructor
+// FUN_004d8000 (callers RpWorldCreate/RpAtomicCreate/RpLightCreate) via the plugin ctor callback 0x004e3800.
+// The binder runs on the MAIN thread (not cross-thread) and is TIMING-SENSITIVE (Heisenbug): a bare canonical
+// observe dispatches [obj+0x18] before the object's plugins are constructed -> 0x25ff5dec AV; adding ANY Frida
+// instrumentation shifts timing so create/bind finishes first -> obj+0x18=0x4e3850, NO crash. Our reimpl's
+// timing loses the window the original wins. A real fix must ensure the render target is fully created/plugin-
+// constructed before the VtableSlot6 dispatch. Deferred (C4-blocked by 8 Orig* trampolines). Details below:
 // 2026-07-24 UPDATE: the EDI-register-clobber hypothesis was tested (volatile uVar2 -> stack reload) and
 // REFUTED — same 0x25ff5dec crash with uVar2 provably correct. ROOT CAUSE (revised): the render-target
 // object (DAT_006905b0, from FUN_004671a0(0)) has an UNBOUND +0x18 method pointer at intro-boot in the
