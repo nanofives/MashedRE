@@ -11,7 +11,7 @@ import os
 PROJECT_DIR = r"C:\Users\maria\Desktop\Proyectos\Mashed\mashed_pool"
 PROJECT_NAME = "Mashed_pool13"
 PROGRAM_NAME = "MASHED.exe"
-GHIDRA_DIR = r"C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra_12.0.3_PUBLIC"
+GHIDRA_DIR = r"C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra\ghidra_12.0.3_PUBLIC"
 
 # Priority RVAs to decompile (VA = image_base 0x00400000 + RVA)
 TARGET_ADDRS = [

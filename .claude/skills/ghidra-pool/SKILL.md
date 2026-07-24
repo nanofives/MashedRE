@@ -26,7 +26,7 @@ C:\Users\maria\Desktop\Proyectos\Mashed\
     └── ...                              # up to MAX_SLOTS=16, created lazily
 ```
 
-The Ghidra binary lives in TD5RE (`C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra_12.0.3_PUBLIC`) — **shared, do not duplicate**. Ghidra MCP is also shared from TD5RE (`ghidra-headless-mcp\`).
+The Ghidra binary lives in TD5RE (`C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra\ghidra_12.0.3_PUBLIC`) — **shared, do not duplicate**. Ghidra MCP is also shared from TD5RE (`ghidra\headless-mcp\`).
 
 ## Standard acquire/release flow
 

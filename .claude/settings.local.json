@@ -2,7 +2,7 @@
   "permissions": {
     "allow": [
       "Read(//c/Users/maria/Desktop/Proyectos/Mashed/**)",
-      "Read(//c/Users/maria/Desktop/Proyectos/TD5RE/ghidra-headless-mcp/**)",
+      "Read(//c/Users/maria/Desktop/Proyectos/TD5RE/ghidra/headless-mcp/**)",
       "Bash(bash \"C:/Users/maria/Desktop/Proyectos/Mashed/scripts/ghidra_pool.sh\":*)",
       "Bash(pwsh -NoProfile -File \"C:/Users/maria/Desktop/Proyectos/Mashed/scripts/ghidra_pool.ps1\":*)",
       "Bash(git -C *)",

@@ -86,7 +86,7 @@ else
     fail "frida-game-hacking-mcp not importable (pip install -e tools/frida-game-hacking-mcp)"
 fi
 
-if [[ -f "C:/Users/maria/Desktop/Proyectos/TD5RE/ghidra-headless-mcp/ghidra_headless_mcp.py" ]]; then
+if [[ -f "C:/Users/maria/Desktop/Proyectos/TD5RE/ghidra/headless-mcp/ghidra_headless_mcp.py" ]]; then
     pass "ghidra-headless-mcp script present"
 else
     fail "ghidra-headless-mcp script missing in TD5RE share"

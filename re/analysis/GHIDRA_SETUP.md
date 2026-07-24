@@ -7,7 +7,7 @@ Pinned record of how the master project was created. If any of these change, the
 | Item | Pinned value |
 |---|---|
 | Ghidra | 12.0.3 PUBLIC |
-| Ghidra install dir | `C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra_12.0.3_PUBLIC\` (shared with TD5RE) |
+| Ghidra install dir | `C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra\ghidra_12.0.3_PUBLIC\` (shared with TD5RE) |
 | Java | bundled with Ghidra 12.0.3 |
 | Project location | `C:\Users\maria\Desktop\Proyectos\Mashed` |
 | Project name | `Mashed` (master) |
@@ -57,7 +57,7 @@ mv Mashed.gpr Mashed.gpr.bak.YYYYMMDD
 mv Mashed.rep Mashed.rep.bak.YYYYMMDD
 
 # 2. Re-run headless analysis
-bash "/c/Users/maria/Desktop/Proyectos/TD5RE/ghidra_12.0.3_PUBLIC/support/analyzeHeadless.bat" \
+bash "/c/Users/maria/Desktop/Proyectos/TD5RE/ghidra/ghidra_12.0.3_PUBLIC/support/analyzeHeadless.bat" \
     "C:/Users/maria/Desktop/Proyectos/Mashed" Mashed \
     -import "C:/Users/maria/Desktop/Proyectos/Mashed/original/MASHED.exe" \
     -overwrite
@@ -69,7 +69,7 @@ bash scripts/ghidra_pool.sh sync
 ## Adding a `Mashed_headless` write target (optional)
 
 ```bash
-bash "/c/Users/maria/Desktop/Proyectos/TD5RE/ghidra_12.0.3_PUBLIC/support/analyzeHeadless.bat" \
+bash "/c/Users/maria/Desktop/Proyectos/TD5RE/ghidra/ghidra_12.0.3_PUBLIC/support/analyzeHeadless.bat" \
     "C:/Users/maria/Desktop/Proyectos/Mashed" Mashed_headless \
     -import "C:/Users/maria/Desktop/Proyectos/Mashed/original/MASHED.exe"
 ```

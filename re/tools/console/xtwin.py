@@ -21,7 +21,7 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]  # repo root (re/tools/console -> root)
-GH = r"C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra_12.0.3_PUBLIC\support\analyzeHeadless.bat"
+GH = r"C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra\ghidra_12.0.3_PUBLIC\support\analyzeHeadless.bat"
 MATCH = ROOT / "re/console/match/xbuild_match_v2.csv"
 PROJ_DIR = ROOT / "re/console/ghidra"
 SCRIPTS = ROOT / "re/tools/console/ghidra_scripts"

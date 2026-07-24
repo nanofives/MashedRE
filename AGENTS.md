@@ -12,7 +12,7 @@ Operating manual for any agent (Claude Code, sub-agents, future contributors) wo
    Mismatch → stop. Note the actual hash and ask the user which build they have.
 
 2. **Bootstrap the Ghidra master project (manual; do NOT auto-run)**
-   - Open Ghidra GUI from `C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra_12.0.3_PUBLIC\ghidraRun.bat`.
+   - Open Ghidra GUI from `C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra\ghidra_12.0.3_PUBLIC\ghidraRun.bat`.
    - File → New Project → Non-Shared Project → location `C:\Users\maria\Desktop\Proyectos\Mashed`, name `Mashed`.
    - Drag `original\MASHED.exe` into the project.
    - Right-click → Auto-analyze (default settings, plus *Decompiler Parameter ID* and *Aggressive Instruction Finder*).

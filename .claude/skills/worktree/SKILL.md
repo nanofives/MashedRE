@@ -49,7 +49,7 @@ Workspaces share:
 - `original/` (immutable) — accessed by the exe's self-locate or `MASHED_ROOT` env.
   **Do NOT junction/symlink it into the worktree** (see warning above).
 - `Mashed.gpr` master and `mashed_pool/` (single physical pool serves all worktrees; the binding is logical).
-- The Ghidra binary at `TD5RE\ghidra_12.0.3_PUBLIC\`.
+- The Ghidra binary at `TD5RE\ghidra\ghidra_12.0.3_PUBLIC\`.
 
 ## Standard create flow
 

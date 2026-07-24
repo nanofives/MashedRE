@@ -72,7 +72,7 @@ Mashed\
 │       ├── MashedFileExtractor\   # .piz / .rws parsers (authoritative)
 │       └── MashedTrainer\         # Only public memory map (Fully Loaded only)
 ├── mashed_pool\                   # Ghidra clones (created on demand by the skill)
-├── ghidra-headless-mcp\           # NOT here — shared from TD5RE\ghidra-headless-mcp\
+├── ghidra-headless-mcp\           # NOT here — shared from TD5RE\ghidra\headless-mcp\
 ├── scripts\                       # ghidra_pool.{sh,ps1}, patch_mashed_*.py (5 patches),
 │   └── canonical\                 # known-good videocfg.bin variants
 ├── .claude\                       # Settings, skills, slash commands
@@ -85,8 +85,8 @@ Do not move or delete anything in `original\` without explicit user permission.
 
 ## Toolchain
 
-- **Ghidra 12.0.3** — shared install at `C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra_12.0.3_PUBLIC` (do not duplicate).
-- **Ghidra MCP** — `mrphrazer/ghidra-headless-mcp`, shared install at `C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra-headless-mcp\`. Wired via `.mcp.json`.
+- **Ghidra 12.0.3** — shared install at `C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra\ghidra_12.0.3_PUBLIC` (do not duplicate). (Moved under `TD5RE\ghidra\` in the 2026-07-24 TD5RE reorg.)
+- **Ghidra MCP** — `mrphrazer/ghidra-headless-mcp`, shared install at `C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra\headless-mcp\`. Wired via `.mcp.json`.
 - **Python 3.12** invoked as `py -3.12` for tooling and the MCP server.
 - **MSVC Build Tools 2022 (x86)** — installed at `C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools`. Activated via `VC\Auxiliary\Build\vcvars32.bat`. `cl.exe 19.44+` produces both targets via `mashedmod\build.bat`. Choice locked 2026-05-08: chosen over MinGW for ABI compatibility with the original MSVC-built MASHED.exe (cleaner `__thiscall`, vtable layout, exception handling for hook surfaces).
 - **Frida** for runtime tracing / behavioral diffs. Already installed via the user's Python.

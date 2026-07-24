@@ -7,7 +7,7 @@ import os
 import sys
 from pathlib import Path
 
-GHIDRA_INSTALL = Path("C:/Users/maria/Desktop/Proyectos/TD5RE/ghidra_12.0.3_PUBLIC")
+GHIDRA_INSTALL = Path("C:/Users/maria/Desktop/Proyectos/TD5RE/ghidra/ghidra_12.0.3_PUBLIC")
 PROJECT_LOC = Path("C:/Users/maria/Desktop/Proyectos/Mashed")
 PROJECT_NAME = "Mashed"
 PROGRAM_NAME = "MASHED.exe"
