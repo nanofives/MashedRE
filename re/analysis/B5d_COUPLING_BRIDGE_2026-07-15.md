@@ -161,3 +161,31 @@ C3, different reasons): `RwpSceneStepWrapper` 0x0047ea40 (tail-calls the DEFERRE
 `FUN_0047e9c0` — that IS an unreversed-island call, and it is not a clean per-frame A/B) and
 `FUN_0055c000` (load-time-only, not per-frame A/B-able). A callee that is an unmapped/C0 placeholder
 WOULD block C4.
+
+## 8. Bridge C4 attempt — forward-loop selftest built; angular GREEN, linear artifact-blocked (2026-07-24)
+
+Built the in-process forward-loop A/B selftest in `Vehicle/VehicleCouplingBridge.cpp`
+(refactor: `VehicleCouplingBridge_impl(bool forwardOnly)` + a `Bridge_SelfTest()` wrapper).
+Mechanism (A4-style): snapshot the 4 proxy bodies' matrix + linVel/angVel; run the ORIGINAL
+setup+forward via `HookSystem::Uninstall` + a `JMP 0x0047eb4b` (the function's own aligned-frame
+epilogue) patched at `0x0047f0b3` (the first instr after the forward loop, before the vendor
+solver); capture; restore; run `impl(forwardOnly=true)`; per-field compare (matrix / linVel /
+angVel separately); restore; run the real full port. Skips the one-shot build tick
+(`G_buildGate==0x7b`). Anchors: prologue `55 8B EC 83 E4` (aligned `AND ESP,-8` frame, 4 saved
+regs EBX/EBP/ESI/EDI), epilogue-reuse `0x0047eb4b`.
+
+RESULT over a canonical QuickRace (32 samples): **angular half BIT-IDENTICAL — `dAng=0` 32/32**
+(validates the x87 atan2→deg + acos heading math, the part §4 predicted would carry a ULP floor).
+But the **linear half shows a systematic `dLin=12`/`dMtx=12`** — traced to a **HARNESS ARTIFACT,
+not a port bug**: the forward loop's render inputs `getRenderMtx` (0x0046d4a0) / `getOffset3D`
+(0x0046cb30) are **non-idempotent** (return different values on the 2nd call within a tick), so the
+ORIG and PORT runs see different `springTgt` → different linVel/matrix. (`getVelWorld`, used by the
+angular half, is idempotent → `dAng=0`.) The values confirm it: `bodyPos` snapshot is garbage-scale
+(~1e9) so linVel explodes to ~1e10 in BOTH runs, but *differently*.
+
+**Bridge C4 NOT earned by this method.** The in-process snapshot/restore A/B — clean for the
+self-contained B5c leaves — is contaminated for the coupled bridge. To finish: FREEZE the render
+inputs (capture on the ORIG run, force-feed the PORT run via a getRenderMtx/getOffset3D shim) OR the
+two-launch deterministic diff (§4). The `dAng=0` result stands as partial (angular-half) validation;
+the harness + this limitation are committed for the next focused session. Evidence:
+`log/phys_c4_bridge_selftest_ARTIFACT_20260724.log`.
