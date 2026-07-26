@@ -54,14 +54,31 @@ AudioRwsChunkHeaderRead(std::uint32_t param_1, std::uint32_t* param_2)
     static constexpr std::uintptr_t kStreamRead = 0x004cbd30u;
     const auto streamRead = reinterpret_cast<StreamReadFn>(kStreamRead);
 
-    std::uint32_t local_c;   // chunk type   (bytes 0..3)
-    std::uint32_t local_8;   // chunk size   (bytes 4..7)
-    std::uint32_t local_4;   // raw version word (bytes 8..11)
-
-    const int bytes = streamRead(param_1, &local_c, 0xc);
+    // BUGFIX 2026-07-26 — this was an 8-byte STACK BUFFER OVERFLOW and the confirmed
+    // root cause of the pc=0x44 boot AV (0xC0000005 @ ~4.6 s, reproduced with this hook
+    // as the ONLY one installed; see verify/menu_crash_pc44/FINDINGS_2026-07-26.md).
+    //
+    // The original reads 0xc bytes into the lowest of three CONTIGUOUS stack slots
+    // (-0xc / -0x8 / -0x4), so `read(&local_c, 0xc)` legitimately fills all three.
+    // The previous transcription copied that idiom literally into three separate C++
+    // locals and passed `&local_c` — but C++ guarantees NOTHING about the placement,
+    // order or padding of distinct locals (they may even be register-allocated). So the
+    // callee wrote 12 bytes into a 4-byte object, smashing 8 bytes of whatever the
+    // compiler happened to place after it, while local_8/local_4 were read effectively
+    // uninitialised. Corrupting the caller's frame is exactly how the RW-audio
+    // stream-handler object at 0x005ab237 (`CALL dword ptr [EAX+0x44]`) ended up
+    // dispatching through a garbage +0x44 slot.
+    //
+    // A stack layout that the original relies on must be modelled EXPLICITLY, never
+    // inferred from adjacent local declarations.
+    std::uint32_t hdr[3] = { 0u, 0u, 0u };   // contiguous by construction, exactly 0xc bytes
+    const int bytes = streamRead(param_1, hdr, 0xc);
     if (bytes != 0xc) {
         return 0u;
     }
+    const std::uint32_t local_c = hdr[0];   // chunk type        (bytes 0..3)
+    const std::uint32_t local_8 = hdr[1];   // chunk size        (bytes 4..7)
+    const std::uint32_t local_4 = hdr[2];   // raw version word  (bytes 8..11)
 
     param_2[1] = local_8;          // out[+0x04] = chunk size
     param_2[0] = local_c;          // out[+0x00] = chunk type
