@@ -309,6 +309,13 @@ def build_config(hook, asi_path=None):
         config['observe'] = hook['observe']
     if 'observe_ret' in hook:
         config['observe_ret'] = hook['observe_ret']
+    # ptr_seed_observe — multi-pointer pure-leaf differ (c3-batch-render-p2w1a-s1).
+    if 'arg_layout' in hook:
+        config['arg_layout'] = hook['arg_layout']
+    if 'num_bufs' in hook:
+        config['num_bufs'] = hook['num_bufs']
+    if 'buf_size' in hook:
+        config['buf_size'] = hook['buf_size']
     # audio_sub_struct_zero — struct layout for sentinel + observe range.
     if 'struct_size' in hook:
         config['struct_size'] = hook['struct_size']

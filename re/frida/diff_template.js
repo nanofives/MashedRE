@@ -1142,6 +1142,92 @@ function runDiff() {
         return;
     }
 
+    // ── ptr_seed_observe ────────────────────────────────────────────────────
+    // Generic multi-pointer pure-leaf differ. Allocates one scratch buffer per
+    // pointer arg (paired Orig/Reimpl), seeds each per-test, threads positional
+    // call args (buffer pointers and/or float/int scalars), runs both sides, and
+    // observes buffer offsets as a BIT-IDENTICAL fingerprint (f32 read back as
+    // raw u32 bits so a sub-ULP divergence is caught). Authored for the
+    // rw-palette-quantizer leaves 0x004d9360 / 0x004d9a60 / 0x004d9ee0
+    // (c3-batch-render-p2w1a-s1). All are pure functions of their args + a few
+    // absolute-address image constants, so seeded non-zero inputs make the
+    // observation non-degenerate without touching any live game state.
+    //
+    //   CONFIG.num_bufs    int    scratch buffers to allocate (default: count of
+    //                             {buf:i} entries in arg_layout)
+    //   CONFIG.buf_size    int    bytes per buffer (default 64)
+    //   CONFIG.arg_layout  array  positional call args, in order, each one of:
+    //                               {buf:i}    -> pointer to scratch buffer i
+    //                               {f32:true} -> next value from test.scalars
+    //                               {i32:true} -> next value from test.scalars
+    //   CONFIG.observe     array  [{buf:i, off:N, type:'f32'|'u8'|'u16'|'u32'|'s32'}]
+    //   CONFIG.tests[i] = { seed:[{buf,off,type,value}...], scalars:[...] }
+    if (CONFIG.arg_type === 'ptr_seed_observe') {
+        const layout = CONFIG.arg_layout || [];
+        const NB = (CONFIG.num_bufs | 0) ||
+                   layout.filter(function (a) { return a && a.buf !== undefined; }).length;
+        const BS = (CONFIG.buf_size | 0) || 64;
+        const bufsO = [], bufsR = [];
+        for (let k = 0; k < NB; k++) { bufsO.push(Memory.alloc(BS)); bufsR.push(Memory.alloc(BS)); }
+        const wr = function (p, off, type, value) {
+            const a = p.add(off);
+            switch (type) {
+                case 'u8':  a.writeU8(value & 0xff); break;
+                case 'u16': a.writeU16(value & 0xffff); break;
+                case 's32': a.writeS32(value | 0); break;
+                case 'f32': a.writeFloat(value); break;
+                case 'u64': a.writeU32(value >>> 0); a.add(4).writeU32(0); break;
+                default:    a.writeU32(value >>> 0); break;  // u32
+            }
+        };
+        const rd = function (p, off, type) {
+            const a = p.add(off);
+            switch (type) {
+                case 'u8':  return (a.readU8()  >>> 0).toString(16);
+                case 'u16': return (a.readU16() >>> 0).toString(16);
+                case 's32': return (a.readS32()  | 0).toString(16);
+                // f32 read as raw bits for a true bit-identity compare.
+                case 'f32': return (a.readU32() >>> 0).toString(16);
+                default:    return (a.readU32() >>> 0).toString(16);  // u32
+            }
+        };
+        const buildArgs = function (bufs, scalars) {
+            const args = [];
+            let si = 0;
+            for (let k = 0; k < layout.length; k++) {
+                const a = layout[k];
+                if (a && a.buf !== undefined) args.push(bufs[a.buf]);
+                else args.push(scalars[si++]);  // f32/i32 -> JS number (NativeFunction promotes)
+            }
+            return args;
+        };
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            for (let k = 0; k < NB; k++) {
+                for (let b = 0; b < BS; b++) { bufsO[k].add(b).writeU8(0); bufsR[k].add(b).writeU8(0); }
+            }
+            (t.seed || []).forEach(function (s) {
+                wr(bufsO[s.buf], s.off, s.type, s.value);
+                wr(bufsR[s.buf], s.off, s.type, s.value);
+            });
+            const scalars = t.scalars || [];
+            let errO = null, errR = null;
+            try { Orig.apply(null, buildArgs(bufsO, scalars)); }   catch (e) { errO = e.message; }
+            try { Reimpl.apply(null, buildArgs(bufsR, scalars)); } catch (e) { errR = e.message; }
+            const fpO = [], fpR = [];
+            (CONFIG.observe || []).forEach(function (o) {
+                fpO.push(o.buf + '+' + o.off + '=' + rd(bufsO[o.buf], o.off, o.type));
+                fpR.push(o.buf + '+' + o.off + '=' + rd(bufsR[o.buf], o.off, o.type));
+            });
+            const sO = fpO.join('|'), sR = fpR.join('|');
+            results.push({ idx: i, input: JSON.stringify(t), original: sO, reimpl: sR,
+                           match: (!errO && !errR && sO === sR),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── pcm_pack ────────────────────────────────────────────────────────────
     // Saturating int32->int16 PCM pack: void fn(i16* dst, i32* src, u32 count).
     // The function writes 2*count int16 samples from 2*count int32 sources.
