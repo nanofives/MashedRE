@@ -251,6 +251,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Render\BatchAB_s3.cpp" ^
     "Render\BatchAB_s6.cpp" ^
     "Render\RenderLeaves_ae1.cpp" ^
+    "Render\PaletteQuantizer.cpp" ^
     "Render\RenderLeaves_ae2.cpp" ^
     "Render\RenderLeaves_ae3.cpp" ^
     "Render\RenderStateSettersA.cpp" ^
