@@ -140,35 +140,41 @@ AudioRwsChunkTypeSeek(std::uint32_t param_1, int param_2,
     const auto hdrRead    = reinterpret_cast<HdrReadFn>(kHdrRead);
     const auto streamSkip = reinterpret_cast<StreamSkipFn>(kStreamSkip);
 
-    // Local header buffer matches decomp: local_14 (type), local_10 (size),
-    // local_c (decoded version), plus two trailing slots written by hdrRead.
-    int           local_14;
-    std::uint32_t local_10;
-    std::uint32_t local_c;
-    std::uint32_t local_8;
-    std::uint32_t local_4;
-    std::uint32_t* const hdrBuf = reinterpret_cast<std::uint32_t*>(&local_14);
+    // BUGFIX 2026-07-26 — same class as the 0x005ab380 fix above, and the SECOND
+    // confirmed pc=0x44 crasher (found by scripts/bisect_hook_index.ps1, index 87).
+    //
+    // hdrRead (0x005ab380) writes a 5 x uint32 = 20-byte output struct (out[0..4]).
+    // This previously declared FIVE separate C++ locals and passed
+    // `reinterpret_cast<uint32_t*>(&local_14)`, assuming the compiler lays them out
+    // contiguously in declaration order — which C++ does not guarantee. The callee
+    // therefore wrote up to 20 bytes starting at a 4-byte object, smashing the frame.
+    //
+    // Model the struct EXPLICITLY. Field order matches the decomp's frame layout
+    // (local_14 lowest): [0]=type [1]=size [2]=decoded version [3]=build [4]=0.
+    std::uint32_t hdr[5] = { 0u, 0u, 0u, 0u, 0u };
+    std::uint32_t* const hdrBuf = hdr;
 
     std::uint32_t r = hdrRead(param_1, hdrBuf);
     if (r != 0u) {
-        while (local_14 != param_2) {
+        while (static_cast<int>(hdr[0]) != param_2) {   // hdr[0] = chunk type
             // Skip payload (seek by size).
-            const int skipOk = streamSkip(param_1, local_10);
+            const int skipOk = streamSkip(param_1, hdr[1]);   // hdr[1] = chunk size
             if (skipOk == 0) return 0u;
             // Read next header.
             r = hdrRead(param_1, hdrBuf);
             if (r == 0u) return 0u;
         }
-        // Version range gate: 0x34fff < local_c < 0x37003.
-        if ((0x34fffu < local_c) && (local_c < 0x37003u)) {
-            if (param_3 != nullptr) *param_3 = local_10;
-            if (param_4 != nullptr) *param_4 = local_c;
+        // Version range gate: 0x34fff < decoded version < 0x37003.  hdr[2] = version.
+        if ((0x34fffu < hdr[2]) && (hdr[2] < 0x37003u)) {
+            if (param_3 != nullptr) *param_3 = hdr[1];   // chunk size
+            if (param_4 != nullptr) *param_4 = hdr[2];   // decoded version
             return 1u;
         }
     }
     return 0u;
-    // Silence unused-warning for trailing-slot locals (matches decomp layout).
-    (void)local_8; (void)local_4;
+    // (The old dead `(void)local_8; (void)local_4;` line is gone: those trailing slots
+    // are now hdr[3]/hdr[4] inside the explicit 5-slot buffer, so there is nothing to
+    // silence — and hdrRead writing them is the whole reason the buffer must be 5 wide.)
 }
 
 RH_ScopedInstall(AudioRwsChunkTypeSeek, 0x005ab410);  // re-enabled 2026-05-24 c3-audio-a
