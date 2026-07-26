@@ -232,6 +232,42 @@ function callFn(fn, input, buf) {
     if (CONFIG.arg_type === 'float3_scalar_ret') {
         return fn(input[0], input[1], input[2]);
     }
+    // st0_ret_global — x87 80-bit ST0 float-return leaf gated by one writable input
+    // global. Shape: float10 f(void) whose body is `FLD dword[global_a]; FMUL qword
+    // [<const>]; <x87 op>; RET`, leaving the result in the x87 ST0 register (extended
+    // precision, no stack cleanup). The 3 sine-getters 0x00431b20/b50/b60 are exactly
+    // this: FSIN of a 32-bit-float .data global * a fixed .rdata double constant.
+    //
+    // CRITICAL: signature.ret MUST be 'double' (NEVER 'void'). A void-declared
+    // NativeFunction leaves ST0 unpopped -> x87 stack leak / NaN + FPU corruption
+    // (feedback memory x87_st0_float10_return_fnptr). 'double' makes libffi FSTP-qword
+    // the ST0 return, truncating 80->64 identically for Orig and Reimpl.
+    //
+    // The gating global sits at 0.0 at menu-idle, so a bare call is degenerate
+    // (0*const -> sin(0)=0). We SEED it per-test: input -> *(float*)global_a (32-bit).
+    // Both Orig and Reimpl then read the IDENTICAL seeded value (varied across tests ->
+    // non-degenerate AND discriminating). The .rdata operand is a read-only constant
+    // (NOT writable -> do not seed it; the leaf reads it internally). The global is
+    // snapshotted and restored so live game state is untouched.
+    //   CONFIG.global_a  hex addr of the writable 32-bit float operand (seeded)
+    //   input:           a single number, stored as f32 into global_a
+    // Returns a 16-hex-digit fingerprint of the 64-bit double ST0 return (full mantissa
+    // -> catches a non-hardware-FSIN reimpl that a 32-bit read would round away).
+    if (CONFIG.arg_type === 'st0_ret_global') {
+        const ga = ptr(CONFIG.global_a);
+        const sa = ga.readU32() >>> 0;
+        ga.writeFloat(input);
+        let rv;
+        try {
+            rv = fn();                          // double (ST0), per signature.ret='double'
+        } finally {
+            ga.writeU32(sa);
+        }
+        buf.writeDouble(typeof rv === 'number' ? rv : NaN);
+        const lo = buf.readU32() >>> 0, hi = buf.add(4).readU32() >>> 0;
+        return '0x' + ('00000000' + hi.toString(16)).slice(-8)
+                    + ('00000000' + lo.toString(16)).slice(-8);
+    }
     if (CONFIG.arg_type === 'vec3_ptr') {
         buf.writeFloat(input[0]);
         buf.add(4).writeFloat(input[1]);
@@ -940,7 +976,7 @@ function runDiff() {
     const Reimpl = new NativeFunction(reimplAddr,  CONFIG.signature.ret, CONFIG.signature.args, reimplCallConv);
 
     const buf = (['vec3_ptr', 'out3_idx', 'vec2_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
-              : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out', 'cache_roundtrip', 'cache_setter_observe'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
+              : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out', 'cache_roundtrip', 'cache_setter_observe', 'st0_ret_global'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
               : (CONFIG.arg_type === 'time_diff_decompose') ? Memory.alloc(16)
               : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256)
               : (CONFIG.arg_type === 'ptr_arg_int_get') ? Memory.alloc((CONFIG.struct_size | 0) || 256)

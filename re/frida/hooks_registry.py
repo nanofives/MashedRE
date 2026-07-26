@@ -967,6 +967,28 @@ HOOKS = {
         'path2_tests': [0.0, 1.0, 4.0, 0.25, 100.0],
     },
 
+    # 0x00431b50 sine-of-global-product leaf: float10 f(void) =
+    #   FSIN(*(float*)0x007f0f04 * *(double*)0x005cd8f0), returned in ST0.
+    #   Proof row for the x87 ST0 float10-return arg_type (st0_ret_global,
+    #   HARNESS_BACKLOG #1). ret MUST be 'double' (void leaks the x87 stack ->
+    #   NaN; feedback memory x87_st0_float10_return_fnptr). 0x007f0f04 (.data,
+    #   writable, 0.0 at menu) is the seeded operand; 0x005cd8f0 (.rdata, read-only
+    #   const double 1.57 = 0x3ff91eb851eb851f) is read internally by the leaf.
+    #   Test inputs are the SEEDED f32 value; sin(a*1.57) chosen nonzero & distinct.
+    #   Reimpl: Util/SineOscillators.cpp SinGlobalProduct431b50 (inline __asm FSIN).
+    'sin_global_product_431b50': {
+        'rva':            0x00431b50,
+        'export':         'SinGlobalProduct431b50',
+        'signature':      {'ret': 'double', 'args': []},
+        'arg_type':       'st0_ret_global',
+        'global_a':       0x007f0f04,   # writable 32-bit float operand (seeded)
+        'path1_tests': [
+            # seeded f32 a -> sin(a * 1.57); products nonzero & distinct.
+            1.0, 0.5, 2.0, 1.5, 0.25, 3.0, 5.0, 0.1, -2.0, 7.0,
+        ],
+        'path2_tests': [1.0, 2.0, 0.5],
+    },
+
     # game_state_d2 trivial getters. Each is `MOV EAX, [imm32]; RET` â€” pure
     # read of a u32 global. `arg_type='none'` calls the function with no args.
     # `tests` is a list of dummy iteration markers; we just want N independent

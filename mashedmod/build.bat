@@ -227,6 +227,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Util\SmallLeaves_o6.cpp" ^
     "Util\UtilLeaves_ab6.cpp" ^
     "Util\UtilLeaves_ac.cpp" ^
+    "Util\SineOscillators.cpp" ^
     "Vehicle\VehicleState.cpp" ^
     "Vehicle\ShapeOwnerHandlePool.cpp" ^
     "Vehicle\VehicleSeed.cpp" ^

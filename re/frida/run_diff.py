@@ -241,6 +241,9 @@ def build_config(hook, asi_path=None):
     # Optional fields — only forwarded if present in the registry entry.
     if 'target_global' in hook:
         config['target_global'] = f"0x{hook['target_global']:08x}"
+    # st0_ret_global — one writable input global (f32) seeded per test.
+    if 'global_a' in hook:
+        config['global_a'] = f"0x{hook['global_a']:08x}"
     if 'entity_byte_stride' in hook:
         config['entity_byte_stride'] = hook['entity_byte_stride']
     if 'calling_convention' in hook:
