@@ -1,0 +1,10 @@
+== MASHED.exe.15516.dmp ==
+[exception] tid=21708 code=0xc0000005 flags=0x0 addr=0x0000000000000044 nparam=2 params=['0x0', '0x44']
+[context]   eip=0x00000044 esp=0x001afd9c ebp=0x00000000 eax=0x02e0c884 ecx=0x0000080a
+[modules]   92 loaded
+[mashed]    base=0x00400000 end=0x00995000
+[SHIM DLLs LOADED] (AppCompat/verifier injection present):
+    0x73bb0000  C:\Windows\System32\apphelp.dll
+[stack]     tid=21708 start=0x001af474 size=0xb8c
+[ret-chain] 14 distinct MASHED addrs on stack; first 25:
+    0x004ac660 0x004abbe5 0x005d1290 0x004a4d60 0x004ac6ab 0x0045d4f1 0x006036e8 0x004669fb 0x004028e0 0x004923d5 0x004a4d38 0x00400000 0x004a4bb7 0x004a4bcf

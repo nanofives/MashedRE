@@ -118,3 +118,5 @@ tmp/
 
 # Claude Code local memory (per-machine, not shared)
 CLAUDE.local.md
+# large crash dumps kept locally as evidence, not committed
+verify/menu_crash_pc44/*.dmp
