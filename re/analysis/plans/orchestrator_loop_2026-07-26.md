@@ -53,9 +53,59 @@ Degeneracy is the default failure mode of this loop, not RED.
 | # | phase | unit | child | state | evidence | verdict |
 |---|---|---|---|---|---|---|
 | 0 | 0 | harness gate | — (in-session) | done | this file | **PASS** |
-| 1 | 1 | x87 ST0 float-return handler + proof row `0x00431b50` | `cms1aq31…ebf0` | running | — | — |
-| 2 | 2 | wave1-A render `0x004d9360/9a60/9ee0` | `cms1aqtz…l3ye` | running | — | — |
-| 3 | 2 | wave1-B gameplay `0x00456eb0/0045ac40/0045c550` | `cms1aren…a6zf` | running | — | — |
+| 1 | 1 | x87 ST0 handler `st0_ret_global` + proof `0x00431b50` | `cms1aq31…ebf0` | **DONE** | `log/diff_sin_global_product_431b50.csv` 10/10 · commit `cec43000` · promo `e72191d9` | **C2→C3 ×1** |
+| 2 | 2 | wave1-A render `0x004d9360/9a60/9ee0` | `cms1aqtz…l3ye` | **DONE** | 3× `log/diff_palette_*.csv` 6/6 · `425f246d` · merge `0004ec9e` · promo `521141ec` | **C2→C3 ×3** |
+| 3 | 2 | wave1-B gameplay `0x00456eb0/0045ac40/0045c550` | `cms1aren…a6zf` | **DONE** | no commits (branch clean) | **3× BLOCKED — no existing handler fits** (honest negative) |
+| 4 | 2 | cheap lane: sin siblings `0x00431b20`/`0x00431b60` | `cms1bomk…73cz` (sonnet) | running | — | — |
+| 5 | 2 | wave2: the 4 existing-handler rows `0x004c1a70 0x004c3910 0x004233e0 0x005aed20` | `cms1bpiu…w9jc` | running | — | — |
+
+**Verified promotions so far: 4.  C3 836 → 840, C2 4045 → 4041.**
+
+### REVISED YIELD MODEL (the loop's most important finding)
+
+The frontier metadata claims these rows are "gated ONLY on Frida-diff authoring". **That is
+misleading.** Measured over 15 triaged rows: roughly **⅓ have an existing `arg_type` handler; ⅔ need a
+NEW handler authored.**
+
+- wave1-B: **3 of 3** gameplay rows blocked, each needing a different new handler
+  (`0x00456eb0` EAX-implicit-ptr void writer; `0x0045ac40` ECX+EAX+stack void sorter; `0x0045c550`
+  two-arg dual-global-gated predicate needing a live global pointer — the last independently
+  corroborated by an account2 second opinion).
+- wave2 account2 triage of 12 rows: **4 fit** (`0x004c1a70` `structptr_seeded_array`, `0x004c3910`
+  + `0x005aed20` `vec3_normalize`, `0x004233e0` `float3_scalar_ret`), **8 need new handlers**.
+- Both successful units had to **author a handler** (`st0_ret_global`, `ptr_seed_observe`).
+
+**Consequence:** the unit of value is the **handler**, not the row — a handler unlocks N siblings
+(`st0_ret_global` unlocked 3 sin-getters for one authoring cost). Prioritise handler authoring by
+how many rows each unlocks. `shape_hint` in `promote_frontier.tsv` is NOT a reliable predictor of
+handler availability and should not be used for batch sizing.
+
+### SAFETY: rows that must never get a naive diff
+
+- **`0x00431b80`** — `hooks.csv` row 730 already records `ESI=0 → infinite loop` at quiescent state
+  (U-1655). A naive `run_diff` **hangs the harness**. Needs a seeded car-select scenario and ESI=±1.
+  Caught by the account2 prep leg before any child touched it.
+
+### x87 porting law (confirmed twice, independently)
+
+The `.asi` builds `/arch:SSE2`. A plain-C reimpl of an x87 function carries only 32-bit intermediates
+and diverges by ULPs → RED. Both GREEN units used `__declspec(naked)` **verbatim** transcriptions
+(`0x004d9a60` FISTP-truncates, so a sub-ULP error flips the stored byte). Treat verbatim-naked as the
+default for anything touching the x87 stack.
+
+### Merge protocol (validated on the first real conflict)
+
+`ARG_TYPES.md` is **generated** — when two branches both add handlers it is the only conflicting file,
+and the resolution is `py -3.12 scripts\gen_arg_types_index.py`, never a hand-merge. `diff_template.js`
+/ `run_diff.py` / `hooks_registry.py` auto-merge cleanly because handler additions are purely additive.
+After merging, **re-diff every previously-promoted hook** (integration gate) — 4/4 stayed GREEN.
+
+### Tracker hygiene defects found
+
+- **DOC-1** `launch.exe` SHA-256 in CLAUDE.md/memory ≠ on-disk (size matches; never modified by us).
+- **DOC-2** `hooks.csv` cited `U-5401` / `U-5404` / `U-5407` for the palette rows; **none was ever
+  filed** in `UNCERTAINTIES.md` (dangling refs, now dropped). Suggests other stale U-refs exist —
+  worth a sweep comparing every U-id cited in `hooks.csv` against the filed set.
 
 ### Transport incident (resolved) — always pass `account` to spawn_child
 
