@@ -43,3 +43,51 @@ double __cdecl SinGlobalProduct431b50()
 }
 
 RH_ScopedInstall(SinGlobalProduct431b50, 0x00431b50);
+
+// 0x00431b20  FUN_00431b20  audio  C2 -> C3
+// Sibling of 0x00431b50, identical shape, only the input global differs.
+// Disasm (Ghidra Mashed_pool0, 2026-07-26):
+//   00431b20  d905000f7f00   FLD   dword ptr [0x007f0f00]   ; *(float*) DAT_007f0f00
+//   00431b26  dc0df0d85c00   FMUL  qword ptr [0x005cd8f0]   ; * *(double*)_DAT_005cd8f0
+//   00431b2c  d9fe           FSIN
+//   00431b2e  c3             RET
+extern "C" __declspec(dllexport)
+double __cdecl SinGlobalProduct431b20()
+{
+    double result;
+    __asm {
+        mov   eax, 0x007f0f00
+        fld   dword ptr [eax]        // *(float*)0x007f0f00
+        mov   eax, 0x005cd8f0
+        fmul  qword ptr [eax]        // * *(double*)0x005cd8f0
+        fsin
+        fstp  qword ptr [result]     // 80 -> 64, matches libffi 'double' read of ST0
+    }
+    return result;
+}
+
+RH_ScopedInstall(SinGlobalProduct431b20, 0x00431b20);
+
+// 0x00431b60  FUN_00431b60  util  C2 -> C3
+// Sibling of 0x00431b50, identical shape, only the input global differs.
+// Disasm (Ghidra Mashed_pool0, 2026-07-26):
+//   00431b60  d905080f7f00   FLD   dword ptr [0x007f0f08]   ; *(float*) DAT_007f0f08
+//   00431b66  dc0df0d85c00   FMUL  qword ptr [0x005cd8f0]   ; * *(double*)_DAT_005cd8f0
+//   00431b6c  d9fe           FSIN
+//   00431b6e  c3             RET
+extern "C" __declspec(dllexport)
+double __cdecl SinGlobalProduct431b60()
+{
+    double result;
+    __asm {
+        mov   eax, 0x007f0f08
+        fld   dword ptr [eax]        // *(float*)0x007f0f08
+        mov   eax, 0x005cd8f0
+        fmul  qword ptr [eax]        // * *(double*)0x005cd8f0
+        fsin
+        fstp  qword ptr [result]     // 80 -> 64, matches libffi 'double' read of ST0
+    }
+    return result;
+}
+
+RH_ScopedInstall(SinGlobalProduct431b60, 0x00431b60);

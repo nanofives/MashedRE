@@ -989,6 +989,36 @@ HOOKS = {
         'path2_tests': [1.0, 2.0, 0.5],
     },
 
+    # 0x00431b20 sine-of-global-product leaf, sibling of 0x00431b50 (audio subsystem).
+    #   FSIN(*(float*)0x007f0f00 * *(double*)0x005cd8f0), returned in ST0.
+    #   Reimpl: Util/SineOscillators.cpp SinGlobalProduct431b20 (inline __asm FSIN).
+    'sin_global_product_431b20': {
+        'rva':            0x00431b20,
+        'export':         'SinGlobalProduct431b20',
+        'signature':      {'ret': 'double', 'args': []},
+        'arg_type':       'st0_ret_global',
+        'global_a':       0x007f0f00,   # writable 32-bit float operand (seeded)
+        'path1_tests': [
+            1.0, 0.5, 2.0, 1.5, 0.25, 3.0, 5.0, 0.1, -2.0, 7.0,
+        ],
+        'path2_tests': [1.0, 2.0, 0.5],
+    },
+
+    # 0x00431b60 sine-of-global-product leaf, sibling of 0x00431b50 (util subsystem).
+    #   FSIN(*(float*)0x007f0f08 * *(double*)0x005cd8f0), returned in ST0.
+    #   Reimpl: Util/SineOscillators.cpp SinGlobalProduct431b60 (inline __asm FSIN).
+    'sin_global_product_431b60': {
+        'rva':            0x00431b60,
+        'export':         'SinGlobalProduct431b60',
+        'signature':      {'ret': 'double', 'args': []},
+        'arg_type':       'st0_ret_global',
+        'global_a':       0x007f0f08,   # writable 32-bit float operand (seeded)
+        'path1_tests': [
+            1.0, 0.5, 2.0, 1.5, 0.25, 3.0, 5.0, 0.1, -2.0, 7.0,
+        ],
+        'path2_tests': [1.0, 2.0, 0.5],
+    },
+
     # game_state_d2 trivial getters. Each is `MOV EAX, [imm32]; RET` â€” pure
     # read of a u32 global. `arg_type='none'` calls the function with no args.
     # `tests` is a list of dummy iteration markers; we just want N independent
