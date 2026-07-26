@@ -257,6 +257,10 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Render\RenderStateSettersA.cpp" ^
     "Frontend\FrontendLeaves_ad2.cpp" ^
     "Frontend\MenuLeaves_af5.cpp" ^
+    "Render\CameraProjCoeffs.cpp" ^
+    "Render\Vec3NormalizeScale.cpp" ^
+    "Ai\HeadingAtan2.cpp" ^
+    "Audio\AudioVecLength.cpp" ^
     "%OUT%\QhullBridge_exe.obj" ^
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO ^
     /MAP:"%OUT%\mashed_re.map" ^

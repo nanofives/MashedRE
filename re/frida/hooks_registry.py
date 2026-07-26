@@ -2523,6 +2523,105 @@ HOOKS = {
         ],
     },
 
+    # ── Phase 2 wave 2 (c3-batch-p2w2-s1) — 4 rows onto existing handlers ──────
+    # 0x004c1a70 CameraRecomputeProjCoeffs(camera*): recompute the two view-space
+    # depth coeffs at +0x8c (slope)/+0x90 (bias) from projType@+0x14 and the two clip
+    # values @+0x80/+0x84, blended with the LIVE view-bounds pair off the global device
+    # struct DAT_007d3ff8 (+0x18/+0x1c). struct_call_observe seeds the three input
+    # fields and observes +0x8c/+0x90 as raw f32 bits; DAT_007d3ff8 is read live
+    # (identical both sides) -> discrimination is the seeded fields. NOT a pure leaf:
+    # run against the live game (menu camera populates DAT_007d3ff8). Verbatim naked
+    # x87 -> Render/CameraProjCoeffs.cpp. Clips kept distinct/nonzero to dodge the
+    # (fVar1-fVar2)=0 and 1.0/0 degenerate divides.
+    'camera_proj_coeffs': {
+        'rva':         0x004c1a70,
+        'export':      'CameraRecomputeProjCoeffs',
+        'signature':   {'ret': 'void', 'args': ['pointer']},
+        'arg_type':    'struct_call_observe',
+        'struct_size': 0x100,
+        'out_ptrs':    0,
+        'observe_ret': False,
+        'observe':     [{'src': 'struct', 'off': 0x8c, 'type': 'u32'},
+                        {'src': 'struct', 'off': 0x90, 'type': 'u32'}],
+        'path1_tests': [
+            {'seeds': [{'off': 0x14, 'type': 's32', 'value': 1}, {'off': 0x80, 'type': 'f32', 'value': 0.1},  {'off': 0x84, 'type': 'f32', 'value': 1000.0}]},
+            {'seeds': [{'off': 0x14, 'type': 's32', 'value': 2}, {'off': 0x80, 'type': 'f32', 'value': 0.1},  {'off': 0x84, 'type': 'f32', 'value': 1000.0}]},
+            {'seeds': [{'off': 0x14, 'type': 's32', 'value': 1}, {'off': 0x80, 'type': 'f32', 'value': 1.0},  {'off': 0x84, 'type': 'f32', 'value': 100.0}]},
+            {'seeds': [{'off': 0x14, 'type': 's32', 'value': 2}, {'off': 0x80, 'type': 'f32', 'value': 1.0},  {'off': 0x84, 'type': 'f32', 'value': 100.0}]},
+            {'seeds': [{'off': 0x14, 'type': 's32', 'value': 1}, {'off': 0x80, 'type': 'f32', 'value': 0.5},  {'off': 0x84, 'type': 'f32', 'value': 50.0}]},
+            {'seeds': [{'off': 0x14, 'type': 's32', 'value': 2}, {'off': 0x80, 'type': 'f32', 'value': 2.0},  {'off': 0x84, 'type': 'f32', 'value': 500.0}]},
+            {'seeds': [{'off': 0x14, 'type': 's32', 'value': 3}, {'off': 0x80, 'type': 'f32', 'value': 1.0},  {'off': 0x84, 'type': 'f32', 'value': 100.0}]},
+            {'seeds': [{'off': 0x14, 'type': 's32', 'value': 1}, {'off': 0x80, 'type': 'f32', 'value': 0.25}, {'off': 0x84, 'type': 'f32', 'value': 2000.0}]},
+            {'seeds': [{'off': 0x14, 'type': 's32', 'value': 2}, {'off': 0x80, 'type': 'f32', 'value': 5.0},  {'off': 0x84, 'type': 'f32', 'value': 250.0}]},
+            {'seeds': [{'off': 0x14, 'type': 's32', 'value': 1}, {'off': 0x80, 'type': 'f32', 'value': 0.1},  {'off': 0x84, 'type': 'f32', 'value': 10.0}]},
+        ],
+        'path2_tests': [
+            {'seeds': [{'off': 0x14, 'type': 's32', 'value': 1}, {'off': 0x80, 'type': 'f32', 'value': 0.1}, {'off': 0x84, 'type': 'f32', 'value': 1000.0}]},
+            {'seeds': [{'off': 0x14, 'type': 's32', 'value': 2}, {'off': 0x80, 'type': 'f32', 'value': 1.0}, {'off': 0x84, 'type': 'f32', 'value': 100.0}]},
+        ],
+    },
+
+    # 0x004c3910 Vec3NormalizeScale(out, in): out = in * (1/|in|); returns the scale
+    # (1/|in|) in ST0. Inv-sqrt sibling of RwV3dNormalize; reads the RW3 invsqrt LUT
+    # (device globals DAT_007d3ff8 / DAT_007d3ffc, table slot +4) -> run live (menu:
+    # FastInvSqrt fires ~900/s so the globals are populated). Verbatim naked x87 ->
+    # Render/Vec3NormalizeScale.cpp. vec3_normalize handler reads the float return +
+    # out[0..2] bits. Zero vector excluded (degenerate: scale=0, out=0).
+    'vec3_normalize_scale': {
+        'rva':            0x004c3910,
+        'export':         'Vec3NormalizeScale',
+        'signature':      {'ret': 'float', 'args': ['pointer', 'pointer']},
+        'arg_type':       'vec3_normalize',
+        'lut_root_delta': 4,
+        'path1_tests': [
+            [1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0], [3.0, 4.0, 0.0],
+            [-3.0, 4.0, 0.0], [1.0, 1.0, 1.0], [2.0, 3.0, 6.0], [10.0, 0.0, 0.0],
+            [12.34, -56.78, 90.12], [0.001, 0.001, 0.001], [100.0, 100.0, 100.0],
+            [0.5, 0.5, 0.5],
+        ],
+        'path2_tests': [[1.0, 0.0, 0.0], [3.0, 4.0, 0.0], [2.0, 3.0, 6.0]],
+    },
+
+    # 0x004233e0 HeadingAtan2ToGameAngle(p1, p2[, dummy]): x87 FPATAN heading->game-angle.
+    # 2-arg __cdecl driven via float3_scalar_ret with a dummy 3rd float (caller cleans;
+    # extra dword ignored). Pure x87 leaf (only .rdata consts; threshold 0x005d757c=0.0).
+    # Verbatim naked x87 (FPATAN + fld/fmul/fsub/fcomp chain) -> Ai/HeadingAtan2.cpp; a
+    # portable atan2f would NOT be bit-identical. Only degenerate case p1==0 && p2==0;
+    # tests are non-zero, sign-varied across both half-planes + the p2==0 axis cases.
+    'heading_atan2': {
+        'rva':            0x004233e0,
+        'export':         'HeadingAtan2ToGameAngle',
+        'signature':      {'ret': 'float', 'args': ['float', 'float', 'float']},
+        'arg_type':       'float3_scalar_ret',
+        'path1_tests': [
+            [1.0, 1.0, 0.0], [1.0, -1.0, 0.0], [-1.0, 1.0, 0.0], [-1.0, -1.0, 0.0],
+            [3.0, 4.0, 0.0], [-3.0, 4.0, 0.0], [3.0, -4.0, 0.0], [0.5, 2.0, 0.0],
+            [1.0, 0.0, 0.0], [-1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, -1.0, 0.0],
+            [10.0, 0.1, 0.0], [0.1, 10.0, 0.0], [-7.5, 2.3, 0.0], [123.0, -45.0, 0.0],
+        ],
+        'path2_tests': [[1.0, 1.0, 0.0], [-3.0, 4.0, 0.0], [1.0, 0.0, 0.0], [0.0, -1.0, 0.0]],
+    },
+
+    # 0x005aed20 AudioVectorLengthFast(out, in): out[0] = fast sqrt(dot(in,in)) via the
+    # 0x00633b48 mantissa LUT; writes ONLY out[0]; returns void. Driven via the
+    # vec3_normalize handler (fn(out,in)); signature ret 'void' -> out[1]/out[2] stay 0
+    # (equal both sides), out[0] is the observable. Pure leaf (threshold 0x005d757c=0.0,
+    # static table). Verbatim naked x87 -> Audio/AudioVecLength.cpp. Avoid zero-magnitude
+    # inputs (mag2==0 -> early-out, out[0]=0 non-discriminating).
+    'audio_vec_length': {
+        'rva':            0x005aed20,
+        'export':         'AudioVectorLengthFast',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'pointer']},
+        'arg_type':       'vec3_normalize',
+        'path1_tests': [
+            [1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0], [3.0, 4.0, 0.0],
+            [1.0, 1.0, 1.0], [2.0, 3.0, 6.0], [10.0, 0.0, 0.0], [0.5, 0.5, 0.5],
+            [12.34, 56.78, 90.12], [0.001, 0.002, 0.003], [100.0, 100.0, 100.0],
+            [7.0, 24.0, 0.0],
+        ],
+        'path2_tests': [[3.0, 4.0, 0.0], [2.0, 3.0, 6.0], [1.0, 1.0, 1.0]],
+    },
+
     # 0x004c4d20  RwMatrixRotate  (WS-A2 vehicle-physics RW-math prereq)
     # Axis-angle rotation matrix (degrees): deg->rad (*π/180), normalize axis via
     # FastInvSqrt, x87 fsin/fcos, then Rodrigues inner builder FUN_004c4a50. Mode 0

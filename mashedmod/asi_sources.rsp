@@ -332,3 +332,7 @@
 "Collision\RwpBuildExterns.cpp"
 "Collision\CollisionBodyCreate.cpp"
 "Collision\PhysicsWorldBuild.cpp"
+"Render\CameraProjCoeffs.cpp"
+"Render\Vec3NormalizeScale.cpp"
+"Ai\HeadingAtan2.cpp"
+"Audio\AudioVecLength.cpp"
