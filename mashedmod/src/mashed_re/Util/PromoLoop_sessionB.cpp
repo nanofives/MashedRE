@@ -4954,3 +4954,42 @@ extern "C" __declspec(dllexport) __declspec(naked) int __cdecl PredNot45c330(int
     }
 }
 RH_ScopedInstall(PredNot45c330, 0x0045c330);
+
+// ===== round 165 ===== (2D fixed-point delta, round-toward-zero bias)
+// 0x005c6b60 — first row released by the U-9023 skip-band correction (a448e116); it had
+// been silently excluded from the frontier since 2026-06-15. Plate records kind: GAME /
+// library_match: (none — game code), and it is a true leaf (0 callees -> leaf exemption).
+// Caller 0x005c7330 is audio C2, satisfying the C3 caller gate.
+//
+// void/u32 fn(int* p, u32 x, u32 y), all three args on the stack (__cdecl):
+//   0x005c6b60 MOV ECX,[ESP+4]            p
+//   0x005c6b64 MOV EAX,[ESP+8]            x
+//   0x005c6b7c MOV EAX,[ESP+0x10]         y  (after 0x005c6b6e PUSH ESI, = entry [ESP+0xc])
+//   dx = (x<<8) - p[1]; CDQ/AND EDX,0x3f/ADD  => dx += (dx<0 ? 0x3f : 0)   0x005c6b68..0x005c6b75
+//   dy = (y<<8) - p[2]; same bias                                          0x005c6b7c..0x005c6b89
+//   SAR ESI,6 / SAR EAX,6                 dx >>= 6; dy >>= 6               0x005c6b8b/0x005c6b8e
+//   p[3] = dx; p[4] = dy;                                                  0x005c6b91/0x005c6b94
+//   p[0] = (dx || dy) ? 0x40 : 0;                                          0x005c6b97..0x005c6baa
+// The +0x3f bias before an arithmetic >>6 is the standard round-toward-zero correction for
+// a signed divide by 64 (0x3f = 64-1, added only when the value is negative).
+//
+// RETURN VALUE: declared u32, NOT void. At BOTH RET paths EAX equals the dword just stored
+// to p[0] — 0x005c6ba0 `MOV [ECX],EAX` with EAX==0 (the zeroed dy), and 0x005c6ba8 with
+// EAX==0x40. Declaring this void would leave EAX undefined for any caller that consumes it;
+// that exact mistake was a confirmed boot-AV crasher at 0x004b40c0 (see memory
+// feedback_installed_hook_abi_mismatch, "lost-return-value sub-class").
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Delta5c6b60(
+        int* p, std::uint32_t x, std::uint32_t y) {
+    int dx = static_cast<int>(x << 8) - p[1];
+    if (dx < 0) dx += 0x3f;
+    int dy = static_cast<int>(y << 8) - p[2];
+    if (dy < 0) dy += 0x3f;
+    dx >>= 6;
+    dy >>= 6;
+    p[3] = dx;
+    p[4] = dy;
+    const std::uint32_t flag = (dx != 0 || dy != 0) ? 0x40u : 0u;
+    p[0] = static_cast<int>(flag);
+    return flag;
+}
+RH_ScopedInstall(Delta5c6b60, 0x005c6b60);

@@ -17965,4 +17965,28 @@ HOOKS = {
         ],
     },
 
+    # ---- promote-round round 165 (2D fixed-point delta, round-toward-zero bias) --
+    # 0x005c6b60 — the FIRST row released by the U-9023 skip-band correction (a448e116);
+    # it had been silently excluded from the frontier since 2026-06-15.
+    # deref_struct_set seeds the whole 0x400 buffer with one byte, so p[1]==p[2]==0x11111111.
+    # seed_byte 0x11 is chosen deliberately: with seed 0x00 the subtraction `- p[1]` would be
+    # a no-op and a reimpl that OMITTED it would still pass. 0x11 also still permits the
+    # zero-output branch, because x=0x111111 gives dx = 0x11111100 - 0x11111111 = -17, and
+    # -17 + 0x3f = 46 -> 46>>6 == 0. So one seed covers both the subtraction and both
+    # branches of the p[0] flag.
+    # observe: p[0] (flag) at 0x0, p[3] (dx) at 0xc, p[4] (dy) at 0x10.
+    'delta_5c6b60': {'rva': 0x005c6b60, 'export': 'Delta5c6b60',
+        'signature': {'ret': 'uint32', 'args': ['pointer', 'uint32', 'uint32']},
+        'arg_type': 'deref_struct_set', 'nscalar': 2, 'seed_byte': 0x11,
+        'observe': [{'off': 0x0}, {'off': 0xc}, {'off': 0x10}],
+        'lut_root_delta': 0,
+        # [0x111111,0x111111] dx=dy=0        -> flag 0      (zero branch)
+        # [0x111112,0x111111] dx=239>>6=3    -> flag 0x40   (positive, no bias)
+        # [0x111111,0x111115] dy=1007>>6=15  -> flag 0x40
+        # [0,0]               deep negative both, exercises the +0x3f bias
+        # [0x222222,0x080000] large positive dx, negative dy
+        'path1_tests': [[0x111111, 0x111111], [0x111112, 0x111111], [0x111111, 0x111115],
+                        [0, 0], [0x222222, 0x080000]],
+        'path2_tests': [[0x111112, 0x111111]]},
+
 }
