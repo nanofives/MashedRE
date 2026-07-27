@@ -175,6 +175,69 @@ Shape hints: `other` 19, `arg_getter` 5, `read_global_f32` 4.
 **x87-blocked (6, need Phase 1):** sin-getters `0x00431b20` / `0x00431b50` / `0x00431b60`;
 RwV3d bbox accessors `0x004c4270` / `0x004c42d0` / `0x004c4360`.
 
+## SESSION CLOSED 2026-07-26 — final state and resume point
+
+### Delivered
+- **6 verified C2→C3 promotions** (C3 836 → 842): `0x00431b50` `0x00431b20` `0x00431b60` (sine getters),
+  `0x004d9360` `0x004d9a60` `0x004d9ee0` (palette quantizer). **CAVEAT: these were race wins** — see below.
+- **2 new arg_type handlers**: `st0_ret_global` (x87 80-bit ST0 float return — closes HARNESS_BACKLOG #1)
+  and `ptr_seed_observe` (general N-pointer differ). 112 → 114, 0 orphans.
+- **4 rows ported, deliberately NOT promoted** (`0x004c1a70` `0x004c3910` `0x004233e0` `0x005aed20`) —
+  no Frida evidence, left C2/`BLOCKED-ON-ENV`.
+- **pc=0x44 ROOT-CAUSED after ~2 months blocked.** 3 crashers found and fixed, each proven by a
+  single-hook before/after:
+
+  | RVA | defect | before → after |
+  |---|---|---|
+  | `0x005ab380` `AudioRwsChunkHeaderRead` | 12 bytes read into a 4-byte local | AV 4.6 s → BOOTS 18 s |
+  | `0x005ab410` `AudioRwsChunkTypeSeek` | 20-byte struct written via `&local_14` | AV → BOOTS 18 s |
+  | `0x0042ac00` `MenuGroupCount` | `__cdecl` reimpl of a `__fastcall` original | 4/4 AV → 0/3 |
+
+- **2 reusable harnesses**: `scripts/bisect_hook_index.ps1` (index-level, no rebuilds — **use this**) and
+  `scripts/bisect_asi_boot.ps1` (TU-level; refuses to verdict on a link failure).
+
+### THE CAVEAT THAT MATTERS MOST
+A single-hook `run_diff` completes in **~4.2 s**; the AV fired at **~4.6 s**. The 6 promotions above were
+**winning a race by ~0.4 s**. Their bit-identity evidence is real (genuine distinct per-case fingerprints,
+independently re-run), but a GREEN obtained while a boot-AV stands is a race win, not a sound harness.
+**Re-verify all 6 once the remaining crashers are fixed.**
+
+### Open: at least one crasher remains — full hook set still AVs at ~6.5 s
+**Next target `0x004b40c0` `RenderElemArrayCopy`** — confirmed 3/3 alone (bisect index 434) but it is a
+**DIFFERENT defect**: `eip=0x004b52ac`, `params=['0x1','0x4a467c']` = a **WRITE** violation into MASHED's
+own code/`.rdata`, not the near-null `+0x44` dispatch. Its C++ body reads faithful against the cited ASM,
+so the cause is not visible by inspection and was deliberately **not guessed**. Needs Ghidra on
+`0x004b40c0` + adjustor `0x004b4130` + wrapper `0x004b4140`. Dump + parse in `verify/menu_crash_pc44/`.
+
+Also unverified for the same stack-smash class: `Boot/BootLowRvaCluster.cpp:123` and
+`Boot/SubsystemInit.cpp:290/339/409` pass a local's address as an out-param (benign iff the callee
+writes ≤ 4 bytes).
+
+### Method that works (no rebuilds)
+`MASHED_HOOK_LO`/`HI` install only indices `[LO,HI)`; `MASHED_HOOK_ONLY`/`SKIP` confirm a single suspect;
+`MASHED_HOOK_HI=0` is a clean 18 s baseline. Expect **multiple independent crashers** — fixing one just
+moves the crash later (4.3 → 6.5 s). Do NOT bisect by TU: rsp subsets under ~170 files fail to **link**.
+
+### Three traps that cost hours (all now encoded in the scripts + memory)
+1. `Start-Process -PassThru` + `HasExited` reports `ExitCode = -1` (0xFFFFFFFF) for this AV — CLAUDE.md
+   documents that as the *force-kill* signature, so it reads as a clean exit. **`WaitForExit()` first.**
+2. `LoadDevAsi()` falls back to `..\mashedmod\build\mashed_re_dev.asi`, so parking only the deployed copy
+   does **not** unload the hooks. Park both, or `MASHED_RE_NO_AUTO_HOOK=1`.
+3. "No WER dump" was the `%LOCALAPPDATA%\CrashDumps` 10-dump retention cap. Archive it and a dump appears.
+
+### Tracker conclusions this session corrected
+- 2026-07-25 #4 "subset installs do not dodge it → static initializer" — **FALSE**; `MASHED_HOOK_HI=0`
+  boots, so the trigger is hook *installation*.
+- I twice wrongly "disproved" that the `.asi` was the cause (traps 1 and 2 above) and retracted both.
+- `hooks_registry.py` recorded the `MenuGroupCount` fastcall fix on **2026-06-01** but **the source change
+  never landed** — registry and code disagreed for ~8 weeks while the row read `GREEN (11/11)`.
+
+### Housekeeping at close
+Working tree clean; both targets build clean; deployed `.asi` byte-identical to `build\`; no stray MASHED;
+all worktrees removed via `diag.py wt-remove`; `original/` intact (45 entries, TOASTART present). The
+stale `mashed_re_dev.asi.pristine` bisect backup was **deleted** — it predated the fixes, so restoring it
+would have silently reinstalled broken code.
+
 ## Halt conditions
 
 Halt and ask the user on: any RED implying real semantic divergence; any C4 claim (needs
