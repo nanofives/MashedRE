@@ -59,7 +59,11 @@ function Test-Range([int]$lo, [int]$hi, [switch]$WithManifest) {
   Remove-Item Env:\MASHED_HOOK_LO,Env:\MASHED_HOOK_HI -EA SilentlyContinue
   Remove-Item Env:\MASHED_HOOK_MANIFEST -EA SilentlyContinue
   $bad = $died -gt 0
-  Write-Host ("  [0,{0,4}) -> {1,-22} {2}" -f $hi, $last, $(if($bad){'BAD'}else{'GOOD'})) -ForegroundColor $(if($bad){'Red'}else{'Green'})
+  # died/Runs is load-bearing: a 1-of-2 result means the crash is FLAKY at this range, so the
+  # monotonicity the binary search assumes is shaky and the reported index is only approximate.
+  $flaky = ($died -gt 0) -and ($died -lt $Runs)
+  $verdict = if ($flaky) { "BAD(FLAKY $died/$Runs)" } elseif ($bad) { "BAD ($died/$Runs)" } else { "GOOD (0/$Runs)" }
+  Write-Host ("  [0,{0,4}) -> {1,-22} {2}" -f $hi, $last, $verdict) -ForegroundColor $(if($flaky){'Yellow'}elseif($bad){'Red'}else{'Green'})
   return $bad
 }
 

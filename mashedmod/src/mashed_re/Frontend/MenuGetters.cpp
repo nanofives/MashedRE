@@ -44,12 +44,27 @@ RH_ScopedInstall(MenuAlphaGet, 0x0042b930);  // re-enabled 2026-05-24 batch-fron
 // ---------------------------------------------------------------------------
 
 // 0x0042ac00
-// Exported __cdecl; original is __fastcall(ECX=unused, EDX=param_2).
-// ECX (param_1) is never read in the original body, so calling the original
-// with __fastcall from Frida (ECX=0, EDX=ptr) is equivalent.
-// Our reimpl is __cdecl with an explicit dummy first arg so the function body
-// is structurally identical and the export name is undecorated.
-extern "C" __declspec(dllexport) int __cdecl MenuGroupCount(int /*param_unused*/, int* param_2) {
+// BUGFIX 2026-07-26 — ABI MISMATCH; third confirmed pc=0x44 boot-AV crasher
+// (MASHED_HOOK_ONLY=MenuGroupCount alone: 4/4 AV 0xC0000005 @ 8.6-10.9 s).
+//
+// The original is __fastcall (ECX = param_1 unused, EDX = param_2). This reimpl was
+// declared __cdecl, which reads BOTH args off the stack. RH_ScopedInstall redirects
+// the original address, so the GAME's callers still pass param_2 in EDX and push
+// nothing — our __cdecl body therefore read stack garbage as `param_2` and walked a
+// wild pointer through the sentinel scan.
+//
+// The old comment justified __cdecl on the grounds that Frida can call the original
+// as __fastcall — true, but irrelevant: it describes the DIFF HARNESS's call, not the
+// installed inline-JMP's real callers. This is the "synthetic diff passes while the
+// installed hook diverges" trap (memory feedback_diff_reimpl_asm_vs_original); the row
+// was even marked "sentinel_array_ptr GREEN (11/11)".
+//
+// NOTE: hooks_registry.py already recorded this fix on 2026-06-01
+// ("reimpl rebuilt as __fastcall ... was 'mscdecl', which let orig+reimpl each pass
+// under its own convention while the LIVE hook crashed (boot AV)") — but the source
+// change never landed. The registry claimed fastcall while the code stayed cdecl.
+// Registry `export` updated to the decorated '@MenuGroupCount@8' to match.
+extern "C" __declspec(dllexport) int __fastcall MenuGroupCount(int /*ecx_unused*/, int* param_2) {
     int count = 0;
     if (!param_2) return 0;
     while (true) {
@@ -66,9 +81,9 @@ extern "C" __declspec(dllexport) int __cdecl MenuGroupCount(int /*param_unused*/
     }
 }
 
-// Note: RH_ScopedInstall patches the original __fastcall at 0x0042ac00.
-// Our reimpl is __cdecl but functionally identical (param_1/ECX unused).
-RH_ScopedInstall(MenuGroupCount, 0x0042ac00);  // re-enabled 2026-05-24 phase-a1 audit sentinel_array_ptr GREEN (11/11)
+// RH_ScopedInstall patches the original __fastcall at 0x0042ac00; our reimpl is now
+// __fastcall too, so the installed inline-JMP and the game's callers agree on the ABI.
+RH_ScopedInstall(MenuGroupCount, 0x0042ac00);  // ABI fixed 2026-07-26 (was __cdecl -> live boot AV)
 
 // ---------------------------------------------------------------------------
 // MenuCursorStep  --  0x0042aa00

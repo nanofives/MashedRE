@@ -1418,7 +1418,11 @@ HOOKS = {
     # U-3439 (ECX unused), U-3440 (sentinel semantics) â€” do not affect correctness.
     'menu_group_count': {
         'rva':                    0x0042ac00,
-        'export':                 'MenuGroupCount',
+        # 2026-07-26: the SOURCE finally matches this entry's declared fastcall
+        # convention (it was still __cdecl until now, despite the 2026-06-01 note
+        # below claiming it had been rebuilt). __fastcall + extern "C" decorates the
+        # export, hence '@MenuGroupCount@8' (2 args x 4 bytes).
+        'export':                 '@MenuGroupCount@8',
         'signature':              {'ret': 'int32', 'args': ['int32', 'pointer']},
         'arg_type':               'sentinel_array_ptr',
         'orig_calling_convention':   'fastcall',
