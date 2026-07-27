@@ -15,9 +15,9 @@
 // stride-0x10 float matrix (the RwMatrix right/up/at layout, pads at 0x0c/0x1c/0x2c
 // never read). Neither is a single-field accessor.
 //
-// 0x004c4360 is NOT part of this pair: it opens `SUB ESP,0x18` with a stack frame and
-// reads additional fields at +0x30/+0x34/+0x38, so it is a different shape. It is NOT
-// ported here and its semantics remain [UNCERTAIN].
+// 0x004c4360 is a DIFFERENT SHAPE from this pair: it opens `SUB ESP,0x18` with a stack
+// frame and reads a fourth row at +0x30/+0x34/+0x38. It is now ported at the bottom of
+// this file (2026-07-27) and U-9022 is resolved -- it is the identity-deviation residual.
 //
 // Return convention: float10 in ST0, __cdecl, caller-cleaned (RET, not RET n).
 // Declared `double` (NEVER void) -- a void-declared forward leaks the x87 stack
@@ -191,3 +191,110 @@ double __cdecl MatrixNormResidual4c42d0(const float* m)
 }
 
 RH_ScopedInstall(MatrixNormResidual4c42d0, 0x004c42d0);
+
+// ---------------------------------------------------------------------------
+// 0x004c4360  FUN_004c4360  render  C2 -> C3 candidate      (resolves U-9022)
+//
+// Disasm from original/MASHED.exe.unpatched (SHA-anchored), 0x004c4360..0x004c4427.
+// Shape: `double __cdecl(const float* m)` — ONE pointer arg at entry [ESP+4] (read as
+// [ESP+0x1c] after `SUB ESP,0x18` at 0x004c4360), x87 float10 return in ST0.
+//
+// Reads TWELVE dwords — the full 4-row, stride-0x10 RwMatrix INCLUDING the translation
+// row at 0x30/0x34/0x38. That extra row is why st0_ret_mat3_ptr (which allocates 0x30 and
+// seeds only nine floats) cannot drive it; a new arg_type `st0_ret_mat4x3_ptr` was
+// authored for this leaf.
+//
+// It accumulates ||M - I||^2: the top-left 3x3 measured against the identity diagonal
+// (each diagonal element minus the 1.0f at 0x005cc320) and the translation row measured
+// against zero.
+//   d0 = m[0x00]-1  d1 = m[0x14]-1  d2 = m[0x28]-1      0x004c4367..0x004c4381
+//   T0 = (m01^2 + m02^2) + d0^2                          0x004c439c..0x004c43c6
+//   T3 = (m30^2 + m31^2) + m32^2                         0x004c43c8..0x004c43e2
+//   T2 = (m20^2 + m21^2) + d2^2                          0x004c43e6..0x004c43fc
+//   T1 = (m10^2 + m12^2) + d1^2                          0x004c4400..0x004c4416
+//   return ((T0 + T3) + T2) + T1                         0x004c43e4/0x004c43fe/0x004c4418
+//
+// This CONFIRMS the role U-9021 predicted from the caller: FUN_004c4530
+// (= RwMatrixOptimize) compares this return against tolerance slot [2] and uses it to gate
+// bit 0x20000 = rwMATRIXINTERNALIDENTITY. The "RwV3d bbox Z accessor" label at
+// re/analysis/plans/frontier_shape_refinement_2026-07-24.md:29 is RETRACTED — an accessor
+// takes no tolerance, reads no fourth row, and gates no flag.
+//
+// The original spills seven of the matrix floats to its own stack frame ([ESP+0x1c], [ESP],
+// [ESP+4], [ESP+8], [ESP+0xc], [ESP+0x10], [ESP+0x14]) purely for register allocation; each
+// spill is a raw f32 dword copy, so loading the same value directly from [EAX+off] is
+// bit-identical. The x87 stack layout and the FADD/FMUL ORDER are what matter for
+// bit-identity, and those are mirrored operand-for-operand, including the st(N) indices.
+//
+// Tail: the original ends with `FSTP ST(5)` + 4x `FSTP ST(0)` (its discard idiom, leaving
+// the result in ST0 for RET). We instead `FSTP qword ptr [result]` — the same 80->64
+// round-to-nearest that libffi's NativeFunction('double') applies when reading ST0 on the
+// original side — then pop the FIVE leftovers to keep the x87 stack balanced.
+// Declared `double`, NEVER void (memory x87_st0_float10_return_fnptr).
+extern "C" __declspec(dllexport)
+double __cdecl MatrixIdentityResidual4c4360(const float* m)
+{
+    double result;
+    __asm {
+        mov   eax, m
+        mov   ecx, 0x005cc320        // &1.0f
+        // ---- seed the x87 stack exactly as 0x004c4367..0x004c438a leaves it ----
+        fld   dword ptr [eax]        // m00
+        fsub  dword ptr [ecx]        // d0 = m00 - 1
+        fld   dword ptr [eax+0x14]   // m11
+        fsub  dword ptr [ecx]        // d1 = m11 - 1
+        fld   dword ptr [eax+0x28]   // m22
+        fsub  dword ptr [ecx]        // d2 = m22 - 1
+        fld   dword ptr [eax+0x38]   // t38 = m32
+        fld   dword ptr [eax+0x34]   // t34 = m31
+        // stack now: ST0=t34 ST1=t38 ST2=d2 ST3=d1 ST4=d0
+        // ---- T0 = (m01^2 + m02^2) + d0^2 ----   0x004c439c..0x004c43c6
+        fld   dword ptr [eax+0x04]
+        fmul  dword ptr [eax+0x04]
+        fld   dword ptr [eax+0x08]
+        fmul  dword ptr [eax+0x08]
+        faddp st(1), st
+        fld   st(5)                  // d0
+        fmul  st, st(6)              // d0*d0
+        faddp st(1), st              // ST0 = T0
+        // ---- T3 = (m30^2 + m31^2) + m32^2 ----  0x004c43c8..0x004c43e2
+        fld   dword ptr [eax+0x30]
+        fmul  dword ptr [eax+0x30]
+        fld   st(2)                  // t34
+        fmul  st, st(3)
+        faddp st(1), st
+        fld   st(3)                  // t38
+        fmul  st, st(4)
+        faddp st(1), st              // ST0 = T3
+        faddp st(1), st              // ST0 = T0 + T3
+        // ---- T2 = (m20^2 + m21^2) + d2^2 ----   0x004c43e6..0x004c43fc
+        fld   dword ptr [eax+0x20]
+        fmul  dword ptr [eax+0x20]
+        fld   dword ptr [eax+0x24]
+        fmul  dword ptr [eax+0x24]
+        faddp st(1), st
+        fld   st(4)                  // d2
+        fmul  st, st(5)
+        faddp st(1), st              // ST0 = T2
+        faddp st(1), st              // ST0 = (T0+T3) + T2
+        // ---- T1 = (m10^2 + m12^2) + d1^2 ----   0x004c4400..0x004c4416
+        fld   dword ptr [eax+0x10]
+        fmul  dword ptr [eax+0x10]
+        fld   dword ptr [eax+0x18]
+        fmul  dword ptr [eax+0x18]
+        faddp st(1), st
+        fld   st(5)                  // d1
+        fmul  st, st(6)
+        faddp st(1), st              // ST0 = T1
+        faddp st(1), st              // ST0 = ((T0+T3)+T2) + T1
+        // ---- store + balance (5 leftovers: t34 t38 d2 d1 d0) ----
+        fstp  qword ptr [result]
+        fstp  st(0)
+        fstp  st(0)
+        fstp  st(0)
+        fstp  st(0)
+        fstp  st(0)
+    }
+    return result;
+}
+RH_ScopedInstall(MatrixIdentityResidual4c4360, 0x004c4360);

@@ -17989,4 +17989,52 @@ HOOKS = {
                         [0, 0], [0x222222, 0x080000]],
         'path2_tests': [[0x111112, 0x111111]]},
 
+    # ---- Pointer-seeded ST0 float10-return leaf, FOUR rows (arg_type st0_ret_mat4x3_ptr) --
+    # 0x004c4360 reads the FULL 4-row stride-0x10 RwMatrix (twelve dwords, including the
+    # translation row at 0x30/0x34/0x38) through ONE pointer arg and returns ST0. It is the
+    # IDENTITY-DEVIATION residual: ||M - I||^2 with the 3x3 measured against the identity
+    # diagonal (each diagonal minus the 1.0f at 0x005cc320) and the translation row against
+    # zero. Its caller FUN_004c4530 = RwMatrixOptimize compares it against tolerance slot [2]
+    # and gates bit 0x20000 = rwMATRIXINTERNALIDENTITY (U-9021 -> resolves U-9022).
+    # The "RwV3d bbox Z accessor" label at frontier_shape_refinement_2026-07-24.md:29 is
+    # RETRACTED. st0_ret_mat3_ptr cannot drive it (allocates 0x30, seeds only nine floats ->
+    # 0x30/0x34/0x38 would be uninitialised heap garbage).
+    # Reimpl Math/MatrixOrthoResidual.cpp (verbatim inline x87).
+    # signature.ret MUST be 'double' (memory x87_st0_float10_return_fnptr).
+    'mat4x3_identity_residual_4c4360': {
+        'rva':            0x004c4360,
+        'export':         'MatrixIdentityResidual4c4360',
+        'signature':      {'ret': 'double', 'args': ['pointer']},
+        'arg_type':       'st0_ret_mat4x3_ptr',
+        'path1_tests': [
+            # exact identity, zero translation -> residual is exactly 0 (semantic anchor)
+            [1.0, 0.0, 0.0,   0.0, 1.0, 0.0,   0.0, 0.0, 1.0,   0.0, 0.0, 0.0],
+            # identity 3x3 but NON-ZERO translation -> isolates the 4th row (3^2+4^2 = 25);
+            # st0_ret_mat3_ptr could never distinguish this from the row above.
+            [1.0, 0.0, 0.0,   0.0, 1.0, 0.0,   0.0, 0.0, 1.0,   3.0, 4.0, 0.0],
+            # pure diagonal scale -> (2-1)^2+(3-1)^2+(4-1)^2 = 14
+            [2.0, 0.0, 0.0,   0.0, 3.0, 0.0,   0.0, 0.0, 4.0,   0.0, 0.0, 0.0],
+            # all-zero matrix -> each diagonal residual is (-1)^2 -> 3
+            [0.0, 0.0, 0.0,   0.0, 0.0, 0.0,   0.0, 0.0, 0.0,   0.0, 0.0, 0.0],
+            # 45-degree rotation about Z, no translation
+            [0.7071, 0.7071, 0.0,  -0.7071, 0.7071, 0.0,  0.0, 0.0, 1.0,  0.0, 0.0, 0.0],
+            # 90-degree rotation + translation
+            [0.0, 1.0, 0.0,  -1.0, 0.0, 0.0,  0.0, 0.0, 1.0,  -2.0, 0.5, 7.0],
+            # dense arbitrary, mixed signs
+            [1.5, -0.25, 0.75,  0.5, 2.0, -1.25,  -0.5, 0.25, 0.5,  1.0, -2.0, 3.0],
+            # tiny magnitudes (exercises cancellation near the 1.0f subtraction)
+            [1.001, 0.002, -0.005,  0.007, 0.999, 0.003,  -0.002, 0.004, 1.006,
+             0.0001, -0.0002, 0.0003],
+            # large magnitudes
+            [100.0, 200.0, -300.0,  400.0, -500.0, 600.0,  -700.0, 800.0, 900.0,
+             -1000.0, 1100.0, -1200.0],
+            # negative determinant / reflection + translation
+            [-1.5, 2.25, 0.125,  3.5, -0.75, 1.0,  2.0, 0.5, -4.0,  6.0, -7.0, 8.0],
+        ],
+        'path2_tests': [
+            [1.0, 0.0, 0.0,   0.0, 1.0, 0.0,   0.0, 0.0, 1.0,   3.0, 4.0, 0.0],
+            [1.5, -0.25, 0.75,  0.5, 2.0, -1.25,  -0.5, 0.25, 0.5,  1.0, -2.0, 3.0],
+        ],
+    },
+
 }

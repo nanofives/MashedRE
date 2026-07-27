@@ -309,6 +309,53 @@ function callFn(fn, input, buf) {
         return '0x' + ('00000000' + hi.toString(16)).slice(-8)
                     + ('00000000' + lo.toString(16)).slice(-8);
     }
+    // st0_ret_mat4x3_ptr — same family as st0_ret_mat3_ptr, but the leaf reads FOUR rows
+    // (stride 0x10), i.e. TWELVE dwords at {0x00,04,08, 0x10,14,18, 0x20,24,28, 0x30,34,38}.
+    // The extra row 3 is the RwMatrix TRANSLATION row.
+    //
+    // Authored for 0x004c4360 (U-9022). Its role was already fixed by the caller
+    // FUN_004c4530 = RwMatrixOptimize (U-9021): its return is compared against tolerance
+    // slot [2] and gates bit 0x20000 = rwMATRIXINTERNALIDENTITY, so it is the
+    // identity-deviation residual. The body confirms that mechanically — it accumulates
+    // ||M - I||^2 with the top-left 3x3 measured against the identity diagonal
+    // (each diagonal element minus the 1.0f at 0x005cc320) and the translation row
+    // measured against zero:
+    //   T0 = (m01^2 + m02^2) + (m00-1)^2      0x004c439c..0x004c43c6
+    //   T3 = (m30^2 + m31^2) + m32^2          0x004c43c8..0x004c43e2
+    //   T2 = (m20^2 + m21^2) + (m22-1)^2      0x004c43e6..0x004c43fc
+    //   T1 = (m10^2 + m12^2) + (m11-1)^2      0x004c4400..0x004c4416
+    //   return ((T0 + T3) + T2) + T1          0x004c43e4/0x004c43fe/0x004c4418
+    //
+    // Why st0_ret_mat3_ptr does NOT fit: it allocates 0x30 and seeds only nine floats, so
+    // offsets 0x30/0x34/0x38 — which this leaf genuinely reads — would be uninitialised
+    // heap garbage and the diff would diverge run-to-run. That is the same MISFIT class
+    // recorded for vec3_ptr against 0x004c4270 in re/PROMOTION_QUEUE.md:285.
+    //
+    // CRITICAL: signature.ret MUST be 'double', NEVER 'void' — a void-declared
+    // NativeFunction leaves ST0 unpopped -> x87 stack leak / NaN + FPU corruption
+    // (memory x87_st0_float10_return_fnptr). 'double' makes libffi FSTP-qword the ST0
+    // return, truncating 80->64 identically for Orig and Reimpl.
+    //
+    //   input: array of 12 numbers -> rows [0..2],[3..5],[6..8],[9..11] written as f32 to
+    //          0x00/04/08, 0x10/14/18, 0x20/24/28, 0x30/34/38.
+    // The four pad dwords at 0x0c/0x1c/0x2c/0x3c are zeroed for run-to-run determinism;
+    // the leaf never reads them. Scratch buffer only — no live game state is touched.
+    // Returns a 16-hex-digit fingerprint of the 64-bit double ST0 return.
+    if (CONFIG.arg_type === 'st0_ret_mat4x3_ptr') {
+        for (let r = 0; r < 4; r++) {
+            const base = r * 0x10;
+            buf.add(base + 0x0).writeFloat(input[r * 3 + 0]);
+            buf.add(base + 0x4).writeFloat(input[r * 3 + 1]);
+            buf.add(base + 0x8).writeFloat(input[r * 3 + 2]);
+            buf.add(base + 0xc).writeU32(0);
+        }
+        const rv = fn(buf);                     // double (ST0), per signature.ret='double'
+        const fp = Memory.alloc(8);
+        fp.writeDouble(typeof rv === 'number' ? rv : NaN);
+        const lo = fp.readU32() >>> 0, hi = fp.add(4).readU32() >>> 0;
+        return '0x' + ('00000000' + hi.toString(16)).slice(-8)
+                    + ('00000000' + lo.toString(16)).slice(-8);
+    }
     if (CONFIG.arg_type === 'vec3_ptr') {
         buf.writeFloat(input[0]);
         buf.add(4).writeFloat(input[1]);
@@ -1023,6 +1070,7 @@ function runDiff() {
               : (CONFIG.arg_type === 'ptr_arg_int_get') ? Memory.alloc((CONFIG.struct_size | 0) || 256)
               : (CONFIG.arg_type === 'fmt_desc_ptr') ? Memory.alloc(0x20)
               : (CONFIG.arg_type === 'st0_ret_mat3_ptr') ? Memory.alloc(0x30)
+              : (CONFIG.arg_type === 'st0_ret_mat4x3_ptr') ? Memory.alloc(0x40)
               : (CONFIG.arg_type === 'ptr_arg_int_get') ? Memory.alloc((CONFIG.struct_size | 0) || 256)
               : null;
 
