@@ -121,7 +121,17 @@ RH_ScopedInstall(LoadingState3Enter, 0x00409930);  // re-enabled 2026-05-24 batc
 // ─────────────────────────────────────────────────────────────────────────────
 typedef int (__cdecl* printf_t)(const char*, ...);
 
-static constexpr std::uintptr_t kPrintfFn_VA   = 0x00442cbdu;  // CALL target at 0x00409905
+// BUGFIX 2026-07-27 — DIGIT TRANSPOSITION. This read `0x00442cbd`; the actual CALL
+// target at 0x00409905 is `0x004a2cbd` (`a2` was typed as `42`). The cited call site in
+// the comment was correct all along — only the transcribed address was wrong.
+// `0x00442cbd` is +0x3d into FUN_00442c80, so calling it executed mid-instruction garbage,
+// the same class as the 0x004a3220 crash fixed in 7518a088 (0x00408a70). Ground truth:
+//   0x00409900 PUSH 0x5ccb28 / 0x00409905 CALL 0x004a2cbd / 0x0040990a ADD ESP,4
+// 0x004a2cbd is the narrow CRT printf (stdout FILE* at 0x00616110) — the same callee
+// 0x00408a70 uses. Found by the systematic call-target audit, not by a crash: this hook
+// (LoadingState2Enter @ 0x00409900) is on the loading path, which the menu-window
+// acceptance runs never exercise.
+static constexpr std::uintptr_t kPrintfFn_VA   = 0x004a2cbdu;  // CALL target at 0x00409905
 static constexpr std::uintptr_t kLoadStartStr  = 0x005ccb28u;  // PUSH operand at 0x00409901
 
 extern "C" __declspec(dllexport) void __cdecl LoadingState2Enter() {

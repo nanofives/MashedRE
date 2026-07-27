@@ -114,17 +114,16 @@ static constexpr int            kPerCarStride = 0x30c;  // 0x00408a70 body
 
 // ---------------------------------------------------------------------------
 // Format strings for FrontendC2RoundI (FUN_00408a70)
-// Cited at 0x00408a70 body.
+// Cited at 0x00408a70 body — see the resolved constants down at the hook itself.
 // ---------------------------------------------------------------------------
-// "put precisepos %d,%f\n" — wprintf format string.
-extern "C" extern wchar_t* wprintf_entry;   // not called via extern; use original VA
-
-// wprintf thunk — forward to original. The function uses wprintf with a wide
-// format string from the literal pool at an unknown RVA; we call the original
-// wprintf via the IAT thunk at 0x004a3220 (FID_conflict__wprintf).
-// [UNCERTAIN U-2169, U-2170 carried]
-static auto* const s_wprintf_thunk =
-    reinterpret_cast<int(__cdecl*)(const wchar_t*, ...)>(0x004a3220);
+// REMOVED 2026-07-27 — a dead `s_wprintf_thunk` declaration lived here holding the
+// same bogus `0x004a3220` that crashed at 0x00408a70 (fixed in 7518a088). It was never
+// referenced (declaration was its only occurrence), so it was a landmine rather than a
+// live fault: any future caller would have executed mid-instruction garbage inside
+// FUN_004a31f3. The real callee is 0x004a2cbd (narrow printf) with the ASCII format
+// string at 0x005cca5c; both are defined at the FrontendC2RoundI hook below.
+// The stale `wprintf_entry` extern that accompanied it is gone too — it was declared
+// "not called via extern" and had no definition anywhere.
 
 // ---------------------------------------------------------------------------
 // Format strings for MenusLapTimeFmt (FUN_0042d290)
