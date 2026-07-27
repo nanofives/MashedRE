@@ -72,20 +72,11 @@ MASHED processes (only the 3 this phase spawned, all exited).
 
 ## UNCOMMITTED STATE
 
-**Everything below is uncommitted — the user has not authorized a commit.**
+**Clean.** This phase's work is committed as **`27a376d2`** on `main` (12 files, +672/-117):
+both C3 promotions, the `st0_ret_mat3_ptr` handler, `Math/MatrixOrthoResidual.cpp`, the build
+wiring, the tracker transaction (hooks.csv / UNCERTAINTIES / CHANGELOG), the plan-doc label
+retraction, and this file.
 
-```
- M UNCERTAINTIES.md                                        (+U-9021, U-9022, U-9023)
- M hooks.csv                                               (2 rows C2->C3; row count 5896 unchanged)
- M mashedmod/asi_sources.rsp                               (+MatrixOrthoResidual.cpp)
- M mashedmod/build.bat                                     (+MatrixOrthoResidual.cpp)
- M re/analysis/CHANGELOG.md                                (2 new rows at head)
- M re/analysis/plans/frontier_shape_refinement_2026-07-24.md  (label retraction block)
- M re/frida/ARG_TYPES.md                                   (regenerated; 115 handlers)
- M re/frida/diff_template.js                               (+st0_ret_mat3_ptr handler)
- M re/frida/hooks_registry.py                              (+2 entries)
-?? mashedmod/src/mashed_re/Math/MatrixOrthoResidual.cpp
-?? re/analysis/render/
-```
+**NOT PUSHED** — `main` is 1 commit ahead of `origin/main`. Push only if the user asks.
 
 TO RESUME: paste this whole block into a new account3 session with the orchestrator prompt.
