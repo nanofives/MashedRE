@@ -1292,7 +1292,23 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Search45baa0(std::uint32_
     }
     return 0;
 }
-RH_ScopedInstall(Search45baa0, 0x0045baa0);
+// Register-ABI shim — this, NOT Search45baa0, is installed at 0x0045baa0.
+// ABI FIX 2026-07-27 — direct sibling of the 0x0041f330 crasher. The original takes its key
+// in ESI and nothing on the stack (0x0045bab1 `CMP ESI,dword ptr [EAX]`), so the plain
+// __cdecl install read [esp+4] caller garbage, never matched, and returned 0
+// (0x0045babd `XOR EAX,EAX`) — the same NULL-propagation failure mode.
+// Register preservation: the original clobbers EAX/ECX/EDX (0x0045baa0 writes EDX,
+// 0x0045baa6 writes ECX, 0x0045baac writes EAX) and preserves ESI/EBX/EDI/EBP — exactly what
+// __cdecl gives the C body, so a plain marshalling shim suffices. Return stays in EAX.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Search45baa0_RegAbi(void) {
+    __asm {
+        push esi            // key (the original reads it from ESI)
+        call Search45baa0
+        add  esp, 4
+        ret
+    }
+}
+RH_ScopedInstall(Search45baa0_RegAbi, 0x0045baa0);  // ABI fixed 2026-07-27 (was __cdecl)
 
 // 0x0041f330 — byte-verified ESI-keyed linear search into a PARALLEL array:
 //   edx=[0x5f5fe0] (count); eax=0 (index); if(count<=0) return 0; ecx=0x5f3828 (base);
@@ -1561,7 +1577,24 @@ extern "C" __declspec(dllexport) void __cdecl Split41e170(std::uint32_t v, int* 
     out[1] = b;
     out[2] = vi - (a * 60 + b) * 100;
 }
-RH_ScopedInstall(Split41e170, 0x0041e170);
+// Register-ABI shim — this, NOT Split41e170, is installed at 0x0041e170.
+// ABI FIX 2026-07-27 — same class. The original takes BOTH args in registers and nothing on
+// the stack: EAX = input value (0x0041e171 `MOV ESI,EAX`) and EDI = out pointer
+// (0x0041e199 `MOV [EDI],ECX`, 0x0041e1b2 `MOV [EDI+0x4],EDX`, 0x0041e1af `MOV [EDI+0x8],ESI`).
+// Installed as plain __cdecl it read two caller stack-garbage words and wrote three dwords
+// through the second one. Fixed on disassembly evidence, not on an observed crash.
+// Register preservation: the original preserves ESI (0x0041e170 PUSH / 0x0041e1b5 POP), EDI,
+// EBX and EBP, and clobbers EAX/ECX/EDX — matching __cdecl, so no extra saves are needed.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Split41e170_RegAbi(void) {
+    __asm {
+        push edi            // out  (2nd C param — __cdecl pushes right-to-left)
+        push eax            // v    (1st C param)
+        call Split41e170
+        add  esp, 8
+        ret
+    }
+}
+RH_ScopedInstall(Split41e170_RegAbi, 0x0041e170);  // ABI fixed 2026-07-27 (was __cdecl)
 
 // ===== round 134 ===== (bounded 2D-grid multi-out getter)
 // 0x004957a0 — u32 fn(i, j, out1, out2, out3): if(i>=*0x772fac || j>=*0x771e80) return 0;
@@ -1862,7 +1895,36 @@ extern "C" __declspec(dllexport) void __cdecl Init477450(
     for (int i = 0; i < 16; i++) reinterpret_cast<std::uint32_t*>(dest)[i] = reinterpret_cast<std::uint32_t*>(src)[i];
     *reinterpret_cast<std::uint32_t*>(dest + 0x40) = *arg2;
 }
-RH_ScopedInstall(Init477450, 0x00477450);
+// Register-ABI shim — this, NOT Init477450, is installed at 0x00477450.
+// ABI FIX 2026-07-27 — MIXED convention, unlike the other shims in this file. The original
+// takes its destination in EAX (0x00477456 `MOV [EAX+0x54],ECX`, 0x00477478 `MOV EDI,EAX`)
+// and FOUR arguments on the stack (0x00477450 `MOV EDX,[ESP+0x10]`, 0x0047745c
+// `MOV ECX,[ESP+0xc]`, 0x00477461 `MOV ESI,[ESP+0x8]` after one PUSH = entry [ESP+4],
+// 0x0047747c `MOV ECX,[ESP+0x10]` after two PUSHes = entry [ESP+8]).
+// Installed as plain __cdecl, the C body took `dest` from [esp+4] — i.e. the original's FIRST
+// stack arg (src) — and then memcpy'd 0x40 bytes through it and wrote fields up to +0x58.
+// So the four real stack args must be forwarded UNCHANGED and EAX supplied as param 0.
+//
+// EAX is also PRESERVED by the original — it is never written across the body, so callers may
+// rely on the implicit EAX==dest return. Our C body returns void, so EAX is restored from the
+// pushed copy after the call.
+// Frame: at entry [ESP+4]=src, [ESP+8]=arg2, [ESP+0xc]=arg3, [ESP+0x10]=arg4. Each PUSH shifts
+// those by 4, which is why the same literal [ESP+0x10] walks src..arg4 in reverse.
+// The original ends in a plain RET (caller cleans its 4 args), so this shim does too.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init477450_RegAbi(void) {
+    __asm {
+        push dword ptr [esp+0x10]   // arg4
+        push dword ptr [esp+0x10]   // arg3
+        push dword ptr [esp+0x10]   // arg2
+        push dword ptr [esp+0x10]   // src
+        push eax                    // dest (register arg in the original)
+        call Init477450
+        mov  eax, dword ptr [esp]   // restore EAX==dest (the original preserves it)
+        add  esp, 20
+        ret
+    }
+}
+RH_ScopedInstall(Init477450_RegAbi, 0x00477450);  // ABI fixed 2026-07-27 (was __cdecl)
 
 // ===== round 153 ===== (struct-table div/mod compute + out-param)
 // 0x005b2fd0 — u32 fn(arg1, arg2, arg3, arg4, arg5):

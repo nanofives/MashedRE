@@ -745,18 +745,33 @@ RH_ScopedInstall(TimerSlotTickDispatcher, 0x0043c000);  // re-enabled 2026-05-24
 // 0x00475a60  PendingOpQueueFlush
 //
 // 74-byte queue drain. For each i in [0, *(int*)0x0069160c):
-//   FUN_004b6520(*(void**)(0x00691604 + i*4), *(int*)(0x00691610 + i*4) * 0x50)
-//   *(int*)(0x00691614 + i*4) = 0
-// Count re-read inside loop (not snapshot).
+//   FUN_004b6520((*(void***)0x00691604)[i], (*(int**)0x00691610)[i] * 0x50)
+//   (*(int**)0x00691614)[i] = 0
+// Count re-read inside loop (not snapshot); the three array pointers are also
+// re-loaded from their globals every iteration.
+//
+// BUGFIX 2026-07-27 — MISSING INDIRECTION (this was a live ~72 s runtime AV).
+// 0x00691604 / 0x00691610 / 0x00691614 are POINTERS TO ARRAYS, not the arrays.
+// The original loads the global and THEN indexes through it:
+//   0x00475a70 MOV EAX,[0x00691610] / 0x00475a75 MOV EAX,[EAX + ESI*0x4]   (size)
+//   0x00475a78 MOV EDX,[0x00691604] / 0x00475a81 MOV EAX,[EDX + ESI*0x4]   (ptr)
+//   0x00475a8e MOV ECX,[0x00691614] / 0x00475a9c MOV [ECX + ESI*0x4],0x0   (result)
+// This reimpl indexed the globals DIRECTLY, so `size` read a raw pointer word
+// (~0x0cf7xxxx) and `size * 0x50` became a ~223 MB count handed to memset:
+//   observed memset(dst=0x0cf77ec8, 0, 0x0d57a380) -> write AV at 0x0cfcf000
+//   inside the CRT `rep stosb` in our own .asi (ECX=0x0d523248 remaining).
+// NOTE: the analysis comment that previously stood here encoded the SAME missing
+// indirection, so re/analysis/timer_d3_cont1_b/0x00475a60.md needs the same fix.
+// Only 0x0069160c is a direct int (0x00475a60 MOV EAX,[0x0069160c]; TEST EAX,EAX).
 //
 // Callees: FUN_004b6520 (C2 ZeroFillWrapper)
 // Analysis: re/analysis/timer_d3_cont1_b/0x00475a60.md
 // ─────────────────────────────────────────────────────────────────────────────
 namespace {
-constexpr std::uintptr_t kQ_count      = 0x0069160c;
-constexpr std::uintptr_t kQ_ptrs       = 0x00691604;  // void* per entry
-constexpr std::uintptr_t kQ_sizes      = 0x00691610;  // int per entry
-constexpr std::uintptr_t kQ_results    = 0x00691614;  // int per entry
+constexpr std::uintptr_t kQ_count      = 0x0069160c;  // int  (direct)
+constexpr std::uintptr_t kQ_ptrs       = 0x00691604;  // void**  -> array of void*
+constexpr std::uintptr_t kQ_sizes      = 0x00691610;  // int*    -> array of int
+constexpr std::uintptr_t kQ_results    = 0x00691614;  // int*    -> array of int
 } // namespace
 
 extern "C" __declspec(dllexport) void __cdecl PendingOpQueueFlush() {
@@ -765,10 +780,11 @@ extern "C" __declspec(dllexport) void __cdecl PendingOpQueueFlush() {
     int i = 0;
     // Count re-read each iteration (matches decomp).
     while (i < *reinterpret_cast<const std::int32_t*>(kQ_count)) {
-        void* ptr   = reinterpret_cast<void**>(kQ_ptrs)[i];
-        int   size  = reinterpret_cast<int*>(kQ_sizes)[i];
+        // Load order matches the original: size (0x00475a70/75) then ptr (0x00475a78/81).
+        int   size = (*reinterpret_cast<int**>(kQ_sizes))[i];
+        void* ptr  = (*reinterpret_cast<void***>(kQ_ptrs))[i];
         fn_zerofill(ptr, size * 0x50);
-        reinterpret_cast<int*>(kQ_results)[i] = 0;
+        (*reinterpret_cast<int**>(kQ_results))[i] = 0;
         ++i;
     }
 }
