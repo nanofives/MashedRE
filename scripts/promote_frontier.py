@@ -83,15 +83,62 @@ def load_hooks():
 #   qhull / RW-Phys 0x0057c5b0..0x005a5820  (qhull-2002.1 via RenderWare Physics 3.7)
 #   libpng+zlib     0x00516000..0x00529fff  (statically-linked PNG/zlib: png_*, z*; user
 #                                            ruling 2026-06-15 = library-skip, do NOT promote)
-#   MSVC CRT rt     0x005c0000..0x005c8000  (CRT runtime: __ftol/__setjmp3/wcs*/SEH/__ctrandisp2;
-#                                            flagged round 156, added 2026-06-15 per library-skip)
+#   MSVC CRT rt     0x005c0000..0x005c3fff  (CRT runtime: __ftol/__setjmp3/wcs*/SEH/__ctrandisp2;
+#                                            flagged round 156, added 2026-06-15 per library-skip.
+#                                            NARROWED 2026-07-27 from 0x005c8000 — see U-9023.)
 LIBRARY_BANDS = (
     (0x004a0000, 0x004b3fff),
     (0x004ec000, 0x004fc9e0),
     (0x0057c5b0, 0x005a5820),
     (0x00516000, 0x00529fff),
-    (0x005c0000, 0x005c8000),
+    (0x005c0000, 0x005c3fff),
 )
+
+# U-9023 (2026-07-27) — the 0x005c0000..0x005c8000 band was OVER-BROAD and had been
+# silently excluding first-party rows from the frontier. Evidence:
+#   * its own source batch note says only 56 of 80 rows are CRT library-residue;
+#   * scripts/bulk_add_library_residue.py:64 uses a DIFFERENT upper bound (0x5d0000)
+#     for the same named band — the two disagreed with each other;
+#   * 0x005c4d30 CondGet5c4d30 was already C3 with a clean Frida diff INSIDE the band
+#     (promoted 2026-06-13, two days BEFORE the band was added on 2026-06-15), as were
+#     0x005c7500 AudioMixerRateCompute and 0x005c75b0 AudioVoiceField8cGet;
+#   * re/analysis/bucket_005c1d63/0x005c47e0.md records kind: GAME / library_match:
+#     (none — game code) for FUN_005c47e0, which calls first-party render leaves.
+#
+# A NARROWER BAND ALONE CANNOT FIX IT: CRT and non-CRT interleave through the range
+# (28 alternations in address order — e.g. FUN_005c1da2 sits between _fseek and __ftol),
+# so no contiguous bound separates them. The band is therefore paired with a name test.
+#
+# Why keep any band at all: the original rationale still holds — Ghidra's FID under-tags
+# CRT here, so unnamed CRT helpers carry subsystem "boot" and neither the tag nor the name
+# test would catch them. Below 0x005c4000 those unnamed helpers are dense and interleaved
+# with named CRT, so the band stays. From 0x005c4000 up, the CRT residue is FID-named
+# (_gmtime 0x5c4440, ___mbtowc_mt 0x5c4547, _mbtowc 0x5c4607) and thus caught by name,
+# while the unnamed rows there are the game dynarray/chunk readers and the audio cluster.
+#
+# Net effect: 37 rows released to the frontier (12 audio + 25 boot), 92 still excluded.
+# NOTE this is a CANDIDATE-GENERATION filter only — every released row still faces the
+# callee-gate and the full C3 evidence gate. So a false ADMIT costs a little screening
+# time, while a false EXCLUDE silently removes coverage forever. That asymmetry is why
+# this leans permissive.
+_CRT_NAME_PREFIXES = ("_", "FID_conflict:")
+_CRT_NAME_EXACT = ("shortsort", "strtoxl")
+# RenderWare internals ALSO take a leading underscore (_rwDeviceSystemFn, _rp*, _rt*).
+# RW is the engine being ported (D2 Option B = RW-subset verbatim), so it is FIRST-PARTY
+# work and must NOT be swept up by the CRT name test. Caught in review: without this
+# exemption the change would have silently dropped 0x004c7a70 _rwDeviceSystemFn (render)
+# out of the frontier — a regression in the opposite direction from the one being fixed.
+_RW_NAME_PREFIXES = ("_rw", "_Rw", "_rp", "_Rp", "_rt", "_Rt")
+
+
+def is_library_name(name):
+    """True when the symbol is FID-attested CRT residue, regardless of address band."""
+    n = (name or "").strip()
+    if not n:
+        return False
+    if n.startswith(_RW_NAME_PREFIXES):
+        return False
+    return n.startswith(_CRT_NAME_PREFIXES) or n in _CRT_NAME_EXACT
 
 
 def _rva_of(row):
@@ -103,6 +150,8 @@ def _rva_of(row):
 
 def is_first_party(row):
     if "third-party" in (row.get("subsystem") or ""):
+        return False
+    if is_library_name(row.get("name")):
         return False
     rva = _rva_of(row)
     return not any(lo <= rva <= hi for lo, hi in LIBRARY_BANDS)

@@ -61,8 +61,17 @@ BANDS = [
      "batch-y-s6 qhull-print residue tail (qh_printcenter+qhull_input_*)"),
     (0x005b8200, 0x005b8681, "d3dx9-fx-framework",
      "batch-z-s2 Region C (effect-state-block builder + bit-pack cascade)"),
-    (0x005c0000, 0x005d0000, "msvc-crt-tail",
-     "batch-v-s6 finding (33 FidDB + 23 helpers)"),
+    # NARROWED 2026-07-27 (U-9023) from 0x005d0000 to 0x005c4000, reconciling a direct
+    # conflict: scripts/promote_frontier.py called the SAME named band 0x005c0000..0x005c8000
+    # while this file used 0x005c0000..0x005d0000. Neither bound was right — CRT and
+    # first-party interleave through the range (28 alternations in address order), and the
+    # region above 0x005c4000 holds the game dynarray/chunk readers plus the audio cluster
+    # (0x005c7500 AudioMixerRateCompute and 0x005c75b0 AudioVoiceField8cGet are C3 with
+    # clean Frida diffs; 0x005c4d30 CondGet5c4d30 likewise). The batch note this cites says
+    # only 56 of 80 rows are CRT residue. CRT above 0x005c4000 is FID-named and is now
+    # caught by promote_frontier.is_library_name() instead of by address.
+    (0x005c0000, 0x005c4000, "msvc-crt-tail",
+     "batch-v-s6 finding (33 FidDB + 23 helpers); upper bound narrowed 2026-07-27 per U-9023"),
 ]
 
 
