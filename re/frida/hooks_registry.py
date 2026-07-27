@@ -1004,6 +1004,65 @@ HOOKS = {
         'path2_tests': [1.0, 2.0, 0.5],
     },
 
+    # ---- Pointer-seeded ST0 float10-return leaves (arg_type st0_ret_mat3_ptr) ----
+    # 0x004c4270 / 0x004c42d0 read a 3-row stride-0x10 float matrix through ONE pointer
+    # arg at [ESP+4] and return a scalar in ST0. They are NOT the "RwV3d bbox accessors"
+    # that re/analysis/plans/frontier_shape_refinement_2026-07-24.md:27-28 labels them --
+    # the raw bytes disprove that, and re/PROMOTION_QUEUE.md:285 recorded the disproof for
+    # 0x004c4270 on 2026-06-08. Reimpl: Math/MatrixOrthoResidual.cpp (verbatim inline x87).
+    # signature.ret MUST be 'double' (memory x87_st0_float10_return_fnptr).
+    #
+    # 0x004c4270: sum of squares of the three pairwise row dot products (orthogonality).
+    'mat3_ortho_residual_4c4270': {
+        'rva':            0x004c4270,
+        'export':         'MatrixOrthoResidual4c4270',
+        'signature':      {'ret': 'double', 'args': ['pointer']},
+        'arg_type':       'st0_ret_mat3_ptr',
+        'path1_tests': [
+            [1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0, 0.0, 1.0],
+            [1.0, 2.0, 3.0,  4.0, 5.0, 6.0,  7.0, 8.0, 9.0],
+            [0.5, 0.0, 0.0,  0.0, 0.5, 0.0,  0.0, 0.0, 0.5],
+            [1.0, 0.1, 0.0, -0.1, 1.0, 0.0,  0.0, 0.0, 1.0],
+            [3.0, -1.0, 2.0,  0.5, 4.0, -2.0,  -1.0, 1.0, 5.0],
+            [0.0, 1.0, 0.0, -1.0, 0.0, 0.0,  0.0, 0.0, 1.0],
+            [0.001, 0.002, -0.005,  0.007, 0.001, 0.003,  -0.002, 0.004, 0.006],
+            [100.0, 200.0, -300.0,  400.0, -500.0, 600.0,  -700.0, 800.0, 900.0],
+            [0.7071, 0.7071, 0.0,  -0.7071, 0.7071, 0.0,  0.0, 0.0, 1.0],
+            [-1.5, 2.25, 0.125,  3.5, -0.75, 1.0,  2.0, 0.5, -4.0],
+        ],
+        'path2_tests': [
+            [1.0, 2.0, 3.0,  4.0, 5.0, 6.0,  7.0, 8.0, 9.0],
+            [3.0, -1.0, 2.0,  0.5, 4.0, -2.0,  -1.0, 1.0, 5.0],
+            [-1.5, 2.25, 0.125,  3.5, -0.75, 1.0,  2.0, 0.5, -4.0],
+        ],
+    },
+
+    # 0x004c42d0: sum of squares of (|row|^2 - 1.0) over the three rows (normality).
+    #   the 1.0 is *(float*)0x005cc320 == 0x3f800000 (memory_read 2026-07-27).
+    'mat3_norm_residual_4c42d0': {
+        'rva':            0x004c42d0,
+        'export':         'MatrixNormResidual4c42d0',
+        'signature':      {'ret': 'double', 'args': ['pointer']},
+        'arg_type':       'st0_ret_mat3_ptr',
+        'path1_tests': [
+            [1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0, 0.0, 1.0],
+            [1.0, 2.0, 3.0,  4.0, 5.0, 6.0,  7.0, 8.0, 9.0],
+            [0.5, 0.0, 0.0,  0.0, 0.5, 0.0,  0.0, 0.0, 0.5],
+            [1.0, 0.1, 0.0, -0.1, 1.0, 0.0,  0.0, 0.0, 1.0],
+            [3.0, -1.0, 2.0,  0.5, 4.0, -2.0,  -1.0, 1.0, 5.0],
+            [0.0, 1.0, 0.0, -1.0, 0.0, 0.0,  0.0, 0.0, 1.0],
+            [0.001, 0.002, -0.005,  0.007, 0.001, 0.003,  -0.002, 0.004, 0.006],
+            [100.0, 200.0, -300.0,  400.0, -500.0, 600.0,  -700.0, 800.0, 900.0],
+            [0.7071, 0.7071, 0.0,  -0.7071, 0.7071, 0.0,  0.0, 0.0, 1.0],
+            [-1.5, 2.25, 0.125,  3.5, -0.75, 1.0,  2.0, 0.5, -4.0],
+        ],
+        'path2_tests': [
+            [1.0, 2.0, 3.0,  4.0, 5.0, 6.0,  7.0, 8.0, 9.0],
+            [3.0, -1.0, 2.0,  0.5, 4.0, -2.0,  -1.0, 1.0, 5.0],
+            [-1.5, 2.25, 0.125,  3.5, -0.75, 1.0,  2.0, 0.5, -4.0],
+        ],
+    },
+
     # 0x00431b60 sine-of-global-product leaf, sibling of 0x00431b50 (util subsystem).
     #   FSIN(*(float*)0x007f0f08 * *(double*)0x005cd8f0), returned in ST0.
     #   Reimpl: Util/SineOscillators.cpp SinGlobalProduct431b60 (inline __asm FSIN).

@@ -268,6 +268,47 @@ function callFn(fn, input, buf) {
         return '0x' + ('00000000' + hi.toString(16)).slice(-8)
                     + ('00000000' + lo.toString(16)).slice(-8);
     }
+    // st0_ret_mat3_ptr — x87 80-bit ST0 float-return leaf taking ONE pointer arg to a
+    // 3-row / stride-0x10 float matrix. Shape: float10 f(float* m), body reads the nine
+    // dwords at {0x00,0x04,0x08, 0x10,0x14,0x18, 0x20,0x24,0x28} with x87 FLD/FMUL and
+    // returns the scalar in ST0 (no stack cleanup beyond the MSVC FSTP ST(3)/FSTP ST(0)
+    // /FSTP ST(0) discard idiom).
+    //
+    // Authored for 0x004c4270 and 0x004c42d0 (HARNESS_BACKLOG #1 follow-on). These were
+    // MISLABELLED "RwV3d bbox X/Y/Z accessors" in re/analysis/plans/
+    // frontier_shape_refinement_2026-07-24.md; the raw bytes disprove that (see the
+    // per-RVA analysis note). They are matrix orthonormality residuals.
+    //
+    // Why the existing handlers do not fit: st0_ret_global takes NO args and seeds
+    // globals; vec3_ptr / float_2ptr_ret seed only offsets 0x00/0x04/0x08, leaving
+    // 0x10..0x28 as uninitialised heap garbage -> nondeterministic divergence (this is
+    // exactly the vec3_ptr MISFIT recorded for 0x004c4270 in re/PROMOTION_QUEUE.md:285).
+    //
+    // CRITICAL: signature.ret MUST be 'double' (NEVER 'void') — a void-declared
+    // NativeFunction leaves ST0 unpopped -> x87 stack leak / NaN + FPU corruption
+    // (feedback memory x87_st0_float10_return_fnptr). 'double' makes libffi FSTP-qword
+    // the ST0 return, truncating 80->64 identically for Orig and Reimpl.
+    //
+    //   input: array of 9 numbers -> rows [0..2], [3..5], [6..8] written as f32 to
+    //          offsets 0x00/0x04/0x08, 0x10/0x14/0x18, 0x20/0x24/0x28.
+    // The three pad dwords at 0x0c/0x1c/0x2c are zeroed for run-to-run determinism; the
+    // leaves never read them. Scratch buffer only — no live game state is touched.
+    // Returns a 16-hex-digit fingerprint of the 64-bit double ST0 return (full mantissa).
+    if (CONFIG.arg_type === 'st0_ret_mat3_ptr') {
+        for (let r = 0; r < 3; r++) {
+            const base = r * 0x10;
+            buf.add(base + 0x0).writeFloat(input[r * 3 + 0]);
+            buf.add(base + 0x4).writeFloat(input[r * 3 + 1]);
+            buf.add(base + 0x8).writeFloat(input[r * 3 + 2]);
+            buf.add(base + 0xc).writeU32(0);
+        }
+        const rv = fn(buf);                     // double (ST0), per signature.ret='double'
+        const fp = Memory.alloc(8);
+        fp.writeDouble(typeof rv === 'number' ? rv : NaN);
+        const lo = fp.readU32() >>> 0, hi = fp.add(4).readU32() >>> 0;
+        return '0x' + ('00000000' + hi.toString(16)).slice(-8)
+                    + ('00000000' + lo.toString(16)).slice(-8);
+    }
     if (CONFIG.arg_type === 'vec3_ptr') {
         buf.writeFloat(input[0]);
         buf.add(4).writeFloat(input[1]);
@@ -981,6 +1022,7 @@ function runDiff() {
               : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256)
               : (CONFIG.arg_type === 'ptr_arg_int_get') ? Memory.alloc((CONFIG.struct_size | 0) || 256)
               : (CONFIG.arg_type === 'fmt_desc_ptr') ? Memory.alloc(0x20)
+              : (CONFIG.arg_type === 'st0_ret_mat3_ptr') ? Memory.alloc(0x30)
               : (CONFIG.arg_type === 'ptr_arg_int_get') ? Memory.alloc((CONFIG.struct_size | 0) || 256)
               : null;
 

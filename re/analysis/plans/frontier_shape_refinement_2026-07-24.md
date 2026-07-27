@@ -24,9 +24,30 @@ turns 6 rows from "un-diffable" to promotable.
 | 0x00431b20 | audio | `float10 f(void) = fsin(DAT_007f0f00 * _DAT_005cd8f0)` | sine channel A; plate `bucket_audio_0042f760_00465b20/00431b20.md` |
 | 0x00431b50 | util | `float10 f(void) = fsin(DAT_007f0f04 * _DAT_005cd8f0)` | sibling; `bucket_util_0042f7a0_004764e0/00431b50.md` |
 | 0x00431b60 | util | `float10 f(void) = fsin(DAT_007f0f08 * _DAT_005cd8f0)` | sibling; shared `_DAT_005cd8f0` factor |
-| 0x004c4270 | render | `float10 f(...)` RwV3d bbox **Y** accessor | decompiler false-empty (lifting failure); needs manual x87 asm |
-| 0x004c42d0 | render | `float10 f(...)` RwV3d bbox **X** accessor | caller 0x004c4530 compares vs `param_2[0]`; `bucket_004c4270/0x004c42d0.md` |
-| 0x004c4360 | render | `float10 f(...)` RwV3d bbox **Z** accessor | sister of X/Y |
+| 0x004c4270 | render | ~~RwV3d bbox **Y** accessor~~ → `float10 f(float* m)` matrix **orthogonality** residual | **LABEL RETRACTED 2026-07-27** — see below |
+| 0x004c42d0 | render | ~~RwV3d bbox **X** accessor~~ → `float10 f(float* m)` matrix **normality** residual | **LABEL RETRACTED 2026-07-27** — see below |
+| 0x004c4360 | render | ~~RwV3d bbox **Z** accessor~~ → **not this shape at all** (`SUB ESP,0x18` stack frame, reads +0x30/+0x34/+0x38) | **LABEL RETRACTED 2026-07-27**; U-9022, not ported |
+
+> **CORRECTION (2026-07-27).** The three "RwV3d bbox accessor" labels above were wrong.
+> They were never single-field accessors: `0x004c4270` and `0x004c42d0` each take **one
+> pointer arg at `[ESP+4]`** and read nine dwords at
+> `{0x00,0x04,0x08, 0x10,0x14,0x18, 0x20,0x24,0x28}` — a 3-row stride-`0x10` float matrix.
+> Together they compute an `M * transpose(M) == I` orthonormality error metric.
+> `0x004c4360` is a different shape entirely and is not part of the pair.
+>
+> This plan reasserted the bbox labels **without reconciling `re/PROMOTION_QUEUE.md:285`**,
+> which had recorded the byte-level disproof for `0x004c4270` on 2026-06-08 — 48 days
+> *before* this plan was written. Lesson: check the drained-batch DEFER notes in
+> `PROMOTION_QUEUE.md` before assigning a shape from a plate hypothesis.
+>
+> The Cluster-A sub-variant claim below ("needs the ST0 handler **and** a manual x87
+> reimpl") is likewise wrong for these three: the no-arg `st0_ret_global` handler cannot
+> serve them, because it seeds *globals* and these read a *caller-supplied pointer*.
+> A separate pointer-seeded handler `st0_ret_mat3_ptr` was authored for them.
+>
+> **Status:** `0x004c4270` and `0x004c42d0` are **C3** as of 2026-07-27 (10/10 bit-identical
+> each). `0x004c4360` remains C2 and unported.
+> Full derivation: `re/analysis/render/0x004c4270_0x004c42d0_matrix_residuals.md`.
 
 Handler shape needed (two sub-variants):
 - **sin-getters (3):** no args, seed 2 input globals (`DAT_007f0f0{0,4,8}` + shared `_DAT_005cd8f0`),

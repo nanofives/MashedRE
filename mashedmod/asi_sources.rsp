@@ -140,6 +140,7 @@
 "Util\UtilLeaves_ab6.cpp"
 "Util\UtilLeaves_ac.cpp"
 "Util\SineOscillators.cpp"
+"Math\MatrixOrthoResidual.cpp"
 "Render\TrackLoaderMicros_p3.cpp"
 "Render\FrameHelpers_q2.cpp"
 "Render\LowRvaMixed_q3.cpp"
