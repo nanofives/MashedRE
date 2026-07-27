@@ -134,10 +134,24 @@ indices; an index-based re-run would have tested the wrong pair.
 - **D2 renderer commitment** — OPEN (RW-subset verbatim vs `librw`). Confirm before M3/WS-E tokens.
 - **D4 airborne bit-identity** — OPEN (accept A5 1-ULP float10 residual U-8991 vs naked-asm shim).
 
-## HYGIENE NOTE
+## HYGIENE — clean
 
-`mashed_pool/` holds **7 stale `.lock` files from OTHER sessions** (dated Jun 26 - Jul 19); slot 0
-(this session's) is released and `status` reports it available. Left alone per multi-session
-etiquette. `py -3.12 scripts/diag.py doctor` heals stale ghidra locks if you want them cleared.
+Ghidra pool: **0 lock files**, slot 0 available, acquire/release smoke-tested. Frida pool healed
+by `diag.py doctor` (cleared locks + a tracked zombie MASHED). No worktrees, no game processes,
+`original/` anchor intact, all-LF.
+
+CORRECTION to an earlier note in this file: the 7 leftover `.lock` files were **not** "other
+sessions' live locks". `ghidra_pool.sh status` listed only Slot 0, i.e. slots 1/3/6/10/11/12/13 no
+longer exist as projects — those were ORPHANED lock files for removed slots. They still mattered a
+little, because `is_locked()` is bare file-existence (`[[ -f ... ]]`), so `acquire` treated those
+slot numbers as taken and would skip to higher numbers.
+`diag.py doctor` does NOT clear them (it reported "ghidra_locks OK — no locked slots", since it
+only inspects slots that still have a project). The right tool is
+**`bash scripts/ghidra_pool.sh cleanup`**.
+Safety check performed first, and worth repeating before any future cleanup: two live `java.exe`
+existed, but one was a Kotlin/Gradle daemon and the other was the Ghidra MCP server started
+*after* every lock file's date, and `mcp__ghidra__program_list_open` returned **0 open sessions** —
+so nothing held a program. Note memory `feedback_mcp_leaked_project_lock`: an in-JVM lock survives
+deleting the `.lock` file, so the open-session check is the one that actually matters.
 
 TO RESUME: paste the kickoff prompt from the end of the session, or this whole file.
