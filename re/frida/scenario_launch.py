@@ -377,8 +377,32 @@ function armOracle(){
 }
 // ---------------------------------------------------------------------------
 
+// --- generic invocation counter (opt-in) ----------------------------------
+// Attach Interceptor at arbitrary RVAs and count entries. Used to PROVE a code
+// path was actually executed during a scenario — a clean run is meaningless as
+// verification if the function under test never ran. Cold paths only: see the
+// hot-path rule in CLAUDE.md (>1000 calls/s destabilises the process).
+const CNT = {};
+function armCounters(csv){
+  try {
+    const out = [];
+    csv.split(',').forEach(function(tok){
+      tok = tok.trim(); if(!tok) return;
+      const rva = parseInt(tok, 16);
+      const p = ga(rva); if(!p) { out.push(tok + '=NOBASE'); return; }
+      CNT[tok] = 0;
+      Interceptor.attach(p, { onEnter: function(){ CNT[tok]++; } });
+      out.push(tok + '=armed');
+    });
+    return out.join(' ');
+  } catch(e){ return 'ERR ' + e; }
+}
+// ---------------------------------------------------------------------------
+
 rpc.exports = {
   ready: function(){ return modBase() ? 1 : 0; },
+  armCounters: function(csv){ return armCounters(csv); },
+  counters: function(){ return JSON.stringify(CNT); },
   armOracle: function(){ return armOracle(); },
   armBypass: function(){ return armBypass(); },
   armStepCounter: function(){ return armStepCounter(); },
@@ -562,6 +586,13 @@ def main():
     scr = sess.create_script(AGENT); scr.on("message", on_msg); scr.load()
     E = scr.exports_sync
 
+    # MASHED_COUNT_RVAS=0x00409900,0x00408a70 — arm invocation counters BEFORE the
+    # phase poke so the track-load path is covered. Proves a path actually executed;
+    # a clean scenario run verifies nothing about a function that never ran.
+    _count_csv = os.environ.get("MASHED_COUNT_RVAS", "").strip()
+    if _count_csv:
+        print("  [counters]", E.arm_counters(_count_csv))
+
     def wait_phase(target, timeout, label):
         end = time.time() + timeout
         last = None
@@ -725,6 +756,11 @@ def main():
     except SystemExit:
         pass
     finally:
+        if _count_csv:
+            try:
+                print("  [counters] " + E.counters())
+            except Exception as ex:
+                print(f"  [counters] fetch failed: {ex}")
         try: sess.detach()
         except Exception: pass
         try:
