@@ -2,7 +2,7 @@
 
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions. Maximize account2.
 
-Prior phase committed as `27a376d2` (NOT pushed). This phase's work is uncommitted (see bottom).
+All work through `e80b91f6` is committed AND pushed to `origin/main`.
 
 ## LANE A (fix) — the ~71 s runtime AV
 
@@ -149,20 +149,63 @@ narrowing `LIBRARY_BANDS` changes candidate generation project-wide.
 - **U-9023** — narrow the `0x5c0000–0x5c8000` band in `promote_frontier.py`? Evidence above.
 - **Push** — `main` is ahead of `origin/main` by `27a376d2` plus this phase's work.
 
+## PHASE 3 (this session, after the bisect) — 3 ABI shims + a missing-indirection bug
+
+Committed `e80b91f6`. **ALL WORK IS NOW PUSHED** — `main` == `origin/main` at `e80b91f6`
+(6 commits pushed: `27a376d2`, `8d71f833`, `d9f61dd5`, `1ed01345`, `78fa3cd3`, `e80b91f6`).
+
+**Fixed the three audited register-ABI suspects**, each verified against disassembly first:
+- `0x0045baa0` `Search45baa0` — key in ESI; sibling of `0x0041f330`, same NULL-return mode.
+- `0x0041e170` `Split41e170` — input EAX, out-ptr EDI.
+- `0x00477450` `Init477450` — **MIXED**: dest in EAX PLUS four stack args. Needed a different
+  shim shape: forward the four stack args unchanged, and restore EAX after the call because the
+  original never writes EAX (callers may rely on the implicit `EAX==dest` return).
+
+**Fifth defect, a DIFFERENT class — missing indirection, `0x00475a60 PendingOpQueueFlush`.**
+Diagnosed from the dump WITHOUT bisecting (technique worth reusing):
+1. faulting address resolved into our own `.asi` (base `0x736b0000`, `+0x7b43c` = CRT `rep stosb`)
+   — `scratchpad/which_module.py`, `scratchpad/nearest_export.py`;
+2. call frame read straight out of the minidump — `scratchpad/read_stack.py` — giving
+   `memset(dst=0x0cf77ec8, 0, count=0x0d57a380)` (~223 MB) and return address `0x736c38ef`
+   = `.asi` RVA `0x138ef` = `ZeroFillWrapper+0xf`, called from `PendingOpQueueFlush+0x37`.
+`0x00691604 / 0x00691610 / 0x00691614` are **pointers to arrays**; the original loads the global
+and THEN indexes (`0x475a70+75`, `0x475a78+81`, `0x475a8e+9c`). The reimpl indexed the globals
+directly, so `size` read a raw pointer word and `size * 0x50` became the 223 MB count.
+**`re/analysis/timer_d3_cont1_b/0x00475a60.md` encoded the SAME missing indirection — the reimpl
+inherited the error from the note.** Both corrected. Lesson: a wrong plate propagates into ports.
+
+Acceptance (full 1203-hook set, 95 s, 4 runs): the memset fault is GONE (was 3/4 → now 0/4).
+
+## STILL OPEN — the ~72 s AV is NOT closed (fourth layer)
+
+New distinct fault, **4/4**: `eip=0x004a3222`, inside `FUN_004a31f3` — the MSVC CRT
+`_initterm`-style function-pointer table walker over `0x5ea03c..0x5ea058` and
+`0x5ea000..0x5ea038` (`CALL ECX` @ `0x4a321c`, `CALL EAX` @ `0x4a324a`). Read AV at
+`0x3f966653` — **a float bit pattern** — and `eip` is **mid-instruction** (instruction
+boundaries there are `0x4a321e` / `0x4a3221` / `0x4a3223`).
+Stock baseline unchanged: `MASHED_RE_NO_AUTO_HOOK=1` → 0/3 AV over 96 s. Still hook-caused.
+
+**Open question worth answering before more bisecting:** five defects have now been fixed this
+session and the crash has resurfaced one layer down each time, always at ~71-73 s. The
+mid-instruction `eip` plus a float-as-pointer is the first evidence pointing at a single
+upstream memory corruptor rather than five independent bugs. Consider testing that hypothesis
+(e.g. PageHeap / Application Verifier on MASHED, or watching the `0x5ea000` table for writes)
+BEFORE spending another ~7 bisect steps.
+
+Reusable tooling built this phase (all in the session scratchpad, not committed):
+`bisect_step.sh` (signature-classified LO/HI bisect), `which_module.py`, `nearest_export.py`,
+`read_stack.py`, `dump_export.py`.
+
 ## LOCKS / WORKTREES HELD
 
-Ghidra `Mashed_pool0` **still open** (MCP session `53ef0c83…`); `.pool_slot` written at repo
-root. Release with `bash scripts/ghidra_pool.sh release 0` and remove `.pool_slot`.
-No worktrees. All MASHED processes spawned this phase exited (harness-tracked).
+**None.** Ghidra `Mashed_pool0` closed and released; `.pool_slot` removed. No worktrees.
+No stray MASHED processes (tasklist clean).
 
 ## UNCOMMITTED STATE
 
-```
-(committed d9f61dd5 + 1ed01345)
- M re/analysis/render/0x004c4270_0x004c42d0_matrix_residuals.md (RwMatrixOptimize section)
- M re/orchestrator/HANDOFF.md
-```
-Tracker updates (U-9021 / U-9022 / U-9023, CHANGELOG) NOT yet applied — must go through
-`re-classify`.
+**Clean and PUSHED.** `main` == `origin/main` at `e80b91f6`.
+
+Tracker updates (U-9021 / U-9022 / U-9023, CHANGELOG) are STILL NOT applied — they must go
+through `re-classify`. That is the top outstanding Lane-B chore.
 
 TO RESUME: paste this whole block into a new account3 session with the orchestrator prompt.
