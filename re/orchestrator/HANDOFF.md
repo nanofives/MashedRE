@@ -200,13 +200,35 @@ The 130 s runs clear ~2x the old failure window.
 All four layers are fixed: `0x0047bc90` (EDX clobber), `0x0041f330` (ABI),
 `0x00475a60` (missing indirection), `0x00408a70` (guessed callee RVA).
 
-### Follow-ups this opened
+### Follow-up DONE — systematic call-target audit (`b215d21f`)
 
-- **Grep for other guessed addresses.** `0x004a3220` sat in-tree behind a comment admitting it was
-  unverified. Any hardcoded RVA near observed / not independently known / assumed is suspect;
-  verify each is a real function ENTRY — a mid-body address links fine and only fails at runtime.
-- `0x0045bfb5` — an unrelated crasher seen during bisect when indices 915+916 were installed.
-  Never chased; may already be fixed by the `0x0045baa0` shim, unverified.
+Rather than grep only for hedging comments, extracted EVERY hardcoded call target from the reimpl
+sources and checked each against Ghidra s function database. Tooling committed and reusable:
+- `scripts/ghidra/extract_call_targets.py` — fn-ptr casts, `as_fn<>`, `kFn_*`, `RH_ScopedInstall`
+- `scripts/ghidra/check_call_targets_eval.py` — READ-ONLY `ghidra_eval`; ENTRY / MID_BODY / NO_FUNC
+
+2192 sites / 1762 distinct addresses -> 1538 ENTRY, 647 NO_FUNC, 6 MID_BODY. Two were real:
+- **`0x00442cbd` (Util/UtilBatch.cpp, kPrintfFn_VA) — LIVE.** Digit transposition of `0x004a2cbd`
+  (`a2` typed `42`); the comment cited the right call site (`0x00409905 CALL 0x004a2cbd`) all along.
+  On the LOADING path, so the menu-window acceptance never touched it. **Still wants a
+  race-scenario run to confirm behaviourally** — it currently rests on disassembly evidence.
+- **`0x004a3220` (Frontend/MenuMixed.cpp:126) — dead landmine.** A SECOND copy of the crasher
+  address that `7518a088` missed; never referenced, now removed with its stale extern.
+
+Four MID_BODY hits were false positives (PIZ magic number, data base/size pair, an explicit
+body-end marker, a stored SEH handler). Two account2-flagged suspects were cleared by checking the
+ORIGINAL — `0x004a3229 PUSH 0x4a78f4` and `0x0057c27a PUSH 0x57c2e0` are faithful; that closes
+**U-0004**. **Lesson: the structural entry-point check found both real bugs; the hedging-comment
+sweep produced only false positives. Prefer structural. MID_BODY is the signal; NO_FUNC is noisy.**
+
+Regression acceptance after both fixes: 4 runs @ 95 s -> 4/4 survived.
+
+### Still open
+
+- `0x0045bfb5` — unrelated crasher seen during bisect with indices 915+916 installed. Never
+  chased; may already be fixed by the `0x0045baa0` shim, unverified.
+- Tracker debt: U-9021 / U-9022 / U-9023 / U-2169 / U-0004 all resolved in analysis but NOT yet
+  written through `re-classify`.
 
 
 ## LOCKS / WORKTREES HELD
