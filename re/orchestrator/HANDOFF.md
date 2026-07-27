@@ -176,25 +176,38 @@ inherited the error from the note.** Both corrected. Lesson: a wrong plate propa
 
 Acceptance (full 1203-hook set, 95 s, 4 runs): the memset fault is GONE (was 3/4 → now 0/4).
 
-## STILL OPEN — the ~72 s AV is NOT closed (fourth layer)
+## LANE A CLOSED — the ~71 s AV is FIXED (8/8 clean)
 
-New distinct fault, **4/4**: `eip=0x004a3222`, inside `FUN_004a31f3` — the MSVC CRT
-`_initterm`-style function-pointer table walker over `0x5ea03c..0x5ea058` and
-`0x5ea000..0x5ea038` (`CALL ECX` @ `0x4a321c`, `CALL EAX` @ `0x4a324a`). Read AV at
-`0x3f966653` — **a float bit pattern** — and `eip` is **mid-instruction** (instruction
-boundaries there are `0x4a321e` / `0x4a3221` / `0x4a3223`).
-Stock baseline unchanged: `MASHED_RE_NO_AUTO_HOOK=1` → 0/3 AV over 96 s. Still hook-caused.
+Layer 4 was **not** a memory corruptor. `MenuMixed.cpp` forwarded FrontendC2RoundI s debug print
+through `0x004a3220` — a **guessed** address its own comment called not independently known.
+That address is inside `FUN_004a31f3`, so the CALL decoded `f7 72 ed` = `DIV [EDX-0x13]`
+mid-instruction with EDX holding a float, reading `0x3f966653` — the exact reported fault.
 
-**Open question worth answering before more bisecting:** five defects have now been fixed this
-session and the crash has resurfaced one layer down each time, always at ~71-73 s. The
-mid-instruction `eip` plus a float-as-pointer is the first evidence pointing at a single
-upstream memory corruptor rather than five independent bugs. Consider testing that hypothesis
-(e.g. PageHeap / Application Verifier on MASHED, or watching the `0x5ea000` table for writes)
-BEFORE spending another ~7 bisect steps.
+Ground truth at `0x00408a70`: `0x00408a89 PUSH 0x5cca5c` / `0x00408a8e CALL 0x004a2cbd`.
+`0x004a2cbd` is a NARROW printf; `0x005cca5c` is ASCII put precisepos %d,%f. The reimpl also
+passed a `wchar_t*`, so even a right address would have misformatted. Fixed verbatim (`7518a088`).
+U-2169 format string / call RVA not known is RESOLVED.
 
-Reusable tooling built this phase (all in the session scratchpad, not committed):
-`bisect_step.sh` (signature-classified LO/HI bisect), `which_module.py`, `nearest_export.py`,
-`read_stack.py`, `dump_export.py`.
+**The single-corruptor hypothesis was wrong, and the tell was free:** all four dumps were
+byte-identical (same eip/esp/ebp/eax/ecx). Heap corruption varies run to run. PageHeap /
+Application Verifier (elevation + IFEO writes) was never needed — reading the crash frame took
+~2 minutes. **Check dump-to-dump determinism before reaching for corruption tooling.**
+
+**ACCEPTANCE:** full 1203-hook set, hooks installed — 4 runs @ 95 s + 4 runs @ 130 s,
+**8/8 survived** to the harness kill (every exit `0xFFFFFFFF`), vs a prior deterministic 4/4 AV.
+The 130 s runs clear ~2x the old failure window.
+
+All four layers are fixed: `0x0047bc90` (EDX clobber), `0x0041f330` (ABI),
+`0x00475a60` (missing indirection), `0x00408a70` (guessed callee RVA).
+
+### Follow-ups this opened
+
+- **Grep for other guessed addresses.** `0x004a3220` sat in-tree behind a comment admitting it was
+  unverified. Any hardcoded RVA near observed / not independently known / assumed is suspect;
+  verify each is a real function ENTRY — a mid-body address links fine and only fails at runtime.
+- `0x0045bfb5` — an unrelated crasher seen during bisect when indices 915+916 were installed.
+  Never chased; may already be fixed by the `0x0045baa0` shim, unverified.
+
 
 ## LOCKS / WORKTREES HELD
 
