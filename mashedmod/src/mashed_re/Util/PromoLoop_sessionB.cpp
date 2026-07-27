@@ -1998,6 +1998,15 @@ RH_ScopedInstall(Set458f20, 0x00458f20);
 // ===== round 161 ===== (ESI/EDX field-match predicate)
 // 0x0047bc90 — u32 fn(ESI=s, EDX=e): a=s[0x10]; c=e[0x10]; if(a==c || a==e[0x14]){
 //   b=s[0x14]; return (b==c || b==e[0x14]) ? 1 : 0; } return 0.  (reimpl takes s,e on stack.)
+//
+// ABI FIX 2026-07-26 — same class as crashers #3/#5/#6. The original reads BOTH args from
+// registers and nothing from the stack: 0x0047bc90 `MOV EAX,[ESI+0x10]` (s) and 0x0047bc93
+// `MOV ECX,[EDX+0x10]` (e); the whole body is 15 instructions with no [ESP+n] operand.
+// Fixed on disassembly evidence, NOT because it crashed: this hook does not AV in isolation
+// (the boot bisect never reached it), but a wrong ABI that happens to land on readable
+// garbage is still a wrong ABI. The C body keeps its stack ABI for hooks_registry.py
+// (arg_type esi_edx_predicate sets registers on the ORIGINAL side only); the INSTALLED hook
+// is the naked shim below.
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Match47bc90(std::uint8_t* s, std::uint8_t* e) {
     std::uint32_t a = *reinterpret_cast<std::uint32_t*>(s + 0x10);
     std::uint32_t c = *reinterpret_cast<std::uint32_t*>(e + 0x10);
@@ -2009,7 +2018,20 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Match47bc90(std::uint8_t*
     }
     return 0;
 }
-RH_ScopedInstall(Match47bc90, 0x0047bc90);
+
+// Register-ABI shim — this, NOT Match47bc90, is installed at 0x0047bc90.
+// The original clobbers only EAX/ECX and preserves everything else; __cdecl gives us
+// EBX/ESI/EDI callee-saved, so the shim is convention-compatible. Return stays in EAX.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Match47bc90_RegAbi(void) {
+    __asm {
+        push edx            // e
+        push esi            // s
+        call Match47bc90
+        add  esp, 8
+        ret
+    }
+}
+RH_ScopedInstall(Match47bc90_RegAbi, 0x0047bc90);  // ABI fixed 2026-07-26 (was __cdecl)
 
 // ===== round 162 ===== (EDX/EBX/EDI register-arg array search)
 // 0x0042ad90 — u32 fn(EDX=arr, EBX=key, EDI=n): if(arr==0) return -1; walk arr[ecx] (term
@@ -2058,6 +2080,14 @@ RH_ScopedInstall(Find42ad90_RegAbi, 0x0042ad90);  // ABI fixed 2026-07-26 (was _
 // ===== round 163 ===== (EBX/EDI register-arg search, arr from globals)
 // 0x0042add0 — u32 fn(EBX=key, EDI=n): idx=*0x67e9f8; arr=*(u8**)(idx*0x40 + 0x67ed38);
 //   same walk as 0x42ad90 (find (n+1)-th key, return following element; else -1).
+//
+// ABI FIX 2026-07-26 — sibling of crasher #5 (0x0042ad90), same class. The original takes
+// BOTH args in registers and nothing on the stack: 0x0042adf0 `CMP EAX,EBX` (key) and
+// 0x0042adf4 `CMP EDI,ESI` (n); the array comes from globals (0x0042add0 `MOV EAX,[0x67e9f8]`,
+// 0x0042add5 `SHL EAX,0x6`, 0x0042add8 `MOV EDX,[EAX + 0x67ed38]`), not from an argument.
+// Fixed on disassembly evidence, NOT because it crashed — this hook does not AV in isolation
+// (the boot bisect never reached it). C body keeps its stack ABI for hooks_registry.py
+// (arg_type ebx_edi_global_find); the INSTALLED hook is the naked shim below.
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Find42add0(std::uint32_t key, std::uint32_t n) {
     std::uint32_t idx = *reinterpret_cast<std::uint32_t*>(0x0067e9f8);
     std::uint8_t* arr = *reinterpret_cast<std::uint8_t**>(idx * 0x40 + 0x0067ed38);
@@ -2071,7 +2101,19 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Find42add0(std::uint32_t 
     }
     return 0xffffffff;
 }
-RH_ScopedInstall(Find42add0, 0x0042add0);
+// Register-ABI shim — this, NOT Find42add0, is installed at 0x0042add0.
+// The original only pushes/pops ESI (0x0042ade0 / 0x0042ae08), and EBX/ESI/EDI are
+// callee-saved under __cdecl, so the shim preserves exactly what the original preserves.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Find42add0_RegAbi(void) {
+    __asm {
+        push edi            // n
+        push ebx            // key
+        call Find42add0
+        add  esp, 8
+        ret
+    }
+}
+RH_ScopedInstall(Find42add0_RegAbi, 0x0042add0);  // ABI fixed 2026-07-26 (was __cdecl)
 
 // ===== round 164 ===== (RainColorInit: strided BGRA-swizzle buffer fill)
 // 0x00491070 — void fn(): p = *0x771530 + 0x1d; for(o=0;o<4;o++) for(i=0;i<0xe0;i++){
