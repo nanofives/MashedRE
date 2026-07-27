@@ -1298,6 +1298,22 @@ RH_ScopedInstall(Search45baa0, 0x0045baa0);
 //   edx=[0x5f5fe0] (count); eax=0 (index); if(count<=0) return 0; ecx=0x5f3828 (base);
 //   loop: if(esi==[ecx]) goto found; eax++; ecx+=0x84; while(eax<count); return 0;
 //   found: return 0x5f37a8 + eax*0x84.   ESI = search key. Reimpl __cdecl(key).
+//
+// ABI FIX 2026-07-27 — this was the ~71 s runtime AV, isolated by hook-index bisection
+// (registry index 917 ALONE: 2/2 AV; the two neighbouring indices 918/919 alone: 0/2).
+// The original takes its key in ESI and NOTHING on the stack (0x0041f341 `CMP [ECX],ESI`);
+// the C body below was installed DIRECTLY, so the live hook read `key` from [esp+4] —
+// caller stack garbage. The key then never matched, the function returned 0, and that NULL
+// propagated downstream to `RpClumpForAllAtomics` (0x004e66d0), which does
+// `MOV EAX,[EAX+8]` on it: AV 0xC0000005 at eip=0x004e66db with eax=0, t≈71 s.
+// Same class as crashers #3/#5/#6 and 0x0047bc90 — note 2854245f called 0x0042add0 and
+// 0x0047bc90 "the last two register-arg ABI suspects"; that was an OVERCLAIM, this is a third.
+// Register preservation: the original clobbers EAX/ECX/EDX (0x0041f330 writes EDX,
+// 0x0041f33c writes ECX) and preserves ESI/EBX/EDI/EBP — exactly what __cdecl gives the C
+// body, so a plain marshalling shim suffices here (no EDX save/restore needed, unlike
+// Match47bc90_RegAbi / Find42ad90_RegAbi).
+// The C body KEEPS its stack ABI for re/frida/hooks_registry.py (arg_type esi_global_search
+// sets ESI on the ORIGINAL side only); the INSTALLED hook is the naked shim below.
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Search41f330(std::uint32_t key) {
     int count = *reinterpret_cast<int*>(0x005f5fe0);
     if (count <= 0) return 0;
@@ -1309,7 +1325,16 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Search41f330(std::uint32_
     }
     return 0;
 }
-RH_ScopedInstall(Search41f330, 0x0041f330);
+// Register-ABI shim — this, NOT Search41f330, is installed at 0x0041f330.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Search41f330_RegAbi(void) {
+    __asm {
+        push esi            // key (the original reads it from ESI)
+        call Search41f330
+        add  esp, 4
+        ret
+    }
+}
+RH_ScopedInstall(Search41f330_RegAbi, 0x0041f330);  // ABI fixed 2026-07-27 (was __cdecl -> ~71 s AV)
 
 // 0x0048ebc0 — byte-verified indexed-global signed division with high clamp:
 //   ecx=[esp+4]*0x488; eax=8; cdq; idiv [ecx+0x76d994]; if(eax>=8) eax=8; return eax.
