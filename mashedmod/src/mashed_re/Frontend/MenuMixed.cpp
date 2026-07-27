@@ -556,17 +556,33 @@ RH_ScopedInstall(MenusLapTimeCmp, 0x0042ed70);  // re-enabled 2026-05-24 c3-fron
 // ref: re/analysis/promote_c2_vehicle_lowrva/0x00408a70.md
 // ---------------------------------------------------------------------------
 
-// wprintf IAT thunk address (cited via FID_conflict__wprintf at 0x00408a70 body).
-// The actual format string and wprintf call RVA in body not independently known;
-// we forward through IAT thunk at 0x004a3220 (observed thunk address).
-// [UNCERTAIN U-2169 carried]
-static constexpr std::uintptr_t kWprintfThunk = 0x004a3220u;
-static auto* const s_wprintf =
-    reinterpret_cast<int(__cdecl*)(const wchar_t*, ...)>(kWprintfThunk);
-
-// Wide format string literal — matches the string in the original at body.
-// "put precisepos %d,%f\n" (cited from analysis note 0x00408a70.md).
-static const wchar_t kFmtPrecisePos[] = L"put precisepos %d,%f\n";
+// BUGFIX 2026-07-27 — THE ~72 s RUNTIME AV. Both the callee address and the string
+// type here were wrong; the comment that stood here admitted the address was only
+// "observed" and "not independently known", and it was in fact a guess.
+//
+// `0x004a3220` is NOT a thunk. It is the middle of `FUN_004a31f3`
+// (body 0x004a31f3..0x004a3257), so CALLing it executed the tail bytes of
+// `0x004a321e ADD ESI,0x4` as `04 3b` (ADD AL,0x3b) and then decoded
+// `0x004a3221 CMP ESI,EDI` (`3b f7`) mid-way as `f7 72 ed` = DIV dword ptr [EDX-0x13].
+// With EDX holding a float bit pattern (0x3f966666) that reads 0x3f966653 — exactly the
+// observed fault: AV 0xC0000005 at eip=0x004a3222, 4/4 runs, byte-identical registers.
+//
+// Ground truth from the SHA-anchored exe (0x00408a70 body):
+//   0x00408a7e FLD dword [ESP+0xc] / 0x00408a85 FSTP qword [ESP]   (float -> double)
+//   0x00408a88 PUSH ESI                                            (param_1)
+//   0x00408a89 PUSH 0x5cca5c                                       (format string)
+//   0x00408a8e CALL 0x004a2cbd                                     (the real callee)
+//   0x00408a97 ADD ESP,0x10                                        (__cdecl, 16 bytes)
+// `0x004a2cbd` is a NARROW CRT printf (SEH prolog; stdout FILE* at 0x00616110), and the
+// bytes at 0x005cca5c are ASCII "put precisepos %d,%f\n" — NOT wide. The previous code
+// passed a `wchar_t*` literal, so even a correct address would have misformatted.
+// Both halves of U-2169's "format string / call RVA not known" are now RESOLVED.
+//
+// Verbatim fix: call the real printf through the original's own format-string pointer.
+static constexpr std::uintptr_t kPrintf      = 0x004a2cbdu;  // 0x00408a8e CALL target
+static constexpr std::uintptr_t kFmtPrecisePos = 0x005cca5cu; // 0x00408a89 PUSH operand
+static auto* const s_printf =
+    reinterpret_cast<int(__cdecl*)(const char*, ...)>(kPrintf);
 
 // 0x00408a70
 extern "C" __declspec(dllexport) std::uint32_t __cdecl FrontendC2RoundI(
@@ -577,8 +593,11 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl FrontendC2RoundI(
         return 0u;
     }
 
-    // Debug print (cited at 0x00408a70 body: wprintf("put precisepos %d,%f\n",...))
-    s_wprintf(kFmtPrecisePos, param_1, static_cast<double>(param_2));
+    // Debug print, verbatim: printf(0x005cca5c, param_1, (double)param_2)
+    // (0x00408a89 PUSH 0x5cca5c / 0x00408a8e CALL 0x004a2cbd). The float is promoted to
+    // double exactly as the original's FLD/FSTP qword pair does.
+    s_printf(reinterpret_cast<const char*>(kFmtPrecisePos),
+             param_1, static_cast<double>(param_2));
 
     // FPU round: push param_2 onto x87 stack, call FUN_004a2c48.
     // The original pushes param_2 via FLD before the CALL; FUN_004a2c48 reads ST0.
