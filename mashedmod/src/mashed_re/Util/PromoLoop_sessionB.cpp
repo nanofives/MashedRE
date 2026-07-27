@@ -2022,12 +2022,26 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Match47bc90(std::uint8_t*
 // Register-ABI shim — this, NOT Match47bc90, is installed at 0x0047bc90.
 // The original clobbers only EAX/ECX and preserves everything else; __cdecl gives us
 // EBX/ESI/EDI callee-saved, so the shim is convention-compatible. Return stays in EAX.
+//
+// EDX FIX 2026-07-27 — ROOT CAUSE of the flaky ~71 s runtime AV. The reasoning above
+// covered EBX/ESI/EDI but NOT EDX, which __cdecl makes volatile while the original
+// PRESERVES it: 0x0047bc90..0x0047bcb3 only ever READS [EDX+0x10] / [EDX+0x14] and never
+// writes EDX. The compiled C body does write it (`mov edx,[eax+0x14]`), and the sole
+// caller FUN_0047bcc0 carries EDX across this call inside its half-edge match loop:
+//   0x0047bd9b LEA EDX,[ESI+0x18] / 0x0047bda0 MOV EDI,[EDX] / 0x0047bda6 CALL 0x0047bc90
+//   / 0x0047bdc5 ADD EDX,0x18 / 0x0047bdc9 JNZ 0x0047bda0
+// so a clobbered EDX turns the loop pointer into the last-loaded e[0x14] word index.
+// Observed: AV 0xC0000005 reading 0x1c at eip=0x0047bda0 (e[0x14]==4, +0x18 == 0x1c) in
+// dumps MASHED.exe.31084 and MASHED.exe.6168, both at t≈71-74 s (attract-mode course load).
+// Save/restore EDX so the shim preserves exactly what the original preserves.
 extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Match47bc90_RegAbi(void) {
     __asm {
+        push edx            // preserve EDX — the original never writes it
         push edx            // e
         push esi            // s
         call Match47bc90
         add  esp, 8
+        pop  edx
         ret
     }
 }
@@ -2065,13 +2079,20 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Find42ad90(std::uint8_t* 
 // Marshals the original's EDX/EBX/EDI args onto the stack. EBX/ESI/EDI are callee-saved
 // under __cdecl so the C body preserves them exactly as the original does (the original
 // only pushes/pops ESI, 0x0042ad9a / 0x0042adbe). Return value stays in EAX.
+//
+// EDX FIX 2026-07-27 — same defect class as 0x0047bc90 (which produced the ~71 s AV).
+// The original PRESERVES EDX: it is the array base, addressed as [EDX + ECX*4 + 4] at
+// 0x0042adaf and 0x0042adc0, and never written. The compiled C body does write it
+// (`lea edx,[edi+4]` / `add edx,4`). Fixed on disassembly evidence, not on a crash.
 extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Find42ad90_RegAbi(void) {
     __asm {
+        push edx            // preserve EDX — the original never writes it
         push edi            // n
         push ebx            // key
         push edx            // arr
         call Find42ad90
         add  esp, 0Ch
+        pop  edx
         ret
     }
 }

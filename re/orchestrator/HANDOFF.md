@@ -1,82 +1,131 @@
-# Mashed RE orchestrator — resume point (updated 2026-07-27 03:45 UTC)
+# Mashed RE orchestrator — resume point (updated 2026-07-27 ~10:30 UTC)
 
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions. Maximize account2.
 
-## LANE A (fix)
+Prior phase committed as `27a376d2` (NOT pushed). This phase's work is uncommitted (see bottom).
 
-- **Current plan item:** A2 — correct the boot-AV stability **overclaim** and measure the real
-  survival window of the full 2402-hook `.asi`. (Chosen over B5e because memory records B5e as
-  PORT COMPLETE + merged at `021a9f38`; the account2 brief calling B5e "the open next big lane"
-  was **stale** — do not re-open it on that basis.)
-- **State: DONE this phase.** Measured, not estimated. `scripts/observe_runtime.ps1 95`, plain
-  launch, no Frida, hooks INSTALLED via the dinput8 proxy, 3 runs:
-  - run1 **SURVIVED 96 s** (ended by our own harness timeout kill, `0xFFFFFFFF` — not a crash)
-  - run2 **AV `0xC0000005` at t=74.4 s**
-  - run3 **AV `0xC0000005` at t=71.7 s**
-  => 2 of 3 AV in a tight 71.7–74.4 s window. The "survives 90 s ×3" claim is **FALSE** and stays
-  retracted. The pc=0x44 boot AV **is** genuinely closed (all 3 runs held the menu 70+ s with the
-  full hook set). The surviving defect is the separate flaky ~71 s AV.
-  CHANGELOG row `2026-07-27 MEASUREMENT boot/runtime survival`. Logs `log/runtime_timeline.txt`.
-- **Next concrete step:** root-cause the ~71 s AV. **Nothing is known about its cause yet** — no
-  dump was parsed this session. Start dump-first:
-  `py -3.12 scripts/parse_minidump.py` on the newest dump, then bisect. Memory
-  `project_71s_av_open` says it pre-dates `c140d1d3` and is invisible to the 16 s bisect.
-- **Not blocking promotions** — `run_diff` finishes far inside the window (both Lane-B diffs ran
-  clean this phase).
-- **Evidence/branch:** `main`, uncommitted (see below). No worktree used.
+## LANE A (fix) — the ~71 s runtime AV
+
+### DONE this phase
+
+**1. Dump-first root-cause.** Archived CrashDumps (it was AT the 10-dump retention cap) to
+`%LOCALAPPDATA%\CrashDumps\_archived_by_claude\71s_av_2026-07-27\`. Four MASHED dumps, two
+signatures, each reproducing twice:
+- `.31084` / `.6168` — `eip=0x0047bda0`, read AV at `0x1c`, `eax=0`, `ecx=6`
+- `.12828` / `.26728` — `eip=0x736ef96a` (DLL), read AV at `0x1c`
+Shared ret-chain `0x0047bdab → 0x0047bfd5 → 0x0047c130`.
+
+**2. First crasher FOUND and FIXED — EDX-clobber ABI defect (a NEW crasher class).**
+`FUN_0047bcc0` (half-edge adjacency builder, *not* hooked) carries EDX across its call to
+`0x0047bc90` (which IS hooked):
+```
+0x0047bd9b LEA EDX,[ESI+0x18] / 0x0047bda0 MOV EDI,[EDX] / 0x0047bda6 CALL 0x0047bc90
+0x0047bdc5 ADD EDX,0x18       / 0x0047bdc9 JNZ 0x0047bda0
+```
+The original `0x0047bc90`–`0x0047bcb3` (15 instrs) only READS `[EDX+0x10]`/`[EDX+0x14]` — it
+**preserves EDX**. Our `Match47bc90_RegAbi` naked shim marshalled EDX as an argument but never
+restored it, and the compiled C body writes it (`mov edx,[eax+0x14]`, asi rva `0x2fadd`).
+Fault arithmetic confirms: EDX is left holding `e[0x14]`, a MOVZX'd word index; `4 + 0x18 ==
+0x1c` — exactly the reported fault address.
+
+**The systemic gap: all three `_RegAbi` shim comments reason only about EBX/ESI/EDI being
+callee-saved under `__cdecl` and never consider EDX/ECX.**
+- `Match47bc90_RegAbi` — FIXED (push/pop EDX).
+- `Find42ad90_RegAbi` — FIXED, same latent defect. Original `0x0042ad90` preserves EDX (array
+  base, `[EDX+ECX*4+4]` at `0x0042adaf`/`0x0042adc0`, never written); compiled body does
+  `lea edx,[edi+4]` / `add edx,4`. Fixed on disassembly evidence, not on a crash.
+- `Find42add0_RegAbi` — checked, **correct as-is**: its original clobbers EDX itself
+  (`0x0042add8 MOV EDX,[EAX+0x67ed38]`).
+Both targets rebuilt clean; emitted shims verified to push/pop EDX.
+
+**3. The fix works but did NOT close the AV — it exposed the next layer.**
+Post-fix the `0x0047bda0` fault is GONE (0/2 fresh dumps). New fault, 2/2:
+`eip=0x004e66db` in **`RpClumpForAllAtomics`** (`0x004e66d0`–`0x004e6708`, a NAMED RW fn),
+`MOV EAX,[EAX+8]` with `eax=0` — **the caller passed a NULL clump**. Caller `FUN_0042a470`
+(platform-prefixed asset path builder, returns 1=found / 0=not-found). Neither
+`FUN_0042a470` nor `RpClumpForAllAtomics` is hooked (both C2/`mapped`).
+
+**4. PROVEN hook-caused — never tested before this phase.** Same harness, 95 s:
+
+| condition | runs | result |
+|---|---|---|
+| hooks INSTALLED (post-fix) | 5 | **5/5 AV** `0xC0000005` at 71.7–73.0 s |
+| `MASHED_RE_NO_AUTO_HOOK=1` | 3 | **0/3** — all survived to the 96 s harness kill (`0xFFFFFFFF`) |
+
+The ~71 s AV is a **hook regression, not a stock-game bug**. Memory `project_71s_av_open`'s
+"pre-existing" framing is **corrected**. Caveat: stock N=3; the hooked side is now 5/5
+(deterministic, previously ~75% flaky), so the split is strong but stock deserves more runs.
+`verify/scene_t071.png` shows menu chrome at t=71, not a 3D scene.
+
+### NEXT concrete step
+
+Bisect the hook set for the `RpClumpForAllAtomics` NULL-clump crasher via `MASHED_HOOK_LO` /
+`MASHED_HOOK_HI` (`Core/HookSystem.cpp:132-182`).
+**The 16 s `bisect_hook_index` CANNOT see this fault** — it fires at ~72 s. Each step needs
+`-Seconds 90`; because the hooked side is now 5/5 deterministic, 2 runs/step should suffice
+(previously 3+ at ~75% flake). Budget ~7 steps.
+Prior: look first for a hook whose ABI or return value feeds an asset lookup — `FUN_0042a470`
+returns found/not-found and the NULL clump is downstream of it.
 
 ## LANE B (promote)
 
-- **Active pipeline lane:** new `arg_type` handler (ROI #1). Yield **2/2 = 100%**, far above the
-  ~30% bar.
-- **DONE this phase: `0x004c4270` + `0x004c42d0` C2 → C3.**
-  - Authored new handler **`st0_ret_mat3_ptr`** in `re/frida/diff_template.js` — pointer-seeded
-    0x30 scratch, nine f32 at `{0x00,04,08, 0x10,14,18, 0x20,24,28}`, pads zeroed, ST0 captured as
-    a 64-bit double fingerprint. `ret` MUST be `'double'`, never `void`.
-  - Reimpl `mashedmod/src/mashed_re/Math/MatrixOrthoResidual.cpp`, verbatim inline `__asm`, wired
-    into **both** `build.bat` and `asi_sources.rsp`. Both targets build clean.
-  - `log/diff_mat3_ortho_residual_4c4270.csv` 10/10 bit-identical (6 distinct fingerprints);
-    `log/diff_mat3_norm_residual_4c42d0.csv` 10/10 (9 distinct). Hook-BYPASSED synthetic A/B
-    ⇒ **C3, NOT C4** (deliberately not claimed).
-- **Major finding — a wrong label was propagating.** `frontier_shape_refinement_2026-07-24.md:27-29`
-  labels `0x004c4270/42d0/4360` "RwV3d bbox Y/X/Z accessors". **All three retracted.** They are not
-  accessors: 4270/42d0 take one pointer arg and compute an `M*transpose(M)==I` orthonormality error
-  metric (4270 = off-diagonal/orthogonality, 42d0 = diagonal/normality vs the `1.0f` at
-  `0x005cc320`). `re/PROMOTION_QUEUE.md:285` had the disproof **48 days before** that plan was
-  written and the plan never reconciled it. Plan doc now carries an inline correction block.
-  Full derivation: `re/analysis/render/0x004c4270_0x004c42d0_matrix_residuals.md`.
-- **Next concrete step (pick one):**
-  1. `0x004c4360` — U-9022. Different shape (`SUB ESP,0x18`, reads `+0x30/+0x34/+0x38`). Needs full
-     disasm; Ghidra lift quality there is unverified. Would likely need its own handler.
-  2. `FUN_004c4530` — the shared C2 caller. Decompiling it resolves **U-9021** and probably names
-     the whole cluster, which may cascade several render rows.
-  3. Sweep for other `st0_ret_mat3_ptr`-shaped leaves now that the handler exists — that is how the
-     ROI-#1 lane pays off beyond the 2 rows already landed.
+### DONE — U-9021 and U-9022 both resolved
+
+Decompiled `FUN_004c4530`, the shared C2 caller. It is **`RwMatrixOptimize`**: takes the matrix
+plus a 3-float tolerance triple (defaulting to `DAT_007d4028 + 0xc + DAT_007d3ff8`), runs the
+three residual leaves, writes the RwMatrix flag word at `*(uint*)(param_1+0xc)`, and **returns
+`param_1`**.
+
+| RVA | tolerance slot | flag bit | metric |
+|---|---|---|---|
+| `0x004c42d0` | `param_2[0]` | `0x1` NORMAL | normality / diagonal |
+| `0x004c4270` | `param_2[1]` | `0x2` ORTHOGONAL | orthogonality / off-diagonal |
+| `0x004c4360` | `param_2[2]` | `0x20000` IDENTITY | identity deviation |
+
+Flag constants pinned from first-party prior work, not external memory:
+`re/analysis/bucket_004c4270/0x004c4670.md:47-48`, `Math/RwMatrixRotateInner.cpp:47`.
+This **independently confirms** last phase's retraction of the "RwV3d bbox accessor" labels —
+the slot order assigns 42d0→normality and 4270→orthogonality exactly as the byte-level
+derivation concluded. Written up in
+`re/analysis/render/0x004c4270_0x004c42d0_matrix_residuals.md` ("Caller resolution" section).
+[UNCERTAIN] `0x004c4360`'s byte-level formula is still underived (`SUB ESP,0x18` frame, reads
+`+0x30/+0x34/+0x38`); only its role is fixed.
+
+### U-9023 — the band IS over-broad (account2 sweep, $0.95)
+
+`0x5c0000–0x5c8000` is not CRT-only:
+- `scripts/promote_frontier.py:86-93` `LIBRARY_BANDS` silently drops every RVA in the range from
+  the C3 frontier. `scripts/bulk_add_library_residue.py:64` uses a DIFFERENT upper bound
+  (`0x5d0000`) for the same named band — the two disagree with each other.
+- The band's own source batch note says only **56/80 are CRT library-residue**.
+- `hooks.csv:2907` `005c4d30 CondGet5c4d30` is already **C3 with a clean Frida diff** inside the
+  band — promoted 2026-06-13, two days BEFORE the band was added (2026-06-15).
+- `re/analysis/bucket_005c1d63/0x005c47e0.md` records `kind: GAME`,
+  `library_match: (none — game code)` for `FUN_005c47e0`, six weeks before the band existed.
+Conclusion: the band has been silently excluding first-party rows. **Needs a decision** —
+narrowing `LIBRARY_BANDS` changes candidate generation project-wide.
 
 ## OPEN GATES / STOP-AND-ASK
 
-- **D2 renderer commitment** — OPEN. RW-subset verbatim (770 rows + 217 stubs) vs adopting `librw`.
-  Confirm before sinking M3/WS-E tokens.
-- **D4 airborne bit-identity** — OPEN. Accept the A5 airborne 1-ULP float10 residual (U-8991) as
-  C4-grounded, or invest in a naked-asm float10 shim.
-- D1 (Option A), D3 (MP out for v1.0), D5 (M1-first) resolved — not blocking.
-- **New this phase — needs a decision:** U-9023. `FUN_005c47e0` calls these first-party render
-  leaves yet sits inside `0x5c0000–0x5c8000`, the range memory `feedback_library_skip_bands` calls
-  the MSVC CRT band. That band is used to auto-exclude promotion candidates, so if its bound is
-  wrong it has been silently skipping first-party rows. Worth a cheap check.
+- **D2 renderer commitment** — OPEN (RW-subset verbatim vs `librw`).
+- **D4 airborne bit-identity** — OPEN (accept A5 1-ULP float10 residual U-8991 vs naked-asm shim).
+- **U-9023** — narrow the `0x5c0000–0x5c8000` band in `promote_frontier.py`? Evidence above.
+- **Push** — `main` is ahead of `origin/main` by `27a376d2` plus this phase's work.
 
 ## LOCKS / WORKTREES HELD
 
-None. Ghidra `Mashed_pool0` closed and released; `.pool_slot` removed. No worktrees. No stray
-MASHED processes (only the 3 this phase spawned, all exited).
+Ghidra `Mashed_pool0` **still open** (MCP session `53ef0c83…`); `.pool_slot` written at repo
+root. Release with `bash scripts/ghidra_pool.sh release 0` and remove `.pool_slot`.
+No worktrees. All MASHED processes spawned this phase exited (harness-tracked).
 
 ## UNCOMMITTED STATE
 
-**Clean.** This phase's work is committed as **`27a376d2`** on `main` (12 files, +672/-117):
-both C3 promotions, the `st0_ret_mat3_ptr` handler, `Math/MatrixOrthoResidual.cpp`, the build
-wiring, the tracker transaction (hooks.csv / UNCERTAINTIES / CHANGELOG), the plan-doc label
-retraction, and this file.
-
-**NOT PUSHED** — `main` is 1 commit ahead of `origin/main`. Push only if the user asks.
+```
+ M mashedmod/src/mashed_re/Util/PromoLoop_sessionB.cpp          (EDX fix, 2 shims)
+ M re/analysis/render/0x004c4270_0x004c42d0_matrix_residuals.md (RwMatrixOptimize section)
+ M re/orchestrator/HANDOFF.md
+```
+Tracker updates (U-9021 / U-9022 / U-9023, CHANGELOG) NOT yet applied — must go through
+`re-classify`.
 
 TO RESUME: paste this whole block into a new account3 session with the orchestrator prompt.

@@ -93,10 +93,53 @@ Row 0 uses a different x87 register schedule in the original (`FMULP ST(3)` / `F
 trigger, assert) is not derivable from these leaves. Path to resolution: decompile the
 shared caller `FUN_004c4530`.
 
-[UNCERTAIN] `0x004c4360` is **not** part of this pair. Its bytes open
-`83ec18` (`SUB ESP,0x18`) with a stack frame and it reads additional fields at `+0x30`,
-`+0x34`, `+0x38`, so it is a different shape. It is not ported and its semantics remain
-undetermined. Path to resolution: full disasm of `0x004c4360`.
+[UNCERTAIN — RESOLVED 2026-07-27, see "Caller resolution" below] `0x004c4360` is **not** part
+of this pair. Its bytes open `83ec18` (`SUB ESP,0x18`) with a stack frame and it reads
+additional fields at `+0x30`, `+0x34`, `+0x38`, so it is a different shape. It is not ported
+and its byte-level semantics remain undetermined; its *role* is now fixed by the caller.
+
+## Caller resolution — `FUN_004c4530` is `RwMatrixOptimize` (2026-07-27)
+
+Decompiling the shared caller closes **U-9021** and fixes the role of all three leaves.
+`FUN_004c4530(int param_1, float *param_2)` (Ghidra, body `0x004c4530`–`0x004c45e2`):
+
+- `param_2 == NULL` → defaults to `DAT_007d4028 + 0xc + DAT_007d3ff8` (an RW-globals default
+  tolerance triple).
+- calls `FUN_004c42d0(param_1)`, compares the `float10` result against `*param_2` → `bVar1`
+- calls `FUN_004c4270(param_1)`, compares against `param_2[1]` → `bVar2`
+- calls `FUN_004c4360(param_1)`, compares against `param_2[2]` (only when neither of the
+  first two already failed) → together with `bVar1`/`bVar2` gives `bVar3`
+- writes the flag word at `*(uint *)(param_1 + 0xc)`:
+  `bVar1` clears/sets bit `0x1`; `bVar2` clears/sets bit `0x2`;
+  `bVar3` sets `0x20000`, else clears it (`& 0xfffdffff`)
+- **returns `param_1`** (the matrix itself)
+
+Flag constants are already pinned on this binary by prior first-party work — no external
+guessing: `0x20000` = `rwMATRIXINTERNALIDENTITY` and low bits `0x3` =
+`rwMATRIXTYPEORTHONORMAL` (= NORMAL | ORTHOGONAL), per
+`re/analysis/bucket_004c4270/0x004c4670.md:47-48` and
+`mashedmod/src/mashed_re/Math/RwMatrixRotateInner.cpp:47`.
+
+Signature, tolerance triple, flag writes at `+0xc`, and return-the-matrix together match
+RenderWare's `RwMatrixOptimize(RwMatrix*, const RwMatrixTolerance*)`, whose tolerance struct
+is `{normal, orthogonal, identity}` in that order. Resulting role assignment:
+
+| RVA | tolerance slot | flag bit | metric |
+|---|---|---|---|
+| `0x004c42d0` | `param_2[0]` | `0x1` (NORMAL) | normality / diagonal residual |
+| `0x004c4270` | `param_2[1]` | `0x2` (ORTHOGONAL) | orthogonality / off-diagonal residual |
+| `0x004c4360` | `param_2[2]` | `0x20000` (IDENTITY) | identity-deviation residual |
+
+This **independently confirms** the retraction recorded above: the slot order assigns
+`0x004c42d0` to normality and `0x004c4270` to orthogonality, exactly as the byte-level
+derivation concluded, and is incompatible with the retracted "RwV3d bbox Y/X/Z accessor"
+labels (an accessor has no tolerance argument and writes no flag word).
+
+**U-9022** (`0x004c4360`) is resolved at the role level: it is the identity-deviation metric
+feeding `rwMATRIXINTERNALIDENTITY`. [UNCERTAIN] Its *byte-level* formula is still
+underived — the `SUB ESP,0x18` frame and the `+0x30/+0x34/+0x38` reads are not yet explained.
+Path to resolution: full disasm of `0x004c4360` plus its own `arg_type` handler (its shape
+differs from `st0_ret_mat3_ptr`, which is pointer-seeded with no stack frame).
 
 ## Call graph (Ghidra, 2026-07-27)
 
