@@ -2014,6 +2014,18 @@ RH_ScopedInstall(Match47bc90, 0x0047bc90);
 // ===== round 162 ===== (EDX/EBX/EDI register-arg array search)
 // 0x0042ad90 — u32 fn(EDX=arr, EBX=key, EDI=n): if(arr==0) return -1; walk arr[ecx] (term
 //   0xff070000); count matches==key in esi; when esi==n at a match, return arr[ecx+1]; else -1.
+//
+// BUGFIX 2026-07-26 — ABI MISMATCH; FIFTH confirmed boot-AV crasher (index 951;
+// MASHED_HOOK_ONLY=0x0042AD90 alone: 3/3 AV 0xC0000005 @ 8.15-8.42 s).
+// The original takes NOTHING on the stack: 0x0042ad90 `TEST EDX,EDX`, 0x0042ada6
+// `CMP EAX,EBX`, 0x0042adaa `CMP EDI,ESI`. The game's callers therefore push nothing,
+// and this __cdecl body read three words of caller stack garbage as (arr,key,n) and
+// walked a wild pointer looking for the 0xff070000 sentinel.
+// Same class as crasher #3 (0x0042ac00 MenuGroupCount) — see that commit.
+//
+// The C body below KEEPS its stack ABI because re/frida/hooks_registry.py drives the
+// export `Find42ad90` with stack args (arg_type edx_ebx_edi_find sets the registers on
+// the ORIGINAL side only). The INSTALLED hook is the naked marshalling shim below it.
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Find42ad90(std::uint8_t* arr, std::uint32_t key, std::uint32_t n) {
     if (arr == 0) return 0xffffffff;
     std::uint32_t* a = reinterpret_cast<std::uint32_t*>(arr);
@@ -2026,7 +2038,22 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Find42ad90(std::uint8_t* 
     }
     return 0xffffffff;
 }
-RH_ScopedInstall(Find42ad90, 0x0042ad90);
+
+// Register-ABI shim — this, NOT Find42ad90, is what gets installed at 0x0042ad90.
+// Marshals the original's EDX/EBX/EDI args onto the stack. EBX/ESI/EDI are callee-saved
+// under __cdecl so the C body preserves them exactly as the original does (the original
+// only pushes/pops ESI, 0x0042ad9a / 0x0042adbe). Return value stays in EAX.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Find42ad90_RegAbi(void) {
+    __asm {
+        push edi            // n
+        push ebx            // key
+        push edx            // arr
+        call Find42ad90
+        add  esp, 0Ch
+        ret
+    }
+}
+RH_ScopedInstall(Find42ad90_RegAbi, 0x0042ad90);  // ABI fixed 2026-07-26 (was __cdecl -> live boot AV)
 
 // ===== round 163 ===== (EBX/EDI register-arg search, arr from globals)
 // 0x0042add0 — u32 fn(EBX=key, EDI=n): idx=*0x67e9f8; arr=*(u8**)(idx*0x40 + 0x67ed38);
@@ -4540,6 +4567,14 @@ RH_ScopedInstall(BitRangeFill5c95b0, 0x005c95b0);
 // Behavioral C reimpl as plain __cdecl(p) (the diff drives the original via an ESI
 // trampoline and the reimpl via a stack-arg pointer — same observable buffer writes).
 // memset is inlined (0x6c is a multiple of 4); identical to ZeroFillWrapper(p,0,0x6c).
+//
+// BUGFIX 2026-07-26 — ABI MISMATCH; SIXTH confirmed boot-AV crasher (index 1023;
+// MASHED_HOOK_ONLY=0x00418A00 alone: 3/3 AV 0xC0000005 @ 6.88-7.23 s). The original
+// reads its pointer ONLY from ESI (0x00418a02 `PUSH ESI`, 0x00418a0d/0x00418a10/
+// 0x00418a18.. `MOV [ESI+n]`) and the game's callers push nothing, so this __cdecl body
+// took a caller stack-garbage word as `p` and wrote 0x6c bytes through it.
+// The C body keeps its stack ABI for the Frida harness; the INSTALLED hook is the naked
+// ESI shim below. Same class as crashers #3 (0x0042ac00) and #5 (0x0042ad90).
 extern "C" __declspec(dllexport) void __cdecl StructInit418a00(unsigned char *p)
 {
     for (unsigned int i = 0; i < 0x6c; i += 4)
@@ -4551,7 +4586,17 @@ extern "C" __declspec(dllexport) void __cdecl StructInit418a00(unsigned char *p)
     p[0x12] = 0xFF;
     p[0x13] = 0xFF;
 }
-RH_ScopedInstall(StructInit418a00, 0x00418a00);
+
+// Register-ABI shim — this, NOT StructInit418a00, is installed at 0x00418a00.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl StructInit418a00_RegAbi(void) {
+    __asm {
+        push esi                // p (register arg in the original)
+        call StructInit418a00
+        add  esp, 4
+        ret
+    }
+}
+RH_ScopedInstall(StructInit418a00_RegAbi, 0x00418a00);  // ABI fixed 2026-07-26 (was __cdecl -> live boot AV)
 
 // 0x00421060 FUN_00421060 (gameplay, StructZero421060) — NEAR-LEAF zero-init, ESI=arg.
 //   memset(p, 0, 8)                       (0x00421060 push 8; push esi; call C3 ZeroFillWrapper 0x4b6520)
@@ -4570,7 +4615,24 @@ extern "C" __declspec(dllexport) void __cdecl StructZero421060(unsigned char *p)
     *(unsigned int *)(p + 0x10) = 0u;
     *(unsigned int *)(p + 0x14) = 0u;
 }
-RH_ScopedInstall(StructZero421060, 0x00421060);
+
+// Register-ABI shim — this, NOT StructZero421060, is installed at 0x00421060.
+// ABI fixed 2026-07-26 alongside crasher #6 (0x00418a00), which is the identical
+// pattern. The original reads its pointer ONLY from ESI (0x00421062 `PUSH ESI`,
+// 0x0042106d/0x00421070/0x00421073/0x00421076 `MOV [ESI+n],EAX`) and pushes nothing,
+// so the __cdecl install was reading a caller stack-garbage word as `p`. This one does
+// NOT AV alone (0x00421060 isolated: 3/3 BOOTS 16 s) — it was fixed on the disassembly
+// evidence, not because it crashed; a wrong ABI that happens to land on writable
+// garbage is still a wrong ABI.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl StructZero421060_RegAbi(void) {
+    __asm {
+        push esi                // p (register arg in the original)
+        call StructZero421060
+        add  esp, 4
+        ret
+    }
+}
+RH_ScopedInstall(StructZero421060_RegAbi, 0x00421060);
 
 // ===== round 248 (2026-06-23) — NEAR-LEAF lane: vehicle-slot-getter family =====
 // Four C2 near-leaves whose ONLY callees are the pure bounds-checked static-table

@@ -24,6 +24,15 @@
 // SIGNED count > 0. Pure leaf (no callees). The "collect" companion to the
 // FUN_004e89a0 RenderWare scene-graph element-pointer "forall".
 //
+// RETURNS int (count). `MOV EAX,[EDX+0x24]` at 0x004b40c4 loads the count into
+// EAX before any branch, and NO path afterwards clobbers EAX (the loop counter
+// is ECX, the scratch is EDI) — so EAX still holds the count at the RET at
+// 0x004b40e7. That return value is load-bearing: it propagates through the
+// tail-JMP thunk FUN_004b4130 (0x004b413b) and the wrapper FUN_004b4140, and
+// FUN_004b5260 consumes it at 0x004b5281 (`MOV ESI,EAX`) as the iteration count
+// of the write loop at 0x004b52a3..0x004b52af. Declaring this `void` left EAX
+// undefined -> garbage count -> AV WRITE at 0x004b52ac. [2026-07-26 crasher #4]
+//
 // ASM (0x004b40c0..0x004b40e6):
 //   MOV  EDX,[ESP+4]        ; param_1
 //   MOV  EAX,[EDX+0x24]     ; count = *(param_1+0x24)
@@ -45,11 +54,11 @@
 //   POP  EDI
 //  end:
 //   POP  ESI
-//   RET                     ; no immediate -> __cdecl
+//   RET                     ; no immediate -> __cdecl; EAX = count
 // ref: re/analysis/bucket_powerups_camera_particle_0044d5e0_004b4140/0x004b40c0.md
 // ─────────────────────────────────────────────────────────────────────────────
 extern "C" __declspec(dllexport)
-void __cdecl RenderElemArrayCopy(int param_1, int param_2) {
+int __cdecl RenderElemArrayCopy(int param_1, int param_2) {
     const int count = *reinterpret_cast<const int*>(param_1 + 0x24);
     if (param_2 != 0) {
         for (int i = 0; i < count; ++i) {  // signed; count <= 0 -> no copy
@@ -58,6 +67,7 @@ void __cdecl RenderElemArrayCopy(int param_1, int param_2) {
                     *reinterpret_cast<const int*>(param_1 + 0x20) + i * 4);
         }
     }
+    return count;  // EAX at 0x004b40e7
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -6,7 +6,7 @@
 
 // Callee hook — C3 reimpl of FUN_004b40c0 (RenderElemArrayCopy), installed in
 // Render/RenderLeaves_ae2.cpp.
-extern "C" void __cdecl RenderElemArrayCopy(int param_1, int param_2);
+extern "C" int __cdecl RenderElemArrayCopy(int param_1, int param_2);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004b4140  FUN_004b4140  RenderElemArrayCopyAll
@@ -24,18 +24,24 @@ extern "C" void __cdecl RenderElemArrayCopy(int param_1, int param_2);
 //   PUSH 0x0               ; arg2 = 0  (copy-destination = null)
 //   PUSH EAX               ; arg1 = p
 //   CALL 0x004b4130        ; FUN_004b4130(p, 0) -> adjustor -> FUN_004b40c0(p[0x18], 0)
-//   ADD  ESP,0x8           ; cdecl caller cleanup
-//   RET                    ; no immediate -> __cdecl
+//   ADD  ESP,0x8           ; cdecl caller cleanup (EAX from the callee survives)
+//   RET                    ; no immediate -> __cdecl; EAX = (p[0x18])[0x24]
+//
+// RETURNS int. Nothing between the CALL at 0x004b4147 and the RET at 0x004b414f
+// touches EAX (ADD ESP,0x8 only), so this forwards FUN_004b40c0's EAX = count.
+// Sole caller FUN_004b5260 consumes it at 0x004b5281 (`MOV ESI,EAX`) as the
+// iteration count of its write loop — declaring this `void` was crasher #4
+// (AV WRITE at 0x004b52ac). [2026-07-26]
 //
 // ref: re/analysis/bucket_powerups_camera_particle_0044d5e0_004b4140/0x004b4140.md
 // ─────────────────────────────────────────────────────────────────────────────
 extern "C" __declspec(dllexport)
-void __cdecl RenderElemArrayCopyAll(int param_1)
+int __cdecl RenderElemArrayCopyAll(int param_1)
 {
     // Adjustor step: FUN_004b4130 reads s = param_1[0x18] before calling FUN_004b40c0
     const int s = *reinterpret_cast<const int*>(param_1 + 0x18);
     // FUN_004b40c0(s, 0): reads count from s+0x24; loop skipped because param_2==0
-    RenderElemArrayCopy(s, 0);
+    return RenderElemArrayCopy(s, 0);
 }
 
 RH_ScopedInstall(RenderElemArrayCopyAll, 0x004b4140);
