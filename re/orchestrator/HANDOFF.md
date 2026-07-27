@@ -57,15 +57,52 @@ The ~71 s AV is a **hook regression, not a stock-game bug**. Memory `project_71s
 (deterministic, previously ~75% flaky), so the split is strong but stock deserves more runs.
 `verify/scene_t071.png` shows menu chrome at t=71, not a 3D scene.
 
+**5. BISECTED and FIXED — `0x0041F330`, a THIRD register-arg ABI crasher.** Committed `1ed01345`.
+Nine bisect steps over the 1203-hook registry (`MASHED_HOOK_LO`/`HI`, 90 s, 2 runs/step),
+every split 2/2 in both directions, isolating registry **index 917 = `Search41f330`
+@ `0x0041F330`** — installed ALONE it reproduces 2/2; neighbours 918/919 alone are 0/2.
+The original reads its key from ESI and nothing from the stack (`0x0041f341 CMP [ECX],ESI`),
+but `RH_ScopedInstall` registered the plain `__cdecl` C body — whose own comment already said
+"ESI = search key". The live hook read `key` from `[esp+4]`, never matched, returned 0
+(`0x0041f350 XOR EAX,EAX`), and that NULL reached `RpClumpForAllAtomics`.
+Fixed with a naked ESI marshalling shim. No EDX save needed (the original clobbers EAX/ECX/EDX
+itself and preserves ESI/EBX/EDI/EBP — exactly what `__cdecl` gives the C body).
+
+**METHOD NOTE (reusable):** the bisect driver classified each step by **fault signature (eip)**,
+not by "did it crash". This mattered — partial hook sets produced two unrelated faults
+(`0x6f5bb3ac` in `[0,601)`; `0x0045bfb5` in `[915,917)`). A crash-vs-no-crash bisect would have
+gone down the wrong branch. Driver: `scratchpad/bisect_step.sh` (LO HI RUNS →
+POSITIVE/CONFOUND/NEGATIVE).
+
+**6. Acceptance: target fault CLOSED, but the ~71 s AV is NOT.** Full 1203-hook set, 95 s, 4 runs:
+`RpClumpForAllAtomics` AV **0/4** (gone). A DIFFERENT fault now appears **3/4** at ~72 s:
+write AV (`params[0]=1`) to `0x0cfcf000`, `eip` in a DLL (`0x6dc7b43c`), with **`0x004b6520`**
+(the memset-like ZeroFillWrapper) on the ret-chain. Third layer. NOT claimed as fixed.
+`StructInit418a00_RegAbi` / `StructZero421060_RegAbi` were checked and are correctly shimmed,
+so it is not those.
+
+### SYSTEMIC — register-ABI audit (account2) found 3 MORE of the same class
+
+`2854245f` called `0x0042add0` + `0x0047bc90` "the last two register-arg ABI suspects".
+**That was an overclaim.** Static audit of every register-oriented `arg_type` row vs its
+`RH_ScopedInstall` symbol found three more plain-`__cdecl` installs of register-arg originals:
+
+| RVA | symbol | decl → install | original's register args (verified by disasm) |
+|---|---|---|---|
+| `0x0045baa0` | `Search45baa0` | `PromoLoop_sessionB.cpp:1285 → :1295` | key in **ESI** (`0x45bab1 CMP ESI,[EAX]`) — sibling of the fixed `0x0041f330` |
+| `0x0041e170` | `Split41e170` | `PromoLoop_sessionB.cpp:1555 → :1564` | input **EAX** (`0x41e171 MOV ESI,EAX`), out-ptr **EDI** (`0x41e199/1af/1b2 MOV [EDI+n]`) |
+| `0x00477450` | `Init477450` | `PromoLoop_sessionB.cpp:1855 → :1865` | [UNCERTAIN] not yet disassembled to a `ret` |
+
+`0x0045baa0` is **independently corroborated**: the bisect's `[915,917)` step (indices 915+916,
+916 = `Search45baa0`) threw a CONFOUND AV at `0x0045bfb5`, in that same `0x45bxxx` region.
+[UNCERTAIN] the causal link — that step installed two hooks, so it is not isolated to 916.
+
 ### NEXT concrete step
 
-Bisect the hook set for the `RpClumpForAllAtomics` NULL-clump crasher via `MASHED_HOOK_LO` /
-`MASHED_HOOK_HI` (`Core/HookSystem.cpp:132-182`).
-**The 16 s `bisect_hook_index` CANNOT see this fault** — it fires at ~72 s. Each step needs
-`-Seconds 90`; because the hooked side is now 5/5 deterministic, 2 runs/step should suffice
-(previously 3+ at ~75% flake). Budget ~7 steps.
-Prior: look first for a hook whose ABI or return value feeds an asset lookup — `FUN_0042a470`
-returns found/not-found and the NULL clump is downstream of it.
+1. Fix the three audited suspects above (verify `0x00477450`'s registers by disasm first),
+   rebuild, re-run the 4-run acceptance.
+2. Then bisect the remaining ~72 s write-AV to `0x0cfcf000` with the same signature-classified
+   driver. Prior: something feeding a size/count into `0x004b6520`.
 
 ## LANE B (promote)
 
@@ -121,7 +158,7 @@ No worktrees. All MASHED processes spawned this phase exited (harness-tracked).
 ## UNCOMMITTED STATE
 
 ```
- M mashedmod/src/mashed_re/Util/PromoLoop_sessionB.cpp          (EDX fix, 2 shims)
+(committed d9f61dd5 + 1ed01345)
  M re/analysis/render/0x004c4270_0x004c42d0_matrix_residuals.md (RwMatrixOptimize section)
  M re/orchestrator/HANDOFF.md
 ```
