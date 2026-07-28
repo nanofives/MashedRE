@@ -2560,9 +2560,17 @@ __declspec(naked) void A6b_BodyAsm(/* ECX=record, ESI=xform, [esp+4]=dt */) {
 }
 
 // ── self-test forwarder: invoke the ORIGINAL A6b bypassing our inline-JMP ────
-// The 5-byte JMP at 0x00468980 overwrites the first 5 bytes of `FLD float ptr
-// [ECX+0x9e0]`(6 bytes: d9 81 e0 09 00 00) + first byte of `SUB ESP,0x20`. Re-execute
-// the whole FLD then `push 0x00468986; ret` (clobber-free; preserves ECX=record +
+// The 5-byte JMP at 0x00468980 overwrites bytes 0x00468980..0x00468984 — the first FIVE of
+// the six bytes of `FLD float ptr [ECX+0x9e0]` (d9 81 e0 09 00 00). Verified against the
+// binary 2026-07-28:
+//     00468980  d981e0090000  FLD   float ptr [ECX + 0x9e0]     <- 6 bytes, 0x468980..0x468985
+//     00468986  83ec20        SUB   ESP,0x20                    <- first INTACT instruction
+// CORRECTION 2026-07-28: this comment previously also claimed the "first byte of
+// `SUB ESP,0x20`" was clobbered. That is impossible — a 5-byte JMP at 0x00468980 cannot reach
+// 0x00468986. Byte 0x00468985 (the FLD's last byte) is likewise untouched. The CODE was always
+// right (re-exec the whole FLD, resume at 0x00468986); only the description over-reported the
+// clobbered region, and a wrong plate is what propagates into the next port.
+// Re-execute the whole FLD then `push 0x00468986; ret` (clobber-free; preserves ECX=record +
 // ESI=xform). The original body runs to its own `ADD ESP,0x20; RET`.
 extern "C" void* PCH_Fwd_468980;
 __declspec(naked) void OrigA6bTrampoline(/* ECX=record, ESI=xform, [esp+4]=dt */) {

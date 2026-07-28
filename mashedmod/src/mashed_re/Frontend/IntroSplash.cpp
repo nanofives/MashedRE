@@ -162,14 +162,29 @@ RH_ScopedInstall(IntroVideoDimGetter, 0x00493f80);  // re-enabled 2026-05-24 c3-
 
 static constexpr std::uintptr_t kVtableSlot6Offset = 0x18u;   // 6 × 4 = 24 = 0x18
 
+// 2026-07-28 — transcribed verbatim. Sweep A flagged this RVA as an ECX Class-A defect; that
+// verdict is a FALSE POSITIVE. The original tail-JMPs, so ECX on return is whatever the
+// vtable callee leaves — identical either way. Measuring the emitted body settled it:
+// MSVC compiled `return fn();` as a tail jump too, so the callee still inherits the frame and
+// still sees param_1 at [ESP+4]:
+//     00011dd0  mov eax,dword ptr [esp+4]
+//     00011dd4  mov eax,dword ptr [eax+0x18]
+//     00011dd7  jmp eax
+// A REAL discrepancy survives that, though: the original enters the callee with EAX = param_1
+// (it jumps through memory and never overwrites EAX), while ours enters with EAX = the
+// function pointer. Any callee that reads EAX sees a different value.
+// [UNCERTAIN U-9027] vtable slot 6 targets are not enumerable statically (Ghidra: "Could not
+// recover jumptable at 0x004c1a08"), so whether a target reads EAX is unproven. Transcribed
+// verbatim regardless — 3 instructions, and exactness costs nothing here.
+//
 // 0x004c1a00
-extern "C" __declspec(dllexport)
-int __cdecl IntroSplashVtableSlot6(int param_1) {
-    using VFn = int (*)();
-    const VFn fn = *reinterpret_cast<VFn*>(
-        static_cast<std::uintptr_t>(static_cast<std::uint32_t>(param_1))
-        + kVtableSlot6Offset);
-    return fn();
+extern "C" __declspec(dllexport) __declspec(naked)
+int __cdecl IntroSplashVtableSlot6(int /*param_1*/) {
+    __asm {
+        mov eax, dword ptr [esp + 4]        // 0x004c1a00
+        mov dword ptr [esp + 4], eax        // 0x004c1a04  (no-op rewrite, kept verbatim)
+        jmp dword ptr [eax + 0x18]          // 0x004c1a08  tail-jmp: callee inherits the frame
+    }
 }
 
 RH_ScopedInstall(IntroSplashVtableSlot6, 0x004c1a00);  // re-enabled 2026-05-24 c3-frontend-b

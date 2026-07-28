@@ -54,6 +54,24 @@ function callFn(fn, input, buf) {
         buf.add(8).writeFloat(input[2]);
         return fn(buf);
     }
+    if (CONFIG.arg_type === 'vec3_normalize') {
+        // (out*, in*) -> writes 3 floats to out, returns the scale 1/|in| in ST0.
+        // Added 2026-07-28: path2 had no case for this arg_type, so the dispatcher fell
+        // through to `fn(input)` and every call died with "bad argument count" BEFORE the
+        // function was ever entered -- an installer check that verified the JMP bytes and
+        // then tested nothing. Needs TWO 12-byte buffers; `buf` is allocated 24 for this
+        // arg_type and split here (out = buf, in = buf+12) so out and in never alias.
+        const outp = buf, inp = buf.add(12);
+        inp.writeFloat(input[0]);
+        inp.add(4).writeFloat(input[1]);
+        inp.add(8).writeFloat(input[2]);
+        outp.writeFloat(0); outp.add(4).writeFloat(0); outp.add(8).writeFloat(0);
+        const scale = fn(outp, inp);
+        // Report the written vector too -- a hook that returns the right scale while writing
+        // nothing to `out` would otherwise pass.
+        return [scale, outp.readFloat(), outp.add(4).readFloat(), outp.add(8).readFloat()]
+               .join(',');
+    }
     if (CONFIG.arg_type === 'void') {
         return fn();
     }
@@ -142,6 +160,7 @@ function runVerification() {
     const buf = (['vec3_ptr', 'out3_idx'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
               : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
               : (CONFIG.arg_type === 'time_diff_decompose') ? Memory.alloc(16)
+              : (CONFIG.arg_type === 'vec3_normalize') ? Memory.alloc(24)  // out[12] + in[12]
               : null;
     const results = [];
     const beforeCount = reimplEntries;

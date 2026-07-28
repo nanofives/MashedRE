@@ -154,6 +154,52 @@ extern "C" int __cdecl RwpWorldSolverHandle(int world, float dt)
     return mineRet;
 }
 
+// BUGFIX 2026-07-28 — REGISTER-ABI DEFECT (Sweep A Class A) on a C4 row.
+//
+// The ORIGINAL is three instructions and writes EAX and nothing else:
+//     0055deb0  MOV EAX,dword ptr [ESP + 0x4]
+//     0055deb4  MOV EAX,dword ptr [EAX + 0x4]
+//     0055deb7  RET
+// so EDX (and ECX) survive the call. An unhooked caller depends on exactly that:
+//     004292d0  MOV  EDX,dword ptr [ESP + 0x4]   ; EDX = world
+//     004292d6  PUSH EDX
+//     004292d7  CALL 0x0055deb0
+//     004292dc  MOV  EDI,dword ptr [ESP + 0x14]
+//     004292e5  LEA  ESI,[EDX + 0x8]             ; EDX read AFTER the call -> live across it
+//
+// MEASURED in mashed_re_dev.asi (body at 0x10033b90, located via mashed_re_dev.map — the
+// function is extern "C" but NOT dllexport, so the export-table audit could not see it):
+// an unconditional `call 0x33110` on entry (a __cdecl call may destroy EDX by contract) and
+// an explicit `mov edx,dword ptr [0x100ffb94]` at 0x10033c2e on the self-test path.
+//
+// The B5C self-test scaffold is deliberately kept — it is load-bearing for the leaf
+// comparison — so the fix is a naked shim that pins the register footprint at the hook
+// boundary instead of rewriting the body. ECX is preserved as well as EDX: the original
+// writes NEITHER, and Sweep A only proves a live value where it happened to find one.
+//
+// NOT preserved: EFLAGS. The original's MOV/MOV/RET leaves flags untouched while any C body
+// clobbers them. No caller is known to read flags across this call (at 0x004292dc the next
+// flag-setting instruction is the SHR at 0x004292e2, with no intervening conditional branch),
+// but that is an observation about one call site, not a proof about all of them.
+// [UNCERTAIN U-9026] flags-across-call is unaudited for this RVA.
+extern "C" __declspec(naked) void __cdecl RwpWorldSolverHandle_RegAbi(void)
+{
+    __asm {
+        push ebp
+        mov  ebp, esp
+        push edx                        // original preserves EDX (live at 0x004292e5)
+        push ecx                        // original writes ECX either
+        push dword ptr [ebp + 12]       // dt
+        push dword ptr [ebp + 8]        // world
+        call RwpWorldSolverHandle
+        add  esp, 8                     // __cdecl: caller cleans the forwarded args
+        pop  ecx
+        pop  edx                        // EAX (the return value) is untouched by the pops
+        pop  ebp
+        ret
+    }
+}
+
 // ---------------------------------------------------------------------------
 // 0x0055ac00  RwpBodyObj — shape-active bit set/clear. Leaf, no callees, no abs writes.
 //   param_1 = bitset owner (bitset at +0x5c), param_2 = body (shape idx at +0x20),
@@ -394,7 +440,10 @@ extern "C" int __cdecl RwpSceneStepWrapper(int solverCtx, unsigned arg2)
 // --- gta-reversed-style hook registration (inert on the exe via HookSystemNoOp;
 //     installs the inline-JMP under the .asi for the diff-original A/B acceptance) ---
 RH_ScopedInstall(RwpBodyTableLookup,    0x0057c210);
-RH_ScopedInstall(RwpWorldSolverHandle,  0x0055deb0);
+// 2026-07-28: registered via the EDX/ECX-preserving naked shim, not the C body directly —
+// see the RegAbi note above. The hook NAME changes, so MASHED_HOOK_ONLY/SKIP callers and any
+// saved registry-index manifest must be regenerated.
+RH_ScopedInstall(RwpWorldSolverHandle_RegAbi,  0x0055deb0);
 RH_ScopedInstall(RwpShapeActiveBitSet,  0x0055ac00);
 RH_ScopedInstall(RwpBodyMatrixRefresh,  0x0055b800);
 RH_ScopedInstall(RwpBodyRefreshGate,    0x0055dff0);

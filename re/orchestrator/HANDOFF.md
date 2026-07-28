@@ -1,140 +1,235 @@
-# Mashed RE orchestrator — resume point (updated 2026-07-28, menu-nav session)
+# Mashed RE orchestrator — resume point (updated 2026-07-28, U-9025 re-characterisation session)
 
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions. Maximize account2.
 
-Status brief — C1 797 / C2 4035 / C3 847 / **C4 185** (one demotion: `0x0042ee00`).
+Status brief — **C1 797 / C2 4034 / C3 849 / C4 184** (was 797/4035/847/185).
+Deltas: `0x004c3910` C2->C3 (promotion), `0x0055deb0` **C4->C3 (demotion)**. Trackers mutated
+via `re-classify` this session; nothing is committed.
 
 ---
 
-## HEADLINE: the menu-navigated race path had never run with hooks installed
+## HEADLINE: U-9025's mechanism was wrong. The phenomenon is real; the attribution was not.
 
-It found **six defects**. All prior acceptance was structurally blind to them:
+The previous session attributed the race-entry wedge to an **audio-hook interaction** on two
+"converging" methods. Both are now disproved by direct measurement.
 
-- `scenario_launch.py` pokes `DAT_00771968=2` and **bypasses the menu-driven loader**
-- the ~71 s attract/menu acceptance **never leaves the frontend**
+### 1. The failure is NON-DETERMINISTIC (this is the load-bearing finding)
 
-So colour-select → track-select → race-entry had simply never executed with the hook set live.
+`scripts/bisect_hooks_set.py --measure 6`, **byte-identical** installed set each time (verified
+by diffing the `.asi`'s own `MASHED_HOOK_MANIFEST` output — index, RVA and name all equal):
 
-| # | fault | root cause | status |
+| configuration | completions |
+|---|---|
+| hooked, indices 75–149, **pre-fix** | **2 / 6**  (0.33) |
+| hooked, same set, **post-fix** | **10 / 12** (0.83) — two independent batches of 5/6 |
+| **stock** (`.asi` loaded, hooks not installed) | **6 / 6**  (1.00) |
+
+Fisher exact, one-tailed: stock vs pre-fix **p = 0.0303**; post-fix vs pre-fix **p = 0.0573**;
+stock vs post-fix **p = 0.43**; batch1 vs batch2 **p = 0.77** (no batch effect — the 0.83
+estimate is stable).
+
+**U-9025 REMAINS OPEN and this is not a judgement call: 2 of 12 post-fix runs still wedge.**
+Whatever the p-value, the race is not eliminated. Note also that further reps cannot change
+that conclusion — they would only sharpen "did the four fixes help" (currently p=0.057,
+suggestive, short of 0.05), which is a secondary question. Spend effort on mechanism capture
+instead.
+
+**Read this carefully.** Hook installation *does* cause the wedge (stock vs pre-fix is
+significant). But it is a **RACE**, not a deterministic interaction. And the post-fix
+improvement is **NOT itself significant** at n=6 — post-fix is merely no longer
+distinguishable from stock. Do not report U-9025 as fixed.
+
+**What this invalidates:** "[75,150) fails as a set while BOTH halves complete → ≥2 hooks
+co-installed". At p(complete)≈1/3 two single runs both completing has probability ≈0.11 —
+unremarkable. Every branch of both prior bisects rests on single runs.
+
+### 1b. THE WEDGE OBJECT IS NOW IDENTIFIED (two captures, `scripts/catch_wedge.py`)
+
+`catch_wedge.py` runs until the game wedges and inspects the live pid **before** anything kills
+it (the old driver killed the evidence). Caught on attempt 1, twice running. Measured:
+
+- GUI thread — identified via `EnumWindows`+`GetWindowThreadProcessId`, **not** guessed from
+  Frida's enumeration order — is parked in `ntdll!ZwWaitForSingleObject+0xc`.
+- Its innermost frame is `0x005a840c`, which is exactly the instruction after
+  `0x005a8406  CALL [0x005cc090]` in `FUN_005a8390`:
+  ```
+  005a83f4  MOV EAX,[0x007dcb68] / TEST / JZ 0x005a840c     <- gate read #1
+  005a83fd  MOV EDX,[0x007dcae0] / PUSH -1 / PUSH EDX
+  005a8406  CALL [0x005cc090]   WaitForSingleObject(h, INFINITE)   <- BLOCKS HERE
+  005a840c  MOV EAX,[0x007dcad8]
+  ```
+- **`0x007dcae0` probes `WAIT_TIMEOUT` — count 0, nobody released it.** It is created
+  `CreateSemaphoreA(NULL, initial=1, max=1, NULL)` (pushes 0x005a8290 / 0x005a829c, call
+  0x005a82d2): a binary semaphore used as a mutex that starts SIGNALLED. So the wedge is a
+  genuine **unpaired acquire** on `0x007dcae0`, not contention.
+- The previously-blamed audio pair `0x007dd618` / `0x007dd620` probed **`WAIT_OBJECT_0`
+  (signalled) in every wedge** — the main thread was never queued on them.
+
+**REFUTED (pre-registered, do not silently re-open):** the obvious reading — that the acquire
+happens under gate read #1 and the release under gate read #2 (`0x005a8423`), so a concurrent
+`FUN_005a8460` (`005a846a DEC / MOV [0x007dcb68]`) driving the gate to 0 makes the release get
+skipped — predicts `0x007dcb68 == 0` at wedge time. **Measured `0x007dcb68 == 0x1`.** The test
+was stated before the run; the gate-zero mechanism is not what is happening.
+
+**Still open — who took `0x007dcae0` and never gave it back.** Leading candidate is
+**self-deadlock by re-entrancy**: a binary semaphore is NOT recursive, so if the same thread
+re-enters any of the 22 `0x007dcae0` sites (`0x005a833d`..`0x005a8a07`) while already holding
+it, it waits on itself forever — which fits count=0, gate=1, and a blocked GUI thread. Next
+step: log acquire/release of `0x007dcae0` with thread id + return address (these are stream
+calls, not a hot path, so Interceptor is affordable) and find the unpaired acquire. The 22
+sites are the whole search space.
+
+### 2. The wedge is NOT the audio semaphore
+
+`re/frida/inspect_wedge.py` on a live wedged process (attach by explicit pid): a 0-timeout
+`WaitForSingleObject` on **both** semaphores returned `WAIT_OBJECT_0` — **signalled**. Had the
+main thread been queued on `0x007dd618`, the kernel would have handed the count to that waiter,
+not to the prober. All 47 threads sit in ntdll; none in MASHED code. So `0x005ab63d` was a
+**stale return address**, not the live frame.
+
+Identified on the way (the handoff listed this as an open step): `[0x005cc090]` =
+`PTR_WaitForSingleObject`, `[0x005cc094]` = `PTR_ReleaseSemaphore`; `FUN_005ab620` acquires
+`0x007dd618` then `0x007dd620` INFINITE and releases both.
+
+### 3. "All 75 are audio" was wrong twice
+
+Indices 75–106 are audio, **107–115 are RW math**, 116–149 menu/HUD/font. And pre-existing
+**U-6700** (`re/analysis/bucket_audio_005ab710_005af040/0x005ab710.md`) already records that the
+`0x005ab..` cluster **cannot be shown audio-exclusive** — it reads as generic RenderWare stream
+I/O, with `0x007dd618` documented as the *streaming lock handle*. No audio worker thread is
+documented in this cluster.
+
+---
+
+## Method changes that matter more than the findings
+
+- **`MASHED_HOOK_ONLY` is an arbitrary exact-token allowlist** (`HookSystem.cpp:189`) and takes
+  precedence over `LO/HI` (`:150`). Any set can be pinned with **no `.asi` change and no
+  rebuild** — so registry indices cannot shift mid-search. `bisect_hooks.py`'s single
+  contiguous range was never capable of narrowing an interaction; `scripts/bisect_hooks_set.py`
+  (new) does pin+search over arbitrary sets.
+- **Select by NAME, never by RVA token.** The manifest has **27 duplicate RVAs** and zero
+  duplicate names; an RVA token silently co-installs extras and makes a search unsound.
+- **The correct predicate is "PASS iff N/N complete"**, not "FAIL iff 0/N". Innocent≈100%,
+  guilty≈33% ⇒ at N=3 the PASS-iff-3/3 rule has ~3.6% false-pass and ~0% false-fail, whereas
+  FAIL-iff-0/3 would mislabel a guilty set as innocent ~30% of the time.
+- **The `.asi` APPENDS to `MASHED_HOOK_MANIFEST`.** A reused tag stacks runs and inflates the
+  installed count (seen as `installed=150` for a 75-hook request). The driver now deletes the
+  file first; older logs in `log/bset_m*.log` from this session carry the inflated figure.
+
+---
+
+## Lane A — four defects fixed (built, byte-verified in the deployed `.asi`; NOT yet committed)
+
+Sweep A's nine "ECX/EDX ports" were **predictions about codegen**, not measurements.
+`scripts/audit_emitted_regabi.py` (new, self-tested) disassembles our real emitted bodies:
+**1 of 9 actually clobbered**, now 0/9.
+
+| RVA | defect | evidence | fix |
 |---|---|---|---|
-| 1 | AV `0x004c5c00+0x2d`, read @ 0 | `0x0042ee40` + `0x0042ee00` are **arg-rewriting tail-JMP thunks**; both ports guessed the ABI and passed an int where a `const char*` sprite NAME belongs | FIXED (verbatim asm) |
-| 2 | AV `0x0045c6c6`, write @ `0x02acdfe0` | `0x0045c640` clobbers **EDX**, which its *unhooked* caller carries across the call as a loop index | FIXED (verbatim asm) |
-| 3 | HANG (spin) | `0x00448700`'s C loop kept its counter in **EAX across a call**; the callee's declared `uint32` return reloaded it | FIXED (verbatim asm) |
-| 4 | HANG (blocked) | `0x00415e20` read **3 qword constants as f32** — `57.2958 → 1.08e-19`, `∓1.0 → 0.0` | FIXED, but still wedges later |
-| 5 | wrong value | `0x00426e00` read a **dword constant as a double** (the tracker asserted the wrong width; the port inherited it) | FIXED |
-| 6 | **U-9025** race-entry wedge | **AUDIO-HOOK INTERACTION** — see below | **OPEN** |
+| `0x00430760` `IsMultiplayerMode` | emitted `mov ecx,[0x67e9fc]`; original is EAX-only | caller `004333fd` loads ECX → `CALL` → `TEST ECX,ECX` at `00433410` | verbatim naked |
+| `0x0055deb0` `RwpWorldSolverHandle` | unconditional `call` at entry + `mov edx,[0x100ffb94]`; original is 3 insns, EAX-only | caller `004292d0` `MOV EDX,[ESP+4]` → `CALL` → `LEA ESI,[EDX+8]` at `004292e5` | EDX/ECX-preserving naked shim, self-test scaffold intact |
+| `0x004c1a00` `IntroSplashVtableSlot6` | sweep's ECX verdict is a **FALSE POSITIVE** (original tail-JMPs); real diff is EAX entering the callee | emitted `mov eax,[esp+4]/mov eax,[eax+0x18]/jmp eax` | verbatim naked (byte-identical) |
+| `0x004148b0` `AiLeader_Entry` | **missing `ds:`** — see below | | `ds:` added |
 
-**Controls:** stock completes the full 45 s round **3/3**; hooked **0/3**. Every attribution is a matched
-stock-vs-hooked pair, never "did it crash".
+The other six are measured clean: `UtilFloat63b910Get`, `TrackLoaderFloatGet`,
+`ClearTable471530`, `ParticleEmitter_SetScalar`, `Mark4d5480`, and `GatedSwitch636ad0`
+(its walker verdict is INCONCLUSIVE — ends in a jump-table dispatch — but both arms were
+dumped by hand: `mov eax,1/ret` and `xor eax,eax/ret`, no ECX/EDX).
 
----
+### The `ds:` defect — highest-value find, and it was accidental
 
-## U-9025 — attributed, not closed
+MSVC assembles `mov eax, dword ptr [0x0067e9fc]` as **`B8 FC E9 67 00  mov eax,67E9FCh`** — the
+ADDRESS as an immediate, not a load. It compiles clean at `/W3 /O2`. Caught by disassembling
+the `.obj` of a fix I had **just written myself**, then swept repo-wide: 64 sites already used
+`ds:`, **2 in `Ai/AiLeaderTimer.cpp` did not**.
 
-Two independent methods converged on **audio**:
+`AiLeader_Entry` is a **default-installed** hook at `0x004148b0` whose whole job is to
+re-execute the prologue the 5-byte JMP clobbers. It loaded the address instead, and the
+original's next instructions are:
 
-- **Stack:** main thread **blocked in an ntdll wait** (`IsHungAppWindow=true`), chain
-  `0x005ab63d / 0x005ab15b / 0x005b1526 / 0x005b1ef3 / 0x005ab23a / 0x005ab83b / 0x00551591 /
-  0x00551146 / 0x00550c15 / 0x0045d40f / 0x0049270a / 0x004922c2 / 0x004923de` —
-  **identical frame-for-frame across three separate processes**.
-- **Bisect:** range `[75,150)` **fails as a set while both halves complete** → needs ≥2 hooks
-  co-installed. All 75 are audio, in the **same `0x005ab..`/`0x005b1..` band as the stack**.
+```
+004148b5  SUB ESP,0x8
+004148b8  CMP EAX,0x2
+004148bb  JNZ 0x004148c3
+004148bd  XOR EAX,EAX / ADD ESP,8 / RET      <- the early-out
+```
 
-Blocked-not-spinning is what a broken audio path looks like (waiting on a buffer/mixer thread), and an
-interaction explains why `MASHED_HOOK_SKIP` by name and every single-hook search found nothing.
+EAX held 9020776, never 2 ⇒ **the early-out was unreachable in every race run to date.**
+Its C3 diff (`log/diff_ai_leadertimer_004148b0_c3.log`) passed anyway, which means that seed
+never drove `[0x0089a368] == 2` — a check that tested nothing.
 
-**NEXT:** pin `[75,112)` installed and bisect `[112,150)`, then swap (~12 runs); identify the wait
-object; then fix by name.
+**Rule now recorded in memory (`feedback_msvc_inline_asm_needs_ds_override`): after writing any
+naked/`__asm` body, disassemble the `.obj` and compare bytes. Never trust "it compiled".**
 
-**Caveat:** the FIRST bisect ran with a loose completion predicate (accepted `round t+30`), so its branch
-decisions are suspect — index 616's isolation path may have been luck. The byte-level width defect in
-`0x00415e20` is independently proven regardless. The predicate is now strict (`FINAL:` only).
+### Trampoline prologue-reexec class — swept, CLEAN
 
----
-
-## Systematic sweeps — committed, self-tested
-
-Every detector is validated against a known instance first; a zero-finding sweep is worthless otherwise.
-
-| sweep | scope | result |
-|---|---|---|
-| **A** register-ABI (`sweep_reg_abi/rega_eval/rega_analyze/rega_rank.py`) | 1195 hooks → 1073 plain C → 380 candidates | **16 RVAs / 27 sites, none fixed yet** |
-| **B** naked-thunk/EAX (`sweep_classb_emitted.py`) | 204k + 261k instructions | 0 |
-| **C** constant width (`sweep_const_width.py`) | 405 float reads / 1143 x87 addresses | found `0x00426e00` |
-
-Sweep A tiers: **9 ECX/EDX** (`0x0040dc80` `0x0041f360` `0x00426e00` `0x00430760` `0x00471530`
-`0x00476a30` `0x004c1a00` `0x004d5480` `0x0055deb0`), **4 EAX void-return** (`0x0042b950` `0x0042f7a0`
-`0x0045b350` `0x00493580`), **3 EAX value-return to eyeball**. Byte-verified `0x00471530`.
-Self-test: un-hiding the fixed `0x0045c640` reproduces it exactly.
-
-**TOOLING BUG WORTH REMEMBERING:** `capstone.disasm()` **stops at the first undecodable byte**, and
-`.text` is full of jump tables and padding — a single pass silently truncated both binary sweeps. The
-width auditor's self-test caught it (1 of 3 expected constants). A resync loop took the `.asi` scan from
-23,901 → **204,135** instructions. Class B was re-run only after that fix.
+account2 surveyed all **20** trampolines (`AiWallLateral`, `AiLineOfSight`, `AiSplineHooks`,
+`AiNavHooks`, `AiWallAhead`, `AiControllerAB`×8, `PhysicsChainHooks`×5, …): **zero byte-count
+mismatches** — every re-executed size equals its jump-back delta. So `AiLeader_Entry` was a
+`ds:` defect, not a width defect, and the width variant does not exist elsewhere.
+- Fixed `PhysicsChainHooks.cpp:2568` comment: it claimed the 5-byte JMP at `0x00468980` also
+  clobbers the first byte of `SUB ESP,0x20`; impossible (JMP covers `..0x468984`, `SUB` starts
+  at `0x468986`). Verified against the binary. Code was always right.
+- **CAVEAT:** that survey checked each comment's arithmetic against its jump-back delta, i.e.
+  internal consistency — **not** verification against the binary. A comment wrong *and*
+  self-consistent would pass. Confirming all 20 against `.unpatched` disasm is a separate pass.
 
 ---
 
-## Harness
+## TRACKER WORK — APPLIED 2026-07-28 (via `re-classify`; NOT committed)
 
-`re/frida/statenav.py` is the menu-nav acceptance driver:
-`--hooks` (arm the dev `.asi`; default stays stock), `--count-export NAME` (count our port by its `.asi`
-EXPORT — an inline JMP makes an RVA probe ambiguous), exit-code on detach (**no WER dump is produced**
-on this path), and an in-process AV catcher filtered to `access-violation` (C++ throws surface as
-KERNELBASE `RaiseException` here and drown the signal).
+- **`0x0055deb0` DEMOTED C4 -> C3.** Its C4 (`log/phys_c4_b5c_ALL6_GREEN_20260724.log`) is a
+  B5C self-test comparing RETURN VALUES and cannot observe register footprint, so GREEN there
+  is fully consistent with the proven EDX clobber — it was never C4-grade evidence for this
+  failure mode. Re-promote only on a canonical-scenario diff with the shim INSTALLED.
+- **`0x004c3910` PROMOTED C2 -> C3** (path1 GREEN 12/12 + path2 installer verified).
+- `0x00430760`, `0x004c1a00`, `0x004148b0`: kept C3, **`frida_diff` cleared** — those diffs
+  compared return values and could not see a register/prologue defect, so they are not evidence
+  for the fixed builds. Each needs a fresh diff for C4; for `0x004148b0` the new diff needs a
+  seed that actually drives `[0x0089a368] == 2`, which the old one demonstrably never did.
+- **U-9025 rewritten** to the race characterisation with the measured wedge site; the disproved
+  audio-interaction text is gone. **U-9026** (EFLAGS unaudited, `0x0055deb0`) and **U-9027**
+  (vtable slot-6 targets not statically enumerable) filed.
+- 4 CHANGELOG entries prepended.
 
-`scripts/bisect_hooks.py` — index bisect. Strict `FINAL:` predicate; aborts if the baseline doesn't
-reproduce; reports interaction instead of forcing a single answer; kills **only** the MASHED pids that
-appeared during each run. Manifest: `log/hook_index_manifest.txt` (1205 entries) via
-`MASHED_HOOK_MANIFEST`. **Indices shift when hooks are added — regenerate before reuse.**
-
-**Frida 17:** static `Module.findExportByName` is REMOVED — use
-`Process.findModuleByName(m).findExportByName(n)`.
-
----
+**GENERAL LESSON worth carrying:** a diff that compares OUTPUTS cannot certify ABI fidelity.
+Three separate rows this session carried green evidence that was structurally blind to the
+defect they actually had. When a port is rewritten for register/prologue reasons, the old diff
+is not merely stale — it never tested the thing that broke.
 
 ## NEXT — recommended order
 
-1. **U-9025** — narrow the audio interaction (above).
-2. **Sweep A's 9 ECX/EDX ports** — fix by verbatim transcription; this class has now hit ten times.
-3. **`0x00442cbd` is STILL not behaviourally confirmed.** `--count-export LoadingState2Enter` is wired
-   and arms correctly; every run so far died or wedged before the counters printed.
-4. **`LobbySlotListRender` (`0x00439210`)** is a fabricated scaffold — invented draw coordinates
-   (330.0f/64.0f/80.0f appear nowhere in the original), wrong callee set, `[UNCERTAIN U-k2-01]` on six
-   signatures. **Exonerated** as the crasher (skipping it reproduced the identical AV) but a live
-   NO-GUESSING violation. A verbatim re-port is ~5.6 KB with 8 x87/register decompiler artifacts —
-   needs its own session and an asm-vs-C decision.
-5. **Lane B is quiet:** the `st0_ret_mat*` lane is mined out (all 22 frontier rows screened). The one
-   real signal is `0x004c3910` (Vec3Normalize, confirmed `float10` return), blocked only by a second
-   *output* pointer; needs a new `st0_ret_vec3_out_in_ptr` handler.
-
-## DONE this session
-
-- **Call-target audit re-run — CLEAN** (2193 sites / 1762 addresses → 1541 ENTRY, 647 NO_FUNC,
-  5 MID_BODY, all 5 false positives). Both real bugs from the prior round are gone.
-- **U-9024 RESOLVED** — `0x005c6b60` is a **64-step gain-ramp target setter**, subsystem **audio**
-  (not boot, not menu/cursor); sole caller `FUN_005c7330` computes left/right mixer gains.
-
-## OPEN GATES / STOP-AND-ASK
-
-- **D2 renderer commitment** — OPEN (RW-subset verbatim vs `librw`).
-- **D4 airborne bit-identity** — OPEN (accept A5 1-ULP float10 residual U-8991 vs naked-asm shim).
+1. **Confirm or refute the post-fix improvement.** 5/6 vs 2/6 is p=0.12 — suggestive, not
+   proven. Another 6 post-fix runs would settle it. Until then U-9025 stays OPEN.
+2. **Given it is a race, prefer mechanism capture over bisection.** A repeat-predicate bisect
+   costs ~3 runs/test × ~14 tests ≈ 4 h. `re/frida/inspect_wedge.py` already dumps threads,
+   the global cluster and semaphore state from a wedged pid; extend it rather than bisect.
+3. **`0x004c3910` `Vec3NormalizeScale` is a free Lane-B win.** `hooks.csv` says C2
+   BLOCKED-ON-ENV: *"no Frida diff obtained: MASHED self-exits ~0.5 s, exitcode -1, NO crash
+   dump"* — which is the **screensaver signature** documented later in the same handoff, not a
+   code problem. The port is already naked-verbatim and `arg_type vec3_normalize` already
+   exists (`diff_template.js:868`). Boot is healthy: just re-run `run_diff.py`.
+   (The prior handoff's claim that it needs a new `st0_ret_vec3_out_in_ptr` handler is wrong.)
+4. `0x00442cbd` / `LoadingState2Enter` still not behaviourally confirmed.
+5. `LobbySlotListRender` (`0x00439210`) remains a fabricated scaffold / NO-GUESSING violation.
 
 ## HYGIENE
 
-**The SCREENSAVER blanks the display and MASHED then exits `0xFFFFFFFF` ~4 s into boot** — no crash
-dump, stock and hooked alike, even with every injected DLL removed. It cost a long detour through
-compat flags / `repatch_original` / `diag doctor` before the user identified it. The tell: a fast
-`exit(-1)` with **no dump** is a clean refusal to start (device/display creation), not a fault.
-`GetSystemMetrics` still reports the monitors, so that check does not catch it.
-
-Ghidra pool: slot 1 in use this session. **`mashed_pool/Mashed_pool0.lock~` is held open by the Ghidra
-MCP JVM** and cannot be deleted — the `feedback_mcp_leaked_project_lock` case; clears only on restarting
-that server. Use slot 1+.
-
-**Pool-script gotcha:** `ghidra_pool.sh acquire` stakes a **Ghidra-format `.lock`** that makes
-`project_program_open_existing` fail with `LockException`. Delete `mashed_pool/<Slot>.lock` after
-acquiring and before the MCP open.
-
-All MASHED PIDs spawned this session were killed by PID. No worktrees. `original/` intact.
+- **SCREENSAVER blanks the display → MASHED exits `0xFFFFFFFF` ~4 s into boot, no dump**, stock
+  and hooked alike. A fast `exit(-1)` with no dump is a clean refusal to start, not a fault.
+- **Never run two MASHED-spawning drivers concurrently.** `bisect_hooks*.py` kills every pid
+  that appeared during its run — it would kill a concurrent `run_diff`'s game. Serialize.
+- **Do not rebuild while a measurement is in flight** — `build.bat` deploys to `original\` and
+  would swap the binary under test.
+- Ghidra pool: **slot 2** used this session (slot 0 and 1 `.lock~` are still JVM-leaked;
+  `acquire` hands out slot 0 anyway and `release` then fails on the busy lock — use
+  `acquire <N>` explicitly, then delete `mashed_pool/Mashed_poolN.lock` before the MCP open).
+- **CORRECTION to the standing workaround:** the JVM-held `.lock~` does NOT require restarting
+  the MCP server. Calling `program_close` on the session releases it — `release 2` failed with
+  "Device or resource busy" before the close and succeeded immediately after. So the clean
+  shutdown order is: `program_close` -> `ghidra_pool.sh release <N>`. (Slots 0/1 remain leaked
+  because those sessions were never closed, not because a restart is required.)
+- All MASHED pids spawned this session were killed by pid. No worktrees. `original/` intact.
 
 TO RESUME: read this file; start at NEXT item 1.

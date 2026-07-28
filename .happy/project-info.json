@@ -1,0 +1,32 @@
+{
+  "title": "Mashed RE — greenfield source port",
+  "updatedAt": "2026-07-28T00:00:00Z",
+  "sections": [
+    {
+      "heading": "Confidence ladder",
+      "fields": [
+        { "label": "C1", "value": 797, "kind": "number" },
+        { "label": "C2", "value": 4034, "kind": "number" },
+        { "label": "C3", "value": 849, "kind": "number" },
+        { "label": "C4", "value": 184, "kind": "number" }
+      ]
+    },
+    {
+      "heading": "Current state",
+      "fields": [
+        { "label": "Phase", "value": "R7 — full game systems (scaffold→verbatim)", "kind": "text" },
+        { "label": "Branch", "value": "main (uncommitted work in tree)", "kind": "text" },
+        { "label": "Open gates", "value": ["D2 renderer commitment", "D4 airborne bit-identity (U-8991)"], "kind": "list" }
+      ]
+    },
+    {
+      "heading": "Active investigation — U-9025",
+      "fields": [
+        { "label": "Status", "value": "OPEN — race, not a hook interaction", "kind": "text" },
+        { "label": "Wedge site", "value": "WaitForSingleObject([0x007dcae0], INFINITE) @ 0x005a8406", "kind": "text" },
+        { "label": "Completion rate", "value": ["stock 6/6", "hooked post-fix 10/12", "hooked pre-fix 2/6"], "kind": "list" },
+        { "label": "Next step", "value": "Log acquire/release of 0x007dcae0 across its 22 sites (0x005a833d..0x005a8a07)", "kind": "text" }
+      ]
+    }
+  ]
+}

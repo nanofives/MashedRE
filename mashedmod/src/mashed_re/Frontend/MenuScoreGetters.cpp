@@ -128,12 +128,51 @@ RH_ScopedInstall(LapSecsGetBySlot, 0x00429a90);  // re-enabled 2026-05-24 c3-fro
 // ref: re/analysis/frontend_promote_menus_b/00430760.md
 // ---------------------------------------------------------------------------
 
+// BUGFIX 2026-07-28 — REGISTER-ABI DEFECT (Sweep A Class A; the ECX/EDX class, 11th hit).
+// The plain-C body compiled to `mov ecx,[0x67e9fc]` + a chain of `cmp ecx,imm` (measured in
+// mashed_re_dev.asi at export IsMultiplayerMode, 13 instructions). The ORIGINAL uses EAX and
+// ONLY EAX -- 0x00430760 `MOV EAX,[0x0067e9fc]`, five `CMP EAX,imm`, `XOR EAX,EAX`/`MOV EAX,1`
+// -- so ECX survives the call, and an unhooked caller relies on exactly that:
+//
+//     004333fd  MOV  ECX,dword ptr [0x0067f0c0]   ; ECX loaded BEFORE the call
+//     00433403  CALL 0x00430760                   ; original preserves ECX
+//     00433408  TEST EAX,EAX
+//     0043340a  JZ   0x004334fa
+//     00433410  TEST ECX,ECX                      ; ECX read AFTER the call -> live across it
+//     00433412  JZ   0x004334df
+//
+// With the hook installed the caller branched on a destroyed ECX. 12 call sites reference
+// 0x00430760 (reference_to); 0x00433403 is the one with a proven live ECX.
+//
+// Transcribed verbatim from 0x00430760..0x00430786 so the register footprint is EAX-only by
+// construction, not by hoping the compiler picks EAX. A `__cdecl` C body may use ECX/EDX as
+// scratch at any time -- only naked asm can pin the ABI.
+//
 // 0x00430760
-extern "C" __declspec(dllexport) std::uint32_t __cdecl IsMultiplayerMode() {
-    std::uint32_t mode = *reinterpret_cast<std::uint32_t*>(0x0067e9fcu);
-    if (mode == 2u || mode == 10u || mode == 3u || mode == 4u || mode == 5u)
-        return 1u;
-    return 0u;
+extern "C" __declspec(dllexport) __declspec(naked) std::uint32_t __cdecl IsMultiplayerMode() {
+    __asm {
+        // `ds:` IS LOAD-BEARING. Without it MSVC assembles `mov eax, dword ptr [0x0067e9fc]`
+        // as `B8 FC E9 67 00  mov eax,67E9FCh` -- the ADDRESS as an immediate, not a load --
+        // and the function would compare 0x0067e9fc against 2/3/4/5/10 and return 0 forever.
+        // Caught by disassembling the .obj; it compiles clean either way. With `ds:` it emits
+        // `3E A1 FC E9 67 00`, i.e. the original's `A1` load plus a redundant segment prefix.
+        mov  eax, dword ptr ds:[0x0067e9fc]  // 0x00430760  MOV EAX,[0x0067e9fc]
+        cmp  eax, 2                        // 0x00430765
+        je   L_one                         // 0x00430768
+        cmp  eax, 0xa                      // 0x0043076a
+        je   L_one                         // 0x0043076d
+        cmp  eax, 3                        // 0x0043076f
+        je   L_one                         // 0x00430772
+        cmp  eax, 4                        // 0x00430774
+        je   L_one                         // 0x00430777
+        cmp  eax, 5                        // 0x00430779
+        je   L_one                         // 0x0043077c
+        xor  eax, eax                      // 0x0043077e
+        ret                                // 0x00430780
+    L_one:
+        mov  eax, 1                        // 0x00430781
+        ret                                // 0x00430786
+    }
 }
 
 RH_ScopedInstall(IsMultiplayerMode, 0x00430760);  // re-enabled 2026-05-24 c3-frontend-b

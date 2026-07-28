@@ -135,7 +135,11 @@ int LeaderTimer(int /*param_1*/, void* /*param_2*/, int* param_3, int param_4) {
 void* g_orig_4148b5 = reinterpret_cast<void*>(0x004148b5);
 __declspec(naked) int OrigLeader(int, void*, int*, int) {
     __asm {
-        mov  eax, dword ptr [0x0089a368]
+        // BUGFIX 2026-07-28: `ds:` added. Without it MSVC assembles this as
+        // `B8 68 A3 89 00  mov eax,89A368h` -- the ADDRESS as an immediate -- instead of the
+        // original's `A1 68 A3 89 00  MOV EAX,[0x0089a368]`. See AiLeader_Entry below for the
+        // behavioural consequence; this trampoline had the identical defect.
+        mov  eax, dword ptr ds:[0x0089a368]
         jmp  dword ptr [g_orig_4148b5]
     }
 }
@@ -146,7 +150,20 @@ __declspec(naked) int OrigLeader(int, void*, int*, int) {
 __declspec(naked) void AiLeader_Entry() {
     __asm {
         // [esp]=ret [esp+4]=p1 [esp+8]=p2 [esp+0xc]=p3 [esp+0x10]=p4
-        mov  eax, dword ptr [0x0089a368]   // re-exec clobbered prologue
+        // BUGFIX 2026-07-28 — MISSING `ds:` DISABLED A MODE GATE ON A DEFAULT-INSTALLED HOOK.
+        // This trampoline exists to re-execute the prologue byte-exactly. Without `ds:` MSVC
+        // emits `B8 68 A3 89 00  mov eax,89A368h` (the address as an immediate) rather than
+        // the original `A1 68 A3 89 00  MOV EAX,[0x0089a368]` -- it compiles clean, so nothing
+        // flagged it. The very next original instructions consume EAX as a mode value:
+        //     004148b5  SUB ESP,0x8
+        //     004148b8  CMP EAX,0x2
+        //     004148bb  JNZ 0x004148c3
+        //     004148bd  XOR EAX,EAX / ADD ESP,8 / RET      <- the early-out
+        // EAX held 0x0089a368 (9020776), never 2, so the JNZ always fell through and the
+        // early-out was UNREACHABLE for as long as this hook was installed -- i.e. in every
+        // race run to date. 64 other inline-asm sites already use `ds:`; these two did not.
+        // Found by sweeping for absolute-address `__asm` operands lacking a segment override.
+        mov  eax, dword ptr ds:[0x0089a368]   // re-exec clobbered prologue
         jmp  dword ptr [g_orig_4148b5]
     }
 }
