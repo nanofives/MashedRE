@@ -277,29 +277,63 @@ RH_ScopedInstall(AudioDSoundSecondaryInit, 0x005bbfc0);  // re-enabled 2026-05-2
 // 0x005aef00  FUN_005aef00  (0x26 bytes)
 // AudioThreadDescInit — initialise a 5-field thread descriptor struct.
 //
-// Decompilation (0x005aef00–0x005aef26):
-//   param_1[1] = param_2;   // 0x005aef03 — thread proc ptr
-//   *param_1   = 0;         // 0x005aef07 — handle = NULL
-//   param_1[2] = 0;         // 0x005aef0b — arg/state = 0
-//   param_1[3] = param_3;   // 0x005aef11 — priority
-//   param_1[4] = param_4;   // 0x005aef17 — stack size
+// Disassembly (0x005aef00–0x005aef26), verified byte-for-byte against MASHED.exe.unpatched:
+//   005aef00  MOV EAX,[ESP+0x4]      ; EAX = param_1  <-- and NOTHING clobbers EAX after this
+//   005aef04  MOV ECX,[ESP+0x8]      ; param_2
+//   005aef08  MOV EDX,[ESP+0xc]      ; param_3
+//   005aef0c  MOV [EAX+0x4],ECX      ; thread proc ptr
+//   005aef0f  MOV ECX,[ESP+0x10]     ; param_4
+//   005aef13  MOV dword ptr [EAX],0  ; HANDLE = NULL
+//   005aef19  MOV dword ptr [EAX+0x8],0
+//   005aef20  MOV [EAX+0xc],EDX      ; priority
+//   005aef23  MOV [EAX+0x10],ECX     ; stack size
+//   005aef26  RET                    ; C3 — plain __cdecl, caller cleans
 //
-// Called by FUN_005bb000: (param_1+0x3e, &LAB_005bb380, 0xf, 0x1000)
+// *** RETURNS param_1 IN EAX. *** Ghidra types this `void`; that is wrong, and it is not a
+// cosmetic difference — ALL THREE callers branch on the result and skip the thread spawn
+// when it is zero. In FUN_005a8060 (the stream-cluster init, which also creates the
+// semaphore at [0x007dcae0] via 0x005a82d2):
+//
+//   005a8315  CALL FUN_005aef00
+//   005a831a  ADD  ESP,0x10
+//   005a831d  TEST EAX,EAX
+//   005a831f  JZ   0x005a8334          <- skips the spawn
+//   005a8328  CALL FUN_005aef30        <- __beginthread: the audio/stream WORKER THREAD
+//
+// (same shape at 0x005be3db in FUN_005be260.) Because the original always leaves the
+// non-null descriptor pointer in EAX, stock always takes the branch.
+//
+// BUGFIX 2026-07-28 — this port was declared `void`, so it returned whatever EAX happened to
+// hold. When that was 0 the worker thread was NEVER CREATED: measured over 2 stock + 2 hooked
+// runs, 0x005aef00 was entered once in both configs while 0x005aef30 and __beginthread
+// (0x005c2e79) were entered 1× in stock and 0× hooked, and an unfiltered CreateThread census
+// found exactly one game thread in every stock run and none in any hooked run. The stream
+// semaphore is created before this branch, so it still exists but is never serviced, and a
+// later WaitForSingleObject(..., INFINITE) hangs the GUI thread — the intermittent race-entry
+// wedge U-9025. Evidence: re/analysis/u9025_stream_lock_race.md, verify/u9025_semtrace/.
+//
+// Its C3 Frida diff (log/diff_audio_thread_desc_init.csv, GREEN 10/10) was structurally blind
+// to this: arg_type `thread_desc_init` fingerprints the five written fields and never reads
+// the return value. See [[feedback-installed-hook-abi-mismatch]].
+//
+// Called by FUN_005a8060, FUN_005bb000, FUN_005be260 — e.g. (buf, &LAB_005bb380, 0xf, 0x1000):
 //   — thread proc ptr = &LAB_005bb380 (0x005bb380)
 //   — priority        = 0xf (THREAD_PRIORITY_TIME_CRITICAL)
 //   — stack size      = 0x1000 (4096 bytes)
 // ---------------------------------------------------------------------------
-extern "C" __declspec(dllexport) void __cdecl AudioThreadDescInit(
+extern "C" __declspec(dllexport) std::uint32_t __cdecl AudioThreadDescInit(
         std::uint32_t* param_1,
         std::uint32_t  param_2,
         std::uint32_t  param_3,
         std::uint32_t  param_4)
 {
-    param_1[1] = param_2;   // 0x005aef03 — thread proc ptr
-    param_1[0] = 0u;        // 0x005aef07 — HANDLE = NULL
-    param_1[2] = 0u;        // 0x005aef0b — arg/state = 0
-    param_1[3] = param_3;   // 0x005aef11 — priority
-    param_1[4] = param_4;   // 0x005aef17 — stack size
+    param_1[1] = param_2;   // 0x005aef0c — thread proc ptr
+    param_1[0] = 0u;        // 0x005aef13 — HANDLE = NULL
+    param_1[2] = 0u;        // 0x005aef19 — arg/state = 0
+    param_1[3] = param_3;   // 0x005aef20 — priority
+    param_1[4] = param_4;   // 0x005aef23 — stack size
+    // The original's EAX still holds param_1 at the RET; the callers TEST it.
+    return static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(param_1));
 }
 
 RH_ScopedInstall(AudioThreadDescInit, 0x005aef00);  // re-enabled 2026-05-24 c3-audio-b

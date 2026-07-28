@@ -1,0 +1,36 @@
+== threads (56)  GUI/main tid=34912 ==
+  tid=34912  running   ntdll.dll!ZwWaitForSingleObject+0xc            ntdll.dll+0x799dc <== GUI/MAIN
+  tid=34340  running   win32u.dll!NtUserGetMessage+0xc                win32u.dll+0x11dc
+  -- parked-thread histogram --
+       37 x ntdll.dll!ZwWaitForSingleObject+0xc
+       12 x ntdll.dll!ZwWaitForMultipleObjects+0xc
+        6 x ntdll.dll!ZwWaitForWorkViaWorkerFactory+0xc
+        1 x win32u.dll!NtUserGetMessage+0xc
+
+== audio globals ==
+  0x007dcae0 = 0x994         THE WEDGE SEMAPHORE (binary, init=1 max=1) - GUI thread waits here INFINITE
+  0x007dcb68 = 0x1           GATE/REFCOUNT - read twice in FUN_005a8390; ==0 skips the RELEASE
+  0x007dcad8 = 0x15c2bdc4    head of the linked list the semaphore guards
+  0x007dcadc = 0x15c2cb74    tail/second list pointer, set beside 0x007dcad8 at 0x005a82cd
+  0x007dd608 = 0x15c31280    cleared by FUN_005ab620 when [0x007dd608]==ESI
+  0x007dd60c = 0x42121e0     cleared alongside 0x007dd608
+  0x007dd618 = 0x948         audio streaming lock (U-6700) - NOT the wedge object
+  0x007dd61c = 0x8f0         passed to FUN_005aeed0 at 0x005ab648
+  0x007dd620 = 0xb74         audio wait-list lock - NOT the wedge object
+  0x007dd62c = 0x0           compared against ESI at 0x005ab65f
+
+== threads with MASHED.exe frames on their stack (CANDIDATE return addresses, includes stale frames) ==
+  tid=34912  0x5b7e35 0x5b788d 0x5aaa20 0x5af2c7 0x5af216 0x5af284 0x5af17a 0x5a8491 0x5aaa20 0x462efa 0x466ece 0x492711 0x4922c2 0x4923de 0x4a4d38 0x4a4bcf
+  tid=2464   0x4c0072
+  tid=32108  0x41006d
+  tid=16600  0x41006d
+  tid=9040   0x41006d
+  tid=30508  0x41006d
+  tid=31636  0x41006d
+  tid=1016   0x49eb0c
+
+== semaphore probe ==
+  0x007dcae0 handle=0x994 -> WAIT_TIMEOUT (count 0 - nobody has released it)
+  0x007dd618 handle=0x948 -> WAIT_OBJECT_0 (was signalled - and this probe just took a count)
+  0x007dd620 handle=0xb74 -> WAIT_OBJECT_0 (was signalled - and this probe just took a count)
+

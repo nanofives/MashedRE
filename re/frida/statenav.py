@@ -77,6 +77,118 @@ rpc.exports={
          Interceptor.attach(p,{onEnter:function(){CNT[k]++;}}); }catch(e){ CNT[k]=-1; } }); return 1; },
   counts:function(){ return CNT; },
   peek:function(rva){ try{ return abs(parseInt(rva,16)).readU32(); }catch(e){ return 0; } },
+  // U-9025 semaphore tracer. The wedge is the GUI thread parked in
+  // WaitForSingleObject([0x007dcae0], INFINITE) at 0x005a8406 on a binary semaphore
+  // (CreateSemaphoreA init=1 max=1) that probes WAIT_TIMEOUT -> an UNPAIRED ACQUIRE.
+  // Instrument the two IMPORTED functions (not the 30 in-cluster call sites): patching
+  // 30 mid-function CALLs is 30 chances to relocate wrongly, whereas the import is one
+  // attach point and `this.returnAddress` still names the exact call site (site+6).
+  // Both are filtered on handle == *[semGlobal] read LIVE each call, because the handle
+  // does not exist yet at spawn time.
+  semtrace:function(rvaHex, iatWaitHex, iatRelHex){
+    const g = abs(parseInt(rvaHex,16));
+    let pW, pR;
+    try { pW = abs(parseInt(iatWaitHex,16)).readPointer(); } catch(e) { pW = null; }
+    try { pR = abs(parseInt(iatRelHex,16)).readPointer(); } catch(e) { pR = null; }
+    // Fallback only if the loader has not bound the IAT yet.
+    if (!pW || pW.isNull()) { const k=Process.getModuleByName('kernel32.dll'); pW=k.findExportByName('WaitForSingleObject'); }
+    if (!pR || pR.isNull()) { const k=Process.getModuleByName('kernel32.dll'); pR=k.findExportByName('ReleaseSemaphore'); }
+    const held = {};            // tid -> net acquires (re-entrancy shows as depth>1)
+    let seq = 0, diag = 0;
+    const mod = Process.findModuleByName('MASHED.exe') || Process.enumerateModules()[0];
+    const lo = mod.base, hi = mod.base.add(mod.size);
+    function sem(){ try { return g.readU32(); } catch(e) { return 0; } }
+    // DIAGNOSTIC: the handle filter is only sound if [semGlobal] is actually populated and
+    // actually passed. A first smoke run logged ZERO events, which is indistinguishable
+    // between "never called" and "filter wrong" -- so the first 40 calls made FROM MASHED
+    // code are logged unconditionally, with both the passed handle and the live global.
+    function diagOk(ra){ return diag < 6 && ra.compare(lo) >= 0 && ra.compare(hi) < 0; }
+    // A bare return address is not evidence of WHO called. Two wedge traces showed waits on
+    // this handle from addresses outside MASHED.exe, which cannot be attributed without the
+    // owning module -- so every site is reported as "module+0xoffset".
+    function where(p){ try { const m = Process.findModuleByAddress(p);
+        return m ? (m.name + '+0x' + p.sub(m.base).toUInt32().toString(16)) : ('UNMAPPED@' + p);
+      } catch(e) { return 'ERR@' + p; } }
+    Interceptor.attach(pW, {
+      onEnter(a){ const s = sem();
+        this.hit = (s !== 0 && a[0].toUInt32() === s);
+        const tid = Process.getCurrentThreadId();
+        if (!this.hit && diagOk(this.returnAddress)) { diag++;
+          send({kind:'sem', ev:'diag-wait', seq:seq++, tid:tid,
+                site:where(this.returnAddress), handle:a[0].toUInt32(),
+                semGlobal:s, timeout:a[1].toUInt32()}); }
+        if (this.hit) {
+          send({kind:'sem', ev:'wait-enter', seq:seq++, tid:tid,
+                site:where(this.returnAddress), timeout:a[1].toUInt32(),
+                depth:(held[tid]||0)}); } },
+      onLeave(r){ if (!this.hit) return; const tid = Process.getCurrentThreadId();
+        const rv = r.toUInt32(); if (rv === 0) held[tid] = (held[tid]||0) + 1;
+        send({kind:'sem', ev:'wait-leave', seq:seq++, tid:tid, rv:rv,
+              depth:(held[tid]||0)}); } });
+    Interceptor.attach(pR, {
+      onEnter(a){ const s = sem();
+        if (s === 0 || a[0].toUInt32() !== s) return;
+        const tid = Process.getCurrentThreadId(); held[tid] = (held[tid]||0) - 1;
+        send({kind:'sem', ev:'release', seq:seq++, tid:tid,
+              site:where(this.returnAddress), count:a[1].toUInt32(),
+              depth:held[tid]}); } });
+    // 2026-07-28: the first hunt caught a wedge whose trace showed the FIRST EVER gated wait
+    // blocking, with zero prior acquires and zero releases. A semaphore created init=1 cannot
+    // block its first waiter, so the count was consumed through an API this pair does not
+    // cover -- and the wedged process had 10 threads parked in ZwWaitForMultipleObjects.
+    // Cover every wait API that can consume a semaphore count, plus the creation itself so
+    // the runtime initial count is observed rather than inferred from the disassembly.
+    const k32 = Process.getModuleByName('kernel32.dll');
+    const pC = k32.findExportByName('CreateSemaphoreA');
+    if (pC) Interceptor.attach(pC, {
+      onEnter(a){ this.init = a[1].toInt32(); this.max = a[2].toInt32(); },
+      onLeave(r){ send({kind:'sem', ev:'create', seq:seq++,
+                        tid:Process.getCurrentThreadId(), handle:r.toUInt32(),
+                        site:where(this.returnAddress),
+                        init:this.init, max:this.max, semGlobal:sem()}); } });
+    // (nCount, lpHandles, ...) forms. `which` is the index of our handle in the array.
+    ['WaitForMultipleObjects','WaitForMultipleObjectsEx',
+     'MsgWaitForMultipleObjects','MsgWaitForMultipleObjectsEx'].forEach(function(nm){
+      const p = k32.findExportByName(nm); if (!p) return;
+      Interceptor.attach(p, {
+        onEnter(a){ this.which = -1; const s = sem(); if (s === 0) return;
+          const n = a[0].toUInt32(); if (n === 0 || n > 64) return;
+          try { for (let i = 0; i < n; i++) {
+                  if (a[1].add(i*4).readU32() === s) { this.which = i; break; } } } catch(e) { return; }
+          if (this.which < 0) return;
+          send({kind:'sem', ev:'multi-enter', api:nm, seq:seq++,
+                tid:Process.getCurrentThreadId(), site:where(this.returnAddress),
+                n:n, which:this.which}); },
+        onLeave(r){ if (this.which < 0) return;
+          send({kind:'sem', ev:'multi-leave', api:nm, seq:seq++,
+                tid:Process.getCurrentThreadId(), rv:r.toUInt32(), which:this.which}); } });
+    });
+    // Thread census. The stock/hooked control showed stock running the stream lock on a
+    // dedicated worker while the hooked build runs it on the GUI thread. Log EVERY
+    // CreateThread with its caller, start routine and resulting tid, so "the worker was
+    // never spawned" can be checked against the tids that actually take the lock rather
+    // than inferred. Unfiltered on purpose: a filtered census cannot show an absence.
+    const pT = k32.findExportByName('CreateThread');
+    const pGTI = k32.findExportByName('GetThreadId');
+    // GetThreadId(hThread) resolves the handle to the tid the lock traffic is reported under,
+    // so "which thread was spawned" and "which thread takes the lock" are the same key.
+    const getTid = pGTI ? new NativeFunction(pGTI, 'uint32', ['pointer'], 'stdcall') : null;
+    if (pT) Interceptor.attach(pT, {
+      onEnter(a){ this.start = a[2]; this.site = where(this.returnAddress); },
+      onLeave(r){ let tid = 0; try { if (getTid && !r.isNull()) tid = getTid(r); } catch(e) {}
+        send({kind:'sem', ev:'thread-create', seq:seq++,
+              by:Process.getCurrentThreadId(), site:this.site,
+              start:where(this.start), tid:tid}); } });
+    const pWx = k32.findExportByName('WaitForSingleObjectEx');
+    if (pWx) Interceptor.attach(pWx, {
+      onEnter(a){ const s = sem(); this.hit = (s !== 0 && a[0].toUInt32() === s);
+        if (this.hit) send({kind:'sem', ev:'waitex-enter', seq:seq++,
+                            tid:Process.getCurrentThreadId(),
+                            site:where(this.returnAddress)}); },
+      onLeave(r){ if (this.hit) send({kind:'sem', ev:'waitex-leave', seq:seq++,
+                                      tid:Process.getCurrentThreadId(), rv:r.toUInt32()}); } });
+    return {wait:pW.toString(), release:pR.toString()};
+  },
   depth:function(){ try{return abs(RVA_DEPTH).readS32();}catch(e){return -999;} },
   phase:function(){ try{return abs(RVA_PHASE).readS32();}catch(e){return -999;} },
   sel:function(){ try{const d=abs(RVA_DEPTH).readS32(); return abs(RVA_SEL+d*0x40).readS32();}catch(e){return -999;} }
@@ -163,6 +275,10 @@ def main():
         p = m.get("payload") if isinstance(m, dict) else None
         if isinstance(p, dict) and p.get("kind") == "crash":
             print("  [CRASH] " + json.dumps(p, indent=2))
+        elif isinstance(p, dict) and p.get("kind") == "sem":
+            # One line per event, flushed, so the trace survives a wedge (the GUI thread
+            # blocks but Frida's thread keeps delivering).
+            print("  [SEM] " + json.dumps(p, sort_keys=True), flush=True)
     scr=sess.create_script(AGENT); scr.on("message", _on_msg); scr.load()
     scr.exports_sync.init()
     # representative gameplay/results-gated HOLD hooks (non-hot: init/event/results, not per-frame)
@@ -173,6 +289,17 @@ def main():
                 "0x0040b6b0","0x00431d80","0x0046c700","0x004241b0","0x00424100",
                 "0x00492340","0x0046c790","0x0045ba00","0x00408a70","0x00436810"]
     scr.exports_sync.countthese(GAMEPLAY)
+    # Ad-hoc entry counters, e.g. MASHED_COUNT_RVAS=0x005bb000,0x005aef00. Counting is by RVA
+    # on purpose here: the question is "did control REACH this address", which an RVA probe
+    # answers correctly even when our inline JMP is installed there.
+    extra_rvas = [r.strip() for r in os.environ.get("MASHED_COUNT_RVAS","").split(",") if r.strip()]
+    if extra_rvas:
+        scr.exports_sync.countthese(extra_rvas)
+        print(f"  [count-rvas] {extra_rvas}", flush=True)
+    if os.environ.get("MASHED_SEMTRACE"):
+        # U-9025: trace acquire/release of the binary semaphore at [0x007dcae0].
+        r = scr.exports_sync.semtrace("0x007dcae0", "0x005cc090", "0x005cc094")
+        print(f"  [SEM] tracer armed wait={r['wait']} release={r['release']}", flush=True)
     dev.resume(pid)
     nav=Nav(scr,pid)
     if count_exports:
@@ -189,9 +316,19 @@ def main():
             except Exception:
                 pass
         print(f"  [count-export] {count_exports} armed={armed}")
+    # A wedged run never reaches the end-of-run counts dump, so the numbers that matter are
+    # lost exactly when the failure is interesting. Snapshot at each milestone instead.
+    def dump_counts(tag):
+        if not extra_rvas: return
+        try:
+            cc = scr.exports_sync.counts()
+            print(f"  [counts @{tag}] " + " ".join(f"{r}={cc.get(r)}" for r in extra_rvas), flush=True)
+        except Exception as e:
+            print(f"  [counts @{tag}] err {e}", flush=True)
     print("  booting...")
     nav.wait(lambda: nav.phase()==3 and nav.depth()>=1, 18.0, "title up")
     print(f"  title: depth={nav.depth()} phase={nav.phase()}")
+    dump_counts("title")
     # confirm title -> GTS (depth 2), then dismiss the Load-Successful modal (extra confirm)
     nav.confirm_to_depth(2); time.sleep(0.3); nav.press(4); time.sleep(0.5)
     print(f"  after GTS+modal: depth={nav.depth()} sel={scr.exports_sync.sel()}")
@@ -213,6 +350,7 @@ def main():
     # frontend), screenshot+log each new state. Stop when stuck or phase leaves 3 (in race).
     nav.press(4); time.sleep(1.5)   # confirm track -> Quick Battle "Game Mode" setup screen
     print(f"  after track confirm: depth={nav.depth()} phase={nav.phase()}")
+    dump_counts("track-confirm")
     shoot(pid, ROOT/shotdir/"sn_gamemode.png")
     # On the Game Mode screen "Play Game" is the top option; confirm to START the arena round.
     # Robust: press confirm until phase leaves the menu (==0 = in arena) or we stop progressing.
@@ -220,6 +358,7 @@ def main():
         if nav.phase()!=3: break
         nav.press(4); time.sleep(1.5)
         print(f"  start-attempt {k}: depth={nav.depth()} phase={nav.phase()}")
+        dump_counts(f"start-attempt{k}")
         if nav.phase()==0: break
     shoot(pid, ROOT/shotdir/"sn_race_enter.png")
     # WAIT for the arena round to play out (AI drives; round ends on elimination/timeout ->
