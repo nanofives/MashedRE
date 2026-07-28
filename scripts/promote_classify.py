@@ -301,15 +301,54 @@ def main():
     if "--emit" in sys.argv:
         emit_tag = sys.argv[sys.argv.index("--emit") + 1]
 
+    # --input <tsv>: classify an arbitrary candidate list instead of the leaf
+    # frontier. Any TSV with a header naming an `rva` column works (the
+    # c3_filter_v4 *_passed.tsv and callee_gate_cascade.tsv both qualify), so
+    # the resolver can be pointed at the real ~1400-row non-leaf pool rather
+    # than only promote_frontier.tsv's ~19 leaves. name/subsystem/size columns
+    # are used when present and defaulted from hooks.csv / the call graph when
+    # not. Added 2026-07-28: the hardcoded FRONTIER input was the reason the
+    # classifier had never been run against the cascade backlog.
+    in_path = FRONTIER
+    if "--input" in sys.argv:
+        in_path = sys.argv[sys.argv.index("--input") + 1]
+
     a = PF.analyze()
     code, tva, size_of, hooks = a["code"], a["text_va"], a["size_of"], a["hooks"]
 
     rows = []
-    with open(FRONTIER, encoding="utf-8") as f:
-        next(f)
+    with open(in_path, encoding="utf-8") as f:
+        hdr = None
         for line in f:
+            if line.startswith("#"):
+                continue
             p = line.rstrip("\n").split("\t")
-            rows.append((int(p[0], 16), p[1], p[2], int(p[3])))
+            if hdr is None:
+                hdr = [c.strip().lower() for c in p]
+                if "rva" not in hdr:      # headerless: assume frontier column order
+                    hdr = ["rva", "name", "subsystem", "size"]
+                else:
+                    continue
+            col = dict(zip(hdr, p))
+            raw = (col.get("rva") or "").strip().lower().replace("0x", "")
+            if not raw:
+                continue
+            try:
+                va = int(raw, 16)
+            except ValueError:
+                continue
+            if va < 0x400000:             # hooks.csv file-offset rows
+                va += 0x400000
+            row = hooks.get(va, {})
+            name = (col.get("name") or row.get("name") or f"FUN_{va:08x}").strip()
+            sub = (col.get("subsystem") or row.get("subsystem") or "?").strip()
+            try:
+                sz = int((col.get("size") or "").strip())
+            except (TypeError, ValueError):
+                sz = size_of.get(va, 0)
+            if not sz:
+                continue                  # outside .text / unknown extent
+            rows.append((va, name, sub, sz))
 
     auto, state, manual = [], [], []
     for va, name, sub, sz in rows:
