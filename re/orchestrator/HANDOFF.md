@@ -1,157 +1,83 @@
-# Mashed RE orchestrator — resume point (updated 2026-07-27, end of session)
+# Mashed RE orchestrator — resume point (updated 2026-07-27, menu-nav session)
 
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions. Maximize account2.
 
-**ALL WORK COMMITTED AND PUSHED.** `main` == `origin/main`. 18 commits this session.
-Tree clean. No worktrees. No MASHED processes. Ghidra slot 0 released, `.pool_slot` removed.
-
-Status brief — C1 797 / **C2 4035** / **C3 846** / C4 186.
+Status brief — C1 797 / C2 4035 / C3 846 / **C4 185** (one demotion this session: `0x0042ee00`).
 
 ---
 
-## HEADLINE: the ~71 s runtime AV is CLOSED (8/8 clean)
+## HEADLINE: the menu-navigated race path had NEVER been run with hooks installed
 
-It was **four INDEPENDENT hook defects**, not one bug and not a memory corruptor, all stacked on
-the same ~71–73 s attract/menu path. Each fix exposed the next.
+It found **four defects in one sitting**. All prior acceptance was structurally blind to them:
 
-| # | fault | root cause | commit |
+- `scenario_launch.py` pokes `DAT_00771968=2` and **bypasses the menu-driven loader**.
+- The ~71 s attract/menu acceptance **never leaves the frontend**.
+
+So colour-select → track-select → race-entry had simply never executed with the hook set live.
+
+| # | fault | root cause | status |
 |---|---|---|---|
-| 1 | `eip=0x0047bda0` read `0x1c` | `Match47bc90_RegAbi` clobbered EDX, which the *unhooked* caller `FUN_0047bcc0` carries across the call | `d9f61dd5` |
-| 2 | `eip=0x004e66db` NULL clump | `0x0041f330` installed as plain `__cdecl` though the original reads its key from ESI → returned 0 | `1ed01345` |
-| 3 | write AV `0x0cfcf000` | `0x00475a60` missing indirection → `memset(_,0,~223 MB)` | `e80b91f6` |
-| 4 | `eip=0x004a3222` | `0x00408a70` called a **guessed** RVA (`0x004a3220`) that landed mid-instruction | `7518a088` |
+| 1 | AV `0x004c5c00+0x2d`, read @ 0 | `0x0042ee40` + `0x0042ee00` are **argument-rewriting tail-JMP thunks**; both ports guessed the ABI and passed an int where a `const char*` sprite NAME belongs | FIXED (verbatim asm) |
+| 2 | AV `0x0045c6c6`, write @ `0x02acdfe0` | `0x0045c640` clobbers **EDX**, which its *unhooked* caller carries across the call as a loop index | FIXED (verbatim asm) |
+| 3 | HANG at race entry | `0x00448700`'s C loop kept its counter in **EAX across a call**; the callee's declared `uint32` return reloaded it → infinite loop | FIXED (verbatim asm) |
+| 4 | STILL WEDGES at race entry | main thread now **blocked in an ntdll wait**, not spinning | **OPEN — U-9025** |
 
-**Proven hook-caused** — an A/B nobody had run before: hooks installed 5/5 AV at 71.7–73.0 s vs
-`MASHED_RE_NO_AUTO_HOOK=1` 0/3 over 96 s. The old memory wrongly framed it as pre-existing; the
-memory is now `project_71s_av_closed`.
+**Stock control is clean 2/2** (full 45 s round, `phase 0→2→3`, results hooks firing) against hooked 2/2 failing — every attribution above is stock-vs-hooked at matched timing, never "did it crash".
 
-**Acceptance:** full 1203-hook set, 4 runs @95 s + 4 runs @130 s = **8/8 survived** to the harness
-kill (every exit `0xFFFFFFFF`), against a prior deterministic 4/4 AV. The 130 s runs clear ~2x the
-old failure window.
+### Two evidence lessons worth keeping
 
-### Methods worth reusing (all cheap, all paid off)
+1. **Install-verification is not behaviour-verification.** `0x0042ee00` was **C4** on "E9+rel32 verified / interceptor fired 3/3 / GREEN 10/10". Every one of those confirms the hook is *installed* and that *return values* matched — none inspects the **argument handed to the callee**. Demoted C4→C3.
+2. **A value diff cannot see a register clobber.** `0x0045c640`'s "10/10 GREEN" compares the global writes, which were always correct. This class has now hit **nine** times and no gate detects it.
 
-1. **Bisect classified by FAULT SIGNATURE (eip), never "did it crash."** Partial hook sets threw
-   two unrelated faults (`0x6f5bb3ac`, `0x0045bfb5`) that would have sent a crash/no-crash bisect
-   down the wrong branch. 9 steps isolated a single registry index.
-2. **Read the crash frame out of the minidump instead of bisecting.** Layer 3 was solved with zero
-   extra runs: resolve the faulting address to its module (it was our own `.asi`), then read
-   `[esp]`/`[esp+4]`... from the dump's memory streams to recover the callee's real arguments and
-   return address. Scratch tools: `which_module.py`, `nearest_export.py`, `read_stack.py`,
-   `dump_export.py`, `bisect_step.sh`.
-3. **Check dump-to-dump determinism BEFORE reaching for corruption tooling.** All four layer-4
-   dumps were byte-identical (same eip/esp/ebp/eax/ecx). Heap corruption varies run to run — that
-   one observation disproved the single-corruptor hypothesis for free and made PageHeap /
-   Application Verifier (elevation + IFEO writes) unnecessary.
-4. **`MASHED_COUNT_RVAS`** on `scenario_launch.py` (new, `ddb0524d`) — proves a path actually ran.
-   A clean scenario run verifies nothing about a function that never executed.
+### Method notes
+
+- **PC sampling was misleading**; the **stack walk** identified the real driver. For layer 3, disassembling **our own `.asi`** (not the original) is what root-caused it — the bug was in the *emitted* code, invisible in the C source.
+- `ESI == 0x32` identical across **three separate processes** is what proved "stuck" rather than "sampled mid-flight". Repeat-across-processes is the cheap determinism test.
+- Filter the exception handler to `type=='access-violation'` — C++ `throw` surfaces as a KERNELBASE `RaiseException` on this path and drowns the signal.
 
 ---
 
-## Guessed-address / call-target audit (`b215d21f`)
+## NEW: `statenav.py` is now the menu-nav acceptance driver
 
-A wrong RVA compiles and links fine and only fails at runtime. Tooling committed and reusable:
-- `scripts/ghidra/extract_call_targets.py` — every hardcoded call target (fn-ptr casts, `as_fn<>`,
-  `kFn_*` constants, `RH_ScopedInstall` targets), filtered to the image range
-- `scripts/ghidra/check_call_targets_eval.py` — READ-ONLY `ghidra_eval` pass classifying each as
-  **ENTRY / MID_BODY / NO_FUNC**
+`re/frida/statenav.py` (the only harness that drives the real frontend to a race) gained:
 
-2192 sites / 1762 addresses -> 1538 ENTRY, 647 NO_FUNC, 6 MID_BODY. **Two were real:**
-`0x00442cbd` (a DIGIT TRANSPOSITION of `0x004a2cbd` — `a2` typed `42`) and a dead second copy of
-`0x004a3220` that `7518a088` had missed.
+- `--hooks` — leave the dev `.asi` **ARMED** (default stays stock, input-drive only)
+- `--count-export NAME[,NAME]` — count entries into **our port by its `.asi` EXPORT**, not the patched RVA (an inline JMP makes an RVA-anchored probe ambiguous). Arming retries after resume because the `.asi` loads *after* spawn.
+- detach handler printing `GetExitCodeProcess` (this is how the AV was distinguished from a clean exit — **no WER dump is produced** on this path)
+- in-process `Process.setExceptionHandler` AV catcher (pc, module, fault address, registers, stack)
 
-**Lesson: the STRUCTURAL check found both real bugs; a parallel account2 sweep for hedging comments
-("observed", "assumed", "not independently known") produced ONLY false positives** — its top hits
-`0x4a78f4` and `0x57c2e0` are faithful transcriptions (the original literally does
-`0x004a3229 PUSH 0x4a78f4` and `0x0057c27a PUSH 0x57c2e0`), i.e. Ghidra `LAB_`-not-`FUN_` gaps.
-**MID_BODY is the signal; NO_FUNC is noisy.** Re-run this after any batch of ports.
+`MASHED_HOOK_SKIP=<Name>` (exact-token denylist, already in `HookSystem.cpp`) is the bisect knob — `statenav` inherits the environment, so no code change is needed.
 
-**WARNING — `0x00442cbd` is STATICALLY proven only.** `LoadingState2Enter @ 0x00409900` sits on the
-loading path; `MASHED_COUNT_RVAS` showed it fired **0 times** in a `scenario_launch` race, because
-the launcher pokes `DAT_00771968=2` and BYPASSES the menu-driven loader. Confirming it needs a
-**menu-navigated** race. The same run did give first in-race behavioural confirmation of
-`0x00408a70` (2 calls) and `0x00475a60` (3 calls), both clean.
-
----
-
-## LANE B — promotions and tracker
-
-**U-9021 RESOLVED** — `FUN_004c4530` is **`RwMatrixOptimize`**: matrix + 3-float tolerance triple
-(default `DAT_007d4028 + 0xc + DAT_007d3ff8`), per-slot compare, writes the RwMatrix flag word at
-`+0xc`, returns `param_1`.
-
-| RVA | tol slot | flag bit | metric | status |
-|---|---|---|---|---|
-| `0x004c42d0` | `[0]` | `0x1` NORMAL | normality / diagonal | C3 (prior session) |
-| `0x004c4270` | `[1]` | `0x2` ORTHOGONAL | orthogonality / off-diagonal | C3 (prior session) |
-| `0x004c4360` | `[2]` | `0x20000` IDENTITY | identity deviation | **C3 `3ceafa84`** |
-
-All three "RwV3d bbox Y/X/Z accessor" labels are now disproved by their own bytes.
-
-**Promotions this session (both C3, both hook-BYPASSED synthetic A/B — NOT C4):**
-- `0x004c4360` `MatrixIdentityResidual4c4360` — ||M - I||^2 over the FULL 4-row matrix. NEW
-  `arg_type` **`st0_ret_mat4x3_ptr`** (0x40 scratch, twelve f32; `st0_ret_mat3_ptr` seeds only
-  nine, so `0x30/34/38` would be heap garbage). 10/10, 10 distinct fingerprints; four hand-derived
-  predictions matched exactly (0.0 / 25.0 / 14.0 / 3.0). Resolves **U-9022**.
-- `0x005c6b60` `Delta5c6b60` — 2D fixed-point delta, first row unlocked by the U-9023 band fix.
-  5/5. `seed_byte 0x11` chosen deliberately: `0x00` would make `- p[1]` a no-op so a reimpl that
-  OMITTED the subtraction would still pass. Declared `u32` not `void` — EAX equals the stored
-  `p[0]` at both RET paths. New **U-9024** (purpose/subsystem undetermined).
-
-**U-9023 RESOLVED (`a448e116`)** — the `0x005c0000-0x005c8000` CRT skip band was over-broad and had
-silently excluded first-party rows since 2026-06-15. A narrower BOUND alone cannot fix it (28
-alternations in address order), so the band is narrowed to `0x005c0000..0x005c3fff` AND paired with
-a name test `is_library_name()`, which exempts RenderWare prefixes (`_rw`/`_rp`/`_rt`) — without
-that exemption it would have silently dropped `0x004c7a70 _rwDeviceSystemFn`. 37 rows released, 0
-newly excluded. `bulk_add_library_residue.py`'s conflicting `0x5d0000` reconciled.
-
-**Deliberately NOT closed** (avoiding overclaim): **U-2169** (registered question is the four-field
-distinction; only an unregistered sub-question riding on its ID was resolved) and **U-0004**
-(transcription proven faithful, but what lives at `0x004a78f4` is still undetermined).
-
-`0x0045bfb5` crasher **verified closed** — 3/3 clean, was collateral from the `Search45baa0` ABI
-defect. Targeted by NAME via `MASHED_HOOK_ONLY`, because appending `Delta5c6b60` shifted registry
-indices; an index-based re-run would have tested the wrong pair.
+**Frida 17 note:** the static `Module.findExportByName` is REMOVED; use `Process.findModuleByName(m).findExportByName(n)`.
 
 ---
 
 ## NEXT — recommended order
 
-1. **Re-run the call-target audit.** Cheap, and new hooks landed since it ran. Two scripts above.
-2. **Menu-navigated race** to behaviourally confirm `0x00442cbd` (the only fix resting on static
-   evidence alone). Needs input injection through the real frontend, not the warp.
-3. **U-9024** — decompile caller `0x005c7330` to fix `0x005c6b60`'s purpose and subsystem. Its row
-   is tagged `boot`, its only caller is `audio`, and the plate guesses "menu/cursor": all three
-   disagree, so it was left at `boot` per the stop-and-ask rule.
-4. **Sweep for more `st0_ret_mat3_ptr` / `st0_ret_mat4x3_ptr`-shaped leaves** now both handlers
-   exist — this is how the new-arg_type lane pays off beyond the rows already landed.
-5. The other 36 rows released by U-9023 are NOT yet frontier-eligible: the frontier is leaf-only
-   and most are non-leaf (e.g. `0x005c47e0` has nine depth-1 callees). They become eligible as
-   their callers reach C2+.
+1. **U-9025 — the layer-4 wedge.** Re-run `--hooks`, walk the blocked thread, and `MASHED_HOOK_SKIP`-bisect the hooks on the chain `0x005ab63d / 0x005b1526 / 0x00551591 / 0x0045d40f / 0x0049270a`. Establish first whether it is hook-caused at all.
+2. **`0x00442cbd` is STILL not behaviourally confirmed.** Every run so far died or wedged before the counters printed. `--count-export LoadingState2Enter` is wired and arms correctly; it just needs a run that survives to the round.
+3. **Sweep the two register classes** — this is the highest-leverage systematic work:
+   - ports whose original preserves registers that compiled C does not (9 instances);
+   - ports whose **declared return type differs from the original's** and are called from a C loop (the new `0x00448700` class).
+4. **`LobbySlotListRender` (`0x00439210`) is a fabricated scaffold** — invented draw coordinates (330.0f/64.0f/80.0f appear nowhere in the original), a wrong callee set, and `[UNCERTAIN U-k2-01]` on six signatures. It was **exonerated** as the crasher (skipping it reproduced the identical AV) but it is a live NO-GUESSING violation. The original uses `FUN_0040bb50("lock"/"check", ...)`, `FUN_00472c60`, `FUN_00472dc0` with screen-dimension-derived coordinates. A verbatim re-port is ~5.6 KB with 8 x87/register decompiler artifacts — needs its own session and an asm-vs-C decision.
+5. **Lane B is quiet:** the `st0_ret_mat3_ptr`/`st0_ret_mat4x3_ptr` lane is **mined out** — all 22 frontier rows screened, no single-pointer ST0-float leaf remains. The one real signal is `0x004c3910` (Vec3Normalize, confirmed `float10` return), blocked only by a second *output* pointer; it needs a new `st0_ret_vec3_out_in_ptr` handler.
+
+## DONE this session
+
+- **Call-target audit re-run — CLEAN.** 2193 sites / 1762 addresses → 1541 ENTRY, 647 NO_FUNC, 5 MID_BODY, **all 5 false positives** (PIZ magic `0x005A4950`, data-base `0x00500000`×2, body-end marker `0x00470914`, SEH handler `0x004a4bc3`). Both real bugs from the prior round are gone.
+- **U-9024 RESOLVED** — `0x005c6b60` is a **64-step gain-ramp target setter**, subsystem **audio** (not boot, not menu/cursor). Its sole caller `FUN_005c7330` computes left/right mixer gains and calls it as `(p+0xa4, gainL, gainR)` and `(p+0xb8, v, v)`; the struct is `[0]`=active flag `0x40`, `[1]/[2]`=current fixed-point, `[3]/[4]`=per-step delta `(target*0x100 - cur)/64`.
 
 ## OPEN GATES / STOP-AND-ASK
 
-- **D2 renderer commitment** — OPEN (RW-subset verbatim vs `librw`). Confirm before M3/WS-E tokens.
+- **D2 renderer commitment** — OPEN (RW-subset verbatim vs `librw`).
 - **D4 airborne bit-identity** — OPEN (accept A5 1-ULP float10 residual U-8991 vs naked-asm shim).
 
-## HYGIENE — clean
+## HYGIENE
 
-Ghidra pool: **0 lock files**, slot 0 available, acquire/release smoke-tested. Frida pool healed
-by `diag.py doctor` (cleared locks + a tracked zombie MASHED). No worktrees, no game processes,
-`original/` anchor intact, all-LF.
+Ghidra pool: slot 1 released. **`mashed_pool/Mashed_pool0.lock~` is held open by the Ghidra MCP JVM** and cannot be deleted (`Device or resource busy`) — the `feedback_mcp_leaked_project_lock` case; clears only on restarting that server. Use slot 1+.
 
-CORRECTION to an earlier note in this file: the 7 leftover `.lock` files were **not** "other
-sessions' live locks". `ghidra_pool.sh status` listed only Slot 0, i.e. slots 1/3/6/10/11/12/13 no
-longer exist as projects — those were ORPHANED lock files for removed slots. They still mattered a
-little, because `is_locked()` is bare file-existence (`[[ -f ... ]]`), so `acquire` treated those
-slot numbers as taken and would skip to higher numbers.
-`diag.py doctor` does NOT clear them (it reported "ghidra_locks OK — no locked slots", since it
-only inspects slots that still have a project). The right tool is
-**`bash scripts/ghidra_pool.sh cleanup`**.
-Safety check performed first, and worth repeating before any future cleanup: two live `java.exe`
-existed, but one was a Kotlin/Gradle daemon and the other was the Ghidra MCP server started
-*after* every lock file's date, and `mcp__ghidra__program_list_open` returned **0 open sessions** —
-so nothing held a program. Note memory `feedback_mcp_leaked_project_lock`: an in-JVM lock survives
-deleting the `.lock` file, so the open-session check is the one that actually matters.
+**Pool-script gotcha:** `ghidra_pool.sh acquire` stakes a **Ghidra-format `.lock`** to reserve the slot, and that file makes `project_program_open_existing` fail with `LockException`. Delete `mashed_pool/<Slot>.lock` after acquiring and before the MCP open; Ghidra then creates its own lock, which serves the same "taken" signal.
 
-TO RESUME: paste the kickoff prompt from the end of the session, or this whole file.
+All MASHED PIDs spawned this session (32496, 33340, 27056, 23308) were killed by PID. No worktrees. `original/` intact.
+
+TO RESUME: read this file; start at NEXT item 1.

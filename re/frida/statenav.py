@@ -67,14 +67,57 @@ rpc.exports={
   clear:function(){ pressCtrl=-1; return 1; },
   countthese:function(rvas){ rvas.forEach(function(r){ const a=parseInt(r,16); CNT[r]=0;
     try{ Interceptor.attach(abs(a),{onEnter:function(){CNT[r]++;}}); }catch(e){ CNT[r]=-1; } }); return 1; },
+  // Count entries into OUR reimplementation by its .asi EXPORT, not by the patched original
+  // RVA: the inline JMP installed at the RVA makes an RVA-anchored probe ambiguous, while the
+  // export address is unambiguously the ported body.
+  countexports:function(mod, names){ names.forEach(function(n){ const k='exp:'+n; CNT[k]=0;
+    // Frida 17 removed the static Module.findExportByName; go through the module object.
+    try{ const m=Process.findModuleByName(mod); if(!m){ CNT[k]=-2; return; }
+         const p=m.findExportByName(n); if(!p){ CNT[k]=-2; return; }
+         Interceptor.attach(p,{onEnter:function(){CNT[k]++;}}); }catch(e){ CNT[k]=-1; } }); return 1; },
   counts:function(){ return CNT; },
   peek:function(rva){ try{ return abs(parseInt(rva,16)).readU32(); }catch(e){ return 0; } },
   depth:function(){ try{return abs(RVA_DEPTH).readS32();}catch(e){return -999;} },
   phase:function(){ try{return abs(RVA_PHASE).readS32();}catch(e){return -999;} },
   sel:function(){ try{const d=abs(RVA_DEPTH).readS32(); return abs(RVA_SEL+d*0x40).readS32();}catch(e){return -999;} }
 };
+// Exception-handler EIP catcher (same class as poll_attach_catch_crash.py, but in-process so
+// it survives a nav-driven AV). Reports the faulting pc, its owning module, and the registers.
+Process.setExceptionHandler(function (d) {
+  // Only AVs. C++ `throw` surfaces here as a RaiseException in KERNELBASE and is normal
+  // traffic on this path — reporting it drowns the signal we are bisecting for.
+  if (d.type !== 'access-violation') return false;
+  try {
+    const pc = d.context.pc;
+    const m = Process.findModuleByAddress(pc);
+    send({kind:'crash', type:d.type, pc:pc.toString(),
+          module: m ? (m.name+'+0x'+pc.sub(m.base).toUInt32().toString(16)) : 'UNMAPPED',
+          addr: d.memory ? (d.memory.operation+' @ '+d.memory.address) : null,
+          regs: {eax:d.context.eax.toString(), ebx:d.context.ebx.toString(),
+                 ecx:d.context.ecx.toString(), edx:d.context.edx.toString(),
+                 esi:d.context.esi.toString(), edi:d.context.edi.toString(),
+                 esp:d.context.esp.toString(), ebp:d.context.ebp.toString()},
+          stack: (function(){ const o=[]; for (let i=0;i<10;i++){
+                    try{ const v=d.context.esp.add(i*4).readPointer();
+                         const mm=Process.findModuleByAddress(v);
+                         o.push('[esp+'+(i*4)+']='+v+(mm?(' '+mm.name+'+0x'+v.sub(mm.base).toUInt32().toString(16)):''));
+                    }catch(e){ o.push('[esp+'+(i*4)+']=?'); } } return o; })()});
+  } catch (e) {}
+  return false;   // let it propagate; we only observe
+});
 send({kind:'ready'});
 '''
+
+def _open_handle(pid):
+    # PROCESS_QUERY_LIMITED_INFORMATION | SYNCHRONIZE — kept open so the exit code is
+    # still readable after the process dies (the PID alone is not enough).
+    return ctypes.windll.kernel32.OpenProcess(0x1000 | 0x00100000, False, pid)
+
+def _exit_code(h):
+    if not h: return None
+    c = wintypes.DWORD()
+    if not ctypes.windll.kernel32.GetExitCodeProcess(h, ctypes.byref(c)): return None
+    return c.value
 
 class Nav:
     def __init__(s, scr, pid): s.scr=scr; s.pid=pid
@@ -100,9 +143,27 @@ def main():
     seconds=int(sys.argv[sys.argv.index("--seconds")+1]) if "--seconds" in sys.argv else 60
     shotdir=sys.argv[sys.argv.index("--shot-dir")+1] if "--shot-dir" in sys.argv else "verify/p2"
     Path(ROOT/shotdir).mkdir(parents=True, exist_ok=True)
-    env=dict(os.environ); env["MASHED_RE_NO_AUTO_HOOK"]="1"   # stock; we only drive input
+    # --hooks: leave the dev .asi ARMED (default is stock, input-drive only). Used to
+    # behaviourally exercise ported hooks on the menu-driven loading path, which
+    # scenario_launch.py cannot reach (it pokes DAT_00771968=2 and bypasses the loader).
+    hooks_on = "--hooks" in sys.argv
+    count_exports = []
+    if "--count-export" in sys.argv:
+        count_exports = sys.argv[sys.argv.index("--count-export")+1].split(",")
+    env=dict(os.environ)
+    if not hooks_on:
+        env["MASHED_RE_NO_AUTO_HOOK"]="1"   # stock; we only drive input
+    else:
+        env.pop("MASHED_RE_NO_AUTO_HOOK", None)
+        print("  [hooks] dev .asi ARMED")
     dev=frida.get_local_device(); pid=dev.spawn(str(EXE),cwd=str(ORIG),env=env); sess=dev.attach(pid)
-    scr=sess.create_script(AGENT); scr.on("message",lambda m,d:None); scr.load()
+    hproc=_open_handle(pid)
+    sess.on("detached", lambda reason, *a: print(f"  [detached] reason={reason} exit_code=0x{(_exit_code(hproc) or 0):08x}"))
+    def _on_msg(m, d):
+        p = m.get("payload") if isinstance(m, dict) else None
+        if isinstance(p, dict) and p.get("kind") == "crash":
+            print("  [CRASH] " + json.dumps(p, indent=2))
+    scr=sess.create_script(AGENT); scr.on("message", _on_msg); scr.load()
     scr.exports_sync.init()
     # representative gameplay/results-gated HOLD hooks (non-hot: init/event/results, not per-frame)
     # RESULTS/round-end subset (the 12 that were 0 in Time Trial) + a few in-race positives.
@@ -114,6 +175,20 @@ def main():
     scr.exports_sync.countthese(GAMEPLAY)
     dev.resume(pid)
     nav=Nav(scr,pid)
+    if count_exports:
+        # The .asi is loaded by the dinput8 proxy AFTER resume, so its exports do not exist
+        # at spawn time; retry until the module is present.
+        armed=False
+        for _ in range(40):
+            time.sleep(0.5)
+            try:
+                scr.exports_sync.countexports("mashed_re_dev.asi", count_exports)
+                cc=scr.exports_sync.counts()
+                if all(cc.get("exp:"+n, -2) >= 0 for n in count_exports):
+                    armed=True; break
+            except Exception:
+                pass
+        print(f"  [count-export] {count_exports} armed={armed}")
     print("  booting...")
     nav.wait(lambda: nav.phase()==3 and nav.depth()>=1, 18.0, "title up")
     print(f"  title: depth={nav.depth()} phase={nav.phase()}")
