@@ -126,6 +126,49 @@ def run_one_hook(sess, nav, name, shotdir):
     return results, (errors[0] if errors else None)
 
 
+# x87 stack scrub, run between hooks on the same Frida thread the force-calls
+# use. Emitting a bare FNINIT would also reset the FPU CONTROL WORD to 0x037F,
+# but MASHED/MSVC run with their own CW (precision + rounding bits), and
+# changing it would alter results — trading the dirty-stack false-RED for a
+# rounding false-RED. So: save CW, FNINIT (empties the register stack and
+# clears exception flags), restore CW.
+#
+#   83 EC 04        sub  esp,4
+#   D9 3C 24        fnstcw word [esp]
+#   DB E3           fninit
+#   D9 2C 24        fldcw  word [esp]
+#   83 C4 04        add  esp,4
+#   C3              ret
+X87_SCRUB_JS = """
+const code = Memory.alloc(Process.pageSize);
+Memory.protect(code, Process.pageSize, 'rwx');
+code.writeByteArray([0x83,0xEC,0x04, 0xD9,0x3C,0x24, 0xDB,0xE3,
+                     0xD9,0x2C,0x24, 0x83,0xC4,0x04, 0xC3]);
+new NativeFunction(code, 'void', [])();
+send({type: 'x87_scrubbed'});
+"""
+
+
+def scrub_x87(sess):
+    """Empty the x87 register stack between hooks, preserving the control word.
+    Returns True if the stub ran. The dirt demonstrably crosses script
+    boundaries (measured: a float hook at position>1 false-REDs on vector 0),
+    which means these scripts share a thread — so scrubbing from a sibling
+    script reaches the same FPU state the force-calls see."""
+    ok = {"v": False}
+    scr = sess.create_script(X87_SCRUB_JS)
+    scr.on("message", lambda m, d: ok.__setitem__(
+        "v", m.get("payload", {}).get("type") == "x87_scrubbed"))
+    try:
+        scr.load()
+    except Exception:
+        return False
+    finally:
+        try: scr.unload()
+        except Exception: pass
+    return ok["v"]
+
+
 def verdict_for(hook, results, ret_kind, mism, total, distinct_bits):
     """Mirror run_diff_scenario's acceptance criterion, including ZERO-ARG mode.
 
@@ -195,6 +238,9 @@ def main():
     sent_words = _flag("--sentinel-words", 8, int)
     shotdir    = _flag("--shot-dir", "verify/scenario_batch")
     repeat_first = "--repeat-first" in sys.argv
+    # --no-x87-scrub: skip the between-hook FPU scrub, to reproduce the dirty
+    # stack the scrub exists to fix (that is how the fix is A/B'd).
+    no_scrub = "--no-x87-scrub" in sys.argv
     (ROOT / shotdir).mkdir(parents=True, exist_ok=True)
 
     # Union of every candidate's sentinel: navigation must populate the state
@@ -234,12 +280,14 @@ def main():
     # may be deliberately probing the effect, as the measurement run was.
     late_floats = [(i, n) for i, n in enumerate(order, 1)
                    if i > 1 and HOOKS[n]["signature"]["ret"] in ("float", "double")]
-    if late_floats:
-        print("  WARNING x87: float-returning hook(s) scheduled after position 1 — "
-              "expect a false RED on vector idx=0 from a dirty x87 stack:")
+    if late_floats and no_scrub:
+        print("  WARNING x87: --no-x87-scrub with float-returning hook(s) after "
+              "position 1 — expect a false RED on vector idx=0:")
         for i, n in late_floats:
             print(f"    #{i} {n}")
-        print("    -> put float hooks first, or give each its own boot.")
+    elif late_floats:
+        print(f"  x87 scrub ON (CW-preserving FNINIT between hooks); "
+              f"{len(late_floats)} float hook(s) scheduled after position 1")
     print(f"batch: {len(names)} hooks in ONE boot "
           f"(vs {len(names)} boots via run_diff_scenario.py)")
     print(f"  order: {' -> '.join(order)}")
@@ -299,6 +347,8 @@ def main():
         for i, name in enumerate(order, 1):
             tag = "repeat_" if (repeat_first and i == len(order) and len(order) > len(names)) else ""
             t_hook = time.time()
+            if not no_scrub:
+                scrubbed = scrub_x87(sess)
             results, err = run_one_hook(sess, nav, name, shotdir)
             dt = time.time() - t_hook
             ret_kind = HOOKS[name]["signature"]["ret"]
