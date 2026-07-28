@@ -162,6 +162,23 @@ LIVE_STATE_PATTERNS = [
     (r"\bIDirectSound(?:Buffer)?\d*\b",    "DirectSound vtable on live device"),
     (r"vtable\[\d+\]\s*=\s*(?:Acquire|Unacquire|Release)\b",
                                             "live COM Acquire/Unacquire/Release"),
+    # RenderWare engine root global. DAT_007d3ff8 holds the RwEngine instance
+    # pointer (notes: "RW engine ptr", "RwEngine global", "engine root"), which
+    # is non-null only after RwEngineInit/RwEngineOpen on a booted game. Any
+    # DEREF of it — vtable slot, struct base — cannot be reproduced by a
+    # synthetic Frida call: the pointer is garbage pre-boot and its vtable
+    # dispatches into live device state.
+    #
+    # Evidence (2026-07-28 render pilot): 9 of 9 hand-checked candidates that
+    # v4 had PASSED were live-state; 6 of them via this global — 0x004219c0,
+    # 0x004cd550, 0x00474db0, 0x004c7730, 0x00490490, 0x0041ebb0. The prior
+    # pattern set caught none of them (it only knew IDirect3D*-style names).
+    #
+    # Matches DEREF/BASE shapes ONLY, never a bare prose mention: measured over
+    # the 530 passed render rows, deref-or-base fires on 90, bare mention on
+    # 123 — the 33-row gap is discussion of the global, not use of it.
+    (r"\*\s*\(?\s*DAT_007d3ff8",           "deref of RW engine global (live device)"),
+    (r"DAT_007d3ff8\s*\+\s*0x",            "RW engine global as struct/vtable base"),
 ]
 
 ARG_TYPE_RE = re.compile(
