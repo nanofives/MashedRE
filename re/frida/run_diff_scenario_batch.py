@@ -37,6 +37,27 @@
 # control going RED is the signal, and that is only interpretable if it was
 # GREEN in the one-boot-per-hook lane.
 #
+# ANSWER (measured 2026-07-28) — REUSE IS NOT UNIVERSAL:
+#   * INTEGER hooks reuse cleanly: 48 force-calls of 4 read-only zero-arg
+#     getters, 48/48 GREEN, repeat control GREEN at first and last position.
+#   * FLOAT-returning hooks DO NOT. Repeating heading_atan2 (float3_scalar_ret)
+#     and audio_vec_length (vec3_normalize) three times each in one process:
+#         position 1  -> GREEN
+#         positions 4, 7 -> RED, and always exactly 1 mismatch, always idx=0
+#     idx=0 original came back EMPTY for heading_atan2 and 0x9F9C-garbage for
+#     audio_vec_length, i.e. NaN/indefinite. That is a DIRTY x87 STACK on entry:
+#     a preceding hook leaves ST0 occupied, the first FLD of the next float hook
+#     overflows the x87 stack, and it drains by the second vector. Same hazard
+#     class as memory feedback_x87_st0_float10_return_fnptr.
+#   MITIGATION until the agent emits an FPU reset between hooks: put every
+#   float-returning hook FIRST in the order, or give it its own boot. This
+#   runner warns when a float hook is scheduled at position > 1.
+#
+# The `race` scenario is POPULATED but NOT quiescent (run_diff_scenario defaults
+# to `results` for that reason). Prefer --scenario race only for hooks whose
+# state is stable within a frame; a per-frame-varying getter can false-RED
+# because the live global moves between the original and reimpl calls.
+#
 # Usage:
 #   py -3.12 re/frida/run_diff_scenario_batch.py <hook1> <hook2> ... \
 #       [--scenario race|results] [--round 130] [--repeat-first]
@@ -206,6 +227,19 @@ def main():
     LOG_DIR.mkdir(parents=True, exist_ok=True)
 
     order = names + ([names[0]] if repeat_first and len(names) > 1 else [])
+
+    # x87 hazard: a float-returning hook scheduled after any other hook sees a
+    # dirty x87 stack and false-REDs on its FIRST test vector only (measured
+    # 2026-07-28; see header). Warn rather than silently reorder — the caller
+    # may be deliberately probing the effect, as the measurement run was.
+    late_floats = [(i, n) for i, n in enumerate(order, 1)
+                   if i > 1 and HOOKS[n]["signature"]["ret"] in ("float", "double")]
+    if late_floats:
+        print("  WARNING x87: float-returning hook(s) scheduled after position 1 — "
+              "expect a false RED on vector idx=0 from a dirty x87 stack:")
+        for i, n in late_floats:
+            print(f"    #{i} {n}")
+        print("    -> put float hooks first, or give each its own boot.")
     print(f"batch: {len(names)} hooks in ONE boot "
           f"(vs {len(names)} boots via run_diff_scenario.py)")
     print(f"  order: {' -> '.join(order)}")
