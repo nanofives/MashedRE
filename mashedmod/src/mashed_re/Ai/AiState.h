@@ -89,5 +89,10 @@ inline std::uint8_t&  U8 (std::uintptr_t a) { return *reinterpret_cast<std::uint
 inline std::int32_t&  I32(std::uintptr_t a) { return *reinterpret_cast<std::int32_t*>(a); }
 inline std::uint32_t& U32(std::uintptr_t a) { return *reinterpret_cast<std::uint32_t*>(a); }
 inline float&         F32(std::uintptr_t a) { return *reinterpret_cast<float*>(a); }
+// F64: for constants the original loads with a QWORD x87 operand (opcode prefix `dc`,
+// e.g. `fmul qword ptr [0x005cc970]`) rather than a DWORD one (`d8`). Reading such a
+// constant through F32 yields the low half of the double and is silently wrong — it is
+// what made AiSteeringAngleError scale by 1.08e-19 instead of 57.2958 (2026-07-28).
+inline double&        F64(std::uintptr_t a) { return *reinterpret_cast<double*>(a); }
 
 } // namespace Ai

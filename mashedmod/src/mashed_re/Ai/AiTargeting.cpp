@@ -167,6 +167,21 @@ inline char   call_00443d10(float x, float z)   { return reinterpret_cast<fn_til
 // original FUN_004a3384 (RVA), not MSVC acos.
 // NOTE: (local_c,local_8,local_4) are stack-adjacent in the original and used as
 // one 3-vector via &local_c — ported as an explicit float[3] to guarantee that.
+//
+// BUGFIX 2026-07-28 — WRONG OPERAND WIDTH on three constants. They are QWORD x87
+// operands in the original (opcode prefix `dc`), not DWORD (`d8`), and reading them
+// through F32 silently returned the low half of a double:
+//   0x00415eba  dc0d 70c95c00  FMUL QWORD [0x005cc970]  = 57.2958 (180/pi)
+//                              read as f32 -> 1.0842e-19, so the acos result was
+//                              scaled to ~0 and the function returned a dead angle
+//   0x00415e85  dc15 d0d05c00  FCOM QWORD [0x005cd0d0]  = -1.0  (read as f32 -> 0.0)
+//   0x00415e9a  dc15 c8d05c00  FCOM QWORD [0x005cd0c8]  = +1.0  (read as f32 -> 0.0)
+// The two clamps therefore compared against 0.0 instead of the acos domain limits,
+// snapping every positive input to 1.0. Note 0x005ccac4 (360.0f, `d805 FADD DWORD`)
+// and 0x005d757c (0.0f, `d80d FMUL DWORD`) in the same function ARE dwords and were
+// always right — this is a per-constant transcription error, not a systematic one.
+// Isolated by a 10-step MASHED_HOOK_LO/HI index bisect (registry index 616) after the
+// menu-navigated race wedged at race entry with the full hook set while stock completed.
 // ===========================================================================
 extern "C" __declspec(dllexport)
 float __cdecl AiSteeringAngleError(int param_1, float param_2, float param_3)
@@ -182,9 +197,9 @@ float __cdecl AiSteeringAngleError(int param_1, float param_2, float param_3)
     n[2] = -(param_3 - F32(static_cast<std::uintptr_t>(local_10) + 0x38u)); // local_4
     call_004c39b0(n, n);
     float fVar1 = n[2] * kZero + n[1] * kZero + n[0];
-    if (fVar1 < F32(0x005cd0d0u)) fVar1 = F32(0x005cc33cu);
-    if (F32(0x005cd0c8u) < fVar1) fVar1 = F32(0x005cc320u);
-    float fVar2 = static_cast<float>(call_004a3384(static_cast<double>(fVar1))) * F32(0x005cc970u);
+    if (fVar1 < F64(0x005cd0d0u)) fVar1 = F32(0x005cc33cu);   // 0x00415e85 FCOM QWORD -> -1.0
+    if (F64(0x005cd0c8u) < fVar1) fVar1 = F32(0x005cc320u);   // 0x00415e9a FCOM QWORD -> +1.0
+    float fVar2 = static_cast<float>(call_004a3384(static_cast<double>(fVar1)) * F64(0x005cc970u));  // 0x00415eba FMUL QWORD -> 57.2958
     if (n[2] - n[0] * kZero < kZero) fVar2 = -fVar2;
     while (fVar2 < kZero) fVar2 += kTwoPi;
     float bearing = fVar2;
@@ -194,9 +209,9 @@ float __cdecl AiSteeringAngleError(int param_1, float param_2, float param_3)
     n[1] = 0.0f;                                     // local_8 = 0
     call_004c39b0(n, n);
     fVar1 = n[2] * kZero + n[1] * kZero + n[0];
-    if (fVar1 < F32(0x005cd0d0u)) fVar1 = F32(0x005cc33cu);
-    if (F32(0x005cd0c8u) < fVar1) fVar1 = F32(0x005cc320u);
-    fVar2 = static_cast<float>(call_004a3384(static_cast<double>(fVar1))) * F32(0x005cc970u);
+    if (fVar1 < F64(0x005cd0d0u)) fVar1 = F32(0x005cc33cu);   // 0x00415e85 FCOM QWORD -> -1.0
+    if (F64(0x005cd0c8u) < fVar1) fVar1 = F32(0x005cc320u);   // 0x00415e9a FCOM QWORD -> +1.0
+    fVar2 = static_cast<float>(call_004a3384(static_cast<double>(fVar1)) * F64(0x005cc970u));  // 0x00415eba FMUL QWORD -> 57.2958
     if (n[2] - n[0] * kZero < kZero) fVar2 = -fVar2;
     while (fVar2 < kZero) fVar2 += kTwoPi;
 

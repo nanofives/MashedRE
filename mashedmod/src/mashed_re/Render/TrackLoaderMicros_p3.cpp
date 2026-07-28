@@ -158,10 +158,18 @@ RH_ScopedInstall(TrackPhysWorld3Get, 0x004260c0);  // re-enabled 2026-05-24 c3-r
 // ---------------------------------------------------------------------------
 
 // 0x00426e00
-extern "C" __declspec(dllexport) double __cdecl TrackLoaderFloatGet()
+// BUGFIX 2026-07-28 — WRONG OPERAND WIDTH. This read DAT_00644368 as a `double`, with a
+// comment claiming it matched `fld qword` / ret. The anchored bytes say DWORD:
+//   0x00426e00  d905 68436400   FLD DWORD PTR [0x00644368]      (m32fp; qword would be dd05)
+//   0x00426e06  c3              RET
+// Reading 8 bytes where the original reads 4 reinterprets the next global as the low half
+// of a mantissa and returns an unrelated value. Same class as the three constants in
+// AiSteeringAngleError (0x00415e20); found by the constant-width audit
+// (scripts/ghidra/sweep_const_width.py), which cross-checks every absolute float read in
+// the ports against the x87 operand width actually encoded at the citing instruction.
+extern "C" __declspec(dllexport) float __cdecl TrackLoaderFloatGet()
 {
-    // Load the 8-byte (double) value from DAT_00644368, matching `fld qword` / ret.
-    return *reinterpret_cast<double*>(0x00644368u);
+    return *reinterpret_cast<const float*>(0x00644368u);
 }
 
 RH_ScopedInstall(TrackLoaderFloatGet, 0x00426e00);  // re-enabled 2026-05-24 c3-render-a
