@@ -257,10 +257,16 @@ def main():
                   f"(reached={reached}). No hook in this batch can diff non-degenerately.")
             return 5
 
-        print(f"\n{'#':>2} {'hook':38s} {'verdict':22s} {'distinct':>8s} {'sentinel':10s} phase")
+        # t0 = the moment live state became usable. Every hook's cumulative
+        # offset is measured from here, because the in-race window (the game
+        # self-exits partway through a round) is what bounds hooks-per-boot.
+        t0 = time.time()
+        print(f"\n{'#':>2} {'hook':32s} {'verdict':20s} {'sec':>5s} {'t+':>6s} {'phase':>5s}")
         for i, name in enumerate(order, 1):
             tag = "repeat_" if (repeat_first and i == len(order) and len(order) > len(names)) else ""
+            t_hook = time.time()
             results, err = run_one_hook(sess, nav, name, shotdir)
+            dt = time.time() - t_hook
             ret_kind = HOOKS[name]["signature"]["ret"]
             if not results:
                 verdict, total, mism, distinct = f"NO-RESULT ({err})", 0, 0, 0
@@ -272,11 +278,12 @@ def main():
             snap = read_sentinels() if alive else None
             same = (snap == baseline_snap) if alive else False
             phase = nav.phase() if alive else "DEAD"
-            rows.append((i, name, tag, verdict, distinct, same, phase))
-            print(f"{i:>2} {name[:38]:38s} {verdict:22s} {distinct:8d} "
-                  f"{'unchanged' if same else 'CHANGED':10s} {phase}")
+            rows.append((i, name, tag, verdict, distinct, same, phase, dt, time.time() - t0))
+            print(f"{i:>2} {name[:32]:32s} {verdict[:20]:20s} {dt:5.1f} "
+                  f"{time.time() - t0:6.1f} {str(phase):>5s}")
             if not alive:
-                print("   process died — remaining hooks cannot run")
+                print(f"   process died after {i} hooks / t+{time.time() - t0:.1f}s "
+                      f"— remaining {len(order) - i} cannot run")
                 break
     finally:
         try: dev.kill(pid)
@@ -291,6 +298,14 @@ def main():
     print(f"  hooks attempted: {len(rows)}  produced results: {len(ran)}")
     green = [r for r in ran if r[3].startswith("GREEN")]
     print(f"  GREEN: {len(green)}/{len(ran)}")
+    if ran:
+        per = [r[7] for r in ran]
+        window = rows[-1][8]
+        print(f"  in-race window used: {window:.1f}s over {len(rows)} hooks")
+        print(f"  per-hook seconds: min {min(per):.1f}  median "
+              f"{sorted(per)[len(per)//2]:.1f}  max {max(per):.1f}")
+        print(f"  => throughput {len(ran)/window*60:.1f} verified hooks/min of window"
+              if window > 0 else "")
     changed_at = [r[0] for r in rows if not r[5]]
     if changed_at:
         print(f"  sentinel CHANGED after hook #{changed_at[0]} — state is perturbed by "
