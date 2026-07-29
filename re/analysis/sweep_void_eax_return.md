@@ -75,9 +75,47 @@ first `RET`. Functions with several RETs or forward branches can be misread, so 
 proper per-function pass before any change. `0x0042e590` is the one to look at first — a body
 that does not resemble its original at all is a different and possibly larger problem.
 
-### Could not be checked
+### Previously unassessed — now checked via the `.map`, both REFUTED
 
-`0x0055bd80` and `0x0057c420` are `extern "C"` but **not** `dllexport`, so the export table
-cannot see them. The prior session hit exactly this with `0x0055deb0` and resolved it through
-`mashedmod/build/mashed_re_dev.map`. Extending the triage to read the `.map` is the immediate
-next step; until then these two are **unassessed, not clean**.
+`0x0055bd80` and `0x0057c420` are `extern "C"` but not `dllexport`, so the export table cannot
+see them — the blind spot that hid `0x0055deb0` from an earlier audit. `sweep_void_eax_return.py
+--triage` now falls back to `mashedmod/build/mashed_re_dev.map` (8028 symbols vs 1131 exports,
+so the fallback is worth far more than these two rows).
+
+**`0x0057c420` — refuted.** Both bodies end by calling `FUN_0055bd80` and returning its EAX:
+the original `call 0x55bd80`, ours `call 0x37410`, which is exactly `_FUN_0055bd80`'s `.map`
+RVA. The three callers' `push eax` forwards the same value either way.
+
+**`0x0055bd80` — refuted.** Both end on the same indirect vtable call and leave its return in
+EAX:
+
+```
+original                                  ours (.map rva 0x37410)
+0055bdca  call dword ptr [edx + 0x10]     00037462  call eax
+0055bdcd  add esp, 0x10                   00037464  mov ecx, [esp + 0x54]
+0055bdd0  pop esi                         00037468  add esp, 0x10
+0055bdd1  add esp, 0x40                   0003746b  pop esi
+0055bdd4  ret                             0003746c  xor ecx, esp
+                                          0003746e  call 0x7a0ca   ; __security_check_cookie
+                                          00037473  add esp, 0x44
+                                          00037476  ret
+```
+
+`__security_check_cookie` takes the cookie in ECX and preserves EAX, so EAX at the `RET` is the
+vtable call's return on both sides. The three-way selection feeding that call also matches: the
+original carries the chosen value in EAX (`[esp+0x4c]` on the flag path, `esi` when param_2 is
+zero, else the return of `0x4c4600`); ours carries the identical selection in EDX and pushes it.
+
+**Worth noting for other work, though not a defect here:** our build emits **/GS stack cookies**
+in some hook bodies — a `mov eax,[__security_cookie] / xor eax,esp` prologue and a
+`call __security_check_cookie` epilogue, which also grew the frame from `0x40` to `0x44`.
+Harmless for a full-replacement hook. It would NOT be harmless for anything trampoline-shaped or
+depending on exact stack layout, so check for it before converting a hook body to naked asm.
+
+## Final tally
+
+**5 refuted** (`0x005abf80`, `0x00426dc0`, `0x0042fab0`, `0x0055bd80`, `0x0057c420`),
+**6 live candidates** (`0x00485a00`, `0x005b1180`, `0x005ab980`, `0x005b6a40`, `0x004c5010`,
+`0x0042e590`), **0 unassessed**. Nothing fixed — each candidate needs a per-function pass, since
+the "EAX at RET" column comes from a bounded linear scan that can misread multi-RET bodies.
+Start with `0x0042e590`, whose emitted body does not structurally resemble its original.

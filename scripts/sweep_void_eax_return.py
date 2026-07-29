@@ -253,9 +253,99 @@ def analyse(img, hooks, rt_lookup, force_void=()):
     return findings, skipped
 
 
+# ── emitted-body triage ──────────────────────────────────────────────────────
+ASI = os.path.join(ROOT, "original", "mashed_re_dev.asi")
+MAP = os.path.join(ROOT, "mashedmod", "build", "mashed_re_dev.map")
+
+MAP_RE = re.compile(r"^\s*[0-9a-fA-F]{4}:[0-9a-fA-F]{8}\s+(\S+)\s+([0-9a-fA-F]{8})\s")
+
+
+def map_symbols():
+    """symbol -> RVA in the .asi, from the linker .map.
+
+    Needed because a hook body may be `extern "C"` but NOT `__declspec(dllexport)`, in which
+    case the export table cannot see it — the blind spot that hid 0x0055deb0 from an earlier
+    audit. MSVC decorates __cdecl with a leading underscore; both forms are indexed."""
+    if not os.path.exists(MAP):
+        return {}, None
+    base = None
+    out = {}
+    for line in open(MAP, encoding="utf-8", errors="replace"):
+        if base is None and "Preferred load address is" in line:
+            base = int(line.strip().split()[-1], 16)
+            continue
+        m = MAP_RE.match(line)
+        if m and base is not None:
+            sym, va = m.group(1), int(m.group(2), 16)
+            if sym.startswith("?"):          # C++ mangled — not our extern "C" hooks
+                continue
+            rva = va - base
+            out.setdefault(sym, rva)
+            if sym.startswith("_"):
+                out.setdefault(sym[1:], rva)
+    return out, base
+
+
+def emitted_body(sym, exports, mapsyms, asipe, limit=24):
+    """(source_of_address, [instructions]) for our compiled body, or (None, [])."""
+    rva, src = None, None
+    if sym in exports:
+        rva, src = exports[sym], "export table"
+    elif sym in mapsyms:
+        rva, src = mapsyms[sym], ".map"
+    if rva is None:
+        return None, []
+    try:
+        code = asipe.get_data(rva, 200)
+    except Exception:
+        return src, []
+    out = []
+    for ins in md.disasm(code, rva):
+        out.append("%s %s" % (ins.mnemonic, ins.op_str))
+        if ins.mnemonic.startswith("ret") or len(out) >= limit:
+            break
+    return src, out
+
+
+def orig_body(img, rva, limit=24):
+    out = []
+    for ins in md.disasm(img.read(rva, 200), rva):
+        out.append("%s %s" % (ins.mnemonic, ins.op_str))
+        if ins.mnemonic.startswith("ret") or len(out) >= limit:
+            break
+    return out
+
+
+def triage(img, findings):
+    import pefile
+    pe = pefile.PE(ASI, fast_load=True)
+    pe.parse_data_directories(
+        directories=[pefile.DIRECTORY_ENTRY["IMAGE_DIRECTORY_ENTRY_EXPORT"]])
+    exports = {}
+    if hasattr(pe, "DIRECTORY_ENTRY_EXPORT"):
+        exports = {e.name.decode(): e.address
+                   for e in pe.DIRECTORY_ENTRY_EXPORT.symbols if e.name}
+    mapsyms, _ = map_symbols()
+    print("\n== emitted-body triage ==")
+    print("   export-table symbols: %d   .map symbols: %d" % (len(exports), len(mapsyms)))
+    for f in findings:
+        rva = int(f["rva"], 16)
+        src, ours = emitted_body(f["sym"], exports, mapsyms, pe)
+        print("\n%s  %s" % (f["rva"], f["sym"]))
+        print("   ORIG : " + " | ".join(orig_body(img, rva)[:9]))
+        if ours:
+            print("   OURS [%s] : %s" % (src, " | ".join(ours[:9])))
+        else:
+            print("   OURS : NOT RESOLVABLE (neither export table nor .map) — UNASSESSED")
+        print("   consumers: " + ", ".join(sorted({c["use"] for c in f["consumers"]}))
+              + "  (%d call sites)" % len(f["consumers"]))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", help="write findings here")
+    ap.add_argument("--triage", action="store_true",
+                    help="also dump original vs emitted bodies (export table, then .map)")
     args = ap.parse_args()
 
     img = Image(IMAGE)
@@ -301,6 +391,8 @@ def main():
                   % (c["caller_call_site"], c["use"], c["use_addr"]))
     if not findings:
         print("   none")
+    if args.triage:
+        triage(img, findings)
     if args.json:
         json.dump(findings, open(args.json, "w", encoding="utf-8"), indent=1)
         print("\nwrote %s" % args.json)
