@@ -1,27 +1,28 @@
 # STATE lane — where the dead globals actually populate (2026-07-29)
 
-> ## ⛔ READ THIS FIRST — the runtime half of this note is INVALID
+> ## ⚠️ TWO CORRECTIONS, IN ORDER — read both
 >
-> **Every diff point in this session was taken against a HUNG GAME, not a race.**
-> `verify/capture_20260729/sb_diffpoint.png` and
-> `verify/state_batch_dwell_20260728/sb_diffpoint.png` are both a **blank white window**.
-> The menu navigates perfectly (`sa_track.png` shows track-select on Angel Peak, Quick Battle),
-> the game then enters "phase=0" — which the nav treats as *in race* — and sits at a white window
-> for 122 s+.
+> **1. I claimed the game was hung. That was WRONG.** I read
+> `verify/capture_20260729/sb_diffpoint.png`, saw a **blank white window**, and concluded every
+> diff point this session had been taken against a hung game rather than a race.
 >
-> So every runtime claim of the form "this array is empty at race entry" is unfounded: the arrays
-> are empty because **the race never started**. That includes "Quick Battle at race-entry+25s does
-> not populate these arrays", the smplfzx manager being null, the camera sub-counts being zero,
-> and the 0-calls-captured result. None of them measured what they claimed to measure.
+> **2. The stock control disproved it.** `re/frida/statenav.py` run stock reached a race
+> demonstrably — `0x00436810` fired **1961 times**, `0x0045ba00` 30, `0x00408a70` 16,
+> `results_hit=1` with `first_results_at=20` — and **its own `sn_round_10.png` is equally white.**
+> The menu captures fine; the race does not. The window grab misses the D3D9 backbuffer.
 >
-> The STATIC half below (who writes each global, the plugin-offset finding, the caller scan) is
-> unaffected — it never touched the running game.
+> **So a white screenshot is evidence of nothing either way**, and I invalidated six boots of work
+> on the strength of one. The runtime findings below are *not* known to be wrong — they are
+> *unproven*, which is where they started.
 >
-> The signature — navigate fine, enter race, hang — is the shape of **U-9025, the race-entry
-> wedge**, which was declared resolved on 2026-07-28. Whether this is a recurrence, a different
-> hang, or the documented white-window/reboot condition
-> (memory `project_boot_hang_directshow_intro`) is **not yet determined**, and the next step is a
-> STOCK control run — the thing that cracked U-9025 in the first place.
+> **What the episode actually establishes:** we had no instrument telling us whether the diff point
+> was inside a running race, and a screenshot is not one. Added: an **in-race entry counter** at the
+> diff point (`--inrace-probe`, default `0x00436810,0x0045ba00,0x00408a70`), counted by RVA so our
+> inline JMPs cannot hide it. This is memory `feedback_evidence_discipline` §1 — *prove the path
+> ran* — applied to the scenario itself rather than to a function. It should have been there from
+> the first batch.
+>
+> The STATIC half below never touched a running game and is unaffected by any of this.
 
 
 Follow-up to `c2c3_throughput_session_2026-07-28.md`. Three authored STATE ports all failed

@@ -491,7 +491,7 @@ def main():
     # strip values that belong to flags
     flagvals = set()
     for f in ("--scenario", "--round", "--shot-dir", "--sentinel-words", "--sentinel",
-              "--gate-wait", "--dwell"):
+              "--gate-wait", "--dwell", "--inrace-probe"):
         if f in sys.argv:
             flagvals.add(sys.argv[sys.argv.index(f) + 1])
     names = [n for n in names if n not in flagvals]
@@ -509,6 +509,12 @@ def main():
     gate_wait = _flag("--gate-wait", 15.0, float)
     # Seconds to let the race run before taking the diff point.
     dwell = _flag("--dwell", 0.0, float)
+    # RVAs only in-race code reaches; used to PROVE the diff point is inside a
+    # running race rather than trusting a screenshot. Measured in a stock statenav
+    # race 2026-07-29: 0x00436810 fired 1961 times, 0x0045ba00 30, 0x00408a70 16.
+    _probe_arg = _flag("--inrace-probe", None)
+    inrace_probes = ([int(x, 16) for x in _probe_arg.split(",") if x.strip()]
+                     if _probe_arg else [0x00436810, 0x0045ba00, 0x00408a70])
     shotdir    = _flag("--shot-dir", "verify/scenario_batch")
     repeat_first = "--repeat-first" in sys.argv
     # --no-x87-scrub: skip the between-hook FPU scrub, to reproduce the dirty
@@ -618,6 +624,34 @@ def main():
                 print("ABORT: process exited during the dwell — lower --dwell.")
                 return 4
         statenav.shoot(pid, ROOT / shotdir / "sb_diffpoint.png")
+
+        # ── PROOF THE RACE IS ACTUALLY RUNNING ────────────────────────────────
+        # Do NOT judge this from a screenshot. Measured 2026-07-29: the diff-point
+        # capture is a BLANK WHITE WINDOW in-race even when the race is provably
+        # running — a stock statenav control hit 0x00436810 1961 times and reached
+        # results at t+20s while its own t+10s screenshot was equally white. The
+        # menu captures fine, the race does not; the window grab misses the D3D9
+        # backbuffer. A white shot is evidence of nothing either way, and I wrongly
+        # called six boots' worth of runs "a hung game" on the strength of one.
+        #
+        # The instrument that DOES answer it is an entry counter on a function only
+        # in-race code reaches (memory feedback_evidence_discipline §1: prove the
+        # path ran). 0x00436810 is the reference — thousands of hits per race in the
+        # stock control, and it is counted by RVA so our inline JMPs do not hide it.
+        try:
+            nav_scr.exports_sync.countthese([f"0x{r:08x}" for r in inrace_probes])
+            time.sleep(1.5)
+            probe = nav_scr.exports_sync.counts() or {}
+            total = sum(v for v in probe.values() if isinstance(v, int))
+            print("\n  in-race probe (1.5s): " + ", ".join(
+                f"{k}={v}" for k, v in sorted(probe.items())))
+            if total == 0:
+                print("  WARNING: no in-race probe fired — the diff point is NOT inside a "
+                      "running race. Live-state verdicts from here would be meaningless.")
+            else:
+                print(f"  => race IS running ({total} calls in 1.5s)")
+        except Exception as e:
+            print(f"  in-race probe unavailable: {e}")
 
         baseline_snap = read_sentinels()
         print("\n  sentinel snapshot @ diff point:")
