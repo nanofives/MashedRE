@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-29T05:30:00Z",
+  "updatedAt": "2026-07-29T06:15:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -48,35 +48,37 @@
       ]
     },
     {
-      "heading": "STATE lane - RESOLVED, and the real lesson",
+      "heading": "STATE lane - pre-screen is the lever",
       "fields": [
         {
-          "label": "Verified",
-          "value": "The batch lane IS inside a running race: 1674 simulation calls in 1.5s (0x004233e0=1224, 0x00470670=360, 0x0047eb30=90). Probes validated first on a stock race: 11266/2867/59690 in-race vs 0/0/0 at title, track-confirm and start-attempt. phase=0 IS the racing state.",
+          "label": "Pre-screen",
+          "value": "MASHED_COUNT_RVAS=<list> py -3.12 re/frida/statenav.py --round 70 - one boot screens ~24 candidates for 'is this exercised in the target scenario'. ALWAYS append the 3 validated in-race probes (0x00470670,0x0047eb30,0x004233e0); a screen where they stay 0 is VOID.",
           "kind": "text"
         },
         {
-          "label": "Three wrong calls before it",
+          "label": "First result",
+          "value": "14 of 24 exercised (58%) vs 0 of 4 hand-picked and fully authored the day before.",
+          "kind": "text"
+        },
+        {
+          "label": "Race-gated targets",
           "value": [
-            "'hung game' - from a white screenshot (the grab misses the D3D9 backbuffer even in a confirmed race)",
-            "'never reaches a race' - from probes that were the RESULTS/round-end subset, all frontend in hooks.csv",
-            "'the scenario does not populate these arrays' - assumed"
+            "0x005b0f40 15B audio",
+            "0x005b8080 15B audio",
+            "0x0045bac0 28B PowerupSlotDeactivate",
+            "0x0041f290 36B gameplay",
+            "0x0046cc10 41B ai"
           ],
           "kind": "list"
         },
         {
-          "label": "Common fault",
-          "value": "A strong conclusion from an instrument never validated. A counter never seen to fire anywhere proves nothing when it reads zero.",
+          "label": "Pool",
+          "value": "187 STATE rows at C2 with a plate, 8-60B. At 58% that is ~108 viable candidates; the batch lane verifies ~20 hooks/min of in-race window.",
           "kind": "text"
         },
         {
-          "label": "Real finding",
-          "value": "With the race PROVEN running, 0x00639dc4 and 0x0068432c are still all-zero and 0x00421930/0x004b4050 are called 0 times in 1.5s. Those candidates are simply not exercised in Quick Battle. Nothing was wrong with the lane, harness, ports or scenario.",
-          "kind": "text"
-        },
-        {
-          "label": "Cheap fix earned",
-          "value": "PRE-SCREEN before authoring: MASHED_COUNT_RVAS=0x..,0x.. py -3.12 re/frida/statenav.py --round 60 counts any number of RVAs in ONE boot (18 in the validation run).",
+          "label": "Docs",
+          "value": "re/analysis/plans/prescreen_recipe.md + prescreen_result_20260729.tsv",
           "kind": "text"
         }
       ]
