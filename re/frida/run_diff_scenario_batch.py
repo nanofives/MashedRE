@@ -37,21 +37,24 @@
 # control going RED is the signal, and that is only interpretable if it was
 # GREEN in the one-boot-per-hook lane.
 #
-# ANSWER (measured 2026-07-28) — REUSE IS NOT UNIVERSAL:
+# ANSWER (measured 2026-07-28) — REUSE HOLDS, WITH ONE FIXED HAZARD:
 #   * INTEGER hooks reuse cleanly: 48 force-calls of 4 read-only zero-arg
 #     getters, 48/48 GREEN, repeat control GREEN at first and last position.
-#   * FLOAT-returning hooks DO NOT. Repeating heading_atan2 (float3_scalar_ret)
-#     and audio_vec_length (vec3_normalize) three times each in one process:
-#         position 1  -> GREEN
-#         positions 4, 7 -> RED, and always exactly 1 mismatch, always idx=0
-#     idx=0 original came back EMPTY for heading_atan2 and 0x9F9C-garbage for
-#     audio_vec_length, i.e. NaN/indefinite. That is a DIRTY x87 STACK on entry:
-#     a preceding hook leaves ST0 occupied, the first FLD of the next float hook
+#   * A float-returning hook batched after a SPECIFIC polluter false-REDs with
+#     exactly 1 mismatch, always idx=0 (original side came back EMPTY for
+#     heading_atan2 and 0x9F9C garbage for audio_vec_length, i.e.
+#     NaN/indefinite, clean from vector 1 on). That is a DIRTY x87 STACK on
+#     entry: the polluter leaves ST0 occupied, the next float hook's first FLD
 #     overflows the x87 stack, and it drains by the second vector. Same hazard
 #     class as memory feedback_x87_st0_float10_return_fnptr.
-#   MITIGATION until the agent emits an FPU reset between hooks: put every
-#   float-returning hook FIRST in the order, or give it its own boot. This
-#   runner warns when a float hook is scheduled at position > 1.
+#     NOT a property of float hooks in general — heading_atan2 + audio_vec_length
+#     alternating 3x with NO scrub is 6/6 GREEN. The polluter measured here was
+#     camera_path_all_nodes_eq2 (0x0047c270), itself RED 8/8 for real.
+#   FIXED (24fb2b69) by a CW-PRESERVING scrub between hooks: save CW -> FNINIT
+#   -> restore CW. A bare FNINIT would reset the control word to 0x037F while
+#   MASHED/MSVC run their own, trading a dirty-stack false-RED for a *rounding*
+#   false-RED. On by default; --no-x87-scrub reproduces the fault (that is how
+#   the fix was A/B'd: scrub OFF 1/5 GREEN -> scrub ON 3/5, same ordering).
 #
 # The `race` scenario is POPULATED but NOT quiescent (run_diff_scenario defaults
 # to `results` for that reason). Prefer --scenario race only for hooks whose
@@ -61,6 +64,7 @@
 # Usage:
 #   py -3.12 re/frida/run_diff_scenario_batch.py <hook1> <hook2> ... \
 #       [--scenario race|results] [--round 130] [--repeat-first]
+#       [--sentinel 0xADDR[,0xADDR...]] [--no-x87-scrub]
 #       [--shot-dir verify/scenario_batch]
 #
 # Emits log/diff_scenario_batch_<hook>.csv per hook (run_diff.py schema) and a

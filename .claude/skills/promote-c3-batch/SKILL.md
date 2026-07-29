@@ -1,6 +1,6 @@
 ---
 name: promote-c3-batch
-description: Generate a parallel-fanout batch file of Claude Code prompts that drive C2→C3 promotions for Mashed RE. Each session is bounded so it finishes before the conversation auto-compacts. Triggers on "generate a c3 batch", "plan a c3 fanout", "make a promotion batch", "batch of promotion prompts", "fan out the C3 work".
+description: Generate a parallel-fanout batch file of Claude Code prompts that drive C2→C3 promotions for Mashed RE. Each session is bounded so it finishes before the conversation auto-compacts. Also covers the STATE lane (many live-state hooks per one booted game via run_diff_scenario_batch.py). Triggers on "generate a c3 batch", "plan a c3 fanout", "make a promotion batch", "batch of promotion prompts", "fan out the C3 work", "state lane", "live-state promotions".
 ---
 
 # promote-c3-batch — generate parallel C3-promotion batch prompts
@@ -171,7 +171,7 @@ Each filter above rejects a specific failure mode. Run the recipes, log how many
 | (5) Depth-1 callee < C2 | C3 rubric refusal | s3: 9 of 12 candidates | Defer; queue a callee-first promotion |
 | (6) `arg_type` absent from `diff_template.js` | Harness can't diff the candidate | s4: ~7 candidates across signatures | Queue a harness-extension session FIRST |
 | (v4-a) Signature-unsupported phrase in body | Harness can't diff (sig.-level) | c3_batch_j: 6 of 9 s3/s4 refusals had detectable phrases (`__fastcall`, `EAX-implicit`, `in_EAX`, `EAX+ESI`, `5-arg`) | Queue a harness-extension session FIRST |
-| (v4-b) Live-state side-effect call | Synthetic Frida call corrupts game state | c3_batch_j s6: 4 of 5 refused candidates (DialogBoxParam, fopen/fwrite/fclose, CloseHandle) | Defer; can never be diffed via synthetic harness |
+| (v4-b) Live-state side-effect call | Synthetic Frida call corrupts game state | c3_batch_j s6: 4 of 5 refused candidates (DialogBoxParam, fopen/fwrite/fclose, CloseHandle) | Route to the **STATE lane** (§ below) — NOT to this fanout. Genuinely undiffable only if the side effect is irreversible (file/COM/handle); state-*reading* rows are the STATE lane's queue |
 | (v4-c) Tighter callee regex | v3 missed RVAs embedded in `FUN_xxxxxxxx`-style mentions (\b doesn't fire on `_`-boundary). The 0x004669b0 note had 4 C1 callees v3 silently dropped. | c3_batch_j: 36 of 107 v3-passes additionally rejected once `FUN_/DAT_/LAB_` prefixes are recognized | Defer; queue a callee-first promotion |
 | (v4-d) `Blocks: <C-level>` honoring | Catalogued U-IDs with `Blocks: C3` cannot be C3-promoted regardless of where the marker sits in the note | c3-batch-i-s1: 0x005aea00 lost to U-0125 Blocks=C3 (worker-side); v4 catches this at filter time | Defer until the U-ID is resolved |
 
@@ -221,8 +221,9 @@ These rules are mandatory at batch-generation time:
    header citing filter evidence. Escalating curation does NOT raise yield at a
    structural ceiling — batch_ah landed 8/48 *with* 8-agent shape-fit curation.
 3. **Live-state candidates are not batchable at menu-attach. At all.** Route them
-   to the scenario-attach lane (`re/analysis/scenario_attach_lane.md`) instead of
-   a synthetic-diff batch.
+   to the **STATE lane** (§ "STATE lane" below) — as of 2026-07-28 they ARE
+   batchable, just not in this skill's menu-attach fanout. Design background:
+   `re/analysis/scenario_attach_lane.md`.
 4. **Verdict semantics (2026-06-12).** `run_diff.py` now returns
    **INCONCLUSIVE-DEGENERATE (exit 5)** when a 0-mismatch run observed only
    trivial values on both sides — that is *neither GREEN nor RED* and is **not
@@ -233,6 +234,77 @@ These rules are mandatory at batch-generation time:
    `arg_type` with no `diff_template.js` handler (previously fell through to a
    default path that could pass vacuously). Filter (6) above still applies at
    batch-generation time; the pre-flight is the backstop, not the filter.
+
+## STATE lane — many live-state hooks per ONE boot (added 2026-07-28)
+
+Everything above this section is the **menu-attach fanout**: N worker sessions, each
+authoring reimpls and diffing them synthetically at the main menu. That lane cannot
+touch live-state candidates at all, and live-state is where the backlog lives —
+**947 of the 1416 rows** in `re/analysis/plans/callee_gate_cascade.tsv` classify STATE.
+
+The STATE lane is not a fanout. It is one runner, one boot, many hooks:
+
+```bash
+py -3.12 re/frida/run_diff_scenario_batch.py <hook1> <hook2> ... <hookN> \
+    --scenario race --sentinel 0x00xxxxxx --repeat-first
+```
+
+It spawns ONE `MASHED.exe`, drives it to a populated race with `run_diff_scenario`'s
+navigation, then force-calls each hook's A/B against that single live process.
+Emits `log/diff_scenario_batch_<hook>.csv` per hook (same schema as `run_diff.py`)
+plus a state-health table. Kills only the pid it spawned.
+
+**Why this exists.** `run_diff_scenario.py`'s usage line is `<hook_name>` — SINGULAR,
+one boot per hook, against a budget of ~15 boots before the d3d9/GPU driver wedges.
+That cap, not candidate supply and not the filters, was the binding constraint on
+C2→C3 throughput: lifetime 1.67 GREEN/round over 248 rounds is ~what 15 boots × 1 hook
+× a ⅔ shape-failure rate predicts. Measured 2026-07-28: **48 force-calls completed in
+1.2s** of in-race window (~25 ms each), so the window is nowhere near the cap. The
+ceiling has moved off verification and onto authoring the reimpls.
+Full diagnosis: `re/analysis/plans/c2c3_throughput_session_2026-07-28.md`.
+
+### Selecting STATE candidates
+
+`scripts/promote_classify.py --input <tsv>` (any TSV with an `rva` column) sorts rows
+into **AUTO** (display-independent leaf shapes it can emit a body for), **STATE**
+(reads live globals / derefs a runtime arg → needs a booted game), **MANUAL**
+(unrecognized shape). The STATE column is this lane's queue. Measured on the real pools:
+
+| input | AUTO | STATE | MANUAL |
+|---|---|---|---|
+| cleaned render pool (440 rows) | 3 | 288 | 149 |
+| `callee_gate_cascade.tsv` (1416 rows) | 0 | 947 | 469 |
+
+### Mandatory caveats — a batch that ignores these produces false verdicts
+
+1. **Ordering + the x87 scrub.** A CW-preserving FPU scrub runs between hooks by
+   default (`24fb2b69`); it exists because one polluter left ST0 occupied and the
+   next float hook's first `FLD` overflowed the stack, yielding a false-RED of
+   **exactly 1 mismatch, always vector idx=0**. Do NOT pass `--no-x87-scrub` outside
+   of reproducing that fault. `heading_atan2` read RED 1/16 from this artefact alone
+   — trusting it would have filed a correct port as defective.
+2. **`--scenario race` is populated but NOT quiescent.** `run_diff_scenario` defaults
+   to `results` precisely because race state moves per frame, so a per-frame-varying
+   getter can false-RED on frame advance between the A and B calls. A RED that is
+   *stable across repeats* is not this artefact. (`--scenario results` is not a
+   substitute here: the game self-exited at ~t+20-30s before the round ended and no
+   hook ran.)
+3. **The sentinel-delta column is confounded** — in a running race the live globals
+   mutate every frame regardless of our calls, so it reports CHANGED unconditionally
+   and cannot attribute perturbation. It is informational only. `--repeat-first` (hook
+   #1 re-run as the final hook) is the trustworthy reuse control.
+4. **Order read-only hooks first; put a control last.** Reuse is confirmed for
+   read-only getters. Side-effecting hooks are UNTESTED in this lane.
+5. **Pass `--sentinel 0xADDR` explicitly.** Only 5 registry entries carry a
+   `scenario_sentinel` field; the multi-vector controls were driven by a CLI flag that
+   was never persisted.
+6. **The ZERO-ARG baseline criterion applies here too.** A 0-mismatch run whose
+   observed value equals `zero_arg_baseline` (the menu default) is INCONCLUSIVE, never
+   GREEN. Without it all four control probes "pass" vacuously.
+7. **Navigation is flaky and costs a spawn when it fails.** One run never left the
+   frontend in 130s and correctly aborted rather than emitting a false GREEN. If
+   attach fails on a known-good hook, the GPU is wedged — stop and ask for a reboot
+   rather than burning the remaining budget.
 
 ## Worktree binding — use the robust helper, NEVER fall back to main
 
