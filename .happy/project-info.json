@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-29T10:40:00Z",
+  "updatedAt": "2026-07-29T12:00:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -32,46 +32,18 @@
         },
         {
           "label": "C2",
-          "value": 4032,
+          "value": 4030,
           "kind": "number"
         },
         {
           "label": "C3",
-          "value": 851,
+          "value": 853,
           "kind": "number"
         },
         {
           "label": "C4",
           "value": 184,
           "kind": "number"
-        }
-      ]
-    },
-    {
-      "heading": "STATE lane - screening COMPLETE 187/187",
-      "fields": [
-        {
-          "label": "Result",
-          "value": "90 exercised (48%): 20 race-gated, 29 pre-race, 41 in-race. 97 never exercised in Quick Battle.",
-          "kind": "text"
-        },
-        {
-          "label": "Authorable",
-          "value": "After shape+semantic screens: 10 SAFE in the in-race class, 7 in pre-race, 3 in race-gated (2 already authored).",
-          "kind": "text"
-        },
-        {
-          "label": "Void chunks - TWO causes",
-          "value": [
-            "Interceptor overhead: FIXED via MASHED_COUNT_LATE (armed after race entry)",
-            "Nav flakiness at the menu: pre-existing, ~50%, unfixed. My 'phase=2 landing' theory was WRONG - the nav never leaves phase=3 and blind nudges walked depth BACKWARD 4->3."
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Method note",
-          "value": "The driver was swallowing statenav's stdout, so the [gate] line added to diagnose the void was itself invisible. Surfacing it revealed the real cause in one run.",
-          "kind": "text"
         }
       ]
     },
@@ -99,6 +71,34 @@
             "SpriteSlotDispatch (0x0042fab0) C2→C3, tracker drift corrected"
           ],
           "kind": "list"
+        }
+      ]
+    },
+    {
+      "heading": "STATE lane - 2 C3 promotions, verified",
+      "fields": [
+        {
+          "label": "Promoted",
+          "value": "0x0047d150 SlotObjectField8 (9/10, NINE distinct values, 1 both-errored excluded) and 0x0046cc10 VehicleFloatFieldAsInt (10/10, 3 distinct fingerprints incl. the guard path with poison intact). Race PROVEN running: 1710 calls/1.5s.",
+          "kind": "text"
+        },
+        {
+          "label": "Not promoted",
+          "value": [
+            "follow_target_field40/10 - GREEN but DEGENERATE (MenuAlphaGet()!=3, branch never varied)",
+            "AudioQueuePop - callee decrements a live queue count, not synthetic-verifiable"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Pipeline",
+          "value": "187 screened -> 48 shape-direct -> 5 semantically safe -> 4 authored -> 2 promoted. Three mechanical screens + hand-reading.",
+          "kind": "text"
+        },
+        {
+          "label": "Verdict fixes",
+          "value": "Both-errored rows no longer outvote discriminating ones; composite fingerprints now count toward distinctness. Both verdicts re-derived from saved CSVs with NO extra boot.",
+          "kind": "text"
         }
       ]
     },

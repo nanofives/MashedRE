@@ -435,8 +435,22 @@ def verdict_for(hook, results, ret_kind, mism, total, distinct_bits):
     if mism:
         if both_errored_identically(results):
             err = next(r.get("err_original") for r in results if not r["match"])
+            # A both-errored row compares NOTHING, so it must not outvote rows
+            # that do. Measured 2026-07-29: slot_object_field8 returned NINE
+            # distinct bit-identical values and both-faulted on one out-of-range
+            # tail vector — and the whole run was labelled INCONCLUSIVE, throwing
+            # away exactly the evidence it had gathered. Judge on the comparable
+            # rows; report the excluded ones rather than letting them decide.
+            ok = [r for r in results if r["match"]]
+            ok_bits = {b for b in (value_bits(r["original"], ret_kind) for r in ok)
+                       if b is not None}
+            ok_bits |= {r["original"] for r in ok
+                        if value_bits(r["original"], ret_kind) is None and r["original"]}
+            if len(ok_bits) > 1:
+                return (f"GREEN {len(ok)}/{total} ({len(ok_bits)} distinct; "
+                        f"{mism} both-errored, excluded)")
             return (f"INCONCLUSIVE-BOTH-ERRORED {mism}/{total} "
-                    f"(both sides: {err}) — state unpopulated, nothing compared")
+                    f"(both sides: {err}) — nothing comparable was discriminating")
         return f"RED {mism}/{total}"
     # A spread of distinct ORIGINAL values IS the non-degeneracy proof, and it
     # outranks the zero_arg baseline check — the baseline exists only for hooks
@@ -483,6 +497,18 @@ def write_csv(name, results, ret_kind, tag):
                 mism += 1
             if ob is not None:
                 distinct.add(ob)
+            elif r["original"]:
+                # COMPOSITE FINGERPRINTS count too. arg_types like out1_idx and
+                # cache_roundtrip return a string ("<ret>:<out>"), for which
+                # value_bits is None — so the distinct set stayed EMPTY and every
+                # such run was reported GREEN-DEGENERATE no matter how
+                # discriminating it was. Measured 2026-07-29:
+                # vehicle_float_field_as_int produced three distinct
+                # fingerprints, including 00000000:cccccccc — the out-of-range
+                # path with the poison intact, i.e. positive proof that the guard
+                # fires AND that it leaves *out untouched. That is the strongest
+                # row in the run and it was being discarded.
+                distinct.add(r["original"])
     return len(results), mism, distinct, out
 
 
