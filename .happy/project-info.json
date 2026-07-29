@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-29T06:15:00Z",
+  "updatedAt": "2026-07-29T07:00:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -48,37 +48,35 @@
       ]
     },
     {
-      "heading": "STATE lane - pre-screen is the lever",
+      "heading": "STATE lane - pre-screen results",
       "fields": [
         {
-          "label": "Pre-screen",
-          "value": "MASHED_COUNT_RVAS=<list> py -3.12 re/frida/statenav.py --round 70 - one boot screens ~24 candidates for 'is this exercised in the target scenario'. ALWAYS append the 3 validated in-race probes (0x00470670,0x0047eb30,0x004233e0); a screen where they stay 0 is VOID.",
+          "label": "Screened",
+          "value": "96 of 187 STATE candidates. 49 exercised (51%), 20 RACE-GATED, 47 never exercised in Quick Battle.",
           "kind": "text"
         },
         {
-          "label": "First result",
-          "value": "14 of 24 exercised (58%) vs 0 of 4 hand-picked and fully authored the day before.",
+          "label": "Stopped by",
+          "value": "d3d9/GPU wedge at ~18 boots - 2 consecutive void boots (probes never fired) DISCARDED, not merged. Had they been trusted, 48 candidates would have been mislabelled 'never exercised'.",
           "kind": "text"
         },
         {
-          "label": "Race-gated targets",
+          "label": "Resume",
+          "value": "91 candidates left. After a reboot: py -3.12 scripts/prescreen_batch.py --candidates re/analysis/plans/prescreen_candidates_all.txt --out re/analysis/plans/prescreen_result_all.tsv --skip-done re/analysis/plans/prescreen_result_all.tsv",
+          "kind": "text"
+        },
+        {
+          "label": "Best clusters",
           "value": [
-            "0x005b0f40 15B audio",
-            "0x005b8080 15B audio",
-            "0x0045bac0 28B PowerupSlotDeactivate",
-            "0x0041f290 36B gameplay",
-            "0x0046cc10 41B ai"
+            "audio: 8 race-gated, several 15-18B",
+            "particle: 0x0048fce0/fd10/fd40 consecutive 39B siblings",
+            "render: 0x00421560..0x00421980"
           ],
           "kind": "list"
         },
         {
-          "label": "Pool",
-          "value": "187 STATE rows at C2 with a plate, 8-60B. At 58% that is ~108 viable candidates; the batch lane verifies ~20 hooks/min of in-race window.",
-          "kind": "text"
-        },
-        {
           "label": "Docs",
-          "value": "re/analysis/plans/prescreen_recipe.md + prescreen_result_20260729.tsv",
+          "value": "re/analysis/plans/prescreen_recipe.md + prescreen_result_all.tsv",
           "kind": "text"
         }
       ]
