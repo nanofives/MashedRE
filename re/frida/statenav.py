@@ -383,6 +383,32 @@ def main():
     if extra_rvas and count_late:
         scr.exports_sync.countthese(extra_rvas)
         print(f"  [count-rvas] armed IN-RACE: {len(extra_rvas)} probes", flush=True)
+    # MASHED_COUNT_GATE — RVAs that CERTIFY the simulation is running. Wait for one
+    # of them to actually fire before letting the round begin.
+    #
+    # The start-attempt loop above exits on `phase != 3`, i.e. "no longer in the
+    # menu", which is not the same as "racing". Measured 2026-07-29: it lands on
+    # phase=2 often enough that ~half of all pre-screen chunks came back with
+    # every probe at zero and had to be discarded — correct, but it halved
+    # throughput. Pressing confirm again from that state usually gets the rest of
+    # the way in, so poll for a gate probe and nudge rather than starting a round
+    # that is not a round.
+    gate_rvas = [r.strip() for r in os.environ.get("MASHED_COUNT_GATE","").split(",") if r.strip()]
+    if gate_rvas and count_late:
+        gate_wait = float(os.environ.get("MASHED_COUNT_GATE_WAIT", "30"))
+        end_g, nudged, fired = time.time() + gate_wait, 0, False
+        last_nudge = 0.0
+        while time.time() < end_g:
+            if not nav.alive(): break
+            cc = scr.exports_sync.counts()
+            if any(isinstance(cc.get(r), int) and cc[r] > 0 for r in gate_rvas):
+                fired = True
+                break
+            if time.time() - last_nudge > 3.0:
+                nav.press(4); nudged += 1; last_nudge = time.time()
+            time.sleep(0.5)
+        print(f"  [gate] simulation {'CONFIRMED' if fired else 'NOT confirmed'} "
+              f"after {nudged} nudge(s), phase={nav.phase()}", flush=True)
     # WAIT for the arena round to play out (AI drives; round ends on elimination/timeout ->
     # end-of-round scoring fires the results hooks). No forced input needed. Watch for results
     # hooks to start firing and for a phase change (round-end/results screen).

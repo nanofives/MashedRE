@@ -70,6 +70,10 @@ def run_chunk(rvas, round_s, shotdir):
     # Interceptor live through the whole menu navigation, and that — not any
     # driver degradation — is what stalled the failing chunks. See below.
     env["MASHED_COUNT_LATE"] = "1"
+    # Wait for a validated probe to actually fire before the round starts. The
+    # nav exits on "not the menu", which is not "racing" — that mismatch voided
+    # about half of all chunks (probes armed at phase=2, nothing ever fired).
+    env["MASHED_COUNT_GATE"] = ",".join(PROBES)
     cmd = [sys.executable, str(ROOT / "re/frida/statenav.py"),
            "--round", str(round_s), "--shot-dir", shotdir]
     try:
