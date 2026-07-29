@@ -78,11 +78,24 @@ c4  VOID no probe fired (first_results_at=None)   DISCARDED
     stopping: consecutive void boots — likely a wedged driver
 ```
 
-**96 screened, 49 exercised (51%), 20 race-gated, 47 never.** The two void boots are the
-d3d9/GPU wedge at ~18 boots, exactly where it is documented to appear. They were discarded rather
-than merged — had they been trusted, 48 candidates would have been permanently mislabelled
-"never exercised". **91 candidates remain**; resume after a reboot with
-`--skip-done re/analysis/plans/prescreen_result_all.tsv`.
+**96 screened, 49 exercised (51%), 20 race-gated, 47 never.** They were discarded rather than
+merged — had they been trusted, 48 candidates would have been permanently mislabelled "never
+exercised". **91 candidates remain.**
+
+> ### CORRECTION — the void chunks were NOT a GPU wedge
+> I read them as the documented ~15-boot d3d9 wedge and said a reboot was needed. **Wrong**, and
+> the run order already disproved it: the 48-probe screen failed, a 24-probe screen **immediately
+> after** succeeded, three more 24-probe chunks succeeded, then two failed. *A wedged driver does
+> not heal itself for the next boot.* The failures track the **probe set**, not elapsed boots.
+>
+> Cause: `statenav` armed every counter **before `dev.resume`**, so 24–48 Interceptors ran through
+> the entire menu navigation and the nav's fixed `time.sleep(1.5)` waits timed out — exactly the
+> hot-path hazard CLAUDE.md documents. The failing chunks contain hot RenderWare functions
+> (`0x004b40f0`, `0x004c7730`, `0x004c5860`).
+>
+> Fix: `MASHED_COUNT_LATE=1` arms the probes **after** race entry, so navigation runs at native
+> speed. The chunk that "wedged" twice then navigated fine **with no reboot**. Cost: the pre-race
+> baseline is lost, so race-gated/pre-race classification needs a separate menu pass.
 
 ### The 20 race-gated candidates
 

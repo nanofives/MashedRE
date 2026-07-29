@@ -24,9 +24,19 @@ Chunks are kept small: Interceptor.attach on a hot path destabilises MASHED in
 about six seconds (CLAUDE.md) and a candidate's call rate is unknown until you
 measure it.
 
-Spawn budget: MASHED wedges the d3d9/GPU driver after roughly 15 boots. This
-stops after --max-void consecutive void/failed chunks rather than grinding
-through the remainder against a wedged driver.
+VOID CHUNKS ARE AN INTERCEPTOR-OVERHEAD PROBLEM, NOT A WEDGED DRIVER.
+I originally read two consecutive void chunks as the documented ~15-boot
+d3d9/GPU wedge and told the user to reboot. That was WRONG, and the run order
+already disproved it: a 48-probe screen failed, a 24-probe screen IMMEDIATELY
+AFTER succeeded, three more 24-probe chunks succeeded, then two whose candidate
+sets contain hot RenderWare functions failed the same way. A wedged driver does
+not heal itself for the next boot. The failures track the probe SET, not elapsed
+boots — statenav armed all counters before dev.resume, so their Interceptors ran
+through the entire menu navigation and the nav's fixed waits timed out.
+Fixed by MASHED_COUNT_LATE=1 (set below): the same chunk that "wedged" twice
+then navigated fine with no reboot.
+--max-void still stops the run, because repeated void chunks mean something is
+wrong worth looking at — just not a driver to reboot.
 
 Usage:
   py -3.12 scripts/prescreen_batch.py --candidates <tsv> --out <tsv>
@@ -56,6 +66,10 @@ def run_chunk(rvas, round_s, shotdir):
     """One boot. Returns (baseline: dict, exercised: set, void: bool, note: str)."""
     env = dict(os.environ)
     env["MASHED_COUNT_RVAS"] = ",".join(rvas + PROBES)
+    # Arm the probes AFTER the race is entered. Arming before resume leaves every
+    # Interceptor live through the whole menu navigation, and that — not any
+    # driver degradation — is what stalled the failing chunks. See below.
+    env["MASHED_COUNT_LATE"] = "1"
     cmd = [sys.executable, str(ROOT / "re/frida/statenav.py"),
            "--round", str(round_s), "--shot-dir", shotdir]
     try:
@@ -128,15 +142,22 @@ def main():
             print(f"    DISCARDED (void {voids}/{max_void}) — zeros from this boot mean nothing",
                   flush=True)
             if voids >= max_void:
-                print("    stopping: consecutive void boots — likely a wedged driver; "
-                      "reboot and resume with --skip-done", flush=True)
+                print("    stopping: consecutive void chunks. NOT a driver to reboot — "
+                      "check probe overhead first (MASHED_COUNT_LATE, smaller --chunk); "
+                      "resume with --skip-done", flush=True)
                 break
             continue
         voids = 0
         for r in rvas:
             sz, sub = meta.get(r, ("", ""))
             if r in exer:
-                cls = "race_gated" if base.get(r, 0) == 0 else "exercised_prerace"
+                # With MASHED_COUNT_LATE the probes are armed AFTER race entry, so
+                # there is no pre-race baseline to compare against and everything
+                # observed is in-race by construction. Do not label these
+                # race_gated — that claim needs the baseline, and asserting it
+                # from a run that cannot see the menu would be inventing evidence.
+                cls = "exercised_inrace" if not base else (
+                    "race_gated" if base.get(r, 0) == 0 else "exercised_prerace")
             else:
                 cls = "never"
             outf.write(f"{r}\t{cls}\t{sz}\t{sub}\t{tag}\n")

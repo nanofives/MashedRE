@@ -293,9 +293,26 @@ def main():
     # on purpose here: the question is "did control REACH this address", which an RVA probe
     # answers correctly even when our inline JMP is installed there.
     extra_rvas = [r.strip() for r in os.environ.get("MASHED_COUNT_RVAS","").split(",") if r.strip()]
-    if extra_rvas:
+    # MASHED_COUNT_LATE=1 — arm the counters AFTER the race is entered instead of
+    # before resume. Arming early means every probe's Interceptor is live through
+    # the whole menu navigation, and CLAUDE.md's rule is explicit that attaching
+    # on hot paths destabilises MASHED in seconds. Measured 2026-07-29: a
+    # 48-probe pre-screen never left the frontend, a 24-probe one immediately
+    # after DID reach a race, three more 24-probe runs worked, then two whose
+    # candidate sets include hot RenderWare functions (0x004b40f0, 0x004c7730,
+    # 0x004c5860) failed the same way — phase stuck at 3, first_results_at=None.
+    # I first attributed that to a progressive d3d9/GPU wedge. THAT WAS WRONG and
+    # the run order disproves it: a wedged driver does not heal itself for the
+    # next boot, yet the 24-probe run right after the failed 48-probe one worked.
+    # The failures track the probe SET, not elapsed boots. Late arming keeps the
+    # nav at native speed and costs only the pre-race baseline.
+    count_late = os.environ.get("MASHED_COUNT_LATE") == "1"
+    if extra_rvas and not count_late:
         scr.exports_sync.countthese(extra_rvas)
         print(f"  [count-rvas] {extra_rvas}", flush=True)
+    elif extra_rvas:
+        print(f"  [count-rvas] {len(extra_rvas)} DEFERRED until in-race "
+              f"(MASHED_COUNT_LATE=1)", flush=True)
     if os.environ.get("MASHED_SEMTRACE"):
         # U-9025: trace acquire/release of the binary semaphore at [0x007dcae0].
         r = scr.exports_sync.semtrace("0x007dcae0", "0x005cc090", "0x005cc094")
@@ -361,6 +378,11 @@ def main():
         dump_counts(f"start-attempt{k}")
         if nav.phase()==0: break
     shoot(pid, ROOT/shotdir/"sn_race_enter.png")
+    # Late arming: navigation is done, so the probes cost nothing that could
+    # stall it. Everything counted from here on is by definition in-race.
+    if extra_rvas and count_late:
+        scr.exports_sync.countthese(extra_rvas)
+        print(f"  [count-rvas] armed IN-RACE: {len(extra_rvas)} probes", flush=True)
     # WAIT for the arena round to play out (AI drives; round ends on elimination/timeout ->
     # end-of-round scoring fires the results hooks). No forced input needed. Watch for results
     # hooks to start firing and for a phase change (round-end/results screen).
