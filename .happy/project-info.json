@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-28T18:40:00Z",
+  "updatedAt": "2026-07-28T20:15:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -22,9 +22,35 @@
       "heading": "Promotions (confidence ladder)",
       "fields": [
         { "label": "C1", "value": 797, "kind": "number" },
-        { "label": "C2", "value": 4034, "kind": "number" },
-        { "label": "C3", "value": 849, "kind": "number" },
+        { "label": "C2", "value": 4033, "kind": "number" },
+        { "label": "C3", "value": 850, "kind": "number" },
         { "label": "C4", "value": 184, "kind": "number" }
+      ]
+    },
+    {
+      "heading": "C2→C3 throughput — lane rebuilt 2026-07-28",
+      "fields": [
+        { "label": "Was", "value": "1.67 GREEN/round over 248 rounds — one boot per live-state hook against a ~15-boot GPU wedge budget", "kind": "text" },
+        { "label": "Root cause", "value": "not candidate supply: callee_gate_cascade.tsv held 1416 ready rows with 0 consumed since 2026-07-24", "kind": "text" },
+        { "label": "Now", "value": "run_diff_scenario_batch.py verifies MANY hooks per ONE booted+navigated game — 48 calls in 1.2s, ~25ms each", "kind": "text" },
+        { "label": "Fixed", "value": [
+          "live-state filter missed the RW engine global (render passed 530→440)",
+          "x87 dirty-stack false-RED — CW-preserving scrub, A/B proven",
+          "promote_classify.py --input (was hardcoded to the 19-row leaf frontier)"
+        ], "kind": "list" },
+        { "label": "Write-up", "value": "re/analysis/plans/c2c3_throughput_session_2026-07-28.md", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Next up",
+      "fields": [
+        { "label": "Queue", "value": [
+          "wire the STATE lane into promote-c3-batch (x87 trap now fixed)",
+          "3 genuine REDs: 0x0047c270, 0x0047c2d0, 0x004853b0",
+          "3 drift rows w/ non-degenerate evidence: sprite_slot_dispatch, text_sprite_scaled, rtfshandler_is_eof",
+          "arg_type=unknown — filter's arg_type check is structurally vacuous"
+        ], "kind": "list" },
+        { "label": "Spawn budget", "value": "~12 of ~15 boots used 2026-07-28; reboot clears the GPU wedge", "kind": "text" }
       ]
     },
     {
@@ -32,14 +58,6 @@
       "fields": [
         { "label": "Defect", "value": "AudioThreadDescInit (0x005aef00) declared void; original returns param_1 in EAX and callers TEST it", "kind": "text" },
         { "label": "Effect", "value": "audio/stream worker thread never spawned; stream semaphore never serviced; GUI thread hangs on an INFINITE wait", "kind": "text" },
-        { "label": "Verified", "value": [
-          "emitted EAX=param_1 at RET (byte dump)",
-          "entry counts now 1/1/1, matching stock",
-          "game CreateThread reappears (1 per run)",
-          "lock acquire/release balance back to net 0",
-          "10/10 runs complete (was 3 wedges in 8)"
-        ], "kind": "list" },
-        { "label": "Uncommitted", "value": "AudioDSound.cpp fix, statenav.py tracer, analysis note", "kind": "text" },
         { "label": "Pending sign-off", "value": "hooks.csv 005aef00 C3 evidence is blind to return values — clear and re-earn", "kind": "text" }
       ]
     }
