@@ -16861,6 +16861,36 @@ HOOKS = {
         'path2_tests': [0, 0xf, 0x10],
     },
 
+    # 0x004671d0 / 0x00467210  FollowTargetField40 / FollowTargetField10 — twins
+    #   differing only in the final displacement. PURE READS: no store anywhere in
+    #   either body, so force-calling them cannot perturb the game — the only two
+    #   of ten in-race SAFE candidates for which that is true.
+    #     holder = (MenuAlphaGet()==3 && sel!=-1) ? Vehicle0HandleGet()
+    #                                            : *(0x006905b0)
+    #     return *(holder+4) + 0x40 (resp. 0x10)
+    #   Both callees are zero-arg global reads (0042b930 -> [0x0067ecb0] C4,
+    #   0042f510 -> [0x0067f190] C3) — checked, because the call sites push
+    #   nothing, which is the shape that hides an argument-convention bug.
+    #   sel = -1 vs anything else selects the branch, so the vectors cover both;
+    #   a run where MenuAlphaGet() != 3 collapses them and reads degenerate,
+    #   which is information about the scenario, not a port defect.
+    'follow_target_field40': {
+        'rva': 0x004671d0, 'export': 'FollowTargetField40',
+        'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'state_gate': [{'chain': [0x006905b0], 'min': 0x00010000}],
+        'path1_tests': [-1, 0, 1, 2, 3, -1, 4, 5, -1, 6],
+        'path2_tests': [-1, 0, 3],
+    },
+    'follow_target_field10': {
+        'rva': 0x00467210, 'export': 'FollowTargetField10',
+        'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'state_gate': [{'chain': [0x006905b0], 'min': 0x00010000}],
+        'path1_tests': [-1, 0, 1, 2, 3, -1, 4, 5, -1, 6],
+        'path2_tests': [-1, 0, 3],
+    },
+
     # ---- promote-round round 29 (worklist batch: const global setters) --------
     'set_77196c_1': {
         'rva': 0x00493570, 'export': 'Set77196c_1', 'signature': {'ret': 'void', 'args': []},

@@ -263,6 +263,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Render\SlotObjectAccessors.cpp" ^
     "Audio\AudioQueuePop.cpp" ^
     "Ai\VehicleFloatFieldAsInt.cpp" ^
+    "Camera\FollowTargetFieldPtr.cpp" ^
     "Render\Vec3NormalizeScale.cpp" ^
     "Ai\HeadingAtan2.cpp" ^
     "Audio\AudioVecLength.cpp" ^
