@@ -206,11 +206,16 @@ def walk_chain(peek, chain, minval=0):
     (ok, human-readable trace) — the trace is printed on failure so a skipped
     hook says WHICH link was null rather than just "gate unmet".
 
-    minval matters: "non-zero" is a weak test for something used as a BASE
-    ADDRESS. Measured 2026-07-28 — body_geometry_first_dword gated on
-    [0x007dc8d8] != 0, passed, and then faulted on both sides at 0xa4/0xa8/0xac
-    because the global held the small integer 0xa4, not a pointer. Pass
-    {'chain': [...], 'min': 0x00400000} for any link the target will dereference.
+    minval is for a link the target uses as a BASE ADDRESS and which is
+    genuinely supposed to hold a pointer. USE IT SPARINGLY — the case that
+    motivated it turned out not to be one. body_geometry_first_dword gated on
+    [0x007dc8d8] != 0, passed, then faulted on both sides at 0xa4/0xa8/0xac, and
+    the global held 0xa4; I concluded it was "not a usable base" and gated it
+    out. Wrong: 0x0057c270 registers a RenderWare plugin (size 4, id 0x901) and
+    stores the returned PLUGIN DATA OFFSET there, so 0xa4 is the correct healthy
+    value and the real defect was passing an int where an RwObject* belongs. A
+    min gate there would have permanently skipped a working hook. Confirm what a
+    global HOLDS before demanding it look like a pointer.
     """
     addr = chain[0] & 0xffffffff
     v = peek(f"0x{addr:08x}")

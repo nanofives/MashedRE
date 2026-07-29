@@ -16734,10 +16734,26 @@ HOOKS = {
         'rva': 0x00421930, 'export': 'BodyGeometryFirstDword',
         'signature': {'ret': 'uint32', 'args': ['int32']},
         'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
-        # NOT just non-zero: measured 2026-07-28 this global held the small
-        # integer 0xa4, the gate passed, and both sides then faulted at
-        # 0xa4/0xa8/0xac. A value used as a BASE must look like a pointer.
-        'state_gate': [{'chain': [0x007dc8d8], 'min': 0x00400000}],
+        # CORRECTED 2026-07-29 — 0xa4 is the RIGHT value, and a 'min pointer'
+        # gate on it was my error (committed in c9de9f78, reverted here).
+        # 0x0057c270 does: push 0x4d7ff0 / push 0x4d7ff0 / push 0x57c2e0 /
+        # push 0x901 / push 4 / call 0x004e7d40 / mov [0x007dc8d8],eax — a
+        # RenderWare PLUGIN REGISTRATION (size 4, id 0x901, ctor/copy/dtor
+        # callbacks). What it returns, and what 0x007dc8d8 therefore holds, is
+        # the plugin's DATA OFFSET within the object. 0xa4 is exactly that.
+        # So 0x0057c210 is *(obj + pluginOffset), NOT table[handle]: the
+        # ARGUMENT IS AN RwObject POINTER. The observed faults at 0xa4/0xa8/0xac
+        # are literally arg+0xa4 for arg = 0/4/8 — the same pointer-as-int
+        # mistake as the camera predicates, third instance in this batch.
+        #
+        # PARKED, NOT PROMOTABLE AS CONFIGURED: a correct run needs a REAL live
+        # object pointer. A seeded scratch buffer cannot work — ptr_arg_int_get
+        # fills every dword non-zero, so *(buf+0xa4) is garbage and the second
+        # deref (mov eax,[eax+4]) faults; a zeroed buffer returns 0 on the first
+        # null check and is degenerate. Needs an arg_type that HARVESTS a live
+        # object pointer. The gate below is the genuine liveness condition
+        # (plugin registered at boot via SubsystemInit 0x00492270).
+        'state_gate': [[0x007dc8d8]],
         'path1_tests': [0, 4, 8, 0xc, 0x10, 0x14, 0x18, 0x1c, 0x20, 0x24],
         'path2_tests': [0, 8, 0x10],
     },
