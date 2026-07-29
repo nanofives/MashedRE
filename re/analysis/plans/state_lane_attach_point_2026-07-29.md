@@ -1,5 +1,29 @@
 # STATE lane — where the dead globals actually populate (2026-07-29)
 
+> ## ⛔ READ THIS FIRST — the runtime half of this note is INVALID
+>
+> **Every diff point in this session was taken against a HUNG GAME, not a race.**
+> `verify/capture_20260729/sb_diffpoint.png` and
+> `verify/state_batch_dwell_20260728/sb_diffpoint.png` are both a **blank white window**.
+> The menu navigates perfectly (`sa_track.png` shows track-select on Angel Peak, Quick Battle),
+> the game then enters "phase=0" — which the nav treats as *in race* — and sits at a white window
+> for 122 s+.
+>
+> So every runtime claim of the form "this array is empty at race entry" is unfounded: the arrays
+> are empty because **the race never started**. That includes "Quick Battle at race-entry+25s does
+> not populate these arrays", the smplfzx manager being null, the camera sub-counts being zero,
+> and the 0-calls-captured result. None of them measured what they claimed to measure.
+>
+> The STATIC half below (who writes each global, the plugin-offset finding, the caller scan) is
+> unaffected — it never touched the running game.
+>
+> The signature — navigate fine, enter race, hang — is the shape of **U-9025, the race-entry
+> wedge**, which was declared resolved on 2026-07-28. Whether this is a recurrence, a different
+> hang, or the documented white-window/reboot condition
+> (memory `project_boot_hang_directshow_intro`) is **not yet determined**, and the next step is a
+> STOCK control run — the thing that cracked U-9025 in the first place.
+
+
 Follow-up to `c2c3_throughput_session_2026-07-28.md`. Three authored STATE ports all failed
 to produce evidence, every one because the global it reads was empty at our attach point. This
 note answers *why*, statically, without spending a boot.
