@@ -58,6 +58,7 @@ DESTRUCTIVE = {
 }
 
 SCRATCH = {"eax", "ecx", "edx", "ebx", "esi", "edi"}
+CALLEE_SAVED = {"ebx", "esi", "edi", "ebp"}   # a push of one of these is a prologue save
 SUB8 = {"al": "eax", "ah": "eax", "ax": "eax", "cl": "ecx", "ch": "ecx", "cx": "ecx",
         "dl": "edx", "dh": "edx", "dx": "edx", "bl": "ebx", "bh": "ebx", "bx": "ebx",
         "si": "esi", "di": "edi"}
@@ -123,19 +124,47 @@ def screen(va, base, data, imports, next_start=None, maxlen=0x200):
     off = va - base
     end = body_end(va, base, data, next_start)
     out["size"] = end - va
+    # A `push <callee-saved>` is a SAVE if the same register is POPped in this
+    # body. That is the exact rule; position is not — 0x004c1be0, 0x00495080 and
+    # 0x005a9de0 all push esi/edi several instructions in, after loading their
+    # stack arguments, and all three pop it back before returning. Judging by
+    # "is this the first instruction" mis-flagged every one of them as taking a
+    # register argument, and reg_arg is the verdict used to SKIP a candidate.
+    popped = {_norm(j.op_str) for j in md.disasm(data[off:off + (end - va)], va)
+              if j.mnemonic == "pop"}
     for i in md.disasm(data[off:off + (end - va)], va):
         op = i.op_str
         # --- register-argument detection: a scratch register READ before written.
-        # Only look at plain register sources; memory operands are handled by the
-        # call classification below and are not evidence of a register argument.
-        if i.mnemonic in ("push", "test", "cmp") or (
-                i.mnemonic in ("mov", "add", "or", "and", "sub", "xor") and "," in op):
+        #
+        # THREE things that look like an argument read and are not. All three
+        # produced false positives on the first pass, and reg_arg was the verdict
+        # being used to SKIP candidates, so each one cost real work:
+        #
+        #  1. `push esi` / `push ebx` / `push edi` at the top of a body is the
+        #     PROLOGUE SAVING a callee-saved register, not reading a parameter.
+        #     0x004c0ed0, 0x0048fef0, 0x005a9de0 and 0x0047a0f0 all begin exactly
+        #     that way and were all mis-flagged.
+        #  2. EAX after a `call` holds the RETURN VALUE. `mov [0x007f1030], eax`
+        #     following a call is storing a result, not consuming an argument
+        #     (0x00495110, 0x004039c0, 0x0048bbe0).
+        #  3. `xor r,r` / `sub r,r` is the zeroing idiom. It nominally reads the
+        #     register but depends on nothing (0x00534920).
+        prologue_save = (i.mnemonic == "push" and _norm(op) in CALLEE_SAVED
+                         and _norm(op) in popped)
+        zero_idiom = (i.mnemonic in ("xor", "sub") and "," in op
+                      and _norm(op.split(",")[0]) == _norm(op.split(",")[1]))
+        if not prologue_save and not zero_idiom and (
+                i.mnemonic in ("push", "test", "cmp") or (
+                i.mnemonic in ("mov", "add", "or", "and", "sub", "xor") and "," in op)):
             parts = [p.strip() for p in op.split(",")]
             srcs = parts[1:] if len(parts) > 1 else parts[:1]
             for s in srcs:
                 s = _norm(s)
                 if s in SCRATCH and s not in written:
                     out["reg_arg"].append(f"{i.address:08x} {i.mnemonic} {op}")
+        if prologue_save or zero_idiom:
+            d = _norm(op if i.mnemonic == "push" else op.split(",")[0])
+            if d in SCRATCH: written.add(d)
         if "," in op and i.mnemonic in ("mov", "lea", "xor", "pop", "add", "sub",
                                         "movzx", "movsx", "imul", "and", "or"):
             d = _norm(op.split(",")[0])
@@ -147,6 +176,7 @@ def screen(va, base, data, imports, next_start=None, maxlen=0x200):
                 written.add(d)
         # --- call classification
         if i.mnemonic == "call":
+            written.update(("eax", "ecx", "edx"))   # defined/clobbered by the callee
             if op.startswith("0x"):
                 out["direct"].append(op)
             elif op.startswith("dword ptr [0x"):

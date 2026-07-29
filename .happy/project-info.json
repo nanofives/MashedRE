@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-29T07:00:00Z",
+  "updatedAt": "2026-07-29T08:10:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -48,35 +48,31 @@
       ]
     },
     {
-      "heading": "STATE lane - pre-screen results",
+      "heading": "STATE lane - two screens, 26 authorable",
       "fields": [
         {
-          "label": "Screened",
-          "value": "96 of 187 STATE candidates. 49 exercised (51%), 20 RACE-GATED, 47 never exercised in Quick Battle.",
+          "label": "Screen 1 EXERCISED",
+          "value": "96 of 187 screened in one boot per 24. 49 exercised (51%): 20 race-gated, 29 pre-race. 91 left, resume after reboot with --skip-done.",
           "kind": "text"
         },
         {
-          "label": "Stopped by",
-          "value": "d3d9/GPU wedge at ~18 boots - 2 consecutive void boots (probes never fired) DISCARDED, not merged. Had they been trusted, 48 candidates would have been mislabelled 'never exercised'.",
+          "label": "Screen 2 SHAPE",
+          "value": "scripts/shape_screen.py - exercised is NOT diffable. race-gated: 5 direct/2 reg_arg/11 indirect/2 destructive. pre-race: 21 direct/1/5/2.",
           "kind": "text"
         },
         {
-          "label": "Resume",
-          "value": "91 candidates left. After a reboot: py -3.12 scripts/prescreen_batch.py --candidates re/analysis/plans/prescreen_candidates_all.txt --out re/analysis/plans/prescreen_result_all.tsv --skip-done re/analysis/plans/prescreen_result_all.tsv",
+          "label": "Destructive found",
+          "value": "CloseHandle(0x005b8080), WaitForSingleObject(0x005aeed0), Enter/LeaveCriticalSection (0x0049ff30, 0x0049cc40). A synthetic A/B calls the target TWICE per vector - these corrupt the game, not measure it.",
           "kind": "text"
         },
         {
-          "label": "Best clusters",
-          "value": [
-            "audio: 8 race-gated, several 15-18B",
-            "particle: 0x0048fce0/fd10/fd40 consecutive 39B siblings",
-            "render: 0x00421560..0x00421980"
-          ],
-          "kind": "list"
+          "label": "Best pool",
+          "value": "21 direct candidates exercised PRE-RACE - no race scenario needed, ordinary run_diff menu-attach lane, no spawn-budget problem. Smallest: 0x00495110 11B, 0x0040d020 21B, 0x0047b860 22B, 0x004039c0 23B, 0x00491780 23B.",
+          "kind": "text"
         },
         {
-          "label": "Docs",
-          "value": "re/analysis/plans/prescreen_recipe.md + prescreen_result_all.tsv",
+          "label": "Authored, unverified",
+          "value": "0x0047d150 SlotObjectField8 + 0x005b0f40 AudioQueuePop (b1948d26). Build clean, exports present. Verification waits on a reboot.",
           "kind": "text"
         }
       ]

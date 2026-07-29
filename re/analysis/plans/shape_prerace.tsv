@@ -1,0 +1,30 @@
+rva	verdict	size	subsystem	detail
+0x00495110	direct	11	util	0x4950b0
+0x0040d020	direct	21	track	0x426e10
+0x0047b860	direct	22	input	0x4b7330,0x4c0510
+0x004039c0	direct	23	vehicle	0x42a5d0
+0x00491780	direct	23	render	0x491590
+0x0047b880	direct	25	input	0x4b7480
+0x004b7fd0	direct	31	render	0x4b7ff0
+0x004c0ed0	direct	31	render	0x4d8350
+0x00494460	direct	32	frontend	0x494320,0x4c7650
+0x004b9600	direct	33	input	0x4b7df0
+0x0048fef0	direct	35	particle	0x4e89a0
+0x004c1be0	direct	35	frontend	0x4c7730
+0x0048bbe0	direct	36	particle	0x4c5cb0,0x4ce2d0
+0x00494480	direct	38	video	0x4938e0,0x493fc0,0x4942b0
+0x005a60e0	direct	38	audio	0x5aab70,0x5aad40
+0x0045d430	direct	39	util	0x5a60e0
+0x005a9de0	direct	39	audio	0x5ad320
+0x00496940	direct	40	render	0x4c77c0
+0x00534920	direct	40	util	0x4c2d90
+0x00425b90	direct	41	frontend	0x4e66d0
+0x0047a0f0	direct	59	track	0x47b9b0,0x4b6520
+0x00495080	reg_arg	38	frontend	0x494fd0
+0x0049f210	indirect	19	particle	dword ptr [ecx + 8]
+0x004c7600	indirect	28	render	dword ptr [eax + 0x88]
+0x004960e0	indirect	30	boot	dword ptr [ecx + 0x1c],dword ptr [edx + 0x20]
+0x004cbb20	indirect	34	render	dword ptr [ecx + 0x1a8]
+0x004c3d60	indirect	38	render	dword ptr [eax + edx + 8]
+0x0049ff30	destructive	37	particle	KERNEL32.dll!EnterCriticalSection,KERNEL32.dll!LeaveCriticalSection
+0x0049cc40	destructive	39	particle	KERNEL32.dll!EnterCriticalSection,KERNEL32.dll!LeaveCriticalSection

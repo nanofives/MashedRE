@@ -112,6 +112,57 @@ Two notes on individual rows:
   **acquires** when signalled, so force-calling it mutates state. Do not batch it without a
   restore.
 
+## Second screen: SHAPE (`scripts/shape_screen.py`) — exercised ≠ diffable
+
+The exercise screen says the scenario calls it. It does not say a synthetic A/B can safely call
+it, and those diverge badly. Run both.
+
+| class | total | direct | reg_arg | indirect | destructive |
+|---|---|---|---|---|---|
+| race-gated | 20 | **5** | 2 | 11 | 2 |
+| exercised pre-race | 29 | **21** | 1 | 5 | 2 |
+
+`destructive` is not a style objection. A synthetic A/B calls the target **twice per vector**:
+
+```
+0x005b8080  call dword ptr [0x005cc088]  ->  KERNEL32!CloseHandle(*(p+0xc))
+0x005aeed0  call dword ptr [0x005cc090]  ->  KERNEL32!WaitForSingleObject(h, 0)
+0x0049ff30  0x0049cc40                   ->  Enter/LeaveCriticalSection
+```
+
+Closing a live kernel handle, acquiring a signalled object, or taking a critical section under a
+force-call corrupts the running game rather than measuring it.
+
+### The menu-verifiable pool is the richer one
+
+**21 direct candidates are exercised BEFORE the race** — they need no race scenario at all and go
+through the ordinary `run_diff` menu-attach lane, which is cheaper, more quiescent, and avoids the
+spawn-budget problem entirely. Smallest first: `0x00495110` (11 B, util), `0x0040d020` (21 B,
+track), `0x0047b860` (22 B, input), `0x004039c0` (23 B, vehicle), `0x00491780` (23 B, render),
+`0x0047b880` (25 B, input), `0x004b7fd0` / `0x004c0ed0` (31 B, render), `0x00494460` (32 B,
+frontend), `0x004b9600` (33 B, input), `0x0048fef0` (35 B, particle), `0x0048bbe0` (36 B,
+particle), `0x00494480` (38 B, video), `0x005a60e0` (38 B, audio), `0x0045d430` (39 B, util),
+`0x00496940` (40 B, render), `0x00534920` (40 B, util), `0x00425b90` (41 B, frontend),
+`0x0047a0f0` (59 B, track).
+
+### Three detector defects found by checking it against real disassembly
+
+Every one produced a **false** verdict, and `reg_arg` / `direct` are exactly the verdicts used to
+skip or accept a candidate:
+
+1. **Stopping at the first `ret`.** `0x0047d150` read as *"leaf (no calls), 18 B"* when it calls
+   `0x0057c210` nine bytes later — a false clean bill.
+2. **Over-correcting the body end.** Requiring 3 bytes of padding merged `0x005b0f40` (15 B, ONE
+   nop, then a different function) with its neighbour and *invented* a call. The two errors are
+   one-sided in opposite directions: truncating hides calls, over-running fabricates them.
+3. **Calling a prologue save a register argument.** `push esi` / `push edi` mis-flagged
+   `0x004c0ed0`, `0x0048fef0`, `0x005a9de0`, `0x0047a0f0`, `0x004c1be0`, `0x00495080` — six
+   candidates that would have been skipped. Position is not the rule; **a push whose register is
+   popped in the same body is a save**. Also fixed: EAX after a `call` is a return value, not an
+   argument, and `xor r,r` is a zeroing idiom rather than a read.
+
+After the fixes, `direct` in the pre-race class went **10 → 21**.
+
 ## Why this matters for throughput
 
 The STATE pool at C2 with a plate and no registry entry is **187 rows** at 8–60 bytes. At the
