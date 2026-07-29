@@ -81,6 +81,35 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl SlotRecordPositionPtr(int
 RH_ScopedInstall(SlotRecordPositionPtr, 0x0044b000);
 
 // ─────────────────────────────────────────────────────────────────────────────
+// 0x00407600  PlayerPositionPtr(int player) -> resolved object + 0x30
+//
+// Verbatim 0x00407600..0x0040761c:
+//   00407600 mov eax,[esp+4]
+//   00407604 imul eax,eax,0xec            ; per-player record = 0xec bytes
+//   0040760a mov ecx,[eax + 0x639dc4]
+//   00407610 push ecx
+//   00407611 call 0x47d150
+//   00407616 add esp,4
+//   00407619 add eax,0x30
+//   0040761c ret
+//
+// Same shape as 0x0044b000 (bounds-checked lookup, unconditional +0x30) with a
+// different base and stride. RESTORED after being wrongly dropped: a linear
+// capstone sweep reported this RVA had zero callers and it was cut for failing
+// the caller gate — capstone.disasm() stops at the first undecodable byte and
+// covered under 5% of .text. A byte-accurate E8 scan finds TWO callers,
+// 0x00446520 and 0x00464a50, both C2. See memory
+// feedback_capstone_linear_sweep_truncates.
+// ─────────────────────────────────────────────────────────────────────────────
+extern "C" __declspec(dllexport) std::uint32_t __cdecl PlayerPositionPtr(int player) {
+    const std::uint32_t rec = *reinterpret_cast<const std::uint32_t*>(
+        0x00639dc4u + static_cast<std::uint32_t>(player) * 0xecu);
+    return static_cast<std::uint32_t>(s_FUN_0047d150(static_cast<int>(rec)))
+           + kPositionOff;
+}
+RH_ScopedInstall(PlayerPositionPtr, 0x00407600);
+
+// ─────────────────────────────────────────────────────────────────────────────
 // 0x00421930  BodyGeometryFirstDword(int handleOff) -> **(body->+4), else 0
 //
 // Verbatim 0x00421930..0x00421952:

@@ -16746,13 +16746,18 @@ HOOKS = {
         # are literally arg+0xa4 for arg = 0/4/8 — the same pointer-as-int
         # mistake as the camera predicates, third instance in this batch.
         #
-        # PARKED, NOT PROMOTABLE AS CONFIGURED: a correct run needs a REAL live
-        # object pointer. A seeded scratch buffer cannot work — ptr_arg_int_get
-        # fills every dword non-zero, so *(buf+0xa4) is garbage and the second
-        # deref (mov eax,[eax+4]) faults; a zeroed buffer returns 0 on the first
-        # null check and is degenerate. Needs an arg_type that HARVESTS a live
-        # object pointer. The gate below is the genuine liveness condition
-        # (plugin registered at boot via SubsystemInit 0x00492270).
+        # A seeded scratch buffer cannot work here — ptr_arg_int_get fills every
+        # dword non-zero, so *(buf+0xa4) is garbage and the second deref
+        # (mov eax,[eax+4]) faults; a zeroed buffer returns 0 on the first null
+        # check and is degenerate. So HARVEST the pointer: attach to the target,
+        # let the game call it, replay the real arguments. Caller 0x00421a90
+        # drives it in a 20-iteration loop (0x00421b82 cmp ebp,0x14), so a short
+        # window yields several distinct live objects. require_offsets rejects a
+        # pointer whose plugin dword — the thing the target dereferences — is
+        # empty. Gate below is the genuine liveness condition (plugin registered
+        # at boot via SubsystemInit 0x00492270).
+        'capture_args': {'arg_index': 0, 'max': 12, 'window_ms': 1500,
+                         'require_offsets': [0, 0xa4]},
         'state_gate': [[0x007dc8d8]],
         'path1_tests': [0, 4, 8, 0xc, 0x10, 0x14, 0x18, 0x1c, 0x20, 0x24],
         'path2_tests': [0, 8, 0x10],
@@ -16764,12 +16769,31 @@ HOOKS = {
     #   vectors stay at 0 plus values the null guard rejects. EXPECT DEGENERATE
     #   unless a real clump handle is supplied — recorded here as the honest
     #   shape of this candidate, not as promotion evidence.
+    #   HARVESTED as of 2026-07-29: caller 0x004b4080 null-checks and forwards
+    #   its own argument, so whatever the game passes IS a valid clump.
     'clump_query_field18': {
         'rva': 0x004b4050, 'export': 'ClumpQueryField18',
         'signature': {'ret': 'uint32', 'args': ['int32']},
         'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'capture_args': {'arg_index': 0, 'max': 12, 'window_ms': 1500,
+                         'require_offsets': [0]},
         'path1_tests': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         'path2_tests': [0, 0, 0],
+    },
+
+    # 0x00407600  PlayerPositionPtr(player) — record at 0x00639dc4 + player*0xec,
+    #   through the BOUNDS-CHECKED 0x0047d150, then +0x30 unconditionally. Same
+    #   safe shape as 0x0044b000: the callee rejects anything outside [0,0xc8),
+    #   so an int index IS the correct argument type and no capture is needed.
+    #   Restored after being wrongly dropped on a truncated capstone sweep — it
+    #   has two C2 callers, 0x00446520 and 0x00464a50.
+    'player_position_ptr': {
+        'rva': 0x00407600, 'export': 'PlayerPositionPtr',
+        'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'state_gate': [{'any_nonzero': 0x00639dc4, 'words': 16}],
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests': [0, 3, 7],
     },
 
     # ---- promote-round round 29 (worklist batch: const global setters) --------

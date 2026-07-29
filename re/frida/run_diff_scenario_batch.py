@@ -123,12 +123,18 @@ def _flag(name, default=None, cast=str):
     return default
 
 
-def run_one_hook(sess, nav, name, shotdir):
+def run_one_hook(sess, nav, name, shotdir, tests_override=None):
     """Force-call the A/B for one hook against an ALREADY-navigated session.
     Mirrors run_diff_scenario's step 4 verbatim (same agent, same config), but
-    leaves the process alive for the next hook."""
+    leaves the process alive for the next hook.
+
+    tests_override replaces the registry's path1_tests with values harvested
+    from the live game (see capture_live_args). Both sides still receive the
+    IDENTICAL list, so bit-identity is unaffected."""
     hook = HOOKS[name]
     config = build_config(hook, asi_path=ASI_PATH)
+    if tests_override:
+        config["tests"] = list(tests_override)
     results, errors, done = [], [], {"v": False}
 
     def on_msg(message, data):
@@ -196,6 +202,117 @@ def scrub_x87(sess):
         try: scr.unload()
         except Exception: pass
     return ok["v"]
+
+
+# ---------------------------------------------------------------------------
+# LIVE ARGUMENT CAPTURE
+#
+# The blocker measured 2026-07-29 is not a missing attach point — it is that a
+# large share of STATE candidates take a POINTER, and every synthetic value we
+# can invent for one is wrong. Seeding a scratch buffer cannot fix it: fill it
+# non-zero and a second-level deref faults, fill it zero and the target's own
+# null check makes the run degenerate. Three hooks died this way in one batch,
+# each looking like "live state absent" when the fault address was really
+# argument + the first field offset (memory
+# feedback_pointer_param_described_as_int).
+#
+# So don't invent the pointer — let the GAME produce it. Attach to the target,
+# let it be called naturally for a short window, record the distinct argument
+# values, detach, and replay those REAL values through the normal A/B. Both
+# sides see the identical list, so bit-identity still holds, and distinct live
+# objects give the non-degeneracy for free.
+#
+# This is the same instinct as the existing 'sprite_table_dispatch' arg_type,
+# which patches the CALLEE with a NativeCallback to capture what was passed —
+# generalised from one hook to any pointer-argument hook, and it needs no new
+# diff_template.js handler: a captured pointer is just an int, so 'int_scalar'
+# replays it verbatim.
+#
+# HOT-PATH HAZARD: Interceptor.attach on a >1000 calls/s function destabilises
+# MASHED in about six seconds (CLAUDE.md). The window is therefore short and
+# capped, one function at a time, and the listener is detached before the A/B
+# runs — never left attached across the diff.
+CAPTURE_JS = """
+const tgt = ptr('$TARGET$');
+const IDX = $IDX$, MAX = $MAX$;
+const seen = [];
+let li = null;
+try {
+    li = Interceptor.attach(tgt, {
+        onEnter: function (args) {
+            if (seen.length >= MAX) return;
+            const v = args[IDX].toUInt32();
+            if (seen.indexOf(v) === -1) seen.push(v);
+        }
+    });
+} catch (e) {
+    send({ type: 'captured', data: [], err: 'attach failed: ' + e.message });
+}
+setTimeout(function () {
+    try { if (li) li.detach(); Interceptor.flush(); } catch (e) {}
+    send({ type: 'captured', data: seen });
+}, $WINDOW$);
+"""
+
+
+def capture_live_args(sess, nav, spec):
+    """Record distinct argument values the GAME passes to a target.
+
+    spec: {'rva':…, 'arg_index':0, 'max':12, 'window_ms':1200}
+    Returns (values, note). Values are raw u32s in call order, deduped.
+    """
+    rva = spec["rva"]
+    js = (CAPTURE_JS
+          .replace("$TARGET$", f"0x{rva:08x}")
+          .replace("$IDX$", str(int(spec.get("arg_index", 0))))
+          .replace("$MAX$", str(int(spec.get("max", 12))))
+          .replace("$WINDOW$", str(int(spec.get("window_ms", 1200)))))
+    got, done = {"v": []}, {"v": False}
+    err = {"v": None}
+
+    def on_msg(message, data):
+        if message.get("type") == "error":
+            err["v"] = message.get("description"); done["v"] = True; return
+        p = message.get("payload", {})
+        if p.get("type") == "captured":
+            got["v"] = p.get("data") or []
+            if p.get("err"):
+                err["v"] = p["err"]
+            done["v"] = True
+
+    scr = sess.create_script(js)
+    scr.on("message", on_msg)
+    scr.load()
+    deadline = time.time() + (int(spec.get("window_ms", 1200)) / 1000.0) + 8
+    while not done["v"] and time.time() < deadline:
+        if not nav.alive():
+            err["v"] = "process exited during capture"; break
+        time.sleep(0.05)
+    try: scr.unload()
+    except Exception: pass
+    return got["v"], err["v"]
+
+
+def validate_captured(peek, values, spec):
+    """Drop captured values that are not usable NOW.
+
+    A pointer harvested a second ago can be stale by replay time (freed, or a
+    per-frame object recycled), and a stale pointer produces a both-sides AV
+    that is indistinguishable from a bad port at a glance. So re-check each one
+    immediately before use: it must be in the process's address range and every
+    offset in spec['require_offsets'] must read back non-zero.
+    """
+    lo = int(spec.get("min_ptr", 0x00010000))
+    req = spec.get("require_offsets") or [0]
+    out = []
+    for v in values:
+        v &= 0xffffffff
+        if v < lo:
+            continue
+        if all(isinstance(peek(f"0x{(v + off) & 0xffffffff:08x}"), int)
+               and peek(f"0x{(v + off) & 0xffffffff:08x}") != 0 for off in req):
+            out.append(v)
+    return out
 
 
 def walk_chain(peek, chain, minval=0):
@@ -542,9 +659,35 @@ def main():
                     print(f"   gate: {gate_tr}")
                     continue
 
+            # Harvest REAL arguments from the game for pointer-taking hooks.
+            tests_override = None
+            if HOOKS[name].get("capture_args"):
+                spec = dict(HOOKS[name]["capture_args"])
+                spec.setdefault("rva", HOOKS[name]["rva"])
+                raw, cerr = capture_live_args(sess, nav, spec)
+                good = validate_captured(nav_scr.exports_sync.peek, raw, spec)
+                print(f"   capture 0x{spec['rva']:08x}: {len(raw)} distinct, "
+                      f"{len(good)} still valid"
+                      + (f" [{cerr}]" if cerr else ""))
+                if len(good) < 2:
+                    # Fewer than two usable live arguments means the run could
+                    # only ever be degenerate or a stale-pointer AV. Say so
+                    # rather than emitting a verdict about the port.
+                    verdict = f"SKIPPED-NO-LIVE-ARGS ({len(raw)} seen/{len(good)} valid)"
+                    rows.append((i, name, tag, verdict, 0, True,
+                                 nav.phase() if nav.alive() else "DEAD",
+                                 time.time() - t_hook, time.time() - t0))
+                    print(f"{i:>2} {name[:32]:32s} {verdict[:20]:20s} "
+                          f"{time.time() - t_hook:5.1f} {time.time() - t0:6.1f}")
+                    continue
+                tests_override = good
+                print(f"   replaying live args: " +
+                      ", ".join(f"0x{v:08x}" for v in good[:6]) +
+                      (" ..." if len(good) > 6 else ""))
+
             if not no_scrub:
                 scrubbed = scrub_x87(sess)
-            results, err = run_one_hook(sess, nav, name, shotdir)
+            results, err = run_one_hook(sess, nav, name, shotdir, tests_override)
             dt = time.time() - t_hook
             ret_kind = HOOKS[name]["signature"]["ret"]
             if not results:
