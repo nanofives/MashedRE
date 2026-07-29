@@ -16734,7 +16734,10 @@ HOOKS = {
         'rva': 0x00421930, 'export': 'BodyGeometryFirstDword',
         'signature': {'ret': 'uint32', 'args': ['int32']},
         'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
-        'state_gate': [[0x007dc8d8]],
+        # NOT just non-zero: measured 2026-07-28 this global held the small
+        # integer 0xa4, the gate passed, and both sides then faulted at
+        # 0xa4/0xa8/0xac. A value used as a BASE must look like a pointer.
+        'state_gate': [{'chain': [0x007dc8d8], 'min': 0x00400000}],
         'path1_tests': [0, 4, 8, 0xc, 0x10, 0x14, 0x18, 0x1c, 0x20, 0x24],
         'path2_tests': [0, 8, 0x10],
     },

@@ -198,13 +198,19 @@ def scrub_x87(sess):
     return ok["v"]
 
 
-def walk_chain(peek, chain):
+def walk_chain(peek, chain, minval=0):
     """Walk a pointer chain [base, off1, off2, ...] and report what we found.
 
     Semantics: v = *base; for each off: v must be non-null, then v = *(v + off).
-    The FINAL value must be non-zero for the gate to pass. Returns
+    The FINAL value must be >= minval (default: merely non-zero). Returns
     (ok, human-readable trace) — the trace is printed on failure so a skipped
     hook says WHICH link was null rather than just "gate unmet".
+
+    minval matters: "non-zero" is a weak test for something used as a BASE
+    ADDRESS. Measured 2026-07-28 — body_geometry_first_dword gated on
+    [0x007dc8d8] != 0, passed, and then faulted on both sides at 0xa4/0xa8/0xac
+    because the global held the small integer 0xa4, not a pointer. Pass
+    {'chain': [...], 'min': 0x00400000} for any link the target will dereference.
     """
     addr = chain[0] & 0xffffffff
     v = peek(f"0x{addr:08x}")
@@ -219,7 +225,10 @@ def walk_chain(peek, chain):
             return False, trace + f" +0x{off:x}=UNREADABLE"
         trace += f" +0x{off:x}=0x{nxt & 0xffffffff:08x}"
         v = nxt
-    return (v & 0xffffffff) != 0, trace
+    ok = (v & 0xffffffff) >= max(1, minval)
+    if not ok and minval:
+        trace += f" (< min 0x{minval:08x} — not a usable base)"
+    return ok, trace
 
 
 def eval_state_gate(peek, hook):
@@ -238,7 +247,12 @@ def eval_state_gate(peek, hook):
         return True, ""
     traces = []
     for ch in chains:
-        if isinstance(ch, dict):
+        if isinstance(ch, dict) and "chain" in ch:
+            # {'chain': [base, off, ...], 'min': N} — as below, but the final
+            # value must be >= N. Use for any link the target DEREFERENCES.
+            ok, tr = walk_chain(peek, ch["chain"], int(ch.get("min", 0)))
+            traces.append(tr)
+        elif isinstance(ch, dict):
             # {'any_nonzero': base, 'words': n} — at least one of n consecutive
             # dwords must be non-zero. A pointer chain cannot express "some
             # element of this array is live", which is exactly what the camera
