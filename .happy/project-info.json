@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-29T04:20:00Z",
+  "updatedAt": "2026-07-29T05:30:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -48,40 +48,35 @@
       ]
     },
     {
-      "heading": "BLOCKER - batch lane never reaches a race",
+      "heading": "STATE lane - RESOLVED, and the real lesson",
       "fields": [
         {
-          "label": "Measured",
-          "value": "statenav stock = REAL race (0x00436810 x1961, results t+20s). run_diff_scenario_batch = 0/0/0 in-race probes, with passive AND active dwell. It sits at phase=0 while statenav goes 0->4->5.",
+          "label": "Verified",
+          "value": "The batch lane IS inside a running race: 1674 simulation calls in 1.5s (0x004233e0=1224, 0x00470670=360, 0x0047eb30=90). Probes validated first on a stock race: 11266/2867/59690 in-race vs 0/0/0 at title, track-confirm and start-attempt. phase=0 IS the racing state.",
           "kind": "text"
         },
         {
-          "label": "So phase=0 is",
-          "value": "the pre-race/LOADING state, not the arena. --scenario race returns there.",
-          "kind": "text"
-        },
-        {
-          "label": "Invalidates",
+          "label": "Three wrong calls before it",
           "value": [
-            "every live-state verdict from the batch lane, back to the first batch 2026-07-28",
-            "the '48 calls in 1.2s, state reuse confirmed' measurement",
-            "every 'this array is empty at race entry' conclusion"
+            "'hung game' - from a white screenshot (the grab misses the D3D9 backbuffer even in a confirmed race)",
+            "'never reaches a race' - from probes that were the RESULTS/round-end subset, all frontend in hooks.csv",
+            "'the scenario does not populate these arrays' - assumed"
           ],
           "kind": "list"
         },
         {
-          "label": "Survives",
-          "value": "Hooks needing no live state: heading_atan2 (seeded floats), RenderState_GetTexturingOverride (echoes its arg). The 0x004233e0 C3 promotion rests on seeded inputs - unaffected. All STATIC findings unaffected.",
+          "label": "Common fault",
+          "value": "A strong conclusion from an instrument never validated. A counter never seen to fire anywhere proves nothing when it reads zero.",
           "kind": "text"
         },
         {
-          "label": "Disproved",
-          "value": "input-driving is NOT the difference - statenav's exact control cycle in the dwell changed nothing.",
+          "label": "Real finding",
+          "value": "With the race PROVEN running, 0x00639dc4 and 0x0068432c are still all-zero and 0x00421930/0x004b4050 are called 0 times in 1.5s. Those candidates are simply not exercised in Quick Battle. Nothing was wrong with the lane, harness, ports or scenario.",
           "kind": "text"
         },
         {
-          "label": "Next (no boots)",
-          "value": "diff statenav.main() vs run_diff_scenario.drive_to_results. First candidate: a leftover FUN_00497310 input override the loader cannot get past.",
+          "label": "Cheap fix earned",
+          "value": "PRE-SCREEN before authoring: MASHED_COUNT_RVAS=0x..,0x.. py -3.12 re/frida/statenav.py --round 60 counts any number of RVAs in ONE boot (18 in the validation run).",
           "kind": "text"
         }
       ]

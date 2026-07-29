@@ -26,6 +26,54 @@
 >
 > ---
 >
+> ## 5. RESOLVED — the lane IS inside a running race. All three theories were wrong.
+>
+> **Probe validation (stock statenav race, `MASHED_COUNT_RVAS`):**
+>
+> | probe | title | track-confirm | start-attempt | in race |
+> |---|---|---|---|---|
+> | `0x00470670` VehicleControlUpdate | 0 | 0 | 0 | **11,266** |
+> | `0x0047eb30` VehiclePhysicsWorldStep | 0 | 0 | 0 | **2,867** |
+> | `0x004233e0` HeadingAtan2ToGameAngle | 0 | 0 | 0 | **59,690** |
+>
+> Zero everywhere before the race, tens of thousands during it — a clean discriminator. The phase
+> trace also settles the semantics: **`phase=0` IS the racing state** (t+0–20), results fire at
+> t+20, then phase goes 2 → 3.
+>
+> **Pointed at the batch lane:**
+> ```
+> in-race probe (1.5s): 0x004233e0=1224, 0x00470670=360, 0x0047eb30=90
+> => race IS running (1674 calls in 1.5s)
+> ```
+>
+> So the batch lane has been diffing inside a real, simulating race the whole time. The game was
+> never hung, the scenario was never wrong, and `--scenario race` returns exactly where it claims.
+>
+> ### What that leaves — the first properly-instrumented finding in this thread
+>
+> With the race *proven* running, these observations are now real evidence rather than artefacts:
+>
+> - `0x00639dc4` (the player array `0x00407600` indexes) is **64 bytes of zeros during a live race**.
+> - `0x0068432c` (the record array `0x0044b000` indexes) is likewise **all zeros**.
+> - `0x00421930` and `0x004b4050` are called **zero times in 1.5 s** of racing.
+>
+> **The candidates are simply not exercised in Quick Battle.** Nothing is wrong with the lane, the
+> harness, the ports, or the scenario — I picked four functions this mode never touches.
+>
+> ### The cheap fix this whole detour earned
+>
+> `statenav.py` already accepts `MASHED_COUNT_RVAS=<comma list>` and counts **any number of RVAs in
+> one boot** (18 in the validation run). So the pre-screen is one command:
+>
+> ```bash
+> MASHED_COUNT_RVAS=0x...,0x...,0x... py -3.12 re/frida/statenav.py --round 60
+> ```
+>
+> **Screen candidates for "is this exercised in the target scenario" BEFORE authoring a port.** One
+> boot pre-screens dozens. Doing that first would have skipped this entire thread.
+>
+> ---
+>
 > ## 4. …and the counter was measuring the wrong thing. THIRD wrong call, same question.
 >
 > The probes in §3 — `0x00436810`, `0x0045ba00`, `0x00408a70` — were taken from statenav's
