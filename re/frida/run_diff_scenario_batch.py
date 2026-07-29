@@ -509,12 +509,25 @@ def main():
     gate_wait = _flag("--gate-wait", 15.0, float)
     # Seconds to let the race run before taking the diff point.
     dwell = _flag("--dwell", 0.0, float)
-    # RVAs only in-race code reaches; used to PROVE the diff point is inside a
-    # running race rather than trusting a screenshot. Measured in a stock statenav
-    # race 2026-07-29: 0x00436810 fired 1961 times, 0x0045ba00 30, 0x00408a70 16.
+    # RVAs only IN-RACE SIMULATION reaches, used to prove the diff point is inside
+    # a running race. Pick these carefully — the first attempt got it wrong.
+    # 0x00436810 / 0x0045ba00 / 0x00408a70 came from statenav's GAMEPLAY list, but
+    # hooks.csv puts all three in the FRONTEND subsystem and statenav's own comment
+    # calls them "the RESULTS/round-end subset". They fire when the results screen
+    # appears (statenav: first_results_at=20s), so 0/0/0 from them means "the round
+    # has not ENDED" — exactly what --scenario race is meant to produce, and it says
+    # nothing about whether a race is running. Reading it as "never reaches a race"
+    # was the third wrong call in a row on that question.
+    #
+    # These are per-frame SIMULATION instead:
+    #   0x00470670 VehicleControlUpdate    (vehicle, C4)
+    #   0x0047eb30 VehiclePhysicsWorldStep (vehicle, C3)
+    #   0x004233e0 HeadingAtan2ToGameAngle (ai, C3 — on the physics chain)
+    # VALIDATE A PROBE BEFORE TRUSTING ITS ZERO: a counter that has never been seen
+    # to fire anywhere proves nothing when it reads 0.
     _probe_arg = _flag("--inrace-probe", None)
     inrace_probes = ([int(x, 16) for x in _probe_arg.split(",") if x.strip()]
-                     if _probe_arg else [0x00436810, 0x0045ba00, 0x00408a70])
+                     if _probe_arg else [0x00470670, 0x0047eb30, 0x004233e0])
     shotdir    = _flag("--shot-dir", "verify/scenario_batch")
     repeat_first = "--repeat-first" in sys.argv
     # --no-x87-scrub: skip the between-hook FPU scrub, to reproduce the dirty

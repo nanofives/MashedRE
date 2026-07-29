@@ -26,7 +26,37 @@
 >
 > ---
 >
+> ## 4. …and the counter was measuring the wrong thing. THIRD wrong call, same question.
+>
+> The probes in §3 — `0x00436810`, `0x0045ba00`, `0x00408a70` — were taken from statenav's
+> `GAMEPLAY` list. **hooks.csv puts all three in the `frontend` subsystem**, and statenav's own
+> comment above that list calls it *"the RESULTS/round-end subset … these fire on round END"*.
+> `0x00436810` is `LocalPlayerSlotCheck`; `0x00422fd0` is `FrontendRaceResultsDispatch`.
+>
+> So `0 / 0 / 0` means **"the round has not ENDED"** — which is precisely what `--scenario race`
+> is designed to produce, since it returns at the *start* of the race. It says nothing whatever
+> about whether a race is running. And statenav's `1961` is consistent with results/menu code,
+> not with proof of simulation.
+>
+> **§3's conclusion is withdrawn.** Whether the batch lane reaches a race is once again OPEN.
+>
+> Three wrong calls in a row on one question — hung game (screenshot), never-in-a-race
+> (results-screen probe), and before those, "the scenario doesn't populate these arrays". The
+> common fault is not the individual mistakes: it is **drawing a strong conclusion from an
+> instrument that was never validated**. A counter that has never been seen to fire *anywhere*
+> proves nothing when it reads zero.
+>
+> Probes replaced with per-frame simulation functions — `0x00470670 VehicleControlUpdate` (C4),
+> `0x0047eb30 VehiclePhysicsWorldStep` (C3), `0x004233e0 HeadingAtan2ToGameAngle` (C3, on the
+> physics chain). **These must be validated against a known-good race before any zero from them
+> is believed.**
+>
+> ---
+>
 > ## 3. With the counter in place, the answer is unambiguous — and it is bad
+>
+> *(SUPERSEDED by §4 above — kept because the measurements are real even though the
+> interpretation was wrong.)*
 >
 > | run | in-race probes (1.5s) | conclusion |
 > |---|---|---|
