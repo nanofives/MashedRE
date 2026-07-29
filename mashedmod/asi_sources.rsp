@@ -339,6 +339,8 @@
 "Audio\AudioQueuePop.cpp"
 "Ai\VehicleFloatFieldAsInt.cpp"
 "Camera\FollowTargetFieldPtr.cpp"
+"Render\GlobalByteQuad.cpp"
+"Render\GlobalByteQuadAB.cpp"
 "Render\Vec3NormalizeScale.cpp"
 "Ai\HeadingAtan2.cpp"
 "Audio\AudioVecLength.cpp"
