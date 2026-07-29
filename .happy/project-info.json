@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-29T08:10:00Z",
+  "updatedAt": "2026-07-29T09:00:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -48,31 +48,35 @@
       ]
     },
     {
-      "heading": "STATE lane - two screens, 26 authorable",
+      "heading": "STATE lane",
       "fields": [
         {
-          "label": "Screen 1 EXERCISED",
-          "value": "96 of 187 screened in one boot per 24. 49 exercised (51%): 20 race-gated, 29 pre-race. 91 left, resume after reboot with --skip-done.",
+          "label": "CORRECTED",
+          "value": "The 'GPU wedge / needs a reboot' call was WRONG. Void chunks were Interceptor overhead: statenav armed counters before dev.resume, so 24-48 hooks ran through menu nav and its fixed waits timed out. Fixed with MASHED_COUNT_LATE=1; the chunk that 'wedged' twice ran fine with NO reboot.",
           "kind": "text"
         },
         {
-          "label": "Screen 2 SHAPE",
-          "value": "scripts/shape_screen.py - exercised is NOT diffable. race-gated: 5 direct/2 reg_arg/11 indirect/2 destructive. pre-race: 21 direct/1/5/2.",
-          "kind": "text"
-        },
-        {
-          "label": "Destructive found",
-          "value": "CloseHandle(0x005b8080), WaitForSingleObject(0x005aeed0), Enter/LeaveCriticalSection (0x0049ff30, 0x0049cc40). A synthetic A/B calls the target TWICE per vector - these corrupt the game, not measure it.",
-          "kind": "text"
-        },
-        {
-          "label": "Best pool",
-          "value": "21 direct candidates exercised PRE-RACE - no race scenario needed, ordinary run_diff menu-attach lane, no spawn-budget problem. Smallest: 0x00495110 11B, 0x0040d020 21B, 0x0047b860 22B, 0x004039c0 23B, 0x00491780 23B.",
-          "kind": "text"
+          "label": "Three screens",
+          "value": [
+            "1 exercised (prescreen_batch.py) - 96/187 screened, 49 exercised",
+            "2 shape (shape_screen.py) - 26 direct of 49",
+            "3 semantic (semantic_screen.py) - safety + repeatability"
+          ],
+          "kind": "list"
         },
         {
           "label": "Authored, unverified",
-          "value": "0x0047d150 SlotObjectField8 + 0x005b0f40 AudioQueuePop (b1948d26). Build clean, exports present. Verification waits on a reboot.",
+          "value": "0x0047d150 SlotObjectField8, 0x0046cc10 VehicleFloatFieldAsInt (+ new out1_idx arg_type). AudioQueuePop registered but marked NOT synthetic-verifiable.",
+          "kind": "text"
+        },
+        {
+          "label": "Key finding",
+          "value": "The C2 STATE pool is dominated by PROCEDURES (init/teardown/dispatch/mutate) that a synthetic A/B structurally cannot judge. Moving it needs observation-based verification of the installed hook.",
+          "kind": "text"
+        },
+        {
+          "label": "Next",
+          "value": "91 candidates left to screen (no reboot needed now); verify the 2 authored hooks",
           "kind": "text"
         }
       ]
