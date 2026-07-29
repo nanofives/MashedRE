@@ -1,66 +1,139 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-28T23:55:00Z",
+  "updatedAt": "2026-07-29T01:30:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
       "fields": [
-        { "label": "Checklist", "value": [
-          "R0 re-baseline — done",
-          "R1 C4 truth — done",
-          "R2 menu — done",
-          "R3 track/vehicle data — done",
-          "R4 world render — done",
-          "R5 drivable car — done",
-          "R6 race loop — done",
-          "R7 full game systems — ACTIVE",
-          "R8 — pending"
-        ], "kind": "list" }
+        {
+          "label": "Checklist",
+          "value": [
+            "R0 re-baseline — done",
+            "R1 C4 truth — done",
+            "R2 menu — done",
+            "R3 track/vehicle data — done",
+            "R4 world render — done",
+            "R5 drivable car — done",
+            "R6 race loop — done",
+            "R7 full game systems — ACTIVE",
+            "R8 — pending"
+          ],
+          "kind": "list"
+        }
       ]
     },
     {
       "heading": "Promotions (confidence ladder)",
       "fields": [
-        { "label": "C1", "value": 797, "kind": "number" },
-        { "label": "C2", "value": 4032, "kind": "number" },
-        { "label": "C3", "value": 851, "kind": "number" },
-        { "label": "C4", "value": 184, "kind": "number" }
+        {
+          "label": "C1",
+          "value": 797,
+          "kind": "number"
+        },
+        {
+          "label": "C2",
+          "value": 4032,
+          "kind": "number"
+        },
+        {
+          "label": "C3",
+          "value": 851,
+          "kind": "number"
+        },
+        {
+          "label": "C4",
+          "value": 184,
+          "kind": "number"
+        }
       ]
     },
     {
       "heading": "C2→C3 throughput — lane rebuilt 2026-07-28",
       "fields": [
-        { "label": "Was", "value": "1.67 GREEN/round over 248 rounds — one boot per live-state hook against a ~15-boot GPU wedge budget", "kind": "text" },
-        { "label": "Root cause", "value": "not candidate supply: callee_gate_cascade.tsv held 1416 ready rows with 0 consumed since 2026-07-24", "kind": "text" },
-        { "label": "Now", "value": "run_diff_scenario_batch.py verifies MANY hooks per ONE booted+navigated game — 48 calls in 1.2s, ~25ms each", "kind": "text" },
-        { "label": "Fixed", "value": [
-          "live-state filter missed the RW engine global (render passed 530→440)",
-          "x87 dirty-stack false-RED — CW-preserving scrub, A/B proven",
-          "promote_classify.py --input (was hardcoded to the 19-row leaf frontier)"
-        ], "kind": "list" },
-        { "label": "Write-up", "value": "re/analysis/plans/c2c3_throughput_session_2026-07-28.md", "kind": "text" }
+        {
+          "label": "Was",
+          "value": "1.67 GREEN/round over 248 rounds — one boot per live-state hook against a ~15-boot GPU wedge budget",
+          "kind": "text"
+        },
+        {
+          "label": "Root cause",
+          "value": "not candidate supply: callee_gate_cascade.tsv held 1416 ready rows with 0 consumed since 2026-07-24",
+          "kind": "text"
+        },
+        {
+          "label": "Now",
+          "value": "run_diff_scenario_batch.py verifies MANY hooks per ONE booted+navigated game — 48 calls in 1.2s, ~25ms each",
+          "kind": "text"
+        },
+        {
+          "label": "Fixed",
+          "value": [
+            "live-state filter missed the RW engine global (render passed 530→440)",
+            "x87 dirty-stack false-RED — CW-preserving scrub, A/B proven",
+            "promote_classify.py --input (was hardcoded to the 19-row leaf frontier)"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Write-up",
+          "value": "re/analysis/plans/c2c3_throughput_session_2026-07-28.md",
+          "kind": "text"
+        }
       ]
     },
     {
       "heading": "Next up",
       "fields": [
-        { "label": "Queue", "value": [
-          "DONE: STATE lane wired into promote-c3-batch (8f439ae2)",
-          "DONE: drift rows checked — only sprite_slot_dispatch was real (C3); rtfshandler_is_eof was ALREADY C3; text_sprite_scaled is gated on U-0459 [Blocks C3]",
-          "DONE: the 3 'genuine REDs' were a NULL pointer arg + an unbuilt state chain, not port defects — fixed via ptr_arg_int_get + per-hook state_gate + --dwell",
-          "REGISTERED STATE POOL AT C2 IS EXHAUSTED (4 candidates, 0 promotable) — the ceiling is now authoring reimpls for the 947-row backlog",
-          "0x006e71cc is still NULL 45s into a Quick Battle race: smplfzx_stateblock_get_logged needs a different scenario entirely",
-          "arg_type=unknown — filter's arg_type check is structurally vacuous"
-        ], "kind": "list" },
-        { "label": "Spawn budget", "value": "~12 of ~15 boots used 2026-07-28; reboot clears the GPU wedge", "kind": "text" }
+        {
+          "label": "Done today",
+          "value": [
+            "STATE lane wired into promote-c3-batch (8f439ae2)",
+            "0x0042fab0 SpriteSlotDispatch C2->C3 (real tracker drift)",
+            "3 false REDs retracted: both-sides-identical AVs, not port defects",
+            "per-hook state_gate + --dwell + pointer-plausibility gate",
+            "3 new STATE ports authored from capstone disasm (0x0044b000, 0x00421930, 0x004b4050)"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "BLOCKER FOUND",
+          "value": "Quick Battle at race-entry+25s does not populate these arrays. Measured 3 ways: 0x0068432c all-zero for 64 bytes; 0x007dc8d8 holds 0xa4 not a base; 0x004b3f90 null-guard makes clump=0 degenerate. The SCENARIO is the next ceiling, not authoring.",
+          "kind": "text"
+        },
+        {
+          "label": "Next",
+          "value": [
+            "find a scenario/attach point where these arrays populate (or a later dwell)",
+            "0x006e71cc still NULL 45s in: smplfzx needs a different scenario entirely",
+            "arg_type=unknown — filter's arg_type check is structurally vacuous"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Spawn budget",
+          "value": "4 boots used this session; nav failed 1 of 5 (aborted correctly, no false GREEN)",
+          "kind": "text"
+        }
       ]
     },
     {
       "heading": "U-9025 — root cause found and fixed",
       "fields": [
-        { "label": "Defect", "value": "AudioThreadDescInit (0x005aef00) declared void; original returns param_1 in EAX and callers TEST it", "kind": "text" },
-        { "label": "Effect", "value": "audio/stream worker thread never spawned; stream semaphore never serviced; GUI thread hangs on an INFINITE wait", "kind": "text" },
-        { "label": "Pending sign-off", "value": "hooks.csv 005aef00 C3 evidence is blind to return values — clear and re-earn", "kind": "text" }
+        {
+          "label": "Defect",
+          "value": "AudioThreadDescInit (0x005aef00) declared void; original returns param_1 in EAX and callers TEST it",
+          "kind": "text"
+        },
+        {
+          "label": "Effect",
+          "value": "audio/stream worker thread never spawned; stream semaphore never serviced; GUI thread hangs on an INFINITE wait",
+          "kind": "text"
+        },
+        {
+          "label": "Pending sign-off",
+          "value": "hooks.csv 005aef00 C3 evidence is blind to return values — clear and re-earn",
+          "kind": "text"
+        }
       ]
     }
   ]
