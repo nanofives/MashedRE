@@ -1,5 +1,25 @@
 # Candidate pre-screen — "is this RVA exercised in the target scenario?" (2026-07-29)
 
+> # ⚠️ RUN THE SCREENS IN THIS ORDER
+>
+> ```
+> 1. shape_screen.py      FREE   (capstone + import table)
+> 2. semantic_screen.py   FREE   (plates + disasm + call graph)
+> 3. prescreen_batch.py   1 BOOT per ~24 candidates   <- LAST
+> ```
+>
+> **I ran them in the opposite order and it cost roughly 10× the boots.** 13 boots went on
+> exercise-screening 187 candidates; the free filters then reduced those 90 exercised rows to 5
+> safe. Reversed, the same 187 would have cost ONE boot — filter to ~9 statically, then
+> exercise-screen only those.
+>
+> The exercise screen is the only one that needs the game. Never spend a boot on a candidate a
+> free screen would have rejected.
+>
+> Full-pool numbers: 1,637 eligible → 888 shape-direct → **80 semantically safe** → ~4 clean
+> boots to exercise-screen (~7 allowing for nav flakiness) → ~38 verifiable at the measured 48%
+> exercise rate.
+
 **Run this BEFORE authoring a STATE port.** One boot screens dozens of candidates. Skipping it
 cost a full session: four hand-picked candidates were authored, built, registered and diffed
 before anything revealed that Quick Battle never calls any of them.
