@@ -73,7 +73,7 @@ def disasm_hazards(rva):
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
     va = int(rva, 16)
     out, prev_call = [], False
-    for i in md.disasm(data[va - base:va - base + 0x80], va):
+    for i in md.disasm(data[va - base:va - base + _body_len(va, base, data)], va):
         if (prev_call and i.mnemonic == "mov"
                 and re.match(r"dword ptr \[0x[0-9a-f]+\], eax", i.op_str)):
             out.append("publishes-call-result")     # obj = make(); global = obj
@@ -88,8 +88,14 @@ def disasm_hazards(rva):
         # `mov [esi+0xc], eax` with esi = DAT_007d716c + param_2 and mutates the
         # game. The two are indistinguishable here, so this flags and a human
         # clears it.
-        if (i.mnemonic == "mov"
-                and re.match(r"dword ptr \[e(ax|cx|dx|bx|si|di)(\s*\+[^\]]+)?\], ", i.op_str)):
+        # BYTE and WORD stores count too. 0x004d8350's mutations are
+        # `mov byte ptr [esi+3], al` — it clears a dirty flag — and a
+        # dword-only pattern walked straight past them, leaving two callers
+        # rated SAFE that a synthetic A/B would have called twice down
+        # different paths. esp/ebp-relative stores are LOCALS, not game state.
+        if (i.mnemonic == "mov" and re.match(
+                r"(byte|word|dword) ptr \[e(ax|cx|dx|bx|si|di)(\s*\+[^\]]+)?\], ",
+                i.op_str)):
             out.append("stores-through-pointer")
         prev_call = (i.mnemonic == "call")
     # NOTE: no break on the first `ret`. An early-out returns before the body's
@@ -97,6 +103,54 @@ def disasm_hazards(rva):
     # this function made the SAME truncation mistake shape_screen.py already had
     # to be fixed for. Third time this pattern has bitten in one session.
     return out
+
+
+def direct_callees(rva):
+    """Direct E8 targets, from the BYTES — not from plate prose.
+
+    The transitive hazard walk originally followed `FUN_xxxxxxxx` mentions in the
+    plate text, and that silently broke the chain: 0x0041f1e0 -> 0x004c0ed0 ->
+    0x004d8350, but 0x004c0ed0's plate never names 0x004d8350, so the walk
+    stopped one call short of the non-idempotent dirty-flag clear. Prose is not a
+    call graph.
+    """
+    import capstone, pefile
+    global _pe
+    try:
+        _pe
+    except NameError:
+        _pe = pefile.PE(str(ROOT / "original" / "MASHED.exe.unpatched"), fast_load=True)
+    base = _pe.OPTIONAL_HEADER.ImageBase
+    data = _pe.get_memory_mapped_image()
+    md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+    va, out = int(rva, 16), []
+    for i in md.disasm(data[va - base:va - base + _body_len(va, base, data)], va):
+        if i.mnemonic == "call" and i.op_str.startswith("0x"):
+            out.append(i.op_str[2:].zfill(8))
+    return out
+
+
+def _body_len(va, base, data, maxlen=0x200):
+    """Body length: stop at the first `ret` followed by alignment padding.
+
+    A fixed window overruns short functions into their NEIGHBOURS and inherits
+    their calls — with a 0x100 window the transitive walk rejected all 22
+    candidates, including two whose real callees are `mov eax,[glob] / ret`.
+    Fourth time in this session that an unbounded body scan produced a confident
+    wrong answer; the other three were in shape_screen.py.
+    """
+    import capstone
+    md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+    end, seen_ret = va, False
+    for i in md.disasm(data[va - base:va - base + maxlen], va):
+        if i.mnemonic in ("nop", "int3"):
+            if seen_ret:
+                break
+            continue
+        end = i.address + i.size
+        if i.mnemonic in ("ret", "retn"):
+            seen_ret = True
+    return max(end - va, 8)
 
 
 def plate_for(rva):
@@ -130,15 +184,31 @@ def screen(rva):
     # 0x0045d430 reads clean, then calls 0x005a60e0 — whose plate says teardown —
     # and clears the gate global so a second call is a no-op. Force-calling it
     # tears down once and then measures nothing.
-    for c in re.findall(r"FUN_([0-9a-f]{8})", body):
-        _, ctxt = plate_for(c)
-        if not ctxt:
-            continue
-        cbody = (ctxt.split("## Mechanical description", 1)[1].split("## Constants")[0]
-                 if "## Mechanical description" in ctxt else ctxt)
-        for name, pat in HAZARDS:
-            if name != "writes-global" and re.search(pat, cbody, re.I):
-                hits.append(f"callee:{name}")
+    # TRANSITIVE, to depth 2. One level was not enough: 0x0041f1e0 and 0x0041f220
+    # call 0x004c0ed0, which calls 0x004d8350 — a dirty-flag matrix sync that
+    # CLEARS the flag it tests (`and al,0xfb / mov [esi+3],al`), so it is NOT
+    # idempotent and a synthetic A/B's two calls take different paths. Both
+    # targets rated SAFE at depth 1 and would have been authored.
+    seen_c, frontier = set(), direct_callees(rva)
+    for depth in (1, 2):
+        nxt = []
+        for c in frontier:
+            if c in seen_c:
+                continue
+            seen_c.add(c)
+            for h in disasm_hazards("0x" + c):
+                hits.append(f"callee{depth}:{h}")
+            _, ctxt = plate_for(c)
+            if not ctxt:
+                continue
+            cbody = (ctxt.split("## Mechanical description", 1)[1].split("## Constants")[0]
+                     if "## Mechanical description" in ctxt else ctxt)
+            for name, pat in HAZARDS:
+                if name != "writes-global" and re.search(pat, cbody, re.I):
+                    hits.append(f"callee{depth}:{name}")
+            if depth == 1:
+                nxt += direct_callees("0x" + c)
+        frontier = nxt
     # writes-global alone is fine — most STATE getters do — it only matters
     # alongside another hazard, so it never decides on its own.
     deciding = [h for h in hits if h != "writes-global"]
