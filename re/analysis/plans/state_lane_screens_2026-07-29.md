@@ -1,5 +1,34 @@
 # STATE lane — three screens, and why the batch is 0 hooks (2026-07-29)
 
+> ## FINAL NUMBERS, after the screens were strengthened
+>
+> The semantic screen was rebuilt to walk the REAL call graph (E8 targets, not plate prose),
+> inherit hazards transitively to depth 2, detect byte/word stores, and bound function bodies.
+> Re-running every class:
+>
+> | class | direct | SAFE before | SAFE after |
+> |---|---|---|---|
+> | race-gated | 5 | 4 | **1** |
+> | pre-race | 21 | 7 | **1** |
+> | in-race | 22 | 10 | **3** |
+> | **total** | **48** | 21 | **5** |
+>
+> **~90% of even shape-clean candidates mutate state or are non-idempotent.** That is the
+> quantitative form of this note's conclusion: the C2 STATE pool is procedures, not functions.
+>
+> Survivors: `0x0047d150`, `0x004671d0`, `0x00467210` (all three authored), plus `0x00425b90`
+> and `0x0045cc50`, which hand-reading rejects anyway — a callback iteration and a void
+> eight-times setter.
+>
+> One knowingly-retained false positive: `0x0046cc10` (authored) is flagged
+> `stores-through-pointer` for `mov [ecx], eax` with `ecx` from `[esp+4]` — a caller-supplied
+> out-param, which is fine. I tried to teach the rule that distinction and **reverted it**: the
+> refinement then cleared `0x004d8350`, which loads `ebp` from `[esp+8]` and clears a dirty flag
+> through it. Writing through a caller-supplied pointer is harmless only when the caller passes a
+> scratch buffer, and the callee's disassembly cannot tell which. A false positive costs a missed
+> candidate; a false negative certifies a mutator and corrupts everything it produces. Not
+> symmetric — so the rule stays blunt and humans clear the out-param cases.
+
 ## The screens
 
 | # | script | question | cost |

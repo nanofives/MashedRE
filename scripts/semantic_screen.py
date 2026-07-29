@@ -81,18 +81,35 @@ def disasm_hazards(rva):
         # register usually came from a global or an argument. 0x004e4320 ends
         # `mov [esi+0xc], eax` with esi = DAT_007d716c + param_2 — it mutates the
         # game, and every prose-level and import-level check rated it SAFE.
-        # FALSE-POSITIVE WARNING, cleared by reading, not by the tool: a store
-        # through a pointer that came straight from an ARGUMENT is an out-param
-        # and is harmless — the harness owns that buffer. 0x0046cc10 does
-        # `mov [ecx], eax` with ecx = param_1 and is fine; 0x004e4320 does
-        # `mov [esi+0xc], eax` with esi = DAT_007d716c + param_2 and mutates the
-        # game. The two are indistinguishable here, so this flags and a human
-        # clears it.
+        # OUT-PARAM vs GAME-STATE. A store through a pointer loaded straight from
+        # an ARGUMENT slot is an out-param and is harmless — the harness owns that
+        # buffer. One loaded from a global, or computed from one, is a mutation.
+        #
+        # 0x0046cc10  mov ecx,[esp+4] / mov [ecx],eax        -> out-param, fine
+        # 0x004e4320  mov ecx,[0x7d716c] / lea esi,[ecx+eax]
+        #             / mov [esi+0xc],eax                    -> mutates the game
+        #
+        # This used to flag both and leave it to a human. That is too blunt to be
+        # useful: it rejected every legitimate out-param writer, which is a
+        # common and perfectly diffable shape. Tracking argument-derived
+        # registers separates them mechanically.
         # BYTE and WORD stores count too. 0x004d8350's mutations are
         # `mov byte ptr [esi+3], al` — it clears a dirty flag — and a
         # dword-only pattern walked straight past them, leaving two callers
         # rated SAFE that a synthetic A/B would have called twice down
         # different paths. esp/ebp-relative stores are LOCALS, not game state.
+        # ATTEMPTED AND REVERTED: "a store through an ARGUMENT-derived pointer is
+        # a harmless out-param". It cleanly separated 0x0046cc10 (out-param) from
+        # 0x004e4320 (global-derived), and then cleared 0x004d8350 — which loads
+        # ebp from [esp+8] and CLEARS A DIRTY FLAG through it. Writing through a
+        # caller-supplied pointer is harmless only when the caller passes a
+        # scratch buffer; when it passes a live game object it is a mutation, and
+        # the callee's own disassembly cannot tell which. The refinement traded a
+        # false positive for a FALSE NEGATIVE, and those are not symmetric here:
+        # a false positive costs a missed candidate, a false negative certifies a
+        # mutator as safe and corrupts the evidence it then produces.
+        # So: flag every store through a register base, and let a human clear the
+        # out-param cases by reading (0x0046cc10 is one).
         if (i.mnemonic == "mov" and re.match(
                 r"(byte|word|dword) ptr \[e(ax|cx|dx|bx|si|di)(\s*\+[^\]]+)?\], ",
                 i.op_str)):
