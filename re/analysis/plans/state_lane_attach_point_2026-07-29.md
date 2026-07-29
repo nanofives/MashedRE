@@ -23,6 +23,38 @@
 > the first batch.
 >
 > The STATIC half below never touched a running game and is unaffected by any of this.
+>
+> ---
+>
+> ## 3. With the counter in place, the answer is unambiguous — and it is bad
+>
+> | run | in-race probes (1.5s) | conclusion |
+> |---|---|---|
+> | `statenav.py`, stock | `0x00436810` = **1961**, `0x0045ba00` = 30, `0x00408a70` = 16, results at t+20s | a real race |
+> | `run_diff_scenario_batch.py`, passive 25s dwell | **0 / 0 / 0** | not a race |
+> | `run_diff_scenario_batch.py`, ACTIVE 45s dwell driving statenav's own control cycle | **0 / 0 / 0** | not a race |
+>
+> **The batch lane's diff point has never been inside a running race.** It sits at `phase=0`
+> indefinitely, while statenav progresses `0 → 4 → 5`. So `phase=0` is the *pre-race / loading*
+> state, not the arena, and `--scenario race` returns there.
+>
+> **This invalidates every live-state verdict the lane has produced**, back to and including the
+> first batch on 2026-07-28 — the "48 calls in 1.2s, state reuse confirmed" measurement and every
+> "this array is empty" conclusion. What survives is only the hooks that never needed live state:
+> `heading_atan2` (seeded float inputs) and `RenderState_GetTexturingOverride` (echoes its own
+> argument). The `0x004233e0` C3 promotion rests on seeded inputs and is unaffected.
+>
+> **Disproved en route:** input-driving is not the difference. Copying statenav's exact control
+> cycle into the dwell changed nothing (0/0/0 either way), so the arena is not waiting on a
+> keypress.
+>
+> **Next, and it costs no boots:** diff the two navigation paths. `statenav.main()` reaches a race;
+> `run_diff_scenario.drive_to_results(scenario='race')` does not, from the same menu position. One
+> candidate worth checking first — `drive_to_results` may leave an input-override installed on
+> `FUN_00497310` that the loader then cannot get past, which statenav's own loop would not hit.
+>
+> Also unexplained and logged, not theorised about: with the active dwell the repeat control went
+> **first=GREEN, last=RED 1/12**, and the runner correctly reported DEGRADED.
 
 
 Follow-up to `c2c3_throughput_session_2026-07-28.md`. Three authored STATE ports all failed

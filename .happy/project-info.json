@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-29T03:10:00Z",
+  "updatedAt": "2026-07-29T04:20:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -48,36 +48,40 @@
       ]
     },
     {
-      "heading": "BLOCKER - race never starts",
+      "heading": "BLOCKER - batch lane never reaches a race",
       "fields": [
         {
-          "label": "Finding",
-          "value": "Every diff point this session was a BLANK WHITE WINDOW. Menu navigates fine (track-select renders), game enters phase=0, then hangs 122s+. The nav treats phase=0 as 'in race'.",
+          "label": "Measured",
+          "value": "statenav stock = REAL race (0x00436810 x1961, results t+20s). run_diff_scenario_batch = 0/0/0 in-race probes, with passive AND active dwell. It sits at phase=0 while statenav goes 0->4->5.",
+          "kind": "text"
+        },
+        {
+          "label": "So phase=0 is",
+          "value": "the pre-race/LOADING state, not the arena. --scenario race returns there.",
           "kind": "text"
         },
         {
           "label": "Invalidates",
           "value": [
-            "'arrays empty at race entry' - empty because no race ran",
-            "smplfzx manager null",
-            "camera sub-counts zero",
-            "0 calls captured by the new capture lane"
+            "every live-state verdict from the batch lane, back to the first batch 2026-07-28",
+            "the '48 calls in 1.2s, state reuse confirmed' measurement",
+            "every 'this array is empty at race entry' conclusion"
           ],
           "kind": "list"
         },
         {
-          "label": "Still valid",
-          "value": "All STATIC findings: RW plugin-offset at 0x007dc8d8, the writer traces, the corrected caller scan. None touched a running game.",
+          "label": "Survives",
+          "value": "Hooks needing no live state: heading_atan2 (seeded floats), RenderState_GetTexturingOverride (echoes its arg). The 0x004233e0 C3 promotion rests on seeded inputs - unaffected. All STATIC findings unaffected.",
           "kind": "text"
         },
         {
-          "label": "Signature",
-          "value": "navigate fine -> enter race -> hang = the shape of U-9025 (race-entry wedge, declared resolved 2026-07-28). Recurrence vs. documented white-window/reboot condition NOT determined.",
+          "label": "Disproved",
+          "value": "input-driving is NOT the difference - statenav's exact control cycle in the dwell changed nothing.",
           "kind": "text"
         },
         {
-          "label": "Next",
-          "value": "STOCK control run - the thing that cracked U-9025",
+          "label": "Next (no boots)",
+          "value": "diff statenav.main() vs run_diff_scenario.drive_to_results. First candidate: a leftover FUN_00497310 input override the loader cannot get past.",
           "kind": "text"
         }
       ]

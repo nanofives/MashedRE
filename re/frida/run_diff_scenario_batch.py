@@ -615,10 +615,28 @@ def main():
         # early is what made the state look absent. Dwelling costs in-race
         # window, which is cheap: the window fits ~28 verified hooks/min.
         if dwell > 0:
-            print(f"\n  dwelling {dwell:.0f}s so live state can populate "
-                  f"(diff point is race frame 0 without this)...")
+            # ACTIVE dwell — press controls, do not just sleep.
+            #
+            # Measured 2026-07-29 and this is the whole difference: a PASSIVE dwell
+            # of 25s left the in-race probes at 0/0/0, while statenav.py — which
+            # cycles a held control every ~6s through its round loop — reached a
+            # race with 0x00436810 firing 1961 times. Same navigation up to race
+            # entry; the only divergence after it is that statenav keeps driving
+            # input and this runner did not. So the arena round does not advance
+            # on its own from where `--scenario race` returns.
+            #
+            # Control cycle copied verbatim from statenav's round loop so the two
+            # paths differ in as little as possible.
+            drive = [4, 0, 1, 11, 12, 5, 6, 7]
+            print(f"\n  dwelling {dwell:.0f}s, DRIVING input (a passive dwell leaves "
+                  f"the round un-started — probes read 0)...")
             end = time.time() + dwell
+            di, dt = 0, 0.0
             while time.time() < end and nav.alive():
+                if time.time() - dt > 6:
+                    di = (di + 1) % len(drive); dt = time.time()
+                try: nav_scr.exports_sync.press(drive[di], 600)
+                except Exception: pass
                 time.sleep(0.5)
             if not nav.alive():
                 print("ABORT: process exited during the dwell — lower --dwell.")
