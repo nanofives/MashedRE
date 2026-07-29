@@ -89,6 +89,17 @@ def body_len(va, base, data, starts, maxlen=0x600):
         end = i.address + i.size
         if i.mnemonic in ("ret", "retn"):
             seen_ret = True
+        # A TAIL JUMP ends a body just as a ret does. 0x004522d0 is two
+        # instructions — `mov ecx,[0x7d3ff8] / jmp dword ptr [ecx+0x10c]` — and
+        # without this the scan ran through the padding into 0x004522e0 and
+        # attributed that function's stores to this one. Fifth mis-bounded body
+        # scan of the session; they all fail the same way, silently.
+        elif i.mnemonic == "jmp" and not i.op_str.startswith("0x"):
+            seen_ret = True          # indirect tail jump: definitely the end
+        elif i.mnemonic == "jmp" and i.op_str.startswith("0x"):
+            t = int(i.op_str, 16)
+            if not (va <= t < va + maxlen):
+                seen_ret = True      # jump out of the body = tail call
     return end - va
 
 
@@ -103,7 +114,7 @@ def scan(va, base, data, starts):
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
     n = body_len(va, base, data, starts)
     prov = {}        # reg -> ('abs', addr) | ('arg', off) | ('call',) | ('other',)
-    out, callees = [], []
+    out, callees, indirect = [], [], []
     for i in md.disasm(data[va - base:va - base + n], va):
         op = i.op_str
         # --- track where each register's value came from
@@ -126,6 +137,10 @@ def scan(va, base, data, starts):
                 prov[r] = ("call",)
             if op.startswith("0x"):
                 callees.append(int(op, 16))
+            else:
+                indirect.append((i.address, op))
+        elif i.mnemonic == "jmp" and not op.startswith("0x"):
+            indirect.append((i.address, op))
         # --- record stores
         m = STORE.search(op)
         if m and i.mnemonic in ("mov", "and", "or", "xor", "add", "sub"):
@@ -160,11 +175,11 @@ def scan(va, base, data, starts):
                 out.append((kind, (b, disp), sz, i.address))
                 continue
             out.append(("unresolved", expr, sz, i.address))
-    return out, callees
+    return out, callees, indirect
 
 
 def walk(root, depth, base, data, starts):
-    seen, frontier, all_stores, tree = set(), [root], [], []
+    seen, frontier, all_stores, tree, all_indirect = set(), [root], [], [], []
     for d in range(depth + 1):
         nxt = []
         for fn in frontier:
@@ -172,12 +187,13 @@ def walk(root, depth, base, data, starts):
                 continue
             seen.add(fn)
             tree.append((d, fn))
-            st, cs = scan(fn, base, data, starts)
+            st, cs, ind = scan(fn, base, data, starts)
+            for a, o in ind: all_indirect.append((fn, d, a, o))
             for s in st:
                 all_stores.append((fn, d) + s)
             nxt += cs
         frontier = nxt
-    return all_stores, tree
+    return all_stores, tree, all_indirect
 
 
 # Ground truth: the write surface a human derived by hand for FUN_00418860's
@@ -199,7 +215,7 @@ GROUND_TRUTH = [
 
 
 def self_test(base, data, starts):
-    stores, _ = walk(0x00418860, 3, base, data, starts)
+    stores, _, _ = walk(0x00418860, 3, base, data, starts)
     hit = set()
     for fn, d, kind, tgt, sz, at in stores:
         addrs = []
@@ -236,7 +252,7 @@ def main():
                      csv.DictReader(io.open(ROOT / "hooks.csv", encoding="utf-8"))
                      if r["rva"] and not r["rva"].startswith("#")
                      and int(r["rva"], 16) >= 0x400000})
-    stores, tree = walk(root, depth, base, data, starts)
+    stores, tree, indirect = walk(root, depth, base, data, starts)
     print(f"write surface of 0x{root:08x}, call tree depth {depth}: "
           f"{len(tree)} functions, {len(stores)} stores\n")
 
@@ -263,6 +279,15 @@ def main():
                                            for t, s in ix))[:12]:
         print(f"    base={b} scale={scale} disp={disp} width={sz}B")
 
+    if indirect:
+        print(f"\n  *** INDIRECT DISPATCH ({len(indirect)}) — "
+              f"WRITE SURFACE UNKNOWN BEYOND THESE ***")
+        print("  A call/jmp through a register or vtable slot cannot be followed")
+        print("  statically. Any snapshot set derived here is INCOMPLETE on those")
+        print("  paths, and an incomplete restore produces a confident A/B GREEN")
+        print("  built on unrestored state.")
+        for fn, d, at, o in indirect[:8]:
+            print(f"    0x{at:08x} (in 0x{fn:08x}, depth {d})  {o}")
     unres = [s for s in stores if s[2] in ("unresolved", "arg_deref")]
     print(f"\n  NEEDS A HUMAN ({len(unres)}) — arg-relative or untracked base."
           f"\n  These are NOT 'no write'. Read them.")
