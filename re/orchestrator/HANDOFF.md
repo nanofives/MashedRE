@@ -107,16 +107,50 @@ second wedge source (residual bound ≈26%/run).
 
 ---
 
+## Class sweep — DONE this session (`5d336717`, `5e9fca6e`)
+
+`scripts/sweep_void_eax_return.py` — installed hooks declared `void` where the original writes
+EAX and a caller reads it back. Self-test is mandatory (it forces `0x005aef00` back to `void` and
+requires both real call sites to be named); the tool refuses to report without it.
+
+Funnel 1195 → 11 flags → **5 refuted, 6 live candidates, 0 unassessed**.
+Full triage: `re/analysis/sweep_void_eax_return.md`.
+
+**Live candidates — NOT fixed, each needs a per-function pass** (the tool's "EAX at RET" comes
+from a bounded linear scan and can misread multi-RET bodies; and an earlier audit had 8/8
+comment-flagged candidates turn out false):
+
+| RVA | original's EAX at RET | ours | caller consumes |
+|---|---|---|---|
+| `0x0042e590` `SpriteAnimFrameThunk` | small arg-rewriting tail-jmp to `0x40bb70` | body looks **structurally unrelated** | `mov esi,eax`; `push eax` |
+| `0x00485a00` `Init485a00` | `mov eax,[esp+0xc]` (param_3) | `mov eax,[edx+0x60]` | `mov [esi],eax` |
+| `0x005b1180` `Tbl5b1180` | `lea eax,[ecx+eax*4]` | `mov eax,[esi+4]` | `mov esi,eax`; `push eax` |
+| `0x005ab980` `Ring5ab980` | `mov eax,ecx` | `add eax,esi` | `add ebp,eax` |
+| `0x005b6a40` `SuccApproxQuantize5b6a40` | `mov eax,[edi]` | `or eax,4` | `and eax,0xff` |
+| `0x004c5010` `RwMatrixScale` | scratch (RW convention returns the matrix) | `mov eax,[ecx+8]` | `mov esi,eax` |
+
+Start with **`0x0042e590`** — an emitted body that does not resemble its original is a different
+and possibly larger problem than a dropped return.
+
+Two reusable results from building it:
+- **Always add the `.map` fallback.** A hook can be `extern "C"` but not `dllexport`, so the
+  export table cannot see it — 8028 `.map` symbols vs 1131 exports. This blind spot hid
+  `0x0055deb0` from an earlier audit and left two rows here unassessed until the fallback landed.
+- **Our build emits /GS stack cookies in some hook bodies** (cookie prologue +
+  `__security_check_cookie` epilogue; frame `0x40` → `0x44`). Harmless for a full-replacement
+  hook, NOT harmless for anything trampoline-shaped or depending on exact stack layout — check
+  before converting a body to naked asm.
+
 ## NEXT — recommended order
 
-1. **Sweep the class.** Ports declared `void` (or with a return type narrower than the original's)
-   whose callers do `TEST EAX,EAX` / `JZ` immediately after the `CALL`. Eight crashers plus this
-   hang say the class is not mined out, and the sweep is static + cheap.
-2. **Make `arg_type thread_desc_init` fingerprint the return value** (`diff_template.js`), then
+1. **`0x0042e590`** — why does the emitted body not match its original? (sweep candidate #1)
+2. Work the other five sweep candidates, one per-function pass each.
+3. **Make `arg_type thread_desc_init` fingerprint the return value** (`diff_template.js`), then
    re-diff `0x005aef00` to re-earn its cleared evidence. Regenerate `re/frida/ARG_TYPES.md` after.
-3. `0x004c1a00` scenario-attach seed; settle `0x004148b0`'s evidence story (item above).
-4. `0x00442cbd` / `LoadingState2Enter` still not behaviourally confirmed.
-5. `LobbySlotListRender` (`0x00439210`) remains a fabricated scaffold / NO-GUESSING violation.
+4. `0x004c1a00` needs a scenario-attach seed with a real vtable object; settle what evidence
+   `0x004148b0`'s row should carry (see Lane B above).
+5. `0x00442cbd` / `LoadingState2Enter` still not behaviourally confirmed.
+6. `LobbySlotListRender` (`0x00439210`) remains a fabricated scaffold / NO-GUESSING violation.
 
 ## HYGIENE
 
