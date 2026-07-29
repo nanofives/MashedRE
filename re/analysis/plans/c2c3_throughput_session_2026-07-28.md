@@ -80,10 +80,16 @@ would have filed a correct port as defective.
 2. **3 genuine REDs** in already-registered hooks, stable across positions, unaffected by the scrub:
    `camera_path_all_nodes_eq2` (0x0047c270) 8/8, `camera_path_any_node_nonzero` (0x0047c2d0) 8/8,
    `smplfzx_stateblock_get_logged` (0x004853b0) 10/10. Real port defects.
-3. **3 tracker-drift rows with non-degenerate evidence already on disk** — registered, still C2:
-   `sprite_slot_dispatch` (11 distinct), `text_sprite_scaled` (10), `rtfshandler_is_eof` (2).
-   Candidate free promotions. NOTE: 7 further drift rows have `distinct=1` = INCONCLUSIVE-DEGENERATE,
-   NOT promotion evidence (skill rule 4).
+3. ~~**3 tracker-drift rows with non-degenerate evidence already on disk**~~ — **CHECKED 2026-07-28,
+   and 2 of the 3 were wrong.** Only `sprite_slot_dispatch` (0x0042fab0) was real drift; it is now C3.
+   `rtfshandler_is_eof` (0x005514e0) was **already C3** in hooks.csv — the drift list was built off
+   stale data. `text_sprite_scaled` (0x004739f0) is **deliberately staged**, not drifted: its row and
+   its registry entry both say so, and it is gated on **U-0459 [Blocks C3]** (semantic: the coordinate
+   system `_DAT_005ceac4` scales in `param_11==2` mode), still open at `UNCERTAINTIES.md:507` with the
+   resolution path being a Ghidra trace of that global's writer. U-0458 (UV layout) *is* resolved.
+   Lesson, same as memory `feedback_check_promotion_queue_defers`: a "drift" label is a hypothesis
+   until the row and its U-IDs are read. NOTE: 7 further drift rows have `distinct=1` =
+   INCONCLUSIVE-DEGENERATE, NOT promotion evidence (skill rule 4).
 4. **The `arg_type=unknown` hole.** All 440 filtered render rows carry `arg_type = unknown`; notes
    have no such field, so `c3_filter_v4`'s `arg_type_unsupported` check is structurally vacuous —
    it reports 0 eliminations because it can never fire. This is the gate the ledger shows kills the
