@@ -1,57 +1,131 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-29T00:00:00Z",
+  "updatedAt": "2026-07-29T03:10:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
       "fields": [
-        { "label": "Checklist", "value": [
-          "R0 re-baseline — done",
-          "R1 C4 truth — done",
-          "R2 menu — done",
-          "R3 track/vehicle data — done",
-          "R4 world render — done",
-          "R5 drivable car — done",
-          "R6 race loop — done",
-          "R7 full game systems — ACTIVE",
-          "R8 — pending"
-        ], "kind": "list" }
+        {
+          "label": "Checklist",
+          "value": [
+            "R0 re-baseline — done",
+            "R1 C4 truth — done",
+            "R2 menu — done",
+            "R3 track/vehicle data — done",
+            "R4 world render — done",
+            "R5 drivable car — done",
+            "R6 race loop — done",
+            "R7 full game systems — ACTIVE",
+            "R8 — pending"
+          ],
+          "kind": "list"
+        }
       ]
     },
     {
       "heading": "Promotions (confidence ladder)",
       "fields": [
-        { "label": "C1", "value": 797, "kind": "number" },
-        { "label": "C2", "value": 4032, "kind": "number" },
-        { "label": "C3", "value": 851, "kind": "number" },
-        { "label": "C4", "value": 184, "kind": "number" }
+        {
+          "label": "C1",
+          "value": 797,
+          "kind": "number"
+        },
+        {
+          "label": "C2",
+          "value": 4032,
+          "kind": "number"
+        },
+        {
+          "label": "C3",
+          "value": 851,
+          "kind": "number"
+        },
+        {
+          "label": "C4",
+          "value": 184,
+          "kind": "number"
+        }
+      ]
+    },
+    {
+      "heading": "BLOCKER - race never starts",
+      "fields": [
+        {
+          "label": "Finding",
+          "value": "Every diff point this session was a BLANK WHITE WINDOW. Menu navigates fine (track-select renders), game enters phase=0, then hangs 122s+. The nav treats phase=0 as 'in race'.",
+          "kind": "text"
+        },
+        {
+          "label": "Invalidates",
+          "value": [
+            "'arrays empty at race entry' - empty because no race ran",
+            "smplfzx manager null",
+            "camera sub-counts zero",
+            "0 calls captured by the new capture lane"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Still valid",
+          "value": "All STATIC findings: RW plugin-offset at 0x007dc8d8, the writer traces, the corrected caller scan. None touched a running game.",
+          "kind": "text"
+        },
+        {
+          "label": "Signature",
+          "value": "navigate fine -> enter race -> hang = the shape of U-9025 (race-entry wedge, declared resolved 2026-07-28). Recurrence vs. documented white-window/reboot condition NOT determined.",
+          "kind": "text"
+        },
+        {
+          "label": "Next",
+          "value": "STOCK control run - the thing that cracked U-9025",
+          "kind": "text"
+        }
       ]
     },
     {
       "heading": "Current branch — U-9025 recharacterise + reg-ABI defects",
       "fields": [
-        { "label": "Branch", "value": "fix/u9025-recharacterise-and-regabi-defects", "kind": "text" },
-        { "label": "U-9025 root cause", "value": "AudioThreadDescInit (0x005aef00) declared void; original returns param_1 in EAX and callers TEST it — audio/stream worker thread never spawned, GUI thread hangs on INFINITE wait. Fixed in port; pending re-classify with return-value evidence.", "kind": "text" },
-        { "label": "Also fixed this branch", "value": [
-          "4 register-ABI/encoding hook defects (wrong-operand-width + implicit-EAX-return drops)",
-          "3 runtime crashers + 1 hang found by first menu-navigated race",
-          "x87 dirty-stack false-RED — CW-preserving scrub between hooks, A/B proven",
-          "many-hooks-per-boot scenario runner (run_diff_scenario_batch.py): state reuse confirmed, 48 calls/1.2s",
-          "scenario-batch: stop reporting both-sides-identical crashes as RED",
-          "SpriteSlotDispatch (0x0042fab0) C2→C3, tracker drift corrected"
-        ], "kind": "list" }
+        {
+          "label": "Branch",
+          "value": "fix/u9025-recharacterise-and-regabi-defects",
+          "kind": "text"
+        },
+        {
+          "label": "U-9025 root cause",
+          "value": "AudioThreadDescInit (0x005aef00) declared void; original returns param_1 in EAX and callers TEST it — audio/stream worker thread never spawned, GUI thread hangs on INFINITE wait. Fixed in port; pending re-classify with return-value evidence.",
+          "kind": "text"
+        },
+        {
+          "label": "Also fixed this branch",
+          "value": [
+            "4 register-ABI/encoding hook defects (wrong-operand-width + implicit-EAX-return drops)",
+            "3 runtime crashers + 1 hang found by first menu-navigated race",
+            "x87 dirty-stack false-RED — CW-preserving scrub between hooks, A/B proven",
+            "many-hooks-per-boot scenario runner (run_diff_scenario_batch.py): state reuse confirmed, 48 calls/1.2s",
+            "scenario-batch: stop reporting both-sides-identical crashes as RED",
+            "SpriteSlotDispatch (0x0042fab0) C2→C3, tracker drift corrected"
+          ],
+          "kind": "list"
+        }
       ]
     },
     {
       "heading": "Next up",
       "fields": [
-        { "label": "Queue", "value": [
-          "STATE lane wired into promote-c3-batch skill (x87 trap now fixed)",
-          "STATE lane ceiling: Quick Battle race-entry arrays unpopulated — need alternate scenario",
-          "0x006e71cc smplfzx still NULL at 45s — candidate for new dwell",
-          "arg_type=unknown — filter's arg_type check is structurally vacuous"
-        ], "kind": "list" },
-        { "label": "Uncommitted", "value": "promote_classified.tsv + new c3_batch_render3/4 pass/reject tsvs + several scripts/ghidra/*.json + many verify/ scratch dirs (untracked, gitignored-by-convention)", "kind": "text" }
+        {
+          "label": "Built, NOT yet verified",
+          "value": [
+            "live-arg capture+replay lane (dd3142c1) - runs clean, never exercised on a real race",
+            "0x00407600 PlayerPositionPtr restored after a bad caller scan",
+            "4 STATE ports authored"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Spawn budget",
+          "value": "6 boots used; a reboot may be required (white-window condition)",
+          "kind": "text"
+        }
       ]
     }
   ]
