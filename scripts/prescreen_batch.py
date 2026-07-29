@@ -163,8 +163,16 @@ def main():
             outf.write(f"{r}\t{cls}\t{sz}\t{sub}\t{tag}\n")
         outf.flush()
         got = [r for r in rvas if r in exer]
-        print(f"    exercised {len(got)}/{len(rvas)} "
-              f"(race-gated {sum(1 for r in got if base.get(r,0)==0)})", flush=True)
+        # Do NOT print a race-gated count when there is no baseline: with
+        # MASHED_COUNT_LATE every base.get() is 0, so the old line reported
+        # "race-gated 8/8" for a run that could not tell race-gated from
+        # pre-race. The written class was right; the console line was not.
+        if base:
+            print(f"    exercised {len(got)}/{len(rvas)} "
+                  f"(race-gated {sum(1 for r in got if base.get(r,0)==0)})", flush=True)
+        else:
+            print(f"    exercised {len(got)}/{len(rvas)} "
+                  f"(in-race; no pre-race baseline under late arming)", flush=True)
     outf.close()
     print(f"\nwrote {out_path}")
 

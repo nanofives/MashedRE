@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-29T09:00:00Z",
+  "updatedAt": "2026-07-29T09:45:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -48,35 +48,35 @@
       ]
     },
     {
-      "heading": "STATE lane",
+      "heading": "STATE lane - screening 144/187",
       "fields": [
         {
-          "label": "CORRECTED",
-          "value": "The 'GPU wedge / needs a reboot' call was WRONG. Void chunks were Interceptor overhead: statenav armed counters before dev.resume, so 24-48 hooks ran through menu nav and its fixed waits timed out. Fixed with MASHED_COUNT_LATE=1; the chunk that 'wedged' twice ran fine with NO reboot.",
+          "label": "Pool",
+          "value": "144 of 187 screened. 70 exercised (49%): 20 race-gated, 29 pre-race, 21 in-race. 74 never. 43 left.",
           "kind": "text"
         },
         {
           "label": "Three screens",
           "value": [
-            "1 exercised (prescreen_batch.py) - 96/187 screened, 49 exercised",
-            "2 shape (shape_screen.py) - 26 direct of 49",
-            "3 semantic (semantic_screen.py) - safety + repeatability"
+            "1 exercised - prescreen_batch.py (MASHED_COUNT_LATE now default)",
+            "2 shape - shape_screen.py (indirect / destructive imports / reg-arg)",
+            "3 semantic - semantic_screen.py (init / teardown / non-determ / stores-through-pointer)"
           ],
           "kind": "list"
         },
         {
+          "label": "Authorable after all three",
+          "value": "~16 across classes; 7 new from the in-race batch: 0x004219c0, 0x0041f220, 0x00442a20, 0x00485070, 0x0045d3f0, 0x004671d0, 0x00467210",
+          "kind": "text"
+        },
+        {
           "label": "Authored, unverified",
-          "value": "0x0047d150 SlotObjectField8, 0x0046cc10 VehicleFloatFieldAsInt (+ new out1_idx arg_type). AudioQueuePop registered but marked NOT synthetic-verifiable.",
+          "value": "0x0047d150 SlotObjectField8, 0x0046cc10 VehicleFloatFieldAsInt (+ new out1_idx arg_type)",
           "kind": "text"
         },
         {
-          "label": "Key finding",
-          "value": "The C2 STATE pool is dominated by PROCEDURES (init/teardown/dispatch/mutate) that a synthetic A/B structurally cannot judge. Moving it needs observation-based verification of the installed hook.",
-          "kind": "text"
-        },
-        {
-          "label": "Next",
-          "value": "91 candidates left to screen (no reboot needed now); verify the 2 authored hooks",
+          "label": "Known limit",
+          "value": "~50% of chunks go VOID because the nav lands on phase=2 rather than the racing phase 0; discarded correctly, but it halves screening throughput.",
           "kind": "text"
         }
       ]
