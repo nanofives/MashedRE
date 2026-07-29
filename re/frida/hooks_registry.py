@@ -16610,20 +16610,50 @@ HOOKS = {
     # 0x0047c270  CameraPathAllNodesEq2 (camera, RACE) — any active camera-path node
     #   whose sub-items are all state==2. Reads live node arrays (count DAT_006c2fe8 /
     #   sub-counts 0x006c2fa8 / records 0x006c27a8) and calls the ORIGINAL inner
-    #   predicate 0x0047c230 (EAX/EBX register convention) -> 0/1. param_1=0 sentinel.
+    #   predicate 0x0047c230 (EAX/EBX register convention) -> 0/1.
+    #
+    #   param_1 IS A POINTER, NOT AN INT SENTINEL (corrected 2026-07-28). The old
+    #   'int_scalar' + path1_tests=[0]*8 read RED 8/8 with "access violation
+    #   accessing 0x0" on BOTH sides — a run that compared nothing, not a port
+    #   defect. Chain: 0x0047c270 forwards param_1 to 0x0047c230, which calls
+    #   FUN_004780c0(in_EAX=sub-item base, param_1) — and per
+    #   re/analysis/bucket_00474d80/0x004780c0.md that is a SPHERE-vs-PLANE
+    #   classify where arg2 is the SPHERE: Vec3 centre at +0x0 and radius at
+    #   +0xc. That is exactly the two fault addresses observed: this twin died
+    #   at 0x0 (centre) and 0x0047c2d0 at 0xc (radius), both from param_1=NULL.
+    #   The AV also PROVES the node arrays were populated — a zero count returns
+    #   early without ever reaching the inner predicate.
+    #
+    #   ptr_arg_int_get allocates struct_size bytes and fills word o with
+    #   seed + o*0x01010101, so a seed picks centre=(seed, seed+0x01010101,
+    #   seed+0x02020202) and radius=seed+0x03030303 as float bits. Seeds span
+    #   ~0 to ~2e6 units, positive and negative, to drive the classify to
+    #   different results (0/1/2) and so the outer scan to both 0 and 1.
+    #   Non-degeneracy depends on the live plane data and is NOT guaranteed
+    #   statically — a distinct==1 run reports GREEN-DEGENERATE, which is not
+    #   promotion evidence.
     'camera_path_all_nodes_eq2': {
-        'rva': 0x0047c270, 'export': 'CameraPathAllNodesEq2', 'signature': {'ret': 'uint32', 'args': ['int32']},
-        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
-        'path1_tests': [0, 0, 0, 0, 0, 0, 0, 0],
-        'path2_tests': [0, 0, 0],
+        'rva': 0x0047c270, 'export': 'CameraPathAllNodesEq2', 'signature': {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type': 'ptr_arg_int_get', 'struct_size': 16, 'lut_root_delta': 0, 'scenario': 'race',
+        # Node count non-zero is NOT enough: the outer scan only reaches the
+        # inner predicate for nodes whose SUB-COUNT is non-zero. Measured at
+        # race frame 0 — count=2 but every sub-count still 0, so all 8 vectors
+        # returned 0 (GREEN-DEGENERATE: compares, but proves nothing).
+        'state_gate': [[0x006c2fe8], {'any_nonzero': 0x006c2fa8, 'words': 16}],
+        'path1_tests': [0x00000000, 0x3F800000, 0xBF800000, 0x42C80000,
+                        0xC2C80000, 0x461C4000, 0xC61C4000, 0x4A000000],
+        'path2_tests': [0x3F800000, 0x42C80000, 0x4A000000],
     },
     # 0x0047c2d0  CameraPathAnyNodeNonzero (camera, RACE) — twin of 0x0047c270, inner
-    #   predicate 0x0047c1f0 (all sub-items != 0).
+    #   predicate 0x0047c1f0 (all sub-items != 0). Same pointer correction; this one
+    #   faulted at 0xc (the sphere RADIUS) rather than 0x0.
     'camera_path_any_node_nonzero': {
-        'rva': 0x0047c2d0, 'export': 'CameraPathAnyNodeNonzero', 'signature': {'ret': 'uint32', 'args': ['int32']},
-        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
-        'path1_tests': [0, 0, 0, 0, 0, 0, 0, 0],
-        'path2_tests': [0, 0, 0],
+        'rva': 0x0047c2d0, 'export': 'CameraPathAnyNodeNonzero', 'signature': {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type': 'ptr_arg_int_get', 'struct_size': 16, 'lut_root_delta': 0, 'scenario': 'race',
+        'state_gate': [[0x006c2fe8], {'any_nonzero': 0x006c2fa8, 'words': 16}],
+        'path1_tests': [0x00000000, 0x3F800000, 0xBF800000, 0x42C80000,
+                        0xC2C80000, 0x461C4000, 0xC61C4000, 0x4A000000],
+        'path2_tests': [0x3F800000, 0x42C80000, 0x4A000000],
     },
     # 0x00448700  VehicleSeedWritePair (vehicle, RACE) — void(p1,p2): 100x DispatchAll
     #   (0x004464c0, loops DAT_008964c0 — does NOT touch 0x897ffc/0x898000) then writes
@@ -16658,9 +16688,17 @@ HOOKS = {
     #   (C3); on miss log via 0x004987b0 + return 0; else return *( *( *(0x6e71cc)+0xc ) + id*0x10 ).
     #   The state-block manager pointer is null at menu (double deref) -> race. Spread of ids
     #   incl. OOB for the bounds/miss path.
+    #   MEASURED 2026-07-28: read 10/10 "RED" with err_original == err_reimpl on
+    #   every row (AV at 0x10, then "system error") — both sides died before
+    #   producing a value, so nothing was compared. The comment above predicted
+    #   it: the manager pointer is null until the state block is up, and the
+    #   batch-wide --sentinel proves only that SOME live state came up, not this
+    #   chain. state_gate makes the runner walk *(0x006e71cc) -> +0xc and SKIP
+    #   the hook (reporting which link is null) rather than emit a fake verdict.
     'smplfzx_stateblock_get_logged': {
         'rva': 0x004853b0, 'export': 'SmplFzxStateBlockGetLogged', 'signature': {'ret': 'uint32', 'args': ['int32']},
         'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'state_gate': [[0x006e71cc, 0xc]],
         'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 12],
         'path2_tests': [0, 1, 2],
     },

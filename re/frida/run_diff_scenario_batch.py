@@ -80,7 +80,17 @@
 #   py -3.12 re/frida/run_diff_scenario_batch.py <hook1> <hook2> ... \
 #       [--scenario race|results] [--round 130] [--repeat-first]
 #       [--sentinel 0xADDR[,0xADDR...]] [--no-x87-scrub]
-#       [--shot-dir verify/scenario_batch]
+#       [--dwell 20] [--gate-wait 15] [--shot-dir verify/scenario_batch]
+#
+# --dwell is usually REQUIRED for anything but the simplest getters: `--scenario
+# race` returns at race frame 0 (phase=0, t+0s), where much of the live state a
+# STATE hook wants has not been built yet. Measured 2026-07-28 at that instant —
+# camera node count already 2 but every sub-count still 0, SmplFzx manager
+# pointer at 0x006e71cc still NULL. Per-hook 'state_gate' in hooks_registry.py
+# then decides individually: a chain [base, off, ...] must resolve non-null, or
+# {'any_nonzero': base, 'words': n} must find one live element; a hook whose gate
+# stays unmet for --gate-wait seconds is SKIPPED with the failing link printed,
+# instead of being called into a null deref and scored.
 #
 # Emits log/diff_scenario_batch_<hook>.csv per hook (run_diff.py schema) and a
 # state-health table. Kills ONLY the pid it spawned (multi-session hygiene).
@@ -188,6 +198,67 @@ def scrub_x87(sess):
     return ok["v"]
 
 
+def walk_chain(peek, chain):
+    """Walk a pointer chain [base, off1, off2, ...] and report what we found.
+
+    Semantics: v = *base; for each off: v must be non-null, then v = *(v + off).
+    The FINAL value must be non-zero for the gate to pass. Returns
+    (ok, human-readable trace) — the trace is printed on failure so a skipped
+    hook says WHICH link was null rather than just "gate unmet".
+    """
+    addr = chain[0] & 0xffffffff
+    v = peek(f"0x{addr:08x}")
+    if not isinstance(v, int):
+        return False, f"[0x{addr:08x}]=UNREADABLE"
+    trace = f"[0x{addr:08x}]=0x{v & 0xffffffff:08x}"
+    for off in chain[1:]:
+        if (v & 0xffffffff) == 0:
+            return False, trace + f" -> NULL before +0x{off:x}"
+        nxt = peek(f"0x{(v + off) & 0xffffffff:08x}")
+        if not isinstance(nxt, int):
+            return False, trace + f" +0x{off:x}=UNREADABLE"
+        trace += f" +0x{off:x}=0x{nxt & 0xffffffff:08x}"
+        v = nxt
+    return (v & 0xffffffff) != 0, trace
+
+
+def eval_state_gate(peek, hook):
+    """Per-hook liveness gate: every chain in hook['state_gate'] must resolve.
+
+    The batch-wide --sentinel proves SOME live state came up; it says nothing
+    about the specific globals a given hook dereferences. Measured 2026-07-28:
+    smplfzx_stateblock_get_logged reads *(*(0x006e71cc)+0xc) and faulted 10/10
+    on BOTH sides — its own registry comment predicted it ("null at menu,
+    double deref"). Calling a hook whose chain is still null produces a
+    both-sides-identical crash, i.e. a run that compares nothing. Gating turns
+    that into an explicit SKIP instead of a fake verdict.
+    """
+    chains = hook.get("state_gate") or []
+    if not chains:
+        return True, ""
+    traces = []
+    for ch in chains:
+        if isinstance(ch, dict):
+            # {'any_nonzero': base, 'words': n} — at least one of n consecutive
+            # dwords must be non-zero. A pointer chain cannot express "some
+            # element of this array is live", which is exactly what the camera
+            # predicates need: the outer scan only reaches the inner predicate
+            # for nodes whose SUB-COUNT is non-zero, so a node count of 2 with
+            # both sub-counts still 0 returns 0 for every input — a degenerate
+            # run, not a broken one.
+            base, n = ch["any_nonzero"] & 0xffffffff, int(ch.get("words", 8))
+            vals = [peek(f"0x{(base + w*4) & 0xffffffff:08x}") for w in range(n)]
+            ok = any(isinstance(v, int) and (v & 0xffffffff) != 0 for v in vals)
+            traces.append(f"any_nonzero[0x{base:08x}..+{n*4}]=" + ",".join(
+                f"0x{(v & 0xffffffff):08x}" if isinstance(v, int) else "??" for v in vals))
+        else:
+            ok, tr = walk_chain(peek, ch)
+            traces.append(tr)
+        if not ok:
+            return False, " | ".join(traces)
+    return True, " | ".join(traces)
+
+
 def both_errored_identically(results):
     """True iff EVERY non-matching row failed the SAME way on BOTH sides.
 
@@ -231,9 +302,20 @@ def verdict_for(hook, results, ret_kind, mism, total, distinct_bits):
             return (f"INCONCLUSIVE-BOTH-ERRORED {mism}/{total} "
                     f"(both sides: {err}) — state unpopulated, nothing compared")
         return f"RED {mism}/{total}"
+    # A spread of distinct ORIGINAL values IS the non-degeneracy proof, and it
+    # outranks the zero_arg baseline check — the baseline exists only for hooks
+    # where that spread is unavailable (a single-shot getter). Measured
+    # 2026-07-28: RenderState_GetTexturingOverride carries zero_arg=True but is
+    # driven with 12 varying inputs and echoes each one back, 12 distinct values
+    # bit-identical; judging it by its FIRST row alone reported
+    # "INCONCLUSIVE (value==0, gate unmet)" and threw away a perfectly good
+    # control. Checking distinct spread first is strictly more evidence, never
+    # less.
+    if len(distinct_bits) > 1:
+        return "GREEN"
     zero_arg = hook.get("zero_arg", False) or len(hook["signature"].get("args", [])) == 0
     if not zero_arg:
-        return "GREEN" if len(distinct_bits) > 1 else "GREEN-DEGENERATE"
+        return "GREEN-DEGENERATE"
     baseline = hook.get("zero_arg_baseline")
     obs = next((value_bits(r["original"], ret_kind) for r in results), None)
     if obs is None:
@@ -272,7 +354,8 @@ def main():
     names = [a for a in sys.argv[1:] if not a.startswith("--")]
     # strip values that belong to flags
     flagvals = set()
-    for f in ("--scenario", "--round", "--shot-dir", "--sentinel-words", "--sentinel"):
+    for f in ("--scenario", "--round", "--shot-dir", "--sentinel-words", "--sentinel",
+              "--gate-wait", "--dwell"):
         if f in sys.argv:
             flagvals.add(sys.argv[sys.argv.index(f) + 1])
     names = [n for n in names if n not in flagvals]
@@ -286,6 +369,10 @@ def main():
     scenario   = _flag("--scenario", "race")
     round_secs = _flag("--round", 130, int)
     sent_words = _flag("--sentinel-words", 8, int)
+    # Seconds to keep polling a hook's own state_gate before skipping it.
+    gate_wait = _flag("--gate-wait", 15.0, float)
+    # Seconds to let the race run before taking the diff point.
+    dwell = _flag("--dwell", 0.0, float)
     shotdir    = _flag("--shot-dir", "verify/scenario_batch")
     repeat_first = "--repeat-first" in sys.argv
     # --no-x87-scrub: skip the between-hook FPU scrub, to reproduce the dirty
@@ -377,6 +464,23 @@ def main():
                   "Use --scenario race (returns as soon as the sentinel populates) "
                   "to maximise the in-race window.")
             return 4
+        # --dwell: let the race RUN before diffing. `--scenario race` returns
+        # the instant the sentinel populates, which is phase=0 / t+0s — the
+        # first frame of the race. Measured 2026-07-28 at that point: the
+        # camera node COUNT is already 2 but every sub-count is still 0 (so the
+        # path predicates return 0 for every input — degenerate, not broken),
+        # and the SmplFzx manager pointer at 0x006e71cc is still NULL. Arriving
+        # early is what made the state look absent. Dwelling costs in-race
+        # window, which is cheap: the window fits ~28 verified hooks/min.
+        if dwell > 0:
+            print(f"\n  dwelling {dwell:.0f}s so live state can populate "
+                  f"(diff point is race frame 0 without this)...")
+            end = time.time() + dwell
+            while time.time() < end and nav.alive():
+                time.sleep(0.5)
+            if not nav.alive():
+                print("ABORT: process exited during the dwell — lower --dwell.")
+                return 4
         statenav.shoot(pid, ROOT / shotdir / "sb_diffpoint.png")
 
         baseline_snap = read_sentinels()
@@ -397,6 +501,28 @@ def main():
         for i, name in enumerate(order, 1):
             tag = "repeat_" if (repeat_first and i == len(order) and len(order) > len(names)) else ""
             t_hook = time.time()
+
+            # Per-hook liveness gate. Poll (don't just sample once) — the chain
+            # a hook needs may come up later than the batch-wide sentinel did.
+            gate_tr = ""
+            if HOOKS[name].get("state_gate"):
+                deadline = time.time() + gate_wait
+                while True:
+                    gate_ok, gate_tr = eval_state_gate(nav_scr.exports_sync.peek,
+                                                       HOOKS[name])
+                    if gate_ok or time.time() >= deadline or not nav.alive():
+                        break
+                    time.sleep(0.25)
+                if not gate_ok:
+                    verdict = "SKIPPED-GATE-UNMET"
+                    rows.append((i, name, tag, verdict, 0, True,
+                                 nav.phase() if nav.alive() else "DEAD",
+                                 time.time() - t_hook, time.time() - t0))
+                    print(f"{i:>2} {name[:32]:32s} {verdict[:20]:20s} "
+                          f"{time.time() - t_hook:5.1f} {time.time() - t0:6.1f}")
+                    print(f"   gate: {gate_tr}")
+                    continue
+
             if not no_scrub:
                 scrubbed = scrub_x87(sess)
             results, err = run_one_hook(sess, nav, name, shotdir)
