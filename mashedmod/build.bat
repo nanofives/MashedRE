@@ -260,6 +260,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Frontend\FrontendLeaves_ad2.cpp" ^
     "Frontend\MenuLeaves_af5.cpp" ^
     "Render\CameraProjCoeffs.cpp" ^
+    "Render\SlotObjectAccessors.cpp" ^
     "Render\Vec3NormalizeScale.cpp" ^
     "Ai\HeadingAtan2.cpp" ^
     "Audio\AudioVecLength.cpp" ^

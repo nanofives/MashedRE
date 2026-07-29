@@ -16703,6 +16703,56 @@ HOOKS = {
         'path2_tests': [0, 1, 2],
     },
 
+    # ---- STATE-lane authoring batch, 2026-07-28 -------------------------------
+    #   Three slot/handle -> object-field accessors ported in
+    #   mashedmod/src/mashed_re/Render/SlotObjectAccessors.cpp. Every one was
+    #   transcribed from capstone disasm of MASHED.exe.unpatched, NOT from the
+    #   plates (two of the three plates are "Drift-skip: already plated" stubs
+    #   with no register detail).
+
+    # 0x0044b000  SlotRecordPositionPtr(slot) — record[0] of the 0x28-stride array
+    #   at 0x0068432c, through the BOUNDS-CHECKED lookup 0x0047d150 (returns 0
+    #   outside [0,0xc8)), then +0x30 UNCONDITIONALLY (an invalid slot yields
+    #   0x30, not 0 — original behaviour). Safe to force-call: the only unbounded
+    #   read is the array index itself, so inputs stay small. Distinct record
+    #   values across slots give the non-degenerate spread.
+    'slot_record_position_ptr': {
+        'rva': 0x0044b000, 'export': 'SlotRecordPositionPtr',
+        'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'state_gate': [{'any_nonzero': 0x0068432c, 'words': 16}],
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests': [0, 3, 7],
+    },
+
+    # 0x00421930  BodyGeometryFirstDword(byteOff) — 0x0057c210 RwpBodyTableLookup
+    #   (C4) is *(*(0x007dc8d8) + arg), i.e. the arg is a BYTE OFFSET into the
+    #   live body table and is UNBOUNDED. Two separate null checks follow (+0x4
+    #   then a deref of that), so a miss returns 0 rather than faulting. Inputs
+    #   are small dword-aligned offsets; the gate proves the table base is up.
+    'body_geometry_first_dword': {
+        'rva': 0x00421930, 'export': 'BodyGeometryFirstDword',
+        'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'state_gate': [[0x007dc8d8]],
+        'path1_tests': [0, 4, 8, 0xc, 0x10, 0x14, 0x18, 0x1c, 0x20, 0x24],
+        'path2_tests': [0, 8, 0x10],
+    },
+
+    # 0x004b4050  ClumpQueryField18(clump) — 0x004b3f90 null-guards its argument
+    #   (004b3f97 test ecx,ecx / je), so clump=0 returns 0 without touching RW.
+    #   A NON-NULL garbage pointer would walk into 0x004e66d0 and fault, so the
+    #   vectors stay at 0 plus values the null guard rejects. EXPECT DEGENERATE
+    #   unless a real clump handle is supplied — recorded here as the honest
+    #   shape of this candidate, not as promotion evidence.
+    'clump_query_field18': {
+        'rva': 0x004b4050, 'export': 'ClumpQueryField18',
+        'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'path1_tests': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests': [0, 0, 0],
+    },
+
     # ---- promote-round round 29 (worklist batch: const global setters) --------
     'set_77196c_1': {
         'rva': 0x00493570, 'export': 'Set77196c_1', 'signature': {'ret': 'void', 'args': []},
