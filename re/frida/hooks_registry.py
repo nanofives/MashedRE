@@ -16821,8 +16821,16 @@ HOOKS = {
     #   implicit return is the U-9025 defect class and is ported explicitly).
     #   The argument is a POINTER, so it is harvested rather than seeded, and
     #   require_offsets rejects an object whose +0x28 queue slot is empty.
-    #   NOTE 0x005ad2e0 MUTATES: it decrements the count at +0xc when non-zero.
-    #   Keep the vector list short — this is not a pure read.
+    #   *** NOT SYNTHETIC-VERIFIABLE — flagged by my own semantic screen after it
+    #   was authored, and the flag is right. 0x005ad2e0 DECREMENTS the count at
+    #   +0xc when non-zero, so an A/B pops the live queue twice per vector. The
+    #   original comment here said "keep the vector list short"; that is not a
+    #   fix, it just corrupts less. Evidence for this hook has to come from the
+    #   INSTALLED-hook/observation path (run_verify_hook / the A/B orchestrator
+    #   lane) where the game calls it naturally — which is also the only route to
+    #   C4 per re/CONFIDENCE.md. Left registered so the port is not lost; it must
+    #   NOT be added to a synthetic batch. See
+    #   re/analysis/plans/state_lane_screens_2026-07-29.md.
     'audio_queue_pop': {
         'rva': 0x005b0f40, 'export': 'AudioQueuePop',
         'signature': {'ret': 'uint32', 'args': ['int32']},
