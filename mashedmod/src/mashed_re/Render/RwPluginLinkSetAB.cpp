@@ -120,6 +120,16 @@ int BuildSegs(void* obj, Seg* segs) {
 
 unsigned g_pairs = 0, g_mism = 0, g_skipped = 0;
 
+// COVERAGE, because "28000 pairs, 0 mismatches" does not say which BRANCHES ran.
+// The callee early-outs on *(u8*)(node+3) & 3; if every call took that arm then
+// W4..W7 (the list insertion) were never written and their agreement is vacuous
+// — a port that omitted the insertion entirely would still read GREEN. That is
+// feedback_evidence_discipline §2: which line could I delete and still pass?
+// g_seg_written[i] counts pairs where the ORIGINAL actually changed segment i;
+// g_ins / g_early sample the predicate directly, before either side runs.
+unsigned g_seg_written[kMaxSeg] = {0};
+unsigned g_ins = 0, g_early = 0;
+
 void __cdecl AbLink43(int value, void* obj) {
     Seg segs[kMaxSeg];
     const int k = BuildSegs(obj, segs);
@@ -127,6 +137,18 @@ void __cdecl AbLink43(int value, void* obj) {
         ++g_skipped;                    // guess; run the original only.
         Orig4e4320(value, obj);
         return;
+    }
+    // Sample the callee's branch predicate BEFORE either side runs.
+    {
+        const std::uintptr_t o = reinterpret_cast<std::uintptr_t>(obj);
+        const std::uint32_t arg = *reinterpret_cast<const std::uint32_t*>(o + 4u);
+        if (arg && Readable(reinterpret_cast<void*>(arg), 0xa4)) {
+            const std::uint32_t node = *reinterpret_cast<const std::uint32_t*>(arg + 0xa0u);
+            if (node && Readable(reinterpret_cast<void*>(node), 4)) {
+                if (*reinterpret_cast<const volatile std::uint8_t*>(node + 3u) & 3) ++g_early;
+                else ++g_ins;
+            }
+        }
     }
     std::uint8_t snap[64], vmine[64], vorig[64];
     std::uint32_t tot = 0;
@@ -148,6 +170,13 @@ void __cdecl AbLink43(int value, void* obj) {
     for (int i = 0; i < k; ++i) { std::memcpy(vorig + at, segs[i].p, segs[i].n); at += segs[i].n; }
 
     ++g_pairs;
+    {   // did the ORIGINAL actually write each segment, or is its agreement vacuous?
+        std::uint32_t o3 = 0;
+        for (int i = 0; i < k; ++i) {
+            if (std::memcmp(vorig + o3, snap + o3, segs[i].n) != 0) ++g_seg_written[i];
+            o3 += segs[i].n;
+        }
+    }
     if (std::memcmp(vmine, vorig, tot) != 0) {
         ++g_mism;
         char buf[320];
@@ -163,9 +192,14 @@ void __cdecl AbLink43(int value, void* obj) {
         std::snprintf(buf + m, sizeof buf - m, "\r\n");
         AbLog(buf);
     } else if ((g_pairs % 500) == 0) {
-        char buf[160];
-        std::snprintf(buf, sizeof buf, "ok pairs=%u mism=%u skipped=%u segs=%d\r\n",
-                      g_pairs, g_mism, g_skipped, k);
+        char buf[320];
+        int m = std::snprintf(buf, sizeof buf,
+            "ok pairs=%u mism=%u skipped=%u segs=%d insert=%u earlyout=%u written=",
+            g_pairs, g_mism, g_skipped, k, g_ins, g_early);
+        for (int i = 0; i < k && m < (int)sizeof buf - 16; ++i)
+            m += std::snprintf(buf + m, sizeof buf - m, "%u%s",
+                               g_seg_written[i], (i + 1 < k) ? "/" : "");
+        std::snprintf(buf + m, sizeof buf - m, "\r\n");
         AbLog(buf);
     }
 }

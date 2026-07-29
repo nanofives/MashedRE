@@ -1,0 +1,2 @@
+ok pairs=500 mism=0 skipped=0 segs=7 insert=200 earlyout=300 written=500/250/250/50/50/200/200
+ok pairs=1000 mism=0 skipped=0 segs=7 insert=400 earlyout=600 written=1000/500/500/100/100/400/400
