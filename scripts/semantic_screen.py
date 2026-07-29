@@ -77,9 +77,25 @@ def disasm_hazards(rva):
         if (prev_call and i.mnemonic == "mov"
                 and re.match(r"dword ptr \[0x[0-9a-f]+\], eax", i.op_str)):
             out.append("publishes-call-result")     # obj = make(); global = obj
+        # A store through a REGISTER base is a write into live state, and the
+        # register usually came from a global or an argument. 0x004e4320 ends
+        # `mov [esi+0xc], eax` with esi = DAT_007d716c + param_2 — it mutates the
+        # game, and every prose-level and import-level check rated it SAFE.
+        # FALSE-POSITIVE WARNING, cleared by reading, not by the tool: a store
+        # through a pointer that came straight from an ARGUMENT is an out-param
+        # and is harmless — the harness owns that buffer. 0x0046cc10 does
+        # `mov [ecx], eax` with ecx = param_1 and is fine; 0x004e4320 does
+        # `mov [esi+0xc], eax` with esi = DAT_007d716c + param_2 and mutates the
+        # game. The two are indistinguishable here, so this flags and a human
+        # clears it.
+        if (i.mnemonic == "mov"
+                and re.match(r"dword ptr \[e(ax|cx|dx|bx|si|di)(\s*\+[^\]]+)?\], ", i.op_str)):
+            out.append("stores-through-pointer")
         prev_call = (i.mnemonic == "call")
-        if i.mnemonic in ("ret", "retn"):
-            break
+    # NOTE: no break on the first `ret`. An early-out returns before the body's
+    # real work — 0x0046cc10 rets at 0x0046cc1b and stores at 0x0046cc31 — and
+    # this function made the SAME truncation mistake shape_screen.py already had
+    # to be fixed for. Third time this pattern has bitten in one session.
     return out
 
 

@@ -509,6 +509,21 @@ function callFn(fn, input, buf) {
     if (CONFIG.arg_type === 'out3_idx') {
         return fn(buf, input >>> 0);
     }
+    // out1_idx — fn(out_ptr, uint32_idx) -> int. Same argument order as out3_idx,
+    // but the fingerprint INCLUDES THE WRITTEN DWORD, not just the return value.
+    // out3_idx returns fn's result alone, so for a bounds-checked writer it only
+    // ever observes the 0/1 flag — a port that returns the right flag while
+    // writing garbage to *out passes it. The out-slot is poisoned to 0xCCCCCCCC
+    // first, so "wrote nothing" is visible rather than reading as a stale match.
+    // Fingerprint: "<ret_hex>:<out_hex>".
+    if (CONFIG.arg_type === 'out1_idx') {
+        buf.writeU32(0xCCCCCCCC >>> 0);
+        const ret = fn(buf, input >>> 0);
+        const rv = (ret === null || ret === undefined) ? 0
+                 : (typeof ret === 'object' ? (ret.toInt32() >>> 0) : (ret >>> 0));
+        return ('00000000' + rv.toString(16)).slice(-8) + ':' +
+               ('00000000' + (buf.readU32() >>> 0).toString(16)).slice(-8);
+    }
     // idx_out2 — fn(uint32_idx, out_ptr1, out_ptr2); two 4-byte out-slots in shared buf.
     // Returns fn return value. Used for functions like VehicleCarStateRead.
     if (CONFIG.arg_type === 'idx_out2') {
@@ -1064,7 +1079,7 @@ function runDiff() {
     const Reimpl = new NativeFunction(reimplAddr,  CONFIG.signature.ret, CONFIG.signature.args, reimplCallConv);
 
     const buf = (['vec3_ptr', 'out3_idx', 'vec2_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
-              : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out', 'cache_roundtrip', 'cache_setter_observe', 'st0_ret_global'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
+              : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out', 'cache_roundtrip', 'cache_setter_observe', 'st0_ret_global', 'out1_idx'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
               : (CONFIG.arg_type === 'time_diff_decompose') ? Memory.alloc(16)
               : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256)
               : (CONFIG.arg_type === 'ptr_arg_int_get') ? Memory.alloc((CONFIG.struct_size | 0) || 256)

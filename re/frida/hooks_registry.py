@@ -16841,6 +16841,26 @@ HOOKS = {
         'path2_tests': [0, 0],
     },
 
+    # 0x0046cc10  VehicleFloatFieldAsInt(out, idx) — bounds-checked [0,0x10) read of
+    #   the float at 0x00881f80 + idx*0xd04 (vehicle record stride), through the
+    #   ORIGINAL __ftol at 0x004a2c48, written to the CALLER's buffer. Survivor of
+    #   exercise + shape + semantic screens AND hand-reading; the other four
+    #   race-gated `direct` rows all mutate game state or index unbounded.
+    #   arg_type out1_idx is NEW and exists because out3_idx observes only the
+    #   0/1 return — under it, a port that returns the right flag while writing
+    #   garbage to *out would pass. out1_idx poisons the out slot and folds it
+    #   into the fingerprint, so both the flag and the value are compared.
+    #   Boundary vectors 0xf/0x10/0x11 give the in-range/out-of-range mix; the
+    #   out-of-range path leaves *out untouched, which the poison makes visible.
+    'vehicle_float_field_as_int': {
+        'rva': 0x0046cc10, 'export': 'VehicleFloatFieldAsInt',
+        'signature': {'ret': 'int32', 'args': ['pointer', 'uint32']},
+        'arg_type': 'out1_idx', 'lut_root_delta': 0, 'scenario': 'race',
+        'state_gate': [{'any_nonzero': 0x00881f80, 'words': 8}],
+        'path1_tests': [0, 1, 2, 3, 7, 0xe, 0xf, 0x10, 0x11, 0xff],
+        'path2_tests': [0, 0xf, 0x10],
+    },
+
     # ---- promote-round round 29 (worklist batch: const global setters) --------
     'set_77196c_1': {
         'rva': 0x00493570, 'export': 'Set77196c_1', 'signature': {'ret': 'void', 'args': []},
