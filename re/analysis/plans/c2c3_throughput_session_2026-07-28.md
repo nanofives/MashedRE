@@ -77,9 +77,18 @@ would have filed a correct port as defective.
 1. **Wire the lane into `promote-c3-batch/SKILL.md` as the STATE lane.** Deliberately NOT done
    while the x87 trap was live; the trap is now fixed, so this is unblocked. Must carry the
    ordering/scrub and quiescence caveats.
-2. **3 genuine REDs** in already-registered hooks, stable across positions, unaffected by the scrub:
-   `camera_path_all_nodes_eq2` (0x0047c270) 8/8, `camera_path_any_node_nonzero` (0x0047c2d0) 8/8,
-   `smplfzx_stateblock_get_logged` (0x004853b0) 10/10. Real port defects.
+2. ~~**3 genuine REDs** … Real port defects.~~ **WRONG — retracted 2026-07-28.** Reading the CSVs
+   instead of the verdict line: every non-matching row of all three has
+   `err_original == err_reimpl` — `camera_path_all_nodes_eq2` 8/8 "access violation accessing 0x0",
+   `camera_path_any_node_nonzero` 8/8 at `0xc`, `smplfzx_stateblock_get_logged` 10/10 at `0x10`
+   (idx 0) / "system error". **Both sides died at the same fault address before producing a value**,
+   so nothing was ever compared. Their own registry comments predict exactly this — 0x004853b0's says
+   "the state-block manager pointer is null at menu (double deref) -> race" — meaning the state was
+   still unpopulated at the point `--scenario race` returned. This is the same class as the x87
+   false-RED: a harness condition read as a port defect. The runner now reports it as
+   `INCONCLUSIVE-BOTH-ERRORED` (never RED, never GREEN — identical faults are *consistent with*
+   identical code without demonstrating it). **Real open work here is the state/arg_type, not the
+   port**: give these hooks a dwell or a per-hook sentinel that waits for their specific globals.
 3. ~~**3 tracker-drift rows with non-degenerate evidence already on disk**~~ — **CHECKED 2026-07-28,
    and 2 of the 3 were wrong.** Only `sprite_slot_dispatch` (0x0042fab0) was real drift; it is now C3.
    `rtfshandler_is_eof` (0x005514e0) was **already C3** in hooks.csv — the drift list was built off

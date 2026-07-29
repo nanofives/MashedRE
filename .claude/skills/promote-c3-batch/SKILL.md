@@ -298,9 +298,16 @@ into **AUTO** (display-independent leaf shapes it can emit a body for), **STATE*
 5. **Pass `--sentinel 0xADDR` explicitly.** Only 5 registry entries carry a
    `scenario_sentinel` field; the multi-vector controls were driven by a CLI flag that
    was never persisted.
-6. **The ZERO-ARG baseline criterion applies here too.** A 0-mismatch run whose
-   observed value equals `zero_arg_baseline` (the menu default) is INCONCLUSIVE, never
-   GREEN. Without it all four control probes "pass" vacuously.
+6. **Two ways a run compares nothing — neither is a verdict about the port.**
+   (a) *ZERO-ARG degeneracy*: a 0-mismatch run whose observed value equals
+   `zero_arg_baseline` (the menu default) is INCONCLUSIVE, never GREEN. Without this
+   all four control probes "pass" vacuously. (b) *Both sides errored identically*: if
+   every non-matching row has `err_original == err_reimpl`, both sides died at the same
+   fault address before producing a value — the live state was unpopulated when we
+   called. Reported as `INCONCLUSIVE-BOTH-ERRORED`, never RED and never GREEN. All
+   three "genuine REDs" from the first real batch turned out to be this (8/8 at 0x0,
+   8/8 at 0xc, 10/10 at 0x10); reading them as port defects would have sent someone
+   debugging correct code. Fix the *state or the arg_type*, not the port.
 7. **Navigation is flaky and costs a spawn when it fails.** One run never left the
    frontend in 130s and correctly aborted rather than emitting a false GREEN. If
    attach fails on a known-good hook, the GPU is wedged — stop and ask for a reboot

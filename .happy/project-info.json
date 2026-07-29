@@ -47,7 +47,8 @@
         { "label": "Queue", "value": [
           "DONE: STATE lane wired into promote-c3-batch (8f439ae2)",
           "DONE: drift rows checked — only sprite_slot_dispatch was real (C3); rtfshandler_is_eof was ALREADY C3; text_sprite_scaled is gated on U-0459 [Blocks C3]",
-          "3 genuine REDs to investigate: 0x0047c270, 0x0047c2d0, 0x004853b0",
+          "RETRACTED: the 3 'genuine REDs' were both-sides-identical AVs — state unpopulated, not port defects; runner now says INCONCLUSIVE-BOTH-ERRORED",
+          "those 3 need a per-hook sentinel/dwell so their globals are live before the call",
           "arg_type=unknown — filter's arg_type check is structurally vacuous"
         ], "kind": "list" },
         { "label": "Spawn budget", "value": "~12 of ~15 boots used 2026-07-28; reboot clears the GPU wedge", "kind": "text" }

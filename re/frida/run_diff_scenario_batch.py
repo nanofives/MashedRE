@@ -56,6 +56,21 @@
 #   false-RED. On by default; --no-x87-scrub reproduces the fault (that is how
 #   the fix was A/B'd: scrub OFF 1/5 GREEN -> scrub ON 3/5, same ordering).
 #
+# VERDICTS ARE NOT JUST GREEN/RED. Two ways a run can compare nothing at all:
+#   * ZERO-ARG DEGENERACY — a single-shot getter returning its menu default;
+#     caught by the zero_arg_baseline criterion (INCONCLUSIVE, never GREEN).
+#   * BOTH SIDES ERRORED IDENTICALLY — every non-matching row has
+#     err_original == err_reimpl (same AV, same fault address). Measured
+#     2026-07-28 on all three hooks that read "RED" in the first real batch:
+#     camera_path_all_nodes_eq2 8/8 at 0x0, camera_path_any_node_nonzero 8/8 at
+#     0xc, smplfzx_stateblock_get_logged 10/10 at 0x10. Both sides died before
+#     producing a value, i.e. the live state those hooks read was still null
+#     when we called them (their own registry comments say the manager pointer
+#     is null until deep into a race). Calling that RED manufactures a port
+#     defect out of a run in which the function never executed. Now reported as
+#     INCONCLUSIVE-BOTH-ERRORED — and still never GREEN, because identical
+#     faults are consistent with identical code without demonstrating it.
+#
 # The `race` scenario is POPULATED but NOT quiescent (run_diff_scenario defaults
 # to `results` for that reason). Prefer --scenario race only for hooks whose
 # state is stable within a frame; a per-frame-varying getter can false-RED
@@ -173,6 +188,33 @@ def scrub_x87(sess):
     return ok["v"]
 
 
+def both_errored_identically(results):
+    """True iff EVERY non-matching row failed the SAME way on BOTH sides.
+
+    Measured 2026-07-28: camera_path_all_nodes_eq2, camera_path_any_node_nonzero
+    and smplfzx_stateblock_get_logged each read 8/8 or 10/10 "RED" — and every
+    single row had err_original == err_reimpl ('access violation accessing 0x0',
+    '0xc', '0x10'). Both sides died at the same fault address before producing a
+    value. That is NOT a port divergence; it is the live state the hook reads
+    still being null at the point we called it (their registry comments say so
+    outright — "the state-block manager pointer is null at menu (double deref)").
+    Reporting it as RED manufactures a defect out of a run in which the function
+    never executed, which is the same failure mode as the x87 false-RED that
+    nearly filed a correct port as broken.
+
+    The honest verdict is INCONCLUSIVE, never GREEN: identical faults are
+    consistent with identical code, but do not demonstrate it — nothing was
+    compared. hooks_registry.py's existing 'crash_equal_ok' flag is the opt-in
+    that says the author intends equal crashes to count; without it this only
+    downgrades RED to INCONCLUSIVE.
+    """
+    bad = [r for r in results if not r["match"]]
+    if not bad:
+        return False
+    return all(r.get("err_original") and r.get("err_original") == r.get("err_reimpl")
+               for r in bad)
+
+
 def verdict_for(hook, results, ret_kind, mism, total, distinct_bits):
     """Mirror run_diff_scenario's acceptance criterion, including ZERO-ARG mode.
 
@@ -184,6 +226,10 @@ def verdict_for(hook, results, ret_kind, mism, total, distinct_bits):
     the 0-mismatch run proves nothing: that is INCONCLUSIVE, never GREEN.
     """
     if mism:
+        if both_errored_identically(results):
+            err = next(r.get("err_original") for r in results if not r["match"])
+            return (f"INCONCLUSIVE-BOTH-ERRORED {mism}/{total} "
+                    f"(both sides: {err}) — state unpopulated, nothing compared")
         return f"RED {mism}/{total}"
     zero_arg = hook.get("zero_arg", False) or len(hook["signature"].get("args", [])) == 0
     if not zero_arg:
