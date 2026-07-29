@@ -16796,6 +16796,43 @@ HOOKS = {
         'path2_tests': [0, 3, 7],
     },
 
+    # ---- STATE lane, pre-screened + shape-screened batch 2026-07-29 ----------
+    #   Both selected by MEASUREMENT: prescreen_result_all.tsv says race-gated
+    #   (called during a Quick Battle race, not before), shape_race_gated.tsv
+    #   rates both `direct` (no indirect dispatch, no destructive import).
+
+    # 0x0047d150  SlotObjectField8(slot) — bounds-checked [0,0xc8) handle-table
+    #   lookup at 0x006c71d8, through 0x0057c210 (C4, *(obj+pluginOffset)), then
+    #   +0x10 and +8. Integer argument is the CORRECT type here — the bounds
+    #   check makes any int safe to pass — so no capture is needed. The two
+    #   trailing derefs are unguarded, so a null table entry faults on BOTH
+    #   sides and reports INCONCLUSIVE-BOTH-ERRORED, never RED.
+    'slot_object_field8': {
+        'rva': 0x0047d150, 'export': 'SlotObjectField8',
+        'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'state_gate': [{'any_nonzero': 0x006c71d8, 'words': 32}],
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 0xc7, 0xc8],
+        'path2_tests': [0, 3, 0xc8],
+    },
+
+    # 0x005b0f40  AudioQueuePop(obj) — 15-byte thunk: FUN_005ad2e0(*(obj+0x28)),
+    #   forwarding the callee's EAX as its own return (Ghidra types it void; the
+    #   implicit return is the U-9025 defect class and is ported explicitly).
+    #   The argument is a POINTER, so it is harvested rather than seeded, and
+    #   require_offsets rejects an object whose +0x28 queue slot is empty.
+    #   NOTE 0x005ad2e0 MUTATES: it decrements the count at +0xc when non-zero.
+    #   Keep the vector list short — this is not a pure read.
+    'audio_queue_pop': {
+        'rva': 0x005b0f40, 'export': 'AudioQueuePop',
+        'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'capture_args': {'arg_index': 0, 'max': 6, 'window_ms': 1500,
+                         'require_offsets': [0, 0x28]},
+        'path1_tests': [0, 0, 0, 0, 0, 0],
+        'path2_tests': [0, 0],
+    },
+
     # ---- promote-round round 29 (worklist batch: const global setters) --------
     'set_77196c_1': {
         'rva': 0x00493570, 'export': 'Set77196c_1', 'signature': {'ret': 'void', 'args': []},

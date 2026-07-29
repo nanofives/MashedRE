@@ -56,6 +56,48 @@ constexpr std::uint32_t  kGeomPtrOff       = 0x04u;   // mov eax,[eax+4]
 } // namespace
 
 // ─────────────────────────────────────────────────────────────────────────────
+// 0x0047d150  SlotObjectField8(int slot) -> *( *(plugin(table[slot]) + 0x10) + 8 )
+//
+// The lookup the two accessors below already call, now ported in its own right.
+// Selected by measurement: the exercise pre-screen shows it is called during a
+// race and not before, and the shape screen rates it `direct` — a bounds-checked
+// integer argument with no indirect dispatch, which is the cleanest shape in the
+// whole race-gated set.
+//
+// Verbatim 0x0047d150..0x0047d178:
+//   0047d150 mov eax,[esp+4]
+//   0047d154 test eax,eax / jl 0x47d15f          ; negative -> 0
+//   0047d158 cmp eax,0xc8 / jl 0x47d162          ; SIGNED, valid range [0,0xc8)
+//   0047d15f xor eax,eax / ret
+//   0047d162 mov eax,[eax*4 + 0x6c71d8]          ; handle table
+//   0047d169 push eax / call 0x57c210            ; -> *(obj + pluginOffset)
+//   0047d16f mov ecx,[eax+0x10]
+//   0047d172 mov eax,[ecx+8]
+//   0047d175 add esp,4 / ret
+//
+// An EARLIER version of scripts/shape_screen.py stopped at the first `ret`
+// (0x0047d161) and reported this as "leaf (no calls)" at 18 bytes — a false
+// clean bill for a function that calls 0x0057c210 nine bytes later. Body bounds
+// now run to alignment padding.
+//
+// Both trailing derefs are unguarded, so a null or stale table entry faults —
+// on BOTH sides identically, which the runner reports as
+// INCONCLUSIVE-BOTH-ERRORED rather than RED.
+// ─────────────────────────────────────────────────────────────────────────────
+extern "C" __declspec(dllexport) std::uint32_t __cdecl SlotObjectField8(int slot) {
+    if (slot < 0 || slot >= 0xc8) return 0u;
+    const std::uint32_t obj = *reinterpret_cast<const std::uint32_t*>(
+        0x006c71d8u + static_cast<std::uint32_t>(slot) * 4u);
+    const std::uintptr_t body =
+        static_cast<std::uintptr_t>(static_cast<std::uint32_t>(s_FUN_0057c210(
+            static_cast<int>(obj))));
+    const std::uint32_t inner = *reinterpret_cast<const std::uint32_t*>(body + 0x10u);
+    return *reinterpret_cast<const std::uint32_t*>(
+        static_cast<std::uintptr_t>(inner) + 8u);
+}
+RH_ScopedInstall(SlotObjectField8, 0x0047d150);
+
+// ─────────────────────────────────────────────────────────────────────────────
 // 0x0044b000  SlotRecordPositionPtr(int slot) -> resolved object + 0x30
 //
 // Verbatim 0x0044b000..0x0044b01a:
