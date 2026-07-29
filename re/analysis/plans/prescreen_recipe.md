@@ -125,6 +125,41 @@ Two notes on individual rows:
   **acquires** when signalled, so force-calling it mutates state. Do not batch it without a
   restore.
 
+## COMPLETE — 187/187 screened
+
+```
+exercised           90 (48%)
+  race_gated        20   (baseline available: fires only once racing)
+  exercised_prerace 29   (also reachable at the menu — cheapest to verify)
+  exercised_inrace  41   (late-armed runs; in-race by construction, no baseline)
+never               97
+```
+
+### Void chunks: TWO independent causes, and I conflated them
+
+1. **Interceptor overhead** — real, fixed. Counters armed before `dev.resume` ran through the
+   whole menu nav and its fixed waits timed out. `MASHED_COUNT_LATE=1` fixed it; the chunk that
+   had failed twice then ran with no reboot.
+2. **Plain navigation flakiness** — pre-existing, unfixed, roughly half of chunks. Late arming
+   cannot touch it.
+
+I diagnosed (2) as "the nav lands on phase=2 instead of the racing phase 0" and added a
+`MASHED_COUNT_GATE` that nudges confirm until a validated probe fires. **Wrong, and the nudge was
+actively harmful.** Surfacing the child process's own log showed:
+
+```
+start-attempt 4: depth=4 phase=3        <- still in the MENU after 5 attempts
+[gate] simulation NOT confirmed after 9 nudge(s), phase=3
+FINAL: depth=3 phase=3                  <- depth walked BACKWARD, 4 -> 3
+```
+
+Nine blind confirms from a stuck menu moved it backward. The gate now refuses to nudge while
+`phase == 3` and bails so the caller can retry the chunk.
+
+**I could only see this because I stopped swallowing the child's stdout.** The driver had been
+capturing it, so the `[gate]` line I had just added to diagnose the problem was invisible — an
+instrument you cannot read is not an instrument.
+
 ## Second screen: SHAPE (`scripts/shape_screen.py`) — exercised ≠ diffable
 
 The exercise screen says the scenario calls it. It does not say a synthetic A/B can safely call

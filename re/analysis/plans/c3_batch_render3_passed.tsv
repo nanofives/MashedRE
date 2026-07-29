@@ -1,0 +1,531 @@
+rva	name	subsystem	arg_type	note	callees
+00558470	sub_00558470	render	unknown	re/analysis/skeleton_prep_high_leverage/00558470.md	00558484,00558498,005584b5,007d3ff8,007dc8ac,007dc8b8,007dc8bc
+004c2f60	FUN_004c2f60	render	unknown	re/analysis/render_promote_c2_rw_plugin/0x004c2f60.md	
+004c3270	sub_004c3270	render	unknown	re/analysis/skeleton_prep_high_leverage/004c3270.md	004c3279,004c327e,004c3283,004c3297,004c32a1,004ccf20,004d7ca0,007d3ff4,007d3ff8
+00493600	FUN_00493600	render	unknown	re/analysis/rw_engine_init/00493600.md	004935a0,004935d0,004ce790,00513f90,0052d530,005cf748,005cf74c
+004951e0	thunk_FUN_00495780	render	unknown	re/analysis/rw_engine_init/004951e0.md	004951e4,004955d0,00495780
+004951f0	FUN_004951f0	render	unknown	re/analysis/skeleton_prep_boot_winmain_a/004951f0.md	00496400,00498b60,00498bf0,00499400,004cbb60,006147bc,007719e0,00771e58
+004a2cbd	FID_conflict:_wprintf	render	unknown	re/analysis/rw_engine_init/004a2cbd.md	004a2d18,004a504f,00616110
+004c2fb0	FUN_004c2fb0	render	unknown	re/analysis/render_promote_c2_rw_plugin/0x004c2fb0.md	
+004c32b0	FUN_004c32b0	render	unknown	re/analysis/skeleton_prep_high_leverage/004c32b0.md	0045b350,004c32b8,004c32ce,004c32d8,004c32dc,004c35af,004c35b0,004c35d0,004cc7e0,004cca80,004ccba0,004cce20,004ccf20,004cfa00,004d7c60,004d7ca0,004d7de0,004d8560,004d8570,00617fe0,007d3ec8,007d3fe0,007d3fe4,007d3ff8
+004c2c90	FUN_004c2c90	render	unknown	re/analysis/render_promote_c2_rw_plugin/0x004c2c90.md	
+004ccf20	FUN_004ccf20	render	unknown	re/analysis/render_5_c1_to_c2_s1/FUN_004ccf20.md	007d3ff8
+004d7ca0	FUN_004d7ca0	render	unknown	re/analysis/render_6_c1_to_c2_s3/004d7ca0.md	
+004d8060	FUN_004d8060	render	unknown	re/analysis/render_6_c1_to_c2_s3/004d8060.md	
+00498b60	FUN_00498b60	render	unknown	re/analysis/promote_c2_video_cfg/00498b60.md	007731f8,007731fc,00773408,00773410
+004a2d18	FUN_004a2d18	render	unknown	re/analysis/rw_engine_init_d2/004a2d18.md	
+004a504f	FUN_004a504f	render	unknown	re/analysis/rw_engine_init_d2/004a504f.md	005d1280,005d12a0,00616038,006160d8
+004c7a60	thunk_FUN_004cfa00	render	unknown	re/analysis/render_4_c1_to_c2_s4/FUN_004c7a60.md	004c7690,004cfa00
+004c9f60	FUN_004c9f60	render	unknown	re/analysis/skeleton_prep_boot_winmain_b/004c9f60.md	006181b4,006181b8,006181bc,006181c0,007d4110,007d4120,007d413c
+004c8690	FUN_004c8690	render	unknown	re/analysis/promote_c2_render_d3d9/0x004c8690.md	
+004c8e50	FUN_004c8e50	render	unknown	re/analysis/promote_c2_render_d3d9/0x004c8e50.md	
+004cc820	FUN_004cc820	render	unknown	re/analysis/promote_c2_render_d3d9/0x004cc820.md	
+004cc9f0	RwFreeListDestroy	render	unknown	re/analysis/promote_c2_render_d3d9/0x004cc9f0.md	
+00409710	FUN_00409710	render	unknown	re/analysis/promote_c2_render_lowrva/00409710.md	004095a0,00409680,00495280,004952f0,004cbd30,004cc160,004cc230,004cc5e0,0063a5f0,0063b7f0
+00412050	FUN_00412050	render	unknown	re/analysis/promote_c2_render_frame/0x00412050.md	0047cdc0,0047fad0,004b3f90,005cd004,0063bb60,0063bc40
+0042a470	FUN_0042a470	render	unknown	re/analysis/render_c1_to_c2_s1/FUN_0042a470.md	004b5350,00550b00
+0042a530	FUN_0042a530	render	unknown	re/analysis/texture_loader/0x0042a530.md	0042a470,0042a6b0,00496400,005f1c18,0067dfa8,0067e1a8
+004cc5e0	FUN_004cc5e0	render	unknown	re/analysis/texture_loader_d2/0x004cc5e0.md	004cc050,004cc400,004cc601,004cc624,004cc637,004cc664,004cc66e,004d7ff0
+004cf7d0	FUN_004cf7d0	render	unknown	re/analysis/texture_loader_d2/0x004cf7d0.md	004c2c90,004c5890,004c5930,004c59c0,004c5bc0,004cbd30,004cc5e0,004cf7e0,004cf80c,004cf826,004cf835,004cf9e0,004e1b60,00618138,00618150
+004b3d20	FUN_004b3d20	render	unknown	re/analysis/texture_loader/0x004b3d20.md	0042a530,0042a6b0,004b3d31,004b3d45,004b3d5e,004cc160,004cc230,004cc5e0,004cf7d0
+0040b090	sub_0040b090	render	unknown	re/analysis/promote_c2_render_lowrva/0040b090.md	0040ad40,0040ad90,0040ae30,0040aef0,0040b0cd,004292c0,004292d0,0046d320,0046d360,0055dec0,005cc32c,005f2568,0063b8e8,0066d728
+00490500	FUN_00490500	render	unknown	re/analysis/bucket_render_00401690_004dc5b0/00490500.md	00472650,00472690,004769a0,004769d0,00476a30,00476a40,00476d00,00476df0,0048ebc0,0048ebf0,0048f290,0048f420,0048fe70,00490e43,004a2c48,005cc328,005cc32c,005cc724,005cc750,005cc9f4,005ccabc,005ccac0,005cd03c,005cd18c,005ce18c,005ce424,005cf508,005cf510,005cf514,005d757c,00614530,006145b0,00614690,007668f8,00766978,007669f8,00766a1c,00766f00,00769f40,00769f44,00769f48,0076a0f8,0076d900,0076d940,0076d99c,0076dafc,0076db04,007706d0,007706d8,00770718,00771528,007f100c
+0048ebf0	FUN_0048ebf0	render	unknown	re/analysis/effects_particle/0x0048ebf0.md	00472650,0048ebc0,005cd088,0076d998,0076d99c,0076d9ac,0076daf0,0076dafc,0076db04,0076dc88,0076ddc8
+0048f290	FUN_0048f290	render	unknown	re/analysis/effects_particle/0x0048f290.md	00472650,004a2c48,005cc950,00770718,0077071c,00770728,0077072c,00770730,00770734,00770737,00770738
+0048f420	FUN_0048f420	render	unknown	re/analysis/effects_particle/0x0048f420.md	00472650,00766a00,00766a04,00766a08,00766a10,00766a14,00766a18,00766a1c
+004671a0	sub_004671a0	render	unknown	re/analysis/promote_c2_piz_loader/004671a0.md	0042b930,0042f510,006905b0
+00467210	sub_00467210	render	unknown	re/analysis/camera_follow/0x00467210.md	0042b930,0042f510,00467213,00467225,00467231,0046723a,00467240,00491490,006905b0
+004c9ad0	FUN_004c9ad0	render	unknown	re/analysis/render_d3d_reset/004c9ad0.md	004cc7f0,004ccc50,004ccde0,004d1d70,004db550,004dc8e0,004e08b0,005d8b90,006181c8,006181cc,006181d0,006181d4,006181d8,007d3ff8,007d40c0,007d4110,007d4114,007d4118,007d4154,007d4158,007d4558,007d4568,007d4574,007d4578,007d4598
+004db3e0	FUN_004db3e0	render	unknown	re/analysis/render_6_c1_to_c2_s6/FUN_004db3e0.md	004cb8a0,004cba80,007d7098,007d709c,007d70a4,007d70ac
+004d1e30	FUN_004d1e30	render	unknown	re/analysis/render_d3d_reset/004d1e30.md	004d22e2,006181b0,007d4104,007d4108,007d410c,007d4110,007d4114,007d46e0
+004d6200	FUN_004d6200	render	unknown	re/analysis/render_6_c1_to_c2_s1/004d6200.md	004d53b0,004d5480,004d54f0,004d5570,004d5bc0,004d62f0,005d8c48,005d8c54,005d8c94,005d8cac,005d8d28,007d4720,007d4f60,007d5120,007d54b0,007d57f8,007d58b8,007d5918,007d5920,007d5e88,007d6ae8,007d6aec,007d6af0,007d6af4,007d6b1c,007d6b20,007d6b24,007d6b28,007d6b2c,007d6b3c
+0042a8d0	FUN_0042a8d0	render	unknown	re/analysis/track_loader_d2/0042a8d0.md	005cd75c,0067dca8,007d3ff8
+00462950	FUN_00462950	render	unknown	re/analysis/render_c1_to_c2_s3/FUN_00462950.md	
+00491780	FUN_00491780	render	unknown	re/analysis/track_loader_d2/00491780.md	00491590,00771534
+00495280	FUN_00495280	render	unknown	re/analysis/promote_c2_piz_loader/00495280.md	00402750,00402b70,004963e0,00496400,004b6570,00616038
+004952f0	FUN_004952f0	render	unknown	re/analysis/promote_c2_piz_loader/004952f0.md	00496400,004b65c0,004b67a0,00616038
+004c1b10	FUN_004c1b10	render	unknown	re/analysis/track_loader_d2/004c1b10.md	0047c0f0,004c0e50,004c1a70
+0040de30	sub_0040de30	render	unknown	re/analysis/promote_c2_render_lowrva/0040de30.md	0040df20,00426670,004c1480,004c1c10,004c1c80,0063b928,0063b9a8,0063b9ac,0063b9b0
+0040df20	sub_0040df20	render	unknown	re/analysis/promote_c2_render_lowrva/0040df20.md	0040de30,004266b0,004c1480,004c1c10,004c1c80,0063b928,0063b9a8,0063b9ac
+00410b30	sub_00410b30	render	unknown	re/analysis/promote_c2_render_frame/0x00410b30.md	00403910,00404650,004072e0,0040bde0,0040e350,00411ce0,00413a00,00413a40,004189c0,0041ebb0,00420050,004219c0,00425e40,00426640,00426ba0,004270f0,00429e10,00448730,0045b350,0045b990,004671a0,004725c0,00475d30,00475e50,00477810,00477a10,0047b9e0,004891f0,0048fd70,00490490,0063ba78,0063ba8c,0063ba98,007d3ff8,007f0f30,007f0f3c,007f0fd0
+0042f530	sub_0042f530	render	unknown	re/analysis/skeleton_prep_game_state/0042f530.md	0042b8b0,0042b8c0,0042f537,0042f53c,0042f53d,0042f546,0042f551,0042f556,0042f562,0042f567,0042f572,0042f57e,0042f583,0042f5a0,0042f5ac,0042f5c1,0042f5ce,004671a0,004c7760,0067ed68,0067f190
+004cc7f0	FUN_004cc7f0	render	unknown	re/analysis/promote_c2_rw_render_submit/004cc7f0.md	004cc820
+004ccc50	FUN_004ccc50	render	unknown	re/analysis/render_5_c1_to_c2_s1/FUN_004ccc50.md	007d3ff8
+004d1d70	FUN_004d1d70	render	unknown	re/analysis/render_5_c1_to_c2_s4/FUN_004d1d70.md	
+004db550	FUN_004db550	render	unknown	re/analysis/render_6_c1_to_c2_s6/FUN_004db550.md	004cba80,004db3e0,007d7098,007d70a0,007d70a8,007d70ac
+004cba80	FUN_004cba80	render	unknown	re/analysis/render_4_c1_to_c2_s6/FUN_004cba80.md	
+004c30b0	FUN_004c30b0	render	unknown	re/analysis/skeleton_prep_high_leverage/004c30b0.md	004c2c90,004c30bc,004c30c6,004c30d3,004c30e1,004c30f2,004c3100,004c326e,004cae90,004d7ff0,004d8480,00617fe0,007d3ec8,007d3fd4,007d3ff4,007d3ff8
+004c4680	FUN_004c4680	render	unknown	re/analysis/vehicle_dynamics/004c4680.md	004c3b90
+004ccce0	FUN_004ccce0	render	unknown	re/analysis/render_5_c1_to_c2_s1/FUN_004ccce0.md	007d3ff8
+004d6e70	FUN_004d6e70	render	unknown	re/analysis/render_6_c1_to_c2_s2/004d6e70.md	004d6ce0,005d8c94,005d8ca8,007d4110,007d5168,007d6b14,007d6b30,007d6b34,007d6b38,007d6b3c,007d6b44,007d6c10,007d6c14
+004c0ed0	FUN_004c0ed0	render	unknown	re/analysis/render_3_c1_to_c2_s6/FUN_004c0ed0.md	004d8350
+004c2d90	FUN_004c2d90	render	unknown	re/analysis/render_promote_c2_rw_plugin/0x004c2d90.md	
+004a42c5	FUN_004a42c5	render	unknown	re/analysis/rw_engine_init_d3/004a42c5.md	004a504f
+004ad1e0	FUN_004ad1e0	render	unknown	re/analysis/rw_engine_init_d3/004ad1e0.md	
+00498a00	FUN_00498a00	render	unknown	re/analysis/rw_engine_init_d3/00498a00.md	004a2b60,005d01e4,005d01f4,005d0200
+00498e40	FUN_00498e40	render	unknown	re/analysis/rw_engine_init_d3/00498e40.md	007731f8,00773408,0077340c
+00498ea0	FUN_00498ea0	render	unknown	re/analysis/rw_engine_init_d3/00498ea0.md	00498a00,007731fc,00773200,00773208,0077320c,0077330c,0077338c,00773390,00773394,00773398,0077339c,007733a0,00773408,0077340c,007d3ff8
+004cfa00	FUN_004cfa00	render	unknown	re/analysis/rw_engine_init_d3/004cfa00.md	004c7690,004cfdd0,004cfdf0,00618180
+004c7690	FUN_004c7690	render	unknown	re/analysis/render_4_c1_to_c2_s4/FUN_004c7690.md	004d7de0,00618180
+004492b0	SkyDomeRender	render	unknown	re/analysis/bucket_render_00401690_004dc5b0/004492b0.md	00426060,004491e0,004492b4,004492c3,004492c8,004492d6,004492df,004492e6,004492f0,00449300,00449307,00449316,0044931b,0044931f,00449320,00449325,0044932d,00449335,0044933d,0044937a,0044937d,0044938b,00449393,0044939d,004493a1,004493a4,004493ab,004493b0,004493f9,004493fc,00449407,0044940f,00449420,00449428,0044942a,00451060,004671a0,004840d0,00489240,004c19f0,004c1a00,004c1bb0,004c1c80,004e4320,004e4350,004e6680,005f34ac,007d3ff8
+004e6680	RpClumpRender	render	unknown	re/analysis/frontend_gate_unblock_u/0x004e6680.md	
+004e4320	FUN_004e4320	render	unknown	re/analysis/skeleton_prep_high_leverage/004e4320.md	004c0e50,004e4324,004e4329,004e433e,004e4346,007d716c
+004278d0	FUN_004278d0	render	unknown	re/analysis/render_c1_to_c2_s1/FUN_004278d0.md	00427780,004277a0,004a2be9,00552d10,00552d70,005555b0,00556e90
+00427990	FUN_00427990	render	unknown	re/analysis/render_c1_to_c2_s1/FUN_00427990.md	00427780,004277a0,004a2be9,00552d10,00552d70,005555b0,00556e90
+00427be0	FUN_00427be0	render	unknown	re/analysis/render_c1_to_c2_s1/FUN_00427be0.md	00427840,004a2be9,00552d10,00552d70,005555b0,00556e90
+0042c010	FUN_0042c010	render	unknown	re/analysis/render_frame_d4/0x0042c010.md	0042b8b0,0042b8c0,00472b10,005cc560
+0042c090	FUN_0042c090	render	unknown	re/analysis/render_frame_d4/0x0042c090.md	004273e0
+004c7760	FUN_004c7760	render	unknown	re/analysis/render_4_c1_to_c2_s4/FUN_004c7760.md	004c7768,004c776f,004c777a,004c7780,004c778e,004c7799,004c77a7
+004725c0	FUN_004725c0	render	unknown	re/analysis/render_frame_d4/0x004725c0.md	004e6680,0069150c,006915ac
+004891f0	FUN_004891f0	render	unknown	re/analysis/render_c0_promote_b/0x004891f0.md	007030a8,007d3ff8
+00490490	FUN_00490490	render	unknown	re/analysis/render_c0_promote_c/0x00490490.md	00490497,004904a4,004904ba,004e6680,007d3ff8
+00429e10	FUN_00429e10	render	unknown	re/analysis/render_c1_to_c2_s1/FUN_00429e10.md	00405890,0040dc80,0040e350,0040e4a0,00417730,00417740,0041e140,00427e00,004295a0,00429660,00429bd0,0042f6a0,00443080,004671a0,00472c60,004c19f0,004c1a00,004c1bb0,004c1c80
+0042f660	DefaultViewportCameraInit	render	unknown	re/analysis/promote_c2_video_display/0042f660.md	0042d420,0042f530,004c1a40,004c1b10,004c1d30,004c77c0,0067ed68,0067f190
+0041faf0	VehicleShadowRender	render	unknown	re/analysis/promote_c2_render_lowrva/0041faf0.md	004769f0,00476a10,00476d00,004a2c48,004c0ed0,004c45f0,004c4d20,004c5010,004c52f0,005cc32c,0063e49c
+0041fcc0	TireMarkRender	render	unknown	re/analysis/promote_c2_render_lowrva/0041fcc0.md	004769f0,00476a10,00476d00,004a2c48,004c45f0,004c4d20,004c5010,004c51a0,004c52f0,005f5fe8,005f6088,0063e4a0
+0041f8f0	FUN_0041f8f0	render	unknown	re/analysis/promote_c2_render_lowrva/0041f8f0.md	00422570,00422ac0,00422af0,00426060,00426070,00426e00,004b42c0,004c1340,004c1680,004c19f0,004c1a00,004c1bb0,004e4320,004e4350,005cca00,006146fc,0063d850,0063d854,0063e490,0065742c,007d3ff8
+004228f0	FUN_004228f0	render	unknown	re/analysis/promote_c2_render_lowrva/004228f0.md	00422570,004cd070,004cd140,004cd2d0,005cc320,005cc328,006403fc,006412e8,00641310,00641313,00641318,0064131c,00641324,007d3ff8
+0042a5d0	FUN_0042a5d0	render	unknown	re/analysis/track_loader_d3/0042a5d0.md	0042a530,0042a640,004b3bf0,005cd29c,005f65b0,0067d9a8,0067e6a8
+0042a7f0	FUN_0042a7f0	render	unknown	re/analysis/track_loader_d3/0042a7f0.md	0042a530,0042a640,004b3cc0,005cd6f0,005f65c0,0067dea8,0067e0a8
+0042a860	FUN_0042a860	render	unknown	re/analysis/track_loader_d3/0042a860.md	0042a530,0042a640,004b3de0,005cd6e8,005f65c4,0067dda8,0067e5a8
+00474fd0	FUN_00474fd0	render	unknown	re/analysis/track_loader_d3/00474fd0.md	00474f30,00474fb0
+00491590	FUN_00491590	render	unknown	re/analysis/track_loader_d3/00491590.md	00491070,00491780,006146b0,006146c0,006146c4,006146c8,006146cc,0077152c,00771530,00771534,00771538,0077153c
+0045de80	FUN_0045de80	render	unknown	re/analysis/render_c1_to_c2_s3/FUN_0045de80.md	
+004c1480	FUN_004c1480	render	unknown	re/analysis/skeleton_prep_high_leverage/004c1480.md	004c1483,004c148c,004c1496,004c149a,004c14a5,004c14b1,004c14be,004c14ca,004c14d6,004c1511,004c52f0,007d3ff8
+004b3de0	FUN_004b3de0	render	unknown	re/analysis/track_loader_d4/0x004b3de0.md	004b3c60,004b3cc0,004b3dee,004b3dfe,004b3e0f,004b3e19,004cc160,004cc230,004cc5e0,0052daf0
+00474fb0	FUN_00474fb0	render	unknown	re/analysis/track_loader_d4/0x00474fb0.md	00474f90,00474fb6,004e66d0
+004b53b0	FUN_004b53b0	render	unknown	re/analysis/render_3_c1_to_c2_s5/FUN_004b53b0.md	004b4550,004c3b30,005d757c
+004c3d90	FUN_004c3d90	render	unknown	re/analysis/track_loader_d4/0x004c3d90.md	004c3d97,007d3ff8,007d3ffc
+004c77c0	FUN_004c77c0	render	unknown	re/analysis/texture_loader_d3/0x004c77c0.md	
+004cc400	FUN_004cc400	render	unknown	re/analysis/texture_loader_d3/0x004cc400.md	
+004cc4f0	FUN_004cc4f0	render	unknown	re/analysis/render_5_c1_to_c2_s1/FUN_004cc4f0.md	
+004cdd60	FUN_004cdd60	render	unknown	re/analysis/texture_loader_d3/0x004cdd60.md	
+004c1340	FUN_004c1340	render	unknown	re/analysis/render_c0_promote_c/0x004c1340.md	004c51a0,007d3ff8
+004b42c0	FUN_004b42c0	render	unknown	re/analysis/render_3_c1_to_c2_s3/FUN_004b42c0.md	004c0ed0,004c1480,004c39b0,004c45f0,004c4600,004c4dc0
+004c1680	FUN_004c1680	render	unknown	re/analysis/render_c0_promote_c/0x004c1680.md	004c1340,004c4680,007d3ff8
+004cd070	RwRenderPrimitiveSubmit	render	unknown	re/analysis/promote_c2_rw_render_submit/004cd070.md	004d40d0,004d7ff0,004d8480,007d3ff8
+004cd2d0	RwRenderIndexedSubmit	render	unknown	re/analysis/promote_c2_rw_render_submit/004cd2d0.md	004cd070,004d40c0,004d40d0,004d7ff0,004d8480,007d3ff8,007d4710
+004d8430	rwID_ERRORMODULE_ctor	render	unknown	re/analysis/render_6_c1_to_c2_s4/0x004d8430.md	
+004d8470	rwID_ERRORMODULE_dtor	render	unknown	re/analysis/render_6_c1_to_c2_s4/0x004d8470.md	
+004d8530	rwID_PIPEMODULE_ctor	render	unknown	re/analysis/render_6_c1_to_c2_s4/0x004d8530.md	
+004d8550	rwID_PIPEMODULE_dtor	render	unknown	re/analysis/render_6_c1_to_c2_s4/0x004d8550.md	
+004d8fa0	rwID_CHUNKGROUPMODULE_ctor	render	unknown	re/analysis/render_6_c1_to_c2_s4/0x004d8fa0.md	
+004d8a80	rwID_RESOURCESMODULE_ctor	render	unknown	re/analysis/render_6_c1_to_c2_s4/0x004d8a80.md	
+004d8b70	rwID_RESOURCESMODULE_dtor	render	unknown	re/analysis/render_6_c1_to_c2_s4/0x004d8b70.md	
+00448730	FUN_00448730	render	unknown	re/analysis/c0_promotion_render_a/0x00448730.md	00432ad0,004430c0,00444ff0,005cc320,007f0f7c,007f1a50
+0045b990	FUN_0045b990	render	unknown	re/analysis/render_c1_to_c2_s3/FUN_0045b990.md	00458b10,0045a130,005f99b8
+0042d4a0	FUN_0042d4a0	render	unknown	re/analysis/frontend_unmapped_a/0x0042d4a0.md	0042b8b0,0042b8c0,004671a0,004c1c80,004c7760,0067f18c
+0042d560	FUN_0042d560	render	unknown	re/analysis/promote_c2_video_display/0042d560.md	0042d420,0042d4a0,0042f530,004c1a40,004c1b10,004c1d30,004c77c0,0067f18c
+004c4600	RwMatrixMultiply	render	unknown	re/analysis/render_pipeline_d3/004c4600.md	
+004cce20	FUN_004cce20	render	unknown	re/analysis/render_5_c1_to_c2_s1/FUN_004cce20.md	004cc820
+004d7c60	FUN_004d7c60	render	unknown	re/analysis/render_6_c1_to_c2_s3/004d7c60.md	
+004d7de0	FUN_004d7de0	render	unknown	re/analysis/render_6_c1_to_c2_s3/004d7de0.md	
+00401f10	FUN_00401f10	render	unknown	re/analysis/promote_c2_render_lowrva/00401f10.md	0040e340,00412130,004e6680,00636ac0,007d3ff8
+00403910	FUN_00403910	render	unknown	re/analysis/promote_c2_render_lowrva/00403910.md	004036a0,004938e0,00636b70,00636b74,00636b78
+00403db0	FUN_00403db0	render	unknown	re/analysis/promote_c2_render_lowrva/00403db0.md	00403d30,00403ed0,00427ad0
+004041c0	FUN_004041c0	render	unknown	re/analysis/promote_c2_render_lowrva/004041c0.md	00403fa0,00417730,00427e00,005cc31c,005cc320,005cc32c,005cc558,005cc574,005cc728,005cc730,005cc734,005cc738,005cc73c,005d757c,00636b80,007f100c
+00404650	FUN_00404650	render	unknown	re/analysis/promote_c2_render_lowrva/00404650.md	00401f10,00404320,0041f290,004c1480,004e6680,005d757c,00636c00,007f0fd0,007f0fe4
+004072e0	FUN_004072e0	render	unknown	re/analysis/promote_c2_render_lowrva/004072e0.md	00406130,004b59c0,00639dfc,0063a5d0,0063a5d8,007d3ff8
+0040bde0	FUN_0040bde0	render	unknown	re/analysis/promote_c2_render_lowrva/0040bde0.md	00412100,00413f50,00421560,00457610,00475d30,00475e50,00477810,00486220,00486f50,00487de0,0048ad50,0048baf0,0048e7b0,0048fce0,0048fd10,0048fd40,0048fd70,00490490,0063b8f0,0063b8f4
+004189c0	FUN_004189c0	render	unknown	re/analysis/promote_c2_render_lowrva/004189c0.md	0040e350,00419530,0042fe50
+0041ebb0	FUN_0041ebb0	render	unknown	re/analysis/render_promote_c2_track_node/0x0041ebb0.md	00476df0,004770a0,0063e49c,0063e4a0,007d3ff8
+004219c0	FUN_004219c0	render	unknown	re/analysis/promote_c2_render_lowrva/004219c0.md	00421720,0063fb90,006403b0,007d3ff8
+00422570	FUN_00422570	render	unknown	re/analysis/promote_c2_render_lowrva/00422570.md	00472500,00477e60,00477f50,004a2c48,004b4ad0,004c3d90,005cc324,005cc56c,005cc950,005cd318,006403b8,006403e8,00640410,00641313,00641318,00641320,00641324
+004c35f0	FUN_004c35f0	render	unknown	re/analysis/render_c0_promote_c/0x004c35f0.md	004c3670,004c3730,004c37d0,004c3880,007d3ff8,007d3ffc
+004c40b0	FUN_004c40b0	render	unknown	re/analysis/render_c0_promote_c/0x004c40b0.md	004c40e0,007d3ff8,007d4028
+004cfe20	FUN_004cfe20	render	unknown	re/analysis/render_c0_promote_c/0x004cfe20.md	004cc7f0,007d46e4
+004d40d0	FUN_004d40d0	render	unknown	re/analysis/render_5_c1_to_c2_s6/004d40d0.md	004e1710,004e2030
+00426030	FUN_00426030	render	unknown	re/analysis/render_promote_c2_track_loader/0x00426030.md	0041e8f0,0041e9b0,0041ea10,0042604c,005f616c,00644158,00646e58
+004260e0	FUN_004260e0	render	unknown	re/analysis/render_promote_c2_track_loader/0x004260e0.md	005cc4dc,005cd4ac
+004262f0	FUN_004262f0	render	unknown	re/analysis/render_promote_c2_track_loader/0x004262f0.md	00425b70,00425bf0,00425c00,004952f0,00644370,00646c38,00646e38,00657408
+00426640	FUN_00426640	render	unknown	re/analysis/render_promote_c2_track_loader/0x00426640.md	0041e950,0041e9b0,0041ea70,0066d704
+00426700	FUN_00426700	render	unknown	re/analysis/render_promote_c2_track_loader/0x00426700.md	004756e0,005cc948,005cc94c
+00426780	FUN_00426780	render	unknown	re/analysis/render_promote_c2_track_loader/0x00426780.md	00475010,005cc948,005cc94c
+00426810	sub_00426810	render	unknown	re/analysis/render_promote_c2_track_loader/0x00426810.md	004924c0,004a2c48,004c1b10,004c39b0,004c3dc0,004c4d20,005cc320,005cd50c,005f6170,005f6174,0066d71c
+00426ab0	sub_00426ab0	render	unknown	re/analysis/render_promote_c2_track_loader/0x00426ab0.md	0040b090,0041e8c0,0041e9b0,0041e9e0,00426700,00426780,00426810,004671a0,00467210,00471ec0,0047c160,00491490,00644158,00646e58
+00426e10	FUN_00426e10	render	unknown	re/analysis/render_promote_c2_track_loader/0x00426e10.md	004053d0,00409680,00409710,00412050,0041e870,0041e8b0,0041e970,0041e980,0041e9d0,0041ea90,004235b0,00423630,00425ab0,004260e0,004262f0,00426cd0,0042a530,0042a8d0,0042f510,00462950,004671a0,004715a0,00478660,00479330,0047a020,0047a0f0,0047c0b0,0047c0f0,00480340,00491780,004924c0,00495280,004952f0,004987b0,004c1b10,005cd280,00616038,00644158,00644370,00644378,00646e58,00656ed8,00657430,00657448,0065744c,0065744d,0065744e,00657450,00657454,00657498,0066d6e4,0066d704,007d3ff8
+004c5a00	FUN_004c5a00	render	unknown	re/analysis/texture_loader_d3_cont1/0x004c5a00.md	
+004c5ae0	FUN_004c5ae0	render	unknown	re/analysis/texture_loader_d3_cont1/0x004c5ae0.md	
+004c5b50	FUN_004c5b50	render	unknown	re/analysis/texture_loader_d3_cont1/0x004c5b50.md	
+004d8810	RwNativeRasterRead	render	unknown	re/analysis/render_6_c1_to_c2_s4/0x004d8810.md	
+004e1df0	FUN_004e1df0	render	unknown	re/analysis/texture_loader_d3_cont1/0x004e1df0.md	
+00477730	FUN_00477730	render	unknown	re/analysis/promote_c2_render_frame/0x00477730.md	004773f0,00477810,006925b8,00692bb8
+004a4fc1	write_char	render	unknown	re/analysis/rw_engine_init_d2_cont2/0x004a4fc1.md	
+004a4da0	__aulldvrm	render	unknown	re/analysis/rw_engine_init_d2_cont2/0x004a4da0.md	
+004cfe40	FUN_004cfe40	render	unknown	re/analysis/promote_c2_render_d3d9/0x004cfe40.md	
+004dcdc0	FUN_004dcdc0	render	unknown	re/analysis/promote_c2_render_d3d9/0x004dcdc0.md	
+0048aa20	FUN_0048aa20	render	unknown	re/analysis/ai_update_d6/0x0048aa20.md	0044e0a0,0048a850
+00487020	FUN_00487020	render	unknown	re/analysis/ai_update_d6/0x00487020.md	004219f0,0045bfe0,0045c350,00486610,004b4b60,004b5080,005cc9bc
+00499ce0	FUN_00499ce0	render	unknown	re/analysis/skeleton_prep_boot_winmain_b/00499ce0.md	00773928,0077392c,00773930,00773934,00773938,0077393c,00773940,00773944,00773948,0077394c,00773950,00773954,00773958,0077395c,00773960,00773964
+00497060	FUN_00497060	render	unknown	re/analysis/settings_config_d2_cont1/00497060.md	00496ec0,00497000,004ed6ad
+004c52f0	RwMatrixCombine	render	unknown	re/analysis/vehicle_update_d3_cont/004c52f0.md	004d7ff0,004d8480,007d3ff8,007d4028
+00401690	FUN_00401690	render	unknown	re/analysis/bucket_render_00401690_004dc5b0/00401690.md	004019c3,004025f0,004b3f90,004c3ac0,005cc320,005cc32c,005cc33c,007d3ff8
+004019d0	FUN_004019d0	render	unknown	re/analysis/render_c1_to_c2_s1/FUN_004019d0.md	0040e340,00412130,00426cf0,00426d00,00467210,0046d4a0,004b4080,004b42c0,004c1340,004c13e0,004c1480,004c4d20,004c5010,004c51a0
+00483a70	FUN_00483a70	render	unknown	re/analysis/render_2_c1_to_c2_s3/FUN_00483a70.md	00482ae0,004b59c0,004b5af0,005cc56c,007d3ff8
+004430e0	FUN_004430e0	render	unknown	re/analysis/render_c1_to_c2_s2/FUN_004430e0.md	
+00448ef0	FUN_00448ef0	render	unknown	re/analysis/render_c1_to_c2_s3/FUN_00448ef0.md	00448cb0,00448dc0,00448e20,004671a0,00488390,00491f00
+00490e50	FUN_00490e50	render	unknown	re/analysis/breadth_unmapped_0049x/0x00490e50.md	004987b0,004a332b
+00490f50	FUN_00490f50	render	unknown	re/analysis/breadth_unmapped_0049x/0x00490f50.md	00490e70,00490f80,005cdb14,00616030,00616031,00616032,00616033,00616034
+00490f80	FUN_00490f80	render	unknown	re/analysis/breadth_unmapped_0049x/0x00490f80.md	00490e70,00490f50,005cdb00,00616030,00616034,00616035,00616036,00616037
+00491030	FUN_00491030	render	unknown	re/analysis/breadth_unmapped_0049x/0x00491030.md	006146d0,006146d4,006146d8,006146dc,006146e0,006146e4
+004910c0	FUN_004910c0	render	unknown	re/analysis/breadth_unmapped_0049x/0x004910c0.md	004671a0,00467210,00472650,00491490,004c1b10,004c1b40,004c39b0,006146b4,00771530,00771534
+00491530	FUN_00491530	render	unknown	re/analysis/breadth_unmapped_0049x/0x00491530.md	00426b40,00491bd0,0077152c,00771530,00771534,007d3ff8
+004d3db0	FUN_004d3db0	render	unknown	re/analysis/render_5_c1_to_c2_s6/004d3db0.md	004cc820,004e1780,004e17e0,004e1e70
+004d3e90	FUN_004d3e90	render	unknown	re/analysis/render_5_c1_to_c2_s6/004d3e90.md	007d3ff8
+004d4170	FUN_004d4170	render	unknown	re/analysis/render_5_c1_to_c2_s6/004d4170.md	004d7ff0,004d8480
+004d4250	FUN_004d4250	render	unknown	re/analysis/render_5_c1_to_c2_s6/004d4250.md	004d7ff0,004d8480
+004d42b0	FUN_004d42b0	render	unknown	re/analysis/render_5_c1_to_c2_s6/004d42b0.md	004d7ff0,004d8480
+004d4310	FUN_004d4310	render	unknown	re/analysis/render_5_c1_to_c2_s6/004d4310.md	
+004d4380	FUN_004d4380	render	unknown	re/analysis/render_5_c1_to_c2_s6/004d4380.md	004d4910,004d4a20,004d4bf0,004d7ff0,004d8480,004e2090
+004d4910	FUN_004d4910	render	unknown	re/analysis/render_5_c1_to_c2_s6/004d4910.md	
+004d4a20	FUN_004d4a20	render	unknown	re/analysis/render_5_c1_to_c2_s6/004d4a20.md	
+004d4bf0	FUN_004d4bf0	render	unknown	re/analysis/render_5_c1_to_c2_s6/004d4bf0.md	
+004d4dd0	FUN_004d4dd0	render	unknown	re/analysis/render_5_c1_to_c2_s6/004d4dd0.md	004d4910,004d4a20,004d7ff0,004d8480
+004d4f00	FUN_004d4f00	render	unknown	re/analysis/render_5_c1_to_c2_s6/004d4f00.md	
+004d4f90	FUN_004d4f90	render	unknown	re/analysis/render_6_c1_to_c2_s1/004d4f90.md	004d3e90,004d5190,004d7ff0,004d8480,007d3ff8
+004d5190	FUN_004d5190	render	unknown	re/analysis/render_6_c1_to_c2_s1/004d5190.md	004d7ff0,004d8480,007d3ff8
+004d52d0	FUN_004d52d0	render	unknown	re/analysis/render_6_c1_to_c2_s1/004d52d0.md	007d3ff8
+004d5310	FUN_004d5310	render	unknown	re/analysis/render_6_c1_to_c2_s1/004d5310.md	007d3ff8
+004d5340	FUN_004d5340	render	unknown	re/analysis/render_6_c1_to_c2_s1/004d5340.md	007d3ff8
+004d5550	FUN_004d5550	render	unknown	re/analysis/render_6_c1_to_c2_s1/004d5550.md	007d4720
+004d6ce0	FUN_004d6ce0	render	unknown	re/analysis/render_6_c1_to_c2_s2/004d6ce0.md	007d4110,007d6b10,007d6b14,007d6b30
+004d71f0	FUN_004d71f0	render	unknown	re/analysis/render_6_c1_to_c2_s2/004d71f0.md	004d7100,007d6b10
+004d7480	FUN_004d7480	render	unknown	re/analysis/render_6_c1_to_c2_s3/004d7480.md	
+00491490	FUN_00491490	render	unknown	re/analysis/cluster_0049_first_pass/00491490.md	004910c0,00491340,007f108b
+004935a0	FUN_004935a0	render	unknown	re/analysis/cluster_0049_first_pass/004935a0.md	00496400,004c5c80,0052cb00
+004935d0	FUN_004935d0	render	unknown	re/analysis/cluster_0049_first_pass/004935d0.md	004935a0,00496400,004c5c80,00514330
+004943d0	FUN_004943d0	render	unknown	re/analysis/cluster_0049_first_pass/004943d0.md	00493c60
+00494b20	FUN_00494b20	render	unknown	re/analysis/cluster_0049_first_pass/00494b20.md	00493c60,0049ebc0,005cf9d0,005cf9e8,005cfd30,005cfd70,005d0e74,005d0e88
+00494c60	FUN_00494c60	render	unknown	re/analysis/cluster_0049_first_pass/00494c60.md	00493c60,004943d0,00494b20
+00496970	FUN_00496970	render	unknown	re/analysis/skeleton_prep_boot_winmain_b/00496970.md	004c7650,0077307c
+00496c10	FUN_00496c10	render	unknown	re/analysis/cluster_0049_first_pass/00496c10.md	004938e0,00496940,004969a0,00636b70,00773078,0077307c
+00496ec0	FUN_00496ec0	render	unknown	re/analysis/cluster_0049_first_pass/00496ec0.md	004c0ed0,004c4dc0
+0049a0a0	FUN_0049a0a0	render	unknown	re/analysis/cluster_0049_first_pass/0049a0a0.md	0045b350,0049a2e0,0049a740,00773968
+0049a0e0	FUN_0049a0e0	render	unknown	re/analysis/cluster_0049_first_pass/0049a0e0.md	0045b350,0049a0a0,0049a150,0049a730,0049aae0,00636ad4,00771e58,00773968
+0049a150	FUN_0049a150	render	unknown	re/analysis/cluster_0049_first_pass/0049a150.md	0045b350,0049a0a0,0049ab10,00773968
+0049a730	FUN_0049a730	render	unknown	re/analysis/cluster_0049_first_pass/0049a730.md	00426c00,0049a0e0,00773970
+0049aae0	FUN_0049aae0	render	unknown	re/analysis/cluster_0049_first_pass/0049aae0.md	004cbad0,004cbb20,005d0438,005d0518,00773974,0077397c
+0049ab10	FUN_0049ab10	render	unknown	re/analysis/cluster_0049_first_pass/0049ab10.md	0049aae0,004cbb50,00773974,0077397c
+00412100	FUN_00412100	render	unknown	re/analysis/bucket_gameplay_00412100_00418e50/0x00412100.md	00412190,00412620,0063bb38
+00412190	FUN_00412190	render	unknown	re/analysis/bucket_gameplay_00412100_00418e50/0x00412190.md	00412130,00412880,00426cf0,00426d00,0045bfe0,0047d080,0047d100,0047d180,004b42c0,004b4430,004b4cd0,004c1340,004c13e0,004c3ac0,004c51a0,005cd02c,005f2a40,006146fc,0063bb38,0063bb3c,0063bb58,0063bb5c,0063bb60
+00412620	FUN_00412620	render	unknown	re/analysis/bucket_gameplay_00412100_00418e50/0x00412620.md	00412130,00412190,0041f300,00459400,004671a0,00474e70,0047ce00,004b42c0,004c1340,004c13e0,005cc32c,005cc358,005cc35c,005cc558,005cc568,005cc9a0,005cd030,005cd038,005cd03c,005f2a40,007f101c
+00412880	thunk_FUN_00412190	render	unknown	re/analysis/bucket_gameplay_00412100_00418e50/0x00412880.md	0040bd80,00412190
+00412e30	FUN_00412e30	render	unknown	re/analysis/bucket_gameplay_00412100_00418e50/0x00412e30.md	004a2c48,004c3ac0,005cc55c,005cc568,005cc9a0,005cc9a4
+004173e0	FUN_004173e0	render	unknown	re/analysis/bucket_gameplay_00412100_00418e50/0x004173e0.md	007f1a9c,007f9a9c
+00418db0	FUN_00418db0	render	unknown	re/analysis/bucket_gameplay_00412100_00418e50/0x00418db0.md	00418a00,00418e30,00419530,0063bda0,0063bde0
+00418e30	FUN_00418e30	render	unknown	re/analysis/bucket_gameplay_00412100_00418e50/0x00418e30.md	00418a00,00418db0,00418de0,004194f0,0063bda0
+0041a9d0	FUN_0041a9d0	render	unknown	re/analysis/bucket_gameplay_0041a980_0041d910/0041a9d0.md	0041a500,0041aab7,0041aac0,0041ac60,0041ad00,004c39b0,005cd188,005d757c,0063c7e0,0063c82c
+0041aac0	FUN_0041aac0	render	unknown	re/analysis/bucket_gameplay_0041a980_0041d910/0041aac0.md	0041a550,0041a9d0,0041ac52,0041ad00,004c39b0,005ccac4,005d757c,0063c7c0,0063c7c4,0063c82c
+0041ac60	FUN_0041ac60	render	unknown	re/analysis/bucket_gameplay_0041a980_0041d910/0041ac60.md	0041a5b0,0041acfc,0041ad00,0041f260,004c3ac0,005cc32c,005cc56c
+0041adb0	FUN_0041adb0	render	unknown	re/analysis/bucket_gameplay_0041a980_0041d910/0041adb0.md	0041ae15,004b5260,0063c89c,007f1a1c
+0041ae60	FUN_0041ae60	render	unknown	re/analysis/bucket_gameplay_0041a980_0041d910/0041ae60.md	0041aef0,0041af00,0041af50,004c13e0
+0041af00	FUN_0041af00	render	unknown	re/analysis/bucket_gameplay_0041a980_0041d910/0041af00.md	0041ae60,0041af4d,0041af50,004c13e0
+0041b690	FUN_0041b690	render	unknown	re/analysis/bucket_gameplay_0041a980_0041d910/0041b690.md	0041ad60,0041b717,0041bec0,004b3fc0,004b5190,004b5260,004b6520,0063cab8
+0041b7a0	FUN_0041b7a0	render	unknown	re/analysis/bucket_gameplay_0041a980_0041d910/0041b7a0.md	0040b6d0,0040b890,0041af50,0041b720,0041bbb8,0041c090,004c13e0,004c1480,004c51a0,0063cd90
+0041c320	FUN_0041c320	render	unknown	re/analysis/bucket_gameplay_0041a980_0041d910/0041c320.md	0041ad60,0041b690,0041c37a,0041cb10,004b3fc0,004b5190,004b6520,0063ce20
+0041c380	FUN_0041c380	render	unknown	re/analysis/bucket_gameplay_0041a980_0041d910/0041c380.md	0041c3e3,0041c401,0042f500,0063cde4,007f0fd0,007f1a1c
+0041c410	FUN_0041c410	render	unknown	re/analysis/bucket_gameplay_0041a980_0041d910/0041c410.md	0040b420,0040b6d0,0040b890,0041af50,0041c91d,0041cc50,004c13e0,004c1480,004c51a0,005cc320,005cc8f0,005cc94c,005cc9c0,005cd118,005f337c,0063cdc0,0063cdd4,0063cde8,0063cdf8,0063ce08,0063d270
+0041cd20	FUN_0041cd20	render	unknown	re/analysis/bucket_gameplay_0041a980_0041d910/0041cd20.md	0041b690,0041cdaa,0041d6e0,004b3fc0,004b5190,004b5260,004b6520,0063d298
+0041ce00	FUN_0041ce00	render	unknown	re/analysis/bucket_gameplay_0041a980_0041d910/0041ce00.md	0040b420,0040b6d0,0040b890,0041b7a0,0041cdb0,0041d36e,0041d830,004c13e0,004c1480,004c51a0,005cc320,005cc8f0,005cc94c,005cc9c0,005cd118,005f33c4,0063d278,0063d288,0063d558
+004b4010	FUN_004b4010	render	unknown	re/analysis/bucket_powerups_camera_particle_0044d5e0_004b4140/0x004b4010.md	004b3f20
+004b4050	FUN_004b4050	render	unknown	re/analysis/bucket_powerups_camera_particle_0044d5e0_004b4140/0x004b4050.md	004b3f90,004b4055,004b4070
+004b4120	FUN_004b4120	render	unknown	re/analysis/bucket_powerups_camera_particle_0044d5e0_004b4140/0x004b4120.md	004b40f0
+004dfab0	FUN_004dfab0	render	unknown	re/analysis/bucket_004ddfb0/0x004dfab0.md	
+004dfb10	FUN_004dfb10	render	unknown	re/analysis/bucket_004ddfb0/0x004dfb10.md	004dfab0
+004dfb60	FUN_004dfb60	render	unknown	re/analysis/bucket_004ddfb0/0x004dfb60.md	004dee20,004dfab0,004dfb10
+004dfbc0	FUN_004dfbc0	render	unknown	re/analysis/bucket_004ddfb0/0x004dfbc0.md	004cdca0,004cdd60,004d9050,004d9530,004da4f0,004daa40,004daaf0,004dee40
+004e02d0	FUN_004e02d0	render	unknown	re/analysis/bucket_004ddfb0/0x004e02d0.md	004df120,004df750
+00421100	FUN_00421100	render	unknown	re/analysis/bucket_gameplay_00421100_004223f0/0x00421100.md	00420d80,00421152,005cc9e0,005cd2b4
+00421160	FUN_00421160	render	unknown	re/analysis/bucket_gameplay_00421100_004223f0/0x00421160.md	00421100,004212a6,00472650,00472690,004a2c48,005cc99c,005cc9c0,0063e4a8,0063e588,0063e58c,0063e590,0063e59c,0063e5a0,0063e5a4,0063e5a8,0063e5ac,0063e5b0,0063fb88
+004212b0	FUN_004212b0	render	unknown	re/analysis/bucket_gameplay_00421100_004223f0/0x004212b0.md	0040e370,0041f290,00421160,0042155c,0046cb30,00472650,00474de0,004769a0,004769d0,004769f0,00476a30,00476d00,00476df0,004a2c48,004c3ac0,005cc318,005cc320,005cc328,005cc32c,005cd2b8,005cd2c0,005d757c,0063e4a8,0063e4b8,0063e4bc,0063e548,0063e5a4,007f100c
+00421560	FUN_00421560	render	unknown	re/analysis/bucket_gameplay_00421100_004223f0/0x00421560.md	004212b0,00421586,004770a0,0063e548,007d3ff8
+004215e0	FUN_004215e0	render	unknown	re/analysis/bucket_gameplay_00421100_004223f0/0x004215e0.md	00420de0,00421620,005d757c
+00421630	FUN_00421630	render	unknown	re/analysis/bucket_gameplay_00421100_004223f0/0x00421630.md	0041f220,004215e0,0042168e,004c3d90,004c4dc0
+00421690	FUN_00421690	render	unknown	re/analysis/bucket_gameplay_00421100_004223f0/0x00421690.md	00421060,004216a5
+00421720	FUN_00421720	render	unknown	re/analysis/bucket_gameplay_00421100_004223f0/0x00421720.md	004216b0,00421740,004219c0,00421c50
+00421930	FUN_00421930	render	unknown	re/analysis/bucket_gameplay_00421100_004223f0/0x00421930.md	00421750,00421800,00421952,0057c210
+00421c10	FUN_00421c10	render	unknown	re/analysis/bucket_gameplay_00421100_004223f0/0x00421c10.md	00421980,00421c4f
+004220d0	FUN_004220d0	render	unknown	re/analysis/bucket_gameplay_00421100_004223f0/0x004220d0.md	00421ba0,0042211f,0042a5d0,0063fb90
+00422140	FUN_00422140	render	unknown	re/analysis/bucket_gameplay_00421100_004223f0/0x00422140.md	0040cf80,00421c80,004220d0,0042215e,0063fb90
+00422160	FUN_00422160	render	unknown	re/analysis/bucket_gameplay_00421100_004223f0/0x00422160.md	00420da0,00420dc0,004216b0,004219a0,00421d20,00422280,00465c10,004c1340,006403b0
+00422290	FUN_00422290	render	unknown	re/analysis/bucket_gameplay_00421100_004223f0/0x00422290.md	00421720,00421c50,00422160,004222b0,004222d0
+004223b0	FUN_004223b0	render	unknown	re/analysis/bucket_gameplay_00421100_004223f0/0x004223b0.md	004222f0,004223e2,004e66d0
+00474db0	FUN_00474db0	render	unknown	re/analysis/bucket_00474d80/0x00474db0.md	004b6520,007d3ff8
+00474de0	FUN_00474de0	render	unknown	re/analysis/bucket_00474d80/0x00474de0.md	004671d0
+00474e70	FUN_00474e70	render	unknown	re/analysis/bucket_00474d80/0x00474e70.md	004c3ac0
+00475010	FUN_00475010	render	unknown	re/analysis/bucket_00474d80/0x00475010.md	00474f50,00474fb0
+00475180	FUN_00475180	render	unknown	re/analysis/bucket_00474d80/0x00475180.md	00474db0,007d3ff8
+00475210	FUN_00475210	render	unknown	re/analysis/bucket_00474d80/0x00475210.md	0045bfe0,004b4b60,004b5080,005ce18c
+004752d0	FUN_004752d0	render	unknown	re/analysis/bucket_00474d80/0x004752d0.md	004752f0
+004756e0	FUN_004756e0	render	unknown	re/analysis/render_c1_to_c2_s5/FUN_004756e0.md	004752f0,004756f0,004756f5,004756fd,00475703,00475707,00475714,00475716,0047571c,004b47e0,004c1480
+00475770	FUN_00475770	render	unknown	re/analysis/render_c1_to_c2_s5/FUN_00475770.md	0047577d,0047578d,004a39d4,005cc98c,005ceae0,005ceae4
+004758d0	FUN_004758d0	render	unknown	re/analysis/render_c1_to_c2_s5/FUN_004758d0.md	00475830,004758d2,004e66d0
+004759b0	FUN_004759b0	render	unknown	re/analysis/render_c1_to_c2_s5/FUN_004759b0.md	00474db0,004759b6,004759bc,004759c8,004759d4,004759e0,00691600,00691604,00691608,00691610,00691614
+00475a00	FUN_00475a00	render	unknown	re/analysis/render_c1_to_c2_s5/FUN_00475a00.md	00474db0,00475a06,00475a16,00475a21,00475a27,00475a2d,004770c0,00691604,00691608,0069160c,00691610
+00475ab0	FUN_00475ab0	render	unknown	re/analysis/render_c1_to_c2_s5/FUN_00475ab0.md	00475ab8,00475ac0,00475acb,00475ad0,00475b44,00475bf8,0061324c,00691604,00691610,00691614
+00475d90	FUN_00475d90	render	unknown	re/analysis/render_c1_to_c2_s5/FUN_00475d90.md	004759b0,00475d9e,00475da5,00475dba,00475dc9,00475de8,00475de9,00475e43,004768c0,00691600,00691604,00691608,00691610,00691614,007d3ff8
+00475ea0	FUN_00475ea0	render	unknown	re/analysis/render_c1_to_c2_s5/FUN_00475ea0.md	00475ea2,00475eb8,00475eb9,00475ece,00475ed0,004768c0,00692498
+00475ef0	FUN_00475ef0	render	unknown	re/analysis/render_c1_to_c2_s5/FUN_00475ef0.md	00475ef6,00475eff,00475f08,004b6520,00613254
+00475f50	FUN_00475f50	render	unknown	re/analysis/render_c1_to_c2_s5/FUN_00475f50.md	00475f52,00475f5a,00475f5e,00475f64,004a2c48
+00475f90	FUN_00475f90	render	unknown	re/analysis/render_c1_to_c2_s5/FUN_00475f90.md	00475f30,00475f50,00475f96,00475f9a,00475faf,00475fc4,00475fd7,00475fd9,00475fe5,00475ff4,00476002,00476007,0047605e,00476068,004762b0,004769a0,004769d0,004769f0,00476a30,00476d00,004a2c48,004c39b0,005d757c,00613250,0061325c,00613268,00613284,00692498,007f100c
+00476320	FUN_00476320	render	unknown	re/analysis/render_c1_to_c2_s5/FUN_00476320.md	004762c0,00476326,00476336,0047633e,0047634e,0047634f,00476360,00476364,004c39b0,005cd7a8
+00476390	FUN_00476390	render	unknown	re/analysis/render_c1_to_c2_s5/FUN_00476390.md	0040bb30,00475ef0,00476392,00476398,004763a4,004763c2,004763c4,004763d0,004763e8,004763ea,00476cb0,004770c0,00692498
+00476710	FUN_00476710	render	unknown	re/analysis/render_c1_to_c2_s6/FUN_00476710.md	004764f0,00476650,0069183c
+004767c0	FUN_004767c0	render	unknown	re/analysis/render_c1_to_c2_s6/FUN_004767c0.md	004764f0,00476710,0069183c
+00476860	FUN_00476860	render	unknown	re/analysis/render_c1_to_c2_s6/FUN_00476860.md	00476650
+004768a0	FUN_004768a0	render	unknown	re/analysis/render_c1_to_c2_s6/FUN_004768a0.md	004767c0
+004770a0	FUN_004770a0	render	unknown	re/analysis/render_c1_to_c2_s6/FUN_004770a0.md	004770bb,007dc57c
+00477760	FUN_00477760	render	unknown	re/analysis/render_2_c1_to_c2_s1/FUN_00477760.md	00477450
+004778e0	FUN_004778e0	render	unknown	re/analysis/render_2_c1_to_c2_s1/FUN_004778e0.md	004b6520
+00477be0	FUN_00477be0	render	unknown	re/analysis/render_2_c1_to_c2_s1/FUN_00477be0.md	004c3ac0
+00477e40	FUN_00477e40	render	unknown	re/analysis/render_2_c1_to_c2_s1/FUN_00477e40.md	0040bb30,00477b40
+00477e60	FUN_00477e60	render	unknown	re/analysis/render_2_c1_to_c2_s1/FUN_00477e60.md	004c39b0
+00477f00	FUN_00477f00	render	unknown	re/analysis/render_2_c1_to_c2_s1/FUN_00477f00.md	004c39b0
+00477f50	FUN_00477f50	render	unknown	re/analysis/render_2_c1_to_c2_s1/FUN_00477f50.md	004c3ac0
+00478030	FUN_00478030	render	unknown	re/analysis/render_2_c1_to_c2_s1/FUN_00478030.md	00477f50
+004780c0	FUN_004780c0	render	unknown	re/analysis/render_2_c1_to_c2_s2/FUN_004780c0.md	00477f50
+00478110	FUN_00478110	render	unknown	re/analysis/render_2_c1_to_c2_s2/FUN_00478110.md	004cc160,004cc230,004cc5e0,004cc790,004cf2b0
+00478220	FUN_00478220	render	unknown	re/analysis/render_2_c1_to_c2_s2/FUN_00478220.md	004a2be9,004cd070,004cd140,004cd170
+00478cd0	FUN_00478cd0	render	unknown	re/analysis/render_2_c1_to_c2_s2/FUN_00478cd0.md	00484580
+0047a130	FUN_0047a130	render	unknown	re/analysis/render_2_c1_to_c2_s2/FUN_0047a130.md	0047b9b0
+0047a180	FUN_0047a180	render	unknown	re/analysis/render_2_c1_to_c2_s2/FUN_0047a180.md	004a2c48,004b6fc0,004b7090
+0047aaa0	FUN_0047aaa0	render	unknown	re/analysis/render_2_c1_to_c2_s2/FUN_0047aaa0.md	004b6fc0,004b70d0
+0047aad0	FUN_0047aad0	render	unknown	re/analysis/render_2_c1_to_c2_s2/FUN_0047aad0.md	004b6fc0,004b7090
+0047ade0	FUN_0047ade0	render	unknown	re/analysis/render_2_c1_to_c2_s2/FUN_0047ade0.md	004a2c48,004b6fc0,004b7090,004b70d0
+0047ae80	FUN_0047ae80	render	unknown	re/analysis/render_2_c1_to_c2_s2/FUN_0047ae80.md	004a2c48,004b6fc0,004b7090
+0047aef0	FUN_0047aef0	render	unknown	re/analysis/bucket_00474d80/0x0047aef0.md	
+0047af50	FUN_0047af50	render	unknown	re/analysis/bucket_00474d80/0x0047af50.md	
+0047afa0	FUN_0047afa0	render	unknown	re/analysis/bucket_00474d80/0x0047afa0.md	
+0047b000	FUN_0047b000	render	unknown	re/analysis/bucket_00474d80/0x0047b000.md	
+0047b0a0	FUN_0047b0a0	render	unknown	re/analysis/bucket_00474d80/0x0047b0a0.md	
+0047b110	FUN_0047b110	render	unknown	re/analysis/bucket_00474d80/0x0047b110.md	
+0047b160	FUN_0047b160	render	unknown	re/analysis/bucket_00474d80/0x0047b160.md	
+0047b1b0	FUN_0047b1b0	render	unknown	re/analysis/bucket_00474d80/0x0047b1b0.md	0047a130,006bf1bc
+0047b200	FUN_0047b200	render	unknown	re/analysis/bucket_00474d80/0x0047b200.md	0047a130,006132fc
+0047b230	FUN_0047b230	render	unknown	re/analysis/bucket_00474d80/0x0047b230.md	00613300
+0047b420	FUN_0047b420	render	unknown	re/analysis/bucket_00474d80/0x0047b420.md	0047ade0
+00454130	FUN_00454130	render	unknown	re/analysis/bucket_gameplay_00454130_00455fe0/00454130.md	00454135,0045413b,0045414e,0045415f,00454162,00454168,0045b990,00688250,00688258,00688308
+00454cd0	FUN_00454cd0	render	unknown	re/analysis/bucket_gameplay_00454130_00455fe0/00454cd0.md	00454cd9,00454ce6,00454cf4,00454d04,00454d13,00454d23,00454d3f,00454d6e,00454dac,004769a0,004769d0,004769f0,00476d00,005cc35c,005cc55c,005cc56c,005cc574,007f100c
+00455030	FUN_00455030	render	unknown	re/analysis/bucket_gameplay_00454130_00455fe0/00455030.md	00454fa0,00454ff0,0045505e,006883b0
+00455100	FUN_00455100	render	unknown	re/analysis/bucket_gameplay_00454130_00455fe0/00455100.md	0045510c,00455118,00455127,00455133,0045514d,004c1520,005cc320,005d757c,00614708,007f100c
+004b4ad0	FUN_004b4ad0	render	unknown	re/analysis/render_3_c1_to_c2_s3/FUN_004b4ad0.md	004b4a80
+004b4b20	FUN_004b4b20	render	unknown	re/analysis/render_3_c1_to_c2_s3/FUN_004b4b20.md	004b4a80
+004b4b60	FUN_004b4b60	render	unknown	re/analysis/render_3_c1_to_c2_s3/FUN_004b4b60.md	004b4a80
+004b4d10	FUN_004b4d10	render	unknown	re/analysis/bucket_004b4a80/0x004b4d10.md	004b4a80,004b4ad0,004b4c80
+004b4e70	FUN_004b4e70	render	unknown	re/analysis/bucket_004b4a80/0x004b4e70.md	004b4a80,004b4b20,004b4e20
+004b5080	FUN_004b5080	render	unknown	re/analysis/bucket_004b4a80/0x004b5080.md	004c39b0,004c45f0,004c51a0
+004b51d0	FUN_004b51d0	render	unknown	re/analysis/bucket_004b4a80/0x004b51d0.md	004b3fc0,004b5190
+004b5260	FUN_004b5260	render	unknown	re/analysis/bucket_004b4a80/0x004b5260.md	004b4130,004b4140
+004b5350	thunk_FUN_00550b00	render	unknown	re/analysis/bucket_004b4a80/0x004b5350.md	00550b00,007dc754,007dc768,007dc76c
+004b5370	thunk_FUN_00550910	render	unknown	re/analysis/bucket_004b4a80/0x004b5370.md	00550910
+004b5380	thunk_FUN_00550950	render	unknown	re/analysis/bucket_004b4a80/0x004b5380.md	00550950
+004b5390	thunk_FUN_005509b0	render	unknown	re/analysis/bucket_004b4a80/0x004b5390.md	005509b0
+004b53a0	thunk_FUN_00550bc0	render	unknown	re/analysis/bucket_004b4a80/0x004b53a0.md	00550bc0
+004b55a0	FUN_004b55a0	render	unknown	re/analysis/render_3_c1_to_c2_s5/FUN_004b55a0.md	004c75e0,005cc320,007d3ff8
+004b5750	FUN_004b5750	render	unknown	re/analysis/promote_c1_high_ab3/0x004b5750.md	004c75e0,005cc320,007d3ff8
+004b59c0	FUN_004b59c0	render	unknown	re/analysis/render_3_c1_to_c2_s5/FUN_004b59c0.md	004cd070,004cd140,004cd430,007d3ff8
+004b5af0	FUN_004b5af0	render	unknown	re/analysis/render_3_c1_to_c2_s5/FUN_004b5af0.md	004cd070,004cd140,004cd430,007d3ff8
+004b5d90	FUN_004b5d90	render	unknown	re/analysis/render_3_c1_to_c2_s5/FUN_004b5d90.md	004c52f0,004cd070,004cd140,004cd430
+004b60c0	FUN_004b60c0	render	unknown	re/analysis/render_3_c1_to_c2_s5/FUN_004b60c0.md	004b5d90,004c51a0,005cc32c
+004b61c0	FUN_004b61c0	render	unknown	re/analysis/render_3_c1_to_c2_s5/FUN_004b61c0.md	004cd070,004cd140,004cd170,00773e48,00773e4c,007bbe48,007d3ff8
+004b6570	FUN_004b6570	render	unknown	re/analysis/render_3_c1_to_c2_s5/FUN_004b6570.md	004b6940
+004b67e0	FUN_004b67e0	render	unknown	re/analysis/render_3_c1_to_c2_s5/FUN_004b67e0.md	004a49cf,004b6873,005c1d63,007d3e48,007d3e50,007d3e5c,007d3e60
+004b68f0	FUN_004b68f0	render	unknown	re/analysis/render_3_c1_to_c2_s6/FUN_004b68f0.md	
+004b71c0	FUN_004b71c0	render	unknown	re/analysis/render_3_c1_to_c2_s6/FUN_004b71c0.md	004b7110,004b7180
+004b7fd0	FUN_004b7fd0	render	unknown	re/analysis/render_3_c1_to_c2_s6/FUN_004b7fd0.md	004b7ff0
+004b8080	FUN_004b8080	render	unknown	re/analysis/render_3_c1_to_c2_s6/FUN_004b8080.md	004b7fd0,004b7ff0
+004c4530	FUN_004c4530	render	unknown	re/analysis/bucket_004c4270/0x004c4530.md	004c4270,004c42d0,004c4360,007d3ff8,007d4028
+004c4670	thunk_FUN_004c4680	render	unknown	re/analysis/bucket_004c4270/0x004c4670.md	004c3b90,004c4680
+004c5470	FUN_004c5470	render	unknown	re/analysis/bucket_004c4270/0x004c5470.md	004c3ac0,004c4eb0,004c5680,005cc320,005cc328,005cc98c,005d757c
+004c5680	FUN_004c5680	render	unknown	re/analysis/bucket_004c4270/0x004c5680.md	004c3b90,004c5470,005cc320
+004c5770	FUN_004c5770	render	unknown	re/analysis/bucket_004c4270/0x004c5770.md	007d3ff8,007d4028
+004c5860	FUN_004c5860	render	unknown	re/analysis/bucket_004c4270/0x004c5860.md	004c5cb0,007d3ff8
+004c59c0	FUN_004c59c0	render	unknown	re/analysis/bucket_004c4270/0x004c59c0.md	
+004c5cb0	FUN_004c5cb0	render	unknown	re/analysis/bucket_004c4270/0x004c5cb0.md	004d7ff0,004d8480,007d3ff8,007d4054
+004c5dd0	FUN_004c5dd0	render	unknown	re/analysis/bucket_004c4270/0x004c5dd0.md	007d3ff8
+004c6140	FUN_004c6140	render	unknown	re/analysis/bucket_004c4270/0x004c6140.md	007d3ff8
+004c6580	FUN_004c6580	render	unknown	re/analysis/bucket_004c4270/0x004c6580.md	004cdca0,004cdd00,004cdd60,004d9050,004d9530,004da4f0,004daa40,004daaf0
+004c6750	FUN_004c6750	render	unknown	re/analysis/bucket_004c4270/0x004c6750.md	004c5cb0,004c6580,004cdca0,004cdd60,004ce6c0,004ce970,004cecb0,004d5340,004d7ff0,004d8480,004da4f0,004dabd0
+004c6ba0	FUN_004c6ba0	render	unknown	re/analysis/bucket_004c4270/0x004c6ba0.md	004c6580,004c6750,004c77c0,004cdd00,004d5310,004d8000,00618138,007d3ff8,007d4054
+004c7600	FUN_004c7600	render	unknown	re/analysis/render_4_c1_to_c2_s4/FUN_004c7600.md	007d3ff8
+004c7620	FUN_004c7620	render	unknown	re/analysis/render_4_c1_to_c2_s4/FUN_004c7620.md	004c7637,007d3ff8
+004c7650	FUN_004c7650	render	unknown	re/analysis/render_4_c1_to_c2_s4/FUN_004c7650.md	004c7663,004c7679,004d8060,00618180,007d3ff8,007d40a8
+004c76c0	FUN_004c76c0	render	unknown	re/analysis/render_4_c1_to_c2_s4/FUN_004c76c0.md	007d3ff8
+004c76f0	FUN_004c76f0	render	unknown	re/analysis/render_4_c1_to_c2_s4/FUN_004c76f0.md	004c76f3,004c7706
+004c7730	FUN_004c7730	render	unknown	re/analysis/render_4_c1_to_c2_s4/FUN_004c7730.md	004c773b,004c7742,004d8c40,007d3ff8
+004c7860	FUN_004c7860	render	unknown	re/analysis/render_4_c1_to_c2_s4/FUN_004c7860.md	004c7873,007d3ff8
+004cb0f0	FUN_004cb0f0	render	unknown	re/analysis/bucket_004c4270/0x004cb0f0.md	004cb070,004cb0b0,006181d4,007d4110
+004cb490	FUN_004cb490	render	unknown	re/analysis/render_4_c1_to_c2_s6/FUN_004cb490.md	
+004cb600	FUN_004cb600	render	unknown	re/analysis/render_4_c1_to_c2_s6/FUN_004cb600.md	
+004cbad0	FUN_004cbad0	render	unknown	re/analysis/render_4_c1_to_c2_s6/FUN_004cbad0.md	
+004cbb50	FUN_004cbb50	render	unknown	re/analysis/render_4_c1_to_c2_s6/FUN_004cbb50.md	
+004cc580	FUN_004cc580	render	unknown	re/analysis/render_5_c1_to_c2_s1/FUN_004cc580.md	004cbe80
+004cc790	FUN_004cc790	render	unknown	re/analysis/render_5_c1_to_c2_s1/FUN_004cc790.md	004cbd30,004d7ff0,004d8480
+004cc9e0	thunk_FUN_004cc820	render	unknown	re/analysis/render_5_c1_to_c2_s1/thunk_FUN_004cc820.md	004cc820,007d3ff8
+004cd170	FUN_004cd170	render	unknown	re/analysis/render_5_c1_to_c2_s1/FUN_004cd170.md	004d40d0,004d7ff0,004d8480
+004cd430	FUN_004cd430	render	unknown	re/analysis/render_5_c1_to_c2_s1/FUN_004cd430.md	004d40c0,004d40d0,004d7ff0,004d8480,004e12b0,004e14a0
+004cd500	FUN_004cd500	render	unknown	re/analysis/render_5_c1_to_c2_s1/FUN_004cd500.md	
+004cd550	FUN_004cd550	render	unknown	re/analysis/bucket_004c4270/0x004cd550.md	004cd170,004cd500,007d3ff8
+004cdca0	FUN_004cdca0	render	unknown	re/analysis/bucket_004c4270/0x004cdca0.md	004d8000,006182b4,007d3ff8,007d4628
+004cdf20	FUN_004cdf20	render	unknown	re/analysis/bucket_004c4270/0x004cdf20.md	004cdca0,004cdd60,004ceaf0,004ceba0
+004ce2d0	FUN_004ce2d0	render	unknown	re/analysis/bucket_004c4270/0x004ce2d0.md	007d3ff8,007d4628
+004ce390	FUN_004ce390	render	unknown	re/analysis/bucket_004c4270/0x004ce390.md	004ce480,004ce690,007d3ff8,007d4628
+004ce480	FUN_004ce480	render	unknown	re/analysis/bucket_004c4270/0x004ce480.md	004ce5d0,004e1a90,007d3ff8,007d4628
+004ce5d0	FUN_004ce5d0	render	unknown	re/analysis/bucket_004c4270/0x004ce5d0.md	004ce2d0,007d3ff8,007d4628
+004ce690	FUN_004ce690	render	unknown	re/analysis/render_5_c1_to_c2_s3/004ce690.md	
+004ce6c0	FUN_004ce6c0	render	unknown	re/analysis/render_5_c1_to_c2_s3/004ce6c0.md	
+004ce8e0	FUN_004ce8e0	render	unknown	re/analysis/render_5_c1_to_c2_s3/004ce8e0.md	
+004cf430	FUN_004cf430	render	unknown	re/analysis/render_5_c1_to_c2_s3/004cf430.md	
+004cf460	FUN_004cf460	render	unknown	re/analysis/render_5_c1_to_c2_s3/004cf460.md	
+004cf9e0	FUN_004cf9e0	render	unknown	re/analysis/bucket_004c4270/0x004cf9e0.md	004c5770,004c5a60,004c5dd0,004cc770
+004cfee0	FUN_004cfee0	render	unknown	re/analysis/bucket_004c4270/0x004cfee0.md	004c9fb0,004cafd0
+004cff20	FUN_004cff20	render	unknown	re/analysis/bucket_004c4270/0x004cff20.md	004cafd0
+00449ba0	thunk_FUN_00449b30	render	unknown	re/analysis/bucket_gameplay_00422440_0044e070/0x00449ba0.md	0040bb30,00449880,00449b30,00476ae0,00476c10,004770c0,004b6520,005f96d4,00683288
+0044aaa0	FUN_0044aaa0	render	unknown	re/analysis/bucket_gameplay_00422440_0044e070/0x0044aaa0.md	0044ab1a,0047d080,0047d180,004b47e0,004c51a0,005f96dc,0068432c
+0044b000	FUN_0044b000	render	unknown	re/analysis/bucket_gameplay_00422440_0044e070/0x0044b000.md	0044aaa0,0044b01a,0045faa0,0047d150,0068432c
+0044bbc0	FUN_0044bbc0	render	unknown	re/analysis/bucket_gameplay_00422440_0044e070/0x0044bbc0.md	0044ba30,0044bc29,0044bfa0,00484cf0,004c0ed0
+0044bc30	FUN_0044bc30	render	unknown	re/analysis/bucket_gameplay_00422440_0044e070/0x0044bc30.md	0044bd46,0044bfa0,004c1340,004c1520,005cc558,005cc9b4
+0044bd50	FUN_0044bd50	render	unknown	re/analysis/bucket_gameplay_00422440_0044e070/0x0044bd50.md	0044be60,004c3d90,004cd070,004cd140,004cd2d0,007d3ff8
+0044be70	FUN_0044be70	render	unknown	re/analysis/bucket_gameplay_00422440_0044e070/0x0044be70.md	0044bd50,0044bf90,004c3d90,004cd070,004cd140,004cd2d0,007d3ff8
+0044bfa0	FUN_0044bfa0	render	unknown	re/analysis/bucket_gameplay_00422440_0044e070/0x0044bfa0.md	004260b0,0044bbc0,0044bc30,0044c345,004c0ed0,004c1340,004c1520,004c39b0,004c51a0,005cc33c,005cc348,005cc94c,005ce18c,005ce200,005ce26c,005ce270,005ce278
+0044c490	FUN_0044c490	render	unknown	re/analysis/bucket_gameplay_00422440_0044e070/0x0044c490.md	0044bbc0,0044c380,0044c4ed,0044c5f0,00484cf0,004c0ed0
+0044c4f0	FUN_0044c4f0	render	unknown	re/analysis/bucket_gameplay_00422440_0044e070/0x0044c4f0.md	0044c5e9,0044c8b0,004728f0,0047cdc0,0047fad0,004b3f90,005cc320,005cc32c,005cd0b4,005f9730
+0044c740	FUN_0044c740	render	unknown	re/analysis/bucket_gameplay_00422440_0044e070/0x0044c740.md	0044c4f0,0044c5f0,0044c842,0044c920,005cc32c,005cd50c,005d757c
+0044c920	FUN_0044c920	render	unknown	re/analysis/bucket_gameplay_00422440_0044e070/0x0044c920.md	0044bfa0,0044c5f0,0044c740,0044c998,005cc94c,005ce18c
+004516d0	FUN_004516d0	render	unknown	re/analysis/frontend_gate_unblock_u/0x004516d0.md	
+004671d0	FUN_004671d0	render	unknown	re/analysis/bucket_gameplay_0045dff0_0046dd90/0x004671d0.md	0042b930,0042f510,006905b0
+004672d0	FUN_004672d0	render	unknown	re/analysis/bucket_gameplay_0045dff0_0046dd90/0x004672d0.md	0042b930,0042f510,004671d0,006905b0
+00472ad0	FUN_00472ad0	render	unknown	re/analysis/bucket_gameplay_00471430_0047b6b0/0x00472ad0.md	004729b0,00472b0d
+00472b10	FUN_00472b10	render	unknown	re/analysis/bucket_gameplay_00471430_0047b6b0/0x00472b10.md	0042c010,00472c59,007d3ff8
+00473220	FUN_00473220	render	unknown	re/analysis/bucket_gameplay_00471430_0047b6b0/0x00473220.md	00428d30,0042b8b0,0042b8c0,00472b10,004733a8,00473ee0,005cc560,005cd5a8
+004733b0	FUN_004733b0	render	unknown	re/analysis/bucket_gameplay_00471430_0047b6b0/0x004733b0.md	0042b8b0,0042b8c0,00473220,00473538,00473ee0
+004744a0	FUN_004744a0	render	unknown	re/analysis/bucket_gameplay_00471430_0047b6b0/0x004744a0.md	00428d30,0042b8b0,0042b8c0,00473220,00473ee0,00474884,005ce1f8,005ce9e0,005ceac8,007f1010
+004d8090	FUN_004d8090	render	unknown	re/analysis/render_6_c1_to_c2_s3/004d8090.md	
+004d80d0	FUN_004d80d0	render	unknown	re/analysis/render_6_c1_to_c2_s3/004d80d0.md	
+004d8280	FUN_004d8280	render	unknown	re/analysis/render_6_c1_to_c2_s3/004d8280.md	
+004d8300	FUN_004d8300	render	unknown	re/analysis/render_6_c1_to_c2_s3/004d8300.md	
+004d8350	FUN_004d8350	render	unknown	re/analysis/render_6_c1_to_c2_s3/004d8350.md	
+004d83d0	RwFrameSyncDirtyChildren	render	unknown	re/analysis/render_6_c1_to_c2_s4/0x004d83d0.md	
+004d84e0	RwResourcesEmptyArena_PopSlot	render	unknown	re/analysis/render_6_c1_to_c2_s4/0x004d84e0.md	
+004d8680	RwStricmp	render	unknown	re/analysis/render_6_c1_to_c2_s4/0x004d8680.md	
+004d8770	RwStringGetSizeAligned	render	unknown	re/analysis/render_6_c1_to_c2_s4/0x004d8770.md	
+004d87a0	RwStringStreamWrite	render	unknown	re/analysis/render_6_c1_to_c2_s4/0x004d87a0.md	
+004d9050	FUN_004d9050	render	unknown	re/analysis/bucket_004d7ac0/0x004d9050.md	004d907b,004d91f5,004d9360,004d94a0,00618430,007d6c98
+004d94a0	FUN_004d94a0	render	unknown	re/analysis/bucket_004d7ac0/0x004d94a0.md	
+004d9530	FUN_004d9530	render	unknown	re/analysis/bucket_004d7ac0/0x004d9530.md	004d9543,004d955a,004d957d,004d99c0,004d9a60,004d9ba0,004d9d00,004da000,004da270,004da430
+004d9ba0	FUN_004d9ba0	render	unknown	re/analysis/bucket_004d7ac0/0x004d9ba0.md	
+004d9d00	FUN_004d9d00	render	unknown	re/analysis/bucket_004d7ac0/0x004d9d00.md	004d9ba0,004d9ee0
+004da000	FUN_004da000	render	unknown	re/analysis/bucket_004d7ac0/0x004da000.md	004d9d00,004d9ee0
+004da270	FUN_004da270	render	unknown	re/analysis/bucket_004d7ac0/0x004da270.md	004d9ee0,005ceb90
+004da430	FUN_004da430	render	unknown	re/analysis/bucket_004d7ac0/0x004da430.md	
+004da480	FUN_004da480	render	unknown	re/analysis/bucket_004d7ac0/0x004da480.md	004d9a60
+004da4f0	FUN_004da4f0	render	unknown	re/analysis/render_6_c1_to_c2_s6/FUN_004da4f0.md	004daa00,00618430,007d6c98
+004daa40	FUN_004daa40	render	unknown	re/analysis/render_6_c1_to_c2_s6/FUN_004daa40.md	004cc7f0,00618430,007d6c98
+004daaf0	FUN_004daaf0	render	unknown	re/analysis/render_6_c1_to_c2_s6/FUN_004daaf0.md	004cc9f0,004daa40,004dab70,00618430
+004dab70	FUN_004dab70	render	unknown	re/analysis/render_6_c1_to_c2_s6/FUN_004dab70.md	
+004dabd0	FUN_004dabd0	render	unknown	re/analysis/render_6_c1_to_c2_s6/FUN_004dabd0.md	004daff0,005cc32c,005cd04c,005cea64
+004daff0	FUN_004daff0	render	unknown	re/analysis/render_6_c1_to_c2_s6/FUN_004daff0.md	005d8d88
+004db2e0	FUN_004db2e0	render	unknown	re/analysis/render_6_c1_to_c2_s6/FUN_004db2e0.md	004cdca0,004cdd00,004cdd60,004cde20,004cecb0,004dabd0
+004db770	FUN_004db770	render	unknown	re/analysis/render_6_c1_to_c2_s6/FUN_004db770.md	004cb070,004cb0b0,004cb0f0,004cb130,004d53b0,004d5480,004d6e60,007d70a0,007d70ac
+004dba60	FUN_004dba60	render	unknown	re/analysis/render_6_c1_to_c2_s6/FUN_004dba60.md	004db770,004dcbb0,007d4110,007d7098,007d709c,007d70a0
+004dc160	FUN_004dc160	render	unknown	re/analysis/render_6_c1_to_c2_s6/FUN_004dc160.md	
+004dc1f0	FUN_004dc1f0	render	unknown	re/analysis/render_6_c1_to_c2_s6/FUN_004dc1f0.md	004dc160
+004dc280	FUN_004dc280	render	unknown	re/analysis/render_6_c1_to_c2_s6/FUN_004dc280.md	004dc160
+004ec130	FUN_004ec130	render	unknown	re/analysis/bucket_004d7ac0/0x004ec130.md	004cbb70,004cbbd0,004d5480,004db770,007d3ff8
+004ec720	FUN_004ec720	render	unknown	re/analysis/bucket_004d7ac0/0x004ec720.md	
+004ec730	FUN_004ec730	render	unknown	re/analysis/bucket_004d7ac0/0x004ec730.md	004ec720
+004ec740	FUN_004ec740	render	unknown	re/analysis/bucket_004d7ac0/0x004ec740.md	
+004ec750	FUN_004ec750	render	unknown	re/analysis/bucket_004d7ac0/0x004ec750.md	004ec740
+004ec760	FUN_004ec760	render	unknown	re/analysis/bucket_004d7ac0/0x004ec760.md	005dae30,005dae34
+004ec79d	FUN_004ec79d	render	unknown	re/analysis/bucket_004d7ac0/0x004ec79d.md	
+004ec839	FUN_004ec839	render	unknown	re/analysis/bucket_004d7ac0/0x004ec839.md	004ec79d
+004ec8eb	FUN_004ec8eb	render	unknown	re/analysis/bucket_004d7ac0/0x004ec8eb.md	004fbe7a,006187ec
+004ec915	FUN_004ec915	render	unknown	re/analysis/bucket_004d7ac0/0x004ec915.md	005cc31c,005cc320
+004ec9a3	FUN_004ec9a3	render	unknown	re/analysis/bucket_004d7ac0/0x004ec9a3.md	004ec8eb,004ec9cd,00618864
+004ec9cd	FUN_004ec9cd	render	unknown	re/analysis/bucket_004d7ac0/0x004ec9cd.md	005cc32c
+004eca7c	FUN_004eca7c	render	unknown	re/analysis/bucket_004d7ac0/0x004eca7c.md	004ecaab,00618868
+004ecaab	FUN_004ecaab	render	unknown	re/analysis/bucket_004d7ac0/0x004ecaab.md	
+004ecaee	FUN_004ecaee	render	unknown	re/analysis/bucket_004d7ac0/0x004ecaee.md	006187a8
+004ecafb	thunk_FUN_004ecaee	render	unknown	re/analysis/bucket_004d7ac0/0x004ecafb.md	004ecaee,004fbe7a,006187a8
+004ecb12	FUN_004ecb12	render	unknown	re/analysis/bucket_004d7ac0/0x004ecb12.md	004fbe7a,006187cc
+004ecb1f	thunk_FUN_004ecb12	render	unknown	re/analysis/bucket_004d7ac0/0x004ecb1f.md	004ecb12,006187cc
+004ecb36	FUN_004ecb36	render	unknown	re/analysis/bucket_004d7ac0/0x004ecb36.md	004fbe7a,006187bc
+004ecb43	thunk_FUN_004ecb36	render	unknown	re/analysis/bucket_004d7ac0/0x004ecb43.md	006187bc
+004ecb5a	FUN_004ecb5a	render	unknown	re/analysis/bucket_004d7ac0/0x004ecb5a.md	004fbe7a,006187c4
+004ecb67	thunk_FUN_004ecb5a	render	unknown	re/analysis/bucket_004d7ac0/0x004ecb67.md	006187c4
+004ecb97	FUN_004ecb97	render	unknown	re/analysis/bucket_004d7ac0/0x004ecb97.md	004ec915
+004ecc45	FUN_004ecc45	render	unknown	re/analysis/bucket_004d7ac0/0x004ecc45.md	004ecc6f,004fbe7a,00618870
+004ecc6f	FUN_004ecc6f	render	unknown	re/analysis/bucket_004d7ac0/0x004ecc6f.md	004ec9cd
+005555b0	FUN_005555b0	render	unknown	re/analysis/promote_c1_high_ab3/0x005555b0.md	005c4d30,005cc32c
+00556e90	FUN_00556e90	render	unknown	re/analysis/promote_c1_high_ab3/0x00556e90.md	005d757c
+004f022d	FUN_004f022d	render	unknown	re/analysis/bucket_004f022d/0x004f022d.md	004eeddc,004f0235
+004f0307	FUN_004f0307	render	unknown	re/analysis/bucket_004f022d/0x004f0307.md	004eeddc,004f022d,005cc320,005cc34c
+004f07a0	FUN_004f07a0	render	unknown	re/analysis/bucket_004f022d/0x004f07a0.md	007d3ff8
+004f07d0	FUN_004f07d0	render	unknown	re/analysis/bucket_004f022d/0x004f07d0.md	004f07a0
+004f0800	FUN_004f0800	render	unknown	re/analysis/bucket_004f022d/0x004f0800.md	0045b350,004f4340,004f43b0,004f43f0,004f4470
+004f0810	FUN_004f0810	render	unknown	re/analysis/bucket_004f022d/0x004f0810.md	0045b350,004d8560,004f07a0,004f07d0,004f0800,004f4340,004f43b0,004f43f0,004f4470
+004f0900	FUN_004f0900	render	unknown	re/analysis/bucket_004f022d/0x004f0900.md	007d3ff8
+004f0910	FUN_004f0910	render	unknown	re/analysis/bucket_004f022d/0x004f0910.md	004d7de0,006189e4
+004f0940	FUN_004f0940	render	unknown	re/analysis/bucket_004f022d/0x004f0940.md	004e1ac0,004f0910,006189e4
+004f0970	FUN_004f0970	render	unknown	re/analysis/bucket_004f022d/0x004f0970.md	007d3ff8
+004f0ae0	FUN_004f0ae0	render	unknown	re/analysis/bucket_004f022d/0x004f0ae0.md	004d7ff0,004d8480,007d3ff8,007d7290
+004f0bd0	FUN_004f0bd0	render	unknown	re/analysis/bucket_004f022d/0x004f0bd0.md	004f0ae0,007d7290
+004f0c10	FUN_004f0c10	render	unknown	re/analysis/bucket_004f022d/0x004f0c10.md	
+004f0c50	FUN_004f0c50	render	unknown	re/analysis/bucket_004f022d/0x004f0c50.md	
+004f0d80	FUN_004f0d80	render	unknown	re/analysis/bucket_004f022d/0x004f0d80.md	
+004f0dc0	FUN_004f0dc0	render	unknown	re/analysis/bucket_004f022d/0x004f0dc0.md	004cc770,004f3cb0
+004f0f10	FUN_004f0f10	render	unknown	re/analysis/bucket_004f022d/0x004f0f10.md	004cc790,004f0dc0,004f3bd0,007d3ff8
+004f10e0	FUN_004f10e0	render	unknown	re/analysis/bucket_004f022d/0x004f10e0.md	
+004f1130	FUN_004f1130	render	unknown	re/analysis/bucket_004f022d/0x004f1130.md	004f0f10,007d3ff8
+004f1150	FUN_004f1150	render	unknown	re/analysis/bucket_004f022d/0x004f1150.md	004cc580,006189fc
+004f1800	FUN_004f1800	render	unknown	re/analysis/bucket_004f022d/0x004f1800.md	004f1150
+004f1f00	FUN_004f1f00	render	unknown	re/analysis/bucket_004f022d/0x004f1f00.md	004f1800,004f1870
+004f1f90	FUN_004f1f90	render	unknown	re/analysis/bucket_004f022d/0x004f1f90.md	004f1fb0
+004f1fb0	FUN_004f1fb0	render	unknown	re/analysis/bucket_004f022d/0x004f1fb0.md	004f0970,004f2420,004f2570,004f3440,005c24e0
+004f2570	FUN_004f2570	render	unknown	re/analysis/bucket_004f022d/0x004f2570.md	004f2e70,004f3030,004f3150
+004f2e70	FUN_004f2e70	render	unknown	re/analysis/bucket_004f022d/0x004f2e70.md	004cc7f0,004f2f90
+004f2f90	FUN_004f2f90	render	unknown	re/analysis/bucket_004f022d/0x004f2f90.md	
+004f3030	FUN_004f3030	render	unknown	re/analysis/bucket_004f022d/0x004f3030.md	
+004f3150	FUN_004f3150	render	unknown	re/analysis/bucket_004f022d/0x004f3150.md	004f3030
+004f3440	FUN_004f3440	render	unknown	re/analysis/bucket_004f022d/0x004f3440.md	
+004f36c0	FUN_004f36c0	render	unknown	re/analysis/bucket_004f022d/0x004f36c0.md	004f0970,004f0d80,004f1fb0,004f2420,004f38c0,005c24e0
+004f3b00	FUN_004f3b00	render	unknown	re/analysis/bucket_004f022d/0x004f3b00.md	004f0bd0,004f36c0,00618a00,00618a10,00618a14
+004f3bc0	FUN_004f3bc0	render	unknown	re/analysis/bucket_004f022d/0x004f3bc0.md	004f3b60
+004f3bd0	FUN_004f3bd0	render	unknown	re/analysis/bucket_004f022d/0x004f3bd0.md	
+004f3be0	FUN_004f3be0	render	unknown	re/analysis/bucket_004f022d/0x004f3be0.md	004d7ff0,004d8480
+004f3cb0	FUN_004f3cb0	render	unknown	re/analysis/bucket_004f022d/0x004f3cb0.md	
+004f4200	FUN_004f4200	render	unknown	re/analysis/bucket_004f022d/0x004f4200.md	004cc7f0,007d7298,007d729c
+004f4270	FUN_004f4270	render	unknown	re/analysis/bucket_004f022d/0x004f4270.md	004f4200,007d7298,007d729c
+004f42d0	FUN_004f42d0	render	unknown	re/analysis/bucket_004f022d/0x004f42d0.md	004cbc80,004cbc90,004f4310,004f4510,004f8580,007d7294
+004f43b0	FUN_004f43b0	render	unknown	re/analysis/bucket_004f022d/0x004f43b0.md	004d41e0,004f07a0,004f4340,007d3ff8
+004f4470	FUN_004f4470	render	unknown	re/analysis/bucket_004f022d/0x004f4470.md	004cc9f0,004d41e0,004f07d0,004f4200,004f4270,004f43f0,004f4900,004f8730,007d3ff8,007d7298,007d729c
+004f46a0	FUN_004f46a0	render	unknown	re/analysis/bucket_004f022d/0x004f46a0.md	004cbb60,006181a0,006181ac,007d72a4,007d72f0,007d7308,007d7368,007d7374,007d7384,007d7388,007d7394
+004f4900	FUN_004f4900	render	unknown	re/analysis/bucket_004f022d/0x004f4900.md	004f4470,004f46a0,007d7378,007d7380,007d7384,007d7388,007d738c,007d7390,007d7394,007d7398,007d739c
+004f5030	FUN_004f5030	render	unknown	re/analysis/bucket_004f022d/0x004f5030.md	005cd04c,005cfe34,005dae40,005dae88,005dae8c
+004f57e0	FUN_004f57e0	render	unknown	re/analysis/bucket_004f022d/0x004f57e0.md	004f5030
+004f6870	FUN_004f6870	render	unknown	re/analysis/bucket_004f022d/0x004f6870.md	004f5030,004f57e0
+004f71f0	FUN_004f71f0	render	unknown	re/analysis/bucket_004f022d/0x004f71f0.md	004f5030
+004f77f0	FUN_004f77f0	render	unknown	re/analysis/bucket_004f022d/0x004f77f0.md	
+004f7850	FUN_004f7850	render	unknown	re/analysis/bucket_004f022d/0x004f7850.md	004f5020,005dae40
+004f79f0	FUN_004f79f0	render	unknown	re/analysis/bucket_004f022d/0x004f79f0.md	004c3b90,004f57e0,005dae94
+004f7dc0	FUN_004f7dc0	render	unknown	re/analysis/bucket_004f022d/0x004f7dc0.md	005ceb90,005cf00c,005dae88,005dae98
+004f81b0	FUN_004f81b0	render	unknown	re/analysis/bucket_004f022d/0x004f81b0.md	004f7dc0
+004f8400	FUN_004f8400	render	unknown	re/analysis/bucket_004f022d/0x004f8400.md	
+004f8490	FUN_004f8490	render	unknown	re/analysis/bucket_004f022d/0x004f8490.md	004f8400,005cc320,005cc33c,005d757c
+004f8640	FUN_004f8640	render	unknown	re/analysis/bucket_004f022d/0x004f8640.md	004f8580,007d73a8
+004f8660	FUN_004f8660	render	unknown	re/analysis/bucket_004f022d/0x004f8660.md	004f8640,007d73a8
+004f8670	FUN_004f8670	render	unknown	re/analysis/bucket_004f022d/0x004f8670.md	004f8580,007d73ac
+004f8690	FUN_004f8690	render	unknown	re/analysis/bucket_004f022d/0x004f8690.md	004f8670,007d73ac
+004f8730	FUN_004f8730	render	unknown	re/analysis/bucket_004f022d/0x004f8730.md	004cbb50,007d73b0,007d73b8,007d98b0,007d98b4
+004fa5f0	FUN_004fa5f0	render	unknown	re/analysis/bucket_004f022d/0x004fa5f0.md	007d73b0,007d97b0,007d97b4,007d97b8,007d97bc,007d97c8,007d97cc,007d97d4,007d97d8,007d97dc,007d98b8,007d98bc
+004fb050	FUN_004fb050	render	unknown	re/analysis/bucket_004f022d/0x004fb050.md	006199b0,006199c0,006199d0,006199e0,006199e8,007d9900,007d9904
+004fb0e0	FUN_004fb0e0	render	unknown	re/analysis/bucket_004f022d/0x004fb0e0.md	004ed6ad,004ed8f6,004ed976,006181e0,006199b0,007d4150,007d98c0,007d9900
+004fb130	FUN_004fb130	render	unknown	re/analysis/bucket_004f022d/0x004fb130.md	004c4dc0,004fb210,005daf10,006199f0,006199fc,00619a0c,00619a1c,00619a2c,007d9900,007d9904,007d9908
+004fb210	FUN_004fb210	render	unknown	re/analysis/bucket_004f022d/0x004fb210.md	
+004fb2a0	FUN_004fb2a0	render	unknown	re/analysis/bucket_004f022d/0x004fb2a0.md	004c4680,004ecf46,004fb210,005daf10,00619a30,007d9900,007d9904,007d9908
+004fb3e0	FUN_004fb3e0	render	unknown	re/analysis/bucket_004f022d/0x004fb3e0.md	004c4dc0,004ecf1c,004fb210,005daf10,006199f0,007d9900,007d9904
+004fb4d0	FUN_004fb4d0	render	unknown	re/analysis/bucket_004f022d/0x004fb4d0.md	004c3b90,004c4dc0,004ecf46,006199f0,007d9900,007d9904
+004fb5a0	FUN_004fb5a0	render	unknown	re/analysis/bucket_004f022d/0x004fb5a0.md	004ecf1c,004ecf46,005d757c
+004b41b0	FUN_004b41b0	render	unknown	re/analysis/bucket_00489450/0x004b41b0.md	004b3f20
+004b4270	FUN_004b4270	render	unknown	re/analysis/render_3_c1_to_c2_s3/FUN_004b4270.md	004b4230
+004b4280	FUN_004b4280	render	unknown	re/analysis/render_3_c1_to_c2_s3/FUN_004b4280.md	004b3f20,004c59c0

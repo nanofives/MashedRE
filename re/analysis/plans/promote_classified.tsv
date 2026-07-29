@@ -1,140 +1,1417 @@
 rva	klass	shape	arg_type	subsystem	size	reason
-0040dcb0	STATE	-	-	gameplay	176	STATE: reads live global / derefs arg → needs booted game
-00413bc0	STATE	-	-	hud	173	STATE: reads live global / derefs arg → needs booted game
-00413c70	STATE	-	-	vehicle	59	STATE: reads live global / derefs arg → needs booted game
-0041e150	STATE	-	-	gameplay	25	STATE: reads live global / derefs arg → needs booted game
-0041f330	STATE	-	-	gameplay	47	STATE: reads live global / derefs arg → needs booted game
-00420d80	STATE	-	-	gameplay	25	STATE: reads live global / derefs arg → needs booted game
-00420de0	STATE	-	-	vehicle	31	STATE: reads live global / derefs arg → needs booted game
-004277a0	STATE	-	-	frontend	147	STATE: reads live global / derefs arg → needs booted game
-0042ad90	STATE	-	-	frontend	54	STATE: reads live global / derefs arg → needs booted game
-0042add0	STATE	-	-	frontend	64	STATE: reads live global / derefs arg → needs booted game
-0042c150	STATE	-	-	util	78	STATE: reads live global / derefs arg → needs booted game
-00431b20	STATE	-	-	audio	15	STATE: reads live global / derefs arg → needs booted game
-00431b50	STATE	-	-	util	15	STATE: reads live global / derefs arg → needs booted game
-00431b60	STATE	-	-	util	15	STATE: reads live global / derefs arg → needs booted game
-0044c740	STATE	-	-	render	259	STATE: reads live global / derefs arg → needs booted game
-0044e070	STATE	-	-	audio	39	STATE: reads live global / derefs arg → needs booted game
-00456eb0	STATE	-	-	gameplay	181	STATE: reads live global / derefs arg → needs booted game
-00458f20	STATE	-	-	gameplay	81	STATE: reads live global / derefs arg → needs booted game
-0045baa0	STATE	-	-	powerups	32	STATE: reads live global / derefs arg → needs booted game
-0045c510	STATE	-	-	gameplay	54	STATE: reads live global / derefs arg → needs booted game
-0045c550	STATE	-	-	gameplay	232	STATE: reads live global / derefs arg → needs booted game
-0045ca30	STATE	-	-	gameplay	118	STATE: reads live global / derefs arg → needs booted game
-0045de80	STATE	-	-	render	236	STATE: reads live global / derefs arg → needs booted game
-0046bda0	STATE	-	-	gameplay	104	STATE: reads live global / derefs arg → needs booted game
-0046be10	STATE	-	-	gameplay	55	STATE: reads live global / derefs arg → needs booted game
-0046d7f0	STATE	-	-	ai	144	STATE: reads live global / derefs arg → needs booted game
-004726b0	STATE	-	-	gameplay	64	STATE: reads live global / derefs arg → needs booted game
-004726f0	STATE	-	-	gameplay	72	STATE: reads live global / derefs arg → needs booted game
-00475f30	STATE	-	-	render	32	STATE: reads live global / derefs arg → needs booted game
-00476b30	STATE	-	-	render	92	STATE: reads live global / derefs arg → needs booted game
-00476d00	STATE	-	-	render	238	STATE: reads live global / derefs arg → needs booted game
-00477450	STATE	-	-	render	56	STATE: reads live global / derefs arg → needs booted game
-00477b60	STATE	-	-	render	117	STATE: reads live global / derefs arg → needs booted game
-0047bc90	STATE	-	-	gameplay	36	STATE: reads live global / derefs arg → needs booted game
-00482730	STATE	-	-	vehicle	110	STATE: reads live global / derefs arg → needs booted game
-00482860	STATE	-	-	vehicle	147	STATE: reads live global / derefs arg → needs booted game
-00483ca0	STATE	-	-	vehicle	102	STATE: reads live global / derefs arg → needs booted game
-004840f0	STATE	-	-	vehicle	59	STATE: reads live global / derefs arg → needs booted game
-00484c90	STATE	-	-	util	83	STATE: reads live global / derefs arg → needs booted game
-004850b0	STATE	-	-	smplfzx	42	STATE: reads live global / derefs arg → needs booted game
-00485340	STATE	-	-	vehicle	28	STATE: reads live global / derefs arg → needs booted game
-00485a00	STATE	-	-	smplfzx	101	STATE: reads live global / derefs arg → needs booted game
-00486f90	STATE	-	-	particle	140	STATE: reads live global / derefs arg → needs booted game
-00488320	STATE	-	-	sky	108	STATE: reads live global / derefs arg → needs booted game
-00489290	STATE	-	-	particle	36	STATE: reads live global / derefs arg → needs booted game
-004893b0	STATE	-	-	gameplay	31	STATE: reads live global / derefs arg → needs booted game
-004893d0	STATE	-	-	frontend	119	STATE: reads live global / derefs arg → needs booted game
-004899c0	STATE	-	-	particle	113	STATE: reads live global / derefs arg → needs booted game
-00489da0	STATE	-	-	particle	30	STATE: reads live global / derefs arg → needs booted game
-0048a630	STATE	-	-	ai	185	STATE: reads live global / derefs arg → needs booted game
-0048ebc0	STATE	-	-	render	33	STATE: reads live global / derefs arg → needs booted game
-0048f590	STATE	-	-	particle	235	STATE: reads live global / derefs arg → needs booted game
-00491070	STATE	-	-	render	78	STATE: reads live global / derefs arg → needs booted game
-004938e0	STATE	-	-	util	28	STATE: reads live global / derefs arg → needs booted game
-004957a0	STATE	-	-	input	136	STATE: reads live global / derefs arg → needs booted game
-004b4550	STATE	-	-	util	247	STATE: reads live global / derefs arg → needs booted game
-004b4650	STATE	-	-	render	91	STATE: reads live global / derefs arg → needs booted game
-004b5240	STATE	-	-	vehicle	29	STATE: reads live global / derefs arg → needs booted game
-004b52c0	STATE	-	-	render	35	STATE: reads live global / derefs arg → needs booted game
-004b7020	STATE	-	-	render	23	STATE: reads live global / derefs arg → needs booted game
-004b9540	STATE	-	-	input	34	STATE: reads live global / derefs arg → needs booted game
-004c0e50	STATE	-	-	render	125	STATE: reads live global / derefs arg → needs booted game
-004c1a70	STATE	-	-	render	150	STATE: reads live global / derefs arg → needs booted game
-004c3910	STATE	-	-	render	149	STATE: reads live global / derefs arg → needs booted game
-004c4270	STATE	-	-	render	91	STATE: reads live global / derefs arg → needs booted game
-004c42d0	STATE	-	-	render	137	STATE: reads live global / derefs arg → needs booted game
-004c4360	STATE	-	-	render	200	STATE: reads live global / derefs arg → needs booted game
-004c45f0	STATE	-	-	render	12	STATE: reads live global / derefs arg → needs booted game
-004c5bc0	STATE	-	-	render	58	STATE: reads live global / derefs arg → needs booted game
-004c5c00	STATE	-	-	frontend	115	STATE: reads live global / derefs arg → needs booted game
-004c75c0	STATE	-	-	render	22	STATE: reads live global / derefs arg → needs booted game
-004cb740	STATE	-	-	render	244	STATE: reads live global / derefs arg → needs booted game
-004cbb70	STATE	-	-	render	82	STATE: reads live global / derefs arg → needs booted game
-004cbbd0	STATE	-	-	render	130	STATE: reads live global / derefs arg → needs booted game
-004cde50	STATE	-	-	render	198	STATE: reads live global / derefs arg → needs booted game
-004ceaf0	STATE	-	-	render	162	STATE: reads live global / derefs arg → needs booted game
-004d5480	STATE	-	-	render	67	STATE: reads live global / derefs arg → needs booted game
-004d54d0	STATE	-	-	render	18	STATE: reads live global / derefs arg → needs booted game
-004d54f0	STATE	-	-	render	90	STATE: reads live global / derefs arg → needs booted game
-004d6c40	STATE	-	-	render	78	STATE: reads live global / derefs arg → needs booted game
-004d6c90	STATE	-	-	render	78	STATE: reads live global / derefs arg → needs booted game
-004d7100	STATE	-	-	render	235	STATE: reads live global / derefs arg → needs booted game
-004d8c40	STATE	-	-	frontend	118	STATE: reads live global / derefs arg → needs booted game
-004e4350	STATE	-	-	render	33	STATE: reads live global / derefs arg → needs booted game
-00516c40	STATE	-	-	util	128	STATE: reads live global / derefs arg → needs booted game
-00517200	STATE	-	-	util	70	STATE: reads live global / derefs arg → needs booted game
-005172f0	STATE	-	-	util	143	STATE: reads live global / derefs arg → needs booted game
-005199f0	STATE	-	-	util	248	STATE: reads live global / derefs arg → needs booted game
-00519af0	STATE	-	-	util	196	STATE: reads live global / derefs arg → needs booted game
-00520ef0	STATE	-	-	util	257	STATE: reads live global / derefs arg → needs booted game
-00528e30	STATE	-	-	util	181	STATE: reads live global / derefs arg → needs booted game
-00557110	STATE	-	-	hud	169	STATE: reads live global / derefs arg → needs booted game
-00558100	STATE	-	-	gameplay	63	STATE: reads live global / derefs arg → needs booted game
-00558140	STATE	-	-	gameplay	51	STATE: reads live global / derefs arg → needs booted game
-005a7420	STATE	-	-	audio	64	STATE: reads live global / derefs arg → needs booted game
-005a7a60	STATE	-	-	audio	60	STATE: reads live global / derefs arg → needs booted game
-005aa030	STATE	-	-	audio	38	STATE: reads live global / derefs arg → needs booted game
-005aa9c0	STATE	-	-	audio	60	STATE: reads live global / derefs arg → needs booted game
-005ab980	STATE	-	-	audio	78	STATE: reads live global / derefs arg → needs booted game
-005ae170	STATE	-	-	audio	81	STATE: reads live global / derefs arg → needs booted game
-005ae4c0	STATE	-	-	audio	139	STATE: reads live global / derefs arg → needs booted game
-005ae550	STATE	-	-	audio	58	STATE: reads live global / derefs arg → needs booted game
-005aed20	STATE	-	-	audio	119	STATE: reads live global / derefs arg → needs booted game
-005af700	STATE	-	-	audio	63	STATE: reads live global / derefs arg → needs booted game
-005b0b60	STATE	-	-	audio	37	STATE: reads live global / derefs arg → needs booted game
-005b0bb0	STATE	-	-	audio	190	STATE: reads live global / derefs arg → needs booted game
-005b0cf0	STATE	-	-	audio	170	STATE: reads live global / derefs arg → needs booted game
-005b0ec0	STATE	-	-	audio	71	STATE: reads live global / derefs arg → needs booted game
-005b0f90	STATE	-	-	audio	104	STATE: reads live global / derefs arg → needs booted game
-005b1180	STATE	-	-	audio	67	STATE: reads live global / derefs arg → needs booted game
-005b11d0	STATE	-	-	audio	31	STATE: reads live global / derefs arg → needs booted game
-005b2fd0	STATE	-	-	audio	70	STATE: reads live global / derefs arg → needs booted game
-005b35e0	STATE	-	-	audio	58	STATE: reads live global / derefs arg → needs booted game
-005b6a40	STATE	-	-	audio	191	STATE: reads live global / derefs arg → needs booted game
-005b6b00	STATE	-	-	audio	123	STATE: reads live global / derefs arg → needs booted game
-005b93a0	STATE	-	-	audio	102	STATE: reads live global / derefs arg → needs booted game
-005baf00	STATE	-	-	audio	62	STATE: reads live global / derefs arg → needs booted game
-005c1f1c	STATE	-	-	boot	123	STATE: reads live global / derefs arg → needs booted game
-005c2f0a	STATE	-	-	boot	28	STATE: reads live global / derefs arg → needs booted game
-005c2f58	STATE	-	-	boot	22	STATE: reads live global / derefs arg → needs booted game
-005c6b60	STATE	-	-	boot	75	STATE: reads live global / derefs arg → needs booted game
-005c95b0	STATE	-	-	audio	204	STATE: reads live global / derefs arg → needs booted game
-0041a4a0	MANUAL	-	-	gameplay	92	MANUAL: unrecognized leaf shape
-0041e170	MANUAL	-	-	gameplay	71	MANUAL: unrecognized leaf shape
-004223f0	MANUAL	-	-	gameplay	72	MANUAL: unrecognized leaf shape
-00422440	MANUAL	-	-	gameplay	45	MANUAL: unrecognized leaf shape
-004233e0	MANUAL	-	-	ai	160	no-clean-ret (multi-exit/tail)
-0042ac50	MANUAL	-	-	frontend	49	MANUAL: unrecognized leaf shape
-00449880	MANUAL	-	-	particle	37	MANUAL: unrecognized leaf shape
-00476a10	MANUAL	-	-	render	30	MANUAL: unrecognized leaf shape
-00478cb0	MANUAL	-	-	physics	16	MANUAL: unrecognized leaf shape
-0049da90	MANUAL	-	-	particle	101	MANUAL: unrecognized leaf shape
-004b65c0	MANUAL	-	-	render	25	MANUAL: unrecognized leaf shape
-004daa00	MANUAL	-	-	render	64	no-clean-ret (multi-exit/tail)
-00520990	MANUAL	-	-	util	49	MANUAL: unrecognized leaf shape
-005c1dac	MANUAL	-	-	boot	39	MANUAL: unrecognized leaf shape
-005c2770	MANUAL	-	-	boot	31	MANUAL: unrecognized leaf shape
-005c3403	MANUAL	-	-	boot	7	no-clean-ret (multi-exit/tail)
-005c3584	MANUAL	-	-	boot	60	MANUAL: unrecognized leaf shape
+0041b440	STATE	-	-	render	11	STATE: reads live global / derefs arg → needs booted game
+00489240	STATE	-	-	sky	11	STATE: reads live global / derefs arg → needs booted game
+00495110	STATE	-	-	util	11	STATE: reads live global / derefs arg → needs booted game
+004cbb50	STATE	-	-	render	11	STATE: reads live global / derefs arg → needs booted game
+00404820	STATE	-	-	hud	13	STATE: reads live global / derefs arg → needs booted game
+0041a3d0	STATE	-	-	boot	13	STATE: reads live global / derefs arg → needs booted game
+0041c2c0	STATE	-	-	boot	13	STATE: reads live global / derefs arg → needs booted game
+0041da80	STATE	-	-	boot	13	STATE: reads live global / derefs arg → needs booted game
+0041de70	STATE	-	-	boot	13	STATE: reads live global / derefs arg → needs booted game
+00425ed0	STATE	-	-	boot	13	STATE: reads live global / derefs arg → needs booted game
+0048bc10	STATE	-	-	particle	13	STATE: reads live global / derefs arg → needs booted game
+0041beb0	STATE	-	-	render	14	STATE: reads live global / derefs arg → needs booted game
+0041cb00	STATE	-	-	render	14	STATE: reads live global / derefs arg → needs booted game
+0041d6d0	STATE	-	-	render	14	STATE: reads live global / derefs arg → needs booted game
+005b0f40	STATE	-	-	audio	15	STATE: reads live global / derefs arg → needs booted game
+005b8080	STATE	-	-	audio	15	STATE: reads live global / derefs arg → needs booted game
+004b4120	STATE	-	-	render	16	STATE: reads live global / derefs arg → needs booted game
+00499cc0	STATE	-	-	boot	18	STATE: reads live global / derefs arg → needs booted game
+005b1080	STATE	-	-	audio	18	STATE: reads live global / derefs arg → needs booted game
+0049f210	STATE	-	-	particle	19	STATE: reads live global / derefs arg → needs booted game
+0052bf20	STATE	-	-	util	20	STATE: reads live global / derefs arg → needs booted game
+0040d020	STATE	-	-	track	21	STATE: reads live global / derefs arg → needs booted game
+00421690	STATE	-	-	render	22	STATE: reads live global / derefs arg → needs booted game
+00454f80	STATE	-	-	render	22	STATE: reads live global / derefs arg → needs booted game
+0047b860	STATE	-	-	input	22	STATE: reads live global / derefs arg → needs booted game
+004039c0	STATE	-	-	vehicle	23	STATE: reads live global / derefs arg → needs booted game
+00491780	STATE	-	-	render	23	STATE: reads live global / derefs arg → needs booted game
+005ae380	STATE	-	-	audio	24	STATE: reads live global / derefs arg → needs booted game
+0047b880	STATE	-	-	input	25	STATE: reads live global / derefs arg → needs booted game
+005571c0	STATE	-	-	hud	25	STATE: reads live global / derefs arg → needs booted game
+005a6c90	STATE	-	-	audio	25	STATE: reads live global / derefs arg → needs booted game
+005ad8b0	STATE	-	-	audio	25	STATE: reads live global / derefs arg → needs booted game
+00421980	STATE	-	-	render	26	STATE: reads live global / derefs arg → needs booted game
+0044b000	STATE	-	-	render	27	STATE: reads live global / derefs arg → needs booted game
+00496ce0	STATE	-	-	boot	27	STATE: reads live global / derefs arg → needs booted game
+0045bac0	STATE	-	-	powerups	28	STATE: reads live global / derefs arg → needs booted game
+004c7600	STATE	-	-	render	28	STATE: reads live global / derefs arg → needs booted game
+005bcd80	STATE	-	-	audio	28	STATE: reads live global / derefs arg → needs booted game
+00407600	STATE	-	-	util	29	STATE: reads live global / derefs arg → needs booted game
+00496470	STATE	-	-	boot	29	STATE: reads live global / derefs arg → needs booted game
+004b4050	STATE	-	-	render	29	STATE: reads live global / derefs arg → needs booted game
+00421960	STATE	-	-	audio	30	STATE: reads live global / derefs arg → needs booted game
+004960e0	STATE	-	-	boot	30	STATE: reads live global / derefs arg → needs booted game
+004b7fd0	STATE	-	-	render	31	STATE: reads live global / derefs arg → needs booted game
+004c0ed0	STATE	-	-	render	31	STATE: reads live global / derefs arg → needs booted game
+00494460	STATE	-	-	frontend	32	STATE: reads live global / derefs arg → needs booted game
+004b9600	STATE	-	-	input	33	STATE: reads live global / derefs arg → needs booted game
+005aeed0	STATE	-	-	audio	33	STATE: reads live global / derefs arg → needs booted game
+00496970	STATE	-	-	render	34	STATE: reads live global / derefs arg → needs booted game
+004cbb20	STATE	-	-	render	34	STATE: reads live global / derefs arg → needs booted game
+004d8770	STATE	-	-	render	34	STATE: reads live global / derefs arg → needs booted game
+00418db0	STATE	-	-	render	35	STATE: reads live global / derefs arg → needs booted game
+0041c2d0	STATE	-	-	hud	35	STATE: reads live global / derefs arg → needs booted game
+00421930	STATE	-	-	render	35	STATE: reads live global / derefs arg → needs booted game
+0042c2a0	STATE	-	-	boot	35	STATE: reads live global / derefs arg → needs booted game
+0045bfa0	STATE	-	-	powerups	35	STATE: reads live global / derefs arg → needs booted game
+0048fef0	STATE	-	-	particle	35	STATE: reads live global / derefs arg → needs booted game
+004c1be0	STATE	-	-	frontend	35	STATE: reads live global / derefs arg → needs booted game
+004c5770	STATE	-	-	render	35	STATE: reads live global / derefs arg → needs booted game
+005af200	STATE	-	-	audio	35	STATE: reads live global / derefs arg → needs booted game
+0041f290	STATE	-	-	gameplay	36	STATE: reads live global / derefs arg → needs booted game
+00451730	STATE	-	-	gameplay	36	STATE: reads live global / derefs arg → needs booted game
+0048bbe0	STATE	-	-	particle	36	STATE: reads live global / derefs arg → needs booted game
+004c7620	STATE	-	-	render	36	STATE: reads live global / derefs arg → needs booted game
+004c79f0	STATE	-	-	render	36	STATE: reads live global / derefs arg → needs booted game
+0049ff30	STATE	-	-	particle	37	STATE: reads live global / derefs arg → needs booted game
+005af7a0	STATE	-	-	audio	37	STATE: reads live global / derefs arg → needs booted game
+00412100	STATE	-	-	render	38	STATE: reads live global / derefs arg → needs booted game
+00451060	STATE	-	-	gameplay	38	STATE: reads live global / derefs arg → needs booted game
+00494480	STATE	-	-	video	38	STATE: reads live global / derefs arg → needs booted game
+00495080	STATE	-	-	frontend	38	STATE: reads live global / derefs arg → needs booted game
+004c3d60	STATE	-	-	render	38	STATE: reads live global / derefs arg → needs booted game
+004c3dc0	STATE	-	-	render	38	STATE: reads live global / derefs arg → needs booted game
+005a60e0	STATE	-	-	audio	38	STATE: reads live global / derefs arg → needs booted game
+005b10a0	STATE	-	-	audio	38	STATE: reads live global / derefs arg → needs booted game
+005b10e0	STATE	-	-	audio	38	STATE: reads live global / derefs arg → needs booted game
+00421560	STATE	-	-	render	39	STATE: reads live global / derefs arg → needs booted game
+004292d0	STATE	-	-	util	39	STATE: reads live global / derefs arg → needs booted game
+0045d430	STATE	-	-	util	39	STATE: reads live global / derefs arg → needs booted game
+0048fce0	STATE	-	-	particle	39	STATE: reads live global / derefs arg → needs booted game
+0048fd10	STATE	-	-	particle	39	STATE: reads live global / derefs arg → needs booted game
+0048fd40	STATE	-	-	particle	39	STATE: reads live global / derefs arg → needs booted game
+0049cc40	STATE	-	-	particle	39	STATE: reads live global / derefs arg → needs booted game
+004e4320	STATE	-	-	render	39	STATE: reads live global / derefs arg → needs booted game
+00557220	STATE	-	-	hud	39	STATE: reads live global / derefs arg → needs booted game
+005a9de0	STATE	-	-	audio	39	STATE: reads live global / derefs arg → needs booted game
+005b3550	STATE	-	-	audio	39	STATE: reads live global / derefs arg → needs booted game
+00418a70	STATE	-	-	render	40	STATE: reads live global / derefs arg → needs booted game
+0041b660	STATE	-	-	boot	40	STATE: reads live global / derefs arg → needs booted game
+0045da60	STATE	-	-	audio	40	STATE: reads live global / derefs arg → needs booted game
+00496940	STATE	-	-	render	40	STATE: reads live global / derefs arg → needs booted game
+0049f1e0	STATE	-	-	particle	40	STATE: reads live global / derefs arg → needs booted game
+004c76c0	STATE	-	-	render	40	STATE: reads live global / derefs arg → needs booted game
+00534920	STATE	-	-	util	40	STATE: reads live global / derefs arg → needs booted game
+00425b90	STATE	-	-	frontend	41	STATE: reads live global / derefs arg → needs booted game
+00467070	STATE	-	-	boot	41	STATE: reads live global / derefs arg → needs booted game
+0046cc10	STATE	-	-	ai	41	STATE: reads live global / derefs arg → needs booted game
+0047d150	STATE	-	-	gameplay	41	STATE: reads live global / derefs arg → needs booted game
+00483a40	STATE	-	-	vehicle	41	STATE: reads live global / derefs arg → needs booted game
+00485380	STATE	-	-	vehicle	41	STATE: reads live global / derefs arg → needs booted game
+00489c30	STATE	-	-	particle	41	STATE: reads live global / derefs arg → needs booted game
+0049ff60	STATE	-	-	particle	41	STATE: reads live global / derefs arg → needs booted game
+004cb840	STATE	-	-	render	41	STATE: reads live global / derefs arg → needs booted game
+00550950	STATE	-	-	audio	41	STATE: reads live global / derefs arg → needs booted game
+004219c0	STATE	-	-	render	42	STATE: reads live global / derefs arg → needs booted game
+00474db0	STATE	-	-	render	42	STATE: reads live global / derefs arg → needs booted game
+00495580	STATE	-	-	input	42	STATE: reads live global / derefs arg → needs booted game
+00495fe0	STATE	-	-	input	42	STATE: reads live global / derefs arg → needs booted game
+004cde20	STATE	-	-	render	42	STATE: reads live global / derefs arg → needs booted game
+005a5d60	STATE	-	-	audio	42	STATE: reads live global / derefs arg → needs booted game
+005af040	STATE	-	-	audio	42	STATE: reads live global / derefs arg → needs booted game
+0041ccf0	STATE	-	-	boot	43	STATE: reads live global / derefs arg → needs booted game
+00448700	STATE	-	-	vehicle	43	STATE: reads live global / derefs arg → needs booted game
+00477580	STATE	-	-	render	43	STATE: reads live global / derefs arg → needs booted game
+004c3d90	STATE	-	-	render	43	STATE: reads live global / derefs arg → needs booted game
+005ae300	STATE	-	-	audio	43	STATE: reads live global / derefs arg → needs booted game
+005bc020	STATE	-	-	audio	43	STATE: reads live global / derefs arg → needs booted game
+00417370	STATE	-	-	gameplay	44	STATE: reads live global / derefs arg → needs booted game
+0049d1d0	STATE	-	-	particle	44	STATE: reads live global / derefs arg → needs booted game
+004c1b10	STATE	-	-	render	44	STATE: reads live global / derefs arg → needs booted game
+0055c810	STATE	-	-	vehicle	44	STATE: reads live global / derefs arg → needs booted game
+004672d0	STATE	-	-	render	45	STATE: reads live global / derefs arg → needs booted game
+005a6c60	STATE	-	-	audio	45	STATE: reads live global / derefs arg → needs booted game
+005bbf30	STATE	-	-	audio	45	STATE: reads live global / derefs arg → needs booted game
+0041f060	STATE	-	-	gameplay	46	STATE: reads live global / derefs arg → needs booted game
+00496010	STATE	-	-	input	46	STATE: reads live global / derefs arg → needs booted game
+005a7e70	STATE	-	-	audio	46	STATE: reads live global / derefs arg → needs booted game
+005af010	STATE	-	-	audio	46	STATE: reads live global / derefs arg → needs booted game
+0045cc50	STATE	-	-	audio	47	STATE: reads live global / derefs arg → needs booted game
+0047b8a0	STATE	-	-	input	47	STATE: reads live global / derefs arg → needs booted game
+0047f450	STATE	-	-	gameplay	47	STATE: reads live global / derefs arg → needs booted game
+004b40f0	STATE	-	-	render	47	STATE: reads live global / derefs arg → needs booted game
+004c5860	STATE	-	-	render	47	STATE: reads live global / derefs arg → needs booted game
+004c7730	STATE	-	-	render	47	STATE: reads live global / derefs arg → needs booted game
+005a6d90	STATE	-	-	audio	47	STATE: reads live global / derefs arg → needs booted game
+005af230	STATE	-	-	audio	47	STATE: reads live global / derefs arg → needs booted game
+00482900	STATE	-	-	vehicle	48	STATE: reads live global / derefs arg → needs booted game
+004b6770	STATE	-	-	render	48	STATE: reads live global / derefs arg → needs booted game
+004cbad0	STATE	-	-	render	48	STATE: reads live global / derefs arg → needs booted game
+004d5310	STATE	-	-	render	48	STATE: reads live global / derefs arg → needs booted game
+005a6d60	STATE	-	-	audio	48	STATE: reads live global / derefs arg → needs booted game
+00457610	STATE	-	-	gameplay	49	STATE: reads live global / derefs arg → needs booted game
+00486f50	STATE	-	-	particle	49	STATE: reads live global / derefs arg → needs booted game
+0048f740	STATE	-	-	util	49	STATE: reads live global / derefs arg → needs booted game
+0049fc80	STATE	-	-	particle	49	STATE: reads live global / derefs arg → needs booted game
+004b5190	STATE	-	-	vehicle	49	STATE: reads live global / derefs arg → needs booted game
+005571e0	STATE	-	-	hud	49	STATE: reads live global / derefs arg → needs booted game
+004c3270	STATE	-	-	render	50	STATE: reads live global / derefs arg → needs booted game
+005a6e10	STATE	-	-	audio	50	STATE: reads live global / derefs arg → needs booted game
+005ba720	STATE	-	-	audio	50	STATE: reads live global / derefs arg → needs booted game
+0041f1e0	STATE	-	-	util	51	STATE: reads live global / derefs arg → needs booted game
+0041f220	STATE	-	-	gameplay	51	STATE: reads live global / derefs arg → needs booted game
+00442a20	STATE	-	-	util	51	STATE: reads live global / derefs arg → needs booted game
+004cb0b0	STATE	-	-	render	51	STATE: reads live global / derefs arg → needs booted game
+004cb0f0	STATE	-	-	render	51	STATE: reads live global / derefs arg → needs booted game
+004ccde0	STATE	-	-	util	51	STATE: reads live global / derefs arg → needs booted game
+004d38b0	STATE	-	-	render	51	STATE: reads live global / derefs arg → needs booted game
+004d52d0	STATE	-	-	render	51	STATE: reads live global / derefs arg → needs booted game
+0041f2c0	STATE	-	-	gameplay	52	STATE: reads live global / derefs arg → needs booted game
+00485070	STATE	-	-	util	52	STATE: reads live global / derefs arg → needs booted game
+004853b0	STATE	-	-	smplfzx	52	STATE: reads live global / derefs arg → needs booted game
+00485e10	STATE	-	-	particle	52	STATE: reads live global / derefs arg → needs booted game
+00490490	STATE	-	-	render	52	STATE: reads live global / derefs arg → needs booted game
+005a6070	STATE	-	-	audio	52	STATE: reads live global / derefs arg → needs booted game
+0045d3f0	STATE	-	-	util	53	STATE: reads live global / derefs arg → needs booted game
+005aaac0	STATE	-	-	audio	53	STATE: reads live global / derefs arg → needs booted game
+00403660	STATE	-	-	boot	54	STATE: reads live global / derefs arg → needs booted game
+004671d0	STATE	-	-	render	54	STATE: reads live global / derefs arg → needs booted game
+00467210	STATE	-	-	render	54	STATE: reads live global / derefs arg → needs booted game
+00484130	STATE	-	-	boot	54	STATE: reads live global / derefs arg → needs booted game
+004c76f0	STATE	-	-	render	54	STATE: reads live global / derefs arg → needs booted game
+004c7860	STATE	-	-	render	54	STATE: reads live global / derefs arg → needs booted game
+00556ce0	STATE	-	-	hud	54	STATE: reads live global / derefs arg → needs booted game
+00458880	STATE	-	-	gameplay	55	STATE: reads live global / derefs arg → needs booted game
+00489890	STATE	-	-	gameplay	55	STATE: reads live global / derefs arg → needs booted game
+00494a80	STATE	-	-	frontend	55	STATE: reads live global / derefs arg → needs booted game
+00496370	STATE	-	-	input	55	STATE: reads live global / derefs arg → needs booted game
+004b9850	STATE	-	-	input	55	STATE: reads live global / derefs arg → needs booted game
+005ad6f0	STATE	-	-	audio	55	STATE: reads live global / derefs arg → needs booted game
+005ae470	STATE	-	-	audio	55	STATE: reads live global / derefs arg → needs booted game
+004778e0	STATE	-	-	render	56	STATE: reads live global / derefs arg → needs booted game
+0047f480	STATE	-	-	gameplay	56	STATE: reads live global / derefs arg → needs booted game
+00489250	STATE	-	-	boot	56	STATE: reads live global / derefs arg → needs booted game
+004b7140	STATE	-	-	input	56	STATE: reads live global / derefs arg → needs booted game
+004cb070	STATE	-	-	render	56	STATE: reads live global / derefs arg → needs booted game
+005ab1c0	STATE	-	-	audio	56	STATE: reads live global / derefs arg → needs booted game
+0040cf40	STATE	-	-	gameplay	57	STATE: reads live global / derefs arg → needs booted game
+0042d560	STATE	-	-	render	57	STATE: reads live global / derefs arg → needs booted game
+00475ef0	STATE	-	-	render	57	STATE: reads live global / derefs arg → needs booted game
+004e66d0	STATE	-	-	render	57	STATE: reads live global / derefs arg → needs booted game
+005a6030	STATE	-	-	audio	58	STATE: reads live global / derefs arg → needs booted game
+005ad2e0	STATE	-	-	audio	58	STATE: reads live global / derefs arg → needs booted game
+0047a0f0	STATE	-	-	track	59	STATE: reads live global / derefs arg → needs booted game
+00485420	STATE	-	-	vehicle	59	STATE: reads live global / derefs arg → needs booted game
+004c7a20	STATE	-	-	render	59	STATE: reads live global / derefs arg → needs booted game
+005aa7a0	STATE	-	-	audio	60	STATE: reads live global / derefs arg → needs booted game
+00412010	STATE	-	-	gameplay	61	STATE: reads live global / derefs arg → needs booted game
+004624c0	STATE	-	-	audio	61	STATE: reads live global / derefs arg → needs booted game
+004d7c60	STATE	-	-	render	61	STATE: reads live global / derefs arg → needs booted game
+005a7520	STATE	-	-	audio	61	STATE: reads live global / derefs arg → needs booted game
+005bf6d0	STATE	-	-	audio	61	STATE: reads live global / derefs arg → needs booted game
+004417e0	STATE	-	-	util	62	STATE: reads live global / derefs arg → needs booted game
+004c7650	STATE	-	-	render	62	STATE: reads live global / derefs arg → needs booted game
+005abcf0	STATE	-	-	audio	62	STATE: reads live global / derefs arg → needs booted game
+005af740	STATE	-	-	audio	63	STATE: reads live global / derefs arg → needs booted game
+00413a00	STATE	-	-	render	64	STATE: reads live global / derefs arg → needs booted game
+00413f50	STATE	-	-	hud	64	STATE: reads live global / derefs arg → needs booted game
+00421c10	STATE	-	-	render	64	STATE: reads live global / derefs arg → needs booted game
+00454ff0	STATE	-	-	render	64	STATE: reads live global / derefs arg → needs booted game
+004c59c0	STATE	-	-	render	64	STATE: reads live global / derefs arg → needs booted game
+005be5f0	STATE	-	-	audio	64	STATE: reads live global / derefs arg → needs booted game
+00411530	STATE	-	-	vehicle	65	STATE: reads live global / derefs arg → needs booted game
+004215e0	STATE	-	-	render	65	STATE: reads live global / derefs arg → needs booted game
+0047a130	STATE	-	-	render	65	STATE: reads live global / derefs arg → needs booted game
+004e6680	STATE	-	-	render	65	STATE: reads live global / derefs arg → needs booted game
+005b1030	STATE	-	-	audio	65	STATE: reads live global / derefs arg → needs booted game
+004b4d10	STATE	-	-	render	66	STATE: reads live global / derefs arg → needs booted game
+004b68f0	STATE	-	-	render	66	STATE: reads live global / derefs arg → needs booted game
+005aacf0	STATE	-	-	audio	66	STATE: reads live global / derefs arg → needs booted game
+0049f030	STATE	-	-	particle	67	STATE: reads live global / derefs arg → needs booted game
+004c9f60	STATE	-	-	render	67	STATE: reads live global / derefs arg → needs booted game
+004da430	STATE	-	-	render	67	STATE: reads live global / derefs arg → needs booted game
+00556e40	STATE	-	-	hud	67	STATE: reads live global / derefs arg → needs booted game
+005a7aa0	STATE	-	-	audio	67	STATE: reads live global / derefs arg → needs booted game
+005ad6a0	STATE	-	-	audio	67	STATE: reads live global / derefs arg → needs booted game
+004593b0	STATE	-	-	gameplay	68	STATE: reads live global / derefs arg → needs booted game
+00467020	STATE	-	-	boot	68	STATE: reads live global / derefs arg → needs booted game
+004759b0	STATE	-	-	render	68	STATE: reads live global / derefs arg → needs booted game
+004b4b60	STATE	-	-	render	68	STATE: reads live global / derefs arg → needs booted game
+00498810	STATE	-	-	util	69	STATE: reads live global / derefs arg → needs booted game
+004161e0	STATE	-	-	ai	70	STATE: reads live global / derefs arg → needs booted game
+00428400	STATE	-	-	boot	70	STATE: reads live global / derefs arg → needs booted game
+00477f00	STATE	-	-	render	70	STATE: reads live global / derefs arg → needs booted game
+00492290	STATE	-	-	boot	70	STATE: reads live global / derefs arg → needs booted game
+00558470	STATE	-	-	render	70	STATE: reads live global / derefs arg → needs booted game
+004b4ad0	STATE	-	-	render	71	STATE: reads live global / derefs arg → needs booted game
+005aefc0	STATE	-	-	audio	71	STATE: reads live global / derefs arg → needs booted game
+005be0f0	STATE	-	-	audio	71	STATE: reads live global / derefs arg → needs booted game
+0041ad60	STATE	-	-	render	72	STATE: reads live global / derefs arg → needs booted game
+004891f0	STATE	-	-	render	72	STATE: reads live global / derefs arg → needs booted game
+00418de0	STATE	-	-	vehicle	73	STATE: reads live global / derefs arg → needs booted game
+00556d20	STATE	-	-	hud	73	STATE: reads live global / derefs arg → needs booted game
+004661a0	STATE	-	-	audio	74	STATE: reads live global / derefs arg → needs booted game
+00472380	STATE	-	-	render	74	STATE: reads live global / derefs arg → needs booted game
+00550be0	STATE	-	-	util	74	STATE: reads live global / derefs arg → needs booted game
+005bc640	STATE	-	-	audio	74	STATE: reads live global / derefs arg → needs booted game
+0049cc80	STATE	-	-	particle	75	STATE: reads live global / derefs arg → needs booted game
+005ae330	STATE	-	-	audio	75	STATE: reads live global / derefs arg → needs booted game
+0041ebb0	STATE	-	-	render	76	STATE: reads live global / derefs arg → needs booted game
+0042a8d0	STATE	-	-	render	76	STATE: reads live global / derefs arg → needs booted game
+004cba80	STATE	-	-	render	76	STATE: reads live global / derefs arg → needs booted game
+0055c4f0	STATE	-	-	vehicle	76	STATE: reads live global / derefs arg → needs booted game
+005a89d0	STATE	-	-	audio	76	STATE: reads live global / derefs arg → needs booted game
+0048a490	STATE	-	-	particle	77	STATE: reads live global / derefs arg → needs booted game
+005b0970	STATE	-	-	audio	77	STATE: reads live global / derefs arg → needs booted game
+005b3620	STATE	-	-	audio	77	STATE: reads live global / derefs arg → needs booted game
+0041af00	STATE	-	-	render	78	STATE: reads live global / derefs arg → needs booted game
+005a7560	STATE	-	-	audio	78	STATE: reads live global / derefs arg → needs booted game
+00404650	STATE	-	-	render	79	STATE: reads live global / derefs arg → needs booted game
+00475e50	STATE	-	-	render	79	STATE: reads live global / derefs arg → needs booted game
+00486220	STATE	-	-	particle	79	STATE: reads live global / derefs arg → needs booted game
+004c2f60	STATE	-	-	render	79	STATE: reads live global / derefs arg → needs booted game
+005bdef0	STATE	-	-	audio	79	STATE: reads live global / derefs arg → needs booted game
+005bf610	STATE	-	-	audio	79	STATE: reads live global / derefs arg → needs booted game
+004220d0	STATE	-	-	render	80	STATE: reads live global / derefs arg → needs booted game
+0047f1e0	STATE	-	-	gameplay	80	STATE: reads live global / derefs arg → needs booted game
+004d8300	STATE	-	-	render	80	STATE: reads live global / derefs arg → needs booted game
+005ad980	STATE	-	-	audio	80	STATE: reads live global / derefs arg → needs booted game
+004570a0	STATE	-	-	gameplay	81	STATE: reads live global / derefs arg → needs booted game
+0045a130	STATE	-	-	gameplay	81	STATE: reads live global / derefs arg → needs booted game
+00475d30	STATE	-	-	render	81	STATE: reads live global / derefs arg → needs booted game
+004950b0	STATE	-	-	util	81	STATE: reads live global / derefs arg → needs booted game
+004cc580	STATE	-	-	render	82	STATE: reads live global / derefs arg → needs booted game
+005aa060	STATE	-	-	audio	82	STATE: reads live global / derefs arg → needs booted game
+00420230	STATE	-	-	track	83	STATE: reads live global / derefs arg → needs booted game
+00421100	STATE	-	-	render	83	STATE: reads live global / derefs arg → needs booted game
+00441700	STATE	-	-	util	83	STATE: reads live global / derefs arg → needs booted game
+00498b60	STATE	-	-	render	83	STATE: reads live global / derefs arg → needs booted game
+004c57a0	STATE	-	-	hud	83	STATE: reads live global / derefs arg → needs booted game
+00557250	STATE	-	-	hud	83	STATE: reads live global / derefs arg → needs booted game
+0041e0d0	STATE	-	-	boot	84	STATE: reads live global / derefs arg → needs booted game
+004d4250	STATE	-	-	render	84	STATE: reads live global / derefs arg → needs booted game
+004dab70	STATE	-	-	render	84	STATE: reads live global / derefs arg → needs booted game
+0045d080	STATE	-	-	gameplay	85	STATE: reads live global / derefs arg → needs booted game
+0048fe70	STATE	-	-	render	85	STATE: reads live global / derefs arg → needs booted game
+00425e40	STATE	-	-	render	86	STATE: reads live global / derefs arg → needs booted game
+0045a530	STATE	-	-	gameplay	86	STATE: reads live global / derefs arg → needs booted game
+0045b930	STATE	-	-	boot	86	STATE: reads live global / derefs arg → needs booted game
+004852e0	STATE	-	-	smplfzx	86	STATE: reads live global / derefs arg → needs booted game
+004cdd00	STATE	-	-	render	86	STATE: reads live global / derefs arg → needs booted game
+005a6710	STATE	-	-	audio	86	STATE: reads live global / derefs arg → needs booted game
+00411350	STATE	-	-	vehicle	87	STATE: reads live global / derefs arg → needs booted game
+0042c220	STATE	-	-	util	87	STATE: reads live global / derefs arg → needs booted game
+004b5260	STATE	-	-	render	87	STATE: reads live global / derefs arg → needs booted game
+004b6710	STATE	-	-	render	87	STATE: reads live global / derefs arg → needs booted game
+004cdca0	STATE	-	-	render	87	STATE: reads live global / derefs arg → needs booted game
+005a5f00	STATE	-	-	audio	87	STATE: reads live global / derefs arg → needs booted game
+0041f710	STATE	-	-	gameplay	88	STATE: reads live global / derefs arg → needs booted game
+004391b0	STATE	-	-	frontend	88	STATE: reads live global / derefs arg → needs booted game
+004972b0	STATE	-	-	input	88	STATE: reads live global / derefs arg → needs booted game
+0049f0a0	STATE	-	-	particle	88	STATE: reads live global / derefs arg → needs booted game
+004b4880	STATE	-	-	boot	88	STATE: reads live global / derefs arg → needs booted game
+004d3d50	STATE	-	-	render	88	STATE: reads live global / derefs arg → needs booted game
+004d83d0	STATE	-	-	render	88	STATE: reads live global / derefs arg → needs booted game
+004db550	STATE	-	-	render	88	STATE: reads live global / derefs arg → needs booted game
+0048fd70	STATE	-	-	render	89	STATE: reads live global / derefs arg → needs booted game
+00491530	STATE	-	-	render	89	STATE: reads live global / derefs arg → needs booted game
+004c7760	STATE	-	-	render	89	STATE: reads live global / derefs arg → needs booted game
+005bbed0	STATE	-	-	audio	89	STATE: reads live global / derefs arg → needs booted game
+004c5a00	STATE	-	-	render	90	STATE: reads live global / derefs arg → needs booted game
+004cb130	STATE	-	-	render	90	STATE: reads live global / derefs arg → needs booted game
+004d42b0	STATE	-	-	render	90	STATE: reads live global / derefs arg → needs booted game
+00417750	STATE	-	-	gameplay	91	STATE: reads live global / derefs arg → needs booted game
+0041c320	STATE	-	-	render	91	STATE: reads live global / derefs arg → needs booted game
+004595c0	STATE	-	-	gameplay	91	STATE: reads live global / derefs arg → needs booted game
+00475a00	STATE	-	-	render	91	STATE: reads live global / derefs arg → needs booted game
+004820e0	STATE	-	-	vehicle	91	STATE: reads live global / derefs arg → needs booted game
+00489c60	STATE	-	-	particle	92	STATE: reads live global / derefs arg → needs booted game
+0048a5d0	STATE	-	-	particle	93	STATE: reads live global / derefs arg → needs booted game
+004b4150	STATE	-	-	render	93	STATE: reads live global / derefs arg → needs booted game
+004d38f0	STATE	-	-	render	93	STATE: reads live global / derefs arg → needs booted game
+004d39b0	STATE	-	-	render	93	STATE: reads live global / derefs arg → needs booted game
+00422470	STATE	-	-	frontend	94	STATE: reads live global / derefs arg → needs booted game
+00426b40	STATE	-	-	frontend	94	STATE: reads live global / derefs arg → needs booted game
+0044c490	STATE	-	-	render	94	STATE: reads live global / derefs arg → needs booted game
+00477810	STATE	-	-	render	94	STATE: reads live global / derefs arg → needs booted game
+00495e80	STATE	-	-	input	94	STATE: reads live global / derefs arg → needs booted game
+0049fac0	STATE	-	-	particle	94	STATE: reads live global / derefs arg → needs booted game
+005bf470	STATE	-	-	audio	94	STATE: reads live global / derefs arg → needs booted game
+0040e500	STATE	-	-	gameplay	95	STATE: reads live global / derefs arg → needs booted game
+00421630	STATE	-	-	render	95	STATE: reads live global / derefs arg → needs booted game
+00448dc0	STATE	-	-	render	95	STATE: reads live global / derefs arg → needs booted game
+0045daf0	STATE	-	-	audio	95	STATE: reads live global / derefs arg → needs booted game
+00483fa0	STATE	-	-	vehicle	95	STATE: reads live global / derefs arg → needs booted game
+00486270	STATE	-	-	particle	96	STATE: reads live global / derefs arg → needs booted game
+005bbd50	STATE	-	-	audio	96	STATE: reads live global / derefs arg → needs booted game
+005bbf60	STATE	-	-	audio	96	STATE: reads live global / derefs arg → needs booted game
+004216b0	STATE	-	-	render	97	STATE: reads live global / derefs arg → needs booted game
+00454170	STATE	-	-	gameplay	97	STATE: reads live global / derefs arg → needs booted game
+0049c990	STATE	-	-	particle	97	STATE: reads live global / derefs arg → needs booted game
+005aab00	STATE	-	-	audio	97	STATE: reads live global / derefs arg → needs booted game
+005aab70	STATE	-	-	audio	97	STATE: reads live global / derefs arg → needs booted game
+005ad910	STATE	-	-	audio	97	STATE: reads live global / derefs arg → needs booted game
+005af690	STATE	-	-	audio	97	STATE: reads live global / derefs arg → needs booted game
+00431d00	STATE	-	-	frontend	98	STATE: reads live global / derefs arg → needs booted game
+0045bf30	STATE	-	-	powerups	98	STATE: reads live global / derefs arg → needs booted game
+004b51d0	STATE	-	-	render	98	STATE: reads live global / derefs arg → needs booted game
+005ad9d0	STATE	-	-	audio	98	STATE: reads live global / derefs arg → needs booted game
+005c8910	STATE	-	-	audio	98	STATE: reads live global / derefs arg → needs booted game
+00421ba0	STATE	-	-	render	99	STATE: reads live global / derefs arg → needs booted game
+00477870	STATE	-	-	render	99	STATE: reads live global / derefs arg → needs booted game
+004d87a0	STATE	-	-	render	99	STATE: reads live global / derefs arg → needs booted game
+0048e7b0	STATE	-	-	particle	100	STATE: reads live global / derefs arg → needs booted game
+005bcd10	STATE	-	-	audio	100	STATE: reads live global / derefs arg → needs booted game
+0045dce0	STATE	-	-	audio	101	STATE: reads live global / derefs arg → needs booted game
+004da480	STATE	-	-	render	101	STATE: reads live global / derefs arg → needs booted game
+005509b0	STATE	-	-	audio	101	STATE: reads live global / derefs arg → needs booted game
+0041a840	STATE	-	-	gameplay	102	STATE: reads live global / derefs arg → needs booted game
+0041adb0	STATE	-	-	render	102	STATE: reads live global / derefs arg → needs booted game
+004c3040	STATE	-	-	render	102	STATE: reads live global / derefs arg → needs booted game
+004d4170	STATE	-	-	render	102	STATE: reads live global / derefs arg → needs booted game
+005b36f0	STATE	-	-	audio	102	STATE: reads live global / derefs arg → needs booted game
+0041dc30	STATE	-	-	frontend	103	STATE: reads live global / derefs arg → needs booted game
+00476320	STATE	-	-	render	103	STATE: reads live global / derefs arg → needs booted game
+00425a40	STATE	-	-	util	104	STATE: reads live global / derefs arg → needs booted game
+0046bf50	STATE	-	-	gameplay	104	STATE: reads live global / derefs arg → needs booted game
+0049cbd0	STATE	-	-	particle	104	STATE: reads live global / derefs arg → needs booted game
+0044ecc0	STATE	-	-	gameplay	105	STATE: reads live global / derefs arg → needs booted game
+0045cbe0	STATE	-	-	gameplay	105	STATE: reads live global / derefs arg → needs booted game
+0047d080	STATE	-	-	physics	105	STATE: reads live global / derefs arg → needs booted game
+00426d20	STATE	-	-	frontend	106	STATE: reads live global / derefs arg → needs booted game
+0044bbc0	STATE	-	-	render	106	STATE: reads live global / derefs arg → needs booted game
+0045d1e0	STATE	-	-	util	106	STATE: reads live global / derefs arg → needs booted game
+00477490	STATE	-	-	render	106	STATE: reads live global / derefs arg → needs booted game
+00550390	STATE	-	-	render	106	STATE: reads live global / derefs arg → needs booted game
+005ab090	STATE	-	-	audio	106	STATE: reads live global / derefs arg → needs booted game
+0048bb70	STATE	-	-	particle	107	STATE: reads live global / derefs arg → needs booted game
+004d5340	STATE	-	-	render	107	STATE: reads live global / derefs arg → needs booted game
+005bcca0	STATE	-	-	audio	107	STATE: reads live global / derefs arg → needs booted game
+0045c6b0	STATE	-	-	audio	108	STATE: reads live global / derefs arg → needs booted game
+004943f0	STATE	-	-	audio	108	STATE: reads live global / derefs arg → needs booted game
+005a73b0	STATE	-	-	audio	108	STATE: reads live global / derefs arg → needs booted game
+005beae0	STATE	-	-	audio	108	STATE: reads live global / derefs arg → needs booted game
+0046d780	STATE	-	-	ai	109	STATE: reads live global / derefs arg → needs booted game
+005a5f60	STATE	-	-	audio	109	STATE: reads live global / derefs arg → needs booted game
+005af600	STATE	-	-	audio	109	STATE: reads live global / derefs arg → needs booted game
+0040bde0	STATE	-	-	render	110	STATE: reads live global / derefs arg → needs booted game
+00457ba0	STATE	-	-	gameplay	110	STATE: reads live global / derefs arg → needs booted game
+00477760	STATE	-	-	render	110	STATE: reads live global / derefs arg → needs booted game
+004942b0	STATE	-	-	video	110	STATE: reads live global / derefs arg → needs booted game
+005ae400	STATE	-	-	audio	110	STATE: reads live global / derefs arg → needs booted game
+005be8c0	STATE	-	-	audio	110	STATE: reads live global / derefs arg → needs booted game
+00426460	STATE	-	-	frontend	111	STATE: reads live global / derefs arg → needs booted game
+0047c0f0	STATE	-	-	track	111	STATE: reads live global / derefs arg → needs booted game
+00487d70	STATE	-	-	particle	111	STATE: reads live global / derefs arg → needs booted game
+004c4600	STATE	-	-	render	111	STATE: reads live global / derefs arg → needs booted game
+004d41e0	STATE	-	-	render	111	STATE: reads live global / derefs arg → needs booted game
+005be080	STATE	-	-	audio	111	STATE: reads live global / derefs arg → needs booted game
+00419480	STATE	-	-	gameplay	112	STATE: reads live global / derefs arg → needs booted game
+0041f880	STATE	-	-	gameplay	112	STATE: reads live global / derefs arg → needs booted game
+0045e0f0	STATE	-	-	audio	112	STATE: reads live global / derefs arg → needs booted game
+004670a0	STATE	-	-	render	112	STATE: reads live global / derefs arg → needs booted game
+00554050	STATE	-	-	hud	113	STATE: reads live global / derefs arg → needs booted game
+00485d90	STATE	-	-	particle	114	STATE: reads live global / derefs arg → needs booted game
+00406950	STATE	-	-	gameplay	115	STATE: reads live global / derefs arg → needs booted game
+004914b0	STATE	-	-	render	115	STATE: reads live global / derefs arg → needs booted game
+005b0a90	STATE	-	-	audio	115	STATE: reads live global / derefs arg → needs booted game
+00441760	STATE	-	-	util	117	STATE: reads live global / derefs arg → needs booted game
+0048baf0	STATE	-	-	particle	117	STATE: reads live global / derefs arg → needs booted game
+00453eb0	STATE	-	-	gameplay	118	STATE: reads live global / derefs arg → needs booted game
+0047e9c0	STATE	-	-	vehicle	118	STATE: reads live global / derefs arg → needs booted game
+005b9320	STATE	-	-	audio	118	STATE: reads live global / derefs arg → needs booted game
+00474de0	STATE	-	-	render	119	STATE: reads live global / derefs arg → needs booted game
+0040bd00	STATE	-	-	boot	120	STATE: reads live global / derefs arg → needs booted game
+00485460	STATE	-	-	smplfzx	120	STATE: reads live global / derefs arg → needs booted game
+005af180	STATE	-	-	audio	120	STATE: reads live global / derefs arg → needs booted game
+005bde70	STATE	-	-	audio	120	STATE: reads live global / derefs arg → needs booted game
+004785e0	STATE	-	-	util	121	STATE: reads live global / derefs arg → needs booted game
+004c5a60	STATE	-	-	render	121	STATE: reads live global / derefs arg → needs booted game
+005ad570	STATE	-	-	audio	121	STATE: reads live global / derefs arg → needs booted game
+005b0360	STATE	-	-	audio	121	STATE: reads live global / derefs arg → needs booted game
+004951f0	STATE	-	-	render	122	STATE: reads live global / derefs arg → needs booted game
+004d8280	STATE	-	-	render	122	STATE: reads live global / derefs arg → needs booted game
+005540d0	STATE	-	-	hud	122	STATE: reads live global / derefs arg → needs booted game
+0042d420	STATE	-	-	render	123	STATE: reads live global / derefs arg → needs booted game
+0052a9c0	STATE	-	-	util	123	STATE: reads live global / derefs arg → needs booted game
+005bec10	STATE	-	-	audio	124	STATE: reads live global / derefs arg → needs booted game
+00425fa0	STATE	-	-	frontend	125	STATE: reads live global / derefs arg → needs booted game
+00426700	STATE	-	-	render	125	STATE: reads live global / derefs arg → needs booted game
+0046cb30	STATE	-	-	util	126	STATE: reads live global / derefs arg → needs booted game
+004862d0	STATE	-	-	particle	126	STATE: reads live global / derefs arg → needs booted game
+005bcda0	STATE	-	-	audio	126	STATE: reads live global / derefs arg → needs booted game
+00411ce0	STATE	-	-	vehicle	127	STATE: reads live global / derefs arg → needs booted game
+0047cea0	STATE	-	-	physics	127	STATE: reads live global / derefs arg → needs booted game
+00489940	STATE	-	-	particle	127	STATE: reads live global / derefs arg → needs booted game
+004d8350	STATE	-	-	render	127	STATE: reads live global / derefs arg → needs booted game
+00552b90	STATE	-	-	hud	127	STATE: reads live global / derefs arg → needs booted game
+00428590	STATE	-	-	boot	128	STATE: reads live global / derefs arg → needs booted game
+00459400	STATE	-	-	gameplay	128	STATE: reads live global / derefs arg → needs booted game
+0048af70	STATE	-	-	particle	128	STATE: reads live global / derefs arg → needs booted game
+004015a0	STATE	-	-	boot	129	STATE: reads live global / derefs arg → needs booted game
+005a6ea0	STATE	-	-	audio	129	STATE: reads live global / derefs arg → needs booted game
+005af860	STATE	-	-	audio	129	STATE: reads live global / derefs arg → needs booted game
+0041c380	STATE	-	-	render	130	STATE: reads live global / derefs arg → needs booted game
+004c2fb0	STATE	-	-	render	130	STATE: reads live global / derefs arg → needs booted game
+00486460	STATE	-	-	particle	131	STATE: reads live global / derefs arg → needs booted game
+00462ec0	STATE	-	-	audio	132	STATE: reads live global / derefs arg → needs booted game
+004756e0	STATE	-	-	render	132	STATE: reads live global / derefs arg → needs booted game
+004b7be0	STATE	-	-	input	132	STATE: reads live global / derefs arg → needs booted game
+004d94a0	STATE	-	-	render	132	STATE: reads live global / derefs arg → needs booted game
+00465c10	STATE	-	-	audio	133	STATE: reads live global / derefs arg → needs booted game
+00467110	STATE	-	-	render	133	STATE: reads live global / derefs arg → needs booted game
+004c5930	STATE	-	-	boot	133	STATE: reads live global / derefs arg → needs booted game
+004ce8e0	STATE	-	-	render	133	STATE: reads live global / derefs arg → needs booted game
+0041e630	STATE	-	-	hud	134	STATE: reads live global / derefs arg → needs booted game
+0048ad50	STATE	-	-	particle	134	STATE: reads live global / derefs arg → needs booted game
+0041a8d0	STATE	-	-	gameplay	135	STATE: reads live global / derefs arg → needs booted game
+005a7ee0	STATE	-	-	audio	135	STATE: reads live global / derefs arg → needs booted game
+005bdff0	STATE	-	-	audio	135	STATE: reads live global / derefs arg → needs booted game
+00458c70	STATE	-	-	gameplay	136	STATE: reads live global / derefs arg → needs booted game
+004cc9f0	STATE	-	-	render	136	STATE: reads live global / derefs arg → needs booted game
+005bfd10	STATE	-	-	audio	136	STATE: reads live global / derefs arg → needs booted game
+004b7ff0	STATE	-	-	input	137	STATE: reads live global / derefs arg → needs booted game
+004c1680	STATE	-	-	render	137	STATE: reads live global / derefs arg → needs booted game
+004584e0	STATE	-	-	gameplay	138	STATE: reads live global / derefs arg → needs booted game
+0047d330	STATE	-	-	gameplay	138	STATE: reads live global / derefs arg → needs booted game
+004ccc50	STATE	-	-	render	138	STATE: reads live global / derefs arg → needs booted game
+005a9f60	STATE	-	-	audio	138	STATE: reads live global / derefs arg → needs booted game
+0041cd20	STATE	-	-	render	139	STATE: reads live global / derefs arg → needs booted game
+005b2190	STATE	-	-	audio	139	STATE: reads live global / derefs arg → needs booted game
+0045ba10	STATE	-	-	vehicle	140	STATE: reads live global / derefs arg → needs booted game
+005af7d0	STATE	-	-	audio	140	STATE: reads live global / derefs arg → needs booted game
+0047c160	STATE	-	-	camera	141	STATE: reads live global / derefs arg → needs booted game
+0048a6f0	STATE	-	-	particle	141	STATE: reads live global / derefs arg → needs booted game
+0044e240	STATE	-	-	gameplay	142	STATE: reads live global / derefs arg → needs booted game
+00481780	STATE	-	-	vehicle	142	STATE: reads live global / derefs arg → needs booted game
+004d4f00	STATE	-	-	render	142	STATE: reads live global / derefs arg → needs booted game
+005bcbe0	STATE	-	-	audio	144	STATE: reads live global / derefs arg → needs booted game
+0041ae60	STATE	-	-	render	145	STATE: reads live global / derefs arg → needs booted game
+005b4150	STATE	-	-	audio	145	STATE: reads live global / derefs arg → needs booted game
+00494bc0	STATE	-	-	boot	146	STATE: reads live global / derefs arg → needs booted game
+004c1340	STATE	-	-	render	146	STATE: reads live global / derefs arg → needs booted game
+004c1480	STATE	-	-	render	146	STATE: reads live global / derefs arg → needs booted game
+00421c80	STATE	-	-	render	147	STATE: reads live global / derefs arg → needs booted game
+0045cfe0	STATE	-	-	audio	147	STATE: reads live global / derefs arg → needs booted game
+00463150	STATE	-	-	audio	147	STATE: reads live global / derefs arg → needs booted game
+00476440	STATE	-	-	util	147	STATE: reads live global / derefs arg → needs booted game
+005b8130	STATE	-	-	audio	147	STATE: reads live global / derefs arg → needs booted game
+00402fb0	STATE	-	-	hud	148	STATE: reads live global / derefs arg → needs booted game
+0040ad90	STATE	-	-	gameplay	148	STATE: reads live global / derefs arg → needs booted game
+004cafd0	STATE	-	-	render	148	STATE: reads live global / derefs arg → needs booted game
+00466100	STATE	-	-	audio	149	STATE: reads live global / derefs arg → needs booted game
+00476390	STATE	-	-	render	149	STATE: reads live global / derefs arg → needs booted game
+004cfe40	STATE	-	-	render	149	STATE: reads live global / derefs arg → needs booted game
+0041f120	STATE	-	-	util	150	STATE: reads live global / derefs arg → needs booted game
+005aa330	STATE	-	-	audio	151	STATE: reads live global / derefs arg → needs booted game
+005aaa00	STATE	-	-	audio	151	STATE: reads live global / derefs arg → needs booted game
+004c5890	STATE	-	-	render	152	STATE: reads live global / derefs arg → needs booted game
+0046d400	STATE	-	-	render	153	STATE: reads live global / derefs arg → needs booted game
+00477e60	STATE	-	-	render	154	STATE: reads live global / derefs arg → needs booted game
+004c77c0	STATE	-	-	render	154	STATE: reads live global / derefs arg → needs booted game
+004219f0	STATE	-	-	util	155	STATE: reads live global / derefs arg → needs booted game
+0041a400	STATE	-	-	gameplay	156	STATE: reads live global / derefs arg → needs booted game
+00482930	STATE	-	-	vehicle	156	STATE: reads live global / derefs arg → needs booted game
+005a79a0	STATE	-	-	audio	156	STATE: reads live global / derefs arg → needs booted game
+00407cd0	STATE	-	-	gameplay	157	STATE: reads live global / derefs arg → needs booted game
+0041ffb0	STATE	-	-	boot	157	STATE: reads live global / derefs arg → needs booted game
+0040cea0	STATE	-	-	track	158	STATE: reads live global / derefs arg → needs booted game
+0041f4f0	STATE	-	-	gameplay	158	STATE: reads live global / derefs arg → needs booted game
+004224d0	STATE	-	-	frontend	158	STATE: reads live global / derefs arg → needs booted game
+00485e50	STATE	-	-	particle	158	STATE: reads live global / derefs arg → needs booted game
+00550430	STATE	-	-	util	158	STATE: reads live global / derefs arg → needs booted game
+004b47e0	STATE	-	-	render	159	STATE: reads live global / derefs arg → needs booted game
+004d40d0	STATE	-	-	render	159	STATE: reads live global / derefs arg → needs booted game
+005b8090	STATE	-	-	audio	159	STATE: reads live global / derefs arg → needs booted game
+005bc050	STATE	-	-	audio	160	STATE: reads live global / derefs arg → needs booted game
+005bc0f0	STATE	-	-	audio	160	STATE: reads live global / derefs arg → needs booted game
+004b7330	STATE	-	-	input	161	STATE: reads live global / derefs arg → needs booted game
+005b09c0	STATE	-	-	audio	161	STATE: reads live global / derefs arg → needs booted game
+005551d0	STATE	-	-	hud	162	STATE: reads live global / derefs arg → needs booted game
+005ae250	STATE	-	-	audio	162	STATE: reads live global / derefs arg → needs booted game
+005bdf40	STATE	-	-	audio	162	STATE: reads live global / derefs arg → needs booted game
+004b7480	STATE	-	-	input	163	STATE: reads live global / derefs arg → needs booted game
+005aa3d0	STATE	-	-	audio	163	STATE: reads live global / derefs arg → needs booted game
+005ad5f0	STATE	-	-	audio	163	STATE: reads live global / derefs arg → needs booted game
+00421800	STATE	-	-	render	164	STATE: reads live global / derefs arg → needs booted game
+0048a780	STATE	-	-	particle	164	STATE: reads live global / derefs arg → needs booted game
+00412050	STATE	-	-	render	165	STATE: reads live global / derefs arg → needs booted game
+00421750	STATE	-	-	render	165	STATE: reads live global / derefs arg → needs booted game
+00554150	STATE	-	-	hud	166	STATE: reads live global / derefs arg → needs booted game
+004074a0	STATE	-	-	gameplay	167	STATE: reads live global / derefs arg → needs booted game
+00443d10	STATE	-	-	ai	167	STATE: reads live global / derefs arg → needs booted game
+00494320	STATE	-	-	video	168	STATE: reads live global / derefs arg → needs booted game
+0045cc80	STATE	-	-	audio	169	STATE: reads live global / derefs arg → needs booted game
+00403910	STATE	-	-	render	170	STATE: reads live global / derefs arg → needs booted game
+00417cf0	STATE	-	-	ai	171	STATE: reads live global / derefs arg → needs booted game
+005a9c50	STATE	-	-	audio	171	STATE: reads live global / derefs arg → needs booted game
+005bc750	STATE	-	-	audio	171	STATE: reads live global / derefs arg → needs booted game
+005be540	STATE	-	-	audio	171	STATE: reads live global / derefs arg → needs booted game
+004926c0	STATE	-	-	boot	173	STATE: reads live global / derefs arg → needs booted game
+00406410	STATE	-	-	gameplay	174	STATE: reads live global / derefs arg → needs booted game
+0042a740	STATE	-	-	render	174	STATE: reads live global / derefs arg → needs booted game
+0049f420	STATE	-	-	particle	174	STATE: reads live global / derefs arg → needs booted game
+00425ca0	STATE	-	-	frontend	175	STATE: reads live global / derefs arg → needs booted game
+0045e040	STATE	-	-	audio	176	STATE: reads live global / derefs arg → needs booted game
+0047cf20	STATE	-	-	gameplay	176	STATE: reads live global / derefs arg → needs booted game
+004daa40	STATE	-	-	render	176	STATE: reads live global / derefs arg → needs booted game
+005a6cb0	STATE	-	-	audio	176	STATE: reads live global / derefs arg → needs booted game
+005a86a0	STATE	-	-	audio	176	STATE: reads live global / derefs arg → needs booted game
+0047d180	STATE	-	-	gameplay	177	STATE: reads live global / derefs arg → needs booted game
+005aa7e0	STATE	-	-	audio	177	STATE: reads live global / derefs arg → needs booted game
+005b3020	STATE	-	-	audio	177	STATE: reads live global / derefs arg → needs booted game
+004b4430	STATE	-	-	util	178	STATE: reads live global / derefs arg → needs booted game
+00441c80	STATE	-	-	util	179	STATE: reads live global / derefs arg → needs booted game
+00459480	STATE	-	-	gameplay	179	STATE: reads live global / derefs arg → needs booted game
+004c4530	STATE	-	-	render	179	STATE: reads live global / derefs arg → needs booted game
+004ce5d0	STATE	-	-	render	179	STATE: reads live global / derefs arg → needs booted game
+004b6640	STATE	-	-	boot	180	STATE: reads live global / derefs arg → needs booted game
+004013f0	STATE	-	-	hud	181	STATE: reads live global / derefs arg → needs booted game
+004014b0	STATE	-	-	boot	182	STATE: reads live global / derefs arg → needs booted game
+0041ec00	STATE	-	-	gameplay	182	STATE: reads live global / derefs arg → needs booted game
+00418e70	STATE	-	-	gameplay	183	STATE: reads live global / derefs arg → needs booted game
+00475d90	STATE	-	-	render	184	STATE: reads live global / derefs arg → needs booted game
+004b9730	STATE	-	-	input	185	STATE: reads live global / derefs arg → needs booted game
+005a7460	STATE	-	-	audio	185	STATE: reads live global / derefs arg → needs booted game
+005ab560	STATE	-	-	audio	185	STATE: reads live global / derefs arg → needs booted game
+00474e70	STATE	-	-	render	186	STATE: reads live global / derefs arg → needs booted game
+00475770	STATE	-	-	render	186	STATE: reads live global / derefs arg → needs booted game
+004ce2d0	STATE	-	-	render	186	STATE: reads live global / derefs arg → needs booted game
+005a5d90	STATE	-	-	audio	187	STATE: reads live global / derefs arg → needs booted game
+004cdd60	STATE	-	-	render	188	STATE: reads live global / derefs arg → needs booted game
+0040ae30	STATE	-	-	gameplay	189	STATE: reads live global / derefs arg → needs booted game
+00465e80	STATE	-	-	audio	189	STATE: reads live global / derefs arg → needs booted game
+0042d4a0	STATE	-	-	render	190	STATE: reads live global / derefs arg → needs booted game
+00471df0	STATE	-	-	boot	190	STATE: reads live global / derefs arg → needs booted game
+0052aa40	STATE	-	-	util	190	STATE: reads live global / derefs arg → needs booted game
+005b9460	STATE	-	-	audio	190	STATE: reads live global / derefs arg → needs booted game
+00451990	STATE	-	-	gameplay	191	STATE: reads live global / derefs arg → needs booted game
+0045cb20	STATE	-	-	gameplay	191	STATE: reads live global / derefs arg → needs booted game
+00465f40	STATE	-	-	audio	191	STATE: reads live global / derefs arg → needs booted game
+00476650	STATE	-	-	render	191	STATE: reads live global / derefs arg → needs booted game
+00406070	STATE	-	-	gameplay	192	STATE: reads live global / derefs arg → needs booted game
+005aa900	STATE	-	-	audio	192	STATE: reads live global / derefs arg → needs booted game
+005bf710	STATE	-	-	audio	192	STATE: reads live global / derefs arg → needs booted game
+00483ed0	STATE	-	-	vehicle	193	STATE: reads live global / derefs arg → needs booted game
+005aac20	STATE	-	-	audio	194	STATE: reads live global / derefs arg → needs booted game
+00556d70	STATE	-	-	hud	195	STATE: reads live global / derefs arg → needs booted game
+004cd070	STATE	-	-	render	196	STATE: reads live global / derefs arg → needs booted game
+004b48e0	STATE	-	-	render	197	STATE: reads live global / derefs arg → needs booted game
+004d7ca0	STATE	-	-	render	197	STATE: reads live global / derefs arg → needs booted game
+004072e0	STATE	-	-	render	198	STATE: reads live global / derefs arg → needs booted game
+00492370	STATE	-	-	boot	198	STATE: reads live global / derefs arg → needs booted game
+004cd430	STATE	-	-	render	198	STATE: reads live global / derefs arg → needs booted game
+005bcab0	STATE	-	-	audio	198	STATE: reads live global / derefs arg → needs booted game
+0047a020	STATE	-	-	vehicle	199	STATE: reads live global / derefs arg → needs booted game
+004cce20	STATE	-	-	render	199	STATE: reads live global / derefs arg → needs booted game
+005b03e0	STATE	-	-	audio	199	STATE: reads live global / derefs arg → needs booted game
+0040d040	STATE	-	-	util	201	STATE: reads live global / derefs arg → needs booted game
+00496c10	STATE	-	-	render	202	STATE: reads live global / derefs arg → needs booted game
+005b1500	STATE	-	-	audio	203	STATE: reads live global / derefs arg → needs booted game
+0043df00	STATE	-	-	frontend	204	STATE: reads live global / derefs arg → needs booted game
+0047ea60	STATE	-	-	vehicle	204	STATE: reads live global / derefs arg → needs booted game
+0049ef60	STATE	-	-	particle	204	STATE: reads live global / derefs arg → needs booted game
+00555f20	STATE	-	-	hud	204	STATE: reads live global / derefs arg → needs booted game
+004491e0	STATE	-	-	render	205	STATE: reads live global / derefs arg → needs booted game
+00553f40	STATE	-	-	hud	205	STATE: reads live global / derefs arg → needs booted game
+004656e0	STATE	-	-	audio	206	STATE: reads live global / derefs arg → needs booted game
+0047f380	STATE	-	-	gameplay	206	STATE: reads live global / derefs arg → needs booted game
+00448e20	STATE	-	-	render	207	STATE: reads live global / derefs arg → needs booted game
+00458a40	STATE	-	-	gameplay	207	STATE: reads live global / derefs arg → needs booted game
+005a8890	STATE	-	-	audio	207	STATE: reads live global / derefs arg → needs booted game
+005af070	STATE	-	-	audio	207	STATE: reads live global / derefs arg → needs booted game
+0040c5b0	STATE	-	-	gameplay	209	STATE: reads live global / derefs arg → needs booted game
+0046c5f0	STATE	-	-	vehicle	210	STATE: reads live global / derefs arg → needs booted game
+004d3db0	STATE	-	-	render	210	STATE: reads live global / derefs arg → needs booted game
+0045c030	STATE	-	-	gameplay	211	STATE: reads live global / derefs arg → needs booted game
+004768c0	STATE	-	-	render	211	STATE: reads live global / derefs arg → needs booted game
+005a9d00	STATE	-	-	audio	211	STATE: reads live global / derefs arg → needs booted game
+00414220	STATE	-	-	util	213	STATE: reads live global / derefs arg → needs booted game
+00477f50	STATE	-	-	render	213	STATE: reads live global / derefs arg → needs booted game
+00414490	STATE	-	-	ai	214	STATE: reads live global / derefs arg → needs booted game
+00555830	STATE	-	-	hud	215	STATE: reads live global / derefs arg → needs booted game
+0049de90	STATE	-	-	particle	216	STATE: reads live global / derefs arg → needs booted game
+00555280	STATE	-	-	hud	216	STATE: reads live global / derefs arg → needs booted game
+00420340	STATE	-	-	gameplay	217	STATE: reads live global / derefs arg → needs booted game
+004892c0	STATE	-	-	particle	218	STATE: reads live global / derefs arg → needs booted game
+00458b10	STATE	-	-	gameplay	219	STATE: reads live global / derefs arg → needs booted game
+0049f4d0	STATE	-	-	particle	219	STATE: reads live global / derefs arg → needs booted game
+005554d0	STATE	-	-	hud	219	STATE: reads live global / derefs arg → needs booted game
+004dcaa0	STATE	-	-	render	220	STATE: reads live global / derefs arg → needs booted game
+0040b540	STATE	-	-	util	221	STATE: reads live global / derefs arg → needs booted game
+00405460	STATE	-	-	util	223	STATE: reads live global / derefs arg → needs booted game
+00407be0	STATE	-	-	gameplay	225	STATE: reads live global / derefs arg → needs booted game
+004c4dc0	STATE	-	-	util	225	STATE: reads live global / derefs arg → needs booted game
+004298e0	STATE	-	-	hud	226	STATE: reads live global / derefs arg → needs booted game
+00465940	STATE	-	-	audio	228	STATE: reads live global / derefs arg → needs booted game
+00465a30	STATE	-	-	audio	228	STATE: reads live global / derefs arg → needs booted game
+0046d570	STATE	-	-	ai	228	STATE: reads live global / derefs arg → needs booted game
+00486370	STATE	-	-	particle	228	STATE: reads live global / derefs arg → needs booted game
+0047ba20	STATE	-	-	gameplay	230	STATE: reads live global / derefs arg → needs booted game
+005b6820	STATE	-	-	audio	230	STATE: reads live global / derefs arg → needs booted game
+00477920	STATE	-	-	util	231	STATE: reads live global / derefs arg → needs booted game
+004c5cb0	STATE	-	-	render	231	STATE: reads live global / derefs arg → needs booted game
+004cc400	STATE	-	-	render	231	STATE: reads live global / derefs arg → needs booted game
+0041a9d0	STATE	-	-	render	232	STATE: reads live global / derefs arg → needs booted game
+00465b20	STATE	-	-	audio	233	STATE: reads live global / derefs arg → needs booted game
+0047f290	STATE	-	-	gameplay	233	STATE: reads live global / derefs arg → needs booted game
+005a6b70	STATE	-	-	audio	233	STATE: reads live global / derefs arg → needs booted game
+005ab620	STATE	-	-	audio	233	STATE: reads live global / derefs arg → needs booted game
+004c5680	STATE	-	-	render	234	STATE: reads live global / derefs arg → needs booted game
+0040b090	STATE	-	-	render	236	STATE: reads live global / derefs arg → needs booted game
+00425d50	STATE	-	-	util	236	STATE: reads live global / derefs arg → needs booted game
+0047d240	STATE	-	-	vehicle	236	STATE: reads live global / derefs arg → needs booted game
+004073b0	STATE	-	-	util	237	STATE: reads live global / derefs arg → needs booted game
+004273e0	STATE	-	-	frontend	237	STATE: reads live global / derefs arg → needs booted game
+00484cf0	STATE	-	-	world-objects	237	STATE: reads live global / derefs arg → needs booted game
+0048a4e0	STATE	-	-	particle	238	STATE: reads live global / derefs arg → needs booted game
+0044e0a0	STATE	-	-	util	239	STATE: reads live global / derefs arg → needs booted game
+00493390	STATE	-	-	util	239	STATE: reads live global / derefs arg → needs booted game
+004ce390	STATE	-	-	render	240	STATE: reads live global / derefs arg → needs booted game
+004d8eb0	STATE	-	-	render	240	STATE: reads live global / derefs arg → needs booted game
+005ac650	STATE	-	-	audio	240	STATE: reads live global / derefs arg → needs booted game
+0044d5e0	STATE	-	-	powerups	241	STATE: reads live global / derefs arg → needs booted game
+004b67e0	STATE	-	-	render	241	STATE: reads live global / derefs arg → needs booted game
+00412e30	STATE	-	-	render	244	STATE: reads live global / derefs arg → needs booted game
+004cc5e0	STATE	-	-	render	244	STATE: reads live global / derefs arg → needs booted game
+0041b340	STATE	-	-	hud	246	STATE: reads live global / derefs arg → needs booted game
+0045d0e0	STATE	-	-	gameplay	247	STATE: reads live global / derefs arg → needs booted game
+00427680	STATE	-	-	hud	248	STATE: reads live global / derefs arg → needs booted game
+0049dd60	STATE	-	-	video	248	STATE: reads live global / derefs arg → needs booted game
+00442ce0	STATE	-	-	vehicle	249	STATE: reads live global / derefs arg → needs booted game
+0044c4f0	STATE	-	-	render	250	STATE: reads live global / derefs arg → needs booted game
+00466000	STATE	-	-	audio	250	STATE: reads live global / derefs arg → needs booted game
+005ad320	STATE	-	-	audio	251	STATE: reads live global / derefs arg → needs booted game
+00465ca0	STATE	-	-	audio	252	STATE: reads live global / derefs arg → needs booted game
+0047f840	STATE	-	-	physics	254	STATE: reads live global / derefs arg → needs booted game
+00484f70	STATE	-	-	world-objects	254	STATE: reads live global / derefs arg → needs booted game
+004ccce0	STATE	-	-	render	254	STATE: reads live global / derefs arg → needs booted game
+005abd30	STATE	-	-	audio	255	STATE: reads live global / derefs arg → needs booted game
+00453100	STATE	-	-	gameplay	258	STATE: reads live global / derefs arg → needs booted game
+00558b40	STATE	-	-	gameplay	258	STATE: reads live global / derefs arg → needs booted game
+004b5080	STATE	-	-	render	260	STATE: reads live global / derefs arg → needs booted game
+00405f60	STATE	-	-	gameplay	261	STATE: reads live global / derefs arg → needs booted game
+00448cb0	STATE	-	-	render	261	STATE: reads live global / derefs arg → needs booted game
+005bd500	STATE	-	-	audio	261	STATE: reads live global / derefs arg → needs booted game
+00421a90	STATE	-	-	render	262	STATE: reads live global / derefs arg → needs booted game
+004069d0	STATE	-	-	gameplay	264	STATE: reads live global / derefs arg → needs booted game
+005b2080	STATE	-	-	audio	266	STATE: reads live global / derefs arg → needs booted game
+004829d0	STATE	-	-	vehicle	267	STATE: reads live global / derefs arg → needs booted game
+005af8f0	STATE	-	-	audio	268	STATE: reads live global / derefs arg → needs booted game
+004ceba0	STATE	-	-	render	271	STATE: reads live global / derefs arg → needs booted game
+004d4910	STATE	-	-	render	271	STATE: reads live global / derefs arg → needs booted game
+00490380	STATE	-	-	util	272	STATE: reads live global / derefs arg → needs booted game
+00414f00	STATE	-	-	ai	274	STATE: reads live global / derefs arg → needs booted game
+00458e00	STATE	-	-	gameplay	274	STATE: reads live global / derefs arg → needs booted game
+00475c10	STATE	-	-	util	274	STATE: reads live global / derefs arg → needs booted game
+0048f9f0	STATE	-	-	particle	275	STATE: reads live global / derefs arg → needs booted game
+00498c00	STATE	-	-	render	276	STATE: reads live global / derefs arg → needs booted game
+005b29e0	STATE	-	-	audio	277	STATE: reads live global / derefs arg → needs booted game
+0045a590	STATE	-	-	gameplay	278	STATE: reads live global / derefs arg → needs booted game
+00499ba0	STATE	-	-	boot	278	STATE: reads live global / derefs arg → needs booted game
+0044bc30	STATE	-	-	render	279	STATE: reads live global / derefs arg → needs booted game
+00426340	STATE	-	-	track	280	STATE: reads live global / derefs arg → needs booted game
+00459290	STATE	-	-	vehicle	280	STATE: reads live global / derefs arg → needs booted game
+0041f3d0	STATE	-	-	gameplay	281	STATE: reads live global / derefs arg → needs booted game
+004864f0	STATE	-	-	particle	282	STATE: reads live global / derefs arg → needs booted game
+004b8340	STATE	-	-	input	282	STATE: reads live global / derefs arg → needs booted game
+00487020	STATE	-	-	render	284	STATE: reads live global / derefs arg → needs booted game
+004967e0	STATE	-	-	input	284	STATE: reads live global / derefs arg → needs booted game
+004729b0	STATE	-	-	render	286	STATE: reads live global / derefs arg → needs booted game
+0048f780	STATE	-	-	particle	287	STATE: reads live global / derefs arg → needs booted game
+005ad420	STATE	-	-	audio	287	STATE: reads live global / derefs arg → needs booted game
+005bbdb0	STATE	-	-	audio	287	STATE: reads live global / derefs arg → needs booted game
+00422160	STATE	-	-	render	289	STATE: reads live global / derefs arg → needs booted game
+00477a10	STATE	-	-	render	290	STATE: reads live global / derefs arg → needs booted game
+005aa200	STATE	-	-	audio	290	STATE: reads live global / derefs arg → needs booted game
+005bf8f0	STATE	-	-	audio	290	STATE: reads live global / derefs arg → needs booted game
+004d4dd0	STATE	-	-	render	291	STATE: reads live global / derefs arg → needs booted game
+005b3a00	STATE	-	-	audio	291	STATE: reads live global / derefs arg → needs booted game
+005bac00	STATE	-	-	audio	294	STATE: reads live global / derefs arg → needs booted game
+004880a0	STATE	-	-	sky	295	STATE: reads live global / derefs arg → needs booted game
+0042f8d0	STATE	-	-	frontend	297	STATE: reads live global / derefs arg → needs booted game
+005a9ab0	STATE	-	-	audio	297	STATE: reads live global / derefs arg → needs booted game
+00418aa0	STATE	-	-	render	299	STATE: reads live global / derefs arg → needs booted game
+0042f530	STATE	-	-	render	299	STATE: reads live global / derefs arg → needs booted game
+00430120	STATE	-	-	frontend	300	STATE: reads live global / derefs arg → needs booted game
+004b59c0	STATE	-	-	render	300	STATE: reads live global / derefs arg → needs booted game
+0045c350	STATE	-	-	util	303	STATE: reads live global / derefs arg → needs booted game
+004858c0	STATE	-	-	smplfzx	305	STATE: reads live global / derefs arg → needs booted game
+005bbc10	STATE	-	-	audio	306	STATE: reads live global / derefs arg → needs booted game
+0045e160	STATE	-	-	render	308	STATE: reads live global / derefs arg → needs booted game
+00401da0	STATE	-	-	frontend	309	STATE: reads live global / derefs arg → needs booted game
+0047bf70	STATE	-	-	track	309	STATE: reads live global / derefs arg → needs booted game
+00413a40	STATE	-	-	render	310	STATE: reads live global / derefs arg → needs booted game
+004d5190	STATE	-	-	render	310	STATE: reads live global / derefs arg → needs booted game
+004ccf20	STATE	-	-	render	312	STATE: reads live global / derefs arg → needs booted game
+00412cf0	STATE	-	-	hud	313	STATE: reads live global / derefs arg → needs booted game
+0040d110	STATE	-	-	track	320	STATE: reads live global / derefs arg → needs booted game
+00496ec0	STATE	-	-	render	320	STATE: reads live global / derefs arg → needs booted game
+005adc10	STATE	-	-	audio	321	STATE: reads live global / derefs arg → needs booted game
+00491340	STATE	-	-	render	323	STATE: reads live global / derefs arg → needs booted game
+004c51a0	STATE	-	-	render	323	STATE: reads live global / derefs arg → needs booted game
+004011f0	STATE	-	-	hud	325	STATE: reads live global / derefs arg → needs booted game
+004cf160	STATE	-	-	render	325	STATE: reads live global / derefs arg → needs booted game
+00421160	STATE	-	-	render	327	STATE: reads live global / derefs arg → needs booted game
+0044c5f0	STATE	-	-	render	328	STATE: reads live global / derefs arg → needs booted game
+004ce790	STATE	-	-	render	328	STATE: reads live global / derefs arg → needs booted game
+005abe30	STATE	-	-	audio	328	STATE: reads live global / derefs arg → needs booted game
+0041fcc0	STATE	-	-	render	329	STATE: reads live global / derefs arg → needs booted game
+00472b10	STATE	-	-	render	331	STATE: reads live global / derefs arg → needs booted game
+0049fcc0	STATE	-	-	particle	331	STATE: reads live global / derefs arg → needs booted game
+0048f8a0	STATE	-	-	particle	332	STATE: reads live global / derefs arg → needs booted game
+004ce480	STATE	-	-	render	333	STATE: reads live global / derefs arg → needs booted game
+0040d8f0	STATE	-	-	gameplay	337	STATE: reads live global / derefs arg → needs booted game
+0048cf90	STATE	-	-	particle	337	STATE: reads live global / derefs arg → needs booted game
+004818d0	STATE	-	-	vehicle	339	STATE: reads live global / derefs arg → needs booted game
+004041c0	STATE	-	-	render	343	STATE: reads live global / derefs arg → needs booted game
+004cb330	STATE	-	-	render	344	STATE: reads live global / derefs arg → needs booted game
+004764f0	STATE	-	-	util	347	STATE: reads live global / derefs arg → needs booted game
+00498a00	STATE	-	-	render	349	STATE: reads live global / derefs arg → needs booted game
+004d9ba0	STATE	-	-	render	349	STATE: reads live global / derefs arg → needs booted game
+0046da80	STATE	-	-	vehicle	350	STATE: reads live global / derefs arg → needs booted game
+00552e40	STATE	-	-	hud	350	STATE: reads live global / derefs arg → needs booted game
+004264d0	STATE	-	-	track	351	STATE: reads live global / derefs arg → needs booted game
+0046dc20	STATE	-	-	vehicle	351	STATE: reads live global / derefs arg → needs booted game
+00555360	STATE	-	-	hud	353	STATE: reads live global / derefs arg → needs booted game
+005b3300	STATE	-	-	audio	354	STATE: reads live global / derefs arg → needs booted game
+0047fad0	STATE	-	-	gameplay	356	STATE: reads live global / derefs arg → needs booted game
+004b42c0	STATE	-	-	render	356	STATE: reads live global / derefs arg → needs booted game
+00441820	STATE	-	-	util	357	STATE: reads live global / derefs arg → needs booted game
+0048ae00	STATE	-	-	particle	357	STATE: reads live global / derefs arg → needs booted game
+0048f420	STATE	-	-	render	364	STATE: reads live global / derefs arg → needs booted game
+0047fe00	STATE	-	-	physics	368	STATE: reads live global / derefs arg → needs booted game
+0047bb10	STATE	-	-	gameplay	370	STATE: reads live global / derefs arg → needs booted game
+004775b0	STATE	-	-	render	372	STATE: reads live global / derefs arg → needs booted game
+004ce970	STATE	-	-	render	375	STATE: reads live global / derefs arg → needs booted game
+004d6ce0	STATE	-	-	render	375	STATE: reads live global / derefs arg → needs booted game
+004046a0	STATE	-	-	util	377	STATE: reads live global / derefs arg → needs booted game
+00453730	STATE	-	-	gameplay	377	STATE: reads live global / derefs arg → needs booted game
+004c52f0	STATE	-	-	render	378	STATE: reads live global / derefs arg → needs booted game
+004cf2b0	STATE	-	-	render	378	STATE: reads live global / derefs arg → needs booted game
+00472dc0	STATE	-	-	frontend	379	STATE: reads live global / derefs arg → needs booted game
+0041f590	STATE	-	-	gameplay	384	STATE: reads live global / derefs arg → needs booted game
+004288a0	STATE	-	-	frontend	386	STATE: reads live global / derefs arg → needs booted game
+0047f940	STATE	-	-	physics	386	STATE: reads live global / derefs arg → needs booted game
+0047ff70	STATE	-	-	physics	386	STATE: reads live global / derefs arg → needs booted game
+0048f290	STATE	-	-	render	389	STATE: reads live global / derefs arg → needs booted game
+00442440	STATE	-	-	util	391	STATE: reads live global / derefs arg → needs booted game
+00473220	STATE	-	-	render	394	STATE: reads live global / derefs arg → needs booted game
+004733b0	STATE	-	-	render	394	STATE: reads live global / derefs arg → needs booted game
+00484de0	STATE	-	-	world-objects	394	STATE: reads live global / derefs arg → needs booted game
+004cefd0	STATE	-	-	render	395	STATE: reads live global / derefs arg → needs booted game
+00554200	STATE	-	-	hud	397	STATE: reads live global / derefs arg → needs booted game
+00405920	STATE	-	-	gameplay	398	STATE: reads live global / derefs arg → needs booted game
+00414300	STATE	-	-	ai	398	STATE: reads live global / derefs arg → needs booted game
+004809e0	STATE	-	-	vehicle	398	STATE: reads live global / derefs arg → needs booted game
+004228f0	STATE	-	-	render	399	STATE: reads live global / derefs arg → needs booted game
+0041aac0	STATE	-	-	render	403	STATE: reads live global / derefs arg → needs booted game
+005baa60	STATE	-	-	audio	404	STATE: reads live global / derefs arg → needs booted game
+00441990	STATE	-	-	util	407	STATE: reads live global / derefs arg → needs booted game
+0048b7c0	STATE	-	-	particle	407	STATE: reads live global / derefs arg → needs booted game
+0040aef0	STATE	-	-	gameplay	409	STATE: reads live global / derefs arg → needs booted game
+0042c7c0	STATE	-	-	util	409	STATE: reads live global / derefs arg → needs booted game
+004034a0	STATE	-	-	render	412	STATE: reads live global / derefs arg → needs booted game
+004955d0	STATE	-	-	boot	419	STATE: reads live global / derefs arg → needs booted game
+004b55a0	STATE	-	-	render	421	STATE: reads live global / derefs arg → needs booted game
+004704c0	STATE	-	-	vehicle	427	STATE: reads live global / derefs arg → needs booted game
+00484ac0	STATE	-	-	world-objects	427	STATE: reads live global / derefs arg → needs booted game
+005a71f0	STATE	-	-	audio	428	STATE: reads live global / derefs arg → needs booted game
+00493710	STATE	-	-	render	430	STATE: reads live global / derefs arg → needs booted game
+004b53b0	STATE	-	-	render	431	STATE: reads live global / derefs arg → needs booted game
+004cc820	STATE	-	-	render	433	STATE: reads live global / derefs arg → needs booted game
+0047bcc0	STATE	-	-	track	434	STATE: reads live global / derefs arg → needs booted game
+0047fc40	STATE	-	-	physics	435	STATE: reads live global / derefs arg → needs booted game
+005b2820	STATE	-	-	audio	439	STATE: reads live global / derefs arg → needs booted game
+00419530	STATE	-	-	gameplay	440	STATE: reads live global / derefs arg → needs booted game
+0045e2a0	STATE	-	-	render	440	STATE: reads live global / derefs arg → needs booted game
+0040d270	STATE	-	-	track	441	STATE: reads live global / derefs arg → needs booted game
+004633d0	STATE	-	-	audio	442	STATE: reads live global / derefs arg → needs booted game
+004da270	STATE	-	-	render	442	STATE: reads live global / derefs arg → needs booted game
+00483d10	STATE	-	-	vehicle	445	STATE: reads live global / derefs arg → needs booted game
+00414a70	STATE	-	-	ai	447	STATE: reads live global / derefs arg → needs booted game
+004c30b0	STATE	-	-	render	447	STATE: reads live global / derefs arg → needs booted game
+0048fb10	STATE	-	-	particle	456	STATE: reads live global / derefs arg → needs booted game
+004dcdc0	STATE	-	-	render	456	STATE: reads live global / derefs arg → needs booted game
+0048a850	STATE	-	-	particle	457	STATE: reads live global / derefs arg → needs booted game
+0041faf0	STATE	-	-	render	458	STATE: reads live global / derefs arg → needs booted game
+005bc470	STATE	-	-	audio	458	STATE: reads live global / derefs arg → needs booted game
+0049ffe0	STATE	-	-	particle	461	STATE: reads live global / derefs arg → needs booted game
+004d4a20	STATE	-	-	render	462	STATE: reads live global / derefs arg → needs booted game
+004c6580	STATE	-	-	render	464	STATE: reads live global / derefs arg → needs booted game
+004cecb0	STATE	-	-	render	468	STATE: reads live global / derefs arg → needs booted game
+00420050	STATE	-	-	render	474	STATE: reads live global / derefs arg → needs booted game
+004d4bf0	STATE	-	-	render	474	STATE: reads live global / derefs arg → needs booted game
+004d9d00	STATE	-	-	render	476	STATE: reads live global / derefs arg → needs booted game
+004715a0	STATE	-	-	ai	477	STATE: reads live global / derefs arg → needs booted game
+004cb8a0	STATE	-	-	render	480	STATE: reads live global / derefs arg → needs booted game
+004783f0	STATE	-	-	ai	491	STATE: reads live global / derefs arg → needs booted game
+00491590	STATE	-	-	render	491	STATE: reads live global / derefs arg → needs booted game
+0052daf0	STATE	-	-	util	492	STATE: reads live global / derefs arg → needs booted game
+00480b70	STATE	-	-	vehicle	493	STATE: reads live global / derefs arg → needs booted game
+00489a40	STATE	-	-	particle	494	STATE: reads live global / derefs arg → needs booted game
+004093b0	STATE	-	-	gameplay	496	STATE: reads live global / derefs arg → needs booted game
+00411ae0	STATE	-	-	vehicle	497	STATE: reads live global / derefs arg → needs booted game
+004c9ad0	STATE	-	-	render	499	STATE: reads live global / derefs arg → needs booted game
+0041f8f0	STATE	-	-	render	500	STATE: reads live global / derefs arg → needs booted game
+004850e0	STATE	-	-	smplfzx	501	STATE: reads live global / derefs arg → needs booted game
+00406ae0	STATE	-	-	gameplay	508	STATE: reads live global / derefs arg → needs booted game
+004d4f90	STATE	-	-	render	508	STATE: reads live global / derefs arg → needs booted game
+004cf7d0	STATE	-	-	render	514	STATE: reads live global / derefs arg → needs booted game
+0045a190	STATE	-	-	gameplay	515	STATE: reads live global / derefs arg → needs booted game
+004d7de0	STATE	-	-	render	515	STATE: reads live global / derefs arg → needs booted game
+00406160	STATE	-	-	gameplay	522	STATE: reads live global / derefs arg → needs booted game
+0047f4c0	STATE	-	-	physics	523	STATE: reads live global / derefs arg → needs booted game
+004c5470	STATE	-	-	render	525	STATE: reads live global / derefs arg → needs booted game
+00403fa0	STATE	-	-	render	529	STATE: reads live global / derefs arg → needs booted game
+004197e0	STATE	-	-	gameplay	530	STATE: reads live global / derefs arg → needs booted game
+00442a60	STATE	-	-	util	531	STATE: reads live global / derefs arg → needs booted game
+00477be0	STATE	-	-	render	535	STATE: reads live global / derefs arg → needs booted game
+005b30e0	STATE	-	-	audio	540	STATE: reads live global / derefs arg → needs booted game
+005ad0b0	STATE	-	-	audio	545	STATE: reads live global / derefs arg → needs booted game
+00483a70	STATE	-	-	render	546	STATE: reads live global / derefs arg → needs booted game
+004d3e90	STATE	-	-	render	546	STATE: reads live global / derefs arg → needs booted game
+00471ac0	STATE	-	-	camera	547	STATE: reads live global / derefs arg → needs booted game
+00479100	STATE	-	-	render	551	STATE: reads live global / derefs arg → needs booted game
+00481e00	STATE	-	-	vehicle	553	STATE: reads live global / derefs arg → needs booted game
+004739f0	STATE	-	-	frontend	557	STATE: reads live global / derefs arg → needs booted game
+005b0740	STATE	-	-	audio	558	STATE: reads live global / derefs arg → needs booted game
+00480100	STATE	-	-	physics	562	STATE: reads live global / derefs arg → needs booted game
+00415e20	STATE	-	-	ai	567	STATE: reads live global / derefs arg → needs booted game
+005aa560	STATE	-	-	audio	568	STATE: reads live global / derefs arg → needs booted game
+004414b0	STATE	-	-	camera	581	STATE: reads live global / derefs arg → needs booted game
+005b04b0	STATE	-	-	audio	584	STATE: reads live global / derefs arg → needs booted game
+00420e00	STATE	-	-	gameplay	594	STATE: reads live global / derefs arg → needs booted game
+0045a950	STATE	-	-	gameplay	594	STATE: reads live global / derefs arg → needs booted game
+004427c0	STATE	-	-	util	598	STATE: reads live global / derefs arg → needs booted game
+00401fe0	STATE	-	-	render	600	STATE: reads live global / derefs arg → needs booted game
+004314b0	STATE	-	-	frontend	602	STATE: reads live global / derefs arg → needs booted game
+0041bc50	STATE	-	-	hud	603	STATE: reads live global / derefs arg → needs booted game
+005a6340	STATE	-	-	audio	604	STATE: reads live global / derefs arg → needs booted game
+00412620	STATE	-	-	render	606	STATE: reads live global / derefs arg → needs booted game
+004d8810	STATE	-	-	render	609	STATE: reads live global / derefs arg → needs booted game
+005acaa0	STATE	-	-	audio	610	STATE: reads live global / derefs arg → needs booted game
+00491f00	STATE	-	-	render	611	STATE: reads live global / derefs arg → needs booted game
+005bc190	STATE	-	-	audio	611	STATE: reads live global / derefs arg → needs booted game
+004036a0	STATE	-	-	render	612	STATE: reads live global / derefs arg → needs booted game
+004969a0	STATE	-	-	render	612	STATE: reads live global / derefs arg → needs booted game
+0041a5d0	STATE	-	-	gameplay	617	STATE: reads live global / derefs arg → needs booted game
+005ab710	STATE	-	-	audio	617	STATE: reads live global / derefs arg → needs booted game
+00413cb0	STATE	-	-	hud	622	STATE: reads live global / derefs arg → needs booted game
+00431240	STATE	-	-	frontend	622	STATE: reads live global / derefs arg → needs booted game
+00411870	STATE	-	-	vehicle	623	STATE: reads live global / derefs arg → needs booted game
+004b5750	STATE	-	-	render	623	STATE: reads live global / derefs arg → needs booted game
+00442e00	STATE	-	-	util	627	STATE: reads live global / derefs arg → needs booted game
+004847d0	STATE	-	-	world-objects	628	STATE: reads live global / derefs arg → needs booted game
+00493fd0	STATE	-	-	frontend	631	STATE: reads live global / derefs arg → needs booted game
+005555b0	STATE	-	-	render	633	STATE: reads live global / derefs arg → needs booted game
+0047d3c0	STATE	-	-	vehicle	638	STATE: reads live global / derefs arg → needs booted game
+005aba20	STATE	-	-	audio	642	STATE: reads live global / derefs arg → needs booted game
+00429310	STATE	-	-	util	644	STATE: reads live global / derefs arg → needs booted game
+00459000	STATE	-	-	gameplay	655	STATE: reads live global / derefs arg → needs booted game
+004b5af0	STATE	-	-	render	661	STATE: reads live global / derefs arg → needs booted game
+005b3760	STATE	-	-	audio	668	STATE: reads live global / derefs arg → needs booted game
+00426810	STATE	-	-	render	672	STATE: reads live global / derefs arg → needs booted game
+004212b0	STATE	-	-	render	685	STATE: reads live global / derefs arg → needs booted game
+0042c510	STATE	-	-	vehicle	687	STATE: reads live global / derefs arg → needs booted game
+00476df0	STATE	-	-	render	687	STATE: reads live global / derefs arg → needs booted game
+00496530	STATE	-	-	input	687	STATE: reads live global / derefs arg → needs booted game
+005a6f30	STATE	-	-	audio	690	STATE: reads live global / derefs arg → needs booted game
+00473c20	STATE	-	-	gameplay	697	STATE: reads live global / derefs arg → needs booted game
+004b61c0	STATE	-	-	render	701	STATE: reads live global / derefs arg → needs booted game
+0045d7a0	STATE	-	-	util	702	STATE: reads live global / derefs arg → needs booted game
+0041d410	STATE	-	-	hud	703	STATE: reads live global / derefs arg → needs booted game
+00480720	STATE	-	-	vehicle	703	STATE: reads live global / derefs arg → needs booted game
+004709a0	STATE	-	-	vehicle	705	STATE: reads live global / derefs arg → needs booted game
+0041e1e0	STATE	-	-	gameplay	719	STATE: reads live global / derefs arg → needs booted game
+00426e10	STATE	-	-	render	723	STATE: reads live global / derefs arg → needs booted game
+005b3b80	STATE	-	-	audio	726	STATE: reads live global / derefs arg → needs booted game
+005b2b00	STATE	-	-	audio	736	STATE: reads live global / derefs arg → needs booted game
+004022a0	STATE	-	-	render	744	STATE: reads live global / derefs arg → needs booted game
+005afa00	STATE	-	-	audio	751	STATE: reads live global / derefs arg → needs booted game
+00467350	STATE	-	-	vehicle	767	STATE: reads live global / derefs arg → needs booted game
+004c32b0	STATE	-	-	render	768	STATE: reads live global / derefs arg → needs booted game
+005a7b60	STATE	-	-	audio	770	STATE: reads live global / derefs arg → needs booted game
+00499d90	STATE	-	-	render	779	STATE: reads live global / derefs arg → needs booted game
+00499890	STATE	-	-	boot	784	STATE: reads live global / derefs arg → needs booted game
+004d9050	STATE	-	-	render	784	STATE: reads live global / derefs arg → needs booted game
+0042e8b0	STATE	-	-	frontend	801	STATE: reads live global / derefs arg → needs booted game
+004770c0	STATE	-	-	vehicle	801	STATE: reads live global / derefs arg → needs booted game
+005ac210	STATE	-	-	audio	804	STATE: reads live global / derefs arg → needs booted game
+00485ef0	STATE	-	-	particle	808	STATE: reads live global / derefs arg → needs booted game
+00475f90	STATE	-	-	render	814	STATE: reads live global / derefs arg → needs booted game
+00424b80	STATE	-	-	frontend	815	STATE: reads live global / derefs arg → needs booted game
+004b5d90	STATE	-	-	render	816	STATE: reads live global / derefs arg → needs booted game
+00401690	STATE	-	-	render	820	STATE: reads live global / derefs arg → needs booted game
+00414570	STATE	-	-	ai	821	STATE: reads live global / derefs arg → needs booted game
+00478cf0	STATE	-	-	track	827	STATE: reads live global / derefs arg → needs booted game
+00471780	STATE	-	-	gameplay	831	STATE: reads live global / derefs arg → needs booted game
+00469aa0	STATE	-	-	vehicle	848	STATE: reads live global / derefs arg → needs booted game
+0046c7d0	STATE	-	-	vehicle	852	STATE: reads live global / derefs arg → needs booted game
+00481a30	STATE	-	-	vehicle	861	STATE: reads live global / derefs arg → needs booted game
+00490020	STATE	-	-	render	864	STATE: reads live global / derefs arg → needs booted game
+004944c0	STATE	-	-	util	864	STATE: reads live global / derefs arg → needs booted game
+0040c690	STATE	-	-	gameplay	874	STATE: reads live global / derefs arg → needs booted game
+005bb000	STATE	-	-	audio	883	STATE: reads live global / derefs arg → needs booted game
+00488e70	STATE	-	-	util	888	STATE: reads live global / derefs arg → needs booted game
+00422570	STATE	-	-	render	890	STATE: reads live global / derefs arg → needs booted game
+00412880	MANUAL	-	-	render	5	no-clean-ret (multi-exit/tail)
+004189e0	MANUAL	-	-	boot	5	no-clean-ret (multi-exit/tail)
+004189f0	MANUAL	-	-	frontend	5	no-clean-ret (multi-exit/tail)
+00421590	MANUAL	-	-	boot	5	no-clean-ret (multi-exit/tail)
+0045bfd0	MANUAL	-	-	gameplay	5	no-clean-ret (multi-exit/tail)
+00476430	MANUAL	-	-	util	5	no-clean-ret (multi-exit/tail)
+0047ba10	MANUAL	-	-	boot	5	no-clean-ret (multi-exit/tail)
+00487e20	MANUAL	-	-	render	5	no-clean-ret (multi-exit/tail)
+00487e30	MANUAL	-	-	render	5	no-clean-ret (multi-exit/tail)
+00494ee0	MANUAL	-	-	util	5	no-clean-ret (multi-exit/tail)
+00494f00	MANUAL	-	-	util	5	no-clean-ret (multi-exit/tail)
+00494f10	MANUAL	-	-	util	5	no-clean-ret (multi-exit/tail)
+00494f20	MANUAL	-	-	boot	5	no-clean-ret (multi-exit/tail)
+004951e0	MANUAL	-	-	render	5	no-clean-ret (multi-exit/tail)
+004955c0	MANUAL	-	-	boot	5	no-clean-ret (multi-exit/tail)
+004963d0	MANUAL	-	-	input	5	no-clean-ret (multi-exit/tail)
+0049ead0	MANUAL	-	-	particle	5	no-clean-ret (multi-exit/tail)
+004b5360	MANUAL	-	-	render	5	no-clean-ret (multi-exit/tail)
+004b5370	MANUAL	-	-	render	5	no-clean-ret (multi-exit/tail)
+004b5380	MANUAL	-	-	render	5	no-clean-ret (multi-exit/tail)
+004b5390	MANUAL	-	-	render	5	no-clean-ret (multi-exit/tail)
+004b53a0	MANUAL	-	-	render	5	no-clean-ret (multi-exit/tail)
+004b6550	MANUAL	-	-	boot	5	no-clean-ret (multi-exit/tail)
+004b6590	MANUAL	-	-	render	5	no-clean-ret (multi-exit/tail)
+004b65b0	MANUAL	-	-	vehicle	5	no-clean-ret (multi-exit/tail)
+004b7200	MANUAL	-	-	input	5	no-clean-ret (multi-exit/tail)
+004c4670	MANUAL	-	-	render	5	no-clean-ret (multi-exit/tail)
+004c7a60	MANUAL	-	-	render	5	no-clean-ret (multi-exit/tail)
+004cc9e0	MANUAL	-	-	render	5	no-clean-ret (multi-exit/tail)
+005ab180	MANUAL	-	-	audio	5	no-clean-ret (multi-exit/tail)
+005ae4b0	MANUAL	-	-	audio	5	no-clean-ret (multi-exit/tail)
+005b10d0	MANUAL	-	-	audio	5	no-clean-ret (multi-exit/tail)
+005b15d0	MANUAL	-	-	audio	5	no-clean-ret (multi-exit/tail)
+005c9220	MANUAL	-	-	audio	5	no-clean-ret (multi-exit/tail)
+0049b300	MANUAL	-	-	input	6	no-clean-ret (multi-exit/tail)
+0041e8d0	MANUAL	-	-	gameplay	9	no-clean-ret (multi-exit/tail)
+0041e8e0	MANUAL	-	-	gameplay	9	no-clean-ret (multi-exit/tail)
+0041e900	MANUAL	-	-	gameplay	9	no-clean-ret (multi-exit/tail)
+0041e910	MANUAL	-	-	gameplay	9	no-clean-ret (multi-exit/tail)
+0041e920	MANUAL	-	-	gameplay	9	no-clean-ret (multi-exit/tail)
+0041e930	MANUAL	-	-	gameplay	9	no-clean-ret (multi-exit/tail)
+0041e940	MANUAL	-	-	gameplay	9	no-clean-ret (multi-exit/tail)
+0041e950	MANUAL	-	-	gameplay	9	no-clean-ret (multi-exit/tail)
+0041e960	MANUAL	-	-	ai	9	no-clean-ret (multi-exit/tail)
+00467010	MANUAL	-	-	boot	10	no-clean-ret (multi-exit/tail)
+005aea50	MANUAL	-	-	audio	11	no-clean-ret (multi-exit/tail)
+00413bb0	MANUAL	-	-	hud	12	MANUAL: unrecognized leaf shape
+00418f30	MANUAL	-	-	gameplay	12	MANUAL: unrecognized leaf shape
+00418f40	MANUAL	-	-	gameplay	12	MANUAL: unrecognized leaf shape
+004210f0	MANUAL	-	-	gameplay	12	MANUAL: unrecognized leaf shape
+00425bf0	MANUAL	-	-	frontend	12	MANUAL: unrecognized leaf shape
+004522d0	MANUAL	-	-	audio	12	no-clean-ret (multi-exit/tail)
+00487140	MANUAL	-	-	particle	12	MANUAL: unrecognized leaf shape
+00487d60	MANUAL	-	-	particle	12	MANUAL: unrecognized leaf shape
+00487de0	MANUAL	-	-	particle	12	MANUAL: unrecognized leaf shape
+00495780	MANUAL	-	-	boot	12	MANUAL: unrecognized leaf shape
+005aea00	MANUAL	-	-	audio	12	no-clean-ret (multi-exit/tail)
+005bc880	MANUAL	-	-	audio	12	MANUAL: unrecognized leaf shape
+00491490	MANUAL	-	-	render	14	no-clean-ret (multi-exit/tail)
+005aeb80	MANUAL	-	-	audio	14	MANUAL: unrecognized leaf shape
+0042f020	MANUAL	-	-	frontend	15	no-clean-ret (multi-exit/tail)
+00417740	MANUAL	-	-	gameplay	16	no-clean-ret (multi-exit/tail)
+004764e0	MANUAL	-	-	util	16	MANUAL: unrecognized leaf shape
+004b4000	MANUAL	-	-	particle	16	MANUAL: unrecognized leaf shape
+004b4270	MANUAL	-	-	render	16	MANUAL: unrecognized leaf shape
+0042a470	MANUAL	-	-	render	17	no-clean-ret (multi-exit/tail)
+004790e0	MANUAL	-	-	track	17	MANUAL: unrecognized leaf shape
+005bf670	MANUAL	-	-	audio	17	no-clean-ret (multi-exit/tail)
+0040acd0	MANUAL	-	-	frontend	18	no-clean-ret (multi-exit/tail)
+00429240	MANUAL	-	-	frontend	18	no-clean-ret (multi-exit/tail)
+005a6df0	MANUAL	-	-	audio	18	no-clean-ret (multi-exit/tail)
+004219a0	MANUAL	-	-	ai	19	no-clean-ret (multi-exit/tail)
+00478cd0	MANUAL	-	-	render	19	no-clean-ret (multi-exit/tail)
+0047b9e0	MANUAL	-	-	track	19	MANUAL: unrecognized leaf shape
+004cc4f0	MANUAL	-	-	render	19	no-clean-ret (multi-exit/tail)
+0041a960	MANUAL	-	-	vehicle	20	MANUAL: unrecognized leaf shape
+0042fab0	MANUAL	-	-	frontend	20	no-clean-ret (multi-exit/tail)
+00487e00	MANUAL	-	-	particle	20	MANUAL: unrecognized leaf shape
+004b6570	MANUAL	-	-	render	20	MANUAL: unrecognized leaf shape
+00423670	MANUAL	-	-	ai	22	no-clean-ret (multi-exit/tail)
+00426c50	MANUAL	-	-	frontend	22	no-clean-ret (multi-exit/tail)
+00426c90	MANUAL	-	-	ai	22	no-clean-ret (multi-exit/tail)
+004671a0	MANUAL	-	-	render	22	no-clean-ret (multi-exit/tail)
+00556ca0	MANUAL	-	-	hud	22	no-clean-ret (multi-exit/tail)
+005af430	MANUAL	-	-	audio	22	no-clean-ret (multi-exit/tail)
+004430c0	MANUAL	-	-	frontend	23	no-clean-ret (multi-exit/tail)
+00458630	MANUAL	-	-	frontend	23	no-clean-ret (multi-exit/tail)
+00477e40	MANUAL	-	-	render	23	no-clean-ret (multi-exit/tail)
+005b7e20	MANUAL	-	-	audio	23	MANUAL: unrecognized leaf shape
+004189a0	MANUAL	-	-	util	24	no-clean-ret (multi-exit/tail)
+004189c0	MANUAL	-	-	render	24	no-clean-ret (multi-exit/tail)
+00419fd0	MANUAL	-	-	gameplay	24	MANUAL: unrecognized leaf shape
+0041e1c0	MANUAL	-	-	gameplay	24	MANUAL: unrecognized leaf shape
+004215a0	MANUAL	-	-	util	24	MANUAL: unrecognized leaf shape
+00452140	MANUAL	-	-	gameplay	24	MANUAL: unrecognized leaf shape
+00456c70	MANUAL	-	-	gameplay	24	MANUAL: unrecognized leaf shape
+00486350	MANUAL	-	-	particle	24	MANUAL: unrecognized leaf shape
+004b5580	MANUAL	-	-	vehicle	24	MANUAL: unrecognized leaf shape
+005aabe0	MANUAL	-	-	audio	24	MANUAL: unrecognized leaf shape
+005af470	MANUAL	-	-	audio	24	no-clean-ret (multi-exit/tail)
+0045c010	MANUAL	-	-	powerups	25	no-clean-ret (multi-exit/tail)
+00497190	MANUAL	-	-	input	25	MANUAL: unrecognized leaf shape
+00418e30	MANUAL	-	-	render	26	MANUAL: unrecognized leaf shape
+00419a00	MANUAL	-	-	gameplay	26	no-clean-ret (multi-exit/tail)
+0045c880	MANUAL	-	-	gameplay	26	no-clean-ret (multi-exit/tail)
+00476860	MANUAL	-	-	render	26	MANUAL: unrecognized leaf shape
+004b44f0	MANUAL	-	-	util	26	MANUAL: unrecognized leaf shape
+004d7480	MANUAL	-	-	render	27	no-clean-ret (multi-exit/tail)
+00474d60	MANUAL	-	-	vehicle	28	MANUAL: unrecognized leaf shape
+00474fb0	MANUAL	-	-	render	28	MANUAL: unrecognized leaf shape
+0048cf70	MANUAL	-	-	particle	28	MANUAL: unrecognized leaf shape
+005b3b60	MANUAL	-	-	audio	28	MANUAL: unrecognized leaf shape
+005bc860	MANUAL	-	-	audio	28	MANUAL: unrecognized leaf shape
+005bc900	MANUAL	-	-	audio	28	MANUAL: unrecognized leaf shape
+0041c0e0	MANUAL	-	-	boot	29	MANUAL: unrecognized leaf shape
+0041d890	MANUAL	-	-	boot	29	MANUAL: unrecognized leaf shape
+004222d0	MANUAL	-	-	util	29	MANUAL: unrecognized leaf shape
+00423b00	MANUAL	-	-	frontend	29	no-clean-ret (multi-exit/tail)
+005b1140	MANUAL	-	-	audio	29	MANUAL: unrecognized leaf shape
+004770a0	MANUAL	-	-	render	30	no-clean-ret (multi-exit/tail)
+005ae7e0	MANUAL	-	-	audio	30	no-clean-ret (multi-exit/tail)
+005af300	MANUAL	-	-	audio	30	no-clean-ret (multi-exit/tail)
+004218b0	MANUAL	-	-	render	31	MANUAL: unrecognized leaf shape
+00422140	MANUAL	-	-	render	31	MANUAL: unrecognized leaf shape
+00476880	MANUAL	-	-	util	31	MANUAL: unrecognized leaf shape
+004929d0	MANUAL	-	-	util	31	no-clean-ret (multi-exit/tail)
+005a7a40	MANUAL	-	-	audio	31	MANUAL: unrecognized leaf shape
+005a9f10	MANUAL	-	-	audio	31	no-clean-ret (multi-exit/tail)
+005b0b40	MANUAL	-	-	audio	31	MANUAL: unrecognized leaf shape
+005ba760	MANUAL	-	-	audio	31	no-clean-ret (multi-exit/tail)
+005bf350	MANUAL	-	-	audio	31	no-clean-ret (multi-exit/tail)
+004752d0	MANUAL	-	-	render	32	no-clean-ret (multi-exit/tail)
+00478200	MANUAL	-	-	track	32	no-clean-ret (multi-exit/tail)
+00490000	MANUAL	-	-	render	32	MANUAL: unrecognized leaf shape
+0049cb00	MANUAL	-	-	particle	32	MANUAL: unrecognized leaf shape
+00409790	MANUAL	-	-	gameplay	33	no-clean-ret (multi-exit/tail)
+00421720	MANUAL	-	-	render	33	MANUAL: unrecognized leaf shape
+00422290	MANUAL	-	-	render	33	MANUAL: unrecognized leaf shape
+00458fd0	MANUAL	-	-	gameplay	33	MANUAL: unrecognized leaf shape
+00489910	MANUAL	-	-	gameplay	33	MANUAL: unrecognized leaf shape
+004cc7f0	MANUAL	-	-	render	33	MANUAL: unrecognized leaf shape
+005a8e70	MANUAL	-	-	audio	33	MANUAL: unrecognized leaf shape
+005b1110	MANUAL	-	-	audio	33	MANUAL: unrecognized leaf shape
+00426d90	MANUAL	-	-	frontend	34	MANUAL: unrecognized leaf shape
+004b9aa0	MANUAL	-	-	input	34	MANUAL: unrecognized leaf shape
+005a61b0	MANUAL	-	-	audio	34	no-clean-ret (multi-exit/tail)
+005a6dc0	MANUAL	-	-	audio	34	MANUAL: unrecognized leaf shape
+005adf60	MANUAL	-	-	audio	34	no-clean-ret (multi-exit/tail)
+005b0b10	MANUAL	-	-	audio	34	no-clean-ret (multi-exit/tail)
+004853f0	MANUAL	-	-	smplfzx	35	MANUAL: unrecognized leaf shape
+004d1640	MANUAL	-	-	render	35	no-clean-ret (multi-exit/tail)
+004c2d90	MANUAL	-	-	render	36	MANUAL: unrecognized leaf shape
+005a60b0	MANUAL	-	-	audio	36	no-clean-ret (multi-exit/tail)
+005ab150	MANUAL	-	-	audio	36	no-clean-ret (multi-exit/tail)
+0040e560	MANUAL	-	-	util	37	MANUAL: unrecognized leaf shape
+00421c50	MANUAL	-	-	render	37	MANUAL: unrecognized leaf shape
+004b7250	MANUAL	-	-	input	37	MANUAL: unrecognized leaf shape
+00458dd0	MANUAL	-	-	gameplay	38	MANUAL: unrecognized leaf shape
+00487150	MANUAL	-	-	particle	38	MANUAL: unrecognized leaf shape
+005b3b30	MANUAL	-	-	audio	38	MANUAL: unrecognized leaf shape
+0047b9b0	MANUAL	-	-	physics	39	MANUAL: unrecognized leaf shape
+00481750	MANUAL	-	-	vehicle	39	no-clean-ret (multi-exit/tail)
+004c7690	MANUAL	-	-	render	39	MANUAL: unrecognized leaf shape
+004ce6c0	MANUAL	-	-	render	39	MANUAL: unrecognized leaf shape
+005a6280	MANUAL	-	-	audio	39	MANUAL: unrecognized leaf shape
+005a7f70	MANUAL	-	-	audio	39	MANUAL: unrecognized leaf shape
+005b8570	MANUAL	-	-	audio	39	MANUAL: unrecognized leaf shape
+005b9e30	MANUAL	-	-	audio	39	MANUAL: unrecognized leaf shape
+0040dba0	MANUAL	-	-	util	40	no-clean-ret (multi-exit/tail)
+00429290	MANUAL	-	-	frontend	40	no-clean-ret (multi-exit/tail)
+005be160	MANUAL	-	-	audio	40	MANUAL: unrecognized leaf shape
+00428760	MANUAL	-	-	hud	41	MANUAL: unrecognized leaf shape
+004725c0	MANUAL	-	-	render	41	MANUAL: unrecognized leaf shape
+0048ffd0	MANUAL	-	-	particle	41	MANUAL: unrecognized leaf shape
+00492d30	MANUAL	-	-	util	41	no-clean-ret (multi-exit/tail)
+004cd550	MANUAL	-	-	render	41	no-clean-ret (multi-exit/tail)
+005ab040	MANUAL	-	-	util	41	no-clean-ret (multi-exit/tail)
+005ab190	MANUAL	-	-	audio	42	no-clean-ret (multi-exit/tail)
+005bcbb0	MANUAL	-	-	audio	42	MANUAL: unrecognized leaf shape
+00413b80	MANUAL	-	-	hud	43	MANUAL: unrecognized leaf shape
+004b5320	MANUAL	-	-	vehicle	43	MANUAL: unrecognized leaf shape
+00426640	MANUAL	-	-	render	44	no-clean-ret (multi-exit/tail)
+00454bd0	MANUAL	-	-	render	44	MANUAL: unrecognized leaf shape
+0048aa20	MANUAL	-	-	render	44	MANUAL: unrecognized leaf shape
+005ad080	MANUAL	-	-	audio	44	MANUAL: unrecognized leaf shape
+005bcc70	MANUAL	-	-	audio	44	no-clean-ret (multi-exit/tail)
+005c9490	MANUAL	-	-	audio	44	MANUAL: unrecognized leaf shape
+0041a980	MANUAL	-	-	render	45	MANUAL: unrecognized leaf shape
+00475010	MANUAL	-	-	render	45	MANUAL: unrecognized leaf shape
+00493c60	MANUAL	-	-	render	45	no-clean-ret (multi-exit/tail)
+00494b20	MANUAL	-	-	render	45	no-clean-ret (multi-exit/tail)
+004954f0	MANUAL	-	-	boot	45	MANUAL: unrecognized leaf shape
+0049ebc0	MANUAL	-	-	particle	45	no-clean-ret (multi-exit/tail)
+004d8060	MANUAL	-	-	render	45	MANUAL: unrecognized leaf shape
+00552b60	MANUAL	-	-	hud	45	no-clean-ret (multi-exit/tail)
+00406130	MANUAL	-	-	gameplay	46	MANUAL: unrecognized leaf shape
+00452f00	MANUAL	-	-	gameplay	46	MANUAL: unrecognized leaf shape
+005adbe0	MANUAL	-	-	audio	46	MANUAL: unrecognized leaf shape
+005c9740	MANUAL	-	-	audio	46	MANUAL: unrecognized leaf shape
+00410d10	MANUAL	-	-	vehicle	47	no-clean-ret (multi-exit/tail)
+00425ea0	MANUAL	-	-	frontend	47	MANUAL: unrecognized leaf shape
+004b7a70	MANUAL	-	-	input	47	MANUAL: unrecognized leaf shape
+005af2d0	MANUAL	-	-	audio	47	MANUAL: unrecognized leaf shape
+005b81d0	MANUAL	-	-	audio	47	MANUAL: unrecognized leaf shape
+0046be50	MANUAL	-	-	gameplay	48	no-clean-ret (multi-exit/tail)
+00477730	MANUAL	-	-	render	48	MANUAL: unrecognized leaf shape
+0045d330	MANUAL	-	-	util	49	no-clean-ret (multi-exit/tail)
+0040ddb0	MANUAL	-	-	util	50	no-clean-ret (multi-exit/tail)
+0045b990	MANUAL	-	-	render	50	MANUAL: unrecognized leaf shape
+00474fd0	MANUAL	-	-	render	50	MANUAL: unrecognized leaf shape
+004898d0	MANUAL	-	-	gameplay	50	no-clean-ret (multi-exit/tail)
+0040b930	MANUAL	-	-	gameplay	51	MANUAL: unrecognized leaf shape
+004194f0	MANUAL	-	-	gameplay	51	MANUAL: unrecognized leaf shape
+0042f660	MANUAL	-	-	render	51	no-clean-ret (multi-exit/tail)
+00444ff0	MANUAL	-	-	ai	51	no-clean-ret (multi-exit/tail)
+00448730	MANUAL	-	-	render	51	no-clean-ret (multi-exit/tail)
+00452ec0	MANUAL	-	-	gameplay	51	MANUAL: unrecognized leaf shape
+004548a0	MANUAL	-	-	vehicle	51	MANUAL: unrecognized leaf shape
+00472650	MANUAL	-	-	util	51	MANUAL: unrecognized leaf shape
+004b4510	MANUAL	-	-	util	51	MANUAL: unrecognized leaf shape
+005a7b00	MANUAL	-	-	audio	51	MANUAL: unrecognized leaf shape
+00493bc0	MANUAL	-	-	util	52	MANUAL: unrecognized leaf shape
+00495150	MANUAL	-	-	input	52	no-clean-ret (multi-exit/tail)
+004b71c0	MANUAL	-	-	render	52	MANUAL: unrecognized leaf shape
+004d8090	MANUAL	-	-	render	52	MANUAL: unrecognized leaf shape
+005a7ea0	MANUAL	-	-	audio	52	MANUAL: unrecognized leaf shape
+0047c1f0	MANUAL	-	-	camera	53	MANUAL: unrecognized leaf shape
+004b4080	MANUAL	-	-	render	53	MANUAL: unrecognized leaf shape
+00550910	MANUAL	-	-	save	53	MANUAL: unrecognized leaf shape
+005ad8d0	MANUAL	-	-	audio	53	MANUAL: unrecognized leaf shape
+005adef0	MANUAL	-	-	audio	53	MANUAL: unrecognized leaf shape
+00442600	MANUAL	-	-	util	54	no-clean-ret (multi-exit/tail)
+0047c230	MANUAL	-	-	camera	54	MANUAL: unrecognized leaf shape
+004b67a0	MANUAL	-	-	render	54	no-clean-ret (multi-exit/tail)
+004b7df0	MANUAL	-	-	input	54	MANUAL: unrecognized leaf shape
+004ba210	MANUAL	-	-	input	54	MANUAL: unrecognized leaf shape
+004210b0	MANUAL	-	-	gameplay	55	MANUAL: unrecognized leaf shape
+004b4010	MANUAL	-	-	render	55	MANUAL: unrecognized leaf shape
+004d1d70	MANUAL	-	-	render	55	no-clean-ret (multi-exit/tail)
+004dba60	MANUAL	-	-	render	55	no-clean-ret (multi-exit/tail)
+005ad730	MANUAL	-	-	audio	55	no-clean-ret (multi-exit/tail)
+00482820	MANUAL	-	-	vehicle	56	MANUAL: unrecognized leaf shape
+00554010	MANUAL	-	-	hud	56	MANUAL: unrecognized leaf shape
+005aef30	MANUAL	-	-	audio	56	MANUAL: unrecognized leaf shape
+005af260	MANUAL	-	-	audio	56	MANUAL: unrecognized leaf shape
+004b4cd0	MANUAL	-	-	util	57	MANUAL: unrecognized leaf shape
+004b4e70	MANUAL	-	-	render	57	MANUAL: unrecognized leaf shape
+00429620	MANUAL	-	-	hud	58	MANUAL: unrecognized leaf shape
+00475f50	MANUAL	-	-	render	58	MANUAL: unrecognized leaf shape
+00493600	MANUAL	-	-	render	58	MANUAL: unrecognized leaf shape
+004c06c0	MANUAL	-	-	input	58	MANUAL: unrecognized leaf shape
+005a9ff0	MANUAL	-	-	audio	58	MANUAL: unrecognized leaf shape
+005aca40	MANUAL	-	-	audio	58	MANUAL: unrecognized leaf shape
+005b8040	MANUAL	-	-	audio	58	MANUAL: unrecognized leaf shape
+004777d0	MANUAL	-	-	util	59	MANUAL: unrecognized leaf shape
+004b4b20	MANUAL	-	-	render	59	MANUAL: unrecognized leaf shape
+004b41b0	MANUAL	-	-	render	60	MANUAL: unrecognized leaf shape
+004b41f0	MANUAL	-	-	render	60	MANUAL: unrecognized leaf shape
+004b4230	MANUAL	-	-	render	60	MANUAL: unrecognized leaf shape
+004b4280	MANUAL	-	-	render	60	MANUAL: unrecognized leaf shape
+005bf690	MANUAL	-	-	audio	60	MANUAL: unrecognized leaf shape
+004b7570	MANUAL	-	-	input	61	no-clean-ret (multi-exit/tail)
+004c2c90	MANUAL	-	-	render	62	no-clean-ret (multi-exit/tail)
+005a6110	MANUAL	-	-	audio	62	MANUAL: unrecognized leaf shape
+005a6150	MANUAL	-	-	audio	62	MANUAL: unrecognized leaf shape
+005a66d0	MANUAL	-	-	audio	62	no-clean-ret (multi-exit/tail)
+005b92e0	MANUAL	-	-	audio	63	no-clean-ret (multi-exit/tail)
+004b7960	MANUAL	-	-	input	64	MANUAL: unrecognized leaf shape
+005bbb70	MANUAL	-	-	audio	64	MANUAL: unrecognized leaf shape
+00432800	MANUAL	-	-	frontend	65	no-clean-ret (multi-exit/tail)
+0045cd30	MANUAL	-	-	audio	65	no-clean-ret (multi-exit/tail)
+0041de80	MANUAL	-	-	hud	67	no-clean-ret (multi-exit/tail)
+00427880	MANUAL	-	-	frontend	67	MANUAL: unrecognized leaf shape
+00475ea0	MANUAL	-	-	render	67	MANUAL: unrecognized leaf shape
+0040cfd0	MANUAL	-	-	boot	68	no-clean-ret (multi-exit/tail)
+0045dff0	MANUAL	-	-	gameplay	68	MANUAL: unrecognized leaf shape
+005aeb30	MANUAL	-	-	audio	68	MANUAL: unrecognized leaf shape
+00480d60	MANUAL	-	-	vehicle	70	no-clean-ret (multi-exit/tail)
+004b4e20	MANUAL	-	-	render	70	MANUAL: unrecognized leaf shape
+005581f0	MANUAL	-	-	boot	70	MANUAL: unrecognized leaf shape
+004b5030	MANUAL	-	-	render	71	MANUAL: unrecognized leaf shape
+005bbb20	MANUAL	-	-	audio	71	MANUAL: unrecognized leaf shape
+004b4a80	MANUAL	-	-	render	72	MANUAL: unrecognized leaf shape
+004b4c80	MANUAL	-	-	render	72	MANUAL: unrecognized leaf shape
+0040e4b0	MANUAL	-	-	util	73	MANUAL: unrecognized leaf shape
+004262f0	MANUAL	-	-	render	73	no-clean-ret (multi-exit/tail)
+0040ad40	MANUAL	-	-	gameplay	74	MANUAL: unrecognized leaf shape
+0040be50	MANUAL	-	-	gameplay	74	no-clean-ret (multi-exit/tail)
+004728a0	MANUAL	-	-	util	74	MANUAL: unrecognized leaf shape
+0040cf80	MANUAL	-	-	boot	75	no-clean-ret (multi-exit/tail)
+00454fa0	MANUAL	-	-	render	75	MANUAL: unrecognized leaf shape
+00496d60	MANUAL	-	-	util	76	MANUAL: unrecognized leaf shape
+00496db0	MANUAL	-	-	util	76	MANUAL: unrecognized leaf shape
+004c0510	MANUAL	-	-	input	76	MANUAL: unrecognized leaf shape
+004657b0	MANUAL	-	-	util	77	no-clean-ret (multi-exit/tail)
+00496490	MANUAL	-	-	boot	77	no-clean-ret (multi-exit/tail)
+004cd170	MANUAL	-	-	render	78	no-clean-ret (multi-exit/tail)
+004d3090	MANUAL	-	-	render	79	no-clean-ret (multi-exit/tail)
+004780c0	MANUAL	-	-	render	80	MANUAL: unrecognized leaf shape
+004781b0	MANUAL	-	-	vehicle	80	MANUAL: unrecognized leaf shape
+004cc790	MANUAL	-	-	render	80	MANUAL: unrecognized leaf shape
+005ada40	MANUAL	-	-	audio	80	MANUAL: unrecognized leaf shape
+00455fe0	MANUAL	-	-	render	82	MANUAL: unrecognized leaf shape
+0045bed0	MANUAL	-	-	powerups	82	MANUAL: unrecognized leaf shape
+00497310	MANUAL	-	-	input	82	no-clean-ret (multi-exit/tail)
+00482030	MANUAL	-	-	vehicle	83	no-clean-ret (multi-exit/tail)
+004826d0	MANUAL	-	-	vehicle	83	MANUAL: unrecognized leaf shape
+004d8000	MANUAL	-	-	frontend	83	MANUAL: unrecognized leaf shape
+004547c0	MANUAL	-	-	gameplay	84	MANUAL: unrecognized leaf shape
+004952f0	MANUAL	-	-	util	84	no-clean-ret (multi-exit/tail)
+004cc230	MANUAL	-	-	frontend	86	no-clean-ret (multi-exit/tail)
+00401630	MANUAL	-	-	track	87	no-clean-ret (multi-exit/tail)
+0041a180	MANUAL	-	-	gameplay	87	MANUAL: unrecognized leaf shape
+004218d0	MANUAL	-	-	render	87	MANUAL: unrecognized leaf shape
+0048ab70	MANUAL	-	-	particle	87	no-clean-ret (multi-exit/tail)
+0048aff0	MANUAL	-	-	particle	87	no-clean-ret (multi-exit/tail)
+004b7aa0	MANUAL	-	-	input	87	MANUAL: unrecognized leaf shape
+00402240	MANUAL	-	-	render	89	MANUAL: unrecognized leaf shape
+00402590	MANUAL	-	-	render	89	MANUAL: unrecognized leaf shape
+0041fe10	MANUAL	-	-	gameplay	89	no-clean-ret (multi-exit/tail)
+00458020	MANUAL	-	-	gameplay	90	MANUAL: unrecognized leaf shape
+004987b0	MANUAL	-	-	input	90	no-clean-ret (multi-exit/tail)
+004ba1b0	MANUAL	-	-	input	91	MANUAL: unrecognized leaf shape
+0041ad00	MANUAL	-	-	vehicle	93	MANUAL: unrecognized leaf shape
+004762c0	MANUAL	-	-	util	93	MANUAL: unrecognized leaf shape
+00493c00	MANUAL	-	-	util	93	MANUAL: unrecognized leaf shape
+00494ac0	MANUAL	-	-	util	93	MANUAL: unrecognized leaf shape
+005ae3a0	MANUAL	-	-	audio	93	MANUAL: unrecognized leaf shape
+00427620	MANUAL	-	-	hud	94	no-clean-ret (multi-exit/tail)
+0048fdd0	MANUAL	-	-	particle	94	MANUAL: unrecognized leaf shape
+0049f300	MANUAL	-	-	particle	94	MANUAL: unrecognized leaf shape
+00419090	MANUAL	-	-	gameplay	96	MANUAL: unrecognized leaf shape
+00402750	MANUAL	-	-	boot	97	no-clean-ret (multi-exit/tail)
+00419ff0	MANUAL	-	-	gameplay	97	no-clean-ret (multi-exit/tail)
+005a9be0	MANUAL	-	-	audio	98	MANUAL: unrecognized leaf shape
+00407b00	MANUAL	-	-	gameplay	99	MANUAL: unrecognized leaf shape
+00449b30	MANUAL	-	-	particle	99	no-clean-ret (multi-exit/tail)
+00495280	MANUAL	-	-	util	99	no-clean-ret (multi-exit/tail)
+004b9650	MANUAL	-	-	input	99	MANUAL: unrecognized leaf shape
+0042a5d0	MANUAL	-	-	render	100	no-clean-ret (multi-exit/tail)
+0042a640	MANUAL	-	-	frontend	100	no-clean-ret (multi-exit/tail)
+0042a7f0	MANUAL	-	-	render	100	no-clean-ret (multi-exit/tail)
+0042a860	MANUAL	-	-	render	100	no-clean-ret (multi-exit/tail)
+00466b50	MANUAL	-	-	util	100	no-clean-ret (multi-exit/tail)
+00484580	MANUAL	-	-	debug-overlay	100	no-clean-ret (multi-exit/tail)
+0048b440	MANUAL	-	-	particle	100	no-clean-ret (multi-exit/tail)
+0049c620	MANUAL	-	-	particle	102	MANUAL: unrecognized leaf shape
+004c1c10	MANUAL	-	-	util	102	MANUAL: unrecognized leaf shape
+005bc890	MANUAL	-	-	audio	102	MANUAL: unrecognized leaf shape
+0049ec10	MANUAL	-	-	util	103	MANUAL: unrecognized leaf shape
+0048e820	MANUAL	-	-	particle	104	no-clean-ret (multi-exit/tail)
+0042a6b0	MANUAL	-	-	vehicle	105	no-clean-ret (multi-exit/tail)
+0041ce00	MANUAL	-	-	render	108	no-clean-ret (multi-exit/tail)
+004196f0	MANUAL	-	-	gameplay	109	no-clean-ret (multi-exit/tail)
+004d2340	MANUAL	-	-	render	109	no-clean-ret (multi-exit/tail)
+00409290	MANUAL	-	-	util	110	MANUAL: unrecognized leaf shape
+0041b7a0	MANUAL	-	-	render	111	no-clean-ret (multi-exit/tail)
+004324a0	MANUAL	-	-	frontend	112	no-clean-ret (multi-exit/tail)
+00493f00	MANUAL	-	-	util	112	no-clean-ret (multi-exit/tail)
+00419760	MANUAL	-	-	vehicle	113	no-clean-ret (multi-exit/tail)
+004e1df0	MANUAL	-	-	render	113	MANUAL: unrecognized leaf shape
+00497230	MANUAL	-	-	input	115	MANUAL: unrecognized leaf shape
+004daaf0	MANUAL	-	-	render	116	no-clean-ret (multi-exit/tail)
+00477500	MANUAL	-	-	render	118	MANUAL: unrecognized leaf shape
+004cd2d0	MANUAL	-	-	render	118	no-clean-ret (multi-exit/tail)
+00409710	MANUAL	-	-	render	119	MANUAL: unrecognized leaf shape
+00453210	MANUAL	-	-	gameplay	120	MANUAL: unrecognized leaf shape
+0042c010	MANUAL	-	-	render	121	MANUAL: unrecognized leaf shape
+0041ecc0	MANUAL	-	-	render	122	no-clean-ret (multi-exit/tail)
+00456140	MANUAL	-	-	gameplay	123	MANUAL: unrecognized leaf shape
+0040ce00	MANUAL	-	-	util	125	no-clean-ret (multi-exit/tail)
+00478030	MANUAL	-	-	render	130	MANUAL: unrecognized leaf shape
+00426ab0	MANUAL	-	-	render	132	MANUAL: unrecognized leaf shape
+0052b750	MANUAL	-	-	util	132	MANUAL: unrecognized leaf shape
+00426780	MANUAL	-	-	render	133	MANUAL: unrecognized leaf shape
+00494f40	MANUAL	-	-	render	133	MANUAL: unrecognized leaf shape
+004c9cd0	MANUAL	-	-	render	133	no-clean-ret (multi-exit/tail)
+0041b690	MANUAL	-	-	render	136	MANUAL: unrecognized leaf shape
+0045c110	MANUAL	-	-	gameplay	138	no-clean-ret (multi-exit/tail)
+00474890	MANUAL	-	-	gameplay	144	no-clean-ret (multi-exit/tail)
+0048e5f0	MANUAL	-	-	particle	144	no-clean-ret (multi-exit/tail)
+004111c0	MANUAL	-	-	util	145	no-clean-ret (multi-exit/tail)
+00494fd0	MANUAL	-	-	render	145	no-clean-ret (multi-exit/tail)
+00425c00	MANUAL	-	-	frontend	156	no-clean-ret (multi-exit/tail)
+00478110	MANUAL	-	-	render	156	MANUAL: unrecognized leaf shape
+004767c0	MANUAL	-	-	render	159	no-clean-ret (multi-exit/tail)
+0041ac60	MANUAL	-	-	render	160	no-clean-ret (multi-exit/tail)
+0042a530	MANUAL	-	-	render	160	MANUAL: unrecognized leaf shape
+0049ecc0	MANUAL	-	-	particle	161	no-clean-ret (multi-exit/tail)
+005a9e60	MANUAL	-	-	audio	161	MANUAL: unrecognized leaf shape
+00476710	MANUAL	-	-	render	162	no-clean-ret (multi-exit/tail)
+0047b8d0	MANUAL	-	-	input	168	no-clean-ret (multi-exit/tail)
+0041c9a0	MANUAL	-	-	hud	169	no-clean-ret (multi-exit/tail)
+0048ff20	MANUAL	-	-	particle	170	no-clean-ret (multi-exit/tail)
+00427be0	MANUAL	-	-	render	171	no-clean-ret (multi-exit/tail)
+00493640	MANUAL	-	-	render	172	MANUAL: unrecognized leaf shape
+00491e50	MANUAL	-	-	render	173	MANUAL: unrecognized leaf shape
+00420290	MANUAL	-	-	gameplay	176	no-clean-ret (multi-exit/tail)
+00415220	MANUAL	-	-	ai	177	no-clean-ret (multi-exit/tail)
+004278d0	MANUAL	-	-	render	181	no-clean-ret (multi-exit/tail)
+004728f0	MANUAL	-	-	gameplay	184	MANUAL: unrecognized leaf shape
+005b6760	MANUAL	-	-	audio	185	MANUAL: unrecognized leaf shape
+0040da50	MANUAL	-	-	util	186	no-clean-ret (multi-exit/tail)
+0042c090	MANUAL	-	-	render	187	MANUAL: unrecognized leaf shape
+0049cfb0	MANUAL	-	-	util	191	MANUAL: unrecognized leaf shape
+00419100	MANUAL	-	-	gameplay	192	no-clean-ret (multi-exit/tail)
+00434720	MANUAL	-	-	frontend	193	no-clean-ret (multi-exit/tail)
+00458d00	MANUAL	-	-	gameplay	193	MANUAL: unrecognized leaf shape
+0048a060	MANUAL	-	-	particle	194	MANUAL: unrecognized leaf shape
+0043bf30	MANUAL	-	-	frontend	196	no-clean-ret (multi-exit/tail)
+0040e590	MANUAL	-	-	util	197	no-clean-ret (multi-exit/tail)
+0042c960	MANUAL	-	-	render	200	no-clean-ret (multi-exit/tail)
+005acda0	MANUAL	-	-	audio	202	MANUAL: unrecognized leaf shape
+00403c60	MANUAL	-	-	hud	207	MANUAL: unrecognized leaf shape
+00472740	MANUAL	-	-	gameplay	210	MANUAL: unrecognized leaf shape
+004095a0	MANUAL	-	-	gameplay	214	no-clean-ret (multi-exit/tail)
+004587a0	MANUAL	-	-	vehicle	214	no-clean-ret (multi-exit/tail)
+00546b10	MANUAL	-	-	vehicle	214	MANUAL: unrecognized leaf shape
+0045d250	MANUAL	-	-	audio	215	no-clean-ret (multi-exit/tail)
+00411f30	MANUAL	-	-	vehicle	216	no-clean-ret (multi-exit/tail)
+00427f00	MANUAL	-	-	hud	233	no-clean-ret (multi-exit/tail)
+0047be80	MANUAL	-	-	track	235	no-clean-ret (multi-exit/tail)
+005af510	MANUAL	-	-	audio	236	MANUAL: unrecognized leaf shape
+00466a50	MANUAL	-	-	audio	245	no-clean-ret (multi-exit/tail)
+00427e00	MANUAL	-	-	frontend	246	no-clean-ret (multi-exit/tail)
+00492e90	MANUAL	-	-	boot	248	no-clean-ret (multi-exit/tail)
+0048eac0	MANUAL	-	-	particle	250	MANUAL: unrecognized leaf shape
+004db2e0	MANUAL	-	-	render	252	MANUAL: unrecognized leaf shape
+0041c410	MANUAL	-	-	render	260	no-clean-ret (multi-exit/tail)
+0041f770	MANUAL	-	-	gameplay	272	no-clean-ret (multi-exit/tail)
+00403db0	MANUAL	-	-	render	278	MANUAL: unrecognized leaf shape
+004927c0	MANUAL	-	-	vehicle	284	no-clean-ret (multi-exit/tail)
+0041a060	MANUAL	-	-	gameplay	285	no-clean-ret (multi-exit/tail)
+0040d470	MANUAL	-	-	util	288	no-clean-ret (multi-exit/tail)
+004430e0	MANUAL	-	-	render	289	no-clean-ret (multi-exit/tail)
+00402a40	MANUAL	-	-	boot	293	no-clean-ret (multi-exit/tail)
+005b6910	MANUAL	-	-	audio	296	MANUAL: unrecognized leaf shape
+0042bcb0	MANUAL	-	-	frontend	303	no-clean-ret (multi-exit/tail)
+00427990	MANUAL	-	-	render	306	no-clean-ret (multi-exit/tail)
+005ad770	MANUAL	-	-	audio	307	MANUAL: unrecognized leaf shape
+00427ff0	MANUAL	-	-	hud	334	no-clean-ret (multi-exit/tail)
+00428140	MANUAL	-	-	frontend	340	no-clean-ret (multi-exit/tail)
+00499400	MANUAL	-	-	save	341	no-clean-ret (multi-exit/tail)
+004627f0	MANUAL	-	-	audio	351	no-clean-ret (multi-exit/tail)
+00485c20	MANUAL	-	-	smplfzx	353	MANUAL: unrecognized leaf shape
+005ace70	MANUAL	-	-	audio	374	MANUAL: unrecognized leaf shape
+0048b960	MANUAL	-	-	particle	387	no-clean-ret (multi-exit/tail)
+005bc920	MANUAL	-	-	audio	387	MANUAL: unrecognized leaf shape
+00411d90	MANUAL	-	-	vehicle	410	no-clean-ret (multi-exit/tail)
+00493900	MANUAL	-	-	boot	448	no-clean-ret (multi-exit/tail)
+004b6940	MANUAL	-	-	render	448	no-clean-ret (multi-exit/tail)
+004368e0	MANUAL	-	-	frontend	450	no-clean-ret (multi-exit/tail)
+00478220	MANUAL	-	-	render	450	no-clean-ret (multi-exit/tail)
+00420870	MANUAL	-	-	gameplay	458	no-clean-ret (multi-exit/tail)
+00401000	MANUAL	-	-	hud	482	no-clean-ret (multi-exit/tail)
+00407800	MANUAL	-	-	gameplay	498	no-clean-ret (multi-exit/tail)
+00496100	MANUAL	-	-	input	531	no-clean-ret (multi-exit/tail)
+004270f0	MANUAL	-	-	render	548	no-clean-ret (multi-exit/tail)
+00429e10	MANUAL	-	-	render	571	no-clean-ret (multi-exit/tail)
+004da000	MANUAL	-	-	render	624	no-clean-ret (multi-exit/tail)
+00471ec0	MANUAL	-	-	camera	643	no-clean-ret (multi-exit/tail)
+00408b00	MANUAL	-	-	util	707	no-clean-ret (multi-exit/tail)
+00414c30	MANUAL	-	-	ai	720	no-clean-ret (multi-exit/tail)
+0045bba0	MANUAL	-	-	util	738	no-clean-ret (multi-exit/tail)
+0043af10	MANUAL	-	-	frontend	782	no-clean-ret (multi-exit/tail)
+0045d460	MANUAL	-	-	audio	822	no-clean-ret (multi-exit/tail)
+005b2220	MANUAL	-	-	audio	842	no-clean-ret (multi-exit/tail)
+004332a0	MANUAL	-	-	frontend	848	no-clean-ret (multi-exit/tail)
+0040d590	MANUAL	-	-	frontend	850	MANUAL: unrecognized leaf shape

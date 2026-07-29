@@ -96,11 +96,22 @@ def run_chunk(rvas, round_s, shotdir):
     if m:
         exer = {x.strip().strip("'\"") for x in m.group(1).split(",") if x.strip()}
 
+    # Surface the child's own diagnostics. Hiding them meant adding the [gate]
+    # instrument and then being unable to read it: after the gate landed, a chunk
+    # still voided and there was no way to tell whether the gate had fired, how
+    # many nudges it made, or what phase it gave up in. An instrument you cannot
+    # see is not an instrument.
+    diag = [ln.strip() for ln in out.splitlines()
+            if "[gate]" in ln or ln.strip().startswith("FINAL:")
+            or "start-attempt" in ln]
     # THE GATE: did this boot actually reach a race?
     probes_fired = sum(1 for p in PROBES if p in exer)
     if probes_fired == 0:
         fr = PHASE_RE.search(out)
-        return base, exer, True, f"VOID no probe fired (first_results_at={fr.group(1) if fr else '?'})"
+        return (base, exer, True,
+                f"VOID no probe fired (first_results_at={fr.group(1) if fr else '?'})"
+                + (chr(10) + "      " + (chr(10) + "      ").join(diag[-4:])
+                   if diag else ""))
     return base, exer, False, f"ok ({probes_fired}/3 probes)"
 
 

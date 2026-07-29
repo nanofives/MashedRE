@@ -404,6 +404,16 @@ def main():
             if any(isinstance(cc.get(r), int) and cc[r] > 0 for r in gate_rvas):
                 fired = True
                 break
+            # Nudge ONLY when we are already out of the frontend (phase != 3) and
+            # merely have not started simulating. If phase is still 3 the game is
+            # stuck in the MENU, and blind confirms there are actively harmful:
+            # measured 2026-07-29, nine nudges from a stuck menu walked depth
+            # BACKWARD 4 -> 3. Bail immediately instead and let the caller retry
+            # the whole chunk.
+            if nav.phase() == 3:
+                print("  [gate] still in the FRONTEND (phase=3) — navigation "
+                      "failed, not a slow race start. Not nudging.", flush=True)
+                break
             if time.time() - last_nudge > 3.0:
                 nav.press(4); nudged += 1; last_nudge = time.time()
             time.sleep(0.5)

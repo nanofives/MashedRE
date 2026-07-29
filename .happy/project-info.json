@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-29T09:45:00Z",
+  "updatedAt": "2026-07-29T10:40:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -48,35 +48,29 @@
       ]
     },
     {
-      "heading": "STATE lane - screening 144/187",
+      "heading": "STATE lane - screening COMPLETE 187/187",
       "fields": [
         {
-          "label": "Pool",
-          "value": "144 of 187 screened. 70 exercised (49%): 20 race-gated, 29 pre-race, 21 in-race. 74 never. 43 left.",
+          "label": "Result",
+          "value": "90 exercised (48%): 20 race-gated, 29 pre-race, 41 in-race. 97 never exercised in Quick Battle.",
           "kind": "text"
         },
         {
-          "label": "Three screens",
+          "label": "Authorable",
+          "value": "After shape+semantic screens: 10 SAFE in the in-race class, 7 in pre-race, 3 in race-gated (2 already authored).",
+          "kind": "text"
+        },
+        {
+          "label": "Void chunks - TWO causes",
           "value": [
-            "1 exercised - prescreen_batch.py (MASHED_COUNT_LATE now default)",
-            "2 shape - shape_screen.py (indirect / destructive imports / reg-arg)",
-            "3 semantic - semantic_screen.py (init / teardown / non-determ / stores-through-pointer)"
+            "Interceptor overhead: FIXED via MASHED_COUNT_LATE (armed after race entry)",
+            "Nav flakiness at the menu: pre-existing, ~50%, unfixed. My 'phase=2 landing' theory was WRONG - the nav never leaves phase=3 and blind nudges walked depth BACKWARD 4->3."
           ],
           "kind": "list"
         },
         {
-          "label": "Authorable after all three",
-          "value": "~16 across classes; 7 new from the in-race batch: 0x004219c0, 0x0041f220, 0x00442a20, 0x00485070, 0x0045d3f0, 0x004671d0, 0x00467210",
-          "kind": "text"
-        },
-        {
-          "label": "Authored, unverified",
-          "value": "0x0047d150 SlotObjectField8, 0x0046cc10 VehicleFloatFieldAsInt (+ new out1_idx arg_type)",
-          "kind": "text"
-        },
-        {
-          "label": "Known limit",
-          "value": "~50% of chunks go VOID because the nav lands on phase=2 rather than the racing phase 0; discarded correctly, but it halves screening throughput.",
+          "label": "Method note",
+          "value": "The driver was swallowing statenav's stdout, so the [gate] line added to diagnose the void was itself invisible. Surfacing it revealed the real cause in one run.",
           "kind": "text"
         }
       ]
