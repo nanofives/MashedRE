@@ -114,6 +114,14 @@ def disasm_hazards(rva):
                 r"(byte|word|dword) ptr \[e(ax|cx|dx|bx|si|di)(\s*\+[^\]]+)?\], ",
                 i.op_str)):
             out.append("stores-through-pointer")
+        # ABSOLUTE-ADDRESS stores. `mov dword ptr [0x005f616c], 1` writes a
+        # global just as surely as a register-base store does, and the rules
+        # above walked straight past it — publishes-call-result only fires on
+        # `mov [abs], eax` immediately after a call. 0x00426030 was rated SAFE
+        # and would have been authored; it sets DAT_005f616c = 1.
+        if (i.mnemonic == "mov"
+                and re.match(r"(byte|word|dword) ptr \[0x[0-9a-f]+\], ", i.op_str)):
+            out.append("stores-global")
         prev_call = (i.mnemonic == "call")
     # NOTE: no break on the first `ret`. An early-out returns before the body's
     # real work — 0x0046cc10 rets at 0x0046cc1b and stores at 0x0046cc31 — and
