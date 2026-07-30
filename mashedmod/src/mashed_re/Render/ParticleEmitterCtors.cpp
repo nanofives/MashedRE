@@ -149,3 +149,56 @@ extern "C" __declspec(dllexport) __declspec(naked) void ParticleEmitterCtorD() {
     }
 }
 RH_ScopedInstall(ParticleEmitterCtorD, 0x0041cd20);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RpClumpDestroy destructors (this=EAX). Each reads a clump handle from a fixed
+// offset and tail-calls RpClumpDestroy (FUN_004e6e00). Verbatim 11-byte tail
+// calls per re/analysis/callers_c2_unblock/portcap_dtor_rpclumpdestroy.md:
+//   0x0041b440  MOV ECX,[EAX+0x5c];  PUSH ECX; CALL 0x004e6e00; POP ECX; RET
+//   0x0041beb0  MOV ECX,[EAX+0x15c]; PUSH ECX; CALL 0x004e6e00; POP ECX; RET
+//   0x0041cb00  MOV ECX,[EAX+0x100]; PUSH ECX; CALL 0x004e6e00; POP ECX; RET
+// Verified via reg_this_call_observe (records RpClumpDestroy's arg). C3 not C4.
+// ─────────────────────────────────────────────────────────────────────────────
+namespace {
+using fn_destroy_t = void(__cdecl*)(std::uint32_t clump);
+void __cdecl EmitterDtor_0x5c_impl(std::uint8_t* self) {
+    reinterpret_cast<fn_destroy_t>(0x004e6e00)(*reinterpret_cast<std::uint32_t*>(self + 0x5c));
+}
+void __cdecl EmitterDtor_0x15c_impl(std::uint8_t* self) {
+    reinterpret_cast<fn_destroy_t>(0x004e6e00)(*reinterpret_cast<std::uint32_t*>(self + 0x15c));
+}
+void __cdecl EmitterDtor_0x100_impl(std::uint8_t* self) {
+    reinterpret_cast<fn_destroy_t>(0x004e6e00)(*reinterpret_cast<std::uint32_t*>(self + 0x100));
+}
+}  // namespace
+
+// this in EAX → naked shim repackages as a single __cdecl stack arg.
+extern "C" __declspec(dllexport) __declspec(naked) void EmitterDtorClumpAt5c() {
+    __asm {
+        push eax
+        call EmitterDtor_0x5c_impl
+        add  esp, 4
+        ret
+    }
+}
+RH_ScopedInstall(EmitterDtorClumpAt5c, 0x0041b440);
+
+extern "C" __declspec(dllexport) __declspec(naked) void EmitterDtorClumpAt15c() {
+    __asm {
+        push eax
+        call EmitterDtor_0x15c_impl
+        add  esp, 4
+        ret
+    }
+}
+RH_ScopedInstall(EmitterDtorClumpAt15c, 0x0041beb0);
+
+extern "C" __declspec(dllexport) __declspec(naked) void EmitterDtorClumpAt100() {
+    __asm {
+        push eax
+        call EmitterDtor_0x100_impl
+        add  esp, 4
+        ret
+    }
+}
+RH_ScopedInstall(EmitterDtorClumpAt100, 0x0041cb00);

@@ -2202,6 +2202,81 @@ function runDiff() {
         return;
     }
 
+    // ── reg_this_call_observe (orch-iter8, SWEEP-CRITICAL) ────────────────────
+    // Sibling of reg_this_callee_stub for VOID functions whose only effect is a
+    // single call — e.g. the particle-emitter destructors
+    //   void fn(this=EAX) { RpClumpDestroy(*(this + field_off)); }
+    // The struct is not written, so there is nothing to fingerprint; instead we
+    // Interceptor.replace the observed callee (RpClumpDestroy) with a recorder
+    // that captures its first argument, seed *(this+field_off)=sentinel per
+    // test, call each side, and compare the recorded arg. Non-degenerate: the
+    // sentinel varies per test, so a port reading the wrong field records a
+    // different value. Evidence: re/analysis/callers_c2_unblock/portcap_dtor_rpclumpdestroy.md.
+    //
+    // CONFIG: this_reg ('eax' for these), this_field_off, observe_callee_str,
+    //   struct_size (>= field_off+4), signature {ret:'void', args:[]},
+    //   tests = [sentinel u32, ...].
+    if (CONFIG.arg_type === 'reg_this_call_observe') {
+        const structSize = CONFIG.struct_size || 0x40;
+        const thisReg    = (CONFIG.this_reg || 'eax').toLowerCase();
+        const fieldOff   = CONFIG.this_field_off || 0;
+        const MOV_OP = { eax: 0xB8, ecx: 0xB9, edx: 0xBA, ebx: 0xBB, esi: 0xBE, edi: 0xBF };
+        const REGNUM = { eax: 0, ecx: 1, edx: 2, ebx: 3, esp: 4, ebp: 5, esi: 6, edi: 7 };
+        const thisOp = MOV_OP[thisReg];
+        if (thisOp === undefined) { send({ type: 'error', msg: 'bad this_reg ' + thisReg }); return; }
+
+        const _keep = [];
+        const thisBuf = Memory.alloc(structSize); _keep.push(thisBuf);
+
+        let recorded = null;
+        const cbObserve = new NativeCallback(function (arg) { recorded = arg >>> 0; return 0; },
+                                             'int', ['uint32']);
+        const obsAddr = ptr(CONFIG.observe_callee_str);
+        Interceptor.replace(obsAddr, cbObserve);
+        Interceptor.flush();
+
+        function buildTramp(targetAddr) {
+            const code = Memory.alloc(Process.pageSize);
+            Memory.patchCode(code, 13, function (cw) {
+                const w = new X86Writer(cw, { pc: code });
+                w.putU8(0x50 + REGNUM[thisReg]);               // push <thisReg>
+                w.putBytes([thisOp, 0, 0, 0, 0]);              // mov <thisReg>, thisAddr (patch +2)
+                w.putU8(0xE8);                                 // call rel32 (opcode @+6, operand @+7..10)
+                const rel = targetAddr.sub(code.add(11)).toInt32();  // next insn @+11
+                w.putBytes([rel & 0xff, (rel >>> 8) & 0xff, (rel >>> 16) & 0xff, (rel >>> 24) & 0xff]);
+                w.putU8(0x58 + REGNUM[thisReg]);               // pop <thisReg>
+                w.putU8(0xC3);                                 // ret
+                w.flush();
+            });
+            code.add(2).writeU32(parseInt(thisBuf.toString(), 16) >>> 0);
+            return code;
+        }
+        const trampO = buildTramp(TARGET_ADDR);
+        const trampR = buildTramp(reimplAddr);
+        const FnO = new NativeFunction(trampO, 'void', [], 'mscdecl');
+        const FnR = new NativeFunction(trampR, 'void', [], 'mscdecl');
+
+        try {
+            for (let i = 0; i < CONFIG.tests.length; i++) {
+                const sentinel = CONFIG.tests[i] >>> 0;
+                for (let k = 0; k < structSize; k += 4) thisBuf.add(k).writeU32(0);
+                thisBuf.add(fieldOff).writeU32(sentinel);
+                let origV = null, reimV = null, errO = null, errR = null;
+                recorded = null; try { FnO(); origV = (recorded === null ? null : '0x' + recorded.toString(16)); } catch (e) { errO = e.message; }
+                recorded = null; try { FnR(); reimV = (recorded === null ? null : '0x' + recorded.toString(16)); } catch (e) { errR = e.message; }
+                results.push({ idx: i, input: '0x' + sentinel.toString(16),
+                               original: origV, reimpl: reimV,
+                               match: (origV !== null && reimV !== null && origV === reimV),
+                               err_original: errO, err_reimpl: errR });
+            }
+        } finally {
+            Interceptor.revert(obsAddr);
+            Interceptor.flush();
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── vec3_lerp (promote-round-22 harness-ext, SWEEP-CRITICAL) ─────────────
     // For pure vec3 math leaves: void fn(float* out3, float* a3, float* b3,
     // float t) — writes a 3-float result computed from two input vec3s and a

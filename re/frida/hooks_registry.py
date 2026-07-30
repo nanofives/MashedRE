@@ -18423,6 +18423,43 @@ HOOKS = {
         ],
     },
 
+    # RpClumpDestroy destructors (this=EAX): void fn { RpClumpDestroy(*(this+off)); }.
+    #   Verified via reg_this_call_observe (records RpClumpDestroy's 0x004e6e00 arg;
+    #   sentinel varies per test -> non-degenerate; a wrong offset records a
+    #   different value). Evidence portcap_dtor_rpclumpdestroy.md. Callee-gate via
+    #   the identified-callee clause (CONFIDENCE.md 2026-07-30: RpClumpDestroy named
+    #   RW API). struct_size covers off+4.
+    'emitter_dtor_clump_5c': {
+        'rva': 0x0041b440, 'export': 'EmitterDtorClumpAt5c',
+        'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'reg_this_call_observe', 'lut_root_delta': 0, 'scenario': 'race',
+        'scenario_sentinel': 0x007d73a8,
+        'this_reg': 'eax', 'this_field_off': 0x5c, 'struct_size': 0x80,
+        'observe_callee': 0x004e6e00,
+        'path1_tests': [0x11110000, 0x22220000, 0x33330000],
+        'path2_tests': [0x44440000],
+    },
+    'emitter_dtor_clump_15c': {
+        'rva': 0x0041beb0, 'export': 'EmitterDtorClumpAt15c',
+        'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'reg_this_call_observe', 'lut_root_delta': 0, 'scenario': 'race',
+        'scenario_sentinel': 0x007d73a8,
+        'this_reg': 'eax', 'this_field_off': 0x15c, 'struct_size': 0x180,
+        'observe_callee': 0x004e6e00,
+        'path1_tests': [0x11110000, 0x22220000, 0x33330000],
+        'path2_tests': [0x44440000],
+    },
+    'emitter_dtor_clump_100': {
+        'rva': 0x0041cb00, 'export': 'EmitterDtorClumpAt100',
+        'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'reg_this_call_observe', 'lut_root_delta': 0, 'scenario': 'race',
+        'scenario_sentinel': 0x007d73a8,
+        'this_reg': 'eax', 'this_field_off': 0x100, 'struct_size': 0x120,
+        'observe_callee': 0x004e6e00,
+        'path1_tests': [0x11110000, 0x22220000, 0x33330000],
+        'path2_tests': [0x44440000],
+    },
+
     # 0x004f3cb0  PtrArrayFindLastIndex(int* c, int value) — reverse linear
     #   search over c = [dataPtr, count]; returns last index of value, count-1
     #   for a non-positive count, -1 when not found. Fully synthetic (the

@@ -407,6 +407,12 @@ def build_config(hook, asi_path=None):
     for _ck in ('callee_fill', 'callee_index', 'callee_zero', 'callee_color'):
         if _ck in hook:
             config[_ck + '_str'] = f"0x{hook[_ck]:08x}"
+    # reg_this_call_observe (orch-iter8): void single-call functions (e.g.
+    # RpClumpDestroy destructors) — record the observed callee's first arg.
+    if 'this_field_off' in hook:
+        config['this_field_off'] = hook['this_field_off']
+    if 'observe_callee' in hook:
+        config['observe_callee_str'] = f"0x{hook['observe_callee']:08x}"
     return config
 
 
