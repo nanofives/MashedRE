@@ -60,9 +60,21 @@ prior run cut off for budget lost nothing — resume from what `status` shows.
   off-quota and touches no machine resource, so this is where parallelism pays.
 - **spawn_child — when a lane needs more than reading.** You MAY
   `mcp__happy__spawn_child` (ALWAYS with an explicit `account`; smoke-test a
-  1-line child first). Run the **wedge-watchdog**: poll `read_child_output`;
-  `latestSeq` FROZEN + idle >5 min → `stop_child` + re-spawn (ignore the
-  `(N text,0 tool)` counter). Never give a claude2 child a write/build/MCP leg.
+  1-line child first). Never give a claude2 child a write/build/MCP leg.
+- **Classify an idle child before acting** (idle ≠ wedged ≠ done). Read its
+  transcript tail:
+  - **ASKING** (ends on a question/options block) → decide and answer via
+    `send_to_session` when the choice follows from the task/your directive/a
+    convention; **escalate to the human** (surface it, don't guess) for genuine
+    user-decisions (architecture forks, destructive/irreversible actions, scope
+    changes, evidence-missing promotions). Log what you answered in the ledger.
+  - **DONE** (ends on a summary/result) → collect it.
+  - **WEDGED** (`latestSeq` frozen ≥2 polls, idle >5 min, last message a partial
+    action — NOT a question or summary) → `stop_child` + re-spawn same prompt.
+  Only WEDGED gets respawned — killing an ASKING child loses its work. Ignore
+  the `(N text,0 tool)` counter. Permission prompts ≠ options: `yolo` bypasses
+  them only if pre-authorized, and is disabled on account2 (a claude2 child just
+  hangs → escalate). Full detail in `ORCHESTRATOR.md` → "Driving child sessions".
 - **Game runs auto-queue.** Every MASHED-spawning script takes the machine-wide
   game lock (`re/orchestrator/mashed_lock.py`), so multiple game-bound children
   take turns instead of colliding — safe to launch, but each still pays a full

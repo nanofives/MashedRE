@@ -83,13 +83,54 @@ it small (2–4), and bias hard toward the READ tier.
    - **Smoke-test the transport first**: spawn a 1-line child (e.g. `git
      rev-parse --short HEAD`) and confirm it returns before sending an expensive
      prompt.
-   - **Wedge-watchdog**: poll `read_child_output` and compare `latestSeq` across
-     polls. The tell is **`latestSeq` FROZEN + idle >5 min** → wedged →
-     `stop_child` + re-spawn the same prompt. **Ignore the `(N text, 0 tool)`
-     counter** — it reads 0 for perfectly healthy children too. claude2 wedges
-     ~50% of the time; that's why read-only work prefers the read-fleet.
+   - **Idle ≠ wedged ≠ done — CLASSIFY before you act** (see "Driving child
+     sessions" below). A child waiting on an options prompt is ALSO idle with a
+     frozen `latestSeq`; killing it as "wedged" throws away its work. Only
+     re-spawn a child that is frozen with **no pending question**.
    - **Never send a write/build/MCP leg to a claude2 child** — it hangs on the
      first permission prompt.
+
+## Driving child sessions — classify before you act
+
+When `wait_for_children until=idle` returns a child (or a poll shows its
+`latestSeq` stopped climbing), do NOT assume it's stuck. Read its transcript
+tail with `read_child_output` and put it in ONE of three states:
+
+| state | how to tell (read the LAST message) | action |
+|---|---|---|
+| **ASKING** | ends with a question / an options block, awaiting input | decide → answer, or escalate (below) |
+| **DONE** | ends with a completion summary / the result you asked for | collect its output; if `shutdownWhenDone` it self-prunes |
+| **WEDGED** | `latestSeq` frozen across ≥2 polls AND idle >5 min AND the last message is a *partial action* — neither a question nor a summary | `stop_child` + re-spawn the SAME prompt |
+
+Ignore the `(N text, 0 tool)` counter for all of this — it reads 0 for healthy
+children too. Only WEDGED gets re-spawned; misreading ASKING or DONE as WEDGED
+destroys work. (claude2 wedges ~50% of the time — the reason read-only work
+prefers the read-fleet, which can't wedge.)
+
+### Answering an ASKING child — decide vs escalate
+
+- **Auto-answer** when the choice follows from the task, the directive you gave
+  the child, or a project convention — e.g. "which existing `arg_type` fits?"
+  (the brief implies it), "proceed with the obvious next step?", "which of these
+  equivalent layouts?". Send the **exact option text** (or a clear directive)
+  via `send_to_session`, and record what you chose in the ledger note so it's
+  auditable.
+- **Escalate to the human** — surface it in your iteration output, do NOT guess
+  — when it's a genuine user-decision: an architecture fork, a destructive or
+  irreversible action, a scope change, a confidence promotion missing evidence,
+  or any choice where two answers have materially different consequences you
+  can't adjudicate from the task. This is the project's stop-and-ask rule
+  applied to a child's question, not just your own.
+
+### Permission prompts are NOT options questions
+
+A child blocked on a *permission* prompt ("allow this Bash/tool call?") is a
+different thing. `send_to_session ... yolo:true` bypasses permission checks, but
+only use `yolo` if the user pre-authorized it. On **account2 it is disabled**
+(`disableBypassPermissionsMode`) — a claude2 child just hangs on a permission
+prompt, so treat that as blocked and escalate/kill, don't wait it out. Prevent
+it: keep claude2 children read-only (they never prompt); give claude3 execution
+children a permissive mode or pre-authorized `yolo` so they don't stall.
 
 **The MASHED run queue makes game-bound fan-out SAFE (but not fast).** Every
 script that boots MASHED (`run_diff_scenario_batch.py`, `stalker_write_surface*`)
