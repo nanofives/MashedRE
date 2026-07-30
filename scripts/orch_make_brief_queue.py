@@ -126,18 +126,46 @@ verdict is exactly one of:
 Be concise. The tables are the deliverable; skip narrative preamble."""
 
 
-def build_prompt(bucket, plates, hooks):
-    lines = ["| # | RVA | plate path (read this file) | hooks.csv name | conf |",
-             "|---|---|---|---|---|"]
+GATE_NOTE = """
+The caller column above is AUTHORITATIVE - it was resolved locally in Ghidra
+(getReferencesTo, so call sites inside un-wrapped blocks are included). Do NOT
+answer CALLERS_NEEDS_GHIDRA for any row in this batch: every row listed here
+already has a confirmed C2-or-better caller. Copy the caller and its confidence
+straight from the table into your caller_rvas / caller_confidences columns.
+
+That means the ONLY things standing between a row and READY are its shape, its
+arg_type match, and harness_safety. Judge those carefully - especially safety.
+"""
+
+
+def build_prompt(bucket, plates, hooks, gate=None):
+    has_gate = gate is not None
+    hdr = ("| # | RVA | plate path (read this file) | hooks.csv name | conf |"
+           " best caller (CONFIRMED C2+) |" if has_gate else
+           "| # | RVA | plate path (read this file) | hooks.csv name | conf |")
+    sep = "|---|---|---|---|---|---|" if has_gate else "|---|---|---|---|---|"
+    lines = [hdr, sep]
     for i, rva in enumerate(bucket["rvas"], 1):
         key = rva[2:].lower()
         plate = plates.get(key, [None])[0] or "NO_PLATE_FOUND"
         row = hooks.get(key, {})
-        lines.append("| %d | %s | %s | %s | %s |" % (
-            i, rva, plate, row.get("name", "?"), row.get("confidence", "?")))
-    return PROMPT_HEAD.format(
-        n=len(bucket["rvas"]), sub=bucket["subsystem"],
-        table="\n".join(lines))
+        cells = [str(i), rva, plate, row.get("name", "?"),
+                 row.get("confidence", "?")]
+        if has_gate:
+            cells.append(gate.get(rva, {}).get("best_caller", "-"))
+        lines.append("| %s |" % " | ".join(cells))
+    body = PROMPT_HEAD.format(n=len(bucket["rvas"]), sub=bucket["subsystem"],
+                              table="\n".join(lines))
+    return body + (GATE_NOTE if has_gate else "")
+
+
+def load_gate():
+    p = ROOT / "re/orchestrator/caller_gate_144.tsv"
+    if not p.exists():
+        return None
+    with p.open(newline="", encoding="utf-8") as f:
+        return {r["rva"]: r for r in csv.DictReader(f, delimiter="\t")
+                if r["verdict"] == "GATE_PASS"}
 
 
 def main(argv):
@@ -149,20 +177,41 @@ def main(argv):
 
     data = json.loads(BUCKETS.read_text(encoding="utf-8"))
     plates, hooks = index_plates(), index_hooks()
+    gate = load_gate()
 
-    sel = data["buckets"] if want == ["--all"] else [
-        b for b in data["buckets"] if b["id"] in want]
-    missing = set(want) - {b["id"] for b in sel} - {"--all"}
-    if missing:
-        print("unknown bucket ids: %s" % ", ".join(sorted(missing)))
-        return 1
+    if want and want[0] == "--gate":
+        # Gate-driven mode: cut fresh 6-RVA units from GATE_PASS rows only,
+        # skipping any RVA named after --skip. Ranked SAFE-agnostic by size,
+        # but note iter11: cheapest-first surfaces teardown families, so the
+        # safety column in the brief is what actually decides routing.
+        if not gate:
+            print("no caller_gate_144.tsv - run the Ghidra sweep first")
+            return 1
+        skip = set(want[want.index("--skip") + 1:]) if "--skip" in want else set()
+        rows = [r for r in gate.values() if r["rva"] not in skip]
+        rows.sort(key=lambda r: int(r["size"] or 9999))
+        sel = []
+        for i in range(0, len(rows), 6):
+            chunk = rows[i:i + 6]
+            if len(chunk) < 2:
+                break
+            sel.append({"id": "gate_b%d" % (i // 6 + 1),
+                        "subsystem": "mixed (gate-passing)",
+                        "rvas": [r["rva"] for r in chunk]})
+    else:
+        sel = data["buckets"] if want == ["--all"] else [
+            b for b in data["buckets"] if b["id"] in want]
+        missing = set(want) - {b["id"] for b in sel} - {"--all"}
+        if missing:
+            print("unknown bucket ids: %s" % ", ".join(sorted(missing)))
+            return 1
 
     units, no_plate = [], 0
     for b in sel:
         no_plate += sum(1 for r in b["rvas"]
                         if r[2:].lower() not in plates)
         units.append({"id": b["id"], "model": "sonnet",
-                      "prompt": build_prompt(b, plates, hooks)})
+                      "prompt": build_prompt(b, plates, hooks, gate)})
 
     out.write_text(json.dumps({
         "description": ("Orchestrator brief queue - %d buckets of <=%d RVAs. "
