@@ -48,11 +48,27 @@ prior run cut off for budget lost nothing — resume from what `status` shows.
 - **read-only → read-fleet** (`re/orchestrator/read_fleet.ps1`, account2). Give
   it EXPLICIT RVA lists, never "derive rows N-M from a TSV" (that timed out).
 - **machine-bound → exec-pipeline** (`re/orchestrator/exec_pipeline.ps1`,
-  account3, serialized under its machine lock). Never launch two exec runs at
-  once; read only the manifest's `promotion_candidates`.
+  account3); read only the manifest's `promotion_candidates`.
 - **Promotion is deliberate**: only via `re-classify` (it gates on evidence).
   Check the leaf caller-gate — a GREEN leaf whose callers are all C1 is QUEUED
   in `re/PROMOTION_QUEUE.md`, not promoted.
+
+### Deciding parallelism (you choose K)
+
+- **Read tier — widen freely.** If several candidate buckets are pending and
+  budget is healthy, run the read-fleet with `-MaxConcurrent 2..4`. It's
+  off-quota and touches no machine resource, so this is where parallelism pays.
+- **spawn_child — when a lane needs more than reading.** You MAY
+  `mcp__happy__spawn_child` (ALWAYS with an explicit `account`; smoke-test a
+  1-line child first). Run the **wedge-watchdog**: poll `read_child_output`;
+  `latestSeq` FROZEN + idle >5 min → `stop_child` + re-spawn (ignore the
+  `(N text,0 tool)` counter). Never give a claude2 child a write/build/MCP leg.
+- **Game runs auto-queue.** Every MASHED-spawning script takes the machine-wide
+  game lock (`re/orchestrator/mashed_lock.py`), so multiple game-bound children
+  take turns instead of colliding — safe to launch, but each still pays a full
+  serialized boot, so don't expect a throughput multiplier there. Check/clear
+  the queue: `py -3.12 re/orchestrator/mashed_lock.py status | break`.
+  Full detail in `ORCHESTRATOR.md` → "Parallelism".
 
 ## Step 3 — persist + budget-stop + kickoff
 

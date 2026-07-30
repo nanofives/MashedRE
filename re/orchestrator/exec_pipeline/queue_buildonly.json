@@ -1,0 +1,4 @@
+{
+  "description": "build-only smoke for the lock refactor",
+  "jobs": [ { "type": "build" } ]
+}

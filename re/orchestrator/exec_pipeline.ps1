@@ -30,35 +30,30 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $ROOT = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent   # ...\Mashed
-$LOCK = Join-Path $PSScriptRoot 'exec_pipeline\.machine.lock'
+. "$PSScriptRoot\MachineLock.ps1"   # Acquire-Lock / Release-Lock (shared with mashed_lock.py)
 $BUILD = Join-Path $ROOT 'mashedmod\build.bat'
 $PY = 'py'; $PYV = '-3.12'
 $BATCH = Join-Path $ROOT 're\frida\run_diff_scenario_batch.py'
 $STALKER = Join-Path $ROOT 're\frida\stalker_write_surface_batch.py'
 
-# ---- machine lock: serialize all game-spawning / build work -----------------
-function Acquire-MachineLock {
-  New-Item -ItemType Directory -Force -Path (Split-Path $LOCK) | Out-Null
-  if (Test-Path $LOCK) {
-    $owner = Get-Content $LOCK -Raw | ConvertFrom-Json
-    $alive = $null -ne (Get-Process -Id $owner.pid -ErrorAction SilentlyContinue)
-    if ($alive -and -not $Force) {
-      throw "machine lock held by pid=$($owner.pid) since $($owner.at). Another machine-bound run is active. Wait, or -Force if that PID is dead."
-    }
-    Write-Host "  breaking stale machine lock (pid=$($owner.pid), alive=$alive)" -ForegroundColor Yellow
-  }
-  @{ pid = $PID; at = (Get-Date).ToString('o') } | ConvertTo-Json | Set-Content -LiteralPath $LOCK
-}
-function Release-MachineLock { Remove-Item -LiteralPath $LOCK -ErrorAction SilentlyContinue }
-
 # ---- job runners ------------------------------------------------------------
+# The GAME lock (mashed_machine) is held by the Python spawners themselves
+# (run_diff_scenario_batch.py / stalker_write_surface_batch.py via
+# mashed_lock.py), so a state_batch/stalker job's child queues on the game
+# automatically — even against an independent child session. This pipeline only
+# takes the BUILD lock (mashed_build), and only around build.bat, so two
+# concurrent builds can't corrupt the shared .asi. No nesting => no deadlock.
 function Run-Build($job, $log) {
-  Write-Host "  [build] mashedmod\build.bat ..." -ForegroundColor Yellow
-  $out = & cmd /c "`"$BUILD`"" 2>&1 | Out-String
-  Set-Content -LiteralPath $log -Value $out -Encoding utf8
-  $ok = $out -match '=== Build OK ==='
-  Write-Host ("  [build] {0}" -f $(if($ok){'OK'}else{'FAILED'})) -ForegroundColor $(if($ok){'Green'}else{'Red'})
-  return [pscustomobject]@{ type='build'; ok=$ok; log=$log }
+  Write-Host "  [build] acquiring build lock ..." -ForegroundColor DarkGray
+  $bl = Acquire-Lock -Name 'mashed_build' -Label 'exec-pipeline build'
+  try {
+    Write-Host "  [build] mashedmod\build.bat ..." -ForegroundColor Yellow
+    $out = & cmd /c "`"$BUILD`"" 2>&1 | Out-String
+    Set-Content -LiteralPath $log -Value $out -Encoding utf8
+    $ok = $out -match '=== Build OK ==='
+    Write-Host ("  [build] {0}" -f $(if($ok){'OK'}else{'FAILED'})) -ForegroundColor $(if($ok){'Green'}else{'Red'})
+    return [pscustomobject]@{ type='build'; ok=$ok; log=$log }
+  } finally { Release-Lock $bl }
 }
 
 function Run-StateBatch($job, $log) {
@@ -107,28 +102,23 @@ if (-not $OutDir) {
 }
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 
-Write-Host "exec-pipeline: $($q.jobs.Count) jobs (SERIALIZED under machine lock)" -ForegroundColor Cyan
+Write-Host "exec-pipeline: $($q.jobs.Count) jobs (build lock on build.bat; game runs auto-queue via mashed_lock)" -ForegroundColor Cyan
 Write-Host "  outdir: $OutDir" -ForegroundColor DarkGray
-Acquire-MachineLock
 $results = @()
-try {
-  $i = 0
-  foreach ($job in $q.jobs) {
-    $i++
-    $log = Join-Path $OutDir ("{0:d2}_{1}.log" -f $i, ($job.id ?? $job.type))
-    switch ($job.type) {
-      'build'         { $results += Run-Build $job $log }
-      'state_batch'   { $results += Run-StateBatch $job $log }
-      'stalker_batch' { $results += Run-StalkerBatch $job $log }
-      default         { Write-Host "  [skip] unknown job type '$($job.type)'" -ForegroundColor Red }
-    }
-    # a failed build stops the pipeline — later verify jobs need the .asi
-    if ($job.type -eq 'build' -and -not $results[-1].ok) {
-      Write-Host "  build failed — halting pipeline" -ForegroundColor Red; break
-    }
+$i = 0
+foreach ($job in $q.jobs) {
+  $i++
+  $log = Join-Path $OutDir ("{0:d2}_{1}.log" -f $i, ($job.id ?? $job.type))
+  switch ($job.type) {
+    'build'         { $results += Run-Build $job $log }
+    'state_batch'   { $results += Run-StateBatch $job $log }
+    'stalker_batch' { $results += Run-StalkerBatch $job $log }
+    default         { Write-Host "  [skip] unknown job type '$($job.type)'" -ForegroundColor Red }
   }
-} finally {
-  Release-MachineLock
+  # a failed build stops the pipeline — later verify jobs need the .asi
+  if ($job.type -eq 'build' -and -not $results[-1].ok) {
+    Write-Host "  build failed — halting pipeline" -ForegroundColor Red; break
+  }
 }
 
 # ---- report -----------------------------------------------------------------

@@ -106,6 +106,8 @@ from pathlib import Path
 import frida
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'orchestrator'))
+from mashed_lock import MashedLock
 
 import statenav
 import run_diff_scenario as RDS
@@ -613,6 +615,11 @@ def main():
 
     env = dict(os.environ)
     env["MASHED_RE_NO_AUTO_HOOK"] = "1"
+    # Machine-wide MASHED run queue: block here until no other instance is
+    # running the game, so concurrent lanes/child sessions take turns rather
+    # than colliding on the one GPU (see re/orchestrator/mashed_lock.py).
+    _gamelock = MashedLock(f"state_batch:{names[0] if names else '?'}")
+    _gamelock.acquire()
     dev = frida.get_local_device()
     pid = dev.spawn(str(MASHED_EXE), cwd=str(ORIG), env=env)
     print(f"  spawned pid={pid} (this session kills ONLY this pid)")
@@ -804,6 +811,7 @@ def main():
         try: sess.detach()
         except Exception: pass
         print(f"  killed pid={pid}")
+        _gamelock.release()   # next queued instance may now boot
 
     # ── state-reuse verdict ─────────────────────────────────────────────────
     print("\n=== STATE-REUSE VERDICT ===")

@@ -35,7 +35,9 @@ import frida
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / 're' / 'frida'))
+sys.path.insert(0, str(ROOT / 're' / 'orchestrator'))
 import statenav
+from mashed_lock import MashedLock
 from run_diff_scenario import drive_to_results
 from run_diff import _find_original
 
@@ -180,6 +182,9 @@ def main():
 
     env = dict(os.environ)
     env['MASHED_RE_NO_AUTO_HOOK'] = '1'
+    # machine-wide MASHED run queue — wait our turn before booting the game.
+    _gamelock = MashedLock('stalker_batch')
+    _gamelock.acquire()
     dev = frida.get_local_device()
     pid = dev.spawn(str(MASHED_EXE), cwd=str(ORIG), env=env)
     print(f'  spawned pid={pid} (kills ONLY this pid); {len(targets)} targets, one boot')
@@ -232,6 +237,7 @@ def main():
         try: dev.kill(pid)
         except Exception: pass
         print(f'  killed pid={pid}')
+        _gamelock.release()
 
     cap = [r for r in results.values() if r.get('status') == 'captured']
     reach = [r for r in cap if r.get('reachable_now')]

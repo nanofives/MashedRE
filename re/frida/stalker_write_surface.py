@@ -45,9 +45,11 @@ import frida
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / 're' / 'frida'))
+sys.path.insert(0, str(ROOT / 're' / 'orchestrator'))
 
 import statenav                              # nav agent + Nav class
 from run_diff import _find_original
+from mashed_lock import MashedLock
 
 MASHED_EXE = _find_original(ROOT)
 ORIG = MASHED_EXE.parent
@@ -163,6 +165,8 @@ def main():
 
     env = dict(os.environ)
     env['MASHED_RE_NO_AUTO_HOOK'] = '1'
+    _gamelock = MashedLock(f'stalker:{rva:#010x}')   # wait our turn on the game
+    _gamelock.acquire()
     dev = frida.get_local_device()
     pid = dev.spawn(str(MASHED_EXE), cwd=str(ORIG), env=env)
     print(f'  spawned pid={pid} (this session kills ONLY this pid)')
@@ -217,6 +221,7 @@ def main():
         try: dev.kill(pid)
         except Exception: pass
         print(f'  killed pid={pid}')
+        _gamelock.release()
 
     if not result:
         print(f'NOT-FIRED within {wait_s}s — target did not execute on this path')

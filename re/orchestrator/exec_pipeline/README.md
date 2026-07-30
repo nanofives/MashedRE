@@ -2,8 +2,8 @@
 
 The machine-bound half of the two-tier orchestration
 (`re/analysis/plans/methods_efficiency_scorecard_2026-07-29.md`). It runs a
-queue of build/verify jobs **serialized under a machine lock**, parses verdicts,
-and emits a promotion-ready candidate list.
+queue of build/verify jobs, parses verdicts, and emits a promotion-ready
+candidate list.
 
 ## Why narrow (the opposite of the read-fleet)
 
@@ -16,10 +16,22 @@ the reverse: every job touches a **shared machine resource** —
 - the **git working tree** (one writer),
 - **Ghidra pool slots** (one session per slot).
 
-Fan-out doesn't help and actively breaks things, so jobs run **one at a time**
-under `exec_pipeline/.machine.lock`. The lock also stops an exec run from
-colliding with a manual Frida/Ghidra run: acquire fails if another live PID holds
-it (`-Force` breaks a stale lock whose owner is dead).
+## Two locks, held at the right level (no nesting, no deadlock)
+
+- **GAME lock** (`mashed_machine`, in `$env:TEMP`): held by the MASHED-spawning
+  scripts THEMSELVES (`run_diff_scenario_batch.py` / `stalker_write_surface*.py`
+  via `re/orchestrator/mashed_lock.py`), around `frida.spawn`..kill. So a
+  state_batch/stalker job queues on the game automatically — and so does an
+  INDEPENDENT child session or a manual Frida run, because they call the same
+  scripts. This is the machine-wide MASHED run queue: instances take turns.
+- **BUILD lock** (`mashed_build`): taken by this pipeline ONLY around
+  `build.bat`, so two concurrent builds can't corrupt the shared `.asi`.
+
+The pipeline does NOT hold the game lock itself (its Python children do), so
+there is no lock nesting and no deadlock. `MachineLock.ps1` (PowerShell) and
+`mashed_lock.py` (Python) share the same lock files + JSON schema, so PS and
+Python spawners queue against each other. Inspect/clear:
+`py -3.12 re/orchestrator/mashed_lock.py status` / `... break`.
 
 ## What it automates vs what stays human
 

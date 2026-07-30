@@ -64,6 +64,45 @@ when the helper or a manifest already summarizes them (token economy).
   exec-pipeline holds a machine lock. You can launch a read-fleet batch and,
   while it runs, do authoring — but never launch two exec-pipeline runs.
 
+## Parallelism — spawn_child fan-out + the MASHED run queue
+
+You MAY fan work out across parallel child sessions when the backlog and budget
+justify it. Decide K yourself: scale it to the number of independent lanes, keep
+it small (2–4), and bias hard toward the READ tier.
+
+**Two ways to run parallel work, in order of preference:**
+1. **read-fleet (`-MaxConcurrent N`)** — the default for read-only fan-out.
+   Off-quota, detached, hard-timeout+retry, no wedge. Widen `MaxConcurrent` when
+   the candidate backlog is large. This is where parallelism actually pays.
+2. **`mcp__happy__spawn_child`** — full persistent sessions when you need a lane
+   to do more than read-and-distill (e.g. a claude3 execution lane, or a
+   long-running analysis you want visible/steerable in the app). Rules, learned
+   the hard way (do not relearn them):
+   - **ALWAYS pass `account` explicitly** (`claude2` or `claude3`). Omitting it
+     dies in ~2 min with OAuth-expired.
+   - **Smoke-test the transport first**: spawn a 1-line child (e.g. `git
+     rev-parse --short HEAD`) and confirm it returns before sending an expensive
+     prompt.
+   - **Wedge-watchdog**: poll `read_child_output` and compare `latestSeq` across
+     polls. The tell is **`latestSeq` FROZEN + idle >5 min** → wedged →
+     `stop_child` + re-spawn the same prompt. **Ignore the `(N text, 0 tool)`
+     counter** — it reads 0 for perfectly healthy children too. claude2 wedges
+     ~50% of the time; that's why read-only work prefers the read-fleet.
+   - **Never send a write/build/MCP leg to a claude2 child** — it hangs on the
+     first permission prompt.
+
+**The MASHED run queue makes game-bound fan-out SAFE (but not fast).** Every
+script that boots MASHED (`run_diff_scenario_batch.py`, `stalker_write_surface*`)
+acquires the machine-wide game lock (`re/orchestrator/mashed_lock.py`, mirrored
+by `MachineLock.ps1`) before `frida.spawn` and releases after it kills its pid.
+So if you spawn several children that each run the game, they **automatically
+take turns** — child B's boot blocks until child A finishes, no collision on the
+one GPU. Check/clear it with `py -3.12 re/orchestrator/mashed_lock.py status |
+break`. Consequence: parallel *game* children mostly overlap only their non-game
+phases (each still pays a full serialized boot), so the big parallel win is the
+READ tier; treat game-lane fan-out as "safe to launch, not a throughput
+multiplier."
+
 ## Budget discipline (the whole point)
 
 - One bounded batch per iteration (≈4–8 hooks, or one read-fleet bucket + its
