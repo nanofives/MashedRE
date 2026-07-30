@@ -1,0 +1,17 @@
+{
+  "description": "Orchestrator iteration 3 — re-verify the two plugin-data getters after the author-stage fix. Diagnosis (run 20260730_103906): DAT_007d73a8/ac are RW plugin BYTE-OFFSETS (0x60/0x88, registered at 0x004f8580), not heap pointers; the old int_scalar registration passed raw ints 0..28 as the object pointer -> AV both sides. Fix: arg_type=struct_call_observe, args=['pointer'], struct_size=0x200 seeded with a repeated byte per test, no null test (no null guard at 0x004f8660/90). Build required: .cpp param retyped int->const void* (same machine semantics; comments corrected per wrong-plate-propagates rule). Gate opens at t+0 so dwell=25 suffices.",
+  "jobs": [
+    {
+      "type": "build",
+      "id": "iter3_build"
+    },
+    {
+      "type": "state_batch",
+      "id": "iter3_plugin_fix",
+      "hooks": ["plugin_data_dword_a", "plugin_data_dword_b"],
+      "scenario": "race",
+      "dwell": 25,
+      "sentinel": "0x007d73a8,0x007d73ac"
+    }
+  ]
+}

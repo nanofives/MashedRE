@@ -11,33 +11,40 @@
 #include <cstdint>
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 0x004f8660  PluginDataDwordA(int off) -> *(u32*)(*(u32*)0x007d73a8 + off)
+// 0x004f8660  PluginDataDwordA(obj*) -> *(u32*)(obj + *(u32*)0x007d73a8)
 //
 // Verbatim 0x004f8660..0x004f866d:
 //   004f8660 mov eax,[esp+4]
 //   004f8664 mov ecx,[0x007d73a8]
 //   004f866a mov eax,[ecx+eax]
 //   004f866d ret
-// Byte-offset read off a live base pointer; the state_gate in hooks_registry
-// requires DAT_007d73a8 non-null before any force-call.
+// DAT_007d73a8 is a RenderWare plugin BYTE-OFFSET (registered by
+// FUN_004e8f50(4, 0x50f, ...) at 0x004f8580 — plate
+// re/analysis/bucket_004f022d/0x004f8580.md; sentinel run 20260730_103906
+// read 0x60), NOT a base pointer; the argument is the live object pointer.
+// The add is commutative so the machine code is unchanged either way.
+// The state_gate in hooks_registry requires DAT_007d73a8 non-zero (offset
+// registered) before any force-call.
 // ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) std::uint32_t __cdecl PluginDataDwordA(int off) {
-    const std::uint32_t base = *reinterpret_cast<const std::uint32_t*>(0x007d73a8u);
+extern "C" __declspec(dllexport) std::uint32_t __cdecl PluginDataDwordA(const void* obj) {
+    const std::uint32_t pluginOff = *reinterpret_cast<const std::uint32_t*>(0x007d73a8u);
     return *reinterpret_cast<const std::uint32_t*>(
-        static_cast<std::uintptr_t>(base) + static_cast<std::intptr_t>(off));
+        reinterpret_cast<std::uintptr_t>(obj) + pluginOff);
 }
 RH_ScopedInstall(PluginDataDwordA, 0x004f8660);
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 0x004f8690  PluginDataDwordB(int off) -> *(u32*)(*(u32*)0x007d73ac + off)
+// 0x004f8690  PluginDataDwordB(obj*) -> *(u32*)(obj + *(u32*)0x007d73ac)
 //
-// Twin of 0x004f8660 with base DAT_007d73ac (decomp 2026-07-29, Mashed_pool0):
+// Twin of 0x004f8660 with plugin byte-offset DAT_007d73ac (registered by
+// FUN_004f0910 at 0x004f8580; sentinel run 20260730_103906 read 0x88).
+// Decomp (2026-07-29, Mashed_pool0):
 //   return *(undefined4 *)(DAT_007d73ac + param_1);
 // ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) std::uint32_t __cdecl PluginDataDwordB(int off) {
-    const std::uint32_t base = *reinterpret_cast<const std::uint32_t*>(0x007d73acu);
+extern "C" __declspec(dllexport) std::uint32_t __cdecl PluginDataDwordB(const void* obj) {
+    const std::uint32_t pluginOff = *reinterpret_cast<const std::uint32_t*>(0x007d73acu);
     return *reinterpret_cast<const std::uint32_t*>(
-        static_cast<std::uintptr_t>(base) + static_cast<std::intptr_t>(off));
+        reinterpret_cast<std::uintptr_t>(obj) + pluginOff);
 }
 RH_ScopedInstall(PluginDataDwordB, 0x004f8690);
 

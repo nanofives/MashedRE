@@ -18267,27 +18267,56 @@ HOOKS = {
     #   Four safe+exercised leaves from commit 0a9a47e8 (semantic_screen SAFE,
     #   prescreen exercised-in-race). Ports: Render/StateBatchGetters.cpp.
 
-    # 0x004f8660  PluginDataDwordA(off) — *(u32*)(DAT_007d73a8 + off). Byte-offset
-    #   read off a live base pointer; the gate proves the base is up before any
-    #   force-call. Offsets kept small and dword-aligned.
+    # 0x004f8660  PluginDataDwordA(obj*) — *(u32*)(obj + DAT_007d73a8). The
+    #   global is NOT a base pointer: it is a RenderWare plugin BYTE-OFFSET
+    #   returned by the FUN_004e8f50(4, 0x50f, ...) registration at 0x004f8580
+    #   (plate re/analysis/bucket_004f022d/0x004f8580.md); sentinel snapshot
+    #   run 20260730_103906 read [0x007d73a8] = 0x60. param_1 is therefore a
+    #   live OBJECT POINTER, mirrored on raster_plugin_byte_get: the harness
+    #   passes a struct buffer filled with one repeated byte per test, so the
+    #   return equals that pattern wherever the live offset lands inside the
+    #   fill. struct_size 0x200 covers the observed 0x60 with headroom for
+    #   registration-order drift. Unlike 0x004cfee0 there is NO null guard, so
+    #   no empty-seeds test. CAVEAT: a live offset >= 0x1fc runs off the
+    #   per-side buffers — triage that before believing a RED.
     'plugin_data_dword_a': {
         'rva': 0x004f8660, 'export': 'PluginDataDwordA',
-        'signature': {'ret': 'uint32', 'args': ['int32']},
-        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'signature': {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type': 'struct_call_observe', 'lut_root_delta': 0, 'scenario': 'race',
         'state_gate': [{'any_nonzero': 0x007d73a8, 'words': 1}],
-        'path1_tests': [0, 4, 8, 12, 16, 20, 24, 28],
-        'path2_tests': [0, 8, 16],
+        'struct_size': 0x200, 'out_ptrs': 0, 'observe_ret': True,
+        'observe': [],
+        'path1_tests': [
+            {'seeds': [{'off': o, 'type': 'u32', 'value': b * 0x01010101}
+                       for o in range(0, 0x200, 4)]}
+            for b in (0x11, 0x22, 0x33, 0x44, 0x55)
+        ],
+        'path2_tests': [
+            {'seeds': [{'off': o, 'type': 'u32', 'value': 0x66666666}
+                       for o in range(0, 0x200, 4)]},
+        ],
     },
 
-    # 0x004f8690  PluginDataDwordB(off) — twin of 0x004f8660 with base
-    #   DAT_007d73ac.
+    # 0x004f8690  PluginDataDwordB(obj*) — twin of 0x004f8660 with plugin
+    #   byte-offset DAT_007d73ac (registered via FUN_004f0910 at 0x004f8580;
+    #   sentinel run 20260730_103906 read [0x007d73ac] = 0x88). Same seeded
+    #   single-byte-pattern strategy; 0x200 covers 0x88 with headroom.
     'plugin_data_dword_b': {
         'rva': 0x004f8690, 'export': 'PluginDataDwordB',
-        'signature': {'ret': 'uint32', 'args': ['int32']},
-        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'signature': {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type': 'struct_call_observe', 'lut_root_delta': 0, 'scenario': 'race',
         'state_gate': [{'any_nonzero': 0x007d73ac, 'words': 1}],
-        'path1_tests': [0, 4, 8, 12, 16, 20, 24, 28],
-        'path2_tests': [0, 8, 16],
+        'struct_size': 0x200, 'out_ptrs': 0, 'observe_ret': True,
+        'observe': [],
+        'path1_tests': [
+            {'seeds': [{'off': o, 'type': 'u32', 'value': b * 0x01010101}
+                       for o in range(0, 0x200, 4)]}
+            for b in (0x11, 0x22, 0x33, 0x44, 0x55)
+        ],
+        'path2_tests': [
+            {'seeds': [{'off': o, 'type': 'u32', 'value': 0x66666666}
+                       for o in range(0, 0x200, 4)]},
+        ],
     },
 
     # 0x004cfee0  RasterPluginByteGet(int* obj) — null-guarded byte read at

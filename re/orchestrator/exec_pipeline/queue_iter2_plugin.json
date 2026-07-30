@@ -1,0 +1,13 @@
+{
+  "description": "Orchestrator iteration 2 — diagnostic re-verify of the two plugin-data getters at a DEEPER dwell (40 vs 25). Base *(u32*)0x007d73a8 / 0x007d73ac is a heap pointer to a plugin-data block allocated at subsystem init; the any_nonzero gate never opened at dwell=25 (INCONCLUSIVE x2). This run's sentinel report is DIAGNOSTIC: if the base is still zero at dwell=40, defer with evidence (gate-never-opens in the race lane); if it populates, promote. Build skipped — .asi freshly built ok=true at run 20260730_095926.",
+  "jobs": [
+    {
+      "type": "state_batch",
+      "id": "iter2_plugin_dwell40",
+      "hooks": ["plugin_data_dword_a", "plugin_data_dword_b"],
+      "scenario": "race",
+      "dwell": 40,
+      "sentinel": "0x007d73a8,0x007d73ac"
+    }
+  ]
+}

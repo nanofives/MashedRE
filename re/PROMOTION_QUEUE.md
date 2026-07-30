@@ -16,6 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 ```
 2026-07-29  orch-iter1  rvas=0x004cfee0  branch=fix/u9025-recharacterise-and-regabi-defects  evidence=log/diff_scenario_batch_raster_plugin_byte_get.csv  note=GREEN 6/6, 6 distinct (repeated-byte fill); C3 REFUSED on leaf caller-gate — only callers 0x005412d0/0x00541d40 both C1 (Ghidra-verified 2026-07-29); port+registry already landed (StateBatchGetters.cpp / raster_plugin_byte_get); unblocks when either caller reaches C2
+2026-07-30  orch-iter3  rvas=0x004f8660,0x004f8690  branch=fix/u9025-recharacterise-and-regabi-defects  evidence=log/diff_scenario_batch_plugin_data_dword_a.csv;log/diff_scenario_batch_plugin_data_dword_b.csv  note=GREEN 5/5 each, non-degenerate (repeated-byte fill 0x11..0x55, return tracks seed bit-identically both sides; exec-pipeline run 20260730_104648, race proven running 1710 calls/1.5s). Root-cause fix this iteration: DAT_007d73a8/ac are RW plugin BYTE-OFFSETS (0x60/0x88; registered at 0x004f8580, plate re/analysis/bucket_004f022d/0x004f8580.md; sentinel runs 20260730_103906+104648), NOT base pointers — registry re-typed int_scalar->struct_call_observe (args=['pointer'], struct_size=0x200 seeded, no null test: no null guard at 0x004f8660/90), port param int->const void* in Render/StateBatchGetters.cpp. C3 REFUSED on leaf caller-gate — all 6 direct call sites (E8 byte scan) in C1 RW-library fns: 0x004ea9a0, 0x004eb3c0, 0x00530650, 0x00530c00, 0x00543710 (x2 sites); unblocks when any caller reaches C2
 ```
 
 ## Merged
