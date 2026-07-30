@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-30T13:45:00Z",
+  "updatedAt": "2026-07-30T14:10:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -32,12 +32,12 @@
         },
         {
           "label": "C2",
-          "value": 4026,
+          "value": 4023,
           "kind": "number"
         },
         {
           "label": "C3",
-          "value": 860,
+          "value": 863,
           "kind": "number"
         },
         {
@@ -76,21 +76,21 @@
       ]
     },
     {
-      "heading": "Orchestrator lane (iter7, 2026-07-30)",
+      "heading": "Orchestrator lane (iter8, 2026-07-30)",
       "fields": [
         {
-          "label": "Render ctor family — 3 of 3 EBX ctors now C3",
-          "value": "reg_this_callee_stub handler proven (iter6) + generalised (iter7): ParticleEmitterCtorA/C/D (0x0041ad60/c320/cd20, 17/24/34-atomic) all C2->C3, GREEN 3/3 non-degenerate. Commits b02421dd, fcefa499.",
+          "label": "Iter8: 3 RpClumpDestroy destructors C3",
+          "value": "NEW reg_this_call_observe handler (records a stubbed callee's arg, for void single-call fns) + NEW identified-callee clause (user-approved). EmitterDtorClumpAt5c/15c/100 (0x0041b440/beb0/cb00) C2->C3, GREEN 3/3 (recorded RpClumpDestroy arg==sentinel). Commit 0e0a436a.",
           "kind": "text"
         },
         {
-          "label": "Next",
-          "value": "Same handler unlocks the rest of the family: EAX-RpClumpDestroy destructors (0x0041b440/beb0/cb00) + ESI-bit-gated dispatchers (0x0041ae60/af00). Destructors likely need a simpler call-observe variant. Portcaps for those NOT yet captured. Also: mutator_sweep_85 needs ~3-chunk re-brief.",
+          "label": "Render emitter family status",
+          "value": "6 of the 7 flagged rows now C3: 3 EBX ctors (ad60/c320/cd20) + 3 EAX destructors (b440/beb0/cb00). Remaining: ESI-bit-gated dispatchers 0x0041ae60/af00 (callee FUN_004c13e0 C2 — clean gate). Plus one-off 0x0041aac0 + 0x0041af50 (per-frame updater).",
           "kind": "text"
         },
         {
           "label": "Ledger",
-          "value": "9 promoted, 1 candidate (mutator_sweep_85)",
+          "value": "12 promoted, 1 candidate (mutator_sweep_85 — needs ~3-chunk re-brief)",
           "kind": "text"
         }
       ]
