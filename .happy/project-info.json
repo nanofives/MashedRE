@@ -90,7 +90,17 @@
         },
         {
           "label": "Ledger",
-          "value": "24 items: 10 promoted, 1 authored (argtype_render_backlog, awaiting verify), 13 candidate",
+          "value": "24 items: 11 promoted, 6 blocked, 7 candidate (iter9 ran 4/4 cycles, 0 promotions, 0 game boots)",
+          "kind": "text"
+        },
+        {
+          "label": "iter10 caller-gate UNBLOCKED",
+          "value": "One local Ghidra pass (pool 7, read-only) resolved the gate for all 144 refilled RVAs: 102 GATE_PASS, 27 ORPHAN_BLOCK (callers in un-wrapped blocks - need plating), 12 NO_CALLERS, 2 NOT_A_FUNCTION, 1 C1-only. Used getReferencesTo not function_callers - 27 rows would otherwise read as uncallable. Results re/orchestrator/caller_gate_144.tsv; tool scripts/orch_caller_gate.py. Brief rework also fixed the timeouts: 4/4 GREEN, and the new harness_safety column self-tested correctly (both known mutators returned MUTATOR_LANE).",
+          "kind": "text"
+        },
+        {
+          "label": "iter9 findings (2 blockers)",
+          "value": "(1) read-fleet 12-RVA briefs blow the 600s worker budget - 5 of 6 units TIMEOUT x2, only state_boot_b1 finished (~9min). Re-queue at <=6 RVAs. (2) The brief's READY criterion omits HARNESS SAFETY: both READY rows are mutators mis-routed to the getter lane - 0x00403640 clobbers the live BackBuffRaster handle DAT_00636b78, 0x00496ce0 is HardwareExitApplication teardown. Authoring refused; route to the snapshot/restore A/B mutator lane.",
           "kind": "text"
         },
         {

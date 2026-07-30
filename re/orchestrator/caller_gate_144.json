@@ -1,0 +1,1450 @@
+{
+ "0x004b6b00": {
+  "is_entry": true,
+  "size": 3,
+  "callers": [],
+  "orphans": [
+   "004b6cb4",
+   "004b6d67",
+   "004b6ddc",
+   "004b6eb3",
+   "004b6f33",
+   "004b6f42",
+   "004b6f89"
+  ]
+ },
+ "0x004cbb50": {
+  "is_entry": true,
+  "size": 11,
+  "callers": [
+   "004f8730",
+   "00543a40",
+   "0049ab10"
+  ],
+  "orphans": []
+ },
+ "0x00454c00": {
+  "is_entry": true,
+  "size": 12,
+  "callers": [],
+  "orphans": [
+   "00454e60"
+  ]
+ },
+ "0x0041d6d0": {
+  "is_entry": true,
+  "size": 14,
+  "callers": [
+   "0041d890"
+  ],
+  "orphans": []
+ },
+ "0x0049a730": {
+  "is_entry": true,
+  "size": 16,
+  "callers": [
+   "0049a0e0"
+  ],
+  "orphans": []
+ },
+ "0x004b4120": {
+  "is_entry": true,
+  "size": 16,
+  "callers": [
+   "0048a4e0"
+  ],
+  "orphans": []
+ },
+ "0x004d8470": {
+  "is_entry": false,
+  "size": null,
+  "callers": [],
+  "orphans": []
+ },
+ "0x00421690": {
+  "is_entry": true,
+  "size": 22,
+  "callers": [
+   "00424eb0"
+  ],
+  "orphans": []
+ },
+ "0x00454f80": {
+  "is_entry": true,
+  "size": 22,
+  "callers": [
+   "00407800"
+  ],
+  "orphans": []
+ },
+ "0x00491780": {
+  "is_entry": true,
+  "size": 23,
+  "callers": [
+   "00426e10"
+  ],
+  "orphans": []
+ },
+ "0x004921b0": {
+  "is_entry": true,
+  "size": 25,
+  "callers": [],
+  "orphans": [
+   "00449070"
+  ]
+ },
+ "0x004cfe20": {
+  "is_entry": true,
+  "size": 25,
+  "callers": [
+   "004c7a70"
+  ],
+  "orphans": []
+ },
+ "0x004d8530": {
+  "is_entry": false,
+  "size": null,
+  "callers": [],
+  "orphans": []
+ },
+ "0x00421980": {
+  "is_entry": true,
+  "size": 26,
+  "callers": [
+   "00421c80",
+   "00421c10",
+   "004219a0"
+  ],
+  "orphans": []
+ },
+ "0x004c7600": {
+  "is_entry": true,
+  "size": 28,
+  "callers": [
+   "0054f8d0",
+   "0054fd60",
+   "004c6ba0",
+   "004de1b0",
+   "004df120"
+  ],
+  "orphans": [
+   "004c7307",
+   "004c7452",
+   "004dd5fc",
+   "004ddbc7",
+   "004ddc79"
+  ]
+ },
+ "0x004cbb00": {
+  "is_entry": true,
+  "size": 30,
+  "callers": [],
+  "orphans": [
+   "0049a828",
+   "0049a839",
+   "0049a84a",
+   "0049a858",
+   "0049a866"
+  ]
+ },
+ "0x0047b230": {
+  "is_entry": true,
+  "size": 31,
+  "callers": [],
+  "orphans": []
+ },
+ "0x004b7fd0": {
+  "is_entry": true,
+  "size": 31,
+  "callers": [],
+  "orphans": []
+ },
+ "0x004b8080": {
+  "is_entry": true,
+  "size": 31,
+  "callers": [
+   "004b87e0"
+  ],
+  "orphans": [
+   "004b7a40",
+   "004b7a5a"
+  ]
+ },
+ "0x004c0ed0": {
+  "is_entry": true,
+  "size": 31,
+  "callers": [
+   "00552e40",
+   "004e6680",
+   "0041f290",
+   "0041faf0",
+   "0047bf70",
+   "00487280",
+   "004b42c0",
+   "004e6100",
+   "00406ce0",
+   "00406160",
+   "004064c0",
+   "00405ab0",
+   "00406410",
+   "0041f1e0",
+   "00420870",
+   "0041f590",
+   "0041f220",
+   "0041f060",
+   "0047c160",
+   "00481a30",
+   "0048a4e0",
+   "0045a590",
+   "0045a950",
+   "004568d0",
+   "0053c5d0",
+   "0053ccc0",
+   "00454350",
+   "00541b50",
+   "005422c0",
+   "00533ec0",
+   "00496ec0",
+   "0044bfa0",
+   "0044bbc0",
+   "004541e0",
+   "00455150",
+   "00455b50",
+   "00458080",
+   "0045b390"
+  ],
+  "orphans": [
+   "00422328",
+   "00422338",
+   "004e38f9",
+   "004e3f69",
+   "0054985a",
+   "00557a89",
+   "00557aa9",
+   "00557ac9",
+   "004ca17a",
+   "0044ba73",
+   "00456316",
+   "004563a3",
+   "00455a73",
+   "0045a724",
+   "0045a812",
+   "0045344a"
+  ]
+ },
+ "0x004d5550": {
+  "is_entry": true,
+  "size": 31,
+  "callers": [],
+  "orphans": [
+   "0049a3ad",
+   "0049a3bb",
+   "0049a3c9",
+   "0049a7b5",
+   "0049a7c3",
+   "0049a7d1"
+  ]
+ },
+ "0x00474f30": {
+  "is_entry": true,
+  "size": 32,
+  "callers": [],
+  "orphans": []
+ },
+ "0x00496970": {
+  "is_entry": true,
+  "size": 34,
+  "callers": [],
+  "orphans": []
+ },
+ "0x004cbb20": {
+  "is_entry": true,
+  "size": 34,
+  "callers": [
+   "00543710",
+   "0049aae0"
+  ],
+  "orphans": []
+ },
+ "0x004d8770": {
+  "is_entry": true,
+  "size": 34,
+  "callers": [
+   "004cf4a0",
+   "004cf460"
+  ],
+  "orphans": []
+ },
+ "0x00418db0": {
+  "is_entry": true,
+  "size": 35,
+  "callers": [
+   "00419530"
+  ],
+  "orphans": []
+ },
+ "0x0047b200": {
+  "is_entry": true,
+  "size": 35,
+  "callers": [],
+  "orphans": []
+ },
+ "0x004c40b0": {
+  "is_entry": true,
+  "size": 35,
+  "callers": [
+   "004c7a70"
+  ],
+  "orphans": []
+ },
+ "0x004c5770": {
+  "is_entry": true,
+  "size": 35,
+  "callers": [
+   "00552b90",
+   "004593b0",
+   "00551a50"
+  ],
+  "orphans": [
+   "005516fa"
+  ]
+ },
+ "0x004c5dd0": {
+  "is_entry": true,
+  "size": 35,
+  "callers": [
+   "004d0290"
+  ],
+  "orphans": []
+ },
+ "0x0047acd0": {
+  "is_entry": true,
+  "size": 36,
+  "callers": [],
+  "orphans": []
+ },
+ "0x0047ad00": {
+  "is_entry": true,
+  "size": 36,
+  "callers": [],
+  "orphans": []
+ },
+ "0x004c7620": {
+  "is_entry": true,
+  "size": 36,
+  "callers": [
+   "004de1b0",
+   "004df120"
+  ],
+  "orphans": [
+   "004dd481",
+   "004dd4c2",
+   "004ddac8",
+   "004ddb04",
+   "004ddb1c"
+  ]
+ },
+ "0x004c79f0": {
+  "is_entry": true,
+  "size": 36,
+  "callers": [
+   "004d1020",
+   "004d07b0"
+  ],
+  "orphans": []
+ },
+ "0x004cb2c0": {
+  "is_entry": true,
+  "size": 36,
+  "callers": [],
+  "orphans": [
+   "004dc0dc",
+   "0049a897"
+  ]
+ },
+ "0x00412100": {
+  "is_entry": true,
+  "size": 38,
+  "callers": [
+   "0040bde0"
+  ],
+  "orphans": []
+ },
+ "0x005b8080": {
+  "is_entry": true,
+  "size": 15,
+  "callers": [
+   "005b1500"
+  ],
+  "orphans": []
+ },
+ "0x005b1080": {
+  "is_entry": true,
+  "size": 18,
+  "callers": [
+   "005b7110",
+   "005bd6f0"
+  ],
+  "orphans": [
+   "005c8cda"
+  ]
+ },
+ "0x005aaff0": {
+  "is_entry": true,
+  "size": 21,
+  "callers": [],
+  "orphans": [
+   "005aafd0"
+  ]
+ },
+ "0x005ae380": {
+  "is_entry": true,
+  "size": 24,
+  "callers": [
+   "005ae330"
+  ],
+  "orphans": []
+ },
+ "0x005a6c90": {
+  "is_entry": true,
+  "size": 25,
+  "callers": [
+   "005a6b70",
+   "005a6cb0"
+  ],
+  "orphans": []
+ },
+ "0x005ad8b0": {
+  "is_entry": true,
+  "size": 25,
+  "callers": [
+   "005ad770",
+   "005ada40"
+  ],
+  "orphans": []
+ },
+ "0x005bcd80": {
+  "is_entry": true,
+  "size": 28,
+  "callers": [
+   "005bcc70",
+   "005bf4d0"
+  ],
+  "orphans": []
+ },
+ "0x005b1160": {
+  "is_entry": true,
+  "size": 29,
+  "callers": [],
+  "orphans": [
+   "005b77dd",
+   "005bd1a8",
+   "005b7960"
+  ]
+ },
+ "0x00421960": {
+  "is_entry": true,
+  "size": 30,
+  "callers": [
+   "00421d20"
+  ],
+  "orphans": []
+ },
+ "0x005bfb90": {
+  "is_entry": true,
+  "size": 30,
+  "callers": [],
+  "orphans": [
+   "005be861"
+  ]
+ },
+ "0x005bfa20": {
+  "is_entry": true,
+  "size": 32,
+  "callers": [],
+  "orphans": [
+   "005be50f"
+  ]
+ },
+ "0x005aeed0": {
+  "is_entry": true,
+  "size": 33,
+  "callers": [
+   "005ab620",
+   "005ab560"
+  ],
+  "orphans": []
+ },
+ "0x0045c820": {
+  "is_entry": true,
+  "size": 34,
+  "callers": [
+   "0045cd30"
+  ],
+  "orphans": []
+ },
+ "0x005af200": {
+  "is_entry": true,
+  "size": 35,
+  "callers": [
+   "005af260",
+   "005af600",
+   "005af740",
+   "005a8560"
+  ],
+  "orphans": []
+ },
+ "0x005af7a0": {
+  "is_entry": true,
+  "size": 37,
+  "callers": [
+   "005af510"
+  ],
+  "orphans": []
+ },
+ "0x005a60e0": {
+  "is_entry": true,
+  "size": 38,
+  "callers": [
+   "0045d430",
+   "005a6030"
+  ],
+  "orphans": []
+ },
+ "0x005b10a0": {
+  "is_entry": true,
+  "size": 38,
+  "callers": [
+   "005b1140"
+  ],
+  "orphans": []
+ },
+ "0x005b10e0": {
+  "is_entry": true,
+  "size": 38,
+  "callers": [
+   "005b1110",
+   "005b1030"
+  ],
+  "orphans": [
+   "005be7d5",
+   "005be6c0"
+  ]
+ },
+ "0x005a9de0": {
+  "is_entry": true,
+  "size": 39,
+  "callers": [
+   "005a62b0"
+  ],
+  "orphans": [
+   "005a8053",
+   "005a8f13",
+   "005b74b3",
+   "005b865f",
+   "005b9f13",
+   "005c6c9f",
+   "005c7a73",
+   "005c8113"
+  ]
+ },
+ "0x005ab010": {
+  "is_entry": true,
+  "size": 39,
+  "callers": [],
+  "orphans": [
+   "005aafe0"
+  ]
+ },
+ "0x005b3550": {
+  "is_entry": true,
+  "size": 39,
+  "callers": [
+   "005a9d00"
+  ],
+  "orphans": []
+ },
+ "0x0045da60": {
+  "is_entry": true,
+  "size": 40,
+  "callers": [
+   "0045e040"
+  ],
+  "orphans": []
+ },
+ "0x00550950": {
+  "is_entry": true,
+  "size": 41,
+  "callers": [
+   "004cbd30",
+   "005ab710"
+  ],
+  "orphans": []
+ },
+ "0x005a5d60": {
+  "is_entry": true,
+  "size": 42,
+  "callers": [
+   "005a5910"
+  ],
+  "orphans": []
+ },
+ "0x00407580": {
+  "is_entry": true,
+  "size": 17,
+  "callers": [],
+  "orphans": [
+   "00458960"
+  ]
+ },
+ "0x00456ce0": {
+  "is_entry": true,
+  "size": 21,
+  "callers": [],
+  "orphans": [
+   "00456d42"
+  ]
+ },
+ "0x00471430": {
+  "is_entry": true,
+  "size": 22,
+  "callers": [],
+  "orphans": [
+   "0047b3dd"
+  ]
+ },
+ "0x0047cde0": {
+  "is_entry": true,
+  "size": 27,
+  "callers": [],
+  "orphans": [
+   "00453e47"
+  ]
+ },
+ "0x0047ce20": {
+  "is_entry": true,
+  "size": 27,
+  "callers": [],
+  "orphans": [
+   "0045643b"
+  ]
+ },
+ "0x00456d00": {
+  "is_entry": true,
+  "size": 28,
+  "callers": [],
+  "orphans": [
+   "00456d29",
+   "0045777a"
+  ]
+ },
+ "0x00451cc0": {
+  "is_entry": true,
+  "size": 30,
+  "callers": [],
+  "orphans": [
+   "00451fc8",
+   "004520e5",
+   "00452ad5",
+   "00452af5"
+  ]
+ },
+ "0x00407550": {
+  "is_entry": true,
+  "size": 35,
+  "callers": [],
+  "orphans": [
+   "00407687"
+  ]
+ },
+ "0x0041f290": {
+  "is_entry": true,
+  "size": 36,
+  "callers": [
+   "00404650",
+   "0040ca00",
+   "0040d8f0",
+   "004212b0",
+   "00421d20",
+   "0048f8a0",
+   "0048fb10",
+   "00490020",
+   "004039f0"
+  ],
+  "orphans": []
+ },
+ "0x00451730": {
+  "is_entry": true,
+  "size": 36,
+  "callers": [
+   "00485460"
+  ],
+  "orphans": []
+ },
+ "0x004722e0": {
+  "is_entry": true,
+  "size": 37,
+  "callers": [],
+  "orphans": [
+   "0047234c"
+  ]
+ },
+ "0x00451060": {
+  "is_entry": true,
+  "size": 38,
+  "callers": [],
+  "orphans": [
+   "004492e6"
+  ]
+ },
+ "0x0049c6d0": {
+  "is_entry": true,
+  "size": 10,
+  "callers": [
+   "005ca340",
+   "005ca360",
+   "005ca368",
+   "005ca380",
+   "005ca450",
+   "005ca430",
+   "005ca470",
+   "005ca478",
+   "005ca490",
+   "005ca498",
+   "005ca4a0",
+   "005ca4a8",
+   "005ca4c0",
+   "005ca4c8",
+   "005ca4e0",
+   "005ca500",
+   "005ca560",
+   "005ca600",
+   "005ca620"
+  ],
+  "orphans": []
+ },
+ "0x0048bc10": {
+  "is_entry": true,
+  "size": 13,
+  "callers": [
+   "0040bd00"
+  ],
+  "orphans": []
+ },
+ "0x0049f210": {
+  "is_entry": true,
+  "size": 19,
+  "callers": [
+   "004a06c0"
+  ],
+  "orphans": []
+ },
+ "0x0049d0a0": {
+  "is_entry": true,
+  "size": 23,
+  "callers": [],
+  "orphans": [
+   "0049d78f",
+   "0049d8ce"
+  ]
+ },
+ "0x0049c770": {
+  "is_entry": true,
+  "size": 26,
+  "callers": [],
+  "orphans": []
+ },
+ "0x0049c750": {
+  "is_entry": true,
+  "size": 28,
+  "callers": [],
+  "orphans": []
+ },
+ "0x0049f2e0": {
+  "is_entry": true,
+  "size": 29,
+  "callers": [],
+  "orphans": []
+ },
+ "0x0048fef0": {
+  "is_entry": true,
+  "size": 35,
+  "callers": [
+   "0048ff20"
+  ],
+  "orphans": []
+ },
+ "0x0048bbe0": {
+  "is_entry": true,
+  "size": 36,
+  "callers": [
+   "0040bbb0"
+  ],
+  "orphans": []
+ },
+ "0x0049ff30": {
+  "is_entry": true,
+  "size": 37,
+  "callers": [
+   "0049cd70"
+  ],
+  "orphans": []
+ },
+ "0x0048fce0": {
+  "is_entry": true,
+  "size": 39,
+  "callers": [
+   "0040bde0"
+  ],
+  "orphans": []
+ },
+ "0x0048fd10": {
+  "is_entry": true,
+  "size": 39,
+  "callers": [
+   "0040bde0"
+  ],
+  "orphans": []
+ },
+ "0x0041a3d0": {
+  "is_entry": true,
+  "size": 13,
+  "callers": [
+   "00402a40"
+  ],
+  "orphans": []
+ },
+ "0x0041c2c0": {
+  "is_entry": true,
+  "size": 13,
+  "callers": [
+   "00402a40"
+  ],
+  "orphans": []
+ },
+ "0x0041da80": {
+  "is_entry": true,
+  "size": 13,
+  "callers": [
+   "00402a40"
+  ],
+  "orphans": []
+ },
+ "0x0041de70": {
+  "is_entry": true,
+  "size": 13,
+  "callers": [
+   "00402a40"
+  ],
+  "orphans": []
+ },
+ "0x00425ed0": {
+  "is_entry": true,
+  "size": 13,
+  "callers": [
+   "00402a40"
+  ],
+  "orphans": []
+ },
+ "0x00499cc0": {
+  "is_entry": true,
+  "size": 18,
+  "callers": [
+   "00492370"
+  ],
+  "orphans": []
+ },
+ "0x004a45fb": {
+  "is_entry": true,
+  "size": 18,
+  "callers": [
+   "004a7800",
+   "00498c00",
+   "004a4739",
+   "004a5fbf",
+   "004a974d",
+   "004a9a58",
+   "004aa2c2",
+   "004abc53",
+   "004abe86",
+   "004abf28",
+   "004ac04a",
+   "004ac367",
+   "004af166",
+   "004af80a",
+   "004af601",
+   "004b008f",
+   "004b274e",
+   "004b319b",
+   "004b35d3",
+   "004b3572",
+   "004b3ac1",
+   "005c192c",
+   "004a504f",
+   "005c4440",
+   "004b2efe",
+   "004b37ea",
+   "004b391a",
+   "004b1433",
+   "004b16d9",
+   "004b1918",
+   "005207c0",
+   "005208c0",
+   "004a40fe",
+   "005aeaf0",
+   "004aec1d",
+   "004ae635",
+   "004ae820"
+  ],
+  "orphans": [
+   "004ccef5"
+  ]
+ },
+ "0x004a77eb": {
+  "is_entry": true,
+  "size": 21,
+  "callers": [
+   "004a4660",
+   "004a7800",
+   "004a45c6",
+   "004a4728",
+   "004a3258",
+   "004a31ea",
+   "004a48a1",
+   "004a5f6d",
+   "004a5f9c",
+   "004a93f9",
+   "004aa00c",
+   "004a9a58",
+   "004aa03a",
+   "004aa3db",
+   "004af2ad",
+   "004af56c",
+   "004ae62c",
+   "004af601",
+   "004aefc7",
+   "004b0e40",
+   "004a973b",
+   "004ad3e3",
+   "004a89ef",
+   "004a89fb",
+   "004aed66"
+  ],
+  "orphans": []
+ },
+ "0x004a2c2f": {
+  "is_entry": true,
+  "size": 23,
+  "callers": [
+   "004a31f3"
+  ],
+  "orphans": []
+ },
+ "0x00403640": {
+  "is_entry": true,
+  "size": 24,
+  "callers": [
+   "00402750"
+  ],
+  "orphans": []
+ },
+ "0x004aa3e4": {
+  "is_entry": true,
+  "size": 26,
+  "callers": [
+   "004aa3fe"
+  ],
+  "orphans": []
+ },
+ "0x00496ce0": {
+  "is_entry": true,
+  "size": 27,
+  "callers": [
+   "00402a40"
+  ],
+  "orphans": []
+ },
+ "0x00495110": {
+  "is_entry": true,
+  "size": 11,
+  "callers": [
+   "00492770"
+  ],
+  "orphans": []
+ },
+ "0x004af32d": {
+  "is_entry": true,
+  "size": 13,
+  "callers": [
+   "004a3258"
+  ],
+  "orphans": []
+ },
+ "0x004af31a": {
+  "is_entry": true,
+  "size": 19,
+  "callers": [],
+  "orphans": []
+ },
+ "0x0052ddc0": {
+  "is_entry": true,
+  "size": 35,
+  "callers": [],
+  "orphans": [
+   "005517a5",
+   "005519c1"
+  ]
+ },
+ "0x004292d0": {
+  "is_entry": true,
+  "size": 39,
+  "callers": [
+   "004111c0",
+   "004844a0",
+   "004270f0",
+   "00484580",
+   "0040b090",
+   "00409790"
+  ],
+  "orphans": [
+   "00484455"
+  ]
+ },
+ "0x0045d430": {
+  "is_entry": true,
+  "size": 39,
+  "callers": [
+   "004926c0",
+   "00429290"
+  ],
+  "orphans": []
+ },
+ "0x00534920": {
+  "is_entry": true,
+  "size": 40,
+  "callers": [
+   "00493640"
+  ],
+  "orphans": []
+ },
+ "0x0049d240": {
+  "is_entry": true,
+  "size": 43,
+  "callers": [],
+  "orphans": []
+ },
+ "0x0052df40": {
+  "is_entry": true,
+  "size": 45,
+  "callers": [],
+  "orphans": [
+   "005517be"
+  ]
+ },
+ "0x0045dfc0": {
+  "is_entry": true,
+  "size": 46,
+  "callers": [
+   "00466b50"
+  ],
+  "orphans": []
+ },
+ "0x0048f740": {
+  "is_entry": true,
+  "size": 39,
+  "callers": [
+   "0040bd80",
+   "0040e590"
+  ],
+  "orphans": []
+ },
+ "0x0041f1e0": {
+  "is_entry": true,
+  "size": 51,
+  "callers": [
+   "00412f30",
+   "00420e00",
+   "00485c20",
+   "00451ad0"
+  ],
+  "orphans": []
+ },
+ "0x004039c0": {
+  "is_entry": true,
+  "size": 23,
+  "callers": [
+   "0045bae0"
+  ],
+  "orphans": []
+ },
+ "0x00483a40": {
+  "is_entry": true,
+  "size": 41,
+  "callers": [
+   "004114e0"
+  ],
+  "orphans": []
+ },
+ "0x00485380": {
+  "is_entry": true,
+  "size": 41,
+  "callers": [
+   "00485420"
+  ],
+  "orphans": []
+ },
+ "0x0055c810": {
+  "is_entry": true,
+  "size": 44,
+  "callers": [
+   "0047fad0",
+   "0047fc40",
+   "0047d3c0"
+  ],
+  "orphans": []
+ },
+ "0x00482900": {
+  "is_entry": true,
+  "size": 48,
+  "callers": [
+   "004113b0",
+   "00411d90",
+   "00482930"
+  ],
+  "orphans": []
+ },
+ "0x004b5190": {
+  "is_entry": true,
+  "size": 49,
+  "callers": [
+   "00419090",
+   "0041ad60",
+   "0041b690",
+   "0041c320",
+   "0041cd20",
+   "004b51d0",
+   "00407800",
+   "00420420",
+   "0041fe10",
+   "00421a90",
+   "00426460",
+   "00456760",
+   "004548e0"
+  ],
+  "orphans": [
+   "004554a0",
+   "0045553b",
+   "00458449",
+   "0045a70c",
+   "0045b899",
+   "00454eec",
+   "00452fe7"
+  ]
+ },
+ "0x00485420": {
+  "is_entry": true,
+  "size": 59,
+  "callers": [
+   "004694e0"
+  ],
+  "orphans": []
+ },
+ "0x00411530": {
+  "is_entry": true,
+  "size": 65,
+  "callers": [
+   "004115c0",
+   "00411580"
+  ],
+  "orphans": []
+ },
+ "0x00418de0": {
+  "is_entry": true,
+  "size": 73,
+  "callers": [
+   "00418e30",
+   "00419760",
+   "00419a00"
+  ],
+  "orphans": []
+ },
+ "0x00484060": {
+  "is_entry": true,
+  "size": 75,
+  "callers": [],
+  "orphans": [
+   "0044914f"
+  ]
+ },
+ "0x0055c4f0": {
+  "is_entry": true,
+  "size": 76,
+  "callers": [
+   "004218d0",
+   "0047fad0",
+   "0047f840",
+   "0047f940",
+   "0047fc40",
+   "0047fe00",
+   "0047ff70",
+   "0055c4f0",
+   "0047d3c0"
+  ],
+  "orphans": []
+ },
+ "0x00411350": {
+  "is_entry": true,
+  "size": 87,
+  "callers": [
+   "00411d90",
+   "00411530",
+   "00429310",
+   "00411600"
+  ],
+  "orphans": []
+ },
+ "0x00404820": {
+  "is_entry": true,
+  "size": 13,
+  "callers": [
+   "0045b930"
+  ],
+  "orphans": []
+ },
+ "0x0041e850": {
+  "is_entry": true,
+  "size": 22,
+  "callers": [
+   "0040dfc0"
+  ],
+  "orphans": []
+ },
+ "0x005571c0": {
+  "is_entry": true,
+  "size": 25,
+  "callers": [
+   "00552b90"
+  ],
+  "orphans": []
+ },
+ "0x00557220": {
+  "is_entry": true,
+  "size": 39,
+  "callers": [
+   "00552b90"
+  ],
+  "orphans": []
+ },
+ "0x0041c090": {
+  "is_entry": true,
+  "size": 46,
+  "callers": [
+   "0040fc00"
+  ],
+  "orphans": []
+ },
+ "0x005571e0": {
+  "is_entry": true,
+  "size": 49,
+  "callers": [
+   "00552b60"
+  ],
+  "orphans": []
+ },
+ "0x0041b4d0": {
+  "is_entry": true,
+  "size": 50,
+  "callers": [
+   "004111c0"
+  ],
+  "orphans": []
+ },
+ "0x00556ce0": {
+  "is_entry": true,
+  "size": 54,
+  "callers": [
+   "00552b90"
+  ],
+  "orphans": []
+ },
+ "0x0041d830": {
+  "is_entry": true,
+  "size": 59,
+  "callers": [
+   "0040fc00"
+  ],
+  "orphans": []
+ },
+ "0x00413f50": {
+  "is_entry": true,
+  "size": 64,
+  "callers": [
+   "0040bde0"
+  ],
+  "orphans": []
+ },
+ "0x00556e40": {
+  "is_entry": true,
+  "size": 67,
+  "callers": [
+   "00427620"
+  ],
+  "orphans": []
+ },
+ "0x00556d20": {
+  "is_entry": true,
+  "size": 73,
+  "callers": [
+   "00552b60"
+  ],
+  "orphans": []
+ },
+ "0x00494460": {
+  "is_entry": true,
+  "size": 32,
+  "callers": [
+   "00495350"
+  ],
+  "orphans": []
+ },
+ "0x004c1be0": {
+  "is_entry": true,
+  "size": 35,
+  "callers": [
+   "004026d0",
+   "00428590",
+   "00492e90",
+   "00495350",
+   "00428a30",
+   "00428bf0",
+   "00428d30"
+  ],
+  "orphans": []
+ },
+ "0x00495080": {
+  "is_entry": true,
+  "size": 38,
+  "callers": [
+   "0043dfd0"
+  ],
+  "orphans": []
+ },
+ "0x00425b90": {
+  "is_entry": true,
+  "size": 41,
+  "callers": [
+   "00425c00"
+  ],
+  "orphans": []
+ },
+ "0x00430b30": {
+  "is_entry": true,
+  "size": 46,
+  "callers": [
+   "00448220",
+   "00434720"
+  ],
+  "orphans": []
+ },
+ "0x00494a80": {
+  "is_entry": true,
+  "size": 55,
+  "callers": [
+   "00495350"
+  ],
+  "orphans": []
+ },
+ "0x00497470": {
+  "is_entry": true,
+  "size": 62,
+  "callers": [],
+  "orphans": [
+   "004983f9",
+   "0049843e",
+   "004984a1",
+   "004984bc"
+  ]
+ },
+ "0x00497b10": {
+  "is_entry": true,
+  "size": 74,
+  "callers": [],
+  "orphans": [
+   "00498067",
+   "0049808a",
+   "004980ad",
+   "004980d0",
+   "004980f3",
+   "00498116",
+   "00498139",
+   "0049815c",
+   "0049817f",
+   "004981a2"
+  ]
+ },
+ "0x004391b0": {
+  "is_entry": true,
+  "size": 88,
+  "callers": [
+   "00439210"
+  ],
+  "orphans": []
+ },
+ "0x004a2b60": {
+  "is_entry": true,
+  "size": 88,
+  "callers": [
+   "00401630",
+   "00401000",
+   "004625b0",
+   "004627f0",
+   "00402b70",
+   "00497190",
+   "00498860",
+   "00498a00",
+   "00428a30",
+   "00428bf0",
+   "00407800",
+   "004095a0",
+   "00423480",
+   "00425c00",
+   "00462950",
+   "0042f400",
+   "004b7f70",
+   "0042c3c0",
+   "00448220",
+   "004368e0",
+   "00434720",
+   "0042d290",
+   "0058d810",
+   "0058ed00",
+   "00589fa0",
+   "004b7e30",
+   "004bb130",
+   "004bca50",
+   "004bcaf0",
+   "004ba9e0",
+   "004c0610",
+   "00496490",
+   "00405780",
+   "00497b60"
+  ],
+  "orphans": []
+ },
+ "0x00422470": {
+  "is_entry": true,
+  "size": 94,
+  "callers": [
+   "0041f770"
+  ],
+  "orphans": []
+ },
+ "0x00426b40": {
+  "is_entry": true,
+  "size": 94,
+  "callers": [
+   "0040cfd0"
+  ],
+  "orphans": []
+ }
+}

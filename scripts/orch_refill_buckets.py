@@ -35,11 +35,13 @@ LIBRARY_BANDS = [
     (0x0057C5B0, 0x005A5820, "qhull/rwphysics"),
 ]
 
-BUCKET_SIZE = 12
+# 6, not 12: in iteration 9 a 12-RVA brief blew the 600s worker budget in 5 of
+# 6 units (the one that finished used ~9 of its 10 minutes).
+BUCKET_SIZE = 6
 # subsystem -> how many buckets to cut. Weighted by pool depth.
 PLAN = [
-    ("render", 3), ("audio", 2), ("gameplay", 1), ("particle", 1),
-    ("boot", 1), ("util", 1), ("vehicle", 1), ("hud", 1), ("frontend", 1),
+    ("render", 6), ("audio", 4), ("gameplay", 2), ("particle", 2),
+    ("boot", 2), ("util", 2), ("vehicle", 2), ("hud", 2), ("frontend", 2),
 ]
 
 
@@ -91,8 +93,10 @@ def main():
             chunk = pool[i * BUCKET_SIZE:(i + 1) * BUCKET_SIZE]
             if not chunk:
                 break
+            # _s6 = "split at 6". Keeps these ids distinct from the iter9
+            # 12-RVA cut still recorded in the ledger, so history is auditable.
             buckets.append({
-                "id": "state_%s_b%d" % (sub, i + 1),
+                "id": "state_%s_b%d_s6" % (sub, i + 1),
                 "subsystem": sub,
                 "count": len(chunk),
                 "size_range": [chunk[0]["size"], chunk[-1]["size"]],

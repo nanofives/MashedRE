@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-07-30T20:00:09.9214778Z",
+  "updated": "2026-07-30T21:41:57.7446462Z",
   "note": "Cross-tier work ledger for the Fable-5 orchestrator. Every item flows: candidate -> briefed -> authored -> verified -> promoted (or -> blocked). orch.ps1 is the ONLY writer during a run (use `set`), so transitions stay durable across iterations — a run cut off for budget never loses state. Stages: candidate|briefed|authored|verified|promoted|blocked.",
   "items": [
     {
@@ -42,8 +42,8 @@
       "id": "argtype_render_backlog",
       "rva": "-",
       "kind": "meta",
-      "stage": "authored",
-      "note": "iter6 BUILD DONE (pre-verify): port Render/ParticleEmitterCtors.cpp (naked EBX-this shim -> __cdecl impl, faithful 0x0041ad60 transcription); NEW reg_this_callee_stub handler in diff_template.js (SWEEP-CRITICAL, parses OK); build_config forwards this_reg/atom_count/callee_*_str; registry particle_emitter_ctor_a (menu scenario, 3 non-degen tests); TU in build.bat+asi_sources.rsp; ARG_TYPES.md regenerated (119 handlers). Confirmed diff runs with MASHED_RE_NO_AUTO_HOOK=1 so 0x0041ad60 stays original (A/B not degenerate). Verifying via exec_pipeline queue_iter6_ctor.json."
+      "stage": "promoted",
+      "note": "iter9 cycle1 RECONCILE (no new evidence claimed): meta item was stale at 'authored'. Verified its tracked work all landed — reg_this_callee_stub + reg_this_call_observe present in re/frida/ARG_TYPES.md lines 42-43 and diff_template.js; all 6 RVAs C3 in hooks.csv (0x0041ad60/c320/cd20 ctors, 0x0041b440/beb0/cb00 dtors), all in Render/ParticleEmitterCtors.cpp. C-levels were claimed by re-classify in iter6/7/8; this transition is bookkeeping only, NOT a promotion. exec_pipeline boot NOT run — nothing left to verify."
     },
     {
       "id": "mutator_sweep_85",
@@ -91,85 +91,260 @@
       "id": "state_render_b1",
       "rva": "0x004b6b00,0x004cbb50,0x00454c00,0x0041d6d0,0x0049a730,0x004b4120,0x004d8470,0x00421690,0x00454f80,0x00491780,0x004921b0,0x004cfe20",
       "kind": "state_getter",
-      "stage": "candidate",
-      "note": "refill 2026-07-30: 12 C2 state-lane RVAs, subsystem=render, body 3..25B. RVA list in re/orchestrator/candidate_buckets.json (bucket state_render_b1). Source state_eligible_CLEAN.txt filtered to confidence==C2 via hooks.csv. Brief via read-fleet with the EXPLICIT rva list."
+      "stage": "blocked",
+      "note": "SUPERSEDED by the iter10 _s6 re-cut (same RVAs, 6 per bucket). Kept for history: this is the 12-RVA cut whose briefs timed out. Do not re-queue this id."
     },
     {
       "id": "state_render_b2",
       "rva": "0x004d8530,0x00421980,0x004c7600,0x004cbb00,0x0047b230,0x004b7fd0,0x004b8080,0x004c0ed0,0x004d5550,0x00474f30,0x00496970,0x004cbb20",
       "kind": "state_getter",
-      "stage": "candidate",
-      "note": "refill 2026-07-30: 12 C2 state-lane RVAs, subsystem=render, body 25..34B. RVA list in re/orchestrator/candidate_buckets.json (bucket state_render_b2). Source state_eligible_CLEAN.txt filtered to confidence==C2 via hooks.csv. Brief via read-fleet with the EXPLICIT rva list."
+      "stage": "blocked",
+      "note": "SUPERSEDED by the iter10 _s6 re-cut (same RVAs, 6 per bucket). Kept for history: this is the 12-RVA cut whose briefs timed out. Do not re-queue this id."
     },
     {
       "id": "state_render_b3",
       "rva": "0x004d8770,0x00418db0,0x0047b200,0x004c40b0,0x004c5770,0x004c5dd0,0x0047acd0,0x0047ad00,0x004c7620,0x004c79f0,0x004cb2c0,0x00412100",
       "kind": "state_getter",
-      "stage": "candidate",
-      "note": "refill 2026-07-30: 12 C2 state-lane RVAs, subsystem=render, body 34..38B. RVA list in re/orchestrator/candidate_buckets.json (bucket state_render_b3). Source state_eligible_CLEAN.txt filtered to confidence==C2 via hooks.csv. Brief via read-fleet with the EXPLICIT rva list."
+      "stage": "blocked",
+      "note": "SUPERSEDED by the iter10 _s6 re-cut (same RVAs, 6 per bucket). Kept for history: this is the 12-RVA cut whose briefs timed out. Do not re-queue this id."
     },
     {
       "id": "state_audio_b1",
       "rva": "0x005b8080,0x005b1080,0x005aaff0,0x005ae380,0x005a6c90,0x005ad8b0,0x005bcd80,0x005b1160,0x00421960,0x005bfb90,0x005bfa20,0x005aeed0",
       "kind": "state_getter",
-      "stage": "candidate",
-      "note": "refill 2026-07-30: 12 C2 state-lane RVAs, subsystem=audio, body 15..33B. RVA list in re/orchestrator/candidate_buckets.json (bucket state_audio_b1). Source state_eligible_CLEAN.txt filtered to confidence==C2 via hooks.csv. Brief via read-fleet with the EXPLICIT rva list."
+      "stage": "blocked",
+      "note": "SUPERSEDED by the iter10 _s6 re-cut (same RVAs, 6 per bucket). Kept for history: this is the 12-RVA cut whose briefs timed out. Do not re-queue this id."
     },
     {
       "id": "state_audio_b2",
       "rva": "0x0045c820,0x005af200,0x005af7a0,0x005a60e0,0x005b10a0,0x005b10e0,0x005a9de0,0x005ab010,0x005b3550,0x0045da60,0x00550950,0x005a5d60",
       "kind": "state_getter",
-      "stage": "candidate",
-      "note": "refill 2026-07-30: 12 C2 state-lane RVAs, subsystem=audio, body 34..42B. RVA list in re/orchestrator/candidate_buckets.json (bucket state_audio_b2). Source state_eligible_CLEAN.txt filtered to confidence==C2 via hooks.csv. Brief via read-fleet with the EXPLICIT rva list."
+      "stage": "blocked",
+      "note": "SUPERSEDED by the iter10 _s6 re-cut (same RVAs, 6 per bucket). Kept for history: this is the 12-RVA cut whose briefs timed out. Do not re-queue this id."
     },
     {
       "id": "state_gameplay_b1",
       "rva": "0x00407580,0x00456ce0,0x00471430,0x0047cde0,0x0047ce20,0x00456d00,0x00451cc0,0x00407550,0x0041f290,0x00451730,0x004722e0,0x00451060",
       "kind": "state_getter",
-      "stage": "candidate",
-      "note": "refill 2026-07-30: 12 C2 state-lane RVAs, subsystem=gameplay, body 17..38B. RVA list in re/orchestrator/candidate_buckets.json (bucket state_gameplay_b1). Source state_eligible_CLEAN.txt filtered to confidence==C2 via hooks.csv. Brief via read-fleet with the EXPLICIT rva list."
+      "stage": "blocked",
+      "note": "SUPERSEDED by the iter10 _s6 re-cut (same RVAs, 6 per bucket). Kept for history: this is the 12-RVA cut whose briefs timed out. Do not re-queue this id."
     },
     {
       "id": "state_particle_b1",
       "rva": "0x0049c6d0,0x0048bc10,0x0049f210,0x0049d0a0,0x0049c770,0x0049c750,0x0049f2e0,0x0048fef0,0x0048bbe0,0x0049ff30,0x0048fce0,0x0048fd10",
       "kind": "state_getter",
-      "stage": "candidate",
-      "note": "refill 2026-07-30: 12 C2 state-lane RVAs, subsystem=particle, body 10..39B. RVA list in re/orchestrator/candidate_buckets.json (bucket state_particle_b1). Source state_eligible_CLEAN.txt filtered to confidence==C2 via hooks.csv. Brief via read-fleet with the EXPLICIT rva list."
+      "stage": "blocked",
+      "note": "SUPERSEDED by the iter10 _s6 re-cut (same RVAs, 6 per bucket). Kept for history: this is the 12-RVA cut whose briefs timed out. Do not re-queue this id."
     },
     {
       "id": "state_boot_b1",
       "rva": "0x0041a3d0,0x0041c2c0,0x0041da80,0x0041de70,0x00425ed0,0x00499cc0,0x004a45fb,0x004a77eb,0x004a2c2f,0x00403640,0x004aa3e4,0x00496ce0",
       "kind": "state_getter",
-      "stage": "candidate",
-      "note": "refill 2026-07-30: 12 C2 state-lane RVAs, subsystem=boot, body 13..27B. RVA list in re/orchestrator/candidate_buckets.json (bucket state_boot_b1). Source state_eligible_CLEAN.txt filtered to confidence==C2 via hooks.csv. Brief via read-fleet with the EXPLICIT rva list."
+      "stage": "blocked",
+      "note": "SUPERSEDED by the iter10 _s6 re-cut; do not re-queue this id. PRESERVED FINDING (iter9 cycle4, this bucket's only completed brief): authoring was REFUSED because the READY criterion omitted harness safety. 0x00403640 writes DAT_00636b78 = the live BackBuffRaster handle (plate promote_c2_perm_piz_callees/00403640.md line 27), so a seeded synthetic call clobbers live render state. 0x00496ce0 is teardown - only caller FUN_00402a40 HardwareExitApplication, body calls RW resource-list teardown FUN_004d41e0 twice on DAT_00773094/DAT_00773088 (plate boot_app_init_d5/0x00496ce0.md line 49). Both route to the snapshot/restore A/B MUTATOR lane, not run_diff_scenario_batch. Also: 0x00499cc0 calls DestroyWindow; 0x004a45fb/_malloc + 0x004aa3e4/___heap_select are FidDB MSVC CRT; 0x004aa3e4 has an UNRESOLVED tracker conflict (plate frontmatter C3 vs hooks.csv C2). These 12 RVAs are re-briefed as state_boot_b1_s6 + state_boot_b2_s6, which doubles as the SELF-TEST of the new harness_safety column - it must return MUTATOR_LANE for 0x00403640 and 0x00496ce0."
     },
     {
       "id": "state_util_b1",
       "rva": "0x00495110,0x004af32d,0x004af31a,0x0052ddc0,0x004292d0,0x0045d430,0x00534920,0x0049d240,0x0052df40,0x0045dfc0,0x0048f740,0x0041f1e0",
       "kind": "state_getter",
-      "stage": "candidate",
-      "note": "refill 2026-07-30: 12 C2 state-lane RVAs, subsystem=util, body 11..51B. RVA list in re/orchestrator/candidate_buckets.json (bucket state_util_b1). Source state_eligible_CLEAN.txt filtered to confidence==C2 via hooks.csv. Brief via read-fleet with the EXPLICIT rva list."
+      "stage": "blocked",
+      "note": "SUPERSEDED by the iter10 _s6 re-cut (same RVAs, 6 per bucket). Kept for history: this is the 12-RVA cut whose briefs timed out. Do not re-queue this id."
     },
     {
       "id": "state_vehicle_b1",
       "rva": "0x004039c0,0x00483a40,0x00485380,0x0055c810,0x00482900,0x004b5190,0x00485420,0x00411530,0x00418de0,0x00484060,0x0055c4f0,0x00411350",
       "kind": "state_getter",
-      "stage": "candidate",
-      "note": "refill 2026-07-30: 12 C2 state-lane RVAs, subsystem=vehicle, body 23..87B. RVA list in re/orchestrator/candidate_buckets.json (bucket state_vehicle_b1). Source state_eligible_CLEAN.txt filtered to confidence==C2 via hooks.csv. Brief via read-fleet with the EXPLICIT rva list."
+      "stage": "blocked",
+      "note": "SUPERSEDED by the iter10 _s6 re-cut (same RVAs, 6 per bucket). Kept for history: this is the 12-RVA cut whose briefs timed out. Do not re-queue this id."
     },
     {
       "id": "state_hud_b1",
       "rva": "0x00404820,0x0041e850,0x005571c0,0x00557220,0x0041c090,0x005571e0,0x0041b4d0,0x00556ce0,0x0041d830,0x00413f50,0x00556e40,0x00556d20",
       "kind": "state_getter",
-      "stage": "candidate",
-      "note": "refill 2026-07-30: 12 C2 state-lane RVAs, subsystem=hud, body 13..73B. RVA list in re/orchestrator/candidate_buckets.json (bucket state_hud_b1). Source state_eligible_CLEAN.txt filtered to confidence==C2 via hooks.csv. Brief via read-fleet with the EXPLICIT rva list."
+      "stage": "blocked",
+      "note": "SUPERSEDED by the iter10 _s6 re-cut (same RVAs, 6 per bucket). Kept for history: this is the 12-RVA cut whose briefs timed out. Do not re-queue this id."
     },
     {
       "id": "state_frontend_b1",
       "rva": "0x00494460,0x004c1be0,0x00495080,0x00425b90,0x00430b30,0x00494a80,0x00497470,0x00497b10,0x004391b0,0x004a2b60,0x00422470,0x00426b40",
       "kind": "state_getter",
+      "stage": "blocked",
+      "note": "SUPERSEDED by the iter10 _s6 re-cut (same RVAs, 6 per bucket). Kept for history: this is the 12-RVA cut whose briefs timed out. Do not re-queue this id."
+    },
+    {
+      "id": "state_render_b1_s6",
+      "rva": "0x004b6b00,0x004cbb50,0x00454c00,0x0041d6d0,0x0049a730,0x004b4120",
+      "kind": "state_getter",
+      "stage": "briefed",
+      "note": "iter10: 0 READY / 6 NEEDS_GHIDRA (all caller-gate). Brief runs/iter10_s6/state_render_b1_s6.md."
+    },
+    {
+      "id": "state_render_b2_s6",
+      "rva": "0x004d8470,0x00421690,0x00454f80,0x00491780,0x004921b0,0x004cfe20",
+      "kind": "state_getter",
       "stage": "candidate",
-      "note": "refill 2026-07-30: 12 C2 state-lane RVAs, subsystem=frontend, body 32..94B. RVA list in re/orchestrator/candidate_buckets.json (bucket state_frontend_b1). Source state_eligible_CLEAN.txt filtered to confidence==C2 via hooks.csv. Brief via read-fleet with the EXPLICIT rva list."
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_render_b3_s6",
+      "rva": "0x004d8530,0x00421980,0x004c7600,0x004cbb00,0x0047b230,0x004b7fd0",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_render_b4_s6",
+      "rva": "0x004b8080,0x004c0ed0,0x004d5550,0x00474f30,0x00496970,0x004cbb20",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_render_b5_s6",
+      "rva": "0x004d8770,0x00418db0,0x0047b200,0x004c40b0,0x004c5770,0x004c5dd0",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_render_b6_s6",
+      "rva": "0x0047acd0,0x0047ad00,0x004c7620,0x004c79f0,0x004cb2c0,0x00412100",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_audio_b1_s6",
+      "rva": "0x005b8080,0x005b1080,0x005aaff0,0x005ae380,0x005a6c90,0x005ad8b0",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_audio_b2_s6",
+      "rva": "0x005bcd80,0x005b1160,0x00421960,0x005bfb90,0x005bfa20,0x005aeed0",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_audio_b3_s6",
+      "rva": "0x0045c820,0x005af200,0x005af7a0,0x005a60e0,0x005b10a0,0x005b10e0",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_audio_b4_s6",
+      "rva": "0x005a9de0,0x005ab010,0x005b3550,0x0045da60,0x00550950,0x005a5d60",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_gameplay_b1_s6",
+      "rva": "0x00407580,0x00456ce0,0x00471430,0x0047cde0,0x0047ce20,0x00456d00",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_gameplay_b2_s6",
+      "rva": "0x00451cc0,0x00407550,0x0041f290,0x00451730,0x004722e0,0x00451060",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_particle_b1_s6",
+      "rva": "0x0049c6d0,0x0048bc10,0x0049f210,0x0049d0a0,0x0049c770,0x0049c750",
+      "kind": "state_getter",
+      "stage": "briefed",
+      "note": "iter10: 0 READY / 2 MUTATOR_LANE (0x0048bc10, 0x0049f210) / 2 NEEDS_NEW_HANDLER (0x0049c6d0, 0x0049d0a0) / 2 NEEDS_GHIDRA (0x0049c770, 0x0049c750). Brief runs/iter10_s6/state_particle_b1_s6.md."
+    },
+    {
+      "id": "state_particle_b2_s6",
+      "rva": "0x0049f2e0,0x0048fef0,0x0048bbe0,0x0049ff30,0x0048fce0,0x0048fd10",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_boot_b1_s6",
+      "rva": "0x0041a3d0,0x0041c2c0,0x0041da80,0x0041de70,0x00425ed0,0x00499cc0",
+      "kind": "state_getter",
+      "stage": "briefed",
+      "note": "iter10: 0 READY / 6 NEEDS_GHIDRA (all caller-gate). Brief runs/iter10_s6/state_boot_b1_s6.md."
+    },
+    {
+      "id": "state_boot_b2_s6",
+      "rva": "0x004a45fb,0x004a77eb,0x004a2c2f,0x00403640,0x004aa3e4,0x00496ce0",
+      "kind": "state_getter",
+      "stage": "briefed",
+      "note": "iter10 SELF-TEST PASSED. Both known-answer rows returned MUTATOR_LANE with the correct globals cited: 0x00403640 -> DAT_00636b78 (BackBuffRaster handle), 0x00496ce0 -> DAT_00773094/DAT_00773088 (RW resource-list roots). Tally 0 READY / 2 MUTATOR_LANE / 4 NEEDS_GHIDRA. NEW hazard iter9 MISSED: 0x004a2c2f is WRITES_GLOBAL (DAT_00773994) - iter9 called it a plain void row. Only SAFE row is 0x004aa3e4 (pure reader) but it is caller-blocked AND carries the unresolved plate-C3-vs-hooks.csv-C2 tracker conflict. arg_types verified real (teardown_call_pair present in ARG_TYPES.md + diff_template.js) - nothing invented."
+    },
+    {
+      "id": "state_util_b1_s6",
+      "rva": "0x00495110,0x004af32d,0x004af31a,0x0052ddc0,0x004292d0,0x0045d430",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_util_b2_s6",
+      "rva": "0x00534920,0x0049d240,0x0052df40,0x0045dfc0,0x0048f740,0x0041f1e0",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_vehicle_b1_s6",
+      "rva": "0x004039c0,0x00483a40,0x00485380,0x0055c810,0x00482900,0x004b5190",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_vehicle_b2_s6",
+      "rva": "0x00485420,0x00411530,0x00418de0,0x00484060,0x0055c4f0,0x00411350",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_hud_b1_s6",
+      "rva": "0x00404820,0x0041e850,0x005571c0,0x00557220,0x0041c090,0x005571e0",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_hud_b2_s6",
+      "rva": "0x0041b4d0,0x00556ce0,0x0041d830,0x00413f50,0x00556e40,0x00556d20",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_frontend_b1_s6",
+      "rva": "0x00494460,0x004c1be0,0x00495080,0x00425b90,0x00430b30,0x00494a80",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "state_frontend_b2_s6",
+      "rva": "0x00497470,0x00497b10,0x004391b0,0x004a2b60,0x00422470,0x00426b40",
+      "kind": "state_getter",
+      "stage": "candidate",
+      "note": "iter10 re-cut: 6-RVA bucket (was 12; iter9 lost 5 of 6 workers to the 600s timeout). RVAs in re/orchestrator/candidate_buckets.json. Brief via scripts/orch_make_brief_queue.py — plate paths + hooks.csv rows PRE-RESOLVED locally, READY now requires harness_safety==SAFE."
+    },
+    {
+      "id": "caller_gate_144",
+      "rva": "-",
+      "kind": "meta",
+      "stage": "briefed",
+      "note": "iter10 CALLER-GATE RESOLVED for all 144 refilled RVAs via one local Ghidra pass (pool slot 7, read-only, session closed cleanly). Results: re/orchestrator/caller_gate_144.tsv + .json, tool scripts/orch_caller_gate.py. TALLY: 102 GATE_PASS (a C2+ caller named), 27 ORPHAN_BLOCK_CALLERS (call sites exist but sit in un-wrapped blocks with no Function object - the 0x004f8660/90 iter4 pattern, needs the block plated first), 12 NO_CALLERS_FOUND, 2 NOT_A_FUNCTION (0x004d8470, 0x004d8530 - not defined functions in the clone), 1 GATE_FAIL_CALLERS_C1. METHOD NOTE: used getReferencesTo, NOT function_callers - 27 rows have callers ONLY in un-wrapped blocks and function_callers would have reported them as uncallable. Cross-check: 0x00403640 caller 0x00402750 C2 and 0x00496ce0 caller 0x00402a40 C2 both match the iter9/iter10 briefs."
     }
   ]
 }

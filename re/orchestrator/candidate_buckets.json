@@ -3,15 +3,15 @@
   "filters": "hooks.csv confidence==C2; library bands dropped",
   "pool_c2_after_filters": 1496,
   "skipped_library_band": 0,
-  "bucket_size": 12,
+  "bucket_size": 6,
   "buckets": [
     {
-      "id": "state_render_b1",
+      "id": "state_render_b1_s6",
       "subsystem": "render",
-      "count": 12,
+      "count": 6,
       "size_range": [
         3,
-        25
+        16
       ],
       "rvas": [
         "0x004b6b00",
@@ -19,7 +19,18 @@
         "0x00454c00",
         "0x0041d6d0",
         "0x0049a730",
-        "0x004b4120",
+        "0x004b4120"
+      ]
+    },
+    {
+      "id": "state_render_b2_s6",
+      "subsystem": "render",
+      "count": 6,
+      "size_range": [
+        16,
+        25
+      ],
+      "rvas": [
         "0x004d8470",
         "0x00421690",
         "0x00454f80",
@@ -29,12 +40,12 @@
       ]
     },
     {
-      "id": "state_render_b2",
+      "id": "state_render_b3_s6",
       "subsystem": "render",
-      "count": 12,
+      "count": 6,
       "size_range": [
         25,
-        34
+        31
       ],
       "rvas": [
         "0x004d8530",
@@ -42,7 +53,18 @@
         "0x004c7600",
         "0x004cbb00",
         "0x0047b230",
-        "0x004b7fd0",
+        "0x004b7fd0"
+      ]
+    },
+    {
+      "id": "state_render_b4_s6",
+      "subsystem": "render",
+      "count": 6,
+      "size_range": [
+        31,
+        34
+      ],
+      "rvas": [
         "0x004b8080",
         "0x004c0ed0",
         "0x004d5550",
@@ -52,12 +74,12 @@
       ]
     },
     {
-      "id": "state_render_b3",
+      "id": "state_render_b5_s6",
       "subsystem": "render",
-      "count": 12,
+      "count": 6,
       "size_range": [
         34,
-        38
+        35
       ],
       "rvas": [
         "0x004d8770",
@@ -65,7 +87,18 @@
         "0x0047b200",
         "0x004c40b0",
         "0x004c5770",
-        "0x004c5dd0",
+        "0x004c5dd0"
+      ]
+    },
+    {
+      "id": "state_render_b6_s6",
+      "subsystem": "render",
+      "count": 6,
+      "size_range": [
+        36,
+        38
+      ],
+      "rvas": [
         "0x0047acd0",
         "0x0047ad00",
         "0x004c7620",
@@ -75,12 +108,12 @@
       ]
     },
     {
-      "id": "state_audio_b1",
+      "id": "state_audio_b1_s6",
       "subsystem": "audio",
-      "count": 12,
+      "count": 6,
       "size_range": [
         15,
-        33
+        25
       ],
       "rvas": [
         "0x005b8080",
@@ -88,7 +121,18 @@
         "0x005aaff0",
         "0x005ae380",
         "0x005a6c90",
-        "0x005ad8b0",
+        "0x005ad8b0"
+      ]
+    },
+    {
+      "id": "state_audio_b2_s6",
+      "subsystem": "audio",
+      "count": 6,
+      "size_range": [
+        28,
+        33
+      ],
+      "rvas": [
         "0x005bcd80",
         "0x005b1160",
         "0x00421960",
@@ -98,12 +142,12 @@
       ]
     },
     {
-      "id": "state_audio_b2",
+      "id": "state_audio_b3_s6",
       "subsystem": "audio",
-      "count": 12,
+      "count": 6,
       "size_range": [
         34,
-        42
+        38
       ],
       "rvas": [
         "0x0045c820",
@@ -111,7 +155,18 @@
         "0x005af7a0",
         "0x005a60e0",
         "0x005b10a0",
-        "0x005b10e0",
+        "0x005b10e0"
+      ]
+    },
+    {
+      "id": "state_audio_b4_s6",
+      "subsystem": "audio",
+      "count": 6,
+      "size_range": [
+        39,
+        42
+      ],
+      "rvas": [
         "0x005a9de0",
         "0x005ab010",
         "0x005b3550",
@@ -121,12 +176,12 @@
       ]
     },
     {
-      "id": "state_gameplay_b1",
+      "id": "state_gameplay_b1_s6",
       "subsystem": "gameplay",
-      "count": 12,
+      "count": 6,
       "size_range": [
         17,
-        38
+        28
       ],
       "rvas": [
         "0x00407580",
@@ -134,7 +189,18 @@
         "0x00471430",
         "0x0047cde0",
         "0x0047ce20",
-        "0x00456d00",
+        "0x00456d00"
+      ]
+    },
+    {
+      "id": "state_gameplay_b2_s6",
+      "subsystem": "gameplay",
+      "count": 6,
+      "size_range": [
+        30,
+        38
+      ],
+      "rvas": [
         "0x00451cc0",
         "0x00407550",
         "0x0041f290",
@@ -144,12 +210,12 @@
       ]
     },
     {
-      "id": "state_particle_b1",
+      "id": "state_particle_b1_s6",
       "subsystem": "particle",
-      "count": 12,
+      "count": 6,
       "size_range": [
         10,
-        39
+        28
       ],
       "rvas": [
         "0x0049c6d0",
@@ -157,7 +223,18 @@
         "0x0049f210",
         "0x0049d0a0",
         "0x0049c770",
-        "0x0049c750",
+        "0x0049c750"
+      ]
+    },
+    {
+      "id": "state_particle_b2_s6",
+      "subsystem": "particle",
+      "count": 6,
+      "size_range": [
+        29,
+        39
+      ],
+      "rvas": [
         "0x0049f2e0",
         "0x0048fef0",
         "0x0048bbe0",
@@ -167,12 +244,12 @@
       ]
     },
     {
-      "id": "state_boot_b1",
+      "id": "state_boot_b1_s6",
       "subsystem": "boot",
-      "count": 12,
+      "count": 6,
       "size_range": [
         13,
-        27
+        18
       ],
       "rvas": [
         "0x0041a3d0",
@@ -180,7 +257,18 @@
         "0x0041da80",
         "0x0041de70",
         "0x00425ed0",
-        "0x00499cc0",
+        "0x00499cc0"
+      ]
+    },
+    {
+      "id": "state_boot_b2_s6",
+      "subsystem": "boot",
+      "count": 6,
+      "size_range": [
+        18,
+        27
+      ],
+      "rvas": [
         "0x004a45fb",
         "0x004a77eb",
         "0x004a2c2f",
@@ -190,12 +278,12 @@
       ]
     },
     {
-      "id": "state_util_b1",
+      "id": "state_util_b1_s6",
       "subsystem": "util",
-      "count": 12,
+      "count": 6,
       "size_range": [
         11,
-        51
+        39
       ],
       "rvas": [
         "0x00495110",
@@ -203,7 +291,18 @@
         "0x004af31a",
         "0x0052ddc0",
         "0x004292d0",
-        "0x0045d430",
+        "0x0045d430"
+      ]
+    },
+    {
+      "id": "state_util_b2_s6",
+      "subsystem": "util",
+      "count": 6,
+      "size_range": [
+        40,
+        51
+      ],
+      "rvas": [
         "0x00534920",
         "0x0049d240",
         "0x0052df40",
@@ -213,12 +312,12 @@
       ]
     },
     {
-      "id": "state_vehicle_b1",
+      "id": "state_vehicle_b1_s6",
       "subsystem": "vehicle",
-      "count": 12,
+      "count": 6,
       "size_range": [
         23,
-        87
+        49
       ],
       "rvas": [
         "0x004039c0",
@@ -226,7 +325,18 @@
         "0x00485380",
         "0x0055c810",
         "0x00482900",
-        "0x004b5190",
+        "0x004b5190"
+      ]
+    },
+    {
+      "id": "state_vehicle_b2_s6",
+      "subsystem": "vehicle",
+      "count": 6,
+      "size_range": [
+        59,
+        87
+      ],
+      "rvas": [
         "0x00485420",
         "0x00411530",
         "0x00418de0",
@@ -236,12 +346,12 @@
       ]
     },
     {
-      "id": "state_hud_b1",
+      "id": "state_hud_b1_s6",
       "subsystem": "hud",
-      "count": 12,
+      "count": 6,
       "size_range": [
         13,
-        73
+        49
       ],
       "rvas": [
         "0x00404820",
@@ -249,7 +359,18 @@
         "0x005571c0",
         "0x00557220",
         "0x0041c090",
-        "0x005571e0",
+        "0x005571e0"
+      ]
+    },
+    {
+      "id": "state_hud_b2_s6",
+      "subsystem": "hud",
+      "count": 6,
+      "size_range": [
+        50,
+        73
+      ],
+      "rvas": [
         "0x0041b4d0",
         "0x00556ce0",
         "0x0041d830",
@@ -259,12 +380,12 @@
       ]
     },
     {
-      "id": "state_frontend_b1",
+      "id": "state_frontend_b1_s6",
       "subsystem": "frontend",
-      "count": 12,
+      "count": 6,
       "size_range": [
         32,
-        94
+        55
       ],
       "rvas": [
         "0x00494460",
@@ -272,7 +393,18 @@
         "0x00495080",
         "0x00425b90",
         "0x00430b30",
-        "0x00494a80",
+        "0x00494a80"
+      ]
+    },
+    {
+      "id": "state_frontend_b2_s6",
+      "subsystem": "frontend",
+      "count": 6,
+      "size_range": [
+        62,
+        94
+      ],
+      "rvas": [
         "0x00497470",
         "0x00497b10",
         "0x004391b0",
