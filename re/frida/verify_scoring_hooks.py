@@ -104,8 +104,8 @@ def main():
     statenav.shoot(pid, ROOT/shotdir/f"scoring_{tag}_title.png")
 
     # ---- drive into a 4-player FFA Quick Battle ----------------------------
-    nav.confirm_to_depth(2); time.sleep(0.3); nav.press(4); time.sleep(0.5)
-    nav.confirm_to_depth(3)
+    nav.confirm_to_depth(2)
+    nav.advance_past_load_modal(3)   # closed-loop across the async Load-Successful modal
     nav.press(12)   # down -> Quick Battle (competitive arena, FFA)
     nav.confirm_to_depth(4, tries=4)   # colour select
     nav.confirm_to_depth(5, tries=4)   # track select

@@ -1,0 +1,11 @@
+{
+  "description": "1-unit smoke queue to verify supervisor cost/status capture.",
+  "defaults": { "repo": "Mashed", "model": "sonnet", "timeoutSec": 180 },
+  "units": [
+    {
+      "id": "smoke_count",
+      "model": "sonnet",
+      "prompt": "READ-ONLY. Read hooks.csv at repo root and return one line: the count of rows grouped by the 'confidence' column (target the confidence column specifically, not any C[0-9] anywhere in the file). Report the single line and stop. Do NOT write anything."
+    }
+  ]
+}

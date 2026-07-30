@@ -1,0 +1,5 @@
+# transient run output + machine lock — evidence lives in the committed
+# manifests/logs under runs/ only for the current run; not version-controlled.
+runs/
+.machine.lock
+read_fleet/queue_iter*.json

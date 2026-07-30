@@ -97,10 +97,12 @@ def drive_to_results(nav, scr, pid, shotdir, scenario, round_secs, sentinel_chec
     print("  booting...")
     nav.wait(lambda: nav.phase() == 3 and nav.depth() >= 1, 18.0, "title up")
     print(f"  title: depth={nav.depth()} phase={nav.phase()}")
-    nav.confirm_to_depth(2); time.sleep(0.3); nav.press(4); time.sleep(0.5)
-    print(f"  after GTS+modal: depth={nav.depth()} sel={scr.exports_sync.sel()}")
+    nav.confirm_to_depth(2)
+    print(f"  after GTS: depth={nav.depth()} sel={scr.exports_sync.sel()}")
     statenav.shoot(pid, ROOT / shotdir / "sa_gts.png")
-    nav.confirm_to_depth(3)
+    # depth 2->3 crosses the async 'Load-Successful' modal — closed-loop so a
+    # modal-absorbed confirm is retried rather than raced against fixed sleeps.
+    nav.advance_past_load_modal(3)
     print(f"  single player: depth={nav.depth()} sel={scr.exports_sync.sel()}")
     nav.press(12)   # down -> Quick Battle (arena; round ends on its own)
     print(f"  mode sel (Quick Battle): sel={scr.exports_sync.sel()}")

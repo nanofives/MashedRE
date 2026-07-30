@@ -419,6 +419,29 @@ function callFn(fn, input, buf) {
         return (ret === null || ret === undefined) ? 0
              : (typeof ret === 'object' ? (ret.toInt32() >>> 0) : (ret >>> 0));
     }
+    // container_find_scalar — fn(container_ptr, int key) -> int32, where
+    // container = [dataPtr@+0, count@+4]. The harness FABRICATES the container
+    // per test so no live state is touched: input.data ints are written into a
+    // fresh scratch array, container[0]=array / container[1]=input.count
+    // (defaults to data.length; may be negative to hit verbatim count<=0
+    // quirks), then fn(container, input.key) and the int returns are compared.
+    // Both sides see the IDENTICAL container, so bit-identity holds. The local
+    // arr/cont handles stay live across the call (no cross-closure storage —
+    // cf. feedback_frida_keepalive_scratch_buffers, which bit buffers stored
+    // for LATER use only as raw ints).
+    //   tests[i] = { data:[ints], key:<int> [, count:<int>] }
+    // Added 2026-07-29 (methods-efficiency pilot) for 0x004f3cb0.
+    if (CONFIG.arg_type === 'container_find_scalar') {
+        const data = input.data || [];
+        const cnt  = (input.count === undefined) ? data.length : input.count;
+        const arr  = Memory.alloc(Math.max(4, data.length * 4));
+        for (let k = 0; k < data.length; k++) arr.add(k * 4).writeS32(data[k] | 0);
+        const cont = Memory.alloc(8);
+        cont.writePointer(arr);
+        cont.add(4).writeS32(cnt | 0);
+        const ret = fn(cont, input.key | 0);
+        return (ret !== null && typeof ret === 'object') ? (ret.toInt32() | 0) : (ret | 0);
+    }
     // int_with_out_ptr — uint32 arg + 4-byte output buffer; returns function's return value
     if (CONFIG.arg_type === 'int_with_out_ptr') {
         return fn(input >>> 0, buf);

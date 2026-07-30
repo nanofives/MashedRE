@@ -1,0 +1,14 @@
+{
+  "description": "Orchestrator iteration 1 — verify the 3 authored-stage hooks. dwell=25 (slot_object_field8's handle table 0x006c71d8 needs the race deep enough; it was GREEN at dwell 20 twice and blocked at dwell 18 once).",
+  "jobs": [
+    { "type": "build" },
+    {
+      "type": "state_batch",
+      "id": "iter1_authored",
+      "hooks": ["slot_object_field8", "plugin_data_dword_a", "plugin_data_dword_b"],
+      "scenario": "race",
+      "dwell": 25,
+      "sentinel": "0x006c71d8,0x007d73a8,0x007d73ac"
+    }
+  ]
+}

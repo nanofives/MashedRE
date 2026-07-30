@@ -1,0 +1,21 @@
+{
+  "description": "Read-only work queue for the claude2 read-fleet supervisor. Every unit is pure Read/Grep/Glob + reasoning — NEVER a write/build/MCP leg (those hang on account2). Each unit returns a compact BRIEF as text; the supervisor collects it. Add units freely; the supervisor loops the queue with bounded concurrency.",
+  "defaults": { "repo": "Mashed", "model": "sonnet", "timeoutSec": 420 },
+  "units": [
+    {
+      "id": "argtype_render_batch",
+      "model": "sonnet",
+      "prompt": "READ-ONLY. arg_type inference for these render STATE RVAs: 0x00490500 0x0048ebf0 0x0048f290 0x0048f420 0x00403910 0x00404650 0x0040bde0 0x0040b090 0x004041c0 0x00412050. For each, glob for its plate under re/analysis/**/<rva>.md (also try 0x-prefixed and bare forms) and read it. Emit one TSV line per RVA: rva<TAB>inferred_arg_type<TAB>confidence(HIGH|MED|LOW)<TAB>evidence(one clause citing the plate signature/line). The ONLY legal arg_type names are in re/frida/ARG_TYPES.md — never invent one; if none fits, write NEEDS_NEW_HANDLER:<8-word shape>. If no plate, write NO_PLATE. End with a tally: per-arg_type counts + NEEDS_NEW_HANDLER shapes + NO_PLATE count. Do NOT write any file."
+    },
+    {
+      "id": "mutator_route_demo12",
+      "model": "sonnet",
+      "prompt": "READ-ONLY. Read re/analysis/plans/stalker_ws_batch_demo12.json (a Stalker dynamic write-surface capture of 12 mutators). For each entry with status=='captured', classify it for the snapshot/restore A/B lane: GLOBAL-WRITE if every write EA is an image global (0x00400000..0x00b60000) — list those absolute addresses; else HEAP-RELATIVE — report the heap_writes count and note it needs a per-run EA snapshot. Also report, per mutator, how many indirects resolved to a system DLL (dest>=0x60000000, i.e. a false blocker) vs an image function. Emit a table: rva | verdict(GLOBAL-WRITE|HEAP-RELATIVE) | image_globals(list or count) | sys_ind/img_ind. End with counts of each verdict. Do NOT write any file."
+    },
+    {
+      "id": "mutator_plates_smallest10",
+      "model": "sonnet",
+      "prompt": "READ-ONLY. Read re/analysis/plans/exercised_mutators.txt (TSV: rva size when subsystem). Take the 10 smallest by size. For each, glob+read its plate under re/analysis/**/<rva>.md if present. Emit one line per RVA: rva<TAB>size<TAB>subsystem<TAB>one-sentence MECHANICAL description of what it writes (reads offset X, writes Y) strictly from the plate/decomp — NO guessing intent; if no plate, write NO_PLATE. Do NOT write any file."
+    }
+  ]
+}

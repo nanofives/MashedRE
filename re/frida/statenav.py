@@ -250,6 +250,32 @@ class Nav:
             s.press(4)
             if s.wait(lambda: s.depth()>=target, 2.0): return True
         return s.depth()>=target
+    def advance_past_load_modal(s, target=3, tries=12, wait=2.5, settle=0.4):
+        """Closed-loop replacement for the fragile depth 2->3 step.
+
+        Crossing into the Single-Player mode-select passes through the
+        'Load-Successful' modal, which pops ASYNCHRONOUSLY after the GTS is
+        entered (see the 'after GTS+modal' comment). The old sequence pressed
+        confirm a FIXED number of times against fixed sleeps, so it needed the
+        modal's appearance to line up with the presses -- it did about half the
+        time, and both the 2026-07-29 STATE batch (2 wasted confirms then
+        success) and the parallel Stalker A run (never advanced, NOT-FIRED at
+        depth=2) show the same signature.
+
+        This presses confirm at most ONCE per loop, then WAITS for depth to
+        actually advance before deciding to press again. A press the modal
+        absorbs leaves depth unchanged, so we settle (letting the modal finish
+        animating) and press once more -- never blindly double-pressing into a
+        mid-animation popup, which is what desynchronised the old code. Stops
+        the instant depth reaches target, so it cannot over-advance."""
+        for _ in range(tries):
+            if s.depth() >= target:
+                return True
+            s.press(4)
+            if s.wait(lambda: s.depth() >= target, wait):
+                return True
+            time.sleep(settle)
+        return s.depth() >= target
 
 def main():
     seconds=int(sys.argv[sys.argv.index("--seconds")+1]) if "--seconds" in sys.argv else 60
@@ -346,12 +372,12 @@ def main():
     nav.wait(lambda: nav.phase()==3 and nav.depth()>=1, 18.0, "title up")
     print(f"  title: depth={nav.depth()} phase={nav.phase()}")
     dump_counts("title")
-    # confirm title -> GTS (depth 2), then dismiss the Load-Successful modal (extra confirm)
-    nav.confirm_to_depth(2); time.sleep(0.3); nav.press(4); time.sleep(0.5)
-    print(f"  after GTS+modal: depth={nav.depth()} sel={scr.exports_sync.sel()}")
+    # confirm title -> GTS (depth 2)
+    nav.confirm_to_depth(2)
+    print(f"  after GTS: depth={nav.depth()} sel={scr.exports_sync.sel()}")
     shoot(pid, ROOT/shotdir/"sn_gts.png")
-    # GTS cursor on Single Player(0). confirm -> Single Player mode-select (depth 3)
-    nav.confirm_to_depth(3)
+    # depth 2->3 crosses the async Load-Successful modal — closed-loop advance.
+    nav.advance_past_load_modal(3)
     print(f"  single player: depth={nav.depth()} sel={scr.exports_sync.sel()}")
     # mode-select: down ONCE to Quick Battle(1) (the competitive arena: rounds END on
     # elimination/timeout -> end-of-round scoring fires WITHOUT driving a lap). confirm -> colour.

@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-07-29  orch-iter1  rvas=0x004cfee0  branch=fix/u9025-recharacterise-and-regabi-defects  evidence=log/diff_scenario_batch_raster_plugin_byte_get.csv  note=GREEN 6/6, 6 distinct (repeated-byte fill); C3 REFUSED on leaf caller-gate — only callers 0x005412d0/0x00541d40 both C1 (Ghidra-verified 2026-07-29); port+registry already landed (StateBatchGetters.cpp / raster_plugin_byte_get); unblocks when either caller reaches C2
 ```
 
 ## Merged

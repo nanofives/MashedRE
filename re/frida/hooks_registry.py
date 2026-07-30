@@ -18263,4 +18263,86 @@ HOOKS = {
         ],
     },
 
+    # ---- STATE batch, methods-efficiency pilot 2026-07-29 ---------------------
+    #   Four safe+exercised leaves from commit 0a9a47e8 (semantic_screen SAFE,
+    #   prescreen exercised-in-race). Ports: Render/StateBatchGetters.cpp.
+
+    # 0x004f8660  PluginDataDwordA(off) — *(u32*)(DAT_007d73a8 + off). Byte-offset
+    #   read off a live base pointer; the gate proves the base is up before any
+    #   force-call. Offsets kept small and dword-aligned.
+    'plugin_data_dword_a': {
+        'rva': 0x004f8660, 'export': 'PluginDataDwordA',
+        'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'state_gate': [{'any_nonzero': 0x007d73a8, 'words': 1}],
+        'path1_tests': [0, 4, 8, 12, 16, 20, 24, 28],
+        'path2_tests': [0, 8, 16],
+    },
+
+    # 0x004f8690  PluginDataDwordB(off) — twin of 0x004f8660 with base
+    #   DAT_007d73ac.
+    'plugin_data_dword_b': {
+        'rva': 0x004f8690, 'export': 'PluginDataDwordB',
+        'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'state_gate': [{'any_nonzero': 0x007d73ac, 'words': 1}],
+        'path1_tests': [0, 4, 8, 12, 16, 20, 24, 28],
+        'path2_tests': [0, 8, 16],
+    },
+
+    # 0x004cfee0  RasterPluginByteGet(int* obj) — null-guarded byte read at
+    #   *obj + 8 + DAT_00911ae4 (raster-plugin extension offset, live global read
+    #   by BOTH sides). The inner buffer is filled with one repeated byte per
+    #   test, so the return equals that byte WHEREVER the live plugin offset
+    #   lands inside the 0x1000-byte fill — non-degenerate without knowing the
+    #   offset. CAVEAT: if the live DAT_00911ae4 exceeds ~0xff8 the read runs off
+    #   the per-side inner buffers (which differ) — a RED here must be triaged
+    #   for that OOB case before being believed.
+    'raster_plugin_byte_get': {
+        'rva': 0x004cfee0, 'export': 'RasterPluginByteGet',
+        'signature': {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type': 'struct_call_observe', 'lut_root_delta': 0, 'scenario': 'race',
+        'state_gate': [{'any_nonzero': 0x00911ae4, 'words': 1}],
+        'struct_size': 8, 'out_ptrs': 0, 'observe_ret': True,
+        'observe': [],
+        'path1_tests': [
+            {'nested': [{'ptr_off': 0, 'size': 0x1000,
+                         'fields': [{'off': o, 'type': 'u32', 'value': b * 0x01010101}
+                                    for o in range(0, 0x1000, 4)]}]}
+            for b in (0x11, 0x22, 0x33, 0x44, 0x55)
+        ] + [
+            {'seeds': []},   # obj[0] == 0 -> the null branch, both sides 0
+        ],
+        'path2_tests': [
+            {'nested': [{'ptr_off': 0, 'size': 0x1000,
+                         'fields': [{'off': o, 'type': 'u32', 'value': 0x66666666}
+                                    for o in range(0, 0x1000, 4)]}]},
+        ],
+    },
+
+    # 0x004f3cb0  PtrArrayFindLastIndex(int* c, int value) — reverse linear
+    #   search over c = [dataPtr, count]; returns last index of value, count-1
+    #   for a non-positive count, -1 when not found. Fully synthetic (the
+    #   harness fabricates the container) via the NEW container_find_scalar
+    #   handler added with this entry.
+    'ptr_array_find_last_index': {
+        'rva': 0x004f3cb0, 'export': 'PtrArrayFindLastIndex',
+        'signature': {'ret': 'int32', 'args': ['pointer', 'int32']},
+        'arg_type': 'container_find_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'path1_tests': [
+            {'data': [7, 3, 7, 9], 'key': 7},          # duplicate -> LAST index (2)
+            {'data': [7, 3, 7, 9], 'key': 9},          # tail hit -> 3
+            {'data': [7, 3, 7, 9], 'key': 5},          # miss -> -1
+            {'data': [42], 'key': 42},                 # single hit -> 0
+            {'data': [], 'key': 1},                    # count 0 -> -1
+            {'data': [1, 2, 3], 'count': -3, 'key': 1},# NEGATIVE count -> -4 (verbatim quirk)
+            {'data': [0, 0, 0], 'key': 0},             # all-match -> last index (2)
+            {'data': [-1, -2, -3], 'key': -2},         # negative values -> 1
+        ],
+        'path2_tests': [
+            {'data': [7, 3, 7, 9], 'key': 7},
+            {'data': [7, 3, 7, 9], 'key': 5},
+        ],
+    },
+
 }

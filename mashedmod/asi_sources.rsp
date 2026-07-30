@@ -336,6 +336,7 @@
 "Collision\PhysicsWorldBuild.cpp"
 "Render\CameraProjCoeffs.cpp"
 "Render\SlotObjectAccessors.cpp"
+"Render\StateBatchGetters.cpp"
 "Audio\AudioQueuePop.cpp"
 "Ai\VehicleFloatFieldAsInt.cpp"
 "Camera\FollowTargetFieldPtr.cpp"
