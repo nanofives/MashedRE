@@ -27,13 +27,16 @@ param(
   [int]$MaxRetries    = 1,
   [string]$OutDir,
   [int]$StaggerSec    = 2,
-  [int]$PollSec       = 5
+  [int]$PollSec       = 5,
+  [switch]$NoPreflight   # disable the read-only preflight (not recommended)
 )
 
 $ErrorActionPreference = 'Stop'
 $ROOT = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent   # ...\Mashed
 $DELEGATE = 'C:\Users\maria\Desktop\Proyectos\.claude\skills\repo-fleet\scripts\delegate.ps1'
 if (-not (Test-Path $DELEGATE)) { throw "delegate.ps1 not found at $DELEGATE" }
+
+. "$PSScriptRoot\preflight.ps1"   # Test-ReadOnlyPrompt (unit-tested separately)
 
 $q = Get-Content -LiteralPath $Queue -Raw | ConvertFrom-Json
 $defaults = $q.defaults
@@ -44,9 +47,22 @@ if (-not $OutDir) {
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 $promptDir = Join-Path $OutDir 'prompts'; New-Item -ItemType Directory -Force -Path $promptDir | Out-Null
 
-# ---- build the pending list (each unit gets an attempt counter) --------------
-$pending = [System.Collections.Generic.Queue[object]]::new()
+# ---- build the pending list (preflight + attempt counter) -------------------
+$pending  = [System.Collections.Generic.Queue[object]]::new()
+$results  = @{}     # id -> final record (rejections recorded here too)
+$rejected = 0
 foreach ($u in $q.units) {
+  $reason = if ($NoPreflight -or $u.skip_preflight) { $null } else { Test-ReadOnlyPrompt $u.prompt }
+  if ($reason) {
+    $rejected++
+    Write-Host ("  ✗ REJECTED [{0}] not read-only: {1}" -f $u.id, $reason) -ForegroundColor Red
+    Write-Host  "      account2 hangs on this; route it to a claude3 lane (or add skip_preflight)." -ForegroundColor DarkGray
+    $results[$u.id] = [pscustomobject]@{
+      id = $u.id; status = 'REJECTED-NONREADONLY'; ok = $false; cost_usd = 0.0;
+      secs = 0; attempts = 0; save = ''; model = ($u.model ?? $defaults.model); reason = $reason
+    }
+    continue
+  }
   $pending.Enqueue([pscustomobject]@{
     id         = $u.id
     prompt     = $u.prompt
@@ -58,9 +74,8 @@ foreach ($u in $q.units) {
 }
 
 $running  = @{}     # id -> @{ unit; proc; save; status; started }
-$results  = @{}     # id -> final record
-$total    = $pending.Count
-Write-Host "read-fleet: $total units, MaxConcurrent=$MaxConcurrent, MaxRetries=$MaxRetries" -ForegroundColor Cyan
+$total    = $q.units.Count
+Write-Host "read-fleet: $($pending.Count) units queued ($rejected rejected by preflight), MaxConcurrent=$MaxConcurrent, MaxRetries=$MaxRetries" -ForegroundColor Cyan
 Write-Host "  outdir: $OutDir" -ForegroundColor DarkGray
 
 function Start-Unit($u) {

@@ -45,6 +45,27 @@ supervisor itself detached:
 `queue.json`: `{ description, defaults:{repo,model,timeoutSec}, units:[{id, prompt, model?, repo?, timeoutSec?}] }`.
 One unit per read-only lane; the `prompt` must be self-contained.
 
+## Preflight: read-only enforced up front
+
+A claude2 child that hits a permission prompt (any write/build/install/network/
+MCP action) **hangs** — bypass-permissions is disabled by managed policy, so no
+one can approve it headless. The supervisor therefore runs a **read-only
+preflight** (`re/orchestrator/preflight.ps1`, `Test-ReadOnlyPrompt`) on every
+unit's prompt BEFORE launching it. A flagged unit is **rejected up front**
+(status `REJECTED-NONREADONLY` in the manifest), never launched, so one
+mis-authored unit can't stall the fleet.
+
+It is tuned for **few false positives**: it strips negated action clauses first
+(so "Do NOT write any file" is a *good* signal), then flags only high-confidence
+signals — command invocations (`py -3.12 …`, `pwsh -…`), `git commit/push/…`,
+`pip/npm install`, `curl/wget`, `run/boot the batch/game/…`, `decompile`, and
+explicit writes to a source/tracker file (`.cpp`, `hooks.csv`, `build.bat`, …).
+Mentioning a file *named* `run_diff_*.py` is fine; *running* it is not.
+
+Escape hatches: per-unit `"skip_preflight": true`, or the `-NoPreflight` switch
+(not recommended). Validated: 0 false positives on the shipped queues, all
+bad-prompt shapes flagged, rejected units never launched.
+
 ## The ONE rule: read-only only
 
 Every unit is pure **Read/Grep/Glob + reasoning**. account2 prompt-gates (and
