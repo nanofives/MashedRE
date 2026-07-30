@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-30T12:20:00Z",
+  "updatedAt": "2026-07-30T13:15:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -32,12 +32,12 @@
         },
         {
           "label": "C2",
-          "value": 4029,
+          "value": 4028,
           "kind": "number"
         },
         {
           "label": "C3",
-          "value": 857,
+          "value": 858,
           "kind": "number"
         },
         {
@@ -76,21 +76,21 @@
       ]
     },
     {
-      "heading": "Orchestrator lane (iter5, 2026-07-30)",
+      "heading": "Orchestrator lane (iter6, 2026-07-30)",
       "fields": [
         {
-          "label": "Iter5: render ctor family — design fork resolved",
-          "value": "Confirmed with evidence (portcap plates, U-7917/7925/7930 resolved) that the EBX/ESI/EAX ctor+dispatch family needs live-RW callees, not seed-only. User chose the callee-stub handler. Wrote the full build spec (reg_this_callee_stub_handler_spec.md). Commits 2dee9c67 + spec.",
+          "label": "Iter6: reg_this_callee_stub handler BUILT + first promotion",
+          "value": "New A/B handler that Interceptor.replaces live-RW CALLEES (first of its kind). ParticleEmitterCtorA 0x0041ad60 C2->C3, GREEN 3/3 non-degenerate. Commit b02421dd. SWEEP-CRITICAL (diff_template.js + run_diff.py + ARG_TYPES.md).",
           "kind": "text"
         },
         {
-          "label": "Next (iter6, fresh session)",
-          "value": "BUILD reg_this_callee_stub in diff_template.js (SWEEP-CRITICAL) + naked EBX-this port of 0x0041ad60 + one-boot verify -> C3. Caller-gate already satisfied.",
+          "label": "Next",
+          "value": "Generalise handler to c320/cd20 (24/34-atomic), EAX-RpClumpDestroy destructors (b440/beb0/cb00), ESI-bit-gated dispatchers (ae60/af00) — spec in reg_this_callee_stub_handler_spec.md. Also: mutator_sweep_85 needs a ~3-chunk re-brief (85-RVA timed out).",
           "kind": "text"
         },
         {
           "label": "Ledger",
-          "value": "6 promoted, 1 briefed (render handler, spec-ready), 1 candidate (mutator_sweep_85 — brief timed out at 85 RVAs, needs ~3-chunk re-brief)",
+          "value": "7 promoted, 1 candidate (mutator_sweep_85)",
           "kind": "text"
         }
       ]
