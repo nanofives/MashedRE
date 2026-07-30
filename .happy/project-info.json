@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-29T23:37:00Z",
+  "updatedAt": "2026-07-30T12:20:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -27,7 +27,7 @@
       "fields": [
         {
           "label": "C1",
-          "value": 797,
+          "value": 796,
           "kind": "number"
         },
         {
@@ -37,7 +37,7 @@
         },
         {
           "label": "C3",
-          "value": 854,
+          "value": 857,
           "kind": "number"
         },
         {
@@ -76,29 +76,21 @@
       ]
     },
     {
-      "heading": "STATE lane - 2 C3 promotions, verified",
+      "heading": "Orchestrator lane (iter5, 2026-07-30)",
       "fields": [
         {
-          "label": "Promoted",
-          "value": "0x0047d150 SlotObjectField8 (9/10, NINE distinct values, 1 both-errored excluded) and 0x0046cc10 VehicleFloatFieldAsInt (10/10, 3 distinct fingerprints incl. the guard path with poison intact). Race PROVEN running: 1710 calls/1.5s.",
+          "label": "Iter5: render ctor family — design fork resolved",
+          "value": "Confirmed with evidence (portcap plates, U-7917/7925/7930 resolved) that the EBX/ESI/EAX ctor+dispatch family needs live-RW callees, not seed-only. User chose the callee-stub handler. Wrote the full build spec (reg_this_callee_stub_handler_spec.md). Commits 2dee9c67 + spec.",
           "kind": "text"
         },
         {
-          "label": "Not promoted",
-          "value": [
-            "follow_target_field40/10 - GREEN but DEGENERATE (MenuAlphaGet()!=3, branch never varied)",
-            "AudioQueuePop - callee decrements a live queue count, not synthetic-verifiable"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Pipeline",
-          "value": "187 screened -> 48 shape-direct -> 5 semantically safe -> 4 authored -> 2 promoted. Three mechanical screens + hand-reading.",
+          "label": "Next (iter6, fresh session)",
+          "value": "BUILD reg_this_callee_stub in diff_template.js (SWEEP-CRITICAL) + naked EBX-this port of 0x0041ad60 + one-boot verify -> C3. Caller-gate already satisfied.",
           "kind": "text"
         },
         {
-          "label": "Verdict fixes",
-          "value": "Both-errored rows no longer outvote discriminating ones; composite fingerprints now count toward distinctness. Both verdicts re-derived from saved CSVs with NO extra boot.",
+          "label": "Ledger",
+          "value": "6 promoted, 1 briefed (render handler, spec-ready), 1 candidate (mutator_sweep_85 — brief timed out at 85 RVAs, needs ~3-chunk re-brief)",
           "kind": "text"
         }
       ]
