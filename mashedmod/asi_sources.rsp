@@ -337,6 +337,7 @@
 "Render\CameraProjCoeffs.cpp"
 "Render\SlotObjectAccessors.cpp"
 "Render\StateBatchGetters.cpp"
+"Render\ParticleEmitterCtors.cpp"
 "Audio\AudioQueuePop.cpp"
 "Ai\VehicleFloatFieldAsInt.cpp"
 "Camera\FollowTargetFieldPtr.cpp"

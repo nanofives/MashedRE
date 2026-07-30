@@ -18349,6 +18349,39 @@ HOOKS = {
         ],
     },
 
+    # 0x0041ad60  ParticleEmitterCtorA(this=EBX, clump=EAX) — 17-atomic Class A
+    #   particle-emitter constructor. Register-implicit `this` + live-RW callees,
+    #   so NOT leaf-callable cold: the NEW reg_this_callee_stub handler seeds
+    #   EBX=&scratchThis + EAX=&sharedClump and Interceptor.replace's the three
+    #   live-RW callees with deterministic stubs (fill buf[i]=HANDLE_BASE+i;
+    #   index=handle-HANDLE_BASE; zero=noop), then diffs the resulting 0x80-byte
+    #   this-struct. Non-degenerate: 3 tests vary handle_base + clump_frame so
+    #   the 17 scattered handles + this[0x5c]=clump + this[0x60]=frame all move.
+    #   Evidence: re/analysis/callers_c2_unblock/portcap_0x0041ad60.md; spec
+    #   re/analysis/plans/reg_this_callee_stub_handler_spec.md. Menu scenario is
+    #   sufficient (the stubs remove the live-RW dependency).
+    'particle_emitter_ctor_a': {
+        'rva': 0x0041ad60, 'export': 'ParticleEmitterCtorA',
+        'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'reg_this_callee_stub', 'lut_root_delta': 0, 'scenario': 'race',
+        # Fully synthetic (the stubs fabricate all state), so no state_gate. The
+        # driver still requires a sentinel to prove the scenario reached a live
+        # point; ride 0x007d73a8 (populates at t+0 in race, orch-iter3) — the
+        # hook does NOT read it. Non-degeneracy is proven by distinct per-test
+        # fingerprints, not this global.
+        'scenario_sentinel': 0x007d73a8,
+        'this_reg': 'ebx', 'struct_size': 0x80, 'atom_count': 17,
+        'callee_fill': 0x004b3fc0, 'callee_index': 0x004b5190, 'callee_zero': 0x004b6520,
+        'path1_tests': [
+            {'clump_frame': 0x3000, 'handle_base': 0x1000},
+            {'clump_frame': 0x3001, 'handle_base': 0x1100},
+            {'clump_frame': 0x3002, 'handle_base': 0x1200},
+        ],
+        'path2_tests': [
+            {'clump_frame': 0x4000, 'handle_base': 0x2000},
+        ],
+    },
+
     # 0x004f3cb0  PtrArrayFindLastIndex(int* c, int value) — reverse linear
     #   search over c = [dataPtr, count]; returns last index of value, count-1
     #   for a non-positive count, -1 when not found. Fully synthetic (the

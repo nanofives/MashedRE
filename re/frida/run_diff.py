@@ -397,6 +397,16 @@ def build_config(hook, asi_path=None):
         ]
     if 'call_args' in hook:
         config['call_args'] = hook['call_args']
+    # reg_this_callee_stub (orch-iter6): register-implicit-this ctor with live-RW
+    # callees stubbed. Forward this_reg + atom_count + the callee RVAs as hex
+    # strings (struct_size already forwarded above; tests come from path1_tests).
+    if 'this_reg' in hook:
+        config['this_reg'] = hook['this_reg']
+    if 'atom_count' in hook:
+        config['atom_count'] = hook['atom_count']
+    for _ck in ('callee_fill', 'callee_index', 'callee_zero', 'callee_color'):
+        if _ck in hook:
+            config[_ck + '_str'] = f"0x{hook[_ck]:08x}"
     return config
 
 

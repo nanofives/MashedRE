@@ -117,8 +117,10 @@ inside the loop @ 0x0041ad88 — there is no separate `local_44` copy step; the
 loop reads the buffer FUN_004b3fc0 was handed. Full internal proof that
 FUN_004b3fc0 writes through this pointer (rather than merely reading it) is
 not walked past its first ~10 instructions here — see Callee prologue reads
-below and treat the write itself as [UNCERTAIN] pending a deeper walk of
-FUN_004b3fc0's body.
+below and treat the write itself as [UNCERTAIN U-7917] pending a deeper walk of
+FUN_004b3fc0's body. (Not load-bearing for FUN_0041ad60's own C3: the port
+calls FUN_004b3fc0 verbatim regardless of its internals, and the orch-iter6 A/B
+stubs FUN_004b3fc0 entirely — the ctor's own shape is fully resolved.)
 
 ## Callee prologue reads
 

@@ -2060,6 +2060,148 @@ function runDiff() {
         return;
     }
 
+    // ── reg_this_callee_stub (orch-iter6, SWEEP-CRITICAL) ─────────────────────
+    // FIRST handler that intercepts CALLEES rather than seeding inputs. For the
+    // render particle-emitter ctor family (EBX/ESI/EAX-implicit `this`) whose
+    // body calls into the LIVE RenderWare object graph and so is not leaf-
+    // callable cold: seed the register-`this` + a shared scratch clump, then
+    // Interceptor.replace the live-RW callees with deterministic stubs so the
+    // ctor produces a fixed `this`-struct that a correct port reproduces
+    // bit-for-bit. Design spec + evidence:
+    // re/analysis/plans/reg_this_callee_stub_handler_spec.md and
+    // re/analysis/callers_c2_unblock/portcap_0x0041ad60.md.
+    //
+    // Proving case 0x0041ad60 (17-atomic): body is
+    //   FUN_004b3fc0(clump, &buf);                       // fills buf[atom_count]
+    //   this[0x5c]=clump; this[0x60]=*(clump+4);
+    //   FUN_004b6520(this, 0x50);                         // zero-init (noop-stubbed)
+    //   for i in 0..atom_count-1:
+    //     idx = FUN_004b5190(buf[i],0,0); this[idx*4]=buf[i];
+    //
+    // Callee stubs (installed once, reverted after; GLOBAL by RVA so BOTH the
+    // original ctor and the reimpl export hit the identical stub):
+    //   callee_fill  (0x004b3fc0): (clump, buf) => write HANDLE_BASE+i to buf[i].
+    //                arg0=clump, arg1=buf per the original's push order
+    //                (PUSH buf deeper, PUSH clump topmost => cdecl clump first).
+    //   callee_index (0x004b5190): (handle,0,0) => handle - HANDLE_BASE, so the
+    //                handles scatter to slots 0..atom_count-1 deterministically
+    //                (also short-circuits the real [handle+0x18] deref).
+    //   callee_zero  (0x004b6520): noop (both sides pre-zero scratchThis anyway).
+    //   callee_color (optional, 0x004b5260 for 0x0041cd20): noop.
+    //
+    // CONFIG: this_reg ('ebx'|'esi'|'eax'), struct_size, atom_count,
+    //   callee_fill_str / callee_index_str / callee_zero_str [/ callee_color_str],
+    //   signature {ret:'void', args:[]}, tests = [{clump_frame, handle_base}, ...].
+    // The shared scratch clump means this[0x5c] (= clump ADDR) matches across
+    // sides; scratchThis is per-side for the diff.
+    if (CONFIG.arg_type === 'reg_this_callee_stub') {
+        const structSize = CONFIG.struct_size || 0x80;
+        const atomCount  = CONFIG.atom_count  || 17;
+        const thisReg    = (CONFIG.this_reg || 'ebx').toLowerCase();
+        // mov r32, imm32 opcode by target register (this delivered in a reg).
+        const MOV_OP = { eax: 0xB8, ecx: 0xB9, edx: 0xBA, ebx: 0xBB,
+                         esp: 0xBC, ebp: 0xBD, esi: 0xBE, edi: 0xBF };
+        const thisOp = MOV_OP[thisReg];
+        if (thisOp === undefined) { send({ type: 'error', msg: 'bad this_reg ' + thisReg }); return; }
+
+        // Shared scratch clump (SAME address seeded into EAX on BOTH sides so
+        // the stored this[0x5c] pointer is identical). +4 holds the per-test
+        // frame sentinel.
+        const _keep = [];
+        const clumpBuf = Memory.alloc(64); _keep.push(clumpBuf);
+        const clumpAddr = parseInt(clumpBuf.toString(), 16) >>> 0;
+
+        // Per-side scratch `this` (compared after each call).
+        const thisO = Memory.alloc(structSize); _keep.push(thisO);
+        const thisR = Memory.alloc(structSize); _keep.push(thisR);
+
+        // Mutable base shared by the stub closures (updated per test).
+        let HANDLE_BASE = 0x1000;
+
+        // Install the callee stubs once (reverted at the end).
+        const filled = [];
+        function replaceCallee(hexStr, cb) {
+            if (!hexStr) return;
+            const a = ptr(hexStr);
+            Interceptor.replace(a, cb);
+            filled.push(a);
+        }
+        const cbFill = new NativeCallback(function (clump, buf) {
+            for (let i = 0; i < atomCount; i++) buf.add(i * 4).writeU32((HANDLE_BASE + i) >>> 0);
+            return 0;
+        }, 'int', ['pointer', 'pointer']);
+        const cbIndex = new NativeCallback(function (handle, a, b) {
+            return ((handle >>> 0) - (HANDLE_BASE >>> 0)) | 0;
+        }, 'int', ['uint32', 'int', 'int']);
+        const cbNoop = new NativeCallback(function () { return 0; }, 'int', ['pointer', 'int']);
+        const cbColor = new NativeCallback(function () { return 0; }, 'int', ['int', 'pointer']);
+
+        replaceCallee(CONFIG.callee_fill_str,  cbFill);
+        replaceCallee(CONFIG.callee_index_str, cbIndex);
+        replaceCallee(CONFIG.callee_zero_str,  cbNoop);
+        replaceCallee(CONFIG.callee_color_str, cbColor);
+        Interceptor.flush();
+
+        // Per-side trampoline:  push ebx/reg? ; mov <thisReg>,thisAddr ;
+        //   mov eax,clumpAddr ; call target ; pop ; ret.  We PUSH/POP the this
+        // register (callee-saved for ebx/esi/edi) to protect the harness state.
+        function buildRegThisTramp(targetAddr, thisAddr) {
+            const code = Memory.alloc(Process.pageSize);
+            // push reg: 0x50 + regnum, same encoding order as MOV low nibble.
+            const REGNUM = { eax:0, ecx:1, edx:2, ebx:3, esp:4, ebp:5, esi:6, edi:7 };
+            const pushOp = 0x50 + REGNUM[thisReg];
+            Memory.patchCode(code, 18, function (cw) {
+                const w = new X86Writer(cw, { pc: code });
+                w.putU8(pushOp);                               // push <thisReg>
+                w.putBytes([thisOp, 0, 0, 0, 0]);              // mov <thisReg>, thisAddr (patch +2)
+                w.putBytes([0xB8, 0, 0, 0, 0]);                // mov eax, clumpAddr      (patch +7)
+                w.putU8(0xE8);                                 // call rel32 (opcode @+11, operand @+12..15)
+                const rel = targetAddr.sub(code.add(16)).toInt32();  // rel32 is relative to the NEXT insn (@+16)
+                w.putBytes([rel & 0xff, (rel >>> 8) & 0xff, (rel >>> 16) & 0xff, (rel >>> 24) & 0xff]);
+                w.putU8(0x58 + REGNUM[thisReg]);               // pop <thisReg>
+                w.putU8(0xC3);                                 // ret
+                w.flush();
+            });
+            code.add(2).writeU32(thisAddr >>> 0);              // this in the seeded reg
+            code.add(7).writeU32(clumpAddr >>> 0);             // clump (shared) in EAX
+            return code;
+        }
+        const trampO = buildRegThisTramp(TARGET_ADDR, parseInt(thisO.toString(), 16) >>> 0);
+        const trampR = buildRegThisTramp(reimplAddr,  parseInt(thisR.toString(), 16) >>> 0);
+        const FnO = new NativeFunction(trampO, 'void', [], 'mscdecl');
+        const FnR = new NativeFunction(trampR, 'void', [], 'mscdecl');
+
+        function fp(p) {
+            let s = '';
+            for (let k = 0; k < structSize; k += 4) {
+                s += ('00000000' + (p.add(k).readU32() >>> 0).toString(16)).slice(-8);
+            }
+            return '0x' + s;
+        }
+
+        try {
+            for (let i = 0; i < CONFIG.tests.length; i++) {
+                const t = CONFIG.tests[i] || {};
+                HANDLE_BASE = (t.handle_base != null ? t.handle_base : (0x1000 + i * 0x100)) >>> 0;
+                const frame = (t.clump_frame != null ? t.clump_frame : (0x3000 + i)) >>> 0;
+                clumpBuf.add(4).writeU32(frame);               // *(clump+4) frame sentinel
+                for (let k = 0; k < structSize; k += 4) { thisO.add(k).writeU32(0); thisR.add(k).writeU32(0); }
+                let origV = null, reimV = null, errO = null, errR = null;
+                try { FnO(); origV = fp(thisO); } catch (e) { errO = e.message; }
+                try { FnR(); reimV = fp(thisR); } catch (e) { errR = e.message; }
+                results.push({ idx: i, input: ('base=0x' + HANDLE_BASE.toString(16) + ' frame=0x' + frame.toString(16)),
+                               original: origV, reimpl: reimV,
+                               match: (origV !== null && reimV !== null && origV === reimV),
+                               err_original: errO, err_reimpl: errR });
+            }
+        } finally {
+            for (const a of filled) Interceptor.revert(a);
+            Interceptor.flush();
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── vec3_lerp (promote-round-22 harness-ext, SWEEP-CRITICAL) ─────────────
     // For pure vec3 math leaves: void fn(float* out3, float* a3, float* b3,
     // float t) — writes a 3-float result computed from two input vec3s and a
