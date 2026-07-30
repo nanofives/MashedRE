@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-29T12:00:00Z",
+  "updatedAt": "2026-07-29T23:37:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -32,12 +32,12 @@
         },
         {
           "label": "C2",
-          "value": 4030,
+          "value": 4029,
           "kind": "number"
         },
         {
           "label": "C3",
-          "value": 853,
+          "value": 854,
           "kind": "number"
         },
         {
@@ -48,7 +48,7 @@
       ]
     },
     {
-      "heading": "Current branch — U-9025 recharacterise + reg-ABI defects",
+      "heading": "Current work — A/B lane (U-9025 defects closed)",
       "fields": [
         {
           "label": "Branch",
@@ -56,19 +56,20 @@
           "kind": "text"
         },
         {
-          "label": "U-9025 root cause",
-          "value": "AudioThreadDescInit (0x005aef00) declared void; original returns param_1 in EAX and callers TEST it — audio/stream worker thread never spawned, GUI thread hangs on INFINITE wait. Fixed in port; pending re-classify with return-value evidence.",
+          "label": "Active: A/B mutator testing",
+          "value": "Snapshot/restore lane; 142 of 1446 mutators reached C3 (9.8%); insertion-arm segment coverage confirmed via bisect",
           "kind": "text"
         },
         {
-          "label": "Also fixed this branch",
+          "label": "U-9025 resolution",
+          "value": "AudioThreadDescInit return-value fix verified; 4 reg-ABI defects closed; x87 stack false-RED mitigated; all run_diff_scenario_batch hooks verified",
+          "kind": "text"
+        },
+        {
+          "label": "Diag notice",
           "value": [
-            "4 register-ABI/encoding hook defects (wrong-operand-width + implicit-EAX-return drops)",
-            "3 runtime crashers + 1 hang found by first menu-navigated race",
-            "x87 dirty-stack false-RED — CW-preserving scrub between hooks, A/B proven",
-            "many-hooks-per-boot scenario runner (run_diff_scenario_batch.py): state reuse confirmed, 48 calls/1.2s",
-            "scenario-batch: stop reporting both-sides-identical crashes as RED",
-            "SpriteSlotDispatch (0x0042fab0) C2→C3, tracker drift corrected"
+            "verify/ scratch: uncommitted CLAUDE.md, build.bat, asi_sources.rsp (manual review needed)",
+            "Backup: 28 days old (refresh recommended)"
           ],
           "kind": "list"
         }

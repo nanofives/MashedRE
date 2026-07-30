@@ -306,3 +306,7 @@ Loaded automatically from `.claude\skills\`:
 - No CI/automation until a second contributor appears.
 - No `reversiblebugfixes`-style framework — fork-fix as needed.
 - No backwards-compatibility shims when changing internal APIs; this is a solo greenfield codebase.
+
+
+## Happy info pane
+Keep `.happy/project-info.json` (the Happy right-sidebar Project Info pane) current: whenever a standing, glance-worthy fact for this folder changes (status, counts, key dates/names), proactively overwrite that JSON and bump `updatedAt`. Shape: `{ title, updatedAt, sections:[{ heading, fields:[{ label, value, kind }] }] }`, kind = text|number|date|list.
