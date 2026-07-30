@@ -18382,6 +18382,47 @@ HOOKS = {
         ],
     },
 
+    # 0x0041c320  ParticleEmitterCtorC — 24-atomic Class C. Same reg_this_callee_stub
+    #   handler as ctor_a; offsets differ (table this+0x80, clump 0x100, frame 0x104),
+    #   so struct_size 0x110 covers 0x104+4. Evidence portcap_0x0041c320.md.
+    'particle_emitter_ctor_c': {
+        'rva': 0x0041c320, 'export': 'ParticleEmitterCtorC',
+        'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'reg_this_callee_stub', 'lut_root_delta': 0, 'scenario': 'race',
+        'scenario_sentinel': 0x007d73a8,
+        'this_reg': 'ebx', 'struct_size': 0x110, 'atom_count': 24,
+        'callee_fill': 0x004b3fc0, 'callee_index': 0x004b5190, 'callee_zero': 0x004b6520,
+        'path1_tests': [
+            {'clump_frame': 0x3000, 'handle_base': 0x1000},
+            {'clump_frame': 0x3001, 'handle_base': 0x1100},
+            {'clump_frame': 0x3002, 'handle_base': 0x1200},
+        ],
+        'path2_tests': [
+            {'clump_frame': 0x4000, 'handle_base': 0x2000},
+        ],
+    },
+
+    # 0x0041cd20  ParticleEmitterCtorD — 34-atomic Class D. Adds a 4th callee
+    #   FUN_004b5260 (colour apply) -> callee_color stub; offsets table this+0xb0,
+    #   clump 0x150, frame 0x154, so struct_size 0x160. Evidence portcap_0x0041cd20.md.
+    'particle_emitter_ctor_d': {
+        'rva': 0x0041cd20, 'export': 'ParticleEmitterCtorD',
+        'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'reg_this_callee_stub', 'lut_root_delta': 0, 'scenario': 'race',
+        'scenario_sentinel': 0x007d73a8,
+        'this_reg': 'ebx', 'struct_size': 0x160, 'atom_count': 34,
+        'callee_fill': 0x004b3fc0, 'callee_index': 0x004b5190, 'callee_zero': 0x004b6520,
+        'callee_color': 0x004b5260,
+        'path1_tests': [
+            {'clump_frame': 0x3000, 'handle_base': 0x1000},
+            {'clump_frame': 0x3001, 'handle_base': 0x1100},
+            {'clump_frame': 0x3002, 'handle_base': 0x1200},
+        ],
+        'path2_tests': [
+            {'clump_frame': 0x4000, 'handle_base': 0x2000},
+        ],
+    },
+
     # 0x004f3cb0  PtrArrayFindLastIndex(int* c, int value) — reverse linear
     #   search over c = [dataPtr, count]; returns last index of value, count-1
     #   for a non-positive count, -1 when not found. Fully synthetic (the

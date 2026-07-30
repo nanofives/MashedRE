@@ -75,3 +75,77 @@ extern "C" __declspec(dllexport) __declspec(naked) void ParticleEmitterCtorA() {
     }
 }
 RH_ScopedInstall(ParticleEmitterCtorA, 0x0041ad60);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 0x0041c320  ParticleEmitterCtorC(this=EBX, clump=EAX) — 24-atomic Class C.
+//
+// Same template as 0x0041ad60 with shifted offsets (portcap_0x0041c320.md):
+//   handle table at this+0x80 (store this[0x80+idx*4]); clump at this+0x100;
+//   frame *(clump+4) at this+0x104; loop count 24 (CMP ESI,0x18);
+//   FUN_004b6520(this+0x80, 0x80) zero-fills the table region.
+// ─────────────────────────────────────────────────────────────────────────────
+namespace {
+void __cdecl ParticleEmitterCtorC_impl(std::uint8_t* self, std::uint32_t clump) {
+    std::uint32_t buf[24];                                       // [ESP+8] buffer
+    reinterpret_cast<fn_fill_t>(0x004b3fc0)(clump, buf);         // CALL 0x004b3fc0
+    *reinterpret_cast<std::uint32_t*>(self + 0x100) = clump;     // [EBX+0x100] = clump
+    *reinterpret_cast<std::uint32_t*>(self + 0x104) =
+        reinterpret_cast<std::uint32_t*>(clump)[1];              // [EBX+0x104] = *(clump+4)
+    reinterpret_cast<fn_zero_t>(0x004b6520)(self + 0x80, 0x80);  // CALL 0x004b6520(this+0x80,0x80)
+    for (int i = 0; i < 0x18; ++i) {                            // 24 iterations
+        std::uint32_t handle = buf[i];                          // MOV EDI,[ESP+ESI*4+8]
+        int idx = reinterpret_cast<fn_index_t>(0x004b5190)(handle, 0, 0);      // CALL 0x004b5190
+        *reinterpret_cast<std::uint32_t*>(self + 0x80 + idx * 4) = handle;     // [EBX+EAX*4+0x80] = EDI
+    }
+}
+}  // namespace
+extern "C" __declspec(dllexport) __declspec(naked) void ParticleEmitterCtorC() {
+    __asm {
+        push eax
+        push ebx
+        call ParticleEmitterCtorC_impl
+        add  esp, 8
+        ret
+    }
+}
+RH_ScopedInstall(ParticleEmitterCtorC, 0x0041c320);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 0x0041cd20  ParticleEmitterCtorD(this=EBX, clump=EAX) — 34-atomic Class D.
+//
+// Same template plus a colour pass (portcap_0x0041cd20.md):
+//   handle table at this+0xb0 (store this[0xb0+idx*4]); clump at this+0x150;
+//   frame at this+0x154; loop count 34 (CMP ESI,0x22);
+//   FUN_004b6520(this+0xb0, 0xa0) zero-fills; after the loop,
+//   FUN_004b5260(*(this+0xb8), &color[4]) with color = {0x32,0x32,0x32,0xff}
+//   applies grey to the master atomic.
+// ─────────────────────────────────────────────────────────────────────────────
+namespace {
+using fn_color_t = void(__cdecl*)(std::uint32_t atomic, const void* colorPtr);
+void __cdecl ParticleEmitterCtorD_impl(std::uint8_t* self, std::uint32_t clump) {
+    std::uint8_t  color[4] = { 0x32, 0x32, 0x32, 0xff };         // R+4..R+7 color buffer
+    std::uint32_t buf[34];                                       // [ESP+0xc] buffer
+    reinterpret_cast<fn_fill_t>(0x004b3fc0)(clump, buf);         // CALL 0x004b3fc0
+    *reinterpret_cast<std::uint32_t*>(self + 0x150) = clump;     // [EBX+0x150] = clump
+    *reinterpret_cast<std::uint32_t*>(self + 0x154) =
+        reinterpret_cast<std::uint32_t*>(clump)[1];              // [EBX+0x154] = *(clump+4)
+    reinterpret_cast<fn_zero_t>(0x004b6520)(self + 0xb0, 0xa0);  // CALL 0x004b6520(this+0xb0,0xa0)
+    for (int i = 0; i < 0x22; ++i) {                            // 34 iterations
+        std::uint32_t handle = buf[i];
+        int idx = reinterpret_cast<fn_index_t>(0x004b5190)(handle, 0, 0);      // CALL 0x004b5190
+        *reinterpret_cast<std::uint32_t*>(self + 0xb0 + idx * 4) = handle;     // [EBX+EAX*4+0xb0] = EDI
+    }
+    reinterpret_cast<fn_color_t>(0x004b5260)(                    // CALL 0x004b5260
+        *reinterpret_cast<std::uint32_t*>(self + 0xb8), color);  //   (*(this+0xb8), &color)
+}
+}  // namespace
+extern "C" __declspec(dllexport) __declspec(naked) void ParticleEmitterCtorD() {
+    __asm {
+        push eax
+        push ebx
+        call ParticleEmitterCtorD_impl
+        add  esp, 8
+        ret
+    }
+}
+RH_ScopedInstall(ParticleEmitterCtorD, 0x0041cd20);
