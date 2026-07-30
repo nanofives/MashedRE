@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-30T13:15:00Z",
+  "updatedAt": "2026-07-30T13:45:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -32,12 +32,12 @@
         },
         {
           "label": "C2",
-          "value": 4028,
+          "value": 4026,
           "kind": "number"
         },
         {
           "label": "C3",
-          "value": 858,
+          "value": 860,
           "kind": "number"
         },
         {
@@ -76,21 +76,21 @@
       ]
     },
     {
-      "heading": "Orchestrator lane (iter6, 2026-07-30)",
+      "heading": "Orchestrator lane (iter7, 2026-07-30)",
       "fields": [
         {
-          "label": "Iter6: reg_this_callee_stub handler BUILT + first promotion",
-          "value": "New A/B handler that Interceptor.replaces live-RW CALLEES (first of its kind). ParticleEmitterCtorA 0x0041ad60 C2->C3, GREEN 3/3 non-degenerate. Commit b02421dd. SWEEP-CRITICAL (diff_template.js + run_diff.py + ARG_TYPES.md).",
+          "label": "Render ctor family — 3 of 3 EBX ctors now C3",
+          "value": "reg_this_callee_stub handler proven (iter6) + generalised (iter7): ParticleEmitterCtorA/C/D (0x0041ad60/c320/cd20, 17/24/34-atomic) all C2->C3, GREEN 3/3 non-degenerate. Commits b02421dd, fcefa499.",
           "kind": "text"
         },
         {
           "label": "Next",
-          "value": "Generalise handler to c320/cd20 (24/34-atomic), EAX-RpClumpDestroy destructors (b440/beb0/cb00), ESI-bit-gated dispatchers (ae60/af00) — spec in reg_this_callee_stub_handler_spec.md. Also: mutator_sweep_85 needs a ~3-chunk re-brief (85-RVA timed out).",
+          "value": "Same handler unlocks the rest of the family: EAX-RpClumpDestroy destructors (0x0041b440/beb0/cb00) + ESI-bit-gated dispatchers (0x0041ae60/af00). Destructors likely need a simpler call-observe variant. Portcaps for those NOT yet captured. Also: mutator_sweep_85 needs ~3-chunk re-brief.",
           "kind": "text"
         },
         {
           "label": "Ledger",
-          "value": "7 promoted, 1 candidate (mutator_sweep_85)",
+          "value": "9 promoted, 1 candidate (mutator_sweep_85)",
           "kind": "text"
         }
       ]
