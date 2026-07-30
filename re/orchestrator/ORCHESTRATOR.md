@@ -5,10 +5,13 @@ decide what each tier should do, read what the children produced, author from
 briefs, and decide what gets promoted. The two tiers do the heavy lifting; you
 do the thinking and hold the state.
 
-**Run me iteratively.** Each invocation does ONE bounded batch, persists every
-step immediately, and ends with a resume kickoff. Running out of tokens never
-loses work — the ledger (`state.json`) is always current because every
-transition is written the moment it happens.
+**Run me in cycles.** Each invocation works a **cycle budget** (default 4 cycles
+— see the `orchestrate` skill, which is authoritative on when to stop), persists
+every step immediately, and ends with a resume kickoff. One cycle = one pass of
+the priority ladder below. Completing a cycle is not a reason to stop; only a
+hard stop is. Running out of tokens never loses work — the ledger
+(`state.json`) is always current because every transition is written the moment
+it happens.
 
 ## The two tiers you command
 
@@ -22,14 +25,22 @@ exec-pipeline (one at a time; it holds a lock so it can't collide with a manual
 Frida run). **Never** send writes/builds/MCP to the read-fleet — account2 hangs
 on them.
 
-## Per-iteration algorithm
+## Per-cycle algorithm
 
 Spend tokens on steps 2 and 5 (judgment). Steps 1, 3 are dispatch; step 0/6 are
 cheap bookkeeping via `orch.ps1` — do NOT read raw child files into your context
 when the helper or a manifest already summarizes them (token economy).
 
+Steps 0–6 are ONE cycle. Step 6 loops back to step 0 until the budget is spent.
+
 0. **Orient** — `pwsh -File re/orchestrator/orch.ps1 status` (and `next`). This is
    your whole situational picture; don't re-read source/plates to reconstruct it.
+0.5 **Refill if the ladder is empty** — a thin ledger is the #1 reason a run ends
+   after one cycle: 12 items, 10 already `promoted`, and the ladder drains in a
+   single pass. Pull the next bucket from `re/PROMOTION_QUEUE.md`,
+   `re/analysis/plans/`, or an existing `candidate` note, and `orch.ps1 set` the
+   RVAs in as `candidate` items. Load buckets of **≥12** — the read-fleet is
+   off-quota, so under-loading it costs throughput and saves nothing.
 1. **Brief** (do FIRST, it's off-quota and frees wall-clock) — for `candidate`
    items needing analysis, write a read-fleet `queue.json` (buckets of ~12) and
    launch `read_fleet.ps1` in the background. Launch it BEFORE any long local
@@ -47,11 +58,13 @@ when the helper or a manifest already summarizes them (token economy).
    the state_gate resolves); RED → `set <id> blocked "<fault>"` and investigate.
 5. **Promote** (deliberate, your judgment) — for `verified` items, run the
    `re-classify` skill (it gates on evidence) and commit. `set <id> promoted`.
-6. **Budget stop** — when you have completed ONE full brief→author→verify cycle,
-   OR your context is getting heavy, STOP. Run `orch.ps1 status`, then write a
-   ready-to-paste kickoff naming exactly what is pending and what the next
-   iteration should pick up. Do not push past this to "finish everything" —
-   iterating is the design.
+6. **Next cycle, or stop** — decrement the cycle budget. Cycles left and no hard
+   stop? Go back to step 1 now, without checking in. Budget spent or hard stop
+   (context heavy / stop-and-ask fired / two cycles with no transition / ledger
+   dry and unrefillable)? Run `orch.ps1 status`, then write a ready-to-paste
+   kickoff naming what is pending and which hard stop ended the run.
+   If the ladder is empty, **refill it** (step 0.5 below) — that is a cycle's
+   work, not a reason to stop.
 
 ## How to read each tier's output (don't over-read)
 
@@ -146,8 +159,9 @@ multiplier."
 
 ## Budget discipline (the whole point)
 
-- One bounded batch per iteration (≈4–8 hooks, or one read-fleet bucket + its
-  authoring). Persist after every `set`.
+- One bounded batch per **cycle** (≈4–8 hooks, or one read-fleet bucket + its
+  authoring); several cycles per run. Persist after every `set` — that is what
+  makes a multi-cycle run safe to have killed at any point.
 - Delegate every readable leg to the read-fleet — it costs your quota nothing
   and is the #1 cost lever.
 - Prefer the manifest/`orch.ps1 status` over raw files; a 3 KB summary in your
@@ -157,11 +171,13 @@ multiplier."
 ## Kickoff template (paste at end of every iteration)
 
 ```
-Orchestrator iteration N+1. Read re/orchestrator/ORCHESTRATOR.md, run
+Orchestrator run N+1, cycle budget 4. Read re/orchestrator/ORCHESTRATOR.md, run
 `pwsh -File re/orchestrator/orch.ps1 status`, then:
 - PROMOTE: <verified ids> via re-classify + commit.
 - VERIFY: <authored ids> via exec_pipeline.
 - AUTHOR: <briefed ids> from runs/<ts>/<id>.md.
 - BRIEF: next read-fleet bucket = <candidate ids / next 12 RVAs>.
-Do one bounded batch, persist each step with orch.ps1 set, then stop + kickoff.
+- REFILL from <queue/plan file> if the ladder empties.
+Persist each step with orch.ps1 set. Keep cycling until the budget is spent or a
+hard stop fires; then status + kickoff.
 ```

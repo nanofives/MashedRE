@@ -1,0 +1,285 @@
+{
+  "source": "re/analysis/plans/state_eligible_CLEAN.txt",
+  "filters": "hooks.csv confidence==C2; library bands dropped",
+  "pool_c2_after_filters": 1496,
+  "skipped_library_band": 0,
+  "bucket_size": 12,
+  "buckets": [
+    {
+      "id": "state_render_b1",
+      "subsystem": "render",
+      "count": 12,
+      "size_range": [
+        3,
+        25
+      ],
+      "rvas": [
+        "0x004b6b00",
+        "0x004cbb50",
+        "0x00454c00",
+        "0x0041d6d0",
+        "0x0049a730",
+        "0x004b4120",
+        "0x004d8470",
+        "0x00421690",
+        "0x00454f80",
+        "0x00491780",
+        "0x004921b0",
+        "0x004cfe20"
+      ]
+    },
+    {
+      "id": "state_render_b2",
+      "subsystem": "render",
+      "count": 12,
+      "size_range": [
+        25,
+        34
+      ],
+      "rvas": [
+        "0x004d8530",
+        "0x00421980",
+        "0x004c7600",
+        "0x004cbb00",
+        "0x0047b230",
+        "0x004b7fd0",
+        "0x004b8080",
+        "0x004c0ed0",
+        "0x004d5550",
+        "0x00474f30",
+        "0x00496970",
+        "0x004cbb20"
+      ]
+    },
+    {
+      "id": "state_render_b3",
+      "subsystem": "render",
+      "count": 12,
+      "size_range": [
+        34,
+        38
+      ],
+      "rvas": [
+        "0x004d8770",
+        "0x00418db0",
+        "0x0047b200",
+        "0x004c40b0",
+        "0x004c5770",
+        "0x004c5dd0",
+        "0x0047acd0",
+        "0x0047ad00",
+        "0x004c7620",
+        "0x004c79f0",
+        "0x004cb2c0",
+        "0x00412100"
+      ]
+    },
+    {
+      "id": "state_audio_b1",
+      "subsystem": "audio",
+      "count": 12,
+      "size_range": [
+        15,
+        33
+      ],
+      "rvas": [
+        "0x005b8080",
+        "0x005b1080",
+        "0x005aaff0",
+        "0x005ae380",
+        "0x005a6c90",
+        "0x005ad8b0",
+        "0x005bcd80",
+        "0x005b1160",
+        "0x00421960",
+        "0x005bfb90",
+        "0x005bfa20",
+        "0x005aeed0"
+      ]
+    },
+    {
+      "id": "state_audio_b2",
+      "subsystem": "audio",
+      "count": 12,
+      "size_range": [
+        34,
+        42
+      ],
+      "rvas": [
+        "0x0045c820",
+        "0x005af200",
+        "0x005af7a0",
+        "0x005a60e0",
+        "0x005b10a0",
+        "0x005b10e0",
+        "0x005a9de0",
+        "0x005ab010",
+        "0x005b3550",
+        "0x0045da60",
+        "0x00550950",
+        "0x005a5d60"
+      ]
+    },
+    {
+      "id": "state_gameplay_b1",
+      "subsystem": "gameplay",
+      "count": 12,
+      "size_range": [
+        17,
+        38
+      ],
+      "rvas": [
+        "0x00407580",
+        "0x00456ce0",
+        "0x00471430",
+        "0x0047cde0",
+        "0x0047ce20",
+        "0x00456d00",
+        "0x00451cc0",
+        "0x00407550",
+        "0x0041f290",
+        "0x00451730",
+        "0x004722e0",
+        "0x00451060"
+      ]
+    },
+    {
+      "id": "state_particle_b1",
+      "subsystem": "particle",
+      "count": 12,
+      "size_range": [
+        10,
+        39
+      ],
+      "rvas": [
+        "0x0049c6d0",
+        "0x0048bc10",
+        "0x0049f210",
+        "0x0049d0a0",
+        "0x0049c770",
+        "0x0049c750",
+        "0x0049f2e0",
+        "0x0048fef0",
+        "0x0048bbe0",
+        "0x0049ff30",
+        "0x0048fce0",
+        "0x0048fd10"
+      ]
+    },
+    {
+      "id": "state_boot_b1",
+      "subsystem": "boot",
+      "count": 12,
+      "size_range": [
+        13,
+        27
+      ],
+      "rvas": [
+        "0x0041a3d0",
+        "0x0041c2c0",
+        "0x0041da80",
+        "0x0041de70",
+        "0x00425ed0",
+        "0x00499cc0",
+        "0x004a45fb",
+        "0x004a77eb",
+        "0x004a2c2f",
+        "0x00403640",
+        "0x004aa3e4",
+        "0x00496ce0"
+      ]
+    },
+    {
+      "id": "state_util_b1",
+      "subsystem": "util",
+      "count": 12,
+      "size_range": [
+        11,
+        51
+      ],
+      "rvas": [
+        "0x00495110",
+        "0x004af32d",
+        "0x004af31a",
+        "0x0052ddc0",
+        "0x004292d0",
+        "0x0045d430",
+        "0x00534920",
+        "0x0049d240",
+        "0x0052df40",
+        "0x0045dfc0",
+        "0x0048f740",
+        "0x0041f1e0"
+      ]
+    },
+    {
+      "id": "state_vehicle_b1",
+      "subsystem": "vehicle",
+      "count": 12,
+      "size_range": [
+        23,
+        87
+      ],
+      "rvas": [
+        "0x004039c0",
+        "0x00483a40",
+        "0x00485380",
+        "0x0055c810",
+        "0x00482900",
+        "0x004b5190",
+        "0x00485420",
+        "0x00411530",
+        "0x00418de0",
+        "0x00484060",
+        "0x0055c4f0",
+        "0x00411350"
+      ]
+    },
+    {
+      "id": "state_hud_b1",
+      "subsystem": "hud",
+      "count": 12,
+      "size_range": [
+        13,
+        73
+      ],
+      "rvas": [
+        "0x00404820",
+        "0x0041e850",
+        "0x005571c0",
+        "0x00557220",
+        "0x0041c090",
+        "0x005571e0",
+        "0x0041b4d0",
+        "0x00556ce0",
+        "0x0041d830",
+        "0x00413f50",
+        "0x00556e40",
+        "0x00556d20"
+      ]
+    },
+    {
+      "id": "state_frontend_b1",
+      "subsystem": "frontend",
+      "count": 12,
+      "size_range": [
+        32,
+        94
+      ],
+      "rvas": [
+        "0x00494460",
+        "0x004c1be0",
+        "0x00495080",
+        "0x00425b90",
+        "0x00430b30",
+        "0x00494a80",
+        "0x00497470",
+        "0x00497b10",
+        "0x004391b0",
+        "0x004a2b60",
+        "0x00422470",
+        "0x00426b40"
+      ]
+    }
+  ]
+}

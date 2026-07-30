@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-30T14:10:00Z",
+  "updatedAt": "2026-07-30T20:30:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -90,7 +90,17 @@
         },
         {
           "label": "Ledger",
-          "value": "12 promoted, 1 candidate (mutator_sweep_85 — needs ~3-chunk re-brief)",
+          "value": "24 items: 10 promoted, 1 authored (argtype_render_backlog, awaiting verify), 13 candidate",
+          "kind": "text"
+        },
+        {
+          "label": "Refill 2026-07-30",
+          "value": "12 new candidate buckets x 12 RVAs (144) cut from state_eligible_CLEAN.txt, filtered to confidence==C2 via hooks.csv; generator scripts/orch_refill_buckets.py, lists in re/orchestrator/candidate_buckets.json. Pool depth remaining: 1496 C2 state-lane RVAs.",
+          "kind": "text"
+        },
+        {
+          "label": "Cycle budget",
+          "value": "orchestrate skill now runs 4 cycles per invocation (was 1), overridable via /orchestrate N; 4 hard stops defined",
           "kind": "text"
         }
       ]
