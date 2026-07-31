@@ -10,6 +10,25 @@ A registry entry naming an arg_type with no handler in EITHER harness
 (and not a recognized marker) is FATAL at run_diff pre-flight (see
 `worker-invented arg_types` feedback memory).
 
+**A `note` describes the handler's MECHANISM, not the function it was
+written for — but only where one has been authored.** Notes come from an
+explicit `// MECHANISM: ...` line above the dispatch when present, and
+otherwise fall back to scraping the 3 comment lines above it — an arbitrary
+window that can land mid-sentence or on a separator.
+
+**A scraped note is not evidence that no handler fits your shape.** Six
+consecutive orchestrator runs concluded NEEDS_NEW_HANDLER from these blurbs
+and every one was wrong: `eax_ecx_insert` reads as "cross-link insert", yet
+its trampoline is exactly `mov eax,bufA; mov ecx,bufC; jmp target`. Before
+writing a handler, READ THE IMPLEMENTATION, and prefer an additive defaulted
+config field over a new handler (precedent: `stub_at`, `null_args`,
+`this_reg:'stack'`, `key_off`). Writeup:
+`re/analysis/needs_new_handler_rescreen_20260731.md`.
+
+When you author or touch a handler, add a `// MECHANISM:` line giving (1) the
+call shape and how args are delivered, (2) what is seeded and observed, (3)
+the config keys, (4) anything making it apply more broadly than its name says.
+
 | arg_type | diff_template.js line | registry uses | note |
 |---|---|---|---|
 | `none` | 213 | 145 |  |

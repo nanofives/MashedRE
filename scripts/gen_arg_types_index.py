@@ -31,6 +31,14 @@ OUT = ROOT / "re" / "frida" / "ARG_TYPES.md"
 HANDLER_RE = re.compile(r"CONFIG\.arg_type\s*===?\s*['\"]([a-zA-Z0-9_]+)['\"]")
 REGISTRY_RE = re.compile(r"['\"]arg_type['\"]\s*:\s*['\"]([a-zA-Z0-9_]+)['\"]")
 EW_SET_RE = re.compile(r"PURE_LEAF_ARGTYPES\s*=\s*\{(.*?)\n\}", re.S)
+
+# `// MECHANISM: ...` opt-in marker, preferred over the positional 3-line scrape.
+# Continuation lines are the plain `//` lines BELOW it, up to the dispatch.
+MECHANISM_RE = re.compile(r"^MECHANISM\s*:\s*", re.I)
+# How far above a dispatch to look for the marker. Handler comment blocks in
+# diff_template.js run to a few dozen lines; the search stops at the first
+# non-comment line anyway, so this is only a runaway guard.
+MECHANISM_LOOKBACK = 60
 EW_NAME_RE = re.compile(r"'([a-zA-Z0-9_]+)'")
 
 # Marker arg_types: deliberate "cannot be synthetically diffed" sentinels.
@@ -62,19 +70,62 @@ def main() -> int:
         names = [m.group(1) for m in HANDLER_RE.finditer(line)]
         if not names:
             continue
-        # scrape up to 3 consecutive // comment lines immediately above the dispatch
-        note_parts: list[str] = []
-        j = i - 2  # 0-based index of the line above
-        while j >= 0 and len(note_parts) < 3:
-            stripped = lines[j].strip()
-            if stripped.startswith("//"):
-                note_parts.insert(0, stripped.lstrip("/ ").strip())
-                j -= 1
-            else:
+        # PREFERRED: an explicit `// MECHANISM: ...` line in the comment block above
+        # the dispatch, continued across following `//` lines until a blank comment
+        # or the dispatch itself.
+        #
+        # WHY THIS EXISTS. The 3-line scrape below takes an arbitrary window, so it
+        # regularly lands mid-sentence (`ptr_arg_int_get` began "is left Queued,
+        # never falsely GREEN") or on a decorative separator (`float_scalar` showed
+        # a run of box-drawing characters). Even when it reads cleanly it usually
+        # describes the handler's ORIGINAL USE CASE rather than its MECHANISM, and a
+        # screen asking "does a handler exist for this shape?" answers from these
+        # blurbs. Six consecutive orchestrator runs returned NEEDS_NEW_HANDLER and
+        # every one was wrong; `eax_ecx_insert` reads as "cross-link insert" so a
+        # screen hunting for "store EAX into *ECX" never matched it, though that is
+        # exactly its trampoline. See re/analysis/needs_new_handler_rescreen_20260731.md.
+        note = ""
+        block_start = max(0, i - 1 - MECHANISM_LOOKBACK)
+        k = i - 2  # 0-based index of the line above the dispatch
+        tail: list[str] = []   # continuation lines BELOW the MECHANISM: line
+        found_mech = False
+        while k >= block_start:
+            stripped = lines[k].strip()
+            if not stripped.startswith("//"):
+                break          # left the comment block without finding a marker
+            body = stripped.lstrip("/ ").rstrip()
+            if MECHANISM_RE.match(body):
+                tail.insert(0, MECHANISM_RE.sub("", body).strip())
+                found_mech = True
                 break
-        note = " ".join(note_parts)
-        if len(note) > 160:
-            note = note[:157] + "..."
+            tail.insert(0, body)
+            k -= 1
+        # Only a real marker counts. Without this flag, walking off the top of the
+        # comment block would hand back the whole accumulated blob as if it were a
+        # MECHANISM line — an unbounded version of the very scrape this replaces.
+        if found_mech:
+            note = " ".join(p for p in tail if p).strip()
+
+        # FALLBACK: up to 3 consecutive // comment lines immediately above the dispatch.
+        if not note:
+            note_parts: list[str] = []
+            j = i - 2  # 0-based index of the line above
+            while j >= 0 and len(note_parts) < 3:
+                stripped = lines[j].strip()
+                if stripped.startswith("//"):
+                    note_parts.insert(0, stripped.lstrip("/ ").strip())
+                    j -= 1
+                else:
+                    break
+            note = " ".join(note_parts)
+        # A MECHANISM line is written to be read in full — it carries the call shape,
+        # seed/observe behaviour and config keys, and its "applies more broadly than
+        # the name suggests" clause lands at the END, which is exactly what a screen
+        # needs and exactly what a 160-char cut would remove. Scraped fallback text
+        # stays short: it is an arbitrary window, so extra length adds no signal.
+        limit = 420 if found_mech else 160
+        if len(note) > limit:
+            note = note[: limit - 3] + "..."
         for name in names:
             if name not in handlers:
                 handlers[name] = (i, note)
@@ -118,6 +169,25 @@ def main() -> int:
         "A registry entry naming an arg_type with no handler in EITHER harness",
         "(and not a recognized marker) is FATAL at run_diff pre-flight (see",
         "`worker-invented arg_types` feedback memory).",
+        "",
+        "**A `note` describes the handler's MECHANISM, not the function it was",
+        "written for — but only where one has been authored.** Notes come from an",
+        "explicit `// MECHANISM: ...` line above the dispatch when present, and",
+        "otherwise fall back to scraping the 3 comment lines above it — an arbitrary",
+        "window that can land mid-sentence or on a separator.",
+        "",
+        "**A scraped note is not evidence that no handler fits your shape.** Six",
+        "consecutive orchestrator runs concluded NEEDS_NEW_HANDLER from these blurbs",
+        "and every one was wrong: `eax_ecx_insert` reads as \"cross-link insert\", yet",
+        "its trampoline is exactly `mov eax,bufA; mov ecx,bufC; jmp target`. Before",
+        "writing a handler, READ THE IMPLEMENTATION, and prefer an additive defaulted",
+        "config field over a new handler (precedent: `stub_at`, `null_args`,",
+        "`this_reg:'stack'`, `key_off`). Writeup:",
+        "`re/analysis/needs_new_handler_rescreen_20260731.md`.",
+        "",
+        "When you author or touch a handler, add a `// MECHANISM:` line giving (1) the",
+        "call shape and how args are delivered, (2) what is seeded and observed, (3)",
+        "the config keys, (4) anything making it apply more broadly than its name says.",
         "",
         "| arg_type | diff_template.js line | registry uses | note |",
         "|---|---|---|---|",
