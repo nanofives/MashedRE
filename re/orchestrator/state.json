@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-07-31T00:32:23.2584063Z",
+  "updated": "2026-07-31T00:38:41.0255444Z",
   "note": "Cross-tier work ledger for the Fable-5 orchestrator. Every item flows: candidate -> briefed -> authored -> verified -> promoted (or -> blocked). orch.ps1 is the ONLY writer during a run (use `set`), so transitions stay durable across iterations — a run cut off for budget never loses state. Stages: candidate|briefed|authored|verified|promoted|blocked.",
   "items": [
     {
@@ -358,21 +358,28 @@
       "rva": "0x005aeed0",
       "kind": "state_getter",
       "stage": "blocked",
-      "note": "iter11 cycle4: READY per brief (bool FUN_005aeed0(undefined4* p) = WaitForSingleObject((HANDLE)*p, 0) != 0x102; SAFE non-blocking poll; caller 0x005ab620 C2; arg_type ptr_arg_int_get). AUTHORING HELD — DEGENERACY RISK, not a safety risk: ptr_arg_int_get seeds the buffer with arbitrary ints, so every seed is an invalid HANDLE, WaitForSingleObject returns WAIT_FAILED (0xffffffff) != 0x102, and EVERY test returns 1. That is a bit-identical GREEN that proves nothing (INCONCLUSIVE-DEGENERATE, cf. 0x004c1a00). To make it evidential the seed must carry a REAL handle plus at least one signalled/unsignalled pair so both branches of the 0x102 compare are exercised. Needs a scenario-attach seed, not a synthetic one."
+      "note": "DEFERRED BY DIRECTIVE (run 12) - do NOT synthetic-diff this row. It is SAFE and READY on shape (bool FUN_005aeed0(undefined4* p) = WaitForSingleObject((HANDLE)*p,0) != 0x102; caller 0x005ab620 C2), and gate_ranked.tsv now sorts it FIRST of all 102 - but it is DEGENERATE under every synthetic seed: an arbitrary int is an invalid HANDLE, WaitForSingleObject returns WAIT_FAILED (0xffffffff) != 0x102, so all seeds return 1 and a bit-identical GREEN proves nothing (cf. 0x004c1a00). NOTE the new str_arg_int_get handler does NOT help here - iter12 fixed a TERMINATION hazard, which is a different problem from degeneracy. To make this evidential the seed must carry a REAL handle plus at least one signalled/unsignalled pair so BOTH branches of the 0x102 compare execute: a scenario-attach seed, not a synthetic one. Being ranked #1 is a property of the ranking, not a green light."
     },
     {
       "id": "ready_004d8770",
       "rva": "0x004d8770",
       "kind": "state_getter",
-      "stage": "verified",
-      "note": "iter12 cycle2 GREEN 1/1, PREDICTION-CONFIRMED (not bare bit-identity). Evidence log/diff_scenario_batch_rw_string_get_size_aligned.csv: observed returns 4,4,8,12,16,24,32 across the 7 seeds = EXACTLY the values predicted in the registry comment before the run, 6 distinct, match=True on all 7, zero exceptions on either side. Non-degeneracy is therefore demonstrated, not assumed. Path-ran proof: sentinel 0x007d3ff8 POPULATED (0x040e21f8, a live heap ptr - the engine string-fn table root is zero until FUN_004d8570 runs), in-race probe 1710 calls in 1.5s, sentinel unchanged across the hook so no perturbation. FIRST RUN FAILED CORRECTLY: no sentinel -> run_diff_scenario_batch refused to launch ('without a gate a 0-mismatch run proves nothing'); fixed by adding scenario_sentinel 0x007d3ff8 to the registry entry, which is the one live global the target reads. Run dir re/orchestrator/exec_pipeline/runs/iter12_str_b (iter12_str is the aborted no-sentinel run, kept). First use of the new str_arg_int_get handler - the handler is now proven end to end."
+      "stage": "promoted",
+      "note": "C2->C3 COMMITTED cb2ab086 (hooks.csv + CHANGELOG + re-classify transaction). Gate satisfied on every criterion: semantics stated in plate render_6_c1_to_c2_s4/0x004d8770.md, reimpl mashedmod/src/mashed_re/Render/RwString.cpp, build clean, RH_ScopedInstall + runtime-toggleable, callers FUN_004cf4a0 AND FUN_004cf460 both C2 (verified in hooks.csv directly, not just the gate TSV), callee _strlen = named CRT via IDENTIFIED-CALLEE clause. Zero uncertainties (plate: 'None remaining'), zero stubs. Corroboration: hooks.csv row for the OTHER caller 0x004cf460 reads 'RwTextureStreamGetSize; name+mask+0x34+plugin' - independently matches the iVar4+iVar5+0x34+iVar6 sum found in 0x004cf4a0 this cycle. C3 not C4 (hook-bypassed synthetic A/B; C4 needs a canonical-scenario run with the inline-JMP live)."
     },
     {
       "id": "gate_briefs_42",
       "rva": "-",
       "kind": "gate_brief",
-      "stage": "candidate",
-      "note": "iter12 pre-cycle LAUNCHED: gate_b9..b15 = the 42 GATE_PASS rows not yet briefed (102 GATE_PASS - 12 state_boot_b1 - 48 iter11). All 42 plates resolved locally. Queue re/orchestrator/read_fleet/queue_iter12_gate.json -> runs/iter12_gate, MaxConcurrent 4, off-quota. Added --start N to orch_make_brief_queue.py so ids continue at gate_b9 instead of colliding with iter11 gate_b1..b8."
+      "stage": "briefed",
+      "note": "iter12 cycle4: 7/7 GREEN, $4.55 off-quota, 42 rows. Pool-wide totals now 90 of 102 GATE_PASS rows briefed. NEW TOOL scripts/orch_rank_gate.py -> re/orchestrator/gate_ranked.tsv: scrapes all 15 gate_bN.md verdict TSVs and joins harness_safety onto caller_gate_144.tsv, sorted SAFE-then-verdict-then-size. This had to be a SEPARATE script, not a sort key in orch_make_brief_queue.py:192 - safety does not exist at bucket-cutting time, only after the briefs return. TALLY over 102: verdict MUTATOR_LANE=35 NEEDS_GHIDRA=30 NEEDS_NEW_HANDLER=22 READY=3 UNBRIEFED=12; safety CALLS_UNKNOWN=37 TEARDOWN=21 WRITES_GLOBAL=13 SAFE=6 DESTROYS_DEVICE=2 blank=11. THE RE-RANK PAID OFF IMMEDIATELY: it surfaced a THIRD READY row, 0x0055c4f0 PhysicsBodySetFriction (76B, SAFE) - which size-ascending had buried in the LAST bucket (gate_b15) precisely because it is one of the biggest. That is the directive's thesis confirmed with data. NEXT AUTHORABLE ROW = 0x0055c4f0. Also note NEEDS_NEW_HANDLER=22 is now the second-largest bucket, and iter12 just showed a new handler costs ~1 cycle and unlocks its row outright. KNOWN GAP: 11 rows parsed a verdict but no safety cell (formatting variance in the worker TSVs); they are ranked last-but-one, not lost - re-scrape or hand-read those 11 before treating the ranking as complete."
+    },
+    {
+      "id": "mutator_ab_pilot",
+      "rva": "-",
+      "kind": "mutator_ab",
+      "stage": "blocked",
+      "note": "iter12 cycle4 SCOPED, NOT AUTHORED - and the obvious candidate was REJECTED for a reason that changes the selection criterion. Candidate pool = the 13 WRITES_GLOBAL rows in gate_ranked.tsv (the 21 TEARDOWN + 2 DESTROYS_DEVICE are worse: teardown fires once at shutdown, so an A/B lane needing N natural calls gets N=1). BEST-SHAPED candidate was 0x00495110: 11 bytes, void, zero params, EXACTLY ONE write surface (DAT_007f1030), and the strongest gate in the whole pool (caller 0x00492770 at C4). REJECTED ANYWAY: its body is 'DAT_007f1030 = FUN_004950b0()' where FUN_004950b0 is a TIMER READ (plate bucket_util_004764f0_0052da20/0x00495110.md; hooks.csv 'frame-time snapshot wrapper'). Snapshot/restore A/B rolls state back and RE-EXECUTES the original afterwards, which samples a LATER time - so the two captured write surfaces differ for reasons that have nothing to do with the port, and the lane REDs spuriously. NEW CRITERION for this lane: the write surface must be DETERMINISTIC given the pre-call state - no timer, QPC, RNG, or frame-counter source. Screen for that BEFORE authoring a driver, because the driver + window list is the expensive non-automatable part. FALSE ALARM CLEARED: the brief's 'C2(table)/C1(plate) CONFLICT' on 0x00495110 is NOT a confidence disagreement - hooks.csv cites re/analysis/timer/0x00495110.md while the brief's plate resolver picked bucket_util_004764f0_0052da20/0x00495110.md, whose frontmatter says 'confidence_target: C2' rather than 'confidence: C2', so the CONF_RE regex in orch_make_brief_queue.py:39 scored it -1. Plate-frontmatter schema variance, not a tracker conflict; do not file a U-row. NEXT: screen the remaining 12 WRITES_GLOBAL rows for a deterministic write surface, then author ONE pilot (port + driver + plate-cited window list + prologue check vs MASHED.exe.unpatched)."
     }
   ]
 }
