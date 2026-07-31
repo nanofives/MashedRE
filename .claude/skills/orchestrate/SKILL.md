@@ -83,6 +83,19 @@ Only if no bucket is obvious does hard-stop #4 apply.
   it EXPLICIT RVA lists, never "derive rows N-M from a TSV" (that timed out).
 - **machine-bound → exec-pipeline** (`re/orchestrator/exec_pipeline.ps1`,
   account3); read only the manifest's `promotion_candidates`.
+- **NEVER boot the game without pre-flighting first.** Run
+  `py -3.12 scripts/orch_preflight.py <hook>...` after authoring and before any
+  `exec_pipeline` run. A boot costs minutes; the check costs milliseconds. It
+  refuses library-band RVAs, verifies every CONFIG key the handler reads is
+  actually *delivered* (present in the entry is NOT enough — run_diff.py must
+  forward it), flags callee hazards read out of the port source, and rejects
+  identical test vectors. Measured: 4 of 12 boots in iters 12-18 produced no
+  verdict, and 3 of those 4 were this exact class.
+- **One boot, several hooks.** `state_batch` takes a `hooks` list — author 3-4
+  rows, then verify them in a SINGLE boot. iters 12/13/16/18 each spent a whole
+  boot on ONE hook; iters 14/15 did 3 and 2. Batching is the difference between
+  ~12 boots and ~5 for the same eight promotions. Only fall back to one-per-boot
+  to isolate a failure (which is what standalone `run_diff.py` is for).
 - **Promotion is deliberate**: only via `re-classify` (it gates on evidence).
   Check the leaf caller-gate — a GREEN leaf whose callers are all C1 is QUEUED
   in `re/PROMOTION_QUEUE.md`, not promoted.
