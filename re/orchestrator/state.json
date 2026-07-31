@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-07-31T15:29:57.9960269Z",
+  "updated": "2026-07-31T15:53:58.4965413Z",
   "note": "Cross-tier work ledger for the Fable-5 orchestrator. Every item flows: candidate -> briefed -> authored -> verified -> promoted (or -> blocked). orch.ps1 is the ONLY writer during a run (use `set`), so transitions stay durable across iterations — a run cut off for budget never loses state. Stages: candidate|briefed|authored|verified|promoted|blocked.",
   "items": [
     {
@@ -350,8 +350,8 @@
       "id": "gate_briefs_48",
       "rva": "-",
       "kind": "meta",
-      "stage": "briefed",
-      "note": "iter21 cycle 3: 11 unblocked ORPHAN_BLOCK rows briefed off-quota ($1.55, 2/2 green). 2 READY and AUTHORABLE NOW: 0x00407580 (17B, owner 00459000:C2) and 0x005b1160 (29B, owners 005b74c0/005bce80:C2). Briefs re/orchestrator/read_fleet/runs/iter21_orphan/. 5 MUTATOR_LANE, 1 NEEDS_GHIDRA, 3 NEEDS_NEW_HANDLER (hypotheses - check ARG_TYPES.md first)."
+      "stage": "promoted",
+      "note": "iter21 cycle 4: BOTH READY rows promoted C2->C3 in ONE boot. 0x00407580 SubsystemARecordKey (GREEN 10/10, weaker - 2 distinct values, sentinel set to the array itself so a dead array refuses) and 0x005b1160 RingHeaderInit (GREEN 6/6, six distinct fingerprints, 0xAA seed proves the zero-stores ran). Both authored from the raw LISTING; the byte-load third arg at 0x005b1172 and the +1,+2,+0 store order are invisible in the decompiler. Remaining from the 11: 5 MUTATOR_LANE, 1 NEEDS_GHIDRA, 3 NEEDS_NEW_HANDLER (check ARG_TYPES.md first)."
     },
     {
       "id": "ready_005aeed0",

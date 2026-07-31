@@ -2,29 +2,31 @@
 
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions.
 
-**C1 796 / C2 4008 / C3 877 / C4 185.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
-committed through **b29fab7c**, **not pushed** (119 commits ahead of origin/main).
-Ledger: 28 promoted / 21 candidate / 9 briefed / 15 blocked.
+**C1 796 / C2 4006 / C3 879 / C4 185.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
+committed through **95d42f4e**, **not pushed** (121 commits ahead of origin/main).
+Ledger: 29 promoted / 21 candidate / 8 briefed / 15 blocked.
 
 Resume with `/orchestrate` — it reads `re/orchestrator/state.json`, which is current.
-iter21 ran 3 of 4 cycles; hard stop #1 (context) ended it.
+iter21 ran its full 4-cycle budget; hard stop #1 (context) ended it.
 
 ---
 
-## START HERE: two rows are READY to author, and the ladder had none before this
+## START HERE: the ladder is empty of authorable work again — refill it
 
-Briefs at `re/orchestrator/read_fleet/runs/iter21_orphan/orphan_unblocked_small.md`:
+Cycle 4 consumed both READY rows. `orch.ps1 next` will show `briefed` items, but every one
+of them tallied **0 READY** — they are stuck, not actionable. **Refilling is the job**, not a
+detour (see the skill's "Refill" note): pick a bucket and brief **>=12 RVAs** on the
+read-fleet with `-MaxConcurrent 2..4`. It is off-quota; iter21's 11-RVA brief cost $1.55.
 
-- **`0x00407580`** (17 bytes) — owner `00459000:C2`
-- **`0x005b1160`** (29 bytes) — owners `005b74c0:C2`, `005bce80:C2`
+Highest-value refill targets, in order:
 
-Author both, then verify them in **ONE** `state_batch` boot. Pre-flight first
-(`py -3.12 scripts/orch_preflight.py <hook>...`) — that is not optional, and note that
-`orch_preflight` now also catches the class of defect that cost this session two boots.
-
-Three rows came back **NEEDS_NEW_HANDLER** (`0x004b6b00`, `0x005bfb90`, `0x00407550`).
-That is the **fifth consecutive run** to propose a handler; every prior one already
-existed or generalised from one that did. Check `re/frida/ARG_TYPES.md` first.
+1. **Plate `0x005515a0` C1->C2.** It is the sole owner of `0x0052ddc0` and `0x0052df40`, so
+   one plate converts both to gate-PASS. Cheapest structural win on the board.
+2. **The 3 NEEDS_NEW_HANDLER rows** — `0x004b6b00`, `0x005bfb90`, `0x00407550`. This is the
+   **fifth consecutive run** to return that verdict; all four prior ones already existed or
+   generalised from one that did. **Check `re/frida/ARG_TYPES.md` before writing anything.**
+3. **The 14 NO_OWNER ORPHAN rows** — need a different method than the reference-chain BFS,
+   which ran out of edges on them. Do not re-run that method on them.
 
 ---
 
@@ -78,6 +80,29 @@ of edges; unresolved, not disproved — **do not re-screen them with this method
 
 An owner here is a **reference-chain witness, not a `function_callers` edge**. It
 establishes which function's control flow reaches the block, not the call's arguments.
+
+### 3. `0x00407580` + `0x005b1160` C2 -> C3, both verified in ONE boot
+
+Both from the ORPHAN_BLOCK group unblocked in cycle 2. **Both authored from the raw
+listing**, and in both cases the listing carried something the decompiler did not:
+`0x005b1160`'s third argument is a **byte** load (`MOV CL,byte ptr [ESP+0xc]` at
+`0x005b1172`) though the caller pushes a dword, and its three zero stores run in the order
+`+1, +2, +0`.
+
+`0x005b1160` is the strong row: 6 vectors, 6 distinct fingerprints, and the **0xAA buffer
+seed is load-bearing** — three of its five writes store zero, so against a zero-filled
+buffer a port that omitted them would have passed.
+
+`0x00407580` is the **weaker** row and its note says so: a pure read of a live global, so
+only the address computation is under test. Its sentinel was deliberately set to the
+**array itself** (`0x00639dc4`) so an unpopulated array refuses the run rather than scoring
+a column of zeros GREEN — `selected_copter_field60` documents that same array as
+unpopulated in Quick Battle, and the snapshot confirmed the first 8 dwords **are** zero.
+10 seeds gave 2 distinct values (indices 12/16/24 -> `0xbf800000`). A real discriminator,
+but thinner than a fingerprint-per-vector row.
+
+**Pre-flight failed both rows on the first pass** — `ring_header_init` lacked `observe_ret`
+and neither had a `scenario_sentinel`. Two boots saved by a millisecond check.
 
 ---
 
