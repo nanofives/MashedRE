@@ -20,7 +20,7 @@
 // and byte-identical at Math/FPURound.cpp (hooks.csv:254). It takes ST0. It is
 // NOT ported again here; the port leaves the conversion to the compiler's own
 // float->int cast, which on this /arch-less x87 build emits the same __ftol
-// call. [UNCERTAIN] whether MSVC emits a literal `call __ftol` here or an
+// call. [UNCERTAIN U-9034] whether MSVC emits a literal `call __ftol` here or an
 // inline FISTP — the A/B compares the RETURNED SIZE, which is identical either
 // way, so this does not affect acceptance. It would matter for a bit-identity
 // claim about the instruction stream, which is not claimed.
@@ -70,7 +70,7 @@ ReplayGetSize(float param_1, int param_2)
     // round the divisor to a 24-bit mantissa and diverge for |param_2| > 2^24.
     // double (53-bit) represents every int32 exactly, so it reproduces FIDIV's
     // operand faithfully and, on this x87 build, is itself evaluated in the
-    // 80-bit registers. [UNCERTAIN] whether every intermediate rounds
+    // 80-bit registers. [UNCERTAIN U-9035] whether every intermediate rounds
     // identically to the original's register chain; the A/B compares the
     // RETURNED INT, and a divergence would have to survive truncation to show
     // up — no bit-identity claim is made about the instruction stream.
