@@ -3,7 +3,7 @@
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions.
 
 **C1 796 / C2 4006 / C3 879 / C4 185.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
-committed through **a0d81a53**, **not pushed** (127 commits ahead of origin/main).
+committed through **6537208f**, **not pushed** (129 commits ahead of origin/main).
 Ledger: 29 promoted / 21 candidate / 8 briefed / 15 blocked.
 
 Resume with `/orchestrate` — it reads `re/orchestrator/state.json`, which is current.
@@ -127,10 +127,16 @@ and neither had a `scenario_sentinel`. Two boots saved by a millisecond check.
    The index summarised each handler's original USE CASE, not its MECHANISM, so a screen
    looking for "store EAX into `*ECX`" never matched something described as "cross-link
    insert". Three fixes shipped: `gen_arg_types_index.py` now prefers an explicit
-   `// MECHANISM:` line over the arbitrary 3-line scrape (`a5c7b2aa`); the **20 most-used**
-   affected handlers have one (`a0d81a53`); and the generated header states outright that a
-   scraped note is not evidence that no handler fits. **78 lower-usage descriptors are still
-   scraped** — when a screen says no handler fits one of those, read the *implementation*.
+   `// MECHANISM:` line over the arbitrary 3-line scrape (`a5c7b2aa`); **all 123 JS handlers
+   now have one** (`a0d81a53`, `6537208f`) — zero empty, zero non-ASCII, zero stub notes; and
+   the generated header states outright that a scraped note is not evidence that no handler
+   fits. The 184 early-window descriptors are untouched, but 107 of those already open with a
+   signature. **When ARG_TYPES.md still does not settle it, read the implementation.**
+
+   `none` (145 uses) and `read_global` (96) had **no note at all** — they documented
+   themselves *inside* their dispatch blocks and the scraper only looked above. Both now warn
+   that they push **no arguments**, so a target that really takes some has both sides read the
+   same leftover stack bytes and agree; confirm arity from the LISTING.
 
    Surfaced while doing it: **`out3_idx` is a false-GREEN hazard.** It never reads its out
    buffer back, so a reimpl that returns the right flag while writing garbage to `*out`
