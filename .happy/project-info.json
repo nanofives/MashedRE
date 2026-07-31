@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-07-31T00:00:00Z",
+  "updatedAt": "2026-07-31T13:05:00Z",
   "sections": [
     {
       "heading": "Confidence ladder",
@@ -17,12 +17,12 @@
         },
         {
           "label": "C3",
-          "value": 878,
+          "value": 877,
           "kind": "number"
         },
         {
           "label": "C4",
-          "value": 184,
+          "value": 185,
           "kind": "number"
         }
       ]
@@ -32,48 +32,42 @@
       "fields": [
         {
           "label": "Iteration",
-          "value": "iter20 (4 runs)",
+          "value": "iter21 (3 of 4 cycles; context hard stop)",
+          "kind": "text"
+        },
+        {
+          "label": "Ledger",
+          "value": "28 promoted / 21 candidate / 9 briefed / 15 blocked",
           "kind": "text"
         },
         {
           "label": "Branch",
-          "value": "fix/u9025-recharacterise-and-regabi-defects (unpushed)",
+          "value": "fix/u9025-recharacterise-and-regabi-defects @ b29fab7c (unpushed)",
           "kind": "text"
         },
         {
-          "label": "Session promotions",
-          "value": "0x00482900, 0x00411350, 0x00411530 (all C3)",
-          "kind": "text"
+          "label": "This run",
+          "value": [
+            "0x00482900 ReplayGetSize C3 -> C4",
+            "11 of 27 ORPHAN_BLOCK rows unblocked",
+            "2 rows READY to author"
+          ],
+          "kind": "list"
         }
       ]
     },
     {
-      "heading": "Open",
+      "heading": "Next",
       "fields": [
         {
-          "label": "C4 lift",
-          "value": [
-            "REFUSED - RVA counts measured the ORIGINAL, not our port",
-            "Next: arm asi:ExportName counter AFTER the menu, re-run",
-            "0x00411350/0x00411530 never fire in a race - need a results-UI scenario"
-          ],
-          "kind": "list"
+          "label": "Start here",
+          "value": "Author 0x00407580 + 0x005b1160, verify in ONE boot",
+          "kind": "text"
         },
         {
-          "label": "Lanes",
-          "value": [
-            "27 ORPHAN_BLOCK rows need callback blocks plated",
-            "Mutator lane: 43 rows, only 2 AB_READY",
-            "Gate pool: 88 rows, 1 READY (deferred)"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Hygiene",
-          "value": [
-            "Ghidra pool 5: leaked .lock~ (clears on MCP JVM restart); use slot 9"
-          ],
-          "kind": "list"
+          "label": "Phase",
+          "value": "R7 - full game systems (scaffold -> verbatim)",
+          "kind": "text"
         }
       ]
     }
