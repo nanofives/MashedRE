@@ -221,6 +221,10 @@ function callFn(fn, input, buf) {
         return fn();
     }
     // ── Simple scalar types ───────────────────────────────────────────────────
+    // MECHANISM: Passes CONFIG.tests[i] as the sole stack argument and returns the raw function
+    // return (fn(input)); no buffer allocation, no global seeding, no post-call observation; the
+    // thinnest possible wrapper - fits any single-scalar-arg fn that returns a scalar, regardless
+    // of numeric domain or arg type interpretation.
     if (CONFIG.arg_type === 'float_scalar') {
         return fn(input);
     }
@@ -367,6 +371,9 @@ function callFn(fn, input, buf) {
         return fn();
     }
     // int_pair — two uint32 args
+    // MECHANISM: Passes two uint32 stack args (input[0], input[1]) directly to fn and returns fn's
+    // return value; no buffer, no globals, no save/restore, no CONFIG parameterization beyond
+    // `arg_type`. Applies to any two-integer-in, any-return-type function.
     if (CONFIG.arg_type === 'int_pair') {
         return fn(input[0], input[1]);
     }
@@ -395,6 +402,10 @@ function callFn(fn, input, buf) {
         return [sign, mn, sc, '0x' + csec.toString(16)].join(',');
     }
     // int_scalar — single uint32 arg, any integer return type
+    // MECHANISM: Passes one uint32 stack arg (`input>>>0`) directly to fn and returns fn's raw
+    // return value; no buffer allocation, no global read-back, no save/restore, and no CONFIG
+    // parameterization beyond `arg_type`. Applies to any single-integer-in, any-return-type
+    // function regardless of name.
     if (CONFIG.arg_type === 'int_scalar') {
         return fn(input >>> 0);
     }
@@ -410,6 +421,12 @@ function callFn(fn, input, buf) {
     // is left Queued, never falsely GREEN. NOT in SEEDED_ARG_TYPES: we rely on
     // the natural non-degeneracy of a real deref, so a getter that ignores its
     // arg stays trivial and is correctly rejected.
+    // MECHANISM: Allocates one SHARED scratch buffer (size `CONFIG.struct_size` or 256), fills it
+    // with a deterministic per-seed dword pattern (`seed + o*0x01010101`), passes the SAME
+    // physical pointer to both Orig and Reimpl, returns fn's uint32 return; a double-deref
+    // function faults on the bad inner pointer (caught as mismatch, never false GREEN). CONFIG:
+    // `struct_size`. Broader: any fn(ptr)->int single-level-deref getter, regardless of struct
+    // type.
     if (CONFIG.arg_type === 'ptr_arg_int_get') {
         const sz = (CONFIG.struct_size | 0) || 256;
         const seed = (input >>> 0);
@@ -506,6 +523,12 @@ function callFn(fn, input, buf) {
     //   tests[i] = { seed:[{addr:'0x..', val:<u32>}], args:[...], obs:['0x..', ...] }
     //     obs may be omitted to fall back to CONFIG.obs_globals (array of hex
     //     strings). A `null` in args is the out-ptr slot (replaced by buf).
+    // MECHANISM: Per-test scatter-seed -> call -> scatter-observe; input.seed=[{addr,val}] written
+    // pre-call, input.args=[...] (null entry -> harness buf) passed to fn, input.obs or
+    // CONFIG.obs_globals (array of hex addr strings) read post-call and packed as a hex
+    // fingerprint; every seeded and observed global is snapshotted and restored; broader than the
+    // name: fits any fn whose observable is scattered non-contiguous globals, not just cache/queue
+    // setters; CONFIG: obs_globals; per-test: seed, args, obs.
     if (CONFIG.arg_type === 'cache_setter_observe') {
         const seeds = input.seed || [];
         const obs   = input.obs || CONFIG.obs_globals || [];
@@ -534,6 +557,10 @@ function callFn(fn, input, buf) {
     // Use for void(uint32) setters that write param_1 directly to a global.
     // Strategy: call fn(value), read back target_global. Both orig and reimpl must
     // have written `value` to target_global.
+    // MECHANISM: Calls fn(input>>>0) [void return], then reads `CONFIG.target_global` as uint32
+    // observable; no buffer allocation, no save/restore. CONFIG: `target_global` only. Broader
+    // than name: any void(uint32) that writes its param to one absolute global - not limited to
+    // simple direct-assign setters.
     if (CONFIG.arg_type === 'void_setter_observe') {
         fn(input >>> 0);
         return ptr(CONFIG.target_global).readU32();
@@ -550,6 +577,11 @@ function callFn(fn, input, buf) {
     }
     // out3_idx — fn(out_buf_ptr, uint32_idx); buf is first arg (12 bytes); returns fn return value.
     // Used for functions like VehicleVec3At9C8Get where output buffer precedes the index arg.
+    // MECHANISM: fn(buf, uint32_idx): passes the harness scratch buffer as the first positional
+    // arg and tests[i] as a u32 second arg; returns the function's return value only - buffer
+    // contents are never read back or fingerprinted; a reimpl that returns the correct scalar
+    // while writing garbage to *buf passes silently; use out1_idx when the written value must also
+    // be verified; CONFIG: tests[] list of uint32 indices; no global seeding.
     if (CONFIG.arg_type === 'out3_idx') {
         return fn(buf, input >>> 0);
     }
@@ -618,6 +650,11 @@ function callFn(fn, input, buf) {
     // entity_field_set — fn(int param_1, uint32 param_2): void write to global array.
     // input: [param_1, param_2].  Calls fn, then reads back the written address as uint32.
     // Address: CONFIG.target_global + param_1 * CONFIG.entity_byte_stride.
+    // MECHANISM: Calls fn(input[0]|0, input[1]>>>0) [void], reads `CONFIG.target_global + input[0]
+    // * CONFIG.entity_byte_stride` as uint32 observable; no buffer, no save/restore (assumes
+    // idempotent slot write). CONFIG: `target_global`, `entity_byte_stride`. Broader: any
+    // fn(int_index, uint32_value) that writes into a strided global array - both the base and
+    // stride are fully configurable.
     if (CONFIG.arg_type === 'entity_field_set') {
         const p1 = input[0] | 0;
         const p2 = input[1] >>> 0;
@@ -738,6 +775,12 @@ function callFn(fn, input, buf) {
     //
     // Returns a hex string packing all output globals (32 bits each) so
     // BigInt-sized observables don't lose precision through JSON.
+    // MECHANISM: Saves all (input  +  output) globals, writes test values into
+    // `CONFIG.input_globals` (array of {addr,type}), calls fn() [void, no args], reads
+    // `CONFIG.output_globals` as packed hex fingerprint, then restores everything; per-entry
+    // types: u8/u16/u32/s8/s16/s32. CONFIG: `input_globals`, `output_globals`. Broader: any void()
+    // function whose entire observable is global-to-global mutation; input and output global sets
+    // are fully independent.
     if (CONFIG.arg_type === 'state_machine_observe') {
         const inputs  = CONFIG.input_globals  || [];
         const outputs = CONFIG.output_globals || [];
@@ -796,6 +839,12 @@ function callFn(fn, input, buf) {
     //   out_base      — hex addr of the first written global
     //   out_count     — number of consecutive u32 slots to read back
     //   input         — array of N param values to pass
+    // MECHANISM: fn(p1..pN): void called with input[] as positional u32 args; forces
+    // CONFIG.guard_global to 1 before the call; reads back CONFIG.out_count consecutive u32s at
+    // CONFIG.out_base as a hex-packed fingerprint; restores both guard and output block afterward;
+    // broader than its name: fits any multi-arg void setter that conditionally writes a contiguous
+    // memory block when a nonzero guard is present, CONFIG fields: guard_global, out_base,
+    // out_count.
     if (CONFIG.arg_type === 'multi_arg_global_write') {
         const guard    = ptr(CONFIG.guard_global);
         const outBase  = ptr(CONFIG.out_base);
@@ -1210,6 +1259,12 @@ function runDiff() {
     // tests[i]:
     //   { seeds:[{off,type,value}], nested:[{ptr_off,size,fields:[{off,type,value}]}] }
     //   type for seeds: u8|u16|u32|s32|f32|u64 ; for observe: u8|u16|u32|s32|u64
+    // MECHANISM: Per side allocates a zeroed struct buffer (`CONFIG.struct_size`) + up to 2 eight-
+    // byte out-bufs (`CONFIG.out_ptrs`); seeds fields and nested sub-struct graphs identically on
+    // each side; calls fn(struct[,out0[,out1]]); fingerprints selected offsets
+    // (u8/u16/u32/s32/u64) from struct or out-bufs and optionally return; each side's pointers
+    // differ in address but match in seeded content so relative-offset reads compare cleanly.
+    // CONFIG: `struct_size`, `out_ptrs`, `observe_ret`, `observe`; test: `seeds`, `nested`.
     if (CONFIG.arg_type === 'struct_call_observe') {
         const SS   = CONFIG.struct_size || 0x200;
         const nOut = CONFIG.out_ptrs || 0;
@@ -1311,6 +1366,12 @@ function runDiff() {
     //                               {i32:true} -> next value from test.scalars
     //   CONFIG.observe     array  [{buf:i, off:N, type:'f32'|'u8'|'u16'|'u32'|'s32'}]
     //   CONFIG.tests[i] = { seed:[{buf,off,type,value}...], scalars:[...] }
+    // MECHANISM: Allocates N paired scratch buffers per side (`CONFIG.num_bufs`x`buf_size`); seeds
+    // identically per-test (flat field values or cross-buffer `ptr_to` pointer wires to build
+    // struct graphs); calls fn via `CONFIG.arg_layout` ({buf:i}->pointer, {f32}/{i32}->scalar from
+    // test.scalars, per-test `null_args`->NULL); fingerprints selected buffer offsets (f32 as raw
+    // bits for bit-identity) and optionally return. CONFIG: `num_bufs`, `buf_size`, `arg_layout`,
+    // `observe`, `observe_ret`.
     if (CONFIG.arg_type === 'ptr_seed_observe') {
         const layout = CONFIG.arg_layout || [];
         const NB = (CONFIG.num_bufs | 0) ||
@@ -1499,6 +1560,11 @@ function runDiff() {
     // Unblocks: 0x004df8d0 PixEncode1555, 0x004df910 PixEncode4444,
     //           0x004df950 PixEncodeA8R3G3B2, 0x004df980 PixEncodeX4R4G4B4,
     //           0x004df9e0 PixEncodeX8R8G8B8.
+    // MECHANISM: fn(byte* buf) -> uint32; harness allocates a single shared 4-byte buffer, writes
+    // CONFIG.tests[i]=[b0,b1,b2,b3] as individual bytes before each Orig and Reimpl call (re-
+    // seeded between the two), compares the unsigned integer return; same pointer used for both
+    // sides; broader than the name: fits any fn(byte*) -> uint that reads <=4 bytes from its sole
+    // pointer arg and returns a packed scalar.
     if (CONFIG.arg_type === 'bgra_encode') {
         const encBuf = Memory.alloc(4);
         for (var i = 0; i < CONFIG.tests.length; i++) {
@@ -1992,6 +2058,12 @@ function runDiff() {
     //                   whose *out = a per-frame-moving DAT_0063d588).
     // Unlocks the single-out-ptr class: SlotSortByModeScore 0x0040b620
     // (round 19), plus 0041da90 / 00484c70 / 00495270 (round 20).
+    // MECHANISM: fn(T* out): void; harness allocates two separate out_buf_size-byte bufs (default
+    // 16), zeros each before the call, calls fn(buf), reads back as packed-dword fingerprint;
+    // CONFIG.fold_ret=true also XORs the return value in (for dual-output getters that both write
+    // *out and return a value); CONFIG.seed_global seeds a global with tests[i] before each call
+    // (for global-copying getters) and restores it after; broadly fits any fn(ptr) that writes a
+    // fixed-size result, regardless of domain.
     if (CONFIG.arg_type === 'outbuf_only') {
         const OB_LEN   = (CONFIG.out_buf_size | 0) || 16;
         const foldRet  = CONFIG.fold_ret ? true : false;
@@ -2506,6 +2578,15 @@ function runDiff() {
     // Pointer arguments the recorder receives are NORMALISED to "b<i>+<off>"
     // against the scratch buffers, because the two sides get different
     // addresses; without that every comparison would trivially differ.
+    // MECHANISM: Arbitrary-arity fn driven by num_bufs scratch buffers (each buf_size bytes)
+    // seeded per-test via test.seed=[{buf,off,type,value,stub,ptr_to}]; arg_layout[] maps each
+    // call position to a buf-ptr, a scalar from test.scalars[], or the recorder stub; stub_at[]
+    // Interceptor-replaces hardcoded direct-CALL targets with the recorder; recorder normalises
+    // pointer args to "b<i>+<off>" against scratch-buffer bases so per-side addresses compare
+    // equal; fingerprint observes return (observe_ret) and/or call sequence with args
+    // (observe_calls); stub_ret is per-test so a pass-through return is also tested; CONFIG:
+    // num_bufs, buf_size, arg_layout, stub_at, stub_nargs, stub_abi, stub_ret, observe_ret,
+    // observe_calls.
     if (CONFIG.arg_type === 'stub_dispatch_observe') {
         const NB = (CONFIG.num_bufs | 0) || 1;
         const BS = (CONFIG.buf_size | 0) || 0x80;
@@ -3575,6 +3656,12 @@ function runDiff() {
     //     bufA fingerprint ^ (bufB fingerprint << 8) -- both buffers since
     //     some comparators may set flag bits in either side.
     //   For 4-arg form: same shape, with p3/p4 routed through.
+    // MECHANISM: fn(bufA, bufB [, p3, p4]); allocates two 0x40-byte scratch bufs, populates sparse
+    // fields via test.a/{fXX} -> u32@offset 0xXX notation, bufs zeroed before each call;
+    // fingerprint is (retU32_low16, rolling-polynomial-hash(bufA), rolling-polynomial-hash(bufB));
+    // 2 vs 4 args driven by CONFIG.signature.args.length; crash_equal_ok flag; broadly fits any
+    // fn(ptr, ptr) or fn(ptr, ptr, int, int) that mutates either buffer - domain-agnostic, field
+    // layout fully per-test.
     if (CONFIG.arg_type === 'fmt_desc_pair_compare') {
         const SZ = 0x40;  // 64-byte buffers — generous; covers fmt-desc + ext
         const bufA = Memory.alloc(SZ);
@@ -4034,6 +4121,11 @@ function runDiff() {
     //   is_getter         bool      — if true, compare return value; if false (dispatcher),
     //                                  use crash_equal_ok (both sides deref through fn-ptr)
     //   record_global_str string    — hex addr of the global pointer (default '0x0063d7e4')
+    // MECHANISM: Zero-arg fn; harness allocates a 0x48-byte fake record (zeroed), writes a u32
+    // sentinel at CONFIG.field_offset, patches CONFIG.record_global_str (default 0x0063d7e4) to
+    // point to it, calls fn() with no args, fingerprints return value (CONFIG.is_getter=true) or
+    // crash-equality (false), then restores the global; generalises to any no-arg fn that
+    // dereferences a single globally-NULL struct pointer provided the record fits in 0x48 bytes.
     if (CONFIG.arg_type === 'track_record_deref') {
         const RECORD_SIZE   = 0x48;
         const RECGLOBAL     = ptr(CONFIG.record_global_str || '0x0063d7e4');
@@ -4758,6 +4850,12 @@ function runDiff() {
     // Tests: list of { args:[...] } (or a raw array of args).
     // Unlocks: 0x00417450/0x00417530 sparse-grid (fixed globals + 1/0 return),
     //   0x004299d0 TimeRecord (3 scalar globals + 3 track arrays at idx_call=0x430790).
+    // MECHANISM: Calls fn(t.args... as uint32 scalars); saves/restores arbitrary non-contiguous
+    // byte-windows (`CONFIG.observe`:{addr,len}) and stride-indexed array slots
+    // (`CONFIG.idx_arrays`:{base,stride,elem_len}) under a live index cursor
+    // (`CONFIG.idx_call_str`); fingerprints with FNV-1a; optionally pre-fills windows, runs a prep
+    // call, or folds the return value. CONFIG: `observe`, `idx_arrays`, `idx_call_str`,
+    // `fold_ret`, `prep_call_str`, `pre_fill_byte`.
     if (CONFIG.arg_type === 'scalars_to_scattered_globals') {
         const observe   = CONFIG.observe || [];
         const idxArrays = CONFIG.idx_arrays || [];
@@ -4842,6 +4940,12 @@ function runDiff() {
     // Observables are ADDRESS-NORMALIZED (count + cmp-field value / found field /
     // -1), never raw pointers, so per-side allocations compare cleanly.
     // Unlocks: 0x005b3580 Init, 0x005b35a0 PushBack, 0x005b3670 Find, 0x005b36b0 At.
+    // MECHANISM: Builds an intrusive count-header ring list with the ORIGINAL Init+PushBack
+    // primitives (init_rva_str / pushback_rva_str as NativeFunctions), then exercises
+    // CONFIG.list_op ('init'|'pushback'|'find'|'at') on Orig vs Reimpl; observables are address-
+    // normalised (count u32, cmp-field s32 values) so per-side allocations compare cleanly;
+    // CONFIG: node_link_off, cmp_field_off, object_size; applies to any intrusive ring list
+    // sharing this header shape (count@0, sentinel@+4 self-loop).
     if (CONFIG.arg_type === 'count_header_list_ring') {
         const LINK  = (CONFIG.node_link_off | 0) || 0x20;
         const CMP   = (CONFIG.cmp_field_off | 0) || 0x18;
@@ -4938,6 +5042,11 @@ function runDiff() {
             // This detects whether both functions write the same value to the
             // same address; the sentinel also confirms the function actually
             // touches that address (if it doesn't, the sentinel survives).
+            // MECHANISM: Per-test writes sentinel `t` to `CONFIG.target_global`, optionally seeds
+            // `CONFIG.seed_globals` (array of {addr,val}) for both sides, calls fn with no args or fixed
+            // `CONFIG.call_args`, reads `target_global` back as uint32; no save/restore (idempotent
+            // sentinel pre-write); `crash_equal_ok` counts identical crashes as pass. CONFIG:
+            // `target_global`, `seed_globals`, `call_args`, `crash_equal_ok`.
             if (CONFIG.arg_type === 'void_write_observe') {
                 const gaddr = ptr(CONFIG.target_global);
                 let origRead = null, reimRead = null;

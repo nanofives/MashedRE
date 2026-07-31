@@ -32,128 +32,128 @@ the config keys, (4) anything making it apply more broadly than its name says.
 | arg_type | diff_template.js line | registry uses | note |
 |---|---|---|---|
 | `none` | 213 | 145 |  |
-| `int_scalar` | 398 | 142 | int_scalar — single uint32 arg, any integer return type |
+| `int_scalar` | 409 | 142 | Passes one uint32 stack arg (`input>>>0`) directly to fn and returns fn's raw return value; no buffer allocation, no global read-back, no save/restore, and no CONFIG parameterization beyond `arg_type`. Applies to any single-integer-in, any-return-type function regardless of name. |
 | `read_global` | 219 | 96 |  |
-| `void_write_observe` | 4941 | 51 | This detects whether both functions write the same value to the same address; the sentinel also confirms the function actually touches that address (if it do... |
-| `void_setter_observe` | 537 | 40 | Use for void(uint32) setters that write param_1 directly to a global. Strategy: call fn(value), read back target_global. Both orig and reimpl must have writt... |
-| `scalars_to_scattered_globals` | 4761 | 30 | Tests: list of { args:[...] } (or a raw array of args). Unlocks: 0x00417450/0x00417530 sparse-grid (fixed globals + 1/0 return), 0x004299d0 TimeRecord (3 sca... |
-| `int_pair` | 370 | 23 | int_pair — two uint32 args |
-| `state_machine_observe` | 741 | 13 |  Returns a hex string packing all output globals (32 bits each) so BigInt-sized observables don't lose precision through JSON. |
-| `struct_call_observe` | 1213 | 13 | tests[i]: { seeds:[{off,type,value}], nested:[{ptr_off,size,fields:[{off,type,value}]}] } type for seeds: u8|u16|u32|s32|f32|u64 ; for observe: u8|u16|u32|s3... |
-| `void` | 366 | 13 | void — no args, no return value of interest |
-| `draw_quad_observe` | 3671 | 10 | CONFIG fields: vbuf_addr_str   string (hex) — override DAT_00898a20 if needed vbuf_len        int          — override 112 if buffer size differs |
-| `ptr_arg_int_get` | 413 | 10 | is left Queued, never falsely GREEN. NOT in SEEDED_ARG_TYPES: we rely on the natural non-degeneracy of a real deref, so a getter that ignores its arg stays t... |
-| `entity_field_set` | 621 | 8 | entity_field_set — fn(int param_1, uint32 param_2): void write to global array. input: [param_1, param_2].  Calls fn, then reads back the written address as ... |
-| `ptr_seed_observe` | 1314 | 8 | {i32:true} -> next value from test.scalars CONFIG.observe     array  [{buf:i, off:N, type:'f32'|'u8'|'u16'|'u32'|'s32'}] CONFIG.tests[i] = { seed:[{buf,off,t... |
-| `track_record_deref` | 4037 | 8 | is_getter         bool      — if true, compare return value; if false (dispatcher), use crash_equal_ok (both sides deref through fn-ptr) record_global_str st... |
-| `bgra_encode` | 1502 | 6 | Unblocks: 0x004df8d0 PixEncode1555, 0x004df910 PixEncode4444, 0x004df950 PixEncodeA8R3G3B2, 0x004df980 PixEncodeX4R4G4B4, 0x004df9e0 PixEncodeX8R8G8B8. |
-| `float_scalar` | 224 | 6 | ── Simple scalar types ─────────────────────────────────────────────────── |
-| `fmt_desc_pair_compare` | 3578 | 6 | bufA fingerprint ^ (bufB fingerprint << 8) -- both buffers since some comparators may set flag bits in either side. For 4-arg form: same shape, with p3/p4 ro... |
-| `multi_arg_global_write` | 799 | 6 | out_base      — hex addr of the first written global out_count     — number of consecutive u32 slots to read back input         — array of N param values to ... |
-| `reg_this_call_observe` | 2280 | 6 | CONFIG: this_reg ('eax' for these), this_field_off, observe_callee_str, struct_size (>= field_off+4), signature {ret:'void', args:[]}, tests = [sentinel u32,... |
-| `cache_setter_observe` | 509 | 4 | tests[i] = { seed:[{addr:'0x..', val:<u32>}], args:[...], obs:['0x..', ...] } obs may be omitted to fall back to CONFIG.obs_globals (array of hex strings). A... |
-| `count_header_list_ring` | 4845 | 4 | Observables are ADDRESS-NORMALIZED (count + cmp-field value / found field / -1), never raw pointers, so per-side allocations compare cleanly. Unlocks: 0x005b... |
-| `out3_idx` | 553 | 4 | out3_idx — fn(out_buf_ptr, uint32_idx); buf is first arg (12 bytes); returns fn return value. Used for functions like VehicleVec3At9C8Get where output buffer... |
-| `outbuf_only` | 1995 | 4 | whose *out = a per-frame-moving DAT_0063d588). Unlocks the single-out-ptr class: SlotSortByModeScore 0x0040b620 (round 19), plus 0041da90 / 00484c70 / 004952... |
-| `stub_dispatch_observe` | 2509 | 4 | Pointer arguments the recorder receives are NORMALISED to "b<i>+<off>" against the scratch buffers, because the two sides get different addresses; without th... |
-| `thiscall_field_get` | 3330 | 4 | CONFIG.struct_size  : int    bytes to allocate (>= field_off + 8). Default field_off + 64. CONFIG.tests        : flat list of seed values (u32/int/float per ... |
-| `bytes_inplace` | 1460 | 3 |  |
-| `int_copy_outbuf` | 2693 | 3 | CONFIG.out_buf_size (default 24) bytes as a position-sensitive XOR fingerprint. Real GREEN requires both fingerprints to be non-zero AND equal — proof the fu... |
-| `int_ptr2_out` | 374 | 3 | int_ptr2_out — fn(uint32, out_ptr1, out_ptr2); two 4-byte out-slots; returns packed u32 |
-| `reg_this_callee_stub` | 2158 | 3 | signature {ret:'void', args:[]}, tests = [{clump_frame, handle_base}, ...]. The shared scratch clump means this[0x5c] (= clump ADDR) matches across sides; sc... |
-| `slot_block_zero` | 712 | 3 | target_global       — hex address of array base (e.g. 0x006403e8) entity_byte_stride  — bytes per slot (e.g. 0xf40) sentinel_value      — optional uint32 pre... |
-| `st0_ret_global` | 256 | 3 | input:           a single number, stored as f32 into global_a Returns a 16-hex-digit fingerprint of the 64-bit double ST0 return (full mantissa -> catches a ... |
-| `struct_three_write` | 4461 | 3 | observe_offsets  array of byte offsets to read back (default [12, 16, 20]) Tests: list of [val_a, val_b] pairs. Unblocks: 0x005be140 FUN_005be140. |
-| `teardown_call_pair` | 4575 | 3 | Tests: flat list (length = call count; values ignored). Unblocks: engine_stop_dispatch (0x00493550), hw_exit_dispatch (0x00493560), engine_stop_helper (0x004... |
-| `vec3_normalize` | 927 | 3 |  |
-| `audio_list_drain` | 3009 | 2 | Build a fresh sentinel, insert N nodes via FUN_005addd0 (original), call orig/reimpl to drain. Observable: 1 = sentinel self-loops (empty) after drain, 0 = n... |
-| `audio_sub_struct_dual` | 4141 | 2 | LinkBuffer(p1,p3); returns p1 on success, 0 on failure. With a zeroed 12-byte scratch buf both cleanups are no-ops and both link calls write to the buffer. T... |
-| `audio_sub_struct_link` | 4101 | 2 | Prior arg_type 'audio_sub_struct_link' did not exist in this file and fell through to default fn(input), passing a bare uint32 as the pointer arg — both side... |
-| `audio_sub_struct_zero` | 4316 | 2 |  |
-| `bytes_inplace_3` | 1460 | 2 |  |
-| `eax_implicit_int` | 3238 | 2 | scratch buffers (so dereferences inside the target don't AV). The harness allocates N scratch buffers (32 bytes each) and rewrites the input list so each tes... |
-| `entity_field_add` | 635 | 2 | the residue of the first call. Snapshot the field, call fn(idx,delta), pack (return_value, post-add field) into a fingerprint, then RESTORE the field so Orig... |
-| `fastcall_reg` | 3449 | 2 | a 2-element [ecxVal, edxVal] (nargs==2, int mode). For a ptr register the value is replaced by a scratch-buffer address. |
-| `float3_scalar_ret` | 232 | 2 | cosine-ease lerp 0x00422440). input is a [a, b, t] triple; registry signature must be {ret:'float', args:['float','float','float']}. The framework reads the ... |
-| `font_ctx_float2` | 1859 | 2 | FontSys_InitRenderState (0x00552c10) once before the test loop to guarantee g_FontCtxPtrs[0] is allocated. Without this, the function derefs a NULL slot ptr ... |
-| `int2_ptr2_out` | 3123 | 2 | void fn(uint a, uint b, uint* hi, uint* lo).  Two scalar args + two 4-byte out-slots; observable = "hi,lo" hex fingerprint.  Used for AudioShiftAddMul64 (0x0... |
-| `sort_dispatch_out4` | 830 | 2 | live globals at quiescent menu → bit-identical sorted output.  input: {sel, dir} |
-| `sprite_table_dispatch` | 3867 | 2 | function takes 9 args — only the first arg matters; remaining stack bytes are garbage but the patched callee only reads its first arg. Tests: flat list of sl... |
-| `st0_ret_mat3_ptr` | 297 | 2 | The three pad dwords at 0x0c/0x1c/0x2c are zeroed for run-to-run determinism; the leaves never read them. Scratch buffer only — no live game state is touched... |
-| `vec3_global_mul_observe` | 3524 | 2 | Strategy: write test vec3 to globals[idx*stride+0/4/8], save original, call fn(idx), read back globals as 3 u32 fingerprints, restore originals. Both orig an... |
-| `vec3_ptr` | 359 | 2 |  |
-| `vtable_table_dispatch` | 2431 | 2 | tests[i] = { idx, aux16, a1, a4 } Authored 2026-07-31 for 0x005b10a0 (offset 4) and 0x005b10e0 (offset 8), which are byte-identical apart from that one displ... |
-| `alloc_check` | 1773 | 1 | ── alloc_check ────────────────────────────────────────────────────────── Call(size, tag) for each test; encode result as (align_mod4 * 256 + header_diff). A... |
-| `allocator_nonnull` | 4363 | 1 | CONFIG fields: none beyond standard. Tests: flat list (length = call count; values ignored). Unblocks: 0x004c5890 RwTexDictionaryCreate (demoted in frida-swe... |
-| `arena_block_free_predicate` | 3194 | 1 | block+8 -> headNode, block+0xc = end-sentinel value; headNode+0 (its next) == sentinel for the fully-free case, != sentinel otherwise.  No pool. Used for Aud... |
-| `audio_list_count` | 3069 | 1 | N nodes WITHOUT the audio pool (pool is not ready at diff-attach), so the traversal body is actually exercised.  Read-only => one structure, both sides.  Use... |
-| `audio_list_find_index` | 3093 | 1 | fn(anchor, key) -> int index-of-key or -1.  Hand-build circular list (next@+4, key@+8) from test.payloads; query test.key.  Read-only. Used for AudioListInde... |
-| `audio_list_min_select` | 3153 | 1 | pointer; map it back to its index so the A/B compares logical selection (per-side pointer identity is meaningless).  Used for AudioListMinKeySelect (0x005b07... |
-| `audio_list_remove` | 2971 | 1 | Build a fresh sentinel, optionally insert a node via the ORIGINAL FUN_005addd0 (insert_rva_str), then call orig/reimpl to remove. Observable: 1 if found (non... |
-| `buf_field_set` | 4184 | 1 | COM branch is never taken; the function exercises only the two field writes. Tests: flat list of param_2 values. Required CONFIG: buf_size, field_offsets (de... |
-| `cache_roundtrip` | 482 | 1 | args entries: a number is passed verbatim; `null` is the out-ptr slot (replaced by a poisoned 4-byte buf). signature.args must match (the out-ptr slot is 'po... |
-| `car_slot_init` | 849 | 1 | input: { idx, guard_val } — param_1 = idx; guard field at 0x7f105c+idx*0x4c is set to guard_val. Calls fn(idx), then reads back the 4 fields (offsets +0, +0x... |
-| `contact_history` | 543 | 1 | contact_history — set up slot 0 of a fake vehicle contact table, call fn(geom, vehicle) input: { slot_contact_id, slot_active, geom_contact_id } |
-| `container_find_scalar` | 455 | 1 | for LATER use only as raw ints). tests[i] = { data:[ints], key:<int> [, count:<int>] } Added 2026-07-29 (methods-efficiency pilot) for 0x004f3cb0. |
-| `cstr_ret_offset` | 1532 | 1 | compares the returned pointer as a byte offset from buf (orig vs reimpl). -1 means the returned pointer was null. test: { str: "filename.ext" }. Harness-exte... |
-| `cursor_back` | 656 | 1 | DAT_0067f17c and DAT_0067f184 as observable output packed into a uint32. Also saves/restores DAT_0067e9fc (written by callee FUN_0042f6b0) so it doesn't leak... |
-| `device_transform_dispatch` | 945 | 1 |  |
-| `dsound_secondary_init` | 2807 | 1 | Calls vtable[0] (QI), vtable[5] (secondary init), vtable[2] (Release). Strategy: build fake IUnknown with 6-slot vtable; stubs anchored in array to prevent G... |
-| `eax_implicit_ptr` | 3238 | 1 | scratch buffers (so dereferences inside the target don't AV). The harness allocates N scratch buffers (32 bytes each) and rewrites the input list so each tes... |
-| `endian_pack` | 1706 | 1 | into a 4-byte source slot; construct a pointer-to-pointer (out_ptr_ptr) and call fn. Read the output buffer bytes as a fingerprint and compare orig/reimpl. T... |
-| `esi_idx_ecx_outbuf4` | 2071 | 1 | C3                 ret  CONFIG.tests : scalar integer indices (incl. negatives / >=5 / the 3 case). |
-| `fmt_desc_copy` | 1036 | 1 | input: { f00, f04, f05, f10, zero_init } — src field values; zero_init flag. Uses two 0x20-byte buffers (fmtSrcBuf, fmtDstBuf). Returns packed u32: dst[+0x04... |
-| `fmt_desc_ptr` | 1024 | 1 | fmt_desc_ptr — fn(ptr_to_fmt_desc) -> int32. input: { f04, f10, f14 } — u32 values written to struct offsets. buf must be pre-allocated (0x20 bytes); zeroed ... |
-| `fmt_global_scan` | 1067 | 1 | fmt_global_scan — fn(key_ptr) -> pointer. input: array of 16 u8 bytes forming the format key. Returns pointer value as uint32 (comparable; NULL=0). |
-| `fmt_key_compare` | 1825 | 1 | Each test is { a: [16 bytes], b: [16 bytes] }. Allocates a 32-byte scratch buffer; writes a to [0..15], b to [16..31]. Calls fn(buf, buf+16) for both Orig an... |
-| `fmt_table_search` | 1054 | 1 | fmt_table_search — fn(ctx_ptr, desc_ptr) -> uint32 (1 match, 0 no-match). input: { count, entry_ptr } — writes count at ctx+0x24, ptr at ctx+0x28. fmtCtxBuf ... |
-| `font_matrix_push` | 1911 | 1 | safely exercisable. Tests with depth in (1..30) deref unallocated slots and AV both sides identically — they're not on the registry's test list, but the prel... |
-| `free_via_alloc` | 1799 | 1 | ── free_via_alloc ─────────────────────────────────────────────────────── Allocate two blocks (via alloc_rva), free each via Orig/Reimpl. Success = 1 (no cra... |
-| `guid_from_tag` | 1585 | 1 | test: tag (uint32). Calls fn(tag, outX) into two 16-byte buffers (preset to 0xCC), compares 16-byte fingerprints. Harness-extension arg_type added 2026-06-04... |
-| `idx_out2` | 573 | 1 | idx_out2 — fn(uint32_idx, out_ptr1, out_ptr2); two 4-byte out-slots in shared buf. Returns fn return value. Used for functions like VehicleCarStateRead. |
-| `int2out` | 2031 | 1 | 4-byte value to each out and returns a value. Compares both out buffers AND the return (packed fingerprint "<a>,<b>:<ret>"). CONFIG.tests is a list of int in... |
-| `int_outbuf4` | 1953 | 1 | Strategy: allocate two 4-byte buffers (one per path), zero each before each call, call fn(idx, buf), read back 4 bytes as packed uint32 (little-endian finger... |
-| `int_with_out_ptr` | 467 | 1 | int_with_out_ptr — uint32 arg + 4-byte output buffer; returns function's return value |
-| `large_buffer_save_restore` | 4630 | 1 | Unblocks (harness side): data_zero_fill (0x004924f0) — NOTE: C3 promotion still blocked by anti-island rule (5 of 6 callees at C1). This arg_type is infrastr... |
-| `matrix_rotate` | 966 | 1 |  |
-| `matrix_rotate_inner` | 986 | 1 |  |
-| `matrix_scale` | 1004 | 1 |  |
-| `out1_idx` | 563 | 1 | writing garbage to *out passes it. The out-slot is poisoned to 0xCCCCCCCC first, so "wrote nothing" is visible rather than reading as a stale match. Fingerpr... |
-| `out_buf_fmt_2` | 3739 | 1 | Tests: [p1, p2] pair (or a single int for the common p2=0 case). CONFIG.out_buf_size: per-buffer size (default 32). Both buffers zeroed before each call. |
-| `pcm_pack` | 1426 | 1 | Added 2026-06-04 (c3-batch-ab-s4) for 0x005c9770. Per test {src:[int32...], count:N}: write source ints into a shared src buffer, call Orig/Reimpl into two s... |
-| `pcm_sat_add` | 1557 | 1 | Writes a[]/b[] as int16 into shared src buffers, zeroes two out buffers, calls fn(outX, srcA, srcB, n*2), compares out fingerprints (n*2 bytes). Harness-exte... |
-| `ptr_nonnull_check` | 694 | 1 | where pointer equality is meaningless but null/non-null is the observable. `input` is an optional mode-flag value to pre-write to CONFIG.target_global before... |
-| `ptr_ptr_entity_set` | 3980 | 1 |  If *target_global == NULL at call time, the write crashes — the harness returns 0 for both sides (null-guard observable). Both paths must agree. |
-| `ptr_scratch_field` | 3045 | 1 | Allocate one zeroed scratch buffer (read-only target), seed the test byte at CONFIG.field_offset (default 0x54), call Orig/Reimpl, compare returns. Used for ... |
-| `ptr_zero_pair` | 1607 | 1 | fn(uint32* p): zeroes p[0] and p[1]. Preload both dwords with a sentinel plus a guard dword at +8 (must stay untouched), call, compare 12 bytes. test: sentin... |
-| `renderer_field3c_set` | 1632 | 1 | with hwvoice embedded at +0x140 (so +0x11c -> base+0x140, mirror at +0x174). test: { val: uint32, hw: 0|1 }. Observable: [+0x3c]:[hwvoice+0x34] hex. Harness-... |
-| `resource_loader_4arg` | 4402 | 1 | type_str is embedded as a NUL-terminated UTF-8 string in scratch memory. CONFIG fields: none beyond standard. Unblocks: 0x004997b0 Win32ResourceLoader. |
-| `seed_field_read_field` | 4686 | 1 | seed values (uint32). Observable = the read_off bytes after the call. Unlocks: 0x00483a30 Replay_Rewind (seed_off=0x18, read_off=0x1c, 4 bytes: copies *(p+0x... |
-| `semaphore_create` | 4230 | 1 | bit0 = (ret-non-null) ; bit1 = (handle stored at *buf was non-null). Per-side buf addrs differ — ret-pointer-identity is meaningless across sides; but ret-no... |
-| `sentinel_array_ptr` | 581 | 1 | Writes the array into buf. For orig, calls via a hand-written thunk that sets ECX=0 and EDX=buf before jumping to the target. For reimpl, calls as cdecl(0, b... |
-| `slot_quad_set` | 4509 | 1 | slot_field_count int (default 4) — number of dwords to read back. Tests: list of { idx: int, vals: [v0, v1, v2, v3] } objects. Unblocks: 0x00422ac0 FUN_00422... |
-| `source_loop_set` | 1669 | 1 | test: { loop: 0|1, hw: 0|1, pre28: uint32, prehw: uint32 }. Observable: [+0x28]:[hwvoice+0xcc] hex. Harness-extension arg_type added 2026-06-04 (c3_batch_ab ... |
-| `spin_angle_observe` | 3917 | 1 | vbuf_addr_str   string (hex) — vertex buffer base (default '0x00898a20') vbuf_len        int          — vertex buffer size (default 112) angle_global_str str... |
-| `st0_ret_mat4x3_ptr` | 344 | 1 | The four pad dwords at 0x0c/0x1c/0x2c/0x3c are zeroed for run-to-run determinism; the leaf never reads them. Scratch buffer only — no live game state is touc... |
-| `str_arg_int_get` | 433 | 1 | distinct returns, so non-degeneracy comes free — but the registry comment must still state the per-seed expected values. Same byte-by-byte idiom as cstr_ret_... |
-| `structptr_seeded_array` | 4723 | 1 | callee may re-read them as float). Observable = concat of read_offs bytes. Unlocks: 0x004c1c80 ViewportDimsSet (struct_size>=0x78, gate@+0x04 stays 0, array ... |
-| `sub_struct_dispatcher` | 2772 | 1 | Strategy: allocate 3 scratch buffers, call fn(b0, b1, b2); compare return address == b0 address (return value must equal first arg). Both paths route through... |
-| `thiscall_nested_field_get` | 3378 | 1 | the field at inner+inner_off. CONFIG: outer_off, inner_off, ret_kind('u32'| 'float'), struct_size, inner_size. Precedent consumer: 0x004c0b10 (*(*(this+0xa0)... |
-| `thread_desc_init` | 2731 | 1 | Strategy: allocate 5x4=20 byte scratch buf; fill with sentinel 0xDEAD????; call fn(buf, p2, p3, p4); read back 5 fields; return packed fingerprint. Both orig... |
-| `time_diff_decompose` | 383 | 1 | time_diff_decompose — fn(int time_a, int time_b, u32* sign, int* min, int* sec, float* csec). void return; four out-ptrs in a single 16-byte buf. input: [tim... |
-| `transform_point` | 897 | 1 |  |
-| `transform_vector` | 897 | 1 |  |
-| `trig_text_draw` | 3797 | 1 | CONFIG.draw_callee_rva_str: hex addr of the draw callee (default '0x00427ff0'). Signature of the callee is void(uint32, float, float). Tests: [sprite_id, x, ... |
-| `uint32_scalar` | 883 | 1 | float_scalar |
-| `vec2_normalize` | 912 | 1 |  |
-| `vec2_ptr` | 887 | 1 | float_scalar (default) |
-| `vec3_lerp` | 2660 | 1 | { a:[x,y,z], b:[x,y,z], t:float }. Fills a/b/t, calls fn(out,a,b,t), reads the 3 out floats as a packed-bits fingerprint, compares. Validated on Vec3Lerp 0x0... |
-| `void_step_global` | 605 | 1 | Writes DAT_0067e9f8=0 (slot 0). Calls fn(step). Returns cursor at 0x0067ed40 after the call (as int32, compared between orig/reimpl). Used for MenuCursorStep... |
-| `wavefmt_copy` | 1741 | 1 | Tests AudioWaveFmtCopy-style fn(src_ptr, dst_ptr, swap_flag) -> src_ptr. For each test {src:[16 bytes], swap}: write src data into srcBuf, zero dstBuf, call ... |
-| `write_global_call_int0` | 529 | 1 | write_global_call_int0 — write sentinel to target_global, call fn(0), return value Use for getters where non-trivial domain requires injecting known values. |
-| `audio_list_insert` | 2937 | 0 | Build a self-referential 12-byte sentinel in fresh memory (isolated from live game state), call fn(sentinel, payload), read back new head node[2]. Observable... |
-| `audio_pool_free` | 2907 | 0 | Allocate a node via FUN_005ae800(&DAT_009146c0, tag), then free it. Success = 1 (no crash), 0 on crash. Both orig and reimpl must return 1. CONFIG: alloc_rva... |
-| `music_vol_set` | 4281 | 0 | runs zero iterations and the secondary branch is skipped. Tests: flat list of float volume values. Observable: low-24 fingerprint of buf packed with (sentine... |
+| `void_write_observe` | 5050 | 51 | Per-test writes sentinel `t` to `CONFIG.target_global`, optionally seeds `CONFIG.seed_globals` (array of {addr,val}) for both sides, calls fn with no args or fixed `CONFIG.call_args`, reads `target_global` back as uint32; no save/restore (idempotent sentinel pre-write); `crash_equal_ok` counts identical crashes as pass. CONFIG: `target_global`, `seed_globals`, `call_args`, `crash_equal_ok`. |
+| `void_setter_observe` | 564 | 40 | Calls fn(input>>>0) [void return], then reads `CONFIG.target_global` as uint32 observable; no buffer allocation, no save/restore. CONFIG: `target_global` only. Broader than name: any void(uint32) that writes its param to one absolute global - not limited to simple direct-assign setters. |
+| `scalars_to_scattered_globals` | 4859 | 30 | Calls fn(t.args... as uint32 scalars); saves/restores arbitrary non-contiguous byte-windows (`CONFIG.observe`:{addr,len}) and stride-indexed array slots (`CONFIG.idx_arrays`:{base,stride,elem_len}) under a live index cursor (`CONFIG.idx_call_str`); fingerprints with FNV-1a; optionally pre-fills windows, runs a prep call, or folds the return value. CONFIG: `observe`, `idx_arrays`, `idx_call_str`, `fold_ret`, `prep_... |
+| `int_pair` | 377 | 23 | Passes two uint32 stack args (input[0], input[1]) directly to fn and returns fn's return value; no buffer, no globals, no save/restore, no CONFIG parameterization beyond `arg_type`. Applies to any two-integer-in, any-return-type function. |
+| `state_machine_observe` | 784 | 13 | Saves all (input  +  output) globals, writes test values into `CONFIG.input_globals` (array of {addr,type}), calls fn() [void, no args], reads `CONFIG.output_globals` as packed hex fingerprint, then restores everything; per-entry types: u8/u16/u32/s8/s16/s32. CONFIG: `input_globals`, `output_globals`. Broader: any void() function whose entire observable is global-to-global mutation; input and output global sets ar... |
+| `struct_call_observe` | 1268 | 13 | Per side allocates a zeroed struct buffer (`CONFIG.struct_size`) + up to 2 eight- byte out-bufs (`CONFIG.out_ptrs`); seeds fields and nested sub-struct graphs identically on each side; calls fn(struct[,out0[,out1]]); fingerprints selected offsets (u8/u16/u32/s32/u64) from struct or out-bufs and optionally return; each side's pointers differ in address but match in seeded content so relative-offset reads compare cl... |
+| `void` | 370 | 13 | void — no args, no return value of interest |
+| `draw_quad_observe` | 3758 | 10 | CONFIG fields: vbuf_addr_str   string (hex) — override DAT_00898a20 if needed vbuf_len        int          — override 112 if buffer size differs |
+| `ptr_arg_int_get` | 430 | 10 | Allocates one SHARED scratch buffer (size `CONFIG.struct_size` or 256), fills it with a deterministic per-seed dword pattern (`seed + o*0x01010101`), passes the SAME physical pointer to both Orig and Reimpl, returns fn's uint32 return; a double-deref function faults on the bad inner pointer (caught as mismatch, never false GREEN). CONFIG: `struct_size`. Broader: any fn(ptr)->int single-level-deref getter, regardle... |
+| `entity_field_set` | 658 | 8 | Calls fn(input[0]|0, input[1]>>>0) [void], reads `CONFIG.target_global + input[0] * CONFIG.entity_byte_stride` as uint32 observable; no buffer, no save/restore (assumes idempotent slot write). CONFIG: `target_global`, `entity_byte_stride`. Broader: any fn(int_index, uint32_value) that writes into a strided global array - both the base and stride are fully configurable. |
+| `ptr_seed_observe` | 1375 | 8 | Allocates N paired scratch buffers per side (`CONFIG.num_bufs`x`buf_size`); seeds identically per-test (flat field values or cross-buffer `ptr_to` pointer wires to build struct graphs); calls fn via `CONFIG.arg_layout` ({buf:i}->pointer, {f32}/{i32}->scalar from test.scalars, per-test `null_args`->NULL); fingerprints selected buffer offsets (f32 as raw bits for bit-identity) and optionally return. CONFIG: `num_buf... |
+| `track_record_deref` | 4129 | 8 | Zero-arg fn; harness allocates a 0x48-byte fake record (zeroed), writes a u32 sentinel at CONFIG.field_offset, patches CONFIG.record_global_str (default 0x0063d7e4) to point to it, calls fn() with no args, fingerprints return value (CONFIG.is_getter=true) or crash-equality (false), then restores the global; generalises to any no-arg fn that dereferences a single globally-NULL struct pointer provided the record fit... |
+| `bgra_encode` | 1568 | 6 | fn(byte* buf) -> uint32; harness allocates a single shared 4-byte buffer, writes CONFIG.tests[i]=[b0,b1,b2,b3] as individual bytes before each Orig and Reimpl call (re- seeded between the two), compares the unsigned integer return; same pointer used for both sides; broader than the name: fits any fn(byte*) -> uint that reads <=4 bytes from its sole pointer arg and returns a packed scalar. |
+| `float_scalar` | 228 | 6 | Passes CONFIG.tests[i] as the sole stack argument and returns the raw function return (fn(input)); no buffer allocation, no global seeding, no post-call observation; the thinnest possible wrapper - fits any single-scalar-arg fn that returns a scalar, regardless of numeric domain or arg type interpretation. |
+| `fmt_desc_pair_compare` | 3665 | 6 | fn(bufA, bufB [, p3, p4]); allocates two 0x40-byte scratch bufs, populates sparse fields via test.a/{fXX} -> u32@offset 0xXX notation, bufs zeroed before each call; fingerprint is (retU32_low16, rolling-polynomial-hash(bufA), rolling-polynomial-hash(bufB)); 2 vs 4 args driven by CONFIG.signature.args.length; crash_equal_ok flag; broadly fits any fn(ptr, ptr) or fn(ptr, ptr, int, int) that mutates either buffer - d... |
+| `multi_arg_global_write` | 848 | 6 | fn(p1..pN): void called with input[] as positional u32 args; forces CONFIG.guard_global to 1 before the call; reads back CONFIG.out_count consecutive u32s at CONFIG.out_base as a hex-packed fingerprint; restores both guard and output block afterward; broader than its name: fits any multi-arg void setter that conditionally writes a contiguous memory block when a nonzero guard is present, CONFIG fields: guard_global... |
+| `reg_this_call_observe` | 2352 | 6 | CONFIG: this_reg ('eax' for these), this_field_off, observe_callee_str, struct_size (>= field_off+4), signature {ret:'void', args:[]}, tests = [sentinel u32,... |
+| `cache_setter_observe` | 532 | 4 | Per-test scatter-seed -> call -> scatter-observe; input.seed=[{addr,val}] written pre-call, input.args=[...] (null entry -> harness buf) passed to fn, input.obs or CONFIG.obs_globals (array of hex addr strings) read post-call and packed as a hex fingerprint; every seeded and observed global is snapshotted and restored; broader than the name: fits any fn whose observable is scattered non-contiguous globals, not jus... |
+| `count_header_list_ring` | 4949 | 4 | Builds an intrusive count-header ring list with the ORIGINAL Init+PushBack primitives (init_rva_str / pushback_rva_str as NativeFunctions), then exercises CONFIG.list_op ('init'|'pushback'|'find'|'at') on Orig vs Reimpl; observables are address- normalised (count u32, cmp-field s32 values) so per-side allocations compare cleanly; CONFIG: node_link_off, cmp_field_off, object_size; applies to any intrusive ring list... |
+| `out3_idx` | 585 | 4 | fn(buf, uint32_idx): passes the harness scratch buffer as the first positional arg and tests[i] as a u32 second arg; returns the function's return value only - buffer contents are never read back or fingerprinted; a reimpl that returns the correct scalar while writing garbage to *buf passes silently; use out1_idx when the written value must also be verified; CONFIG: tests[] list of uint32 indices; no global seeding. |
+| `outbuf_only` | 2067 | 4 | fn(T* out): void; harness allocates two separate out_buf_size-byte bufs (default 16), zeros each before the call, calls fn(buf), reads back as packed-dword fingerprint; CONFIG.fold_ret=true also XORs the return value in (for dual-output getters that both write *out and return a value); CONFIG.seed_global seeds a global with tests[i] before each call (for global-copying getters) and restores it after; broadly fits ... |
+| `stub_dispatch_observe` | 2590 | 4 | Arbitrary-arity fn driven by num_bufs scratch buffers (each buf_size bytes) seeded per-test via test.seed=[{buf,off,type,value,stub,ptr_to}]; arg_layout[] maps each call position to a buf-ptr, a scalar from test.scalars[], or the recorder stub; stub_at[] Interceptor-replaces hardcoded direct-CALL targets with the recorder; recorder normalises pointer args to "b<i>+<off>" against scratch-buffer bases so per-side ad... |
+| `thiscall_field_get` | 3411 | 4 | CONFIG.struct_size  : int    bytes to allocate (>= field_off + 8). Default field_off + 64. CONFIG.tests        : flat list of seed values (u32/int/float per ... |
+| `bytes_inplace` | 1521 | 3 |  |
+| `int_copy_outbuf` | 2774 | 3 | CONFIG.out_buf_size (default 24) bytes as a position-sensitive XOR fingerprint. Real GREEN requires both fingerprints to be non-zero AND equal — proof the fu... |
+| `int_ptr2_out` | 381 | 3 | int_ptr2_out — fn(uint32, out_ptr1, out_ptr2); two 4-byte out-slots; returns packed u32 |
+| `reg_this_callee_stub` | 2230 | 3 | signature {ret:'void', args:[]}, tests = [{clump_frame, handle_base}, ...]. The shared scratch clump means this[0x5c] (= clump ADDR) matches across sides; sc... |
+| `slot_block_zero` | 749 | 3 | target_global       — hex address of array base (e.g. 0x006403e8) entity_byte_stride  — bytes per slot (e.g. 0xf40) sentinel_value      — optional uint32 pre... |
+| `st0_ret_global` | 260 | 3 | input:           a single number, stored as f32 into global_a Returns a 16-hex-digit fingerprint of the 64-bit double ST0 return (full mantissa -> catches a ... |
+| `struct_three_write` | 4553 | 3 | observe_offsets  array of byte offsets to read back (default [12, 16, 20]) Tests: list of [val_a, val_b] pairs. Unblocks: 0x005be140 FUN_005be140. |
+| `teardown_call_pair` | 4667 | 3 | Tests: flat list (length = call count; values ignored). Unblocks: engine_stop_dispatch (0x00493550), hw_exit_dispatch (0x00493560), engine_stop_helper (0x004... |
+| `vec3_normalize` | 976 | 3 |  |
+| `audio_list_drain` | 3090 | 2 | Build a fresh sentinel, insert N nodes via FUN_005addd0 (original), call orig/reimpl to drain. Observable: 1 = sentinel self-loops (empty) after drain, 0 = n... |
+| `audio_sub_struct_dual` | 4233 | 2 | LinkBuffer(p1,p3); returns p1 on success, 0 on failure. With a zeroed 12-byte scratch buf both cleanups are no-ops and both link calls write to the buffer. T... |
+| `audio_sub_struct_link` | 4193 | 2 | Prior arg_type 'audio_sub_struct_link' did not exist in this file and fell through to default fn(input), passing a bare uint32 as the pointer arg — both side... |
+| `audio_sub_struct_zero` | 4408 | 2 |  |
+| `bytes_inplace_3` | 1521 | 2 |  |
+| `eax_implicit_int` | 3319 | 2 | scratch buffers (so dereferences inside the target don't AV). The harness allocates N scratch buffers (32 bytes each) and rewrites the input list so each tes... |
+| `entity_field_add` | 672 | 2 | the residue of the first call. Snapshot the field, call fn(idx,delta), pack (return_value, post-add field) into a fingerprint, then RESTORE the field so Orig... |
+| `fastcall_reg` | 3530 | 2 | a 2-element [ecxVal, edxVal] (nargs==2, int mode). For a ptr register the value is replaced by a scratch-buffer address. |
+| `float3_scalar_ret` | 236 | 2 | cosine-ease lerp 0x00422440). input is a [a, b, t] triple; registry signature must be {ret:'float', args:['float','float','float']}. The framework reads the ... |
+| `font_ctx_float2` | 1925 | 2 | FontSys_InitRenderState (0x00552c10) once before the test loop to guarantee g_FontCtxPtrs[0] is allocated. Without this, the function derefs a NULL slot ptr ... |
+| `int2_ptr2_out` | 3204 | 2 | void fn(uint a, uint b, uint* hi, uint* lo).  Two scalar args + two 4-byte out-slots; observable = "hi,lo" hex fingerprint.  Used for AudioShiftAddMul64 (0x0... |
+| `sort_dispatch_out4` | 879 | 2 | live globals at quiescent menu → bit-identical sorted output.  input: {sel, dir} |
+| `sprite_table_dispatch` | 3954 | 2 | function takes 9 args — only the first arg matters; remaining stack bytes are garbage but the patched callee only reads its first arg. Tests: flat list of sl... |
+| `st0_ret_mat3_ptr` | 301 | 2 | The three pad dwords at 0x0c/0x1c/0x2c are zeroed for run-to-run determinism; the leaves never read them. Scratch buffer only — no live game state is touched... |
+| `vec3_global_mul_observe` | 3605 | 2 | Strategy: write test vec3 to globals[idx*stride+0/4/8], save original, call fn(idx), read back globals as 3 u32 fingerprints, restore originals. Both orig an... |
+| `vec3_ptr` | 363 | 2 |  |
+| `vtable_table_dispatch` | 2503 | 2 | tests[i] = { idx, aux16, a1, a4 } Authored 2026-07-31 for 0x005b10a0 (offset 4) and 0x005b10e0 (offset 8), which are byte-identical apart from that one displ... |
+| `alloc_check` | 1839 | 1 | ── alloc_check ────────────────────────────────────────────────────────── Call(size, tag) for each test; encode result as (align_mod4 * 256 + header_diff). A... |
+| `allocator_nonnull` | 4455 | 1 | CONFIG fields: none beyond standard. Tests: flat list (length = call count; values ignored). Unblocks: 0x004c5890 RwTexDictionaryCreate (demoted in frida-swe... |
+| `arena_block_free_predicate` | 3275 | 1 | block+8 -> headNode, block+0xc = end-sentinel value; headNode+0 (its next) == sentinel for the fully-free case, != sentinel otherwise.  No pool. Used for Aud... |
+| `audio_list_count` | 3150 | 1 | N nodes WITHOUT the audio pool (pool is not ready at diff-attach), so the traversal body is actually exercised.  Read-only => one structure, both sides.  Use... |
+| `audio_list_find_index` | 3174 | 1 | fn(anchor, key) -> int index-of-key or -1.  Hand-build circular list (next@+4, key@+8) from test.payloads; query test.key.  Read-only. Used for AudioListInde... |
+| `audio_list_min_select` | 3234 | 1 | pointer; map it back to its index so the A/B compares logical selection (per-side pointer identity is meaningless).  Used for AudioListMinKeySelect (0x005b07... |
+| `audio_list_remove` | 3052 | 1 | Build a fresh sentinel, optionally insert a node via the ORIGINAL FUN_005addd0 (insert_rva_str), then call orig/reimpl to remove. Observable: 1 if found (non... |
+| `buf_field_set` | 4276 | 1 | COM branch is never taken; the function exercises only the two field writes. Tests: flat list of param_2 values. Required CONFIG: buf_size, field_offsets (de... |
+| `cache_roundtrip` | 499 | 1 | args entries: a number is passed verbatim; `null` is the out-ptr slot (replaced by a poisoned 4-byte buf). signature.args must match (the out-ptr slot is 'po... |
+| `car_slot_init` | 898 | 1 | input: { idx, guard_val } — param_1 = idx; guard field at 0x7f105c+idx*0x4c is set to guard_val. Calls fn(idx), then reads back the 4 fields (offsets +0, +0x... |
+| `contact_history` | 570 | 1 | contact_history — set up slot 0 of a fake vehicle contact table, call fn(geom, vehicle) input: { slot_contact_id, slot_active, geom_contact_id } |
+| `container_find_scalar` | 472 | 1 | for LATER use only as raw ints). tests[i] = { data:[ints], key:<int> [, count:<int>] } Added 2026-07-29 (methods-efficiency pilot) for 0x004f3cb0. |
+| `cstr_ret_offset` | 1598 | 1 | compares the returned pointer as a byte offset from buf (orig vs reimpl). -1 means the returned pointer was null. test: { str: "filename.ext" }. Harness-exte... |
+| `cursor_back` | 693 | 1 | DAT_0067f17c and DAT_0067f184 as observable output packed into a uint32. Also saves/restores DAT_0067e9fc (written by callee FUN_0042f6b0) so it doesn't leak... |
+| `device_transform_dispatch` | 994 | 1 |  |
+| `dsound_secondary_init` | 2888 | 1 | Calls vtable[0] (QI), vtable[5] (secondary init), vtable[2] (Release). Strategy: build fake IUnknown with 6-slot vtable; stubs anchored in array to prevent G... |
+| `eax_implicit_ptr` | 3319 | 1 | scratch buffers (so dereferences inside the target don't AV). The harness allocates N scratch buffers (32 bytes each) and rewrites the input list so each tes... |
+| `endian_pack` | 1772 | 1 | into a 4-byte source slot; construct a pointer-to-pointer (out_ptr_ptr) and call fn. Read the output buffer bytes as a fingerprint and compare orig/reimpl. T... |
+| `esi_idx_ecx_outbuf4` | 2143 | 1 | C3                 ret  CONFIG.tests : scalar integer indices (incl. negatives / >=5 / the 3 case). |
+| `fmt_desc_copy` | 1085 | 1 | input: { f00, f04, f05, f10, zero_init } — src field values; zero_init flag. Uses two 0x20-byte buffers (fmtSrcBuf, fmtDstBuf). Returns packed u32: dst[+0x04... |
+| `fmt_desc_ptr` | 1073 | 1 | fmt_desc_ptr — fn(ptr_to_fmt_desc) -> int32. input: { f04, f10, f14 } — u32 values written to struct offsets. buf must be pre-allocated (0x20 bytes); zeroed ... |
+| `fmt_global_scan` | 1116 | 1 | fmt_global_scan — fn(key_ptr) -> pointer. input: array of 16 u8 bytes forming the format key. Returns pointer value as uint32 (comparable; NULL=0). |
+| `fmt_key_compare` | 1891 | 1 | Each test is { a: [16 bytes], b: [16 bytes] }. Allocates a 32-byte scratch buffer; writes a to [0..15], b to [16..31]. Calls fn(buf, buf+16) for both Orig an... |
+| `fmt_table_search` | 1103 | 1 | fmt_table_search — fn(ctx_ptr, desc_ptr) -> uint32 (1 match, 0 no-match). input: { count, entry_ptr } — writes count at ctx+0x24, ptr at ctx+0x28. fmtCtxBuf ... |
+| `font_matrix_push` | 1977 | 1 | safely exercisable. Tests with depth in (1..30) deref unallocated slots and AV both sides identically — they're not on the registry's test list, but the prel... |
+| `free_via_alloc` | 1865 | 1 | ── free_via_alloc ─────────────────────────────────────────────────────── Allocate two blocks (via alloc_rva), free each via Orig/Reimpl. Success = 1 (no cra... |
+| `guid_from_tag` | 1651 | 1 | test: tag (uint32). Calls fn(tag, outX) into two 16-byte buffers (preset to 0xCC), compares 16-byte fingerprints. Harness-extension arg_type added 2026-06-04... |
+| `idx_out2` | 605 | 1 | idx_out2 — fn(uint32_idx, out_ptr1, out_ptr2); two 4-byte out-slots in shared buf. Returns fn return value. Used for functions like VehicleCarStateRead. |
+| `int2out` | 2103 | 1 | 4-byte value to each out and returns a value. Compares both out buffers AND the return (packed fingerprint "<a>,<b>:<ret>"). CONFIG.tests is a list of int in... |
+| `int_outbuf4` | 2019 | 1 | Strategy: allocate two 4-byte buffers (one per path), zero each before each call, call fn(idx, buf), read back 4 bytes as packed uint32 (little-endian finger... |
+| `int_with_out_ptr` | 484 | 1 | int_with_out_ptr — uint32 arg + 4-byte output buffer; returns function's return value |
+| `large_buffer_save_restore` | 4722 | 1 | Unblocks (harness side): data_zero_fill (0x004924f0) — NOTE: C3 promotion still blocked by anti-island rule (5 of 6 callees at C1). This arg_type is infrastr... |
+| `matrix_rotate` | 1015 | 1 |  |
+| `matrix_rotate_inner` | 1035 | 1 |  |
+| `matrix_scale` | 1053 | 1 |  |
+| `out1_idx` | 595 | 1 | writing garbage to *out passes it. The out-slot is poisoned to 0xCCCCCCCC first, so "wrote nothing" is visible rather than reading as a stale match. Fingerpr... |
+| `out_buf_fmt_2` | 3826 | 1 | Tests: [p1, p2] pair (or a single int for the common p2=0 case). CONFIG.out_buf_size: per-buffer size (default 32). Both buffers zeroed before each call. |
+| `pcm_pack` | 1487 | 1 | Added 2026-06-04 (c3-batch-ab-s4) for 0x005c9770. Per test {src:[int32...], count:N}: write source ints into a shared src buffer, call Orig/Reimpl into two s... |
+| `pcm_sat_add` | 1623 | 1 | Writes a[]/b[] as int16 into shared src buffers, zeroes two out buffers, calls fn(outX, srcA, srcB, n*2), compares out fingerprints (n*2 bytes). Harness-exte... |
+| `ptr_nonnull_check` | 731 | 1 | where pointer equality is meaningless but null/non-null is the observable. `input` is an optional mode-flag value to pre-write to CONFIG.target_global before... |
+| `ptr_ptr_entity_set` | 4067 | 1 |  If *target_global == NULL at call time, the write crashes — the harness returns 0 for both sides (null-guard observable). Both paths must agree. |
+| `ptr_scratch_field` | 3126 | 1 | Allocate one zeroed scratch buffer (read-only target), seed the test byte at CONFIG.field_offset (default 0x54), call Orig/Reimpl, compare returns. Used for ... |
+| `ptr_zero_pair` | 1673 | 1 | fn(uint32* p): zeroes p[0] and p[1]. Preload both dwords with a sentinel plus a guard dword at +8 (must stay untouched), call, compare 12 bytes. test: sentin... |
+| `renderer_field3c_set` | 1698 | 1 | with hwvoice embedded at +0x140 (so +0x11c -> base+0x140, mirror at +0x174). test: { val: uint32, hw: 0|1 }. Observable: [+0x3c]:[hwvoice+0x34] hex. Harness-... |
+| `resource_loader_4arg` | 4494 | 1 | type_str is embedded as a NUL-terminated UTF-8 string in scratch memory. CONFIG fields: none beyond standard. Unblocks: 0x004997b0 Win32ResourceLoader. |
+| `seed_field_read_field` | 4778 | 1 | seed values (uint32). Observable = the read_off bytes after the call. Unlocks: 0x00483a30 Replay_Rewind (seed_off=0x18, read_off=0x1c, 4 bytes: copies *(p+0x... |
+| `semaphore_create` | 4322 | 1 | bit0 = (ret-non-null) ; bit1 = (handle stored at *buf was non-null). Per-side buf addrs differ — ret-pointer-identity is meaningless across sides; but ret-no... |
+| `sentinel_array_ptr` | 613 | 1 | Writes the array into buf. For orig, calls via a hand-written thunk that sets ECX=0 and EDX=buf before jumping to the target. For reimpl, calls as cdecl(0, b... |
+| `slot_quad_set` | 4601 | 1 | slot_field_count int (default 4) — number of dwords to read back. Tests: list of { idx: int, vals: [v0, v1, v2, v3] } objects. Unblocks: 0x00422ac0 FUN_00422... |
+| `source_loop_set` | 1735 | 1 | test: { loop: 0|1, hw: 0|1, pre28: uint32, prehw: uint32 }. Observable: [+0x28]:[hwvoice+0xcc] hex. Harness-extension arg_type added 2026-06-04 (c3_batch_ab ... |
+| `spin_angle_observe` | 4004 | 1 | vbuf_addr_str   string (hex) — vertex buffer base (default '0x00898a20') vbuf_len        int          — vertex buffer size (default 112) angle_global_str str... |
+| `st0_ret_mat4x3_ptr` | 348 | 1 | The four pad dwords at 0x0c/0x1c/0x2c/0x3c are zeroed for run-to-run determinism; the leaf never reads them. Scratch buffer only — no live game state is touc... |
+| `str_arg_int_get` | 450 | 1 | distinct returns, so non-degeneracy comes free — but the registry comment must still state the per-seed expected values. Same byte-by-byte idiom as cstr_ret_... |
+| `structptr_seeded_array` | 4815 | 1 | callee may re-read them as float). Observable = concat of read_offs bytes. Unlocks: 0x004c1c80 ViewportDimsSet (struct_size>=0x78, gate@+0x04 stays 0, array ... |
+| `sub_struct_dispatcher` | 2853 | 1 | Strategy: allocate 3 scratch buffers, call fn(b0, b1, b2); compare return address == b0 address (return value must equal first arg). Both paths route through... |
+| `thiscall_nested_field_get` | 3459 | 1 | the field at inner+inner_off. CONFIG: outer_off, inner_off, ret_kind('u32'| 'float'), struct_size, inner_size. Precedent consumer: 0x004c0b10 (*(*(this+0xa0)... |
+| `thread_desc_init` | 2812 | 1 | Strategy: allocate 5x4=20 byte scratch buf; fill with sentinel 0xDEAD????; call fn(buf, p2, p3, p4); read back 5 fields; return packed fingerprint. Both orig... |
+| `time_diff_decompose` | 390 | 1 | time_diff_decompose — fn(int time_a, int time_b, u32* sign, int* min, int* sec, float* csec). void return; four out-ptrs in a single 16-byte buf. input: [tim... |
+| `transform_point` | 946 | 1 |  |
+| `transform_vector` | 946 | 1 |  |
+| `trig_text_draw` | 3884 | 1 | CONFIG.draw_callee_rva_str: hex addr of the draw callee (default '0x00427ff0'). Signature of the callee is void(uint32, float, float). Tests: [sprite_id, x, ... |
+| `uint32_scalar` | 932 | 1 | float_scalar |
+| `vec2_normalize` | 961 | 1 |  |
+| `vec2_ptr` | 936 | 1 | float_scalar (default) |
+| `vec3_lerp` | 2741 | 1 | { a:[x,y,z], b:[x,y,z], t:float }. Fills a/b/t, calls fn(out,a,b,t), reads the 3 out floats as a packed-bits fingerprint, compares. Validated on Vec3Lerp 0x0... |
+| `void_step_global` | 637 | 1 | Writes DAT_0067e9f8=0 (slot 0). Calls fn(step). Returns cursor at 0x0067ed40 after the call (as int32, compared between orig/reimpl). Used for MenuCursorStep... |
+| `wavefmt_copy` | 1807 | 1 | Tests AudioWaveFmtCopy-style fn(src_ptr, dst_ptr, swap_flag) -> src_ptr. For each test {src:[16 bytes], swap}: write src data into srcBuf, zero dstBuf, call ... |
+| `write_global_call_int0` | 552 | 1 | write_global_call_int0 — write sentinel to target_global, call fn(0), return value Use for getters where non-trivial domain requires injecting known values. |
+| `audio_list_insert` | 3018 | 0 | Build a self-referential 12-byte sentinel in fresh memory (isolated from live game state), call fn(sentinel, payload), read back new head node[2]. Observable... |
+| `audio_pool_free` | 2988 | 0 | Allocate a node via FUN_005ae800(&DAT_009146c0, tag), then free it. Success = 1 (no crash), 0 on crash. Both orig and reimpl must return 1. CONFIG: alloc_rva... |
+| `music_vol_set` | 4373 | 0 | runs zero iterations and the secondary branch is skipped. Tests: flat list of float volume values. Observable: low-24 fingerprint of buf packed with (sentine... |
 
 ## Early-window-only arg_types (pure-leaf pre-crash lane)
 
