@@ -210,12 +210,25 @@ function pollLutThenRun(triesLeft) {
 // For scalar-return types: returns the function's return value (number).
 // For output-buffer types: returns a bit-packed hex string from the output buffer.
 function callFn(fn, input, buf) {
+    // MECHANISM: Zero-arg call - fn() with no args, no seeding, no buffer, no out-pointers;
+    // observable is ONLY fn()'s return value; for a true void function both sides return
+    // null/undefined and trivially match - FALSE-GREEN hazard for void side-effect-only functions.
+    // CONFIG: none. SECOND AND WORSE HAZARD: if the target ACTUALLY TAKES ARGUMENTS this pushes
+    // none, so both sides read the SAME leftover stack bytes and agree; non-degeneracy cannot
+    // catch it because the garbage is identical between the two sides. x87 args are invisible to
+    // the decompiler - confirm arity from the LISTING before using this.
     if (CONFIG.arg_type === 'none') {
         // Zero-arg getter / void invocation. `input` is a dummy iteration
         // marker; we just call the function repeatedly to confirm stable
         // bit-identical output between original and reimpl.
         return fn();
     }
+    // MECHANISM: Writes `input>>>0` as u32 into ptr(CONFIG.target_global) then calls fn() with no
+    // args; observable is ONLY fn()'s return value; no save/restore of the global, no buffer, no
+    // out-pointers. CONFIG: `target_global`. Broader: any zero-arg function whose single input
+    // dimension is one writable 32-bit global. SAME HAZARD AS `none`: it pushes NO arguments, so a
+    // target that really takes some reads identical leftover stack bytes on both sides and passes.
+    // Confirm arity from the LISTING; x87 args do not appear in decompiler output.
     if (CONFIG.arg_type === 'read_global') {
         ptr(CONFIG.target_global).writeU32(input >>> 0);
         return fn();
@@ -233,6 +246,11 @@ function callFn(fn, input, buf) {
     // cosine-ease lerp 0x00422440). input is a [a, b, t] triple; registry signature
     // must be {ret:'float', args:['float','float','float']}. The framework reads the
     // float return and fingerprints it as IEEE-754 bits (ret_kind 'float').
+    // MECHANISM: Passes three float stack args (input[0], input[1], input[2]) to fn and returns
+    // its float return value directly; no buffers, no globals, no save/restore, no CONFIG
+    // parameterization beyond signature {ret:'float',args:['float','float','float']}. Observes
+    // return value only. Applies to any pure f(float,float,float)->float math leaf with no side
+    // effects.
     if (CONFIG.arg_type === 'float3_scalar_ret') {
         return fn(input[0], input[1], input[2]);
     }
@@ -257,6 +275,12 @@ function callFn(fn, input, buf) {
     //   input:           a single number, stored as f32 into global_a
     // Returns a 16-hex-digit fingerprint of the 64-bit double ST0 return (full mantissa
     // -> catches a non-hardware-FSIN reimpl that a 32-bit read would round away).
+    // MECHANISM: Zero stack args (fn() with no args); seeds CONFIG.global_a (hex addr of a
+    // writable 32-bit float global) with input as f32, snapshots and restores the 4-byte U32
+    // around the call; returns a 16-hex-digit fingerprint of the 64-bit ST0 double (full
+    // mantissa); observes nothing else - false-GREEN hazard if ST0 return is always 0 for the
+    // seeded input; CONFIG.global_a is the only key; fits any no-stack-arg leaf that reads exactly
+    // one f32 global and returns its result in ST0.
     if (CONFIG.arg_type === 'st0_ret_global') {
         const ga = ptr(CONFIG.global_a);
         const sa = ga.readU32() >>> 0;
@@ -298,6 +322,11 @@ function callFn(fn, input, buf) {
     // The three pad dwords at 0x0c/0x1c/0x2c are zeroed for run-to-run determinism; the
     // leaves never read them. Scratch buffer only — no live game state is touched.
     // Returns a 16-hex-digit fingerprint of the 64-bit double ST0 return (full mantissa).
+    // MECHANISM: Seeds a 0x30-byte scratch buffer with 9 f32s in 3 rows at stride 0x10 (pads at
+    // 0x0c/1c/2c zeroed); calls fn(buf) with signature.ret='double' (required to drain x87 ST0 via
+    // libffi FSTP-qword); fingerprints 64-bit double return as 16 hex digits. No CONFIG
+    // parameterization. Fits any f(float*)->ST0 leaf reading a 3-row stride-0x10 matrix; does NOT
+    // fit a 4-row layout (use st0_ret_mat4x3_ptr).
     if (CONFIG.arg_type === 'st0_ret_mat3_ptr') {
         for (let r = 0; r < 3; r++) {
             const base = r * 0x10;
@@ -345,6 +374,11 @@ function callFn(fn, input, buf) {
     // The four pad dwords at 0x0c/0x1c/0x2c/0x3c are zeroed for run-to-run determinism;
     // the leaf never reads them. Scratch buffer only — no live game state is touched.
     // Returns a 16-hex-digit fingerprint of the 64-bit double ST0 return.
+    // MECHANISM: fn(float* mat -> ST0 double): packs the test's 12 floats as 4 rows of 3 at stride
+    // 0x10 into a scratch buf and zeroes the 4 pad dwords at 0x0c/0x1c/0x2c/0x3c for run-to-run
+    // determinism (the leaf never reads them); returns the x87 ST0 value, so signature.ret must be
+    // 'double'. Fits any leaf taking a row-padded 4x3 matrix by pointer and returning a float in
+    // ST0.
     if (CONFIG.arg_type === 'st0_ret_mat4x3_ptr') {
         for (let r = 0; r < 4; r++) {
             const base = r * 0x10;
@@ -360,6 +394,10 @@ function callFn(fn, input, buf) {
         return '0x' + ('00000000' + hi.toString(16)).slice(-8)
                     + ('00000000' + lo.toString(16)).slice(-8);
     }
+    // MECHANISM: Writes input[0..2] as f32 into a shared scratch buf at offsets 0/4/8; calls
+    // fn(buf) and returns fn's return value directly; post-call buffer state is NOT observed -
+    // false-GREEN hazard if fn writes results back into the pointer. No CONFIG parameterization.
+    // Applies to any fn(float*)->scalar where the vec3 buffer is read-only by the callee.
     if (CONFIG.arg_type === 'vec3_ptr') {
         buf.writeFloat(input[0]);
         buf.add(4).writeFloat(input[1]);
@@ -367,6 +405,10 @@ function callFn(fn, input, buf) {
         return fn(buf);
     }
     // void — no args, no return value of interest
+    // MECHANISM: Calls fn() with no args and returns fn()'s raw return value to the comparison
+    // framework; no seeding, no buffer, no out-pointer, no observation beyond the return; for a
+    // true void return type both sides produce null/undefined and trivially match - FALSE-GREEN
+    // hazard. CONFIG: none. NARROW: zero-arg, no observation beyond return.
     if (CONFIG.arg_type === 'void') {
         return fn();
     }
@@ -378,6 +420,11 @@ function callFn(fn, input, buf) {
         return fn(input[0], input[1]);
     }
     // int_ptr2_out — fn(uint32, out_ptr1, out_ptr2); two 4-byte out-slots; returns packed u32
+    // MECHANISM: Passes (input, buf, buf+4) to fn via callFn's shared harness `buf`; zeroes both
+    // 4-byte out-slots before the call; observable is `(out[0] & 0x3f) | ((out[1] & 0x3f) << 8)` -
+    // ONLY the low 6 bits of each output dword. CONFIG: none. NARROW: observable truncates to 6
+    // bits per slot; both output pointers are always 4 bytes apart in the same shared 8-byte
+    // buffer; no parameterization.
     if (CONFIG.arg_type === 'int_ptr2_out') {
         buf.writeU32(0);
         buf.add(4).writeU32(0);
@@ -387,6 +434,11 @@ function callFn(fn, input, buf) {
     // time_diff_decompose — fn(int time_a, int time_b, u32* sign, int* min, int* sec, float* csec).
     // void return; four out-ptrs in a single 16-byte buf. input: [time_a, time_b].
     // Observable: comma-separated fingerprint string of sign|min|sec|csec_bits (IEEE-754 u32).
+    // MECHANISM: Passes fn(input[0]|0, input[1]|0, buf+0, buf+4, buf+8, buf+12) - 2 int32 stack
+    // args plus 4 out-pointers into a single 16-byte harness buffer (sign u32 at +0, min s32 at
+    // +4, sec s32 at +8, csec float-bits u32 at +12); void return; observable is comma-joined
+    // "sign,min,sec,0x<csec_bits>"; no CONFIG beyond `tests`; no globals. Broadly fits any fn(int,
+    // int, u32*, int*, int*, float*) with 4 distinct out-pointers packed into one 16-byte buffer.
     if (CONFIG.arg_type === 'time_diff_decompose') {
         const ta = input[0] | 0;
         const tb = input[1] | 0;
@@ -447,6 +499,11 @@ function callFn(fn, input, buf) {
     // distinct returns, so non-degeneracy comes free — but the registry comment
     // must still state the per-seed expected values. Same byte-by-byte idiom as
     // cstr_ret_offset below; Memory.allocUtf8String is deliberately unused here.
+    // MECHANISM: Calls fn(const_char_ptr) with a per-side 512-byte scratch buffer; input JS string
+    // written byte-by-byte with an explicit NUL appended (Memory.allocUtf8String deliberately
+    // avoided); observable is fn's return value coerced to uint32; no out-buffer, no globals. No
+    // CONFIG beyond arg_type. Applies to any fn(const char*)->integer pure reader regardless of
+    // string content or length.
     if (CONFIG.arg_type === 'str_arg_int_get') {
         const sbuf = Memory.alloc(512);
         const s = (typeof input === 'string') ? input : String(input);
@@ -469,6 +526,11 @@ function callFn(fn, input, buf) {
     // for LATER use only as raw ints).
     //   tests[i] = { data:[ints], key:<int> [, count:<int>] }
     // Added 2026-07-29 (methods-efficiency pilot) for 0x004f3cb0.
+    // MECHANISM: Builds a harness-only [ptr@+0, count@+4] container backed by a fresh scratch
+    // array of input.data ints; calls fn(container, input.key) and observes int32 return;
+    // input.count overrides length (may be negative to exercise count<=0 edge cases); both sides
+    // share the identical container (read-only); no CONFIG; broader: any fn(container_ptr,
+    // int_key) with this 2-field layout; tests[i] = { data:[int...], key [, count] }.
     if (CONFIG.arg_type === 'container_find_scalar') {
         const data = input.data || [];
         const cnt  = (input.count === undefined) ? data.length : input.count;
@@ -481,6 +543,10 @@ function callFn(fn, input, buf) {
         return (ret !== null && typeof ret === 'object') ? (ret.toInt32() | 0) : (ret | 0);
     }
     // int_with_out_ptr — uint32 arg + 4-byte output buffer; returns function's return value
+    // MECHANISM: fn(uint32, out_ptr): passes tests[i] as u32 first arg and shared 8-byte harness
+    // buf as second arg (no pre-poison); observable = return value only - buf contents are never
+    // read back or fingerprinted; a reimpl returning the correct scalar while writing garbage to
+    // *buf passes silently (false-GREEN hazard identical to out3_idx); no CONFIG beyond tests[].
     if (CONFIG.arg_type === 'int_with_out_ptr') {
         return fn(input >>> 0, buf);
     }
@@ -496,6 +562,11 @@ function callFn(fn, input, buf) {
     //     args entries: a number is passed verbatim; `null` is the out-ptr slot
     //     (replaced by a poisoned 4-byte buf). signature.args must match (the
     //     out-ptr slot is 'pointer'). Fingerprint = "<ret_hex>:<out_hex>".
+    // MECHANISM: Scatter-seeds absolute globals (input.seed=[{addr,val}]); poisons harness buf
+    // with 0xCCCCCCCC; calls fn(args: null->buf, others->u32); fingerprints `<ret_hex>:<out_hex>`
+    // from return value and buf; save/restores all seeded globals; broader: fits any
+    // fn(mixed_u32_args + one_out_ptr) requiring pre-seeded globals for non-degenerate
+    // discrimination; no CONFIG keys beyond standard; per-test: seed, args.
     if (CONFIG.arg_type === 'cache_roundtrip') {
         const seeds = input.seed || [];
         const saved = seeds.map(s => ptr(s.addr).readU32() >>> 0);
@@ -549,6 +620,10 @@ function callFn(fn, input, buf) {
     }
     // write_global_call_int0 — write sentinel to target_global, call fn(0), return value
     // Use for getters where non-trivial domain requires injecting known values.
+    // MECHANISM: Seeds `CONFIG.target_global` with `input>>>0` (uint32), calls `fn(0)` - one stack
+    // arg always literal 0, no out-pointers, no buffers - and returns fn's return value as the
+    // sole observable; no post-call global reads. CONFIG: `target_global` only. Broader than name:
+    // any fn whose only arg must be 0 and whose result depends on one injectable global.
     if (CONFIG.arg_type === 'write_global_call_int0') {
         ptr(CONFIG.target_global).writeU32(input >>> 0);
         return fn(0);
@@ -567,6 +642,12 @@ function callFn(fn, input, buf) {
     }
     // contact_history — set up slot 0 of a fake vehicle contact table, call fn(geom, vehicle)
     // input: { slot_contact_id, slot_active, geom_contact_id }
+    // MECHANISM: Seeds outer-scope shared buffers vehicleBuf (0xC80 b) / geomBuf (0x40 b):
+    // vehicleBuf+0xBFC=slot_contact_id, +0xC7C=slot_active; geomBuf+0x34=geom_contact_id; calls
+    // fn(geomBuf, vehicleBuf) and observes return value only; NARROW: offsets hardcoded; buffer
+    // mutations are never read back - a reimpl returning the correct scalar while miswriting the
+    // struct passes silently; CONFIG: none; tests[i] = { slot_contact_id, slot_active,
+    // geom_contact_id }.
     if (CONFIG.arg_type === 'contact_history') {
         vehicleBuf.add(0xBFC).writeU32(0);
         vehicleBuf.add(0xC7C).writeU32(0);
@@ -592,6 +673,11 @@ function callFn(fn, input, buf) {
     // writing garbage to *out passes it. The out-slot is poisoned to 0xCCCCCCCC
     // first, so "wrote nothing" is visible rather than reading as a stale match.
     // Fingerprint: "<ret_hex>:<out_hex>".
+    // MECHANISM: fn(buf, uint32_idx)->scalar; poisons buf[0] with 0xCCCCCCCC, calls fn(buf,
+    // input>>>0), fingerprints as "<ret_hex>:<written_dword_hex>"; observes BOTH the return value
+    // and the dword written at buf+0; CONFIG: tests[] of uint32 indices; broader than out3_idx - a
+    // reimpl that returns correct flag but writes garbage fails here; only one dword of buf is
+    // read back.
     if (CONFIG.arg_type === 'out1_idx') {
         buf.writeU32(0xCCCCCCCC >>> 0);
         const ret = fn(buf, input >>> 0);
@@ -602,6 +688,11 @@ function callFn(fn, input, buf) {
     }
     // idx_out2 — fn(uint32_idx, out_ptr1, out_ptr2); two 4-byte out-slots in shared buf.
     // Returns fn return value. Used for functions like VehicleCarStateRead.
+    // MECHANISM: fn(uint32_idx, out_ptr1, out_ptr2): passes tests[i] as u32, shared 8-byte harness
+    // buf as out_ptr1, buf+4 as out_ptr2; observable = return value only - neither out-slot is
+    // ever read back or fingerprinted; a reimpl returning the correct scalar while writing garbage
+    // to both outs passes silently (false-GREEN hazard identical to out3_idx); no CONFIG beyond
+    // tests[].
     if (CONFIG.arg_type === 'idx_out2') {
         return fn(input >>> 0, buf, buf.add(4));
     }
@@ -610,6 +701,11 @@ function callFn(fn, input, buf) {
     // Writes the array into buf. For orig, calls via a hand-written thunk that sets ECX=0
     // and EDX=buf before jumping to the target. For reimpl, calls as cdecl(0, buf).
     // Used for MenuGroupCount (0x0042ac00).
+    // MECHANISM: fn(int32[] -> one scratch buf): writes the test's int32 array into a shared
+    // scratch buffer and passes it as the first positional arg; the ORIGINAL is reached through a
+    // hand-written thunk setting ECX=0 and EDX=buf (fastcall) while the reimpl is called __cdecl,
+    // so it compares BEHAVIOUR, not ABI. Observable is the return value. Fits any fn taking a
+    // caller-owned int32 array by pointer, whatever the register convention.
     if (CONFIG.arg_type === 'sentinel_array_ptr') {
         const arr = input;  // array of int32 values
         for (let k = 0; k < arr.length; k++) {
@@ -634,6 +730,12 @@ function callFn(fn, input, buf) {
     // Writes DAT_0067e9f8=0 (slot 0). Calls fn(step). Returns cursor at
     // 0x0067ed40 after the call (as int32, compared between orig/reimpl).
     // Used for MenuCursorStep (0x0042aa00).
+    // MECHANISM: NARROW - hardcodes three absolute addresses (0x0067e9f8, 0x0067ed74, 0x0067ed40);
+    // seeds them from input.raw_bytes (byte array written starting at 0x0067ed74) and
+    // input.initial_cursor (written to 0x0067ed40), zeroes DAT_0067e9f8; calls fn(input.step) -
+    // single int32 stack arg, void return; observable is 0x0067ed40 read as int32 after the call;
+    // no CONFIG for any address; applicable only to functions that read exactly this global
+    // cursor/limit layout.
     if (CONFIG.arg_type === 'void_step_global') {
         const raw  = input.raw_bytes;
         const init = input.initial_cursor;
@@ -669,6 +771,14 @@ function callFn(fn, input, buf) {
     // the residue of the first call. Snapshot the field, call fn(idx,delta),
     // pack (return_value, post-add field) into a fingerprint, then RESTORE the
     // field so Orig and Reimpl each start from the identical baseline.
+    // MECHANISM: fn(int idx, int delta) on a live global array; computes field address as
+    // ptr(CONFIG.target_global) + idx x CONFIG.entity_byte_stride; snapshots the 4-byte field
+    // before the call and restores it afterward so both Orig and Reimpl start from the same
+    // baseline (prevents accumulation); observes both the uint32 return value AND the post-add
+    // field value packed as "ret_hex:field_hex"; CONFIG.max_index (default 0xf) guards out-of-
+    // range idx - no live write occurs, returns 0:0; CONFIG keys: target_global,
+    // entity_byte_stride, max_index; fits any indexed-array incrementer with configurable base and
+    // stride.
     if (CONFIG.arg_type === 'entity_field_add') {
         const idx   = input[0] | 0;
         const delta = input[1] | 0;
@@ -690,6 +800,10 @@ function callFn(fn, input, buf) {
     // DAT_0067f17c and DAT_0067f184 as observable output packed into a uint32.
     // Also saves/restores DAT_0067e9fc (written by callee FUN_0042f6b0) so it doesn't
     // leak between orig and reimpl calls.
+    // MECHANISM: NARROW: hardcodes 5 absolute globals (row=0x67f17c, col=0x67f184, flag=0x67f1a4,
+    // mp_flag=0x67ea68, game_mode=0x67e9fc). Call shape fn(void); seeds 4 globals from input
+    // {row,col,flag,mp_flag}; observes post-call row/col packed as (row&0xffff)<<16|(col&0xffff);
+    // saves/restores all 5 globals. CONFIG: input.row/col/flag/mp_flag only.
     if (CONFIG.arg_type === 'cursor_back') {
         const pRow  = ptr('0x0067f17c');
         const pCol  = ptr('0x0067f184');
@@ -728,6 +842,11 @@ function callFn(fn, input, buf) {
     // where pointer equality is meaningless but null/non-null is the observable.
     // `input` is an optional mode-flag value to pre-write to CONFIG.target_global
     // before each call (resets cached state so the function re-runs its detection).
+    // MECHANISM: fn(void)->pointer; optionally writes input>>>0 to CONFIG.target_global (any hex
+    // address) before each call to reset cached state; observable is null-vs-non-null only
+    // (returns 0 or 1) - actual pointer address is never compared; CONFIG: target_global
+    // (optional); broader: any no-arg function returning a non-deterministic pointer where only
+    // NULL/non-NULL distinguishes correctness.
     if (CONFIG.arg_type === 'ptr_nonnull_check') {
         if (CONFIG.target_global) {
             ptr(CONFIG.target_global).writeU32(input >>> 0);
@@ -746,6 +865,11 @@ function callFn(fn, input, buf) {
     //   target_global       — hex address of array base (e.g. 0x006403e8)
     //   entity_byte_stride  — bytes per slot (e.g. 0xf40)
     //   sentinel_value      — optional uint32 pre-write (default 0xDEADBEEF)
+    // MECHANISM: Passes integer slot to fn(slot); computes base = ptr(CONFIG.target_global) + slot
+    // * CONFIG.entity_byte_stride; pre-writes CONFIG.sentinel_value (default 0xDEADBEEF) to
+    // base[0]; calls fn; observable is base[0] post-call (typically 0 for a memset-style
+    // initializer); saves/restores original dword; fn return value is NOT compared. CONFIG:
+    // `target_global`, `entity_byte_stride`, `sentinel_value`.
     if (CONFIG.arg_type === 'slot_block_zero') {
         const slot = input | 0;
         const sentinel = (CONFIG.sentinel_value !== undefined ? CONFIG.sentinel_value : 0xDEADBEEF) >>> 0;
@@ -876,6 +1000,11 @@ function callFn(fn, input, buf) {
     // live globals at quiescent menu → bit-identical sorted output.
     //
     // input: {sel, dir}
+    // MECHANISM: Allocates 16-byte output buffer pre-filled with -1 sentinel; calls fn(out,
+    // input.sel, input.dir) void; reads back 4 u32s packed as hex string; observes output buffer
+    // only (return value not checked). Relies on quiescent live game globals being identical for
+    // both sides; no CONFIG parameterization. Fits void fn(int*,int,int) sort dispatchers that
+    // write exactly 4 int indices.
     if (CONFIG.arg_type === 'sort_dispatch_out4') {
         const out = Memory.alloc(16);
         // Pre-fill with a sentinel so an under-write is detectable.
@@ -895,6 +1024,10 @@ function callFn(fn, input, buf) {
     // input: { idx, guard_val } — param_1 = idx; guard field at 0x7f105c+idx*0x4c is set to guard_val.
     // Calls fn(idx), then reads back the 4 fields (offsets +0, +0xC, +0x10, +0x14) packed as
     // a 32-bit composite (low 8 bits of each, shifted).  Guard field is restored after.
+    // MECHANISM: NARROW - hardcoded to global array at 0x7f1058, stride 0x4c: saves/zeros fields
+    // at offsets +0/+0xC/+0x10/+0x14, sets guard at 0x7f105c+idx*0x4c = input.guard_val, calls
+    // fn(idx), packs low bytes of 4 fields as uint32 fingerprint, restores all; CONFIG: none;
+    // tests[i] = { idx:int, guard_val:uint }.
     if (CONFIG.arg_type === 'car_slot_init') {
         const idx   = input.idx | 0;
         const guard = input.guard_val >>> 0;
@@ -929,10 +1062,22 @@ function callFn(fn, input, buf) {
         return ((r0 & 0xff) | ((rC & 0xff) << 8) | ((r10 & 0xff) << 16) | ((r14 & 0xff) << 24)) >>> 0;
     }
     // float_scalar
+    // MECHANISM: Passes fn(input>>>0) - single uint32 stack arg; returns fn's raw return value; no
+    // buffer allocation, no global read-back, no out-pointer observation; no CONFIG beyond
+    // `arg_type`. Observes ONLY the return value - a false-GREEN hazard for any function whose
+    // primary effect is a side-effect or out-pointer write rather than a return value.
+    // Mechanically identical to int_scalar; the different name carries no behavioral distinction
+    // in the body.
     if (CONFIG.arg_type === 'uint32_scalar') {
         return fn(input >>> 0);
     }
     // float_scalar (default)
+    // MECHANISM: Writes input[0]/input[1] as floats into the shared 8-byte `buf`; calls fn(buf) -
+    // single pointer stack arg; returns fn's raw return value unchanged; does NOT read back buf
+    // contents after the call; observes ONLY the return value - a false-GREEN hazard for any
+    // function that writes its result into the vec2 and returns void or a trivially constant
+    // value; no CONFIG beyond `arg_type`. Suitable only for fn(float*vec2) -> scalar getters;
+    // wrong for any writer-into-buf.
     if (CONFIG.arg_type === 'vec2_ptr') {
         buf.writeFloat(input[0]);
         buf.add(4).writeFloat(input[1]);
@@ -943,6 +1088,12 @@ function callFn(fn, input, buf) {
     // These call fn(...) then read the output buffer and return a bit-packed
     // string so that the JS `===` comparison is a bit-identical check.
 
+    // MECHANISM: Identical dispatch block as transform_point - uses pre-allocated shared
+    // xformBufs.out/in/mat (12B/12B/64B); seeds .in from input.in[0..2] and .mat from
+    // input.mat[0..15]; calls fn(out, in, mat) - 3 pointer stack args; observes 3 out-float bits
+    // as comma-joined string; ignores fn return value; same physical .in/.mat for both Orig and
+    // Reimpl; no CONFIG beyond `tests`; no globals. The two names dispatch to the same code - use
+    // either for any 3-pointer (vec3-out, vec3-in, 4x4-mat) transform function.
     if (CONFIG.arg_type === 'transform_point' || CONFIG.arg_type === 'transform_vector') {
         // input: { in: [x,y,z], mat: [m0..m15] }
         xformBufs.in.writeFloat(input.in[0]);
@@ -958,6 +1109,12 @@ function callFn(fn, input, buf) {
         ].join(',');
     }
 
+    // MECHANISM: Uses pre-allocated shared buffers v2nBufs.in (8B) and v2nBufs.out (8B) plus
+    // tmpF32 scratch; seeds .in from input[0..1], zeroes .out before each call; calls fn(out, in)
+    // -> float; captures return float via tmpF32 for bit-exact IEEE-754 comparison; observes
+    // [return_magnitude_bits, out[0]_bits, out[1]_bits] as comma-joined; same .in/.out pointers
+    // for both Orig and Reimpl; no CONFIG beyond `tests`; no globals. Broadly fits any
+    // fn(float*out2, float*in2) -> float normalise/length shape.
     if (CONFIG.arg_type === 'vec2_normalize') {
         // input: [x, y]
         v2nBufs.in.writeFloat(input[0]);
@@ -973,6 +1130,12 @@ function callFn(fn, input, buf) {
         ].join(',');
     }
 
+    // MECHANISM: fn(out_ptr, in_ptr); module-level shared buffers v3nBufs.{in,out} (both re-seeded
+    // before every callFn call so Orig and Reimpl receive the same pointer and fresh data); seeds
+    // input[0..2] as f32 into in-buf, zeroes out-buf (3 dwords); observes [magnitude-f32-bits,
+    // out[0..2]-bits] as a 4-element comma string; broader than normalisation: fits any fn(float3*
+    // out, float3* in) -> float with a 12-byte output buffer - CONFIG-free, buffer size is
+    // hardcoded to 3 floats.
     if (CONFIG.arg_type === 'vec3_normalize') {
         // input: [x, y, z]; fn(out, in) -> magnitude (float). 0x004c39b0 RwV3dNormalize.
         v3nBufs.in.writeFloat(input[0]);
@@ -991,6 +1154,12 @@ function callFn(fn, input, buf) {
         ].join(',');
     }
 
+    // MECHANISM: NARROW: shared buffers xfdBufs (same out/mat/in pointers across both sides); call
+    // shape fn(out, mat, 1, in) with hardcoded count=1; seeds 16-float mat + 3-float in, zeros
+    // out; observes 3 u32s from xfdBufs.out. Both sides dispatch same device globals
+    // (0x7d3ff8/0x7d3ffc) -> vtable slot +0x14, so GREEN validates the offset/global selection
+    // only, not behavioral divergence - a false-GREEN risk. CONFIG: input.mat (16 floats),
+    // input.in (3 floats).
     if (CONFIG.arg_type === 'device_transform_dispatch') {
         // input: { mat: [16 floats], in: [x,y,z] }. 0x004c3df0 RwV3dTransformPoints thunk.
         // fn(out, mat, 1, in) -> out (matches caller FUN_0046d510's call shape). Both orig
@@ -1012,6 +1181,10 @@ function callFn(fn, input, buf) {
         ].join(',');
     }
 
+    // MECHANISM: fn(mat_ptr, axis_ptr, angle_float, mode_int): shared matrBufs (mat=64 bytes
+    // alloc, axis=12 bytes); zeros matrBufs.mat before each call, seeds axis[3] floats; observable
+    // = 13 of 16 output floats as u32 bit-exact (pad slots [7]/[11]/[15] excluded - documented
+    // uninitialized in original); no CONFIG keys; tests=[{axis:[3], angle, mode}].
     if (CONFIG.arg_type === 'matrix_rotate') {
         // input: { axis: [x,y,z], angle: degrees, mode: int }. 0x004c4d20 RwMatrixRotate.
         // fn(matrix, axis, angle_deg, mode) -> matrix; compare all 16 output floats (bits).
@@ -1032,6 +1205,11 @@ function callFn(fn, input, buf) {
         return out.join(',');
     }
 
+    // MECHANISM: fn(mat_ptr, axis_ptr, omc_float, sin_float, mode_int): seeds all 16 input matrix
+    // floats to shared mriBufs.mat and axis[3] to mriBufs.axis before each call; observable = 13
+    // of 16 floats as u32 bit-exact (skips uninitialized pad [7]/[11]/[15]); richer than
+    // matrix_rotate: caller supplies full input matrix (mode 0 pure replace, modes 1/2 use it as
+    // concat operand); no CONFIG keys; tests=[{matrix:[16],axis:[3],omc,sin,mode}].
     if (CONFIG.arg_type === 'matrix_rotate_inner') {
         // input: { matrix:[16], axis:[3] normalized, omc:float (1-cos), sin:float, mode:int }
         // 0x004c4a50 RwMatrixRotateInner. fn(matrix, axis_n, 1-cos, sin, mode) -> matrix.
@@ -1050,6 +1228,10 @@ function callFn(fn, input, buf) {
         return out.join(',');
     }
 
+    // MECHANISM: fn(mat_buf, scale_buf, mode_int); harness writes input.mat[16 floats] into
+    // matsBufs.mat and input.scale[3 floats] into matsBufs.scale, calls fn in-place, reads back 13
+    // of 16 dwords (skips indices 3/7/11 as flags) as comma-joined u32 fingerprint; return value
+    // not observed; no CONFIG keys - buffer names and skip indices are hardcoded.
     if (CONFIG.arg_type === 'matrix_scale') {
         // input: { mat: [16 floats], scale: [3 floats], mode: int }
         for (let j = 0; j < 16; j++)
@@ -1070,6 +1252,11 @@ function callFn(fn, input, buf) {
     // fmt_desc_ptr — fn(ptr_to_fmt_desc) -> int32.
     // input: { f04, f10, f14 } — u32 values written to struct offsets.
     // buf must be pre-allocated (0x20 bytes); zeroed then fields written.
+    // MECHANISM: Call shape fn(ptr_to_0x20_struct) -> int32; harness zeroes shared 0x20-byte buf
+    // then writes u32 fields at offsets +0x04/+0x10/+0x14; observes return value only - no buffer
+    // readback. CONFIG: input.f04/f10/f14. Same buf pointer delivered to both sides (re-zeroed
+    // each call); false-GREEN risk if fn stores the ptr as a side-effect and observes nothing
+    // beyond the int32 return.
     if (CONFIG.arg_type === 'fmt_desc_ptr') {
         // Zero 0x20 bytes then write test fields
         for (var fz = 0; fz < 0x20; fz++) buf.add(fz).writeU8(0);
@@ -1082,6 +1269,12 @@ function callFn(fn, input, buf) {
     // input: { f00, f04, f05, f10, zero_init } — src field values; zero_init flag.
     // Uses two 0x20-byte buffers (fmtSrcBuf, fmtDstBuf).
     // Returns packed u32: dst[+0x04] ^ dst[+0x0c] ^ dst[+0x0d] ^ dst[+0x18].
+    // MECHANISM: Call shape fn(src_ptr, dst_ptr, zero_init) -> void; zeroes shared
+    // fmtSrcBuf/fmtDstBuf (0x20 bytes each) then seeds src at offsets
+    // +0x00/+0x04(u32)/+0x05/+0x10; observes 4 dst fields (+0x04 as u32, +0x0c/+0x0d/+0x18 as u8)
+    // XOR-packed into uint32. CONFIG: tests[].f00/f04/f05/f10/zero_init. Same buffer ptrs
+    // delivered to both sides (re-zeroed each call); false-GREEN risk if fn stores either buf ptr
+    // internally.
     if (CONFIG.arg_type === 'fmt_desc_copy') {
         for (var fs = 0; fs < 0x20; fs++) { fmtSrcBuf.add(fs).writeU8(0); fmtDstBuf.add(fs).writeU8(0); }
         fmtSrcBuf.add(0x00).writeU32(input.f00 >>> 0);
@@ -1100,6 +1293,10 @@ function callFn(fn, input, buf) {
     // fmt_table_search — fn(ctx_ptr, desc_ptr) -> uint32 (1 match, 0 no-match).
     // input: { count, entry_ptr } — writes count at ctx+0x24, ptr at ctx+0x28.
     // fmtCtxBuf is a 0x30-byte fake audio context.
+    // MECHANISM: fn(ctx_ptr, ptr(0)): per test zeroes the 0x30-byte fmtCtxBuf, seeds input.count
+    // at +0x24 and a pointer to fmtEntryPtrBuf (holding input.entry_ptr) at +0x28; second arg is
+    // always null; observable = return uint32 only (no buffer read-back); NARROW: ctx offsets
+    // 0x24/0x28 and 0x30-byte size are hardcoded; no CONFIG keys.
     if (CONFIG.arg_type === 'fmt_table_search') {
         for (var fc = 0; fc < 0x30; fc++) fmtCtxBuf.add(fc).writeU8(0);
         fmtCtxBuf.add(0x24).writeU32(input.count >>> 0);
@@ -1113,6 +1310,11 @@ function callFn(fn, input, buf) {
     // fmt_global_scan — fn(key_ptr) -> pointer.
     // input: array of 16 u8 bytes forming the format key.
     // Returns pointer value as uint32 (comparable; NULL=0).
+    // MECHANISM: Call shape fn(key_ptr) -> pointer; harness zeroes shared 16-byte fmtKeyBuf then
+    // writes input[0..15]; observes return pointer value as uint32 (0=NULL) - does NOT dereference
+    // the returned pointer. Same fmtKeyBuf ptr delivered to both sides. CONFIG: input = array of
+    // up to 16 u8 bytes. Applies to any fn(16-byte-key-ptr) -> ptr doing a lookup into shared
+    // global state; false-RED if sides return different-but-equivalent pointers.
     if (CONFIG.arg_type === 'fmt_global_scan') {
         for (var fk = 0; fk < 16; fk++) fmtKeyBuf.add(fk).writeU8(0);
         for (var ki = 0; ki < 16 && ki < input.length; ki++) {
@@ -1484,6 +1686,11 @@ function runDiff() {
     // Added 2026-06-04 (c3-batch-ab-s4) for 0x005c9770.
     // Per test {src:[int32...], count:N}: write source ints into a shared src
     // buffer, call Orig/Reimpl into two separate dst buffers, compare exact bytes.
+    // MECHANISM: fn(i16* dst, i32* src, u32 count)->void; writes input.src[] as int32s into ONE
+    // shared srcBuf (pointer-equal on both sides), allocates separate dstO/dstR per side, calls
+    // Orig(dstO,srcBuf,count) then Reimpl(dstR,srcBuf,count), observes hex dump of nSamples*2
+    // bytes from each dst; return value not observed; CONFIG: tests[] of {src:[int32...],count:N};
+    // NARROW: src is shared - a function that mutates src corrupts the reimpl call.
     if (CONFIG.arg_type === 'pcm_pack') {
         const SRC_MAX = 8192, DST_MAX = 8192;
         const srcBuf = Memory.alloc(SRC_MAX);
@@ -1518,6 +1725,12 @@ function runDiff() {
     // Allocate a pair of scratch buffers; fill both from test.init before each
     // call; compare buffer fingerprints (not return value, which is void).
     const BUFSIZE = 256;
+    // MECHANISM: fn(ptr, int len, int width); shares a single dispatch `if` with bytes_inplace
+    // (2-arg); per-side 256-byte scratch buffers (bufA/bufB) filled from tests[i].init (byte
+    // array, length tests[i].len) before each call; calls fn(buf, len, width) where width =
+    // tests[i].width; observes bufFingerprint(buf, len) - rolling XOR fingerprint of the first len
+    // bytes of the output buffer; return value is NOT observed; fits any in-place buffer mutator
+    // with signature (ptr, len, width) up to 256 bytes output.
     if (CONFIG.arg_type === 'bytes_inplace' || CONFIG.arg_type === 'bytes_inplace_3') {
         const bufA = Memory.alloc(BUFSIZE);
         const bufB = Memory.alloc(BUFSIZE);
@@ -1595,6 +1808,11 @@ function runDiff() {
     // compares the returned pointer as a byte offset from buf (orig vs reimpl).
     // -1 means the returned pointer was null. test: { str: "filename.ext" }.
     // Harness-extension arg_type added 2026-06-04 (c3_batch_ab s3) for 0x005b73b0.
+    // MECHANISM: Call shape fn(char* buf) -> char*; harness allocates 512-byte shared buf, writes
+    // test.str as NUL-terminated ASCII, calls each side with same buf ptr; observes return pointer
+    // as byte offset from buf start (retptr - buf), reports -1 if NULL. Observes return offset
+    // only. CONFIG: tests[].str. Applies to any fn(char*) -> char* returning a pointer into its
+    // input buffer (e.g., extension finders, substring locators).
     if (CONFIG.arg_type === 'cstr_ret_offset') {
         const sbuf = Memory.alloc(512);
         for (var i = 0; i < CONFIG.tests.length; i++) {
@@ -1620,6 +1838,11 @@ function runDiff() {
     // Writes a[]/b[] as int16 into shared src buffers, zeroes two out buffers,
     // calls fn(outX, srcA, srcB, n*2), compares out fingerprints (n*2 bytes).
     // Harness-extension arg_type added 2026-06-04 (c3_batch_ab s3) for 0x005bb5b0.
+    // MECHANISM: fn(out, srcA, srcB, byteCount)->void; writes test.a[]/test.b[] as int16 into
+    // shared srcA/srcB buffers (pointer-equal both sides), allocates separate outO/outR, calls
+    // fn(outX,srcA,srcB,n*2), observes bufFingerprint of n*2 bytes; return value not observed;
+    // CONFIG: tests[] of {a:[int16...],b:[int16...]}; NARROW: srcA/srcB shared - in-place src
+    // mutation corrupts the second call.
     if (CONFIG.arg_type === 'pcm_sat_add') {
         const PCMCAP = 1024;
         const srcA = Memory.alloc(PCMCAP), srcB = Memory.alloc(PCMCAP);
@@ -1648,6 +1871,11 @@ function runDiff() {
     // test: tag (uint32). Calls fn(tag, outX) into two 16-byte buffers (preset
     // to 0xCC), compares 16-byte fingerprints.
     // Harness-extension arg_type added 2026-06-04 (c3_batch_ab s3) for 0x005bcb80.
+    // MECHANISM: fn(uint32_tag, out_ptr): per test allocates separate 16-byte buffers gO/gR preset
+    // to 0xCC, calls fn(tag, buf) for each side; observable = 16-byte bufFingerprint (position-
+    // sensitive XOR); separate allocs so pointer values differ between sides; CONFIG:
+    // tests=[uint32 tags]; broader: any fn(uint32, byte*) writing a fixed 16-byte structure to an
+    // out-pointer.
     if (CONFIG.arg_type === 'guid_from_tag') {
         const gO = Memory.alloc(16), gR = Memory.alloc(16);
         for (var i = 0; i < CONFIG.tests.length; i++) {
@@ -1670,6 +1898,11 @@ function runDiff() {
     // fn(uint32* p): zeroes p[0] and p[1]. Preload both dwords with a sentinel
     // plus a guard dword at +8 (must stay untouched), call, compare 12 bytes.
     // test: sentinel (uint32). Harness-extension added 2026-06-04 (c3_batch_ab s3) for 0x005bc450.
+    // MECHANISM: fn(uint32* p)->void; allocates separate 16-byte buffers per side, preloads p[0]
+    // and p[1] with sentinel and p[2] with guard 0xA5A5A5A5, calls Orig/Reimpl, compares
+    // bufFingerprint of all 12 bytes; CONFIG: tests[] of sentinel uint32 values; NARROW: hardcodes
+    // exactly-2-dword write assumption with fixed guard at +8; no configurable field count or
+    // stride.
     if (CONFIG.arg_type === 'ptr_zero_pair') {
         const zO = Memory.alloc(16), zR = Memory.alloc(16);
         for (var i = 0; i < CONFIG.tests.length; i++) {
@@ -1695,6 +1928,11 @@ function runDiff() {
     // with hwvoice embedded at +0x140 (so +0x11c -> base+0x140, mirror at +0x174).
     // test: { val: uint32, hw: 0|1 }. Observable: [+0x3c]:[hwvoice+0x34] hex.
     // Harness-extension arg_type added 2026-06-04 (c3_batch_ab s3) for 0x005baf40.
+    // MECHANISM: fn(struct_ptr, uint32 val)->void; harness allocates a 0x200-byte struct per side,
+    // sets bit-3 flag at +0x78 (hw path), embeds self-pointer at +0x11c pointing to hwvoice block
+    // at +0x140, seeds 0xDEADBEEF sentinels at +0x3c and +0x174, calls fn(sX,val), observes
+    // "[+0x3c_hex]:[+0x174_hex]"; CONFIG: tests[] of {val:uint32,hw:0|1}; NARROW: all offsets
+    // hardcoded (0x3c,0x78,0x11c,0x140,0x174), no CONFIG keys to reparameterise.
     if (CONFIG.arg_type === 'renderer_field3c_set') {
         var STRUCTSZ = 0x200, HWOFF = 0x140;
         var sO = Memory.alloc(STRUCTSZ), sR = Memory.alloc(STRUCTSZ);
@@ -1732,6 +1970,11 @@ function runDiff() {
     // test: { loop: 0|1, hw: 0|1, pre28: uint32, prehw: uint32 }.
     // Observable: [+0x28]:[hwvoice+0xcc] hex.
     // Harness-extension arg_type added 2026-06-04 (c3_batch_ab s3) for 0x005b9410.
+    // MECHANISM: fn over a 0x200-byte scratch struct per side, with a nested hardware-voice sub-
+    // struct at +0x100 and caps at +0x180; per-test {loop,hw,pre28,prehw} pre-seed [+0x28] and the
+    // hw field before the call; observable is [+0x28]:[hwvoice+0xcc] as hex. Both sides get
+    // identically seeded but separately allocated structs, so only field CONTENT is compared,
+    // never addresses.
     if (CONFIG.arg_type === 'source_loop_set') {
         var SLS_SZ = 0x200, CAPSOFF = 0x180, SLS_HWOFF = 0x100;
         var slO = Memory.alloc(SLS_SZ), slR = Memory.alloc(SLS_SZ);
@@ -1769,6 +2012,11 @@ function runDiff() {
     // into a 4-byte source slot; construct a pointer-to-pointer (out_ptr_ptr) and
     // call fn. Read the output buffer bytes as a fingerprint and compare orig/reimpl.
     // The out buffer is reset to 0 before each call.
+    // MECHANISM: Call shape fn(int** out_ptr_ptr, uint* src, int size) with fully per-side harness
+    // buffers; seeds src_val into 4-byte srcSlot, sets ptrSlot -> 8-byte zeroed outBuf, resets
+    // outBuf before each call; observes 4-byte XOR fingerprint of outBuf. CONFIG: tests[].src_val,
+    // tests[].size. Applies to any fn taking a double-pointer output + uint src + int size that
+    // writes <=4 bytes via the out_ptr_ptr chain.
     if (CONFIG.arg_type === 'endian_pack') {
         const outBufA   = Memory.alloc(16);
         const outBufB   = Memory.alloc(16);
@@ -1804,6 +2052,13 @@ function runDiff() {
     // Tests AudioWaveFmtCopy-style fn(src_ptr, dst_ptr, swap_flag) -> src_ptr.
     // For each test {src:[16 bytes], swap}: write src data into srcBuf,
     // zero dstBuf, call fn, fingerprint dstBuf (16 bytes). Compare orig/reimpl.
+    // MECHANISM: Allocates 4 independent 16-byte buffers (srcBufA/B, dstBufA/B); for each test
+    // {src:[16 bytes], swap}: fills both src bufs identically, zeroes both dst bufs; calls
+    // Orig(srcBufA, dstBufA, swap?dstBufA:ptr(0)) and Reimpl(srcBufB, dstBufB,
+    // swap?dstBufB:ptr(0)) - when swap=1 third arg aliases dst (in-place swap path), when swap=0
+    // third arg is NULL; observes 16-byte dst fingerprint only; fn return value (src_ptr) is
+    // discarded and not compared; no CONFIG beyond `tests`. NARROW: fixed 16-byte struct with no
+    // CONFIG.struct_size.
     if (CONFIG.arg_type === 'wavefmt_copy') {
         const srcBufA = Memory.alloc(16);
         const srcBufB = Memory.alloc(16);
@@ -1836,6 +2091,10 @@ function runDiff() {
     // ── alloc_check ──────────────────────────────────────────────────────────
     // Call(size, tag) for each test; encode result as (align_mod4 * 256 + header_diff).
     // A correct aligned alloc with 4-byte aligned heap returns result = 4.
+    // MECHANISM: Calls fn(size, CONFIG.alloc_tag) for each test size; encodes result as
+    // (ptr_align_mod4x256)+(ptr-header_ptr_before_allocation); returns -1 on null. Observes
+    // alignment and header-distance ONLY - NOT allocated content or size, so two allocators
+    // differing only in fill are a false-GREEN. No CONFIG beyond alloc_tag.
     if (CONFIG.arg_type === 'alloc_check') {
         var allocTag = (CONFIG.alloc_tag | 0);
         for (var i = 0; i < CONFIG.tests.length; i++) {
@@ -1862,6 +2121,10 @@ function runDiff() {
     // ── free_via_alloc ───────────────────────────────────────────────────────
     // Allocate two blocks (via alloc_rva), free each via Orig/Reimpl.
     // Success = 1 (no crash), failure = 0 or error.
+    // MECHANISM: fn(ptr): allocates separate blocks via AllocFn(size, CONFIG.alloc_tag) using
+    // CONFIG.alloc_rva_str, calls Orig(pO) and Reimpl(pR) on their respective blocks; observable =
+    // crash-absence flag only (1=ok, 0=error) - no post-free read-back; a reimpl that silently no-
+    // ops passes; CONFIG: alloc_rva_str, alloc_tag; tests=[int sizes].
     if (CONFIG.arg_type === 'free_via_alloc') {
         var allocRva = ptr(CONFIG.alloc_rva_str);
         var allocTag = (CONFIG.alloc_tag | 0);
@@ -1888,6 +2151,11 @@ function runDiff() {
     // Each test is { a: [16 bytes], b: [16 bytes] }.
     // Allocates a 32-byte scratch buffer; writes a to [0..15], b to [16..31].
     // Calls fn(buf, buf+16) for both Orig and Reimpl; compares return int.
+    // MECHANISM: Call shape fn(byte* a, byte* b) -> int; harness allocates single 32-byte fkBuf,
+    // writes a[0..15] at buf+0 and b[0..15] at buf+16, calls fn(buf, buf+16) for each side;
+    // observes signed int return. CONFIG: tests[].a (16 bytes), tests[].b (16 bytes). Same fkBuf
+    // ptr across both sides; not re-zeroed between orig/reimpl calls but safe if fn is read-only
+    // on its inputs. Applies to any pure 16-byte-key comparator returning -1/0/+1.
     if (CONFIG.arg_type === 'fmt_key_compare') {
         const fkBuf = Memory.alloc(32);
         for (let i = 0; i < CONFIG.tests.length; i++) {
@@ -1922,6 +2190,11 @@ function runDiff() {
     // FontSys_InitRenderState (0x00552c10) once before the test loop to
     // guarantee g_FontCtxPtrs[0] is allocated. Without this, the function
     // derefs a NULL slot ptr and both sides AV identically at offset 0.
+    // MECHANISM: NARROW: hardcodes FontSys_InitRenderState prelude (0x00552c10) and dirty-flag
+    // global (0x00912bd8); two float stack args (sx, sy); writes sentinel 0xDEADBEEF to the flag
+    // before each call; observes packed (uint32_ret<<16)|dirty_flag_readback; restores flag
+    // between sides. No CONFIG parameterization - only fits font-ctx float2 fns requiring that
+    // specific prelude and dirty flag.
     if (CONFIG.arg_type === 'font_ctx_float2') {
         const pDirty = ptr('0x00912bd8');
         // Idempotent one-time setup: allocate slot 0.
@@ -1974,6 +2247,10 @@ function runDiff() {
     // safely exercisable. Tests with depth in (1..30) deref unallocated
     // slots and AV both sides identically — they're not on the registry's
     // test list, but the prelude is still required for depth=0.
+    // MECHANISM: fn() no args: calls original FontSys_InitRenderState(0x00552c10) once as prelude;
+    // per test seeds t.depth into hardcoded global 0x00912b04, calls fn(), reads bool ret and new
+    // depth packed as (ret&1)|((depth&0xff)<<8), then restores depth; NARROW: globals 0x00912b04
+    // and prelude address 0x00552c10 are hardcoded; CONFIG: tests=[{depth}].
     if (CONFIG.arg_type === 'font_matrix_push') {
         const pDepth = ptr('0x00912b04');
         // Idempotent one-time setup: allocate slot 0 (and reset depth to 0).
@@ -2016,6 +2293,11 @@ function runDiff() {
     // Strategy: allocate two 4-byte buffers (one per path), zero each before
     // each call, call fn(idx, buf), read back 4 bytes as packed uint32
     // (little-endian fingerprint). Both paths must produce identical output.
+    // MECHANISM: fn(int_idx, out_buf4_ptr): separate 4-byte buffers per side (ioBufA for Orig,
+    // ioBufB for Reimpl), zeroed before each call; observable = 4 bytes read back as uint32
+    // (little-endian fingerprint); return value is NOT observed (void return assumed); CONFIG:
+    // tests=[int indices]; broader: any fn(int, byte*) writing exactly 4 bytes to an out-pointer
+    // with void return.
     if (CONFIG.arg_type === 'int_outbuf4') {
         const ioBufA = Memory.alloc(4);
         const ioBufB = Memory.alloc(4);
@@ -2100,6 +2382,11 @@ function runDiff() {
     // 4-byte value to each out and returns a value. Compares both out buffers
     // AND the return (packed fingerprint "<a>,<b>:<ret>"). CONFIG.tests is a
     // list of int indices. Validated on 0x0046cbb0 (per-car state pair getter).
+    // MECHANISM: fn(int_idx, out_a_ptr, out_b_ptr): separate 4-byte buffer pairs per side (a1/a2
+    // for Orig, b1/b2 for Reimpl), zeroed before each call; observable = both out-dwords and
+    // return value packed as \<a_hex\>,\<b_hex\>:\<ret_hex\> - all three must match; CONFIG:
+    // tests=[int indices]; broader: any fn(int, U*, U*) writing 4 bytes to each of two out-
+    // pointers with a return value.
     if (CONFIG.arg_type === 'int2out') {
         const a1 = Memory.alloc(4), a2 = Memory.alloc(4);
         const b1 = Memory.alloc(4), b2 = Memory.alloc(4);
@@ -2140,6 +2427,12 @@ function runDiff() {
     //   C3                 ret
     //
     // CONFIG.tests : scalar integer indices (incl. negatives / >=5 / the 3 case).
+    // MECHANISM: Per-side `push esi; mov esi,idx; mov ecx,scratch_ptr; call target; pop esi; ret`
+    // trampoline seeds ESI=integer index (imm32 patched per test) and ECX=per-side 16-byte zeroed
+    // scratch-buffer ptr (constant per side). Observes all 16 scratch bytes as 4xu32 hex
+    // fingerprint; no return value captured. CONFIG: tests[] = integer indices (including
+    // negatives/OOB). Applies to any void fn delivering an index in ESI and output-buffer ptr in
+    // ECX writing <=16 bytes.
     if (CONFIG.arg_type === 'esi_idx_ecx_outbuf4') {
         const scratchO = Memory.alloc(16);
         const scratchR = Memory.alloc(16);
@@ -2227,6 +2520,13 @@ function runDiff() {
     //   signature {ret:'void', args:[]}, tests = [{clump_frame, handle_base}, ...].
     // The shared scratch clump means this[0x5c] (= clump ADDR) matches across
     // sides; scratchThis is per-side for the diff.
+    // MECHANISM: Delivers `this` in CONFIG.this_reg (default 'ebx') via x86 trampoline and seeds
+    // EAX with a shared scratch clump address on both sides; stubs up to 4 live callees
+    // (callee_fill_str, callee_index_str, callee_zero_str, callee_color_str) with deterministic
+    // NativeCallbacks; shared clump ensures stored this[0x5c] pointer is identical on both sides;
+    // observable is the full per-side struct fingerprint (all CONFIG.struct_size bytes as packed
+    // hex). CONFIG: `this_reg`, `struct_size`, `atom_count`, `callee_fill_str`,
+    // `callee_index_str`, `callee_zero_str`, `callee_color_str`.
     if (CONFIG.arg_type === 'reg_this_callee_stub') {
         const structSize = CONFIG.struct_size || 0x80;
         const atomCount  = CONFIG.atom_count  || 17;
@@ -2349,6 +2649,13 @@ function runDiff() {
     // CONFIG: this_reg ('eax' for these), this_field_off, observe_callee_str,
     //   struct_size (>= field_off+4), signature {ret:'void', args:[]},
     //   tests = [sentinel u32, ...].
+    // MECHANISM: Delivers `this` via CONFIG.this_reg (eax/ebx/ecx/edx/esi/edi) or as a __cdecl
+    // stack arg ('stack'); seeds *(this + CONFIG.this_field_off) with a per-test u32 sentinel;
+    // Interceptor.replaces CONFIG.observe_callee_str with a recorder that captures the callee's
+    // first uint32 arg; verifies stub installed before running; observable is the recorded arg -
+    // fn's return is NOT compared. CONFIG: `this_reg`, `this_field_off`, `observe_callee_str`,
+    // `struct_size`. Broader: any fn that conditionally passes a field-derived or hardcoded value
+    // to one interceptable callee.
     if (CONFIG.arg_type === 'reg_this_call_observe') {
         const structSize = CONFIG.struct_size || 0x40;
         const thisReg    = (CONFIG.this_reg || 'eax').toLowerCase();
@@ -2500,6 +2807,12 @@ function runDiff() {
     // tests[i] = { idx, aux16, a1, a4 }
     // Authored 2026-07-31 for 0x005b10a0 (offset 4) and 0x005b10e0 (offset 8),
     // which are byte-identical apart from that one displacement.
+    // MECHANISM: Per-side holder+table buffers; holder[CONFIG.vtbl_ptr_offset]->table;
+    // entry[idx*8]=shared NativeCallback stub ptr, entry[idx*8+4]=aux16; calls fn(a1, holder, idx,
+    // a4); observes 3 uint32 args captured by the stub - direct comparison since both sides call
+    // the same stub address. CONFIG: vtbl_ptr_offset (4 or 8), table_entries; tests: {idx, aux16,
+    // a1, a4}. Applies to any fn dispatching through a pointer-at-offset table of 8-byte {fnptr,
+    // aux16} entries.
     if (CONFIG.arg_type === 'vtable_table_dispatch') {
         const OFF  = CONFIG.vtbl_ptr_offset | 0;
         const NENT = (CONFIG.table_entries | 0) || 8;
@@ -2738,6 +3051,12 @@ function runDiff() {
     // { a:[x,y,z], b:[x,y,z], t:float }. Fills a/b/t, calls fn(out,a,b,t),
     // reads the 3 out floats as a packed-bits fingerprint, compares.
     // Validated on Vec3Lerp 0x004b4650.
+    // MECHANISM: Allocates separate outA and outB (12B each) for Orig and Reimpl respectively;
+    // shares aBuf and bBuf (12B each, written once per test, read-only to callee) between both
+    // sides; seeds aBuf/bBuf from input.a[0..2]/input.b[0..2], passes input.t as a float scalar
+    // 4th arg - fn(out, a, b, t); observes 3 out-float bits as packed hex; no CONFIG beyond
+    // `tests`; no globals; deterministic/menu-attach-safe. Broadly fits any pure fn(float*out3,
+    // float*a3, float*b3, float) vec3 math leaf.
     if (CONFIG.arg_type === 'vec3_lerp') {
         const outA = Memory.alloc(12), outB = Memory.alloc(12);
         const aBuf = Memory.alloc(12), bBuf = Memory.alloc(12);
@@ -2771,6 +3090,12 @@ function runDiff() {
     // CONFIG.out_buf_size (default 24) bytes as a position-sensitive XOR
     // fingerprint. Real GREEN requires both fingerprints to be non-zero AND
     // equal — proof the function wrote AND wrote the same bytes.
+    // MECHANISM: Passes (int slot, T* dst) to fn; each side gets its own independent 4 KB buffer
+    // pre-filled with sentinel byte 0xCD; observable is a position-sensitive XOR fingerprint of
+    // the first CONFIG.out_buf_size bytes (default 24); GREEN requires fingerprint non-zero AND
+    // equal - non-zero proves the copy executed; fn return value is NOT compared. CONFIG:
+    // `out_buf_size`. Broader: any fn(int, ptr) that copies data from a per-slot source global
+    // into a caller-allocated output buffer.
     if (CONFIG.arg_type === 'int_copy_outbuf') {
         const BUF_BYTES = 4096;
         const READ_LEN  = (CONFIG.out_buf_size | 0) || 24;
@@ -2809,6 +3134,11 @@ function runDiff() {
     // Strategy: allocate 5x4=20 byte scratch buf; fill with sentinel 0xDEAD????;
     // call fn(buf, p2, p3, p4); read back 5 fields; return packed fingerprint.
     // Both orig and reimpl must produce identical field values.
+    // MECHANISM: Allocates a 20-byte (5-field) scratch buffer, sentinel-fills with 0xDEADBEEF
+    // before each call, passes it as first arg with three uint32 scalars (p2, p3, p4) on the stack
+    // - fn(buf, p2, p3, p4); observes all 5 output uint32 fields as a comma-joined fingerprint;
+    // ignores fn return value; no CONFIG beyond `tests`; no globals. NARROW: hardcoded
+    // 5-field/20-byte struct with no size CONFIG - only fits this exact 4-arg/5-field init layout.
     if (CONFIG.arg_type === 'thread_desc_init') {
         const STRUCT_BUF = Memory.alloc(20);
         for (let i = 0; i < CONFIG.tests.length; i++) {
@@ -2850,6 +3180,10 @@ function runDiff() {
     // Strategy: allocate 3 scratch buffers, call fn(b0, b1, b2); compare return
     // address == b0 address (return value must equal first arg).
     // Both paths route through same original callees; assertion is return==param_1.
+    // MECHANISM: fn(b0, b1, b2): allocates three 64-byte scratch buffers, zeroes all three before
+    // each call, and compares the RETURN ADDRESS against b0's address rather than a raw pointer -
+    // the address-normalisation that lets per-side allocations compare equal. Fits any 3-pointer
+    // dispatcher expected to return its first argument.
     if (CONFIG.arg_type === 'sub_struct_dispatcher') {
         const BUF0 = Memory.alloc(64);
         const BUF1 = Memory.alloc(64);
@@ -2885,6 +3219,11 @@ function runDiff() {
     // Calls vtable[0] (QI), vtable[5] (secondary init), vtable[2] (Release).
     // Strategy: build fake IUnknown with 6-slot vtable; stubs anchored in array
     // to prevent GC. Observable: return value (0) packed with stub call count.
+    // MECHANISM: NARROW: builds fixed 2-object stdcall IUnknown fake (outer vtable[0]=QI writes
+    // inner obj addr, vtable[2]=Release; inner vtable[5]=secondary-init writes sentinel 3 into
+    // 4th-arg slot); call shape fn(void** ppUnk) -> int; resets outer ptr before each side;
+    // observes ((ret & 0xffff) | (stub_call_count << 16)). CONFIG.tests[] is a repeat counter only
+    // - no per-test input variation; layout hardcoded to this one vtable shape.
     if (CONFIG.arg_type === 'dsound_secondary_init') {
         let dsDsCallCount = 0;
         const _dsDsStubs = [];  // GC anchors for NativeCallback objects
@@ -2985,6 +3324,11 @@ function runDiff() {
     // Allocate a node via FUN_005ae800(&DAT_009146c0, tag), then free it.
     // Success = 1 (no crash), 0 on crash. Both orig and reimpl must return 1.
     // CONFIG: alloc_rva_str (005ae800), alloc_tag (0x30804), pool_addr_str (009146c0).
+    // MECHANISM: Allocates two live pool nodes via `CONFIG.alloc_rva_str`(poolPtr,
+    // `CONFIG.alloc_tag`), one per side; calls fn(poolPtr, node) void(ptr,ptr) on live game
+    // memory; observable is crash-or-no-crash only (1/0) - a no-op reimpl that doesn't crash
+    // passes. CONFIG: `alloc_rva_str`, `alloc_tag`, `pool_addr_str`; tests[] length drives
+    // iteration count, test values unused.
     if (CONFIG.arg_type === 'audio_pool_free') {
         var poolPtr    = ptr(CONFIG.pool_addr_str);
         var allocRva   = ptr(CONFIG.alloc_rva_str);
@@ -3015,6 +3359,11 @@ function runDiff() {
     // Build a self-referential 12-byte sentinel in fresh memory (isolated from
     // live game state), call fn(sentinel, payload), read back new head node[2].
     // Observable = payload at node[+8]; -1 if alloc failed (pool not ready).
+    // MECHANISM: Allocates two fresh 12-byte isolated sentinel nodes (next=self, prev=self,
+    // val=0), one per side; calls fn(sentinel_ptr, int32_payload) void(ptr,int32); fingerprint =
+    // int32 at newHead+8 (-1 if no new head). CONFIG: `tests[]` (int32 payloads) only. Broader
+    // than name: any insert-head that allocates a node, stores int32 payload at node+8, and writes
+    // the new head to sentinel[0].
     if (CONFIG.arg_type === 'audio_list_insert') {
         for (var i = 0; i < CONFIG.tests.length; i++) {
             var payload = CONFIG.tests[i] | 0;
@@ -3049,6 +3398,11 @@ function runDiff() {
     // Build a fresh sentinel, optionally insert a node via the ORIGINAL
     // FUN_005addd0 (insert_rva_str), then call orig/reimpl to remove.
     // Observable: 1 if found (non-NULL return), 0 if not found (NULL).
+    // MECHANISM: Per-side: builds a fresh sentinel-based circular list and optionally inserts one
+    // node via the original fn at CONFIG.insert_rva_str; calls fn(sentinel, payload) and observes
+    // null vs non-null return (1=found, 0=not-found) only; NARROW: insert always uses the original
+    // fn; post-removal list state is never fingerprinted; CONFIG: insert_rva_str; tests[i] = {
+    // payload:int, present:bool }.
     if (CONFIG.arg_type === 'audio_list_remove') {
         var insertRva = ptr(CONFIG.insert_rva_str);
         var InsertFn = new NativeFunction(insertRva, 'void', ['pointer', 'int32'], 'mscdecl');
@@ -3087,6 +3441,13 @@ function runDiff() {
     // Build a fresh sentinel, insert N nodes via FUN_005addd0 (original),
     // call orig/reimpl to drain.
     // Observable: 1 = sentinel self-loops (empty) after drain, 0 = not empty.
+    // MECHANISM: fn(sentinel_ptr); harness allocates a fresh per-side 12-byte self-looping
+    // sentinel (next@+0, prev@+4, count@+8), inserts N nodes by calling the real game function at
+    // CONFIG.insert_rva_str (loaded as NativeFunction with 'mscdecl' void(pointer,int32)), then
+    // calls orig/reimpl to drain; observes whether the sentinel self-loops post-drain (1=empty,
+    // 0=not); return value not observed; NARROW: 12-byte circular-list layout and insert-function
+    // calling convention are fixed - only fits list-drain functions using that exact node shape
+    // and the game's own insert function.
     if (CONFIG.arg_type === 'audio_list_drain') {
         var insertRva2 = ptr(CONFIG.insert_rva_str);
         var InsertFn2 = new NativeFunction(insertRva2, 'void', ['pointer', 'int32'], 'mscdecl');
@@ -3123,6 +3484,11 @@ function runDiff() {
     // Allocate one zeroed scratch buffer (read-only target), seed the test byte
     // at CONFIG.field_offset (default 0x54), call Orig/Reimpl, compare returns.
     // Used for AudioByte54Bit3Get (0x005ac540): (*(byte*)(p+0x54) & 8) >> 3.
+    // MECHANISM: fn(ptr)->int; harness allocates a 0x80-byte zeroed buffer, writes test byte value
+    // at CONFIG.field_offset (default 0x54), calls Orig/Reimpl with that pointer, compares return
+    // values as u32; buffer contents after call are not observed; CONFIG: field_offset (byte
+    // offset, default 0x54), tests[] (byte values); broader: any fn(ptr)->int that extracts a
+    // scalar from a configurable byte offset in a zeroed struct.
     if (CONFIG.arg_type === 'ptr_scratch_field') {
         var PSF_OFF = (CONFIG.field_offset !== undefined) ? (CONFIG.field_offset | 0) : 0x54;
         var PSF_SZ  = 0x80;
@@ -3147,6 +3513,10 @@ function runDiff() {
     // N nodes WITHOUT the audio pool (pool is not ready at diff-attach), so the
     // traversal body is actually exercised.  Read-only => one structure, both
     // sides.  Used for AudioListNodeCount (0x005aded0).
+    // MECHANISM: Builds a harness-only circular linked list of n nodes with next@+4 and ring
+    // closed back to anchor; calls fn(anchor) and observes integer return; both sides share the
+    // identical structure (read-only traversal, no per-side copy); no CONFIG fields; broader: any
+    // fn(anchor) counting a circular list traversed via next@+4; tests[i] = n (node count).
     if (CONFIG.arg_type === 'audio_list_count') {
         for (var i = 0; i < CONFIG.tests.length; i++) {
             var n = CONFIG.tests[i] | 0;
@@ -3171,6 +3541,11 @@ function runDiff() {
     // fn(anchor, key) -> int index-of-key or -1.  Hand-build circular list
     // (next@+4, key@+8) from test.payloads; query test.key.  Read-only.
     // Used for AudioListIndexOfKey (0x005ade60).
+    // MECHANISM: Builds a harness-only circular list (next@+4, key@+8 per node) from
+    // test.payloads; calls fn(anchor, key) and observes int return (index or -1); both sides share
+    // the identical list (read-only, no per-side copy); no CONFIG; broader: any circular-list
+    // linear search fn(anchor, int_key) whose nodes carry key@+8 and next@+4; tests[i] = {
+    // payloads:[int...], key:int }.
     if (CONFIG.arg_type === 'audio_list_find_index') {
         for (var i = 0; i < CONFIG.tests.length; i++) {
             var t = CONFIG.tests[i];
@@ -3201,6 +3576,11 @@ function runDiff() {
     // void fn(uint a, uint b, uint* hi, uint* lo).  Two scalar args + two 4-byte
     // out-slots; observable = "hi,lo" hex fingerprint.  Used for
     // AudioShiftAddMul64 (0x005aeda0).  test = [a, b].
+    // MECHANISM: Two uint32 stack args plus two 4-byte out-pointers into a single harness-
+    // allocated 8-byte buffer (cleared before each call pair); void return not observed;
+    // fingerprints both output slots as "hi,lo" hex string. No CONFIG parameterization beyond
+    // standard tests=[a,b]. Applies to any void fn(uint,uint,uint*,uint*) that writes exactly two
+    // 4-byte results via out-pointers.
     if (CONFIG.arg_type === 'int2_ptr2_out') {
         var i2Buf = Memory.alloc(8);
         function i2Pack() {
@@ -3231,6 +3611,11 @@ function runDiff() {
     // pointer; map it back to its index so the A/B compares logical selection
     // (per-side pointer identity is meaningless).  Used for AudioListMinKeySelect
     // (0x005b0700).  test = { keys: [...], thresh: uint }.
+    // MECHANISM: Builds a harness-only circular list (next@+4, payload_ptr@+8; payload+0x54 ->
+    // keystruct; keystruct+0x10 = key); calls fn(anchor, thresh); maps the raw return pointer back
+    // to its payload index (-1=null, -2=unknown ptr) so comparison is logical rather than pointer-
+    // identical across sides; no CONFIG; NARROW: node/payload/keystruct layout fully hardcoded;
+    // tests[i] = { keys:[uint...], thresh:uint }.
     if (CONFIG.arg_type === 'audio_list_min_select') {
         for (var i = 0; i < CONFIG.tests.length; i++) {
             var t = CONFIG.tests[i];
@@ -3272,6 +3657,11 @@ function runDiff() {
     // block+8 -> headNode, block+0xc = end-sentinel value; headNode+0 (its next)
     // == sentinel for the fully-free case, != sentinel otherwise.  No pool.
     // Used for AudioArenaBlockIsFree (0x005ae590).  test = { free: bool }.
+    // MECHANISM: Builds a 16-byte block (block+8 -> 12-byte headNode; block+0xc = hardcoded
+    // sentinel 0x13572468); headNode+0 = sentinel (free=true) or sentinel^0xff (free=false); calls
+    // fn(block) and observes boolean return (1/0); NARROW: offsets +8/+0xc and sentinel value are
+    // hardcoded - only correct for a `**(p+8)==*(p+0xc)` predicate; CONFIG: none; tests[i] = {
+    // free:bool }.
     if (CONFIG.arg_type === 'arena_block_free_predicate') {
         var ABF_SENT = 0x13572468;
         for (var i = 0; i < CONFIG.tests.length; i++) {
@@ -3316,6 +3706,11 @@ function runDiff() {
     // scratch buffers (so dereferences inside the target don't AV). The
     // harness allocates N scratch buffers (32 bytes each) and rewrites the
     // input list so each test value points to a fresh buffer of zeroed data.
+    // MECHANISM: Per-side `mov eax,imm32; jmp target` trampoline pre-loads EAX per test; no stack
+    // args (CONFIG.signature.args must be empty). ptr variant substitutes per-test zeroed 64-byte
+    // scratch-buffer addresses as the imm32 to prevent AV on dereferences; int variant passes raw
+    // uint32. Observes return value only. CONFIG: tests[] (uint32/addr values), signature.ret,
+    // crash_equal_ok. Applies to any fn whose sole arg arrives in EAX.
     if (CONFIG.arg_type === 'eax_implicit_ptr' || CONFIG.arg_type === 'eax_implicit_int') {
         // Allocate scratch buffers for ptr mode (32-byte each, zero-init).
         const isPtr   = (CONFIG.arg_type === 'eax_implicit_ptr');
@@ -3408,6 +3803,12 @@ function runDiff() {
     // CONFIG.struct_size  : int    bytes to allocate (>= field_off + 8). Default
     //                              field_off + 64.
     // CONFIG.tests        : flat list of seed values (u32/int/float per ret_kind).
+    // MECHANISM: Per-side: allocates a fresh zeroed scratch struct (CONFIG.struct_size, default
+    // field_off+64); writes the test seed at CONFIG.field_off (u32/int/float per CONFIG.ret_kind);
+    // passes the struct pointer as the sole __cdecl stack arg; observable is fn's return value
+    // compared by value. CONFIG: `field_off`, `ret_kind`, `struct_size`. Broader: any
+    // fn(ptr)->scalar that reads one field at a configurable byte offset regardless of struct type
+    // or register convention.
     if (CONFIG.arg_type === 'thiscall_field_get') {
         const fieldOff = CONFIG.field_off | 0;
         const retKind  = CONFIG.ret_kind || 'u32';
@@ -3456,6 +3857,12 @@ function runDiff() {
     // the field at inner+inner_off. CONFIG: outer_off, inner_off, ret_kind('u32'|
     // 'float'), struct_size, inner_size. Precedent consumer: 0x004c0b10
     // (*(*(this+0xa0)+3) & 3). Bit-identity is integer-only (no x87 issue).
+    // MECHANISM: Calls fn(this_ptr) with per-test outer (CONFIG.struct_size) and inner
+    // (CONFIG.inner_size) harness buffers; inner ptr written at outer+CONFIG.outer_off; test value
+    // seeded at inner+CONFIG.inner_off; observable is return value only (CONFIG.ret_kind
+    // 'u32'|'float'). Generalises thiscall_field_get to one pointer-deref depth - the zero-filled
+    // outer alone would AV at the inner deref; CONFIG: outer_off, inner_off, ret_kind,
+    // struct_size, inner_size.
     if (CONFIG.arg_type === 'thiscall_nested_field_get') {
         const outerOff = CONFIG.outer_off | 0;
         const innerOff = CONFIG.inner_off | 0;
@@ -3527,6 +3934,11 @@ function runDiff() {
     //                         a 2-element [ecxVal, edxVal] (nargs==2, int mode).
     //                         For a ptr register the value is replaced by a
     //                         scratch-buffer address.
+    // MECHANISM: Drives __fastcall via a patched `mov ecx; mov edx; jmp` trampoline - ECX and/or
+    // EDX carry scalar or per-test 64-byte zeroed scratch-buffer-pointer args
+    // (CONFIG.fastcall_nargs=1|2, CONFIG.fastcall_ecx_ptr, CONFIG.fastcall_edx_ptr); both sides
+    // get identical register values; observes return value only (no buffer read-back). Applies to
+    // any 1-2 register-arg fastcall leaf.
     if (CONFIG.arg_type === 'fastcall_reg') {
         const nargs   = (CONFIG.fastcall_nargs === 1) ? 1 : 2;
         const ecxPtr  = !!CONFIG.fastcall_ecx_ptr;
@@ -3602,6 +4014,11 @@ function runDiff() {
     // Strategy: write test vec3 to globals[idx*stride+0/4/8], save original,
     // call fn(idx), read back globals as 3 u32 fingerprints, restore originals.
     // Both orig and reimpl must produce identical post-call globals.
+    // MECHANISM: Seeds globals[idx*stride+0..8] as f32 from test.vec3 (CONFIG.target_global_base,
+    // CONFIG.target_global_stride); calls fn(idx) or fn() per CONFIG.signature.args.length;
+    // fingerprints three post-call global u32s and restores originals between sides; return value
+    // NOT observed. CONFIG.crash_equal_ok optional. Applies to any in-place vec3 mutation indexed
+    // over a configurable stride-based global array.
     if (CONFIG.arg_type === 'vec3_global_mul_observe') {
         const base   = ptr(CONFIG.target_global_base);
         const stride = (CONFIG.target_global_stride | 0);
@@ -3755,6 +4172,12 @@ function runDiff() {
     // CONFIG fields:
     //   vbuf_addr_str   string (hex) — override DAT_00898a20 if needed
     //   vbuf_len        int          — override 112 if buffer size differs
+    // MECHANISM: Passes CONFIG.tests[i] as positional args per CONFIG.signature.args (any count;
+    // 'pointer' entries coerced via ptr(), float as-is); zeroes VBUF (ptr(CONFIG.vbuf_addr_str,
+    // default 0x00898a20), CONFIG.vbuf_len bytes, default 112) before each side; observable is a
+    // polynomial fingerprint of VBUF post-call; fn return value is NOT compared; VBUF restored
+    // after. CONFIG: `vbuf_addr_str`, `vbuf_len`, `signature`. Broader: any 5/7/12-arg draw call
+    // that fills a known fixed-address vertex buffer.
     if (CONFIG.arg_type === 'draw_quad_observe') {
         const VBUF = ptr(CONFIG.vbuf_addr_str || '0x00898a20');
         const VLEN = (CONFIG.vbuf_len | 0) || 112;
@@ -3823,6 +4246,11 @@ function runDiff() {
     // Tests: [p1, p2] pair (or a single int for the common p2=0 case).
     // CONFIG.out_buf_size: per-buffer size (default 32). Both buffers zeroed
     // before each call.
+    // MECHANISM: fn(int p1, uint32 p2, char* outA, char* outB)->void; harness allocates four
+    // separate Memory.alloc buffers (two per side, size CONFIG.out_buf_size, default 32), zeros
+    // them before each call, calls Orig/Reimpl independently, observes null-terminated C-string
+    // contents of both output buffers joined by '|'; return value not observed; input per test is
+    // [p1,p2] or scalar (p2 defaults 0); CONFIG: out_buf_size.
     if (CONFIG.arg_type === 'out_buf_fmt_2') {
         const BUF_SIZE = (CONFIG.out_buf_size | 0) || 32;
         const bufAo = Memory.alloc(BUF_SIZE);
@@ -3881,6 +4309,13 @@ function runDiff() {
     // CONFIG.draw_callee_rva_str: hex addr of the draw callee (default
     // '0x00427ff0'). Signature of the callee is void(uint32, float, float).
     // Tests: [sprite_id, x, y, p4, p5, p6].
+    // MECHANISM: Interceptor.replaces the draw callee at CONFIG.draw_callee_rva_str (default
+    // 0x00427ff0) with a capture stub before calling fn(uint32, float, float, uint32, uint32,
+    // uint32) - 6 stack args from test vector; observable is the 3-tuple (sid, adj_x_bits,
+    // adj_y_bits) that the patched draw callee received, NOT any output buffer; reverts replace in
+    // finally; CONFIG: `draw_callee_rva_str`, `crash_equal_ok`. Broader: any multi-arg pipeline
+    // that terminates in a single capturable callee, provided that callee address is configurable
+    // via draw_callee_rva_str.
     if (CONFIG.arg_type === 'trig_text_draw') {
         const drawAddr = ptr(CONFIG.draw_callee_rva_str || '0x00427ff0');
         let capturedArgs = null;
@@ -3951,6 +4386,11 @@ function runDiff() {
     //   function takes 9 args — only the first arg matters; remaining stack
     //   bytes are garbage but the patched callee only reads its first arg.
     // Tests: flat list of slot indices.
+    // MECHANISM: Patches CONFIG.callee_rva_str (default 0x0040bb90) with a NativeCallback recorder
+    // via Interceptor.replace; calls fn(slot>>>0) for each test integer; observes the pointer arg
+    // the stub captured - both null (no-call path) is a valid match; reverts the callee in
+    // finally. Parameterised by CONFIG.callee_rva_str and CONFIG.signature; applies to any int-arg
+    // dispatcher that routes to one pointer-taking callee.
     if (CONFIG.arg_type === 'sprite_table_dispatch') {
         const calleeAddr = ptr(CONFIG.callee_rva_str || '0x0040bb90');
         let capturedPtr = null;
@@ -4001,6 +4441,11 @@ function runDiff() {
     //   vbuf_addr_str   string (hex) — vertex buffer base (default '0x00898a20')
     //   vbuf_len        int          — vertex buffer size (default 112)
     //   angle_global_str string (hex) — spin angle accumulator addr (default '0x0067d974')
+    // MECHANISM: Calls void fn(int p1, int p2); before each sub-call (both sides separately)
+    // zeroes CONFIG.vbuf_len bytes at CONFIG.vbuf_addr_str and injects the per-test float seed
+    // (tests[i][2]) into CONFIG.angle_global_str; observable is a 32-bit rolling hash of the
+    // vertex buffer post-call. Saves and restores both globals after the batch. Solves per-call
+    // accumulator drift that would diverge orig/reimpl within one test cycle.
     if (CONFIG.arg_type === 'spin_angle_observe') {
         const VBUF2   = ptr(CONFIG.vbuf_addr_str  || '0x00898a20');
         const VLEN2   = (CONFIG.vbuf_len  | 0) || 112;
@@ -4064,6 +4509,11 @@ function runDiff() {
     //
     // If *target_global == NULL at call time, the write crashes — the harness
     // returns 0 for both sides (null-guard observable). Both paths must agree.
+    // MECHANISM: fn(int p1, uint32 p2)->void; no harness buffer - reads live outer pointer from
+    // CONFIG.target_global at runtime, computes effective=(*target_global)+p1*stride+field_offset
+    // and reads u32 there after each call as observable; null outer pointer yields 0/0 match
+    // (graceful); CONFIG: target_global (hex string), entity_byte_stride (default 4), field_offset
+    // (default 0); broader than entity_field_set by one extra pointer deref of the base.
     if (CONFIG.arg_type === 'ptr_ptr_entity_set') {
         const outerPtrAddr  = ptr(CONFIG.target_global);
         const stride        = (CONFIG.entity_byte_stride | 0) || 4;
@@ -4190,6 +4640,12 @@ function runDiff() {
     // Prior arg_type 'audio_sub_struct_link' did not exist in this file and
     // fell through to default fn(input), passing a bare uint32 as the pointer
     // arg — both sides AV. Tests: flat list of param_2 values.
+    // MECHANISM: fn(ptr, uint32); per-side 12-byte zeroed scratch buffers (separate pointers);
+    // tests[i] = flat uint32 p2; fingerprint = (return-ptr-non-null<<24)|(low-24-bit
+    // bufFingerprint of all 12 buffer bytes); compares the combined fingerprint across sides -
+    // broader than struct-link: fits any fn(ptr, uint32) that writes to a <=12-byte pointer-arg
+    // struct and returns a pointer, as long as zeroing the buffer suppresses any cleanup-callee
+    // side-effects; 12-byte size is hardcoded.
     if (CONFIG.arg_type === 'audio_sub_struct_link') {
         const BUF_BYTES = 12;
         const sBufA = Memory.alloc(BUF_BYTES);
@@ -4230,6 +4686,12 @@ function runDiff() {
     // LinkBuffer(p1,p3); returns p1 on success, 0 on failure. With a zeroed
     // 12-byte scratch buf both cleanups are no-ops and both link calls write
     // to the buffer. Tests: list of [p2, p3] pairs.
+    // MECHANISM: fn(uint32 p1, uint32 p2, uint32 p3) where p1 is the integer representation of a
+    // harness-allocated 12-byte zeroed scratch buffer (callee casts internally); per-side separate
+    // buffers allocated at different addresses and both passed as distinct p1 values; tests[i] =
+    // {p2, p3} object; fingerprint = (ret-non-null-flag<<24)|(low-24-bit bufFingerprint of 12
+    // bytes); broader than the name: fits any 3-uint32-arg fn whose first arg is a buffer address
+    // passed as a plain integer (uint32-cast pointer pattern) and which writes to that buffer.
     if (CONFIG.arg_type === 'audio_sub_struct_dual') {
         const BUF_BYTES = 12;
         const sBufA = Memory.alloc(BUF_BYTES);
@@ -4273,6 +4735,11 @@ function runDiff() {
     // COM branch is never taken; the function exercises only the two field
     // writes. Tests: flat list of param_2 values.
     // Required CONFIG: buf_size, field_offsets (default [0x74, 0x78]).
+    // MECHANISM: Per-side zero-filled buffer of CONFIG.buf_size (default 0x120); calls fn(buf,
+    // param_2_u32); reads dwords at CONFIG.field_offsets[0] and [1] (default [0x74, 0x78]), folds
+    // each to 16-bit XOR of its two halves, packs as a uint32 fingerprint; NARROW: only 2 offsets
+    // observed - other buffer writes are invisible; broader: parameterized offsets make it usable
+    // for different struct layouts; CONFIG: buf_size, field_offsets.
     if (CONFIG.arg_type === 'buf_field_set') {
         const BUF_BYTES = (CONFIG.buf_size | 0) || 0x120;
         const offsets   = CONFIG.field_offsets || [0x74, 0x78];
@@ -4319,6 +4786,11 @@ function runDiff() {
     //   bit0 = (ret-non-null) ; bit1 = (handle stored at *buf was non-null).
     // Per-side buf addrs differ — ret-pointer-identity is meaningless across
     // sides; but ret-non-null and handle-validity must match.
+    // MECHANISM: Calls fn(out_ptr, initial_int, max_int) with a per-side 4-byte scratch as
+    // out_ptr; observable is a 2-bit mask (bit0=ret-non-null, bit1=handle-at-*out_ptr-non-null);
+    // actual pointer values discarded since buffers differ per side; resulting handle is
+    // CloseHandled immediately. No CONFIG beyond arg_type. FALSE-GREEN hazard: observes
+    // success/fail only, not handle value identity.
     if (CONFIG.arg_type === 'semaphore_create') {
         const sBufA = Memory.alloc(4);
         const sBufB = Memory.alloc(4);
@@ -4370,6 +4842,11 @@ function runDiff() {
     // runs zero iterations and the secondary branch is skipped. Tests: flat
     // list of float volume values. Observable: low-24 fingerprint of buf
     // packed with (sentinel-still-self-loop ? 1 : 0).
+    // MECHANISM: Allocates a zeroed `CONFIG.buf_size`-byte (default 0x120) struct, sets buf+0x0c
+    // as a self-loop (empty circular list); calls fn(buf_ptr, float) void(ptr,float); fingerprint
+    // = (buf[+0x38]&0xffffff)|(sentinel_intact<<24). List-walk and secondary-pointer (buf+0x11c=0)
+    // paths are both skipped by the zeroed+self-loop setup. CONFIG: `buf_size`, `tests[]`
+    // (floats). NARROW: only the +0x38 direct-write path is exercised.
     if (CONFIG.arg_type === 'music_vol_set') {
         const BUF_BYTES = (CONFIG.buf_size | 0) || 0x120;
         const bufA = Memory.alloc(BUF_BYTES);
@@ -4405,6 +4882,13 @@ function runDiff() {
         return;
     }
 
+    // MECHANISM: fn(ptr); per-side scratch buffer of CONFIG.struct_size bytes (default 24) filled
+    // with sentinel 0xAA before each call; test values are ignored (iteration markers only);
+    // observes rolling XOR/multiply hash of bytes [CONFIG.observe_offset, +CONFIG.observe_length)
+    // (both default to the full buffer); return value is NOT observed; crash_equal_ok supported;
+    // no comment above dispatch - mechanism purely from body; broader than the name: fits any
+    // fn(ptr) that mutates a configurable-size buffer with no return value observable, with
+    // configurable observation window.
     if (CONFIG.arg_type === 'audio_sub_struct_zero') {
         const sSize   = (CONFIG.struct_size   | 0) || 24;
         const obsOff  = (CONFIG.observe_offset | 0) || 0;
@@ -4452,6 +4936,10 @@ function runDiff() {
     // CONFIG fields: none beyond standard.
     // Tests: flat list (length = call count; values ignored).
     // Unblocks: 0x004c5890 RwTexDictionaryCreate (demoted in frida-sweep-q).
+    // MECHANISM: Calls fn() with zero arguments and no seeds; observes only null vs non-null of
+    // the return pointer (1=non-null, 0=null) - a reimpl returning any non-null pointer passes
+    // even if size or contents are wrong; CONFIG: none beyond standard; tests[i] values are
+    // ignored (list length = call count).
     if (CONFIG.arg_type === 'allocator_nonnull') {
         for (let i = 0; i < CONFIG.tests.length; i++) {
             let origV = null, reimV = null, errO = null, errR = null;
@@ -4491,6 +4979,12 @@ function runDiff() {
     // type_str is embedded as a NUL-terminated UTF-8 string in scratch memory.
     // CONFIG fields: none beyond standard.
     // Unblocks: 0x004997b0 Win32ResourceLoader.
+    // MECHANISM: fn(uint16 nameId, char* typeName, uint8** pOutBuf, uint32* pOutLen)->int; harness
+    // allocates NUL-terminated string for typeName and two 4-byte out-pointer slots (zeroed before
+    // each call), observable is (ret&1)|(bufNonNull<<1) - success/failure bit and whether *pOutBuf
+    // is non-null; actual resource bytes are NOT compared because both sides call into the same
+    // MASHED.exe module and LockResource returns the same address; CONFIG: tests[] of
+    // {name_id:uint16,type_str:string}, no other keys.
     if (CONFIG.arg_type === 'resource_loader_4arg') {
         const outBufSlot = Memory.alloc(4);   // uint8** outBuf (4-byte slot holding the pointer)
         const outLenSlot = Memory.alloc(4);   // uint32* outLen
@@ -4550,6 +5044,12 @@ function runDiff() {
     //   observe_offsets  array of byte offsets to read back (default [12, 16, 20])
     // Tests: list of [val_a, val_b] pairs.
     // Unblocks: 0x005be140 FUN_005be140.
+    // MECHANISM: fn(harness_ptr, uint32, uint32); per-side harness-allocated scratch of
+    // CONFIG.struct_size bytes (default 32) sentinel-filled with 0xDEADBEEF before each call;
+    // calls fn(buf, tests[i][0], tests[i][1]); fingerprints uint32s at CONFIG.observe_offsets
+    // (default [0x0c,0x10,0x14]) as a comma-joined string; return value is NOT observed;
+    // observe_offsets is fully configurable so the handler is not restricted to the default layout
+    // - any fn(ptr,u32,u32) that writes to configurable offsets in its first arg fits.
     if (CONFIG.arg_type === 'struct_three_write') {
         const stSize   = (CONFIG.struct_size | 0) || 32;
         const stOffs   = CONFIG.observe_offsets || [0x0c, 0x10, 0x14];
@@ -4598,6 +5098,11 @@ function runDiff() {
     //   slot_field_count int (default 4) — number of dwords to read back.
     // Tests: list of { idx: int, vals: [v0, v1, v2, v3] } objects.
     // Unblocks: 0x00422ac0 FUN_00422ac0.
+    // MECHANISM: Calls void fn(int idx, uint32* arr); arr is a scratch buffer loaded with
+    // CONFIG.slot_field_count uint32 test values; observes those dwords read back from live
+    // globals at CONFIG.slot_base_addr + idx*CONFIG.slot_stride; saves and restores live globals
+    // around each orig/reimpl pair. CONFIG: slot_base_addr (default 0x006412e8), slot_stride
+    // (default 0xf40), slot_field_count (default 4).
     if (CONFIG.arg_type === 'slot_quad_set') {
         const sqBase   = ptr(CONFIG.slot_base_addr || '0x006412e8');
         const sqStride = (CONFIG.slot_stride | 0) || 0xf40;
@@ -4664,6 +5169,12 @@ function runDiff() {
     // Tests: flat list (length = call count; values ignored).
     // Unblocks: engine_stop_dispatch (0x00493550), hw_exit_dispatch (0x00493560),
     //           engine_stop_helper (0x004938c0).
+    // MECHANISM: Zero-arg fn(); before EVERY call (both Orig and Reimpl) writes 0 to
+    // CONFIG.state_global_str (default 0x007d3ff8) so both sides start from the same already-torn-
+    // down state; saves the global once before the loop and restores best-effort after; observes
+    // return value (normalised to uint32) or matched crash message via crash_equal_ok; NARROW:
+    // only one configurable global is corrupted, no buffer setup - fits only no-arg
+    // teardown/shutdown thunks where the sole pre-condition is one specific global = 0.
     if (CONFIG.arg_type === 'teardown_call_pair') {
         const tdGlobalAddr = ptr(CONFIG.state_global_str || '0x007d3ff8');
         // Save the global's current value for best-effort restore.
@@ -4719,6 +5230,11 @@ function runDiff() {
     // Unblocks (harness side): data_zero_fill (0x004924f0) — NOTE: C3 promotion
     //   still blocked by anti-island rule (5 of 6 callees at C1). This arg_type
     //   is infrastructure for when callees are promoted.
+    // MECHANISM: fn() no args: snapshots CONFIG.buffer_addr (CONFIG.buffer_size_dwords*4 bytes)
+    // once, restores before each Orig and Reimpl call so both sides see identical pre-call buffer
+    // state; observable = return value; void return always matches if signature.ret='void';
+    // matched crashes pass when CONFIG.crash_equal_ok; CONFIG: buffer_addr, buffer_size_dwords,
+    // crash_equal_ok; broader: any zero-arg fn mutating a large global buffer.
     if (CONFIG.arg_type === 'large_buffer_save_restore') {
         const lbAddr  = ptr(CONFIG.buffer_addr);
         const lbDwords = (CONFIG.buffer_size_dwords | 0);
@@ -4775,6 +5291,11 @@ function runDiff() {
     //   seed values (uint32). Observable = the read_off bytes after the call.
     // Unlocks: 0x00483a30 Replay_Rewind (seed_off=0x18, read_off=0x1c, 4 bytes:
     //   copies *(p+0x18)->*(p+0x1c)).
+    // MECHANISM: Calls fn(structPtr) with a harness-zeroed CONFIG.struct_size scratch buffer;
+    // seeds uint32 at CONFIG.seed_off before the call, reads CONFIG.read_size bytes at
+    // CONFIG.read_off afterward as the observable. Both sides get identically-seeded separate
+    // buffers; no globals touched. Drives any fn(struct_ptr) that derives one field from another
+    // within the same struct.
     if (CONFIG.arg_type === 'seed_field_read_field') {
         const SFSZ   = (CONFIG.struct_size | 0) || 0x40;
         const seedOff = CONFIG.seed_off | 0;
@@ -4812,6 +5333,11 @@ function runDiff() {
     //   callee may re-read them as float). Observable = concat of read_offs bytes.
     // Unlocks: 0x004c1c80 ViewportDimsSet (struct_size>=0x78, gate@+0x04 stays 0,
     //   array = 2 u32 dims, read_offs=[0x68,0x6c,0x70,0x74]).
+    // MECHANISM: Calls fn(structPtr, arrayPtr); struct is harness-zeroed to CONFIG.struct_size
+    // (keeps internal gate fields at 0, suppressing conditional branches); array holds
+    // CONFIG.array_vals_len uint32 test values written raw (callee may reinterpret as float);
+    // observable is comma-joined hex of CONFIG.read_offs[] dwords read from the struct after the
+    // call. CONFIG: struct_size, array_vals_len, read_offs[].
     if (CONFIG.arg_type === 'structptr_seeded_array') {
         const SASZ   = (CONFIG.struct_size | 0) || 0x80;
         const readOffs = CONFIG.read_offs || [];
