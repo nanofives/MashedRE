@@ -1,3 +1,59 @@
+# Mashed RE orchestrator - resume point (updated 2026-07-31, end of iter27)
+
+> ## iter27: the synthetic getter lane is MINED OUT. This is a mission-level fork.
+>
+> Directive was "find a bucket with SAFE read-only getter leaves." I briefed **32
+> fresh C2 rows across 6 buckets** (audio x2, hud x2, vehicle, frontend),
+> off-quota $2.86, 6/6 OK (`runs/iter27_getters/`). **Zero authorable getters.**
+> The one GETTER_SAFE (`0x005aeed0`) is the ledger's known-degenerate row
+> (`WaitForSingleObject((HANDLE)*p,0)` - every seed returns 1). Everything else
+> dies on **harness safety**: teardown (FontSys shutdown, RW frees), WRITES_GLOBAL
+> (allocator stores, frame-counter incs, video-handle clears), DESTROYS_DEVICE
+> (vtable flush), or CALLS_UNKNOWN (uncharacterized callees, `RpClumpForAllAtomics`
+> over live objects). The worker independently concluded the same.
+>
+> **This is structural, not a bad bucket.** Combined with iters 22/24 (util,
+> gameplay, particle, render all 0 READY), **every subsystem is now sampled** and
+> the getter lane is empty. The clean field/global getters were the EARLY
+> promotions - that is *why* they are C3 now. What remains at C2 is dominated by
+> mutators / teardown / device / dispatch, which is exactly why harness safety has
+> been the bottleneck for three straight sessions. Briefing more getter buckets is
+> spinning: **0 is the expected value.**
+>
+> ### THE FORK (mission-level - yours)
+> Batch C2->C3 promotion via the synthetic getter lane is exhausted. To continue
+> producing promotions, ONE of:
+> 1. **Build harness capability** for the mutator/setter shapes that dominate the
+>    remaining C2 pool - each unlocks a class, not one row:
+>    - `stub_ret_buf` + `observe_buf` on `stub_dispatch_observe` (callee-stubbed
+>      setters like the `0x004b8080`/`0x004b7fd0` Lua pair) - iter26 spec.
+>    - per-side sentinel reset on `entity_field_set` (strided-global setters like
+>      `0x0047cde0`) - iter26 spec; fixes a latent false-GREEN in a shipped handler.
+>    - a real snapshot/restore mutator A/B driver (the `mutator_ab_pilot` lane) -
+>      needs the deterministic-write-surface screen first (iter14: only 2 of 44
+>      rows survive, and both need a call-frequency boot).
+>    Each must be proven non-degenerate on a KNOWN-WRONG port before any promotion.
+> 2. **Pivot to lane A** - fix the game per `RE_MASTER_PLAN_2026-07.md` / the
+>    `re/analysis/plans/` frontier. The dual mission (A: fix the game, B: promote
+>    functions) has leaned entirely on B for ~6 sessions; B is now capital-gated.
+> 3. **Accept lower confidence** - stop chasing C2->C3 and mine C0->C1 / C1->C2
+>    discovery (the `discover-c1-batch` lane), which does not need the runtime
+>    harness at all.
+>
+> My read: option 1's `entity_field_set` sentinel-reset is the cheapest capital
+> (small, reusable, fixes a real bug, unlocks a whole setter class), but whether
+> B is even the right mission now is a call above the orchestrator.
+>
+> **Tracker conflict (route to re-classify, not resolved here):** `0x0041c090`
+> plate says C1, hooks.csv says C2.
+>
+> **Hygiene:** slot 9 acquired + released cleanly (fifth clean cycle). Slots 5,
+> 10, 11 hold leaked `.lock~`. `acquire` stakes a `.lock` Ghidra trips over.
+> Never pool-wide `cleanup` while another session is live.
+
+---
+
+# (iter26 resume point - superseded above)
 # Mashed RE orchestrator - resume point (updated 2026-07-31, end of iter26)
 
 > ## iter26: BOTH "author next" rows need harness code, not a .cpp. STOP-AND-ASK.
