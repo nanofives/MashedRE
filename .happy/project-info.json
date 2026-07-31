@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-31T09:45:00Z",
+  "updatedAt": "2026-07-31T12:00:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -76,34 +76,45 @@
       ]
     },
     {
-      "heading": "Orchestrator lane (iter17, 2026-07-31)",
+      "heading": "Orchestrator lane (iters 12-19, closed 2026-07-31)",
       "fields": [
         {
-          "label": "iter17: no promotions — two screening defects fixed instead",
-          "value": "Commits d20479b1, 8e66ffb5. Both cycles that were meant to author found the row shouldn't be authored. That is the run's value.",
+          "label": "Session result",
+          "value": "11 rows C2->C3. 4 new arg_type handlers, 1 ratified rubric clause, 3 harness bugs fixed, 2 screening defects closed. Branch pushed to a6a59a05.",
           "kind": "text"
         },
         {
-          "label": "0x00482900: takes 2 args, not 0 — __ftol hides an ST0 input",
-          "value": "Plate and hooks.csv both said `int f(void)` with FUN_004a2c48 as a 'frame count getter'. Both false: it is __ftol (already C3), which takes its input in ST0, so Ghidra reported the whole function void-parameter. Real body: (int)(param_1 * 60.0f / param_2) * 36 + 412. A port from the old plate would have been int f(void) calling a getter that does not exist.",
-          "kind": "text"
-        },
-        {
-          "label": "0x004a2b60 is MSVC sprintf — never a port target",
-          "value": "Spec'd SPEC_COMPLETE by a brief. It builds a fake FILE on the stack and calls _output, and sits inside the FidDB band msvc-crt-main marked 'do NOT promote'. A brief asks whether a function can be TESTED, never whether it should be PORTED. orch_rank_gate.py now applies a LIBRARY_BANDS filter that overrides any brief verdict.",
-          "kind": "text"
-        },
-        {
-          "label": "The two defects compounded",
-          "value": "The off-quota screen launched this run read the stale 0x00482900 plate and returned it as the ONLY READY row, picking a ZERO-ARG arg_type. That would not merely have been a bad port — with no args pushed, both sides read the same stack garbage and return the same value, i.e. a bit-identical FALSE GREEN the non-degeneracy check cannot catch.",
-          "kind": "text"
-        },
-        {
-          "label": "Pool after the band filter",
+          "label": "METHOD CHANGE (the durable part)",
           "value": [
-            "DEFER 6 · MUTATOR_LANE 43 · NEEDS_GHIDRA 30 · NEEDS_NEW_HANDLER 20 · READY 3",
-            "6 SPEC_COMPLETE handler rows left (re-check each against existing handlers first)",
-            "Mutator lane still only 2 AB_READY of 43"
+            "scripts/orch_preflight.py — derives a handler's required CONFIG keys from its own source and checks the DELIVERY path, not the spelling",
+            "Batch discipline — author 3-4 rows, verify in ONE boot",
+            "Both written into .claude/skills/orchestrate/SKILL.md",
+            "Measured: iters 12-18 wasted 4 of 12 boots; iter19 = 0 FAIL, 1 boot, 3 verdicts"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Open item 1 — __ftol plate sweep (needs a go-ahead)",
+          "value": "14 plates invent a semantic for FUN_004a2c48 (really __ftol). 4 of 5 C4 plates contaminated. NOT demoted: C4 rests on behavioural evidence and the ports were built x87-aware — this is a documentation defect. Bulk prose edit, unstarted.",
+          "kind": "text"
+        },
+        {
+          "label": "Open item 2 — 0x00482900 blocked",
+          "value": "Unverifiable by force-call: its logger callee (0x004987b0, OutputDebugStringA) raises a debug-print SEH exception, so both sides error identically. Needs a handler combining callee-stubbing WITH scalar args; neither existing one does both.",
+          "kind": "text"
+        },
+        {
+          "label": "Open item 3 — clause wording gap",
+          "value": "The indirect-dispatch clause says 'runtime data table or function-pointer FIELD'; 0x005af200's target is a function-pointer ARGUMENT. Same case a fortiori, but the text should be widened.",
+          "kind": "text"
+        },
+        {
+          "label": "Pool state",
+          "value": [
+            "Gate pool 102/102 judged; all READY rows resolved",
+            "6 SPEC_COMPLETE handler rows left (re-check vs EXISTING handlers first — iter16 and iter19 both found the proposed handler already existed or generalised)",
+            "Mutator lane: only 2 AB_READY of 43",
+            "27 ORPHAN_BLOCK rows need their callback blocks plated"
           ],
           "kind": "list"
         }
