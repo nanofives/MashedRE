@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-30T20:30:00Z",
+  "updatedAt": "2026-07-30T23:55:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -76,8 +76,28 @@
       ]
     },
     {
-      "heading": "Orchestrator lane (iter8, 2026-07-30)",
+      "heading": "Orchestrator lane (iter12, 2026-07-30)",
       "fields": [
+        {
+          "label": "iter12: 1 promotion + the gate re-rank",
+          "value": "0x004d8770 RwStringGetSizeAligned C2->C3 (commit cb2ab086) via a NEW str_arg_int_get arg_type that seeds a NUL-TERMINATED string — ptr_arg_int_get could not be used, its dword fill has no terminator so the callee's strlen runs off the allocation (the FontText 0x427840 crash class). GREEN 7/7 prediction-confirmed: observed 4,4,8,12,16,24,32 == the values written into the registry comment BEFORE the run, 6 distinct. Commit b6d43860 adds scripts/orch_rank_gate.py (SAFE-then-size ranking).",
+          "kind": "text"
+        },
+        {
+          "label": "Gate pool after re-rank (102 GATE_PASS, 90 briefed)",
+          "value": [
+            "MUTATOR_LANE 35 · NEEDS_GHIDRA 30 · NEEDS_NEW_HANDLER 22 · READY 3",
+            "safety: CALLS_UNKNOWN 37 · TEARDOWN 21 · WRITES_GLOBAL 13 · SAFE 6 · DESTROYS_DEVICE 2",
+            "Next authorable row: 0x0055c4f0 PhysicsBodySetFriction (SAFE, READY)",
+            "Size-first had buried it in the LAST bucket purely for being large"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Mutator A/B pilot — new selection criterion",
+          "value": "Best-shaped candidate 0x00495110 (11 B, one write surface, caller at C4) was REJECTED: it writes a TIMER read, and snapshot/restore re-executes the original after rollback, sampling a later time — the lane would RED for reasons unrelated to the port. The write surface must be DETERMINISTIC given pre-call state. 12 WRITES_GLOBAL rows left to screen.",
+          "kind": "text"
+        },
         {
           "label": "Iter8: 3 RpClumpDestroy destructors C3",
           "value": "NEW reg_this_call_observe handler (records a stubbed callee's arg, for void single-call fns) + NEW identified-callee clause (user-approved). EmitterDtorClumpAt5c/15c/100 (0x0041b440/beb0/cb00) C2->C3, GREEN 3/3 (recorded RpClumpDestroy arg==sentinel). Commit 0e0a436a.",
