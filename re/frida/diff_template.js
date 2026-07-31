@@ -2280,8 +2280,35 @@ function runDiff() {
         const cbObserve = new NativeCallback(function (arg) { recorded = arg >>> 0; return 0; },
                                              'int', ['uint32']);
         const obsAddr = ptr(CONFIG.observe_callee_str);
+        // Verify the stub ACTUALLY installed before calling anything. This is a
+        // safety gate, not a diagnostic: for a guarded call the whole reason to
+        // stub the callee is that letting it run for real would hand fabricated
+        // arguments to live engine state. If the replace silently no-ops, that
+        // protection is gone and the real callee executes — while the run merely
+        // looks like "the branch was never taken".
+        //
+        // Observed in iter14: three hooks in one batch all replaced the SAME
+        // address (0x005ae920) in sequence, each in its own script load/unload,
+        // and the MIDDLE one recorded no calls at all on either side. Standalone
+        // it was correct and non-degenerate (4/4), so the function was fine; the
+        // stub had not taken effect. [UNCERTAIN] whether the cause is the
+        // unload of the previous script tearing down the new replacement or
+        // something else — the mechanism is not established, only the symptom.
+        // The verdict was safe either way (the batch reported INCONCLUSIVE, not
+        // GREEN, because every observation was identical), but the unstubbed
+        // call is not something to leave to chance.
+        const preBytes = [];
+        for (let b = 0; b < 5; b++) preBytes.push(obsAddr.add(b).readU8());
         Interceptor.replace(obsAddr, cbObserve);
         Interceptor.flush();
+        let patched = false;
+        for (let b = 0; b < 5; b++) if (obsAddr.add(b).readU8() !== preBytes[b]) { patched = true; break; }
+        if (!patched) {
+            send({ type: 'error', msg: 'callee stub did NOT install at ' +
+                   CONFIG.observe_callee_str + ' — refusing to run, the REAL ' +
+                   'callee would execute with fabricated arguments' });
+            return;
+        }
 
         function buildTramp(targetAddr) {
             const code = Memory.alloc(Process.pageSize);
