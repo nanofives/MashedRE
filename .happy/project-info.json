@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-31T07:30:00Z",
+  "updatedAt": "2026-07-31T09:45:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -76,34 +76,34 @@
       ]
     },
     {
-      "heading": "Orchestrator lane (iter16, 2026-07-31)",
+      "heading": "Orchestrator lane (iter17, 2026-07-31)",
       "fields": [
         {
-          "label": "iter16: 0x0055c810 C2->C3, no new handler",
-          "value": "Commit 6b77cda5. The brief proposed a new float3_ptr_write_observe; ptr_seed_observe already did the job. A NEEDS_NEW_HANDLER verdict is a hypothesis about the handler inventory, not a fact about it. Also corrected the brief twice from disasm: the function is not void, and it has a direct callee the brief omitted entirely.",
+          "label": "iter17: no promotions — two screening defects fixed instead",
+          "value": "Commits d20479b1, 8e66ffb5. Both cycles that were meant to author found the row shouldn't be authored. That is the run's value.",
           "kind": "text"
         },
         {
-          "label": "Clause re-screen paid off",
-          "value": [
-            "31 NEEDS_GHIDRA rows re-asked against the two new clauses, off-quota",
-            "5 UNBLOCKED · 5 CLAUSE_PARTIAL · 21 still need Ghidra",
-            "Clause B's exclusion fired correctly on 0x00413f50 (indirect callee, but also a direct anonymous one)"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Tracker conflict found — both plates wrong",
-          "value": "FUN_004a2c48 is described as a 'checkpoint/frame count getter' in one plate and a bare [STUB] in another. hooks.csv is authoritative: it is __ftol, the MSVC CRT x87 round-to-int64 helper, already C3 byte-identical. An invented role for a known CRT function is the wrong-plate-propagates-into-ports class — correct it before anything ports against that description.",
+          "label": "0x00482900: takes 2 args, not 0 — __ftol hides an ST0 input",
+          "value": "Plate and hooks.csv both said `int f(void)` with FUN_004a2c48 as a 'frame count getter'. Both false: it is __ftol (already C3), which takes its input in ST0, so Ghidra reported the whole function void-parameter. Real body: (int)(param_1 * 60.0f / param_2) * 36 + 412. A port from the old plate would have been int f(void) calling a getter that does not exist.",
           "kind": "text"
         },
         {
-          "label": "Lanes remaining",
+          "label": "0x004a2b60 is MSVC sprintf — never a port target",
+          "value": "Spec'd SPEC_COMPLETE by a brief. It builds a fake FILE on the stack and calls _output, and sits inside the FidDB band msvc-crt-main marked 'do NOT promote'. A brief asks whether a function can be TESTED, never whether it should be PORTED. orch_rank_gate.py now applies a LIBRARY_BANDS filter that overrides any brief verdict.",
+          "kind": "text"
+        },
+        {
+          "label": "The two defects compounded",
+          "value": "The off-quota screen launched this run read the stale 0x00482900 plate and returned it as the ONLY READY row, picking a ZERO-ARG arg_type. That would not merely have been a bad port — with no args pushed, both sides read the same stack garbage and return the same value, i.e. a bit-identical FALSE GREEN the non-degeneracy check cannot catch.",
+          "kind": "text"
+        },
+        {
+          "label": "Pool after the band filter",
           "value": [
-            "7 SPEC_COMPLETE handler rows (re-check each against existing handlers first)",
-            "Mutator lane: only 2 AB_READY of 44",
-            "Gate pool 102/102 judged; synthetic-getter lane exhausted",
-            "27 ORPHAN_BLOCK rows still need their callback blocks plated"
+            "DEFER 6 · MUTATOR_LANE 43 · NEEDS_GHIDRA 30 · NEEDS_NEW_HANDLER 20 · READY 3",
+            "6 SPEC_COMPLETE handler rows left (re-check each against existing handlers first)",
+            "Mutator lane still only 2 AB_READY of 43"
           ],
           "kind": "list"
         }
