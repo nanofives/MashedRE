@@ -351,9 +351,39 @@ def check(name, mapping, csv_rows):
 
     # 5. test-vector shape
     t1 = h.get("path1_tests") or []
-    if len(t1) < 2:
-        fails.append("path1_tests has %d vector(s); cannot be non-degenerate"
-                     % len(t1))
+    # Non-degeneracy can come from EITHER of two places, and only counting vectors
+    # sees one of them:
+    #   (a) ACROSS vectors  — distinct inputs produce distinct fingerprints;
+    #   (b) WITHIN one observation — several observed slots carrying DIFFERENT
+    #       expected values, so one call already discriminates.
+    # (b) is a real and used pattern here. 0x0040ba60 observes out=[1,0,1,0], so a
+    # port returning all-1 or all-0 fails on a single vector. 0x00477b40 uses a
+    # boundary echo — the region goes to 0 while a byte past its end keeps a
+    # sentinel — so zeroing too far AND not far enough both fail at once. Flagging
+    # those as "cannot be non-degenerate" is a FALSE FAIL, and a checker that cries
+    # wolf gets ignored.
+    # The exemption is deliberately narrow: >= 2 observed slots. One observed slot
+    # and one vector really is one observation, which is what eax_ecx_insert was
+    # doing before cfg.eax_from_test (orch-iter21).
+    obs_slots = 0
+    for key in ("observe_addrs", "observe", "out_observe", "eax_observe",
+                "ecx_observe", "abs_observe", "obs_globals"):
+        v = h.get(key)
+        if isinstance(v, (list, tuple)):
+            obs_slots = max(obs_slots, len(v))
+    for t in t1:                      # per-test obs lists (cache_setter_observe)
+        if isinstance(t, dict) and isinstance(t.get("obs"), (list, tuple)):
+            obs_slots = max(obs_slots, len(t["obs"]))
+    if len(t1) < 2 and obs_slots >= 2:
+        notes.append("only %d test vector(s), but %d observed slots — "
+                     "non-degeneracy must come from DIFFERENT expected values across "
+                     "those slots (e.g. a boundary echo, or a mixed out-vector). "
+                     "Verify that from the evidence CSV; the vector count alone "
+                     "cannot." % (len(t1), obs_slots))
+    elif len(t1) < 2:
+        fails.append("path1_tests has %d vector(s) and %d observed slots; cannot be "
+                     "non-degenerate — one call observing one slot is a single "
+                     "observation" % (len(t1), obs_slots))
     elif len({repr(x) for x in t1}) < 2:
         fails.append("all %d path1_tests are identical" % len(t1))
 
