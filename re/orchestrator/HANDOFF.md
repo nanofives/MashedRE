@@ -1,3 +1,66 @@
+# Mashed RE orchestrator - resume point (updated 2026-07-31, end of iter26)
+
+> ## iter26: BOTH "author next" rows need harness code, not a .cpp. STOP-AND-ASK.
+>
+> The directive was "author 0x004b8080". It is **not authorable with any existing
+> handler** - verified against both candidates' source, not guessed. And the
+> fallback 0x0047cde0's handler is **degenerate** for its shape. No boot was spent;
+> neither row can produce honest evidence without new harness JS first. Ledger:
+> `author_004b8080` (blocked), `entity_field_set_degeneracy` (candidate).
+>
+> ### 0x004b8080 - real handler gap (first genuine one after 7 false alarms)
+> Raw listing (Mashed_pool9): `__cdecl void f(L, value, idx): slot =
+> FUN_004b7ff0(L, idx); *slot = value; *(u16)(slot+0xc) = 0`. The tag write
+> (`0` here vs `1` in sibling 0x004b7fd0) is the ONLY thing distinguishing the
+> row. To observe it, callee `FUN_004b7ff0` (a Lua stack-realloc that derefs `*L`
+> and AVs on a fake state) must be stubbed **to return a scratch-buffer pointer**,
+> then the harness must **read that buffer back** at +0 (u32) and +0xc (u16).
+> - `ptr_seed_observe`: reads buffers, **no `stub_at`** (iter25 grep).
+> - `stub_dispatch_observe`: **has `stub_at`** but the stub returns a **static
+>   int** (`stub_ret`, default 0) and observes only `observe_ret`/`observe_calls`
+>   - never a post-call buffer. So `*slot=value` writes to `*0` -> AV, and the
+>   tag write is invisible.
+> - **Additive spec:** add to `stub_dispatch_observe` two knobs - `stub_ret_buf:k`
+>   (recorder returns `&bufs[k]`) and `observe_buf:[{buf,off,type}]` (post-call
+>   readback folded into the fingerprint). Then author 0x004b8080 (tag=0) AND
+>   0x004b7fd0 (tag=1) as a pair; distinct VALUE per vector + the tag contrast
+>   give non-degeneracy.
+>
+> ### entity_field_set is DEGENERATE for shared-live-global setters (reusable)
+> 0x0047cde0 = `if (0<=i<200) (&DAT_006c9438)[i]=v` - `entity_field_set`
+> (`diff_template.js:780`) shape-fits exactly, BUT `callFn` (line 5648) runs Orig
+> then Reimpl **in one process on the same real global with no reset**, and the
+> handler does no save/restore. Orig writes `v` first, so Reimpl's readback
+> returns `v` **even if Reimpl writes nothing** -> every in-bounds vector is a
+> false GREEN. Only an OOB vector tests anything (the bounds check), never the
+> write's base/stride/value. **Fix (additive, reusable):** per-side sentinel
+> pre-fill of `base+i*stride` before each side, so a non-writing port REDs.
+> Plus, for THIS row: `DAT_006c9438` is live per-frame vehicle water-zone state
+> (read by `FUN_00481a30`, the row's own caller-gate witness, as a byte bitfield),
+> so the no-restore write is safe **only at the menu early-window**
+> (`DAT_006c6eb0==0`).
+>
+> ### THE DECISION (yours)
+> Both rows are gated on the same kind of work: a small, reusable **additive
+> harness capability**, then self-verify it isn't itself false-GREEN (needs a
+> boot), then author. Options:
+> 1. Build `stub_ret_buf`/`observe_buf` on `stub_dispatch_observe` -> author the
+>    0x004b8080 / 0x004b7fd0 Lua-setter PAIR.
+> 2. Build the `entity_field_set` per-side sentinel reset -> author 0x0047cde0 at
+>    the menu window (and it generalises to other strided-global setters).
+> 3. Defer both; mine a different bucket where the getter lane still has SAFE
+>    read-only leaves (thin, per iter24 - harness safety is the bottleneck).
+>
+> Whichever handler is built must be proven non-degenerate on a KNOWN-WRONG port
+> before any promotion (a body that writes nothing must RED).
+>
+> **Hygiene:** slot 9 acquired + released cleanly (fourth clean cycle). Slots 5,
+> 10, 11 hold leaked `.lock~`. `acquire` stakes a `.lock` Ghidra trips over -
+> clear it before opening. Never pool-wide `cleanup` while another session is live.
+
+---
+
+# (iter25 resume point - superseded above)
 # Mashed RE orchestrator — resume point (updated 2026-07-31, end of iter25)
 
 > ## iter25: U-4976 resolved — it DISQUALIFIES 0x004c7600. Author 0x004b8080 next.
