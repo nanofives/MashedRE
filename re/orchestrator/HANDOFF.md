@@ -1,3 +1,68 @@
+# Mashed RE orchestrator — resume point (updated 2026-07-31, end of iter25)
+
+> ## iter25: U-4976 resolved — it DISQUALIFIES 0x004c7600. Author 0x004b8080 next.
+>
+> The iter24 handoff called 0x004c7600 "one fact from READY". That fact — the
+> identity of vtable slot `DAT_007d3ff8 + 0x88` — is now resolved, and it kills
+> the row rather than promoting it. Evidence:
+> `re/analysis/render_4_c1_to_c2_s4/U4976_resolution.md`, commit `e202fd26`.
+>
+> **Slot +0x88 = RwStandard index 16 = `FUN_004d0290` = the raster-unlock
+> standard.** Proven from the binary: RwEngineOpen (`FUN_004c30b0`) registers
+> 0x1d standards at device+0x48 via device-system request 0xb; the D3D9 device
+> system fn `FUN_004c7a70` case 0xb calls installer `FUN_004c8e50`, whose inline
+> {index,funcptr} table sets index 0x10 → `FUN_004d0290`; device+0x48+16*4 =
+> device+0x88. `FUN_004d0290` writes raster fields, walks the raster parent chain
+> (unbounded pointer chase), drives the **live D3D9 device** `DAT_007d4110`
+> vtable +0x78, and releases surfaces. So a synthetic call of 0x004c7600 either
+> takes the null path (both sides return 0 — degenerate false GREEN), AVs, or
+> corrupts the renderer. `int_scalar` was the right shape; harness_safety is
+> DESTROYS_DEVICE/AV. **0x004c7600 stays C2.**
+>
+> **The U-4976 row in `UNCERTAINTIES.md` is NOT closed** — that file is owned by
+> the other live session. Close it via `re-classify` **after** multi-session
+> coordination; the evidence note + commit are the substantiation.
+>
+> ### AUTHOR NEXT: 0x004b8080 (from the iter24 gate brief, still the best row)
+>
+> - Caller-gate satisfied: `0x004b87e0` (C2), resolved in iter24.
+> - The iter24 brief said ADDITIVE_FIELD "ptr_seed_observe + stub_at" and claimed
+>   ptr_seed_observe supports stub_at. **It does NOT** — I grepped its dispatch
+>   block: `null_args`/`ptr_to` yes, `stub_at`/`stub_ret`/`stub_nargs` no.
+>   **Use `stub_dispatch_observe` (`ARG_TYPES.md:57`)** — it already has `stub_at[]`,
+>   scratch buffers, and `arg_layout`. Likely NO new field needed.
+> - Shape: 3 params; param_1 is a Lua state pointer (typed undefined4 — the
+>   recurring deref-defect). Body: `puVar1 = (undefined4*)FUN_004b7ff0(param_1,
+>   param_3); *puVar1 = param_2` — stub `FUN_004b7ff0` to return a scratch-buffer
+>   pointer, then observe the write. Plate layout: value at puVar1+0, tag uint16
+>   at byte +0xc.
+> - **AUTHORING NEEDS THE RAW LISTING FIRST** (rule #4). Open a slot, read
+>   `FUN_004b8080` and `FUN_004b7ff0` via `listing_code_units_list` (NOT
+>   `listing_disassemble_*` — write-gated on a slot), author the .cpp + registry,
+>   `orch_preflight`, then verify in a `state_batch` boot. This is a full lift —
+>   give it its own session; iter25 stopped here (context heavy after the U-4976
+>   chase) rather than half-author an unverifiable hook.
+> - If it clears, batch it with `0x0047cde0` (MUTATOR_LANE,
+>   `(&DAT_006c9438)[param_1]=param_2`; `entity_field_set` (`ARG_TYPES.md:46`)
+>   models the exact strided-global-array shape).
+>
+> **Handler discipline reminder (now 7 instances):** grep the dispatch block in
+> `diff_template.js` before believing ANY handler-gap claim — including an
+> ADDITIVE_FIELD one. iter25 refuted one more (the ptr_seed_observe/stub_at claim).
+>
+> **Do not bother:** 0x00421980 (TEARDOWN), 0x004cbb20 (DESTROYS_DEVICE —
+> SetTextureStageState on live device), 0x004c0ed0 (returns param_1+0x50 →
+> per-side false-RED), 0x004c7600 (this row), 0x0052df40/0x0052ddc0 (library).
+>
+> **Hygiene:** slot 9 acquired + released cleanly (third clean cycle). Slots
+> 5, 10, 11 hold leaked `.lock~`. `acquire` stakes a `.lock` Ghidra trips over —
+> clear the stake before opening. Never pool-wide `cleanup` while another session
+> is live. On a slot, `memory_read`/`reference_to`/`decomp_function`/
+> `listing_code_units_list` are read-safe; `listing_disassemble_*` is write-gated.
+
+---
+
+# (iter24 resume point — superseded above)
 # Mashed RE orchestrator — resume point (updated 2026-07-31, end of iter24)
 
 > ## iter24: the caller-gate fix is APPLIED AND PROVEN. Harness safety is the real bottleneck.
