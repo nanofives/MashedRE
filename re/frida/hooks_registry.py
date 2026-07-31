@@ -18909,12 +18909,49 @@ HOOKS = {
     # are invisible to Ghidra because only x87 instructions touch them
     # (FLD [ESP+4], FIDIV [ESP+0xc]).
     #
-    # ARG_TYPE 'ptr_seed_observe' with a scalar-only layout: no buffers at all,
-    # just an f32 and an i32 threaded positionally. num_bufs 0 is deliberate.
-    # The observable is the RETURN, so observe is empty and fold_ret carries it.
+    # ARG_TYPE: 'stub_dispatch_observe' with the iter20 'stub_at' extension.
     #
-    # SAFE: leaf arithmetic plus a logger call. The only side effect is a line
-    # in the game's log, which is not game state.
+    # RE-SPEC #2 (orch-iter20). The iter18 spec — 'ptr_seed_observe', scalar-only
+    # layout, observe_ret — was CORRECT about the signature and the predictions,
+    # and still produced NO VERDICT: all six seeds returned 'system error' on
+    # BOTH sides, in the batch and standalone alike
+    # (log/diff_replay_get_size.csv, log/diff_scenario_batch_replay_get_size.csv).
+    # Standalone reproducing it ruled out the batch-sequencing artifact that had
+    # explained the iter14 guard_b case.
+    #
+    # The cause is the CALLEE, not either implementation. 0x004987b0 is a printf
+    # wrapper ending in OutputDebugStringA, which raises the debug-print SEH
+    # exception 0x40010006. Windows swallows it with no debugger attached; Frida's
+    # exception handler surfaces it, so the force-call errors out before
+    # returning. Our port fails identically because it calls the same address.
+    # [UNCERTAIN] the exception code is inferred from the cited OutputDebugStringA
+    # plus the both-sides-identical failure; it was never instrumented. What IS
+    # established: the failure is in the callee, and BOTH SIDES ERRORING IS NOT
+    # EVIDENCE OF CORRECTNESS.
+    #
+    # So the callee has to be stubbed — but it is reached by a hardcoded
+    # `CALL rel32` at 0x00482924, not through a pointer, so nothing can be seeded
+    # to divert it. Neither existing handler covered this: reg_this_call_observe
+    # replaces a fixed callee but passes no scalars and observes no return;
+    # ptr_seed_observe passes scalars and observes the return but stubs nothing.
+    # stub_dispatch_observe already did scalars AND observe_ret, so it needed one
+    # additive field — 'stub_at', a list of addresses to Interceptor.replace with
+    # the recorder, carrying the same install guard reg_this_call_observe got in
+    # iter15. No new handler was written; see the standing rule that a
+    # NEEDS_NEW_HANDLER verdict is a hypothesis about the inventory, not a fact.
+    #
+    # stub_nargs is 2, NOT the default 3. The call site pushes exactly two
+    # (format string, size); a 3-arg recorder would read stack garbage past them
+    # that can differ between sides — a false RED.
+    #
+    # observe_calls is on and is a genuine bonus over the old spec: it records
+    # what the logger RECEIVED, so the run verifies the format-string pointer
+    # 0x005cf24c and the computed size as an ARGUMENT, not only as the return.
+    # A port that returned the right value but logged the wrong one would now
+    # fail; under the iter18 spec it could not.
+    #
+    # SAFE: leaf arithmetic plus a logger call, and with stub_at the logger does
+    # not run at all. No game state is touched.
     #
     # NON-DEGENERACY (asserted): size = (int)(a*60/b)*36 + 412.
     #   a=1.0,  b=1  -> frames 60   -> 2572
@@ -18927,15 +18964,31 @@ HOOKS = {
     # Five distinct returns over six seeds. The last one is the important one:
     # 37.5 truncating to 37 pins __ftol's rounding mode — a port that rounded
     # to nearest would return 38*36+412 = 1780 and fail only there.
+    #
+    # With observe_calls the expected fingerprints are
+    #   r=<size>|calls[1]=0x5cf24c,0x<size in hex>
+    # i.e. each seed checks the return AND both logger arguments.
     'replay_get_size': {
         'rva':        0x00482900,
         'export':     'ReplayGetSize',
         'signature':  {'ret': 'int32', 'args': ['float', 'int32']},
-        'arg_type':   'ptr_seed_observe',
+        'arg_type':   'stub_dispatch_observe',
         'num_bufs':   0,
         'arg_layout': [{'f32': True}, {'i32': True}],
+        'stub_at':    [0x004987b0],   # the OutputDebugStringA logger
+        'stub_nargs': 2,              # (format, size) — NOT the default 3
+        'stub_abi':   'mscdecl',
+        'stub_ret':   0,              # the logger's return is discarded at
+                                      # 0x00482929 (ADD ESP,8 then MOV EAX,ESI),
+                                      # so nothing depends on this value; set
+                                      # explicitly rather than left to default.
+        'buf_size':   0x80,           # no buffers are used (arg_layout is
+                                      # scalar-only), but the handler allocates
+                                      # NB=1 regardless; pinned so the CONFIG is
+                                      # complete rather than defaulted.
         'observe':    [],
         'observe_ret': True,
+        'observe_calls': True,
         'scenario':   'race',
         'scenario_sentinel': 0x008815a0,
         'path1_tests': [

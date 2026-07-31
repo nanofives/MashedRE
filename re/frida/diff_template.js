@@ -2467,6 +2467,7 @@ function runDiff() {
     //   0x004cbb50  obj -> *obj -> [+8]        stub planted in a fake vtable
     //   0x00550950  stream -> *(s+0x38) -> [+0x30]   ditto, deeper
     //   0x005af200  callback passed DIRECTLY as an argument
+    //   0x00482900  callee is a HARDCODED DIRECT CALL — patched via stub_at
     //
     // Nothing real is ever dispatched, which is the point: for a Release thunk
     // or a stream-read dispatch, letting the true callee run would touch live
@@ -2478,7 +2479,14 @@ function runDiff() {
     //                       | {buf,off,ptr_to:j}   address of buffer j
     //                       | {buf,off,stub:true}  address of the recorder
     //   arg_layout[]          {buf:i} | {i32:true} | {f32:true} | {stub:true}
+    //   stub_at[]             hex addrs to Interceptor.replace with the recorder
+    //                         (for callees reached by a hardcoded direct CALL,
+    //                          where there is no pointer to seed)
     //   stub_nargs            how many args the recorder declares (default 3)
+    //                         — MUST match what the call site actually pushes.
+    //                         Declaring more reads stack garbage past the last
+    //                         real argument, which can differ between sides and
+    //                         produce a FALSE RED.
     //   stub_abi              'mscdecl' (default) or 'stdcall' (callee-cleans)
     //   stub_ret              int the recorder returns (default 0)
     //   observe_ret           fold the TARGET's return into the fingerprint
@@ -2530,6 +2538,45 @@ function runDiff() {
         };
         const stub = mkStub();
         keep.push(stub);
+
+        // ── stub_at: plant the recorder at a FIXED DIRECT-CALL address ───────
+        // The three iter19 rows all dispatched through data the caller supplies
+        // — a fake vtable slot, or the function-pointer argument itself — so
+        // seeding a pointer was enough. 0x00482900 is different in kind: it
+        // `CALL rel32`s a hardcoded logger at 0x004987b0 and there is NO pointer
+        // to seed. Patching the callee's entry is the only way to stop it.
+        //
+        // This is not a convenience, it is the whole reason the row was
+        // unverifiable. 0x004987b0 ends in OutputDebugStringA, which raises a
+        // debug-print SEH exception (0x40010006). Windows swallows it when no
+        // debugger is attached, but Frida's exception handler surfaces it — so
+        // in iter18 all six seeds returned 'system error' on BOTH sides, in the
+        // batch AND standalone. Both-sides-identical failure is not evidence of
+        // correctness; it is no evidence at all.
+        //
+        // Install guard is the same one reg_this_call_observe got in iter15:
+        // verify the entry bytes actually changed before running anything. A
+        // silently uninstalled stub means the REAL callee executes while the run
+        // merely looks quiet.
+        const stubAt = CONFIG.stub_at || [];
+        for (let k = 0; k < stubAt.length; k++) {
+            const sa = ptr(stubAt[k]);
+            const pre = [];
+            for (let b = 0; b < 5; b++) pre.push(sa.add(b).readU8());
+            const cb = mkStub();
+            keep.push(cb);
+            Interceptor.replace(sa, cb);
+            Interceptor.flush();
+            let patched = false;
+            for (let b = 0; b < 5; b++)
+                if (sa.add(b).readU8() !== pre[b]) { patched = true; break; }
+            if (!patched) {
+                send({ type: 'error', msg: 'stub_at did NOT install at ' +
+                       stubAt[k] + ' — refusing to run, the REAL callee would ' +
+                       'execute' });
+                return;
+            }
+        }
 
         const wr = function (p, off, type, value) {
             const a = p.add(off);

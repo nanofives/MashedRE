@@ -418,6 +418,13 @@ def build_config(hook, asi_path=None):
     for _k in ('stub_nargs', 'stub_abi', 'stub_ret', 'observe_calls'):
         if _k in hook:
             config[_k] = hook[_k]
+    # stub_at (orch-iter20): the same recorder, but planted at a callee reached
+    # by a HARDCODED direct CALL, where there is no pointer to seed. Ints in the
+    # registry, hex strings on the wire — ptr() takes either, but the string form
+    # matches observe_callee_str and reads correctly in a dumped manifest.
+    if 'stub_at' in hook:
+        config['stub_at'] = [a if isinstance(a, str) else f"0x{a:08x}"
+                             for a in hook['stub_at']]
     # vtable_table_dispatch (orch-iter15): table-of-8-byte-entries dispatch,
     # entry = *(holder + vtbl_ptr_offset) + idx*8.
     for _k in ('vtbl_ptr_offset', 'table_entries'):

@@ -148,6 +148,18 @@ def rundiff_mapping():
     for x, y in re.findall(
             r"config\['([^']+)'\]\s*=\s*f\"[^\"]*hook\['([^']+)'\]", src):
         mapping[x] = y
+    # Transformed forwards: the assignment is an expression over hook['Y']
+    # rather than a bare read — e.g. a list comprehension normalising ints to
+    # hex strings (stub_at, iter20). Matching only the bare form reported those
+    # as "never forwarded", which is a FALSE FAIL and exactly as expensive as a
+    # missed one: it trains you to ignore the checker.
+    # The bound + DOTALL is deliberate: such a forward is often wrapped across
+    # lines, but an unbounded .*? would happily span half the file and invent a
+    # mapping from one forward to an unrelated hook[...] far below it.
+    for x, y in re.findall(
+            r"config\['([^']+)'\]\s*=\s*(?!hook\['|f\").{0,200}?hook\['([^']+)'\]",
+            src, re.S):
+        mapping.setdefault(x, y)
     for k in re.findall(r"config\[_k\]\s*=\s*hook\[_k\]", src):
         pass  # identity loops handled below
     for grp in re.findall(r"for _k in \(([^)]*)\):", src, re.S):
@@ -261,6 +273,20 @@ def check(name, mapping, csv_rows):
             note = " ".join(crow.get(k, "") or "" for k in ("name", "notes"))
             for pat, why in CALLEE_HAZARDS:
                 if re.search(pat, note, re.I):
+                    # A hazard the entry has already NEUTRALISED is not a
+                    # warning. stub_at Interceptor.replaces the callee's entry,
+                    # so it never executes and cannot raise anything. Reporting
+                    # it anyway would leave the mitigated case looking identical
+                    # to the unmitigated one — which trains you to skip the
+                    # line, and the next real hazard with it.
+                    stubbed = {("0x%08x" % a) if isinstance(a, int)
+                               else str(a).lower()
+                               for a in (h.get("stub_at") or [])}
+                    if ("0x00" + lit).lower() in stubbed:
+                        notes.append("callee 0x00%s (%s): %s — NEUTRALISED, "
+                                     "it is in stub_at and never runs"
+                                     % (lit, crow.get("name", "?"), why))
+                        break
                     warns.append("callee 0x00%s (%s): %s"
                                  % (lit, crow.get("name", "?"), why))
                     break
