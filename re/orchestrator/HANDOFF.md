@@ -3,7 +3,7 @@
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions.
 
 **C1 795 / C2 4005 / C3 881 / C4 185.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
-committed through **774648d3**, **not pushed** (147 commits ahead of origin/main).
+committed through **99cf635e**, **PUSHED** to `origin/fix/u9025-recharacterise-and-regabi-defects` (2026-07-31; 37 commits, fast-forward). Still 153 ahead of `origin/main` — the branch is not merged.
 Ledger: 29 promoted / 21 candidate / 8 briefed / 15 blocked.
 
 Resume with `/orchestrate` — it reads `re/orchestrator/state.json`, which is current.

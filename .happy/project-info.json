@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-07-31T18:30:00Z",
+  "updatedAt": "2026-07-31T18:50:00Z",
   "sections": [
     {
       "heading": "Confidence ladder",
@@ -42,7 +42,7 @@
         },
         {
           "label": "Branch",
-          "value": "fix/u9025-recharacterise-and-regabi-defects @ e0e3e02e (unpushed)",
+          "value": "fix/u9025-recharacterise-and-regabi-defects @ 99cf635e (pushed)",
           "kind": "text"
         },
         {
