@@ -1,4 +1,72 @@
-# Mashed RE orchestrator — resume point (updated 2026-07-31, end of iter22)
+# Mashed RE orchestrator — resume point (updated 2026-07-31, end of iter23)
+
+> ## iter23 SUPERSEDES the "START HERE" below — do NOT author `0x0052df40`
+>
+> **`0x0052df40` and `0x0052ddc0` are library residue and are not port targets.**
+> `re/analysis/bucket_00516bb0/_BUCKET_HALT.md` declares bucket
+> `0x00516bb0..0x0052df40` statically-linked third-party (libpng + zlib + a
+> DevIL-shaped image loader); `0x0052df40` is literally the stated upper bound of
+> its image-library region, and `0x0052ddc0` is inside it. That halt was taken
+> under the stop-and-ask library-residue clause and says *"do NOT re-issue this
+> bucket."* `hooks.csv` agrees: the row is tagged `library_residue` /
+> `static-linked third-party` and cites that very file.
+>
+> **Why iter22's handoff got it wrong:** `0x0052df40` has TWO plates. The brief
+> read the one with no library tag (`plate_rank` scores frontmatter confidence
+> then size; a HALT report has neither), while `hooks.csv` cites the one that
+> declares the halt. Fixed in `73273edd`.
+>
+> **Three gates were closed (commit `73273edd`), all verified:**
+> 1. `orch_rank_gate.LIBRARY_BANDS` — `libpng-zlib` widened to
+>    `0x00516000..0x0052df6d`, renamed `libpng-zlib-image-loader`. The old
+>    `hi=0x0052a000` stopped ~0x4000 bytes short, so `library_band()` returned
+>    `None` and **`orch_preflight` would have PASSED both rows and spent the
+>    boot** — its cheapest disqualifier failing silently in the safe-looking
+>    direction. The correct range already existed in
+>    `bulk_add_library_residue.py:52`; the table had drifted out of sync.
+>    Boundary-verified (`0x0052df6c`→library, `0x0052df70`→None) and
+>    regression-verified (25 rows newly covered: 24 C2 + 1 C1, **zero C3/C4**).
+> 2. `cited_plate()` — the `hooks.csv` `file` column now outranks `plate_rank`.
+> 3. `screen_bucket()` — drops library-band rows, `_BUCKET_HALT.md`-cited rows,
+>    and **already-C3/C4 rows** at queue-build time. The C3/C4 case was found by
+>    smoke-testing the screen: `state_render_b1_s6` was still queuing
+>    `0x004b6b00` and `0x004cbb50` at C3 (third instance of that class, after
+>    iter22's `0x00407550`).
+>
+> **Measured: 27 of 144 candidate RVAs (19%) now never reach a worker** — 18
+> already promoted, 9 library (7 `msvc-crt-main`, 2 `libpng-zlib-image-loader`).
+> The 7 CRT rows include `0x004af32d` / `0x004af31a`, which iter22 *did* pay to
+> screen.
+>
+> **Ground truth banked for `0x0052df40`** (so it is not re-derived if the scope
+> call is ever revisited): full 18-instruction listing read from `Mashed_pool9`;
+> both dimensions come from **param_1**, the destination (`MOV ECX,[EAX+0x2c]` at
+> `0x0052df4a`, `IMUL ECX,[EAX+0x24]` at `0x0052df50`); `REP MOVSD` then
+> `AND ECX,3` + `REP MOVSB` tail; `MOV EAX,1` at `0x0052df60` so the return is a
+> constant and not a discriminator; `RET` with no operand → `__cdecl`.
+> Caller-gate: `function_callers` returns **0** because the call sites
+> (`0x005517be` for `0x0052df40`; `0x005517a5` / `0x005519c1` for `0x0052ddc0`)
+> live in un-wrapped blocks; `reference_to` + `orphan_owners.tsv` put all three
+> under owner `0x005515a0`, **C2**.
+>
+> **NEXT:** the ladder has no authorable row. Re-brief a fresh bucket — the
+> queue builder is now trustworthy, so use
+> `py -3.12 scripts/orch_make_brief_queue.py <out.json> <bucket_id>...` rather
+> than an ad-hoc plate resolver (iter22's ad-hoc script picked plates by size,
+> which is exactly what caused this). Still apply `brief_caller_gate_fix`:
+> resolve callers + confidence into the prompt table, or the screen still cannot
+> emit READY.
+>
+> **Hygiene:** pool slot **11 now also holds a leaked `.lock~`** (a failed MCP
+> open leaks an in-JVM lock; `rm` says "Device or resource busy"). **5, 10, 11
+> are all leaked; slot 9 works** and was released cleanly. Note the pool script's
+> `acquire` stakes a `.lock` that Ghidra then trips over — clear that stake
+> before opening, and never run pool-wide `cleanup` while another session is
+> live.
+
+---
+
+# (iter22 resume point — superseded above)
 
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions.
 
