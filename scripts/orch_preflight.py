@@ -24,6 +24,21 @@ config key from a differently-named registry field:
   2. built by run_diff.py from hook['other']  -> ok if 'other' is in the entry
   3. neither                                  -> FAIL, with the fix named
 
+THE EARLY-WINDOW LANE IS A SECOND HARNESS and is checked too (orch-iter21).
+early_window_leaf_diff.py has its own dispatch gate (PURE_LEAF_ARGTYPES) and
+builds its cfg from an EXPLICIT ALLOWLIST of `'k': h.get('k')` pairs. A registry
+key absent from that allowlist is silently dropped: the handler sees `undefined`,
+which reads as "feature off" rather than as an error, so the run still produces a
+verdict - just not the one you think. `key_off` did exactly that and produced a
+GREEN 4/4 that a port returning a constant 0 would equally have passed.
+
+That check runs in the direction that actually bites: every key THIS ENTRY sets
+must be delivered. The opposite direction ("every cfg.<key> the handler reads
+must be forwarded") needs an accurate brace-match of a JS block embedded in a
+Python string, which strip_js - written for a .js file - gets wrong; the first
+attempt emitted ~20 false FAILs on already-green rows. A checker that cries wolf
+is worse than no checker.
+
 Also checks, cheapest first: library-band membership (never a port target),
 callee hazards read out of the PORT SOURCE (a debug-printf callee makes a
 function unverifiable by force-call, which cost a boot in iter18), sentinel
@@ -57,6 +72,54 @@ def early_window_argtypes():
     if not m:
         return set()
     return set(re.findall(r"'([a-z0-9_]+)'", m.group(1)))
+
+
+def early_window_cfg_forwarded():
+    """{cfg_key: registry_key} the early-window driver actually FORWARDS.
+
+    That driver builds its cfg from an EXPLICIT ALLOWLIST of `'k': h.get('k')`
+    pairs. A registry key absent from it is silently dropped and the handler sees
+    `undefined`, which reads as "feature off" rather than as an error — so the run
+    still produces a verdict, just not the one you think. This cost two false
+    GREENs in orch-iter21: `key_off` was in the entry AND in the handler and did
+    nothing, so esi_global_search seeded the key at entry+0 while the target
+    compared at +0x44, every vector missed and BOTH SIDES RETURNED 0. That is the
+    early-window twin of the run_diff.py forwarding bug this script was written
+    for."""
+    try:
+        src = EARLY_WINDOW.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return {}
+    # Brace-match the dict rather than regexing to the first `}` on its own line:
+    # the cfg literal contains nested structures, so a non-greedy match truncates
+    # it and silently under-reports what is forwarded — which would turn this
+    # checker into a false-FAIL generator, the one failure mode that guarantees it
+    # gets ignored.
+    start = src.find("cfg = {")
+    if start < 0:
+        return {}
+    brace = src.find("{", start)
+    depth, i, n = 0, brace, len(src)
+    while i < n:
+        if src[i] == "{":
+            depth += 1
+        elif src[i] == "}":
+            depth -= 1
+            if depth == 0:
+                break
+        i += 1
+    m = re.match(r"(?s)(.*)", src[brace:i + 1])
+    out = {}
+    for cfg_k, hook_k in re.findall(
+            r"'([A-Za-z_][A-Za-z0-9_]*)'\s*:\s*h\.get\(\s*'([A-Za-z_][A-Za-z0-9_]*)'",
+            m.group(1)):
+        out[cfg_k] = hook_k
+    # a few are taken straight off h[...] rather than h.get(...)
+    for cfg_k, hook_k in re.findall(
+            r"'([A-Za-z_][A-Za-z0-9_]*)'\s*:\s*h\[\s*'([A-Za-z_][A-Za-z0-9_]*)'\s*\]",
+            m.group(1)):
+        out.setdefault(cfg_k, hook_k)
+    return out
 
 
 RUNDIFF = ROOT / "re/frida/run_diff.py"
@@ -223,6 +286,33 @@ def check(name, mapping, csv_rows):
         notes.append("arg_type %r is EARLY-WINDOW only - run it with "
                      "`py -3.12 re/frida/early_window_leaf_diff.py <hook>`, NOT run_diff.py "
                      "or run_diff_scenario_batch (they only know diff_template.js)" % at)
+        # 3b. THE FORWARDING CHECK, in its high-signal direction: every key THIS
+        # ENTRY sets must actually be delivered to the handler.
+        #
+        # Deliberately NOT "every cfg.<key> the handler reads must be forwarded".
+        # That direction needs an accurate brace-match of a handler block living
+        # inside a JS string inside a .py file, which strip_js (written for a .js
+        # file) gets wrong - the first attempt at it emitted ~20 false FAILs on
+        # already-green rows. A checker that cries wolf is worse than no checker;
+        # this file's own history says so.
+        #
+        # The direction kept is the one that actually bit: a key present in the
+        # entry and absent from the driver's allowlist is silently dropped, the
+        # handler sees `undefined`, and that reads as "feature off" rather than as
+        # an error - so the run still produces a verdict, just the wrong one.
+        # `key_off` did exactly this in orch-iter21 and produced a GREEN 4/4 that a
+        # port returning a constant 0 would also have passed.
+        fwd = early_window_cfg_forwarded()          # {cfg_key: registry_key}
+        delivered = set(fwd.values())
+        STRUCTURAL = {"rva", "export", "signature", "arg_type", "path1_tests",
+                      "path2_tests", "lut_root_delta", "scenario",
+                      "scenario_sentinel", "notes"}
+        for k in sorted(set(h) - STRUCTURAL - delivered):
+            fails.append(
+                "entry sets %r but the early-window driver never forwards it into cfg - "
+                "it will be silently undefined and the handler will read that as "
+                "'feature off', NOT as an error. Add \"'<cfg_key>': h.get('%s'),\" to the "
+                "cfg dict in early_window_leaf_diff.py (or drop the key)." % (k, k))
     elif block is None:
         fails.append("arg_type %r has NO handler in EITHER harness "
                      "(diff_template.js or early_window_leaf_diff.py)" % at)
