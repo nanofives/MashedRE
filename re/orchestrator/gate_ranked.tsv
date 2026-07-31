@@ -4,7 +4,6 @@ rva	name	conf	size	best_caller	harness_safety	brief_verdict	brief
 0x0055c4f0	PhysicsBodySetFriction	C2	76	0x004218d0(C2)	SAFE	READY	re/orchestrator/read_fleet/runs/iter12_gate/gate_b15.md
 0x00430b30	FUN_00430b30	C2	46	0x00448220(C2)	SAFE	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter12_gate/gate_b12.md
 0x00411350	Replay::TimeFormat	C2	87	0x00411600(C3)	SAFE	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter12_gate/gate_b15.md
-0x004a2b60	FUN_004a2b60	C2	88	0x004625b0(C3)	SAFE	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter12_gate/gate_b15.md
 0x005ae380	FUN_005ae380	C2	24	0x005ae330(C2)	CALLS_UNKNOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter11_gate/gate_b3.md
 0x004b8080	FUN_004b8080	C2	31	0x004b87e0(C2)	CALLS_UNKNOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter11_gate/gate_b5.md
 0x005af200	FUN_005af200	C2	35	0x005af260(C2)	CALLS_UNKNOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter11_gate/gate_b7.md
@@ -43,7 +42,6 @@ rva	name	conf	size	best_caller	harness_safety	brief_verdict	brief
 0x004391b0	FUN_004391b0	C2	88	0x00439210(C4)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter12_gate/gate_b15.md
 0x00495110	FUN_00495110	C2	11	0x00492770(C4)	WRITES_GLOBAL	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b1.md
 0x0049a730	FUN_0049a730	C2	16	0x0049a0e0(C2)	WRITES_GLOBAL	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b2.md
-0x004a2c2f	FUN_004a2c2f	C2	23	0x004a31f3(C3)	WRITES_GLOBAL	MUTATOR_LANE	re/orchestrator/gate_verdicts_manual.tsv (iter10)
 0x004039c0	FUN_004039c0	C2	23	0x0045bae0(C2)	WRITES_GLOBAL	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b3.md
 0x00403640	FUN_00403640	C2	24	0x00402750(C2)	WRITES_GLOBAL	MUTATOR_LANE	re/orchestrator/gate_verdicts_manual.tsv (iter9/iter10-selftest)
 0x004cfe20	FUN_004cfe20	C2	25	0x004c7a70(C2)	WRITES_GLOBAL	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b3.md
@@ -63,7 +61,6 @@ rva	name	conf	size	best_caller	harness_safety	brief_verdict	brief
 0x0041d830	FUN_0041d830	C2	59	0x0040fc00(C2)	WRITES_GLOBAL	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter12_gate/gate_b14.md
 0x00556d20	FontSys_InitBuffers	C2	73	0x00552b60(C2)	WRITES_GLOBAL	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter12_gate/gate_b14.md
 0x004cbb50	FUN_004cbb50	C2	11	0x004f8730(C2)	TEARDOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter11_gate/gate_b1.md
-0x004af32d	FUN_004af32d	C2	13	0x004a3258(C3)	TEARDOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter11_gate/gate_b1.md
 0x0041d6d0	FUN_0041d6d0	C2	14	0x0041d890(C2)	TEARDOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter11_gate/gate_b1.md
 0x0049f210	FUN_0049f210	C2	19	0x004a06c0(C2)	TEARDOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter11_gate/gate_b2.md
 0x005a6c90	FUN_005a6c90	C2	25	0x005a6b70(C2)	TEARDOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter11_gate/gate_b4.md
@@ -93,10 +90,13 @@ rva	name	conf	size	best_caller	harness_safety	brief_verdict	brief
 0x00499cc0	sub_00499cc0	C2	18	0x00492370(C2)	DESTROYS_DEVICE	MUTATOR_LANE	re/orchestrator/gate_verdicts_manual.tsv (iter11-cycle1)
 0x004cbb20	FUN_004cbb20	C2	34	0x0049aae0(C2)	DESTROYS_DEVICE	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b5.md
 0x004c79f0	FUN_004c79f0	C2	36	0x004d1020(C2)	DESTROYS_DEVICE	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b7.md
-0x004a45fb	_malloc	C2	18	0x004abc53(C3)	LIBRARY_SKIP	DEFER	re/orchestrator/gate_verdicts_manual.tsv (iter9)
-0x004aa3e4	___heap_select	C2	26	0x004aa3fe(C2)	LIBRARY_SKIP	DEFER	re/orchestrator/gate_verdicts_manual.tsv (iter9)
+0x004af32d	FUN_004af32d	C2	13	0x004a3258(C3)	LIBRARY_SKIP	DEFER	library band: msvc-crt-main
+0x004a45fb	_malloc	C2	18	0x004abc53(C3)	LIBRARY_SKIP	DEFER	library band: msvc-crt-main
+0x004a77eb	FUN_004a77eb	C2	21	0x004a3258(C3)	LIBRARY_SKIP	DEFER	library band: msvc-crt-main
+0x004a2c2f	FUN_004a2c2f	C2	23	0x004a31f3(C3)	LIBRARY_SKIP	DEFER	library band: msvc-crt-main
+0x004aa3e4	___heap_select	C2	26	0x004aa3fe(C2)	LIBRARY_SKIP	DEFER	library band: msvc-crt-main
+0x004a2b60	FUN_004a2b60	C2	88	0x004625b0(C3)	LIBRARY_SKIP	DEFER	library band: msvc-crt-main
 0x00425b90	FUN_00425b90	C2	41	0x00425c00(C2)	UNKNOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter12_gate/gate_b11.md
-0x004a77eb	FUN_004a77eb	C2	21	0x004a3258(C3)	UNKNOWN	NEEDS_GHIDRA	re/orchestrator/gate_verdicts_manual.tsv (iter9)
 0x00421690	FUN_00421690	C2	22	0x00424eb0(C2)	UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b2.md
 0x004c5dd0	FUN_004c5dd0	C2	35	0x004d0290(C2)	UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b6.md
 0x00413f50	FUN_00413f50	C2	64	0x0040bde0(C2)	UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter12_gate/gate_b14.md

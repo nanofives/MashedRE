@@ -62,6 +62,40 @@ SAFETY_RANK = {
 # inline so each row can carry its evidence.
 MANUAL = ROOT / "re/orchestrator/gate_verdicts_manual.tsv"
 
+# Statically-linked third-party code. These are NOT port targets — the greenfield
+# build calls the real thing — and the msvc-crt-main band is explicitly marked
+# "do NOT promote" in hooks.csv (see the 0x004a4ea8 row, FidDB-attested).
+#
+# This filter exists because nothing upstream applied it. iter17 found SIX
+# gate-pool rows inside the CRT band, of which only the two already carrying a
+# LIBRARY_SKIP tag had been caught; the other four were being processed as
+# ordinary port candidates. One of them, 0x004a2b60, had even been spec'd
+# SPEC_COMPLETE by a handler brief — it is MSVC `sprintf` (it builds a fake FILE
+# on the stack with _cnt=0x7fffffff / _flag=0x42 and hands it to _output), so
+# authoring a port would have been wasted work AND a policy violation.
+#
+# A brief asks "can this be tested?"; it never asks "should this be ported?".
+# That second question is what this table answers.
+LIBRARY_BANDS = [
+    (0x004a0000, 0x004b4000, "msvc-crt-main"),      # hooks.csv 0x004a4ea8, FidDB
+    (0x004ec000, 0x004fc9e0, "d3dx9-psgp"),
+    (0x00516000, 0x0052a000, "libpng-zlib"),
+    (0x0057c5b0, 0x005a5820, "qhull-2002.1"),
+    (0x005c0000, 0x005c8000, "msvc-crt-tail"),
+]
+
+
+def library_band(rva_str):
+    """Return the band name containing this RVA, or None."""
+    try:
+        a = int(rva_str, 16)
+    except (TypeError, ValueError):
+        return None
+    for lo, hi, name in LIBRARY_BANDS:
+        if lo <= a < hi:
+            return name
+    return None
+
 
 def split_row(line):
     line = line.strip()
@@ -120,12 +154,22 @@ def main(argv):
     rows = []
     for g in gate:
         b = briefs.get(g["rva"].lower(), {})
+        safety = b.get("safety", "UNBRIEFED")
+        verdict = b.get("verdict", "UNBRIEFED")
+        brief = b.get("brief", "")
+        # A library-band hit overrides whatever a brief concluded: the brief was
+        # answering "can this be tested", which is the wrong question for code we
+        # are never going to port.
+        band = library_band(g["rva"])
+        if band:
+            safety, verdict = "LIBRARY_SKIP", "DEFER"
+            brief = "library band: %s" % band
         rows.append({
             "rva": g["rva"], "name": g["name"], "conf": g["conf"],
             "size": int(g["size"] or 9999), "best_caller": g["best_caller"],
-            "harness_safety": b.get("safety", "UNBRIEFED"),
-            "brief_verdict": b.get("verdict", "UNBRIEFED"),
-            "brief": b.get("brief", ""),
+            "harness_safety": safety,
+            "brief_verdict": verdict,
+            "brief": brief,
         })
 
     # SAFE-then-size, with unbriefed rows sorted after everything judged.
