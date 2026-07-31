@@ -3,7 +3,7 @@
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions.
 
 **C1 795 / C2 4005 / C3 881 / C4 185.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
-committed through **99cf635e**, **PUSHED** to `origin/fix/u9025-recharacterise-and-regabi-defects` (2026-07-31; 37 commits, fast-forward). Still 153 ahead of `origin/main` — the branch is not merged.
+committed through **74d7749e**, **PUSHED** to `origin/fix/u9025-recharacterise-and-regabi-defects` (2026-07-31; 38 commits, fast-forward). Still 153 ahead of `origin/main` — the branch is not merged.
 Ledger: 29 promoted / 21 candidate / 8 briefed / 15 blocked.
 
 Resume with `/orchestrate` — it reads `re/orchestrator/state.json`, which is current.
@@ -11,24 +11,31 @@ iter21 ran 5 cycles (4 budgeted + a directed re-screen); hard stop #1 (context) 
 
 ---
 
-## START HERE: the ladder is empty again — refill it
+## START HERE: refill the ladder — nothing is authorable right now
 
-`0x004b6b00` and `0x00407550` were authored and promoted C2→C3 (`70063d3e`). Nothing
-authorable is left. **Refilling is the job**, not a detour: pick a bucket and brief **≥12
-RVAs** on the read-fleet with `-MaxConcurrent 3..4` (off-quota).
+Every `briefed` ledger item tallied **0 READY**; they are stuck, not actionable. **Refilling
+is the job**, not a detour (see the skill's "Refill" note): brief **≥12 RVAs** on the
+read-fleet with `-MaxConcurrent 3..4`. It is off-quota — iter21 spent ~$16.60 there and none
+of it against session quota.
 
-Highest-value targets, in order:
+**Put these two in the batch first** — they became gate-PASS in iter21 and have never been
+briefed:
 
-1. **~~Plate `0x005515a0`~~ — DONE (`25d46ef1`).** ORPHAN_BLOCK is now **13 PASS / 0
-   OWNER_BELOW_C2 / 14 NO_OWNER**. `0x0052ddc0` (35 B) and `0x0052df40` (45 B) are gate-PASS
-   and **unbriefed** — brief them with the next read-fleet batch.
-2. **~~The out3_idx audit~~ — FULLY CLOSED (`e0e3e02e`).** All four demoted rows are back at
-   C3; `out3_idx` is retired in both harnesses. `0x0046d510` was finished on the **in-race**
-   lane after the early-window attempt died on a both-sides AV (that lane force-calls before
-   its transform's matrix exists). The two ex-C4 rows have since **re-earned C4** on fresh canonical-scenario runs
-   (`asi:` export counters 5866/7443 and 2928/3708 over two runs, control 0) — not restored on
-   the old void evidence. **C4 is back to 185.**
-3. **The 14 NO_OWNER ORPHAN rows** — need a different method than the reference-chain BFS.
+- **`0x0052ddc0`** (35 B) and **`0x0052df40`** (45 B), owner `0x005515a0` **C2**.
+
+Then pick a second bucket to fill the batch out. The **14 NO_OWNER ORPHAN rows** are NOT it —
+they need a different method than the reference-chain BFS, which ran out of edges on them; do
+not re-screen them with it.
+
+### Before authoring anything
+
+1. **Pre-flight every boot**: `py -3.12 scripts/orch_preflight.py <hook>...`. It now covers
+   **both** harnesses and caught two real defects in iter21 before they cost a boot.
+2. **Check `re/frida/ARG_TYPES.md` before writing a handler.** Every one of the 307 handlers
+   now has a MECHANISM line describing what it *does*, not what it was written for. Six
+   consecutive runs proposed a handler that already existed; the re-screen found 0 of 3 real.
+3. **Prefer an additive defaulted field over a new handler.** Precedent is now long:
+   `stub_at`, `null_args`, `this_reg:'stack'`, `key_off`, `eax_from_test`, `reseed_per_side`.
 
 ### Preflight now covers both harnesses
 
