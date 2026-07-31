@@ -3,7 +3,7 @@
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions.
 
 **C1 796 / C2 4006 / C3 879 / C4 185.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
-committed through **6537208f**, **not pushed** (129 commits ahead of origin/main).
+committed through **625d77f9**, **not pushed** (131 commits ahead of origin/main).
 Ledger: 29 promoted / 21 candidate / 8 briefed / 15 blocked.
 
 Resume with `/orchestrate` — it reads `re/orchestrator/state.json`, which is current.
@@ -127,11 +127,12 @@ and neither had a `scenario_sentinel`. Two boots saved by a millisecond check.
    The index summarised each handler's original USE CASE, not its MECHANISM, so a screen
    looking for "store EAX into `*ECX`" never matched something described as "cross-link
    insert". Three fixes shipped: `gen_arg_types_index.py` now prefers an explicit
-   `// MECHANISM:` line over the arbitrary 3-line scrape (`a5c7b2aa`); **all 123 JS handlers
-   now have one** (`a0d81a53`, `6537208f`) — zero empty, zero non-ASCII, zero stub notes; and
-   the generated header states outright that a scraped note is not evidence that no handler
-   fits. The 184 early-window descriptors are untouched, but 107 of those already open with a
-   signature. **When ARG_TYPES.md still does not settle it, read the implementation.**
+   `// MECHANISM:` line over the arbitrary 3-line scrape (`a5c7b2aa`), and **every arg_type in
+   BOTH harnesses now carries one** — 123 JS (`a0d81a53`, `6537208f`) + 184 early-window
+   (`625d77f9`). Zero empty notes, zero non-ASCII, zero stubs. The generated header states
+   outright that a scraped note is not evidence that no handler fits.
+   **ARG_TYPES.md is now a real screening surface — use it, then still confirm against the
+   implementation before writing a handler.**
 
    `none` (145 uses) and `read_global` (96) had **no note at all** — they documented
    themselves *inside* their dispatch blocks and the scraper only looked above. Both now warn
