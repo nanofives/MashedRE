@@ -18952,4 +18952,134 @@ HOOKS = {
         ],
     },
 
+    # ── stub_dispatch_observe cluster (orch-iter19) ──────────────────────────
+    # Three rows needing the same primitive: plant a recorder where the function
+    # expects a callee, then compare what it received. Ports:
+    # Render/RwComReleaseThunk.cpp, Rws/RwsStreamRead.cpp, Audio/AudioChainWalk.cpp.
+    # Authored together and verified in ONE boot.
+
+    # 0x004cbb50 (10 B): (*(void**)((*(char**)obj)+8))(obj), result passed out.
+    # The dispatched target is __stdcall — the call is followed directly by RET
+    # with no `add esp,4` — hence stub_abi.
+    # NON-DEGENERACY: this function's whole behaviour is one dispatch, so a fixed
+    # layout leaves nothing to vary. The discriminator is the PER-TEST stub_ret:
+    # the recorder returns Ri and the thunk must pass exactly Ri out (there is no
+    # `mov` after the call — EAX flows straight through). observe_calls confirms
+    # the recorder received the object pointer on every seed.
+    'rw_com_release_thunk': {
+        'rva':        0x004cbb50,
+        'export':     'RwComReleaseThunk',
+        'signature':  {'ret': 'int32', 'args': ['pointer']},
+        'arg_type':   'stub_dispatch_observe',
+        'num_bufs':   2,
+        'buf_size':   0x40,
+        'arg_layout': [{'buf': 0}],
+        'stub_nargs': 1,
+        'stub_abi':   'stdcall',
+        'observe_ret':   True,
+        'observe_calls': True,
+        'scenario':   'race',
+        'scenario_sentinel': 0x007d3ff8,
+        'path1_tests': [
+            {'seed': [{'buf': 0, 'off': 0, 'ptr_to': 1},
+                      {'buf': 1, 'off': 8, 'stub': True}], 'stub_ret': 0x11111111},
+            {'seed': [{'buf': 0, 'off': 0, 'ptr_to': 1},
+                      {'buf': 1, 'off': 8, 'stub': True}], 'stub_ret': 0},
+            {'seed': [{'buf': 0, 'off': 0, 'ptr_to': 1},
+                      {'buf': 1, 'off': 8, 'stub': True}], 'stub_ret': 0x7fffffff},
+            {'seed': [{'buf': 0, 'off': 0, 'ptr_to': 1},
+                      {'buf': 1, 'off': 8, 'stub': True}], 'stub_ret': 0x22222222},
+        ],
+        'path2_tests': [
+            {'seed': [{'buf': 0, 'off': 0, 'ptr_to': 1},
+                      {'buf': 1, 'off': 8, 'stub': True}], 'stub_ret': 0x11111111},
+            {'seed': [{'buf': 0, 'off': 0, 'ptr_to': 1},
+                      {'buf': 1, 'off': 8, 'stub': True}], 'stub_ret': 0x7fffffff},
+        ],
+    },
+
+    # 0x00550950 (41 B): got = slot(stream, buf, size*count); return got / size.
+    # buf0 = destination, buf1 = stream object, buf2 = vtable base (slot +0x28+8).
+    # NON-DEGENERACY: the return is got/size, so varying BOTH the recorder's
+    # return and `size` gives distinct quotients and proves the divide is by
+    # `size`, not by `count`. observe_calls carries the recorder's third argument,
+    # which is size*count — so the multiply at 0x0055095b is checked directly
+    # rather than inferred.
+    # NO SEED USES size == 0: `div esi` at 0x00550975 has no guard, so zero faults
+    # in the original. That is preserved behaviour, not a gap to probe here.
+    'rws_stream_read': {
+        'rva':        0x00550950,
+        'export':     'RwsStreamRead',
+        'signature':  {'ret': 'uint32',
+                       'args': ['pointer', 'uint32', 'uint32', 'pointer']},
+        'arg_type':   'stub_dispatch_observe',
+        'num_bufs':   3,
+        'buf_size':   0x80,
+        'arg_layout': [{'buf': 0}, {'i32': True}, {'i32': True}, {'buf': 1}],
+        'stub_nargs': 3,
+        'observe_ret':   True,
+        'observe_calls': True,
+        'scenario':   'race',
+        'scenario_sentinel': 0x007d3ff8,
+        'path1_tests': [
+            {'seed': [{'buf': 1, 'off': 0x38, 'ptr_to': 2},
+                      {'buf': 2, 'off': 0x30, 'stub': True}],
+             'scalars': [4, 8], 'stub_ret': 32},      # 32 bytes, got 32 -> 8
+            {'seed': [{'buf': 1, 'off': 0x38, 'ptr_to': 2},
+                      {'buf': 2, 'off': 0x30, 'stub': True}],
+             'scalars': [4, 8], 'stub_ret': 16},      # short read      -> 4
+            {'seed': [{'buf': 1, 'off': 0x38, 'ptr_to': 2},
+                      {'buf': 2, 'off': 0x30, 'stub': True}],
+             'scalars': [1, 5], 'stub_ret': 5},       # size 1          -> 5
+            {'seed': [{'buf': 1, 'off': 0x38, 'ptr_to': 2},
+                      {'buf': 2, 'off': 0x30, 'stub': True}],
+             'scalars': [16, 3], 'stub_ret': 40},     # truncating      -> 2
+            {'seed': [{'buf': 1, 'off': 0x38, 'ptr_to': 2},
+                      {'buf': 2, 'off': 0x30, 'stub': True}],
+             'scalars': [4, 2], 'stub_ret': 0},       # nothing read    -> 0
+        ],
+        'path2_tests': [
+            {'seed': [{'buf': 1, 'off': 0x38, 'ptr_to': 2},
+                      {'buf': 2, 'off': 0x30, 'stub': True}],
+             'scalars': [4, 8], 'stub_ret': 32},
+            {'seed': [{'buf': 1, 'off': 0x38, 'ptr_to': 2},
+                      {'buf': 2, 'off': 0x30, 'stub': True}],
+             'scalars': [16, 3], 'stub_ret': 40},
+        ],
+    },
+
+    # 0x005af200 (34 B): do { next = *(node+0x38); fn(node,user); node = next; }
+    # while (next). The callback is a plain ARGUMENT, so {stub:true} goes in
+    # arg_layout rather than into a seeded structure.
+    # NON-DEGENERACY: chains of different length give different call SEQUENCES.
+    # observe_calls records the normalised node pointer per invocation, so
+    # b0 / b0,b1 / b0,b1,b2 proves the walk followed +0x38 in order — a port that
+    # read the link after the callback, or stopped one node early, produces a
+    # visibly different sequence rather than merely a different count.
+    'audio_chain_walk': {
+        'rva':        0x005af200,
+        'export':     'AudioChainWalk',
+        'signature':  {'ret': 'void',
+                       'args': ['pointer', 'pointer', 'pointer']},
+        'arg_type':   'stub_dispatch_observe',
+        'num_bufs':   4,
+        'buf_size':   0x40,
+        'arg_layout': [{'buf': 0}, {'stub': True}, {'buf': 3}],
+        'stub_nargs': 2,
+        'observe_calls': True,
+        'scenario':   'race',
+        'scenario_sentinel': 0x007dca34,
+        'path1_tests': [
+            {'seed': []},                                        # 1 node
+            {'seed': [{'buf': 0, 'off': 0x38, 'ptr_to': 1}]},    # 2 nodes
+            {'seed': [{'buf': 0, 'off': 0x38, 'ptr_to': 1},
+                      {'buf': 1, 'off': 0x38, 'ptr_to': 2}]},    # 3 nodes
+        ],
+        'path2_tests': [
+            {'seed': []},
+            {'seed': [{'buf': 0, 'off': 0x38, 'ptr_to': 1},
+                      {'buf': 1, 'off': 0x38, 'ptr_to': 2}]},
+        ],
+    },
+
 }

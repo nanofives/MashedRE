@@ -413,6 +413,11 @@ def build_config(hook, asi_path=None):
         config['this_field_off'] = hook['this_field_off']
     if 'observe_callee' in hook:
         config['observe_callee_str'] = f"0x{hook['observe_callee']:08x}"
+    # stub_dispatch_observe (orch-iter19): plant a recorder where the function
+    # expects a callee — in a fake vtable, or passed straight as an argument.
+    for _k in ('stub_nargs', 'stub_abi', 'stub_ret', 'observe_calls'):
+        if _k in hook:
+            config[_k] = hook[_k]
     # vtable_table_dispatch (orch-iter15): table-of-8-byte-entries dispatch,
     # entry = *(holder + vtbl_ptr_offset) + idx*8.
     for _k in ('vtbl_ptr_offset', 'table_entries'):

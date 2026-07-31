@@ -354,3 +354,6 @@
 "Audio\AudioTableDispatch.cpp"
 "Vehicle\PhysicsBodySetLinearVelocity.cpp"
 "Save\ReplayGetSize.cpp"
+"Render\RwComReleaseThunk.cpp"
+"Rws\RwsStreamRead.cpp"
+"Audio\AudioChainWalk.cpp"

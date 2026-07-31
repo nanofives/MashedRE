@@ -2458,6 +2458,140 @@ function runDiff() {
         return;
     }
 
+    // ── stub_dispatch_observe ───────────────────────────────────────────────
+    // Generalises "plant a recorder where the function expects a callee, then
+    // compare what it received". vtable_table_dispatch did this for one fixed
+    // layout; three more rows needed the same primitive with different plumbing,
+    // so the plumbing is now CONFIG:
+    //
+    //   0x004cbb50  obj -> *obj -> [+8]        stub planted in a fake vtable
+    //   0x00550950  stream -> *(s+0x38) -> [+0x30]   ditto, deeper
+    //   0x005af200  callback passed DIRECTLY as an argument
+    //
+    // Nothing real is ever dispatched, which is the point: for a Release thunk
+    // or a stream-read dispatch, letting the true callee run would touch live
+    // engine objects.
+    //
+    // CONFIG:
+    //   num_bufs, buf_size    scratch buffers (paired per side)
+    //   seed[]                {buf,off,type,value} literal
+    //                       | {buf,off,ptr_to:j}   address of buffer j
+    //                       | {buf,off,stub:true}  address of the recorder
+    //   arg_layout[]          {buf:i} | {i32:true} | {f32:true} | {stub:true}
+    //   stub_nargs            how many args the recorder declares (default 3)
+    //   stub_abi              'mscdecl' (default) or 'stdcall' (callee-cleans)
+    //   stub_ret              int the recorder returns (default 0)
+    //   observe_ret           fold the TARGET's return into the fingerprint
+    //   observe_calls         fold the sequence of recorder invocations in
+    //
+    // Pointer arguments the recorder receives are NORMALISED to "b<i>+<off>"
+    // against the scratch buffers, because the two sides get different
+    // addresses; without that every comparison would trivially differ.
+    if (CONFIG.arg_type === 'stub_dispatch_observe') {
+        const NB = (CONFIG.num_bufs | 0) || 1;
+        const BS = (CONFIG.buf_size | 0) || 0x80;
+        const NA = (CONFIG.stub_nargs === undefined) ? 3 : (CONFIG.stub_nargs | 0);
+        // Per-test return, not a fixed constant. Without this a pure dispatch
+        // thunk like 0x004cbb50 — whose entire behaviour is (*obj)[2](obj) — has
+        // NOTHING that can vary across seeds, so every fingerprint would be
+        // identical and the run degenerate by construction. Varying what the
+        // recorder returns also tests the thunk's return PASSTHROUGH, which for
+        // 0x004cbb50 is the whole second half of the function (it has no `mov`
+        // after the call; EAX simply flows out).
+        let curRet = (CONFIG.stub_ret | 0) || 0;
+        const layout = CONFIG.arg_layout || [];
+        const keep = [];
+        const bufsO = [], bufsR = [];
+        for (let k = 0; k < NB; k++) {
+            bufsO.push(Memory.alloc(BS)); bufsR.push(Memory.alloc(BS));
+        }
+        keep.push(bufsO, bufsR);
+
+        let calls = [], sideBufs = null;
+        const normPtr = function (v) {
+            const a = ptr(v >>> 0);
+            for (let k = 0; k < NB; k++) {
+                const base = sideBufs[k];
+                const d = a.sub(base).toInt32();
+                if (d >= 0 && d < BS) return 'b' + k + '+' + d;
+            }
+            return '0x' + (v >>> 0).toString(16);
+        };
+        const mkStub = function () {
+            const types = [];
+            for (let k = 0; k < NA; k++) types.push('uint32');
+            return new NativeCallback(function () {
+                const got = [];
+                for (let k = 0; k < arguments.length; k++)
+                    got.push(normPtr(arguments[k]));
+                calls.push(got.join(','));
+                return curRet;
+            }, 'int', types, CONFIG.stub_abi || undefined);
+        };
+        const stub = mkStub();
+        keep.push(stub);
+
+        const wr = function (p, off, type, value) {
+            const a = p.add(off);
+            switch (type) {
+                case 'u8':  a.writeU8(value & 0xff); break;
+                case 'u16': a.writeU16(value & 0xffff); break;
+                case 's32': a.writeS32(value | 0); break;
+                case 'f32': a.writeFloat(value); break;
+                default:    a.writeU32(value >>> 0); break;
+            }
+        };
+        const applySeed = function (bufs, seed) {
+            for (let k = 0; k < NB; k++)
+                for (let b = 0; b < BS; b++) bufs[k].add(b).writeU8(0);
+            (seed || []).forEach(function (s) {
+                if (s.stub) bufs[s.buf].add(s.off).writePointer(stub);
+                else if (s.ptr_to !== undefined)
+                    bufs[s.buf].add(s.off).writePointer(bufs[s.ptr_to]);
+                else wr(bufs[s.buf], s.off, s.type, s.value);
+            });
+        };
+        const buildArgs = function (bufs, scalars) {
+            const args = []; let si = 0;
+            for (let k = 0; k < layout.length; k++) {
+                const a = layout[k];
+                if (a && a.stub) args.push(stub);
+                else if (a && a.buf !== undefined) args.push(bufs[a.buf]);
+                else args.push(scalars[si++]);
+            }
+            return args;
+        };
+        const fpOf = function (ret, errored) {
+            const parts = [];
+            if (CONFIG.observe_ret)
+                parts.push('r=' + (errored ? 'ERR'
+                    : (ret === null || ret === undefined) ? 'null'
+                    : (typeof ret === 'object' ? ret.toInt32() : (ret | 0)) >>> 0));
+            if (CONFIG.observe_calls)
+                parts.push('calls[' + calls.length + ']=' + calls.join(';'));
+            return parts.join('|');
+        };
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            const scalars = t.scalars || [];
+            curRet = (t.stub_ret !== undefined) ? (t.stub_ret | 0)
+                                                : ((CONFIG.stub_ret | 0) || 0);
+            let fO = null, fR = null, errO = null, errR = null;
+            sideBufs = bufsO; applySeed(bufsO, t.seed); calls = [];
+            try { fO = fpOf(Orig.apply(null, buildArgs(bufsO, scalars)), false); }
+            catch (e) { errO = e.message; fO = fpOf(null, true); }
+            sideBufs = bufsR; applySeed(bufsR, t.seed); calls = [];
+            try { fR = fpOf(Reimpl.apply(null, buildArgs(bufsR, scalars)), false); }
+            catch (e) { errR = e.message; fR = fpOf(null, true); }
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: fO, reimpl: fR,
+                           match: (!errO && !errR && fO === fR),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── vec3_lerp (promote-round-22 harness-ext, SWEEP-CRITICAL) ─────────────
     // For pure vec3 math leaves: void fn(float* out3, float* a3, float* b3,
     // float t) — writes a 3-float result computed from two input vec3s and a
