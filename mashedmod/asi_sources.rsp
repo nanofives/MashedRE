@@ -350,3 +350,4 @@
 "Audio\AudioVecLength.cpp"
 "Render\RwString.cpp"
 "Vehicle\PhysicsBodySetFriction.cpp"
+"Audio\AudioPoolFreeGuards.cpp"

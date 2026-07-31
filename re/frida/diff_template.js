@@ -2258,8 +2258,20 @@ function runDiff() {
         const fieldOff   = CONFIG.this_field_off || 0;
         const MOV_OP = { eax: 0xB8, ecx: 0xB9, edx: 0xBA, ebx: 0xBB, esi: 0xBE, edi: 0xBF };
         const REGNUM = { eax: 0, ecx: 1, edx: 2, ebx: 3, esp: 4, ebp: 5, esi: 6, edi: 7 };
+        // this_reg:'stack' (2026-07-31) — same observe-a-stubbed-callee idea, but
+        // the object goes in as a __cdecl STACK argument instead of a register.
+        // Added for the audio pool-free cluster 0x005ae380/0x005a6c90/0x005ad8b0:
+        //   mov eax,[esp+4]; test byte[eax+off],1; jnz ret;
+        //   push eax; push <anchor>; call AudioPoolFree; add esp,8; ret
+        // Stubbing the callee is what makes those testable at all — the pool
+        // anchor is a hardcoded immediate inside each function, so letting the
+        // clear-bit path run for real would hand a fabricated node to the LIVE
+        // allocator. With the callee replaced nothing downstream executes, and
+        // the recorded arg0 IS the anchor, so one observation checks both the
+        // branch and the per-row constant.
+        const useStack = (thisReg === 'stack');
         const thisOp = MOV_OP[thisReg];
-        if (thisOp === undefined) { send({ type: 'error', msg: 'bad this_reg ' + thisReg }); return; }
+        if (!useStack && thisOp === undefined) { send({ type: 'error', msg: 'bad this_reg ' + thisReg }); return; }
 
         const _keep = [];
         const thisBuf = Memory.alloc(structSize); _keep.push(thisBuf);
@@ -2273,6 +2285,23 @@ function runDiff() {
 
         function buildTramp(targetAddr) {
             const code = Memory.alloc(Process.pageSize);
+            if (useStack) {
+                // push imm32(thisBuf) / call rel32 / add esp,4 / ret
+                // = 5 + 5 + 3 + 1 = 14 bytes. Counting this wrong (13) left the
+                // trailing RET outside the patched window on the first attempt.
+                Memory.patchCode(code, 14, function (cw) {
+                    const w = new X86Writer(cw, { pc: code });
+                    w.putBytes([0x68, 0, 0, 0, 0]);             // push imm32 (patch +1)
+                    w.putU8(0xE8);                              // call rel32 (operand @+6..9)
+                    const rel = targetAddr.sub(code.add(10)).toInt32();  // next insn @+10
+                    w.putBytes([rel & 0xff, (rel >>> 8) & 0xff, (rel >>> 16) & 0xff, (rel >>> 24) & 0xff]);
+                    w.putBytes([0x83, 0xC4, 0x04]);             // add esp,4  (__cdecl cleanup)
+                    w.putU8(0xC3);                              // ret
+                    w.flush();
+                });
+                code.add(1).writeU32(parseInt(thisBuf.toString(), 16) >>> 0);
+                return code;
+            }
             Memory.patchCode(code, 13, function (cw) {
                 const w = new X86Writer(cw, { pc: code });
                 w.putU8(0x50 + REGNUM[thisReg]);               // push <thisReg>
@@ -2298,11 +2327,22 @@ function runDiff() {
                 for (let k = 0; k < structSize; k += 4) thisBuf.add(k).writeU32(0);
                 thisBuf.add(fieldOff).writeU32(sentinel);
                 let origV = null, reimV = null, errO = null, errR = null;
-                recorded = null; try { FnO(); origV = (recorded === null ? null : '0x' + recorded.toString(16)); } catch (e) { errO = e.message; }
-                recorded = null; try { FnR(); reimV = (recorded === null ? null : '0x' + recorded.toString(16)); } catch (e) { errR = e.message; }
+                // "the callee was not invoked" is a REAL observation, not an
+                // absent one — for a guarded call it is exactly what the taken
+                // branch looks like. Recording it as null made null==null read
+                // as a mismatch, which RED'd three correct ports in iter14
+                // (both sides agreed on all four seeds). Same class as the
+                // standing rule that a both-sides-identical crash is not a RED.
+                // Encoded as a sentinel STRING so it participates in the match
+                // test AND in the distinct-value count, which is what actually
+                // guards against the degenerate all-null run. Inert for the
+                // iter8 users (their callee fires on every seed).
+                const NOT_CALLED = 'not-called';
+                recorded = null; try { FnO(); origV = (recorded === null ? NOT_CALLED : '0x' + recorded.toString(16)); } catch (e) { errO = e.message; }
+                recorded = null; try { FnR(); reimV = (recorded === null ? NOT_CALLED : '0x' + recorded.toString(16)); } catch (e) { errR = e.message; }
                 results.push({ idx: i, input: '0x' + sentinel.toString(16),
                                original: origV, reimpl: reimV,
-                               match: (origV !== null && reimV !== null && origV === reimV),
+                               match: (!errO && !errR && origV === reimV),
                                err_original: errO, err_reimpl: errR });
             }
         } finally {

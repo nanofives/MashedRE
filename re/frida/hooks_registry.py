@@ -18661,4 +18661,75 @@ HOOKS = {
         ],
     },
 
+    # ── audio pool-free guard cluster (0x005ae380 / 0x005a6c90 / 0x005ad8b0) ──
+    # Port mashedmod/src/mashed_re/Audio/AudioPoolFreeGuards.cpp. One shape,
+    # three instances differing ONLY in the flag offset and the pool anchor:
+    #     if ((*(byte*)(node + flag_off) & 1) == 0)
+    #         AudioPoolFree(&anchor, node);
+    #
+    # ARG_TYPE: 'reg_this_call_observe' with the NEW this_reg='stack'. Stubbing
+    # the callee is not a convenience here, it is the only safe option: the pool
+    # anchor is a hardcoded immediate baked into each function, so a synthetic
+    # call on the clear-bit path would hand a fabricated node to the LIVE audio
+    # allocator. With 0x005ae920 replaced by a recording NativeCallback, nothing
+    # downstream runs.
+    #
+    # Recording arg0 is exactly the right observable, because arg0 IS the pool
+    # anchor. So a single observation checks BOTH halves of each function: that
+    # the branch went the right way, and that the port pushed its own anchor. A
+    # copy-paste port that kept the wrong anchor constant fails immediately —
+    # which is the failure mode a three-instance cluster invites.
+    #
+    # NON-DEGENERACY (asserted): the four seeds alternate between the two
+    # outcomes, so neither "always called" nor "never called" can pass:
+    #     0x00 -> called, recorded == that row's anchor
+    #     0x01 -> NOT called, recorded == null
+    #     0xff -> NOT called, recorded == null
+    #     0xfe -> called, recorded == that row's anchor
+    # 0xfe is the discriminating vector: every bit set EXCEPT bit 0. A port that
+    # tested the byte for non-zero instead of masking bit 0 passes 0x00/0x01/0xff
+    # and fails only here.
+    'audio_pool_free_guard_a': {
+        'rva':                0x005ae380,
+        'export':             'AudioPoolFreeGuardA',
+        'signature':          {'ret': 'void', 'args': []},
+        'arg_type':           'reg_this_call_observe',
+        'this_reg':           'stack',
+        'this_field_off':     0x00,
+        'struct_size':        0x40,
+        'observe_callee':     0x005ae920,   # AudioPoolFree, C3
+        'scenario':           'race',
+        'scenario_sentinel':  0x007dda50,     # this row's own pool anchor
+        'path1_tests':        [0x00, 0x01, 0xff, 0xfe],
+        'path2_tests':        [0x00, 0x01],
+    },
+    'audio_pool_free_guard_b': {
+        'rva':                0x005a6c90,
+        'export':             'AudioPoolFreeGuardB',
+        'signature':          {'ret': 'void', 'args': []},
+        'arg_type':           'reg_this_call_observe',
+        'this_reg':           'stack',
+        'this_field_off':     0x10,
+        'struct_size':        0x40,
+        'observe_callee':     0x005ae920,
+        'scenario':           'race',
+        'scenario_sentinel':  0x007dc9e8,
+        'path1_tests':        [0x00, 0x01, 0xff, 0xfe],
+        'path2_tests':        [0x00, 0x01],
+    },
+    'audio_pool_free_guard_c': {
+        'rva':                0x005ad8b0,
+        'export':             'AudioPoolFreeGuardC',
+        'signature':          {'ret': 'void', 'args': []},
+        'arg_type':           'reg_this_call_observe',
+        'this_reg':           'stack',
+        'this_field_off':     0x1c,
+        'struct_size':        0x40,
+        'observe_callee':     0x005ae920,
+        'scenario':           'race',
+        'scenario_sentinel':  0x007dd6c4,
+        'path1_tests':        [0x00, 0x01, 0xff, 0xfe],
+        'path2_tests':        [0x00, 0x01],
+    },
+
 }

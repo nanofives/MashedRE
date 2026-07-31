@@ -1,0 +1,9 @@
+{
+  "description": "orch iter14 cycle3 - verify the audio pool-free guard cluster (0x005ae380/0x005a6c90/0x005ad8b0) via reg_this_call_observe + the NEW this_reg='stack' trampoline. All three in ONE boot. Expected per row: seed 0x00 -> recorded == that row's anchor, 0x01 -> null, 0xff -> null, 0xfe -> anchor. A run where every seed records the same thing is INCONCLUSIVE, not GREEN.",
+  "jobs": [
+    { "type": "build", "id": "iter14_build" },
+    { "type": "state_batch", "id": "iter14_poolfree",
+      "hooks": ["audio_pool_free_guard_a", "audio_pool_free_guard_b", "audio_pool_free_guard_c"],
+      "scenario": "race", "dwell": 20 }
+  ]
+}

@@ -801,6 +801,12 @@ def main():
             rows.append((i, name, tag, verdict, distinct, same, phase, dt, time.time() - t0))
             print(f"{i:>2} {name[:32]:32s} {verdict[:20]:20s} {dt:5.1f} "
                   f"{time.time() - t0:6.1f} {str(phase):>5s}")
+            # The column above is clipped to 20 chars, which silently swallows
+            # the reason a hook produced nothing ("NO-RESULT (Error: mi" was as
+            # much as iter14 got). A failure that cannot be read costs a whole
+            # game boot to re-diagnose, so print it in full underneath.
+            if verdict.startswith("NO-RESULT"):
+                print(f"   ^ {name}: {verdict}")
             if not alive:
                 print(f"   process died after {i} hooks / t+{time.time() - t0:.1f}s "
                       f"— remaining {len(order) - i} cannot run")
