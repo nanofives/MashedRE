@@ -30,18 +30,18 @@ Highest-value targets, in order:
    the old void evidence. **C4 is back to 185.**
 3. **The 14 NO_OWNER ORPHAN rows** — need a different method than the reference-chain BFS.
 
-### Follow-up surfaced by closing the cfg-forwarding gap
+### Preflight now covers both harnesses
 
-`orch_preflight` now checks BOTH harnesses (`eba90e61`): it verifies that every key an
-entry sets is actually forwarded into `early_window_leaf_diff.py`'s `cfg` allowlist, not
-just `run_diff.py`'s. 0 false positives across a 40-row sweep.
+`orch_preflight` checks that every key an entry sets is forwarded into
+`early_window_leaf_diff.py`'s `cfg` allowlist, not just `run_diff.py`'s (`eba90e61`), and
+no longer false-FAILs single-vector rows that observe several slots (`25fb6304`+). 0 FAIL
+across a 40-row sweep.
 
-That sweep surfaced **3 more rows with single-vector test lists** — the same
-non-degeneracy weakness `store_eax_at_ecx` had: **`active4slots_40ba60`**,
-**`zero_two_regions_477b40`**, **`pool_array_reset_486f90`**. Their handlers
-(`near_leaf_seed_outbuf`, `near_leaf_seed_multi_obs`) do use their test lists, so this is
-likely just thin vectors rather than an inert one — but each needs checking, and any that
-is a genuine one-observation row wants the `eax_from_test` treatment.
+The 3 rows the first sweep flagged were checked against their **evidence CSVs** and are
+fine: `active4slots_40ba60` (`1,0,1,0`), `zero_two_regions_477b40` (`0|0|0|0|cccccccc`, a
+boundary echo), `pool_array_reset_486f90` (`42480000|0|...`, 50.0f alternating). Their
+non-degeneracy is *within* one observation rather than across vectors — a pattern the
+vector-count heuristic could not see.
 
 ---
 
