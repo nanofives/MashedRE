@@ -3,11 +3,11 @@
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions.
 
 **C1 796 / C2 4006 / C3 879 / C4 185.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
-committed through **95d42f4e**, **not pushed** (121 commits ahead of origin/main).
+committed through **0f273f78**, **not pushed** (124 commits ahead of origin/main).
 Ledger: 29 promoted / 21 candidate / 8 briefed / 15 blocked.
 
 Resume with `/orchestrate` — it reads `re/orchestrator/state.json`, which is current.
-iter21 ran its full 4-cycle budget; hard stop #1 (context) ended it.
+iter21 ran 5 cycles (4 budgeted + a directed re-screen); hard stop #1 (context) ended it.
 
 ---
 
@@ -22,9 +22,17 @@ Highest-value refill targets, in order:
 
 1. **Plate `0x005515a0` C1->C2.** It is the sole owner of `0x0052ddc0` and `0x0052df40`, so
    one plate converts both to gate-PASS. Cheapest structural win on the board.
-2. **The 3 NEEDS_NEW_HANDLER rows** — `0x004b6b00`, `0x005bfb90`, `0x00407550`. This is the
-   **fifth consecutive run** to return that verdict; all four prior ones already existed or
-   generalised from one that did. **Check `re/frida/ARG_TYPES.md` before writing anything.**
+2. **~~The 3 NEEDS_NEW_HANDLER rows~~ — RE-SCREENED, 0 of 3 need a new handler.**
+   `re/analysis/needs_new_handler_rescreen_20260731.md`. Two are now authorable:
+   - **`0x004b6b00`** — `eax_ecx_insert`, **zero handler changes**. It is `MOV [ECX],EAX; RET`.
+     Config: `ecx_observe: [0]`, `eax_seed: []`. bufA/bufC are shared across sides, so the
+     stored pointer compares equal.
+   - **`0x00407550`** — `esi_global_search` with `key_off: 0x44` (**already implemented**,
+     `0f273f78`). Config: `tgt 0x00639d80`, `glob 0x0063a5d0`, `stride 0xec`. This handler
+     **seeds** the table, so it is a stronger test than `0x00407580` got.
+   - **`0x005bfb90`** — the brief's blocker is refuted (`CALL [0x005cc094]` is a fixed IAT
+     slot; no real semaphore is needed). Still genuinely unsettled — **route to mutator/defer**,
+     it is a teardown path whose only behaviour is two outbound calls.
 3. **The 14 NO_OWNER ORPHAN rows** — need a different method than the reference-chain BFS,
    which ran out of edges on them. Do not re-run that method on them.
 

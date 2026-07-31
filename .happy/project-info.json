@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-07-31T14:20:00Z",
+  "updatedAt": "2026-07-31T15:10:00Z",
   "sections": [
     {
       "heading": "Confidence ladder",
@@ -32,7 +32,7 @@
       "fields": [
         {
           "label": "Iteration",
-          "value": "iter21 complete (4 of 4 cycles)",
+          "value": "iter21 complete (5 cycles)",
           "kind": "text"
         },
         {
@@ -42,7 +42,7 @@
         },
         {
           "label": "Branch",
-          "value": "fix/u9025-recharacterise-and-regabi-defects @ 95d42f4e (unpushed)",
+          "value": "fix/u9025-recharacterise-and-regabi-defects @ 0f273f78 (unpushed)",
           "kind": "text"
         },
         {
@@ -51,7 +51,7 @@
             "0x00482900 C3 -> C4",
             "0x00407580 + 0x005b1160 C2 -> C3",
             "11 of 27 ORPHAN_BLOCK rows unblocked",
-            "2 Frida harness defects fixed"
+            "0 of 3 NEEDS_NEW_HANDLER were real"
           ],
           "kind": "list"
         }
@@ -62,7 +62,7 @@
       "fields": [
         {
           "label": "Start here",
-          "value": "Refill the ladder - no authorable rows left; plate 0x005515a0 first",
+          "value": "Author 0x004b6b00 + 0x00407550 (handlers already exist), verify in one boot",
           "kind": "text"
         },
         {
