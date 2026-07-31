@@ -1943,9 +1943,14 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Calc5b2fd0(
 RH_ScopedInstall(Calc5b2fd0, 0x005b2fd0);
 
 // ===== round 154 ===== (ring-buffer copy to linear dest)
-// 0x005ab980 — void fn(arg): esi=arg[0xc]-*0x7dd610; cnt=*0x7dd614-esi; if(cnt>=arg[0x14])
+// 0x005ab980 — fn(arg): esi=arg[0xc]-*0x7dd610; cnt=*0x7dd614-esi; if(cnt>=arg[0x14])
 //   cnt=arg[0x14]; memcpy(arg[0x18], 0x7dce08+esi, cnt); arg[0x18]+=cnt; arg[0x14]-=cnt.
-extern "C" __declspec(dllexport) void __cdecl Ring5ab980(std::uint8_t* arg) {
+// IMPLICIT EAX RETURN (U-6701 resolved 2026-07-31): Ghidra types the original
+// void, but it leaves cnt in EAX at RET (0x005ab9a4 MOV ECX,EAX path keeps EAX)
+// and the single caller FUN_005ab710 consumes it: 0x005ab7f7 ADD EBP,EAX /
+// 0x005ab7f9 ADD EDI,EAX (stream-cursor advance). The void port wedged the
+// audio stream pump during track load (statediff bisection, registry idx 946).
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Ring5ab980(std::uint8_t* arg) {
     std::uint32_t esi = *reinterpret_cast<std::uint32_t*>(arg + 0xc) - *reinterpret_cast<std::uint32_t*>(0x007dd610);
     std::uint32_t cnt = *reinterpret_cast<std::uint32_t*>(0x007dd614) - esi;
     std::uint32_t lim = *reinterpret_cast<std::uint32_t*>(arg + 0x14);
@@ -1955,6 +1960,7 @@ extern "C" __declspec(dllexport) void __cdecl Ring5ab980(std::uint8_t* arg) {
     for (std::uint32_t i = 0; i < cnt; i++) dst[i] = src[i];
     *reinterpret_cast<std::uint32_t*>(arg + 0x18) = reinterpret_cast<std::uint32_t>(dst) + cnt;
     *reinterpret_cast<std::uint32_t*>(arg + 0x14) = lim - cnt;
+    return cnt;
 }
 RH_ScopedInstall(Ring5ab980, 0x005ab980);
 

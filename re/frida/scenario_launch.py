@@ -475,8 +475,38 @@ function armCounters(csv){
 }
 // ---------------------------------------------------------------------------
 
+// --- STATE-DIFF capture (2026-07-31, re/tools/statediff/) -------------------
+// Per-render-frame snapshot of ONE vehicle record (base 0x008815a0 +
+// car*0xd04, size 0xd04), gated on phase==3. Frame 0 = the FIRST phase-3
+// render tick (FUN_004c1be0, the replay clock of replay_verify.py armClock):
+// the menu-tick anchor cannot align two separate boots because the warp poke
+// is python-timed, but the phase-2->3 transition is engine-driven. Fires
+// ~60/s — far under the 1000/s hot-path limit. Payload rides the Frida
+// binary-data channel; the python side writes MSD1 (re/tools/statediff/FORMAT.md).
+const RENDER_TICK = 0x004c1be0;   // render-frame clock
+const SD = { armed:false, frames:0, car:0, err:null };
+function sdArm(car){
+  if (SD.armed) return 'already armed';
+  SD.car = car;
+  try {
+    const rec = ga(CARREC).add(car * 0xd04);
+    const ph  = ga(PHASE);
+    Interceptor.attach(ga(RENDER_TICK), { onEnter(){
+      try {
+        if (ph.readU8() !== 3) return;
+        send({kind:'sd', f: SD.frames++}, rec.readByteArray(0xd04));
+      } catch(e){ if (!SD.err) SD.err = '' + e; }
+    }});
+    SD.armed = true;
+    return 'statediff armed (tick 0x004c1be0, car ' + car + ', rec@' + rec + ')';
+  } catch(e){ return 'ERR ' + e; }
+}
+// ---------------------------------------------------------------------------
+
 rpc.exports = {
   ready: function(){ return modBase() ? 1 : 0; },
+  sdArm: function(car){ return sdArm(car); },
+  sdStats: function(){ return JSON.stringify(SD); },
   armCounters: function(csv){ return armCounters(csv); },
   rearmAsi: function(){ return rearmAsi(); },
   counters: function(){ return JSON.stringify(CNT); },
@@ -613,6 +643,19 @@ def main():
     ap.add_argument("--bypass-at", type=float, default=3.0,
                     help="seconds into the hold before arming --bypass-proxy (lets world "
                          "init + the one-shot qhull hull build finish normally)")
+    ap.add_argument("--statediff-out", default="",
+                    help="write a per-frame MSD1 snapshot of one vehicle record (0xd04 bytes "
+                         "at 0x008815a0+car*0xd04, one record per phase-3 render tick "
+                         "0x004c1be0) to this path. Diff two captures with "
+                         "re/tools/statediff/statediff.py. Suppresses the control-4 press "
+                         "pulses (wall-clock-timed input would break cross-boot determinism).")
+    ap.add_argument("--statediff-car", type=int, default=0,
+                    help="car slot to snapshot for --statediff-out (default 0 = player)")
+    ap.add_argument("--statediff-drive", action="store_true",
+                    help="statediff driving scenario: arm the cook injector (0x00496530) with "
+                         "full accel / zero steer BEFORE the phase poke, so the forced input is "
+                         "frame-locked to the race (cross-boot deterministic), unlike the "
+                         "wall-clock-timed --spike drive arming")
     ap.add_argument("--spike-telemetry", default="",
                     help="tag: sample the player car at 10 Hz (render pos/vel/speed/yaw-rate/"
                          "heading/grounded) and write log/d1_spike_<tag>.json. In control "
@@ -632,13 +675,24 @@ def main():
 
     env = dict(os.environ)
     env["MASHED_FPS_CAP"] = str(args.fps)
-    if args.hooks:
+    if args.hooks == "all":
+        # Full canonical hook set: default auto-hook (no MASHED_HOOK_ONLY filter).
+        env["MASHED_RE_DEV"] = "1"
+        env["MASHED_PHYS_C4_SELFTEST"] = "1"
+        env.pop("MASHED_HOOK_ONLY", None)
+        env.pop("MASHED_RE_NO_AUTO_HOOK", None)
+    elif args.hooks:
         env["MASHED_RE_DEV"] = "1"
         env["MASHED_HOOK_ONLY"] = args.hooks
         env["MASHED_PHYS_C4_SELFTEST"] = "1"
         env.pop("MASHED_RE_NO_AUTO_HOOK", None)
     else:
         env["MASHED_RE_NO_AUTO_HOOK"] = "1"     # stock original, no installed hooks
+    if args.statediff_out:
+        # The C4 selftest re-executes hook bodies in-process (A3 spawn runs 3x per
+        # call with only partial rollback — survey 2026-07-31) and temp-patches
+        # control flow. Statediff runs must observe ONE clean execution per call.
+        env.pop("MASHED_PHYS_C4_SELFTEST", None)
     _keep_display_awake()
     dev = frida.get_local_device()
     proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
@@ -655,9 +709,13 @@ def main():
         except Exception: pass
         return 3
 
+    sd_records = []          # (frame_idx, 0xd04 bytes) — statediff capture buffer
+
     def on_msg(m, d):
         if m.get("type") == "error": print("  agent error:", m.get("description")); return
         p = m.get("payload", {})
+        if p.get("kind") == "sd" and d is not None:
+            sd_records.append((p["f"], d)); return
         if p.get("kind") in ("ready", "err"): print("  [agent]", p.get("msg") or "ready")
 
     scr = sess.create_script(AGENT); scr.on("message", on_msg); scr.load()
@@ -698,6 +756,12 @@ def main():
                "rule": args.rule, "team": args.team,
                "difficulty": args.difficulty, "powerups": args.powerups}
         print("  [setup]", E.setup(cfg))
+        if args.statediff_out:
+            # Arm BEFORE the phase poke so frame 0 = the very first phase-3 tick.
+            print("  [statediff]", E.sd_arm(args.statediff_car))
+            if args.statediff_drive:
+                print("  [statediff]", E.arm_cook())
+                print("  [statediff] drive: full accel, straight ->", E.drive(1, 0))
         time.sleep(0.2)
         # 3) poke the state machine into load+spawn
         print("  [launch] poke DAT_00771968 = 2 ->", E.launch())
@@ -742,8 +806,9 @@ def main():
                 steer_on = True
                 try: print(f"\n  [spike] +{time.time()-t0:.1f}s drive: accel + steer ->", E.drive(1, 1))
                 except Exception: pass
-            try: E.press(4, 250)            # pulse: 250ms held, ~0.35s gap -> edges for round-end prompts
-            except Exception: pass
+            if not args.statediff_out:      # press pulses are wall-clock-timed nondeterministic input
+                try: E.press(4, 250)        # pulse: 250ms held, ~0.35s gap -> edges for round-end prompts
+                except Exception: pass
             if (args.poke_lap or args.poke_collect) and not poked \
                     and time.time() - t0 >= args.poke_delay:
                 poked = True
@@ -765,7 +830,9 @@ def main():
             if n % 8 == 0:
                 try:
                     ci = E.carinfo()
-                    print(f"\r    +{int(time.time()-t0):>3}s  spawnFired={ci.get('spawnFired')}"
+                    try: ci["ph"] = E.phase()
+                    except Exception: ci["ph"] = "?"
+                    print(f"\r    +{int(time.time()-t0):>3}s  ph={ci['ph']}  spawnFired={ci.get('spawnFired')}"
                           f"  p0.grounded={ci.get('grounded')} airflag={ci.get('airflag')}"
                           f"  vel={[round(v,1) for v in ci.get('vel',[0,0,0])]}   ", end="", flush=True)
                 except Exception: pass
@@ -837,6 +904,32 @@ def main():
     except SystemExit:
         pass
     finally:
+        if args.statediff_out:
+            # MSD1 writer (re/tools/statediff/FORMAT.md). In finally so an early
+            # game exit still yields whatever was captured.
+            try:
+                import struct
+                try: print("  [statediff] agent:", E.sd_stats())
+                except Exception: pass
+                outp = Path(args.statediff_out)
+                outp.parent.mkdir(parents=True, exist_ok=True)
+                base_va = 0x008815a0 + args.statediff_car * 0xd04
+                with open(outp, "wb") as f:
+                    f.write(b"MSD1" + struct.pack("<III", 0xd04, base_va, 0))
+                    for idx, payload in sd_records:
+                        f.write(struct.pack("<I", idx) + bytes(payload))
+                # Non-degeneracy: a capture of N identical (or all-zero) records
+                # verifies nothing (feedback_evidence_discipline).
+                distinct = len({bytes(p) for _, p in sd_records})
+                nonzero = sum(1 for _, p in sd_records if any(bytes(p)))
+                print(f"  [statediff] {len(sd_records)} frames -> {outp}"
+                      f"  (distinct payloads={distinct}, nonzero={nonzero})")
+                if not sd_records:
+                    print("  [statediff] WARNING: EMPTY capture — no phase-3 render tick observed")
+                elif distinct <= 1:
+                    print("  [statediff] WARNING: DEGENERATE capture — record never changed")
+            except Exception as ex:
+                print(f"  [statediff] write failed: {ex}")
         if _count_csv:
             try:
                 print("  [counters] " + E.counters())
