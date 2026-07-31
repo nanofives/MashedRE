@@ -1,191 +1,140 @@
-# Mashed RE orchestrator — resume point (updated 2026-07-31, end of iter21)
+# Mashed RE orchestrator — resume point (updated 2026-07-31, end of iter22)
 
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions.
 
 **C1 795 / C2 4005 / C3 881 / C4 185.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
-committed through **74d7749e**, **PUSHED** to `origin/fix/u9025-recharacterise-and-regabi-defects` (2026-07-31; 38 commits, fast-forward). Still 153 ahead of `origin/main` — the branch is not merged.
-Ledger: 29 promoted / 21 candidate / 8 briefed / 15 blocked.
+clean, pushed, still 153 ahead of `origin/main` (unmerged).
 
 Resume with `/orchestrate` — it reads `re/orchestrator/state.json`, which is current.
-iter21 ran 5 cycles (4 budgeted + a directed re-screen); hard stop #1 (context) ended it.
+iter22 ran its full 4-cycle budget. No hard stop; the budget simply ran out.
 
 ---
 
-## START HERE: refill the ladder — nothing is authorable right now
+## START HERE: author `0x0052df40`. It is authorable NOW.
 
-Every `briefed` ledger item tallied **0 READY**; they are stuck, not actionable. **Refilling
-is the job**, not a detour (see the skill's "Refill" note): brief **≥12 RVAs** on the
-read-fleet with `-MaxConcurrent 3..4`. It is off-quota — iter21 spent ~$16.60 there and none
-of it against session quota.
+iter21 handed over "nothing is authorable". **That was wrong**, and iter22's main job was
+finding out why (below). Concretely:
 
-**Put these two in the batch first** — they became gate-PASS in iter21 and have never been
-briefed:
+- **`0x0052df40`** — SAFE, **leaf** (`callees_depth1: []`, inline copy loops, no calls), so
+  the callee-half of the gate is exempt. Two params, both correctly typed as pointers and
+  both literally dereferenced (param_1 at +0x24/+0x2c/+0x4c, param_2 at +0x4c). Returns
+  `int` 1. **`ptr_seed_observe` matches with no new handler and no additive field**
+  (`ARG_TYPES.md:1597`). Caller-gate satisfied by owner **`0x005515a0` C2** (iter21).
+  **NON-DEGENERACY — read before seeding:** it returns the constant 1 on every path, so the
+  return value is *not* a discriminator. Evidence must come from the destination buffer, and
+  the seed must differ per vector at +0x24/+0x2c/+0x4c, or a port that copies nothing still
+  scores GREEN.
 
-- **`0x0052ddc0`** (35 B) and **`0x0052df40`** (45 B), owner `0x005515a0` **C2**.
+Batch it with one or two of these (all need one additive field first, none need a new handler):
 
-Then pick a second bucket to fill the batch out. The **14 NO_OWNER ORPHAN rows** are NOT it —
-they need a different method than the reference-chain BFS, which ran out of edges on them; do
-not re-screen them with it.
+- **`0x0052ddc0`** — SAFE leaf, same owner `0x005515a0` C2. Needs `count_header_list_ring`
+  (`ARG_TYPES.md:55`) **+ a `count` list_op**. Three alternatives were named and refuted by
+  MECHANISM: `audio_list_count` (next@+4, wrong layout), `ptr_arg_int_get` (fills a dword
+  pattern — a random buffer is not a valid ring list, so it AVs or spins), `thunk_list_count`
+  (list at p+0xc, next at node+4, no stride descriptor).
+- **`0x0049ff30`** — SAFE (every write relative to param_1: `*(undefined1*)(param_1+0x95)=1`;
+  the Enter/LeaveCriticalSection pair uses the CS *inside the passed struct* at +0x14, not
+  live engine state). Needs `struct_call_observe` (`ARG_TYPES.md:1490`) **+ a `cs_init_at`
+  additive field** (pre-call `InitializeCriticalSection`, exactly analogous to `stub_at`).
+  **This supersedes the mutator lane for this row**: the synthetic lane doesn't care how
+  often it is called naturally, so `cs_init_at` sidesteps `mutator_ab_pilot`'s open
+  call-frequency question entirely. Prefer it.
 
-### Before authoring anything
-
-1. **Pre-flight every boot**: `py -3.12 scripts/orch_preflight.py <hook>...`. It now covers
-   **both** harnesses and caught two real defects in iter21 before they cost a boot.
-2. **Check `re/frida/ARG_TYPES.md` before writing a handler.** Every one of the 307 handlers
-   now has a MECHANISM line describing what it *does*, not what it was written for. Six
-   consecutive runs proposed a handler that already existed; the re-screen found 0 of 3 real.
-3. **Prefer an additive defaulted field over a new handler.** Precedent is now long:
-   `stub_at`, `null_args`, `this_reg:'stack'`, `key_off`, `eax_from_test`, `reseed_per_side`.
-
-### Preflight now covers both harnesses
-
-`orch_preflight` checks that every key an entry sets is forwarded into
-`early_window_leaf_diff.py`'s `cfg` allowlist, not just `run_diff.py`'s (`eba90e61`), and
-no longer false-FAILs single-vector rows that observe several slots (`25fb6304`+). 0 FAIL
-across a 40-row sweep.
-
-The 3 rows the first sweep flagged were checked against their **evidence CSVs** and are
-fine: `active4slots_40ba60` (`1,0,1,0`), `zero_two_regions_477b40` (`0|0|0|0|cccccccc`, a
-boundary echo), `pool_array_reset_486f90` (`42480000|0|...`, 50.0f alternating). Their
-non-degeneracy is *within* one observation rather than across vectors — a pattern the
-vector-count heuristic could not see.
+Pre-flight (`py -3.12 scripts/orch_preflight.py <hook>...`), then verify all of them in
+**ONE** `state_batch` boot.
 
 ---
 
-## What iter21 did
+## The finding: the s6 brief could never say READY
 
-### 1. `0x00482900 ReplayGetSize` C3 → C4 (the lift iter20 refused)
+**24 fresh RVAs, 4 buckets, 4/4 units OK, $2.78 off-quota — and 24/24 came back
+`NEEDS_GHIDRA`. In 22 of 24 the deciding column was `CALLERS_NEEDS_GHIDRA`.**
 
-The iter20 **refusal was correct**; its **diagnosis was not**, and the difference cost
-two boots. The handoff said the `asi:` counters were armed too early, before `dinput8`
-loads the `.asi`. Arming them after `wait_phase(1)` changed nothing — still `NOEXPORT`.
+The READY criterion requires "≥1 caller is C2+". The prompt hands the worker **only** plate
+paths plus `ARG_TYPES.md`, and explicitly forbids globbing, grepping `hooks.csv`, or
+searching `re/analysis`. **Plates do not name their callers.** The one fact READY depends on
+is the one fact the worker is structurally denied — the verdict is decided before the screen
+runs.
 
-Two independent defects, both now fixed (`c555600b`):
+This retro-explains **all 8 prior s6 briefs** tallying 0 READY, which iters 9–11 recorded as
+if the candidate pool were dry. It is a prompt defect, not a fact about the candidates.
 
-1. **`scenario_launch.py:623` sets `MASHED_RE_NO_AUTO_HOOK=1` whenever `--hooks` is
-   empty.** Every canonical race run for the lift was **stock original with no hooks
-   installed at all**. `armed[orig]` was not a timing artifact — there was nothing
-   installed to read. This is documented behaviour ("Empty = stock original"), not a bug,
-   but it is a trap: **a scenario_launch run without `--hooks` says nothing about any
-   hook.**
-2. **The static `Module.findExportByName(moduleName, symbol)` was removed in Frida 17.**
-   It threw `TypeError`, the `catch` swallowed it to `null`, and a null is
-   indistinguishable from "the .asi is not loaded yet" — exactly the load-order story the
-   handoff had primed. The lookup now tries the module-instance API first and, on failure,
-   **prints the loaded module list** instead of a bare `NOEXPORT`.
+**Fix (ledger item `brief_caller_gate_fix`, one prompt change, not a new lane):** resolve
+callers + caller confidence orchestrator-side — the same way plate paths already are — and
+put them **in the table**. That is one `hooks.csv`/Ghidra lookup by the orchestrator, not 24
+read-fleet globs, so it does not re-open the read-only boundary the prompt exists to protect.
 
-Evidence: `asi:ReplayGetSize = 13` in each of two canonical races run with
-`--hooks 0x00482900`, counter on the **.asi export** (reachable only through the installed
-JMP). Control `asi:ReplayRecordFrame = 0` — armed at `0x739cce40`, export resolves, but not
-in `MASHED_HOOK_ONLY`, so no JMP routes to it. path2 0 FAIL, returns 2572 / 1744 through
-the live JMP. Full writeup: `verify/c4_replay_get_size/EVIDENCE.md`.
+**Second, smaller fix:** filter the batch against `hooks.csv` **before** building the queue.
+`0x00407550` was screened at C2 while already **C3** (`SubsystemARecordFind`, promoted
+iter21), wasting a row. (It did independently re-derive the shipped config —
+`esi_global_search`, tgt `0x639d80`, stride `0xec`, `key_off 0x44` — a clean incidental
+corroboration of that port.)
 
-Also fixed, both `run_verify_hook.py` FAILs the last handoff flagged: *"bytes unchanged
-after Module.load"* is now a PASS when the site holds a correct JMP, and *"bad argument
-count"* was the path2 dispatcher having no case for `{'scalars': [...]}`. path2 now
-forwards `stub_at`/`stub_nargs`/`stub_ret` too — without it, it could never exercise these
-rows at all.
+**Keep verbatim: the mandatory-refutation clause.** iter22 added "before writing
+NEEDS_NEW_HANDLER, state which MECHANISM lines you considered and why each fails; if the gap
+is a small knob, call it ADDITIVE_FIELD instead." Result: **0 NEEDS_NEW_HANDLER in 23 of 24
+rows**, versus six consecutive prior runs that each invented a handler that already existed.
+The sole exception (`0x0049d240`) named and refuted four handlers by mechanism —
+`fastcall_reg`, `thiscall_nested_field_get`, `reg_this_call_observe`, `vtable_table_dispatch`
+— before claiming a gap (ECX-as-this with a 2-level deref *and* a dynamic vtable stub).
+Still confirm against the implementation before writing it.
 
-### 2. ORPHAN_BLOCK caller-gate: 11 of 27 rows unblocked
+## Two stale ledger notes reconciled (iter22 cycles 2–3)
 
-`re/orchestrator/ORPHAN_GATE_RESOLUTION.md` + `orphan_owners.tsv`.
+1. **`handler_specs_22` was stale → closed as `promoted`.** Its two "AUTHORABLE NOW" rows
+   were in fact authored *and* promoted in iter21 and are C3 today: `0x004b6b00`
+   `StoreEaxAtEcx` (GREEN 5/5) and `0x00407550` `SubsystemARecordFind` (GREEN 4/4). The
+   iter21 handoff named only `0x00407580` + `0x005b1160` and so **undercounted its own
+   output** — which is exactly why this run opened believing the ladder was dry.
+   **Lesson: the ledger, not the handoff prose, is the source of truth. Reconcile briefed
+   notes against `hooks.csv` before declaring anything dry.**
+2. **`mutator_ab_pilot`'s "NEXT" was superseded.** It said "screen the remaining 12
+   WRITES_GLOBAL rows"; iter14 already screened **all 44** and the answer is **2**, not 12
+   (AB_READY 2 / NONDET 7 / UNENUMERABLE 11 / ONESHOT 4 / IRREVERSIBLE 20). Survivors:
+   `0x0049ff30` and `0x0045c820`. The only remaining gate is a **runtime** measurement — one
+   `MASHED_COUNT_RVAS` boot — not more screening. There is no existing evidence for it:
+   `re/analysis/plans/ab_reachable.tsv` is a *static* write-surface survey (columns
+   rva / resolved-store-count / call-tree-size, per `scripts/survey_ab_reach.py:79-81`), not
+   a call counter. Prefer the `cs_init_at` synthetic route for `0x0049ff30` instead.
 
-**The first method was wrong and is recorded as such.** Walking back from the orphan site
-to the nearest preceding defined function resolves all 51 sites and is unsound: site
-`00407687` walks back 8 instructions into `FUN_00407640`, but the only reference to its
-block start comes from function `00481a30`. **Physical adjacency is not ownership.**
+## Recurring defect classes confirmed again
 
-Replaced with a backward BFS over the reference graph that follows chained orphan blocks
-and hops through jump-table data slots. Result after plating `0x005515a0`: **13 PASS**,
-**0 OWNER_BELOW_C2**, **14 NO_OWNER** (BFS ran out of edges; unresolved, not disproved —
-**do not re-screen them with this method**).
+- **Pointer param declared `int`**: 6 of 24 this run (`0x00451cc0`, `0x00451730`,
+  `0x004722e0`, `0x0049f2e0`, `0x0048fef0`, `0x0049ff30`). Reliable recurrence, not anecdote.
+- **Plate-vs-`hooks.csv` confidence conflicts**: 4 genuine ones in `state_util_b1_s6`
+  (`0x00495110`, `0x004af32d`, `0x004292d0`, `0x0045d430` — plate C1, table C2). No winner
+  picked; route via `re-classify` before any promotion.
 
-An owner here is a **reference-chain witness, not a `function_callers` edge**. It
-establishes which function's control flow reaches the block, not the call's arguments.
+## Do NOT re-pick
 
-### 3. `0x00407580` + `0x005b1160` C2 -> C3, both verified in ONE boot
+- `0x00495110` — QPC timer via `FUN_004950b0`; rejected in iter12, re-confirmed twice since.
+- The 6 heap-address writers (iter14) — allocation addresses differ per run.
+- The 14 NO_OWNER ORPHAN rows via reference-chain BFS — it ran out of edges on them.
+- `0x0048fce0` / `0x0048fd10` — both DESTROYS_DEVICE via the same
+  `(**(code**)(DAT_007d3ff8+0x20))(8,0)` disabling RW renderstate 8.
 
-Both from the ORPHAN_BLOCK group unblocked in cycle 2. **Both authored from the raw
-listing**, and in both cases the listing carried something the decompiler did not:
-`0x005b1160`'s third argument is a **byte** load (`MOV CL,byte ptr [ESP+0xc]` at
-`0x005b1172`) though the caller pushes a dword, and its three zero stores run in the order
-`+1, +2, +0`.
+## Standing rules (unchanged, all measured)
 
-`0x005b1160` is the strong row: 6 vectors, 6 distinct fingerprints, and the **0xAA buffer
-seed is load-bearing** — three of its five writes store zero, so against a zero-filled
-buffer a port that omitted them would have passed.
-
-`0x00407580` is the **weaker** row and its note says so: a pure read of a live global, so
-only the address computation is under test. Its sentinel was deliberately set to the
-**array itself** (`0x00639dc4`) so an unpopulated array refuses the run rather than scoring
-a column of zeros GREEN — `selected_copter_field60` documents that same array as
-unpopulated in Quick Battle, and the snapshot confirmed the first 8 dwords **are** zero.
-10 seeds gave 2 distinct values (indices 12/16/24 -> `0xbf800000`). A real discriminator,
-but thinner than a fingerprint-per-vector row.
-
-**Pre-flight failed both rows on the first pass** — `ring_header_init` lacked `observe_ret`
-and neither had a `scenario_sentinel`. Two boots saved by a millisecond check.
-
----
-
-## Standing rules (all measured; unchanged)
-
-1. **Pre-flight before every boot**: `py -3.12 scripts/orch_preflight.py <hook>...`.
-2. **Author 3-4 rows, verify in ONE `state_batch` boot.**
-3. **NEEDS_NEW_HANDLER is a hypothesis about the handler inventory, not a fact** — now **6
-   consecutive runs**, and iter21's re-screen found **0 of 3** were real. Check
-   `re/frida/ARG_TYPES.md` before writing anything. **Root cause now fixed at source.**
-   The index summarised each handler's original USE CASE, not its MECHANISM, so a screen
-   looking for "store EAX into `*ECX`" never matched something described as "cross-link
-   insert". Three fixes shipped: `gen_arg_types_index.py` now prefers an explicit
-   `// MECHANISM:` line over the arbitrary 3-line scrape (`a5c7b2aa`), and **every arg_type in
-   BOTH harnesses now carries one** — 123 JS (`a0d81a53`, `6537208f`) + 184 early-window
-   (`625d77f9`). Zero empty notes, zero non-ASCII, zero stubs. The generated header states
-   outright that a scraped note is not evidence that no handler fits.
-   **ARG_TYPES.md is now a real screening surface — use it, then still confirm against the
-   implementation before writing a handler.**
-
-   `none` (145 uses) and `read_global` (96) had **no note at all** — they documented
-   themselves *inside* their dispatch blocks and the scraper only looked above. Both now warn
-   that they push **no arguments**, so a target that really takes some has both sides read the
-   same leftover stack bytes and agree; confirm arity from the LISTING.
-
-   Surfaced while doing it: **`out3_idx` was a false-GREEN hazard, now AUDITED AND RESOLVED**
-   (`6e218371`, `ef4add8e`; `re/analysis/out3_idx_false_green_audit_20260731.md`). All 4 rows
-   were demoted to C2 — a reimpl whose whole body is `return idx<16 ? 1 : 0` passed their
-   recorded 9/9 GREEN. Re-verified under `ptr_out_table_get`: **`0x0046d700` and `0x0046bce0`
-   restored to C3** (GREEN 11/11, payload observed). **`0x0046d510` INCONCLUSIVE** (both-sides
-   AV — the early-window lane force-calls before its transform's matrix exists; needs an
-   in-race scenario). **`0x0046d740` not attempted** — it is a SETTER, so it needs
-   `cache_setter_observe`, and its entry is marked DO-NOT-RUN-AS-IS on `out3_idx`.
-   **`out3_idx` should be retired** once those two land.
-4. **A decompiler summary is not evidence about x87.** Read the raw listing.
-5. **A discriminator must be checked against the truncation, not the operand.**
-6. **NEW (iter21): a harness reading of "absent" has two causes — the thing is absent, or
-   the probe is broken — and they look identical.** `NOEXPORT` meant "the API you called no
-   longer exists", not "not loaded". Make probes report *why* they failed, not just that
-   they did.
-
-## Lane choice for the next substantial run
-
-- **(a)** ~~Author the 2 READY rows~~ — **done in iter21 cycle 4**; both promoted C2→C3.
-- **(b)** Plate `0x005515a0` C1→C2, which converts `0x0052ddc0` and `0x0052df40` to PASS.
-  **This is now the cheapest win** — see START HERE.
-- **(c)** Build a **results/time-trial scenario** in the launcher. Still the only route to
-  `0x00411350` / `0x00411530`, which fired zero times in every race while sibling
-  `0x00411600` fired ~1800 in the same runs. **Now cheaper than it was**: the asi-export
-  counter works, so reachability can be measured directly instead of inferred.
-- **(d)** Mutator lane — 43 rows plus 5 more from iter21. Do **not** re-pick the 7 AB_NONDET
-  rows; 6 of them write heap addresses.
+1. Pre-flight before every boot: `py -3.12 scripts/orch_preflight.py <hook>...`.
+2. Author 3–4 rows, verify in ONE `state_batch` boot.
+3. `NEEDS_NEW_HANDLER` is a hypothesis, not a fact — check `ARG_TYPES.md` MECHANISM lines,
+   prefer an additive defaulted field (`stub_at`, `null_args`, `this_reg:'stack'`, `key_off`,
+   `eax_from_test`, `reseed_per_side`).
+4. A decompiler summary is not evidence about x87. Read the raw listing.
+5. A "absent" harness reading has two causes — absent, or a broken probe — and they look
+   identical. Make probes report *why* they failed.
+6. `out3_idx` is retired; the harness throws if anything references it.
 
 ## Hygiene
 
-- **Pool slots 5 and 10 hold leaked `.lock~`** (in-JVM leak from a failed MCP open; `rm`
-  reports "Device or resource busy"; clears only when the MCP JVM restarts). Slot 10 was
-  leaked **this session** — `ghidra_pool.ps1 acquire` handed it out and the open failed
-  with `LockException`. **Slot 9 works and was used and released cleanly.** Slot 4 is a
-  stale broken clone.
-- `mashed_pool/Mashed_poolN/` **subdirectory** projects are stale 0-byte duplicates — open
-  the root-level `mashed_pool/Mashed_poolN.gpr` only.
-- All MASHED PIDs spawned this session were killed by the harness; `original/` intact; no
-  worktrees created.
+- Pool slots **5 and 10** hold leaked `.lock~` (clears only when the MCP JVM restarts).
+  **Slots 9 and 11 work.** Slot 4 is a stale broken clone.
+- Open the root-level `mashed_pool/Mashed_poolN.gpr` only; the `Mashed_poolN/` subdirectory
+  projects are stale 0-byte duplicates.
+- iter22 spawned **no** MASHED process and created no worktrees; `original/` untouched.
+- Another session is active in this checkout — leave `scenario_launch.py`,
+  `PromoLoop_sessionB.cpp`, `UNCERTAINTIES.md`, and
+  `re/analysis/bucket_audio_005ab710_005af040/0x005ab980.md` alone.
+- **Account2 policy v29 (2026-07-31 15:59)**: adds `allow_routines=False`. No impact on the
+  read-fleet — it only disables scheduled/cloud routines, alongside the already-disabled
+  Remote Control and Workflows. Read/Grep/Glob via `delegate.ps1` is unaffected.
