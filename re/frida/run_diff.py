@@ -413,6 +413,11 @@ def build_config(hook, asi_path=None):
         config['this_field_off'] = hook['this_field_off']
     if 'observe_callee' in hook:
         config['observe_callee_str'] = f"0x{hook['observe_callee']:08x}"
+    # vtable_table_dispatch (orch-iter15): table-of-8-byte-entries dispatch,
+    # entry = *(holder + vtbl_ptr_offset) + idx*8.
+    for _k in ('vtbl_ptr_offset', 'table_entries'):
+        if _k in hook:
+            config[_k] = hook[_k]
     return config
 
 

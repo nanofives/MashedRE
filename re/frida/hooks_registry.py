@@ -18732,4 +18732,82 @@ HOOKS = {
         'path2_tests':        [0x00, 0x01],
     },
 
+    # ── audio table-dispatch pair (0x005b10a0 / 0x005b10e0) ──────────────────
+    # Port mashedmod/src/mashed_re/Audio/AudioTableDispatch.cpp. The two are
+    # BYTE-IDENTICAL apart from one displacement byte (mov ecx,[eax+4] vs
+    # [eax+8]), so ONE handler with a CONFIG value covers both:
+    #     entry = *(holder + vtbl_ptr_offset) + idx*8
+    #     entry[0](a1, *(u16*)(entry+4), a4)
+    #
+    # ARG_TYPE: new 'vtable_table_dispatch'. Nothing real is dispatched — the
+    # handler writes its own NativeCallback into entry[0], so the call lands on
+    # a recorder. The recorded triple (a1, aux16, a4) proves the *8 stride, the
+    # +4 aux read, the vtbl_ptr_offset indirection and the argument order all in
+    # one observation; a port with the wrong offset or stride reads a different
+    # entry and records a different aux16. That matters here precisely because
+    # the two rows differ ONLY in that offset — a copy-paste port is the
+    # expected failure mode, and this catches it.
+    #
+    # ARGUMENT ORDER was read off the stack, not the decompiler: the two PUSHes
+    # before `mov eax,[esp+0xc]` (0x005b10bb) shift ESP, so that read reaches
+    # the ORIGINAL [esp+4], the FIRST argument. a1 is pushed last (arg1 of the
+    # dispatched call) and a4 first (arg3).
+    #
+    # NON-DEGENERACY (asserted): every seed varies idx, aux16, a1 AND a4, so all
+    # four recorded fingerprints differ. Expected recorded (a1, aux16, a4):
+    #   t0 idx 0 -> aaaa0001,00001111,bbbb0001
+    #   t1 idx 1 -> aaaa0002,00002222,bbbb0002
+    #   t2 idx 3 -> aaaa0003,00003333,bbbb0003
+    #   t3 idx 7 -> aaaa0004,0000ffff,bbbb0004
+    # Varying idx across 0/1/3/7 is what exercises the stride; a port using the
+    # wrong stride still passes idx 0 and fails the rest. aux16 0xffff also
+    # confirms the value is ZERO-extended (xor eax,eax / mov ax) rather than
+    # sign-extended.
+    #
+    # CALLEE-GATE NOTE: the only callee is `call dword ptr [ecx]`, an indirect
+    # dispatch through a runtime data table — there is no named callee to gate
+    # on. Flagged for a ruling; not self-approved.
+    'audio_table_dispatch_at4': {
+        'rva':              0x005b10a0,
+        'export':           'AudioTableDispatchAt4',
+        'signature':        {'ret': 'void',
+                             'args': ['uint32', 'pointer', 'uint32', 'uint32']},
+        'arg_type':         'vtable_table_dispatch',
+        'vtbl_ptr_offset':  0x4,
+        'table_entries':    8,
+        'scenario':         'race',
+        'scenario_sentinel': 0x007dca34,   # central audio object (see 0x005ad8b0 notes)
+        'path1_tests': [
+            {'idx': 0, 'aux16': 0x1111, 'a1': 0xaaaa0001, 'a4': 0xbbbb0001},
+            {'idx': 1, 'aux16': 0x2222, 'a1': 0xaaaa0002, 'a4': 0xbbbb0002},
+            {'idx': 3, 'aux16': 0x3333, 'a1': 0xaaaa0003, 'a4': 0xbbbb0003},
+            {'idx': 7, 'aux16': 0xffff, 'a1': 0xaaaa0004, 'a4': 0xbbbb0004},
+        ],
+        'path2_tests': [
+            {'idx': 0, 'aux16': 0x1111, 'a1': 0xaaaa0001, 'a4': 0xbbbb0001},
+            {'idx': 7, 'aux16': 0xffff, 'a1': 0xaaaa0004, 'a4': 0xbbbb0004},
+        ],
+    },
+    'audio_table_dispatch_at8': {
+        'rva':              0x005b10e0,
+        'export':           'AudioTableDispatchAt8',
+        'signature':        {'ret': 'void',
+                             'args': ['uint32', 'pointer', 'uint32', 'uint32']},
+        'arg_type':         'vtable_table_dispatch',
+        'vtbl_ptr_offset':  0x8,
+        'table_entries':    8,
+        'scenario':         'race',
+        'scenario_sentinel': 0x007dca34,
+        'path1_tests': [
+            {'idx': 0, 'aux16': 0x1111, 'a1': 0xaaaa0001, 'a4': 0xbbbb0001},
+            {'idx': 1, 'aux16': 0x2222, 'a1': 0xaaaa0002, 'a4': 0xbbbb0002},
+            {'idx': 3, 'aux16': 0x3333, 'a1': 0xaaaa0003, 'a4': 0xbbbb0003},
+            {'idx': 7, 'aux16': 0xffff, 'a1': 0xaaaa0004, 'a4': 0xbbbb0004},
+        ],
+        'path2_tests': [
+            {'idx': 0, 'aux16': 0x1111, 'a1': 0xaaaa0001, 'a4': 0xbbbb0001},
+            {'idx': 7, 'aux16': 0xffff, 'a1': 0xaaaa0004, 'a4': 0xbbbb0004},
+        ],
+    },
+
 }

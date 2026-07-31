@@ -2380,6 +2380,70 @@ function runDiff() {
         return;
     }
 
+    // ── vtable_table_dispatch ───────────────────────────────────────────────
+    // void fn(a1, holder, idx, a4) that dispatches through a TABLE OF 8-BYTE
+    // ENTRIES reached by one indirection off `holder`:
+    //     entry = *(holder + vtbl_ptr_offset) + idx*8
+    //     entry[0](a1, *(u16*)(entry + 4), a4)
+    // i.e. the entry carries both the function pointer and a 16-bit datum that
+    // is passed as the middle argument.
+    //
+    // Nothing real is called: the handler writes its OWN NativeCallback into
+    // entry[0], so the dispatch lands on a recorder. That makes the whole
+    // structure observable — the recorded triple (a1, aux16, a4) proves the
+    // *8 stride, the +4 aux read, the vtbl_ptr_offset indirection, and the
+    // argument order all at once. A port with the wrong stride or offset reads
+    // a different entry and records a different aux16.
+    //
+    // Both sides get their own holder/table buffers but SHARE the stub address,
+    // so the recorded values are directly comparable without normalisation.
+    //
+    // CONFIG: vtbl_ptr_offset (4 or 8 for the pair it was written for),
+    //         table_entries (default 8).
+    // tests[i] = { idx, aux16, a1, a4 }
+    // Authored 2026-07-31 for 0x005b10a0 (offset 4) and 0x005b10e0 (offset 8),
+    // which are byte-identical apart from that one displacement.
+    if (CONFIG.arg_type === 'vtable_table_dispatch') {
+        const OFF  = CONFIG.vtbl_ptr_offset | 0;
+        const NENT = (CONFIG.table_entries | 0) || 8;
+        const holderO = Memory.alloc(0x40), holderR = Memory.alloc(0x40);
+        const tableO  = Memory.alloc(NENT * 8), tableR = Memory.alloc(NENT * 8);
+        const _keepVT = [holderO, holderR, tableO, tableR];
+        let rec = null;
+        const stub = new NativeCallback(function (p1, p2, p3) {
+            rec = [p1 >>> 0, p2 >>> 0, p3 >>> 0];
+            return 0;
+        }, 'int', ['uint32', 'uint32', 'uint32']);
+        _keepVT.push(stub);
+        const fp = function () {
+            return rec === null ? 'not-called'
+                 : rec.map(function (v) { return ('00000000' + v.toString(16)).slice(-8); }).join(',');
+        };
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            const idx = t.idx >>> 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            [[holderO, tableO], [holderR, tableR]].forEach(function (pair) {
+                const h = pair[0], tb = pair[1];
+                for (let b = 0; b < 0x40; b += 4) h.add(b).writeU32(0);
+                for (let b = 0; b < NENT * 8; b += 4) tb.add(b).writeU32(0);
+                h.add(OFF).writePointer(tb);              // holder -> table
+                tb.add(idx * 8).writePointer(stub);       // entry[0] = recorder
+                tb.add(idx * 8 + 4).writeU16(t.aux16 & 0xffff);
+            });
+            rec = null;
+            try { Orig(t.a1 >>> 0, holderO, idx, t.a4 >>> 0);   origV = fp(); } catch (e) { errO = e.message; }
+            rec = null;
+            try { Reimpl(t.a1 >>> 0, holderR, idx, t.a4 >>> 0); reimV = fp(); } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: (!errO && !errR && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── vec3_lerp (promote-round-22 harness-ext, SWEEP-CRITICAL) ─────────────
     // For pure vec3 math leaves: void fn(float* out3, float* a3, float* b3,
     // float t) — writes a 3-float result computed from two input vec3s and a

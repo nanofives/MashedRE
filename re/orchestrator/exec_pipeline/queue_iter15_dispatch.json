@@ -1,0 +1,9 @@
+{
+  "description": "orch iter15 cycle3 - verify the audio table-dispatch pair via the NEW vtable_table_dispatch handler. ONE handler, two rows, differing only in vtbl_ptr_offset (4 vs 8). Expected recorded (a1,aux16,a4) per seed: aaaa0001,00001111,bbbb0001 / aaaa0002,00002222,bbbb0002 / aaaa0003,00003333,bbbb0003 / aaaa0004,0000ffff,bbbb0004. All-identical fingerprints = INCONCLUSIVE, not GREEN.",
+  "jobs": [
+    { "type": "build", "id": "iter15_build" },
+    { "type": "state_batch", "id": "iter15_dispatch",
+      "hooks": ["audio_table_dispatch_at4", "audio_table_dispatch_at8"],
+      "scenario": "race", "dwell": 20 }
+  ]
+}
