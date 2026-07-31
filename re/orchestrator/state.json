@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-07-31T05:06:25.5230276Z",
+  "updated": "2026-07-31T05:10:34.2688004Z",
   "note": "Cross-tier work ledger for the Fable-5 orchestrator. Every item flows: candidate -> briefed -> authored -> verified -> promoted (or -> blocked). orch.ps1 is the ONLY writer during a run (use `set`), so transitions stay durable across iterations — a run cut off for budget never loses state. Stages: candidate|briefed|authored|verified|promoted|blocked.",
   "items": [
     {
@@ -429,6 +429,13 @@
       "kind": "state_setter",
       "stage": "promoted",
       "note": "iter16 cycles1-3: C2->C3 GREEN 4/4, prediction-confirmed, 4 distinct fingerprints, both sides equal. KEY OUTCOME - NO NEW HANDLER WAS NEEDED. The brief proposed float3_ptr_write_observe; the existing ptr_seed_observe already seeds two positional buffers and observes offsets, which is exactly this shape, so it was reused unchanged. GENERAL LESSON for the remaining SPEC_COMPLETE queue: a NEEDS_NEW_HANDLER verdict is a hypothesis about the handler inventory, not a fact about it - re-check against what exists (and against handler EXTENSIONS added since the brief, e.g. ptr_to) before writing anything. TWO BRIEF CORRECTIONS from disasm: (1) NOT void - mov eax,esi at 0x0055c838 returns param_1; (2) the brief omitted the direct callee FUN_0055c380 entirely, though it does the bulk of the work. That callee is safe for a scratch buffer (constants only, through its own arg1, no globals, no calls) - but the brief's 'writes only through the passed pointer' was reached without accounting for it. Observed +0x00=3f800000, +0x0c=00020003, +0x40/44/48=seeded triple, +0x50=3e4ccccd, +0x5c=005e4fe0; +0x5c is the load-bearing check since it is the global immediate passed to the init. NOT COVERED, recorded explicitly: the RETURN is not observed (ptr_seed_observe discards returns; the return is the input pointer, which differs per side), and init-before-copy ORDER is not distinguished because FUN_0055c380 never touches +0x40..0x48. Gate: 3 callers all C2; callee FUN_0055c380 C1 with a DOCUMENTED LIBRARY ROLE (third-party-library[RenderWare-Physics-3.7]) so the existing identified-callee clause applies - no new ruling needed this time."
+    },
+    {
+      "id": "clause_rescreen_31",
+      "rva": "-",
+      "kind": "clause_rescreen",
+      "stage": "briefed",
+      "note": "iter16 cycle4: 6/6 GREEN, 31 NEEDS_GHIDRA rows re-screened against the two new clauses. New tool scripts/orch_make_rescreen_queue.py; briefs runs/iter16_rescreen/rescreen_r1..r6.md. TALLY 5 UNBLOCKED_BY_CLAUSE / 5 CLAUSE_PARTIAL / 21 STILL_NEEDS_GHIDRA. So the clauses moved 5 rows outright and half-moved 5 more - a modest but real yield for an off-quota pass, and much cheaper than opening Ghidra on 31 rows. UNBLOCKED (ready for a normal safety/shape screen): 0x005b1080 (clause B, sole callee an indirect fn-ptr field param_1[1]), 0x004c5dd0 (B, vtable slot DAT_007d3ff8+0x2c), 0x004c7620 (BOTH - indirect vtable slot +0xa8 AND identified as RwRasterUnlockMipLevel), 0x00412100 (B, vtable dispatch **(code**)(iVar1+0x48)), 0x00482900 (A, both callees role-documented). CLAUSE_PARTIAL - callee question resolved but a residual remains: 0x004a77eb (callers unknown), 0x00485420 (shape - non-standard EAX passing, U-3576), 0x00413f50 (shape + callers), 0x00418de0 (shape U-3609 + callers U-3611), 0x004391b0 (shape - undefined game-mode enum states). CLAUSE B WORKED AS DESIGNED, including its exclusion: 0x00413f50 HAS an indirect callee but ALSO a direct anonymous one (FUN_004770a0), so B correctly did NOT fire - the exclusion is not decorative. TRACKER CONFLICT FOUND, and BOTH plates are wrong: FUN_004a2c48 is described as a 'checkpoint/frame count getter' in one plate (rescreen_r5) and as a bare [STUB] in another (rescreen_r6). hooks.csv line 254 is authoritative and says neither - it is __ftol, the MSVC CRT x87 round-to-int64 helper, ALREADY C3 and byte-identical (Math/FPURound.cpp). CONSEQUENCE: 0x00482900's callee-half is satisfied OUTRIGHT by a C2+ callee, stronger than the clause-A route the re-screen used. But a plate carrying an invented role for a known CRT function is the wrong-plate-propagates-into-ports failure class - file it and correct the plate before anything ports against that description."
     }
   ]
 }
