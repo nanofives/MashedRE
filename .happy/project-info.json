@@ -1,29 +1,9 @@
 {
-  "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-31T12:00:00Z",
+  "title": "Mashed RE",
+  "updatedAt": "2026-07-31T00:00:00Z",
   "sections": [
     {
-      "heading": "Roadmap (v2)",
-      "fields": [
-        {
-          "label": "Checklist",
-          "value": [
-            "R0 re-baseline — done",
-            "R1 C4 truth — done",
-            "R2 menu — done",
-            "R3 track/vehicle data — done",
-            "R4 world render — done",
-            "R5 drivable car — done",
-            "R6 race loop — done",
-            "R7 full game systems — ACTIVE",
-            "R8 — pending"
-          ],
-          "kind": "list"
-        }
-      ]
-    },
-    {
-      "heading": "Promotions (confidence ladder)",
+      "heading": "Confidence ladder",
       "fields": [
         {
           "label": "C1",
@@ -32,12 +12,12 @@
         },
         {
           "label": "C2",
-          "value": 4023,
+          "value": 4010,
           "kind": "number"
         },
         {
           "label": "C3",
-          "value": 863,
+          "value": 876,
           "kind": "number"
         },
         {
@@ -48,94 +28,51 @@
       ]
     },
     {
-      "heading": "Current work — A/B lane (U-9025 defects closed)",
+      "heading": "Orchestrator",
       "fields": [
+        {
+          "label": "Iteration",
+          "value": "iter20",
+          "kind": "text"
+        },
+        {
+          "label": "Ledger",
+          "value": "24 promoted / 21 candidate / 9 briefed / 15 blocked",
+          "kind": "text"
+        },
         {
           "label": "Branch",
-          "value": "fix/u9025-recharacterise-and-regabi-defects",
+          "value": "fix/u9025-recharacterise-and-regabi-defects (unpushed)",
           "kind": "text"
         },
         {
-          "label": "Active: A/B mutator testing",
-          "value": "Snapshot/restore lane; 142 of 1446 mutators reached C3 (9.8%); insertion-arm segment coverage confirmed via bisect",
+          "label": "Last promotion",
+          "value": "0x00482900 ReplayGetSize C2->C3 (GREEN 6/6)",
           "kind": "text"
-        },
-        {
-          "label": "U-9025 resolution",
-          "value": "AudioThreadDescInit return-value fix verified; 4 reg-ABI defects closed; x87 stack false-RED mitigated; all run_diff_scenario_batch hooks verified",
-          "kind": "text"
-        },
-        {
-          "label": "Diag notice",
-          "value": [
-            "verify/ scratch: uncommitted CLAUDE.md, build.bat, asi_sources.rsp (manual review needed)",
-            "Backup: 28 days old (refresh recommended)"
-          ],
-          "kind": "list"
         }
       ]
     },
     {
-      "heading": "Orchestrator lane (iters 12-19, closed 2026-07-31)",
+      "heading": "This session",
       "fields": [
         {
-          "label": "Session result",
-          "value": "11 rows C2->C3. 4 new arg_type handlers, 1 ratified rubric clause, 3 harness bugs fixed, 2 screening defects closed. Branch pushed to a6a59a05.",
-          "kind": "text"
-        },
-        {
-          "label": "METHOD CHANGE (the durable part)",
+          "label": "Done",
           "value": [
-            "scripts/orch_preflight.py — derives a handler's required CONFIG keys from its own source and checks the DELIVERY path, not the spelling",
-            "Batch discipline — author 3-4 rows, verify in ONE boot",
-            "Both written into .claude/skills/orchestrate/SKILL.md",
-            "Measured: iters 12-18 wasted 4 of 12 boots; iter19 = 0 FAIL, 1 boot, 3 verdicts"
+            "__ftol sweep: 14 plates + 3 uncertainty rows",
+            "CONFIDENCE.md indirect-dispatch clause widened",
+            "stub_at handler extension (new harness capability)",
+            "0x00482900 unblocked and promoted"
           ],
           "kind": "list"
         },
         {
-          "label": "Open item 1 — __ftol plate sweep (needs a go-ahead)",
-          "value": "14 plates invent a semantic for FUN_004a2c48 (really __ftol). 4 of 5 C4 plates contaminated. NOT demoted: C4 rests on behavioural evidence and the ports were built x87-aware — this is a documentation defect. Bulk prose edit, unstarted.",
-          "kind": "text"
-        },
-        {
-          "label": "Open item 2 — 0x00482900 blocked",
-          "value": "Unverifiable by force-call: its logger callee (0x004987b0, OutputDebugStringA) raises a debug-print SEH exception, so both sides error identically. Needs a handler combining callee-stubbing WITH scalar args; neither existing one does both.",
-          "kind": "text"
-        },
-        {
-          "label": "Open item 3 — clause wording gap",
-          "value": "The indirect-dispatch clause says 'runtime data table or function-pointer FIELD'; 0x005af200's target is a function-pointer ARGUMENT. Same case a fortiori, but the text should be widened.",
-          "kind": "text"
-        },
-        {
-          "label": "Pool state",
+          "label": "Next",
           "value": [
-            "Gate pool 102/102 judged; all READY rows resolved",
-            "6 SPEC_COMPLETE handler rows left (re-check vs EXISTING handlers first — iter16 and iter19 both found the proposed handler already existed or generalised)",
-            "Mutator lane: only 2 AB_READY of 43",
-            "27 ORPHAN_BLOCK rows need their callback blocks plated"
+            "U-9035: param_2 > 2^24 vectors (gates C4)",
+            "0x00423040 + 0x004325c0 arity raw decode",
+            "27 ORPHAN_BLOCK rows need callback blocks plated"
           ],
           "kind": "list"
-        }
-      ]
-    },
-    {
-      "heading": "Next up",
-      "fields": [
-        {
-          "label": "Built, NOT yet verified",
-          "value": [
-            "live-arg capture+replay lane (dd3142c1) - runs clean, never exercised on a real race",
-            "0x00407600 PlayerPositionPtr restored after a bad caller scan",
-            "4 STATE ports authored"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Spawn budget",
-          "value": "6 boots used; a reboot may be required (white-window condition)",
-          "kind": "text"
         }
       ]
     }
