@@ -3,7 +3,7 @@
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions.
 
 **C1 795 / C2 4006 / C3 882 / C4 183.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
-committed through **becc0117**, **not pushed** (141 commits ahead of origin/main).
+committed through **eba90e61**, **not pushed** (143 commits ahead of origin/main).
 Ledger: 29 promoted / 21 candidate / 8 briefed / 15 blocked.
 
 Resume with `/orchestrate` — it reads `re/orchestrator/state.json`, which is current.
@@ -31,15 +31,18 @@ Highest-value targets, in order:
    `reseed_per_side` flag is already implemented and forwarded, and is genuinely required.
 3. **The 14 NO_OWNER ORPHAN rows** — need a different method than the reference-chain BFS.
 
-### KNOWN GAP worth closing early
+### Follow-up surfaced by closing the cfg-forwarding gap
 
-`orch_preflight` does **not** check that the early-window driver actually FORWARDS a
-registry key into `cfg`. That driver builds `cfg` from an **explicit allowlist**, and a key
-present in the entry but absent from the allowlist is silently dropped — the handler sees
-`undefined`, which reads as "feature off", not as an error. This produced **two false GREENs
-in one session** (`key_off`, and `reseed_per_side` on `0x0046d510`). Preflight already
-enforces exactly this rule for `run_diff.py`; extending it to
-`early_window_leaf_diff.py`'s `cfg` dict is a small, high-value fix.
+`orch_preflight` now checks BOTH harnesses (`eba90e61`): it verifies that every key an
+entry sets is actually forwarded into `early_window_leaf_diff.py`'s `cfg` allowlist, not
+just `run_diff.py`'s. 0 false positives across a 40-row sweep.
+
+That sweep surfaced **3 more rows with single-vector test lists** — the same
+non-degeneracy weakness `store_eax_at_ecx` had: **`active4slots_40ba60`**,
+**`zero_two_regions_477b40`**, **`pool_array_reset_486f90`**. Their handlers
+(`near_leaf_seed_outbuf`, `near_leaf_seed_multi_obs`) do use their test lists, so this is
+likely just thin vectors rather than an inert one — but each needs checking, and any that
+is a genuine one-observation row wants the `eax_from_test` treatment.
 
 ---
 
