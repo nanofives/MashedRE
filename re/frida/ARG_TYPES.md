@@ -1,7 +1,7 @@
 # arg_type index (GENERATED — do not hand-edit)
 
 Regenerate: `py -3.12 scripts\gen_arg_types_index.py`
-Handlers: 123 in `re/frida/diff_template.js` + 184 early-window-only in `re/frida/early_window_leaf_diff.py` | registry uses: 1090 across 298 distinct arg_types.
+Handlers: 123 in `re/frida/diff_template.js` + 184 early-window-only in `re/frida/early_window_leaf_diff.py` | registry uses: 1092 across 298 distinct arg_types.
 
 Answer "does an arg_type exist for this signature?" HERE. Open
 diff_template.js only to author a NEW handler (its header comments,
@@ -13,7 +13,7 @@ A registry entry naming an arg_type with no handler in EITHER harness
 | arg_type | diff_template.js line | registry uses | note |
 |---|---|---|---|
 | `none` | 213 | 145 |  |
-| `int_scalar` | 398 | 141 | int_scalar — single uint32 arg, any integer return type |
+| `int_scalar` | 398 | 142 | int_scalar — single uint32 arg, any integer return type |
 | `read_global` | 219 | 96 |  |
 | `void_write_observe` | 4941 | 51 | This detects whether both functions write the same value to the same address; the sentinel also confirms the function actually touches that address (if it do... |
 | `void_setter_observe` | 537 | 40 | Use for void(uint32) setters that write param_1 directly to a global. Strategy: call fn(value), read back target_global. Both orig and reimpl must have writt... |
@@ -25,8 +25,8 @@ A registry entry naming an arg_type with no handler in EITHER harness
 | `draw_quad_observe` | 3671 | 10 | CONFIG fields: vbuf_addr_str   string (hex) — override DAT_00898a20 if needed vbuf_len        int          — override 112 if buffer size differs |
 | `ptr_arg_int_get` | 413 | 10 | is left Queued, never falsely GREEN. NOT in SEEDED_ARG_TYPES: we rely on the natural non-degeneracy of a real deref, so a getter that ignores its arg stays t... |
 | `entity_field_set` | 621 | 8 | entity_field_set — fn(int param_1, uint32 param_2): void write to global array. input: [param_1, param_2].  Calls fn, then reads back the written address as ... |
+| `ptr_seed_observe` | 1314 | 8 | {i32:true} -> next value from test.scalars CONFIG.observe     array  [{buf:i, off:N, type:'f32'|'u8'|'u16'|'u32'|'s32'}] CONFIG.tests[i] = { seed:[{buf,off,t... |
 | `track_record_deref` | 4037 | 8 | is_getter         bool      — if true, compare return value; if false (dispatcher), use crash_equal_ok (both sides deref through fn-ptr) record_global_str st... |
-| `ptr_seed_observe` | 1314 | 7 | {i32:true} -> next value from test.scalars CONFIG.observe     array  [{buf:i, off:N, type:'f32'|'u8'|'u16'|'u32'|'s32'}] CONFIG.tests[i] = { seed:[{buf,off,t... |
 | `bgra_encode` | 1502 | 6 | Unblocks: 0x004df8d0 PixEncode1555, 0x004df910 PixEncode4444, 0x004df950 PixEncodeA8R3G3B2, 0x004df980 PixEncodeX4R4G4B4, 0x004df9e0 PixEncodeX8R8G8B8. |
 | `float_scalar` | 224 | 6 | ── Simple scalar types ─────────────────────────────────────────────────── |
 | `fmt_desc_pair_compare` | 3578 | 6 | bufA fingerprint ^ (bufB fingerprint << 8) -- both buffers since some comparators may set flag bits in either side. For 4-arg form: same shape, with p3/p4 ro... |
@@ -150,7 +150,7 @@ Evidence tag in hooks.csv: `green-earlywindow-rN`.
 | `near_leaf_seed_multi_obs` | 12 | void fn(void): NEAR-LEAF that reads pure C3 getters and conditionally writes SEVERAL absolute globals. cfg.observe_addrs=[...]. seed_sets[t]={globals:[[addr,val],...]}; seed, call, snapshot all observe_addrs. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via path toggles (do-nothing vs compute) |
 | `deref_struct_set` | 11 | void fn(ptr p, scalar...): writes deterministic values into fields of p. alloc+seed buffer, pass as p, call with nscalar args, snapshot observe offsets. test=[a0(,a1,a2)] |
 | `indexed_table_set` | 9 | void fn(i,val): *(tgt + i*stride) = val (fixed i=set_idx, vary val) |
-| `eax_ecx_insert` | 7 | fn(EAX=container, ECX=item): cross-link insert. trampoline sets EAX+ECX, seed both bufs (eax_seed/ecx_seed [{off,val}]), call, snapshot eax_observe/ecx_observe offsets in both + ret. reimpl naked __asm reading EAX+ECX. test ignored (single call) |
+| `eax_ecx_insert` | 7 | MECHANISM: any fn taking TWO REGISTER args in EAX+ECX (and optionally EDX via edx_val) - NOT only inserts. bufA/bufC are allocated ONCE and SHARED across both sides, so a pointer STORED from one reg into the other's buffer compares equal (this is what makes `mov [ecx],eax` shapes work). Original use case: cross-link insert. trampoline sets EAX+ECX, seed both bufs (eax_seed/ecx_seed [{off,val}]), call, snapshot eax_observe/ecx_observe offsets in both + ret. reimpl naked __asm reading EAX+ECX. test ignored (single call) |
 | `deref_p1field_glob_set` | 6 | fn(p1[, p2/v]): base=*(u32*)(*(u32*)(p1+p1_off)+*(u32*)glob); reimpl writes base fields. seed glob=0, p1->atab->base, optional p2 in-ptr(n) or scalar; snapshot base observe. test ignored |
 | `seed_globals_arg_multiobs` | 6 | void fn(int arg): PURE LEAF global-cascade. Per cfg.seed_sets[t]={arg, globals:[[a,v]...]} seed input globals (+ queue/sentinel), call f(arg), observe cfg.observe_addrs (list, joined). non-degen via distinct seed states/arg producing distinct write patterns |
 | `abs_ranges_setter` | 5 | void fn(scalars...): writes to ABSOLUTE globals (no ptr args). Reset cfg.abs_ranges [{addr,dwords}] to 0, call fn(test scalars), snapshot the same ranges, compare. nscalar from cfg. test=[a0(,a1,a2)] (varied -> non-degen). reimpl __cdecl reads/writes the absolute globals directly |
@@ -166,7 +166,7 @@ Evidence tag in hooks.csv: `green-earlywindow-rN`.
 | `table_bool_predicate` | 3 | u32 fn(i): if(bound>=0 && (int)i<=bound) return 0; return (*(u32*)(tgt+i*stride+off0) {==|!=} 0)?1:0. test=[idx,slotval] |
 | `double_deref_vec3_get` | 2 | void fn(i,out*): rec=*(tgt+i*stride); t=*(rec+rec_off); out[k]=*(t+out_off+k*4) for k<span. test=idx |
 | `eax_implicit_void` | 2 | void fn() with `this` in EAX — trampoline sets EAX=buf, check observed fields |
-| `esi_global_search` | 2 | u32 fn(ESI=key): linear-search a global table (count at glob, base tgt, stride) for entry[+0]==key; return an index-derived pointer or 0. ORIG called via `mov esi,key; jmp` trampoline; reimpl is __cdecl(key) reading the same globals (compares result, not ABI). Seed count=4, zero 4 entries, table[idx*stride]=key, key=0xC0DE0000|idx. test=idx (0..3 -> distinct matched addr -> non-degen) |
+| `esi_global_search` | 2 | MECHANISM: PARAMETERISED scan, not a fixed recipe - cfg.tgt base, cfg.glob count, cfg.stride, cfg.key_off key field (default 0). It SEEDS the table, so it does not depend on the live array being populated. u32 fn(ESI=key): linear-search for entry[+cfg.key_off]==key; return an index-derived pointer or 0. ORIG called via `mov esi,key; jmp` trampoline; reimpl is __cdecl(key) reading the same globals (compares result, not ABI). Seed count=4, zero 4 entries, table[idx*stride]=key, key=0xC0DE0000|idx. test=idx (0..3 -> distinct matched addr -> non-degen) |
 | `esi_struct_init` | 2 | void fn(ESI=p): NEAR-LEAF struct initializer; pointer is a REGISTER arg in ESI. Orig driven via esi-trampoline (mov esi,buf; jmp rva); Reim is plain __cdecl(void* p) (stack arg) -> compares observable buffer writes (behavior, not ABI). Per cfg.scenarios[t]={seed}: seed cfg.bufsize buf=seed, call, observe full buffer hex dwords. non-degen via the structured post-state (memset region + distinct const fields) + seed variation (proves full memset coverage) |
 | `float_2ptr_ret` | 2 | float fn(a*, b*): pure float of two vec3 args (dot/clamp/etc.), returns ST0. Seed a,b from cfg.seed_pairs[t]={a:[3 floats],b:[3 floats]} (plain numbers), call, compare float return as u32 bit pattern. Reimpl is VERBATIM naked __asm (bit-identical x87). test=index into seed_pairs (varied -> non-degen). signature ret MUST be 'float' |
 | `float_table_read` | 2 | fn(i): return *(float*)(base+i*stride) — seed_table bits read as float |
