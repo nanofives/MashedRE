@@ -1,0 +1,9 @@
+{
+  "description": "orch iter18 cycle2 - verify 0x00482900 ReplayGetSize against the CORRECTED two-arg signature int f(float, int). Uses ptr_seed_observe with a scalar-only layout (num_bufs 0) plus the NEW observe_ret. Expected returns 2572/1492/1492/7612/412/1744 - 5 distinct over 6 seeds. The 2.5/4 case (37.5 truncating to 37) pins __ftol's rounding mode; a round-to-nearest port returns 1780 and fails only there.",
+  "jobs": [
+    { "type": "build", "id": "iter18_build" },
+    { "type": "state_batch", "id": "iter18_rgs",
+      "hooks": ["replay_get_size"],
+      "scenario": "race", "dwell": 20 }
+  ]
+}

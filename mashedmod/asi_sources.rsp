@@ -353,3 +353,4 @@
 "Audio\AudioPoolFreeGuards.cpp"
 "Audio\AudioTableDispatch.cpp"
 "Vehicle\PhysicsBodySetLinearVelocity.cpp"
+"Save\ReplayGetSize.cpp"

@@ -1375,10 +1375,24 @@ function runDiff() {
                 }
             });
             const scalars = t.scalars || [];
-            let errO = null, errR = null;
-            try { Orig.apply(null, buildArgs(bufsO, scalars)); }   catch (e) { errO = e.message; }
-            try { Reimpl.apply(null, buildArgs(bufsR, scalars)); } catch (e) { errR = e.message; }
+            let errO = null, errR = null, retO = null, retR = null;
+            try { retO = Orig.apply(null, buildArgs(bufsO, scalars)); }   catch (e) { errO = e.message; }
+            try { retR = Reimpl.apply(null, buildArgs(bufsR, scalars)); } catch (e) { errR = e.message; }
             const fpO = [], fpR = [];
+            // observe_ret (2026-07-31): fold the RETURN into the fingerprint.
+            // Added because this handler otherwise fingerprints buffer contents
+            // only, so a function whose entire observable IS its return (e.g.
+            // 0x00482900, pure arithmetic over two scalar args) would produce an
+            // EMPTY fingerprint — identical on both sides, i.e. a false GREEN.
+            // With num_bufs 0 and observe [], observe_ret is the whole test.
+            if (CONFIG.observe_ret) {
+                const norm = function (v) {
+                    return (v === null || v === undefined) ? 'null'
+                         : (typeof v === 'object' ? (v.toInt32() | 0) : (v | 0)).toString(16);
+                };
+                fpO.push('r=' + norm(retO));
+                fpR.push('r=' + norm(retR));
+            }
             (CONFIG.observe || []).forEach(function (o) {
                 fpO.push(o.buf + '+' + o.off + '=' + rd(bufsO[o.buf], o.off, o.type));
                 fpR.push(o.buf + '+' + o.off + '=' + rd(bufsR[o.buf], o.off, o.type));

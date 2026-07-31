@@ -18891,4 +18891,65 @@ HOOKS = {
         ],
     },
 
+    # 0x00482900 ReplayGetSize (C2 -> C3 candidate, 47 bytes).
+    # Port mashedmod/src/mashed_re/Save/ReplayGetSize.cpp.
+    #
+    #   frames = (int)(param_1 * 60.0f / param_2);   // x87 chain then __ftol
+    #   size   = frames * 0x24 + 0x19c;
+    #   printf("Replay size is %d\n", size);
+    #   return size;
+    #
+    # RE-SPEC. An earlier screen marked this row READY with arg_type
+    # 'read_global' and ZERO arguments, off a stale plate. That would have been
+    # a FALSE-GREEN GENERATOR, not merely a bad test: read_global pushes no
+    # arguments, so both sides would have read the SAME leftover stack bytes as
+    # param_1/param_2 and returned the SAME value — bit-identical, and the
+    # non-degeneracy assertion cannot catch it, because the garbage is identical
+    # BETWEEN THE TWO SIDES within a run. The function takes TWO arguments; they
+    # are invisible to Ghidra because only x87 instructions touch them
+    # (FLD [ESP+4], FIDIV [ESP+0xc]).
+    #
+    # ARG_TYPE 'ptr_seed_observe' with a scalar-only layout: no buffers at all,
+    # just an f32 and an i32 threaded positionally. num_bufs 0 is deliberate.
+    # The observable is the RETURN, so observe is empty and fold_ret carries it.
+    #
+    # SAFE: leaf arithmetic plus a logger call. The only side effect is a line
+    # in the game's log, which is not game state.
+    #
+    # NON-DEGENERACY (asserted): size = (int)(a*60/b)*36 + 412.
+    #   a=1.0,  b=1  -> frames 60   -> 2572
+    #   a=1.0,  b=2  -> frames 30   -> 1492
+    #   a=0.5,  b=1  -> frames 30   -> 1492   (same size, different inputs —
+    #                                          proves BOTH args reach the math)
+    #   a=10.0, b=3  -> frames 200  -> 7612
+    #   a=0.0,  b=1  -> frames 0    -> 412    (pure header)
+    #   a=2.5,  b=4  -> frames 37.5 -> TRUNCATES to 37 -> 1744
+    # Five distinct returns over six seeds. The last one is the important one:
+    # 37.5 truncating to 37 pins __ftol's rounding mode — a port that rounded
+    # to nearest would return 38*36+412 = 1780 and fail only there.
+    'replay_get_size': {
+        'rva':        0x00482900,
+        'export':     'ReplayGetSize',
+        'signature':  {'ret': 'int32', 'args': ['float', 'int32']},
+        'arg_type':   'ptr_seed_observe',
+        'num_bufs':   0,
+        'arg_layout': [{'f32': True}, {'i32': True}],
+        'observe':    [],
+        'observe_ret': True,
+        'scenario':   'race',
+        'scenario_sentinel': 0x008815a0,
+        'path1_tests': [
+            {'scalars': [1.0,  1]},    # -> 2572
+            {'scalars': [1.0,  2]},    # -> 1492
+            {'scalars': [0.5,  1]},    # -> 1492
+            {'scalars': [10.0, 3]},    # -> 7612
+            {'scalars': [0.0,  1]},    # -> 412
+            {'scalars': [2.5,  4]},    # -> 1744  (37.5 truncates to 37)
+        ],
+        'path2_tests': [
+            {'scalars': [1.0,  1]},
+            {'scalars': [2.5,  4]},
+        ],
+    },
+
 }
