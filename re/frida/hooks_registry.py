@@ -18485,4 +18485,64 @@ HOOKS = {
         ],
     },
 
+    # 0x004d8770 RwStringGetSizeAligned (render, C2 -> C3 candidate, 34 bytes).
+    # Plate re/analysis/render_6_c1_to_c2_s4/0x004d8770.md; port
+    # mashedmod/src/mashed_re/Render/RwString.cpp.
+    #
+    # BEHAVIOR: ret = (strlen(s ? s : &DAT_005d8d70) + 4) & 0xfffffffc — the
+    # 4-byte-aligned on-stream size of a C string. The strlen is dispatched
+    # through the RenderWare engine string-function table DAT_007d3ff8 slot
+    # +0xf4, which FUN_004d8570 literally assigns to _strlen (confirmed, not
+    # inferred). __cdecl, one pointer arg (mov eax,[esp+4] / ret at 0x004d8770,
+    # 0x004d8791; the callee's `add esp,4` at 0x004d878c makes the vtable
+    # target __cdecl too).
+    #
+    # RETURN: uint, and load-bearing — caller FUN_004cf4a0 sums two of these
+    # into a stream chunk size (`iVar4 + iVar5 + 0x34 + iVar6` passed to
+    # FUN_004cc580). This resolves the brief's RETURN_UNVERIFIED flag.
+    #
+    # ARG_TYPE: 'str_arg_int_get', NOT 'ptr_arg_int_get'. ptr_arg_int_get seeds
+    # its buffer with dwords and never writes a NUL, so the callee's strlen
+    # would run past the allocation — the exact FontText 0x427840 crash class.
+    # str_arg_int_get writes an explicit terminator (diff_template.js).
+    #
+    # NON-DEGENERACY (asserted, not assumed): with (len+4)&~3 the seeds below
+    # return 4, 4, 8, 12, 16, 24, 32 — SIX distinct values over seven vectors.
+    # The 0-length and 1-length pair deliberately collide on 4: that pins the
+    # rounding boundary, where an off-by-one in the +4 would show up. This row
+    # is NOT in SEEDED_ARG_TYPES, so run_diff.py's non-degeneracy assertion
+    # still applies. Contrast 0x005aeed0, held blocked precisely because every
+    # synthetic seed there collapses to one value.
+    #
+    # CALLER-GATE: 0x004cf4a0 is C2 (caller_gate_144.tsv, GATE_PASS). Second
+    # caller FUN_004cf460 also named in the plate. harness_safety = SAFE (reads
+    # only; no global writes) per read-fleet brief runs/iter11_gate/gate_b6.md.
+    'rw_string_get_size_aligned': {
+        'rva':         0x004d8770,
+        'export':      'RwStringGetSizeAligned',
+        'signature':   {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':    'str_arg_int_get',
+        'scenario':    'race',
+        # The ONE live global this function reads: the engine string-function
+        # table root. Zero/garbage until FUN_004d8570 installs the slots at
+        # engine init, so a non-zero read here is real evidence the scenario got
+        # past RwEngineInit — without which the target's vtable dispatch could
+        # not have executed at all, and a 0-mismatch run would prove nothing.
+        'scenario_sentinel': 0x007d3ff8,
+        'path1_tests': [
+            '',                                # strlen 0  -> (0+4)&~3  = 4
+            'a',                               # strlen 1  -> (1+4)&~3  = 4
+            'abcd',                            # strlen 4  -> (4+4)&~3  = 8
+            'abcdefgh',                        # strlen 8  -> (8+4)&~3  = 12
+            'abcdefghijkl',                    # strlen 12 -> (12+4)&~3 = 16
+            'RwStringGetSizeAligned',          # strlen 22 -> (22+4)&~3 = 24
+            'MASHED_RwStringGetSizeAligned',   # strlen 29 -> (29+4)&~3 = 32
+        ],
+        'path2_tests': [
+            '',                                # -> 4
+            'abcdefgh',                        # -> 12
+            'MASHED_RwStringGetSizeAligned',   # -> 32
+        ],
+    },
+
 }

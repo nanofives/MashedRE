@@ -187,6 +187,11 @@ def main(argv):
         if not gate:
             print("no caller_gate_144.tsv - run the Ghidra sweep first")
             return 1
+        # --start N numbers the emitted units from gate_bN, so a later cut of
+        # the same TSV does not reuse ids the previous run already spent (iter11
+        # burned gate_b1..b8; iter12 continues at gate_b9).
+        # --skip must come LAST: everything after it is read as RVAs.
+        start = int(want[want.index("--start") + 1]) if "--start" in want else 1
         skip = set(want[want.index("--skip") + 1:]) if "--skip" in want else set()
         rows = [r for r in gate.values() if r["rva"] not in skip]
         rows.sort(key=lambda r: int(r["size"] or 9999))
@@ -195,7 +200,7 @@ def main(argv):
             chunk = rows[i:i + 6]
             if len(chunk) < 2:
                 break
-            sel.append({"id": "gate_b%d" % (i // 6 + 1),
+            sel.append({"id": "gate_b%d" % (i // 6 + start),
                         "subsystem": "mixed (gate-passing)",
                         "rvas": [r["rva"] for r in chunk]})
     else:

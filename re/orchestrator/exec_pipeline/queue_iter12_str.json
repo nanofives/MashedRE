@@ -1,0 +1,13 @@
+{
+  "description": "orch iter12 cycle2 - verify 0x004d8770 RwStringGetSizeAligned through the NEW str_arg_int_get seed handler (first user of that arg_type). Build then one-hook STATE batch. Expected per-seed returns 4,4,8,12,16,24,32 (6 distinct) - a GREEN where every seed returns the same value is INCONCLUSIVE, not GREEN.",
+  "jobs": [
+    { "type": "build", "id": "iter12_build" },
+    {
+      "type": "state_batch",
+      "id": "iter12_str",
+      "hooks": ["rw_string_get_size_aligned"],
+      "scenario": "race",
+      "dwell": 20
+    }
+  ]
+}

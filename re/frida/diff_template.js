@@ -419,6 +419,27 @@ function callFn(fn, input, buf) {
         return (ret === null || ret === undefined) ? 0
              : (typeof ret === 'object' ? (ret.toInt32() >>> 0) : (ret >>> 0));
     }
+    // str_arg_int_get — fn(const char*) -> int, for string-measure leaves whose
+    // arg is walked until a NUL. ptr_arg_int_get is UNSAFE for these: it fills
+    // its scratch with seeded dwords and never writes a terminator, so a strlen
+    // inside the callee runs off the end of the allocation (this project already
+    // ate that crash once — FontText 0x427840). Here each test vector is a JS
+    // STRING; the harness writes its bytes plus an explicit NUL into a shared
+    // 512-byte buffer before each call, so Orig and Reimpl see identical memory
+    // and the read is bounded by construction. Distinct string LENGTHS give
+    // distinct returns, so non-degeneracy comes free — but the registry comment
+    // must still state the per-seed expected values. Same byte-by-byte idiom as
+    // cstr_ret_offset below; Memory.allocUtf8String is deliberately unused here.
+    if (CONFIG.arg_type === 'str_arg_int_get') {
+        const sbuf = Memory.alloc(512);
+        const s = (typeof input === 'string') ? input : String(input);
+        for (let j = 0; j < s.length; j++)
+            sbuf.add(j).writeU8(s.charCodeAt(j) & 0xff);
+        sbuf.add(s.length).writeU8(0);
+        const ret = fn(sbuf);
+        return (ret === null || ret === undefined) ? 0
+             : (typeof ret === 'object' ? (ret.toInt32() >>> 0) : (ret >>> 0));
+    }
     // container_find_scalar — fn(container_ptr, int key) -> int32, where
     // container = [dataPtr@+0, count@+4]. The harness FABRICATES the container
     // per test so no live state is touched: input.data ints are written into a

@@ -348,3 +348,4 @@
 "Render\Vec3NormalizeScale.cpp"
 "Ai\HeadingAtan2.cpp"
 "Audio\AudioVecLength.cpp"
+"Render\RwString.cpp"
