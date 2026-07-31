@@ -76,7 +76,7 @@ PURE_LEAF_ARGTYPES = {
     'indexed_table_set',          # MECHANISM: Stack call fn(cfg.set_idx, val) with index FIXED to cfg.set_idx and test input t as val; seeds slot at cfg.tgt+cfg.set_idx*cfg.stride with 0xFFFFFFFF; ONLY observable is the written slot dword (return NOT observed). NARROW: index never varies across tests - a stride/addressing bug that only manifests at non-tested indices is invisible; use multiple registry entries with different cfg.set_idx values to cover index space.
     'range_init',                 # MECHANISM: Zero-arg call on stack; seeds cfg.len bytes at absolute cfg.tgt with 0xEEEEEEEE sentinel; observes the full dword range after call. Return value NOT observed (false-GREEN hazard if fn also returns a meaningful value). Parameterised by cfg.tgt (base) + cfg.len (byte count, multiple of 4). Broad: any void fn() that initialises a contiguous absolute global region with constants.
     'cond_global_set',            # MECHANISM: void fn(uint32 v) on stack; seeds `*cfg.tgt` from `t[0]`, calls with `t[1]`, observes `*cfg.tgt`; ONLY observable is the global u32; cfg: `tgt`; logic `if(v==0 || *tgt==0) *tgt=v`; test pairs [seed, arg] are chosen to exercise all three branches (v==0 write, *tgt==0 write, both-nonzero no-op); broadly applicable to any conditional scalar-global setter of this predicate shape.
-    'ptr_out_table_get',          # MECHANISM: Stack call fn(out_ptr, idx); seeds absolute table at cfg.tgt+idx*cfg.stride with cfg.span distinct dwords (in-range idx only); allocates SEPARATE out buffers per side; observes cfg.span dwords from out_ptr PLUS u32 return (in-range: n dwords written + ret=1; out-of-range: nothing written + ret=0). Params: cfg.tgt, cfg.stride, cfg.span (output dword count), cfg.bound. Broad: any bounds-checked table-lookup filling an out-buffer with a success/fail return.
+    'ptr_out_table_get',          # MECHANISM: Stack call fn(out_ptr, idx); seeds absolute table at cfg.tgt+idx*cfg.stride with cfg.span distinct dwords (in-range idx only); allocates SEPARATE out buffers per side; observes cfg.span dwords from out_ptr PLUS u32 return (in-range: n dwords written + ret=1; out-of-range: nothing written + ret=0). Params: cfg.tgt, cfg.stride, cfg.span (output dword count), cfg.bound. cfg.reseed_per_side re-seeds before EACH side - REQUIRED if the fn WRITES the block it copies out (else the original's result is left in place and a port that skipped the work reads it and passes). Broad: any bounds-checked table-lookup filling an out-buffer with a success/fail return.
     'idx2_table_get',             # MECHANISM: 3 stack args fn(out_ptr,i1,i2); out_ptr freshly allocated per side; seeds abs slot at cfg.tgt+(i1*cfg.mult+i2)*cfg.stride with distinct marker; observes *out AND return value - both compared, false-GREEN only possible if both match. cfg.tgt, cfg.mult, cfg.stride, cfg.bound, cfg.bound2; composite-multiply and both bounds are configurable.
     'cond_table_get',             # MECHANISM: fn(uint32 idx) stack; harness seeds rec=cfg.tgt+idx*cfg.stride with distinct dwords at cfg.off0/cfg.off1 and flag-word at cfg.offf; observes ONLY u32 return value (false-GREEN hazard - no field snapshot); cfg: tgt, stride, off0, off1, offf; test=[idx,flag] seeds both slots plus flag so both conditional branches are exercised non-degenerately.
     'ptr_compute_get',            # MECHANISM: Stack args (ptr out, u32 idx); seeds cfg.idxtbl[idxxstride]=(0x100|idx) (distinct per idx); fresh harness-allocated out-buffer per side (not shared); observes *out (computed address) + u32 return (1 in-range, 0 out-of-bound); cfg.tgt, cfg.idxtbl, cfg.stride, cfg.tscale, cfg.bound all configurable; applies to any indexed ptr-compute getter of this two-arg shape.
@@ -547,12 +547,24 @@ rpc.exports.diff = function(cfg) {
       // side. In-range idx writes n dwords + returns 1; out-of-range writes nothing + returns 0.
       const base = cfg.tgt, stride = cfg.stride | 0, n = (cfg.span | 0) || 1, bound = cfg.bound | 0;
       const idx = t >>> 0;
-      if (idx < bound) {
-        for (let j = 0; j < n; j++) ptr(base).add(idx * stride + j * 4).writeU32((0xC0DE0000 | ((idx << 4) | j)) >>> 0);
-      }
+      // cfg.reseed_per_side (default false): re-seed the table slots before EACH side
+      // instead of once per test. REQUIRED when the function itself WRITES the block it
+      // then copies out - e.g. 0x0046d510 runs a matrix transform into 0x881f74 at
+      // 0x0046d53a and copies the result from there. Seeded once, the original's transform
+      // leaves its result in place, so a port that SKIPPED the transform and merely copied
+      // the block would read that result and compare equal: a false GREEN one level down
+      // from the out3_idx one this row was just demoted for. Defaulting to false keeps every
+      // existing caller byte-identical (they are pure reads and mutate nothing).
+      const seedTbl = function () {
+        if (idx >= bound) return;
+        for (let j = 0; j < n; j++)
+          ptr(base).add(idx * stride + j * 4).writeU32((0xC0DE0000 | ((idx << 4) | j)) >>> 0);
+      };
+      seedTbl();
       const outO = Memory.alloc(0x40), outR = Memory.alloc(0x40); _keep.push(outO, outR);
       const rd = function (b) { const p = []; for (let j = 0; j < n; j++) p.push(b.add(j * 4).readU32() >>> 0); return p.join(','); };
       try { for (let j = 0; j < 16; j++) outO.add(j * 4).writeU32(0); const ro = Orig(outO, idx) >>> 0; o = rd(outO) + '|ret=' + ro; } catch (e) { eo = e.message; }
+      if (cfg.reseed_per_side) seedTbl();
       try { for (let j = 0; j < 16; j++) outR.add(j * 4).writeU32(0); const rr = Reim(outR, idx) >>> 0; r = rd(outR) + '|ret=' + rr; } catch (e) { er = e.message; }
     } else if (cfg.at === 'idx2_table_get') {
       // u32 fn(out_ptr, i1, i2): if(i1>=bound || i2>=bound2) return 0; *out=*(u32*)(base+(i1*mult+i2)*stride); return 1.

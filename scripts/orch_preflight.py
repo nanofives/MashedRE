@@ -41,6 +41,24 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 AGENT = ROOT / "re/frida/diff_template.js"
+EARLY_WINDOW = ROOT / "re/frida/early_window_leaf_diff.py"
+
+
+def early_window_argtypes():
+    """Names in PURE_LEAF_ARGTYPES — the early-window harness's dispatch gate.
+
+    Parsed from source rather than imported: importing that module is not free and
+    this checker must stay cheap enough to run before every boot."""
+    try:
+        src = EARLY_WINDOW.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return set()
+    m = re.search(r"PURE_LEAF_ARGTYPES\s*=\s*\{(.*?)\n\}", src, re.S)
+    if not m:
+        return set()
+    return set(re.findall(r"'([a-z0-9_]+)'", m.group(1)))
+
+
 RUNDIFF = ROOT / "re/frida/run_diff.py"
 HOOKS_CSV = ROOT / "hooks.csv"
 
@@ -196,8 +214,18 @@ def check(name, mapping, csv_rows):
     block, line = handler_block(at) if at else (None, None)
     if at in (None, "none", "void"):
         notes.append("arg_type %r needs no handler" % at)
+    elif block is None and at in early_window_argtypes():
+        # The EARLY-WINDOW lane is a second harness with its own dispatch table
+        # (PURE_LEAF_ARGTYPES in early_window_leaf_diff.py). Pre-flight only ever
+        # looked in diff_template.js, so it FAILED every early-window row - including
+        # ones already promoted through that lane, e.g. veh_tbl_8820a0_get3. Not a
+        # defect in the row; a blind spot in this checker. (orch-iter21.)
+        notes.append("arg_type %r is EARLY-WINDOW only - run it with "
+                     "`py -3.12 re/frida/early_window_leaf_diff.py <hook>`, NOT run_diff.py "
+                     "or run_diff_scenario_batch (they only know diff_template.js)" % at)
     elif block is None:
-        fails.append("arg_type %r has NO handler in diff_template.js" % at)
+        fails.append("arg_type %r has NO handler in EITHER harness "
+                     "(diff_template.js or early_window_leaf_diff.py)" % at)
     else:
         notes.append("handler %r at diff_template.js:%d" % (at, line))
         # 3. every CONFIG key the handler reads must be resolvable

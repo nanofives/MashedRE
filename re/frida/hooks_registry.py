@@ -1425,14 +1425,26 @@ HOOKS = {
     # Reads 3-DWORD vector at per-vehicle offsets +0x9C8/+0x9CC/+0x9D0.
     # out3_idx: 12-byte buf as first arg, vehicleIdx as second; compares return value (0/1).
     # U-1748 is open: direction type unconfirmed â€” does not affect offset/bounds correctness.
-    'vehicle_vec3_at_9c8_get': {
+        # RE-WIRED orch-iter21 2026-07-31 after the out3_idx false-GREEN audit
+    # (re/analysis/out3_idx_false_green_audit_20260731.md). The previous arg_type
+    # out3_idx is `return fn(buf, input>>>0)` - it NEVER reads the out buffer back, and
+    # this function returns a CONSTANT (MOV EAX,1 in range, XOR EAX,EAX out of range),
+    # so the old 9/9 GREEN would have been passed by a reimpl whose entire body is
+    # `return idx<16 ? 1 : 0`. Row demoted to C2. ptr_out_table_get observes
+    # out[0..span-1] AND the return, which is the payload this function exists for.
+    # 3 dwords from 0x881f68 (0x0046d716/0x0046d71e/0x0046d727), stride 0xd04, bound 0x10.
+'vehicle_vec3_at_9c8_get': {
         'rva':            0x0046d700,
         'export':         'VehicleVec3At9C8Get',
         'signature':      {'ret': 'int32', 'args': ['pointer', 'uint32']},
-        'arg_type':       'out3_idx',
+        'arg_type':      'ptr_out_table_get',
+        'target_global': 0x00881f68,
+        'stride':        0xd04,
+        'span':          3,
+        'bound':         0x10,
         'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 5, 10, 15, 16, 17, 255, 0xffffffff],
-        'path2_tests':    [0, 15, 16, 255],
+        'path1_tests':   [0, 1, 5, 10, 15, 3, 15, 0, 16, 17, 255],
+        'path2_tests':   [0, 15, 16],
     },
 
     # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -1815,14 +1827,26 @@ HOOKS = {
     # Read-only getter (sibling of VehicleVec3At9C8Get 0x0046d700). U-8408 open
     # (vec3 semantic) — does not affect offset/bounds correctness.
     # ref: re/analysis/bucket_gameplay_0045dff0_0046dd90/0x0046bce0.md
-    'vehicle_vec3_at_94_get': {
+        # RE-WIRED orch-iter21 2026-07-31 after the out3_idx false-GREEN audit
+    # (re/analysis/out3_idx_false_green_audit_20260731.md). The previous arg_type
+    # out3_idx is `return fn(buf, input>>>0)` - it NEVER reads the out buffer back, and
+    # this function returns a CONSTANT (MOV EAX,1 in range, XOR EAX,EAX out of range),
+    # so the old 9/9 GREEN would have been passed by a reimpl whose entire body is
+    # `return idx<16 ? 1 : 0`. Row demoted to C2. ptr_out_table_get observes
+    # out[0..span-1] AND the return, which is the payload this function exists for.
+    # 3 dwords from 0x882094 (0x0046bcf6/0x0046bcfe/0x0046bd07), stride 0xd04, bound 0x10.
+'vehicle_vec3_at_94_get': {
         'rva':            0x0046bce0,
         'export':         'VehicleVec3At94Get',
         'signature':      {'ret': 'int32', 'args': ['pointer', 'uint32']},
-        'arg_type':       'out3_idx',
+        'arg_type':      'ptr_out_table_get',
+        'target_global': 0x00882094,
+        'stride':        0xd04,
+        'span':          3,
+        'bound':         0x10,
         'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 5, 10, 15, 16, 17, 255, 0xffffffff],
-        'path2_tests':    [0, 15, 16, 255],
+        'path1_tests':   [0, 1, 5, 10, 15, 3, 15, 0, 16, 17, 255],
+        'path2_tests':   [0, 15, 16],
     },
 
     # 0x0046d740  VehicleVec3At6E4Set
@@ -16678,11 +16702,28 @@ HOOKS = {
     # 0x0046d510  VehicleVelocityWorldGet (ai, RACE) — direct twin of 0x0046d700; transforms
     #   the +0xac velocity float3 via FUN_004c3df0 (C4) then copies it out. out3_idx validates
     #   the 0/1 BOUNDS RETURN (idx<16); boundary tests 15/16/17 give the non-degenerate mix.
-    'vehicle_velocity_world_get': {
+        # RE-WIRED orch-iter21 2026-07-31 after the out3_idx false-GREEN audit
+    # (re/analysis/out3_idx_false_green_audit_20260731.md). The previous arg_type
+    # out3_idx is `return fn(buf, input>>>0)` - it NEVER reads the out buffer back, and
+    # this function returns a CONSTANT (MOV EAX,1 in range, XOR EAX,EAX out of range),
+    # so the old 9/9 GREEN would have been passed by a reimpl whose entire body is
+    # `return idx<16 ? 1 : 0`. Row demoted to C2. ptr_out_table_get observes
+    # out[0..span-1] AND the return, which is the payload this function exists for.
+    # reads 0x881f74 AFTER the FUN_004c3df0 transform at 0x0046d53a writes it (0x0046d53f/0x0046d547/0x0046d553), stride 0xd04, bound 0x10.
+'vehicle_velocity_world_get': {
         'rva': 0x0046d510, 'export': 'VehicleVelocityWorldGet', 'signature': {'ret': 'int32', 'args': ['pointer', 'uint32']},
-        'arg_type': 'out3_idx', 'lut_root_delta': 0, 'scenario': 'race',
-        'path1_tests': [0, 1, 5, 10, 15, 16, 17, 255, 0xffffffff],
-        'path2_tests': [0, 15, 16, 255],
+        'arg_type':      'ptr_out_table_get',
+        'target_global': 0x00881f74,
+        'stride':        0xd04,
+        'span':          3,
+        'bound':         0x10,
+        # The transform WRITES the block this then copies out, so the table must
+        # be re-seeded between the two sides. Without it the original's result is
+        # left in place and a port that SKIPPED the transform reads it and passes -
+        # the same false GREEN one level down from the one this row was demoted for.
+        'reseed_per_side': True, 'lut_root_delta': 0, 'scenario': 'race',
+        'path1_tests':   [0, 1, 5, 10, 15, 3, 15, 0, 16, 17, 255],
+        'path2_tests':   [0, 15, 16],
     },
     # 0x004853b0  SmplFzxStateBlockGetLogged (smplfzx, RACE) — int(id): validate via 0x00485340
     #   (C3); on miss log via 0x004987b0 + return 0; else return *( *( *(0x6e71cc)+0xc ) + id*0x10 ).
