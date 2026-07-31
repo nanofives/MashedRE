@@ -121,8 +121,9 @@ and neither had a `scenario_sentinel`. Two boots saved by a millisecond check.
 
 ## Lane choice for the next substantial run
 
-- **(a)** Author the 2 READY rows above — **do this first**, it is the only authorable work.
+- **(a)** ~~Author the 2 READY rows~~ — **done in iter21 cycle 4**; both promoted C2→C3.
 - **(b)** Plate `0x005515a0` C1→C2, which converts `0x0052ddc0` and `0x0052df40` to PASS.
+  **This is now the cheapest win** — see START HERE.
 - **(c)** Build a **results/time-trial scenario** in the launcher. Still the only route to
   `0x00411350` / `0x00411530`, which fired zero times in every race while sibling
   `0x00411600` fired ~1800 in the same runs. **Now cheaper than it was**: the asi-export
