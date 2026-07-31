@@ -2,8 +2,8 @@
 
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions.
 
-**C1 796 / C2 4008 / C3 879 / C4 183.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
-committed through **ef4add8e**, **not pushed** (135 commits ahead of origin/main).
+**C1 796 / C2 4006 / C3 881 / C4 183.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
+committed through **70063d3e**, **not pushed** (137 commits ahead of origin/main).
 Ledger: 29 promoted / 21 candidate / 8 briefed / 15 blocked.
 
 Resume with `/orchestrate` — it reads `re/orchestrator/state.json`, which is current.
@@ -11,33 +11,31 @@ iter21 ran 5 cycles (4 budgeted + a directed re-screen); hard stop #1 (context) 
 
 ---
 
-## START HERE: author `0x004b6b00` + `0x00407550`, verify in ONE boot
+## START HERE: the ladder is empty again — refill it
 
-The cycle-5 re-screen freed two rows that were parked as NEEDS_NEW_HANDLER. **Both handlers
-already exist** and `key_off` is already implemented, so this is authoring only — no harness
-work. Details in item 2 below. Pre-flight both before booting.
+`0x004b6b00` and `0x00407550` were authored and promoted C2→C3 (`70063d3e`). Nothing
+authorable is left. **Refilling is the job**, not a detour: pick a bucket and brief **≥12
+RVAs** on the read-fleet with `-MaxConcurrent 3..4` (off-quota).
 
-After that the ladder is empty again and **refilling is the job**, not a detour (see the
-skill's "Refill" note): pick a bucket and brief **>=12 RVAs** on the read-fleet with
-`-MaxConcurrent 2..4`. It is off-quota; iter21's 11-RVA brief cost $1.55.
+Highest-value targets, in order:
 
-Refill targets after the two rows above, in order:
+1. **Plate `0x005515a0` C1→C2** — sole owner of `0x0052ddc0` and `0x0052df40`, so one plate
+   converts both to gate-PASS. Cheapest structural win on the board.
+2. **Finish the out3_idx audit** — `0x0046d740` needs `cache_setter_observe` (it is a SETTER;
+   observable is the global block at `0x8816e4/e8/ec`), and `0x0046d510` needs an **in-race**
+   scenario with a payload-observing handler (the early-window lane force-calls before its
+   transform's matrix exists). Then **retire `out3_idx`**.
+3. **The 14 NO_OWNER ORPHAN rows** — need a different method than the reference-chain BFS.
 
-1. **Plate `0x005515a0` C1->C2.** It is the sole owner of `0x0052ddc0` and `0x0052df40`, so
-   one plate converts both to gate-PASS. Cheapest structural win on the board.
-2. **~~The 3 NEEDS_NEW_HANDLER rows~~ — RE-SCREENED, 0 of 3 need a new handler.**
-   `re/analysis/needs_new_handler_rescreen_20260731.md`. Two are now authorable:
-   - **`0x004b6b00`** — `eax_ecx_insert`, **zero handler changes**. It is `MOV [ECX],EAX; RET`.
-     Config: `ecx_observe: [0]`, `eax_seed: []`. bufA/bufC are shared across sides, so the
-     stored pointer compares equal.
-   - **`0x00407550`** — `esi_global_search` with `key_off: 0x44` (**already implemented**,
-     `0f273f78`). Config: `tgt 0x00639d80`, `glob 0x0063a5d0`, `stride 0xec`. This handler
-     **seeds** the table, so it is a stronger test than `0x00407580` got.
-   - **`0x005bfb90`** — the brief's blocker is refuted (`CALL [0x005cc094]` is a fixed IAT
-     slot; no real semaphore is needed). Still genuinely unsettled — **route to mutator/defer**,
-     it is a teardown path whose only behaviour is two outbound calls.
-3. **The 14 NO_OWNER ORPHAN rows** — need a different method than the reference-chain BFS,
-   which ran out of edges on them. Do not re-run that method on them.
+### KNOWN GAP worth closing early
+
+`orch_preflight` does **not** check that the early-window driver actually FORWARDS a
+registry key into `cfg`. That driver builds `cfg` from an **explicit allowlist**, and a key
+present in the entry but absent from the allowlist is silently dropped — the handler sees
+`undefined`, which reads as "feature off", not as an error. This produced **two false GREENs
+in one session** (`key_off`, and `reseed_per_side` on `0x0046d510`). Preflight already
+enforces exactly this rule for `run_diff.py`; extending it to
+`early_window_leaf_diff.py`'s `cfg` dict is a small, high-value fix.
 
 ---
 
