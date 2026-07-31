@@ -663,8 +663,28 @@ function callFn(fn, input, buf) {
     // contents are never read back or fingerprinted; a reimpl that returns the correct scalar
     // while writing garbage to *buf passes silently; use out1_idx when the written value must also
     // be verified; CONFIG: tests[] list of uint32 indices; no global seeding.
+    // RETIRED orch-iter21 2026-07-31. Do NOT reintroduce.
+    //
+    // The body was `return fn(buf, input >>> 0);` - it passed a scratch buffer and
+    // compared the RETURN VALUE ALONE, never reading the buffer back, never
+    // fingerprinting it, never even poisoning it. All four rows that used it turned
+    // out to be bounds-checked vec3 accessors returning a CONSTANT 1 in range and 0
+    // out of range, so the return carried zero information about the data moved and
+    // a reimpl whose entire body was `return idx<16 ? 1 : 0` passed 9/9 GREEN on
+    // every one of them. Audit: re/analysis/out3_idx_false_green_audit_20260731.md.
+    //
+    // All four were re-verified under handlers that observe the payload:
+    // ptr_out_table_get for the getters, cache_setter_observe for the setter.
+    // There is NO call shape for which out3_idx is the right choice - use
+    // ptr_out_table_get (observes out[0..span-1] + return), out1_idx (one written
+    // dword + return), or idx_out2. This stub stays so the name resolves and fails
+    // LOUDLY rather than silently reverting to the old behaviour if an old entry or
+    // an old brief resurfaces.
     if (CONFIG.arg_type === 'out3_idx') {
-        return fn(buf, input >>> 0);
+        send({ type: 'error', msg: 'arg_type out3_idx is RETIRED (false-GREEN: it never ' +
+              'observes the out buffer). Use ptr_out_table_get / out1_idx / idx_out2 - see ' +
+              're/analysis/out3_idx_false_green_audit_20260731.md' });
+        throw new Error('out3_idx is retired');
     }
     // out1_idx — fn(out_ptr, uint32_idx) -> int. Same argument order as out3_idx,
     // but the fingerprint INCLUDES THE WRITTEN DWORD, not just the return value.

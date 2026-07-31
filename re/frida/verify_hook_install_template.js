@@ -111,8 +111,14 @@ function callFn(fn, input, buf) {
     if (CONFIG.arg_type === 'int_with_out_ptr') {
         return fn(input >>> 0, buf);
     }
+    // RETIRED orch-iter21 2026-07-31 — see diff_template.js and
+    // re/analysis/out3_idx_false_green_audit_20260731.md. It passed a scratch buffer
+    // and compared the RETURN VALUE ALONE, never reading the buffer back; all four
+    // rows using it returned a CONSTANT in range, so a reimpl that moved no data at
+    // all passed. Throws rather than silently reverting if an old entry resurfaces.
     if (CONFIG.arg_type === 'out3_idx') {
-        return fn(buf, input >>> 0);
+        throw new Error('arg_type out3_idx is retired (false-GREEN: never observes ' +
+                        'the out buffer); use ptr_out_table_get / out1_idx / idx_out2');
     }
     if (CONFIG.arg_type === 'idx_out2') {
         return fn(input >>> 0, buf, buf.add(4));
@@ -185,7 +191,7 @@ function runVerification() {
     });
 
     const Patched = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, 'mscdecl');
-    const buf = (['vec3_ptr', 'out3_idx'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
+    const buf = (['vec3_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12)  /* out3_idx retired */
               : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
               : (CONFIG.arg_type === 'time_diff_decompose') ? Memory.alloc(16)
               : (CONFIG.arg_type === 'vec3_normalize') ? Memory.alloc(24)  // out[12] + in[12]

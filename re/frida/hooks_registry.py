@@ -1848,21 +1848,77 @@ HOOKS = {
         'path1_tests':   [0, 1, 5, 10, 15, 3, 15, 0, 16, 17, 255],
         'path2_tests':   [0, 15, 16],
     },
-
-    # 0x0046d740  VehicleVec3At6E4Set
-    # if (0xf < veh) return 0; writes input vec3 into &DAT_008816e4 + veh*0xd04.
-    # out3_idx: 12-byte buf is the INPUT vec3 (read by the setter), vehicleIdx
-    # second; compares return value (0/1 bounds). The write side-effect lands in
-    # the inactive per-vehicle .bss record at menu (benign). U-8421 open.
-    # ref: re/analysis/bucket_gameplay_0045dff0_0046dd90/0x0046d740.md
+    # 0x0046d740 VehicleVec3At6E4Set - RE-WIRED orch-iter21 after the out3_idx audit
+    # (re/analysis/out3_idx_false_green_audit_20260731.md). Row was demoted to C2.
+    #
+    #   f(src_ptr, idx): if (idx >= 0x10) return 0;
+    #                    dst = 0x008816e4 + idx*0xd04;
+    #                    dst[0..2] = src[0..2];  return 1;
+    #   (0x0046d756/0x0046d758, 0x0046d75e/0x0046d761, 0x0046d767/0x0046d76a)
+    #
+    # THIS IS A SETTER, so ptr_out_table_get does not fit it - the observable is the
+    # GLOBAL BLOCK it writes, not an out buffer. out3_idx observed NEITHER, and it
+    # also handed both sides the same undifferentiated scratch as their SOURCE, so
+    # even the written values were uncontrolled. cache_setter_observe seeds absolute
+    # addresses, calls, then reads absolute addresses, snapshotting and restoring
+    # every one - which is exactly the shape.
+    #
+    # THE SOURCE IS AN ABSOLUTE ADDRESS, NOT THE HARNESS BUFFER, and that is the
+    # load-bearing choice. A `null` in args would pass the shared scratch buf, whose
+    # contents this handler does not seed: every in-range test would then copy the
+    # same (zero) bytes, and a port that wrote a constant zero would pass. Passing
+    # slot 15's block as a raw integer arg lets `seed` control the source dwords, so
+    # each test copies DIFFERENT values. Slot 15 is never a destination here.
+    #
+    # NON-DEGENERACY (asserted, and checkable from the fingerprints):
+    #   idx=0  <- AAAA0001,AAAA0002,AAAA0003
+    #   idx=1  <- BBBB0001,BBBB0002,BBBB0003   (different slot AND different values)
+    #   idx=2  <- CCCC0001,CCCC0002,CCCC0003
+    #   idx=16 -> OOB: destination slot 0 must still read the 0x5EED0000 sentinel
+    # The destinations are pre-seeded with 0x5EED0000 so "wrote nothing" is visible
+    # rather than reading as a stale match, and the OOB vector is what proves the
+    # bounds check still bites - the half of the behaviour out3_idx DID cover.
+    # A port that ignored idx and always wrote slot 0 fails idx=1 and idx=2; one that
+    # wrote unconditionally fails idx=16; one that copied the wrong offsets fails all.
+    #
+    # SAFE: every seeded and observed address is snapshotted and restored by the
+    # handler, so the live vehicle records are unchanged after the run.
     'vehicle_vec3_at_6e4_set': {
         'rva':            0x0046d740,
         'export':         'VehicleVec3At6E4Set',
-        'signature':      {'ret': 'int32', 'args': ['pointer', 'uint32']},
-        'arg_type':       'out3_idx',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'uint32']},
+        'arg_type':       'cache_setter_observe',
         'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 5, 10, 15, 16, 17, 255, 0xffffffff],
-        'path2_tests':    [0, 15, 16, 255],
+        'scenario':       'race',
+        'scenario_sentinel': 0x008815a0,
+        'path1_tests': [
+            {'seed': [{'addr': '0x0088da20', 'val': 0xaaaa0001}, {'addr': '0x0088da24', 'val': 0xaaaa0002}, {'addr': '0x0088da28', 'val': 0xaaaa0003},
+                      {'addr': '0x008816e4', 'val': 0x5eed0000}, {'addr': '0x008816e8', 'val': 0x5eed0001}, {'addr': '0x008816ec', 'val': 0x5eed0002}],
+             'args': [0x0088da20, 0],
+             'obs':  ['0x008816e4', '0x008816e8', '0x008816ec']},
+            {'seed': [{'addr': '0x0088da20', 'val': 0xbbbb0001}, {'addr': '0x0088da24', 'val': 0xbbbb0002}, {'addr': '0x0088da28', 'val': 0xbbbb0003},
+                      {'addr': '0x008823e8', 'val': 0x5eed0000}, {'addr': '0x008823ec', 'val': 0x5eed0001}, {'addr': '0x008823f0', 'val': 0x5eed0002}],
+             'args': [0x0088da20, 1],
+             'obs':  ['0x008823e8', '0x008823ec', '0x008823f0']},
+            {'seed': [{'addr': '0x0088da20', 'val': 0xcccc0001}, {'addr': '0x0088da24', 'val': 0xcccc0002}, {'addr': '0x0088da28', 'val': 0xcccc0003},
+                      {'addr': '0x008830ec', 'val': 0x5eed0000}, {'addr': '0x008830f0', 'val': 0x5eed0001}, {'addr': '0x008830f4', 'val': 0x5eed0002}],
+             'args': [0x0088da20, 2],
+             'obs':  ['0x008830ec', '0x008830f0', '0x008830f4']},
+            {'seed': [{'addr': '0x0088da20', 'val': 0xdddd0001}, {'addr': '0x0088da24', 'val': 0xdddd0002}, {'addr': '0x0088da28', 'val': 0xdddd0003},
+                      {'addr': '0x008816e4', 'val': 0x5eed0000}, {'addr': '0x008816e8', 'val': 0x5eed0001}, {'addr': '0x008816ec', 'val': 0x5eed0002}],
+             'args': [0x0088da20, 16],
+             'obs':  ['0x008816e4', '0x008816e8', '0x008816ec']},
+        ],
+        'path2_tests': [
+            {'seed': [{'addr': '0x0088da20', 'val': 0xaaaa0001}, {'addr': '0x0088da24', 'val': 0xaaaa0002}, {'addr': '0x0088da28', 'val': 0xaaaa0003},
+                      {'addr': '0x008816e4', 'val': 0x5eed0000}, {'addr': '0x008816e8', 'val': 0x5eed0001}, {'addr': '0x008816ec', 'val': 0x5eed0002}],
+             'args': [0x0088da20, 0],
+             'obs':  ['0x008816e4', '0x008816e8', '0x008816ec']},
+            {'seed': [{'addr': '0x0088da20', 'val': 0xdddd0001}, {'addr': '0x0088da24', 'val': 0xdddd0002}, {'addr': '0x0088da28', 'val': 0xdddd0003},
+                      {'addr': '0x008816e4', 'val': 0x5eed0000}, {'addr': '0x008816e8', 'val': 0x5eed0001}, {'addr': '0x008816ec', 'val': 0x5eed0002}],
+             'args': [0x0088da20, 16],
+             'obs':  ['0x008816e4', '0x008816e8', '0x008816ec']},
+        ],
     },
 
     # 0x00461e90  SurfaceCodeClassify
