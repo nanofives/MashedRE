@@ -84,6 +84,11 @@ def main():
         # made install verification unreachable exactly for the rows most likely
         # to need a C4 lift (orch-iter20).
         'lut_root_delta': hook.get('lut_root_delta', 0),
+        # Forwarded so path2 can neutralise the same callees the A/B path does.
+        # Present in the registry entry is NOT enough — it has to be DELIVERED.
+        'stub_at':        [f"0x{a:08x}" for a in hook.get('stub_at', [])],
+        'stub_nargs':     hook.get('stub_nargs', 3),
+        'stub_ret':       hook.get('stub_ret', 0),
         'tests':          hook['path2_tests'],
     }
 
@@ -158,8 +163,19 @@ def write_report(name, config, out_path):
         else:                 fail_flags.append(f"opcode {post['opcode_hex']} != 0xE9")
         if post['rel32_ok']:  pass_flags.append('rel32 matches reimpl - target - 5')
         else:                 fail_flags.append('rel32 mismatch')
-        if post['bytes_changed']: pass_flags.append('first 8 bytes mutated by patcher')
-        else:                     fail_flags.append('bytes unchanged after Module.load')
+        if post['bytes_changed']:
+            pass_flags.append('first 8 bytes mutated by patcher')
+        elif post['opcode_ok'] and post['rel32_ok']:
+            # Not a defect: dinput8 auto-loads the .asi at process start, so
+            # RH_ScopedInstall has ALREADY written the JMP before this harness
+            # snapshots PRE. Module.load then finds nothing left to patch, and
+            # bytes-unchanged is the expected reading. What matters is that the
+            # site holds a correct JMP to the reimpl, which opcode_ok + rel32_ok
+            # already assert. Flagging this FAIL made install verification look
+            # broken for every hook installed the normal way (orch-iter21).
+            pass_flags.append('JMP already installed pre-load (dinput8 autoload); site verified')
+        else:
+            fail_flags.append('bytes unchanged after Module.load and site holds no valid JMP')
     else:
         fail_flags.append('post_snapshot missing')
     if res:

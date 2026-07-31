@@ -383,6 +383,50 @@ function armOracle(){
 // verification if the function under test never ran. Cold paths only: see the
 // hot-path rule in CLAUDE.md (>1000 calls/s destabilises the process).
 const CNT = {};
+// Tokens that could not be armed yet because mashed_re_dev.asi was not loaded at
+// attach time. armCounters() runs at spawn+attach (entry point), which is BEFORE
+// dinput8 has loaded the .asi, so every "asi:" token returns NOEXPORT there. The
+// driver calls rearmAsi() once the menu is up (phase 1) — by then the .asi is
+// loaded and the export resolves. Without this the asi: counter is always
+// NOEXPORT and the C4 lift has no evidence. (orch-iter21.)
+const PENDING_ASI = [];
+function armAsiToken(tok, out){
+  const nm = tok.slice(4);
+  let ep = null;
+  // Frida 17 removed the STATIC Module.findExportByName(moduleName, symbol); it
+  // now lives on the module instance. The static form throws TypeError, which the
+  // old catch swallowed into a null — indistinguishable from "not loaded yet", and
+  // it cost two boots in orch-iter21 chasing a load-order theory. Try the instance
+  // API first and only then the legacy static.
+  try {
+    const m = Process.findModuleByName('mashed_re_dev.asi');
+    if (m) ep = m.findExportByName(nm);
+  } catch(e){}
+  if (!ep) { try { ep = Module.findExportByName('mashed_re_dev.asi', nm); } catch(e){} }
+  if (!ep) { out.push(tok + '=NOEXPORT'); return false; }
+  CNT[tok] = 0;
+  Interceptor.attach(ep, { onEnter: function(){ CNT[tok]++; } });
+  out.push(tok + '=armed@' + ep);
+  return true;
+}
+function rearmAsi(){
+  try {
+    const out = [];
+    for (let i = PENDING_ASI.length - 1; i >= 0; i--) {
+      if (armAsiToken(PENDING_ASI[i], out)) PENDING_ASI.splice(i, 1);
+    }
+    if (PENDING_ASI.length) {
+      // Still unresolved: say WHY. Either the .asi is not loaded (no module) or it
+      // is loaded but does not export the name. Guessing between those cost a boot
+      // in orch-iter21.
+      const mods = Process.enumerateModules()
+        .filter(function(m){ return /asi$|dinput8|d3d9/i.test(m.name); })
+        .map(function(m){ return m.name; });
+      out.push('[loaded: ' + (mods.join(',') || 'none') + ']');
+    }
+    return out.length ? out.join(' ') : 'nothing pending';
+  } catch(e){ return 'ERR ' + e; }
+}
 function armCounters(csv){
   try {
     const out = [];
@@ -400,13 +444,8 @@ function armCounters(csv){
       // non-zero count is positive proof the port executed. (orch-iter20, after
       // an armed[orig] reading nearly became a false C4.)
       if (tok.indexOf('asi:') === 0) {
-        const nm = tok.slice(4);
-        let ep = null;
-        try { ep = Module.findExportByName('mashed_re_dev.asi', nm); } catch(e){}
-        if (!ep) { out.push(tok + '=NOEXPORT'); return; }
-        CNT[tok] = 0;
-        Interceptor.attach(ep, { onEnter: function(){ CNT[tok]++; } });
-        out.push(tok + '=armed@' + ep);
+        // Deferred on failure — rearmAsi() retries once the menu is up.
+        if (!armAsiToken(tok, out)) PENDING_ASI.push(tok);
         return;
       }
       const rva = parseInt(tok, 16);
@@ -439,6 +478,7 @@ function armCounters(csv){
 rpc.exports = {
   ready: function(){ return modBase() ? 1 : 0; },
   armCounters: function(csv){ return armCounters(csv); },
+  rearmAsi: function(){ return rearmAsi(); },
   counters: function(){ return JSON.stringify(CNT); },
   armOracle: function(){ return armOracle(); },
   armBypass: function(){ return armBypass(); },
@@ -649,6 +689,10 @@ def main():
         # 1) wait for the menu (main loop live, phase 1)
         if wait_phase(1, 40, "menu (phase 1)") is None: raise SystemExit
         time.sleep(0.5)
+        # asi:ExportName counters could not resolve at attach time (dinput8 had not
+        # loaded mashed_re_dev.asi yet). The menu being up means it is loaded now.
+        if "asi:" in _count_csv:
+            print("  [counters/asi]", E.rearm_asi())
         # 2) write the selection globals
         cfg = {"track": args.track, "mode": args.mode, "cars": args.cars, "car": args.car,
                "rule": args.rule, "team": args.team,

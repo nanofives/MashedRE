@@ -44,6 +44,16 @@ function pollLutThenRun(triesLeft) {
 }
 
 function callFn(fn, input, buf) {
+    // Registry entries for ptr_seed_observe / stub_dispatch_observe express their
+    // test vectors as {'scalars': [...]} rather than a bare value or array. path2
+    // had no case for that shape, so the dispatcher fell through to `fn(input)`
+    // and every call died with "bad argument count" BEFORE the function was ever
+    // entered — the same class of hole vec3_normalize had. Keyed off the TEST
+    // SHAPE, not the arg_type, so it covers every handler that adopts the shape.
+    // (orch-iter21.)
+    if (input && typeof input === 'object' && Array.isArray(input.scalars)) {
+        return fn.apply(null, input.scalars);
+    }
     if (CONFIG.arg_type === 'none') {
         // Zero-arg invocation; `input` is a dummy iteration marker.
         return fn();
@@ -150,6 +160,24 @@ function runVerification() {
            opcode_ok: opcode === 0xE9,
            rel32_ok:  rel32 === expected_rel32,
            bytes_changed: preBytes !== postBytes });
+
+    // stub_at: neutralise callees that cannot survive a force-call. For
+    // 0x00482900 the callee 0x004987b0 ends in OutputDebugStringA, whose debug-print
+    // SEH exception Frida surfaces, so every force-call errored out before returning
+    // — on BOTH sides, which is why it produced no verdict rather than a RED. The
+    // A/B path already stubs it (registry 'stub_at'); path2 did not, so path2 could
+    // never exercise these rows at all. Same install guard as reg_this_call_observe.
+    (CONFIG.stub_at || []).forEach(function (a) {
+        try {
+            const p = ptr(a);
+            Interceptor.replace(p, new NativeCallback(function () {
+                return CONFIG.stub_ret | 0;
+            }, 'int', new Array(CONFIG.stub_nargs || 3).fill('pointer'), 'mscdecl'));
+            send({ type: 'log', msg: 'stubbed callee ' + p });
+        } catch (e) {
+            send({ type: 'error', msg: 'stub_at ' + a + ' failed: ' + e.message });
+        }
+    });
 
     let reimplEntries = 0;
     Interceptor.attach(reimplAddr, {

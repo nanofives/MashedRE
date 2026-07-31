@@ -1,0 +1,25 @@
+=== verify_hook_install report (replay_get_size) ===
+
+target address: 0x00482900  export: ReplayGetSize
+PRE  bytes:     e9 7b c9 58 73 d8 0d 28
+asi base:       0x739c0000
+reimpl addr:    0x73a0f280
+POST bytes:     e9 7b c9 58 73 d8 0d 28
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x7358c97b  expected 0x7358c97b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2
+
+per-input results:
+  [OK] input={'scalars': [1, 1]}  got=2572  err=
+  [OK] input={'scalars': [2.5, 4]}  got=1744  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)
