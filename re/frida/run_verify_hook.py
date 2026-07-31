@@ -77,7 +77,13 @@ def main():
         'export':         hook['export'],
         'signature':      hook['signature'],
         'arg_type':       hook['arg_type'],
-        'lut_root_delta': hook['lut_root_delta'],
+        # Default 0, matching the overwhelming majority of entries that set it.
+        # This was an unguarded subscript, so path2 raised KeyError for every
+        # hook authored without the key — i.e. every recent entry, since a leaf
+        # with no RW-globals LUT involvement has no reason to declare it. That
+        # made install verification unreachable exactly for the rows most likely
+        # to need a C4 lift (orch-iter20).
+        'lut_root_delta': hook.get('lut_root_delta', 0),
         'tests':          hook['path2_tests'],
     }
 

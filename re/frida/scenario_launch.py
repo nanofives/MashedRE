@@ -388,11 +388,48 @@ function armCounters(csv){
     const out = [];
     csv.split(',').forEach(function(tok){
       tok = tok.trim(); if(!tok) return;
+      // "asi:ExportName" counts entries into OUR PORT rather than into the
+      // original RVA. This is the measurement the C4 rubric actually wants.
+      // Counting at the original RVA cannot answer "did our code run": the
+      // inline JMP may not be installed yet when counters are armed (attach
+      // happens very early in boot, before dinput8 has loaded the .asi), and
+      // once Interceptor.attach patches the site, re-reading the bytes shows
+      // Frida's trampoline instead of our JMP — so the install state is
+      // unreadable at both ends. A counter on the .asi export sidesteps all of
+      // it: the export is only reachable THROUGH the installed JMP, so a
+      // non-zero count is positive proof the port executed. (orch-iter20, after
+      // an armed[orig] reading nearly became a false C4.)
+      if (tok.indexOf('asi:') === 0) {
+        const nm = tok.slice(4);
+        let ep = null;
+        try { ep = Module.findExportByName('mashed_re_dev.asi', nm); } catch(e){}
+        if (!ep) { out.push(tok + '=NOEXPORT'); return; }
+        CNT[tok] = 0;
+        Interceptor.attach(ep, { onEnter: function(){ CNT[tok]++; } });
+        out.push(tok + '=armed@' + ep);
+        return;
+      }
       const rva = parseInt(tok, 16);
       const p = ga(rva); if(!p) { out.push(tok + '=NOBASE'); return; }
+      // READ THE INSTALL STATE BEFORE ATTACHING. Interceptor.attach patches the
+      // target itself, so reading after would report Frida's trampoline rather
+      // than whether OUR inline JMP is live. Order is load-bearing here.
+      //
+      // This exists for the C4 lift: the rubric wants a canonical-scenario run
+      // with the hook ACTUALLY INSTALLED, and counting entries alone does not
+      // show that. Doing it in the SAME run closes the gap that otherwise makes
+      // the claim an inference across two separate boots (orch-iter20).
+      let inst = 'orig';
+      try {
+        if (p.readU8() === 0xe9) {
+          const tgt = p.add(5).add(p.add(1).readS32());
+          const m = Process.findModuleByAddress(tgt);
+          inst = 'JMP->' + (m ? m.name : '?') + '@' + tgt;
+        }
+      } catch(e){ inst = 'READERR'; }
       CNT[tok] = 0;
       Interceptor.attach(p, { onEnter: function(){ CNT[tok]++; } });
-      out.push(tok + '=armed');
+      out.push(tok + '=armed[' + inst + ']');
     });
     return out.join(' ');
   } catch(e){ return 'ERR ' + e; }
