@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-31T03:10:00Z",
+  "updatedAt": "2026-07-31T05:40:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -76,37 +76,32 @@
       ]
     },
     {
-      "heading": "Orchestrator lane (iter14, 2026-07-31)",
+      "heading": "Orchestrator lane (iter15, 2026-07-31)",
       "fields": [
         {
-          "label": "iter14: 2 pool-free guards C2->C3",
-          "value": "Commit 527be742. 0x005ae380 + 0x005ad8b0, guarded pool-free wrappers. Extended reg_this_call_observe with a this_reg='stack' __cdecl trampoline; stubbing the callee was the only safe route because the pool anchor is a hardcoded immediate, so a real call would hand a fabricated node to the LIVE allocator. Recording the stub's arg0 checks branch AND anchor at once. Third sibling 0x005a6c90 held INCONCLUSIVE — degenerate, cause not established, not promoted on its siblings' strength.",
+          "label": "iter15: 3 promotions",
+          "value": "0x005a6c90 (the held pool-free guard, resolved standalone) + the table-dispatch pair 0x005b10a0/0x005b10e0. Commits 78690b6e, 16a36c1f, 233cea51.",
           "kind": "text"
         },
         {
-          "label": "Harness bug fixed (had RED'd 3 correct ports)",
-          "value": "reg_this_call_observe recorded 'callee not invoked' as null and required both sides non-null to match, so null==null read as a mismatch. For a guarded call, 'not invoked' IS the observation of the taken branch. Now a 'not-called' sentinel counted in both the match test and the distinct-value check.",
+          "label": "NEW rubric: indirect-dispatch clause (user-approved)",
+          "value": "Where a function's ONLY callee is `call dword ptr [reg]` off a runtime data table, the C2->C3 callee-half is vacuous as for a leaf — the call graph holds no unknown function, only a datum. REQUIRES the A/B to exercise the dispatch itself via a stubbed target recording its arguments. re/CONFIDENCE.md.",
           "kind": "text"
         },
         {
-          "label": "Mutator lane screened — it is far narrower than it looked",
+          "label": "Harness safety gate added",
+          "value": "reg_this_call_observe now snapshots 5 bytes at the callee entry and REFUSES to run if replace+flush left them unchanged. Found via 0x005a6c90: three hooks in one batch replacing the SAME callee address, the middle one silently lost its stub — verdict was safe (INCONCLUSIVE) but the real callee would have run with a fabricated node.",
+          "kind": "text"
+        },
+        {
+          "label": "Handler lane",
           "value": [
-            "Of 44 MUTATOR_LANE rows, only 2 are AB_READY",
-            "20 irreversible · 11 un-enumerable · 7 non-deterministic · 4 one-shot",
-            "Allocation ADDRESSES dominate the non-determinism (6 of 7), not timers",
-            "AB_READY: 0x0049ff30 (1 byte) and 0x0045c820 (16 bytes)"
+            "vtable_table_dispatch: 1 handler, 2 rows — done",
+            "8 SPEC_COMPLETE rows still authorable",
+            "Mutator lane is only 2 AB_READY rows of 44",
+            "Gate pool 102/102 judged; synthetic-getter lane exhausted"
           ],
           "kind": "list"
-        },
-        {
-          "label": "Handler specs: 22/22 rows",
-          "value": "10 SPEC_COMPLETE, 9 NEEDS_GHIDRA, 3 SCENARIO_ONLY. Two EXISTING handlers generalise rather than needing new ones. 0x004af32d correctly refused — it is SetUnhandledExceptionFilter, which Frida itself depends on.",
-          "kind": "text"
-        },
-        {
-          "label": "Gate pool",
-          "value": "102/102 judged. All 3 READY rows resolved (2 promoted, 1 degenerate) — the synthetic-getter lane in this pool is exhausted.",
-          "kind": "text"
         }
       ]
     },
