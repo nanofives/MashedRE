@@ -19327,4 +19327,143 @@ HOOKS = {
         ],
     },
 
+    # 0x00407580 SubsystemARecordKey (C2 -> C3 candidate, 17 bytes).
+    # Port mashedmod/src/mashed_re/Gameplay/SubsystemARecordKey.cpp.
+    #
+    #   return *(int*)(0x00639dc4 + index * 0xec);
+    #
+    # Read from the LISTING (Mashed_pool9), not the decompiler: IMUL EAX,EAX,0xec
+    # at 0x00407584 then MOV EAX,[EAX+0x639dc4] at 0x0040758a. The plate's
+    # "(&DAT_00639dc4)[param_1 * 0x3b]" is the same thing in dword units
+    # (0x3b * 4 = 0xec).
+    #
+    # NON-DEGENERACY IS THE WHOLE PROBLEM WITH THIS ROW, and it cannot be
+    # asserted in advance. This is a pure READ of a live global array: both sides
+    # read the SAME memory at the same instant, so a port that computed the WRONG
+    # address would still be bit-identical if every record it could reach happened
+    # to hold the same value. If the record array is not populated in the race
+    # scenario, every seed returns 0 and the run proves only that the port does
+    # not crash - the classic false GREEN
+    # (memory feedback_evidence_discipline, feedback_zero_arg_argtype_false_green).
+    #
+    # ACCEPTANCE RULE FOR THIS ROW: the run is GREEN only if the observed returns
+    # contain AT LEAST TWO DISTINCT VALUES across the seeds. All-identical returns
+    # = INCONCLUSIVE, not GREEN, and the row stays C2 pending a scenario where
+    # subsystem-A records are populated. Do not promote on an all-zero column.
+    #
+    # INDEX RANGE IS DELIBERATELY SMALL. There is no bounds check at all (the port
+    # reproduces its absence), so index * 0xec walks arbitrary memory. Seeds stay
+    # in 0..31: 0xffffffff would wrap the address and AV, and a both-sides AV
+    # reads as agreement while actually testing nothing
+    # (memory feedback_pointer_param_described_as_int).
+    #
+    # SAFE: reads only; writes nothing.
+    'subsystem_a_record_key': {
+        'rva':            0x00407580,
+        'export':         'SubsystemARecordKey',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        # THE SENTINEL IS THE ARRAY ITSELF, deliberately. 0x00639dc4 is record[0]
+        # +0x44 - the very first slot this function can return. If the record
+        # array is unpopulated the sentinel reads 0 and the driver REFUSES the run
+        # instead of scoring a column of identical zeros as GREEN. That is not a
+        # hypothetical: 'selected_copter_field60' (0x004077e0) documents the SAME
+        # record array - base 0x00639d80, same 0x3b-dword stride, field +0x60 at
+        # 0x00639de0 - as "unpopulated in Quick-Battle arena -> likely DEFER".
+        # Riding an unrelated in-race global here would convert that known-dead
+        # state into a false GREEN.
+        'scenario_sentinel': 0x00639dc4,
+        'path1_tests':    [0, 1, 2, 3, 5, 8, 12, 16, 24, 31],
+        'path2_tests':    [0, 1, 5, 16],
+    },
+
+    # 0x005b1160 RingHeaderInit (C2 -> C3 candidate, 29 bytes).
+    # Port mashedmod/src/mashed_re/Audio/RingHeaderInit.cpp.
+    #
+    #   void f(u8* header, u32 buffer_base, u8 capacity)
+    #     header[1]=0; header[2]=0; header[0]=0;      // in THAT order
+    #     header[3]=capacity;                          // BYTE from [ESP+0xc]
+    #     *(u32*)(header+4)=buffer_base;
+    #
+    # Read from the LISTING (Mashed_pool9). Two things the decompiler output does
+    # not make obvious: the third argument is a BYTE load (MOV CL,byte ptr
+    # [ESP+0xc] at 0x005b1172), so only its low 8 bits are consumed; and the zero
+    # writes are ordered +1, +2, +0, not ascending.
+    #
+    # THE BUFFER IS SEEDED WITH 0xAA, NOT LEFT ZERO. Three of the five writes
+    # store ZERO. Against a zero-filled buffer, "wrote 0" and "never touched it"
+    # are the same reading, and a port that omitted those stores entirely would
+    # pass. This is exactly the failure the 0x00411530 run caught in iter20 by
+    # using distinct sentinels. 0xAA in every observed byte means every observed
+    # slot must CHANGE for the port to pass.
+    #
+    # NON-DEGENERACY (asserted, and checkable from the entry alone - unlike the
+    # row above, this function's output is a pure function of its arguments):
+    #   (0x10000000, 0x04) -> +3=0x04, +4..7=0x10000000
+    #   (0x20000000, 0x08) -> both observed fields differ from vector 1
+    #   (0x10000000, 0x10) -> same base as #1, +3 differs (0x10 vs 0x04)
+    #   (0x40000000, 0x04) -> same capacity as #1, +4..7 differs
+    #   (0xdeadbeef, 0xff) -> capacity at its byte maximum
+    #   (0x00000000, 0x00) -> the all-zero case: distinguishable ONLY because the
+    #                         buffer was seeded 0xAA, which is the point of the seed
+    # Vectors 3 and 4 are the pair that isolates each argument: a port that swapped
+    # them, or that widened capacity to a dword, fails one of the two.
+    #
+    # SAFE: writes only into the harness scratch buffer. No globals, no callees.
+    'ring_header_init': {
+        'rva':            0x005b1160,
+        'export':         'RingHeaderInit',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'uint32', 'uint32']},
+        'arg_type':       'ptr_seed_observe',
+        'num_bufs':       1,
+        'buf_size':       32,
+        'arg_layout':     [{'buf': 0}, {'i32': True}, {'i32': True}],
+        'observe':        [{'buf': 0, 'off': 0x00, 'type': 'u8'},
+                           {'buf': 0, 'off': 0x01, 'type': 'u8'},
+                           {'buf': 0, 'off': 0x02, 'type': 'u8'},
+                           {'buf': 0, 'off': 0x03, 'type': 'u8'},
+                           {'buf': 0, 'off': 0x04, 'type': 'u32'}],
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        # void return - nothing to observe there; all evidence is in the buffer.
+        'observe_ret':    False,
+        # Fully synthetic: the function reads no globals and calls nothing, so
+        # there is no state for a gate to protect. The driver still requires a
+        # sentinel to prove the scenario reached a live point; ride 0x007d73a8
+        # (populates at t+0 in race, orch-iter3) exactly as particle_emitter_ctor_a
+        # does. The hook does NOT read it. Non-degeneracy here comes from the
+        # per-vector fingerprints and the 0xAA seed, not from this global.
+        'scenario_sentinel': 0x007d73a8,
+        'path1_tests': [
+            {'seed': [{'buf': 0, 'off': 0, 'type': 'u32', 'value': 0xAAAAAAAA},
+                      {'buf': 0, 'off': 4, 'type': 'u32', 'value': 0xAAAAAAAA}],
+             'scalars': [0x10000000, 0x04]},
+            {'seed': [{'buf': 0, 'off': 0, 'type': 'u32', 'value': 0xAAAAAAAA},
+                      {'buf': 0, 'off': 4, 'type': 'u32', 'value': 0xAAAAAAAA}],
+             'scalars': [0x20000000, 0x08]},
+            {'seed': [{'buf': 0, 'off': 0, 'type': 'u32', 'value': 0xAAAAAAAA},
+                      {'buf': 0, 'off': 4, 'type': 'u32', 'value': 0xAAAAAAAA}],
+             'scalars': [0x10000000, 0x10]},
+            {'seed': [{'buf': 0, 'off': 0, 'type': 'u32', 'value': 0xAAAAAAAA},
+                      {'buf': 0, 'off': 4, 'type': 'u32', 'value': 0xAAAAAAAA}],
+             'scalars': [0x40000000, 0x04]},
+            {'seed': [{'buf': 0, 'off': 0, 'type': 'u32', 'value': 0xAAAAAAAA},
+                      {'buf': 0, 'off': 4, 'type': 'u32', 'value': 0xAAAAAAAA}],
+             'scalars': [0xdeadbeef, 0xff]},
+            {'seed': [{'buf': 0, 'off': 0, 'type': 'u32', 'value': 0xAAAAAAAA},
+                      {'buf': 0, 'off': 4, 'type': 'u32', 'value': 0xAAAAAAAA}],
+             'scalars': [0x00000000, 0x00]},
+        ],
+        'path2_tests': [
+            {'seed': [{'buf': 0, 'off': 0, 'type': 'u32', 'value': 0xAAAAAAAA},
+                      {'buf': 0, 'off': 4, 'type': 'u32', 'value': 0xAAAAAAAA}],
+             'scalars': [0x10000000, 0x04]},
+            {'seed': [{'buf': 0, 'off': 0, 'type': 'u32', 'value': 0xAAAAAAAA},
+                      {'buf': 0, 'off': 4, 'type': 'u32', 'value': 0xAAAAAAAA}],
+             'scalars': [0x40000000, 0xff]},
+        ],
+    },
+
 }

@@ -359,3 +359,5 @@
 "Render\RwComReleaseThunk.cpp"
 "Rws\RwsStreamRead.cpp"
 "Audio\AudioChainWalk.cpp"
+"Gameplay\SubsystemARecordKey.cpp"
+"Audio\RingHeaderInit.cpp"
