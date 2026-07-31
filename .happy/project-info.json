@@ -12,12 +12,12 @@
         },
         {
           "label": "C2",
-          "value": 4010,
+          "value": 4008,
           "kind": "number"
         },
         {
           "label": "C3",
-          "value": 876,
+          "value": 878,
           "kind": "number"
         },
         {
@@ -32,12 +32,7 @@
       "fields": [
         {
           "label": "Iteration",
-          "value": "iter20",
-          "kind": "text"
-        },
-        {
-          "label": "Ledger",
-          "value": "24 promoted / 21 candidate / 9 briefed / 15 blocked",
+          "value": "iter20 (2 runs)",
           "kind": "text"
         },
         {
@@ -46,8 +41,8 @@
           "kind": "text"
         },
         {
-          "label": "Last promotion",
-          "value": "0x00482900 ReplayGetSize C2->C3 (GREEN 6/6)",
+          "label": "Last promotions",
+          "value": "0x00411350 + 0x00411530 Replay time pair C2->C3",
           "kind": "text"
         }
       ]
@@ -56,19 +51,28 @@
       "heading": "This session",
       "fields": [
         {
-          "label": "Done",
+          "label": "Promoted",
           "value": [
-            "__ftol sweep: 14 plates + 3 uncertainty rows",
-            "CONFIDENCE.md indirect-dispatch clause widened",
-            "stub_at handler extension (new harness capability)",
-            "0x00482900 unblocked and promoted"
+            "0x00482900 ReplayGetSize",
+            "0x00411350 Replay::TimeFormat",
+            "0x00411530 Replay::GetTimeAtIdx"
           ],
           "kind": "list"
         },
         {
-          "label": "Next",
+          "label": "Also",
           "value": [
-            "U-9035: param_2 > 2^24 vectors (gates C4)",
+            "__ftol sweep: 14 plates + 3 uncertainty rows",
+            "CONFIDENCE.md indirect-dispatch clause widened",
+            "stub_at + null_args harness extensions",
+            "gate ranking + preflight defects fixed"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Open",
+          "value": [
+            "U-9035 vectors staged, need 1 boot (gates C4 on 0x00482900)",
             "0x00423040 + 0x004325c0 arity raw decode",
             "27 ORPHAN_BLOCK rows need callback blocks plated"
           ],
