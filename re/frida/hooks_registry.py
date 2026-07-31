@@ -16755,31 +16755,194 @@ HOOKS = {
         'path1_tests': [0x11111111, 0x22222222, 0x33333333, 0x44444444, 0x55555555],
         'path2_tests': [0x11111111, 0x22222222],
     },
-    # 0x0046d510  VehicleVelocityWorldGet (ai, RACE) — direct twin of 0x0046d700; transforms
-    #   the +0xac velocity float3 via FUN_004c3df0 (C4) then copies it out. out3_idx validates
-    #   the 0/1 BOUNDS RETURN (idx<16); boundary tests 15/16/17 give the non-degenerate mix.
-        # RE-WIRED orch-iter21 2026-07-31 after the out3_idx false-GREEN audit
-    # (re/analysis/out3_idx_false_green_audit_20260731.md). The previous arg_type
-    # out3_idx is `return fn(buf, input>>>0)` - it NEVER reads the out buffer back, and
-    # this function returns a CONSTANT (MOV EAX,1 in range, XOR EAX,EAX out of range),
-    # so the old 9/9 GREEN would have been passed by a reimpl whose entire body is
-    # `return idx<16 ? 1 : 0`. Row demoted to C2. ptr_out_table_get observes
-    # out[0..span-1] AND the return, which is the payload this function exists for.
-    # reads 0x881f74 AFTER the FUN_004c3df0 transform at 0x0046d53a writes it (0x0046d53f/0x0046d547/0x0046d553), stride 0xd04, bound 0x10.
-'vehicle_velocity_world_get': {
-        'rva': 0x0046d510, 'export': 'VehicleVelocityWorldGet', 'signature': {'ret': 'int32', 'args': ['pointer', 'uint32']},
-        'arg_type':      'ptr_out_table_get',
-        'target_global': 0x00881f74,
-        'stride':        0xd04,
-        'span':          3,
-        'bound':         0x10,
-        # The transform WRITES the block this then copies out, so the table must
-        # be re-seeded between the two sides. Without it the original's result is
-        # left in place and a port that SKIPPED the transform reads it and passes -
-        # the same false GREEN one level down from the one this row was demoted for.
-        'reseed_per_side': True, 'lut_root_delta': 0, 'scenario': 'race',
-        'path1_tests':   [0, 1, 5, 10, 15, 3, 15, 0, 16, 17, 255],
-        'path2_tests':   [0, 15, 16],
+    # 0x0046d510 VehicleVelocityWorldGet - RE-WIRED orch-iter21, IN-RACE lane.
+    # Closes the last open row of the out3_idx audit
+    # (re/analysis/out3_idx_false_green_audit_20260731.md). Row is C2, demoted from C3.
+    #
+    #   f(out_vec3, idx): if (idx > 0xf) return 0;
+    #                     FUN_004c3df0(0x881f74+idx*0xd04, 0x614708, 1, 0x881ec8+idx*0xd04);
+    #                     out[0..2] = *(0x881f74+idx*0xd04 .. +8);  return 1;
+    #
+    # WHY NOT THE EARLY-WINDOW LANE: it force-calls BEFORE boot, when neither the
+    # matrix at 0x614708 nor the vehicle records exist, so FUN_004c3df0 dereferences
+    # unset state and 8 of 11 cases died with an access violation ON BOTH SIDES. A
+    # both-sides-identical failure is a DEAD RUN - not a defect, not correctness.
+    # This entry runs the in-race (diff_template.js) lane instead.
+    #
+    # BOTH SIDES CALL THE SAME ORIGINAL FUN_004c3df0, so the transform itself is not
+    # under test. What IS under test is exactly what out3_idx could not see: the
+    # bounds check, the three address computations (src, dst, out), and the copy.
+    #
+    # THE OUT POINTER IS AN ABSOLUTE ADDRESS, NOT THE HARNESS BUFFER. cache_setter_observe
+    # can only observe absolute addresses, and the payload here is what the function
+    # writes THROUGH ITS OUT POINTER - so the out pointer is aimed at slot 15's velocity
+    # block (0x0088e2b0), which no test below uses as a destination. Observing the transform's
+    # own destination instead would NOT catch a port that copied from the wrong offsets,
+    # which is precisely the defect class this re-verification exists for.
+    #
+    # THE MATRIX IS SEEDED TO IDENTITY and the source vector is seeded per test. Without
+    # that, determinism would rest on the two back-to-back calls seeing the same live
+    # vehicle state, and a frame boundary landing between them would produce a spurious
+    # RED. Identity is chosen because it is layout-agnostic - it is the same bit pattern
+    # row-major or column-major - so no assumption about the matrix's storage order is
+    # being made. CONTRIVED STATE (C3-grade): the matrix is restored by the handler
+    # immediately after each call, along with every other seeded and observed address.
+    #
+    # NON-DEGENERACY: three distinct source triples (1.0/2.0/3.0, 4.0/5.0/6.0,
+    # -1.5/0.25/8.0) at three different slots, so a port with a wrong stride, a wrong
+    # source offset, or a wrong copy offset produces different bytes. The fourth vector
+    # is idx=16 (out of range): the out block's 0x5EED0000/1/2 sentinel must SURVIVE,
+    # which proves the bounds check bites and that nothing was written.
+    'vehicle_velocity_world_get': {
+        'rva':            0x0046d510,
+        'export':         'VehicleVelocityWorldGet',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'uint32']},
+        'arg_type':       'cache_setter_observe',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'scenario_sentinel': 0x008815a0,
+        'path1_tests': [
+            {'seed': [{'addr': '0x00881ec8', 'val': 0x3f800000},
+                      {'addr': '0x00881ecc', 'val': 0x40000000},
+                      {'addr': '0x00881ed0', 'val': 0x40400000},
+                      {'addr': '0x00614708', 'val': 0x3f800000},
+                      {'addr': '0x0061470c', 'val': 0x00000000},
+                      {'addr': '0x00614710', 'val': 0x00000000},
+                      {'addr': '0x00614714', 'val': 0x00000000},
+                      {'addr': '0x00614718', 'val': 0x00000000},
+                      {'addr': '0x0061471c', 'val': 0x3f800000},
+                      {'addr': '0x00614720', 'val': 0x00000000},
+                      {'addr': '0x00614724', 'val': 0x00000000},
+                      {'addr': '0x00614728', 'val': 0x00000000},
+                      {'addr': '0x0061472c', 'val': 0x00000000},
+                      {'addr': '0x00614730', 'val': 0x3f800000},
+                      {'addr': '0x00614734', 'val': 0x00000000},
+                      {'addr': '0x00614738', 'val': 0x00000000},
+                      {'addr': '0x0061473c', 'val': 0x00000000},
+                      {'addr': '0x00614740', 'val': 0x00000000},
+                      {'addr': '0x00614744', 'val': 0x3f800000},
+                      {'addr': '0x0088e2b0', 'val': 0x5eed0000},
+                      {'addr': '0x0088e2b4', 'val': 0x5eed0001},
+                      {'addr': '0x0088e2b8', 'val': 0x5eed0002}],
+             'args': [0x0088e2b0, 0],
+             'obs':  ['0x0088e2b0', '0x0088e2b4', '0x0088e2b8']},
+            {'seed': [{'addr': '0x00882bcc', 'val': 0x40800000},
+                      {'addr': '0x00882bd0', 'val': 0x40a00000},
+                      {'addr': '0x00882bd4', 'val': 0x40c00000},
+                      {'addr': '0x00614708', 'val': 0x3f800000},
+                      {'addr': '0x0061470c', 'val': 0x00000000},
+                      {'addr': '0x00614710', 'val': 0x00000000},
+                      {'addr': '0x00614714', 'val': 0x00000000},
+                      {'addr': '0x00614718', 'val': 0x00000000},
+                      {'addr': '0x0061471c', 'val': 0x3f800000},
+                      {'addr': '0x00614720', 'val': 0x00000000},
+                      {'addr': '0x00614724', 'val': 0x00000000},
+                      {'addr': '0x00614728', 'val': 0x00000000},
+                      {'addr': '0x0061472c', 'val': 0x00000000},
+                      {'addr': '0x00614730', 'val': 0x3f800000},
+                      {'addr': '0x00614734', 'val': 0x00000000},
+                      {'addr': '0x00614738', 'val': 0x00000000},
+                      {'addr': '0x0061473c', 'val': 0x00000000},
+                      {'addr': '0x00614740', 'val': 0x00000000},
+                      {'addr': '0x00614744', 'val': 0x3f800000},
+                      {'addr': '0x0088e2b0', 'val': 0x5eed0000},
+                      {'addr': '0x0088e2b4', 'val': 0x5eed0001},
+                      {'addr': '0x0088e2b8', 'val': 0x5eed0002}],
+             'args': [0x0088e2b0, 1],
+             'obs':  ['0x0088e2b0', '0x0088e2b4', '0x0088e2b8']},
+            {'seed': [{'addr': '0x008838d0', 'val': 0xbfc00000},
+                      {'addr': '0x008838d4', 'val': 0x3e800000},
+                      {'addr': '0x008838d8', 'val': 0x41000000},
+                      {'addr': '0x00614708', 'val': 0x3f800000},
+                      {'addr': '0x0061470c', 'val': 0x00000000},
+                      {'addr': '0x00614710', 'val': 0x00000000},
+                      {'addr': '0x00614714', 'val': 0x00000000},
+                      {'addr': '0x00614718', 'val': 0x00000000},
+                      {'addr': '0x0061471c', 'val': 0x3f800000},
+                      {'addr': '0x00614720', 'val': 0x00000000},
+                      {'addr': '0x00614724', 'val': 0x00000000},
+                      {'addr': '0x00614728', 'val': 0x00000000},
+                      {'addr': '0x0061472c', 'val': 0x00000000},
+                      {'addr': '0x00614730', 'val': 0x3f800000},
+                      {'addr': '0x00614734', 'val': 0x00000000},
+                      {'addr': '0x00614738', 'val': 0x00000000},
+                      {'addr': '0x0061473c', 'val': 0x00000000},
+                      {'addr': '0x00614740', 'val': 0x00000000},
+                      {'addr': '0x00614744', 'val': 0x3f800000},
+                      {'addr': '0x0088e2b0', 'val': 0x5eed0000},
+                      {'addr': '0x0088e2b4', 'val': 0x5eed0001},
+                      {'addr': '0x0088e2b8', 'val': 0x5eed0002}],
+             'args': [0x0088e2b0, 2],
+             'obs':  ['0x0088e2b0', '0x0088e2b4', '0x0088e2b8']},
+            {'seed': [{'addr': '0x00614708', 'val': 0x3f800000},
+                      {'addr': '0x0061470c', 'val': 0x00000000},
+                      {'addr': '0x00614710', 'val': 0x00000000},
+                      {'addr': '0x00614714', 'val': 0x00000000},
+                      {'addr': '0x00614718', 'val': 0x00000000},
+                      {'addr': '0x0061471c', 'val': 0x3f800000},
+                      {'addr': '0x00614720', 'val': 0x00000000},
+                      {'addr': '0x00614724', 'val': 0x00000000},
+                      {'addr': '0x00614728', 'val': 0x00000000},
+                      {'addr': '0x0061472c', 'val': 0x00000000},
+                      {'addr': '0x00614730', 'val': 0x3f800000},
+                      {'addr': '0x00614734', 'val': 0x00000000},
+                      {'addr': '0x00614738', 'val': 0x00000000},
+                      {'addr': '0x0061473c', 'val': 0x00000000},
+                      {'addr': '0x00614740', 'val': 0x00000000},
+                      {'addr': '0x00614744', 'val': 0x3f800000},
+                      {'addr': '0x0088e2b0', 'val': 0x5eed0000},
+                      {'addr': '0x0088e2b4', 'val': 0x5eed0001},
+                      {'addr': '0x0088e2b8', 'val': 0x5eed0002}],
+             'args': [0x0088e2b0, 16],
+             'obs':  ['0x0088e2b0', '0x0088e2b4', '0x0088e2b8']},
+        ],
+        'path2_tests': [
+            {'seed': [{'addr': '0x00881ec8', 'val': 0x3f800000},
+                      {'addr': '0x00881ecc', 'val': 0x40000000},
+                      {'addr': '0x00881ed0', 'val': 0x40400000},
+                      {'addr': '0x00614708', 'val': 0x3f800000},
+                      {'addr': '0x0061470c', 'val': 0x00000000},
+                      {'addr': '0x00614710', 'val': 0x00000000},
+                      {'addr': '0x00614714', 'val': 0x00000000},
+                      {'addr': '0x00614718', 'val': 0x00000000},
+                      {'addr': '0x0061471c', 'val': 0x3f800000},
+                      {'addr': '0x00614720', 'val': 0x00000000},
+                      {'addr': '0x00614724', 'val': 0x00000000},
+                      {'addr': '0x00614728', 'val': 0x00000000},
+                      {'addr': '0x0061472c', 'val': 0x00000000},
+                      {'addr': '0x00614730', 'val': 0x3f800000},
+                      {'addr': '0x00614734', 'val': 0x00000000},
+                      {'addr': '0x00614738', 'val': 0x00000000},
+                      {'addr': '0x0061473c', 'val': 0x00000000},
+                      {'addr': '0x00614740', 'val': 0x00000000},
+                      {'addr': '0x00614744', 'val': 0x3f800000},
+                      {'addr': '0x0088e2b0', 'val': 0x5eed0000},
+                      {'addr': '0x0088e2b4', 'val': 0x5eed0001},
+                      {'addr': '0x0088e2b8', 'val': 0x5eed0002}],
+             'args': [0x0088e2b0, 0],
+             'obs':  ['0x0088e2b0', '0x0088e2b4', '0x0088e2b8']},
+            {'seed': [{'addr': '0x00614708', 'val': 0x3f800000},
+                      {'addr': '0x0061470c', 'val': 0x00000000},
+                      {'addr': '0x00614710', 'val': 0x00000000},
+                      {'addr': '0x00614714', 'val': 0x00000000},
+                      {'addr': '0x00614718', 'val': 0x00000000},
+                      {'addr': '0x0061471c', 'val': 0x3f800000},
+                      {'addr': '0x00614720', 'val': 0x00000000},
+                      {'addr': '0x00614724', 'val': 0x00000000},
+                      {'addr': '0x00614728', 'val': 0x00000000},
+                      {'addr': '0x0061472c', 'val': 0x00000000},
+                      {'addr': '0x00614730', 'val': 0x3f800000},
+                      {'addr': '0x00614734', 'val': 0x00000000},
+                      {'addr': '0x00614738', 'val': 0x00000000},
+                      {'addr': '0x0061473c', 'val': 0x00000000},
+                      {'addr': '0x00614740', 'val': 0x00000000},
+                      {'addr': '0x00614744', 'val': 0x3f800000},
+                      {'addr': '0x0088e2b0', 'val': 0x5eed0000},
+                      {'addr': '0x0088e2b4', 'val': 0x5eed0001},
+                      {'addr': '0x0088e2b8', 'val': 0x5eed0002}],
+             'args': [0x0088e2b0, 16],
+             'obs':  ['0x0088e2b0', '0x0088e2b4', '0x0088e2b8']},
+        ],
     },
     # 0x004853b0  SmplFzxStateBlockGetLogged (smplfzx, RACE) — int(id): validate via 0x00485340
     #   (C3); on miss log via 0x004987b0 + return 0; else return *( *( *(0x6e71cc)+0xc ) + id*0x10 ).
