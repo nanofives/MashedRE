@@ -254,11 +254,25 @@ def check(name, mapping, csv_rows):
         # unique anyway.
         exp = h.get("export")
         if exp:
+            # Match the INSTALL SITE, not any mention of the name. A sibling
+            # port that merely references the export — in a comment, or as a
+            # typedef'd call target — used to win on rglob order, and then the
+            # callee-hazard scan below read the wrong file's literals. Seen
+            # iter20: replay_time_format resolved to ReplayGetTimeAtIdx.cpp.
+            # Fall back to a plain name match only if no install site is found,
+            # so a port not yet wired up still gets scanned.
+            inst = re.compile(r"RH_ScopedInstall\s*\(\s*%s\s*," % re.escape(exp))
+            name = re.compile(r"\b%s\b" % re.escape(exp))
+            fallback = None
             for p in (ROOT / "mashedmod/src/mashed_re").rglob("*.cpp"):
-                if re.search(r"\b%s\b" % re.escape(exp),
-                             p.read_text(encoding="utf-8", errors="replace")):
+                text = p.read_text(encoding="utf-8", errors="replace")
+                if inst.search(text):
                     port = p
                     break
+                if fallback is None and name.search(text):
+                    fallback = p
+            if port is None:
+                port = fallback
     if port:
         notes.append("port %s" % port.relative_to(ROOT).as_posix())
         text = port.read_text(encoding="utf-8", errors="replace")

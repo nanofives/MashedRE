@@ -1340,13 +1340,24 @@ function runDiff() {
                 default:    return (a.readU32() >>> 0).toString(16);  // u32
             }
         };
-        const buildArgs = function (bufs, scalars) {
+        // test.null_args = [argIndex, ...] forces those POSITIONAL args to NULL
+        // for that test, overriding whatever the layout says. Added orch-iter20
+        // for 0x00411530, whose null-object path is half the function and could
+        // not be reached otherwise: a {buf:i} arg always passed a real pointer,
+        // and the address cannot be threaded through {i32} because the two sides
+        // allocate at different addresses. Purely additive — omitting it keeps
+        // the old behaviour exactly.
+        const buildArgs = function (bufs, scalars, nulls) {
             const args = [];
             let si = 0;
             for (let k = 0; k < layout.length; k++) {
                 const a = layout[k];
-                if (a && a.buf !== undefined) args.push(bufs[a.buf]);
-                else args.push(scalars[si++]);  // f32/i32 -> JS number (NativeFunction promotes)
+                const isNull = nulls && nulls.indexOf(k) !== -1;
+                if (a && a.buf !== undefined) args.push(isNull ? NULL : bufs[a.buf]);
+                else {
+                    const v = scalars[si++];  // f32/i32 -> JS number (NativeFunction promotes)
+                    args.push(isNull ? 0 : v);
+                }
             }
             return args;
         };
@@ -1376,8 +1387,8 @@ function runDiff() {
             });
             const scalars = t.scalars || [];
             let errO = null, errR = null, retO = null, retR = null;
-            try { retO = Orig.apply(null, buildArgs(bufsO, scalars)); }   catch (e) { errO = e.message; }
-            try { retR = Reimpl.apply(null, buildArgs(bufsR, scalars)); } catch (e) { errR = e.message; }
+            try { retO = Orig.apply(null, buildArgs(bufsO, scalars, t.null_args)); }   catch (e) { errO = e.message; }
+            try { retR = Reimpl.apply(null, buildArgs(bufsR, scalars, t.null_args)); } catch (e) { errR = e.message; }
             const fpO = [], fpR = [];
             // observe_ret (2026-07-31): fold the RETURN into the fingerprint.
             // Added because this handler otherwise fingerprints buffer contents

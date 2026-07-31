@@ -18998,10 +18998,202 @@ HOOKS = {
             {'scalars': [10.0, 3]},    # -> 7612
             {'scalars': [0.0,  1]},    # -> 412
             {'scalars': [2.5,  4]},    # -> 1744  (37.5 truncates to 37)
+            # ── U-9035 coverage (orch-iter20) ────────────────────────────────
+            # The port uses DOUBLE intermediates specifically so the INTEGER
+            # divisor is not rounded to a 24-bit float mantissa; its comment
+            # says this diverges for |param_2| > 2^24. The six vectors above use
+            # param_2 in {1,2,3,4} and never enter that domain, so the port's
+            # single most consequential design decision was untested. These do.
+            #
+            # FIRST ATTEMPT WAS DEGENERATE — recorded because the failure is
+            # instructive. (1e9, 0x1000001) and (1e9, 0x1000000) were chosen on
+            # the reasoning that 0x1000001 is the first int32 not representable
+            # as float32, so a `(float)param_2` port would divide by 16777216
+            # instead. Both returned 129148 (orch-iter20 run): 6e10/16777217 and
+            # 6e10/16777216 are 3576.2712 and 3576.2714, which TRUNCATE TO THE
+            # SAME INTEGER. Picking inputs where the two divisors differ is not
+            # enough — the QUOTIENTS must straddle an integer, or __ftol erases
+            # the difference. A discriminator has to be checked against the
+            # truncation, not just against the operand.
+            #
+            # These pairs were searched for that property explicitly. Each is
+            # (p1, p2) where trunc(p1*60/p2) != trunc(p1*60/(float)p2):
+            {'scalars': [19853048.0,  0x1000007]},  # correct 71 -> 2968
+                                                    # (float)p2 -> 70 -> 2932
+            {'scalars': [1231447680.0, 0x1000001]}, # correct 4403 -> 158920
+                                                    # (float)p2 -> 4404 -> 158956
+            # Both directions of the error are covered: the first rounds the
+            # frame count DOWN when the divisor is widened, the second UP.
+            # Negatives on both arguments: FIDIV is a SIGNED integer divide and
+            # __ftol truncates toward zero, so a port using floor() rather than
+            # truncation diverges on exactly these and on none of the positives.
+            {'scalars': [-2.5, 4]},           # -37.5 -> -37 (toward zero), not -38
+            {'scalars': [2.5, -4]},           # -37.5 -> -37 via a negative divisor
         ],
         'path2_tests': [
             {'scalars': [1.0,  1]},
             {'scalars': [2.5,  4]},
+        ],
+    },
+
+    # ── Replay time pair (orch-iter20) ───────────────────────────────────────
+    # Both rows were REFUSED for promotion in c3-batch-j-s3 on a claim that is
+    # mechanically FALSE: an "implicit-ST0 FPU input arg". The raw listing shows
+    # 0x00411354 FILD dword ptr [ESP+4] — an INTEGER load from the STACK. There
+    # is no incoming x87 argument. Ghidra's `extraout_ST0` is an artifact of the
+    # FLD ST0 duplication at 0x00411368 against __ftol's pop; three artefacts
+    # (plate, iter13 brief, hooks.csv note) all repeated it, none quoting a
+    # listing. Raw plates: re/analysis/replay_record/0x0041135{0,}_RAW.md.
+    #
+    # CONSEQUENCE: the proposed `st0_in_float_3out` arg_type (an FLD+JMP
+    # trampoline to preload ST0) is NOT NEEDED. Both are plain __cdecl functions
+    # with scalars and out-pointers, which ptr_seed_observe already covers. That
+    # is the FOURTH consecutive run (16, 19, 20, 20) where NEEDS_NEW_HANDLER was
+    # a hypothesis about the inventory rather than a fact about it.
+
+    # 0x00411350 Replay::TimeFormat (87 B).
+    #   v = (double)(uint32)p1 * 3.3333333e-4f;  *p3 = (int)v;
+    #   *p2 = (float)(v - (int)v);  *p4 = 0;  while (*p3 > 59) { (*p4)++; *p3 -= 60; }
+    #
+    # param_1 is UNSIGNED: the TEST/JGE/FADD 2^32 at 0x00411358 is the MSVC
+    # unsigned-to-float fixup. A port typing it `int` is correct on the whole
+    # lower half of the domain and wrong on the whole upper half — which is why
+    # a vector at 0x80000000 is mandatory, not decorative.
+    #
+    # THE SCALE CONSTANT IS NOT EXACTLY 1/3000. 0x005cc948 = 0x39AEC33E =
+    # 3.3333332976e-4, a hair BELOW 1/3000, so a tick count that "should" give a
+    # whole number lands just under it and truncates DOWN. 375000 ticks is
+    # 124.999999, not 125.0 — the iter13 brief's expected (0.0f, 5, 2) would be
+    # wrong even after its units were fixed. Every prediction below comes from
+    # the actual dword, not from 1/3000.
+    #
+    # NON-DEGENERACY (asserted): 6 vectors, 6 distinct fingerprints.
+    #   0          -> frac 0x00000000  secs 0   mins 0      (zero path)
+    #   196500     -> frac 0x3effffe8  secs 5   mins 1      (one loop iteration)
+    #   11250      -> frac 0x3f3fffff  secs 3   mins 0      (no loop)
+    #   180000     -> frac 0x3f7ffff5  secs 59  mins 0      (just BELOW threshold)
+    #   180001     -> frac 0x39ae6cfe  secs 0   mins 1      (just ABOVE: 60/K =
+    #                                                        180000.0019, so 180001
+    #                                                        is the FIRST tick count
+    #                                                        that enters the loop)
+    #   0x80000000 -> frac 0x3f600000  secs 27  mins 11930  (unsigned fixup +
+    #                                                        11930 loop iterations)
+    # The 180000/180001 pair pins `> 59` exactly; a port using `>= 60` passes
+    # both, but one using `> 60` or `>= 59` fails one of them. 0x80000000 is the
+    # only vector that distinguishes signed from unsigned, and it also exercises
+    # the loop far past one iteration.
+    'replay_time_format': {
+        'rva':        0x00411350,
+        'export':     'ReplayTimeFormat',
+        'signature':  {'ret': 'void', 'args': ['uint32', 'pointer', 'pointer', 'pointer']},
+        'arg_type':   'ptr_seed_observe',
+        'num_bufs':   3,
+        'buf_size':   0x40,
+        'arg_layout': [{'i32': True}, {'buf': 0}, {'buf': 1}, {'buf': 2}],
+        # Read frac as u32 = RAW BITS, so a sub-ULP divergence in the x87 chain
+        # is caught rather than rounded away by a float compare.
+        'observe':    [{'buf': 0, 'off': 0, 'type': 'u32'},
+                       {'buf': 1, 'off': 0, 'type': 's32'},
+                       {'buf': 2, 'off': 0, 'type': 's32'}],
+        'scenario':   'race',
+        'scenario_sentinel': 0x008815a0,
+        # Distinct sentinels in every out-slot: all three are written on every
+        # path here, but the sibling row's null path leaves one UNWRITTEN, and
+        # sharing the seed shape keeps "unwritten" observable rather than
+        # indistinguishable from "wrote 0".
+        'path1_tests': [
+            {'scalars': [0],          'seed': [{'buf': 0, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF},
+                                               {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0x7FFFFFFF},
+                                               {'buf': 2, 'off': 0, 'type': 'u32', 'value': 0x0BADF00D}]},
+            {'scalars': [196500],     'seed': [{'buf': 0, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF},
+                                               {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0x7FFFFFFF},
+                                               {'buf': 2, 'off': 0, 'type': 'u32', 'value': 0x0BADF00D}]},
+            {'scalars': [11250],      'seed': [{'buf': 0, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF},
+                                               {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0x7FFFFFFF},
+                                               {'buf': 2, 'off': 0, 'type': 'u32', 'value': 0x0BADF00D}]},
+            {'scalars': [180000],     'seed': [{'buf': 0, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF},
+                                               {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0x7FFFFFFF},
+                                               {'buf': 2, 'off': 0, 'type': 'u32', 'value': 0x0BADF00D}]},
+            {'scalars': [180001],     'seed': [{'buf': 0, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF},
+                                               {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0x7FFFFFFF},
+                                               {'buf': 2, 'off': 0, 'type': 'u32', 'value': 0x0BADF00D}]},
+            {'scalars': [0x80000000], 'seed': [{'buf': 0, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF},
+                                               {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0x7FFFFFFF},
+                                               {'buf': 2, 'off': 0, 'type': 'u32', 'value': 0x0BADF00D}]},
+        ],
+        'path2_tests': [
+            {'scalars': [196500], 'seed': []},
+            {'scalars': [0x80000000], 'seed': []},
+        ],
+    },
+
+    # 0x00411530 Replay::GetTimeAtIdx (65 B). Was NEEDS_GHIDRA in the iter13
+    # screen precisely because it needed TimeFormat's formula; now unblocked.
+    #
+    #   if (!p1) { *p4 = 0; *p3 = 0; return; }   // p5 (minutes) UNWRITTEN
+    #   TimeFormat(p1[0x17c + p2*4], p3, p4, p5);
+    #
+    # THE NULL PATH IS THE POINT OF THIS ROW. The iter13 brief recorded
+    # "frac=0 mins=0 secs=unwritten (confirmed)" — backwards on two of three.
+    # The listing writes *p4 (SECONDS) at 0x00411564 and *p3 (FRACTION) at
+    # 0x0041156a, and never touches p5 (MINUTES). A port from that brief zeroes
+    # minutes and leaves seconds dangling. The distinct sentinels below are what
+    # make that observable: with all-zero out-slots, "wrote 0" and "left alone"
+    # are the same reading and the inverted port would pass.
+    #
+    # null_args (NEW, additive to ptr_seed_observe): forces a positional arg to
+    # NULL for one test. Needed because a {buf:i} arg always passed a real
+    # pointer and the address cannot be threaded through {i32} — the two sides
+    # allocate at different addresses. Omitting it keeps the old behaviour.
+    #
+    # param_1 is a POINTER although hooks.csv types it `int` (dereferenced at
+    # 0x0041154a) — the pointer-param-described-as-int defect class.
+    #
+    # NON-DEGENERACY (asserted): 4 vectors, 4 distinct fingerprints.
+    #   null       -> frac 0x00000000  secs 0   mins 0x0BADF00D (SENTINEL INTACT)
+    #   idx0=196500-> frac 0x3effffe8  secs 5   mins 1
+    #   idx3=11250 -> frac 0x3f3fffff  secs 3   mins 0
+    #   idx1=2^31  -> frac 0x3f600000  secs 27  mins 11930
+    # Varying the INDEX across 0/3/1 is what exercises the *4 stride and the
+    # 0x17c base — a wrong stride still passes idx 0 and fails the rest.
+    'replay_get_time_at_idx': {
+        'rva':        0x00411530,
+        'export':     'ReplayGetTimeAtIdx',
+        'signature':  {'ret': 'void', 'args': ['pointer', 'int32', 'pointer', 'pointer', 'pointer']},
+        'arg_type':   'ptr_seed_observe',
+        'num_bufs':   4,
+        'buf_size':   0x200,   # must cover 0x17c + idx*4 + 4; idx max 3 -> 0x18c
+        'arg_layout': [{'buf': 0}, {'i32': True}, {'buf': 1}, {'buf': 2}, {'buf': 3}],
+        'observe':    [{'buf': 1, 'off': 0, 'type': 'u32'},
+                       {'buf': 2, 'off': 0, 'type': 's32'},
+                       {'buf': 3, 'off': 0, 'type': 's32'}],
+        'scenario':   'race',
+        'scenario_sentinel': 0x008815a0,
+        'path1_tests': [
+            # null object: p5/minutes must come back as the UNTOUCHED sentinel.
+            {'scalars': [0], 'null_args': [0],
+             'seed': [{'buf': 1, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF},
+                      {'buf': 2, 'off': 0, 'type': 'u32', 'value': 0x7FFFFFFF},
+                      {'buf': 3, 'off': 0, 'type': 'u32', 'value': 0x0BADF00D}]},
+            {'scalars': [0],
+             'seed': [{'buf': 0, 'off': 0x17c, 'type': 'u32', 'value': 196500},
+                      {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF},
+                      {'buf': 2, 'off': 0, 'type': 'u32', 'value': 0x7FFFFFFF},
+                      {'buf': 3, 'off': 0, 'type': 'u32', 'value': 0x0BADF00D}]},
+            {'scalars': [3],
+             'seed': [{'buf': 0, 'off': 0x188, 'type': 'u32', 'value': 11250},
+                      {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF},
+                      {'buf': 2, 'off': 0, 'type': 'u32', 'value': 0x7FFFFFFF},
+                      {'buf': 3, 'off': 0, 'type': 'u32', 'value': 0x0BADF00D}]},
+            {'scalars': [1],
+             'seed': [{'buf': 0, 'off': 0x180, 'type': 'u32', 'value': 0x80000000},
+                      {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF},
+                      {'buf': 2, 'off': 0, 'type': 'u32', 'value': 0x7FFFFFFF},
+                      {'buf': 3, 'off': 0, 'type': 'u32', 'value': 0x0BADF00D}]},
+        ],
+        'path2_tests': [
+            {'scalars': [0], 'null_args': [0], 'seed': []},
+            {'scalars': [0], 'seed': [{'buf': 0, 'off': 0x17c, 'type': 'u32', 'value': 196500}]},
         ],
     },
 
