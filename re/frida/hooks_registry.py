@@ -19507,4 +19507,94 @@ HOOKS = {
         ],
     },
 
+    # 0x004b6b00 StoreEaxAtEcx (C2 -> C3 candidate, 3 bytes).
+    # Port mashedmod/src/mashed_re/Render/StoreEaxAtEcx.cpp.
+    #
+    #   MOV dword ptr [ECX],EAX ; RET     <- the entire function
+    #
+    # NO NEW HANDLER WAS WRITTEN. An iter21 screen returned NEEDS_NEW_HANDLER on
+    # the grounds that "no handler can both (a) control the implicit EAX register
+    # before the call, (b) pass ECX = a fresh scratch buffer, and (c) observe *ECX
+    # after". eax_ecx_insert does all three and has since it was written; it was
+    # simply not among the handlers considered, because ARG_TYPES.md described it
+    # by its original USE CASE ("cross-link insert") rather than its mechanism.
+    # Sixth consecutive run where that verdict was a hypothesis about the handler
+    # inventory rather than a fact. See
+    # re/analysis/needs_new_handler_rescreen_20260731.md.
+    #
+    # WHAT MAKES IT WORK, and it is not obvious: the handler allocates bufA and
+    # bufC ONCE and reuses the SAME two buffers for both the original and the
+    # reimpl call. So the value stored into *ECX is bufA's address, which is
+    # IDENTICAL on both sides and therefore compares equal. Per-side allocations
+    # would differ every run and this row would be permanently AB_NONDET.
+    #
+    # NON-DEGENERACY IS THIN AND IS RECORDED AS SUCH. The handler makes a SINGLE
+    # call ('test ignored'), so there is exactly one observation: bufC[0]. It does
+    # discriminate - a port that stored nothing leaves bufC[0] at its seeded 0
+    # against the original's bufA address, and a port that stored the wrong
+    # register stores something else - but this is one data point, not a
+    # fingerprint-per-vector row, and it must not be read as more. edx_val is the
+    # existing precedent if a raw-immediate variant is ever wanted.
+    #
+    # SAFE: writes only into the harness scratch buffers. No globals, no callees.
+    'store_eax_at_ecx': {
+        'rva':            0x004b6b00,
+        'export':         'StoreEaxAtEcx',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'eax_ecx_insert',
+        # Put the TEST VALUE in EAX as a raw imm32 (added this session; edx_val is
+        # the precedent). Without it the handler makes ONE observation - the test
+        # list is unused - which orch_preflight correctly refused as non-degenerate.
+        'eax_from_test':  True,
+        'eax_seed':       [],
+        'ecx_seed':       [{'off': 0x0, 'val': 0x5EED0000}],   # so "wrote nothing" is visible
+        'eax_observe':    [],
+        'ecx_observe':    [0x0],                                # *ECX == bufA address
+        'lut_root_delta': 0,
+        'path1_tests':    [0x11111111, 0x22222222, 0xdeadbeef, 0x00000000, 0xffffffff],
+        'path2_tests':    [0x11111111, 0xffffffff],
+    },
+
+    # 0x00407550 SubsystemARecordFind (C2 -> C3 candidate, 35 bytes).
+    # Port mashedmod/src/mashed_re/Gameplay/SubsystemARecordFind.cpp.
+    #
+    #   key in ESI; scan record[i] at 0x00639d80 + i*0xec for [+0x44] == key,
+    #   count at 0x0063a5d0 (SIGNED, <=0 returns 0); hit returns the RECORD
+    #   ADDRESS, miss returns 0.
+    #
+    # NO NEW HANDLER. The same iter21 screen proposed extending esi_global_search
+    # with a configurable key offset - which is right, except that it is an
+    # ADDITIVE DEFAULTED FIELD, not a new handler. key_off landed in 0f273f78 and
+    # defaults to 0, leaving every existing caller byte-identical. Precedent for
+    # exactly this shape of change: stub_at, null_args, this_reg:'stack'.
+    #
+    # THIS IS A STRONGER TEST THAN 0x00407580 GOT, and for a structural reason.
+    # esi_global_search SEEDS the table - count=4, four entries zeroed, a distinct
+    # non-zero key planted per test - instead of reading whatever the live array
+    # happens to hold. The degeneracy that made 0x00407580's GREEN thin (a pure
+    # read of an array that turned out to be mostly zeros) cannot arise here.
+    # test = idx 0..3, each planting its key in a different record, so the matched
+    # ADDRESS differs per test and a port with the wrong stride or the wrong key
+    # offset returns a different pointer or 0.
+    #
+    # The A/B compares the RETURNED POINTER, not the ABI: the original is driven
+    # through a `mov esi,key ; jmp target` trampoline while the reimpl is called
+    # __cdecl(key). That is why the port is plain C rather than naked asm.
+    #
+    # SAFE: reads only. The handler's own seeding writes the record array, which
+    # is harness-controlled state, not game state it must preserve.
+    'subsystem_a_record_find': {
+        'rva':            0x00407550,
+        'export':         'SubsystemARecordFind',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'esi_global_search',
+        'target_global':  0x00639d80,   # cfg.tgt   - record base
+        'glob':           0x0063a5d0,   # cfg.glob  - record count
+        'stride':         0xec,
+        'key_off':        0x44,         # added 0f273f78; default 0 would scan [+0]
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3],
+        'path2_tests':    [0, 3],
+    },
+
 }

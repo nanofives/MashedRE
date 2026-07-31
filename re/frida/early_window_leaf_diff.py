@@ -3006,9 +3006,20 @@ rpc.exports.diff = function(cfg) {
       const aobs = cfg.abs_observe || [];   // absolute globals the fn writes (e.g. EDX-indexed tables)
       const hasEdx = (cfg.edx_val !== undefined && cfg.edx_val !== null);
       const bufA = Memory.alloc(0x400), bufC = Memory.alloc(0x400); _keep.push(bufA, bufC);
+      // cfg.eax_from_test (default false): put the TEST VALUE in EAX as a raw imm32
+      // instead of bufA's address. Same idea as the existing edx_val, but driven per
+      // test rather than fixed. Without it this handler makes an effectively single
+      // observation - the test list is otherwise unused, so every vector produces an
+      // identical result - which is fine for a struct initialiser but not for a
+      // function whose ENTIRE semantics is "store EAX somewhere" (0x004b6b00 is
+      // `MOV [ECX],EAX; RET`). With it, each vector stores a distinct value and a
+      // port that stored the wrong register, or a constant, fails per-vector.
+      // Defaulting to false keeps every existing caller byte-identical.
+      const eaxImm = cfg.eax_from_test ? (t >>> 0) : null;
       const mkT2 = function (target) {
         const tr = Memory.alloc(Process.pageSize); _keep.push(tr);
-        tr.writeU8(0xB8); tr.add(1).writePointer(bufA);        // mov eax, bufA
+        tr.writeU8(0xB8);                                      // mov eax, imm32
+        if (eaxImm === null) tr.add(1).writePointer(bufA); else tr.add(1).writeU32(eaxImm);
         tr.add(5).writeU8(0xB9); tr.add(6).writePointer(bufC); // mov ecx, bufC
         let p = 10;
         if (hasEdx) { tr.add(p).writeU8(0xBA); tr.add(p + 1).writeS32(cfg.edx_val | 0); p += 5; } // mov edx, imm32
@@ -3100,6 +3111,18 @@ def run(name):
            'mask': h.get('mask'), 'glob': h.get('glob'), 'p1_off': h.get('p1_off'),
            'arg2_kind': h.get('arg2_kind'), 'arg2_dwords': h.get('arg2_dwords'),
            'seed': h.get('seed'),
+           # Added orch-iter21. cfg is an explicit ALLOWLIST, so a key present in the
+           # registry entry but missing here is silently dropped and the handler sees
+           # undefined - which reads as "feature off", not as an error. All three of
+           # these were added to their handlers this session and were INERT until
+           # listed here: key_off made esi_global_search seed at +0 while the target
+           # compares at +0x44, so every vector missed and returned 0 on BOTH sides -
+           # a GREEN that a port returning a constant 0 would also have passed.
+           # This is the early-window twin of the rule orch_preflight enforces for
+           # run_diff.py: present in the entry is NOT enough, the driver must forward it.
+           'key_off': h.get('key_off'),
+           'eax_from_test': h.get('eax_from_test'),
+           'reseed_per_side': h.get('reseed_per_side'),
            'idx_off': h.get('idx_off'), 'tbl': h.get('tbl'),
            'tbl_stride': h.get('tbl_stride'), 'seed_tbl_n': h.get('seed_tbl_n'),
            'tbl_base': h.get('tbl_base'), 'tbl_count': h.get('tbl_count'),

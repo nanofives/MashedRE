@@ -361,3 +361,5 @@
 "Audio\AudioChainWalk.cpp"
 "Gameplay\SubsystemARecordKey.cpp"
 "Audio\RingHeaderInit.cpp"
+"Render\StoreEaxAtEcx.cpp"
+"Gameplay\SubsystemARecordFind.cpp"
