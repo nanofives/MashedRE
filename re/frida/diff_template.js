@@ -1355,9 +1355,24 @@ function runDiff() {
             for (let k = 0; k < NB; k++) {
                 for (let b = 0; b < BS; b++) { bufsO[k].add(b).writeU8(0); bufsR[k].add(b).writeU8(0); }
             }
+            // {buf,off,ptr_to:j} writes the ADDRESS of buffer j into buffer
+            // s.buf at s.off (each side gets its own side's buffer, so the two
+            // graphs are structurally identical but never share memory). Added
+            // 2026-07-30 for 0x0055c4f0, a recursive setter that double-derefs
+            // its arg — `**(short**)(p+0x5c)` and `*(int**)(p+0x40)` — so a flat
+            // literal seed cannot reach the branch at all, it just AVs on a
+            // garbage inner pointer. This is what lets a multi-buffer seed build
+            // a real struct GRAPH (parent -> tag, parent -> child-array -> child)
+            // instead of a flat record. Opt-in: seeds without ptr_to are
+            // unchanged, so existing users of this arg_type are unaffected.
             (t.seed || []).forEach(function (s) {
-                wr(bufsO[s.buf], s.off, s.type, s.value);
-                wr(bufsR[s.buf], s.off, s.type, s.value);
+                if (s.ptr_to !== undefined) {
+                    bufsO[s.buf].add(s.off).writePointer(bufsO[s.ptr_to]);
+                    bufsR[s.buf].add(s.off).writePointer(bufsR[s.ptr_to]);
+                } else {
+                    wr(bufsO[s.buf], s.off, s.type, s.value);
+                    wr(bufsR[s.buf], s.off, s.type, s.value);
+                }
             });
             const scalars = t.scalars || [];
             let errO = null, errR = null;

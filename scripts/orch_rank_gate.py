@@ -74,7 +74,12 @@ def scrape_briefs():
                 continue
             cells = split_row(line)
             rva = cells[0].lower()
-            safety = next((c for c in cells if c in SAFETY_RANK), "")
+            # Workers often qualify the safety cell in place — "WRITES_GLOBAL
+            # (DAT_007dc578)", "TEARDOWN - caller is HardwareExitApplication".
+            # An exact-equality match silently dropped 11 of 90 rows on the
+            # first pass, so match the leading token instead.
+            safety = next((k for c in cells for k in SAFETY_RANK
+                           if c.upper().startswith(k)), "")
             verdict = next((c for c in cells if c in VERDICT_RANK), "")
             if not verdict:
                 continue

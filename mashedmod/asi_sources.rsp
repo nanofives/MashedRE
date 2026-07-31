@@ -349,3 +349,4 @@
 "Ai\HeadingAtan2.cpp"
 "Audio\AudioVecLength.cpp"
 "Render\RwString.cpp"
+"Vehicle\PhysicsBodySetFriction.cpp"

@@ -18545,4 +18545,120 @@ HOOKS = {
         ],
     },
 
+    # 0x0055c4f0 PhysicsBodySetFriction (vehicle, C2 -> C3 candidate, 76 bytes).
+    # Plate re/analysis/promote_c2_vehicle_dynamics/0055c4f0.md; port
+    # mashedmod/src/mashed_re/Vehicle/PhysicsBodySetFriction.cpp.
+    #
+    # BEHAVIOR: recursive tree setter. Three outcomes, and the middle one is the
+    # one a careless port gets wrong (the write lives in the `else`, so a
+    # compound node with no children writes NOTHING):
+    #     tag != 8             -> *(p+0x50) = param_2
+    #     tag == 8, count == 0 -> no write at all
+    #     tag == 8, count  > 0 -> recurse over count children, stride 0x60
+    # param_1 is a POINTER despite Ghidra typing it `int` — it is dereferenced at
+    # +0x5c (then again for a 16-bit tag), +0x40, and +0x50. Known defect class.
+    #
+    # ARG_TYPE: 'ptr_seed_observe' with the NEW `ptr_to` seed field. The screening
+    # brief proposed struct_call_observe; that is WRONG here and would have
+    # produced a degenerate GREEN. struct_call_observe calls Orig(struct) or
+    # Orig(struct, out0) — its second argument is an allocated OUT-POINTER, not a
+    # caller-supplied scalar, so param_2 would be the same address on every test
+    # and every write would store the same value. ptr_seed_observe threads a real
+    # i32 scalar via arg_layout, which is the actual (ptr, dword) shape.
+    #
+    # `ptr_to` (added for this row) writes the ADDRESS of another scratch buffer
+    # into a buffer, which is what makes the double-deref reachable: a flat
+    # literal seed leaves *(p+0x5c) as garbage and the call just AVs.
+    # Buffer map: 0 = parent body, 1 = parent tag (u16), 2 = child descriptor
+    # [base@+0, count@+4], 3 = child body, 4 = child tag (u16).
+    #
+    # NON-DEGENERACY (asserted): buf0+0x50 is pre-seeded to 0xdeadbeef so "no
+    # write" is DISTINGUISHABLE from "wrote 0". Expected observations, in order:
+    #   t0 buf0+0x50=0x11111111, buf3+0x50=0xdeadbeef   (leaf write, tag 0)
+    #   t1 buf0+0x50=0x22222222, buf3+0x50=0xdeadbeef   (leaf write, tag 1)
+    #   t2 buf0+0x50=0xdeadbeef, buf3+0x50=0xdeadbeef   (tag 8, count 0: NO WRITE)
+    #   t3 buf0+0x50=0x44444444, buf3+0x50=0xdeadbeef   (tag 7 + count 5 ignored)
+    #   t4 buf0+0x50=0xdeadbeef, buf3+0x50=0x55555555   (RECURSION, 1 child)
+    # Five distinct fingerprints covering all THREE branches. t2 vs t0 is what
+    # proves the fall-through, and t4 is what proves the recursion actually
+    # descends rather than writing the parent.
+    'physics_body_set_friction': {
+        'rva':         0x0055c4f0,
+        'export':      'PhysicsBodySetFriction',
+        'signature':   {'ret': 'void', 'args': ['pointer', 'uint32']},
+        'arg_type':    'ptr_seed_observe',
+        'scenario':    'race',
+        'num_bufs':    5,
+        'buf_size':    0x100,
+        'arg_layout':  [{'buf': 0}, {'i32': True}],
+        'observe':     [{'buf': 0, 'off': 0x50, 'type': 'u32'},
+                        {'buf': 3, 'off': 0x50, 'type': 'u32'}],
+        # The one live global the target reads: none — it is a pure function of
+        # its argument graph. Gate on the physics world root instead, which is
+        # non-zero only once a race has built the body tree this function walks.
+        'scenario_sentinel': 0x008815a0,
+        'path1_tests': [
+            # t0: leaf, tag 0
+            {'seed': [{'buf': 0, 'off': 0x5c, 'ptr_to': 1},
+                      {'buf': 1, 'off': 0, 'type': 'u16', 'value': 0},
+                      {'buf': 0, 'off': 0x40, 'ptr_to': 2},
+                      {'buf': 2, 'off': 4, 'type': 'u32', 'value': 0},
+                      {'buf': 0, 'off': 0x50, 'type': 'u32', 'value': 0xdeadbeef},
+                      {'buf': 3, 'off': 0x50, 'type': 'u32', 'value': 0xdeadbeef}],
+             'scalars': [0x11111111]},
+            # t1: leaf, tag 1 — different scalar, same path
+            {'seed': [{'buf': 0, 'off': 0x5c, 'ptr_to': 1},
+                      {'buf': 1, 'off': 0, 'type': 'u16', 'value': 1},
+                      {'buf': 0, 'off': 0x40, 'ptr_to': 2},
+                      {'buf': 2, 'off': 4, 'type': 'u32', 'value': 0},
+                      {'buf': 0, 'off': 0x50, 'type': 'u32', 'value': 0xdeadbeef},
+                      {'buf': 3, 'off': 0x50, 'type': 'u32', 'value': 0xdeadbeef}],
+             'scalars': [0x22222222]},
+            # t2: compound with ZERO children -> must write nothing
+            {'seed': [{'buf': 0, 'off': 0x5c, 'ptr_to': 1},
+                      {'buf': 1, 'off': 0, 'type': 'u16', 'value': 8},
+                      {'buf': 0, 'off': 0x40, 'ptr_to': 2},
+                      {'buf': 2, 'off': 4, 'type': 'u32', 'value': 0},
+                      {'buf': 0, 'off': 0x50, 'type': 'u32', 'value': 0xdeadbeef},
+                      {'buf': 3, 'off': 0x50, 'type': 'u32', 'value': 0xdeadbeef}],
+             'scalars': [0x33333333]},
+            # t3: tag 7 with a non-zero count -> count must be IGNORED
+            {'seed': [{'buf': 0, 'off': 0x5c, 'ptr_to': 1},
+                      {'buf': 1, 'off': 0, 'type': 'u16', 'value': 7},
+                      {'buf': 0, 'off': 0x40, 'ptr_to': 2},
+                      {'buf': 2, 'off': 0, 'ptr_to': 3},
+                      {'buf': 2, 'off': 4, 'type': 'u32', 'value': 5},
+                      {'buf': 0, 'off': 0x50, 'type': 'u32', 'value': 0xdeadbeef},
+                      {'buf': 3, 'off': 0x50, 'type': 'u32', 'value': 0xdeadbeef}],
+             'scalars': [0x44444444]},
+            # t4: compound with ONE child -> recursion writes the CHILD, not us
+            {'seed': [{'buf': 0, 'off': 0x5c, 'ptr_to': 1},
+                      {'buf': 1, 'off': 0, 'type': 'u16', 'value': 8},
+                      {'buf': 0, 'off': 0x40, 'ptr_to': 2},
+                      {'buf': 2, 'off': 0, 'ptr_to': 3},
+                      {'buf': 2, 'off': 4, 'type': 'u32', 'value': 1},
+                      {'buf': 3, 'off': 0x5c, 'ptr_to': 4},
+                      {'buf': 4, 'off': 0, 'type': 'u16', 'value': 0},
+                      {'buf': 0, 'off': 0x50, 'type': 'u32', 'value': 0xdeadbeef},
+                      {'buf': 3, 'off': 0x50, 'type': 'u32', 'value': 0xdeadbeef}],
+             'scalars': [0x55555555]},
+        ],
+        'path2_tests': [
+            {'seed': [{'buf': 0, 'off': 0x5c, 'ptr_to': 1},
+                      {'buf': 1, 'off': 0, 'type': 'u16', 'value': 0},
+                      {'buf': 0, 'off': 0x40, 'ptr_to': 2},
+                      {'buf': 2, 'off': 4, 'type': 'u32', 'value': 0},
+                      {'buf': 0, 'off': 0x50, 'type': 'u32', 'value': 0xdeadbeef},
+                      {'buf': 3, 'off': 0x50, 'type': 'u32', 'value': 0xdeadbeef}],
+             'scalars': [0x11111111]},
+            {'seed': [{'buf': 0, 'off': 0x5c, 'ptr_to': 1},
+                      {'buf': 1, 'off': 0, 'type': 'u16', 'value': 8},
+                      {'buf': 0, 'off': 0x40, 'ptr_to': 2},
+                      {'buf': 2, 'off': 4, 'type': 'u32', 'value': 0},
+                      {'buf': 0, 'off': 0x50, 'type': 'u32', 'value': 0xdeadbeef},
+                      {'buf': 3, 'off': 0x50, 'type': 'u32', 'value': 0xdeadbeef}],
+             'scalars': [0x33333333]},
+        ],
+    },
+
 }
