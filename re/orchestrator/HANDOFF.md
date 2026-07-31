@@ -2,8 +2,8 @@
 
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions.
 
-**C1 796 / C2 4006 / C3 879 / C4 185.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
-committed through **625d77f9**, **not pushed** (131 commits ahead of origin/main).
+**C1 796 / C2 4008 / C3 879 / C4 183.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
+committed through **ef4add8e**, **not pushed** (135 commits ahead of origin/main).
 Ledger: 29 promoted / 21 candidate / 8 briefed / 15 blocked.
 
 Resume with `/orchestrate` — it reads `re/orchestrator/state.json`, which is current.
@@ -139,9 +139,15 @@ and neither had a `scenario_sentinel`. Two boots saved by a millisecond check.
    that they push **no arguments**, so a target that really takes some has both sides read the
    same leftover stack bytes and agree; confirm arity from the LISTING.
 
-   Surfaced while doing it: **`out3_idx` is a false-GREEN hazard.** It never reads its out
-   buffer back, so a reimpl that returns the right flag while writing garbage to `*out`
-   passes silently. Its 4 registry uses are worth an audit; `out1_idx` is the safe variant.
+   Surfaced while doing it: **`out3_idx` was a false-GREEN hazard, now AUDITED AND RESOLVED**
+   (`6e218371`, `ef4add8e`; `re/analysis/out3_idx_false_green_audit_20260731.md`). All 4 rows
+   were demoted to C2 — a reimpl whose whole body is `return idx<16 ? 1 : 0` passed their
+   recorded 9/9 GREEN. Re-verified under `ptr_out_table_get`: **`0x0046d700` and `0x0046bce0`
+   restored to C3** (GREEN 11/11, payload observed). **`0x0046d510` INCONCLUSIVE** (both-sides
+   AV — the early-window lane force-calls before its transform's matrix exists; needs an
+   in-race scenario). **`0x0046d740` not attempted** — it is a SETTER, so it needs
+   `cache_setter_observe`, and its entry is marked DO-NOT-RUN-AS-IS on `out3_idx`.
+   **`out3_idx` should be retired** once those two land.
 4. **A decompiler summary is not evidence about x87.** Read the raw listing.
 5. **A discriminator must be checked against the truncation, not the operand.**
 6. **NEW (iter21): a harness reading of "absent" has two causes — the thing is absent, or

@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-07-31T14:40:00Z",
+  "updatedAt": "2026-07-31T15:30:00Z",
   "sections": [
     {
       "heading": "Confidence ladder",
@@ -12,7 +12,7 @@
         },
         {
           "label": "C2",
-          "value": 4006,
+          "value": 4008,
           "kind": "number"
         },
         {
@@ -22,7 +22,7 @@
         },
         {
           "label": "C4",
-          "value": 185,
+          "value": 183,
           "kind": "number"
         }
       ]
@@ -42,7 +42,7 @@
         },
         {
           "label": "Branch",
-          "value": "fix/u9025-recharacterise-and-regabi-defects @ 625d77f9 (unpushed)",
+          "value": "fix/u9025-recharacterise-and-regabi-defects @ ef4add8e (unpushed)",
           "kind": "text"
         },
         {
@@ -51,8 +51,8 @@
             "0x00482900 C3 -> C4",
             "0x00407580 + 0x005b1160 C2 -> C3",
             "11 of 27 ORPHAN_BLOCK rows unblocked",
-            "0 of 3 NEEDS_NEW_HANDLER were real",
-            "ARG_TYPES: all 307 handlers documented"
+            "ARG_TYPES: all 307 handlers documented",
+            "out3_idx audit: 4 demoted, 2 restored"
           ],
           "kind": "list"
         }
