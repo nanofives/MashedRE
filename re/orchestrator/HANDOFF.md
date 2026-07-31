@@ -11,14 +11,17 @@ iter21 ran 5 cycles (4 budgeted + a directed re-screen); hard stop #1 (context) 
 
 ---
 
-## START HERE: the ladder is empty of authorable work again — refill it
+## START HERE: author `0x004b6b00` + `0x00407550`, verify in ONE boot
 
-Cycle 4 consumed both READY rows. `orch.ps1 next` will show `briefed` items, but every one
-of them tallied **0 READY** — they are stuck, not actionable. **Refilling is the job**, not a
-detour (see the skill's "Refill" note): pick a bucket and brief **>=12 RVAs** on the
-read-fleet with `-MaxConcurrent 2..4`. It is off-quota; iter21's 11-RVA brief cost $1.55.
+The cycle-5 re-screen freed two rows that were parked as NEEDS_NEW_HANDLER. **Both handlers
+already exist** and `key_off` is already implemented, so this is authoring only — no harness
+work. Details in item 2 below. Pre-flight both before booting.
 
-Highest-value refill targets, in order:
+After that the ladder is empty again and **refilling is the job**, not a detour (see the
+skill's "Refill" note): pick a bucket and brief **>=12 RVAs** on the read-fleet with
+`-MaxConcurrent 2..4`. It is off-quota; iter21's 11-RVA brief cost $1.55.
+
+Refill targets after the two rows above, in order:
 
 1. **Plate `0x005515a0` C1->C2.** It is the sole owner of `0x0052ddc0` and `0x0052df40`, so
    one plate converts both to gate-PASS. Cheapest structural win on the board.
@@ -118,8 +121,13 @@ and neither had a `scenario_sentinel`. Two boots saved by a millisecond check.
 
 1. **Pre-flight before every boot**: `py -3.12 scripts/orch_preflight.py <hook>...`.
 2. **Author 3-4 rows, verify in ONE `state_batch` boot.**
-3. **NEEDS_NEW_HANDLER is a hypothesis about the handler inventory, not a fact** — now 5
-   consecutive runs. Check `re/frida/ARG_TYPES.md` before writing anything.
+3. **NEEDS_NEW_HANDLER is a hypothesis about the handler inventory, not a fact** — now **6
+   consecutive runs**, and iter21's re-screen found **0 of 3** were real. Check
+   `re/frida/ARG_TYPES.md` before writing anything. **Root cause now fixed at source**
+   (`0f273f78`): the index summarised each handler's original USE CASE, not its MECHANISM,
+   so a screen looking for "store EAX into `*ECX`" never matched something described as
+   "cross-link insert". When a screen says no handler fits, check the handler's
+   *implementation*, not its one-line summary.
 4. **A decompiler summary is not evidence about x87.** Read the raw listing.
 5. **A discriminator must be checked against the truncation, not the operand.**
 6. **NEW (iter21): a harness reading of "absent" has two causes — the thing is absent, or
