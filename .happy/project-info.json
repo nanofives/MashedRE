@@ -32,7 +32,7 @@
       "fields": [
         {
           "label": "Iteration",
-          "value": "iter20 (2 runs)",
+          "value": "iter20 (3 runs)",
           "kind": "text"
         },
         {
@@ -41,40 +41,28 @@
           "kind": "text"
         },
         {
-          "label": "Last promotions",
-          "value": "0x00411350 + 0x00411530 Replay time pair C2->C3",
+          "label": "Session promotions",
+          "value": "0x00482900, 0x00411350, 0x00411530",
           "kind": "text"
         }
       ]
     },
     {
-      "heading": "This session",
+      "heading": "Open",
       "fields": [
         {
-          "label": "Promoted",
+          "label": "Next",
           "value": [
-            "0x00482900 ReplayGetSize",
-            "0x00411350 Replay::TimeFormat",
-            "0x00411530 Replay::GetTimeAtIdx"
+            "27 ORPHAN_BLOCK rows need callback blocks plated",
+            "Mutator lane: 43 rows, only 2 AB_READY",
+            "C4 for 0x00482900 needs a canonical-scenario run"
           ],
           "kind": "list"
         },
         {
-          "label": "Also",
+          "label": "Hygiene",
           "value": [
-            "__ftol sweep: 14 plates + 3 uncertainty rows",
-            "CONFIDENCE.md indirect-dispatch clause widened",
-            "stub_at + null_args harness extensions",
-            "gate ranking + preflight defects fixed"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Open",
-          "value": [
-            "U-9035 vectors staged, need 1 boot (gates C4 on 0x00482900)",
-            "0x00423040 + 0x004325c0 arity raw decode",
-            "27 ORPHAN_BLOCK rows need callback blocks plated"
+            "Ghidra pool 5: leaked .lock~ (clears on MCP JVM restart); use slot 9"
           ],
           "kind": "list"
         }
