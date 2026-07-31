@@ -2,8 +2,8 @@
 
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions.
 
-**C1 796 / C2 4006 / C3 881 / C4 183.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
-committed through **70063d3e**, **not pushed** (137 commits ahead of origin/main).
+**C1 795 / C2 4007 / C3 881 / C4 183.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
+committed through **25d46ef1**, **not pushed** (139 commits ahead of origin/main).
 Ledger: 29 promoted / 21 candidate / 8 briefed / 15 blocked.
 
 Resume with `/orchestrate` — it reads `re/orchestrator/state.json`, which is current.
@@ -19,8 +19,9 @@ RVAs** on the read-fleet with `-MaxConcurrent 3..4` (off-quota).
 
 Highest-value targets, in order:
 
-1. **Plate `0x005515a0` C1→C2** — sole owner of `0x0052ddc0` and `0x0052df40`, so one plate
-   converts both to gate-PASS. Cheapest structural win on the board.
+1. **~~Plate `0x005515a0`~~ — DONE (`25d46ef1`).** ORPHAN_BLOCK is now **13 PASS / 0
+   OWNER_BELOW_C2 / 14 NO_OWNER**. `0x0052ddc0` (35 B) and `0x0052df40` (45 B) are gate-PASS
+   and **unbriefed** — brief them with the next read-fleet batch.
 2. **Finish the out3_idx audit** — `0x0046d740` needs `cache_setter_observe` (it is a SETTER;
    observable is the global block at `0x8816e4/e8/ec`), and `0x0046d510` needs an **in-race**
    scenario with a payload-observing handler (the early-window lane force-calls before its
@@ -83,9 +84,9 @@ to the nearest preceding defined function resolves all 51 sites and is unsound: 
 block start comes from function `00481a30`. **Physical adjacency is not ownership.**
 
 Replaced with a backward BFS over the reference graph that follows chained orphan blocks
-and hops through jump-table data slots. Result: **11 PASS**, **2 OWNER_BELOW_C2** (both
-owned solely by `0x005515a0` at C1 — one plate converts both), **14 NO_OWNER** (BFS ran out
-of edges; unresolved, not disproved — **do not re-screen them with this method**).
+and hops through jump-table data slots. Result after plating `0x005515a0`: **13 PASS**,
+**0 OWNER_BELOW_C2**, **14 NO_OWNER** (BFS ran out of edges; unresolved, not disproved —
+**do not re-screen them with this method**).
 
 An owner here is a **reference-chain witness, not a `function_callers` edge**. It
 establishes which function's control flow reaches the block, not the call's arguments.
