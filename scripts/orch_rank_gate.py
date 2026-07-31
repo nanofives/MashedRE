@@ -79,7 +79,30 @@ MANUAL = ROOT / "re/orchestrator/gate_verdicts_manual.tsv"
 LIBRARY_BANDS = [
     (0x004a0000, 0x004b4000, "msvc-crt-main"),      # hooks.csv 0x004a4ea8, FidDB
     (0x004ec000, 0x004fc9e0, "d3dx9-psgp"),
-    (0x00516000, 0x0052a000, "libpng-zlib"),
+    # WIDENED 2026-07-31 (orch-iter23) from hi=0x0052a000. The old bound stopped
+    # ~0x4000 bytes short of the documented island, so library_band() returned
+    # None for 0x0052ddc0 and 0x0052df40 and orch_preflight would have PASSED
+    # both — spending a state_batch boot on a memcpy out of a statically-linked
+    # image library. This gate is preflight's *cheapest* disqualifier and it was
+    # failing silently in the safe-looking direction.
+    #
+    # The correct range already existed in scripts/bulk_add_library_residue.py:52
+    # ((0x00516bb0, 0x0052df40, "libpng-zlib-image-loader", "batch-v-s4 +
+    # batch-t-s4 halt")); this table had simply drifted out of sync with it.
+    # Source of truth is re/analysis/bucket_00516bb0/_BUCKET_HALT.md, which
+    # declares bucket 0x00516bb0..0x0052df40 third-party across libpng + zlib +
+    # a DevIL-shaped image loader (BMP loader 0x0052cb00, format-handler
+    # registry 0x0052daf0) and says "do NOT re-issue this bucket".
+    #
+    # hi is 0x0052df6d, not 0x0052df40: bands are half-open [lo, hi), and the
+    # island's last function 0x0052df40 has body_end 0x0052df6c, so hi must
+    # clear that byte. It deliberately stops short of 0x0052df70 (FUN_0052df70),
+    # which the halt note does NOT cover.
+    #
+    # lo is left at 0x00516000 rather than narrowed to the halt note's 0x00516bb0
+    # — widening a "never a port target" gate is safe, narrowing it is not, and
+    # 0x00516000..0x00516bb0 was not re-examined here.
+    (0x00516000, 0x0052df6d, "libpng-zlib-image-loader"),
     (0x0057c5b0, 0x005a5820, "qhull-2002.1"),
     (0x005c0000, 0x005c8000, "msvc-crt-tail"),
 ]

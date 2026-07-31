@@ -27,6 +27,9 @@ import re
 import sys
 from collections import defaultdict
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from orch_rank_gate import library_band          # noqa: E402
+
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 BUCKETS = ROOT / "re/orchestrator/candidate_buckets.json"
 HOOKS = ROOT / "hooks.csv"
@@ -138,6 +141,58 @@ arg_type match, and harness_safety. Judge those carefully - especially safety.
 """
 
 
+def cited_plate(row):
+    """The plate hooks.csv itself points at, if it is an analysis note on disk.
+
+    iter23 near-miss, and the reason this exists: 0x0052df40 has TWO plates.
+    bucket_util_0052daf0_00582680/0x0052df40.md describes a tidy surface memcpy
+    and carries no library tag; re/analysis/bucket_00516bb0/_BUCKET_HALT.md
+    declares the whole 0x00516bb0..0x0052df40 bucket statically-linked
+    third-party and says "do NOT re-issue this bucket". plate_rank() picked the
+    first (it scores frontmatter confidence, then size, and a HALT report has
+    neither) so the screen, the handoff, and the next run's directive all
+    inherited a clean-looking row that was never a port target.
+
+    hooks.csv's `file` column is the row's own citation, so it wins. For rows
+    already implemented `file` is a .cpp path, hence the re/analysis/ guard.
+    """
+    f = (row.get("file") or "").strip().replace("\\", "/")
+    if not f.startswith("re/analysis/"):
+        return None
+    return f if (ROOT / f).exists() else None
+
+
+def screen_bucket(rvas, hooks):
+    """Split RVAs into (keep, dropped) — dropped are never port targets.
+
+    Library-band membership is preflight's cheapest disqualifier, but preflight
+    runs at AUTHORING time, long after a worker has already been paid to screen
+    the row. Applying it here means a library RVA never reaches a worker at all.
+    """
+    keep, dropped = [], []
+    for rva in rvas:
+        row = hooks.get(rva[2:].lower(), {})
+        band = library_band(rva)
+        cited = cited_plate(row)
+        conf = (row.get("confidence") or "").strip().upper()
+        if band:
+            dropped.append((rva, "library band '%s'" % band))
+        elif cited and cited.endswith("_BUCKET_HALT.md"):
+            dropped.append((rva, "hooks.csv cites a bucket HALT: %s" % cited))
+        elif conf in ("C3", "C4"):
+            # This lane exists to move C2 -> C3. A row that is already there is
+            # finished work. iter22 paid to screen 0x00407550 at "C2" when it had
+            # been promoted to C3 that same day; a smoke test of this screen then
+            # caught 0x004b6b00 and 0x004cbb50 queued at C3 too. The buckets are
+            # a static list, so they go stale the moment anything is promoted —
+            # read the live confidence instead of trusting the bucket.
+            dropped.append((rva, "already %s in hooks.csv - nothing to promote"
+                            % conf))
+        else:
+            keep.append(rva)
+    return keep, dropped
+
+
 def build_prompt(bucket, plates, hooks, gate=None):
     has_gate = gate is not None
     hdr = ("| # | RVA | plate path (read this file) | hooks.csv name | conf |"
@@ -145,16 +200,26 @@ def build_prompt(bucket, plates, hooks, gate=None):
            "| # | RVA | plate path (read this file) | hooks.csv name | conf |")
     sep = "|---|---|---|---|---|---|" if has_gate else "|---|---|---|---|---|"
     lines = [hdr, sep]
-    for i, rva in enumerate(bucket["rvas"], 1):
+    kept, dropped = screen_bucket(bucket["rvas"], hooks)
+    for rva, why in dropped:
+        print("  DROPPED %s from %s: %s" % (rva, bucket.get("id", "?"), why),
+              file=sys.stderr)
+    if not kept:
+        raise SystemExit(
+            "bucket %s has no screenable RVA left after the library/HALT screen"
+            % bucket.get("id", "?"))
+    for i, rva in enumerate(kept, 1):
         key = rva[2:].lower()
-        plate = plates.get(key, [None])[0] or "NO_PLATE_FOUND"
         row = hooks.get(key, {})
+        # hooks.csv's own citation wins over the size/confidence ranking.
+        plate = (cited_plate(row) or plates.get(key, [None])[0]
+                 or "NO_PLATE_FOUND")
         cells = [str(i), rva, plate, row.get("name", "?"),
                  row.get("confidence", "?")]
         if has_gate:
             cells.append(gate.get(rva, {}).get("best_caller", "-"))
         lines.append("| %s |" % " | ".join(cells))
-    body = PROMPT_HEAD.format(n=len(bucket["rvas"]), sub=bucket["subsystem"],
+    body = PROMPT_HEAD.format(n=len(kept), sub=bucket["subsystem"],
                               table="\n".join(lines))
     return body + (GATE_NOTE if has_gate else "")
 
