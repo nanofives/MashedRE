@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-07-31T18:00:00Z",
+  "updatedAt": "2026-07-31T18:30:00Z",
   "sections": [
     {
       "heading": "Confidence ladder",
@@ -17,12 +17,12 @@
         },
         {
           "label": "C3",
-          "value": 883,
+          "value": 881,
           "kind": "number"
         },
         {
           "label": "C4",
-          "value": 183,
+          "value": 185,
           "kind": "number"
         }
       ]
@@ -48,7 +48,7 @@
         {
           "label": "This run",
           "value": [
-            "0x00482900 C3 -> C4",
+            "3 rows lifted to C4",
             "6 rows C2 -> C3",
             "ORPHAN_BLOCK: 13 of 27 gate-PASS",
             "ARG_TYPES: all 307 handlers documented",

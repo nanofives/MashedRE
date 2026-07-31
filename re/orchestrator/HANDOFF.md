@@ -2,8 +2,8 @@
 
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions.
 
-**C1 795 / C2 4005 / C3 883 / C4 183.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
-committed through **e0e3e02e**, **not pushed** (145 commits ahead of origin/main).
+**C1 795 / C2 4005 / C3 881 / C4 185.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
+committed through **HEAD**, **not pushed** (147 commits ahead of origin/main).
 Ledger: 29 promoted / 21 candidate / 8 briefed / 15 blocked.
 
 Resume with `/orchestrate` — it reads `re/orchestrator/state.json`, which is current.
@@ -25,8 +25,9 @@ Highest-value targets, in order:
 2. **~~The out3_idx audit~~ — FULLY CLOSED (`e0e3e02e`).** All four demoted rows are back at
    C3; `out3_idx` is retired in both harnesses. `0x0046d510` was finished on the **in-race**
    lane after the early-window attempt died on a both-sides AV (that lane force-calls before
-   its transform's matrix exists). Net C4 185→183 stands — a synthetic force-call does not
-   re-establish the canonical-scenario half of C4 for the two rows that held it.
+   its transform's matrix exists). The two ex-C4 rows have since **re-earned C4** on fresh canonical-scenario runs
+   (`asi:` export counters 5866/7443 and 2928/3708 over two runs, control 0) — not restored on
+   the old void evidence. **C4 is back to 185.**
 3. **The 14 NO_OWNER ORPHAN rows** — need a different method than the reference-chain BFS.
 
 ### Follow-up surfaced by closing the cfg-forwarding gap
