@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-07-31T01:20:00Z",
+  "updatedAt": "2026-07-31T03:10:00Z",
   "sections": [
     {
       "heading": "Roadmap (v2)",
@@ -76,81 +76,36 @@
       ]
     },
     {
-      "heading": "Orchestrator lane (iter13, 2026-07-30)",
+      "heading": "Orchestrator lane (iter14, 2026-07-31)",
       "fields": [
         {
-          "label": "iter13: 0x0055c4f0 PhysicsBodySetFriction C2->C3",
-          "value": "Commit aa1887f5. Recursive body-tree setter. Extended ptr_seed_observe with {buf,off,ptr_to:j} so a seed can build a struct GRAPH — needed because the function double-derefs its arg and a flat seed just AVs. The screening brief's struct_call_observe recommendation was rejected: its 2nd arg is an out-pointer, not a caller scalar, so param_2 would have been constant and the GREEN degenerate. GREEN 5/5 branch-covering: proved the childless-compound path writes nothing AND that the recursion descends to the child.",
+          "label": "iter14: 2 pool-free guards C2->C3",
+          "value": "Commit 527be742. 0x005ae380 + 0x005ad8b0, guarded pool-free wrappers. Extended reg_this_call_observe with a this_reg='stack' __cdecl trampoline; stubbing the callee was the only safe route because the pool anchor is a hardcoded immediate, so a real call would hand a fabricated node to the LIVE allocator. Recording the stub's arg0 checks branch AND anchor at once. Third sibling 0x005a6c90 held INCONCLUSIVE — degenerate, cause not established, not promoted on its siblings' strength.",
           "kind": "text"
         },
         {
-          "label": "Gate pool COMPLETE — all 102 rows judged",
+          "label": "Harness bug fixed (had RED'd 3 correct ports)",
+          "value": "reg_this_call_observe recorded 'callee not invoked' as null and required both sides non-null to match, so null==null read as a mismatch. For a guarded call, 'not invoked' IS the observation of the taken branch. Now a 'not-called' sentinel counted in both the match test and the distinct-value check.",
+          "kind": "text"
+        },
+        {
+          "label": "Mutator lane screened — it is far narrower than it looked",
           "value": [
-            "MUTATOR_LANE 44 · NEEDS_GHIDRA 31 · NEEDS_NEW_HANDLER 22 · READY 3 · DEFER 2",
-            "All 3 READY rows now resolved — 2 promoted, 1 degenerate",
-            "Synthetic-getter lane in this pool is EXHAUSTED",
-            "Next yield: handler-design (22) or mutator lane (44)"
+            "Of 44 MUTATOR_LANE rows, only 2 are AB_READY",
+            "20 irreversible · 11 un-enumerable · 7 non-deterministic · 4 one-shot",
+            "Allocation ADDRESSES dominate the non-determinism (6 of 7), not timers",
+            "AB_READY: 0x0049ff30 (1 byte) and 0x0045c820 (16 bytes)"
           ],
           "kind": "list"
         },
         {
-          "label": "Pointer-param-as-int defect rate",
-          "value": "Flagged in 6 of 10 handler-brief rows (60%), and hit again on 0x0055c4f0 this run. Treat Ghidra's `int` param typing as wrong until the plate proves otherwise.",
+          "label": "Handler specs: 22/22 rows",
+          "value": "10 SPEC_COMPLETE, 9 NEEDS_GHIDRA, 3 SCENARIO_ONLY. Two EXISTING handlers generalise rather than needing new ones. 0x004af32d correctly refused — it is SetUnhandledExceptionFilter, which Frida itself depends on.",
           "kind": "text"
         },
         {
-          "label": "iter12: 1 promotion + the gate re-rank",
-          "value": "0x004d8770 RwStringGetSizeAligned C2->C3 (commit cb2ab086) via a NEW str_arg_int_get arg_type that seeds a NUL-TERMINATED string — ptr_arg_int_get could not be used, its dword fill has no terminator so the callee's strlen runs off the allocation (the FontText 0x427840 crash class). GREEN 7/7 prediction-confirmed: observed 4,4,8,12,16,24,32 == the values written into the registry comment BEFORE the run, 6 distinct. Commit b6d43860 adds scripts/orch_rank_gate.py (SAFE-then-size ranking).",
-          "kind": "text"
-        },
-        {
-          "label": "Gate pool after re-rank (102 GATE_PASS, 90 briefed)",
-          "value": [
-            "MUTATOR_LANE 35 · NEEDS_GHIDRA 30 · NEEDS_NEW_HANDLER 22 · READY 3",
-            "safety: CALLS_UNKNOWN 37 · TEARDOWN 21 · WRITES_GLOBAL 13 · SAFE 6 · DESTROYS_DEVICE 2",
-            "Next authorable row: 0x0055c4f0 PhysicsBodySetFriction (SAFE, READY)",
-            "Size-first had buried it in the LAST bucket purely for being large"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Mutator A/B pilot — new selection criterion",
-          "value": "Best-shaped candidate 0x00495110 (11 B, one write surface, caller at C4) was REJECTED: it writes a TIMER read, and snapshot/restore re-executes the original after rollback, sampling a later time — the lane would RED for reasons unrelated to the port. The write surface must be DETERMINISTIC given pre-call state. 12 WRITES_GLOBAL rows left to screen.",
-          "kind": "text"
-        },
-        {
-          "label": "Iter8: 3 RpClumpDestroy destructors C3",
-          "value": "NEW reg_this_call_observe handler (records a stubbed callee's arg, for void single-call fns) + NEW identified-callee clause (user-approved). EmitterDtorClumpAt5c/15c/100 (0x0041b440/beb0/cb00) C2->C3, GREEN 3/3 (recorded RpClumpDestroy arg==sentinel). Commit 0e0a436a.",
-          "kind": "text"
-        },
-        {
-          "label": "Render emitter family status",
-          "value": "6 of the 7 flagged rows now C3: 3 EBX ctors (ad60/c320/cd20) + 3 EAX destructors (b440/beb0/cb00). Remaining: ESI-bit-gated dispatchers 0x0041ae60/af00 (callee FUN_004c13e0 C2 — clean gate). Plus one-off 0x0041aac0 + 0x0041af50 (per-frame updater).",
-          "kind": "text"
-        },
-        {
-          "label": "Ledger",
-          "value": "24 items: 11 promoted, 6 blocked, 7 candidate (iter9 ran 4/4 cycles, 0 promotions, 0 game boots)",
-          "kind": "text"
-        },
-        {
-          "label": "iter10 caller-gate UNBLOCKED",
-          "value": "One local Ghidra pass (pool 7, read-only) resolved the gate for all 144 refilled RVAs: 102 GATE_PASS, 27 ORPHAN_BLOCK (callers in un-wrapped blocks - need plating), 12 NO_CALLERS, 2 NOT_A_FUNCTION, 1 C1-only. Used getReferencesTo not function_callers - 27 rows would otherwise read as uncallable. Results re/orchestrator/caller_gate_144.tsv; tool scripts/orch_caller_gate.py. Brief rework also fixed the timeouts: 4/4 GREEN, and the new harness_safety column self-tested correctly (both known mutators returned MUTATOR_LANE).",
-          "kind": "text"
-        },
-        {
-          "label": "iter9 findings (2 blockers)",
-          "value": "(1) read-fleet 12-RVA briefs blow the 600s worker budget - 5 of 6 units TIMEOUT x2, only state_boot_b1 finished (~9min). Re-queue at <=6 RVAs. (2) The brief's READY criterion omits HARNESS SAFETY: both READY rows are mutators mis-routed to the getter lane - 0x00403640 clobbers the live BackBuffRaster handle DAT_00636b78, 0x00496ce0 is HardwareExitApplication teardown. Authoring refused; route to the snapshot/restore A/B mutator lane.",
-          "kind": "text"
-        },
-        {
-          "label": "Refill 2026-07-30",
-          "value": "12 new candidate buckets x 12 RVAs (144) cut from state_eligible_CLEAN.txt, filtered to confidence==C2 via hooks.csv; generator scripts/orch_refill_buckets.py, lists in re/orchestrator/candidate_buckets.json. Pool depth remaining: 1496 C2 state-lane RVAs.",
-          "kind": "text"
-        },
-        {
-          "label": "Cycle budget",
-          "value": "orchestrate skill now runs 4 cycles per invocation (was 1), overridable via /orchestrate N; 4 hard stops defined",
+          "label": "Gate pool",
+          "value": "102/102 judged. All 3 READY rows resolved (2 promoted, 1 degenerate) — the synthetic-getter lane in this pool is exhausted.",
           "kind": "text"
         }
       ]
