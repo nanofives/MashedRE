@@ -32,7 +32,7 @@
       "fields": [
         {
           "label": "Iteration",
-          "value": "iter20 (3 runs)",
+          "value": "iter20 (4 runs)",
           "kind": "text"
         },
         {
@@ -42,7 +42,7 @@
         },
         {
           "label": "Session promotions",
-          "value": "0x00482900, 0x00411350, 0x00411530",
+          "value": "0x00482900, 0x00411350, 0x00411530 (all C3)",
           "kind": "text"
         }
       ]
@@ -51,11 +51,20 @@
       "heading": "Open",
       "fields": [
         {
-          "label": "Next",
+          "label": "C4 lift",
+          "value": [
+            "REFUSED - RVA counts measured the ORIGINAL, not our port",
+            "Next: arm asi:ExportName counter AFTER the menu, re-run",
+            "0x00411350/0x00411530 never fire in a race - need a results-UI scenario"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Lanes",
           "value": [
             "27 ORPHAN_BLOCK rows need callback blocks plated",
             "Mutator lane: 43 rows, only 2 AB_READY",
-            "C4 for 0x00482900 needs a canonical-scenario run"
+            "Gate pool: 88 rows, 1 READY (deferred)"
           ],
           "kind": "list"
         },
