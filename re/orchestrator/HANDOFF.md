@@ -3,7 +3,7 @@
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions.
 
 **C1 796 / C2 4006 / C3 879 / C4 185.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
-committed through **0f273f78**, **not pushed** (124 commits ahead of origin/main).
+committed through **a0d81a53**, **not pushed** (127 commits ahead of origin/main).
 Ledger: 29 promoted / 21 candidate / 8 briefed / 15 blocked.
 
 Resume with `/orchestrate` — it reads `re/orchestrator/state.json`, which is current.
@@ -123,11 +123,18 @@ and neither had a `scenario_sentinel`. Two boots saved by a millisecond check.
 2. **Author 3-4 rows, verify in ONE `state_batch` boot.**
 3. **NEEDS_NEW_HANDLER is a hypothesis about the handler inventory, not a fact** — now **6
    consecutive runs**, and iter21's re-screen found **0 of 3** were real. Check
-   `re/frida/ARG_TYPES.md` before writing anything. **Root cause now fixed at source**
-   (`0f273f78`): the index summarised each handler's original USE CASE, not its MECHANISM,
-   so a screen looking for "store EAX into `*ECX`" never matched something described as
-   "cross-link insert". When a screen says no handler fits, check the handler's
-   *implementation*, not its one-line summary.
+   `re/frida/ARG_TYPES.md` before writing anything. **Root cause now fixed at source.**
+   The index summarised each handler's original USE CASE, not its MECHANISM, so a screen
+   looking for "store EAX into `*ECX`" never matched something described as "cross-link
+   insert". Three fixes shipped: `gen_arg_types_index.py` now prefers an explicit
+   `// MECHANISM:` line over the arbitrary 3-line scrape (`a5c7b2aa`); the **20 most-used**
+   affected handlers have one (`a0d81a53`); and the generated header states outright that a
+   scraped note is not evidence that no handler fits. **78 lower-usage descriptors are still
+   scraped** — when a screen says no handler fits one of those, read the *implementation*.
+
+   Surfaced while doing it: **`out3_idx` is a false-GREEN hazard.** It never reads its out
+   buffer back, so a reimpl that returns the right flag while writing garbage to `*out`
+   passes silently. Its 4 registry uses are worth an audit; `out1_idx` is the safe variant.
 4. **A decompiler summary is not evidence about x87.** Read the raw listing.
 5. **A discriminator must be checked against the truncation, not the operand.**
 6. **NEW (iter21): a harness reading of "absent" has two causes — the thing is absent, or
