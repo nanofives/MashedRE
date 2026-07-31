@@ -2,8 +2,8 @@
 
 MISSION: dual-lane — (A) fix the game per RE_MASTER_PLAN, (B) promote Ghidra functions.
 
-**C1 795 / C2 4006 / C3 882 / C4 183.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
-committed through **eba90e61**, **not pushed** (143 commits ahead of origin/main).
+**C1 795 / C2 4005 / C3 883 / C4 183.** Branch `fix/u9025-recharacterise-and-regabi-defects`,
+committed through **e0e3e02e**, **not pushed** (145 commits ahead of origin/main).
 Ledger: 29 promoted / 21 candidate / 8 briefed / 15 blocked.
 
 Resume with `/orchestrate` — it reads `re/orchestrator/state.json`, which is current.
@@ -22,13 +22,11 @@ Highest-value targets, in order:
 1. **~~Plate `0x005515a0`~~ — DONE (`25d46ef1`).** ORPHAN_BLOCK is now **13 PASS / 0
    OWNER_BELOW_C2 / 14 NO_OWNER**. `0x0052ddc0` (35 B) and `0x0052df40` (45 B) are gate-PASS
    and **unbriefed** — brief them with the next read-fleet batch.
-2. **~~Finish the out3_idx audit~~ — CLOSED (`becc0117`).** `0x0046d740` re-verified C2→C3 via
-   `cache_setter_observe` and **`out3_idx` is RETIRED** in both harnesses (the dispatch throws
-   rather than being deleted, so an old entry fails loudly). Audit tally: 4 demoted, 3 restored
-   to C3, **1 left open** — `0x0046d510`, still C2 and INCONCLUSIVE, needs an **in-race**
-   scenario with a payload-observing handler (the early-window lane force-calls before its
-   `FUN_004c3df0` transform's matrix exists, so 8/11 cases die on a both-sides AV). Its
-   `reseed_per_side` flag is already implemented and forwarded, and is genuinely required.
+2. **~~The out3_idx audit~~ — FULLY CLOSED (`e0e3e02e`).** All four demoted rows are back at
+   C3; `out3_idx` is retired in both harnesses. `0x0046d510` was finished on the **in-race**
+   lane after the early-window attempt died on a both-sides AV (that lane force-calls before
+   its transform's matrix exists). Net C4 185→183 stands — a synthetic force-call does not
+   re-establish the canonical-scenario half of C4 for the two rows that held it.
 3. **The 14 NO_OWNER ORPHAN rows** — need a different method than the reference-chain BFS.
 
 ### Follow-up surfaced by closing the cfg-forwarding gap
