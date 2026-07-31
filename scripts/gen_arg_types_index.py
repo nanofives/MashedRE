@@ -141,7 +141,13 @@ def main() -> int:
             comment = raw.split("#", 1)[1].strip() if "#" in raw else ""
             for n in found:
                 # attach the trailing comment only when it is unambiguous
-                ew_names.setdefault(n, comment if len(found) == 1 else "")
+                # Strip a leading `MECHANISM:` here too. This lane needs no marker to
+                # FIND the text — the trailing `#` comment is unambiguous — but the
+                # prefix is written anyway so both lanes read the same way in source,
+                # and without this it leaks verbatim into the table.
+                ew_names.setdefault(
+                    n, MECHANISM_RE.sub("", comment).strip() if len(found) == 1 else ""
+                )
     ew_only = {n: c for n, c in ew_names.items() if n not in handlers}
 
     usage = Counter(
