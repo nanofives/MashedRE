@@ -1,4 +1,64 @@
-# Mashed RE orchestrator — resume point (updated 2026-07-31, end of iter23)
+# Mashed RE orchestrator — resume point (updated 2026-07-31, end of iter24)
+
+> ## iter24: the caller-gate fix is APPLIED AND PROVEN. Harness safety is the real bottleneck.
+>
+> **Zero rows returned `CALLERS_NEEDS_GHIDRA`** (versus 22 of 24 the run before).
+> The caller column is now resolved orchestrator-side and marked authoritative in
+> the prompt. `brief_caller_gate_fix` is closed. Brief: `runs/iter24_gate/`,
+> 2/2 OK, 7 RVAs, $1.51 off-quota.
+>
+> **Resolution method — `function_callers` alone is NOT enough.** 9 of 17
+> candidates returned zero callers because their call sites live in un-wrapped
+> blocks. Use `function_callers`, else `reference_to` + `orphan_owners.tsv`.
+> Two false positives to reject when reading `reference_to`:
+> a `UNCONDITIONAL_JUMP` from a `thunk_` is an alias, not a caller
+> (`0x004b7fd0`, `0x00496970`); a `DATA` reference is a function-pointer table
+> slot, not a call (`0x0047b230`, `0x00474f30`, `0x004d8530`).
+> Only 7 of 17 had a genuine caller — **and all 7 were C2+**, so the gate was
+> never the real filter.
+>
+> **Still 0 READY, but now honestly so:** 4 MUTATOR_LANE, 2 NEEDS_GHIDRA,
+> 1 ADDITIVE_FIELD. With callers settled, READY turns solely on arg_type and
+> harness safety — and safety is where rows now die. Expect the synthetic getter
+> lane to stay thin; **the yield is in the mutator and ADDITIVE_FIELD routes.**
+>
+> **Best next candidates, in order:**
+> 1. **`0x004c7600`** — `int_scalar` is the right shape and the row is one fact
+>    from READY: its whole effect is a vtable dispatch at `DAT_007d3ff8+0x88`
+>    whose identity is open as **U-4976**. Resolve that slot in Ghidra; if it is
+>    a read-only getter this flips to READY.
+> 2. **`0x004b8080`** — the brief called it ADDITIVE_FIELD `ptr_seed_observe +
+>    stub_at` and claimed ptr_seed_observe "supports stub_at". **I checked the
+>    dispatch block in `diff_template.js`: it does NOT** (`null_args` and
+>    `ptr_to` are there; `stub_at`/`stub_ret`/`stub_nargs` are not). But
+>    **`stub_dispatch_observe` (`ARG_TYPES.md:57`) already has `stub_at[]`** plus
+>    scratch buffers and `arg_layout`. Try that handler before writing any field.
+>    Seventh instance of "the handler you want already exists under another
+>    name" — grep the dispatch block before believing any handler-gap claim,
+>    **including an ADDITIVE_FIELD one**.
+> 3. **`0x0047cde0`** (MUTATOR_LANE, `(&DAT_006c9438)[param_1] = param_2`) —
+>    `entity_field_set` already models exactly this strided-global-array shape.
+>
+> **Do not bother with:** `0x00421980` (TEARDOWN, detaches an atomic from the
+> world), `0x004cbb20` (**DESTROYS_DEVICE** — vtable `+0x1a8` is
+> `SetTextureStageState` on the live D3D device `DAT_007d4110`; a synthetic call
+> reconfigures the renderer), `0x004c0ed0` (returns `param_1+0x50`, so per-side
+> buffers differ and a raw-retval compare false-REDs; needs address
+> normalisation).
+>
+> **Data defect:** `0x004d8530` is in `candidate_buckets.json` but is **not a
+> function start** in the program — reachable only as a DATA reference from
+> `0x004c34ab`. The buckets file needs a validity pass against the live program.
+>
+> **Hygiene:** slot 9 acquired and released cleanly twice this session. Slots
+> **5, 10, 11 hold leaked `.lock~`**. The pool script's `acquire` stakes a
+> `.lock` that Ghidra then trips over — clear the stake before opening, and
+> never run pool-wide `cleanup` while another session is live.
+
+---
+
+# (iter23 resume point)
+# (iter23 resume point — superseded above)
 
 > ## iter23 SUPERSEDES the "START HERE" below — do NOT author `0x0052df40`
 >
