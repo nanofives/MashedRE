@@ -18810,4 +18810,85 @@ HOOKS = {
         ],
     },
 
+    # 0x0055c810 PhysicsBodySetLinearVelocity (vehicle, C2 -> C3 candidate, 44 B).
+    # Port mashedmod/src/mashed_re/Vehicle/PhysicsBodySetLinearVelocity.cpp.
+    #
+    #   FUN_0055c380(body, &DAT_005e4fe0);   // RW-Physics shape-record init
+    #   *(u32*)(body+0x40..0x48) = vec[0..2];
+    #   return body;
+    #
+    # NO NEW HANDLER. The screening brief proposed 'float3_ptr_write_observe',
+    # but ptr_seed_observe already does exactly this: two scratch buffers passed
+    # positionally, seed one, observe offsets in the other. Reused as-is.
+    #
+    # SAFE with scratch buffers even though it calls a real function: the callee
+    # FUN_0055c380 (0x0055c380..0x0055c3d7) writes constants only through its own
+    # first argument, touches no globals and calls nothing — so everything it
+    # does lands inside buf0. The brief did not mention this callee at all.
+    #
+    # OBSERVABLE covers both halves of the function: the constants the init
+    # writes AND the three copied dwords. +0x5c is the load-bearing one — it is
+    # param_2 of the init, i.e. the 0x005e4fe0 immediate, the single constant a
+    # port could plausibly get wrong. Expected per test, buffers zeroed first:
+    #   0+0    = 3f800000   (init: *param_1 = 1.0f bits)
+    #   0+0xc  = 00020003   (init: param_1[3] |= 0x20003, from zero)
+    #   0+0x40 = seed[0]    (the copy)
+    #   0+0x44 = seed[1]
+    #   0+0x48 = seed[2]
+    #   0+0x50 = 3e4ccccd   (init: param_1[0x14])
+    #   0+0x5c = 005e4fe0   (init: param_1[0x17] = the passed global)
+    # NON-DEGENERACY comes from the seeded triple: four tests, four distinct
+    # fingerprints. The constant fields repeat by design — they are there to
+    # prove the init ran, not to discriminate.
+    #
+    # NOT OBSERVED, stated so it is not mistaken for covered: the RETURN value
+    # (`mov eax,esi` at 0x0055c838). ptr_seed_observe discards returns, and the
+    # return is the input pointer, which would differ per side anyway. The
+    # brief had recorded this function as void; it is not.
+    #
+    # CALLEE-GATE: FUN_0055c380 is C1 but hooks.csv tags it
+    # third-party-library[RenderWare-Physics-3.7] — a documented library role,
+    # so the identified-callee clause (CONFIDENCE.md 2026-07-30) applies.
+    # Callers 0x0047d3c0 / 0x0047fad0 / 0x0047fc40 are all C2.
+    'physics_body_set_linear_velocity': {
+        'rva':        0x0055c810,
+        'export':     'PhysicsBodySetLinearVelocity',
+        'signature':  {'ret': 'pointer', 'args': ['pointer', 'pointer']},
+        'arg_type':   'ptr_seed_observe',
+        'num_bufs':   2,
+        'buf_size':   0x80,          # init writes up to +0x5c; 0x40 is too small
+        'arg_layout': [{'buf': 0}, {'buf': 1}],
+        'observe':    [{'buf': 0, 'off': 0x00, 'type': 'u32'},
+                       {'buf': 0, 'off': 0x0c, 'type': 'u32'},
+                       {'buf': 0, 'off': 0x40, 'type': 'u32'},
+                       {'buf': 0, 'off': 0x44, 'type': 'u32'},
+                       {'buf': 0, 'off': 0x48, 'type': 'u32'},
+                       {'buf': 0, 'off': 0x50, 'type': 'u32'},
+                       {'buf': 0, 'off': 0x5c, 'type': 'u32'}],
+        'scenario':   'race',
+        'scenario_sentinel': 0x008815a0,
+        'path1_tests': [
+            {'seed': [{'buf': 1, 'off': 0, 'type': 'u32', 'value': 0x3f800000},
+                      {'buf': 1, 'off': 4, 'type': 'u32', 'value': 0x40000000},
+                      {'buf': 1, 'off': 8, 'type': 'u32', 'value': 0x40400000}]},
+            {'seed': [{'buf': 1, 'off': 0, 'type': 'u32', 'value': 0xdead0001},
+                      {'buf': 1, 'off': 4, 'type': 'u32', 'value': 0xdead0002},
+                      {'buf': 1, 'off': 8, 'type': 'u32', 'value': 0xdead0003}]},
+            {'seed': [{'buf': 1, 'off': 0, 'type': 'u32', 'value': 0x00000000},
+                      {'buf': 1, 'off': 4, 'type': 'u32', 'value': 0xffffffff},
+                      {'buf': 1, 'off': 8, 'type': 'u32', 'value': 0x80000000}]},
+            {'seed': [{'buf': 1, 'off': 0, 'type': 'u32', 'value': 0x11111111},
+                      {'buf': 1, 'off': 4, 'type': 'u32', 'value': 0x22222222},
+                      {'buf': 1, 'off': 8, 'type': 'u32', 'value': 0x33333333}]},
+        ],
+        'path2_tests': [
+            {'seed': [{'buf': 1, 'off': 0, 'type': 'u32', 'value': 0x3f800000},
+                      {'buf': 1, 'off': 4, 'type': 'u32', 'value': 0x40000000},
+                      {'buf': 1, 'off': 8, 'type': 'u32', 'value': 0x40400000}]},
+            {'seed': [{'buf': 1, 'off': 0, 'type': 'u32', 'value': 0x11111111},
+                      {'buf': 1, 'off': 4, 'type': 'u32', 'value': 0x22222222},
+                      {'buf': 1, 'off': 8, 'type': 'u32', 'value': 0x33333333}]},
+        ],
+    },
+
 }

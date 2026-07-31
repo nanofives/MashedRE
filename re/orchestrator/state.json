@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-07-31T04:55:44.4196178Z",
+  "updated": "2026-07-31T05:06:25.5230276Z",
   "note": "Cross-tier work ledger for the Fable-5 orchestrator. Every item flows: candidate -> briefed -> authored -> verified -> promoted (or -> blocked). orch.ps1 is the ONLY writer during a run (use `set`), so transitions stay durable across iterations — a run cut off for budget never loses state. Stages: candidate|briefed|authored|verified|promoted|blocked.",
   "items": [
     {
@@ -422,6 +422,13 @@
       "kind": "table_dispatch",
       "stage": "promoted",
       "note": "iter15 cycle4: BOTH promoted C2->C3. Gate: callers 0x005b1140 (at4) and 0x005b1030 + 0x005b1110 (at8) all C2; callee-half VACUOUS under the NEW INDIRECT-DISPATCH clause, added to re/CONFIDENCE.md 2026-07-31 and USER-APPROVED - I did not self-approve it, because it sets precedent for every dispatcher in the codebase. The clause: where a function's ONLY callee is an indirect call whose target comes from a runtime data table or fn-ptr field (call dword ptr [reg]), the callee-half is vacuous as for a leaf, since the call graph contains no unknown FUNCTION - only a datum - and which function runs is a property of the caller's data at run time, not of this function's semantics. CRITICALLY the clause REQUIRES that the A/B exercise the dispatch ITSELF via a stubbed target recording its arguments; without that condition the very thing that makes the callee unknown would also be the thing left untested. That requirement is met here. NOT satisfied by a function that also has anonymous DIRECT callees - those still gate normally."
+    },
+    {
+      "id": "ready_0055c810",
+      "rva": "0x0055c810",
+      "kind": "state_setter",
+      "stage": "promoted",
+      "note": "iter16 cycles1-3: C2->C3 GREEN 4/4, prediction-confirmed, 4 distinct fingerprints, both sides equal. KEY OUTCOME - NO NEW HANDLER WAS NEEDED. The brief proposed float3_ptr_write_observe; the existing ptr_seed_observe already seeds two positional buffers and observes offsets, which is exactly this shape, so it was reused unchanged. GENERAL LESSON for the remaining SPEC_COMPLETE queue: a NEEDS_NEW_HANDLER verdict is a hypothesis about the handler inventory, not a fact about it - re-check against what exists (and against handler EXTENSIONS added since the brief, e.g. ptr_to) before writing anything. TWO BRIEF CORRECTIONS from disasm: (1) NOT void - mov eax,esi at 0x0055c838 returns param_1; (2) the brief omitted the direct callee FUN_0055c380 entirely, though it does the bulk of the work. That callee is safe for a scratch buffer (constants only, through its own arg1, no globals, no calls) - but the brief's 'writes only through the passed pointer' was reached without accounting for it. Observed +0x00=3f800000, +0x0c=00020003, +0x40/44/48=seeded triple, +0x50=3e4ccccd, +0x5c=005e4fe0; +0x5c is the load-bearing check since it is the global immediate passed to the init. NOT COVERED, recorded explicitly: the RETURN is not observed (ptr_seed_observe discards returns; the return is the input pointer, which differs per side), and init-before-copy ORDER is not distinguished because FUN_0055c380 never touches +0x40..0x48. Gate: 3 callers all C2; callee FUN_0055c380 C1 with a DOCUMENTED LIBRARY ROLE (third-party-library[RenderWare-Physics-3.7]) so the existing identified-callee clause applies - no new ruling needed this time."
     }
   ]
 }

@@ -1,0 +1,9 @@
+{
+  "description": "orch iter16 cycle2 - verify 0x0055c810 PhysicsBodySetLinearVelocity via the EXISTING ptr_seed_observe (no new handler needed; the brief's float3_ptr_write_observe proposal was unnecessary). Observes the RW-Physics init constants AND the 3 copied dwords. +0x5c must read 005e4fe0 (the passed global) and +0x0c must read 00020003.",
+  "jobs": [
+    { "type": "build", "id": "iter16_build" },
+    { "type": "state_batch", "id": "iter16_pbslv",
+      "hooks": ["physics_body_set_linear_velocity"],
+      "scenario": "race", "dwell": 20 }
+  ]
+}

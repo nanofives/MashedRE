@@ -352,3 +352,4 @@
 "Vehicle\PhysicsBodySetFriction.cpp"
 "Audio\AudioPoolFreeGuards.cpp"
 "Audio\AudioTableDispatch.cpp"
+"Vehicle\PhysicsBodySetLinearVelocity.cpp"
