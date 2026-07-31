@@ -12,21 +12,18 @@ rva	name	conf	size	best_caller	harness_safety	brief_verdict	brief
 0x005b10e0	FUN_005b10e0	C2	38	0x005b1110(C2)	CALLS_UNKNOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter12_gate/gate_b9.md
 0x00495080	FUN_00495080	C2	38	0x0043dfd0(C2)	CALLS_UNKNOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter12_gate/gate_b9.md
 0x00550950	FUN_00550950	C2	41	0x004cbd30(C3)	CALLS_UNKNOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter12_gate/gate_b11.md
-0x00425b90	FUN_00425b90	C2	41	0x00425c00(C2)	CALLS_UNKNOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter12_gate/gate_b11.md
 0x0055c810	PhysicsBodySetLinearVelocity	C2	44	0x0047fad0(C2)	CALLS_UNKNOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter12_gate/gate_b12.md
 0x004b5190	FUN_004b5190	C2	49	0x0041ad60(C3)	CALLS_UNKNOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter12_gate/gate_b12.md
 0x00411530	Replay::GetTimeAtIdx	C2	65	0x004115c0(C3)	CALLS_UNKNOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter12_gate/gate_b14.md
 0x00404820	FUN_00404820	C2	13	0x0045b930(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b1.md
 0x004b4120	FUN_004b4120	C2	16	0x0048a4e0(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b2.md
 0x005b1080	FUN_005b1080	C2	18	0x005b7110(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b2.md
-0x00421690	FUN_00421690	C2	22	0x00424eb0(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b2.md
 0x00454f80	FUN_00454f80	C2	22	0x00407800(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b3.md
 0x0041e850	sub_0041e850	C2	22	0x0040dfc0(C3)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b3.md
 0x00491780	FUN_00491780	C2	23	0x00426e10(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b3.md
 0x00421980	FUN_00421980	C2	26	0x00421c80(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b4.md
 0x00421960	FUN_00421960	C2	30	0x00421d20(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b5.md
 0x004c0ed0	FUN_004c0ed0	C2	31	0x00552e40(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b5.md
-0x004c5dd0	FUN_004c5dd0	C2	35	0x004d0290(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b6.md
 0x0048fef0	FUN_0048fef0	C2	35	0x0048ff20(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b7.md
 0x004c1be0	sub_004c1be0	C2	35	0x004026d0(C3)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b7.md
 0x004c7620	FUN_004c7620	C2	36	0x004de1b0(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b7.md
@@ -42,13 +39,13 @@ rva	name	conf	size	best_caller	harness_safety	brief_verdict	brief
 0x00482900	FUN_00482900	C2	48	0x004113b0(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter12_gate/gate_b12.md
 0x0041f1e0	FUN_0041f1e0	C2	51	0x00412f30(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter12_gate/gate_b13.md
 0x00485420	FUN_00485420	C2	59	0x004694e0(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter12_gate/gate_b13.md
-0x00413f50	FUN_00413f50	C2	64	0x0040bde0(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter12_gate/gate_b14.md
 0x00418de0	FUN_00418de0	C2	73	0x00418e30(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter12_gate/gate_b14.md
 0x004391b0	FUN_004391b0	C2	88	0x00439210(C4)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter12_gate/gate_b15.md
-0x00422470	FUN_00422470	C2	94	0x0041f770(C2)	CALLS_UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter12_gate/gate_b15.md
 0x00495110	FUN_00495110	C2	11	0x00492770(C4)	WRITES_GLOBAL	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b1.md
 0x0049a730	FUN_0049a730	C2	16	0x0049a0e0(C2)	WRITES_GLOBAL	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b2.md
+0x004a2c2f	FUN_004a2c2f	C2	23	0x004a31f3(C3)	WRITES_GLOBAL	MUTATOR_LANE	re/orchestrator/gate_verdicts_manual.tsv (iter10)
 0x004039c0	FUN_004039c0	C2	23	0x0045bae0(C2)	WRITES_GLOBAL	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b3.md
+0x00403640	FUN_00403640	C2	24	0x00402750(C2)	WRITES_GLOBAL	MUTATOR_LANE	re/orchestrator/gate_verdicts_manual.tsv (iter9/iter10-selftest)
 0x004cfe20	FUN_004cfe20	C2	25	0x004c7a70(C2)	WRITES_GLOBAL	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b3.md
 0x0045c820	FUN_0045c820	C2	34	0x0045cd30(C2)	WRITES_GLOBAL	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b6.md
 0x004c40b0	FUN_004c40b0	C2	35	0x004c7a70(C2)	WRITES_GLOBAL	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b6.md
@@ -74,8 +71,14 @@ rva	name	conf	size	best_caller	harness_safety	brief_verdict	brief
 0x005bcd80	FUN_005bcd80	C2	28	0x005bcc70(C2)	TEARDOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter11_gate/gate_b4.md
 0x005b3550	FUN_005b3550	C2	39	0x005a9d00(C2)	TEARDOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter12_gate/gate_b9.md
 0x0048bc10	FUN_0048bc10	C2	13	0x0040bd00(C2)	TEARDOWN	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b1.md
+0x0041a3d0	FUN_0041a3d0	C2	13	0x00402a40(C2)	TEARDOWN	MUTATOR_LANE	re/orchestrator/gate_verdicts_manual.tsv (iter11-cycle1)
+0x0041c2c0	FUN_0041c2c0	C2	13	0x00402a40(C2)	TEARDOWN	MUTATOR_LANE	re/orchestrator/gate_verdicts_manual.tsv (iter11-cycle1)
+0x0041da80	FUN_0041da80	C2	13	0x00402a40(C2)	TEARDOWN	MUTATOR_LANE	re/orchestrator/gate_verdicts_manual.tsv (iter11-cycle1)
+0x0041de70	FUN_0041de70	C2	13	0x00402a40(C2)	TEARDOWN	MUTATOR_LANE	re/orchestrator/gate_verdicts_manual.tsv (iter11-cycle1)
+0x00425ed0	FUN_00425ed0	C2	13	0x00402a40(C2)	TEARDOWN	MUTATOR_LANE	re/orchestrator/gate_verdicts_manual.tsv (iter11-cycle1)
 0x005b8080	FUN_005b8080	C2	15	0x005b1500(C2)	TEARDOWN	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b2.md
 0x005571c0	FontSys_ShutdownFontPool	C2	25	0x00552b90(C2)	TEARDOWN	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b4.md
+0x00496ce0	FUN_00496ce0	C2	27	0x00402a40(C2)	TEARDOWN	MUTATOR_LANE	re/orchestrator/gate_verdicts_manual.tsv (iter9/iter10-selftest)
 0x004c7600	FUN_004c7600	C2	28	0x004c6ba0(C2)	TEARDOWN	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b4.md
 0x00494460	sub_00494460	C2	32	0x00495350(C2)	TEARDOWN	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b5.md
 0x00418db0	FUN_00418db0	C2	35	0x00419530(C2)	TEARDOWN	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b6.md
@@ -87,17 +90,14 @@ rva	name	conf	size	best_caller	harness_safety	brief_verdict	brief
 0x00556ce0	FontSys_ShutdownBuffers	C2	54	0x00552b90(C2)	TEARDOWN	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter12_gate/gate_b13.md
 0x00556e40	FUN_00556e40	C2	67	0x00427620(C2)	TEARDOWN	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter12_gate/gate_b14.md
 0x00426b40	FUN_00426b40	C2	94	0x0040cfd0(C2)	TEARDOWN	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter12_gate/gate_b15.md
+0x00499cc0	sub_00499cc0	C2	18	0x00492370(C2)	DESTROYS_DEVICE	MUTATOR_LANE	re/orchestrator/gate_verdicts_manual.tsv (iter11-cycle1)
 0x004cbb20	FUN_004cbb20	C2	34	0x0049aae0(C2)	DESTROYS_DEVICE	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b5.md
 0x004c79f0	FUN_004c79f0	C2	36	0x004d1020(C2)	DESTROYS_DEVICE	MUTATOR_LANE	re/orchestrator/read_fleet/runs/iter11_gate/gate_b7.md
-0x0041a3d0	FUN_0041a3d0	C2	13	0x00402a40(C2)	UNBRIEFED	UNBRIEFED	
-0x0041c2c0	FUN_0041c2c0	C2	13	0x00402a40(C2)	UNBRIEFED	UNBRIEFED	
-0x0041da80	FUN_0041da80	C2	13	0x00402a40(C2)	UNBRIEFED	UNBRIEFED	
-0x0041de70	FUN_0041de70	C2	13	0x00402a40(C2)	UNBRIEFED	UNBRIEFED	
-0x00425ed0	FUN_00425ed0	C2	13	0x00402a40(C2)	UNBRIEFED	UNBRIEFED	
-0x00499cc0	sub_00499cc0	C2	18	0x00492370(C2)	UNBRIEFED	UNBRIEFED	
-0x004a45fb	_malloc	C2	18	0x004abc53(C3)	UNBRIEFED	UNBRIEFED	
-0x004a77eb	FUN_004a77eb	C2	21	0x004a3258(C3)	UNBRIEFED	UNBRIEFED	
-0x004a2c2f	FUN_004a2c2f	C2	23	0x004a31f3(C3)	UNBRIEFED	UNBRIEFED	
-0x00403640	FUN_00403640	C2	24	0x00402750(C2)	UNBRIEFED	UNBRIEFED	
-0x004aa3e4	___heap_select	C2	26	0x004aa3fe(C2)	UNBRIEFED	UNBRIEFED	
-0x00496ce0	FUN_00496ce0	C2	27	0x00402a40(C2)	UNBRIEFED	UNBRIEFED	
+0x004a45fb	_malloc	C2	18	0x004abc53(C3)	LIBRARY_SKIP	DEFER	re/orchestrator/gate_verdicts_manual.tsv (iter9)
+0x004aa3e4	___heap_select	C2	26	0x004aa3fe(C2)	LIBRARY_SKIP	DEFER	re/orchestrator/gate_verdicts_manual.tsv (iter9)
+0x00425b90	FUN_00425b90	C2	41	0x00425c00(C2)	UNKNOWN	NEEDS_NEW_HANDLER	re/orchestrator/read_fleet/runs/iter12_gate/gate_b11.md
+0x004a77eb	FUN_004a77eb	C2	21	0x004a3258(C3)	UNKNOWN	NEEDS_GHIDRA	re/orchestrator/gate_verdicts_manual.tsv (iter9)
+0x00421690	FUN_00421690	C2	22	0x00424eb0(C2)	UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b2.md
+0x004c5dd0	FUN_004c5dd0	C2	35	0x004d0290(C2)	UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter11_gate/gate_b6.md
+0x00413f50	FUN_00413f50	C2	64	0x0040bde0(C2)	UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter12_gate/gate_b14.md
+0x00422470	FUN_00422470	C2	94	0x0041f770(C2)	UNKNOWN	NEEDS_GHIDRA	re/orchestrator/read_fleet/runs/iter12_gate/gate_b15.md

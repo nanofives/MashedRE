@@ -43,6 +43,7 @@ VERDICT_RANK = {
     "NEEDS_GHIDRA": 2,
     "MUTATOR_LANE": 3,
     "NO_PLATE": 4,
+    "DEFER": 5,          # library-skip band etc. — never a port target
 }
 # Safety ordering: SAFE is authorable into the synthetic lane; everything else
 # routes to snapshot/restore. DESTROYS_DEVICE is last — a synthetic call there
@@ -53,7 +54,13 @@ SAFETY_RANK = {
     "WRITES_GLOBAL": 2,
     "TEARDOWN": 3,
     "DESTROYS_DEVICE": 4,
+    "LIBRARY_SKIP": 6,
+    "UNKNOWN": 7,
 }
+# Verdicts transcribed by hand from iter9/iter10, which pre-date the gate_bN.md
+# brief format and so are invisible to the scraper. Kept in a file rather than
+# inline so each row can carry its evidence.
+MANUAL = ROOT / "re/orchestrator/gate_verdicts_manual.tsv"
 
 
 def split_row(line):
@@ -85,6 +92,19 @@ def scrape_briefs():
                 continue
             out[rva] = {"safety": safety, "verdict": verdict,
                         "brief": md.relative_to(ROOT).as_posix()}
+    # Hand-transcribed verdicts fill the pre-format gap. A real brief always
+    # wins, so these only apply where the scraper found nothing.
+    if MANUAL.exists():
+        with MANUAL.open(newline="", encoding="utf-8") as f:
+            for r in csv.DictReader(
+                    (l for l in f if not l.startswith("#")), delimiter="\t"):
+                rva = (r.get("rva") or "").strip().lower()
+                if rva and rva not in out:
+                    out[rva] = {"safety": r["harness_safety"],
+                                "verdict": r["brief_verdict"],
+                                "brief": "%s (%s)" % (
+                                    MANUAL.relative_to(ROOT).as_posix(),
+                                    r.get("source", ""))}
     return out
 
 

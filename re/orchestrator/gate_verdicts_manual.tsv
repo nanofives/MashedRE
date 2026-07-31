@@ -1,0 +1,19 @@
+rva	harness_safety	brief_verdict	source	evidence
+# The 12 GATE_PASS rows that orch_rank_gate.py reads as UNBRIEFED. They are NOT
+# un-judged — they were screened in orchestrator iter9/iter10 as the state_boot_b1
+# / state_boot_b2 buckets, before the gate_bN.md brief format existed, so the
+# scraper cannot see their verdicts. Re-briefing them would re-buy answers already
+# on record, so the verdicts are transcribed here instead, each with the plate or
+# ledger note it came from. Anything added to this file must cite its evidence.
+0x0041a3d0	TEARDOWN	MUTATOR_LANE	iter11-cycle1	13B singleton release of DAT_0063c620 (BTBPanel dff) via FUN_004e6e00; sole caller 0x00402a40 HardwareExitApplication
+0x0041c2c0	TEARDOWN	MUTATOR_LANE	iter11-cycle1	13B singleton release of DAT_0063cdb4 via FUN_004e6e00; sole caller 0x00402a40 HardwareExitApplication
+0x0041da80	TEARDOWN	MUTATOR_LANE	iter11-cycle1	13B singleton release of DAT_0063d57c via FUN_004e6e00; sole caller 0x00402a40 HardwareExitApplication
+0x0041de70	TEARDOWN	MUTATOR_LANE	iter11-cycle1	13B singleton release of DAT_0063d5e0 via FUN_004e6e00; sole caller 0x00402a40 HardwareExitApplication
+0x00425ed0	TEARDOWN	MUTATOR_LANE	iter11-cycle1	13B release of DAT_00644150 (Copters.txd) via RW TXD release FUN_004c5930; sole caller 0x00402a40
+0x00499cc0	DESTROYS_DEVICE	MUTATOR_LANE	iter11-cycle1	calls DestroyWindow(DAT_007e9584) - a synthetic call kills the game window
+0x00403640	WRITES_GLOBAL	MUTATOR_LANE	iter9/iter10-selftest	writes DAT_00636b78, the live BackBuffRaster handle (plate promote_c2_perm_piz_callees/00403640.md line 27)
+0x00496ce0	TEARDOWN	MUTATOR_LANE	iter9/iter10-selftest	RW resource-list teardown FUN_004d41e0 twice on DAT_00773094/DAT_00773088 (plate boot_app_init_d5/0x00496ce0.md line 49); sole caller FUN_00402a40
+0x004a2c2f	WRITES_GLOBAL	MUTATOR_LANE	iter10	writes DAT_00773994; iter9 had mis-read this as a plain void row - the hazard was caught only by the harness_safety column
+0x004a45fb	LIBRARY_SKIP	DEFER	iter9	_malloc, MSVC CRT via FidDB - library-skip band, not a port target
+0x004aa3e4	LIBRARY_SKIP	DEFER	iter9	___heap_select, MSVC CRT via FidDB - library-skip band; ALSO carries an unresolved plate-C3-vs-hooks.csv-C2 tracker conflict
+0x004a77eb	UNKNOWN	NEEDS_GHIDRA	iter9	no characterisation on record; the one row of the twelve genuinely still unscreened
