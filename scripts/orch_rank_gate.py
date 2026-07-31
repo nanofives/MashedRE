@@ -151,8 +151,27 @@ def main(argv):
         gate = [r for r in csv.DictReader(f, delimiter="\t")
                 if r["verdict"] == "GATE_PASS"]
 
-    rows = []
+    # LIVE confidence from hooks.csv, not the `conf` snapshot frozen into the
+    # gate TSV when the pool was cut. A row promoted since then is DONE and must
+    # not keep surfacing as work: before this filter, 5 of the top 12 rows were
+    # already C3 (0x005ae380, 0x005af200, 0x005b10a0, 0x005b10e0, 0x00550950,
+    # promoted in iters 14/15/19), i.e. ~40% of the primary queue was noise.
+    # A queue you have to mentally filter is one you stop trusting.
+    live = {}
+    with (ROOT / "hooks.csv").open(newline="", encoding="utf-8",
+                                   errors="replace") as f:
+        for r in csv.DictReader(f):
+            rva = (r.get("rva") or "").strip().lower()
+            if rva:
+                live["0x" + rva] = (r.get("confidence") or "").strip()
+
+    rows, done = [], []
     for g in gate:
+        cur = live.get(g["rva"].lower(), g["conf"])
+        if cur in ("C3", "C4"):
+            done.append((g["rva"], g["name"], cur))
+            continue
+        g = dict(g, conf=cur)
         b = briefs.get(g["rva"].lower(), {})
         safety = b.get("safety", "UNBRIEFED")
         verdict = b.get("verdict", "UNBRIEFED")
@@ -192,7 +211,13 @@ def main(argv):
         safety[r["harness_safety"]] = safety.get(r["harness_safety"], 0) + 1
     print("briefs scraped: %d rows over %d files"
           % (len(briefs), len(set(b['brief'] for b in briefs.values()))))
-    print("gate rows ranked: %d" % len(rows))
+    # Report what was filtered rather than silently shrinking the pool — a
+    # queue that quietly loses rows is indistinguishable from one that is done.
+    print("gate rows ranked: %d  (+%d already C3/C4, filtered)"
+          % (len(rows), len(done)))
+    if done:
+        print("  promoted since the pool was cut: "
+              + ", ".join("%s %s(%s)" % (r, n, c) for r, n, c in sorted(done)))
     print("verdict: " + "  ".join("%s=%d" % kv for kv in sorted(tally.items())))
     print("safety : " + "  ".join("%s=%d" % kv for kv in sorted(safety.items())))
     print("\ntop of the SAFE-first ranking:")
