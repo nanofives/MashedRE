@@ -304,6 +304,47 @@ horizontal velocity on the last lip contact (an edge-contact normal pointing wro
 airborne-state transition zeroing/clamping velocity, or a broadphase/edge special case
 at the ramp boundary. We ported the relevant code (B5b contact, B5e solver K1..K24,
 B5c integrator) — read our C first.
+**INVESTIGATION (2026-08-01) — strong root cause, not yet live-confirmed.**
+
+Confirmed it is a NATIVE bug (the owner reported it before any QoL work existed;
+boot patches don't touch physics). RE survey (worker, cited from C1 notes) points
+to a single culprit:
+
+- **`FUN_0046EF70`** (wheel contact spring/damper resolver, `0x0046ef70`, C1
+  `re/analysis/vehicle_dynamics/0046ef70.md`; called from broadphase
+  `FUN_004709a0` only when a contact is present). On a contact frame it:
+  1. **overwrites** the car linear velocity `+0x9B0/9B4/9B8` with the summed
+     contact-spring force, directed along the contact **face normal**; and
+  2. **clamps** it on the LAST active contact: `vel *= clampFactor`,
+     `clampFactor = min((1.0 − spring_depth/speed)·k, cap)`.
+- The contact normal is the contacted triangle's face normal from
+  **`FUN_0046CC40`** (classifier). A ramp-**lip** triangle has a near-vertical /
+  overhanging normal. Its per-wheel-flag **reset path is a documented unknown
+  (U-3629)** — exactly the hole that lets a stale lip contact linger one frame
+  too long. If that stale lip contact is the last active contact on the takeoff
+  frame, the spring force redirects/kills forward velocity and/or `clampFactor`
+  shrinks it → **forward velocity → ~0, car drops straight down.** Intermittent
+  because it needs a stale lip contact to land exactly on the takeoff frame.
+- The ported A3–A6 force chain is airborne-clean (A6a 20/20 ndiff=0, A6b 12/12),
+  so the defect is in this **C1 contact layer**, not the force chain.
+
+**Repro built:** `--track 11` (Warzone) is the only track whose racing line
+crosses a real jump. Probes `re/…/scratchpad/jump_probe{,2}.py` classify takeoffs
+(grounded `+0x9E0` 4→0) by horizontal-velocity retention. In one 80s run: 42
+takeoffs captured; the player's clean jumps were all NORMAL (velocity retained) —
+no *dead* jump surfaced this run (intermittent). AI-car velocity field reads 0
+(they store velocity elsewhere), so use render-pos delta for AI hspeed.
+
+**Remaining: live confirmation + fix.** Confirm by hooking `FUN_0046EF70` and
+logging `+0x9B0` before/after on takeoff frames until a dead jump is caught
+(needs many runs, or a **player-in-the-loop capture** — the owner triggers it
+while the hook logs, the natural repro for an intermittent bug). **Fix design**
+(toggleable `mashed_qol.asi` hook, off by default): on the takeoff frame (grounded
+→0 / last contact lost), preserve the horizontal velocity from the last grounded
+frame instead of letting the lip-contact spring overwrite/clamp it. NOT shipped —
+a physics guard must be verified against a real dead jump AND a normal-jump corpus
+before touching the play binary (a wrong guard would break normal jumps).
+
 Investigation lane:
 1. Reproduce deterministically with `scenario_launch.py` (the A6b airborne lane already
    produces NATURAL full-air states) + deterministic capture mode

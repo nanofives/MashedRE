@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-01T06:30:00Z",
+  "updatedAt": "2026-08-01T07:15:00Z",
   "sections": [
     {
       "heading": "QoL patch set (2026-08-01)",
@@ -31,9 +31,14 @@
           "kind": "text"
         },
         {
+          "label": "Jump bug",
+          "value": "ROOT-CAUSED (native): FUN_0046ef70 overwrites/clamps velocity along a stale ramp-lip contact normal (U-3629). Repro=track11 Warzone. Needs live-confirm + fix (not shipped).",
+          "kind": "text"
+        },
+        {
           "label": "Open",
           "value": [
-            "Jump bug root-cause (dead jumps at takeoff)",
+            "Jump bug: live-confirm dead jump + ship toggleable fix",
             "Aspect-ratio audit at non-4:3"
           ],
           "kind": "list"
@@ -117,7 +122,7 @@
         },
         {
           "label": "M3 librw lane",
-          "value": "E2'b step 3 + first E3' pass DONE 2026-08-01 (branch e2b/step3-librw-inloop, 2 commits): librw renders IN-LOOP via device adoption (5 documented librw patches). FIXED: mirrored view (D-S3-4) and render-state desync (D-S3-2 inbound half) -- car_2_drive 25.37 -> 14.31 vs D3D9 control. Regression-clean: librw OFF still 0.00 vs reference on 7/7 gating shots. Sim is renderer-independent (byte-identical trace). OPEN D-S3-1: librw's world draw hides the car; proven by MASHED_LIBRW_NODRAW isolation control; 4 hypotheses disproved; remaining = depth VALUES incomparable despite matching projection -- needs a depth readback.",
+          "value": "E2'b step 3 + E3' first pass DONE 2026-08-01 (branch e2b/step3-librw-inloop, 3 commits). librw DRAWS THE STATIC WORLD IN-LOOP at 0.39-0.93 mean-abs vs reference on all 7 reproduced gating shots (was 24.9-39.9); D3D9 path still 0.00 with the gate off. Non-degeneracy proven: MASHED_LIBRW_NODRAW on the same binary diffs 19.31. Mechanism: device adoption (5 librw patches) + D3D9 state block around the submit. D-S3-1/2/4 all CLOSED -- single root cause was bidirectional render-state leakage, NOT occlusion (depth surfaces, clip-space z and z-state all measured identical). Residual ~0.9 not yet itemised [UNCERTAIN]. Next: E3' per-region delta register, then cars/props through librw.",
           "kind": "text"
         },
         {
