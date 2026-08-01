@@ -458,6 +458,12 @@ viewpoints, world-only, no cars.
 > not measurement. **Do not call E2'c verified until R10 is fixed and the diff
 > re-run.**
 >
+> ### RETRACTED — the verdict below is WRONG. See "E2'c VERDICT, FINAL" underneath.
+> It was reached with an inadequate control (n=1 rebuild pair) and blamed the
+> refactor for what is actually build-level nondeterminism. Left in place because
+> the error is instructive: the second time in one session that an under-powered
+> control produced a confident wrong conclusion.
+>
 > ### E2'c VERDICT after R10 was fixed — **NOT a no-op. Refactor is suspect.**
 > With the deterministic harness (13/13 same-binary), the pre- vs post-refactor
 > A/B — same source tree, same clock, only `TrackRenderer.h` + `RaceSceneState.h`
@@ -488,6 +494,47 @@ viewpoints, world-only, no cars.
 >
 > Decision needed: revert the refactor, or treat the layout dependency as the
 > finding and chase it. Do NOT build E2'b on top of this until it is resolved.
+>
+> ### E2'c VERDICT, FINAL — **the refactor is EXONERATED. R10b is the real bug.**
+> The missing control was "rebuild the *pre-refactor* source and compare against
+> itself". Run it and the whole picture inverts:
+>
+> | comparison | identical | differing shots |
+> |---|---|---|
+> | same binary, two runs | **13/13** | — |
+> | PRE vs PRE (rebuild control) | 5/13 | `01_action 01_grid 01_inrace_track 02_back_to_menu car_2_drive car_3_weave car_4_chase car_5_chase` |
+> | PRE vs POST (the "refactor" A/B) | 5/13 | **the same eight, exactly** |
+> | POST vs POST (rebuild control) | 12/13 | `01_inrace_track` |
+> | PRE2 vs POST2 (refactor, both rebuilt) | 8/13 | `01_action 01_inrace_track car_3_weave car_4_chase car_5_chase` |
+>
+> **Rebuilding identical source reproduces the entire effect I attributed to the
+> refactor** — the same eight files, not a subset. The refactor is not the
+> variable. My "NOT a no-op" verdict was an artefact of comparing one build
+> against one other build and calling the difference causal.
+>
+> Note also that the two rebuild controls disagree with each other (5/13 vs
+> 12/13). So the instability is intermittent *between build pairs*: a single
+> "12/13" run does not demonstrate stability either. Any future control here needs
+> several build pairs, not one.
+>
+> **R10b is therefore much larger than first logged** — up to 8 of 13 shots, not
+> one — and it is the genuine latent bug: identical source, same deterministic
+> clock, differing behaviour. That signature points at a read of uninitialised
+> memory (or something else address/layout-dependent) somewhere on the in-race
+> path; MSVC output is not byte-reproducible run to run, so small code-layout
+> shifts change whatever garbage is being read. `car_1_spawn` is stable while
+> `car_2_drive` onward is not, so it enters after spawn and accumulates.
+>
+> **E2'c stands as written** (structurally a pure move, and no longer contradicted
+> by measurement), but it is still not positively *verified*, because R10b means
+> no in-race shot can currently certify anything. E2'b is unblocked from the
+> refactor's side; it remains blocked from the acceptance side until R10b is
+> fixed — and so does E3', for the same reason.
+>
+> Next diagnostic step (not yet run): determine whether the divergence is in the
+> simulation or only in rendering, by diffing the per-lap/split log lines between
+> two builds. If the sim numbers differ, bisect the in-race update path for the
+> uninitialised read; if only pixels differ, it is renderer-side.
 
 **E2'c — the TrackRenderer split (L — this is the real cost).** Before cars/particles/pickups can
 move, `TrackRenderer.cpp`'s 4139 LOC must be separated into *race state* (keep, renderer-neutral)
@@ -556,7 +603,7 @@ Reference captures for E3' should be taken **before** E2' starts, on the current
 | R7 | librw is alive upstream (pushed 2026-07-14); drift vs our snapshot. | LOW | Snapshot + `PINNED_REV.txt` + keep the gitignored pristine clone for diffing. |
 | R8 | Frame-baked `DffBatch` collapses the RW frame hierarchy (I2) — forecloses skinned/animated parts. | LOW | Costs nothing today (nothing in Mashed's DFFs is skinned as far as our loader exposes). Re-open only if an animated part appears. |
 | R9 | librw in the .asi would collide with `MASHED.exe`'s own RW engine and device. | LOW | Avoided by decision: **exe-only** (§3.4). Guard any bridge TU that lands in `asi_sources.rsp`. |
-| **R10b** | **Residual build-level nondeterminism: one shot (`01_inrace_track`) differs by 61.89 mean-abs between two builds of IDENTICAL source.** The other 12 are bit-identical, so this is isolated, not general — but until it is explained, that one viewpoint cannot be used as an E3' gate, and the possibility of a second unstable shot appearing is not excluded (n=1 control). | MED | Suspect uninitialised memory or a pointer-value dependency somewhere on the in-race path. Diagnose before relying on the full 13-shot gate; the other 12 are usable now. |
+| **R10b** | **Build-level nondeterminism: up to 8 of 13 shots differ between two builds of IDENTICAL source** (measured over two rebuild-control pairs; one pair gave 5/13 identical, the other 12/13, so it is intermittent between build pairs and a single control run proves nothing). Same source, same deterministic clock, differing behaviour. **This blocks E3' just as R10 did** — no in-race viewpoint can certify anything until it is fixed. It also produced a false "the refactor broke it" verdict for E2'c. | **HIGH — blocks the lane's gate** | Signature points at a read of uninitialised memory or other address/layout-dependent behaviour on the in-race path: MSVC output is not byte-reproducible, so small code-layout shifts change what garbage is read. `car_1_spawn` is stable, `car_2_drive` onward is not, so it enters after spawn and accumulates. Next step: diff the per-lap/split log lines between two builds to decide sim-side vs renderer-side, then bisect. Menu shots (`00_challengeselect`, `01_cupstandings`, `01_results`, `00_results`) are stable and usable today. |
 | ~~R10~~ | ~~The E3' acceptance protocol does not work — the capture harness is nondeterministic~~ | **CLOSED 2026-07-31** | Fixed by `MASHED_DETERMINISTIC=1` + `MASHED_DET_FRAMES=N` (commit `46869d1d`). **13/13 captures bit-identical across two runs of the same binary**, from a starting point of up to 36.74 mean-abs. Two causes: wall-clock `dt` driving the sim, and — the larger term — the harness killing the process on a wall-clock timeout, which under a synthetic clock stops it at a different synthetic instant each run. |
 | ~~R10-orig~~ | **The E3' acceptance protocol does not work as specified — the capture harness is nondeterministic.** Two boots of a byte-identical binary differ by up to **36.74 mean-abs** across the ten viewpoints (measured 2026-07-31). Any realistic librw delta is far below that, so imgdiff-vs-baseline currently tests nothing. | **HIGH — blocks the lane's gate** | Root cause: `exe_main.cpp:2318` derives `dt` from the GetTickCount wall clock and `:2416` feeds that wall-clock `dt` into `UpdateCar`, so the sim advances frame-rate-dependently; capture triggers also fire on wall-clock `t`. The seed is fine (spawn state is bit-identical: `gate0=(-26.08,0.04,17.00) yaw=1.55`), so this is fixable, not fundamental. Needs a deterministic capture mode: fixed `dt` on every sim path + frame-count-driven capture triggers — the "clock = render frames" approach that already yields +0 drift in `replay_verify.py`. **Only `05_car_spawn` (t=0.8 s, 0.10 run-to-run) is numerically usable today.** |
 | ~~R0~~ | ~~librw's 32-bit MSVC path is dead → D2 reopens~~ | **CLOSED** | Measured: 0 errors, 45 objs, `librw.lib` 1.23 MB, COFF machine `0x014C`. See §1.3. |
