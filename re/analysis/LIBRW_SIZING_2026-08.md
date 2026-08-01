@@ -326,14 +326,28 @@ Risk here is low: the compile is already proven (0 errors, x86 verified). What i
 >    and the D3D9-typed interface (`src/d3d/rwd3d.h:2,36`); `<windows.h>` must
 >    precede it for the `HWND` form of `EngineOpenParams`.
 >
-> Deferred out of E1' (not blocking): the 8 E3' reference captures. The existing
-> `MASHED_RACE_DEMO=1` driver reached the frontend cleanly but emitted **zero**
-> demo steps and produced no `verify/race1/*.bmp` in a 180 s run — root cause
-> unknown and out of E1' scope. **Fix or replace that driver as E2'a's first task**;
-> the references must exist on the current GREEN D3D9 path before any librw
-> submission lands, or E3' has no baseline. I9 (shader vs fixed-function default
-> pipe) is likewise still open — the smoke clears and presents without exercising
-> either object pipeline.
+> I9 (shader vs fixed-function default pipe) is still open — the smoke clears and
+> presents without exercising either object pipeline.
+
+> **E2'a TASK 0 — DONE 2026-07-31. Reference captures exist: `verify/librw_ref/`
+> (10 shots + MANIFEST).** The capture driver was never broken. `RunRaceDemoStep`
+> is documented at `exe_main.cpp:1029-1030` as *"paired with `MASHED_GOTO=6` so we
+> start parked on the Challenge Select screen"*; the failed E1' attempt simply
+> omitted that companion variable, so the driver never advanced a step, logged
+> nothing, and wrote no BMP. That reads exactly like a dead driver and is not one.
+> With `MASHED_GOTO=6` (plus `MASHED_RESULT_DEMO=1`, and `MASHED_DRIVE_HOLD=1` for
+> the two late chase frames past t=9 s/16 s) the full set captures in two boots.
+> Recipe and per-shot sha256 are in `verify/librw_ref/MANIFEST.md`.
+>
+> Two pre-existing deltas were recorded from the baseline so they cannot later be
+> misattributed to librw: **D-REF-1** trackside banner text ("SUPERSONIC",
+> "EMPIRE") renders **mirrored** on the current D3D9 path; **D-REF-2** the captured
+> course is dark (means 31-36 vs 97-111 for menus), so E3' should judge shots 2-7
+> on per-region grid stats rather than whole-image mean.
+>
+> Coverage gap carried forward: no isolated particle/weather frame and no isolated
+> pickup-orb frame — both appear only incidentally in-race. Add capture hooks in
+> `ParticleSystem`/`PickupField` during E2'c if E3' needs them isolated.
 
 ### E2' — feed librw from our loaders (**L — split into three**)
 
