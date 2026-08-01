@@ -663,8 +663,66 @@ viewpoints, world-only, no cars.
 > It measures a frame where librw draws the static world and **nothing else is
 > submitted through it**. Three causes, none yet closed:
 >
-> **Two of the three were fixed in the same session; a debugging log follows because
-> the wrong turns are the useful part.**
+> ## ✅ RESOLVED — D-S3-1 and D-S3-2 both closed. One root cause, not two.
+>
+> **Result: librw draws the static world in-loop at 0.39–0.93 mean-abs against the
+> reference across all 7 reproduced gating shots** (was 24.9–39.9), with the D3D9
+> path still bit-identical (0.00) when the gate is off.
+>
+> | shot | librw ON vs ref | librw OFF vs ref |
+> |---|---|---|
+> | `01_action` | 0.56 | 0.00 |
+> | `01_grid` | 0.93 | 0.00 |
+> | `car_1_spawn` | 0.93 | 0.00 |
+> | `car_2_drive` | 0.93 | 0.00 |
+> | `car_3_weave` | 0.93 | 0.00 |
+> | `car_4_chase` | 0.39 | 0.00 |
+> | `car_5_chase` | 0.70 | 0.00 |
+>
+> **Non-degeneracy proven, not assumed:** with `MASHED_LIBRW_NODRAW=1` on the *same
+> binary* the diff explodes to **19.31** (the world vanishes). So the ~0.9 is
+> genuinely "librw drew this world", not "D3D9 quietly drew it and librw did
+> nothing" — the failure mode that would have made a near-zero number meaningless.
+>
+> ### The root cause was never occlusion
+>
+> D-S3-1 was mis-framed for most of the session, by me, as "librw's world overdraws
+> the car". Every occlusion mechanism was measured and found correct: shared depth
+> **and** colour surface (pointer-identical), clip-space z identical to four
+> decimals (`ndc.z=0.9709 w=1.717` from *both* pipelines for the same world point),
+> `zenable=1 zwrite=1 zfunc=LESSEQUAL` before and after the draw, live per-frame
+> camera. Nothing was occluding anything.
+>
+> The real mechanism is **bidirectional render-state leakage between two renderers
+> sharing one device** — the same cause as D-S3-2, which is why fixing it fixed
+> both. librw's write-back state cache and the D3D9 path each assume they own the
+> device. `resyncDeviceState()` (P4) fixes the inbound direction. The outbound
+> direction — state librw leaves behind, e.g. `D3DRS_ALPHABLENDENABLE` stuck on
+> (measured `ablend` 0→1 across the draw) — corrupted the D3D9 draws that followed,
+> **including the next frame's car and props**. That is why the car appeared to be
+> occluded: it was being drawn wrongly, not covered up.
+>
+> Fix: an `IDirect3DStateBlock9` (`D3DSBT_ALL`) captured before the submit and
+> applied after, in `RwRaceSubmit.cpp`. Not a librw patch — it lives on our side of
+> the seam, and it beats restoring a curated register list that would rot the moment
+> librw's pipeline changes.
+>
+> **Ordering is load-bearing, and I got it wrong once.** Capturing *after*
+> `resyncDeviceState()` snapshots librw's state and restores that — the exact
+> opposite of the intent. Measured cost of the mistake: `01_action` regressed
+> 14.99 → 39.25. Capture must precede the resync.
+>
+> ### Residual
+>
+> The remaining ~0.9 is not itemised. It is consistent with the I4 fog/lighting
+> delta below (RW ties fog end to the far plane) plus per-vertex lighting
+> differences, but **that is a hypothesis, not a measurement** — the E3' delta
+> register still owes a per-region breakdown of it. `[UNCERTAIN]`
+>
+> ---
+>
+> **Original log of the investigation follows — the wrong turns are the useful part,
+> and the disproved hypotheses are recorded so they are not re-tried.**
 >
 > - **D-S3-4 — the librw view was horizontally MIRRORED. FIXED.** `beginUpdate`
 >   builds the view matrix with the X component of every basis row negated

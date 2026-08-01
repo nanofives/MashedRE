@@ -46,6 +46,8 @@ rw::Camera*  g_cam       = nullptr;
 rw::Light*   g_amb       = nullptr;
 rw::Light*   g_sun       = nullptr;
 long long    g_frames    = 0;
+HWND         g_hwnd_dbg  = nullptr;   // kept only for the D-S3-1 surface probe
+IDirect3DStateBlock9* g_state_block = nullptr;  // D-S3-2 outbound fix
 
 // Build the camera once. frameBuffer is a plain Raster::CAMERA: on the D3D9
 // backend such a raster has natras->texture == nil, and setRenderSurfaces then
@@ -138,11 +140,15 @@ bool RaceSubmit_Init(HWND hwnd, IDirect3DDevice9* dev, int width, int height) {
 
     g_width  = width;
     g_height = height;
+    g_hwnd_dbg = hwnd;
     if (!EngineStartAdopted(hwnd, dev, width, height)) {
         RLog("FAIL: EngineStartAdopted");
         return false;
     }
     if (!BuildCamera()) { EngineStop(); return false; }
+    if (FAILED(dev->CreateStateBlock(D3DSBT_ALL, &g_state_block)))
+        g_state_block = nullptr;   // non-fatal; D-S3-2 just stays open
+    RLog("ok: state block %s", g_state_block ? "created" : "UNAVAILABLE");
     g_engine_up = true;
     RLog("ok: init (%dx%d)", width, height);
     return true;
@@ -151,6 +157,7 @@ bool RaceSubmit_Init(HWND hwnd, IDirect3DDevice9* dev, int width, int height) {
 void RaceSubmit_Shutdown() {
     if (!g_engine_up) return;
     // Lights are owned by the world once added; destroy the world last.
+    if (g_state_block) { g_state_block->Release(); g_state_block = nullptr; }
     if (g_cam)   { g_cam->destroy();   g_cam   = nullptr; }
     if (g_world) { g_world->destroy(); g_world = nullptr; }
     g_amb = g_sun = nullptr;
@@ -181,6 +188,19 @@ bool RaceSubmit_OnTrackLoaded(const Track::World& world,
 
 void RaceSubmit_Render(const Race::RaceSceneState& st) {
     if (!RaceSubmit_Active()) return;
+
+    // [D-S3-2 FIX, outbound half] Snapshot the D3D9 pipeline state FIRST -- before
+    // resyncDeviceState() below overwrites the device with librw's cached state.
+    // Ordering is load-bearing and was got wrong once: capturing after the resync
+    // snapshots librw's own state and "restores" that, which is the opposite of
+    // the intent (measured: 01_action regressed 14.99 -> 39.25).
+    //
+    // MEASURED cause of the delta: librw's world pass leaves D3DRS_ALPHABLENDENABLE
+    // set (ZSTATE@draw ablend=0 -> ZSTATE@after ablend=1), and exe_main draws the
+    // HUD AFTER this submit -- so the pips lost their colour and the lap digit its
+    // yellow. A state block beats restoring a hand-picked register list: librw
+    // touches far more state than the few we happened to read.
+    if (g_state_block) g_state_block->Capture();
 
     // [D-S3-1 FIX] The D3D9 path has been drawing with this device since our last
     // submit and has changed render states librw's write-back cache cannot see --
@@ -298,9 +318,121 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
         return e && e[0] == '1' && e[1] == '\0';
     }();
 
+    // D-S3-1: is the depth SURFACE actually shared? Measured, not assumed --
+    // capture what D3D9 was rendering into, then what librw switches to.
+    IDirect3DSurface9* dsBefore = nullptr;
+    IDirect3DSurface9* rtBefore = nullptr;
+    if (g_frames % 200 == 0 && rw::d3d::d3ddevice) {
+        rw::d3d::d3ddevice->GetDepthStencilSurface(&dsBefore);
+        rw::d3d::d3ddevice->GetRenderTarget(0, &rtBefore);
+    }
+
     g_cam->beginUpdate();
+
+    if (dsBefore || rtBefore) {
+        IDirect3DSurface9* dsAfter = nullptr;
+        IDirect3DSurface9* rtAfter = nullptr;
+        rw::d3d::d3ddevice->GetDepthStencilSurface(&dsAfter);
+        rw::d3d::d3ddevice->GetRenderTarget(0, &rtAfter);
+        RECT rc{}; GetClientRect(g_hwnd_dbg, &rc);
+        RLog("f%-6lld SURFACES depth d3d9=%p librw=%p %s | rt d3d9=%p librw=%p %s"
+             " | client=%dx%d raster=%dx%d",
+             g_frames, (void*)dsBefore, (void*)dsAfter,
+             dsBefore == dsAfter ? "SHARED" : "*** DIFFERENT ***",
+             (void*)rtBefore, (void*)rtAfter,
+             rtBefore == rtAfter ? "SHARED" : "*** DIFFERENT ***",
+             (int)rc.right, (int)rc.bottom, g_width, g_height);
+        if (dsBefore) dsBefore->Release();
+        if (rtBefore) rtBefore->Release();
+        if (dsAfter)  dsAfter->Release();
+        if (rtAfter)  rtAfter->Release();
+    }
+
+    // ---- D-S3-1 depth probe -------------------------------------------------
+    // A D24S8 depth surface is not lockable, so instead of reading the GPU's
+    // depth back we compute, on the CPU, the clip-space coordinate each pipeline
+    // produces for ONE world point -- using the very matrices each one uses:
+    //   D3D9  : D3DTS_VIEW/D3DTS_PROJECTION still on the device (TrackRenderer
+    //           set them at TrackRenderer.cpp:3757-3759; librw never calls
+    //           SetTransform -- those calls are commented out in beginUpdate).
+    //   librw : cam->devView / cam->devProj, which beginUpdate has just filled and
+    //           which uploadMatrices multiplies per draw (d3drender.cpp:400-416).
+    // Both use the row-vector convention (v' = v*M), RawMatrix rows being
+    // right/up/at/pos, so the two are directly comparable.
+    //
+    // The discriminator: if x/w and y/w agree but z/w does NOT, the scene is
+    // framed identically while the depths written are incompatible -- exactly the
+    // signature D-S3-1 needs, and the last hypothesis standing.
+    if (g_frames % 200 == 0 && st.car_ready_) {
+        const float p[3] = { st.car_pos_[0], st.car_pos_[1], st.car_pos_[2] };
+
+        auto xformD3D = [&](const D3DMATRIX& m, const float v[4], float o[4]) {
+            o[0] = v[0]*m._11 + v[1]*m._21 + v[2]*m._31 + v[3]*m._41;
+            o[1] = v[0]*m._12 + v[1]*m._22 + v[2]*m._32 + v[3]*m._42;
+            o[2] = v[0]*m._13 + v[1]*m._23 + v[2]*m._33 + v[3]*m._43;
+            o[3] = v[0]*m._14 + v[1]*m._24 + v[2]*m._34 + v[3]*m._44;
+        };
+        auto xformRw = [&](const rw::RawMatrix& m, const float v[4], float o[4]) {
+            o[0] = v[0]*m.right.x + v[1]*m.up.x + v[2]*m.at.x + v[3]*m.pos.x;
+            o[1] = v[0]*m.right.y + v[1]*m.up.y + v[2]*m.at.y + v[3]*m.pos.y;
+            o[2] = v[0]*m.right.z + v[1]*m.up.z + v[2]*m.at.z + v[3]*m.pos.z;
+            o[3] = v[0]*m.rightw  + v[1]*m.upw  + v[2]*m.atw  + v[3]*m.posw;
+        };
+
+        D3DMATRIX dv, dp;
+        IDirect3DDevice9* dev = rw::d3d::d3ddevice;
+        if (dev && SUCCEEDED(dev->GetTransform(D3DTS_VIEW, &dv)) &&
+            SUCCEEDED(dev->GetTransform(D3DTS_PROJECTION, &dp))) {
+            const float p4[4] = { p[0], p[1], p[2], 1.f };
+            float a[4], b[4];
+            xformD3D(dv, p4, a); xformD3D(dp, a, b);           // D3D9 clip
+            float c[4], d[4];
+            xformRw(g_cam->devView, p4, c); xformRw(g_cam->devProj, c, d);  // librw clip
+
+            const float bw = (b[3] != 0.f) ? b[3] : 1e-6f;
+            const float dw = (d[3] != 0.f) ? d[3] : 1e-6f;
+            RLog("f%-6lld DEPTHPROBE p=(%.2f,%.2f,%.2f)\n"
+                 "        d3d9  ndc=(%.4f,%.4f,%.4f) w=%.3f\n"
+                 "        librw ndc=(%.4f,%.4f,%.4f) w=%.3f",
+                 g_frames, p[0], p[1], p[2],
+                 b[0]/bw, b[1]/bw, b[2]/bw, b[3],
+                 d[0]/dw, d[1]/dw, d[2]/dw, d[3]);
+        }
+    }
+
+    // Last unmeasured link in the D-S3-1 chain: what the DEVICE actually believes
+    // about depth at the instant librw draws. Everything upstream is confirmed --
+    // shared depth surface, identical clip-space z, live camera.
+    if (g_frames % 200 == 0 && rw::d3d::d3ddevice) {
+        DWORD ze = 0, zw = 0, zf = 0, cull = 0, ab = 0;
+        rw::d3d::d3ddevice->GetRenderState(D3DRS_ZENABLE, &ze);
+        rw::d3d::d3ddevice->GetRenderState(D3DRS_ZWRITEENABLE, &zw);
+        rw::d3d::d3ddevice->GetRenderState(D3DRS_ZFUNC, &zf);
+        rw::d3d::d3ddevice->GetRenderState(D3DRS_CULLMODE, &cull);
+        rw::d3d::d3ddevice->GetRenderState(D3DRS_ALPHABLENDENABLE, &ab);
+        RLog("f%-6lld ZSTATE@draw zenable=%lu zwrite=%lu zfunc=%lu cull=%lu ablend=%lu",
+             g_frames, ze, zw, zf, cull, ab);
+    }
+
     if (!s_nodraw) g_world->render();
+
+    // ...and what the pipeline LEFT set, which is a proxy for what it used during
+    // the draw. The pre-draw reading above is not enough: librw's default atomic
+    // pipeline issues its own setRenderState per material.
+    if (g_frames % 200 == 0 && rw::d3d::d3ddevice && !s_nodraw) {
+        DWORD ze = 0, zw = 0, zf = 0, ab = 0;
+        rw::d3d::d3ddevice->GetRenderState(D3DRS_ZENABLE, &ze);
+        rw::d3d::d3ddevice->GetRenderState(D3DRS_ZWRITEENABLE, &zw);
+        rw::d3d::d3ddevice->GetRenderState(D3DRS_ZFUNC, &zf);
+        rw::d3d::d3ddevice->GetRenderState(D3DRS_ALPHABLENDENABLE, &ab);
+        RLog("f%-6lld ZSTATE@after zenable=%lu zwrite=%lu zfunc=%lu ablend=%lu",
+             g_frames, ze, zw, zf, ab);
+    }
+
     g_cam->endUpdate();
+
+    // Hand the device back exactly as the D3D9 path left it.
+    if (g_state_block) g_state_block->Apply();
 
     // D-S3-1 instrumentation: is the camera INPUT actually changing per frame?
     if (g_frames % 200 == 0) {
