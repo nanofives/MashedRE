@@ -1,7 +1,35 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-01T00:20:00Z",
+  "updatedAt": "2026-08-01T01:10:00Z",
   "sections": [
+    {
+      "heading": "QoL patch set (2026-08-01)",
+      "fields": [
+        {
+          "label": "FPS decouple",
+          "value": "SHIPPED: race speed correct at any fps (mashed_qol.asi MASHED_DECOUPLE; 0.998x measured @165fps)",
+          "kind": "text"
+        },
+        {
+          "label": "Launcher",
+          "value": "scripts/mashed_launch.ps1 (pc=165Hz / tv=120Hz race, menus 60)",
+          "kind": "text"
+        },
+        {
+          "label": "Unlock + no-save",
+          "value": "runtime env-gated in mashed_qol.asi (MASHED_UNLOCK / MASHED_NO_SAVE), verified live",
+          "kind": "text"
+        },
+        {
+          "label": "Open",
+          "value": [
+            "Jump bug root-cause (dead jumps at takeoff)",
+            "165Hz render interpolation (motion still 60Hz-stepped)"
+          ],
+          "kind": "list"
+        }
+      ]
+    },
     {
       "heading": "Phase & roadmap",
       "fields": [
@@ -79,15 +107,17 @@
         },
         {
           "label": "M3 librw lane",
-          "value": "E1' + E2'a DONE; E2'c code done. librw vendored+building, raster bridge 64/64 cross-checked, R10 CLOSED (deterministic capture: 13/13 bit-identical same-binary). BLOCKER: R10b (HIGH) - up to 8/13 shots differ across REBUILDS of identical source; blocks E3'. Next: RELIGHT_CAP heading diff to split sim-side vs renderer-side.",
+          "value": "E1' + E2'a DONE; E2'c VERIFIED a no-op (A/B differences are a strict subset of the rebuild control). librw vendored+building, raster bridge 64/64 cross-checked. Deterministic capture works: 10 of 13 viewpoints gate with a ZERO noise floor. Next: E2'b world+props geometry.",
           "kind": "text"
         },
         {
           "label": "Bugs found this session",
           "value": [
             "FIXED: TrackRenderer PAL4 read as packed nibbles; is 1 byte/px (5194-mip census)",
-            "FIXED R10: wall-clock dt + wall-clock process kill made captures nondeterministic",
-            "OPEN R10b (HIGH): identical source, rebuilt -> up to 8/13 captures differ; likely uninitialised read on the in-race path",
+            "FIXED R10: wall-clock dt + wall-clock process kill broke capture determinism",
+            "FIXED R10b (main term): background DirectInput let stray keystrokes fly the camera mid-capture",
+            "FIXED: capture recipe needs MASHED_DRIVE_DEMO or the car never moves",
+            "OPEN R10b residual (MED): 3/13 shots still build-unstable (was 8)",
             "OPEN D-REF-1: trackside banner text renders mirrored (UV/winding)"
           ],
           "kind": "list"
