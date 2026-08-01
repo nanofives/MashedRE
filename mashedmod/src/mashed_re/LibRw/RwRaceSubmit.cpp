@@ -91,9 +91,28 @@ void SetCameraLookAt(const float eye[3], const float at_pt[3]) {
                           fwd[2]*right[0] - fwd[0]*right[2],
                           fwd[0]*right[1] - fwd[1]*right[0] };
 
+    // [D-S3-4 FIX] Cancel librw's view-space X negation.
+    //
+    // beginUpdate builds the view matrix as inverse(LTM) with the X COMPONENT of
+    // every basis row negated (d3ddevice.cpp:1229-1240) -- i.e. world->view
+    // carries a built-in mirror in X. Handing it the plain D3D-LookAtLH basis
+    // above therefore renders the whole scene horizontally mirrored. Negating
+    // `right` (and only `right`, leaving `up` derived from the un-negated one so
+    // the frame stays orthonormal and upright) puts a matching mirror into the
+    // LTM, and the two cancel.
+    //
+    // MEASURED, not reasoned into place: with the frame as-built, mirroring the
+    // captured image dropped mean-abs against the D3D9 control from 25.37 to
+    // 15.41 -- so the delta really was a horizontal flip and not a camera
+    // position error. NOTE the E2'b step 2 probe (RwSceneBuild.cpp
+    // RenderWorldProbe) builds its basis the same un-compensated way, so its
+    // world_probe_arctic.png is mirrored too; it was only ever checked
+    // structurally, never against a reference.
+    const float right_lh[3] = { -right[0], -right[1], -right[2] };
+
     rw::Frame*  cf = g_cam->getFrame();
     rw::Matrix* m  = &cf->matrix;
-    m->right.x = right[0]; m->right.y = right[1]; m->right.z = right[2];
+    m->right.x = right_lh[0]; m->right.y = right_lh[1]; m->right.z = right_lh[2];
     m->up.x    = up[0];    m->up.y    = up[1];    m->up.z    = up[2];
     m->at.x    = fwd[0];   m->at.y    = fwd[1];   m->at.z    = fwd[2];
     m->pos.x   = eye[0];   m->pos.y   = eye[1];   m->pos.z   = eye[2];
@@ -162,6 +181,30 @@ bool RaceSubmit_OnTrackLoaded(const Track::World& world,
 
 void RaceSubmit_Render(const Race::RaceSceneState& st) {
     if (!RaceSubmit_Active()) return;
+
+    // [D-S3-1 FIX] The D3D9 path has been drawing with this device since our last
+    // submit and has changed render states librw's write-back cache cannot see --
+    // in particular TrackRenderer::Render() exits with D3DRS_ZENABLE=FALSE
+    // (TrackRenderer.cpp:4151) so its 2D HUD draws. librw's cache still believed
+    // ztest was on, so it issued no ZENABLE write and drew the entire world with
+    // DEPTH TESTING OFF, painting over the player car. Re-push the cached state
+    // before every submit. (The earlier suspicion that the two projections encode
+    // depth differently was WRONG: RW builds proj[10]=far/(far-near), proj[11]=1,
+    // proj[14]=-near*far/(far-near) at d3ddevice.cpp:1284-1290, which is
+    // algebraically identical to MatPerspectiveFovLH.)
+    rw::d3d::resyncDeviceState();
+
+    // The resync makes the DEVICE agree with librw's cache -- it does not make
+    // that cache correct. librw's own default leaves ztest off, so a resync alone
+    // pushes ZENABLE=FALSE and the world still overdraws whatever D3D9 already
+    // put in the frame. State the requirement explicitly, after the resync so the
+    // request is not swallowed by a stale cache entry that already reads 1.
+    // The depth BUFFER is genuinely shared: a Raster::ZBUFFER whose native
+    // texture is already set binds d3d9Globals.defaultDepthSurf (d3ddevice.cpp
+    // :1062-1069), which is the exe's depth surface under adoption. Verified by
+    // experiment -- forcing that binding explicitly produced bit-identical output.
+    rw::SetRenderState(rw::ZTESTENABLE, 1);
+    rw::SetRenderState(rw::ZWRITEENABLE, 1);
 
     // ---- camera: read what TrackRenderer resolved, never re-derive it -------
     SetCameraLookAt(st.last_eye_, st.last_at_);
@@ -246,10 +289,30 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
     // NO clear: exe_main.cpp already cleared this backbuffer to fog_color_ and
     // the D3D9 path may have drawn into it. NO Begin/EndScene: the caller owns
     // the frame (both suppressed under adoption — MASHED_PATCHES.md P3).
+    // MASHED_LIBRW_NODRAW=1 runs the whole path (engine, resync, camera, fog,
+    // lights, scene) but submits NOTHING. It is the isolation control for
+    // "does librw's draw hide the D3D9 car, or is the car not drawn at all?" --
+    // a question four rounds of reading could not settle.
+    static const bool s_nodraw = [] {
+        const char* e = std::getenv("MASHED_LIBRW_NODRAW");
+        return e && e[0] == '1' && e[1] == '\0';
+    }();
+
     g_cam->beginUpdate();
-    g_world->render();
+    if (!s_nodraw) g_world->render();
     g_cam->endUpdate();
 
+    // D-S3-1 instrumentation: is the camera INPUT actually changing per frame?
+    if (g_frames % 200 == 0) {
+        // Compare the INPUT (st.last_eye_) against what actually reaches the
+        // shader: the camera frame's LTM position, and devView's translation row
+        // (uploadMatrices multiplies devView*devProj per draw, d3drender.cpp:400).
+        const rw::Matrix* ltm = g_cam->getFrame()->getLTM();
+        RLog("f%-6lld in=(%.2f,%.2f,%.2f) ltm=(%.2f,%.2f,%.2f) devView.pos=(%.2f,%.2f,%.2f)",
+             g_frames, st.last_eye_[0], st.last_eye_[1], st.last_eye_[2],
+             ltm->pos.x, ltm->pos.y, ltm->pos.z,
+             g_cam->devView.right.x, g_cam->devView.up.y, g_cam->devView.pos.z);
+    }
     if (++g_frames == 1)
         RLog("ok: first frame submitted — eye=(%.2f,%.2f,%.2f) at=(%.2f,%.2f,%.2f) "
              "fov=%.4f aspect=%.4f near=%.3f far=%.1f fog=%d[%.1f..%.1f]",

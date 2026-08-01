@@ -1580,6 +1580,28 @@ setAdoptedDevice(IDirect3DDevice9 *dev)
 	d3d9Globals.adoptedDevice = dev;
 }
 
+// MASHED LOCAL PATCH (E2'b step 3, P4) -- re-push librw's cached state onto a
+// device that someone else has been drawing with.
+//
+// librw's setRenderState() layer is a write-back cache: setZTestEnable() only
+// touches the device when the CACHED value changes (:420). That is correct when
+// librw owns the device, and wrong under adoption, because mashed_re's D3D9 path
+// sets D3D render states directly and librw never sees it. Concretely:
+// TrackRenderer::Render() ends with SetRenderState(D3DRS_ZENABLE, FALSE) so the
+// 2D HUD draws (TrackRenderer.cpp:4151) -- and since librw's cache still says
+// ztest is enabled, its next submit issues no ZENABLE write and draws the whole
+// world with DEPTH TESTING OFF, painting over everything already in the frame.
+//
+// restoreD3d9Device() is upstream's own answer to "the device no longer matches
+// our cache" (it exists for post-Reset recovery); the adoption case has the same
+// shape, just caused by another renderer rather than a Reset. Exposed rather than
+// reimplemented so it keeps covering every state upstream adds.
+void
+resyncDeviceState(void)
+{
+	restoreD3d9Device();
+}
+
 static int
 startD3D(void)
 {

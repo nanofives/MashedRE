@@ -663,22 +663,67 @@ viewpoints, world-only, no cars.
 > It measures a frame where librw draws the static world and **nothing else is
 > submitted through it**. Three causes, none yet closed:
 >
-> - **D-S3-1 — the player car is occluded. BUG, not scope.** librw submits after
->   `g_track.Render()`, and its world overdraws the car that D3D9 already drew,
->   despite sharing the depth buffer. Candidate cause: the two projections encode
->   depth differently (RW builds `proj[10] = far/(far−near)`, `proj[11] = 1` in
->   `d3ddevice.cpp:1284-1290`, vs `MatPerspectiveFovLH`), so shared-depth
->   comparisons are inconsistent. **[UNCERTAIN]** — not yet confirmed by a depth
->   readback.
-> - **D-S3-2 — HUD render-state leakage.** The colour pips vanish and the lap "1"
->   loses its yellow. librw sets state through its own `rwStateCache`, which does
->   not know what D3D9 left set and vice versa; `MASHED_PATCHES.md` records this as
->   explicitly **not** patched, and this is the predicted symptom.
-> - **D-S3-3 — I4 fog/lighting.** The librw frame is markedly brighter. Two known
->   mechanisms: ambient is applied on top of already-baked prelight, and **RW ties
->   the fog END to the camera far plane** (`fogData.end = cam->farPlane`), so
->   `fog_end_` (70) cannot be honoured independently of the clip distance (643.6) —
->   the fog ramp is necessarily longer than D3D9's. Recorded, not approximated.
+> **Two of the three were fixed in the same session; a debugging log follows because
+> the wrong turns are the useful part.**
+>
+> - **D-S3-4 — the librw view was horizontally MIRRORED. FIXED.** `beginUpdate`
+>   builds the view matrix with the X component of every basis row negated
+>   (`d3ddevice.cpp:1229-1240`), so handing it a plain D3D-`LookAtLH` basis renders
+>   the scene flipped. Cancelled by negating `right` in the camera frame.
+>   **Measured, not argued:** mirroring the captured image dropped mean-abs against
+>   the D3D9 control 25.37 → 15.41, and the real fix then gave 14.31.
+>   ⚠️ **The E2'b step 2 probe (`RwSceneBuild.cpp RenderWorldProbe`) builds its
+>   basis the same un-compensated way, so `verify/librw_e2b/world_probe_arctic.png`
+>   is mirrored too.** It was only ever checked structurally, never against a
+>   reference — a concrete instance of "structural validation is not visual
+>   validation".
+> - **D-S3-2 — render-state leakage. CAUSE CONFIRMED, partially fixed.** Fixing the
+>   direction *into* librw (patch P4, `resyncDeviceState`) restored the fog and
+>   lighting. The direction *out of* librw is still open: the isolation control
+>   below shows the HUD pips and the yellow lap digit are correct until librw
+>   submits, so librw leaves state that corrupts the D3D9 draws that follow it.
+> - **D-S3-1 — the player car is occluded. STILL OPEN, but now precisely scoped.**
+>   The decisive test was `MASHED_LIBRW_NODRAW=1`, which runs the entire path
+>   (engine, resync, camera, fog, lights, scene build) and submits nothing: **the
+>   car draws perfectly, and so does the HUD.** So D3D9 draws both correctly and
+>   librw's world draw is what destroys them.
+>   Four hypotheses were tested and **all four disproved by evidence**, which is
+>   worth recording so they are not re-tried:
+>   1. *Depth encoding differs.* No — RW's `proj[10]=far/(far−near)`, `proj[11]=1`,
+>      `proj[14]=−near·far/(far−near)` is algebraically identical to
+>      `MatPerspectiveFovLH`, and the view-window mapping matches too.
+>   2. *librw uses a private depth buffer.* Not here — `rasterCreateZbuffer`
+>      (`d3d.cpp:499`) shares `defaultDepthSurf` when the raster matches the client
+>      rect, which it does at 640×480. Forcing the binding (P5) produced
+>      **bit-identical** output. P5 is kept only as a guard for the borderless case.
+>      (An earlier attempt patched `recreateVidmemRasters` — the post-`Reset` path,
+>      which never runs at startup — and its "no change" result was misread as
+>      proof of sharing. Identical output is equally consistent with dead code.)
+>   3. *The librw camera is frozen.* No — instrumentation shows input → frame LTM →
+>      `cam->devView` all tracking per frame. The two shots that looked identical
+>      simply sit at near-identical camera poses.
+>   4. *Depth state is off at submit.* No — explicitly forcing `ZTESTENABLE`/
+>      `ZWRITEENABLE` after the resync changed nothing.
+>
+>   **Remaining hypothesis, untested:** the depth *values* librw writes are not
+>   comparable with the D3D9 path's even though the projection parameters agree —
+>   e.g. a transpose/handedness difference in `RawMatrix::mult(&combined,
+>   &worldview, &cam->devProj)` (`d3drender.cpp:400-416`) that leaves x/y correct
+>   (the scene is correctly framed) while z is not. **[UNCERTAIN]** — needs a depth
+>   readback or a z-only probe, not another reading pass.
+> - **D-S3-3 — I4 fog/lighting.** Much reduced by P4. **RW ties the fog END to the
+>   camera far plane** (`fogData.end = cam->farPlane`), so `fog_end_` (70) cannot be
+>   honoured independently of the clip distance (643.6) — the ramp is necessarily
+>   longer than D3D9's. A genuine documented delta, not a bug.
+>
+> **Sim is renderer-independent — verified.** `log/r10b_sim.txt` under librw is
+> byte-identical to the D3D9 control (same frames, same `pos`/`yaw`/`spd`), so none
+> of this perturbs the simulation.
+>
+> **Scoreboard after the fixes** (mean-abs vs the D3D9 control, not vs the
+> reference): `car_2_drive` 25.37 → **14.31**, `01_grid` → 14.57, `01_action` →
+> 14.99, `car_4_chase` → 21.79. Still dominated by D-S3-1, so still not a parity
+> number.
 >
 > #### Caveats that must not be lost
 >

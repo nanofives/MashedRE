@@ -498,8 +498,31 @@ rasterCreateZbuffer(Raster *raster)
 
 	RECT rect;
 	GetClientRect(d3d9Globals.window, &rect);
+	// MASHED LOCAL PATCH (E2'b step 3, P5) -- share the exe's depth buffer.
+	//
+	// Upstream decides "is this the main depth buffer?" by comparing the raster
+	// size against the WINDOW CLIENT RECT. Under adoption that test is simply the
+	// wrong question: mashed_re renders to a fixed 640x480 backbuffer whose size
+	// is deliberately independent of the window (the borderless native-resolution
+	// mode makes them differ on purpose -- the same mismatch that forced P3). So
+	// the comparison fails, librw quietly allocates a PRIVATE depth surface, and
+	// its camera then depth-tests against a buffer that knows nothing about the
+	// cars and props the D3D9 path already drew -- the librw world paints straight
+	// over the player car. That was delta D-S3-1.
+	//
+	// Under adoption the raster is created at the BACKBUFFER size by construction
+	// (RaceSubmit_Init passes kWidth/kHeight), which is the dimension that
+	// actually has to match, so bind the shared surface unconditionally.
+	// releaseVidmemRasters() already refuses to Release defaultDepthSurf
+	// (d3ddevice.cpp:1029-1032), so this does not introduce an over-release.
+	//
+	// NOTE the sibling rasterCreateCamera() above always uses the default render
+	// target, so COLOUR was shared all along -- which is why librw's output was
+	// visible while its depth test was blind.
+	if(d3d9Globals.adoptedDevice)
+		natras->texture = d3d9Globals.defaultDepthSurf;
 	// This check is done by RW but it's rather strange...
-	if(rect.right == raster->width && rect.bottom == raster->height)
+	else if(rect.right == raster->width && rect.bottom == raster->height)
 		natras->texture = d3d9Globals.defaultDepthSurf;
 	else{
 		IDirect3DSurface9 *surf = nil;

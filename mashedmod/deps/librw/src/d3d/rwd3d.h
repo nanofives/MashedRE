@@ -39,6 +39,10 @@ void setD3dMaterial(D3DMATERIAL9 *mat9);
 // into instead of creating its own. Call between Engine::open and Engine::start.
 // See deps/librw/MASHED_PATCHES.md P1.
 void setAdoptedDevice(IDirect3DDevice9 *dev);
+// MASHED LOCAL PATCH (E2'b step 3, P4) -- re-push librw's cached render state onto
+// the shared device. Call before each submit under adoption: the other renderer
+// changes device state that librw's write-back cache cannot see. See P4 notes.
+void resyncDeviceState(void);
 #endif
 
 #define COLOR_ARGB(a, r, g, b) ((rw::uint32)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
