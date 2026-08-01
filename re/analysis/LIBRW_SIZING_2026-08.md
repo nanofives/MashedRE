@@ -531,10 +531,25 @@ viewpoints, world-only, no cars.
 > refactor's side; it remains blocked from the acceptance side until R10b is
 > fixed — and so does E3', for the same reason.
 >
-> Next diagnostic step (not yet run): determine whether the divergence is in the
-> simulation or only in rendering, by diffing the per-lap/split log lines between
-> two builds. If the sim numbers differ, bisect the in-race update path for the
-> uninitialised read; if only pixels differ, it is renderer-side.
+> **Next diagnostic step (not yet run) — the instrument already exists.** The
+> capture lambda in `exe_main.cpp` emits `RELIGHT_CAP tag=<shot> heading=%.5f` to
+> `mashed_re.log` at each in-race capture (confirmed present: three lines per run,
+> `01_grid` / `01_inrace_track` / `01_action`, all `heading=1.54978` in the run on
+> disk). So the sim-vs-renderer question is a three-number comparison:
+>
+> 1. Build, run a deterministic capture, save `mashed_re.log`.
+> 2. Rebuild the *same* source, run again, save the log.
+> 3. Diff the `RELIGHT_CAP` headings.
+>
+> Headings differ → the divergence is in the **simulation**; bisect the in-race
+> update path for an uninitialised read. Headings identical while pixels differ →
+> it is **renderer-side** (uninitialised render state, or a texture/batch built
+> from stale memory), a much smaller search. Do this before any bisect — it halves
+> the space for one build cycle.
+>
+> Widen the trace first if needed: `car_pos_`, `car_vel_` and the AI car positions
+> would localise it further at negligible cost, and unlike the heading they are
+> not already collapsed through `atan2`.
 
 **E2'c — the TrackRenderer split (L — this is the real cost).** Before cars/particles/pickups can
 move, `TrackRenderer.cpp`'s 4139 LOC must be separated into *race state* (keep, renderer-neutral)

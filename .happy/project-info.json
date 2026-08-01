@@ -1,13 +1,13 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-07-31T21:55:00Z",
+  "updatedAt": "2026-08-01T00:20:00Z",
   "sections": [
     {
       "heading": "Phase & roadmap",
       "fields": [
         {
           "label": "Current",
-          "value": "R7 (scaffold → verbatim) · M2 faithful race",
+          "value": "R7 (scaffold \u2192 verbatim) \u00b7 M2 faithful race",
           "kind": "text"
         },
         {
@@ -25,10 +25,26 @@
     {
       "heading": "Confidence ladder",
       "fields": [
-        { "label": "C1", "value": 795, "kind": "number" },
-        { "label": "C2", "value": 4005, "kind": "number" },
-        { "label": "C3", "value": 881, "kind": "number" },
-        { "label": "C4", "value": 185, "kind": "number" }
+        {
+          "label": "C1",
+          "value": 795,
+          "kind": "number"
+        },
+        {
+          "label": "C2",
+          "value": 4005,
+          "kind": "number"
+        },
+        {
+          "label": "C3",
+          "value": 881,
+          "kind": "number"
+        },
+        {
+          "label": "C4",
+          "value": 185,
+          "kind": "number"
+        }
       ]
     },
     {
@@ -51,22 +67,29 @@
         },
         {
           "label": "M2 critical path",
-          "value": "statediff residual wedge (~1/6 boots, 2nd mechanism) — defect session's lane",
+          "value": "statediff residual wedge (~1/6 boots, 2nd mechanism) \u2014 defect session's lane",
           "kind": "text"
         },
         {
           "label": "Open gates",
-          "value": ["ALL FOUR RESOLVED 2026-07-31 (D2/D4/D6/D7)"],
+          "value": [
+            "ALL FOUR RESOLVED 2026-07-31 (D2/D4/D6/D7)"
+          ],
           "kind": "list"
         },
         {
           "label": "M3 librw lane",
-          "value": "E1' + E2'a COMPLETE (2026-07-31). librw vendored (deps/librw @ 1252b90e, MIT), both targets build, smoke PASS. E3' baseline = verify/librw_ref (10 shots). Raster bridge live: 64/64 textures hash-identical vs an independent Python impl. Next = E2'c TrackRenderer no-op split, then E2'b world+props",
+          "value": "E1' + E2'a DONE; E2'c code done. librw vendored+building, raster bridge 64/64 cross-checked, R10 CLOSED (deterministic capture: 13/13 bit-identical same-binary). BLOCKER: R10b (HIGH) - up to 8/13 shots differ across REBUILDS of identical source; blocks E3'. Next: RELIGHT_CAP heading diff to split sim-side vs renderer-side.",
           "kind": "text"
         },
         {
           "label": "Bugs found this session",
-          "value": ["FIXED: TrackRenderer PAL4 read as packed nibbles; is 1 byte/px (5194-mip census + Roadslipblend2 decode)", "OPEN D-REF-1: trackside banner text renders mirrored (UV/winding; PAL4 ruled out)"],
+          "value": [
+            "FIXED: TrackRenderer PAL4 read as packed nibbles; is 1 byte/px (5194-mip census)",
+            "FIXED R10: wall-clock dt + wall-clock process kill made captures nondeterministic",
+            "OPEN R10b (HIGH): identical source, rebuilt -> up to 8/13 captures differ; likely uninitialised read on the in-race path",
+            "OPEN D-REF-1: trackside banner text renders mirrored (UV/winding)"
+          ],
           "kind": "list"
         }
       ]
