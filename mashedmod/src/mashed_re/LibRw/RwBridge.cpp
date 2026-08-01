@@ -17,6 +17,7 @@
 // them.
 
 #include "RwBridge.h"   // pulls <windows.h> first, which rwd3d.h needs for HWND
+#include "RwRasterBridge.h"
 
 // WITH_D3D makes librw's rwd3d.h include <d3d9.h> and expose the D3D9-typed part
 // of its interface -- notably `extern IDirect3DDevice9 *d3ddevice` (rwd3d.h:2,36).
@@ -249,6 +250,17 @@ int RunSmoke(HWND hwnd, int width, int height, int frames) {
     }
     LogLine("ok: backbuffer centre = 0x%06lX == clear colour (librw really drew)",
             centre);
+
+    // E2'a task 2: the raster bridge needs a live engine (Raster::create goes
+    // through the D3D9 driver), so it runs here, inside the started engine.
+    {
+        const int n = RasterBridge_SelfTest();
+        if (n < 0) {
+            LogLine("FAIL: raster bridge self-test (see log/librw_raster.txt)");
+            return 8;
+        }
+        LogLine("ok: raster bridge hashed %d textures -> log/librw_raster.txt", n);
+    }
 
     // Teardown in reverse (skeleton.cpp:56-65).
     cam->frameBuffer->destroy();

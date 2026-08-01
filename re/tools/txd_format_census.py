@@ -123,12 +123,127 @@ def census_txd(buf: bytes):
     return device_id, ver, mips
 
 
+# ---------------------------------------------------------------------------
+# --rgba-hash: independent re-implementation of the librw raster bridge's hash
+# ---------------------------------------------------------------------------
+#
+# Deliberately written from the FORMAT SPEC, not by porting the C++. Its whole
+# value is being a second opinion: if this and
+# mashedmod/src/mashed_re/LibRw/RwRasterBridge.cpp agree on every texture, the
+# bridge's palette lookup, nibble handling, stride walk and channel order are all
+# corroborated by something that shares no code with it. A hash produced only by
+# the bridge would just be the bridge agreeing with itself.
+#
+# Must stay byte-identical in semantics to RasterRgbaHash():
+#   FNV-1a 32, base mip only, row-major, four bytes per texel in R,G,B,A order.
+
+HASH_TARGETS = [
+    ("original/TOASTART/TRACKS/dump.piz", "DUMP.TXD"),
+    ("original/TOASTART/Common/Frontend.piz", "TEXTURES.TXD"),
+]
+
+
+def _walk_full(buf):
+    """Like census_txd but also returns each texture's name and base-mip bytes."""
+    cid, _size, _ver, off = _hdr(buf, 0)
+    if cid != ROOT_CHUNK_ID:
+        raise TxdError(f"root chunk id 0x{cid:x}, expected 0x23")
+    num_tex, device_id = struct.unpack_from("<HH", buf, off)
+    off += 4
+    out = []
+    for _ti in range(num_tex):
+        (num_mips,) = struct.unpack_from("<I", buf, off)
+        off += 4
+        base = None
+        for mi in range(num_mips):
+            cid, img_size, _v, img_payload = _hdr(buf, off)
+            if cid != IMAGE_CHUNK_ID:
+                raise TxdError(f"id 0x{cid:x} != IMAGE")
+            img_end = img_payload + img_size
+            cid, _sz, _v, sp = _hdr(buf, img_payload)
+            if cid != STRUCT_CHUNK_ID:
+                raise TxdError(f"id 0x{cid:x} != STRUCT")
+            w, h, depth, stride = struct.unpack_from("<IIII", buf, sp)
+            po = sp + 16
+            pb = stride * h
+            palb = (1 << depth) * 4 if depth < 9 else 0
+            if mi == 0:
+                base = (w, h, depth, stride,
+                        buf[po:po + pb], buf[po + pb:po + pb + palb])
+            off = img_end
+        cid, size, _v, after = _hdr(buf, off)
+        if cid != TEXTURE_CHUNK_ID:
+            raise TxdError(f"id 0x{cid:x} != TEXTURE")
+        name, p, end = "", after, after + size
+        while p < end:                       # first STRING subchunk is the name
+            c, s2, _v2, pl = _hdr(buf, p)
+            if c == 2:
+                name = buf[pl:pl + s2].split(b"\0")[0].decode("ascii", "replace")
+                break
+            p = pl + s2
+        off = after + size
+        out.append((name, base))
+    return device_id, out
+
+
+def _fnv1a_rgba(w, h, depth, stride, px, pal):
+    h32 = 2166136261
+    for y in range(h):
+        row = px[y * stride:(y + 1) * stride]
+        for x in range(w):
+            if depth == 32:
+                r, g, b, a = row[x * 4], row[x * 4 + 1], row[x * 4 + 2], row[x * 4 + 3]
+            else:
+                # depth 4 and 8 are BOTH one byte per pixel; depth 4 uses only
+                # the low nibble as a 16-entry palette index.
+                idx = (row[x] & 0x0F) if depth == 4 else row[x]
+                e = idx * 4
+                r, g, b, a = pal[e], pal[e + 1], pal[e + 2], pal[e + 3]
+            for byte in (r, g, b, a):
+                h32 = ((h32 ^ byte) * 16777619) & 0xFFFFFFFF
+    return h32
+
+
+def rgba_hash_mode():
+    fmt_name = {4: "PAL4", 8: "PAL8", 32: "ARGB"}
+    for piz_path, entry_name in HASH_TARGETS:
+        piz = Path(piz_path)
+        if not piz.exists():
+            print(f"# MISSING {piz}", file=sys.stderr)
+            return 2
+        data, _v, _a, entries, _m = read_archive(piz)
+        blob = None
+        for name, off, length, _i in entries:
+            if name.upper().endswith(entry_name.upper()):
+                blob = data[off:off + length]
+                break
+        if blob is None:
+            print(f"# {piz} has no entry {entry_name}", file=sys.stderr)
+            return 2
+        device_id, texs = _walk_full(blob)
+        print(f"# {piz_path}::{entry_name}  textures={len(texs)} "
+              f"deviceId={device_id}")
+        for i, (name, base) in enumerate(texs):
+            w, h, depth, stride, px, pal = base
+            hv = _fnv1a_rgba(w, h, depth, stride, px, pal)
+            print(f"{entry_name}|{i}|{name}|{fmt_name.get(depth, '?')}|"
+                  f"{w}x{h}|{hv:08X}")
+    return 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default="original/TOASTART",
                     help="directory scanned recursively for .piz archives")
     ap.add_argument("--json", default=None, help="write the full record set here")
+    ap.add_argument("--rgba-hash", action="store_true",
+                    help="instead of the census, emit the same per-texture "
+                         "fnv1a32(RGBA) the librw raster bridge logs, so the two "
+                         "independent implementations can be diffed")
     args = ap.parse_args(argv)
+
+    if args.rgba_hash:
+        return rgba_hash_mode()
 
     root = Path(args.root)
     if not root.is_dir():

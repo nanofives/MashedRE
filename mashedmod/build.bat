@@ -59,6 +59,9 @@ set LIBRWINC=%ROOT%deps\librw
 cl /nologo /EHa /W3 /O2 /c /I "%LIBRWINC%" /I "%LIBRWINC%\src" /DRW_D3D9 ^
     /Fo"%OUT%\RwBridge_exe.obj" "%SRC%\LibRw\RwBridge.cpp"
 if errorlevel 1 (echo [ERROR] RwBridge exe-obj compile failed & exit /b 1)
+cl /nologo /EHa /W3 /O2 /c /I "%LIBRWINC%" /I "%LIBRWINC%\src" /DRW_D3D9 ^
+    /Fo"%OUT%\RwRasterBridge_exe.obj" "%SRC%\LibRw\RwRasterBridge.cpp"
+if errorlevel 1 (echo [ERROR] RwRasterBridge exe-obj compile failed & exit /b 1)
 
 REM ===========================================================================
 REM Phase C status (2026-05-25):
@@ -297,6 +300,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Audio\AudioVecLength.cpp" ^
     "%OUT%\QhullBridge_exe.obj" ^
     "%OUT%\RwBridge_exe.obj" ^
+    "%OUT%\RwRasterBridge_exe.obj" ^
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO ^
     /MAP:"%OUT%\mashed_re.map" ^
     user32.lib d3d9.lib dsound.lib gdi32.lib "%QHULL_LIB%" "%LIBRW_LIB%"

@@ -393,6 +393,41 @@ current D3D9 path, per-channel mean-abs at the documented floor.
 > `rwID_TEXDICTIONARY`, which incidentally confirms Mashed's PC `0x23` really is a
 > proprietary variant. librw could read those natively; we have no reason to.
 
+> **E2'a TASK 2 — DONE 2026-07-31. `LibRw/RwRasterBridge.{h,cpp}`.**
+> `Txd::Texture` → `rw::Raster` (C8888 | TEXTURE), plus `TextureFromTxdTexture`
+> wrapping it in a named, filtered `rw::Texture`. Two design decisions, both
+> deliberate and both reversible:
+> - **PAL4/PAL8 are CPU-expanded to C8888**, not handed to librw as paletted
+>   rasters. librw maps both to `D3DFMT_P8` (`d3d.cpp:397-400`), which modern
+>   GPUs no longer support — the same reason the existing D3D9 path expands
+>   (`QuadRenderer.cpp:151`). Expanding also keeps one variable in the E3' diff.
+> - **Base mip only**, matching the shipping path's single-level `CreateTexture`
+>   and therefore the `verify/librw_ref` baseline. The full mip chain would
+>   probably look better, but changing renderer *and* mip policy at once would
+>   make every E3' delta ambiguous. Revisit once E3' is green.
+>
+> **Acceptance — two independent implementations agree on 64/64 textures.**
+> `RasterBridge_SelfTest()` runs inside the live engine, builds a raster per
+> texture from `dump.piz::DUMP.TXD` and `Frontend.piz::TEXTURES.TXD`, reads each
+> back through `rw::Raster::lock`, and logs an FNV-1a-32 of the RGBA to
+> `log/librw_raster.txt`. `re/tools/txd_format_census.py --rgba-hash` computes the
+> same value in Python straight from the TXD bytes — written from the format spec,
+> sharing no code with the bridge. `diff` of the two is **empty**. Coverage:
+> 11 ARGB, 5 PAL4, 48 PAL8.
+>
+> **The check is non-degenerate**: recomputing the 5 PAL4 textures with the old
+> nibble-packed interpretation changes every one of their hashes (e.g.
+> `Roadslipblend2` `9617B0A6` → `3679A285`), so this test would have caught the
+> bug it was written after.
+>
+> **What it does NOT prove** — stated so it is not over-read: the cross-check
+> validates pipeline *mechanics* (stride walk, palette indexing, nibble handling,
+> channel round-trip through real D3D memory). It does not independently confirm
+> that depth-32 TXD bytes are RGBA-ordered; that convention is inherited from the
+> existing shipped path (`QuadRenderer` / `TrackRenderer::MakeTexture`), so if it
+> were wrong, old and new would be wrong identically. Only the E3' comparison
+> against the *original game* can settle that.
+
 **E2'b — static world + props (M).** `Track::World` → geometry/atomic/world (I1), `Track::DffModel`
 → clump (I2), flags (I5), camera + fog/lighting (I4). Acceptance: `imgdiff` at the E3'
 viewpoints, world-only, no cars.
