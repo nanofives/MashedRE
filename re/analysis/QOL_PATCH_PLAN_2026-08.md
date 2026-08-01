@@ -120,7 +120,25 @@ the true pose = bit-identical to stock.
 races either way. Interpolates the CAMERA only → the world flows smoothly; the
 player car is ~screen-centred so its residual step is minimal.
 
-**Car interpolation — ATTEMPTED and DROPPED (2026-08-01).** Extended the wrapper
+**Car interpolation — SHIPPED (2026-08-01, `MASHED_INTERP` covers cars too).**
+After three investigation rounds (below), landed via the car RwFrame subtree:
+- renderable = `*(DAT_0063da18 + i*0xd04-slot i*0x2ac)`; a car atom frame =
+  `*(renderable+0x4)`; its ROOT = `*(frame+0xa0)` (RW 3.x: child +0x98, next +0x9c,
+  root +0xa0). Walk the root's subtree; for each frame, snapshot its LTM (+0x50)
+  prev/curr per tick and write the lerp — **LTM only, never modelling** (+0x10 is
+  the fixed local part-offset; writing it wedged the car, vel=0). Restore true
+  LTM after render. Car count `DAT_008a94d0`; per-frame snapshots keyed by frame
+  address (stable within a race), reset on leaving race phase.
+- Verified via the trustworthy BBDUMP channel: at 165 fps with real interpolation
+  the cars render **clean and intact** at interpolated positions, no tear / freeze
+  / crash, across a full race (`verify/qol_asi_20260801/bb_interp165_f3000.png`).
+  A crude +80 cartest confirmed the body LTM is read by the render
+  (`bb_sub_f1500.png`). At 60 fps alpha≈0 → bit-identical to stock.
+- Nuance: the car BODY interpolates (its LTM is render-read); some parts (e.g.
+  wheels) recompute their LTM from modelling and micro-step, but per-frame interp
+  deltas are a fraction of one tick's motion so it's imperceptible.
+
+**Car interpolation — earlier investigation rounds (ATTEMPTED and DROPPED).** Extended the wrapper
 to lerp each car's active render matrix (`0x00881ec8 + i*0xd04 + active*0x40`,
 `FUN_0046d4a0`; car count `DAT_008a94d0`) with row+pos linear lerp + restore.
 Decisive empirical test — a constant **+80-unit Y lift** applied to every car's

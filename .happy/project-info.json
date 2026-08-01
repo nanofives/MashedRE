@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-01T02:45:00Z",
+  "updatedAt": "2026-08-01T06:30:00Z",
   "sections": [
     {
       "heading": "QoL patch set (2026-08-01)",
@@ -26,15 +26,14 @@
           "kind": "text"
         },
         {
-          "label": "Camera interp",
-          "value": "SHIPPED: MASHED_INTERP smooths camera to render rate (60/s -> 389/s pose commits @165fps)",
+          "label": "Render interp",
+          "value": "SHIPPED: MASHED_INTERP smooths camera (60->389/s) + cars (RwFrame LTM subtree lerp); BBDUMP-verified clean at 165fps",
           "kind": "text"
         },
         {
           "label": "Open",
           "value": [
             "Jump bug root-cause (dead jumps at takeoff)",
-            "Car-mesh interpolation (render matrix +0x928 is a no-op; needs clump-frame hook)",
             "Aspect-ratio audit at non-4:3"
           ],
           "kind": "list"
@@ -118,7 +117,7 @@
         },
         {
           "label": "M3 librw lane",
-          "value": "E1'/E2'a/E2'b DONE, E2'c VERIFIED. librw vendored+building; raster bridge 64/64 cross-checked; world+clump geometry built and content-validated (16229 verts / 16480 tris == parser totals, 0 bad indices). Nothing DRAWN through librw yet. Next: wire World::render() behind MASHED_RENDER_LIBRW + first E3' imgdiff.",
+          "value": "E2'b step 3 + first E3' pass DONE 2026-08-01 (branch e2b/step3-librw-inloop, 2 commits): librw renders IN-LOOP via device adoption (5 documented librw patches). FIXED: mirrored view (D-S3-4) and render-state desync (D-S3-2 inbound half) -- car_2_drive 25.37 -> 14.31 vs D3D9 control. Regression-clean: librw OFF still 0.00 vs reference on 7/7 gating shots. Sim is renderer-independent (byte-identical trace). OPEN D-S3-1: librw's world draw hides the car; proven by MASHED_LIBRW_NODRAW isolation control; 4 hypotheses disproved; remaining = depth VALUES incomparable despite matching projection -- needs a depth readback.",
           "kind": "text"
         },
         {

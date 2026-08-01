@@ -284,14 +284,60 @@ constexpr std::uintptr_t kPhase     = 0x00771968;  // session-phase enum
 using RenderFn   = void(__cdecl*)();
 using CamApplyFn = void(__cdecl*)(std::uintptr_t);
 
-// Car (opponent/player) render interpolation was investigated and DROPPED:
-// the empirical +80u lift test (2026-08-01, verify/qol_asi_20260801/cartest_lift.png)
-// showed the car MESH is unaffected by the render matrix at record +0x928 — the
-// clump's RwFrame is committed before the render pass (at tick time), so
-// interpolating +0x928 at render is a no-op. Camera interpolation stands because
-// FUN_00441760 is a distinct callable pose→frame commit; cars have no equivalent
-// at render time. Reviving cars needs the clump-frame-set (in the FUN_00420050
-// render subtree) located and re-applied with an interpolated transform.
+// ── car RwFrame hierarchy (BFS 2026-08-01, car_frame_bfs2.py) ────────────────
+// renderable = *(DAT_0063da18 + i*0x2ac); a car atom frame = *(renderable+0x4);
+// ROOT = *(frame+0xa0) (RW 3.x RwFrame: child +0x98, next +0x9c, root +0xa0).
+// The root frame holds the car world matrix at modelling +0x10 AND LTM +0x50.
+// A single child-frame LTM write was a no-op (render recomputes children from the
+// root), so we walk the root's whole subtree and interpolate every frame's LTM
+// (+0x50 ONLY — writing modelling wedges the car: it is the fixed local
+// part-offset). Verified via BBDUMP: cars render clean and intact at 165fps, no
+// freeze/tear (verify/qol_asi_20260801/bb_interp165_f3000.png). The car body's
+// LTM is read by the render (a +80 cartest visibly moved it); some parts recompute
+// and micro-step, but per-frame interp deltas are tiny so it's imperceptible.
+constexpr std::uintptr_t kCarRendBase = 0x0063da18;
+constexpr std::uintptr_t kCarStride   = 0x000002ac;
+constexpr std::uintptr_t kCarCount    = 0x008a94d0;
+constexpr int kMaxCars   = 16;
+constexpr int kMaxFrames = 48;   // per-car frame-subtree cap
+
+inline std::uintptr_t RdPtr(std::uintptr_t a) {
+    return *reinterpret_cast<volatile std::uintptr_t*>(a);
+}
+inline std::uintptr_t CarRootFrame(int i) {
+    const std::uintptr_t rend = RdPtr(kCarRendBase + (std::uintptr_t)i * kCarStride);
+    if (rend < 0x10000) return 0;
+    const std::uintptr_t fa = RdPtr(rend + 0x4);
+    if (fa < 0x10000) return 0;
+    const std::uintptr_t root = RdPtr(fa + 0xa0);
+    return (root >= 0x10000) ? root : fa;
+}
+// Collect root + all descendants into out[]. NB: we must NOT follow the root's
+// own `next` (that is root's SIBLING — another car / world object, outside this
+// subtree). So seed the stack with root->child only; thereafter follow both
+// child (+0x98) and next (+0x9c), since a child's next-siblings are root's other
+// children (in-subtree).
+int CollectSubtree(std::uintptr_t root, std::uintptr_t* out, int cap) {
+    int n = 0;
+    if (root < 0x10000) return 0;
+    out[n++] = root;
+    std::uintptr_t stack[kMaxFrames];
+    int sp = 0;
+    const std::uintptr_t rc = RdPtr(root + 0x98);   // root->child
+    if (rc >= 0x10000) stack[sp++] = rc;
+    while (sp > 0 && n < cap) {
+        std::uintptr_t f = stack[--sp];
+        bool dup = false;
+        for (int k = 0; k < n; ++k) if (out[k] == f) { dup = true; break; }
+        if (dup) continue;
+        out[n++] = f;
+        const std::uintptr_t child = RdPtr(f + 0x98);
+        const std::uintptr_t next  = RdPtr(f + 0x9c);
+        if (child >= 0x10000 && sp < kMaxFrames) stack[sp++] = child;
+        if (next  >= 0x10000 && sp < kMaxFrames) stack[sp++] = next;
+    }
+    return n;
+}
 
 struct Pose { float elev, azim, roll, px, py, pz; };
 bool s_have = false;
@@ -330,6 +376,46 @@ inline bool SamePose(const Pose& a, const Pose& b) {
            a.px == b.px && a.py == b.py && a.pz == b.pz;
 }
 
+// ── per-frame matrix (modelling +0x10 and LTM +0x50; each: right/up/at/pos) ───
+struct Mat { float m[12]; };  // 3 rows (r,u,a) + pos, packed 0..11
+Mat ReadFrameLTM(std::uintptr_t f) {
+    Mat o;
+    for (int k = 0; k < 12; ++k) {
+        const int row = k / 3, col = k % 3;
+        o.m[k] = rdF(f + 0x50 + row*0x10 + col*4);   // LTM
+    }
+    return o;
+}
+void WriteFrame(std::uintptr_t f, const Mat& o) {
+    // LTM (+0x50) ONLY — never touch modelling (+0x10): child frames' modelling
+    // is their fixed local part-offset, which physics + the tick's LTM recompute
+    // depend on. Overwriting it wedges the car. If the render reads the cached
+    // LTM, this interpolates; if it recomputes LTM from modelling, this is a
+    // harmless no-op (and physics is unperturbed).
+    for (int k = 0; k < 12; ++k) {
+        const int row = k / 3, col = k % 3;
+        wrF(f + 0x50 + row*0x10 + col*4, o.m[k]);    // LTM
+    }
+}
+inline bool SameMat(const Mat& a, const Mat& b) {
+    for (int k = 0; k < 12; ++k) if (a.m[k] != b.m[k]) return false;
+    return true;
+}
+inline Mat LerpMat(const Mat& a, const Mat& b, float t) {
+    Mat o;
+    for (int k = 0; k < 12; ++k) o.m[k] = a.m[k] + (b.m[k] - a.m[k]) * t;
+    return o;
+}
+// per-frame prev/curr snapshots keyed by frame address (stable within a race)
+struct FrameSnap { std::uintptr_t f; Mat prev, curr; bool have; };
+FrameSnap s_fs[kMaxCars * kMaxFrames];
+int s_fsN = 0;
+FrameSnap* FindSnap(std::uintptr_t f) {
+    for (int k = 0; k < s_fsN; ++k) if (s_fs[k].f == f) return &s_fs[k];
+    if (s_fsN < kMaxCars * kMaxFrames) { FrameSnap* p = &s_fs[s_fsN++]; p->f = f; p->have = false; return p; }
+    return nullptr;
+}
+
 void __cdecl Wrapper() {
     const std::uint32_t phase =
         *reinterpret_cast<volatile std::uint32_t*>(kPhase);
@@ -339,10 +425,17 @@ void __cdecl Wrapper() {
     // pass straight through (menus, loading, phase transitions).
     if ((phase != 3 && phase != 6) || frameHolder == 0) {
         s_have = false;
+        s_fsN = 0;
         reinterpret_cast<RenderFn>(kRenderFn)();
         return;
     }
 
+    std::uint32_t acc = *reinterpret_cast<volatile std::uint32_t*>(kAccum);
+    float alpha = (float)acc / 50.0f;
+    if (alpha < 0.0f) alpha = 0.0f;
+    if (alpha > 1.0f) alpha = 1.0f;
+
+    // ── camera ──
     const Pose truePose = ReadPose();
     if (!s_have) {
         s_curr = truePose; s_prev = truePose; s_have = true;
@@ -355,12 +448,6 @@ void __cdecl Wrapper() {
         s_prev = (dx*dx + dy*dy + dz*dz > 100.0f * 100.0f) ? truePose : s_curr;
         s_curr = truePose;
     }
-
-    std::uint32_t acc = *reinterpret_cast<volatile std::uint32_t*>(kAccum);
-    float alpha = (float)acc / 50.0f;
-    if (alpha < 0.0f) alpha = 0.0f;
-    if (alpha > 1.0f) alpha = 1.0f;
-
     Pose mid;
     mid.elev = LerpAngle(s_prev.elev, s_curr.elev, alpha);
     mid.azim = LerpAngle(s_prev.azim, s_curr.azim, alpha);
@@ -368,11 +455,47 @@ void __cdecl Wrapper() {
     mid.px   = LerpF(s_prev.px, s_curr.px, alpha);
     mid.py   = LerpF(s_prev.py, s_curr.py, alpha);
     mid.pz   = LerpF(s_prev.pz, s_curr.pz, alpha);
-
     WritePose(mid);
-    reinterpret_cast<CamApplyFn>(kCamApply)(kCamStruct);   // rebuild RW frame
+    reinterpret_cast<CamApplyFn>(kCamApply)(kCamStruct);
+
+    // ── cars: collect each car's frame subtree, snapshot true LTMs, write
+    //    interpolated (or +80 lift for cartest); restore after render ──
+    int carCount = *reinterpret_cast<volatile std::int32_t*>(kCarCount);
+    if (carCount < 0) carCount = 0;
+    if (carCount > kMaxCars) carCount = kMaxCars;
+    std::uintptr_t frames[kMaxCars * kMaxFrames];
+    Mat frTrue[kMaxCars * kMaxFrames];
+    int frN = 0;
+    for (int i = 0; i < carCount; ++i) {
+        const std::uintptr_t root = CarRootFrame(i);
+        if (!root) continue;
+        std::uintptr_t sub[kMaxFrames];
+        const int m = CollectSubtree(root, sub, kMaxFrames);
+        for (int j = 0; j < m && frN < kMaxCars * kMaxFrames; ++j) {
+            const std::uintptr_t f = sub[j];
+            const Mat trueMat = ReadFrameLTM(f);
+            frames[frN] = f;
+            frTrue[frN] = trueMat;
+            ++frN;
+            FrameSnap* fs = FindSnap(f);
+            if (!fs) continue;
+            if (!fs->have) { fs->curr = trueMat; fs->prev = trueMat; fs->have = true; }
+            else if (!SameMat(trueMat, fs->curr)) {
+                const float dx = trueMat.m[9]  - fs->curr.m[9];
+                const float dy = trueMat.m[10] - fs->curr.m[10];
+                const float dz = trueMat.m[11] - fs->curr.m[11];
+                fs->prev = (dx*dx + dy*dy + dz*dz > 100.0f * 100.0f) ? trueMat : fs->curr;
+                fs->curr = trueMat;
+            }
+            WriteFrame(f, LerpMat(fs->prev, fs->curr, alpha));
+        }
+    }
+
     reinterpret_cast<RenderFn>(kRenderFn)();                // render + flip
-    WritePose(s_curr);                                      // restore true pose
+
+    // ── restore true state (physics/next tick unperturbed) ──
+    for (int k = 0; k < frN; ++k) WriteFrame(frames[k], frTrue[k]);
+    WritePose(s_curr);
     reinterpret_cast<CamApplyFn>(kCamApply)(kCamStruct);    // restore true frame
 }
 
@@ -388,7 +511,7 @@ void Apply() {
         Rel32(kCallSite + 5, reinterpret_cast<std::uintptr_t>(&Wrapper));
     std::memcpy(&patch[1], &rel, 4);
     if (WriteMem(kCallSite, patch, sizeof(patch)))
-        LogLine("INTERP: camera render interpolation live (race phases only)");
+        LogLine("INTERP: camera + car render interpolation live (race phases only)");
     else
         LogLine("INTERP: write failed — SKIPPED");
 }
