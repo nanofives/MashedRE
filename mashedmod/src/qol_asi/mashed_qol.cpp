@@ -251,6 +251,141 @@ void Apply() {
 
 } // namespace decouple
 
+// ─── MASHED_INTERP — 165Hz camera render interpolation ───────────────────────
+// With MASHED_DECOUPLE, most rendered frames at >60fps carry 0 physics ticks, so
+// the camera pose is frozen between ticks → 60Hz-stepped motion. This wraps the
+// main-loop render call and, on every rendered frame, writes an interpolated
+// camera pose (lerp of the last two tick poses by the sub-tick fraction) into the
+// camera controller struct, rebuilds the RW frame, renders, then restores the
+// true pose so the next tick's director is unperturbed.
+//
+// Evidence (Ghidra pool12 2026-08-01 + re/analysis/race_camera/race_camera.md):
+//   Main loop FUN_00492290 calls the render fn at 0x004922b8:
+//     004922b8: E8 D3 0B 00 00   CALL 0x00492e90   (render + buffer flip)
+//   Camera controller struct DAT_00897fe0 holds the RENDERED pose:
+//     +0x34 elevation°, +0x38 azimuth°, +0x3c roll°, +0x40..0x48 position xyz.
+//   FUN_00441760(camStruct) (cdecl) rebuilds the camera's RW frame
+//     (*(*(cam+0x84)+4), matrix +0x10) from exactly those fields — it is THE
+//     commit-pose-to-frame function, called each tick by the director FUN_00446520
+//     via FUN_0040d470 (which runs in the per-frame race tick BEFORE this render).
+//   Sub-tick fraction: DAT_007719d4 is the quantizer's leftover accumulator in
+//     [0,50) units where 50 = one 60Hz tick (FUN_00493480) → alpha = acc/50.
+//   At 60fps a tick lands every frame and acc≈0 → alpha≈0 → renders the true
+//   pose = bit-identical to stock. Only active in race phases (DAT_00771968∈{3,6}).
+namespace interp {
+
+constexpr std::uintptr_t kCallSite  = 0x004922b8;  // CALL FUN_00492e90
+constexpr std::uintptr_t kRenderFn  = 0x00492e90;  // render + flip
+constexpr std::uintptr_t kCamApply  = 0x00441760;  // void __cdecl(camStruct*)
+constexpr std::uintptr_t kCamStruct = 0x00897fe0;
+constexpr std::uintptr_t kAccum     = 0x007719d4;  // sub-tick accumulator [0,50)
+constexpr std::uintptr_t kPhase     = 0x00771968;  // session-phase enum
+
+using RenderFn   = void(__cdecl*)();
+using CamApplyFn = void(__cdecl*)(std::uintptr_t);
+
+struct Pose { float elev, azim, roll, px, py, pz; };
+bool s_have = false;
+Pose s_prev, s_curr;
+
+inline float rdF(std::uintptr_t a) { return *reinterpret_cast<volatile float*>(a); }
+inline void  wrF(std::uintptr_t a, float v) { *reinterpret_cast<volatile float*>(a) = v; }
+
+Pose ReadPose() {
+    Pose p;
+    p.elev = rdF(kCamStruct + 0x34);
+    p.azim = rdF(kCamStruct + 0x38);
+    p.roll = rdF(kCamStruct + 0x3c);
+    p.px   = rdF(kCamStruct + 0x40);
+    p.py   = rdF(kCamStruct + 0x44);
+    p.pz   = rdF(kCamStruct + 0x48);
+    return p;
+}
+void WritePose(const Pose& p) {
+    wrF(kCamStruct + 0x34, p.elev);
+    wrF(kCamStruct + 0x38, p.azim);
+    wrF(kCamStruct + 0x3c, p.roll);
+    wrF(kCamStruct + 0x40, p.px);
+    wrF(kCamStruct + 0x44, p.py);
+    wrF(kCamStruct + 0x48, p.pz);
+}
+inline float LerpAngle(float a, float b, float t) {
+    float d = b - a;
+    while (d >  180.0f) d -= 360.0f;
+    while (d < -180.0f) d += 360.0f;
+    return a + d * t;
+}
+inline float LerpF(float a, float b, float t) { return a + (b - a) * t; }
+inline bool SamePose(const Pose& a, const Pose& b) {
+    return a.elev == b.elev && a.azim == b.azim && a.roll == b.roll &&
+           a.px == b.px && a.py == b.py && a.pz == b.pz;
+}
+
+void __cdecl Wrapper() {
+    const std::uint32_t phase =
+        *reinterpret_cast<volatile std::uint32_t*>(kPhase);
+    const std::uintptr_t frameHolder =
+        *reinterpret_cast<volatile std::uintptr_t*>(kCamStruct + 0x84);
+    // Only interpolate a live in-race camera with a valid RW-frame chain; else
+    // pass straight through (menus, loading, phase transitions).
+    if ((phase != 3 && phase != 6) || frameHolder == 0) {
+        s_have = false;
+        reinterpret_cast<RenderFn>(kRenderFn)();
+        return;
+    }
+
+    const Pose truePose = ReadPose();
+    if (!s_have) {
+        s_curr = truePose; s_prev = truePose; s_have = true;
+    } else if (!SamePose(truePose, s_curr)) {
+        // A tick advanced the camera. Roll snapshots — but if it jumped far
+        // (respawn / scene cut / director snap), don't interpolate the jump.
+        const float dx = truePose.px - s_curr.px;
+        const float dy = truePose.py - s_curr.py;
+        const float dz = truePose.pz - s_curr.pz;
+        s_prev = (dx*dx + dy*dy + dz*dz > 100.0f * 100.0f) ? truePose : s_curr;
+        s_curr = truePose;
+    }
+
+    std::uint32_t acc = *reinterpret_cast<volatile std::uint32_t*>(kAccum);
+    float alpha = (float)acc / 50.0f;
+    if (alpha < 0.0f) alpha = 0.0f;
+    if (alpha > 1.0f) alpha = 1.0f;
+
+    Pose mid;
+    mid.elev = LerpAngle(s_prev.elev, s_curr.elev, alpha);
+    mid.azim = LerpAngle(s_prev.azim, s_curr.azim, alpha);
+    mid.roll = LerpAngle(s_prev.roll, s_curr.roll, alpha);
+    mid.px   = LerpF(s_prev.px, s_curr.px, alpha);
+    mid.py   = LerpF(s_prev.py, s_curr.py, alpha);
+    mid.pz   = LerpF(s_prev.pz, s_curr.pz, alpha);
+
+    WritePose(mid);
+    reinterpret_cast<CamApplyFn>(kCamApply)(kCamStruct);   // rebuild RW frame
+    reinterpret_cast<RenderFn>(kRenderFn)();                // render + flip
+    WritePose(s_curr);                                      // restore true pose
+    reinterpret_cast<CamApplyFn>(kCamApply)(kCamStruct);    // restore true frame
+}
+
+void Apply() {
+    static const std::uint8_t pre[5] = {0xE8, 0xD3, 0x0B, 0x00, 0x00}; // CALL 0x492e90
+    if (!BytesAre(kCallSite, pre, sizeof(pre))) {
+        LogLine("INTERP: call site 0x4922b8 bytes unexpected — SKIPPED");
+        return;
+    }
+    std::uint8_t patch[5];
+    patch[0] = 0xE8;
+    const std::uint32_t rel =
+        Rel32(kCallSite + 5, reinterpret_cast<std::uintptr_t>(&Wrapper));
+    std::memcpy(&patch[1], &rel, 4);
+    if (WriteMem(kCallSite, patch, sizeof(patch)))
+        LogLine("INTERP: camera render interpolation live (race phases only)");
+    else
+        LogLine("INTERP: write failed — SKIPPED");
+}
+
+} // namespace interp
+
 // ─── MASHED_RES — retarget the screen-dimension getters ──────────────────────
 // The d3d9 shim reads the same env var and sizes the backbuffer; the two getters
 // MUST return the identical size or the camera frameBuffer raster fails against
@@ -313,13 +448,15 @@ void ApplyAll() {
     const bool noSave   = EnvSet("MASHED_NO_SAVE");
     const bool unlock   = EnvSet("MASHED_UNLOCK");
     const bool decouple = EnvSet("MASHED_DECOUPLE");
+    const bool interpol = EnvSet("MASHED_INTERP");
     char resBuf[4] = {};
     const bool res = GetEnvironmentVariableA("MASHED_RES", resBuf, sizeof(resBuf)) > 0;
-    if (!noSave && !unlock && !decouple && !res) return;  // inert boot — no logging noise
+    if (!noSave && !unlock && !decouple && !res && !interpol) return;  // inert boot
     LogLine("attach: applying QoL patches");
     if (noSave)   ApplyNoSave();
     if (unlock)   ApplyUnlock();
     if (decouple) decouple::Apply();
+    if (interpol) interp::Apply();
     if (res)      ApplyRes();
 }
 

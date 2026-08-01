@@ -91,6 +91,7 @@ if ($resolved) {
 $env:MASHED_FPS_CAP         = '60'
 $env:MASHED_FPS_CAP_RACE    = if ($DecoupleReady) { "$raceCap" } else { $null }
 $env:MASHED_DECOUPLE        = if ($DecoupleReady) { '1' } else { '0' }
+$env:MASHED_INTERP          = if ($DecoupleReady) { '1' } else { '0' }  # smooth >60fps camera
 $env:MASHED_NO_SAVE         = if ($EnableSave) { '0' } else { '1' }
 $env:MASHED_UNLOCK          = if ($NoUnlock)   { '0' } else { '1' }
 $env:MASHED_RE_NO_AUTO_HOOK = '1'    # keep dev RE hooks out of play sessions

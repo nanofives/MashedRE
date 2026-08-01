@@ -99,8 +99,32 @@ clean in-race clock-rate number for the control was not captured (rounds cycle
 too fast to hold a driving window); the {50}-vs-{0,50} mechanism split is the
 control evidence.
 
-**Residue for a later session:** stage 3 render interpolation (at 165 Hz motion
-is still 60 Hz-stepped with 3-3-2-3 cadence; at 120 Hz cadence is a clean 2:1).
+**Stage 3 — camera render interpolation (SHIPPED 2026-08-01, `MASHED_INTERP`):**
+The camera's rendered pose lives in the director struct `DAT_00897fe0` (position
+`+0x40..0x48`, Euler angles elevation/azimuth/roll `+0x34/+0x38/+0x3c`), and
+`FUN_00441760(camStruct)` (cdecl) is the single function that commits those fields
+into the camera's RW frame (`*(*(cam+0x84)+4)`, matrix `+0x10`). The director
+(`FUN_00446520` via `FUN_0040d470`) runs in the per-frame race tick BEFORE the
+render. So the fix wraps the main-loop render call at `0x004922b8`
+(`E8 D3 0B 00 00` → `FUN_00492e90`): each rendered frame it lerps the camera pose
+between the last two tick snapshots by `alpha = DAT_007719d4/50` (the quantizer's
+sub-tick accumulator), re-runs `FUN_00441760`, renders, then restores the true
+pose. Position = linear lerp; the three angles = shortest-arc angle lerp; a
+>100-unit position jump (respawn/scene cut) snaps instead of interpolating. Only
+active in race phases (`DAT_00771968` ∈ {3,6}); at 60 fps `alpha≈0` so it renders
+the true pose = bit-identical to stock.
+
+**Measured acceptance (Camera::Apply pose-commit rate during a driven race, cap
+165):** interp OFF = **60/s** (stepped at tick rate); interp ON = **389/s**
+(render-rate pose commits, ~6× — the smoothing). No crash across 30 s+ driven
+races either way. Interpolates the CAMERA only → the world flows smoothly; the
+player car is ~screen-centred so its residual step is minimal.
+
+**Residue for a later session:** opponent-car interpolation (their render matrix
+is at record `+0x928`, pos `+0x30/34/38`, written per tick by `FUN_0046d4d0` from
+`FUN_0047eb30`; needs matrix/quaternion lerp, more delicate than the camera's
+Euler angles). Opponents currently still step at 60 Hz relative to the smooth
+camera. Aspect-ratio audit at non-4:3 still open.
 
 ### Staged execution (C, with A as a fallback experiment)
 1. **Map the main loop** (Ghidra, pool slot): from `FUN_004c1be0` outward, identify
