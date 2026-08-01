@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-01T01:10:00Z",
+  "updatedAt": "2026-08-01T01:45:00Z",
   "sections": [
     {
       "heading": "QoL patch set (2026-08-01)",
@@ -107,7 +107,7 @@
         },
         {
           "label": "M3 librw lane",
-          "value": "E1' + E2'a DONE; E2'c VERIFIED a no-op (A/B differences are a strict subset of the rebuild control). librw vendored+building, raster bridge 64/64 cross-checked. Deterministic capture works: 10 of 13 viewpoints gate with a ZERO noise floor. Next: E2'b world+props geometry.",
+          "value": "E1'/E2'a/E2'b DONE, E2'c VERIFIED. librw vendored+building; raster bridge 64/64 cross-checked; world+clump geometry built and content-validated (16229 verts / 16480 tris == parser totals, 0 bad indices). Nothing DRAWN through librw yet. Next: wire World::render() behind MASHED_RENDER_LIBRW + first E3' imgdiff.",
           "kind": "text"
         },
         {
