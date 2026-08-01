@@ -747,13 +747,38 @@ viewpoints, world-only, no cars.
 >      (0x3 = `LIGHTATOMICS|LIGHTWORLD` is also the asset-verified Arctic value),
 >      but it produced **bit-identical output** — so it is not the cause either.
 >
->   What is actually observed: the banner/building props render correctly through
->   librw, while the large ground/sea surface is pure black. So this is one
->   *specific* surface, not props in general and not the world. Prime suspect is the
->   Arctic sea/road material — the F3 UV-scrolled one — resolving without a texture
->   in `BuildMaterials`, leaving it to draw with a black material colour. **Not
->   verified.** `[UNCERTAIN]` Next step is to log per-material texture resolution
->   inside `BuildClump`, not to try another fix.
+>   3. Suspected an unresolved texture. **Instrumented `BuildClump` and disproved
+>      that too.** The log (`log/librw_scene.txt`) is now definitive about what the
+>      instanced set actually contains — 8 props plus the car:
+>
+>      | clump | texture | resolved? | nv | prelit | normals | lit |
+>      |---|---|---|---|---|---|---|
+>      | 0 | `sky` | yes | 258 | 1 | 0 | 0 |
+>      | 1,2 | `Tyres` | yes | 192 | 0 | 1 | 1 |
+>      | 3 | `Crate02` | yes | 36 | 0 | 1 | 1 |
+>      | **4** | **`sea`** | **yes** | **864** | **1** | **0** | **0** |
+>      | 5,6 | `Vehicles` | yes | 993 / 351 | 1 | 0 | 0 |
+>      | 7 | `CamManCold` | yes | 531 | 1 | 0 | 0 |
+>      | 8 | (car) | 44 of 71 named | — | 0 | 1 | 1 |
+>
+>      **Every prop texture resolves.** The black surface is `clump[4]`, the **sea**
+>      — and its flags are *identical* to the banner props (`clump[5]/[6]`,
+>      `prelit=1 normals=0 lit=0`) which render correctly. So it is neither a
+>      missing texture, nor lighting, nor the prelit/LIGHT flag split.
+>
+>   Also ruled out: **texture addressing**. librw's `Texture::create` already
+>   defaults to `(WRAP<<12)|(WRAP<<8)|NEAREST` (`texture.cpp:279`), so a large plane
+>   with out-of-range UVs is not clamping to a black edge texel. (That line does
+>   reveal a separate delta: librw defaults to **NEAREST** filtering where the D3D9
+>   path sets `LINEAR` — a quality difference to fold into the E3' register.)
+>
+>   **Status: OPEN, cause unknown.** What distinguishes the sea from the
+>   structurally identical banner props is not yet established. It is the largest
+>   single-material prop and the only one carrying the F3 UV-scroll animation, which
+>   the librw path does not apply — but *why that would render black rather than
+>   merely static is unexplained*, and I will not log a mechanism I cannot show.
+>   `[UNCERTAIN]` Next step: confirm the sea is being submitted and drawn at all
+>   (log per-model instance counts), before theorising about its shading.
 > - **D-S3-7 — the player car does not appear** on the instanced path. The instance
 >   count sits at a constant 27 with no car entry, so `car_via_rw` is evaluating
 >   false; whether `rw_car_model_` or `car_ready_` is the reason is **not yet

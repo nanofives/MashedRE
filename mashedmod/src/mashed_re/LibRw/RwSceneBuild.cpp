@@ -178,9 +178,45 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
     return rww;
 }
 
+// Defined further down next to kSceneLog, inside the unnamed namespace. All
+// `namespace {}` blocks in a TU are the SAME namespace, so the declaration must
+// go in one too -- at outer scope it becomes a DIFFERENT function and every later
+// call is ambiguous.
+namespace { void SLog(const char* fmt, ...); }
+
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex) {
     std::vector<rw::Material*> mats;
-    BuildMaterials(model.materials, tex, mats);
+    int named = 0, resolved = 0;
+    BuildMaterials(model.materials, tex, mats, &named, &resolved);
+    // D-S3-6 instrumentation: one large ground/sea surface renders BLACK through
+    // librw while banner/building props render correctly. Two candidate causes are
+    // visible here and nowhere else -- a material whose texture failed to resolve
+    // (draws with the material colour), and a material colour that is itself dark.
+    // Log both per material so the black surface can be NAMED rather than guessed.
+    {
+        static int s_clump_no = 0;
+        const int id = s_clump_no++;
+        SLog("clump[%d]: mats=%zu named=%d resolved=%d batches=%zu",
+             id, model.materials.size(), named, resolved, model.batches.size());
+        for (std::size_t i = 0; i < model.materials.size(); ++i) {
+            const auto& m = model.materials[i];
+            const bool has_tex = m.tex_name[0] != 0;
+            const bool got_tex = has_tex && ResolveTexture(m.tex_name, tex) != nullptr;
+            SLog("  clump[%d].mat[%zu] tex='%s' %s rgba=(%u,%u,%u,%u)",
+                 id, i, has_tex ? m.tex_name : "(none)",
+                 !has_tex ? "NO-TEXNAME" : (got_tex ? "resolved" : "*** UNRESOLVED ***"),
+                 (unsigned)m.rgba[0], (unsigned)m.rgba[1],
+                 (unsigned)m.rgba[2], (unsigned)m.rgba[3]);
+        }
+        for (std::size_t bi = 0; bi < model.batches.size(); ++bi) {
+            const Track::DffBatch& b = model.batches[bi];
+            SLog("  clump[%d].batch[%zu] mat=%u nv=%zu nt=%zu uv=%d prelit=%d "
+                 "norm=%d lit=%d mod=%d",
+                 id, bi, (unsigned)b.material, b.verts.size() / 3, b.tris.size() / 3,
+                 (int)!b.uvs.empty(), (int)!b.prelit.empty(), (int)!b.normals.empty(),
+                 (int)b.lit, (int)b.modulate_mat);
+        }
+    }
 
     rw::Clump* clump = rw::Clump::create();
     if (!clump) return nullptr;
