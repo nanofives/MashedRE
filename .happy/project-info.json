@@ -61,8 +61,13 @@
         },
         {
           "label": "M3 librw lane",
-          "value": "E1' DONE 2026-07-31 — librw vendored (deps/librw @ 1252b90e, MIT), both targets build, smoke PASS (backbuffer readback 0x2080C0). Next = E2'a rasters; blocker first: MASHED_RACE_DEMO emits no steps, so the 8 E3' reference captures are missing",
+          "value": "E1' DONE + E2'a tasks 0-1 DONE (2026-07-31). librw vendored (deps/librw @ 1252b90e, MIT), both targets build, smoke PASS. E3' baseline captured (verify/librw_ref, 10 shots). TXD census: only 3 formats exist (PAL4/PAL8/ARGB) -> I3 downgraded M->S. Next = the Txd::Mip -> rw::Raster bridge",
           "kind": "text"
+        },
+        {
+          "label": "Bugs found this session",
+          "value": ["FIXED: TrackRenderer PAL4 read as packed nibbles; is 1 byte/px (5194-mip census + Roadslipblend2 decode)", "OPEN D-REF-1: trackside banner text renders mirrored (UV/winding; PAL4 ruled out)"],
+          "kind": "list"
         }
       ]
     },
