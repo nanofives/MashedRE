@@ -518,6 +518,99 @@ void Apply() {
 
 } // namespace interp
 
+// ─── MASHED_JUMPFIX — preserve forward velocity through ramp takeoff ──────────
+// Root cause (re/analysis/QOL_PATCH_PLAN_2026-08.md Item 4): on a contact frame
+// FUN_0046EF70 (wheel contact spring/damper resolver) overwrites the car linear
+// velocity +0x9B0/9B4/9B8 with the summed contact-spring force along the contact
+// face normal, then clamps by a last-contact factor. A ramp-LIP triangle's
+// near-vertical normal, accepted as a stale contact on the takeoff frame
+// (classifier flag-reset path unknown, U-3629), redirects/kills FORWARD velocity
+// → the car drops straight down. Intermittent.
+//
+// Fix (velocity-level, one tick delayed, CLEAN ABI — avoids FUN_0046EF70's
+// implicit-EDI convention): retarget the sole call to the once-per-tick coupling
+// bridge FUN_0047eb30 (0x0047eb30, void(), call @0x00470e15). FUN_0046EF70 runs
+// LATER in the tick than the bridge, so at the START of the next tick's bridge
+// the killed velocity is visible; we restore it there BEFORE the bridge drives
+// the physics body, so forward momentum carries. We only act while a car is
+// LEAVING the ground (grounded +0x9E0 <= 1.5) AND its horizontal speed collapsed
+// >60% vs the previous tick from a real speed — a signature that cannot occur in
+// normal airborne flight (no ground friction airborne) or grounded driving
+// (grounded==4), nor a wall crash (stays grounded). Vertical velocity (+0x9B4)
+// is left untouched so the upward launch and gravity are unaffected.
+// OFF by default (MASHED_JUMPFIX=1); a physics guard ships only after the
+// capture tool (re/frida/capture_jump_bug.py) confirms it on a real dead jump
+// AND a normal-jump corpus stays unchanged.
+namespace jumpfix {
+
+constexpr std::uintptr_t kCallSite  = 0x00470e15;  // CALL FUN_0047eb30
+constexpr std::uintptr_t kBridgeFn  = 0x0047eb30;  // void()
+constexpr std::uintptr_t kRecBase   = 0x008815a0;
+constexpr std::uintptr_t kRecStride = 0x00000d04;
+constexpr std::uintptr_t kCount     = 0x008a94d0;
+constexpr int   kMaxCars    = 16;
+constexpr float kGroundMax  = 1.5f;   // <=1 wheel touching = leaving the ground
+constexpr float kMinSpeed   = 5.0f;   // must have carried real forward speed
+constexpr float kCollapse   = 0.40f;  // cur < 40% of prev horiz = a kill
+
+using BridgeFn = void(__cdecl*)();
+
+bool  s_have[kMaxCars] = {};
+float s_vx[kMaxCars], s_vz[kMaxCars];
+
+inline float rF(std::uintptr_t a) { return *reinterpret_cast<volatile float*>(a); }
+inline void  wF(std::uintptr_t a, float v) { *reinterpret_cast<volatile float*>(a) = v; }
+
+void FixTakeoffKills() {
+    int n = *reinterpret_cast<volatile std::int32_t*>(kCount);
+    if (n < 0) n = 0; if (n > kMaxCars) n = kMaxCars;
+    for (int i = 0; i < n; ++i) {
+        const std::uintptr_t rec = kRecBase + (std::uintptr_t)i * kRecStride;
+        const float g  = rF(rec + 0x9e0);
+        const float vx = rF(rec + 0x9b0);
+        const float vz = rF(rec + 0x9b8);
+        if (s_have[i]) {
+            const float prevH = (s_vx[i]*s_vx[i] + s_vz[i]*s_vz[i]);
+            const float curH  = (vx*vx + vz*vz);
+            if (g <= kGroundMax && prevH > kMinSpeed*kMinSpeed &&
+                curH < prevH * (kCollapse*kCollapse)) {
+                // takeoff velocity-kill → restore last tick's horizontal velocity.
+                // `continue` leaves s_vx/s_vz as the good value (frozen while
+                // airborne = correct projectile motion; gravity still acts on +0x9B4).
+                wF(rec + 0x9b0, s_vx[i]);
+                wF(rec + 0x9b8, s_vz[i]);
+                continue;
+            }
+        }
+        s_have[i] = true;
+        s_vx[i] = vx; s_vz[i] = vz;
+    }
+}
+
+void __cdecl Wrapper() {
+    FixTakeoffKills();                              // correct last tick's kill first
+    reinterpret_cast<BridgeFn>(kBridgeFn)();        // then run the real bridge
+}
+
+void Apply() {
+    static const std::uint8_t pre[5] = {0xE8, 0x16, 0xDD, 0x00, 0x00}; // CALL 0x47eb30
+    if (!BytesAre(kCallSite, pre, sizeof(pre))) {
+        LogLine("JUMPFIX: call site 0x470e15 bytes unexpected — SKIPPED");
+        return;
+    }
+    std::uint8_t patch[5];
+    patch[0] = 0xE8;
+    const std::uint32_t rel =
+        Rel32(kCallSite + 5, reinterpret_cast<std::uintptr_t>(&Wrapper));
+    std::memcpy(&patch[1], &rel, 4);
+    if (WriteMem(kCallSite, patch, sizeof(patch)))
+        LogLine("JUMPFIX: takeoff velocity-preserve live (DRAFT — verify on a real dead jump)");
+    else
+        LogLine("JUMPFIX: write failed — SKIPPED");
+}
+
+} // namespace jumpfix
+
 // ─── MASHED_RES — retarget the screen-dimension getters ──────────────────────
 // The d3d9 shim reads the same env var and sizes the backbuffer; the two getters
 // MUST return the identical size or the camera frameBuffer raster fails against
@@ -581,14 +674,16 @@ void ApplyAll() {
     const bool unlock   = EnvSet("MASHED_UNLOCK");
     const bool decouple = EnvSet("MASHED_DECOUPLE");
     const bool interpol = EnvSet("MASHED_INTERP");
+    const bool jumpfx   = EnvSet("MASHED_JUMPFIX");
     char resBuf[4] = {};
     const bool res = GetEnvironmentVariableA("MASHED_RES", resBuf, sizeof(resBuf)) > 0;
-    if (!noSave && !unlock && !decouple && !res && !interpol) return;  // inert boot
+    if (!noSave && !unlock && !decouple && !res && !interpol && !jumpfx) return;  // inert boot
     LogLine("attach: applying QoL patches");
     if (noSave)   ApplyNoSave();
     if (unlock)   ApplyUnlock();
     if (decouple) decouple::Apply();
     if (interpol) interp::Apply();
+    if (jumpfx)   jumpfix::Apply();
     if (res)      ApplyRes();
 }
 

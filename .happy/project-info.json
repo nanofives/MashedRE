@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-01T08:00:00Z",
+  "updatedAt": "2026-08-01T08:30:00Z",
   "sections": [
     {
       "heading": "QoL patch set (2026-08-01)",
@@ -32,7 +32,7 @@
         },
         {
           "label": "Jump bug",
-          "value": "ROOT-CAUSED (native): FUN_0046ef70 velocity overwrite/clamp on stale ramp-lip normal. Headless can't repro (no high-speed ramp launches). Capture tool BUILT: re/frida/capture_jump_bug.py -- owner plays, it logs the smoking gun. Fix pending live-confirm.",
+          "value": "ROOT-CAUSED (native): FUN_0046ef70 velocity overwrite/clamp on stale ramp-lip normal. Fix DRAFTED (MASHED_JUMPFIX / launcher -JumpFix): restore horizontal velocity through takeoff via FUN_0047eb30 wrapper; smoke-tested non-destructive. Capture tool re/frida/capture_jump_bug.py for live-confirm. NOT verified on a real dead jump yet.",
           "kind": "text"
         },
         {

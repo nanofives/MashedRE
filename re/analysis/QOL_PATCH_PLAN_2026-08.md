@@ -351,6 +351,22 @@ per-wheel contact normals/loads (to see the bad lip normal). Usage:
   `--pid N` if several). Verified: attaches, both hooks install clean.
 Hygiene: attach-only, never spawns/kills, refuses to guess among multiple MASHED.
 
+**Fix DRAFTED 2026-08-01 (`MASHED_JUMPFIX`, opt-in, unverified).** In
+`mashed_qol.asi`: retarget the sole call to the once-per-tick bridge FUN_0047eb30
+(`E8 @0x00470e15`) to a wrapper that, before the bridge runs, restores each car's
+horizontal velocity (`+0x9B0`/`+0x9B8`) to the previous tick's value IF the car is
+leaving the ground (`+0x9E0 ≤ 1.5`) AND its horizontal speed collapsed >60% vs
+last tick from a real speed — the takeoff-kill signature. Vertical (`+0x9B4`) is
+untouched (upward launch + gravity intact). Clean ABI (avoids FUN_0046EF70's
+implicit-EDI); corrects the kill one tick later (car dips imperceptibly instead of
+dropping dead). Guard is inert during normal driving (grounded=4), wall crashes
+(stay grounded), and normal airborne flight (no >60% single-tick horizontal loss
+airborne). Smoke-tested: installs clean, cars race normally at speed (12/tick, 63
+ground transitions, no freeze/crash). Launcher opt-in: `-JumpFix`.
+**NOT verified to actually fix a dead jump** — needs the capture-tool log
+(`log/jump_capture.txt`) from a real dead jump to confirm the restore fires on it,
+plus a normal-jump corpus to confirm no regression. Off by default until then.
+
 **Remaining: live confirmation + fix.** Confirm by hooking `FUN_0046EF70` and
 logging `+0x9B0` before/after on takeoff frames until a dead jump is caught
 (needs many runs, or a **player-in-the-loop capture** — the owner triggers it
