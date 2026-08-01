@@ -284,6 +284,15 @@ constexpr std::uintptr_t kPhase     = 0x00771968;  // session-phase enum
 using RenderFn   = void(__cdecl*)();
 using CamApplyFn = void(__cdecl*)(std::uintptr_t);
 
+// Car (opponent/player) render interpolation was investigated and DROPPED:
+// the empirical +80u lift test (2026-08-01, verify/qol_asi_20260801/cartest_lift.png)
+// showed the car MESH is unaffected by the render matrix at record +0x928 — the
+// clump's RwFrame is committed before the render pass (at tick time), so
+// interpolating +0x928 at render is a no-op. Camera interpolation stands because
+// FUN_00441760 is a distinct callable pose→frame commit; cars have no equivalent
+// at render time. Reviving cars needs the clump-frame-set (in the FUN_00420050
+// render subtree) located and re-applied with an interpolated transform.
+
 struct Pose { float elev, azim, roll, px, py, pz; };
 bool s_have = false;
 Pose s_prev, s_curr;
@@ -338,8 +347,8 @@ void __cdecl Wrapper() {
     if (!s_have) {
         s_curr = truePose; s_prev = truePose; s_have = true;
     } else if (!SamePose(truePose, s_curr)) {
-        // A tick advanced the camera. Roll snapshots — but if it jumped far
-        // (respawn / scene cut / director snap), don't interpolate the jump.
+        // A tick advanced the camera. Roll snapshots — but a far jump
+        // (respawn / scene cut / director snap) is snapped, not interpolated.
         const float dx = truePose.px - s_curr.px;
         const float dy = truePose.py - s_curr.py;
         const float dz = truePose.pz - s_curr.pz;

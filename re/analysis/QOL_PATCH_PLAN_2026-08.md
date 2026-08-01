@@ -120,11 +120,26 @@ the true pose = bit-identical to stock.
 races either way. Interpolates the CAMERA only → the world flows smoothly; the
 player car is ~screen-centred so its residual step is minimal.
 
-**Residue for a later session:** opponent-car interpolation (their render matrix
-is at record `+0x928`, pos `+0x30/34/38`, written per tick by `FUN_0046d4d0` from
-`FUN_0047eb30`; needs matrix/quaternion lerp, more delicate than the camera's
-Euler angles). Opponents currently still step at 60 Hz relative to the smooth
-camera. Aspect-ratio audit at non-4:3 still open.
+**Car interpolation — ATTEMPTED and DROPPED (2026-08-01).** Extended the wrapper
+to lerp each car's active render matrix (`0x00881ec8 + i*0xd04 + active*0x40`,
+`FUN_0046d4a0`; car count `DAT_008a94d0`) with row+pos linear lerp + restore.
+Decisive empirical test — a constant **+80-unit Y lift** applied to every car's
+`+0x928` matrix before the render call — left the cars **on the ground**
+(`verify/qol_asi_20260801/cartest_lift.png`). Conclusion: the car MESH's RwFrame
+is committed **before** the render pass (at tick time); the render matrix at
+`+0x928` is a position source for camera/HUD/effects, NOT the transform the car
+clump draws from. So interpolating `+0x928` at render time is a no-op for the car
+mesh, and the code was reverted (camera-only ships).
+Why the camera works but cars don't: `FUN_00441760` is a distinct, callable
+pose→frame commit I can re-run at render time; the car clump has no equivalent
+re-appliable step in the render path. **To revive cars:** locate where the car
+clump's RwFrame is set from its transform (in the `FUN_00410b30`→`FUN_00420050`
+render subtree, or the tick path) and re-apply an interpolated matrix there —
+materially deeper RE. Opponents currently step at 60 Hz relative to the smooth
+camera; the player car is ~screen-centred so its residual step is minimal.
+
+**Residue for a later session:** car-mesh interpolation (above); aspect-ratio
+audit at non-4:3.
 
 ### Staged execution (C, with A as a fallback experiment)
 1. **Map the main loop** (Ghidra, pool slot): from `FUN_004c1be0` outward, identify
