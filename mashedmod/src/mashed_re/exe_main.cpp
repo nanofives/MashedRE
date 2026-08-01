@@ -347,6 +347,40 @@ constexpr char  kClassName[]   = "MashedRE";
 // hex (e.g. ffffffff) overrides it, so dark elements (black text/bands/spade)
 // that vanish on black read against a white field. Only used in MASHED_PARITY.
 std::uint32_t g_parity_bg = 0xff000000u;
+// ---- R10: deterministic capture clock -------------------------------------
+// MASHED_DETERMINISTIC=1 replaces the wall clock with a frame counter, so a
+// scripted capture run produces bit-reproducible output. Measured 2026-07-31:
+// without this, two boots of a BYTE-IDENTICAL binary differed by up to 36.74
+// mean-abs across the ten verify/librw_ref viewpoints -- noise that swamps any
+// renderer delta and makes the E3' librw parity gate untestable. The seed was
+// never the problem (spawn state is bit-identical run to run); the divergence
+// came from frame-rate-dependent dt feeding the race sim, plus capture triggers
+// firing on wall-clock t.
+//
+// Every DetTicks() call site in this file now goes through DetTicks(), so
+// the demo drivers, splash/menu animation timers and the frame loop all advance
+// on the same synthetic clock. GetTickCount64() (the CreateDevice watchdog) is
+// deliberately NOT redirected -- it must measure real time or it cannot detect a
+// real hang.
+//
+// OFF by default: the interactive game must keep running on the wall clock.
+unsigned g_det_frame = 0;          // bumped once per rendered frame
+bool     g_det_clock = false;      // latched from the env in WinMain
+// MASHED_DET_FRAMES=N quits after N rendered frames. Without it a deterministic
+// run still has to be stopped by a wall-clock kill from the harness, and since
+// the synthetic clock decouples frame rate from real time, the kill lands at a
+// different synthetic instant every run -- which reintroduced exactly the
+// nondeterminism this mode exists to remove (measured: 6 of 10 shots still
+// differed until the run length itself became a function of the frame index).
+// 0 = run until something else quits.
+unsigned g_det_frames_max = 0;
+constexpr double kDetStep = 1.0 / 60.0;   // synthetic frame period (seconds)
+inline DWORD DetTicks() {
+    return g_det_clock
+        ? static_cast<DWORD>(static_cast<unsigned long long>(g_det_frame) * 1000ull / 60ull)
+        : GetTickCount();
+}
+
 // Apply the MASHED_HIRES / MASHED_PARITY_BG envs (call before InitD3D9).
 inline void ApplyResolutionEnv() {
     char v[16] = {};
@@ -974,17 +1008,17 @@ bool RunParityWalk(int phase) {
     if (g_frontend_phase < 3) { g_frontend_phase = 3; LogoOverlayFadeSet(0xff, -1); }
     if (idx == -1) {           // first: enter screen 0 of the list
         CreateDirectoryA("verify\\parity", nullptr);
-        idx = 0; Nav_DevGoto(kScr[0]); goto_ms = GetTickCount(); return false;
+        idx = 0; Nav_DevGoto(kScr[0]); goto_ms = DetTicks(); return false;
     }
     if (idx >= kN) return true;
-    if (GetTickCount() - goto_ms < kDwellMs) return false;   // wait for the animation to settle
+    if (DetTicks() - goto_ms < kDwellMs) return false;   // wait for the animation to settle
     char path[128];
     std::snprintf(path, sizeof(path), "verify/parity/re_s%d.bmp", kScr[idx]);
     DumpBackbufferBMP(path);
     NavDemoLog(phase, path, true);
     ++idx;
     if (idx >= kN) return true;
-    Nav_DevGoto(kScr[idx]); goto_ms = GetTickCount();
+    Nav_DevGoto(kScr[idx]); goto_ms = DetTicks();
     return false;
 }
 
@@ -1086,24 +1120,24 @@ bool RunRaceDemoStep(int /*phase*/) {
             // cup-standings screen (kT5). Capture it (screen-5 reachability
             // evidence), then re-park on Challenge Select for the next round.
             if (frontend && mashed_re::Frontend::Nav_ScreenId() == 5) {
-                if (t_ms == 0) { t_ms = GetTickCount(); return false; }
-                if (GetTickCount() - t_ms < 600) return false;
+                if (t_ms == 0) { t_ms = DetTicks(); return false; }
+                if (DetTicks() - t_ms < 600) return false;
                 char sn[24];
                 std::snprintf(sn, sizeof sn, "%02d_cupstandings", cupRound);
                 cap(sn);
                 mashed_re::Frontend::Nav_DevGoto(6);
                 t_ms = 0; cool = 20; return false;
             }
-            if (t_ms == 0) { t_ms = GetTickCount(); return false; }
-            if (GetTickCount() - t_ms < 600) return false;
+            if (t_ms == 0) { t_ms = DetTicks(); return false; }
+            if (DetTicks() - t_ms < 600) return false;
             cap("00_challengeselect");
             NavDemoTap(DIK_RETURN);   // -> sid==6 handler launches the race
             step = 1; t_ms = 0; return false;
         case 1:  // LoadingRace -> InRace; capture a few moments (start grid +
                  // mid-race) so at least one frames the track/cars well, then Esc.
             if (inrace) {
-                if (t_ms == 0) t_ms = GetTickCount();
-                const DWORD el = GetTickCount() - t_ms;
+                if (t_ms == 0) t_ms = DetTicks();
+                const DWORD el = DetTicks() - t_ms;
                 // WS-E vehicle lighting: MASHED_DEMO_DRIVE=1 holds accel with
                 // an oscillating steer so the player car actually TURNS —
                 // required to see world-fixed (vs body-fixed) sun shading.
@@ -1137,7 +1171,7 @@ bool RunRaceDemoStep(int /*phase*/) {
                     s_cap[2] = true; cap("01_action");
                     if (s_result_demo) {
                         // wait for the match-end -> results screen (don't Esc yet)
-                        step = 4; t_ms = GetTickCount();
+                        step = 4; t_ms = DetTicks();
                     } else if (!s_drive_hold) {
                         NavDemoTap(DIK_ESCAPE);   // RequestExit -> Frontend
                         step = 2; cool = 10;
@@ -1149,7 +1183,7 @@ bool RunRaceDemoStep(int /*phase*/) {
                     step = 2; cool = 10;
                 }
             } else if (results) {
-                step = 4; t_ms = GetTickCount();   // already in results
+                step = 4; t_ms = DetTicks();   // already in results
             } else if (frontend && t_ms != 0) {
                 // safety: race ended before we captured -> don't hang. Capture
                 // whatever's on screen and finish.
@@ -1166,8 +1200,8 @@ bool RunRaceDemoStep(int /*phase*/) {
             if (results) {
                 // capture grabs the *already-rendered* backbuffer, so settle a
                 // few frames after entering Results so the overlay is on-screen.
-                if (res_ms == 0) { res_ms = GetTickCount(); return false; }
-                if (GetTickCount() - res_ms < 500) return false;
+                if (res_ms == 0) { res_ms = DetTicks(); return false; }
+                if (DetTicks() - res_ms < 500) return false;
                 { char cn[16]; std::snprintf(cn, sizeof cn, "%02d_results", cupRound); cap(cn); }
                 NavDemoTap(DIK_ESCAPE);   // RequestExit -> Frontend
                 NavDemoLog(step, "cup round done (results+progression)", true);
@@ -1178,7 +1212,7 @@ bool RunRaceDemoStep(int /*phase*/) {
                 } else {
                     step = 2; cool = 10;            // cup complete -> finish
                 }
-            } else if (GetTickCount() - t_ms > (s_playthrough ? 300000u : 9000u)) {
+            } else if (DetTicks() - t_ms > (s_playthrough ? 300000u : 9000u)) {
                 NavDemoTap(DIK_ESCAPE); step = 2; cool = 10;   // safety (G4: allow a full race)
             }
             return false;
@@ -1411,7 +1445,7 @@ void ModalGo(int step) {
         case 11: g_modal_body_id = 0x1bc; g_modal_yesno = false; break; // "Load Successful."
         case 20: g_modal_body_id = 0x1ca; g_modal_yesno = true;  break; // overwrite?
         case 21: g_modal_body_id = 0x233; g_modal_yesno = false;        // "Saving game data."
-                 g_modal_timer_ms = GetTickCount();              break; // auto-advance
+                 g_modal_timer_ms = DetTicks();              break; // auto-advance
         case 22: g_modal_body_id = 0x279; g_modal_yesno = false; break; // "Save successful."
         // Round-3: brief LOADING modal after press-button (auto-dismiss, no
         // buttons); the boot loading message is "Loading saved game data."
@@ -1419,7 +1453,7 @@ void ModalGo(int step) {
         // Exit-To-Windows quit confirm (body 0x34).
         case 30: g_modal_body_id = 0x231; g_modal_yesno = false;     // "Loading saved game data."
                  g_modal_button_id = -1;                                 // no button
-                 g_modal_timer_ms = GetTickCount();              break; // auto-advance
+                 g_modal_timer_ms = DetTicks();              break; // auto-advance
         case 40: g_modal_body_id = 0x34;  g_modal_yesno = true;  break; // quit-game confirm
         // [D-11057] continue-cup confirmation (FUN_0043dfd0 0xff240000 arm).
         // 50 = single-confirm (body 0x135, 1 button 0x2d "Continue"); 51 =
@@ -2311,9 +2345,9 @@ bool RenderFrame() {
         g_device->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
                         g_track.fog_color(), 1.0f, 0);  // horizon = fog color
         g_device->BeginScene();
-        static DWORD s_t0 = GetTickCount();
+        static DWORD s_t0 = DetTicks();
         static DWORD s_prev = 0;
-        const DWORD now = GetTickCount();
+        const DWORD now = DetTicks();
         const float t = static_cast<float>(now - s_t0) * 0.001f;
         const float dt = (s_prev == 0) ? 0.f
                        : static_cast<float>(now - s_prev) * 0.001f;
@@ -2335,6 +2369,12 @@ bool RenderFrame() {
                            / (double)s_qf.QuadPart;
         s_simPrev = s_simNow;
         if (sim_real_dt > 0.25) sim_real_dt = 0.25;  // clamp: no spiral after a stall
+        // R10: in deterministic-capture mode the physics accumulator must not see
+        // real elapsed time either -- DetTicks() alone would still leave the QPC
+        // delta here as a source of run-to-run divergence. Feeding it exactly one
+        // synthetic frame makes the accumulator emit exactly one fixed step per
+        // rendered frame, so sim state is a pure function of the frame index.
+        if (g_det_clock) sim_real_dt = kDetStep;
         static const int s_simHz = []{ char b[16];
             DWORD n = GetEnvironmentVariableA("MASHED_SIM_HZ", b, sizeof b);
             return n ? atoi(b) : 60; }();
@@ -2957,7 +2997,7 @@ bool RenderFrame() {
         s_chrome_slide -= 0x10;
         if (s_chrome_slide < 0) s_chrome_slide = 0;
         static DWORD s_t0 = 0;
-        const DWORD now = GetTickCount();
+        const DWORD now = DetTicks();
         if (s_t0 == 0) s_t0 = now;
         const float wave_t = static_cast<float>(now - s_t0) * (1.0f / 3000.0f);
         // Pass the ACTUAL backbuffer dims (LogoOverlayDraw scales every coord by
@@ -3016,8 +3056,8 @@ bool RenderFrame() {
     // screen depends on how long it takes to load"). (The press-button ->
     // menu transition is now a small Loading MODAL, not this full screen.)
     if (g_frontend_phase == 0 && g_bridge_installed) {
-        if (g_splash_start_ms == 0) g_splash_start_ms = GetTickCount();
-        const DWORD elapsed = GetTickCount() - g_splash_start_ms;
+        if (g_splash_start_ms == 0) g_splash_start_ms = DetTicks();
+        const DWORD elapsed = DetTicks() - g_splash_start_ms;
         // Advance once the frontend assets are ready (g_assets_loaded) past a
         // ~1.5s minimum dwell, or an 8s hard cap, or any key.
         if ((g_assets_loaded && elapsed > 1500u) || elapsed > 8000u)
@@ -3228,7 +3268,7 @@ bool RenderFrame() {
         // as the original computes them.
         {
             static DWORD s_last_ms = 0;
-            const DWORD now_ms = GetTickCount();
+            const DWORD now_ms = DetTicks();
             int raw_ms =
                 (s_last_ms == 0) ? 0 : static_cast<int>(now_ms - s_last_ms);
             s_last_ms = now_ms;
@@ -3862,7 +3902,7 @@ bool RenderFrame() {
             const float stx = 42.0f * kVScale, sts = 16.0f * kVScale;
             const float row0 = 116.0f * kVScale, rowdy = 22.0f * kVScale;
             // animated star pulse (triangle wave, no <cmath> dep).
-            const float ph = (GetTickCount() % 800u) / 800.0f;
+            const float ph = (DetTicks() % 800u) / 800.0f;
             const float pulse = 0.82f + 0.18f * (ph < 0.5f ? ph * 2.f : (1.f - ph) * 2.f);
             for (int i = 0; i < cup.trackCount; ++i) {
                 const float cy = row0 + i * rowdy;          // row centre
@@ -4087,25 +4127,25 @@ bool RenderFrame() {
                 // Successful." (user 2026-06-14).
                 g_modal_alpha = 0; g_modal_fadeout = false;
                 ModalGo(11); g_boot_loadsuccess = true;
-                g_modal_timer_ms = GetTickCount();
+                g_modal_timer_ms = DetTicks();
             }
         } else if (g_modal_alpha < 0xff) {
             g_modal_alpha += 0x11; if (g_modal_alpha > 0xff) g_modal_alpha = 0xff;
         }
         // #18/#19: the 'Saving game data.' step auto-advances to 'Save successful.'
         if (g_modal_step == 21 && g_modal_timer_ms != 0 &&
-            GetTickCount() - g_modal_timer_ms > 800u) {
+            DetTicks() - g_modal_timer_ms > 800u) {
             ModalGo(22); g_modal_alpha = 0xff;
         }
         // Loading modal (step 30) shows ~800ms, then FADES OUT; once unloaded the
         // "Load Successful." modal fades IN (handled in the fadeout branch above).
         if (g_modal_step == 30 && !g_modal_fadeout && g_modal_timer_ms != 0 &&
-            GetTickCount() - g_modal_timer_ms > 800u) {
+            DetTicks() - g_modal_timer_ms > 800u) {
             g_modal_fadeout = true;
         }
         // Boot "Load Successful." auto-dismisses (~1.1s), then the menu slides in.
         if (g_modal_step == 11 && g_boot_loadsuccess && g_modal_timer_ms != 0 &&
-            GetTickCount() - g_modal_timer_ms > 1100u) {
+            DetTicks() - g_modal_timer_ms > 1100u) {
             g_boot_loadsuccess = false;
             ModalGo(0);
             mashed_re::Frontend::Nav_AnimateIn();
@@ -5472,6 +5512,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
 
     // Scripted nav-demo verification harness (in-process input only). Enabled
     // via env var MASHED_NAV_DEMO; drives push/pop/cursor + dumps backbuffer BMPs.
+    // R10: latch the deterministic capture clock before anything reads a time.
+    g_det_clock = (GetEnvironmentVariableA("MASHED_DETERMINISTIC", nullptr, 0) != 0);
+    {
+        char fb[16] = {};
+        if (GetEnvironmentVariableA("MASHED_DET_FRAMES", fb, sizeof(fb)) > 0)
+            g_det_frames_max = static_cast<unsigned>(std::strtoul(fb, nullptr, 10));
+    }
     g_nav_demo = (GetEnvironmentVariableA("MASHED_NAV_DEMO", nullptr, 0) != 0);
     g_parity   = (GetEnvironmentVariableA("MASHED_PARITY",   nullptr, 0) != 0);
     g_race_demo= (GetEnvironmentVariableA("MASHED_RACE_DEMO", nullptr, 0) != 0);
@@ -5954,6 +6001,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // loading screen may auto-advance once its min dwell elapses.
     g_assets_loaded = true;
     while (!PumpOnce()) {
+        // R10: the synthetic clock advances exactly one tick per loop iteration,
+        // so DetTicks() and the physics accumulator are both pure functions of
+        // the frame index. No-op unless MASHED_DETERMINISTIC=1.
+        ++g_det_frame;
+        if (g_det_frames_max && g_det_frame >= g_det_frames_max) {
+            PostQuitMessage(0);
+            break;
+        }
         PollKeyboard();
         // Scripted nav-demo: inject the next in-process key edge / capture a
         // backbuffer BMP (no-op unless MASHED_NAV_DEMO is set). Runs right after
