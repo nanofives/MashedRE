@@ -618,6 +618,35 @@ viewpoints, world-only, no cars.
 > wiring `World::render()` behind the `MASHED_RENDER_LIBRW` gate and taking the
 > first real E3' imgdiff against the ten gating viewpoints.
 
+> ### E2'b step 3 (camera + I4 fog/lighting) — DESIGN DECIDED, NOT STARTED
+>
+> Attempting this from the standalone probe was rejected after looking at where the
+> inputs actually live:
+> - **Fog** is parsed inline inside `TrackRenderer::Load` from COURSE.LUA
+>   `Setup_Fog(near, far, r, g, b)` (`TrackRenderer.cpp:1268-1291`).
+> - **Lights** are parsed inline from LIGHTS.DFF in the same function
+>   (`:936-1031`), including the default-light fallback when a track declares none.
+> - **The chase rig** (`:3703-3712`) needs `car_len_` / `car_height_`, which only
+>   exist after a vehicle DFF has been loaded and measured.
+>
+> Duplicating any of that into `RwSceneBuild` would create a second copy of a
+> parser that must agree with the first — the "wrong plate propagates into ports"
+> failure mode. And a parity shot built on *approximated* camera constants would
+> look authoritative while measuring nothing, which is the same trap as the three
+> measurement failures logged above.
+>
+> **Decision: the librw path must render IN-LOOP, not from a probe.** Add a librw
+> submit path alongside `g_track.Render(dev, t, &ci)` in `exe_main.cpp`'s frame
+> loop, selected by `MASHED_RENDER_LIBRW`, consuming the camera/fog/light state
+> `TrackRenderer` has already computed — reading the *same* values, never
+> re-parsing them. `RaceSceneState` (E2'c) is what makes that reachable; the three
+> `D3DCOLOR` members (`fog_color_`, `amb_world_`, `sun_color_`) should move there
+> and retype to `uint32_t` as part of this step, which is also when §3.4's deferred
+> retype is finally worth doing.
+>
+> Only once that is in place does an imgdiff against the ten gating viewpoints
+> measure renderer parity rather than "librw does not draw a car yet".
+
 **E2'c — the TrackRenderer split (L — this is the real cost).** Before cars/particles/pickups can
 move, `TrackRenderer.cpp`'s 4139 LOC must be separated into *race state* (keep, renderer-neutral)
 and *draw submission* (replace). Suggested cut: extract a `Race/RaceSceneState` holding the
