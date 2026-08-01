@@ -1111,6 +1111,33 @@ bool RunRaceDemoStep(int /*phase*/) {
                 std::fclose(lf);
             }
         }
+        // R10b diagnostic: dump the SIMULATION state at each capture as raw bit
+        // patterns, so a rebuild-to-rebuild comparison can say whether the
+        // divergence is in the sim or only in the pixels. %.5f would hide a
+        // sub-epsilon split, which is exactly how an uninitialised-read drift
+        // starts, so these are printed as hex u32 of the float bits.
+        if (std::FILE* lf = std::fopen("log/r10b_sim.txt", "a")) {
+            auto B = [](float f) { std::uint32_t u; std::memcpy(&u, &f, 4); return u; };
+            float p[3] = {0, 0, 0};
+            if (g_track.car_ready()) g_track.car_pos(p);
+            std::fprintf(lf,
+                "tag=%-20s frame=%-6u inrace=%d pos=%08X,%08X,%08X "
+                "yaw=%08X spd=%08X t=%08X",
+                tag, g_det_frame, inrace ? 1 : 0,
+                B(p[0]), B(p[1]), B(p[2]),
+                B(g_track.car_yaw()), B(g_track.car_speed()),
+                B(g_track.race_time()));
+            // AI cars: ai_cars_ lives in the renderer-neutral RaceSceneState and
+            // is public, so it can be read directly. Their positions diverge
+            // earlier than the player's under an AI-side perturbation.
+            for (std::size_t k = 0; k < g_track.ai_cars_.size() && k < 4; ++k) {
+                const auto& a = g_track.ai_cars_[k];
+                std::fprintf(lf, " ai%zu=%08X,%08X,%08X/%08X",
+                             k, B(a.pos[0]), B(a.pos[1]), B(a.pos[2]), B(a.yaw));
+            }
+            std::fputc('\n', lf);
+            std::fclose(lf);
+        }
     };
     switch (step) {
         case 0:  // settle on Challenge Select for ~0.6s, snapshot it, then Enter
@@ -2382,7 +2409,15 @@ bool RenderFrame() {
         // look, R = back to auto-orbit.
         mashed_re::D3d9Render::TrackRenderer::CamInput ci;
         ci.dt = dt;
-        if (g_kbd) {
+        // R10b: a deterministic capture must be immune to AMBIENT input. The
+        // DirectInput device is opened DISCL_BACKGROUND|DISCL_NONEXCLUSIVE, so it
+        // reads the keyboard even when this window has no focus -- typing in
+        // another window while a capture runs flies the camera and steers the car.
+        // That, not build nondeterminism, was R10b: two "identical" builds produced
+        // a chase-cam frame and a high-orbit frame of the same simulation instant.
+        // The demo drivers inject their own input, so suppressing live input here
+        // costs the capture nothing.
+        if (g_kbd && !g_det_clock) {
             auto dn = [&](int k) { return (g_keys[k] & 0x80) != 0; };
             ci.move_fwd    = (dn(DIK_W) ? 1.f : 0.f) - (dn(DIK_S) ? 1.f : 0.f);
             ci.move_strafe = (dn(DIK_D) ? 1.f : 0.f) - (dn(DIK_A) ? 1.f : 0.f);
@@ -2393,7 +2428,7 @@ bool RenderFrame() {
                               (dn(DIK_DOWN) ? 1.f : 0.f)) * 1.0f * dt;
             ci.reset_orbit = dn(DIK_R);
         }
-        {
+        if (!g_det_clock) {
             static POINT s_last{};
             static bool  s_had = false;
             if (GetAsyncKeyState(VK_RBUTTON) & 0x8000) {
@@ -2442,7 +2477,7 @@ bool RenderFrame() {
                 // keeps the run on the visible road, off the frozen bay.
                 di.accel = (t < 3.0f) ? 1.f : 0.f;
                 di.steer = (t > 1.5f) ? 0.35f * std::sin(t * 0.8f) : 0.f;
-            } else if (g_kbd) {
+            } else if (g_kbd && !g_det_clock) {   // R10b: no ambient steering
                 auto dn = [&](int k) { return (g_keys[k] & 0x80) != 0; };
                 di.accel = (dn(DIK_UP) ? 1.f : 0.f) - (dn(DIK_DOWN) ? 1.f : 0.f);
                 di.steer = (dn(DIK_RIGHT) ? 1.f : 0.f) - (dn(DIK_LEFT) ? 1.f : 0.f);

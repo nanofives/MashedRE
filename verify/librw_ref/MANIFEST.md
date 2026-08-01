@@ -59,6 +59,33 @@ py -3.12 re/tools/imgdiff.py verify/librw_ref/<name>.png <librw_capture>.png \
     --out verify/<name>_heat.png --grid 8x6
 ```
 
+> ### SUPERSEDED 2026-08-01 — this whole capture set is INVALID as a baseline
+>
+> Root cause of R10b, found by looking at two "identical build" frames side by
+> side: one showed the chase camera behind the car, the other a high orbit view
+> with the car off-screen — same simulation instant. The camera reads **live
+> DirectInput keyboard and mouse** (`exe_main.cpp` camera block + `GetCursorPos`),
+> and the device is opened `DISCL_BACKGROUND | DISCL_NONEXCLUSIVE`, so it reads
+> the keyboard **even with no window focus**. Typing in a terminal while a capture
+> ran flew the camera and steered the car. That, not build nondeterminism, is what
+> produced every "rebuild changed the output" result — and it is also what
+> produced the false "the E2'c refactor broke it" verdict.
+>
+> Suppressing ambient input under `MASHED_DETERMINISTIC` takes two rebuilds of
+> identical source from 5/13 to **11/13** bit-identical.
+>
+> **Why this set must be re-taken:** with ambient input gone the sim trace shows
+> `spd=00000000` and an unchanging `pos` at every capture — the player car never
+> moves, because `MASHED_DRIVE_HOLD` alone leaves `human_drive_` true and nothing
+> supplies input. So the in-race shots here (`02`, `03`, `04`, `05`, `06`, `07`)
+> recorded a car driven by **stray keystrokes**, not by the game. They are not
+> reproducible and must not gate anything.
+>
+> The corrected recipe needs a scripted driver — `MASHED_DRIVE_DEMO=1` (auto-follow
+> + scripted throttle/weave) or `MASHED_PLAY_DEMO=1` — on top of
+> `MASHED_DETERMINISTIC=1 MASHED_DET_FRAMES=N`. Re-take the set that way before
+> E3' relies on it.
+
 ## Set
 
 | # | File | Source BMP | Captured | sha256[:16] |
