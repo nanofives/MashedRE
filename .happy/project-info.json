@@ -61,7 +61,7 @@
         },
         {
           "label": "M3 librw lane",
-          "value": "E1' DONE + E2'a tasks 0-1 DONE (2026-07-31). librw vendored (deps/librw @ 1252b90e, MIT), both targets build, smoke PASS. E3' baseline captured (verify/librw_ref, 10 shots). TXD census: only 3 formats exist (PAL4/PAL8/ARGB) -> I3 downgraded M->S. Next = the Txd::Mip -> rw::Raster bridge",
+          "value": "E1' + E2'a COMPLETE (2026-07-31). librw vendored (deps/librw @ 1252b90e, MIT), both targets build, smoke PASS. E3' baseline = verify/librw_ref (10 shots). Raster bridge live: 64/64 textures hash-identical vs an independent Python impl. Next = E2'c TrackRenderer no-op split, then E2'b world+props",
           "kind": "text"
         },
         {
