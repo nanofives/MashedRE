@@ -247,8 +247,12 @@ multiplayer-local split-screen (OUT for v1.0, gate D3 → D-11063).
 **M1 status:** the RE_MASTER_PLAN M1 breadth tail (9 items) CLOSED 2026-07-13; next per gate D5
 is the M2 opener. **WS-PHYS-DRIVE-STABILIZE diagnosis DONE 2026-07-14** (root cause = the missing
 system-2 two-body proxy loop; the fix is not a separable pre-B5 step but B5a..B5e itself — see
-RE_MASTER_PLAN §7 item 10 + `INITD3D9_HANG_AND_REMEASURE_2026-07-14.md`). **Active next: B5a**
-(system-2 call-surface plating) → B5b..B5e → A8 true-diff + steer-calib.
+RE_MASTER_PLAN §7 item 10 + `INITD3D9_HANG_AND_REMEASURE_2026-07-14.md`).
+**B5 lane PORT COMPLETE** (updated 2026-07-31): B5a/B5b DONE 07-14, B5c/B5d DONE 07-15,
+**B5e solver island merged main `021a9f38` 2026-07-20**. **Active next: the B5e C4-verify
+campaign** (KV batches + statediff warp-wedge hunt — Ring5ab980/U-6701 fixed 07-31, ~1/6
+boots residual) → A8 true-diff + steer-calib fold into that evidence. Route + queue:
+RE_MASTER_PLAN (rebuilt 2026-07-31).
 **Exit criteria:** every menu path functional; every mode playable; S-DoD for every
 subsystem.
 
@@ -360,9 +364,13 @@ qhull-2002.1 ([[qhull-rwphysics-island]], 0x57c5b0..0x5a5820).
   0055c000/0055e200/0047ea40 → Collision/RwpIntegrator.cpp), 4 build TUs wired into
   build.bat both targets, cone-table [UNCERTAIN] closed (_DAT_005cf240 = double 120.0,
   no writer), canonical-race acceptance clean (the full 12-stage FUN_0047e9c0 solver
-  island is DEFERRED to a new lane); **B5d next** — coupling bridge 0x0047eb30 verbatim
-  (drives the B5c subset; gives the C4 body-state diff); B5e wire into the standalone +
-  re-run the drive-hold harness expecting wedge-free sustained drive, then A8 true diff.
+  island was DEFERRED to its own lane); **B5d DONE 2026-07-15** — coupling bridge
+  0x0047eb30 verbatim (Vehicle/VehicleCouplingBridge.cpp, C3 behavioral; C4 body-state
+  diff folded into B5e verify); **B5e DONE (port) 2026-07-20** — full clean-room RWP-3.7
+  solver island K1..K24, merged main `021a9f38`. **Remaining: the C4-verify campaign**
+  (KV batches 07-24/25; statediff warp-wedge hunt — Ring5ab980 implicit-EAX culprit fixed
+  07-31 per U-6701, ~1/6 boots still wedge on an unbisected second mechanism), then A8
+  true diff + steer-calib on that evidence.
 
 ### WS-C — AI drivers (item 1)
 Replaces the gate-ribbon lane-follower scaffold. Real = **FUN_00418860 family**
