@@ -206,25 +206,12 @@ private:
     void LoadCopters(IDirect3DDevice9* dev, Piz::Archive& piz,
                      const char* piz_path, std::FILE* log);
 
-    // renderer-gap closures (reconciliation 2026-06-10): fog from COURSE.LUA
-    // Setup_Fog(start_frac, end, r, g, b); sky.dff drawn first, z-write off,
-    // unfogged.
-    D3DCOLOR fog_color_ = D3DCOLOR_XRGB(24, 28, 40);
+    // renderer-gap closures (reconciliation 2026-06-10): sky.dff drawn first,
+    // z-write off, unfogged. The fog COLOUR itself, plus amb_world_/sun_color_,
+    // moved to Race::RaceSceneState in E2'b step 3 (2026-08-01) and retyped to
+    // uint32_t so the librw submitter can read them; they are inherited, so every
+    // use site in this file is unchanged.
     Prop     sky_;
-    // WS-E lighting: track ambient RpLight term (LIGHTS.DFF, COURSE.LUA
-    // Lights_Filename) as 0x00RRGGBB; added to world/prop baked prelight. The
-    // dim baked prelight (Arctic mean ~55,78,78) is meant to be combined with
-    // this ambient (Arctic 51,76,76) at render — without it the world is a dark
-    // void. 0 = no lights file. Parsed in Load() before the batches are built.
-    D3DCOLOR amb_world_ = 0;
-    // WS-E s2 lighting: the track's DIRECTIONAL RpLight (LIGHTS.DFF type-1) —
-    // sun colour as 0x00RRGGBB and its world-space direction (the light frame's
-    // at-vector, i.e. the direction the light travels). Applied as N·L to ATOMIC
-    // (prop/car) batches that carry vertex normals + rpGEOMETRYLIGHT — the static
-    // world has no normals so it cannot receive it (see Task-1 combine notes).
-    // Arctic LIGHTS.DFF (asset-verified): colour (0.6,0.7,0.7)=(153,178,178),
-    // dir (0.577,-0.577,-0.577), flags 0x3 (lights atomics+world). 0 = none.
-    D3DCOLOR sun_color_  = 0;
     // WS-E vehicle lighting (RpLight subset, env MASHED_RPLIGHT, default ON;
     // =0 reverts to the legacy load-time model-space bake). Faithful
     // FUN_00479330 (0x00479330) light acquisition: float-precision colours
@@ -234,9 +221,6 @@ private:
     // lights keyed on the subtype byte alone (no stream-flag filter,
     // last-wins), Ambient_RGB override (DFF branch only, any component >
     // DAT_005d757c = 0.0f). has_sun_dir_ gates the per-frame relight pass.
-public:
-    D3DCOLOR fog_color() const { return fog_color_; }
-private:
 
     // car model + state
     std::vector<std::vector<V>>     car_batches_;

@@ -1295,31 +1295,48 @@ beginUpdate(Camera *cam)
 	d3dShaderState.fogDisable.disable = 1.0f;
 	d3dShaderState.fogDirty = true;
 
-	RECT r;
-	GetClientRect(d3d9Globals.window, &r);
-	BOOL icon = IsIconic(d3d9Globals.window);
-	if(!icon &&
-	   (r.right != d3d9Globals.present.BackBufferWidth || r.bottom != d3d9Globals.present.BackBufferHeight)){
+	// MASHED LOCAL PATCH (E2'b step 3) -- under device adoption the exe owns both
+	// the swapchain and the scene bracket, so librw must do NEITHER of the two
+	// things below:
+	//  (a) the auto-Reset. mashed_re renders to a fixed 640x480 backbuffer whose
+	//      size is deliberately independent of the client rect (the borderless
+	//      native-resolution mode makes them differ by design), so this test is
+	//      true every frame and would Reset the exe's device mid-frame, throwing
+	//      away its render targets.
+	//  (b) BeginScene/EndScene. exe_main.cpp already opened the scene before
+	//      calling us; a nested BeginScene returns D3DERR_INVALIDCALL and the
+	//      matching EndScene in endUpdate would close the exe's scene early,
+	//      losing every draw issued after the librw submit (the HUD).
+	if(!d3d9Globals.adoptedDevice){
+		RECT r;
+		GetClientRect(d3d9Globals.window, &r);
+		BOOL icon = IsIconic(d3d9Globals.window);
+		if(!icon &&
+		   (r.right != d3d9Globals.present.BackBufferWidth || r.bottom != d3d9Globals.present.BackBufferHeight)){
 
-		d3d9Globals.present.BackBufferWidth = r.right;
-		d3d9Globals.present.BackBufferHeight = r.bottom;
+			d3d9Globals.present.BackBufferWidth = r.right;
+			d3d9Globals.present.BackBufferHeight = r.bottom;
 
-		releaseVideoMemory();
-		d3d::d3ddevice->Reset(&d3d9Globals.present);
-		restoreVideoMemory();
+			releaseVideoMemory();
+			d3d::d3ddevice->Reset(&d3d9Globals.present);
+			restoreVideoMemory();
+		}
 	}
 
 	setRenderSurfaces(cam);
 
 	setViewport(cam->frameBuffer);
 
-	d3ddevice->BeginScene();
+	if(!d3d9Globals.adoptedDevice)
+		d3ddevice->BeginScene();
 }
 
 static void
 endUpdate(Camera *cam)
 {
-	d3ddevice->EndScene();
+	// MASHED LOCAL PATCH (E2'b step 3) -- see beginUpdate (b).
+	if(!d3d9Globals.adoptedDevice)
+		d3ddevice->EndScene();
 }
 
 static void
@@ -1552,11 +1569,49 @@ closeD3D(void)
 	return 1;
 }
 
+// MASHED LOCAL PATCH (E2'b step 3, 2026-08-01) -- device adoption entry point.
+// See the adoptedDevice comment in rwd3dimpl.h for why. Must be called after
+// rw::Engine::open() (which fills d3d9Globals.window/d3d9/caps) and before
+// rw::Engine::start().
+// (this file is already inside namespace rw::d3d, opened at the top)
+void
+setAdoptedDevice(IDirect3DDevice9 *dev)
+{
+	d3d9Globals.adoptedDevice = dev;
+}
+
 static int
 startD3D(void)
 {
 	HRESULT hr;
 	int vp;
+
+	// MASHED LOCAL PATCH -- adopt the exe's existing device rather than making
+	// a second one. d3d9Globals.present is filled from the live swapchain, not
+	// from the mode list, because downstream code reads it: raster creation uses
+	// present.AutoDepthStencilFormat/MultiSampleType (:1069, :1074) and the
+	// resize/vsync paths Reset() with it (:1308, :1350). Deriving it from the
+	// real device is what keeps those consistent with the backbuffer we share.
+	if(d3d9Globals.adoptedDevice){
+		IDirect3DSwapChain9 *sc = nil;
+		if(FAILED(d3d9Globals.adoptedDevice->GetSwapChain(0, &sc)) || sc == nil){
+			RWERROR((ERR_GENERAL, "GetSwapChain() failed on adopted device"));
+			return 0;
+		}
+		D3DPRESENT_PARAMETERS pp;
+		HRESULT gr = sc->GetPresentParameters(&pp);
+		sc->Release();
+		if(FAILED(gr)){
+			RWERROR((ERR_GENERAL, "GetPresentParameters() failed on adopted device"));
+			return 0;
+		}
+		d3d9Globals.present = pp;
+		rw::d3d::isP8supported = 0;
+		d3d::d3ddevice = d3d9Globals.adoptedDevice;
+		return 1;
+	}
+
+
 	if(d3d9Globals.caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
 		vp = D3DCREATE_HARDWARE_VERTEXPROCESSING;
 	else
@@ -1895,6 +1950,16 @@ termD3D(void)
 	closeIm2D();
 
 	releaseVideoMemory();
+
+	// MASHED LOCAL PATCH (E2'b step 3) -- an adopted device belongs to the exe
+	// (mashed_re's InitD3D9), which Releases it in ShutdownD3D9. Releasing it
+	// here too would drop the refcount to zero while the D3D9 path is still
+	// drawing through it. Drop only OUR reference to the pointer.
+	if(d3d9Globals.adoptedDevice){
+		d3d9Globals.adoptedDevice = nil;
+		d3d::d3ddevice = nil;
+		return 1;
+	}
 
 	ULONG ref = d3d::d3ddevice->Release();
 	if(ref != 0)

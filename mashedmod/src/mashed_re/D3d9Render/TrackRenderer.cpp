@@ -17,6 +17,7 @@
 #include "../Txd/TxdDecoder.h"
 #include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
 #include "RwWorldRender.h"          // WS-E1: RW world render path (behind MASHED_RW_RENDER)
+#include "../LibRw/RwRaceSubmit.h"  // E2'b step 3: in-loop librw submit (MASHED_RENDER_LIBRW)
 #include "DrawStreamDump.h"         // parity harness: MASHED_DBG_DRAWSTREAM3D race-3D summary
 #include "../Ai/AiStandalone.h"     // WS-C-WIRE: standalone AI tick (behind MASHED_REAL_AI)
 #include "../Vehicle/VehiclePhysicsRun.h"  // WS-A8: ported physics chain (behind MASHED_REAL_PHYSICS)
@@ -547,8 +548,12 @@ D3DCOLOR ParseLightsDffAmbient(const std::uint8_t* d, std::uint32_t len) {
 // return its colour (0x00RRGGBB) and the frame's parent-chain-composed at-vector.
 // Returns false if there is no such light. Arctic -> colour (153,178,178),
 // dir (0.577,-0.577,-0.577).
+// E2'b step 3: out_color retyped D3DCOLOR* -> std::uint32_t* to match sun_color_
+// after its move into RaceSceneState. D3DCOLOR is `unsigned long` and uint32_t is
+// `unsigned int` -- distinct types, so the VALUE sites converted silently but this
+// POINTER site did not, which is what caught it at compile time.
 bool ParseLightsDffDirectional(const std::uint8_t* d, std::uint32_t len,
-                               D3DCOLOR* out_color, float out_dir[3]) {
+                               std::uint32_t* out_color, float out_dir[3]) {
     if (!d || len < 24) return false;
     auto u32 = [&](std::size_t o) -> std::uint32_t {
         std::uint32_t v; std::memcpy(&v, d + o, 4); return v;
@@ -1533,6 +1538,15 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                      track_radius_);
         std::fclose(log);
     }
+    // E2'b step 3: hand the librw submitter the SAME parsed world + texture
+    // dictionaries this function just used. Called here because `world` and
+    // `dicts` are locals that die at the closing brace -- building the librw
+    // scene from anywhere else would mean re-parsing GRAPH.BSP/TEXTURES.TXD into
+    // a second copy that could disagree with this one. No-op unless
+    // MASHED_RENDER_LIBRW=1 brought the engine up.
+    if (LibRw::RaceSubmit_Requested())
+        LibRw::RaceSubmit_OnTrackLoaded(world, dicts.data(), dicts.size());
+
     ready_ = true;
     return true;
 }
@@ -3730,9 +3744,15 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // round-mode branch derived FOV from race_cam_'s view-window 0.6 -> ~48 deg,
     // but that camera framed the whole pack from a high orbit and is now replaced
     // by the ground chase above.)
-    const float fovy = 1.0472f;  // 60 deg
-    MatPerspectiveFovLH(&projm, fovy, 800.f / 600.f,
-                        0.05f, radius_ * 8.f);
+    // E2'b step 3: publish the resolved frustum into RaceSceneState and build
+    // the D3D9 projection FROM those members, so the librw submitter reads the
+    // same four numbers rather than a hand-copied second set that could drift.
+    last_fov_    = 1.0472f;  // 60 deg
+    last_aspect_ = 800.f / 600.f;
+    last_near_   = 0.05f;
+    last_far_    = radius_ * 8.f;
+    MatPerspectiveFovLH(&projm, last_fov_, last_aspect_,
+                        last_near_, last_far_);
     MatIdentity(&worldm);
     dev->SetTransform(D3DTS_WORLD, &worldm);
     dev->SetTransform(D3DTS_VIEW, &viewm);
@@ -3758,7 +3778,14 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // returns 0 and the spike world draw below stays the shipping path. When active
     // it traverses RpWorld sectors -> RpAtomic render callbacks (full world incl.
     // sky/props route through it; the spike world-geometry loop is then skipped).
-    const bool rw_world = D3d9Render::RwWorldRender_Render(/*world*/nullptr, /*cam*/nullptr) != 0;
+    // E2'b step 3: when the librw submit path is live it draws the static world,
+    // so the D3D9 world batches must be skipped — otherwise BOTH renderers write
+    // the same pixels and no difference is attributable to either. Folded into the
+    // existing rw_world gate, which already means exactly "someone else drew the
+    // world". Everything else (cars, props, particles, pickups, sky, HUD) still
+    // comes from D3D9, so remaining deltas are scope, not overdraw.
+    const bool rw_world = D3d9Render::RwWorldRender_Render(/*world*/nullptr, /*cam*/nullptr) != 0
+                          || LibRw::RaceSubmit_Active();
 
     // sky clump first: unfogged, no depth write (renderer-gap closure)
     if (!sky_.batches.empty()) {

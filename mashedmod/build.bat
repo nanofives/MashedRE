@@ -65,6 +65,12 @@ if errorlevel 1 (echo [ERROR] RwRasterBridge exe-obj compile failed & exit /b 1)
 cl /nologo /EHa /W3 /O2 /c /I "%LIBRWINC%" /I "%LIBRWINC%\src" /DRW_D3D9 ^
     /Fo"%OUT%\RwSceneBuild_exe.obj" "%SRC%\LibRw\RwSceneBuild.cpp"
 if errorlevel 1 (echo [ERROR] RwSceneBuild exe-obj compile failed & exit /b 1)
+REM E2'b step 3: the in-loop submit path. Same isolation as the three above --
+REM it includes <rw.h>, so it must NOT join the plain source list below (those
+REM TUs compile without the librw include path). EXE-ONLY: never asi_sources.rsp.
+cl /nologo /EHa /W3 /O2 /c /I "%LIBRWINC%" /I "%LIBRWINC%\src" /DRW_D3D9 ^
+    /Fo"%OUT%\RwRaceSubmit_exe.obj" "%SRC%\LibRw\RwRaceSubmit.cpp"
+if errorlevel 1 (echo [ERROR] RwRaceSubmit exe-obj compile failed & exit /b 1)
 
 REM ===========================================================================
 REM Phase C status (2026-05-25):
@@ -305,6 +311,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "%OUT%\RwBridge_exe.obj" ^
     "%OUT%\RwRasterBridge_exe.obj" ^
     "%OUT%\RwSceneBuild_exe.obj" ^
+    "%OUT%\RwRaceSubmit_exe.obj" ^
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO ^
     /MAP:"%OUT%\mashed_re.map" ^
     user32.lib d3d9.lib dsound.lib gdi32.lib "%QHULL_LIB%" "%LIBRW_LIB%"

@@ -49,9 +49,24 @@ struct D3d9Globals
 	int numVertexBuffers;
 	int numIndexBuffers;
 	int numVertexDeclarations;
+
+	// MASHED LOCAL PATCH (E2'b step 3, 2026-08-01) -- device adoption.
+	// Upstream librw owns the device: startD3D() calls CreateDevice() itself and
+	// asserts d3ddevice == nil. mashed_re already created its device in
+	// InitD3D9(), and the librw world must be submitted INTO that device's
+	// backbuffer, inside the existing BeginScene/EndScene/Present, so that a
+	// single frame contains both renderers' output and the capture harness
+	// (MASHED_DBG_BBDUMP) and the d3d9-shim frame limiter keep working unchanged.
+	// When this is non-null, startD3D() adopts it instead of creating one, and
+	// termD3D() must not Release it (the exe owns the lifetime).
+	// Set via rw::d3d::setAdoptedDevice() before rw::Engine::start().
+	IDirect3DDevice9 *adoptedDevice;
 };
 
 extern D3d9Globals d3d9Globals;
+
+// MASHED LOCAL PATCH (E2'b step 3) -- see D3d9Globals::adoptedDevice.
+void setAdoptedDevice(IDirect3DDevice9 *dev);
 
 void addVidmemRaster(Raster *raster);
 void removeVidmemRaster(Raster *raster);

@@ -165,7 +165,8 @@
 #include "D3d9Render/MashedFont.h"          // B19: faithful FGDC20 glyph font
 #include "D3d9Render/MenuStringTable.h"     // menu id->glyph-string (sprite-by-id)
 #include "D3d9Render/DrawStreamDump.h"      // parity harness: MASHED_DBG_DRAWSTREAM
-#include "LibRw/RwBridge.h"                 // M3-E1': vendored librw seam (MASHED_RENDER_LIBRW)
+#include "LibRw/RwBridge.h"                 // M3-E1': vendored librw seam (MASHED_LIBRW_SMOKE)
+#include "LibRw/RwRaceSubmit.h"             // E2'b step 3: in-loop submit (MASHED_RENDER_LIBRW)
 #include "Compat/StandaloneRvaThunks.h"     // B16: standalone RVA-thunk installer
 #include "Frontend/MenuNavSM.h"             // standalone menu nav state machine (FUN_0043d2a0 port)
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
@@ -2608,6 +2609,16 @@ bool RenderFrame() {
         }
         LARGE_INTEGER rA, rB; if (s_fprof) QueryPerformanceCounter(&rA);
         g_track.Render(g_device, t, &ci);
+        // E2'b step 3: the librw submit path, in-loop and beside the D3D9 one.
+        // AFTER Render(), not before, for two reasons: Render() is what resolves
+        // this frame's camera and publishes it into RaceSceneState (last_eye_ /
+        // last_at_ / the projection quartet), and it is where fog/light state is
+        // live -- so submitting first would draw last frame's camera. Both
+        // renderers therefore write the same backbuffer this frame; while only
+        // the static world is submitted, the overlap is deliberate and the deltas
+        // are scope (RwRaceSubmit.h). It issues no Clear and no Begin/EndScene.
+        if (mashed_re::LibRw::RaceSubmit_Active())
+            mashed_re::LibRw::RaceSubmit_Render(g_track);
         if (s_fprof) { QueryPerformanceCounter(&rB); msRender = QpcMs(rA, rB); }
         // [SCAFFOLD] R6 HUD overlay — invented pips/banner; the REAL game
         // uses team badges + score bars + "+1/-1" points on a Current
@@ -5646,11 +5657,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     ShowWindow(g_hwnd, nCmdShow);
     UpdateWindow(g_hwnd);
 
-    // M3-E1' (gate D2): MASHED_RENDER_LIBRW=1 hands the window to vendored librw
+    // M3-E1' (gate D2): MASHED_LIBRW_SMOKE=1 hands the window to vendored librw
     // instead of our own D3D9 path and runs the E1' acceptance probe. Gated HERE,
-    // before InitD3D9, because the two paths cannot coexist — librw calls
-    // Direct3DCreate9 + CreateDevice + Present itself and owns the device
-    // outright. Default OFF; the shipping D3D9 path is untouched when unset.
+    // before InitD3D9, because THAT path cannot coexist with ours — the probe
+    // lets librw call Direct3DCreate9 + CreateDevice + Present itself and own the
+    // device outright. It runs and exits.
+    //
+    // The in-loop render path (MASHED_RENDER_LIBRW, E2'b step 3) is different and
+    // is wired AFTER InitD3D9 below: it adopts our device instead of making one.
+    // Default OFF for both; the shipping D3D9 path is untouched when unset.
     // See re/analysis/LIBRW_SIZING_2026-08.md and LibRw/RwBridge.h.
     if (mashed_re::LibRw::SmokeRequested()) {
         const int rc = mashed_re::LibRw::RunSmoke(g_hwnd, kWidth, kHeight, 600);
@@ -5673,6 +5688,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // pre-initd3d9 is d3d9's real low-address footprint — the granules we must
     // NOT pre-reserve, and the ones we may.
     DumpRegionMap("post-initd3d9");
+
+    // E2'b step 3: bring librw up ADOPTING the device InitD3D9 just made, so the
+    // world can be submitted inside our own frame. Must be after InitD3D9 (there
+    // is no device to adopt before it) and before any track load (the scene is
+    // built from TrackRenderer::Load). A failure here is non-fatal: we log it and
+    // carry on with the D3D9 path alone rather than losing the run.
+    // (RaceSubmit_Init writes its own per-step failure detail to
+    // log/librw_race.txt, so there is nothing to log here.)
+    if (mashed_re::LibRw::RaceSubmit_Requested())
+        mashed_re::LibRw::RaceSubmit_Init(g_hwnd, g_device, kWidth, kHeight);
 
     // B7 (deferred to post-InitD3D9): wedge over whatever low-address
     // granules d3d9 didn't claim. Then verify + run boot chain.

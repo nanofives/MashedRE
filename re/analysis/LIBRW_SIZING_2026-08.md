@@ -618,7 +618,83 @@ viewpoints, world-only, no cars.
 > wiring `World::render()` behind the `MASHED_RENDER_LIBRW` gate and taking the
 > first real E3' imgdiff against the ten gating viewpoints.
 
-> ### E2'b step 3 (camera + I4 fog/lighting) — DESIGN DECIDED, NOT STARTED
+> ### E2'b step 3 — **IMPLEMENTED 2026-08-01.** In-loop, deterministic, three deltas open.
+>
+> The design below was followed, with one thing it had not accounted for: **librw
+> owns the D3D9 device**, so "beside `g_track.Render(dev, …)`" was not expressible
+> as written — there was no `dev` both renderers agreed on, and the
+> `MASHED_RENDER_LIBRW` gate terminated the process *before* `InitD3D9`. Resolved
+> by **device adoption** (user-decided, option A): librw is handed the exe's
+> device via three documented local patches to the vendored snapshot
+> (`deps/librw/MASHED_PATCHES.md` P1–P3), so one device, one `BeginScene`, one
+> `Present`. The E1' probe kept its own-device behaviour and moved to
+> `MASHED_LIBRW_SMOKE`; `MASHED_RENDER_LIBRW` now selects the in-loop path.
+>
+> **Landed:** `fog_color_`/`amb_world_`/`sun_color_` moved to `RaceSceneState` and
+> retyped `D3DCOLOR → uint32_t` (§3.4's deferred retype, now closed), joined by the
+> resolved-camera quartet `last_fov_/last_aspect_/last_near_/last_far_` — the
+> projection constants were function-local at `TrackRenderer.cpp:3733` and nothing
+> exposed them. `TrackRenderer` now builds its own D3D9 projection *from* those
+> members, so there is one source of truth. New exe-only TU `LibRw/RwRaceSubmit.cpp`
+> (build.bat only, librw `/I`, never `asi_sources.rsp`). The scene is built at the
+> tail of `TrackRenderer::Load` from the *same* `world`/`dicts` locals — nothing is
+> re-parsed.
+>
+> **The retype was not free**, and the compiler caught why: `D3DCOLOR` is
+> `unsigned long`, `uint32_t` is `unsigned int`. Every *value* site converted
+> silently; the one *pointer* site (`ParseLightsDffDirectional(…, D3DCOLOR*, …)`,
+> `TrackRenderer.cpp:550`) did not, and had to be retyped too.
+>
+> #### Evidence — controls first, per the R10b rule
+>
+> | Comparison | Result | What it establishes |
+> |---|---|---|
+> | librw **OFF**, this build vs `verify/librw_ref/` | **0.00 on 7/7** gating shots reproduced | The state move + gate rename are a **verified no-op** on the D3D9 path. Also a *cross-build* control: a different binary reproduced the reference exactly. |
+> | librw **ON**, run 1 vs run 2 (**two different builds**) | **0.00 on both shots checked** | The in-loop path is deterministic run-to-run, and the D3D9 world contributes **zero visible pixels** once librw draws (the world-skip gate changed nothing). |
+> | librw **ON** vs reference | mean-abs 24.9–39.9 | **NOT a parity number** — see below. |
+>
+> The path demonstrably consumed real state rather than defaults:
+> `log/librw_race.txt` records `fog=1[0.1..70.0]` (Arctic's `Setup_Fog(0.1, 70, …)`),
+> `far=643.6` (`radius_*8`), `fov=1.0472`, and `sectors=12 mats=13 tris=16480
+> verts=16229` — matching the E2'b step 2 parse exactly.
+>
+> #### Delta register — the 24.9–39.9 is NOT parity
+>
+> It measures a frame where librw draws the static world and **nothing else is
+> submitted through it**. Three causes, none yet closed:
+>
+> - **D-S3-1 — the player car is occluded. BUG, not scope.** librw submits after
+>   `g_track.Render()`, and its world overdraws the car that D3D9 already drew,
+>   despite sharing the depth buffer. Candidate cause: the two projections encode
+>   depth differently (RW builds `proj[10] = far/(far−near)`, `proj[11] = 1` in
+>   `d3ddevice.cpp:1284-1290`, vs `MatPerspectiveFovLH`), so shared-depth
+>   comparisons are inconsistent. **[UNCERTAIN]** — not yet confirmed by a depth
+>   readback.
+> - **D-S3-2 — HUD render-state leakage.** The colour pips vanish and the lap "1"
+>   loses its yellow. librw sets state through its own `rwStateCache`, which does
+>   not know what D3D9 left set and vice versa; `MASHED_PATCHES.md` records this as
+>   explicitly **not** patched, and this is the predicted symptom.
+> - **D-S3-3 — I4 fog/lighting.** The librw frame is markedly brighter. Two known
+>   mechanisms: ambient is applied on top of already-baked prelight, and **RW ties
+>   the fog END to the camera far plane** (`fogData.end = cam->farPlane`), so
+>   `fog_end_` (70) cannot be honoured independently of the clip distance (643.6) —
+>   the fog ramp is necessarily longer than D3D9's. Recorded, not approximated.
+>
+> #### Caveats that must not be lost
+>
+> - **Only 10 of the 13 manifest shots regenerate** under the documented recipe in
+>   this environment: `00_results`, `01_cupstandings`, `01_results` were not
+>   produced (they need further cup rounds), so **7 of the 10 gating shots** were
+>   exercised, not 10. The stale files of those names in `verify/race1` are from
+>   earlier sessions and must not be mistaken for run output.
+> - **Captures land in the MAIN repo's `verify/`**, because `MASHED_ROOT` makes the
+>   exe `SetCurrentDirectory` to the main repo to reach `original/`. A worktree run
+>   therefore writes into shared scratch — snapshot results out immediately, and
+>   coordinate before capturing while another session is active.
+>
+> ---
+>
+> ### E2'b step 3 (camera + I4 fog/lighting) — original design block (kept for the record)
 >
 > Attempting this from the standalone probe was rejected after looking at where the
 > inputs actually live:

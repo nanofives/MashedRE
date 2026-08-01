@@ -35,6 +35,10 @@ extern Device renderdevice;
 #ifdef _D3D9_H_
 extern IDirect3DDevice9 *d3ddevice;
 void setD3dMaterial(D3DMATERIAL9 *mat9);
+// MASHED LOCAL PATCH (E2'b step 3) -- hand librw an existing device to render
+// into instead of creating its own. Call between Engine::open and Engine::start.
+// See deps/librw/MASHED_PATCHES.md P1.
+void setAdoptedDevice(IDirect3DDevice9 *dev);
 #endif
 
 #define COLOR_ARGB(a, r, g, b) ((rw::uint32)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
