@@ -18,6 +18,7 @@
 
 #include "RwBridge.h"   // pulls <windows.h> first, which rwd3d.h needs for HWND
 #include "RwRasterBridge.h"
+#include "RwSceneBuild.h"
 
 // WITH_D3D makes librw's rwd3d.h include <d3d9.h> and expose the D3D9-typed part
 // of its interface -- notably `extern IDirect3DDevice9 *d3ddevice` (rwd3d.h:2,36).
@@ -260,6 +261,17 @@ int RunSmoke(HWND hwnd, int width, int height, int frames) {
             return 8;
         }
         LogLine("ok: raster bridge hashed %d textures -> log/librw_raster.txt", n);
+    }
+
+    // E2'b: build a real track's world geometry through librw and check it
+    // against the parser's own totals.
+    {
+        const int rc = SceneBuild_SelfTest();
+        if (rc != 0) {
+            LogLine("FAIL: scene build self-test rc=%d (log/librw_scene.txt)", rc);
+            return 9;
+        }
+        LogLine("ok: scene build self-test PASS -> log/librw_scene.txt");
     }
 
     // Teardown in reverse (skeleton.cpp:56-65).

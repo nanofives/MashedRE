@@ -587,6 +587,37 @@ viewpoints, world-only, no cars.
 > would localise it further at negligible cost, and unlike the heading they are
 > not already collapsed through `atan2`.
 
+> **E2'b (world + props) — GEOMETRY BUILT AND VALIDATED 2026-08-01.**
+> `LibRw/RwSceneBuild.{h,cpp}`: `Track::World` → `rw::World` (I1),
+> `Track::DffModel` → `rw::Clump` (I2), geometry flags (I5), textures via the
+> already-verified `RwRasterBridge`. Exe-only, isolated TU.
+>
+> Self-test on `Arctic.piz` (`log/librw_scene.txt`):
+> ```
+> parsed: 13 materials, 12 sectors, total_verts=16229 total_tris=16480
+> materials with a texture name: 12, resolved against the TXD: 12
+> built: 9 atomics, 16229 verts, 16480 tris  (3 sectors skipped as empty)
+> triangle validation: 0 out-of-range vertex indices, 0 out-of-range matIds
+> ```
+> Counts match the parser exactly. The content validation matters: a builder that
+> mis-sliced `Track::Sector::tris` — which is `(mat,v0,v1,v2)`, stride **4**, not 3
+> — would still produce plausible totals, but every `matId` would then be a vertex
+> index (up to 16228) against a 13-entry material list. `badMat == 0` is what rules
+> that out.
+>
+> **librw finding worth recording: `World::addAtomic` adds the atomic to no list.**
+> It only sets `atomic->world` (`world.cpp`), and `World::render()` walks the
+> **clump** list only — upstream's own comment there is *"this is very wrong, we
+> really want world sectors"*. A bare atomic added to a world silently never draws.
+> Sectors are therefore built as one `rw::Clump` added via `addClump`. This is the
+> concrete shape of "librw's `rw::World` is a container, not a BSP" (§3.2).
+>
+> **Not yet done in E2'b:** nothing is *drawn* through librw yet — the scene is
+> built and validated structurally, but the submit path (camera, fog/lighting I4,
+> Im2D I6) is still ahead, and `TrackRenderer` remains the live renderer. Next is
+> wiring `World::render()` behind the `MASHED_RENDER_LIBRW` gate and taking the
+> first real E3' imgdiff against the ten gating viewpoints.
+
 **E2'c — the TrackRenderer split (L — this is the real cost).** Before cars/particles/pickups can
 move, `TrackRenderer.cpp`'s 4139 LOC must be separated into *race state* (keep, renderer-neutral)
 and *draw submission* (replace). Suggested cut: extract a `Race/RaceSceneState` holding the
