@@ -712,6 +712,43 @@ viewpoints, world-only, no cars.
 > opposite of the intent. Measured cost of the mistake: `01_action` regressed
 > 14.99 → 39.25. Capture must precede the resync.
 >
+> ### Instanced props / cars — STAGED behind `MASHED_LIBRW_INST`, NOT accepted
+>
+> The seam is built and works mechanically, but it is **off by default** because
+> enabling it regresses two things. `MASHED_RENDER_LIBRW` alone still gives the
+> verified world-only numbers above.
+>
+> What landed: `RaceSubmit_RegisterModel` / `AddInstance` / `BeginTrackLoad`.
+> Registration happens at load time from the live `DffModel` locals — inside
+> `load_prop`'s lambda and `LoadCar` — because **nothing in the codebase retains a
+> parsed `DffModel`**; every one is a function local destroyed right after
+> `BuildDffBatches`. Each owning struct keeps an `int rw_model` handle; **-1 means
+> "keep drawing through D3D9"**, so the port is incremental by construction and one
+> bad model cannot black out the scene. Instance transforms are the *same*
+> `D3DMATRIX` the D3D9 path would pass to `SetTransform(D3DTS_WORLD)` — `rw::Matrix`
+> and `D3DMATRIX` agree field-for-field (right/up/at/pos), so nothing is re-derived.
+>
+> Measured with it on: 9 models registered (the 71-atomic one is the car), 27
+> instances/frame, props visibly drawing through librw.
+>
+> **Two open regressions, both introduced by `World::addCamera`:**
+> - **D-S3-6 — the static world goes black** when instances are enabled. Binding the
+>   camera to the world is *required* — `lightingCB_Shader` dereferences
+>   `engine->currentWorld` for any geometry carrying `rw::Geometry::LIGHT`
+>   (`d3drender.cpp:357-359`), which props and cars do and the normal-less world
+>   sectors do not. That deref was a hard **segfault** until the camera was added.
+>   But adding it also changes how the world itself shades. Cause not yet found.
+> - **D-S3-7 — the player car does not appear** on the instanced path. The instance
+>   count sits at a constant 27 with no car entry, so `car_via_rw` is evaluating
+>   false; whether `rw_car_model_` or `car_ready_` is the reason is **not yet
+>   measured**. `[UNCERTAIN]`
+>
+> Also logged: **D-S3-5** — the librw car path bypasses `RenderCarsRelit`, the
+> per-frame world-space sun relight (`MASHED_RPLIGHT`, default ON and active on
+> Arctic). Through librw the body carries baked prelight plus the `rw::Light`
+> terms instead of the ported per-vertex N·L. A real visual delta, to be closed by
+> giving the librw path an equivalent relight pass.
+>
 > ### Residual
 >
 > The remaining ~0.9 is not itemised. It is consistent with the I4 fog/lighting

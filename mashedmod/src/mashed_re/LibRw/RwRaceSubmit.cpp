@@ -14,6 +14,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
+#include <vector>
 
 #include "../Race/RaceSceneState.h"
 #include "../Track/TrackWorld.h"
@@ -48,6 +49,12 @@ rw::Light*   g_sun       = nullptr;
 long long    g_frames    = 0;
 HWND         g_hwnd_dbg  = nullptr;   // kept only for the D-S3-1 surface probe
 IDirect3DStateBlock9* g_state_block = nullptr;  // D-S3-2 outbound fix
+
+// Registered instanced models (props / cars / copters) and this frame's queue.
+std::vector<rw::Clump*> g_models;
+struct Inst { int model; float m[16]; };
+std::vector<Inst>       g_insts;
+long long               g_inst_drawn = 0;
 
 // Build the camera once. frameBuffer is a plain Raster::CAMERA: on the D3D9
 // backend such a raster has natras->texture == nil, and setRenderSurfaces then
@@ -159,12 +166,14 @@ void RaceSubmit_Shutdown() {
     // Lights are owned by the world once added; destroy the world last.
     if (g_state_block) { g_state_block->Release(); g_state_block = nullptr; }
     if (g_cam)   { g_cam->destroy();   g_cam   = nullptr; }
+    for (rw::Clump* c : g_models) if (c) c->destroy();
+    g_models.clear(); g_insts.clear();
     if (g_world) { g_world->destroy(); g_world = nullptr; }
     g_amb = g_sun = nullptr;
     g_scene_up = false;
     EngineStop();
     g_engine_up = false;
-    RLog("ok: shutdown after %lld submitted frames", g_frames);
+    RLog("ok: shutdown after %lld frames, %lld instance draws", g_frames, g_inst_drawn);
 }
 
 bool RaceSubmit_OnTrackLoaded(const Track::World& world,
@@ -179,12 +188,77 @@ bool RaceSubmit_OnTrackLoaded(const Track::World& world,
     g_world = static_cast<rw::World*>(BuildWorld(world, ts));
     if (!g_world) { RLog("FAIL: BuildWorld"); return false; }
 
+    // Bind the camera to the world. This is what installs worldBeginUpdateCB,
+    // which sets engine->currentWorld (camera.cpp:258-261) -- and any geometry
+    // carrying rw::Geometry::LIGHT dereferences that in lightingCB_Shader
+    // (d3drender.cpp:358). The static world sectors have no normals and no LIGHT
+    // flag, so they never touched it; props and cars DO, which is why submitting
+    // them segfaulted until the camera was added here. Re-added on every rebuild
+    // because the old world is destroyed above.
+    if (RaceSubmit_InstancesEnabled()) g_world->addCamera(g_cam);
+
     g_scene_up = true;
     RLog("ok: scene built — sectors=%zu mats=%zu tris=%u verts=%u (dicts=%zu)",
          world.sectors.size(), world.materials.size(),
          world.total_tris, world.total_verts, ndicts);
     return true;
 }
+
+bool RaceSubmit_InstancesEnabled() {
+    static const bool on = [] {
+        const char* e = std::getenv("MASHED_LIBRW_INST");
+        return e && e[0] == '1' && e[1] == 0;
+    }();
+    return on;
+}
+
+void RaceSubmit_BeginTrackLoad() {
+    if (!g_engine_up) return;
+    for (rw::Clump* c : g_models) if (c) c->destroy();
+    g_models.clear();
+    g_insts.clear();
+}
+
+int RaceSubmit_RegisterModel(const Track::DffModel& model,
+                             const Txd::Dictionary* dicts, std::size_t ndicts) {
+    if (!g_engine_up) return -1;
+    TextureSource ts{ dicts, (int)ndicts };
+    rw::Clump* c = static_cast<rw::Clump*>(BuildClump(model, ts));
+    if (!c) { RLog("WARN: BuildClump failed -- model stays on the D3D9 path"); return -1; }
+    // Deliberately NOT added to the rw::World: World::render() walks the clump
+    // list and would draw every registered model once, at its authored transform,
+    // regardless of how many copies are actually placed this frame. Instanced
+    // models are drawn explicitly below instead.
+    g_models.push_back(c);
+    RLog("model[%d] registered: atomics=%d", (int)g_models.size() - 1,
+         (int)c->countAtomics());
+    return (int)g_models.size() - 1;
+}
+
+void RaceSubmit_AddInstance(int handle, const float* m44) {
+    if (handle < 0 || !m44 || (std::size_t)handle >= g_models.size()) return;
+    Inst i; i.model = handle;
+    for (int k = 0; k < 16; ++k) i.m[k] = m44[k];
+    g_insts.push_back(i);
+}
+
+namespace {
+// A D3DMATRIX and an rw::Matrix agree field-for-field: rows 1..4 are
+// right/up/at/pos, each an xyz triple (D3D's 4th column is the affine w, unused
+// for a rigid transform). So the transform the D3D9 path would have used copies
+// straight across -- no reconstruction, no chance of the two drifting.
+void SetClumpTransform(rw::Clump* c, const float* m) {
+    rw::Frame* f = c->getFrame();
+    if (!f) return;
+    rw::Matrix* d = &f->matrix;
+    d->right.x = m[0];  d->right.y = m[1];  d->right.z = m[2];
+    d->up.x    = m[4];  d->up.y    = m[5];  d->up.z    = m[6];
+    d->at.x    = m[8];  d->at.y    = m[9];  d->at.z    = m[10];
+    d->pos.x   = m[12]; d->pos.y   = m[13]; d->pos.z   = m[14];
+    d->update();
+    f->updateObjects();
+}
+}  // namespace
 
 void RaceSubmit_Render(const Race::RaceSceneState& st) {
     if (!RaceSubmit_Active()) return;
@@ -414,7 +488,24 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
              g_frames, ze, zw, zf, cull, ab);
     }
 
-    if (!s_nodraw) g_world->render();
+    if (!s_nodraw) {
+        g_world->render();
+        // Instanced models. Each registered clump is re-posed and re-drawn once
+        // per placed copy, which is what the D3D9 path does too (one
+        // SetTransform + draw per entry in Prop::instances).
+        if (g_frames % 200 == 0)
+            RLog("f%-6lld instances=%zu models=%zu", g_frames,
+                 g_insts.size(), g_models.size());
+        for (const Inst& in : g_insts) {
+            if (in.model < 0 || (std::size_t)in.model >= g_models.size()) continue;
+            rw::Clump* c = g_models[(std::size_t)in.model];
+            if (!c) continue;
+            SetClumpTransform(c, in.m);
+            c->render();
+            ++g_inst_drawn;
+        }
+    }
+    g_insts.clear();
 
     // ...and what the pipeline LEFT set, which is a proxy for what it used during
     // the draw. The pre-draw reading above is not enough: librw's default atomic

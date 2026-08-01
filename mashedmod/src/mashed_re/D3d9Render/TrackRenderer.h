@@ -178,6 +178,8 @@ private:
         std::vector<std::vector<V>>     batches;   // per material
         std::vector<IDirect3DTexture9*> textures;
         std::vector<D3DMATRIX>          instances;
+        // E2'b step 3: librw clump handle for this model, or -1 = draw via D3D9.
+        int                             rw_model = -1;
         // F3: per-material UV-scroll rate (units/sec) from the DFF material's
         // RW UVAnim extension -> the track .UVA dict (sea/sky props scroll).
         std::vector<MatScroll>          mat_scroll;
@@ -230,6 +232,8 @@ private:
     std::vector<std::vector<RelitSrc>> car_relit_;
     // AI livery variants (index 0 = livery 1 = AI car 0, etc.); full models
     // with wheels baked in — the spin overlay only applies to the player.
+    // E2'b step 3: librw clump handle for the player body, -1 = D3D9.
+    int rw_car_model_ = -1;
     struct CarVariant {
         std::vector<std::vector<V>>     batches;
         std::vector<IDirect3DTexture9*> textures;
