@@ -251,6 +251,51 @@ void Apply() {
 
 } // namespace decouple
 
+// ─── MASHED_RES — retarget the screen-dimension getters ──────────────────────
+// The d3d9 shim reads the same env var and sizes the backbuffer; the two getters
+// MUST return the identical size or the camera frameBuffer raster fails against
+// the device and boot AVs (root cause narrative: patch_mashed_fix_camera_res.py
+// / re/analysis/BOOT_CRASH_ROOTCAUSE_2026-06-13.md).
+//   FUN_00498bc0 (width)  @0x00498bc0: 6 bytes, on-disk-patched form B8 imm32 C3
+//   FUN_00498bd0 (height) @0x00498bd0: same; pristine form A1 <glob> C3 also accepted
+void ApplyRes() {
+    char v[32] = {};
+    if (GetEnvironmentVariableA("MASHED_RES", v, sizeof(v)) == 0) return;
+    std::uint32_t w = 0, h = 0; const char* p = v;
+    for (; *p >= '0' && *p <= '9'; ++p) w = w * 10 + (std::uint32_t)(*p - '0');
+    if (*p == 'x' || *p == 'X')
+        for (++p; *p >= '0' && *p <= '9'; ++p) h = h * 10 + (std::uint32_t)(*p - '0');
+    if (w < 320 || h < 240 || w > 7680 || h > 4320) {
+        LogLine("RES: MASHED_RES unparsable/out of range — SKIPPED");
+        return;
+    }
+    struct Site { std::uintptr_t va; std::uint8_t pristine1; std::uint32_t val; };
+    const Site sites[2] = {
+        {0x00498bc0u, 0x28, w},   // pristine: A1 28 60 61 00 C3
+        {0x00498bd0u, 0x2C, h},   // pristine: A1 2C 60 61 00 C3
+    };
+    for (const Site& s : sites) {
+        const std::uint8_t* cur = reinterpret_cast<const std::uint8_t*>(s.va);
+        const bool patchedForm  = (cur[0] == 0xB8 && cur[5] == 0xC3);
+        const bool pristineForm = (cur[0] == 0xA1 && cur[1] == s.pristine1 &&
+                                   cur[2] == 0x60 && cur[3] == 0x61 &&
+                                   cur[4] == 0x00 && cur[5] == 0xC3);
+        if (!patchedForm && !pristineForm) {
+            LogLine("RES: getter bytes unexpected — SKIPPED (res mismatch AV risk: unset MASHED_RES)");
+            return;
+        }
+        std::uint8_t stub[6];
+        stub[0] = 0xB8;
+        std::memcpy(&stub[1], &s.val, 4);
+        stub[5] = 0xC3;
+        if (!WriteMem(s.va, stub, sizeof(stub))) {
+            LogLine("RES: getter write failed — SKIPPED");
+            return;
+        }
+    }
+    LogLine("RES: screen-dim getters retargeted to MASHED_RES");
+}
+
 void InitLogPath() {
     g_fileLog = EnvSet("MASHED_QOL_LOG");
     if (!g_fileLog) return;
@@ -268,11 +313,14 @@ void ApplyAll() {
     const bool noSave   = EnvSet("MASHED_NO_SAVE");
     const bool unlock   = EnvSet("MASHED_UNLOCK");
     const bool decouple = EnvSet("MASHED_DECOUPLE");
-    if (!noSave && !unlock && !decouple) return;  // inert boot — no logging noise
+    char resBuf[4] = {};
+    const bool res = GetEnvironmentVariableA("MASHED_RES", resBuf, sizeof(resBuf)) > 0;
+    if (!noSave && !unlock && !decouple && !res) return;  // inert boot — no logging noise
     LogLine("attach: applying QoL patches");
     if (noSave)   ApplyNoSave();
     if (unlock)   ApplyUnlock();
     if (decouple) decouple::Apply();
+    if (res)      ApplyRes();
 }
 
 } // namespace

@@ -59,17 +59,34 @@ CreateDeviceFn g_OriginalCreateDevice = nullptr;
 LONG           g_VtablePatched        = 0;
 
 // Forced windowed backbuffer. Default 640x480 (matches the camera-res patch);
-// env MASHED_HIRES=1 -> 1280x960 (2x) for high-res parity capture. COUPLING:
-// must equal the camera-res patch's screen-dim getters AND the RE's kWidth/
-// kHeight — re-apply patch_mashed_fix_camera_res.py at the matching res.
+// env MASHED_HIRES=1 -> 1280x960 (2x) for high-res parity capture;
+// env MASHED_RES=WxH (e.g. 2560x1440) overrides both — QoL play resolution.
+// COUPLING: must equal the camera-res screen-dim getters (on-disk
+// patch_mashed_fix_camera_res.py, or mashed_qol.asi's runtime MASHED_RES
+// re-target of 0x00498bc0/0x00498bd0) — a mismatched camera raster AVs at boot.
+static void ForcedBackBufInit(UINT* pw, UINT* ph) {
+    char v[32] = {};
+    if (GetEnvironmentVariableA("MASHED_RES", v, sizeof(v)) > 0) {
+        UINT w = 0, h = 0; const char* p = v;
+        for (; *p >= '0' && *p <= '9'; ++p) w = w * 10 + (UINT)(*p - '0');
+        if (*p == 'x' || *p == 'X') {
+            for (++p; *p >= '0' && *p <= '9'; ++p) h = h * 10 + (UINT)(*p - '0');
+        }
+        if (w >= 320 && h >= 240 && w <= 7680 && h <= 4320) { *pw = w; *ph = h; return; }
+    }
+    const bool hires =
+        (GetEnvironmentVariableA("MASHED_HIRES", v, sizeof(v)) > 0 && v[0] == '1');
+    *pw = hires ? 1280u : 640u;
+    *ph = hires ? 960u : 480u;
+}
 static UINT ForcedBackBufW() {
-    static UINT w = 0;
-    if (!w) { char v[16] = {}; w = (GetEnvironmentVariableA("MASHED_HIRES", v, sizeof(v)) > 0 && v[0] == '1') ? 1280u : 640u; }
+    static UINT w = 0, h = 0;
+    if (!w) ForcedBackBufInit(&w, &h);
     return w;
 }
 static UINT ForcedBackBufH() {
-    static UINT h = 0;
-    if (!h) { char v[16] = {}; h = (GetEnvironmentVariableA("MASHED_HIRES", v, sizeof(v)) > 0 && v[0] == '1') ? 960u : 480u; }
+    static UINT w = 0, h = 0;
+    if (!h) ForcedBackBufInit(&w, &h);
     return h;
 }
 #define kForceBackBufferWidth  ForcedBackBufW()
@@ -86,6 +103,20 @@ static UINT ForcedBackBufH() {
 void ApplyWindowBorders(HWND hWnd) {
     if (!hWnd || !IsWindow(hWnd)) return;
     char buf[8] = { 0 };
+    // QoL borderless play mode: undecorated popup at (0,0) sized exactly to the
+    // backbuffer (use with MASHED_RES at the monitor's native size for
+    // borderless-fullscreen). Takes precedence over the titled-border reshape.
+    if (GetEnvironmentVariableA("MASHED_QOL_BORDERLESS", buf, sizeof(buf)) > 0 &&
+        buf[0] == '1') {
+        LONG_PTR cur = GetWindowLongPtr(hWnd, GWL_STYLE);
+        if (cur & WS_CHILD) return;
+        SetWindowLongPtr(hWnd, GWL_STYLE,
+                         WS_POPUP | (cur & WS_VISIBLE));
+        SetWindowPos(hWnd, HWND_TOP, 0, 0,
+                     (int)kForceBackBufferWidth, (int)kForceBackBufferHeight,
+                     SWP_FRAMECHANGED | SWP_NOACTIVATE);
+        return;
+    }
     if (GetEnvironmentVariableA("MASHED_RE_BORDERLESS", buf, sizeof(buf)) > 0 &&
         buf[0] == '1') {
         return;  // explicit opt-out: leave the original (borderless) style

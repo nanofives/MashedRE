@@ -124,6 +124,37 @@ is still 60 Hz-stepped with 3-3-2-3 cadence; at 120 Hz cadence is a clean 2:1).
 animation/audio may be driven per render frame (audit in step 1); UI/menu code paths
 also frame-coupled (menus can simply tick 1:1 — decouple only in-race if simpler).
 
+## Item 5 — Borderless native-resolution play mode (added 2026-08-01)
+
+The classic play window is 640×480 (the d3d9 shim's forced backbuffer, coupled to
+`patch_mashed_fix_camera_res.py`'s 640×480 screen-dim getters). This item makes the
+game render at the monitor's native resolution in a borderless-fullscreen window.
+
+**Mechanism** — the two coupled sizes are moved together at runtime (no on-disk
+change, so RE boots are unaffected):
+- d3d9 shim: `ForcedBackBufInit` reads `MASHED_RES=WxH` (bounded 320..7680 ×
+  240..4320) and sizes the D3D9 backbuffer to it; `MASHED_QOL_BORDERLESS=1` gives
+  the device window a `WS_POPUP` style pinned to (0,0) at the backbuffer size.
+- `mashed_qol.asi` `ApplyRes()`: retargets the screen-dim getters `FUN_00498bc0`
+  (width) / `FUN_00498bd0` (height) @0x00498bc0/0x00498bd0 to return the same W/H
+  (accepts pristine `A1 <glob> C3` or already-patched `B8 imm32 C3`). This keeps
+  the camera frameBuffer raster == device backbuffer, avoiding the null-raster boot
+  AV documented in `patch_mashed_fix_camera_res.py` /
+  `re/analysis/BOOT_CRASH_ROOTCAUSE_2026-06-13.md`.
+- Launcher profiles: pc → 2560×1440, tv → 1920×1080; `-Res WxH` overrides,
+  `-Res 0` restores the classic 640×480 titled window.
+
+**Measured acceptance (2026-08-01):** launched pc profile → qol log shows all five
+patches (NO_SAVE/UNLOCK/DECOUPLE/RES) applied; window is a borderless popup at
+(0,0) covering the full screen; game booted to Game Type Select and rendered the
+video backdrop + menu at native res; process survived 30 s (no null-raster AV).
+Screenshots in `verify/qol_asi_20260801/screen_1440p*.png`.
+
+**Note:** internal render resolution scales with the backbuffer, so the game is
+genuinely sharper (not upscaled 640×480). At 4:3 source aspect on a 16:9 panel the
+image fills the width; pillarboxing/stretch behavior is whatever the engine's own
+viewport math produces at the new dims — not yet separately audited.
+
 ## Item 2 — Launcher that bypasses control/video settings
 
 Mostly assembly of existing pieces:

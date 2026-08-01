@@ -26,6 +26,7 @@ param(
     [ValidateSet('pc', 'tv')]
     [string]$Profile = 'pc',
     [int]$FpsCap = 0,          # 0 = use profile logic
+    [string]$Res = '',         # 'WxH' override; '' = profile default; '0' = classic 640x480 titled window
     [switch]$EnableSave,
     [switch]$NoUnlock,
     [switch]$Repatch,
@@ -41,6 +42,9 @@ $Orig = Join-Path $Root 'original'
 $DecoupleReady = $true
 
 $ProfileTargets = @{ pc = 165; tv = 120 }
+# Borderless play resolution per profile (MASHED_RES + MASHED_QOL_BORDERLESS;
+# the qol .asi retargets the screen-dim getters to match the shim backbuffer).
+$ProfileRes     = @{ pc = '2560x1440'; tv = '1920x1080' }
 
 # ── sanity: required deploy artifacts ────────────────────────────────────────
 $required = @('MASHED.exe', 'MASHED.exe.unpatched', 'd3d9.dll', 'dinput8.dll', 'mashed_qol.asi')
@@ -75,6 +79,15 @@ $target = $ProfileTargets[$Profile]
 $raceCap = if ($FpsCap -gt 0) { $FpsCap } elseif ($DecoupleReady) { $target } else { 60 }
 
 # ── environment for the child process ────────────────────────────────────────
+$resolved = if ($Res -eq '0') { '' } elseif ($Res) { $Res } else { $ProfileRes[$Profile] }
+if ($resolved) {
+    $env:MASHED_RES            = $resolved
+    $env:MASHED_QOL_BORDERLESS = '1'
+} else {
+    Remove-Item Env:MASHED_RES            -ErrorAction SilentlyContinue
+    Remove-Item Env:MASHED_QOL_BORDERLESS -ErrorAction SilentlyContinue
+}
+
 $env:MASHED_FPS_CAP         = '60'
 $env:MASHED_FPS_CAP_RACE    = if ($DecoupleReady) { "$raceCap" } else { $null }
 $env:MASHED_DECOUPLE        = if ($DecoupleReady) { '1' } else { '0' }
@@ -83,8 +96,9 @@ $env:MASHED_UNLOCK          = if ($NoUnlock)   { '0' } else { '1' }
 $env:MASHED_RE_NO_AUTO_HOOK = '1'    # keep dev RE hooks out of play sessions
 $env:MASHED_QOL_LOG         = if ($QolLog) { '1' } else { '0' }
 
-Write-Host ("profile={0}  menu_cap=60  race_cap={1}  decouple={2}  no_save={3}  unlock={4}" -f
-    $Profile, $raceCap, $env:MASHED_DECOUPLE, $env:MASHED_NO_SAVE, $env:MASHED_UNLOCK)
+$resLabel = if ($resolved) { "$resolved borderless" } else { '640x480 windowed' }
+Write-Host ("profile={0}  res={1}  menu_cap=60  race_cap={2}  decouple={3}  no_save={4}  unlock={5}" -f
+    $Profile, $resLabel, $raceCap, $env:MASHED_DECOUPLE, $env:MASHED_NO_SAVE, $env:MASHED_UNLOCK)
 
 $p = Start-Process -FilePath (Join-Path $Orig 'MASHED.exe') -WorkingDirectory $Orig -PassThru
 Write-Host ("MASHED.exe started, PID {0}" -f $p.Id)
