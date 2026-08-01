@@ -72,10 +72,14 @@ The physics pole is ported; what remains is **convergence evidence**, then the g
    starting]: WS-D gated slice (MISSILE velocity, projectile pools), WS-J impact/skid FX,
    U-9016 vehicle→engine-class map.
 
-### M3 — "Faithful render" — GATED ON D2, do not start until decided
-~770 render rows < C3 + ~217 stubs (drifting down slowly; a handful promoted 07-30/31).
-**Gate D2 (open):** commit to the RW-subset verbatim port (months) vs ship on `librw`/the
-D3D9 spike (deviates from pure verbatim). Every M3 token spent before D2 is decided is at risk.
+### M3 — "Shipping render via librw" — D2 DECIDED 2026-07-31
+**Gate D2 resolved (user): librw is the shipping renderer**, reversing the 2026-06-10
+RW-verbatim ratification (~770 rows + ~217 stubs of avoided batch work). Verbatim RW ports
+continue only demand-driven where a behavior diff requires them. New lane (ROADMAP §WS-E,
+redefined): E1' vendor+build librw → E2' feed it from our renderer-agnostic loaders →
+E3' viewpoint-parity pass with documented deltas → E4' verbatim islands only on behavioral
+parity failures. **First step is a sizing session** (librw x86/MSVC fit, TXD/DFF bridging
+surface) — the lane is new and unsized.
 
 ### M4 — "Ship" — HUMAN-GATED tail
 D-11060 (interactive track/car select playthrough) + D-11061 (full-loop desktop recording)
@@ -101,15 +105,26 @@ Standing rule regardless of route: **any new/extended handler must RED on a know
 before it certifies anything.** Discovery (C0→C1/C1→C2, `discover-c1-batch`) needs no harness
 and remains available as low-judgment volume work.
 
-## 5. Open decision gates (STOP-AND-ASK — these need the user)
+## 5. Decision gates — ALL FOUR RESOLVED 2026-07-31 (user-decided, same session)
 
-- **D2 — renderer commitment** (blocks all of M3). RW-subset verbatim vs `librw`.
-- **D4 — airborne 1-ULP bit-identity** (U-8991): accept as C4-grounded vs naked-asm float10 shim.
-- **D6 (new) — lane-B capital**: fund which of §4's items, or park lane B entirely until M2/M3
-  need it.
-- **D7 (new) — schedule the human tail** (D-11060/D-11061): when, and on what machine setup.
+- **D2 — RESOLVED: librw is the shipping renderer.** Reverses the 2026-06-10 RW-verbatim
+  ratification; verbatim RW ports become demand-driven behavior islands only. M3 redefined
+  (§3); ROADMAP §WS-E redefined (E1'–E4'); memory + gate brief note the supersession.
+- **D4 — RESOLVED: the A5 airborne 1-ULP float10 residual (U-8991) is accepted as
+  C4-grounded.** No float10 shim. Consistent with the angular-field ULP floor already
+  accepted in the B5 verify campaign. U-8991's close goes through `re-classify` after
+  multi-session coordination (UNCERTAINTIES.md is the defect session's file).
+- **D6 — RESOLVED: fund the `entity_field_set` per-side sentinel fix first.** Smallest
+  capital; fixes a shipped false-GREEN (iter26) and unlocks the strided-global-setter
+  class. Acceptance for the fix itself: a known-wrong (non-writing) port must RED.
+  The other §4 items stay ranked but unfunded.
+- **D7 — RESOLVED: the human tail runs SOON — the next session the user is present.**
+  D-11060 interactive playthrough + D-11061 full-loop recording (+ the G3 cup place-names
+  Frida session while hands-on). Accepted cost: repeating the verification pass at ship.
+  Prep checklist for that session: patched boot per BOOT_PATCHES.md, d3d9 shim deployed,
+  unlocked desktop, no intro-minimize, kill-by-PID hygiene.
 
-Resolved gates for the record: D1 collision Option A (07-06) → executed as B5a..B5e;
+Earlier gates for the record: D1 collision Option A (07-06) → executed as B5a..B5e;
 D3 MP out for v1.0 (07-11, D-11063); D5 M1-breadth-first (07-06) → M1 closed.
 
 ## 6. Operating model (unchanged in substance)
@@ -133,25 +148,23 @@ D3 MP out for v1.0 (07-11, D-11063); D5 M1-breadth-first (07-06) → M1 closed.
 
 ## 7. Next-sessions queue (rebuilt 2026-07-31; every item leads with a worker leg)
 
-**Non-colliding, autonomous-capable (pick per D6/priorities):**
-1. **HUD sweep D-6160..D-6173** (9 HUD fns: powerup sprite, player-count, lap formatter,
-   layout Y-base, slot occupancy, vehicle icon, background rect, split-check). *Worker:* map
-   each RVA to the standalone's HUD implementation status. *Account3:* parity/draw-list check
-   to CONFIRM the gap, then port only what is actually missing. Truest "fix the game" slice.
-2. **Lane-B capital item per D6** (§4.1 is the recommended first: small, reusable, fixes a
-   real bug). Must include the known-wrong-port RED proof.
-3. **Plating drains** (no harness needed): D-7000..3 longjmp callees, D-0281 teardown bucket,
-   D-0245..63 / D-9280 render-frame buckets, D-8140 slot reassign. Volume work for cheap models.
-4. **candidate_buckets.json validity pass** (`0x004d8530` is not a function start — iter24)
-   + the `0x0041c090` C1-vs-C2 plate/hooks.csv conflict → `re-classify`.
+**Non-colliding, autonomous-capable (gates decided — this is now a priority order):**
+1. **librw sizing session** (D2 consequence; M3 opener): librw x86/MSVC build fit, license
+   check, TXD/DFF/world bridging surface vs our loaders, integration risk list. *Worker:*
+   survey librw's repo docs offline facts + our loader inventory. *Account3:* the build spike.
+2. **`entity_field_set` sentinel fix** (D6): implement + prove RED on a known-wrong port,
+   then author `0x0047cde0` at the menu window as its first consumer.
+3. **HUD sweep D-6160..D-6173** (9 HUD fns). *Worker:* map each RVA to standalone HUD status.
+   *Account3:* parity/draw-list check to CONFIRM the gap, then port only what is missing.
+4. **Plating drains** (no harness): D-7000..3, D-0281, D-0245..63 / D-9280, D-8140. Cheap-model
+   volume work.
+5. **candidate_buckets.json validity pass** + the `0x0041c090` C1-vs-C2 conflict → `re-classify`.
+
+**Next hands-on session (D7):** D-11060 playthrough + D-11061 recording + G3 Frida session
+(prep: BOOT_PATCHES boot, d3d9 shim, unlocked desktop, no intro-minimize, kill-by-PID).
 
 **Defect-session lane (do NOT pick up from here):** statediff residual wedge, KV C4 campaign,
-WS-A8 diff.
-
-**Coordinate-first:** VECCAP-2 `FUN_00566200` (collision math adjacency).
-
-**User-gated:** D2 decision session (unblocks M3), D4, the human tail (D-11060/61, G3 Frida
-session).
+WS-A8 diff. **Coordinate-first:** VECCAP-2 `FUN_00566200`; U-8991 close (D4) via re-classify.
 
 ## 8. Risks
 

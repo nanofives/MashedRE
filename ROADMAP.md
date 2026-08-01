@@ -167,10 +167,12 @@ hand-built matrices, depth buffer added to the device). Proof:
 `verify/r4/arctic_fly_*.png` — island, dirt circuit and the suspension bridge
 unmistakable. The spike deliberately prejudges nothing: the parsed world is
 renderer-agnostic and the architecture gate below stays open.
-**Opening gate — RATIFIED 2026-06-10 (re/analysis/RENDERER_GATE_BRIEF.md):** the D3D9
-spike stays the DEV VIEWER; the shipping renderer is the **RW-subset verbatim port**,
-demand-driven (vehicle lighting/material first); **librw is the fallback** only if the
-RW core band proves impractical to port.
+**Opening gate — RATIFIED 2026-06-10, SUPERSEDED 2026-07-31 (gate D2, user-decided):**
+the shipping renderer is **librw**; verbatim RW ports continue only demand-driven where a
+behavior diff requires them. The 2026-06-10 ratification (RW-subset verbatim port, librw
+fallback — re/analysis/RENDERER_GATE_BRIEF.md) is reversed: with ~770 render rows < C3 +
+~217 stubs measured, the verbatim route was months of the project's largest remaining
+token risk. The D3D9 spike remains the dev viewer until librw is integrated.
 **Goal:** the standalone renders a full track in 3D with a controllable fly-through camera.
 **Exit criteria:** track renders with textures; camera controllable; visual parity vs an
 original-game screenshot of the same viewpoint (lighting deltas allowed and documented);
@@ -396,15 +398,18 @@ POWERUPS_GOLD.LUA). [Corrected 2026-06-16: the old "FUN_00430670" was a mis-cita
   low-dep area effects (OIL 0x457800 / FLASH 0x454db0); defer projectiles to WS-B.
 - **D3** wire to the held-pickup + collision; diff.
 
-### WS-E — Renderer: RW-subset verbatim port (item 2; large; partly PARALLEL)
-Gate already RATIFIED (RENDERER_GATE_BRIEF.md: RW-subset port, librw fallback).
-Replaces the D3D9 spike.
-- **E1** RE + port the RW world render path (RpWorld sector render, atomic/clump).
-- **E2** Material system + multi-TXD binding (verbatim) + the real draw order.
-- **E3** **RpWorld lighting** (replaces the flat-shading approx) + vehicle
-  lighting consumer (ledger #9). **E4** RW immediate-mode / 2D (HUD/menu) path.
-- **E5** wire + screenshot parity vs original viewpoints.
-(E1–E4 can split across sessions; E is independent of WS-A/B/C/D.)
+### WS-E — Renderer: librw adoption (item 2; REDEFINED by gate D2 2026-07-31)
+Gate D2 (2026-07-31, user-decided) reverses the 2026-06-10 ratification: **librw is the
+shipping renderer**; verbatim RW ports continue only where a behavior diff demands them.
+The old E1–E5 verbatim ladder is retired as a batch plan (E1 world chain / E3 lighting
+knowledge already banked stays cited in the per-slice notes).
+- **E1'** librw vendoring + build integration (x86 MSVC, both targets' constraints).
+- **E2'** Asset path: our TXD/DFF/world loaders feed librw's pipeline (the parsed world
+  is renderer-agnostic by design — R4 exit note).
+- **E3'** Parity pass vs original viewpoints (imgdiff + draw-list where applicable);
+  document accepted deltas (librw is not bit-identical rendering by definition).
+- **E4'** Demand-driven verbatim islands ONLY where parity fails on behavior (not pixels).
+(Independent of WS-A/B/C/D; sizing session required before E1' — this lane is new.)
 
 ### WS-F — Data formats (item 3; all PARALLEL, completable, no Ghidra)
 Self-contained parsers like the audio/powerup wins; verify against asset bytes.
