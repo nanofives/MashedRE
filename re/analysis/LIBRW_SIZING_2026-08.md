@@ -731,13 +731,29 @@ viewpoints, world-only, no cars.
 > Measured with it on: 9 models registered (the 71-atomic one is the car), 27
 > instances/frame, props visibly drawing through librw.
 >
-> **Two open regressions, both introduced by `World::addCamera`:**
-> - **D-S3-6 — the static world goes black** when instances are enabled. Binding the
->   camera to the world is *required* — `lightingCB_Shader` dereferences
->   `engine->currentWorld` for any geometry carrying `rw::Geometry::LIGHT`
->   (`d3drender.cpp:357-359`), which props and cars do and the normal-less world
->   sectors do not. That deref was a hard **segfault** until the camera was added.
->   But adding it also changes how the world itself shades. Cause not yet found.
+> **Two open regressions:**
+> - **D-S3-6 — a large ground/sea surface renders black.** ⚠️ **This entry was
+>   wrong twice; the corrections are the useful part.**
+>   1. First written as "the static world goes black, caused by `World::addCamera`".
+>      **Both halves were wrong.** `addCamera` only sets `cam->world`
+>      (`world.cpp:69-75`); binding it unconditionally while props stayed on D3D9
+>      left the gating shots **unchanged at 0.93/0.39/0.93**, which exonerates it.
+>      It is also *required* — `lightingCB_Shader` derefs `engine->currentWorld` for
+>      `rw::Geometry::LIGHT` geometry (`d3drender.cpp:357-359`), a hard **segfault**
+>      without it — so it is now unconditional.
+>   2. Then suspected as "all props render black, because `World::enumerateLights`
+>      skips lights without `LIGHTATOMICS` (`world.cpp:162-163`) and `Light::create`
+>      leaves flags 0". The flag fix **is correct on its own terms** and is kept
+>      (0x3 = `LIGHTATOMICS|LIGHTWORLD` is also the asset-verified Arctic value),
+>      but it produced **bit-identical output** — so it is not the cause either.
+>
+>   What is actually observed: the banner/building props render correctly through
+>   librw, while the large ground/sea surface is pure black. So this is one
+>   *specific* surface, not props in general and not the world. Prime suspect is the
+>   Arctic sea/road material — the F3 UV-scrolled one — resolving without a texture
+>   in `BuildMaterials`, leaving it to draw with a black material colour. **Not
+>   verified.** `[UNCERTAIN]` Next step is to log per-material texture resolution
+>   inside `BuildClump`, not to try another fix.
 > - **D-S3-7 — the player car does not appear** on the instanced path. The instance
 >   count sits at a constant 27 with no car entry, so `car_via_rw` is evaluating
 >   false; whether `rw_car_model_` or `car_ready_` is the reason is **not yet

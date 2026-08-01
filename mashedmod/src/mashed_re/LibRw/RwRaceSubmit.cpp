@@ -195,7 +195,13 @@ bool RaceSubmit_OnTrackLoaded(const Track::World& world,
     // flag, so they never touched it; props and cars DO, which is why submitting
     // them segfaulted until the camera was added here. Re-added on every rebuild
     // because the old world is destroyed above.
-    if (RaceSubmit_InstancesEnabled()) g_world->addCamera(g_cam);
+    // Bind the camera to the world. Required: worldBeginUpdateCB sets
+    // engine->currentWorld (camera.cpp:258-261), which lightingCB_Shader
+    // dereferences for LIGHT-flagged geometry (d3drender.cpp:358) -- props and
+    // cars segfault without it. MEASURED harmless to the world-only path: with
+    // this unconditional and props still on D3D9, the gating shots were unchanged
+    // (0.93/0.39/0.93), which is what exonerated it as the cause of D-S3-6.
+    g_world->addCamera(g_cam);
 
     g_scene_up = true;
     RLog("ok: scene built — sectors=%zu mats=%zu tris=%u verts=%u (dicts=%zu)",
@@ -346,13 +352,29 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
     // observable on this geometry today.
     if (!g_amb) {
         g_amb = rw::Light::create(rw::Light::AMBIENT);
-        if (g_amb) { g_amb->setFrame(rw::Frame::create()); g_world->addLight(g_amb); }
+        if (g_amb) {
+            // [D-S3-6 FIX] World::enumerateLights SKIPS any light without
+            // LIGHTATOMICS (world.cpp:162-163), and Light::create leaves flags 0.
+            // With no flags set, lightData.ambient stayed (0,0,0) and every
+            // LIGHT-flagged atomic -- i.e. every prop and car -- rendered BLACK,
+            // while the normal-less world sectors were unaffected because they
+            // never consult lighting at all. 0x3 = LIGHTATOMICS|LIGHTWORLD is also
+            // the asset-verified value: Arctic's LIGHTS.DFF carries flags 0x3
+            // (TrackRenderer's own note at the former sun_color_ declaration).
+            g_amb->setFlags(rw::Light::LIGHTATOMICS | rw::Light::LIGHTWORLD);
+            g_amb->setFrame(rw::Frame::create());
+            g_world->addLight(g_amb);
+        }
     }
     if (g_amb) g_amb->setColor(st.amb_f_[0], st.amb_f_[1], st.amb_f_[2]);
 
     if (!g_sun && st.has_sun_dir_) {
         g_sun = rw::Light::create(rw::Light::DIRECTIONAL);
-        if (g_sun) { g_sun->setFrame(rw::Frame::create()); g_world->addLight(g_sun); }
+        if (g_sun) {
+            g_sun->setFlags(rw::Light::LIGHTATOMICS | rw::Light::LIGHTWORLD);
+            g_sun->setFrame(rw::Frame::create());
+            g_world->addLight(g_sun);
+        }
     }
     if (g_sun) {
         g_sun->setColor(st.sun_f_[0], st.sun_f_[1], st.sun_f_[2]);
