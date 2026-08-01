@@ -432,6 +432,32 @@ current D3D9 path, per-channel mean-abs at the documented floor.
 → clump (I2), flags (I5), camera + fog/lighting (I4). Acceptance: `imgdiff` at the E3'
 viewpoints, world-only, no cars.
 
+> **E2'c STEP 1 — DONE 2026-07-31 (code), acceptance BLOCKED by R10.**
+> `Race/RaceSceneState.h` now holds the renderer-neutral simulation state;
+> `TrackRenderer` derives from it. **`TrackRenderer.cpp` has ZERO changed lines** —
+> the entire commit is 6 insertions / 155 deletions in `TrackRenderer.h`. Both
+> targets build clean first try.
+>
+> Inheritance rather than composition was chosen deliberately: composition would
+> have required rewriting several hundred `foo_` → `state_.foo_` references in a
+> commit whose whole value is being provably a no-op. Deriving moves only
+> declarations, so every existing reference resolves unchanged. This is step 1 of
+> 2 — it puts the simulation in a D3D9-free type a librw submitter can take as
+> `const RaceSceneState&`, but TrackRenderer still *is-a* state holder. Flip to
+> composition after E2'b reveals which members a submitter actually reads.
+>
+> **The specified acceptance (imgdiff the 10 viewpoints ≤ the noise floor) could
+> not be run: the harness turned out to be nondeterministic — see R10.** Measured
+> deltas were 0.00–15.16 against baseline while two runs of the *same binary*
+> differ by up to 36.74, so the test cannot distinguish a no-op from a regression.
+> What stands in its place is structural, and is strong for a pure move:
+> `TrackRenderer.cpp` unchanged (0 lines), moved declarations textually identical,
+> clean build of both targets. What it does NOT cover is member *ordering* —
+> declaration order changed, so initialisation order changed. These are
+> default-initialised members with no cross-dependencies, but that is reasoning,
+> not measurement. **Do not call E2'c verified until R10 is fixed and the diff
+> re-run.**
+
 **E2'c — the TrackRenderer split (L — this is the real cost).** Before cars/particles/pickups can
 move, `TrackRenderer.cpp`'s 4139 LOC must be separated into *race state* (keep, renderer-neutral)
 and *draw submission* (replace). Suggested cut: extract a `Race/RaceSceneState` holding the
@@ -499,6 +525,7 @@ Reference captures for E3' should be taken **before** E2' starts, on the current
 | R7 | librw is alive upstream (pushed 2026-07-14); drift vs our snapshot. | LOW | Snapshot + `PINNED_REV.txt` + keep the gitignored pristine clone for diffing. |
 | R8 | Frame-baked `DffBatch` collapses the RW frame hierarchy (I2) — forecloses skinned/animated parts. | LOW | Costs nothing today (nothing in Mashed's DFFs is skinned as far as our loader exposes). Re-open only if an animated part appears. |
 | R9 | librw in the .asi would collide with `MASHED.exe`'s own RW engine and device. | LOW | Avoided by decision: **exe-only** (§3.4). Guard any bridge TU that lands in `asi_sources.rsp`. |
+| **R10** | **The E3' acceptance protocol does not work as specified — the capture harness is nondeterministic.** Two boots of a byte-identical binary differ by up to **36.74 mean-abs** across the ten viewpoints (measured 2026-07-31). Any realistic librw delta is far below that, so imgdiff-vs-baseline currently tests nothing. | **HIGH — blocks the lane's gate** | Root cause: `exe_main.cpp:2318` derives `dt` from the GetTickCount wall clock and `:2416` feeds that wall-clock `dt` into `UpdateCar`, so the sim advances frame-rate-dependently; capture triggers also fire on wall-clock `t`. The seed is fine (spawn state is bit-identical: `gate0=(-26.08,0.04,17.00) yaw=1.55`), so this is fixable, not fundamental. Needs a deterministic capture mode: fixed `dt` on every sim path + frame-count-driven capture triggers — the "clock = render frames" approach that already yields +0 drift in `replay_verify.py`. **Only `05_car_spawn` (t=0.8 s, 0.10 run-to-run) is numerically usable today.** |
 | ~~R0~~ | ~~librw's 32-bit MSVC path is dead → D2 reopens~~ | **CLOSED** | Measured: 0 errors, 45 objs, `librw.lib` 1.23 MB, COFF machine `0x014C`. See §1.3. |
 
 ---

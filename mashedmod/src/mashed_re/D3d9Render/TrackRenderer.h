@@ -28,6 +28,7 @@
 #include <vector>
 
 #include "../Race/RaceCamera.h"
+#include "../Race/RaceSceneState.h"
 #include "../Race/RuleEngine.h"
 #include "../Track/TrackData.h"
 #include "ParticleSystem.h"
@@ -41,7 +42,11 @@ namespace mashed_re { namespace D3d9Render { class PowerupBackendImpl; } }
 namespace mashed_re {
 namespace D3d9Render {
 
-class TrackRenderer {
+// Derives from the renderer-neutral simulation state (M3-E2'c step 1). Every
+// gameplay member lives in the base now; this class is the D3D9 submitter that
+// draws it. See Race/RaceSceneState.h for what moved and what deliberately did
+// not. Pure move: no behaviour change.
+class TrackRenderer : public mashed_re::Race::RaceSceneState {
 public:
     // Load + parse <piz_path>'s GRAPH*.BSP and its TXD, build batches and
     // textures on `dev`. Appends a load report to `log_path` (may be null).
@@ -143,19 +148,10 @@ private:
 
     std::vector<std::vector<V>>      batches_;   // per material, tri lists
     std::vector<IDirect3DTexture9*>  textures_;  // per material (may be null)
-    float  center_[3] = {};
-    float  radius_    = 1.f;
-    // Orbit-camera focus derived from the AI gate ribbon (the raceable track),
-    // not the raw world bbox — the bbox is skewed by skybox/backdrop geometry,
-    // so orbiting its midpoint frames mostly empty sky. Falls back to the bbox
-    // center/radius when there are too few gates. Set in Load().
-    float  track_center_[3] = {};
-    float  track_radius_    = 1.f;
     bool   ready_     = false;
     ParticleSystem parts_;          // in-race weather/dust billboards
     PickupField    pickups_;        // in-race power-up orbs
     std::vector<PickupField::Spawn> powerup_spawns_;  // POWERUPS_GOLD.LUA placement
-    float  last_t_    = -1.f;        // for per-frame dt (particles)
 
 public:
     // Enable + place power-up pickups along the gate ribbon (called when a race
@@ -172,54 +168,6 @@ public:
     }
 private:
 
-    // free-camera state (orbit when !free_)
-    bool   free_      = false;
-    float  eye_[3]    = {};
-    float  yaw_       = 0.f;
-    float  pitch_     = -0.4f;
-    float  last_eye_[3] = {};
-    float  last_at_[3]  = {};
-
-    // collision world (flat triangle soup for the ground raycast) + the
-    // render world's soup (spawn validation: ground must be VISIBLE — the
-    // frozen-bay ice has collision but its SEA.DFF visual is an unrendered
-    // prop, so collision-only scoring spawns the car on invisible ice)
-    std::vector<float>          col_verts_;  // x,y,z per vertex
-    std::vector<std::uint32_t>  col_tris_;   // v0,v1,v2 triples
-    std::vector<float>          rend_verts_;
-    std::vector<std::uint32_t>  rend_tris_;
-
-    // AI path gates (AI*.BSP: 94-ish vertical quads; material RED byte = the
-    // gate index LAPDATA's Lap_Line numbers refer to). gate 0 = start line.
-    // c0/c3 = first/fourth vertex in stream order (the original's node
-    // corners j=0/j=3, FUN_00426d00); dir = unit race direction (the
-    // original's node +0x00, FUN_00426cc0) — feeds the RaceCamera port.
-    struct Gate {
-        float center[3];
-        float c0[3], c3[3];
-        float dir[3];
-    };
-    std::vector<Gate> gates_;
-
-    // ---- F4 LAPDATA.LUA: real lap lines (parsed in Load) — replaces the
-    // hardcoded gate-0 lap heuristic. Also carries split sectors + safe-start
-    // ranges for split timing / start-grace (re/analysis/formats/track_anim_data.md).
-    Track::LapData lap_data_;
-    // ---- F3 .UVA UV-anim: per-material scrolling-UV rate (units/sec). Sized to
-    // batches_ (one entry per world material); zero = static. The named UVA
-    // entries (bmp_Sea_M / bmp_Sky_M) bind to materials whose tex_name carries
-    // the stem (Sea / Sky) — see Track::UVEntry::TextureStem.
-    struct MatScroll { float du = 0.f, dv = 0.f; };
-    std::vector<MatScroll> mat_scroll_;
-    bool uv_anim_ = false;          // any world material scrolls
-
-    // VERBATIM-PORTED race camera + elimination (Race/RaceCamera.{h,cpp};
-    // replaces the invented centroid camera + ">7 gates" rule).
-    Race::RaceCamera race_cam_;
-    std::vector<Race::RaceCamNode> cam_nodes_;
-    int    course_id_ = -1;       // COURSE.LUA Course_Id(N) -> LE<N>.LED
-    char   gate_bsp_[64] = {};    // COURSE.LUA AI_Bsp_Filename (gate BSP, per-track)
-    double cam_ticks_ = 0.0;      // DAT_007f1030 equivalent (~3.0 MHz live)
 public:
     float cam_required_zoom() const { return race_cam_.required_zoom(); }
 private:
@@ -261,8 +209,6 @@ private:
     // renderer-gap closures (reconciliation 2026-06-10): fog from COURSE.LUA
     // Setup_Fog(start_frac, end, r, g, b); sky.dff drawn first, z-write off,
     // unfogged.
-    bool     fog_on_   = false;
-    float    fog_start_ = 0.f, fog_end_ = 100.f;
     D3DCOLOR fog_color_ = D3DCOLOR_XRGB(24, 28, 40);
     Prop     sky_;
     // WS-E lighting: track ambient RpLight term (LIGHTS.DFF, COURSE.LUA
@@ -279,7 +225,6 @@ private:
     // Arctic LIGHTS.DFF (asset-verified): colour (0.6,0.7,0.7)=(153,178,178),
     // dir (0.577,-0.577,-0.577), flags 0x3 (lights atomics+world). 0 = none.
     D3DCOLOR sun_color_  = 0;
-    float    sun_dir_[3] = {0.f, 0.f, 0.f};
     // WS-E vehicle lighting (RpLight subset, env MASHED_RPLIGHT, default ON;
     // =0 reverts to the legacy load-time model-space bake). Faithful
     // FUN_00479330 (0x00479330) light acquisition: float-precision colours
@@ -289,11 +234,6 @@ private:
     // lights keyed on the subtype byte alone (no stream-flag filter,
     // last-wins), Ambient_RGB override (DFF branch only, any component >
     // DAT_005d757c = 0.0f). has_sun_dir_ gates the per-frame relight pass.
-    bool  rp_light_on_  = false;
-    bool  has_sun_dir_  = false;
-    float amb_f_[3]     = {0.f, 0.f, 0.f};   // ambient RGB, float
-    float sun_f_[3]     = {0.f, 0.f, 0.f};   // directional RGB, float
-    float sun_L_[3]     = {0.f, 0.f, 0.f};   // unit world dir TO the light
 public:
     D3DCOLOR fog_color() const { return fog_color_; }
 private:
@@ -312,14 +252,6 @@ private:
         std::vector<std::vector<RelitSrc>> relit;   // parallel to batches
     };
     std::vector<CarVariant> car_variants_;
-    bool  car_ready_   = false;
-    float car_pos_[3]  = {};
-    float car_yaw_     = 0.f;
-    float car_speed_   = 0.f;
-    float car_ground_off_ = 0.f;   // model bbox min-Y -> wheels on ground
-    float car_len_    = 1.f;       // car model long-axis extent (chase-cam scale)
-    float car_height_ = 0.5f;      // car model height extent (chase-cam scale)
-    bool  car_long_is_x_ = true;   // car model nose axis: true=+X, false=+Z
 
     // visual wheels: split from the body by per-atomic bbox heuristic
     // (disc-shaped, lateral-thin, at the 4 ground corners). Verts stored
@@ -335,8 +267,6 @@ private:
         bool  lateral_is_x = true;   // axle along model X (else Z)
     };
     std::vector<CarWheel> wheels_;
-    float wheel_spin_ = 0.f;
-    float steer_vis_  = 0.f;
 
     // WS-E vehicle lighting: relit car/wheel/AI draw pass (replaces the
     // static car section of Render when MASHED_RPLIGHT is on and the track
@@ -349,16 +279,6 @@ private:
     // AI v2: follows the gate ribbon with a per-car lateral lane offset
     // (so cars spread out / overtake), brakes for sharp upcoming corners,
     // and uses a velocity-shaped speed instead of teleport-to-gate.
-    struct AiCar {
-        float pos[3]; float yaw; int target; float speed;
-        float cur_speed; float lane;   // lane = signed lateral offset
-        float spin = 0.f;              // >0: spun out (missile/mine hit)
-        float slow = 0.f;              // >0: shocked (capped speed)
-        float vel[3] = {0.f,0.f,0.f};  // G3: persistent world velocity (real-physics AI)
-        float stuck_t  = 0.f;          // s since this car last advanced a gate (anti-stuck)
-        int   prog_gate = -1;          // last observed race gate (anti-stuck progress watch)
-    };
-    std::vector<AiCar> ai_cars_;
 
     // ---- power-up EFFECTS — D3 (2026-06-16): the ported dispatch replaces the
     // invented boost/shield/missile/mine/shock switch. PickupField::held_type()
@@ -369,23 +289,11 @@ private:
     // visuals below via PowerupBackendImpl (IPowerupBackend) — the WS-B/WS-E
     // subsystem stand-in. boost_/shield_timer_ remain only as general handling
     // hooks; the real 9 codes do not set them (no boost/shield power-up exists).
-    float boost_timer_  = 0.f;     // player +top speed while >0 (no powerup sets it now)
-    float shield_timer_ = 0.f;     // player blocks the next spin-out while >0 (idem)
-    struct Missile { float pos[3]; float vel[3]; int target; float life; };
-    std::vector<Missile> missiles_;
-    struct Mine { float pos[3]; float life; };
-    std::vector<Mine> mines_;
     void UpdatePowerups(float dt);
     void SpinOut(int carSlot);     // slot 0 = player, 1..3 = ai_cars_[slot-1]
 
     // ported power-up dispatch + its host-visuals backend (WS-D2/D3).
     friend class PowerupBackendImpl;
-    Powerup::PowerupSystem      pw_;
-    Powerup::IPowerupBackend*   pu_be_ = nullptr;     // lazily-created backend
-    Powerup::HostCar            pu_player_;           // filled each fire
-    std::vector<Powerup::HostCar> pu_ai_;
-    float pu_oil_last_[3] = {0, 0, 0};                // OIL drop-distance trail
-    bool  pu_oil_has_     = false;
     void  EnsurePowerupBackend();                     // lazy Init(this)
     void  SyncHostCar();                              // fill pu_player_/pu_ai_
     void  PowerupFireOnce(int realCode);              // drive the dispatch one-shot
@@ -407,62 +315,6 @@ public:
     // Ground probe also returns the hit triangle's normal for slope gravity.
     float GroundProbe(float x, float z, bool* ok, float normal[3]) const;
 
-    struct RaceCar {           // race bookkeeping per car (0 = player)
-        int   gate = 1;        // next gate to cross
-        int   laps = 0;
-        float progress = 0.f;  // gate + fraction (ranking metric)
-        bool  alive = true;
-        // F4 (algorithm-faithful, FUN_00408610): bitmask of LAPDATA Lap_Line
-        // gates crossed since the last lap. A lap completes on the primary
-        // line once every declared line is set (the multi-Lap_Line anti-shortcut
-        // — see re/analysis/lap_progress_subsystem_2026-06-16.md).
-        std::uint32_t lap_mask = 0;
-    };
-    static constexpr int kRaceCars = 4;
-    RaceCar race_[kRaceCars];
-    bool  round_mode_  = false;   // MASHED_ROUND: 4-car exhibition round
-    int   round_alive_ = kRaceCars;
-    int   round_winner_ = -1;     // set when the round ends
-    // PORTED points system (FUN_0040eee0 + FUN_0040b290 + Race::
-    // EvaluateResult 0x00410510): per-elimination awards with 4
-    // participants: 1st out -2, 2nd out -1, runner-up +1 (zeroed if its
-    // score >10), winner +2; scores floor at 0; signed delta + 6000 ms
-    // display timer (DAT_008a9520/DAT_008a9510); elimination order kept
-    // (DAT_008a94c0). Match win at score > 11 (0x00410510, DAT_008a94d0==4).
-    int   scores_[kRaceCars] = {};       // DAT_008a94e0
-    int   score_prev_[kRaceCars] = {};   // DAT_008a9570
-    int   score_delta_[kRaceCars] = {};  // DAT_008a9520
-    float delta_timer_[kRaceCars] = {};  // DAT_008a9510 (ms)
-    int   elim_order_[kRaceCars] = {-1, -1, -1, -1};   // DAT_008a94c0
-    int   elim_count_ = 0;
-    int   match_winner_ = -1;
-    int   round_no_ = 0;
-    int   race_mode_ = 0;         // 0 = elimination, 1 = laps
-    int   lap_target_ = 3;        // laps mode: laps to finish
-    // [D-11052] rule engine state (Race/RuleEngine). rule_ = DAT_007f0fd0;
-    // rulep_ holds the finish order / rule-10 timer / rule-5 collect counters;
-    // rule_engine_on_ latches MASHED_RULE_ENGINE (default ON, "0" reverts).
-    // rule_engine_race_on_ is the per-race effective gate — SetRaceRule
-    // clears it when the rule-5 collectible feed is absent (D-11056) so the
-    // legacy flow can terminate the race; re-armed on every SetRaceRule.
-    int   rule_ = 0;
-    bool  rule_engine_on_ = false;
-    bool  rule_engine_race_on_ = true;
-    bool  match_draw_ = false;
-    float rule10_bonus_ = 0.f;    // per-checkpoint time award (FUN_004046a0)
-    std::uint32_t rule10_hit_mask_ = 0;  // lap lines awarded this lap (FUN_004039f0
-                                         // resets the flags when floor(metric0) changes)
-    int   rule10_lap_seen_ = -1;
-    Race::RuleEngine::Persist rulep_;
-    bool  human_drive_ = false;   // true: player car uses input (not auto-follow)
-    float countdown_ = 0.f;       // >0 = pre-go freeze (seconds remaining)
-    // F4: race clock (seconds since GO) + per-Split_Sector split times for the
-    // player car (recorded at the declared split gates, mirroring the original's
-    // DAT_008a964c / FUN_00411600 intermediate timing). Reset each lap.
-    static constexpr int kMaxSplits = 8;
-    float race_time_ = 0.f;
-    float split_time_[kMaxSplits] = {};
-    bool  split_done_[kMaxSplits] = {};
     void  ScoreAward(int car, int delta);          // FUN_0040b290 mode-0 path
     void  ScoreOnElimination(int victim);          // FUN_0040eee0 4-player path
     void  StartRound();           // grid all 4 cars at the start line
@@ -551,7 +403,6 @@ public:
     }
 
 private:
-    float car_vel_[3] = {};       // +0x9b0-shape velocity vector (world)
 };
 
 }  // namespace D3d9Render

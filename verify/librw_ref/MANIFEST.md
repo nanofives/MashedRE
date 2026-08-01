@@ -9,9 +9,42 @@ session, so it is superseded and must not be used. Effect of the fix on these
 viewpoints, measured old-vs-new with `imgdiff.py`: mean-abs **0.85 / 0.88** on the
 two race shots, **0.01** on the menu and chase shots.
 
-That 0.01 pair is itself useful: two independent boots of the same scene differ by
-0.01 mean-abs, so **the capture harness is effectively deterministic** and an E3'
-delta above ~0.1 mean-abs is signal, not run-to-run noise.
+> ### CORRECTION 2026-07-31 — the "deterministic harness" claim below was WRONG
+>
+> This file previously said the 0.01 mean-abs seen on two shots meant the capture
+> harness was "effectively deterministic", with ~0.1 as the signal threshold.
+> **That was an overgeneralisation from a 4-shot sample, two of which happened to
+> be stable.** Measured properly over all ten shots, two boots of a *byte-identical
+> binary* differ by:
+>
+> | shot | run-to-run mean-abs |
+> |---|---|
+> | 01_menu_challenge_select | 2.74 |
+> | 02_race_grid_startline | **32.94** |
+> | 03_race_midlap_props | **32.88** |
+> | 04_race_action | **36.74** |
+> | 05_car_spawn | 0.10 |
+> | 06_car_chase_speed | **35.73** |
+> | 07_car_chase_late | **30.68** |
+> | 08_results | 0.83 |
+> | 09_match_result | **31.65** |
+> | 10_menu_return | 3.69 |
+>
+> **Root cause:** `exe_main.cpp:2318` computes `dt` from the GetTickCount wall
+> clock and `:2416` passes that wall-clock `dt` into `UpdateCar`, so the race
+> simulation advances by a frame-rate-dependent amount. Capture triggers also fire
+> on wall-clock `t` (`t >= 0.8f`, `>= 9.0f`, `>= 16.0f`). The seed is fine — spawn
+> state is bit-identical run to run (`gate0=(-26.08, 0.04, 17.00) yaw=1.55`) — the
+> divergence accumulates purely from variable `dt`. That is also why `05_car_spawn`
+> (earliest capture, t=0.8 s) is the only stable in-race shot.
+>
+> **Consequence: these captures cannot serve as an imgdiff baseline for E3' as
+> specified.** Run-to-run noise up to ~37 mean-abs would swamp any realistic
+> renderer delta. They remain valid as a *visual* record of the pre-librw path,
+> and `05_car_spawn` alone is usable numerically. Fixing this needs a deterministic
+> capture mode (fixed `dt` everywhere plus frame-count-driven capture triggers —
+> the same "clock = render frames" approach that already gives +0 drift in
+> `replay_verify.py`). Tracked as risk R10 in `re/analysis/LIBRW_SIZING_2026-08.md`.
 
 Purpose: gate D2 makes librw the shipping renderer, and its acceptance is
 **behavioural parity with documented visual deltas, explicitly not bit-parity**
