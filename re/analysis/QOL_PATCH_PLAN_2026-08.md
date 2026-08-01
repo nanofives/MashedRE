@@ -178,7 +178,27 @@ Investigation lane:
 1. Item 3 (hours — pieces exist) → 2. Item 2 v1 launcher (hours) → 3. Item 1 stages 1–3
 (the bulk; milestone-gated) → 4. Item 4 (needs repro; may fall out of Item 1).
 
-## Kickoff prompt for the executing session
+## Kickoff prompt for the NEXT session (post-2026-08-01: Items 1-3 shipped)
+
+> Items 1–3 of `re/analysis/QOL_PATCH_PLAN_2026-08.md` are shipped and committed
+> (mashed_qol.asi decouple/unlock/no-save + mashed_launch.ps1 + phase-aware fps
+> cap; read the EXECUTED section for the loop map). Two work items remain:
+> 1. **Item 4, jump bug** (primary): intermittent dead jumps — at the moment of
+>    takeoff the car's forward motion stops and it drops off the ramp lip;
+>    reproduces even at 60 fps. Follow the plan's investigation lane: seed-sweep
+>    `scenario_launch.py` micro-variations until you capture a dead/normal jump
+>    pair, statediff at the takeoff frame to find which write kills the velocity,
+>    then root-cause in our ported contact/solver source (B5b Collision/, B5e
+>    K-island, B5c RwpIntegrator) citing their RVAs. Fix = env-gated hook in
+>    mashed_qol.asi; acceptance = dead seed now jumps + normal-seed corpus
+>    bit-unchanged.
+> 2. **Stage 3 render interpolation** (secondary, only if Item 4 closes): at
+>    165 Hz motion is 60 Hz-stepped (0-tick frames re-render the same state).
+>    Interpolate car (0xd04 records @ DAT_008815a0) + chase cam (DAT_00897fe0)
+>    transforms on 0-tick frames before Present, restore after.
+> Multi-session rules apply (kill only your own PIDs, pool slots via the skill).
+
+## Original kickoff prompt (2026-08-01 planning session)
 > Read `re/analysis/QOL_PATCH_PLAN_2026-08.md` and execute it in order. Start with
 > Item 3 (unlock + MASHED_NO_SAVE hook in a NEW QoL .asi, not mashed_re_dev.asi), then
 > the Item 2 launcher script with pc/tv profiles, then Item 1 stage 1 (main-loop map
