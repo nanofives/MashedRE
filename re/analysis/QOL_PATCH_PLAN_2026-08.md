@@ -154,11 +154,36 @@ dispatch and did a live memory scan for a car's world-position triplet
   This is RW frame-hierarchy manipulation with real crash risk on the play
   binary, and the frame walk must be re-derived each boot. A dedicated session,
   not a quick extension.
-- **Decision:** not landed. Disproportionate risk/effort for a second-order gain
-  (opponents only; the player car is screen-centred and the camera is already
-  smooth). Camera-only interpolation ships. Revival path is the bullet above;
-  the live evidence is `verify/qol_asi_20260801/cartest_lift.png` +
-  scratch probes `car_frame_find.py` / `car_frame_scan.py`. Opponents currently step at 60 Hz relative to the smooth
+- **Decision (first pass):** not landed. Camera-only ships.
+
+**Dedicated session (2026-08-01, third attempt).** Located a writable car RwFrame
+and established a trustworthy verification method, but still could not identify
+the frame the car atoms actually DRAW from. Progress:
+- Car RwFrame located via live BFS (`car_frame_bfs.py`): `*(renderable+0x4)`,
+  standard RW 3.x layout — modelling `+0x10`, **LTM `+0x50`** (pos `+0x80`);
+  independently confirmed by a worker notes survey. Implemented render-time
+  interpolation of that frame's modelling+LTM (rebuilt `mashed_qol.cpp`).
+- `phase_check.py` confirmed the write REACHES the frame LTM (a +80 lift showed
+  LTM.y ≈ 85.6 during phase-3 racing) and the game ran a full race **healthy,
+  no crash**.
+- **Trustworthy verification via the d3d9 shim `MASHED_ORIG_BBDUMP`** (window
+  screenshots are untrustworthy for D3D9 on this machine — CLAUDE.md). The
+  in-race backbuffer dump (`verify/qol_asi_20260801/bb_cartest_f1700.png`)
+  renders **cleanly** (no corruption) with the racing cars **on the ground** —
+  the +80 lift to `*(rend+0x4)`'s LTM did NOT move the drawn cars. So that frame
+  is another non-render copy, like `+0x928`.
+- **Net:** two strongest candidates eliminated with trustworthy evidence
+  (`+0x928`, `*(rend+0x4)`); the car transform lives in 30+ copies and the actual
+  atom-draw frame is still unidentified. My writes are proven **non-corrupting**,
+  which de-risks future work.
+- **Now-cheap iteration method for next time:** for each remaining candidate
+  frame (`*(rend+0x8)` [matrix @+0x74], `*(rend+0xbc)` [+0x50], or the deeper
+  clump-child frames in the `0x10d3xxxx` cluster), apply the +80 cartest lift and
+  BBDUMP an in-race frame — the one where the cars float is the draw frame. Then
+  interpolate it (mind child frames if it's a clump root). This is a bounded
+  search now that the trustworthy capture loop works.
+- Scratch probes: `car_frame_find.py`, `car_frame_scan.py`, `car_frame_bfs.py`,
+  `phase_check.py`; lift evidence `verify/qol_asi_20260801/bb_cartest_f1700.png`. Opponents currently step at 60 Hz relative to the smooth
 camera; the player car is ~screen-centred so its residual step is minimal.
 
 **Residue for a later session:** car-mesh interpolation (above); aspect-ratio
