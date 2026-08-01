@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-01T07:15:00Z",
+  "updatedAt": "2026-08-01T08:00:00Z",
   "sections": [
     {
       "heading": "QoL patch set (2026-08-01)",
@@ -32,7 +32,7 @@
         },
         {
           "label": "Jump bug",
-          "value": "ROOT-CAUSED (native): FUN_0046ef70 overwrites/clamps velocity along a stale ramp-lip contact normal (U-3629). Repro=track11 Warzone. Needs live-confirm + fix (not shipped).",
+          "value": "ROOT-CAUSED (native): FUN_0046ef70 velocity overwrite/clamp on stale ramp-lip normal. Headless can't repro (no high-speed ramp launches). Capture tool BUILT: re/frida/capture_jump_bug.py -- owner plays, it logs the smoking gun. Fix pending live-confirm.",
           "kind": "text"
         },
         {
@@ -122,7 +122,7 @@
         },
         {
           "label": "M3 librw lane",
-          "value": "E2'b step 3 + E3' first pass DONE 2026-08-01 (branch e2b/step3-librw-inloop, 3 commits). librw DRAWS THE STATIC WORLD IN-LOOP at 0.39-0.93 mean-abs vs reference on all 7 reproduced gating shots (was 24.9-39.9); D3D9 path still 0.00 with the gate off. Non-degeneracy proven: MASHED_LIBRW_NODRAW on the same binary diffs 19.31. Mechanism: device adoption (5 librw patches) + D3D9 state block around the submit. D-S3-1/2/4 all CLOSED -- single root cause was bidirectional render-state leakage, NOT occlusion (depth surfaces, clip-space z and z-state all measured identical). Residual ~0.9 not yet itemised [UNCERTAIN]. Next: E3' per-region delta register, then cars/props through librw.",
+          "value": "E2'b step 3 + E3' first pass DONE 2026-08-01 (branch e2b/step3-librw-inloop, 4 commits). librw DRAWS THE STATIC WORLD IN-LOOP at 0.39-0.93 mean-abs vs reference on all 7 reproduced gating shots (was 24.9-39.9); D3D9 path still 0.00 with the gate off. Non-degeneracy proven (MASHED_LIBRW_NODRAW diffs 19.31). Mechanism: device adoption (5 librw patches) + D3D9 state block around the submit. D-S3-1/2/4 CLOSED -- one root cause, render-state leakage, NOT occlusion. PROPS/CARS staged behind MASHED_LIBRW_INST but OFF: D-S3-6 world goes black and D-S3-7 car missing, both from the World::addCamera that LIGHT-flagged geometry requires. Next: close D-S3-6/7, then itemise the ~0.9 residual.",
           "kind": "text"
         },
         {

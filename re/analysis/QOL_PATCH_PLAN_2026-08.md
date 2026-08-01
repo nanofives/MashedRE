@@ -335,6 +335,22 @@ takeoffs captured; the player's clean jumps were all NORMAL (velocity retained) 
 no *dead* jump surfaced this run (intermittent). AI-car velocity field reads 0
 (they store velocity elsewhere), so use render-pos delta for AI hspeed.
 
+**Player-in-the-loop capture tool (BUILT + verified 2026-08-01):**
+`re/frida/capture_jump_bug.py` — the owner plays normally and this logs the
+smoking gun on every dead jump. Headless grinding was proven futile first: 5+
+Warzone races produced many low-speed airborne bumps (13–40 grounded→0/run) but
+ZERO high-speed ramp launches (the bug's trigger) — the AI don't take the ramp at
+racing speed headlessly, so no dead jump can occur. The tool sidesteps this: it
+hooks `FUN_0047eb30` (per-tick, detects a dead takeoff via render-transform: fast
+in → forward speed collapses + falling) AND `FUN_0046EF70` (captures the car
+linear velocity `+0x9B0` BEFORE vs AFTER the resolver, implicit-EDI = car record).
+On a dead jump it writes to `log/jump_capture.txt`: the tick window, the
+0046EF70 before/after velocity (CONFIRMED if |horiz| collapses across it), and the
+per-wheel contact normals/loads (to see the bad lip normal). Usage:
+  `py -3.12 re/frida/capture_jump_bug.py`   (auto-attaches to the running game;
+  `--pid N` if several). Verified: attaches, both hooks install clean.
+Hygiene: attach-only, never spawns/kills, refuses to guess among multiple MASHED.
+
 **Remaining: live confirmation + fix.** Confirm by hooking `FUN_0046EF70` and
 logging `+0x9B0` before/after on takeoff frames until a dead jump is caught
 (needs many runs, or a **player-in-the-loop capture** — the owner triggers it
