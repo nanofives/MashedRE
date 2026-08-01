@@ -89,8 +89,15 @@ any new accumulator/interpolation machinery:
 
 **Measured acceptance (speed_probe, race clock `DAT_007f0ff4` vs wall clock,
 phase 3, driving):** decouple + cap165 → present_fps=165.0, tick-units seen
-{0,50}, clock rate median 2994 units/s = **0.998× real time**. Negative control
-(decouple OFF, cap 165) recorded below.
+{0,50}, clock rate median 2994 units/s = **0.998× real time** (pre-fix build
+without the remainder carry measured 0.965 — the probe detects small speed
+errors). **Negative control (decouple OFF, cap 165):** tick-units pinned {50}
+(one full tick EVERY frame — the stock constant), and the 40 s hold churned
+through 3+ round/intro cycles where decoupled runs stayed in one round — the
+documented frame-coupled fast-forward (BOOT_PATCHES.md: ~6× at ~360 fps). A
+clean in-race clock-rate number for the control was not captured (rounds cycle
+too fast to hold a driving window); the {50}-vs-{0,50} mechanism split is the
+control evidence.
 
 **Residue for a later session:** stage 3 render interpolation (at 165 Hz motion
 is still 60 Hz-stepped with 3-3-2-3 cadence; at 120 Hz cadence is a clean 2:1).
