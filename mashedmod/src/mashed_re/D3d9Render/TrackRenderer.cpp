@@ -369,13 +369,21 @@ IDirect3DTexture9* MakeTexture(IDirect3DDevice9* dev,
                 r = row[x * 4 + 0]; g = row[x * 4 + 1];
                 b = row[x * 4 + 2]; a = row[x * 4 + 3];
             } else {
-                std::uint32_t idx;
-                if (mip.depth == 4) {
-                    const std::uint8_t pair = row[x >> 1];
-                    idx = (x & 1) ? (pair >> 4) : (pair & 0x0F);
-                } else {  // 8 bpp
-                    idx = row[x];
-                }
+                // PAL4 and PAL8 are BOTH stored one byte per pixel; `depth`
+                // selects the PALETTE SIZE (16 vs 256 entries), not the storage
+                // width. Measured 2026-07-31 over every TXD in the game
+                // (re/tools/txd_format_census.py, 5194 mips): stride is always
+                // max(4, width * bpp) with bpp==1 for depth 4 AND 8, zero
+                // violations, and stride*height+palette exactly fills the IMAGE
+                // chunk (total slack 0). Independently, no byte in any depth-4
+                // mip exceeds 0x0F -- impossible if two indices were packed per
+                // byte. This previously read `row[x >> 1]` and unpacked nibble
+                // pairs, which squashed every PAL4 track texture to half width
+                // and scrambled its indices (dump.piz "Roadslipblend2" rendered
+                // as vertical stripes). Affects Warzone/training/rouabout/sands/
+                // City/Forest/Neustein/dump + SFX BADGES.
+                const std::uint32_t idx =
+                    (mip.depth == 4) ? (row[x] & 0x0Fu) : row[x];
                 const std::uint8_t* pe = mip.palette + idx * 4;
                 r = pe[0]; g = pe[1]; b = pe[2]; a = pe[3];
             }

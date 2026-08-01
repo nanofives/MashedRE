@@ -52,17 +52,36 @@ constexpr std::uint32_t kStructPayloadSize = 16;          // w,h,depth,stride
 constexpr std::uint32_t kMaxNameLen        = 32;
 constexpr std::uint32_t kMaxMipsPerTexture = 16;          // sanity limit
 
-// Pixel format inferred from `depth`. Mashed only emits depth values 8 and 32
-// in the Frontend.piz TXD; other values are reported as `Unknown` so the
-// caller can decide how to handle them in later milestones.
+// Pixel format inferred from `depth`.
+//
+// Whole-game census 2026-07-31 (re/tools/txd_format_census.py over all 42 PC
+// TXDs / 5194 mips) found EXACTLY three depths: 4, 8 and 32. Nothing else.
+//
+//   depth  storage        palette        mips
+//     4    1 byte/pixel   16 entries     1042
+//     8    1 byte/pixel   256 entries    3620
+//    32    4 bytes/pixel  none            532
+//
+// NOTE the trap: `depth` is the PALETTE SIZE exponent, not the storage width.
+// PAL4 is one byte per pixel with only the low nibble used -- NOT two pixels
+// packed per byte. Evidence: stride == max(4, width * bpp) with bpp==1 for both
+// 4 and 8 (zero violations over 5194 mips), stride*height + palette exactly
+// fills the IMAGE chunk (total slack 0), and no byte in any depth-4 mip exceeds
+// 0x0F. Reading PAL4 as packed nibbles is what corrupted every PAL4 track
+// texture before 2026-07-31.
+//
+// Row pitch is ALWAYS `Mip::stride`; never recompute it from width * depth / 8.
+// The 4-byte minimum makes those disagree for every mip narrower than 4 texels.
 enum class PixelFormat : std::uint8_t {
     Unknown    = 0,
-    Paletted8  = 1,  // 8 bpp, palette of 256 RGBA8 entries follows pixels
+    Paletted8  = 1,  // 8 bpp index, palette of 256 RGBA8 entries follows pixels
     ARGB8888   = 2,  // 32 bpp, no palette
+    Paletted4  = 3,  // 4-bit index stored in a WHOLE byte, 16 RGBA8 entries
 };
 
 inline PixelFormat PixelFormatFromDepth(std::uint32_t depth) {
     switch (depth) {
+    case 4:  return PixelFormat::Paletted4;
     case 8:  return PixelFormat::Paletted8;
     case 32: return PixelFormat::ARGB8888;
     default: return PixelFormat::Unknown;
@@ -71,6 +90,7 @@ inline PixelFormat PixelFormatFromDepth(std::uint32_t depth) {
 
 inline const char* PixelFormatName(PixelFormat f) {
     switch (f) {
+    case PixelFormat::Paletted4: return "PAL4";
     case PixelFormat::Paletted8: return "PAL8";
     case PixelFormat::ARGB8888:  return "ARGB";
     default:                     return "?";

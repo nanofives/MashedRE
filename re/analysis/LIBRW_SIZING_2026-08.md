@@ -356,6 +356,43 @@ present across all 13 track TXDs + the vehicle TXDs (a `re/tools/` one-shot, che
 `Txd::Mip` → `rw::Raster` bridge (I3). Acceptance: `imgdiff` of a texture-atlas dump vs the
 current D3D9 path, per-channel mean-abs at the documented floor.
 
+> **E2'a TASK 1 — DONE 2026-07-31. Census tool: `re/tools/txd_format_census.py`.**
+> Walked all 42 PC TXDs / **5194 mips**. The format space is small and closed:
+>
+> | depth | storage | palette | mips |
+> |---|---|---|---|
+> | 4 | **1 byte/pixel** | 16 entries (64 B) | 1042 |
+> | 8 | 1 byte/pixel | 256 entries (1024 B) | 3620 |
+> | 32 | 4 bytes/pixel | none | 532 |
+>
+> Nothing else exists — no DXT, no 16-bit, no non-power-of-two, one `deviceId` (1),
+> two chunk versions (`0x1C02000A`, `0x1803FFFF`, both already known). **I3 is
+> therefore much smaller than sized: three formats, two of them the same code path
+> with a different palette length.** Downgrade I3 from **M** to **S**.
+>
+> Two traps the census exposed, both now documented in `TxdDecoder.h`:
+> 1. **`depth` is the palette-size exponent, NOT the storage width.** PAL4 is one
+>    byte per pixel with only the low nibble used. Evidence: `stride == max(4, w*bpp)`
+>    with `bpp==1` for depth 4 *and* 8 (0 violations / 5194), `stride*h + palette`
+>    exactly fills the IMAGE chunk (total slack **0**), and no byte in any depth-4
+>    mip exceeds `0x0F` — impossible if two indices were packed per byte.
+> 2. **Row pitch is always `Mip::stride`; never recompute `w*depth/8`.** A 4-byte
+>    minimum makes them disagree for every mip narrower than 4 texels (1973 mips).
+>
+> **This found a live bug in the shipping D3D9 path** (fixed same session):
+> `TrackRenderer::MakeTexture` read PAL4 as packed nibbles (`row[x >> 1]`), which
+> squashed every PAL4 track texture to half width and scrambled its indices.
+> Proven by decoding `dump.piz::DUMP.TXD` texture 19 "Roadslipblend2" both ways —
+> 1 byte/px gives a coherent asphalt-and-gravel road, nibble-packed gives vertical
+> stripes. Affects Warzone (288 mips), training (139), rouabout (123), sands (96),
+> City, Forest, Neustein, dump, and SFX BADGES. `PixelFormat::Paletted4` added to
+> the enum (it previously fell through to `Unknown`).
+>
+> 17 TXD entries were skipped, correctly: they are `XBOX/` and `PS2/` console
+> assets shipped inside the PC archives, with root chunk **`0x16`** — the *standard*
+> `rwID_TEXDICTIONARY`, which incidentally confirms Mashed's PC `0x23` really is a
+> proprietary variant. librw could read those natively; we have no reason to.
+
 **E2'b — static world + props (M).** `Track::World` → geometry/atomic/world (I1), `Track::DffModel`
 → clump (I2), flags (I5), camera + fog/lighting (I4). Acceptance: `imgdiff` at the E3'
 viewpoints, world-only, no cars.

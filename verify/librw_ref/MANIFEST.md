@@ -1,8 +1,17 @@
 # E3' reference captures — current D3D9 path (pre-librw baseline)
 
-**Captured 2026-07-31** from `mashedmod/build/mashed_re.exe` at commit `122e3010`
-(the E1' commit; librw vendored but **gated OFF** — these are the hand-written
-D3D9 path, not librw).
+**Captured 2026-07-31 22:32** from `mashedmod/build/mashed_re.exe`, librw vendored
+but **gated OFF** — these are the hand-written D3D9 path, not librw.
+
+**Re-captured after the PAL4 fix.** The first set (22:15–22:16) was taken before
+`TrackRenderer::MakeTexture`'s PAL4 decode bug was found and fixed in the same
+session, so it is superseded and must not be used. Effect of the fix on these
+viewpoints, measured old-vs-new with `imgdiff.py`: mean-abs **0.85 / 0.88** on the
+two race shots, **0.01** on the menu and chase shots.
+
+That 0.01 pair is itself useful: two independent boots of the same scene differ by
+0.01 mean-abs, so **the capture harness is effectively deterministic** and an E3'
+delta above ~0.1 mean-abs is signal, not run-to-run noise.
 
 Purpose: gate D2 makes librw the shipping renderer, and its acceptance is
 **behavioural parity with documented visual deltas, explicitly not bit-parity**
@@ -21,20 +30,23 @@ py -3.12 re/tools/imgdiff.py verify/librw_ref/<name>.png <librw_capture>.png \
 
 | # | File | Source BMP | Captured | sha256[:16] |
 |---|---|---|---|---|
-| 1 | `01_menu_challenge_select.png` | `verify/race1/00_challengeselect.bmp` | 22:16:30 | `102dc83f279b848f` |
-| 2 | `02_race_grid_startline.png` | `verify/race1/01_grid.bmp` | 22:16:33 | `20ac4ce249a2aed5` |
-| 3 | `03_race_midlap_props.png` | `verify/race1/01_inrace_track.bmp` | 22:16:35 | `8011becc7de8440a` |
-| 4 | `04_race_action.png` | `verify/race1/01_action.bmp` | 22:16:37 | `a7d8b8f01fdda96a` |
-| 5 | `05_car_spawn.png` | `verify/r5/car_1_spawn.bmp` | 22:16:31 | `8bc5a55bb057672c` |
-| 6 | `06_car_chase_speed.png` | `verify/r5/car_4_chase.bmp` | 22:15:57 | `b9d39f22c4f216b3` |
-| 7 | `07_car_chase_late.png` | `verify/r5/car_5_chase.bmp` | 22:16:04 | `b883870fb756fcfe` |
-| 8 | `08_results.png` | `verify/race1/00_results.bmp` | 22:16:39 | `d1b36eb1399ac27b` |
-| 9 | `09_match_result.png` | `verify/r6/match_result.bmp` | 22:16:36 | `70e8ed34e4055d92` |
-| 10 | `10_menu_return.png` | `verify/race1/02_back_to_menu.bmp` | 22:16:39 | `899cd8271460efa5` |
+| 1 | `01_menu_challenge_select.png` | `verify/race1/00_challengeselect.bmp` | 22:32:11 | `87fdb02fa7587a72` |
+| 2 | `02_race_grid_startline.png` | `verify/race1/01_grid.bmp` | 22:32:13 | `977cfe2220847e7e` |
+| 3 | `03_race_midlap_props.png` | `verify/race1/01_inrace_track.bmp` | 22:32:15 | `7e828240e79d7ce1` |
+| 4 | `04_race_action.png` | `verify/race1/01_action.bmp` | 22:32:18 | `50d33eb33356b0b6` |
+| 5 | `05_car_spawn.png` | `verify/r5/car_1_spawn.bmp` | 22:32:12 | `45c5e7de859c0ef2` |
+| 6 | `06_car_chase_speed.png` | `verify/r5/car_4_chase.bmp` | 22:32:20 | `56472e66933f2889` |
+| 7 | `07_car_chase_late.png` | `verify/r5/car_5_chase.bmp` | 22:32:27 | `8699f585b3f8b6c1` |
+| 8 | `08_results.png` | `verify/race1/00_results.bmp` | 22:32:09 | `26323f9a31a43a22` |
+| 9 | `09_match_result.png` | `verify/r6/match_result.bmp` | 22:32:06 | `27e96960715e7249` |
+| 10 | `10_menu_return.png` | `verify/race1/02_back_to_menu.bmp` | 22:32:41 | `ebf64ad9788b1c36` |
 
 All ten are 640x480, all confirmed non-degenerate (distinct sha256 per shot;
 950-2686 distinct sampled colours each; non-zero means). Lossless BMP -> PNG
 conversion only; no resampling, no colour transform.
+
+Shots 1-4, 8-10 come from the `MASHED_RESULT_DEMO` boot; shots 5-7 from the
+`MASHED_DRIVE_HOLD` boot. Both boots ran on the same post-PAL4-fix binary.
 
 ## Recipe (reproducible)
 
@@ -59,11 +71,13 @@ BMP — it looks like a broken driver but is a missing companion variable.
 
 Recorded now so they are not later misattributed to librw:
 
-- **D-REF-1 — trackside banner text renders mirrored.** In
+- **D-REF-1 — trackside banner text renders mirrored. OPEN.** In
   `03_race_midlap_props.png` the "SUPERSONIC" and "EMPIRE" banners read
-  backwards. Present in the current D3D9 path, before librw touches anything.
-  Likely a UV or winding-order issue in the banner prop path. Not yet filed as an
-  uncertainty; if E3' shows it on the librw side too, it is inherited, not caused.
+  backwards (legible, but horizontally flipped). Present in the current D3D9
+  path, before librw touches anything. **PAL4 has been ruled out as the cause** —
+  the banners are still mirrored in this post-fix set. So it is a UV or
+  winding-order issue in the banner prop path. If E3' shows it on the librw side
+  too, it is inherited, not caused by librw.
 - **D-REF-2 — the captured track is very dark** (sampled means 31-36 vs 97-111
   for menu shots). Expected for this course at 640x480, but it compresses the
   dynamic range available to `imgdiff`. When judging E3' deltas on shots 2-7,
