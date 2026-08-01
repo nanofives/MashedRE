@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-01T01:45:00Z",
+  "updatedAt": "2026-08-01T02:45:00Z",
   "sections": [
     {
       "heading": "QoL patch set (2026-08-01)",
@@ -21,10 +21,21 @@
           "kind": "text"
         },
         {
+          "label": "Borderless res",
+          "value": "SHIPPED: MASHED_RES native-res borderless (pc=2560x1440/tv=1920x1080), verified live",
+          "kind": "text"
+        },
+        {
+          "label": "Camera interp",
+          "value": "SHIPPED: MASHED_INTERP smooths camera to render rate (60/s -> 389/s pose commits @165fps)",
+          "kind": "text"
+        },
+        {
           "label": "Open",
           "value": [
             "Jump bug root-cause (dead jumps at takeoff)",
-            "165Hz render interpolation (motion still 60Hz-stepped)"
+            "Car-mesh interpolation (render matrix +0x928 is a no-op; needs clump-frame hook)",
+            "Aspect-ratio audit at non-4:3"
           ],
           "kind": "list"
         }
