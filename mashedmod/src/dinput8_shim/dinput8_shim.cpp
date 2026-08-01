@@ -31,6 +31,33 @@
 
 namespace {
 HMODULE g_HookAsi = nullptr;
+HMODULE g_QolAsi  = nullptr;
+
+// mashed_qol.asi — player-facing QoL patches (no-save, unlock, ...). It is
+// entirely env-gated internally (inert without MASHED_NO_SAVE/MASHED_UNLOCK/...),
+// so it is loaded unconditionally; MASHED_QOL_DISABLE=1 skips even the load.
+void LoadQolAsi(HINSTANCE hThis) {
+    {
+        char buf[4] = {0};
+        DWORD r = GetEnvironmentVariableA("MASHED_QOL_DISABLE", buf, sizeof(buf));
+        if (r > 0 && buf[0] != '\0' && buf[0] != '0') return;
+    }
+    wchar_t our_dir[MAX_PATH];
+    DWORD got = GetModuleFileNameW(hThis, our_dir, MAX_PATH);
+    if (got == 0 || got >= MAX_PATH) return;
+    for (DWORD i = got; i > 0; --i) {
+        if (our_dir[i-1] == L'\\' || our_dir[i-1] == L'/') {
+            our_dir[i] = 0;
+            break;
+        }
+    }
+    wchar_t qol_asi[MAX_PATH];
+    if (lstrlenW(our_dir) + 20 < MAX_PATH) {
+        lstrcpyW(qol_asi, our_dir);
+        lstrcatW(qol_asi, L"mashed_qol.asi");
+        g_QolAsi = LoadLibraryW(qol_asi);
+    }
+}
 
 void LoadDevAsi(HINSTANCE hThis) {
     // Honour MASHED_RE_NO_AUTO_HOOK: Frida A/B harness sets this env var to
@@ -75,6 +102,7 @@ void LoadDevAsi(HINSTANCE hThis) {
 BOOL WINAPI DllMain(HINSTANCE hThis, DWORD reason, LPVOID) {
     if (reason == DLL_PROCESS_ATTACH) {
         DisableThreadLibraryCalls(hThis);
+        LoadQolAsi(hThis);
         LoadDevAsi(hThis);
     }
     return TRUE;

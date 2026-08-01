@@ -248,6 +248,7 @@ void ParseReqOnce() {
 static void FrameLimit()
 {
     static int           s_cap  = -1;          // -1 uninit, 0 disabled
+    static int           s_capRace = -1;       // -1 feature off; >=0 cap for race phases
     static int           s_log  = 0;
     static LARGE_INTEGER s_freq = {};
     static LARGE_INTEGER s_last = {};
@@ -259,14 +260,27 @@ static void FrameLimit()
         int v = 60;                            // default 60 FPS
         if (got > 0 && got < sizeof(buf)) { v = 0; for (char* c = buf; *c >= '0' && *c <= '9'; ++c) v = v * 10 + (*c - '0'); }
         s_cap = (v < 0) ? 0 : v;
+        // MASHED_FPS_CAP_RACE: alternate cap applied ONLY while the game-state
+        // enum DAT_00771968 is 3 or 6 (the tick-loop race phases — see
+        // FUN_00492d30 cases 3/6). Menus stay on MASHED_FPS_CAP (they are
+        // per-frame-coupled); races may run faster once MASHED_DECOUPLE
+        // (mashed_qol.asi) makes game speed framerate-independent. 0 = uncapped
+        // in race. Unset = feature off (single cap, legacy behavior).
+        got = GetEnvironmentVariableA("MASHED_FPS_CAP_RACE", buf, sizeof(buf));
+        if (got > 0 && got < sizeof(buf)) { v = 0; for (char* c = buf; *c >= '0' && *c <= '9'; ++c) v = v * 10 + (*c - '0'); s_capRace = (v < 0) ? 0 : v; }
         s_log = (GetEnvironmentVariableA("MASHED_FPS_LOG", buf, sizeof(buf)) > 0);
         QueryPerformanceFrequency(&s_freq);
         QueryPerformanceCounter(&s_last);
         s_logLast = s_last;
     }
+    int cap = s_cap;
+    if (s_capRace >= 0) {
+        const DWORD phase = *reinterpret_cast<volatile DWORD*>(0x00771968); // DAT_00771968
+        if (phase == 3 || phase == 6) cap = s_capRace;
+    }
     LARGE_INTEGER now;
-    if (s_cap > 0 && s_freq.QuadPart != 0) {
-        const LONGLONG target = s_freq.QuadPart / s_cap;   // ticks per frame
+    if (cap > 0 && s_freq.QuadPart != 0) {
+        const LONGLONG target = s_freq.QuadPart / cap;     // ticks per frame
         for (;;) {
             QueryPerformanceCounter(&now);
             LONGLONG elapsed = now.QuadPart - s_last.QuadPart;
@@ -284,7 +298,7 @@ static void FrameLimit()
         if (since >= s_freq.QuadPart) {
             double fps = (double)s_frames * (double)s_freq.QuadPart / (double)since;
             std::FILE* lf = std::fopen("C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\log\\fps_limiter.txt", "a");
-            if (lf) { std::fprintf(lf, "present_fps=%.1f (cap=%d)\n", fps, s_cap); std::fclose(lf); }
+            if (lf) { std::fprintf(lf, "present_fps=%.1f (cap=%d)\n", fps, cap); std::fclose(lf); }
             s_frames = 0; s_logLast = now;
         }
     }
