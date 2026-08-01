@@ -531,6 +531,42 @@ viewpoints, world-only, no cars.
 > refactor's side; it remains blocked from the acceptance side until R10b is
 > fixed — and so does E3', for the same reason.
 >
+> ### E2'c — **VERIFIED a no-op 2026-08-01.** R10b root-caused and reduced.
+>
+> R10b was never build nondeterminism. The camera and drive paths read **live
+> DirectInput keyboard and mouse**, and the device is opened
+> `DISCL_BACKGROUND | DISCL_NONEXCLUSIVE` — it reads the keyboard with no window
+> focus. Typing in a terminal during a capture flew the camera; two "identical
+> builds" produced a chase-cam frame and a high-orbit frame of the same simulation
+> instant. Three live-input sites are now gated on `!g_det_clock` (`01e87920`).
+>
+> That also exposed a second defect in the recipe: with ambient input gone the car
+> never moved (`spd=00000000` throughout), because `MASHED_DRIVE_HOLD` alone leaves
+> `human_drive_` true. `MASHED_DRIVE_DEMO=1` is required. The old baseline was
+> therefore pictures of a car steered by stray keystrokes; `verify/librw_ref` has
+> been re-taken with the corrected recipe.
+>
+> **The E2'c A/B, re-run properly and WITH controls:**
+>
+> | comparison | identical | differing |
+> |---|---|---|
+> | PRE vs PRE (control) | 10/13 | `00_challengeselect 01_inrace_track 02_back_to_menu` |
+> | POST vs POST (control) | 12/13 | `02_back_to_menu` |
+> | **PRE vs POST (refactor)** | **11/13** | `00_challengeselect 01_inrace_track` |
+>
+> **Every shot differing in the A/B also differs in the control** — the refactor's
+> differing set is a strict *subset* of the control's. It introduces nothing beyond
+> what rebuilding the same source already produces. **E2'c is a no-op** to this
+> harness's resolution, and E2'b is unblocked.
+>
+> **R10b residual, still open (MED):** 3 of 13 shots remain build-unstable
+> (`00_challengeselect`, `01_inrace_track`, `02_back_to_menu`), down from 8. The two
+> control pairs disagree (1 vs 3 shots), so it is intermittent between builds. The
+> other **10 gate with a zero noise floor** — bit-identical across rebuilds — so E3'
+> has a working gate today on ten viewpoints. `02_back_to_menu` is a menu screen
+> with the DirectShow video backdrop running, which the frame clock cannot govern;
+> that is a plausible but **[UNCERTAIN]** explanation, not yet tested.
+>
 > **Next diagnostic step (not yet run) — the instrument already exists.** The
 > capture lambda in `exe_main.cpp` emits `RELIGHT_CAP tag=<shot> heading=%.5f` to
 > `mashed_re.log` at each in-race capture (confirmed present: three lines per run,

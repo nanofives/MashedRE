@@ -1127,14 +1127,9 @@ bool RunRaceDemoStep(int /*phase*/) {
                 B(p[0]), B(p[1]), B(p[2]),
                 B(g_track.car_yaw()), B(g_track.car_speed()),
                 B(g_track.race_time()));
-            // AI cars: ai_cars_ lives in the renderer-neutral RaceSceneState and
-            // is public, so it can be read directly. Their positions diverge
-            // earlier than the player's under an AI-side perturbation.
-            for (std::size_t k = 0; k < g_track.ai_cars_.size() && k < 4; ++k) {
-                const auto& a = g_track.ai_cars_[k];
-                std::fprintf(lf, " ai%zu=%08X,%08X,%08X/%08X",
-                             k, B(a.pos[0]), B(a.pos[1]), B(a.pos[2]), B(a.yaw));
-            }
+            // (AI-car fields omitted while the E2'c A/B runs: ai_cars_ is
+            // private in the pre-refactor header and this trace must compile
+            // on BOTH sides of that comparison.)
             std::fputc('\n', lf);
             std::fclose(lf);
         }
