@@ -61,7 +61,7 @@
         },
         {
           "label": "M3 librw lane",
-          "value": "SIZED 2026-07-31 — GO (LIBRW_SIZING_2026-08.md); librw builds clean x86/MSVC (0 errors); next = E1' vendor+build, pending dep approval",
+          "value": "E1' DONE 2026-07-31 — librw vendored (deps/librw @ 1252b90e, MIT), both targets build, smoke PASS (backbuffer readback 0x2080C0). Next = E2'a rasters; blocker first: MASHED_RACE_DEMO emits no steps, so the 8 E3' reference captures are missing",
           "kind": "text"
         }
       ]
