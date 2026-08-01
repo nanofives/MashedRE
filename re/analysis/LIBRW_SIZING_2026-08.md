@@ -772,13 +772,35 @@ viewpoints, world-only, no cars.
 >   reveal a separate delta: librw defaults to **NEAREST** filtering where the D3D9
 >   path sets `LINEAR` — a quality difference to fold into the E3' register.)
 >
->   **Status: OPEN, cause unknown.** What distinguishes the sea from the
->   structurally identical banner props is not yet established. It is the largest
->   single-material prop and the only one carrying the F3 UV-scroll animation, which
->   the librw path does not apply — but *why that would render black rather than
->   merely static is unexplained*, and I will not log a mechanism I cannot show.
->   `[UNCERTAIN]` Next step: confirm the sea is being submitted and drawn at all
->   (log per-model instance counts), before theorising about its shading.
+>   4. **Instance counts measured. The sea IS submitted and IS drawn — it is too
+>      dark, not missing.** Per-model counts at f400:
+>      `model[0] sky inst=0` (drawn by the separate `sky_` path, never instanced),
+>      `model[1] inst=5`, `model[2] inst=9`, `model[3] inst=5`,
+>      **`model[4] sea inst=1 @ (0,0,0)`**, `model[5..7] inst=1 each @ (0,0,0)`,
+>      **`model[8] car inst=4`**.
+>
+>      Sampling the black region: **(2.9, 4.2, 4.0)**, versus the clear colour
+>      `fog_color_` = (24,28,40) and the baseline's (12.5, 19.0, 21.7) in the same
+>      region. It is **not** the background showing through — geometry is drawn
+>      there, about **4–5× too dark**. Culling and "never drawn" are both dead.
+>
+>      ⚠️ **This also corrects D-S3-7.** The car reports **4 instances** (player +
+>      3 AI), so it IS submitted. The earlier claim that `car_via_rw` was false was
+>      inferred from a constant instance total of 27 — which already *included* the
+>      car. D-S3-7 is very likely not a separate bug but the same too-dark shading.
+>
+>   **Leading hypothesis, UNVERIFIED:** the D3D9 path bakes the track ambient into
+>   the vertex colours at build time (`BuildDffBatches` takes an `AtomicLight`, and
+>   `TrackRenderer`'s own note says the dim baked prelight "is meant to be combined
+>   with this ambient at render — without it the world is a dark void"). The librw
+>   path feeds `BuildClump` the **raw** `DffModel` prelit with no ambient added, and
+>   `lightingCB_Shader` then sets ambient to **black** for non-LIGHT geometry. That
+>   would produce exactly a uniform darkening. **The objection I cannot yet answer:
+>   the static world is also prelit and non-LIGHT and renders correctly at 0.93.**
+>   Until that is reconciled the hypothesis is not established. `[UNCERTAIN]`
+>
+>   Next step: compare a single sea vertex's colour as the D3D9 path bakes it
+>   against what `BuildClump` uploads — one number each, no rebuild-and-guess.
 > - **D-S3-7 — the player car does not appear** on the instanced path. The instance
 >   count sits at a constant 27 with no car entry, so `car_via_rw` is evaluating
 >   false; whether `rw_car_model_` or `car_ready_` is the reason is **not yet

@@ -515,9 +515,25 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
         // Instanced models. Each registered clump is re-posed and re-drawn once
         // per placed copy, which is what the D3D9 path does too (one
         // SetTransform + draw per entry in Prop::instances).
-        if (g_frames % 200 == 0)
+        if (g_frames % 200 == 0) {
+            // D-S3-6: is clump[4] (the sea) actually SUBMITTED and DRAWN? Count
+            // instances per model and show each one's translation, so "the sea is
+            // black" can be separated from "the sea is never drawn" and from "the
+            // sea is drawn somewhere else". Measure before theorising about shading.
             RLog("f%-6lld instances=%zu models=%zu", g_frames,
                  g_insts.size(), g_models.size());
+            for (std::size_t mi = 0; mi < g_models.size(); ++mi) {
+                int n = 0; float px = 0, py = 0, pz = 0;
+                for (const Inst& in : g_insts)
+                    if ((std::size_t)in.model == mi) {
+                        ++n;
+                        if (n == 1) { px = in.m[12]; py = in.m[13]; pz = in.m[14]; }
+                    }
+                RLog("    model[%zu] atomics=%d instances=%d first_pos=(%.2f,%.2f,%.2f)",
+                     mi, g_models[mi] ? (int)g_models[mi]->countAtomics() : -1,
+                     n, px, py, pz);
+            }
+        }
         for (const Inst& in : g_insts) {
             if (in.model < 0 || (std::size_t)in.model >= g_models.size()) continue;
             rw::Clump* c = g_models[(std::size_t)in.model];
