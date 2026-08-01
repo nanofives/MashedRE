@@ -274,6 +274,17 @@ int RunSmoke(HWND hwnd, int width, int height, int frames) {
         LogLine("ok: scene build self-test PASS -> log/librw_scene.txt");
     }
 
+    // E2'b step 2: actually DRAW the world through librw. Static world only --
+    // no car/props/HUD -- so this is a "does it render" gate, not E3' parity.
+    {
+        const int rc = RenderWorldProbe(width, height, "verify/librw_world.bmp");
+        if (rc != 0) {
+            LogLine("FAIL: world render probe rc=%d", rc);
+            return 10;
+        }
+        LogLine("ok: world rendered through librw -> verify/librw_world.bmp");
+    }
+
     // Teardown in reverse (skeleton.cpp:56-65).
     cam->frameBuffer->destroy();
     cam->zBuffer->destroy();

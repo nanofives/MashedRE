@@ -46,6 +46,18 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex);
 // gets an identity frame parented to the clump frame.
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex);
 
+// E2'b step 2: build the Arctic world, render it once through librw from a
+// DETERMINISTIC overview camera derived from the world bbox, and dump the
+// backbuffer to `out_bmp`. Returns 0 on success.
+//
+// SCOPE, stated so the output is not over-read: this draws the STATIC WORLD ONLY.
+// No car, props, copters, particles, pickups, HUD or menu. It therefore cannot be
+// imgdiff'd against verify/librw_ref -- those are full-game frames, and the
+// comparison would be apples-to-oranges, not parity. The gate at this stage is
+// "does the world draw, with the right geometry and textures". Real E3' parity
+// waits until the submit path covers everything the D3D9 path draws.
+int RenderWorldProbe(int width, int height, const char* out_bmp);
+
 // Self-test: load a real track's GRAPH*.BSP + TXD, build the scene, and verify
 // the built geometry against the parser's own totals. Writes log/librw_scene.txt.
 // Returns 0 on success, non-zero on the first failing check. Needs a live engine.

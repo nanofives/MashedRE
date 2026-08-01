@@ -9,6 +9,7 @@
 
 #include <cstdarg>
 #include <cstdio>
+#include <cmath>
 #include <cstring>
 #include <vector>
 
@@ -249,6 +250,130 @@ const std::uint8_t* FindEntry(mashed_re::Piz::Archive& ar, const char* suffix,
 }
 
 }  // namespace
+
+// Write the current D3D9 backbuffer to a 24-bit BMP. Self-contained (no D3DX).
+static bool DumpBackbuffer(const char* path) {
+    IDirect3DDevice9* dev = rw::d3d::d3ddevice;
+    if (!dev) return false;
+    IDirect3DSurface9* rt = nullptr;
+    if (FAILED(dev->GetRenderTarget(0, &rt)) || !rt) return false;
+    D3DSURFACE_DESC de; rt->GetDesc(&de);
+    IDirect3DSurface9* sys = nullptr;
+    if (FAILED(dev->CreateOffscreenPlainSurface(de.Width, de.Height, de.Format,
+                                                D3DPOOL_SYSTEMMEM, &sys, nullptr))) {
+        rt->Release(); return false;
+    }
+    bool ok = false;
+    if (SUCCEEDED(dev->GetRenderTargetData(rt, sys))) {
+        D3DLOCKED_RECT lr;
+        if (SUCCEEDED(sys->LockRect(&lr, nullptr, D3DLOCK_READONLY))) {
+            const int w = (int)de.Width, h = (int)de.Height;
+            const int rowsz = (w * 3 + 3) & ~3;
+            const int imgsz = rowsz * h;
+            std::uint8_t fh[14] = {'B','M'};
+            const std::uint32_t total = 14 + 40 + imgsz, off = 54;
+            std::memcpy(fh + 2, &total, 4); std::memcpy(fh + 10, &off, 4);
+            std::uint8_t ih[40] = {}; const std::uint32_t hs = 40; const std::uint16_t pl = 1, bc = 24;
+            std::memcpy(ih + 0, &hs, 4); std::memcpy(ih + 4, &w, 4); std::memcpy(ih + 8, &h, 4);
+            std::memcpy(ih + 12, &pl, 2); std::memcpy(ih + 14, &bc, 2);
+            std::memcpy(ih + 20, &imgsz, 4);
+            if (std::FILE* f = std::fopen(path, "wb")) {
+                std::fwrite(fh, 1, 14, f); std::fwrite(ih, 1, 40, f);
+                std::vector<std::uint8_t> row((std::size_t)rowsz, 0);
+                for (int y = h - 1; y >= 0; --y) {           // BMP is bottom-up
+                    const std::uint8_t* src = (const std::uint8_t*)lr.pBits + (std::size_t)y * lr.Pitch;
+                    for (int x = 0; x < w; ++x) {
+                        row[(std::size_t)x * 3 + 0] = src[x * 4 + 0];  // B
+                        row[(std::size_t)x * 3 + 1] = src[x * 4 + 1];  // G
+                        row[(std::size_t)x * 3 + 2] = src[x * 4 + 2];  // R
+                    }
+                    std::fwrite(row.data(), 1, (std::size_t)rowsz, f);
+                }
+                std::fclose(f); ok = true;
+            }
+            sys->UnlockRect();
+        }
+    }
+    sys->Release(); rt->Release();
+    return ok;
+}
+
+int RenderWorldProbe(int width, int height, const char* out_bmp) {
+    SLog("# world render probe (E2'b step 2) -- STATIC WORLD ONLY, not a parity shot");
+    const char* kPiz = "original/TOASTART/TRACKS/Arctic.piz";
+    mashed_re::Piz::Archive ar;
+    if (!ar.Load(kPiz)) { SLog("FAIL: piz %s", ar.last_error()); return 1; }
+    std::uint32_t bl = 0, tl = 0;
+    const std::uint8_t* bsp = FindEntry(ar, "GRAPH.BSP", &bl);
+    const std::uint8_t* txd = FindEntry(ar, "TEXTURES.TXD", &tl);
+    if (!bsp || !txd) { SLog("FAIL: missing GRAPH.BSP or TEXTURES.TXD"); return 2; }
+
+    static Txd::Dictionary dict;
+    static Track::World world;
+    if (!dict.Decode(txd, tl))   { SLog("FAIL: TXD %s", dict.last_error());  return 3; }
+    if (!world.Parse(bsp, bl))   { SLog("FAIL: BSP %s", world.last_error()); return 4; }
+
+    TextureSource ts{ &dict, 1 };
+    rw::World* rww = static_cast<rw::World*>(BuildWorld(world, ts));
+    if (!rww) { SLog("FAIL: BuildWorld"); return 5; }
+
+    // Deterministic overview camera from the world bbox (sup.xyz, inf.xyz).
+    const float cx = (world.bbox[0] + world.bbox[3]) * 0.5f;
+    const float cy = (world.bbox[1] + world.bbox[4]) * 0.5f;
+    const float cz = (world.bbox[2] + world.bbox[5]) * 0.5f;
+    float ex = world.bbox[0] - world.bbox[3];
+    float ey = world.bbox[1] - world.bbox[4];
+    float ez = world.bbox[2] - world.bbox[5];
+    if (ex < 0) ex = -ex; if (ey < 0) ey = -ey; if (ez < 0) ez = -ez;
+    float radius = ex; if (ey > radius) radius = ey; if (ez > radius) radius = ez;
+    if (radius < 1.f) radius = 1.f;
+    SLog("world bbox centre=(%.2f,%.2f,%.2f) radius=%.2f", cx, cy, cz, radius);
+
+    rw::Camera* cam = rw::Camera::create();
+    if (!cam) { SLog("FAIL: Camera::create"); return 6; }
+    rw::Frame* cf = rw::Frame::create();
+    cam->setFrame(cf);
+    cam->frameBuffer = rw::Raster::create(width, height, 0, rw::Raster::CAMERA);
+    cam->zBuffer     = rw::Raster::create(width, height, 0, rw::Raster::ZBUFFER);
+    { rw::V2d vw; vw.x = 1.0f; vw.y = (float)height / (float)width; cam->setViewWindow(&vw); }
+    cam->setNearPlane(radius * 0.01f);
+    cam->setFarPlane(radius * 6.0f);
+
+    // Look-at: eye above and to one side of the centre, aimed at it.
+    const float eye[3] = { cx + radius * 0.9f, cy + radius * 0.7f, cz + radius * 0.9f };
+    float at[3] = { cx - eye[0], cy - eye[1], cz - eye[2] };
+    float len = std::sqrt(at[0]*at[0] + at[1]*at[1] + at[2]*at[2]);
+    if (len < 1e-6f) len = 1.f;
+    at[0] /= len; at[1] /= len; at[2] /= len;
+    const float wup[3] = { 0.f, 1.f, 0.f };
+    float right[3] = { wup[1]*at[2] - wup[2]*at[1],
+                       wup[2]*at[0] - wup[0]*at[2],
+                       wup[0]*at[1] - wup[1]*at[0] };
+    float rl = std::sqrt(right[0]*right[0] + right[1]*right[1] + right[2]*right[2]);
+    if (rl < 1e-6f) rl = 1.f;
+    right[0] /= rl; right[1] /= rl; right[2] /= rl;
+    const float up[3] = { at[1]*right[2] - at[2]*right[1],
+                          at[2]*right[0] - at[0]*right[2],
+                          at[0]*right[1] - at[1]*right[0] };
+    rw::Matrix* m = &cf->matrix;
+    m->right.x = right[0]; m->right.y = right[1]; m->right.z = right[2];
+    m->up.x    = up[0];    m->up.y    = up[1];    m->up.z    = up[2];
+    m->at.x    = at[0];    m->at.y    = at[1];    m->at.z    = at[2];
+    m->pos.x   = eye[0];   m->pos.y   = eye[1];   m->pos.z   = eye[2];
+    m->update();
+    cf->updateObjects();
+
+    rw::RGBA sky = { 40, 48, 64, 255 };   // distinguishable from both black and the terrain
+    cam->clear(&sky, rw::Camera::CLEARIMAGE | rw::Camera::CLEARZ);
+    cam->beginUpdate();
+    rww->render();
+    cam->endUpdate();
+
+    const bool dumped = DumpBackbuffer(out_bmp);
+    cam->showRaster(0);
+    SLog("rendered world -> %s (%s)", out_bmp, dumped ? "dumped" : "DUMP FAILED");
+    return dumped ? 0 : 7;
+}
 
 int SceneBuild_SelfTest() {
     if (std::FILE* f = std::fopen(kSceneLog, "w")) std::fclose(f);
