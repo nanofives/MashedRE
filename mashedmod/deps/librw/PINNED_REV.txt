@@ -1,0 +1,55 @@
+librw — vendored snapshot for Mashed RE
+=======================================
+
+Upstream:   https://github.com/aap/librw
+Revision:   1252b90e03fa89d5d15e9d58166b2f34eb19643f
+Rev date:   2026-04-28  ("more tex uniforms")
+Snapshotted: 2026-07-31
+License:    MIT — see LICENSE (Copyright (c) 2014 aap). Preserved verbatim.
+            The notice must ship with any binary that links this; see
+            mashedmod\THIRD_PARTY_NOTICES.txt.
+
+Why a snapshot and not a submodule
+----------------------------------
+Upstream is actively maintained (last push 2026-07-14 as of snapshot date). We
+want a pinned, reproducible renderer, and we expect to carry local patches. This
+matches the only other vendored library in the tree (deps\qhull-2002.1, also a
+snapshot). The three git submodules under re\prior_art\ are read-only prior art,
+a different role.
+
+A pristine upstream clone is kept (gitignored) at:
+    re\prior_art\renderware\librw
+Diff this snapshot against it to see our local patches:
+    git -C re\prior_art\renderware\librw diff 1252b90e -- src rw.h
+
+What was included / excluded
+----------------------------
+INCLUDED : rw.h, args.h, src\** (all backends: d3d, gl, ps2, lodepng),
+           LICENSE, README.md, ARCHITECTURE.MD, TODO,
+           premake5.lua + CMakeLists.txt (reference only — we do NOT use them).
+EXCLUDED : skeleton\ (3.8 MB GLFW/SDL demo app), tools\ (1.4 MB),
+           premake5.exe (1.3 MB binary), Dockerfile, cmake\, .github\, .git\.
+
+We build with a plain cl invocation (deps\librw\build_librw.bat), NOT premake and
+NOT CMake. Only src\*.cpp, src\d3d\*.cpp and src\lodepng\*.cpp are compiled
+(RW_D3D9). src\gl\ and src\ps2\ are carried for upstream-diff fidelity but are
+never compiled.
+
+Local patches
+-------------
+(none yet)
+
+Keep this list current. Any edit under src\ or to rw.h MUST be recorded here with
+a one-line rationale, or the snapshot stops being diffable against upstream.
+
+Build facts measured at snapshot time (2026-07-31)
+--------------------------------------------------
+Toolchain : MSVC Build Tools 2022 x86 via vcvars32.bat, cl 19.44
+Result    : 0 errors; 3 warnings, all C4838 narrowing in src\d3d\xbox.cpp:542-544
+            (D3DFMT_UNKNOWN enum -> rw::uint32), benign.
+Output    : 45 objects; librw_d3d9.lib ~1.23 MB; COFF machine 0x014C (I386).
+No fxc / DirectX SDK needed — the D3D9 shader blobs in src\d3d\shaders\*.h are
+pre-compiled and committed upstream. The make_*.cmd files there only REGENERATE
+them and reference %DXSDK_DIR%; we never invoke them.
+
+Full sizing rationale: re\analysis\LIBRW_SIZING_2026-08.md

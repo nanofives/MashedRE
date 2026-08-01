@@ -304,6 +304,37 @@ Sessions are sized to the token-economy rule (split at phase boundaries).
 Risk here is low: the compile is already proven (0 errors, x86 verified). What is unproven is
 `Engine::open`/`start` against our window and the shim.
 
+> **E1' OUTCOME — DONE 2026-07-31, same session.** Snapshot landed at
+> `mashedmod/deps/librw` (rev `1252b90e`, `PINNED_REV.txt`), `build_librw.bat`
+> wired into `build.bat` on the qhull pattern, `LibRw/RwBridge.cpp` smoke TU
+> behind `MASHED_RENDER_LIBRW=1`, `THIRD_PARTY_NOTICES.txt` added. Both targets
+> build clean. Smoke result (`log/librw_smoke.txt`): librw enumerated the adapter,
+> created its own D3D9 device on our HWND, presented 600 frames, and the
+> **backbuffer centre pixel read back `0x2080C0` == the clear colour** — so librw
+> demonstrably wrote the framebuffer, not merely returned success. Teardown clean,
+> exit 0; the default D3D9 path is unregressed (12 s healthy run with the gate off).
+>
+> Three corrections to the recipe in §1.3, learned by doing:
+> 1. **All platform subdirs must be compiled, not just `src` + `src/d3d`.**
+>    `src/engine.cpp:233-238` calls `ps2::`/`wdgl::`/`gl3::registerPlatformPlugins()`
+>    unconditionally; the bodies are `#ifdef`-guarded but the stub symbols still
+>    have to exist. Omitting them = 30 `LNK2019` at exe link. Upstream does the
+>    same (`premake5.lua:126-127` is `src/*.*` + `src/*/*.*`). `src/gl/glad/` is the
+>    one exception — gl3-only, needs GLFW/SDL headers, excluded.
+> 2. **`LODEPNG_NO_COMPILE_CPP`** must be defined (upstream `premake5.lua:125`).
+> 3. **`WITH_D3D`** must be defined before `<rw.h>` to get `rw::d3d::d3ddevice`
+>    and the D3D9-typed interface (`src/d3d/rwd3d.h:2,36`); `<windows.h>` must
+>    precede it for the `HWND` form of `EngineOpenParams`.
+>
+> Deferred out of E1' (not blocking): the 8 E3' reference captures. The existing
+> `MASHED_RACE_DEMO=1` driver reached the frontend cleanly but emitted **zero**
+> demo steps and produced no `verify/race1/*.bmp` in a 180 s run — root cause
+> unknown and out of E1' scope. **Fix or replace that driver as E2'a's first task**;
+> the references must exist on the current GREEN D3D9 path before any librw
+> submission lands, or E3' has no baseline. I9 (shader vs fixed-function default
+> pipe) is likewise still open — the smoke clears and presents without exercising
+> either object pipeline.
+
 ### E2' — feed librw from our loaders (**L — split into three**)
 
 **E2'a — rasters (M).** First action: enumerate the mip `depth`/palette combinations actually

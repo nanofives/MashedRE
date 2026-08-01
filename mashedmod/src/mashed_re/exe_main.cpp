@@ -165,6 +165,7 @@
 #include "D3d9Render/MashedFont.h"          // B19: faithful FGDC20 glyph font
 #include "D3d9Render/MenuStringTable.h"     // menu id->glyph-string (sprite-by-id)
 #include "D3d9Render/DrawStreamDump.h"      // parity harness: MASHED_DBG_DRAWSTREAM
+#include "LibRw/RwBridge.h"                 // M3-E1': vendored librw seam (MASHED_RENDER_LIBRW)
 #include "Compat/StandaloneRvaThunks.h"     // B16: standalone RVA-thunk installer
 #include "Frontend/MenuNavSM.h"             // standalone menu nav state machine (FUN_0043d2a0 port)
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
@@ -5567,6 +5568,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // Show + paint. Pattern from 0x004996f0 (WindowShow).
     ShowWindow(g_hwnd, nCmdShow);
     UpdateWindow(g_hwnd);
+
+    // M3-E1' (gate D2): MASHED_RENDER_LIBRW=1 hands the window to vendored librw
+    // instead of our own D3D9 path and runs the E1' acceptance probe. Gated HERE,
+    // before InitD3D9, because the two paths cannot coexist — librw calls
+    // Direct3DCreate9 + CreateDevice + Present itself and owns the device
+    // outright. Default OFF; the shipping D3D9 path is untouched when unset.
+    // See re/analysis/LIBRW_SIZING_2026-08.md and LibRw/RwBridge.h.
+    if (mashed_re::LibRw::SmokeRequested()) {
+        const int rc = mashed_re::LibRw::RunSmoke(g_hwnd, kWidth, kHeight, 600);
+        DestroyWindow(g_hwnd);
+        UnregisterClassA(kClassName, hInstance);
+        return rc;
+    }
 
     // B17: snapshot the arena right before CreateDevice so we can diff what
     // d3d9 claims against what was free here.

@@ -38,6 +38,28 @@ if errorlevel 1 (echo [ERROR] QhullBridge exe-obj compile failed & exit /b 1)
 cl /nologo /EHsc /W3 /O2 /c /I "%QINC%" /Fo"%OUT%\QhullBridge_asi.obj" "%SRC%\Collision\QhullBridge.cpp"
 if errorlevel 1 (echo [ERROR] QhullBridge asi-obj compile failed & exit /b 1)
 
+REM Vendored librw (MIT, aap) -- the SHIPPING renderer per gate D2 (user-decided
+REM 2026-07-31). Build the static lib once if absent. EXE-ONLY: deliberately NOT
+REM linked into the .asi, which runs inside MASHED.exe and already has its own RW
+REM engine + D3D9 device. See deps\librw\build_librw.bat, deps\librw\PINNED_REV.txt
+REM and re\analysis\LIBRW_SIZING_2026-08.md.
+set LIBRW_LIB=%ROOT%deps\librw\librw_d3d9.lib
+if not exist "%LIBRW_LIB%" (
+    echo === Building vendored librw static lib ===
+    call "%ROOT%deps\librw\build_librw.bat"
+    if errorlevel 1 (echo [ERROR] librw lib build failed & exit /b 1)
+)
+
+REM E1': LibRw\RwBridge.cpp is the ONLY TU that includes librw's <rw.h>. Compile it
+REM in ISOLATION with the librw include path into its own .obj, exactly as
+REM QhullBridge.cpp is handled above -- librw's headers drop a large `namespace rw`
+REM and their own rw*.h names into scope, which must not reach the other ~200 TUs.
+REM Only an exe .obj is produced (no asi counterpart): librw is exe-only.
+set LIBRWINC=%ROOT%deps\librw
+cl /nologo /EHa /W3 /O2 /c /I "%LIBRWINC%" /I "%LIBRWINC%\src" /DRW_D3D9 ^
+    /Fo"%OUT%\RwBridge_exe.obj" "%SRC%\LibRw\RwBridge.cpp"
+if errorlevel 1 (echo [ERROR] RwBridge exe-obj compile failed & exit /b 1)
+
 REM ===========================================================================
 REM Phase C status (2026-05-25):
 REM   - LINK GATE MET: an experimental full-source-set build (every reimpl in
@@ -274,9 +296,10 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Ai\HeadingAtan2.cpp" ^
     "Audio\AudioVecLength.cpp" ^
     "%OUT%\QhullBridge_exe.obj" ^
+    "%OUT%\RwBridge_exe.obj" ^
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO ^
     /MAP:"%OUT%\mashed_re.map" ^
-    user32.lib d3d9.lib dsound.lib "%QHULL_LIB%"
+    user32.lib d3d9.lib dsound.lib gdi32.lib "%QHULL_LIB%" "%LIBRW_LIB%"
 popd
 if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)
 
