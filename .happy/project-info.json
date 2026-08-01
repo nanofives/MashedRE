@@ -1,94 +1,82 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-07-31T19:00:00Z",
+  "updatedAt": "2026-07-31T21:55:00Z",
   "sections": [
+    {
+      "heading": "Phase & roadmap",
+      "fields": [
+        {
+          "label": "Current",
+          "value": "R7 (scaffold → verbatim) · M2 faithful race",
+          "kind": "text"
+        },
+        {
+          "label": "Master plan",
+          "value": "REBUILT 2026-07-31 (RE_MASTER_PLAN_2026-07.md)",
+          "kind": "text"
+        },
+        {
+          "label": "B5 physics lane",
+          "value": "PORT COMPLETE (B5e merged 07-20); C4-verify campaign active",
+          "kind": "text"
+        }
+      ]
+    },
     {
       "heading": "Confidence ladder",
       "fields": [
-        {
-          "label": "C1",
-          "value": 795,
-          "kind": "number"
-        },
-        {
-          "label": "C2",
-          "value": 4005,
-          "kind": "number"
-        },
-        {
-          "label": "C3",
-          "value": 881,
-          "kind": "number"
-        },
-        {
-          "label": "C4",
-          "value": 185,
-          "kind": "number"
-        }
+        { "label": "C1", "value": 795, "kind": "number" },
+        { "label": "C2", "value": 4005, "kind": "number" },
+        { "label": "C3", "value": 881, "kind": "number" },
+        { "label": "C4", "value": 185, "kind": "number" }
       ]
     },
     {
-      "heading": "Orchestrator",
+      "heading": "Current work",
       "fields": [
-        {
-          "label": "Iteration",
-          "value": "iter21 complete (5 cycles)",
-          "kind": "text"
-        },
-        {
-          "label": "Ledger",
-          "value": "29 promoted / 21 candidate / 8 briefed / 15 blocked",
-          "kind": "text"
-        },
         {
           "label": "Branch",
-          "value": "fix/u9025-recharacterise-and-regabi-defects @ f673fd8b (pushed, in sync)",
+          "value": "fix/u9025-recharacterise-and-regabi-defects (in sync with origin through 8d0a7eba; 6 newer local commits)",
           "kind": "text"
         },
         {
-          "label": "This run",
+          "label": "Iter 22-27 summary",
           "value": [
-            "3 rows lifted to C4",
-            "6 rows C2 -> C3",
-            "ORPHAN_BLOCK: 13 of 27 gate-PASS",
-            "ARG_TYPES: all 307 handlers documented",
-            "out3_idx audit closed, handler retired"
+            "Brief pipeline gates fixed (caller-gate, library band, cited plates)",
+            "U-4976 resolved: slot +0x88 = RwRasterUnlock (row disqualified)",
+            "Getter lane measured MINED OUT (0/56 SAFE across all subsystems)",
+            "Master plan + ROADMAP rebuilt to current reality"
           ],
           "kind": "list"
-        }
-      ]
-    },
-    {
-      "heading": "Statediff lane (new 2026-07-31)",
-      "fields": [
+        },
         {
-          "label": "Start here",
-          "value": "Refill the ladder - brief 0x0052ddc0 + 0x0052df40 plus >=10 more",
+          "label": "M2 critical path",
+          "value": "statediff residual wedge (~1/6 boots, 2nd mechanism) — defect session's lane",
           "kind": "text"
         },
         {
-          "label": "Fix landed",
-          "value": "Ring5ab980 0x005ab980 dropped-EAX-return wedge; U-6701 resolved",
-          "kind": "text"
+          "label": "Open gates",
+          "value": ["ALL FOUR RESOLVED 2026-07-31 (D2/D4/D6/D7)"],
+          "kind": "list"
         },
         {
-          "label": "Full-set warp boots",
-          "value": "5/6 healthy (was 0/19); residual 1/6 intermittent wedge unbisected",
+          "label": "M3 librw lane",
+          "value": "SIZED 2026-07-31 — GO (LIBRW_SIZING_2026-08.md); librw builds clean x86/MSVC (0 errors); next = E1' vendor+build, pending dep approval",
           "kind": "text"
         }
       ]
     },
     {
-      "heading": "Next",
+      "heading": "Subsystem coverage",
       "fields": [
         {
-          "label": "Start here",
-          "value": "Author 0x004b6b00 + 0x00407550 (handlers already exist), verify in one boot",
+          "label": "Largest",
+          "value": "render (965), audio (585), gameplay (357), boot (280), frontend (264)",
           "kind": "text"
         },
         {
-          "label": "Phase",
-          "value": "R7 - full game systems (scaffold -> verbatim)",
+          "label": "Target tier",
+          "value": "Vehicle, physics, AI, track data live at C2+",
           "kind": "text"
         }
       ]

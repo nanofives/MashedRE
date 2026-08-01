@@ -1,0 +1,421 @@
+# librw sizing brief — M3 shipping renderer (gate D2 consequence)
+
+**Date:** 2026-07-31 · **Branch:** `fix/u9025-recharacterise-and-regabi-defects` @ `b10c5c30`
+**Scope:** sizing only. No renderer code lands in this session. Deliverable = go/no-go + bounded
+E1'–E4' sessions + risk register.
+**Trigger:** gate **D2 resolved 2026-07-31** — librw is the shipping renderer, reversing the
+2026-06-10 RW-verbatim ratification (`RE_MASTER_PLAN_2026-07.md` §3-M3, §5).
+
+---
+
+## 0. Verdict — **GO**, with one costed complication
+
+librw is a clean fit for Mashed on every axis that could have killed the lane:
+MIT, alive, RW 3.1–3.7 (Mashed is **3.7.0.2**), first-class `win-x86-d3d9`, and it
+**compiles clean under our exact locked toolchain — measured this session, not claimed.**
+
+The two things the README warns about (*"BSP is not supported at all"*, PS2 DFF gaps) are
+**not blockers for us**, because we do not need librw's stream readers: we already parse
+Mashed's BSP, DFF and TXD ourselves into renderer-agnostic structs. librw is being adopted as
+a **rendering pipeline**, not as a file-format library.
+
+The real cost is not librw. It is **`TrackRenderer.cpp` — 4139 LOC that fuses the D3D9 draw
+path with race gameplay state.** That TU must be split before anything can be swapped. See
+Risk R1; it dominates the estimate.
+
+**Stop-and-ask items are all cleared:** license is unambiguous (§1.1), the 32-bit MSVC path is
+alive and measured (§1.3), so **D2 does not reopen**. The one decision that needs the user is
+formally adding librw as a dependency (§3.4) — see the question at the end.
+
+---
+
+## 1. Web facts — librw upstream (aap/librw)
+
+### 1.1 License — MIT, unambiguous, permits our use
+`LICENSE`, 1071 bytes, verbatim MIT, `Copyright (c) 2014 aap`; GitHub API reports
+`spdx_id: MIT`. MIT permits use, modification, and redistribution in a closed-or-open
+derivative provided the copyright notice ships. **No ambiguity, no copyleft, no
+attribution-in-UI requirement.** Concretely we must ship the notice with `mashed_re.exe`
+(a `THIRD_PARTY_NOTICES.txt` beside the exe satisfies this).
+
+Contrast with `re/prior_art/`'s SciLor repos, which are unlicensed and therefore
+knowledge-only. librw is the opposite: we may vendor and ship the actual source.
+
+### 1.2 Repo health
+| Fact | Value |
+|---|---|
+| Upstream | `https://github.com/aap/librw` |
+| Last push | 2026-07-14 (17 days before this brief) — **actively maintained** |
+| Archived | no · Stars 794 · Open issues 46 · Size ~4.1 MB |
+| Local reference clone | `re/prior_art/renderware/librw` @ `1252b90e` (2026-04-28, *"more tex uniforms"*) |
+
+`re/prior_art/renderware/` is **gitignored** (`.gitignore:101`) and line 98 already records
+`librw … https://github.com/aap/librw.git (MIT)`. So the clone is present as reference but is
+**not** a tracked dependency today.
+
+### 1.3 x86 / MSVC 2022 support — **MEASURED, not assumed**
+`premake5.lua` declares `win-x86-d3d9` as a first-class platform (alongside `win-x86-gl3`,
+`win-x86-null`, and the amd64 variants) with a Windows-only `ReleaseStatic` configuration.
+
+Rather than trust that, this session **built it** with our locked toolchain:
+
+```
+vcvars32.bat (MSVC BuildTools 2022, cl 19.44, x86)
+cl /nologo /c /EHsc /O2 /MT /DRW_D3D9 /DNDEBUG /I<librw> /I<librw>\src /wd4996 /wd4244 \
+   src\*.cpp src\d3d\*.cpp src\lodepng\*.cpp
+lib /out:librw.lib *.obj
+```
+
+| Result | Value |
+|---|---|
+| Errors | **0** |
+| Warnings | **3** — all `C4838` narrowing, all `src/d3d/xbox.cpp:542-544` (`D3DFMT_UNKNOWN` enum → `uint32`), all benign |
+| Objects produced | 45 |
+| Static lib | `librw.lib`, 1,232,788 bytes |
+| Architecture verified | `engine.obj` COFF machine word = **`0x014C` = IMAGE_FILE_MACHINE_I386** |
+
+Notes that make this cheap:
+- **premake is not needed.** The whole library is a flat set of `.cpp` with no generated
+  sources; `cl` over two globs is sufficient. (`premake5.exe` ships in-tree anyway, and
+  `premake-vs2019.cmd` exists, but we do not need either.)
+- **fxc / the DirectX SDK are not needed.** The D3D9 shader blobs are **pre-compiled and
+  committed** as `.h` byte arrays (`src/d3d/shaders/*_VS.h`, `*_PS.h`). `make_default.cmd`
+  et al. only exist to *regenerate* them and reference `%DXSDK_DIR%` — we never invoke them.
+- `d3d9.h` comes from the Windows SDK already installed with BuildTools. No extra SDK.
+
+**This is the single most important de-risk in the brief: E1' is a solved problem.**
+
+### 1.4 Backend maturity and format coverage
+- **Backends:** D3D9 and OpenGL ≥2.1/ES≥2.0 are production; PS2 is *"working as a test only"*.
+  D3D9 is the backend re3/reVC ship on Windows, i.e. the best-exercised path in the project.
+- **Stream versions:** `src/rwbase.h` maps `0x04000000`=3.1 … `0x1C000000`=3.7 with
+  `libraryIDPack`/`libraryIDUnpackVersion`. **Mashed's assets are 3.7.0.2 — the top of the
+  supported range**, the same band as GTA:SA.
+- **Native-data platforms read:** PS2, D3D8, D3D9, Xbox (`src/d3d/`, `src/ps2/`).
+- **Stated limitations:** *"Not all pre-instanced PS2 DFFs are supported"* (irrelevant — we are
+  PC), and **"BSP is not supported at all"** (see §3.2 — neutralised).
+- **Default D3D9 pipeline is shader-based:** `d3d9.cpp:697` assigns
+  `pipe->renderCB = defaultRenderCB_Shader` (vs_2_0/ps_2_0). A fixed-function callback
+  `defaultRenderCB_Fix` (`d3d9render.cpp:78`) exists and can be assigned instead. Our current
+  spike is fixed-function, so this is a deliberate switch, not an accident — see Risk R6.
+
+### 1.5 Device ownership — librw creates its own D3D9 device
+```c
+struct EngineOpenParams { HWND window; };   // src/d3d/rwd3d.h
+extern IDirect3DDevice9 *d3ddevice;         // src/d3d/rwd3d.h
+```
+`src/d3d/d3ddevice.cpp` calls `Direct3DCreate9` (:1518) and `CreateDevice(…, D3DDEVTYPE_HAL, …)`
+(:1622), owns `d3d9Globals.present`, handles `Reset` on resize (:1299-1308) and calls
+`Present` itself (:1356). You hand it an `HWND`; it owns everything below that.
+
+Because `d3ddevice` is a plain extern global and the post-create init is a small isolated block
+(`:1192-1211` — grab default render target + depth surface into the device cache), **adopting an
+externally-created device is a ~30-line local patch** if we ever need it. See §3.3.
+
+---
+
+## 2. Our surface (worker survey, read-only, off-quota)
+
+### 2.1 Render subtrees
+| Subtree | LOC | Role |
+|---|---:|---|
+| `Txd/` | 395 | `TxdDecoder` — Mashed's **proprietary chunk-id `0x23`** TXD → `Txd::Dictionary` |
+| `Rws/` | 285 | nested-chunk walker; `RwsStreamRead.cpp` is .asi-only |
+| `Track/` | 1304 | `TrackWorld` (BSP→`Track::World`), `DffModel` (DFF→batches), `TrackData` (SPL/ANM/UVA/MTS/LAPDATA) |
+| `D3d9Render/` | **8433** | the actual standalone pixel path (28 files) |
+| `Render/` | 8395 | **not the pixel path** — 53 harvested C2→C3 leaf-function TUs for the .asi |
+
+Pixel entry points in `exe_main.cpp`: `RwIm2DBridge_Install(g_device)` (:5652) for menu 2D,
+`g_track.Render(g_device, t, &ci)` (:2539) for race 3D, plus the native video quad (:2843).
+
+`RwWorldRender` / `RwWorldLoad` / `RwWorldLoadStubs` / `RwWorldStream` (~820 LOC) are the old
+WS-E1/E2 RpWorld seam and are **inert** — `RwWorldRender_Enabled()` is false in the exe. Under
+D2 these become either the librw seam or dead code; decide in E2'.
+
+### 2.2 Loader output structs — all ours, all clean
+- `Txd::Mip{w,h,depth,stride,pixels,pixel_bytes,palette,palette_bytes}`,
+  `Txd::Texture{name[33],mask_name[33],filter_addressing,mip_count,mips[16]}`,
+  `Txd::Dictionary{textures_[256],count_,device_id_}`
+- `Track::DffMaterial{tex_name,rgba,uv_anim}`,
+  `Track::DffBatch{material,atomic,abox[6],verts,uvs,normals,prelit,tris,lit,modulate_mat}` (model-space, frame-baked),
+  `Track::DffModel{materials,batches,bbox,total_tris,total_verts}`
+- `Track::Material{...}`, `Track::Sector{verts,uvs,prelit,tris}`,
+  `Track::World{materials,sectors,bbox,total_tris,total_verts}`
+- `TrackData.h`: `Spline`, `HAnim`/`HKeyFrame`, `UVDict`/`UVEntry`, `MtxList`/`MtxInstance`, `LapData`
+
+**Zero D3D9 tokens and zero RW types in any of these headers.**
+
+### 2.3 The renderer-agnostic claim — TRUE as written, but read the scope
+The R4 exit note (`TrackRenderer.h:22`) and `RENDERER_GATE_BRIEF.md:34-37` claim the **parsed
+data** is renderer-agnostic. **Verified: it holds.** What is emphatically *not* agnostic is the
+**consumer**. `TrackRenderer` bakes D3D9 into its public API, members, and vertex structs:
+
+`D3d9Render/TrackRenderer.h` — `:25` `#include <d3d9.h>`; `:48` `Load(IDirect3DDevice9*)`;
+`:66` `Render(IDirect3DDevice9*)`; `:71` `struct V{float x,y,z; D3DCOLOR c; float u,v;}`;
+`:91` `LoadCar(IDirect3DDevice9*)`; `:100` `LoadCarLiveries(IDirect3DDevice9*)`;
+`:142` `kFVF = D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1`; `:145` `vector<IDirect3DTexture9*> textures_`;
+`:231`/`:248`/`:303`/`:311` more `IDirect3DTexture9*` vectors; `:232` `vector<D3DMATRIX> instances`;
+`:258` `LoadCopters(IDirect3DDevice9*)`; `:266`/`:273`/`:281`/`:298` `D3DCOLOR` fog/ambient/sun;
+`:345` `RenderCarsRelit(IDirect3DDevice9*, const D3DMATRIX&)`.
+
+Also D3D9-bound: `PickupField.h` (`:20,:47,:57,:75,:78`), `ParticleSystem.h` (`:16,:27,:39,:58,:65`),
+`MpegVideoTexture.h` (`:14,:28,:34,:44`), `QuadRenderer.h` (`:25,:45,:83,:97,:98,:101`),
+`RwIm2DBridge.h` (`:29,:39,:45`).
+
+D3D9-**clean** and therefore reusable as-is: `TextRenderer.h`, `MashedFont.h`, `PngLoader.h`,
+`MenuStringTable.h`, `DrawStreamDump.h` (they return CPU-side BGRA / strings; the caller uploads).
+`RwWorldRender.h` leaks nothing — its signatures are `void*`.
+
+**Sizing boundary: a librw swap replaces all of `D3d9Render/`'s draw layer and touches none of
+`Track/`, `Txd/`, `Rws/`.**
+
+### 2.4 Vendored RW headers — there are none
+`mashedmod/deps/` contains exactly one vendored library: **qhull-2002.1**. Grep for
+`rwcore|rpworld|rwplcore|RenderWare|librw` across the whole build tree → **no matches**. Every
+RW-shaped struct we use is hand-rolled (including the `kRpWorldBaseSize=0x70` /
+`kRpWorldSectorSize=0x88` constants in `RwWorldLoad.h:46-47`). **librw would be a genuinely new
+dependency, not a swap of an existing one** — hence the approval question.
+
+### 2.5 Build wiring
+`mashedmod/build.bat` lists exe TUs **explicitly** (`:82-276`, no globbing); the .asi reads
+`mashedmod/asi_sources.rsp` (366 lines, one quoted `.cpp` each). **qhull is the precedent for a
+vendored subtree and it is *not* per-file listed** — it builds to a static lib via its own
+`deps\qhull-2002.1\build_qhull.bat` (invoked at `build.bat:24-28`), the single bridge TU
+(`Collision\QhullBridge.cpp`) compiles in isolation with a dedicated `/I` (`:35-39`), and the lib
+is pulled via `/link "%QHULL_LIB%"` (`:279`, `:287`).
+
+---
+
+## 3. Fit analysis
+
+### 3.1 Asset reality — Mashed ships stock RenderWare containers
+Measured this session by extracting `original/TOASTART/TRACKS/Arctic.piz` and reading chunk headers:
+
+| File | Leading chunk id | Library ID | Meaning |
+|---|---|---|---|
+| `GRAPH.BSP` (0x9b610) | `0x0000000B` | `0x1C02000A` | `rwID_WORLD` — the drawable world |
+| `COLLISIONS.BSP` | `0x0000000B` | `0x1C02000A` | `rwID_WORLD` |
+| `AI.BSP` | `0x0000000B` | `0x1C02000A` | `rwID_WORLD` |
+| `SKY.DFF` | `0x00000010` | `0x1C02000A` | `rwID_CLUMP` |
+| `TEXTURES.TXD` (0x11f9c4) | `0x00000023` | `0x1C02000A` | **not a stock RW texdict** |
+
+`libraryIDUnpackVersion(0x1C02000A)` = **RW 3.7.0.2**, inside librw's declared range.
+Every track `.piz` carries the same shape (`AI.BSP`, `COLLISIONS.BSP`, `GRAPH.BSP`, N×`.DFF`,
+`TEXTURES.TXD`, plus the Mashed-custom `.SPL`/`.ANM`/`.UVA`/`.MTS`/`.LUA`).
+
+The `0x23` TXD is **Mashed-proprietary** — our own `Txd/TxdDecoder.h:2` says so explicitly
+(*"Mashed's proprietary chunk-id 0x23 TXD format"*, twin of `FUN_0054f8d0`), and the byte grid
+after the 12-byte root header does not match a canonical `rwID_STRUCT`. librw's
+`readNativeTexture` will never read these. Not a problem — see below.
+
+### 3.2 The "librw doesn't support BSP" warning — neutralised, and here is why
+`src/world.cpp` is 5.4 KB: librw's `rw::World` is an atomic/light **container**, not a BSP
+sector tree, and there is no world-stream reader. Upstream is explicit: *"BSP is not supported
+at all."*
+
+**This does not bite us, because we never intended to hand librw a file.** We already have
+`Track/TrackWorld.cpp` (224 LOC) turning `GRAPH.BSP` into `Track::World{materials, sectors}`
+with per-sector verts/uvs/prelit/tris. The same is true of DFF (`Track/DffModel.cpp`, 382 LOC)
+and TXD (`TxdDecoder`, 260 LOC). **All three formats are already ours.** The adoption shape is
+therefore:
+
+> parse with **our** loaders → **construct** librw objects in memory → render with **librw's**
+> pipelines.
+
+librw's stream layer (`clump.cpp`, `texture.cpp`, native-data readers) is simply unused. This is
+a supported use of the library — `rw::Geometry::create`, `rw::Atomic::create`,
+`rw::Raster::create`/`setTexels` are public construction APIs, not stream-private.
+
+Corollary: the DFF-variant question never has to be answered. Whether Mashed's `.DFF` would
+survive librw's clump reader is moot; `DffModel.cpp` already reads it.
+
+### 3.3 Impedance mismatches — the complete list
+
+| # | Mismatch | Shape of the bridge | Effort |
+|---|---|---|---|
+| I1 | `Track::Sector` (SoA float arrays + `uint32 prelit` + `uint16 tris`) → `rw::Geometry` (`morphTarget->vertices`, `colors`, `texCoords[]`, `Triangle{v[3],matId}`) + `rw::Atomic` + `rw::World` | straight repack; note RW wants `RGBA` structs not packed `uint32`, and a `MaterialList` per geometry | **M** |
+| I2 | `Track::DffBatch` (model-space, frame-baked, has `normals`) → `rw::Geometry` + `rw::Frame` + `rw::Atomic`/`rw::Clump` | same repack; our batches are already frame-baked so the RW frame hierarchy collapses to identity — **this loses nothing today but forecloses skinned/animated parts** | **M** |
+| I3 | `Txd::Mip{depth, stride, palette}` → `rw::Raster` via `Raster::create` + `lockTexture`/`setTexels` | needs a format map: Mashed mip `depth`/palette → RW `Raster::C8888`/`C888`/`C1555`/`PAL8`/DXT. **Unknown until we enumerate the depths actually present across all 13 track TXDs — do this first in E2'.** | **M** |
+| I4 | `TrackRenderer`'s `D3DCOLOR fog_color_/amb_world_/sun_color_` + fixed-function fog → `rw::Light` (`LIGHT_AMBIENT`/`LIGHT_DIRECTIONAL`) + RW fog render-state | semantics differ (RW lighting is per-vertex in the default pipe); needs a documented delta | **M** |
+| I5 | `Track::DffBatch::modulate_mat` / `lit` flags → RW geometry flags (`Geometry::LIGHT`, `Geometry::MODULATE_MATERIAL_COLOR`, `PRELIT`) | near 1:1 — these flags exist in RW for exactly this reason | **S** |
+| I6 | `RwIm2DBridge` (fake RW device at `*(0x007d3ff8)`, `+0x30` slot → `DrawPrimitiveUP`) → librw `im2d` | the bridge's *purpose* was to be a stand-in RW device; librw **is** the real thing. This is a simplification, not a port. Keep the vtable shim, redirect its body to `rw::im2d::RenderPrimitive`. | **M** |
+| I7 | Device ownership: we create the device (`exe_main`'s InitD3D9); librw wants to (`EngineOpenParams{HWND}`, `Direct3DCreate9`+`CreateDevice`+`Present`) | **Option A (recommended for the exe):** hand librw the HWND, delete our InitD3D9. **Option B:** patch `startD3D` to adopt a pre-made device (set `d3d::d3ddevice`, `d3d9Globals.present/window`, run the `:1192-1211` cache init) — ~30 lines, and **required only if librw ever goes in the .asi.** | **S** (A) / **S–M** (B) |
+| I8 | Present + frame limiter: librw calls `Present` at `d3ddevice.cpp:1356`; our frame limiter lives in the d3d9 shim's Present | the shim wraps the *real* d3d9 export, so it still sees librw's Present. **Likely no change** — verify empirically in E1' smoke. | **S** |
+| I9 | librw default D3D9 pipe is shader-based (`vs_2_0`/`ps_2_0`, `d3d9.cpp:697`); our spike is fixed-function | either accept shaders (blobs are pre-compiled, no fxc) or assign `defaultRenderCB_Fix`. Shaders are the better-exercised path (re3 ships them). | **S** (decision) |
+
+**Not a mismatch (explicitly):** `Track/`, `Txd/`, `Rws/`, `TrackData` parsers, `TextRenderer`,
+`MashedFont`, `PngLoader`, `MenuStringTable`, `LapLogic`, and all of `Render/` (the .asi leaf
+clusters) are untouched by this lane.
+
+### 3.4 Vendor strategy — **recommend: vendored snapshot, qhull-shaped**
+
+**Snapshot, not submodule.** Reasons: (a) upstream is alive (pushed 17 days ago) and we want a
+pinned, reproducible renderer, not a moving one; (b) we will carry local patches (I7-B if the
+.asi ever needs it, plus any `#pragma`/warning suppressions), and a submodule makes patches
+awkward; (c) the repo's only existing vendored library — qhull — is a snapshot, so this matches
+convention; (d) the three existing submodules are all *read-only prior art*, a different role.
+
+Concretely:
+```
+mashedmod/deps/librw/            <- tracked snapshot of aap/librw @ <pinned sha>
+  LICENSE                        <- MIT, must be preserved and shipped
+  PINNED_REV.txt                 <- upstream URL + sha + date + list of local patches
+  build_librw.bat                <- mirrors deps/qhull-2002.1/build_qhull.bat
+  rw.h, src/**
+```
+`re/prior_art/renderware/librw` (gitignored) stays as the pristine upstream clone for diffing
+our snapshot against upstream.
+
+**Build consumption — static lib, both targets, per the qhull precedent:**
+- `build_librw.bat` → `librw.lib` (x86, `/MT`, `/DRW_D3D9`), invoked once near `build.bat:24-28`.
+- Exactly **one** bridge TU per subsystem includes `rw.h`, compiled in isolation with a
+  dedicated `/I` into a per-target `.obj` (mirroring `build.bat:35-39` for `QhullBridge.cpp`).
+  Proposed: `mashedmod/src/mashed_re/LibRw/RwBridge.cpp` (+ `RwSceneBuild.cpp`, `RwIm2D.cpp`).
+- `/link … "%LIBRW_LIB%"` added to the exe target (`build.bat:279`).
+- **Both-lists rule (memory `project_asi_builds_from_rsp`): every new bridge `.cpp` must be
+  listed in BOTH `build.bat` AND `asi_sources.rsp`.** librw's own 45 sources are *not* listed
+  anywhere — that is the whole point of the static-lib shape.
+- **.asi target: do NOT link librw initially.** The .asi is the Frida-diff harness inside
+  `MASHED.exe`, which has its own RW engine and its own device. Linking librw there invites
+  symbol and device conflicts for no benefit. If a bridge TU lands in `asi_sources.rsp`, guard
+  it so the librw path is exe-only.
+
+Third-party notice obligation: ship `THIRD_PARTY_NOTICES.txt` next to `mashed_re.exe` carrying
+librw's MIT text (and qhull's terms while we are at it).
+
+---
+
+## 4. Sizing — E1'–E4'
+
+Effort classes: **S** = one focused session · **M** = 1–2 · **L** = 3+ or needs a split.
+Sessions are sized to the token-economy rule (split at phase boundaries).
+
+### E1' — vendor + build + smoke (**S**) — *largely pre-validated this session*
+1. Snapshot `re/prior_art/renderware/librw@1252b90e` (or re-pull to a fresh sha) into
+   `mashedmod/deps/librw/`; write `PINNED_REV.txt`; preserve `LICENSE`.
+2. Author `deps/librw/build_librw.bat` from the probe command in §1.3; wire into `build.bat`.
+3. Smoke TU `LibRw/RwBridge.cpp`: `Engine::init` → `Engine::open({hwnd})` → `Engine::start`,
+   create an `rw::Camera`, clear to a known colour, `Present`, exit.
+4. **Acceptance:** `mashed_re.exe` boots, shows the clear colour, exits clean; frame limiter
+   (I8) still caps at `MASHED_FPS_CAP`; no regression to the existing menu path (librw stays
+   behind an env gate, e.g. `MASHED_RENDER_LIBRW=1`).
+5. Decide I9 (shader vs fixed-function default pipe) and record it.
+
+Risk here is low: the compile is already proven (0 errors, x86 verified). What is unproven is
+`Engine::open`/`start` against our window and the shim.
+
+### E2' — feed librw from our loaders (**L — split into three**)
+
+**E2'a — rasters (M).** First action: enumerate the mip `depth`/palette combinations actually
+present across all 13 track TXDs + the vehicle TXDs (a `re/tools/` one-shot, cheap). Then the
+`Txd::Mip` → `rw::Raster` bridge (I3). Acceptance: `imgdiff` of a texture-atlas dump vs the
+current D3D9 path, per-channel mean-abs at the documented floor.
+
+**E2'b — static world + props (M).** `Track::World` → geometry/atomic/world (I1), `Track::DffModel`
+→ clump (I2), flags (I5), camera + fog/lighting (I4). Acceptance: `imgdiff` at the E3'
+viewpoints, world-only, no cars.
+
+**E2'c — the TrackRenderer split (L — this is the real cost).** Before cars/particles/pickups can
+move, `TrackRenderer.cpp`'s 4139 LOC must be separated into *race state* (keep, renderer-neutral)
+and *draw submission* (replace). Suggested cut: extract a `Race/RaceSceneState` holding the
+gameplay members, leave `TrackRenderer` as the D3D9 submitter, add `LibRw/RwSceneSubmit` as the
+librw submitter, both consuming the same state. **Do this as its own session with a no-op
+refactor commit first** (pure move, existing D3D9 path unchanged, existing parity GREEN
+preserved) — that de-risks everything after it. Then port cars, particles, pickups, sky.
+
+### E3' — viewpoint parity pass with documented deltas (**M**)
+**Acceptance is explicitly NOT bit-parity** (gate D2). It is behavioural parity with every
+remaining difference written down.
+
+Protocol:
+- **`imgdiff.py` — primary gate, survives the swap untouched.** It compares presented pixels
+  (`MASHED_DBG_BBDUMP` → `verify/dbg_backbuffer.bmp`, or `capture_window.ps1`), so it is
+  renderer-agnostic by construction. Fixed viewpoint set, captured on the D3D9 path *before*
+  E2' as the reference: (1) main menu, (2) Arctic race start-line, (3) Arctic mid-lap with
+  props + copters, (4) a car-heavy pack shot, (5) a particle/weather-active frame, (6) a
+  pickup-orb frame, (7) sky/fog horizon, (8) results screen. Per-viewpoint mean-abs and
+  %-over-threshold recorded in a **delta register** inside this brief's successor doc; each
+  non-zero delta gets a one-line cause or an `[UNCERTAIN]`.
+- **`nav_coverage.py` — survives untouched.** Pure source linter over `Frontend/MenuNavSM.cpp`
+  + `exe_main.cpp`; never touches the renderer. Keep running it.
+- **`drawlist_diff.py` — schema survives, emit sites must be re-planted.** The record format is
+  the *original's* RW Im2D vertex layout (`decode_raw_blob`, `<ffffIff`), not a D3D9 layout, so
+  the differ and the original-side capture (`menu_draw_burst.py`) are unchanged. What moves:
+  - `RwIm2DBridge.cpp:121` (the primary emit, inside `Bridge_DrawPrimitive`, fired on the raw
+    source blob + mirrored RW state *before* conversion) → an equivalent one-line
+    `DrawStreamDump_OnDraw(...)` at librw's im2d submit entry (`src/im2d`-equivalent).
+  - `exe_main.cpp:2858` (the native video quad that bypasses the bridge) — hand-built record,
+    unaffected.
+  - `TrackRenderer.cpp:3601/3611/3620/3951` (`DrawStreamDump_Race3DBegin/Cat`, camera-invariant
+    geometry tallies) → re-insert in the librw world/atomic submit path.
+  Net harness cost: **two emit hooks re-wired, ~S**, not a harness rebuild.
+- **Draw-list checks that still apply:** the full 2D menu channel (MISSING/EXTRA/MISMATCH
+  classification is renderer-independent) and the 3D geometry tallies. What does *not* apply:
+  any expectation that D3D9 draw-call counts match — librw batches differently by design, and
+  that difference is a documented delta, not a failure.
+
+### E4' — verbatim RW islands, demand-driven only (**open-ended, unscheduled**)
+Per D2, verbatim RW ports now happen **only** where an E3' behavioural delta cannot be closed
+inside librw. Each island is opened by a specific cited delta, ported per `hook-author`, and
+verified per `diff-original`. **Do not pre-queue islands.** The ~770 rows + ~217 stubs the D2
+reversal avoided stay avoided unless a delta names them.
+
+### Sequencing
+```
+E1' (S)  ->  E2'a (M)  ->  E2'c refactor, no-op commit (M)  ->  E2'b (M)  ->  E2'c ports (M–L)  ->  E3' (M)  ->  E4' (as-needed)
+                              ^ the earlier this lands, the cheaper everything after it
+```
+Reference captures for E3' should be taken **before** E2' starts, on the current GREEN D3D9 path.
+
+---
+
+## 5. Risk register
+
+| # | Risk | Sev | Evidence / mitigation |
+|---|---|---|---|
+| **R1** | **`TrackRenderer.cpp` fuses 4139 LOC of D3D9 draw path with race gameplay state.** Any swap risks dragging gameplay behaviour along with the renderer. | **HIGH** | The dominant cost. Mitigate with the E2'c **no-op refactor commit first** (pure move, D3D9 path unchanged, parity still GREEN) before any librw submission lands. |
+| R2 | Acceptance is behavioural, not bit-exact — "how different is too different?" has no mechanical answer. | HIGH | Gate D2 chose this deliberately. Mitigate with the fixed 8-viewpoint set + a written delta register where every non-zero diff has a cause or an `[UNCERTAIN]`. No delta may be closed by "looks fine". |
+| R3 | RW per-vertex lighting/fog semantics differ from our fixed-function approximation (I4). | MED | Expect visible deltas in ambient/sun/fog. These are *candidate documented deltas*, not bugs — but if the track reads wrong, that is an E4' island. |
+| R4 | Mashed TXD mip formats may not map cleanly onto RW raster formats (I3). | MED | Unknown until enumerated. **E2'a's first action is the enumeration** — do not start the bridge before it. |
+| R5 | librw owns device + Present; our boot path and d3d9 shim assume we do (I7, I8). | MED | Known InitD3D9/CreateDevice hang history (memory `project_initd3d9_createdevice_hang`). Prove in E1' smoke behind `MASHED_RENDER_LIBRW=1` so the working path stays reachable. |
+| R6 | Default librw D3D9 pipe uses vs_2_0/ps_2_0; our spike is fixed-function (I9). | LOW-MED | Shader blobs are pre-compiled and committed (no fxc). `defaultRenderCB_Fix` is the fallback. re3 ships the shader path on Windows. |
+| R7 | librw is alive upstream (pushed 2026-07-14); drift vs our snapshot. | LOW | Snapshot + `PINNED_REV.txt` + keep the gitignored pristine clone for diffing. |
+| R8 | Frame-baked `DffBatch` collapses the RW frame hierarchy (I2) — forecloses skinned/animated parts. | LOW | Costs nothing today (nothing in Mashed's DFFs is skinned as far as our loader exposes). Re-open only if an animated part appears. |
+| R9 | librw in the .asi would collide with `MASHED.exe`'s own RW engine and device. | LOW | Avoided by decision: **exe-only** (§3.4). Guard any bridge TU that lands in `asi_sources.rsp`. |
+| ~~R0~~ | ~~librw's 32-bit MSVC path is dead → D2 reopens~~ | **CLOSED** | Measured: 0 errors, 45 objs, `librw.lib` 1.23 MB, COFF machine `0x014C`. See §1.3. |
+
+---
+
+## 6. Complication list (things the user should know before E1')
+
+1. **librw is a new tracked dependency.** Nothing RW is vendored into the build today (§2.4).
+   This needs approval — see the question below.
+2. **The expensive part is ours, not librw's.** R1: the `TrackRenderer` split is the single
+   largest item in the lane and it buys nothing visible on its own.
+3. **We keep all three of our loaders.** librw's stream layer is unused; the "BSP unsupported"
+   warning is moot (§3.2). Anyone reading upstream's README cold will think this lane is
+   blocked — it is not.
+4. **The .asi does not get librw.** Exe-only, by decision.
+5. **Reference captures must be taken before E2' starts**, on the current GREEN path, or E3' has
+   nothing to diff against.
+
+---
+
+## Appendix — evidence index
+
+| Claim | Where measured |
+|---|---|
+| MIT license text | `re/prior_art/renderware/librw/LICENSE` (read verbatim); GitHub API `spdx_id: MIT` |
+| Upstream alive, 2026-07-14 | GitHub API `/repos/aap/librw` |
+| RW 3.1–3.7 range | `librw/src/rwbase.h` version comment table |
+| `win-x86-d3d9` platform | `librw/premake5.lua` |
+| **x86/MSVC build clean** | this session: `vcvars32` + `cl 19.44` over `src/*.cpp src/d3d/*.cpp src/lodepng/*.cpp`; 0 errors, 3× C4838, 45 objs, `librw.lib` 1,232,788 B, `engine.obj` COFF machine `0x014C` |
+| Shaders pre-compiled | `librw/src/d3d/shaders/*_VS.h`, `*_PS.h` committed; `make_*.cmd` only regenerates |
+| Device ownership | `librw/src/d3d/rwd3d.h` (`EngineOpenParams{HWND}`, `extern IDirect3DDevice9 *d3ddevice`); `d3ddevice.cpp:1518,1622,1356,1192-1211` |
+| Default pipe is shader-based | `librw/src/d3d/d3d9.cpp:697`; fallback `d3d9render.cpp:78` |
+| No BSP reader | `librw/src/world.cpp` (5.4 KB, container only); README *"BSP is not supported at all"* |
+| Mashed assets are RW 3.7.0.2 | this session: `piz_extract.py extract Arctic.piz`; chunk headers `0x0B`/`0x10`/`0x23`, libid `0x1C02000A` |
+| TXD is proprietary `0x23` | `mashedmod/src/mashed_re/Txd/TxdDecoder.h:2`, `.cpp:49` |
+| Our render surface / LOC / D3D9 leaks | account2 worker survey, 2026-07-31 (read-only; cost $2.41, off this account's quota) |
+| Build wiring + qhull precedent | `mashedmod/build.bat:24-28,35-39,82-276,279,287`; `mashedmod/asi_sources.rsp` |
+| Parity harness emit sites | `RwIm2DBridge.cpp:121`; `exe_main.cpp:2858`; `TrackRenderer.cpp:3601,3611,3620,3951` |
