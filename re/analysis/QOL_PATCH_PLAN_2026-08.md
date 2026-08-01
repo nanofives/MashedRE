@@ -132,10 +132,33 @@ clump draws from. So interpolating `+0x928` at render time is a no-op for the ca
 mesh, and the code was reverted (camera-only ships).
 Why the camera works but cars don't: `FUN_00441760` is a distinct, callable
 pose→frame commit I can re-run at render time; the car clump has no equivalent
-re-appliable step in the render path. **To revive cars:** locate where the car
-clump's RwFrame is set from its transform (in the `FUN_00410b30`→`FUN_00420050`
-render subtree, or the tick path) and re-apply an interpolated matrix there —
-materially deeper RE. Opponents currently step at 60 Hz relative to the smooth
+re-appliable step in the render path.
+
+**Deeper-hook investigation (2026-08-01, second attempt).** Traced the render
+dispatch and did a live memory scan for a car's world-position triplet
+(`car_frame_scan.py`). Findings:
+- RW matrix layout confirmed: right `+0x00`, up `+0x10`, at `+0x20`, pos `+0x30`.
+- The car's transform is replicated in **30+ copies at per-boot heap addresses**
+  (a `0x10d3xxxx`-region cluster — the car clump's per-atomic/part frame LTMs;
+  a Mashed car is a multi-part `RpClump`), plus fixed-segment copies: the
+  per-player render struct `DAT_0063dc38 + i*0x2ac` (passed to `FUN_004c1b40`
+  in `FUN_00420050`), a clean matrix at `0x0063d910`, and the `+0x928` render
+  matrix already tried.
+- The clump-frame LTMs are positioned at **tick time** (the +80 lift on `+0x928`
+  at render had no effect), at **heap addresses that change every boot**.
+- **What car interpolation actually requires:** at render, for each car, walk to
+  its clump root frame (dynamic ptr — via the per-player renderable
+  `DAT_0063da18[i]` or `DAT_0063dc38[i]` → clump → frame), override the root
+  frame LTM with the interpolated matrix, force the child-frame LTM rebuild
+  (RW dirty-flag / `RwFrameUpdateObjects`), render, then restore the true LTM.
+  This is RW frame-hierarchy manipulation with real crash risk on the play
+  binary, and the frame walk must be re-derived each boot. A dedicated session,
+  not a quick extension.
+- **Decision:** not landed. Disproportionate risk/effort for a second-order gain
+  (opponents only; the player car is screen-centred and the camera is already
+  smooth). Camera-only interpolation ships. Revival path is the bullet above;
+  the live evidence is `verify/qol_asi_20260801/cartest_lift.png` +
+  scratch probes `car_frame_find.py` / `car_frame_scan.py`. Opponents currently step at 60 Hz relative to the smooth
 camera; the player car is ~screen-centred so its residual step is minimal.
 
 **Residue for a later session:** car-mesh interpolation (above); aspect-ratio
