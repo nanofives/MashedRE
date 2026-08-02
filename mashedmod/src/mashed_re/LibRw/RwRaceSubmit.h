@@ -33,6 +33,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <windows.h>
 
 struct IDirect3DDevice9;
@@ -91,8 +92,11 @@ void RaceSubmit_BeginTrackLoad();
 // Returns an opaque handle (>= 0) to keep in the owning struct, or -1 on failure.
 // A -1 handle simply means "keep drawing this one through D3D9", so the port is
 // incremental by construction and a single bad model cannot black out the scene.
+// `ambient` = RaceSceneState::amb_world_ (0x00RRGGBB), already parsed by
+// TrackRenderer before any prop loads. See BuildClump's note for why it matters.
 int RaceSubmit_RegisterModel(const Track::DffModel& model,
-                             const Txd::Dictionary* dicts, std::size_t ndicts);
+                             const Txd::Dictionary* dicts, std::size_t ndicts,
+                             std::uint32_t ambient);
 
 // Queue one placed copy for this frame. `m44` is a D3DMATRIX in memory order --
 // the SAME matrix the D3D9 path would pass to SetTransform(D3DTS_WORLD), so both

@@ -789,7 +789,32 @@ viewpoints, world-only, no cars.
 >      inferred from a constant instance total of 27 — which already *included* the
 >      car. D-S3-7 is very likely not a separate bug but the same too-dark shading.
 >
->   **Leading hypothesis, UNVERIFIED:** the D3D9 path bakes the track ambient into
+>   5. **CONFIRMED, and largely fixed.** The two vertex colours settle it. The raw
+>      prelit `BuildClump` receives for the sea is `0xFF0C0E0B` = **(12,14,11)**;
+>      the track ambient is **(51,77,77)** (`0xFF334D4D`, logged by TrackRenderer);
+>      so what the D3D9 path bakes is **(63,91,88)** — a **5.3–8×** brightening,
+>      against a **4.3–5.4×** deficit measured on screen. The arithmetic matches.
+>
+>      Fix: `BuildClump` now takes the ambient and folds it into the prelit of
+>      batches that are **prelit-but-not-LIGHT** — exactly the set librw's lighting
+>      cannot reach (no normals → no `LIGHT` flag → `setAmbient(black)`). `LIGHT`
+>      batches are left alone because they *do* receive the `rw::Light` ambient, and
+>      baking it there would double-count.
+>
+>      Measured effect (instances ON, vs reference): `car_1_spawn` 15.41 → **10.13**,
+>      `car_2_drive` 9.96 → **7.36**, `01_grid` 9.74 → **7.31**, `car_3_weave`
+>      10.27 → **9.32**, `car_5_chase` 4.07 → **3.58**. The sea now renders as a
+>      textured surface instead of near-black.
+>
+>      **Still open on the instanced path** (so it stays gated OFF):
+>      - a **colour cast** — the sea reads olive where the D3D9 baseline reads dark
+>        teal. Suspect the prelit channel order or the texture stage op, not the
+>        ambient (which is now provably applied). `[UNCERTAIN]`
+>      - **D-S3-7 — the car still does not appear**, despite 4 instances being
+>        submitted every frame. Now clearly its own defect rather than the shading
+>        issue, and the next thing to chase.
+>
+>   **Superseded hypothesis (kept for the record):** the D3D9 path bakes the ambient
 >   the vertex colours at build time (`BuildDffBatches` takes an `AtomicLight`, and
 >   `TrackRenderer`'s own note says the dim baked prelight "is meant to be combined
 >   with this ambient at render — without it the world is a dark void"). The librw

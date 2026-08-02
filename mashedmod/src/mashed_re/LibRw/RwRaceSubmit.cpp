@@ -226,10 +226,11 @@ void RaceSubmit_BeginTrackLoad() {
 }
 
 int RaceSubmit_RegisterModel(const Track::DffModel& model,
-                             const Txd::Dictionary* dicts, std::size_t ndicts) {
+                             const Txd::Dictionary* dicts, std::size_t ndicts,
+                             std::uint32_t ambient) {
     if (!g_engine_up) return -1;
     TextureSource ts{ dicts, (int)ndicts };
-    rw::Clump* c = static_cast<rw::Clump*>(BuildClump(model, ts));
+    rw::Clump* c = static_cast<rw::Clump*>(BuildClump(model, ts, ambient));
     if (!c) { RLog("WARN: BuildClump failed -- model stays on the D3D9 path"); return -1; }
     // Deliberately NOT added to the rw::World: World::render() walks the clump
     // list and would draw every registered model once, at its authored transform,

@@ -44,7 +44,16 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex);
 // Track::DffModel -> rw::Clump* (returned as void*), one rw::Atomic per batch.
 // DffBatch verts are model-space and frame-baked (DffModel.h), so every atomic
 // gets an identity frame parented to the clump frame.
-void* BuildClump(const Track::DffModel& model, const TextureSource& tex);
+// `ambient` is the track's RpLight ambient as 0x00RRGGBB (RaceSceneState::amb_world_).
+// It is ADDED into the prelit colours of batches that are prelit-but-not-LIGHT,
+// mirroring what the D3D9 path bakes in via BuildDffBatches' AtomicLight. Those
+// batches carry no normals, so librw's lighting cannot reach them: lightingCB_Shader
+// sets ambient to BLACK for non-LIGHT geometry, and without this they render several
+// times too dark (measured: Arctic sea prelit (12,14,11) vs baked (63,91,88)).
+// LIGHT batches are left alone -- they DO receive the rw::Light ambient, and baking
+// it in as well would double-count.
+void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
+                 std::uint32_t ambient = 0);
 
 // E2'b step 2: build the Arctic world, render it once through librw from a
 // DETERMINISTIC overview camera derived from the world bbox, and dump the

@@ -1195,10 +1195,22 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             Track::DffModel m;
             if (!m.Parse(db, dl)) return false;
             BuildDffBatches(dev, m, dicts, &p->batches, &p->textures, lt);
+        // D-S3-6 probe: what does the D3D9 bake produce for vertex 0 of this
+        // prop, and was an AtomicLight applied? Compare against the raw prelit
+        // value BuildClump uploads for the same vertex (log/librw_scene.txt).
+        // If they differ by the track ambient, the librw path is missing the
+        // ambient the D3D9 path bakes in -- which is the standing hypothesis.
+        if (log) {
+            unsigned baked = 0;
+            for (const auto& bb : p->batches) if (!bb.empty()) { baked = bb[0].c; break; }
+            std::fprintf(log, "D-S3-6 bake: dff=%s lt=%s baked_v0=0x%08X\n",
+                         dff_name, lt ? "YES" : "no", baked);
+        }
         // E2'b step 3: hand this model to librw HERE -- `m` is a local that dies
         // at the closing brace, and nothing else retains a parsed DffModel.
         if (LibRw::RaceSubmit_Requested())
-            p->rw_model = LibRw::RaceSubmit_RegisterModel(m, dicts.data(), dicts.size());
+            p->rw_model = LibRw::RaceSubmit_RegisterModel(m, dicts.data(), dicts.size(),
+                                                          amb_world_);
             // F3: bind each material's UVAnim-extension name to its .UVA rate.
             p->mat_scroll.assign(m.materials.size(), {});
             for (std::size_t mi = 0; mi < m.materials.size(); ++mi)
@@ -1911,7 +1923,8 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
     BuildDffBatches(dev, model, dicts, &all_batches, &car_textures_);
     // E2'b step 3: same lifetime rule as props -- register before `model` dies.
     if (LibRw::RaceSubmit_Requested())
-        rw_car_model_ = LibRw::RaceSubmit_RegisterModel(model, dicts.data(), dicts.size());
+        rw_car_model_ = LibRw::RaceSubmit_RegisterModel(model, dicts.data(), dicts.size(),
+                                                       amb_world_);
     // WS-E s2: the track's atomic light set drives the car's directional shading
     // (RW lights the body panels — normals + rpGEOMETRYLIGHT — per LIGHTS.DFF).
     // WS-E vehicle lighting: under MASHED_RPLIGHT the directional term is NOT

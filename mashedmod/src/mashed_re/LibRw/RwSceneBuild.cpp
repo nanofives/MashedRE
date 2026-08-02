@@ -184,7 +184,8 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
 // call is ambiguous.
 namespace { void SLog(const char* fmt, ...); }
 
-void* BuildClump(const Track::DffModel& model, const TextureSource& tex) {
+void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
+                 std::uint32_t ambient) {
     std::vector<rw::Material*> mats;
     int named = 0, resolved = 0;
     BuildMaterials(model.materials, tex, mats, &named, &resolved);
@@ -211,10 +212,11 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex) {
         for (std::size_t bi = 0; bi < model.batches.size(); ++bi) {
             const Track::DffBatch& b = model.batches[bi];
             SLog("  clump[%d].batch[%zu] mat=%u nv=%zu nt=%zu uv=%d prelit=%d "
-                 "norm=%d lit=%d mod=%d",
+                 "norm=%d lit=%d mod=%d prelit[0]=0x%08X",
                  id, bi, (unsigned)b.material, b.verts.size() / 3, b.tris.size() / 3,
                  (int)!b.uvs.empty(), (int)!b.prelit.empty(), (int)!b.normals.empty(),
-                 (int)b.lit, (int)b.modulate_mat);
+                 (int)b.lit, (int)b.modulate_mat,
+                 b.prelit.empty() ? 0u : (unsigned)b.prelit[0]);
         }
     }
 
@@ -240,7 +242,27 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex) {
 
         rw::Geometry* geo = rw::Geometry::create(nv, nt, flags);
         if (!geo) continue;
-        FillVertexData(geo, nv, b.verts, b.uvs, b.prelit, &b.normals);
+        // [D-S3-6 FIX] Fold the track ambient into prelit for non-LIGHT batches.
+        // See the header note: this is what the D3D9 bake does, and librw's
+        // lighting provably cannot supply it here (no normals => no LIGHT flag =>
+        // lightingCB_Shader takes the setAmbient(black) branch).
+        std::vector<std::uint32_t> prelit_amb;
+        const std::vector<std::uint32_t>* prelit_src = &b.prelit;
+        if (ambient && !b.prelit.empty() && !b.lit) {
+            const unsigned ar = (ambient >> 16) & 0xFF;
+            const unsigned ag = (ambient >> 8)  & 0xFF;
+            const unsigned ab = (ambient)       & 0xFF;
+            prelit_amb.resize(b.prelit.size());
+            for (std::size_t i = 0; i < b.prelit.size(); ++i) {
+                const std::uint32_t c = b.prelit[i];
+                unsigned r = ((c >> 16) & 0xFF) + ar; if (r > 255) r = 255;
+                unsigned g = ((c >> 8)  & 0xFF) + ag; if (g > 255) g = 255;
+                unsigned bl = ((c)      & 0xFF) + ab; if (bl > 255) bl = 255;
+                prelit_amb[i] = (c & 0xFF000000u) | (r << 16) | (g << 8) | bl;
+            }
+            prelit_src = &prelit_amb;
+        }
+        FillVertexData(geo, nv, b.verts, b.uvs, *prelit_src, &b.normals);
         for (std::int32_t i = 0; i < nt; ++i) {
             // DffBatch::tris is v0,v1,v2 -- material is per BATCH, not per tri.
             geo->triangles[i].matId =
