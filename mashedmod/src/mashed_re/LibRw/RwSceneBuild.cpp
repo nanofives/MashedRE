@@ -260,16 +260,24 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
         std::vector<std::uint32_t> prelit_amb;
         const std::vector<std::uint32_t>* prelit_src = &b.prelit;
         if (ambient && !b.prelit.empty() && !b.lit) {
-            const unsigned ar = (ambient >> 16) & 0xFF;
+            // CHANNEL ORDER, and it bit once. `ambient` (amb_world_) is
+            // 0x00RRGGBB, but DffModel prelit is RW-native RGBA bytes, i.e.
+            // 0xAABBGGRR -- FillVertexData below reads red from the LOW byte and
+            // blue from bits 16-23. The first version of this bake used the ARGB
+            // layout for both, so it added the ambient's RED to the blue channel
+            // and its BLUE to the red channel. With Arctic's (51,77,77) that
+            // pushed red up and blue down and turned the sea olive where the D3D9
+            // baseline is dark teal. Unpack each side in its own convention.
+            const unsigned ar = (ambient >> 16) & 0xFF;   // ambient is 0x00RRGGBB
             const unsigned ag = (ambient >> 8)  & 0xFF;
             const unsigned ab = (ambient)       & 0xFF;
             prelit_amb.resize(b.prelit.size());
             for (std::size_t i = 0; i < b.prelit.size(); ++i) {
-                const std::uint32_t c = b.prelit[i];
-                unsigned r = ((c >> 16) & 0xFF) + ar; if (r > 255) r = 255;
+                const std::uint32_t c = b.prelit[i];       // prelit is 0xAABBGGRR
+                unsigned r = ((c)       & 0xFF) + ar; if (r > 255) r = 255;
                 unsigned g = ((c >> 8)  & 0xFF) + ag; if (g > 255) g = 255;
-                unsigned bl = ((c)      & 0xFF) + ab; if (bl > 255) bl = 255;
-                prelit_amb[i] = (c & 0xFF000000u) | (r << 16) | (g << 8) | bl;
+                unsigned bl = ((c >> 16) & 0xFF) + ab; if (bl > 255) bl = 255;
+                prelit_amb[i] = (c & 0xFF000000u) | (bl << 16) | (g << 8) | r;
             }
             prelit_src = &prelit_amb;
         }

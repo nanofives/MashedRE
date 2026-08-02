@@ -831,10 +831,31 @@ viewpoints, world-only, no cars.
 >      librw**, correctly positioned and oriented, and props sit at their real
 >      placements instead of the origin.
 >
->      **Still open** (so the instanced path stays gated OFF): a **colour cast** —
->      the sea reads olive where the D3D9 baseline reads dark teal. Suspect the
->      prelit channel order or the texture stage op, not the ambient, which is now
->      provably applied. `[UNCERTAIN]`
+>      **Colour cast — CLOSED. Channel order.** `amb_world_` is `0x00RRGGBB`, but
+>      `DffModel` prelit is RW-native RGBA bytes (`0xAABBGGRR`) — `FillVertexData`
+>      reads red from the LOW byte and blue from bits 16-23. The first ambient bake
+>      used the ARGB layout for *both*, so it added the ambient's RED to blue and
+>      its BLUE to red; with Arctic's (51,77,77) that pushed red up and blue down.
+>      Each side is now unpacked in its own convention.
+>
+>      Measured on the sea region (mean RGB):
+>
+>      | | R | G | B |
+>      |---|---|---|---|
+>      | baseline D3D9 | 11.1 | 17.7 | 20.6 |
+>      | librw, ARGB bake (olive) | 21.9 | 25.7 | 20.0 |
+>      | librw, channel fix | 15.8 | 25.9 | 28.2 |
+>
+>      The hue ordering now matches the baseline (blue > red = teal, not olive).
+>      Shots: `01_grid` 5.51 → **5.24**, `car_1_spawn` 8.33 → **7.88**,
+>      `car_2_drive` 5.56 → **5.28**, `car_5_chase` 2.24 → **2.18**.
+>
+>      **Residual is brightness, not hue** — librw runs a uniform ~1.4× hot
+>      (15.8/11.1, 25.9/17.7, 28.2/20.6). That is consistent with the already
+>      registered **I4 fog delta**: RW ties the fog END to the camera far plane, so
+>      at this distance librw applies less fog than D3D9's `fog_end_`=70 ramp and
+>      the surface stays brighter. Consistent, **not proven** — closing it means
+>      giving the librw path an equivalent fog ramp. `[UNCERTAIN]`
 >
 >   **Superseded hypothesis (kept for the record):** the D3D9 path bakes the ambient
 >   the vertex colours at build time (`BuildDffBatches` takes an `AtomicLight`, and
