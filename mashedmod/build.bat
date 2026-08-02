@@ -44,8 +44,23 @@ REM linked into the .asi, which runs inside MASHED.exe and already has its own R
 REM engine + D3D9 device. See deps\librw\build_librw.bat, deps\librw\PINNED_REV.txt
 REM and re\analysis\LIBRW_SIZING_2026-08.md.
 set LIBRW_LIB=%ROOT%deps\librw\librw_d3d9.lib
+REM Rebuild when the lib is MISSING **or STALE**. "Build once if absent" was not
+REM enough: we carry local patches to the vendored snapshot
+REM (deps\librw\MASHED_PATCHES.md), and editing those sources left a stale .lib
+REM that still linked, so the build failed with unresolved externals for the newly
+REM added entry points -- which is exactly what merging this branch into a tree
+REM with a pre-patch .lib did. Staleness is a source-newer-than-lib check.
+set LIBRW_STALE=0
 if not exist "%LIBRW_LIB%" (
-    echo === Building vendored librw static lib ===
+    set LIBRW_STALE=1
+) else (
+    for /f %%s in ('powershell -NoProfile -Command ^
+        "$l=(Get-Item '%LIBRW_LIB%').LastWriteTime;" ^
+        "if (Get-ChildItem '%ROOT%deps\librw\src' -Recurse -Include *.cpp,*.h -ErrorAction SilentlyContinue |" ^
+        "    Where-Object { $_.LastWriteTime -gt $l } | Select-Object -First 1) { '1' } else { '0' }"') do set LIBRW_STALE=%%s
+)
+if "%LIBRW_STALE%"=="1" (
+    echo === Building vendored librw static lib ^(missing or sources newer^) ===
     call "%ROOT%deps\librw\build_librw.bat"
     if errorlevel 1 (echo [ERROR] librw lib build failed & exit /b 1)
 )
