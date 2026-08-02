@@ -521,8 +521,10 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
             // instances per model and show each one's translation, so "the sea is
             // black" can be separated from "the sea is never drawn" and from "the
             // sea is drawn somewhere else". Measure before theorising about shading.
-            RLog("f%-6lld instances=%zu models=%zu", g_frames,
-                 g_insts.size(), g_models.size());
+            RLog("f%-6lld instances=%zu models=%zu | amb=(%.3f,%.3f,%.3f) sun=(%.3f,%.3f,%.3f) has_sun=%d",
+                 g_frames, g_insts.size(), g_models.size(),
+                 st.amb_f_[0], st.amb_f_[1], st.amb_f_[2],
+                 st.sun_f_[0], st.sun_f_[1], st.sun_f_[2], (int)st.has_sun_dir_);
             for (std::size_t mi = 0; mi < g_models.size(); ++mi) {
                 int n = 0; float px = 0, py = 0, pz = 0;
                 for (const Inst& in : g_insts)
@@ -530,16 +532,53 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
                         ++n;
                         if (n == 1) { px = in.m[12]; py = in.m[13]; pz = in.m[14]; }
                     }
-                RLog("    model[%zu] atomics=%d instances=%d first_pos=(%.2f,%.2f,%.2f)",
+                // D-S3-7: Clump::render() only draws atomics with the RENDER
+                // flag (clump.cpp:386). Count how many of ours actually have it,
+                // and report the live light colours -- the car has prelit=0, so
+                // unlike the props its colour comes ENTIRELY from lighting.
+                int rend = 0;
+                if (g_models[mi]) {
+                    FORLIST(lnk, g_models[mi]->atomics) {
+                        rw::Atomic* a = rw::Atomic::fromClump(lnk);
+                        if (a->object.object.flags & rw::Atomic::RENDER) ++rend;
+                    }
+                }
+                RLog("    model[%zu] atomics=%d render_flagged=%d instances=%d first_pos=(%.2f,%.2f,%.2f)",
                      mi, g_models[mi] ? (int)g_models[mi]->countAtomics() : -1,
-                     n, px, py, pz);
+                     rend, n, px, py, pz);
             }
         }
+        // D-S3-7 experiment: MASHED_LIBRW_LIFT=<metres> raises every instance in
+        // Y. Reasoning about why the car is invisible has failed repeatedly while
+        // every individual link measured correct, so lift the geometry into empty
+        // sky: if a car appears there it IS rasterising and was hidden; if nothing
+        // appears, it never rasterises at all. One observation, two hypotheses.
+        static const float s_lift = [] {
+            const char* e = std::getenv("MASHED_LIBRW_LIFT");
+            return e ? (float)std::atof(e) : 0.0f;
+        }();
         for (const Inst& in : g_insts) {
             if (in.model < 0 || (std::size_t)in.model >= g_models.size()) continue;
             rw::Clump* c = g_models[(std::size_t)in.model];
             if (!c) continue;
-            SetClumpTransform(c, in.m);
+            float mm[16];
+            for (int k = 0; k < 16; ++k) mm[k] = in.m[k];
+            mm[13] += s_lift;
+            SetClumpTransform(c, mm);
+            // D-S3-7: does the transform actually reach the atomics? uploadMatrices
+            // uses atomic->getFrame()->getLTM() (d3d9render.cpp:154), so THAT is
+            // the number that matters -- not what we wrote into clump->frame.
+            if (g_frames % 200 == 0 && in.model == 8) {
+                rw::Atomic* a0 = rw::Atomic::fromClump(c->atomics.link.next);
+                const rw::Matrix* al = a0 ? a0->getFrame()->getLTM() : nullptr;
+                RLog("      D-S3-7 want=(%.2f,%.2f,%.2f) clumpframe=(%.2f,%.2f,%.2f) "
+                     "atomicLTM=(%.2f,%.2f,%.2f)",
+                     mm[12], mm[13], mm[14],
+                     c->getFrame()->matrix.pos.x, c->getFrame()->matrix.pos.y,
+                     c->getFrame()->matrix.pos.z,
+                     al ? al->pos.x : -999.f, al ? al->pos.y : -999.f,
+                     al ? al->pos.z : -999.f);
+            }
             c->render();
             ++g_inst_drawn;
         }

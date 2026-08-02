@@ -121,7 +121,18 @@ rw::Atomic* MakeAtomic(rw::Geometry* geo, rw::Frame* parent) {
     rw::Atomic* a = rw::Atomic::create();
     if (!a) return nullptr;
     rw::Frame* f = rw::Frame::create();
-    if (parent) f->addChild(parent);
+    // [D-S3-7 FIX] The arguments were INVERTED here. Frame::addChild(child) makes
+    // `this` the PARENT (frame.cpp:87-99), so `f->addChild(parent)` hung the clump
+    // root off the atomic instead of the atomic off the root. Consequence: moving
+    // the clump's frame moved a CHILD, the atomic's own frame stayed at identity,
+    // and every instanced model drew at the world origin regardless of the
+    // transform submitted. Measured directly: clumpframe=(-25.21,0.04,15.78) while
+    // the atomic's LTM read (0.00,0.00,0.00).
+    //
+    // It went unnoticed in E2'b step 2 because the only consumer was the static
+    // world, whose frame is identity -- wrong parenting and correct parenting are
+    // indistinguishable at identity. It surfaced the moment anything had to MOVE.
+    if (parent) parent->addChild(f);
     a->setFrame(f);
     a->setGeometry(geo, 0);
     return a;

@@ -806,13 +806,35 @@ viewpoints, world-only, no cars.
 >      10.27 → **9.32**, `car_5_chase` 4.07 → **3.58**. The sea now renders as a
 >      textured surface instead of near-black.
 >
->      **Still open on the instanced path** (so it stays gated OFF):
->      - a **colour cast** — the sea reads olive where the D3D9 baseline reads dark
->        teal. Suspect the prelit channel order or the texture stage op, not the
->        ambient (which is now provably applied). `[UNCERTAIN]`
->      - **D-S3-7 — the car still does not appear**, despite 4 instances being
->        submitted every frame. Now clearly its own defect rather than the shading
->        issue, and the next thing to chase.
+>      **D-S3-7 — CLOSED. `MakeAtomic` had its arguments inverted.**
+>      `Frame::addChild(child)` makes `this` the PARENT (`frame.cpp:87-99`), so
+>      `f->addChild(parent)` hung the clump root off the atomic instead of the
+>      atomic off the root. Moving the clump's frame moved a *child*; the atomic's
+>      own frame stayed at identity, and every instanced model drew at the world
+>      origin no matter what transform was submitted.
+>
+>      Measured directly, which is what found it after reasoning had failed:
+>      `clumpframe=(-25.21,0.04,15.78)` while `atomicLTM=(0.00,0.00,0.00)`. The
+>      preceding clue was a **null experiment** — `MASHED_LIBRW_LIFT=4` raised every
+>      instance and produced a **bit-identical** frame, proving the submitted
+>      transform reached nothing.
+>
+>      This is a **pre-existing E2'b step 2 defect**, not new. It was invisible
+>      because the only consumer was the static world, whose frame is identity —
+>      wrong and right parenting are indistinguishable at identity. It surfaced the
+>      moment something had to move.
+>
+>      After the fix (instances ON, vs reference): `01_action` 1.77 → **0.71**,
+>      `01_grid` 7.31 → **5.51**, `car_1_spawn` 10.13 → **8.33**, `car_2_drive`
+>      7.36 → **5.56**, `car_3_weave` 9.32 → **7.64**, `car_4_chase` 1.57 →
+>      **0.41**, `car_5_chase` 3.58 → **2.24**. **The player car now renders through
+>      librw**, correctly positioned and oriented, and props sit at their real
+>      placements instead of the origin.
+>
+>      **Still open** (so the instanced path stays gated OFF): a **colour cast** —
+>      the sea reads olive where the D3D9 baseline reads dark teal. Suspect the
+>      prelit channel order or the texture stage op, not the ambient, which is now
+>      provably applied. `[UNCERTAIN]`
 >
 >   **Superseded hypothesis (kept for the record):** the D3D9 path bakes the ambient
 >   the vertex colours at build time (`BuildDffBatches` takes an `AtomicLight`, and
