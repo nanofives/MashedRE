@@ -43,6 +43,11 @@ void setAdoptedDevice(IDirect3DDevice9 *dev);
 // the shared device. Call before each submit under adoption: the other renderer
 // changes device state that librw's write-back cache cannot see. See P4 notes.
 void resyncDeviceState(void);
+// MASHED LOCAL PATCH (E2'b step 3 / I4, P6) -- set the fog ramp independently of
+// the camera's far plane. beginUpdate() derives fogData.end from cam->farPlane
+// (d3ddevice.cpp:1288), which welds the fog END to the CLIP distance. Call this
+// AFTER Camera::beginUpdate() to overwrite that. See P6 notes.
+void setFogRange(float32 start, float32 end);
 #endif
 
 #define COLOR_ARGB(a, r, g, b) ((rw::uint32)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))

@@ -14,6 +14,7 @@ Keep this file in sync when patching. A snapshot re-vendor must re-apply these.
 | P3 | `src/d3d/d3ddevice.cpp` (`beginUpdate`, `endUpdate`) | **Don't own the frame.** Under adoption, suppress (a) the auto-`Reset()` on client-rect mismatch and (b) `BeginScene`/`EndScene`. |
 | P4 | `src/d3d/d3ddevice.cpp` (`resyncDeviceState`), `src/d3d/rwd3d.h` | **Re-push cached state onto a device someone else drew with.** Exposes upstream's `restoreD3d9Device()`. librw's `setRenderState` layer is a write-back cache; the D3D9 path changes device state behind it (notably `TrackRenderer::Render` exits with `D3DRS_ZENABLE=FALSE`, `TrackRenderer.cpp:4151`). Without this, librw's first submit inherits whatever the other renderer left. |
 | P5 | `src/d3d/d3d.cpp` (`rasterCreateZbuffer`) | **Share the exe's depth buffer.** Upstream decides "is this the main depth buffer?" by comparing the raster size to the **window client rect**. Under adoption that is the wrong question — the backbuffer size is deliberately independent of the window (borderless mode). When it mismatches, librw silently allocates a *private* depth surface and its camera is blind to everything D3D9 already drew. Inert at 640×480 windowed, where the sizes happen to agree. |
+| P6 | `src/d3d/d3ddevice.cpp` (`setFogRange`), `src/d3d/rwd3d.h` | **Decouple the fog ramp from the clip distance.** New `rw::d3d::setFogRange(start, end)`, called after `Camera::beginUpdate()`. Upstream derives the fog constant's END from `cam->farPlane` (`:1288`) — which upstream itself flags as provisional — so `fog_end_` could not be honoured independently. See "Why P6" below. Inert unless called. |
 
 ## Why P1 — the shape of the problem
 
@@ -46,6 +47,41 @@ Both were found by reading, before they could produce a mystery blank frame:
    path. A nested `BeginScene` returns `D3DERR_INVALIDCALL`, and the matching
    `EndScene` in `endUpdate` would close the exe's scene early — silently dropping
    every draw issued afterwards, i.e. the whole HUD.
+
+## Why P6 — and why the far plane is NOT shortened instead
+
+The premise that made this look unfixable was that "RW ties fog to the far plane"
+is a *design* property of RW. It is not. Fog here is not fixed-function at all —
+the fixed-function `D3DRS_FOGSTART`/`D3DRS_FOGEND` writes are commented out
+(`d3ddevice.cpp:1285-1286`). What is actually used is a vertex-shader constant
+`fogData = (start, end, range, disable)` at `c14`, uploaded at `:308`, consumed by
+`default_VS.hlsl:48` as
+
+```
+TexCoord0.z = clamp((Position.w - fogEnd)*fogRange, fogDisable, 1.0)
+```
+
+— a fog factor that is 1 at `w == start` and 0 at `w == end`, with
+`range = 1/(start - end)`. `beginUpdate` merely *populates* that constant, taking
+`end` from `cam->farPlane` under a comment reading `// TODO: figure out where this
+is really done`. The coupling is an unfinished upstream detail, not a constraint.
+Nothing downstream reads `fogData.end` as a clip distance, and `devProj` is built
+from the real `farPlane` a few lines earlier, so overwriting the constant after
+`beginUpdate` changes the ramp and nothing else.
+
+Three options were on the table; the other two were rejected on evidence:
+
+- **Shorten the far plane to `fog_end_`.** Rejected. `proj[10] = far/(far-near)` and
+  `proj[14] = -near*proj[10]` (`:1270-1279`), so `far` 643.6 → 70 rewrites the depth
+  encoding librw writes into the depth buffer it **shares with the exe's D3D9 path**
+  (P5, and D-S3-1's measurement that the surface really is shared). librw-drawn cars
+  and props would then occlude-test incorrectly against D3D9-drawn particles and
+  pickups. It would also hard-clip all world geometry past 70 rather than fogging it.
+  Fixing fog by breaking Z is not a trade worth making.
+- **Accept it as a documented delta.** Rejected. It is a uniform ~1.4× on every
+  fogged surface — the largest single remaining parity term, and visible — while the
+  fix is four lines. A delta register is for differences that cost more to close than
+  to live with; this is the opposite.
 
 ## What is NOT patched
 

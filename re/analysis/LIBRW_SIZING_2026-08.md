@@ -880,12 +880,92 @@ viewpoints, world-only, no cars.
 > terms instead of the ported per-vertex N·L. A real visual delta, to be closed by
 > giving the librw path an equivalent relight pass.
 >
-> ### Residual
+> ### Residual — I4 fog CLOSED; the fog hypothesis for the SEA is DISPROVED (2026-08-02)
 >
-> The remaining ~0.9 is not itemised. It is consistent with the I4 fog/lighting
-> delta below (RW ties fog end to the far plane) plus per-vertex lighting
-> differences, but **that is a hypothesis, not a measurement** — the E3' delta
-> register still owes a per-region breakdown of it. `[UNCERTAIN]`
+> The premise that "RW ties fog to the far plane" is a *design* property of RW was
+> wrong. Fog on this path is not fixed-function at all: the `D3DRS_FOGSTART`/
+> `D3DRS_FOGEND` writes are commented out (`d3ddevice.cpp:1285-1286`), and what is
+> actually used is a vertex-shader constant `fogData=(start,end,range,disable)` at
+> c14 (`:1287-1296`), read by `default_VS.hlsl:48` as
+> `clamp((Position.w - fogEnd)*fogRange, fogDisable, 1.0)`. `beginUpdate` merely
+> *populates* `end` from `cam->farPlane`, under an upstream comment reading
+> `// TODO: figure out where this is really done`. An unfinished upstream detail,
+> not a constraint.
+>
+> Fix: **patch P6** — `rw::d3d::setFogRange(start, end)`, called immediately after
+> `Camera::beginUpdate()` (which would otherwise overwrite it). The projection is
+> still built from the true `farPlane`, so the depth encoding is untouched.
+>
+> *Shortening the far plane was rejected*, not merely unchosen:
+> `proj[10]=far/(far-near)`, `proj[14]=-near*proj[10]` (`:1270-1279`), so 643.6→70
+> rewrites the depth values librw writes into the depth buffer it **shares** with
+> the exe's D3D9 path (P5) — librw-drawn cars/props would then occlude-test wrongly
+> against D3D9-drawn particles and pickups. It would also hard-clip world geometry
+> past 70 instead of fogging it. Fixing fog by breaking Z is not a trade worth making.
+>
+> Measured on **one binary** with an env-gated control (`MASHED_LIBRW_FOGFIX=0`), so
+> this is a true A/B and not a rebuild artefact. The control reproduces the
+> previously recorded numbers to the hundredth on 6 of 7 shots — which validates the
+> harness end to end:
+>
+> | shot | world-only OFF | world-only ON | INST OFF | INST ON |
+> |---|---|---|---|---|
+> | `01_grid`     | 0.93 | **0.32** | 5.24 | **4.65** |
+> | `01_action`   | 0.56 | **0.45** | 0.71 | **0.59** |
+> | `car_1_spawn` | 0.93 | **0.31** | 7.88 | **7.12** |
+> | `car_2_drive` | 0.93 | **0.32** | 5.28 | **4.64** |
+> | `car_3_weave` | 0.93 | **0.37** | 7.55 | **6.95** |
+> | `car_4_chase` | 0.39 | **0.04** | 0.41 | **0.06** |
+> | `car_5_chase` | 0.70 | **0.29** | 2.18 | **1.77** |
+>
+> 7/7 improved. World-only **0.39–0.93 → 0.04–0.45**, reproduced identically across
+> two separate builds and runs. So about half the world-only residual *was* fog —
+> the hypothesis was right about the world.
+>
+> **It was wrong about the sea.** Closing the ramp moved the sea region the WRONG
+> way: 1.52/1.57/1.46 → **1.58/1.59/1.47**. The direction settles it: a shorter ramp
+> applies *more* fog, fog colour is (24,28,40), and the D3D9 baseline is
+> (11.1,17.8,20.7) — **darker than the fog colour**. Blending harder toward
+> (24,28,40) can only brighten. Less fog therefore cannot be what made the sea 1.4×
+> bright. The `[UNCERTAIN]` fog attribution is retired: the instanced sea's
+> brightness is an **unidentified, still-open cause**, not an I4 consequence.
+>
+> > Sea region = `car_2_drive`, box (0,240)-(240,480) = 8x6 grid cells (0,3) span
+> > 3x3. The box was never written down; it was recovered by scanning the reference
+> > for the region reproducing the recorded (11.1,17.7,20.6) baseline, which it does
+> > to 0.07. Recorded here so the next measurement is comparable.
+>
+> ### Residual itemised per region (world-only, post-fog-fix)
+>
+> "~0.9, not itemised, probably fog + lighting" is superseded. After the fog fix the
+> residual is **not diffuse** — it is one localised object plus a faint sky band. On
+> `01_action`, **43 of 48 grid cells are exactly 0.0** and only 1.73% of pixels
+> exceed threshold 16. The pattern is stable across shots:
+>
+> - **rows 3–5 (the whole lower half — ground and sea): 0.0.** Bit-identical.
+> - **one horizon-band object** — cells (1,2)/(2,2) in the car shots (3.3–6.4),
+>   (6,3)/(6,4) in `01_action` (7.6/5.1). Different screen position per camera, so a
+>   world object seen from different angles, not a screen-space artefact.
+> - **faint sky/horizon band**, row 1, ~0.3–0.9.
+>
+> Cropped side by side, D3D9 renders that surface smooth and librw renders it sharp
+> and speckled. **The obvious mip-level explanation is disproved:** both uploaders
+> are single-level — `RwRasterBridge.cpp:73` takes `tex.mips[0]` only, and the D3D9
+> track path calls `CreateTexture(w,h,1,...)` (`TrackRenderer.cpp:358`), also
+> `Levels=1`. Cause **not identified**; the localisation is the finding. `[UNCERTAIN]`
+>
+> ### Texture filtering (NEAREST vs LINEAR) — NOT a delta. Closed.
+>
+> Registered on the strength of librw's `Texture::create` default
+> (`texture.cpp:279`, `NEAREST`). But `TextureFromTxdTexture` overwrites that
+> default from the TXD, and Arctic's TXD already asks for LINEAR. Forcing LINEAR
+> (`MASHED_LIBRW_LINEAR=1`) gave a **bit-identical** frame on all 7 gating shots.
+>
+> That alone proves nothing — it is exactly what a dead override looks like — so a
+> **non-degeneracy control** was run: `MASHED_LIBRW_LINEAR=2` forces NEAREST and
+> moves every shot (`01_grid` 4.65→5.00, `car_1_spawn` 7.12→7.50, `car_5_chase`
+> 1.77→2.74). The override reaches the draw; the textures were already LINEAR.
+> Worth **0.00** of the E3' residual on Arctic. Probe kept for other tracks.
 >
 > ---
 >

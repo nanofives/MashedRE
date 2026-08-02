@@ -1602,6 +1602,37 @@ resyncDeviceState(void)
 	restoreD3d9Device();
 }
 
+// MASHED LOCAL PATCH (E2'b step 3 / I4, P6) -- decouple the fog ramp from the
+// clip distance.
+//
+// Fog in this path is NOT fixed-function: beginUpdate fills the vertex-shader
+// constant fogData = (start, end, range, disable) at c14 (:1287-1296, uploaded at
+// :308), and default_VS.hlsl:48 evaluates
+//     TexCoord0.z = clamp((Position.w - fogEnd)*fogRange, fogDisable, 1.0)
+// i.e. a fog FACTOR that is 1 at w==start and 0 at w==end. beginUpdate happens to
+// populate end from cam->farPlane -- upstream itself flags that as provisional
+// ("TODO: figure out where this is really done", :1284) -- and that is the entire
+// reason the fog end could not be honoured independently. Nothing downstream reads
+// fogData.end as a clip distance, so overwriting it here changes the ramp and
+// NOTHING else; devProj is already built from the real farPlane by the time we run.
+//
+// This is what D3DRS_FOGSTART/D3DRS_FOGEND give the D3D9 path for free, and it is
+// what the two renderers need to agree on: the alternative -- shortening farPlane
+// to fog_end_ -- would alter proj[10]/proj[14] and therefore the depth encoding
+// librw writes into the depth buffer it SHARES with the exe's D3D9 path (P5),
+// breaking depth interaction between librw-drawn cars/props and D3D9-drawn
+// particles and pickups. Fixing fog by breaking Z is not a trade worth making.
+//
+// Must be called after Camera::beginUpdate(), which would otherwise overwrite it.
+void
+setFogRange(float32 start, float32 end)
+{
+	d3dShaderState.fogData.start = start;
+	d3dShaderState.fogData.end = end;
+	d3dShaderState.fogData.range = 1.0f/(start - end);
+	d3dShaderState.fogDirty = true;
+}
+
 static int
 startD3D(void)
 {

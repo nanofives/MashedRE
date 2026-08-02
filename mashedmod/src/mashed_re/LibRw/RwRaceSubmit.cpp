@@ -325,13 +325,10 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
     g_cam->setFarPlane(st.last_far_);
 
     // ---- fog: values parsed by TrackRenderer from COURSE.LUA Setup_Fog ------
-    // [DELTA I4-fog] RW ties the fog END to the camera's FAR plane
-    // (d3ddevice.cpp:1289-1291: fogData.end = cam->farPlane), so fog_end_ cannot
-    // be honoured independently of the clip distance the way D3D9's discrete
-    // D3DRS_FOGEND can. We set fogPlane = fog_start_ and leave farPlane at the
-    // clip distance; the resulting fog ramp is therefore LONGER than the D3D9
-    // path's whenever fog_end_ < last_far_ (Arctic: 70 vs radius*8). Recorded as
-    // an I4 delta, not silently approximated.
+    // [I4-fog] fogPlane is the ramp's NEAR end and is honoured as-is. The FAR end
+    // is the one beginUpdate welds to cam->farPlane; it is corrected immediately
+    // after that call, below. Before the correction the ramp ran 70 -> 643.6
+    // instead of 70 -> 70's worth, leaving fogged surfaces ~1.4x too bright.
     if (st.fog_on_) {
         g_cam->fogPlane = st.fog_start_;
         rw::SetRenderState(rw::FOGENABLE, 1);
@@ -425,6 +422,20 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
     }
 
     g_cam->beginUpdate();
+
+    // [I4-fog CLOSED] beginUpdate has just welded the fog END to the far plane
+    // (d3ddevice.cpp:1288, fogData.end = cam->farPlane). Undo that and state the
+    // ramp COURSE.LUA's Setup_Fog actually asks for, which is what the D3D9 path
+    // puts in D3DRS_FOGSTART/D3DRS_FOGEND. Must follow beginUpdate, not precede it.
+    // See MASHED_PATCHES.md P6 for why the far plane is not shortened instead.
+    // MASHED_LIBRW_FOGFIX=0 restores the old farPlane-welded ramp. Kept as the
+    // same-binary control for this change -- the capture harness cannot tell a
+    // real difference from a rebuild artefact without one (librw_ref MANIFEST).
+    static const bool s_fogfix = [] {
+        const char* e = std::getenv("MASHED_LIBRW_FOGFIX");
+        return !(e && e[0] == '0' && e[1] == '\0');
+    }();
+    if (st.fog_on_ && s_fogfix) rw::d3d::setFogRange(st.fog_start_, st.fog_end_);
 
     if (dsBefore || rtBefore) {
         IDirect3DSurface9* dsAfter = nullptr;

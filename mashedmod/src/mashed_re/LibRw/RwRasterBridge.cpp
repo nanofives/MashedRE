@@ -23,6 +23,7 @@
 #include <rw.h>
 
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 #include "../Piz/PizReader.h"
@@ -121,8 +122,29 @@ void* TextureFromTxdTexture(const Txd::Texture& tex) {
     t->mask[sizeof(t->mask) - 1] = '\0';
     // TXD packs filter in the low byte and addressing in the next two nibbles;
     // same layout RW uses, so the fields transfer directly.
-    t->setFilter(static_cast<rw::Texture::FilterMode>(
-        tex.filter_addressing & 0xFFu));
+    // [E3' filter delta -- MEASURED, and it is NOT a delta. 2026-08-02]
+    // The registered concern was that librw filters NEAREST where the D3D9 path
+    // forces LINEAR (TrackRenderer.cpp:3789-3790). That came from librw's
+    // Texture::create default (texture.cpp:279) -- but this bridge OVERWRITES that
+    // default from the TXD two lines down, and Arctic's TXD already asks for
+    // LINEAR. Forcing LINEAR here produced a BIT-IDENTICAL frame on all 7 gating
+    // shots. That alone proves nothing (it is equally what a dead override looks
+    // like), so the =2 arm below forces NEAREST as the non-degeneracy control: it
+    // moves every shot (01_grid 4.65->5.00, car_1_spawn 7.12->7.50, car_5_chase
+    // 1.77->2.74). The override reaches the draw; the textures were already LINEAR.
+    // Worth 0.00 of the E3' residual on Arctic. Kept as a probe for other tracks.
+    // MASHED_LIBRW_LINEAR=1 forces LINEAR, =2 forces NEAREST. The =2 arm is the
+    // NON-DEGENERACY control: forcing LINEAR produced bit-identical output, which
+    // on its own cannot distinguish "the TXD already said LINEAR" from "the
+    // override never reached the draw". Forcing NEAREST must change the frame.
+    static const int s_filter_force = [] {
+        const char* e = std::getenv("MASHED_LIBRW_LINEAR");
+        if (!e || e[1] != '\0') return 0;
+        return e[0] == '1' ? 1 : e[0] == '2' ? 2 : 0;
+    }();
+    t->setFilter(s_filter_force == 1 ? rw::Texture::LINEAR
+               : s_filter_force == 2 ? rw::Texture::NEAREST
+               : static_cast<rw::Texture::FilterMode>(tex.filter_addressing & 0xFFu));
     t->setAddressU(static_cast<rw::Texture::Addressing>(
         (tex.filter_addressing >> 8) & 0x0Fu));
     t->setAddressV(static_cast<rw::Texture::Addressing>(
