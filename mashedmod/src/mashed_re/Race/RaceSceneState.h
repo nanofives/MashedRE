@@ -26,14 +26,15 @@
 //
 // WHAT DELIBERATELY STAYED BEHIND in TrackRenderer:
 //   - anything typed on D3D9: the V/RelitSrc vertex structs and every
-//     std::vector<V> batch, IDirect3DTexture9*, D3DMATRIX, and the three
-//     D3DCOLOR members (fog_color_, amb_world_, sun_color_).
+//     std::vector<V> batch, IDirect3DTexture9*, and D3DMATRIX.
 //   - ParticleSystem parts_ / PickupField pickups_ / powerup_spawns_, whose own
 //     headers include <d3d9.h>.
-// The three D3DCOLOR members are the awkward ones: they are conceptually scene
-// state, but D3DCOLOR is a DWORD typedef from <d3d9.h>, and retyping them to
-// uint32_t would have made this commit something other than a pure move.
-// Retype them when E2'b needs them renderer-side.
+//
+// E2'b step 3 (2026-08-01) CLOSED the D3DCOLOR deferral noted here: fog_color_,
+// amb_world_ and sun_color_ moved in and retyped to uint32_t, joined by the
+// resolved-camera quartet (last_fov_/last_aspect_/last_near_/last_far_). That is
+// what makes the state reachable from a renderer that is not D3D9 -- the librw
+// submitter consumes this struct and never re-parses COURSE.LUA or LIGHTS.DFF.
 #pragma once
 
 #include <cstdint>
@@ -106,9 +107,47 @@ struct RaceSceneState {
     char   gate_bsp_[64] = {};      // COURSE.LUA AI_Bsp_Filename (per-track)
     double cam_ticks_   = 0.0;      // DAT_007f1030 equivalent (~3.0 MHz live)
 
-    // ---- fog + lighting scalars (the D3DCOLOR half stays renderer-side) -----
+    // ---- fog + lighting ----------------------------------------------------
     bool  fog_on_    = false;
     float fog_start_ = 0.f, fog_end_ = 100.f;
+    // E2'b step 3 (2026-08-01): the three former D3DCOLOR members moved here
+    // from TrackRenderer and retyped to uint32_t -- the retype §3.4 deferred.
+    // D3DCOLOR is a DWORD typedef, so every existing use site (D3DCOLOR_XRGB
+    // packing, SetRenderState(D3DRS_FOGCOLOR), Clear()) is source-compatible.
+    // They live here so the librw submitter can READ the values TrackRenderer
+    // already parsed instead of re-parsing COURSE.LUA / LIGHTS.DFF -- a second
+    // copy of a parser that must agree with the first is the "wrong plate
+    // propagates into ports" failure mode (LIBRW_SIZING_2026-08.md, step-3 block).
+    //
+    // fog: COURSE.LUA Setup_Fog(near, far, r, g, b), parsed TrackRenderer.cpp:1268.
+    std::uint32_t fog_color_ = 0x00181C28u;  // = D3DCOLOR_XRGB(24, 28, 40)
+    // WS-E lighting: track ambient RpLight term (LIGHTS.DFF, COURSE.LUA
+    // Lights_Filename) as 0x00RRGGBB; added to world/prop baked prelight. The
+    // dim baked prelight (Arctic mean ~55,78,78) is meant to be combined with
+    // this ambient (Arctic 51,76,76) at render -- without it the world is a dark
+    // void. 0 = no lights file. Parsed in Load() before the batches are built.
+    std::uint32_t amb_world_ = 0;
+    // WS-E s2 lighting: the track's DIRECTIONAL RpLight (LIGHTS.DFF type-1) --
+    // sun colour as 0x00RRGGBB and its world-space direction (the light frame's
+    // at-vector, i.e. the direction the light travels). Applied as N.L to ATOMIC
+    // (prop/car) batches that carry vertex normals + rpGEOMETRYLIGHT; the static
+    // world has no normals so it cannot receive it. Arctic LIGHTS.DFF
+    // (asset-verified): colour (0.6,0.7,0.7)=(153,178,178), dir
+    // (0.577,-0.577,-0.577), flags 0x3 (lights atomics+world). 0 = none.
+    std::uint32_t sun_color_ = 0;
+
+    std::uint32_t fog_color() const { return fog_color_; }
+
+    // ---- resolved camera, written once per frame by the active renderer -----
+    // E2'b step 3: last_eye_/last_at_ (above) gave eye+target but NOT the
+    // projection, whose constants were function-local at TrackRenderer.cpp:3733.
+    // The librw submitter must build the SAME frustum, so TrackRenderer now
+    // publishes them here rather than a second copy being written by hand -- an
+    // approximated camera would look authoritative while measuring nothing.
+    float last_fov_    = 1.0472f;   // vertical FOV, radians (60 deg)
+    float last_aspect_ = 800.f / 600.f;
+    float last_near_   = 0.05f;
+    float last_far_    = 8.f;       // TrackRenderer: radius_ * 8.f
     // WS-E vehicle lighting (RpLight subset, env MASHED_RPLIGHT). Faithful
     // FUN_00479330 light acquisition: float-precision colours, default lights
     // when COURSE.LUA has no Lights_Filename, DFF lights keyed on the subtype

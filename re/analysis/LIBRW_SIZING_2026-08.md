@@ -618,7 +618,354 @@ viewpoints, world-only, no cars.
 > wiring `World::render()` behind the `MASHED_RENDER_LIBRW` gate and taking the
 > first real E3' imgdiff against the ten gating viewpoints.
 
-> ### E2'b step 3 (camera + I4 fog/lighting) — DESIGN DECIDED, NOT STARTED
+> ### E2'b step 3 — **IMPLEMENTED 2026-08-01.** In-loop, deterministic, three deltas open.
+>
+> The design below was followed, with one thing it had not accounted for: **librw
+> owns the D3D9 device**, so "beside `g_track.Render(dev, …)`" was not expressible
+> as written — there was no `dev` both renderers agreed on, and the
+> `MASHED_RENDER_LIBRW` gate terminated the process *before* `InitD3D9`. Resolved
+> by **device adoption** (user-decided, option A): librw is handed the exe's
+> device via three documented local patches to the vendored snapshot
+> (`deps/librw/MASHED_PATCHES.md` P1–P3), so one device, one `BeginScene`, one
+> `Present`. The E1' probe kept its own-device behaviour and moved to
+> `MASHED_LIBRW_SMOKE`; `MASHED_RENDER_LIBRW` now selects the in-loop path.
+>
+> **Landed:** `fog_color_`/`amb_world_`/`sun_color_` moved to `RaceSceneState` and
+> retyped `D3DCOLOR → uint32_t` (§3.4's deferred retype, now closed), joined by the
+> resolved-camera quartet `last_fov_/last_aspect_/last_near_/last_far_` — the
+> projection constants were function-local at `TrackRenderer.cpp:3733` and nothing
+> exposed them. `TrackRenderer` now builds its own D3D9 projection *from* those
+> members, so there is one source of truth. New exe-only TU `LibRw/RwRaceSubmit.cpp`
+> (build.bat only, librw `/I`, never `asi_sources.rsp`). The scene is built at the
+> tail of `TrackRenderer::Load` from the *same* `world`/`dicts` locals — nothing is
+> re-parsed.
+>
+> **The retype was not free**, and the compiler caught why: `D3DCOLOR` is
+> `unsigned long`, `uint32_t` is `unsigned int`. Every *value* site converted
+> silently; the one *pointer* site (`ParseLightsDffDirectional(…, D3DCOLOR*, …)`,
+> `TrackRenderer.cpp:550`) did not, and had to be retyped too.
+>
+> #### Evidence — controls first, per the R10b rule
+>
+> | Comparison | Result | What it establishes |
+> |---|---|---|
+> | librw **OFF**, this build vs `verify/librw_ref/` | **0.00 on 7/7** gating shots reproduced | The state move + gate rename are a **verified no-op** on the D3D9 path. Also a *cross-build* control: a different binary reproduced the reference exactly. |
+> | librw **ON**, run 1 vs run 2 (**two different builds**) | **0.00 on both shots checked** | The in-loop path is deterministic run-to-run, and the D3D9 world contributes **zero visible pixels** once librw draws (the world-skip gate changed nothing). |
+> | librw **ON** vs reference | mean-abs 24.9–39.9 | **NOT a parity number** — see below. |
+>
+> The path demonstrably consumed real state rather than defaults:
+> `log/librw_race.txt` records `fog=1[0.1..70.0]` (Arctic's `Setup_Fog(0.1, 70, …)`),
+> `far=643.6` (`radius_*8`), `fov=1.0472`, and `sectors=12 mats=13 tris=16480
+> verts=16229` — matching the E2'b step 2 parse exactly.
+>
+> #### Delta register — the 24.9–39.9 is NOT parity
+>
+> It measures a frame where librw draws the static world and **nothing else is
+> submitted through it**. Three causes, none yet closed:
+>
+> ## ✅ RESOLVED — D-S3-1 and D-S3-2 both closed. One root cause, not two.
+>
+> **Result: librw draws the static world in-loop at 0.39–0.93 mean-abs against the
+> reference across all 7 reproduced gating shots** (was 24.9–39.9), with the D3D9
+> path still bit-identical (0.00) when the gate is off.
+>
+> | shot | librw ON vs ref | librw OFF vs ref |
+> |---|---|---|
+> | `01_action` | 0.56 | 0.00 |
+> | `01_grid` | 0.93 | 0.00 |
+> | `car_1_spawn` | 0.93 | 0.00 |
+> | `car_2_drive` | 0.93 | 0.00 |
+> | `car_3_weave` | 0.93 | 0.00 |
+> | `car_4_chase` | 0.39 | 0.00 |
+> | `car_5_chase` | 0.70 | 0.00 |
+>
+> **Non-degeneracy proven, not assumed:** with `MASHED_LIBRW_NODRAW=1` on the *same
+> binary* the diff explodes to **19.31** (the world vanishes). So the ~0.9 is
+> genuinely "librw drew this world", not "D3D9 quietly drew it and librw did
+> nothing" — the failure mode that would have made a near-zero number meaningless.
+>
+> ### The root cause was never occlusion
+>
+> D-S3-1 was mis-framed for most of the session, by me, as "librw's world overdraws
+> the car". Every occlusion mechanism was measured and found correct: shared depth
+> **and** colour surface (pointer-identical), clip-space z identical to four
+> decimals (`ndc.z=0.9709 w=1.717` from *both* pipelines for the same world point),
+> `zenable=1 zwrite=1 zfunc=LESSEQUAL` before and after the draw, live per-frame
+> camera. Nothing was occluding anything.
+>
+> The real mechanism is **bidirectional render-state leakage between two renderers
+> sharing one device** — the same cause as D-S3-2, which is why fixing it fixed
+> both. librw's write-back state cache and the D3D9 path each assume they own the
+> device. `resyncDeviceState()` (P4) fixes the inbound direction. The outbound
+> direction — state librw leaves behind, e.g. `D3DRS_ALPHABLENDENABLE` stuck on
+> (measured `ablend` 0→1 across the draw) — corrupted the D3D9 draws that followed,
+> **including the next frame's car and props**. That is why the car appeared to be
+> occluded: it was being drawn wrongly, not covered up.
+>
+> Fix: an `IDirect3DStateBlock9` (`D3DSBT_ALL`) captured before the submit and
+> applied after, in `RwRaceSubmit.cpp`. Not a librw patch — it lives on our side of
+> the seam, and it beats restoring a curated register list that would rot the moment
+> librw's pipeline changes.
+>
+> **Ordering is load-bearing, and I got it wrong once.** Capturing *after*
+> `resyncDeviceState()` snapshots librw's state and restores that — the exact
+> opposite of the intent. Measured cost of the mistake: `01_action` regressed
+> 14.99 → 39.25. Capture must precede the resync.
+>
+> ### Instanced props / cars — STAGED behind `MASHED_LIBRW_INST`, NOT accepted
+>
+> The seam is built and works mechanically, but it is **off by default** because
+> enabling it regresses two things. `MASHED_RENDER_LIBRW` alone still gives the
+> verified world-only numbers above.
+>
+> What landed: `RaceSubmit_RegisterModel` / `AddInstance` / `BeginTrackLoad`.
+> Registration happens at load time from the live `DffModel` locals — inside
+> `load_prop`'s lambda and `LoadCar` — because **nothing in the codebase retains a
+> parsed `DffModel`**; every one is a function local destroyed right after
+> `BuildDffBatches`. Each owning struct keeps an `int rw_model` handle; **-1 means
+> "keep drawing through D3D9"**, so the port is incremental by construction and one
+> bad model cannot black out the scene. Instance transforms are the *same*
+> `D3DMATRIX` the D3D9 path would pass to `SetTransform(D3DTS_WORLD)` — `rw::Matrix`
+> and `D3DMATRIX` agree field-for-field (right/up/at/pos), so nothing is re-derived.
+>
+> Measured with it on: 9 models registered (the 71-atomic one is the car), 27
+> instances/frame, props visibly drawing through librw.
+>
+> **Two open regressions:**
+> - **D-S3-6 — a large ground/sea surface renders black.** ⚠️ **This entry was
+>   wrong twice; the corrections are the useful part.**
+>   1. First written as "the static world goes black, caused by `World::addCamera`".
+>      **Both halves were wrong.** `addCamera` only sets `cam->world`
+>      (`world.cpp:69-75`); binding it unconditionally while props stayed on D3D9
+>      left the gating shots **unchanged at 0.93/0.39/0.93**, which exonerates it.
+>      It is also *required* — `lightingCB_Shader` derefs `engine->currentWorld` for
+>      `rw::Geometry::LIGHT` geometry (`d3drender.cpp:357-359`), a hard **segfault**
+>      without it — so it is now unconditional.
+>   2. Then suspected as "all props render black, because `World::enumerateLights`
+>      skips lights without `LIGHTATOMICS` (`world.cpp:162-163`) and `Light::create`
+>      leaves flags 0". The flag fix **is correct on its own terms** and is kept
+>      (0x3 = `LIGHTATOMICS|LIGHTWORLD` is also the asset-verified Arctic value),
+>      but it produced **bit-identical output** — so it is not the cause either.
+>
+>   3. Suspected an unresolved texture. **Instrumented `BuildClump` and disproved
+>      that too.** The log (`log/librw_scene.txt`) is now definitive about what the
+>      instanced set actually contains — 8 props plus the car:
+>
+>      | clump | texture | resolved? | nv | prelit | normals | lit |
+>      |---|---|---|---|---|---|---|
+>      | 0 | `sky` | yes | 258 | 1 | 0 | 0 |
+>      | 1,2 | `Tyres` | yes | 192 | 0 | 1 | 1 |
+>      | 3 | `Crate02` | yes | 36 | 0 | 1 | 1 |
+>      | **4** | **`sea`** | **yes** | **864** | **1** | **0** | **0** |
+>      | 5,6 | `Vehicles` | yes | 993 / 351 | 1 | 0 | 0 |
+>      | 7 | `CamManCold` | yes | 531 | 1 | 0 | 0 |
+>      | 8 | (car) | 44 of 71 named | — | 0 | 1 | 1 |
+>
+>      **Every prop texture resolves.** The black surface is `clump[4]`, the **sea**
+>      — and its flags are *identical* to the banner props (`clump[5]/[6]`,
+>      `prelit=1 normals=0 lit=0`) which render correctly. So it is neither a
+>      missing texture, nor lighting, nor the prelit/LIGHT flag split.
+>
+>   Also ruled out: **texture addressing**. librw's `Texture::create` already
+>   defaults to `(WRAP<<12)|(WRAP<<8)|NEAREST` (`texture.cpp:279`), so a large plane
+>   with out-of-range UVs is not clamping to a black edge texel. (That line does
+>   reveal a separate delta: librw defaults to **NEAREST** filtering where the D3D9
+>   path sets `LINEAR` — a quality difference to fold into the E3' register.)
+>
+>   4. **Instance counts measured. The sea IS submitted and IS drawn — it is too
+>      dark, not missing.** Per-model counts at f400:
+>      `model[0] sky inst=0` (drawn by the separate `sky_` path, never instanced),
+>      `model[1] inst=5`, `model[2] inst=9`, `model[3] inst=5`,
+>      **`model[4] sea inst=1 @ (0,0,0)`**, `model[5..7] inst=1 each @ (0,0,0)`,
+>      **`model[8] car inst=4`**.
+>
+>      Sampling the black region: **(2.9, 4.2, 4.0)**, versus the clear colour
+>      `fog_color_` = (24,28,40) and the baseline's (12.5, 19.0, 21.7) in the same
+>      region. It is **not** the background showing through — geometry is drawn
+>      there, about **4–5× too dark**. Culling and "never drawn" are both dead.
+>
+>      ⚠️ **This also corrects D-S3-7.** The car reports **4 instances** (player +
+>      3 AI), so it IS submitted. The earlier claim that `car_via_rw` was false was
+>      inferred from a constant instance total of 27 — which already *included* the
+>      car. D-S3-7 is very likely not a separate bug but the same too-dark shading.
+>
+>   5. **CONFIRMED, and largely fixed.** The two vertex colours settle it. The raw
+>      prelit `BuildClump` receives for the sea is `0xFF0C0E0B` = **(12,14,11)**;
+>      the track ambient is **(51,77,77)** (`0xFF334D4D`, logged by TrackRenderer);
+>      so what the D3D9 path bakes is **(63,91,88)** — a **5.3–8×** brightening,
+>      against a **4.3–5.4×** deficit measured on screen. The arithmetic matches.
+>
+>      Fix: `BuildClump` now takes the ambient and folds it into the prelit of
+>      batches that are **prelit-but-not-LIGHT** — exactly the set librw's lighting
+>      cannot reach (no normals → no `LIGHT` flag → `setAmbient(black)`). `LIGHT`
+>      batches are left alone because they *do* receive the `rw::Light` ambient, and
+>      baking it there would double-count.
+>
+>      Measured effect (instances ON, vs reference): `car_1_spawn` 15.41 → **10.13**,
+>      `car_2_drive` 9.96 → **7.36**, `01_grid` 9.74 → **7.31**, `car_3_weave`
+>      10.27 → **9.32**, `car_5_chase` 4.07 → **3.58**. The sea now renders as a
+>      textured surface instead of near-black.
+>
+>      **D-S3-7 — CLOSED. `MakeAtomic` had its arguments inverted.**
+>      `Frame::addChild(child)` makes `this` the PARENT (`frame.cpp:87-99`), so
+>      `f->addChild(parent)` hung the clump root off the atomic instead of the
+>      atomic off the root. Moving the clump's frame moved a *child*; the atomic's
+>      own frame stayed at identity, and every instanced model drew at the world
+>      origin no matter what transform was submitted.
+>
+>      Measured directly, which is what found it after reasoning had failed:
+>      `clumpframe=(-25.21,0.04,15.78)` while `atomicLTM=(0.00,0.00,0.00)`. The
+>      preceding clue was a **null experiment** — `MASHED_LIBRW_LIFT=4` raised every
+>      instance and produced a **bit-identical** frame, proving the submitted
+>      transform reached nothing.
+>
+>      This is a **pre-existing E2'b step 2 defect**, not new. It was invisible
+>      because the only consumer was the static world, whose frame is identity —
+>      wrong and right parenting are indistinguishable at identity. It surfaced the
+>      moment something had to move.
+>
+>      After the fix (instances ON, vs reference): `01_action` 1.77 → **0.71**,
+>      `01_grid` 7.31 → **5.51**, `car_1_spawn` 10.13 → **8.33**, `car_2_drive`
+>      7.36 → **5.56**, `car_3_weave` 9.32 → **7.64**, `car_4_chase` 1.57 →
+>      **0.41**, `car_5_chase` 3.58 → **2.24**. **The player car now renders through
+>      librw**, correctly positioned and oriented, and props sit at their real
+>      placements instead of the origin.
+>
+>      **Colour cast — CLOSED. Channel order.** `amb_world_` is `0x00RRGGBB`, but
+>      `DffModel` prelit is RW-native RGBA bytes (`0xAABBGGRR`) — `FillVertexData`
+>      reads red from the LOW byte and blue from bits 16-23. The first ambient bake
+>      used the ARGB layout for *both*, so it added the ambient's RED to blue and
+>      its BLUE to red; with Arctic's (51,77,77) that pushed red up and blue down.
+>      Each side is now unpacked in its own convention.
+>
+>      Measured on the sea region (mean RGB):
+>
+>      | | R | G | B |
+>      |---|---|---|---|
+>      | baseline D3D9 | 11.1 | 17.7 | 20.6 |
+>      | librw, ARGB bake (olive) | 21.9 | 25.7 | 20.0 |
+>      | librw, channel fix | 15.8 | 25.9 | 28.2 |
+>
+>      The hue ordering now matches the baseline (blue > red = teal, not olive).
+>      Shots: `01_grid` 5.51 → **5.24**, `car_1_spawn` 8.33 → **7.88**,
+>      `car_2_drive` 5.56 → **5.28**, `car_5_chase` 2.24 → **2.18**.
+>
+>      **Residual is brightness, not hue** — librw runs a uniform ~1.4× hot
+>      (15.8/11.1, 25.9/17.7, 28.2/20.6). That is consistent with the already
+>      registered **I4 fog delta**: RW ties the fog END to the camera far plane, so
+>      at this distance librw applies less fog than D3D9's `fog_end_`=70 ramp and
+>      the surface stays brighter. Consistent, **not proven** — closing it means
+>      giving the librw path an equivalent fog ramp. `[UNCERTAIN]`
+>
+>   **Superseded hypothesis (kept for the record):** the D3D9 path bakes the ambient
+>   the vertex colours at build time (`BuildDffBatches` takes an `AtomicLight`, and
+>   `TrackRenderer`'s own note says the dim baked prelight "is meant to be combined
+>   with this ambient at render — without it the world is a dark void"). The librw
+>   path feeds `BuildClump` the **raw** `DffModel` prelit with no ambient added, and
+>   `lightingCB_Shader` then sets ambient to **black** for non-LIGHT geometry. That
+>   would produce exactly a uniform darkening. **The objection I cannot yet answer:
+>   the static world is also prelit and non-LIGHT and renders correctly at 0.93.**
+>   Until that is reconciled the hypothesis is not established. `[UNCERTAIN]`
+>
+>   Next step: compare a single sea vertex's colour as the D3D9 path bakes it
+>   against what `BuildClump` uploads — one number each, no rebuild-and-guess.
+> - **D-S3-7 — the player car does not appear** on the instanced path. The instance
+>   count sits at a constant 27 with no car entry, so `car_via_rw` is evaluating
+>   false; whether `rw_car_model_` or `car_ready_` is the reason is **not yet
+>   measured**. `[UNCERTAIN]`
+>
+> Also logged: **D-S3-5** — the librw car path bypasses `RenderCarsRelit`, the
+> per-frame world-space sun relight (`MASHED_RPLIGHT`, default ON and active on
+> Arctic). Through librw the body carries baked prelight plus the `rw::Light`
+> terms instead of the ported per-vertex N·L. A real visual delta, to be closed by
+> giving the librw path an equivalent relight pass.
+>
+> ### Residual
+>
+> The remaining ~0.9 is not itemised. It is consistent with the I4 fog/lighting
+> delta below (RW ties fog end to the far plane) plus per-vertex lighting
+> differences, but **that is a hypothesis, not a measurement** — the E3' delta
+> register still owes a per-region breakdown of it. `[UNCERTAIN]`
+>
+> ---
+>
+> **Original log of the investigation follows — the wrong turns are the useful part,
+> and the disproved hypotheses are recorded so they are not re-tried.**
+>
+> - **D-S3-4 — the librw view was horizontally MIRRORED. FIXED.** `beginUpdate`
+>   builds the view matrix with the X component of every basis row negated
+>   (`d3ddevice.cpp:1229-1240`), so handing it a plain D3D-`LookAtLH` basis renders
+>   the scene flipped. Cancelled by negating `right` in the camera frame.
+>   **Measured, not argued:** mirroring the captured image dropped mean-abs against
+>   the D3D9 control 25.37 → 15.41, and the real fix then gave 14.31.
+>   ⚠️ **The E2'b step 2 probe (`RwSceneBuild.cpp RenderWorldProbe`) builds its
+>   basis the same un-compensated way, so `verify/librw_e2b/world_probe_arctic.png`
+>   is mirrored too.** It was only ever checked structurally, never against a
+>   reference — a concrete instance of "structural validation is not visual
+>   validation".
+> - **D-S3-2 — render-state leakage. CAUSE CONFIRMED, partially fixed.** Fixing the
+>   direction *into* librw (patch P4, `resyncDeviceState`) restored the fog and
+>   lighting. The direction *out of* librw is still open: the isolation control
+>   below shows the HUD pips and the yellow lap digit are correct until librw
+>   submits, so librw leaves state that corrupts the D3D9 draws that follow it.
+> - **D-S3-1 — the player car is occluded. STILL OPEN, but now precisely scoped.**
+>   The decisive test was `MASHED_LIBRW_NODRAW=1`, which runs the entire path
+>   (engine, resync, camera, fog, lights, scene build) and submits nothing: **the
+>   car draws perfectly, and so does the HUD.** So D3D9 draws both correctly and
+>   librw's world draw is what destroys them.
+>   Four hypotheses were tested and **all four disproved by evidence**, which is
+>   worth recording so they are not re-tried:
+>   1. *Depth encoding differs.* No — RW's `proj[10]=far/(far−near)`, `proj[11]=1`,
+>      `proj[14]=−near·far/(far−near)` is algebraically identical to
+>      `MatPerspectiveFovLH`, and the view-window mapping matches too.
+>   2. *librw uses a private depth buffer.* Not here — `rasterCreateZbuffer`
+>      (`d3d.cpp:499`) shares `defaultDepthSurf` when the raster matches the client
+>      rect, which it does at 640×480. Forcing the binding (P5) produced
+>      **bit-identical** output. P5 is kept only as a guard for the borderless case.
+>      (An earlier attempt patched `recreateVidmemRasters` — the post-`Reset` path,
+>      which never runs at startup — and its "no change" result was misread as
+>      proof of sharing. Identical output is equally consistent with dead code.)
+>   3. *The librw camera is frozen.* No — instrumentation shows input → frame LTM →
+>      `cam->devView` all tracking per frame. The two shots that looked identical
+>      simply sit at near-identical camera poses.
+>   4. *Depth state is off at submit.* No — explicitly forcing `ZTESTENABLE`/
+>      `ZWRITEENABLE` after the resync changed nothing.
+>
+>   **Remaining hypothesis, untested:** the depth *values* librw writes are not
+>   comparable with the D3D9 path's even though the projection parameters agree —
+>   e.g. a transpose/handedness difference in `RawMatrix::mult(&combined,
+>   &worldview, &cam->devProj)` (`d3drender.cpp:400-416`) that leaves x/y correct
+>   (the scene is correctly framed) while z is not. **[UNCERTAIN]** — needs a depth
+>   readback or a z-only probe, not another reading pass.
+> - **D-S3-3 — I4 fog/lighting.** Much reduced by P4. **RW ties the fog END to the
+>   camera far plane** (`fogData.end = cam->farPlane`), so `fog_end_` (70) cannot be
+>   honoured independently of the clip distance (643.6) — the ramp is necessarily
+>   longer than D3D9's. A genuine documented delta, not a bug.
+>
+> **Sim is renderer-independent — verified.** `log/r10b_sim.txt` under librw is
+> byte-identical to the D3D9 control (same frames, same `pos`/`yaw`/`spd`), so none
+> of this perturbs the simulation.
+>
+> **Scoreboard after the fixes** (mean-abs vs the D3D9 control, not vs the
+> reference): `car_2_drive` 25.37 → **14.31**, `01_grid` → 14.57, `01_action` →
+> 14.99, `car_4_chase` → 21.79. Still dominated by D-S3-1, so still not a parity
+> number.
+>
+> #### Caveats that must not be lost
+>
+> - **Only 10 of the 13 manifest shots regenerate** under the documented recipe in
+>   this environment: `00_results`, `01_cupstandings`, `01_results` were not
+>   produced (they need further cup rounds), so **7 of the 10 gating shots** were
+>   exercised, not 10. The stale files of those names in `verify/race1` are from
+>   earlier sessions and must not be mistaken for run output.
+> - **Captures land in the MAIN repo's `verify/`**, because `MASHED_ROOT` makes the
+>   exe `SetCurrentDirectory` to the main repo to reach `original/`. A worktree run
+>   therefore writes into shared scratch — snapshot results out immediately, and
+>   coordinate before capturing while another session is active.
+>
+> ---
+>
+> ### E2'b step 3 (camera + I4 fog/lighting) — original design block (kept for the record)
 >
 > Attempting this from the standalone probe was rejected after looking at where the
 > inputs actually live:

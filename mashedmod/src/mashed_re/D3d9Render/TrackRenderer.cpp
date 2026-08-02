@@ -17,6 +17,7 @@
 #include "../Txd/TxdDecoder.h"
 #include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
 #include "RwWorldRender.h"          // WS-E1: RW world render path (behind MASHED_RW_RENDER)
+#include "../LibRw/RwRaceSubmit.h"  // E2'b step 3: in-loop librw submit (MASHED_RENDER_LIBRW)
 #include "DrawStreamDump.h"         // parity harness: MASHED_DBG_DRAWSTREAM3D race-3D summary
 #include "../Ai/AiStandalone.h"     // WS-C-WIRE: standalone AI tick (behind MASHED_REAL_AI)
 #include "../Vehicle/VehiclePhysicsRun.h"  // WS-A8: ported physics chain (behind MASHED_REAL_PHYSICS)
@@ -547,8 +548,12 @@ D3DCOLOR ParseLightsDffAmbient(const std::uint8_t* d, std::uint32_t len) {
 // return its colour (0x00RRGGBB) and the frame's parent-chain-composed at-vector.
 // Returns false if there is no such light. Arctic -> colour (153,178,178),
 // dir (0.577,-0.577,-0.577).
+// E2'b step 3: out_color retyped D3DCOLOR* -> std::uint32_t* to match sun_color_
+// after its move into RaceSceneState. D3DCOLOR is `unsigned long` and uint32_t is
+// `unsigned int` -- distinct types, so the VALUE sites converted silently but this
+// POINTER site did not, which is what caught it at compile time.
 bool ParseLightsDffDirectional(const std::uint8_t* d, std::uint32_t len,
-                               D3DCOLOR* out_color, float out_dir[3]) {
+                               std::uint32_t* out_color, float out_dir[3]) {
     if (!d || len < 24) return false;
     auto u32 = [&](std::size_t o) -> std::uint32_t {
         std::uint32_t v; std::memcpy(&v, d + o, 4); return v;
@@ -794,6 +799,9 @@ namespace { void InvalidateBatchCache(); }  // WS-A s3 PERF (defined before Rend
 bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                          const char* log_path) {
     InvalidateBatchCache();   // drop any prior track's cached VBs (reload safety)
+    // E2'b step 3: same reload safety on the librw side -- see the header note on
+    // why this cannot live at the tail alongside RaceSubmit_OnTrackLoaded.
+    if (LibRw::RaceSubmit_Requested()) LibRw::RaceSubmit_BeginTrackLoad();
     std::FILE* log = log_path ? std::fopen(log_path, "a") : nullptr;
     auto fail = [&](const char* why) {
         if (log) { std::fprintf(log, "R4 track load FAILED: %s\n", why); std::fclose(log); }
@@ -1187,6 +1195,22 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             Track::DffModel m;
             if (!m.Parse(db, dl)) return false;
             BuildDffBatches(dev, m, dicts, &p->batches, &p->textures, lt);
+        // D-S3-6 probe: what does the D3D9 bake produce for vertex 0 of this
+        // prop, and was an AtomicLight applied? Compare against the raw prelit
+        // value BuildClump uploads for the same vertex (log/librw_scene.txt).
+        // If they differ by the track ambient, the librw path is missing the
+        // ambient the D3D9 path bakes in -- which is the standing hypothesis.
+        if (log) {
+            unsigned baked = 0;
+            for (const auto& bb : p->batches) if (!bb.empty()) { baked = bb[0].c; break; }
+            std::fprintf(log, "D-S3-6 bake: dff=%s lt=%s baked_v0=0x%08X\n",
+                         dff_name, lt ? "YES" : "no", baked);
+        }
+        // E2'b step 3: hand this model to librw HERE -- `m` is a local that dies
+        // at the closing brace, and nothing else retains a parsed DffModel.
+        if (LibRw::RaceSubmit_Requested())
+            p->rw_model = LibRw::RaceSubmit_RegisterModel(m, dicts.data(), dicts.size(),
+                                                          amb_world_);
             // F3: bind each material's UVAnim-extension name to its .UVA rate.
             p->mat_scroll.assign(m.materials.size(), {});
             for (std::size_t mi = 0; mi < m.materials.size(); ++mi)
@@ -1533,6 +1557,15 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                      track_radius_);
         std::fclose(log);
     }
+    // E2'b step 3: hand the librw submitter the SAME parsed world + texture
+    // dictionaries this function just used. Called here because `world` and
+    // `dicts` are locals that die at the closing brace -- building the librw
+    // scene from anywhere else would mean re-parsing GRAPH.BSP/TEXTURES.TXD into
+    // a second copy that could disagree with this one. No-op unless
+    // MASHED_RENDER_LIBRW=1 brought the engine up.
+    if (LibRw::RaceSubmit_Requested())
+        LibRw::RaceSubmit_OnTrackLoaded(world, dicts.data(), dicts.size());
+
     ready_ = true;
     return true;
 }
@@ -1888,6 +1921,10 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
     // lit body/wheel verts are built in the custom loop below)
     std::vector<std::vector<V>> all_batches;
     BuildDffBatches(dev, model, dicts, &all_batches, &car_textures_);
+    // E2'b step 3: same lifetime rule as props -- register before `model` dies.
+    if (LibRw::RaceSubmit_Requested())
+        rw_car_model_ = LibRw::RaceSubmit_RegisterModel(model, dicts.data(), dicts.size(),
+                                                       amb_world_);
     // WS-E s2: the track's atomic light set drives the car's directional shading
     // (RW lights the body panels — normals + rpGEOMETRYLIGHT — per LIGHTS.DFF).
     // WS-E vehicle lighting: under MASHED_RPLIGHT the directional term is NOT
@@ -3730,9 +3767,15 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // round-mode branch derived FOV from race_cam_'s view-window 0.6 -> ~48 deg,
     // but that camera framed the whole pack from a high orbit and is now replaced
     // by the ground chase above.)
-    const float fovy = 1.0472f;  // 60 deg
-    MatPerspectiveFovLH(&projm, fovy, 800.f / 600.f,
-                        0.05f, radius_ * 8.f);
+    // E2'b step 3: publish the resolved frustum into RaceSceneState and build
+    // the D3D9 projection FROM those members, so the librw submitter reads the
+    // same four numbers rather than a hand-copied second set that could drift.
+    last_fov_    = 1.0472f;  // 60 deg
+    last_aspect_ = 800.f / 600.f;
+    last_near_   = 0.05f;
+    last_far_    = radius_ * 8.f;
+    MatPerspectiveFovLH(&projm, last_fov_, last_aspect_,
+                        last_near_, last_far_);
     MatIdentity(&worldm);
     dev->SetTransform(D3DTS_WORLD, &worldm);
     dev->SetTransform(D3DTS_VIEW, &viewm);
@@ -3758,7 +3801,14 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // returns 0 and the spike world draw below stays the shipping path. When active
     // it traverses RpWorld sectors -> RpAtomic render callbacks (full world incl.
     // sky/props route through it; the spike world-geometry loop is then skipped).
-    const bool rw_world = D3d9Render::RwWorldRender_Render(/*world*/nullptr, /*cam*/nullptr) != 0;
+    // E2'b step 3: when the librw submit path is live it draws the static world,
+    // so the D3D9 world batches must be skipped — otherwise BOTH renderers write
+    // the same pixels and no difference is attributable to either. Folded into the
+    // existing rw_world gate, which already means exactly "someone else drew the
+    // world". Everything else (cars, props, particles, pickups, sky, HUD) still
+    // comes from D3D9, so remaining deltas are scope, not overdraw.
+    const bool rw_world = D3d9Render::RwWorldRender_Render(/*world*/nullptr, /*cam*/nullptr) != 0
+                          || LibRw::RaceSubmit_Active();
 
     // sky clump first: unfogged, no depth write (renderer-gap closure)
     if (!sky_.batches.empty()) {
@@ -3882,6 +3932,16 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // R6: track props — instanced DFF batches (tyre walls, crates, sea,
     // freighter...) under their MTS / identity world matrices.
     for (const auto& p : props_) {
+        // E2'b step 3: when this model is registered with librw, queue its placed
+        // copies there instead of drawing them here -- passing the SAME D3DMATRIX
+        // the D3D9 path would have used, so both renderers place it identically.
+        // A -1 handle falls through to the D3D9 draw below, which is what makes
+        // the port incremental: an unregistered model still renders.
+        if (rw_world && p.rw_model >= 0 && LibRw::RaceSubmit_InstancesEnabled()) {
+            for (const auto& inst : p.instances)
+                LibRw::RaceSubmit_AddInstance(p.rw_model, (const float*)&inst);
+            continue;
+        }
         for (const auto& inst : p.instances) {
             dev->SetTransform(D3DTS_WORLD, &inst);
             for (std::size_t mi = 0; mi < p.batches.size(); ++mi) {
@@ -3955,7 +4015,49 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // the car section runs through the relit pass (per-frame world-space sun
     // on the lit batches; identical draw order/states, packed dynamic VB).
     const bool relit_cars = car_ready_ && rp_light_on_ && has_sun_dir_;
-    if (relit_cars) {
+    // E2'b step 3: submit the player body through librw when it is registered.
+    // This takes precedence over BOTH D3D9 car paths so the car is never drawn
+    // twice. The transform is built exactly as the D3D9 branch below builds it.
+    //
+    // [DELTA D-S3-5] This bypasses RenderCarsRelit, the per-frame world-space sun
+    // relight (MASHED_RPLIGHT, default ON) -- which is the ACTIVE path on any track
+    // with a directional light, Arctic included. Through librw the body therefore
+    // carries its baked prelight plus the rw::Light ambient/directional instead of
+    // the ported per-vertex N.L. That is a real visual delta, logged rather than
+    // hidden; closing it means giving the librw path an equivalent relight pass.
+    const bool car_via_rw = rw_world && car_ready_ && rw_car_model_ >= 0 &&
+                            LibRw::RaceSubmit_InstancesEnabled();
+    if (car_via_rw) {
+        D3DMATRIX carm;
+        MatIdentity(&carm);
+        const float cy = std::cos(car_yaw_), sy2 = std::sin(car_yaw_);
+        if (car_long_is_x_) {
+            carm._11 =  cy;  carm._13 = sy2;
+            carm._31 = -sy2; carm._33 = cy;
+        } else {
+            carm._31 =  cy;  carm._33 = sy2;
+            carm._11 = sy2;  carm._13 = -cy;
+        }
+        carm._41 = car_pos_[0]; carm._42 = car_pos_[1]; carm._43 = car_pos_[2];
+        LibRw::RaceSubmit_AddInstance(rw_car_model_, (const float*)&carm);
+        // AI cars reuse the player body when they have no livery variant of their
+        // own; those that do keep drawing through D3D9 (their variants are not
+        // registered yet), which is the same incremental fallback as props.
+        for (const auto& a : ai_cars_) {
+            D3DMATRIX am;
+            MatIdentity(&am);
+            const float ay = std::cos(a.yaw), asy = std::sin(a.yaw);
+            if (car_long_is_x_) {
+                am._11 =  ay;  am._13 = asy;
+                am._31 = -asy; am._33 = ay;
+            } else {
+                am._31 =  ay;  am._33 = asy;
+                am._11 = asy;  am._13 = -ay;
+            }
+            am._41 = a.pos[0]; am._42 = a.pos[1]; am._43 = a.pos[2];
+            LibRw::RaceSubmit_AddInstance(rw_car_model_, (const float*)&am);
+        }
+    } else if (relit_cars) {
         RenderCarsRelit(dev, worldm);   // emits its own "cars" Race3DCat tally
     } else if (car_ready_) {
         D3DMATRIX carm;

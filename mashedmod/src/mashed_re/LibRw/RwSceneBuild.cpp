@@ -121,7 +121,18 @@ rw::Atomic* MakeAtomic(rw::Geometry* geo, rw::Frame* parent) {
     rw::Atomic* a = rw::Atomic::create();
     if (!a) return nullptr;
     rw::Frame* f = rw::Frame::create();
-    if (parent) f->addChild(parent);
+    // [D-S3-7 FIX] The arguments were INVERTED here. Frame::addChild(child) makes
+    // `this` the PARENT (frame.cpp:87-99), so `f->addChild(parent)` hung the clump
+    // root off the atomic instead of the atomic off the root. Consequence: moving
+    // the clump's frame moved a CHILD, the atomic's own frame stayed at identity,
+    // and every instanced model drew at the world origin regardless of the
+    // transform submitted. Measured directly: clumpframe=(-25.21,0.04,15.78) while
+    // the atomic's LTM read (0.00,0.00,0.00).
+    //
+    // It went unnoticed in E2'b step 2 because the only consumer was the static
+    // world, whose frame is identity -- wrong parenting and correct parenting are
+    // indistinguishable at identity. It surfaced the moment anything had to MOVE.
+    if (parent) parent->addChild(f);
     a->setFrame(f);
     a->setGeometry(geo, 0);
     return a;
@@ -178,9 +189,47 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
     return rww;
 }
 
-void* BuildClump(const Track::DffModel& model, const TextureSource& tex) {
+// Defined further down next to kSceneLog, inside the unnamed namespace. All
+// `namespace {}` blocks in a TU are the SAME namespace, so the declaration must
+// go in one too -- at outer scope it becomes a DIFFERENT function and every later
+// call is ambiguous.
+namespace { void SLog(const char* fmt, ...); }
+
+void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
+                 std::uint32_t ambient) {
     std::vector<rw::Material*> mats;
-    BuildMaterials(model.materials, tex, mats);
+    int named = 0, resolved = 0;
+    BuildMaterials(model.materials, tex, mats, &named, &resolved);
+    // D-S3-6 instrumentation: one large ground/sea surface renders BLACK through
+    // librw while banner/building props render correctly. Two candidate causes are
+    // visible here and nowhere else -- a material whose texture failed to resolve
+    // (draws with the material colour), and a material colour that is itself dark.
+    // Log both per material so the black surface can be NAMED rather than guessed.
+    {
+        static int s_clump_no = 0;
+        const int id = s_clump_no++;
+        SLog("clump[%d]: mats=%zu named=%d resolved=%d batches=%zu",
+             id, model.materials.size(), named, resolved, model.batches.size());
+        for (std::size_t i = 0; i < model.materials.size(); ++i) {
+            const auto& m = model.materials[i];
+            const bool has_tex = m.tex_name[0] != 0;
+            const bool got_tex = has_tex && ResolveTexture(m.tex_name, tex) != nullptr;
+            SLog("  clump[%d].mat[%zu] tex='%s' %s rgba=(%u,%u,%u,%u)",
+                 id, i, has_tex ? m.tex_name : "(none)",
+                 !has_tex ? "NO-TEXNAME" : (got_tex ? "resolved" : "*** UNRESOLVED ***"),
+                 (unsigned)m.rgba[0], (unsigned)m.rgba[1],
+                 (unsigned)m.rgba[2], (unsigned)m.rgba[3]);
+        }
+        for (std::size_t bi = 0; bi < model.batches.size(); ++bi) {
+            const Track::DffBatch& b = model.batches[bi];
+            SLog("  clump[%d].batch[%zu] mat=%u nv=%zu nt=%zu uv=%d prelit=%d "
+                 "norm=%d lit=%d mod=%d prelit[0]=0x%08X",
+                 id, bi, (unsigned)b.material, b.verts.size() / 3, b.tris.size() / 3,
+                 (int)!b.uvs.empty(), (int)!b.prelit.empty(), (int)!b.normals.empty(),
+                 (int)b.lit, (int)b.modulate_mat,
+                 b.prelit.empty() ? 0u : (unsigned)b.prelit[0]);
+        }
+    }
 
     rw::Clump* clump = rw::Clump::create();
     if (!clump) return nullptr;
@@ -204,7 +253,35 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex) {
 
         rw::Geometry* geo = rw::Geometry::create(nv, nt, flags);
         if (!geo) continue;
-        FillVertexData(geo, nv, b.verts, b.uvs, b.prelit, &b.normals);
+        // [D-S3-6 FIX] Fold the track ambient into prelit for non-LIGHT batches.
+        // See the header note: this is what the D3D9 bake does, and librw's
+        // lighting provably cannot supply it here (no normals => no LIGHT flag =>
+        // lightingCB_Shader takes the setAmbient(black) branch).
+        std::vector<std::uint32_t> prelit_amb;
+        const std::vector<std::uint32_t>* prelit_src = &b.prelit;
+        if (ambient && !b.prelit.empty() && !b.lit) {
+            // CHANNEL ORDER, and it bit once. `ambient` (amb_world_) is
+            // 0x00RRGGBB, but DffModel prelit is RW-native RGBA bytes, i.e.
+            // 0xAABBGGRR -- FillVertexData below reads red from the LOW byte and
+            // blue from bits 16-23. The first version of this bake used the ARGB
+            // layout for both, so it added the ambient's RED to the blue channel
+            // and its BLUE to the red channel. With Arctic's (51,77,77) that
+            // pushed red up and blue down and turned the sea olive where the D3D9
+            // baseline is dark teal. Unpack each side in its own convention.
+            const unsigned ar = (ambient >> 16) & 0xFF;   // ambient is 0x00RRGGBB
+            const unsigned ag = (ambient >> 8)  & 0xFF;
+            const unsigned ab = (ambient)       & 0xFF;
+            prelit_amb.resize(b.prelit.size());
+            for (std::size_t i = 0; i < b.prelit.size(); ++i) {
+                const std::uint32_t c = b.prelit[i];       // prelit is 0xAABBGGRR
+                unsigned r = ((c)       & 0xFF) + ar; if (r > 255) r = 255;
+                unsigned g = ((c >> 8)  & 0xFF) + ag; if (g > 255) g = 255;
+                unsigned bl = ((c >> 16) & 0xFF) + ab; if (bl > 255) bl = 255;
+                prelit_amb[i] = (c & 0xFF000000u) | (bl << 16) | (g << 8) | r;
+            }
+            prelit_src = &prelit_amb;
+        }
+        FillVertexData(geo, nv, b.verts, b.uvs, *prelit_src, &b.normals);
         for (std::int32_t i = 0; i < nt; ++i) {
             // DffBatch::tris is v0,v1,v2 -- material is per BATCH, not per tri.
             geo->triangles[i].matId =

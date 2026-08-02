@@ -20,11 +20,14 @@
 namespace mashed_re {
 namespace LibRw {
 
-// True when MASHED_RENDER_LIBRW=1. Checked in WinMain BEFORE InitD3D9, because
-// the two paths must never coexist: librw owns Direct3DCreate9 + CreateDevice +
-// Present itself (deps/librw/src/d3d/d3ddevice.cpp:1518, :1622, :1356), so it
-// takes over the whole device, not a slice of it. Default OFF keeps the shipping
-// D3D9 path reachable at all times.
+// True when MASHED_LIBRW_SMOKE=1 — the standalone E1' probe, which DOES let
+// librw create and own its own device (Direct3DCreate9 + CreateDevice + Present,
+// deps/librw/src/d3d/d3ddevice.cpp:1518, :1622, :1356) and so must still be
+// checked in WinMain BEFORE InitD3D9. It runs and exits the process.
+//
+// NOTE: this used to be MASHED_RENDER_LIBRW. E2'b step 3 took that name for the
+// in-loop render path (LibRw/RwRaceSubmit.h), which instead ADOPTS the exe's
+// device. Default OFF for both keeps the shipping D3D9 path reachable.
 bool SmokeRequested();
 
 // E1' acceptance probe. Brings librw up on an already-created HWND
@@ -37,6 +40,17 @@ bool SmokeRequested();
 // This is a probe, not the renderer. It draws no Mashed content; feeding it from
 // our loaders is E2'.
 int RunSmoke(HWND hwnd, int width, int height, int frames);
+
+// E2'b step 3 — bring the engine up ADOPTING the exe's existing D3D9 device
+// instead of letting librw create its own (deps/librw/MASHED_PATCHES.md, P1).
+// Lives here, next to RunSmoke, so the plugin-registration list is written once:
+// a second copy that drifted from this one would change how streams parse.
+// Call after InitD3D9(). Returns false on the first failing step.
+// `dev` is IDirect3DDevice9*, kept void* so this header need not include <d3d9.h>.
+bool EngineStartAdopted(HWND hwnd, void* dev, int width, int height);
+
+// Matching teardown. Does NOT release the adopted device.
+void EngineStop();
 
 }  // namespace LibRw
 }  // namespace mashed_re

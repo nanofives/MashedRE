@@ -81,8 +81,12 @@ bool PumpMessages() {
 
 }  // namespace
 
+// E2'b step 3 moved the E1' probe off MASHED_RENDER_LIBRW onto its own variable.
+// MASHED_RENDER_LIBRW now selects the IN-LOOP submit path (RwRaceSubmit.h), which
+// is what the design decision requires; the probe stays reachable because it is
+// still the only end-to-end check of engine bring-up in isolation.
 bool SmokeRequested() {
-    const char* e = std::getenv("MASHED_RENDER_LIBRW");
+    const char* e = std::getenv("MASHED_LIBRW_SMOKE");
     return e && e[0] == '1' && e[1] == '\0';
 }
 
@@ -300,6 +304,57 @@ int RunSmoke(HWND hwnd, int width, int height, int frames) {
     LogLine("ok: teardown clean");
     LogLine("RESULT: PASS");
     return 0;
+}
+
+// ---------------------------------------------------------------------------
+// E2'b step 3 -- engine bring-up on an ADOPTED device.
+//
+// Same ordering as RunSmoke above (init -> plugins -> open -> setSubSystem ->
+// start), with one difference: rw::d3d::setAdoptedDevice() is called between
+// open() and start(), because open() is what fills d3d9Globals.window/d3d9/caps
+// and start() is what would otherwise call CreateDevice(). See
+// deps/librw/MASHED_PATCHES.md P1.
+//
+// No Charset::open() here: that is the smoke's debug-text facility, and this path
+// draws no librw 2D. Im2D (I6) stays with the D3D9 bridge for now.
+bool EngineStartAdopted(HWND hwnd, void* dev, int width, int height) {
+    if (!dev) { LogLine("adopt: FAIL -- null device"); return false; }
+    LogLine("librw engine start (E2'b step 3, ADOPTED device %p) %dx%d",
+            dev, width, height);
+
+    if (!rw::Engine::init())  { LogLine("adopt: FAIL Engine::init");  return false; }
+    RegisterPlugins();
+
+    rw::EngineOpenParams params;
+    std::memset(&params, 0, sizeof(params));
+    params.window = hwnd;
+    if (!rw::Engine::open(&params)) { LogLine("adopt: FAIL Engine::open"); return false; }
+
+    const rw::int32 numSub = rw::Engine::getNumSubSystems();
+    if (numSub > 0) rw::Engine::setSubSystem(numSub - 1);
+
+    rw::d3d::setAdoptedDevice(static_cast<IDirect3DDevice9*>(dev));
+
+    if (!rw::Engine::start()) { LogLine("adopt: FAIL Engine::start"); return false; }
+
+    // Prove the adoption actually took, rather than assuming it: if librw had
+    // created its own device instead, d3ddevice would differ from ours and every
+    // later draw would land in an invisible second swapchain -- a failure that
+    // looks exactly like "librw draws nothing".
+    if ((void*)rw::d3d::d3ddevice != dev) {
+        LogLine("adopt: FAIL -- d3ddevice=%p != adopted %p",
+                (void*)rw::d3d::d3ddevice, dev);
+        return false;
+    }
+    LogLine("ok: engine started on adopted device (d3ddevice=%p)", dev);
+    return true;
+}
+
+void EngineStop() {
+    rw::Engine::stop();
+    rw::Engine::close();
+    rw::Engine::term();
+    LogLine("ok: engine stopped (adopted device left to the exe)");
 }
 
 }  // namespace LibRw
