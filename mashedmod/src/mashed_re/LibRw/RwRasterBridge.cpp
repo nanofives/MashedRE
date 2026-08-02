@@ -108,6 +108,40 @@ void* RasterFromTxdTexture(const Txd::Texture& tex) {
         }
     }
     ras->unlock(0);
+
+    // D-S3-SEA probe: the vertex colours and both texture decoders have been
+    // shown identical, so the surviving candidate for the sea's 1.5x is whether
+    // the two paths agree on ALPHA BLENDING. Log the decoded texture's mean RGB
+    // (does librw sample the same texels the D3D9 path does?) and its alpha
+    // range (is there any alpha for a blend to act on at all?).
+    // Answered (sea: 256x256 depth 8, mean (60.7,68.2,76.8), alpha [255..255] --
+    // opaque, so blending was ruled out), so it is gated: it rescans every texel
+    // of every texture at load time. MASHED_LIBRW_TEXLOG=1 to re-enable.
+    static const bool s_texlog = [] {
+        const char* e = std::getenv("MASHED_LIBRW_TEXLOG");
+        return e && e[0] == '1' && e[1] == '\0';
+    }();
+    if (s_texlog) {
+        double sr = 0, sg = 0, sb = 0;
+        unsigned amin = 255, amax = 0;
+        const std::size_t n = static_cast<std::size_t>(w) * h;
+        for (std::int32_t y = 0; y < h; ++y)
+            for (std::int32_t x = 0; x < w; ++x) {
+                Rgba c{};
+                SourceTexel(mip, (std::uint32_t)x, (std::uint32_t)y, &c);
+                sr += c.r; sg += c.g; sb += c.b;
+                if (c.a < amin) amin = c.a;
+                if (c.a > amax) amax = c.a;
+            }
+        std::FILE* f = std::fopen("log/librw_scene.txt", "a");
+        if (f) {
+            std::fprintf(f, "  TEXDEC '%s' %dx%d depth=%u mean=(%.1f,%.1f,%.1f) "
+                            "alpha=[%u..%u]\n",
+                         tex.name, w, h, (unsigned)mip.depth,
+                         sr / n, sg / n, sb / n, amin, amax);
+            std::fclose(f);
+        }
+    }
     return ras;
 }
 

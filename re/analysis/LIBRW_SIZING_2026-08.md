@@ -935,6 +935,46 @@ viewpoints, world-only, no cars.
 > > for the region reproducing the recorded (11.1,17.7,20.6) baseline, which it does
 > > to 0.07. Recorded here so the next measurement is comparable.
 >
+> ### D-S3-SEA — ROOT-CAUSED. The librw instanced path applies no UV ANIMATION.
+>
+> Not lighting, not the bake, not fog, not filtering, not blending. **The sea is
+> drawn with static UVs.** The D3D9 path scrolls each material's UVs per frame via
+> a texture transform (`mat_scroll` / `uv_rate`, F3; applied at
+> `TrackRenderer.cpp:3839-3843` and `:3968-3980`). Nothing in `LibRw/` carries
+> `uv_anim` — `RwBridge.cpp:63` registers the UVAnim *plugin* and that is all. The
+> scroll phase decides where the wave highlights land, and that sets the region mean.
+>
+> **Proved by positive control**, which is what makes this different from the earlier
+> guesses: disabling UV scroll on the *shipping D3D9 renderer* (`MASHED_NO_UVSCROLL=1`)
+> reproduces the defect on the reference itself.
+>
+> | sea region | R | G | B |
+> |---|---|---|---|
+> | D3D9 baseline | 11.1 | 17.8 | 20.7 |
+> | **D3D9, `MASHED_NO_UVSCROLL=1`** | **17.4** | **28.2** | **30.5** |
+> | **librw instanced** | **17.6** | **28.2** | **30.3** |
+>
+> The control lands within 0.2 of librw on every channel, closing **97%** of a
+> (6.5,10.4,9.6) gap. It is also non-degenerate: it moves all 7 shots hard
+> (`01_action` 0.59→5.67, `car_4_chase` 0.06→8.13), so UV animation is a large
+> general term for the instanced path, not a sea-only curiosity.
+>
+> The elimination chain behind it, each step measured or cited, so none is re-tried:
+>
+> | candidate | verdict | evidence |
+> |---|---|---|
+> | ambient bake divergence | **exonerated** | D3D9 bakes `0xFF3E5B59` = (62,91,89); librw uploads `0xFF595B3E` = (62,91,89). **Bit-identical.** This is the per-vertex comparison the previous entry asked for. |
+> | `amb_world_` vs `amb_f_` quantisation | ruled out | `amb_world_` is a quantised mirror of `amb_f_` (`TrackRenderer.cpp:1032`) |
+> | ambient double-counted by librw | ruled out | `lightingCB_Shader` takes `setAmbient(black)` + `setNumLights(0,0,0)` for non-LIGHT geometry (`d3drender.cpp:357-364`); sea is `lit=0` |
+> | texture decode / PAL4 nibble bug | ruled out | both decoders identical (`RwRasterBridge.cpp:45-67` vs `TrackRenderer.cpp:363-395`); sea is depth 8 anyway |
+> | alpha blending | ruled out | decoded sea alpha is `[255..255]` — fully opaque, nothing to blend |
+> | texture filtering | ruled out | both LINEAR, with a non-degeneracy control (above) |
+> | fog | **disproved** | closing the ramp moved it the *wrong way* |
+>
+> Fix: carry the per-material UV scroll into the librw submit as a texture matrix
+> per material per frame. **Not yet implemented** — it is the gating work for
+> turning `MASHED_LIBRW_INST` on.
+>
 > ### Residual itemised per region (world-only, post-fog-fix)
 >
 > "~0.9, not itemised, probably fog + lighting" is superseded. After the fog fix the

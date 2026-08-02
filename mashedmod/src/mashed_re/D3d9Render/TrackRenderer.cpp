@@ -1201,10 +1201,18 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         // If they differ by the track ambient, the librw path is missing the
         // ambient the D3D9 path bakes in -- which is the standing hypothesis.
         if (log) {
-            unsigned baked = 0;
-            for (const auto& bb : p->batches) if (!bb.empty()) { baked = bb[0].c; break; }
-            std::fprintf(log, "D-S3-6 bake: dff=%s lt=%s baked_v0=0x%08X\n",
-                         dff_name, lt ? "YES" : "no", baked);
+            // D-S3-SEA: log EVERY batch, not just the first non-empty one. The
+            // sea is one batch of a multi-batch prop, so a single "first batch"
+            // sample cannot be lined up against the librw UPLOAD lines, which
+            // are per batch. Batch order is the same on both sides (both walk
+            // model.batches in order), so index i pairs with index i.
+            for (std::size_t bi = 0; bi < p->batches.size(); ++bi) {
+                const auto& bb = p->batches[bi];
+                if (bb.empty()) continue;
+                std::fprintf(log,
+                    "D-S3-6 bake: dff=%s lt=%s batch=%zu baked_v0=0x%08X\n",
+                    dff_name, lt ? "YES" : "no", bi, bb[0].c);
+            }
         }
         // E2'b step 3: hand this model to librw HERE -- `m` is a local that dies
         // at the closing brace, and nothing else retains a parsed DffModel.

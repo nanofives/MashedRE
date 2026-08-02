@@ -281,6 +281,18 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
             }
             prelit_src = &prelit_amb;
         }
+        // D-S3-SEA probe: the value librw actually UPLOADS for vertex 0, to be
+        // compared against the D3D9 path's `D-S3-6 bake: baked_v0` for the same
+        // vertex. Both are the final per-vertex colour their renderer starts
+        // from, so if they agree the 1.5x sea divergence is downstream of the
+        // bake (pipeline/shader) and if they differ it is the bake itself.
+        // Printed in RW byte order (0xAABBGGRR), same as `prelit[0]` above.
+        if (!b.prelit.empty()) {
+            SLog("  UPLOAD mat=%u lit=%d mod=%d amb=0x%06X raw=0x%08X -> up=0x%08X",
+                 (unsigned)b.material, (int)b.lit, (int)b.modulate_mat,
+                 (unsigned)ambient, (unsigned)b.prelit[0],
+                 (unsigned)(*prelit_src)[0]);
+        }
         FillVertexData(geo, nv, b.verts, b.uvs, *prelit_src, &b.normals);
         for (std::int32_t i = 0; i < nt; ++i) {
             // DffBatch::tris is v0,v1,v2 -- material is per BATCH, not per tri.
