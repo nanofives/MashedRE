@@ -94,9 +94,24 @@ void RaceSubmit_BeginTrackLoad();
 // incremental by construction and a single bad model cannot black out the scene.
 // `ambient` = RaceSceneState::amb_world_ (0x00RRGGBB), already parsed by
 // TrackRenderer before any prop loads. See BuildClump's note for why it matters.
+// `uv_rates`, when non-null, is 2 floats (du/dt, dv/dt) per MATERIAL, in
+// model.materials order -- the same rates the D3D9 path feeds its texture
+// transform (TrackRenderer's mat_scroll / uv_rate, F3). librw's d3d9 shader pipe
+// has NO texture matrix (default_VS.hlsl passes input.TexCoord straight through)
+// and its UVAnim plugin is stream-only, so the scroll is applied by moving the
+// texture coordinates themselves -- see RaceSubmit_SetAnimTime.
 int RaceSubmit_RegisterModel(const Track::DffModel& model,
                              const Txd::Dictionary* dicts, std::size_t ndicts,
-                             std::uint32_t ambient);
+                             std::uint32_t ambient,
+                             const float* uv_rates = nullptr,
+                             std::size_t nmats = 0);
+
+// Set the UV-animation clock for this frame. MUST be the same `t` the D3D9 path
+// passes to TrackRenderer::Render, or the two renderers scroll to different
+// phases and the surface differs even though everything else matches -- which is
+// exactly what D-S3-SEA turned out to be (a static-UV librw sea read as "1.5x too
+// bright" until MASHED_NO_UVSCROLL=1 reproduced it on the D3D9 path).
+void RaceSubmit_SetAnimTime(float t);
 
 // Queue one placed copy for this frame. `m44` is a D3DMATRIX in memory order --
 // the SAME matrix the D3D9 path would pass to SetTransform(D3DTS_WORLD), so both

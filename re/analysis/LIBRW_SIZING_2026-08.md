@@ -712,11 +712,68 @@ viewpoints, world-only, no cars.
 > opposite of the intent. Measured cost of the mistake: `01_action` regressed
 > 14.99 → 39.25. Capture must precede the resync.
 >
-> ### Instanced props / cars — STAGED behind `MASHED_LIBRW_INST`, NOT accepted
+> ### Instanced props / cars — **ON BY DEFAULT since 2026-08-02**
 >
-> The seam is built and works mechanically, but it is **off by default** because
-> enabling it regresses two things. `MASHED_RENDER_LIBRW` alone still gives the
-> verified world-only numbers above.
+> Both staging regressions are closed (D-S3-7 transform inversion, D-S3-SEA missing
+> UV animation). `MASHED_LIBRW_INST=0` reverts to world-only. The flip only applies
+> when the librw renderer is on at all — with no env set the shipping D3D9 path
+> still runs and still diffs **0.00**.
+>
+> Verified in three configurations on one binary:
+>
+> | config | gating shots | sea region ratio |
+> |---|---|---|
+> | A. no env (shipping D3D9) | **0.00** ×7 | 1.00 / 1.00 / 1.00 |
+> | B. `MASHED_RENDER_LIBRW=1` (instances default ON) | **0.06 – 0.59** | 1.02 / 1.00 / 0.99 |
+> | C. `+ MASHED_LIBRW_INST=0` (revert) | 0.04 – 0.45 | 1.00 / 1.00 / 1.00 |
+>
+> B reproduced the earlier explicit `MASHED_LIBRW_INST=1` run to the hundredth on
+> all seven shots, which is the same-config repeat this harness requires before a
+> difference may be believed.
+>
+> | shot | pre-UVanim | **B (default)** | C (world-only) |
+> |---|---|---|---|
+> | `01_grid`     | 4.65 | **0.26** | 0.32 |
+> | `01_action`   | 0.59 | **0.59** | 0.45 |
+> | `car_1_spawn` | 7.12 | **0.26** | 0.31 |
+> | `car_2_drive` | 4.64 | **0.26** | 0.32 |
+> | `car_3_weave` | 6.95 | **0.58** | 0.37 |
+> | `car_4_chase` | 0.06 | **0.06** | 0.04 |
+> | `car_5_chase` | 1.77 | **0.41** | 0.29 |
+>
+> The instanced path is now at or below the world-only path on four of seven shots
+> — drawing props and cars through librw as well as the world is closer to the
+> reference than drawing the world alone was.
+>
+> #### How UV animation is carried over (no librw patch needed)
+>
+> The D3D9 path scrolls with a texture transform. That lever does not exist here:
+> librw's d3d9 shader pipe passes `input.TexCoord` through untouched
+> (`default_VS.hlsl:26`) and ignores `D3DTSS_TEXTURETRANSFORMFLAGS`, and librw's
+> UVAnim plugin is stream-only — nothing under `src/d3d/` references it. So the
+> **coordinates themselves are moved**, entirely on our side of the seam:
+>
+> - `BuildClump` now reports each atomic's material index as it creates the atomic.
+>   Batch index is NOT atomic index — empty batches are skipped and produce none —
+>   so re-deriving the mapping by re-walking `model.batches` would drift.
+> - `RaceSubmit_RegisterModel` takes the per-material `(du,dv)` rates and snapshots
+>   the authored UVs of each scrolling atomic. Every frame the UVs are re-derived
+>   from that base as `base + fmod(rate*t, 1)` — **absolute, never accumulated**,
+>   matching the D3D9 formula exactly, so the two cannot drift apart over a run.
+> - `RaceSubmit_SetAnimTime(t)` is fed the *same* `t` `TrackRenderer::Render`
+>   scrolls with. A private clock would put the renderers at different phases,
+>   which is indistinguishable from a shading bug — which is how this read for
+>   several rounds. It also honours `MASHED_NO_UVSCROLL`, so that kill-switch still
+>   disables both paths together and remains usable as the control that found this.
+> - Cost is one texcoord re-upload per animated atomic per frame, not a full
+>   re-instance: `lockedSinceInst = LOCKTEXCOORDS` makes `d3d9.cpp:416` call
+>   `instanceCB(reinstance=1)`, where the vertex/prelight/normal blocks (`:588`,
+>   `:598`, `:627`) are each guarded by their own lock bit and skipped.
+>
+> Registration is confirmed live rather than assumed: `uvanim=1` on exactly
+> `model[0]` (sky) and `model[4]` (sea), 0 on the other seven.
+>
+> **Historical note — what the staging block used to say:**
 >
 > What landed: `RaceSubmit_RegisterModel` / `AddInstance` / `BeginTrackLoad`.
 > Registration happens at load time from the live `DffModel` locals — inside
@@ -971,9 +1028,11 @@ viewpoints, world-only, no cars.
 > | texture filtering | ruled out | both LINEAR, with a non-degeneracy control (above) |
 > | fog | **disproved** | closing the ramp moved it the *wrong way* |
 >
-> Fix: carry the per-material UV scroll into the librw submit as a texture matrix
-> per material per frame. **Not yet implemented** — it is the gating work for
-> turning `MASHED_LIBRW_INST` on.
+> **FIXED same session.** The scroll is carried over by moving the texture
+> coordinates (librw's shader pipe has no texture matrix) — see "How UV animation
+> is carried over" above. Sea region went 1.58/1.59/1.47 → **1.02/1.00/0.99**, and
+> the gating shots 0.06–7.12 → **0.06–0.59**. `MASHED_LIBRW_INST` is now ON by
+> default.
 >
 > ### Residual itemised per region (world-only, post-fog-fix)
 >

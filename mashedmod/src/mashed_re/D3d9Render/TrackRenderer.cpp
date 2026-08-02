@@ -1214,15 +1214,26 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     dff_name, lt ? "YES" : "no", bi, bb[0].c);
             }
         }
-        // E2'b step 3: hand this model to librw HERE -- `m` is a local that dies
-        // at the closing brace, and nothing else retains a parsed DffModel.
-        if (LibRw::RaceSubmit_Requested())
-            p->rw_model = LibRw::RaceSubmit_RegisterModel(m, dicts.data(), dicts.size(),
-                                                          amb_world_);
             // F3: bind each material's UVAnim-extension name to its .UVA rate.
             p->mat_scroll.assign(m.materials.size(), {});
             for (std::size_t mi = 0; mi < m.materials.size(); ++mi)
                 p->mat_scroll[mi] = uv_rate(m.materials[mi].uv_anim);
+        // E2'b step 3: hand this model to librw HERE -- `m` is a local that dies
+        // at the closing brace, and nothing else retains a parsed DffModel.
+        // The UV rates must be resolved BEFORE this call, not after: librw has no
+        // texture matrix and applies the scroll by moving the coordinates, so it
+        // needs the rates at registration time. They used to be filled in below
+        // this call, which left the librw side with none.
+        if (LibRw::RaceSubmit_Requested()) {
+            std::vector<float> rates(m.materials.size() * 2, 0.f);
+            for (std::size_t mi = 0; mi < p->mat_scroll.size(); ++mi) {
+                rates[mi * 2 + 0] = p->mat_scroll[mi].du;
+                rates[mi * 2 + 1] = p->mat_scroll[mi].dv;
+            }
+            p->rw_model = LibRw::RaceSubmit_RegisterModel(
+                m, dicts.data(), dicts.size(), amb_world_,
+                rates.empty() ? nullptr : rates.data(), m.materials.size());
+        }
             return true;
         };
         if (lua) {
@@ -3817,6 +3828,15 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // comes from D3D9, so remaining deltas are scope, not overdraw.
     const bool rw_world = D3d9Render::RwWorldRender_Render(/*world*/nullptr, /*cam*/nullptr) != 0
                           || LibRw::RaceSubmit_Active();
+
+    // F3: hand librw the SAME animation clock this function scrolls its own
+    // texture transforms with. Passing anything else (a private timer, a frame
+    // count) would put the two renderers at different scroll phases, which is
+    // indistinguishable from a shading bug -- that is precisely how D-S3-SEA read
+    // for several rounds. `t` is the single source of truth; it is not re-derived.
+    // Honours MASHED_NO_UVSCROLL so the kill-switch still disables BOTH paths
+    // together and stays usable as the positive control that found this.
+    LibRw::RaceSubmit_SetAnimTime(s_uvscroll_off ? 0.f : t);
 
     // sky clump first: unfogged, no depth write (renderer-gap closure)
     if (!sky_.batches.empty()) {

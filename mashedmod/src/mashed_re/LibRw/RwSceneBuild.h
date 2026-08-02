@@ -13,6 +13,7 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 
 #include "../Track/DffModel.h"
 #include "../Track/TrackWorld.h"
@@ -52,8 +53,15 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex);
 // times too dark (measured: Arctic sea prelit (12,14,11) vs baked (63,91,88)).
 // LIGHT batches are left alone -- they DO receive the rw::Light ambient, and baking
 // it in as well would double-count.
+// `out_atomic_mat`, when non-null, receives one entry per atomic BuildClump
+// creates, in creation order, holding that atomic's material index. The caller
+// needs it to bind per-material state (UV-animation rates) to atomics: the
+// mapping is not batch index -> atomic index, because batches with no vertices
+// or no triangles are skipped and produce no atomic. Deriving it by re-walking
+// model.batches would silently drift the moment that skip rule changes.
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
-                 std::uint32_t ambient = 0);
+                 std::uint32_t ambient = 0,
+                 std::vector<std::uint32_t>* out_atomic_mat = nullptr);
 
 // E2'b step 2: build the Arctic world, render it once through librw from a
 // DETERMINISTIC overview camera derived from the world bbox, and dump the

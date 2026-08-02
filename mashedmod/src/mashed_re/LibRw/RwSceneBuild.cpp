@@ -196,7 +196,9 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
 namespace { void SLog(const char* fmt, ...); }
 
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
-                 std::uint32_t ambient) {
+                 std::uint32_t ambient,
+                 std::vector<std::uint32_t>* out_atomic_mat) {
+    if (out_atomic_mat) out_atomic_mat->clear();
     std::vector<rw::Material*> mats;
     int named = 0, resolved = 0;
     BuildMaterials(model.materials, tex, mats, &named, &resolved);
@@ -305,8 +307,13 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
         AppendMaterials(geo, mats);
         FinishGeometry(geo);
 
-        if (rw::Atomic* a = MakeAtomic(geo, root))
+        if (rw::Atomic* a = MakeAtomic(geo, root)) {
             clump->addAtomic(a);
+            // Record the material HERE, where the atomic is actually created --
+            // batches that produced none (nv==0 || nt==0, skipped above) must not
+            // shift the mapping.
+            if (out_atomic_mat) out_atomic_mat->push_back(b.material);
+        }
     }
     return clump;
 }

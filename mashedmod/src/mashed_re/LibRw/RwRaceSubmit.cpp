@@ -210,35 +210,128 @@ bool RaceSubmit_OnTrackLoaded(const Track::World& world,
     return true;
 }
 
+// DEFAULT ON since 2026-08-02. It was staged off while the instanced path ran a
+// uniform ~1.5x bright on fogged surfaces; that turned out to be missing UV
+// ANIMATION (D-S3-SEA), not shading, and carrying the scroll over took the gating
+// shots from 0.06-7.12 to 0.06-0.59 -- at or below the world-only path. Note this
+// only takes effect when the librw renderer is on at all (MASHED_RENDER_LIBRW);
+// with no env set the shipping D3D9 path still runs and still diffs 0.00.
+// MASHED_LIBRW_INST=0 reverts to world-only.
 bool RaceSubmit_InstancesEnabled() {
     static const bool on = [] {
         const char* e = std::getenv("MASHED_LIBRW_INST");
-        return e && e[0] == '1' && e[1] == 0;
+        return !(e && e[0] == '0' && e[1] == 0);
     }();
     return on;
 }
+
+// ---------------------------------------------------------------------------
+// F3 UV animation on the librw path
+//
+// The D3D9 path scrolls UV-animated materials with a texture transform
+// (TrackRenderer.cpp:3839-3843 / :3968-3980, offset = fmod(rate*t, 1)). That
+// lever does not exist here: librw's d3d9 shader pipeline passes input.TexCoord
+// through untouched (default_VS.hlsl:26) and ignores D3DTSS_TEXTURETRANSFORMFLAGS
+// entirely, and librw's UVAnim plugin is stream-only -- nothing under src/d3d/
+// references it. So the coordinates themselves are moved.
+//
+// Cost is one texcoord re-upload per animated atomic per frame, NOT a full
+// re-instance: setting lockedSinceInst to LOCKTEXCOORDS makes d3d9.cpp:416 call
+// instanceCB(reinstance=1), and every other block there is guarded by its own
+// lock bit (:588 vertices, :598 prelight, :627 normals), so only the texcoord
+// loop at :616 runs. Geometry::lock() is deliberately NOT used: it is fine for
+// this flag today, but it also frees meshHeader for LOCKPOLYGONS, and setting
+// the one bit we mean is clearer than relying on which flags it special-cases.
+// ---------------------------------------------------------------------------
+namespace {
+
+struct UvAnimAtomic {
+    rw::Atomic*                 atomic = nullptr;
+    float                       du = 0.f, dv = 0.f;
+    std::vector<rw::TexCoords>  base;    // authored UVs; offsets apply to these
+};
+// Parallel to g_models: per model, the atomics that actually scroll.
+std::vector<std::vector<UvAnimAtomic>> g_uvanim;
+float g_anim_t = 0.f;
+int   g_uvanim_count = 0;   // total scrolling atomics, for the log
+
+void RegisterUvAnim(rw::Clump* c, const std::vector<std::uint32_t>& atomic_mat,
+                    const float* uv_rates, std::size_t nmats) {
+    g_uvanim.emplace_back();
+    if (!uv_rates || nmats == 0) return;
+    std::vector<UvAnimAtomic>& out = g_uvanim.back();
+
+    std::size_t ai = 0;
+    FORLIST(lnk, c->atomics) {
+        rw::Atomic* a = rw::Atomic::fromClump(lnk);
+        if (ai >= atomic_mat.size()) break;
+        const std::uint32_t mi = atomic_mat[ai++];
+        if (mi >= nmats) continue;
+        const float du = uv_rates[mi * 2 + 0], dv = uv_rates[mi * 2 + 1];
+        if (du == 0.f && dv == 0.f) continue;
+        rw::Geometry* g = a->geometry;
+        if (!g || g->numTexCoordSets < 1 || !g->texCoords[0]) continue;
+        UvAnimAtomic e;
+        e.atomic = a; e.du = du; e.dv = dv;
+        e.base.assign(g->texCoords[0], g->texCoords[0] + g->numVertices);
+        out.push_back(std::move(e));
+        ++g_uvanim_count;
+    }
+}
+
+// Re-derive every animated atomic's UVs from its AUTHORED base, never from last
+// frame's values: accumulating a per-frame delta would drift, and the D3D9 path
+// it must match is itself absolute (fmod(rate * t, 1) of a fixed rate).
+void ApplyUvAnim() {
+    for (std::vector<UvAnimAtomic>& model : g_uvanim)
+        for (UvAnimAtomic& e : model) {
+            rw::Geometry* g = e.atomic ? e.atomic->geometry : nullptr;
+            if (!g || !g->texCoords[0]) continue;
+            const float ou = std::fmod(e.du * g_anim_t, 1.f);
+            const float ov = std::fmod(e.dv * g_anim_t, 1.f);
+            const std::int32_t n =
+                g->numVertices < (std::int32_t)e.base.size()
+                    ? g->numVertices : (std::int32_t)e.base.size();
+            for (std::int32_t i = 0; i < n; ++i) {
+                g->texCoords[0][i].u = e.base[i].u + ou;
+                g->texCoords[0][i].v = e.base[i].v + ov;
+            }
+            g->lockedSinceInst |= rw::Geometry::LOCKTEXCOORDS;
+        }
+}
+
+}  // namespace
+
+void RaceSubmit_SetAnimTime(float t) { g_anim_t = t; }
 
 void RaceSubmit_BeginTrackLoad() {
     if (!g_engine_up) return;
     for (rw::Clump* c : g_models) if (c) c->destroy();
     g_models.clear();
     g_insts.clear();
+    g_uvanim.clear();
+    g_uvanim_count = 0;
 }
 
 int RaceSubmit_RegisterModel(const Track::DffModel& model,
                              const Txd::Dictionary* dicts, std::size_t ndicts,
-                             std::uint32_t ambient) {
+                             std::uint32_t ambient,
+                             const float* uv_rates, std::size_t nmats) {
     if (!g_engine_up) return -1;
     TextureSource ts{ dicts, (int)ndicts };
-    rw::Clump* c = static_cast<rw::Clump*>(BuildClump(model, ts, ambient));
+    std::vector<std::uint32_t> atomic_mat;
+    rw::Clump* c = static_cast<rw::Clump*>(
+        BuildClump(model, ts, ambient, &atomic_mat));
     if (!c) { RLog("WARN: BuildClump failed -- model stays on the D3D9 path"); return -1; }
+    RegisterUvAnim(c, atomic_mat, uv_rates, nmats);
     // Deliberately NOT added to the rw::World: World::render() walks the clump
     // list and would draw every registered model once, at its authored transform,
     // regardless of how many copies are actually placed this frame. Instanced
     // models are drawn explicitly below instead.
     g_models.push_back(c);
-    RLog("model[%d] registered: atomics=%d", (int)g_models.size() - 1,
-         (int)c->countAtomics());
+    RLog("model[%d] registered: atomics=%d uvanim=%d", (int)g_models.size() - 1,
+         (int)c->countAtomics(),
+         g_uvanim.empty() ? 0 : (int)g_uvanim.back().size());
     return (int)g_models.size() - 1;
 }
 
@@ -568,6 +661,12 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
             const char* e = std::getenv("MASHED_LIBRW_LIFT");
             return e ? (float)std::atof(e) : 0.0f;
         }();
+        // F3: scroll UV-animated materials before anything is drawn. Once per
+        // FRAME, not once per instance -- the geometry is shared by every placed
+        // copy of a model, so doing it per instance would redo identical work and
+        // (worse) re-upload texcoords between draws of the same buffer.
+        ApplyUvAnim();
+
         for (const Inst& in : g_insts) {
             if (in.model < 0 || (std::size_t)in.model >= g_models.size()) continue;
             rw::Clump* c = g_models[(std::size_t)in.model];
