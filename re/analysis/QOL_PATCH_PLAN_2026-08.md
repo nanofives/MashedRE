@@ -351,7 +351,21 @@ per-wheel contact normals/loads (to see the bad lip normal). Usage:
   `--pid N` if several). Verified: attaches, both hooks install clean.
 Hygiene: attach-only, never spawns/kills, refuses to guess among multiple MASHED.
 
-**Fix DRAFTED 2026-08-01 (`MASHED_JUMPFIX`, opt-in, unverified).** In
+**FIX VERIFIED + SHIPPED 2026-08-02 (`MASHED_JUMPFIX`, on by default).**
+Player-in-the-loop confirmation (`re/frida/capture_jump_bug.py`, deceleration
+detector): the violent ramp dead jump — fast approach, forward render-speed
+collapses from ~0.18 to ~0.03 the instant grounded goes 4→0 at the lip, tilted
+contact normal (−0.061, 0.991, −0.12) with only the front wheels loaded (10,10,0,0)
+— reproduced twice in ~1900 ticks with the fix OFF (car0 t1376, car3 t1372, same
+ramp) and did NOT reproduce across ~10000 ticks (5× longer) with the fix ON. The
+owner independently "couldn't recreate it." Residual logged events with the fix on
+are round-restart teleports (detector false-positives, all 4 cars jump at one
+tick) or genuine wall-collision stops on flat normals (correct). Root cause
+mechanism confirmed exactly as predicted: the ramp-lip contact normal's backward
+tilt cancels forward velocity at takeoff. Launcher enables it by default; opt out
+with `-NoJumpFix`. Evidence: `verify/qol_asi_20260801/jump_capture_CONFIRMED.txt`.
+
+**Fix DRAFTED 2026-08-01 (`MASHED_JUMPFIX`).** In
 `mashed_qol.asi`: retarget the sole call to the once-per-tick bridge FUN_0047eb30
 (`E8 @0x00470e15`) to a wrapper that, before the bridge runs, restores each car's
 horizontal velocity (`+0x9B0`/`+0x9B8`) to the previous tick's value IF the car is

@@ -29,7 +29,7 @@ param(
     [string]$Res = '',         # 'WxH' override; '' = profile default; '0' = classic 640x480 titled window
     [switch]$EnableSave,
     [switch]$NoUnlock,
-    [switch]$JumpFix,      # DRAFT: preserve forward velocity through ramp takeoff (unverified)
+    [switch]$NoJumpFix,    # opt out of the ramp-takeoff velocity fix (on by default; verified 2026-08-02)
     [switch]$Repatch,
     [switch]$QolLog
 )
@@ -95,7 +95,7 @@ $env:MASHED_DECOUPLE        = if ($DecoupleReady) { '1' } else { '0' }
 $env:MASHED_INTERP          = if ($DecoupleReady) { '1' } else { '0' }  # smooth >60fps camera
 $env:MASHED_NO_SAVE         = if ($EnableSave) { '0' } else { '1' }
 $env:MASHED_UNLOCK          = if ($NoUnlock)   { '0' } else { '1' }
-$env:MASHED_JUMPFIX         = if ($JumpFix) { '1' } else { '0' }   # opt-in, unverified draft
+$env:MASHED_JUMPFIX         = if ($NoJumpFix) { '0' } else { '1' }  # ramp-takeoff velocity fix (verified)
 $env:MASHED_RE_NO_AUTO_HOOK = '1'    # keep dev RE hooks out of play sessions
 $env:MASHED_QOL_LOG         = if ($QolLog) { '1' } else { '0' }
 

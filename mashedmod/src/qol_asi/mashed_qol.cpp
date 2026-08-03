@@ -538,9 +538,12 @@ void Apply() {
 // normal airborne flight (no ground friction airborne) or grounded driving
 // (grounded==4), nor a wall crash (stays grounded). Vertical velocity (+0x9B4)
 // is left untouched so the upward launch and gravity are unaffected.
-// OFF by default (MASHED_JUMPFIX=1); a physics guard ships only after the
-// capture tool (re/frida/capture_jump_bug.py) confirms it on a real dead jump
-// AND a normal-jump corpus stays unchanged.
+// VERIFIED 2026-08-02 (re/frida/capture_jump_bug.py, player-in-the-loop): the
+// violent ramp-lip dead jump reproduced twice in ~1900 ticks with the fix OFF
+// (recentMax~0.18, grounded 4->0, tilted lip normal -0.061,0.991,-0.12) and did
+// NOT reproduce in ~10000 ticks with the fix ON. Evidence:
+// verify/qol_asi_20260801/jump_capture_CONFIRMED.txt. Launcher enables it by
+// default (opt out with -NoJumpFix). Gated by MASHED_JUMPFIX.
 namespace jumpfix {
 
 constexpr std::uintptr_t kCallSite  = 0x00470e15;  // CALL FUN_0047eb30
@@ -604,7 +607,7 @@ void Apply() {
         Rel32(kCallSite + 5, reinterpret_cast<std::uintptr_t>(&Wrapper));
     std::memcpy(&patch[1], &rel, 4);
     if (WriteMem(kCallSite, patch, sizeof(patch)))
-        LogLine("JUMPFIX: takeoff velocity-preserve live (DRAFT — verify on a real dead jump)");
+        LogLine("JUMPFIX: takeoff velocity-preserve live (verified 2026-08-02)");
     else
         LogLine("JUMPFIX: write failed — SKIPPED");
 }

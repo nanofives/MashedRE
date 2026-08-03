@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-01T08:30:00Z",
+  "updatedAt": "2026-08-02T21:30:00Z",
   "sections": [
     {
       "heading": "QoL patch set (2026-08-01)",
@@ -32,14 +32,14 @@
         },
         {
           "label": "Jump bug",
-          "value": "ROOT-CAUSED (native): FUN_0046ef70 velocity overwrite/clamp on stale ramp-lip normal. Fix DRAFTED (MASHED_JUMPFIX / launcher -JumpFix): restore horizontal velocity through takeoff via FUN_0047eb30 wrapper; smoke-tested non-destructive. Capture tool re/frida/capture_jump_bug.py for live-confirm. NOT verified on a real dead jump yet.",
+          "value": "FIXED + SHIPPED (verified 2026-08-02): native ramp-lip contact normal cancels forward velocity at takeoff. MASHED_JUMPFIX (launcher default, -NoJumpFix to disable) restores horizontal velocity via FUN_0047eb30 wrapper. Reproduced 2x fix-off in ~1900 ticks, 0x fix-on in ~10000; owner couldn't recreate. Root cause + evidence: capture_jump_bug.py.",
           "kind": "text"
         },
         {
           "label": "Open",
           "value": [
-            "Jump bug: live-confirm dead jump + ship toggleable fix",
-            "Aspect-ratio audit at non-4:3"
+            "Aspect-ratio audit at non-4:3",
+            "165Hz opponent-car interpolation is body-only (wheels micro-step)"
           ],
           "kind": "list"
         }
@@ -122,7 +122,7 @@
         },
         {
           "label": "M3 librw lane",
-          "value": "E2'b step 3 + E3' first pass DONE 2026-08-01 (branch e2b/step3-librw-inloop, 4 commits). librw DRAWS THE STATIC WORLD IN-LOOP at 0.39-0.93 mean-abs vs reference on all 7 reproduced gating shots (was 24.9-39.9); D3D9 path still 0.00 with the gate off. Non-degeneracy proven (MASHED_LIBRW_NODRAW diffs 19.31). Mechanism: device adoption (5 librw patches) + D3D9 state block around the submit. D-S3-1/2/4 CLOSED -- one root cause, render-state leakage, NOT occlusion. PROPS/CARS staged behind MASHED_LIBRW_INST but OFF: D-S3-6 world goes black and D-S3-7 car missing, both from the World::addCamera that LIGHT-flagged geometry requires. Next: close D-S3-6/7, then itemise the ~0.9 residual.",
+          "value": "I4 FOG CLOSED 2026-08-02 (b31baba9), new librw patch P6. Fog here is NOT fixed-function -- it is a vertex-shader constant whose end beginUpdate happens to populate from cam->farPlane, under an upstream TODO. setFogRange() decouples it after beginUpdate; the far plane is deliberately NOT shortened (it would rewrite the depth values librw writes into the buffer it SHARES with the D3D9 path). Measured with an env-gated same-binary control (MASHED_LIBRW_FOGFIX=0) that reproduces the prior numbers to the hundredth on 6/7 shots: world-only 0.39-0.93 -> 0.04-0.45, instanced 0.41-7.88 -> 0.06-7.12, 7/7 improved. Default D3D9 path still 0.00. ALSO: the fog hypothesis for the instanced SEA is DISPROVED (closing the ramp moved it the wrong way, 1.52x->1.58x; more fog can only brighten toward fog colour 24,28,40 which is brighter than the 11.1,17.8,20.7 baseline) -- its 1.5x is an unidentified open cause. NEAREST/LINEAR delta measured at 0.00 (Arctic TXD already LINEAR; non-degeneracy control run). World-only residual itemised: NOT diffuse -- 43/48 cells exactly 0.0, whole lower half bit-identical, residual is one horizon object (mip explanation disproved, both uploaders single-level). INSTANCED PROPS/CARS NOW ON BY DEFAULT (fdfba4eb). D-S3-SEA was root-caused (f60603a7) and FIXED: the librw path applied NO UV ANIMATION -- static UVs while D3D9 scrolled them per frame. Found by POSITIVE CONTROL (MASHED_NO_UVSCROLL=1 reproduced the defect on the shipping renderer, closing 97% of the gap); ruled out en route with evidence: the bake (vertex colours BIT-IDENTICAL at (62,91,89)), ambient quantisation, ambient double-count, texture decode incl. the PAL4 nibble trap, alpha blending, filtering, fog. Fix moves the texture coordinates themselves (librw's shader pipe has no texture matrix; its UVAnim plugin is stream-only) -- NO new librw patch, vendored snapshot untouched. Verified 3 ways on one binary: A) no env = shipping D3D9, 0.00 on all 7; B) MASHED_RENDER_LIBRW=1 = 0.06-0.59, sea ratio 1.02/1.00/0.99; C) +MASHED_LIBRW_INST=0 reverts to 0.04-0.45. B reproduced the prior explicit-INST run to the hundredth. Instanced path now at or below world-only on 4 of 7 shots.",
           "kind": "text"
         },
         {
