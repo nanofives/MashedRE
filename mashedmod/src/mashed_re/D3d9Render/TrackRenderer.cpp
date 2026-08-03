@@ -3936,8 +3936,30 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     MARK(d_other);   // setup + sky + fog state
     // WS-E1: skip the spike's world-geometry batches when the RW world render path
     // drew the world (the `if` gates the entire for-statement; inert today).
+    // D-S3-BANK probe: does the world contain COPLANAR surfaces whose winner is
+    // decided by draw order? It matters because the two renderers order the world
+    // differently and neither sets D3DRS_ZFUNC, so both use D3D9's default
+    // LESSEQUAL -- under which the LAST draw wins a depth tie. D3D9 accumulates
+    // batches_ per material ACROSS all sectors (material-major); librw gives each
+    // sector its own geometry and draws matIds 0..n within it (sector-major, see
+    // geometry.cpp buildMeshes). MASHED_WORLD_REVORDER=1 reverses this path's
+    // material order: if the frame is unchanged there is no coplanar overlap and
+    // order cannot be the cause; if it moves, order is live.
+    // Announces itself once: a reversal that changes nothing and a gate that never
+    // fired produce the SAME 0.00, so the log line is what separates them.
+    static const bool s_rev_order = [] {
+        const bool on = std::getenv("MASHED_WORLD_REVORDER") != nullptr;
+        if (on) {
+            if (std::FILE* f = std::fopen("mashed_re.log", "a")) {
+                std::fprintf(f, "D-S3-BANK: world material order REVERSED\n");
+                std::fclose(f);
+            }
+        }
+        return on;
+    }();
     if (!rw_world)
-    for (std::size_t mi = 0; mi < batches_.size(); ++mi) {
+    for (std::size_t k = 0; k < batches_.size(); ++k) {
+        const std::size_t mi = s_rev_order ? batches_.size() - 1 - k : k;
         const auto& b = batches_[mi];
         if (b.empty()) continue;
         dev->SetTexture(0, textures_[mi]);

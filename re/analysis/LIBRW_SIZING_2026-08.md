@@ -1095,7 +1095,40 @@ viewpoints, world-only, no cars.
 > | material colour on untextured `mat[6]` | ruled out | librw gates matCol on `Geometry::MODULATE` and uses **white** otherwise (`rwd3d.h:321-328`), matching D3D9's `SELECTARG2` |
 > | fog | **ruled out** | hotspot unchanged with fog off on both paths |
 >
-> Not yet examined: the UVs themselves, and vertex/index ordering within a mesh.
+> **UVs and mesh ordering — both examined, both ruled out (2026-08-02).**
+>
+> - **UVs**: copied raw on both paths, no transform. `FillVertexData` writes
+>   `uvs[i*2+0]/[i*2+1]` straight into `texCoords[0]` (`RwSceneBuild.cpp:105-108`);
+>   the D3D9 world build does the same (`TrackRenderer.cpp:1092-1093`). No flip,
+>   no scale.
+> - **Draw order / coplanar depth ties**: there IS a real ordering difference —
+>   D3D9 accumulates `batches_[mat]` across all sectors (**material-major**) while
+>   librw gives each sector its own geometry and draws matIds 0..n within it
+>   (**sector-major**, `geometry.cpp` `buildMeshes`) — and neither sets
+>   `D3DRS_ZFUNC`, so both run D3D9's default `LESSEQUAL`, under which the last
+>   draw wins a depth tie. But reversing this path's material order
+>   (`MASHED_WORLD_REVORDER=1`) produces a **bit-identical frame, 0 pixels over
+>   threshold**. The gate logs `D-S3-BANK: world material order REVERSED` when it
+>   fires, because a reversal that changes nothing and a gate that never fired
+>   produce the same 0.00 — the log is what separates them. So the world holds no
+>   coplanar surfaces whose winner depends on order, and the ordering difference,
+>   though real, has no visual consequence.
+> - Also ruled out: a **second texture stage** (no `SetTexture(1,...)` or stage-1
+>   state anywhere in `TrackRenderer`), and a **silhouette/occlusion flip** — the
+>   diff heatmap is a filled area over the whole slope face, not a thin edge.
+>
+> **Numeric characterisation, for whoever picks this up.** In the hot cell librw
+> loses red and green but keeps blue *exactly*, and cold cells match to 0.1:
+>
+> | cell | D3D9 | librw | ratio |
+> |---|---|---|---|
+> | (6,3) hot | (105.1, 108.0, 87.6) | (91.5, 100.1, 88.7) | 0.87 / 0.93 / **1.01** |
+> | (7,3) | (87.7, 110.6, 110.2) | (79.6, 105.6, 110.4) | 0.91 / 0.96 / **1.00** |
+> | (0,0) cold | (136.3, 116.7, 96.8) | (136.3, 116.7, 96.8) | 1.00 / 1.00 / 1.00 |
+>
+> It is a channel-dependent warm deficit over one slope face — **not** a uniform
+> scale (which would hit all three channels) and **not** a hue swap (which would
+> move blue too). Whatever is missing contributes roughly R:G ≈ 1.7:1 and no blue.
 > `[UNCERTAIN]`
 >
 > ### Texture filtering (NEAREST vs LINEAR) — NOT a delta. Closed.
