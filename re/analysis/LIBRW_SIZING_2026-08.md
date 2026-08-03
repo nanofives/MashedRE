@@ -1150,7 +1150,37 @@ viewpoints, world-only, no cars.
 > (`TrackRenderer.cpp:1082-1088`) — so there is no light term on that side for
 > librw to be missing.
 >
-> #### ANSWERED: librw draws `Snow` where D3D9 draws `World`
+> #### ⚠️ CORRECTION (2026-08-03): the "`World` → `Snow`" reading below was a DECODER ARTEFACT
+>
+> The material-ID decoder accepted any pixel within **±24** of a palette entry.
+> Sky and prop pixels — which are *not* drawn as ID colours — fall inside that
+> tolerance by chance, so they were decoded as world materials. The ID fill is
+> flat and exact, so the tolerance was never needed. Re-run with **exact** palette
+> matching, the picture is simpler and different:
+>
+> | material | D3D9 px | librw px | delta |
+> |---|---|---|---|
+> | `Snow` | 20 551 | **44 360** | **+23 809** |
+> | every other world material | **0** | 0 (+82 `Ads`) | — |
+>
+> D3D9 shows **no other world material** at those pixels — they are sky/props.
+> So it is not `World` losing to `Snow`; it is **librw rasterising `Snow` over
+> 23 809 pixels that D3D9 leaves to non-world content**, 2.16× the coverage.
+> Verified with liveness on both sides: D3D9 logged `drew=0x10` (material 4 only)
+> and librw logged `kept: mat[4]=1914`, matching the build tally exactly.
+>
+> Isolated silhouettes: D3D9's `Snow` has a ragged, stepped upper boundary;
+> librw's is a larger region with a clean diagonal edge. The mechanism is still
+> **unidentified** — same 1914 triangles, same vertices, matrices agreeing to
+> 2.7e-07 — but the question is now "why does this surface rasterise further in
+> librw", not "who wins the depth test".
+>
+> The superseded reading is kept below, because the *way* it was wrong is the
+> reusable lesson: a quantitative-looking result (9547 px, one component, 4.4%
+> boundary) was entirely an artefact of a sloppy classifier, and it survived
+> several rounds of reasoning because the numbers looked clean.
+>
+> #### SUPERSEDED: librw draws `Snow` where D3D9 draws `World`
 >
 > Settled by making both renderers output a **material-ID map** instead of shading
 > (`MASHED_WORLD_MATID=1`, both paths, flat colour `(20 + i*18, 200, 60)` so the

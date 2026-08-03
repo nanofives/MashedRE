@@ -3965,11 +3965,26 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // distance and stop being readable as indices.
     if (s_matid) dev->SetRenderState(D3DRS_FOGENABLE, FALSE);
 
+    // MASHED_WORLD_ONLYMAT=N draws only world material N, isolating its raw
+    // rasterised coverage. The previous version of this probe SILENTLY DID
+    // NOTHING -- a "Snow only" run still showed World -- and its output looked
+    // clean and quantitative enough to be believed. So this one reports what it
+    // actually submitted: `drew` is a bitmask of the material indices that
+    // reached DrawBatch, logged once. If ONLYMAT=4 does not print drew=0x10,
+    // the run is void and must not be measured.
+    static const int s_only_mat = [] {
+        const char* e = std::getenv("MASHED_WORLD_ONLYMAT");
+        return (e && *e) ? std::atoi(e) : -1;
+    }();
+    unsigned drew = 0;
+
     if (!rw_world)
     for (std::size_t k = 0; k < batches_.size(); ++k) {
         const std::size_t mi = s_rev_order ? batches_.size() - 1 - k : k;
         const auto& b = batches_[mi];
         if (b.empty()) continue;
+        if (s_only_mat >= 0 && (int)mi != s_only_mat) continue;
+        drew |= 1u << mi;
         dev->SetTexture(0, textures_[mi]);
         // F3: scroll the UVs of UV-animated materials (sea/sky) via a texture
         // transform — translation in row 3 with D3DTTFF_COUNT2 (the standard
@@ -4005,6 +4020,20 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         }
         if (scroll)
             dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
+    }
+    // Liveness for the two world probes. Printed once, from inside the frame that
+    // actually rendered, so it cannot be confused with build-time intent.
+    if (s_only_mat >= 0 || s_matid) {
+        static bool s_probe_logged = false;
+        if (!s_probe_logged) {
+            s_probe_logged = true;
+            if (std::FILE* f = std::fopen("mashed_re.log", "a")) {
+                std::fprintf(f, "D-S3-BANK PROBE: onlymat=%d matid=%d rw_world=%d "
+                                "drew=0x%X (bit i set = world material i submitted)\n",
+                             s_only_mat, (int)s_matid, (int)rw_world, drew);
+                std::fclose(f);
+            }
+        }
     }
     ds_flush("world");   // reports zeros when rw_world drew instead (inert today)
 

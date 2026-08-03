@@ -159,6 +159,18 @@ bool WorldMatIdMode() {
     }();
     return on;
 }
+// MASHED_WORLD_ONLYMAT=N: keep only world material N's triangles, collapsing the
+// rest to degenerates (v0=v1=v2) so vertex indices, matIds and mesh structure
+// stay exactly as in the real build -- the probe then measures the real geometry
+// rather than a rebuilt one. BuildWorld logs the surviving non-degenerate count
+// per material; a run whose log does not show only material N is void.
+int WorldOnlyMat() {
+    static const int v = [] {
+        const char* e = std::getenv("MASHED_WORLD_ONLYMAT");
+        return (e && *e) ? std::atoi(e) : -1;
+    }();
+    return v;
+}
 void WorldMatIdColour(std::size_t i, std::uint8_t* rgb) {
     rgb[0] = static_cast<std::uint8_t>(20 + i * 18);
     rgb[1] = 200;
@@ -218,6 +230,8 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
     rw::Frame* worldFrame = rw::Frame::create();
     sectors->setFrame(worldFrame);
 
+    const int only_mat = WorldOnlyMat();
+    std::vector<std::size_t> kept(world.materials.size(), 0);
     for (const Track::Sector& s : world.sectors) {
         const std::int32_t nv = static_cast<std::int32_t>(s.verts.size() / 3);
         const std::int32_t nt = static_cast<std::int32_t>(s.tris.size() / 4);
@@ -242,7 +256,14 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
                 geo->colors[i] = rw::RGBA{255, 255, 255, 255};
         for (std::int32_t i = 0; i < nt; ++i) {
             // Track::Sector::tris is (mat, v0, v1, v2) -- TrackWorld.h:30.
-            geo->triangles[i].matId = s.tris[i * 4 + 0];
+            const std::uint16_t tmat = s.tris[i * 4 + 0];
+            geo->triangles[i].matId = tmat;
+            if (only_mat >= 0 && (int)tmat != only_mat) {
+                geo->triangles[i].v[0] = geo->triangles[i].v[1] =
+                    geo->triangles[i].v[2] = s.tris[i * 4 + 1];
+                continue;
+            }
+            if (tmat < kept.size()) ++kept[tmat];
             geo->triangles[i].v[0]  = s.tris[i * 4 + 1];
             geo->triangles[i].v[1]  = s.tris[i * 4 + 2];
             geo->triangles[i].v[2]  = s.tris[i * 4 + 3];
@@ -268,6 +289,19 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
         }
         for (std::size_t i = 0; i < per_mat.size(); ++i)
             SLog("  world.tris mat[%zu]=%zu", i, per_mat[i]);
+        // Liveness for ONLYMAT: what SURVIVED as drawable triangles. If
+        // onlymat=N and any material other than N shows a non-zero kept count,
+        // the filter did not take and the run must not be measured.
+        if (only_mat >= 0) {
+            char line[512];
+            int off = 0;
+            for (std::size_t i = 0; i < kept.size() && off < 400; ++i)
+                if (kept[i])
+                    off += std::snprintf(line + off, sizeof(line) - off,
+                                         " mat[%zu]=%zu", i, kept[i]);
+            if (off == 0) std::snprintf(line, sizeof(line), " (nothing)");
+            SLog("  world ONLYMAT=%d PROBE kept:%s", only_mat, line);
+        }
     }
     rww->addClump(sectors);
     return rww;
