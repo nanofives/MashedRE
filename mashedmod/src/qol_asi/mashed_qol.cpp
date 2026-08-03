@@ -452,14 +452,15 @@ RecSnap s_rs[kMaxCars];
 
 // ── car shadow (render-to-texture pass FUN_0041f8f0 @0x0041f8f0) ─────────────
 // The shadow pass anchors its projector camera at
-//   sunDir(DAT_0063d850+4 matrix +0x30..38) * DAT_005cca00 + *(slot +0x258..0x260)
-// where slot = 0x0063dc38 + i*0x2ac (PerPlayerViewportRender struct). The xyz
-// at slot+0x258 is a TICK-cached car position — the shadow steps at tick rate
-// against the interpolated body. Lerp it during render, restore after.
-// Additionally slot+0x64 -> object -> +0x4 is the airborne-shadow billboard
-// frame read by VehicleShadowRender (0x0041faf0, gate byte +0x294 bit 0x40);
-// lerp its modelling+LTM the same way.
-constexpr std::uintptr_t kSlotBase   = 0x0063dc38;
+//   sunDir(DAT_0063d850+4 matrix +0x30..38) * DAT_005cca00 + *(ESI +0x258..0x260)
+// where ESI = 0x0063d9e0 + i*0x2ac — measured live via Interceptor on
+// 0x0041f8f0 (2026-08-03): ESI values 0x63d9e0/0x63dc8c/0x63df38. NOTE this is
+// 0x258 BELOW the PerPlayerViewportRender slot view (0x0063dc38, the U-1907
+// parallel-array quirk); for car 0 the anchor lands exactly at 0x0063dc38.
+// The xyz at ESI+0x258 is a TICK-written car position (verified fresh: equals
+// the body frame pos after every tick) — the shadow steps at tick rate against
+// the interpolated body. Lerp it during render, restore after.
+constexpr std::uintptr_t kSlotBase   = 0x0063d9e0;   // shadow-pass ESI base
 constexpr std::uintptr_t kSlotStride = 0x000002ac;
 struct Vec3Snap { float prev[3], curr[3]; bool have; };
 Vec3Snap s_sh[kMaxCars];
