@@ -100,6 +100,16 @@ rpc.exports = {
   pairroot(which, dy, reqPath, aPath, bPath, cPath) {
     const n = Math.min(COUNT.readS32(), 16), addrs = [];
     for (let i = 0; i < n; i++) {
+      if (which === 'shadow' || which === 'shadowm') {
+        // per-car render slot 0x0063dc38 + i*0x2ac; +0x64 = shadow object ->
+        // +0x4 RwFrame (VehicleShadowRender 0x0041faf0 reads its LTM at render)
+        const obj = ptr(0x0063dc38 + i * 0x2ac + 0x64).readPointer();
+        if (obj.compare(ptr(0x10000)) < 0) continue;
+        const f = obj.add(0x4).readPointer();
+        if (f.compare(ptr(0x10000)) < 0) continue;
+        addrs.push(f.add((which === 'shadowm' ? 0x10 : 0x50) + 0x30 + 4));
+        continue;
+      }
       const f = carRootFrame(i);
       if (!f) continue;
       if (which === 'model' || which === 'both') addrs.push(f.add(0x10 + 0x30 + 4));

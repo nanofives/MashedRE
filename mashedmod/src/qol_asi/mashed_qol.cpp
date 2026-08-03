@@ -450,6 +450,69 @@ FrameSnap* FindSnap(std::uintptr_t f) {
 struct RecSnap { Mat prev, curr; bool have; };
 RecSnap s_rs[kMaxCars];
 
+// ── car shadow (render-to-texture pass FUN_0041f8f0 @0x0041f8f0) ─────────────
+// The shadow pass anchors its projector camera at
+//   sunDir(DAT_0063d850+4 matrix +0x30..38) * DAT_005cca00 + *(slot +0x258..0x260)
+// where slot = 0x0063dc38 + i*0x2ac (PerPlayerViewportRender struct). The xyz
+// at slot+0x258 is a TICK-cached car position — the shadow steps at tick rate
+// against the interpolated body. Lerp it during render, restore after.
+// Additionally slot+0x64 -> object -> +0x4 is the airborne-shadow billboard
+// frame read by VehicleShadowRender (0x0041faf0, gate byte +0x294 bit 0x40);
+// lerp its modelling+LTM the same way.
+constexpr std::uintptr_t kSlotBase   = 0x0063dc38;
+constexpr std::uintptr_t kSlotStride = 0x000002ac;
+struct Vec3Snap { float prev[3], curr[3]; bool have; };
+Vec3Snap s_sh[kMaxCars];
+
+// SEH-guarded shadow lerp/restore (slot state can be stale/garbage during
+// race setup frames — a bad access must never kill the game).
+float s_shTrue[kMaxCars][3];
+bool  s_shDid[kMaxCars];
+
+void ShadowLerpOne(int i, float alpha) {
+    __try {
+        const std::uintptr_t anchor =
+            kSlotBase + (std::uintptr_t)i * kSlotStride + 0x258;
+        float t[3] = { rdF(anchor), rdF(anchor + 4), rdF(anchor + 8) };
+        Vec3Snap* vs = &s_sh[i];
+        if (!vs->have) {
+            for (int k = 0; k < 3; ++k) { vs->prev[k] = t[k]; vs->curr[k] = t[k]; }
+            vs->have = true;
+        } else if (t[0] != vs->curr[0] || t[1] != vs->curr[1] || t[2] != vs->curr[2]) {
+            const float dx = t[0]-vs->curr[0], dy = t[1]-vs->curr[1], dz = t[2]-vs->curr[2];
+            const bool jump = dx*dx + dy*dy + dz*dz > 100.0f * 100.0f;
+            for (int k = 0; k < 3; ++k) {
+                vs->prev[k] = jump ? t[k] : vs->curr[k];
+                vs->curr[k] = t[k];
+            }
+        }
+        for (int k = 0; k < 3; ++k) s_shTrue[i][k] = t[k];
+        s_shDid[i] = true;
+        wrF(anchor,     LerpF(vs->prev[0], vs->curr[0], alpha));
+        wrF(anchor + 4, LerpF(vs->prev[1], vs->curr[1], alpha));
+        wrF(anchor + 8, LerpF(vs->prev[2], vs->curr[2], alpha));
+        // NOTE: the airborne-shadow billboard frame (slot+0x64 -> +0x4) is NOT
+        // lerped: that object pointer is stale outside airborne states and
+        // writing through it corrupts heap (crashed race load, 2026-08-03).
+    } __except (1) {
+        s_shDid[i] = false;
+        s_sh[i].have = false;
+    }
+}
+
+void ShadowRestoreOne(int i) {
+    __try {
+        if (s_shDid[i]) {
+            const std::uintptr_t anchor =
+                kSlotBase + (std::uintptr_t)i * kSlotStride + 0x258;
+            wrF(anchor,     s_shTrue[i][0]);
+            wrF(anchor + 4, s_shTrue[i][1]);
+            wrF(anchor + 8, s_shTrue[i][2]);
+        }
+    } __except (1) {}
+    s_shDid[i] = false;
+}
+
 void __cdecl Wrapper() {
     const std::uint32_t phase =
         *reinterpret_cast<volatile std::uint32_t*>(kPhase);
@@ -460,7 +523,10 @@ void __cdecl Wrapper() {
     if ((phase != 3 && phase != 6) || frameHolder == 0) {
         s_have = false;
         s_fsN = 0;
-        for (int i = 0; i < kMaxCars; ++i) s_rs[i].have = false;
+        for (int i = 0; i < kMaxCars; ++i) {
+            s_rs[i].have = false;
+            s_sh[i].have = false;
+        }
         reinterpret_cast<RenderFn>(kRenderFn)();
         return;
     }
@@ -548,9 +614,13 @@ void __cdecl Wrapper() {
         WriteMatAt(a, LerpMat(rs->prev, rs->curr, alpha));
     }
 
+    // ── shadow-pass camera anchor (slot +0x258 xyz) + airborne-shadow frame ──
+    for (int i = 0; i < carCount; ++i) ShadowLerpOne(i, alpha);
+
     reinterpret_cast<RenderFn>(kRenderFn)();                // render + flip
 
     // ── restore true state (physics/next tick unperturbed) ──
+    for (int i = 0; i < carCount; ++i) ShadowRestoreOne(i);
     for (int i = 0; i < carCount; ++i)
         if (recAddr[i]) WriteMatAt(recAddr[i], recTrue[i]);
     for (int k = 0; k < frN; ++k) WriteFrame(frames[k], frTrue[k]);

@@ -492,3 +492,28 @@ icon, "!" marker, wheel transforms, fire emitters). Wheels: their clump-frame
 LTMs ARE lerped and still step -> they draw from another copy (candidates: the
 record +0x9f8 wheel array, or per-wheel heap frames written by suspension at
 tick).
+
+### Item 6 progress — shadow (2026-08-03, session 2)
+
+The car shadow is a **render-to-texture pass**: `FUN_0041f8f0` (0x0041f8f0, per-
+slot pre-pass in PerPlayerViewportRender) parks a projector camera at
+`sunDir(*(DAT_0063d850+4) +0x30..38) * DAT_005cca00 + *(slot +0x258..0x260)`
+and renders the car clump into the shadow raster (slot = 0x0063dc38 + i*0x2ac).
+The xyz at **slot+0x258 is the tick-cached car position anchor** — the shadow
+stepped because this anchor stepped. `FUN_0041faf0` (VehicleShadowRender,
+gate byte slot+0x294 bit 0x40, frame at slot+0x64) is the AIRBORNE billboard
+variant — gate observed CLEAR in normal driving.
+
+**Shipped:** interp wrapper now lerps slot+0x258..0x260 per car (SEH-guarded
+snapshot/lerp/restore, ShadowLerpOne/ShadowRestoreOne). The clump rendered into
+the shadow raster already uses the interpolated frames, so shape+position both
+follow the smooth car.
+
+**Crash lesson:** ALSO lerping the slot+0x64 airborne-billboard frame crashed
+race load twice — that object pointer is stale outside airborne states and the
+writes corrupt a live heap block (SEH cannot catch a successful bad write). Do
+NOT write through slot+0x64; if the airborne shadow ever needs interp, gate on
++0x294 bit 0x40 first.
+
+Verified: full stack (decouple+interp+jumpfix, 165 race cap) races 90s+ through
+round transitions, no crash. Visual smoothness pending owner check at 165Hz.
