@@ -767,7 +767,7 @@ void __cdecl Wrapper() {
 
     // ── overlay sprite pools: lerp arrays + re-flush VBs (see pools::) ──
     if (PoolLerpEnabled())
-        for (int p = 0; p < 4; ++p) pools::LerpFlushOne(p, alpha);
+        for (int p = 0; p < 5; ++p) pools::LerpFlushOne(p, alpha);   // kNumPools
 
     // ── held-powerup icon slots: lerp both matrices per slot ──
     for (int s = 0; s < kPupSlots; ++s) PupLerpOne(s, alpha);
@@ -808,14 +808,19 @@ void __cdecl Wrapper() {
 // (0x40), +0x20 scalar(4), +0x24 uv(0x10), +0x28 extra(0x20).
 namespace pools {
 
-constexpr int kNumPools = 4;
+constexpr int kNumPools = 5;
 constexpr int kMaxInst  = 128;   // >= largest pool capacity (0x63e548 cap 128)
 // car-attached overlay pools (identified live 2026-08-03 via 476d00 caller
 // log): 0x63bd50 = target/"!" marker (FUN_00413cb0), 0x63e548 = FUN_004212b0
 // element, 0x6842c8 = powerup held/active visuals (Lua-dispatched handler in
 // the unwrapped 0x449xxx block), 0x6887d0 = FUN_00456140 (rare pickup fx).
 constexpr std::uintptr_t kPoolAddr[kNumPools] = {
-    0x0063bd50, 0x0063e548, 0x006842c8, 0x006887d0
+    0x0063bd50, 0x0063e548, 0x006842c8, 0x006887d0,
+    // 0x0068b968: pickup/held-powerup ICON pool (FUN_00459000 draw ->
+    // FUN_00476df0 flush; init FUN_004587a0, IconCube.dff x25 @0x0068b1a0).
+    // This is the on-car held icon AND the on-track pickup pods — the element
+    // that kept stepping because it was NOT in the original 4-pool set.
+    0x0068b968
 };
 constexpr std::uintptr_t kStreamTable = 0x007dc57c;
 constexpr std::uintptr_t kFlushFn     = 0x00476df0;
