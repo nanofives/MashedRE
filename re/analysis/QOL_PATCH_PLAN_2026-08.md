@@ -637,3 +637,49 @@ Concrete next steps:
 decouple, camera+car-body interp, WHEELS (frame cap 48->128), projected SHADOWS.
 Jump fix, borderless res, unlock/no-save, FPS OSD from earlier. The overlay
 sprites (powerup icons, "!" markers, pickup pods) remain OPEN.
+
+### Item 6 — session 4 CLARIFIED TARGET: the 3D held-powerup MODEL over the car
+
+Owner clarified: NOT the flat HUD icon (barely moves) — the actual 3D powerup
+MODEL that floats/spins above a car while held. It lags behind the car at 165fps.
+
+**What this is (from code):** per-player powerup-model slots at 0x0088fc90
+(stride 0xb4, 4 slots; init FUN_0045bae0 loads PowerUpModels.txd + runs
+powerups_all.lua; per-slot reset FUN_0045ba10). Each slot holds TWO 0x40
+matrices (A@+0x4, B@+0x44; identity diagonal set in 45ba10) and a preserved
+object pointer at slot+0xb0 (ESI[0x2c]). Per-tick driver FUN_0045bba0 copies the
+car frame LTM into the slot matrices (via FUN_0041f060) — so the model is
+positioned at the car each TICK -> steps at 165fps.
+
+**Confirmed dead ends (do not repeat):**
+- Lerping the slot matrices A/B (+0x4/+0x44) — a +40 continuous lift did NOT
+  move the drawn model => they are computed MIRRORS, not the model's draw input.
+- Pool re-flush / registry re-drain — proven ineffective for all overlays
+  (previous section); the model is an RW atomic, use FRAME-MATRIX interp.
+
+**Correct mechanism (proven by wheels/shadows):** find the RwFrame the model's
+atomic DRAWS from and interpolate it (like the car body / shadow anchor). Path:
+slot 0x0088fc90 + s*0xb4 + 0xb0 = model object ptr -> its RwFrame -> LTM +0x50.
+
+**HARD BLOCKER hit this session:** the scenario_launch AI harness (even
+--powerups 1) does NOT reliably make cars COLLECT + HOLD a powerup — slot+0xb0
+object ptr stayed 0 across 120s (no model loaded), and slots showed only the
+player's always-present tracking position. Cannot locate the model frame without
+a genuinely-held powerup in memory.
+
+**Next session — unblock first, then fix:**
+1. Trigger a held powerup deterministically. Options: (a) find + call the game's
+   "grant/collect powerup" fn (trace writes to slot+0xb0 or the powerup-type
+   field; likely reachable from the pickup-collision path FUN_00459000's
+   FUN_004576b0 branch); (b) drive a REAL playthrough and attach to the live
+   game (owner can collect one, then we scan); (c) directly write a valid model
+   object + type into a slot.
+2. With a model held: read slot+0xb0 -> object -> frame; confirm by lifting THAT
+   frame's LTM +0x50 (+ freeze via FUN_00493390->0, BBDUMP) and seeing the model
+   rise. Then add it to interp's frame set (guard: only slots with obj != 0).
+3. The model may be a multi-frame clump (spinning) — walk its subtree like the
+   car (kMaxFrames already 128).
+
+Status: OPEN, well-scoped, blocker identified. Everything else in the QoL set
+remains shipped + owner-confirmed (decouple, camera/car/wheels/shadows interp,
+jump fix, res, unlock/no-save, OSD).
