@@ -26,6 +26,8 @@ param(
     [ValidateSet('pc', 'tv')]
     [string]$Profile = 'pc',
     [int]$FpsCap = 0,          # 0 = use profile logic
+    [int]$MenuCap = 0,         # 0 = follow profile target; e.g. 60 = classic menu pace
+                               # (menu logic is per-frame-coupled: higher cap = faster menus)
     [string]$Res = '',         # 'WxH' override; '' = profile default; '0' = classic 640x480 titled window
     [switch]$EnableSave,
     [switch]$NoUnlock,
@@ -75,8 +77,8 @@ if (Test-Path $canon) {
 }
 
 # ── resolve FPS caps ─────────────────────────────────────────────────────────
-# Menu cap stays 60 (menu logic is per-frame-coupled); race cap = profile target
-# (the decouple makes race speed framerate-independent).
+# Race cap = profile target (the decouple makes race speed framerate-independent).
+# Menu cap follows it by default (menus run proportionally faster — see -MenuCap).
 $target = $ProfileTargets[$Profile]
 $raceCap = if ($FpsCap -gt 0) { $FpsCap } elseif ($DecoupleReady) { $target } else { 60 }
 
@@ -90,7 +92,11 @@ if ($resolved) {
     Remove-Item Env:MASHED_QOL_BORDERLESS -ErrorAction SilentlyContinue
 }
 
-$env:MASHED_FPS_CAP         = '60'
+# Menu/frontend cap. Menus are per-frame-coupled (no tick quantizer outside
+# the race phases), so raising this speeds menu animation/nav proportionally —
+# uncapped-to-target reads as "snappy". -MenuCap 60 restores the classic pace.
+$menuCap = if ($MenuCap -gt 0) { $MenuCap } else { $raceCap }
+$env:MASHED_FPS_CAP         = "$menuCap"
 $env:MASHED_FPS_CAP_RACE    = if ($DecoupleReady) { "$raceCap" } else { $null }
 $env:MASHED_DECOUPLE        = if ($DecoupleReady) { '1' } else { '0' }
 $env:MASHED_INTERP          = if ($DecoupleReady) { '1' } else { '0' }  # smooth >60fps camera
@@ -102,8 +108,8 @@ $env:MASHED_RE_NO_AUTO_HOOK = '1'    # keep dev RE hooks out of play sessions
 $env:MASHED_QOL_LOG         = if ($QolLog) { '1' } else { '0' }
 
 $resLabel = if ($resolved) { "$resolved borderless" } else { '640x480 windowed' }
-Write-Host ("profile={0}  res={1}  menu_cap=60  race_cap={2}  decouple={3}  no_save={4}  unlock={5}" -f
-    $Profile, $resLabel, $raceCap, $env:MASHED_DECOUPLE, $env:MASHED_NO_SAVE, $env:MASHED_UNLOCK)
+Write-Host ("profile={0}  res={1}  menu_cap={2}  race_cap={3}  decouple={4}  no_save={5}  unlock={6}" -f
+    $Profile, $resLabel, $menuCap, $raceCap, $env:MASHED_DECOUPLE, $env:MASHED_NO_SAVE, $env:MASHED_UNLOCK)
 
 $p = Start-Process -FilePath (Join-Path $Orig 'MASHED.exe') -WorkingDirectory $Orig -PassThru
 Write-Host ("MASHED.exe started, PID {0}" -f $p.Id)
