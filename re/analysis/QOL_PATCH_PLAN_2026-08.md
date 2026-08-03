@@ -437,3 +437,58 @@ Investigation lane:
 > hand-edit trackers. Item 4 is a native 60 fps bug (owner-confirmed): get my symptom
 > description if I haven't given one yet, else characterize it via the scenario_launch
 > airborne lane + statediff before touching any fix.
+
+## Item 6 — Interp residue: tick-cached overlay/effect elements (investigated 2026-08-03)
+
+Owner report after the 165Hz interp shipped: powerup icons over cars, the "!"
+indicator, car shadows, wheels, fire still step at tick rate against the
+interpolated car body.
+
+**First attempt (shipped 2d186b9a, INSUFFICIENT):** lerp the car record render
+matrix (`0x00881ec8 + i*0xd04 + act*0x40`, active index at record `+0x9A8`;
+layout cited from the id->matrix lookup `FUN_0046d4a0` @0x0046d4a0) inside the
+interp wrapper, restore after render. Harmless and alpha-correct, but the owner
+retested: no visible change.
+
+**Root cause of the no-change (STATIC, decisive):** reachability classification
+of all 48 callers of `FUN_0046d4a0` against the two main-loop roots
+(render `FUN_00492e90`, logic `FUN_00492d30`, sets computed on pool13):
+**47/48 callers are logic-side; the only render-side caller is `FUN_00444b60`
+(map/spline debug draw).** Every element that positions itself from the car
+transform does so DURING THE TICK and caches the result — a render-time lerp of
+the source matrix cannot move them. The fix must interpolate each element's
+CACHED state (or re-run its positioning step) at render time — per-element RE.
+
+**Empirical probes** (`re/frida/carpos_source_probe.py`, `carpos_root_test.py`,
+runs under `verify/carpos_probe/`):
+- Consecutive-frame lift pairs with a logic freeze (force frame-time source
+  `FUN_00493390` to return 0 -> 0-tick frames, native under the decouple) and
+  on-demand BBDUMP pairs. Self-validating triple (on/off/off2) added after
+  scene-motion noise polluted early rounds.
+- Root RwFrame single-matrix lifts (modelling +0x40 / LTM +0x80): both at noise
+  level -> the lagging elements do NOT derive from the root frame matrices at
+  render; the RW dirty-resync theory is dead.
+- Record scan: two matrix buffers at +0x928/+0x968 (pos +0x958/+0x998) plus a
+  per-wheel-looking triplet run at +0x9f8..+0xac4 stride 0xc. Fixed globals
+  echoing car0 pos: 0x63d910, 0x63dc38 (camera-feed), transient 0x7ec/0x7ed
+  arrays.
+
+**Environment lessons (cost most of the session):**
+- Force-killed MASHED instances make Windows PCA re-add `DWM8And16BitMitigation`
+  to original\MASHED.exe (breaks the d3d9 proxy -> next spawns wedge before
+  render). Remedy: clear PCA Store + re-run setup_mashed_compat.ps1. THIS
+  SESSION'S KILLS DID IT TWICE.
+- MASHED stops rendering when unfocused: `FUN_00499690` (0x00499690) blocks in
+  WaitMessage while the active flag `DAT_0077391c`==0. Forcing the flag to 1
+  (+ one WM_NULL PostThreadMessage to wake a parked pump) keeps it rendering in
+  background — now built into the probe agent. Candidate future QoL toggle
+  (play/capture while unfocused).
+
+**Status: OPEN.** Next lane (dedicated session): pick ONE element (car shadow is
+the most visible), find its draw under `FUN_00492e90`, trace where its
+world-space inputs were cached during the tick, and lerp THAT cache in the
+interp wrapper (same snapshot/restore pattern). Repeat per element (powerup
+icon, "!" marker, wheel transforms, fire emitters). Wheels: their clump-frame
+LTMs ARE lerped and still step -> they draw from another copy (candidates: the
+record +0x9f8 wheel array, or per-wheel heap frames written by suspension at
+tick).
