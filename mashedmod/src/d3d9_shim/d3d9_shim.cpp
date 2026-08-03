@@ -335,6 +335,106 @@ static void FrameLimit()
     }
 }
 
+// ── FPS / frame-time OSD ────────────────────────────────────────────────────
+// Dependency-free on-screen indicators drawn with Clear-rect 7-segment digits
+// (no D3DX/font — works on the 16-bit backbuffer, drawn in the Present hook).
+// Top line: FPS (green). Second line: frame time in ms, 1 decimal (yellow).
+// Values are a rolling average over ~1/4 s. Env MASHED_FPS_OSD=1 starts
+// visible; F11 toggles at any time. Drawn AFTER the BBDump copy so parity
+// captures never include the overlay.
+static void OsdRect(IDirect3DDevice9* dev, int x1, int y1, int x2, int y2,
+                    D3DCOLOR c) {
+    D3DRECT r = { x1, y1, x2, y2 };
+    dev->Clear(1, &r, D3DCLEAR_TARGET, c, 1.0f, 0);
+}
+
+// Segment bits: A=1 B=2 C=4 D=8 E=16 F=32 G=64 (A top, clockwise, G middle).
+static const unsigned char kSegDigits[10] = {
+    63, 6, 91, 79, 102, 109, 125, 7, 127, 111
+};
+
+// Draw one glyph ('0'-'9' or '.') at (x,y), scale s. Returns x advance.
+static int OsdGlyph(IDirect3DDevice9* dev, char ch, int x, int y, int s,
+                    D3DCOLOR c) {
+    const int t = 2 * s, w = 7 * s, h = 12 * s;
+    if (ch == '.') {
+        OsdRect(dev, x, y + h - t, x + t, y + h, c);
+        return t + 2 * s;
+    }
+    if (ch < '0' || ch > '9') return w + 3 * s;   // unknown: blank advance
+    const unsigned char m = kSegDigits[ch - '0'];
+    const int ym = y + h / 2;
+    if (m & 1)  OsdRect(dev, x, y, x + w, y + t, c);                  // A
+    if (m & 2)  OsdRect(dev, x + w - t, y, x + w, ym, c);             // B
+    if (m & 4)  OsdRect(dev, x + w - t, ym, x + w, y + h, c);         // C
+    if (m & 8)  OsdRect(dev, x, y + h - t, x + w, y + h, c);          // D
+    if (m & 16) OsdRect(dev, x, ym, x + t, y + h, c);                 // E
+    if (m & 32) OsdRect(dev, x, y, x + t, ym, c);                     // F
+    if (m & 64) OsdRect(dev, x, ym - t / 2, x + w, ym + t / 2, c);    // G
+    return w + 3 * s;
+}
+
+static int OsdText(IDirect3DDevice9* dev, const char* str, int x, int y, int s,
+                   D3DCOLOR c) {
+    for (const char* p = str; *p; ++p) x += OsdGlyph(dev, *p, x, y, s, c);
+    return x;
+}
+
+static void OsdDraw(IDirect3DDevice9* dev) {
+    static int           s_visible = -1;   // -1 = env unparsed
+    static SHORT         s_prevKey = 0;
+    static LARGE_INTEGER s_freq = {}, s_winStart = {};
+    static int           s_winFrames = 0;
+    static double        s_fps = 0.0, s_ms = 0.0;
+
+    if (s_visible == -1) {
+        char buf[8] = {};
+        s_visible = (GetEnvironmentVariableA("MASHED_FPS_OSD", buf, sizeof(buf)) > 0 &&
+                     buf[0] == '1') ? 1 : 0;
+        QueryPerformanceFrequency(&s_freq);
+        QueryPerformanceCounter(&s_winStart);
+    }
+    // F11 toggle (edge-triggered).
+    const SHORT key = GetAsyncKeyState(VK_F11);
+    if ((key & 0x8000) && !(s_prevKey & 0x8000)) s_visible = !s_visible;
+    s_prevKey = key;
+
+    // Rolling ~1/4-second measurement window (always runs, so the readout is
+    // fresh the moment the overlay is toggled on).
+    s_winFrames++;
+    LARGE_INTEGER now;
+    QueryPerformanceCounter(&now);
+    const LONGLONG span = now.QuadPart - s_winStart.QuadPart;
+    if (s_freq.QuadPart > 0 && span >= s_freq.QuadPart / 4) {
+        s_fps = (double)s_winFrames * (double)s_freq.QuadPart / (double)span;
+        s_ms  = (double)span * 1000.0 /
+                ((double)s_freq.QuadPart * (double)s_winFrames);
+        s_winFrames = 0;
+        s_winStart  = now;
+    }
+    if (!s_visible || s_fps <= 0.0) return;
+
+    const int s = (int)(kForceBackBufferHeight / 480u);
+    const int scale = s < 1 ? 1 : s;
+    const int margin = 6 * scale, lineH = 16 * scale;
+
+    char fpsStr[16], msStr[16];
+    std::snprintf(fpsStr, sizeof(fpsStr), "%d", (int)(s_fps + 0.5));
+    std::snprintf(msStr,  sizeof(msStr),  "%.1f", s_ms);
+
+    // Backdrop sized to the wider line, for readability over the scene.
+    const int advD = 10 * scale, advDot = 4 * scale;
+    int wFps = 0; for (const char* p = fpsStr; *p; ++p) wFps += advD;
+    int wMs  = 0; for (const char* p = msStr;  *p; ++p) wMs += (*p == '.') ? advDot : advD;
+    const int wMax = (wFps > wMs ? wFps : wMs);
+    OsdRect(dev, margin - 2 * scale, margin - 2 * scale,
+            margin + wMax + 2 * scale, margin + 2 * lineH + 2 * scale,
+            D3DCOLOR_XRGB(12, 12, 12));
+
+    OsdText(dev, fpsStr, margin, margin,         scale, D3DCOLOR_XRGB(64, 255, 64));
+    OsdText(dev, msStr,  margin, margin + lineH, scale, D3DCOLOR_XRGB(255, 208, 64));
+}
+
 HRESULT STDMETHODCALLTYPE Present_BBDump(
     IDirect3DDevice9* pThis, const RECT* src, const RECT* dst,
     HWND wnd, const RGNDATA* dirty)
@@ -358,6 +458,7 @@ HRESULT STDMETHODCALLTYPE Present_BBDump(
         DeleteFileA(g_ReqPath);
         if (target[0]) DumpBackbufferBMPPath(pThis, target);
     }
+    OsdDraw(pThis);   // after dumps: captures never include the overlay
     return g_OriginalPresent(pThis, src, dst, wnd, dirty);
 }
 
