@@ -171,6 +171,29 @@ int WorldOnlyMat() {
     }();
     return v;
 }
+// MASHED_WORLD_PRELITONLY=1: strip world material textures so the librw PS TEX
+// path is off and Color = interpolated prelit alone (matCol stays white; no
+// MODULATE). Paired with the D3D9 SELECTARG2 branch, this isolates vertex-colour
+// interpolation from texture/UV sampling in the D-S3-BANK diff.
+bool WorldPrelitOnly() {
+    static const bool on = [] {
+        const char* e = std::getenv("MASHED_WORLD_PRELITONLY");
+        return e && e[0] == '1' && e[1] == '\0';
+    }();
+    return on;
+}
+// MASHED_WORLD_VDUMP=1: dump every world triangle's 3 corners as
+// "matId x y z r g b" to log/vdump_librw.txt (the D3D9 path writes vdump_d3d9.txt
+// the same way). Lets a per-vertex prelit readback be matched by position across
+// the two paths -- the last open D-S3-BANK candidate (does the packed prelit that
+// reaches the rasterizer differ?). Run WITHOUT ONLYMAT so triangles are real.
+bool WorldVDump() {
+    static const bool on = [] {
+        const char* e = std::getenv("MASHED_WORLD_VDUMP");
+        return e && e[0] == '1' && e[1] == '\0';
+    }();
+    return on;
+}
 void WorldMatIdColour(std::size_t i, std::uint8_t* rgb) {
     rgb[0] = static_cast<std::uint8_t>(20 + i * 18);
     rgb[1] = 200;
@@ -196,6 +219,17 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
             mats[i]->color.alpha = 255;
         }
         SLog("world: MATID mode -- flat per-material colours, (20+i*18, 200, 60)");
+    }
+    if (WorldPrelitOnly()) {
+        // Strip every world material's texture; keep matCol white and PRELIT on.
+        // PS #ifdef TEX is then off, so Color == interpolated prelit vertex colour.
+        int stripped = 0;
+        for (std::size_t i = 0; i < mats.size(); ++i) {
+            if (!mats[i]) continue;
+            if (mats[i]->texture) ++stripped;
+            mats[i]->setTexture(nullptr);
+        }
+        SLog("world: PRELITONLY mode -- textures stripped from %d materials", stripped);
     }
     // D-S3-BANK probe: the WORLD's texture resolution has never been logged --
     // BuildClump asks for these counts, BuildWorld did not. An unresolved world
@@ -231,6 +265,7 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
     sectors->setFrame(worldFrame);
 
     const int only_mat = WorldOnlyMat();
+    if (WorldVDump()) { if (std::FILE* f = std::fopen("log/vdump_librw.txt", "w")) std::fclose(f); }
     std::vector<std::size_t> kept(world.materials.size(), 0);
     for (const Track::Sector& s : world.sectors) {
         const std::int32_t nv = static_cast<std::int32_t>(s.verts.size() / 3);
@@ -267,6 +302,22 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
             geo->triangles[i].v[0]  = s.tris[i * 4 + 1];
             geo->triangles[i].v[1]  = s.tris[i * 4 + 2];
             geo->triangles[i].v[2]  = s.tris[i * 4 + 3];
+        }
+        if (WorldVDump() && geo->colors && geo->morphTargets[0].vertices) {
+            if (std::FILE* f = std::fopen("log/vdump_librw.txt", "a")) {
+                const rw::V3d* vp = geo->morphTargets[0].vertices;
+                for (std::int32_t i = 0; i < nt; ++i) {
+                    if (s.tris[i * 4 + 0] != 4) continue;   // snow only
+                    for (int j = 0; j < 3; ++j) {
+                        const std::uint16_t vi = s.tris[i * 4 + 1 + j];
+                        const rw::RGBA& c = geo->colors[vi];
+                        std::fprintf(f, "4 %.3f %.3f %.3f %u %u %u\n",
+                                     vp[vi].x, vp[vi].y, vp[vi].z,
+                                     (unsigned)c.red, (unsigned)c.green, (unsigned)c.blue);
+                    }
+                }
+                std::fclose(f);
+            }
         }
         AppendMaterials(geo, mats);   // matId is a world-global index
         FinishGeometry(geo);
