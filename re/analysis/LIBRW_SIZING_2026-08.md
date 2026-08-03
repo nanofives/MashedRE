@@ -1195,6 +1195,163 @@ viewpoints, world-only, no cars.
 >
 > ---
 >
+> #### ✅ RESOLVED on a counting instrument (2026-08-03): the hotspot is world material 4 (`Snow`), and it is a per-vertex shading delta, not silhouette/sampling
+>
+> The retraction's recommended instrument was run. `MASHED_WORLD_ONLYMAT=4` draws
+> **only** world material 4 on both paths, with liveness logged on each side, so the
+> diff is measured — not classified. Pairing it with `MASHED_LIBRW_INST=0` routes
+> **everything except the world** (props, cars) through D3D9 on *both* captures, so
+> those cancel and the only surviving content is world-material-4's D3D9-vs-librw
+> rendering:
+>
+> - Cap A: D3D9 baseline, `ONLYMAT=4` → liveness `drew=0x10` (only mat 4 submitted).
+> - Cap B: `RENDER_LIBRW=1 LIBRW_INST=0 ONLYMAT=4` → liveness `world ONLYMAT=4 PROBE
+>   kept: mat[4]=1914` (only Snow's 1914 tris) and D3D9 world loop `drew=0x0`.
+>
+> **Result — the snow-only diff reproduces the ENTIRE hotspot exactly:** cells
+> (6,3)=7.6, (7,3)=4.6, (6,4)=5.1, (5,4)=1.7, identical to the full-scene librw diff.
+> The full-scene cells that are *not* reproduced — (3,3)=2.2, (4,3)=3.8 — drop to
+> **0.0** here (props/instances, which now go through D3D9 on both sides). So of the
+> `01_action` 0.59: **~0.45 is world material 4 (`Snow`) shading, ~0.14 is
+> props/instances.** The hotspot is 100% `Snow`, established by counting, not colour.
+>
+> **What the delta IS, measured (`verify/s3bank_iso/`):**
+> - Over the diff≥8 mask: D3D9 (97.8,116.5,109.8) vs librw (80.2,106.1,110.9),
+>   deficit **(+17.6,+10.5,−1.1)** — D3D9 brighter/warmer in R,G, **blue untouched**.
+> - Over the WHOLE snow face (131 715 px) the deficit is tiny: **(+1.74,+1.08,−0.01)**.
+>   So the effect is **nonlinear and concentrated at the bright ridge**, best fit by a
+>   per-channel gain **R ×1.107, G ×1.044, B ×1.000 exactly** (median ratio 1.0
+>   everywhere; deviation only where the surface is bright). B is pinned to unity.
+> - The diff image is **smooth/low-frequency** (high-freq RMS / mean = 0.25) and weakly
+>   correlated with texture edges (0.20). The sky region of the `ONLYMAT` crop is
+>   **pure zero-diff** — so it is NOT a silhouette/background difference; the whole
+>   snow **face** glows, brightest toward the grazing far ridge.
+>
+> **Shading terms eliminated by reading the two combines + measuring, not arguing:**
+>
+> | candidate | verdict | evidence |
+> |---|---|---|
+> | material colour (`matCol`) | ruled out | `Snow` rgba=(255,255,255,255) in the BuildWorld log AND `setMaterial` (rwd3d.h:322-328) passes **white** without `Geometry::MODULATE`, which the world build does not set (RwSceneBuild.cpp:240-249). matCol is white on both. |
+> | librw ambient add (`+ ambientLight·surfAmbient`, default_VS.hlsl:29) | ruled out by SIGN | adding ambient makes librw *brighter* → deficit would be **negative**; measured deficit is **+** (D3D9 brighter). So the world draw's `ambientLight·surfAmbient` is inert here. |
+> | shader clamp saturation (default_VS.hlsl:45) | ruled out | 0 % of mask pixels are ≥254 on either side (brightness ~111); nothing is near the clamp. |
+> | silhouette / sky boundary | ruled out | the `ONLYMAT` diff crop's sky region is pure black (zero diff); the glow is on the face. |
+> | sampler-state asymmetry (mip/aniso/filter) | ruled out | librw's `filterConvMap` maps LINEAR→`D3DTEXF_LINEAR` (min/mag) and LINEAR→`D3DTEXF_NONE` (mip), d3ddevice.cpp:207-215 — identical to D3D9's hardcoded LINEAR/no-mip. Both LINEAR, no effective mip. |
+> | fog | ruled out (prior) | `01_action` moves 0.59→0.58 fog-off; the fog term is ~0.01 here. |
+>
+> **The D3D9 world renders prelit RAW** (`TrackRenderer.cpp:1082-1093`, `v.c = prelit`,
+> and its own comment records that an earlier build's `amb_world_` re-add was a
+> double-count and was removed). **librw's default VS re-adds ambient and clamps**
+> (default_VS.hlsl:28-46) — but that path is shown inert here by the sign test, and
+> matCol is white, so the two combines are algebraically `prelit·tex` on both sides
+> with the **same** prelit dwords (FillVertexData RwSceneBuild.cpp:94-100 vs
+> TrackRenderer.cpp:1084-1088) and the **same** texels (decoders proven identical).
+>
+> **NARROWED then a hypothesis FALSIFIED (2026-08-03, instrumented).**
+>
+> **Still solid — it is the vertex-colour path, NOT texture.** A new gate
+> `MASHED_WORLD_PRELITONLY=1` renders the world with the TEXTURE stripped on BOTH
+> paths (D3D9 `COLOROP=SELECTARG2` → DIFFUSE only, TrackRenderer.cpp; librw
+> `setTexture(nullptr)` on every world material so its PS `#ifdef TEX` is off,
+> RwSceneBuild.cpp), leaving the interpolated prelit vertex colour ALONE. Liveness
+> both sides (`prelitonly=1 drew=0x10`; `textures stripped from 12 materials`,
+> `kept mat[4]=1914`). With no texture at all the hotspot persists (mean 0.45→0.40,
+> cell (6,3) 7.6→6.8). So texture/UV sampling is out; the texture only modulated a
+> vertex-colour delta. 74 % of the snow face is bit-identical; the differing 26 % is
+> the steeply-receding upper slope.
+>
+> **⚠️ The "perspective vs affine" root cause was WRONG — falsified by its own fix.**
+> The hypothesis was: D3D9 fixed-function iterates DIFFUSE affine, librw's shader
+> carries `COLOR0` perspective-correct, and the ridge is where they diverge. The
+> approved fix (owner-approved) was implemented properly: the D3D9-only interpolation
+> modifier `noperspective` does **not** exist in D3D9 HLSL (SM4+), so the
+> hardware-independent affine identity was used instead — carry `Colour*w` and `w` as
+> perspective-correct varyings and divide in the PS (`(Σλ·Cᵢ·wᵢ/wᵢ)/(Σλ·wᵢ/wᵢ) =
+> Σλ·Cᵢ`). Applied to `default_VS.hlsl`/`default_PS.hlsl` + `skin_VS.hlsl` (the VS
+> set feeding `default_PS`), recompiled with `fxc` (Win10 SDK, `vs_2_0`/`ps_2_0`),
+> rebuilt.
+>
+> **Result: the fix was a NO-OP for the world snow.** librw-affine vs librw-pre-fix
+> snow = **0.08 mean, 0 px over threshold** — the world render did not move, and the
+> full-scene hotspot cell stayed 7.5 (was 7.6). A magenta-PS diagnostic
+> (`default_tex_PS` forced to `return float4(1,0,1,1)`) turned the **entire snow face
+> magenta**, proving `default_tex_PS` *is* the world's pixel shader — so the affine
+> change genuinely applied and genuinely changed nothing. **Therefore librw's colour
+> was ALREADY affine on this GPU (the `COLOR0` interpolator iterates affine here),
+> and perspective-vs-affine is not the mechanism.** The change was reverted (it also
+> added ~1–2 LSB precision noise on other geometry: `car_5_chase` 1.99, `01_action`
+> 0.59→0.63).
+>
+> **Fog re-checked directly (not taken on faith):** snow-only with `MASHED_NO_FOG=1`
+> symmetric on both paths still gives hotspot 7.7, mean 0.44. Fog stays out.
+>
+> **Mechanism is OPEN again.** Both paths are affine, fog-free, `matCol`-white
+> (`Snow` rgba=255,255,255; `setMaterial` white without MODULATE, rwd3d.h:322-328),
+> same texture (decoders proven identical), and read the same prelit dwords
+> (RwSceneBuild.cpp:94-100 vs TrackRenderer.cpp:1084-1088) — which predicts an
+> identical render, yet a warm ridge delta (D3D9−librw ≈ (16,8,−4), R>G>B≈0) remains.
+> One trusted premise is false.
+>
+> **Ambient add + clamp — now ELIMINATED by measurement (not by the sign argument).**
+> Zeroed `ambientLight·surfAmbient` and removed the per-vertex `clamp` in
+> `default_VS.hlsl` (diagnostic build), recompiled, reran the snow isolation:
+> librw-ambient-off vs librw-pre-fix = **0.00 mean, bit-identical**, and D3D9 vs
+> librw-ambient-off = **0.45, hotspot 7.6** — unchanged. So the ambient term was
+> already **inert** for the world (no ambient light bound; the clamp never fires
+> because prelit ≤ 1), exactly as the sign argument said, but now proven. The VS
+> provably emits `output.Color = prelit·matCol = prelit`.
+>
+> **This exhausts the shader.** Texture, perspective, fog, matCol, ambient, and
+> clamp are all eliminated by measurement. The VS output is bit-identically `prelit`;
+> D3D9 also renders `prelit`; both feed the SAME D3D9 rasterizer — yet the ridge
+> delta stands.
+>
+> **Vertex-DATA readback — DONE, and it is byte-identical (2026-08-03).** A
+> `MASHED_WORLD_VDUMP=1` gate (both paths) dumps every snow (mat 4) triangle corner
+> as `4 x y z r g b` — D3D9 from `batches_[4]` in `Render`, librw from the built
+> `geo->colors` / `morphTargets[0].vertices` in `BuildWorld`. The two files are
+> **md5-identical**: 5742 rows, 1459 unique vertices, `common=1459 d3d9-only=0
+> librw-only=0`, **0 positions where the colour differs**. So the positions AND the
+> prelit colours reaching the rasterizer are the same on both paths. The
+> pack/weld/swizzle/index-mismatch hypothesis is disproved.
+>
+> **Conclusion — it is NOT a data or shader-logic bug; it is a fixed-function-vs-shader
+> pipeline delta.** With identical vertex data, identical prelit, identical texture,
+> both affine, and the same D3D9 device, the *only* remaining difference is the
+> pipeline that consumes that data: the standalone/original D3D9 path uses
+> **fixed-function T&L** (`DrawPrimitiveUP`, FVF `XYZ|DIFFUSE|TEX1`), librw uses a
+> **vertex shader** (`default_amb_VS` → `default_tex_PS`). The ~0.45-mean warm ridge
+> term is a transform/rasterization/iteration difference between those two pipelines,
+> amplified where the surface is most foreshortened (the far ridge). It is small
+> (whole-face mean ≈ 1.5; the gate cell is dominated by a thin bright ridge band) and
+> is very likely an **inherent FF-vs-programmable delta**, not a defect in the port.
+>
+> **[UNCERTAIN], and probably not worth chasing further:** which specific pipeline
+> aspect — FF transform precision vs the VS `mul(combinedMat,pos)`, or FF DIFFUSE
+> iteration vs shader `COLOR0` at the sub-pixel level. Closing it would mean matching
+> librw's world draw to fixed-function bit-for-bit, which the greenfield renderer
+> gate (librw SHIPS) does not require — behavioural parity with documented deltas is
+> the bar, and this is now a fully-documented, quantified, sub-percent delta on one
+> horizon surface.
+>
+> Instruments kept (branch `render/s3-bank`, both default-off, liveness/dump-gated):
+> `MASHED_WORLD_PRELITONLY`, `MASHED_WORLD_VDUMP`. Vertex dumps archived at
+> `verify/s3bank_iso/vdump_{d3d9,librw}.txt`.
+>
+> Instrument `MASHED_WORLD_PRELITONLY` (branch `render/s3-bank`, both paths,
+> default-off, liveness-logged) is worth keeping. Evidence under `verify/s3bank_iso/`:
+> `d3d9_snow.bmp`, `librw_snow.bmp`, `librw_snow_affine.bmp` (fix no-op),
+> `librw_snow_magenta.bmp` (shader-used proof), `{d3d9,librw}_snow_nofog.bmp`,
+> `{d3d9,librw}_prelit.bmp`, `crop_*.png`.
+>
+> **Method note (this cost several rebuilds):** the perspective claim was written as
+> "ROOT-CAUSED" from a circumstantial signature (74 %-exact + ridge-tracking) before
+> the fix validated it. Building the fix falsified it in one test. Do not promote a
+> mechanism to root-cause on a signature alone — the falsifying instrument (here, the
+> fix itself; elsewhere a magenta/marker probe) is cheap next to the reasoning it
+> replaces. Same lesson as the retracted MATID instrument above.
+>
+> ---
+>
 > #### ⚠️ superseded correction (kept for the record): "the `World` → `Snow` reading was a decoder artefact"
 >
 > The material-ID decoder accepted any pixel within **±24** of a palette entry.
