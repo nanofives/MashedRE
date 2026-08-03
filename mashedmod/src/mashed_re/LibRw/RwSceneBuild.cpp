@@ -147,10 +147,44 @@ rw::Atomic* MakeAtomic(rw::Geometry* geo, rw::Frame* parent) {
 // (it used to sit between BuildWorld and BuildClump, which only the latter needed).
 namespace { void SLog(const char* fmt, ...); }
 
+// D-S3-BANK: material-ID visualisation. With MASHED_WORLD_MATID=1 the world is
+// drawn as flat per-material colours instead of shaded texture, on BOTH paths
+// (TrackRenderer does the same via D3DRS_TEXTUREFACTOR), so the question "which
+// material owns these pixels" is read off the image rather than inferred. Colour
+// for material i is (20 + i*18, 200, 60) -- i is recoverable as (R-20)/18.
+bool WorldMatIdMode() {
+    static const bool on = [] {
+        const char* e = std::getenv("MASHED_WORLD_MATID");
+        return e && e[0] == '1' && e[1] == '\0';
+    }();
+    return on;
+}
+void WorldMatIdColour(std::size_t i, std::uint8_t* rgb) {
+    rgb[0] = static_cast<std::uint8_t>(20 + i * 18);
+    rgb[1] = 200;
+    rgb[2] = 60;
+}
+
 void* BuildWorld(const Track::World& world, const TextureSource& tex) {
     std::vector<rw::Material*> mats;
     int w_named = 0, w_resolved = 0;
     BuildMaterials(world.materials, tex, mats, &w_named, &w_resolved);
+    if (WorldMatIdMode()) {
+        // Strip the texture and paint the material its ID colour. Combined with
+        // the white vertex colours and the MODULATE flag set below, the shader
+        // reduces to Color = white * matCol = the ID colour, flat.
+        for (std::size_t i = 0; i < mats.size(); ++i) {
+            if (!mats[i]) continue;
+            mats[i]->setTexture(nullptr);
+            std::uint8_t c[3];
+            WorldMatIdColour(i, c);
+            mats[i]->color.red = c[0];
+            mats[i]->color.green = c[1];
+            mats[i]->color.blue = c[2];
+            mats[i]->color.alpha = 255;
+        }
+        SLog("world: MATID mode -- flat per-material colours, (20+i*18, 200, 60)");
+    }
     // D-S3-BANK probe: the WORLD's texture resolution has never been logged --
     // BuildClump asks for these counts, BuildWorld did not. An unresolved world
     // material draws with flat material colour instead of its texture, which is
@@ -195,9 +229,17 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
         // Deliberately no NORMALS/LIGHT: the static world carries no vertex
         // normals, so its baked prelight IS the lighting -- same as D3D9 today.
 
+        // MATID: matCol only reaches the shader when the geometry carries
+        // MODULATE (rwd3d.h:321-328 hands setMaterial white otherwise), so the
+        // flag is required for the ID colour to show at all.
+        if (WorldMatIdMode()) flags |= rw::Geometry::MODULATE;
+
         rw::Geometry* geo = rw::Geometry::create(nv, nt, flags);
         if (!geo) continue;
         FillVertexData(geo, nv, s.verts, s.uvs, s.prelit, nullptr);
+        if (WorldMatIdMode() && geo->colors)
+            for (std::int32_t i = 0; i < nv; ++i)
+                geo->colors[i] = rw::RGBA{255, 255, 255, 255};
         for (std::int32_t i = 0; i < nt; ++i) {
             // Track::Sector::tris is (mat, v0, v1, v2) -- TrackWorld.h:30.
             geo->triangles[i].matId = s.tris[i * 4 + 0];

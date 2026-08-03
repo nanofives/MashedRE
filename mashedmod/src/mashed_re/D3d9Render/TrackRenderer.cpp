@@ -3957,6 +3957,14 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         }
         return on;
     }();
+    static const bool s_matid = [] {
+        const char* e = std::getenv("MASHED_WORLD_MATID");
+        return e && e[0] == '1' && e[1] == '\0';
+    }();
+    // MATID needs fog OFF or the flat colours get blended toward fog colour with
+    // distance and stop being readable as indices.
+    if (s_matid) dev->SetRenderState(D3DRS_FOGENABLE, FALSE);
+
     if (!rw_world)
     for (std::size_t k = 0; k < batches_.size(); ++k) {
         const std::size_t mi = s_rev_order ? batches_.size() - 1 - k : k;
@@ -3975,12 +3983,26 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             dev->SetTransform(D3DTS_TEXTURE0, &tm);
             dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
         }
-        if (!textures_[mi])
+        // D-S3-BANK MATID: draw each material as a flat ID colour instead of
+        // shaded texture, matching what BuildWorld does on the librw side, so
+        // "which material owns these pixels" is read off the image rather than
+        // inferred. Same encoding: (20 + i*18, 200, 60), i = (R-20)/18.
+        if (s_matid) {
+            dev->SetRenderState(D3DRS_TEXTUREFACTOR,
+                                D3DCOLOR_XRGB(20 + (int)mi * 18, 200, 60));
+            dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+            dev->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TFACTOR);
+        } else if (!textures_[mi]) {
             dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG2);
+        }
         DrawBatch(dev, b);
         ds_tally(b, textures_[mi]);
-        if (!textures_[mi])
+        if (s_matid) {
+            dev->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
             dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+        } else if (!textures_[mi]) {
+            dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+        }
         if (scroll)
             dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
     }

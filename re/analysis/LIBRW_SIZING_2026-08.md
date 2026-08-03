@@ -1150,11 +1150,38 @@ viewpoints, world-only, no cars.
 > (`TrackRenderer.cpp:1082-1088`) — so there is no light term on that side for
 > librw to be missing.
 >
-> Sharpest remaining clue: on the 242 most-different pixels D3D9 shows warm brown
-> (82.3, 80.3, 54.5) while librw shows dark teal (31.0, 41.5, 41.4) — a hue close
-> to the ambient direction (G = B, R lower). On the worst pixels the two are
-> showing materially **different surfaces**, not one surface at two brightnesses.
-> `[UNCERTAIN]`
+> #### ANSWERED: librw draws `Snow` where D3D9 draws `World`
+>
+> Settled by making both renderers output a **material-ID map** instead of shading
+> (`MASHED_WORLD_MATID=1`, both paths, flat colour `(20 + i*18, 200, 60)` so the
+> index reads back as `(R-20)/18`), then reading ownership off the pixels rather
+> than inferring it from hue. In the hot region (x 480–640, y 240–400), **32.3% of
+> pixels disagree about which material owns them**:
+>
+> | D3D9 draws | librw draws | pixels |
+> |---|---|---|
+> | `World` (mat 5) | **`Snow`** (mat 4) | 6 724 |
+> | untextured (mat 6) | **`Snow`** (mat 4) | 1 551 |
+>
+> The hues corroborate it: `World` is warm (106.4, 95.3, 86.5), `Snow` is cool
+> (197.0, 196.3, 206.1) — warm-in-D3D9, cool-in-librw, exactly the measured
+> deficit. This is a **depth-resolution disagreement on near-coplanar surfaces**,
+> not a shading bug: nothing about how either renderer *shades* differs, only
+> which surface survives the depth test.
+>
+> It is specifically NOT draw order — reversing D3D9's material order is
+> bit-identical (above), so within D3D9 `World` genuinely wins on depth rather than
+> by drawing last. The two renderers therefore compute slightly different z for
+> these surfaces. The plausible mechanism is that they transform vertices through
+> different pipelines (D3D9 fixed-function T&L vs librw's
+> `mul(combinedMat, Position)` in `default_VS.hlsl`), which differ in
+> floating-point evaluation order and so flip a near-tie — **stated as the next
+> thing to test, not as established.** `[UNCERTAIN]`
+>
+> Worth settling before treating this as a defect: whether the overlap is authored
+> (the original may z-fight here too), in which case librw's answer is a different
+> valid resolution of ambiguous geometry and this becomes a documented delta rather
+> than a bug.
 >
 > ### Texture filtering (NEAREST vs LINEAR) — NOT a delta. Closed.
 >
