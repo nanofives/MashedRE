@@ -568,6 +568,19 @@ namespace pools {
 void Reset();
 void LerpFlushOne(int p, float alpha);   // p in [0, 4) — kNumPools
 }
+namespace registry {
+void Reset();
+void RedrawLerped(float alpha);
+}
+inline bool RegistryLerpEnabled() {
+    static int v = -1;
+    if (v == -1) {
+        char b[8] = {};
+        v = (GetEnvironmentVariableA("MASHED_INTERP_REGISTRY", b, sizeof(b)) > 0 &&
+             b[0] == '0') ? 0 : 1;
+    }
+    return v == 1;
+}
 
 void __cdecl Wrapper() {
     const std::uint32_t phase =
@@ -584,6 +597,7 @@ void __cdecl Wrapper() {
             s_sh[i].have = false;
         }
         pools::Reset();
+        registry::Reset();
         reinterpret_cast<RenderFn>(kRenderFn)();
         return;
     }
@@ -697,6 +711,10 @@ void __cdecl Wrapper() {
     // ── overlay sprite pools: lerp arrays + re-flush VBs (see pools::) ──
     if (PoolLerpEnabled())
         for (int p = 0; p < 4; ++p) pools::LerpFlushOne(p, alpha);
+
+    // ── world-object registry (powerup icons/pods): lerped re-drain ──
+    if (RegistryLerpEnabled())
+        registry::RedrawLerped(alpha);
 
     reinterpret_cast<RenderFn>(kRenderFn)();                // render + flip
 
@@ -852,6 +870,96 @@ void LerpFlushOne(int p, float alpha) {
 
 } // namespace pools
 
+// ── world-object registry re-drain interpolation ────────────────────────────
+// Held-powerup icons / pickup-pod cubes and other queued world objects are
+// REGISTERED per tick into the registry at 0x006dccb8 (stride 0x8c, count
+// 0x006e70cc, max 300; registrar FUN_00484cf0: entry = pos xyz, radius, type,
+// data ptr, 0, draw callback) and then DRAINED + DRAWN + RESET once per tick
+// by FUN_00485070 (sole call site 0x0040fd07 in the tick driver FUN_0040fc00;
+// drain iterates entries and invokes the draw callbacks, which fill
+// DISCARD-locked dynamic VBs — overwrite semantics). Between ticks the drawn
+// output is frozen -> these objects step. Fix: snapshot the registry right
+// before the tick drain, then per rendered frame restore it with LERPED entry
+// positions and call the drain again — callbacks re-fill the same discard VBs
+// at interpolated positions. MASHED_INTERP_REGISTRY=0 disables.
+namespace registry {
+
+constexpr std::uintptr_t kCallSite = 0x0040fd07;   // E8 64 53 07 00
+constexpr std::uintptr_t kDrainFn  = 0x00485070;
+constexpr std::uintptr_t kBase     = 0x006dccb8;
+constexpr std::uintptr_t kCountVar = 0x006e70cc;
+constexpr int            kStride   = 0x8c;
+constexpr int            kMaxEnt   = 300;
+
+struct Snap {
+    int  count;
+    bool have;
+    std::uint8_t data[kMaxEnt * kStride];
+};
+Snap s_prev, s_curr;
+
+void __cdecl PreSnapshot() {
+    __try {
+        int n = *reinterpret_cast<volatile std::int32_t*>(kCountVar);
+        if (n < 0) n = 0;
+        if (n > kMaxEnt) n = kMaxEnt;
+        std::memcpy(&s_prev, &s_curr, sizeof(Snap));
+        s_curr.count = n;
+        s_curr.have = true;
+        if (n > 0)
+            std::memcpy(s_curr.data, reinterpret_cast<void*>(kBase),
+                        (size_t)n * kStride);
+    } __except (1) {
+        s_curr.have = false;
+    }
+}
+
+void* s_drainOrig = reinterpret_cast<void*>(kDrainFn);
+
+__declspec(naked) void DrainWrapper() {
+    __asm {
+        pushad
+        call PreSnapshot
+        popad
+        jmp dword ptr [s_drainOrig]
+    }
+}
+
+void Reset() { s_prev.have = false; s_curr.have = false; }
+
+// per rendered frame (render wrapper, race phases): restore the registry with
+// lerped positions and re-run the game's own drain (draw callbacks re-fill
+// discard VBs; drain resets the count again afterwards)
+void RedrawLerped(float alpha) {
+    __try {
+        if (!s_curr.have || s_curr.count <= 0) return;
+        const int n = s_curr.count;
+        std::memcpy(reinterpret_cast<void*>(kBase), s_curr.data,
+                    (size_t)n * kStride);
+        if (s_prev.have && s_prev.count == n) {
+            for (int i = 0; i < n; ++i) {
+                for (int k = 0; k < 3; ++k) {
+                    const float a = *reinterpret_cast<const float*>(
+                        s_prev.data + i * kStride + k * 4);
+                    const float b = *reinterpret_cast<const float*>(
+                        s_curr.data + i * kStride + k * 4);
+                    // teleport guard: >100u jump snaps to curr
+                    const float v = (a - b > 100.0f || b - a > 100.0f)
+                        ? b : a + (b - a) * alpha;
+                    wrF(kBase + (std::uintptr_t)i * kStride + k * 4, v);
+                }
+            }
+        }
+        *reinterpret_cast<volatile std::int32_t*>(kCountVar) = n;
+        reinterpret_cast<void (__cdecl*)()>(kDrainFn)();
+    } __except (1) {
+        s_prev.have = false;
+        s_curr.have = false;
+    }
+}
+
+} // namespace registry
+
 // ── draw-submission interpose ────────────────────────────────────────────────
 // The overlay elements riding on cars (powerup icon over the roof, "!" marker,
 // target arrows…) are SUBMITTED from FUN_0040ce00 — sole call site 0x0040fcb3
@@ -957,6 +1065,23 @@ void Apply() {
         LogLine("INTERP: camera + car render interpolation live (race phases only)");
     else
         LogLine("INTERP: write failed — SKIPPED");
+
+    // registry snapshot interpose at the tick drain (powerup icons/pods)
+    if (RegistryLerpEnabled()) {
+        static const std::uint8_t preReg[5] = {0xE8, 0x64, 0x53, 0x07, 0x00}; // CALL 0x485070
+        if (!BytesAre(registry::kCallSite, preReg, sizeof(preReg))) {
+            LogLine("INTERP: registry drain call-site bytes unexpected — SKIPPED");
+        } else {
+            std::uint8_t patchR[5];
+            patchR[0] = 0xE8;
+            const std::uint32_t relR = Rel32(
+                registry::kCallSite + 5,
+                reinterpret_cast<std::uintptr_t>(&registry::DrainWrapper));
+            std::memcpy(&patchR[1], &relR, 4);
+            if (WriteMem(registry::kCallSite, patchR, sizeof(patchR)))
+                LogLine("INTERP: registry re-drain lerp live (0x40fd07)");
+        }
+    }
 
     // draw-submission interpose — SUPERSEDED by the pool re-flush lerp
     // (pools::LerpFlushOne). Off by default: it lerps the bake inputs at tick
