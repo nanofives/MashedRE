@@ -434,8 +434,23 @@ void WriteMatAt(std::uintptr_t a, const Mat& o) {
     for (int k = 0; k < 12; ++k) wrF(a + (k / 3) * 0x10 + (k % 3) * 4, o.m[k]);
 }
 
+Mat ReadFrameModelling(std::uintptr_t f) {
+    Mat o;
+    for (int k = 0; k < 12; ++k)
+        o.m[k] = rdF(f + 0x10 + (k / 3) * 0x10 + (k % 3) * 4);
+    return o;
+}
+void WriteFrameModelling(std::uintptr_t f, const Mat& o) {
+    for (int k = 0; k < 12; ++k)
+        wrF(f + 0x10 + (k / 3) * 0x10 + (k % 3) * 4, o.m[k]);
+}
+
 // per-frame prev/curr snapshots keyed by frame address (stable within a race)
-struct FrameSnap { std::uintptr_t f; Mat prev, curr; bool have; };
+// LTM always lerped; modelling (local part transform — wheel spin/suspension)
+// additionally lerped when MASHED_INTERP_WHEELS=1: dynamic parts step their
+// LOCAL matrix at tick rate, which reads as wheel judder at >60fps. Static
+// parts have prev==curr so their lerp is a no-op write of the same value.
+struct FrameSnap { std::uintptr_t f; Mat prev, curr, prevM, currM; bool have; };
 FrameSnap s_fs[kMaxCars * kMaxFrames];
 int s_fsN = 0;
 FrameSnap* FindSnap(std::uintptr_t f) {
@@ -514,6 +529,27 @@ void ShadowRestoreOne(int i) {
     s_shDid[i] = false;
 }
 
+// Feature toggles (read once). MASHED_INTERP_SHADOW=0 disables the shadow
+// anchor lerp; MASHED_INTERP_WHEELS=1 enables local-matrix (wheel) lerp.
+inline bool ShadowLerpEnabled() {
+    static int v = -1;
+    if (v == -1) {
+        char b[8] = {};
+        v = (GetEnvironmentVariableA("MASHED_INTERP_SHADOW", b, sizeof(b)) > 0 &&
+             b[0] == '0') ? 0 : 1;
+    }
+    return v == 1;
+}
+inline bool WheelLerpEnabled() {
+    static int v = -1;
+    if (v == -1) {
+        char b[8] = {};
+        v = (GetEnvironmentVariableA("MASHED_INTERP_WHEELS", b, sizeof(b)) > 0 &&
+             b[0] == '1') ? 1 : 0;
+    }
+    return v == 1;
+}
+
 void __cdecl Wrapper() {
     const std::uint32_t phase =
         *reinterpret_cast<volatile std::uint32_t*>(kPhase);
@@ -567,7 +603,10 @@ void __cdecl Wrapper() {
     if (carCount > kMaxCars) carCount = kMaxCars;
     std::uintptr_t frames[kMaxCars * kMaxFrames];
     Mat frTrue[kMaxCars * kMaxFrames];
+    Mat frTrueM[kMaxCars * kMaxFrames];
+    bool frDidM[kMaxCars * kMaxFrames];
     int frN = 0;
+    const bool wheels = WheelLerpEnabled();
     for (int i = 0; i < carCount; ++i) {
         const std::uintptr_t root = CarRootFrame(i);
         if (!root) continue;
@@ -578,18 +617,32 @@ void __cdecl Wrapper() {
             const Mat trueMat = ReadFrameLTM(f);
             frames[frN] = f;
             frTrue[frN] = trueMat;
-            ++frN;
+            frDidM[frN] = false;
             FrameSnap* fs = FindSnap(f);
-            if (!fs) continue;
-            if (!fs->have) { fs->curr = trueMat; fs->prev = trueMat; fs->have = true; }
-            else if (!SameMat(trueMat, fs->curr)) {
+            if (!fs) { ++frN; continue; }
+            if (!fs->have) {
+                fs->curr = trueMat; fs->prev = trueMat;
+                fs->currM = fs->prevM = ReadFrameModelling(f);
+                fs->have = true;
+            } else if (!SameMat(trueMat, fs->curr)) {
                 const float dx = trueMat.m[9]  - fs->curr.m[9];
                 const float dy = trueMat.m[10] - fs->curr.m[10];
                 const float dz = trueMat.m[11] - fs->curr.m[11];
-                fs->prev = (dx*dx + dy*dy + dz*dz > 100.0f * 100.0f) ? trueMat : fs->curr;
+                const bool jump = dx*dx + dy*dy + dz*dz > 100.0f * 100.0f;
+                fs->prev = jump ? trueMat : fs->curr;
                 fs->curr = trueMat;
+                const Mat mm = ReadFrameModelling(f);
+                fs->prevM = jump ? mm : fs->currM;
+                fs->currM = mm;
             }
             WriteFrame(f, LerpMat(fs->prev, fs->curr, alpha));
+            if (wheels && !SameMat(fs->prevM, fs->currM)) {
+                // dynamic local part (wheel spin / suspension): lerp modelling
+                frTrueM[frN] = ReadFrameModelling(f);
+                frDidM[frN] = true;
+                WriteFrameModelling(f, LerpMat(fs->prevM, fs->currM, alpha));
+            }
+            ++frN;
         }
     }
 
@@ -615,8 +668,9 @@ void __cdecl Wrapper() {
         WriteMatAt(a, LerpMat(rs->prev, rs->curr, alpha));
     }
 
-    // ── shadow-pass camera anchor (slot +0x258 xyz) + airborne-shadow frame ──
-    for (int i = 0; i < carCount; ++i) ShadowLerpOne(i, alpha);
+    // ── shadow-pass camera anchor (slot +0x258 xyz) ──
+    if (ShadowLerpEnabled())
+        for (int i = 0; i < carCount; ++i) ShadowLerpOne(i, alpha);
 
     reinterpret_cast<RenderFn>(kRenderFn)();                // render + flip
 
@@ -624,7 +678,10 @@ void __cdecl Wrapper() {
     for (int i = 0; i < carCount; ++i) ShadowRestoreOne(i);
     for (int i = 0; i < carCount; ++i)
         if (recAddr[i]) WriteMatAt(recAddr[i], recTrue[i]);
-    for (int k = 0; k < frN; ++k) WriteFrame(frames[k], frTrue[k]);
+    for (int k = 0; k < frN; ++k) {
+        WriteFrame(frames[k], frTrue[k]);
+        if (frDidM[k]) WriteFrameModelling(frames[k], frTrueM[k]);
+    }
     WritePose(s_curr);
     reinterpret_cast<CamApplyFn>(kCamApply)(kCamStruct);    // restore true frame
 }

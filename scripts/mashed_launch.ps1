@@ -33,6 +33,8 @@ param(
     [switch]$NoUnlock,
     [switch]$NoJumpFix,    # opt out of the ramp-takeoff velocity fix (on by default; verified 2026-08-02)
     [switch]$Osd,          # start with the FPS/ms overlay visible (F11 toggles it any time)
+    [switch]$NoShadowInterp,  # A/B: disable the shadow-anchor interpolation
+    [switch]$WheelInterp,     # A/B: interpolate wheel local matrices (spin/suspension)
     [switch]$Repatch,
     [switch]$QolLog
 )
@@ -104,6 +106,8 @@ $env:MASHED_NO_SAVE         = if ($EnableSave) { '0' } else { '1' }
 $env:MASHED_UNLOCK          = if ($NoUnlock)   { '0' } else { '1' }
 $env:MASHED_JUMPFIX         = if ($NoJumpFix) { '0' } else { '1' }  # ramp-takeoff velocity fix (verified)
 $env:MASHED_FPS_OSD         = if ($Osd) { '1' } else { '0' }  # F11 toggles in-game either way
+$env:MASHED_INTERP_SHADOW   = if ($NoShadowInterp) { '0' } else { '1' }
+$env:MASHED_INTERP_WHEELS   = if ($WheelInterp) { '1' } else { '0' }
 $env:MASHED_RE_NO_AUTO_HOOK = '1'    # keep dev RE hooks out of play sessions
 $env:MASHED_QOL_LOG         = if ($QolLog) { '1' } else { '0' }
 
