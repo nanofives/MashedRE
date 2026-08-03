@@ -517,3 +517,34 @@ NOT write through slot+0x64; if the airborne shadow ever needs interp, gate on
 
 Verified: full stack (decouple+interp+jumpfix, 165 race cap) races 90s+ through
 round transitions, no crash. Visual smoothness pending owner check at 165Hz.
+
+### Item 6 progress — session 3 (2026-08-03): overlay sprites are per-tick VB flushes
+
+Burst-frame instrument (`burst()` rpc in carpos_source_probe.py; 10 consecutive
+BBDUMPs, per-pair diff classification): body, wheels, shadows all advance EVERY
+frame — objectively smooth. Remaining steppers are the overlay sprites.
+
+**Draw architecture (cited):** overlay/effect sprites are instanced into pools
+(`FUN_00476d00`: current color/matrix/pos registers at 0x006924xx -> per-pool
+arrays, count at pool+0xc) by submitters under `FUN_0040ce00` and siblings, all
+called from `FUN_0040fc00` — which is called from **FUN_004111c0 = the tick
+executor** (7 call sites, e.g. 0x0041128d). Each tick `FUN_00476440` ->
+`FUN_00476df0` FLUSHES the pools into retained engine vertex buffers
+(FUN_00535700/FUN_00535910 stream fill) and resets the counts; the renderer
+redraws those frozen VBs between ticks. **Input lerping cannot fix these**
+— the VB content itself is baked per tick.
+
+Shipped this session anyway (commit a415a2f8): interpose at 0x0040fcb3 wraps
+FUN_0040ce00 with record-matrix lerp -> submissions bake LERPED positions at
+tick time (alpha at tick moment). Owner reports "better, but something still
+steps" — consistent: the bake is smoother but still once per tick.
+
+**Correct fix (next session):** per rendered frame, re-fill + re-flush the
+OVERLAY pools with lerped state: identify the specific pure-draw submitters
+(powerup icon = IconCube.dff instances, entries 0x0068b1a0 x25 stride 0x50,
+init FUN_004587a0; per-car powerup models 0x0088fc90 x4 stride 0xb4, init
+FUN_0045bae0; "!" marker = TBD — check FUN_00413cb0 "player target" path),
+verify they are side-effect-free to re-run (particles like FUN_00486830
+SIMULATE per call — must NOT re-run), then per frame: submit subset ->
+FUN_00476df0 on their pool descriptors (pure copy+reset). Alternatively lerp
+the flushed VB contents directly (needs per-instance identity — harder).
