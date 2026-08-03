@@ -140,9 +140,35 @@ rw::Atomic* MakeAtomic(rw::Geometry* geo, rw::Frame* parent) {
 
 }  // namespace
 
+// Defined further down next to kSceneLog, inside the unnamed namespace. All
+// `namespace {}` blocks in a TU are the SAME namespace, so the declaration must
+// go in one too -- at outer scope it becomes a DIFFERENT function and every later
+// call is ambiguous. Declared HERE, above BuildWorld, because BuildWorld logs too
+// (it used to sit between BuildWorld and BuildClump, which only the latter needed).
+namespace { void SLog(const char* fmt, ...); }
+
 void* BuildWorld(const Track::World& world, const TextureSource& tex) {
     std::vector<rw::Material*> mats;
-    BuildMaterials(world.materials, tex, mats);
+    int w_named = 0, w_resolved = 0;
+    BuildMaterials(world.materials, tex, mats, &w_named, &w_resolved);
+    // D-S3-BANK probe: the WORLD's texture resolution has never been logged --
+    // BuildClump asks for these counts, BuildWorld did not. An unresolved world
+    // material draws with flat material colour instead of its texture, which is
+    // one of the few things that could put a warm wash on the D3D9 snow bank and
+    // not on librw's. Name every material so a specific one can be blamed rather
+    // than the set being declared "fine" from a total.
+    SLog("world: mats=%zu named=%d resolved=%d sectors=%zu",
+         world.materials.size(), w_named, w_resolved, world.sectors.size());
+    for (std::size_t i = 0; i < world.materials.size(); ++i) {
+        const auto& m = world.materials[i];
+        const bool has_tex = m.tex_name[0] != 0;
+        const bool got_tex = has_tex && ResolveTexture(m.tex_name, tex) != nullptr;
+        SLog("  world.mat[%zu] tex='%s' %s rgba=(%u,%u,%u,%u)",
+             i, has_tex ? m.tex_name : "(none)",
+             !has_tex ? "NO-TEXNAME" : (got_tex ? "resolved" : "*** UNRESOLVED ***"),
+             (unsigned)m.rgba[0], (unsigned)m.rgba[1],
+             (unsigned)m.rgba[2], (unsigned)m.rgba[3]);
+    }
 
     rw::World* rww = rw::World::create();
     if (!rww) return nullptr;
@@ -185,15 +211,25 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
         if (rw::Atomic* a = MakeAtomic(geo, worldFrame))
             sectors->addAtomic(a);
     }
+    // D-S3-BANK probe: per-material triangle totals across all sectors. The D3D9
+    // path logs the same tally from batches_, so a material that gets a different
+    // number of triangles on the two paths -- or none at all -- is visible as a
+    // number instead of being argued about from a screenshot.
+    {
+        std::vector<std::size_t> per_mat(world.materials.size(), 0);
+        for (const Track::Sector& s : world.sectors) {
+            const std::size_t nt = s.tris.size() / 4;
+            for (std::size_t i = 0; i < nt; ++i) {
+                const std::uint16_t m = s.tris[i * 4 + 0];
+                if (m < per_mat.size()) ++per_mat[m];
+            }
+        }
+        for (std::size_t i = 0; i < per_mat.size(); ++i)
+            SLog("  world.tris mat[%zu]=%zu", i, per_mat[i]);
+    }
     rww->addClump(sectors);
     return rww;
 }
-
-// Defined further down next to kSceneLog, inside the unnamed namespace. All
-// `namespace {}` blocks in a TU are the SAME namespace, so the declaration must
-// go in one too -- at outer scope it becomes a DIFFERENT function and every later
-// call is ambiguous.
-namespace { void SLog(const char* fmt, ...); }
 
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  std::uint32_t ambient,

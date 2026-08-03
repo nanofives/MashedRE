@@ -1051,7 +1051,52 @@ viewpoints, world-only, no cars.
 > and speckled. **The obvious mip-level explanation is disproved:** both uploaders
 > are single-level — `RwRasterBridge.cpp:73` takes `tex.mips[0]` only, and the D3D9
 > track path calls `CreateTexture(w,h,1,...)` (`TrackRenderer.cpp:358`), also
-> `Levels=1`. Cause **not identified**; the localisation is the finding. `[UNCERTAIN]`
+> `Levels=1`.
+>
+> #### It is TWO residuals, not one (2026-08-02)
+>
+> Separated by turning fog off on **both** paths and re-diffing against a matching
+> no-fog D3D9 reference. (`MASHED_NO_FOG` only gated the D3D9 device state and left
+> `st.fog_on_` set, so librw kept fogging — a one-sided switch is useless as a
+> control and actively misleading. Now honoured on both paths.)
+>
+> | shot | fog ON both | fog OFF both |
+> |---|---|---|
+> | `car_1_spawn` | 0.31 | **0.03** |
+> | `car_3_weave` | 0.58 | **0.34** |
+> | `01_action`   | 0.59 | 0.58 (hotspot 7.6 → **7.7**, unchanged) |
+>
+> **1. Fog model — identified.** D3D9 uses per-pixel table fog
+> (`D3DRS_FOGTABLEMODE = D3DFOG_LINEAR`); librw computes the fog factor in the
+> VERTEX shader and interpolates it (`default_VS.hlsl:48` → `default_PS.hlsl`
+> `lerp`). This accounts for **all** of `car_1_spawn` (0.31 → 0.03, 0.04% of pixels
+> left over threshold) and the faint sky/horizon band everywhere. Closing it means
+> moving the fog computation into the pixel shader, which requires recompiling
+> librw's HLSL — the shaders are vendored as precompiled bytecode headers, so that
+> needs `fxc` and is a **toolchain decision, not a code change**. Not taken here.
+>
+> **2. The snow-bank hotspot — still unidentified**, and fog is now off its list:
+> the 7.6/4.6/5.1 cells are 7.7/4.7/5.2 with fog disabled on both sides. It is world
+> geometry (identical cells with instances on and off), warm-weighted
+> (R=0.99 / G=0.61 / B=0.16), ~2.3% of pixels, 42 of 48 cells still exactly 0.0.
+>
+> Eliminated for it so far, each measured or cited — do not re-try:
+>
+> | candidate | verdict | evidence |
+> |---|---|---|
+> | mip level | ruled out | both uploaders `Levels=1` |
+> | UV animation | ruled out | `world=0` scrolling materials on Arctic (F3 log) |
+> | texture resolution | ruled out | world 12/12 named materials resolve |
+> | per-material triangle assignment | ruled out | **13/13 tallies identical** across the two builds |
+> | vertex colours | ruled out | both render `s.prelit` raw — `TrackRenderer.cpp:1082-1088`, `RwSceneBuild.cpp:174` |
+> | texture addressing | ruled out | TXD says `addrU=addrV=1` (WRAP) on every texture; D3D9 hardcodes WRAP |
+> | filtering | ruled out | both LINEAR, with a non-degeneracy control |
+> | alpha test / blend | ruled out | lowest alpha in any texture is 97, D3D9's `ALPHAREF` is 0x30=48 — nothing is discarded; blending off both |
+> | material colour on untextured `mat[6]` | ruled out | librw gates matCol on `Geometry::MODULATE` and uses **white** otherwise (`rwd3d.h:321-328`), matching D3D9's `SELECTARG2` |
+> | fog | **ruled out** | hotspot unchanged with fog off on both paths |
+>
+> Not yet examined: the UVs themselves, and vertex/index ordering within a mesh.
+> `[UNCERTAIN]`
 >
 > ### Texture filtering (NEAREST vs LINEAR) — NOT a delta. Closed.
 >

@@ -422,7 +422,12 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
     // is the one beginUpdate welds to cam->farPlane; it is corrected immediately
     // after that call, below. Before the correction the ramp ran 70 -> 643.6
     // instead of 70 -> 70's worth, leaving fogged surfaces ~1.4x too bright.
-    if (st.fog_on_) {
+    // MASHED_NO_FOG gates the D3D9 device state (TrackRenderer.cpp:3916-3917) but
+    // does NOT clear st.fog_on_, so without this librw kept fogging while the D3D9
+    // path stopped -- a one-sided switch is useless as a control and actively
+    // misleading. Honour it here too, so it turns fog off on BOTH paths at once.
+    static const bool s_no_fog = (std::getenv("MASHED_NO_FOG") != nullptr);
+    if (st.fog_on_ && !s_no_fog) {
         g_cam->fogPlane = st.fog_start_;
         rw::SetRenderState(rw::FOGENABLE, 1);
         // COLOR_ARGB is a MACRO (rwd3d.h:41), so it cannot be namespace-qualified.
@@ -528,7 +533,8 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
         const char* e = std::getenv("MASHED_LIBRW_FOGFIX");
         return !(e && e[0] == '0' && e[1] == '\0');
     }();
-    if (st.fog_on_ && s_fogfix) rw::d3d::setFogRange(st.fog_start_, st.fog_end_);
+    if (st.fog_on_ && s_fogfix && !std::getenv("MASHED_NO_FOG"))
+        rw::d3d::setFogRange(st.fog_start_, st.fog_end_);
 
     if (dsBefore || rtBefore) {
         IDirect3DSurface9* dsAfter = nullptr;

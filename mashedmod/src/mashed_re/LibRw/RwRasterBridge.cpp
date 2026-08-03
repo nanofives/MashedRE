@@ -135,10 +135,19 @@ void* RasterFromTxdTexture(const Txd::Texture& tex) {
             }
         std::FILE* f = std::fopen("log/librw_scene.txt", "a");
         if (f) {
+            // filt/addrU/addrV: the D3D9 path IGNORES all three and hardcodes
+            // LINEAR + WRAP/WRAP (TrackRenderer.cpp:3789-3790, :3810-3811),
+            // whereas librw honours the TXD. Any texture whose TXD asks for
+            // something else is a divergence by construction, so print the raw
+            // field rather than trusting that they agree.
             std::fprintf(f, "  TEXDEC '%s' %dx%d depth=%u mean=(%.1f,%.1f,%.1f) "
-                            "alpha=[%u..%u]\n",
+                            "alpha=[%u..%u] fa=0x%04X filt=%u addrU=%u addrV=%u\n",
                          tex.name, w, h, (unsigned)mip.depth,
-                         sr / n, sg / n, sb / n, amin, amax);
+                         sr / n, sg / n, sb / n, amin, amax,
+                         (unsigned)tex.filter_addressing,
+                         (unsigned)(tex.filter_addressing & 0xFFu),
+                         (unsigned)((tex.filter_addressing >> 8) & 0x0Fu),
+                         (unsigned)((tex.filter_addressing >> 12) & 0x0Fu));
             std::fclose(f);
         }
     }

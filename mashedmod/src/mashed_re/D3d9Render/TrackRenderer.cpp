@@ -1096,6 +1096,14 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         }
     }
 
+    // D-S3-BANK probe: the same per-material triangle tally BuildWorld logs, so
+    // the two world builds can be compared as numbers rather than screenshots.
+    if (log)
+        for (std::size_t mi = 0; mi < batches_.size(); ++mi)
+            std::fprintf(log, "D3D9 world.tris mat[%zu]=%zu tex=%d\n",
+                         mi, batches_[mi].size() / 3,
+                         mi < textures_.size() && textures_[mi] ? 1 : 0);
+
     // ---- track props ------------------------------------------------------
     // COURSE.LUA wires them: RWP_Object(i,"name","X.dff","Y.mts") = physics
     // props placed by an MTS matrix set (ExportMatrices: u32 count + per-
