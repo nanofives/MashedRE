@@ -35,6 +35,7 @@ param(
     [switch]$Osd,          # start with the FPS/ms overlay visible (F11 toggles it any time)
     [switch]$NoShadowInterp,  # A/B: disable the shadow-anchor interpolation
     [switch]$WheelInterp,     # A/B: interpolate wheel local matrices (spin/suspension)
+    [switch]$HideShadow,      # DIAGNOSTIC: remove car shadows entirely (element ID test)
     [switch]$Repatch,
     [switch]$QolLog
 )
@@ -108,6 +109,7 @@ $env:MASHED_JUMPFIX         = if ($NoJumpFix) { '0' } else { '1' }  # ramp-takeo
 $env:MASHED_FPS_OSD         = if ($Osd) { '1' } else { '0' }  # F11 toggles in-game either way
 $env:MASHED_INTERP_SHADOW   = if ($NoShadowInterp) { '0' } else { '1' }
 $env:MASHED_INTERP_WHEELS   = if ($WheelInterp) { '1' } else { '0' }
+$env:MASHED_HIDE_SHADOW     = if ($HideShadow) { '1' } else { '0' }
 $env:MASHED_RE_NO_AUTO_HOOK = '1'    # keep dev RE hooks out of play sessions
 $env:MASHED_QOL_LOG         = if ($QolLog) { '1' } else { '0' }
 

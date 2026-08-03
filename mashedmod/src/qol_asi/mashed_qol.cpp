@@ -916,6 +916,25 @@ __declspec(naked) void SubmitWrapper() {
     }
 }
 
+// Diagnostic: MASHED_HIDE_SHADOW=1 NOPs the RTT shadow pass call
+// (0x004200c1 E8 2A F8 FF FF -> FUN_0041f8f0 inside PerPlayerViewportRender).
+// Element-identification aid: if the "lagging" element disappears with this,
+// it IS the RTT car shadow; if not, the perceived element is something else.
+void ApplyHideShadow() {
+    char b[8] = {};
+    if (!(GetEnvironmentVariableA("MASHED_HIDE_SHADOW", b, sizeof(b)) > 0 &&
+          b[0] == '1'))
+        return;
+    static const std::uint8_t pre[5] = {0xE8, 0x2A, 0xF8, 0xFF, 0xFF};
+    if (!BytesAre(0x004200c1, pre, sizeof(pre))) {
+        LogLine("HIDE_SHADOW: call-site bytes unexpected — SKIPPED");
+        return;
+    }
+    static const std::uint8_t nops[5] = {0x90, 0x90, 0x90, 0x90, 0x90};
+    if (WriteMem(0x004200c1, nops, sizeof(nops)))
+        LogLine("HIDE_SHADOW: RTT shadow pass disabled (diagnostic)");
+}
+
 void Apply() {
     static const std::uint8_t pre[5] = {0xE8, 0xD3, 0x0B, 0x00, 0x00}; // CALL 0x492e90
     if (!BytesAre(kCallSite, pre, sizeof(pre))) {
@@ -1129,6 +1148,7 @@ void ApplyAll() {
     if (unlock)   ApplyUnlock();
     if (decouple) decouple::Apply();
     if (interpol) interp::Apply();
+    if (interpol) interp::ApplyHideShadow();   // diagnostic, env-gated inside
     if (jumpfx)   jumpfix::Apply();
     if (res)      ApplyRes();
 }
