@@ -548,3 +548,50 @@ verify they are side-effect-free to re-run (particles like FUN_00486830
 SIMULATE per call — must NOT re-run), then per frame: submit subset ->
 FUN_00476df0 on their pool descriptors (pure copy+reset). Alternatively lerp
 the flushed VB contents directly (needs per-instance identity — harder).
+
+### Item 6 — session 4 results (2026-08-03/04): three fixed, one remains
+
+**FIXED + owner-confirmed this session:**
+- Wheels + projected shadows: ROOT CAUSE was CollectSubtree's kMaxFrames=48
+  cap silently dropping 35 of a car's 83 frames (all wheel/suspension frames).
+  Cap now 128 (6ce3b7ae). Owner confirms wheels+shadows glide.
+- Element-ID diagnostic that unlocked it: -HideShadow (NOPs the RTT pass call
+  0x004200c1) proved the shadow was genuinely lagging (a29c375f).
+
+**SHIPPED, effect on "!" marker unconfirmed:** pool re-flush lerp (a37fb65a)
+covers 0x63bd50 (marker), 0x63e548, 0x6842c8 (active-powerup visuals, e.g.
+trails), 0x6887d0. Registry re-drain lerp (e418b3c6) covers world-object
+registry callbacks. Ask owner to specifically check "!" markers.
+
+**STILL STEPPING: held-powerup icon (over the holding car).** Investigation
+state (all measured live):
+- Per-car powerup slots 0x0088fc90 (stride 0xb4; 45bba0 iterates from base
+  0x0088fc70): two matrices +0x4/+0x44 track the holding car at roof height,
+  TICK-written. LERPED per frame now (0cf0c61a) — but a +40 continuous lift on
+  them does NOT move the drawn icon => they are MIRRORS, not the draw input.
+- FUN_0045bba0 (per-tick, under 0040fc00): computes per-slot pos deltas, then
+  calls per-TYPE handler fnptrs (type obj at slotbase(0x88fc70)+0x18; +0x8
+  fire-mode handler — mode arg derived from fire-button state 0x7f103c/
+  0x7f14ff, UNSAFE to re-run; +0xC per-tick held-update). Handlers are
+  Lua-registered UNWRAPPED blocks (e.g. 0x449cff region) — invisible to the
+  static call graph, no data pointers (runtime-registered).
+- Heap scan for an icon RwFrame at the slot position: 0 exact-float matches
+  (rotation math in the handler likely perturbs low bits; or transform is
+  baked, not framed).
+- Icon mesh instances: 25 IconCube.dff instances, entries 0x0068b1a0 x 0x50,
+  instance handle at entry-8; FUN_00458dd0 re-skins via FUN_004b4080
+  (handle->object) + FUN_004e8090 (set texture).
+
+**Next session plan (in order):**
+1. With a HELD powerup live, dump the type object fnptrs (slotbase+0x18) and
+   decompile/disassemble the +0xC held-update handler (unwrapped: use
+   listing_disassemble_seed) — find its draw output (472xxx im3d? 476d00 pool?
+   FUN_004b4080 object render? 535700 stream fill?).
+2. If it renders the IconCube instance via an RW object: capture the object at
+   FUN_004b4080 return (hook during 45bba0) -> its frame -> add to the interp
+   frame set (guard: only while slot active).
+3. If it bakes into a stream: identify the stream object and apply the pool
+   re-flush pattern one level down.
+4. Re-verify with the continuous-lift + BBDUMP pair (tooling:
+   scratchpad icon_lift_pair.py pattern; requires MASHED_ORIG_BBDUMP_REQ in
+   the spawn env — forgetting it produces empty dumps).
