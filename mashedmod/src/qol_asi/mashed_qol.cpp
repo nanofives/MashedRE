@@ -299,7 +299,12 @@ constexpr std::uintptr_t kCarRendBase = 0x0063da18;
 constexpr std::uintptr_t kCarStride   = 0x000002ac;
 constexpr std::uintptr_t kCarCount    = 0x008a94d0;
 constexpr int kMaxCars   = 16;
-constexpr int kMaxFrames = 48;   // per-car frame-subtree cap
+// Per-car frame-subtree cap. A Mashed car clump has 83 frames (live count
+// 2026-08-03) — the previous cap of 48 silently DROPPED 35 frames per car,
+// including all wheel/suspension frames: wheels stepped at tick rate and the
+// RTT shadow silhouette wobbled (its raster renders the clump with the
+// un-lerped parts against the smooth projector camera).
+constexpr int kMaxFrames = 128;
 
 inline std::uintptr_t RdPtr(std::uintptr_t a) {
     return *reinterpret_cast<volatile std::uintptr_t*>(a);
@@ -616,16 +621,18 @@ void __cdecl Wrapper() {
     int carCount = *reinterpret_cast<volatile std::int32_t*>(kCarCount);
     if (carCount < 0) carCount = 0;
     if (carCount > kMaxCars) carCount = kMaxCars;
-    std::uintptr_t frames[kMaxCars * kMaxFrames];
-    Mat frTrue[kMaxCars * kMaxFrames];
-    Mat frTrueM[kMaxCars * kMaxFrames];
-    bool frDidM[kMaxCars * kMaxFrames];
+    // scratch state for restore-after-render — static: at kMaxFrames=128 these
+    // are ~400KB total, far too big for the stack (single game thread only)
+    static std::uintptr_t frames[kMaxCars * kMaxFrames];
+    static Mat frTrue[kMaxCars * kMaxFrames];
+    static Mat frTrueM[kMaxCars * kMaxFrames];
+    static bool frDidM[kMaxCars * kMaxFrames];
     int frN = 0;
     const bool wheels = WheelLerpEnabled();
     for (int i = 0; i < carCount; ++i) {
         const std::uintptr_t root = CarRootFrame(i);
         if (!root) continue;
-        std::uintptr_t sub[kMaxFrames];
+        static std::uintptr_t sub[kMaxFrames];
         const int m = CollectSubtree(root, sub, kMaxFrames);
         for (int j = 0; j < m && frN < kMaxCars * kMaxFrames; ++j) {
             const std::uintptr_t f = sub[j];
