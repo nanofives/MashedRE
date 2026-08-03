@@ -595,3 +595,45 @@ state (all measured live):
 4. Re-verify with the continuous-lift + BBDUMP pair (tooling:
    scratchpad icon_lift_pair.py pattern; requires MASHED_ORIG_BBDUMP_REQ in
    the spawn env — forgetting it produces empty dumps).
+
+### Item 6 — session 4 CRITICAL FINDING: pool re-flush is the wrong mechanism for overlays
+
+Owner: "no change on either" (held icon AND pods) after adding pool 0x0068b968.
+This is decisive evidence about the whole approach, not just one pool.
+
+**Pattern across the whole session:** every element that got FIXED + owner-
+confirmed (camera, car body, wheels, projected shadow) was fixed by FRAME-MATRIX
+interpolation — writing RwFrame LTMs (+0x50) that the render pass reads. Every
+element attacked with POOL RE-FLUSH (the 4+1 sprite pools, the world registry,
+the pup-slot matrices) produced NO visible change, despite the re-flush being
+verified to RUN (pool 0x68b968 measured re-flushing ~224/s).
+
+**Likely root cause (architectural):** these sprite draws are ISSUED during the
+LOGIC phase inside their per-tick draw fns (e.g. FUN_00459000), not deferred to
+the render pass. FUN_00476df0 fills a dynamic VB and sets an engine flag, but if
+the actual DrawPrimitive is emitted in the logic phase (or the VB is consumed at
+fill time), re-filling that VB later in the render wrapper cannot move an
+already-issued draw. That would explain why re-flush runs but nothing moves.
+
+**IMPLICATION FOR NEXT SESSION — change strategy:** stop using pool re-flush for
+overlays. Instead treat the icon/marker like the car body: find the RwFrame (or
+matrix) the sprite's atomic/quad DRAW reads at render time and interpolate THAT.
+Concrete next steps:
+1. Verify the architectural hypothesis directly: with pool lerp OFF, hook
+   FUN_00476df0 for pool 0x68b968, lift its posA/matA Y by +60, FREEZE logic
+   (force FUN_00493390 -> 0 so the scene is static) and BBDUMP off/on. If the
+   drawn pods/icon do NOT rise -> confirmed the VB fill is not the live draw
+   source (draw issued elsewhere/earlier). (This session's frozen run bounced to
+   phase 7 before capturing — retry with a guard that re-pokes phase 3.)
+2. If confirmed: find the real draw. Trace the RxPipeline/RpAtomicRender or
+   Im3D-immediate call for the IconCube atomic; identify the frame/matrix it
+   consumes AT RENDER; add it to interp's frame set (guard active-only).
+3. Consider gating OFF the pool/registry/pup-slot lerp code by default
+   (MASHED_INTERP_POOLS/REGISTRY default to 1 today) — they add per-frame cost
+   and risk with no proven benefit. Keep as opt-in until one is proven to move
+   pixels.
+
+**What IS confirmed shipped + working (owner-verified this session):** FPS
+decouple, camera+car-body interp, WHEELS (frame cap 48->128), projected SHADOWS.
+Jump fix, borderless res, unlock/no-save, FPS OSD from earlier. The overlay
+sprites (powerup icons, "!" markers, pickup pods) remain OPEN.
