@@ -686,6 +686,77 @@ void __cdecl Wrapper() {
     reinterpret_cast<CamApplyFn>(kCamApply)(kCamStruct);    // restore true frame
 }
 
+// ── draw-submission interpose ────────────────────────────────────────────────
+// The overlay elements riding on cars (powerup icon over the roof, "!" marker,
+// target arrows…) are SUBMITTED from FUN_0040ce00 — sole call site 0x0040fcb3
+// inside the tick driver FUN_0040fc00 — which runs in the LOGIC phase, BEFORE
+// the render wrapper writes interpolated matrices. They therefore baked
+// tick-stepped positions even though their position source (FUN_0046d4a0 ->
+// record +0x928 active matrix) is lerped at render time. Interpose the call:
+// write the lerped record matrices, run the dispatcher, restore. The naked
+// shim preserves all registers around the C helpers (Ghidra reports no args,
+// but implicit-register ABI mismatches have bitten before).
+constexpr std::uintptr_t kSubmitCallSite = 0x0040fcb3;   // E8 48 D1 FF FF
+constexpr std::uintptr_t kSubmitFn       = 0x0040ce00;
+
+std::uintptr_t s_subAddr[kMaxCars];
+Mat            s_subTrue[kMaxCars];
+
+void __cdecl SubmitPreLerp() {
+    const std::uint32_t phase =
+        *reinterpret_cast<volatile std::uint32_t*>(kPhase);
+    for (int i = 0; i < kMaxCars; ++i) s_subAddr[i] = 0;
+    if (phase != 3 && phase != 6) return;
+    std::uint32_t acc = *reinterpret_cast<volatile std::uint32_t*>(kAccum);
+    float alpha = (float)acc / 50.0f;
+    if (alpha < 0.0f) alpha = 0.0f;
+    if (alpha > 1.0f) alpha = 1.0f;
+    int carCount = *reinterpret_cast<volatile std::int32_t*>(kCarCount);
+    if (carCount < 0) carCount = 0;
+    if (carCount > kMaxCars) carCount = kMaxCars;
+    for (int i = 0; i < carCount; ++i) {
+        const std::uintptr_t a = CarRecMat(i);
+        if (!a) continue;
+        const Mat trueMat = ReadMatAt(a);
+        RecSnap* rs = &s_rs[i];
+        if (!rs->have) { rs->curr = trueMat; rs->prev = trueMat; rs->have = true; }
+        else if (!SameMat(trueMat, rs->curr)) {
+            const float dx = trueMat.m[9]  - rs->curr.m[9];
+            const float dy = trueMat.m[10] - rs->curr.m[10];
+            const float dz = trueMat.m[11] - rs->curr.m[11];
+            rs->prev = (dx*dx + dy*dy + dz*dz > 100.0f * 100.0f) ? trueMat : rs->curr;
+            rs->curr = trueMat;
+        }
+        s_subAddr[i] = a;
+        s_subTrue[i] = trueMat;
+        WriteMatAt(a, LerpMat(rs->prev, rs->curr, alpha));
+    }
+}
+
+void __cdecl SubmitPostRestore() {
+    for (int i = 0; i < kMaxCars; ++i) {
+        if (s_subAddr[i]) {
+            WriteMatAt(s_subAddr[i], s_subTrue[i]);
+            s_subAddr[i] = 0;
+        }
+    }
+}
+
+void* s_submitOrig = reinterpret_cast<void*>(kSubmitFn);
+
+__declspec(naked) void SubmitWrapper() {
+    __asm {
+        pushad
+        call SubmitPreLerp
+        popad
+        call dword ptr [s_submitOrig]
+        pushad
+        call SubmitPostRestore
+        popad
+        ret
+    }
+}
+
 void Apply() {
     static const std::uint8_t pre[5] = {0xE8, 0xD3, 0x0B, 0x00, 0x00}; // CALL 0x492e90
     if (!BytesAre(kCallSite, pre, sizeof(pre))) {
@@ -701,6 +772,22 @@ void Apply() {
         LogLine("INTERP: camera + car render interpolation live (race phases only)");
     else
         LogLine("INTERP: write failed — SKIPPED");
+
+    // draw-submission interpose (overlay elements: powerup icon, "!", arrows)
+    static const std::uint8_t preSub[5] = {0xE8, 0x48, 0xD1, 0xFF, 0xFF}; // CALL 0x40ce00
+    if (!BytesAre(kSubmitCallSite, preSub, sizeof(preSub))) {
+        LogLine("INTERP: submit call site 0x40fcb3 bytes unexpected — overlay lerp SKIPPED");
+        return;
+    }
+    std::uint8_t patch2[5];
+    patch2[0] = 0xE8;
+    const std::uint32_t rel2 =
+        Rel32(kSubmitCallSite + 5, reinterpret_cast<std::uintptr_t>(&SubmitWrapper));
+    std::memcpy(&patch2[1], &rel2, 4);
+    if (WriteMem(kSubmitCallSite, patch2, sizeof(patch2)))
+        LogLine("INTERP: overlay draw-submission lerp live (0x40fcb3)");
+    else
+        LogLine("INTERP: submit write failed — overlay lerp SKIPPED");
 }
 
 } // namespace interp
