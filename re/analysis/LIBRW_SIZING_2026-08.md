@@ -1150,7 +1150,52 @@ viewpoints, world-only, no cars.
 > (`TrackRenderer.cpp:1082-1088`) — so there is no light term on that side for
 > librw to be missing.
 >
-> #### ⚠️ CORRECTION (2026-08-03): the "`World` → `Snow`" reading below was a DECODER ARTEFACT
+> #### ⚠️⚠️ RETRACTION (2026-08-03): the MATID instrument is UNSOUND. Both findings below are withdrawn.
+>
+> **Do not build on anything in this subsection.** The material-ID probe renders
+> each world material as a flat colour via `D3DRS_TEXTUREFACTOR` (D3D9) and
+> `matCol` (librw), and everything below was derived by classifying those colours.
+> The D3D9 side's fill **is not flat**, so the classification is unsound in both
+> directions and produced two confident, wrong answers in succession.
+>
+> Histogram of pixels in the ID colour band (`01_action`, `MASHED_WORLD_ONLYMAT=4`):
+>
+> | | pixels in band | exactly on palette | off-palette |
+> |---|---|---|---|
+> | D3D9 | 46 499 | 20 551 (**45.2%**) | 25 503 (54.8%) |
+> | librw | 46 499 | 44 360 (95.5%) | 2 074 (4.5%) |
+>
+> `TEXTUREFACTOR` is constant per draw, so the D3D9 fill should be 100% flat. It
+> is not: R drifts smoothly 93→107 across the surface with G/B held near
+> (200, 60), while alpha blending is off (`TrackRenderer.cpp:3815`) and fog is off.
+> **The cause of that drift is not known**, and until it is, no colour read off a
+> D3D9 MATID capture means anything.
+>
+> **What this retracts:**
+> - "librw draws `Snow` where D3D9 draws `World`" — withdrawn (was ±24 tolerance
+>   admitting sky/prop pixels).
+> - "`Snow` coverage differs 2.16× (20 551 vs 44 360)" — withdrawn (was exact
+>   matching rejecting genuine but perturbed world pixels).
+>
+> **What it establishes instead:** both renderers put **exactly 46 499 pixels** in
+> the ID band — so `Snow`'s **coverage is the same on both paths**, and the
+> "why does this surface rasterise further in librw" question is closed: it does
+> not. The disagreement is in those pixels' colour, which puts the snow bank back
+> in the shading category it started in.
+>
+> **Unaffected** (none of these came from MATID): the residual measurement itself;
+> matrices agreeing to 2.7e-07; the shared depth surface (identical pointer);
+> equal cull and depth-func; draw order being irrelevant (REVORDER, liveness-proven);
+> UVs copied raw; the fog-model term; filtering; alpha.
+>
+> **For the next attempt:** do not read material identity back out of pixels. Use
+> an instrument that counts rather than classifies — D3D9 occlusion queries per
+> material draw give exact per-material pixel counts on the D3D9 side, and the
+> librw side can be diffed the ordinary way with one material suppressed on *both*.
+>
+> ---
+>
+> #### ⚠️ superseded correction (kept for the record): "the `World` → `Snow` reading was a decoder artefact"
 >
 > The material-ID decoder accepted any pixel within **±24** of a palette entry.
 > Sky and prop pixels — which are *not* drawn as ID colours — fall inside that
