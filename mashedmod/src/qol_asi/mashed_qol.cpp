@@ -406,6 +406,34 @@ inline Mat LerpMat(const Mat& a, const Mat& b, float t) {
     for (int k = 0; k < 12; ++k) o.m[k] = a.m[k] + (b.m[k] - a.m[k]) * t;
     return o;
 }
+// ── car record render matrix (the HUD/effects position source) ──────────────
+// FUN_0046d4a0 (0x0046d4a0) is the id→matrix lookup every consumer uses
+// (HUD "!" marker, powerup icons over cars, effect emitters, camera director):
+//   *out = 0x00881ec8 + i*0xd04 + (*(int*)(0x00881f48 + i*0xd04)) * 0x40
+// i.e. two 0x40 matrix buffers at car record +0x928, active index int at
+// record +0x9A8. This matrix is NOT what the car clump draws from (the +80
+// lift test left cars on the ground — plan doc Item 5), but it IS what the
+// overlay/effect consumers read — so lerping it at render time syncs those
+// elements with the interpolated car body. Same RW layout as a frame matrix:
+// right +0x00, up +0x10, at +0x20, pos +0x30.
+constexpr std::uintptr_t kRecMatBase = 0x00881ec8;
+constexpr std::uintptr_t kRecMatIdx  = 0x00881f48;
+constexpr std::uintptr_t kRecStride  = 0x00000d04;
+inline std::uintptr_t CarRecMat(int i) {
+    const std::int32_t act =
+        *reinterpret_cast<volatile std::int32_t*>(kRecMatIdx + (std::uintptr_t)i * kRecStride);
+    if (act < 0 || act > 1) return 0;
+    return kRecMatBase + (std::uintptr_t)i * kRecStride + (std::uintptr_t)act * 0x40;
+}
+Mat ReadMatAt(std::uintptr_t a) {
+    Mat o;
+    for (int k = 0; k < 12; ++k) o.m[k] = rdF(a + (k / 3) * 0x10 + (k % 3) * 4);
+    return o;
+}
+void WriteMatAt(std::uintptr_t a, const Mat& o) {
+    for (int k = 0; k < 12; ++k) wrF(a + (k / 3) * 0x10 + (k % 3) * 4, o.m[k]);
+}
+
 // per-frame prev/curr snapshots keyed by frame address (stable within a race)
 struct FrameSnap { std::uintptr_t f; Mat prev, curr; bool have; };
 FrameSnap s_fs[kMaxCars * kMaxFrames];
@@ -415,6 +443,12 @@ FrameSnap* FindSnap(std::uintptr_t f) {
     if (s_fsN < kMaxCars * kMaxFrames) { FrameSnap* p = &s_fs[s_fsN++]; p->f = f; p->have = false; return p; }
     return nullptr;
 }
+
+// per-car prev/curr snapshots of the record render matrix (value-keyed by car
+// index — the ACTIVE ADDRESS alternates between the two buffers per tick, so
+// snapshots track the fetched value, not the address)
+struct RecSnap { Mat prev, curr; bool have; };
+RecSnap s_rs[kMaxCars];
 
 void __cdecl Wrapper() {
     const std::uint32_t phase =
@@ -426,6 +460,7 @@ void __cdecl Wrapper() {
     if ((phase != 3 && phase != 6) || frameHolder == 0) {
         s_have = false;
         s_fsN = 0;
+        for (int i = 0; i < kMaxCars; ++i) s_rs[i].have = false;
         reinterpret_cast<RenderFn>(kRenderFn)();
         return;
     }
@@ -491,9 +526,33 @@ void __cdecl Wrapper() {
         }
     }
 
+    // ── car record render matrices (HUD "!"/powerup icons/effect emitters) ──
+    std::uintptr_t recAddr[kMaxCars];
+    Mat            recTrue[kMaxCars];
+    for (int i = 0; i < carCount; ++i) {
+        const std::uintptr_t a = CarRecMat(i);
+        recAddr[i] = 0;
+        if (!a) continue;
+        const Mat trueMat = ReadMatAt(a);
+        RecSnap* rs = &s_rs[i];
+        if (!rs->have) { rs->curr = trueMat; rs->prev = trueMat; rs->have = true; }
+        else if (!SameMat(trueMat, rs->curr)) {
+            const float dx = trueMat.m[9]  - rs->curr.m[9];
+            const float dy = trueMat.m[10] - rs->curr.m[10];
+            const float dz = trueMat.m[11] - rs->curr.m[11];
+            rs->prev = (dx*dx + dy*dy + dz*dz > 100.0f * 100.0f) ? trueMat : rs->curr;
+            rs->curr = trueMat;
+        }
+        recAddr[i] = a;
+        recTrue[i] = trueMat;
+        WriteMatAt(a, LerpMat(rs->prev, rs->curr, alpha));
+    }
+
     reinterpret_cast<RenderFn>(kRenderFn)();                // render + flip
 
     // ── restore true state (physics/next tick unperturbed) ──
+    for (int i = 0; i < carCount; ++i)
+        if (recAddr[i]) WriteMatAt(recAddr[i], recTrue[i]);
     for (int k = 0; k < frN; ++k) WriteFrame(frames[k], frTrue[k]);
     WritePose(s_curr);
     reinterpret_cast<CamApplyFn>(kCamApply)(kCamStruct);    // restore true frame
