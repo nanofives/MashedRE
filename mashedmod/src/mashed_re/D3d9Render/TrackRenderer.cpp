@@ -3976,7 +3976,36 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         const char* e = std::getenv("MASHED_WORLD_ONLYMAT");
         return (e && *e) ? std::atoi(e) : -1;
     }();
+    // D-S3-BANK discriminator: MASHED_WORLD_PRELITONLY=1 draws the world with the
+    // TEXTURE suppressed on BOTH paths -- output becomes the interpolated prelit
+    // vertex colour alone (COLOROP=SELECTARG2 -> DIFFUSE here; librw strips the
+    // material texture so its PS TEX path is off). If the snow delta VANISHES here
+    // the difference is texture/UV sampling; if it PERSISTS it is vertex-colour
+    // interpolation (fixed-function iterated DIFFUSE vs shader COLOR0 varying).
+    static const bool s_prelit_only = [] {
+        const char* e = std::getenv("MASHED_WORLD_PRELITONLY");
+        return e && e[0] == '1' && e[1] == '\0';
+    }();
     unsigned drew = 0;
+
+    // MASHED_WORLD_VDUMP=1: dump the D3D9 snow (mat 4) batch's triangle vertices
+    // as "4 x y z r g b" to log/vdump_d3d9.txt, once. Matched by position against
+    // the librw dump (RwSceneBuild) to see if the packed prelit differs per vertex.
+    static const bool s_vdump = std::getenv("MASHED_WORLD_VDUMP") != nullptr;
+    if (!rw_world && s_vdump) {
+        static bool s_vdumped = false;
+        if (!s_vdumped && batches_.size() > 4) {
+            s_vdumped = true;
+            if (std::FILE* f = std::fopen("log/vdump_d3d9.txt", "w")) {
+                for (const V& v : batches_[4]) {
+                    const std::uint32_t c = v.c;
+                    std::fprintf(f, "4 %.3f %.3f %.3f %u %u %u\n", v.x, v.y, v.z,
+                                 (c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF);
+                }
+                std::fclose(f);
+            }
+        }
+    }
 
     if (!rw_world)
     for (std::size_t k = 0; k < batches_.size(); ++k) {
@@ -4002,7 +4031,10 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         // shaded texture, matching what BuildWorld does on the librw side, so
         // "which material owns these pixels" is read off the image rather than
         // inferred. Same encoding: (20 + i*18, 200, 60), i = (R-20)/18.
-        if (s_matid) {
+        if (s_prelit_only) {
+            // DIFFUSE (interpolated prelit) only -- texture ignored by SELECTARG2.
+            dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG2);
+        } else if (s_matid) {
             dev->SetRenderState(D3DRS_TEXTUREFACTOR,
                                 D3DCOLOR_XRGB(20 + (int)mi * 18, 200, 60));
             dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
@@ -4012,7 +4044,9 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         }
         DrawBatch(dev, b);
         ds_tally(b, textures_[mi]);
-        if (s_matid) {
+        if (s_prelit_only) {
+            dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+        } else if (s_matid) {
             dev->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
             dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
         } else if (!textures_[mi]) {
@@ -4023,14 +4057,16 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     }
     // Liveness for the two world probes. Printed once, from inside the frame that
     // actually rendered, so it cannot be confused with build-time intent.
-    if (s_only_mat >= 0 || s_matid) {
+    if (s_only_mat >= 0 || s_matid || s_prelit_only) {
         static bool s_probe_logged = false;
         if (!s_probe_logged) {
             s_probe_logged = true;
             if (std::FILE* f = std::fopen("mashed_re.log", "a")) {
-                std::fprintf(f, "D-S3-BANK PROBE: onlymat=%d matid=%d rw_world=%d "
-                                "drew=0x%X (bit i set = world material i submitted)\n",
-                             s_only_mat, (int)s_matid, (int)rw_world, drew);
+                std::fprintf(f, "D-S3-BANK PROBE: onlymat=%d matid=%d prelitonly=%d "
+                                "rw_world=%d drew=0x%X (bit i set = world material i "
+                                "submitted)\n",
+                             s_only_mat, (int)s_matid, (int)s_prelit_only,
+                             (int)rw_world, drew);
                 std::fclose(f);
             }
         }
