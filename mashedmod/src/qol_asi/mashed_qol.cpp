@@ -470,6 +470,62 @@ FrameSnap* FindSnap(std::uintptr_t f) {
 struct RecSnap { Mat prev, curr; bool have; };
 RecSnap s_rs[kMaxCars];
 
+// ── held-powerup icon slots (0x0088fc90, 4 slots, stride 0xb4) ──────────────
+// Each active slot holds TWO 0x40 matrices at +0x4 and +0x44 whose positions
+// (+0x34 / +0x74) track the holding car at roof height (measured live
+// 2026-08-03: slots follow car pos +0.25y while a powerup is held). They are
+// TICK-written — the icon over the car steps. Lerp both per frame,
+// snapshot/restore, teleport-snap when the slot switches cars.
+constexpr std::uintptr_t kPupSlotBase   = 0x0088fc90;
+constexpr std::uintptr_t kPupSlotStride = 0xb4;
+constexpr int            kPupSlots      = 4;
+struct PupSnap { Mat prevA, currA, prevB, currB; bool have; };
+PupSnap s_pup[kPupSlots];
+Mat  s_pupTrueA[kPupSlots], s_pupTrueB[kPupSlots];
+bool s_pupDid[kPupSlots];
+
+void PupLerpOne(int s, float alpha) {
+    __try {
+        const std::uintptr_t a = kPupSlotBase + (std::uintptr_t)s * kPupSlotStride + 0x4;
+        const std::uintptr_t b = a + 0x40;
+        const Mat ta = ReadMatAt(a);
+        const Mat tb = ReadMatAt(b);
+        PupSnap* ps = &s_pup[s];
+        if (!ps->have) {
+            ps->prevA = ps->currA = ta;
+            ps->prevB = ps->currB = tb;
+            ps->have = true;
+        } else if (!SameMat(ta, ps->currA) || !SameMat(tb, ps->currB)) {
+            const float dx = ta.m[9]  - ps->currA.m[9];
+            const float dy = ta.m[10] - ps->currA.m[10];
+            const float dz = ta.m[11] - ps->currA.m[11];
+            const bool jump = dx*dx + dy*dy + dz*dz > 100.0f * 100.0f;
+            ps->prevA = jump ? ta : ps->currA; ps->currA = ta;
+            ps->prevB = jump ? tb : ps->currB; ps->currB = tb;
+        }
+        s_pupTrueA[s] = ta;
+        s_pupTrueB[s] = tb;
+        s_pupDid[s] = true;
+        WriteMatAt(a, LerpMat(ps->prevA, ps->currA, alpha));
+        WriteMatAt(b, LerpMat(ps->prevB, ps->currB, alpha));
+    } __except (1) {
+        s_pup[s].have = false;
+        s_pupDid[s] = false;
+    }
+}
+
+void PupRestoreOne(int s) {
+    __try {
+        if (s_pupDid[s]) {
+            const std::uintptr_t a =
+                kPupSlotBase + (std::uintptr_t)s * kPupSlotStride + 0x4;
+            WriteMatAt(a, s_pupTrueA[s]);
+            WriteMatAt(a + 0x40, s_pupTrueB[s]);
+        }
+    } __except (1) {}
+    s_pupDid[s] = false;
+}
+
 // ── car shadow (render-to-texture pass FUN_0041f8f0 @0x0041f8f0) ─────────────
 // The shadow pass anchors its projector camera at
 //   sunDir(DAT_0063d850+4 matrix +0x30..38) * DAT_005cca00 + *(ESI +0x258..0x260)
@@ -596,6 +652,7 @@ void __cdecl Wrapper() {
             s_rs[i].have = false;
             s_sh[i].have = false;
         }
+        for (int s = 0; s < kPupSlots; ++s) s_pup[s].have = false;
         pools::Reset();
         registry::Reset();
         reinterpret_cast<RenderFn>(kRenderFn)();
@@ -712,6 +769,9 @@ void __cdecl Wrapper() {
     if (PoolLerpEnabled())
         for (int p = 0; p < 4; ++p) pools::LerpFlushOne(p, alpha);
 
+    // ── held-powerup icon slots: lerp both matrices per slot ──
+    for (int s = 0; s < kPupSlots; ++s) PupLerpOne(s, alpha);
+
     // ── world-object registry (powerup icons/pods): lerped re-drain ──
     if (RegistryLerpEnabled())
         registry::RedrawLerped(alpha);
@@ -719,6 +779,7 @@ void __cdecl Wrapper() {
     reinterpret_cast<RenderFn>(kRenderFn)();                // render + flip
 
     // ── restore true state (physics/next tick unperturbed) ──
+    for (int s = 0; s < kPupSlots; ++s) PupRestoreOne(s);
     for (int i = 0; i < carCount; ++i) ShadowRestoreOne(i);
     for (int i = 0; i < carCount; ++i)
         if (recAddr[i]) WriteMatAt(recAddr[i], recTrue[i]);
