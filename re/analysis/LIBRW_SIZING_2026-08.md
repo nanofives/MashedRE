@@ -1128,7 +1128,32 @@ viewpoints, world-only, no cars.
 >
 > It is a channel-dependent warm deficit over one slope face — **not** a uniform
 > scale (which would hit all three channels) and **not** a hue swap (which would
-> move blue too). Whatever is missing contributes roughly R:G ≈ 1.7:1 and no blue.
+> move blue too).
+>
+> **Refined over differing pixels only** (the grid cell above averages slope and
+> sky together, so it describes a mixture, not a surface):
+>
+> | mask | pixels | deficit (D3D9 − librw) | R:G | B:G |
+> |---|---|---|---|---|
+> | diff ≥ 8 | 13 055 (4.25%) | (19.3, 12.6, **0.3**) | 1.53 | **0.02** |
+> | diff ≥ 24 | 3 886 (1.26%) | (31.5, 21.7, **2.0**) | 1.45 | 0.09 |
+>
+> The term is **additive** — blue is untouched (ratio 0.997), so it is not a
+> multiplicative scale — and its hue is **R:G ≈ 1.5 with essentially no blue**,
+> ≈ (255, 167, 3).
+>
+> **The sun is DISPROVED against it.** `sun = 0xFF99B3B3` = (153,179,179),
+> R:G = **0.855** with B = G — a cool teal. The ambient (51,77,77) is R:G = 0.66,
+> also cool with B = G. Both are opposite in shape to a red-dominant, blue-free
+> deficit, not merely different in magnitude. Independently, the D3D9 world path
+> applies **no runtime light at all** — it renders `s.prelit` as-is
+> (`TrackRenderer.cpp:1082-1088`) — so there is no light term on that side for
+> librw to be missing.
+>
+> Sharpest remaining clue: on the 242 most-different pixels D3D9 shows warm brown
+> (82.3, 80.3, 54.5) while librw shows dark teal (31.0, 41.5, 41.4) — a hue close
+> to the ambient direction (G = B, R lower). On the worst pixels the two are
+> showing materially **different surfaces**, not one surface at two brightnesses.
 > `[UNCERTAIN]`
 >
 > ### Texture filtering (NEAREST vs LINEAR) — NOT a delta. Closed.
