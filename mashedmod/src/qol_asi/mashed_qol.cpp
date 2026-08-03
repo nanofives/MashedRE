@@ -549,6 +549,20 @@ inline bool WheelLerpEnabled() {
     }
     return v == 1;
 }
+inline bool PoolLerpEnabled() {
+    static int v = -1;
+    if (v == -1) {
+        char b[8] = {};
+        v = (GetEnvironmentVariableA("MASHED_INTERP_POOLS", b, sizeof(b)) > 0 &&
+             b[0] == '0') ? 0 : 1;
+    }
+    return v == 1;
+}
+
+namespace pools {
+void Reset();
+void LerpFlushOne(int p, float alpha);   // p in [0, 4) — kNumPools
+}
 
 void __cdecl Wrapper() {
     const std::uint32_t phase =
@@ -564,6 +578,7 @@ void __cdecl Wrapper() {
             s_rs[i].have = false;
             s_sh[i].have = false;
         }
+        pools::Reset();
         reinterpret_cast<RenderFn>(kRenderFn)();
         return;
     }
@@ -672,6 +687,10 @@ void __cdecl Wrapper() {
     if (ShadowLerpEnabled())
         for (int i = 0; i < carCount; ++i) ShadowLerpOne(i, alpha);
 
+    // ── overlay sprite pools: lerp arrays + re-flush VBs (see pools::) ──
+    if (PoolLerpEnabled())
+        for (int p = 0; p < 4; ++p) pools::LerpFlushOne(p, alpha);
+
     reinterpret_cast<RenderFn>(kRenderFn)();                // render + flip
 
     // ── restore true state (physics/next tick unperturbed) ──
@@ -685,6 +704,146 @@ void __cdecl Wrapper() {
     WritePose(s_curr);
     reinterpret_cast<CamApplyFn>(kCamApply)(kCamStruct);    // restore true frame
 }
+
+// ── overlay sprite-pool re-flush interpolation ──────────────────────────────
+// Overlay sprites (powerup visuals, "!"/target markers, misc car-attached
+// quads) are instanced into pools once per TICK and flushed into retained
+// engine vertex buffers by FUN_00476df0 (0x00476df0: copies pool arrays via
+// stream fill FUN_00535700/FUN_00535910, writes the instance count into the
+// engine object at *( *(0x007dc57c) + pool->id ) + 4, then resets pool->count).
+// Between ticks the renderer redraws the frozen VBs -> the sprites step.
+// KEY: the pool ARRAYS survive the reset (only count is zeroed) and the true
+// count is recoverable from the engine object. So per rendered frame we can:
+// snapshot the arrays per tick, write index-matched lerped values (guarded on
+// equal counts), restore pool->count, and call the game's own flush — a pure
+// copy — to re-upload the VB with interpolated positions. No game logic runs.
+// Pool layout (FUN_00476d00/FUN_00476df0): +0x4 stream id, +0x8 capacity,
+// +0xc count, +0x10 pos(0xc), +0x14 size(8), +0x18 color(4), +0x1c matrix
+// (0x40), +0x20 scalar(4), +0x24 uv(0x10), +0x28 extra(0x20).
+namespace pools {
+
+constexpr int kNumPools = 4;
+constexpr int kMaxInst  = 128;   // >= largest pool capacity (0x63e548 cap 128)
+// car-attached overlay pools (identified live 2026-08-03 via 476d00 caller
+// log): 0x63bd50 = target/"!" marker (FUN_00413cb0), 0x63e548 = FUN_004212b0
+// element, 0x6842c8 = powerup held/active visuals (Lua-dispatched handler in
+// the unwrapped 0x449xxx block), 0x6887d0 = FUN_00456140 (rare pickup fx).
+constexpr std::uintptr_t kPoolAddr[kNumPools] = {
+    0x0063bd50, 0x0063e548, 0x006842c8, 0x006887d0
+};
+constexpr std::uintptr_t kStreamTable = 0x007dc57c;
+constexpr std::uintptr_t kFlushFn     = 0x00476df0;
+
+struct Snap {
+    int   count;
+    bool  have;
+    float pos[kMaxInst][3];
+    float size[kMaxInst][2];
+    float mat[kMaxInst][12];
+};
+Snap s_prev[kNumPools], s_curr[kNumPools];
+
+using FlushFn = void (__cdecl*)(std::uintptr_t);
+
+inline std::uintptr_t Rd(std::uintptr_t a) {
+    return *reinterpret_cast<volatile std::uintptr_t*>(a);
+}
+
+void Reset() {
+    for (int p = 0; p < kNumPools; ++p) {
+        s_prev[p].have = false;
+        s_curr[p].have = false;
+    }
+}
+
+void LerpFlushOne(int p, float alpha) {
+    __try {
+        const std::uintptr_t pool = kPoolAddr[p];
+        const std::uintptr_t sobj = Rd(pool + 0x4);   // stream object (heap ptr)
+        const std::uintptr_t posA = Rd(pool + 0x10);
+        const std::uintptr_t sizA = Rd(pool + 0x14);
+        const std::uintptr_t matA = Rd(pool + 0x1c);
+        if ((!posA && !matA) || sobj < 0x10000) return;
+        // engine sub-object = *(streamObj + DAT_007dc57c); count at +4
+        // (FUN_00476df0: DAT_007dc57c is a small member OFFSET, observed 0x80)
+        const std::uintptr_t off = Rd(kStreamTable);
+        if (off > 0x1000) return;
+        const std::uintptr_t obj = Rd(sobj + off);
+        if (obj < 0x10000) return;
+        const int cnt = *reinterpret_cast<volatile std::int32_t*>(obj + 4);
+        if (cnt <= 0 || cnt > kMaxInst) {
+            s_prev[p].have = s_curr[p].have = false;
+            return;
+        }
+        Snap* cs = &s_curr[p];
+        // detect a new tick's data: count change or any pos/matrix delta vs
+        // the stored curr snapshot (we write curr back after each re-flush,
+        // so a difference here can only come from a fresh tick refill)
+        bool fresh = !cs->have || cs->count != cnt;
+        if (!fresh) {
+            for (int i = 0; i < cnt && !fresh; ++i) {
+                if (posA)
+                    for (int k = 0; k < 3; ++k)
+                        if (rdF(posA + i*0xc + k*4) != cs->pos[i][k]) { fresh = true; break; }
+                if (!fresh && matA)
+                    for (int k = 9; k < 12; ++k)   // matrix pos row is enough
+                        if (rdF(matA + i*0x40 + (k/3)*0x10 + (k%3)*4) != cs->mat[i][k]) { fresh = true; break; }
+            }
+        }
+        if (fresh) {
+            s_prev[p] = *cs;
+            cs->count = cnt;
+            cs->have = true;
+            for (int i = 0; i < cnt; ++i) {
+                for (int k = 0; k < 3; ++k)
+                    cs->pos[i][k] = posA ? rdF(posA + i*0xc + k*4) : 0.0f;
+                for (int k = 0; k < 2; ++k)
+                    cs->size[i][k] = sizA ? rdF(sizA + i*8 + k*4) : 0.0f;
+                for (int k = 0; k < 12; ++k)
+                    cs->mat[i][k] = matA ? rdF(matA + i*0x40 + (k/3)*0x10 + (k%3)*4) : 0.0f;
+            }
+        }
+        const Snap* ps = &s_prev[p];
+        const bool canLerp = ps->have && ps->count == cnt;
+        // write lerped (or true) values into the pool arrays
+        for (int i = 0; i < cnt; ++i) {
+            for (int k = 0; k < 3; ++k) {
+                const float v = canLerp
+                    ? ps->pos[i][k] + (cs->pos[i][k] - ps->pos[i][k]) * alpha
+                    : cs->pos[i][k];
+                if (posA) wrF(posA + i*0xc + k*4, v);
+            }
+            for (int k = 0; k < 2; ++k) {
+                const float v = canLerp
+                    ? ps->size[i][k] + (cs->size[i][k] - ps->size[i][k]) * alpha
+                    : cs->size[i][k];
+                if (sizA) wrF(sizA + i*8 + k*4, v);
+            }
+            for (int k = 0; k < 12; ++k) {
+                const float v = canLerp
+                    ? ps->mat[i][k] + (cs->mat[i][k] - ps->mat[i][k]) * alpha
+                    : cs->mat[i][k];
+                if (matA) wrF(matA + i*0x40 + (k/3)*0x10 + (k%3)*4, v);
+            }
+        }
+        // restore the count and let the game's own pure flush re-upload the VB
+        *reinterpret_cast<volatile std::int32_t*>(pool + 0xc) = cnt;
+        reinterpret_cast<FlushFn>(kFlushFn)(pool);
+        // write the true curr values back so the next fresh-tick compare works
+        for (int i = 0; i < cnt; ++i) {
+            for (int k = 0; k < 3; ++k)
+                if (posA) wrF(posA + i*0xc + k*4, cs->pos[i][k]);
+            for (int k = 0; k < 2; ++k)
+                if (sizA) wrF(sizA + i*8 + k*4, cs->size[i][k]);
+            for (int k = 0; k < 12; ++k)
+                if (matA) wrF(matA + i*0x40 + (k/3)*0x10 + (k%3)*4, cs->mat[i][k]);
+        }
+    } __except (1) {
+        s_prev[p].have = s_curr[p].have = false;
+    }
+}
+
+} // namespace pools
 
 // ── draw-submission interpose ────────────────────────────────────────────────
 // The overlay elements riding on cars (powerup icon over the roof, "!" marker,
@@ -773,7 +932,17 @@ void Apply() {
     else
         LogLine("INTERP: write failed — SKIPPED");
 
-    // draw-submission interpose (overlay elements: powerup icon, "!", arrows)
+    // draw-submission interpose — SUPERSEDED by the pool re-flush lerp
+    // (pools::LerpFlushOne). Off by default: it lerps the bake inputs at tick
+    // time, which would phase-shift the pool snapshots. MASHED_INTERP_SUBMIT=1
+    // re-enables for A/B.
+    {
+        char b[8] = {};
+        if (!(GetEnvironmentVariableA("MASHED_INTERP_SUBMIT", b, sizeof(b)) > 0 &&
+              b[0] == '1')) {
+            return;
+        }
+    }
     static const std::uint8_t preSub[5] = {0xE8, 0x48, 0xD1, 0xFF, 0xFF}; // CALL 0x40ce00
     if (!BytesAre(kSubmitCallSite, preSub, sizeof(preSub))) {
         LogLine("INTERP: submit call site 0x40fcb3 bytes unexpected — overlay lerp SKIPPED");
