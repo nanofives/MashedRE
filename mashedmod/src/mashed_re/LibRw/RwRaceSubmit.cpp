@@ -598,12 +598,50 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
 
             const float bw = (b[3] != 0.f) ? b[3] : 1e-6f;
             const float dw = (d[3] != 0.f) ? d[3] : 1e-6f;
+            // %.4f is far too coarse to judge a near-tie: the whole question for
+            // D-S3-BANK is whether two surfaces differ in depth by less than the
+            // two pipelines disagree. Print enough digits to see that.
             RLog("f%-6lld DEPTHPROBE p=(%.2f,%.2f,%.2f)\n"
-                 "        d3d9  ndc=(%.4f,%.4f,%.4f) w=%.3f\n"
-                 "        librw ndc=(%.4f,%.4f,%.4f) w=%.3f",
+                 "        d3d9  ndc=(%.9f,%.9f,%.9f) w=%.6f\n"
+                 "        librw ndc=(%.9f,%.9f,%.9f) w=%.6f\n"
+                 "        dz=%.3e (ndc units)",
                  g_frames, p[0], p[1], p[2],
                  b[0]/bw, b[1]/bw, b[2]/bw, b[3],
-                 d[0]/dw, d[1]/dw, d[2]/dw, d[3]);
+                 d[0]/dw, d[1]/dw, d[2]/dw, d[3],
+                 (double)(b[2]/bw) - (double)(d[2]/dw));
+
+            // Both transforms are LINEAR, so comparing the combined matrices
+            // settles for EVERY point at once whether the two pipelines can
+            // produce different depths -- far stronger than sampling positions.
+            // D3D9 combined = VIEW * PROJ; librw = devView * devProj.
+            float dcomb[16], rcomb[16];
+            for (int r = 0; r < 4; ++r) {
+                const float row[4] = { r == 0 ? 1.f : 0.f, r == 1 ? 1.f : 0.f,
+                                       r == 2 ? 1.f : 0.f, r == 3 ? 1.f : 0.f };
+                float t1[4], t2[4];
+                xformD3D(dv, row, t1); xformD3D(dp, t1, t2);
+                for (int cq = 0; cq < 4; ++cq) dcomb[r * 4 + cq] = t2[cq];
+                xformRw(g_cam->devView, row, t1); xformRw(g_cam->devProj, t1, t2);
+                for (int cq = 0; cq < 4; ++cq) rcomb[r * 4 + cq] = t2[cq];
+            }
+            double maxabs = 0.0, maxrel = 0.0;
+            int wi = -1;
+            for (int i = 0; i < 16; ++i) {
+                const double ad = std::fabs((double)dcomb[i] - (double)rcomb[i]);
+                if (ad > maxabs) { maxabs = ad; wi = i; }
+                const double mag = std::fabs((double)dcomb[i]);
+                if (mag > 1e-9) {
+                    const double rel = ad / mag;
+                    if (rel > maxrel) maxrel = rel;
+                }
+            }
+            RLog("        MATCMP max|d3d9-librw|=%.3e at elem %d (row %d col %d)"
+                 "  maxrel=%.3e\n"
+                 "        d3d9 col2 = %.9f %.9f %.9f %.9f\n"
+                 "        librw col2= %.9f %.9f %.9f %.9f",
+                 maxabs, wi, wi / 4, wi % 4, maxrel,
+                 dcomb[2], dcomb[6], dcomb[10], dcomb[14],
+                 rcomb[2], rcomb[6], rcomb[10], rcomb[14]);
         }
     }
 

@@ -1171,12 +1171,49 @@ viewpoints, world-only, no cars.
 >
 > It is specifically NOT draw order — reversing D3D9's material order is
 > bit-identical (above), so within D3D9 `World` genuinely wins on depth rather than
-> by drawing last. The two renderers therefore compute slightly different z for
-> these surfaces. The plausible mechanism is that they transform vertices through
-> different pipelines (D3D9 fixed-function T&L vs librw's
-> `mul(combinedMat, Position)` in `default_VS.hlsl`), which differ in
-> floating-point evaluation order and so flip a near-tie — **stated as the next
-> thing to test, not as established.** `[UNCERTAIN]`
+> by drawing last.
+>
+> #### The z-precision theory is DISPROVED (2026-08-03)
+>
+> Two independent grounds:
+>
+> **1. The matrices agree to float rounding.** The DEPTHPROBE now compares the two
+> *combined* transforms element-wise, which settles it for every point at once
+> rather than by sampling positions (both transforms are linear):
+> `max|d3d9−librw| = 3.8e-06` (in the translation row), **maxrel = 2.7e-07**, and
+> NDC z differs by ~1.8e-07. For scale: depth precision goes as
+> `near·far/((far−near)·z²)`, so at the probe point (w = 1.72) that 1.8e-07 is
+> ~1e-5 world units — nothing — while at the horizon distances where the bank sits
+> (z ≈ 200–400) it is **0.14–0.6 world units**. So a near-tie *could* in principle
+> be flipped at that range. It is not what is happening, because:
+>
+> **2. The disagreement is one solid surface, not a marbled interleave.** A
+> float-rounding near-tie z-fights: many small components, high boundary fraction.
+> Measured on the material-ID maps, the disagreeing pixels form **1 connected
+> component holding 100% of them, with only 4.4% boundary pixels** — a clean
+> contiguous region. That is the signature of a structural difference, not of
+> depth-test noise.
+>
+> Also ruled out here: **backface culling** — the D3D9 world pass sets
+> `D3DCULL_NONE` (`TrackRenderer.cpp:3814`) and librw sets `D3DCULL_NONE` once at
+> device init and never changes it (`d3ddevice.cpp:1793-1794`); the live probe
+> reads `cull=1` (NONE) and `zfunc=4` (LESSEQUAL) on both.
+>
+> So: identical geometry, matrices agreeing to rounding, identical cull and depth
+> func — yet one whole surface's worth of pixels is owned differently. The
+> remaining explanation is that the two disagree about **where `Snow` rasterises**,
+> not about who wins a depth test. That is the next thing to measure.
+>
+> > **A failed probe, recorded so it is not trusted or repeated.** An attempt to
+> > isolate coverage with `MASHED_WORLD_ONLYMAT=N` (draw only material N on both
+> > paths) was **removed rather than kept**: a run that should have drawn only
+> > `Snow` still showed `World` and the untextured material on the D3D9 side, so
+> > the filter was not doing what it claimed, and only one world draw loop exists
+> > to explain it. No conclusion was drawn from it. Anyone re-attempting coverage
+> > isolation should verify the filter with a liveness check first — the same
+> > discipline the REVORDER probe needed.
+>
+> `[UNCERTAIN]`
 >
 > Worth settling before treating this as a defect: whether the overlap is authored
 > (the original may z-fight here too), in which case librw's answer is a different
