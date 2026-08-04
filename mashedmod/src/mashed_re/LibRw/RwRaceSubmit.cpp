@@ -225,6 +225,34 @@ bool RaceSubmit_InstancesEnabled() {
     return on;
 }
 
+// [D-S3-PROP] MASHED_LIBRW_ONLYPROP=<handle>: route ONLY this model's instances
+// through librw. Every other prop and both car sets fall through to the D3D9 draw
+// they would have taken anyway, so they render identically in the capture being
+// measured AND in the MASHED_LIBRW_INST=0 baseline -- i.e. they cancel, and the
+// remaining difference is attributable to one model by COUNTING rather than by
+// classifying pixels. Same instrument shape that closed the snow bank
+// (MASHED_WORLD_ONLYMAT); see the MATID retraction for why classifying fails.
+// -1 (unset) = normal behaviour.
+static int OnlyPropHandle() {
+    static const int h = [] {
+        const char* e = std::getenv("MASHED_LIBRW_ONLYPROP");
+        return (e && *e) ? std::atoi(e) : -1;
+    }();
+    return h;
+}
+
+bool RaceSubmit_InstanceModelEnabled(int handle) {
+    if (!RaceSubmit_InstancesEnabled()) return false;
+    const int only = OnlyPropHandle();
+    if (only < 0) return true;
+    if (handle != only) return false;
+    // Liveness: a gate that never fires and a gate whose effect is nil produce the
+    // same picture. Log the first time it actually passes something through.
+    static bool logged = false;
+    if (!logged) { logged = true; RLog("D-S3-PROP: ONLYPROP=%d ACTIVE", only); }
+    return true;
+}
+
 // ---------------------------------------------------------------------------
 // F3 UV animation on the librw path
 //
@@ -320,8 +348,13 @@ int RaceSubmit_RegisterModel(const Track::DffModel& model,
     if (!g_engine_up) return -1;
     TextureSource ts{ dicts, (int)ndicts };
     std::vector<std::uint32_t> atomic_mat;
+    // [D-S3-PROP] Tell the builder which handle this model is about to get, so
+    // MASHED_PROP_VDUMP can select it by the SAME id as MASHED_LIBRW_ONLYPROP.
+    // g_models.size() is the handle this call will return on success.
+    SceneBuild_SetRegisteringHandle((int)g_models.size());
     rw::Clump* c = static_cast<rw::Clump*>(
         BuildClump(model, ts, ambient, &atomic_mat));
+    SceneBuild_SetRegisteringHandle(-1);
     if (!c) { RLog("WARN: BuildClump failed -- model stays on the D3D9 path"); return -1; }
     RegisterUvAnim(c, atomic_mat, uv_rates, nmats);
     // Deliberately NOT added to the rw::World: World::render() walks the clump

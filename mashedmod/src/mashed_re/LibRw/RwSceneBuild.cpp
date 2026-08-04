@@ -194,6 +194,30 @@ bool WorldVDump() {
     }();
     return on;
 }
+// [D-S3-PROP] MASHED_PROP_VDUMP=<handle>: which registered model to dump every
+// vertex colour for. Keyed on the librw model HANDLE so it names exactly the same
+// model as MASHED_LIBRW_ONLYPROP and as the D3D9 side's `p->rw_model` -- not on a
+// clump counter, which would silently drift from the handle if any BuildClump
+// failed.
+static int s_registering_handle = -1;
+
+int PropVDumpHandle() {
+    static const int h = [] {
+        const char* e = std::getenv("MASHED_PROP_VDUMP");
+        return (e && *e) ? std::atoi(e) : -1;
+    }();
+    return h;
+}
+
+void SceneBuild_SetRegisteringHandle(int h) {
+    s_registering_handle = h;
+    // Truncate at the start of the targeted model's build; the per-batch writes
+    // below append, so without this a re-registration would concatenate.
+    if (h >= 0 && h == PropVDumpHandle()) {
+        if (std::FILE* f = std::fopen("log/pvdump_librw.txt", "w")) std::fclose(f);
+    }
+}
+
 void WorldMatIdColour(std::size_t i, std::uint8_t* rgb) {
     rgb[0] = static_cast<std::uint8_t>(20 + i * 18);
     rgb[1] = 200;
@@ -401,7 +425,9 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
     rw::Frame* root = rw::Frame::create();
     clump->setFrame(root);
 
+    std::size_t bi = static_cast<std::size_t>(-1);
     for (const Track::DffBatch& b : model.batches) {
+        ++bi;
         const std::int32_t nv = static_cast<std::int32_t>(b.verts.size() / 3);
         const std::int32_t nt = static_cast<std::int32_t>(b.tris.size() / 3);
         if (nv == 0 || nt == 0) continue;
@@ -459,6 +485,25 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  (unsigned)(*prelit_src)[0]);
         }
         FillVertexData(geo, nv, b.verts, b.uvs, *prelit_src, &b.normals);
+        // [D-S3-PROP] MASHED_PROP_VDUMP=<handle>: the librw half of the pair. Dump
+        // every vertex this batch uploads as "batch x y z r g b" -- same columns
+        // and same order as the D3D9 side (both walk model.batches in order), so
+        // the two files can be diffed directly. Appends across batches; the caller
+        // truncates the file once per build. See the D3D9 side for why v0-only was
+        // not enough.
+        if (PropVDumpHandle() >= 0 && PropVDumpHandle() == s_registering_handle &&
+            geo->colors && geo->morphTargets[0].vertices) {
+            if (std::FILE* vf = std::fopen("log/pvdump_librw.txt", "a")) {
+                const rw::V3d* vp = geo->morphTargets[0].vertices;
+                for (std::int32_t i = 0; i < nv; ++i) {
+                    const rw::RGBA& c = geo->colors[i];
+                    std::fprintf(vf, "%zu %.3f %.3f %.3f %u %u %u\n", bi,
+                                 vp[i].x, vp[i].y, vp[i].z,
+                                 (unsigned)c.red, (unsigned)c.green, (unsigned)c.blue);
+                }
+                std::fclose(vf);
+            }
+        }
         for (std::int32_t i = 0; i < nt; ++i) {
             // DffBatch::tris is v0,v1,v2 -- material is per BATCH, not per tri.
             geo->triangles[i].matId =

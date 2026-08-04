@@ -1241,6 +1241,32 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             p->rw_model = LibRw::RaceSubmit_RegisterModel(
                 m, dicts.data(), dicts.size(), amb_world_,
                 rates.empty() ? nullptr : rates.data(), m.materials.size());
+            // [D-S3-PROP] MASHED_PROP_VDUMP=<handle>: dump EVERY vertex of the
+            // model registered under that handle, not just v0. v0 agreeing is
+            // exactly what made the ambient bake look innocent -- one vertex
+            // cannot separate "the bake matches" from "the bake matches at this
+            // one vertex". Written as "batch x y z r g b" so it pairs
+            // positionally with the librw dump, the same protocol as the world
+            // MASHED_WORLD_VDUMP pair. Must follow RegisterModel: rw_model is
+            // assigned by that call.
+            static const int s_prop_vdump = [] {
+                const char* e = std::getenv("MASHED_PROP_VDUMP");
+                return (e && *e) ? std::atoi(e) : -1;
+            }();
+            if (s_prop_vdump >= 0 && p->rw_model == s_prop_vdump) {
+                if (std::FILE* vf = std::fopen("log/pvdump_d3d9.txt", "w")) {
+                    std::fprintf(vf, "# dff=%s handle=%d batches=%zu\n",
+                                 dff_name, p->rw_model, p->batches.size());
+                    for (std::size_t bi = 0; bi < p->batches.size(); ++bi)
+                        for (const V& v : p->batches[bi]) {
+                            const std::uint32_t c = v.c;
+                            std::fprintf(vf, "%zu %.3f %.3f %.3f %u %u %u\n", bi,
+                                         v.x, v.y, v.z, (c >> 16) & 0xFF,
+                                         (c >> 8) & 0xFF, c & 0xFF);
+                        }
+                    std::fclose(vf);
+                }
+            }
         }
             return true;
         };
@@ -4082,7 +4108,8 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         // the D3D9 path would have used, so both renderers place it identically.
         // A -1 handle falls through to the D3D9 draw below, which is what makes
         // the port incremental: an unregistered model still renders.
-        if (rw_world && p.rw_model >= 0 && LibRw::RaceSubmit_InstancesEnabled()) {
+        if (rw_world && p.rw_model >= 0 &&
+            LibRw::RaceSubmit_InstanceModelEnabled(p.rw_model)) {
             for (const auto& inst : p.instances)
                 LibRw::RaceSubmit_AddInstance(p.rw_model, (const float*)&inst);
             continue;
@@ -4171,7 +4198,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // the ported per-vertex N.L. That is a real visual delta, logged rather than
     // hidden; closing it means giving the librw path an equivalent relight pass.
     const bool car_via_rw = rw_world && car_ready_ && rw_car_model_ >= 0 &&
-                            LibRw::RaceSubmit_InstancesEnabled();
+                            LibRw::RaceSubmit_InstanceModelEnabled(rw_car_model_);
     if (car_via_rw) {
         D3DMATRIX carm;
         MatIdentity(&carm);

@@ -1179,77 +1179,69 @@ viewpoints, world-only, no cars.
 >   the colour fixed, both renderers' own fog contributions agree to 0.01, which is
 >   the positive evidence that the ramp is right; no further work is owed here.
 >
-> ### D-S3-PROP — the props/instances term, ISOLATED and CHARACTERISED (2026-08-04). Mechanism OPEN.
+> ### D-S3-PROP — the props/instances term, ISOLATED TO ONE MODEL BY COUNTING (2026-08-04, corrected). Mechanism narrowed, not yet proven.
 >
-> The second `01_action` term. **Measured at 0.14** of that shot's 0.59 (0.59 full
-> librw → **0.45** with `MASHED_LIBRW_INST=0`), and it is not diffuse.
+> The second `01_action` term, **0.14** of that shot's 0.59 (0.589 full librw →
+> 0.451 with `MASHED_LIBRW_INST=0`). Built the `MASHED_LIBRW_ONLYPROP=<handle>`
+> instrument (routes one registered prop model to librw, everything else to D3D9,
+> with a liveness line when the gate actually passes something) and swept it.
 >
-> **Control first, and it is a strong one.** With `MASHED_LIBRW_INST=0` props and
-> cars route through D3D9 on *both* captures, so they must cancel. Over the
-> prop-affected pixel mask the diff is **exactly 0 — max 0, not "small"**. So the
-> mask is precisely librw's instance content and nothing else leaks into it. Grid
-> cells (3,3)/(4,3) go 2.2/3.8 → **0.0/0.0** while the snow-bank cells ((6,3)=7.8,
-> (7,3)=4.7, (6,4)=5.3) are untouched. The two terms separate cleanly.
+> **RESULT — the entire term is model[8], attributed by counting:**
 >
-> **The term is far narrower than its mean suggests.** Banding the 9021
-> prop-affected pixels by magnitude:
+> | routing | 01_action whole | car-region (`x249–392 y287–472`) |
+> |---|---:|---:|
+> | INST=0 (nothing to librw) | 0.451 | 0.000 |
+> | ONLYPROP = 1,2,3,4,5,6,7 (each) | 0.451 | 0.000 |
+> | **ONLYPROP = 8** | **0.589** | **1.607** |
+> | full (all) | 0.589 | 1.607 |
 >
-> | band | pixels | % of prop px | signed (d3d9 − librw) | D3D9 level |
-> |---|---:|---:|---|---|
-> | 1–3 LSB | 7318 | 81.1% | (−0.36, +0.11, +0.13) | (42.7, 45.3, 46.0) |
-> | 4–15 | 70 | 0.8% | (+5.90, +4.17, +1.96) | (46.8, 31.1, 29.5) |
-> | **16–63** | **1631** | **18.1%** | **(+32.5, +27.8, +9.7)** | (83.2, 61.0, 44.0) |
-> | ≥64 | 2 | 0.0% | — | — |
+> `ONLYPROP=8` alone reproduces the full term; every other handle sits at baseline.
+> Its score ≠ baseline is positive proof the gate fired and model[8] carries the
+> whole 0.14 — non-degenerate. `full` is perfectly deterministic (three identical
+> runs byte-identical, 0.000 vs each other), so 1.607 is real, not run noise.
 >
-> **81% of prop pixels already agree to ≤3 LSB.** The whole term is 1631 pixels on
-> **one trackside object** — a moored boat's red canopy plus its two fins
-> (`x[249..392] y[287..472]`). librw renders it darker.
+> **Model[8] is the 71-atomic `Advantage` advertising clump** (4 instances,
+> first_pos ≈ (−25, 0, 16)). NOT a boat, NOT the car, NOT model[5].
 >
-> **Eliminated, each by measurement or direct inspection:**
+> **⚠️ Two errors in the first (2026-08-04 AM) writeup of this term — both corrected here:**
+> 1. *"Only model[5] (a moored boat) is placed."* FALSE. That instance count was read
+>    from a **gated** run's log (INST=0 / ONLYPROP suppress the `AddInstance` calls, so
+>    the frame dump shows ~1 instance). The **un-gated** full run places models 1–8 with
+>    **5 / 9 / 5 / 1 / 1 / 1 / 1 / 4** instances. Lesson: never read scene population from a
+>    run whose population is itself gated off.
+> 2. *"A multiplicative per-material factor, canopy 0.709/0.427/0.698 etc."* Those fits
+>    were over the `full − INST=0` mask, which conflates **all** props, and the surface
+>    split was cosmetic. Discard the per-surface scale table; it described a mixture, not a
+>    mechanism. `ONLYPROP` (one model at a time) is the correct isolation and it points at a
+>    single clump, not a per-surface multiply.
 >
-> | candidate | verdict | evidence |
-> |---|---|---|
-> | fog | ruled out | the fog term is closed above; the two paths' fog now agrees to 0.01 |
-> | librw adds light D3D9 does not | **ruled out by sign** | D3D9 sets `D3DRS_LIGHTING=FALSE` (`TrackRenderer.cpp:3813`) and bakes RW lighting on the CPU instead; an unmatched *addition* in librw would make it brighter, and librw is **darker** |
-> | ambient colour / the D-S3-6 ambient fold | ruled out at v0 | the two existing matched instruments agree exactly — `D-S3-6 bake: dff=Freighter.dff baked_v0=0xFF467373` (D3DCOLOR ⇒ 70,115,115) vs `UPLOAD raw=0xFF262613 -> up=0xFF737346` (RW-native ⇒ 70,115,115). Same colour, each in its own byte convention. Same for `FishingBoat.dff`. **Only v0 is logged** — see the next-step note. |
-> | missing sun term | ruled out by shape | `sun=(0.60,0.70,0.70)`, `amb=(0.20,0.30,0.30)` are both **cool** (R lowest); the deficit is **warm** (R highest) |
-> | **mirrored UVs (D-REF-1)** | **falsified by inspection** | at 6× zoom the canopy's white pattern is in the **same place and orientation** on both. A live hypothesis — D-REF-1 records mirrored banner text on this very path — and wrong here. |
-> | an additive term | ruled out | per surface a pure **scale** fits much better than a pure offset: canopy R residual 3.86 vs 5.55, fins R **4.62 vs 10.03** |
+> Still-valid eliminations from that writeup: fog (closed); "librw adds light" (ruled
+> out by sign — D3D9 has `D3DRS_LIGHTING=FALSE`, `TrackRenderer.cpp:3813`); mirrored
+> UVs (falsified at 6× zoom).
 >
-> **What it positively IS: a multiplicative, per-material factor.**
+> **Mechanism — NARROWED to model[8]'s lit+MODULATE batches, not yet proven.**
+> `clump[8]` is mixed (`log/librw_scene.txt`):
+> - mats 0–2: `lit=0 mod=0`, prelit **white** — the textured `Advantage` banners. The
+>   `MASHED_PROP_VDUMP=8` librw dump shows these upload faithful `(255,255,255)`.
+> - mats 7–33: `lit=1 mod=1`, prelit **0x00000000**, matCol **`(102,102,102)`**,
+>   `tex='(none)'` — a lit, matColour-modulated grey structure (frame/poles). 972 of
+>   model[8]'s batch-rows carry `mod=1`.
 >
-> | surface | pixels | best-fit librw/D3D9 scale (R, G, B) |
-> |---|---:|---|
-> | red canopy | 789 | 0.709, **0.427**, 0.698 |
-> | fins / backing | 637 | 0.550, 0.692, 0.901 |
+> So the divergence is in the **LIT + MODULATE** batches — the same class as the
+> **documented car-relight delta** (`TrackRenderer.cpp:4170` note): D3D9 bakes
+> `prelight + ambient + sun·max(0,N·L)` on the CPU (`AtomicLight`, `:151`) and librw
+> does the same lighting in-shader; where the CPU bake and the shader disagree
+> (clamp, ambient handling, or matCol multiply order), lit atomics diverge. matCol
+> `(102,102,102)=0.40` is a live suspect but **NOT promoted** — it is one factor in a
+> lit+modulate product and I have not separated it from the lighting term.
 >
-> The factor is **per-surface and per-channel**. No global shading difference
-> (ambient, sun, fog, exposure) can do that; a **per-material colour multiply**
-> applied on one side and not the other is exactly that shape.
->
-> *Method note, logged against myself:* the first fit was run over the whole
-> prop mask and fitted nothing well (residuals 3.5–10 on a ~30 signal), from which
-> I briefly concluded "not a shading term at all". That mask mixes canopy, fins and
-> backing — three surfaces with different factors — so it is the same
-> heterogeneous-mask error this document already records for grid cells. Splitting
-> by surface inverted the conclusion. Fit only over homogeneous regions.
->
-> **[UNCERTAIN] — the mechanism is NOT identified, and is deliberately not named.**
-> The obvious suspect is `matCol` / `Geometry::MODULATE`: `clump[8]`'s materials
-> 7–14 carry `rgba=(102,102,102,255)`, **not white**, and 102/255 = 0.40 is close to
-> the canopy's G factor of 0.427. But that is one channel out of six, the logged
-> clumps for these boats report `mod=0` with white materials, and promoting a
-> mechanism on a suggestive number is precisely the error behind the retracted MATID
-> instrument, the falsified "perspective" root cause, and the mis-attributed fog
-> model. Hypothesis with a cheap falsifier, not a finding.
->
-> **Next step — the instrument, not more reasoning.** Build the props analogue of
-> what closed the snow bank: a `MASHED_LIBRW_ONLYPROP=<model>` /
-> `ONLYPROPMAT=<mat>` gate honoured on **both** paths with liveness logged each
-> side, so one model/material at a time is attributable by *counting*; plus the
-> props analogue of `MASHED_WORLD_VDUMP` dumping **every** vertex colour (v0
-> agreement is exactly what made the bake look innocent here) and a per-draw
-> `matCol` readback. That decides matCol in one build.
+> **What blocks proof:** the `MASHED_PROP_VDUMP` D3D9 side hooks the `load_prop`
+> lambda, which only registers handles 0–7. Model[8] has a **different loader**, so
+> `pvdump_d3d9.txt` was never written and the D3D9-vs-librw per-vertex compare for
+> model[8] could not run. Next build: hook the model[8] loader for the D3D9 dump,
+> then compare per-vertex bake vs upload for its lit+modulate batches. That
+> separates "bake formula differs" from "matCol applied on one side only" without
+> guessing. (The `ONLYPROP` gate and the librw-side dump are landed and proven.)
 >
 > **2. The snow-bank hotspot — still unidentified**, and fog is now off its list:
 > the 7.6/4.6/5.1 cells are 7.7/4.7/5.2 with fog disabled on both sides. It is world
