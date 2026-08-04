@@ -775,3 +775,30 @@ iteration would need the owner to be holding/near a powerup live. That test-rig
 gap makes blind implementation irresponsible. Unblock first: make pods spawn
 deterministically in the harness (seed the pickup array, or a track/mode that
 spawns them at the start line), THEN implement + visually iterate the replay.
+
+### Item 6 — test-rig progress (2026-08-04): force-spawn a pod entry
+
+Goal: make a pod render on demand in the harness so the draw-replay can be
+iterated. Pod entry array 0x0068bb58, stride 0x58, 4 entries; per-entry fields
+(pv = entry loop ptr, from FUN_0045a190):
+  pv-0x48 active flag ; pv-0x44 draw sub-flag ; pv-0x34/-0x30/-0x2c pos xyz ;
+  pv-0x28 spin timer ; pv-0x24 arg to FUN_004b5580(clump, pv-0x24) ; pv-0x4 clump.
+Confirmed: entries hold pre-allocated clumps (e.g. 0xfd88f70) but are inactive
+(active=0, pos=0) in the AI harness. Writing active=1 + sub=1 + pos(car+Y) DOES
+set the entry (verified read-back), BUT not yet confirmed to RENDER a visible pod
+— the clump's own frame must also be positioned (FUN_0045a190 calls
+FUN_004b5580(clump, pv-0x24) then billboards; the clump frame LTM likely needs
+seeding). Also scenario_launch short races drop to standings (phase 5/7) mid-test,
+corrupting BBDUMP timing.
+
+Remaining to finish the rig: (1) confirm/complete what makes the forced entry
+draw (seed clump frame; check pv-0x24 and the sub-flags fVar1 states in 45a190's
+branches — draw requires puVar3[-0x11]!=0 AND the fVar1==1.4013e-45/2.8026e-45
+state machine); (2) hold the race in phase 3 (longer --hold, re-poke on phase 5).
+THEN implement draw-replay per the design above and iterate visually with the
+forced pod. force_spawn probe: scratch/pod_forcespawn.py.
+
+SESSION STATUS: took the shot at the re-architecture — measured the render
+model, designed the replay, and began the test rig (entry activation works).
+Completing the rig + replay + visual iteration is a dedicated session's work;
+handed off with exact offsets and steps. Shipping QoL set unchanged + solid.
