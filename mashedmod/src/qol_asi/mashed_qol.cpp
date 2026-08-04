@@ -450,6 +450,27 @@ void WriteFrameModelling(std::uintptr_t f, const Mat& o) {
         wrF(f + 0x10 + (k / 3) * 0x10 + (k % 3) * 4, o.m[k]);
 }
 
+// ── pickup-pod clumps (the on-track powerups) ───────────────────────────────
+// FUN_0045a190 renders up to 4 pickup pods (RpClumpForAllAtomics on clumps at
+// the entry array based at 0x0068bb58, stride 0x58 downward to 0x0068b9f8).
+// Per entry (entry ptr 'pv'): active flag *(pv-0x48), clump *(pv-0x4). The pod's
+// RW render frame is *(clump+0x4) (same renderable->frame pattern as cars),
+// LTM +0x50; the pods bob/spin each TICK (fsin in 45a190) so they step at 165.
+// Confirmed live 2026-08-04: active pod clump 0xf189828 -> frame 0xf193a6c whose
+// LTM pos == pod world pos. Lerp their frame subtrees like the car body.
+constexpr std::uintptr_t kPodTop    = 0x0068bb58;   // first entry 'pv'
+constexpr std::uintptr_t kPodLow    = 0x0068b9f8;   // loop bound
+constexpr int            kPodStride = 0x58;
+constexpr int            kPodCount  = 4;            // (0x160/0x58)
+inline std::uintptr_t PodClumpFrame(int p) {
+    const std::uintptr_t pv = kPodTop - (std::uintptr_t)p * kPodStride;
+    if (RdPtr(pv - 0x48) == 0) return 0;             // inactive
+    const std::uintptr_t clump = RdPtr(pv - 0x4);
+    if (clump < 0x10000 || clump > 0x7fff0000) return 0;
+    const std::uintptr_t f = RdPtr(clump + 0x4);
+    return (f >= 0x10000 && f <= 0x7fff0000) ? f : 0;
+}
+
 // per-frame prev/curr snapshots keyed by frame address (stable within a race)
 // LTM always lerped; modelling (local part transform — wheel spin/suspension)
 // additionally lerped when MASHED_INTERP_WHEELS=1: dynamic parts step their
@@ -731,6 +752,47 @@ void __cdecl Wrapper() {
             WriteFrame(f, LerpMat(fs->prev, fs->curr, alpha));
             if (wheels && !SameMat(fs->prevM, fs->currM)) {
                 // dynamic local part (wheel spin / suspension): lerp modelling
+                frTrueM[frN] = ReadFrameModelling(f);
+                frDidM[frN] = true;
+                WriteFrameModelling(f, LerpMat(fs->prevM, fs->currM, alpha));
+            }
+            ++frN;
+        }
+    }
+
+    // ── pickup pods (on-track powerups): lerp each active pod clump's frame
+    //    subtree, into the same frames[]/frTrue[] set (restored after render) ──
+    for (int p = 0; p < kPodCount; ++p) {
+        const std::uintptr_t proot = PodClumpFrame(p);
+        if (!proot) continue;
+        static std::uintptr_t psub[kMaxFrames];
+        const int pm = CollectSubtree(proot, psub, kMaxFrames);
+        for (int j = 0; j < pm && frN < kMaxCars * kMaxFrames; ++j) {
+            const std::uintptr_t f = psub[j];
+            const Mat trueMat = ReadFrameLTM(f);
+            frames[frN] = f;
+            frTrue[frN] = trueMat;
+            frDidM[frN] = false;
+            FrameSnap* fs = FindSnap(f);
+            if (!fs) { ++frN; continue; }
+            if (!fs->have) {
+                fs->curr = trueMat; fs->prev = trueMat;
+                fs->currM = fs->prevM = ReadFrameModelling(f);
+                fs->have = true;
+            } else if (!SameMat(trueMat, fs->curr)) {
+                const float dx = trueMat.m[9]  - fs->curr.m[9];
+                const float dy = trueMat.m[10] - fs->curr.m[10];
+                const float dz = trueMat.m[11] - fs->curr.m[11];
+                const bool jump = dx*dx + dy*dy + dz*dz > 100.0f * 100.0f;
+                fs->prev = jump ? trueMat : fs->curr;
+                fs->curr = trueMat;
+                const Mat mm = ReadFrameModelling(f);
+                fs->prevM = jump ? mm : fs->currM;
+                fs->currM = mm;
+            }
+            WriteFrame(f, LerpMat(fs->prev, fs->curr, alpha));
+            // pods spin: lerp modelling too (dynamic), guarded to changed parts
+            if (!SameMat(fs->prevM, fs->currM)) {
                 frTrueM[frN] = ReadFrameModelling(f);
                 frDidM[frN] = true;
                 WriteFrameModelling(f, LerpMat(fs->prevM, fs->currM, alpha));
