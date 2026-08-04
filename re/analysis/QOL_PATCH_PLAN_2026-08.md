@@ -802,3 +802,32 @@ SESSION STATUS: took the shot at the re-architecture — measured the render
 model, designed the replay, and began the test rig (entry activation works).
 Completing the rig + replay + visual iteration is a dedicated session's work;
 handed off with exact offsets and steps. Shipping QoL set unchanged + solid.
+
+### Item 6 — pod render path fully mapped (2026-08-04)
+
+FUN_0045a190 per active pod entry does TWO visual parts:
+- GLOW SPRITE: immediate draw into pool 0x0068b9b8 (FUN_004769f0/a0/d0 +
+  FUN_00476d00), positioned from entry pos pv-0x34..-0x2c, flushed by
+  FUN_00476df0(0x0068b9b8) at the end of 45a190. This is a 60/s TICK immediate
+  draw -> the prominent stepping element. (Pool re-flush proven ineffective.)
+- 3D MODEL: FUN_004b5580(clump, pv-0x24) then RpClumpForAllAtomics(clump,
+  FUN_00459400,0). CORRECTION: pv-0x24 is a TINT COLOR (FUN_004b5580 ->
+  LAB_004b5560 -> FUN_004b5260 writes it to atomic materials +4), NOT a matrix.
+  FUN_00459400 is a trail-mesh UV cosine-animator (lock/anim/unlock), not a
+  transform. The model's transform is the CLUMP FRAME (set at spawn/place time).
+
+Test-rig force-spawn therefore needs: entry active(pv-0x48)+sub(pv-0x44)+pos
+(pv-0x34) for the glow AND the clump root-frame LTM seeded to the pod position
+for the model. (Setting only entry fields renders the glow at origin/garbage.)
+
+Replay implication: the stepping is dominated by the 60/s immediate glow-sprite
+draw in the tick. The only fix is to re-issue that draw at render rate (165/s)
+with interpolated position -- i.e. relocate/replay the 45a190 glow-draw (and
+the 459000 pickup equivalent) into the render pass, disentangled from their
+tick UPDATE logic (spin timer, pool flush, state machine). This is the real,
+bounded-but-substantial re-architecture; it needs a visible-pod test rig (force
+-spawn w/ clump-frame seed, or live capture) to iterate safely.
+
+RECOMMENDATION: this is a dedicated multi-step session (test rig -> replay ->
+visual iteration), not incremental. Pushed as far as is productive without a
+working visible-pod rig. All findings + offsets above are the complete handoff.
