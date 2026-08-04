@@ -1,66 +1,28 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-02T21:30:00Z",
+  "updatedAt": "2026-08-04T02:00:00Z",
   "sections": [
     {
-      "heading": "QoL patch set (2026-08-01)",
+      "heading": "Current milestone",
       "fields": [
         {
-          "label": "FPS decouple",
-          "value": "SHIPPED: race speed correct at any fps (mashed_qol.asi MASHED_DECOUPLE; 0.998x measured @165fps)",
+          "label": "Phase",
+          "value": "R7 (scaffold→verbatim)",
           "kind": "text"
         },
         {
-          "label": "Launcher",
-          "value": "scripts/mashed_launch.ps1 (pc=165Hz / tv=120Hz race, menus 60)",
+          "label": "Milestone",
+          "value": "M2 Faithful Race (in progress)",
           "kind": "text"
         },
         {
-          "label": "Unlock + no-save",
-          "value": "runtime env-gated in mashed_qol.asi (MASHED_UNLOCK / MASHED_NO_SAVE), verified live",
+          "label": "Critical path",
+          "value": "Statediff residual wedge (~1/6 boots, second mechanism unbisected)",
           "kind": "text"
         },
         {
-          "label": "Borderless res",
-          "value": "SHIPPED: MASHED_RES native-res borderless (pc=2560x1440/tv=1920x1080), verified live",
-          "kind": "text"
-        },
-        {
-          "label": "Render interp",
-          "value": "SHIPPED: MASHED_INTERP smooths camera (60->389/s) + cars (RwFrame LTM subtree lerp); BBDUMP-verified clean at 165fps",
-          "kind": "text"
-        },
-        {
-          "label": "Jump bug",
-          "value": "FIXED + SHIPPED (verified 2026-08-02): native ramp-lip contact normal cancels forward velocity at takeoff. MASHED_JUMPFIX (launcher default, -NoJumpFix to disable) restores horizontal velocity via FUN_0047eb30 wrapper. Reproduced 2x fix-off in ~1900 ticks, 0x fix-on in ~10000; owner couldn't recreate. Root cause + evidence: capture_jump_bug.py.",
-          "kind": "text"
-        },
-        {
-          "label": "Open",
-          "value": [
-            "Aspect-ratio audit at non-4:3",
-            "165Hz opponent-car interpolation is body-only (wheels micro-step)"
-          ],
-          "kind": "list"
-        }
-      ]
-    },
-    {
-      "heading": "Phase & roadmap",
-      "fields": [
-        {
-          "label": "Current",
-          "value": "R7 (scaffold \u2192 verbatim) \u00b7 M2 faithful race",
-          "kind": "text"
-        },
-        {
-          "label": "Master plan",
-          "value": "REBUILT 2026-07-31 (RE_MASTER_PLAN_2026-07.md)",
-          "kind": "text"
-        },
-        {
-          "label": "B5 physics lane",
-          "value": "PORT COMPLETE (B5e merged 07-20); C4-verify campaign active",
+          "label": "Branch",
+          "value": "fix/u9025-recharacterise-and-regabi-defects",
           "kind": "text"
         }
       ]
@@ -87,70 +49,67 @@
           "label": "C4",
           "value": 185,
           "kind": "number"
+        },
+        {
+          "label": "C3+ coverage",
+          "value": "1,066 functions (18.1%)",
+          "kind": "text"
         }
       ]
     },
     {
-      "heading": "Current work",
+      "heading": "Recent work",
       "fields": [
         {
-          "label": "Branch",
-          "value": "fix/u9025-recharacterise-and-regabi-defects (in sync with origin through 8d0a7eba; 6 newer local commits)",
+          "label": "B5 physics",
+          "value": "PORT COMPLETE (all K1..K24 merged main 2026-07-20); C4-verify campaign owns statediff lane",
           "kind": "text"
         },
         {
-          "label": "Iter 22-27 summary",
+          "label": "QoL patches shipped",
           "value": [
-            "Brief pipeline gates fixed (caller-gate, library band, cited plates)",
-            "U-4976 resolved: slot +0x88 = RwRasterUnlock (row disqualified)",
-            "Getter lane measured MINED OUT (0/56 SAFE across all subsystems)",
-            "Master plan + ROADMAP rebuilt to current reality"
+            "FPS decoupling (0.998x @ 165fps)",
+            "Interpolation (camera + cars + wheels + shadows, verified by burst instrument)",
+            "Jump bug fix (MASHED_JUMPFIX)",
+            "Render resolution (native borderless)",
+            "FPS/ms OSD (F11)"
           ],
           "kind": "list"
         },
         {
-          "label": "M2 critical path",
-          "value": "statediff residual wedge (~1/6 boots, 2nd mechanism) \u2014 defect session's lane",
+          "label": "QoL open",
+          "value": "3D held-powerup MODEL over cars still steps. Confirmed fixes use FRAME-MATRIX interp (car/wheels/shadow); pool re-flush + slot matrices proven ineffective (mirrors). BLOCKER: harness never spawns an active powerup (pods inactive, held-model slot obj=0) so the model's render frame can't be found/lift-tested. Next: trigger via collect path (FUN_00459000/004576b0/00458d00) or live owner capture. QOL_PATCH_PLAN Item 6 session 4.",
           "kind": "text"
         },
         {
-          "label": "Open gates",
-          "value": [
-            "ALL FOUR RESOLVED 2026-07-31 (D2/D4/D6/D7)"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "M3 librw lane",
-          "value": "I4 FOG CLOSED 2026-08-02 (b31baba9), new librw patch P6. Fog here is NOT fixed-function -- it is a vertex-shader constant whose end beginUpdate happens to populate from cam->farPlane, under an upstream TODO. setFogRange() decouples it after beginUpdate; the far plane is deliberately NOT shortened (it would rewrite the depth values librw writes into the buffer it SHARES with the D3D9 path). Measured with an env-gated same-binary control (MASHED_LIBRW_FOGFIX=0) that reproduces the prior numbers to the hundredth on 6/7 shots: world-only 0.39-0.93 -> 0.04-0.45, instanced 0.41-7.88 -> 0.06-7.12, 7/7 improved. Default D3D9 path still 0.00. ALSO: the fog hypothesis for the instanced SEA is DISPROVED (closing the ramp moved it the wrong way, 1.52x->1.58x; more fog can only brighten toward fog colour 24,28,40 which is brighter than the 11.1,17.8,20.7 baseline) -- its 1.5x is an unidentified open cause. NEAREST/LINEAR delta measured at 0.00 (Arctic TXD already LINEAR; non-degeneracy control run). World-only residual itemised: NOT diffuse -- 43/48 cells exactly 0.0, whole lower half bit-identical, residual is one horizon object (mip explanation disproved, both uploaders single-level). INSTANCED PROPS/CARS NOW ON BY DEFAULT (fdfba4eb). D-S3-SEA was root-caused (f60603a7) and FIXED: the librw path applied NO UV ANIMATION -- static UVs while D3D9 scrolled them per frame. Found by POSITIVE CONTROL (MASHED_NO_UVSCROLL=1 reproduced the defect on the shipping renderer, closing 97% of the gap); ruled out en route with evidence: the bake (vertex colours BIT-IDENTICAL at (62,91,89)), ambient quantisation, ambient double-count, texture decode incl. the PAL4 nibble trap, alpha blending, filtering, fog. Fix moves the texture coordinates themselves (librw's shader pipe has no texture matrix; its UVAnim plugin is stream-only) -- NO new librw patch, vendored snapshot untouched. Verified 3 ways on one binary: A) no env = shipping D3D9, 0.00 on all 7; B) MASHED_RENDER_LIBRW=1 = 0.06-0.59, sea ratio 1.02/1.00/0.99; C) +MASHED_LIBRW_INST=0 reverts to 0.04-0.45. B reproduced the prior explicit-INST run to the hundredth. Instanced path now at or below world-only on 4 of 7 shots.",
+          "label": "Render (M3 gateway)",
+          "value": "librw ratified as shipping renderer (D2 decided 2026-07-31); fog fix closed I4 2026-08-02",
           "kind": "text"
         },
         {
-          "label": "Bugs found this session",
-          "value": [
-            "FIXED: TrackRenderer PAL4 read as packed nibbles; is 1 byte/px (5194-mip census)",
-            "FIXED R10: wall-clock dt + wall-clock process kill broke capture determinism",
-            "FIXED R10b (main term): background DirectInput let stray keystrokes fly the camera mid-capture",
-            "FIXED: capture recipe needs MASHED_DRIVE_DEMO or the car never moves",
-            "OPEN R10b residual (MED): 3/13 shots still build-unstable (was 8)",
-            "OPEN D-REF-1: trackside banner text renders mirrored (UV/winding)"
-          ],
-          "kind": "list"
+          "label": "Getters lane",
+          "value": "MINED OUT (0/56 safe non-degenerate across subsystems)",
+          "kind": "text"
         }
       ]
     },
     {
-      "heading": "Subsystem coverage",
+      "heading": "Trackers",
       "fields": [
         {
-          "label": "Largest",
-          "value": "render (965), audio (585), gameplay (357), boot (280), frontend (264)",
-          "kind": "text"
+          "label": "DEFERRED",
+          "value": 672,
+          "kind": "number"
         },
         {
-          "label": "Target tier",
-          "value": "Vehicle, physics, AI, track data live at C2+",
-          "kind": "text"
+          "label": "STUBS",
+          "value": 1107,
+          "kind": "number"
+        },
+        {
+          "label": "UNCERTAINTIES",
+          "value": 3003,
+          "kind": "number"
         }
       ]
     }
