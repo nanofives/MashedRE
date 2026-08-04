@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-04T02:00:00Z",
+  "updatedAt": "2026-08-04T04:00:00Z",
   "sections": [
     {
       "heading": "Current milestone",
@@ -77,8 +77,8 @@
           "kind": "list"
         },
         {
-          "label": "QoL open",
-          "value": "3D held-powerup MODEL over cars still steps. Confirmed fixes use FRAME-MATRIX interp (car/wheels/shadow); pool re-flush + slot matrices proven ineffective (mirrors). BLOCKER: harness never spawns an active powerup (pods inactive, held-model slot obj=0) so the model's render frame can't be found/lift-tested. Next: trigger via collect path (FUN_00459000/004576b0/00458d00) or live owner capture. QOL_PATCH_PLAN Item 6 session 4.",
+          "label": "QoL open (powerups)",
+          "value": "ROOT CAUSE PROVEN 2026-08-04: powerups draw in the LOGIC TICK, not the render pass (static reachability: FUN_0045a190/0045bba0/00459000 are logic-only; cars/shadow are render-reachable). Render-time interp cannot reach them -- explains every 'still stepping'. Fix needs draw-replay in the render pass (dedicated re-architecture). All overlay-interp paths gated OFF (MASHED_INTERP_OVERLAYS). QOL_PATCH_PLAN Item 6.",
           "kind": "text"
         },
         {
