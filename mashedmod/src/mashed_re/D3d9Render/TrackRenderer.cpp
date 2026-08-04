@@ -1089,6 +1089,17 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 } else {
                     v.c = 0xFFFFFFFFu;
                 }
+                // [D-S3-BANK discriminator] MASHED_WORLD_FLATSNOW=1: constant grey
+                // on the snow (mat 4), same value the librw side forces. Kills the
+                // colour gradient so an FF-vs-shader COLOR iteration delta cannot
+                // show; a surviving delta is transform/coverage. Snow-only so it
+                // pairs with ONLYMAT=4 and leaves the rest of the world untouched.
+                static const bool s_flatsnow = [] {
+                    const char* e = std::getenv("MASHED_WORLD_FLATSNOW");
+                    return e && e[0] == '1' && e[1] == '\0';
+                }();
+                if (s_flatsnow && mat == 4)
+                    v.c = D3DCOLOR_ARGB(255, 180, 180, 180);
                 v.u = has_uv ? s.uvs[vi * 2 + 0] : 0.f;
                 v.v = has_uv ? s.uvs[vi * 2 + 1] : 0.f;
                 b.push_back(v);

@@ -1245,7 +1245,12 @@ viewpoints, world-only, no cars.
 > in favour of the existing car-relight item. The `ONLYPROP` gate + registration
 > manifest are landed and are the right tools to keep props and car separable.
 >
-> **2. The snow-bank hotspot — still unidentified**, and fog is now off its list:
+> **2. The snow-bank hotspot** — *[SUPERSEDED 2026-08-04: this "still unidentified"
+> writeup predates the resolution. The hotspot is world material 4 (`Snow`), and it
+> is PINNED as a per-channel brightness-dependent gain on the D3D9 fixed-function
+> output that librw's linear shader does not apply — see the two "✅ RESOLVED" /
+> "✅ PINNED" subsections below. The elimination table here remains valid and is
+> subsumed by them.]* — and fog is now off its list:
 > the 7.6/4.6/5.1 cells are 7.7/4.7/5.2 with fog disabled on both sides. It is world
 > geometry (identical cells with instances on and off), warm-weighted
 > (R=0.99 / G=0.61 / B=0.16), ~2.3% of pixels, 42 of 48 cells still exactly 0.0.
@@ -1506,6 +1511,62 @@ viewpoints, world-only, no cars.
 > Instruments kept (branch `render/s3-bank`, both default-off, liveness/dump-gated):
 > `MASHED_WORLD_PRELITONLY`, `MASHED_WORLD_VDUMP`. Vertex dumps archived at
 > `verify/s3bank_iso/vdump_{d3d9,librw}.txt`.
+>
+> #### ✅ PINNED (2026-08-04): it is a per-channel, brightness-dependent OUTPUT gain on the D3D9 fixed-function side — NOT transform, NOT attribute interpolation.
+>
+> The two candidates left open above ("FF transform precision vs the VS `mul`" and
+> "FF DIFFUSE iteration vs shader `COLOR0`") were separated by a **constant-input**
+> test. New gate `MASHED_WORLD_FLATSNOW=1` forces **every** world vertex colour to a
+> single constant `(180,180,180)` on both paths (D3D9: `v.c` on `mat==4`; librw:
+> `geo->colors`). Run with `ONLYMAT=4 + PRELITONLY=1 + NO_FOG=1 + LIBRW_INST=0`, the
+> snow becomes a **flat grey, untextured, unlit, unfogged** wedge — no gradient of any
+> kind left to interpolate and no depth term. Any residual diff can only be coverage
+> (transform) or a raw output difference.
+>
+> **Measured over the wedge interior (5 px eroded off every edge, so coverage-independent):**
+>
+> | path | interior render of the flat (180,180,180) input |
+> |---|---|
+> | **librw** | **exactly (180,180,180)** — 1 distinct RGB triple, std (0,0,0). Renders the input verbatim. |
+> | **D3D9** | (181.98, 180.73, 177.75), **25 distinct triples**, std (3.0,1.1,3.4); R ∈ [180,192] (never <180), B ∈ [166,180] (never >180). |
+>
+> **This eliminates both open candidates by construction:**
+> - **NOT transform / coverage.** The measurement is 5 px deep in the interior, where
+>   coverage is identical by definition; librw is a perfect flat while D3D9 is not, so
+>   the difference is in the pixel *values*, not which pixels are covered. (Coverage
+>   *does* also differ — 1121 px / 2.6% at the wedge edge, librw slightly larger — but
+>   that is a separate, tiny edge term, not the face glow.)
+> - **NOT colour / texture gradient interpolation.** The input is flat — there is no
+>   gradient to iterate differently — yet D3D9's output is non-flat and warm.
+>
+> **What it IS: the D3D9 fixed-function pipeline applies a per-channel gain to the
+> DIFFUSE output that librw's shader does not.** R ×1.011, B ×0.988 at mid-grey (180),
+> directional (R only rises, B only falls). And it is **brightness-dependent**: the
+> same gain measured over the *bright* ridge mask earlier in this doc is R ×**1.107**,
+> vs ×1.011 here at 180 — i.e. a per-channel **nonlinear (gamma-like) transfer**,
+> steeper on R, slightly compressive on B, whose effect grows with luminance. That
+> single curve explains **both** halves of the signature at once: the ~1.5 whole-face
+> mean (mid-grey gain) **and** the ridge concentration (the ridge is the brightest snow,
+> so the curve deviates most there). librw's world shader is a linear pass-through of
+> `prelit·matCol`, so it has no such curve.
+>
+> **[UNCERTAIN] — the exact D3D9 state/driver source of the curve is not identified,
+> and is deliberately not named.** Candidates not yet separated: a per-channel gamma
+> on the FF output path, a default FF colour-combine that is not a pure pass-through,
+> or a driver colour-space quirk in FF DIFFUSE that the programmable path bypasses.
+> Fog, texture, lighting, `matCol`, ambient, clamp, transform, and attribute
+> interpolation are all now **excluded by measurement**, so whatever remains lives in
+> the FF DIFFUSE-to-framebuffer transfer itself. Naming it would need a gamma-ramp
+> readback / a swept-input flat test (render flat 32/64/128/200/250 and fit the
+> per-channel curve), which is the clean next step if this is ever pursued.
+>
+> **Bottom line unchanged for the gate: this is a real, now fully-characterised
+> FF-vs-shader delta, not a port defect** — librw faithfully renders the vertex data
+> (proven byte-identical) through a linear shader; the original's FF path adds a
+> brightness-dependent per-channel curve on top. Reproducing it would mean baking that
+> curve into the librw world shader, which behavioural-parity-with-documented-deltas
+> (the renderer gate) does not require. New instrument kept: `MASHED_WORLD_FLATSNOW`
+> (both paths, default-off).
 >
 > Instrument `MASHED_WORLD_PRELITONLY` (branch `render/s3-bank`, both paths,
 > default-off, liveness-logged) is worth keeping. Evidence under `verify/s3bank_iso/`:
