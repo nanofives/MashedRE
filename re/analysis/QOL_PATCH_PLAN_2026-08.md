@@ -740,3 +740,38 @@ proven benefit); kept as opt-in env flags for the future re-architecture work.
 
 Confirmed shipped + owner-verified (unchanged): FPS decouple, camera/car/WHEELS/
 SHADOWS interp, jump fix, borderless res, unlock/no-save, FPS OSD.
+
+### Item 6 — measured render architecture (2026-08-04) + draw-replay design
+
+Live call-rate measurement during a decoupled 165fps race (draw_rates.py):
+  render FUN_00492e90 = 164.8/s ; tick FUN_0040fc00 = 60.0/s ;
+  powerup driver FUN_0045bba0 = 60.0/s ; pod draw FUN_0045a190 = 60.0/s ;
+  car render FUN_00420050 = 659.8/s (= 165 x 4 viewports)
+
+Reading: cars re-render EVERY render frame (per-viewport), so writing their
+frames before 492e90 interpolates them. Powerups are IMMEDIATE-drawn once per
+tick (60/s) and that output persists between ticks (492e90 does not fully clear
+tick-immediate geometry), which is exactly the 60Hz stepping. Interpolating
+their transforms can't help because the DRAW only happens 60/s.
+
+**Draw-replay design (the only mechanism that can work):** make the powerup
+draw run every render frame at an interpolated transform. Concretely, per pod
+entry (0x0068bb58 array) FUN_0045a190 reads pod pos at pv[-0xd..-0xb], advances
+a spin timer pv[-0x0a] += DAT_005cc56c, billboards toward camera FUN_004671d0,
+draws a glow sprite (pool 0x0068b9b8) + the 3D clump (RpClumpForAllAtomics), and
+FUN_00476df0-flushes the pool. A replay must, each render frame:
+  1. snapshot the mutated fields (spin timer pv[-0x0a], pod pos, pool count);
+  2. write interpolated pos (prev/curr tick snapshots) + interpolated spin;
+  3. invoke the draw (45a190 / 459000 / the 0045bba0 draw portions);
+  4. restore the mutated fields so the tick's own update is unperturbed.
+Plus decide double-draw handling on tick frames (tick already drew once) — either
+suppress the tick's draw and always replay, or accept a faint tick-frame overdraw.
+
+**Why not implemented this session (honest):** (a) it re-invokes side-effectful
+immediate-draw fns per frame — real crash/smear/ghost risk that MUST be visually
+iterated; (b) the scenario_launch AI harness NEVER has an active pod/powerup
+(measured repeatedly), so there is NO automated way to test a replay — every
+iteration would need the owner to be holding/near a powerup live. That test-rig
+gap makes blind implementation irresponsible. Unblock first: make pods spawn
+deterministically in the harness (seed the pickup array, or a track/mode that
+spawns them at the start line), THEN implement + visually iterate the replay.
