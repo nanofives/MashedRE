@@ -189,13 +189,20 @@ bool WorldPrelitOnly() {
 // only shows across a gradient) must VANISH, while a transform/coverage difference
 // (which moves edge pixels regardless of colour) would survive as a thin edge.
 // Separates the two remaining FF-vs-shader candidates by OBSERVATION.
-bool WorldFlatSnow() {
-    static const bool on = [] {
+// Returns the flat grey LEVEL (0..255) to force, or -1 when off. The value of the
+// env var IS the level, so a sweep (=32,=64,...,=250) fits the D3D9 FF output
+// transfer curve per channel. `=1` therefore means grey level 1, not "on".
+int WorldFlatSnowLevel() {
+    static const int lv = [] {
         const char* e = std::getenv("MASHED_WORLD_FLATSNOW");
-        return e && e[0] == '1' && e[1] == '\0';
+        if (!e || !*e) return -1;
+        int v = std::atoi(e);
+        if (v < 0) v = 0; if (v > 255) v = 255;
+        return v;
     }();
-    return on;
+    return lv;
 }
+bool WorldFlatSnow() { return WorldFlatSnowLevel() >= 0; }
 // MASHED_WORLD_VDUMP=1: dump every world triangle's 3 corners as
 // "matId x y z r g b" to log/vdump_librw.txt (the D3D9 path writes vdump_d3d9.txt
 // the same way). Lets a per-vertex prelit readback be matched by position across
@@ -327,9 +334,11 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
         if (WorldMatIdMode() && geo->colors)
             for (std::int32_t i = 0; i < nv; ++i)
                 geo->colors[i] = rw::RGBA{255, 255, 255, 255};
-        if (WorldFlatSnow() && geo->colors)
+        if (WorldFlatSnow() && geo->colors) {
+            const auto g = static_cast<rw::uint8>(WorldFlatSnowLevel());
             for (std::int32_t i = 0; i < nv; ++i)
-                geo->colors[i] = rw::RGBA{180, 180, 180, 255};
+                geo->colors[i] = rw::RGBA{g, g, g, 255};
+        }
         for (std::int32_t i = 0; i < nt; ++i) {
             // Track::Sector::tris is (mat, v0, v1, v2) -- TrackWorld.h:30.
             const std::uint16_t tmat = s.tris[i * 4 + 0];

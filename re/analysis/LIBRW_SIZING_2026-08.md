@@ -1550,23 +1550,60 @@ viewpoints, world-only, no cars.
 > so the curve deviates most there). librw's world shader is a linear pass-through of
 > `prelit·matCol`, so it has no such curve.
 >
-> **[UNCERTAIN] — the exact D3D9 state/driver source of the curve is not identified,
-> and is deliberately not named.** Candidates not yet separated: a per-channel gamma
-> on the FF output path, a default FF colour-combine that is not a pure pass-through,
-> or a driver colour-space quirk in FF DIFFUSE that the programmable path bypasses.
-> Fog, texture, lighting, `matCol`, ambient, clamp, transform, and attribute
-> interpolation are all now **excluded by measurement**, so whatever remains lives in
-> the FF DIFFUSE-to-framebuffer transfer itself. Naming it would need a gamma-ramp
-> readback / a swept-input flat test (render flat 32/64/128/200/250 and fit the
-> per-channel curve), which is the clean next step if this is ever pursued.
+> **⚠️ CORRECTION (2026-08-04, same day): the "per-channel gamma/gain" framing above
+> is an AVERAGING ARTIFACT. The swept-flat-input test + a spatial breakdown show the
+> effect is RIDGE-LOCALISED, not a global transfer, and transform/coverage is NOT
+> eliminated.** Keep the flat-input *result* (librw renders a constant verbatim, D3D9
+> does not); discard the "gamma-like global curve" reading.
 >
-> **Bottom line unchanged for the gate: this is a real, now fully-characterised
-> FF-vs-shader delta, not a port defect** — librw faithfully renders the vertex data
-> (proven byte-identical) through a linear shader; the original's FF path adds a
-> brightness-dependent per-channel curve on top. Reproducing it would mean baking that
-> curve into the librw world shader, which behavioural-parity-with-documented-deltas
-> (the renderer gate) does not require. New instrument kept: `MASHED_WORLD_FLATSNOW`
-> (both paths, default-off).
+> **The sweep.** `MASHED_WORLD_FLATSNOW=<level>` was parameterised and swept over
+> {32,64,110,160,200,245}, masking on librw's exact-value wedge. The whole-wedge mean
+> fits an **affine** law almost perfectly — `out = 0.9686·in + (7.98, 6.53, 3.06)`,
+> identical slope on all channels, maxresid **0.05** (a *gamma* fit is far worse,
+> resid 2–5). Algebraically that is a 3.14 % blend toward warm `(254,208,97)`.
+>
+> **But the spatial breakdown of the flat wedge falsifies "global transfer".** The
+> flat-input `D3D9 − librw` delta is strongly ridge-graded, and per-band:
+>
+> | band | coverage | D3D9 on snow-covered px (in = 160) |
+> |---|---|---|
+> | near (y ≥ 380) | 100 % agree | **(160.3, 160.2, 159.8) = identity**, delta ≈ 0 |
+> | far ridge (y 208–300) | **76 % agree, 24 % coverage-flip** | agree: (165.2,162.7,156.3) warm R+5/B−4; flip: (176.5,168.3,148.8) = warm background exposed |
+>
+> **Near the camera D3D9 and librw are the SAME (identity), so there is no global
+> per-channel curve.** The whole-wedge affine mean was mixing three regimes (near
+> identity + ridge warm-shift + ridge coverage-flips). The hotspot is entirely a
+> **far-ridge, foreshortening-driven** phenomenon with two measured components:
+> 1. **Sub-pixel coverage disagreement — ~24 % of ridge pixels.** Where the snow is
+>    most foreshortened (triangles sub-pixel dense) the two pipelines cover different
+>    pixels; librw rasterises snow where D3D9 shows the warm background `(176,168,149)`.
+>    This is the FF-vs-VS transform/rasterisation term — **NOT eliminated** (last
+>    commit's 5 px-erode test wrongly averaged near + ridge; near is identity so the
+>    residual it saw was itself the ridge, i.e. this term).
+> 2. **A per-channel warm shift on the agreeing pixels that GROWS toward the ridge**
+>    (neutral ≈ 160 near → R+5/G+3/B−4 at the ridge). Depth/foreshortening-correlated,
+>    on the D3D9 FF side; librw stays flat.
+>
+> **[UNCERTAIN] — exact source of component 2 still not named**, but it is now known to
+> be *depth/foreshortening-correlated*, not a global LUT: fog is excluded (`NO_FOG`
+> disables D3D9 fog at `TrackRenderer.cpp:3939/4005`, verified), so it is another
+> depth-linked FF term (W/Z-precision in the FF colour path, or an FF specular/emissive
+> that scales with the foreshortened geometry). Component 1 is plainly the FF-vs-shader
+> rasterisation coverage delta.
+>
+> **Bottom line for the gate is unchanged and if anything stronger: this is an
+> inherent FF-vs-programmable-pipeline delta at the foreshortened ridge — coverage
+> disagreement plus a depth-linked warm shift — not a port defect.** librw renders the
+> byte-identical vertex data faithfully; the original's fixed-function path diverges
+> only where the snow grazes the horizon. Reproducing it bit-for-bit is not
+> gate-required. Instruments kept (both paths, default-off): `MASHED_WORLD_FLATSNOW`
+> (now a 0–255 level), `MASHED_WORLD_PRELITONLY`, `MASHED_WORLD_VDUMP`.
+>
+> *Discipline note, logged against myself:* the intermediate "✅ PINNED per-channel
+> gain" claim (committed hours earlier) was promoted from a whole-wedge mean before a
+> spatial check — exactly the "signature → root cause" error this document keeps
+> recording. The swept-input curve the correction demanded is what exposed it. Count
+> AND localise before pinning.
 >
 > Instrument `MASHED_WORLD_PRELITONLY` (branch `render/s3-bank`, both paths,
 > default-off, liveness-logged) is worth keeping. Evidence under `verify/s3bank_iso/`:

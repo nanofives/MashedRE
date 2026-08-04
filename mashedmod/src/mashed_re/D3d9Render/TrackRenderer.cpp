@@ -1094,12 +1094,18 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 // colour gradient so an FF-vs-shader COLOR iteration delta cannot
                 // show; a surviving delta is transform/coverage. Snow-only so it
                 // pairs with ONLYMAT=4 and leaves the rest of the world untouched.
-                static const bool s_flatsnow = [] {
+                // MASHED_WORLD_FLATSNOW=<level 0..255>: the value IS the grey level,
+                // so a sweep fits the D3D9 FF output transfer curve per channel.
+                static const int s_flatsnow = [] {
                     const char* e = std::getenv("MASHED_WORLD_FLATSNOW");
-                    return e && e[0] == '1' && e[1] == '\0';
+                    if (!e || !*e) return -1;
+                    int v = std::atoi(e); if (v < 0) v = 0; if (v > 255) v = 255;
+                    return v;
                 }();
-                if (s_flatsnow && mat == 4)
-                    v.c = D3DCOLOR_ARGB(255, 180, 180, 180);
+                if (s_flatsnow >= 0 && mat == 4) {
+                    const auto g = static_cast<std::uint8_t>(s_flatsnow);
+                    v.c = D3DCOLOR_ARGB(255, g, g, g);
+                }
                 v.u = has_uv ? s.uvs[vi * 2 + 0] : 0.f;
                 v.v = has_uv ? s.uvs[vi * 2 + 1] : 0.f;
                 b.push_back(v);
