@@ -683,3 +683,24 @@ a genuinely-held powerup in memory.
 Status: OPEN, well-scoped, blocker identified. Everything else in the QoL set
 remains shipped + owner-confirmed (decouple, camera/car/wheels/shadows interp,
 jump fix, res, unlock/no-save, OSD).
+
+### Item 6 — session 4 force-grant attempt FAILED (blocker stands)
+
+Tried to force-grant a powerup by writing a real type descriptor (0x5f9a58,
+caught live by handler_watch) into slot 0's type field (0x0088fc70+0x18):
+- Write succeeded (type reads 0x5f9a58) but slot obj (0x0088fc90+0xb0) stayed
+  0x0 and no model appeared. So the held-model object is instantiated by the
+  COLLECT code path (FUN_00458d00/FUN_00459000 pickup-collision branch), not by
+  the type flag alone. slot+0xb0 was 0x0 on ALL slots throughout — the model
+  object is NOT stored there (or not in this scenario at all).
+
+Net for the held-powerup MODEL: still cannot get one instantiated in memory
+without the real collect flow. Two clean unblocks for next session:
+ (a) Trace the collect path: hook FUN_004576b0 (collision test in FUN_00459000)
+     and FUN_00458d00 to see what they write / instantiate, then call that fn
+     directly to grant + load the model.
+ (b) Live capture with the owner: launch normally, owner collects+holds one,
+     attach, then scan for the above-car model frame and lift-test it.
+Then interpolate the model's RwFrame (the proven mechanism). The scan tool
+(pupmodel_frame_scan.py) and force-grant probe (force_grant.py) are in scratch;
+promote them into re/frida if pursued.
