@@ -704,3 +704,39 @@ without the real collect flow. Two clean unblocks for next session:
 Then interpolate the model's RwFrame (the proven mechanism). The scan tool
 (pupmodel_frame_scan.py) and force-grant probe (force_grant.py) are in scratch;
 promote them into re/frida if pursued.
+
+### Item 6 — ROOT CAUSE PROVEN (2026-08-04): powerups draw in the TICK, not render
+
+Static reachability (pool13) from the two main-loop roots settles the entire
+overlay saga definitively:
+- render = reachable(FUN_00492e90); logic = reachable(FUN_00492d30)
+- car render FUN_00420050 = R- ; shadow FUN_0041faf0 = R-   (render-reachable)
+- pod draw FUN_0045a190 = -L ; pup driver FUN_0045bba0 = -L ; pickup draw
+  FUN_00459000 = -L ; tick driver FUN_0040fc00 = -L ; tick exec FUN_004111c0 = -L
+
+=> ALL powerup/pickup draws are issued during the LOGIC TICK (60/s), and that
+output is frozen until the next tick. The interp wrapper runs at the RENDER pass
+(FUN_00492e90), which happens AFTER the tick already drew them. Therefore NO
+render-time interpolation (frame matrix, pool re-flush, registry re-drain, slot
+matrices) can move them — confirmed by every "still stepping" result. Cars/
+wheels/shadows worked precisely because they are render-reachable.
+
+**Correct fix (dedicated future session, real re-architecture):** replay the
+tick-phase powerup draws inside the render pass at the interpolated alpha. Two
+viable shapes:
+ (a) Move the powerup draw calls (FUN_0045a190/FUN_00459000/FUN_0045bba0 draw
+     portions) out of the tick and into an interp-driven render-phase pass, fed
+     interpolated transforms — requires separating their UPDATE (keep in tick)
+     from their DRAW (relocate), non-trivial.
+ (b) Per render frame, re-invoke just the DRAW with interpolated frames while
+     suppressing the update side effects (timers/spawn). Risky; needs precise
+     isolation of draw vs update in those fns.
+Both are substantial and crash-prone; out of scope for incremental work.
+
+**DECISION:** stop bolting render-time interp onto powerups. The ineffective
+paths (pool re-flush pools 0-4, registry re-drain, pup-slot matrices, pod-clump
+frames) are being GATED OFF by default (they add per-frame cost + risk with zero
+proven benefit); kept as opt-in env flags for the future re-architecture work.
+
+Confirmed shipped + owner-verified (unchanged): FPS decouple, camera/car/WHEELS/
+SHADOWS interp, jump fix, borderless res, unlock/no-save, FPS OSD.

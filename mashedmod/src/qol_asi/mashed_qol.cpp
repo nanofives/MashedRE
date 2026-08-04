@@ -631,15 +631,20 @@ inline bool WheelLerpEnabled() {
     }
     return v == 1;
 }
-inline bool PoolLerpEnabled() {
+// Overlay/powerup interp paths are PROVEN INEFFECTIVE (2026-08-04): powerups
+// draw in the LOGIC TICK, not the render pass, so render-time interp can't reach
+// them (QOL_PATCH_PLAN Item 6 ROOT CAUSE). Default OFF; opt-in only for the
+// future draw-replay re-architecture. Covers: pools, registry, pup-slots, pods.
+inline bool OverlayInterpEnabled() {
     static int v = -1;
     if (v == -1) {
         char b[8] = {};
-        v = (GetEnvironmentVariableA("MASHED_INTERP_POOLS", b, sizeof(b)) > 0 &&
-             b[0] == '0') ? 0 : 1;
+        v = (GetEnvironmentVariableA("MASHED_INTERP_OVERLAYS", b, sizeof(b)) > 0 &&
+             b[0] == '1') ? 1 : 0;
     }
     return v == 1;
 }
+inline bool PoolLerpEnabled()     { return OverlayInterpEnabled(); }
 
 namespace pools {
 void Reset();
@@ -650,11 +655,13 @@ void Reset();
 void RedrawLerped(float alpha);
 }
 inline bool RegistryLerpEnabled() {
+    // default OFF (proven ineffective — powerups draw in the tick, not render);
+    // opt-in via MASHED_INTERP_OVERLAYS=1 for future draw-replay work.
     static int v = -1;
     if (v == -1) {
         char b[8] = {};
-        v = (GetEnvironmentVariableA("MASHED_INTERP_REGISTRY", b, sizeof(b)) > 0 &&
-             b[0] == '0') ? 0 : 1;
+        v = (GetEnvironmentVariableA("MASHED_INTERP_OVERLAYS", b, sizeof(b)) > 0 &&
+             b[0] == '1') ? 1 : 0;
     }
     return v == 1;
 }
@@ -762,7 +769,10 @@ void __cdecl Wrapper() {
 
     // ── pickup pods (on-track powerups): lerp each active pod clump's frame
     //    subtree, into the same frames[]/frTrue[] set (restored after render) ──
-    for (int p = 0; p < kPodCount; ++p) {
+    // GATED OFF by default: pods draw in the TICK (FUN_0045a190 is logic-only,
+    // not render-reachable), so this render-time lerp cannot move them. Kept for
+    // the future draw-replay re-architecture (MASHED_INTERP_OVERLAYS=1).
+    for (int p = 0; OverlayInterpEnabled() && p < kPodCount; ++p) {
         const std::uintptr_t proot = PodClumpFrame(p);
         if (!proot) continue;
         static std::uintptr_t psub[kMaxFrames];
@@ -832,7 +842,9 @@ void __cdecl Wrapper() {
         for (int p = 0; p < 5; ++p) pools::LerpFlushOne(p, alpha);   // kNumPools
 
     // ── held-powerup icon slots: lerp both matrices per slot ──
-    for (int s = 0; s < kPupSlots; ++s) PupLerpOne(s, alpha);
+    // GATED OFF (proven mirrors / tick-phase draw). MASHED_INTERP_OVERLAYS=1.
+    if (OverlayInterpEnabled())
+        for (int s = 0; s < kPupSlots; ++s) PupLerpOne(s, alpha);
 
     // ── world-object registry (powerup icons/pods): lerped re-drain ──
     if (RegistryLerpEnabled())
@@ -841,7 +853,8 @@ void __cdecl Wrapper() {
     reinterpret_cast<RenderFn>(kRenderFn)();                // render + flip
 
     // ── restore true state (physics/next tick unperturbed) ──
-    for (int s = 0; s < kPupSlots; ++s) PupRestoreOne(s);
+    if (OverlayInterpEnabled())
+        for (int s = 0; s < kPupSlots; ++s) PupRestoreOne(s);
     for (int i = 0; i < carCount; ++i) ShadowRestoreOne(i);
     for (int i = 0; i < carCount; ++i)
         if (recAddr[i]) WriteMatAt(recAddr[i], recTrue[i]);
