@@ -1253,17 +1253,62 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 const char* e = std::getenv("MASHED_PROP_VDUMP");
                 return (e && *e) ? std::atoi(e) : -1;
             }();
+            if (s_prop_vdump >= 0) {
+                // Manifest: EVERY registration, so which handle a given dff got is
+                // visible by counting (the AM run's "only model[5]" error was a
+                // gated-log misread; never infer registration from a gated run).
+                // This is also how we learned the D3D9 per-vertex dump was not
+                // firing for model[8] -- read the manifest, not the guard.
+                if (std::FILE* mf = std::fopen("log/pvdump_manifest.txt", "a")) {
+                    std::fprintf(mf, "REG handle=%d dff=%s d3d9_batches=%zu "
+                                 "m_batches=%zu requested=1\n",
+                                 p->rw_model, dff_name, p->batches.size(),
+                                 m.batches.size());
+                    std::fclose(mf);
+                }
+            }
             if (s_prop_vdump >= 0 && p->rw_model == s_prop_vdump) {
+                // D3D9's CPU-baked lit colour + the inputs that produced it, per
+                // vertex, for the lit batches librw cannot dump (they carry no
+                // uploaded vertex colour -- lit in-shader). Columns:
+                //   batch mat lit mod matR matG matB  x y z  nx ny nz  bakedR bakedG bakedB
+                // p->batches[bi] is aligned 1:1 with m.batches[bi] (both walk the
+                // DffModel in order); m carries the flags/normals/matcol, p carries
+                // the baked V.c. Lets the bake be checked against
+                // matCol*(amb + sun*max(0,N.L)) offline and against librw's HLSL.
                 if (std::FILE* vf = std::fopen("log/pvdump_d3d9.txt", "w")) {
-                    std::fprintf(vf, "# dff=%s handle=%d batches=%zu\n",
-                                 dff_name, p->rw_model, p->batches.size());
-                    for (std::size_t bi = 0; bi < p->batches.size(); ++bi)
-                        for (const V& v : p->batches[bi]) {
-                            const std::uint32_t c = v.c;
-                            std::fprintf(vf, "%zu %.3f %.3f %.3f %u %u %u\n", bi,
-                                         v.x, v.y, v.z, (c >> 16) & 0xFF,
-                                         (c >> 8) & 0xFF, c & 0xFF);
+                    const auto& amb = amb_f_; const auto& sun = sun_f_;
+                    std::fprintf(vf, "# dff=%s handle=%d batches=%zu "
+                                 "amb=(%.3f,%.3f,%.3f) sun=(%.3f,%.3f,%.3f) "
+                                 "sunL=(%.3f,%.3f,%.3f) has_sun=%d\n",
+                                 dff_name, p->rw_model, p->batches.size(),
+                                 amb[0], amb[1], amb[2], sun[0], sun[1], sun[2],
+                                 sun_L_[0], sun_L_[1], sun_L_[2], (int)has_sun_dir_);
+                    const std::size_t nb = p->batches.size() < m.batches.size()
+                        ? p->batches.size() : m.batches.size();
+                    for (std::size_t bi = 0; bi < nb; ++bi) {
+                        const auto& db = p->batches[bi];
+                        const auto& mb = m.batches[bi];
+                        const std::uint8_t* mc =
+                            m.materials[mb.material].rgba;
+                        const bool hasN = !mb.normals.empty();
+                        for (std::size_t vi = 0; vi < db.size(); ++vi) {
+                            const V& v = db[vi];
+                            float nx = 0, ny = 0, nz = 0;
+                            if (hasN && vi * 3 + 2 < mb.normals.size()) {
+                                nx = mb.normals[vi * 3 + 0];
+                                ny = mb.normals[vi * 3 + 1];
+                                nz = mb.normals[vi * 3 + 2];
+                            }
+                            std::fprintf(vf,
+                                "%zu %u %d %d %u %u %u  %.3f %.3f %.3f  "
+                                "%.4f %.4f %.4f  %u %u %u\n",
+                                bi, (unsigned)mb.material, (int)mb.lit,
+                                (int)mb.modulate_mat, mc[0], mc[1], mc[2],
+                                v.x, v.y, v.z, nx, ny, nz,
+                                (v.c >> 16) & 0xFF, (v.c >> 8) & 0xFF, v.c & 0xFF);
                         }
+                    }
                     std::fclose(vf);
                 }
             }

@@ -1179,12 +1179,12 @@ viewpoints, world-only, no cars.
 >   the colour fixed, both renderers' own fog contributions agree to 0.01, which is
 >   the positive evidence that the ramp is right; no further work is owed here.
 >
-> ### D-S3-PROP — the props/instances term, ISOLATED TO ONE MODEL BY COUNTING (2026-08-04, corrected). Mechanism narrowed, not yet proven.
+> ### D-S3-PROP → it is the CAR, not a prop. The "props/instances" term is the documented car-relight delta (2026-08-04, TWICE-corrected, now verified 3 ways).
 >
 > The second `01_action` term, **0.14** of that shot's 0.59 (0.589 full librw →
-> 0.451 with `MASHED_LIBRW_INST=0`). Built the `MASHED_LIBRW_ONLYPROP=<handle>`
-> instrument (routes one registered prop model to librw, everything else to D3D9,
-> with a liveness line when the gate actually passes something) and swept it.
+> 0.451 with `MASHED_LIBRW_INST=0`). Built `MASHED_LIBRW_ONLYPROP=<handle>` (routes
+> one registered instanced model to librw, the rest to D3D9, with a liveness line)
+> and swept it.
 >
 > **RESULT — the entire term is model[8], attributed by counting:**
 >
@@ -1195,53 +1195,55 @@ viewpoints, world-only, no cars.
 > | **ONLYPROP = 8** | **0.589** | **1.607** |
 > | full (all) | 0.589 | 1.607 |
 >
-> `ONLYPROP=8` alone reproduces the full term; every other handle sits at baseline.
-> Its score ≠ baseline is positive proof the gate fired and model[8] carries the
-> whole 0.14 — non-degenerate. `full` is perfectly deterministic (three identical
-> runs byte-identical, 0.000 vs each other), so 1.607 is real, not run noise.
+> **model[8] IS THE CAR** — the shared player/AI car body, not a prop. Verified three
+> independent ways after two wrong guesses:
+> 1. **Registration manifest** (`log/pvdump_manifest.txt`, every `load_prop` call):
+>    handles **0–7 are the props** (sky, WhiteTyre, RedTyre, Crate02, sea, Freighter,
+>    FishingBoat, CamMan). **Handle 8 is absent** — it is registered by
+>    `TrackRenderer::LoadCar` (`:1940`, the `rw_car_model_ = RaceSubmit_RegisterModel`
+>    at `:1979`), not by `load_prop`. 71 atomics = a detailed body + wheels + the
+>    `Advantage`/`AdvantageSmall` **sponsor-livery decals** (which is why the clump
+>    log reads texture `Advantage` — a car livery, not a hoarding).
+> 2. **`ONLYPROP=8` flips `car_via_rw`** (`:4200`): that path is gated on
+>    `RaceSubmit_InstanceModelEnabled(rw_car_model_)`, so routing changed the region
+>    only because `rw_car_model_ == 8`. If 8 were a static prop the car region could
+>    not move.
+> 3. **model[8]'s 4 instances MOVE between frames** — `first_pos` goes
+>    `(−23.68, 0.04, 41.80) → (−25.21, 0.04, 15.78)` frame to frame. Static props sit
+>    at `(0,0,0)`; four moving instances = the four racing cars (player + 3 AI).
 >
-> **Model[8] is the 71-atomic `Advantage` advertising clump** (4 instances,
-> first_pos ≈ (−25, 0, 16)). NOT a boat, NOT the car, NOT model[5].
+> `full` is byte-deterministic (three identical runs 0.000 vs each other), so 1.607
+> is real, not run noise.
 >
-> **⚠️ Two errors in the first (2026-08-04 AM) writeup of this term — both corrected here:**
-> 1. *"Only model[5] (a moored boat) is placed."* FALSE. That instance count was read
->    from a **gated** run's log (INST=0 / ONLYPROP suppress the `AddInstance` calls, so
->    the frame dump shows ~1 instance). The **un-gated** full run places models 1–8 with
->    **5 / 9 / 5 / 1 / 1 / 1 / 1 / 4** instances. Lesson: never read scene population from a
->    run whose population is itself gated off.
-> 2. *"A multiplicative per-material factor, canopy 0.709/0.427/0.698 etc."* Those fits
->    were over the `full − INST=0` mask, which conflates **all** props, and the surface
->    split was cosmetic. Discard the per-surface scale table; it described a mixture, not a
->    mechanism. `ONLYPROP` (one model at a time) is the correct isolation and it points at a
->    single clump, not a per-surface multiply.
+> **⚠️ THREE attributions this term went through — a cautionary trail:**
+> - AM v1: *"a moored boat (model[5]), a per-material multiplicative factor."* Wrong —
+>   the instance count was read from a **gated** run's log (INST=0/ONLYPROP suppress
+>   `AddInstance`, so the frame dump shows ~1 instance); the surface-scale fits were
+>   over `full−INST=0`, which conflates everything. Discard entirely.
+> - AM v2: *"model[8], the 71-atomic Advantage advertising clump, NOT the car."*
+>   Also wrong — `Advantage` is a **livery texture**, and I had not checked the
+>   registration path; I asserted "not the car" without evidence.
+> - Verified: **model[8] is the car.** Lesson, logged hard: this is the second time
+>   this session I talked myself *out of* the correct first read ("red car + rear
+>   wing, centre-bottom") by classifying an image instead of counting. The
+>   registration manifest should have been the FIRST instrument, not the third.
 >
-> Still-valid eliminations from that writeup: fog (closed); "librw adds light" (ruled
-> out by sign — D3D9 has `D3DRS_LIGHTING=FALSE`, `TrackRenderer.cpp:3813`); mirrored
-> UVs (falsified at 6× zoom).
+> **Mechanism — this is the already-documented car-relight delta, no new bug.**
+> `TrackRenderer.cpp:4170` states it outright: when the car is drawn through librw it
+> "carries baked prelight plus the `rw::Light` ambient/directional instead of the
+> ported per-vertex N·L. That is a real visual delta, logged rather than hidden;
+> closing it means giving the librw path an equivalent relight pass." The D3D9 path
+> draws the car via `RenderCarsRelit` (CPU per-vertex relight, `LightAtomicVertex`
+> `:192`); librw lights it in-shader. The 0.14 on `01_action` is exactly that,
+> localised to the centre-bottom car. matCol `(102,102,102)` is a livery-decal
+> material, not the driver — a red herring for this term.
 >
-> **Mechanism — NARROWED to model[8]'s lit+MODULATE batches, not yet proven.**
-> `clump[8]` is mixed (`log/librw_scene.txt`):
-> - mats 0–2: `lit=0 mod=0`, prelit **white** — the textured `Advantage` banners. The
->   `MASHED_PROP_VDUMP=8` librw dump shows these upload faithful `(255,255,255)`.
-> - mats 7–33: `lit=1 mod=1`, prelit **0x00000000**, matCol **`(102,102,102)`**,
->   `tex='(none)'` — a lit, matColour-modulated grey structure (frame/poles). 972 of
->   model[8]'s batch-rows carry `mod=1`.
->
-> So the divergence is in the **LIT + MODULATE** batches — the same class as the
-> **documented car-relight delta** (`TrackRenderer.cpp:4170` note): D3D9 bakes
-> `prelight + ambient + sun·max(0,N·L)` on the CPU (`AtomicLight`, `:151`) and librw
-> does the same lighting in-shader; where the CPU bake and the shader disagree
-> (clamp, ambient handling, or matCol multiply order), lit atomics diverge. matCol
-> `(102,102,102)=0.40` is a live suspect but **NOT promoted** — it is one factor in a
-> lit+modulate product and I have not separated it from the lighting term.
->
-> **What blocks proof:** the `MASHED_PROP_VDUMP` D3D9 side hooks the `load_prop`
-> lambda, which only registers handles 0–7. Model[8] has a **different loader**, so
-> `pvdump_d3d9.txt` was never written and the D3D9-vs-librw per-vertex compare for
-> model[8] could not run. Next build: hook the model[8] loader for the D3D9 dump,
-> then compare per-vertex bake vs upload for its lit+modulate batches. That
-> separates "bake formula differs" from "matCol applied on one side only" without
-> guessing. (The `ONLYPROP` gate and the librw-side dump are landed and proven.)
+> **Status: this term is NOT a defect to hunt — it is the known librw car-relight
+> gap, already tracked.** It closes only by porting the CPU relight into the librw
+> car path (or matching the shader to the bake), which is the same work item
+> `:4170` already names. It is NOT a props bug and the `D-S3-PROP` label is retired
+> in favour of the existing car-relight item. The `ONLYPROP` gate + registration
+> manifest are landed and are the right tools to keep props and car separable.
 >
 > **2. The snow-bank hotspot — still unidentified**, and fog is now off its list:
 > the 7.6/4.6/5.1 cells are 7.7/4.7/5.2 with fog disabled on both sides. It is world
