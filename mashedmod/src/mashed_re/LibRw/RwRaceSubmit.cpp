@@ -430,12 +430,22 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
     if (st.fog_on_ && !s_no_fog) {
         g_cam->fogPlane = st.fog_start_;
         rw::SetRenderState(rw::FOGENABLE, 1);
-        // COLOR_ARGB is a MACRO (rwd3d.h:41), so it cannot be namespace-qualified.
+        // [P7 FIX] Byte order. COLOR_ARGB (rwd3d.h:53) packs 0xAARRGGBB -- D3D's
+        // order -- but rw::SetRenderState(FOGCOLOR) does NOT take a D3DCOLOR: its
+        // handler unpacks RGBA little-endian, `red = value; blue = value>>16`
+        // (d3ddevice.cpp:672-676), i.e. it wants RED in the LOW byte. Passing a
+        // D3D-ordered word therefore swapped red and blue in the fog colour that
+        // reaches the pixel shader. Measured signature before the fix, on 48% of
+        // the frame: signed (d3d9 - librw) = (-0.75, +0.02, +0.76) -- antisymmetric
+        // in R/B with G exactly zero, which is (1-fogFactor)*(F - Fswapped) and
+        // nothing else. Build the word with red low; the macro is still used, with
+        // its r and b arguments crossed, so the packing stays in one place.
+        // COLOR_ARGB is a MACRO (rwd3d.h:53), so it cannot be namespace-qualified.
         rw::SetRenderState(rw::FOGCOLOR,
                            COLOR_ARGB(255,
-                                      (st.fog_color_ >> 16) & 0xFF,
-                                      (st.fog_color_ >> 8)  & 0xFF,
-                                      (st.fog_color_)       & 0xFF));
+                                      (st.fog_color_)       & 0xFF,   // -> blue byte
+                                      (st.fog_color_ >> 8)  & 0xFF,   // -> green
+                                      (st.fog_color_ >> 16) & 0xFF)); // -> red (low)
     } else {
         rw::SetRenderState(rw::FOGENABLE, 0);
     }
@@ -768,13 +778,49 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
              ltm->pos.x, ltm->pos.y, ltm->pos.z,
              g_cam->devView.right.x, g_cam->devView.up.y, g_cam->devView.pos.z);
     }
-    if (++g_frames == 1)
+    if (++g_frames == 1) {
+        // [P7 liveness] Which depth does D3D9's TABLE fog actually use? The spec
+        // makes it conditional on the device: W-based when D3DPRASTERCAPS_WFOG is
+        // present AND a perspective projection is set, Z-based otherwise. The
+        // per-pixel librw fog we now compute is written against eye-W, so this is
+        // the premise it stands on -- logged, not assumed.
+        D3DCAPS9 caps{};
+        if (rw::d3d::d3ddevice &&
+            SUCCEEDED(rw::d3d::d3ddevice->GetDeviceCaps(&caps)))
+            RLog("P7 fogcaps: RasterCaps=%08lX WFOG=%d ZFOG=%d FOGTABLE=%d "
+                 "FOGVERTEX=%d FOGRANGE=%d",
+                 (unsigned long)caps.RasterCaps,
+                 !!(caps.RasterCaps & D3DPRASTERCAPS_WFOG),
+                 !!(caps.RasterCaps & D3DPRASTERCAPS_ZFOG),
+                 !!(caps.RasterCaps & D3DPRASTERCAPS_FOGTABLE),
+                 !!(caps.RasterCaps & D3DPRASTERCAPS_FOGVERTEX),
+                 !!(caps.RasterCaps & D3DPRASTERCAPS_FOGRANGE));
+        RLog("P7 fogconst: start=%.3f end=%.3f range=%.6f disable=%.1f",
+             rw::d3d::d3dShaderState.fogData.start,
+             rw::d3d::d3dShaderState.fogData.end,
+             rw::d3d::d3dShaderState.fogData.range,
+             rw::d3d::d3dShaderState.fogData.disable);
+        // [P7 FIX liveness] The PS fog colour must equal the D3DCOLOR the D3D9
+        // path puts in D3DRS_FOGCOLOR. Print both; a byte-order slip is visible
+        // here as a swapped pair, so this does not have to be inferred from pixels.
+        RLog("P7 fogcolor: d3d9=%02X%02X%02X librw_ps=(%.4f,%.4f,%.4f) %s",
+             (unsigned)((st.fog_color_ >> 16) & 0xFF),
+             (unsigned)((st.fog_color_ >> 8) & 0xFF),
+             (unsigned)(st.fog_color_ & 0xFF),
+             rw::d3d::d3dShaderState.fogColor.red,
+             rw::d3d::d3dShaderState.fogColor.green,
+             rw::d3d::d3dShaderState.fogColor.blue,
+             (((int)(rw::d3d::d3dShaderState.fogColor.red   * 255.0f + 0.5f) ==
+                     (int)((st.fog_color_ >> 16) & 0xFF)) &&
+              ((int)(rw::d3d::d3dShaderState.fogColor.blue  * 255.0f + 0.5f) ==
+                     (int)(st.fog_color_ & 0xFF))) ? "MATCH" : "*** MISMATCH ***");
         RLog("ok: first frame submitted — eye=(%.2f,%.2f,%.2f) at=(%.2f,%.2f,%.2f) "
              "fov=%.4f aspect=%.4f near=%.3f far=%.1f fog=%d[%.1f..%.1f]",
              st.last_eye_[0], st.last_eye_[1], st.last_eye_[2],
              st.last_at_[0], st.last_at_[1], st.last_at_[2],
              st.last_fov_, st.last_aspect_, st.last_near_, st.last_far_,
              (int)st.fog_on_, st.fog_start_, st.fog_end_);
+    }
 }
 
 }  // namespace LibRw

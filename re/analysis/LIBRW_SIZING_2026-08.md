@@ -1075,6 +1075,110 @@ viewpoints, world-only, no cars.
 > librw's HLSL — the shaders are vendored as precompiled bytecode headers, so that
 > needs `fxc` and is a **toolchain decision, not a code change**. Not taken here.
 >
+> > ## ✅ RESOLVED 2026-08-04 — the fog term is CLOSED. It was a fog-COLOUR byte swap, not the fog model.
+>
+> **Result: every gating shot now sits at or below its own fog-off floor.** The fog
+> term is gone; what remains on each shot is the non-fog residual that was already
+> there with fog disabled.
+>
+> | shot | librw pre-P7 | P7 per-pixel only | **P7 + colour fix** | fog-OFF floor |
+> |---|---|---|---|---|
+> | `01_action`   | 0.59 | 0.59 | **0.59** | 0.58 |
+> | `01_grid`     | 0.26 | 0.26 | **0.02** | 0.03 |
+> | `car_1_spawn` | 0.26 | 0.26 | **0.02** | 0.03 |
+> | `car_2_drive` | 0.26 | 0.26 | **0.03** | 0.03 |
+> | `car_3_weave` | 0.58 | 0.56 | **0.33** | 0.34 |
+> | `car_4_chase` | 0.06 | 0.06 | **0.02** | 0.02 |
+> | `car_5_chase` | 0.41 | 0.38 | **0.25** | 0.25 |
+>
+> Acceptance was "`car_1_spawn` drops toward ~0.03 (its fog-off floor)". It reads
+> **0.02**. No shot regressed. The `01_action` snow-bank hotspot cell (6,3) reads
+> 7.8 — it was 7.6 with the fog tint present and 7.7 with fog off on both paths, so
+> it converged to its own fog-free value, which is the closed FF-vs-shader delta
+> behaving exactly as documented.
+>
+> ### Controls (the R10b rule: an A/B without a control means nothing)
+>
+> | comparison | result |
+> |---|---|
+> | librw **OFF** on the P7 binary vs `verify/librw_ref` | **0.00 ×7** — cross-build control, no drift on the shipping D3D9 path |
+> | librw **ON**, two runs of the same binary | **0.00 ×7** — bit-identical, deterministic |
+> | librw ON, P7 build vs pre-P7 build | 0.00 on 5/7, 0.06 & 0.05 on two — *the shader change on its own* |
+> | D3D9's own fog contribution (fog-on vs fog-off, same path) | 1.29–1.38 |
+> | librw's own fog contribution (fog-on vs fog-off, same path) | 1.30–1.38 |
+>
+> That last pair is what killed the "librw fogs by the wrong amount" reading before
+> any code was written: **both renderers fog by the same magnitude.** The
+> disagreement had to be in *what colour* they fog toward, or *where*.
+>
+> ### The mechanism, and how it was actually found
+>
+> Histogramming the cross-renderer diff, rather than reading its mean, made it
+> obvious. On `car_1_spawn` with fog on: **77.7% of samples differ by 0, 20.2% by
+> exactly 1 LSB**, only 0.06% by ≥8 — and that ≥8 tail is 0.068% with fog *off*
+> too, i.e. it is entirely the pre-existing snow-bank/prop residual. So the whole
+> "fog term" was a **sub-LSB bias over half the frame**, never a visible band.
+>
+> Its signed shape settled it: `(d3d9 − librw) = (−0.75, +0.02, +0.76)` —
+> antisymmetric in R/B with **G exactly zero**. A ramp error, a depth error, or a
+> precision difference all move G. Only a red/blue swap in the fog *colour* leaves
+> G at zero, because the difference is `(1 − f)·(F − F_swapped)` and the green
+> component of that is identically 0.
+>
+> **The bug** (ours, at the seam — not a librw defect): `COLOR_ARGB` (`rwd3d.h:53`)
+> packs `0xAARRGGBB`, but `rw::SetRenderState(FOGCOLOR)` unpacks RGBA
+> little-endian — `red = value`, `blue = value>>16` (`d3ddevice.cpp:672-676`).
+> `RwRaceSubmit.cpp` handed it a D3D-ordered word. Arctic's fog is `282C30`
+> (R 40, G 44, B 48); librw was blending toward `302C28`. 8 LSB of error in R and
+> B × the frame's mean `(1 − f) ≈ 0.09` ≈ 0.75 LSB — the measured number, predicted
+> quantitatively before the rebuild.
+>
+> **Liveness, so this is not inferred from pixels:** `P7 fogcolor: d3d9=282C30
+> librw_ps=(0.1569,0.1725,0.1882) MATCH` in `log/librw_race.txt` — the PS constant
+> is now byte-for-byte the D3D9 path's `D3DRS_FOGCOLOR`. Also logged:
+> `P7 fogcaps: WFOG=1 ZFOG=1 FOGTABLE=1`, which is the premise the per-pixel
+> formula stands on, checked instead of assumed.
+>
+> ### The fog MODEL was a near no-op — and the attribution was wrong
+>
+> P6's write-up called the per-vertex/per-pixel model difference "identified" and
+> sized it as the whole of `car_1_spawn`. It is not. The per-pixel move alone
+> measured **0.00 on 5 of 7 shots**.
+>
+> The reason is worth keeping: `TexCoord0` is interpolated **perspective-correct**,
+> and perspective-correct interpolation of an attribute affine in `w` reproduces
+> the per-pixel value *exactly* (`Σλa_i/w_i ÷ Σλ/w_i = (w_true − end)·range`, since
+> `w_true·Σλ/w_i = 1`). The two models can only diverge where the vertex-side
+> **clamp** saturates, which on this geometry is a sliver. Full derivation in
+> `deps/librw/MASHED_PATCHES.md` "Why P7".
+>
+> **Method, third time:** "fog off closes the gap → librw fogs per-vertex →
+> per-vertex is the cause" is a circumstantial signature promoted to root cause.
+> The falsifying instrument was the fix itself, and it cost one build. Same shape
+> as the retracted MATID instrument and the falsified "perspective" root cause
+> above. The cheap move that *did* work was refusing to classify: histogram the
+> difference and read its sign per channel.
+>
+> P7 (the per-pixel shader change) is **kept** — correct model, 3 PS instructions,
+> zero regression, and it makes the two fog paths agree by construction rather than
+> by a property of the interpolator. It is simply not what closed the term.
+>
+> ### Two fog items now open, both found by reading during this work
+>
+> - **D-FOG-CHASE (NEW, open).** The D3D9 path applies fog only under the chase
+>   camera — `if (fog_on_ && chase_cam && !s_no_fog)`, `chase_cam = car_ready_ &&
+>   !free_` (`TrackRenderer.cpp:3893,3917`) — because the orbit/overview cameras sit
+>   a track-radius back and would wash the whole track. **`RwRaceSubmit.cpp:430`
+>   gates on `st.fog_on_` alone**, so librw fogs under overview cameras too. Every
+>   gating shot is a chase shot, so this is invisible to the current gate;
+>   `01_inrace_track` is the overview shot and it is one of the three R10b
+>   build-unstable ones, so it cannot certify anything today. Fix is one clause,
+>   but it needs a gating instrument before it can be measured.
+> - **The P6 range-weld is closed, not pending.** `setFogRange` already overrides
+>   the `farPlane` weld and is on by default (`MASHED_LIBRW_FOGFIX=0` reverts). With
+>   the colour fixed, both renderers' own fog contributions agree to 0.01, which is
+>   the positive evidence that the ramp is right; no further work is owed here.
+>
 > **2. The snow-bank hotspot — still unidentified**, and fog is now off its list:
 > the 7.6/4.6/5.1 cells are 7.7/4.7/5.2 with fog disabled on both sides. It is world
 > geometry (identical cells with instances on and off), warm-weighted

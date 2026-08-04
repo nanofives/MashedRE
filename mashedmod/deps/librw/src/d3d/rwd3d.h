@@ -391,7 +391,10 @@ enum
 
 	VSLOC_numLights	= 0,
 
-	PSLOC_fogColor = 0
+	PSLOC_fogColor = 0,
+	// MASHED LOCAL PATCH (P7) -- per-pixel fog needs (end, range, disable) in the
+	// PS as well as the VS. Same four floats as VSLOC_fogData.
+	PSLOC_fogData = 1
 };
 
 // Vertex shader bits

@@ -307,6 +307,12 @@ flushCache(void)
 	if(d3dShaderState.fogDirty){
 		d3ddevice->SetVertexShaderConstantF(VSLOC_fogData, (float*)&d3dShaderState.fogData, 1);
 		d3ddevice->SetPixelShaderConstantF(PSLOC_fogColor, (float*)&d3dShaderState.fogColor, 1);
+		// MASHED LOCAL PATCH (P7) -- the fog ramp is now evaluated in the pixel
+		// shader (default_PS.hlsl), so the same constant the VS gets at c14 must
+		// also reach the PS at c1. If this upload is missing the PS reads c1 = 0,
+		// giving fog = clamp(w*0, 0, 1) = 0, i.e. EVERY pixel painted flat fog
+		// colour -- a loud failure, not a silent one.
+		d3ddevice->SetPixelShaderConstantF(PSLOC_fogData, (float*)&d3dShaderState.fogData, 1);
 		d3dShaderState.fogDirty = false;
 	}
 }
