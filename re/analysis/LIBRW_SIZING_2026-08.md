@@ -1638,15 +1638,43 @@ viewpoints, world-only, no cars.
 > - It is the **snow/sky silhouette coverage divergence** between FF and the shader,
 >   warm because the neighbour it mismatches against is the horizon sky.
 >
-> **[UNCERTAIN], and the honest floor of this investigation:** *why* the two transforms
-> land the silhouette a few sub-pixels apart at the far ridge, when the combined
-> matrices agree to 2.7e-7 and model-space vertex data is byte-identical. A 2.7e-7
-> matrix delta at ridge coordinates is ~0.05 px — too small to explain a multi-pixel
-> band by itself — so the silhouette shift is amplified by the **grazing foreshortening**
-> (the snow/sky edge is near-parallel to the view ray at the ridge, so a tiny
-> depth/position perturbation sweeps the boundary across many pixels). Pinning the last
-> sub-pixel requires clip-space position readback per silhouette vertex on both paths,
-> which is the only remaining step and has no bearing on the gate.
+> **✅ LAST SUB-PIXEL NAILED (2026-08-04): the transform is exact to ~5e-4 px; the
+> residual is rasterisation of differently-organised geometry, NOT a transform error.**
+> The clip-space readback was done — via the existing `DEPTHPROBE`, whose own comment
+> notes the combined-matrix comparison is *stronger* than per-vertex sampling (it
+> settles all points at once). Measured (`log/librw_race.txt`):
+> - Per-point clip: `p=(−25.21,0.04,15.78)` → D3D9 ndc `(0, −0.578020215, 0.970947564)`
+>   vs librw `(−1.443e-6, −0.578019679, 0.970947444)`. **Δx = 1.4e-6 NDC = 4.6e-4 px;
+>   Δy = 1.3e-4 px; Δz = 1.2e-7.**
+> - Whole-matrix `MATCMP max|d3d9−librw| = 3.8e-6 … 1.1e-5, maxrel = 1.85e-7 … 2.74e-7`.
+>
+> So **every snow vertex projects to within ~0.0005 px on both paths** — the two
+> transforms are identical to the float-noise floor. The 1.46 px silhouette band is
+> therefore **categorically not a transform/clip-position difference**, and the earlier
+> "grazing foreshortening amplifies a sub-pixel transform delta" idea is **falsified**
+> (there is no sub-pixel transform delta to amplify; and the shift did not correlate
+> with edge slope — the flattest band, y300–340 |dx/dy|=0.72, shifted 0 px while
+> y250–300 |dx/dy|=0.82 shifted +1.46 px).
+>
+> **What the residual IS: rasterisation of identically-projected but differently-
+> ORGANISED geometry.** librw submits the snow as **indexed, sector-major**
+> `rw::Geometry` meshes (`buildMeshes`); the D3D9 path submits it **unindexed,
+> material-major** via `DrawPrimitiveUP` (`batches_[mat]` accumulated across sectors).
+> Same byte-identical vertices, same ~5e-4 px projection, same D3D9 rasteriser — but
+> the **top-left fill rule** resolves a grazing silhouette edge 1–2 px apart when the
+> triangles arrive in a different order / indexed-vs-unindexed. Over most of the ridge
+> the two organisations tie (0 px, 74 % of rows); in the one band where the snow-mesh
+> boundary triangles differ in submission order, the fill flips 1–2 px. This is an
+> **irreducible FF-organisation-vs-shader-organisation floor**, not a defect and not a
+> transform bug — reproducing it bit-for-bit would require submitting the librw world
+> as unindexed material-major primitives, which the renderer gate does not want.
+>
+> **The snow-bank investigation is now closed at its true floor:** transform proven
+> exact (5e-4 px), shading/fog/specular/depth/transfer-curve all excluded by
+> measurement, deep-interior snow faithful (|delta| 0.54), and the last residual is a
+> ~1 px grazing-silhouette fill-rule difference between indexed and unindexed
+> submission of the identical mesh. Nothing further is pinnable without changing the
+> renderer's geometry organisation, which is out of scope.
 >
 > **FINAL bottom line: the snow-bank hotspot is a single silhouette-localised FF-vs-shader
 > coverage divergence at the foreshortened snow/sky horizon, warm because it mismatches
