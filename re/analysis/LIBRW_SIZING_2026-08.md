@@ -1605,6 +1605,57 @@ viewpoints, world-only, no cars.
 > recording. The swept-input curve the correction demanded is what exposed it. Count
 > AND localise before pinning.
 >
+> #### ✅ UNIFIED (2026-08-04, final): it is ONE mechanism — a silhouette-localised snow/sky coverage divergence. "Component 2" is not independent; deep-interior snow is faithful.
+>
+> Chasing "component 2's source" (was it W/Z-precision or an FF specular/emissive
+> term?) collapsed the two-component model into one. Over the flat-160 wedge, the warm
+> shift on the *agreeing* (both-snow) pixels was binned by **distance to the D3D9 snow
+> silhouette** (`scipy` EDT):
+>
+> | distance from edge | warm shift (D3D9 − 160) | \|D3D9 − librw\| |
+> |---|---|---|
+> | 0–2 px | (+7.4, +3.7, −5.0) | 5.39 |
+> | 8–16 px | (+6.0, +3.1, −4.1) | 4.38 |
+> | 16–32 px | (+4.5, +2.3, −3.1) | 3.27 |
+> | **32+ px (deep interior)** | **(+0.7, +0.4, −0.5)** | **0.54 (noise floor)** |
+>
+> **The warm shift decays monotonically to the noise floor within ~32 px of the
+> silhouette. Deep-interior snow is bit-faithful.** So there is no independent
+> depth-shade term and no per-channel transfer curve — "component 2" is the
+> near-silhouette **penumbra of the coverage difference** (component 1). Both are the
+> same thing: where the D3D9 fixed-function transform and librw's vertex-shader
+> transform place the **snow/sky boundary at slightly different sub-pixels**, the
+> mismatch band pulls toward the **warm horizon sky**. That sky colour is `(254,208,97)`
+> — exactly the blend colour the affine sweep-fit reported, now explained: the affine
+> "blend toward (254,208,97)" was the sky bleeding through the coverage mismatch, not a
+> gamma curve.
+>
+> **The candidates the chase set out to separate are both wrong:**
+> - **NOT FF specular / emissive.** `D3DRS_LIGHTING=FALSE` and neither state is set
+>   (`TrackRenderer.cpp:3902` block); with lighting off they cannot contribute.
+> - **NOT W/Z colour precision.** Z/W affects the depth test, not colour; and the delta
+>   is silhouette-localised (decays with distance), not depth-monotonic over the face.
+> - It is the **snow/sky silhouette coverage divergence** between FF and the shader,
+>   warm because the neighbour it mismatches against is the horizon sky.
+>
+> **[UNCERTAIN], and the honest floor of this investigation:** *why* the two transforms
+> land the silhouette a few sub-pixels apart at the far ridge, when the combined
+> matrices agree to 2.7e-7 and model-space vertex data is byte-identical. A 2.7e-7
+> matrix delta at ridge coordinates is ~0.05 px — too small to explain a multi-pixel
+> band by itself — so the silhouette shift is amplified by the **grazing foreshortening**
+> (the snow/sky edge is near-parallel to the view ray at the ridge, so a tiny
+> depth/position perturbation sweeps the boundary across many pixels). Pinning the last
+> sub-pixel requires clip-space position readback per silhouette vertex on both paths,
+> which is the only remaining step and has no bearing on the gate.
+>
+> **FINAL bottom line: the snow-bank hotspot is a single silhouette-localised FF-vs-shader
+> coverage divergence at the foreshortened snow/sky horizon, warm because it mismatches
+> against the sky. Deep-interior snow renders faithfully (|delta| 0.54). It is not a
+> shading, transfer-curve, fog, specular, or depth term — all excluded by measurement —
+> and it is not a port defect.** Three framings were tried and two were wrong (per-channel
+> gain; two independent components); this is the one that survives every control. Not
+> gate-required to close.
+>
 > Instrument `MASHED_WORLD_PRELITONLY` (branch `render/s3-bank`, both paths,
 > default-off, liveness-logged) is worth keeping. Evidence under `verify/s3bank_iso/`:
 > `d3d9_snow.bmp`, `librw_snow.bmp`, `librw_snow_affine.bmp` (fix no-op),
