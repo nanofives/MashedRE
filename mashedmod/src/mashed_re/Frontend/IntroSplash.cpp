@@ -2,7 +2,7 @@
 // Session c3-batch-m-s5 — C2->C3 promotions for the intro-splash cluster.
 //
 // This file implements 5 functions from the intro-video playback sequence:
-//   IntroSplashOrchestrator  (0x00495350) — main loop: 4 indexed videos, button-skip
+//   HardwareShowIntroVideo  (0x00495350) — main loop: 4 indexed videos, button-skip
 //   IntroSplashFrameTickShim (0x00492d20) — per-frame shim: calls input pipeline, returns 1
 //   IntroVideoDimGetter      (0x00493f80) — leaf: writes 4 globals into two out-ptr pairs
 //   IntroSplashVtableSlot6   (0x004c1a00) — vtable shim: tail-dispatch *(param_1+0x18)
@@ -21,7 +21,7 @@
 
 // ─── Forward declarations for callees not yet reimplemented ──────────────────
 // These trampolines call the original binary at their known RVAs so that
-// IntroSplashOrchestrator can be built and exercised without requiring all
+// HardwareShowIntroVideo can be built and exercised without requiring all
 // callees to be reimplemented first.
 
 typedef std::uint32_t  uint32;
@@ -29,7 +29,7 @@ typedef std::uint8_t   uint8;
 
 // ─── Ported callees implemented in SplashGameMode_t5.cpp ─────────────────────
 // Resolved 2026-07-23 (account2 Lane-A): these two intro-splash callees now have
-// C4/C3-verified reimplementations, so IntroSplashOrchestrator calls them
+// C4/C3-verified reimplementations, so HardwareShowIntroVideo calls them
 // directly instead of trampolining to the original RVA — retires STUBS S-0801
 // and S-0803. Both bodies are 5-byte global getters that ignore their stack args
 // (see SplashGameMode_t5.cpp; U-0814).
@@ -38,7 +38,7 @@ extern "C" std::uint32_t __cdecl AspectRatioGlobalGet(void);   // 0x00493fc0
 
 // Callee stubs — forward to original RVAs (boot-time trampolines via function pointer).
 // Declared as function pointers to the original addresses so the linker doesn't
-// need to know about them. All calls within IntroSplashOrchestrator that go to
+// need to know about them. All calls within HardwareShowIntroVideo that go to
 // C1/C2 functions are forwarded through these.
 
 // 0x00494a80  FUN_00494a80 — indexed video loader: (int, int index, int) -> void
@@ -125,7 +125,7 @@ static constexpr int            kInputBackOffset = 0x4C0;            // back-off
 // Reads 4 globals (0x007719ec/f0/f4/f8) into two out-ptr pairs.
 //   param_1: pointer to two undefined4 slots; writes DAT_007719ec, DAT_007719f0
 //   param_2: pointer to two undefined4 slots; writes DAT_007719f4, DAT_007719f8
-// Caller (IntroSplashOrchestrator) then divides:
+// Caller (HardwareShowIntroVideo) then divides:
 //   ratio_a = DAT_007719ec / DAT_007719f4
 //   ratio_b = DAT_007719f0 / DAT_007719f8
 // and passes both to FUN_00493fc0 (aspect-ratio / scale computation).
@@ -197,7 +197,7 @@ RH_ScopedInstall(IntroSplashVtableSlot6, 0x004c1a00);  // re-enabled 2026-05-24 
 //   -(iVar1 != 0) & param_1
 //     if vtable call != 0: -(1) = 0xFFFFFFFF; 0xFFFFFFFF & param_1 = param_1.
 //     if vtable call == 0: -(0) = 0;           0 & param_1 = 0.
-// Caller: IntroSplashOrchestrator passes (uVar2, &local_44, 1) where:
+// Caller: HardwareShowIntroVideo passes (uVar2, &local_44, 1) where:
 //   uVar2     = render target (from FUN_004671a0(0))
 //   &local_44 = 4-byte RGBA color {0x00, 0x80, 0x80, 0xFF}
 //   1         = param_3
@@ -230,7 +230,7 @@ RH_ScopedInstall(IntroSplashRenderState, 0x004c1bb0);  // re-enabled 2026-05-24 
 // 10 bytes. Single callee: FUN_004967e0 (per-frame input pipeline).
 // Calls FUN_004967e0() — no args, return value discarded.
 // Returns literal 1.
-// Caller (IntroSplashOrchestrator) discards the return value of this shim.
+// Caller (HardwareShowIntroVideo) discards the return value of this shim.
 // Callee gate: FUN_004967e0 drift-promoted to C2 this session (full plate exists).
 // ref: re/analysis/intro_splash/0x00492d20.md
 // U-0811: FUN_004967e0 callee semantics — open (does not affect mechanical correctness).
@@ -245,7 +245,7 @@ int __cdecl IntroSplashFrameTickShim() {
 RH_ScopedInstall(IntroSplashFrameTickShim, 0x00492d20);  // re-enabled 2026-05-24 c3-frontend-b
 
 
-// ─── 0x00495350  IntroSplashOrchestrator ─────────────────────────────────────
+// ─── 0x00495350  HardwareShowIntroVideo ─────────────────────────────────────
 // 401 bytes. 14 callees (10 intro-splash + Sleep + 4 helpers). No params/return.
 //
 // Sequence:
@@ -296,7 +296,7 @@ RH_ScopedInstall(IntroSplashFrameTickShim, 0x00492d20);  // re-enabled 2026-05-2
 
 // 0x00495350
 extern "C" __declspec(dllexport)
-void __cdecl IntroSplashOrchestrator() {
+void __cdecl HardwareShowIntroVideo() {
     // Stack locals matching decompilation layout.
     // local_44 block: 4-byte RGBA colour {0x00, 0x80, 0x80, 0xFF} as LE uint32.
     // Bytes: local_44=0x00, local_43=0x80, local_42=0x80, local_41=0xFF.
@@ -433,7 +433,7 @@ void __cdecl IntroSplashOrchestrator() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(IntroSplashOrchestrator, 0x00495350);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(HardwareShowIntroVideo, 0x00495350);
 // 2026-07-23 account3 canonical-verify: subset-install (MASHED_HOOK_ONLY=0x00495350) CRASHES at boot —
 // access-violation from the (inlined) IntroSplashVtableSlot6 dispatch `call [edi+0x18]` (asm 0x10011887),
 // edi=OrigVehicle0Get(0)=FUN_004671a0(0) render-target handle whose +0x18 slot is garbage (0x25ff5dec) at

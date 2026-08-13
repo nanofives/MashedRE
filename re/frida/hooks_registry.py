@@ -7795,7 +7795,7 @@ HOOKS = {
 
     # 0x00492d20  IntroSplashFrameTickShim
     # 10-byte shim: calls FUN_004967e0() (per-frame input pipeline), returns 1.
-    # Caller (IntroSplashOrchestrator) discards the return value.
+    # Caller (HardwareShowIntroVideo) discards the return value.
     # arg_type='none': call 10x at quiescent main menu; reimpl returns 1 each time.
     # Both orig and reimpl execute identical input-poll side-effects â†’ stable.
     # U-0811 (callee semantics) open; does not affect mechanical correctness.
@@ -10769,7 +10769,7 @@ HOOKS = {
 
 
     # 0x00493550  thunk_EngineStopDispatch  (thunk_FUN_004938c0)
-    # 4-byte JMP thunk to FUN_004938c0 at 0x004938c0 (EngineStopHelper).
+    # 4-byte JMP thunk to FUN_004938c0 at 0x004938c0 (SoftwareTidyUpBeforeExiting).
     # Inlined target: 5 sequential void calls (teardown sequence).
     # arg_type='teardown_call_pair': zero DAT_007d3ff8 (RW engine vtable base)
     # before EACH call (both orig AND reimpl) so both crash symmetrically from
@@ -10828,7 +10828,7 @@ HOOKS = {
     },
 
 
-    # 0x004938c0  EngineStopHelper  (sub_004938c0)
+    # 0x004938c0  SoftwareTidyUpBeforeExiting  (sub_004938c0)
     # 24-byte function body: 5 sequential void calls, no branches, no globals.
     # Calls: FUN_00558470 / FUN_00550390 / FUN_004c2f60 / FUN_004c3040 / FUN_004c3270.
     # arg_type='teardown_call_pair': same strategy. Zero DAT_007d3ff8 before each
@@ -10840,7 +10840,7 @@ HOOKS = {
     # ref: re/analysis/promote_c2_launch_handshake/004938c0.md
     'engine_stop_helper': {
         'rva':              0x004938c0,
-        'export':           'EngineStopHelper',
+        'export':           'SoftwareTidyUpBeforeExiting',
         'signature':        {'ret': 'void', 'args': []},
         'arg_type':         'teardown_call_pair',
         'crash_equal_ok':   True,

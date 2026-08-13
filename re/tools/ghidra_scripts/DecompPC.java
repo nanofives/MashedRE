@@ -74,6 +74,9 @@ public class DecompPC extends GhidraScript {
             else if (m.equals("strings")) {
                 mStrings = true;
             }
+            else if (m.equals("metadata")) {
+                continue;   // name/entry/size/signature only; emitted unconditionally
+            }
             else if (!m.isEmpty()) {
                 throw new IllegalArgumentException("unknown mode: " + m);
             }

@@ -157,7 +157,12 @@ def main():
              + (["callees"] if a.callees else [])
              + (["callers"] if a.callers else [])
              + (["xrefs"] if a.xrefs else [])
-             + (["strings"] if a.strings else [])) or ["decomp"]
+             + (["strings"] if a.strings else []))
+    if not modes:
+        # --no-decomp with no other mode: metadata only (name/entry/size/signature).
+        # Must NOT fall back to "decomp" -- that silently ignores --no-decomp and
+        # turns a cheap metadata sweep into a full decompile of every address.
+        modes = ["metadata"]
 
     if a.slot is not None:
         slot_name, idx, owned = f"Mashed_pool{a.slot}", a.slot, False

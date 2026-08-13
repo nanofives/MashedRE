@@ -29,10 +29,10 @@
 // External callees (all confirmed C2+ in hooks.csv):
 //
 //   0x00495150  FUN_00495150  — lang/codeset gate; returns bool   (C2)
-//   0x004938c0  FUN_004938c0  — engine-stop helper; void          (C2, = EngineStopHelper below)
+//   0x004938c0  FUN_004938c0  — engine-stop helper; void          (C2, = SoftwareTidyUpBeforeExiting below)
 //   0x004954f0  FUN_004954f0  — HardwareExit gate; returns uint32 (C2)
 //
-//   Called by EngineStopHelper (0x004938c0):
+//   Called by SoftwareTidyUpBeforeExiting (0x004938c0):
 //   0x00558470  FUN_00558470  — teardown void call #1  (C2)
 //   0x00550390  FUN_00550390  — teardown void call #2  (C2)
 //   0x004c2f60  FUN_004c2f60  — teardown void call #3  (C2)
@@ -49,7 +49,7 @@ static BoolFn_t   const s_FUN_00495150 = reinterpret_cast<BoolFn_t>(0x00495150);
 static VoidFn_t   const s_FUN_004938c0 = reinterpret_cast<VoidFn_t>(0x004938c0);
 static Uint32Fn_t const s_FUN_004954f0 = reinterpret_cast<Uint32Fn_t>(0x004954f0);
 
-// EngineStopHelper direct callees (used in sub_004938c0 reimpl).
+// SoftwareTidyUpBeforeExiting direct callees (used in sub_004938c0 reimpl).
 static VoidFn_t const s_FUN_00558470 = reinterpret_cast<VoidFn_t>(0x00558470);
 static VoidFn_t const s_FUN_00550390 = reinterpret_cast<VoidFn_t>(0x00550390);
 static VoidFn_t const s_FUN_004c2f60 = reinterpret_cast<VoidFn_t>(0x004c2f60);
@@ -128,7 +128,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl thunk_HwExitDispatch() {
 RH_ScopedInstall(thunk_HwExitDispatch, 0x00493560);  // re-enabled 2026-05-25 a4-thunk-passthrough (C3 evidence: implicit-survival sweep 2026-05-23; 1:1 proxy to s_FUN_004954f0)
 
 
-// ─── 0x004938c0  sub_004938c0  (EngineStopHelper) ──────────────────────────
+// ─── 0x004938c0  sub_004938c0  (SoftwareTidyUpBeforeExiting) ──────────────────────────
 //
 // 24-byte function body (0x004938c0..0x004938d7).
 // Takes no parameters; returns void.
@@ -149,7 +149,7 @@ RH_ScopedInstall(thunk_HwExitDispatch, 0x00493560);  // re-enabled 2026-05-25 a4
 // ref: re/analysis/promote_c2_launch_handshake/004938c0.md
 
 // 0x004938c0
-extern "C" __declspec(dllexport) void __cdecl EngineStopHelper() {
+extern "C" __declspec(dllexport) void __cdecl SoftwareTidyUpBeforeExiting() {
     s_FUN_00558470();
     s_FUN_00550390();
     s_FUN_004c2f60();
@@ -157,4 +157,4 @@ extern "C" __declspec(dllexport) void __cdecl EngineStopHelper() {
     s_FUN_004c3270();
 }
 
-RH_ScopedInstall(EngineStopHelper, 0x004938c0);  // re-enabled 2026-05-24 batch-mixed
+RH_ScopedInstall(SoftwareTidyUpBeforeExiting, 0x004938c0);  // re-enabled 2026-05-24 batch-mixed
