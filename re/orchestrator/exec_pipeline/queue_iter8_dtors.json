@@ -1,0 +1,14 @@
+{
+  "description": "Orchestrator iteration 8 — RpClumpDestroy destructors via NEW reg_this_call_observe handler. Build (ports appended to ParticleEmitterCtors.cpp) then ONE boot race state_batch on all 3, sentinel 0x007d73a8. Each expects GREEN 3/3 with distinct recorded RpClumpDestroy args (= the per-test sentinel). GREEN -> re-classify C2->C3 (identified-callee clause).",
+  "jobs": [
+    { "type": "build", "id": "iter8_build" },
+    {
+      "type": "state_batch",
+      "id": "iter8_dtors",
+      "hooks": ["emitter_dtor_clump_5c", "emitter_dtor_clump_15c", "emitter_dtor_clump_100"],
+      "scenario": "race",
+      "dwell": 20,
+      "sentinel": "0x007d73a8"
+    }
+  ]
+}

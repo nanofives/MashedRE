@@ -1,0 +1,3246 @@
+{
+ "candidates": [
+  {
+   "rva": 4229872,
+   "sym": "AiVehicleFieldPtrGet",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4467904,
+   "sym": "AiVehicleFloat4Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4252496,
+   "sym": "GetRenderSubMode",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4363008,
+   "sym": "HudOverlayFloatGet",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 6014032,
+   "sym": "AudioSlotPairZero",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 6015872,
+   "sym": "AudioMediaSubtypeFromTag",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 6026848,
+   "sym": "Audio3DwordZero",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 6059440,
+   "sym": "AudioVoiceField8cGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5958208,
+   "sym": "AudioAlignedFree",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5955376,
+   "sym": "AudioFmtKeyCompare",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5955760,
+   "sym": "AudioSubStructZeroInit",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 6021520,
+   "sym": "AudioRwsSubZeroInit",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5947264,
+   "sym": "AudioWaveVtableSlot1cDispatch",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5942592,
+   "sym": "AudioRootGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5943408,
+   "sym": "AudioTimerRateGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5958544,
+   "sym": "AudioLinearToLog",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5933472,
+   "sym": "VoiceFieldD6cGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5933488,
+   "sym": "VoiceFieldD70Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5933504,
+   "sym": "VoiceFieldD74Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5944176,
+   "sym": "ChannelField10Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4206416,
+   "sym": "BootDefaultParamsInit",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4397792,
+   "sym": "DefaultParam_SetField04",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4397808,
+   "sym": "DefaultParam_SetField08",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4397824,
+   "sym": "DefaultParam_SetField00",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4372688,
+   "sym": "StatePhaseIsIdle",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4372720,
+   "sym": "StatePhaseIsFinal",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4388112,
+   "sym": "Vehicle0HandleGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4819952,
+   "sym": "DisplayActiveFlagGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4987376,
+   "sym": "RwVtableSlot07Call",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4353024,
+   "sym": "GameStateFlagGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4372704,
+   "sym": "StatePhaseIsTwo",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4372752,
+   "sym": "RaceEndConstGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4372800,
+   "sym": "StatePhaseSubSet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4374976,
+   "sym": "RaceInterruptFlagGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4374992,
+   "sym": "RaceStateArrayZero",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4797760,
+   "sym": "thunk_LaunchLangGate",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4797776,
+   "sym": "thunk_EngineStopDispatch",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4797792,
+   "sym": "thunk_HwExitDispatch",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4306192,
+   "sym": "HudCounterReset",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4397840,
+   "sym": "BootParamSet2",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5074528,
+   "sym": "TexStageCacheGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5021520,
+   "sym": "RwGlobal7d4134Set",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4941152,
+   "sym": "BootGlobalPairSetThunk",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4822832,
+   "sym": "BootPtr773818Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4804336,
+   "sym": "ThunkVideoStateGet",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4819904,
+   "sym": "VideoGetRenderWidth",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4819920,
+   "sym": "VideoGetRenderHeight",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4819952,
+   "sym": "DisplayGetCursorGate",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5751312,
+   "sym": "RwpBodyTableLookup",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5627568,
+   "sym": "RwpWorldSolverHandle",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5662656,
+   "sym": "FUN_005667c0",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4353264,
+   "sym": "GetDat0066d6e4",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4357264,
+   "sym": "GetDat0067d84c",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5598400,
+   "sym": "SetDat00912a20",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5598416,
+   "sym": "GetDat00912a20",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4673120,
+   "sym": "DegToRad",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5598416,
+   "sym": "FontAtlasSlotGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5598400,
+   "sym": "FontAtlasSlotSet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4238624,
+   "sym": "FrontendGlobalGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4241088,
+   "sym": "FrontendArrayGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4353200,
+   "sym": "FrontendSlotTablePtr426cb0",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4353504,
+   "sym": "FrontendFloatGet426de0",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4353520,
+   "sym": "FrontendFloatGet426df0",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4355456,
+   "sym": "FrontendQuadParamInit427580",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4393392,
+   "sym": "FrontendModeIndex",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4388528,
+   "sym": "MenuModeSync",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4349664,
+   "sym": "SlotWordPtrGet",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4349680,
+   "sym": "ActiveSlotCount",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4349984,
+   "sym": "GlobalDat00646e58Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4350080,
+   "sym": "GlobalDat00656ed8Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4350096,
+   "sym": "GlobalDat0066ce58Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4350112,
+   "sym": "GetDat00657438",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4350128,
+   "sym": "GetDat0065743c",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4352960,
+   "sym": "GetDat0066d6e0",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4987392,
+   "sym": "IntroSplashVtableSlot6",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4229712,
+   "sym": "PerCarRaceProgressGet",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4372656,
+   "sym": "ScreenWidthGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4372672,
+   "sym": "ScreenHeightGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4372784,
+   "sym": "MenuAlphaGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4390528,
+   "sym": "GetRaceEndFlag",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4386992,
+   "sym": "GetFrameCounterPlus73",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4379616,
+   "sym": "MenuEntryArrayInit",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4397936,
+   "sym": "MenuFlagDat007f0f10Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4364480,
+   "sym": "MenuQuadGlobalZero",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4342192,
+   "sym": "GetDat008994c0",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4353200,
+   "sym": "SlotIndexToPtr",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4372768,
+   "sym": "ConstantGetter22",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4241072,
+   "sym": "ModeScoreGetBySlot",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4241312,
+   "sym": "HotkeyStringBaseGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4364912,
+   "sym": "LapFracGetBySlot",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4364928,
+   "sym": "LapLapsGetBySlot",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4364944,
+   "sym": "LapSecsGetBySlot",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4392800,
+   "sym": "IsMultiplayerMode",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4252784,
+   "sym": "CarSlotStateGet",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4355280,
+   "sym": "LangIndexSeedFromCli",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4359056,
+   "sym": "FrontendStateSet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4569600,
+   "sym": "RaceResultIndexedStore",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4229840,
+   "sym": "RaceScoreFloatGetBySlot",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4199792,
+   "sym": "EntryTableScanByKey",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4317312,
+   "sym": "ScoreboardStateZeroInit",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4800368,
+   "sym": "VideoStateFlagGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4800448,
+   "sym": "AspectRatioGlobalGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4398464,
+   "sym": "TiebreakFlagGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4389552,
+   "sym": "SpriteSlotDispatch",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4336432,
+   "sym": "TimerArrayClear",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4233376,
+   "sym": "GetLedEntryArrayBase",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4225568,
+   "sym": "GetAiLapCounter",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4250736,
+   "sym": "GetAnimationState",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4240416,
+   "sym": "IndexedTableLookup",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4246928,
+   "sym": "CountNonZeroPairs",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4224992,
+   "sym": "GetSelectedCopterField60",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4375248,
+   "sym": "GetDat0067ecb4",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4375264,
+   "sym": "GetDat0067ecb8",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4388096,
+   "sym": "GetDat0067ea64",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4355968,
+   "sym": "FontText_StringTableLookup",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4822816,
+   "sym": "GetInputHinst",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4567888,
+   "sym": "RwInitNullStub",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4997744,
+   "sym": "MatrixOrthoResidual4c4270",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4997840,
+   "sym": "MatrixNormResidual4c42d0",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4834960,
+   "sym": "ComField14Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4848192,
+   "sym": "ConstZeroRet_0049fa40",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5062848,
+   "sym": "GetPipelinePtr",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4616640,
+   "sym": "GetOverlayCamera",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5028704,
+   "sym": "GetRenderStateBlockPtr",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5078448,
+   "sym": "RwPluginExtensionSlotGet",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4680176,
+   "sym": "ParticleEmitter_SetColour",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4680240,
+   "sym": "ParticleEmitter_SetScalar",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5079024,
+   "sym": "RwIdentityPassthrough",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4232832,
+   "sym": "LedArrayInit",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4215760,
+   "sym": "TrackDataSlotSet",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4348592,
+   "sym": "EntryHeaderClear",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5110432,
+   "sym": "PixPassthrough16",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5211744,
+   "sym": "PluginFieldReadA8",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5197856,
+   "sym": "FormatEntryLookup",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5025424,
+   "sym": "RwCapsBlockPtrGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4388128,
+   "sym": "ViewportBlockPtrGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4739952,
+   "sym": "DynamicObjectListGetBase",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4215840,
+   "sym": "ReplayCursorReset",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4390512,
+   "sym": "VehicleDword67ea80Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4319872,
+   "sym": "TrackDescField40Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5028960,
+   "sym": "RwGlobal7d4598Set",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5028976,
+   "sym": "RwGlobal7d4598Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5028992,
+   "sym": "RwGlobal7d459cSet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4689088,
+   "sym": "RenderWorldStateZeroFill",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4941280,
+   "sym": "PizGlobalsZero6",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5075440,
+   "sym": "RenderState_GetTexturingOverride",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5075456,
+   "sym": "RenderState_SetOpcode34",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5075536,
+   "sym": "RenderState_SetOpcode35",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5075616,
+   "sym": "RenderState_SetOpcode36",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5075696,
+   "sym": "RenderState_SetOpcode37",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5075776,
+   "sym": "RenderState_SetOpcode38",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5075856,
+   "sym": "RenderStateSetOpcode39",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5075936,
+   "sym": "RenderStateSetOpcode3a",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5076016,
+   "sym": "RenderStateSetOpcode3b",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5077952,
+   "sym": "TextureStateSetFilterMode",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5078032,
+   "sym": "TextureStateSetAddressMode",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5046016,
+   "sym": "RpMaterialReflectivityGet",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4983568,
+   "sym": "RwAtomicDirtyFlagGet",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4992368,
+   "sym": "RwPluginRegistryFrozen",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5003296,
+   "sym": "RwTexDictionaryGetCurrent",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4350048,
+   "sym": "TrackPhysWorld1Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4350064,
+   "sym": "TrackPhysWorld2Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4350144,
+   "sym": "TrackPhysWorld3Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4353536,
+   "sym": "TrackLoaderFloatGet",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4353232,
+   "sym": "TrackSlotArrayReset",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4319696,
+   "sym": "TrackNodeFnPtrGet14",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4319888,
+   "sym": "TrackNodeFnPtrGet44",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4319408,
+   "sym": "TrackNodeDispatch14",
+   "preserved": [
+    "eax",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4319600,
+   "sym": "TrackNodeDispatch44",
+   "preserved": [
+    "eax",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4319712,
+   "sym": "TrackNodeFnPtrGet18",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4319424,
+   "sym": "TrackNodeDispatch18",
+   "preserved": [
+    "eax",
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4319472,
+   "sym": "TrackNodeDispatch24",
+   "preserved": [
+    "eax",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4251136,
+   "sym": "ThunkReplaySave",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5573568,
+   "sym": "VfsStreamGetType",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4388512,
+   "sym": "GetRaceSubMode",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4638544,
+   "sym": "EntityVelocityCounterGet",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4638512,
+   "sym": "EntityDamageStateGet",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4240400,
+   "sym": "RaceScoreTimerGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4252512,
+   "sym": "RaceModeSet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4206400,
+   "sym": "Util636ad8Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4811040,
+   "sym": "TimerTable772ffcGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4811056,
+   "sym": "TimerTable773030Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4739936,
+   "sym": "DynObjListGetCount",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5572496,
+   "sym": "FsManager7dc76cSet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4738160,
+   "sym": "WorldObjectsBaseGet",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4315792,
+   "sym": "DeltaTimeOutGet",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4811008,
+   "sym": "SlotActiveThunk",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4282464,
+   "sym": "InteractionCooldownSet",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 5029008,
+   "sym": "RwGlobal7d459cGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4252752,
+   "sym": "Flag63b908Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4252768,
+   "sym": "Flag63b908Set",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4252832,
+   "sym": "ElapsedTimeGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4468864,
+   "sym": "AiTargetEnableGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4372736,
+   "sym": "Global67eca4Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4392992,
+   "sym": "Global67ed6cGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4795664,
+   "sym": "Global771968Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4397872,
+   "sym": "Float67eaa8Get",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4533936,
+   "sym": "PowerupRangeGet",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4397888,
+   "sym": "Set67eaa8",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4825824,
+   "sym": "Set77396c",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4826944,
+   "sym": "Set773978",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4388768,
+   "sym": "GhostFlagReset",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4530528,
+   "sym": "PowerupTargetPtrGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4797808,
+   "sym": "Set77196c_1",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4797824,
+   "sym": "Set771970_1",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4597008,
+   "sym": "Set603868_0",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4596992,
+   "sym": "Set603868_1",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4750832,
+   "sym": "Set703058_0",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4941216,
+   "sym": "Global7d3e4cGetThunk",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4811056,
+   "sym": "Table773030Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4735184,
+   "sym": "JointPtr6ce81cGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4545344,
+   "sym": "PowerupTable6885e0Get",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4388704,
+   "sym": "Global67f19cGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4388720,
+   "sym": "Global67f1a0Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4388736,
+   "sym": "Global67f1a4Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4352944,
+   "sym": "Global66d6d8Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4571104,
+   "sym": "Global80332cGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4379536,
+   "sym": "Global67ea6cGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4822800,
+   "sym": "Global7e9584Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5929808,
+   "sym": "Global7dcabcGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4662848,
+   "sym": "Set86ecc8",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4252016,
+   "sym": "Set63ba7c",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4224416,
+   "sym": "Global63a5d0Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4317504,
+   "sym": "Global63d7e0Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4705904,
+   "sym": "Global6c6eb0Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4811024,
+   "sym": "Global772ffcGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4372816,
+   "sym": "Set7f1a0c_1000",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4806544,
+   "sym": "Global772facGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4511456,
+   "sym": "Set684b34",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4797840,
+   "sym": "Set771968_1",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4563184,
+   "sym": "VehPwrState68ba00Get",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4209120,
+   "sym": "Float5ea0a8Get",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4289440,
+   "sym": "Float89a360Get",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4533920,
+   "sym": "Table88ff50Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4578640,
+   "sym": "Table8aa300Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4322080,
+   "sym": "Table63d830Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4638544,
+   "sym": "Table882194Get",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4638512,
+   "sym": "Table882198Get",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4315408,
+   "sym": "Clear63d584Pair",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4364320,
+   "sym": "Clear8991b0Pair",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4513760,
+   "sym": "Ret50",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4468880,
+   "sym": "Ret897ff0",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4233376,
+   "sym": "Ret63a5f0",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4793568,
+   "sym": "Ret6147b4",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4322048,
+   "sym": "Table63dc6cGet",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4225568,
+   "sym": "Table8a9648Get",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4225600,
+   "sym": "Table8a9640Get",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4321536,
+   "sym": "FloatTable63dc64Get",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4513872,
+   "sym": "FloatTable8900a8Get",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4573264,
+   "sym": "Table88f09cClear",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4756720,
+   "sym": "Clear894f0",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4742096,
+   "sym": "StackPop485bd0",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4662608,
+   "sym": "Table691508Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4662560,
+   "sym": "Table69150cSet",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4662224,
+   "sym": "Init691500",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4215808,
+   "sym": "Clear639d70x3",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4781696,
+   "sym": "StridedClear76a100",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4781744,
+   "sym": "StridedClear766a00",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4781792,
+   "sym": "StridedClear770718",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4781840,
+   "sym": "StridedClear769f50",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4563152,
+   "sym": "Table68ba04Get",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4705792,
+   "sym": "Table6c9438Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4705920,
+   "sym": "Table6c9758Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4706608,
+   "sym": "Table6c71d8Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4573280,
+   "sym": "Clear88f0a0x4",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4563216,
+   "sym": "PtrGet68ba1c",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4662528,
+   "sym": "CondGet691500",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4573936,
+   "sym": "EqPredicate7f1a18",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4224992,
+   "sym": "FloatIdx639de0",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4756608,
+   "sym": "ContRecSet480",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4760672,
+   "sym": "StridedClear2_709238",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4322144,
+   "sym": "GatedSwitch636ad0",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4219760,
+   "sym": "Clear10x3_63a494",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4296272,
+   "sym": "Fill64_63c508",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4321248,
+   "sym": "BitExtract63dc74",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4364480,
+   "sym": "Clear67d99c_x4",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4399664,
+   "sym": "RecEq231",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4399712,
+   "sym": "RecEq232",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4558752,
+   "sym": "TtlSet68b1b0",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4560192,
+   "sym": "PoolJReset68ba00",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4597680,
+   "sym": "AudioStateActive",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4374944,
+   "sym": "StateAdvance2to3",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4399760,
+   "sym": "Trigger432290",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4538160,
+   "sym": "Fill6870b4",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4214272,
+   "sym": "IdxPtr404e00",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4494800,
+   "sym": "GlobalFieldGet896278",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4513824,
+   "sym": "FloatLt44e020",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4506480,
+   "sym": "GlobalFieldGet896000",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4329600,
+   "sym": "Fill63e5a4",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4468896,
+   "sym": "Util897fe0Set",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4468912,
+   "sym": "Util897fe0Get",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4388752,
+   "sym": "GhostModeIsActive",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4398448,
+   "sym": "CourseGetLeaderIndex",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5031904,
+   "sym": "RwGlobal6182b0Set",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4819936,
+   "sym": "RenderBitDepthGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4250752,
+   "sym": "UtilFloat63b910Get",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4250768,
+   "sym": "UtilSlotIndexCondGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4364384,
+   "sym": "RaceStateFlagGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4364352,
+   "sym": "RaceStateLatchSet",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4805920,
+   "sym": "Get771e78",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4735664,
+   "sym": "Clear4842b0",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4368880,
+   "sym": "GetFadeAlpha",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 6023472,
+   "sym": "AudioClear5be930",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5967008,
+   "sym": "CmdBuild5b0ca0Set",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 6020688,
+   "sym": "ClearDesc5bde50",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5342576,
+   "sym": "Rmw518570",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 6049072,
+   "sym": "CondGet5c4d30",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5929792,
+   "sym": "AudioCtxSwap5a7b40",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4705728,
+   "sym": "StoreDistSq47cdc0",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4215856,
+   "sym": "Pred405430",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4552368,
+   "sym": "AnyActive4576b0",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4579184,
+   "sym": "FloatStep45df70",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5966736,
+   "sym": "Init5b0b90",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5967632,
+   "sym": "Init5b0f10",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 6024016,
+   "sym": "Init5beb50",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 6066464,
+   "sym": "Init5c9120",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4658480,
+   "sym": "ClearTable471530",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4702384,
+   "sym": "ClearColl47c0b0",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4705856,
+   "sym": "Search47ce40",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4780640,
+   "sym": "Clear48f260",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4791248,
+   "sym": "ClearVB491bd0",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5923216,
+   "sym": "Clamp5a6190",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4860919,
+   "sym": "Tbl4a2bf7",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4573200,
+   "sym": "Inc45c810",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5003344,
+   "sym": "Get4c5850",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5004448,
+   "sym": "Get4c5ca0",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4689072,
+   "sym": "Memset478cb0",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4941248,
+   "sym": "Copy4b65c0",
+   "preserved": [
+    "eax",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4495488,
+   "sym": "Fill449880",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4998640,
+   "sym": "And4c45f0",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4936256,
+   "sym": "Or4b5240",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4756112,
+   "sym": "Reset489290",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4943904,
+   "sym": "Tbl4b7020",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5067904,
+   "sym": "Mark4d5480",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5073984,
+   "sym": "Set4d6c40",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5074064,
+   "sym": "Set4d6c90",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 5129040,
+   "sym": "Clear4e4350",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4680208,
+   "sym": "Copy476a10",
+   "preserved": [
+    "eax",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4558624,
+   "sym": "Set458f20",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4328832,
+   "sym": "IndexedFloatPairSum420d80",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4250800,
+   "sym": "TimerStateMachine40dcb0",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4573744,
+   "sym": "FloatClamp3Level45ca30",
+   "preserved": [
+    "eax"
+   ]
+  },
+  {
+   "rva": 4397904,
+   "sym": "SinGlobalProduct431b50",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4397856,
+   "sym": "SinGlobalProduct431b20",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4397920,
+   "sym": "SinGlobalProduct431b60",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4392848,
+   "sym": "GetDat0067f17c",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4315168,
+   "sym": "TimerSlotClear",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4317488,
+   "sym": "TimerTrackSetter",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4334272,
+   "sym": "TimerInitThunk",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4336400,
+   "sym": "TimerDwordClear",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4348688,
+   "sym": "TimerGlobalZero",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4312000,
+   "sym": "FloatTableInit",
+   "preserved": [
+    "eax",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4351536,
+   "sym": "PitchParamSet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4351728,
+   "sym": "PitchParam2Set",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4276112,
+   "sym": "TimerGetBasePtr",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4375280,
+   "sym": "SetDat0067ecb8",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4233392,
+   "sym": "LoadingState1Enter",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4233520,
+   "sym": "LoadingState3Enter",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4252480,
+   "sym": "GetLiveCarCount",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4466128,
+   "sym": "UtilZeroTable8964c0",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4572288,
+   "sym": "UtilZeroScatter45c480",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4785360,
+   "sym": "UtilZeroTable86a4a0",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5080416,
+   "sym": "UtilReturnOne4d8560",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 5627584,
+   "sym": "UtilDeref55dec0",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4238640,
+   "sym": "UtilSet8a95ac",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4239952,
+   "sym": "UtilReset8a9500",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4241104,
+   "sym": "UtilArrayGet8a94e0",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4362944,
+   "sym": "UtilWritePtr",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4369072,
+   "sym": "UtilInit898a90",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4638064,
+   "sym": "VehicleDampVec3",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4465680,
+   "sym": "CameraSlotFieldPtrGet",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4465696,
+   "sym": "CameraSlotFloatGet",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4340512,
+   "sym": "CarSnapshotDwordGet",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4353216,
+   "sym": "VehicleTable4cPtrGet",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4468208,
+   "sym": "RaceFloat898980Get",
+   "preserved": [
+    "eax",
+    "ecx",
+    "edx"
+   ]
+  },
+  {
+   "rva": 4733488,
+   "sym": "ReplayRewind",
+   "preserved": [
+    "edx"
+   ]
+  },
+  {
+   "rva": 4638640,
+   "sym": "VehicleSlotGetter",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4638576,
+   "sym": "VehicleDestructionStateGetter",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4643808,
+   "sym": "VehicleRacePositionGet",
+   "preserved": [
+    "ecx"
+   ]
+  },
+  {
+   "rva": 4290352,
+   "sym": "VehicleRaceAngleGet",
+   "preserved": [
+    "ecx",
+    "edx"
+   ]
+  }
+ ],
+ "confirmed": [
+  {
+   "rva": 4804336,
+   "sym": "ThunkVideoStateGet",
+   "file": "mashedmod/src/mashed_re/Boot/Teardown.cpp",
+   "reg": "eax",
+   "caller": 4668448,
+   "call_site": 4668465,
+   "use": "test eax, eax",
+   "use_addr": 4668473
+  },
+  {
+   "rva": 5627568,
+   "sym": "RwpWorldSolverHandle",
+   "file": "mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp",
+   "reg": "edx",
+   "caller": 4362960,
+   "call_site": 4362967,
+   "use": "lea esi, [edx + 8]",
+   "use_addr": 4362981
+  },
+  {
+   "rva": 4987392,
+   "sym": "IntroSplashVtableSlot6",
+   "file": "mashedmod/src/mashed_re/Frontend/IntroSplash.cpp",
+   "reg": "ecx",
+   "caller": 4323568,
+   "call_site": 4323908,
+   "use": "push ecx",
+   "use_addr": 4323932
+  },
+  {
+   "rva": 4392800,
+   "sym": "IsMultiplayerMode",
+   "file": "mashedmod/src/mashed_re/Frontend/MenuScoreGetters.cpp",
+   "reg": "ecx",
+   "caller": 4403872,
+   "call_site": 4404227,
+   "use": "test ecx, ecx",
+   "use_addr": 4404240
+  },
+  {
+   "rva": 4567888,
+   "sym": "RwInitNullStub",
+   "file": "mashedmod/src/mashed_re/Input/DirectInput.cpp",
+   "reg": "eax",
+   "caller": 4247824,
+   "call_site": 4248004,
+   "use": "push eax",
+   "use_addr": 4248015
+  },
+  {
+   "rva": 4567888,
+   "sym": "RwInitNullStub",
+   "file": "mashedmod/src/mashed_re/Input/DirectInput.cpp",
+   "reg": "eax",
+   "caller": 4204368,
+   "call_site": 4205307,
+   "use": "push eax",
+   "use_addr": 4205331
+  },
+  {
+   "rva": 4567888,
+   "sym": "RwInitNullStub",
+   "file": "mashedmod/src/mashed_re/Input/DirectInput.cpp",
+   "reg": "eax",
+   "caller": 4798224,
+   "call_site": 4798490,
+   "use": "movsx esi, ax",
+   "use_addr": 4798505
+  },
+  {
+   "rva": 4567888,
+   "sym": "RwInitNullStub",
+   "file": "mashedmod/src/mashed_re/Input/DirectInput.cpp",
+   "reg": "eax",
+   "caller": 4798224,
+   "call_site": 4798495,
+   "use": "movsx esi, ax",
+   "use_addr": 4798505
+  },
+  {
+   "rva": 4567888,
+   "sym": "RwInitNullStub",
+   "file": "mashedmod/src/mashed_re/Input/DirectInput.cpp",
+   "reg": "eax",
+   "caller": 4205120,
+   "call_site": 4205307,
+   "use": "push eax",
+   "use_addr": 4205331
+  },
+  {
+   "rva": 4567888,
+   "sym": "RwInitNullStub",
+   "file": "mashedmod/src/mashed_re/Input/DirectInput.cpp",
+   "reg": "eax",
+   "caller": 4247424,
+   "call_site": 4248004,
+   "use": "push eax",
+   "use_addr": 4248015
+  },
+  {
+   "rva": 4680240,
+   "sym": "ParticleEmitter_SetScalar",
+   "file": "mashedmod/src/mashed_re/Render/FrameHelpers_q2.cpp",
+   "reg": "ecx",
+   "caller": 4558848,
+   "call_site": 4559059,
+   "use": "cmp ecx, 0x13",
+   "use_addr": 4559082
+  },
+  {
+   "rva": 4353536,
+   "sym": "TrackLoaderFloatGet",
+   "file": "mashedmod/src/mashed_re/Render/TrackLoaderMicros_p3.cpp",
+   "reg": "ecx",
+   "caller": 4323568,
+   "call_site": 4323921,
+   "use": "push ecx",
+   "use_addr": 4323932
+  },
+  {
+   "rva": 4811008,
+   "sym": "SlotActiveThunk",
+   "file": "mashedmod/src/mashed_re/Util/PromoLoop_round24.cpp",
+   "reg": "eax",
+   "caller": 4375072,
+   "call_site": 4375115,
+   "use": "test eax, eax",
+   "use_addr": 4375123
+  },
+  {
+   "rva": 4811008,
+   "sym": "SlotActiveThunk",
+   "file": "mashedmod/src/mashed_re/Util/PromoLoop_round24.cpp",
+   "reg": "eax",
+   "caller": 4403872,
+   "call_site": 4404533,
+   "use": "test eax, eax",
+   "use_addr": 4404541
+  },
+  {
+   "rva": 4388768,
+   "sym": "GhostFlagReset",
+   "file": "mashedmod/src/mashed_re/Util/PromoLoop_round28.cpp",
+   "reg": "eax",
+   "caller": 4248176,
+   "call_site": 4248515,
+   "use": "mov dword ptr [0x80332c], eax",
+   "use_addr": 4248525
+  },
+  {
+   "rva": 4797824,
+   "sym": "Set771970_1",
+   "file": "mashedmod/src/mashed_re/Util/PromoLoop_round29.cpp",
+   "reg": "eax",
+   "caller": 4446144,
+   "call_site": 4447174,
+   "use": "cmp eax, 0xff210000",
+   "use_addr": 4447204
+  },
+  {
+   "rva": 4941216,
+   "sym": "Global7d3e4cGetThunk",
+   "file": "mashedmod/src/mashed_re/Util/PromoLoop_round30.cpp",
+   "reg": "eax",
+   "caller": 4556704,
+   "call_site": 4556799,
+   "use": "push eax",
+   "use_addr": 4556814
+  },
+  {
+   "rva": 4941216,
+   "sym": "Global7d3e4cGetThunk",
+   "file": "mashedmod/src/mashed_re/Util/PromoLoop_round30.cpp",
+   "reg": "eax",
+   "caller": 4783904,
+   "call_site": 4783945,
+   "use": "push eax",
+   "use_addr": 4783960
+  },
+  {
+   "rva": 4941216,
+   "sym": "Global7d3e4cGetThunk",
+   "file": "mashedmod/src/mashed_re/Util/PromoLoop_round30.cpp",
+   "reg": "eax",
+   "caller": 4267824,
+   "call_site": 4267886,
+   "use": "push eax",
+   "use_addr": 4267901
+  },
+  {
+   "rva": 4372816,
+   "sym": "Set7f1a0c_1000",
+   "file": "mashedmod/src/mashed_re/Util/PromoLoop_round33.cpp",
+   "reg": "eax",
+   "caller": 4446144,
+   "call_site": 4447179,
+   "use": "cmp eax, 0xff210000",
+   "use_addr": 4447204
+  },
+  {
+   "rva": 4322144,
+   "sym": "GatedSwitch636ad0",
+   "file": "mashedmod/src/mashed_re/Util/PromoLoop_round66.cpp",
+   "reg": "ecx",
+   "caller": 4326208,
+   "call_site": 4326280,
+   "use": "mov edx, dword ptr [ecx + 0x18]",
+   "use_addr": 4326294
+  },
+  {
+   "rva": 4250752,
+   "sym": "UtilFloat63b910Get",
+   "file": "mashedmod/src/mashed_re/Util/PromoLoop_round9.cpp",
+   "reg": "ecx",
+   "caller": 4363872,
+   "call_site": 4364077,
+   "use": "push ecx",
+   "use_addr": 4364088
+  },
+  {
+   "rva": 4250752,
+   "sym": "UtilFloat63b910Get",
+   "file": "mashedmod/src/mashed_re/Util/PromoLoop_round9.cpp",
+   "reg": "ecx",
+   "caller": 4363872,
+   "call_site": 4364278,
+   "use": "push ecx",
+   "use_addr": 4364289
+  },
+  {
+   "rva": 4250752,
+   "sym": "UtilFloat63b910Get",
+   "file": "mashedmod/src/mashed_re/Util/PromoLoop_round9.cpp",
+   "reg": "ecx",
+   "caller": 4365264,
+   "call_site": 4365771,
+   "use": "push ecx",
+   "use_addr": 4365782
+  },
+  {
+   "rva": 4658480,
+   "sym": "ClearTable471530",
+   "file": "mashedmod/src/mashed_re/Util/PromoLoop_sessionB.cpp",
+   "reg": "edx",
+   "caller": 4660720,
+   "call_site": 4660733,
+   "use": "cmp edx, 0x10",
+   "use_addr": 4660752
+  },
+  {
+   "rva": 5067904,
+   "sym": "Mark4d5480",
+   "file": "mashedmod/src/mashed_re/Util/PromoLoop_sessionB.cpp",
+   "reg": "edx",
+   "caller": 5069760,
+   "call_site": 5071092,
+   "use": "push edx",
+   "use_addr": 5071106
+  },
+  {
+   "rva": 5067904,
+   "sym": "Mark4d5480",
+   "file": "mashedmod/src/mashed_re/Util/PromoLoop_sessionB.cpp",
+   "reg": "edx",
+   "caller": 5069760,
+   "call_site": 5071101,
+   "use": "push edx",
+   "use_addr": 5071106
+  }
+ ]
+}

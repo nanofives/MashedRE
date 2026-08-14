@@ -1,0 +1,20 @@
+JS  int_scalar                       uses=142 L398   | int_scalar — single uint32 arg, any integer return type
+JS  void_write_observe               uses=51  L4941  | This detects whether both functions write the same value to the same address; the sentinel also confirms the f
+JS  void_setter_observe              uses=40  L537   | Use for void(uint32) setters that write param_1 directly to a global. Strategy: call fn(value), read back targ
+JS  scalars_to_scattered_globals     uses=30  L4761  | Tests: list of { args:[...] } (or a raw array of args). Unlocks: 0x00417450/0x00417530 sparse-grid (fixed glob
+JS  int_pair                         uses=23  L370   | int_pair — two uint32 args
+JS  state_machine_observe            uses=13  L741   |  Returns a hex string packing all output globals (32 bits each) so BigInt-sized observables don't lose precisi
+JS  struct_call_observe              uses=13  L1213  | tests[i]: { seeds:[{off,type,value}], nested:[{ptr_off,size,fields:[{off,type,value}]}] } type for seeds: u8|u
+JS  ptr_arg_int_get                  uses=10  L413   | is left Queued, never falsely GREEN. NOT in SEEDED_ARG_TYPES: we rely on the natural non-degeneracy of a real 
+JS  entity_field_set                 uses=8   L621   | entity_field_set — fn(int param_1, uint32 param_2): void write to global array. input: [param_1, param_2].  Ca
+JS  ptr_seed_observe                 uses=8   L1314  | {i32:true} -> next value from test.scalars CONFIG.observe     array  [{buf:i, off:N, type:'f32'|'u8'|'u16'|'u3
+JS  track_record_deref               uses=8   L4037  | is_getter         bool      — if true, compare return value; if false (dispatcher), use crash_equal_ok (both s
+JS  bgra_encode                      uses=6   L1502  | Unblocks: 0x004df8d0 PixEncode1555, 0x004df910 PixEncode4444, 0x004df950 PixEncodeA8R3G3B2, 0x004df980 PixEnco
+JS  float_scalar                     uses=6   L224   | ── Simple scalar types ───────────────────────────────────────────────────
+JS  fmt_desc_pair_compare            uses=6   L3578  | bufA fingerprint ^ (bufB fingerprint << 8) -- both buffers since some comparators may set flag bits in either 
+JS  multi_arg_global_write           uses=6   L799   | out_base      — hex addr of the first written global out_count     — number of consecutive u32 slots to read b
+JS  cache_setter_observe             uses=4   L509   | tests[i] = { seed:[{addr:'0x..', val:<u32>}], args:[...], obs:['0x..', ...] } obs may be omitted to fall back 
+JS  count_header_list_ring           uses=4   L4845  | Observables are ADDRESS-NORMALIZED (count + cmp-field value / found field / -1), never raw pointers, so per-si
+JS  out3_idx                         uses=4   L553   | out3_idx — fn(out_buf_ptr, uint32_idx); buf is first arg (12 bytes); returns fn return value. Used for functio
+JS  outbuf_only                      uses=4   L1995  | whose *out = a per-frame-moving DAT_0063d588). Unlocks the single-out-ptr class: SlotSortByModeScore 0x0040b62
+JS  stub_dispatch_observe            uses=4   L2509  | Pointer arguments the recorder receives are NORMALISED to "b<i>+<off>" against the scratch buffers, because th

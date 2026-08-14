@@ -1,116 +1,29 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-04T04:00:00Z",
+  "updatedAt": "2026-08-13T12:04:00Z",
   "sections": [
     {
-      "heading": "Current milestone",
+      "heading": "Status",
       "fields": [
-        {
-          "label": "Phase",
-          "value": "R7 (scaffold→verbatim)",
-          "kind": "text"
-        },
-        {
-          "label": "Milestone",
-          "value": "M2 Faithful Race (in progress)",
-          "kind": "text"
-        },
-        {
-          "label": "Critical path",
-          "value": "Statediff residual wedge (~1/6 boots, second mechanism unbisected)",
-          "kind": "text"
-        },
-        {
-          "label": "Branch",
-          "value": "fix/u9025-recharacterise-and-regabi-defects",
-          "kind": "text"
-        }
+        { "label": "Phase", "value": "R7 (scaffold→verbatim)", "kind": "text" },
+        { "label": "Current branch", "value": "fix/u9025-recharacterise-and-regabi-defects", "kind": "text" },
+        { "label": "Attention needed", "value": ["3 unmerged worktrees", "backup refresh (42 days old)"], "kind": "list" }
       ]
     },
     {
-      "heading": "Confidence ladder",
+      "heading": "Progress",
       "fields": [
-        {
-          "label": "C1",
-          "value": 795,
-          "kind": "number"
-        },
-        {
-          "label": "C2",
-          "value": 4005,
-          "kind": "number"
-        },
-        {
-          "label": "C3",
-          "value": 881,
-          "kind": "number"
-        },
-        {
-          "label": "C4",
-          "value": 185,
-          "kind": "number"
-        },
-        {
-          "label": "C3+ coverage",
-          "value": "1,066 functions (18.1%)",
-          "kind": "text"
-        }
+        { "label": "Functions C3+", "value": 1066, "kind": "number" },
+        { "label": "Functions C4", "value": 185, "kind": "number" },
+        { "label": "Coverage", "value": "18.2% C3+, 3.2% C4", "kind": "text" }
       ]
     },
     {
-      "heading": "Recent work",
+      "heading": "Active work",
       "fields": [
-        {
-          "label": "B5 physics",
-          "value": "PORT COMPLETE (all K1..K24 merged main 2026-07-20); C4-verify campaign owns statediff lane",
-          "kind": "text"
-        },
-        {
-          "label": "QoL patches shipped",
-          "value": [
-            "FPS decoupling (0.998x @ 165fps)",
-            "Interpolation (camera + cars + wheels + shadows, verified by burst instrument)",
-            "Jump bug fix (MASHED_JUMPFIX)",
-            "Render resolution (native borderless)",
-            "FPS/ms OSD (F11)"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "QoL open (powerups)",
-          "value": "ROOT CAUSE PROVEN 2026-08-04: powerups draw in the LOGIC TICK, not the render pass (static reachability: FUN_0045a190/0045bba0/00459000 are logic-only; cars/shadow are render-reachable). Render-time interp cannot reach them -- explains every 'still stepping'. Fix needs draw-replay in the render pass (dedicated re-architecture). All overlay-interp paths gated OFF (MASHED_INTERP_OVERLAYS). QOL_PATCH_PLAN Item 6.",
-          "kind": "text"
-        },
-        {
-          "label": "Render (M3 gateway)",
-          "value": "librw ratified as shipping renderer (D2 decided 2026-07-31); fog fix closed I4 2026-08-02",
-          "kind": "text"
-        },
-        {
-          "label": "Getters lane",
-          "value": "MINED OUT (0/56 safe non-degenerate across subsystems)",
-          "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "Trackers",
-      "fields": [
-        {
-          "label": "DEFERRED",
-          "value": 672,
-          "kind": "number"
-        },
-        {
-          "label": "STUBS",
-          "value": 1107,
-          "kind": "number"
-        },
-        {
-          "label": "UNCERTAINTIES",
-          "value": 3003,
-          "kind": "number"
-        }
+        { "label": "Current", "value": "QoL Item 6 (powerup render path)", "kind": "text" },
+        { "label": "Last merge", "value": "B5e solver island (2026-07-20)", "kind": "text" },
+        { "label": "Blocker", "value": "statediff residual wedge", "kind": "text" }
       ]
     }
   ]

@@ -1,0 +1,1094 @@
+[
+ {
+  "name": "range_init",
+  "line": 77,
+  "uses": 14,
+  "cur": "void fn(): writes a contiguous global range [tgt, tgt+len) \u2014 snapshot whole range"
+ },
+ {
+  "name": "global_field_read",
+  "line": 66,
+  "uses": 12,
+  "cur": "fn(): return *(*(global)+field_off) \u2014 point global at a seeded buffer"
+ },
+ {
+  "name": "near_leaf_seed_multi_obs",
+  "line": 209,
+  "uses": 12,
+  "cur": "void fn(void): NEAR-LEAF that reads pure C3 getters and conditionally writes SEVERAL absolute globals. cfg.observe_addrs=[...]. seed_sets[t]={globals:"
+ },
+ {
+  "name": "deref_struct_set",
+  "line": 103,
+  "uses": 11,
+  "cur": "void fn(ptr p, scalar...): writes deterministic values into fields of p. alloc+seed buffer, pass as p, call with nscalar args, snapshot observe offset"
+ },
+ {
+  "name": "indexed_table_set",
+  "line": 76,
+  "uses": 9,
+  "cur": "void fn(i,val): *(tgt + i*stride) = val (fixed i=set_idx, vary val)"
+ },
+ {
+  "name": "deref_p1field_glob_set",
+  "line": 121,
+  "uses": 6,
+  "cur": "fn(p1[, p2/v]): base=*(u32*)(*(u32*)(p1+p1_off)+*(u32*)glob); reimpl writes base fields. seed glob=0, p1->atab->base, optional p2 in-ptr(n) or scalar;"
+ },
+ {
+  "name": "seed_globals_arg_multiobs",
+  "line": 224,
+  "uses": 6,
+  "cur": "void fn(int arg): PURE LEAF global-cascade. Per cfg.seed_sets[t]={arg, globals:[[a,v]...]} seed input globals (+ queue/sentinel), call f(arg), observe"
+ },
+ {
+  "name": "abs_ranges_setter",
+  "line": 144,
+  "uses": 5,
+  "cur": "void fn(scalars...): writes to ABSOLUTE globals (no ptr args). Reset cfg.abs_ranges [{addr,dwords}] to 0, call fn(test scalars), snapshot the same ran"
+ },
+ {
+  "name": "const_return",
+  "line": 65,
+  "uses": 5,
+  "cur": "fn(): return <fixed constant> \u2014 no input, no state; call + compare"
+ },
+ {
+  "name": "struct_const_init",
+  "line": 116,
+  "uses": 5,
+  "cur": "[u32] fn([passthrough,] ptr p): writes deterministic consts/computed to p's fields. alloc 0x400 buf, snapshot observe offsets (+ret if passthrough). t"
+ },
+ {
+  "name": "ptr_out_table_get",
+  "line": 79,
+  "uses": 4,
+  "cur": "u32 fn(out_ptr,idx): if(idx>=bound) return 0; out[0..n-1]=*(u32*)(base+idx*stride+j*4); return 1"
+ },
+ {
+  "name": "container_record_set",
+  "line": 88,
+  "uses": 3,
+  "cur": "void fn(container,..): base=container[0],idx=container[2]; addr=base+idx*0x30; write args into addr+offs. shape p/f/pp"
+ },
+ {
+  "name": "flag_multibit",
+  "line": 101,
+  "uses": 3,
+  "cur": "void fn(idx,b1,b2[,b3]): RMW flag word at base+idx*stride via reimpl bit logic. test=[idx,b1,b2(,b3),seed]"
+ },
+ {
+  "name": "idx2_table_get",
+  "line": 80,
+  "uses": 3,
+  "cur": "u32 fn(out_ptr,i1,i2): if(i1>=bound||i2>=bound2) return 0; *out=*(u32*)(base+(i1*mult+i2)*stride); return 1"
+ },
+ {
+  "name": "near_leaf_seed_globals",
+  "line": 206,
+  "uses": 3,
+  "cur": "u32 fn(void): NEAR-LEAF that reads pure global getters (C3 callees) and returns a derived int. seed_sets[t]={globals:[[abs_addr,val],...]} written bef"
+ },
+ {
+  "name": "near_leaf_seed_outbuf",
+  "line": 216,
+  "uses": 3,
+  "cur": "NEAR-LEAF reading seedable abs table(s) via C3 getter callee(s), writing a small out-buffer arg and/or returning a derived int. cfg.out_size/out_argpo"
+ },
+ {
+  "name": "ptr_fields_clear",
+  "line": 72,
+  "uses": 3,
+  "cur": "void fn(ptr): zero fields of a struct arg; check observe offsets"
+ },
+ {
+  "name": "table_bool_predicate",
+  "line": 105,
+  "uses": 3,
+  "cur": "u32 fn(i): if(bound>=0 && (int)i<=bound) return 0; return (*(u32*)(tgt+i*stride+off0) {==|!=} 0)?1:0. test=[idx,slotval]"
+ },
+ {
+  "name": "double_deref_vec3_get",
+  "line": 109,
+  "uses": 2,
+  "cur": "void fn(i,out*): rec=*(tgt+i*stride); t=*(rec+rec_off); out[k]=*(t+out_off+k*4) for k<span. test=idx"
+ },
+ {
+  "name": "eax_implicit_void",
+  "line": 68,
+  "uses": 2,
+  "cur": "void fn() with `this` in EAX \u2014 trampoline sets EAX=buf, check observed fields"
+ },
+ {
+  "name": "esi_struct_init",
+  "line": 245,
+  "uses": 2,
+  "cur": "void fn(ESI=p): NEAR-LEAF struct initializer; pointer is a REGISTER arg in ESI. Orig driven via esi-trampoline (mov esi,buf; jmp rva); Reim is plain _"
+ },
+ {
+  "name": "float_2ptr_ret",
+  "line": 148,
+  "uses": 2,
+  "cur": "float fn(a*, b*): pure float of two vec3 args (dot/clamp/etc.), returns ST0. Seed a,b from cfg.seed_pairs[t]={a:[3 floats],b:[3 floats]} (plain number"
+ },
+ {
+  "name": "float_table_read",
+  "line": 67,
+  "uses": 2,
+  "cur": "fn(i): return *(float*)(base+i*stride) \u2014 seed_table bits read as float"
+ },
+ {
+  "name": "gated_record_eq2",
+  "line": 94,
+  "uses": 2,
+  "cur": "u32 fn(): g=*(int*)gate; rec=base+g*stride; return (*(rec+off0)==v0 && *(rec+off1)==v1)?1:0. test=[gidx,s0,s1]"
+ },
+ {
+  "name": "global4_bool_out",
+  "line": 92,
+  "uses": 2,
+  "cur": "void fn(out): reads N globals at base[k], writes out[k]=predicate(base[k])?1:0. test indexes cfg.seedvecs"
+ },
+ {
+  "name": "index_then_ptr_array",
+  "line": 100,
+  "uses": 2,
+  "cur": "fn(args): comp=mult?a0*mult+a1:a0; idx=*(int*)(base_idx+comp*4); if(idx==-1) return 0; return *(u32*)(basePtr+idx*4). test=[a0(,a1),idxval]"
+ },
+ {
+  "name": "indexed_global_field_read",
+  "line": 128,
+  "uses": 2,
+  "cur": "u32 fn(): return *(u32*)(*(u32*)tgt + *(u32*)glob + field_off). seed tgt->buf, glob->idx(nonzero), place test at buf[idx+field_off]. verifies base ptr"
+ },
+ {
+  "name": "indexed_global_field_write",
+  "line": 129,
+  "uses": 2,
+  "cur": "int fn(v): *(u32*)(*(u32*)tgt + *(u32*)glob + field_off)=v; return const/v. seed tgt->buf, glob->idx; call; observe slot|ret. test=v"
+ },
+ {
+  "name": "indexed_vec_set",
+  "line": 89,
+  "uses": 2,
+  "cur": "void fn(idx,in): addr=base+idx*stride; if(in) write n dwords from in to addr+j*4 else zero them"
+ },
+ {
+  "name": "int2_scalar",
+  "line": 62,
+  "uses": 2,
+  "cur": "pure function of TWO int args (no memory) \u2014 tests are [p1,p2] pairs"
+ },
+ {
+  "name": "ptr_buffer_op",
+  "line": 132,
+  "uses": 2,
+  "cur": "void fn(ptr p): memset/memcpy-from-abs over a buffer at p. alloc buf_dwords*4, fill sentinel 0xA5A5A5A5, call fn(buf), snapshot observe_offs. test ign"
+ },
+ {
+  "name": "table_ret_ptrout",
+  "line": 84,
+  "uses": 2,
+  "cur": "u32 fn(idx,out): addr=base+idx*stride; if(out) *out=*(u32*)(addr+off0); return *(u32*)(addr+off1)"
+ },
+ {
+  "name": "thiscall_struct_from_table",
+  "line": 130,
+  "uses": 2,
+  "cur": "__thiscall fn(this): idx=this[idx_off]; record=tbl+idx*tbl_stride; derive into this fields. orig=thiscall(ECX), reimpl=__cdecl(self). seed this+table,"
+ },
+ {
+  "name": "two_global_predicate",
+  "line": 99,
+  "uses": 2,
+  "cur": "u32 fn(): reads gate global + tgt global, returns membership (1/0). test=[g1seed,g2seed]"
+ },
+ {
+  "name": "aabb_sphere_overlap",
+  "line": 194,
+  "uses": 1,
+  "cur": "int fn(box* arg1, sphere* arg2): box={min.xyz@0,4,8; max.xyz@0xc,0x10,0x14}; sphere={center.xyz@0,4,8; radius@0xc}. block1: center strictly inside box"
+ },
+ {
+  "name": "abs_region_zeroer",
+  "line": 175,
+  "uses": 1,
+  "cur": "void fn(): strided record-array zeroer (base glob, stride 0x8c) that also writes record index (word) to [+0x1c], + trailing tgt=0. Pure writer; sentin"
+ },
+ {
+  "name": "abs_scan_flag",
+  "line": 158,
+  "uses": 1,
+  "cur": "void fn(): scans an absolute dword range; if any nonzero, sets flag global=0xff (else leaves it). Reset scan range (glob, span dwords) to 0 + flag(tgt"
+ },
+ {
+  "name": "abs_table_state_setter",
+  "line": 177,
+  "uses": 1,
+  "cur": "u32 fn(i, arg2): if(i<0||i>=0x19) return 0; rec=glob+i*0x50; if(arg2==0){rec[0x20]=3;rec[0x1c]=0} elif(rec[0x20]==3){rec[0x20]=1;rec[0x1c]=0} else {re"
+ },
+ {
+  "name": "abstable_ptr_zero",
+  "line": 135,
+  "uses": 1,
+  "cur": "void fn(idx): ptr=*(u32*)(abstable+idx*4); operate on a buffer at ptr. seed abstable[idx]=&scratch, fill sentinel, call fn(idx), observe scratch at ob"
+ },
+ {
+  "name": "any_slot_nonzero",
+  "line": 113,
+  "uses": 1,
+  "cur": "u32 fn(): return any(observe[k].addr nonzero)?1:0. test=index to set nonzero (-1=all zero)"
+ },
+ {
+  "name": "arg_default_memcpy_abs",
+  "line": 165,
+  "uses": 1,
+  "cur": "void fn(src): if(!src) src=glob(default); memcpy(tgt, src, copy_dwords*4). test0: src=&buf(markers)->dest=markers; test1: src=0->dest=copy of default."
+ },
+ {
+  "name": "arg_flag_branch_getter",
+  "line": 160,
+  "uses": 1,
+  "cur": "u32 fn(arg*): pure getter; if(arg[0x20]){ p=arg[0]; f=p[0x40]&0xfffffff; return (arg[0x1c]&2)?f+arg[0x20]+4:f+arg[0x20]; } else return (arg[0x1c]&2)?a"
+ },
+ {
+  "name": "arg_scattered_globals",
+  "line": 85,
+  "uses": 1,
+  "cur": "void fn(arg): observe globals after call, vary arg (switch/branch setter -> distinct globals per arg)"
+ },
+ {
+  "name": "arg_table_linear_search",
+  "line": 114,
+  "uses": 1,
+  "cur": "int fn(key, table*, count): for i<count if(table[i*stride_dw]==key) return i; return -1. test=[key,placeAt,count]"
+ },
+ {
+  "name": "arg_to_global_ret",
+  "line": 127,
+  "uses": 1,
+  "cur": "u32 fn(v): reimpl writes *tgt + returns (deterministic fn of v). seed tgt sentinel, call, check tgt+ret. test=v"
+ },
+ {
+  "name": "array_fill_2way",
+  "line": 176,
+  "uses": 1,
+  "cur": "void fn(p, src): count=p[0xc]; if(!count) return; arr1=p[0]; arr2=p[4]; for i in [0,count): *(arr1+i*12)=*src (vec3 copy); *(arr2+i*12)={0,0,0}. seed "
+ },
+ {
+  "name": "bitfield_range_set",
+  "line": 244,
+  "uses": 1,
+  "cur": "void fn(uint8** pbuf, uint startbit, uint nbits, int fill): PURE LEAF. buf=*pbuf; sets bits [startbit,startbit+nbits) of the bit-array buf to (fill!=0"
+ },
+ {
+  "name": "bitmap_alloc_slot",
+  "line": 182,
+  "uses": 1,
+  "cur": "u32 fn(): scan bitmap 0x6bf198 for first clear bit idx<0x100; if found rec=0x693198+idx*0x2c0; rec[0x2b0]=0,[0x2b8]=0,[0x2b4]=1,[0x2bc]=30.0f; set the"
+ },
+ {
+  "name": "bitmap_blit",
+  "line": 198,
+  "uses": 1,
+  "cur": "int fn(dst* arg1, src* arg2): dst{[4]=channels,[8]=rows,[0xc]=width_bits,[0x10]=dst_stride,[0x14]=dst_px,[0x18]=dst_pal}; src{[0xc]=pal_bits,[0x10]=sr"
+ },
+ {
+  "name": "bounded_struct_push",
+  "line": 186,
+  "uses": 1,
+  "cur": "void fn(p, arg2, arg3): top=p[8]; cap=p[4]; if(top>=cap){p[8]=cap; return;} buf=p[0]; off=top*0x30; rec=buf+off+4; rec[0..8]=arg2 vec3; buf[off+0x1c]="
+ },
+ {
+  "name": "bounded_table_signselect_clamp",
+  "line": 223,
+  "uses": 1,
+  "cur": "int fn(uint idx, int val): PURE LEAF. if(idx>=0x10) ret 0; b=*(u8*)(t2Tbl + (*(int*)(t1Tbl+idx*16))*0x4c); slot=&t3Tbl[idx*t3Stride]; *slot += (float)"
+ },
+ {
+  "name": "bounded_thunk_orflag",
+  "line": 243,
+  "uses": 1,
+  "cur": "int fn(uint idx, uint a2): NEAR-LEAF bounds-checked adjustor thunk -> C3. if(idx<0xc8 && (s=*(int*)(cfg.tbl+idx*4))) -> if(a2) s[2]|=4. Build s at cfg"
+ },
+ {
+  "name": "byte_args_to_globals",
+  "line": 107,
+  "uses": 1,
+  "cur": "void fn(u8 a,u8 b,..): write byte args to byte globals (observe addrs). test=[a,b,..]"
+ },
+ {
+  "name": "byte_counter_struct",
+  "line": 164,
+  "uses": 1,
+  "cur": "void fn(p): a=p[0]+1; if(a>=p[3]) a-=p[3]; p[0]=a&0xff; p[1]=(p[1]-1)&0xff. seed p[0],p[1],p[3] per cfg.seed_sets[t]={b0,b1,b3}; observe p[0]|p[1]. no"
+ },
+ {
+  "name": "byte_idx_table_bitclear",
+  "line": 166,
+  "uses": 1,
+  "cur": "void fn(p): if(p[1]!=p[3]){ off=p[1]+p[0]; if(off>=p[3]) off-=p[3]; p[1]++; ptr=p[4]+off*0x14; } else ptr=0; *ptr&=~8. seed p[0]/p[1]/p[3](b1!=b3), p["
+ },
+ {
+  "name": "case_insensitive_ncmp",
+  "line": 193,
+  "uses": 1,
+  "cur": "int fn(char* s1, char* s2, int n): bounded case-insensitive compare with a CUSTOM inline-ASCII toupper. ASYMMETRIC: s1 applies &0xdf to 0x5b-0x60 (cmp"
+ },
+ {
+  "name": "circular_dll_search",
+  "line": 140,
+  "uses": 1,
+  "cur": "u32 fn(p, key): circular list at p[0x10] (sentinel=p+0x10), node[0]=next, object=node-0x18; returns object whose addr==key, else 0. build 3-obj circul"
+ },
+ {
+  "name": "circular_list_search_node",
+  "line": 168,
+  "uses": 1,
+  "cur": "u32 fn(list, key): walk circular list (sentinel=list, *list=first, node[0]=next); each node: if *(node-0x44)==key return node-0x4c; else next; return "
+ },
+ {
+  "name": "circular_str_search_ci",
+  "line": 195,
+  "uses": 1,
+  "cur": "void* fn(list* arg1, char* query): circular list at arg1[8] (sentinel=&arg1[8]); node[0]=next, node+8=key string, object=node-8; case-insensitive comp"
+ },
+ {
+  "name": "cond_deref_get",
+  "line": 104,
+  "uses": 1,
+  "cur": "u32 fn(ptr p): if(*(u32*)(p+gate_off)) return *(u32*)(p+val_off); else 0. test=[gateval,val]"
+ },
+ {
+  "name": "cond_table_get",
+  "line": 81,
+  "uses": 1,
+  "cur": "u32 fn(idx): rec=base+idx*stride; return *(rec+offf) ? *(rec+off1) : *(rec+off0)"
+ },
+ {
+  "name": "copy_arg_to_globals",
+  "line": 118,
+  "uses": 1,
+  "cur": "void fn(ptr p): copy len(observe) dwords from p to observe[k].addr globals. test ignored"
+ },
+ {
+  "name": "deref_byte_flag",
+  "line": 119,
+  "uses": 1,
+  "cur": "void fn(ptr p, set): b=*(u8*)(p+field_off); set?b|=bit:b&=~bit; store. test=[set,seedbyte]"
+ },
+ {
+  "name": "deref_float_field_rmw",
+  "line": 112,
+  "uses": 1,
+  "cur": "void fn(ptr p,float f): *(float*)(p+field_off) -= f (seedf initial). test=fval"
+ },
+ {
+  "name": "dll_get_nth",
+  "line": 141,
+  "uses": 1,
+  "cur": "u32 fn(p, cont, idx): DLL get Nth (fwd from p[0x20]=head if idx<count/2 else bwd from p[0x24]=tail; count=cont[8]); node[0]=next,node[4]=prev; returns"
+ },
+ {
+  "name": "dll_head_insert",
+  "line": 227,
+  "uses": 1,
+  "cur": "void fn(struct* p): PURE LEAF intrusive DLL head-insert. node=p[0xa0]; if((node[3]&3)==0) insert at head of list *cfg.glob (sentinel @+0xbc; node+8=ne"
+ },
+ {
+  "name": "dll_insert_head",
+  "line": 155,
+  "uses": 1,
+  "cur": "void fn(list, node): if(node[4]) unlink; node[4]=list; node[0xc]=list+8; old=*(list+8); node[8]=old; *(old+4)=&node[8]; *(list+8)=&node[8] (intrusive "
+ },
+ {
+  "name": "dll_merge_swap",
+  "line": 231,
+  "uses": 1,
+  "cur": "void fn(void): PURE LEAF circular-list merge+swap on table entry base=*glob_a+*glob_b. seed *glob_a=&mybuf, *glob_b=0; mybuf+0x20=B,+0x24=A,+8=sentine"
+ },
+ {
+  "name": "dll_remove_count",
+  "line": 154,
+  "uses": 1,
+  "cur": "void fn(list, node): list[0]--; A=node[0x24]; B=node[0x20]; *A=B; *(B+4)=A. (A pure-read search loop precedes it but converges either way; skipped by "
+ },
+ {
+  "name": "dll_unlink",
+  "line": 139,
+  "uses": 1,
+  "cur": "void fn(list, node+0xc): doubly-linked-list unlink (node[0]=next,node[4]=prev,list[8]=head,list[0xc]=sentinel). build 3-node DLL fresh each side, remo"
+ },
+ {
+  "name": "double_deref_ptr_get",
+  "line": 111,
+  "uses": 1,
+  "cur": "void fn(out*,idx): rec=*(tgt+idx*stride); *out=*(rec+rec_off)+add. test=idx"
+ },
+ {
+  "name": "double_indexed_float_mul",
+  "line": 220,
+  "uses": 1,
+  "cur": "float fn(int idx): PURE LEAF. c=*(int*)(idx*S+aTbl); d=*(int*)(idx*S+bTbl); e=d+c*4; return *(float*)(fTbl+e*4) * *(float*)K. Seed idx=0: aTbl=0, bTbl"
+ },
+ {
+  "name": "eax_dest_memcpy_init",
+  "line": 170,
+  "uses": 1,
+  "cur": "void fn(EAX=dest, src, arg2*, arg3, arg4): dest[0x54]=0; dest[0x48]=0; dest[0x4c]=arg3; dest[0x58]=1; dest[0x50]=arg4; memcpy(dest,src,16 dwords); des"
+ },
+ {
+  "name": "eax_ecx_float_hash",
+  "line": 192,
+  "uses": 1,
+  "cur": "float fn(EAX=a, ECX=b): if(a) b&=a; x=(b<<13)^b; h=((x*x*0x3d73+0xc0ae5)*x - 0x2df722f3) & 0x7fffffff; return fild(h) * .rdata(0x5cd314) (dead fadd 0x"
+ },
+ {
+  "name": "eax_edi_out",
+  "line": 150,
+  "uses": 1,
+  "cur": "void fn(EAX=v, EDI=out*): writes out[0..2] computed from v. ORIG via `mov eax,v; mov edi,outbuf; jmp` trampoline; REIMPL __cdecl(v, out) (compares out"
+ },
+ {
+  "name": "eax_out_2float",
+  "line": 230,
+  "uses": 1,
+  "cur": "void fn(EAX=out ptr, float a1@[esp+4], float a2@[esp+8]): PURE LEAF EAX-implicit output. Trampoline `mov eax,outbuf; jmp target`, NativeFunction(void,"
+ },
+ {
+  "name": "eax_struct_deref_write",
+  "line": 236,
+  "uses": 1,
+  "cur": "void fn(EAX=s): PURE LEAF. if(s[0x1b4]==s[0x1b8]) return; s[0x1b8]=s[0x1b4]; for 12 offsets write table[idx](@cfg.tbl) into chain s[OFF]->+0x18->+0x20"
+ },
+ {
+  "name": "eax_struct_stack_out",
+  "line": 134,
+  "uses": 1,
+  "cur": "void fn(EAX=struct ptr, [esp+4]=out ptr): compute from struct fields into *out. trampoline `mov eax,sbuf; jmp`, NativeFunction(void,['pointer']) calle"
+ },
+ {
+  "name": "ebx_edi_global_find",
+  "line": 180,
+  "uses": 1,
+  "cur": "u32 fn(EBX=key, EDI=n): idx=*(glob); arr=*(tgt + idx*0x40); same walk as edx_ebx_edi_find. seed idx=0 + arr ptr + build arr. ORIG via call-trampoline "
+ },
+ {
+  "name": "edx_ebx_edi_find",
+  "line": 179,
+  "uses": 1,
+  "cur": "u32 fn(EDX=arr, EBX=key, EDI=n): walk arr (terminated 0xff070000); find (n+1)-th element==key, return the FOLLOWING element; else -1. ORIG via a CALL-"
+ },
+ {
+  "name": "engine_register_funcs",
+  "line": 235,
+  "uses": 1,
+  "cur": "int fn(void): PURE LEAF straight-line; stores fixed funcptr constants into (*cfg.glob)+cfg.observe_offs; ret 1. seed *glob=struct (sentinel-filled), o"
+ },
+ {
+  "name": "eq_predicate_get",
+  "line": 83,
+  "uses": 1,
+  "cur": "u32 fn(p1,p2): if(*(int*)gate<gatemax && p2>=0) return tbl[p1*stride]==tbl[p2*stride]?1:0; return 0"
+ },
+ {
+  "name": "esi_edx_predicate",
+  "line": 178,
+  "uses": 1,
+  "cur": "u32 fn(ESI=s, EDX=e): a=s[0x10];c=e[0x10]; if(a==c||a==e[0x14]){ b=s[0x14]; return (b==c||b==e[0x14])?1:0; } return 0. ORIG via `mov esi,s; mov edx,e;"
+ },
+ {
+  "name": "fastcall_float_clamp",
+  "line": 190,
+  "uses": 1,
+  "cur": "void __fastcall fn(ECX=idx, EDX=base, [esp+4]=val float): v(80bit)=val+base[idx]; base[idx]=(float32)v (fst keeps st0); if v(80bit) > 50.0 (fcomp vs ."
+ },
+ {
+  "name": "find_node_struct_copy",
+  "line": 232,
+  "uses": 1,
+  "cur": "int fn(struct* p1, void** p2): PURE LEAF. walk p2's list for node (node[8]==p1[8] && node[0]==0x10b)||node[0]==0; copy 0x67 dwords p1->node; copy p1[0"
+ },
+ {
+  "name": "flag_branch_struct_2way",
+  "line": 174,
+  "uses": 1,
+  "cur": "void fn(p, arg2): if(p[0x94][0x50]&8){ sub=p[0x11c]; sub[0x88]=0; sub[0x8c]=arg2; } else { s=p[0x84]; val=(s[0x38]>>3)*s[0x39]*arg2; p[0x8c]=p[0x90]=v"
+ },
+ {
+  "name": "float_planes6_predicate",
+  "line": 149,
+  "uses": 1,
+  "cur": "u32 fn(obj*, point*): 6 planes at obj+0x94 stride 0x14 (x,y,z,w); for each test dot(plane.xyz,point.xyz)-plane.w vs -point.w; return 1 if all pass els"
+ },
+ {
+  "name": "float_threshold_predicate",
+  "line": 102,
+  "uses": 1,
+  "cur": "u32 fn(idx): return (*(float*)(base+idx*stride) < *(float*)gate) ? 1 : 0. test=[idx,recordbits,threshbits]"
+ },
+ {
+  "name": "float_vec3_lerp_out",
+  "line": 147,
+  "uses": 1,
+  "cur": "void fn(out*, a*, b*, float t): out[k] = a[k] + t*(b[k]-a[k]) per component (pure x87). Seed a,b vec3 (cfg.seed_a/seed_b = 3 u32 float-bit-patterns) +"
+ },
+ {
+  "name": "gated_args_to_globals",
+  "line": 97,
+  "uses": 1,
+  "cur": "void fn(p1..p6): if(*(int*)gate==0){ write args+consts to observe globals; conditional on aux }. test=[p1..p6,auxseed]"
+ },
+ {
+  "name": "gated_int_predicate",
+  "line": 91,
+  "uses": 1,
+  "cur": "u32 fn(arg): if(*(int*)gate==gateval) <switch membership> else 0. test=[arg,gateseed]"
+ },
+ {
+  "name": "global_2level_list_search",
+  "line": 159,
+  "uses": 1,
+  "cur": "int fn(key): g=*(glob); node=g[4]; while(node){ e=node[0]; if(e && e[8]==key) return e[0xc]; node=node[8]; } return -1. seed *glob=&cont, cont[4]=&nod"
+ },
+ {
+  "name": "global_dll_insert_head",
+  "line": 161,
+  "uses": 1,
+  "cur": "u32 fn(arg): node=arg+0x28; node[0]=*glob; node[4]=glob(addr const); (*glob)[4]=node; *glob=node; node[0xc]&=~1; return 1. seed *glob=&S, arg[0x34](=n"
+ },
+ {
+  "name": "global_fieldoff_clear",
+  "line": 162,
+  "uses": 1,
+  "cur": "u32 fn(arg): V=*(glob); entry=*(arg+V); if(!entry) return 0; if(!entry[0]) return arg; e4=entry[4]; if(e4) arg[0x48]=e4; entry[4]=0; entry[0]=0; retur"
+ },
+ {
+  "name": "global_fieldoff_set",
+  "line": 169,
+  "uses": 1,
+  "cur": "u32 fn(arg): V=*(glob); entry=*(arg+V); if(!entry) return 0; if(entry[0]) return arg; entry[4]=arg[0x48]; arg[0x48]=0x557b70; entry[0]=1; return arg. "
+ },
+ {
+  "name": "global_float_predicate",
+  "line": 110,
+  "uses": 1,
+  "cur": "u32 fn(): if(*(int*)gate==0) return 0; return (*(float*)thr <= *(float*)(*(tgt)+rec_off))?1:0. test=[gateval,thrbits,valbits]"
+ },
+ {
+  "name": "global_float_step",
+  "line": 115,
+  "uses": 1,
+  "cur": "void fn(float target): if(*tgt<target) *tgt+=step; if(target<*tgt) *tgt-=step. test=[seedbits,targetfloat]"
+ },
+ {
+  "name": "global_indexed_float",
+  "line": 86,
+  "uses": 1,
+  "cur": "float fn(): idx=*(int*)gate; return *(float*)(base+idx*stride) \u2014 single FLD, x87-safe"
+ },
+ {
+  "name": "global_ptr_strided_clear",
+  "line": 123,
+  "uses": 1,
+  "cur": "void fn(): for i in [0,len) step stride: *(u32*)(*(u32*)glob + i)=0. seed *glob=&buf, snapshot strided"
+ },
+ {
+  "name": "global_ptrtable_match",
+  "line": 156,
+  "uses": 1,
+  "cur": "u32 fn(arg1, arg2*): for idx in 0..3: e=*(tbl+idx*4); if(e && e[0xc]==1 && e[0x28]==arg1 && arg2[4]==idx) return 1; return 0. Seed tbl[2]=&entry (.bss"
+ },
+ {
+  "name": "global_rec_clear_ret",
+  "line": 157,
+  "uses": 1,
+  "cur": "u32 fn(arg1, arg2): rec=*(glob)+arg2; if(rec[0xc]){ rec[0xc]=0; rec[8]=0; return arg1; } return 0. seed *glob=&buf, buf[idx+0xc]= (test0: nonzero -> z"
+ },
+ {
+  "name": "global_swap",
+  "line": 106,
+  "uses": 1,
+  "cur": "u32 fn(v): old=*tgt; *tgt=v; return old. test=[oldseed,v]"
+ },
+ {
+  "name": "global_switch_member",
+  "line": 96,
+  "uses": 1,
+  "cur": "u32 fn(): reads *(int*)gate, returns switch-membership (1/0). seed gate; test = gate value"
+ },
+ {
+  "name": "global_table_linear_search",
+  "line": 122,
+  "uses": 1,
+  "cur": "int fn(key): if(key<=0) return -1; for i<count if(*(int*)(tgt+i*stride)==key) return i; return -1. test=[key,placeAt]"
+ },
+ {
+  "name": "grid_getter_multiout",
+  "line": 151,
+  "uses": 1,
+  "cur": "u32 fn(i,j,out1,_,_,out2,out3): bounds-check i<*b1, j<*b2; idx=i*mul1+j; out1[0..1]=out1_t[*][idx*s12], out2[0..1]=out2_t[*][idx*s12], out3[0]=out3_t["
+ },
+ {
+  "name": "heap_alloc_aligned",
+  "line": 200,
+  "uses": 1,
+  "cur": "void* fn(heap* arg1, size, align): aligned first-fit allocator over an embedded block list. arg1[8]=first block, arg1[0xc]=sentinel; block[0]=next/end"
+ },
+ {
+  "name": "idx2_record_condset",
+  "line": 228,
+  "uses": 1,
+  "cur": "void fn(int i, int j, int v): PURE LEAF. off=(j+5i)*recStride; *(int*)(baseB+off)=v; if(*(float*)(baseA+off)==0.0) *(int*)(baseA+off)=0x3c23d70a. Per "
+ },
+ {
+  "name": "idx2_table_get_outlast",
+  "line": 117,
+  "uses": 1,
+  "cur": "u32 fn(i1,i2,out*): if(i1>=bound||i2>=bound2) return 0; *out=*(u32*)(tgt+(i1*mult+i2)*stride); return 1. test=[i1,i2]"
+ },
+ {
+  "name": "idx_src_abs_memcpy",
+  "line": 138,
+  "uses": 1,
+  "cur": "void fn(idx, src): if(src) memcpy(tgt+idx*stride, src, copy_dwords*4). seed src distinct, reset abs dest, call, observe abs dest. test=idx. reimpl __c"
+ },
+ {
+  "name": "idx_table_out",
+  "line": 136,
+  "uses": 1,
+  "cur": "void fn(idx, out*): *out = (value from static abs table indexed by idx). call w/ outbuf, observe out[0]. test=idx (varied -> non-degen from static tab"
+ },
+ {
+  "name": "indexed_bit_toggle",
+  "line": 90,
+  "uses": 1,
+  "cur": "void fn(idx,set): flag=*(u32*)(base+idx*stride+field_off); set?flag|=bit:flag&=~bit; store. test=[idx,set,seed]"
+ },
+ {
+  "name": "indexed_bound_array_get",
+  "line": 143,
+  "uses": 1,
+  "cur": "u32 fn(i): if(i>*(u32*)glob) return 0; cont=*(u32*)tgt; arr=*(u32*)(cont+field_off); return *(u32*)(arr+i*4). seed glob=large bound, tgt->contbuf, con"
+ },
+ {
+  "name": "indexed_const2_set",
+  "line": 95,
+  "uses": 1,
+  "cur": "void fn(idx): *(u32*)(base+idx*stride+off0)=v0; *(u32*)(base+idx*stride+off1)=v1 (consts baked in reimpl)"
+ },
+ {
+  "name": "indexed_float_accum16",
+  "line": 222,
+  "uses": 1,
+  "cur": "int fn(float* out, uint i, uint j): PURE LEAF. if(i>=0x10||j>=4) ret 0; else acc=init + 16 floats at tbl_base+i*iStride+j*jStride+regionOff; acc*=K; *"
+ },
+ {
+  "name": "indexed_float_sq",
+  "line": 108,
+  "uses": 1,
+  "cur": "void fn(i,float f): *(float*)(tgt+i*stride)=f*f. test=[idx,fval]"
+ },
+ {
+  "name": "indexed_float_sum2",
+  "line": 219,
+  "uses": 1,
+  "cur": "float fn(int idx): PURE LEAF. p=(float*)(cfg.tgt + idx*cfg.stride); return p[0]+p[1]. Seed two distinct floats at slot+0/+4 per idx; compare float ret"
+ },
+ {
+  "name": "indexed_global_2lvl",
+  "line": 142,
+  "uses": 1,
+  "cur": "u32 fn(): base=*(u32*)tgt; idx=*(u32*)glob; edx=*(u32*)(base+idx+mid_off); return *(u32*)(base+edx*4+idx). seed tgt->buf, glob->idx(nonzero), place ed"
+ },
+ {
+  "name": "indexed_global_idiv",
+  "line": 146,
+  "uses": 1,
+  "cur": "u32 fn(arg): d=*(int*)(tgt+arg*stride); q=num/d (signed idiv); clamp. Seed d=test value at slot (fixed arg=idx), call fn(idx), compare ret. test=divis"
+ },
+ {
+  "name": "indexed_masked_get_out",
+  "line": 120,
+  "uses": 1,
+  "cur": "void fn(i, out*): if(out) *out=*(u32*)(tgt+i*stride) & mask. test=[idx,slotval]"
+ },
+ {
+  "name": "linear_scan_find",
+  "line": 93,
+  "uses": 1,
+  "cur": "int fn(key): for k in [0,count@gate): if(*(int*)(base+k*stride)==key) return k; return -1. test=[key,placeAt]"
+ },
+ {
+  "name": "list_node_const_init",
+  "line": 185,
+  "uses": 1,
+  "cur": "void fn(p, arg2): s=p[0x18]; count=s[0x24]; arr=s[0x20] (array of node ptrs); for i<count: node=arr[i]; node[4]=*arg2; node[0xc]=node[0x10]=1.0f; node"
+ },
+ {
+  "name": "list_walk_self_write",
+  "line": 191,
+  "uses": 1,
+  "cur": "void fn(p, value): node=*p; while(node!=*node) node=*node (walk linked list until a self-pointing node); *(uint32*)(*0x911ae4 + node)=value. global 0x"
+ },
+ {
+  "name": "load_be32",
+  "line": 126,
+  "uses": 1,
+  "cur": "int fn(ptr p): return big-endian u32 from p[0..3]. test = dword to seed"
+ },
+ {
+  "name": "multi_array_scatter",
+  "line": 226,
+  "uses": 1,
+  "cur": "void fn(struct* p): PURE LEAF. if(p[0xc]>=p[8]) return; else scatter REAL source globals into 7 optional arrays (ptr fields at p+0x10/14/18/1c/20/24/2"
+ },
+ {
+  "name": "multi_deref_global_set",
+  "line": 184,
+  "uses": 1,
+  "cur": "void fn(p1, p2): val=*(p2?p2:0x613290); g=*0x7dc57c; e=p1[4]; obj=*(e+g); obj[0xc4]=val; n=*(*(e[0x18])[0x20]); if(n) n[4]=val; obj[0x40]|=0x2000. see"
+ },
+ {
+  "name": "multi_state_list_setter",
+  "line": 163,
+  "uses": 1,
+  "cur": "void fn(p): state=p[0x48]; state1: if(p[0x14]){ *(p[0x18])=p[0x14]; *(p[0x14]+4)=p[0x18]; p[0x18]=0; p[0x14]=0; } p[0x50]=3; state2: p[0x50]=6; state3"
+ },
+ {
+  "name": "near_leaf_abs_table",
+  "line": 201,
+  "uses": 1,
+  "cur": "void fn(arg): NEAR-LEAF parent that loops calling a C3 callee which writes an ABSOLUTE record table. cfg.tbl_base/tbl_stride/tbl_count/observe(offsets"
+ },
+ {
+  "name": "near_leaf_accum_table",
+  "line": 211,
+  "uses": 1,
+  "cur": "void fn(a1, float val, a3): NEAR-LEAF that accumulates val into a float table slot tbl_base+a1*rec_stride+a3*4 via a C3 fastcall callee (base[a3]=min("
+ },
+ {
+  "name": "near_leaf_arr_to_table",
+  "line": 204,
+  "uses": 1,
+  "cur": "void fn(int* arg): NEAR-LEAF that writes arg[i] into an absolute table[base+i*stride] (i in 0..len(vals)-1) via a C3 setter callee. cfg.tbl_base/tbl_s"
+ },
+ {
+  "name": "near_leaf_dot_plane",
+  "line": 205,
+  "uses": 1,
+  "cur": "void fn(arg1, arg2): NEAR-LEAF dot product. idx=arg1[0x20]; rec=C3-pure-callee(idx)=idx*tbl_stride+tbl_base; dp=arg2[0x20]*rec[0]+arg2[0x24]*rec[4]+ar"
+ },
+ {
+  "name": "near_leaf_global_str_search",
+  "line": 213,
+  "uses": 1,
+  "cur": "void* fn(query): NEAR-LEAF wrapper = C3 circular-list case-insensitive search(*cfg.glob, query). build 3-node alpha/beta/gamma circular list, set *cfg"
+ },
+ {
+  "name": "near_leaf_memcmp16",
+  "line": 203,
+  "uses": 1,
+  "cur": "int fn(_, arg2, arg3): NEAR-LEAF = !FUN(a=*arg2,b=arg3) where the C3 callee memcmp's 16 bytes at a/b (0 if equal else +/-1). returns 1 iff the 16 byte"
+ },
+ {
+  "name": "near_leaf_memset2",
+  "line": 215,
+  "uses": 1,
+  "cur": "void fn(dest, count): NEAR-LEAF = C3 memset(dest, 0, count). seed_sets[t]={count}; dest pre-filled 0xCC, snapshot dest[0x20] (first count bytes -> 0, "
+ },
+ {
+  "name": "near_leaf_ptr_array_search",
+  "line": 208,
+  "uses": 1,
+  "cur": "int fn(key, gate): NEAR-LEAF that searches arr=*cfg.glob (cfg.count ptrs) for arr[i] with *arr[i]==key; returns derived addr or 0. C3 getter callee re"
+ },
+ {
+  "name": "near_leaf_record_builder",
+  "line": 210,
+  "uses": 1,
+  "cur": "void fn(_, arg2, _, arg4): NEAR-LEAF that builds a record at rec_base+arg2*rec_stride + writes a C3-setter table. cfg.rec_base/rec_stride/tbl_base/tbl"
+ },
+ {
+  "name": "near_leaf_seed_arg_obs",
+  "line": 207,
+  "uses": 1,
+  "cur": "void fn(arg): NEAR-LEAF that reads pure global getters (C3) and conditionally writes an ABSOLUTE global. cfg.obs_addr. seed_sets[t]={globals:[[addr,va"
+ },
+ {
+  "name": "near_leaf_seed_ret",
+  "line": 202,
+  "uses": 1,
+  "cur": "u32 fn(void): NEAR-LEAF that READS a seedable absolute table (via a C3 callee) and returns a derived int. cfg.tbl_base/tbl_stride/tbl_count. seed_sets"
+ },
+ {
+  "name": "near_leaf_struct_array_predicate",
+  "line": 212,
+  "uses": 1,
+  "cur": "int fn(void): NEAR-LEAF predicate over a pointer array at cfg.glob (cfg.count entries). For each p: checks fields via C3 getters -> returns 1/0. seed_"
+ },
+ {
+  "name": "nested_list_search",
+  "line": 233,
+  "uses": 1,
+  "cur": "uint fn(int key): PURE LEAF nested circular-list search at *cfg.glob (sentinel=glob). outer node O1=outerBuf+0x20; inner head @O1-0xc, sentinel O1-0x1"
+ },
+ {
+  "name": "nested_struct_op",
+  "line": 137,
+  "uses": 1,
+  "cur": "void fn(ptr p): p has a nested ptr p[link_off]=&sub; fn RMWs p fields + writes into sub. alloc p+sub, link, seed p_seed, fill sub sentinel, call, obse"
+ },
+ {
+  "name": "particle_pool_alloc",
+  "line": 237,
+  "uses": 1,
+  "cur": "void fn(int* a1, int a2): PURE LEAF particle-pool alloc at cfg.glob (10 slots stride 0x24). scan for free (slot[+0]==0) else evict max(slot[+0x1c]); w"
+ },
+ {
+  "name": "pixel_max_alpha",
+  "line": 234,
+  "uses": 1,
+  "cur": "int fn(struct* s): PURE LEAF per-pixel alpha=max(R,G,B). mode=s[0xc]: 4|8 -> (1<<mode) pixels @s[0x18]+2; 0x20 -> s[8]rows x s[4]cols @s[0x14]+2 (base"
+ },
+ {
+  "name": "pool_freelist_init",
+  "line": 197,
+  "uses": 1,
+  "cur": "void fn(pool* arg1): N=arg1[0x16c]; zero (N+2)*0x24 buf at arg1[0x14]; build circular freelist of N+1 nodes (stride 0x24) via node[0x1c]; arg1[0x18]=b"
+ },
+ {
+  "name": "pool_insert_snapshot",
+  "line": 69,
+  "uses": 1,
+  "cur": "fn(mgr_ptr, key): pool/list insert \u2014 reset+call+full-state snapshot diff"
+ },
+ {
+  "name": "pool_remove_snapshot",
+  "line": 70,
+  "uses": 1,
+  "cur": "fn(mgr_ptr, key): pool/list remove \u2014 build list via orig insert, then remove, snapshot"
+ },
+ {
+  "name": "ptr_compute_get",
+  "line": 82,
+  "uses": 1,
+  "cur": "u32 fn(out,idx): if(idx>=bound) return 0; t=*(u32*)(idxtbl+idx*stride); *out=base+idx*stride+t*tscale; return 1"
+ },
+ {
+  "name": "ptr_table_field_read",
+  "line": 75,
+  "uses": 1,
+  "cur": "fn(i): return *(*(tgt))[i] + field_off  (pointer-to-table + field)"
+ },
+ {
+  "name": "quad_buffer_build",
+  "line": 229,
+  "uses": 1,
+  "cur": "int fn(void* out, uint maxsize, struct* rec): PURE LEAF 2-pass quad builder. rec[0x14]=count, rec[0x18]=arr; per record P=*(arr+0x14+k*0x28), sub=P[0x"
+ },
+ {
+  "name": "record_array_filter_update",
+  "line": 199,
+  "uses": 1,
+  "cur": "void fn(arg1, arg2, arg3, arg4, arg5, arg6): scan arg2[4] records (stride 0x10 from arg1+0x18; A@+0,B@+4,C@+8,D@+0xc). rowRange from arg3 (-1->[0,arg2"
+ },
+ {
+  "name": "reg_scalar_compute",
+  "line": 133,
+  "uses": 1,
+  "cur": "fn with SCALAR register args (EAX[,ECX,EDX]); returns value in EAX. trampoline sets regs per test [a,c(,d)], compare ret. varies inputs (hits all bran"
+ },
+ {
+  "name": "ring_copy_5ab980",
+  "line": 172,
+  "uses": 1,
+  "cur": "void fn(arg): esi=arg[0xc]-*0x7dd610; cnt=*0x7dd614-esi; if(cnt>=arg[0x14]) cnt=arg[0x14]; memcpy(arg[0x18], 0x7dce08+esi, cnt); arg[0x18]+=cnt; arg[0"
+ },
+ {
+  "name": "seed_indirect_ctx_obs",
+  "line": 218,
+  "uses": 1,
+  "cur": "u32 fn(void): ctx = (*(ptr_array))[depth] where depth_global=idx; writes fixed values into ctx[offsets] (+ OR a flags field) + zeros direct globals. S"
+ },
+ {
+  "name": "stack_pop_snapshot",
+  "line": 73,
+  "uses": 1,
+  "cur": "fn(stk): array-stack pop {top,cap,buf}; reset+call+snapshot+ret"
+ },
+ {
+  "name": "stack_push_snapshot",
+  "line": 74,
+  "uses": 1,
+  "cur": "fn(stk,val): array-stack push; reset+call+snapshot+ret"
+ },
+ {
+  "name": "state_list_insert",
+  "line": 183,
+  "uses": 1,
+  "cur": "void fn(p, _, state_src): state=*state_src; sub=p[0x20]; if(state==1 && sub[0x28]!=3) sub[0x28]=8; elif(state==3 && sub[0x28]!=5) sub[0x28]=4; sub[0x2"
+ },
+ {
+  "name": "store_be32",
+  "line": 125,
+  "uses": 1,
+  "cur": "void fn(ptr p, u32 v): p[0..3] = big-endian bytes of v. test = v"
+ },
+ {
+  "name": "strided_color_fill",
+  "line": 181,
+  "uses": 1,
+  "cur": "void fn(): base=*0x771530+0x1d; for 896 entries (stride 0x20): p[-1]=*0x616030, p[0]=*0x616032, p[1]=*0x616031, p[2]=*0x616033 (BGRA swizzle from a gl"
+ },
+ {
+  "name": "struct_delta_flag_init",
+  "line": 188,
+  "uses": 1,
+  "cur": "u32 fn(out,a,b,c,d): copies d.xy->out[0x10/0x14], a.xy->out[0x40/0x44]; deltas out[0x28]=c[0]-d[0], out[0x2c]=c[4]-d[4], out[0x58]=b[0]-a[0], out[0x5c"
+ },
+ {
+  "name": "struct_div_mod_compute",
+  "line": 171,
+  "uses": 1,
+  "cur": "u32 fn(arg1,arg2,arg3,arg4,arg5): div=*(arg1[0x18]+arg4*0x28+0x20); q=arg2/div(unsigned); rem=arg2%div; *arg5=rem; return *(arg1[0x10]+arg3*0x20+0x1c)"
+ },
+ {
+  "name": "struct_init_3arg_sub",
+  "line": 173,
+  "uses": 1,
+  "cur": "void fn(a, b, dest): dest[0]=b; dest[4]=a[4]; zero dest[8,0x10,0x18,0x1c,0x20,0x24,0x28]; dest[0xc]=1.0f; dest[0x14]=0.01f; sub=dest[0x60]; sub[0x3c]="
+ },
+ {
+  "name": "struct_list_float_set",
+  "line": 217,
+  "uses": 1,
+  "cur": "void fn(struct*, float vol): struct+0x38=vol; walk circular list at struct+0xc (sentinel=struct+0xc) setting node+0x14|=0x40; if struct+0x11c!=0 -> se"
+ },
+ {
+  "name": "struct_tag_equals",
+  "line": 221,
+  "uses": 1,
+  "cur": "int fn(a,b): PURE LEAF tagged-union dword equality. Two 0x80 bufs filled equal, tag at [0], optional one-field perturbation per cfg.scenarios[t]={tag,"
+ },
+ {
+  "name": "struct_to_out_build",
+  "line": 124,
+  "uses": 1,
+  "cur": "void fn(out*, p2): reads p2 fields (seeded per cfg.seed [{off,bits}]), writes out[0..span-1]. snapshot out. test ignored"
+ },
+ {
+  "name": "succ_approx_quantize",
+  "line": 225,
+  "uses": 1,
+  "cur": "void fn(int arg1, int* p2, int* p3): PURE LEAF successive-approx quantizer. ecx=range tbl[*p3], updates *p2 (quantized recon, clamp) and *p3 (+= delta"
+ },
+ {
+  "name": "table_accum_clamp",
+  "line": 189,
+  "uses": 1,
+  "cur": "void fn(a1, p2, p3): idx=*p3; d=((int16)tblA[0x634498][idx]*(2*(a1&7)+1))>>3(logical); *p2 += (a1&8)?-d:+d, clamp[-32768,32767]; *p3 += (int16)tblB[0x"
+ },
+ {
+  "name": "table_clear",
+  "line": 71,
+  "uses": 1,
+  "cur": "void fn(i): zero an absolute table slot [target_global + i*4]"
+ },
+ {
+  "name": "thunk_cond_or",
+  "line": 240,
+  "uses": 1,
+  "cur": "uint fn(p, a2, a3): NEAR-LEAF adjustor thunk -> C3 cond-or. s=p[0x18]; if(a3) s[8]|=a2; return s[8]. Build p/s; s[8]=seed; per cfg.scenarios[t]={a2,a3"
+ },
+ {
+  "name": "thunk_field_copy",
+  "line": 239,
+  "uses": 1,
+  "cur": "void fn(p, out): NEAR-LEAF adjustor thunk -> C3 copy. s=p[0x18]; copy s[0x24] dwords from *(s[0x20]) to out. Build p/s/src/out; s[0x24]=count, s[0x20]"
+ },
+ {
+  "name": "thunk_float_sub",
+  "line": 242,
+  "uses": 1,
+  "cur": "void fn(uint idx, float fval): NEAR-LEAF adjustor thunk -> C3 float-sub. *(float*)(cfg.tbl + idx*cfg.stride + cfg.field_off) -= fval. Per cfg.scenario"
+ },
+ {
+  "name": "thunk_list_count",
+  "line": 241,
+  "uses": 1,
+  "cur": "uint fn(p): NEAR-LEAF adjustor thunk -> C3 circular-list count at (p+0xc) (linked +4, sentinel=head). Build a circular list of cfg.scenarios[t].n node"
+ },
+ {
+  "name": "thunk_node_write",
+  "line": 238,
+  "uses": 1,
+  "cur": "void fn(p, a2, a3): NEAR-LEAF adjustor thunk -> C3 0x476cb0. node = (*cfg.glob)[p[0x14]]; node[0xa4]=a2; node[0xa8]=a3; node[0x40]|=0x10000000. Build "
+ },
+ {
+  "name": "trie_walk",
+  "line": 187,
+  "uses": 1,
+  "cur": "u32 fn(node, key, depth): while(depth){ depth--; idx=key&0xf; key>>=4; node=*(node+idx*4+0x1c); } return (node & 0xffffff00) | node[0x18] (byte in AL,"
+ },
+ {
+  "name": "vec16_copy_set",
+  "line": 87,
+  "uses": 1,
+  "cur": "u32 fn(idx,in): if(idx>=bound) return 0; copy n dwords from in to TWO contiguous regions at base+idx*stride"
+ },
+ {
+  "name": "void_global_transition",
+  "line": 98,
+  "uses": 1,
+  "cur": "void fn(): if(*(int*)tgt==from) *(int*)tgt=to. test=[seed] -> seed *tgt, call, snapshot"
+ },
+ {
+  "name": "byte_format_hexdump",
+  "line": 196,
+  "uses": 0,
+  "cur": "void fn(struct* arg1, char* out, void* arg3): for 4 bytes at arg1[0x11c..0x11f] write printable ([0x29,0x5a]|[0x61,0x7a]) directly else \"[XX]\" via .rd"
+ },
+ {
+  "name": "cond_global_set",
+  "line": 78,
+  "uses": 0,
+  "cur": "void fn(v): if (v==0 || *tgt==0) *tgt=v \u2014 tests are [seed,arg] pairs (seed *tgt first)"
+ },
+ {
+  "name": "deref_field_write",
+  "line": 63,
+  "uses": 0,
+  "cur": "fn(ptr p1, u32 p2): *(*(p1+outer_off)+inner_off)=p2 \u2014 harness allocs+links buffers"
+ },
+ {
+  "name": "deref_table_read",
+  "line": 64,
+  "uses": 0,
+  "cur": "fn(ptr p1, u32 i): return (*p1)[i] \u2014 harness allocs+seeds an array behind p1"
+ },
+ {
+  "name": "indexed_abs_dualout",
+  "line": 153,
+  "uses": 0,
+  "cur": "u32 fn(i, out1*, out2*): if(i>=bound[immediate]) return 0; *out1=*(tbl1+i*stride); *out2=*(tbl2+i*stride); return 1. Seed the two abs table slots (inc"
+ },
+ {
+  "name": "near_leaf_list_search",
+  "line": 214,
+  "uses": 0,
+  "cur": "u32 fn(key): NEAR-LEAF wrapper = C3 list-search(cfg.glob, key) walking *(glob[0x10]) via node[0x30], returns node[0] where node[8]==key else -1. seed_"
+ },
+ {
+  "name": "struct_ctor_big",
+  "line": 152,
+  "uses": 0,
+  "cur": "void fn(p): deterministic constructor writing consts/self-relative-ptrs/zeros to p's fields (no live reads). Uses ONE shared sentinel buffer (cfg.buf_"
+ },
+ {
+  "name": "struct_table5_search",
+  "line": 167,
+  "uses": 0,
+  "cur": "u32 fn(p1, p2): if(!p1&&!p2) return 0; count=p1[0x1d0]; if(count<=0) return 0; tbl=p1[0x1d4]; search entries (5 bytes: dword key @+0, byte val @+4) BA"
+ }
+]

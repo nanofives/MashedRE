@@ -1,0 +1,14 @@
+{
+  "description": "Orchestrator iteration 7 — generalise reg_this_callee_stub to the other two EBX ctors. Build (new port code in ParticleEmitterCtors.cpp: CtorC 24-atomic, CtorD 34-atomic+colour), then ONE boot race state_batch on both, sentinel 0x007d73a8. Each expects GREEN 3/3 distinct fingerprints. GREEN -> re-classify both C2->C3.",
+  "jobs": [
+    { "type": "build", "id": "iter7_build" },
+    {
+      "type": "state_batch",
+      "id": "iter7_ctors",
+      "hooks": ["particle_emitter_ctor_c", "particle_emitter_ctor_d"],
+      "scenario": "race",
+      "dwell": 20,
+      "sentinel": "0x007d73a8"
+    }
+  ]
+}

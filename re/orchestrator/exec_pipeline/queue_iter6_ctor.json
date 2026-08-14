@@ -1,0 +1,13 @@
+{
+  "description": "Orchestrator iteration 6 (rerun 2) — JS-only fix (call rel32 origin 13->16). .asi already built with ParticleEmitterCtors.cpp; skip build. One-boot race state_batch on particle_emitter_ctor_a, sentinel 0x007d73a8 (gate only; hook fabricates state). Expect GREEN 3/3 distinct fingerprints.",
+  "jobs": [
+    {
+      "type": "state_batch",
+      "id": "iter6_ctor_a",
+      "hooks": ["particle_emitter_ctor_a"],
+      "scenario": "race",
+      "dwell": 20,
+      "sentinel": "0x007d73a8"
+    }
+  ]
+}

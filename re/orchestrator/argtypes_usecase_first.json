@@ -1,0 +1,778 @@
+[
+ {
+  "lane": "JS",
+  "name": "int_scalar",
+  "line": 409,
+  "uses": 142,
+  "mech_first": false,
+  "txt": "return value; no buffer allocation, no global read-back, no save/restore, and no CONFIG parameterization beyond `arg_type`. Applies to any single-integer-in, any-return-type function regardless of name."
+ },
+ {
+  "lane": "JS",
+  "name": "void_write_observe",
+  "line": 5050,
+  "uses": 51,
+  "mech_first": false,
+  "txt": "`CONFIG.call_args`, reads `target_global` back as uint32; no save/restore (idempotent sentinel pre-write); `crash_equal_ok` counts identical crashes as pass. CONFIG: `target_global`, `seed_globals`, `call_args`, `crash_equal_ok`."
+ },
+ {
+  "lane": "JS",
+  "name": "void_setter_observe",
+  "line": 564,
+  "uses": 40,
+  "mech_first": false,
+  "txt": "observable; no buffer allocation, no save/restore. CONFIG: `target_global` only. Broader than name: any void(uint32) that writes its param to one absolute global - not limited to simple direct-assign setters."
+ },
+ {
+  "lane": "JS",
+  "name": "scalars_to_scattered_globals",
+  "line": 4859,
+  "uses": 30,
+  "mech_first": false,
+  "txt": "(`CONFIG.idx_call_str`); fingerprints with FNV-1a; optionally pre-fills windows, runs a prep call, or folds the return value. CONFIG: `observe`, `idx_arrays`, `idx_call_str`, `fold_ret`, `prep_call_str`, `pre_fill_byte`."
+ },
+ {
+  "lane": "JS",
+  "name": "state_machine_observe",
+  "line": 784,
+  "uses": 13,
+  "mech_first": false,
+  "txt": "types: u8/u16/u32/s8/s16/s32. CONFIG: `input_globals`, `output_globals`. Broader: any void() function whose entire observable is global-to-global mutation; input and output global sets are fully independent."
+ },
+ {
+  "lane": "JS",
+  "name": "struct_call_observe",
+  "line": 1268,
+  "uses": 13,
+  "mech_first": false,
+  "txt": "(u8/u16/u32/s32/u64) from struct or out-bufs and optionally return; each side's pointers differ in address but match in seeded content so relative-offset reads compare cleanly. CONFIG: `struct_size`, `out_ptrs`, `observe_ret`, `observe`; test: `seeds`, `nested`."
+ },
+ {
+  "lane": "JS",
+  "name": "ptr_arg_int_get",
+  "line": 430,
+  "uses": 10,
+  "mech_first": false,
+  "txt": "function faults on the bad inner pointer (caught as mismatch, never false GREEN). CONFIG: `struct_size`. Broader: any fn(ptr)->int single-level-deref getter, regardless of struct type."
+ },
+ {
+  "lane": "JS",
+  "name": "entity_field_set",
+  "line": 658,
+  "uses": 8,
+  "mech_first": false,
+  "txt": "idempotent slot write). CONFIG: `target_global`, `entity_byte_stride`. Broader: any fn(int_index, uint32_value) that writes into a strided global array - both the base and stride are fully configurable."
+ },
+ {
+  "lane": "JS",
+  "name": "ptr_seed_observe",
+  "line": 1375,
+  "uses": 8,
+  "mech_first": false,
+  "txt": "test.scalars, per-test `null_args`->NULL); fingerprints selected buffer offsets (f32 as raw bits for bit-identity) and optionally return. CONFIG: `num_bufs`, `buf_size`, `arg_layout`, `observe`, `observe_ret`."
+ },
+ {
+  "lane": "JS",
+  "name": "track_record_deref",
+  "line": 4129,
+  "uses": 8,
+  "mech_first": false,
+  "txt": "point to it, calls fn() with no args, fingerprints return value (CONFIG.is_getter=true) or crash-equality (false), then restores the global; generalises to any no-arg fn that dereferences a single globally-NULL struct pointer provided the record fits in 0x48 bytes."
+ },
+ {
+  "lane": "JS",
+  "name": "bgra_encode",
+  "line": 1568,
+  "uses": 6,
+  "mech_first": false,
+  "txt": "seeded between the two), compares the unsigned integer return; same pointer used for both sides; broader than the name: fits any fn(byte*) -> uint that reads <=4 bytes from its sole pointer arg and returns a packed scalar."
+ },
+ {
+  "lane": "JS",
+  "name": "float_scalar",
+  "line": 228,
+  "uses": 6,
+  "mech_first": false,
+  "txt": "return (fn(input)); no buffer allocation, no global seeding, no post-call observation; the thinnest possible wrapper - fits any single-scalar-arg fn that returns a scalar, regardless of numeric domain or arg type interpretation."
+ },
+ {
+  "lane": "JS",
+  "name": "fmt_desc_pair_compare",
+  "line": 3665,
+  "uses": 6,
+  "mech_first": false,
+  "txt": "2 vs 4 args driven by CONFIG.signature.args.length; crash_equal_ok flag; broadly fits any fn(ptr, ptr) or fn(ptr, ptr, int, int) that mutates either buffer - domain-agnostic, field layout fully per-test."
+ },
+ {
+  "lane": "JS",
+  "name": "multi_arg_global_write",
+  "line": 848,
+  "uses": 6,
+  "mech_first": false,
+  "txt": "broader than its name: fits any multi-arg void setter that conditionally writes a contiguous memory block when a nonzero guard is present, CONFIG fields: guard_global, out_base, out_count."
+ },
+ {
+  "lane": "JS",
+  "name": "cache_setter_observe",
+  "line": 532,
+  "uses": 4,
+  "mech_first": false,
+  "txt": "fingerprint; every seeded and observed global is snapshotted and restored; broader than the name: fits any fn whose observable is scattered non-contiguous globals, not just cache/queue setters; CONFIG: obs_globals; per-test: seed, args, obs."
+ },
+ {
+  "lane": "JS",
+  "name": "count_header_list_ring",
+  "line": 4949,
+  "uses": 4,
+  "mech_first": false,
+  "txt": "normalised (count u32, cmp-field s32 values) so per-side allocations compare cleanly; CONFIG: node_link_off, cmp_field_off, object_size; applies to any intrusive ring list sharing this header shape (count@0, sentinel@+4 self-loop)."
+ },
+ {
+  "lane": "JS",
+  "name": "out3_idx",
+  "line": 585,
+  "uses": 4,
+  "mech_first": false,
+  "txt": "contents are never read back or fingerprinted; a reimpl that returns the correct scalar while writing garbage to *buf passes silently; use out1_idx when the written value must also be verified; CONFIG: tests[] list of uint32 indices; no global seeding."
+ },
+ {
+  "lane": "JS",
+  "name": "outbuf_only",
+  "line": 2067,
+  "uses": 4,
+  "mech_first": false,
+  "txt": "*out and return a value); CONFIG.seed_global seeds a global with tests[i] before each call (for global-copying getters) and restores it after; broadly fits any fn(ptr) that writes a fixed-size result, regardless of domain."
+ },
+ {
+  "lane": "JS",
+  "name": "stub_dispatch_observe",
+  "line": 2590,
+  "uses": 4,
+  "mech_first": false,
+  "txt": "(observe_calls); stub_ret is per-test so a pass-through return is also tested; CONFIG: num_bufs, buf_size, arg_layout, stub_at, stub_nargs, stub_abi, stub_ret, observe_ret, observe_calls."
+ },
+ {
+  "lane": "JS",
+  "name": "int_ptr2_out",
+  "line": 381,
+  "uses": 3,
+  "mech_first": false,
+  "txt": "int_ptr2_out \u2014 fn(uint32, out_ptr1, out_ptr2); two 4-byte out-slots; returns packed u32"
+ },
+ {
+  "lane": "JS",
+  "name": "slot_block_zero",
+  "line": 749,
+  "uses": 3,
+  "mech_first": false,
+  "txt": "target_global       \u2014 hex address of array base (e.g. 0x006403e8) entity_byte_stride  \u2014 bytes per slot (e.g. 0xf40) sentinel_value      \u2014 optional uint32 pre-write (default 0xDEADBEEF)"
+ },
+ {
+  "lane": "JS",
+  "name": "st0_ret_global",
+  "line": 260,
+  "uses": 3,
+  "mech_first": false,
+  "txt": "input:           a single number, stored as f32 into global_a Returns a 16-hex-digit fingerprint of the 64-bit double ST0 return (full mantissa -> catches a non-hardware-FSIN reimpl that a 32-bit read would round away)."
+ },
+ {
+  "lane": "JS",
+  "name": "struct_three_write",
+  "line": 4553,
+  "uses": 3,
+  "mech_first": false,
+  "txt": "observe_offsets  array of byte offsets to read back (default [12, 16, 20]) Tests: list of [val_a, val_b] pairs. Unblocks: 0x005be140 FUN_005be140."
+ },
+ {
+  "lane": "JS",
+  "name": "teardown_call_pair",
+  "line": 4667,
+  "uses": 3,
+  "mech_first": false,
+  "txt": "Tests: flat list (length = call count; values ignored). Unblocks: engine_stop_dispatch (0x00493550), hw_exit_dispatch (0x00493560), engine_stop_helper (0x004938c0)."
+ },
+ {
+  "lane": "JS",
+  "name": "audio_list_drain",
+  "line": 3090,
+  "uses": 2,
+  "mech_first": false,
+  "txt": "Build a fresh sentinel, insert N nodes via FUN_005addd0 (original), call orig/reimpl to drain. Observable: 1 = sentinel self-loops (empty) after drain, 0 = not empty."
+ },
+ {
+  "lane": "JS",
+  "name": "audio_sub_struct_dual",
+  "line": 4233,
+  "uses": 2,
+  "mech_first": false,
+  "txt": "LinkBuffer(p1,p3); returns p1 on success, 0 on failure. With a zeroed 12-byte scratch buf both cleanups are no-ops and both link calls write to the buffer. Tests: list of [p2, p3] pairs."
+ },
+ {
+  "lane": "JS",
+  "name": "audio_sub_struct_link",
+  "line": 4193,
+  "uses": 2,
+  "mech_first": false,
+  "txt": "Prior arg_type 'audio_sub_struct_link' did not exist in this file and fell through to default fn(input), passing a bare uint32 as the pointer arg \u2014 both sides AV. Tests: flat list of param_2 values."
+ },
+ {
+  "lane": "JS",
+  "name": "eax_implicit_int",
+  "line": 3319,
+  "uses": 2,
+  "mech_first": false,
+  "txt": "scratch buffers (so dereferences inside the target don't AV). The harness allocates N scratch buffers (32 bytes each) and rewrites the input list so each test value points to a fresh buffer of zeroed data."
+ },
+ {
+  "lane": "JS",
+  "name": "entity_field_add",
+  "line": 672,
+  "uses": 2,
+  "mech_first": false,
+  "txt": "the residue of the first call. Snapshot the field, call fn(idx,delta), pack (return_value, post-add field) into a fingerprint, then RESTORE the field so Orig and Reimpl each start from the identical baseline."
+ },
+ {
+  "lane": "JS",
+  "name": "fastcall_reg",
+  "line": 3530,
+  "uses": 2,
+  "mech_first": false,
+  "txt": "a 2-element [ecxVal, edxVal] (nargs==2, int mode). For a ptr register the value is replaced by a scratch-buffer address."
+ },
+ {
+  "lane": "JS",
+  "name": "float3_scalar_ret",
+  "line": 236,
+  "uses": 2,
+  "mech_first": false,
+  "txt": "cosine-ease lerp 0x00422440). input is a [a, b, t] triple; registry signature must be {ret:'float', args:['float','float','float']}. The framework reads the float return and fingerprints it as IEEE-754 bits (ret_kind 'float')."
+ },
+ {
+  "lane": "JS",
+  "name": "font_ctx_float2",
+  "line": 1925,
+  "uses": 2,
+  "mech_first": false,
+  "txt": "FontSys_InitRenderState (0x00552c10) once before the test loop to guarantee g_FontCtxPtrs[0] is allocated. Without this, the function derefs a NULL slot ptr and both sides AV identically at offset 0."
+ },
+ {
+  "lane": "JS",
+  "name": "sort_dispatch_out4",
+  "line": 879,
+  "uses": 2,
+  "mech_first": false,
+  "txt": "live globals at quiescent menu \u2192 bit-identical sorted output.  input: {sel, dir}"
+ },
+ {
+  "lane": "JS",
+  "name": "sprite_table_dispatch",
+  "line": 3954,
+  "uses": 2,
+  "mech_first": false,
+  "txt": "function takes 9 args \u2014 only the first arg matters; remaining stack bytes are garbage but the patched callee only reads its first arg. Tests: flat list of slot indices."
+ },
+ {
+  "lane": "JS",
+  "name": "st0_ret_mat3_ptr",
+  "line": 301,
+  "uses": 2,
+  "mech_first": false,
+  "txt": "The three pad dwords at 0x0c/0x1c/0x2c are zeroed for run-to-run determinism; the leaves never read them. Scratch buffer only \u2014 no live game state is touched. Returns a 16-hex-digit fingerprint of the 64-bit double ST0 return (full mantissa)."
+ },
+ {
+  "lane": "JS",
+  "name": "vec3_global_mul_observe",
+  "line": 3605,
+  "uses": 2,
+  "mech_first": false,
+  "txt": "Strategy: write test vec3 to globals[idx*stride+0/4/8], save original, call fn(idx), read back globals as 3 u32 fingerprints, restore originals. Both orig and reimpl must produce identical post-call globals."
+ },
+ {
+  "lane": "JS",
+  "name": "vtable_table_dispatch",
+  "line": 2503,
+  "uses": 2,
+  "mech_first": false,
+  "txt": "tests[i] = { idx, aux16, a1, a4 } Authored 2026-07-31 for 0x005b10a0 (offset 4) and 0x005b10e0 (offset 8), which are byte-identical apart from that one displacement."
+ },
+ {
+  "lane": "JS",
+  "name": "alloc_check",
+  "line": 1839,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "\u2500\u2500 alloc_check \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Call(size, tag) for each test; encode result as (align_mod4 * 256 + header_diff). A correct aligned alloc with 4-byte aligned heap returns result = 4."
+ },
+ {
+  "lane": "JS",
+  "name": "arena_block_free_predicate",
+  "line": 3275,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "block+8 -> headNode, block+0xc = end-sentinel value; headNode+0 (its next) == sentinel for the fully-free case, != sentinel otherwise.  No pool. Used for AudioArenaBlockIsFree (0x005ae590).  test = { free: bool }."
+ },
+ {
+  "lane": "JS",
+  "name": "audio_list_count",
+  "line": 3150,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "N nodes WITHOUT the audio pool (pool is not ready at diff-attach), so the traversal body is actually exercised.  Read-only => one structure, both sides.  Used for AudioListNodeCount (0x005aded0)."
+ },
+ {
+  "lane": "JS",
+  "name": "audio_list_min_select",
+  "line": 3234,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "pointer; map it back to its index so the A/B compares logical selection (per-side pointer identity is meaningless).  Used for AudioListMinKeySelect (0x005b0700).  test = { keys: [...], thresh: uint }."
+ },
+ {
+  "lane": "JS",
+  "name": "audio_list_remove",
+  "line": 3052,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "Build a fresh sentinel, optionally insert a node via the ORIGINAL FUN_005addd0 (insert_rva_str), then call orig/reimpl to remove. Observable: 1 if found (non-NULL return), 0 if not found (NULL)."
+ },
+ {
+  "lane": "JS",
+  "name": "buf_field_set",
+  "line": 4276,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "COM branch is never taken; the function exercises only the two field writes. Tests: flat list of param_2 values. Required CONFIG: buf_size, field_offsets (default [0x74, 0x78])."
+ },
+ {
+  "lane": "JS",
+  "name": "cache_roundtrip",
+  "line": 499,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "args entries: a number is passed verbatim; `null` is the out-ptr slot (replaced by a poisoned 4-byte buf). signature.args must match (the out-ptr slot is 'pointer'). Fingerprint = \"<ret_hex>:<out_hex>\"."
+ },
+ {
+  "lane": "JS",
+  "name": "car_slot_init",
+  "line": 898,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "input: { idx, guard_val } \u2014 param_1 = idx; guard field at 0x7f105c+idx*0x4c is set to guard_val. Calls fn(idx), then reads back the 4 fields (offsets +0, +0xC, +0x10, +0x14) packed as a 32-bit composite (low 8 bits of each, shifted).  Guard field is restored after."
+ },
+ {
+  "lane": "JS",
+  "name": "contact_history",
+  "line": 570,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "contact_history \u2014 set up slot 0 of a fake vehicle contact table, call fn(geom, vehicle) input: { slot_contact_id, slot_active, geom_contact_id }"
+ },
+ {
+  "lane": "JS",
+  "name": "container_find_scalar",
+  "line": 472,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "for LATER use only as raw ints). tests[i] = { data:[ints], key:<int> [, count:<int>] } Added 2026-07-29 (methods-efficiency pilot) for 0x004f3cb0."
+ },
+ {
+  "lane": "JS",
+  "name": "cstr_ret_offset",
+  "line": 1598,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "compares the returned pointer as a byte offset from buf (orig vs reimpl). -1 means the returned pointer was null. test: { str: \"filename.ext\" }. Harness-extension arg_type added 2026-06-04 (c3_batch_ab s3) for 0x005b73b0."
+ },
+ {
+  "lane": "JS",
+  "name": "cursor_back",
+  "line": 693,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "DAT_0067f17c and DAT_0067f184 as observable output packed into a uint32. Also saves/restores DAT_0067e9fc (written by callee FUN_0042f6b0) so it doesn't leak between orig and reimpl calls."
+ },
+ {
+  "lane": "JS",
+  "name": "dsound_secondary_init",
+  "line": 2888,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "Calls vtable[0] (QI), vtable[5] (secondary init), vtable[2] (Release). Strategy: build fake IUnknown with 6-slot vtable; stubs anchored in array to prevent GC. Observable: return value (0) packed with stub call count."
+ },
+ {
+  "lane": "JS",
+  "name": "eax_implicit_ptr",
+  "line": 3319,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "scratch buffers (so dereferences inside the target don't AV). The harness allocates N scratch buffers (32 bytes each) and rewrites the input list so each test value points to a fresh buffer of zeroed data."
+ },
+ {
+  "lane": "JS",
+  "name": "endian_pack",
+  "line": 1772,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "into a 4-byte source slot; construct a pointer-to-pointer (out_ptr_ptr) and call fn. Read the output buffer bytes as a fingerprint and compare orig/reimpl. The out buffer is reset to 0 before each call."
+ },
+ {
+  "lane": "JS",
+  "name": "esi_idx_ecx_outbuf4",
+  "line": 2143,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "C3                 ret  CONFIG.tests : scalar integer indices (incl. negatives / >=5 / the 3 case)."
+ },
+ {
+  "lane": "JS",
+  "name": "fmt_desc_copy",
+  "line": 1085,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "input: { f00, f04, f05, f10, zero_init } \u2014 src field values; zero_init flag. Uses two 0x20-byte buffers (fmtSrcBuf, fmtDstBuf). Returns packed u32: dst[+0x04] ^ dst[+0x0c] ^ dst[+0x0d] ^ dst[+0x18]."
+ },
+ {
+  "lane": "JS",
+  "name": "fmt_desc_ptr",
+  "line": 1073,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "fmt_desc_ptr \u2014 fn(ptr_to_fmt_desc) -> int32. input: { f04, f10, f14 } \u2014 u32 values written to struct offsets. buf must be pre-allocated (0x20 bytes); zeroed then fields written."
+ },
+ {
+  "lane": "JS",
+  "name": "fmt_global_scan",
+  "line": 1116,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "fmt_global_scan \u2014 fn(key_ptr) -> pointer. input: array of 16 u8 bytes forming the format key. Returns pointer value as uint32 (comparable; NULL=0)."
+ },
+ {
+  "lane": "JS",
+  "name": "fmt_key_compare",
+  "line": 1891,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "Each test is { a: [16 bytes], b: [16 bytes] }. Allocates a 32-byte scratch buffer; writes a to [0..15], b to [16..31]. Calls fn(buf, buf+16) for both Orig and Reimpl; compares return int."
+ },
+ {
+  "lane": "JS",
+  "name": "fmt_table_search",
+  "line": 1103,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "fmt_table_search \u2014 fn(ctx_ptr, desc_ptr) -> uint32 (1 match, 0 no-match). input: { count, entry_ptr } \u2014 writes count at ctx+0x24, ptr at ctx+0x28. fmtCtxBuf is a 0x30-byte fake audio context."
+ },
+ {
+  "lane": "JS",
+  "name": "font_matrix_push",
+  "line": 1977,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "safely exercisable. Tests with depth in (1..30) deref unallocated slots and AV both sides identically \u2014 they're not on the registry's test list, but the prelude is still required for depth=0."
+ },
+ {
+  "lane": "JS",
+  "name": "free_via_alloc",
+  "line": 1865,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "\u2500\u2500 free_via_alloc \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Allocate two blocks (via alloc_rva), free each via Orig/Reimpl. Success = 1 (no crash), failure = 0 or error."
+ },
+ {
+  "lane": "JS",
+  "name": "guid_from_tag",
+  "line": 1651,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "test: tag (uint32). Calls fn(tag, outX) into two 16-byte buffers (preset to 0xCC), compares 16-byte fingerprints. Harness-extension arg_type added 2026-06-04 (c3_batch_ab s3) for 0x005bcb80."
+ },
+ {
+  "lane": "JS",
+  "name": "idx_out2",
+  "line": 605,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "idx_out2 \u2014 fn(uint32_idx, out_ptr1, out_ptr2); two 4-byte out-slots in shared buf. Returns fn return value. Used for functions like VehicleCarStateRead."
+ },
+ {
+  "lane": "JS",
+  "name": "int2out",
+  "line": 2103,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "4-byte value to each out and returns a value. Compares both out buffers AND the return (packed fingerprint \"<a>,<b>:<ret>\"). CONFIG.tests is a list of int indices. Validated on 0x0046cbb0 (per-car state pair getter)."
+ },
+ {
+  "lane": "JS",
+  "name": "int_outbuf4",
+  "line": 2019,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "Strategy: allocate two 4-byte buffers (one per path), zero each before each call, call fn(idx, buf), read back 4 bytes as packed uint32 (little-endian fingerprint). Both paths must produce identical output."
+ },
+ {
+  "lane": "JS",
+  "name": "int_with_out_ptr",
+  "line": 484,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "int_with_out_ptr \u2014 uint32 arg + 4-byte output buffer; returns function's return value"
+ },
+ {
+  "lane": "JS",
+  "name": "large_buffer_save_restore",
+  "line": 4722,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "Unblocks (harness side): data_zero_fill (0x004924f0) \u2014 NOTE: C3 promotion still blocked by anti-island rule (5 of 6 callees at C1). This arg_type is infrastructure for when callees are promoted."
+ },
+ {
+  "lane": "JS",
+  "name": "out1_idx",
+  "line": 595,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "writing garbage to *out passes it. The out-slot is poisoned to 0xCCCCCCCC first, so \"wrote nothing\" is visible rather than reading as a stale match. Fingerprint: \"<ret_hex>:<out_hex>\"."
+ },
+ {
+  "lane": "JS",
+  "name": "out_buf_fmt_2",
+  "line": 3826,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "Tests: [p1, p2] pair (or a single int for the common p2=0 case). CONFIG.out_buf_size: per-buffer size (default 32). Both buffers zeroed before each call."
+ },
+ {
+  "lane": "JS",
+  "name": "pcm_pack",
+  "line": 1487,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "Added 2026-06-04 (c3-batch-ab-s4) for 0x005c9770. Per test {src:[int32...], count:N}: write source ints into a shared src buffer, call Orig/Reimpl into two separate dst buffers, compare exact bytes."
+ },
+ {
+  "lane": "JS",
+  "name": "pcm_sat_add",
+  "line": 1623,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "Writes a[]/b[] as int16 into shared src buffers, zeroes two out buffers, calls fn(outX, srcA, srcB, n*2), compares out fingerprints (n*2 bytes). Harness-extension arg_type added 2026-06-04 (c3_batch_ab s3) for 0x005bb5b0."
+ },
+ {
+  "lane": "JS",
+  "name": "ptr_nonnull_check",
+  "line": 731,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "where pointer equality is meaningless but null/non-null is the observable. `input` is an optional mode-flag value to pre-write to CONFIG.target_global before each call (resets cached state so the function re-runs its detection)."
+ },
+ {
+  "lane": "JS",
+  "name": "ptr_ptr_entity_set",
+  "line": 4067,
+  "uses": 1,
+  "mech_first": false,
+  "txt": " If *target_global == NULL at call time, the write crashes \u2014 the harness returns 0 for both sides (null-guard observable). Both paths must agree."
+ },
+ {
+  "lane": "JS",
+  "name": "ptr_scratch_field",
+  "line": 3126,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "Allocate one zeroed scratch buffer (read-only target), seed the test byte at CONFIG.field_offset (default 0x54), call Orig/Reimpl, compare returns. Used for AudioByte54Bit3Get (0x005ac540): (*(byte*)(p+0x54) & 8) >> 3."
+ },
+ {
+  "lane": "JS",
+  "name": "renderer_field3c_set",
+  "line": 1698,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "with hwvoice embedded at +0x140 (so +0x11c -> base+0x140, mirror at +0x174). test: { val: uint32, hw: 0|1 }. Observable: [+0x3c]:[hwvoice+0x34] hex. Harness-extension arg_type added 2026-06-04 (c3_batch_ab s3) for 0x005baf40."
+ },
+ {
+  "lane": "JS",
+  "name": "resource_loader_4arg",
+  "line": 4494,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "type_str is embedded as a NUL-terminated UTF-8 string in scratch memory. CONFIG fields: none beyond standard. Unblocks: 0x004997b0 Win32ResourceLoader."
+ },
+ {
+  "lane": "JS",
+  "name": "seed_field_read_field",
+  "line": 4778,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "seed values (uint32). Observable = the read_off bytes after the call. Unlocks: 0x00483a30 Replay_Rewind (seed_off=0x18, read_off=0x1c, 4 bytes: copies *(p+0x18)->*(p+0x1c))."
+ },
+ {
+  "lane": "JS",
+  "name": "semaphore_create",
+  "line": 4322,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "bit0 = (ret-non-null) ; bit1 = (handle stored at *buf was non-null). Per-side buf addrs differ \u2014 ret-pointer-identity is meaningless across sides; but ret-non-null and handle-validity must match."
+ },
+ {
+  "lane": "JS",
+  "name": "sentinel_array_ptr",
+  "line": 613,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "Writes the array into buf. For orig, calls via a hand-written thunk that sets ECX=0 and EDX=buf before jumping to the target. For reimpl, calls as cdecl(0, buf). Used for MenuGroupCount (0x0042ac00)."
+ },
+ {
+  "lane": "JS",
+  "name": "slot_quad_set",
+  "line": 4601,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "slot_field_count int (default 4) \u2014 number of dwords to read back. Tests: list of { idx: int, vals: [v0, v1, v2, v3] } objects. Unblocks: 0x00422ac0 FUN_00422ac0."
+ },
+ {
+  "lane": "JS",
+  "name": "source_loop_set",
+  "line": 1735,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "test: { loop: 0|1, hw: 0|1, pre28: uint32, prehw: uint32 }. Observable: [+0x28]:[hwvoice+0xcc] hex. Harness-extension arg_type added 2026-06-04 (c3_batch_ab s3) for 0x005b9410."
+ },
+ {
+  "lane": "JS",
+  "name": "spin_angle_observe",
+  "line": 4004,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "vbuf_addr_str   string (hex) \u2014 vertex buffer base (default '0x00898a20') vbuf_len        int          \u2014 vertex buffer size (default 112) angle_global_str string (hex) \u2014 spin angle accumulator addr (default '0x0067d974')"
+ },
+ {
+  "lane": "JS",
+  "name": "st0_ret_mat4x3_ptr",
+  "line": 348,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "The four pad dwords at 0x0c/0x1c/0x2c/0x3c are zeroed for run-to-run determinism; the leaf never reads them. Scratch buffer only \u2014 no live game state is touched. Returns a 16-hex-digit fingerprint of the 64-bit double ST0 return."
+ },
+ {
+  "lane": "JS",
+  "name": "str_arg_int_get",
+  "line": 450,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "distinct returns, so non-degeneracy comes free \u2014 but the registry comment must still state the per-seed expected values. Same byte-by-byte idiom as cstr_ret_offset below; Memory.allocUtf8String is deliberately unused here."
+ },
+ {
+  "lane": "JS",
+  "name": "structptr_seeded_array",
+  "line": 4815,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "callee may re-read them as float). Observable = concat of read_offs bytes. Unlocks: 0x004c1c80 ViewportDimsSet (struct_size>=0x78, gate@+0x04 stays 0, array = 2 u32 dims, read_offs=[0x68,0x6c,0x70,0x74])."
+ },
+ {
+  "lane": "JS",
+  "name": "sub_struct_dispatcher",
+  "line": 2853,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "Strategy: allocate 3 scratch buffers, call fn(b0, b1, b2); compare return address == b0 address (return value must equal first arg). Both paths route through same original callees; assertion is return==param_1."
+ },
+ {
+  "lane": "JS",
+  "name": "thiscall_nested_field_get",
+  "line": 3459,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "the field at inner+inner_off. CONFIG: outer_off, inner_off, ret_kind('u32'| 'float'), struct_size, inner_size. Precedent consumer: 0x004c0b10 (*(*(this+0xa0)+3) & 3). Bit-identity is integer-only (no x87 issue)."
+ },
+ {
+  "lane": "JS",
+  "name": "thread_desc_init",
+  "line": 2812,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "Strategy: allocate 5x4=20 byte scratch buf; fill with sentinel 0xDEAD????; call fn(buf, p2, p3, p4); read back 5 fields; return packed fingerprint. Both orig and reimpl must produce identical field values."
+ },
+ {
+  "lane": "JS",
+  "name": "time_diff_decompose",
+  "line": 390,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "time_diff_decompose \u2014 fn(int time_a, int time_b, u32* sign, int* min, int* sec, float* csec). void return; four out-ptrs in a single 16-byte buf. input: [time_a, time_b]. Observable: comma-separated fingerprint string of sign|min|sec|csec_bits (IEEE-754 u32)."
+ },
+ {
+  "lane": "JS",
+  "name": "uint32_scalar",
+  "line": 932,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "float_scalar"
+ },
+ {
+  "lane": "JS",
+  "name": "vec2_ptr",
+  "line": 936,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "float_scalar (default)"
+ },
+ {
+  "lane": "JS",
+  "name": "vec3_lerp",
+  "line": 2741,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "{ a:[x,y,z], b:[x,y,z], t:float }. Fills a/b/t, calls fn(out,a,b,t), reads the 3 out floats as a packed-bits fingerprint, compares. Validated on Vec3Lerp 0x004b4650."
+ },
+ {
+  "lane": "JS",
+  "name": "void_step_global",
+  "line": 637,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "Writes DAT_0067e9f8=0 (slot 0). Calls fn(step). Returns cursor at 0x0067ed40 after the call (as int32, compared between orig/reimpl). Used for MenuCursorStep (0x0042aa00)."
+ },
+ {
+  "lane": "JS",
+  "name": "wavefmt_copy",
+  "line": 1807,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "Tests AudioWaveFmtCopy-style fn(src_ptr, dst_ptr, swap_flag) -> src_ptr. For each test {src:[16 bytes], swap}: write src data into srcBuf, zero dstBuf, call fn, fingerprint dstBuf (16 bytes). Compare orig/reimpl."
+ },
+ {
+  "lane": "JS",
+  "name": "write_global_call_int0",
+  "line": 552,
+  "uses": 1,
+  "mech_first": false,
+  "txt": "write_global_call_int0 \u2014 write sentinel to target_global, call fn(0), return value Use for getters where non-trivial domain requires injecting known values."
+ },
+ {
+  "lane": "JS",
+  "name": "audio_list_insert",
+  "line": 3018,
+  "uses": 0,
+  "mech_first": false,
+  "txt": "Build a self-referential 12-byte sentinel in fresh memory (isolated from live game state), call fn(sentinel, payload), read back new head node[2]. Observable = payload at node[+8]; -1 if alloc failed (pool not ready)."
+ },
+ {
+  "lane": "JS",
+  "name": "audio_pool_free",
+  "line": 2988,
+  "uses": 0,
+  "mech_first": false,
+  "txt": "Allocate a node via FUN_005ae800(&DAT_009146c0, tag), then free it. Success = 1 (no crash), 0 on crash. Both orig and reimpl must return 1. CONFIG: alloc_rva_str (005ae800), alloc_tag (0x30804), pool_addr_str (009146c0)."
+ },
+ {
+  "lane": "JS",
+  "name": "music_vol_set",
+  "line": 4373,
+  "uses": 0,
+  "mech_first": false,
+  "txt": "runs zero iterations and the secondary branch is skipped. Tests: flat list of float volume values. Observable: low-24 fingerprint of buf packed with (sentinel-still-self-loop ? 1 : 0)."
+ }
+]

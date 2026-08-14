@@ -120,6 +120,12 @@ rpc.exports = {
                a: aPath, b: bPath, c: cPath || null, state: -2 };
     return addrs.length;
   },
+  // dump N consecutive rendered frames to <dir>/burst_<k>.bmp (no lift, no
+  // freeze) — for observing which screen elements advance per frame vs per tick
+  burst(n, reqPath, dir) {
+    g_burst = { n: n, k: 0, req: reqPath, dir: dir };
+    return true;
+  },
   // consecutive-frame pair: frame N renders with the lift + dumps to aPath,
   // frame N+1 renders clean + dumps to bPath (16ms apart -> scene motion tiny,
   // the +dy displacement dominates the diff)
@@ -168,6 +174,7 @@ for (const t of Process.enumerateThreads())
 setInterval(forceActive, 250);
 
 let g_pair = null;
+let g_burst = null;
 let g_freeze = false;
 function writeReq(req, target) {
   const f = new File(req, 'w');
@@ -187,6 +194,13 @@ Interceptor.attach(ptr('0x00493390'), {
 Interceptor.attach(REND, {
   onEnter(args) {
     g_saved = [];
+    if (g_burst) {
+      try { writeReq(g_burst.req, g_burst.dir + '\\burst_' + g_burst.k + '.bmp'); }
+      catch (e) {}
+      g_burst.k++;
+      if (g_burst.k >= g_burst.n) g_burst = null;
+      return;
+    }
     if (g_pair) {
       if (g_pair.state < 0) {          // settle frames under freeze
         g_pair.state++;
