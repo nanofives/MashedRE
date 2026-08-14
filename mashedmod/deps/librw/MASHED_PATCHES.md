@@ -15,6 +15,7 @@ Keep this file in sync when patching. A snapshot re-vendor must re-apply these.
 | P4 | `src/d3d/d3ddevice.cpp` (`resyncDeviceState`), `src/d3d/rwd3d.h` | **Re-push cached state onto a device someone else drew with.** Exposes upstream's `restoreD3d9Device()`. librw's `setRenderState` layer is a write-back cache; the D3D9 path changes device state behind it (notably `TrackRenderer::Render` exits with `D3DRS_ZENABLE=FALSE`, `TrackRenderer.cpp:4151`). Without this, librw's first submit inherits whatever the other renderer left. |
 | P5 | `src/d3d/d3d.cpp` (`rasterCreateZbuffer`) | **Share the exe's depth buffer.** Upstream decides "is this the main depth buffer?" by comparing the raster size to the **window client rect**. Under adoption that is the wrong question — the backbuffer size is deliberately independent of the window (borderless mode). When it mismatches, librw silently allocates a *private* depth surface and its camera is blind to everything D3D9 already drew. Inert at 640×480 windowed, where the sizes happen to agree. |
 | P6 | `src/d3d/d3ddevice.cpp` (`setFogRange`), `src/d3d/rwd3d.h` | **Decouple the fog ramp from the clip distance.** New `rw::d3d::setFogRange(start, end)`, called after `Camera::beginUpdate()`. Upstream derives the fog constant's END from `cam->farPlane` (`:1288`) — which upstream itself flags as provisional — so `fog_end_` could not be honoured independently. See "Why P6" below. Inert unless called. |
+| P7 | `src/d3d/shaders/default_VS.hlsl`, `skin_VS.hlsl`, `default_PS.hlsl` (+ the 8 regenerated `.h` blobs), `src/d3d/d3ddevice.cpp` (fog constant upload), `src/d3d/rwd3d.h` (`PSLOC_fogData`) | **Per-PIXEL fog.** Upstream evaluates the whole fog factor in the VERTEX shader and interpolates the already-CLAMPED result; D3D9 table fog (`D3DRS_FOGTABLEMODE = D3DFOG_LINEAR`), which the hand-written D3D9 path uses, evaluates it per pixel. `TexCoord0.z` now carries raw eye depth and the ramp+clamp moved to the PS, which needs `fogData` at PS `c1` as well as VS `c14`. See "Why P7" below — **including the measurement that this was very nearly a no-op.** |
 
 ## Why P1 — the shape of the problem
 
@@ -82,6 +83,68 @@ Three options were on the table; the other two were rejected on evidence:
   fogged surface — the largest single remaining parity term, and visible — while the
   fix is four lines. A delta register is for differences that cost more to close than
   to live with; this is the opposite.
+
+## Why P7 — and the finding it did NOT produce
+
+**Read this before spending a session on it: the per-pixel move closed almost
+nothing. The fog residual it was chased for had a different cause entirely.**
+
+The model difference is real and correctly described. D3D9 pixel/table fog is
+evaluated per pixel; `default_VS.hlsl:48` evaluated the whole factor per vertex.
+The device's premise was checked rather than assumed — `P7 fogcaps` logs
+`WFOG=1 ZFOG=1 FOGTABLE=1` on this hardware, and `TrackRenderer`'s projection has
+`m._34 = 1`, so D3D9 genuinely does linear fog on eye-W.
+
+But the delta that predicts is nearly zero, for a reason worth writing down:
+`TexCoord0` is interpolated **perspective-correct**, and perspective-correct
+interpolation of an attribute that is affine in `w` reproduces the per-pixel value
+exactly — for `a_i = (w_i - end)·range`,
+
+```
+    Σλ·a_i/w_i        1
+    ----------  =  ------- · Σλ·(w_i - end)·range/w_i  =  (w_true - end)·range
+    Σλ·1/w_i        Σλ/w_i
+```
+
+because `w_true·Σλ/w_i = 1`. So the two models can only differ where the **clamp**
+saturates at a vertex, and on this geometry that is a sliver. Measured, librw ON
+before vs after the shader change: **0.00 on 5 of 7 gating shots**, 0.06 and 0.05 on
+the other two.
+
+**What actually caused the fog residual was a byte-order slip on our side of the
+seam** (`LibRw/RwRaceSubmit.cpp`, not a librw defect): `COLOR_ARGB` packs
+`0xAARRGGBB`, but `rw::SetRenderState(FOGCOLOR)` unpacks RGBA little-endian
+(`red = value`, `blue = value>>16`, `d3ddevice.cpp:672-676`). Passing a D3D-ordered
+word **swapped red and blue in the fog colour**. Arctic's fog is `282C30`, so the
+shader was blending toward `302C28` — an 8-LSB error in R and B, which at the
+frame's mean `(1 - fogFactor) ≈ 0.09` is ~0.75 LSB. The measured signed difference
+before the fix was `(d3d9 - librw) = (-0.75, +0.02, +0.76)` over 48% of the frame:
+antisymmetric in R/B, **G exactly zero**. Nothing but a channel swap has that shape.
+
+P7 is kept anyway: it is the correct model, it costs 3 PS instructions, it makes the
+two fog paths agree by construction rather than by a property of the interpolator,
+and it regressed nothing. It is simply not what closed the term — and the way it was
+mis-attributed (fog-off closes the gap → librw fogs per-vertex → per-vertex is the
+cause) is the same circumstantial-signature error that produced the retracted MATID
+instrument and the falsified "perspective" root cause. Three for three.
+
+Interface note for anyone editing these shaders: `default_PS` is fed by **both**
+`default_VS` and `skin_VS`, and by `d3d9matfx.cpp:49-61` (the non-env matfx path)
+and `d3d9skin.cpp:321-323`. All the VS variants that feed it were regenerated
+together. `im2d_VS`/`im2d_PS` and `matfx_env_VS`/`matfx_env_PS` are self-consistent
+pairs and were deliberately left on the per-vertex model.
+
+Regenerating the blobs (the DXSDK `make_*.cmd` reference `%DXSDK_DIR%`, which we do
+not have — use the Windows 10 SDK fxc, **from PowerShell**; Git Bash mangles `/T`):
+
+```
+fxc /nologo /T vs_2_0 [/DDIRECTIONALS …] /Vn g_vs20_main /Fh <out>.h <in>.hlsl
+fxc /nologo /T ps_2_0 [/DTEX]            /Vn g_ps20_main /Fh <out>.h <in>.hlsl
+```
+
+`/Vn` is required — the headers are included into a `static` declaration that names
+`VS_NAME`/`PS_NAME`. Editing a shader header does **not** invalidate `librw_d3d9.lib`
+(the staleness check scans `src/**` mtimes only); delete the lib to force a relink.
 
 ## What is NOT patched
 

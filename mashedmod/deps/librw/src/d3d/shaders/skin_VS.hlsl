@@ -57,7 +57,9 @@ VS_out main(in VS_in input)
 	output.Color = clamp(output.Color, 0.0, 1.0);
 	output.Color *= matCol;
 
-	output.TexCoord0.z = clamp((output.Position.w - fogEnd)*fogRange, fogDisable, 1.0);
+	// MASHED LOCAL PATCH (P7) -- per-PIXEL fog; must match default_VS.hlsl because
+	// both feed default_PS. Carry raw eye depth; the clamp/ramp moves to the PS.
+	output.TexCoord0.z = output.Position.w;
 
 	return output;
 }

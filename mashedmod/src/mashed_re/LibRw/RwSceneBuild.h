@@ -59,6 +59,12 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex);
 // mapping is not batch index -> atomic index, because batches with no vertices
 // or no triangles are skipped and produce no atomic. Deriving it by re-walking
 // model.batches would silently drift the moment that skip rule changes.
+// [D-S3-PROP] MASHED_PROP_VDUMP=<handle> support. RaceSubmit_RegisterModel must
+// announce the handle the model is about to receive before calling BuildClump, so
+// the dump selects the same model MASHED_LIBRW_ONLYPROP names. Pass -1 after.
+void SceneBuild_SetRegisteringHandle(int handle);
+int  PropVDumpHandle();
+
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  std::uint32_t ambient = 0,
                  std::vector<std::uint32_t>* out_atomic_mat = nullptr);

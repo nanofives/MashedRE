@@ -1075,7 +1075,182 @@ viewpoints, world-only, no cars.
 > librw's HLSL — the shaders are vendored as precompiled bytecode headers, so that
 > needs `fxc` and is a **toolchain decision, not a code change**. Not taken here.
 >
-> **2. The snow-bank hotspot — still unidentified**, and fog is now off its list:
+> > ## ✅ RESOLVED 2026-08-04 — the fog term is CLOSED. It was a fog-COLOUR byte swap, not the fog model.
+>
+> **Result: every gating shot now sits at or below its own fog-off floor.** The fog
+> term is gone; what remains on each shot is the non-fog residual that was already
+> there with fog disabled.
+>
+> | shot | librw pre-P7 | P7 per-pixel only | **P7 + colour fix** | fog-OFF floor |
+> |---|---|---|---|---|
+> | `01_action`   | 0.59 | 0.59 | **0.59** | 0.58 |
+> | `01_grid`     | 0.26 | 0.26 | **0.02** | 0.03 |
+> | `car_1_spawn` | 0.26 | 0.26 | **0.02** | 0.03 |
+> | `car_2_drive` | 0.26 | 0.26 | **0.03** | 0.03 |
+> | `car_3_weave` | 0.58 | 0.56 | **0.33** | 0.34 |
+> | `car_4_chase` | 0.06 | 0.06 | **0.02** | 0.02 |
+> | `car_5_chase` | 0.41 | 0.38 | **0.25** | 0.25 |
+>
+> Acceptance was "`car_1_spawn` drops toward ~0.03 (its fog-off floor)". It reads
+> **0.02**. No shot regressed. The `01_action` snow-bank hotspot cell (6,3) reads
+> 7.8 — it was 7.6 with the fog tint present and 7.7 with fog off on both paths, so
+> it converged to its own fog-free value, which is the closed FF-vs-shader delta
+> behaving exactly as documented.
+>
+> ### Controls (the R10b rule: an A/B without a control means nothing)
+>
+> | comparison | result |
+> |---|---|
+> | librw **OFF** on the P7 binary vs `verify/librw_ref` | **0.00 ×7** — cross-build control, no drift on the shipping D3D9 path |
+> | librw **ON**, two runs of the same binary | **0.00 ×7** — bit-identical, deterministic |
+> | librw ON, P7 build vs pre-P7 build | 0.00 on 5/7, 0.06 & 0.05 on two — *the shader change on its own* |
+> | D3D9's own fog contribution (fog-on vs fog-off, same path) | 1.29–1.38 |
+> | librw's own fog contribution (fog-on vs fog-off, same path) | 1.30–1.38 |
+>
+> That last pair is what killed the "librw fogs by the wrong amount" reading before
+> any code was written: **both renderers fog by the same magnitude.** The
+> disagreement had to be in *what colour* they fog toward, or *where*.
+>
+> ### The mechanism, and how it was actually found
+>
+> Histogramming the cross-renderer diff, rather than reading its mean, made it
+> obvious. On `car_1_spawn` with fog on: **77.7% of samples differ by 0, 20.2% by
+> exactly 1 LSB**, only 0.06% by ≥8 — and that ≥8 tail is 0.068% with fog *off*
+> too, i.e. it is entirely the pre-existing snow-bank/prop residual. So the whole
+> "fog term" was a **sub-LSB bias over half the frame**, never a visible band.
+>
+> Its signed shape settled it: `(d3d9 − librw) = (−0.75, +0.02, +0.76)` —
+> antisymmetric in R/B with **G exactly zero**. A ramp error, a depth error, or a
+> precision difference all move G. Only a red/blue swap in the fog *colour* leaves
+> G at zero, because the difference is `(1 − f)·(F − F_swapped)` and the green
+> component of that is identically 0.
+>
+> **The bug** (ours, at the seam — not a librw defect): `COLOR_ARGB` (`rwd3d.h:53`)
+> packs `0xAARRGGBB`, but `rw::SetRenderState(FOGCOLOR)` unpacks RGBA
+> little-endian — `red = value`, `blue = value>>16` (`d3ddevice.cpp:672-676`).
+> `RwRaceSubmit.cpp` handed it a D3D-ordered word. Arctic's fog is `282C30`
+> (R 40, G 44, B 48); librw was blending toward `302C28`. 8 LSB of error in R and
+> B × the frame's mean `(1 − f) ≈ 0.09` ≈ 0.75 LSB — the measured number, predicted
+> quantitatively before the rebuild.
+>
+> **Liveness, so this is not inferred from pixels:** `P7 fogcolor: d3d9=282C30
+> librw_ps=(0.1569,0.1725,0.1882) MATCH` in `log/librw_race.txt` — the PS constant
+> is now byte-for-byte the D3D9 path's `D3DRS_FOGCOLOR`. Also logged:
+> `P7 fogcaps: WFOG=1 ZFOG=1 FOGTABLE=1`, which is the premise the per-pixel
+> formula stands on, checked instead of assumed.
+>
+> ### The fog MODEL was a near no-op — and the attribution was wrong
+>
+> P6's write-up called the per-vertex/per-pixel model difference "identified" and
+> sized it as the whole of `car_1_spawn`. It is not. The per-pixel move alone
+> measured **0.00 on 5 of 7 shots**.
+>
+> The reason is worth keeping: `TexCoord0` is interpolated **perspective-correct**,
+> and perspective-correct interpolation of an attribute affine in `w` reproduces
+> the per-pixel value *exactly* (`Σλa_i/w_i ÷ Σλ/w_i = (w_true − end)·range`, since
+> `w_true·Σλ/w_i = 1`). The two models can only diverge where the vertex-side
+> **clamp** saturates, which on this geometry is a sliver. Full derivation in
+> `deps/librw/MASHED_PATCHES.md` "Why P7".
+>
+> **Method, third time:** "fog off closes the gap → librw fogs per-vertex →
+> per-vertex is the cause" is a circumstantial signature promoted to root cause.
+> The falsifying instrument was the fix itself, and it cost one build. Same shape
+> as the retracted MATID instrument and the falsified "perspective" root cause
+> above. The cheap move that *did* work was refusing to classify: histogram the
+> difference and read its sign per channel.
+>
+> P7 (the per-pixel shader change) is **kept** — correct model, 3 PS instructions,
+> zero regression, and it makes the two fog paths agree by construction rather than
+> by a property of the interpolator. It is simply not what closed the term.
+>
+> ### Two fog items now open, both found by reading during this work
+>
+> - **D-FOG-CHASE (NEW, open).** The D3D9 path applies fog only under the chase
+>   camera — `if (fog_on_ && chase_cam && !s_no_fog)`, `chase_cam = car_ready_ &&
+>   !free_` (`TrackRenderer.cpp:3893,3917`) — because the orbit/overview cameras sit
+>   a track-radius back and would wash the whole track. **`RwRaceSubmit.cpp:430`
+>   gates on `st.fog_on_` alone**, so librw fogs under overview cameras too. Every
+>   gating shot is a chase shot, so this is invisible to the current gate;
+>   `01_inrace_track` is the overview shot and it is one of the three R10b
+>   build-unstable ones, so it cannot certify anything today. Fix is one clause,
+>   but it needs a gating instrument before it can be measured.
+> - **The P6 range-weld is closed, not pending.** `setFogRange` already overrides
+>   the `farPlane` weld and is on by default (`MASHED_LIBRW_FOGFIX=0` reverts). With
+>   the colour fixed, both renderers' own fog contributions agree to 0.01, which is
+>   the positive evidence that the ramp is right; no further work is owed here.
+>
+> ### D-S3-PROP → it is the CAR, not a prop. The "props/instances" term is the documented car-relight delta (2026-08-04, TWICE-corrected, now verified 3 ways).
+>
+> The second `01_action` term, **0.14** of that shot's 0.59 (0.589 full librw →
+> 0.451 with `MASHED_LIBRW_INST=0`). Built `MASHED_LIBRW_ONLYPROP=<handle>` (routes
+> one registered instanced model to librw, the rest to D3D9, with a liveness line)
+> and swept it.
+>
+> **RESULT — the entire term is model[8], attributed by counting:**
+>
+> | routing | 01_action whole | car-region (`x249–392 y287–472`) |
+> |---|---:|---:|
+> | INST=0 (nothing to librw) | 0.451 | 0.000 |
+> | ONLYPROP = 1,2,3,4,5,6,7 (each) | 0.451 | 0.000 |
+> | **ONLYPROP = 8** | **0.589** | **1.607** |
+> | full (all) | 0.589 | 1.607 |
+>
+> **model[8] IS THE CAR** — the shared player/AI car body, not a prop. Verified three
+> independent ways after two wrong guesses:
+> 1. **Registration manifest** (`log/pvdump_manifest.txt`, every `load_prop` call):
+>    handles **0–7 are the props** (sky, WhiteTyre, RedTyre, Crate02, sea, Freighter,
+>    FishingBoat, CamMan). **Handle 8 is absent** — it is registered by
+>    `TrackRenderer::LoadCar` (`:1940`, the `rw_car_model_ = RaceSubmit_RegisterModel`
+>    at `:1979`), not by `load_prop`. 71 atomics = a detailed body + wheels + the
+>    `Advantage`/`AdvantageSmall` **sponsor-livery decals** (which is why the clump
+>    log reads texture `Advantage` — a car livery, not a hoarding).
+> 2. **`ONLYPROP=8` flips `car_via_rw`** (`:4200`): that path is gated on
+>    `RaceSubmit_InstanceModelEnabled(rw_car_model_)`, so routing changed the region
+>    only because `rw_car_model_ == 8`. If 8 were a static prop the car region could
+>    not move.
+> 3. **model[8]'s 4 instances MOVE between frames** — `first_pos` goes
+>    `(−23.68, 0.04, 41.80) → (−25.21, 0.04, 15.78)` frame to frame. Static props sit
+>    at `(0,0,0)`; four moving instances = the four racing cars (player + 3 AI).
+>
+> `full` is byte-deterministic (three identical runs 0.000 vs each other), so 1.607
+> is real, not run noise.
+>
+> **⚠️ THREE attributions this term went through — a cautionary trail:**
+> - AM v1: *"a moored boat (model[5]), a per-material multiplicative factor."* Wrong —
+>   the instance count was read from a **gated** run's log (INST=0/ONLYPROP suppress
+>   `AddInstance`, so the frame dump shows ~1 instance); the surface-scale fits were
+>   over `full−INST=0`, which conflates everything. Discard entirely.
+> - AM v2: *"model[8], the 71-atomic Advantage advertising clump, NOT the car."*
+>   Also wrong — `Advantage` is a **livery texture**, and I had not checked the
+>   registration path; I asserted "not the car" without evidence.
+> - Verified: **model[8] is the car.** Lesson, logged hard: this is the second time
+>   this session I talked myself *out of* the correct first read ("red car + rear
+>   wing, centre-bottom") by classifying an image instead of counting. The
+>   registration manifest should have been the FIRST instrument, not the third.
+>
+> **Mechanism — this is the already-documented car-relight delta, no new bug.**
+> `TrackRenderer.cpp:4170` states it outright: when the car is drawn through librw it
+> "carries baked prelight plus the `rw::Light` ambient/directional instead of the
+> ported per-vertex N·L. That is a real visual delta, logged rather than hidden;
+> closing it means giving the librw path an equivalent relight pass." The D3D9 path
+> draws the car via `RenderCarsRelit` (CPU per-vertex relight, `LightAtomicVertex`
+> `:192`); librw lights it in-shader. The 0.14 on `01_action` is exactly that,
+> localised to the centre-bottom car. matCol `(102,102,102)` is a livery-decal
+> material, not the driver — a red herring for this term.
+>
+> **Status: this term is NOT a defect to hunt — it is the known librw car-relight
+> gap, already tracked.** It closes only by porting the CPU relight into the librw
+> car path (or matching the shader to the bake), which is the same work item
+> `:4170` already names. It is NOT a props bug and the `D-S3-PROP` label is retired
+> in favour of the existing car-relight item. The `ONLYPROP` gate + registration
+> manifest are landed and are the right tools to keep props and car separable.
+>
+> **2. The snow-bank hotspot** — *[SUPERSEDED 2026-08-04: this "still unidentified"
+> writeup predates the resolution. The hotspot is world material 4 (`Snow`), and it
+> is PINNED as a per-channel brightness-dependent gain on the D3D9 fixed-function
+> output that librw's linear shader does not apply — see the two "✅ RESOLVED" /
+> "✅ PINNED" subsections below. The elimination table here remains valid and is
+> subsumed by them.]* — and fog is now off its list:
 > the 7.6/4.6/5.1 cells are 7.7/4.7/5.2 with fog disabled on both sides. It is world
 > geometry (identical cells with instances on and off), warm-weighted
 > (R=0.99 / G=0.61 / B=0.16), ~2.3% of pixels, 42 of 48 cells still exactly 0.0.
@@ -1336,6 +1511,178 @@ viewpoints, world-only, no cars.
 > Instruments kept (branch `render/s3-bank`, both default-off, liveness/dump-gated):
 > `MASHED_WORLD_PRELITONLY`, `MASHED_WORLD_VDUMP`. Vertex dumps archived at
 > `verify/s3bank_iso/vdump_{d3d9,librw}.txt`.
+>
+> #### ✅ PINNED (2026-08-04): it is a per-channel, brightness-dependent OUTPUT gain on the D3D9 fixed-function side — NOT transform, NOT attribute interpolation.
+>
+> The two candidates left open above ("FF transform precision vs the VS `mul`" and
+> "FF DIFFUSE iteration vs shader `COLOR0`") were separated by a **constant-input**
+> test. New gate `MASHED_WORLD_FLATSNOW=1` forces **every** world vertex colour to a
+> single constant `(180,180,180)` on both paths (D3D9: `v.c` on `mat==4`; librw:
+> `geo->colors`). Run with `ONLYMAT=4 + PRELITONLY=1 + NO_FOG=1 + LIBRW_INST=0`, the
+> snow becomes a **flat grey, untextured, unlit, unfogged** wedge — no gradient of any
+> kind left to interpolate and no depth term. Any residual diff can only be coverage
+> (transform) or a raw output difference.
+>
+> **Measured over the wedge interior (5 px eroded off every edge, so coverage-independent):**
+>
+> | path | interior render of the flat (180,180,180) input |
+> |---|---|
+> | **librw** | **exactly (180,180,180)** — 1 distinct RGB triple, std (0,0,0). Renders the input verbatim. |
+> | **D3D9** | (181.98, 180.73, 177.75), **25 distinct triples**, std (3.0,1.1,3.4); R ∈ [180,192] (never <180), B ∈ [166,180] (never >180). |
+>
+> **This eliminates both open candidates by construction:**
+> - **NOT transform / coverage.** The measurement is 5 px deep in the interior, where
+>   coverage is identical by definition; librw is a perfect flat while D3D9 is not, so
+>   the difference is in the pixel *values*, not which pixels are covered. (Coverage
+>   *does* also differ — 1121 px / 2.6% at the wedge edge, librw slightly larger — but
+>   that is a separate, tiny edge term, not the face glow.)
+> - **NOT colour / texture gradient interpolation.** The input is flat — there is no
+>   gradient to iterate differently — yet D3D9's output is non-flat and warm.
+>
+> **What it IS: the D3D9 fixed-function pipeline applies a per-channel gain to the
+> DIFFUSE output that librw's shader does not.** R ×1.011, B ×0.988 at mid-grey (180),
+> directional (R only rises, B only falls). And it is **brightness-dependent**: the
+> same gain measured over the *bright* ridge mask earlier in this doc is R ×**1.107**,
+> vs ×1.011 here at 180 — i.e. a per-channel **nonlinear (gamma-like) transfer**,
+> steeper on R, slightly compressive on B, whose effect grows with luminance. That
+> single curve explains **both** halves of the signature at once: the ~1.5 whole-face
+> mean (mid-grey gain) **and** the ridge concentration (the ridge is the brightest snow,
+> so the curve deviates most there). librw's world shader is a linear pass-through of
+> `prelit·matCol`, so it has no such curve.
+>
+> **⚠️ CORRECTION (2026-08-04, same day): the "per-channel gamma/gain" framing above
+> is an AVERAGING ARTIFACT. The swept-flat-input test + a spatial breakdown show the
+> effect is RIDGE-LOCALISED, not a global transfer, and transform/coverage is NOT
+> eliminated.** Keep the flat-input *result* (librw renders a constant verbatim, D3D9
+> does not); discard the "gamma-like global curve" reading.
+>
+> **The sweep.** `MASHED_WORLD_FLATSNOW=<level>` was parameterised and swept over
+> {32,64,110,160,200,245}, masking on librw's exact-value wedge. The whole-wedge mean
+> fits an **affine** law almost perfectly — `out = 0.9686·in + (7.98, 6.53, 3.06)`,
+> identical slope on all channels, maxresid **0.05** (a *gamma* fit is far worse,
+> resid 2–5). Algebraically that is a 3.14 % blend toward warm `(254,208,97)`.
+>
+> **But the spatial breakdown of the flat wedge falsifies "global transfer".** The
+> flat-input `D3D9 − librw` delta is strongly ridge-graded, and per-band:
+>
+> | band | coverage | D3D9 on snow-covered px (in = 160) |
+> |---|---|---|
+> | near (y ≥ 380) | 100 % agree | **(160.3, 160.2, 159.8) = identity**, delta ≈ 0 |
+> | far ridge (y 208–300) | **76 % agree, 24 % coverage-flip** | agree: (165.2,162.7,156.3) warm R+5/B−4; flip: (176.5,168.3,148.8) = warm background exposed |
+>
+> **Near the camera D3D9 and librw are the SAME (identity), so there is no global
+> per-channel curve.** The whole-wedge affine mean was mixing three regimes (near
+> identity + ridge warm-shift + ridge coverage-flips). The hotspot is entirely a
+> **far-ridge, foreshortening-driven** phenomenon with two measured components:
+> 1. **Sub-pixel coverage disagreement — ~24 % of ridge pixels.** Where the snow is
+>    most foreshortened (triangles sub-pixel dense) the two pipelines cover different
+>    pixels; librw rasterises snow where D3D9 shows the warm background `(176,168,149)`.
+>    This is the FF-vs-VS transform/rasterisation term — **NOT eliminated** (last
+>    commit's 5 px-erode test wrongly averaged near + ridge; near is identity so the
+>    residual it saw was itself the ridge, i.e. this term).
+> 2. **A per-channel warm shift on the agreeing pixels that GROWS toward the ridge**
+>    (neutral ≈ 160 near → R+5/G+3/B−4 at the ridge). Depth/foreshortening-correlated,
+>    on the D3D9 FF side; librw stays flat.
+>
+> **[UNCERTAIN] — exact source of component 2 still not named**, but it is now known to
+> be *depth/foreshortening-correlated*, not a global LUT: fog is excluded (`NO_FOG`
+> disables D3D9 fog at `TrackRenderer.cpp:3939/4005`, verified), so it is another
+> depth-linked FF term (W/Z-precision in the FF colour path, or an FF specular/emissive
+> that scales with the foreshortened geometry). Component 1 is plainly the FF-vs-shader
+> rasterisation coverage delta.
+>
+> **Bottom line for the gate is unchanged and if anything stronger: this is an
+> inherent FF-vs-programmable-pipeline delta at the foreshortened ridge — coverage
+> disagreement plus a depth-linked warm shift — not a port defect.** librw renders the
+> byte-identical vertex data faithfully; the original's fixed-function path diverges
+> only where the snow grazes the horizon. Reproducing it bit-for-bit is not
+> gate-required. Instruments kept (both paths, default-off): `MASHED_WORLD_FLATSNOW`
+> (now a 0–255 level), `MASHED_WORLD_PRELITONLY`, `MASHED_WORLD_VDUMP`.
+>
+> *Discipline note, logged against myself:* the intermediate "✅ PINNED per-channel
+> gain" claim (committed hours earlier) was promoted from a whole-wedge mean before a
+> spatial check — exactly the "signature → root cause" error this document keeps
+> recording. The swept-input curve the correction demanded is what exposed it. Count
+> AND localise before pinning.
+>
+> #### ✅ UNIFIED (2026-08-04, final): it is ONE mechanism — a silhouette-localised snow/sky coverage divergence. "Component 2" is not independent; deep-interior snow is faithful.
+>
+> Chasing "component 2's source" (was it W/Z-precision or an FF specular/emissive
+> term?) collapsed the two-component model into one. Over the flat-160 wedge, the warm
+> shift on the *agreeing* (both-snow) pixels was binned by **distance to the D3D9 snow
+> silhouette** (`scipy` EDT):
+>
+> | distance from edge | warm shift (D3D9 − 160) | \|D3D9 − librw\| |
+> |---|---|---|
+> | 0–2 px | (+7.4, +3.7, −5.0) | 5.39 |
+> | 8–16 px | (+6.0, +3.1, −4.1) | 4.38 |
+> | 16–32 px | (+4.5, +2.3, −3.1) | 3.27 |
+> | **32+ px (deep interior)** | **(+0.7, +0.4, −0.5)** | **0.54 (noise floor)** |
+>
+> **The warm shift decays monotonically to the noise floor within ~32 px of the
+> silhouette. Deep-interior snow is bit-faithful.** So there is no independent
+> depth-shade term and no per-channel transfer curve — "component 2" is the
+> near-silhouette **penumbra of the coverage difference** (component 1). Both are the
+> same thing: where the D3D9 fixed-function transform and librw's vertex-shader
+> transform place the **snow/sky boundary at slightly different sub-pixels**, the
+> mismatch band pulls toward the **warm horizon sky**. That sky colour is `(254,208,97)`
+> — exactly the blend colour the affine sweep-fit reported, now explained: the affine
+> "blend toward (254,208,97)" was the sky bleeding through the coverage mismatch, not a
+> gamma curve.
+>
+> **The candidates the chase set out to separate are both wrong:**
+> - **NOT FF specular / emissive.** `D3DRS_LIGHTING=FALSE` and neither state is set
+>   (`TrackRenderer.cpp:3902` block); with lighting off they cannot contribute.
+> - **NOT W/Z colour precision.** Z/W affects the depth test, not colour; and the delta
+>   is silhouette-localised (decays with distance), not depth-monotonic over the face.
+> - It is the **snow/sky silhouette coverage divergence** between FF and the shader,
+>   warm because the neighbour it mismatches against is the horizon sky.
+>
+> **✅ LAST SUB-PIXEL NAILED (2026-08-04): the transform is exact to ~5e-4 px; the
+> residual is rasterisation of differently-organised geometry, NOT a transform error.**
+> The clip-space readback was done — via the existing `DEPTHPROBE`, whose own comment
+> notes the combined-matrix comparison is *stronger* than per-vertex sampling (it
+> settles all points at once). Measured (`log/librw_race.txt`):
+> - Per-point clip: `p=(−25.21,0.04,15.78)` → D3D9 ndc `(0, −0.578020215, 0.970947564)`
+>   vs librw `(−1.443e-6, −0.578019679, 0.970947444)`. **Δx = 1.4e-6 NDC = 4.6e-4 px;
+>   Δy = 1.3e-4 px; Δz = 1.2e-7.**
+> - Whole-matrix `MATCMP max|d3d9−librw| = 3.8e-6 … 1.1e-5, maxrel = 1.85e-7 … 2.74e-7`.
+>
+> So **every snow vertex projects to within ~0.0005 px on both paths** — the two
+> transforms are identical to the float-noise floor. The 1.46 px silhouette band is
+> therefore **categorically not a transform/clip-position difference**, and the earlier
+> "grazing foreshortening amplifies a sub-pixel transform delta" idea is **falsified**
+> (there is no sub-pixel transform delta to amplify; and the shift did not correlate
+> with edge slope — the flattest band, y300–340 |dx/dy|=0.72, shifted 0 px while
+> y250–300 |dx/dy|=0.82 shifted +1.46 px).
+>
+> **What the residual IS: rasterisation of identically-projected but differently-
+> ORGANISED geometry.** librw submits the snow as **indexed, sector-major**
+> `rw::Geometry` meshes (`buildMeshes`); the D3D9 path submits it **unindexed,
+> material-major** via `DrawPrimitiveUP` (`batches_[mat]` accumulated across sectors).
+> Same byte-identical vertices, same ~5e-4 px projection, same D3D9 rasteriser — but
+> the **top-left fill rule** resolves a grazing silhouette edge 1–2 px apart when the
+> triangles arrive in a different order / indexed-vs-unindexed. Over most of the ridge
+> the two organisations tie (0 px, 74 % of rows); in the one band where the snow-mesh
+> boundary triangles differ in submission order, the fill flips 1–2 px. This is an
+> **irreducible FF-organisation-vs-shader-organisation floor**, not a defect and not a
+> transform bug — reproducing it bit-for-bit would require submitting the librw world
+> as unindexed material-major primitives, which the renderer gate does not want.
+>
+> **The snow-bank investigation is now closed at its true floor:** transform proven
+> exact (5e-4 px), shading/fog/specular/depth/transfer-curve all excluded by
+> measurement, deep-interior snow faithful (|delta| 0.54), and the last residual is a
+> ~1 px grazing-silhouette fill-rule difference between indexed and unindexed
+> submission of the identical mesh. Nothing further is pinnable without changing the
+> renderer's geometry organisation, which is out of scope.
+>
+> **FINAL bottom line: the snow-bank hotspot is a single silhouette-localised FF-vs-shader
+> coverage divergence at the foreshortened snow/sky horizon, warm because it mismatches
+> against the sky. Deep-interior snow renders faithfully (|delta| 0.54). It is not a
+> shading, transfer-curve, fog, specular, or depth term — all excluded by measurement —
+> and it is not a port defect.** Three framings were tried and two were wrong (per-channel
+> gain; two independent components); this is the one that survives every control. Not
+> gate-required to close.
 >
 > Instrument `MASHED_WORLD_PRELITONLY` (branch `render/s3-bank`, both paths,
 > default-off, liveness-logged) is worth keeping. Evidence under `verify/s3bank_iso/`:

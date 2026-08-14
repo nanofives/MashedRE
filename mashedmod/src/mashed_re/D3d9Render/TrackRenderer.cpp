@@ -1089,6 +1089,23 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 } else {
                     v.c = 0xFFFFFFFFu;
                 }
+                // [D-S3-BANK discriminator] MASHED_WORLD_FLATSNOW=1: constant grey
+                // on the snow (mat 4), same value the librw side forces. Kills the
+                // colour gradient so an FF-vs-shader COLOR iteration delta cannot
+                // show; a surviving delta is transform/coverage. Snow-only so it
+                // pairs with ONLYMAT=4 and leaves the rest of the world untouched.
+                // MASHED_WORLD_FLATSNOW=<level 0..255>: the value IS the grey level,
+                // so a sweep fits the D3D9 FF output transfer curve per channel.
+                static const int s_flatsnow = [] {
+                    const char* e = std::getenv("MASHED_WORLD_FLATSNOW");
+                    if (!e || !*e) return -1;
+                    int v = std::atoi(e); if (v < 0) v = 0; if (v > 255) v = 255;
+                    return v;
+                }();
+                if (s_flatsnow >= 0 && mat == 4) {
+                    const auto g = static_cast<std::uint8_t>(s_flatsnow);
+                    v.c = D3DCOLOR_ARGB(255, g, g, g);
+                }
                 v.u = has_uv ? s.uvs[vi * 2 + 0] : 0.f;
                 v.v = has_uv ? s.uvs[vi * 2 + 1] : 0.f;
                 b.push_back(v);
@@ -1241,6 +1258,77 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             p->rw_model = LibRw::RaceSubmit_RegisterModel(
                 m, dicts.data(), dicts.size(), amb_world_,
                 rates.empty() ? nullptr : rates.data(), m.materials.size());
+            // [D-S3-PROP] MASHED_PROP_VDUMP=<handle>: dump EVERY vertex of the
+            // model registered under that handle, not just v0. v0 agreeing is
+            // exactly what made the ambient bake look innocent -- one vertex
+            // cannot separate "the bake matches" from "the bake matches at this
+            // one vertex". Written as "batch x y z r g b" so it pairs
+            // positionally with the librw dump, the same protocol as the world
+            // MASHED_WORLD_VDUMP pair. Must follow RegisterModel: rw_model is
+            // assigned by that call.
+            static const int s_prop_vdump = [] {
+                const char* e = std::getenv("MASHED_PROP_VDUMP");
+                return (e && *e) ? std::atoi(e) : -1;
+            }();
+            if (s_prop_vdump >= 0) {
+                // Manifest: EVERY registration, so which handle a given dff got is
+                // visible by counting (the AM run's "only model[5]" error was a
+                // gated-log misread; never infer registration from a gated run).
+                // This is also how we learned the D3D9 per-vertex dump was not
+                // firing for model[8] -- read the manifest, not the guard.
+                if (std::FILE* mf = std::fopen("log/pvdump_manifest.txt", "a")) {
+                    std::fprintf(mf, "REG handle=%d dff=%s d3d9_batches=%zu "
+                                 "m_batches=%zu requested=1\n",
+                                 p->rw_model, dff_name, p->batches.size(),
+                                 m.batches.size());
+                    std::fclose(mf);
+                }
+            }
+            if (s_prop_vdump >= 0 && p->rw_model == s_prop_vdump) {
+                // D3D9's CPU-baked lit colour + the inputs that produced it, per
+                // vertex, for the lit batches librw cannot dump (they carry no
+                // uploaded vertex colour -- lit in-shader). Columns:
+                //   batch mat lit mod matR matG matB  x y z  nx ny nz  bakedR bakedG bakedB
+                // p->batches[bi] is aligned 1:1 with m.batches[bi] (both walk the
+                // DffModel in order); m carries the flags/normals/matcol, p carries
+                // the baked V.c. Lets the bake be checked against
+                // matCol*(amb + sun*max(0,N.L)) offline and against librw's HLSL.
+                if (std::FILE* vf = std::fopen("log/pvdump_d3d9.txt", "w")) {
+                    const auto& amb = amb_f_; const auto& sun = sun_f_;
+                    std::fprintf(vf, "# dff=%s handle=%d batches=%zu "
+                                 "amb=(%.3f,%.3f,%.3f) sun=(%.3f,%.3f,%.3f) "
+                                 "sunL=(%.3f,%.3f,%.3f) has_sun=%d\n",
+                                 dff_name, p->rw_model, p->batches.size(),
+                                 amb[0], amb[1], amb[2], sun[0], sun[1], sun[2],
+                                 sun_L_[0], sun_L_[1], sun_L_[2], (int)has_sun_dir_);
+                    const std::size_t nb = p->batches.size() < m.batches.size()
+                        ? p->batches.size() : m.batches.size();
+                    for (std::size_t bi = 0; bi < nb; ++bi) {
+                        const auto& db = p->batches[bi];
+                        const auto& mb = m.batches[bi];
+                        const std::uint8_t* mc =
+                            m.materials[mb.material].rgba;
+                        const bool hasN = !mb.normals.empty();
+                        for (std::size_t vi = 0; vi < db.size(); ++vi) {
+                            const V& v = db[vi];
+                            float nx = 0, ny = 0, nz = 0;
+                            if (hasN && vi * 3 + 2 < mb.normals.size()) {
+                                nx = mb.normals[vi * 3 + 0];
+                                ny = mb.normals[vi * 3 + 1];
+                                nz = mb.normals[vi * 3 + 2];
+                            }
+                            std::fprintf(vf,
+                                "%zu %u %d %d %u %u %u  %.3f %.3f %.3f  "
+                                "%.4f %.4f %.4f  %u %u %u\n",
+                                bi, (unsigned)mb.material, (int)mb.lit,
+                                (int)mb.modulate_mat, mc[0], mc[1], mc[2],
+                                v.x, v.y, v.z, nx, ny, nz,
+                                (v.c >> 16) & 0xFF, (v.c >> 8) & 0xFF, v.c & 0xFF);
+                        }
+                    }
+                    std::fclose(vf);
+                }
+            }
         }
             return true;
         };
@@ -4082,7 +4170,8 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         // the D3D9 path would have used, so both renderers place it identically.
         // A -1 handle falls through to the D3D9 draw below, which is what makes
         // the port incremental: an unregistered model still renders.
-        if (rw_world && p.rw_model >= 0 && LibRw::RaceSubmit_InstancesEnabled()) {
+        if (rw_world && p.rw_model >= 0 &&
+            LibRw::RaceSubmit_InstanceModelEnabled(p.rw_model)) {
             for (const auto& inst : p.instances)
                 LibRw::RaceSubmit_AddInstance(p.rw_model, (const float*)&inst);
             continue;
@@ -4171,7 +4260,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // the ported per-vertex N.L. That is a real visual delta, logged rather than
     // hidden; closing it means giving the librw path an equivalent relight pass.
     const bool car_via_rw = rw_world && car_ready_ && rw_car_model_ >= 0 &&
-                            LibRw::RaceSubmit_InstancesEnabled();
+                            LibRw::RaceSubmit_InstanceModelEnabled(rw_car_model_);
     if (car_via_rw) {
         D3DMATRIX carm;
         MatIdentity(&carm);

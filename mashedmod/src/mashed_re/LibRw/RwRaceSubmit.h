@@ -87,6 +87,12 @@ bool RaceSubmit_OnTrackLoaded(const Track::World& world,
 // (0.39-0.93 mean-abs). Do not flip this default until those two are closed.
 bool RaceSubmit_InstancesEnabled();
 
+// [D-S3-PROP] Per-model routing. Honours MASHED_LIBRW_ONLYPROP=<handle>: with it
+// set, only that model's instances go to librw and every other model falls through
+// to its D3D9 draw, so the untargeted models cancel against the
+// MASHED_LIBRW_INST=0 baseline and one model becomes attributable by counting.
+bool RaceSubmit_InstanceModelEnabled(int handle);
+
 void RaceSubmit_BeginTrackLoad();
 
 // Returns an opaque handle (>= 0) to keep in the owning struct, or -1 on failure.

@@ -45,7 +45,14 @@ VS_out main(in VS_in input)
 	output.Color = clamp(output.Color, 0.0, 1.0);
 	output.Color *= matCol;
 
-	output.TexCoord0.z = clamp((output.Position.w - fogEnd)*fogRange, fogDisable, 1.0);
+	// MASHED LOCAL PATCH (P7) -- per-PIXEL fog. Upstream evaluates the whole fog
+	// factor here, per VERTEX, and interpolates the CLAMPED result; D3D9 table fog
+	// (D3DRS_FOGTABLEMODE = D3DFOG_LINEAR), which the hand-written D3D9 path uses,
+	// evaluates it per pixel. Carry the raw eye depth instead and clamp in the PS.
+	// TEXCOORD is perspective-correct, and perspective-correct interpolation of the
+	// attribute w reconstructs the true per-pixel eye depth exactly, so this makes
+	// the two models algebraically identical. See MASHED_PATCHES.md P7.
+	output.TexCoord0.z = output.Position.w;
 
 	return output;
 }
