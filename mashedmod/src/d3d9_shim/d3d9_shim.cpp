@@ -435,6 +435,10 @@ static void OsdDraw(IDirect3DDevice9* dev) {
     OsdText(dev, msStr,  margin, margin + lineH, scale, D3DCOLOR_XRGB(255, 208, 64));
 }
 
+// P3 3D draw-call accounting (defined below, with the counting thunks).
+void DumpDraw3DStats(const char* bmpPath);
+void ResetDraw3DCounters();
+
 HRESULT STDMETHODCALLTYPE Present_BBDump(
     IDirect3DDevice9* pThis, const RECT* src, const RECT* dst,
     HWND wnd, const RGNDATA* dirty)
@@ -456,9 +460,17 @@ HRESULT STDMETHODCALLTYPE Present_BBDump(
         for (char* c = target; *c; ++c)
             if (*c == '\r' || *c == '\n') { *c = 0; break; }
         DeleteFileA(g_ReqPath);
-        if (target[0]) DumpBackbufferBMPPath(pThis, target);
+        if (target[0]) {
+            DumpBackbufferBMPPath(pThis, target);
+            DumpDraw3DStats(target);   // P3: this frame's 3D draw totals
+        }
     }
     OsdDraw(pThis);   // after dumps: captures never include the overlay
+    // Reset the per-frame 3D counters every Present so each captured frame's
+    // draw totals are isolated (draws for frame N accumulate before Present(N)).
+    // Placed after OsdDraw for correctness-by-construction; the OSD itself uses
+    // Clear (see OsdRect), not DrawPrimitive, so it never reaches these counters.
+    ResetDraw3DCounters();
     return g_OriginalPresent(pThis, src, dst, wnd, dirty);
 }
 
@@ -499,6 +511,77 @@ HRESULT STDMETHODCALLTYPE Clear_ForceColor(IDirect3DDevice9* pThis, DWORD count,
     return g_OriginalClear(pThis, count, rects, flags, color, z, stencil);
 }
 
+// ── P3 parity: per-frame 3D draw-call accounting (original side) ──────────
+// The standalone reports loaded 3D geometry per category via
+// MASHED_DBG_DRAWSTREAM3D; this counts what the ORIGINAL actually submits to
+// D3D9 each frame, so the two are comparable on the camera-INVARIANT metric:
+// total primitives (triangles) + draw calls per frame. If the original submits
+// far more than the RE, the RE is missing geometry; similar totals mean the
+// divergence is lighting/material, not content. Dumped as a
+// "<bmp>.draw3d.json" sibling whenever MASHED_ORIG_BBDUMP_REQ fires.
+LONG g_dcCalls = 0, g_dcPrims = 0, g_dcVerts = 0;
+LONG g_dp = 0, g_di = 0, g_dpup = 0, g_diup = 0;
+
+using DrawPrimitiveFn = HRESULT (STDMETHODCALLTYPE*)(
+    IDirect3DDevice9*, D3DPRIMITIVETYPE, UINT, UINT);
+using DrawIndexedPrimitiveFn = HRESULT (STDMETHODCALLTYPE*)(
+    IDirect3DDevice9*, D3DPRIMITIVETYPE, INT, UINT, UINT, UINT, UINT);
+using DrawPrimitiveUPFn = HRESULT (STDMETHODCALLTYPE*)(
+    IDirect3DDevice9*, D3DPRIMITIVETYPE, UINT, const void*, UINT);
+using DrawIndexedPrimitiveUPFn = HRESULT (STDMETHODCALLTYPE*)(
+    IDirect3DDevice9*, D3DPRIMITIVETYPE, UINT, UINT, UINT, const void*,
+    D3DFORMAT, const void*, UINT);
+DrawPrimitiveFn          g_OrigDP   = nullptr;
+DrawIndexedPrimitiveFn   g_OrigDI   = nullptr;
+DrawPrimitiveUPFn        g_OrigDPUP = nullptr;
+DrawIndexedPrimitiveUPFn g_OrigDIUP = nullptr;
+
+HRESULT STDMETHODCALLTYPE DP_Count(IDirect3DDevice9* t, D3DPRIMITIVETYPE pt,
+    UINT start, UINT prims) {
+    ++g_dcCalls; ++g_dp; g_dcPrims += (LONG)prims;
+    return g_OrigDP(t, pt, start, prims);
+}
+HRESULT STDMETHODCALLTYPE DI_Count(IDirect3DDevice9* t, D3DPRIMITIVETYPE pt,
+    INT base, UINT minIdx, UINT numV, UINT startIdx, UINT prims) {
+    ++g_dcCalls; ++g_di; g_dcPrims += (LONG)prims; g_dcVerts += (LONG)numV;
+    return g_OrigDI(t, pt, base, minIdx, numV, startIdx, prims);
+}
+HRESULT STDMETHODCALLTYPE DPUP_Count(IDirect3DDevice9* t, D3DPRIMITIVETYPE pt,
+    UINT prims, const void* data, UINT stride) {
+    ++g_dcCalls; ++g_dpup; g_dcPrims += (LONG)prims;
+    return g_OrigDPUP(t, pt, prims, data, stride);
+}
+HRESULT STDMETHODCALLTYPE DIUP_Count(IDirect3DDevice9* t, D3DPRIMITIVETYPE pt,
+    UINT minV, UINT numV, UINT prims, const void* idx, D3DFORMAT fmt,
+    const void* vtx, UINT stride) {
+    ++g_dcCalls; ++g_diup; g_dcPrims += (LONG)prims; g_dcVerts += (LONG)numV;
+    return g_OrigDIUP(t, pt, minV, numV, prims, idx, fmt, vtx, stride);
+}
+
+void DumpDraw3DStats(const char* bmpPath) {
+    char p[MAX_PATH];
+    std::snprintf(p, sizeof(p), "%s.draw3d.json", bmpPath);
+    std::FILE* f = std::fopen(p, "w");
+    if (!f) return;
+    std::fprintf(f, "{\"draw_calls\": %ld, \"prims\": %ld, \"verts\": %ld, "
+        "\"dp\": %ld, \"di\": %ld, \"dpup\": %ld, \"diup\": %ld}\n",
+        g_dcCalls, g_dcPrims, g_dcVerts, g_dp, g_di, g_dpup, g_diup);
+    std::fclose(f);
+}
+
+void ResetDraw3DCounters() {
+    g_dcCalls = g_dcPrims = g_dcVerts = g_dp = g_di = g_dpup = g_diup = 0;
+}
+
+void PatchDrawSlot(void** vtbl, int slot, void* thunk, void** saveOrig) {
+    DWORD oldProt = 0, tmp = 0;
+    if (!VirtualProtect(&vtbl[slot], sizeof(void*), PAGE_READWRITE, &oldProt))
+        return;
+    *saveOrig = vtbl[slot];
+    vtbl[slot] = thunk;
+    VirtualProtect(&vtbl[slot], sizeof(void*), oldProt, &tmp);
+}
+
 void PatchPresentSlot(IDirect3DDevice9* dev) {
     ParseDumpFramesOnce();
     ParseReqOnce();
@@ -515,6 +598,16 @@ void PatchPresentSlot(IDirect3DDevice9* dev) {
     vtbl[17] = reinterpret_cast<void*>(&Present_BBDump);
     DWORD tmp = 0;
     VirtualProtect(&vtbl[17], sizeof(void*), oldProt, &tmp);
+    // P3: 3D draw-call counting slots (only in REQ capture mode, so normal runs
+    // are byte-identical-in-effect — the slots are only patched when armed).
+    // IDirect3DDevice9 vtable: DrawPrimitive=81, DrawIndexedPrimitive=82,
+    // DrawPrimitiveUP=83, DrawIndexedPrimitiveUP=84.
+    if (g_ReqArmed == 1) {
+        PatchDrawSlot(vtbl, 81, (void*)&DP_Count,   (void**)&g_OrigDP);
+        PatchDrawSlot(vtbl, 82, (void*)&DI_Count,   (void**)&g_OrigDI);
+        PatchDrawSlot(vtbl, 83, (void*)&DPUP_Count, (void**)&g_OrigDPUP);
+        PatchDrawSlot(vtbl, 84, (void*)&DIUP_Count, (void**)&g_OrigDIUP);
+    }
     // Clear hook (vtable slot 43) — only when a parity background is requested.
     if (ParityBgColor() != 0 &&
         VirtualProtect(&vtbl[43], sizeof(void*), PAGE_READWRITE, &oldProt)) {

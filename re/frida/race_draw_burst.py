@@ -13,10 +13,13 @@
 # primitives/frame) answers: is the RE missing geometry (dark-void cause), or
 # is the divergence lighting/material?
 #
-# SHIM LIMITATION: the current d3d9 shim implements BBDUMP only — no draw-slot
-# counters / draw3d.json writer exists yet (P3 plan). Until an instrumented
-# shim ships, this script captures BMP + campose and reports the draw totals
-# as unavailable (exit 0); nonzero exits are reserved for missing BMP/campose.
+# SHIM STATUS: the draw-slot counters + draw3d.json writer SHIP as of 2026-08-14
+# (mashedmod/src/d3d9_shim/d3d9_shim.cpp, vtable slots 81-84, gated on
+# MASHED_ORIG_BBDUMP_REQ so unarmed runs are unaffected). Rebuild the shim with
+# mashedmod\build_d3d9_shim.bat if draw3d.json is missing. The totals stay
+# OPTIONAL here on purpose: a stale deployed d3d9.dll should degrade to
+# "unavailable" (exit 0) rather than fail the capture. Nonzero exits remain
+# reserved for missing BMP/campose.
 #
 # Usage: py -3.12 re/frida/race_draw_burst.py [--out verify/parity_race/orig_race.bmp]
 import argparse, os, shutil, subprocess, sys, time
