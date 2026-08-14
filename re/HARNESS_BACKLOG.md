@@ -74,6 +74,39 @@ idling or reviving dead batch lanes.
    already scripted on `log/ttd/*.run`. Finding VECCAP-1 (LUT validator rejected high-heap layouts → silent CPU
    fallback in 4 Math TUs) RESOLVED via Math/RwLutGuard.h; re-verified.
 
+- **Chunked PHASE 2 install in `c4_navigate_batch.py` (`--on-chunk`)** — rescued 2026-08-14 from
+  branch `harness/ext-ag-arg-types` (commit `1b8ae10b`) immediately before that branch was deleted.
+  The branch was deleted as a net regression (it dragged a -238-line `hooks_registry.py` revert),
+  so **re-author against main; do NOT try to recover the commit** — it is unreachable now, which is
+  why the snippet is reproduced here verbatim rather than cited.
+
+  Today main installs every RVA at once (`re/frida/c4_navigate_batch.py`, PHASE 2:
+  `on_all = H.run(",".join(rvas), rvas, ...)`), so one bad hook in a large batch means a crash and
+  a full-range bisect. The branch installed in groups of `--on-chunk` (default 16) and bisected only
+  *within* the crashing group:
+
+  ```python
+  on_chunk = int(a[a.index("--on-chunk")+1]) if "--on-chunk" in a else 16
+  bad = set(); jmp = {}
+  for gi, group in enumerate(chunked(rvas, on_chunk)):
+      res = H.run(",".join(group), group, None, nav, settle, dwell, seconds,
+                  shot=(f"{shotdir}/c4nav_ON_g{gi}.png" if shotdir else None),
+                  shotat=(seconds*0.6))
+      if res["crash"] is None and res["alive"]:
+          jmp.update(res["jmp"])
+      else:
+          gbad = bisect_bad(group, nav, settle, dwell, seconds)
+          bad |= gbad
+          good = [r for r in group if r not in gbad]
+          if good:
+              jmp.update(H.run(",".join(good), good, None, nav, settle, dwell, seconds).get("jmp", {}))
+          for b in gbad: jmp.setdefault(b, None)
+  ```
+
+  Requires a `chunked()` helper (not on main). [UNCERTAIN] The branch version was never run to
+  completion on record, so the ROI is reasoned (smaller blast radius per crash), not measured —
+  treat the default of 16 as untuned.
+
 ## Done
 
 - **T1 delegation-reach test — DONE 2026-07-06: SHELL-BLOCKED.** The account2 worker has no shell
