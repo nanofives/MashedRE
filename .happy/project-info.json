@@ -1,13 +1,13 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-13T12:04:00Z",
+  "updatedAt": "2026-08-14T00:00:00Z",
   "sections": [
     {
       "heading": "Status",
       "fields": [
         { "label": "Phase", "value": "R7 (scaffold→verbatim)", "kind": "text" },
-        { "label": "Current branch", "value": "fix/u9025-recharacterise-and-regabi-defects", "kind": "text" },
-        { "label": "Attention needed", "value": ["3 unmerged worktrees", "backup refresh (42 days old)"], "kind": "list" }
+        { "label": "Current branch", "value": "main @ 1b883e9f", "kind": "text" },
+        { "label": "Attention needed", "value": ["new roadmap pending", "4 stale branches in triage", "backup refresh (43 days old)"], "kind": "list" }
       ]
     },
     {
@@ -19,10 +19,18 @@
       ]
     },
     {
+      "heading": "Branch hygiene",
+      "fields": [
+        { "label": "Remote branches", "value": 8, "kind": "number" },
+        { "label": "Local branches", "value": 5, "kind": "number" },
+        { "label": "Cleanup 2026-08-14", "value": "87→8 remote, 15→5 local; 267 commits landed on main", "kind": "text" }
+      ]
+    },
+    {
       "heading": "Active work",
       "fields": [
-        { "label": "Current", "value": "QoL Item 6 (powerup render path)", "kind": "text" },
-        { "label": "Last merge", "value": "B5e solver island (2026-07-20)", "kind": "text" },
+        { "label": "Last merge", "value": "render/fog-perpixel — D-S3-BANK closed at floor (2026-08-14)", "kind": "text" },
+        { "label": "Open", "value": ["new project roadmap", "promote-c4 / ws-visual-polish triage"], "kind": "list" },
         { "label": "Blocker", "value": "statediff residual wedge", "kind": "text" }
       ]
     }

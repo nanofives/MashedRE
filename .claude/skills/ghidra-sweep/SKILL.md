@@ -120,6 +120,26 @@ API and `0x*.md`-only globbing.)
     "<YYYY-MM-DD>  $SESSION_SHORT_ID  scribe-release  buckets=<N drained>  errors=0"
     git add re/analysis/CHANGELOG.md
     git commit -m "scribe: release $SESSION_SHORT_ID"
+
+14. MANDATORY branch teardown. For every fanout session branch this sweep drained:
+      git push origin main
+      for BRANCH in <the drained session branches>; do
+        py -3.12 scripts/diag.py wt-remove ".worktrees/<worktree-for-$BRANCH>"
+        git branch -d "$BRANCH"                  # -d, never -D: refuses if unmerged
+        git push origin --delete "$BRANCH"
+      done
+    → If `git branch -d` refuses, that branch has commits the sweep did not
+      land. Halt and surface it — that is a finding, not an obstacle.
+    → Remove worktrees ONLY via `scripts/diag.py wt-remove`. NEVER
+      `git worktree remove --force` (it follows the `original/` junction and
+      wipes the real game install; see re/diag/KNOWN_ISSUES.md
+      WORKTREE-SYMLINK-WIPE).
+
+    Why mandatory: skipping this is what produced the 2026-08-14 cleanup —
+    75 of 87 remote branches were already fully merged into main and had
+    simply never been reaped. The cost is not disk, it is that the branch
+    list stops being a signal, so branches that DO carry unlanded work
+    become invisible.
 ```
 
 ## C0 fallback (RVA not a Ghidra function object)

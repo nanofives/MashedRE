@@ -89,6 +89,17 @@ SESSION_SHORT_ID="frida-sweep-$(date -u +%Y%m%d-%H%M)"
 9. git rm "frida-sweep.WIP-$SESSION_SHORT_ID"
    git add -A
    git commit -m "frida-sweep: release $SESSION_SHORT_ID — <K> hooks integrated, diff GREEN"
+
+10. MANDATORY branch teardown (not optional — see § "Branch teardown" below).
+    Only after step 8's integration diff is GREEN and step 9 is committed:
+      git push origin main
+      for BRANCH in <the N merged branches>; do
+        py -3.12 scripts/diag.py wt-remove ".worktrees/<worktree-for-$BRANCH>"
+        git branch -d "$BRANCH"                  # -d, never -D: refuses if unmerged
+        git push origin --delete "$BRANCH"
+      done
+    → If `git branch -d` refuses, the branch is NOT fully merged. Halt and
+      surface it; do not escalate to -D.
 ```
 
 ## Conflict resolution rules (mechanical)
@@ -202,7 +213,16 @@ A merge-sweep that fails to run the integration diff has not finished. Commit th
 - **promote-c3-batch** — generates the batch file this sweep eventually drains.
 - **re-classify** — already ran per-session inside each worktree. The sweep does not re-classify.
 - **frida_pool** (`scripts/frida_pool.sh`) — used during the integration diff. Cleanup before, cleanup after.
-- **worktree** — sessions ran in `.worktrees/c3-batch-<id>-s<N>/`. After the sweep succeeds, the worktrees can be torn down (`git worktree remove`) at the user's discretion.
+- **worktree** — sessions ran in `.worktrees/c3-batch-<id>-s<N>/`. Teardown is step 10 and is MANDATORY, not discretionary. Remove worktrees ONLY via `py -3.12 scripts/diag.py wt-remove <path>` — **never** `git worktree remove --force` (it follows the `original/` junction and wipes the real game install; incidents 2026-06-27 and 2026-07-01, `re/diag/KNOWN_ISSUES.md` WORKTREE-SYMLINK-WIPE).
+
+## Branch teardown (step 10) — why it is mandatory
+
+Skipping teardown is what produced the 2026-08-14 cleanup: **75 of 87 remote branches were already fully merged into `main`** and had simply never been deleted. Six sweep rounds a batch, one branch per session, nothing reaping them. The cost is not disk — it is that the branch list stops being a signal, so the handful of branches that *do* carry unlanded work become invisible.
+
+Rules:
+- Delete with `git branch -d` (lowercase). It refuses on an unmerged branch, which is the safety property we want. Never escalate to `-D`.
+- Delete the remote ref too (`git push origin --delete`). A local-only reap leaves the remote list just as noisy.
+- If `-d` refuses, that branch has unique commits the sweep did not land. Halt and surface it — that is a finding, not an obstacle.
 
 ## End-of-session report
 
