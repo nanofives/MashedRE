@@ -1,37 +1,46 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-14T00:00:00Z",
+  "updatedAt": "2026-08-14T22:30:00Z",
   "sections": [
     {
       "heading": "Status",
       "fields": [
-        { "label": "Phase", "value": "R7 (scaffold→verbatim)", "kind": "text" },
-        { "label": "Current branch", "value": "main @ 1b883e9f", "kind": "text" },
-        { "label": "Attention needed", "value": ["new roadmap pending", "4 stale branches in triage", "backup refresh (43 days old)"], "kind": "list" }
+        { "label": "Roadmap", "value": "v3 (2026-08-14) — default-build rule", "kind": "text" },
+        { "label": "Phase", "value": "D0 — tell the truth again", "kind": "text" },
+        { "label": "Branch", "value": "main", "kind": "text" }
       ]
     },
     {
-      "heading": "Progress",
+      "heading": "The v3 premise",
       "fields": [
-        { "label": "Functions C3+", "value": 1066, "kind": "number" },
-        { "label": "Functions C4", "value": 185, "kind": "number" },
-        { "label": "Coverage", "value": "18.2% C3+, 3.2% C4", "kind": "text" }
+        { "label": "Root finding", "value": "mashed_re.exe with no env set does not run most of what has been ported", "kind": "text" },
+        { "label": "Default OFF", "value": ["MASHED_RENDER_LIBRW — librw renderer", "MASHED_REAL_PHYSICS — ported physics chain"], "kind": "list" },
+        { "label": "MASHED_* flags", "value": 146, "kind": "number" }
+      ]
+    },
+    {
+      "heading": "Coverage (first-party)",
+      "fields": [
+        { "label": "Rows", "value": 3682, "kind": "number" },
+        { "label": "C3+", "value": "28.8%", "kind": "text" },
+        { "label": "C4", "value": "4.9%", "kind": "text" },
+        { "label": "Caveat", "value": "~1,788 race-closure RVAs undiscovered — denominator is partial", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Phase gates",
+      "fields": [
+        { "label": "D1 default renderer", "value": "blocked on R10b — 8/13 shots differ between builds of identical source", "kind": "text" },
+        { "label": "D2 default physics", "value": "blocked on statediff wedge — ~1/6 boots", "kind": "text" },
+        { "label": "Open decisions", "value": ["promote-c4: port or drop its 5 features?", "CHANGELOG: index or highlights?", "original-exe QoL patches: track or stop?"], "kind": "list" }
       ]
     },
     {
       "heading": "Branch hygiene",
       "fields": [
-        { "label": "Remote branches", "value": 8, "kind": "number" },
-        { "label": "Local branches", "value": 5, "kind": "number" },
-        { "label": "Cleanup 2026-08-14", "value": "87→8 remote, 15→5 local; 267 commits landed on main", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "Active work",
-      "fields": [
-        { "label": "Last merge", "value": "render/fog-perpixel — D-S3-BANK closed at floor (2026-08-14)", "kind": "text" },
-        { "label": "Open", "value": ["new project roadmap", "promote-c4 / ws-visual-polish triage"], "kind": "list" },
-        { "label": "Blocker", "value": "statediff residual wedge", "kind": "text" }
+        { "label": "Remote", "value": 1, "kind": "number" },
+        { "label": "Local", "value": 3, "kind": "number" },
+        { "label": "Cleanup 2026-08-14", "value": "87→1 remote, 15→3 local", "kind": "text" }
       ]
     }
   ]
