@@ -1,13 +1,13 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-14T22:30:00Z",
+  "updatedAt": "2026-08-15T01:15:00Z",
   "sections": [
     {
       "heading": "Status",
       "fields": [
         { "label": "Roadmap", "value": "v3 (2026-08-14) — default-build rule", "kind": "text" },
-        { "label": "Phase", "value": "D0 — tell the truth again", "kind": "text" },
-        { "label": "Branch", "value": "main", "kind": "text" }
+        { "label": "Next phase", "value": "D0 — tell the truth again", "kind": "text" },
+        { "label": "Branches", "value": "main only (1 remote, 1 local)", "kind": "text" }
       ]
     },
     {
@@ -16,6 +16,14 @@
         { "label": "Root finding", "value": "mashed_re.exe with no env set does not run most of what has been ported", "kind": "text" },
         { "label": "Default OFF", "value": ["MASHED_RENDER_LIBRW — librw renderer", "MASHED_REAL_PHYSICS — ported physics chain"], "kind": "list" },
         { "label": "MASHED_* flags", "value": 146, "kind": "number" }
+      ]
+    },
+    {
+      "heading": "Phase gates",
+      "fields": [
+        { "label": "D1 default renderer", "value": "blocked on R10b — 8/13 shots differ between builds of identical source", "kind": "text" },
+        { "label": "D2 default physics", "value": "blocked on statediff wedge — ~1/6 boots", "kind": "text" },
+        { "label": "D0 tasks", "value": ["refresh 2-month-stale verification audit", "classify + prune the 146 flags", "reconcile UNCERTAINTIES Type vs Blocks", "fix STUBS census (1,072 vs 1,109)", "file the QoL strand"], "kind": "list" }
       ]
     },
     {
@@ -28,19 +36,11 @@
       ]
     },
     {
-      "heading": "Phase gates",
+      "heading": "Closed 2026-08-14",
       "fields": [
-        { "label": "D1 default renderer", "value": "blocked on R10b — 8/13 shots differ between builds of identical source", "kind": "text" },
-        { "label": "D2 default physics", "value": "blocked on statediff wedge — ~1/6 boots", "kind": "text" },
-        { "label": "Open decisions", "value": ["promote-c4: port or drop its 5 features?", "CHANGELOG: index or highlights?", "original-exe QoL patches: track or stop?"], "kind": "list" }
-      ]
-    },
-    {
-      "heading": "Branch hygiene",
-      "fields": [
-        { "label": "Remote", "value": 1, "kind": "number" },
-        { "label": "Local", "value": 3, "kind": "number" },
-        { "label": "Cleanup 2026-08-14", "value": "87→1 remote, 15→3 local", "kind": "text" }
+        { "label": "Branches", "value": "87→1 remote, 15→1 local; all work landed or preserved", "kind": "text" },
+        { "label": "Decisions", "value": ["QuadRenderer stays 2D-only", "promote-c4 drained + retired", "CHANGELOG = tracker audit trail", "QoL strand filed, not stopped"], "kind": "list" },
+        { "label": "Recovered", "value": "478 CHANGELOG entries lost to an accidental overwrite", "kind": "text" }
       ]
     }
   ]
