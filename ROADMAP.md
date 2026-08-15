@@ -329,5 +329,5 @@ render-interpolation findings currently do not).
 | # | Follow-up | Owner | Phase |
 |---|---|---|---|
 | 1 | Give the QoL strand a tracker row; reclassify borderless as port work (librw P5 exerciser) | — | D0 |
-| 2 | Re-measure the collision-FX thresholds once `MASHED_REAL_PHYSICS` is the default | — | D2 |
-| 3 | Verify collision FX in a race capture (ported 2026-08-14, build-only so far) | — | D3 |
+| 2 | Re-measure the collision-FX thresholds once `MASHED_REAL_PHYSICS` is the default — **and independently of D2, investigate suspected over-firing: 2,164 skids/race measured vs the 251 the calibration was tuned to** | — | D2 |
+| 3 | ~~Verify collision FX in a race capture~~ **DONE 2026-08-14** — emission verified, `verify/fx_verify/`. Residual: the visual contribution of skid smoke specifically was NOT isolated (`MASHED_NO_PARTICLES` disables the whole particle block), and dark smoke `0x303030` on a night track may be invisible in practice | — | — |
