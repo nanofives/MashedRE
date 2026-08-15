@@ -423,15 +423,44 @@ void BuildDffBatches(IDirect3DDevice9* dev,
                          = nullptr) {
     using V = TrackRenderer::V;
     textures->assign(model.materials.size(), nullptr);
+    // P3b diagnostic (MASHED_DBG_TEXMATCH): classify each material's texture
+    // resolution as matched / empty-name (colour-only, correctly untextured) /
+    // unmatched (a name the dicts don't contain — a real binding bug). The 2026-06-19
+    // run of this on the car model answered the question it was built for: 71 materials,
+    // 44 matched, 27 colour-only, 0 unmatched — i.e. the untextured batches are
+    // by-design, NOT a binding bug. Kept because the same question recurs per-model,
+    // and because the earlier "65% vs 97%" framing was a batch-vs-draw denominator
+    // artefact that this counter is what disambiguates.
+    static const bool s_dbg_tex = std::getenv("MASHED_DBG_TEXMATCH") != nullptr;
+    int n_match = 0, n_empty = 0, n_unmatched = 0;
+    std::string unmatched_names;
     for (std::size_t mi = 0; mi < model.materials.size(); ++mi) {
         const char* want = model.materials[mi].tex_name;
-        if (!want[0]) continue;
+        if (!want[0]) { ++n_empty; continue; }
         for (std::size_t di = 0; di < dicts.size() && !(*textures)[mi]; ++di)
             for (std::uint32_t ti = 0; ti < dicts[di].count(); ++ti)
                 if (std::strcmp(dicts[di].texture(ti).name, want) == 0) {
                     (*textures)[mi] = MakeTexture(dev, dicts[di].texture(ti));
                     break;
                 }
+        if ((*textures)[mi]) { ++n_match; }
+        else { ++n_unmatched; if (unmatched_names.size() < 400) { unmatched_names += want; unmatched_names += ' '; } }
+    }
+    if (s_dbg_tex) {
+        if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+            std::fprintf(lf, "TEXMATCH: %zu mats match=%d empty=%d unmatched=%d"
+                         " dicts=%zu unmatched_names=[%s]\n",
+                         model.materials.size(), n_match, n_empty, n_unmatched,
+                         dicts.size(), unmatched_names.c_str());
+            // also list the available dict texture names once, to spot case/format diffs
+            for (std::size_t di = 0; di < dicts.size(); ++di) {
+                std::fprintf(lf, "  dict[%zu] (%u texs):", di, dicts[di].count());
+                for (std::uint32_t ti = 0; ti < dicts[di].count() && ti < 24; ++ti)
+                    std::fprintf(lf, " %s", dicts[di].texture(ti).name);
+                std::fputc('\n', lf);
+            }
+            std::fclose(lf);
+        }
     }
     batches->assign(model.materials.size(), {});
     if (relit_out) relit_out->assign(model.materials.size(), {});
@@ -3763,6 +3792,84 @@ void TrackRenderer::RenderCarsRelit(IDirect3DDevice9* dev,
     dev->SetTransform(D3DTS_WORLD, &worldm);
 }
 
+// Collision/slide FX. [SCAFFOLD] presentation, real data path: reuses the existing
+// ParticleSystem billboard pool and scales every threshold to track radius.
+//
+// CALIBRATION CAVEAT (load-bearing, do not lose this):
+// the skid trigger is driven off YAW-RATE x speed, not off lateral slip, because the
+// kinematic/AI cars keep velocity aligned with heading and encode motion as
+// (speed, yaw) with vel[] zero. The first pass used slip and fired 0 skids per race;
+// after the change it fired 251. That calibration is therefore tuned to the CURRENT
+// DEFAULT drive model. ROADMAP v3 D2 inverts MASHED_REAL_PHYSICS and makes the ported
+// chain the default, at which point vel[] becomes real and the slip term starts
+// carrying signal — these thresholds must be re-measured then, not assumed to carry
+// over. The `slip` branch below is retained precisely so it takes over when that lands.
+void TrackRenderer::EmitCarFx(int slot, const float pos[3], const float vel[3],
+                              float speed, float yaw, float dt) {
+    if (slot < 0 || slot > 3 || dt <= 0.f) return;
+    const float R  = track_radius_ > 1.f ? track_radius_ : radius_;
+    const float fx = std::cos(yaw), fz = std::sin(yaw);
+    const float vf = vel[0] * fx + vel[2] * fz;             // forward component
+    const float lx = vel[0] - fx * vf, lz = vel[2] - fz * vf;
+    const float slip = std::sqrt(lx * lx + lz * lz);        // lateral slide speed
+
+    // skid smoke: lateral slip OR hard cornering at speed.
+    float dyaw = yaw - fx_prev_yaw_[slot];
+    while (dyaw >  3.14159265f) dyaw -= 6.28318531f;
+    while (dyaw < -3.14159265f) dyaw += 6.28318531f;
+    const float spd = (speed < 0.f) ? -speed : speed;
+    const float yawRate = std::fabs(dyaw) / dt;                  // rad/s
+    const float corner = yawRate * spd;                          // cornering intensity
+    fx_prev_yaw_[slot] = yaw;
+    const float kSlip = R * 0.02f, kCorner = R * 0.12f;
+    float skidI = slip / kSlip;
+    if (corner / kCorner > skidI) skidI = corner / kCorner;      // whichever is stronger
+    if (skidI > 1.f && spd > R * 0.04f) {
+        fx_skid_accum_[slot] += (skidI > 3.f ? 3.f : skidI) * 36.f * dt;
+        int n = static_cast<int>(fx_skid_accum_[slot]);
+        if (n > 4) n = 4;
+        fx_skid_accum_[slot] -= static_cast<float>(n);
+        fx_skids_ += n;
+        for (int i = 0; i < n; ++i) {
+            const float w  = (i & 1) ? 1.f : -1.f;          // two wheel tracks
+            const float wx = pos[0] - fx * (R * 0.012f) + (-fz) * w * (R * 0.006f);
+            const float wz = pos[2] - fz * (R * 0.012f) + ( fx) * w * (R * 0.006f);
+            const float p[3] = { wx, pos[1] + R * 0.002f, wz };
+            float aF = 0.28f + 0.30f * (skidI > 2.f ? 1.f : skidI * 0.5f);
+            std::uint8_t a = static_cast<std::uint8_t>(aF * 255.f);
+            std::uint32_t col = (static_cast<std::uint32_t>(a) << 24) | 0x00303030u; // dark smoke
+            parts_.SpawnTrail(p, col, R * 0.010f, 0.55f);
+        }
+    } else {
+        fx_skid_accum_[slot] = 0.f;
+    }
+
+    // impact sparks: a sudden one-frame deceleration is a collision
+    const float decel = fx_prev_speed_[slot] - speed;
+    const float kImpact = R * 0.06f;
+    if (decel > kImpact && fx_prev_speed_[slot] > R * 0.05f) {
+        const float k = decel / kImpact;                    // >= 1
+        const int n = static_cast<int>(8.f + 8.f * (k > 2.f ? 2.f : k));
+        const float p[3] = { pos[0], pos[1] + R * 0.012f, pos[2] };
+        parts_.SpawnBurst(p, n, 0xE0FFC850u /*warm spark*/, R * 0.07f, R * 0.006f, 0.35f);
+        ++fx_sparks_;
+    }
+    // [diag] MASHED_FX_DEBUG: log a MOVING AI car (slot 1) + emit counts (calibration).
+    static int s_fxdbg = -1;
+    if (s_fxdbg < 0) { char b[8]; s_fxdbg = GetEnvironmentVariableA("MASHED_FX_DEBUG", b, sizeof b) ? 1 : 0; }
+    if (s_fxdbg && slot == 1) {
+        static int dn = 0;
+        if ((dn++ % 12) == 0) {
+            if (std::FILE* f = std::fopen("log/fx_debug.txt", "a")) {
+                std::fprintf(f, "[s1] R=%.1f spd=%.2f yawRate=%.2f corner=%.2f kCorner=%.2f decel=%.2f skidI=%.2f skids=%d sparks=%d\n",
+                             R, spd, yawRate, corner, kCorner, decel, skidI, fx_skids_, fx_sparks_);
+                std::fclose(f);
+            }
+        }
+    }
+    fx_prev_speed_[slot] = speed;
+}
+
 void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     if (!ready_) return;
     // Parity 3D channel (MASHED_DBG_DRAWSTREAM3D) frame delimiter: Render() is
@@ -3795,6 +3902,23 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         acc += RMs(_mk, n); _mk = n; } };
     // F3 A/B verification toggle: suppress all UV-scroll texture transforms.
     static const bool s_uvscroll_off = std::getenv("MASHED_NO_UVSCROLL") != nullptr;
+    // P3 same-view parity: MASHED_CAM_POSE=ex,ey,ez,ax,ay,az pins the camera to a
+    // fixed world-space eye/at (overrides orbit/chase/free), so the standalone can
+    // render a track from the ORIGINAL's exact captured pose and an in-race diff is
+    // finally same-view. The producer is re/frida/race_draw_burst.py, which reads the
+    // original's race-camera struct DAT_00897fe0 (+0x40 eye, +0x4c at) and prints the
+    // value in this exact format. NOTE the pose is read from that RW struct via Frida,
+    // NOT from any D3D transform: 3755c57e established that RenderWare pre-transforms
+    // world geometry on the CPU, so D3DTS_VIEW and the first world matrix are BOTH
+    // identity and the shim cannot recover the camera from fixed-function state.
+    static float s_campose[6];
+    static const bool s_have_campose = [] {
+        char b[128];
+        if (GetEnvironmentVariableA("MASHED_CAM_POSE", b, sizeof(b)) == 0) return false;
+        return std::sscanf(b, "%f,%f,%f,%f,%f,%f", &s_campose[0], &s_campose[1],
+                           &s_campose[2], &s_campose[3], &s_campose[4],
+                           &s_campose[5]) == 6;
+    }();
     // Camera: auto-orbit by default; any movement input switches to free
     // mode (WASD/QE move relative to look direction, mouse/arrow look).
     float eye[3];
@@ -3873,6 +3997,9 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         eye[1] = C[1] + R * 1.10f;
         eye[2] = C[2] + R * 1.60f * std::sin(yaw);
         at[0] = C[0]; at[1] = C[1]; at[2] = C[2];
+    }
+    if (s_have_campose) {   // P3 same-view parity: pin to the captured pose
+        for (int i = 0; i < 3; ++i) { eye[i] = s_campose[i]; at[i] = s_campose[3 + i]; }
     }
     for (int i = 0; i < 3; ++i) { last_eye_[i] = eye[i]; last_at_[i] = at[i]; }
 
@@ -4446,6 +4573,21 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         const float dt = (last_t_ < 0.f) ? 0.f : (t - last_t_);
         last_t_ = t;
         float fwd[3] = {at[0]-eye[0], at[1]-eye[1], at[2]-eye[2]};
+        // Collision/slide FX (skids + impact sparks) for every car, before the
+        // pool advances this frame. Emit once per frame; parts_.Render is the
+        // per-view half (kept separate — see D-11063's particle constraint).
+        if (car_ready_) {
+            EmitCarFx(0, car_pos_, car_vel_, car_speed_, car_yaw_, dt);
+            // AiCar carries no velocity vector on main (pos/yaw/target/speed/
+            // cur_speed/lane), so pass an explicit zero. This is faithful rather
+            // than lossy: the AI/kinematic cars encode motion as (speed, yaw) and
+            // their lateral-slip term was already ~0, which is exactly why the
+            // trigger is yaw-rate-based (see EmitCarFx).
+            static const float kNoVel[3] = { 0.f, 0.f, 0.f };
+            for (int i = 0; i < static_cast<int>(ai_cars_.size()) && i < 3; ++i)
+                EmitCarFx(i + 1, ai_cars_[i].pos, kNoVel,
+                          ai_cars_[i].cur_speed, ai_cars_[i].yaw, dt);
+        }
         parts_.Update(dt, eye, fwd, car_ready_ ? car_pos_ : nullptr,
                       car_ready_ ? car_speed_ : 0.f);
         parts_.Render(dev, eye, at);

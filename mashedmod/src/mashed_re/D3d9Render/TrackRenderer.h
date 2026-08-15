@@ -150,6 +150,18 @@ private:
     std::vector<IDirect3DTexture9*>  textures_;  // per material (may be null)
     bool   ready_     = false;
     ParticleSystem parts_;          // in-race weather/dust billboards
+    // Collision/slide FX state, per car slot (0=player, 1..3 = ai_cars_):
+    // skid-smoke rate accumulator, prev-frame speed (sudden drop = impact),
+    // prev-frame yaw (yaw-rate drives the cornering skid trigger).
+    float  fx_skid_accum_[4] = {};
+    float  fx_prev_speed_[4] = {};
+    float  fx_prev_yaw_[4]   = {};
+    int    fx_skids_ = 0, fx_sparks_ = 0;   // [diag] cumulative counts (MASHED_FX_DEBUG)
+    // Emit skid smoke (cornering/lateral slip) + impact sparks (sudden decel) for
+    // one car into parts_. Call once per car per frame BEFORE parts_.Update() --
+    // emit is per-frame, render is per-view (the split-screen constraint in D-11063).
+    void EmitCarFx(int slot, const float pos[3], const float vel[3],
+                   float speed, float yaw, float dt);
     PickupField    pickups_;        // in-race power-up orbs
     std::vector<PickupField::Spawn> powerup_spawns_;  // POWERUPS_GOLD.LUA placement
 
