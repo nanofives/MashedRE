@@ -1,0 +1,272 @@
+diff --git a/mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp b/mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp
+index 62f83481..8af751f1 100644
+--- a/mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp
++++ b/mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp
+@@ -1637,6 +1637,19 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
+             const int slot = Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride);
+             const std::uint8_t* ctrl = reinterpret_cast<const std::uint8_t*>(
+                 Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(slot) * Ai::kCtrlBlockStride);
++            // 2nd input: in 2-player mode, player 2 drives car slot 1 (ci==0) from the
++            // keyboard (arrows), overriding its AI controller. ctrl[0]/[1]=steer,
++            // [4]=accel, [5]=brake (project_wsc_ai_port byte map).
++            std::uint8_t p2ctrl[8] = {0};
++            {
++                if (MashedPlayerCount() >= 2 && ci == 0) {
++                    if (GetAsyncKeyState(VK_UP)    & 0x8000) p2ctrl[4] = 255;  // accelerate
++                    if (GetAsyncKeyState(VK_DOWN)  & 0x8000) p2ctrl[5] = 255;  // brake
++                    if (GetAsyncKeyState(VK_LEFT)  & 0x8000) p2ctrl[1] = 255;  // steer left
++                    if (GetAsyncKeyState(VK_RIGHT) & 0x8000) p2ctrl[0] = 255;  // steer right
++                    ctrl = p2ctrl;
++                }
++            }
+             if (phys) {
+                 // --- REAL physics: AI descriptor bytes -> the verbatim chain (StepCar) ---
+                 Vehicle::PlayerCarIO io{};
+@@ -2319,6 +2332,90 @@ void TrackRenderer::camera(float eye[3], float at[3]) const {
+     for (int i = 0; i < 3; ++i) { eye[i] = last_eye_[i]; at[i] = last_at_[i]; }
+ }
+ 
++// Collision/slide FX (goal: skids + impacts). Decompose the car's velocity into
++// forward + lateral(slide) in XZ: emit dark smoke trails behind the rear axle when
++// it slides hard while grounded, and a warm spark burst on a sudden one-frame speed
++// drop (= a collision impact). Reuses parts_' alpha-blended billboard pool.
++// [SCAFFOLD] presentation/thresholds (like the ambient emitters), not RE'd from the
++// original FX; the DATA path (billboards) is real. Tuned to the track radius.
++void TrackRenderer::EmitCarFx(int slot, const float pos[3], const float vel[3],
++                              float speed, float yaw, float dt) {
++    if (slot < 0 || slot > 3 || dt <= 0.f) return;
++    const float R  = track_radius_ > 1.f ? track_radius_ : radius_;
++    const float fx = std::cos(yaw), fz = std::sin(yaw);
++    const float vf = vel[0] * fx + vel[2] * fz;             // forward component
++    const float lx = vel[0] - fx * vf, lz = vel[2] - fz * vf;
++    const float slip = std::sqrt(lx * lx + lz * lz);        // lateral slide speed
++
++    // skid smoke: lateral slip OR hard cornering at speed. In the kinematic/AI
++    // model velocity stays ~aligned with heading (slip ~0 under strong grip), so
++    // cornering — yaw-rate x forward speed — is the reliable trigger.
++    float dyaw = yaw - fx_prev_yaw_[slot];
++    while (dyaw >  3.14159265f) dyaw -= 6.28318531f;
++    while (dyaw < -3.14159265f) dyaw += 6.28318531f;
++    // The kinematic/AI cars encode motion as (speed, yaw), not in vel[] (which is
++    // zero in the scaffold path) — so use the passed speed magnitude, not vf.
++    const float spd = (speed < 0.f) ? -speed : speed;
++    const float yawRate = std::fabs(dyaw) / dt;                  // rad/s
++    const float corner = yawRate * spd;                          // cornering intensity
++    fx_prev_yaw_[slot] = yaw;
++    const float kSlip = R * 0.02f, kCorner = R * 0.12f;
++    float skidI = slip / kSlip;
++    if (corner / kCorner > skidI) skidI = corner / kCorner;      // whichever is stronger
++    if (skidI > 1.f && spd > R * 0.04f) {
++        fx_skid_accum_[slot] += (skidI > 3.f ? 3.f : skidI) * 36.f * dt;
++        int n = static_cast<int>(fx_skid_accum_[slot]);
++        if (n > 4) n = 4;
++        fx_skid_accum_[slot] -= static_cast<float>(n);
++        fx_skids_ += n;
++        for (int i = 0; i < n; ++i) {
++            const float w  = (i & 1) ? 1.f : -1.f;          // two wheel tracks
++            const float wx = pos[0] - fx * (R * 0.012f) + (-fz) * w * (R * 0.006f);
++            const float wz = pos[2] - fz * (R * 0.012f) + ( fx) * w * (R * 0.006f);
++            const float p[3] = { wx, pos[1] + R * 0.002f, wz };
++            float aF = 0.28f + 0.30f * (skidI > 2.f ? 1.f : skidI * 0.5f);
++            std::uint8_t a = static_cast<std::uint8_t>(aF * 255.f);
++            std::uint32_t col = (static_cast<std::uint32_t>(a) << 24) | 0x00303030u; // dark smoke
++            parts_.SpawnTrail(p, col, R * 0.010f, 0.55f);
++        }
++    } else {
++        fx_skid_accum_[slot] = 0.f;
++    }
++
++    // impact sparks: a sudden one-frame deceleration is a collision
++    const float decel = fx_prev_speed_[slot] - speed;
++    const float kImpact = R * 0.06f;
++    if (decel > kImpact && fx_prev_speed_[slot] > R * 0.05f) {
++        const float k = decel / kImpact;                    // >= 1
++        const int n = static_cast<int>(8.f + 8.f * (k > 2.f ? 2.f : k));
++        const float p[3] = { pos[0], pos[1] + R * 0.012f, pos[2] };
++        parts_.SpawnBurst(p, n, 0xE0FFC850u /*warm spark*/, R * 0.07f, R * 0.006f, 0.35f);
++        ++fx_sparks_;
++    }
++    // [diag] MASHED_FX_DEBUG: log a MOVING AI car (slot 1) + emit counts (calibration).
++    static int s_fxdbg = -1;
++    if (s_fxdbg < 0) { char b[8]; s_fxdbg = GetEnvironmentVariableA("MASHED_FX_DEBUG", b, sizeof b) ? 1 : 0; }
++    if (s_fxdbg && slot == 1) {
++        static int dn = 0;
++        if ((dn++ % 12) == 0) {
++            if (std::FILE* f = std::fopen("log/fx_debug.txt", "a")) {
++                std::fprintf(f, "[s1] R=%.1f spd=%.2f yawRate=%.2f corner=%.2f kCorner=%.2f decel=%.2f skidI=%.2f skids=%d sparks=%d\n",
++                             R, spd, yawRate, corner, kCorner, decel, skidI, fx_skids_, fx_sparks_);
++                std::fclose(f);
++            }
++        }
++    }
++    fx_prev_speed_[slot] = speed;
++}
++
++int& MashedPlayerCount() {
++    static int n = [] {
++        char b[8];
++        return GetEnvironmentVariableA("MASHED_PLAYERS", b, sizeof b) ? std::atoi(b) : 1;
++    }();
++    return n;
++}
++
+ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
+     if (!ready_) return;
+     // F3 A/B verification toggle: suppress all UV-scroll texture transforms.
+@@ -2391,6 +2488,16 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
+     }
+     for (int i = 0; i < 3; ++i) { last_eye_[i] = eye[i]; last_at_[i] = at[i]; }
+ 
++    // ── SPLIT-SCREEN multiplayer (MASHED_PLAYERS>=2): render the scene once per
++    // player view. The eye/at computed above is player 1; player 2 chases car
++    // slot 1 (ai_cars_[0]). 1P renders full-screen, byte-identical to before.
++    // drawView captures by ref; the eye/at PARAMS deliberately shadow the outer
++    // pose so the 340-line body below is unchanged and just renders the passed cam.
++    D3DVIEWPORT9 fullVp; dev->GetViewport(&fullVp);
++    const int kViews = (MashedPlayerCount() >= 2 && car_ready_) ? 2 : 1;
++    auto drawView = [&](const float* eye, const float* at, float aspect,
++                        const D3DVIEWPORT9* vp, bool advance) {
++    if (vp) dev->SetViewport(vp);
+     D3DMATRIX viewm, projm, worldm;
+     MatLookAtLH(&viewm, eye, at);
+     // round mode: FOV from the camera struct's view-window 0.6 (cam[0x16],
+@@ -2398,7 +2505,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
+     const float fovy = (round_mode_ && car_ready_ && !free_)
+         ? 2.f * std::atan(race_cam_.view_window() * 600.f / 800.f)
+         : 1.0472f /*60 deg*/;
+-    MatPerspectiveFovLH(&projm, fovy, 800.f / 600.f,
++    MatPerspectiveFovLH(&projm, fovy, aspect,
+                         0.05f, radius_ * 8.f);
+     MatIdentity(&worldm);
+     dev->SetTransform(D3DTS_WORLD, &worldm);
+@@ -2712,12 +2819,44 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
+         const float dt = (last_t_ < 0.f) ? 0.f : (t - last_t_);
+         last_t_ = t;
+         float fwd[3] = {at[0]-eye[0], at[1]-eye[1], at[2]-eye[2]};
+-        parts_.Update(dt, eye, fwd, car_ready_ ? car_pos_ : nullptr,
+-                      car_ready_ ? car_speed_ : 0.f);
+-        parts_.Render(dev, eye, at);
++        // Collision/slide FX (skids + impact sparks) for every car, before the
++        // pool advances this frame.
++        if (advance && car_ready_) {   // emit + advance the pool ONCE per frame
++            EmitCarFx(0, car_pos_, car_vel_, car_speed_, car_yaw_, dt);
++            for (int i = 0; i < static_cast<int>(ai_cars_.size()) && i < 3; ++i)
++                EmitCarFx(i + 1, ai_cars_[i].pos, ai_cars_[i].vel,
++                          ai_cars_[i].cur_speed, ai_cars_[i].yaw, dt);
++        }
++        if (advance)
++            parts_.Update(dt, eye, fwd, car_ready_ ? car_pos_ : nullptr,
++                          car_ready_ ? car_speed_ : 0.f);
++        parts_.Render(dev, eye, at);   // drawn in each viewport
+         // power-up orbs (additive glow billboards) on top of the weather
+         if (pickups_.enabled()) pickups_.Render(dev, eye, at);
+     }
++    };  // end drawView lambda
++
++    if (kViews == 1) {
++        drawView(eye, at, 800.f / 600.f, nullptr, true);   // 1P: full screen, unchanged
++    } else {
++        // Player 2 chase camera on car slot 1 (ai_cars_[0]); mirror the P1 chase cam.
++        float p2eye[3] = { eye[0], eye[1], eye[2] }, p2at[3] = { at[0], at[1], at[2] };
++        if (!ai_cars_.empty()) {
++            const AiCar& c = ai_cars_[0];
++            const float back = 7.f, up = 3.f;
++            p2eye[0] = c.pos[0] - std::cos(c.yaw) * back;
++            p2eye[1] = c.pos[1] + up;
++            p2eye[2] = c.pos[2] - std::sin(c.yaw) * back;
++            p2at[0] = c.pos[0]; p2at[1] = c.pos[1] + 0.8f; p2at[2] = c.pos[2];
++        }
++        const UINT W = fullVp.Width, hh = fullVp.Height / 2;
++        const float aspect = hh ? static_cast<float>(W) / static_cast<float>(hh) : 800.f / 600.f;
++        D3DVIEWPORT9 vpTop{ fullVp.X, fullVp.Y,      W, hh, 0.f, 1.f };
++        D3DVIEWPORT9 vpBot{ fullVp.X, fullVp.Y + hh, W, hh, 0.f, 1.f };
++        drawView(eye,   at,   aspect, &vpTop, true);    // P1 top — advance the pool here
++        drawView(p2eye, p2at, aspect, &vpBot, false);   // P2 bottom — reuse advanced pool
++        dev->SetViewport(&fullVp);                        // restore for the 2D/menu pass
++    }
+ 
+     dev->SetRenderState(D3DRS_FOGENABLE, FALSE);
+     dev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+diff --git a/mashedmod/src/mashed_re/D3d9Render/TrackRenderer.h b/mashedmod/src/mashed_re/D3d9Render/TrackRenderer.h
+index 8a82d9a4..71172bb7 100644
+--- a/mashedmod/src/mashed_re/D3d9Render/TrackRenderer.h
++++ b/mashedmod/src/mashed_re/D3d9Render/TrackRenderer.h
+@@ -130,6 +130,16 @@ private:
+     float  track_radius_    = 1.f;
+     bool   ready_     = false;
+     ParticleSystem parts_;          // in-race weather/dust billboards
++    // Collision/slide FX state, per car slot (0=player, 1..3 = ai_cars_):
++    // skid-smoke rate accumulator + prev-frame speed (sudden drop = impact).
++    float  fx_skid_accum_[4] = {};
++    float  fx_prev_speed_[4] = {};
++    float  fx_prev_yaw_[4]   = {};          // for yaw-rate (cornering) skid trigger
++    int    fx_skids_ = 0, fx_sparks_ = 0;   // [diag] cumulative emit counts (MASHED_FX_DEBUG)
++    // Emit skid smoke (lateral slip) + impact sparks (sudden decel) for one car
++    // into parts_. Call once per car per frame before parts_.Update().
++    void EmitCarFx(int slot, const float pos[3], const float vel[3],
++                   float speed, float yaw, float dt);
+     PickupField    pickups_;        // in-race power-up orbs
+     std::vector<PickupField::Spawn> powerup_spawns_;  // POWERUPS_GOLD.LUA placement
+     float  last_t_    = -1.f;        // for per-frame dt (particles)
+@@ -445,5 +455,10 @@ private:
+     float car_vel_[3] = {};       // +0x9b0-shape velocity vector (world)
+ };
+ 
++// Local-multiplayer player count (1 or 2) — shared runtime value, default from the
++// MASHED_PLAYERS env. The MP frontend toggles it; the split-screen render + the 2nd
++// input route read it. Shared here so exe_main (frontend) and the renderer agree.
++int& MashedPlayerCount();
++
+ }  // namespace D3d9Render
+ }  // namespace mashed_re
+diff --git a/mashedmod/src/mashed_re/exe_main.cpp b/mashedmod/src/mashed_re/exe_main.cpp
+index c577c340..a4950d99 100644
+--- a/mashedmod/src/mashed_re/exe_main.cpp
++++ b/mashedmod/src/mashed_re/exe_main.cpp
+@@ -1101,6 +1101,15 @@ void UpdateTitleFromKeyboard() {
+     const bool right = (g_keys[DIK_RIGHT] & 0x80) != 0;
+     const bool enter = (g_keys[DIK_RETURN]& 0x80) != 0;
+     const bool esc   = (g_keys[DIK_ESCAPE]& 0x80) != 0;
++    // MP frontend: F2 cycles the local player count (1<->2), read every call (before
++    // the change-gate). The split-screen render + the 2nd-input route read this live.
++    {
++        static bool s_f2 = false;
++        const bool f2 = (GetAsyncKeyState(VK_F2) & 0x8000) != 0;
++        if (f2 && !s_f2) { int& pc = mashed_re::D3d9Render::MashedPlayerCount(); pc = (pc >= 2) ? 1 : 2; }
++        s_f2 = f2;
++    }
++    const int mpc = mashed_re::D3d9Render::MashedPlayerCount();
+     // Pack into an int so we only refresh title on transitions OR quad
+     // position changes (which happen while arrows are held) OR slot pick
+     // changes (B13 PgUp/PgDn cycling). Without these, the title would freeze
+@@ -1109,16 +1118,18 @@ void UpdateTitleFromKeyboard() {
+     static int           s_last_qx     = INT_MIN;
+     static int           s_last_qy     = INT_MIN;
+     static std::uint32_t s_last_slot   = UINT32_MAX;
++    static int           s_last_mpc    = -1;
+     const int packed = (up<<0)|(down<<1)|(left<<2)|(right<<3)|(enter<<4)|(esc<<5);
+     const int qx = static_cast<int>(g_titleQuadOffsetX);
+     const int qy = static_cast<int>(g_titleQuadOffsetY);
+     const std::uint32_t slot = g_titlePickedSlot;
+     if (packed == s_last_packed && qx == s_last_qx && qy == s_last_qy
+-        && slot == s_last_slot) return;
++        && slot == s_last_slot && mpc == s_last_mpc) return;
+     s_last_packed = packed;
+     s_last_qx = qx;
+     s_last_qy = qy;
+     s_last_slot = slot;
++    s_last_mpc = mpc;
+     char buf[256];
+     std::snprintf(buf, sizeof(buf),
+                   "Mashed RE (B11 keys: %s%s%s%s%s%s)",
+@@ -1151,6 +1162,10 @@ void UpdateTitleFromKeyboard() {
+                       static_cast<int>(g_titleQuadOffsetX),
+                       static_cast<int>(g_titleQuadOffsetY));
+     }
++    {
++        const size_t L = std::strlen(buf);
++        std::snprintf(buf + L, sizeof(buf) - L, "  PLAYERS:%d (F2)", mpc);
++    }
+     SetWindowTextA(g_hwnd, buf);
+ }
+ 

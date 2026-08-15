@@ -247,10 +247,37 @@ and parallelises.
 C2→C3 vs 8 C3→C4.** Effort has gone into breadth while the things the default build
 actually runs went unverified. v3's phase order is the correction.
 
-A third strand appeared in August: QoL patches to the **original** `MASHED.exe`
-(framerate decoupling, borderless, unlocks). These advance the port by zero. They are
-legitimate as a separate product, but they must not be counted as roadmap progress —
-if they continue, they get their own tracker.
+A third strand ran in August: the QoL work. **The first draft of this paragraph was wrong
+on four checkable points and is corrected here rather than quietly edited**, because the
+error is instructive — it was written from commit subjects and an impression of volume,
+not from the code.
+
+What is actually true:
+
+- It does **not** patch the original exe on disk. It is an in-memory `mashed_qol.asi`
+  plus shim env vars and a launcher (`dadacde6`); it adds zero `patch_mashed_*.py`. The
+  on-disk unlock patches are from **June** (`28badb07`), part of R0 triage.
+- The headline "framerate decoupling, borderless, unlocks" misses the bulk: 27 of 35
+  commits are render-interpolation and powerup-render RE.
+- **"Advances the port by zero" is false for at least one item.** Borderless/`MASHED_RES`
+  made the backbuffer deliberately differ from the client rect, which exposed a real bug
+  in our own librw adoption — `mashedmod/deps/librw/MASHED_PATCHES.md:16` (P5): librw
+  silently allocates a private depth surface and its camera goes blind to everything
+  D3D9 already drew, "inert at 640×480" and therefore invisible until borderless forced
+  the mismatch.
+- It already stopped. Last QoL commit `3499b0df`, 2026-08-03 — eleven days before v3.
+
+What survives the correction: the strand is **untracked**. It was scoped in its own doc
+(`re/analysis/QOL_PATCH_PLAN_2026-08.md`, 833 lines, explicitly "separate from the
+RE/standalone lanes"), but appears in no tracker — zero hits across `hooks.csv`,
+`DEFERRED.md`, `UNCERTAINTIES.md`, `STUBS.md`. Volume is also less than commit count
+suggests: 35 of 65 August commits (54%) but 3,162 of 77,444 insertions (4.1%), across
+three days. And there is no shared boot risk — `scripts/repatch_original.py` lists nine
+boot patches and no QoL patch is among them; the `.asi` is default-off and env-gated.
+
+So the open decision is not "stop it" (it stopped) but how to file it: dual-use items
+like the librw P5 exerciser belong to the port, and the rest belongs to a side-product
+with its own tracker.
 
 ---
 
@@ -271,13 +298,36 @@ if they continue, they get their own tracker.
 
 ## Open decisions
 
-| # | Decision | Owner | Blocks |
-|---|---|---|---|
-| 1 | Do the 5 unlanded renderer/shim features on `promote-c4` get ported, or dropped? The branch is their only copy. | user | branch retirement |
-| 2 | Is `re/analysis/CHANGELOG.md` a complete index or a highlights log? It is currently neither. | user | D0.5 |
-| 3 | Do the original-exe QoL patches become a tracked side-product or stop? | user | trajectory hygiene |
+All open decisions carried into v3 were settled on 2026-08-14. Recorded here because the
+reasoning matters more than the verdicts.
 
-Resolved 2026-08-14: **QuadRenderer stays 2D-only** — it no longer draws (`Render()` has
-zero call sites; `RenderAt()` reaches only an uncompiled branch and a background-load
-failure path), librw's I3/I6 cover both of its remaining roles, and nothing in any
-tracker is blocked by it. Branch `b6/transform` deleted (was `ff527c4b`).
+**QuadRenderer stays 2D-only.** It no longer draws — `Render()` has zero call sites and
+`RenderAt()` reaches only an uncompiled branch and a background-load failure path. librw's
+I3/I6 cover both of its remaining roles and nothing in any tracker is blocked by it.
+Branch `b6/transform` deleted (was `ff527c4b`).
+
+**`promote-c4`'s features: all ported, branch retired.** Shim draw counters (`0a1cbf65`),
+then `MASHED_CAM_POSE` + `MASHED_DBG_TEXMATCH` + collision FX (`53855ee1`). The prelight
+knob was dropped as superseded by the WS-E atomic-lighting model. The split-screen spike
+is preserved as a committed patch under `re/analysis/split_screen/` rather than as a
+branch, so D-11063 cites a file that cannot rot instead of commits that deletion would
+dangle. `promote-c4` and `ws-visual-polish` retired.
+
+**`CHANGELOG.md` is the tracker audit trail, not a commit log.** That is already what
+`re-classify` writes into it, and it is the one role git history cannot serve — git tells
+you what changed, not why a confidence moved or why a deferral was upheld. Trying to also
+mirror every commit is what made it drift, twice. Git log plus per-lane docs cover the
+rest. **Consequence for D0.5:** the task is not "restore completeness" but "state the
+scope in the file header and stop measuring it against commit count".
+
+**The QoL strand is filed, not stopped** — it stopped on its own on 2026-08-03. See the
+Trajectory-correction section above for the four ways v3's first draft got this wrong.
+Remaining work is bookkeeping: give the strand a tracker entry, and reclassify as port
+work only those items with a **named consumer** (borderless has one — librw P5; the
+render-interpolation findings currently do not).
+
+| # | Follow-up | Owner | Phase |
+|---|---|---|---|
+| 1 | Give the QoL strand a tracker row; reclassify borderless as port work (librw P5 exerciser) | — | D0 |
+| 2 | Re-measure the collision-FX thresholds once `MASHED_REAL_PHYSICS` is the default | — | D2 |
+| 3 | Verify collision FX in a race capture (ported 2026-08-14, build-only so far) | — | D3 |
