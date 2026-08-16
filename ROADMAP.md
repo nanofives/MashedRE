@@ -215,10 +215,21 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
 Invert `MASHED_RENDER_LIBRW`. librw becomes the shipping path; the hand-written D3D9
 renderer becomes the fallback, then goes away.
 
-Blocked by, and therefore includes: **R10b** — up to 8 of 13 screenshots differ between
-two builds of *identical source*. Nondeterminism in the capture harness makes every
-pixel-parity claim unfalsifiable, and it blocks E3' outright. Fix this first; it is
-cheap relative to what it unblocks.
+~~Blocked by R10b.~~ **R10b CLOSED 2026-08-15 — the gate now has a zero noise floor on
+every shot (16/16 byte-identical across runs).**
+
+The "8 of 13 shots differ between builds of identical source" figure this section was
+written around was already stale: R10b was root-caused on 2026-08-01 as ambient
+DirectInput (the device is opened `DISCL_BACKGROUND | DISCL_NONEXCLUSIVE`, so typing in
+another window flew the camera mid-capture), fixed, and reduced to 3 unstable shots.
+
+The residual was closed today by running the diagnostic the sizing doc had already
+specified but never executed — compare `RELIGHT_CAP` headings across two runs. **Headings
+were bit-identical while `02_back_to_menu` differed on 17.30% of pixels**, which localises
+the divergence to the renderer, not the simulation. Cause: `MpegVideoTexture::Update()`
+pulls whatever frame the live DirectShow graph is on, and `MASHED_DETERMINISTIC` pins the
+frame *index*, not wall-clock. Deterministic mode now freezes the backdrop after one
+upload — the menu still shows real video (93.2% non-black), and the frame reproduces.
 
 Accepted delta on record: D-S3-BANK closed at floor 2026-08-04 — transform exact to
 4.6e-4 px, residual is a 1–2 px grazing-silhouette fill-rule difference from indexed

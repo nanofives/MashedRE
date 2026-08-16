@@ -163,6 +163,26 @@ bool MpegVideoTexture::Open(IDirect3DDevice9* dev, const char* mpg_path,
 
 void MpegVideoTexture::Update() {
     if (!ready_ || !grab_ || !tex_) return;
+    // ── R10b residual fix (D1, 2026-08-15) ──────────────────────────────────
+    // MASHED_DETERMINISTIC pins the frame INDEX, not wall-clock time. This
+    // texture is fed by a live DirectShow graph via GetCurrentBuffer(), so the
+    // frame it happens to be showing when Update() runs depends on how fast the
+    // machine got here. That made 02_back_to_menu the last unstable shot in the
+    // parity gate: two runs of the SAME BUILD differed on 17.30% of pixels while
+    // every RELIGHT_CAP heading was bit-identical, i.e. the simulation agreed and
+    // only the backdrop moved.
+    //
+    // Deterministic mode therefore freezes the backdrop after ONE upload: the
+    // menu still shows real video rather than a black hole, and the frame is
+    // reproducible. Outside deterministic mode nothing changes — the backdrop
+    // animates exactly as before.
+    static int s_det = -1;
+    if (s_det < 0) {
+        char b[8] = {};
+        s_det = (GetEnvironmentVariableA("MASHED_DETERMINISTIC", b, sizeof(b)) > 0
+                 && b[0] == '1') ? 1 : 0;
+    }
+    if (s_det && det_uploaded_) return;
     long sz = buf_len_;
     if (FAILED(grab_->GetCurrentBuffer(&sz, reinterpret_cast<long*>(buf_))) || sz <= 0)
         return;
@@ -185,6 +205,7 @@ void MpegVideoTexture::Update() {
                             y * static_cast<unsigned>(lr.Pitch),
                         buf_ + (h_ - 1 - y) * stride, stride);
         tex_->UnlockRect(0);
+        det_uploaded_ = true;   // R10b: one upload is enough in deterministic mode
     }
 }
 

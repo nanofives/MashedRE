@@ -46,6 +46,11 @@ private:
     long                 buf_len_ = 0;
     unsigned             w_ = 0, h_ = 0;
     bool                 ready_ = false;
+    // R10b residual: under MASHED_DETERMINISTIC the frame COUNT is pinned but
+    // wall-clock is not, and this texture is fed by a real-time DirectShow graph.
+    // So the backdrop lands on a different video frame every run. Freeze after the
+    // first upload in deterministic mode; see Update().
+    bool                 det_uploaded_ = false;
 };
 
 }  // namespace D3d9Render
