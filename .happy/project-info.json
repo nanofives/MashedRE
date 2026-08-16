@@ -1,46 +1,37 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-15T01:15:00Z",
+  "updatedAt": "2026-08-16T12:00:00Z",
   "sections": [
     {
       "heading": "Status",
       "fields": [
-        { "label": "Roadmap", "value": "v3 (2026-08-14) — default-build rule", "kind": "text" },
-        { "label": "Next phase", "value": "D0 — tell the truth again", "kind": "text" },
-        { "label": "Branches", "value": "main only (1 remote, 1 local)", "kind": "text" }
+        { "label": "Roadmap", "value": "v3 — default-build rule", "kind": "text" },
+        { "label": "Phase", "value": "D0 COMPLETE · D1 in progress", "kind": "text" },
+        { "label": "Branch", "value": "main only, clean, synced", "kind": "text" }
       ]
     },
     {
-      "heading": "The v3 premise",
+      "heading": "D1 — default renderer",
       "fields": [
-        { "label": "Root finding", "value": "mashed_re.exe with no env set does not run most of what has been ported", "kind": "text" },
-        { "label": "Default OFF", "value": ["MASHED_RENDER_LIBRW — librw renderer", "MASHED_REAL_PHYSICS — ported physics chain"], "kind": "list" },
-        { "label": "MASHED_* flags", "value": 146, "kind": "number" }
+        { "label": "R10b", "value": "CLOSED — capture gate is zero-noise 16/16", "kind": "text" },
+        { "label": "Blocker", "value": "in-race D3D9-vs-librw divergence, confirmed real", "kind": "text" },
+        { "label": "Scope", "value": "world IS submitted (13 batches) yet frame comes out orange → render-state or draw-order, not submission", "kind": "text" },
+        { "label": "Live hypothesis", "value": "particles draw after the world; librw may submit late and paint over them — UNTESTED (probe run never reached the race)", "kind": "text" }
       ]
     },
     {
-      "heading": "Phase gates",
+      "heading": "Next up",
       "fields": [
-        { "label": "D1 default renderer", "value": "blocked on R10b — 8/13 shots differ between builds of identical source", "kind": "text" },
-        { "label": "D2 default physics", "value": "blocked on statediff wedge — ~1/6 boots", "kind": "text" },
-        { "label": "D0 tasks", "value": ["refresh 2-month-stale verification audit", "classify + prune the 146 flags", "reconcile UNCERTAINTIES Type vs Blocks", "fix STUBS census (1,072 vs 1,109)", "file the QoL strand"], "kind": "list" }
+        { "label": "D1", "value": ["retry MASHED_NO_PARTICLES probe", "find where librw submits vs particles"], "kind": "list" },
+        { "label": "D2", "value": "invert MASHED_REAL_PHYSICS — exit condition met 2026-07-01, blocked on the statediff wedge (~1/6 boots)", "kind": "text" },
+        { "label": "D0 follow-ups", "value": ["file the QoL strand in a tracker", "sweep other log/-citing hooks.csv rows", "70 [UNPROVEN] Blocks cells", "4 odd-shaped U rows", "7 dead files, 4 dead flags"], "kind": "list" }
       ]
     },
     {
-      "heading": "Coverage (first-party)",
+      "heading": "Harness notes",
       "fields": [
-        { "label": "Rows", "value": 3682, "kind": "number" },
-        { "label": "C3+", "value": "28.8%", "kind": "text" },
-        { "label": "C4", "value": "4.9%", "kind": "text" },
-        { "label": "Caveat", "value": "~1,788 race-closure RVAs undiscovered — denominator is partial", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "Closed 2026-08-14",
-      "fields": [
-        { "label": "Branches", "value": "87→1 remote, 15→1 local; all work landed or preserved", "kind": "text" },
-        { "label": "Decisions", "value": ["QuadRenderer stays 2D-only", "promote-c4 drained + retired", "CHANGELOG = tracker audit trail", "QoL strand filed, not stopped"], "kind": "list" },
-        { "label": "Recovered", "value": "478 CHANGELOG entries lost to an accidental overwrite", "kind": "text" }
+        { "label": "Window", "value": "MASHED_WIN_POS=left-bl parks the game bottom-left on the LEFT monitor (both targets)", "kind": "text" },
+        { "label": "Traps", "value": ["mashed_re.log truncates every run — copy it immediately", "race-demo nav fails ~1 in 5", "MASHED_DBG_DRAWSTREAM3D writes nothing if the window end exceeds total in-race calls", "MASHED_RACE_DEMO must be paired with MASHED_GOTO=6"], "kind": "list" }
       ]
     }
   ]
