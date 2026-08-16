@@ -3829,7 +3829,7 @@ void TrackRenderer::EmitCarFx(int slot, const float pos[3], const float vel[3],
         int n = static_cast<int>(fx_skid_accum_[slot]);
         if (n > 4) n = 4;
         fx_skid_accum_[slot] -= static_cast<float>(n);
-        fx_skids_ += n;
+        fx_skids_[slot] += n;
         for (int i = 0; i < n; ++i) {
             const float w  = (i & 1) ? 1.f : -1.f;          // two wheel tracks
             const float wx = pos[0] - fx * (R * 0.012f) + (-fz) * w * (R * 0.006f);
@@ -3852,17 +3852,23 @@ void TrackRenderer::EmitCarFx(int slot, const float pos[3], const float vel[3],
         const int n = static_cast<int>(8.f + 8.f * (k > 2.f ? 2.f : k));
         const float p[3] = { pos[0], pos[1] + R * 0.012f, pos[2] };
         parts_.SpawnBurst(p, n, 0xE0FFC850u /*warm spark*/, R * 0.07f, R * 0.006f, 0.35f);
-        ++fx_sparks_;
+        ++fx_sparks_[slot];
     }
-    // [diag] MASHED_FX_DEBUG: log a MOVING AI car (slot 1) + emit counts (calibration).
+    // [diag] MASHED_FX_DEBUG: one line PER SLOT per sample window, each carrying that
+    // slot's OWN inputs and its OWN counters. The previous form logged only slot 1 but
+    // printed a counter summed over all four cars, so a rising number could not be
+    // attributed and a stationary car appeared to emit thousands of skids.
     static int s_fxdbg = -1;
     if (s_fxdbg < 0) { char b[8]; s_fxdbg = GetEnvironmentVariableA("MASHED_FX_DEBUG", b, sizeof b) ? 1 : 0; }
-    if (s_fxdbg && slot == 1) {
-        static int dn = 0;
-        if ((dn++ % 12) == 0) {
+    if (s_fxdbg) {
+        static int dn[4] = {};
+        if ((dn[slot]++ % 12) == 0) {
             if (std::FILE* f = std::fopen("log/fx_debug.txt", "a")) {
-                std::fprintf(f, "[s1] R=%.1f spd=%.2f yawRate=%.2f corner=%.2f kCorner=%.2f decel=%.2f skidI=%.2f skids=%d sparks=%d\n",
-                             R, spd, yawRate, corner, kCorner, decel, skidI, fx_skids_, fx_sparks_);
+                // alive/pool: the question "is the FX rate starving the shared pool?"
+                // is answerable only from occupancy, not from cumulative emit counts.
+                std::fprintf(f, "[s%d] R=%.1f spd=%.2f yawRate=%.2f corner=%.2f kCorner=%.2f decel=%.2f skidI=%.2f skids=%d sparks=%d alive=%d\n",
+                             slot, R, spd, yawRate, corner, kCorner, decel, skidI,
+                             fx_skids_[slot], fx_sparks_[slot], parts_.alive());
                 std::fclose(f);
             }
         }

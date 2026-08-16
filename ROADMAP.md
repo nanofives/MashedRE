@@ -329,5 +329,18 @@ render-interpolation findings currently do not).
 | # | Follow-up | Owner | Phase |
 |---|---|---|---|
 | 1 | Give the QoL strand a tracker row; reclassify borderless as port work (librw P5 exerciser) | — | D0 |
-| 2 | Re-measure the collision-FX thresholds once `MASHED_REAL_PHYSICS` is the default — **and independently of D2, investigate suspected over-firing: 2,164 skids/race measured vs the 251 the calibration was tuned to** | — | D2 |
+| 2 | Re-measure the collision-FX thresholds once `MASHED_REAL_PHYSICS` is the default (real `vel[]` makes the slip term carry signal). ~~Suspected over-firing~~ **investigated and dismissed 2026-08-14** — see below | — | D2 |
 | 3 | ~~Verify collision FX in a race capture~~ **DONE 2026-08-14** — emission verified, `verify/fx_verify/`. Residual: the visual contribution of skid smoke specifically was NOT isolated (`MASHED_NO_PARTICLES` disables the whole particle block), and dark smoke `0x303030` on a night track may be invisible in practice | — | — |
+
+**Over-firing: investigated 2026-08-14, no defect.** The "2,164 skids/race vs the 251 the
+calibration was tuned to" alarm was an **instrumentation artifact, not a behaviour
+change**. `fx_skids_` was a single counter summed over all four cars while the debug line
+printed only slot 1's inputs, so a stationary car appeared to emit thousands of skids and
+no figure was attributable. Made per-slot, the distribution is unremarkable —
+772/358/241/378, player highest and genuinely cornering (`skidI=2.82`) — and the earlier
+total was further inflated by `MASHED_DRIVE_HOLD` extending the race well past the natural
+one the 251 came from. The two numbers were never like-for-like.
+
+The load-bearing check is pool occupancy, since cumulative emit counts cannot answer "is
+this starving the shared pool": **peak 175 of 1,200 (14.6%), median 130.** The rate is
+comfortably within budget. Thresholds stand at the current drive model.

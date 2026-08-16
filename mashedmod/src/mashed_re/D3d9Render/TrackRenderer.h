@@ -156,7 +156,11 @@ private:
     float  fx_skid_accum_[4] = {};
     float  fx_prev_speed_[4] = {};
     float  fx_prev_yaw_[4]   = {};
-    int    fx_skids_ = 0, fx_sparks_ = 0;   // [diag] cumulative counts (MASHED_FX_DEBUG)
+    // [diag] PER-SLOT cumulative counts (MASHED_FX_DEBUG). Per-slot on purpose:
+    // a single shared counter cannot be attributed to a car, which made the
+    // 2026-08-14 "2164 skids/race" figure uninterpretable (the debug line logged
+    // slot 1's inputs while the counter summed all four).
+    int    fx_skids_[4] = {}, fx_sparks_[4] = {};
     // Emit skid smoke (cornering/lateral slip) + impact sparks (sudden decel) for
     // one car into parts_. Call once per car per frame BEFORE parts_.Update() --
     // emit is per-frame, render is per-view (the split-screen constraint in D-11063).
