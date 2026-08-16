@@ -57,7 +57,23 @@ rpc.exports = { campose: function () {
   const m = Process.findModuleByName('MASHED.exe') || Process.enumerateModules()[0];
   const cam = ptr(0x00897fe0 + (m.base.toUInt32() - IMG));
   const f = function (o) { return cam.add(o).readFloat(); };
-  return [f(0x40), f(0x44), f(0x48), f(0x4c), f(0x50), f(0x54)];
+  // +0x40..0x48 = eye. +0x4c..0x54 is a DIRECTION DELTA (target - eye), NOT an
+  // absolute look-at point -- established 2026-08-16 from the Xbox twin of
+  // 0x00446520 (Xbox 0x00198170, tier=const, re/analysis/race_camera/
+  // xtwin_00446520_2026-08-15.txt): lines 577-580 compute
+  //     local_e8 = fVar6 - param_1[0x10];   ...   param_1[0x13] = local_e8
+  // i.e. the field at +0x4c is written as target-minus-eye, with the eye at
+  // param_1[0x10..0x12] = bytes +0x40/+0x44/+0x48.
+  //
+  // This reader previously returned the raw delta and the caller printed it into
+  // MASHED_CAM_POSE as though it were a point, so every pose captured before this
+  // date fed the standalone a direction where it expects a position (U-9039).
+  // Return BOTH: the raw fields for the record, and the resolved at-point.
+  const ex = f(0x40), ey = f(0x44), ez = f(0x48);
+  const dx = f(0x4c), dy = f(0x50), dz = f(0x54);
+  return { eye: [ex, ey, ez],
+           dir: [dx, dy, dz],
+           at:  [ex + dx, ey + dy, ez + dz] };
 }};
 """
 
@@ -151,10 +167,22 @@ def main():
             camscr.on("message", lambda m, d: None)
             camscr.load()
             cp = camscr.exports_sync.campose()
-            pose = ",".join(f"{v:.4f}" for v in cp)
+            eye, dirv, at = cp["eye"], cp["dir"], cp["at"]
+            # MASHED_CAM_POSE takes eye + an absolute AT POINT, so emit the
+            # RESOLVED at (eye+dir) — never the raw +0x4c delta. See CAM_JS.
+            pose = ",".join(f"{v:.4f}" for v in list(eye) + list(at))
             (out_bmp.parent / "orig_campose.txt").write_text(pose + "\n")
-            print(f"  CAMPOSE eye=({cp[0]:.2f},{cp[1]:.2f},{cp[2]:.2f}) "
-                  f"at=({cp[3]:.2f},{cp[4]:.2f},{cp[5]:.2f})")
+            # Keep the raw fields alongside: the delta is what the struct actually
+            # holds, and a later reader must be able to re-check this resolution.
+            (out_bmp.parent / "orig_campose_raw.txt").write_text(
+                "eye=%.4f,%.4f,%.4f\n"
+                "dir_at_0x4c_delta=%.4f,%.4f,%.4f\n"
+                "at_resolved_eye_plus_dir=%.4f,%.4f,%.4f\n"
+                % (eye[0], eye[1], eye[2], dirv[0], dirv[1], dirv[2],
+                   at[0], at[1], at[2]))
+            print(f"  CAMPOSE eye=({eye[0]:.2f},{eye[1]:.2f},{eye[2]:.2f}) "
+                  f"dir=({dirv[0]:.2f},{dirv[1]:.2f},{dirv[2]:.2f}) "
+                  f"at=({at[0]:.2f},{at[1]:.2f},{at[2]:.2f})")
             print(f"  MASHED_CAM_POSE={pose}")
             cam_ok = True
         except Exception as e:
