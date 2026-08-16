@@ -954,6 +954,26 @@ bool DumpBackbufferBMP(const char* path) {
         sys->Release();
     }
     rt->Release();
+    // Record the GameFlow state for EVERY capture, at the sink rather than at
+    // each call site, so no driver can be forgotten. Parity comparisons need it:
+    // TrackRenderer::Render does not run during Results (measured 2026-08-16,
+    // verify/dsproof2/SETTLED.md), so a renderer A/B on a Results shot compares
+    // two frames neither renderer drew. Classifying shots by FILENAME started
+    // three wrong diagnoses; an unmeasured shot must be excludable by name.
+    if (std::FILE* mf = std::fopen(kLogPath, "a")) {
+        const char* mn = "?";
+        switch (mashed_re::Race::GameFlow_Mode()) {
+            case mashed_re::Race::GameMode::Frontend:    mn = "Frontend"; break;
+            case mashed_re::Race::GameMode::LoadingRace: mn = "LoadingRace"; break;
+            case mashed_re::Race::GameMode::InRace:      mn = "InRace"; break;
+            case mashed_re::Race::GameMode::Results:     mn = "Results"; break;
+        }
+        const char* base = path;
+        for (const char* p = path; *p; ++p)
+            if (*p == '/' || *p == '\\') base = p + 1;
+        std::fprintf(mf, "CAPMODE tag=%s mode=%s\n", base, mn);
+        std::fclose(mf);
+    }
     return ok;
 }
 
@@ -1153,23 +1173,8 @@ bool RunRaceDemoStep(int /*phase*/) {
         char path[160];
         std::snprintf(path, sizeof(path), "%s", VOut2("race1/%s.bmp", tag));
         NavDemoLog(step, tag, DumpBackbufferBMP(path));
-        // Record the GameFlow state AT CAPTURE TIME. Parity comparisons must know
-        // which shots are InRace, because TrackRenderer::Render does not run
-        // during Results (measured 2026-08-16, verify/dsproof2/SETTLED.md) — so a
-        // renderer A/B is meaningless on a Results shot: neither renderer drew it.
-        // Classifying shots by FILENAME is how three wrong diagnoses got started;
-        // this makes the classification measured instead.
-        if (std::FILE* mf = std::fopen(kLogPath, "a")) {
-            const char* mn = "?";
-            switch (mashed_re::Race::GameFlow_Mode()) {
-                case mashed_re::Race::GameMode::Frontend:    mn = "Frontend"; break;
-                case mashed_re::Race::GameMode::LoadingRace: mn = "LoadingRace"; break;
-                case mashed_re::Race::GameMode::InRace:      mn = "InRace"; break;
-                case mashed_re::Race::GameMode::Results:     mn = "Results"; break;
-            }
-            std::fprintf(mf, "CAPMODE tag=%s mode=%s\n", tag, mn);
-            std::fclose(mf);
-        }
+        // (GameFlow mode is logged for every capture inside DumpBackbufferBMP, so
+        // no per-driver logging is needed here.)
         // WS-E lighting acceptance: log the player heading at capture time so
         // standalone shots can be heading-matched against original-side shots.
         // Standalone forward = {cos(yaw),0,sin(yaw)} (VehiclePhysicsRun adapter),
