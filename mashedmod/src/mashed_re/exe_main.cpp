@@ -898,6 +898,94 @@ const char* VOut2(const char* fmt, ...) {
     return VOut(rel);
 }
 
+// ── Dev window placement (MASHED_WIN_POS) ────────────────────────────────────
+// Park the game window somewhere predictable so a test run does not land on top
+// of whatever the user is doing. Values:
+//
+//   "left-bl"     bottom-left of the LEFTMOST monitor   (also -br / -tl / -tr)
+//   "right-bl"    ... the RIGHTMOST monitor
+//   "primary-bl"  ... the primary monitor
+//   "s<N>-bl"     ... monitor N in EnumDisplayMonitors order, 1-based
+//   "<x>,<y>"     absolute virtual-desktop coordinates
+//
+// Prefer the DIRECTIONAL selectors. Monitor "numbers" are ambiguous: Windows
+// Display Settings numbering, EnumDisplayMonitors order and
+// Screen.AllScreens order need not agree, and on this machine they do not --
+// the physically-left monitor is AllScreens[3] / Enum index 3 while the user
+// calls it "screen 2". "left" cannot be misread.
+//
+// Unset = leave the OS default. Never changes the window SIZE, only where it
+// sits, so it cannot affect a capture: the backbuffer is dumped from the render
+// target, not from the screen.
+struct MonPick {
+    int  mode;        // 0 = index, 1 = leftmost, 2 = rightmost, 3 = primary
+    int  want;        // for mode 0
+    int  idx;
+    RECT work;
+    bool got;
+};
+
+static BOOL CALLBACK PickMonitorCB(HMONITOR hm, HDC, LPRECT, LPARAM lp) {
+    MonPick* e = reinterpret_cast<MonPick*>(lp);
+    ++e->idx;
+    MONITORINFO mi{};
+    mi.cbSize = sizeof(mi);
+    if (!GetMonitorInfoA(hm, &mi)) return TRUE;
+
+    switch (e->mode) {
+        case 0:
+            if (e->idx == e->want) { e->work = mi.rcWork; e->got = true; return FALSE; }
+            break;
+        case 1:  // leftmost wins
+            if (!e->got || mi.rcWork.left < e->work.left) { e->work = mi.rcWork; e->got = true; }
+            break;
+        case 2:  // rightmost wins
+            if (!e->got || mi.rcWork.left > e->work.left) { e->work = mi.rcWork; e->got = true; }
+            break;
+        case 3:
+            if (mi.dwFlags & MONITORINFOF_PRIMARY) { e->work = mi.rcWork; e->got = true; return FALSE; }
+            break;
+    }
+    return TRUE;
+}
+
+void PlaceDevWindow(HWND hwnd) {
+    char v[64] = {};
+    if (!hwnd || GetEnvironmentVariableA("MASHED_WIN_POS", v, sizeof(v)) == 0 || !v[0])
+        return;
+
+    RECT wr{};
+    if (!GetWindowRect(hwnd, &wr)) return;
+    const int w = wr.right - wr.left, h = wr.bottom - wr.top;
+
+    int x = 0, y = 0;
+    int mode = -1, want = 0;
+    const char* dash = std::strrchr(v, '-');
+
+    if (dash && dash > v) {
+        const std::size_t nlen = static_cast<std::size_t>(dash - v);
+        if      (nlen == 4 && _strnicmp(v, "left",    4) == 0) mode = 1;
+        else if (nlen == 5 && _strnicmp(v, "right",   5) == 0) mode = 2;
+        else if (nlen == 7 && _strnicmp(v, "primary", 7) == 0) mode = 3;
+        else if (v[0] == 's' && std::sscanf(v + 1, "%d", &want) == 1 && want >= 1) mode = 0;
+    }
+
+    if (mode >= 0) {
+        MonPick e{mode, want, 0, {}, false};
+        EnumDisplayMonitors(nullptr, nullptr, PickMonitorCB,
+                            reinterpret_cast<LPARAM>(&e));
+        if (!e.got) return;                       // no such monitor: leave it alone
+        const char* c = dash + 1;                 // "bl" / "br" / "tl" / "tr"
+        const bool bottom = (c[0] == 'b' || c[0] == 'B');
+        const bool right  = (c[0] && (c[1] == 'r' || c[1] == 'R'));
+        x = right  ? (e.work.right  - w) : e.work.left;
+        y = bottom ? (e.work.bottom - h) : e.work.top;
+    } else if (std::sscanf(v, "%d,%d", &x, &y) != 2) {
+        return;                                   // unparseable: leave it alone
+    }
+    SetWindowPos(hwnd, nullptr, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+}
+
 bool DumpBackbufferBMP(const char* path) {
     if (!g_device) return false;
     IDirect3DSurface9* rt = nullptr;
@@ -5722,6 +5810,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
 
     RECT rect = {0, 0, kWidth, kHeight};
     AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
+    // (window is placed by PlaceDevWindow immediately after creation)
 
     g_hwnd = CreateWindowExA(
         0,
@@ -5738,6 +5827,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         UnregisterClassA(kClassName, hInstance);
         return 2;
     }
+    PlaceDevWindow(g_hwnd);
 
     // Show + paint. Pattern from 0x004996f0 (WindowShow).
     ShowWindow(g_hwnd, nCmdShow);

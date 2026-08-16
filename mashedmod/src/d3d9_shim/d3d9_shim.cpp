@@ -143,7 +143,64 @@ void ApplyWindowBorders(HWND hWnd) {
           pinBuf[0] == '1');
     UINT moveFlags = SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED |
                      (pinScreen1 ? 0u : SWP_NOMOVE);
-    SetWindowPos(hWnd, nullptr, 64, 64,
+    int posX = 64, posY = 64;
+
+    // MASHED_WIN_POS overrides the screen-1 pin: park the ORIGINAL's window on a
+    // chosen monitor/corner so a test run does not land on top of what the user is
+    // doing. Same syntax as the standalone's (exe_main.cpp PlaceDevWindow):
+    //   left-bl | right-bl | primary-bl | s<N>-bl   (also -br / -tl / -tr)
+    //   <x>,<y>
+    // Directional selectors are preferred because monitor NUMBERS disagree between
+    // Windows Display Settings, EnumDisplayMonitors and Screen.AllScreens.
+    //
+    // HAZARD, deliberately preserved from the pin comment above: a secondary monitor
+    // that goes to SLEEP can wedge the windowed D3D9 output. That is exactly what the
+    // screen-1 pin exists to avoid, so this override is opt-in and the risk moves to
+    // the caller. MASHED_RE_NO_SCREEN1_PIN is unrelated and still just disables moving.
+    char wp[64] = { 0 };
+    if (GetEnvironmentVariableA("MASHED_WIN_POS", wp, sizeof(wp)) > 0 && wp[0]) {
+        const int w = rc.right - rc.left, h = rc.bottom - rc.top;
+        const char* dash = strrchr(wp, '-');
+        RECT work = {};
+        bool got = false;
+        if (dash && dash > wp) {
+            const size_t nlen = (size_t)(dash - wp);
+            int mode = -1, want = 0;
+            if      (nlen == 4 && _strnicmp(wp, "left",    4) == 0) mode = 1;
+            else if (nlen == 5 && _strnicmp(wp, "right",   5) == 0) mode = 2;
+            else if (nlen == 7 && _strnicmp(wp, "primary", 7) == 0) mode = 3;
+            else if (wp[0] == 's' && sscanf(wp + 1, "%d", &want) == 1 && want >= 1) mode = 0;
+            if (mode >= 0) {
+                struct P { int mode, want, idx; RECT work; bool got; } p{mode, want, 0, {}, false};
+                EnumDisplayMonitors(nullptr, nullptr,
+                    [](HMONITOR hm, HDC, LPRECT, LPARAM lp) -> BOOL {
+                        P* e = reinterpret_cast<P*>(lp);
+                        ++e->idx;
+                        MONITORINFO mi{}; mi.cbSize = sizeof(mi);
+                        if (!GetMonitorInfoA(hm, &mi)) return TRUE;
+                        switch (e->mode) {
+                            case 0: if (e->idx == e->want) { e->work = mi.rcWork; e->got = true; return FALSE; } break;
+                            case 1: if (!e->got || mi.rcWork.left < e->work.left) { e->work = mi.rcWork; e->got = true; } break;
+                            case 2: if (!e->got || mi.rcWork.left > e->work.left) { e->work = mi.rcWork; e->got = true; } break;
+                            case 3: if (mi.dwFlags & MONITORINFOF_PRIMARY) { e->work = mi.rcWork; e->got = true; return FALSE; } break;
+                        }
+                        return TRUE;
+                    }, reinterpret_cast<LPARAM>(&p));
+                if (p.got) {
+                    const char* c = dash + 1;
+                    const bool bottom = (c[0] == 'b' || c[0] == 'B');
+                    const bool right  = (c[0] && (c[1] == 'r' || c[1] == 'R'));
+                    posX = right  ? (p.work.right  - w) : p.work.left;
+                    posY = bottom ? (p.work.bottom - h) : p.work.top;
+                    got = true;
+                }
+            }
+        }
+        if (!got && sscanf(wp, "%d,%d", &posX, &posY) == 2) got = true;
+        if (got) moveFlags &= ~SWP_NOMOVE;   // an explicit position beats the pin
+    }
+
+    SetWindowPos(hWnd, nullptr, posX, posY,
                  rc.right - rc.left, rc.bottom - rc.top, moveFlags);
 }
 
