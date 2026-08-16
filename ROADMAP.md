@@ -215,6 +215,24 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
 Invert `MASHED_RENDER_LIBRW`. librw becomes the shipping path; the hand-written D3D9
 renderer becomes the fallback, then goes away.
 
+**Measured 2026-08-15, and the inversion is BLOCKED on a new finding
+(`verify/d1_measure/MEASUREMENT.md`).** With the R10b-fixed gate, a like-for-like run
+differing only in that flag gives: 12 of 16 shots at or near parity (≤0.92%), and four
+that diverge — `01_inrace_track` 71.61%, `round3_result` 69.15%, `round2_result` 68.94%,
+`01_action` 21.69%.
+
+**The divergence accumulates.** `round1_result` 0.01% → `round2_result` 68.94% →
+`round3_result` 69.15%; `01_grid` (early race) 0.02% → `01_action` 21.69% →
+`01_inrace_track` (late) 71.61%. Parity holds for the first round and the start of a race
+and degrades after. That is leaked or unreset state, not a static shading difference —
+inverting now would ship a default renderer that drifts as you play. The
+round-1/round-2 boundary is a clean bisection point.
+
+Note also what the measurement does **not** settle: which renderer is *faithful*. Both were
+compared to each other, not to the original. Resolving that needs an original-side capture
+at the same pose, which became possible today (`MASHED_CAM_POSE` + the shim's
+`draw3d.json`).
+
 ~~Blocked by R10b.~~ **R10b CLOSED 2026-08-15 — the gate now has a zero noise floor on
 every shot (16/16 byte-identical across runs).**
 
