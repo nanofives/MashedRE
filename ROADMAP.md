@@ -169,8 +169,11 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
    decides; `Type` is a descriptive taxonomy.** Also repaired 113 malformed rows (6 columns
    instead of 8, missing `Type`/`Evidence missing`/`Blocks`, an RVA sitting in the `Type`
    slot) — their empty `Blocks` was being counted as "blocks nothing", understating the
-   figure. Marked `[UNRECORDED]` rather than guessed. **644 is not final until those 113
-   have their `Blocks` filled**; 4 more rows have odd shapes awaiting manual review.
+   figure. **`Blocks` since filled from evidence:** 43 rows → `nothing` (their target
+   is at C3/C4 in `hooks.csv` *with the row open*, so it provably did not gate), 70 →
+   `[UNPROVEN]` (target still C2, never tested — explicitly NOT "non-blocking").
+   **Final: 2,999 open, 640 assert a blocker, 70 unproven.** 4 odd-shaped rows await
+   manual review.
 4. ~~Fix `STUBS.md`'s census and the 13 shifted rows.~~ **DONE 2026-08-15.** True count is
    **1,107 open / 149 struck** (1,256 total) — the header said 1,113/143, its own appended
    narrative ended at 1,109/147, and v3 quoted 1,072/1,109; all three were wrong. Census
