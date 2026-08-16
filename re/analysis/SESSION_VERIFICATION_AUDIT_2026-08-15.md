@@ -20,41 +20,62 @@ ROADMAP v3 (2026-08-15) added that step. So this audit asks instead:
 
 ---
 
-## 1. The finding that reframes D0
+## 1. The finding that reframes D0 — CORRECTED 2026-08-15 (D0.7)
 
-Env-gating is **not** the largest gap. Non-linkage is.
+**The first version of this section was wrong about the cause, and the correction matters
+more than the original claim.** It reported "193 of 433 `.cpp` linked; `Save/` 0 of 17;
+no env var can reach them" and implied forgotten linkage. That reading does not survive
+the diff against `asi_sources.rsp`.
+
+Measured (`build.bat` exe block + the 5 isolated `.obj` compiles it links, vs `asi_sources.rsp`):
 
 ```
-mashedmod/src/mashed_re/**.cpp        433 files
-linked into mashed_re.exe (build.bat) 193 files
-Save/                                 17 files, 0 referenced in build.bat
-Audio/                                25 files, 4 referenced in build.bat
+total .cpp under mashed_re/   433
+in mashed_re.exe              198     (193 in the source list + 5 isolated .obj:
+                                       QhullBridge, RwBridge, RwRasterBridge,
+                                       RwSceneBuild, RwRaceSubmit)
+in mashed_re_dev.asi          365
+in BOTH                       147
+asi-only                      218
+in NEITHER                     17     (10 are tests/selftests; 7 unexplained)
 ```
 
-Reproduce: `find mashedmod/src/mashed_re -name '*.cpp' | wc -l`, and
-`grep -c "Save[\\/]" mashedmod/build.bat`.
+**215 of those 218 asi-only files install `RH_ScopedInstall` hooks.** They are harness code
+by construction — they patch the *original* `MASHED.exe`. They cannot be "linked into the
+exe", because they are not standalone implementations. There is no drift to fix, and my
+earlier framing would have sent someone to add build.bat lines that could not work.
 
-**Consequence:** 585 audio and 32 save `hooks.csv` rows — *including 28 save rows at C4* —
-are absent from the deliverable, and **no environment variable can reach them.** They are
-ported, verified, tracked as done, and not in the product.
+**The real finding is different, and worse.** Take `Save/`: all 16 asi-only files are hook
+installers (`GameSave.cpp` 4 hooks, `SettingsDialog.cpp` 6, `SettingsAndIO.cpp` 5, …). Zero
+Save files are in the exe. So:
 
-This is worse than a flag defaulting off, because a flag is at least visible and
-togglable. v3's default-build rule was written against the flag axis only; it needs a
-second clause:
+> **The standalone has no save subsystem at all.** Not "unlinked" — absent.
 
-> A capability counts only if its translation unit is **linked into `mashed_re.exe`** and
-> reached on the default path.
+Same shape for audio: 21 of 25 `Audio/` files are asi-only hooks; only 4 reach the exe.
 
-`save` reads 93.8% C3+ in the coverage table — the strongest subsystem in the project —
-while contributing nothing to the shipping binary. Any planning that reads that number as
-progress toward P-DoD is reading it wrong.
+This reframes the coverage table rather than the build. `save` reads **93.8% C3+** — the
+strongest subsystem in the project — and that number means *"we understand the original's
+save code deeply and have verified it against the original"*. It does **not** mean the
+standalone saves anything. Those are different claims, and `hooks.csv` cannot distinguish
+them because it tracks understanding-of-the-original, not standalone capability.
 
-**[UNCERTAIN]** `asi_sources.rsp` (the dev `.asi` file list) was not diffed against the exe
-list. Some of the 240 unlinked files may be `.asi`-only by design (hook harnesses have no
-place in a standalone). The 17 `Save/` files are not plausibly in that category; the
-audio split needs the diff before apportioning blame.
+**So the default-build rule needs its second clause, but a different one than I first
+wrote.** Not "the TU must be linked" — that is a build detail. Rather:
 
----
+> A subsystem counts toward P-DoD only when the **standalone implements it**. A C4-verified
+> hook proves we understand the original; it contributes nothing to `mashed_re.exe` unless
+> a standalone implementation exists alongside it.
+
+Whether every subsystem *needs* a standalone implementation is a scope question (audio
+might reasonably be re-implemented rather than ported; D-11062 already defers video on
+exactly this reasoning). What is not defensible is reading a hook-derived percentage as
+progress toward a working standalone.
+
+**The 7 genuinely unexplained files** (dead to both targets, excluding the 10
+tests/selftests): `Boot/CrtEnvArgv.cpp`, `Compat/PizOpenBypass.cpp`,
+`Frontend/HudFrontendDispatchers_t4.cpp`, and four `MixedC3Sweep.cpp` under
+`Frontend/`, `Input/`, `Render/`, `Util/` — batch-era artifacts. These are the only real
+dead code found; triage separately, they are small.
 
 ## 2. Default-execution table
 

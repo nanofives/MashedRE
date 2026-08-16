@@ -153,10 +153,24 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
    are absent from the deliverable and **no env var can reach them**. The default-build
    rule therefore needs a second clause: a capability counts only if its TU is linked
    into the exe *and* reached on the default path.
-2. Publish the flag inventory: all 128 real `MASHED_*` env vars, each classed **verification** /
-   **migration-in-progress (owner + exit condition)** / **dead**. Delete the dead.
-3. Reconcile UNCERTAINTIES `Type` against `Blocks` so "2,530 blocking" becomes a real
-   number.
+2. ~~Publish the flag inventory.~~ **DONE 2026-08-15** —
+   `re/analysis/FLAG_INVENTORY_2026-08-15.md`, generated rather than hand-listed. **150
+   tokens, 138 live env vars, 8 non-env tokens, 4 dead flag names.** Note the count moved
+   twice: v3 first said 146 (raw prefix grep), I corrected it to 128 (too strict a regex),
+   and the true figure is **138** — `envSet(...)` and `EnvSet(...)` are real accessors that
+   the stricter regex missed. Only **3 flags are migration debt** (`MASHED_RENDER_LIBRW`,
+   `MASHED_REAL_PHYSICS`, `MASHED_RW_RENDER` which is inert), and 3 are already correctly
+   inverted. The 4 dead names are comment-only: a comment naming a flag that does not
+   exist is a false map — delete or implement.
+3. ~~Reconcile UNCERTAINTIES `Type` against `Blocks`.~~ **DONE 2026-08-15.** 2,547 rows are
+   typed `semantic`/`structural` but only **644** carry a non-empty `Blocks` cell. The
+   header rule (Type gates C3) is not what is practised and would have ~1,900 rows silently
+   blocking promotions that in fact proceeded. Rule corrected in the tracker: **`Blocks`
+   decides; `Type` is a descriptive taxonomy.** Also repaired 113 malformed rows (6 columns
+   instead of 8, missing `Type`/`Evidence missing`/`Blocks`, an RVA sitting in the `Type`
+   slot) — their empty `Blocks` was being counted as "blocks nothing", understating the
+   figure. Marked `[UNRECORDED]` rather than guessed. **644 is not final until those 113
+   have their `Blocks` filled**; 4 more rows have odd shapes awaiting manual review.
 4. ~~Fix `STUBS.md`'s census and the 13 shifted rows.~~ **DONE 2026-08-15.** True count is
    **1,107 open / 149 struck** (1,256 total) — the header said 1,113/143, its own appended
    narrative ended at 1,109/147, and v3 quoted 1,072/1,109; all three were wrong. Census
