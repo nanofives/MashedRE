@@ -50,6 +50,51 @@ NPG, DET, ABOVE = 0x00000200, 0x00000008, 0x00008000
 # target. RW pre-transforms geometry on the CPU so the pose is NOT in any D3D
 # matrix — this struct is the source of truth. Feeding eye/at to the RE's
 # MASHED_CAM_POSE renders the SAME track from the SAME pose (same-view parity).
+# Track identity, read from the ORIGINAL rather than inferred from the menu.
+# Same-track capture is a precondition for any pose comparison (U-9039: a pose
+# from one track fed to another is meaningless whatever the frame convention),
+# and the original's track-select index -> track mapping is not documented
+# anywhere. So detect the truth instead of assuming it: watch CreateFileA/W for
+# anything under TRACKS\ and report the .piz actually opened. Detection also
+# validates --track-sel when that is used.
+TRACK_JS = r"""
+'use strict';
+const seen = [];
+let err = '';
+
+// rpc.exports FIRST. If the hook setup below throws, the script still answers —
+// otherwise the caller sees only "unable to find method", which says nothing
+// about the cause. (That is exactly what happened on the first run of this.)
+rpc.exports = {
+  tracks: function () { return seen; },
+  err: function () { return err; },
+  // Basename without extension, e.g. "Egypt" — matches the `piz` column of
+  // kAreas[] in mashedmod/src/mashed_re/Race/GameFlow.cpp, which is what
+  // MASHED_TRACK_SEL indexes on the standalone side.
+  trackname: function () {
+    if (!seen.length) return '';
+    return seen[seen.length - 1].replace(/^.*[\\/]/, '').replace(/\.piz$/i, '');
+  }
+};
+
+try {
+  // Module.findExportByName is NOT available as a static in Frida 17 (this repo
+  // is on 17.9.3). Use the instance method, same idiom as diff_template.js:4818.
+  const k32 = Module.load('kernel32.dll');
+  [['CreateFileA', false], ['CreateFileW', true]].forEach(function (e) {
+    const p = k32.findExportByName(e[0]);
+    if (!p || p.isNull()) return;
+    Interceptor.attach(p, { onEnter: function (args) {
+      try {
+        const s = e[1] ? args[0].readUtf16String() : args[0].readAnsiString();
+        if (s && /TRACKS[\\/]/i.test(s) && /\.piz$/i.test(s) && seen.indexOf(s) < 0)
+          seen.push(s);
+      } catch (_) {}
+    }});
+  });
+} catch (ex) { err = String(ex); }
+"""
+
 CAM_JS = r"""
 'use strict';
 rpc.exports = { campose: function () {
@@ -83,6 +128,13 @@ def main():
     ap.add_argument("--out", default=str(ROOT / "verify" / "parity_race" / "orig_race.bmp"))
     ap.add_argument("--settle", type=float, default=3.0,
                     help="seconds in-race before capture (let the scene populate)")
+    ap.add_argument("--track-sel", type=int, default=None, metavar="N",
+                    help="set the track-select cursor to N before confirming. "
+                         "The original's index->track mapping is NOT documented; "
+                         "the detected track name is printed either way, so use "
+                         "that to find the N you want, then pass it to reproduce. "
+                         "Counterpart on the standalone side is MASHED_TRACK_SEL, "
+                         "which indexes kAreas[] in Race/GameFlow.cpp.")
     args = ap.parse_args()
 
     out_bmp = Path(args.out).resolve()
@@ -127,6 +179,16 @@ def main():
     scr.on("message", lambda m, d: None)
     scr.load(); E = scr.exports_sync; E.init()
 
+    # Load the track watcher BEFORE navigating, so it sees the load that the
+    # track-select confirm triggers.
+    trackscr = None
+    try:
+        trackscr = sess.create_script(TRACK_JS)
+        trackscr.on("message", lambda m, d: None)
+        trackscr.load()
+    except Exception as e:
+        print(f"  track watcher failed to load: {e}")
+
     def wait(pred, t):
         end = time.time() + t
         while time.time() < end:
@@ -151,6 +213,11 @@ def main():
         confirm_to(3)
         E.setsel(1); time.sleep(0.3)               # Quick Battle
         confirm_to(4, 4); confirm_to(5, 4)
+        # Track select. setsel() writes the cursor at the CURRENT depth, so this
+        # must happen after confirm_to(5) and before the confirm that loads.
+        if args.track_sel is not None:
+            E.setsel(args.track_sel); time.sleep(0.3)
+            print(f"  track-sel cursor set to {args.track_sel} at depth={E.depth()}")
         press(4); time.sleep(1.5)
         for _ in range(5):
             if E.phase() != 3: break
@@ -159,6 +226,26 @@ def main():
             sys.exit(f"NOT in race (phase={E.phase()}) — aborting")
         print(f"  in race (phase={E.phase()}); settling {args.settle}s")
         time.sleep(args.settle)
+        # Which track did the ORIGINAL actually load? Ground truth for same-track
+        # capture; write it beside the pose so a later comparison can verify the
+        # two sides matched instead of assuming it.
+        track = ""
+        try:
+            if trackscr:
+                track = trackscr.exports_sync.trackname() or ""
+                allp = trackscr.exports_sync.tracks() or []
+                if track:
+                    (out_bmp.parent / "orig_track.txt").write_text(track + "\n")
+                    print(f"  ORIGINAL TRACK = {track}   "
+                          f"(standalone: MASHED_TRACK_SEL = index of '{track}' in kAreas[])")
+                else:
+                    e = ""
+                    try: e = trackscr.exports_sync.err() or ""
+                    except Exception: pass
+                    print(f"  track not detected (piz opens seen: {len(allp)})"
+                          + (f" hook-error: {e}" if e else ""))
+        except Exception as e:
+            print(f"  track detect failed: {e}")
         # Read the original's race-camera pose (source of truth; D3D matrices are
         # identity under RW). Write it next to the capture for RE same-view replay.
         cam_ok = False

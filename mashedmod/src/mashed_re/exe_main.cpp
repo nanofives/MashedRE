@@ -1749,9 +1749,19 @@ bool UpdateMenuSelection() {
             // are the rows). MASHED_TRACK_SEL overrides for dev/verification.
             int trackSel = cur;
             char ts[8] = {};
-            if (GetEnvironmentVariableA("MASHED_TRACK_SEL", ts, sizeof(ts)) > 0)
-                trackSel = std::atoi(ts);
-            mashed_re::Race::Campaign_SetSelectedTrack(trackSel);
+            const bool trackOverride =
+                GetEnvironmentVariableA("MASHED_TRACK_SEL", ts, sizeof(ts)) > 0;
+            if (trackOverride) trackSel = std::atoi(ts);
+            // The override addresses the FULL kAreas[] table, not just the 8 cup
+            // tracks: parity capture has to reach Training (kAreas[12]), which is
+            // where the original's Quick Battle always races. Gameplay keeps the
+            // cup clamp. Without this, MASHED_TRACK_SEL=12 silently clamped to 7
+            // (SuperG) and a "same-track" comparison quietly compared two
+            // different tracks.
+            if (trackOverride)
+                mashed_re::Race::Campaign_SetSelectedTrackDev(trackSel);
+            else
+                mashed_re::Race::Campaign_SetSelectedTrack(trackSel);
             // [item 4 / WS-G2] real frontend game mode (DAT_0067e9fc via the
             // menu game-state) drives the race. The Single-/Multi-Player mode
             // items now SET game_mode on select (MenuNavSM ApplyActionGameMode,

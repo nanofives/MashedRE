@@ -287,6 +287,15 @@ void Campaign_SetSelectedTrack(int t) {
     g_selTrack = t;
 }
 
+// Dev/verification override — see the header. Same as above but clamped to the
+// full kAreas[] table rather than the 8 cup tracks, so parity capture can reach
+// Training/Sands/Dump/Roundabout. Not reachable from gameplay.
+void Campaign_SetSelectedTrackDev(int t) {
+    if (t < 0) t = 0;
+    if (t >= kAreaCount) t = kAreaCount - 1;
+    g_selTrack = t;
+}
+
 // Track index (into the cup / kAreas) -> area .piz path + engine Course_Id.
 void Campaign_TrackPizPath(int trackIdx, char* buf, int cap) {
     if (trackIdx < 0 || trackIdx >= kAreaCount) trackIdx = 0;

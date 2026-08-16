@@ -54,6 +54,14 @@ struct Cup {
 const Cup& Campaign_CurrentCup();
 int        Campaign_SelectedTrack();      // cursor within the cup
 void       Campaign_SetSelectedTrack(int);
+// DEV/VERIFICATION ONLY. Campaign_SetSelectedTrack clamps to the 8 cup tracks,
+// which is correct for gameplay but makes the other 5 areas in kAreas[]
+// (Roundabout, Sands, Dump, Training, ...) unreachable. Same-track parity capture
+// needs them: the original's Quick Battle always races TRAINING (kAreas[12]),
+// measured 2026-08-16 via race_draw_burst.py's track detector, so with the cup
+// clamp the standalone can never be put on the same track as that capture.
+// Clamps to kAreaCount instead. Reached only from the MASHED_TRACK_SEL override.
+void       Campaign_SetSelectedTrackDev(int);
 // Progression persistence (sidecar mashed_re_progress.bin; NEVER original/).
 // Load at boot; record a result (winnerSlot 0 = player won -> unlock next track
 // + trophy, then save). Campaign_CurrentCup merges this with the save-table.
