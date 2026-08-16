@@ -45,8 +45,11 @@ When the skill promotes a function, it must **all in one transaction**:
 1. **Update `hooks.csv`** — find or insert the row for this RVA; update `name`, `subsystem`, `confidence`, `status`, `file`, `scenario`, `frida_diff`, `notes`.
 2. **Sweep `[UNCERTAIN]` markers** in the function's analysis note. For each unfiled marker, write a new row in `UNCERTAINTIES.md` (next `U-NNNN`), and replace the inline marker with `[UNCERTAIN U-NNNN]`. Refuse a C3 promotion if any `semantic` or `structural` uncertainty is unresolved.
 3. **Sweep stubs** in the function's source. For each callee that resolves to a stub helper, ensure a row exists in `STUBS.md`. Refuse C4 promotion if any stub remains in the function's body.
-4. **Append to `re/analysis/CHANGELOG.md`** — one line: `YYYY-MM-DD  RVA  name  oldC->newC  evidence`.
-5. **Demotion** is the same flow in reverse: lower the row, append to changelog with `oldC<-newC` arrow.
+4. **Prepend to `re/analysis/CHANGELOG.md`** — one line: `YYYY-MM-DD  RVA  name  oldC->newC  evidence`.
+   Insert it **immediately below the `<!-- ENTRIES -->` marker** (the file is newest-first).
+   NEVER rewrite or truncate the file: `2dee9c67` destroyed 477 entries by writing where it
+   should have inserted. If a past entry was wrong, add a correcting entry — do not edit history.
+5. **Demotion** is the same flow in reverse: lower the row, prepend to the changelog with an `oldC<-newC` arrow.
 
 ## CSV row format reminder
 

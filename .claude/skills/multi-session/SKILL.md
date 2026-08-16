@@ -131,7 +131,7 @@ Format: `<bucket>-YYYYMMDD-HHMM` UTC. Deterministic, no guessing. The terms `<se
    git add "master.WIP-$SESSION_SHORT_ID"
    git commit -m "scribe: claim $SESSION_SHORT_ID"
    ```
-   Append to `re/analysis/CHANGELOG.md`: `YYYY-MM-DD $SESSION_SHORT_ID scribe-claim bucket=<b> rvas=<n>`.
+   Prepend to `re/analysis/CHANGELOG.md` (immediately below the <!-- ENTRIES --> marker; newest-first, never rewrite or truncate): `YYYY-MM-DD $SESSION_SHORT_ID scribe-claim bucket=<b> rvas=<n>`.
 2. **Open master writable** — `mcp__ghidra__project_program_open_existing` with `read_only=false`
    against `Mashed.gpr` (project_location = `C:/Users/maria/Desktop/Proyectos/Mashed`). Never
    against a pool slot.
@@ -153,7 +153,7 @@ Format: `<bucket>-YYYYMMDD-HHMM` UTC. Deterministic, no guessing. The terms `<se
    git rm "master.WIP-$SESSION_SHORT_ID"
    git commit -m "scribe: release $SESSION_SHORT_ID"
    ```
-   Append to `re/analysis/CHANGELOG.md`: `YYYY-MM-DD $SESSION_SHORT_ID scribe-release writes=<n> errors=<n>`.
+   Prepend to `re/analysis/CHANGELOG.md` (immediately below the <!-- ENTRIES --> marker; newest-first, never rewrite or truncate): `YYYY-MM-DD $SESSION_SHORT_ID scribe-release writes=<n> errors=<n>`.
 
 **Branch-locality caveat:** the flag is committed to the local branch. Two sessions on different
 worktrees/branches do not see each other's flags until they fetch+rebase. Solo/sequential master

@@ -64,7 +64,7 @@ API and `0x*.md`-only globbing.)
 3. echo "master.WIP-$SESSION_SHORT_ID" > "master.WIP-$SESSION_SHORT_ID"
    git add "master.WIP-$SESSION_SHORT_ID"
    git commit -m "scribe: claim $SESSION_SHORT_ID"
-4. Append to re/analysis/CHANGELOG.md:
+4. Prepend to re/analysis/CHANGELOG.md (immediately below the <!-- ENTRIES --> marker; the file is newest-first and must never be rewritten or truncated):
    "<YYYY-MM-DD>  $SESSION_SHORT_ID  scribe-claim  buckets=<N queued, M skipped-HOLD>"
 5. mcp__ghidra__project_program_open_existing
      project_location="C:/Users/maria/Desktop/Proyectos/Mashed"
@@ -105,7 +105,7 @@ API and `0x*.md`-only globbing.)
 10. Record the drain. Because the apply is ONE atomic transaction, a single
     commit covering all buckets is correct (the legacy per-bucket commit was a
     crash-recovery checkpoint for the serial loop, which no longer exists). For
-    each drained bucket append to re/analysis/CHANGELOG.md:
+    each drained bucket prepend to re/analysis/CHANGELOG.md (immediately below the <!-- ENTRIES --> marker; newest-first, never rewrite or truncate):
        "<YYYY-MM-DD>  $SESSION_SHORT_ID  scribe-release  bucket=<bucket>  writes=<N>  errors=0"
     and move its row in re/SCRIBE_QUEUE.md from "## Queued" to "## Drained",
     appending  drained-by=<SESSION_SHORT_ID>; <N> plates, <N> bookmarks,
@@ -116,7 +116,7 @@ API and `0x*.md`-only globbing.)
 11. mcp__ghidra__program_close
 12. bash scripts/ghidra_pool.sh sync     # tolerate "device busy" on a held clone — non-fatal
 13. rm "master.WIP-$SESSION_SHORT_ID"  (it is .gitignored here; if tracked, git rm)
-    Append to re/analysis/CHANGELOG.md:
+    Prepend to re/analysis/CHANGELOG.md (immediately below the <!-- ENTRIES --> marker; the file is newest-first and must never be rewritten or truncated):
     "<YYYY-MM-DD>  $SESSION_SHORT_ID  scribe-release  buckets=<N drained>  errors=0"
     git add re/analysis/CHANGELOG.md
     git commit -m "scribe: release $SESSION_SHORT_ID"

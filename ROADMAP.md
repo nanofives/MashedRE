@@ -157,11 +157,21 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
    **migration-in-progress (owner + exit condition)** / **dead**. Delete the dead.
 3. Reconcile UNCERTAINTIES `Type` against `Blocks` so "2,530 blocking" becomes a real
    number.
-4. Fix `STUBS.md`'s self-inconsistent census (1,072 vs 1,109) and the 13 rows with a date
-   in the subsystem cell.
-5. Restore `re/analysis/CHANGELOG.md` as a complete index, or explicitly demote it to a
-   highlights log and name what replaces it. August has 4 entries against ~20 commits;
-   right now it is neither.
+4. ~~Fix `STUBS.md`'s census and the 13 shifted rows.~~ **DONE 2026-08-15.** True count is
+   **1,107 open / 149 struck** (1,256 total) — the header said 1,113/143, its own appended
+   narrative ended at 1,109/147, and v3 quoted 1,072/1,109; all three were wrong. Census
+   rewritten with its reproducing command. The 13 "misformatted" rows were missing their
+   Subsystem *and* Type columns entirely (5 fields, not 7); subsystems recovered from
+   `hooks.csv` via the called RVA, Type marked `[UNRECORDED]` rather than guessed. The
+   `misformatted` pseudo-subsystem bucket is gone.
+5. ~~State what `re/analysis/CHANGELOG.md` is.~~ **DONE 2026-08-15.** It is the **tracker
+   audit trail** — why tracker state changed — not a commit log, and not to be measured
+   against commit count. The file had **no header at all**, which is part of why its scope
+   was ambiguous. Added one stating scope, newest-first ordering, an `<!-- ENTRIES -->`
+   insertion marker, and never-rewrite/never-truncate. Also fixed a live inconsistency:
+   five skill docs across `re-classify`, `ghidra-sweep`, `frida-sweep` and `multi-session`
+   said "**append**" while the file is prepend-ordered — that undocumented mismatch is part
+   of how `2dee9c67` came to overwrite it. All now name the marker.
 
 6. ~~Decide the 14 unfalsifiable C4 rows.~~ **DONE 2026-08-15 — re-run, all 14 hold.**
    `canonical_c4_racediff.py` re-run in three batches (5/5/4), in-race and frame-synced

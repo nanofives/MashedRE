@@ -51,7 +51,7 @@ SESSION_SHORT_ID="frida-sweep-$(date -u +%Y%m%d-%H%M)"
 4. echo "$SESSION_SHORT_ID" > "frida-sweep.WIP-$SESSION_SHORT_ID"
    git add "frida-sweep.WIP-$SESSION_SHORT_ID"
    git commit -m "frida-sweep: claim $SESSION_SHORT_ID"
-5. Append to re/analysis/CHANGELOG.md:
+5. Prepend to re/analysis/CHANGELOG.md (immediately below the <!-- ENTRIES --> marker; the file is newest-first and must never be rewritten or truncated):
    "<YYYY-MM-DD>  $SESSION_SHORT_ID  frida-sweep-claim  branches=<N queued>"
 
 6. For each Queued row in re/PROMOTION_QUEUE.md (in order):
@@ -83,7 +83,7 @@ SESSION_SHORT_ID="frida-sweep-$(date -u +%Y%m%d-%H%M)"
           Surface the regressing branch + RVA to the user. Do NOT auto-revert
           main; that's the user's call.
 
-8. Append to re/analysis/CHANGELOG.md:
+8. Prepend to re/analysis/CHANGELOG.md (immediately below the <!-- ENTRIES --> marker; the file is newest-first and must never be rewritten or truncated):
    "<YYYY-MM-DD>  $SESSION_SHORT_ID  frida-sweep-release  branches=<N merged>  integration-diff=GREEN  hooks=<K>"
 
 9. git rm "frida-sweep.WIP-$SESSION_SHORT_ID"

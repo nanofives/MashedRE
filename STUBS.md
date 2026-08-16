@@ -1,4 +1,4 @@
-﻿# Stubs
+# Stubs
 
 Every time a reimplementation calls a function that has not itself been reversed, the placeholder is recorded here. **Stubs block S-DoD.** A subsystem cannot be marked DONE while it has open stubs.
 
@@ -9,25 +9,56 @@ A "stub" is one of:
 
 Each stub gets one row. Resolve by reversing the target function (preferred) or by promoting the stub to `DEFERRED.md` with a wontfix rationale (rare).
 
-## Status summary (census 2026-07-06 — foundation reset)
+## Status summary (census 2026-08-15 — D0.4 recount)
 
-**1,113 open rows / 143 struck.** (2026-07-23: 5 intro-splash stubs struck as standalone account2
-work — S-0802/S-0810/S-0811 stale passthroughs, plus S-0801/S-0803 rewired to ported symbols
-(build-verified). All target functions already impl/C3-C4; see those rows. Original 2026-07-06
-census was 1,118 / 138. 2026-07-24: 4 more stale-stub strikes (account2 Lane-A global scan) →
-**1,111 open / 145 struck** — S-1483 (hud: RwMatrixRotate→RwMatrixRotateInner direct C++ call),
-S-3653 (save: ThunkReplaySave→ReplaySave direct C++ linkage), S-1442+S-2410 (vehicle/input:
-ZeroFillWrapper inlines FUN_004b64e0 as std::memset). No code change; each already calls the
-ported symbol directly or inlines it. 2026-07-24 (2nd strike, inlined-callee scan): 2 more →
-**1,109 open / 147 struck** — S-3931/S-3932 (frontend: LogoOverlayDraw C4 body inlines the
-FUN_00473220/FUN_004733b0 inner gradient-quad draws; no trampoline in src).)
-S-DoD is gated *per subsystem* — read this census, not the raw
-row count. Open rows by subsystem column (13 rows have a shifted/older column format and are
-counted under their literal 4th cell):
+**1,107 open rows / 149 struck** (1,256 total).
 
-| render | boot | util | particle | audio | vehicle | frontend | hud (+font/gameplay) | track | input | save | ai | gameplay | physics | race_state | video | io | misformatted |
-|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 224 | 197 | 139 | 111 | 90 | 85 | 52 | 67 | 42 | 40 | 19 | 9 | 6 | 5 | 5 | 2 | 1 | 13 |
+Recomputed, not carried forward. The previous census block had drifted three ways at once:
+its headline said 1,113/143, its own appended narrative ended at 1,109/147, and the true
+count was 1,107/149 — two later strikes never reached the header. It had become an
+append-log of strike announcements rather than a census.
+
+**Reproduce (this is the definition, not a snapshot to trust):**
+
+```bash
+py -3.12 - <<'EOF'
+import io,re,collections
+s=io.open('STUBS.md',encoding='utf-8-sig').read().split('
+')
+rows=[l for l in s if re.match(r'^\|\s*~*S-\d+', l)]
+open_=[l for l in rows if not re.match(r'^\|\s*~~', l)]
+cnt=collections.Counter([x.strip() for x in l.split('|')][4] for l in open_)
+print(len(open_),'open /',len(rows)-len(open_),'struck'); print(cnt.most_common())
+EOF
+```
+
+Strike history is preserved in the per-row strikethroughs and in
+`re/analysis/CHANGELOG.md`; it does not belong in this header.
+
+**S-DoD is gated per subsystem — read this table, not the total.**
+
+| Subsystem | Open | | Subsystem | Open |
+|---|---:|---|---|---:|
+| render | 231 | | save | 19 |
+| boot | 197 | | hud/font | 13 |
+| util | 143 | | ai | 9 |
+| particle | 111 | | gameplay | 6 |
+| audio | 91 | | race_state | 5 |
+| vehicle | 85 | | physics | 5 |
+| hud | 53 | | video | 2 |
+| frontend | 52 | | third-party-library[renderware] | 1 |
+| track | 42 | | io | 1 |
+| input | 40 | | hud/gameplay | 1 |
+
+The former **`misformatted` bucket (13 rows) is gone** — those rows were missing their
+Subsystem and Type columns entirely (5 fields instead of 7), so a date sat in the
+Subsystem slot and they were counted as their own pseudo-subsystem. Repaired 2026-08-15
+by deriving each row's real subsystem from `hooks.csv` via the called RVA (evidence, not
+inference); they now count under `render` (7), `util` (4), `audio` (1) and
+`third-party-library[renderware]` (1). Their **Type cell is marked `[UNRECORDED]`** rather
+than guessed — the original value was lost when the columns were dropped, and inventing
+`passthrough`/`no-op` would be unfounded.
+
 
 A large share of the open rows are **library-band passthroughs, not first-party port targets**
 (library-skip policy, `re/CONFIDENCE.md` + CLAUDE.md skip bands): the `boot` block is dominated
@@ -130,19 +161,19 @@ boundaries alongside the master plan §1 snapshot.)*
 | S-4159 | 0x0049ff30 | 0x0049cd70 FUN_0049cd70 | particle | passthrough | 2026-05-24 | called with param_1; no return value used; batch-ad-s2 |
 | S-4160 | 0x0049ff60 | 0x0049ce10 FUN_0049ce10 | particle | passthrough | 2026-05-24 | called with param_1 when vtable[0x88] >= 0; return value propagated; batch-ad-s2 |
 | S-4161 | 0x0049fc80 | 0x0049ceb0 FUN_0049ceb0 | particle | passthrough | 2026-05-24 | called with no visible args when vtable[0x8c] >= 0; batch-ad-s2 |
-| S-1720 | 0x005aa1e0 FUN_005aa1e0 | 0x005aa060 FUN_005aa060 | 2026-06-02 | C2 batch_ai-finalize: master function_create + decomp confirms cdecl predicate `int(node,ctx){return FUN_005adf30(*node,ctx)==0;}`; plate re/analysis/bucket_audio_005a7b60_005ab620/005aa1e0.md; corrects old note (callee FUN_005adf30 not FUN_005ade10, U-6625) |
-| S-0373 | 0x00493ac0 LAB_00493ac0 | 0x00493b50 FUN_00493b50 | 2026-05-03 | C1 analyzed video_mci_d2; pre-NT5 code-page path; GetThreadLocale→GetLocaleInfoA(0x1004)→atoi; fallback GetACP |
-| S-0374 | 0x00493b40 LAB_00493b40 | 0x00493b50 FUN_00493b50 | 2026-05-03 | C1 analyzed video_mci_d2; NT5+ code-page path; MOV EAX,3 (CP_THREAD_ACP); RET |
-| S-0375 | 0x0049ec10 FUN_0049ec10 | 0x00493c00 FUN_00493c00 | 2026-05-03 | C1 analyzed video_mci_d2; __thiscall ctor; vtable[0]+7 offsets; calls FUN_0049dd60+FUN_0049cfb0 |
-| S-0376 | 0x004a3b84 FUN_004a3b84 | 0x00493f00 FUN_00493f00 | 2026-05-03 | C1 analyzed video_mci_d2; vsnprintf-impl via fake FILE (_flag=0x42); calls FUN_004a504f |
-| S-0080 | 0x00551510 FUN_00551510 | 0x00550390 FUN_00550390 | 2026-05-12 | C1 analyzed rw_engine_teardown_d2; RW plugin dispatch; dispatches fn ptrs at param_1+0x20/+0x24 with (param_1+0x50); see re/analysis/rw_engine_teardown_d2/0x00551510.md |
-| S-0081 | 0x004c2c90 FUN_004c2c90 | 0x004c2f60 + 0x004c3040 | 2026-05-12 | C1 analyzed rw_engine_teardown_d2; RW engine state-transition dispatcher; switch on param_2 (0xd..0x12); default calls FUN_004d7ff0+FUN_004d8480; see re/analysis/rw_engine_teardown_d2/0x004c2c90.md |
-| S-0082 | 0x004d7ca0 FUN_004d7ca0 | 0x004c3270 FUN_004c3270 | 2026-05-12 | C1 analyzed rw_engine_teardown_d2; render context teardown; iterates DAT_007d6c54 array, unlinks nodes, calls FUN_004ccce0+FUN_004cc9f0; see re/analysis/rw_engine_teardown_d2/0x004d7ca0.md |
-| S-0083 | 0x004ccf20 FUN_004ccf20 | 0x004c3270 FUN_004c3270 | 2026-05-12 | C1 analyzed rw_engine_teardown_d2; free-list/pool block teardown; walks DAT_007d45cc doubly-linked list, frees all blocks via vtable+0x10c/+0x11c, zeros DAT_007d45fc; see re/analysis/rw_engine_teardown_d2/0x004ccf20.md |
-| S-0220 | 0x004d7ff0 FUN_004d7ff0 | 0x004c2c90 FUN_004c2c90 | 2026-05-12 | C1 analyzed audio_rws_loader_d2; 4-byte identity function; returns param_1 unchanged (MOV EAX,[ESP+4]; RET); see re/analysis/audio_rws_loader_d2/004d7ff0.md |
-| S-0221 | 0x004d8480 FUN_004d8480 | 0x004c2c90 FUN_004c2c90 | 2026-05-12 | C1 analyzed audio_rws_loader_d2; first-error recorder; stores {uint,uint} at DAT_007d3ff8[DAT_007d6c5c] if slot empty (first=0, second=0x80000000); see re/analysis/audio_rws_loader_d2/004d8480.md |
-| S-0222 | 0x004ccce0 FUN_004ccce0 | 0x004d7ca0 FUN_004d7ca0 | 2026-05-12 | C1 analyzed rw_engine_teardown_d3; RwFreeListForAllUsed equivalent; iterates pool block bitmap, calls param_2(element_addr, param_3) per set bit; D-0580 resolved; see re/analysis/rw_engine_teardown_d3/0x004ccce0.md |
-| S-0223 | 0x004cc9f0 FUN_004cc9f0 | 0x004d7ca0 FUN_004d7ca0 | 2026-05-12 | C1 analyzed render_d3d9_device; RwFreeListDestroy equivalent; unlinks from global chain at DAT_007d45cc, walks+frees internal free list, frees header; D-0581 resolved; see re/analysis/render_d3d9_device/0x004cc9f0.md |
+| S-1720 | 0x005aa1e0 FUN_005aa1e0 | 0x005aa060 FUN_005aa060 | audio | [UNRECORDED] | 2026-06-02 | C2 batch_ai-finalize: master function_create + decomp confirms cdecl predicate `int(node,ctx){return FUN_005adf30(*node,ctx)==0;}`; plate re/analysis/bucket_audio_005a7b60_005ab620/005aa1e0.md; corrects old note (callee FUN_005adf30 not FUN_005ade10, U-6625) |
+| S-0373 | 0x00493ac0 LAB_00493ac0 | 0x00493b50 FUN_00493b50 | util | [UNRECORDED] | 2026-05-03 | C1 analyzed video_mci_d2; pre-NT5 code-page path; GetThreadLocale→GetLocaleInfoA(0x1004)→atoi; fallback GetACP |
+| S-0374 | 0x00493b40 LAB_00493b40 | 0x00493b50 FUN_00493b50 | util | [UNRECORDED] | 2026-05-03 | C1 analyzed video_mci_d2; NT5+ code-page path; MOV EAX,3 (CP_THREAD_ACP); RET |
+| S-0375 | 0x0049ec10 FUN_0049ec10 | 0x00493c00 FUN_00493c00 | util | [UNRECORDED] | 2026-05-03 | C1 analyzed video_mci_d2; __thiscall ctor; vtable[0]+7 offsets; calls FUN_0049dd60+FUN_0049cfb0 |
+| S-0376 | 0x004a3b84 FUN_004a3b84 | 0x00493f00 FUN_00493f00 | util | [UNRECORDED] | 2026-05-03 | C1 analyzed video_mci_d2; vsnprintf-impl via fake FILE (_flag=0x42); calls FUN_004a504f |
+| S-0080 | 0x00551510 FUN_00551510 | 0x00550390 FUN_00550390 | third-party-library[renderware] | [UNRECORDED] | 2026-05-12 | C1 analyzed rw_engine_teardown_d2; RW plugin dispatch; dispatches fn ptrs at param_1+0x20/+0x24 with (param_1+0x50); see re/analysis/rw_engine_teardown_d2/0x00551510.md |
+| S-0081 | 0x004c2c90 FUN_004c2c90 | 0x004c2f60 + 0x004c3040 | render | [UNRECORDED] | 2026-05-12 | C1 analyzed rw_engine_teardown_d2; RW engine state-transition dispatcher; switch on param_2 (0xd..0x12); default calls FUN_004d7ff0+FUN_004d8480; see re/analysis/rw_engine_teardown_d2/0x004c2c90.md |
+| S-0082 | 0x004d7ca0 FUN_004d7ca0 | 0x004c3270 FUN_004c3270 | render | [UNRECORDED] | 2026-05-12 | C1 analyzed rw_engine_teardown_d2; render context teardown; iterates DAT_007d6c54 array, unlinks nodes, calls FUN_004ccce0+FUN_004cc9f0; see re/analysis/rw_engine_teardown_d2/0x004d7ca0.md |
+| S-0083 | 0x004ccf20 FUN_004ccf20 | 0x004c3270 FUN_004c3270 | render | [UNRECORDED] | 2026-05-12 | C1 analyzed rw_engine_teardown_d2; free-list/pool block teardown; walks DAT_007d45cc doubly-linked list, frees all blocks via vtable+0x10c/+0x11c, zeros DAT_007d45fc; see re/analysis/rw_engine_teardown_d2/0x004ccf20.md |
+| S-0220 | 0x004d7ff0 FUN_004d7ff0 | 0x004c2c90 FUN_004c2c90 | render | [UNRECORDED] | 2026-05-12 | C1 analyzed audio_rws_loader_d2; 4-byte identity function; returns param_1 unchanged (MOV EAX,[ESP+4]; RET); see re/analysis/audio_rws_loader_d2/004d7ff0.md |
+| S-0221 | 0x004d8480 FUN_004d8480 | 0x004c2c90 FUN_004c2c90 | render | [UNRECORDED] | 2026-05-12 | C1 analyzed audio_rws_loader_d2; first-error recorder; stores {uint,uint} at DAT_007d3ff8[DAT_007d6c5c] if slot empty (first=0, second=0x80000000); see re/analysis/audio_rws_loader_d2/004d8480.md |
+| S-0222 | 0x004ccce0 FUN_004ccce0 | 0x004d7ca0 FUN_004d7ca0 | render | [UNRECORDED] | 2026-05-12 | C1 analyzed rw_engine_teardown_d3; RwFreeListForAllUsed equivalent; iterates pool block bitmap, calls param_2(element_addr, param_3) per set bit; D-0580 resolved; see re/analysis/rw_engine_teardown_d3/0x004ccce0.md |
+| S-0223 | 0x004cc9f0 FUN_004cc9f0 | 0x004d7ca0 FUN_004d7ca0 | render | [UNRECORDED] | 2026-05-12 | C1 analyzed render_d3d9_device; RwFreeListDestroy equivalent; unlinks from global chain at DAT_007d45cc, walks+frees internal free list, frees header; D-0581 resolved; see re/analysis/render_d3d9_device/0x004cc9f0.md |
 | S-0100 | 0x004522d6 | 0x004522d0 FUN_004522d0 | audio | passthrough | 2026-05-02 | Indirect dispatch target through DAT_007d3ff8+0x10c; not statically traceable |
 | S-0180 | 0x004a2bb8 | 0x004a2be9 __security_check_cookie | boot | passthrough | 2026-05-02 | report_failure; depth-4 of boot_crt_exit_d3; D-0462 |
 | S-0181 | 0x004a31e1 | 0x004a4126 __onexit | boot | passthrough | 2026-05-02 | FUN_004a31e1; called before __onexit_lk; role unknown; depth-4; D-0463 |
