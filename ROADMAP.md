@@ -170,12 +170,12 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
 7. **Resolve the linkage gap.** Diff `asi_sources.rsp` against the exe source list, then
    decide per directory whether `Save/` and `Audio/` are unlinked by intent (`.asi`-only
    harness code) or by drift.
-8. **Stop the harness overwriting committed evidence.** `MASHED_RACE_DEMO=1` writes into
-   `verify/race1/` (`exe_main.cpp:1100`), a committed directory. A routine D0 capture run
-   silently overwrote 16 tracked BMPs across `verify/race1|r5|r6`, including the R6 exit
-   stills D-11061 cites. Recovered via `git checkout --` only because they were tracked.
-   Point the default at a dated scratch dir; promoting a capture into a cited folder
-   should be a deliberate act.
+8. ~~Stop the harness overwriting committed evidence.~~ **DONE 2026-08-15.** All 17
+   capture sites in `exe_main.cpp` now route through `VOut()`/`VOut2()`, which root every
+   harness write under `verify/run_<pid>/`. `MASHED_VERIFY_OUT` overrides the root, so
+   regenerating a cited artifact in place is still possible but is now an explicit act.
+   Verified both ways: the same race-demo run that previously overwrote 16 tracked BMPs
+   across `verify/race1|r5|r6` now modifies zero, and the override lands where told.
 
 **Gate:** every number in this roadmap is reproducible from the repo by a stated command.
 

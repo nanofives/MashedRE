@@ -145,6 +145,7 @@
 #include <cmath>        // R5: drive-demo steering waveform
 #include <cwchar>       // R6: swprintf for the HUD result banner
 #include <cstdio>
+#include <cstdarg>
 #include <cstring>
 #include <climits>
 #include <vector>       // 2026-07-14: watchdogged InitD3D9 attempt list
@@ -844,6 +845,59 @@ bool g_race_demo = false;
 // Dump the current backbuffer (post-Present is unavailable, so we grab the
 // render target before Present, see RenderFrame) to a 24-bit BMP. Self-contained
 // (no D3DX dependency). Returns true on success.
+// ── D0.8: harness captures must not default into committed evidence dirs ─────
+// Every verification driver below used to write straight into verify/race1/,
+// verify/r4|r5|r6/ and verify/parity/ — 78 TRACKED files. A routine capture run
+// therefore overwrote cited acceptance evidence silently; on 2026-08-15 a D0 run
+// clobbered 16 of them, including the R6 exit stills D-11061 cites. They were
+// recoverable only because they happened to be committed.
+//
+// VOut() reroutes every harness write under a per-run directory:
+//     verify/run_<pid>/<relative path>
+// Set MASHED_VERIFY_OUT to override the root. Passing MASHED_VERIFY_OUT=verify
+// restores the old in-place behaviour, which is what you want when DELIBERATELY
+// regenerating a cited artifact — the point is that it is now an explicit act.
+const char* VOut(const char* rel) {
+    static char root[MAX_PATH] = {};
+    static bool init = false;
+    if (!init) {
+        init = true;
+        char env[MAX_PATH] = {};
+        if (GetEnvironmentVariableA("MASHED_VERIFY_OUT", env, sizeof(env)) > 0 && env[0])
+            std::snprintf(root, sizeof(root), "%s", env);
+        else
+            std::snprintf(root, sizeof(root), "verify/run_%lu",
+                          static_cast<unsigned long>(GetCurrentProcessId()));
+    }
+    // 4-slot rotation so a couple of live VOut() results can coexist in one call.
+    static char buf[4][MAX_PATH];
+    static int  slot = 0;
+    char* out = buf[slot];
+    slot = (slot + 1) & 3;
+    std::snprintf(out, MAX_PATH, "%s/%s", root, rel);
+    // Create the leading directories lazily; captures are rare so the cost is nil.
+    for (char* p = out; *p; ++p) {
+        if (*p == '/' || *p == '\\') {
+            const char c = *p; *p = 0;
+            CreateDirectoryA(out, nullptr);
+            *p = c;
+        }
+    }
+    return out;
+}
+
+// printf-style sibling of VOut: formats a RELATIVE path, then roots it. Keeps the
+// format string a literal at every call site (VOut()'s return must never be used
+// as a format string — it is a rotating buffer).
+const char* VOut2(const char* fmt, ...) {
+    char rel[MAX_PATH];
+    va_list ap;
+    va_start(ap, fmt);
+    std::vsnprintf(rel, sizeof(rel), fmt, ap);
+    va_end(ap);
+    return VOut(rel);
+}
+
 bool DumpBackbufferBMP(const char* path) {
     if (!g_device) return false;
     IDirect3DSurface9* rt = nullptr;
@@ -942,7 +996,7 @@ bool RunNavDemoStep(int /*phase*/) {
     const int modal = g_modal_step;
     auto cap = [&](const char* tag) {
         char path[160];
-        std::snprintf(path, sizeof(path), "verify/walk_%s.bmp", tag);
+        std::snprintf(path, sizeof(path), "%s", VOut2("walk_%s.bmp", tag));
         NavDemoLog(step, tag, DumpBackbufferBMP(path));
     };
     switch (step) {
@@ -1014,7 +1068,7 @@ bool RunParityWalk(int phase) {
     if (idx >= kN) return true;
     if (DetTicks() - goto_ms < kDwellMs) return false;   // wait for the animation to settle
     char path[128];
-    std::snprintf(path, sizeof(path), "verify/parity/re_s%d.bmp", kScr[idx]);
+    std::snprintf(path, sizeof(path), "%s", VOut2("parity/re_s%d.bmp", kScr[idx]));
     DumpBackbufferBMP(path);
     NavDemoLog(phase, path, true);
     ++idx;
@@ -1040,7 +1094,7 @@ bool RunConfigEditDemo(int /*phase*/) {
     if (cool > 0) { --cool; return false; }
     auto cap = [&](const char* tag) {
         char path[160];
-        std::snprintf(path, sizeof(path), "verify/cfgedit_%s.bmp", tag);
+        std::snprintf(path, sizeof(path), "%s", VOut2("cfgedit_%s.bmp", tag));
         NavDemoLog(step, tag, DumpBackbufferBMP(path));
     };
     switch (step) {
@@ -1097,7 +1151,7 @@ bool RunRaceDemoStep(int /*phase*/) {
                           mashed_re::Race::GameMode::Results);
     auto cap = [&](const char* tag) {
         char path[160];
-        std::snprintf(path, sizeof(path), "verify/race1/%s.bmp", tag);
+        std::snprintf(path, sizeof(path), "%s", VOut2("race1/%s.bmp", tag));
         NavDemoLog(step, tag, DumpBackbufferBMP(path));
         // WS-E lighting acceptance: log the player heading at capture time so
         // standalone shots can be heading-matched against original-side shots.
@@ -2732,29 +2786,29 @@ bool RenderFrame() {
         static bool s_shot[3] = {};
         if (!s_shot[0] && t >= 0.8f) {
             s_shot[0] = true;
-            DumpBackbufferBMP(car ? "verify/r5/car_1_spawn.bmp"
-                                  : "verify/r4/arctic_fly_1.bmp");
+            DumpBackbufferBMP(car ? VOut("r5/car_1_spawn.bmp")
+                                  : VOut("r4/arctic_fly_1.bmp"));
         }
         if (!s_shot[1] && t >= 2.2f) {
             s_shot[1] = true;
-            DumpBackbufferBMP(car ? "verify/r5/car_2_drive.bmp"
-                                  : "verify/r4/arctic_fly_2.bmp");
+            DumpBackbufferBMP(car ? VOut("r5/car_2_drive.bmp")
+                                  : VOut("r4/arctic_fly_2.bmp"));
         }
         if (!s_shot[2] && t >= 3.6f) {
             s_shot[2] = true;
-            DumpBackbufferBMP(car ? "verify/r5/car_3_weave.bmp"
-                                  : "verify/r4/arctic_fly_3.bmp");
+            DumpBackbufferBMP(car ? VOut("r5/car_3_weave.bmp")
+                                  : VOut("r4/arctic_fly_3.bmp"));
         }
         // WS-E s3: two later frames (car at speed) so a ~22s run captures the
         // ground chase + tamed dust once the car is actually moving down-track.
         static bool s_shot_late[2] = {};
         if (car && !s_shot_late[0] && t >= 9.0f) {
             s_shot_late[0] = true;
-            DumpBackbufferBMP("verify/r5/car_4_chase.bmp");
+            DumpBackbufferBMP(VOut("r5/car_4_chase.bmp"));
         }
         if (car && !s_shot_late[1] && t >= 16.0f) {
             s_shot_late[1] = true;
-            DumpBackbufferBMP("verify/r5/car_5_chase.bmp");
+            DumpBackbufferBMP(VOut("r5/car_5_chase.bmp"));
         }
         // R6 round telemetry/captures: each elimination + the winner + 2
         // periodic frames of the shared camera.
@@ -2768,13 +2822,13 @@ bool RenderFrame() {
             if (g_track.countdown() <= 0.f && s_cap_round != rn) {
                 s_cap_round = rn;
                 char pth[64];
-                std::snprintf(pth, sizeof(pth), "verify/r6/round%d_go.bmp", rn);
+                std::snprintf(pth, sizeof(pth), "%s", VOut2("r6/round%d_go.bmp", rn));
                 DumpBackbufferBMP(pth);
             }
             if (g_track.round_winner() >= 0 && s_res_round != rn) {
                 s_res_round = rn;
                 char pth[64];
-                std::snprintf(pth, sizeof(pth), "verify/r6/round%d_result.bmp", rn);
+                std::snprintf(pth, sizeof(pth), "%s", VOut2("r6/round%d_result.bmp", rn));
                 DumpBackbufferBMP(pth);
                 std::FILE* lf = std::fopen(kLogPath, "a");
                 if (lf) {
@@ -2788,7 +2842,7 @@ bool RenderFrame() {
             }
             if (!s_match_cap && g_track.match_winner() >= 0) {
                 s_match_cap = true;
-                DumpBackbufferBMP("verify/r6/match_result.bmp");
+                DumpBackbufferBMP(VOut("r6/match_result.bmp"));
                 std::FILE* lf = std::fopen(kLogPath, "a");
                 if (lf) {
                     std::fprintf(lf, "R6 MATCH OVER t=%.1fs winner=car%d "
@@ -2857,7 +2911,7 @@ bool RenderFrame() {
             DumpBackbufferBMP(
                 GetEnvironmentVariableA("MASHED_DBG_BBDUMP_OUT", bbp,
                                         sizeof(bbp)) > 0
-                    ? bbp : "verify/dbg_backbuffer.bmp");
+                    ? bbp : VOut("dbg_backbuffer.bmp"));
         }
     }
     // On-demand capture for the dual-nav parity harness: env MASHED_DBG_BBDUMP_REQ
@@ -4682,7 +4736,7 @@ bool LoadBadgeSprites() {
                 std::strcmp(t.name,"SemiC2")) continue;
             const auto fmt = t.format(); const auto& mp = t.mips[0];
             char path[160];
-            std::snprintf(path, sizeof(path), "verify/badge_%s.raw", t.name);
+            std::snprintf(path, sizeof(path), "%s", VOut2("badge_%s.raw", t.name));
             if (std::FILE* bf = std::fopen(path, "wb")) {
                 std::fprintf(bf, "P7 %u %u\n", t.width(), t.height()); // w h header
                 for (std::uint32_t y=0; y<mp.height; ++y)
