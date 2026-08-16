@@ -3,6 +3,14 @@
 
 #include "DrawStreamDump.h"
 
+// GameFlow mode is recorded per frame (D1, 2026-08-16). Without it the dump is
+// unusable for the question it was reached for: every counter here reports
+// GEOMETRY PRESENCE, which is static once a track loads, so a 1000-frame capture
+// showed one identical state throughout and there was no way to point at a frame
+// and say "this is the results screen". Tagging the mode makes result-screen
+// frames identifiable by name.
+#include "../Race/GameFlow.h"
+
 #include <windows.h>
 #include <cstdint>
 #include <cstdio>
@@ -120,7 +128,18 @@ void WriteOut() {
 constexpr char kOutPath3D[] = "log/drawstream3d_re.json";
 
 struct CatRec3D { std::string cat; unsigned batches, verts, textured; };
-struct Frame3D  { int index; std::vector<CatRec3D> cats; };
+struct Frame3D  { int index; const char* mode; std::vector<CatRec3D> cats; };
+
+// GameFlow::GameMode -> a short stable string for the dump.
+const char* ModeName3D() {
+    switch (mashed_re::Race::GameFlow_Mode()) {
+        case mashed_re::Race::GameMode::Frontend:    return "Frontend";
+        case mashed_re::Race::GameMode::LoadingRace: return "LoadingRace";
+        case mashed_re::Race::GameMode::InRace:      return "InRace";
+        case mashed_re::Race::GameMode::Results:     return "Results";
+    }
+    return "?";
+}
 
 int  g_state3d      = -1;
 int  g_fs3d         = 0;
@@ -171,7 +190,12 @@ void WriteOut3D() {
     std::fputs("{\n", f);
     for (std::size_t fi = 0; fi < g_frames3d.size(); ++fi) {
         const Frame3D& fr = g_frames3d[fi];
-        std::fprintf(f, " \"f%d\": {", fr.index);
+        // "mode" first so a reader can filter frames by GameFlow state without
+        // parsing the category payload.
+        // Trailing separator only when categories follow, else a frame with no
+        // categories emits {"mode": "X", } and the file is not valid JSON.
+        std::fprintf(f, " \"f%d\": {\"mode\": \"%s\"%s", fr.index,
+                     fr.mode ? fr.mode : "?", fr.cats.empty() ? "" : ", ");
         for (std::size_t ci = 0; ci < fr.cats.size(); ++ci) {
             const CatRec3D& c = fr.cats[ci];
             std::fprintf(f, "%s\"%s\": {\"batches\": %u, \"verts\": %u, "
@@ -204,6 +228,7 @@ void DrawStreamDump_Race3DBegin() {
     if (Capturing3D()) {
         Frame3D fr;
         fr.index = g_fc3d;
+        fr.mode  = ModeName3D();
         g_frames3d.push_back(fr);
     }
 }
