@@ -163,10 +163,14 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
    highlights log and name what replaces it. August has 4 entries against ~20 commits;
    right now it is neither.
 
-6. **Decide the 14 unfalsifiable C4 rows.** `log/c4_racediff_result.json` is the sole
-   evidence for 14 C4 rows and does not exist; `/log/` is gitignored (27 tracked, 2,217 on
-   disk). Re-run the canonical scenario, or demote pending re-verification. Leaving them
-   at C4 citing an unopenable file is the one option `re/CONFIDENCE.md` forbids.
+6. ~~Decide the 14 unfalsifiable C4 rows.~~ **DONE 2026-08-15 — re-run, all 14 hold.**
+   `canonical_c4_racediff.py` re-run in three batches (5/5/4), in-race and frame-synced
+   over [300,1200]: **14/14 C4-CLEAN with `jmp=0xe9` installed**, off-set == on-set, zero
+   demotions. Root cause fixed rather than just the symptom: the citations pointed into
+   gitignored `/log/`, so all 14 `frida_diff` fields now point at the **tracked** artifact
+   `re/analysis/phys_c4_evidence/c4_racediff_result_2026-08-15.json`. **Remaining
+   systemic issue:** `/log/` still holds 2,217 files against 27 tracked, so other rows
+   citing `log/...` have the same latent fragility — sweep them next.
 7. **Resolve the linkage gap.** Diff `asi_sources.rsp` against the exe source list, then
    decide per directory whether `Save/` and `Audio/` are unlinked by intent (`.asi`-only
    harness code) or by drift.
