@@ -1153,6 +1153,23 @@ bool RunRaceDemoStep(int /*phase*/) {
         char path[160];
         std::snprintf(path, sizeof(path), "%s", VOut2("race1/%s.bmp", tag));
         NavDemoLog(step, tag, DumpBackbufferBMP(path));
+        // Record the GameFlow state AT CAPTURE TIME. Parity comparisons must know
+        // which shots are InRace, because TrackRenderer::Render does not run
+        // during Results (measured 2026-08-16, verify/dsproof2/SETTLED.md) — so a
+        // renderer A/B is meaningless on a Results shot: neither renderer drew it.
+        // Classifying shots by FILENAME is how three wrong diagnoses got started;
+        // this makes the classification measured instead.
+        if (std::FILE* mf = std::fopen(kLogPath, "a")) {
+            const char* mn = "?";
+            switch (mashed_re::Race::GameFlow_Mode()) {
+                case mashed_re::Race::GameMode::Frontend:    mn = "Frontend"; break;
+                case mashed_re::Race::GameMode::LoadingRace: mn = "LoadingRace"; break;
+                case mashed_re::Race::GameMode::InRace:      mn = "InRace"; break;
+                case mashed_re::Race::GameMode::Results:     mn = "Results"; break;
+            }
+            std::fprintf(mf, "CAPMODE tag=%s mode=%s\n", tag, mn);
+            std::fclose(mf);
+        }
         // WS-E lighting acceptance: log the player heading at capture time so
         // standalone shots can be heading-matched against original-side shots.
         // Standalone forward = {cos(yaw),0,sin(yaw)} (VehiclePhysicsRun adapter),
