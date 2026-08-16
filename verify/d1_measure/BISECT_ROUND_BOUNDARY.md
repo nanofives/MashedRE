@@ -97,3 +97,26 @@ The defect is on the **D3D9 side**; librw is the stable path on these shots. Inv
 `MASHED_RENDER_LIBRW` would remove a visible defect from the shipping default rather than
 introduce one — but still cannot be justified until faithfulness is adjudicated against the
 ORIGINAL (U-9039).
+
+
+---
+
+# SECOND CORRECTION (2026-08-16): the world-coverage hypothesis is ALSO wrong
+
+The section above concluded the D3D9 world draw "is not covering the result-screen view"
+and named the test that would prove it. The test was run and **refuted it**:
+
+```
+MASHED_DBG_DRAWSTREAM3D=1:1000   ->  world-batch histogram {13: 1000}, zero-world frames NONE
+```
+
+Every in-race render call submits the world, 13 batches, result screens included. The world
+is drawn. See `verify/dsproof/RESULT.md`.
+
+So the orange fill is drawn OVER a normally-submitted world, not in place of a missing one
+— and since only the world-submit path differs between the two runs, whatever draws it must
+be present in the librw run too, with librw's world submit masking it by draw order. That
+is a hypothesis and has not been tested.
+
+Two hypotheses down (per-channel gain, world coverage). What is still solid: the divergence
+is real, it is D3D9-side, it starts at the round-1/round-2 boundary, and librw is unaffected.
