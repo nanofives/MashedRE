@@ -42,3 +42,52 @@ That is a hypothesis, not a finding. It has not been tested.
   yields roughly 601-1200 of them here.
 - Default (`=1`) is the 60:62 early-race window, which is why every earlier look at this
   data showed a healthy world and said nothing about the result screens.
+
+
+---
+
+# CORRECTION (same day): this refutation is WEAKER than stated above
+
+Checked the rest of the capture and the instrument does not support the conclusion as
+firmly as written.
+
+## Every category is constant for all 1000 frames
+
+```
+cars      (284, 184296)   x1000
+copters   ( 25,   5793)   x1000
+props     ( 23,   5607)   x1000
+sky       (  1,    258)   x1000
+world     ( 13,  49440)   x1000
+```
+
+One distinct state each. Nothing varies anywhere in the run. These counters report
+**geometry presence**, which is static once a track is loaded — they do not vary with what
+the frame looks like, and they carry **no marker for which frames are result screens**.
+
+## Why that matters
+
+The claim "the world is drawn at the result screen" requires that result-screen frames are
+among the 1000 captured. That was assumed, not shown:
+
+- The whole demo is 601-1200 in-race calls; the window captured 1..1000, so any frames
+  beyond 1000 — plausibly including `round3_result` — were **not** observed.
+- Nothing in the dump identifies a frame as a result screen, so even for the frames that
+  were captured, there is no way to point at one and say "this is round2_result".
+
+The librw result frame does render 3D, which is good reason to think the result screen goes
+through `TrackRenderer::Render` and therefore increments this counter. But that is an
+inference, not a measurement.
+
+## Honest status
+
+**The coverage hypothesis is NOT refuted. It is untested** — the instrument as configured
+cannot observe the specific frames in question. The earlier "REFUTED" heading overstated
+what this data can carry.
+
+## What would actually settle it
+
+Tag each drawstream record with the GameFlow mode (`InRace` / `Results`) — one field in
+`Frame3D`, written in `DrawStreamDump_Race3DBegin`. Then a result-screen frame is
+identifiable by name and `world.batches` for that frame answers the question directly.
+Until then this line of investigation is blocked on instrumentation, not on analysis.
