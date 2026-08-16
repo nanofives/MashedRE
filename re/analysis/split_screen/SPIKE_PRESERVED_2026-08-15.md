@@ -1,8 +1,8 @@
-# Split-screen spike — preserved artifact (2026-08-14)
+# Split-screen spike — preserved artifact (2026-08-15)
 
 This directory holds the **only surviving copy** of the local split-screen multiplayer
 spike. The branch it lived on (`promote-c4`, and its strict ancestor `ws-visual-polish`)
-was retired on 2026-08-14 once every other feature on it had been ported to `main`.
+was retired on 2026-08-15 once every other feature on it had been ported to `main`.
 
 Preserved here rather than kept as a branch because a branch is not a durable citation:
 `DEFERRED.md` D-11063 cited commits `e5df32ef` and `1e4328bb`, and those hashes become
@@ -23,7 +23,7 @@ Original commits, for the record — **unreachable after branch deletion**:
 
 ## What the spike actually built
 
-Measured 2026-08-14 against the code, because D-11063's original justification described
+Measured 2026-08-15 against the code, because D-11063's original justification described
 this work inaccurately. 103 insertions / 15 deletions across 3 files.
 
 | Element | Verdict |
@@ -45,7 +45,7 @@ Treat the patch as a design reference, not as working verified code.
 
 ## Survivability if re-picked
 
-As of `main` @ 2026-08-14:
+As of `main` @ 2026-08-15:
 
 - **Viewport** — transplants near-verbatim. Anchor `TrackRenderer.cpp:3877` is intact and
   there is no viewport code on main at all.
@@ -60,13 +60,13 @@ As of `main` @ 2026-08-14:
 **Particle constraint** (the spike guarded this, and it still applies): the pool must
 `Emit`+`Update` **once per frame** but `Render` **per view**. Main keeps `parts_.Update`
 and `parts_.Render` as separate calls (`TrackRenderer.cpp:4449-4451`), so this remains
-structurally possible. `EmitCarFx` was ported to main on 2026-08-14 and its call site is
+structurally possible. `EmitCarFx` was ported to main on 2026-08-15 and its call site is
 already correctly placed once-per-frame before `parts_.Update` — see U-9038, which
 established the symbol had never landed on main rather than having been lost.
 
 ## Related
 
-- `DEFERRED.md` D-11063 — the deferral, justification corrected 2026-08-14
+- `DEFERRED.md` D-11063 — the deferral, justification corrected 2026-08-14 (that part was 08-14)
 - `re/analysis/split_screen/SESSION_END.md:52-54` — U-1908, the load-bearing original-side
   unknown (per-player screen-quadrant/viewport-rect assignment mechanism unlocated)
 - `re/analysis/MULTIPLAYER_PLAN_v1.1*` — the scope doc, already on main

@@ -1,4 +1,4 @@
-# Mashed RE Roadmap — v3 (2026-08-14)
+# Mashed RE Roadmap — v3 (2026-08-15)
 
 Supersedes v2 (2026-06-09), archived verbatim at
 `re/analysis/archive/ROADMAP_v2_2026-06-09.md`. v2's workstream definitions (WS-A..WS-J)
@@ -15,7 +15,7 @@ clean-room RWP-3.7 solver island. It also produced a gap nobody was measuring:
 > **`mashed_re.exe`, run with no environment variables set, does not use most of what
 > has been ported.**
 
-Verified 2026-08-14 against the source, not against a doc:
+Verified 2026-08-15 against the source, not against a doc:
 
 | Ported subsystem | Gate | Default |
 |---|---|---|
@@ -25,8 +25,12 @@ Verified 2026-08-14 against the source, not against a doc:
 With neither set, the shipping exe runs a hand-written D3D9 renderer (which is neither
 verbatim RW nor librw) and the kinematic drive model that v2 itself called "explicitly
 NOT the ported physics". `LibRw/RwRaceSubmit.cpp:218` states it plainly: *"with no env
-set the shipping D3D9 path still runs"*. There are **146 distinct `MASHED_*` names** under
-`mashedmod/src/`, so "what the exe does" currently has no single answer.
+set the shipping D3D9 path still runs"*. A raw grep finds 149 distinct `MASHED_*` tokens under `mashedmod/src/`, of which
+**128 have an actual `getenv`/`GetEnvironmentVariableA` site** — the remainder are
+include guards, absolute-address macros, a compile-time `#define`, a filename and a
+prose prefix. So "what the exe does" currently has no single answer, and the honest
+flag number is **128**, not the 146 this document first claimed (that figure counted
+raw tokens; corrected 2026-08-15 during D0).
 
 **This is not a new requirement. It is a violation of the rule v2 already had.** S-DoD
 criterion 1 reads: *"The standalone exe runs the subsystem's canonical scenario natively
@@ -51,7 +55,8 @@ Corollaries, all enforceable:
    flagged on-demand" is the state v2 accepted; v3 calls that half-landed.
 3. **Every phase gate below is measured on a clean environment.** If a demo needs a flag
    set, the demo does not count. This applies retroactively to the phase ledger.
-4. **The flag inventory is a tracked number.** 146 today. It should fall.
+4. **The flag inventory is a tracked number.** 128 real env vars today (149 raw tokens).
+   It should fall. Count reproducibly, not by grepping the prefix — see D0.2.
 
 This rule costs something and the cost is worth naming: some flags exist because the
 ported path is *not yet good enough* to default. Inverting those flags will make the
@@ -60,7 +65,7 @@ invisible debt into visible, fixable regressions.
 
 ---
 
-## Honest baseline (2026-08-14)
+## Honest baseline (2026-08-15)
 
 Recounted from the data, not read off a doc. Where a doc disagrees, both are shown.
 
@@ -139,9 +144,16 @@ Phases are gates, not dates. Do not advance while the current gate is unmet.
 
 v2's R0 did this once and it paid for itself; the repo has drifted since.
 
-1. Refresh `SESSION_VERIFICATION_AUDIT` — what is scaffold vs verbatim vs absent, as of
-   today, covering B5/librw/2026-07.
-2. Publish the flag inventory: all 146 `MASHED_*`, each classed **verification** /
+1. ~~Refresh `SESSION_VERIFICATION_AUDIT`~~ **DONE 2026-08-15** —
+   `re/analysis/SESSION_VERIFICATION_AUDIT_2026-08-15.md`. It surfaced two items that did
+   not exist when D0 was written, both below (6 and 7), and one correction to this
+   document's own premise: **env-gating is not the largest gap — non-linkage is.**
+   `build.bat` links 193 of 433 `.cpp` into `mashed_re.exe`; `Save/` contributes 0 of 17
+   files and `Audio/` 4 of 25, so 585 audio and 32 save rows — *including 28 save C4s* —
+   are absent from the deliverable and **no env var can reach them**. The default-build
+   rule therefore needs a second clause: a capability counts only if its TU is linked
+   into the exe *and* reached on the default path.
+2. Publish the flag inventory: all 128 real `MASHED_*` env vars, each classed **verification** /
    **migration-in-progress (owner + exit condition)** / **dead**. Delete the dead.
 3. Reconcile UNCERTAINTIES `Type` against `Blocks` so "2,530 blocking" becomes a real
    number.
@@ -150,6 +162,20 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
 5. Restore `re/analysis/CHANGELOG.md` as a complete index, or explicitly demote it to a
    highlights log and name what replaces it. August has 4 entries against ~20 commits;
    right now it is neither.
+
+6. **Decide the 14 unfalsifiable C4 rows.** `log/c4_racediff_result.json` is the sole
+   evidence for 14 C4 rows and does not exist; `/log/` is gitignored (27 tracked, 2,217 on
+   disk). Re-run the canonical scenario, or demote pending re-verification. Leaving them
+   at C4 citing an unopenable file is the one option `re/CONFIDENCE.md` forbids.
+7. **Resolve the linkage gap.** Diff `asi_sources.rsp` against the exe source list, then
+   decide per directory whether `Save/` and `Audio/` are unlinked by intent (`.asi`-only
+   harness code) or by drift.
+8. **Stop the harness overwriting committed evidence.** `MASHED_RACE_DEMO=1` writes into
+   `verify/race1/` (`exe_main.cpp:1100`), a committed directory. A routine D0 capture run
+   silently overwrote 16 tracked BMPs across `verify/race1|r5|r6`, including the R6 exit
+   stills D-11061 cites. Recovered via `git checkout --` only because they were tracked.
+   Point the default at a dated scratch dir; promoting a capture into a cited folder
+   should be a deliberate act.
 
 **Gate:** every number in this roadmap is reproducible from the repo by a stated command.
 
@@ -220,7 +246,7 @@ rows.
 
 ## Workstream ledger (carried forward from v2)
 
-Definitions live in the archived v2 §Workstreams. Status as of 2026-08-14:
+Definitions live in the archived v2 §Workstreams. Status as of 2026-08-15:
 
 | WS | Scope | Status | Phase |
 |---|---|---|---|
@@ -298,7 +324,7 @@ with its own tracker.
 
 ## Open decisions
 
-All open decisions carried into v3 were settled on 2026-08-14. Recorded here because the
+All open decisions carried into v3 were settled on 2026-08-15. Recorded here because the
 reasoning matters more than the verdicts.
 
 **QuadRenderer stays 2D-only.** It no longer draws — `Render()` has zero call sites and
@@ -330,9 +356,9 @@ render-interpolation findings currently do not).
 |---|---|---|---|
 | 1 | Give the QoL strand a tracker row; reclassify borderless as port work (librw P5 exerciser) | — | D0 |
 | 2 | Re-measure the collision-FX thresholds once `MASHED_REAL_PHYSICS` is the default (real `vel[]` makes the slip term carry signal). ~~Suspected over-firing~~ **investigated and dismissed 2026-08-14** — see below | — | D2 |
-| 3 | ~~Verify collision FX in a race capture~~ **DONE 2026-08-14** — emission verified, `verify/fx_verify/`. Residual: the visual contribution of skid smoke specifically was NOT isolated (`MASHED_NO_PARTICLES` disables the whole particle block), and dark smoke `0x303030` on a night track may be invisible in practice | — | — |
+| 3 | ~~Verify collision FX in a race capture~~ **DONE 2026-08-15** — emission verified, `verify/fx_verify/`. Residual: the visual contribution of skid smoke specifically was NOT isolated (`MASHED_NO_PARTICLES` disables the whole particle block), and dark smoke `0x303030` on a night track may be invisible in practice | — | — |
 
-**Over-firing: investigated 2026-08-14, no defect.** The "2,164 skids/race vs the 251 the
+**Over-firing: investigated 2026-08-15, no defect.** The "2,164 skids/race vs the 251 the
 calibration was tuned to" alarm was an **instrumentation artifact, not a behaviour
 change**. `fx_skids_` was a single counter summed over all four cars while the debug line
 printed only slot 1's inputs, so a stationary car appeared to emit thousands of skids and
