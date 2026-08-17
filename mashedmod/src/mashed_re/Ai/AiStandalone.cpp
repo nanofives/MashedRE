@@ -485,6 +485,17 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
         // G2, increases yaw -> rotates forward toward -x/west = the WRONG way). The AI steer sign
         // was long flagged [UNCERTAIN] ("steer-sign pending verify"); it is INVERTED. Flip it so
         // err<180 -> ctrl[1] and err>180 -> ctrl[0]. Env MASHED_AI_STEERFLIP=0 reverts for A/B.
+        //
+        // [UNCERTAIN U-9040] This flip makes this path the EXACT OPPOSITE of the verbatim bands
+        // at :519-560 (err<180 -> ctrl[0]) — note the line above states the unflipped mapping was
+        // written to MATCH those bands. At most one of the two is faithful to the original, and
+        // which one is NOT decidable today: both are dead code on the default path, because once
+        // the .AI banks load the AI cars are steered by TrackRenderer.cpp:2679-2687's own
+        // world-space controller and never by ctrl[]. The inversion [G4] observed may instead
+        // live in the ctrl[] -> physics mapping (Vehicle/VehiclePhysicsRun.cpp:391-405), which
+        // BOTH paths share — in which case this flip is a symptomatic fix and the bands are
+        // still wrong. Resolution + the ready-made world-space A/B: UNCERTAINTIES.md U-9040,
+        // verify/d1_steersign/RESULT.md. Do not "resolve" by picking a sign without that run.
         static const bool s_flip = [] {
             const char* e = std::getenv("MASHED_AI_STEERFLIP");
             return !(e && e[0] == '0');           // flipped by default

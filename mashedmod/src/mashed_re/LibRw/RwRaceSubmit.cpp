@@ -100,24 +100,32 @@ void SetCameraLookAt(const float eye[3], const float at_pt[3]) {
                           fwd[2]*right[0] - fwd[0]*right[2],
                           fwd[0]*right[1] - fwd[1]*right[0] };
 
-    // [D-S3-4 FIX] Cancel librw's view-space X negation.
+    // [D-S3-4 REVERTED, 2026-08-16] Do NOT cancel librw's view-space X negation.
     //
     // beginUpdate builds the view matrix as inverse(LTM) with the X COMPONENT of
-    // every basis row negated (d3ddevice.cpp:1229-1240) -- i.e. world->view
-    // carries a built-in mirror in X. Handing it the plain D3D-LookAtLH basis
-    // above therefore renders the whole scene horizontally mirrored. Negating
-    // `right` (and only `right`, leaving `up` derived from the un-negated one so
-    // the frame stays orthonormal and upright) puts a matching mirror into the
-    // LTM, and the two cancel.
+    // every basis row negated (d3ddevice.cpp:1229-1240) -- world->view carries a
+    // built-in mirror in X. D-S3-4 read that as a librw quirk and negated `right`
+    // here to cancel it, on the measurement that doing so moved librw's output
+    // toward the D3D9 path (mean-abs 25.37 -> 15.41).
     //
-    // MEASURED, not reasoned into place: with the frame as-built, mirroring the
-    // captured image dropped mean-abs against the D3D9 control from 25.37 to
-    // 15.41 -- so the delta really was a horizontal flip and not a camera
-    // position error. NOTE the E2'b step 2 probe (RwSceneBuild.cpp
-    // RenderWorldProbe) builds its basis the same un-compensated way, so its
-    // world_probe_arctic.png is mirrored too; it was only ever checked
-    // structurally, never against a reference.
-    const float right_lh[3] = { -right[0], -right[1], -right[2] };
+    // That measurement was real and the conclusion drawn from it was wrong: the
+    // D3D9 path was itself mirrored relative to the ORIGINAL, so D-S3-4 tuned
+    // librw to agree with a bad reference. librw is a RenderWare implementation,
+    // and its built-in X negation IS the original's convention -- it was right
+    // all along and got compensated into being wrong.
+    //
+    // Established 2026-08-16 by transplanting the original's own RwCamera basis
+    // into the standalone and comparing against an original capture at that pose:
+    // verbatim basis 89.68%, right-axis negated 33.79%. TrackRenderer's
+    // MatLookAtLH/MatViewFromBasis now carry the same negation, so both paths
+    // share the original's handedness and this compensation must go.
+    // Evidence: verify/d1_basis/RESULT.md, verify/d1_mirrorfix/RESULT.md.
+    //
+    // Still outstanding: the E2'b step 2 probe (RwSceneBuild.cpp
+    // RenderWorldProbe) builds its basis the same un-compensated way. Under the
+    // corrected reading its world_probe_arctic.png was never mirrored -- the
+    // note claiming it was is wrong and is superseded here.
+    const float right_lh[3] = { right[0], right[1], right[2] };
 
     rw::Frame*  cf = g_cam->getFrame();
     rw::Matrix* m  = &cf->matrix;

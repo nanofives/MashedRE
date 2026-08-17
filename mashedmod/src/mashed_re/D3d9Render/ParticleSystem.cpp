@@ -1,6 +1,7 @@
 // ParticleSystem impl — see ParticleSystem.h.
 #include "ParticleSystem.h"
 #include <cmath>
+#include <cstdlib>
 
 namespace mashed_re {
 namespace D3d9Render {
@@ -61,6 +62,13 @@ void ParticleSystem::Reset() {
     pool_.clear();
     snowAccum_ = dustAccum_ = 0.f;
     next_ = 0;
+}
+
+void ParticleSystem::SetFovY(float fovy) {
+    // Guard the degenerate ends so the coverage divide in Render() stays sane;
+    // outside (0, pi) there is no meaningful half-angle to take a tangent of.
+    if (fovy > 1e-3f && fovy < 3.1415f)
+        tanHalfFov_ = std::tan(fovy * 0.5f);
 }
 
 ParticleSystem::P* ParticleSystem::Spawn() {
@@ -236,10 +244,36 @@ void ParticleSystem::Render(IDirect3DDevice9* dev, const float camEye[3],
     // exempt them so a power-up blast at the car isn't dimmed.
     const float nearFull = worldR_ * 0.030f;
     const float nearZero = worldR_ * 0.010f;
+    // Which particle classes draw. Bit0 ambient, bit1 car-spray, bit2 fx.
+    //
+    // DEFAULT = 3: THE FX CLASS IS CUT FROM THE DEFAULT BUILD (2026-08-16).
+    // Not a tuning choice. The FX emitters are admitted [SCAFFOLD] invented
+    // presentation (see the header) with no counterpart yet reversed out of the
+    // original Particle/ system, and measured they were destroying the frame:
+    // kind==2 alone accounted for the whole saturated-orange in-race divergence
+    // that blocked the D1 renderer inversion, at 87-99% of pixels on four shots
+    // (verify/d1_fxbloom/RESULT.md). The screen-coverage guard below bounds the
+    // worst of it but cannot fix stacked opacity, because every FX particle is
+    // emitted at alpha 0xFF and a burst of 36 saturates wherever they overlap.
+    // Tuning invented content further is not reverse engineering, so the class
+    // is off until the real system is ported and can replace it.
+    //
+    // MASHED_PARTS_KINDS=7 restores it (and any mask isolates a class, which is
+    // how the cause was found -- MASHED_NO_PARTICLES kills the pass AND the
+    // pickup orbs together, so it names a pass, not a cause).
+    //
+    // Suppression is at DRAW time, not spawn: the pool keeps evolving exactly as
+    // before, so this run stays comparable against every capture taken before
+    // the cut. Re-pickup condition: the ported Particle/ system lands.
+    static const int s_kind_mask = [] {
+        const char* v = std::getenv("MASHED_PARTS_KINDS");
+        return (v && *v) ? std::atoi(v) : 3;
+    }();
     verts_.clear();
     verts_.reserve(static_cast<size_t>(alive()) * 6);
     for (const auto& p : pool_) {
         if (p.life <= 0.f) continue;
+        if (!((s_kind_mask >> p.kind) & 1)) continue;
         // fade alpha over life (in/out)
         const float lf = p.life / (p.maxlife > 1e-3f ? p.maxlife : 1.f);  // 1->0
         float fade = lf < 0.25f ? (lf / 0.25f) : 1.f;                     // fade out tail
@@ -253,6 +287,44 @@ void ParticleSystem::Render(IDirect3DDevice9* dev, const float camEye[3],
                 fade *= nf;                       // 0 in the lens .. 1 past nearFull
             }
         }
+        // D1 FX LENS-WALL GUARD. The WS-E s4 near-camera fade above deliberately
+        // EXEMPTED kind==2 ("FX are deliberate and brief"). Measured 2026-08-16,
+        // that exemption is what produced the saturated-orange in-race frames
+        // that blocked the D1 renderer inversion: SpawnBurst at a spin-out
+        // (TrackRenderer.cpp:2796) puts 36 FULLY OPAQUE billboards of half-extent
+        // up to track_radius_*0.025 (~1.4u on Arctic, R=55) at the car, and the
+        // chase rig sits ~1.3u behind it. Each quad then subtends more than the
+        // whole viewport, and 36 of them alpha-composite to a solid wall.
+        // Isolation evidence: MASHED_PARTS_KINDS=3 (this class alone suppressed)
+        // reproduces the entire MASHED_NO_PARTICLES effect to the decimal, while
+        // MASHED_NO_PICKUPS moves the same frames 0.00-0.04%. See
+        // verify/d1_fxbloom/RESULT.md.
+        //
+        // The guard is a SCREEN-COVERAGE budget, not another distance band,
+        // because distance alone does not say how much of the lens a billboard
+        // eats -- that is (size/dist)/tan(fovy/2), the fraction of the viewport
+        // half-height it spans. Derived from the projection at
+        // TrackRenderer.cpp:4021/4025, not chosen by eye. Full alpha up to a
+        // quarter of the half-height; gone by 0.75 (a quad 1.5x the screen).
+        // An explosion across the track is untouched; one inside the lens fades.
+        // NOTE [SCAFFOLD]: the emitters themselves are invented presentation,
+        // not RE'd from the original Particle/ system. This bounds the damage
+        // of the scaffold; it does not make it faithful.
+        float fx_cov = 1.f;
+        if (p.kind == 2) {
+            const float dx = p.pos[0]-camEye[0], dy = p.pos[1]-camEye[1],
+                        dz = p.pos[2]-camEye[2];
+            const float dist = std::sqrt(dx*dx + dy*dy + dz*dz);
+            if (dist > 1e-4f && tanHalfFov_ > 1e-4f) {
+                const float cov = (p.size / dist) / tanHalfFov_;
+                const float kFull = 0.25f, kZero = 0.75f;
+                if (cov >= kZero)      fx_cov = 0.f;
+                else if (cov > kFull)  fx_cov = (kZero - cov) / (kZero - kFull);
+            } else {
+                fx_cov = 0.f;   // degenerate: particle is in the eye
+            }
+        }
+        fade *= fx_cov;
         const std::uint32_t baseA = (p.col >> 24) & 0xFF;
         const std::uint32_t a = static_cast<std::uint32_t>(baseA * fade);
         const D3DCOLOR c = (a << 24) | (p.col & 0x00FFFFFF);

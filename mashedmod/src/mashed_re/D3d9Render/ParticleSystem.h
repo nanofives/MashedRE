@@ -11,6 +11,12 @@
 // [SCAFFOLD] The emitter shapes/rates are invented presentation, not RE'd from
 // the original's particle system (Particle/ dir, still un-ported). The DATA path
 // (D3D9 billboards) is real; tune/replace rates when the original is reversed.
+//
+// 2026-08-16: the FX class (kind==2 — SpawnBurst/SpawnTrail, i.e. explosions and
+// power-up trails) is CUT FROM THE DEFAULT BUILD. Measured, it alone produced the
+// saturated-orange in-race frames that blocked the D1 renderer inversion
+// (verify/d1_fxbloom/RESULT.md). Set MASHED_PARTS_KINDS=7 to restore it. The
+// ambient and car-spray classes are unaffected and still draw by default.
 #pragma once
 
 #include <d3d9.h>
@@ -37,6 +43,12 @@ public:
     // Draw alive particles as camera-facing billboards. Assumes a scene is in
     // progress and view/proj are set; saves/restores the states it changes.
     void Render(IDirect3DDevice9* dev, const float camEye[3], const float camAt[3]);
+
+    // Vertical FOV of the projection the billboards will be drawn under, in
+    // radians. Render() needs it to convert a world-space billboard size into
+    // the fraction of the viewport it covers (the FX lens-wall guard). Defaults
+    // to the TrackRenderer value (60 deg) if never set.
+    void SetFovY(float fovy);
 
     // One-off FX (power-up trails / explosions). Burst = n particles flung out
     // from `pos`; Trail = a single drifting particle (call each frame on a
@@ -68,6 +80,7 @@ private:
     float                snowAccum_ = 0.f;
     float                dustAccum_ = 0.f;
     std::uint32_t        rng_ = 0x9e3779b9u;
+    float                tanHalfFov_ = 0.57735027f;   // tan(60deg/2), see SetFovY
     std::vector<PV>      verts_;   // scratch billboard buffer
 };
 

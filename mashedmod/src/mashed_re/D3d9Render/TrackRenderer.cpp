@@ -789,6 +789,24 @@ void MatLookAtLH(D3DMATRIX* m, const float eye[3], const float at[3]) {
     x[0] /= xl; x[1] /= xl; x[2] /= xl;
     const float y[3] = {z[1]*x[2] - z[2]*x[1], z[2]*x[0] - z[0]*x[2],
                         z[0]*x[1] - z[1]*x[0]};
+    // MIRROR FIX (2026-08-16). RenderWare's camera space and D3D's disagree on
+    // which way the right axis points on screen, and the standalone had been
+    // rendering the world REFLECTED relative to the original because of it --
+    // self-consistently, which is why it survived this long unnoticed.
+    //
+    // Measured: transplanting the original's own RwCamera basis verbatim gives a
+    // mirror image (89.68% vs the original capture); negating the right axis
+    // gives 33.79%, and beats a post-hoc pixel flip of the same render (44.38%)
+    // because it fixes occlusion rather than just moving pixels. It also
+    // retro-explains the ~90px car-projection offset previously blamed on
+    // capture timing. Evidence: verify/d1_basis/RESULT.md.
+    //
+    // Applied to the axis, not to the projection's _11, deliberately: librw
+    // builds its own projection from the published fov/aspect/near/far, so
+    // negating there would flip only the D3D9 path and silently break the
+    // renderer A/B. Negating here keeps the change in the view basis.
+    // y is computed from the ORIGINAL x above, so the negation happens after.
+    x[0] = -x[0]; x[1] = -x[1]; x[2] = -x[2];
     MatIdentity(m);
     m->_11 = x[0]; m->_12 = y[0]; m->_13 = z[0];
     m->_21 = x[1]; m->_22 = y[1]; m->_23 = z[1];
@@ -796,6 +814,29 @@ void MatLookAtLH(D3DMATRIX* m, const float eye[3], const float at[3]) {
     m->_41 = -(x[0]*eye[0] + x[1]*eye[1] + x[2]*eye[2]);
     m->_42 = -(y[0]*eye[0] + y[1]*eye[1] + y[2]*eye[2]);
     m->_43 = -(z[0]*eye[0] + z[1]*eye[1] + z[2]*eye[2]);
+}
+
+// Same view matrix, but from an EXPLICIT orthonormal basis instead of a
+// look-at pair. MatLookAtLH above hardcodes up = world +Y, which silently
+// forces roll to zero; the original's race camera carries a real roll (measured
+// ~26 deg, RwCamera frame right.y = 0.440, verify/d1_carproj/RESULT.md), so a
+// look-at pair CANNOT reproduce its view and any transplant through one is
+// wrong about the horizon by construction. Rows are the basis, translation is
+// -dot(axis, pos) -- identical convention to MatLookAtLH, just without
+// re-deriving the axes from a target point.
+void MatViewFromBasis(D3DMATRIX* m, const float pos[3], const float right[3],
+                      const float up[3], const float at[3]) {
+    // Same right-axis negation as MatLookAtLH -- see the block there. The basis
+    // passed in is RenderWare's, straight off the RwCamera frame, so it gets the
+    // identical treatment and a transplanted pose needs NO pre-negation.
+    const float r[3] = { -right[0], -right[1], -right[2] };
+    MatIdentity(m);
+    m->_11 = r[0]; m->_12 = up[0]; m->_13 = at[0];
+    m->_21 = r[1]; m->_22 = up[1]; m->_23 = at[1];
+    m->_31 = r[2]; m->_32 = up[2]; m->_33 = at[2];
+    m->_41 = -(r[0]*pos[0]  + r[1]*pos[1]  + r[2]*pos[2]);
+    m->_42 = -(up[0]*pos[0] + up[1]*pos[1] + up[2]*pos[2]);
+    m->_43 = -(at[0]*pos[0] + at[1]*pos[1] + at[2]*pos[2]);
 }
 
 void MatPerspectiveFovLH(D3DMATRIX* m, float fovy, float aspect,
@@ -2210,11 +2251,25 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
                 float fx = gg1[0] - gg0[0], fz = gg1[2] - gg0[2];
                 const float fl = std::sqrt(fx*fx + fz*fz);
                 if (fl > 1e-3f) { fx /= fl; fz /= fl; }
-                const float rx = fz, rz = -fx;               // track "right" (perp to forward)
+                // Track lateral axis. CONVENTION: perp(f) = (-fz, +fx), the SAME one used by
+                // StartRound (:3133 lat = {-dir.z, dir.x}) and the AI lane offset (:2770
+                // aim = g + (-tdz, +tdx)*lane). This site used to compute the OPPOSITE
+                // perpendicular, (+fz, -fx), which was harmless where consumers are symmetric
+                // (+/-0.9 grid sides, lanes -3/0/+3) but NOT here: lat[] below is asymmetric
+                // and puts all three cars on ONE side, so the side depended on the odd-one-out
+                // convention. Unified 2026-08-16 after the mirror-fix audit flagged it as a
+                // trap for any future code that assumes one convention and calls the other.
+                //
+                // Behaviour is UNCHANGED: the axis is negated and lat[] is negated with it, so
+                // every spawn lands on the same world position as before. The side itself is
+                // load-bearing and stays put -- it is chosen so the faithful lookahead's
+                // geometric-nearest seed lands on the forward leg of the spline (see the
+                // comment above), which is a world-space/spline argument, not a visual one.
+                const float rx = -fz, rz = fx;               // track "right" = perp(forward)
                 const float baseYaw = std::atan2(fz, fx);    // race direction
                 const float unit = (car_len_ > 0.05f ? car_len_ : 0.5f);
                 const float lane = unit * 1.6f, row = unit * 2.2f;
-                const float lat[3] = { +0.7f, +1.7f, +0.7f }; // 2-wide grid on the forward-seeding side
+                const float lat[3] = { -0.7f, -1.7f, -0.7f }; // 2-wide grid on the forward-seeding side
                 const float lon[3] = {  1.f,   1.f,  2.4f };  // (front row + one behind), staggered ahead
                 for (int i = 0; i < 3; ++i) {
                     AiCar a{};
@@ -3917,13 +3972,34 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // NOT from any D3D transform: 3755c57e established that RenderWare pre-transforms
     // world geometry on the CPU, so D3DTS_VIEW and the first world matrix are BOTH
     // identity and the shim cannot recover the camera from fixed-function state.
-    static float s_campose[6];
+    //
+    // TWO FORMS, and the 12-float one is the faithful one:
+    //   6  floats: ex,ey,ez,ax,ay,az            -- eye + at-point (legacy)
+    //   12 floats: px,py,pz,rx,ry,rz,ux,uy,uz,ax,ay,az
+    //              -- the camera's full orthonormal BASIS: position, right, up,
+    //                 at. This exists because the 6-float form assumes up is
+    //                 world +Y and therefore cannot express roll, and the
+    //                 original's race camera measurably HAS roll (RwCamera frame
+    //                 right.y = 0.440, ~26 deg, verify/d1_carproj/RESULT.md).
+    //
+    // Source, and this is the part that was wrong for months: feed it from the
+    // RwCamera's FRAME (*(RwCamera+4), LTM +0x50 -> right +0x00 / up +0x10 /
+    // at +0x20 / pos +0x30), NOT from the controller struct DAT_00897fe0
+    // +0x40/+0x4c. Those controller fields are not the world camera: projecting
+    // the original's own car world positions through them puts the cars at
+    // z 4.8-7.7 spread across mid-frame, while the capture shows them clustered
+    // at z ~18.5-21.8 -- which is what the frame basis predicts.
+    static float s_campose[12];
+    static int  s_campose_n = 0;
     static const bool s_have_campose = [] {
-        char b[128];
+        char b[256];
         if (GetEnvironmentVariableA("MASHED_CAM_POSE", b, sizeof(b)) == 0) return false;
-        return std::sscanf(b, "%f,%f,%f,%f,%f,%f", &s_campose[0], &s_campose[1],
-                           &s_campose[2], &s_campose[3], &s_campose[4],
-                           &s_campose[5]) == 6;
+        s_campose_n = std::sscanf(b,
+            "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f",
+            &s_campose[0], &s_campose[1], &s_campose[2], &s_campose[3],
+            &s_campose[4], &s_campose[5], &s_campose[6], &s_campose[7],
+            &s_campose[8], &s_campose[9], &s_campose[10], &s_campose[11]);
+        return s_campose_n == 6 || s_campose_n == 12;
     }();
     // Camera: auto-orbit by default; any movement input switches to free
     // mode (WASD/QE move relative to look direction, mouse/arrow look).
@@ -4004,26 +4080,100 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         eye[2] = C[2] + R * 1.60f * std::sin(yaw);
         at[0] = C[0]; at[1] = C[1]; at[2] = C[2];
     }
-    if (s_have_campose) {   // P3 same-view parity: pin to the captured pose
+    // P3 same-view parity: pin to the captured pose. The 12-float basis form
+    // carries roll, so it is applied as a basis rather than collapsed into an
+    // at-point -- collapsing would throw the roll away, which is the whole
+    // reason the form exists.
+    const bool campose_basis = (s_have_campose && s_campose_n == 12);
+    if (s_have_campose && !campose_basis) {
         for (int i = 0; i < 3; ++i) { eye[i] = s_campose[i]; at[i] = s_campose[3 + i]; }
+    } else if (campose_basis) {
+        // last_eye_/last_at_ still get a look-at pair because RaceSceneState
+        // publishes a point (librw + the HUD read it). The VIEW MATRIX below is
+        // built from the basis, so the roll survives where it matters; only the
+        // published at-point is the lossy summary.
+        for (int i = 0; i < 3; ++i) {
+            eye[i] = s_campose[i];
+            at[i]  = s_campose[i] + s_campose[9 + i];
+        }
     }
     for (int i = 0; i < 3; ++i) { last_eye_[i] = eye[i]; last_at_[i] = at[i]; }
 
     D3DMATRIX viewm, projm, worldm;
-    MatLookAtLH(&viewm, eye, at);
-    // WS-E s3: a single 60-deg vertical FOV for all standalone cameras. (The old
-    // round-mode branch derived FOV from race_cam_'s view-window 0.6 -> ~48 deg,
-    // but that camera framed the whole pack from a high orbit and is now replaced
-    // by the ground chase above.)
+    if (campose_basis)
+        MatViewFromBasis(&viewm, &s_campose[0], &s_campose[3],
+                         &s_campose[6], &s_campose[9]);
+    else
+        MatLookAtLH(&viewm, eye, at);
     // E2'b step 3: publish the resolved frustum into RaceSceneState and build
     // the D3D9 projection FROM those members, so the librw submitter reads the
     // same four numbers rather than a hand-copied second set that could drift.
-    last_fov_    = 1.0472f;  // 60 deg
+    //
+    // LENS: MEASURED FROM THE ORIGINAL (2026-08-16), replacing the invented
+    // 60 deg that stood here since WS-E s3. RenderWare stores no angle -- the
+    // lens is RwCamera::viewWindow, the half-extents at unit distance -- so the
+    // measured quantity is kViewWindowY and the angle below is arithmetic on it.
+    //
+    // Read live from MASHED.exe (TRAINING, Quick Battle) at
+    // *(DAT_00897fe0 + 0x84) + 0x6c: viewWindow = (0.6000, 0.4500), near 0.1,
+    // far 360.0, projType 1. Two cross-checks passed, so the offsets are right
+    // and the value is not a hopeful pointer read:
+    //   * recipViewWindow (+0x70/+0x74) == 1/viewWindow;
+    //   * Camera::SetupFOV (0x00441700) reproduces it exactly from the
+    //     controller fields -- vw.y = 0.75 * ctrl[0x70] * ctrl[0x58]
+    //     = 0.75 * 1.0 * 0.6 = 0.45, with ctrl[0x6c]/[0x70] measured at 1.0.
+    // Corroborated independently by hooks.csv:559 (MinimapCameraOrthoSetup,
+    // "ortho 0.6 x 0.45"). Evidence: verify/d1_lens/RESULT.md + orig_lens.json.
+    //
+    // NOTE the WS-E s3 comment removed from here claimed the old ~48 deg branch
+    // was superseded because it "framed the whole pack from a high orbit". That
+    // branch had derived 48 deg from view-window 0.6 and was RIGHT; deleting it
+    // is what left an invented constant in a shipping path for two months.
+    //
+    // 0.6/0.45 = 4:3, consistent with last_aspect_ below.
+    // MASHED_CAM_FOV=<degrees> still overrides, for A/B against a capture.
+    static const float kViewWindowY = 0.45f;              // MEASURED half-extent
+    last_fov_    = 2.f * std::atan(kViewWindowY);         // = 48.46 deg
+    {
+        static const float s_fov_override = [] {
+            char b[32];
+            if (GetEnvironmentVariableA("MASHED_CAM_FOV", b, sizeof(b)) == 0) return 0.f;
+            const float deg = static_cast<float>(std::atof(b));
+            return (deg > 1.f && deg < 179.f) ? deg * 3.14159265f / 180.f : 0.f;
+        }();
+        if (s_fov_override > 0.f) last_fov_ = s_fov_override;
+    }
     last_aspect_ = 800.f / 600.f;
-    last_near_   = 0.05f;
-    last_far_    = radius_ * 8.f;
+    last_near_   = 0.1f;      // MEASURED (RwCamera +0x80); was an invented 0.05
+    // FAR: the original's far clip is COURSE.LUA Setup_Fog's SECOND argument.
+    // Not a formula on any radius -- the original computes no world radius at
+    // all; radius_ is ours, invented at :1657, and radius_*8 stood here purely
+    // as a guess.
+    //
+    // The track loader (0x00426e10) reads the course-description fog pair
+    // (Setup_Fog handler 0x0047ab30 stores near at +0x1ec, far at +0x1f0),
+    // guards on near != far, then writes near to the camera's fogPlane (+0x88)
+    // and far through 0x004c1b10 (the RwCameraSetFarClipPlane equivalent, which
+    // writes +0x84). 0x00426810 does the same +0x88 / +0x84 pairing per frame
+    // for tracks with a camera anim.
+    //
+    // Confirmed by measurement on TRAINING, both arguments at once, which is
+    // why no second track was needed: the live camera read back
+    // fogPlane = 20.0 and farPlane = 360.0, and our own COURSE.LUA asset survey
+    // at :1436-1440 records training as Setup_Fog(20, 360). Exact match on the
+    // pair, so the near/far operand binding is settled too. Evidence:
+    // verify/d1_lens/RESULT.md + orig_lens.json.
+    //
+    // No Setup_Fog -> the loader's near != far guard fails and the camera keeps
+    // the init-time default, which is 180.0f at every camera-init site found
+    // (0x0042d560, 0x0042f660, 0x00467110 all write 0x43340000).
+    last_far_    = fog_on_ ? fog_end_ : 180.f;
     MatPerspectiveFovLH(&projm, last_fov_, last_aspect_,
                         last_near_, last_far_);
+    // Same source of truth for the particle FX lens-wall guard: it sizes
+    // billboards against the viewport, so it must read the FOV this frame
+    // actually projects with rather than keep a second copy.
+    parts_.SetFovY(last_fov_);
     MatIdentity(&worldm);
     dev->SetTransform(D3DTS_WORLD, &worldm);
     dev->SetTransform(D3DTS_VIEW, &viewm);
@@ -4597,8 +4747,13 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         parts_.Update(dt, eye, fwd, car_ready_ ? car_pos_ : nullptr,
                       car_ready_ ? car_speed_ : 0.f);
         parts_.Render(dev, eye, at);
-        // power-up orbs (additive glow billboards) on top of the weather
-        if (pickups_.enabled()) pickups_.Render(dev, eye, at);
+        // power-up orbs (additive glow billboards) on top of the weather.
+        // D1 isolation: the orbs blend ADDITIVE (PickupField.cpp:231
+        // DESTBLEND_ONE), so they are a candidate for a saturated white-out on
+        // their own. MASHED_NO_PICKUPS separates them from the particle pass,
+        // which MASHED_NO_PARTICLES alone cannot do (it kills both).
+        static const bool s_no_pickups = (std::getenv("MASHED_NO_PICKUPS") != nullptr);
+        if (!s_no_pickups && pickups_.enabled()) pickups_.Render(dev, eye, at);
     }
 
     MARK(d_part);    // particles + pickups

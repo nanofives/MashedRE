@@ -22,7 +22,7 @@
 # reserved for missing BMP/campose.
 #
 # Usage: py -3.12 re/frida/race_draw_burst.py [--out verify/parity_race/orig_race.bmp]
-import argparse, os, shutil, subprocess, sys, time
+import argparse, json, math, os, shutil, subprocess, sys, time
 from pathlib import Path
 import frida
 
@@ -116,9 +116,95 @@ rpc.exports = { campose: function () {
   // Return BOTH: the raw fields for the record, and the resolved at-point.
   const ex = f(0x40), ey = f(0x44), ez = f(0x48);
   const dx = f(0x4c), dy = f(0x50), dz = f(0x54);
+  // LENS. The standalone's 60 deg vertical FOV is self-declared invented
+  // (TrackRenderer.cpp), and it is one of the two named suspects for the
+  // residual in the original-vs-standalone pose transplant. RenderWare does not
+  // store an angle: the lens is RwCamera::viewWindow, the half-extents at unit
+  // distance, so fovy = 2*atan(viewWindow.y).
+  //
+  // +0x84 of this controller is the RwCamera* -- three independently reversed
+  // functions dereference it that way (0x00441700 Camera::SetupFOV,
+  // 0x00441760 Camera::Apply, 0x00442a20 Camera::InitWithMatrix). RwCamera
+  // offsets are the RW 3.x layout, confirmed against our own reversals:
+  // 0x004c1c80 (RwCameraSetViewWindow) writes 0x68/0x6c and the reciprocals at
+  // 0x70/0x74, and 0x004c1a70 reads projType 0x14 and the clip planes 0x80/0x84.
+  //
+  // Also dump the controller inputs to Camera::SetupFOV so the READ can be
+  // checked against the STATIC derivation rather than merely believed:
+  //   vw.x = ((ctrl[0x6c] * ctrl[0x58]) / ctrl[0x24]) * 0.75
+  //   vw.y = 0.75 * ctrl[0x70] * ctrl[0x58]
+  // with ctrl[0x58] = 0.6 in race and ctrl[0x24] = 0.75. ctrl[0x6c]/[0x70] are
+  // undocumented, which is exactly why they are read here.
+  let lens = null;
+  try {
+    const cp = cam.add(0x84).readPointer();
+    if (!cp.isNull()) {
+      const g = function (o) { return cp.add(o).readFloat(); };
+      lens = { cam_ptr: cp.toString(),
+               proj_type: cp.add(0x14).readU32(),
+               view_window:  [g(0x68), g(0x6c)],
+               recip_window: [g(0x70), g(0x74)],
+               view_offset:  [g(0x78), g(0x7c)],
+               near_plane: g(0x80), far_plane: g(0x84), fog_plane: g(0x88) };
+    }
+  } catch (e) { lens = { error: String(e) }; }
+  // GROUND TRUTH ORIENTATION. The +0x4c delta is what the DIRECTOR aims at; it
+  // is NOT what the renderer uses. Camera::Apply (0x00441760) rebuilds the RW
+  // frame from the EULER ANGLES at +0x34 elev / +0x38 azim / +0x3c roll plus the
+  // +0x40 position -- it never reads +0x4c. So a pose transplant fed from +0x4c
+  // is reconstructing the aim point, not the camera basis, and any mismatch
+  // between the two shows up as a wrong vantage with a correct eye position.
+  //
+  // Read the frame's matrix directly and settle it: camera frame is
+  // *(RwCamera + 4), RW 3.x RwFrame has modelling at +0x10 and LTM at +0x50
+  // (mashed_qol.cpp:268-271, car_frame_bfs2.py). RwMatrix is right +0x00,
+  // up +0x10, at +0x20, pos +0x30.
+  let frame = null;
+  try {
+    const cp = cam.add(0x84).readPointer();
+    const fr = cp.add(0x04).readPointer();
+    const mat = function (base) {
+      const g = function (o) { return base.add(o).readFloat(); };
+      return { right: [g(0x00), g(0x04), g(0x08)],
+               up:    [g(0x10), g(0x14), g(0x18)],
+               at:    [g(0x20), g(0x24), g(0x28)],
+               pos:   [g(0x30), g(0x34), g(0x38)] };
+    };
+    frame = { modelling: mat(fr.add(0x10)), ltm: mat(fr.add(0x50)) };
+  } catch (e) { frame = { error: String(e) }; }
+  // CAR WORLD POSITIONS, from the render hierarchy rather than any gameplay
+  // struct -- this is the space RenderWare actually draws in, which is exactly
+  // what the camera-space question needs. Path documented by the 2026-08-01
+  // frame BFS (mashed_qol.cpp:283-287, car_frame_bfs2.py):
+  //   renderable = *(DAT_0063da18 + i*0x2ac);  frame = *(renderable + 4);
+  //   ROOT = *(frame + 0xa0);  world matrix at root+0x10 (modelling) / +0x50 (LTM)
+  // RwMatrix pos is +0x30. Projecting one of these with the pose+lens we
+  // transplant, and comparing against where that car appears in the capture,
+  // decides whether ctrl+0x40 is a world-space eye or something else.
+  let cars = [];
+  try {
+    const tbl = ptr(0x0063da18 + (m.base.toUInt32() - IMG));
+    for (let i = 0; i < 4; ++i) {
+      try {
+        const rend = tbl.add(i * 0x2ac).readPointer();
+        if (rend.isNull()) { cars.push(null); continue; }
+        const fr0 = rend.add(0x04).readPointer();
+        if (fr0.isNull()) { cars.push(null); continue; }
+        const root = fr0.add(0xa0).readPointer();
+        const use = root.isNull() ? fr0 : root;
+        const p = function (o) { return use.add(0x50 + 0x30).add(o).readFloat(); };
+        cars.push([p(0), p(4), p(8)]);
+      } catch (e) { cars.push(null); }
+    }
+  } catch (e) { cars = [{ error: String(e) }]; }
   return { eye: [ex, ey, ez],
            dir: [dx, dy, dz],
-           at:  [ex + dx, ey + dy, ez + dz] };
+           at:  [ex + dx, ey + dy, ez + dz],
+           lens: lens,
+           frame: frame,
+           cars: cars,
+           euler: { elev: f(0x34), azim: f(0x38), roll: f(0x3c) },
+           ctrl: { s58: f(0x58), s24: f(0x24), s6c: f(0x6c), s70: f(0x70) } };
 }};
 """
 
@@ -128,6 +214,12 @@ def main():
     ap.add_argument("--out", default=str(ROOT / "verify" / "parity_race" / "orig_race.bmp"))
     ap.add_argument("--settle", type=float, default=3.0,
                     help="seconds in-race before capture (let the scene populate)")
+    ap.add_argument("--mode-sel", type=int, default=1, metavar="N",
+                    help="menu cursor at the mode screen (depth 3). 1 = Quick "
+                         "Battle (default), which always races TRAINING. Use "
+                         "another index to reach a mode with a real track "
+                         "choice; the loaded track is detected and printed "
+                         "either way, so try values and read the result.")
     ap.add_argument("--track-sel", type=int, default=None, metavar="N",
                     help="set the track-select cursor to N before confirming. "
                          "The original's index->track mapping is NOT documented; "
@@ -217,7 +309,11 @@ def main():
         time.sleep(1.0)
         confirm_to(2); time.sleep(0.4); press(4); time.sleep(0.8)
         confirm_to(3)
-        E.setsel(1); time.sleep(0.3)               # Quick Battle
+        # Mode select at depth 3. 1 = Quick Battle, which ALWAYS races TRAINING
+        # (measured) -- so it cannot vary the track, and anything needing a
+        # second track (e.g. deciding whether the camera's far plane is a
+        # constant or track-derived) has to enter through a different mode.
+        E.setsel(args.mode_sel); time.sleep(0.3)
         confirm_to(4, 4); confirm_to(5, 4)
         # Track select. setsel() writes the cursor at the CURRENT depth, so this
         # must happen after confirm_to(5) and before the confirm that loads.
@@ -241,9 +337,19 @@ def main():
                 track = trackscr.exports_sync.trackname() or ""
                 allp = trackscr.exports_sync.tracks() or []
                 if track:
-                    (out_bmp.parent / "orig_track.txt").write_text(track + "\n")
+                    # Record EVERY .piz seen, not just the resolved name. The
+                    # name is seen[-1], which is only trustworthy if the race
+                    # actually loaded last; if the game preloads a track (or
+                    # opens several), the single name silently mis-reports which
+                    # track was raced -- and every same-track comparison built on
+                    # it would be wrong without any visible symptom.
+                    (out_bmp.parent / "orig_track.txt").write_text(
+                        track + "\n#all_piz_opens_in_order:\n"
+                        + "".join("#  " + p + "\n" for p in allp))
                     print(f"  ORIGINAL TRACK = {track}   "
                           f"(standalone: MASHED_TRACK_SEL = index of '{track}' in kAreas[])")
+                    print(f"  piz opens seen ({len(allp)}): "
+                          + ", ".join(p.split('\\')[-1].split('/')[-1] for p in allp))
                 else:
                     e = ""
                     try: e = trackscr.exports_sync.err() or ""
@@ -277,6 +383,131 @@ def main():
                   f"dir=({dirv[0]:.2f},{dirv[1]:.2f},{dirv[2]:.2f}) "
                   f"at=({at[0]:.2f},{at[1]:.2f},{at[2]:.2f})")
             print(f"  MASHED_CAM_POSE={pose}")
+            # LENS: the measured RwCamera view window, and the fovy it implies.
+            # Written as JSON so the raw fields survive alongside the derived
+            # angle -- RenderWare stores no angle, so the angle is OUR arithmetic
+            # and a later reader must be able to redo it from the halves.
+            # Frame-vs-delta cross-check. If the renderer's actual look axis
+            # (frame LTM 'at') disagrees with the +0x4c delta we transplant, the
+            # transplant is aiming the standalone somewhere the original was not
+            # looking, and no lens or sim-moment argument can account for it.
+            fr = cp.get("frame") or {}
+            eul = cp.get("euler") or {}
+            if "ltm" in fr:
+                import math as _m
+                def _n(v):
+                    L = _m.sqrt(sum(c * c for c in v)) or 1.0
+                    return [c / L for c in v]
+                d_n, a_n = _n(dirv), _n(fr["ltm"]["at"])
+                dot = sum(x * y for x, y in zip(d_n, a_n))
+                ang = _m.degrees(_m.acos(max(-1.0, min(1.0, dot))))
+                pos = fr["ltm"]["pos"]
+                dpos = _m.sqrt(sum((a - b) ** 2 for a, b in zip(pos, eye)))
+                fr["delta_vs_frame_at_deg"] = ang
+                fr["frame_pos_vs_eye_dist"] = dpos
+                # THE POSE TO ACTUALLY USE. 12 floats: pos, right, up, at --
+                # the camera's full basis, straight off the RwCamera frame.
+                # The 6-float eye/at form in orig_campose.txt is kept for the
+                # record but is BOTH mis-sourced (controller, not frame) and
+                # lossy (no roll); see verify/d1_carproj/RESULT.md.
+                L = fr["ltm"]
+                basis = ",".join(
+                    "%.5f" % v for v in
+                    (L["pos"] + L["right"] + L["up"] + L["at"]))
+                (out_bmp.parent / "orig_cambasis.txt").write_text(basis + "\n")
+                print(f"  MASHED_CAM_POSE(basis)={basis}")
+                (out_bmp.parent / "orig_frame.json").write_text(
+                    json.dumps({"frame": fr, "euler": eul,
+                                "ctrl_eye": eye, "ctrl_dir_0x4c": dirv},
+                               indent=2) + "\n")
+                print(f"  FRAME ltm.at=({a_n[0]:.3f},{a_n[1]:.3f},{a_n[2]:.3f}) "
+                      f"vs 0x4c dir=({d_n[0]:.3f},{d_n[1]:.3f},{d_n[2]:.3f})  "
+                      f"ANGLE={ang:.2f}deg")
+                print(f"  FRAME ltm.pos=({pos[0]:.3f},{pos[1]:.3f},{pos[2]:.3f}) "
+                      f"vs ctrl eye  dist={dpos:.4f}   "
+                      f"euler elev={eul.get('elev')} azim={eul.get('azim')} "
+                      f"roll={eul.get('roll')}")
+            # CAMERA-SPACE TEST. Project each car's world position with the pose
+            # we transplant and the lens we measured. If a car lands on the car
+            # in the capture, ctrl+0x40/+0x4c ARE the world-space camera and the
+            # transplant is correctly sourced; if it lands elsewhere, they are in
+            # some other space and every same-view comparison built on them is
+            # measuring the wrong place. Left-handed, matching the standalone's
+            # MatLookAtLH + MatPerspectiveFovLH.
+            cars = cp.get("cars") or []
+            lens0 = cp.get("lens") or {}
+            if cars and "view_window" in lens0:
+                import math as _m
+                def _sub(a, b): return [a[i] - b[i] for i in range(3)]
+                def _dot(a, b): return sum(a[i] * b[i] for i in range(3))
+                def _crs(a, b): return [a[1]*b[2]-a[2]*b[1],
+                                        a[2]*b[0]-a[0]*b[2],
+                                        a[0]*b[1]-a[1]*b[0]]
+                def _nn(v):
+                    L = _m.sqrt(_dot(v, v)) or 1.0
+                    return [c / L for c in v]
+                fwd = _nn(_sub(at, eye))
+                rgt = _nn(_crs([0.0, 1.0, 0.0], fwd))
+                upv = _crs(fwd, rgt)
+                vwx, vwy = lens0["view_window"]
+                W, H = 640, 480
+                rows = []
+                for i, c in enumerate(cars):
+                    if not c or not isinstance(c, list) or len(c) != 3:
+                        rows.append(f"    car{i}: (absent)"); continue
+                    d = _sub(c, eye)
+                    z = _dot(d, fwd)
+                    if z <= 1e-4:
+                        rows.append(f"    car{i}: world=({c[0]:.2f},{c[1]:.2f},"
+                                    f"{c[2]:.2f}) BEHIND camera (z={z:.2f})")
+                        continue
+                    # RenderWare viewWindow IS the half-extent at unit distance,
+                    # so ndc = (offset/z)/viewWindow directly -- no extra fov math.
+                    nx = (_dot(d, rgt) / z) / vwx
+                    ny = (_dot(d, upv) / z) / vwy
+                    sx, sy = (nx + 1.0) * 0.5 * W, (1.0 - ny) * 0.5 * H
+                    onscreen = (0 <= sx < W and 0 <= sy < H)
+                    rows.append(f"    car{i}: world=({c[0]:.2f},{c[1]:.2f},{c[2]:.2f})"
+                                f" z={z:6.2f} -> screen=({sx:7.1f},{sy:6.1f})"
+                                f" {'ON-SCREEN' if onscreen else 'off-screen'}")
+                print("  CARPROJ (pose+lens as transplanted, 640x480):")
+                for r in rows: print(r)
+                (out_bmp.parent / "orig_carproj.txt").write_text(
+                    "eye=%r\nat=%r\nviewWindow=%r\n%s\n"
+                    % (eye, at, lens0["view_window"], "\n".join(rows)))
+            lens, ctrl = cp.get("lens"), cp.get("ctrl") or {}
+            if lens and "view_window" in lens:
+                vwx, vwy = lens["view_window"]
+                lens["fovy_deg"] = 2.0 * math.degrees(math.atan(vwy))
+                lens["fovx_deg"] = 2.0 * math.degrees(math.atan(vwx))
+                lens["ctrl"] = ctrl
+                # Cross-check 1: recipViewWindow must be 1/viewWindow, else the
+                # offsets are wrong and every number here is a misread.
+                rx, ry = lens["recip_window"]
+                lens["recip_ok"] = (abs(rx * vwx - 1.0) < 1e-3 and
+                                    abs(ry * vwy - 1.0) < 1e-3)
+                # Cross-check 2: against Camera::SetupFOV (0x00441700) computed
+                # from the controller fields, with _DAT_005cc950 = 0.75.
+                try:
+                    px = ((ctrl["s6c"] * ctrl["s58"]) / ctrl["s24"]) * 0.75
+                    py = 0.75 * ctrl["s70"] * ctrl["s58"]
+                    lens["setupfov_predicted"] = [px, py]
+                    lens["setupfov_ok"] = (abs(px - vwx) < 1e-3 and
+                                           abs(py - vwy) < 1e-3)
+                except Exception:
+                    pass
+                (out_bmp.parent / "orig_lens.json").write_text(
+                    json.dumps(lens, indent=2) + "\n")
+                print(f"  LENS viewWindow=({vwx:.4f},{vwy:.4f}) "
+                      f"fovy={lens['fovy_deg']:.2f}deg fovx={lens['fovx_deg']:.2f}deg "
+                      f"near={lens['near_plane']:.4f} far={lens['far_plane']:.2f} "
+                      f"projType={lens['proj_type']}")
+                print(f"  LENS ctrl 0x58={ctrl.get('s58')} 0x24={ctrl.get('s24')} "
+                      f"0x6c={ctrl.get('s6c')} 0x70={ctrl.get('s70')}  "
+                      f"recip_ok={lens['recip_ok']} "
+                      f"setupfov_ok={lens.get('setupfov_ok')}")
+            else:
+                print(f"  LENS unavailable: {lens}")
             cam_ok = True
         except Exception as e:
             print(f"  campose read failed: {e}")

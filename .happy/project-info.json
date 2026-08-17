@@ -1,37 +1,32 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-16T12:00:00Z",
+  "updatedAt": "2026-08-17T01:30:00Z",
   "sections": [
     {
-      "heading": "Status",
+      "heading": "Current phase",
       "fields": [
-        { "label": "Roadmap", "value": "v3 — default-build rule", "kind": "text" },
-        { "label": "Phase", "value": "D0 COMPLETE · D1 in progress", "kind": "text" },
-        { "label": "Branch", "value": "main only, clean, synced", "kind": "text" }
+        { "label": "Phase", "value": "D1 — default renderer (invert MASHED_RENDER_LIBRW)", "kind": "text" },
+        { "label": "Renderer A/B", "value": "16/16, max 1.01% (car_3_weave, pre-existing)", "kind": "text" },
+        { "label": "Baseline", "value": "verify/d1_mirrorfix/final_d3d9 + final_librw", "kind": "text" }
       ]
     },
     {
-      "heading": "D1 — default renderer",
+      "heading": "Session 2026-08-16",
       "fields": [
-        { "label": "R10b", "value": "CLOSED — capture gate is zero-noise 16/16", "kind": "text" },
-        { "label": "Blocker", "value": "in-race D3D9-vs-librw divergence, confirmed real", "kind": "text" },
-        { "label": "Scope", "value": "world IS submitted (13 batches) yet frame comes out orange → render-state or draw-order, not submission", "kind": "text" },
-        { "label": "Live hypothesis", "value": "particles draw after the world; librw may submit late and paint over them — UNTESTED (probe run never reached the race)", "kind": "text" }
+        { "label": "FX particles", "value": "kind==2 cut from default build — was the whole orange divergence", "kind": "text" },
+        { "label": "Lens measured", "value": "viewWindow (0.6,0.45) -> fovy 48.46 deg, near 0.1", "kind": "text" },
+        { "label": "Far plane", "value": "= COURSE.LUA Setup_Fog arg2; wired to fog_end_", "kind": "text" },
+        { "label": "MIRROR FIX", "value": "Standalone rendered reflected vs original; fixed in both paths", "kind": "text" },
+        { "label": "D-S3-4", "value": "REVERTED — librw had the original's handedness all along", "kind": "text" },
+        { "label": "vs original", "value": "transplant 89.68% -> 33.79%", "kind": "text" }
       ]
     },
     {
-      "heading": "Next up",
+      "heading": "Warnings",
       "fields": [
-        { "label": "D1", "value": ["retry MASHED_NO_PARTICLES probe", "find where librw submits vs particles"], "kind": "list" },
-        { "label": "D2", "value": "invert MASHED_REAL_PHYSICS — exit condition met 2026-07-01, blocked on the statediff wedge (~1/6 boots)", "kind": "text" },
-        { "label": "D0 follow-ups", "value": ["file the QoL strand in a tracker", "sweep other log/-citing hooks.csv rows", "70 [UNPROVEN] Blocks cells", "4 odd-shaped U rows", "7 dead files, 4 dead flags"], "kind": "list" }
-      ]
-    },
-    {
-      "heading": "Harness notes",
-      "fields": [
-        { "label": "Window", "value": "MASHED_WIN_POS=left-bl parks the game bottom-left on the LEFT monitor (both targets)", "kind": "text" },
-        { "label": "Traps", "value": ["mashed_re.log truncates every run — copy it immediately", "race-demo nav fails ~1 in 5", "MASHED_DBG_DRAWSTREAM3D writes nothing if the window end exceeds total in-race calls", "MASHED_RACE_DEMO must be paired with MASHED_GOTO=6"], "kind": "list" }
+        { "label": "Old captures", "value": "All pre-2026-08-16 verify/ stills are mirrored vs current output", "kind": "text" },
+        { "label": "Re-check owed", "value": "Any scaffold hand-tuned against the old mirrored view", "kind": "text" },
+        { "label": "Uncommitted", "value": "Source + ~22 verify dirs", "kind": "text" }
       ]
     }
   ]
