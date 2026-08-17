@@ -159,3 +159,9 @@ standalone capture taken to date — a deliberate call, not a drive-by edit.
 `far` is deliberately excluded: 360.0 was read on Training only, and there is no evidence yet
 whether it is a constant or track-derived (`radius_ = 265.32` there, so it is neither 8x nor
 an obvious multiple). One track is not enough to replace a formula.
+
+---
+
+**Capture-set note:** some `verify/d1_*` directories cited above were pruned on
+2026-08-16 to reclaim disk. They are regenerable from the recipe in this file; the exact list
+of what was deleted and what was deliberately kept is in `verify/d1_evidence/README.md`.

@@ -92,3 +92,9 @@ sky comes from the D3D9 path in both runs, so "which renderer's sky is faithful"
 D3D9-vs-original question, not a D3D9-vs-librw one. The original's `SkyDomeRender`
 (`0x004492b0`) sets a camera-follow clear colour of R=0x50 G=0x58 B=0x60, which is a cheap
 first check against an original capture.
+
+---
+
+**Capture-set note:** some `verify/d1_*` directories cited above were pruned on
+2026-08-16 to reclaim disk. They are regenerable from the recipe in this file; the exact list
+of what was deleted and what was deliberately kept is in `verify/d1_evidence/README.md`.

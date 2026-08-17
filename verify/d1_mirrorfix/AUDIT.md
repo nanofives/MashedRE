@@ -128,3 +128,9 @@ An empirical steering check was attempted and **failed to produce data**: with
 captures, i.e. the demo driver did not turn the car at all, so the run says nothing about
 steering sense. Noted so it is not mistaken for a passing result. A working steering test
 needs a driver that demonstrably changes heading.
+
+---
+
+**Capture-set note:** some `verify/d1_*` directories cited above were pruned on
+2026-08-16 to reclaim disk. They are regenerable from the recipe in this file; the exact list
+of what was deleted and what was deliberately kept is in `verify/d1_evidence/README.md`.

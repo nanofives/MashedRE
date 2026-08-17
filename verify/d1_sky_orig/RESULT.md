@@ -77,3 +77,9 @@ investigated here — filed as an observation so it is not lost.
 | `orig_campose.txt` / `orig_campose_raw.txt` | the pose, resolved and raw |
 | `orig_track.txt` | the `.piz` the original actually opened |
 | `verify/d1_sky_sa_d3d9/`, `verify/d1_sky_sa_librw/` | standalone at that pose, both paths |
+
+---
+
+**Capture-set note:** some `verify/d1_*` directories cited above were pruned on
+2026-08-16 to reclaim disk. They are regenerable from the recipe in this file; the exact list
+of what was deleted and what was deliberately kept is in `verify/d1_evidence/README.md`.
