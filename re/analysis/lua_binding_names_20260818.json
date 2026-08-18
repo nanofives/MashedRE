@@ -1,0 +1,492 @@
+[
+ {
+  "name": "EgyptPushColumn1",
+  "fn": "0x4496a0",
+  "site": "0x449780",
+  "nva": "0x5ce21c",
+  "reg": "0x4714f0"
+ },
+ {
+  "name": "RoundaboutStartCrane",
+  "fn": "0x44ca40",
+  "site": "0x44ca70",
+  "nva": "0x5ce298",
+  "reg": "0x4714f0"
+ },
+ {
+  "name": "Course_Id",
+  "fn": "0x47a180",
+  "site": "0x440bc0",
+  "nva": "0x5ce004",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Occluder_Filename",
+  "fn": "0x47a1b0",
+  "site": "0x440c3b",
+  "nva": "0x5cdf5c",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Sky_Filename",
+  "fn": "0x47a1e0",
+  "site": "0x440c4a",
+  "nva": "0x5cdf4c",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Mts_Filename",
+  "fn": "0x47a280",
+  "site": "0x440c59",
+  "nva": "0x5cdf3c",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "SetCopter",
+  "fn": "0x47a320",
+  "site": "0x440fb6",
+  "nva": "0x5cdaac",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Clump_Filename",
+  "fn": "0x47a3a0",
+  "site": "0x440c68",
+  "nva": "0x5cdf2c",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "UVA_Filename",
+  "fn": "0x47a440",
+  "site": "0x440c77",
+  "nva": "0x5cdf1c",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Spline_Filename",
+  "fn": "0x47a4a0",
+  "site": "0x440c86",
+  "nva": "0x5cdf0c",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "AI_Bsp_Filename",
+  "fn": "0x47a540",
+  "site": "0x440bcf",
+  "nva": "0x5cdff4",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "AI_Data_Filename",
+  "fn": "0x47a580",
+  "site": "0x440bde",
+  "nva": "0x5cdfe0",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "World_Bsp_Filename",
+  "fn": "0x47a5b0",
+  "site": "0x440bed",
+  "nva": "0x5cdfcc",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Hoppy_Bsp_Filename",
+  "fn": "0x47a5e0",
+  "site": "0x440bfc",
+  "nva": "0x5cdfb8",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Object_Bsp_Filename",
+  "fn": "0x47a610",
+  "site": "0x440c0b",
+  "nva": "0x5cdfa4",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Collision_Bsp_Filename",
+  "fn": "0x47a6b0",
+  "site": "0x440c1a",
+  "nva": "0x5cdf8c",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Texture_Dictionary_Filename",
+  "fn": "0x47a6f0",
+  "site": "0x440c29",
+  "nva": "0x5cdf70",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Lap_Variations",
+  "fn": "0x47a720",
+  "site": "0x440d9a",
+  "nva": "0x5cddc0",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Split_Sector",
+  "fn": "0x47a750",
+  "site": "0x440de8",
+  "nva": "0x5cdd70",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Lap_Line",
+  "fn": "0x47a790",
+  "site": "0x440dac",
+  "nva": "0x5cddb4",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Lap_Line_End",
+  "fn": "0x47a7d0",
+  "site": "0x440dbb",
+  "nva": "0x5cdda4",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Lap_Line_Change",
+  "fn": "0x47a7f0",
+  "site": "0x440dca",
+  "nva": "0x5cdd94",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Safe_Start_Lines",
+  "fn": "0x47a810",
+  "site": "0x440dd9",
+  "nva": "0x5cdd80",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Camera_Anim_Filename",
+  "fn": "0x47a880",
+  "site": "0x440c95",
+  "nva": "0x5cdef4",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "General_Anim_Filename",
+  "fn": "0x47a8b0",
+  "site": "0x440ca4",
+  "nva": "0x5cdedc",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Clump_Mts_Pair",
+  "fn": "0x47a950",
+  "site": "0x440cb6",
+  "nva": "0x5cdecc",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Physics_Object",
+  "fn": "0x47a9b0",
+  "site": "0x440cc5",
+  "nva": "0x5cdebc",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Clump_Exclude_From_World",
+  "fn": "0x47aa20",
+  "site": "0x440ce3",
+  "nva": "0x5cde94",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Powerup_Filename",
+  "fn": "0x47aa50",
+  "site": "0x440cf2",
+  "nva": "0x5cde80",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Lights_Filename",
+  "fn": "0x47aaa0",
+  "site": "0x440d01",
+  "nva": "0x5cde70",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Ambient_RGB",
+  "fn": "0x47aad0",
+  "site": "0x440d10",
+  "nva": "0x5cde64",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Setup_Fog",
+  "fn": "0x47ab30",
+  "site": "0x440d1f",
+  "nva": "0x5cde58",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Modify_Fog",
+  "fn": "0x47abd0",
+  "site": "0x440d31",
+  "nva": "0x5cde4c",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Vehicle_Shininess_Range",
+  "fn": "0x47ac80",
+  "site": "0x440d40",
+  "nva": "0x5cde34",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Shine_Scale",
+  "fn": "0x47acd0",
+  "site": "0x440d4f",
+  "nva": "0x5cde28",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Shadow_Scale",
+  "fn": "0x47ad00",
+  "site": "0x440d5e",
+  "nva": "0x5cde18",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Vehicle_Body_Dirt_Texture",
+  "fn": "0x47ad30",
+  "site": "0x440d6d",
+  "nva": "0x5cddfc",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Vehicle_Wheel_Dirt_Texture",
+  "fn": "0x47ad30",
+  "site": "0x440d7c",
+  "nva": "0x5cdde0",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "SetClumpAnim",
+  "fn": "0x47ad40",
+  "site": "0x440d8b",
+  "nva": "0x5cddd0",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "RWP_Object",
+  "fn": "0x47ade0",
+  "site": "0x440df7",
+  "nva": "0x5cdd64",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "RWP_Object_Box",
+  "fn": "0x47ae80",
+  "site": "0x440e06",
+  "nva": "0x5cdd54",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "RWP_Object_Cylinder",
+  "fn": "0x47aef0",
+  "site": "0x440e15",
+  "nva": "0x5cdd40",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "RWP_Object_Sphere",
+  "fn": "0x47af50",
+  "site": "0x440e27",
+  "nva": "0x5cdd2c",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "RWP_Object_Capsule",
+  "fn": "0x47afa0",
+  "site": "0x440e36",
+  "nva": "0x5cdd18",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "RWP_Object_Properties",
+  "fn": "0x47b000",
+  "site": "0x440e45",
+  "nva": "0x5cdd00",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "RWP_Object_CentreOfMassOffset",
+  "fn": "0x47b0a0",
+  "site": "0x440e54",
+  "nva": "0x5cdce0",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "RWP_Object_BaseLabel",
+  "fn": "0x47b110",
+  "site": "0x440e63",
+  "nva": "0x5cdcc8",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "RWP_Object_ShatterVel",
+  "fn": "0x47b160",
+  "site": "0x440e72",
+  "nva": "0x5cdcb0",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Set_Current_Position",
+  "fn": "0x47b1b0",
+  "site": "0x440efc",
+  "nva": "0x5cdb88",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Set_Current_Type",
+  "fn": "0x47b200",
+  "site": "0x440f0b",
+  "nva": "0x5cdb74",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Set_Current_Respawn_Time",
+  "fn": "0x47b230",
+  "site": "0x440f1d",
+  "nva": "0x5cdb58",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Place_Powerup",
+  "fn": "0x47b250",
+  "site": "0x440f2c",
+  "nva": "0x5cdb48",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Set_Track_Powerups",
+  "fn": "0x47b280",
+  "site": "0x440f3b",
+  "nva": "0x5cdb34",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Physics_Scenario_Create",
+  "fn": "0x47b350",
+  "site": "0x440e81",
+  "nva": "0x5cdc98",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Physics_Scenario_Set_Sequence",
+  "fn": "0x47b3c0",
+  "site": "0x440e90",
+  "nva": "0x5cdc78",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Physics_Scenario_Add_Objects",
+  "fn": "0x47b420",
+  "site": "0x440ea2",
+  "nva": "0x5cdc58",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Physics_Scenario_Add_Animated_Object",
+  "fn": "0x47b480",
+  "site": "0x440eb1",
+  "nva": "0x5cdc30",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Physics_Scenario_Create_Trigger",
+  "fn": "0x47b500",
+  "site": "0x440ec0",
+  "nva": "0x5cdc10",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Physics_Scenario_Trigger_Add_Objects",
+  "fn": "0x47b5b0",
+  "site": "0x440ecf",
+  "nva": "0x5cdbe8",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Physics_Scenario_Get_Function",
+  "fn": "0x47b630",
+  "site": "0x440ede",
+  "nva": "0x5cdbc8",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "Physics_Scenario_Trigger_Set_AI_Poly",
+  "fn": "0x47b6b0",
+  "site": "0x440eed",
+  "nva": "0x5cdba0",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "KTC_NewCopter",
+  "fn": "0x47b720",
+  "site": "0x440fc5",
+  "nva": "0x5cda9c",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "KTC_AddPickUp",
+  "fn": "0x47b7d0",
+  "site": "0x440fd4",
+  "nva": "0x5cda8c",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "RainEnable",
+  "fn": "0x4917a0",
+  "site": "0x440f4a",
+  "nva": "0x5cdb28",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "RainSetHeadColour",
+  "fn": "0x4917c0",
+  "site": "0x440f59",
+  "nva": "0x5cdb14",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "RainSetTailColour",
+  "fn": "0x491860",
+  "site": "0x440f68",
+  "nva": "0x5cdb00",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "RainSetPosition",
+  "fn": "0x491900",
+  "site": "0x440f77",
+  "nva": "0x5cdaf0",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "RainSetScale",
+  "fn": "0x4919b0",
+  "site": "0x440f86",
+  "nva": "0x5cdae0",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "RainSetCameraScale",
+  "fn": "0x491a10",
+  "site": "0x440f98",
+  "nva": "0x5cdacc",
+  "reg": "0x47b980"
+ },
+ {
+  "name": "RainSetDirection",
+  "fn": "0x491a70",
+  "site": "0x440fa7",
+  "nva": "0x5cdab8",
+  "reg": "0x47b980"
+ }
+]
