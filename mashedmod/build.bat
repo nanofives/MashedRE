@@ -110,6 +110,34 @@ REM (which exercises every .cpp). When Phase F/G work begins, .cpp files will
 REM be added back here individually as their RVA references are neutralized.
 REM
 REM See `re/STANDALONE_DEPS.md` for the per-region disposition list.
+REM
+REM   - D0.7 TRIAGE, 2026-08-18 (read_fleet runs/w1_relink). 124 of the 235
+REM     unlinked .cpp were classified. Two findings correct the picture above:
+REM
+REM     (a) RH_ScopedInstall is NOT a boot hazard and never was. It expands to a
+REM         file-scope object whose ctor calls HookSystem::Register(RVA, &fn) --
+REM         the RVA is passed as an INTEGER, never dereferenced -- and in the exe
+REM         Register is the no-op from Stubs\HookSystemNoOp.cpp. Util\UtilLeaves.cpp
+REM         has the identical shape and has been linked and booting all along.
+REM         The real trigger is narrower: a file-scope initializer that DEREFS an
+REM         absolute address, i.e. the leading '*' in the GUID example above.
+REM         Across 124 files there are exactly TWO offenders, both in Audio\:
+REM         AudioDSound.cpp:95-96 (confirmed, the GUID pattern verbatim) and
+REM         AudioRws.cpp:477-490 (RVA-bound globals; binds only, will not fault
+REM         the loader, held out for its thunks to the original RW audio engine).
+REM
+REM     (b) Load-safe is NOT the same as functional, and this is the load-bearing
+REM         caveat. Because Register is no-op'd, a linked reimpl is a DEAD EXPORT
+REM         unless the standalone call graph invokes it by name; and its body
+REM         still derefs MASHED addresses (0x004xxxxx code, 0x006xxxxx-0x008xxxxx
+REM         data) that are unmapped in an exe based at 0x10000, so it AVs if it
+REM         ever does run. Bulk-adding the class-B files would grow the binary and
+REM         the tracker without shipping one working feature.
+REM
+REM     Therefore add-backs are gated on NO MASHED ADDRESS IN ANY CODE PATH, not
+REM     merely on booting. Batch 1 (the six Save\/Input\/Particle\ files at the end
+REM     of the list below) meets that bar. Everything else in the backlog needs its
+REM     RVA tunnels neutralized first -- that is porting work, not a list edit.
 REM ===========================================================================
 
 REM RUNTIME NOTE: when launching mashedmod\build\mashed_re.exe, Windows'
@@ -322,6 +350,12 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Render\Vec3NormalizeScale.cpp" ^
     "Ai\HeadingAtan2.cpp" ^
     "Audio\AudioVecLength.cpp" ^
+    "Save\FsOpen.cpp" ^
+    "Save\VfsStream.cpp" ^
+    "Save\ReplayTimeFormat.cpp" ^
+    "Input\MemsetInline_ag1.cpp" ^
+    "Particle\ParticleLeaves_ad4.cpp" ^
+    "Particle\ParticleLeaves_ad5.cpp" ^
     "%OUT%\QhullBridge_exe.obj" ^
     "%OUT%\RwBridge_exe.obj" ^
     "%OUT%\RwRasterBridge_exe.obj" ^

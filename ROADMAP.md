@@ -198,9 +198,43 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
    `re/analysis/phys_c4_evidence/c4_racediff_result_2026-08-15.json`. **Remaining
    systemic issue:** `/log/` still holds 2,217 files against 27 tracked, so other rows
    citing `log/...` have the same latent fragility — sweep them next.
-7. **Resolve the linkage gap.** Diff `asi_sources.rsp` against the exe source list, then
-   decide per directory whether `Save/` and `Audio/` are unlinked by intent (`.asi`-only
-   harness code) or by drift.
+7. ~~Resolve the linkage gap.~~ **ANSWERED 2026-08-18**, and the answer is neither of the
+   two options this item offered. 124 of the 235 unlinked `.cpp` were triaged
+   (`re/orchestrator/read_fleet/runs/w1_relink/`, two independent passes that converged).
+
+   **`RH_ScopedInstall` is not a boot hazard and never was.** It expands to a file-scope
+   object whose ctor calls `HookSystem::Register(RVA, &fn)` — the RVA is passed as an
+   *integer*, never dereferenced — and in the exe `Register` is the no-op from
+   `Stubs/HookSystemNoOp.cpp` (`build.bat:212`). `Util/UtilLeaves.cpp` has the identical
+   shape and has been linked and booting all along. The real trigger is narrower: a
+   file-scope initializer that *dereferences* an absolute address. Across 124 files there
+   are exactly **two** offenders, both in `Audio/`: `AudioDSound.cpp:95-96` (the
+   `static const GUID = *(const GUID*)0x005d09dc` pattern `build.bat:101` names verbatim)
+   and `AudioRws.cpp:477-490` (RVA-bound globals — binds only, will not fault the loader,
+   held out for its thunks to the original RW audio engine).
+
+   **The real blocker is not linkage, it is that this code is hook-shaped.** Because
+   `Register` is no-op'd, a linked reimpl is a *dead export* unless the standalone call
+   graph invokes it by name; and its body still derefs MASHED addresses (`0x004xxxxx`
+   code, `0x006xxxxx`–`0x008xxxxx` data) that are unmapped in an exe based at `0x10000`,
+   so it AVs if it ever does run. **Bulk-adding the class-B files would grow the binary
+   and the tracker without shipping one working feature** — the exact thing corollary 1
+   of the default-build rule exists to prevent. This vindicates D0.1's amendment: linked
+   *and reached* is the test.
+
+   Per-directory disposition: `Save/` is **drift** but inert (16 files, 28 C4, all
+   load-safe, nearly all RVA-tunnelled). `Audio/` is **mixed** — `AudioDSound` (8 rows)
+   and `AudioRws` (20 rows) are genuine intent, the other 18 of 21 files (~50 C3) are the
+   same drift as `Util/`. `Util/` is 72 files, uniformly class B, dominated by one
+   `PromoLoop` family of 63.
+
+   **Add-backs are therefore gated on NO MASHED ADDRESS IN ANY CODE PATH**, not merely on
+   booting. Batch 1 landed 2026-08-18: `Save/FsOpen.cpp`, `Save/VfsStream.cpp`,
+   `Save/ReplayTimeFormat.cpp`, `Input/MemsetInline_ag1.cpp`,
+   `Particle/ParticleLeaves_ad4.cpp`, `ParticleLeaves_ad5.cpp` — six files meeting that
+   bar, verified per file for zero non-comment RVA references and zero cross-TU deps.
+   Everything else in the backlog needs its RVA tunnels neutralized first, which is
+   porting work and belongs in a phase, not in this item.
 8. ~~Stop the harness overwriting committed evidence.~~ **DONE 2026-08-15.** All 17
    capture sites in `exe_main.cpp` now route through `VOut()`/`VOut2()`, which root every
    harness write under `verify/run_<pid>/`. `MASHED_VERIFY_OUT` overrides the root, so
