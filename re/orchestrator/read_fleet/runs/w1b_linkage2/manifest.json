@@ -1,0 +1,39 @@
+{
+  "queue": "re/orchestrator/read_fleet/queue_w1b_linkage_rest.json",
+  "units_total": 3,
+  "outdir": "re/orchestrator/read_fleet/runs/w1b_linkage2",
+  "total_cost": 14.1,
+  "green": 3,
+  "results": [
+    {
+      "id": "w1d3_render_rws",
+      "status": "OK",
+      "ok": true,
+      "cost_usd": 5.3198,
+      "secs": 752,
+      "attempts": 1,
+      "save": "re\\orchestrator\\read_fleet\\runs\\w1b_linkage2\\w1d3_render_rws.md",
+      "model": "opus"
+    },
+    {
+      "id": "w1d4_frontend_hud",
+      "status": "OK",
+      "ok": true,
+      "cost_usd": 3.5163,
+      "secs": 365,
+      "attempts": 1,
+      "save": "re\\orchestrator\\read_fleet\\runs\\w1b_linkage2\\w1d4_frontend_hud.md",
+      "model": "opus"
+    },
+    {
+      "id": "w1d5_boot_vehicle_rest",
+      "status": "OK",
+      "ok": true,
+      "cost_usd": 5.2639,
+      "secs": 738,
+      "attempts": 1,
+      "save": "re\\orchestrator\\read_fleet\\runs\\w1b_linkage2\\w1d5_boot_vehicle_rest.md",
+      "model": "opus"
+    }
+  ]
+}
