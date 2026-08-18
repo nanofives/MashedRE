@@ -1,15 +1,26 @@
-# Mashed RE — Master Execution Plan (REBUILT 2026-07-31)
+# Mashed RE — Master Execution Plan (RECONCILED 2026-08-18)
 
-Companion to `ROADMAP.md` (v2, phases R0–R8). ROADMAP defines the *gates*; this plan defines the
-*route*. **This is a full rebuild** of the 2026-07-03 plan (orchestrate iter27b; the prior text is
-in git history — `git log -p re/analysis/RE_MASTER_PLAN_2026-07.md`). The old doc had drifted
-materially: it listed B5e as "OPEN, next big lane" 11 days after the port merged (`021a9f38`,
-2026-07-20), and its §1 counts were three refresh cycles old. Per-item history lives in
-`re/analysis/CHANGELOG.md`; this doc is the strategic index only.
+Companion to `ROADMAP.md` (**v3, 2026-08-15, phases D0–D5**). ROADMAP defines the *gates*; this
+plan defines the *route*. **This is a reconciliation** of the 2026-07-31 rebuild against ROADMAP v3
+(prior text in git history — `git log -p re/analysis/RE_MASTER_PLAN_2026-07.md`). The 2026-07-31
+doc had drifted onto a superseded phase model: it called itself a companion to ROADMAP v2's R0–R8
+and claimed "Active phase R7 (R0–R6 closed)" — both repudiated by ROADMAP.md §"Roadmap — v3"
+(v2 superseded and archived) and ROADMAP.md §"Phase ledger — corrected" (v2's own text marks R4/R5
+OPEN; v3 records them open; there is no R7). Per-item history lives in `re/analysis/CHANGELOG.md`;
+this doc is the strategic index only.
 
-> Active phase: **R7 scaffold→verbatim conversion** (R0–R6 closed).
-> Maintenance rule: refresh §1 + §3 after each merged lane; a claim contradicted by CHANGELOG
-> is a bug in THIS file — fix it the day it is noticed.
+> Phase model: **v3 D0–D5**. D0 "tell the truth again" DONE 2026-08-15 (ROADMAP.md §D0, items
+> D0.1–D0.8); its linkage item **D0.7 answered 2026-08-18** (ROADMAP.md §D0 item 7). The active
+> long poles are **D1 default renderer** and **D2 default physics**, independent of each other.
+> The old R-phases and the M1–M4 milestone names in §3 are superseded — read them mapped onto
+> D-phases (M2 → D1+D2, M3 → D1, M4 → D5).
+> Governing rule (ROADMAP.md §"The default-build rule" + the D0.7 linkage clause): **a capability
+> counts only if it runs in `mashed_re.exe` with no `MASHED_*` var set AND its TU is linked into
+> the exe.** An env-gated opt-in path is a fallback, i.e. not landed.
+> §1 and §3 below are the **pre-D0 snapshot (2026-07-31)**, kept for history; where any number
+> conflicts with ROADMAP's "Honest baseline (2026-08-15)", the ROADMAP figure governs.
+> Maintenance rule: refresh §1 + §3 after each merged lane; a claim contradicted by ROADMAP or
+> CHANGELOG is a bug in THIS file — fix it the day it is noticed.
 
 ## 1. Where we actually are (refreshed 2026-07-31)
 
@@ -146,25 +157,62 @@ D3 MP out for v1.0 (07-11, D-11063); D5 M1-breadth-first (07-06) → M1 closed.
 - Token economy per CLAUDE.md: focused sessions, no raw-transcript reads, `ARG_TYPES.md`
   (never raw `diff_template.js`) for handler lookup, one-liner state queries.
 
-## 7. Next-sessions queue (rebuilt 2026-07-31; every item leads with a worker leg)
+## 7. Next-sessions queue (reconciled 2026-08-18 against ROADMAP v3; every item leads with a worker leg)
 
-**Non-colliding, autonomous-capable (gates decided — this is now a priority order):**
-1. **librw sizing session** (D2 consequence; M3 opener): librw x86/MSVC build fit, license
-   check, TXD/DFF/world bridging surface vs our loaders, integration risk list. *Worker:*
-   survey librw's repo docs offline facts + our loader inventory. *Account3:* the build spike.
-2. **`entity_field_set` sentinel fix** (D6): implement + prove RED on a known-wrong port,
-   then author `0x0047cde0` at the menu window as its first consumer.
-3. **HUD sweep D-6160..D-6173** (9 HUD fns). *Worker:* map each RVA to standalone HUD status.
-   *Account3:* parity/draw-list check to CONFIRM the gap, then port only what is missing.
-4. **Plating drains** (no harness): D-7000..3, D-0281, D-0245..63 / D-9280, D-8140. Cheap-model
-   volume work.
-5. **candidate_buckets.json validity pass** + the `0x0041c090` C1-vs-C2 conflict → `re-classify`.
+D0 is CLOSED (2026-08-15, all 8 items; D0.7 answered 2026-08-18 — ROADMAP.md §D0). The two long
+poles, **D1 (default renderer)** and **D2 (default physics)**, are independent; either can advance.
+Priority order:
 
-**Next hands-on session (D7):** D-11060 playthrough + D-11061 recording + G3 Frida session
-(prep: BOOT_PATCHES boot, d3d9 shim, unlocked desktop, no intro-minimize, kill-by-PID).
+**D1 — default renderer (invert `MASHED_RENDER_LIBRW`). The renderer A/B is CLEAN; faithfulness
+adjudication is what remains:**
+1. **Adjudicate librw-vs-D3D9 faithfulness against the ORIGINAL.** The A/B compared the two
+   renderers to *each other* (now 16/16 ≤1.01%, `verify/d1_recheck_20260818/REPORT.md`), never to
+   the original (CHANGELOG 2026-08-15 "D1 renderer inversion"). The original-side capture is now
+   possible (`MASHED_CAM_POSE` + the shim's `draw3d.json`); the pose reader's +0x4c bug is fixed
+   (it is a direction delta, Xbox twin 0x00446520, CHANGELOG 2026-08-16) and same-track capture is
+   wired (`Campaign_SetSelectedTrackDev`; on Training, D3D9-vs-librw = 1.13%, original-vs-standalone
+   = 90.15% from a higher/further eye, not a frame mismatch — a figure since further advanced by
+   the 2026-08-16 mirror/lens fixes). *Worker:* collate the campose/track-watcher evidence.
+   *Account3:* the paired original capture + adjudication.
+2. **Confirm the once-suspected in-race divergence stays closed.** The 2026-08-15 measurement read
+   `01_inrace_track` 71.61%, `01_action` 21.69%, `round2/3_result` ~69% as an accumulating renderer
+   defect (CHANGELOG 2026-08-16 "CAPMODE moved to the capture SINK"). The 2026-08-18 re-measure on
+   a clean rebuild shows those same shots at 0.48% / 0.01% / 0.06% / 0.10% — the accumulation was a
+   scaffold FX particle defect on the D3D9 side, now cut from the default build
+   (`verify/d1_recheck_20260818/REPORT.md`, control pair 16/16 byte-identical
+   `verify/d1_control_20260818/REPORT.md`). Keep the gate green as librw becomes the default.
 
-**Defect-session lane (do NOT pick up from here):** statediff residual wedge, KV C4 campaign,
-WS-A8 diff. **Coordinate-first:** VECCAP-2 `FUN_00566200`; U-8991 close (D4) via re-classify.
+**D2 — default physics (invert `MASHED_REAL_PHYSICS`). Defect-session lane — coordinate first:**
+3. **Statediff residual wedge** (~1/6 boots, second unbisected mechanism; the first, Ring5ab980
+   implicit-EAX, fixed 2026-07-31 / U-6701). Caps physics C4 at ~5/6 and blocks A8 and the B5e
+   C4-verify campaign (ROADMAP.md §D2).
+4. **WS-A8 velocity/position diff vs original telemetry** on matched inputs, once the wedge falls.
+
+**D3 — default AI / powerups / modes (scaffolds the default build still runs):**
+5. **WS-C AI** (FUN_00418860 family). Note U-9040 (CHANGELOG 2026-08-16): both the verbatim-band
+   and the pure-pursuit steer conventions are DEAD on the default path — AI is steered by
+   TrackRenderer's own world-space controller — so the steer-sign contradiction cannot be resolved
+   until the ControlStep path executes.
+6. **WS-D powerups** (FUN_0045bba0 dispatcher + 9-entry table; gated on a Ghidra fn-split of
+   0x453f60–0x45be81) and **WS-G per-mode rules.** *Worker:* map each RVA to standalone status first.
+
+**D4 — breadth (ONLY after D1–D3):** HUD sweep D-6160..D-6173; plating drains D-7000..3 / D-0281 /
+D-0245..63 / D-9280 / D-8140 (cheap-model, no harness); `candidate_buckets.json` validity +
+0x0041c090 C1-vs-C2 conflict → `re-classify`; WS-F formats; WS-J audio remainder. **Linkage gap —
+ANSWERED, not open:** `Save/` and `Audio/` TUs are absent from `mashed_re.exe` (0 of 17 save,
+4 of 25 audio), so C4-verified save/audio hooks contribute nothing to the deliverable — but D0.7
+(ROADMAP.md §D0 item 7, answered 2026-08-18) settled that this is not a build-list bug: the code is
+hook-shaped (`Register` is no-op'd in the exe) and its bodies deref MASHED addresses unmapped at
+base 0x10000, so bulk-linking it would grow the binary and the tracker without shipping a feature.
+Add-backs are gated on NO MASHED ADDRESS IN ANY CODE PATH (batch 1 of six landed 2026-08-18); the
+rest is porting work, not a counting fix. Do NOT re-open D0.7.
+
+**Next hands-on session (human tail, D5):** D-11060 playthrough + D-11061 recording + G3 cup
+place-names Frida session (prep: BOOT_PATCHES boot, d3d9 shim, unlocked desktop, no intro-minimize,
+kill-by-PID). Still deferred — not yet run.
+
+**Coordinate-first (do NOT pick up cold):** VECCAP-2 `FUN_00566200` [UNCERTAIN — status not confirmed
+in the reconciliation read window]; U-8991 close via `re-classify`.
 
 ## 8. Risks
 
