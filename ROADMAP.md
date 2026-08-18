@@ -149,8 +149,10 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
    `re/analysis/SESSION_VERIFICATION_AUDIT_2026-08-15.md`. It surfaced two items that did
    not exist when D0 was written, both below (6 and 7), and one correction to this
    document's own premise: **env-gating is not the largest gap — non-linkage is.**
-   `build.bat` links **198 of 433** `.cpp` into `mashed_re.exe` (D0.1 first counted 193; the
-   D0.7 pass at item 7 found 5 isolated `.obj` the first parser missed); `Save/` contributes
+   `build.bat` linked **198 of 433** `.cpp` into `mashed_re.exe` **as audited 2026-08-15**
+   (D0.1 first counted 193 because it counted plain sources on the `cl` line and omitted the
+   5 isolated per-target `.obj`; it reported a plain-source count as a TU count. **204 after
+   batch 1** landed six files on 2026-08-18 — see item 7); `Save/` contributes
    0 of 17 files and `Audio/` 4 of 25, so 585 audio and 32 save rows — *including 28 save
    C4s* — are absent from the deliverable and **no env var can reach them**. The default-build
    rule therefore needs a second clause: a capability counts only if its TU is linked
