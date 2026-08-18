@@ -1,7 +1,17 @@
 # Original developer names recovered from the Lua binding tables — 2026-08-18
 
-**70 names across 69 distinct functions, all 70 previously absent from `hooks.csv`.**
-Method is deterministic and reproducible; nothing here is inferred from behaviour.
+**70 names across 69 distinct functions.** Method is deterministic and reproducible;
+nothing here is inferred from behaviour.
+
+> **CORRECTION 2026-08-18.** The first version of this note claimed all 70 were absent from
+> `hooks.csv`. That was WRONG, caused by a lookup bug: the comparison normalised keys to
+> `0x0047a180` while `hooks.csv` stores RVAs unprefixed (`0047a180`), so nothing ever
+> matched. The harvest itself is unaffected. True figures: **42 of the 69 RVAs were already
+> tracked, all at C2; 27 are genuinely new.** Of the 42, three already carried *inferred*
+> names, and the harvest confirms all three (`SkyFilename_Handler`/`Sky_Filename`,
+> `SetupFog_Handler`/`Setup_Fog`, `ModifyFog_Handler`/`Modify_Fog`) — 3 for 3, which is
+> stronger corroboration than the single case cited below. Net value is **39 renames of
+> `FUN_*` rows + 27 new discoveries**, not 69 new functions.
 
 ## Why this exists
 
