@@ -46,8 +46,10 @@ namespace Txd { class Dictionary; }
 
 namespace LibRw {
 
-// True when MASHED_RENDER_LIBRW=1. Default OFF keeps the shipping D3D9 path
-// reachable at all times.
+// D1 INVERTED (2026-08-18): librw is the DEFAULT renderer. Returns true unless
+// MASHED_RENDER_LIBRW=0, which reverts to the legacy D3D9 path for A/B. Unset or
+// any non-"0" value keeps librw. (Was: "true when MASHED_RENDER_LIBRW=1, default
+// OFF".) See RwRaceSubmit.cpp for the full rationale.
 bool RaceSubmit_Requested();
 
 // Bring librw up on the exe's already-created device+window. Call once, AFTER
@@ -79,12 +81,13 @@ bool RaceSubmit_OnTrackLoaded(const Track::World& world,
 // TrackRenderer::Load: models are registered DURING the load (from the live
 // DffModel locals), so clearing them at the tail -- where the world is rebuilt --
 // would destroy the ones just handed over.
-// MASHED_LIBRW_INST=1. Instanced props/cars through librw are STAGED, not
-// accepted: enabling them currently regresses the static world (the ground goes
-// black) and the player car stops appearing -- both introduced by binding the
-// camera to the world, which is required for LIGHT-flagged geometry. Default OFF
-// so MASHED_RENDER_LIBRW alone stays at the VERIFIED world-only result
-// (0.39-0.93 mean-abs). Do not flip this default until those two are closed.
+// MASHED_LIBRW_INST: DEFAULT ON since 2026-08-02 (the earlier "STAGED, default
+// OFF, ground goes black" caveat is superseded -- the regression was missing UV
+// animation D-S3-SEA, not shading; see RwRaceSubmit.cpp). Instanced props/cars/
+// copters route through librw and land at the best-measured config (gating shots
+// 0.06-0.59). Before the D1 flag inversion this was unreachable on a clean env;
+// after it, librw is default so instancing is LIVE by default.
+// MASHED_LIBRW_INST=0 reverts to world-only.
 bool RaceSubmit_InstancesEnabled();
 
 // [D-S3-PROP] Per-model routing. Honours MASHED_LIBRW_ONLYPROP=<handle>: with it
