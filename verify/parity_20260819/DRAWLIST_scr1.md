@@ -79,3 +79,63 @@ Note the documented baseline is *"settled scr1 is GREEN 118/118 per frame (2026-
 This run captured 117 draws per original frame and 468 aligned pairs across the burst, so
 the counts are not directly comparable to that line; whether the baseline has drifted or
 the burst framing differs is **[UNCERTAIN]** and not resolved here.
+
+
+---
+
+# Follow-up, same day: both open questions answered
+
+## 118 vs 117 — RESOLVED, and it is not a regression
+
+All four original frames contain **117 raw draws** (before any `--exclude-tex`), and the
+diff aligned **468 pairs = 117 x 4** with `missing=0 extra=0`.
+
+So **both sides independently produce 117 draws per frame and agree completely.** Had the
+standalone regressed against a genuine 118-draw original, that would surface as `missing=1`
+per frame. It does not. The `118/118` figure in `parity_tooling.md` (2026-06-12) does not
+reproduce, but because the two sides agree exactly, this is a measurement or documentation
+difference and **not** a rendering regression.
+
+The doc line is deliberately **left as-is**: which count was right in June is not
+established here, and overwriting it would swap one unverified number for another.
+
+## The alpha defect localises to the last two rows
+
+The 20 mismatching draws sit at exactly two y positions:
+
+| x | y | w | role |
+|---:|---:|---:|---|
+| 60 | 258 | 210 | plate / border |
+| 270 | 258 | 100 | right-fade gradient |
+| 58 | 258 | 2 | left border |
+| 60 | 282 | 210 | plate / border |
+| 270 | 282 | 100 | right-fade gradient |
+
+Screen 1's rows run y=168, 192, … 258, 282 — so **the original disables the last two items
+and the standalone enables them.**
+
+The colour constant in the port is already correct (`exe_main.cpp:3634-3637`):
+
+```cpp
+const std::uint32_t border =
+    disabled    ? 0x30501513u
+  : highlighted ? 0xff1050b4u : 0xff501513u;
+```
+
+with the comment *"disabled rows alpha 0x30"*. The bug is that `disabled` never becomes
+true for those rows. It comes from `!Nav_ItemEnabled(rec.row_index)`
+(`exe_main.cpp:3593-3594`), and `Nav_ItemEnabled` (`MenuNavSM.cpp:1346-1349`) reads
+`g_stack[g_nav_depth].avail[row_index] == 1` — so `avail[]` is not carrying the original's
+unavailability for those two rows.
+
+**Ruled out: the savedata gate**, which was the obvious suspect. `MenuNavSM.cpp` documents
+*"DAT_007f0f2c savedata gate -> +0x4ec (screen 1 item 3)"* and notes a blank save leaves no
+savedata. But `original/gamesave.bin` carries magic `0xDEADBEEF` at +0, is exactly
+`0x24FA0` bytes, and `Nav_GameStateLoadSave` is wired at `exe_main.cpp:6117`. Both sides
+see savedata, so these rows are gated on something else.
+
+**Not fixed here, deliberately.** Finding what the original gates rows 258/282 on is RE work
+against the avail-population path, not a constant edit. Guessing a predicate to force the
+gate GREEN would be exactly the unfounded change this gate exists to catch — and that GREEN
+would be worth less than the RED it replaced. The defect is left localised to a single
+predicate, with emitters, geometry and constants all confirmed correct.
