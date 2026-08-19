@@ -1389,5 +1389,13 @@ bool Nav_GameStateLoadSave(const unsigned char* data, unsigned len) {
     return true;
 }
 
+// Bind point for Save/GameSaveBuffer.cpp (standalone exe build only). Exposes the
+// live championship span (models 0x007f0a40..0x007f0f60, 0x520 B = 0x148 dwords)
+// BY NAME, so the ported Serialize/DeserializeToBuffer neutralize their
+// DAT_007F0A40 tunnel by binding to THIS real engine state rather than a private
+// duplicate (which would silently desync save from the live game). External
+// linkage; g_save_span itself stays file-static.
+unsigned char* Nav_SaveSpanData() { return g_save_span; }
+
 } // namespace Frontend
 } // namespace mashed_re

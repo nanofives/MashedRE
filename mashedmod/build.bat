@@ -138,6 +138,24 @@ REM     Therefore add-backs are gated on NO MASHED ADDRESS IN ANY CODE PATH, not
 REM     merely on booting. Batch 1 (the six Save\/Input\/Particle\ files at the end
 REM     of the list below) meets that bar. Everything else in the backlog needs its
 REM     RVA tunnels neutralized first -- that is porting work, not a list edit.
+REM
+REM     D0.7 batch 2, 2026-08-19 (save-rva-neutralize): the FIRST neutralized
+REM     tunnel add-back. Save\GameSaveBuffer.cpp DOES touch MASHED addresses (the
+REM     save globals in 0x007xxxxx/0x008xxxxx), so it did not qualify for batch 1.
+REM     It is added here because those tunnels are now neutralized at compile time:
+REM     the new /DMASHED_STANDALONE on the exe cl line below resolves every base to
+REM     a NAMED standalone symbol -- 7 logical globals split 3-vs-4 (see the header
+REM     block in Save\GameSaveBuffer.cpp): 3 are PRIVATE to save (own local scratch)
+REM     and 4 are SHARED engine state (BOUND by name -- trackTable->g_save_span,
+REM     counter->g_saveCounter; strideRecords/profile bind to the standalone's
+REM     documented ABSENCE of that state, not a duplicate). The dev .asi (no macro)
+REM     keeps the original absolute globals so the diff-original reference is
+REM     byte-identical. Repeatable pattern for the rest of Save\. NOTE: in the exe,
+REM     HookSystem::Register is no-op'd (Stubs\HookSystemNoOp.cpp), so the two funcs
+REM     are DEAD EXPORTS -- LINKED and load-safe but NOT reached on the default path
+REM     (the live save/load runs through Save\GameSaveFormat.h BuildImage/ParseImage
+REM     in Race\GameFlow.cpp; nothing calls Serialize/DeserializeToBuffer by name).
+REM     Wiring a real standalone save/load call site is a separate slice.
 REM ===========================================================================
 
 REM RUNTIME NOTE: when launching mashedmod\build\mashed_re.exe, Windows'
@@ -156,7 +174,7 @@ REM /EHa (not /EHsc) for the exe target: the standalone boot chain relies on
 REM __try/__except to survive partial-wedge AVs (steps 2..7, B7/B14 probes);
 REM /EHa makes those SEH guards catch hardware exceptions. The .asi target keeps
 REM /EHsc (it runs inside MASHED, not the wedge).
-cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
+cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "exe_main.cpp" ^
     "Piz\PizReader.cpp" ^
     "Rws\RwsChunkWalker.cpp" ^
@@ -356,6 +374,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Input\MemsetInline_ag1.cpp" ^
     "Particle\ParticleLeaves_ad4.cpp" ^
     "Particle\ParticleLeaves_ad5.cpp" ^
+    "Save\GameSaveBuffer.cpp" ^
     "%OUT%\QhullBridge_exe.obj" ^
     "%OUT%\RwBridge_exe.obj" ^
     "%OUT%\RwRasterBridge_exe.obj" ^
