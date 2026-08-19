@@ -2,7 +2,7 @@
 
 `scripts/` holds 21 `patch_mashed_*.py`. `CLAUDE.md` documented ten. A byte-diff of
 `original/MASHED.exe` against `.unpatched` proves which are live: 111 differing bytes in 14
-clusters, all consumed by **nine**. `skip_intro` is a data patch. **Eleven are inert.**
+clusters, all consumed by **nine**. `skip_intro` is a data patch. **Eleven were inert; `no_focus_pause` was adopted 2026-08-19, leaving ten.**
 
 ## The guardrail that was missing
 
@@ -27,11 +27,11 @@ state on the reference.
 `fix_camera_res`, `disable_log`, `fix_fopen`, `fix_joypad`, `skip_movies`, plus the
 `skip_intro` data patch. Addresses in `re/analysis/binary_claims_audit_20260818.md`.
 
-## The eleven inert scripts
+## The eleven non-applied scripts as of 2026-08-18 — now ten, one was adopted
 
 | script | class | disposition |
 |---|---|---|
-| `no_focus_pause` | SAFE-DEV | **Adopt candidate.** See below |
+| `no_focus_pause` | SAFE-DEV | **ADOPTED 2026-08-19.** Now one of the ten applied |
 | `clean_exit` | SAFE-DEV | Useful against dirty-exit crash dumps. **Overlaps `skip_teardown` — never apply both**, they both hijack shutdown to `ExitProcess` |
 | `fix_movie_uaf` | SAFE-DEV | Real crash-hardening for degenerate-movie teardown. Relevant *because* `skip_intro` swaps in 167,414-byte stand-ins that may be exactly the degenerate case it guards |
 | `skip_intro_logos` | SAFE-DEV | Superseded by the applied `skip_intro` data patch |
@@ -56,5 +56,6 @@ is why the 16-shot capture is unattended today. `no_focus_pause` matters for **o
 work: Frida diffs, `MASHED_ORIG_BBDUMP` captures, `race_draw_burst.py`. Those are the runs
 that can stall when a terminal takes focus.
 
-It is not applied, and this note does not apply it — adopting it changes the reference
-binary and is a decision for the human.
+**ADOPTED 2026-08-19 at the user's direction.** Verified: exactly one new byte in the
+diff (`0x996d3`, `0x75`→`0xEB`), `.unpatched` anchor still `BDCAE093…`, idempotent
+re-run is a no-op, and `MASHED.exe` boots and runs 18 s without crashing.

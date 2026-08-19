@@ -45,28 +45,36 @@ See `re/INJECTION.md` for why we still need a hook harness during dev (it lets u
 
 Stock `MASHED.exe` does not boot to main menu on Win11 + modern GPUs. One-command setup/recovery: `py -3.12 scripts/repatch_original.py` (idempotent) applies everything below. **Full root-cause narratives + evidence: `re/analysis/BOOT_PATCHES.md`** — read it before touching any boot behavior. Summary:
 
-1. **Nine on-disk binary patches** to `original/MASHED.exe` (idempotent, self-checking, each reversible via `--restore`). `original/MASHED.exe.unpatched` is the backup matching the SHA-256 anchor — never delete it. `patch_mashed_skip_powerups.py` is **RETIRED** (caused boot crash #2; refuses to apply).
+1. **Ten on-disk binary patches** to `original/MASHED.exe` (idempotent, self-checking, each reversible via `--restore`). `original/MASHED.exe.unpatched` is the backup matching the SHA-256 anchor — never delete it. `patch_mashed_skip_powerups.py` is **RETIRED** (caused boot crash #2; refuses to apply).
    - `show_windowed`, `skip_audio_com`, `skip_selector`, `skip_controller_dialog` — dialog/COM silencers.
    - `fix_camera_res` — screen-dim getters forced to 640×480; COUPLED to the d3d9 shim's backbuffer.
    - `disable_log` — neutralize the broken boot file-log (partial fix alone, ~80% boot).
    - `fix_fopen` — **ROOT boot fix**: NULL out garbage `FILE*` (<0x10000) from `FUN_004a4541`; boots 8/8.
    - `fix_joypad` — guard the garbage device pointer in `FUN_00495870`; boots 8/8 with a controller.
-   - `skip_intro` — **PREFERRED intro-skip**, and note it is a **DATA patch, not one of the nine**:
+   - `no_focus_pause` — **ADOPTED 2026-08-19**: one signature-guarded byte at `0x004996d3`,
+     `JNZ`→`JMP`, so the main loop never calls `WaitMessage()` at `0x004996d5` and the game
+     keeps running while unfocused. Unblocks unattended **original-side** capture (Frida
+     diffs, `MASHED_ORIG_BBDUMP`, `race_draw_burst.py`), which previously stalled whenever a
+     terminal took focus. The standalone never needed it — `exe_main.cpp:1665` already
+     bypasses the focus gate. Cost: spins a core while unfocused. `--restore` reverts.
+     Does not change any computed value, so behavioural diffs are unaffected:
+     `DAT_0077391c` has exactly one reader and this is the only pause gate.
+   - `skip_intro` — **PREFERRED intro-skip**, and note it is a **DATA patch, not one of the ten**:
      it replaces 5 `.mpg` files (`intro`, `renderware`, `supersonic`, `empire`, `small`), leaving
      `MASHED.exe` untouched. Verified 2026-08-18: all five are 167,414 bytes; `frontend.mpg`
      is untouched at 38 MB.
    - `skip_movies` — OPTIONAL small.mpg-call NOP; MUST keep the `push 0` at `0x40283d` (stack-imbalance history in BOOT_PATCHES.md); redundant next to `skip_intro`.
    **Verified byte-for-byte 2026-08-18** (`re/analysis/binary_claims_audit_20260818.md`):
-   diffing `MASHED.exe` against `MASHED.exe.unpatched` gives 111 bytes in 14 clusters, and
+   diffing `MASHED.exe` against `MASHED.exe.unpatched` gives 112 bytes in 15 clusters, and
    **every cluster maps to a documented patch address** — no undocumented modification exists.
-   The applied set is exactly nine: `show_windowed` `0x00498dbc`, `skip_audio_com` `0x005bc750`,
+   The applied set is exactly ten: `show_windowed` `0x00498dbc`, `skip_audio_com` `0x005bc750`,
    `skip_selector` `0x004951f0`, `skip_controller_dialog` `0x004951aa`, `fix_camera_res`
    `0x00498bc0`/`0x00498bd0`, `disable_log` `0x004963e7`/`0x00496400`/`0x00496490`, `fix_fopen`
-   `0x004a4541`, `fix_joypad` `0x00495870`, `skip_movies` `0x0040283f`. `fix_fopen` and
+   `0x004a4541`, `fix_joypad` `0x00495870`, `skip_movies` `0x0040283f`, `no_focus_pause` `0x004996d3`. `fix_fopen` and
    `fix_joypad` are detours into code caves at `0x0050f6c4` and `0x00508bd5`.
-   **`scripts/` holds 21 `patch_mashed_*.py`; 11 are NOT applied** and are not part of the
+   **`scripts/` holds 21 `patch_mashed_*.py`; 10 are NOT applied** and are not part of the
    boot recipe: `clean_exit`, `fix_movie_uaf`, `force_keyboard`, `heap_reserve`,
-   `no_focus_pause`, `skip_intro_logos`, `skip_teardown`, `unlock_all`, `unlock_restore`,
+   `skip_intro_logos`, `skip_teardown`, `unlock_all`, `unlock_restore`,
    `unlock_tracks`, plus the retired `skip_powerups`.
 
    **NEVER apply `unlock_all` / `unlock_tracks` / `unlock_restore` to
@@ -146,7 +154,7 @@ All commands run from the repo root (`C:\Users\maria\Desktop\Proyectos\Mashed`).
 # Build both targets (mashed_re.exe + mashed_re_dev.asi). Internally calls vcvars32.bat.
 mashedmod\build.bat
 
-# Apply the nine binary patches to original\MASHED.exe (idempotent; skip if .unpatched
+# Apply the ten binary patches to original\MASHED.exe (idempotent; skip if .unpatched
 # is missing because that means a fresh original/ has not been backed up yet).
 # NOTE: patch_mashed_skip_powerups.py is RETIRED (causes boot crash #2; refuses to apply).
 py -3.12 scripts\patch_mashed_show_windowed.py

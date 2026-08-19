@@ -101,7 +101,9 @@ Same method: check the claim against the artifact. Here the artifact is the **di
 `original/MASHED.exe` and `original/MASHED.exe.unpatched`**, the only authoritative
 statement of what is actually applied.
 
-**111 differing bytes in 14 clusters, all in `.text`, file sizes identical.** Every cluster
+**111 differing bytes in 14 clusters, all in `.text`, file sizes identical.**
+(Now **112 / 15** — `no_focus_pause` was adopted 2026-08-19, adding a single byte at
+`0x004996d3`. Everything below describes the pre-adoption state.) Every cluster
 maps to a documented patch address. **No undocumented modification exists on disk.**
 
 | VA | bytes | old -> new | patch |
