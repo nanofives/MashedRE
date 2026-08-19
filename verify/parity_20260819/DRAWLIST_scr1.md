@@ -213,3 +213,52 @@ call-order trace (Frida on the three writers, or a caller walk), and it is the o
 required before changing the port. It is deliberately not guessed: forcing `avail[3]=0`
 would turn the gate GREEN while leaving the port wrong for any state where the row *should*
 be enabled.
+
+
+---
+
+# Closed by Frida: the gate is 0 all through the menu, and the =1 write is progression-locked
+
+Traced `DAT_007f0f2c` on stock `original/MASHED.exe` (`re/frida/trace_savedata_gate.py`,
+hooks off): Interceptor on all three writers plus the reader `FUN_00432800`, logging the
+flag's value at each event. 2211 events over a 16 s menu-idle boot.
+
+## Result
+
+- **The reader `FUN_00432800` fired 1056 times, always at `slot=0` (screen 1), and the gate
+  was `0` at every single read.** Zero transitions across the whole run. So the original
+  greys the row because the flag is genuinely 0 at the menu — the trace matches the RED
+  exactly.
+- `FUN_004924f0` (the zero-fill) ran twice, early, both before the first read.
+- `FUN_004927c0` fired **1152 times and never set the flag to 1**.
+
+## Why the =1 writer never fires — it is a progression gate, not a per-boot init
+
+`FUN_004927c0`'s assignment is guarded:
+
+```c
+DAT_00771980 = DAT_00771980 + 1;
+if (DAT_00771980 == 0xc) {
+    for (i = 0x9c; i != 0; i--) *puVar4++ = 2;   // fills 0x007f0a40..
+    DAT_007f0f2c = 1;
+}
+```
+
+The write to 1 only happens when the counter `DAT_00771980` reaches **12**. At a fresh menu
+that counter never gets there, which is why 1152 calls produced zero writes. `DAT_007f0f2c`
+is therefore a **progression/unlock flag** — some cup or challenge milestone sets it — not
+something a boot establishes.
+
+## Conclusion, now with dynamic proof
+
+The port's model is wrong in kind. `DAT_007f0f2c` is runtime progression state whose
+default at a fresh menu is 0 (row greyed), and it flips to 1 only on a gameplay milestone.
+The standalone derives it from the restored save byte at `+0x4ec`, which is non-zero in
+`original/gamesave.bin`, so it enables a row the original greys.
+
+**The fix is to seed the flag from progression, not from the raw save byte** — or, minimally
+and faithfully, default it to 0 at the fresh menu and set it only when the same milestone
+`DAT_00771980 == 0xc` is reached. Which is still a port change against the progression
+system, not a one-line constant, so it stays out of this evidence-gathering pass. But the
+open question from the previous section — *which writer runs before the frontend* — is now
+answered: **none of them do; the flag is simply 0.**

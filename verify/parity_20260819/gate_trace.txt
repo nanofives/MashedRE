@@ -1,0 +1,4 @@
+  0     0  init 
+  1     0  W_FUN_004924f0:enter 
+  2     0  W_FUN_004924f0:leave 
+... 1056 reads of FUN_00432800 follow, ALL gate=0 slot=0 ...
