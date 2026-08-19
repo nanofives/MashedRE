@@ -17,7 +17,7 @@ See `re/INJECTION.md` for why we still need a hook harness during dev (it lets u
 ## Engine, anchors, and the "two Ghidra projects" arrangement
 
 - **Engine: RenderWare 3.x** (Criterion). Confirmed via `mashed.log` (`RwEngineInit`, `RwEngineOpen`, `RtFSManagerOpen`). The folder name `TOASTART` / `toastaudio` is asset/middleware naming, **not the engine name**. RenderWare structs/headers from `gta-reversed-modern/source/RenderWare/` apply directly.
-- **Other tech**: native PE32 i386 (MSVC-era), DirectX 9.0c, MCI for video, Lua 5.x for joypad remap, MSVBVM60 for the `launch.exe` copy-protection wrapper, custom `.piz` asset format (XeNTaX-documented), RenderWare RWS audio, RenderWare TXD textures.
+- **Other tech**: native PE32 i386 (MSVC-era), DirectX 9.0c, MCI for video, Lua 4.0 for joypad remap (version string at `0x005d8790`; corrected from "5.x" 2026-08-18, see U-9042), MSVBVM60 for the `launch.exe` copy-protection wrapper, custom `.piz` asset format (XeNTaX-documented), RenderWare RWS audio, RenderWare TXD textures.
 - **Version anchor — verify before any hook authoring**:
   ```
   original\MASHED.exe   size 2,846,720   SHA-256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
