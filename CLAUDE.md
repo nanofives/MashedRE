@@ -69,6 +69,16 @@ Stock `MASHED.exe` does not boot to main menu on Win11 + modern GPUs. One-comman
    `no_focus_pause`, `skip_intro_logos`, `skip_teardown`, `unlock_all`, `unlock_restore`,
    `unlock_tracks`, plus the retired `skip_powerups`.
 
+   **NEVER apply `unlock_all` / `unlock_tracks` / `unlock_restore` to
+   `original/MASHED.exe`.** That binary is the **diffing reference** every behavioural
+   verification is measured against. Those scripts force `VehicleUnlockFlagGet` /
+   `TrackAvailGet` and the arrays at `0x007f0a40` / `0x007f0e50` to non-stock values, so
+   any Frida diff touching car select, track select, championship or save-restore would
+   compare modded against modded and still report GREEN. `unlock_restore` persists across
+   save-restore. `force_keyboard` carries the same caution for input diffs (it forces the
+   joystick count to 0). Full inventory of all 21 scripts:
+   `re/analysis/patch_scripts_inventory_20260818.md`.
+
 2. **Canonical `videocfg.bin`** from `scripts/canonical/videocfg_windowed.bin` (800×600).
 3. **Per-machine compat shim** via `scripts/setup_mashed_compat.ps1` — EMULATEHEAP is build-dependent (script toggles by OS build); never `DISABLEDXMAXIMIZEDWINDOWEDMODE` while the d3d9 shim is deployed. If MASHED suddenly AVs at boot: parse the newest crash dump with `scripts/parse_minidump.py`, re-run the setup script, clear the PCA Store — full decision tree in BOOT_PATCHES.md.
 4. **d3d9 shim** via `mashedmod\build_d3d9_shim.bat` — forces windowed 640×480 CreateDevice and hosts the frame limiter (`MASHED_FPS_CAP`, default 60; `MASHED_FPS_LOG=1` → `log/fps_limiter.txt`). Auto-copies the real d3d9 to `original\d3d9_real.dll`.
