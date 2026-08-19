@@ -91,3 +91,67 @@ is absent), consistent with `Audio/AudioDSound.cpp` and its `0x005d09dc` IID der
 **Conclusion: the naming veins are exhausted.** The registrar vein was the large one and it
 is fully mined. Further names would have to come from a different class of evidence
 (the Xbox twin, or behavioural inference), not from strings in this image.
+
+
+---
+
+# Part 2 - boot-patch and runtime claims
+
+Same method: check the claim against the artifact. Here the artifact is the **diff between
+`original/MASHED.exe` and `original/MASHED.exe.unpatched`**, the only authoritative
+statement of what is actually applied.
+
+**111 differing bytes in 14 clusters, all in `.text`, file sizes identical.** Every cluster
+maps to a documented patch address. **No undocumented modification exists on disk.**
+
+| VA | bytes | old -> new | patch |
+|---|---|---|---|
+| `0x0040283f` | 5 | `e8 3c 24 09 00` -> `90 90 90 90 90` | `skip_movies` |
+| `0x004951aa` | 5 | `a1 c0 47 61 00` -> `33 c0 90 90 90` | `skip_controller_dialog` |
+| `0x004951f0` | 5 | `a1 bc 47 61 00` -> `33 c0 90 90 90` | `skip_selector` |
+| `0x00495870` | 5 | `83 ec 6c a1 38` -> `e9 60 33 07 00` | `fix_joypad` (detour) |
+| `0x004963e7` | 1 | `74` -> `eb` | `disable_log` |
+| `0x00496400` | 1 | `81` -> `c3` | `disable_log` |
+| `0x00496490` | 6 | `81 ec 14 01 00 00` -> `31 c0 c3 90 90 90` | `disable_log` |
+| `0x00498bc0` | 4 | `a1 28 60 61` -> `b8 80 02 00` | `fix_camera_res` (= 640) |
+| `0x00498bd0` | 4 | `a1 2c 60 61` -> `b8 e0 01 00` | `fix_camera_res` (= 480) |
+| `0x00498dbc` | 2 | `75 44` -> `90 90` | `show_windowed` |
+| `0x004a4541` | 5 | `6a 40 ff 74 24` -> `e9 7e b1 06 00` | `fix_fopen` (detour) |
+| `0x00508bd5` | 39 | `cc...` -> trampoline | `fix_joypad` code cave |
+| `0x0050f6c4` | 28 | `cc...` -> trampoline | `fix_fopen` code cave |
+| `0x005bc750` | 3 | `83 ec 34` -> `33 c0 c3` | `skip_audio_com` |
+
+## Claim by claim
+
+| Claim | Verdict | Evidence |
+|---|---|---|
+| "Nine on-disk binary patches" | **CONFIRMED as a count** | exactly 9 distinct patches applied |
+| ...but the bullet list under it names **ten** | **CATEGORY ERROR, fixed** | `skip_intro` is a **data** patch. Its script targets `0x00495350`, which is **not** in the diff; it replaces `.mpg` files, not bytes in the exe |
+| `fix_camera_res` forces 640x480 | **CONFIRMED** | `mov eax, 0x280` (640), `mov eax, 0x1e0` (480) |
+| `fix_fopen` at `FUN_004a4541` | **CONFIRMED** | patched at exactly `0x004a4541`; detour to a cave holding the relocated `6a 40 ff 74 24 0c ...` prologue |
+| `fix_joypad` guards `FUN_00495870` | **CONFIRMED**, mechanism clarified | patched at exactly `0x00495870`, but it is a **detour** to `0x00508bd5`, not the inline guard the wording implies |
+| `skip_movies` must keep the `push 0` at `0x40283d` | **CONFIRMED** | the call at `0x0040283f` is NOPed; `0x0040283d` is untouched |
+| `skip_intro` replaces 5 `.mpg` | **CONFIRMED** | `intro`/`renderware`/`supersonic`/`empire`/`small` all exactly 167,414 bytes; `frontend.mpg` untouched at 38 MB |
+| `skip_powerups` RETIRED, refuses to apply | **CONFIRMED** | script header: RETIRED PATCH - DO NOT APPLY (kept as un-applier / refusal guard) |
+| Canonical `videocfg.bin` is 800x600 | **CONFIRMED** | byte-identical to the canonical; trailing dwords `0x320`/`0x258`/`0x20` = 800x600x32 |
+| `MASHED_FPS_CAP` default 60 | **CONFIRMED** | `d3d9_shim.cpp:329` |
+| "Apply the four binary patches" | **WRONG, fixed** | stale by five; the same file says nine, 75 lines earlier |
+
+## The undocumented eleven
+
+`scripts/` holds **21** `patch_mashed_*.py`. Nine are applied, `skip_intro` is the data
+patch, and **eleven are neither documented in `CLAUDE.md` nor applied**:
+
+`clean_exit`, `fix_movie_uaf`, `force_keyboard`, `heap_reserve`, `no_focus_pause`,
+`skip_intro_logos`, `skip_teardown`, `unlock_all`, `unlock_restore`, `unlock_tracks`,
+plus the retired `skip_powerups`.
+
+Their being unapplied is proven by construction: all 14 diff clusters are consumed by the
+nine, so nothing else has touched the binary. Several look useful (`no_focus_pause`,
+`force_keyboard`, `unlock_tracks`) and a reader of `CLAUDE.md` would not know they exist.
+
+## Incidental
+
+`original/videocfg.bin` embeds this machine's GPU string (`NVIDIA GeForce RTX 5070 Ti`), so
+the committed canonical was generated on this machine and is **not portable** to another
+GPU. Not a defect, but worth knowing before treating it as universal.

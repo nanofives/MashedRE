@@ -51,8 +51,24 @@ Stock `MASHED.exe` does not boot to main menu on Win11 + modern GPUs. One-comman
    - `disable_log` — neutralize the broken boot file-log (partial fix alone, ~80% boot).
    - `fix_fopen` — **ROOT boot fix**: NULL out garbage `FILE*` (<0x10000) from `FUN_004a4541`; boots 8/8.
    - `fix_joypad` — guard the garbage device pointer in `FUN_00495870`; boots 8/8 with a controller.
-   - `skip_intro` — **PREFERRED intro-skip**: replaces the 5 intro `.mpg` with empty 1-frame movies.
+   - `skip_intro` — **PREFERRED intro-skip**, and note it is a **DATA patch, not one of the nine**:
+     it replaces 5 `.mpg` files (`intro`, `renderware`, `supersonic`, `empire`, `small`), leaving
+     `MASHED.exe` untouched. Verified 2026-08-18: all five are 167,414 bytes; `frontend.mpg`
+     is untouched at 38 MB.
    - `skip_movies` — OPTIONAL small.mpg-call NOP; MUST keep the `push 0` at `0x40283d` (stack-imbalance history in BOOT_PATCHES.md); redundant next to `skip_intro`.
+   **Verified byte-for-byte 2026-08-18** (`re/analysis/binary_claims_audit_20260818.md`):
+   diffing `MASHED.exe` against `MASHED.exe.unpatched` gives 111 bytes in 14 clusters, and
+   **every cluster maps to a documented patch address** — no undocumented modification exists.
+   The applied set is exactly nine: `show_windowed` `0x00498dbc`, `skip_audio_com` `0x005bc750`,
+   `skip_selector` `0x004951f0`, `skip_controller_dialog` `0x004951aa`, `fix_camera_res`
+   `0x00498bc0`/`0x00498bd0`, `disable_log` `0x004963e7`/`0x00496400`/`0x00496490`, `fix_fopen`
+   `0x004a4541`, `fix_joypad` `0x00495870`, `skip_movies` `0x0040283f`. `fix_fopen` and
+   `fix_joypad` are detours into code caves at `0x0050f6c4` and `0x00508bd5`.
+   **`scripts/` holds 21 `patch_mashed_*.py`; 11 are NOT applied** and are not part of the
+   boot recipe: `clean_exit`, `fix_movie_uaf`, `force_keyboard`, `heap_reserve`,
+   `no_focus_pause`, `skip_intro_logos`, `skip_teardown`, `unlock_all`, `unlock_restore`,
+   `unlock_tracks`, plus the retired `skip_powerups`.
+
 2. **Canonical `videocfg.bin`** from `scripts/canonical/videocfg_windowed.bin` (800×600).
 3. **Per-machine compat shim** via `scripts/setup_mashed_compat.ps1` — EMULATEHEAP is build-dependent (script toggles by OS build); never `DISABLEDXMAXIMIZEDWINDOWEDMODE` while the d3d9 shim is deployed. If MASHED suddenly AVs at boot: parse the newest crash dump with `scripts/parse_minidump.py`, re-run the setup script, clear the PCA Store — full decision tree in BOOT_PATCHES.md.
 4. **d3d9 shim** via `mashedmod\build_d3d9_shim.bat` — forces windowed 640×480 CreateDevice and hosts the frame limiter (`MASHED_FPS_CAP`, default 60; `MASHED_FPS_LOG=1` → `log/fps_limiter.txt`). Auto-copies the real d3d9 to `original\d3d9_real.dll`.
@@ -120,7 +136,7 @@ All commands run from the repo root (`C:\Users\maria\Desktop\Proyectos\Mashed`).
 # Build both targets (mashed_re.exe + mashed_re_dev.asi). Internally calls vcvars32.bat.
 mashedmod\build.bat
 
-# Apply the four binary patches to original\MASHED.exe (idempotent; skip if .unpatched
+# Apply the nine binary patches to original\MASHED.exe (idempotent; skip if .unpatched
 # is missing because that means a fresh original/ has not been backed up yet).
 # NOTE: patch_mashed_skip_powerups.py is RETIRED (causes boot crash #2; refuses to apply).
 py -3.12 scripts\patch_mashed_show_windowed.py
