@@ -1,37 +1,31 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-18T09:20:00Z",
+  "updatedAt": "2026-08-19T14:05:00Z",
   "sections": [
     {
-      "heading": "Current phase",
+      "heading": "Session 2026-08-19 (RE + audit)",
       "fields": [
-        { "label": "Phase", "value": "D1 - default renderer (invert MASHED_RENDER_LIBRW)", "kind": "text" },
-        { "label": "Renderer A/B", "value": "16/16, worst 1.01% (r5/car_3_weave) - reproduced on a fresh build 2026-08-18", "kind": "text" },
-        { "label": "D1 roadmap blocker", "value": "Does NOT reproduce (71.61/69.15/68.94 predate the mirror fix); control pair pending", "kind": "text" },
-        { "label": "Baseline build", "value": "clean, both targets", "kind": "text" }
+        { "label": "Commits on main today", "value": 13, "kind": "number" },
+        { "label": "Working tree", "value": "clean; all instrumentation reverted", "kind": "text" },
+        { "label": "scr1 composition gate", "value": "GREEN 468/468 - RED was a save-state mismatch, port correct", "kind": "text" },
+        { "label": "no_focus_pause", "value": "adopted (10th patch) + proven 15 vs 1 frames/15s unfocused", "kind": "text" }
       ]
     },
     {
-      "heading": "D0.7 linkage - answered 2026-08-18",
+      "heading": "Findings landed",
       "fields": [
-        { "label": "Unlinked .cpp triaged", "value": 124, "kind": "number" },
-        { "label": "True boot blocker", "value": "Audio/AudioDSound.cpp:95-96 - GUID deref of 0x005d09dc at load, the exact build.bat:101 pattern", "kind": "text" },
-        { "label": "Key finding", "value": "RH_ScopedInstall is inert in the exe (Stubs/HookSystemNoOp.cpp), so linking is boot-safe but NOT functional - bodies deref MASHED addresses unmapped in the standalone", "kind": "text" },
-        { "label": "Functional standalone today", "value": ["Save/FsOpen.cpp", "Save/VfsStream.cpp", "Save/ReplayTimeFormat.cpp", "Input/MemsetInline_ag1.cpp", "Particle/ParticleLeaves_ad4.cpp", "Particle/ParticleLeaves_ad5.cpp"], "kind": "list" }
+        { "label": "Dev names recovered", "value": "70 from Lua binding tables; 27 new hooks.csv rows, 39 renames", "kind": "text" },
+        { "label": "CLAUDE.md corrections", "value": ["Lua 5.x -> 4.0 (297 rows relabelled)", "MCI -> DirectShow", "launch.exe anchor (DOC-1 closed)", "9 -> 10 patches; +11 undocumented listed"], "kind": "list" },
+        { "label": "D0.7 linkage", "value": "answered; 6 RVA-free files linked (batch 1); ~12 more linkable, rest need porting", "kind": "text" },
+        { "label": "D1 renderer A/B", "value": "16/16 max 1.01%; roadmap blocker does not reproduce", "kind": "text" }
       ]
     },
     {
-      "heading": "New tooling",
+      "heading": "Open at session end",
       "fields": [
-        { "label": "re/tools/ab_report.py", "value": "batch 16-shot A/B: captures both arms, scores all shots, emits table + heatmaps + PNGs to the share folder", "kind": "text" },
-        { "label": "Replaces", "value": "hand-assembled RESULT.md tables from individual imgdiff.py runs", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "Open",
-      "fields": [
-        { "label": "Doc drift", "value": "RE_MASTER_PLAN still cites ROADMAP v2/R7; ROADMAP D1 section stale - replacements drafted, not applied", "kind": "text" },
-        { "label": "Uncommitted", "value": "ab_report.py + 3 verify dirs + Wave 1 briefs", "kind": "text" }
+        { "label": "Stranded on docs/reconcile", "value": "RE_MASTER_PLAN reconciliation (110 lines) - unique, not on main", "kind": "text" },
+        { "label": "Empty worktrees", "value": "d1-invert, save-rva-neutralize (no commits; children hit claude3 limit)", "kind": "text" },
+        { "label": "Not started", "value": "C2 D1 flag inversion; C3 Save RVA-tunnel port", "kind": "text" }
       ]
     }
   ]
