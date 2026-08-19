@@ -17,12 +17,24 @@ See `re/INJECTION.md` for why we still need a hook harness during dev (it lets u
 ## Engine, anchors, and the "two Ghidra projects" arrangement
 
 - **Engine: RenderWare 3.x** (Criterion). Confirmed via `mashed.log` (`RwEngineInit`, `RwEngineOpen`, `RtFSManagerOpen`). The folder name `TOASTART` / `toastaudio` is asset/middleware naming, **not the engine name**. RenderWare structs/headers from `gta-reversed-modern/source/RenderWare/` apply directly.
-- **Other tech**: native PE32 i386 (MSVC-era), DirectX 9.0c, MCI for video, Lua 4.0 for joypad remap (version string at `0x005d8790`; corrected from "5.x" 2026-08-18, see U-9042), MSVBVM60 for the `launch.exe` copy-protection wrapper, custom `.piz` asset format (XeNTaX-documented), RenderWare RWS audio, RenderWare TXD textures.
+- **Build stamps** (embedded, read from the anchored binary 2026-08-18): `MASHED.exe`
+  `Jun 14 2004 11:39:38` (`0x005cd67c`/`0x005cd688`, printed by the `Build date : %s, %s`
+  format at `0x005cd663`); RenderWare core `Core built at Mar 17 2004 07:14:02`
+  (`0x005d8b41`). Linker version 7.0 = MSVC .NET 2002.
+- **Other tech**: native PE32 i386 (MSVC-era), DirectX 9.0c, DirectShow for video (COM: `CLSID_FilterGraph` + `IID_IGraphBuilder` + `IID_IMediaControl` GUIDs present, `ole32` imported; corrected from "MCI" 2026-08-18 -- there is no `mciSendString` anywhere in the image), Lua 4.0 for joypad remap (version string at `0x005d8790`; corrected from "5.x" 2026-08-18, see U-9042), MSVBVM60 for the `launch.exe` copy-protection wrapper, custom `.piz` asset format (XeNTaX-documented), RenderWare RWS audio, RenderWare TXD textures.
 - **Version anchor — verify before any hook authoring**:
   ```
   original\MASHED.exe   size 2,846,720   SHA-256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
-  original\launch.exe   size   978,944   SHA-256 694AA949B86AE26E5F1496A48383D1027244752A468BE7F678C54770B973EF79
+  original\launch.exe   size   978,944   SHA-256 01506209E42C79A4E5BEDB43DCE9FB953F0CA628B26AF9FCD49EE2522DF78DA2
   ```
+  **`launch.exe` anchor corrected 2026-08-18 (closes DOC-1).** The previously recorded
+  hash `694AA949B86AE26E...` matches no file present. The on-disk file is the right size
+  and is **confirmed NOT NoCD-patched** — both of MashedRunner's unpatched signatures are
+  intact at file offsets `0x0e8181` and `0x0e81a4`, and neither patched signature
+  (`90 90 90 90 90 90` / `EB 04 90 90 90 90`) appears — so the difference is not tampering.
+  The old value was simply never correct for this install. `launch.exe` RVAs are not used
+  by the port; this anchor only guards against silent substitution.
+
   If a binary differs, RVAs are invalid; abort and re-anchor before continuing.
 - **Two Ghidra projects** (sharing one Ghidra 12.0.3 install, located in TD5RE):
   - `Mashed.gpr` / `Mashed.rep` — GUI-edited master; canonical symbols, types, comments.
