@@ -262,3 +262,72 @@ and faithfully, default it to 0 at the fresh menu and set it only when the same 
 system, not a one-line constant, so it stays out of this evidence-gathering pass. But the
 open question from the previous section — *which writer runs before the frontend* — is now
 answered: **none of them do; the flag is simply 0.**
+
+
+---
+
+# RESOLVED: GREEN. It was a save-state mismatch, and the port was correct all along
+
+I was wrong three times about this defect. The record above preserves the wrong turns because
+they are instructive; this section is the verified answer.
+
+## The answer
+
+The two builds were compared with **different save files**:
+
+- The original burst (`menu_draw_burst`) ran `original/MASHED.exe`, which reads
+  `original/gamesave.bin`. Its byte at file `0x24F2C` (the `DAT_007f0f2c` gate, span+0x4ec)
+  is **0**, so item 3 is greyed.
+- The standalone reads `original/gamesave.bin` at boot **and then** `Campaign_LoadProgress`
+  (`Race/GameFlow.cpp:216`) reads its own progression save `mashed_re_gamesave.bin` and
+  calls `Nav_GameStateLoadSave(img)` a second time (`GameFlow.cpp:233`). That file is a real
+  progressed save (magic `0xDEADBEEF`, counter 9, 2/13 tracks) whose byte at `0x24F2C` is
+  **1**, so `has_savedata` ends at 1 and item 3 is enabled.
+
+Proven by instrumenting the render (`MASHED_DBG_AVAIL`): at screen 1 the standalone reported
+`has_savedata=1`, row_index 3 `enabled=1`. The port's `case 1: if (has_savedata==0) av[3]=0`
+never fired because the state was legitimately 1 for the save it had loaded.
+
+## The proof: matched state -> GREEN
+
+Parked `mashed_re_gamesave.bin` so `Campaign_LoadProgress` finds no progression save and the
+standalone keeps the blank-save default (`has_savedata=0`), matching the original's blank
+`original/gamesave.bin`. Re-captured and re-ran the same diff:
+
+```
+VERDICT: GREEN (match=468 mismatch=0 missing=0 extra=0)
+```
+
+**All four frames, 117/117 draws, zero mismatches.** With the save state matched, the
+standalone's draw list is byte-identical to the original's. The 20 alpha mismatches were
+entirely a save-state difference. The grey-out port is correct.
+
+## What every earlier root cause got wrong
+
+1. "The port derives the gate from a non-zero save byte." No: `original/gamesave.bin`'s byte
+   is 0, and that is the save the original reads too.
+2. "It is runtime progression state the port ignores." True of the original's flag, but not
+   the divergence: the port does model it, from the save.
+3. "The bug is downstream in avail-population." No: avail is populated correctly; the input
+   state simply differed.
+
+The single fact that would have refuted all three in 30 seconds was reading both save files'
+byte at `0x24F2C` — 0 in the original's, 1 in the standalone's. I did not do that until the
+fourth pass. The lesson is the same one that paid off elsewhere this session, applied too
+late here: check the artifact before writing the conclusion.
+
+## Is there still a real defect?
+
+Maybe a smaller one, filed rather than chased: the original sets `DAT_007f0f2c` to 1 only at
+a specific milestone (`DAT_00771980 == 0xc`, counter 12), while the standalone's save has the
+byte set at counter 9. Whether the standalone's `SaveProgress` sets that byte on the same
+condition the original would is **[UNCERTAIN]** and untested here. But it is a save-format
+fidelity question, not a rendering defect, and the parity gate is GREEN under matched state.
+
+## Harness note
+
+`build.bat` reused a stale `exe_main.obj` across two source edits — the instrumentation only
+took effect after `rm mashedmod/build/exe_main.obj`. If a source change seems to have no
+runtime effect, delete the object and rebuild before concluding anything about behaviour. The
+exe also chdir's into its output dir at boot, so debug files must use the same relative
+convention as `kLogPath` (`"foo.txt"`, not `"log/foo.txt"`).
