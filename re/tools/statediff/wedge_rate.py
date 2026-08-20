@@ -142,6 +142,10 @@ def main():
     ap.add_argument('--hooks', default='all')
     ap.add_argument('--drive', action='store_true', default=True)
     ap.add_argument('--no-drive', dest='drive', action='store_false')
+    ap.add_argument('--noop-cook', action='store_true',
+                    help='D2 isolation control: pass --statediff-noop-cook '
+                         '(attach the hot-path Interceptor with an empty callback, '
+                         'no forced input). Implies --no-drive.')
     ap.add_argument('--degenerate-below', type=int, default=100,
                     help='frames strictly below this (and >0) count DEGENERATE')
     ap.add_argument('--idle-min-frames', type=int, default=1000,
@@ -155,6 +159,8 @@ def main():
     ap.add_argument('--keep-msd', action='store_true',
                     help='keep every .msd (default keeps only failures, to save disk)')
     a = ap.parse_args()
+    if a.noop_cook:
+        a.drive = False          # isolation arm is idle + instrumentation
 
     out = Path(a.out_dir) if a.out_dir else ROOT / 'verify' / f'wedge_rate_{date.today():%Y%m%d}'
     out.mkdir(parents=True, exist_ok=True)
@@ -172,8 +178,10 @@ def main():
         if sys.executable and 'python' in sys.executable.lower():
             cmd = [sys.executable, str(LAUNCH), '--hooks', a.hooks,
                    '--statediff-out', str(msd)]
-        if a.drive:
+        if a.drive and not a.noop_cook:
             cmd.append('--statediff-drive')
+        if a.noop_cook:
+            cmd.append('--statediff-noop-cook')
 
         t0 = time.time()
         rc, timed_out, pr = None, False, None

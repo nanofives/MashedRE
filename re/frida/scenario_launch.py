@@ -102,6 +102,16 @@ function armCook(){ if (cookArmed) return 'already on'; cookArmed = true;
     b.add(0x0f).writeU8(gSteer < 0 ? 0xff : 0);
   }}); return 'cook injector armed (0x00496530)'; }
   catch(e){ return 'ERR '+e; } }
+// ISOLATION CONTROL (2026-08-20, D2): same attach point, same arming moment
+// (before the phase poke), EMPTY callback and no forced input. Separates the
+// cost of instrumenting a hot function from the effect of the race actually
+// starting -- dropping --statediff-drive removes both at once, so it cannot
+// tell them apart. Pair with a plain --no-drive run: if the phase-2 hang comes
+// back with this armed, the Interceptor attachment alone is the cause.
+function armCookNoop(){ if (cookArmed) return 'already on'; cookArmed = true;
+  try { Interceptor.attach(ga(COOK_RVA), { onLeave(){} });
+    return 'cook injector armed NO-OP (0x00496530)'; }
+  catch(e){ return 'ERR '+e; } }
 let stepCalls = 0, bypassOn = false, stepCounterOn = false;
 function armStepCounter(){
   if (stepCounterOn) return 'already on';
@@ -514,6 +524,7 @@ rpc.exports = {
   armBypass: function(){ return armBypass(); },
   armStepCounter: function(){ return armStepCounter(); },
   armCook: function(){ return armCook(); },
+  armCookNoop: function(){ return armCookNoop(); },
   drive: function(accel, steer){ gAccel = accel; gSteer = steer; return 1; },
   telStart: function(){ return telStart(); },
   telemetry: function(){ return JSON.stringify({
@@ -651,6 +662,11 @@ def main():
                          "pulses (wall-clock-timed input would break cross-boot determinism).")
     ap.add_argument("--statediff-car", type=int, default=0,
                     help="car slot to snapshot for --statediff-out (default 0 = player)")
+    ap.add_argument("--statediff-noop-cook", action="store_true",
+                    help="D2 isolation control: attach the cook Interceptor (0x00496530) at the "
+                         "same moment as --statediff-drive but with an EMPTY callback and no "
+                         "forced input, to separate hot-path instrumentation cost from the "
+                         "effect of the race starting. Ignored if --statediff-drive is set.")
     ap.add_argument("--statediff-drive", action="store_true",
                     help="statediff driving scenario: arm the cook injector (0x00496530) with "
                          "full accel / zero steer BEFORE the phase poke, so the forced input is "
@@ -762,6 +778,9 @@ def main():
             if args.statediff_drive:
                 print("  [statediff]", E.arm_cook())
                 print("  [statediff] drive: full accel, straight ->", E.drive(1, 0))
+            elif args.statediff_noop_cook:
+                # D2 isolation control: instrumentation without the drive.
+                print("  [statediff]", E.arm_cook_noop())
         time.sleep(0.2)
         # 3) poke the state machine into load+spawn
         print("  [launch] poke DAT_00771968 = 2 ->", E.launch())

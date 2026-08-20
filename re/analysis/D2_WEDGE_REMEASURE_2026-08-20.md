@@ -325,6 +325,60 @@ every healthy idle run. `wedge_rate.py` now applies the anchor test only when
 `--drive` is set and judges idle runs on frame count (`--idle-min-frames`,
 default 1000). Re-scored: **USABLE 10, SHORT 1, NOFILE 1**.
 
+## Isolation arm — dose-response, but the split is NOT resolved
+
+`verify/wedge_noopcook_20260820/` — n=12, new `--statediff-noop-cook`
+(`scenario_launch.py`): the **same** `Interceptor.attach` at `0x00496530`, armed
+at the **same moment** (before the phase poke), with an **empty callback** and
+**no forced input**. Idle plus instrumentation, nothing else.
+
+| Arm | Phase-2 hangs | Render collapse | Total | Rate |
+|---|---:|---:|---:|---:|
+| no-drive (no attach, no drive) | 0/12 | 1/12 | 1/12 | **8.3%** |
+| noop-cook (attach only) | 2/12 | 2/12 | 4/12 | **33.3%** |
+| drive (attach + drive) | 6/18 | 5/18 | 11/18 | **61.1%** |
+
+Monotone across all three arms, on both failure families. But the pairwise tests
+do not support declaring the mechanism:
+
+```
+phase-2 hangs   drive vs no-drive   p = 0.031   *
+                noop  vs no-drive   p = 0.239   ns
+                drive vs noop       p = 0.282   ns
+total failures  drive vs no-drive   p = 0.020   *
+                noop  vs no-drive   p = 0.320   ns
+```
+
+**Only the extreme comparison is significant.** Attachment alone is *not* proven
+to cause the hang: 2/12 against 0/12 is p = 0.24. The first no-op boot did
+reproduce a phase-2 hang immediately, which is what made this look decisive at
+n=1, and the batch shows why n=1 was not.
+
+So the honest state is: the full drive configuration is significantly worse than
+no drive (that stands, p = 0.031/0.020), and the ordering across three arms is
+consistent with *both* instrumentation and the race start contributing — but
+each individual step is underpowered at n=12. Separating them properly needs
+roughly n≈40–50 per arm to detect a ~17-point difference at 80% power, i.e.
+about 45 minutes of boots per arm at ~31 s each. **That has not been paid for,
+and the split should not be asserted until it is.**
+
+### The decision does not actually depend on resolving the split
+
+Both candidate mechanisms point at the same fix: **do not instrument
+`0x00496530` during phase 2.** `--statediff-drive` arms before the phase poke
+only so that frame 0 lines up with the first phase-3 tick
+(`scenario_launch.py:760`). Arming *after* phase 3 is reached keeps the drive
+and removes the instrumentation from track load entirely, which avoids both
+candidate mechanisms without needing to know which dominates.
+
+That is the experiment to run next (variant B): `--statediff-drive` with the
+cook armed post-phase-3. If it restores the ~8% baseline rate **while keeping a
+usable driving capture**, the harness fix is proven end-to-end and D2's "wedge
+rate zero" gate becomes a property of how statediff is invoked. The cost is that
+frame 0 no longer coincides with the phase-3 anchor, so the alignment would move
+to the `+0xBF4` countdown witness — which is already the documented drive anchor
+and is deterministic to one frame, so this is likely free.
+
 ## [UNCERTAIN] — the gap that must close before concluding
 
 RESOLVED by the second pass above — the short runs are failures (frozen state),
