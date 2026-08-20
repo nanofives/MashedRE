@@ -41,17 +41,50 @@ def msd_frames(p: Path):
     return body // REC, body % REC
 
 
+ANCHOR_OFF = 0xBF4       # countdown-start witness (NOISE_MASK.md: 0 -> 0x32)
+DRIVE_WINDOW = 314       # documented valid drive-diff window past the anchor
+
+
+def msd_anchor(p: Path):
+    """Frame ordinal where the countdown-start witness +0xBF4 goes non-zero.
+
+    THIS is the meaningful usability test, not distinctness. Measured: the
+    anchor lands at frame 783 (hooked, today) and 782 (stock, 2026-07-31) --
+    within one frame across 20 days and different builds, so it is effectively
+    deterministic. Motion (|vel.z| > 1) starts at 898/897. The documented
+    comparison window is [anchor, anchor+314] and is where all the driving is;
+    everything before the anchor is the stationary pre-countdown phase.
+
+    A capture is only usable if it REACHES the anchor. Returns None if not.
+    """
+    frames, _ = msd_frames(p)
+    if not frames:
+        return None
+    try:
+        import struct
+        with p.open('rb') as fh:
+            fh.seek(HDR)
+            for i in range(frames):
+                rec = fh.read(REC)
+                if len(rec) < REC:
+                    break
+                if struct.unpack_from('<I', rec, 4 + ANCHOR_OFF)[0] != 0:
+                    return i
+    except Exception:
+        return None
+    return None
+
+
 def msd_distinct(p: Path):
     """Count DISTINCT payloads in a capture.
 
-    This -- not the frame count -- is the discriminating signal. Measured over
-    n=18 (verify/wedge_rate2_20260820) the outcome is categorical with no
-    overlap: a usable drive capture has 268-271 distinct payloads, a FROZEN one
-    has exactly 4 no matter whether it captured 8 frames or 735, and a wedged
-    one has 0. A FROZEN capture passes every check the protocol had (non-empty,
-    healthy-looking frame count) while containing almost no state evolution to
-    diff -- so it can diff GREEN against another FROZEN capture and be recorded
-    as evidence of correctness. Frame count cannot see that.
+    CAUTION -- this is NOT a usability test, and an earlier version of this file
+    wrongly treated it as one. The stationary pre-countdown phase genuinely has
+    only 4-5 distinct states: slicing a KNOWN-GOOD 1097-frame capture to the
+    lengths of the short runs gives distinct=4 at 236, 446 and 735 frames, and 5
+    at 783. So "4 distinct" does not mean the state froze -- it means the capture
+    ended before the countdown, where 4 is the correct value. Use msd_anchor()
+    to decide usability; keep this only as a descriptive statistic.
     """
     frames, _ = msd_frames(p)
     if not frames:
@@ -111,9 +144,9 @@ def main():
     ap.add_argument('--no-drive', dest='drive', action='store_false')
     ap.add_argument('--degenerate-below', type=int, default=100,
                     help='frames strictly below this (and >0) count DEGENERATE')
-    ap.add_argument('--min-distinct', type=int, default=100,
-                    help='distinct payloads below this count FROZEN (measured: '
-                         'usable=268-271, frozen=exactly 4)')
+    ap.add_argument('--min-window', type=int, default=200,
+                    help='frames required inside [anchor, anchor+314] to count '
+                         'USABLE (measured: good runs give 301-314)')
     ap.add_argument('--out-dir', default='')
     ap.add_argument('--timeout', type=int, default=240)
     ap.add_argument('--keep-msd', action='store_true',
@@ -161,15 +194,19 @@ def main():
 
         frames, rem = msd_frames(msd)
         distinct = msd_distinct(msd)
+        anchor = msd_anchor(msd)
+        # Usability = reached the countdown anchor and holds some of the
+        # documented [anchor, anchor+314] window. Frame count and distinctness
+        # both mis-classify here (see msd_distinct docstring).
+        window = None if anchor is None else max(0, min(frames, anchor + DRIVE_WINDOW) - anchor)
         if frames is None:
             verdict = 'NOFILE'
         elif frames == 0:
             verdict = 'EMPTY'
-        elif distinct is not None and distinct < a.min_distinct:
-            # Static state -- unusable regardless of how many frames it holds.
-            verdict = 'FROZEN'
-        elif frames < a.degenerate_below:
-            verdict = 'DEGENERATE'
+        elif anchor is None:
+            verdict = 'PRE-ANCHOR'
+        elif window < a.min_window:
+            verdict = 'SHORT-WINDOW'
         else:
             verdict = 'USABLE'
         if timed_out:
@@ -180,10 +217,10 @@ def main():
             kill_only(leftover)
 
         results.append({'run': i, 'frames': frames, 'distinct': distinct,
-                        'remainder': rem,
+                        'anchor': anchor, 'window': window, 'remainder': rem,
                         'verdict': verdict, 'rc': rc, 'secs': round(dt, 1),
                         'leftover_pids': sorted(leftover), 'msd': msd.name})
-        print(f'  run {i:2d}/{a.runs}  {verdict:<18} frames={frames} distinct={distinct}  '
+        print(f'  run {i:2d}/{a.runs}  {verdict:<14} frames={frames} anchor={anchor} window={window} distinct={distinct}  '
               f'{dt:5.1f}s  rc={rc}{"  LEFTOVER" if leftover else ""}')
 
         if verdict.startswith('USABLE') and not a.keep_msd:
@@ -192,9 +229,9 @@ def main():
 
     n = len(results)
     healthy = sum(1 for r in results if r['verdict'].startswith('USABLE'))
-    frozen = sum(1 for r in results if r['verdict'].startswith('FROZEN'))
+    frozen = sum(1 for r in results if r['verdict'].startswith(('PRE-ANCHOR', 'SHORT-WINDOW')))
     empty = sum(1 for r in results if r['verdict'].startswith('EMPTY'))
-    degen = sum(1 for r in results if r['verdict'].startswith('DEGENERATE'))
+    degen = 0
     nofile = sum(1 for r in results if r['verdict'].startswith('NOFILE'))
     bad = n - healthy
     lo, hi = wilson(bad, n)
@@ -209,8 +246,8 @@ def main():
     (out / 'REPORT.json').write_text(json.dumps(summary, indent=2), encoding='utf-8')
 
     print(f'\n=== wedge rate over n={n} ===')
-    print(f'  USABLE      {healthy}   (state evolving, >= {a.min_distinct} distinct payloads)')
-    print(f'  FROZEN      {frozen}   (static state -- looks healthy by frame count, is not)')
+    print(f'  USABLE      {healthy}   (>= {a.min_window} frames inside the anchor window)')
+    print(f'  PRE/SHORT   {frozen}   (ended before the countdown anchor, or too little window)')
     print(f'  EMPTY       {empty}   (0 frames -- never reached phase 3)')
     print(f'  DEGENERATE  {degen}   (1..{a.degenerate_below - 1} frames)')
     if nofile:

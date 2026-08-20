@@ -182,6 +182,89 @@ failures, Wilson 95% [39.6%, 70.5%]**. Against the recorded ~17%, the
 conservative reading is that **more than half of full-set boots do not produce a
 usable capture.**
 
+## CORRECTION (same day) — "FROZEN" was the wrong mechanism, and the car does move
+
+Chasing the `vel=[0,0,0]` observation overturned my own framing above. Both
+corrections are recorded rather than edited away.
+
+### 1. The car moves. `vel=[0,0,0]` was a sampling artifact.
+
+Velocity lives at record `+0x9b0/+0x9b4/+0x9b8` (`scenario_launch.py:569`). In a
+usable capture it is **not** static:
+
+| Field | Distinct | Range |
+|---|---:|---|
+| `vel.x` `+0x9b0` | 203 | −55.26 … +9.12 |
+| `vel.y` `+0x9b4` | 28 | 0 … +160.38 |
+| `vel.z` `+0x9b8` | 203 | −4054.74 … 0 |
+| `yawrate` `+0x9c0` | 188 | −0.0058 … +0.0561 |
+| `fwd.z` `+0x9dc` | 112 | 0 … −1.0000 |
+
+Motion (`|vel.z| > 1`) begins at **frame 898** (hooked, today) and **897**
+(stock, 2026-07-31). The launcher prints status at +4 s / +9 s / +13 s / +18 s,
+and a usable run captures ~1097 frames ≈ 18.3 s, so nearly every printed sample
+lands in the stationary pre-countdown phase. The console line is misleading, not
+the data.
+
+The large magnitudes are also **not** a hook defect: stock `drive_stock_a.msd`
+reaches `|vel.z|` 4341 with 992 frames over 200, first at frame 918. Hooked
+today peaks at 4054. I checked stock before calling these absurd.
+
+### 2. The short runs are truncations, not state freezes
+
+The claim above that FROZEN runs have "static state" is **wrong**. Slicing the
+known-good 1097-frame capture down to the short runs' lengths:
+
+```
+first 236 frames -> 4 distinct      first 783 frames (pre-anchor) ->   5 distinct
+first 446 frames -> 4 distinct      frames 783..1097 (the window) -> 263 distinct
+first 735 frames -> 4 distinct      whole capture                 -> 268 distinct
+```
+
+**The stationary pre-countdown phase genuinely has 4–5 distinct states.** So
+"4 distinct" is the *correct* value for a capture that ended early, not evidence
+that anything froze. `distinct` cannot distinguish a truncated healthy run from
+a defective one, and using it as a usability test — as the version of
+`wedge_rate.py` committed in `a1861251` did — was a mistake.
+
+### 3. The right test is whether the capture reaches the countdown anchor
+
+`NOISE_MASK.md:33-45` anchors the drive comparison on `+0xBF4` going non-zero
+(countdown start) and declares verdicts valid only inside `--until 314`. So
+usability = does the capture contain `[anchor, anchor+314]`. Re-scored:
+
+| Capture | Frames | Anchor | Window | Verdict |
+|---|---:|---:|---:|---|
+| `wedge_probe_00` (today) | 1097 | 783 | 314 | usable |
+| `drive_stock_a` | 2731 | 782 | 314 | usable |
+| `drive_hooked_phys` | 2099 | 771 | 314 | usable |
+| `flake_2` … `flake_6` | 481–536 | **none** | — | **zero comparable frames** |
+| `fix_ring_alone` | 533 | **none** | — | **zero comparable frames** |
+
+The anchor is reproducible to within one frame (783 vs 782) across 20 days and
+different builds, so this is a stable test, not a threshold guess.
+
+**The conclusion about the 1/6 basis survives, and is stronger for the right
+reason.** `flake_2..6` and `fix_ring_alone` do not merely have low
+distinctness — they **never reach the countdown at all**, so they contain zero
+frames inside the only window in which a drive verdict is defined. The "5/6
+boots healthy" tally counted captures that cannot support a drive A/B claim.
+
+Note also that a usable run's ~1097 frames only just covers `anchor+314` (783 +
+314 = 1097). Runs at 1084–1095 frames cover 301–312 of the 314, so most
+"usable" captures are a few frames short of the full documented window.
+`wedge_rate.py` now classifies on the anchor window (`msd_anchor`,
+`--min-window`, default 200) and `msd_distinct` is demoted to a descriptive
+statistic with the trap documented in its docstring.
+
+### What this does NOT change
+
+The failure counts stand: EMPTY 6/18 in pass 2 (all six with
+`TIMEOUT waiting for race running (phase 3) (last phase=2)`), and the short runs
+are still unusable for statediff. What changes is the mechanism label — early
+termination, not state freeze — and therefore the direction of any follow-up:
+the question is why a run ends before frame ~783, not why state stops evolving.
+
 ## [UNCERTAIN] — the gap that must close before concluding
 
 RESOLVED by the second pass above — the short runs are failures (frozen state),
