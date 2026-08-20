@@ -1,0 +1,198 @@
+{
+  "runs": 18,
+  "healthy": 10,
+  "empty": 6,
+  "degenerate": 2,
+  "nofile": 0,
+  "failures": 8,
+  "failure_rate": 0.4444,
+  "wilson95": [
+    0.2456,
+    0.6628
+  ],
+  "hooks": "all",
+  "drive": true,
+  "degenerate_below": 100,
+  "runs_detail": [
+    {
+      "run": 1,
+      "frames": 1100,
+      "remainder": 0,
+      "verdict": "HEALTHY",
+      "rc": 0,
+      "secs": 27.8,
+      "leftover_pids": [],
+      "msd": "run_01.msd"
+    },
+    {
+      "run": 2,
+      "frames": 735,
+      "remainder": 0,
+      "verdict": "HEALTHY",
+      "rc": 0,
+      "secs": 29.7,
+      "leftover_pids": [],
+      "msd": "run_02.msd"
+    },
+    {
+      "run": 3,
+      "frames": 1089,
+      "remainder": 0,
+      "verdict": "HEALTHY",
+      "rc": 0,
+      "secs": 27.8,
+      "leftover_pids": [],
+      "msd": "run_03.msd"
+    },
+    {
+      "run": 4,
+      "frames": 8,
+      "remainder": 0,
+      "verdict": "DEGENERATE",
+      "rc": 0,
+      "secs": 30.7,
+      "leftover_pids": [],
+      "msd": "run_04.msd"
+    },
+    {
+      "run": 5,
+      "frames": 0,
+      "remainder": 0,
+      "verdict": "EMPTY",
+      "rc": 1,
+      "secs": 47.6,
+      "leftover_pids": [],
+      "msd": "run_05.msd"
+    },
+    {
+      "run": 6,
+      "frames": 1088,
+      "remainder": 0,
+      "verdict": "HEALTHY",
+      "rc": 0,
+      "secs": 28.4,
+      "leftover_pids": [],
+      "msd": "run_06.msd"
+    },
+    {
+      "run": 7,
+      "frames": 0,
+      "remainder": 0,
+      "verdict": "EMPTY",
+      "rc": 1,
+      "secs": 47.8,
+      "leftover_pids": [],
+      "msd": "run_07.msd"
+    },
+    {
+      "run": 8,
+      "frames": 1095,
+      "remainder": 0,
+      "verdict": "HEALTHY",
+      "rc": 0,
+      "secs": 28.1,
+      "leftover_pids": [],
+      "msd": "run_08.msd"
+    },
+    {
+      "run": 9,
+      "frames": 0,
+      "remainder": 0,
+      "verdict": "EMPTY",
+      "rc": 1,
+      "secs": 47.4,
+      "leftover_pids": [],
+      "msd": "run_09.msd"
+    },
+    {
+      "run": 10,
+      "frames": 1084,
+      "remainder": 0,
+      "verdict": "HEALTHY",
+      "rc": 0,
+      "secs": 27.2,
+      "leftover_pids": [],
+      "msd": "run_10.msd"
+    },
+    {
+      "run": 11,
+      "frames": 0,
+      "remainder": 0,
+      "verdict": "EMPTY",
+      "rc": 1,
+      "secs": 47.5,
+      "leftover_pids": [],
+      "msd": "run_11.msd"
+    },
+    {
+      "run": 12,
+      "frames": 0,
+      "remainder": 0,
+      "verdict": "EMPTY",
+      "rc": 1,
+      "secs": 49.3,
+      "leftover_pids": [],
+      "msd": "run_12.msd"
+    },
+    {
+      "run": 13,
+      "frames": 236,
+      "remainder": 0,
+      "verdict": "HEALTHY",
+      "rc": 0,
+      "secs": 29.8,
+      "leftover_pids": [],
+      "msd": "run_13.msd"
+    },
+    {
+      "run": 14,
+      "frames": 1086,
+      "remainder": 0,
+      "verdict": "HEALTHY",
+      "rc": 0,
+      "secs": 27.6,
+      "leftover_pids": [],
+      "msd": "run_14.msd"
+    },
+    {
+      "run": 15,
+      "frames": 8,
+      "remainder": 0,
+      "verdict": "DEGENERATE",
+      "rc": 0,
+      "secs": 30.5,
+      "leftover_pids": [],
+      "msd": "run_15.msd"
+    },
+    {
+      "run": 16,
+      "frames": 0,
+      "remainder": 0,
+      "verdict": "EMPTY",
+      "rc": 1,
+      "secs": 48.2,
+      "leftover_pids": [],
+      "msd": "run_16.msd"
+    },
+    {
+      "run": 17,
+      "frames": 1088,
+      "remainder": 0,
+      "verdict": "HEALTHY",
+      "rc": 0,
+      "secs": 28.7,
+      "leftover_pids": [],
+      "msd": "run_17.msd"
+    },
+    {
+      "run": 18,
+      "frames": 446,
+      "remainder": 0,
+      "verdict": "HEALTHY",
+      "rc": 0,
+      "secs": 30.2,
+      "leftover_pids": [],
+      "msd": "run_18.msd"
+    }
+  ]
+}

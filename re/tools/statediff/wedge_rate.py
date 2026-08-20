@@ -41,6 +41,35 @@ def msd_frames(p: Path):
     return body // REC, body % REC
 
 
+def msd_distinct(p: Path):
+    """Count DISTINCT payloads in a capture.
+
+    This -- not the frame count -- is the discriminating signal. Measured over
+    n=18 (verify/wedge_rate2_20260820) the outcome is categorical with no
+    overlap: a usable drive capture has 268-271 distinct payloads, a FROZEN one
+    has exactly 4 no matter whether it captured 8 frames or 735, and a wedged
+    one has 0. A FROZEN capture passes every check the protocol had (non-empty,
+    healthy-looking frame count) while containing almost no state evolution to
+    diff -- so it can diff GREEN against another FROZEN capture and be recorded
+    as evidence of correctness. Frame count cannot see that.
+    """
+    frames, _ = msd_frames(p)
+    if not frames:
+        return 0 if frames == 0 else None
+    seen = set()
+    try:
+        with p.open('rb') as fh:
+            fh.seek(HDR)
+            while True:
+                rec = fh.read(REC)
+                if len(rec) < REC:
+                    break
+                seen.add(hash(rec[4:]))      # skip frame_idx, hash the payload
+    except Exception:
+        return None
+    return len(seen)
+
+
 def mashed_pids():
     try:
         out = subprocess.run(
@@ -82,6 +111,9 @@ def main():
     ap.add_argument('--no-drive', dest='drive', action='store_false')
     ap.add_argument('--degenerate-below', type=int, default=100,
                     help='frames strictly below this (and >0) count DEGENERATE')
+    ap.add_argument('--min-distinct', type=int, default=100,
+                    help='distinct payloads below this count FROZEN (measured: '
+                         'usable=268-271, frozen=exactly 4)')
     ap.add_argument('--out-dir', default='')
     ap.add_argument('--timeout', type=int, default=240)
     ap.add_argument('--keep-msd', action='store_true',
@@ -128,14 +160,18 @@ def main():
                 encoding='utf-8', errors='replace')
 
         frames, rem = msd_frames(msd)
+        distinct = msd_distinct(msd)
         if frames is None:
             verdict = 'NOFILE'
         elif frames == 0:
             verdict = 'EMPTY'
+        elif distinct is not None and distinct < a.min_distinct:
+            # Static state -- unusable regardless of how many frames it holds.
+            verdict = 'FROZEN'
         elif frames < a.degenerate_below:
             verdict = 'DEGENERATE'
         else:
-            verdict = 'HEALTHY'
+            verdict = 'USABLE'
         if timed_out:
             verdict += '+TIMEOUT'
 
@@ -143,25 +179,27 @@ def main():
         if leftover:
             kill_only(leftover)
 
-        results.append({'run': i, 'frames': frames, 'remainder': rem,
+        results.append({'run': i, 'frames': frames, 'distinct': distinct,
+                        'remainder': rem,
                         'verdict': verdict, 'rc': rc, 'secs': round(dt, 1),
                         'leftover_pids': sorted(leftover), 'msd': msd.name})
-        print(f'  run {i:2d}/{a.runs}  {verdict:<18} frames={frames}  '
+        print(f'  run {i:2d}/{a.runs}  {verdict:<18} frames={frames} distinct={distinct}  '
               f'{dt:5.1f}s  rc={rc}{"  LEFTOVER" if leftover else ""}')
 
-        if verdict.startswith('HEALTHY') and not a.keep_msd:
+        if verdict.startswith('USABLE') and not a.keep_msd:
             try: msd.unlink()
             except Exception: pass
 
     n = len(results)
-    healthy = sum(1 for r in results if r['verdict'].startswith('HEALTHY'))
+    healthy = sum(1 for r in results if r['verdict'].startswith('USABLE'))
+    frozen = sum(1 for r in results if r['verdict'].startswith('FROZEN'))
     empty = sum(1 for r in results if r['verdict'].startswith('EMPTY'))
     degen = sum(1 for r in results if r['verdict'].startswith('DEGENERATE'))
     nofile = sum(1 for r in results if r['verdict'].startswith('NOFILE'))
     bad = n - healthy
     lo, hi = wilson(bad, n)
 
-    summary = {'runs': n, 'healthy': healthy, 'empty': empty,
+    summary = {'runs': n, 'usable': healthy, 'frozen': frozen, 'empty': empty,
                'degenerate': degen, 'nofile': nofile, 'failures': bad,
                'failure_rate': round(bad / n, 4) if n else None,
                'wilson95': [round(lo, 4), round(hi, 4)],
@@ -171,7 +209,8 @@ def main():
     (out / 'REPORT.json').write_text(json.dumps(summary, indent=2), encoding='utf-8')
 
     print(f'\n=== wedge rate over n={n} ===')
-    print(f'  HEALTHY     {healthy}')
+    print(f'  USABLE      {healthy}   (state evolving, >= {a.min_distinct} distinct payloads)')
+    print(f'  FROZEN      {frozen}   (static state -- looks healthy by frame count, is not)')
     print(f'  EMPTY       {empty}   (0 frames -- never reached phase 3)')
     print(f'  DEGENERATE  {degen}   (1..{a.degenerate_below - 1} frames)')
     if nofile:

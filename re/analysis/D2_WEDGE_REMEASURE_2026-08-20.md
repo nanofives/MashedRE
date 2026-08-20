@@ -99,20 +99,113 @@ Index bisection (`MASHED_HOOK_LO`/`HI`) assumes a specific culprit and, per
 Against a 27.8% flaky predicate it also needs materially more than the assumed
 ~3 boots per verdict. On this evidence a bisection is the wrong next spend.
 
+## Second pass (n=18, stdout retained) — the truncated runs ARE failures, and the classifier was wrong
+
+`verify/wedge_rate2_20260820/`. Same config, stdout kept per run. Result:
+**USABLE 7, FROZEN 5, EMPTY 6 — failures 11/18 = 61.1%, Wilson 95% [38.6%, 79.7%]**.
+
+The question this pass was run to settle — are the short captures legitimate
+race endings? — is answered **no**, and the discriminator is not frame count at
+all. It is the number of **distinct payloads** in the capture:
+
+| Run class | n | Frames | Distinct payloads |
+|---|---:|---|---|
+| USABLE | 7 | 1084–1100 | **268–271** |
+| FROZEN | 5 | 8, 8, 236, 446, 735 | **exactly 4** |
+| EMPTY | 6 | 0 | 0 |
+
+Categorical, with **zero overlap**. A FROZEN run reaches phase 3, survives to
+the `+18s` tick, exits cleanly with `rc=0`, and reports a healthy-looking frame
+count — while the captured vehicle state takes only four distinct values for the
+whole run. Frame count cannot see this: run 02 captured **735 frames with 4
+distinct payloads**. The EMPTY six are the documented mechanism, all six showing
+`TIMEOUT waiting for race running (phase 3) (last phase=2)` at ~48 s.
+
+### This invalidates the "5/6 healthy" basis of the 1/6 figure
+
+Re-scoring the archived captures with the same measure:
+
+```
+flake_2.msd   532 frames    4 distinct      flake_5.msd   536 frames    4 distinct
+flake_3.msd   481 frames    4 distinct      flake_6.msd   536 frames    4 distinct
+flake_4.msd   519 frames    4 distinct
+fix_ring_alone.msd  533 frames    4 distinct
+```
+
+**All five captures that constitute the "5/6 boots healthy" claim have exactly 4
+distinct payloads.** By the criterion established here they are FROZEN, not
+healthy — so the 1/6 figure does not measure what it was taken to measure, and
+the full-set configuration produced **zero** usable captures that day.
+
+The scenario the flake runs used is not recorded, so this is checked against
+both baselines and holds either way:
+
+| Capture | Frames | Distinct | distinct/frame |
+|---|---:|---:|---:|
+| `drive_stock_a.msd` (drive baseline) | 2731 | 1798 | 0.658 |
+| `run_01` today (drive, usable) | 1100 | 268 | 0.244 |
+| `stock_a.msd` (**idle** baseline) | 1249 | 34 | 0.027 |
+| `flake_2..6` | 481–536 | 4 | **0.008** |
+
+4 distinct is far below even the *idle* stock baseline of 34, so the flake
+captures are degenerate whichever scenario they used.
+
+**`fix_ring_alone.msd` is also frozen** (533 frames, 4 distinct). That is the
+capture cited as verifying the U-6701 ring fix ("culprit-alone boot healthy,
+533 frames"). The fix itself is separately supported by the decompiled
+ABI defect, but its runtime verification is weaker than recorded.
+
+Two archived pairs are **not** affected: `stock_a/b.msd` at 34 distinct are the
+idle noise-floor pair, where low state change is the expected condition and is
+the point of the measurement; `drive_stock_a/b.msd` (1798/1861 distinct) and
+`drive_hooked_phys.msd` (1282) are richly evolving.
+
+### The real risk this exposes
+
+A FROZEN capture passes every check the protocol had — non-empty, plausible
+frame count — and would diff **GREEN against another FROZEN capture**, because
+neither side has state to disagree about. Nothing in `statediff.py` or the
+README requires a minimum state-evolution count. So the harness can currently
+manufacture false GREENs, and a GREEN is only as strong as the distinctness of
+the two captures behind it.
+
+`wedge_rate.py` now computes distinct payloads directly from the `.msd`
+(`msd_distinct`) and classifies FROZEN on it, defaulting to `--min-distinct 100`.
+
+### Pooled rate
+
+Pass 1 (5/18, frame-count classifier only) and pass 2 (11/18, full classifier)
+are not measuring the same predicate, so they are not averaged as a rate. Pass 1
+re-scored by frame-count bands gives 9/18 with a full-length capture; pass 2
+gives 7/18 usable. Pooling only the usable/unusable split: **20/36 = 55.6%
+failures, Wilson 95% [39.6%, 70.5%]**. Against the recorded ~17%, the
+conservative reading is that **more than half of full-set boots do not produce a
+usable capture.**
+
 ## [UNCERTAIN] — the gap that must close before concluding
 
-**Whether the TRUNCATED and DEGENERATE runs are failures at all.** The scenario
-is `--mode 10` (QuickRace) with `--hold 20`; a capture also stops if the race
-legitimately ends — AI wins, the car is destroyed, the round completes. So the
-160–486 frame runs may be correct behaviour rather than a defect, and the 5- and
-89-frame runs may not share a mechanism with the 0-frame ones.
+RESOLVED by the second pass above — the short runs are failures (frozen state),
+not legitimate race endings. What remains open:
 
-This n = 18 pass **cannot** separate those, because it discarded the launcher's
-stdout. Missing evidence: the phase/verdict line at termination for each
-non-full run. `wedge_rate.py` now writes `run_NN.stdout.txt` for every
-non-timeout run, so a repeat pass answers it directly. Until then the honest
-claim is bounded: **EMPTY 2/18 and NOFILE 1/18 are unambiguous failures (16.7%
-combined); the other 4 short and 2 degenerate runs are unclassified.**
+**Whether FROZEN and EMPTY share one mechanism.** They present differently:
+EMPTY never leaves phase 2 and times out at ~48 s with `rc=1`; FROZEN reaches
+phase 3, runs the full hold, exits `rc=0`, and simply never evolves the vehicle
+record. Whether one race produces both outcomes depending on when it lands, or
+these are two defects, is not established. Missing evidence: a writer-level
+trace of the vehicle record on a FROZEN run — is nothing writing it, or is the
+capture hook (`FUN_004c1be0`) not firing?
+
+**Why `vel=[0, 0, 0]` on every run, including USABLE ones.** The launcher
+reports zero velocity at every tick in all 18 runs even with `--statediff-drive`
+(full accel). So the car may not be moving in any run, and the 268-distinct
+"usable" captures may be evolving something other than motion. This weakens the
+drive scenario as a physics-evidence vehicle and is not noted anywhere.
+
+**Whether the rate changed with today's merges.** The `.asi` was rebuilt after
+`0e6e0834` / `218b6598`, but Slice B left the `.asi` branch of
+`GameSaveBuffer.cpp` untouched by construction and the D1 flag is read in the
+exe target, so neither should touch this path. No pre-merge measurement at this
+n exists to compare against.
 
 Also unverified: whether the rate changed as a result of today's merges. The
 `.asi` was rebuilt, but Slice B left the `#else` (.asi) branch of
