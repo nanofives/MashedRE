@@ -115,6 +115,14 @@ void SaveProgress() {
 }
 }  // namespace
 
+// Bind point for Save/GameSaveBuffer.cpp (standalone exe build only). Exposes the
+// live save-state counter (models DAT_008A95AC) BY NAME, so the ported
+// Serialize/DeserializeToBuffer neutralize their 0x008A95AC tunnel by binding to
+// THIS real engine state (bumped by SaveProgress at ++g_saveCounter) rather than a
+// private duplicate. Anon-namespace members are visible in the enclosing namespace,
+// so this accessor (external linkage) can take the counter's address.
+std::uint32_t* GameFlow_SaveCounterPtr() { return &g_saveCounter; }
+
 GameMode GameFlow_Mode() { return g_mode; }
 RaceSession& GameFlow_Session() { return g_session; }
 
