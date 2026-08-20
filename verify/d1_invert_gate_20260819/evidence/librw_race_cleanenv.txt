@@ -1,0 +1,169 @@
+# librw in-loop submit (E2'b step 3) — STATIC WORLD ONLY
+# cars, props, particles, pickups, sky and HUD still come from the
+# D3D9 path, so imgdiff deltas against verify/librw_ref/ are SCOPE.
+ok: state block created
+ok: init (640x480)
+model[0] registered: atomics=1 uvanim=1
+model[1] registered: atomics=1 uvanim=0
+model[2] registered: atomics=1 uvanim=0
+model[3] registered: atomics=1 uvanim=0
+model[4] registered: atomics=1 uvanim=1
+model[5] registered: atomics=1 uvanim=0
+model[6] registered: atomics=1 uvanim=0
+model[7] registered: atomics=1 uvanim=0
+ok: scene built — sectors=12 mats=13 tris=16480 verts=16229 (dicts=1)
+model[8] registered: atomics=71 uvanim=0
+f0      SURFACES depth d3d9=08AD96E0 librw=08AD96E0 SHARED | rt d3d9=08A78B60 librw=08A78B60 SHARED | client=640x480 raster=640x480
+f0      DEPTHPROBE p=(-25.21,0.04,15.78)
+        d3d9  ndc=(0.000000000,-0.741602361,0.943091631) w=1.716570
+        librw ndc=(0.000001852,-0.741601706,0.943091631) w=1.716570
+        dz=0.000e+00 (ndc units)
+        MATCMP max|d3d9-librw|=7.629e-06 at elem 12 (row 3 col 0)  maxrel=2.042e-07
+        d3d9 col2 = 0.020306986 -0.263156921 0.966022432 -13.104461670
+        librw col2= 0.020306984 -0.263156921 0.966022372 -13.104460716
+f0      ZSTATE@draw zenable=1 zwrite=1 zfunc=4 cull=1 ablend=0
+f0      instances=27 models=9 | amb=(0.200,0.300,0.300) sun=(0.600,0.700,0.700) has_sun=1
+    model[0] atomics=1 render_flagged=1 instances=0 first_pos=(0.00,0.00,0.00)
+    model[1] atomics=1 render_flagged=1 instances=5 first_pos=(-24.18,0.12,13.72)
+    model[2] atomics=1 render_flagged=1 instances=9 first_pos=(-24.13,0.12,13.45)
+    model[3] atomics=1 render_flagged=1 instances=5 first_pos=(-28.26,0.31,5.09)
+    model[4] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[5] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[6] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[7] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[8] atomics=71 render_flagged=71 instances=4 first_pos=(-25.21,0.04,15.78)
+      D-S3-7 want=(-25.21,0.04,15.78) clumpframe=(-25.21,0.04,15.78) atomicLTM=(-25.21,0.04,15.78)
+      D-S3-7 want=(-27.01,0.04,15.82) clumpframe=(-27.01,0.04,15.82) atomicLTM=(-27.01,0.04,15.82)
+      D-S3-7 want=(-25.25,0.04,13.98) clumpframe=(-25.25,0.04,13.98) atomicLTM=(-25.25,0.04,13.98)
+      D-S3-7 want=(-27.05,0.04,14.02) clumpframe=(-27.05,0.04,14.02) atomicLTM=(-27.05,0.04,14.02)
+f0      ZSTATE@after zenable=1 zwrite=1 zfunc=4 ablend=1
+f0      in=(-25.24,1.04,14.28) ltm=(-25.24,1.04,14.28) devView.pos=(-1.00,0.96,-12.99)
+P7 fogcaps: RasterCaps=07732191 WFOG=1 ZFOG=1 FOGTABLE=1 FOGVERTEX=1 FOGRANGE=1
+P7 fogconst: start=0.100 end=70.000 range=-0.014306 disable=0.0
+P7 fogcolor: d3d9=282C30 librw_ps=(0.1569,0.1725,0.1882) MATCH
+ok: first frame submitted — eye=(-25.24,1.04,14.28) at=(-25.18,0.22,17.29) fov=0.8457 aspect=1.3333 near=0.100 far=70.0 fog=1[0.1..70.0]
+f200    SURFACES depth d3d9=08AD96E0 librw=08AD96E0 SHARED | rt d3d9=08A78B60 librw=08A78B60 SHARED | client=640x480 raster=640x480
+f200    DEPTHPROBE p=(-25.20,0.04,16.33)
+        d3d9  ndc=(0.000001852,-0.741601706,0.943091631) w=1.716570
+        librw ndc=(0.000000000,-0.741602361,0.943091631) w=1.716570
+        dz=0.000e+00 (ndc units)
+        MATCMP max|d3d9-librw|=1.907e-06 at elem 13 (row 3 col 1)  maxrel=2.224e-07
+        d3d9 col2 = -0.016808866 -0.263156950 0.966089606 -14.566532135
+        librw col2= -0.016808867 -0.263156980 0.966089725 -14.566534042
+f200    ZSTATE@draw zenable=1 zwrite=1 zfunc=4 cull=1 ablend=1
+f200    instances=27 models=9 | amb=(0.200,0.300,0.300) sun=(0.600,0.700,0.700) has_sun=1
+    model[0] atomics=1 render_flagged=1 instances=0 first_pos=(0.00,0.00,0.00)
+    model[1] atomics=1 render_flagged=1 instances=5 first_pos=(-24.18,0.12,13.72)
+    model[2] atomics=1 render_flagged=1 instances=9 first_pos=(-24.13,0.12,13.45)
+    model[3] atomics=1 render_flagged=1 instances=5 first_pos=(-28.26,0.31,5.09)
+    model[4] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[5] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[6] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[7] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[8] atomics=71 render_flagged=71 instances=4 first_pos=(-25.20,0.04,16.33)
+      D-S3-7 want=(-25.20,0.04,16.33) clumpframe=(-25.20,0.04,16.33) atomicLTM=(-25.20,0.04,16.33)
+      D-S3-7 want=(-26.82,0.04,17.59) clumpframe=(-26.82,0.04,17.59) atomicLTM=(-26.82,0.04,17.59)
+      D-S3-7 want=(-25.34,0.04,16.05) clumpframe=(-25.34,0.04,16.05) atomicLTM=(-25.34,0.04,16.05)
+      D-S3-7 want=(-26.77,0.04,16.31) clumpframe=(-26.77,0.04,16.31) atomicLTM=(-26.77,0.04,16.31)
+f200    ZSTATE@after zenable=1 zwrite=1 zfunc=4 ablend=1
+f200    in=(-25.18,1.04,14.82) ltm=(-25.18,1.04,14.82) devView.pos=(-1.00,0.96,-14.45)
+f400    SURFACES depth d3d9=08AD96E0 librw=08AD96E0 SHARED | rt d3d9=08A78B60 librw=08A78B60 SHARED | client=640x480 raster=640x480
+f400    DEPTHPROBE p=(-31.23,-0.70,40.93)
+        d3d9  ndc=(-0.000001852,-0.741600931,0.943091691) w=1.716572
+        librw ndc=(0.000000000,-0.741603732,0.943091512) w=1.716568
+        dz=1.788e-07 (ndc units)
+        MATCMP max|d3d9-librw|=1.144e-05 at elem 14 (row 3 col 2)  maxrel=2.650e-07
+        d3d9 col2 = -0.193020999 -0.263156891 0.946760058 -43.347663879
+        librw col2= -0.193021044 -0.263156950 0.946760237 -43.347675323
+f400    ZSTATE@draw zenable=1 zwrite=1 zfunc=4 cull=1 ablend=1
+f400    instances=27 models=9 | amb=(0.200,0.300,0.300) sun=(0.600,0.700,0.700) has_sun=1
+    model[0] atomics=1 render_flagged=1 instances=0 first_pos=(0.00,0.00,0.00)
+    model[1] atomics=1 render_flagged=1 instances=5 first_pos=(-24.18,0.12,13.72)
+    model[2] atomics=1 render_flagged=1 instances=9 first_pos=(-24.13,0.12,13.45)
+    model[3] atomics=1 render_flagged=1 instances=5 first_pos=(-28.26,0.31,5.09)
+    model[4] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[5] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[6] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[7] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[8] atomics=71 render_flagged=71 instances=4 first_pos=(-31.23,-0.70,40.93)
+      D-S3-7 want=(-31.23,-0.70,40.93) clumpframe=(-31.23,-0.70,40.93) atomicLTM=(-31.23,-0.70,40.93)
+      D-S3-7 want=(-10.72,0.03,43.77) clumpframe=(-10.72,0.03,43.77) atomicLTM=(-10.72,0.03,43.77)
+      D-S3-7 want=(-25.92,0.04,24.14) clumpframe=(-25.92,0.04,24.14) atomicLTM=(-25.92,0.04,24.14)
+      D-S3-7 want=(-0.64,-0.01,43.88) clumpframe=(-0.64,-0.01,43.88) atomicLTM=(-0.64,-0.01,43.88)
+f400    ZSTATE@after zenable=1 zwrite=1 zfunc=4 ablend=1
+f400    in=(-30.93,0.30,39.46) ltm=(-30.93,0.30,39.46) devView.pos=(-0.98,0.96,-43.19)
+f600    SURFACES depth d3d9=08AD96E0 librw=08AD96E0 SHARED | rt d3d9=08A78B60 librw=08A78B60 SHARED | client=640x480 raster=640x480
+f600    DEPTHPROBE p=(-31.23,-0.70,40.93)
+        d3d9  ndc=(-0.000001852,-0.741600931,0.943091691) w=1.716572
+        librw ndc=(0.000000000,-0.741603732,0.943091512) w=1.716568
+        dz=1.788e-07 (ndc units)
+        MATCMP max|d3d9-librw|=1.144e-05 at elem 14 (row 3 col 2)  maxrel=2.650e-07
+        d3d9 col2 = -0.193020999 -0.263156891 0.946760058 -43.347663879
+        librw col2= -0.193021044 -0.263156950 0.946760237 -43.347675323
+f600    ZSTATE@draw zenable=1 zwrite=1 zfunc=4 cull=1 ablend=1
+f600    instances=27 models=9 | amb=(0.200,0.300,0.300) sun=(0.600,0.700,0.700) has_sun=1
+    model[0] atomics=1 render_flagged=1 instances=0 first_pos=(0.00,0.00,0.00)
+    model[1] atomics=1 render_flagged=1 instances=5 first_pos=(-24.18,0.12,13.72)
+    model[2] atomics=1 render_flagged=1 instances=9 first_pos=(-24.13,0.12,13.45)
+    model[3] atomics=1 render_flagged=1 instances=5 first_pos=(-28.26,0.31,5.09)
+    model[4] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[5] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[6] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[7] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[8] atomics=71 render_flagged=71 instances=4 first_pos=(-31.23,-0.70,40.93)
+      D-S3-7 want=(-31.23,-0.70,40.93) clumpframe=(-31.23,-0.70,40.93) atomicLTM=(-31.23,-0.70,40.93)
+      D-S3-7 want=(-2.58,0.02,43.76) clumpframe=(-2.58,0.02,43.76) atomicLTM=(-2.58,0.02,43.76)
+      D-S3-7 want=(-25.92,0.04,24.14) clumpframe=(-25.92,0.04,24.14) atomicLTM=(-25.92,0.04,24.14)
+      D-S3-7 want=(25.13,0.04,22.75) clumpframe=(25.13,0.04,22.75) atomicLTM=(25.13,0.04,22.75)
+f600    ZSTATE@after zenable=1 zwrite=1 zfunc=4 ablend=1
+f600    in=(-30.93,0.30,39.46) ltm=(-30.93,0.30,39.46) devView.pos=(-0.98,0.96,-43.19)
+f800    SURFACES depth d3d9=08AD96E0 librw=08AD96E0 SHARED | rt d3d9=08A78B60 librw=08A78B60 SHARED | client=640x480 raster=640x480
+f800    DEPTHPROBE p=(-25.21,0.04,15.78)
+        d3d9  ndc=(0.000000000,-0.741602361,0.943091631) w=1.716570
+        librw ndc=(0.000001852,-0.741601706,0.943091631) w=1.716570
+        dz=0.000e+00 (ndc units)
+        MATCMP max|d3d9-librw|=7.629e-06 at elem 12 (row 3 col 0)  maxrel=2.042e-07
+        d3d9 col2 = 0.020306986 -0.263156921 0.966022432 -13.104461670
+        librw col2= 0.020306984 -0.263156921 0.966022372 -13.104460716
+f800    ZSTATE@draw zenable=1 zwrite=1 zfunc=4 cull=1 ablend=1
+f800    instances=27 models=9 | amb=(0.200,0.300,0.300) sun=(0.600,0.700,0.700) has_sun=1
+    model[0] atomics=1 render_flagged=1 instances=0 first_pos=(0.00,0.00,0.00)
+    model[1] atomics=1 render_flagged=1 instances=5 first_pos=(-24.18,0.12,13.72)
+    model[2] atomics=1 render_flagged=1 instances=9 first_pos=(-24.13,0.12,13.45)
+    model[3] atomics=1 render_flagged=1 instances=5 first_pos=(-28.26,0.31,5.09)
+    model[4] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[5] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[6] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[7] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[8] atomics=71 render_flagged=71 instances=4 first_pos=(-25.21,0.04,15.78)
+      D-S3-7 want=(-25.21,0.04,15.78) clumpframe=(-25.21,0.04,15.78) atomicLTM=(-25.21,0.04,15.78)
+      D-S3-7 want=(-27.01,0.04,15.82) clumpframe=(-27.01,0.04,15.82) atomicLTM=(-27.01,0.04,15.82)
+      D-S3-7 want=(-25.25,0.04,13.98) clumpframe=(-25.25,0.04,13.98) atomicLTM=(-25.25,0.04,13.98)
+      D-S3-7 want=(-27.05,0.04,14.02) clumpframe=(-27.05,0.04,14.02) atomicLTM=(-27.05,0.04,14.02)
+f800    ZSTATE@after zenable=1 zwrite=1 zfunc=4 ablend=1
+f800    in=(-25.24,1.04,14.28) ltm=(-25.24,1.04,14.28) devView.pos=(-1.00,0.96,-12.99)
+f1000   SURFACES depth d3d9=08AD96E0 librw=08AD96E0 SHARED | rt d3d9=08A78B60 librw=08A78B60 SHARED | client=640x480 raster=640x480
+f1000   DEPTHPROBE p=(-24.83,0.04,38.31)
+        d3d9  ndc=(0.000003704,-0.741601527,0.943091691) w=1.716572
+        librw ndc=(0.000000000,-0.741601706,0.943091631) w=1.716570
+        dz=5.960e-08 (ndc units)
+        MATCMP max|d3d9-librw|=7.629e-06 at elem 12 (row 3 col 0)  maxrel=2.670e-07
+        d3d9 col2 = 0.369356692 -0.263156861 0.892853618 -23.407051086
+        librw col2= 0.369356662 -0.263156831 0.892853498 -23.407049179
+f1000   ZSTATE@draw zenable=1 zwrite=1 zfunc=4 cull=1 ablend=1
+f1000   instances=27 models=9 | amb=(0.200,0.300,0.300) sun=(0.600,0.700,0.700) has_sun=1
+    model[0] atomics=1 render_flagged=1 instances=0 first_pos=(0.00,0.00,0.00)
+    model[1] atomics=1 render_flagged=1 instances=5 first_pos=(-24.18,0.12,13.72)
+    model[2] atomics=1 render_flagged=1 instances=9 first_pos=(-24.13,0.12,13.45)
+    model[3] atomics=1 render_flagged=1 instances=5 first_pos=(-28.26,0.31,5.09)
+    model[4] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[5] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[6] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[7] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[8] atomics=71 render_flagged=71 instances=4 first_pos=(-24.83,0.04,38.31)
+      D-S3-7 want=(-24.83,0.04,38.31) clumpframe=(-24.83,0.04,38.31) atomicLTM=(-24.83,0.04,38.31)
+      D-S3-7 want=(-15.19,-4.06,40.83) clumpframe=(-15.19,-4.06,40.83) atomicLTM=(-15.19,-4.06,40.83)
+      D-S3-7 want=(-21.58,-4.06,37.36) clumpframe=(-21.58,-4.06,37.36) atomicLTM=(-21.58,-4.06,37.36)
+      D-S3-7 want=(-21.58,0.04,11.31) clumpframe=(-21.58,0.04,11.31) atomicLTM=(-21.58,0.04,11.31)
+f1000   ZSTATE@after zenable=1 zwrite=1 zfunc=4 ablend=1
+f1000   in=(-25.40,1.04,36.92) ltm=(-25.40,1.04,36.92) devView.pos=(-0.92,0.96,-23.27)

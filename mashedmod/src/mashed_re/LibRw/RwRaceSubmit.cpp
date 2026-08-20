@@ -139,9 +139,15 @@ void SetCameraLookAt(const float eye[3], const float at_pt[3]) {
 
 }  // namespace
 
+// D1 (2026-08-18): the flag is INVERTED. librw is the DEFAULT renderer for the
+// standalone (ROADMAP phase D1 / gate D2 ratified 2026-07-31: librw SHIPS).
+// MASHED_RENDER_LIBRW=0 reverts to the legacy D3D9 path for A/B; unset or any
+// other value keeps librw. Same "=0 reverts to legacy" shape as MASHED_RULE_ENGINE
+// (TrackRenderer.cpp:3226) and the opposite polarity of the pre-inversion gate,
+// which was "=1 turns librw on".
 bool RaceSubmit_Requested() {
     const char* e = std::getenv("MASHED_RENDER_LIBRW");
-    return e && e[0] == '1' && e[1] == '\0';
+    return !(e && e[0] == '0' && e[1] == '\0');
 }
 
 bool RaceSubmit_Active() { return g_engine_up && g_scene_up; }
@@ -221,10 +227,13 @@ bool RaceSubmit_OnTrackLoaded(const Track::World& world,
 // DEFAULT ON since 2026-08-02. It was staged off while the instanced path ran a
 // uniform ~1.5x bright on fogged surfaces; that turned out to be missing UV
 // ANIMATION (D-S3-SEA), not shading, and carrying the scroll over took the gating
-// shots from 0.06-7.12 to 0.06-0.59 -- at or below the world-only path. Note this
-// only takes effect when the librw renderer is on at all (MASHED_RENDER_LIBRW);
-// with no env set the shipping D3D9 path still runs and still diffs 0.00.
-// MASHED_LIBRW_INST=0 reverts to world-only.
+// shots from 0.06-7.12 to 0.06-0.59 -- at or below the world-only path.
+// COUPLING NOTE (D1, 2026-08-18): this only takes effect when the librw renderer
+// is on at all (RaceSubmit_Requested). Before the D1 flag inversion a clean env
+// ran the D3D9 path, so this default-ON was UNREACHABLE with no env set. After
+// inversion librw is the default, so on a clean env this is now LIVE: cars, props,
+// particles, pickups instance through librw (the best-measured config, gating
+// shots 0.06-0.59). MASHED_LIBRW_INST=0 still reverts to world-only.
 bool RaceSubmit_InstancesEnabled() {
     static const bool on = [] {
         const char* e = std::getenv("MASHED_LIBRW_INST");
