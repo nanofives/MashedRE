@@ -144,6 +144,9 @@ def main():
     ap.add_argument('--no-drive', dest='drive', action='store_false')
     ap.add_argument('--degenerate-below', type=int, default=100,
                     help='frames strictly below this (and >0) count DEGENERATE')
+    ap.add_argument('--idle-min-frames', type=int, default=1000,
+                    help='frames required for an IDLE (--no-drive) run to count '
+                         'USABLE; the anchor test does not apply there')
     ap.add_argument('--min-window', type=int, default=200,
                     help='frames required inside [anchor, anchor+314] to count '
                          'USABLE (measured: good runs give 301-314)')
@@ -203,6 +206,13 @@ def main():
             verdict = 'NOFILE'
         elif frames == 0:
             verdict = 'EMPTY'
+        elif not a.drive:
+            # IDLE scenario: the countdown witness +0xBF4 never fires because
+            # nothing ever accelerates, so the anchor test does NOT apply and
+            # applying it labelled every healthy idle run a failure. The idle
+            # baseline is ~1255 frames / 34 distinct (matches the archived
+            # stock_a/b.msd pair), so judge idle runs on frame count alone.
+            verdict = 'USABLE' if frames >= a.idle_min_frames else 'SHORT'
         elif anchor is None:
             verdict = 'PRE-ANCHOR'
         elif window < a.min_window:
@@ -229,7 +239,7 @@ def main():
 
     n = len(results)
     healthy = sum(1 for r in results if r['verdict'].startswith('USABLE'))
-    frozen = sum(1 for r in results if r['verdict'].startswith(('PRE-ANCHOR', 'SHORT-WINDOW')))
+    frozen = sum(1 for r in results if r['verdict'].startswith(('PRE-ANCHOR', 'SHORT-WINDOW', 'SHORT')))
     empty = sum(1 for r in results if r['verdict'].startswith('EMPTY'))
     degen = 0
     nofile = sum(1 for r in results if r['verdict'].startswith('NOFILE'))

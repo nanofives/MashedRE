@@ -265,6 +265,66 @@ are still unusable for statediff. What changes is the mechanism label — early
 termination, not state freeze — and therefore the direction of any follow-up:
 the question is why a run ends before frame ~783, not why state stops evolving.
 
+## Control arm: the phase-2 hang is caused by the harness, not the hooks
+
+`verify/wedge_nodrive_20260820/` — n=12, `--hooks all --no-drive`, i.e. identical
+hook set with the **cook injector not armed**.
+
+`--statediff-drive` does one thing beyond forcing input: it
+`Interceptor.attach`es to `COOK_RVA = 0x00496530` (`scenario_launch.py:93-104`),
+and the argparse help says it arms **"BEFORE the phase poke"**
+(`scenario_launch.py:654-658`) — so the instrumentation is live during phase 2
+(track load + car spawn), which is exactly where the documented wedge occurs.
+`0x00496530` runs per player per frame, and today's U-3558 watchpoint data
+showed its inner `0x00496568` firing 38 times in 40 hits, i.e. hot. CLAUDE.md's
+standing rule is that Frida `Interceptor` on hot paths destabilises Mashed.
+
+| Measure | with `--drive` | without | Fisher 1-tailed |
+|---|---:|---:|---:|
+| Phase-2 hangs (EMPTY) | **6/18 = 33.3%** | **0/12 = 0%** | **p = 0.031** |
+| Total failures | 11/18 = 61.1% | 2/12 = 16.7% | — |
+
+**Zero phase-2 hangs in 12 boots without the injector**, against 6 in 18 with
+it. The idle runs are also strikingly consistent: 10 of 12 gave 1254–1256
+frames with 34 distinct payloads — a two-frame spread — and that **reproduces
+the archived idle baseline exactly** (`stock_a.msd` 1249 frames / 34 distinct,
+`stock_b.msd` 1255 / 34, both 2026-07-31), 20 days later with the full hook set.
+The hooks are not breaking the idle path.
+
+So the "residual wedge" that has blocked D2 since 2026-07-31 is substantially an
+artifact of the measuring apparatus, not a defect in the ported hooks. The
+planned index bisection would have been hunting a culprit hook that does not
+exist.
+
+### Caveat — this is not a fully controlled comparison
+
+Dropping `--statediff-drive` removes **two** things at once: the hot-path
+`Interceptor`, and the race actually starting. So this pins the phase-2 hang on
+the drive configuration but does **not** separate "instrumentation overhead"
+from "the race starting at all" as the mechanism. [UNCERTAIN]
+
+The clean follow-up isolates them: keep `--statediff-drive` but (a) arm the
+injector with a no-op `onLeave`, or (b) arm it **after** the phase poke rather
+than before. Either keeps the race and drops the phase-2 instrumentation. If
+the hangs stay away, overhead is confirmed; if they return, the race start is
+implicated instead.
+
+### A residual remains, and it is small
+
+2 of 12 idle runs still failed — one 164-frame run and one `NOFILE` at `rc=3`,
+21.0 s (the same third signature seen in pass 1). So a failure mode independent
+of the injector does exist, at roughly 17% rather than 61%. That is the real
+residual, and it is a different and much smaller problem than the one on record.
+
+### Classifier correction
+
+The raw run printed `failure rate 12/12 = 100.0%`, which was **my classifier
+misfiring, not a result**. The anchor test is drive-specific: with no
+acceleration the countdown witness `+0xBF4` never fires, so `anchor=None` for
+every healthy idle run. `wedge_rate.py` now applies the anchor test only when
+`--drive` is set and judges idle runs on frame count (`--idle-min-frames`,
+default 1000). Re-scored: **USABLE 10, SHORT 1, NOFILE 1**.
+
 ## [UNCERTAIN] — the gap that must close before concluding
 
 RESOLVED by the second pass above — the short runs are failures (frozen state),
