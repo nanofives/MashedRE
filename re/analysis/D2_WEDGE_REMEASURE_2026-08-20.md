@@ -448,6 +448,77 @@ variant B reproduces at 770–782 (vs 783 early), still deterministic to ~a doze
 frames and re-anchored per capture anyway. Keep the early-arm path behind a flag
 for anyone who needs frame-0 alignment on an idle scenario.
 
+## The render collapse is a HOLD-TOO-SHORT artifact, not a defect
+
+Two more arms, and the second failure family also resolves into harness
+configuration.
+
+### The FPS probe was confounded — my design error
+
+`verify/fps_probe_20260821/` — 8 boots with `MASHED_FPS_LOG=1`. **0 of 8** landed
+in the usable class (677–680 frames each), against 8/14 without the flag. I
+added per-frame work to measure a per-frame-work problem, so the probe changed
+its own outcome and cannot compare healthy against collapsed runs.
+
+It did establish one thing cleanly: steady-state `present_fps` was **32.4–32.5
+across all 8** against the shim's reported `cap=60`. The game cannot reach its
+cap, so **limiter misbehaviour is ruled out**. (Consistency worth noting: a
+3-frame spread across 8 boots — a stable regime, unlike the ragged natural
+collapse distribution.)
+
+### The race is FRAME-LOCKED at ~1090 frames
+
+Usable frame counts are invariant to the hold:
+
+```
+hold 20:  1084 1086 1089 1091 1091 1093 1095 1096 1097
+hold 38:  1086 1088 1088 1088 1092
+```
+
+Same ~1090 either way — so a race is a fixed number of frames, not a fixed
+duration. Implied phase-3 rates: 1090 frames in ~18 s (**61 fps**) under hold 20,
+1088 in ~33 s (**33 fps**) under hold 38. Frame rate varies boot to boot between
+roughly 33 and 61 fps; the race length does not.
+
+That is the whole mechanism. A 20 s hold only lets a run finish a 1090-frame race
+if it sustains ≥55 fps. Anything slower is **cut off mid-race** — producing
+exactly the observed 364 / 409 / 723-frame partials — and the countdown anchor at
+frame ~780 is missed for the same reason. Nothing is malfunctioning; the harness
+was assuming a frame rate the process does not reliably deliver.
+
+### `verify/wedge_hold38_20260821/` — n=12, `--hold 38`
+
+**PRE/SHORT 0.** The collapse class disappeared: every run that successfully
+attached (5/5) produced a full 314-frame window with 268–271 distinct payloads
+and anchor 771–778. Against 5/14 collapsed at hold 20 this is p = 0.17 — not
+significant at n=5, so the *rate* is not established, but the mechanism is
+arithmetically forced by the frame-locked race length above and does not rest on
+that p-value.
+
+### A third, separate harness flake: NOFILE
+
+The 7 NOFILE runs all failed identically at 20.9 s with `rc=3` and
+`error: could not attach` — Frida failing to attach to the spawned process.
+Nothing to do with the game, the hooks, or the hold. It appeared at 1/18, 1/12,
+1/14 in the earlier arms and 7/12 here; the longer runs change inter-run timing,
+which plausibly aggravates a spawn/attach race. Recorded as its own item, NOT
+folded into either failure family. [UNCERTAIN] cause not investigated.
+
+### Net effect on D2
+
+The "statediff residual wedge" decomposes entirely into three harness issues,
+none of them a defect in the ported hooks:
+
+| # | Failure | Cause | Fix | Evidence |
+|---|---|---|---|---|
+| 1 | Phase-2 hang | Frida `Interceptor` on `0x00496530` during track load | arm after phase 3 (`--statediff-drive-late`) | 8/30 vs 0/26, **p = 0.0041** |
+| 2 | "Render collapse" | 20 s hold vs a frame-locked ~1090-frame race at 33–61 fps | `--hold 38` | 0/5 vs 5/14; forced by frame-invariance |
+| 3 | NOFILE | Frida `could not attach` | unknown | 20.9 s / `rc=3`, consistent signature |
+
+Recommended defaults: `--statediff-drive` arms late, and the drive hold defaults
+to ~38 s. Neither is applied here — both change the behaviour of every existing
+statediff invocation.
+
 ## [UNCERTAIN] — the gap that must close before concluding
 
 RESOLVED by the second pass above — the short runs are failures (frozen state),

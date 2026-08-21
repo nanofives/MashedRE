@@ -158,6 +158,10 @@ def main():
                     help='frames required inside [anchor, anchor+314] to count '
                          'USABLE (measured: good runs give 301-314)')
     ap.add_argument('--out-dir', default='')
+    ap.add_argument('--hold', type=int, default=0,
+                    help='pass --hold N to scenario_launch. The countdown anchor is '
+                         'FRAME-locked at ~780, so a run must sustain >= 780/hold fps '
+                         'to reach it; the default 20s hold needs >=39 fps.')
     ap.add_argument('--timeout', type=int, default=240)
     ap.add_argument('--keep-msd', action='store_true',
                     help='keep every .msd (default keeps only failures, to save disk)')
@@ -187,6 +191,8 @@ def main():
                 cmd.append('--statediff-drive-late')
         if a.noop_cook:
             cmd.append('--statediff-noop-cook')
+        if a.hold:
+            cmd += ['--hold', str(a.hold)]
 
         t0 = time.time()
         rc, timed_out, pr = None, False, None
