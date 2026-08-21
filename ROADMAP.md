@@ -298,13 +298,48 @@ Closes v2's **R4**.
 Invert `MASHED_REAL_PHYSICS`. The ported RWP-3.7 chain drives the car by default; the
 kinematic scaffold is deleted, not flagged off.
 
-Blocked by: the **statediff residual wedge** — ~1/6 boots still wedge on an unbisected
-second mechanism (the first, Ring5ab980's implicit-EAX defect, was fixed 2026-07-31 per
-U-6701). This caps physics C4 evidence at ~5/6 and blocks the B5e verify campaign and
-WS-A8.
+Blocked by: **the coupling reduction, not the statediff wedge** (corrected 2026-08-21).
 
-**Gate:** clean-env race on ported physics; A8 velocity/position diff against original
-telemetry on matched inputs; wedge rate zero.
+The blocker recorded here until now was the "statediff residual wedge — ~1/6 boots,
+unbisected second mechanism". That has been measured and **it is not a port defect at
+all** — it decomposes into three harness issues, evidence in
+`re/analysis/D2_WEDGE_REMEASURE_2026-08-20.md`:
+
+1. **Phase-2 hang** — a Frida `Interceptor` on the hot `0x00496530` during track load,
+   armed by `--statediff-drive` before the phase poke. 8/30 hangs when instrumented
+   during phase 2 vs **0/26 when not** (Fisher p = 0.0041). Fixed by
+   `--statediff-drive-late`, which keeps the drive and arms after phase 3.
+2. **"Render collapse"** — the 20 s hold against a **frame-locked ~1090-frame race** at a
+   boot-to-boot rate of 33–61 fps, so slow-but-healthy runs were cut off mid-race.
+   Gone with `--hold 38` (0/5 vs 5/14).
+3. **NOFILE** — Frida `error: could not attach`, cause not investigated.
+
+Also corrected: the original "~1/6 healthy" figure rested on six trials whose five
+"healthy" captures (`flake_2..6.msd`) never reach the countdown anchor, so they contain
+zero frames in the window where a drive verdict is defined. The planned majority-vote
+index bisection would have hunted a culprit hook that does not exist — **do not run it.**
+
+**The actual blocker** (`re/analysis/D2_REALPHYS_REMEASURE_2026-08-21.md`): with
+`MASHED_REAL_PHYSICS=1` the car is undrivable. Forward speed has no top-speed damping and
+saturates the `kSafetyInternal = 1500` clamp (`VehiclePhysicsRun.cpp:480`) in 1.6 s, and
+steering produces **no heading change at all** (`car_yaw` frozen at 1.5498 under
+`steer=+0.50`). The scaffold control on the identical recipe caps at 20.11 and turns
+normally — so the ported chain is 75x too fast with zero steer coupling. Re-measured
+2026-08-21 on a post-B5e build: **identical to the decimal** to the 2026-07-01 and
+2026-07-14 measurements, so the B5e solver-island merge (`021a9f38`) did not close it.
+Root cause as recorded in `COLLISION_GATE_BRIEF_D1_2026-07.md:56` — the original's
+two-body closed loop (PD gain `_DAT_005ccd6c = 20.0` @ `0x005ccd6c`, 0.06 s lookahead)
+which the single-body reduction loses. Fully deterministic, so a fix is unambiguous to verify.
+
+Note the bar this exposes: physics has been **5/5 C4** (A3/A4/A5/A6a/A6b) since
+2026-07-01, and this phase's original exit condition ("gated OFF until A6a/A6b reach C4")
+was met that day. Per-hook C4 and a drivable default build are different bars and the
+ledger tracks only the first.
+
+**Gate:** clean-env race on ported physics that is actually drivable — top speed bounded
+below the safety clamp and `car_yaw` responding to steer; A8 velocity/position diff
+against original telemetry on matched inputs. (Dropped from the gate: "wedge rate zero" —
+it was a harness-configuration property, not a property of the port.)
 
 Closes v2's **R5**.
 
@@ -344,7 +379,7 @@ Definitions live in the archived v2 §Workstreams. Status as of 2026-08-15:
 
 | WS | Scope | Status | Phase |
 |---|---|---|---|
-| WS-A | Vehicle physics | A1–A7 done; **A8 blocked on the statediff wedge** | D2 |
+| WS-A | Vehicle physics | A1–A7 done; **A8 blocked on the coupling reduction** (not the statediff wedge — corrected 2026-08-21, see §D2) | D2 |
 | WS-B | Collision / RW-Physics | B5e port DONE (K1..K24, `021a9f38`); C4-verify campaign open | D2 |
 | WS-C | AI drivers | C1 done (`re/analysis/ai_controller.md`); port + wire open | D3 |
 | WS-D | Powerup effects | D1 done (`structs/powerup_system.md`); D2/D3 gated on a Ghidra fn-split of 0x453f60–0x45be81 | D3 |
