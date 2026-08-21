@@ -347,10 +347,42 @@ Note the bar this exposes: physics has been **5/5 C4** (A3/A4/A5/A6a/A6b) since
 was met that day. Per-hook C4 and a drivable default build are different bars and the
 ledger tracks only the first.
 
+**Root cause FOUND AND FIXED 2026-08-21** (`9cc41fa8`): `Math/RwMatrixRotate.cpp` read
+pi/180 and 1.0f from the MASHED absolute addresses `0x005cd7a8` / `0x005cc320`. Correct in
+the injected `.asi`; in the standalone exe **both read 0** (measured), so
+`angle_rad = 0`, `one_minus_cos = -1`, and Rodrigues produced `I - K^2 = diag(2,1,2)` — a
+scale instead of a rotation. Steered wheels got 2x body-forward, hence no lateral force.
+Fixed by materialising the bit patterns as literals. **The car now steers**
+(`car_yaw` 1.5123 → 1.4984 → … , path curves) with no regression on the default path, and
+the restored rotation is exact (|fwd| 1.0000, rotation = steer angle to 0.01 deg).
+
+**But the fix is one instance of a class — see `re/analysis/RVA_TUNNEL_AUDIT_2026-08-21.md`.**
+`exe_main.cpp:5348` maps 0x00500000–0x009fffff as a zero-filled wedge, so MASHED addresses
+read **0 silently instead of faulting**; only 8 addresses hold correct values. The audit
+found **547 runtime tunnels across 84 of 205 exe TUs**, 405 of them silent data reads. The
+**densest cluster is the physics/collision code this phase intends to switch on**: ~80
+macros of the form `#define _DAT_005cxxxx (*(const float*)0x005cxxxx)` whose true values
+are 1.0f / 0.5f / -1.0f / 2.0f / 0.99f / FLT_MAX, **all evaluating to 0.0f**, currently
+dead only because `MASHED_REAL_PHYSICS` is OFF. Inverting the flag activates them
+simultaneously. Any plan that treats D2's inversion as a one-line flag flip is wrong on
+this evidence.
+
+Note also for the A8 task below: `Vehicle/VehicleControl.cpp:155` passes `nullptr` for
+`orient` with the comment "orient bound at A8". Binding it reaches
+`Math/RwMatrixRotateInner.cpp:159-166` mode 1, which calls through a function pointer read
+out of the zero wedge — currently **nullptr**. A8 must handle that.
+
 **Gate:** clean-env race on ported physics that is actually drivable — top speed bounded
 below the safety clamp and `car_yaw` responding to steer; A8 velocity/position diff
-against original telemetry on matched inputs. (Dropped from the gate: "wedge rate zero" —
-it was a harness-configuration property, not a property of the port.)
+against original telemetry on matched inputs; **and the physics-cluster RVA tunnels
+resolved, not merely inactive**. (Dropped from the gate: "wedge rate zero" — it was a
+harness-configuration property, not a property of the port.)
+
+**Recommended first step, cheap and decisive:** re-run with the wedge granules set
+`PAGE_NOACCESS`. That converts every live tunnel from a silent zero into an immediate
+self-reporting fault, which is what would have caught the `RwMatrixRotate` defect in
+minutes rather than seven weeks. `Math/RwSqrt.cpp:42-63` is the correct remediation model
+(`RwLutGuard` validates the resolved root and falls back to a CPU path).
 
 Closes v2's **R5**.
 
