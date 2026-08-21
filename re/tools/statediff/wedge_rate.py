@@ -142,6 +142,9 @@ def main():
     ap.add_argument('--hooks', default='all')
     ap.add_argument('--drive', action='store_true', default=True)
     ap.add_argument('--no-drive', dest='drive', action='store_false')
+    ap.add_argument('--drive-late', action='store_true',
+                    help='D2 variant B: --statediff-drive plus '
+                         '--statediff-drive-late (cook armed only after phase 3).')
     ap.add_argument('--noop-cook', action='store_true',
                     help='D2 isolation control: pass --statediff-noop-cook '
                          '(attach the hot-path Interceptor with an empty callback, '
@@ -180,6 +183,8 @@ def main():
                    '--statediff-out', str(msd)]
         if a.drive and not a.noop_cook:
             cmd.append('--statediff-drive')
+            if a.drive_late:
+                cmd.append('--statediff-drive-late')
         if a.noop_cook:
             cmd.append('--statediff-noop-cook')
 

@@ -379,6 +379,75 @@ frame 0 no longer coincides with the phase-3 anchor, so the alignment would move
 to the `+0xBF4` countdown witness — which is already the documented drive anchor
 and is deterministic to one frame, so this is likely free.
 
+## Variant B RESOLVES the phase-2 hang, and separates it from the render collapse
+
+`verify/wedge_drivelate_20260821/` — n=14, new `--statediff-drive-late`: the
+drive is unchanged, but the cook injector arms **after** the phase-3 gate, so
+track load runs with `0x00496530` uninstrumented.
+
+**Phase-2 hangs: 0/14.** And the drive survives intact — the 8 usable runs give
+anchor 770–782, a full 314-frame window, and 268–270 distinct payloads, matching
+the early-arm usable runs exactly (anchor 783, distinct 268–271). So this is a
+fix, not a trade: the wedge is gone and the driving capture is unchanged.
+
+### Four arms, and the cause resolves cleanly
+
+| Arm | n | Phase-2 hangs | Render collapse |
+|---|---:|---:|---:|
+| no-drive (no attach, no drive) | 12 | **0** | 1 |
+| noop-cook (attach in ph2, no drive) | 12 | **2** | 2 |
+| drive-early (attach in ph2 + drive) | 18 | **6** | 5 |
+| drive-late (attach after ph3 + drive) | 14 | **0** | 5 |
+
+Pooled on the variable that actually differs:
+
+```
+Was 0x00496530 instrumented DURING PHASE 2?
+  YES (noop + drive-early)     8/30 = 26.7% phase-2 hangs
+  NO  (no-drive + drive-late)  0/26 =  0.0%
+  Fisher exact one-tailed p = 0.0041
+```
+
+**That is the mechanism.** The phase-2 hang happens if and only if
+`0x00496530` carries a Frida `Interceptor` while phase 2 runs — 8 hangs in 30
+instrumented boots, zero in 26 uninstrumented ones. It does not depend on the
+callback doing anything (the no-op arm hangs too) and it does not depend on the
+drive (the no-op arm has no drive). The isolation arm looked underpowered on its
+own; adding variant B as the fourth cell resolves it, because drive-late and
+drive-early differ *only* in when the attach happens.
+
+This retires the "residual wedge" as a port defect. It is Frida instrumentation
+on a hot function during track load — the exact hazard CLAUDE.md documents —
+introduced by the measuring harness in 2026-07-31's own drive scenario, and it
+has been miscredited to the ported hooks ever since.
+
+### The render collapse is a SEPARATE mechanism and is NOT fixed
+
+Collapse rates are unchanged by the arming moment (5/18 early vs 5/14 late) and
+track the *drive* instead:
+
+```
+Was the forced drive active?
+  drive on  (early + late)     10/32 = 31.2% collapse
+  drive off (no-drive + noop)   3/24 = 12.5%
+  Fisher exact one-tailed p = 0.091
+```
+
+Suggestive, not significant (p = 0.09), and n is still small. So: phase-2 hang
+SOLVED and attributed; render collapse still open at ~31% under drive, cause
+not established, and it is the thing that actually caps usable drive captures at
+8/14 here. [UNCERTAIN] — needs its own arm, and the obvious next cut is whether
+collapse tracks the forced input itself or merely the car moving.
+
+### Recommended harness change
+
+Make `--statediff-drive` arm late by default. Frame 0 no longer coincides with
+the first phase-3 tick, but that alignment was never what the drive protocol
+used — `NOISE_MASK.md` already aligns on the `+0xBF4` countdown witness, which
+variant B reproduces at 770–782 (vs 783 early), still deterministic to ~a dozen
+frames and re-anchored per capture anyway. Keep the early-arm path behind a flag
+for anyone who needs frame-0 alignment on an idle scenario.
+
 ## [UNCERTAIN] — the gap that must close before concluding
 
 RESOLVED by the second pass above — the short runs are failures (frozen state),

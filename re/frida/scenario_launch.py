@@ -662,6 +662,11 @@ def main():
                          "pulses (wall-clock-timed input would break cross-boot determinism).")
     ap.add_argument("--statediff-car", type=int, default=0,
                     help="car slot to snapshot for --statediff-out (default 0 = player)")
+    ap.add_argument("--statediff-drive-late", action="store_true",
+                    help="D2 variant B: like --statediff-drive but arm the cook injector only "
+                         "AFTER phase 3 is reached, so track load runs uninstrumented. Requires "
+                         "--statediff-drive. Trades frame-0 alignment (recover it via the "
+                         "+0xBF4 countdown anchor, which is the documented drive anchor anyway).")
     ap.add_argument("--statediff-noop-cook", action="store_true",
                     help="D2 isolation control: attach the cook Interceptor (0x00496530) at the "
                          "same moment as --statediff-drive but with an EMPTY callback and no "
@@ -775,9 +780,12 @@ def main():
         if args.statediff_out:
             # Arm BEFORE the phase poke so frame 0 = the very first phase-3 tick.
             print("  [statediff]", E.sd_arm(args.statediff_car))
-            if args.statediff_drive:
+            if args.statediff_drive and not args.statediff_drive_late:
                 print("  [statediff]", E.arm_cook())
                 print("  [statediff] drive: full accel, straight ->", E.drive(1, 0))
+            elif args.statediff_drive_late:
+                print("  [statediff] drive-late: cook NOT armed yet "
+                      "(deferred until phase 3 to keep track load uninstrumented)")
             elif args.statediff_noop_cook:
                 # D2 isolation control: instrumentation without the drive.
                 print("  [statediff]", E.arm_cook_noop())
@@ -790,6 +798,14 @@ def main():
         ph3 = wait_phase(3, 40, "race running (phase 3)")
         if ph3 is None: raise SystemExit
         print("\n  *** RACE RUNNING (phase 3) ***")
+        if args.statediff_out and args.statediff_drive_late:
+            # D2 variant B: arm the cook injector only NOW, so phase 2 (track
+            # load + car spawn) runs with 0x00496530 uninstrumented. Costs the
+            # frame-0 == first-phase-3-tick alignment, but the documented drive
+            # anchor is the +0xBF4 countdown witness anyway (deterministic to
+            # one frame), so alignment is unaffected in practice.
+            print("  [statediff]", E.arm_cook())
+            print("  [statediff] drive-late: full accel, straight ->", E.drive(1, 0))
         if args.rule10_timer is not None:
             print("  [rule10-timer] DAT_007f0fe4 =", args.rule10_timer,
                   "->", E.poke_timer(args.rule10_timer))
