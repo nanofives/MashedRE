@@ -613,12 +613,21 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                         // zero angles mean it never gets past A4's byte input.
                         std::fprintf(lf, "cv=(%.2f,%.2f,%.2f) horiz=%.2f fwdDot=%.2f "
                             "desired=%.3f bs=%.3f frameMs=%.1f yaw=%.4f velH=%.4f "
-                            "steer=%.3f in=(%u,%u) steerAng=(%g,%g)\n",
+                            "steer=%.3f in=(%u,%u) steerAng=(%g,%g) "
+                            // Per-wheel STEERED FORWARD axis (Wheel::kSteeredFwd
+                            // = +0xb4; wheel0 front = 0x16c+0xb4 = 0x220, wheel3
+                            // rear = 0x3b8+0xb4 = 0x46c). The discriminator: if the
+                            // FRONT wheel's forward axis equals the REAR's while
+                            // steerAng is non-zero, the steer rotation is never
+                            // expressed and BuildYawMatrix(io.yaw) is the loss point.
+                            "fwd0=(%.4f,%.4f) fwd3=(%.4f,%.4f)\n",
                             cvx, cvy, cvz, horizSpeed, fwdDot, desiredSp, bs,
                             frameMs, io.yaw,
                             (horizSpeed > 1e-3f ? std::atan2(cvz, cvx) : 0.f),
                             io.steer, (unsigned)input[0], (unsigned)input[1],
-                            F(r, 0x1a8), F(r, 0x26c));
+                            F(r, 0x1a8), F(r, 0x26c),
+                            F(r, 0x220), F(r, 0x228),      /* wheel0 fwd x,z */
+                            F(r, 0x46c), F(r, 0x474));     /* wheel3 fwd x,z */
                         std::fclose(lf);
                     }
                     ++cn;

@@ -233,6 +233,41 @@ Next measurement, cheap and already instrumented: emit a per-wheel forward axis
 alongside `steerAng`. If all four wheels share one axis equal to body-forward
 while `steerAng` is 8.5, the synthesised transform is confirmed as the loss point.
 
+### That test REFUTED the suspect — and the real signature is sharper
+
+Emitted `Wheel::kSteeredFwd` (+0xb4) for wheel 0 (front, steered) and wheel 3
+(rear, unsteered) — `0x220` and `0x46c`:
+
+```
+steer=0.500  steerAng=(8.5,8.5)  fwd0=(0.0420,1.9996)  fwd3=(0.0210,0.9998)
+```
+
+The prediction was `fwd0 == fwd3`. It is **not**. `fwd0` is **exactly 2x `fwd3`**
+(0.0420 = 2 x 0.0210; 1.9996 = 2 x 0.9998), i.e. the same **direction** at double
+the **magnitude**. `fwd3` is unit (|v| = 0.9998); `fwd0` is |v| = 2.0.
+
+So `BuildYawMatrix` is **not** the loss point, and the hypothesis above is
+withdrawn. The steer angle is not being discarded — it is being expressed as a
+**scalar magnitude change instead of a rotation**. A steered wheel ends up with
+its forward axis scaled, not turned, which produces exactly the observed
+behaviour: more forward force, zero lateral force, no velocity rotation.
+
+**Restated defect, now one line wide:** for a steered wheel, the steer
+contribution is applied along the **forward** axis rather than the **right/lateral**
+axis. Adding along `right` would rotate the vector (and give the missing lateral
+force); adding along `forward` only lengthens it.
+
+[UNCERTAIN] the exact writer. `Wheel::kSteeredFwd` has no accessor in
+`VehicleStruct.h` (unlike `wheel_right` / `wheel_steer`) and no grep-visible
+writer at `Base(n)+0xb4` — the ported A5 code addresses the record by raw dword
+index (`self[0xb4]` there is a *different* field, per-wheel steer torque at byte
+`0x2d0`, `PhysicsChainHooks.cpp:917`), so the writer must be found by offset
+arithmetic rather than by name. Note also the accumulate idiom already present in
+that file (`a5F(self, 0xb4) = fVar4 + f;`, `PhysicsChainHooks.cpp:735`): an exact
+2x is equally consistent with the field being **accumulated twice** for steered
+wheels rather than assigned once. Both readings predict the same observable and
+are distinguished by reading the writer, which is the next step.
+
 ## What is NOT established
 
 - **Why** the coupling is lost. This run reproduces the symptom; it does not
