@@ -604,11 +604,21 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                 if (cn < 2000) {
                     const float cvy = F(r, off::kVelocity + 4);
                     if (std::FILE* lf = std::fopen("coupling_diag.log", "a")) {
+                        // D2 2026-08-21: velH is pinned all run (chain velocity only
+                        // scales, never rotates), so the steer->lateral term is missing.
+                        // Added steer + the FRONT-wheel steer-angle slots +0x1a8/+0x26c
+                        // that A4 (FUN_00470670) writes, to cut the search in half:
+                        // non-zero angles mean steer reaches the wheels and the loss is
+                        // downstream (A5 / contact solver producing no lateral force);
+                        // zero angles mean it never gets past A4's byte input.
                         std::fprintf(lf, "cv=(%.2f,%.2f,%.2f) horiz=%.2f fwdDot=%.2f "
-                            "desired=%.3f bs=%.3f frameMs=%.1f yaw=%.4f velH=%.4f\n",
+                            "desired=%.3f bs=%.3f frameMs=%.1f yaw=%.4f velH=%.4f "
+                            "steer=%.3f in=(%u,%u) steerAng=(%g,%g)\n",
                             cvx, cvy, cvz, horizSpeed, fwdDot, desiredSp, bs,
                             frameMs, io.yaw,
-                            (horizSpeed > 1e-3f ? std::atan2(cvz, cvx) : 0.f));
+                            (horizSpeed > 1e-3f ? std::atan2(cvz, cvx) : 0.f),
+                            io.steer, (unsigned)input[0], (unsigned)input[1],
+                            F(r, 0x1a8), F(r, 0x26c));
                         std::fclose(lf);
                     }
                     ++cn;

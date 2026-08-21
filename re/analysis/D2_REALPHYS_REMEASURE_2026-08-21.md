@@ -174,6 +174,65 @@ That is a much narrower search than "the coupling reduction", and it is
 deterministic and instrumented, so a fix is directly measurable: `velH` must
 start moving when `steer` is non-zero.
 
+## Steer DOES reach the wheels — the loss is downstream of A4
+
+Extended the live `MASHED_COUPLING_DIAG` block (`VehiclePhysicsRun.cpp:606`) to
+also emit `io.steer`, the two descriptor input bytes, and the **front-wheel
+steer-angle slots `+0x1a8` / `+0x26c`** that A4 (`FUN_00470670`) writes. Rebuilt
+and re-ran the same recipe:
+
+```
+steer=0.500  in=(128,0)  steerAng=(8.5,8.5)   yaw=1.5498  velH=1.5498  cv=(7.90,0.00,375.55)
+steer=0.500  in=(128,0)  steerAng=(8.5,8.5)   yaw=1.5498  velH=1.5498  cv=(31.56,0.00,1499.67)
+```
+
+Everything upstream is **working**:
+
+- `steer=0.500` maps to `in=(128,0)` — the byte channel is correct (0.5 × 255 ≈ 128
+  into the +steer slot, the −steer slot zero, mutually exclusive as the original writes).
+- `steerAng=(8.5, 8.5)` — **A4 consumed the input and wrote non-zero front-wheel
+  steer angles.**
+
+And yet the velocity direction never moves: `cv` x/z is 0.02103 at the first
+sample above and 0.02104 at the last. So a non-zero wheel steer angle produces
+**no lateral force at all**.
+
+**The defect is therefore downstream of A4** — in A5 (`FUN_0046ddb0` Phase 0,
+which is supposed to turn the steer angle into a per-wheel forward-axis rotation
+via `FUN_004c4d20`) or in the contact/force solver that should convert a rotated
+wheel axis into lateral force. A4 and the input mapping are exonerated.
+
+### Prime suspect, on the evidence
+
+`velH` equals `yaw` **exactly** in every sample (both 1.5498) — the velocity is
+always precisely along body-forward, never at a slip angle. That is what you
+would see if every wheel's forward axis were body-forward regardless of its
+steer angle.
+
+`VehiclePhysicsRun.cpp:418-423` is the place that could cause exactly that:
+
+```cpp
+// The body-forward/wheel-axis world transform A5 needs (zeroed +0x928 wheel
+// matrix block produced (0,0,0) -> no drive direction -> no motion). Synthesize
+// it from the car's yaw each frame (origin position; only the rotation axes are
+// read by A5's forward/right-axis transforms).
+float xform[16];
+BuildYawMatrix(io.yaw, xform);
+```
+
+The port **synthesises** the wheel-axis transform from `io.yaw` alone, as a
+workaround for a zeroed `+0x928` wheel-matrix block. A yaw-only matrix carries no
+per-wheel steer rotation, so if this synthesised transform is what A5's
+forward/right-axis reads consume, every wheel points along body-forward and the
+`steerAng` values are never expressed. [UNCERTAIN] — this is a hypothesis
+consistent with all observations, NOT a confirmed cause. Confirming it means
+checking whether `FUN_004c4d20`'s per-wheel rotation is applied on top of
+`xform`, or bypassed by it.
+
+Next measurement, cheap and already instrumented: emit a per-wheel forward axis
+alongside `steerAng`. If all four wheels share one axis equal to body-forward
+while `steerAng` is 8.5, the synthesised transform is confirmed as the loss point.
+
 ## What is NOT established
 
 - **Why** the coupling is lost. This run reproduces the symptom; it does not
