@@ -320,16 +320,27 @@ zero frames in the window where a drive verdict is defined. The planned majority
 index bisection would have hunted a culprit hook that does not exist — **do not run it.**
 
 **The actual blocker** (`re/analysis/D2_REALPHYS_REMEASURE_2026-08-21.md`): with
-`MASHED_REAL_PHYSICS=1` the car is undrivable. Forward speed has no top-speed damping and
-saturates the `kSafetyInternal = 1500` clamp (`VehiclePhysicsRun.cpp:480`) in 1.6 s, and
-steering produces **no heading change at all** (`car_yaw` frozen at 1.5498 under
-`steer=+0.50`). The scaffold control on the identical recipe caps at 20.11 and turns
-normally — so the ported chain is 75x too fast with zero steer coupling. Re-measured
-2026-08-21 on a post-B5e build: **identical to the decimal** to the 2026-07-01 and
-2026-07-14 measurements, so the B5e solver-island merge (`021a9f38`) did not close it.
-Root cause as recorded in `COLLISION_GATE_BRIEF_D1_2026-07.md:56` — the original's
-two-body closed loop (PD gain `_DAT_005ccd6c = 20.0` @ `0x005ccd6c`, 0.06 s lookahead)
-which the single-body reduction loses. Fully deterministic, so a fix is unambiguous to verify.
+`MASHED_REAL_PHYSICS=1` **the car will not steer.** `car_yaw` is frozen at 1.5498 for the
+whole run under `steer=+0.50`; the scaffold control on the identical recipe sweeps
+1.5498 → 4.97 and turns normally. Re-measured 2026-08-21 on a post-B5e build and
+**identical to the decimal** to the 2026-07-01 and 2026-07-14 measurements, so the B5e
+solver-island merge (`021a9f38`) did not close it.
+
+**Localised** via `MASHED_COUPLING_DIAG=1`: over 220 diag samples the chain velocity's
+components change (100 distinct x, 98 distinct z) but its **direction never does** (x/z
+0.0203 → 0.0210). The vector only scales, so the velocity heading `velH` is pinned at
+1.5498, and `yaw` follows it because the alignment block (`VehiclePhysicsRun.cpp:582-589`)
+steers `io.yaw` toward the velocity direction rather than from the steer input. So the
+missing term is specifically **steer → lateral velocity**, not the coupling wholesale.
+
+Correspondingly narrowed from the prior description: emitted speed is **fine** — `bs`
+tracks `desired` exactly (0.012 → 12.000), and actual car motion is ~11.9 units/s against
+the scaffold's ~20, i.e. **slower, not faster**. (An earlier version of this section said
+"75x too fast"; that misread `PLAY-DEMO`'s `speed=` field, which reports the chain's
+internal saturated velocity rather than the car's motion. Corrected 2026-08-21.) The
+internal integrator does saturate `kSafetyInternal = 1500`
+(`VehiclePhysicsRun.cpp:480`) — real, but it never reaches the car. Deterministic and
+instrumented, so a fix is directly measurable: `velH` must move when `steer` is non-zero.
 
 Note the bar this exposes: physics has been **5/5 C4** (A3/A4/A5/A6a/A6b) since
 2026-07-01, and this phase's original exit condition ("gated OFF until A6a/A6b reach C4")
