@@ -392,10 +392,43 @@ oddities elsewhere.
   handling matches the original is the A8 telemetry diff, still unrun.
 - The internal velocity integrator still saturates `kSafetyInternal = 1500`.
   Untouched by this fix, and still not reaching the car.
-- There is a **yaw discontinuity** at td=5.81 (1.4750 → 2.0915) and the initial
-  yaw response goes *down* before jumping up, under a constant `steer=+0.50`.
-  Not explained. [UNCERTAIN] whether that is a collision/respawn event or a sign
-  error in the restored coupling.
+- The yaw discontinuity and turn direction are addressed below.
+
+### Follow-up: the rotation is exactly right; the discontinuity is a collision
+
+**Vector level — correct.** Post-fix diag, steering samples:
+
+```
+steer=0.500  steerAng=8.5  |fwd0|=1.0000  |fwd3|=1.0000  angle(fwd0-fwd3) = -8.50 deg
+steer=0.500  steerAng=8.5  |fwd0|=1.0000  |fwd3|=1.0000  angle(fwd0-fwd3) = -8.51 deg
+```
+
+Magnitude is restored to **1.0000** (was 2.0), and the rotation magnitude equals
+the steer angle **exactly** (8.50 vs 8.5). The negative sign is the measuring
+convention, not a defect: `atan2(z,x)` decreases for a positive rotation about
++Y, so −8.50° in that measure *is* +8.5° about the up axis. The Rodrigues build
+and the transform are both behaving correctly.
+
+**The discontinuity is a collision, and the scaffold has one too.** Both arms
+show a yaw jump coinciding with a speed drop:
+
+```
+real physics  td=5.55 yaw=1.4750 speed=1500.00  ->  td=5.81 yaw=2.0915 speed=1018.83
+scaffold      td=6.08 yaw=3.5026 speed=  20.11  ->  td=6.34 yaw=4.7805 speed=  11.14
+```
+
+A discrete heading change with simultaneous deceleration is the signature of
+hitting track geometry, and it appears in the **working reference** as well. So
+it is not evidence of a defect in the restored coupling.
+
+**Turn direction differs between the two arms, and this cannot say which is
+right.** Under the same `steer=+0.50`, scaffold yaw *increases* (1.5498 → 3.50)
+while real physics *decreases* (1.5498 → 1.4750). One of the two disagrees with
+the original's steer-sign convention. [UNCERTAIN] — resolving it requires the
+original's telemetry on matched inputs, i.e. the A8 diff, which is exactly the
+remaining D2 gate item. The scaffold is a kinematic approximation and is **not**
+authoritative on sign, so "it differs from the scaffold" is not evidence against
+the ported chain.
 
 ## What is NOT established
 
