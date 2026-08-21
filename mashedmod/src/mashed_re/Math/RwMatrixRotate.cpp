@@ -35,6 +35,8 @@
 #include "../Core/HookSystem.h"
 
 #include <cstdint>
+#include <cstdio>     // D2 diagnostic
+#include <cstdlib>    // D2 diagnostic
 
 // Ported, bit-identical RW fast inverse-sqrt (Math/RwSqrt.cpp, 0x004c3b90).
 extern "C" float __cdecl FastInvSqrt(float x);
@@ -50,8 +52,45 @@ static constexpr std::uintptr_t kOneAddr      = 0x005cc320u;  // float 1.0f
 extern "C" __declspec(dllexport)
 void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float angle_deg, int mode)
 {
-    const float kDegToRad = *reinterpret_cast<const float*>(kDegToRadAddr);
-    const float kOne      = *reinterpret_cast<const float*>(kOneAddr);
+    // FIX 2026-08-21 (D2 root cause). These two constants used to be read from
+    // the MASHED absolute addresses below. That is correct in the injected .asi,
+    // where MASHED.exe's .rdata is mapped, but in the STANDALONE exe both
+    // addresses read as **0** (measured: kDegToRad=0, kOne=0), which silently
+    // turned every axis-angle rotation into a scale:
+    //     angle_rad     = deg * 0 = 0
+    //     s             = sin(0) = 0
+    //     one_minus_cos = 0 - cos(0) = -1
+    //     R = I + s*K + (1-c)*K^2 = I - K^2 = diag(2,1,2) about the up axis
+    // which is exactly the observed steered-forward defect (a steered wheel got
+    // 2x body-forward instead of a rotated forward, so no lateral force and the
+    // car could not turn). Materialise the same bit patterns as literals — the
+    // values are identical in both targets, so this is bit-identical in the .asi
+    // and merely CORRECT in the exe. This is the D0.7 RVA-tunnel class of defect.
+    static const std::uint32_t kDegToRadBits = 0x3c8efa35u;   // pi/180, was [0x005cd7a8]
+    const float kDegToRad = *reinterpret_cast<const float*>(&kDegToRadBits);
+    const float kOne      = 1.0f;                             // 0x3f800000, was [0x005cc320]
+    (void)kDegToRadAddr; (void)kOneAddr;   // retained above for provenance
+
+    // D2 DIAGNOSTIC 2026-08-21: both constants are read from MASHED ABSOLUTE
+    // ADDRESSES, which are valid in the injected .asi but not in the standalone
+    // exe. Predicted consequence if they read 0 there: angle_rad = 0, s = 0,
+    // one_minus_cos = 0 - 1 = -1, so Rodrigues yields R = I - K^2 = diag(2,1,2)
+    // about the up axis -- a uniform 2x scale in x/z instead of a rotation,
+    // which is exactly the steered-forward defect (fwd0 = 2 * fwd3).
+    {
+        static const bool s_d = (std::getenv("MASHED_COUPLING_DIAG") != nullptr);
+        static bool s_once = false;
+        if (s_d && !s_once) {
+            s_once = true;
+            if (std::FILE* lf = std::fopen("coupling_diag.log", "a")) {
+                std::fprintf(lf, "RWMATROT-CONSTS kDegToRad=%g (expect 0.0174533) "
+                                 "kOne=%g (expect 1) @%p/%p\n",
+                             kDegToRad, kOne,
+                             (void*)kDegToRadAddr, (void*)kOneAddr);
+                std::fclose(lf);
+            }
+        }
+    }
 
     // angle_deg * (π/180), rounded to f32 (matches FLD; FMUL [0x5cd7a8]; FSTP).
     const float angle_rad = angle_deg * kDegToRad;

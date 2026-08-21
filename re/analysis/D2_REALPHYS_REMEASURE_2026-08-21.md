@@ -324,6 +324,79 @@ DEGREES; `8.5` is then 8.5°, which should give a visible rotation) and the
 reads a 3x4 or 4x4 stride — a layout mismatch is the standard way a rotation
 degenerates into a scale).
 
+## ROOT CAUSE FOUND AND FIXED — an RVA tunnel in `RwMatrixRotate`
+
+`Math/RwMatrixRotate.cpp` read its two constants from **MASHED absolute
+addresses**:
+
+```cpp
+static constexpr std::uintptr_t kDegToRadAddr = 0x005cd7a8u;  // pi/180
+static constexpr std::uintptr_t kOneAddr      = 0x005cc320u;  // 1.0f
+const float kDegToRad = *reinterpret_cast<const float*>(kDegToRadAddr);
+const float kOne      = *reinterpret_cast<const float*>(kOneAddr);
+```
+
+Correct in the injected `.asi`, where MASHED's `.rdata` is mapped. In the
+**standalone exe both read 0** — measured, not inferred:
+
+```
+RWMATROT-CONSTS kDegToRad=0 (expect 0.0174533) kOne=0 (expect 1) @005CD7A8/005CC320
+```
+
+The arithmetic then forces the observed symptom exactly:
+
+```
+angle_rad     = deg * 0          = 0
+s             = sin(0)           = 0
+one_minus_cos = kOne - cos(0)    = 0 - 1 = -1
+R = I + s*K + (1-c)*K^2 = I - K^2 = diag(2, 1, 2)   (about the up axis)
+```
+
+`diag(2,1,2) * bodyForward` = `(2*0.0210, 0, 2*0.9998)` = **`(0.0420, 0, 1.9996)`**
+— the measured `fwd0`, to four decimals. **Every axis-angle rotation in the
+standalone was silently a scale.** This is the D0.7 RVA-tunnel class of defect,
+the same category as the `Save/GameSaveBuffer` work earlier in this session.
+
+### Fix and result
+
+Materialised the same bit patterns as literals (`0x3c8efa35` for pi/180, `1.0f`)
+— identical values in both targets, so bit-identical in the `.asi` and merely
+correct in the exe. Constants now read `kDegToRad=0.0174533 kOne=1`.
+
+**The car steers.** `car_yaw`, frozen at 1.5498 across three measurements over
+seven weeks, now moves:
+
+```
+td=4.75  steer=+0.50  car_yaw=1.5123   pos=(-25.0,20.6)
+td=5.02  steer=+0.50  car_yaw=1.4984   pos=(-24.9,22.7)
+td=5.28  steer=+0.50  car_yaw=1.4862   pos=(-24.7,25.2)
+td=5.81  steer=+0.50  car_yaw=2.0915   pos=(-24.8,30.9)
+td=6.34  steer=+0.50  car_yaw=2.0671   pos=(-27.5,35.8)
+```
+
+and the path curves (x: −25.0 → −24.4 → −26.0 → −29.1).
+
+### No regression on the default path
+
+Default build (flag unset) re-run: scaffold telemetry is **identical to the
+pre-fix control** (`car_yaw` 2.3562, 2.6274, 2.9160, 3.2093, 3.5026; speed caps
+20.11), boot chrome intact (`B17-SUMMARY chrome=YES thunks=6/6`), race demo
+completes `ok=1`. Checked because `RwMatrixRotate` has **29 callers across
+vehicle / camera / HUD / font** — the same bug was silently degrading every one
+of them in the standalone, so this fix may also explain unrelated standalone
+oddities elsewhere.
+
+### What this does NOT claim
+
+- **Not** that the ported physics is now faithful. Steering exists; whether the
+  handling matches the original is the A8 telemetry diff, still unrun.
+- The internal velocity integrator still saturates `kSafetyInternal = 1500`.
+  Untouched by this fix, and still not reaching the car.
+- There is a **yaw discontinuity** at td=5.81 (1.4750 → 2.0915) and the initial
+  yaw response goes *down* before jumping up, under a constant `steer=+0.50`.
+  Not explained. [UNCERTAIN] whether that is a collision/respawn event or a sign
+  error in the restored coupling.
+
 ## What is NOT established
 
 - **Why** the coupling is lost. This run reproduces the symptom; it does not
