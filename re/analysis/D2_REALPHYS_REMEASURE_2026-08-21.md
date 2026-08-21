@@ -268,6 +268,62 @@ that file (`a5F(self, 0xb4) = fVar4 + f;`, `PhysicsChainHooks.cpp:735`): an exac
 wheels rather than assigned once. Both readings predict the same observable and
 are distinguished by reading the writer, which is the next step.
 
+## The writer is found; two hypotheses tested, both refuted
+
+**Writer located** — `ForceIntegrator.cpp:49-57` (A5 Phase 0, per-wheel loop
+`piVar12 = self + 0x5b + w*0x31`, so `piVar12[0x2d]` is exactly the
+`Base(n)+0xb4` field the diag reads):
+
+```cpp
+if (vF(piVar12, 0xf) == kZero) {            // steer angle == 0
+    piVar12[0x2d] = self[0x275];            // steered fwd = body forward
+    piVar12[0x2e] = self[0x276];
+    piVar12[0x2f] = self[0x277];
+} else {
+    unsigned char m[64];
+    Rw_MatrixFromAxisAngle(m, kUpAxis, vF(piVar12, 0xf), 0);   // FUN_004c4d20
+    Rw_TransformPoints(vFP(piVar12, 0x2d), vFP(self, 0x275), 1, m);  // FUN_004c3df0
+}
+```
+
+The **structure is correct** — unsteered wheels copy body forward (which is why
+`fwd3` is unit), steered wheels rotate body forward about the up axis by the
+steer angle. So the defect is inside one of the two helpers, both of which are
+bound to real implementations, **not stubs**
+(`ForceIntegratorStubs.cpp:37-45` → `Math::RwV3dTransformPointsCPU` and
+`RwMatrixRotate`). Note `ContactStubs.cpp` *does* carry stub versions of the same
+two names — a second definition pair that is not the one on this path.
+
+**Hypothesis A — accumulation (`+=` instead of `=`).** Refuted by the structure:
+line 56 writes through `Rw_TransformPoints(dst, src, ...)` with `dst != src`, and
+an accumulating transform would keep growing each frame. The value is pinned at
+exactly 2.0 for the whole run.
+
+**Hypothesis B — uninitialised matrix.** `unsigned char m[64]` was read
+uninitialised, and `Rw_TransformPoints` is a *point* transform, so it consumes
+the matrix's translation row — a garbage translation equal to the source would
+give exactly `2*src`. Tested by `memset(m, 0, sizeof m)` before the call,
+rebuilt, re-ran: **output identical, `fwd0=(0.0420,1.9996)` unchanged.**
+Refuted. (The `memset` is kept as hygiene — reading uninitialised memory is UB
+regardless — with the negative result recorded at the call site.)
+
+### What that leaves
+
+With `m` zeroed, `RwMatrixRotate(m, kUpAxis, 8.5, mode 0)` followed by
+`RwV3dTransformPointsCPU(dst, src, 1, m)` yields `dst = 2*src` with the direction
+exactly preserved. Since a zeroed matrix that `RwMatrixRotate` failed to write
+would give `dst = 0`, `RwMatrixRotate` **is** writing something — and whatever it
+writes acts as a uniform scale of 2 rather than a rotation of 8.5.
+
+Next step is to read those two functions directly (`Math/RwMatrixRotate.cpp`,
+`Math/RwV3dTransformPointsCPU.cpp`) against `FUN_004c4d20` / `FUN_004c3df0`, and
+in particular to check the **angle unit** (`ContactConstants.h:46` records
+`kAxisAngle90 = 90.0f` as a `FUN_004c4d20` angle argument, so the helper takes
+DEGREES; `8.5` is then 8.5°, which should give a visible rotation) and the
+**matrix layout** the CPU transform assumes (row- vs column-major, and whether it
+reads a 3x4 or 4x4 stride — a layout mismatch is the standard way a rotation
+degenerates into a scale).
+
 ## What is NOT established
 
 - **Why** the coupling is lost. This run reproduces the symptom; it does not

@@ -16,6 +16,7 @@
 // C-LEVEL: C2 faithful transcription. Gate = installed-hook scenario telemetry vs
 // the captured contact baseline (re/analysis/wsb_contact_baseline.json), once
 // wired (B4). Residual RW-math / PRNG / runtime-global deps stubbed inert.
+#include <cstring>                          // memset (D2 steered-forward diagnostic)
 #include "ForceIntegrator.h"
 #include "../Collision/ContactSolvers.h"   // reuse TriangleFaceNormal (0x0046c5f0)
 #include "../Collision/ContactDeps.h"      // Collision::g_suspScratch (DAT_00881560)
@@ -52,6 +53,21 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
             piVar12[0x2f] = self[0x277];
         } else {
             unsigned char m[64];
+            // Hygiene only — `m` was read uninitialised (Rw_TransformPoints is a
+            // POINT transform and consumes the translation row). Kept because
+            // reading uninitialised memory is UB regardless.
+            //
+            // D2 2026-08-21: this was ALSO tested as a fix for the steered-forward
+            // defect and REFUTED. Symptom: a steered wheel's steered-forward comes
+            // out as EXACTLY 2x body forward with direction unchanged
+            // (fwd0=(0.0420,1.9996) vs unsteered fwd3=(0.0210,0.9998)) — a scale,
+            // not a rotation, so no lateral force and the car cannot turn. Zeroing
+            // `m` changed the output by nothing at all, so the garbage translation
+            // is NOT the cause. Whatever RwMatrixRotate(kUpAxis, 8.5, mode 0)
+            // produces, feeding it to RwV3dTransformPointsCPU yields 2*src. Next
+            // step is to read RwMatrixRotate / RwV3dTransformPointsCPU directly —
+            // see re/analysis/D2_REALPHYS_REMEASURE_2026-08-21.md.
+            std::memset(m, 0, sizeof m);
             Rw_MatrixFromAxisAngle(m, kUpAxis, vF(piVar12, 0xf), 0);
             Rw_TransformPoints(vFP(piVar12, 0x2d), vFP(self, 0x275), 1, m);
         }
