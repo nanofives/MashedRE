@@ -22,11 +22,8 @@
 >    the run completed cleanly rather than crashing.
 > 2. **Reads are not guaranteed to be 0.** Two measured addresses read 0 because
 >    that part of `.data` happens to be zero. Others may read live bytes.
-> 3. **The sharp new risk: address collision.** A MASHED address can alias a
->    genuine standalone variable in `.data`, so a tunnel *write* could silently
->    corrupt real state rather than scribbling on padding. Nothing currently
->    proves which parts of that 11.9 MB are deliberate address-space padding and
->    which hold real variables — settling that needs the linker `/MAP`.
+> 3. ~~**The sharp new risk: address collision.**~~ **REFUTED by the linker map
+>    — see below. There is no collision risk.**
 >
 > The inventory, classification and the D2 consequence below are unaffected: the
 > counts, the ~80 zero-valued physics constants, and the `Math/` verdicts all
@@ -62,6 +59,47 @@ a loud crash into a silent wrong value.
 There is no `#ifdef MASHED_STANDALONE` guard on any tunnel: only ONE exe TU
 references that macro at all (`Save/GameSaveBuffer.cpp`), and no header defines
 or tests it.
+
+## Resolved from `mashed_re.map` — the padding is deliberate and collision-free
+
+`mashedmod/build.bat:384` already emits `/MAP:"%OUT%\mashed_re.map"`, so no
+rebuild was needed. Parsed 14,437 symbols:
+
+```
+symbols with VA inside the MASHED range 0x00400000..0x00A00000:  0
+```
+
+**Not one real symbol is placed in the MASHED address range.** The 11.9 MB
+`.data` is not accidental bloat — it is one named array:
+
+```cpp
+// exe_main.cpp:241-242
+extern "C" char g_b17_low_arena_pad[0x00A00000];
+char            g_b17_low_arena_pad[0x00A00000];
+```
+
+The map shows it at `0x0019A2E0` followed by a **10,485,760-byte gap** — the
+single largest in the image — with real symbols resuming at `0x00B9A2E0`
+(`g_track`). So the pad spans **0x0019A2E0 .. 0x00B9A2E0**, which fully contains
+the MASHED range. Verified for every address of interest: `0x005CC320`,
+`0x005CD7A8`, `0x007F1038`, `0x007D3FF8`, and both range endpoints — all land
+inside the pad.
+
+**So the collision risk raised in the correction above does not exist.** A
+tunnel read returns pad bytes (zero-initialised `.bss`-style storage, which is
+why the two measured constants read 0), and a tunnel *write* scribbles on the
+pad rather than on a real variable. The design is intentional and sound: reserve
+the address space by construction so stale derefs are inert.
+
+That is also the precise reason the class is so quiet. The pad guarantees every
+MASHED address is mapped, readable and zero — which is exactly the condition
+under which a wrong constant produces a plausible-looking wrong answer instead
+of a crash.
+
+**Remaining real risk is unchanged and is about values, not memory safety:** a
+tunnel that should read `1.0f` reads `0.0f`. The ~80 physics constants below are
+the population that matters, and they are inert only while
+`MASHED_REAL_PHYSICS` is OFF.
 
 ## Inventory — 547 runtime tunnels across 84 of 205 exe TUs
 
