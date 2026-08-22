@@ -54,18 +54,18 @@ typedef unsigned short ushort;
 typedef unsigned char  byte;
 typedef long double    float10;      // x87 80-bit ST0 return
 
-#define DAT_005d757c      (*(const float*)0x005d757cu)   // 0.0f
-#define _DAT_005cc320     (*(const float*)0x005cc320u)   // 1.0f
-#define _DAT_005cc32c     (*(const float*)0x005cc32cu)   // 0.5f
-#define _DAT_005cc33c     (*(const float*)0x005cc33cu)   // -1.0f            (0xbf800000)
-#define _DAT_005cc328     (*(const float*)0x005cc328u)   // 0.00999999978f   (0x3c23d70a)
-#define _DAT_005cc558     (*(const float*)0x005cc558u)   // 0.00100000005f   (0x3a83126f)
-#define _DAT_005cc9b4     (*(const float*)0x005cc9b4u)   // 0.990000009f     (0x3f7d70a4)
-#define _DAT_005cd03c     (*(const float*)0x005cd03cu)   // 9.99999975e-05f  (0x38d1b717)
-#define _DAT_005ccabc     (*(const float*)0x005ccabcu)   // 1.10000002f      (0x3f8ccccd)
-#define _DAT_005ce1d4     (*(const float*)0x005ce1d4u)   // 1.00999999f      (0x3f8147ae)
-#define _DAT_005ce54c     (*(const float*)0x005ce54cu)   // 1.00099994e-06f  (0x358637bd)
-#define PTR_DAT_005ceabc  (*(const float*)0x005ceabcu)   // 1.17549435e-38f  (0x00800000)
+#define DAT_005d757c      (0.0f)   // 0.0f [RVA 0x005d757c = 0x00000000]
+#define _DAT_005cc320     (1.0f)   // 1.0f [RVA 0x005cc320 = 0x3f800000]
+#define _DAT_005cc32c     (0.5f)   // 0.5f [RVA 0x005cc32c = 0x3f000000]
+#define _DAT_005cc33c     (-1.0f)   // -1.0f            (0xbf800000) [RVA 0x005cc33c = 0xbf800000]
+#define _DAT_005cc328     (0.01f)   // 0.00999999978f   (0x3c23d70a) [RVA 0x005cc328 = 0x3c23d70a]
+#define _DAT_005cc558     (0.001f)   // 0.00100000005f   (0x3a83126f) [RVA 0x005cc558 = 0x3a83126f]
+#define _DAT_005cc9b4     (0.99f)   // 0.990000009f     (0x3f7d70a4) [RVA 0x005cc9b4 = 0x3f7d70a4]
+#define _DAT_005cd03c     (0.0001f)   // 9.99999975e-05f  (0x38d1b717) [RVA 0x005cd03c = 0x38d1b717]
+#define _DAT_005ccabc     (1.1f)   // 1.10000002f      (0x3f8ccccd) [RVA 0x005ccabc = 0x3f8ccccd]
+#define _DAT_005ce1d4     (1.01f)   // 1.00999999f      (0x3f8147ae) [RVA 0x005ce1d4 = 0x3f8147ae]
+#define _DAT_005ce54c     (1.0e-06f)   // 1.00099994e-06f  (0x358637bd) [RVA 0x005ce54c = 0x358637bd]
+#define PTR_DAT_005ceabc  (1.1754944e-38f)   // 1.17549435e-38f  (0x00800000) [RVA 0x005ceabc = 0x00800000]
 #define PTR_DAT_00623fe8  (*(uint*)0x00623fe8u)          // &table = (uint*)0x00623fe8
 
 // --- extern callees (K1/K2/K3 + K16, defined in sibling TUs of the same .asi) --

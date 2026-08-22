@@ -101,6 +101,57 @@ tunnel that should read `1.0f` reads `0.0f`. The ~80 physics constants below are
 the population that matters, and they are inert only while
 `MASHED_REAL_PHYSICS` is OFF.
 
+## FIXED — the 83 physics constants, resolved from the original binary
+
+Done 2026-08-21, ahead of any D2 flag inversion. Method deliberately avoided the
+comment glosses: memory `plate-hex-gloss-authoritative` records a nonzero
+IEEE-754 gloss error rate in plates (24 found 2026-07-04), so **every value was
+read from `original/MASHED.exe.unpatched` itself** by walking its PE section
+table and resolving each VA to a file offset.
+
+```
+exe TUs parsed from build.bat : 200
+float RVA macros found        :  83   (14 files, all Collision/RwpSolver*)
+resolved from binary          :  83   (all in .rdata)
+unresolved (bss)              :   0
+comment-gloss mismatches      :   0   (the 1 flagged was my regex catching "m32" in "(FCOM m32)")
+```
+
+Each `#define X (*(const float*)0xADDR u)` became `#define X (literal)` with the
+shortest decimal that **round-trips to the exact original bits** — asserted per
+macro, not assumed. Provenance kept inline:
+
+```c
+-#define _DAT_005cc9b4  (*(const float*)0x005cc9b4u)   // 0.99f
++#define _DAT_005cc9b4  (0.99f)   // 0.99f [RVA 0x005cc9b4 = 0x3f7d70a4]
+```
+
+Diff is exactly **83 added / 83 deleted** across `Collision/` — one line per
+macro, no whitespace churn. Zero `const float*)0x00` derefs remain in those files.
+
+**The `.asi` is unaffected by construction**: it previously read these addresses
+from live MASHED memory and got these same values, so substituting the identical
+bit patterns cannot change its arithmetic. `diff-original` evidence stands.
+
+### Measured effect
+
+| Arm | Result |
+|---|---|
+| Default (scaffold) | **Unchanged** — `car_yaw` 3.2093 / 3.5026 / 4.7908 / 4.9732, speed caps 20.11, identical to prior runs |
+| `MASHED_REAL_PHYSICS=1` | Behaviour materially the same, values differ in the 4th decimal (`car_yaw` 1.4862 → 1.4854, 2.0915 → 2.0939) |
+
+Two things follow, and the second is the more useful:
+
+1. **The constants are genuinely live and consumed** — the small deltas prove the
+   solver reads them; they were previously all 0.0f.
+2. **The internal 1500 saturation is NOT caused by these constants.** It is
+   unchanged with all 83 corrected, so that defect has a different cause. That
+   rules out a large hypothesis cheaply.
+
+This is a latent-correctness fix rather than a behavioural one: it removes 83
+wrong values from the code path D2 intends to make default, *before* the
+inversion makes them matter.
+
 ## Inventory — 547 runtime tunnels across 84 of 205 exe TUs
 
 Exe TU set established from `mashedmod/build.bat`: 200 `.cpp` on the

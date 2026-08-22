@@ -39,15 +39,15 @@ typedef unsigned int   uint;
 typedef unsigned int   undefined4;
 typedef long double    float10;      // x87 80-bit return of FUN_005667c0 (K1)
 
-#define _DAT_005cc320    (*(const float*)0x005cc320u)   //  1.0f
-#define _DAT_005cc32c    (*(const float*)0x005cc32cu)   //  0.5f
-#define _DAT_005cc33c    (*(const float*)0x005cc33cu)   // -1.0f
-#define DAT_005d757c     (*(const float*)0x005d757cu)   //  0.0f
-#define _DAT_005ce54c    (*(const float*)0x005ce54cu)   //  1.00060076e-06 (contact eps)
-#define _DAT_005e4568    (*(const float*)0x005e4568u)   // -1.00060076e-06 (barycentric low bound)
-#define _DAT_005e4564    (*(const float*)0x005e4564u)   //  1.00000095f     (barycentric high bound)
-#define _DAT_005ceac0    (*(const float*)0x005ceac0u)   //  3.40282347e+38  (FLT_MAX early-out)
-#define PTR_DAT_005ceabc (*(const float*)0x005ceabcu)   //  1.17549435e-38  (FLT_MIN)
+#define _DAT_005cc320    (1.0f)   // 1.0f [RVA 0x005cc320 = 0x3f800000]
+#define _DAT_005cc32c    (0.5f)   // 0.5f [RVA 0x005cc32c = 0x3f000000]
+#define _DAT_005cc33c    (-1.0f)   // -1.0f [RVA 0x005cc33c = 0xbf800000]
+#define DAT_005d757c     (0.0f)   // 0.0f [RVA 0x005d757c = 0x00000000]
+#define _DAT_005ce54c    (1.0e-06f)   // 1.00060076e-06 (contact eps) [RVA 0x005ce54c = 0x358637bd]
+#define _DAT_005e4568    (-1.0e-06f)   // -1.00060076e-06 (barycentric low bound) [RVA 0x005e4568 = 0xb58637bd]
+#define _DAT_005e4564    (1.000001f)   // 1.00000095f     (barycentric high bound) [RVA 0x005e4564 = 0x3f800008]
+#define _DAT_005ceac0    (3.4028235e+38f)   // 3.40282347e+38  (FLT_MAX early-out) [RVA 0x005ceac0 = 0x7f7fffff]
+#define PTR_DAT_005ceabc (1.1754944e-38f)   // 1.17549435e-38  (FLT_MIN) [RVA 0x005ceabc = 0x00800000]
 
 // --- extern callees (K1 + K14) ----------------------------------------------
 extern "C" float10 __cdecl FUN_005667c0(float *p1,float *p2);                                  // K1

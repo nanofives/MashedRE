@@ -61,16 +61,16 @@ typedef unsigned short ushort;
 typedef unsigned char  byte;
 typedef long double    float10;      // x87 80-bit ST0 return
 
-#define DAT_005d757c   (*(const float*)0x005d757cu)   // 0.0f
-#define _DAT_005cc320  (*(const float*)0x005cc320u)   // 1.0f
-#define _DAT_005cc328  (*(const float*)0x005cc328u)   // 0.00999999978f
-#define _DAT_005cc32c  (*(const float*)0x005cc32cu)   // 0.5f
-#define _DAT_005cc33c  (*(const float*)0x005cc33cu)   // -1.0f
-#define _DAT_005ce54c  (*(const float*)0x005ce54cu)   // 1.00099994e-06f
-#define _DAT_005cc9a0  (*(const float*)0x005cc9a0u)   // 0.0500000007f
-#define _DAT_005cc9dc  (*(const float*)0x005cc9dcu)   // 0.949999988f
-#define _DAT_005ceac0  (*(const float*)0x005ceac0u)   // 3.40282347e+38f (FLT_MAX)
-#define _DAT_005e5050  (*(const float*)0x005e5050u)   // -3.40282347e+38f (-FLT_MAX)
+#define DAT_005d757c   (0.0f)   // 0.0f [RVA 0x005d757c = 0x00000000]
+#define _DAT_005cc320  (1.0f)   // 1.0f [RVA 0x005cc320 = 0x3f800000]
+#define _DAT_005cc328  (0.01f)   // 0.00999999978f [RVA 0x005cc328 = 0x3c23d70a]
+#define _DAT_005cc32c  (0.5f)   // 0.5f [RVA 0x005cc32c = 0x3f000000]
+#define _DAT_005cc33c  (-1.0f)   // -1.0f [RVA 0x005cc33c = 0xbf800000]
+#define _DAT_005ce54c  (1.0e-06f)   // 1.00099994e-06f [RVA 0x005ce54c = 0x358637bd]
+#define _DAT_005cc9a0  (0.05f)   // 0.0500000007f [RVA 0x005cc9a0 = 0x3d4ccccd]
+#define _DAT_005cc9dc  (0.95f)   // 0.949999988f [RVA 0x005cc9dc = 0x3f733333]
+#define _DAT_005ceac0  (3.4028235e+38f)   // 3.40282347e+38f (FLT_MAX) [RVA 0x005ceac0 = 0x7f7fffff]
+#define _DAT_005e5050  (-3.4028235e+38f)   // -3.40282347e+38f (-FLT_MAX) [RVA 0x005e5050 = 0xff7fffff]
 
 // --- extern callees (K1/K2/K3/K5/K16/K17, defined in sibling TUs of same .asi) ----
 extern "C" int     __cdecl FUN_0055c230(int param_1,float *param_2,undefined4 param_3,float *param_4,undefined4 param_5); // 0x0055c230 (K5)

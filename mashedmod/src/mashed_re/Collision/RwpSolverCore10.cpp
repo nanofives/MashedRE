@@ -44,13 +44,13 @@ typedef unsigned short ushort;
 typedef unsigned int   uint;
 typedef unsigned int   undefined4;
 
-#define _DAT_005cc320  (*(const float*)0x005cc320u)   // 1.0f
-#define _DAT_005cc32c  (*(const float*)0x005cc32cu)   // 0.5f
-#define _DAT_005cd03c  (*(const float*)0x005cd03cu)   // 1.0e-4f
-#define DAT_005d757c   (*(const float*)0x005d757cu)   // 0.0f
-#define _DAT_005e456c  (*(const float*)0x005e456cu)   // -1.0e-3f
-#define _DAT_005cc9b4  (*(const float*)0x005cc9b4u)   // 0.99f
-#define _DAT_005e520c  (*(const float*)0x005e520cu)   // 0.70710678f (1/sqrt2)
+#define _DAT_005cc320  (1.0f)   // 1.0f [RVA 0x005cc320 = 0x3f800000]
+#define _DAT_005cc32c  (0.5f)   // 0.5f [RVA 0x005cc32c = 0x3f000000]
+#define _DAT_005cd03c  (0.0001f)   // 1.0e-4f [RVA 0x005cd03c = 0x38d1b717]
+#define DAT_005d757c   (0.0f)   // 0.0f [RVA 0x005d757c = 0x00000000]
+#define _DAT_005e456c  (-0.001f)   // -1.0e-3f [RVA 0x005e456c = 0xba83126f]
+#define _DAT_005cc9b4  (0.99f)   // 0.99f [RVA 0x005cc9b4 = 0x3f7d70a4]
+#define _DAT_005e520c  (0.70710677f)   // 0.70710678f (1/sqrt2) [RVA 0x005e520c = 0x3f3504f3]
 // data tables (absolute-address binds; note 2)
 #define DAT_005e57a4   0x005e57a4u
 #define DAT_005e57b0   0x005e57b0u

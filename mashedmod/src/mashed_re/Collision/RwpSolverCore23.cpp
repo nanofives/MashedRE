@@ -128,9 +128,9 @@ typedef float10 (__cdecl *RwpVolFn24)(int);
 typedef int     (__cdecl *RwpBodyFn1c)(int *);
 
 // m32 float constants (verified): 0.5 bbox scale / inertia numerator / 1.0
-#define K23_DAT_005cc32c (*(const float *)0x005cc32cu)
-#define K23_DAT_005cc574 (*(const float *)0x005cc574u)
-#define K23_DAT_005cc320 (*(const float *)0x005cc320u)
+#define K23_DAT_005cc32c (0.5f)   // [RVA 0x005cc32c = 0x3f000000]
+#define K23_DAT_005cc574 (2.0f)   // [RVA 0x005cc574 = 0x40000000]
+#define K23_DAT_005cc320 (1.0f)   // [RVA 0x005cc320 = 0x3f800000]
 
 // --- K24 root FUN_0047e9c0 callees (besides the 9 K23 drivers defined below) ---
 // 0x0055e200 solver-context set — ported hook (RwpIntegrator.cpp, extern "C" symbol

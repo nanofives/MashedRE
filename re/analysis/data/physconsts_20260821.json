@@ -1,0 +1,832 @@
+[
+ {
+  "file": "Collision\\RwpSolverCore10.cpp",
+  "line": 47,
+  "macro": "_DAT_005cc320",
+  "addr": 6079264,
+  "comment": "// 1.0f",
+  "value": 1.0,
+  "bits": 1065353216,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore10.cpp",
+  "line": 48,
+  "macro": "_DAT_005cc32c",
+  "addr": 6079276,
+  "comment": "// 0.5f",
+  "value": 0.5,
+  "bits": 1056964608,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore10.cpp",
+  "line": 49,
+  "macro": "_DAT_005cd03c",
+  "addr": 6082620,
+  "comment": "// 1.0e-4f",
+  "value": 9.999999747378752e-05,
+  "bits": 953267991,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore10.cpp",
+  "line": 50,
+  "macro": "DAT_005d757c",
+  "addr": 6124924,
+  "comment": "// 0.0f",
+  "value": 0.0,
+  "bits": 0,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore10.cpp",
+  "line": 51,
+  "macro": "_DAT_005e456c",
+  "addr": 6178156,
+  "comment": "// -1.0e-3f",
+  "value": -0.0010000000474974513,
+  "bits": 3129152111,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore10.cpp",
+  "line": 52,
+  "macro": "_DAT_005cc9b4",
+  "addr": 6080948,
+  "comment": "// 0.99f",
+  "value": 0.9900000095367432,
+  "bits": 1065185444,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore10.cpp",
+  "line": 53,
+  "macro": "_DAT_005e520c",
+  "addr": 6181388,
+  "comment": "// 0.70710678f (1/sqrt2)",
+  "value": 0.7071067690849304,
+  "bits": 1060439283,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore11.cpp",
+  "line": 45,
+  "macro": "DAT_005d757c",
+  "addr": 6124924,
+  "comment": "// 0.0f",
+  "value": 0.0,
+  "bits": 0,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore12.cpp",
+  "line": 63,
+  "macro": "_DAT_005cc320",
+  "addr": 6079264,
+  "comment": "// 1.0f",
+  "value": 1.0,
+  "bits": 1065353216,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore12.cpp",
+  "line": 64,
+  "macro": "_DAT_005cc32c",
+  "addr": 6079276,
+  "comment": "// 0.5f",
+  "value": 0.5,
+  "bits": 1056964608,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore12.cpp",
+  "line": 65,
+  "macro": "_DAT_005cc31c",
+  "addr": 6079260,
+  "comment": "// 3.0f",
+  "value": 3.0,
+  "bits": 1077936128,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore12.cpp",
+  "line": 66,
+  "macro": "_DAT_005cc574",
+  "addr": 6079860,
+  "comment": "// 2.0f",
+  "value": 2.0,
+  "bits": 1073741824,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore12.cpp",
+  "line": 67,
+  "macro": "_DAT_005cc34c",
+  "addr": 6079308,
+  "comment": "// -2.0f",
+  "value": -2.0,
+  "bits": 3221225472,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore12.cpp",
+  "line": 68,
+  "macro": "_DAT_005cc35c",
+  "addr": 6079324,
+  "comment": "// 4.0f",
+  "value": 4.0,
+  "bits": 1082130432,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore12.cpp",
+  "line": 69,
+  "macro": "_DAT_005cc328",
+  "addr": 6079272,
+  "comment": "// 0.01f",
+  "value": 0.009999999776482582,
+  "bits": 1008981770,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore12.cpp",
+  "line": 70,
+  "macro": "_DAT_005cc56c",
+  "addr": 6079852,
+  "comment": "// 0.1f",
+  "value": 0.10000000149011612,
+  "bits": 1036831949,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore12.cpp",
+  "line": 71,
+  "macro": "_DAT_005e57dc",
+  "addr": 6182876,
+  "comment": "// -0.9f",
+  "value": -0.8999999761581421,
+  "bits": 3211159142,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore12.cpp",
+  "line": 72,
+  "macro": "_DAT_005ceae4",
+  "addr": 6089444,
+  "comment": "// 0.99999893f (0x3f7fffef)",
+  "value": 0.9999989867210388,
+  "bits": 1065353199,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore12.cpp",
+  "line": 73,
+  "macro": "DAT_005d757c",
+  "addr": 6124924,
+  "comment": "// 0.0f",
+  "value": 0.0,
+  "bits": 0,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore14.cpp",
+  "line": 29,
+  "macro": "_DAT_005cc320",
+  "addr": 6079264,
+  "comment": "// 1.0f",
+  "value": 1.0,
+  "bits": 1065353216,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore14.cpp",
+  "line": 30,
+  "macro": "DAT_005d757c",
+  "addr": 6124924,
+  "comment": "// 0.0f",
+  "value": 0.0,
+  "bits": 0,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore14.cpp",
+  "line": 31,
+  "macro": "_DAT_005cd03c",
+  "addr": 6082620,
+  "comment": "// 9.99999975e-05  (parallel-segment det eps)",
+  "value": 9.999999747378752e-05,
+  "bits": 953267991,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore14.cpp",
+  "line": 32,
+  "macro": "_DAT_005ce54c",
+  "addr": 6088012,
+  "comment": "// 1.00060076e-06  (contact-dedup dist\u00b2 eps)",
+  "value": 9.999999974752427e-07,
+  "bits": 897988541,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore15.cpp",
+  "line": 42,
+  "macro": "_DAT_005cc320",
+  "addr": 6079264,
+  "comment": "//  1.0f",
+  "value": 1.0,
+  "bits": 1065353216,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore15.cpp",
+  "line": 43,
+  "macro": "_DAT_005cc32c",
+  "addr": 6079276,
+  "comment": "//  0.5f",
+  "value": 0.5,
+  "bits": 1056964608,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore15.cpp",
+  "line": 44,
+  "macro": "_DAT_005cc33c",
+  "addr": 6079292,
+  "comment": "// -1.0f",
+  "value": -1.0,
+  "bits": 3212836864,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore15.cpp",
+  "line": 45,
+  "macro": "DAT_005d757c",
+  "addr": 6124924,
+  "comment": "//  0.0f",
+  "value": 0.0,
+  "bits": 0,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore15.cpp",
+  "line": 46,
+  "macro": "_DAT_005ce54c",
+  "addr": 6088012,
+  "comment": "//  1.00060076e-06 (contact eps)",
+  "value": 9.999999974752427e-07,
+  "bits": 897988541,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore15.cpp",
+  "line": 47,
+  "macro": "_DAT_005e4568",
+  "addr": 6178152,
+  "comment": "// -1.00060076e-06 (barycentric low bound)",
+  "value": -9.999999974752427e-07,
+  "bits": 3045472189,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore15.cpp",
+  "line": 48,
+  "macro": "_DAT_005e4564",
+  "addr": 6178148,
+  "comment": "//  1.00000095f     (barycentric high bound)",
+  "value": 1.0000009536743164,
+  "bits": 1065353224,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore15.cpp",
+  "line": 49,
+  "macro": "_DAT_005ceac0",
+  "addr": 6089408,
+  "comment": "//  3.40282347e+38  (FLT_MAX early-out)",
+  "value": 3.4028234663852886e+38,
+  "bits": 2139095039,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore15.cpp",
+  "line": 50,
+  "macro": "PTR_DAT_005ceabc",
+  "addr": 6089404,
+  "comment": "//  1.17549435e-38  (FLT_MIN)",
+  "value": 1.1754943508222875e-38,
+  "bits": 8388608,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore16.cpp",
+  "line": 42,
+  "macro": "DAT_005d757c",
+  "addr": 6124924,
+  "comment": "// 0.0f",
+  "value": 0.0,
+  "bits": 0,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore16.cpp",
+  "line": 43,
+  "macro": "_DAT_005cc320",
+  "addr": 6079264,
+  "comment": "// 1.0f              (0x3f800000)",
+  "value": 1.0,
+  "bits": 1065353216,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore16.cpp",
+  "line": 44,
+  "macro": "_DAT_005cc56c",
+  "addr": 6079852,
+  "comment": "// 0.100000001f      (0x3dcccccd)",
+  "value": 0.10000000149011612,
+  "bits": 1036831949,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore16.cpp",
+  "line": 45,
+  "macro": "_DAT_005cc32c",
+  "addr": 6079276,
+  "comment": "// 0.5f              (0x3f000000)",
+  "value": 0.5,
+  "bits": 1056964608,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore16.cpp",
+  "line": 46,
+  "macro": "_DAT_005cea1c",
+  "addr": 6089244,
+  "comment": "// -9.99999975e-06f  (0xb727c5ac)",
+  "value": -9.999999747378752e-06,
+  "bits": 3072837036,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore17.cpp",
+  "line": 57,
+  "macro": "DAT_005d757c",
+  "addr": 6124924,
+  "comment": "// 0.0f",
+  "value": 0.0,
+  "bits": 0,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore17.cpp",
+  "line": 58,
+  "macro": "_DAT_005cc320",
+  "addr": 6079264,
+  "comment": "// 1.0f",
+  "value": 1.0,
+  "bits": 1065353216,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore17.cpp",
+  "line": 59,
+  "macro": "_DAT_005cc32c",
+  "addr": 6079276,
+  "comment": "// 0.5f",
+  "value": 0.5,
+  "bits": 1056964608,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore17.cpp",
+  "line": 60,
+  "macro": "_DAT_005cc33c",
+  "addr": 6079292,
+  "comment": "// -1.0f            (0xbf800000)",
+  "value": -1.0,
+  "bits": 3212836864,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore17.cpp",
+  "line": 61,
+  "macro": "_DAT_005cc328",
+  "addr": 6079272,
+  "comment": "// 0.00999999978f   (0x3c23d70a)",
+  "value": 0.009999999776482582,
+  "bits": 1008981770,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore17.cpp",
+  "line": 62,
+  "macro": "_DAT_005cc558",
+  "addr": 6079832,
+  "comment": "// 0.00100000005f   (0x3a83126f)",
+  "value": 0.0010000000474974513,
+  "bits": 981668463,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore17.cpp",
+  "line": 63,
+  "macro": "_DAT_005cc9b4",
+  "addr": 6080948,
+  "comment": "// 0.990000009f     (0x3f7d70a4)",
+  "value": 0.9900000095367432,
+  "bits": 1065185444,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore17.cpp",
+  "line": 64,
+  "macro": "_DAT_005cd03c",
+  "addr": 6082620,
+  "comment": "// 9.99999975e-05f  (0x38d1b717)",
+  "value": 9.999999747378752e-05,
+  "bits": 953267991,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore17.cpp",
+  "line": 65,
+  "macro": "_DAT_005ccabc",
+  "addr": 6081212,
+  "comment": "// 1.10000002f      (0x3f8ccccd)",
+  "value": 1.100000023841858,
+  "bits": 1066192077,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore17.cpp",
+  "line": 66,
+  "macro": "_DAT_005ce1d4",
+  "addr": 6087124,
+  "comment": "// 1.00999999f      (0x3f8147ae)",
+  "value": 1.0099999904632568,
+  "bits": 1065437102,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore17.cpp",
+  "line": 67,
+  "macro": "_DAT_005ce54c",
+  "addr": 6088012,
+  "comment": "// 1.00099994e-06f  (0x358637bd)",
+  "value": 9.999999974752427e-07,
+  "bits": 897988541,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore17.cpp",
+  "line": 68,
+  "macro": "PTR_DAT_005ceabc",
+  "addr": 6089404,
+  "comment": "// 1.17549435e-38f  (0x00800000)",
+  "value": 1.1754943508222875e-38,
+  "bits": 8388608,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore18.cpp",
+  "line": 64,
+  "macro": "DAT_005d757c",
+  "addr": 6124924,
+  "comment": "// 0.0f",
+  "value": 0.0,
+  "bits": 0,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore18.cpp",
+  "line": 65,
+  "macro": "_DAT_005cc320",
+  "addr": 6079264,
+  "comment": "// 1.0f",
+  "value": 1.0,
+  "bits": 1065353216,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore18.cpp",
+  "line": 66,
+  "macro": "_DAT_005cc328",
+  "addr": 6079272,
+  "comment": "// 0.00999999978f",
+  "value": 0.009999999776482582,
+  "bits": 1008981770,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore18.cpp",
+  "line": 67,
+  "macro": "_DAT_005cc32c",
+  "addr": 6079276,
+  "comment": "// 0.5f",
+  "value": 0.5,
+  "bits": 1056964608,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore18.cpp",
+  "line": 68,
+  "macro": "_DAT_005cc33c",
+  "addr": 6079292,
+  "comment": "// -1.0f",
+  "value": -1.0,
+  "bits": 3212836864,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore18.cpp",
+  "line": 69,
+  "macro": "_DAT_005ce54c",
+  "addr": 6088012,
+  "comment": "// 1.00099994e-06f",
+  "value": 9.999999974752427e-07,
+  "bits": 897988541,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore18.cpp",
+  "line": 70,
+  "macro": "_DAT_005cc9a0",
+  "addr": 6080928,
+  "comment": "// 0.0500000007f",
+  "value": 0.05000000074505806,
+  "bits": 1028443341,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore18.cpp",
+  "line": 71,
+  "macro": "_DAT_005cc9dc",
+  "addr": 6080988,
+  "comment": "// 0.949999988f",
+  "value": 0.949999988079071,
+  "bits": 1064514355,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore18.cpp",
+  "line": 72,
+  "macro": "_DAT_005ceac0",
+  "addr": 6089408,
+  "comment": "// 3.40282347e+38f (FLT_MAX)",
+  "value": 3.4028234663852886e+38,
+  "bits": 2139095039,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore18.cpp",
+  "line": 73,
+  "macro": "_DAT_005e5050",
+  "addr": 6180944,
+  "comment": "// -3.40282347e+38f (-FLT_MAX)",
+  "value": -3.4028234663852886e+38,
+  "bits": 4286578687,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore21.cpp",
+  "line": 89,
+  "macro": "DAT_005d757c",
+  "addr": 6124924,
+  "comment": "// 0.0f",
+  "value": 0.0,
+  "bits": 0,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore21.cpp",
+  "line": 90,
+  "macro": "_DAT_005cc320",
+  "addr": 6079264,
+  "comment": "// 1.0f            (0x3f800000)",
+  "value": 1.0,
+  "bits": 1065353216,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore21.cpp",
+  "line": 91,
+  "macro": "_DAT_005cc574",
+  "addr": 6079860,
+  "comment": "// inertia numerator",
+  "value": 2.0,
+  "bits": 1073741824,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore21.cpp",
+  "line": 92,
+  "macro": "_DAT_005cd07c",
+  "addr": 6082684,
+  "comment": "// clamp numerator",
+  "value": 0.7853981852531433,
+  "bits": 1061752795,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore21.cpp",
+  "line": 93,
+  "macro": "_DAT_005e4568",
+  "addr": 6178152,
+  "comment": "// separation threshold",
+  "value": -9.999999974752427e-07,
+  "bits": 3045472189,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore21.cpp",
+  "line": 94,
+  "macro": "PTR_DAT_005ceabc",
+  "addr": 6089404,
+  "comment": "// radius-sum floor (FCOM m32)",
+  "value": 1.1754943508222875e-38,
+  "bits": 8388608,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore23.cpp",
+  "line": 131,
+  "macro": "K23_DAT_005cc32c",
+  "addr": 6079276,
+  "comment": "",
+  "value": 0.5,
+  "bits": 1056964608,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore23.cpp",
+  "line": 132,
+  "macro": "K23_DAT_005cc574",
+  "addr": 6079860,
+  "comment": "",
+  "value": 2.0,
+  "bits": 1073741824,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore23.cpp",
+  "line": 133,
+  "macro": "K23_DAT_005cc320",
+  "addr": 6079264,
+  "comment": "",
+  "value": 1.0,
+  "bits": 1065353216,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore8.cpp",
+  "line": 71,
+  "macro": "_DAT_005cc320",
+  "addr": 6079264,
+  "comment": "// 1.0f",
+  "value": 1.0,
+  "bits": 1065353216,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore8.cpp",
+  "line": 72,
+  "macro": "_DAT_005cc32c",
+  "addr": 6079276,
+  "comment": "// 0.5f",
+  "value": 0.5,
+  "bits": 1056964608,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore8.cpp",
+  "line": 73,
+  "macro": "_DAT_005cc564",
+  "addr": 6079844,
+  "comment": "// 0.25f",
+  "value": 0.25,
+  "bits": 1048576000,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore8.cpp",
+  "line": 74,
+  "macro": "PTR_DAT_005ceabc",
+  "addr": 6089404,
+  "comment": "// FLT_MIN threshold",
+  "value": 1.1754943508222875e-38,
+  "bits": 8388608,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore8.cpp",
+  "line": 75,
+  "macro": "DAT_005d757c",
+  "addr": 6124924,
+  "comment": "// 0.0f",
+  "value": 0.0,
+  "bits": 0,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverCore9.cpp",
+  "line": 38,
+  "macro": "_DAT_005cc33c",
+  "addr": 6079292,
+  "comment": "// -1.0f",
+  "value": -1.0,
+  "bits": 3212836864,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverIntegrate6.cpp",
+  "line": 84,
+  "macro": "_DAT_005cc320",
+  "addr": 6079264,
+  "comment": "// 1.0f",
+  "value": 1.0,
+  "bits": 1065353216,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverIntegrate6.cpp",
+  "line": 85,
+  "macro": "_DAT_005cc32c",
+  "addr": 6079276,
+  "comment": "// 0.5f",
+  "value": 0.5,
+  "bits": 1056964608,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverIntegrate6.cpp",
+  "line": 86,
+  "macro": "_DAT_005cd03c",
+  "addr": 6082620,
+  "comment": "// 1.0e-4f",
+  "value": 9.999999747378752e-05,
+  "bits": 953267991,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverIntegrate6.cpp",
+  "line": 87,
+  "macro": "_DAT_005cc574",
+  "addr": 6079860,
+  "comment": "// 2.0f",
+  "value": 2.0,
+  "bits": 1073741824,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverPartition13.cpp",
+  "line": 60,
+  "macro": "_DAT_005cc320",
+  "addr": 6079264,
+  "comment": "//  1.0f",
+  "value": 1.0,
+  "bits": 1065353216,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverPartition13.cpp",
+  "line": 61,
+  "macro": "_DAT_005cc33c",
+  "addr": 6079292,
+  "comment": "// -1.0f",
+  "value": -1.0,
+  "bits": 3212836864,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverPartition13.cpp",
+  "line": 62,
+  "macro": "DAT_005d757c",
+  "addr": 6124924,
+  "comment": "//  0.0f",
+  "value": 0.0,
+  "bits": 0,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverPartition13.cpp",
+  "line": 63,
+  "macro": "_DAT_005e5258",
+  "addr": 6181464,
+  "comment": "// -1.17549435e-38 (-FLT_MIN), penetration thresh",
+  "value": -1.1754943508222875e-38,
+  "bits": 2155872256,
+  "sec": ".rdata"
+ },
+ {
+  "file": "Collision\\RwpSolverPartition13.cpp",
+  "line": 64,
+  "macro": "PTR_DAT_005ceabc",
+  "addr": 6089404,
+  "comment": "//  1.17549435e-38 (+FLT_MIN)",
+  "value": 1.1754943508222875e-38,
+  "bits": 8388608,
+  "sec": ".rdata"
+ }
+]

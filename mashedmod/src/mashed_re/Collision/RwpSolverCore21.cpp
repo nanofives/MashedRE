@@ -86,12 +86,12 @@ typedef long double    float10;   // x87 80-bit intermediate (== double under MS
 static inline float10 SQRT(float10 v) { return std::sqrtl(v); }             // [X87]
 
 // --- fixed-address .data constants (live in MASHED.exe for the .asi race) -----
-#define DAT_005d757c    (*(const float*)0x005d757cu)   // 0.0f
-#define _DAT_005cc320   (*(const float*)0x005cc320u)   // 1.0f            (0x3f800000)
-#define _DAT_005cc574   (*(const float*)0x005cc574u)   // inertia numerator
-#define _DAT_005cd07c   (*(const float*)0x005cd07cu)   // clamp numerator
-#define _DAT_005e4568   (*(const float*)0x005e4568u)   // separation threshold
-#define PTR_DAT_005ceabc (*(const float*)0x005ceabcu)  // radius-sum floor (FCOM m32)
+#define DAT_005d757c    (0.0f)   // 0.0f [RVA 0x005d757c = 0x00000000]
+#define _DAT_005cc320   (1.0f)   // 1.0f            (0x3f800000) [RVA 0x005cc320 = 0x3f800000]
+#define _DAT_005cc574   (2.0f)   // inertia numerator [RVA 0x005cc574 = 0x40000000]
+#define _DAT_005cd07c   (0.7853982f)   // clamp numerator [RVA 0x005cd07c = 0x3f490fdb]
+#define _DAT_005e4568   (-1.0e-06f)   // separation threshold [RVA 0x005e4568 = 0xb58637bd]
+#define PTR_DAT_005ceabc (1.1754944e-38f)   // radius-sum floor (FCOM m32) [RVA 0x005ceabc = 0x00800000]
 
 // --- extern callees (defined in sibling K-cluster TUs of same .asi) ----------
 extern "C" float10 __cdecl FUN_005667c0(float *param_1,float *param_2);                     // 0x005667c0 (K1)

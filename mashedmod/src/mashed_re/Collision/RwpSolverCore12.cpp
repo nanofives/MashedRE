@@ -60,17 +60,17 @@ typedef unsigned int   uint;
 typedef unsigned int   undefined4;
 typedef long double    float10;     // x87 80-bit return of FUN_005667c0 (read as (float))
 
-#define _DAT_005cc320  (*(const float*)0x005cc320u)   // 1.0f
-#define _DAT_005cc32c  (*(const float*)0x005cc32cu)   // 0.5f
-#define _DAT_005cc31c  (*(const float*)0x005cc31cu)   // 3.0f
-#define _DAT_005cc574  (*(const float*)0x005cc574u)   // 2.0f
-#define _DAT_005cc34c  (*(const float*)0x005cc34cu)   // -2.0f
-#define _DAT_005cc35c  (*(const float*)0x005cc35cu)   // 4.0f
-#define _DAT_005cc328  (*(const float*)0x005cc328u)   // 0.01f
-#define _DAT_005cc56c  (*(const float*)0x005cc56cu)   // 0.1f
-#define _DAT_005e57dc  (*(const float*)0x005e57dcu)   // -0.9f
-#define _DAT_005ceae4  (*(const float*)0x005ceae4u)   // 0.99999893f (0x3f7fffef)
-#define DAT_005d757c   (*(const float*)0x005d757cu)   // 0.0f
+#define _DAT_005cc320  (1.0f)   // 1.0f [RVA 0x005cc320 = 0x3f800000]
+#define _DAT_005cc32c  (0.5f)   // 0.5f [RVA 0x005cc32c = 0x3f000000]
+#define _DAT_005cc31c  (3.0f)   // 3.0f [RVA 0x005cc31c = 0x40400000]
+#define _DAT_005cc574  (2.0f)   // 2.0f [RVA 0x005cc574 = 0x40000000]
+#define _DAT_005cc34c  (-2.0f)   // -2.0f [RVA 0x005cc34c = 0xc0000000]
+#define _DAT_005cc35c  (4.0f)   // 4.0f [RVA 0x005cc35c = 0x40800000]
+#define _DAT_005cc328  (0.01f)   // 0.01f [RVA 0x005cc328 = 0x3c23d70a]
+#define _DAT_005cc56c  (0.1f)   // 0.1f [RVA 0x005cc56c = 0x3dcccccd]
+#define _DAT_005e57dc  (-0.9f)   // -0.9f [RVA 0x005e57dc = 0xbf666666]
+#define _DAT_005ceae4  (0.999999f)   // 0.99999893f (0x3f7fffef) [RVA 0x005ceae4 = 0x3f7fffef]
+#define DAT_005d757c   (0.0f)   // 0.0f [RVA 0x005d757c = 0x00000000]
 
 // The 27-word "unset" constraint-row template (see K9 note 3). Copy = the 0x1b-count decomp loop.
 #define LOAD_ROW(buf)  memcpy((buf), (const void*)0x005e5738u, 27u * sizeof(float))

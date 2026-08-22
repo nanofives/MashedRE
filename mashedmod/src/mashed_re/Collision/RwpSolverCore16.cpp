@@ -39,11 +39,11 @@ typedef unsigned short ushort;
 typedef unsigned char  byte;
 typedef long double    float10;      // x87 80-bit return (ST0) of FUN_005751f0 / FUN_00579d50
 
-#define DAT_005d757c   (*(const float*)0x005d757cu)   // 0.0f
-#define _DAT_005cc320  (*(const float*)0x005cc320u)   // 1.0f              (0x3f800000)
-#define _DAT_005cc56c  (*(const float*)0x005cc56cu)   // 0.100000001f      (0x3dcccccd)
-#define _DAT_005cc32c  (*(const float*)0x005cc32cu)   // 0.5f              (0x3f000000)
-#define _DAT_005cea1c  (*(const float*)0x005cea1cu)   // -9.99999975e-06f  (0xb727c5ac)
+#define DAT_005d757c   (0.0f)   // 0.0f [RVA 0x005d757c = 0x00000000]
+#define _DAT_005cc320  (1.0f)   // 1.0f              (0x3f800000) [RVA 0x005cc320 = 0x3f800000]
+#define _DAT_005cc56c  (0.1f)   // 0.100000001f      (0x3dcccccd) [RVA 0x005cc56c = 0x3dcccccd]
+#define _DAT_005cc32c  (0.5f)   // 0.5f              (0x3f000000) [RVA 0x005cc32c = 0x3f000000]
+#define _DAT_005cea1c  (-1.0e-05f)   // -9.99999975e-06f  (0xb727c5ac) [RVA 0x005cea1c = 0xb727c5ac]
 
 // --- extern callee (un-ported B5c GJK support map) --------------------------
 extern "C" void* __cdecl FUN_0055c000(int shape,void* mtx,float* dir,float* out); // 0x0055c000

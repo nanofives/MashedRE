@@ -35,7 +35,7 @@ namespace Collision {
 typedef unsigned int   uint;
 typedef unsigned int   undefined4;
 
-#define _DAT_005cc33c  (*(const float*)0x005cc33cu)   // -1.0f
+#define _DAT_005cc33c  (-1.0f)   // -1.0f [RVA 0x005cc33c = 0xbf800000]
 #define DAT_005e5738   ((undefined4*)0x005e5738u)     // constant "unset" row-template table (note 3)
 
 // --- Cluster-internal forward decls. ---

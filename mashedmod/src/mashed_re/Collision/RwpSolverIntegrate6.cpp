@@ -81,10 +81,10 @@ typedef unsigned int   undefined4;
 typedef long double    float10;     // x87 80-bit extended — MSVC = 64-bit double [X87]
 
 // --- Float constants (absolute-address binds; values proven in header note 2). ---
-#define _DAT_005cc320  (*(const float*)0x005cc320u)   // 1.0f
-#define _DAT_005cc32c  (*(const float*)0x005cc32cu)   // 0.5f
-#define _DAT_005cd03c  (*(const float*)0x005cd03cu)   // 1.0e-4f
-#define _DAT_005cc574  (*(const float*)0x005cc574u)   // 2.0f
+#define _DAT_005cc320  (1.0f)   // 1.0f [RVA 0x005cc320 = 0x3f800000]
+#define _DAT_005cc32c  (0.5f)   // 0.5f [RVA 0x005cc32c = 0x3f000000]
+#define _DAT_005cd03c  (0.0001f)   // 1.0e-4f [RVA 0x005cd03c = 0x38d1b717]
+#define _DAT_005cc574  (2.0f)   // 2.0f [RVA 0x005cc574 = 0x40000000]
 
 // --- 0x004c3b30 — C4 FastSqrt port (Math/RwSqrt.cpp), called directly (K2 idiom). ---
 extern "C" float __cdecl FastSqrt(float x);

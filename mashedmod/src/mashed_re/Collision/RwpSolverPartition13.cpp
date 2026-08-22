@@ -57,11 +57,11 @@ typedef unsigned short ushort;
 typedef unsigned int   uint;
 typedef unsigned int   undefined4;
 
-#define _DAT_005cc320  (*(const float*)0x005cc320u)   //  1.0f
-#define _DAT_005cc33c  (*(const float*)0x005cc33cu)   // -1.0f
-#define DAT_005d757c   (*(const float*)0x005d757cu)   //  0.0f
-#define _DAT_005e5258  (*(const float*)0x005e5258u)   // -1.17549435e-38 (-FLT_MIN), penetration thresh
-#define PTR_DAT_005ceabc (*(const float*)0x005ceabcu) //  1.17549435e-38 (+FLT_MIN)
+#define _DAT_005cc320  (1.0f)   // 1.0f [RVA 0x005cc320 = 0x3f800000]
+#define _DAT_005cc33c  (-1.0f)   // -1.0f [RVA 0x005cc33c = 0xbf800000]
+#define DAT_005d757c   (0.0f)   // 0.0f [RVA 0x005d757c = 0x00000000]
+#define _DAT_005e5258  (-1.1754944e-38f)   // -1.17549435e-38 (-FLT_MIN), penetration thresh [RVA 0x005e5258 = 0x80800000]
+#define PTR_DAT_005ceabc (1.1754944e-38f)   // 1.17549435e-38 (+FLT_MIN) [RVA 0x005ceabc = 0x00800000]
 #define _DAT_00913284  (*(int*)0x00913284u)           // game-global int (written 0/1 around param_13)
 
 // reinterpret helpers — raw decomp read undefined4 fields as float (bit-cast, NOT numeric convert)

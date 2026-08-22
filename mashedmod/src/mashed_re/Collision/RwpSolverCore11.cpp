@@ -42,7 +42,7 @@ typedef unsigned short ushort;
 typedef unsigned int   uint;
 typedef unsigned int   undefined4;
 
-#define DAT_005d757c   (*(const float*)0x005d757cu)   // 0.0f
+#define DAT_005d757c   (0.0f)   // 0.0f [RVA 0x005d757c = 0x00000000]
 
 static inline float asf(uint i) { float f; memcpy(&f,&i,4); return f; }
 

@@ -26,10 +26,10 @@ namespace Collision {
 typedef unsigned int   uint;
 typedef unsigned int   undefined4;
 
-#define _DAT_005cc320  (*(const float*)0x005cc320u)   // 1.0f
-#define DAT_005d757c   (*(const float*)0x005d757cu)   // 0.0f
-#define _DAT_005cd03c  (*(const float*)0x005cd03cu)   // 9.99999975e-05  (parallel-segment det eps)
-#define _DAT_005ce54c  (*(const float*)0x005ce54cu)   // 1.00060076e-06  (contact-dedup dist² eps)
+#define _DAT_005cc320  (1.0f)   // 1.0f [RVA 0x005cc320 = 0x3f800000]
+#define DAT_005d757c   (0.0f)   // 0.0f [RVA 0x005d757c = 0x00000000]
+#define _DAT_005cd03c  (0.0001f)   // 9.99999975e-05  (parallel-segment det eps) [RVA 0x005cd03c = 0x38d1b717]
+#define _DAT_005ce54c  (1.0e-06f)   // 1.00060076e-06  (contact-dedup dist² eps) [RVA 0x005ce54c = 0x358637bd]
 
 // ---------------------------------------------------------------------------
 // 0x00577be0  line-parameter clamp: out = p1 + clamp(dot(dir,p5-p1)/|dir|², [t3,t4]) * dir

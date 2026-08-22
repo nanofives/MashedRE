@@ -68,11 +68,11 @@ typedef unsigned int   uint;
 typedef unsigned int   undefined4;
 
 // --- Float constants (absolute-address binds; values proven in header notes 3/4/6). ---
-#define _DAT_005cc320  (*(const float*)0x005cc320u)   // 1.0f
-#define _DAT_005cc32c  (*(const float*)0x005cc32cu)   // 0.5f
-#define _DAT_005cc564  (*(const float*)0x005cc564u)   // 0.25f
-#define PTR_DAT_005ceabc (*(const float*)0x005ceabcu) // FLT_MIN threshold
-#define DAT_005d757c   (*(const float*)0x005d757cu)   // 0.0f
+#define _DAT_005cc320  (1.0f)   // 1.0f [RVA 0x005cc320 = 0x3f800000]
+#define _DAT_005cc32c  (0.5f)   // 0.5f [RVA 0x005cc32c = 0x3f000000]
+#define _DAT_005cc564  (0.25f)   // 0.25f [RVA 0x005cc564 = 0x3e800000]
+#define PTR_DAT_005ceabc (1.1754944e-38f)   // FLT_MIN threshold [RVA 0x005ceabc = 0x00800000]
+#define DAT_005d757c   (0.0f)   // 0.0f [RVA 0x005d757c = 0x00000000]
 
 // reinterpret raw 32-bit as float (dd40 identity-mask lane reads: `_mm_and_ps` w/ all-ones mask,
 // and the puVar8[3] scalar which the original loads via MOV+MOVSS = bit reinterpret @0x0056de15).
