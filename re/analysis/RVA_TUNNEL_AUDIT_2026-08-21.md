@@ -1,5 +1,37 @@
 # RVA-tunnel audit of `mashed_re.exe` — 547 tunnels, and why they are silent
 
+> **CORRECTION 2026-08-21 (same day, measured after this note was first
+> committed): the mechanism below is WRONG.** The silence is not a runtime
+> zero-filled `VirtualAlloc` wedge. `MapMashedDataSection()` **fails** — the
+> exe's own log line reads `Milestone B7: wedge status = INACTIVE (VirtualAlloc
+> failed)` and its granule walk reports `0 granules covered, 80 blocked`.
+>
+> The real mechanism is the exe's **own image**. `mashed_re.exe` has
+> `ImageBase = 0x00010000` and `SizeOfImage = 0xCBD000` (12.74 MB), so it spans
+> **0x00010000 .. 0x00CCD000**, and its `.data` section alone is **11.9 MB**
+> (`0x00160000 .. 0x00CBDAE8`). Every MASHED address the port dereferences falls
+> **inside the standalone's own `.data`** — verified for `0x005CD7A8`,
+> `0x005CC320`, `0x007F1038`, `0x007D3FF8`. A `VirtualQuery` at the granules the
+> TLS callback lists returns `State=MEM_COMMIT, Type=MEM_IMAGE, Protect=0x8`.
+>
+> Three consequences, all of which change the remediation:
+>
+> 1. **The tunnels cannot be trapped by protecting "wedge granules"** — they are
+>    image pages. The `MASHED_WEDGE_TRAP` experiment added in this session
+>    correctly refused to touch `MEM_IMAGE` and armed 0 granules, which is why
+>    the run completed cleanly rather than crashing.
+> 2. **Reads are not guaranteed to be 0.** Two measured addresses read 0 because
+>    that part of `.data` happens to be zero. Others may read live bytes.
+> 3. **The sharp new risk: address collision.** A MASHED address can alias a
+>    genuine standalone variable in `.data`, so a tunnel *write* could silently
+>    corrupt real state rather than scribbling on padding. Nothing currently
+>    proves which parts of that 11.9 MB are deliberate address-space padding and
+>    which hold real variables — settling that needs the linker `/MAP`.
+>
+> The inventory, classification and the D2 consequence below are unaffected: the
+> counts, the ~80 zero-valued physics constants, and the `Math/` verdicts all
+> stand. Only the explanation of *why the reads are silent* is corrected.
+
 Date: 2026-08-21
 Trigger: the `RwMatrixRotate` root cause (`D2_REALPHYS_REMEASURE_2026-08-21.md`,
 fixed in `9cc41fa8`) — two constants read from MASHED absolute addresses that

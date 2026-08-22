@@ -5345,8 +5345,111 @@ void DumpRegionMap(const char* tag) {
 // Failure is non-fatal — the title-screen render still runs without the
 // wedge; we just can't call most Boot/Frontend/HUD reimpls from the
 // standalone yet.
+// ── WEDGE TRAP (MASHED_WEDGE_TRAP=1) ────────────────────────────────────────
+// Intent: make stale MASHED-absolute derefs FAULT instead of silently returning
+// whatever byte happens to live at that address, so a single run enumerates the
+// tunnels that are actually LIVE. See re/analysis/RVA_TUNNEL_AUDIT_2026-08-21.md
+// (547 tunnels across 84 exe TUs), motivated by the RwMatrixRotate constants
+// (0x005cd7a8 / 0x005cc320) reading 0 for seven weeks and freezing steering.
+//
+// MEASURED RESULT — this trap does NOT work, and the reason is worth keeping:
+// the addresses are not in a runtime wedge at all. MapMashedDataSection() FAILS
+// ("wedge status = INACTIVE (VirtualAlloc failed)", 0 granules covered of 80)
+// because mashed_re.exe's OWN IMAGE already covers the range: ImageBase
+// 0x00010000, SizeOfImage 0xCBD000 (12.74 MB), with an 11.9 MB .data spanning
+// 0x00160000..0x00CBDAE8. VirtualQuery on the granules below returns
+// State=MEM_COMMIT Type=MEM_IMAGE. So every MASHED address the port derefs
+// lands inside our own .data, and PAGE_NOACCESS on them would protect the exe's
+// real data. The MEM_IMAGE guard below therefore arms 0 granules by design.
+//
+// Kept because it is the cheapest way to re-derive that fact, and because the
+// handler is the right shape if a future build gives the tunnels their own
+// mapping. To actually trap them, the exe must first stop overlapping the MASHED
+// range (relink at a base/size that does not span 0x00400000-0x00A00000).
+static DWORD g_wedgeProt = PAGE_READWRITE;   // PAGE_NOACCESS when trapping
+static long  g_wedgeHits = 0;
+
+static LONG CALLBACK WedgeTrapHandler(EXCEPTION_POINTERS* ep) {
+    if (ep->ExceptionRecord->ExceptionCode != EXCEPTION_ACCESS_VIOLATION)
+        return EXCEPTION_CONTINUE_SEARCH;
+    const std::uintptr_t addr =
+        static_cast<std::uintptr_t>(ep->ExceptionRecord->ExceptionInformation[1]);
+    if (addr < kMashedDataBase || addr >= kMashedDataBase + kMashedDataSize)
+        return EXCEPTION_CONTINUE_SEARCH;      // not ours — let it crash normally
+
+    const std::uintptr_t page = addr & ~static_cast<std::uintptr_t>(0xFFFu);
+    DWORD old = 0;
+    if (!VirtualProtect(reinterpret_cast<LPVOID>(page), 0x1000, PAGE_READWRITE, &old))
+        return EXCEPTION_CONTINUE_SEARCH;      // cannot recover — report normally
+
+    ++g_wedgeHits;
+    if (std::FILE* lf = std::fopen("wedge_trap.log", "a")) {
+        std::fprintf(lf, "TUNNEL addr=0x%08X page=0x%08X eip=0x%08X op=%s\n",
+                     static_cast<unsigned>(addr), static_cast<unsigned>(page),
+                     static_cast<unsigned>(ep->ContextRecord->Eip),
+                     ep->ExceptionRecord->ExceptionInformation[0] ? "write" : "read");
+        std::fclose(lf);
+    }
+    return EXCEPTION_CONTINUE_EXECUTION;
+}
+
 bool MapMashedDataSection() {
     std::FILE* log = std::fopen(kLogPath, "a");
+    if (GetEnvironmentVariableA("MASHED_WEDGE_TRAP", nullptr, 0) != 0) {
+        g_wedgeProt = PAGE_NOACCESS;
+        AddVectoredExceptionHandler(1, WedgeTrapHandler);
+        // The granule walk below covers 0 granules in practice (measured: "0
+        // covered, 80 blocked") because B17_TlsReserve has already reserved the
+        // interesting ones at TLS time, so setting the VirtualAlloc protection
+        // alone is inert. Protect the TLS-reserved granules directly instead.
+        // Restricted to OUR granules on purpose: blanket-protecting the whole
+        // 0x00500000-0x009fffff range would also hit loader/heap pages that are
+        // legitimately in use.
+        int armed = 0;
+        for (std::size_t i = 0;
+             i < sizeof(kB17ReserveBases) / sizeof(kB17ReserveBases[0]); ++i) {
+            const std::uintptr_t base = kB17ReserveBases[i];
+            if (base < kMashedDataBase || base >= kMashedDataBase + kMashedDataSize)
+                continue;                       // outside the wedge (handled elsewhere)
+            MEMORY_BASIC_INFORMATION mbi{};
+            if (VirtualQuery(reinterpret_cast<LPVOID>(base), &mbi, sizeof(mbi)) == 0)
+                continue;
+            if (log)
+                std::fprintf(log, "  wedge-trap: granule 0x%08X state=0x%X type=0x%X "
+                                  "prot=0x%X size=0x%X\n",
+                             static_cast<unsigned>(base), mbi.State, mbi.Type,
+                             mbi.Protect, static_cast<unsigned>(mbi.RegionSize));
+            if (mbi.Type == MEM_IMAGE || mbi.Type == MEM_MAPPED)
+                continue;                       // never touch image/mapped
+            // B17_TlsReserve only RESERVEs, so these arrive MEM_RESERVE and
+            // VirtualProtect would fail on uncommitted pages — commit first.
+            if (mbi.State == MEM_RESERVE) {
+                if (!VirtualAlloc(reinterpret_cast<LPVOID>(base), 0x10000,
+                                  MEM_COMMIT, PAGE_READWRITE)) {
+                    if (log) std::fprintf(log, "    commit failed (err %lu)\n",
+                                          GetLastError());
+                    continue;
+                }
+            } else if (mbi.State == MEM_FREE) {
+                if (!VirtualAlloc(reinterpret_cast<LPVOID>(base), 0x10000,
+                                  MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE)) {
+                    if (log) std::fprintf(log, "    alloc failed (err %lu)\n",
+                                          GetLastError());
+                    continue;
+                }
+            }
+            DWORD old = 0;
+            if (VirtualProtect(reinterpret_cast<LPVOID>(base), 0x10000,
+                               PAGE_NOACCESS, &old)) {
+                ++armed;
+                if (log) std::fprintf(log, "    -> armed (was prot 0x%X)\n", old);
+            } else if (log) {
+                std::fprintf(log, "    protect failed (err %lu)\n", GetLastError());
+            }
+        }
+        if (log) std::fprintf(log, "\nWEDGE TRAP ARMED: %d granule(s) PAGE_NOACCESS, "
+                                   "faults logged to wedge_trap.log\n", armed);
+    }
     // Probe each 64KB allocation-granule and find which ones are free vs
     // already mapped. The MASHED .data spans 0x00500000..0x009fffff but the
     // standalone may have DLL imports / loader-placed pages somewhere in
@@ -5371,7 +5474,7 @@ bool MapMashedDataSection() {
                 reinterpret_cast<LPVOID>(a),
                 kGran,
                 MEM_RESERVE | MEM_COMMIT,
-                PAGE_READWRITE);
+                g_wedgeProt);
             if (p) ++covered;
             else { ++blocked; if (!blocked_first) blocked_first = a; }
         } else if (mbi.State == MEM_RESERVE) {
@@ -5381,7 +5484,7 @@ bool MapMashedDataSection() {
                 reinterpret_cast<LPVOID>(a),
                 kGran,
                 MEM_COMMIT,
-                PAGE_READWRITE);
+                g_wedgeProt);
             if (p) ++covered;
             else { ++blocked; if (!blocked_first) blocked_first = a; }
         } else {
