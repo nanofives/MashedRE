@@ -430,6 +430,61 @@ remaining D2 gate item. The scaffold is a kinematic approximation and is **not**
 authoritative on sign, so "it differs from the scaffold" is not evidence against
 the ported chain.
 
+## The 1500 saturation is NOT a defect — but the clamp is mis-sized
+
+I flagged "the internal velocity integrator saturates `kSafetyInternal = 1500`"
+three times in this note as an open defect. **The code already says otherwise,
+and I should have read it before flagging it.** `VehiclePhysicsRun.cpp:472-478`:
+
+> "anti-overflow safety clamp ONLY. The OLD code hard-clamped record +0x9b0 to 45
+> here, which destroyed the accel ramp… The recovered law's SOFT top-speed
+> asymptote (below) governs the visible top speed now, so this clamp is set high
+> — far above where the tanh saturates — purely to stop the ported chain's
+> unbounded straight-line ramp (+0x9b0 grows ~77->553+, Integrate2 grip-clamp #6
+> limits only LATERAL speed) from overflowing the round-tripped car_vel_."
+
+So the raw chain velocity was never meant to be the car's speed: the coupling law
+converts it through a tanh asymptote to `bs = desired`, which is why the car
+moves at ~12 while the internal value reads 1500. Intentional, and consistent
+with the 83-constant result above (fixing them changed nothing here).
+
+### But the clamp's own premise is measurably false
+
+The comment's justification is that 1500 sits "far above where the tanh
+saturates", i.e. high enough never to bind. Measured against the **stock
+original** (`drive_stock_a.msd`, 2731 frames, the archived stock arm):
+
+```
+max |v| at +0x9b0            = 4341.1
+frames with |v| > 1500       = 756  (28% of the run)
+vel.z trajectory   49%=+0  69%=+2766  74%=-19  79%=-335  84%=-3186  98%=+1070
+sign changes in vel.z        = 10
+```
+
+Two differences from the port, both real:
+
+1. **The original routinely exceeds 1500** — in 28% of frames, peaking at 4341.
+   So the clamp is not a never-binding safety net; it is actively truncating a
+   range the original occupies. The port pins at 1500 where the original swings
+   to ±4341.
+2. **The original oscillates; the port ramps monotonically.** Ten sign changes in
+   the stock `vel.z` against a monotonic climb in the port. That is a deeper
+   difference than clamp sizing and is not explained by it.
+
+### Consequence for A8, which is the next D2 task
+
+The A8 gate is a velocity/position diff against original telemetry on matched
+inputs. On this evidence **it will fail at `+0x9b0..+0x9b8` by construction**:
+the port cannot reproduce values above 1500, and its trajectory shape differs
+regardless. Both need addressing before A8 can produce a meaningful verdict —
+otherwise the diff reports a known-by-design mismatch and buries whatever real
+signal is there.
+
+[UNCERTAIN] whether the monotonic-vs-oscillating difference is the same
+single-body reduction already blamed for the steer coupling, or a separate
+missing longitudinal term. `Integrate2` grip-clamp #6 limiting only lateral speed
+(per the comment above) is the obvious place to look first.
+
 ## What is NOT established
 
 - **Why** the coupling is lost. This run reproduces the symptom; it does not
