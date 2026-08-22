@@ -323,6 +323,31 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     float lb0f = (float)((double)Rf(v,0xb1c) + lin_b0);
     // linear-velocity integration (+0x9b0..) by mass*dt over (control force + accum)
     float linTerm = dt * Rf(v, 0x54) * kDt;
+
+    // D2 DIAGNOSTIC 2026-08-22 (env MASHED_COUPLING_DIAG). The drive force at
+    // +0xb14 is speed-INDEPENDENT (Integrate2.cpp:160-182) and grip-clamp #6 is
+    // lateral-only, so the accumulators l_b8/l_b4/lin_b0 below are the ONLY place
+    // a velocity-opposing term can live. If they read ~0 while the car is
+    // grounded, the friction block is not contributing and that is why the port
+    // ramps monotonically where the original oscillates and stays bounded.
+    // grounded flag +0x9e0 is float 4.0 (0x40800000) when all four wheels touch.
+    {
+        static const bool s_fd = (std::getenv("MASHED_COUPLING_DIAG") != nullptr);
+        static int s_fn = 0;
+        if (s_fd && s_fn < 1500) {
+            ++s_fn;
+            if (std::FILE* lf = std::fopen("friction_diag.log", "a")) {
+                std::fprintf(lf,
+                    "spd=%.3f ctrl=(%.4f,%.4f,%.4f) accum=(%.4f,%.4f,%.4f) "
+                    "grounded=0x%08X linTerm=%g\n",
+                    Vec3Mag3((const float*)((char*)v + 0x9b0)),
+                    Rf(v,0xb14), Rf(v,0xb18), Rf(v,0xb1c),
+                    l_b8, l_b4, (float)lin_b0,
+                    (unsigned)Ri(v,0x9e0), linTerm);
+                std::fclose(lf);
+            }
+        }
+    }
     Wf(v, 0x9b0, linTerm * (Rf(v,0xb14) + l_b8) + Rf(v,0x9b0));
     Wf(v, 0x9b4, linTerm * (Rf(v,0xb18) + l_b4) + Rf(v,0x9b4));
     Wf(v, 0x9b8, linTerm * lb0f + Rf(v,0x9b8));

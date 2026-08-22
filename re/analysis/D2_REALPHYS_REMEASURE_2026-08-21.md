@@ -580,6 +580,51 @@ A candidate worth checking in the same pass: the accumulators are fed by wheel
 contact data from the collision solver. If contacts are not being produced in the
 standalone, friction is structurally zero regardless of the arithmetic.
 
+
+## RESOLVED — there is no terminal velocity to reproduce; the clamp was the whole defect
+
+Instrumented the friction accumulators (`Integrate2.cpp`, env-gated) and compared
+against the archived stock arm. Both of my earlier readings were wrong.
+
+**The accumulators are NOT zero.** They exist and grow with speed:
+
+```
+spd=   0.000  ctrl=(16813,0,799823)        accum=(0,0,0)               grounded=0x40800000
+spd= 925.034  ctrl=(685257,0,3183196)      accum=(9642,0,-25598)       grounded=0x40800000
+spd=1496.917  ctrl=(-1532765,0,3731676)    accum=(-62110,-1564,61390)  grounded=0x40800000
+```
+
+The car is grounded throughout and friction is being produced. My first reading —
+"friction is ~60x too small to balance drive" — assumed a balance is supposed to
+happen. **It isn't.**
+
+**The original has no terminal velocity either.** From `drive_stock_a.msd`
+(`+0x9e4`), the stock run decomposes into rounds:
+
+```
+zero-speed runs (resets):  frames 0..897, 1366..1379, 1571..1817, 2427..2662
+peak |v| per active round: 4275.1 / 4070.4 / 4344.5 / 1970.3
+```
+
+It **ramps unbounded within a round, then resets to ~0 at the round boundary**.
+The "oscillation with 10 sign changes" I reported earlier was these round resets,
+not damping. Stock control-force magnitudes are the same order as ours (max
+12.3M vs our 4.0M), so the drive force is not mis-scaled either.
+
+So the unbounded ramp is **faithful**, and the only unfaithful element was
+`kSafetyInternal = 1500` truncating a range the original occupies (28% of its
+frames exceed 1500; it reaches 4344).
+
+**Fix applied:** raised to `16384.0f` — ~3.8x above the highest observed original
+value, preserving the stated anti-overflow purpose while never binding in
+practice. Measured after: speed now ramps 1698 → 1254 (collision) → 1560 → 1882
+→ 2211 instead of pinning at 1500.00, i.e. the same ramp-and-reset shape as the
+original. Default (scaffold) arm unchanged: `car_yaw` 3.2093 / 3.5026 / 4.7908 /
+4.9732, speed caps 20.11, `B17-SUMMARY chrome=YES thunks=6/6`.
+
+This closes the saturation thread. It also removes one of the two reasons A8 was
+predicted to fail by construction; the steer-sign question remains open.
+
 ## What is NOT established
 
 - **Why** the coupling is lost. This run reproduces the symptom; it does not

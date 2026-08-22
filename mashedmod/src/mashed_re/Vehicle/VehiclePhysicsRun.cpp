@@ -477,7 +477,21 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // straight-line ramp (+0x9b0 grows ~77->553+, Integrate2 grip-clamp #6 limits
     // only LATERAL speed) from overflowing the round-tripped car_vel_ over a long run.
     {
-        constexpr float kSafetyInternal = 1500.0f;   // >> tanh-saturation point (~3*top/scale)
+        // RAISED 2026-08-22 from 1500 to 16384. The old value's premise -- "far
+        // above where the tanh saturates", i.e. high enough never to bind -- is
+        // measurably false against the stock original. Measured from the archived
+        // stock arm (verify/statediff_proto/drive_stock_a.msd, +0x9e4):
+        //   the original RAMPS UNBOUNDED within a round, peaking at 4275.1 /
+        //   4070.4 / 4344.5 / 1970.3, then RESETS to ~0 at each round boundary
+        //   (zero-runs of 897 / 13 / 246 / 235 frames). It never reaches a
+        //   terminal velocity, and 28% of its frames exceed 1500.
+        // So the unbounded ramp is FAITHFUL and 1500 was truncating a range the
+        // original occupies -- pinning our +0x9b0 where the original swings to
+        // ~4344. 16384 keeps the anti-overflow guarantee (the stated purpose)
+        // while sitting ~3.8x above the highest value the original was observed
+        // to reach, so it should never bind in practice.
+        // Detail: re/analysis/D2_REALPHYS_REMEASURE_2026-08-21.md.
+        constexpr float kSafetyInternal = 16384.0f;
         float vx = F(r, off::kVelocity + 0), vy = F(r, off::kVelocity + 4), vz = F(r, off::kVelocity + 8);
         float sp = std::sqrt(vx*vx + vy*vy + vz*vz);
         if (sp > kSafetyInternal && sp > 1e-4f) {
