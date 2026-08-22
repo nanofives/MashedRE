@@ -485,6 +485,48 @@ single-body reduction already blamed for the steer coupling, or a separate
 missing longitudinal term. `Integrate2` grip-clamp #6 limiting only lateral speed
 (per the comment above) is the obvious place to look first.
 
+## Integrate2 grip-clamp #6 — lateral-only, confirmed by reading it
+
+`Integrate2.cpp:347-374`. The clamp is gated on all-four-grounded
+(`Ri(v,0x9e0) == 0x40800000`, i.e. float 4.0 read as int) and computes:
+
+```cpp
+float fwdDot = Rf(v,0x9dc)*Rf(v,0x9b8) + Rf(v,0x9d4)*Rf(v,0x9b0) + Rf(v,0x9d8)*Rf(v,0x9b4);
+float fx = Rf(v,0x9b0) - fwdDot*Rf(v,0x9d4);   // velocity MINUS its forward projection
+float fy = Rf(v,0x9b4) - fwdDot*Rf(v,0x9d8);   //   = the LATERAL residual
+float fz = Rf(v,0x9b8) - fwdDot*Rf(v,0x9dc);
+...
+Wf(v,0x9b0, Rf(v,0x9b0) - fx*k);               // subtract a fraction of the LATERAL part only
+```
+
+`fx/fy/fz` are the velocity with its forward component removed, and only that
+residual is scaled out. **The forward component is never reduced anywhere in the
+function.** So the `VehiclePhysicsRun.cpp:477` claim — "Integrate2 grip-clamp #6
+limits only LATERAL speed" — is exactly right, and there is no longitudinal
+damping term to be missing here.
+
+### Which undermines the standing root-cause attribution
+
+The file header marks this a **verbatim port** (`WS-A6-COMPLETE`, "PENDING
+diff-original C4"). If the transcription is faithful, then **the original has no
+longitudinal damping in this function either** — so the original's bounded,
+oscillating velocity must be produced somewhere else entirely, not by a damping
+term the port dropped.
+
+That matters because `COLLISION_GATE_BRIEF_D1_2026-07.md:56` attributes **both**
+symptoms to one cause: the single-body reduction "loses forward damping AND turn
+coupling". **The turn-coupling half is now disproven** — it was the
+`RwMatrixRotate` RVA tunnel (`9cc41fa8`), nothing to do with body count. The
+damping half rests on the same argument and the same evidence, so it should no
+longer be assumed either.
+
+[UNCERTAIN] where the original's longitudinal bound actually comes from.
+Candidates not yet examined: a speed-dependent falloff in the drive force (A4
+`FUN_00470670`), aerodynamic drag elsewhere in the chain, or the 2-body loop
+genuinely doing it. The stock trajectory shape argues mildly against a simple
+drag term — it **oscillates with 10 sign changes** rather than settling to a
+terminal velocity, which is spring-like rather than damping-like.
+
 ## What is NOT established
 
 - **Why** the coupling is lost. This run reproduces the symptom; it does not
