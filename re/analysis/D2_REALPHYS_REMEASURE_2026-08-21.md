@@ -527,6 +527,59 @@ genuinely doing it. The stock trajectory shape argues mildly against a simple
 drag term — it **oscillates with 10 sign changes** rather than settling to a
 terminal velocity, which is spring-like rather than damping-like.
 
+## The drive force has NO speed falloff — so the bound must come from friction
+
+`Integrate2.cpp:160-182`, the per-wheel drive-force block. `drive` is built from:
+
+```cpp
+float drive = (float)(unsigned)input[4];              // accel byte, 0..255
+if (mode == 7) drive = 0.0f;
+if (Ri(v, 0x28) != 0) drive = (float)(100 - Ri(v,0x28)) * drive * k0p01;   // damage scale
+if (trackId == -0x69e1a6 || trackId == -0xe17f4c) { ... drive = fwd * drive; }
+if (k160 < drive) drive = 160.0f;                     // hard cap on the INPUT, not on speed
+drive = drive * local_cc;
+Wf(v, 0xb14, Rp(p,0x1f) * drive + Rf(v,0xb14));       // along the wheel's steered forward
+```
+
+**Nothing reads the current speed to reduce it.** The only velocity-dependent
+term (lines 166-174) uses the velocity *direction* — a normalised dot raised to
+the 8th power — and applies to two specific track IDs only, and it *raises*
+drive toward alignment rather than damping it. The `160` cap limits the accel
+input, not the resulting speed.
+
+So a constant accel input yields a constant force, which integrates to a linear
+velocity ramp forever. **That fully explains the port's monotonic unbounded
+ramp** — and, since this block is part of the same verbatim A6a port, the
+original's drive force is speed-independent too.
+
+### Which localises where the original's bound has to be
+
+Line 326 is the whole linear integration:
+
+```cpp
+Wf(v, 0x9b0, linTerm * (Rf(v,0xb14) + l_b8) + Rf(v,0x9b0));
+```
+
+Two contributions: the control force `+0xb14` (just shown to be
+speed-independent) and the accumulator `l_b8` from the **cross-product friction
+block #5** / suspension block #4. Since clamp #6 is lateral-only and the drive
+force has no falloff, **`l_b8` is the only remaining place a velocity-opposing
+term can live.** A friction force that grows with contact-patch slip would
+balance the drive force and produce exactly the terminal velocity the stock
+capture shows.
+
+**Next measurement, and it is cheap:** extend the `MASHED_COUPLING_DIAG` line
+with `l_b8`/`l_b4`/`lin_b0` and the grounded count `+0x9e0`. If the accumulators
+are ~0 while the car is grounded, the friction block is not contributing and that
+is the defect. Note the 83-constant fix did **not** change the saturation, and
+`Integrate2.cpp` was never affected by the RVA-tunnel class anyway — it already
+uses `Cf(0x…)` bit-pattern literals marked EXACT — so whatever is wrong with the
+accumulators is not a stale-constant problem.
+
+A candidate worth checking in the same pass: the accumulators are fed by wheel
+contact data from the collision solver. If contacts are not being produced in the
+standalone, friction is structurally zero regardless of the arithmetic.
+
 ## What is NOT established
 
 - **Why** the coupling is lost. This run reproduces the symptom; it does not
