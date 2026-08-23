@@ -1,31 +1,30 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-19T14:05:00Z",
+  "updatedAt": "2026-08-22T00:00:00Z",
   "sections": [
     {
-      "heading": "Session 2026-08-19 (RE + audit)",
+      "heading": "Current phase",
       "fields": [
-        { "label": "Commits on main today", "value": 13, "kind": "number" },
-        { "label": "Working tree", "value": "clean; all instrumentation reverted", "kind": "text" },
-        { "label": "scr1 composition gate", "value": "GREEN 468/468 - RED was a save-state mismatch, port correct", "kind": "text" },
-        { "label": "no_focus_pause", "value": "adopted (10th patch) + proven 15 vs 1 frames/15s unfocused", "kind": "text" }
+        { "label": "Roadmap", "value": "v3 (2026-08-15), phases D0-D5", "kind": "text" },
+        { "label": "D1 default renderer", "value": "LANDED - librw is the default", "kind": "text" },
+        { "label": "D2 default physics", "value": "steering FIXED; blocked on A8 steer-sign vs original", "kind": "text" }
       ]
     },
     {
-      "heading": "Findings landed",
+      "heading": "Landed 2026-08-19..22",
       "fields": [
-        { "label": "Dev names recovered", "value": "70 from Lua binding tables; 27 new hooks.csv rows, 39 renames", "kind": "text" },
-        { "label": "CLAUDE.md corrections", "value": ["Lua 5.x -> 4.0 (297 rows relabelled)", "MCI -> DirectShow", "launch.exe anchor (DOC-1 closed)", "9 -> 10 patches; +11 undocumented listed"], "kind": "list" },
-        { "label": "D0.7 linkage", "value": "answered; 6 RVA-free files linked (batch 1); ~12 more linkable, rest need porting", "kind": "text" },
-        { "label": "D1 renderer A/B", "value": "16/16 max 1.01%; roadmap blocker does not reproduce", "kind": "text" }
+        { "label": "Merged to main", "value": ["0e6e0834 D1 librw default", "218b6598 Save RVA tunnel neutralized"], "kind": "list" },
+        { "label": "D2 root cause", "value": "9cc41fa8 - RwMatrixRotate read pi/180 + 1.0f from MASHED addresses, read 0 in the exe, made every rotation a scale. Car steers again.", "kind": "text" },
+        { "label": "Also fixed", "value": ["53e5c05d 83 zeroed physics constants (from the binary, bit-exact)", "8917e29c kSafetyInternal 1500 -> 16384 (original reaches 4344)"], "kind": "list" },
+        { "label": "Audit", "value": "c0e6c3e7 - 547 RVA tunnels across 84 of 205 exe TUs; mechanism is a deliberate 10 MB g_b17_low_arena_pad, symbol-free so memory-safe but silently wrong", "kind": "text" }
       ]
     },
     {
-      "heading": "Open at session end",
+      "heading": "Next",
       "fields": [
-        { "label": "Stranded on docs/reconcile", "value": "RE_MASTER_PLAN reconciliation (110 lines) - unique, not on main", "kind": "text" },
-        { "label": "Empty worktrees", "value": "d1-invert, save-rva-neutralize (no commits; children hit claude3 limit)", "kind": "text" },
-        { "label": "Not started", "value": "C2 D1 flag inversion; C3 Save RVA-tunnel port", "kind": "text" }
+        { "label": "A8 telemetry diff", "value": "settle steer-sign vs the original; scaffold and ported chain turn OPPOSITE ways and the scaffold is not authoritative", "kind": "text" },
+        { "label": "Statediff harness", "value": "use --statediff-drive-late and --hold 38; wedge was 3 harness issues, not a port defect", "kind": "text" },
+        { "label": "Do NOT", "value": ["run the majority-vote index bisection - no culprit hook exists"], "kind": "list" }
       ]
     }
   ]
