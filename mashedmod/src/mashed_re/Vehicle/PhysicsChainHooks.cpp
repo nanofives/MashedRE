@@ -426,19 +426,38 @@ void SelfTestLog(const char* s) {
 // Returns mismatch count; logs per-call summary. Runs for the first kMaxTests calls.
 int g_selfTestCount = 0;        // total logged calls
 int g_selfTestIdle  = 0;        // coast calls (no input) — sampled sparsely
-int g_selfTestAccel = 0;        // accel-only calls (input[0]!=0, input[1]==0)
-int g_selfTestBrake = 0;        // BRAKE-branch calls (input[1]!=0)  — TARGET branch
-int g_selfTestHiIn5 = 0;        // input[5]>128 grip-else branch    — TARGET branch
+// NAMES CORRECTED 2026-08-24 — these counters were named accel/brake, but A4 reads
+// input[0]/[1] which are the STEER signs, not accel/brake (accel/brake are
+// input[4]/[5] and are read by A6a; see VehicleControl.cpp's descriptor map). The
+// counter VARIABLE names are kept so the existing log format and any archived log
+// parsers still line up; the semantics below are the corrected ones.
+int g_selfTestAccel = 0;        // steer-sign-A-only calls (input[0]!=0, input[1]==0)
+int g_selfTestBrake = 0;        // steer-sign-B calls (input[1]!=0)  — TARGET branch
+int g_selfTestHiIn5 = 0;        // input[5]>128 grip-else branch     — TARGET branch
 const int kMaxIdle  = 8;
 const int kMaxAccel = 40;
-const int kMaxBrake = 40;       // reserve a dedicated quota for the brake branch
+const int kMaxBrake = 40;       // dedicated quota for the input[1] (steer sign B) branch
 const int kMaxHiIn5 = 16;
-// WS-PHYS-COVERAGE-SCENARIO: A4's brake branch (input[1]!=0, the FCHS-negated force
-// path) and the input[5]>128 grip-else branch were unhit in the throttle-only
-// player-car demo. The per-frame dispatcher invokes A4 for EVERY car; the AI
-// opponents (slots 1-3) brake into corners on their own, so the brake-branch calls
-// arrive from AI records during a normal race. Independent per-branch quotas keep the
-// (far more numerous) accel/coast calls from filling the cap before a brake call lands.
+// WS-PHYS-COVERAGE-SCENARIO: the input[1]!=0 branch (the FCHS-negated force path) and
+// the input[5]>128 grip-else branch were unhit in the straight-line player-car demo.
+// The per-frame dispatcher invokes A4 for EVERY car, and the AI opponents (slots 1-3)
+// steer through corners on their own, so those calls arrive from AI records during a
+// normal race. Independent per-branch quotas keep the (far more numerous) sign-A/coast
+// calls from filling the cap first.
+//
+// CONSEQUENCE OF THE RENAME, recorded because a coverage claim rests on it: A4 has NO
+// BRAKE BRANCH. The branch this quota covers is STEER SIGN B (steer left), and the
+// rationale "AI opponents brake into corners" was the right prediction for the wrong
+// reason — what lands here is AI cars STEERING. The branch was genuinely exercised, so
+// the coverage result stands; only its label was wrong.
+//
+// It also CORROBORATES the steer model rather than undermining it: the FCHS negation
+// (force = -force) in the input[1] branch is precisely the mechanism by which the two
+// steer signs yield opposite wheel angles, matching VehiclePhysicsRun.h:76
+// (+steer -> input[0] -> +angle, -steer -> input[1] -> -angle). Under the old
+// "brake/reverse" reading that same negation was explained as reverse thrust; both fit
+// the arithmetic, but only the steer reading is consistent with input[0]/[1] being set
+// from io.steer at VehiclePhysicsRun.cpp:404-405.
 void A4_SelfTest(void* record, int param_1, float dt, std::uint8_t* input, void* xform,
                  int gameMode, unsigned phase) {
     const bool brake  = (input[1] != 0);

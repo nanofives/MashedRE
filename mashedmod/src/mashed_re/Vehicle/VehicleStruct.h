@@ -49,13 +49,43 @@ namespace off {
     constexpr std::size_t kGearTorque0  = 0x150; // [0x54] gear const product…
     constexpr std::size_t kGearTorque1  = 0x154; // [0x55]
     constexpr std::size_t kGearTorque2  = 0x158; // [0x56]
-    constexpr std::size_t kAccelMag     = 0x190; // per-vehicle accel scalar
-    constexpr std::size_t kDriveTorque  = 0x1a8; // this-frame drive torque out
-    constexpr std::size_t kDriveRing    = 0x1ac; // float[16] ring (DAT_007f101c&0xf)
-    constexpr std::size_t kAngTorque    = 0x26c; // this-frame angular torque out
-    constexpr std::size_t kAngTorqueRing= 0x270; // float[16] ring
-    constexpr std::size_t kScratch330   = 0x330; // cleared/tick [UNCERTAIN U-V01]
-    constexpr std::size_t kScratch3f4   = 0x3f4; // cleared/tick [UNCERTAIN U-V02]
+    constexpr std::size_t kAccelMag     = 0x190; // steer scale, 34.0 (init FUN_0046b540
+                                                 // @0x42080000); NOT an accel scalar
+    // --- per-wheel STEER ANGLE, one slot per wheel ---
+    // CORRECTED 2026-08-24. These four were named/glossed as "drive torque" and
+    // "angular torque"; that is the mislabel VehiclePhysicsRun.h:26 already calls out,
+    // and it survived here. They are the WHEEL-N STEER-ANGLE slots:
+    //   wheelN steer = +0x16c + N*0xC4 + 0x3c  =>  w0 +0x1a8, w1 +0x26c,
+    //                                              w2 +0x330, w3 +0x3f4
+    // A4 FUN_00470670 zeroes all four every entry (0x004706c1..d3) and writes w0/w1
+    // from descriptor input[0]/[1] = the STEER command (VehiclePhysicsRun.cpp:404-405
+    // sets them from io.steer; accel/brake are input[4]/[5], read by A6a FUN_00467650
+    // at PhysicsChainHooks.cpp:1880,1976). A5 FUN_0046ddb0 Phase 0 then reads each
+    // wheel's angle at piVar12[0xf] and rotates that wheel's forward axis. Rear w2/w3
+    // have no writer besides init + A4-clear => FRONT-WHEEL steering.
+    // Scale: input * (+0x190 = 34.0) * (1/256, _DAT_005ceaa8) * 0.5 -> ~16.93 deg at
+    // full lock. NOTE the same 16.93 is glossed as a "drive force" in
+    // PHYS_SMOKE_2026-06-17.md:102 — one gloss was relabelled from the other.
+    // These slots are per-frame SCRATCH: zeroed at A4 entry, consumed inside the same
+    // physics step, so they read 0 at any frame-boundary sample. Do NOT diff them —
+    // both sides read 0 and the result is a false GREEN (see
+    // D2_REALPHYS_REMEASURE_2026-08-21.md "A8 BLOCKED").
+    constexpr std::size_t kWheel0Steer  = 0x1a8; // wheel-0 steer angle (deg), A4 out
+    constexpr std::size_t kWheel0Ring   = 0x1ac; // float[16] ring (DAT_007f101c&0xf)
+    constexpr std::size_t kWheel1Steer  = 0x26c; // wheel-1 steer angle (deg), A4 out
+    constexpr std::size_t kWheel1Ring   = 0x270; // float[16] ring
+    // U-V01 / U-V02 still stand as filed, but their PREMISE is now contradicted and
+    // needs routing through re-classify (do NOT treat them as resolved here).
+    // structs/vehicle.md:224-225 files both as "cleared each tick by FUN_00470670;
+    // never read in the 4 mapped fns" / "no read site found in mapped fns". A read
+    // site DOES exist: A5 FUN_0046ddb0 Phase 0 reads every wheel's steer angle at
+    // piVar12[0xf], i.e. all four of +0x1a8/+0x26c/+0x330/+0x3f4
+    // (VehiclePhysicsRun.h:42-44). A5 was simply not among "the 4 mapped fns" when
+    // that note was written. So the open question is not "is it ever read" but "does
+    // a rear-wheel angle ever become nonzero", which VehiclePhysicsRun.h:39-41
+    // answers no for 0x466000-0x472000.
+    constexpr std::size_t kWheel2Steer  = 0x330; // wheel-2 (rear) [UNCERTAIN U-V01]
+    constexpr std::size_t kWheel3Steer  = 0x3f4; // wheel-3 (rear) [UNCERTAIN U-V02]
     // --- per-wheel state flags (FUN_0046f6c0 writes; FUN_00467650 drive-gate reads
     //     as p[-3]; FUN_0046ddb0/FUN_0046f6c0 sum them into the grounded count) ---
     //     wheelN state = byte +0x198 + N*0xC4 (int idx 0x66/0x97/0xc8/0xf9).
@@ -83,8 +113,10 @@ namespace off {
     constexpr std::size_t kBoostForce   = 0xb14; // vec3 (written by FUN_00467650)
     constexpr std::size_t kAirDampCtr   = 0xb18; // [0x2c6] airborne damp counter
     constexpr std::size_t kAirborneFlag = 0xb20; // [0x2c8] set on speed/contact thr
-    constexpr std::size_t kFiltAccel    = 0xb24; // FUN_004a2c48(input[0])
-    constexpr std::size_t kFiltBrake    = 0xb28; // FUN_004a2c48(input[1])
+    // CORRECTED 2026-08-24: input[0]/[1] are the STEER command (sign A / sign B), not
+    // accel/brake — so these two filter the steer channel. Accel/brake are input[4]/[5].
+    constexpr std::size_t kFiltSteerA   = 0xb24; // FUN_004a2c48(input[0]) steer sign A
+    constexpr std::size_t kFiltSteerB   = 0xb28; // FUN_004a2c48(input[1]) steer sign B
     constexpr std::size_t kTickRing     = 0xbec; // [0x2fb] (n+1)&0xf
     constexpr std::size_t kRingB34      = 0xb34; // [0x2cd] f[] ring
     constexpr std::size_t kBoostGate    = 0xbf0; // ≠0 ⇒ drive ×_DAT_005cc950
@@ -132,8 +164,10 @@ struct MashedVehicle {
     std::int32_t& active_flag()  { return at<std::int32_t>(off::kActiveFlag); }
     float&  mass()               { return at<float>(off::kMass); }
     float&  accel_mag()          { return at<float>(off::kAccelMag); }
-    float&  drive_torque()       { return at<float>(off::kDriveTorque); }
-    float&  ang_torque()         { return at<float>(off::kAngTorque); }
+    // Renamed 2026-08-24 from drive_torque()/ang_torque() — see the kWheel0Steer
+    // block above. Both had ZERO callers, so this is a pure de-misnaming.
+    float&  wheel0_steer()       { return at<float>(off::kWheel0Steer); }
+    float&  wheel1_steer()       { return at<float>(off::kWheel1Steer); }
     float*  velocity()           { return ptr<float>(off::kVelocity); }   // [3]
     float*  forward()            { return ptr<float>(off::kForward); }    // [3]
     float&  grounded_count()     { return at<float>(off::kGroundedCnt); }

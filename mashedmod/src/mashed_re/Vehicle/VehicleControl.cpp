@@ -1,10 +1,15 @@
 // Mashed RE — WS-A4: the per-vehicle control-input integrator FUN_00470670.
 //
 // Verbatim port of the control half of the per-frame vehicle update. Reads the
-// per-car input descriptor (accel/brake bytes), computes the speed-normalized
-// drive/reverse torque, writes it to the control-output slots (+0x1a8/+0x26c) and
-// their 16-slot phase rings (+0x1ac/+0x270), then dispatches the three integration
-// callees and applies the parked-state velocity damp.
+// per-car input descriptor's STEER bytes ([0]/[1] = sign A / sign B), scales them
+// into a front-wheel steer angle, writes it to the wheel-0/wheel-1 steer slots
+// (+0x1a8/+0x26c) and their 16-slot phase rings (+0x1ac/+0x270), then dispatches
+// the three integration callees and applies the parked-state velocity damp.
+//
+// CORRECTED 2026-08-24: this header previously said "accel/brake bytes" and
+// "speed-normalized drive/reverse torque". Both are the mislabel called out at
+// VehiclePhysicsRun.h:26. Accel/brake are input[4]/[5] and are read by A6a, not
+// here. See the descriptor map on VehicleControlIntegrate below.
 //
 // Anchored to MASHED.exe SHA-256:
 //   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
@@ -69,7 +74,19 @@ int  Vc_InputFilter();
 // 0x00470670  VehicleControlIntegrate(self, dt, input[], xform)
 //   self    = the 0xd04 vehicle record (original: in_EAX)
 //   dt      = substep delta (original: param_2 / param_4 == &dt)
-//   input   = per-car input descriptor: [0]=accel, [1]=brake/reverse, [5]=byte gate
+//   input   = per-car input descriptor. CORRECTED 2026-08-24 — this line previously
+//             read "[0]=accel, [1]=brake/reverse", which is the mislabel
+//             VehiclePhysicsRun.h:26 calls out. The real map:
+//               [0]/[1] = STEER command, sign A / sign B, 0..255 magnitude.
+//                         VehiclePhysicsRun.cpp:404-405 sets them from io.steer
+//                         (+steer -> [0], -steer -> [1]); the original writers are
+//                         the AI FUN_00416250 and the human cook FUN_00496530.
+//               [4]/[5] = accelerator / brake-reverse. A4 does NOT read these; A6a
+//                         FUN_00467650 does (PhysicsChainHooks.cpp:1880, 1976).
+//             So the two branches below are steer-right and steer-left, NOT
+//             accelerate and brake. The ARITHMETIC IS UNAFFECTED (it is verbatim
+//             either way) — only the names were wrong. [5] is still read here as the
+//             grip-branch threshold at line ~112, which is a separate use.
 //   xform   = vehicle world-transform context (original: param_4, to A5)
 // Verbatim of FUN_00470670 (body 0x00470670..0x00470991).
 // ===========================================================================
@@ -96,14 +113,15 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
         Fb(v, 0xb0c) = (vc::kOne - dot / Fb(v, 0x9e4)) * Fb(v, 0x9e4);
     }
 
-    // filter the two analog inputs into the per-car scratch (+0xb24 accel, +0xb28 brake)
+    // filter the two steer-sign inputs into the per-car scratch
+    // (+0xb24 = steer sign A, +0xb28 = steer sign B; NOT accel/brake)
     Ib(v, 0xb24) = (input[0] == 0) ? 0 : Vc_InputFilter();
     Ib(v, 0xb28) = (input[1] == 0) ? 0 : Vc_InputFilter();
 
     const unsigned phase = static_cast<unsigned>(g_torqueRingPhase) & 0xf;
     float force = vc::kZero;
 
-    if (input[0] != 0) {                                             // accelerate
+    if (input[0] != 0) {                                             // steer sign A (was mislabelled "accelerate")
         if (vc::kAirSpeed < Fb(v, 0x9e4)) Ib(v, 0xb20) = 1;
         force = static_cast<float>(input[0]) * Fb(v, 0x190) * vc::kInputScale;
         if (gameMode == 7) force = vc::kZero;
@@ -122,7 +140,7 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     Fb(v, 0x1ac + phase * 4) = force;                               // drive-torque ring
     Fb(v, 0x270 + phase * 4) = force;                               // angular-torque ring
 
-    if (input[1] != 0) {                                            // brake / reverse
+    if (input[1] != 0) {                        // steer sign B (was mislabelled "brake / reverse")
         if (vc::kAirSpeed < Fb(v, 0x9e4)) Ib(v, 0xb20) = 1;
         force = static_cast<float>(input[1]) * Fb(v, 0x190) * vc::kInputScale;
         if (gameMode == 7) force = vc::kZero;
