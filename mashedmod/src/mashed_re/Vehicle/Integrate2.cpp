@@ -16,8 +16,20 @@
 //     compile x87 (build.bat does — no /arch:SSE2) so the transient stays 80-bit.
 //   [U-A6A-ST0] FUN_004a2c48 (=round-of-ST0) calls take an implicit ST0 input not in the
 //     decomp; the gearbox/boost timers + brake quantizer use Vc_RoundST0() (stub=0).
-//   [U-A6A-GLOB] g_suspScale (_DAT_0088e5f0) is 0 in the standalone stub -> the suspension
-//     force magnitude is inert until A8 binds the real per-frame value; the .asi reads it live.
+//   [U-A6A-GLOB] STALE AS WRITTEN — CORRECTED 2026-08-24. It said g_suspScale
+//     (_DAT_0088e5f0) "is 0 in the standalone stub ... until A8 binds the real per-frame
+//     value". A8 HAS bound it: VehiclePhysicsRun.cpp:415-416 sets g_suspDtTerm =
+//     frameMs * kSuspDtK and g_suspScale = kSuspNum / g_suspDtTerm every frame on the
+//     live path. Only the ForceIntegratorStubs.cpp defaults are 0, and they are
+//     overwritten before use. The suspension force magnitude is NOT inert. (The .asi
+//     still reads the originals live, unchanged.)
+//     STILL 0 AND FAITHFULLY SO: g_gravX/Y/Z (_DAT_00803334/38/3c). Per
+//     VehiclePhysicsRun.h:20-23, [U-A8-GRAVITY] is RESOLVED AS VESTIGIAL — in the
+//     ORIGINAL the only writer is FUN_00470c70's frame-end zeroing (0x004713fc) and the
+//     only reader is A5 (0x0046e316), so they are always 0 there too. Do not "fix" them;
+//     vertical dynamics come from suspension/contacts. Checked while hunting the A8
+//     yaw-rate/speed defect (D2_REALPHYS_REMEASURE_2026-08-21.md) — both of these were
+//     candidate root causes and BOTH ARE ELIMINATED.
 //   The transform (FUN_004c3df0) is now the CPU device-transform (WS-A-DEVXFORM); the
 //   FUN_004c4d20 matrix build is mode 0 (standalone-correct).
 //
