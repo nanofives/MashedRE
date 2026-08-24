@@ -848,3 +848,72 @@ round. No new uncertainty was opened; the gap is recorded on U-9043's resolution
 If `velH` arm-symmetry is ever wanted, re-run `-1` on a track or spawn where a
 left turn does not immediately meet geometry, and read round 0 before the first
 collision.
+
+## A8 standalone arm — THE PREDICTED SIGN INVERSION DOES NOT EXIST
+
+Measured 2026-08-24. Evidence `verify/a8_standalone_20260824/` (log + extracted
+`play_demo.txt` + `PROVENANCE.txt`). Recipe, verbatim from
+`WS_A8_REALPHYS_2026-07-01.md:15`: `MASHED_REAL_PHYSICS=1 MASHED_RACE_DEMO=1
+MASHED_PLAY_DEMO=1 MASHED_GOTO=6 MASHED_TRACK_SEL=0 MASHED_CAR_SEL=0`. Process
+self-exited cleanly.
+
+### The prediction, and its refutation on two independent grounds
+
+The section above predicted: *"`TrackRenderer.cpp:2553` integrates `io.yaw` from
+the chain yaw rate while treating `io.yaw` as a velocity heading, so those
+conventions differ by a sign and `+yawrate*dt` steers the car the wrong way."*
+**That prediction is wrong.** Both halves of it fail.
+
+**1. There is no yaw-rate integration to invert.** `VehiclePhysicsRun.cpp:596-603`
+does not read the yaw rate at all — it relaxes `io.yaw` toward the chain
+velocity's heading, in the *same* `atan2(z,x)` convention:
+
+```c
+float velHeading = std::atan2(cvz, cvx);   // forward={cos,0,sin} -> heading=atan2(z,x)
+float err = velHeading - io.yaw;
+io.yaw += err * frac;
+```
+
+`0x9c0` is never read in that file. So the comment at `TrackRenderer.cpp:2553`
+("recovered chain-grip heading (+0x9c0)") is itself misleading — the value is a
+velocity heading, not a yaw-rate integral. Worth fixing, but it is a comment
+defect, not a behavioural one.
+
+**2. The measured heading turns the correct way.** Under `steer=+0.50`:
+
+```
+td=4.22  car_yaw 1.5498 -> 1.5406 -> 1.5269 -> 1.5131 -> 1.4993 -> 1.4862 -> 1.4759
+```
+
+**Decreasing** — the same direction as the original, whose `velH` runs
+−1.5708 → −54.8896 under `steer=+1`. Sign agrees. D2's remaining work is
+therefore **not** a sign bug, and nobody should "fix" one.
+
+**A trap I nearly fell into, recorded because it is reusable.** The last sample
+of the run reads `car_yaw=2.1000`, which looks like the heading *increased*. It
+did not: at `td=5.81` speed drops 1679.87 → 1254.32 and the position jumps, i.e.
+the collision already documented in `efad2dc2` ("the yaw jump is a collision, not
+a defect"). Reading the final line instead of the trajectory inverts the
+conclusion. Always segment on the collision.
+
+### What remains open, stated without inventing a number
+
+The turn **rate** looks much lower than the original's, but the two are **not
+measured in comparable terms** and no factor is claimed here:
+
+| | steer | heading change | speed regime |
+|---|---|---|---|
+| original (`orig_steerR.msd`) | +1.0 | −53.3187 rad over one 1430-frame round | ~3000–4000 (record units) |
+| standalone | +0.50 | −0.0739 rad over 1.33 s | ~340–1680 (world units) |
+
+Different steer magnitude, different speed regime, different units and time base.
+A like-for-like rate comparison needs the standalone driven at full lock in a
+matched speed band, which this demo does not provide.
+
+**Harness limitation found:** the round ends at **t=6.6 s** (`R6 ROUND END
+winner=car3`), while `MASHED_PLAY_DEMO`'s steer ramp needs ~24 s to walk
+0 → +0.5 → −0.5 → +1.0 → −1.0 (`exe_main.cpp:2640-2643`). So this recipe only
+ever exercises the `+0.5` phase; the negative and full-lock phases are
+**unreachable** and every prior A8 run on this recipe had the same blind spot. A
+longer round (more laps, or a rules config that does not end at 6.6 s) is needed
+before the standalone's `−0.5`/`±1.0` response can be measured at all.

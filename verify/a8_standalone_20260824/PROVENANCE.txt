@@ -1,0 +1,6 @@
+A8 standalone-side arm, 2026-08-24
+env: MASHED_REAL_PHYSICS=1 MASHED_RACE_DEMO=1 MASHED_PLAY_DEMO=1 MASHED_GOTO=6 MASHED_TRACK_SEL=0 MASHED_CAR_SEL=0
+exe: mashedmod/build/mashed_re.exe (built 2026-08-24 11:49)
+recipe source: WS_A8_REALPHYS_2026-07-01.md:15 via D2_REALPHYS_REMEASURE_2026-08-21.md:8-9
+process self-exited cleanly; 26 PLAY-DEMO samples, round ended t=6.6s (winner=car3)
+compare against: verify/a8_steer_20260824/orig_steerR.msd (+1) and orig_steerL.msd (-1)
