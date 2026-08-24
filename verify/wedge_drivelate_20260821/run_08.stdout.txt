@@ -1,0 +1,31 @@
+  [keep-awake] display-sleep suppressed + wake nudge sent
+=== scenario_launch  pid=10084  track=0 mode=10 cars=1 ===
+  attaching ASAP...
+  [agent] ready
+    phase=0  (waiting for menu (phase 1))
+    phase=1  (waiting for menu (phase 1))
+  [setup] set track=0 mode=10 cars=1 car=0 rule=0 team=0
+  [statediff] statediff armed (tick 0x004c1be0, car 0, rec@0x8815a0)
+  [statediff] drive-late: cook NOT armed yet (deferred until phase 3 to keep track load uninstrumented)
+  [launch] poke DAT_00771968 = 2 -> 1
+    phase=2  (waiting for race running (phase 3))
+    phase=3  (waiting for race running (phase 3))
+
+  *** RACE RUNNING (phase 3) ***
+  [statediff] cook injector armed (0x00496530)
+  [statediff] drive-late: full accel, straight -> 1
+  car spawn fired: 3   grounded=4  airflag=0
+  vel=[0, 0, 0]  fwd=[-8.742277657347586e-08, 0, -1]
+
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+
+  racing 20s — pulsing control 4 (confirm/accel) to skip the start intro + continue rounds...
+
+    +  4s  ph=3  spawnFired=3  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    +  9s  ph=3  spawnFired=3  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 13s  ph=3  spawnFired=3  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 18s  ph=3  spawnFired=3  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+  [statediff] agent: {"armed":true,"frames":409,"car":0,"err":null}
+  [statediff] 409 frames -> verify\wedge_drivelate_20260821\run_08.msd  (distinct payloads=4, nonzero=409)
+
+--- STDERR ---

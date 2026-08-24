@@ -23,6 +23,9 @@
 # subsystem subfolders (verify/boot/, verify/font/, verify/menu_crash/, ...).
 /verify/*
 !/verify/*/
+# The one intended file at verify/ root: the index that makes every citation of a
+# verify/ directory resolve to tracked content (see the capture-blob block below).
+!/verify/EVIDENCE_MANIFEST.md
 # Regenerable capture pools (dir-cited by analysis notes; rebuild via the
 # parity / nav-coverage harnesses — do not commit, ~100 MB of captures)
 /verify/allscreens/
@@ -120,3 +123,19 @@ tmp/
 CLAUDE.local.md
 # large crash dumps kept locally as evidence, not committed
 verify/menu_crash_pc44/*.dmp
+
+# --- Capture blobs under verify/ (2026-08-24) ---
+# Extends the menu_crash_pc44/*.dmp precedent above to the capture pools. At the
+# time of writing the 36 surviving verify/ dirs held 1,424,801,792 bytes of
+# .bmp/.msd/.png against 2,029,217 bytes of .txt/.json -- 99.9% blobs. Those
+# blobs are regenerable by the harness that produced them, so they stay local.
+# What IS committed for every cited directory: its RESULT.md/AUDIT.md/README.md
+# verdict (already tracked), its .txt/.json telemetry, and a row in
+# verify/EVIDENCE_MANIFEST.md giving counts, bytes and the tracked files that
+# cite it. That keeps every citation resolvable, which is the D0.6 lesson --
+# citations into untrackable paths are latent fragility, and 35 of these dirs are
+# cited by hooks.csv / UNCERTAINTIES.md / DEFERRED.md / ROADMAP.md.
+# NOTE this does not retract the 322,698,309 bytes of blobs already in history.
+verify/**/*.bmp
+verify/**/*.msd
+verify/**/*.png
