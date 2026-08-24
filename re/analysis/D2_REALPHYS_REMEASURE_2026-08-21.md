@@ -814,3 +814,37 @@ recorded; the sign result does not depend on it.
 Rounds 1-7 are 1-2 frame fragments of the post-round car and carry no usable
 delta. The provenance sidecar is committed beside the capture; the 7.8 MB `.msd`
 itself is local-only per `verify/EVIDENCE_MANIFEST.md`.
+
+### A8 addendum — the negative steer arm, and what it does and does not show
+
+Second boot 2026-08-24: `verify/a8_steer_20260824/orig_steerL.msd` (2334 frames),
+stock original, `steer = -1` per its committed `.provenance.json`.
+
+| quantity | `steer +1` | `steer -1` | flipped? |
+|---|---|---|---|
+| `steerAng0` mean | **+33.2253** (1441/1441 nonzero) | **−33.2346** (1416/1416) | **yes**, magnitudes agree to **0.03%** |
+| `yawrate` sign | + | − | **yes** |
+| `fwdH` round-0 delta (body heading) | −50.5689 | **+1.5234** | **yes** |
+| `velH` round-0 delta (velocity heading) | −53.3187 | −1.6354 | **no** |
+
+**What is established.** `[1]` produces the opposite-signed steer angle of equal
+magnitude. The 0.03% agreement between `+33.2253` and `−33.2346` is as clean an
+antisymmetry as this harness can show, and it behaviourally confirms three
+witnesses that were previously code-only: `VehiclePhysicsRun.cpp:404-405`
+(`input[1] = (st < 0.f) ? m : 0`), A4's `FCHS` negation in the `input[1]` branch,
+and the `[0]`↔`[1]` invert swap at `0x00496717`.
+
+**What is not, and why it is not a contradiction.** The velocity heading did not
+flip — both arms are negative. The `−1` car **collided at frame 966**, leaving 80
+driving frames in round 0 and then 1263 frames stationary at speed ~0.1. Across
+that collision `fwdH` moves **+1.5234** while `velH` moves **−1.6354**: the body
+rotated one way while the velocity vector went the other, which is a skid, not a
+steer. So `velH` in this arm never describes a clean arc and the arm-to-arm `velH`
+comparison is not a valid test. This is a **capture-quality gap, not a knowledge
+hole** — the sign convention A8 depends on (`+yawrate` ↔ decreasing
+`atan2(vz,vx)`) was established by the `+1` arm, which held a single 1430-frame
+round. No new uncertainty was opened; the gap is recorded on U-9043's resolution.
+
+If `velH` arm-symmetry is ever wanted, re-run `-1` on a track or spawn where a
+left turn does not immediately meet geometry, and read round 0 before the first
+collision.
