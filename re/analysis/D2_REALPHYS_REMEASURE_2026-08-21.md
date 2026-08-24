@@ -1035,3 +1035,82 @@ monotonic in steer magnitude, and symmetric left-to-right within measurement
 error. A8 has produced **no** confirmed standalone-side defect. The speed
 dependence above is the only open lead, and it needs a purpose-built run
 (constant speed, low collision) rather than the play-demo ramp.
+
+## A8 CONFIRMED DEFECT — the yaw-rate/speed relationship is INVERTED, and it is upstream of the alignment
+
+This is the first confirmed standalone-side defect A8 has produced, and unlike the
+retracted asymmetry it is a **shape** difference, which no averaging artifact can
+manufacture.
+
+### Ground truth from the original — yaw rate RISES with speed
+
+Read directly from `verify/a8_steer_20260824/orig_steerR.msd` (1402 frames with
+speed > 50 and `steerAng0` nonzero). Per-frame record state, no derived quantities:
+
+| speed bin | n | `|yawrate|` (+0x9c0) | `steerAng0` (+0x1a8) |
+|---|---:|---:|---:|
+| 50–500 | 192 | 0.10874 | 32.1430 |
+| 500–1000 | 149 | 0.60771 | 32.7989 |
+| 1000–1500 | 188 | 0.85371 | 33.1113 |
+| 1500–2000 | 332 | **1.13866** | 33.5824 |
+| 2000–3000 | 541 | **1.45075** | 33.8672 |
+
+Monotonic, ~13x across a ~10x speed range, while the commanded wheel angle stays
+essentially flat (32.1 → 33.9). That is textbook `yawRate = v·tan(δ)/L`.
+
+### The standalone falls instead, at both alignment settings
+
+| speed bin | `MASHED_ALIGNRATE=7` (default) | `=40` |
+|---|---:|---:|
+| 50–500 | 0.06382 | 0.15436 |
+| 500–1000 | **0.08268** | **0.18530** |
+| 1000–1500 | 0.07850 | 0.17684 |
+| 1500–2000 | 0.06808 | 0.14082 |
+| 2000–3000 | 0.05324 | 0.08556 |
+
+Both peak at 500–1000 and decline. **The shape is wrong and `kAlignRate` does not
+change it.**
+
+### Two separable defects, and the alignment is not the cause of the shape
+
+**1. Shape (the real defect).** The original rises monotonically; the standalone
+peaks early and falls. `kAlignRate` scales every bin by a near-constant 1.6–2.4x
+without altering the shape, so the inverted speed dependence lives **upstream** of
+the `io.yaw` alignment — in how the chain's velocity heading rotates, i.e. A6a's
+lateral grip. Localised, not yet root-caused.
+
+**2. Magnitude.** At 1500–2000 the original yaws at 1.139 against the standalone's
+0.068 — **~17x**. `MASHED_ALIGNRATE=40` recovers ~2.1x of that, which is a fudge
+factor, not a fix, and it still leaves ~8x while making the shape no better.
+*(Magnitude caveat retained: original speed is record units, standalone is world
+units. The **shape** comparison does not depend on that; the ratio does.)*
+
+### Correction to my own reasoning, worth recording
+
+I argued analytically that the alignment could not be the limiter, because
+`io.yaw += err*(1-exp(-kAlignRate*dt))` is a first-order lag and in steady state
+tracks a rotating target at the target's own rate with offset `err = ω/kAlignRate`
+(0.21 rad at ω=1.45, far from the π bound). **The measurement refutes that:**
+raising `kAlignRate` 5.7x raised the yaw rate ~2.3x, so it is not a passive lag.
+
+The reason is a feedback loop I had missed: the chain builds its forward axis
+**from `io.yaw`** (`VehiclePhysicsRun.cpp:383-385` writes
+`kForward = {cos(io.yaw), 0, sin(io.yaw)}`; `BuildYawMatrix(io.yaw)` at 296 and
+423), so `velHeading` is itself a function of `io.yaw`. `kAlignRate` is therefore a
+**loop gain**, not a lag constant. The steady-state argument does not apply to a
+closed loop.
+
+**Consequence beyond this measurement:** `MASHED_ALIGNRATE` is a physics-behaviour
+knob, not a diagnostic. Under the S-DoD rule that env-gated alternatives do not
+count as done, a default of 7.0 chosen to look right is tuning, not porting — and
+the correct value is whatever makes the shape match, which no single constant can
+do while the shape itself is wrong.
+
+### Next step
+
+Instrument the chain's velocity heading rotation rate directly against speed
+(`MASHED_COUPLING_DIAG` already sits next to `io.drive_speed`) and compare its
+scaling with the original's `+0x9c0`. The question is narrow: **why does the chain
+velocity's heading rotate at a roughly speed-independent ~0.08 rad/s when the
+original's body yaw scales with v?** A6a's per-wheel lateral grip is the place to
+look.
