@@ -644,3 +644,85 @@ predicted to fail by construction; the steer-sign question remains open.
 - Whether the two failures share one cause. Missing forward damping and missing
   steer coupling are consistent with a single lost two-body loop, but that is
   the pre-existing hypothesis, not a finding from this run.
+
+## A8 BLOCKED — the original-side steer capture is invalid, on two independent counts
+
+Measured 2026-08-24, read-only, no boot spent. Artifact:
+`verify/a8_steer_20260823/orig_steerR.msd` (MSD1, `rec_size=0xd04`,
+`base_va=0x8815a0`, 2335 frames), the original-side capture taken 2026-08-23 for
+the A8 steer-sign question. **It cannot answer that question and must be
+re-taken.** Both defects would have survived into a false verdict.
+
+### 1. The chosen field is unobservable by construction, and would have produced a FALSE GREEN
+
+`re/tools/statediff/field_trace.py` reads the steer angle at `+0x1a8` /
+`+0x26c`. In this capture both are **exactly 0.0 in all 2335 frames** (0 nonzero,
+`max|v|` = 0), while **315 of 832** dword slots in the record do vary — so the
+capture is live, the field is not.
+
+The offsets are **not wrong**. `VehiclePhysicsRun.h:35-36` derives them by RVA
+(`wheelN steer = +0x16c + N*0xC4 + 0x3c` => `w0=+0x1a8`, `w1=+0x26c`,
+`w2=+0x330`, `w3=+0x3f4`). They are unreadable for a mechanical reason:
+
+- **A4 zeroes all four slots at every entry** — `0x004706c1..d3`, ported verbatim
+  at `VehicleControl.cpp:86` (`Ib(v,0x3f4)=0; Ib(v,0x330)=0; Ib(v,0x26c)=0;
+  Ib(v,0x1a8)=0;`).
+- **A5 `FUN_0046ddb0` Phase 0 consumes them inside the same physics step**
+  (`VehiclePhysicsRun.h:42-44`): it reads each wheel's angle at `piVar12[0xf]` and
+  rotates that wheel's forward axis.
+
+So they are per-frame scratch. Any capture that samples the record at a frame
+boundary reads 0 **by construction**, on either side. Had the standalone-side
+capture been taken and diffed, it would also have read 0, the diff would have
+been bit-identical, and A8 would have reported GREEN on a field that is
+structurally always zero — the same false-GREEN class as the iter17 `0x00482900`
+incident in the orchestrator ledger, where a zero-argument `arg_type` on a
+two-argument function made both sides read identical garbage.
+
+**Corrected citation, filed as a documentation defect:** `field_trace.py`'s
+docstring cited `scenario_launch.py:133-149` as the source for these two offsets.
+That block documents `+0x928/+0x958/+0x9b0..b8/+0x9c0/+0x9d4/+0x9dc/+0x9e0/
++0x9e4/+0xb20` and contains **neither** `+0x1a8` nor `+0x26c`. The real source is
+`VehiclePhysicsRun.h:26-51`. Docstring corrected in place.
+
+### 2. The capture shows no steering at all
+
+Heading deltas are only defined **within one active round** — the stock car ramps
+unbounded then resets to ~0 at each round boundary (established above, "there is
+no terminal velocity"). The tool's original summary unwrapped the whole
+min-speed-filtered series as one, joining across the excluded reset frames and
+reporting `velH delta -13.0160 rad`. **That figure is an unwrap artifact, not a
+turn.** Fixed: the tool now segments on frame-index gaps and reports per-round
+deltas, giving 15 contiguous segments. The two substantial ones:
+
+```
+round 0: frames  888..1086  n=199  velH -1.5708 -> -1.5844  delta -0.0136
+round 1: frames 1089..1367  n=279  velH +1.5899 -> +1.5732  delta -0.0166
+```
+
+**-0.0136 rad is -0.78 degrees over 199 frames at speed 3000-4000.** A held
+steer at full lock is documented as ~16.93 deg of wheel angle
+(`VehiclePhysicsRun.h:38-39`); this car is going straight. Round 3's
+`delta -3.1338` (~-pi) is a heading flip, i.e. a collision/respawn, not a turn,
+and rounds 5-14 are 1-7 frame fragments of a car sitting at speed 10-13 with
+`yawrate` ~0 for the last 600 frames.
+
+The economical reading is that the `--statediff-steer` injection did not take
+effect in this run. It is **not confirmable from the artifact**: the directory
+holds the `.msd` and nothing else, with no sidecar recording the flags used.
+
+### What A8 needs instead
+
+1. **Re-take the original capture** with `--statediff-steer +1` and **persist the
+   invoking command line next to the `.msd`**, so "was the steer actually
+   injected" is answerable from the artifact rather than by inference.
+2. **Assert the injection took effect before spending the standalone boot** — the
+   cheap check is a non-trivial per-round `velH` delta in the original. A capture
+   whose driving rounds are straight is a failed capture, not a datum.
+3. **Derive the steer-sign law from persistent record state, never from
+   `+0x1a8`**: yaw rate `+0x9c0` (A6a's body output), velocity `+0x9b0..b8`,
+   forward axis `+0x9d4/+0x9dc`. These are integrated body state, not per-step
+   scratch, so they survive the sample boundary.
+
+`--statediff-steer` (`re/frida/scenario_launch.py`) is sound and unchanged; the
+defect is in the field choice, the summary statistic, and the missing provenance.
