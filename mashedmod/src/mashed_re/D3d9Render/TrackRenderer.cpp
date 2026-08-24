@@ -2550,7 +2550,17 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         Vehicle::VehiclePhysics_StepPlayer(in.dt, io);
         car_vel_[0] = io.vel[0]; car_vel_[1] = io.vel[1]; car_vel_[2] = io.vel[2];
         car_speed_  = io.speed;
-        car_yaw_ = io.yaw;   // WS-A coupling: recovered chain-grip heading (+0x9c0)
+        // CORRECTED 2026-08-24: this said "recovered chain-grip heading (+0x9c0)",
+        // which named the wrong source. io.yaw is NOT derived from the yaw rate —
+        // +0x9c0 is never read in VehiclePhysicsRun.cpp. StepPlayer relaxes io.yaw
+        // toward the chain VELOCITY heading, in this same atan2(z,x) convention
+        // (VehiclePhysicsRun.cpp:596-603): velHeading = atan2(cvz,cvx);
+        // io.yaw += (velHeading - io.yaw) * frac. So this is a velocity-heading
+        // follow, not a yaw-rate integral. The distinction matters: a sign bug was
+        // predicted on the yaw-rate-integral reading and does not exist — measured
+        // 2026-08-24, car_yaw decreases under +steer exactly as the original does
+        // (D2_REALPHYS_REMEASURE_2026-08-21.md "A8 standalone arm").
+        car_yaw_ = io.yaw;
         // WS-A COUPLING (2026-06-29): the POSITION step now advances along the heading
         // at the recovered coupling's WORLD body speed (io.drive_speed) — replacing the
         // degenerate kWorldVel gain on the chain's internal velocity (which, with the

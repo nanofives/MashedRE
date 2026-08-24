@@ -917,3 +917,59 @@ ever exercises the `+0.5` phase; the negative and full-lock phases are
 **unreachable** and every prior A8 run on this recipe had the same blind spot. A
 longer round (more laps, or a rules config that does not end at 6.6 s) is needed
 before the standalone's `−0.5`/`±1.0` response can be measured at all.
+
+### Full steer ramp, all four phases — sign law COMPLETE, and a new asymmetry finding
+
+The run above only ever reached `steer=+0.5`. Cause found: **`MASHED_RACE_DEMO`'s
+own nav script** ends the race after round 1 (`NAV_DEMO phase=1 01_action` →
+`phase=2 02_back_to_menu` → `phase=3 race-demo done`), not the race rules —
+`MASHED_RACE_MODE=laps MASHED_LAPS=5` changed nothing. The missing flag is
+**`MASHED_DRIVE_HOLD=1`** ("G2: hold InRace for sustained-drive calibration",
+`exe_main.cpp`).
+
+**Recipe defect worth fixing where it is documented:**
+`WS_A8_REALPHYS_2026-07-01.md:15` — the recipe this note has been quoting as
+canonical — **omits `MASHED_DRIVE_HOLD`**, which is why every A8 run on it caps at
+6.6 s and never leaves the `+0.5` phase. `WSPHYS_DRIVEHOLD_2026-07-06.md:15` has
+it. Use the latter.
+
+With `MASHED_DRIVE_HOLD=1` all four phases are reached (114 samples, td 0→29.9).
+Segmented on steer changes *and* on collisions (speed drop >15%), collision-free
+segments only:
+
+| steer | mean yaw rate (rad/s) | sign | segments |
+|---|---|---|---|
+| **+1.00** | **−0.0834** | − | 4 |
+| **+0.50** | **−0.0313** | − | 2 |
+| 0.00 | 0.0000 | 0 | 1 |
+| **−0.50** | **+0.0074** | + | 1 |
+| **−1.00** | **+0.0262** | + | 2 |
+
+**ESTABLISHED — the sign law is complete and correct.** Positive steer decreases
+the heading, negative steer increases it, zero steer holds it, and the response is
+monotonic in steer magnitude. Every one of the 10 collision-free segments carries
+the expected sign. This matches the original on **both** arms (`+1` → heading
+decreases; `−1` → `steerAng0` and `fwdH` flip). **The standalone steers the right
+way. There is no sign defect in D2.**
+
+**NEW CANDIDATE DEFECT — left/right asymmetry.** The magnitudes are not
+symmetric: `+1.00` gives `−0.0834` against `−1.00`'s `+0.0262` (**3.2x**), and
+`+0.50` gives `−0.0313` against `−0.50`'s `+0.0074` (**4.2x**). The original is
+symmetric to **0.03%** (`steerAng0` `+33.2253` vs `−33.2346`), so this asymmetry
+is a standalone-side property, not a faithful reproduction. That is the first
+concrete, quantified D2 defect candidate to come out of A8.
+
+**Caveat, stated because it could bias the numbers:** the car collides
+repeatedly, so segment lengths differ between arms — the `+1.00` mean rests on
+four short segments (3-6 samples each, all ended by collision) while `−0.50`
+rests on one clean 16-sample segment ended by a steer change. The asymmetry is
+consistent across both magnitudes and all ten segments, but a cleaner run with
+fewer collisions should confirm the ratio before it is treated as a measured
+constant.
+
+**Still not claimed:** any absolute rate comparison against the original. The
+standalone's ~0.03–0.08 rad/s versus the original's ~1.0 rad/s spans different
+units, speed regimes and time bases; no factor is asserted here.
+
+Evidence: `verify/a8_standalone_20260824/play_demo_drivehold.txt` (114 samples)
+and `mashed_re_drivehold.log`.
