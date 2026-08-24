@@ -973,3 +973,65 @@ units, speed regimes and time bases; no factor is asserted here.
 
 Evidence: `verify/a8_standalone_20260824/play_demo_drivehold.txt` (114 samples)
 and `mashed_re_drivehold.log`.
+
+### RETRACTION — the "3-4x left/right asymmetry" is an artifact of my own averaging
+
+Re-analysed the same 114 samples per-sample instead of per-segment. **The
+asymmetry does not exist.** No new run was needed; the error was in the
+statistic, not the data.
+
+Per-sample yaw rates (steer changes and collision steps excluded, speed > 50):
+
+| steer | n | speed mean | rate mean |
+|---|---:|---:|---:|
+| −1.00 | 20 | 1871.1 | +0.0786 |
+| −0.50 | 5 | 755.5 | +0.0271 |
+| 0.00 | 3 | 197.0 | +0.0000 |
+| +0.50 | 16 | 2090.3 | −0.0257 |
+| +1.00 | 12 | 1372.2 | −0.0859 |
+
+At matched steer magnitude that is already near-symmetric — `|±1.00|` 0.0786 vs
+0.0859 (**1.09x**), `|±0.50|` 0.0271 vs 0.0257 (**1.05x**) — nothing like 3-4x.
+
+Controlling for speed settles it. Yaw rate depends on speed, and the two arms
+occupied different speed bands, so binning is the right comparison:
+
+| speed bin | `|+1.0|` | `|−1.0|` | ratio |
+|---|---|---|---|
+| 500–1000 | 0.0979 (n=2) | 0.1036 (n=3) | **1.06** |
+| 1000–1500 | 0.0875 (n=5) | 0.0967 (n=1) | **1.10** |
+| 1500–2000 | 0.0794 (n=5) | 0.0784 (n=2) | **0.99** |
+
+**Left and right agree to within 1-10%, and to 1% in the best-populated bin.**
+
+**Where my error came from.** The segment means divided a net `car_yaw` change by
+a segment's wall duration, so any segment containing near-stationary time reported
+a depressed rate. The `−1.00` arm's longest segment (td 19.08→26.75, 30 samples)
+and the `−0.50` arm's only segment (td 9.78→13.77) both include low-speed stretches;
+the `+1.00` arm's four segments were short bursts at speed. That inflated the
+apparent right/left ratio. **This is the same mistake as the `car_yaw=2.1000` trap
+earlier in this session — aggregating across a regime boundary instead of
+segmenting on it.** Twice in one session, so it is worth naming: *for a
+rate quantity, average the per-sample rates; do not divide a total by a span
+unless the regime is constant across it.*
+
+### What survives, as an observation rather than a conclusion
+
+Yaw rate **decreases monotonically with speed** at constant steer, on both arms:
+
+```
+steer -1.0:  0.1036 (500-1000) -> 0.0967 (1000-1500) -> 0.0784 (1500-2000) -> 0.0731 (2000-3000)
+steer +1.0:  0.0979 (500-1000) -> 0.0875 (1000-1500) -> 0.0794 (1500-2000)
+```
+
+Worth noting only because it is the **opposite** of the naive bicycle-model
+expectation (`yawRate = v·tan(δ)/L` rises with `v` at fixed wheel angle `δ`). That
+could be the `io.yaw` alignment relaxation, grip saturation, or a speed-dependent
+steer scale — **not established here**, and n is 1-5 per bin. Flagged as the next
+thing to look at, not as a defect.
+
+**Net position on A8:** the standalone's steer response is correctly signed,
+monotonic in steer magnitude, and symmetric left-to-right within measurement
+error. A8 has produced **no** confirmed standalone-side defect. The speed
+dependence above is the only open lead, and it needs a purpose-built run
+(constant speed, low collision) rather than the play-demo ramp.
