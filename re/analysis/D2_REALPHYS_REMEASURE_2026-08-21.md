@@ -1114,3 +1114,87 @@ scaling with the original's `+0x9c0`. The question is narrow: **why does the cha
 velocity's heading rotate at a roughly speed-independent ~0.08 rad/s when the
 original's body yaw scales with v?** A6a's per-wheel lateral grip is the place to
 look.
+
+## ROOT-CAUSE CANDIDATE FOUND — the speed-to-grip term is behind an unpopulated gate (`+0x1f0`)
+
+Ghidra decomp of A6a `FUN_00467650` pulled read-only on `Mashed_pool13`, anchor
+verified; verbatim body committed at
+`re/analysis/data/A6a_FUN_00467650_decomp_20260824.txt` (594 lines).
+
+### What the original does with speed
+
+The decomp shows exactly one grip term scaled by speed:
+
+```
++0x9e4 * _DAT_005cea14 (0.008)  ->  floored at 8.0  ->  * +0x9e8 * 0.02 * 360.0
+```
+
+and it is **conditional**: it runs only when the record's `+0x1f0` field equals
+`-0x69e1a6` or `-0xe17f4c`, and speed > 0.
+
+The angular-velocity write itself carries no speed term —
+`*(ESI+0x9c0) += local_74 * (param_2 * *(ESI+0x5c) * 6.87e-7)` — so the speed
+dependence of yaw rate has to enter through the torque accumulator `local_74`,
+i.e. through the grip terms feeding it. The speed-gated block above is the one
+that scales with velocity.
+
+### Why the standalone loses it
+
+The port transcribes the block faithfully (`Integrate2.cpp:178`):
+
+```c
+int trackId = Ri(v, 0x1f0);                                                     // :151
+...
+if ((trackId == -0x69e1a6 || trackId == -0xe17f4c) && kZero < Rf(v, 0x9e4)) {   // :178
+```
+
+**`+0x1f0` has no writer anywhere in `mashedmod/src/mashed_re`.** It is read at
+`Integrate2.cpp:151`, `Integrate2.cpp:367`, `PhysicsChainHooks.cpp:1901`,
+`:1929` and `:2141`, and written by nothing. (The `PromoLoop_sessionB.cpp:185`
+hit is a different struct; the three `Ai/` hits use `0x1f0` as a tile-index
+literal, not this field.)
+
+So in the standalone `trackId` holds whatever `VehiclePhysics_Init` left in the
+record, every magic comparison fails, and **four gated behaviours are silently
+skipped**:
+
+| gate | line | what is skipped |
+|---|---|---|
+| `-0x69e1a6` / `-0xe17f4c` (+ speed>0) | `:178` | **the speed-to-grip scaling** |
+| `-0x69e1a6` / `-0xe17f4c` (+ `+0xd00`==0) | `:159` | `fVar3sel = 299488` instead of the default 349872 |
+| `-1` / `-0x373738` | `:160` | the per-frame velocity drag `(1 - dt*0.0167*0.01)*0.99` |
+| `-0x5f7f80` / `-0x557f80` | `:155-156` | `fVar3sel` = 149744 / 200000 |
+
+A yaw response that never receives the speed-scaled grip term is exactly the
+measured symptom: roughly speed-independent ~0.08 rad/s where the original rises
+0.109 -> 1.451 across the same speed range.
+
+**This is the same class as `RwMatrixRotate` (`9cc41fa8`) and the 83 zeroed
+constants (`53e5c05d`)** — a value that is live in MASHED and unset in the
+standalone, silently disabling a code path rather than faulting. It is the third
+instance, which makes the pattern the dominant defect class in this port.
+
+### What is established and what is not
+
+**Established:** the gate exists, the port transcribes it correctly, the term it
+guards is the speed-dependent one, and **no code in the port writes `+0x1f0`**.
+
+**[UNCERTAIN] — not yet measured:** the runtime value of `+0x1f0` in the
+standalone. "No writer in the port source" makes 0 (or `VehiclePhysics_Init`'s
+leftover) overwhelmingly likely, but it has not been read at runtime. **Do that
+first** — it is a one-line addition to the `MASHED_A6_DIAG` block
+(`Integrate2.cpp:292`) and costs one boot.
+
+**[UNCERTAIN] — what `+0x1f0` means and what value is correct.** The port's
+comment calls it a "track-id literal"; the negative magic numbers look like
+hashes. The original's writer was not searched for in this pass. **Do not guess a
+value** — find MASHED's writer of `+0x1f0` in Ghidra and reproduce it. Forcing one
+of the magic constants to make the number look right would be tuning, not
+porting, and would repeat the `MASHED_ALIGNRATE` mistake recorded above.
+
+**Also confirmed by the decomp, worth keeping:** A6a does **not** read the
+per-wheel steer slots `+0x1a8`/`+0x26c`/`+0x330`/`+0x3f4` — the loop starts at
+`ESI+0x1a4` with stride `0xC4` and `piVar12[1]` is never read. Steer reaches A6a
+only through the wheel axes A5 already rotated, which is consistent with the
+A4-A5-A6a chain as documented.
+
