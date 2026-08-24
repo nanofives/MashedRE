@@ -86,16 +86,41 @@ const PSTEP_RVA = 0x0047eb30;    // VehiclePhysicsWorldStep (C2)
 const PWORLD    = 0x006ce274;    // physics world ptr (its guard global)
 // IN-RACE DRIVE INJECTOR (ported from capture_player_dynamics.py — the proven
 // path): the cook FUN_00496530 zeroes player p's descriptor block
-// (0x007f1038 + p*0x4c) then rewrites it; the physics (A4 FUN_00470670) reads
-// block[4]=accel, block[2]/[3]=steer (+[0xe]/[0xf] active flags). Forcing the
-// block ON LEAVE survives the cook. Armed only on demand (spike runs) — it
-// clobbers real input with zeros when idle, so oracle runs must not arm it.
+// (0x007f1038 + p*0x4c) then rewrites it. Forcing the block ON LEAVE survives
+// the cook. Armed only on demand (spike runs) — it clobbers real input with
+// zeros when idle, so oracle runs must not arm it.
+//
+// STEER BYTES CORRECTED 2026-08-24 (D2/A8). This comment used to assert that A4
+// FUN_00470670 reads "block[2]/[3]=steer", and the injector wrote only [2]/[3]
+// (+[0xe]/[0xf]). That contradicts the RVA-cited byte map at
+// VehiclePhysicsRun.h:67-73, which has [0]/[1]=STEER (sign A/B), [4]=accel,
+// [5]=brake, and names this very cook as the writer of [0]/[1]. The port agrees:
+// A4 reads input[0]/[1] (VehiclePhysicsRun.h:32-34, asm CMP [EBP],BL @0x470732
+// and [EBP+1] @0x470754) and StepPlayer sets input[0]/[1] from io.steer
+// (VehiclePhysicsRun.cpp:404-405). Accel is [4] in BOTH accounts — only steer
+// disagreed.
+//
+// This is not a theoretical discrepancy: verify/a8_steer_20260823/orig_steerR.msd
+// was captured with --statediff-steer +1 and the car DID NOT TURN (per-round velH
+// deltas -0.0136 and -0.0166 rad over 199 and 279 frames, i.e. under one degree).
+// Writing steer into bytes A4 never reads is exactly that symptom.
+//
+// FIX, deliberately minimal: also write [0]/[1]. The pre-existing [2]/[3] and
+// [0xe]/[0xf] writes are KEPT so the accel-only baseline every prior statediff
+// capture used is byte-unchanged — the only delta versus those runs is the new
+// [0]/[1] steer write. What [2]/[3]/[0xe]/[0xf] actually are is NOT established
+// here; do not assume they are dead. [UNCERTAIN] — resolve in Ghidra by reading
+// FUN_00496530's own stores before removing them.
 const COOK_RVA = 0x00496530;
 const BLK0 = 0x007f1038;
 let gAccel = 0, gSteer = 0, cookArmed = false;
 function armCook(){ if (cookArmed) return 'already on'; cookArmed = true;
   try { Interceptor.attach(ga(COOK_RVA), { onLeave(){ const b = ga(BLK0); if (!b) return;
     b.add(4).writeU8(gAccel ? 0xff : 0);
+    // steer, per the RVA-cited map (A4 reads these two)
+    b.add(0).writeU8(gSteer > 0 ? 0xff : 0);
+    b.add(1).writeU8(gSteer < 0 ? 0xff : 0);
+    // retained legacy writes — see the note above; NOT known to be dead
     b.add(2).writeU8(gSteer > 0 ? 0xff : 0);
     b.add(3).writeU8(gSteer < 0 ? 0xff : 0);
     b.add(0x0e).writeU8(gSteer > 0 ? 0xff : 0);
@@ -677,6 +702,13 @@ def main():
                          "full accel / zero steer BEFORE the phase poke, so the forced input is "
                          "frame-locked to the race (cross-boot deterministic), unlike the "
                          "wall-clock-timed --spike drive arming")
+    ap.add_argument("--statediff-steer", type=int, default=0, choices=[-1, 0, 1],
+                    help="D2/A8 steer-sign: held steer for the drive injector. +1 -> descriptor "
+                         "steer byte [2] (gSteer>0), -1 -> byte [3] (gSteer<0), 0 -> straight "
+                         "(default). Applies to both --statediff-drive and --statediff-drive-late; "
+                         "accel is always full. Lets the original be driven with a held steer so "
+                         "its steer-sign convention (steerAng +0x1a8 vs velocity-heading change) "
+                         "can be measured against the ported chain.")
     ap.add_argument("--spike-telemetry", default="",
                     help="tag: sample the player car at 10 Hz (render pos/vel/speed/yaw-rate/"
                          "heading/grounded) and write log/d1_spike_<tag>.json. In control "
@@ -782,7 +814,8 @@ def main():
             print("  [statediff]", E.sd_arm(args.statediff_car))
             if args.statediff_drive and not args.statediff_drive_late:
                 print("  [statediff]", E.arm_cook())
-                print("  [statediff] drive: full accel, straight ->", E.drive(1, 0))
+                print(f"  [statediff] drive: full accel, steer={args.statediff_steer:+d} ->",
+                      E.drive(1, args.statediff_steer))
             elif args.statediff_drive_late:
                 print("  [statediff] drive-late: cook NOT armed yet "
                       "(deferred until phase 3 to keep track load uninstrumented)")
@@ -805,7 +838,8 @@ def main():
             # anchor is the +0xBF4 countdown witness anyway (deterministic to
             # one frame), so alignment is unaffected in practice.
             print("  [statediff]", E.arm_cook())
-            print("  [statediff] drive-late: full accel, straight ->", E.drive(1, 0))
+            print(f"  [statediff] drive-late: full accel, steer={args.statediff_steer:+d} ->",
+                  E.drive(1, args.statediff_steer))
         if args.rule10_timer is not None:
             print("  [rule10-timer] DAT_007f0fe4 =", args.rule10_timer,
                   "->", E.poke_timer(args.rule10_timer))
@@ -949,20 +983,74 @@ def main():
                 outp = Path(args.statediff_out)
                 outp.parent.mkdir(parents=True, exist_ok=True)
                 base_va = 0x008815a0 + args.statediff_car * 0xd04
+                # Snapshot the list ONCE: the agent can still be appending during
+                # teardown, and reading len(sd_records) again later reported 2340
+                # against the 2335 actually on disk (2026-08-24). The provenance
+                # sidecar must describe the bytes written, not a later count.
+                sd_snapshot = list(sd_records)
                 with open(outp, "wb") as f:
                     f.write(b"MSD1" + struct.pack("<III", 0xd04, base_va, 0))
-                    for idx, payload in sd_records:
+                    for idx, payload in sd_snapshot:
                         f.write(struct.pack("<I", idx) + bytes(payload))
                 # Non-degeneracy: a capture of N identical (or all-zero) records
                 # verifies nothing (feedback_evidence_discipline).
-                distinct = len({bytes(p) for _, p in sd_records})
-                nonzero = sum(1 for _, p in sd_records if any(bytes(p)))
-                print(f"  [statediff] {len(sd_records)} frames -> {outp}"
+                distinct = len({bytes(p) for _, p in sd_snapshot})
+                nonzero = sum(1 for _, p in sd_snapshot if any(bytes(p)))
+                print(f"  [statediff] {len(sd_snapshot)} frames -> {outp}"
                       f"  (distinct payloads={distinct}, nonzero={nonzero})")
-                if not sd_records:
+                if not sd_snapshot:
                     print("  [statediff] WARNING: EMPTY capture — no phase-3 render tick observed")
                 elif distinct <= 1:
                     print("  [statediff] WARNING: DEGENERATE capture — record never changed")
+                # PROVENANCE SIDECAR (added 2026-08-24, D2/A8). A capture with no
+                # record of how it was made is not a datum: the 2026-08-23 A8
+                # capture verify/a8_steer_20260823/orig_steerR.msd could not be
+                # confirmed to have had --statediff-steer in effect, because the
+                # directory held the .msd and nothing else. Always write this.
+                try:
+                    import json as _json, platform as _plat, subprocess as _sp
+                    _sha = ""
+                    try:
+                        _sha = _sp.check_output(["git", "rev-parse", "HEAD"],
+                                                stderr=_sp.DEVNULL, text=True).strip()
+                    except Exception:
+                        pass
+                    _prov = {
+                        "msd": outp.name,
+                        "captured_utc": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "argv": sys.argv,
+                        "cwd": str(Path.cwd()),
+                        "git_head": _sha,
+                        "host": _plat.node(),
+                        "statediff": {
+                            "car": args.statediff_car,
+                            "base_va": hex(base_va),
+                            "rec_size": "0xd04",
+                            "drive": bool(args.statediff_drive),
+                            "drive_late": bool(args.statediff_drive_late),
+                            "steer": args.statediff_steer,
+                            "noop_cook": bool(args.statediff_noop_cook),
+                            "hooks": getattr(args, "hooks", ""),
+                        },
+                        "capture": {
+                            "frames": len(sd_snapshot),
+                            "distinct_payloads": distinct,
+                            "nonzero_frames": nonzero,
+                        },
+                        # what the injector actually wrote, so a future reader does
+                        # not have to re-derive the byte map from the source
+                        "descriptor_writes": {
+                            "block_base": "0x007f1038",
+                            "accel_byte": 4,
+                            "steer_bytes": [0, 1],
+                            "legacy_steer_bytes": [2, 3, 14, 15],
+                        },
+                    }
+                    _pp = outp.with_suffix(outp.suffix + ".provenance.json")
+                    _pp.write_text(_json.dumps(_prov, indent=2), encoding="utf-8")
+                    print(f"  [statediff] provenance -> {_pp}")
+                except Exception as _pex:
+                    print(f"  [statediff] provenance write FAILED: {_pex}")
             except Exception as ex:
                 print(f"  [statediff] write failed: {ex}")
         if _count_csv:

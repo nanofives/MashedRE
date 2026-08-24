@@ -9,21 +9,32 @@ change in VELOCITY heading atan2(vel_z, vel_x) -- the like-for-like quantity for
 the standalone's real-physics car_yaw (TrackRenderer.cpp:2553, io.yaw = velocity
 heading; position advances along it at 2560-2562).
 
-*** MEASURED 2026-08-24 -- +0x1a8/+0x26c ARE UNOBSERVABLE BY THIS METHOD. ***
-Do not build an A8 verdict on them. In verify/a8_steer_20260823/orig_steerR.msd
-both offsets are EXACTLY 0.0 in all 2335 frames (0 nonzero, max|v| = 0), while
-315 of 832 dword slots in the record do vary. The offsets are NOT wrong -- the
-derivation in VehiclePhysicsRun.h:26-51 is RVA-cited (wheelN steer =
-+0x16c + N*0xC4 + 0x3c => w0=+0x1a8, w1=+0x26c). They are unreadable because A4
-ZEROES ALL FOUR SLOTS AT EVERY ENTRY (0x004706c1..d3, ported verbatim at
-VehicleControl.cpp:86) and A5 FUN_0046ddb0 Phase 0 consumes them inside the same
-physics step (VehiclePhysicsRun.h:42-44). They are per-frame scratch, so a
-capture that samples the record at a frame boundary reads 0 by construction.
-CONSEQUENCE: the standalone side would ALSO read 0, the diff would be
-bit-identical, and A8 would report a FALSE GREEN -- the same class as the iter17
-0x00482900 incident in the orchestrator ledger. Measure the steer-sign law from
-PERSISTENT record state instead: yaw rate +0x9c0 (A6a's body output), velocity
-+0x9b0..b8, forward axis +0x9d4/+0x9dc.
+*** +0x1a8/+0x26c ARE OBSERVABLE. A 2026-08-24 claim in this file said they were
+    not; that claim is RETRACTED, and the retraction is the useful part. ***
+
+First reading (2026-08-24, morning): in verify/a8_steer_20260823/orig_steerR.msd
+both offsets are EXACTLY 0.0 in all 2335 frames (0 nonzero, max|v| = 0) while 315
+of 832 dword slots in the record vary. I inferred from A4 zeroing all four slots
+at entry (0x004706c1..d3, ported at VehicleControl.cpp:86) plus A5 FUN_0046ddb0
+Phase 0 reading them (VehiclePhysicsRun.h:42-44) that they were per-frame scratch
+and therefore unreadable at a frame boundary "by construction".
+
+That inference was WRONG, and re-measurement refutes it. In
+verify/a8_steer_20260824/orig_steerR.msd -- same tool, same offsets, same sample
+point -- steerAng0 is NONZERO IN 1441 OF 1441 driving frames, mean +33.2253. The
+entry-zeroing is real, but A4 WRITES the slot later in the same call and the value
+PERSISTS until the next call, so a frame-boundary sample sees it.
+
+The real and sufficient cause of the all-zero first capture was much duller: the
+harness was writing the steer command into descriptor bytes [2]/[3] while A4 reads
+[0]/[1], so A4's `if (input[0] != 0)` branch never fired and the slot simply kept
+its zeroed value. Fixed in re/frida/scenario_launch.py (armCook now writes [0]/[1]).
+
+LESSON WORTH KEEPING: "the field is structurally unobservable" and "nothing was
+commanded, so the field is legitimately zero" produce an IDENTICAL all-zero
+capture. Do not conclude the first from an all-zero read alone -- command a known
+nonzero input and re-measure. The false-GREEN risk was real either way: with no
+steer commanded, both sides of an A8 diff read 0 and report bit-identical.
 
 NOTE the docstring below previously cited scenario_launch.py:133-149 for the two
 steer offsets. That block documents +0x928/+0x958/+0x9b0..b8/+0x9c0/+0x9d4/
@@ -32,7 +43,9 @@ citation: VehiclePhysicsRun.h:26-51.
 
 Fields (byte offsets into the 0xd04 record; velocity/heading/speed/grounded
 citations in scenario_launch.py:133-149, steer slots in VehiclePhysicsRun.h:35-36):
-  +0x1a8 steerAng0 (A4 out; ZERO AT SAMPLE TIME -- see above)  +0x26c steerAng1
+  +0x1a8 steerAng0 (A4 out, wheel-0 steer angle in deg)  +0x26c steerAng1 (wheel-1)
+    -- written only inside `if (input[0] != 0)`; all-zero means no steer was
+       commanded, NOT that the field is unreadable. See the retraction above.
   +0x9b0/+0x9b4/+0x9b8 velocity x/y/z                   +0x9c0 yaw rate (angvel.y)
   +0x9d4/+0x9dc forward axis x/z                        +0x9e0 grounded (4.0=all)
   +0x9e4 scalar speed                                    +0xbf4 countdown anchor
@@ -193,14 +206,17 @@ def main():
     if sa0_nonzero == 0:
         print("\n# NO LAW EMITTED: steerAng0 (+0x1a8) is identically 0 in every")
         print("#   driving frame, so no steer->heading law can be derived from it.")
-        print("#   This is EXPECTED, not a capture failure: A4 zeroes +0x1a8/+0x26c")
-        print("#   at every entry (0x004706c1..d3; VehicleControl.cpp:86) and A5")
-        print("#   FUN_0046ddb0 Phase 0 consumes them inside the same physics step")
-        print("#   (VehiclePhysicsRun.h:42-44), so the slots are per-frame scratch")
-        print("#   and read 0 at any frame-boundary sample. Both sides of an A8 diff")
-        print("#   would read 0 -> bit-identical -> FALSE GREEN (iter17 0x00482900")
-        print("#   class). Derive the law from yawrate +0x9c0 vs the injected steer")
-        print("#   byte instead, per round, using the per-round deltas above.")
+        print("#   MOST LIKELY CAUSE: no steer was actually commanded. A4 only writes")
+        print("#   +0x1a8 inside `if (input[0] != 0)` (VehicleControl.cpp:118), so if")
+        print("#   the steer never reached descriptor bytes [0]/[1] the slot keeps its")
+        print("#   entry-zeroed value (0x004706c1..d3). That is exactly what happened")
+        print("#   to verify/a8_steer_20260823 -- the injector wrote [2]/[3] instead.")
+        print("#   The field IS observable when steer is commanded: the 2026-08-24")
+        print("#   re-take reads nonzero in 1441/1441 driving frames, mean +33.2253.")
+        print("#   DO NOT treat this capture as a datum, and do NOT diff it: with no")
+        print("#   steer commanded both sides read 0 -> bit-identical -> FALSE GREEN")
+        print("#   (iter17 0x00482900 class). Check the .provenance.json sidecar for")
+        print("#   the steer flag and descriptor_writes, then re-capture.")
     else:
         print(f"\n# LAW: steerAng0 sign {sgn(mean_sa0)}  ->  per-round velH signs "
               f"{[sgn(unwrap([d[5] for d in s])[-1] - unwrap([d[5] for d in s])[0]) for s in rounds if len(s) >= 2]}  "

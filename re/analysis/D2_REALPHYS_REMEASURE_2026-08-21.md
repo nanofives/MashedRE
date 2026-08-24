@@ -726,3 +726,91 @@ holds the `.msd` and nothing else, with no sidecar recording the flags used.
 
 `--statediff-steer` (`re/frida/scenario_launch.py`) is sound and unchanged; the
 defect is in the field choice, the summary statistic, and the missing provenance.
+
+## A8 UNBLOCKED — the original's steer-sign law, measured
+
+Re-take 2026-08-24: `verify/a8_steer_20260824/orig_steerR.msd` (2335 frames) plus
+`orig_steerR.msd.provenance.json`. Stock original (`"hooks": ""`), one boot.
+
+```
+py -3.12 re/frida/scenario_launch.py --statediff-out verify/a8_steer_20260824/orig_steerR.msd \
+         --statediff-drive --statediff-drive-late --statediff-steer 1 --hold 38
+```
+
+### RETRACTION — the "unobservable by construction" claim above is WRONG
+
+The section immediately preceding this one concluded that `+0x1a8`/`+0x26c` are
+per-frame scratch, unreadable at a frame boundary "by construction", because A4
+zeroes all four at entry (`0x004706c1..d3`) and A5 Phase 0 reads them. **That
+inference does not survive re-measurement.** Same tool, same offsets, same sample
+point:
+
+| capture | steerAng0 nonzero | mean |
+|---|---|---|
+| `a8_steer_20260823` | **0 / 1428** | +0.0000 |
+| `a8_steer_20260824` | **1441 / 1441** | **+33.2253** |
+
+The entry-zeroing is real, but A4 **writes the slot later in the same call** and
+the value persists until the next call, so a frame-boundary sample sees it.
+
+**The real and sufficient cause was defect 2 alone, and it was duller than the
+mechanism I proposed:** the harness wrote the steer command into descriptor bytes
+`[2]`/`[3]` while A4 reads `[0]`/`[1]`, so `if (input[0] != 0)`
+(`VehicleControl.cpp:118`) never fired and the slot kept its zeroed value.
+`scenario_launch.py:90` had asserted "block[2]/[3]=steer" against the RVA-cited
+`[0]`/`[1]` map in `VehiclePhysicsRun.h:67-73` — both agreed `[4]`=accel, and only
+steer disagreed. Fixed: `armCook` now writes `[0]`/`[1]`, keeping the legacy
+`[2]`/`[3]`/`[0xe]`/`[0xf]` writes so the accel-only baseline of every prior
+statediff capture is byte-unchanged. What those legacy bytes are is **[UNCERTAIN]**
+— not established here, do not assume they are dead.
+
+**Generalisable trap:** "the field is structurally unobservable" and "nothing was
+commanded, so the field is legitimately zero" produce an *identical* all-zero
+capture. An all-zero read alone cannot distinguish them. Command a known-nonzero
+input and re-measure before theorising. (The false-GREEN warning stands on its own
+merits either way: with no steer commanded, both sides of an A8 diff read 0.)
+
+### The measured law
+
+Magnitude check first: mean `steerAng0` **+33.2253 deg**.
+`VehiclePhysicsRun.h:38-39` predicts `input * (+0x190 = 34.0) * (1/256) * 0.5` =
+**16.93 deg** at full lock, and `255 * 34.0 / 256 = 33.867` is that value *before*
+the `* 0.5`. The grip branch recovers the factor: `force = (f + kFilterClamp) *
+force * kGripMul` with `kFilterClamp = 6000` and `kGripMul ~= 1/6000`
+(`VehicleControl.cpp:125-127`), i.e. `force * (1 + f/6000)`, which doubles it as
+the filtered input saturates. So 33.2253 is consistent with the documented scale,
+not a contradiction of it.
+
+The single sustained driving round (frames 887..2316, n=1430):
+
+```
+steerAng0 mean  +33.2253   (nonzero 1441/1441)
+yawrate   mean  +1.000046  sign +
+velH      -1.5709 -> -54.8896   delta -53.3187  sign -
+fwdH                             delta -50.5689  sign -
+```
+
+**LAW: steer = +1  =>  steerAng0 > 0  =>  yawrate > 0  =>  `atan2(vz, vx)`
+heading DECREASES.**
+
+Note the sign inversion in that chain, because it is the part A8 has to get right:
+the yaw rate is **+1.0** while both heading measures **decrease** by ~53 and ~51
+rad. Yaw rate `+0x9c0` (world-Y component of angular velocity) and
+`atan2(vz, vx)` therefore run in **opposite** senses — consistent with a
+left-handed / Y-up basis, where rotation about `+Y` decreases `atan2(z, x)`.
+
+**Direct consequence for the port:** `TrackRenderer.cpp:2553` integrates `io.yaw`
+from the chain's yaw rate while treating `io.yaw` as a velocity heading
+(`forward = {cos, 0, sin}`). On this measurement those two conventions differ by a
+sign, so integrating `+yawrate * dt` into that heading turns the car the **wrong
+way**. That is a concrete, checkable prediction and it is the next thing to test.
+
+Consistency cross-check: 1430 frames of a frame-locked race at ~30 fps is ~47.7 s,
+and `1.000046 rad/s * 47.7 s ~= 47.7 rad` against the measured 53.3 rad of heading
+change — same order, the residual being instantaneous-rate sampling and the
+frame-rate assumption. **[UNCERTAIN]** the exact frame rate of this run was not
+recorded; the sign result does not depend on it.
+
+Rounds 1-7 are 1-2 frame fragments of the post-round car and carry no usable
+delta. The provenance sidecar is committed beside the capture; the 7.8 MB `.msd`
+itself is local-only per `verify/EVIDENCE_MANIFEST.md`.
