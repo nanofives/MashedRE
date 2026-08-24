@@ -367,6 +367,34 @@ dead only because `MASHED_REAL_PHYSICS` is OFF. Inverting the flag activates the
 simultaneously. Any plan that treats D2's inversion as a one-line flag flip is wrong on
 this evidence.
 
+**UPDATE 2026-08-24 — the physics-cluster tunnel clause of this gate is MET, and the
+mechanism above is corrected twice.** Three commits from 2026-08-21/22 settle it:
+
+- `625e91d0` — **there is no runtime zero-filled wedge.** `MapMashedDataSection()` fails
+  (80 granules blocked, 0 covered) because `mashed_re.exe`'s **own image** already covers
+  the range: `ImageBase 0x00010000`, `SizeOfImage 0xCBD000`, with an 11.9 MB `.data`. The
+  silence is a *static image-based* wedge, not a VirtualAlloc one. The paragraph above
+  citing "`exe_main.cpp:5348` maps 0x00500000–0x009fffff as a zero-filled wedge" describes
+  a mapping that does not take effect.
+- `15f088a3` — the **address-collision risk does not exist.** `mashed_re.map` (14,437
+  symbols) places **zero** real symbols inside `0x00400000..0x00A00000`; the whole range
+  sits inside one named array, `g_b17_low_arena_pad[0x00A00000]` (`exe_main.cpp:241-242`),
+  at `0x0019A2E0` followed by the image's largest gap. So a tunnel read returns
+  zero-initialised pad and a tunnel write scribbles on pad. The residual risk is about
+  **values, not memory safety**.
+- `53e5c05d` — **all 83 zeroed physics constants are fixed**, resolved from
+  `original/MASHED.exe.unpatched`'s PE section table rather than from the comment glosses
+  (per memory `plate-hex-gloss-authoritative`): 83 found, 83 resolved from `.rdata`, 0
+  unresolved, 0 gloss mismatches. Verified 2026-08-24: **zero `(const float*)0x00…`
+  derefs remain anywhere in `Collision/`.** Measured consequence — the default scaffold
+  arm is unchanged, and `MASHED_REAL_PHYSICS=1` moved in the 4th decimal, which proves the
+  solver genuinely consumes them. It also cheaply killed a large hypothesis: the 1500
+  saturation was **unchanged** with all 83 corrected, so it had a different cause (since
+  found — see the saturation thread below).
+
+What that leaves is **not** a D2 blocker: the other ~460 tunnels live in non-physics TUs
+and belong to a general hygiene lane, not this gate.
+
 Note also for the A8 task below: `Vehicle/VehicleControl.cpp:155` passes `nullptr` for
 `orient` with the comment "orient bound at A8". Binding it reaches
 `Math/RwMatrixRotateInner.cpp:159-166` mode 1, which calls through a function pointer read
@@ -374,14 +402,28 @@ out of the zero wedge — currently **nullptr**. A8 must handle that.
 
 **Gate:** clean-env race on ported physics that is actually drivable — top speed bounded
 below the safety clamp and `car_yaw` responding to steer; A8 velocity/position diff
-against original telemetry on matched inputs; **and the physics-cluster RVA tunnels
-resolved, not merely inactive**. (Dropped from the gate: "wedge rate zero" — it was a
-harness-configuration property, not a property of the port.)
+against original telemetry on matched inputs; ~~and the physics-cluster RVA tunnels
+resolved, not merely inactive~~ **(this clause MET 2026-08-24 — `53e5c05d`, 83/83 resolved
+from the binary, 0 float-RVA derefs left in `Collision/`)**. (Dropped from the gate:
+"wedge rate zero" — it was a harness-configuration property, not a property of the port.)
 
-**Recommended first step, cheap and decisive:** re-run with the wedge granules set
-`PAGE_NOACCESS`. That converts every live tunnel from a silent zero into an immediate
-self-reporting fault, which is what would have caught the `RwMatrixRotate` defect in
-minutes rather than seven weeks. `Math/RwSqrt.cpp:42-63` is the correct remediation model
+So the gate now reduces to **A8**: the velocity/position diff against original telemetry
+on matched inputs. Drivability is measured — `car_yaw` responds to steer since `9cc41fa8`,
+and top speed ramps-and-resets in the stock shape since `8917e29c`. The original-side
+capture is already taken (`verify/a8_steer_20260823/orig_steerR.msd`, 2026-08-23); the
+standalone-side capture and the diff are what remain. Open sub-question: the **steer sign**.
+
+~~**Recommended first step, cheap and decisive:** re-run with the wedge granules set
+`PAGE_NOACCESS`.~~ **DONE AND REFUTED 2026-08-21 (`625e91d0`) — do not re-run it as
+written.** `MASHED_WEDGE_TRAP=1` exists and does exactly what this item asked (maps the
+granules `PAGE_NOACCESS` with a vectored handler that logs fault address / EIP / access
+kind, unprotects the one 4 KB page and resumes). **It armed 0 granules**, correctly: the
+pages report `type=0x1000000` (`MEM_IMAGE`) and the trap refuses `MEM_IMAGE` by design.
+Per `15f088a3`, `PAGE_NOACCESS` on `g_b17_low_arena_pad` can never be safe while the exe
+overlaps the MASHED range, so **relinking the exe at a base/size that does not span
+`0x00400000..0x00A00000` is the only route to trapping** — a general-hygiene project, not a
+D2 prerequisite. Keep the trap: it is env-gated and is the cheapest way to re-derive this.
+`Math/RwSqrt.cpp:42-63` remains the correct remediation model for individual tunnels
 (`RwLutGuard` validates the resolved root and falls back to a CPU path).
 
 Closes v2's **R5**.
