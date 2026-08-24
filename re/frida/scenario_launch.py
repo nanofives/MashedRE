@@ -108,9 +108,32 @@ const PWORLD    = 0x006ce274;    // physics world ptr (its guard global)
 // FIX, deliberately minimal: also write [0]/[1]. The pre-existing [2]/[3] and
 // [0xe]/[0xf] writes are KEPT so the accel-only baseline every prior statediff
 // capture used is byte-unchanged — the only delta versus those runs is the new
-// [0]/[1] steer write. What [2]/[3]/[0xe]/[0xf] actually are is NOT established
-// here; do not assume they are dead. [UNCERTAIN] — resolve in Ghidra by reading
-// FUN_00496530's own stores before removing them.
+// [0]/[1] steer write.
+//
+// [2]/[3]/[0xe]/[0xf] RESOLVED 2026-08-24 by reading FUN_00496530 in Ghidra
+// (Mashed_pool13, read-only, anchor verified on MASHED.exe.unpatched). The cook
+// makes FOUR conditional analog-axis reads, each writing a VALUE byte plus an
+// ACTIVE-FLAG byte, and the pairing rule is flag(N) = N + 0x0c:
+//
+//   call FUN_00497310(player, arg)   flag byte      value byte
+//     arg 0x09 @0x0049663c          [0x0c]=0xff    [0x00]=AL @0x0049664f
+//     arg 0x0a @0x00496658          [0x0d]=0xff    [0x01]=AL @0x0049666b
+//     arg 0x0b @0x00496674          [0x0e]=0xff    [0x02]=AL @0x00496687
+//     arg 0x0c @0x00496690          [0x0f]=0xff    [0x03]=AL @0x004966a3
+//
+// So the four value bytes form TWO DIFFERENTIAL AXIS PAIRS, and the cook reduces
+// each pair to a float in the device-type-2 branch (0x004966ca, gated on
+// [ECX+0x13c]==2):
+//   offset 0x14 = ([0x01] - [0x00]) * _DAT_005ceb90   (0x004966cf..0x00496701)
+//   offset 0x18 = ([0x03] - [0x02]) * _DAT_005ceb90   (0x004966dd..0x00496711)
+//
+// [0]/[1] is therefore one axis pair and [2]/[3] is the OTHER — [2]/[3] are NOT
+// a second steer channel, and [0xe]/[0xf] are merely the active flags for [2]/[3].
+// Corroboration that [0]/[1] is the steer pair: 0x00496717 swaps [0]<->[1] when
+// DAT_007f0f30 != 0, i.e. an invert-steering option, and the A8 measurement
+// (verify/a8_steer_20260824) turned the car only once [0]/[1] were driven.
+// [UNCERTAIN] which of the 0x14/0x18 floats is consumed as steer vs throttle
+// downstream — not needed here, since A4 reads the raw bytes [0]/[1], not the floats.
 const COOK_RVA = 0x00496530;
 const BLK0 = 0x007f1038;
 let gAccel = 0, gSteer = 0, cookArmed = false;
