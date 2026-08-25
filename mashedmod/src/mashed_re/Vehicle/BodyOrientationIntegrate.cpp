@@ -270,12 +270,15 @@ void BodyOrient_OmegaFromSteer(void* rec, float dtMs, const std::uint8_t* in,
     if (dot < kRevDot && !bothPedals) { w[0] = -w[0]; w[1] = -w[1]; w[2] = -w[2]; }
 
     // FUN_0040e350()==7 && record+0x4==1 special case (CMP dword [ESI+4],1 @0x0046edaf,
-    // multiply @0x0046edc7). It REPLACES the local torque triple with a spin term
-    // (it does NOT zero the accumulator below, which still adds on top).
-    // [UNCERTAIN] the decode gives the SCALAR (2*dt)*kDtK*speed*_DAT_005ce268 but not
-    // which vector it is applied along; "forward-axis spin" is the description, so it
-    // is applied along the same +0x9c8 axis used above. Confirm the component writes
-    // at 0x0046edc7..0x0046edd8 before promoting past C2.
+    // scalar multiply @0x0046edc7). It REPLACES the local torque triple with a spin
+    // term (it does NOT zero the accumulator below, which still adds on top).
+    //
+    // The vector is CONFIRMED from the instruction stream (notes "Follow-up 4"): the
+    // scalar goes to a temp at 0x0046edcd, then each component of the +0x9c8 vector
+    // is loaded and multiplied by it — 0x0046edd1/edd5 (x), 0x0046edd9/eddd/ede1 (y),
+    // 0x0046ede5/ede9 (z). All three assigned, none preserved, no FADD of the prior
+    // omega in the branch. It is NOT a basis row of the matrix, NOT the forward vec3
+    // at +0x9d4, and NOT the world up axis — all three were checked and ruled out.
     if (Fi_GameMode() == 7 && Ib(rec, 0x4) == 1) {
         const float spin = (2.0f * dtMs) * kDtK * Fb(rec, 0x9e4) * kSpinTerm;
         w[0] = fwd[0] * spin; w[1] = fwd[1] * spin; w[2] = fwd[2] * spin;

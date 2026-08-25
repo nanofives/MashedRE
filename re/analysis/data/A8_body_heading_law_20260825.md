@@ -347,3 +347,72 @@ Read from MASHED.exe (Ghidra pool slot Mashed_pool14, read_only).
     This REPLACES the local torque triple (local_24/20/1c overwritten with the forward-axis spin), it does NOT
     zero ESI[0x51..0x53]; the triple is still ADDED onto existing omega by the damp block that follows
     (`ESI[0x51] = (local_24 + ESI[0x51]) * damp`).
+
+## Follow-up 4 2026-08-25: what the mode-7 branch writes
+
+Verdict (from the instruction stream, Ghidra slot Mashed_pool14, read-only):
+the mode-7 branch multiplies the vector `FUN_0046d700` returned (`local_18`/`local_14`/`local_10`,
+i.e. record +0x9c8/+0x9cc/+0x9d0 -- the same axis the steer torques use) by the scalar and stores that
+product into the omega triple. It **REPLACES** the triple (three direct `FSTP`, no `FADD` of the prior
+omega). It writes ALL THREE components (omega.x=local_24, omega.y=local_20, omega.z=local_1c); none are
+zeroed and none are left as-is.
+
+### Annotated disassembly 0x0046edaf .. 0x0046eded (the gated branch)
+
+```
+0046edaf  837e0401       CMP   dword ptr [ESI+0x4],0x1     ; ESI[1]==1 gate (mode-7 already confirmed EAX==7)
+0046edb3  753a           JNZ   0x0046edef                  ; not mode-7-substate -> else path (FLD local_24/local_1c)
+; --- scalar = (2*dt) * 3.334e-4 * speed * 5.00029e-4 ---
+0046edb5  d9442434       FLD   float ptr [ESP+0x34]        ; ST0 = param_1 (dt)
+0046edb9  dcc0           FADD  ST0,ST0                     ; ST0 = 2*dt
+0046edbb  d80d48c95c00   FMUL  float ptr [0x005cc948]      ; * _DAT_005cc948 (3.334e-4)
+0046edc1  d88ee4090000   FMUL  float ptr [ESI+0x9e4]       ; * ESI[0x279] (linear speed magnitude)
+0046edc7  d80d68e25c00   FMUL  float ptr [0x005ce268]      ; * _DAT_005ce268 (5.00029e-4)  => SCALAR
+0046edcd  d95c2438       FSTP  float ptr [ESP+0x38]        ; scalar -> temp [ESP+0x38] (decomp reuses local_1c here)
+; --- omega = FUN_0046d700 vector (local_18,local_14,local_10) * scalar ---
+0046edd1  d9442418       FLD   float ptr [ESP+0x18]        ; ST0 = local_18  (=record+0x9c8)
+0046edd5  d84c2438       FMUL  float ptr [ESP+0x38]        ; ST0 = local_18*scalar      -> becomes omega.x (local_24), held in ST
+0046edd9  d944241c       FLD   float ptr [ESP+0x1c]        ; ST0 = local_14  (=record+0x9cc)
+0046eddd  d84c2438       FMUL  float ptr [ESP+0x38]        ; ST0 = local_14*scalar
+0046ede1  d95c2410       FSTP  float ptr [ESP+0x10]        ; local_20 = local_14*scalar  (omega.y stored to memory)
+0046ede5  d9442420       FLD   float ptr [ESP+0x20]        ; ST0 = local_10  (=record+0x9d0)
+0046ede9  d84c2438       FMUL  float ptr [ESP+0x38]        ; ST0 = local_10*scalar       -> becomes omega.z (local_1c), held in ST
+0046eded  eb08           JMP   0x0046edf7                  ; converge; FPU: ST0=omega.z, ST1=omega.x, mem[ESP+0x10]=omega.y
+```
+
+Else path (for contrast, not the mode-7 branch): `0046edef FLD [ESP+0xc](local_24)` / `0046edf3 FLD
+[ESP+0x14](local_1c)`, leaving `[ESP+0x10]`(local_20) untouched -- i.e. the existing omega triple.
+
+### ESP-offset -> Ghidra local map (from function_variables + the two branch shapes)
+
+| ESP off | local     | role                                   |
+|---------|-----------|----------------------------------------|
+| ESP+0xc | local_24  | omega.x                                |
+| ESP+0x10| local_20  | omega.y                                |
+| ESP+0x14| local_1c  | omega.z                                |
+| ESP+0x18| local_18  | FUN_0046d700 vec[0] (record+0x9c8)     |
+| ESP+0x1c| local_14  | FUN_0046d700 vec[1] (record+0x9cc)     |
+| ESP+0x20| local_10  | FUN_0046d700 vec[2] (record+0x9d0)     |
+| ESP+0x38| (temp)    | scalar (decomp names it local_1c reuse)|
+
+The omega triple is carried into the convergent code at 0046edf7 as (ST1=omega.x, mem[ESP+0x10]=omega.y,
+ST0=omega.z); the mode-7 branch supplies all three as `FUN_0046d700_vec[i] * scalar`. Decompiler agrees:
+
+```
+if ((iVar6 == 7) && (unaff_ESI[1] == 1)) {
+  local_1c = (param_1 + param_1) * _DAT_005cc948 * (float)unaff_ESI[0x279] * _DAT_005ce268;  // scalar
+  local_24 = local_18 * local_1c;   // omega.x = vec[0]*scalar
+  local_20 = local_14 * local_1c;   // omega.y = vec[1]*scalar
+  local_1c = local_10 * local_1c;   // omega.z = vec[2]*scalar
+}
+```
+
+Assignment is `=`, not `+=`: **REPLACES**. `local_18`/`local_14`/`local_10` are exactly what
+`FUN_0046d700(&local_18,*unaff_ESI)` wrote earlier (three consecutive floats from &local_18), so the
+multiplied vector is FUN_0046d700's output axis (record +0x9c8/+0x9cc/+0x9d0). No basis row of EDI, no
+record forward vec3 (+0x9d4..), and no world-up axis is involved in this branch.
+
+[UNCERTAIN] Nothing material. Only cosmetic decomp-vs-disasm delta: the disassembly parks the scalar in a
+separate temp slot `[ESP+0x38]`, while the decompiler reuses `local_1c` as the scalar temp before
+overwriting it with `local_10*scalar`. Same computed result either way; the semantics (omega =
+FUN_0046d700_vec * scalar, replacing the triple) are identical.
