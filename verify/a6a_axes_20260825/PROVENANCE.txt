@@ -1,0 +1,32 @@
+A6a per-wheel axes + full-span grip/av, 2026-08-25
+env: MASHED_REAL_PHYSICS=1 MASHED_RACE_DEMO=1 MASHED_PLAY_DEMO=1 MASHED_GOTO=6 MASHED_TRACK_SEL=0 MASHED_CAR_SEL=0 MASHED_DRIVE_HOLD=1 MASHED_A6_DIAG=1 MASHED_WIN_POS=left-bl
+pid 27256 (60-sample axes run), pid 26440 (1097-sample full-span run), both rc=0
+diag cap raised 60 -> 4000 so the window spans the whole PLAY_DEMO steer ramp
+
+RESULT 1 - THE STEER->AXIS PATH WORKS (this is what the axes run settled)
+  steer=(128,0): w0=w1=(0.168563,0,0.985691) FRONT PAIR ROTATED
+                 w2=w3=(0.021017,0,0.999779) rear pair unrotated
+                 velDir=(0.023949,0,0.999713)
+  Front axis sits ~8.4 deg off the velocity direction, so real slip exists.
+  steer=(0,0):   all four axes EXACTLY equal velDir -> ld4 = 0 legitimately.
+  A5's rotation reaches p[0x1f..0x21]. There is no broken axis path.
+
+RESULT 2 - THE PRIOR "av COLLAPSE" WAS A SAMPLING ARTIFACT
+  At the old 60-sample cap, 58 of 60 samples had steer=(0,0): the opening
+  straight-line phase, where zero slip and zero grip are the CORRECT answer.
+  Full span (1097 samples, all four steer phases present: 0 / -128 / -255 / +128 / +255):
+    arm:       hi 942 , lo 155
+    retention: 0.5 (the maximum) on 969 , mid on 93 , zero on only 35
+  Angular-velocity retention is at its CAP almost all the time. There is no collapse.
+
+RESULT 3 - RECORD +0x9c0 RISES WITH SPEED, matching the original's SHAPE
+  spd<500     n=232  mean|avY| 0.012146
+  500-1000    n=119  mean|avY| 0.092651
+  1000-1500   n=151  mean|avY| 0.173598
+  spd>=1500   n=595  mean|avY| 0.175008
+  ~14x rise, saturating. The original's ground truth rises ~13x (0.109 -> 1.451).
+  Shape matches. Magnitude still ~8x low, and the record-units caveat still applies.
+
+CAVEAT ON COMPARABILITY: these samples are per Integrate2 CALL (several substeps
+per frame), not per frame, and the bins are not the A8 note's bins. The monotone
+rise is robust to that; a magnitude ratio is not.

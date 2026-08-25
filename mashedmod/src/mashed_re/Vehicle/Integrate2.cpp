@@ -169,8 +169,14 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     // per-wheel loop (4 wheels, piVar12 = self + 0x1a4 ints, stride 0x31 ints)
     int g2_n4 = 0, g2_n5 = 0;   // [G2-A6DIAG] block#4 / block#5 fire counts
     float g2_ld4sum = 0.0f, g2_le4sum = 0.0f; int g2_ld4n = 0;  // [G6-AVDIAG]
+    // [G7-AXDIAG] per-wheel forward axis p[0x1f..0x21] captured unconditionally at
+    // the top of the wheel loop, so it is independent of which contact branch runs.
+    // A6a never reads the steer slots; steer can only arrive here as a rotation A5
+    // already applied to these axes. If all four are identical, it did not arrive.
+    float g7_ax[4][3] = {};
     int* p = self + (0x1a4 / 4);
     for (int wheel = 0; wheel < 4; ++wheel, p += 0x31) {
+        g7_ax[wheel][0] = Rp(p,0x1f); g7_ax[wheel][1] = Rp(p,0x20); g7_ax[wheel][2] = Rp(p,0x21);  // [G7-AXDIAG]
         // drive-force block (committed mode 2 + active)
         if (p[-0xf] == 2 && p[-3] != 0) {
             float drive = (float)(unsigned)input[4];
@@ -405,7 +411,13 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
         {
             static const bool g6_on = (std::getenv("MASHED_A6_DIAG") != nullptr);
             static int g6_n = 0;
-            if (g6_on && g6_n < 60) {
+            // Cap RAISED 60 -> 4000 (2026-08-25). At 60 the window covered only the
+            // opening straight-line phase, where steer is 0, the wheel axes equal the
+            // velocity direction, and near-zero grip is the CORRECT answer. Measuring
+            // there and comparing against the 32768 grip scale manufactured a
+            // "7 orders of magnitude short" defect that does not exist. Any grip/av
+            // claim must span the steer ramp.
+            if (g6_on && g6_n < 4000) {
                 ++g6_n;
                 float kLo = (k32768 - grip) * k3p0518e5;
                 if (kLo < k0p1) kLo = k0p1;
@@ -420,6 +432,22 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                         g2_ld4n ? g2_ld4sum / (float)g2_ld4n : 0.0f,
                         g2_ld4n ? g2_le4sum / (float)g2_ld4n : 0.0f,
                         Rf(v,0x9bc), Rf(v,0x9c0), Rf(v,0x9c4));
+                    // [G7-AXDIAG] the four wheel forward axes vs the unit velocity
+                    // direction. steer!=0 is the discriminator: if the front pair
+                    // (w0/w1) is identical to the rear pair while steer is applied,
+                    // A5's rotation never reached these slots.
+                    float vd[3] = { Rf(v,0x9b0), Rf(v,0x9b4), Rf(v,0x9b8) };
+                    float vm = Mag3(vd[0], vd[1], vd[2]);
+                    if (vm > 0.0f) { vd[0]/=vm; vd[1]/=vm; vd[2]/=vm; }
+                    std::fprintf(lf, "   G7 velDir=(%.6f,%.6f,%.6f)", vd[0], vd[1], vd[2]);
+                    for (int w = 0; w < 4; ++w) {
+                        std::fprintf(lf, " w%d=(%.6f,%.6f,%.6f)",
+                                     w, g7_ax[w][0], g7_ax[w][1], g7_ax[w][2]);
+                    }
+                    // steer bytes A4 consumes, so a zero-steer frame is not mistaken
+                    // for a broken axis path.
+                    std::fprintf(lf, " steer=(%u,%u)\n",
+                                 (unsigned)input[0], (unsigned)input[1]);
                     std::fclose(lf);
                 }
             }
