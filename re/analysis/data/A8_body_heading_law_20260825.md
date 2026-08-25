@@ -252,3 +252,69 @@ single/championship driving should not reach them for the player. If it did, a p
 +0x10==1 (seed-kept arm). EXACT PROBE to harden before the code change: Frida-hook FUN_0046e9e0 entry (or read
 `*(int*)(DAT_008815a0 + playerSlot*0xd04 + 0x10)`) per frame across a real normal-race driving session; a
 steady 0 confirms the wheel-force arm. This is a one-boot behavioral read, not a diff.
+
+## Follow-up 2 2026-08-25: constants, FUN_0046d700, steer columns, 0x004c4680
+
+Read from Mashed_pool15 (MASHED.exe, image_base 0x00400000, read_only), bytes read directly.
+
+### Task A — constant VALUES (raw dword read at the cited address)
+
+| address | raw hex dword | float | use at site |
+|---|---|---|---|
+| _DAT_005ce1e8 | 0x3a2ec33e | 6.6667e-4 (=1/1500) | grip = ESI[0x279]*this  (0x0046ea?? `unaff_ESI[0x279]*_DAT_005ce1e8`) |
+| _DAT_005cc320 | 0x3f800000 | 1.0 | grip clamp ceiling; also the `1.0` in `_DAT_005cc320 - ESI[0xc]*_DAT_005cc328` |
+| _DAT_005cd04c | 0x437f0000 | 255.0 | steer-trim clamp ceiling (applied to trimmed value only) |
+| _DAT_005cd0fc | 0xbdcccccd | -0.1 | reverse-detection dot threshold (`dot(...) < this` -> negate omega) |
+| _DAT_005cc348 | 0x3fc00000 | 1.5 | both-bytes (in[4]&&in[5]) spin scale on omega |
+| _DAT_005cc328 | 0x3c23d70a | 0.01 | ESI[0xc] scale term `1.0 - ESI[0xc]*0.01` |
+| _DAT_005cd03c | 0x38d1b717 | 1.0000e-4 | CONFIRMED 0x38d1b717; torque multiply-chain constant |
+| DAT_005d757c | 0x00000000 | 0.0 | CONFIRMED 0.0; zero-compare sentinel (grounded gate, != tests) |
+| (ctx) _DAT_00613108 | 0x42c80000 | 100.0 | torque multiply-chain constant (set by FUN_0046b540) |
+
+### Task B — FUN_0046d700 (0x0046d700..0x0046d735). *** SPEC MECHANISM IS WRONG ***
+
+It does NOT read a matrix and does NOT normalize. Signature `FUN_0046d700(undefined4 *out, uint idx)`:
+- `if (0xf < idx) return 0;` — idx is a vehicle SLOT INDEX (0..15), NOT a matrix pointer. In the caller
+  the arg is `*ESI` = record[+0x00], the vehicle's own index field.
+- Reads 3 consecutive floats from a global table:
+  `out[0]=(&DAT_00881f68)[idx*0x341]; out[1]=(&DAT_00881f6c)[idx*0x341]; out[2]=(&DAT_00881f70)[idx*0x341];`
+  Stride 0x341 dwords = 0xd04 bytes = the vehicle record size. 0x00881f68 - 0x008815a0(base) = **+0x9c8**.
+  So this returns the vehicle record fields **+0x9c8 / +0x9cc / +0x9d0** (3 floats) for slot `idx`.
+- No normalization anywhere; returns 1 on success. The caller's `local_18/14/10` = record[+0x9c8/+0x9cc/+0x9d0].
+- "forward" is therefore a STORED vector field (+0x9c8), not a matrix row. Whether +0x9c8 is unit-length is
+  [UNCERTAIN] here (maintained elsewhere). Port: read the vehicle's stored +0x9c8 vec3, use as-is.
+- (Matrix-row convention IS confirmed separately by Task D + the integration tail: rows at m[0..2]/m[4..6]/
+  m[8..10], translation m[0xc..0xe] = standard RwMatrix right/up/at/pos. The ω×row update in the tail applies
+  to all three rows. This matches BuildYawMatrix at/forward=m[8..10]. But +0x9c8 is not that matrix.)
+
+### Task C — exact steer torque (ESI[4]==0 arm), forward = local_18/14/10 = record[+0x9c8/9cc/9d0]
+```
+grip = min(ESI[0x279]*6.6667e-4, 1.0);   if (in[4]&&in[5]) grip = 1.0;      // fVar2
+c = ESI[0xc];  scale = (c!=0) ? (1.0 - (float)c*0.01) : 1.0;                // _DAT_005cc328=0.01
+// LEFT (steer byte in[0]=*param_2):
+sL = (float)in[0];                                   // unsigned byte -> float, RAW byte first
+if (ESI[8]!=0){ sL = (float)in[0] + (float)(int)ESI[8]; if (sL>255.0) sL=255.0; } // trim ADDED, THEN clamp
+if (c!=0) sL = scale*sL;                             // ESI[0xc] scale AFTER trim+clamp
+if (sL!=0.0){ tL = sL*dt*100.0*grip*1.0000e-4*3.334e-4;  omega = forward*tL; } // ASSIGN
+// RIGHT (steer byte in[1]=pbVar5[1]):
+sR = (float)in[1];
+if (ESI[9]!=0){ sR = (float)in[1] + (float)(int)ESI[9]; if (sR>255.0) sR=255.0; }
+if (c!=0) sR = scale*sR;
+if (sR!=0.0){ tR = sR*dt*100.0*grip*1.0000e-4*3.334e-4;  omega += forward*(-tR); } // ADD, negated
+```
+Notes: clamp `_DAT_005cd04c`=255.0 applies to the TRIMMED value and ONLY when trim!=0 (raw byte is never
+clamped). dt=param_1; chain constants 100.0=_DAT_00613108, 1.0000e-4=_DAT_005cd03c, 3.334e-4=_DAT_005cc948.
+LEFT overwrites omega (=), RIGHT accumulates with opposite sign (+= forward*-tR) -> net differential yaw.
+
+### Task D — thunk_FUN_004c4680 (0x004c4680) = matrix RE-ORTHONORMALIZE (not plain Gram-Schmidt)
+`FUN_004c4680(float *dst, float *src)` on an RwMatrix (rows m[0..2]/m[4..6]/m[8..10], pos m[0xc..0xe]):
+- Normalizes each of the 3 axis rows via FUN_004c3b90 (returns 1/length; multiply each component).
+- AXIS SELECTION: computes abs pairwise dot products of the normalized rows and picks the dominant/most-
+  orthogonal axis to keep (the local_18/local_14/fVar1 abs-dot comparisons + the length<=0 fallbacks),
+  then rebuilds the other two axes with two cross products, normalizing each result. So it is an
+  axis-selecting orthonormalization, NOT sequential row-by-row Gram-Schmidt in fixed order.
+- Preserves translation (dst[0xc/0xd/0xe] = src). Sets flags `dst[3] = (dst[3] & 0xfffdffff) | 3`
+  (clears 0x20000 = RwMatrix INTERNAL-IDENTITY, sets bits 0|1 = ORTHOGONAL|ORTHONORMAL).
+- Flag bits + layout are RwMatrix's; behavior matches **RwMatrixOrthoNormalize** (name [UNCERTAIN]: no
+  symbol/import confirms the export; identification is by flag/layout convention only). FUN_004c3b90 =
+  reciprocal-length (1/sqrt of squared length). Replace the Gram-Schmidt SUBSTITUTE with this exact routine.
