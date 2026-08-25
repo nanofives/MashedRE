@@ -309,11 +309,11 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
             if (std::FILE* lf = std::fopen("a6_diag.log", "a")) {
                 std::fprintf(lf,
                     "A6 mode=%d gndBits=%08x st10=%d c54=%g c5c=%g adt=%g "
-                    "trk1f0=%d(0x%08x) f9e4=%g f9e8=%g d00=%d "
+                    "mat1ec=%d trk1f0=%d(0x%08x) f9e4=%g f9e8=%g d00=%d "
                     "n4=%d n5=%d l78=%g l74=%g l70=%g l60=%g ld0=%g "
                     "w0f=(%g,%g,%g) av=(%g,%g,%g)\n",
                     mode, (unsigned)Ri(v,0x9e0), Ri(v,0x10), Rf(v,0x54), Rf(v,0x5c), adt,
-                    trackId, (unsigned)trackId, Rf(v,0x9e4), Rf(v,0x9e8), Ri(v,0xd00),
+                    Ri(v,0x1ec), trackId, (unsigned)trackId, Rf(v,0x9e4), Rf(v,0x9e8), Ri(v,0xd00),
                     g2_n4, g2_n5, l_78, l_74, l_70, (double)l_60, (double)l_d0,
                     Rf(v,0x214), Rf(v,0x218), Rf(v,0x21c),       /* wheel-0 force p[0x1c..0x1e] */
                     Rf(v,0x9bc), Rf(v,0x9c0), Rf(v,0x9c4));

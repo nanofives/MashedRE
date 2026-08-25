@@ -1,0 +1,17 @@
+A6a fix steps 1-2 (carry per-triangle material index to record +0x1ec), 2026-08-25
+env: MASHED_REAL_PHYSICS=1 MASHED_RACE_DEMO=1 MASHED_PLAY_DEMO=1 MASHED_GOTO=6 MASHED_TRACK_SEL=0 MASHED_CAR_SEL=0 MASHED_DRIVE_HOLD=1 MASHED_A6_DIAG=1 MASHED_WIN_POS=left-bl
+runB pid 36308 rc=0, runC pid 29672 rc=0 (SAME binary, both post-fix)
+pre-fix baseline: verify/a6a_field1f0_20260825/a6_diag_1f0.log (run A, pid 14676)
+
+RESULT
+  mat1ec (record +0x1ec): 3 on all 60 samples in both runB and runC (pre-fix: hardcoded 0)
+  trk1f0 (record +0x1f0): 0, unchanged and expected (surfaceKey wiring is step 3)
+
+DETERMINISM CONTROL - this is what makes the above a clean result:
+  runA (pre-fix)  vs runB (post-fix): differ on 2 of 60 lines (59-60)
+  runB (post-fix) vs runC (post-fix): differ on 2 of 60 lines (59-60)
+  Same-binary run-to-run noise equals the pre/post difference, so the change moved
+  no physics value outside harness noise. The harness is deterministic for the first
+  58 samples and diverges only in the tail.
+  NOTE: comparisons must normalize CRLF (tr -d) - a naive diff reports all 60 lines
+  differing and is a false positive. I hit that twice before controlling for it.

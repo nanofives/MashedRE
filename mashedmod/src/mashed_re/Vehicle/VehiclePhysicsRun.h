@@ -93,8 +93,11 @@ bool VehiclePhysics_Enabled();                       // MASHED_REAL_PHYSICS set 
 void VehiclePhysics_Init(int carCount, int trackType);
 // Feed the track collision triangles (TrackRenderer col_verts_/col_tris_) to the
 // wheel solver's broadphase (Collision::g_worldTris). Call once at track load.
+// mats = per-triangle material index (col_mat_, triCount entries) or nullptr;
+// it reaches record +0x1ec through contact entry +0x30 (original 0x0046d00b).
 void VehiclePhysics_SetWorld(const float* verts, int vertCount,
-                             const unsigned* tris, int triCount);
+                             const unsigned* tris, int triCount,
+                             const unsigned* mats = nullptr);
 void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io);
 // Step any car slot through the same physics chain (slot 0 = player; 1..3 = AI
 // opponents). The caller supplies the descriptor input (io.input[4]/[5] throttle +

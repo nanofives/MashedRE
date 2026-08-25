@@ -914,6 +914,10 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         col_tris_.push_back(vbase + s.tris[ti * 4 + 1]);
                         col_tris_.push_back(vbase + s.tris[ti * 4 + 2]);
                         col_tris_.push_back(vbase + s.tris[ti * 4 + 3]);
+                        // element 0 is the 16-bit material index (same index
+                        // space the render path uses at :1132/:1581) — keep it
+                        // so the wheel contact can reach record +0x1ec.
+                        col_mat_.push_back(s.tris[ti * 4 + 0]);
                     }
                 }
             }
@@ -2524,7 +2528,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             // ground -> A5 suspension force is live (was the empty-terrain gap).
             Vehicle::VehiclePhysics_SetWorld(
                 col_verts_.data(), static_cast<int>(col_verts_.size() / 3),
-                col_tris_.data(),  static_cast<int>(col_tris_.size()  / 3));
+                col_tris_.data(),  static_cast<int>(col_tris_.size()  / 3),
+                col_mat_.size() == col_tris_.size() / 3 ? col_mat_.data() : nullptr);
             s_pinit = true;
         }
         Vehicle::PlayerCarIO io;

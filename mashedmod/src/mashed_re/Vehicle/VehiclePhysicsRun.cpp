@@ -123,7 +123,8 @@ inline unsigned char* rec(int slot) { return g_records + static_cast<std::size_t
 // wheels -> A5's suspension force is no longer inert. verts = x,y,z flat;
 // tris = 3 vertex indices per triangle.
 void VehiclePhysics_SetWorld(const float* verts, int vertCount,
-                             const unsigned* tris, int triCount) {
+                             const unsigned* tris, int triCount,
+                             const unsigned* mats) {
     g_worldTriStore.clear();
     if (!verts || !tris || triCount <= 0) {
         Collision::g_worldTris = nullptr; Collision::g_worldTriCount = 0; return;
@@ -143,7 +144,15 @@ void VehiclePhysics_SetWorld(const float* verts, int vertCount,
         float nx = e1y*e2z - e1z*e2y, ny = e1z*e2x - e1x*e2z, nz = e1x*e2y - e1y*e2x;
         const float m = std::sqrt(nx*nx + ny*ny + nz*nz);
         if (m > 1e-12f) { nx/=m; ny/=m; nz/=m; }
-        ct.normal[0]=nx; ct.normal[1]=ny; ct.normal[2]=nz; ct.material=0; ct.surfaceKey=0;
+        ct.normal[0]=nx; ct.normal[1]=ny; ct.normal[2]=nz;
+        // material index -> contact entry +0x30 -> record +0x1ec (0x0046d00b).
+        ct.material = mats ? static_cast<int>(mats[t]) : 0;
+        // surfaceKey (-> entry +0x34 -> record +0x1f0) still 0: the original puts
+        // the material-table COLOUR here via [0x88e654]->+8->+0x10->[matIdx*4]->+0x4
+        // (0x00468bbc), and the collision material table is not retained yet.
+        // Wiring it is a separate step, gated on the rgba-packing and
+        // collision-vs-render index-space questions. Do NOT hardcode a magic.
+        ct.surfaceKey = 0;
         g_worldTriStore.push_back(ct);
     }
     Collision::g_worldTris     = g_worldTriStore.empty() ? nullptr : g_worldTriStore.data();

@@ -75,6 +75,11 @@ struct RaceSceneState {
     // collision-only scoring spawns the car on invisible ice).
     std::vector<float>         col_verts_;   // x,y,z per vertex
     std::vector<std::uint32_t> col_tris_;    // v0,v1,v2 triples
+    // Per-collision-triangle material index (s.tris[ti*4+0]), parallel to
+    // col_tris_ (one entry per TRIPLE, not per index). The original feeds this
+    // to record +0x1ec via contact entry +0x30 (writer 0x0046d00b); it was
+    // being discarded at the collision-soup boundary.
+    std::vector<std::uint32_t> col_mat_;
     std::vector<float>         rend_verts_;
     std::vector<std::uint32_t> rend_tris_;
 
