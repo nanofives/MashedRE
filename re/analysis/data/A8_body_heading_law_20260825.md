@@ -318,3 +318,32 @@ LEFT overwrites omega (=), RIGHT accumulates with opposite sign (+= forward*-tR)
 - Flag bits + layout are RwMatrix's; behavior matches **RwMatrixOrthoNormalize** (name [UNCERTAIN]: no
   symbol/import confirms the export; identification is by flag/layout convention only). FUN_004c3b90 =
   reciprocal-length (1/sqrt of squared length). Replace the Gram-Schmidt SUBSTITUTE with this exact routine.
+
+## Follow-up 3 2026-08-25: _DAT_005cc35c and _DAT_005ce268
+
+Read from MASHED.exe (Ghidra pool slot Mashed_pool14, read_only).
+
+### Task 1 — global values
+
+| global | address | raw hex dword | float |
+|---|---|---|---|
+| _DAT_005cc35c | 0x005cc35c | 0x40800000 | 4.0 |
+| _DAT_005ce268 | 0x005ce268 | 0x3a03126f | 5.00029e-4 |
+
+### Task 2 — use sites (FUN_0046e9e0, body 0x0046e9e0..0x0046ef6a)
+
+(a) Damp: at 0x0046edf7 FLD [ESP+0x34]=param_1(dt); **0x0046edfb FMUL [0x005cc35c]**;
+    0x0046ee01 FSUBR [0x005ccd08]; 0x0046ee07 FMUL [0x005cc948] =>
+    `(_DAT_005ccd08 - dt*_DAT_005cc35c) * _DAT_005cc948`. Confirmed.
+    _DAT_005ccd08 @ that site = 0x453b8000 = **3000.0** (same global as the suspension numerator).
+    Damp applied to omega: 0x0046ee0f FADD [ESI+0x144](=ESI[0x51]); **0x0046ee15 FMUL ST1** (the damp fVar1);
+    0x0046ee17 FSTP [ESI+0x144]. i.e. `ESI[0x51] = (local + ESI[0x51]) * damp`. Confirmed. (Note: 0x0046f041's
+    FMUL [0x005cc35c] is in the NEXT function FUN_0046ef70, unrelated.)
+
+(b) Spin branch: 0x0046eda5 CALL 0x0040e350; CMP EAX,0x7; then 0x0046edaf **CMP dword [ESI+0x4],0x1**
+    (ESI[1] = record +0x4, a dword tested ==1). Then 0x0046edb5 FLD param_1(dt); 0x0046edb9 FADD ST0,ST0(=2*dt);
+    0x0046edbb FMUL [0x005cc948]; 0x0046edc1 FMUL [ESI+0x9e4](=ESI[0x279]); **0x0046edc7 FMUL [0x005ce268]** =>
+    `(2*dt) * _DAT_005cc948 * ESI[0x279] * _DAT_005ce268`. Confirmed.
+    This REPLACES the local torque triple (local_24/20/1c overwritten with the forward-axis spin), it does NOT
+    zero ESI[0x51..0x53]; the triple is still ADDED onto existing omega by the damp block that follows
+    (`ESI[0x51] = (local_24 + ESI[0x51]) * damp`).

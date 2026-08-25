@@ -44,6 +44,8 @@
 namespace mashed_re {
 namespace Vehicle {
 
+int Fi_GameMode();        // FUN_0040e350
+
 namespace {
 
 // record field accessors (float / int by byte offset)
@@ -208,6 +210,12 @@ void BodyOrient_OmegaFromSteer(void* rec, float dtMs, const std::uint8_t* in,
     constexpr float kDtK          = 3.334e-4f;    // _DAT_005cc948 0x39aec33e
     constexpr float kTorque100    = 100.0f;       // _DAT_00613108 0x42c80000
     constexpr float kSeedScale    = 0.5f;         // _DAT_005cc32c 0x3f000000
+    constexpr float kDampNum      = 3000.0f;      // _DAT_005ccd08 0x453b8000 (same global
+                                                  //   as the suspension numerator; confirmed
+                                                  //   at this site, damp @0x0046edfb)
+    constexpr float kDampK        = 4.0f;         // _DAT_005cc35c 0x40800000
+    constexpr float kAccumK       = 0.0020001f;   // _DAT_005ce018 0x3b03126f
+    constexpr float kSpinTerm     = 5.00029e-4f;  // _DAT_005ce268 0x3a03126f
 
     const float* fwd = &Fb(rec, 0x9c8);           // FUN_0046d700 -> +0x9c8/+0x9cc/+0x9d0
     float w[3] = { 0.f, 0.f, 0.f };
@@ -261,14 +269,41 @@ void BodyOrient_OmegaFromSteer(void* rec, float dtMs, const std::uint8_t* in,
                     + Fb(rec,0x9dc)*Fb(rec,0x9b8);
     if (dot < kRevDot && !bothPedals) { w[0] = -w[0]; w[1] = -w[1]; w[2] = -w[2]; }
 
-    // NOT PORTED, deliberately: the +0x144/+0x148/+0x14c accumulator term. Its damp
-    // is `(_DAT_005ccd08 - dt*_DAT_005cc35c) * _DAT_005cc948` and _DAT_005cc35c has
-    // no confirmed value yet, so porting it would mean inventing a constant. Its ADD
-    // into omega is gated on BOTH steer bytes being zero (Q4), so it is a no-steer
-    // settling term and does not affect the steering response A8 measures. Read
-    // _DAT_005cc35c and finish this before promoting past C2.
-    // Also NOT PORTED: the FUN_0040e350()==7 / +0x4==1 special case, which overrides
-    // omega with a forward-axis spin needing _DAT_005ce268 (also unread).
+    // FUN_0040e350()==7 && record+0x4==1 special case (CMP dword [ESI+4],1 @0x0046edaf,
+    // multiply @0x0046edc7). It REPLACES the local torque triple with a spin term
+    // (it does NOT zero the accumulator below, which still adds on top).
+    // [UNCERTAIN] the decode gives the SCALAR (2*dt)*kDtK*speed*_DAT_005ce268 but not
+    // which vector it is applied along; "forward-axis spin" is the description, so it
+    // is applied along the same +0x9c8 axis used above. Confirm the component writes
+    // at 0x0046edc7..0x0046edd8 before promoting past C2.
+    if (Fi_GameMode() == 7 && Ib(rec, 0x4) == 1) {
+        const float spin = (2.0f * dtMs) * kDtK * Fb(rec, 0x9e4) * kSpinTerm;
+        w[0] = fwd[0] * spin; w[1] = fwd[1] * spin; w[2] = fwd[2] * spin;
+    }
+
+    // +0x144/+0x148/+0x14c persistent accumulator (ESI[0x51..0x53]), present in BOTH
+    // arms because it sits after the ESI[4] gate. Transcribed from Q4:
+    //   if (+0x9e0 == 0.0) accum += local;
+    //   damp  = (3000.0 - dt*4.0) * kDtK;                     // multiply @0x0046edfb
+    //   accum = (local + accum) * damp;                       // FMUL ST1 @0x0046ee15
+    //   if (in[0]==0 && in[1]==0) omega += dt*0.0020001*accum;
+    // NOTE the apparent double-add of `local`: it is added conditionally on the first
+    // line and then again unconditionally inside the damp line. That is what the
+    // decompilation shows, so it is transcribed as-is rather than "corrected" — a
+    // tidier reading would be a behavioural change, not a fix. Flag if it ever looks
+    // wrong in a diff.
+    float* accum = &Fb(rec, 0x144);
+    if (Fb(rec, 0x9e0) == 0.0f) {
+        accum[0] += w[0]; accum[1] += w[1]; accum[2] += w[2];
+    }
+    const float damp = (kDampNum - dtMs * kDampK) * kDtK;
+    accum[0] = (w[0] + accum[0]) * damp;
+    accum[1] = (w[1] + accum[1]) * damp;
+    accum[2] = (w[2] + accum[2]) * damp;
+    if (in[0] == 0 && in[1] == 0) {                // add ONLY when not steering
+        const float k2 = dtMs * kAccumK;
+        w[0] += k2 * accum[0]; w[1] += k2 * accum[1]; w[2] += k2 * accum[2];
+    }
 
     omegaOut[0] = w[0]; omegaOut[1] = w[1]; omegaOut[2] = w[2];
 }
