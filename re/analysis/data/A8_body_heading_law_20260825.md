@@ -126,3 +126,129 @@ caches, particle/debris rotation, spawn/aero resets, or a collision-response sto
 - FUN_00469df0's exact write semantics (collision impulse -> angular velocity) were not fully decompiled.
 - Whether ESI[4] (the gate that keeps vs discards the +0x9bc seed in FUN_0046e9e0) is 0 in normal driving
   was not determined; but both branches integrate omega x R (angular integration), not velocity alignment.
+  RESOLVED in the follow-up below: normal driving = +0x10 == 0 (wheel-force rebuild arm).
+
+## Follow-up 2026-08-25: the ESI[4] / +0x10 gate
+
+Ghidra pool slot Mashed_pool14 (read-only), image base 0x00400000. Same NO-GUESSING discipline.
+`unaff_ESI` in FUN_0046e9e0 = the vehicle record base; ESI[4] = int at record **+0x10** = global `DAT_008815b0`
+(0x8815b0 - 0x8815a0 = 0x10). Getter `FUN_0046c770` (0x0046c770 reads DAT_008815b0), setter `FUN_0046c790`
+(0x0046c790 writes `(&DAT_008815b0)[slot*0x341]=param_2`). Do NOT confuse with `FUN_0046c7b0` (0x0046c7b0)
+which is the getter for **+0x4** (DAT_008815a4), the separate "car active" flag.
+
+### VERDICT (Q2): normal driving player car takes the +0x10 == 0 arm = OMEGA REBUILT FROM WHEEL FORCES.
+
+Evidence chain (all cited, static):
+1. Per-vehicle init `FUN_0046b540` (0x0046b540 — mass/suspension/handling setup) writes BOTH
+   `(&DAT_008815a4)[slot*0x341] = 1` (+0x4 = 1) and `(&DAT_008815b0)[slot*0x341] = 0` (**+0x10 = 0**),
+   literally, in the same block. So a freshly-prepared race car has +0x10 = 0.
+2. The ONLY writer of +0x10 to a nonzero value is `FUN_0046c790(slot,1)`, called from exactly one site:
+   `FUN_00422fd0` (0x00422fd0) does `FUN_0046c790(param_1,1)` — a "(re)place car at start" routine
+   (also sets grid position 0x42480000=50.0 via FUN_004215c0 x2, FUN_0045ba00(slot,2)).
+3. Every FUN_00422fd0 invocation is an event/mode transition, never the steady driving tick:
+   - dispatcher FUN_00470c70: only when `DAT_007f0fd0 == 1` AND target slot's +0x4 (`FUN_0046c7b0(DAT_007f0fd4)`)
+     `== 0` — i.e. a mode-1 activation of cars that are NOT already +0x4-active.
+   - FUN_00424eb0 (elimination/round counter, gated by game modes DAT_007f0fd0 ∈ {4,7,8,9,10}): only for
+     slots whose state marker `local_20[slot] == 0xff` (eliminated/finished).
+   - FUN_004039f0 (countdown/bonus progress): only when the countdown value `DAT_007f0fe4` crosses < 0.
+   - FUN_0040d590 / FUN_0040eee0 / FUN_00410d10 hold the remaining ~18 call sites (0x40d6xx / 0x40f0xx /
+     0x410dxx); FUN_0040eee0 is invoked at the TAIL of FUN_00424eb0's all-eliminated branch. These are the
+     party/elimination/round-advance machine, not the ordinary per-frame update. [see residual below]
+4. +0x10 is reset to 0 ONLY by a full `FUN_0046b540`. The lighter respawn init `FUN_0046baa0` (0x0046baa0)
+   does NOT write +0x10 (verified: its store list has no DAT_008815b0), so once set to 1 it persists until
+   a full re-init.
+5. CORROBORATION from A6a `FUN_00467650`: the wheel-torque accumulate into the angular-velocity triple is
+   guarded by `if (*(int *)(unaff_ESI + 0x10) == 0)` (the `+0x9bc/+0x9c0/+0x9c4 +=` block near 0x4688xx).
+   The port's already-verified "+0x9c0 computed correctly during driving" result lives inside that branch;
+   it can only be the live branch during normal driving, so +0x10 == 0 there. This also dissolves the
+   apparent tension: with +0x10==0 A6a WRITES the physical angular velocity (consumed by the +0x9e8 magnitude
+   cache, particle rotation, collision), while FUN_0046e9e0 independently rebuilds the body-matrix omega from
+   the same wheel-force model. With +0x10!=0 the triple is externally seeded and A6a leaves it, and
+   FUN_0046e9e0 KEEPS it as omega — a scripted/kinematic body-rotation mode (eliminated cars, mode-placed cars).
+
+Mechanical role of +0x10: a per-car mode flag, values {0,1} only. 0 = wheel-force-driven body (normal);
+1 = start-placed / scripted-angular-velocity body. Not a counter, not a pointer.
+
+### +0x10 writer table
+
+| RVA | value written | mechanical description |
+|-----|---------------|------------------------|
+| 0x0046b540 (FUN_0046b540, per-car init) | 0 | `(&DAT_008815b0)[slot*0x341]=0` alongside +0x4=1; the "prepare car for race" setup |
+| 0x0046c790 (FUN_0046c790, setter) | param_2 | `(&DAT_008815b0)[slot*0x341]=param_2`; bounds-checked slot<16; sole caller FUN_00422fd0 passes 1 |
+| via FUN_00422fd0 (0x00422fd0) | 1 | calls FUN_0046c790(slot,1); "(re)place car at start" — mode-1 activation, elimination(0xff) respawn, countdown cross |
+
+Readers/tests of +0x10 (for completeness): FUN_0046e9e0 `if(ESI[4]==0)` (the arm gate);
+FUN_004709a0 `CMP [rec+0x10],1` at 0x00470b37 and FUN_00470c70 `*piVar==1` at ~0x004710xx — both the
+"car live" gate `+0x4!=0 || +0x10==1`; getter FUN_0046c770; FUN_0046c7d0 reads it at 0x0046c811.
+
+### Q3 — the +0x10 == 0 arm ("omega rebuilt from wheel forces"), full decomp
+
+Setup before the gate (runs regardless):
+```
+fVar1   = param_1 * _DAT_005cc948;            // param_1 = substep dt; _DAT_005cc948 = 0x39aec33e ~ 3.334e-4
+scale   = fVar1 * _DAT_005cc32c;              // _DAT_005cc32c = 0x3f000000 = 0.5   -> seed scale
+local_24= scale * ESI[0x26f];  // +0x9bc      (angular-vel seed X)
+local_20= scale * ESI[0x270];  // +0x9c0      (angular-vel seed Y)
+local_1c= scale * ESI[0x271];  // +0x9c4      (angular-vel seed Z)
+FUN_0046d700(&local_18, *ESI); // local_18/14/10 = body FORWARD row from the orientation matrix (*ESI = matrix ptr)
+```
+Then `if (ESI[4]==0)` WIPES the seed and rebuilds omega from steering/wheel forces:
+```
+local_24=local_20=local_1c=0;
+grip = ESI[0x279]*_DAT_005ce1e8;  clamp grip <= _DAT_005cc320;                 // ESI[0x279]=+0x9e4 linear speed mag
+ESI[0x33f]=0;  if (in[4]!=0 && in[5]!=0){ ESI[0x33f]=1; grip=_DAT_005cc320; }  // in=param_2 bytes; [4]&[5] set => grip=max
+if (ESI[0x278] != DAT_005d757c) {   // +0x9e0 != 0.0  (grounded/steerable gate)
+  // LEFT steer col: s = (float)in[0]  (+ ESI[8] trim, clamp _DAT_005cd04c);  if ESI[0xc]!=0 scale by (_DAT_005cc320 - ESI[0xc]*_DAT_005cc328)
+  //   torque_L = s * dt * _DAT_00613108 * grip * _DAT_005cd03c * _DAT_005cc948
+  //   omega  = forward(local_18/14/10) * torque_L
+  // RIGHT steer col: s = (float)in[1] (+ ESI[9] trim, clamp);  same ESI[0xc] scale
+  //   torque_R = s * dt * _DAT_00613108 * grip * _DAT_005cd03c * _DAT_005cc948
+  //   omega -= forward * torque_R          // opposite sign => net yaw from L/R steer differential
+}
+if (in[4]!=0 && in[5]!=0) omega *= _DAT_005cc348;                              // both bytes => spin scale
+if (ESI[0x278] != 0x40800000) { omega.x += k*ESI[0x26f]; omega.z += k*ESI[0x271]; } // +0x9e0!=4.0: re-add residual ang-vel X/Z
+if (dot(ESI[0x275..277], ESI[0x26c..26e]) < _DAT_005cd0fc && (in[4]==0||in[5]==0)) omega = -omega; // reverse when moving backward
+```
+in[] = param_2 byte descriptor; per WS-C map [0]/[1] = steer L/R, [4]/[5] = accel/brake. ESI[0xc]=+0x30,
+ESI[8]=+0x20, ESI[9]=+0x24 (per-wheel steer trims). `_DAT_00613108` = 100.0 (set by FUN_0046b540).
+
+### Q4 — the +0x10 != 0 arm, and the +0x144 accumulator
+
+- +0x10 != 0: the entire `if(ESI[4]==0){...}` block is skipped, so omega retains the seed
+  `0.5*_DAT_005cc948*dt * (+0x9bc,+0x9c0,+0x9c4)` computed above. The +0x9bc/+0x9c0/+0x9c4 contribution is
+  KEPT UNMODIFIED. Confirmed.
+- The +0x144/+0x148/+0x14c accumulator (ESI[0x51/0x52/0x53]) is updated and consumed in BOTH arms — it is
+  OUTSIDE/after the gate:
+  ```
+  if (ESI[0x278]==DAT_005d757c) ESI[0x51..53] += local_24..1c;           // +0x9e0==0.0
+  damp = (_DAT_005ccd08 - dt*_DAT_005cc35c) * _DAT_005cc948;
+  ESI[0x51..53] = (local + ESI[0x51..53]) * damp;                        // persistent damp
+  k2 = dt * _DAT_005ce018;                                               // _DAT_005ce018 = 0x3b03126f ~ 0.002
+  if (in[1]==0 && in[0]==0) omega += k2 * ESI[0x51..53];                 // add accumulator ONLY when NOT steering
+  ```
+  So the accumulator term is present in both arms; its ADD into omega is gated on steer bytes [0]&[1]==0.
+- Brake/handbrake gate bytes: param_2[4] and param_2[5] (accel/brake per WS-C). Both-nonzero =>
+  grip clamp + `_DAT_005cc348` spin scale; the reverse-sign gate additionally requires (in[4]==0 || in[5]==0).
+  The 7/`ESI[1]==1` special case (FUN_0040e350()==7, +0x4==1) overrides omega with a forward-axis spin
+  `(2*dt)*_DAT_005cc948*ESI[0x279]*_DAT_005ce268`.
+
+### Q5 — constants
+
+- `_DAT_005cc32c` = 0x3f000000 = **0.5** (at 0x005cc32c). It is the exact global read as the omega-seed scale
+  in FUN_0046e9e0 (`scale = dt*_DAT_005cc948 * _DAT_005cc32c`). [UNCERTAIN] identity with "Integrate2's 0.5
+  floor": the VALUE is 0.5, but I did not open Integrate2 to confirm it dereferences THIS address 0x005cc32c
+  rather than another 0.5 literal — needs Integrate2's RVA to check the operand.
+- `_DAT_005ce018` = 0x3b03126f = **~0.0020001** (at 0x005ce018) — the accumulator-term scale (omega += dt*this*accum).
+- (context) `_DAT_005cc948` = 0x39aec33e ≈ 3.334e-4 (the per-substep dt normalizer used by both the seed scale
+  and the linear-velocity position term).
+
+### Residual [UNCERTAIN]
+
+I did NOT exhaustively decompile FUN_0040d590 / FUN_0040eee0 / FUN_00410d10 (dense FUN_00422fd0 call sites)
+to PROVE none fires for the player slot on the ordinary race-start/grid path without a following FUN_0046b540
+re-init. All read context points to them being the party/elimination/round-advance machine (FUN_0040eee0 is
+called from FUN_00424eb0's all-eliminated tail; FUN_00424eb0 special-cases modes {4,7,8,9,10}), so normal
+single/championship driving should not reach them for the player. If it did, a player could enter driving with
++0x10==1 (seed-kept arm). EXACT PROBE to harden before the code change: Frida-hook FUN_0046e9e0 entry (or read
+`*(int*)(DAT_008815a0 + playerSlot*0xd04 + 0x10)`) per frame across a real normal-race driving session; a
+steady 0 confirms the wheel-force arm. This is a one-boot behavioral read, not a diff.

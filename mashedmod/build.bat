@@ -189,6 +189,7 @@ cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe
     "Vehicle\ForceIntegratorStubs.cpp" ^
     "Vehicle\VehicleControl.cpp" ^
     "Vehicle\Integrate2.cpp" ^
+    "Vehicle\BodyOrientationIntegrate.cpp" ^
     "Vehicle\AeroStabilize.cpp" ^
     "Vehicle\VehicleInit.cpp" ^
     "Vehicle\VehiclePhysicsRun.cpp" ^
