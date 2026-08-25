@@ -1,0 +1,30 @@
+A6a angular-velocity collapse, root mechanism, 2026-08-25
+env: MASHED_REAL_PHYSICS=1 MASHED_RACE_DEMO=1 MASHED_PLAY_DEMO=1 MASHED_GOTO=6 MASHED_TRACK_SEL=0 MASHED_CAR_SEL=0 MASHED_DRIVE_HOLD=1 MASHED_A6_DIAG=1 MASHED_WIN_POS=left-bl
+pid 36772, self-exited rc=0, 60 G6 samples
+new diag: Integrate2.cpp grip-clamp #6 block (a6_g6.log), env MASHED_A6_DIAG
+
+MEASURED CHAIN (every step from this log)
+  ld4  (lateral slip of the UNIT velocity dir, range [0,1]) = 1.86e-9 .. 1.19e-7  on 59/60 frames
+  le4  (= speed) correct, 4.44 -> 354.75
+  l_60 (= sum ld4*le4 over 4 wheels)                        = 2.2e-6 .. 3.9e-5
+  grip (= l_60 / +0x18c, +0x18c measured 1.0, then * speed) = 2.9e-7 .. 6.8e-3
+  retention (1 - kLo)                                       = 0 exactly on most frames
+
+THE ARITHMETIC IS EXACT POWERS OF TWO
+  k3p0518e5 = Cf(0x38000000) = 2^-15 exactly ; k32768 = 2^15
+  so kLo = (32768 - grip) * 2^-15 = 1 - grip/32768
+  and retention = 1 - kLo = grip/32768, floored so it never exceeds 0.5.
+  Angular-velocity retention is therefore PROPORTIONAL TO grip, hence to SPEED.
+  With grip ~1e-3 against a 32768 scale, retention underflows to 0 and av is
+  ANNIHILATED every frame - not damped.
+
+THE CONTROL CASE IS IN THIS LOG (last sample, frame 60)
+  ld4avg 0.0741 (a realistic ~4.3 deg slip) -> l_60 107.1 -> grip 39437 -> arm=hi
+  -> retention 0.5 -> av jumped to 0.00781507, 3.2x the steady 0.00246.
+  So the machinery is correct. The input is zero.
+
+FAITHFULNESS CHECKED, NOT ASSUMED
+  The damping tail is a faithful transcription: decomp lines 555-583 have the same
+  (32768-grip)*2^-15, the same 0.5 floor, the same 1-k, the same three av writes.
+  The accumulator matches too: decomp line 406 local_60 = ld4*local_e4 + local_60
+  == port Integrate2.cpp:250. Do NOT "fix" the damping; it is not the defect.

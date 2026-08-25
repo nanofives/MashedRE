@@ -168,6 +168,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
 
     // per-wheel loop (4 wheels, piVar12 = self + 0x1a4 ints, stride 0x31 ints)
     int g2_n4 = 0, g2_n5 = 0;   // [G2-A6DIAG] block#4 / block#5 fire counts
+    float g2_ld4sum = 0.0f, g2_le4sum = 0.0f; int g2_ld4n = 0;  // [G6-AVDIAG]
     int* p = self + (0x1a4 / 4);
     for (int wheel = 0; wheel < 4; ++wheel, p += 0x31) {
         // drive-force block (committed mode 2 + active)
@@ -246,6 +247,11 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 float lc8 = lc0 * Rp(p,0x1f), lc4 = lc0 * Rp(p,0x20); lc0 = lc0 * Rp(p,0x21);
                 float lac = s0 - lc8, la8 = s1 - lc4, la4 = inv*ld8 - lc0;
                 float ld4 = Mag3(lac, la8, la4);
+                // [G6-AVDIAG] ld4 is the LATERAL (slip) magnitude of the unit
+                // velocity direction after removing its projection on the wheel
+                // forward axis, so it lies in [0,1]. It is the sole non-speed
+                // input to l_60 (:250) and therefore to grip. Track it per frame.
+                g2_ld4sum += ld4; g2_le4sum += le4; ++g2_ld4n;
                 unsigned l94 = (unsigned)p[-1];
                 l_60 = (double)ld4 * (double)le4 + l_60;             // [U-A6A-FLOAT10]
                 if ((l94 & 0x100) == 0) {
@@ -390,6 +396,34 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
         float fy = Rf(v,0x9b4) - fwdDot*Rf(v,0x9d8);
         float fz = Rf(v,0x9b8) - fwdDot*Rf(v,0x9dc);
         grip = grip * speed;
+        // [G6-AVDIAG] env MASHED_A6_DIAG: the av collapse. The damping below is a
+        // faithful transcription of the original tail (decomp 555-583), so if av is
+        // being annihilated the cause is `grip` arriving near zero: at grip==0 the
+        // low arm gives k=(32768-0)*3.0518e-5=1.00003, which clears the 0.5 floor,
+        // so 1-k is a small NEGATIVE (~-3e-5) and av is scaled by that every frame.
+        // Print the inputs (l_60, +0x18c, grip) and the resulting k per arm.
+        {
+            static const bool g6_on = (std::getenv("MASHED_A6_DIAG") != nullptr);
+            static int g6_n = 0;
+            if (g6_on && g6_n < 60) {
+                ++g6_n;
+                float kLo = (k32768 - grip) * k3p0518e5;
+                if (kLo < k0p1) kLo = k0p1;
+                if (kLo < kHalf) kLo = kHalf;
+                if (std::FILE* lf = std::fopen("a6_g6.log", "a")) {
+                    std::fprintf(lf,
+                        "G6 l60=%g m18c=%g spd=%g grip=%g arm=%s kLo=%g 1-kLo=%g "
+                        "ld4n=%d ld4avg=%g le4avg=%g avIn=(%g,%g,%g)\n",
+                        (double)l_60, Rf(v,0x18c), speed, grip,
+                        (k32768 < grip) ? "hi" : "lo", kLo, 1.0f - kLo,
+                        g2_ld4n,
+                        g2_ld4n ? g2_ld4sum / (float)g2_ld4n : 0.0f,
+                        g2_ld4n ? g2_le4sum / (float)g2_ld4n : 0.0f,
+                        Rf(v,0x9bc), Rf(v,0x9c0), Rf(v,0x9c4));
+                    std::fclose(lf);
+                }
+            }
+        }
         if (k32768 < grip) {
             float k = (k1e7 - grip) * k9p9998e8;
             if (k < 0.0f) k = 0.0f;
