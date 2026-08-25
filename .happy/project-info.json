@@ -1,42 +1,23 @@
 {
-  "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-08-24T16:30:00Z",
+  "title": "Mashed RE",
+  "updatedAt": "2026-08-25T13:20:00Z",
   "sections": [
     {
-      "heading": "Active phase",
+      "heading": "Current thread — A8 yaw/speed",
       "fields": [
-        { "label": "Phase", "value": "D2 — default physics", "kind": "text" },
-        { "label": "Gate reduces to", "value": "A8 (tunnel clause MET 2026-08-24)", "kind": "text" },
-        { "label": "A8 original side", "value": "MEASURED — steer-sign law captured", "kind": "text" },
-        { "label": "A8 standalone side", "value": "Next: test the predicted yaw-sign inversion", "kind": "text" }
+        { "label": "Status", "value": "FUN_0046e9e0 fully ported, unwired; blocked on motion model", "kind": "text" },
+        { "label": "Blocker", "value": "Port integrates pos from heading+scalar speed, so slip is unrepresentable; any independent body orientation collapses the drive by cos(slip)", "kind": "text" },
+        { "label": "Next session", "value": "re/analysis/plans/KICKOFF_velocity_vector_motion.md", "kind": "text" },
+        { "label": "Wiring attempts reverted", "value": 2, "kind": "number" }
       ]
     },
     {
-      "heading": "A8 measured law",
+      "heading": "Session 2026-08-25",
       "fields": [
-        { "label": "steer +1 -> steerAng0", "value": "+33.2253 deg mean", "kind": "text" },
-        { "label": "-> yawrate", "value": "+1.000046 (positive)", "kind": "text" },
-        { "label": "-> atan2(vz,vx) heading", "value": "DECREASES (-53.32 rad)", "kind": "text" },
-        { "label": "Prediction to test", "value": "TrackRenderer.cpp:2553 integrates +yawrate*dt into a velocity heading — opposite sign, steers the wrong way", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "Orchestrator ledger",
-      "fields": [
-        { "label": "Items", "value": 90, "kind": "number" },
-        { "label": "Promoted", "value": 37, "kind": "number" },
-        { "label": "Blocked", "value": 34, "kind": "number" },
-        { "label": "Briefed", "value": 12, "kind": "number" },
-        { "label": "Verified", "value": 4, "kind": "number" },
-        { "label": "Candidate", "value": 3, "kind": "number" }
-      ]
-    },
-    {
-      "heading": "Session 2026-08-24",
-      "fields": [
-        { "label": "Commits", "value": 5, "kind": "number" },
-        { "label": "Game boots spent", "value": 1, "kind": "number" },
-        { "label": "verify/ cleanup", "value": "129 uncited dirs deleted (299,613,877 bytes); blobs gitignored", "kind": "text" }
+        { "label": "Commits", "value": 15, "kind": "number" },
+        { "label": "Retractions of my own claims", "value": 4, "kind": "number" },
+        { "label": "Landed", "value": ["material index now reaches record +0x1ec (0 -> 3 verified)", "A8 mechanism found: grip = speed x 1/1500 scales steer torque", "omega law + 0x004c4680 ortho-normalize ported, all constants cited"], "kind": "list" },
+        { "label": "Baseline gate", "value": "verify/a8_standalone_20260824/play_demo_drivehold.txt median 378.31", "kind": "text" }
       ]
     }
   ]
