@@ -1,0 +1,6 @@
+00d920c6bebe5d95492a704a36da6ff9754e5f2a
+A6a +0x1f0 runtime read, 2026-08-25
+env: MASHED_REAL_PHYSICS=1 MASHED_RACE_DEMO=1 MASHED_PLAY_DEMO=1 MASHED_GOTO=6 MASHED_TRACK_SEL=0 MASHED_CAR_SEL=0 MASHED_DRIVE_HOLD=1 MASHED_A6_DIAG=1 MASHED_WIN_POS=left-bl
+recipe source: WSPHYS_DRIVEHOLD_2026-07-06.md:15 (DRIVE_HOLD included; WS_A8_REALPHYS_2026-07-01.md:15 omits it and caps runs at 6.6s)
+exe: mashedmod/build/mashed_re.exe, built this session from main (Integrate2.cpp diag line added)
+pid 14676, self-exited rc=0, 60 diag samples
