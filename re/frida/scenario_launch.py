@@ -194,7 +194,19 @@ function telSample(){
       r.add(0x9e4).readFloat(), r.add(0x9c0).readFloat(),
       r.add(0x9d4).readFloat(), r.add(0x9dc).readFloat(),
       r.add(0x9e0).readFloat(), r.add(0xb20).readU32(),
-      stepCalls, bypassOn ? 1 : 0, ga(PWORLD).readU32() !== 0 ? 1 : 0 ]);
+      stepCalls, bypassOn ? 1 : 0, ga(PWORLD).readU32() !== 0 ? 1 : 0,
+      // [A8-SUSPGLOBALS 2026-08-26] the two suspension-scale GLOBALS. They are not
+      // in the vehicle record, so the statediff record capture cannot see them —
+      // which is why the p[0x1b] question stayed open. Our port computes them as
+      //   suspDtTerm = frameMs * _DAT_005cea80(0.0027809);  suspScale = 3000/that
+      // giving 0.139045 / 21575.7 at a 50-unit budget. Reading the ORIGINAL's
+      // values is the only non-circular way to check that.
+      ga(0x0088e610).readFloat(),      // suspDtTerm  (_DAT_0088e610)
+      ga(0x0088e5f0).readFloat(),      // suspScale   (_DAT_0088e5f0)
+      // per-wheel load p[0x1a] (+0x20c) for wheel 0, as a cross-check against the
+      // record capture's 1091.56 — confirms the live run is the same regime.
+      r.add(0x20c).readFloat(),
+      r.add(0x50).readFloat() ]);      // vehicle mass, expected 1000.0
   } catch(e){ /* sample dropped */ }
 }
 function telStart(){ if (TEL.on) return 'already on';
@@ -577,7 +589,8 @@ rpc.exports = {
   telStart: function(){ return telStart(); },
   telemetry: function(){ return JSON.stringify({
     cols: ['t_ms','phase','px','py','pz','vx','vy','vz','speed','yawRate',
-           'fwdx','fwdz','grounded','airflag','stepCalls','bypass','worldPtr'],
+           'fwdx','fwdz','grounded','airflag','stepCalls','bypass','worldPtr',
+           'suspDtTerm','suspScale','wheel0Load','mass'],
     rows: TEL.rows }); },
   pokeTimer: function(v){ try { ga(0x007f0fe4).writeFloat(v); return 1; } catch(e){ return 'ERR '+e; } },
   // lap counter row 0x008a9620 stride 0x30c field +0x28 (U-8988 resolution);

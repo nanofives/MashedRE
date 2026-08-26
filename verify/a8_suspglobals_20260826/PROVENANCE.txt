@@ -1,0 +1,35 @@
+A8 suspension globals, read from a LIVE ORIGINAL, 2026-08-26
+
+cmd: py -3.12 re/frida/scenario_launch.py --spike-telemetry suspglobals --hold 25
+exe: original/MASHED.exe (boot-patched; .unpatched matches the SHA-256 anchor)
+pid: 28000 (spawned and reaped by the harness; 0 MASHED alive afterwards)
+
+WHY: _DAT_0088e610 (suspDtTerm) and _DAT_0088e5f0 (suspScale) are GLOBALS, not
+vehicle-record fields, so the statediff record capture cannot see them. Every
+previous attempt to check them compared our computed value against a
+recomputation of our own formula -- circular. This is the first non-circular
+measurement.
+
+CHANGE MADE: re/frida/scenario_launch.py telSample() extended (additive) with
+suspDtTerm / suspScale / wheel0Load(+0x20c) / mass(+0x50), and the cols list
+updated to match. Kept -- it is a permanent improvement to that harness.
+
+RESULT (80 driving samples, phase 3, speed>100):
+  suspDtTerm  4.33337   (constant, distinct=1)
+  suspScale   692.302   (constant, distinct=1)
+  product     3000.0000 exactly
+  wheel0Load  1086.83   (matches the record capture's 1091.56 -- same regime)
+  mass        1000.0    (matches)
+OUR PORT: suspDtTerm 0.139045, suspScale 21575.7 -> 31.17x apart, reciprocally.
+
+--- follow-up: formula decoded and applied, 2026-08-26 ---
+FORMULA (Ghidra, re/analysis/data/A8_suspdt_formula_20260826.md):
+  suspDtTerm = DAT_00803324 * _DAT_005cea80,  suspScale = 3000 / suspDtTerm
+  DAT_00803324 = 0x44C30000 = 1560.0, hardcoded at 0x0040d3d2 (course load
+  FUN_0040d270, sole writer); read by the dispatcher as *param_2.
+  Our port was passing param_1 (the 50-unit budget) instead.
+ALSO FIXED: kSuspDtK 0.0027809f -> 0.0027778f. The hex 0x3b360bc0 was right,
+  the decimal gloss was wrong; 0.0027809f compiles to 0x3b363fc3.
+RESULT: p[0x1a] 39.67 -> 1088.31 vs the live original's 1086.83 (0.14%).
+  Behaviour unchanged, as the reciprocal-cancellation analysis predicted.
+  Runs: gloss_A, susp_A, susp_B in verify/a8_velvec_20260825/.

@@ -1,0 +1,106 @@
+A8 velocity-vector motion model, 2026-08-25
+env (all runs): MASHED_REAL_PHYSICS=1 MASHED_RACE_DEMO=1 MASHED_PLAY_DEMO=1
+  MASHED_GOTO=6 MASHED_TRACK_SEL=0 MASHED_CAR_SEL=0 MASHED_DRIVE_HOLD=1
+  MASHED_WIN_POS=left-bl  (+ MASHED_MOTION_DIAG=1 on the velvec_* runs)
+exe: mashedmod/build/mashed_re.exe
+
+ctrlA_pre.txt / ctrlB_pre.txt   PRE-change same-binary controls (git 053779bf tree,
+                                rebuilt today). Establish the noise floor.
+velvec_A.txt / velvec_B.txt     POST-change PLAY-DEMO telemetry.
+velvec_*_motion.log             POST-change per-sim-step motion diag (steer input,
+                                speed, velocity heading, body heading, slip, delta,
+                                angular velocity). Uncapped -- no sample cap that
+                                could act as a regime filter.
+*_full.log                      full mashed_re.log for each run (carries SIMHZ,
+                                which is where dt=1/60 comes from).
+
+original-side ground truth: verify/a8_steer_20260824/orig_steerR.msd (unchanged;
+  body heading read as atan2(record+0x9dc, record+0x9d4)).
+
+writeup: re/analysis/data/A8_velocity_vector_motion_20260825.md
+
+--- follow-up: time-base (gain gap) investigation, same day ---
+tb_A / tb_B      frameMs = dt*3000 and kMaxSubstep = 25 APPLIED. Gate (b) improves,
+                 gate (a) FAILS (median 33.27 / 26.24 vs control 390.90 / 398.50).
+revert_C         after reverting both constants. Confirms the passing state is
+                 restored: gate (a) 390.86, gate (b) identical to velvec_A.
+
+--- third follow-up: off-mesh fix + time base applied ---
+om_A / om_B      off-mesh fix ALONE at dt*1000 (attribution control). No regression.
+final_A/final_B  off-mesh fix + dt*3000, BEFORE the reseed marker existed.
+fin2_*           discarded: the reseed marker did not compile into the log.
+fin3_A / fin3_B  off-mesh fix + dt*3000 WITH the reseed marker. The reference runs.
+
+--- fourth follow-up: over-acceleration root cause ---
+iso50_*    kMaxSubstep=50 at dt*3000 (one A4 call/frame). Isolation test that
+           REFUTED the A4-call-count hypothesis. Not a shipped config.
+gear_A_*   gearbox state (gear= / gtmr=) added to the motion diag. gtmr=0 on all
+           1096 driving frames -> the shift lockout never holds.
+
+--- fifth/sixth follow-up ---
+gt_A / gt_B        gearbox shift-timer fix (real _ftol2 law) on top of everything.
+gt_table_motion    adds the per-gear drive table read AT RUNTIME (identical to orig).
+friction_A.log     MASHED_COUPLING_DIAG friction accumulator capture. Shows |accum|
+                   is a flat ~1% of the drive force where the original needs ~86%.
+
+--- seventh follow-up: friction block probe ---
+friction_A.log   first friction capture (cap 1500).
+friction_B.log   friction diag extended with cMag/fMag/ld0/m78/frac, cap 40000.
+a6_g6_A.log      grip-clamp #6 inputs (l_60, +0x18c, grip, arm, kLo).
+
+--- eighth/ninth follow-up ---
+cad_motion.log / cad_friction.log  +0xb14 logged at BOTH consumption time (inside
+                 Integrate2) and post-substep-loop (render-tick equivalent). They
+                 match, confirming a render-tick snapshot is the consumed force.
+
+--- tenth follow-up: A4 cadence ---
+a4x_A / a4x_B   A4 moved OUT of the substep loop (once per frame at the full budget),
+                matching the original's FUN_00470c70 step 3. Slip 4.6x short -> 1.2x
+                short; acceleration falloff appears; gate (b) held.
+
+--- eleventh follow-up ---
+friction_C_a4x.log  fTot/accum re-measured with A4 once per frame. 1097 samples =
+                    one per frame (was 3/frame). SUPERSEDES the flat-accum finding
+                    in friction_B.log, which was a doubled-A4 artifact.
+
+--- twelfth follow-up ---
+ftot_motion.log  block-#4 force inputs logged (g_suspScale, p[0x15], p[0x16],
+                 p[0x1b] x4, p[-1] flags x4). Localizes the fTot gap to p[0x1b]
+                 alone: 26-40x short, everything else exact.
+
+--- thirteenth follow-up ---
+ftol_A / ftol_B  all seven _ftol2 sites ported (boost timer, per-wheel spin,
+                 per-wheel brake, two steer hold-duration counters). Gate (a)
+                 driving-median 1936/2044 -> 1831/1806 vs original 1760.
+
+--- fourteenth follow-up ---
+bisect_nosteer_*  3 _ftol2 fixes with the two steer hold counters DISABLED.
+                  Attributes both the gate-(a) gain and the 1000-1500 slip drop
+                  to the steer counters. Counters KEPT (verbatim port, live in
+                  the original). Not a shipped config.
+
+--- fifteenth follow-up ---
+contact_A.log   per-wheel load p[0x1a] (+0x20c) measured. Confirms the original's
+                p[0x1b]/p[0x1a] = 0.9995 and traces the 27x gap to _DAT_0088e610.
+
+--- nineteenth follow-up ---
+a6_g6_now.log   grip chain (l_60 / ld4 / le4 / grip) RE-MEASURED on the current
+                build. Supersedes a6_g6_A.log, which predates the A4-cadence fix,
+                the _ftol2 ports and the suspDtTerm correction. Also shows the
+                equilibrium-slip model no longer fits (ratio 0.28-1.35).
+
+--- twentieth follow-up ---
+friction_D_now.log  fTot re-measured on the final build. Shortfall 2.00/1.16/1.18/
+                    1.22/1.04 (was 1.99/1.76/1.59/1.58/1.39). Grip chain and force
+                    now BOTH match the original; slip alone is still short.
+                    ORIGINAL le4/ld4/l_60 reconstructed from orig_steerR.msd -- no
+                    hook needed, all inputs are record fields.
+
+--- twenty-first follow-up ---
+ftotdir_motion.log   summed per-wheel force VECTOR logged; direction compared with
+                     the original's (reconstructed from the .msd). Lateral fraction
+                     agrees within 2% -> direction hypothesis REFUTED.
+bitexact3_*          after making 5 wrong-bit decimal literals bit-exact. No
+                     movement (sub-0.02% changes). bitexact/bitexact2 were short
+                     runs that stalled in frontend nav -- NOT comparable, kept only
+                     as a record of the flakiness.
