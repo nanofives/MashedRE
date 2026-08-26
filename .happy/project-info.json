@@ -1,33 +1,42 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-26T11:00:00Z",
+  "updatedAt": "2026-08-26T14:40:00Z",
   "sections": [
     {
-      "heading": "A8 — landed on main",
+      "heading": "D2 default physics — OPEN, gate is SLIP (ruling 2026-08-26)",
       "fields": [
-        { "label": "Commits", "value": ["c5dafe5e motion model + 5 cited fidelity fixes", "3d4b3c04 21 follow-ups, 6 decode notes, global telemetry lane", "4295ff0f force-add the cited diag logs", "6d6de212 kickoff for the slip-deficit session"], "kind": "list" },
-        { "label": "Gate (a) driving-median", "value": "~1745 vs original 1760 — within 1%", "kind": "text" },
-        { "label": "Gate (b) yaw rate", "value": "2.07 / 2.55 / 2.55 vs original 2.31 / 2.66 / 2.65", "kind": "text" },
-        { "label": "Force mag + direction", "value": "within 4-22%; lateral fraction within 2%", "kind": "text" },
-        { "label": "Record fidelity", "value": "p[0x1a] 1088.31 vs live original 1086.83 (0.14%)", "kind": "text" }
+        { "label": "Sole gate item", "value": "U-9044 — the A8 slip deficit, filed with a path to resolution", "kind": "text" },
+        { "label": "Slip gap", "value": "1.29-1.36x at 2000-2600; 2.70-5.38x at 500-1000 (band- and run-dependent)", "kind": "text" },
+        { "label": "Ruling", "value": "re-gating D2 onto the trajectory was proposed on the p[0x1b] precedent and DECLINED — slip stays the metric", "kind": "text" },
+        { "label": "Eliminated by measurement", "value": 8, "kind": "number" },
+        { "label": "The interesting result", "value": "slip differs up to 4x while the TRAJECTORY matches — radius within 3-11%, yaw rate within 4-10%", "kind": "text" }
       ]
     },
     {
-      "heading": "Next session",
+      "heading": "This session — branch a8-slip-deficit-measurement",
       "fields": [
-        { "label": "Kickoff", "value": "re/analysis/plans/KICKOFF_slip_deficit.md (ready to paste)", "kind": "text" },
-        { "label": "The one open item", "value": "slip 1.3x short at 2000-2600, 2.5x at 1000-1500 — unexplained", "kind": "text" },
-        { "label": "Eliminated", "value": "13 candidate causes, all by measurement", "kind": "text" },
-        { "label": "Untried", "value": "p[-9..-7] wheel mount offsets (readable from the capture, no hook needed)", "kind": "text" }
+        { "label": "Commit", "value": "7208a70f — 10 files, +1888/-2, NOT yet merged to main", "kind": "text" },
+        { "label": "Eliminated", "value": ["force->velocity application (momentum identity, eff dt port/orig 0.94-1.16 on 3 regimes)", "steer-regime mismatch (real, but matching it did not close the gap)", "turn radius — REFUTED this session's own tighter-radius hypothesis"], "kind": "list" },
+        { "label": "Retracted on measurement", "value": ["897-vs-1941 speed gap = 50 RecoverOffMesh 0.5x halvings, magnitude NOT quantified", "off-mesh observable WITHDRAWN — it measures the GroundHeight collision scaffold (gnd=4.0 in 1097/1097 and 1441/1441)"], "kind": "list" },
+        { "label": "New reusable tooling", "value": ["re/tools/statediff/a8_momentum.py", "re/tools/statediff/a8_radius.py", "MASHED_STEER_HOLD / _AFTER (held-steer harness knob)"], "kind": "list" }
+      ]
+    },
+    {
+      "heading": "Strongest untaken lead",
+      "fields": [
+        { "label": "The anomaly", "value": "momentum identity's ABSOLUTE effective dt is 12-33x of 1/60 and speed-dependent on BOTH sides — may indicate a second lateral force term larger than the per-wheel sum", "kind": "text" },
+        { "label": "Also unmeasured", "value": "A6a/A4 locals that are NOT pure functions of record fields (le4/ld4 were, and matched)", "kind": "text" },
+        { "label": "Do not re-open", "value": "the 8 eliminated candidates, without new evidence", "kind": "text" }
       ]
     },
     {
       "heading": "Housekeeping",
       "fields": [
-        { "label": "Unpushed", "value": "main is 88 commits ahead of upstream (84 predate this session)", "kind": "text" },
+        { "label": "Unpushed", "value": "main 88 commits ahead of upstream; this session's commit sits on a branch, unmerged", "kind": "text" },
         { "label": "Stale branch", "value": "a8-velocity-vector-motion is merged and redundant — left in place, deletion not assumed", "kind": "text" },
         { "label": "Untracked", "value": "dbg_avail.txt (519 KB nav debug, predates this session, deliberately not committed)", "kind": "text" },
-        { "label": "Ghidra pool", "value": "all slots released (3 stale July locks cleared)", "kind": "text" }
+        { "label": "Known trap hit twice", "value": "text-mode writes flip CHANGELOG.md CRLF->LF (whole-file rewrite); a literal pipe breaks an UNCERTAINTIES.md row even inside backticks", "kind": "text" },
+        { "label": "Ghidra pool", "value": "all slots released", "kind": "text" }
       ]
     }
   ]
