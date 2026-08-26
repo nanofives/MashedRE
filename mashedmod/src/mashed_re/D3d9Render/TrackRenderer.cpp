@@ -1985,6 +1985,8 @@ void TrackRenderer::RecoverOffMesh() {
     if (mok) { car_pos_[0] = mx; car_pos_[2] = mz; car_pos_[1] = my + car_ground_off_; }
     const float sp = (car_speed_ > 4.f ? car_speed_ * 0.5f : 4.f);
     car_yaw_ = ry;
+    // A8: re-seed the integrated body basis to the recovered heading.
+    Vehicle::VehiclePhysics_ResetOrientation(0, car_yaw_);
     car_vel_[0] = std::cos(ry) * sp; car_vel_[2] = std::sin(ry) * sp;
     car_speed_  = sp;
 }
@@ -2242,6 +2244,8 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
             car_pos_[1] = gy + car_ground_off_;
             car_yaw_ = std::atan2(g1[2] - g0[2], g1[0] - g0[0]);
             car_speed_ = 0.f;
+            // A8: re-seed the integrated body basis to the grid heading.
+            Vehicle::VehiclePhysics_ResetOrientation(0, car_yaw_);
             car_ready_ = true;
             // 3 AI opponents as a starting GRID just ahead of the start line, on the
             // unambiguous forward leg of the racing-line spline, all facing the race
@@ -2354,6 +2358,8 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
     if (!ok) return fail("no collision ground found for spawn");
     car_pos_[0] = sx; car_pos_[1] = sy + car_ground_off_; car_pos_[2] = sz;
     car_yaw_ = syaw; car_speed_ = 0.f;
+    // A8: re-seed the integrated body basis to the spawn heading.
+    Vehicle::VehiclePhysics_ResetOrientation(0, car_yaw_);
 
     if (log) {
         std::fprintf(log, "R5 car load OK: %s::%s — batches=%zu mats=%zu "
@@ -2565,37 +2571,69 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // predicted on the yaw-rate-integral reading and does not exist — measured
         // 2026-08-24, car_yaw decreases under +steer exactly as the original does
         // (D2_REALPHYS_REMEASURE_2026-08-21.md "A8 standalone arm").
+        // A8 (2026-08-25): io.yaw is now the BODY heading read back from the
+        // integrated orientation basis (FUN_0046e9e0's omega x R row integration),
+        // not a lag chasing the velocity heading. The two can now differ — that
+        // difference IS the slip angle, which the old model could not represent.
         car_yaw_ = io.yaw;
-        // WS-A COUPLING (2026-06-29): the POSITION step now advances along the heading
-        // at the recovered coupling's WORLD body speed (io.drive_speed) — replacing the
-        // degenerate kWorldVel gain on the chain's internal velocity (which, with the
-        // hard 45 cap, pinned instantly). drive_speed is the inertial, soft-capped body
-        // speed from the recovered PD law (FUN_0047eb30; re/analysis/vehicle_coupling.md);
-        // full lateral grip -> velocity along forward, so steering curves the path.
-        const float dfx = std::cos(car_yaw_), dfz = std::sin(car_yaw_);
-        const float nx = car_pos_[0] + dfx * io.drive_speed * in.dt;
-        const float nz = car_pos_[2] + dfz * io.drive_speed * in.dt;
+        // A8: the POSITION step advances by the VELOCITY VECTOR, as FUN_0046e9e0
+        // does (`EBX[0xc..0xe] = EDI[0xc..0xe] + k*dt*ESI[0x26c..0x26e]`, stores at
+        // 0x0046ea5f/0x0046ea69/0x0046ea73). io.drive_delta is that increment
+        // accumulated over the frame's substeps, already scaled by dt and by the
+        // original's own internal->world factor _DAT_005cc948 * _DAT_005cea80.
+        // REPLACES `pos += {cos,0,sin(car_yaw_)} * io.drive_speed * dt`, which
+        // forced the path to follow the nose and so could not express a slide.
+        const float nx = car_pos_[0] + io.drive_delta[0];
+        const float nz = car_pos_[2] + io.drive_delta[2];
         bool nok = false;
         const float ngy = GroundHeight(nx, nz, &nok);
         if (nok) { car_pos_[0] = nx; car_pos_[2] = nz; car_pos_[1] = ngy + car_ground_off_; }
         else {
-            // [G4][U-A8-OFFTRACK] ACTIVE steer-back. Just retaining velocity left the car idling
-            // against the edge (it cut the corner off-mesh and the deadband kept steer 0 toward a
-            // target whose chord leads off-track). Instead, redirect velocity + heading toward the
-            // next gate (the on-track ribbon point) so the car is pulled BACK onto the drivable
-            // surface; next frame its forward points on-mesh and it advances. Standalone collision-
-            // recovery shim (the original's RW contact pushes the car off walls).
+            // [G4][U-A8-OFFTRACK] off-mesh recovery.
+            //
+            // FIXED 2026-08-25. The old version re-aimed velocity + heading toward a
+            // gate and multiplied car_speed_ by 0.6, but it NEVER MOVED THE CAR back
+            // onto the drivable surface. So if the re-aim did not by itself clear the
+            // boundary, this branch ran again the next frame and the 0.6 COMPOUNDED.
+            // Measured in verify/a8_velvec_20260825/tb_A.txt: 4198.28 -> 21.88, which
+            // is 0.6^10.3 to three figures — ten consecutive frames of decay with no
+            // recovery, after which the race logic respawned the car. That
+            // decay-to-respawn loop is what floors the gate-(a) median.
+            //
+            // It was latent before and became load-bearing at the corrected time
+            // base, where the car covers ground 3x faster and reaches the boundary
+            // far more often. The bug is the missing relocation, not the time base.
+            //
+            // Now: RELOCATE FIRST (RecoverOffMesh finds a VERIFIED on-mesh point via
+            // FindOnMeshHeading and moves the car there, so the next frame starts on
+            // the mesh and this branch cannot re-fire indefinitely), then re-aim
+            // toward the gate ahead ONLY IF a short probe in that direction is itself
+            // on-mesh — otherwise keep the heading RecoverOffMesh verified.
+            RecoverOffMesh();
             if (!gates_.empty()) {
                 const int n = static_cast<int>(gates_.size());
                 const float* g = gates_[static_cast<std::size_t>((race_[0].gate + 3) % n)].center;  // a few AHEAD
                 float dx = g[0] - car_pos_[0], dz = g[2] - car_pos_[2];
                 float dl = std::sqrt(dx*dx + dz*dz);
                 if (dl > 1e-3f) {
-                    const float sp = car_speed_ * 0.6f;   // damped
-                    car_vel_[0] = dx/dl * sp; car_vel_[2] = dz/dl * sp;
-                    car_yaw_ = std::atan2(dz, dx); car_speed_ = sp;
-                } else { car_vel_[0] = car_vel_[2] = 0.f; car_speed_ = 0.f; }
-            } else { RecoverOffMesh(); }   // no gates (track-view / pre-race): active steer-back
+                    // Probe one short step along the gate chord. Same 0.3 step
+                    // RecoverOffMesh uses for its own on-mesh verification.
+                    bool pok = false;
+                    GroundHeight(car_pos_[0] + dx/dl * 0.3f,
+                                 car_pos_[2] + dz/dl * 0.3f, &pok);
+                    if (pok) {
+                        const float sp = car_speed_;      // keep RecoverOffMesh's speed;
+                                                          // do NOT damp again here (that
+                                                          // double-damp was the compounding)
+                        car_vel_[0] = dx/dl * sp; car_vel_[2] = dz/dl * sp;
+                        car_yaw_ = std::atan2(dz, dx);
+                    }
+                }
+            }
+            // A8: the integrated basis is the authority for the body heading, so any
+            // re-aim above must re-seed it. RecoverOffMesh re-seeds for its own case;
+            // this covers the gate re-aim that may have overwritten car_yaw_ after it.
+            Vehicle::VehiclePhysics_ResetOrientation(0, car_yaw_);
         }
     } else {
     const float fwd[3] = {std::cos(car_yaw_), 0.f, std::sin(car_yaw_)};

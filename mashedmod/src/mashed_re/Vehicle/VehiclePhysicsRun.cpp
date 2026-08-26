@@ -2,7 +2,11 @@
 // See VehiclePhysicsRun.h for status + the documented approximations.
 //
 // Dispatcher scale constants harvested from FUN_00470c70 (Ghidra pool13, 2026-06-17):
-//   _DAT_005cea80 = 0x3b360bc0 = 0.0027809   (suspDtTerm = dt * this)
+//   _DAT_005cea80 = 0x3b360bc0 = 0.00277780  (= 1/360; suspDtTerm = dt * this)
+//     CORRECTED 2026-08-26: this said 0.0027809, which is a WRONG DECIMAL GLOSS —
+//     0.0027809f compiles to 0x3b363fc3, not the image's 0x3b360bc0. The hex was
+//     right and the decimal was not, which is the documented 'plate hex gloss'
+//     trap in this project. Verified by reading .rdata straight out of the PE.
 //   _DAT_005ccd08 = 0x453b8000 = 3000.0      (suspScale  = this / suspDtTerm)
 #include "VehiclePhysicsRun.h"
 #include "VehicleStruct.h"
@@ -71,6 +75,13 @@ long long* PerfBatchTestCounter() { return prof::g_on ? &prof::f_batchTests : nu
 // Chain entry points (defined in their .cpp; declared here to avoid a header churn).
 int  VehicleInit(int slot, int trackType);                                       // A3 0x0046b540
 void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xf); // A4 0x00470670
+
+// A8 body-orientation integrator (BodyOrientationIntegrate.cpp = FUN_0046e9e0's
+// orientation half + the 0x004c4680 ortho-normalize). Wired 2026-08-25.
+void  BodyOrient_Init(float* m, float yaw);
+void  BodyOrient_IntegrateStep(float* m, const float omega[3]);
+void  BodyOrient_OmegaFromSteer(void* rec, float dtMs, const std::uint8_t* in, float omegaOut[3]);
+float BodyOrient_Heading(const float* m);
 extern int g_torqueRingPhase;   // DAT_007f101c (defined in ForceIntegratorStubs.cpp)
 
 // Build a vehicle WORLD-transform RwMatrix (the layout RwV3dTransformPointsCPU /
@@ -92,22 +103,50 @@ static void BuildYawMatrix(float yaw, float* m /*[16]*/) {
 
 namespace {
 constexpr std::size_t kRec   = 0xd04;          // record stride (== sizeof, vehicle.md)
-constexpr float       kSuspDtK = 0.0027809f;   // _DAT_005cea80
+constexpr float       kSuspDtK = 0.0027778f;   // _DAT_005cea80 = 0x3b360bc0 (= 1/360)
+                                               // was 0.0027809f -> 0x3b363fc3, WRONG BITS
 constexpr float       kSuspNum = 3000.0f;      // _DAT_005ccd08
-// [U-A8-SUBSTEP] the dispatcher FUN_00470c70 runs the chain in <=0x32 (50) chunks
-// (local_24 = min(remaining, 0x32)) over the frame's substep budget. We subdivide
-// the frame into <=kMaxSubstep fixed ~1ms steps (the dispatcher's chunks are in ms).
-constexpr int         kMaxSubstep = 50;        // 0x32 (ms chunk cap)
+// [U-A8-SUBSTEP] CORRECTED 2026-08-25. The dispatcher FUN_00470c70 takes a budget
+// of 0x32 (50) units per frame and its OUTER chunk is min(remaining, 0x32) — but
+// that outer chunk is then split again: FUN_004709a0 is called twice with 25.0
+// each (inner cap 0x19 = 25), and FUN_0046e9e0 runs once per vehicle per call
+// (twice only on the collision retry guarded by `if (1 < iVar10)` at LAB_00470c47).
+// So the substep granularity is 25 units, not 50. Decode:
+// re/analysis/data/A8_substep_budget_20260825.md (Q2).
+constexpr int         kMaxSubstep = 25;        // 0x19 (FUN_004709a0 inner chunk)
 
 unsigned char g_records[16 * kRec];            // the 0xd04 record array (mirror of DAT_008815a0)
 bool          g_inited = false;
 
-// WS-A COUPLING (2026-06-29): persistent WORLD forward body speed per car — the
-// rigid body the recovered coupling law (FUN_0047eb30) drives. The chain's INTERNAL
-// velocity persists in the record (+0x9b0, g_records); this is the inertial world
-// speed that follows it through the recovered PD relaxation (gain 20). See
-// re/analysis/vehicle_coupling.md.
-float         g_bodySpeed[16] = { 0.f };
+// A8 (2026-08-25): persistent integrated BODY ORIENTATION basis per car — the
+// state FUN_0046e9e0's `dst[row] = src[row] + (omega x src[row])` advances. This
+// REPLACES the old `g_bodySpeed` scalar + PD relaxation, which existed only to
+// carry a heading-plus-scalar motion model that cannot represent slip.
+// The original keeps this basis in the record's +0x928/+0x968 double buffer; the
+// port holds it here because our +0x928 block is already used as the contact ring
+// (SolveWheelContacts writes through it) — the deviation is stated in full in
+// BodyOrientationIntegrate.cpp's BodyOrient_Init comment. Only the storage
+// location differs; the arithmetic is the original's.
+float         g_bodyBasis[16][16] = { { 0.f } };
+bool          g_bodyBasisOk[16]   = { false };
+// Set by VehiclePhysics_ResetOrientation, reported by MASHED_MOTION_DIAG and
+// cleared there. A reseed is a HEADING DISCONTINUITY (spawn, grid placement,
+// off-mesh recovery re-aim), not an integration step, so any yaw-RATE statistic
+// must exclude the sample pair that straddles one. Without this marker a recovery
+// re-aim shows up as a huge instantaneous yaw rate and inflates the bands — the
+// same artifact class as the round-boundary respawn in the PLAY-DEMO metric.
+bool          g_bodyBasisReseed[16] = { false };
+
+// A8 position law constants (re/analysis/data/A8_position_law_20260825.md).
+// FUN_0046e9e0 builds the per-substep position increment as
+//   inc = dtMs * _DAT_005cc948 * _DAT_005cea80 * linVel
+// with the two FMULs at 0x0046e9e8 and 0x0046e9f6. kSuspDtK below is already
+// _DAT_005cea80; this is the other factor.
+// AUDITED 2026-08-26: 3.33320e-4f compiles to the WRONG BITS. The image's
+// 0x39aec33e is 0.00033333333 (= 1/3000). Same "plate hex gloss" trap as
+// kSuspDtK. Built bit-exactly from the pattern instead. Error was 0.004%.
+const     float kPosDtK = [] { std::uint32_t b = 0x39aec33e; float f;
+                               std::memcpy(&f, &b, 4); return f; }();  // _DAT_005cc948
 
 // Terrain contact soup (built from the track collision triangles) the B4 wheel
 // solver's broadphase walks via Collision::g_worldTris.
@@ -167,7 +206,7 @@ bool VehiclePhysics_Enabled() {
 
 void VehiclePhysics_Init(int carCount, int trackType) {
     std::memset(g_records, 0, sizeof(g_records));
-    for (int s = 0; s < 16; ++s) g_bodySpeed[s] = 0.f;   // WS-A coupling: reset rigid bodies
+    for (int s = 0; s < 16; ++s) g_bodyBasisOk[s] = false;   // A8: basis reseeds at first step
     // The integrator's "other cars" base (DAT_008815a0) -> our standalone array.
     g_vehicleArrayBase = reinterpret_cast<int*>(g_records);
     if (carCount < 1)  carCount = 1;
@@ -367,6 +406,17 @@ static void SolveWheelContacts(unsigned char* r, const PlayerCarIO& io, int subs
     ReassertContacts(r);
 }
 
+// A8 (2026-08-25): (re)seed a slot's body basis. Callers that teleport or re-aim
+// the car (spawn, grid placement, off-mesh recovery) must call this, otherwise the
+// integrated basis keeps the pre-teleport heading — the basis is now the authority
+// for io.yaw, so writing car_yaw_ alone no longer turns the car.
+void VehiclePhysics_ResetOrientation(int slot, float yaw) {
+    if (slot < 0 || slot >= 16) return;
+    BodyOrient_Init(g_bodyBasis[slot], yaw);
+    g_bodyBasisOk[slot] = true;
+    g_bodyBasisReseed[slot] = true;   // heading discontinuity — see the decl comment
+}
+
 void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
     VehiclePhysics_StepCar(0, dt, io);
 }
@@ -417,19 +467,116 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // The chain works in the ORIGINAL's millisecond time base: FUN_00470c70 passes
     // A4 a dt that is the integer ms chunk count (local_24 = min(remaining,0x32)),
     // and computes the per-frame suspension scale from the FRAME dt in ms:
-    //   _DAT_0088e610 (suspDtTerm) = frameMs * _DAT_005cea80 (0.0027809)
+    //   _DAT_0088e610 (suspDtTerm) = frameMs * _DAT_005cea80 (0.0027778 = 1/360)
+    //
+    // *** BOTH FACTORS OF THIS FORMULA WERE WRONG. Measured 2026-08-26 by reading
+    // the globals out of a LIVE original (verify/a8_suspglobals_20260826/):
+    //     _DAT_0088e610 = 4.33336782 (bits 0x408aaaf3), constant over the run
+    //     _DAT_0088e5f0 = 692.302185, constant; product exactly 3000
+    // and 4.33336782 / 0.00277779996 = 1559.99996, with 1560 * that constant
+    // reproducing 0x408aaaf3 EXACTLY. So the multiplicand is 1560, not the
+    // dispatcher's 50-unit budget (1560/50 = 31.20 = the measured discrepancy).
+    // WHERE 1560 COMES FROM IS NOT YET DECODED, so this is left as-is for now.
+    // The error is behaviourally INERT: every consumer of the per-wheel field
+    // derived from 0088e610 also multiplies by 0088e5f0, and the two are
+    // reciprocal through 3000, so it cancels. Detail: seventeenth follow-up of
+    // re/analysis/data/A8_velocity_vector_motion_20260825.md.
     //   _DAT_0088e5f0 (suspScale)  = _DAT_005ccd08 (3000) / suspDtTerm
     // (the chain constants — kDt 3.33e-4, etc. — are calibrated for ms, NOT seconds).
-    const float frameMs = dt * 1000.0f;
-    g_suspDtTerm = frameMs * kSuspDtK;
+    // A8 TIME BASE CORRECTED (2026-08-25). This was `dt * 1000.0f`, i.e. the wall
+    // frame time read as MILLISECONDS. That is wrong by exactly 3x, and it was the
+    // whole of the measured yaw-rate gain gap (port reached 48-57% of the original
+    // in every speed band; implied budget 52.48 units/frame vs our 16.67).
+    //
+    // The original does NOT feed the chain its wall frame time. FUN_00470c70's
+    // budget is a FIXED 50 (0x32) per frame, produced by a tick quantizer:
+    //   DAT_007f1000 pinned to 0x32          @0x004933d5 (FUN_00493390)
+    //   re-derived as uVar1*0x32             @0x00493514 (FUN_00493480), with the
+    //                                         sub-50 remainder carried in DAT_007719d4
+    //   PUSH 0x32                            @0x0042c980
+    //   forwarded verbatim: MOV ESI,[ESP+8]  @0x00425a78
+    //                       PUSH ESI; CALL 0x00470c70 @0x00425a8d
+    // and the catch-up loop iterates ceil(DAT_007f1000/50) = 1 in steady state, so
+    // the dispatcher runs once per render frame. Decode:
+    // re/analysis/data/A8_substep_budget_20260825.md.
+    //
+    // 50 units == one 1/60 s frame, from the engine's own two constants:
+    //   DAT_007f1004  = 0x3c888889 = 1/60      (the float frame dt)
+    //   _DAT_005cc948 = 0x39aec33e = 1/3000    (unit -> seconds)
+    //   50 * (1/3000) = 1/60                   -- consistent
+    // So the unit is 1/3000 s, not 1/1000 s, and the correct budget is dt*3000
+    // (exactly 50 at our fixed 60 Hz sim rate).
+    //
+    // *** APPLIED 2026-08-25 (second attempt). *** The first attempt was reverted
+    // because it failed the speed-profile gate, and that failure was WRONGLY
+    // attributed to an internal->world unit mismatch. Both parts were then settled:
+    //
+    //  - The original's world position IS the +0x928 block translation (+0x30).
+    //    Its per-frame delta equals this increment with a budget of 50 to a median
+    //    ratio of 1.0147 (X, n=1207) / 1.0077 (Z, n=1210), with ZERO discontinuities
+    //    above 0.5 across the drive. The earlier "it is contact-rebased and bounded,
+    //    so it is not the world position" reading was a REGIME ARTIFACT: that
+    //    capture holds full lock for 38 s, so the car drives a ~2-unit circle.
+    //
+    //  - Measured at MATCHED internal speed, dt*3000 reproduces the original and
+    //    dt*1000 does not (band 1500-2000):
+    //        metric        ORIGINAL   dt*1000   dt*3000
+    //        world speed     4.94      1.58      4.74
+    //        yaw rate        2.66      1.29      2.61
+    //        turn radius     1.86      1.23      1.81
+    //    Turn radius is a LENGTH, so its agreement is the unit check and it passes.
+    //
+    // What actually failed the gate was an off-mesh recovery defect in
+    // TrackRenderer (it re-aimed the car but never relocated it, so its 0.6 speed
+    // damping compounded to a respawn — 0.6^10.3, measured). That is fixed
+    // separately; see the long note on the off-mesh branch there.
+    const float frameMs = dt * 3000.0f;
+    // CORRECTED 2026-08-26. This was `frameMs * kSuspDtK` — it passed the
+    // dispatcher's per-frame BUDGET (param_1 = 50) where the original passes
+    // `*param_2`, a COURSE-LOAD CONSTANT. Two different parameters, conflated.
+    //
+    // The original (FUN_00470c70, math 0x00470f1c-0x00470f3a):
+    //     FLD [EAX] ; FMUL [0x005cea80] ; FSTP [0x0088e610]   @0x00470f28
+    //     FLD 3000.0 ; FDIV [0x0088e610] ; FSTP [0x0088e5f0]  @0x00470f3a
+    // where [EAX] = *param_2 = DAT_00803324, a hardcoded float literal
+    // 0x44C30000 = 1560.0 stored at 0x0040d3d2 in the course-load path
+    // FUN_0040d270 (sole writer; the respawn path FUN_004704c0 only reads it).
+    //
+    // 1560 * (1/360) = 13/3, whose float32 is 0x408aaaf3 = 4.33336782 — an EXACT
+    // bit match to the value MEASURED out of a live original
+    // (verify/a8_suspglobals_20260826/), and 1560/50 = 31.20 is exactly the
+    // 31.17x discrepancy that measurement showed.
+    //
+    // [UNCERTAIN] whether any other course-load path writes DAT_00803324 with a
+    // different value; the decode says this is the sole writer, so 1560 is used
+    // as a constant here rather than plumbed through a course parameter.
+    //
+    // Expected behavioural effect: NONE. Every consumer of the per-wheel field
+    // derived from suspDtTerm also multiplies by suspScale, and the two are
+    // reciprocal through 3000 — so this corrects the record CONTENTS (a 31x
+    // fidelity error) without changing any force. If a gate moves, the
+    // cancellation analysis in the seventeenth follow-up is wrong.
+    constexpr float kCourseSuspConst = 1560.0f;   // DAT_00803324 (0x44C30000)
+    g_suspDtTerm = kCourseSuspConst * kSuspDtK;
     g_suspScale  = (g_suspDtTerm != 0.f) ? (kSuspNum / g_suspDtTerm) : 0.f;
 
-    // The body-forward/wheel-axis world transform A5 needs (zeroed +0x928 wheel
-    // matrix block produced (0,0,0) -> no drive direction -> no motion). Synthesize
-    // it from the car's yaw each frame (origin position; only the rotation axes are
-    // read by A5's forward/right-axis transforms).
-    float xform[16];
-    BuildYawMatrix(io.yaw, xform);
+    // A8 (2026-08-25): the body-forward/wheel-axis world transform A5 needs IS the
+    // integrated body basis now, not a yaw matrix synthesized from io.yaw. That is
+    // the whole point of the change: with a synthesized BuildYawMatrix(io.yaw) the
+    // wheel axes are forced to agree with the velocity heading (because io.yaw was
+    // itself a lag chasing the velocity heading), so slip was unrepresentable.
+    float* basis = g_bodyBasis[slot];
+    if (!g_bodyBasisOk[slot]) { BodyOrient_Init(basis, io.yaw); g_bodyBasisOk[slot] = true; }
+    // Keep io.yaw the basis heading from here on: it feeds record +0x9d4 (above) and
+    // SolveWheelContacts' wheel placement, both of which must see the BODY heading.
+    io.yaw = BodyOrient_Heading(basis);
+    F(r, off::kForward + 0) = std::cos(io.yaw);
+    F(r, off::kForward + 8) = std::sin(io.yaw);
+
+    // A8 position accumulator: the frame's world-space position delta, summed over
+    // the substeps exactly as FUN_0046e9e0 accumulates it into the matrix
+    // translation (0x0046ea5f / 0x0046ea69 / 0x0046ea73).
+    float posDelta[3] = { 0.f, 0.f, 0.f };
 
     // Subdivide the frame ms budget into <=50ms chunks (the FUN_00470c70 chunk loop,
     // local_24 = min(remaining,0x32)); A4's dt per chunk is that ms count.
@@ -437,19 +584,82 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     int guard = 0;
     while (remMs > 0.0f && guard++ < 64) {
         float chunkMs = (remMs < (float)kMaxSubstep) ? remMs : (float)kMaxSubstep;
+
+        // --- FUN_0046e9e0 (0x0046e9e0) runs FIRST in the original's substep
+        // (FUN_004709a0 order: FUN_0046e9e0 -> FUN_0046f6c0 -> FUN_00469aa0), so
+        // position and orientation advance on the velocity/omega state the previous
+        // substep left in the record. Keep that order.
+
+        // POSITION, from the velocity VECTOR (0x0046e9fe / 0x0046ea0a / 0x0046ea14):
+        //   inc = dtMs * _DAT_005cc948 * _DAT_005cea80 * (+0x9b0,+0x9b4,+0x9b8)
+        // DEVIATION, STATED: the original zeroes this increment unless
+        // FUN_0040e350() is 6, 0xb or 0xa (gate 0x0046ea1e..0x0046ea4c). The
+        // standalone's Fi_GameMode() is a STUB returning 0
+        // (ForceIntegratorStubs.cpp:49), so consuming that gate here would zero all
+        // motion unconditionally — it would be reading a stub, not the original's
+        // mode. The gate is therefore not applied; this code path only runs during
+        // a race, which is one of the three passing modes. Porting FUN_0040e350 is
+        // tracked separately (it also gates RubberBandGate and Integrate2's mode-7
+        // branch, so it is not a one-line change).
+        {
+            const float k = chunkMs * kPosDtK * kSuspDtK;
+            posDelta[0] += k * F(r, off::kVelocity + 0);
+            posDelta[1] += k * F(r, off::kVelocity + 4);
+            posDelta[2] += k * F(r, off::kVelocity + 8);
+            // Advance io.pos within the frame so the contact solve below sees the
+            // position this substep produced, as the original's FUN_0046f6c0 does
+            // (it reads the translation FUN_0046e9e0 just wrote). The caller
+            // re-seeds io.pos from its own car_pos_ every frame.
+            io.pos[0] += k * F(r, off::kVelocity + 0);
+            io.pos[2] += k * F(r, off::kVelocity + 8);
+        }
+
+        // ORIENTATION: omega from the wheel-force arm (record +0x10 == 0, which the
+        // Ghidra pass established is the arm a normal driving car takes), then the
+        // first-order dR = omega x R row integration + ortho-normalize.
+        {
+            float w[3];
+            BodyOrient_OmegaFromSteer(r, chunkMs, input, w);
+            BodyOrient_IntegrateStep(basis, w);
+            io.yaw = BodyOrient_Heading(basis);
+            F(r, off::kForward + 0) = std::cos(io.yaw);
+            F(r, off::kForward + 8) = std::sin(io.yaw);
+        }
+
         // WS-A contacts: run the REAL ported wheel-contact solver (FUN_0046f6c0) over the
         // track tris instead of the flat SetGrounded substitute -> per-wheel slope normals
         // (+0x200) + per-wheel grounding (-> A5's mass/grounded_count load = weight transfer).
         const double tp0 = prof::g_on ? prof::NowMs() : 0.0;
         SolveWheelContacts(r, io, guard);
         if (prof::g_on) { prof::f_probeMs += prof::NowMs() - tp0; ++prof::f_substeps; }
-        g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
-        VehicleControlIntegrate(reinterpret_cast<int*>(r), chunkMs, input, xform);
-        // A6a's drive block can clear wheel states in some branches; re-assert from the
-        // cached contact result (no re-broadphase) so the next chunk stays engaged.
-        ReassertContacts(r);
         remMs -= chunkMs;
     }
+
+    // A4 (FUN_00470670) RUNS ONCE PER FRAME, OUTSIDE THE SUBSTEP LOOP — corrected
+    // 2026-08-25. It used to be called inside the loop above, which at the corrected
+    // budget meant TWICE per frame at dt=25.
+    //
+    // The original's order (FUN_00470c70): step 3 is a per-vehicle FUN_00470670,
+    // which zeroes +0xb14/18/1c at its start (0x004706af/b5/bb) then calls A5
+    // (FUN_0046ddb0), A6a (FUN_00467650) EXACTLY ONCE, and A6b (FUN_00468980).
+    // Step 5 is the substep loop FUN_004709a0 (2 x 25), which calls FUN_0046e9e0 /
+    // FUN_00469aa0 and NEVER calls A4 or A6a. Decode: the eighth follow-up of
+    // re/analysis/data/A8_velocity_vector_motion_20260825.md.
+    //
+    // This matters beyond bookkeeping: grip-clamp #6 lives at the tail of A6a and
+    // does `vel -= lateral * k`. Running A4 twice per frame applied that lateral
+    // bleed TWICE, suppressing slip. Measured slip at 2000-2600 full lock:
+    // 0.0547 (twice/frame) -> 0.0733 (once/frame), against the original's 0.2498.
+    // A real improvement in the right direction; the remaining 3.4x is still open.
+    //
+    // A4 therefore consumes the WHOLE frame budget, and sees the contact state the
+    // substep loop above left in the record — which is what the original does too,
+    // since its contacts are solved in the loop that follows A4.
+    g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
+    VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis);
+    // A6a's drive block can clear wheel states in some branches; re-assert from the
+    // cached contact result (no re-broadphase) so the next frame stays engaged.
+    ReassertContacts(r);
 
     // WS-A contacts telemetry: per-wheel contact NORMAL (+0x200) + LOAD (+0x20c, A5
     // Phase-5 weight-transfer slot) + STATE (+0x198), to prove they VARY with terrain
@@ -513,148 +723,103 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     }
 
     // ========================================================================
-    // WS-A COUPLING (2026-06-29): the recovered first-party chain->body coupling
-    // law (FUN_0047eb30 — re/analysis/vehicle_coupling.md), replacing the degenerate
-    // hard kSpeedCap clamp + TrackRenderer's kWorldVel/kYawScale gains.
+    // A8 VELOCITY-VECTOR MOTION MODEL (2026-08-25) — replaces the WS-A COUPLING
+    // block that lived here (a PD-relaxed scalar body speed + a first-order lag
+    // that chased the VELOCITY heading, with env knobs MASHED_CHAINSCALE /
+    // MASHED_ALIGNRATE / MASHED_TOPSPEED).
     //
-    // The original springs an RW-Physics proxy body to the chain's render position
-    // with PD gain _DAT_005ccd6c=20.0 and a velocity lookahead
-    // _DAT_005cd8fc*_DAT_005cf014 = 300*0.0002 = 0.06 s, then reads the integrated
-    // body transform back (renderPos=bodyPos) — a 2-body CLOSED loop. Transcribed
-    // open-loop onto a single body it DIVERGES (simulated: the +vel*0.06 lookahead
-    // self-amplifies ~1.2x/tick with no readback to cancel the 20*(anchor-pos) term).
-    // So this is the faithful single-body REDUCTION: the car body follows the chain's
-    // force-integrated velocity (+0x9b0 = the real accel ramp / throttle response)
-    // through the recovered PD relaxation (gain 20 -> inertia + smooth ramp), with a
-    // SOFT top-speed asymptote replacing the hard 45 clamp (the hard clamp is what
-    // produced "instant pin to 45"). Direction = the chain-grip heading (+0x9c0)
-    // with full lateral grip; speed emitted in WORLD units (io.drive_speed).
+    // WHY IT IS GONE. That model was heading-plus-scalar: it projected the chain
+    // velocity onto {cos,0,sin(io.yaw)}, relaxed a scalar toward the projection,
+    // and the caller re-expanded the scalar along the same axis. It is only
+    // correct while io.yaw EQUALS the velocity heading, which the alignment lag
+    // enforced. The two halves were mutually load-bearing, so the car could not
+    // slip: any independent body orientation shrank the projection by cos(slip)
+    // and collapsed the drive (measured twice, median speed 378 -> 7.28 and
+    // -> 5.56 when the orientation was wired against this block).
+    //
+    // The original has no such coupling. FUN_0046e9e0 integrates position and
+    // orientation SEPARATELY in one function, with nothing forcing them to agree:
+    //   position:    EBX[0xc..0xe] = EDI[0xc..0xe] + k*dt*ESI[0x26c..0x26e]
+    //   orientation: EBX[row]      = EDI[row] + (omega x EDI[row])
+    // Both halves are ported now: position accumulates into posDelta in the
+    // substep loop above, orientation into g_bodyBasis via BodyOrient_*.
+    //
+    // The velocity-heading alignment law the old block cited as FUN_0047eb30 is
+    // real but belongs to the DAT_006ce274-gated RWP servo bridge, which never
+    // touches +0x9bc/+0x9c0/+0x9c4 — the citation was misattributed. Evidence:
+    // re/analysis/data/A8_body_heading_law_20260825.md.
+    //
+    // MASHED_ALIGNRATE's 7.0 default and MASHED_CHAINSCALE's 0.0083 were fitted
+    // numbers with no address behind them. Both are deleted rather than
+    // re-defaulted: the internal->world scale is now the original's own
+    // _DAT_005cc948 * _DAT_005cea80 = 9.2598e-7 per ms, cited in the substep loop.
     // ========================================================================
+    io.drive_delta[0] = posDelta[0];
+    io.drive_delta[1] = posDelta[1];
+    io.drive_delta[2] = posDelta[2];
+
+    // A8 motion diag (env MASHED_MOTION_DIAG): the three quantities that decide
+    // whether the model can represent slip — the velocity heading, the BODY
+    // heading, and their difference (the slip angle) — logged next to the STEER
+    // INPUT that is supposed to drive them. Logging the input on the same line is
+    // deliberate: a previous pass drew a conclusion from a sample window in which
+    // steer was 0 on 58 of 60 frames, i.e. a regime filter masquerading as a
+    // measurement. Slot 0 only, uncapped so the cap cannot become a regime filter.
     {
-        const float dtSec = dt;            // StepCar's dt is ALREADY seconds (in.dt;
-                                           // the chain converts to ms via frameMs).
-
-        // forward axis from the integrated heading (TrackRenderer convention forward={cos,0,sin}).
-        const float fwdx = std::cos(io.yaw), fwdz = std::sin(io.yaw);
-        // chain force-integrated velocity (+0x9b0), HORIZONTAL part (internal units).
-        // The chain ramps |+0x9b0| from 0 over ~2 s (the real throttle force ramp);
-        // its horizontal magnitude is the body's forward speed, its direction is the
-        // heading the grip is driving the car toward.
-        const float cvx = F(r, off::kVelocity + 0);
-        const float cvz = F(r, off::kVelocity + 8);
-        const float horizSpeed = std::sqrt(cvx*cvx + cvz*cvz);   // internal, >=0
-        const float fwdDot     = cvx*fwdx + cvz*fwdz;            // signed (reverse < 0)
-        const float vsign      = (fwdDot >= 0.f) ? 1.0f : -1.0f;
-
-        // internal -> world unit scale: the ONE linear calibration. The original
-        // needs none (RW proxy + render share world units); the standalone chain
-        // self-limits in internal units, so convert. The chain's horizontal-speed
-        // RAMP (0 -> ~1440 over ~2 s) maps LINEARLY to the world speed ramp, so the
-        // accel ramp is the chain's real force-integration ramp (not an instant pin).
-        // Env MASHED_CHAINSCALE (replaces the old TrackRenderer kWorldVel).
-        static const float kChainScale = [] {
-            const char* e = std::getenv("MASHED_CHAINSCALE");
-            float v = e ? (float)std::atof(e) : 0.0083f;  // ~12 world top at the chain's ~1440 internal
-            return (v > 0.f) ? v : 0.0083f;
-        }();
-        // world top-speed clamp (the natural top, chain_internal*scale, sits just under
-        // it so the ramp is smooth, not a hard pin). Old effective top was 45*0.22 ~= 10
-        // world u/s; keep that scale. Env MASHED_TOPSPEED.
-        static const float kTopSpeedBase = [] {
-            const char* e = std::getenv("MASHED_TOPSPEED");
-            float v = e ? (float)std::atof(e) : 12.0f;
-            return (v > 0.f) ? v : 12.0f;
-        }();
-        // [G4] per-car top-speed spread (unchanged intent: AI tops differ so the
-        // field SEPARATES on track — the elimination rule needs cars to spread).
-        // Slot 0 (player) = base; opponents 1..3 vary. Env MASHED_AI_SPREAD=0 disables.
-        static const bool kSpread = [] {
-            const char* e = std::getenv("MASHED_AI_SPREAD");
-            return !(e && (e[0] == '0'));
-        }();
-        static const float kSlotCapMul[4] = { 1.00f, 0.86f, 1.00f, 0.92f };
-        const float kTopSpeed = kTopSpeedBase *
-            ((kSpread && slot >= 1 && slot <= 3) ? kSlotCapMul[slot] : 1.0f);
-        float desiredSp = vsign * horizSpeed * kChainScale;       // world, signed
-        if (desiredSp >  kTopSpeed)        desiredSp =  kTopSpeed;
-        if (desiredSp < -kTopSpeed * 0.4f) desiredSp = -kTopSpeed * 0.4f;   // reverse slower
-
-        // recovered PD relaxation (gain _DAT_005ccd6c @0x005ccd6c = 20.0): the body
-        // speed approaches the desired speed at rate 20/s -> inertia (coasts on
-        // release). At low fps (a -> 1) it tracks desiredSp, whose own ramp is the
-        // chain's; at high fps it adds the recovered 0.05 s smoothing.
-        constexpr float kPdGain = 20.0f;     // _DAT_005ccd6c
-        float a = kPdGain * dtSec;
-        if (a > 1.0f) a = 1.0f;
-        float& bs = g_bodySpeed[slot];
-        bs += (desiredSp - bs) * a;
-
-        // recovered ANGULAR law (FUN_0047eb30): the body faces its VELOCITY heading
-        // (the original sets body angVel.y = wrapped(bodyHeading - velHeading); the
-        // body rotates to align forward with where the chain velocity points). This
-        // is BOUNDED (|heading error| <= pi) so it is framerate-stable, unlike the old
-        // yawRate*frameMs integration which spun at low fps. The chain's grip (A6a)
-        // curves the velocity direction with the steer input -> facing it turns the
-        // car. Env MASHED_ALIGNRATE = how fast the nose snaps to velocity (1/s).
-        static const float kAlignRate = [] {
-            const char* e = std::getenv("MASHED_ALIGNRATE");
-            float v = e ? (float)std::atof(e) : 7.0f;
-            return (v > 0.f) ? v : 7.0f;
-        }();
-        constexpr float kTwoPi = 6.2831853f, kPi = 3.14159265f;
-        if (fwdDot > 0.f && horizSpeed > 1e-3f) {     // moving forward with real velocity
-            float velHeading = std::atan2(cvz, cvx);  // forward={cos,0,sin} -> heading=atan2(z,x)
-            float err = velHeading - io.yaw;
-            while (err >  kPi) err -= kTwoPi;
-            while (err < -kPi) err += kTwoPi;
-            const float frac = 1.0f - std::exp(-kAlignRate * dtSec);   // fps-independent
-            io.yaw += err * frac;
-        }
-        while (io.yaw >  kTwoPi) io.yaw -= kTwoPi;
-        while (io.yaw < -kTwoPi) io.yaw += kTwoPi;
-
-        // OUT: coupled WORLD forward speed (signed). TrackRenderer integrates
-        // pos += {cos,0,sin(io.yaw)} * io.drive_speed * dt (no kWorldVel).
-        io.drive_speed = bs;
-
-        // TEMP coupling diag (env MASHED_COUPLING_DIAG): the chain velocity vector,
-        // its forward projection, the yaw rate, and the emitted body speed — to
-        // calibrate the coupling. Slot 0 only.
-        {
-            static const bool s_cd = (std::getenv("MASHED_COUPLING_DIAG") != nullptr);
-            if (s_cd && slot == 0) {
-                static int cn = 0;
-                if (cn < 2000) {
-                    const float cvy = F(r, off::kVelocity + 4);
-                    if (std::FILE* lf = std::fopen("coupling_diag.log", "a")) {
-                        // D2 2026-08-21: velH is pinned all run (chain velocity only
-                        // scales, never rotates), so the steer->lateral term is missing.
-                        // Added steer + the FRONT-wheel steer-angle slots +0x1a8/+0x26c
-                        // that A4 (FUN_00470670) writes, to cut the search in half:
-                        // non-zero angles mean steer reaches the wheels and the loss is
-                        // downstream (A5 / contact solver producing no lateral force);
-                        // zero angles mean it never gets past A4's byte input.
-                        std::fprintf(lf, "cv=(%.2f,%.2f,%.2f) horiz=%.2f fwdDot=%.2f "
-                            "desired=%.3f bs=%.3f frameMs=%.1f yaw=%.4f velH=%.4f "
-                            "steer=%.3f in=(%u,%u) steerAng=(%g,%g) "
-                            // Per-wheel STEERED FORWARD axis (Wheel::kSteeredFwd
-                            // = +0xb4; wheel0 front = 0x16c+0xb4 = 0x220, wheel3
-                            // rear = 0x3b8+0xb4 = 0x46c). The discriminator: if the
-                            // FRONT wheel's forward axis equals the REAR's while
-                            // steerAng is non-zero, the steer rotation is never
-                            // expressed and BuildYawMatrix(io.yaw) is the loss point.
-                            "fwd0=(%.4f,%.4f) fwd3=(%.4f,%.4f)\n",
-                            cvx, cvy, cvz, horizSpeed, fwdDot, desiredSp, bs,
-                            frameMs, io.yaw,
-                            (horizSpeed > 1e-3f ? std::atan2(cvz, cvx) : 0.f),
-                            io.steer, (unsigned)input[0], (unsigned)input[1],
-                            F(r, 0x1a8), F(r, 0x26c),
-                            F(r, 0x220), F(r, 0x228),      /* wheel0 fwd x,z */
-                            F(r, 0x46c), F(r, 0x474));     /* wheel3 fwd x,z */
-                        std::fclose(lf);
-                    }
-                    ++cn;
-                }
+        static const bool s_md = (std::getenv("MASHED_MOTION_DIAG") != nullptr);
+        if (s_md && slot == 0) {
+            if (std::FILE* lf = std::fopen("motion_diag.log", "a")) {
+                const float cvx = F(r, off::kVelocity + 0), cvz = F(r, off::kVelocity + 8);
+                const float hs  = std::sqrt(cvx*cvx + cvz*cvz);
+                const float velH = (hs > 1e-3f) ? std::atan2(cvz, cvx) : 0.f;
+                float slip = velH - io.yaw;
+                while (slip >  3.14159265f) slip -= 6.28318531f;
+                while (slip < -3.14159265f) slip += 6.28318531f;
+                std::fprintf(lf,
+                    "reseed=%d gear=%d gtmr=%d ftot=[%g,%g,%g] susp=%g p15=%g p16=%g w1b=[%g,%g,%g,%g] fl=[%d,%d,%d,%d] "
+                    "b14=[%g,%g,%g] gt=[%.2f,%.2f,%.2f,%.2f,%.2f,%.2f] in=(%u,%u,%u,%u) steer=%+.3f gnd=%.1f sp=%.2f horiz=%.2f "
+                    "velH=%.4f bodyH=%.4f slip=%+.4f "
+                    "d=(%.5f,%.5f) av=(%g,%g,%g)\n",
+                    g_bodyBasisReseed[slot] ? 1 : 0,
+                    I(r, 0x490), I(r, 0x494),   // gearbox state (Integrate2.cpp:137-143)
+                    // [A8-FTOTDIR] the SUMMED per-wheel force VECTOR, p[0x1c..0x1e]
+                    // over the 4 wheels (base 0x1a4 + w*0xc4, +0x70/+0x74/+0x78).
+                    // Every comparison so far used only |fTot|; a matching magnitude
+                    // with a different DIRECTION would explain a slip gap that the
+                    // magnitudes do not. These are record fields on both sides, so
+                    // the original's can be read straight out of the .msd capture.
+                    F(r,0x214)+F(r,0x2d8)+F(r,0x39c)+F(r,0x460),
+                    F(r,0x218)+F(r,0x2dc)+F(r,0x3a0)+F(r,0x464),
+                    F(r,0x21c)+F(r,0x2e0)+F(r,0x3a4)+F(r,0x468),
+                    // [A8-FTOT] block-#4 per-wheel force inputs. Wheel w base is
+                    // 0x1a4 + w*0xc4; p[0x15]=+0x54, p[0x16]=+0x58, p[0x1b]=+0x6c,
+                    // p[-1]=-0x04. ORIGINAL (speed>1000): p15=0.15, p16=0.0125,
+                    // p[-1]=0 on all four, p[0x1b]=1091/1081/1086/536.
+                    g_suspScale, F(r,0x1f8), F(r,0x1fc),
+                    F(r,0x210), F(r,0x2d4), F(r,0x398), F(r,0x45c),
+                    I(r,0x1a0), I(r,0x264), I(r,0x328), I(r,0x3ec),
+                    // [A8-B14CADENCE] the drive-force accumulator AS SEEN AFTER the
+                    // whole substep loop — i.e. at the same point in the frame that
+                    // the original-side capture's render-tick snapshot sees it.
+                    // Compare against the consumption-time value logged inside
+                    // Integrate2 (MASHED_COUPLING_DIAG `ctrl=`). If they differ, a
+                    // render-tick snapshot of +0xb14 is a residue, not the force the
+                    // integrator used, and every figure derived from the captured
+                    // +0xb14 is invalid.
+                    F(r,0xb14), F(r,0xb18), F(r,0xb1c),
+                    // per-gear drive table +0x478..+0x48c. READ AT RUNTIME, not
+                    // grepped: a literal-offset grep cannot see a dword-index write
+                    // off a computed base, and that exact mistake has produced a
+                    // committed false "no writer anywhere" claim in this project before.
+                    F(r,0x478), F(r,0x47c), F(r,0x480), F(r,0x484), F(r,0x488), F(r,0x48c),
+                    (unsigned)input[0], (unsigned)input[1],
+                    (unsigned)input[4], (unsigned)input[5],
+                    io.steer, F(r, 0x9e0), F(r, off::kSpeed), hs,
+                    velH, io.yaw, slip,
+                    posDelta[0], posDelta[2],
+                    F(r, 0x9bc), F(r, 0x9c0), F(r, 0x9c4));
+                std::fclose(lf);
+                g_bodyBasisReseed[slot] = false;
             }
         }
     }
@@ -682,7 +847,8 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
 #endif  /* TEMP diag */
     // --- adapter OUT: read back the chain's INTERNAL velocity (round-trips through
     // record +0x9b0 to seed next frame, and feeds car_vel_ consumers — the AI host).
-    // The visible world motion is io.drive_speed + io.yaw, set by the coupling above.
+    // The visible world motion is io.drive_delta (velocity vector) + io.yaw (the
+    // integrated body basis) — both set above, independently of each other.
     io.vel[0] = F(r, off::kVelocity + 0);
     io.vel[1] = F(r, off::kVelocity + 4);
     io.vel[2] = F(r, off::kVelocity + 8);

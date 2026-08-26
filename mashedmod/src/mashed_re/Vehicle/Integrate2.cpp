@@ -105,6 +105,8 @@ constexpr float k1e7=1.0e7f;            // 005ce9f8
 const     float k9p9998e8  = Cf(0x33d6bf95);  // 005ce9f4 ~1e-7 hi-grip slope (EXACT)
 const     float k3p0518e5  = Cf(0x38000000);  // 005ce9f0 3.0518e-5 low-grip slope (EXACT)
 constexpr float k16=16.0f;              // 005cc750
+const     float k1p745329  = Cf(0x3fdf6715);  // 005cea24 1.745329 per-wheel spin divisor
+const     float k256       = Cf(0x43800000);  // 005cea20 256.0 brake-branch bias
 } // namespace a6
 
 // 0x00467650 — Vehicle_Integrate2(self, param_1, dt, wheelBlock(unused by body), input)
@@ -142,8 +144,41 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     }
     gear = Ri(v, 0x490);
     float local_cc = local_54[(gear >= 0 && gear < 6) ? gear : 0];
-    if (Ri(v, 0x494) > 0) { int r = Vc_RoundST0(); if (r < 0) r = 0; Wi(v, 0x494, r); }
-    if (Ri(v, 0x494) < 0) { int r = Vc_RoundST0(); if (r > 0) r = 0; Wi(v, 0x494, r); }
+    // GEARBOX SHIFT-TIMER COUNTDOWN — REAL LAW, 2026-08-25. These two lines used to
+    // call Vc_RoundST0() (our stub for FUN_004a2c48) which returns 0, so the 3000
+    // armed above was overwritten with 0 on the very next frame and the shift lockout
+    // NEVER HELD. Measured consequence: +0x494 read 0 on all 1096 driving frames in
+    // the standalone, the car upshifted every frame it could and sat in top gear for
+    // 89% of frames (original: 181 of 1441), and its acceleration never decayed with
+    // speed (7.4x the original's at 2000-2600).
+    //
+    // FUN_004a2c48 is NOT a game routine — it is the MSVC CRT helper `_ftol2`
+    // (x87 ST0 -> int64 in EDX:EAX, truncate toward zero, no control-word change;
+    // 154 callers image-wide across startup, frontend and input). So each of these
+    // sites is just an int cast of a float expression, and the real content is the
+    // x87 value built immediately before the CALL. Verbatim from the instruction
+    // stream (decode: re/analysis/data/A8_ftol_gearbox_timer_20260825.md):
+    //
+    //   0x004679bf  FILD dword [ESP+0x34]    ; ST0 = (float)(int)timer
+    //   0x004679c3  FSUB float [ESP+0xf8]    ; ST0 = timer - param_2   (param_2 = dt)
+    //   0x004679ca  CALL 0x004a2c48          ; EAX = (int)(timer - dt)
+    //   0x004679d1  MOV  [ESI+0x494],EAX     ; store, THEN clamp to 0 if negative
+    //   0x004679ed  FILD / 0x004679f1 FADD / 0x004679f8 CALL  ; the mirrored < 0 arm
+    //
+    // Arming constants: 0xbb8 = +3000 @0x00467978 (upshift), 0xfffff448 = -3000
+    // @0x00467990 (downshift). The step is exactly the dt argument — there is no
+    // literal 50 in this function. Independently corroborated against the original's
+    // own capture: +0x494 steps by exactly -50 per frame on 848 frames and its
+    // observed max is 2950 = 3000 - 50, which is this law with dt summing to 50 per
+    // frame (the dispatcher's per-frame budget). Store-then-clamp order preserved.
+    if (Ri(v, 0x494) > 0) {
+        int r = (int)((float)Ri(v, 0x494) - dt);   // _ftol2 truncates toward zero
+        Wi(v, 0x494, r); if (r < 0) Wi(v, 0x494, 0);
+    }
+    if (Ri(v, 0x494) < 0) {
+        int r = (int)((float)Ri(v, 0x494) + dt);
+        Wi(v, 0x494, r); if (r > 0) Wi(v, 0x494, 0);
+    }
 
     // surface/grip selection from the +0x1f0 track-id literal (verbatim ints)
     float gripIn = (float)(unsigned)input[4];
@@ -199,10 +234,28 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 Wf(v, 0xb18, Rp(p,0x20) * drive + Rf(v,0xb18));
                 Wf(v, 0xb1c, Rp(p,0x21) * drive + Rf(v,0xb1c));
             }
-            if (Fi_GameMode() == 6) { int r = Vc_RoundST0(); if (r > 3000) r = 3000; if (r < 0) r = 0; Wi(v, 0xbf4, r); }
+            // BOOST TIMER +0xbf4 — real law, 2026-08-25. Same shape as the gearbox
+            // timer: FILD +0xbf4 / FSUB dt / CALL _ftol2 at 0x00467cf1..0x00467cfe,
+            // then clamp to [0, 0xbb8=3000]. Was Vc_RoundST0() (stub -> 0).
+            // (Original runtime: nonzero on only 9 of 1441 driving frames, max 1800 —
+            //  so this one is near-inert in practice, unlike the gearbox timer.)
+            if (Fi_GameMode() == 6) {
+                int r = (int)((float)Ri(v, 0xbf4) - dt);   // _ftol2 truncates toward zero
+                if (r > 3000) r = 3000; if (r < 0) r = 0; Wi(v, 0xbf4, r);
+            }
             // [U-A6A-ST0] boost-state machine (+0xbf8 == 1 / == 2) gated on Vc_RoundST0 — shape only.
         }
-        { int r = Vc_RoundST0(); p[0] = r; }                  // *piVar12 = round(ST0) [U-A6A-ST0]
+        // PER-WHEEL SPIN p[0] — real law, 2026-08-25 (call 0x00467e7e):
+        //   (int)( dot(p[0x1f..0x21], vel(+0x9b0..)) / (p[-0xa] * _DAT_005cea24) )
+        // _DAT_005cea24 = 0x3fdf6715 = 1.745329. Was Vc_RoundST0() (stub -> 0).
+        {
+            const float den = Rp(p,-0xa) * k1p745329;
+            float r = 0.0f;
+            if (den != 0.0f) {
+                r = (Rp(p,0x1f)*Rf(v,0x9b0) + Rp(p,0x20)*Rf(v,0x9b4) + Rp(p,0x21)*Rf(v,0x9b8)) / den;
+            }
+            p[0] = (int)r;                                  // _ftol2 truncates toward zero
+        }
         if (local_58 == 0 || p[-0xf] != 2) { p[-1] = 0; }
         else { int p1 = p[-1] + 1; p[-1] = p1; if (p1 < 0x200) p[-1] = 0x200; p[0] = p[0] + (p[-1] - 0x200) * 0x40; }
 
@@ -222,7 +275,9 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                         Wp(p, 0x1e, bf * Rp(p,0x21) + Rp(p,0x1e));
                     }
                 } else if (wheel > 1) {
-                    p[-1] = Vc_RoundST0();
+                    // p[-1] brake branch (call 0x00467f93):
+                    //   (int)( (float)input[5] + _DAT_005cea20 ), 0x43800000 = 256.0
+                    p[-1] = (int)((float)(unsigned)input[5] + k256);
                 }
             }
             // orientation/spin check: any ang-vel component outside [kAngLo, kAngHi]
@@ -336,6 +391,17 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     }
     // redistribute the normal-load torque by (l_d0 - |l_78,l_74,l_70|)/l_d0
     double m78 = (double)Mag3(l_78, l_74, l_70);
+    // [A8-FRICDIAG 2026-08-25] snapshot the blend INPUTS before they are consumed.
+    // accum = c + (fTot - c)*frac, frac = (l_d0 - m78)/l_d0, where
+    //   c    = l_b8/l_b4/l_b0  (NORMAL component of the per-wheel force)
+    //   fTot = l_6c/l_68/l_64  (TOTAL per-wheel force; fTot - c is the TANGENTIAL
+    //                           i.e. friction part, the only velocity-opposing term)
+    // If frac is ~0 the tangential part is never admitted no matter how large it is,
+    // so all four of these must be logged together to tell "no friction computed"
+    // from "friction computed but blended out".
+    const float dg_cMag = Mag3(l_b8, l_b4, l_b0);
+    const float dg_fMag = Mag3(l_6c, l_68, l_64);
+    const double dg_frac = (l_d0 != 0.0) ? ((l_d0 - m78) / l_d0) : 0.0;
     double lin_b0;
     if (l_d0 - m78 == 0.0) {
         lin_b0 = (double)l_b0;
@@ -350,25 +416,61 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     // linear-velocity integration (+0x9b0..) by mass*dt over (control force + accum)
     float linTerm = dt * Rf(v, 0x54) * kDt;
 
-    // D2 DIAGNOSTIC 2026-08-22 (env MASHED_COUPLING_DIAG). The drive force at
-    // +0xb14 is speed-INDEPENDENT (Integrate2.cpp:160-182) and grip-clamp #6 is
+    // D2 DIAGNOSTIC 2026-08-22 (env MASHED_COUPLING_DIAG).
+    //
+    // CORRECTION 2026-08-25: this said "the drive force at +0xb14 is
+    // speed-INDEPENDENT". It is NOT. +0xb14 = drive * local_cc and
+    // local_cc = local_54[gear], which carries a `+ Rf(v,0x9e4)` term (line ~134),
+    // so it rises with speed. Measured in the ORIGINAL's own capture,
+    // |+0xb14..1c| by speed band: 1328114 / 2374970 / 2563372 / 3168173 / 3612376
+    // over 1-500 .. 2000-2600. It rises 2.7x. Our port's is 1318939 / 1903897 /
+    // 3041779 / 3261542 / 3476483 — i.e. the DRIVE SIDE IS ESSENTIALLY CORRECT.
+    //
+    // The rest of the note stands and is now confirmed: grip-clamp #6 is
     // lateral-only, so the accumulators l_b8/l_b4/lin_b0 below are the ONLY place
-    // a velocity-opposing term can live. If they read ~0 while the car is
-    // grounded, the friction block is not contributing and that is why the port
-    // ramps monotonically where the original oscillates and stays bounded.
+    // a velocity-opposing term can live, and they are nearly inert here.
+    //
+    // MEASURED 2026-08-25, this is the open defect. The original's acceleration
+    // FALLS (1696 -> 351 units/s) while its drive force RISES, so an opposing term
+    // must grow with speed. Backing it out of the original's own numbers
+    // (linTerm is genuinely constant: +0x54 = 0.0010 on every frame, dt and kDt
+    // constant; calibrated on the 500-1000 band where accel peaks, so that band is
+    // pinned to 0 by construction — that calibration choice is the one assumption):
+    // *** BOTH FIGURES BELOW ARE SUPERSEDED — kept only to mark the retraction. ***
+    // The "-86.4% of drive force" number came from a model that does not hold (see
+    // the ninth follow-up), and the "flat |accum|" was an artifact of A4 being
+    // called TWICE per frame, which applied grip-clamp #6's lateral bleed twice and
+    // crushed slip. With A4 corrected to once per frame (tenth follow-up), |accum|
+    // RISES with speed as the original's does:
+    //     band        ORIGINAL   PORT(now)   PORT(old, A4 x2)
+    //     1-500          60920      31008      30641
+    //     500-1000       65666      36596      30641
+    //     1000-1500      90503      53909      30641
+    //     1500-2000     128166      74250      32818
+    //     2000-2600     152506     106736      33370
+    // Remaining shortfall is a roughly uniform 1.4-2.0x, tightening at speed —
+    // not the order-of-magnitude, wrong-shape defect this comment used to describe.
+    // Detail: re/analysis/data/A8_velocity_vector_motion_20260825.md.
     // grounded flag +0x9e0 is float 4.0 (0x40800000) when all four wheels touch.
     {
         static const bool s_fd = (std::getenv("MASHED_COUPLING_DIAG") != nullptr);
         static int s_fn = 0;
-        if (s_fd && s_fn < 1500) {
+        // Cap raised 1500 -> 40000 on 2026-08-25. A 1500-sample cap is a REGIME
+        // FILTER on this recipe: it covers only the opening low-speed phase, and
+        // this measurement is specifically about how the term behaves AT SPEED.
+        // A 60-sample cap on the neighbouring A6 diag already manufactured one
+        // false finding in this project.
+        if (s_fd && s_fn < 40000) {
             ++s_fn;
             if (std::FILE* lf = std::fopen("friction_diag.log", "a")) {
                 std::fprintf(lf,
                     "spd=%.3f ctrl=(%.4f,%.4f,%.4f) accum=(%.4f,%.4f,%.4f) "
+                    "cMag=%g fMag=%g ld0=%g m78=%g frac=%g "
                     "grounded=0x%08X linTerm=%g\n",
                     Vec3Mag3((const float*)((char*)v + 0x9b0)),
                     Rf(v,0xb14), Rf(v,0xb18), Rf(v,0xb1c),
                     l_b8, l_b4, (float)lin_b0,
+                    dg_cMag, dg_fMag, (double)l_d0, m78, dg_frac,
                     (unsigned)Ri(v,0x9e0), linTerm);
                 std::fclose(lf);
             }

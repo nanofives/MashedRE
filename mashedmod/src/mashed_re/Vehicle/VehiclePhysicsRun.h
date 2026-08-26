@@ -80,13 +80,22 @@ struct PlayerCarIO {
     // the car is on the track via its own GroundHeight collision; when set, the
     // chain marks the 4 wheels grounded so the drive/suspension blocks engage.
     int grounded;           // 1 = car is in ground contact (caller's GroundHeight ok)
-    // WS-A COUPLING (2026-06-29): the recovered chain->body coupling law
-    // (FUN_0047eb30; re/analysis/vehicle_coupling.md) emits a WORLD-space forward
-    // body speed here. `vel`/`speed` stay the chain's INTERNAL velocity (they
-    // round-trip through record +0x9b0); `drive_speed` is the coupled, soft-capped,
-    // inertial world speed the caller integrates as pos += {cos,0,sin(yaw)}*this*dt
-    // (REPLACES the degenerate kWorldVel gain). 0 until the first physics step.
-    float drive_speed;      // out: coupled world forward speed (signed; <0 = reverse)
+    // A8 VELOCITY-VECTOR MOTION MODEL (2026-08-25). REPLACES the old
+    // `drive_speed` scalar (heading * scalar speed), which could not represent
+    // slip by construction: it projected the chain velocity onto {cos,0,sin(yaw)}
+    // and the caller re-expanded it along the same axis, so velocity and body
+    // heading were forced equal. FUN_0046e9e0 integrates position from the
+    // velocity VECTOR, independently of the orientation it integrates in the same
+    // function, so the port now does the same. This is the frame's accumulated
+    // WORLD-space position delta, summed over the substep loop exactly as the
+    // original accumulates it per substep:
+    //   inc = dtMs * _DAT_005cc948 * _DAT_005cea80 * (+0x9b0,+0x9b4,+0x9b8)
+    // (FMULs at 0x0046e9e8 / 0x0046e9f6; velocity reads at 0x0046e9fe / 0x0046ea0a
+    //  / 0x0046ea14; stores at 0x0046ea5f / 0x0046ea69 / 0x0046ea73).
+    // Decode: re/analysis/data/A8_position_law_20260825.md.
+    // The caller applies it as pos += drive_delta (already includes dt). 0 until
+    // the first physics step.
+    float drive_delta[3];   // out: world-space position delta for this frame
 };
 
 bool VehiclePhysics_Enabled();                       // MASHED_REAL_PHYSICS set once
@@ -103,6 +112,13 @@ void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io);
 // opponents). The caller supplies the descriptor input (io.input[4]/[5] throttle +
 // io.steer) and persists vel/yaw/pos per car. StepPlayer == StepCar(0, ...).
 void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io);
+// A8 (2026-08-25): (re)seed a slot's integrated body-orientation basis from a yaw.
+// The body basis is now persistent state inside the physics module (the original
+// keeps it in the record's +0x928 double buffer; see BodyOrientationIntegrate.cpp
+// for why the port holds it separately), so any caller that teleports or re-aims
+// the car (spawn, grid placement, off-mesh recovery) must tell the physics module,
+// otherwise the integrated basis keeps the pre-teleport heading.
+void VehiclePhysics_ResetOrientation(int slot, float yaw);
 
 }  // namespace Vehicle
 }  // namespace mashed_re

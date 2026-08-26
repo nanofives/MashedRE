@@ -40,6 +40,7 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 
 namespace mashed_re {
 namespace Vehicle {
@@ -49,6 +50,12 @@ int Fi_GameMode();        // FUN_0040e350
 namespace {
 
 // record field accessors (float / int by byte offset)
+// Bit-exact float from the image's .rdata pattern — the same Cf() idiom
+// Integrate2.cpp uses. AUDITED 2026-08-26 against the PE: five of the plain
+// decimal literals below had the WRONG BITS (the hex in each comment was right,
+// the decimal gloss was not — the documented "plate hex gloss" trap). Errors were
+// 0.0005-0.02%, so this is a bit-exactness fix, NOT a behavioural one.
+inline float Cf(std::uint32_t bits) { float f; std::memcpy(&f, &bits, 4); return f; }
 inline float&        Fb(void* v, std::size_t o) { return *reinterpret_cast<float*>(static_cast<char*>(v) + o); }
 inline std::int32_t& Ib(void* v, std::size_t o) { return *reinterpret_cast<std::int32_t*>(static_cast<char*>(v) + o); }
 
@@ -200,22 +207,22 @@ void BodyOrient_OmegaFromAngVel(void* rec, float scale, float omegaOut[3]) {
 // use it as-is rather than imposing a normalization the original does not do.
 void BodyOrient_OmegaFromSteer(void* rec, float dtMs, const std::uint8_t* in,
                                float omegaOut[3]) {
-    constexpr float kGripPerSpeed = 6.6667e-4f;   // _DAT_005ce1e8 0x3a2ec33e (1/1500)
+    const     float kGripPerSpeed = Cf(0x3a2ec33e); // _DAT_005ce1e8 = 1/1500 (EXACT)
     constexpr float kOne          = 1.0f;         // _DAT_005cc320 0x3f800000
     constexpr float kTrimClamp    = 255.0f;       // _DAT_005cd04c 0x437f0000
     constexpr float kRevDot       = -0.1f;        // _DAT_005cd0fc 0xbdcccccd
     constexpr float kSpinScale    = 1.5f;         // _DAT_005cc348 0x3fc00000
     constexpr float kPct          = 0.01f;        // _DAT_005cc328 0x3c23d70a
     constexpr float kTorqueK      = 1.0000e-4f;   // _DAT_005cd03c 0x38d1b717
-    constexpr float kDtK          = 3.334e-4f;    // _DAT_005cc948 0x39aec33e
+    const     float kDtK          = Cf(0x39aec33e); // _DAT_005cc948 = 1/3000 (EXACT)
     constexpr float kTorque100    = 100.0f;       // _DAT_00613108 0x42c80000
     constexpr float kSeedScale    = 0.5f;         // _DAT_005cc32c 0x3f000000
     constexpr float kDampNum      = 3000.0f;      // _DAT_005ccd08 0x453b8000 (same global
                                                   //   as the suspension numerator; confirmed
                                                   //   at this site, damp @0x0046edfb)
     constexpr float kDampK        = 4.0f;         // _DAT_005cc35c 0x40800000
-    constexpr float kAccumK       = 0.0020001f;   // _DAT_005ce018 0x3b03126f
-    constexpr float kSpinTerm     = 5.00029e-4f;  // _DAT_005ce268 0x3a03126f
+    const     float kAccumK       = Cf(0x3b03126f); // _DAT_005ce018 (EXACT)
+    const     float kSpinTerm     = Cf(0x3a03126f); // _DAT_005ce268 (EXACT)
 
     const float* fwd = &Fb(rec, 0x9c8);           // FUN_0046d700 -> +0x9c8/+0x9cc/+0x9d0
     float w[3] = { 0.f, 0.f, 0.f };

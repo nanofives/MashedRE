@@ -113,10 +113,25 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
         Fb(v, 0xb0c) = (vc::kOne - dot / Fb(v, 0x9e4)) * Fb(v, 0x9e4);
     }
 
-    // filter the two steer-sign inputs into the per-car scratch
-    // (+0xb24 = steer sign A, +0xb28 = steer sign B; NOT accel/brake)
-    Ib(v, 0xb24) = (input[0] == 0) ? 0 : Vc_InputFilter();
-    Ib(v, 0xb28) = (input[1] == 0) ? 0 : Vc_InputFilter();
+    // STEER HOLD-DURATION ACCUMULATORS +0xb24 / +0xb28 — real law, 2026-08-25.
+    // These were `Vc_InputFilter()`, our stub for FUN_004a2c48, which returns 0 —
+    // so both counters read 0 on every frame and the `(f + 6000)` term below was
+    // stuck at its floor. FUN_004a2c48 is the MSVC CRT helper `_ftol2`, so each
+    // site is just an int cast of the float expression built before the CALL:
+    //   00470737  FILD dword [EDI+0xb24]   ; ST0 = (float)(int)counter
+    //   0047073d  FADD float [ESP+0x1c]    ; + param_2 (dt)
+    //   00470741  CALL 0x004a2c48          ; (int)(counter + dt)
+    //   00470746  MOV  [EDI+0xb24],EAX
+    // and the mirrored +0xb28 arm at 0x00470759/0x0047075f/0x00470763. Reset to 0
+    // when the corresponding input byte is 0 (JZ at 0x00470735 / 0x00470757).
+    // So these are "how long this steer input has been held", in budget units —
+    // NOT filtered analog values, which is what the old stub name implied.
+    // Decode: re/analysis/data/A8_ftol_gearbox_timer_20260825.md (Q4).
+    // Runtime check against the original: +0xb24 is nonzero on 1430 of 1441 driving
+    // frames (0..254, 128 distinct); +0xb28 is 0 throughout that capture because it
+    // holds RIGHT lock only, i.e. input[1] == 0 — which matches this reset rule.
+    Ib(v, 0xb24) = (input[0] == 0) ? 0 : (int)((float)Ib(v, 0xb24) + dt);
+    Ib(v, 0xb28) = (input[1] == 0) ? 0 : (int)((float)Ib(v, 0xb28) + dt);
 
     const unsigned phase = static_cast<unsigned>(g_torqueRingPhase) & 0xf;
     float force = vc::kZero;
