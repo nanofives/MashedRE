@@ -1,32 +1,33 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-26T10:15:00Z",
+  "updatedAt": "2026-08-26T11:00:00Z",
   "sections": [
     {
-      "heading": "A8 — shipped this session (uncommitted)",
+      "heading": "A8 — landed on main",
       "fields": [
-        { "label": "Changes", "value": ["velocity-vector motion model (BodyOrient_* wired)", "dt*3000 time base (unit is 1/3000 s, budget 50/frame)", "off-mesh recovery relocates instead of decaying", "A4 once per frame, outside the substep loop", "all 7 _ftol2 sites ported (were stubbed to 0)", "suspDtTerm from the course constant 1560, not the frame budget", "6 wrong-bit constants made bit-exact (incl. kSuspDtK, kPosDtK, kDtK)"], "kind": "list" },
-        { "label": "Gate (a) driving-median", "value": "~1745 mean vs original 1760 — within 1%", "kind": "text" },
+        { "label": "Commits", "value": ["c5dafe5e motion model + 5 cited fidelity fixes", "3d4b3c04 21 follow-ups, 6 decode notes, global telemetry lane", "4295ff0f force-add the cited diag logs", "6d6de212 kickoff for the slip-deficit session"], "kind": "list" },
+        { "label": "Gate (a) driving-median", "value": "~1745 vs original 1760 — within 1%", "kind": "text" },
         { "label": "Gate (b) yaw rate", "value": "2.07 / 2.55 / 2.55 vs original 2.31 / 2.66 / 2.65", "kind": "text" },
-        { "label": "Force magnitude + direction", "value": "within 4-22%; lateral fraction within 2%", "kind": "text" },
-        { "label": "Grip chain / record fidelity", "value": "l_60 within 10-19%; p[0x1a] 0.14%", "kind": "text" }
+        { "label": "Force mag + direction", "value": "within 4-22%; lateral fraction within 2%", "kind": "text" },
+        { "label": "Record fidelity", "value": "p[0x1a] 1088.31 vs live original 1086.83 (0.14%)", "kind": "text" }
       ]
     },
     {
-      "heading": "The one open item — slip",
+      "heading": "Next session",
       "fields": [
-        { "label": "Gap", "value": "0.193 vs 0.250 (1.29x) at 2000-2600; 2.76x at 1000-1500", "kind": "text" },
-        { "label": "Eliminated by measurement", "value": ["grip/clamp chain (le4 saturates on both sides)", "force magnitude", "force direction", "constants"], "kind": "list" },
-        { "label": "Status", "value": "UNEXPLAINED by any input measurable this session. Do not close it by inventing a mechanism.", "kind": "text" },
-        { "label": "Untried", "value": "p[-9..-7] wheel mount offsets (reconstructible from the capture the same way)", "kind": "text" }
+        { "label": "Kickoff", "value": "re/analysis/plans/KICKOFF_slip_deficit.md (ready to paste)", "kind": "text" },
+        { "label": "The one open item", "value": "slip 1.3x short at 2000-2600, 2.5x at 1000-1500 — unexplained", "kind": "text" },
+        { "label": "Eliminated", "value": "13 candidate causes, all by measurement", "kind": "text" },
+        { "label": "Untried", "value": "p[-9..-7] wheel mount offsets (readable from the capture, no hook needed)", "kind": "text" }
       ]
     },
     {
-      "heading": "Notes for next session",
+      "heading": "Housekeeping",
       "fields": [
-        { "label": "Harness flakiness", "value": "this recipe occasionally stalls in frontend nav — ALWAYS check sample count (~1100) before comparing; a short run's bands are not comparable", "kind": "text" },
-        { "label": "Standing rules", "value": ["re-measure prior findings after any structural change (3 defects dissolved this way)", "tag every subagent claim MEASURED / DECODED / INFERRED", "re-validate a model on the build of the day", "check whether a 'local' is a pure function of record fields before hooking"], "kind": "list" },
-        { "label": "Evidence", "value": ["A8_velocity_vector_motion_20260825.md (21 follow-ups)", "A8_suspdt_formula_20260826.md", "A8_p1b_writer_20260826.md", "A8_ftol_gearbox_timer_20260825.md", "A8_substep_budget_20260825.md", "A8_position_law_20260825.md"], "kind": "list" }
+        { "label": "Unpushed", "value": "main is 88 commits ahead of upstream (84 predate this session)", "kind": "text" },
+        { "label": "Stale branch", "value": "a8-velocity-vector-motion is merged and redundant — left in place, deletion not assumed", "kind": "text" },
+        { "label": "Untracked", "value": "dbg_avail.txt (519 KB nav debug, predates this session, deliberately not committed)", "kind": "text" },
+        { "label": "Ghidra pool", "value": "all slots released (3 stale July locks cleared)", "kind": "text" }
       ]
     }
   ]
