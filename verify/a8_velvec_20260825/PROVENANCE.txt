@@ -104,3 +104,13 @@ bitexact3_*          after making 5 wrong-bit decimal literals bit-exact. No
                      movement (sub-0.02% changes). bitexact/bitexact2 were short
                      runs that stalled in frontend nav -- NOT comparable, kept only
                      as a record of the flakiness.
+
+--- a note on committing these ---
+.gitignore:18 has a project-wide `*.log`, so the 71 diag logs here were
+SILENTLY EXCLUDED by a plain `git add` -- only the .txt PLAY-DEMO extracts
+landed. The .txt files carry only PLAY-DEMO lines, so the per-frame tables in
+the analysis note cannot be re-derived from them. The logs were therefore
+force-added with `git add -f`, which follows existing precedent (6 .log files
+are already tracked under verify/, e.g. verify/r10b/headings_runA.log).
+Roughly 11 MB. If that is unwanted, the .txt extracts plus PROVENANCE are
+enough to reproduce the gate-(a) numbers but not the per-frame diag tables.

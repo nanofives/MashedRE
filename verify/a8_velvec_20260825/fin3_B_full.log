@@ -1,0 +1,348 @@
+
+=== B17 region map [winmain-entry] 0x00400000..0x009FFFFF ===
+  0x00400000 +0x0079B000  COMMIT  IMAGE   protect=0x008
+  --- totals: free=0KB commit=7788KB reserve=0KB ---
+  B17-GRAN [winmain-entry] 0x00420000 COMMIT   .text getters (0x0042b8b0/c0, credits 0x0042d5a0)
+  B17-GRAN [winmain-entry] 0x00470000 COMMIT   .text Im2D draws (0x00472c60/2f40, 0x004730b0)
+  B17-GRAN [winmain-entry] 0x005C0000 COMMIT   .rdata scale consts (1/640 @5cd5a8, 1/480 @5cc560)
+  B17-GRAN [winmain-entry] 0x00630000 COMMIT   .data boot params (0x00636ae8) + timer (0x0063d558)
+  B17-GRAN [winmain-entry] 0x00670000 COMMIT   .data race-state array (0x0067ea10)
+  B17-GRAN [winmain-entry] 0x007D0000 COMMIT   .data RW device slot (*(0x007d3ff8)) — B15 bridge
+  B17-GRAN [winmain-entry] 0x007F0000 COMMIT   .bss big buffer (0x007f0f60) + input (0x007f1044)
+  B17-GRAN [winmain-entry] 0x00890000 COMMIT   .bss menu-entry array + vtx buffer (0x00898a20/ac0)
+B17-TLS: reserved 0/0 needed granules at TLS time (seen-free; the rest were already occupied by kernel-early NLS)
+B17-PAD: image-pad arena [0x0019B2E0 .. 0x00B9B2DF] (exe owns the MASHED RVA range)
+Frontend.piz loaded OK
+  path:    original/TOASTART/Common/Frontend.piz
+  size:    1257472 bytes
+  version: 3
+  entries: 2
+  mode:    raw
+
+  name                                                             offset     length         id
+  ------------------------------------------------------------ ---------- ---------- ----------
+  TEXTURES.TXD                                                 0x00001000 0x000FBCE8 0x00001AC2
+  MAIN.BSP                                                     0x000FD000 0x00035BF8 0x00000AE1
+
+TEXTURES.TXD extracted to extracted/TEXTURES.TXD (1031400 bytes)
+RWS chunk tree:
+[0] 0x00000023 (?) size=0x000FBCDC version=0x1803FFFF @ 0x00000000
+
+  total chunks: 1 (containers: 0)
+
+TXD decode (Milestone B3):
+  OK: 8 textures, deviceId=1
+
+  #   name                     w     h  bpp fmt   mips palette
+  --- -------------------- ----- ----- ---- ----- ---- -------
+  0   skydomegs               32    32    8 PAL8     6 yes    
+  1   Shad_groundgs          128   128    8 PAL8     8 yes    
+  2   Shad_car               256   256   32 ARGB     9 -      
+  3   Shad_bild              256   256   32 ARGB     9 -      
+  4   rendergs                64    32   32 ARGB     7 -      
+  5   main                   256   256    8 PAL8     9 yes    
+  6   Gravel                 128   128   32 ARGB     8 -      
+  7   carbase                256   256    8 PAL8     9 yes    
+
+=== B17 region map [pre-initd3d9] 0x00400000..0x009FFFFF ===
+  0x00400000 +0x0079B000  COMMIT  IMAGE   protect=0x008
+  --- totals: free=0KB commit=7788KB reserve=0KB ---
+  B17-GRAN [pre-initd3d9] 0x00420000 COMMIT   .text getters (0x0042b8b0/c0, credits 0x0042d5a0)
+  B17-GRAN [pre-initd3d9] 0x00470000 COMMIT   .text Im2D draws (0x00472c60/2f40, 0x004730b0)
+  B17-GRAN [pre-initd3d9] 0x005C0000 COMMIT   .rdata scale consts (1/640 @5cd5a8, 1/480 @5cc560)
+  B17-GRAN [pre-initd3d9] 0x00630000 COMMIT   .data boot params (0x00636ae8) + timer (0x0063d558)
+  B17-GRAN [pre-initd3d9] 0x00670000 COMMIT   .data race-state array (0x0067ea10)
+  B17-GRAN [pre-initd3d9] 0x007D0000 COMMIT   .data RW device slot (*(0x007d3ff8)) — B15 bridge
+  B17-GRAN [pre-initd3d9] 0x007F0000 COMMIT   .bss big buffer (0x007f0f60) + input (0x007f1044)
+  B17-GRAN [pre-initd3d9] 0x00890000 COMMIT   .bss menu-entry array + vtx buffer (0x00898a20/ac0)
+InitD3D9: adapter mode 2560x1440 fmt=22 refresh=165
+InitD3D9: CreateDevice(HAL/HW,depthA,vsdef) -> OK hr=0x00000000 OK
+
+=== B17 region map [post-initd3d9] 0x00400000..0x009FFFFF ===
+  0x00400000 +0x0079B000  COMMIT  IMAGE   protect=0x008
+  --- totals: free=0KB commit=7788KB reserve=0KB ---
+  B17-GRAN [post-initd3d9] 0x00420000 COMMIT   .text getters (0x0042b8b0/c0, credits 0x0042d5a0)
+  B17-GRAN [post-initd3d9] 0x00470000 COMMIT   .text Im2D draws (0x00472c60/2f40, 0x004730b0)
+  B17-GRAN [post-initd3d9] 0x005C0000 COMMIT   .rdata scale consts (1/640 @5cd5a8, 1/480 @5cc560)
+  B17-GRAN [post-initd3d9] 0x00630000 COMMIT   .data boot params (0x00636ae8) + timer (0x0063d558)
+  B17-GRAN [post-initd3d9] 0x00670000 COMMIT   .data race-state array (0x0067ea10)
+  B17-GRAN [post-initd3d9] 0x007D0000 COMMIT   .data RW device slot (*(0x007d3ff8)) — B15 bridge
+  B17-GRAN [post-initd3d9] 0x007F0000 COMMIT   .bss big buffer (0x007f0f60) + input (0x007f1044)
+  B17-GRAN [post-initd3d9] 0x00890000 COMMIT   .bss menu-entry array + vtx buffer (0x00898a20/ac0)
+
+Milestone B7: granule walk over 0x00500000..0x009FFFFF — 0 granules covered, 80 blocked (first blocked at 0x
+Milestone B7: first blocked granule = 0x00500000
+Milestone B7: g_mashed_data_mapped = false
+
+Milestone B7: wedge status = INACTIVE (VirtualAlloc failed)
+
+Milestone B10: frontend boot chain start
+  [1] DataZeroFill (page-granular): zeroed 226212, skipped 0 bytes
+  [2-pre] 0x00630000 state=0x00001000 protect=0x00000008
+  [2] BootDefaultParamsInit OK
+  [3] DefaultParam_SetField00/04/08 OK; readback 0x007f0f00=0x3F333333 04=0x3F333333 08=0x3F333333 (expect 0x3f333333)
+  [4] RaceStateArrayZero OK; readback 0x0067ea10=0x00000000 0x0067ea14=0x00000000 (expect 0)
+  [5] MenuEntryArrayInit OK; readback 0x00898ac0=0x00000000 (expect 0)
+  [6] TimerSlotClear OK; readback 0x0063d558=0x00000000 (expect 0)
+  [7] MainLoopInit AV'd (expected: tunnels into MASHED code section via FUN_00495110 etc.)
+Milestone B10: frontend boot chain complete
+
+Milestone B11: DirectInput8 + keyboard device acquired (cooperative = background+nonexclusive)
+
+Milestone B14: MASHED input-globals wedge probe = OK (wrote 0xA5 to 0x007f1044, readback=0xA5)
+
+Milestone B5: uploading 8 textures for atlas
+  slot 0: 'skydomegs' 32x32 PAL8 mips=6 OK
+  slot 1: 'Shad_groundgs' 128x128 PAL8 mips=8 OK
+  slot 2: 'Shad_car' 256x256 ARGB mips=9 OK
+  slot 3: 'Shad_bild' 256x256 ARGB mips=9 OK
+  slot 4: 'rendergs' 64x32 ARGB mips=7 OK
+  slot 5: 'main' 256x256 PAL8 mips=9 OK
+  slot 6: 'Gravel' 128x128 ARGB mips=8 OK
+  slot 7: 'carbase' 256x256 PAL8 mips=9 OK
+  Milestone B5: 8/8 textures uploaded into atlas
+
+Milestone B15: RW Im2D->D3D9 bridge install = OK (fake RW device at *(0x007d3ff8); HudIm2DQuad routes to D3D9)
+
+Milestone B16: standalone RVA thunks — map_text=1 map_scale=1 scale_ok=1 thunks=6/6 (b8b0=1 b8c0=1 d5a0=1 f40=1 30b0=1 2c60=1)
+Milestone B16: MenuChromeShellA ready = YES (real MASHED menu chrome via the B15 bridge)
+
+B19a: original/TOASTART/Common/Perm.piz :: BACKGROUND.PNG decode+upload OK (340x240) -> slot 8 handle 2
+
+B19a: original/TOASTART/Common/Font36.piz :: MASHEDNEWLOGO.PNG decode+upload OK (256x128) -> slot 9 handle 3
+
+B19b: message table original/TOASTART/Common/Font36.piz/ENGLISH.DAT loaded (33626 bytes)
+B19b: menu item id=33 "Single Player" 195x39 -> slot 10 handle 4
+B19b: menu item id=34 "Multi Player" 175x39 -> slot 11 handle 5
+B19b: menu item id=35 "Championship" 214x39 -> slot 12 handle 6
+B19b: menu item id=36 "Time Trial" 148x39 -> slot 13 handle 7
+B19b: menu item id=39 "Options" 120x39 -> slot 14 handle 8
+B19b: 5 menu items ready
+
+R2-5: badges.txd 'Button' 16x32 upload OK (dict has 23 textures)
+R2-5: badges.txd 'Arrow' 16x16 upload OK
+F2 track previews: 24/24 loaded; veh 3/8
+
+#25 color-select: INTERFACE.TXD cars 10/10, vs OK, star OK (dict has 30 textures)
+
+#10 input icons: PC.TXD decode OK, 2/2 (kbd+joypad)
+
+loadicon: 256x128 decode+upload OK
+
+B19a: original/TOASTART/Common/Font36.piz :: BIGE.BMP decode+upload OK (32x32) -> slot 57 handle 48
+F1 frontend.mpg: RUNNING (512x512)
+R2-2 gamesave load: LOADED (DEADBEEF save)
+
+B19 faithful font (FGDC20): load OK (height=33.0)
+
+MenuStringTable (id->glyph-string): load OK size=20894 ids=449
+  self-check id 0x21 len=13 "Single Player"
+  self-check id 0x22 len=12 "Multi Player"
+  self-check id 0x23 len=12 "Championship"
+  self-check id 0x24 len=10 "Time Trial"
+  self-check id 0x27 len=7 "Options"
+
+B17-SUMMARY reached-main-loop chrome=YES thunks=6/6
+CAPMODE tag=00_challengeselect.bmp mode=Frontend
+NAV_DEMO phase=0 00_challengeselect ok=1 depth=1 screen=6 cur=0 nrec=3
+  WS-E lights: ambient=0xFF334D4D (RGB 51,77,77) sun=0xFF99B3B3 dir=(-0.977,-0.138,0.161)
+D3D9 world.tris mat[0]=955 tex=1
+D3D9 world.tris mat[1]=162 tex=1
+D3D9 world.tris mat[2]=523 tex=1
+D3D9 world.tris mat[3]=1660 tex=1
+D3D9 world.tris mat[4]=1914 tex=1
+D3D9 world.tris mat[5]=8197 tex=1
+D3D9 world.tris mat[6]=22 tex=0
+D3D9 world.tris mat[7]=596 tex=1
+D3D9 world.tris mat[8]=541 tex=1
+D3D9 world.tris mat[9]=48 tex=1
+D3D9 world.tris mat[10]=1131 tex=1
+D3D9 world.tris mat[11]=196 tex=1
+D3D9 world.tris mat[12]=535 tex=1
+D-S3-6 bake: dff=sky.dff lt=no batch=0 baked_v0=0x00FFFFFF
+D-S3-6 bake: dff=WhiteTyre.dff lt=YES batch=0 baked_v0=0xFF334D4D
+D-S3-6 bake: dff=RedTyre.dff lt=YES batch=0 baked_v0=0xFF334D4D
+D-S3-6 bake: dff=Crate02.dff lt=YES batch=0 baked_v0=0xFF334D4D
+D-S3-6 bake: dff=sea.dff lt=YES batch=0 baked_v0=0xFF3E5B59
+D-S3-6 bake: dff=Freighter.dff lt=YES batch=0 baked_v0=0xFF467373
+D-S3-6 bake: dff=FishingBoat.dff lt=YES batch=0 baked_v0=0xFF467373
+D-S3-6 bake: dff=CamMan.dff lt=YES batch=0 baked_v0=0xFFFFFFFF
+  F3 UV-anim: 2 .UVA rate(s); scrolling materials world=0 props=1 sky=1
+  F2 copters: 6 flying, 3 models from original/TOASTART/Common\Perm.piz (1 gameplay/rule-5)
+R4 track load OK: original/TOASTART/TRACKS/Arctic.piz — tris=16480 verts=16229 sectors=12 mats=13 textured=12 radius=80.46 props=7 (instances=23) gates=94
+  CAM-DIAG bbox=[32.3,14.2,57.2 .. -62.3,-5.3,-73.0] bbox_center=(-15.0,4.4,-7.9) bbox_R=80.5 | gate_center=(-4.6,0.4,-4.0) gate_R=55.4
+R4 pickups: 18 real powerup spawns (POWERUPS_GOLD.LUA)
+PLAY-DEMO td=0.00 steer=+0.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=0.27 steer=+0.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=0.52 steer=+0.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=0.78 steer=+0.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+CAPMODE tag=car_1_spawn.bmp mode=InRace
+SIMHZ render_fps=170.0 sim_hz=59.0 (frames=170 steps=59 span=1.00s cfg=60)
+PLAY-DEMO td=1.05 steer=+0.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=1.31 steer=+0.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=1.58 steer=+0.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=1.84 steer=+0.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+CAPMODE tag=01_grid.bmp mode=InRace
+NAV_DEMO phase=1 01_grid ok=1 depth=1 screen=6 cur=0 nrec=3
+RELIGHT_CAP tag=01_grid heading=1.54978
+R5 drive t=1.9s pos=(-25.21, 0.04, 15.78) speed=0.00
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=2.11 steer=+0.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+CAPMODE tag=car_2_drive.bmp mode=InRace
+PLAY-DEMO td=2.38 steer=+0.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=2.63 steer=+0.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=2.89 steer=+0.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+CAPMODE tag=round1_go.bmp mode=InRace
+PLAY-DEMO td=3.16 steer=+0.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=128.78
+PLAY-DEMO td=3.42 steer=+0.00 car_yaw=1.5498 pos=(-25.2,16.0) speed=459.10
+CAPMODE tag=car_3_weave.bmp mode=InRace
+PLAY-DEMO td=3.69 steer=+0.00 car_yaw=1.5498 pos=(-25.2,16.6) speed=1091.31
+PLAY-DEMO td=3.95 steer=+0.00 car_yaw=1.5498 pos=(-25.2,17.7) speed=2001.01
+SIMHZ render_fps=179.0 sim_hz=60.0 (frames=179 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=4.22 steer=+0.50 car_yaw=1.2724 pos=(-25.0,19.4) speed=2741.83
+CAPMODE tag=01_inrace_track.bmp mode=InRace
+NAV_DEMO phase=1 01_inrace_track ok=1 depth=1 screen=6 cur=0 nrec=3
+RELIGHT_CAP tag=01_inrace_track heading=1.20839
+PLAY-DEMO td=4.49 steer=+0.50 car_yaw=1.6487 pos=(-24.3,21.5) speed=1766.00
+PLAY-DEMO td=4.75 steer=+0.50 car_yaw=1.7481 pos=(-24.3,23.3) speed=1274.17
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=5.02 steer=+0.50 car_yaw=1.4138 pos=(-24.3,24.5) speed=2140.15
+PLAY-DEMO td=5.28 steer=+0.50 car_yaw=1.5260 pos=(-24.3,25.9) speed=1871.36
+PLAY-DEMO td=5.55 steer=+0.50 car_yaw=1.7178 pos=(-24.4,27.4) speed=1562.01
+PLAY-DEMO td=5.81 steer=+0.50 car_yaw=1.3764 pos=(-24.3,28.9) speed=2381.44
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=6.08 steer=+0.50 car_yaw=1.8166 pos=(-24.5,30.4) speed=1909.58
+PLAY-DEMO td=6.34 steer=+0.50 car_yaw=1.4752 pos=(-24.7,32.0) speed=2662.95
+PLAY-DEMO td=6.61 steer=+0.50 car_yaw=-2.5588 pos=(-24.4,34.1) speed=1657.65
+R6 ROUND END winner=car3 scores=[0,1,0,2]
+CAPMODE tag=round1_result.bmp mode=InRace
+R6 round 1 OVER t=6.6s winner=car3 (wins now: c0=0 c1=1 c2=0 c3=2)
+CAPMODE tag=01_action.bmp mode=InRace
+NAV_DEMO phase=1 01_action ok=1 depth=1 screen=6 cur=0 nrec=3
+RELIGHT_CAP tag=01_action heading=-2.62281
+PLAY-DEMO td=6.88 steer=+0.50 car_yaw=-2.9002 pos=(-25.7,33.5) speed=2460.85
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=7.14 steer=+0.50 car_yaw=3.0416 pos=(-27.8,33.3) speed=3085.96
+PLAY-DEMO td=7.41 steer=+0.50 car_yaw=2.7216 pos=(-30.0,33.8) speed=3510.21
+PLAY-DEMO td=7.67 steer=+0.50 car_yaw=2.3802 pos=(-32.3,35.3) speed=3819.39
+PLAY-DEMO td=7.94 steer=+0.50 car_yaw=2.0388 pos=(-34.1,37.5) speed=4019.32
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=8.19 steer=+0.50 car_yaw=1.7187 pos=(-35.0,40.2) speed=4138.77
+PLAY-DEMO td=8.45 steer=+0.50 car_yaw=1.3773 pos=(-35.1,43.3) speed=4218.77
+PLAY-DEMO td=8.72 steer=+0.50 car_yaw=1.0360 pos=(-34.1,46.3) speed=4267.64
+PLAY-DEMO td=8.99 steer=+0.50 car_yaw=0.6946 pos=(-32.1,48.7) speed=4297.29
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+CAPMODE tag=car_4_chase.bmp mode=InRace
+PLAY-DEMO td=9.25 steer=-0.50 car_yaw=0.9933 pos=(-29.9,51.0) speed=4323.15
+PLAY-DEMO td=9.52 steer=-0.50 car_yaw=1.3347 pos=(-28.5,53.9) speed=4330.59
+PLAY-DEMO td=9.78 steer=-0.50 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+SIMHZ render_fps=181.0 sim_hz=60.0 (frames=181 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=10.05 steer=-0.50 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=10.31 steer=-0.50 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=10.58 steer=-0.50 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=10.84 steer=-0.50 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+SIMHZ render_fps=179.0 sim_hz=60.0 (frames=179 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=11.11 steer=-0.50 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=11.38 steer=-0.50 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=11.64 steer=-0.50 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=11.91 steer=-0.50 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+SIMHZ render_fps=181.0 sim_hz=60.0 (frames=181 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=12.17 steer=-0.50 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=12.44 steer=-0.50 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+CAPMODE tag=round2_go.bmp mode=InRace
+PLAY-DEMO td=12.70 steer=-0.50 car_yaw=1.5061 pos=(-25.2,15.8) speed=41.24
+PLAY-DEMO td=12.97 steer=-0.50 car_yaw=1.5487 pos=(-25.2,15.9) speed=342.27
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=13.24 steer=-0.50 car_yaw=1.6710 pos=(-25.2,16.3) speed=812.55
+PLAY-DEMO td=13.50 steer=-0.50 car_yaw=1.9454 pos=(-25.4,17.2) speed=1684.32
+PLAY-DEMO td=13.77 steer=-0.50 car_yaw=2.2868 pos=(-26.2,18.5) speed=2481.53
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=14.03 steer=+1.00 car_yaw=2.5005 pos=(-27.8,19.9) speed=3097.66
+PLAY-DEMO td=14.30 steer=+1.00 car_yaw=1.8204 pos=(-29.2,21.8) speed=3402.83
+PLAY-DEMO td=14.56 steer=+1.00 car_yaw=1.1404 pos=(-29.2,24.3) speed=3580.11
+PLAY-DEMO td=14.83 steer=+1.00 car_yaw=0.4604 pos=(-27.5,26.3) speed=3686.64
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=15.09 steer=+1.00 car_yaw=-0.2197 pos=(-24.9,26.9) speed=3749.17
+PLAY-DEMO td=15.36 steer=+1.00 car_yaw=1.3095 pos=(-24.4,27.7) speed=2401.63
+R6 ROUND END winner=car1 scores=[0,3,1,0]
+CAPMODE tag=round2_result.bmp mode=InRace
+R6 round 2 OVER t=15.5s winner=car1 (wins now: c0=0 c1=3 c2=1 c3=0)
+PLAY-DEMO td=15.63 steer=+1.00 car_yaw=1.4779 pos=(-24.4,29.2) speed=1854.70
+PLAY-DEMO td=15.89 steer=+1.00 car_yaw=1.8432 pos=(-24.5,30.6) speed=1506.76
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+CAPMODE tag=car_5_chase.bmp mode=InRace
+PLAY-DEMO td=16.16 steer=+1.00 car_yaw=1.1631 pos=(-24.5,32.0) speed=2251.26
+PLAY-DEMO td=16.42 steer=+1.00 car_yaw=2.5328 pos=(-24.9,32.9) speed=1746.40
+PLAY-DEMO td=16.69 steer=+1.00 car_yaw=1.8528 pos=(-25.9,34.1) speed=2438.43
+PLAY-DEMO td=16.95 steer=+1.00 car_yaw=1.1728 pos=(-25.9,36.1) speed=2947.63
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=17.22 steer=+1.00 car_yaw=0.4927 pos=(-24.5,37.8) speed=3292.54
+PLAY-DEMO td=17.49 steer=+1.00 car_yaw=-0.1873 pos=(-22.1,38.4) speed=3512.22
+PLAY-DEMO td=17.75 steer=+1.00 car_yaw=-0.8673 pos=(-19.7,37.3) speed=3646.20
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=18.02 steer=+1.00 car_yaw=-0.2550 pos=(-18.0,36.0) speed=2131.05
+PLAY-DEMO td=18.28 steer=+1.00 car_yaw=-0.0040 pos=(-16.0,35.9) speed=154.86
+PLAY-DEMO td=18.55 steer=+1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=18.81 steer=+1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=19.08 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=19.34 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=19.61 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=19.88 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=20.13 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=20.39 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=20.66 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=20.92 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+SIMHZ render_fps=181.0 sim_hz=60.0 (frames=181 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=21.19 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=21.45 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+CAPMODE tag=round3_go.bmp mode=InRace
+PLAY-DEMO td=21.72 steer=-1.00 car_yaw=-2.8338 pos=(-25.3,15.8) speed=269.06
+PLAY-DEMO td=21.99 steer=-1.00 car_yaw=-2.6451 pos=(-25.6,15.6) speed=622.72
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=22.25 steer=-1.00 car_yaw=-2.2149 pos=(-26.1,15.2) speed=1367.59
+PLAY-DEMO td=22.52 steer=-1.00 car_yaw=-1.5405 pos=(-26.5,14.0) speed=2141.07
+PLAY-DEMO td=22.78 steer=-1.00 car_yaw=-0.8605 pos=(-26.0,12.3) speed=2735.04
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=23.03 steer=-1.00 car_yaw=-0.2229 pos=(-24.3,11.1) speed=3130.60
+PLAY-DEMO td=23.30 steer=-1.00 car_yaw=0.4571 pos=(-21.9,11.3) speed=3411.01
+PLAY-DEMO td=23.56 steer=-1.00 car_yaw=2.2891 pos=(-22.0,12.8) speed=2277.92
+PLAY-DEMO td=23.83 steer=-1.00 car_yaw=-2.8146 pos=(-23.4,13.2) speed=1707.98
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=24.09 steer=-1.00 car_yaw=-2.1345 pos=(-24.6,12.4) speed=2409.10
+R6 ROUND END winner=car1 scores=[0,5,2,0]
+CAPMODE tag=round3_result.bmp mode=InRace
+R6 round 3 OVER t=24.3s winner=car1 (wins now: c0=0 c1=5 c2=2 c3=0)
+PLAY-DEMO td=24.36 steer=-1.00 car_yaw=-1.4545 pos=(-25.1,10.5) speed=2927.42
+PLAY-DEMO td=24.63 steer=-1.00 car_yaw=-0.7745 pos=(-24.3,8.4) speed=3279.81
+PLAY-DEMO td=24.89 steer=-1.00 car_yaw=-0.0944 pos=(-22.1,7.2) speed=3504.86
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=25.16 steer=-1.00 car_yaw=2.2502 pos=(-22.0,8.5) speed=2312.66
+PLAY-DEMO td=25.42 steer=-1.00 car_yaw=2.8877 pos=(-23.5,9.5) speed=2830.18
+PLAY-DEMO td=25.69 steer=-1.00 car_yaw=-2.7155 pos=(-25.7,9.5) speed=3215.65
+PLAY-DEMO td=25.95 steer=-1.00 car_yaw=-2.0354 pos=(-27.6,7.9) speed=3464.76
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=26.22 steer=-1.00 car_yaw=-1.3554 pos=(-28.1,5.4) speed=3618.23
+PLAY-DEMO td=26.49 steer=-1.00 car_yaw=-0.6754 pos=(-26.9,3.0) speed=3709.76
+PLAY-DEMO td=26.75 steer=-1.00 car_yaw=0.0047 pos=(-24.4,1.9) speed=3763.20
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=27.02 steer=-1.00 car_yaw=0.6847 pos=(-21.7,2.6) speed=3793.99
+PLAY-DEMO td=27.28 steer=-1.00 car_yaw=2.3119 pos=(-22.1,4.3) speed=2491.55
+PLAY-DEMO td=27.55 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=27.81 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=28.08 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=28.34 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=28.61 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=28.88 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+PLAY-DEMO td=29.14 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=29.41 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=29.67 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+PLAY-DEMO td=29.94 steer=-1.00 car_yaw=1.5498 pos=(-25.2,15.8) speed=0.00
+SIMHZ render_fps=180.0 sim_hz=60.0 (frames=180 steps=60 span=1.00s cfg=60)
+CAPMODE tag=02_back_to_menu.bmp mode=Frontend
+NAV_DEMO phase=2 02_back_to_menu ok=1 depth=1 screen=6 cur=0 nrec=3
+NAV_DEMO phase=3 race-demo done ok=1 depth=1 screen=6 cur=0 nrec=3
