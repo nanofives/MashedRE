@@ -2654,6 +2654,64 @@ bool RenderFrame() {
                 // arrows belong to the car now; keep camera-look on the mouse
                 ci.yaw_delta = 0.f; ci.pitch_delta = 0.f;
             }
+            // A8 (2026-08-26): MASHED_STEER_HOLD — a HELD steer, full accel, for the
+            // whole run. MEASUREMENT HARNESS ONLY; it commands input, it changes no
+            // computed value.
+            //
+            // Why it exists: the original-side A8 captures are a HELD FULL LOCK. Per
+            // verify/a8_steer_20260824/orig_steerR.msd.provenance.json the argv is
+            // `--statediff-drive --statediff-drive-late --statediff-steer 1 --hold 38`,
+            // i.e. the cook injector (0x00496530) pinned full accel and steer +1 for
+            // the entire capture — steerAng0 (+0x1a8) reads +33.87 deg in 1155 of 1210
+            // driving frames. MASHED_PLAY_DEMO, which produced every port-side A8
+            // capture, is instead a FIVE-PHASE calibration ramp (:2640-2643):
+            // straight / +0.5 / -0.5 / +1.0 / -1.0. Measured on
+            // verify/a8_velvec_20260825/bitexact3_motion.log: io.steer takes exactly
+            // those five values, with 352 of 1100 frames at -1.000 — FULL LOCK LEFT
+            // while the original is turning right.
+            //
+            // So every port-vs-original slip median in the first twenty-one A8
+            // follow-ups compares a sustained right-hand turn against a mixture of
+            // left, right and straight. That is the A8 trap-6 failure (control for
+            // regime before comparing) baked into the recipe. This knob makes the two
+            // sides commandable to the same manoeuvre.
+            //
+            // Overrides every branch above deliberately, and forces accel to 1 because
+            // the original's cook always drives full accel (scenario_launch.py:853-854).
+            // MASHED_STEER_HOLD_AFTER (seconds, drive-relative, default 4) delays the
+            // hold: full accel STRAIGHT until then, hold after. Two reasons, both
+            // measured:
+            //   1. The original armed its cook LATE — the provenance argv carries
+            //      `--statediff-drive-late`. Holding from the grid is not what the
+            //      reference capture did.
+            //   2. Holding full lock from the grid drives the port straight off the
+            //      track: a 194-frame run took ELEVEN reseeds (vs 20 per 1100 on the
+            //      ramp) and the race self-terminated by td=6s, tripping the
+            //      race-ended-early safety at :1374-1378 (CAPMODE logged
+            //      mode=Frontend). A straight run-up first is what makes a sustained
+            //      turn at speed observable at all.
+            {
+                static const float s_steerHold = [] {
+                    char buf[32];
+                    const DWORD n = GetEnvironmentVariableA("MASHED_STEER_HOLD", buf,
+                                                            sizeof(buf));
+                    if (n == 0 || n >= sizeof(buf)) return 2.f;   // 2 = unset sentinel
+                    return (float)atof(buf);
+                }();
+                static const float s_steerHoldAfter = [] {
+                    char buf[32];
+                    const DWORD n = GetEnvironmentVariableA("MASHED_STEER_HOLD_AFTER",
+                                                            buf, sizeof(buf));
+                    if (n == 0 || n >= sizeof(buf)) return 4.f;
+                    return (float)atof(buf);
+                }();
+                if (s_steerHold <= 1.f && s_steerHold >= -1.f) {
+                    if (s_drive_t0 < 0.f) s_drive_t0 = t;
+                    const float td = t - s_drive_t0;
+                    di.accel = 1.f;
+                    di.steer = (td < s_steerHoldAfter) ? 0.f : s_steerHold;
+                }
+            }
             LARGE_INTEGER uA, uB; if (s_fprof) QueryPerformanceCounter(&uA);
             int simStepsThisFrame = 0;
             if (s_simHz <= 0) {

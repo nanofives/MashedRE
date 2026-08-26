@@ -114,3 +114,19 @@ force-added with `git add -f`, which follows existing precedent (6 .log files
 are already tracked under verify/, e.g. verify/r10b/headings_runA.log).
 Roughly 11 MB. If that is unwanted, the .txt extracts plus PROVENANCE are
 enough to reproduce the gate-(a) numbers but not the per-frame diag tables.
+
+--- 2026-08-26, twenty-third follow-up (iter52) ---
+cleanhold_motion.log   1097 samples, 1039/1097 frames at steer=+1.000, 50 reseeds.
+  The FIRST held-lock port capture, added to match orig_steerR.msd's held full lock.
+  git HEAD at capture: see `git log -1` for the commit adding MASHED_STEER_HOLD.
+  env: MASHED_REAL_PHYSICS=1 MASHED_RACE_DEMO=1 MASHED_PLAY_DEMO=1 MASHED_GOTO=6
+       MASHED_TRACK_SEL=0 MASHED_CAR_SEL=0 MASHED_DRIVE_HOLD=1 MASHED_WIN_POS=left-bl
+       MASHED_MOTION_DIAG=1 MASHED_STEER_HOLD=1 MASHED_STEER_HOLD_AFTER=4
+  Reduced with re/tools/statediff/a8_momentum.py (new, committed) against
+  verify/a8_steer_20260824/orig_steerR.msd --orig-steer-min 33.0 --port-steer-min 0.9.
+  VERDICT: negative. Controlling the manoeuvre did NOT close the slip gap
+  (2.70/4.12/1.77/1.36x), and the run is LESS clean than the ramp it replaced
+  (50 reseeds vs 20, median speed 897 vs 1811, original 1941). n=60/57 at the top
+  two bands, so those are weak. Do not quote them as if they were solid.
+  A discarded 194-sample first attempt (hold from the grid) self-terminated at
+  td=6s via the race-ended-early safety; not kept.

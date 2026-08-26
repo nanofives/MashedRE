@@ -1650,3 +1650,281 @@ not explained by any input this session has been able to measure.
 
 That is the handoff state. It is a much narrower and better-instrumented question than
 the one this session opened with, and it should NOT be closed by inventing a mechanism.
+
+---
+
+# Twenty-second follow-up — the force->velocity application MATCHES; the comparison run is REGIME-CONTAMINATED
+
+Tool: `re/tools/statediff/a8_momentum.py` (new, committed). The previous session's
+band reducers were ad-hoc and were not preserved, so none of the numbers above could
+be re-derived. This one is committed so they can be.
+
+## Elimination 5: the velocity-turn momentum identity matches on both sides
+
+Everything measured up to the twenty-first follow-up verified the INPUTS (force,
+grip, constants) and the OUTPUTS (slip, yaw, speed). The transfer between them was
+never checked. Note that "force matches AND slip differs" is by itself near-
+tautologically a statement that the slip->force map differs, so restating it as a
+cornering-stiffness ratio adds nothing.
+
+What can be checked without circularity (trap 3) is the OTHER half of the loop, as a
+PER-SIDE identity between two measured quantities:
+
+```
+    d(velH)/dt = F_lat / (m * |v|)        F_lat = component of F perpendicular to v
+```
+
+Only the perpendicular component enters, so this is immune to the longitudinal drive
+force (+0xb14) and to gravity, neither of which is in the summed per-wheel force.
+Solved for an effective dt per frame, driving-only, grounded, consecutive frames,
+reseed pairs dropped, **steer regime matched** (original +0x1a8 >= 33.0 deg, port
+`io.steer` >= 0.9):
+
+| band | ORIG eff dt | PORT eff dt | port/orig |
+|---|---:|---:|---:|
+| 500-1000 | 0.19202 | 0.22190 | **1.156** |
+| 1000-1500 | 0.28949 | 0.27163 | **0.938** |
+| 1500-2000 | 0.43544 | 0.45168 | **1.037** |
+| 2000-2600 | 0.49860 | 0.55781 | **1.119** |
+
+Within 6-16% in every band, straddling 1.0. **The force->velocity application is not
+the defect.** Fifth candidate eliminated.
+
+(The effective dt is 0.19-0.56 rather than 1/60, i.e. 12-33x, and it grows with
+speed. So the identity does not close in absolute terms with m=1000 on EITHER side --
+a units/normalisation gap, or a second lateral force larger than the per-wheel sum.
+It scales the same way on both sides, which is what licenses the ratio. The absolute
+value is NOT interpreted here and should not be quoted as a dt.)
+
+## Elimination 6: the steer regimes were mismatched, and matching them changes nothing
+
+MEASURED. `orig_steerR.msd` is a HELD FULL-LOCK RIGHT: `steerAng0` = +33.87 deg in
+**1155 of 1210** driving frames (95.5%). The port run is not: `io.steer` takes five
+discrete values, and **352 of 1100 frames are at -1.000, full lock LEFT**, with 269
+at +1.000, 300 at +0.500, 120 at -0.500, 59 at 0.000.
+
+So every slip median quoted above this follow-up is an uncontrolled comparison
+(trap 6) -- a sustained right-hand turn against a mixture of left, right and
+straight. I expected this to be the whole answer. **It is not:**
+
+| band | slip x, steer UNMATCHED | slip x, steer MATCHED |
+|---|---:|---:|
+| 500-1000 | 5.56 | 5.38 |
+| 1000-1500 | 3.98 | 3.35 |
+| 1500-2000 | 1.92 | 1.55 |
+| 2000-2600 | 1.36 | 1.29 |
+
+Hypothesis refuted. Sixth candidate eliminated. Recording it because the regime
+mismatch is real and every future comparison must control for it even though it did
+not explain this gap.
+
+## NEW, and partial: the port reseeds its body basis ~once a second, and a reseed ZEROES slip
+
+MEASURED, port side, 1100-frame run: **20 reseeds**, gap min 14 / median 27 / max 227
+frames. `g_bodyBasisReseed` is set only by `VehiclePhysics_ResetOrientation`
+(`VehiclePhysicsRun.cpp:409-418`), whose callers are teleports and re-aims -- spawn,
+grid placement, off-mesh recovery.
+
+Slip against frames-since-last-reseed, driving frames:
+
+| age | 0 | 1 | 2 | 4 | 7 | 11 | >=12 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| median \|slip\| | 0.0059 | 0.0107 | 0.0133 | 0.0192 | 0.0231 | 0.0278 | **0.0907** |
+
+Monotonic. **A reseed zeroes slip and it takes more than 12 frames to rebuild**, and
+~29% of driving frames sit inside that recovery window. Excluding the tail:
+
+| band | age>=0 | age>=12 | age>=20 | age>=30 | ORIGINAL |
+|---|---:|---:|---:|---:|---:|
+| 500-1000 | 0.0129 | 0.0082 | 0.0083 | 0.0105 | 0.0946 |
+| 1000-1500 | 0.0214 | 0.0284 | 0.0491 | 0.0461 | 0.0795 |
+| 1500-2000 | 0.0997 | 0.1102 | 0.1338 | 0.1445 | 0.1911 |
+| 2000-2600 | 0.1833 | 0.1833 | 0.1875 | 0.1906 | 0.2494 |
+
+So reseed contamination is a **genuine partial contaminant of the mid bands** --
+1000-1500 goes 3.7x -> 1.6x short, 1500-2000 goes 1.92x -> 1.32x -- and explains
+**nothing** at 500-1000 (which gets worse) or 2000-2600 (0.1833 -> 0.1875, flat).
+
+Two caveats, stated so this is not over-read:
+1. `age>=N` is itself a regime filter (trap 6). Frames far from a reseed correlate
+   with easier driving, and `n` falls sharply, so the age>=20/30 columns are
+   indicative, not solid.
+2. This does not name a physics defect. It says the COMPARISON RUN is contaminated:
+   the port is being relocated roughly once per second, so it is not performing the
+   sustained manoeuvre the original capture performs.
+
+## What this leaves, and the next measurement
+
+Six candidates are now eliminated by measurement: grip/clamp chain, force magnitude,
+force direction, the constants, the force->velocity application, and the steer-regime
+mismatch. The remaining slip deficit after regime control is **~1.3x at 1500-2600 and
+~5x at 500-1000**, and part of the mid-band figure is reseed artifact.
+
+The next measurement is a CLEAN PORT RUN, not more analysis of this one: a sustained
+full-lock turn with **zero off-mesh recoveries**, compared against `orig_steerR.msd`.
+Until such a run exists, the size of the residual is not established -- and the
+low-speed 5x, which no filter touches, is the part that most needs it.
+
+Still true, and still the rule: do not close this by inventing a mechanism.
+
+---
+
+# Twenty-third follow-up — the clean run was attempted and FAILED TO BE CLEAN; a better observable fell out
+
+## The recipe could not command a matched manoeuvre, so a knob was added
+
+`MASHED_PLAY_DEMO` is a five-phase scripted steer ramp (`exe_main.cpp:2640-2643`):
+straight / +0.5 / -0.5 / +1.0 / -1.0. It cannot hold a lock. Added
+**`MASHED_STEER_HOLD`** (+ `MASHED_STEER_HOLD_AFTER`, default 4 s) — measurement
+harness only, commands input, changes no computed value — mirroring the original's
+cook, which per `orig_steerR.msd.provenance.json` ran
+`--statediff-drive --statediff-drive-late --statediff-steer 1 --hold 38`.
+
+First attempt held from the grid and **self-destructed**: 194 samples, 11 reseeds, and
+the race self-terminated by td=6 s, tripping the race-ended-early safety at
+`exe_main.cpp:1374-1378` (`CAPMODE ... mode=Frontend`). Hence the delay, which also
+matches the original's `--statediff-drive-late`.
+
+## The clean run: `verify/a8_velvec_20260825/cleanhold_motion.log`, 1097 samples
+
+Steer is now genuinely held: **1039 of 1097 frames at +1.000**, 58 at 0.0 (the run-up).
+Elimination 5 reconfirmed a third time, on a third regime — momentum-identity
+effective dt, port/orig: **1.064 / 0.887 / 1.013 / 1.033**.
+
+**But the run is NOT clean, and it is LESS clean than the ramp it replaced:**
+
+| | ramp run | held-lock run |
+|---|---:|---:|
+| reseeds per ~1100 frames | 20 | **50** |
+| driving-only median horiz speed | 1811 | **897** |
+| ORIGINAL, same manoeuvre | -- | **1941**, grounded, 1150 usable pairs |
+
+And the slip gap did not close. It moved without shrinking:
+
+| band | ramp, steer-matched | held lock | ORIGINAL |
+|---|---:|---:|---:|
+| 500-1000 | 5.38x | **2.70x** | 0.0946 |
+| 1000-1500 | 3.35x | **4.12x** | 0.0795 |
+| 1500-2000 | 1.55x | **1.77x** | 0.1911 |
+| 2000-2600 | 1.29x | **1.36x** | 0.2494 |
+
+`n` at the top two bands is 60 and 57, so those two are weak. The experiment as framed
+in the twenty-second follow-up is **negative**: controlling the manoeuvre does not
+close the gap, and the "zero off-mesh recoveries" precondition proved unreachable.
+
+## What fell out of the failure, and it is a better handle than slip
+
+MEASURED: **given the same command, the original sustains a full-lock turn at median
+speed 1941 while staying grounded for 1150 consecutive pairs; the port drops to median
+897 and needs relocating 50 times.** The port cannot execute the manoeuvre the
+reference capture performs.
+
+INFERRED, and offered as a hypothesis to test rather than a conclusion: a car with too
+little slip has too much lateral grip, so at full lock it describes a TIGHTER radius
+than the original and leaves the mesh on the inside. That would make the off-mesh rate
+and the slip deficit the same defect seen twice. It is consistent with the numbers
+above but it is NOT established — the per-band `d(velH)/dt` comparison is mixed
+(port turns 5x faster than the original at 500-1000, but comparably at 1000-1500), so
+a single-radius story does not yet fit the data.
+
+Why this is a better observable than slip: "the port cannot hold a full-lock turn at
+speed, and leaves the track 2.5x more often" is gameplay-visible, needs no matched
+capture, and has a much larger signal than a 1.36x median-slip ratio at n=57.
+
+## Status
+
+**Seven** candidates eliminated by measurement: grip/clamp chain, force magnitude,
+force direction, constants, force->velocity application, steer-regime mismatch, and
+now matched-manoeuvre control. The slip deficit survives all of them.
+
+Per the kickoff's closing rule, this is the legitimate stopping point: **the gap needs
+a mechanism nobody has identified, and the matched-manoeuvre measurement route is
+blocked because the port cannot perform the manoeuvre.** The turn-radius / off-mesh-rate
+observable is the recommended next handle. It has NOT been chased, and it must not be
+written up as if it had.
+
+---
+
+# Twenty-fourth follow-up — TURN RADIUS MATCHES; my tighter-radius hypothesis is refuted and the off-mesh observable is WITHDRAWN
+
+Chased the handle the previous follow-up proposed. It does not survive, and two of my
+own claims come back with it.
+
+## REFUTED: the port does not turn tighter. Turn radius MATCHES.
+
+Radius is purely geometric — `r = |v|·dt/dθ` — and both sides sample at 60 Hz, so
+`|v| / |Δ velH per frame|` is the radius up to a constant common to both. Held-lock
+port run against `orig_steerR.msd`, steer matched, grounded, consecutive frames:
+
+| band | ORIG radius | PORT radius | port/orig |
+|---|---:|---:|---:|
+| 500-1000 | 43050 | 38524 | **0.895** |
+| 1000-1500 | 40855 | 42098 | **1.030** |
+| 1500-2000 | 42253 | 46174 | **1.093** |
+| 2000-2600 | 51313 | 57007 | **1.111** |
+
+**Within 3-11% in every turning band**, and the one band where the port is tighter is
+tighter by 10%, not the 2.5x the hypothesis needed. The twenty-third follow-up's
+"too much lateral grip means a tighter radius, so both symptoms are one defect" is
+**dead by measurement.** It was tagged INFERRED there; it is now false.
+
+This is the most interesting number in A8. **Slip differs by up to 4x while the
+trajectory that slip produces matches to within 11%.** The gameplay-visible output
+agrees; the internal state variable does not.
+
+## RETRACTED: the 897-vs-1941 speed gap is a recovery artifact, not a physics difference
+
+The previous follow-up reported the port's median driving speed as 897 against the
+original's 1941 and called it "the port cannot execute the manoeuvre". The mechanism
+is mundane: `RecoverOffMesh` sets `sp = car_speed_ > 4 ? car_speed_ * 0.5f : 4`
+(`TrackRenderer.cpp:1989`) — **every recovery halves the speed** — and the run took
+**50** of them. Fifty speed-halvings is the whole gap. It is not evidence about the
+physics.
+
+## WITHDRAWN: off-mesh rate is a COLLISION-SCAFFOLD measure, not a fidelity signal
+
+The off-mesh branch is gated on `GroundHeight(nx, nz, &nok)` (`TrackRenderer.cpp:2589`)
+— the hand-written scaffold ground probe, which `SESSION_VERIFICATION_AUDIT_2026-08-15.md`
+already lists as SCAFFOLD. Meanwhile the physics record's own grounded field is
+**`gnd` = 4.0 in 1097 of 1097 frames on the port and 1441 of 1441 on the original**,
+including in all 49 measurable pre-reseed frames. So:
+
+- the two ground queries **disagree**: physics says all four wheels planted, always,
+  while `GroundHeight` says off-mesh 50 times;
+- reseeds correlate with low speed (median 474 at reseed vs 750 overall), which is the
+  0.5x damping's own consequence, not its cause;
+- therefore the off-mesh rate measures the **collision scaffold**, not physics
+  fidelity.
+
+The observable I proposed one follow-up ago is confounded. Withdrawn. (Incidental: the
+`grounded` filter in `a8_momentum.py` is a no-op on both sides, since neither ever
+drops below 4.0. Harmless, kept for when collision stops being a scaffold.)
+
+## Where this leaves the slip question — an ACCEPTANCE question, not a measurement one
+
+Eight candidates are now eliminated by measurement. And the slip deficit now sits
+alongside a fact that changes its meaning: **the trajectory matches.** Radius within
+11%, yaw rate within 4-10% (ramp run), force and grip within 4-22%.
+
+On speed, state only what was measured: the **ramp** run agreed within 1% (1778 vs
+1760). The held-lock run's 897 vs 1941 is *attributed* to the 50 `RecoverOffMesh` 0.5x
+halvings — the mechanism is cited (`TrackRenderer.cpp:1989`) and the correlation is
+measured (reseeds at median speed 474 vs 750 overall) — but **the magnitude was never
+quantified**, so "50 halvings account for the whole gap" is an unverified attribution,
+not a measurement. It is the weakest claim in this follow-up and should be nailed down
+or dropped before anything is built on it.
+
+There is direct precedent in this very note for a large internal discrepancy that is
+behaviourally inert: the seventeenth follow-up found `p[0x1b]` wrong by **31x** and
+proved the error cancelled in every consumer, confirmed by experiment in the
+eighteenth. A slip angle that is short while the path it generates is right has that
+shape.
+
+That is **not** a licence to close this. It is a question that belongs to whoever sets
+D2's gate: **is median slip angle the right acceptance metric for default physics, or
+is the trajectory?** Recording it as an open question rather than answering it, because
+changing an acceptance criterion to match a measurement is exactly how a port talks
+itself into being done.
+
+Not established, and deliberately not chased: what actually makes the two ground
+queries disagree. That is collision-scaffold work (D1/D3), not A8.

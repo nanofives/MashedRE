@@ -413,6 +413,33 @@ and top speed ramps-and-resets in the stock shape since `8917e29c`. The original
 capture is already taken (`verify/a8_steer_20260823/orig_steerR.msd`, 2026-08-23); the
 standalone-side capture and the diff are what remain. Open sub-question: the **steer sign**.
 
+**RULING 2026-08-26 — the gate metric is SLIP, and D2 stays OPEN.** The standalone-side
+capture and diff now exist (`verify/a8_velvec_20260825/cleanhold_motion.log`, held full
+lock via the new `MASHED_STEER_HOLD`; reducers `re/tools/statediff/a8_momentum.py` and
+`a8_radius.py`), and they put a genuine question on the table: **every trajectory
+quantity matches while slip does not.** Radius within 3-11%, yaw rate within 4-10%,
+speed within 1% on the ramp run (1778 vs 1760; the held-lock run's gap is attributed to
+50 RecoverOffMesh halvings but was never quantified), force magnitude and direction and
+the grip chain within 4-22% — but median slip angle is **1.36x to 4.12x short**, and
+eight candidate causes are eliminated by measurement (A8 follow-ups seventeen through
+twenty-four).
+
+It was proposed that D2 be re-gated on the trajectory instead, on the precedent of
+`p[0x1b]` (wrong by 31x, proven behaviourally inert by the reciprocal cancellation in
+the seventeenth/eighteenth follow-ups). **That was declined.** Slip remains the metric.
+D2 does not close on a matching trajectory while the state variable that generates it is
+4x wrong and unexplained. Rationale: this is a port, and an unexplained internal
+discrepancy is an unexplained internal discrepancy — re-gating to the quantity that
+happens to pass is how a port talks itself into being done, and the project has a
+standing rule against exactly that.
+
+Consequence: **the A8 slip deficit is the sole remaining blocker on D2**, and it is a
+known-unknown rather than a missing measurement. What is NOT blocking: the off-mesh /
+reseed rate (50 per 1100 frames), which the twenty-fourth follow-up establishes is a
+`GroundHeight` **collision-scaffold** artifact — the physics record reports `gnd` = 4.0
+in 1097/1097 port and 1441/1441 original frames — and therefore belongs to D1/D3, not
+here.
+
 ~~**Recommended first step, cheap and decisive:** re-run with the wedge granules set
 `PAGE_NOACCESS`.~~ **DONE AND REFUTED 2026-08-21 (`625e91d0`) — do not re-run it as
 written.** `MASHED_WEDGE_TRAP=1` exists and does exactly what this item asked (maps the
