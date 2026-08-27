@@ -8,17 +8,20 @@
 # divergence is a real rendering difference, not a capture artifact.
 #
 #   RE: launched with MASHED_PARITY=1 — it self-walks the nav SM over the screen
-#       list (RunParityWalk) and dumps verify/parity/re_s<scr>.bmp for each, then
+#       list (RunParityWalk) and dumps <out>/parity/re_s<scr>.bmp for each, then
 #       quits.
 #   ORIGINAL: Frida drives FUN_0043d2a0 over the SAME list (+ writes the
 #       current-screen global so the title layer doesn't composite over it) and
-#       captures via the d3d9-shim on-demand req -> verify/parity/orig_s<scr>.bmp.
+#       captures via the d3d9-shim on-demand req -> <out>/parity/orig_s<scr>.bmp.
 #
 # Then per-screen: a normalized pixel diff (% of pixels differing beyond a
 # tolerance) + a labeled side-by-side, and a verdict table. Screens over the
 # threshold are flagged NON-FAITHFUL for follow-up.
 #
-# Usage: py -3.12 re/frida/frontend_parity.py [scr ...]   (default: full list)
+# Usage: py -3.12 re/frida/frontend_parity.py [--out DIR] [scr ...]
+#   default screens: the full 17-screen list; default DIR: a fresh
+#   verify/parity_run_<timestamp>/ -- see the OUT comment below, this harness
+#   used to write into TRACKED evidence and destroyed 17 files doing it.
 import os, sys, time
 from pathlib import Path
 import frida
@@ -27,7 +30,29 @@ from PIL import Image, ImageDraw
 ROOT = Path(__file__).resolve().parent.parent.parent
 ORIG = ROOT / "original"; EXE = ORIG / "MASHED.exe"
 RE_EXE = ROOT / "mashedmod" / "build" / "mashed_re.exe"
-PARITY = ROOT / "verify" / "parity"
+
+# OUTPUT ROOT — a fresh per-run directory, NEVER verify/parity/.
+#
+# This used to be `ROOT / "verify" / "parity"`, which holds 28 TRACKED files
+# (re_s*.bmp, orig_s24.bmp, cmp/s24.png, the orig_*.png references). Running the
+# harness therefore destroyed committed evidence two ways at once, and did so on
+# 2026-08-27:
+#   * run_re() unlinks re_s<scr>.bmp for every screen before launching. Since
+#     D0.8 the standalone routes harness writes through VOut() to
+#     verify/run_<pid>/, so the files were deleted and never recreated -- 17
+#     tracked reference images gone in one command.
+#   * the d3d9 shim has NO VOut equivalent, so the ORIGINAL side wrote straight
+#     over the tracked orig_s24.bmp.
+# The report also read "0/17 faithful", a false RED caused purely by the path
+# mismatch. Recovered with `git restore verify/parity/`.
+#
+# Now: both sides write under a fresh timestamped directory, and MASHED_VERIFY_OUT
+# is set so the standalone's VOut() lands in the same place instead of
+# verify/run_<pid>/. Pass --out to override (e.g. --out verify/parity to
+# DELIBERATELY regenerate the cited artifacts -- that is now an explicit act,
+# which is exactly what D0.8 asked for).
+OUT = ROOT / "verify" / f"parity_run_{time.strftime('%Y%m%d_%H%M%S')}"
+SHOTS = OUT / "parity"          # both sides' .bmp land here
 REQ = ROOT / "log" / "parity_dump.req"
 SCREENS = [1, 2, 3, 4, 6, 7, 8, 15, 16, 18, 19, 24, 29, 30, 31, 32, 33]
 
@@ -67,7 +92,7 @@ rpc.exports={
 
 
 def run_original(screens):
-    PARITY.mkdir(parents=True, exist_ok=True)
+    SHOTS.mkdir(parents=True, exist_ok=True)
     REQ.parent.mkdir(parents=True, exist_ok=True)
     if REQ.exists():
         REQ.unlink()
@@ -94,7 +119,7 @@ def run_original(screens):
                 break
             E.pop(); time.sleep(0.12)
         E.push(s); time.sleep(2.4)             # settle the slide-in (let the animation finish)
-        out = PARITY / f"orig_s{s}.bmp"
+        out = SHOTS / f"orig_s{s}.bmp"
         if out.exists():
             out.unlink()
         REQ.write_text(str(out) + "\n", encoding="utf-8")
@@ -110,12 +135,14 @@ def run_original(screens):
 
 def run_re(screens):
     import subprocess
-    PARITY.mkdir(parents=True, exist_ok=True)
+    SHOTS.mkdir(parents=True, exist_ok=True)
     for s in screens:
-        f = PARITY / f"re_s{s}.bmp"
+        f = SHOTS / f"re_s{s}.bmp"
         if f.exists():
             f.unlink()
     env = dict(os.environ); env["MASHED_PARITY"] = "1"
+    # D0.8: point VOut() at our run dir, else the exe writes verify/run_<pid>/
+    env["MASHED_VERIFY_OUT"] = str(OUT)
     p = subprocess.Popen([str(RE_EXE)], cwd=str(ROOT), env=env)
     # the parity walk self-quits; give it time (≈ screens * 1.1s dwell + boot)
     end = time.time() + 65
@@ -123,7 +150,7 @@ def run_re(screens):
         time.sleep(0.3)
     if p.poll() is None:
         p.kill()
-    return [s if (PARITY / f"re_s{s}.bmp").exists() else -s for s in screens]
+    return [s if (SHOTS / f"re_s{s}.bmp").exists() else -s for s in screens]
 
 
 def diff_pct(a_path, b_path):
@@ -147,10 +174,10 @@ def diff_pct(a_path, b_path):
 
 
 def compare(screens, thresh=12.0):
-    PARITY.joinpath("cmp").mkdir(parents=True, exist_ok=True)
+    (OUT / "cmp").mkdir(parents=True, exist_ok=True)
     rows = []
     for s in screens:
-        o = PARITY / f"orig_s{s}.bmp"; r = PARITY / f"re_s{s}.bmp"
+        o = SHOTS / f"orig_s{s}.bmp"; r = SHOTS / f"re_s{s}.bmp"
         if not o.exists() or not r.exists():
             rows.append((s, None, "MISSING(%s%s)" % ("" if o.exists() else "o", "" if r.exists() else "r")))
             continue
@@ -163,7 +190,7 @@ def compare(screens, thresh=12.0):
         verdict = "FAITHFUL" if pct <= thresh else "DIVERGENT"
         d.text((4, 6), f"s{s}  ORIGINAL | STANDALONE   diff={pct:.1f}%  {verdict}",
                fill=(0, 255, 120) if pct <= thresh else (255, 120, 120))
-        cv.save(PARITY / "cmp" / f"s{s}.png")
+        cv.save(OUT / "cmp" / f"s{s}.png")
         rows.append((s, pct, verdict))
     print("\n=== FRONTEND PARITY REPORT ===")
     for s, pct, v in rows:
@@ -171,12 +198,20 @@ def compare(screens, thresh=12.0):
     bad = [s for s, pct, v in rows if v == "DIVERGENT"]
     print(f"\n{sum(1 for _,_,v in rows if v=='FAITHFUL')}/{len(rows)} faithful; "
           f"divergent: {bad}")
-    print("composites -> verify/parity/cmp/")
+    print(f"composites -> {(OUT / 'cmp').relative_to(ROOT)}/")
     return rows
 
 
 def main():
-    screens = [int(a) for a in sys.argv[1:]] or SCREENS
+    global OUT, SHOTS
+    args = sys.argv[1:]
+    if "--out" in args:
+        i = args.index("--out")
+        OUT = (ROOT / args[i + 1]).resolve()
+        SHOTS = OUT / "parity"
+        del args[i:i + 2]
+    screens = [int(a) for a in args] or SCREENS
+    print(f"[out] {OUT.relative_to(ROOT) if OUT.is_relative_to(ROOT) else OUT}")
     print("[1/3] RE parity walk...");   print("  re:", run_re(screens))
     print("[2/3] original parity walk..."); print("  orig:", run_original(screens))
     print("[3/3] compare...");           compare(screens)
