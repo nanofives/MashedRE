@@ -402,10 +402,28 @@ inline DWORD DetTicks() {
         : GetTickCount();
 }
 
-// Apply the MASHED_HIRES / MASHED_PARITY_BG envs (call before InitD3D9).
+// Apply the MASHED_RES / MASHED_HIRES / MASHED_PARITY_BG envs (call before
+// InitD3D9). MASHED_RES=WxH takes precedence over MASHED_HIRES, matching the
+// d3d9 shim's ForcedBackBufInit precedence (d3d9_shim.cpp:67-81) so a single
+// env var sizes both sides of a parity capture identically.
 inline void ApplyResolutionEnv() {
-    char v[16] = {};
-    if (GetEnvironmentVariableA("MASHED_HIRES", v, sizeof(v)) > 0 && v[0] == '1') {
+    char v[32] = {};
+    bool res_set = false;
+    if (GetEnvironmentVariableA("MASHED_RES", v, sizeof(v)) > 0) {
+        int w = 0, h = 0; const char* p = v;
+        for (; *p >= '0' && *p <= '9'; ++p) w = w * 10 + (*p - '0');
+        if (*p == 'x' || *p == 'X')
+            for (++p; *p >= '0' && *p <= '9'; ++p) h = h * 10 + (*p - '0');
+        // Same accepted range as the shim and mashed_qol.asi's ApplyRes(), so a
+        // value that one side rejects is rejected by all three (a mismatched
+        // backbuffer vs camera raster AVs at boot).
+        if (w >= 320 && h >= 240 && w <= 7680 && h <= 4320) {
+            kWidth = w; kHeight = h; res_set = true;
+        }
+    }
+    v[0] = '\0';
+    if (!res_set &&
+        GetEnvironmentVariableA("MASHED_HIRES", v, sizeof(v)) > 0 && v[0] == '1') {
         kWidth = 1280; kHeight = 960;
     }
     kVScale = kWidth / 640.0f;
@@ -4107,9 +4125,28 @@ bool RenderFrame() {
         if ((Nav_ScreenId() == 15 || Nav_ScreenId() == 16) && g_carsel_ready) {
             const bool team = (Nav_ScreenId() == 16);
             const std::uint32_t white   = 0xffffffffu;
-            const std::uint32_t hdrFill = 0xa0146ef0u;   // bridge-swapped -> orange
+            // Plate alpha 0x7f, NOT 0xa0. FUN_0042f8d0 builds the plate colour
+            // byte-by-byte on its stack slot and HALVES the caller's alpha:
+            //   0x0042f8d9  mov bl, al        ; bl = caller alpha
+            //   0x0042f8e0  mov cl, bl
+            //   0x0042f8e7  shr cl, 1         ; <-- alpha >> 1
+            //   0x0042f8e9  mov [esp+0x13], cl
+            //   0x0042f8ed  mov [esp+0x10], 0xf0
+            //   0x0042f8f2  mov [esp+0x11], 0x6e
+            //   0x0042f8f7  mov [esp+0x12], 0x14   ; -> 0x{a>>1}146ef0
+            // We never replicated the halving, so our plates rendered at alpha
+            // 0xa0: orange f06e14 * 0xa0/0xff = (150.5, 69, 12.5), and the
+            // 1024x768 capture measures our flat fill at exactly (151, 69, 13).
+            // The original's flat fill measures (120, 52, 8); 120/240*255 =
+            // 127.5 => effective alpha 0x7f, i.e. a caller passing 0xff halved.
+            // [UNCERTAIN] 0x7f on f06e14 predicts (120, 55, 10) — R lands exact,
+            // G is +3 and B is +2 against the capture. The residual is NOT
+            // explained by this constant alone (a single alpha on f06e14 cannot
+            // produce (120,52,8): the per-channel ratios are 0.500/0.473/0.400).
+            // Not fudged to fit; the gap is filed rather than tuned away.
+            const std::uint32_t hdrFill = 0x7f146ef0u;   // bridge-swapped -> orange
             const std::uint32_t hdrBord = 0xff1050b4u;
-            const std::uint32_t rowFill = 0xa0146ef0u;
+            const std::uint32_t rowFill = 0x7f146ef0u;
             const std::uint32_t rowBord = 0xff1050b4u;
             const float bt = 1.0f * kVScale;
             static const wchar_t* kCols4[4] = { L"Elite", L"Pro", L"Amateur", L"Rookie" };
@@ -4132,7 +4169,9 @@ bool RenderFrame() {
             // 4 player rows (jumped-to default): car0 + joypad + "1".
             const float rowX  = (team ? 68.0f  : 58.0f)  * kVScale;
             const float rowW  = (team ? 513.0f : 526.0f) * kVScale;
-            const float carX  = (team ? 88.0f  : 70.0f)  * kVScale;
+            // carX back-solved from the devil-bbox measurement below (was
+            // team 88 / solo 70, fitted against the half-size quad).
+            const float carX  = (team ? 81.0f  : 63.0f)  * kVScale;
             const float rowH  = 27.0f * kVScale;
             const float rowY0 = 200.0f * kVScale, rowDY = 40.0f * kVScale;
             const float ncell = 0.55f * 0.0708f * 480.f * kVScale;
@@ -4142,9 +4181,40 @@ bool RenderFrame() {
                 HudIm2DQuad(0, rowX, ry, rowW, bt, rowBord, uv_full);
                 HudIm2DQuad(0, rowX, ry + rowH - bt, rowW, bt, rowBord, uv_full);
                 // player car 0 (red devil) at the row's left.
-                const float cs = rowH - 2.0f * kVScale;
-                HudIm2DQuad(kHandleCar0, carX, ry + 1.0f * kVScale, cs, cs,
-                            white, uv_full);
+                // Size 50 virtual, NOT rowH-2 (=25). MEASURED from the 1024x768
+                // parity capture (kVScale 1.6), masking bright red only
+                // (R>185,G<55,B<55) so neither side's orange plate contaminates
+                // the blob:
+                //   original  devil bbox x 111..158 (w=47)  y 309..372 (h=63)
+                //   ours      devil bbox x 117..140 (w=23)  y 325..357 (h=32)
+                // Ratios 23/47 = 0.489 and 32/63 = 0.508, i.e. our quad was a
+                // uniform ~1/2 scale. The red bbox occupies 0.125..0.70 of the
+                // quad width, so the original's quad is 47/0.575 = ~80 device =
+                // 50 virtual, and its vertical centre (302..381 -> 341.5) sits on
+                // the row centre (bar 320..364 -> 342) exactly as ours does.
+                // Left edge back-solved from the same bbox: quad_left =
+                // 111 - 0.125*80 = 101 device = 63 virtual (team: 140 - 10 = 130
+                // device = 81 virtual), which is why carX drops by 7 in both.
+                // [UNCERTAIN] the ratio is 2.00 within measurement error but the
+                // MECHANISM is not identified — no ASM cited for a factor-2 on
+                // this quad, so this is a measured geometry match, not a ported
+                // constant. Do not promote past C2 on this evidence.
+                //
+                // Dimensions solved from the red-bbox transfer ratios, measured
+                // with an 80x80-device quad (cs = 50 virtual, round 1):
+                //   ours   body blob w=34 h=67   -> red/quad = 0.425 w, 0.8375 h
+                //   target body blob w=35 h=63   (original, same mask)
+                // => quad = 35/0.425 = 82.4 device = 51.5 virtual (w)
+                //           63/0.8375 = 75.2 device = 47.0 virtual (h)
+                // Two measurements, two unknowns, so this is solved rather than
+                // fitted. [UNCERTAIN] it implies the original's quad is slightly
+                // LANDSCAPE (w/h = 1.097) where ours was square; that asymmetry
+                // is unexplained and could equally be a texture-sampling
+                // difference, so it is recorded, not rationalised.
+                const float csw = 51.5f * kVScale;
+                const float csh = 47.0f * kVScale;
+                HudIm2DQuad(kHandleCar0, carX, ry + rowH * 0.5f - csh * 0.5f,
+                            csw, csh, white, uv_full);
                 // joypad icon (device[order=0]==joypad) then the number "1".
                 const float jx = carX + 34.0f * kVScale;
                 const float jy = ry + (rowH - 22.0f * kVScale) * 0.5f;
@@ -4297,7 +4367,20 @@ bool RenderFrame() {
             // pitch 28 (the original's 0x1c). Plate/label/value geometry measured
             // from verify/parity/orig_s24.bmp / orig_s18.bmp.
             const float y0 = sp ? 84.0f : 98.0f, pitch = 28.0f;
-            const float plateX = 58.0f, plateW = 250.0f;  // s18 was 169 → labels/values overlapped
+            // The plate is SOLID for 169 then a horizontal alpha fade to 0 over
+            // the remaining 81 (total extent 250, which is what the label/value
+            // anchors key off). MEASURED per-column max red over the row-0 band
+            // of the 1024x768 capture (kVScale 1.6), plate x 100..500 device on
+            // BOTH sides, so only the fade was missing:
+            //   original  R=176 flat to x=370, then 168 160 152 144 136 120 104
+            //             88 72 48 32 8 -> 0 at x=500  (fade = 130 device = 81 virtual)
+            //   ours      R=151 flat all the way to x=490, then a hard cut
+            // 250 - 81 = 169 recovers the value the old comment discarded: 169
+            // was the SOLID width, not the total, so widening it to 250 traded a
+            // label overlap for a missing fade. Both are kept now.
+            const float plateX = 58.0f, plateW = 250.0f;
+            const float plateSolidW = 169.0f;
+            const float plateFadeW  = plateW - plateSolidW;   // 81
             const float labelX = 66.0f, valRight = plateX + plateW - 18.0f;
             const float plateH = 26.0f, bt = 1.0f * kVScale;
             const float cell = 0.6f * 0.0708f * 480.f * kVScale;
@@ -4311,9 +4394,31 @@ bool RenderFrame() {
                 const float pw = plateW * kVScale, px = plateX * kVScale;
                 const std::uint32_t fill = (r == selRow) ? 0xa0146ef0u   // selected = orange
                                                          : 0x40f8d0e8u;  // idle = blue
-                HudIm2DQuad(0, px, pt, pw, plateH * kVScale, fill, uvf);
-                HudIm2DQuad(0, px, pt, pw, bt, 0xff1050b4u, uvf);
-                HudIm2DQuad(0, px, pt + plateH * kVScale - bt, pw, bt, 0xff1050b4u, uvf);
+                // Solid body, then the right-hand alpha fade — same construction
+                // as the generic list-row path above (solid HudIm2DQuad + a
+                // HudIm2DQuadCorners band whose right corners drop alpha to 0).
+                // [UNCERTAIN] peak brightness still disagrees: the original's
+                // selected plate maxes at R=176, ours at R=151 (this fill's
+                // 0xa0 on f06e14). 176 implies an effective alpha of 0xbb, which
+                // CANNOT come from FUN_0042f8d0's alpha>>1 (0x0042f8e7) since
+                // that would need a caller alpha of 0x176. A double-blend of two
+                // 0x7f plates predicts R=179.6, close to 176 but not exact, and
+                // no ASM is cited for a second draw here. Left at 0xa0 rather
+                // than tuned to hit 176 — the gap is real and unexplained.
+                const float psw = plateSolidW * kVScale;
+                const float pfw = plateFadeW  * kVScale;
+                const std::uint32_t fill0 = fill & 0x00ffffffu;
+                const std::uint32_t bord  = 0xff1050b4u;
+                const std::uint32_t bord0 = bord & 0x00ffffffu;
+                HudIm2DQuad(0, px, pt, psw, plateH * kVScale, fill, uvf);
+                HudIm2DQuadCorners(0, px + psw, pt, pfw, plateH * kVScale,
+                                   fill, fill0, fill, fill0, uvf);
+                HudIm2DQuad(0, px, pt, psw, bt, bord, uvf);
+                HudIm2DQuadCorners(0, px + psw, pt, pfw, bt,
+                                   bord, bord0, bord, bord0, uvf);
+                HudIm2DQuad(0, px, pt + plateH * kVScale - bt, psw, bt, bord, uvf);
+                HudIm2DQuadCorners(0, px + psw, pt + plateH * kVScale - bt, pfw, bt,
+                                   bord, bord0, bord, bord0, uvf);
                 if (!g_font.ready()) continue;
                 wchar_t lab[64];
                 if (GetMenuMessage(rows[r].label, lab, 64) > 0)
