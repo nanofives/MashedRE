@@ -23,9 +23,10 @@
 #   --keep-backdrop  leave the original's video/preview/arc compositors alive, so
 #                    the map PREVIEW renders. Review-only: the backdrop is
 #                    non-deterministic, so the diff numbers become meaningless.
-#   --no-unlock      skip the runtime unlock-all. Default is UNLOCKED, because a
-#                    bare nav push has no cup/championship state and the original
-#                    then lists Arctic/Egypt and shows locked stars.
+#   --no-unlock      skip the runtime unlock-all (VehicleUnlockFlagGet /
+#                    TrackAvailGet -> MOV EAX,1; RET). Default ON. It does NOT
+#                    fix the track names or the stars -- that needs cup state,
+#                    not availability. See the note in run_original().
 #   default screens: the full 17-screen list; default DIR: a fresh
 #   verify/parity_run_<timestamp>/ -- see the OUT comment below, this harness
 #   used to write into TRACKED evidence and destroyed 17 files doing it.
@@ -137,9 +138,15 @@ def run_original(screens, keep_backdrop=False, unlock=True):
     scr = sess.create_script(AGENT); scr.on("message", lambda m, d: None); scr.load()
     scr.exports_sync.init()
     if unlock:
-        # runtime-only; see the RVA_UNLOCK comment. Fixes the track names
-        # (Arctic/Egypt instead of Angel Peak/Kharga Temple) and the stars,
-        # both of which are missing-state artifacts rather than port defects.
+        # Runtime-only; see the RVA_UNLOCK comment.
+        # NOTE, corrected 2026-08-27: this does NOT fix the track names or the
+        # stars, and an earlier version of this comment wrongly claimed it did.
+        # Measured effect on the original's output is 0.17-0.22 mean abs, with
+        # some screens byte-identical. The screen-6 list is drawn by FUN_00439210
+        # from msgids 0x49+row gated on DAT_007f0a40, and a bare nav push leaves
+        # game mode DAT_0067e9fc = 0, which matches none of that drawer's header
+        # cases. The gate is CUP STATE, not availability. Kept because it is
+        # correct in itself and harmless.
         print(f"  [orig] unlock-all patched at {scr.exports_sync.unlock_all()} sites")
     if keep_backdrop:
         # leave the video/preview/arc compositors alive. Needed to review the
