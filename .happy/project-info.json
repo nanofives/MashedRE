@@ -1,33 +1,50 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-26T11:00:00Z",
+  "updatedAt": "2026-08-26T18:30:00Z",
   "sections": [
     {
-      "heading": "A8 — landed on main",
+      "heading": "Two branches open, neither merged to main",
       "fields": [
-        { "label": "Commits", "value": ["c5dafe5e motion model + 5 cited fidelity fixes", "3d4b3c04 21 follow-ups, 6 decode notes, global telemetry lane", "4295ff0f force-add the cited diag logs", "6d6de212 kickoff for the slip-deficit session"], "kind": "list" },
-        { "label": "Gate (a) driving-median", "value": "~1745 vs original 1760 — within 1%", "kind": "text" },
-        { "label": "Gate (b) yaw rate", "value": "2.07 / 2.55 / 2.55 vs original 2.31 / 2.66 / 2.65", "kind": "text" },
-        { "label": "Force mag + direction", "value": "within 4-22%; lateral fraction within 2%", "kind": "text" },
-        { "label": "Record fidelity", "value": "p[0x1a] 1088.31 vs live original 1086.83 (0.14%)", "kind": "text" }
+        { "label": "a8-slip-deficit-measurement", "value": "2 commits — D2 physics: slip deficit filed as U-9044, eight candidates eliminated", "kind": "text" },
+        { "label": "d1-camera-pose", "value": "1 commit (fbe3c210) — D1 camera: first-ever measurement, two defects fixed", "kind": "text" },
+        { "label": "Unpushed", "value": "main 88 commits ahead of upstream, plus both branches", "kind": "text" }
       ]
     },
     {
-      "heading": "Next session",
+      "heading": "D2 default physics — OPEN, gate is SLIP (ruling 2026-08-26)",
       "fields": [
-        { "label": "Kickoff", "value": "re/analysis/plans/KICKOFF_slip_deficit.md (ready to paste)", "kind": "text" },
-        { "label": "The one open item", "value": "slip 1.3x short at 2000-2600, 2.5x at 1000-1500 — unexplained", "kind": "text" },
-        { "label": "Eliminated", "value": "13 candidate causes, all by measurement", "kind": "text" },
-        { "label": "Untried", "value": "p[-9..-7] wheel mount offsets (readable from the capture, no hook needed)", "kind": "text" }
+        { "label": "Sole gate item", "value": "U-9044 — the A8 slip deficit", "kind": "text" },
+        { "label": "Slip gap", "value": "1.29-1.36x at 2000-2600; 2.70-5.38x at 500-1000 (band- and run-dependent)", "kind": "text" },
+        { "label": "Eliminated by measurement", "value": 8, "kind": "number" },
+        { "label": "Ruling", "value": "re-gating onto the trajectory was proposed on the p[0x1b] precedent and DECLINED", "kind": "text" },
+        { "label": "Strongest untaken lead", "value": "momentum identity's ABSOLUTE effective dt is 12-33x of 1/60 and speed-dependent on BOTH sides — possible second lateral force term", "kind": "text" }
       ]
     },
     {
-      "heading": "Housekeeping",
+      "heading": "D1 camera — measured, two defects fixed",
       "fields": [
-        { "label": "Unpushed", "value": "main is 88 commits ahead of upstream (84 predate this session)", "kind": "text" },
-        { "label": "Stale branch", "value": "a8-velocity-vector-motion is merged and redundant — left in place, deletion not assumed", "kind": "text" },
-        { "label": "Untracked", "value": "dbg_avail.txt (519 KB nav debug, predates this session, deliberately not committed)", "kind": "text" },
-        { "label": "Ghidra pool", "value": "all slots released (3 stale July locks cleared)", "kind": "text" }
+        { "label": "Pose agreement", "value": "eye 4.4343 -> 0.0001, aim 37.27deg -> 0.0007deg, pair 0% -> 92.2% exact", "kind": "text" },
+        { "label": "Defect 1", "value": "0x004a2c48 is __ftol (truncates), was std::nearbyint — out-of-bounds ribbon index on 591 of 766 frames", "kind": "text" },
+        { "label": "Defect 2", "value": "MostSeparatedPair out-params swapped (source-verified against the PE)", "kind": "text" },
+        { "label": "Next", "value": "re/analysis/plans/KICKOFF_camera_nodedir_hook.md — hook 0x00441820, the only missing C3 criterion", "kind": "text" },
+        { "label": "Still open", "value": "7.8% of frames pick a different pair; the verbatim pose is still discarded at TrackRenderer.cpp:4059-4135", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "New tooling",
+      "fields": [
+        { "label": "Offline diffs", "value": ["re/tools/statediff/a8_momentum.py", "re/tools/statediff/a8_radius.py", "re/tools/camera/ (driver + diff)"], "kind": "list" },
+        { "label": "re/tools/pedisasm.py", "value": "disassemble any RVA from the PE with capstone — no Ghidra project, no pool lock; verifies the SHA-256 anchor first", "kind": "text" },
+        { "label": "Harness knobs", "value": "MASHED_STEER_HOLD / _AFTER (held-steer capture)", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Traps hit this session",
+      "fields": [
+        { "label": "Duplicate RVA copies drift", "value": "both camera defects were written down in comments before they were measured, and shipped anyway", "kind": "text" },
+        { "label": "Tracker writes", "value": "a literal pipe breaks an UNCERTAINTIES row even in backticks; Python text-mode flips CHANGELOG CRLF->LF into a whole-file rewrite", "kind": "text" },
+        { "label": "Stale ground truth", "value": "camera_trace.csv (2026-06-10) had invalid car columns for eleven weeks; the probe now self-checks", "kind": "text" },
+        { "label": "Untracked", "value": "dbg_avail.txt (predates this session, deliberately not committed)", "kind": "text" }
       ]
     }
   ]
