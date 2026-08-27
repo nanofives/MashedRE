@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-27T09:00:00Z",
+  "updatedAt": "2026-08-27T09:20:00Z",
   "sections": [
     {
       "heading": "Both lanes merged to main (2026-08-27)",
@@ -16,8 +16,8 @@
           "kind": "text"
         },
         {
-          "label": "Unpushed",
-          "value": "main is ahead of upstream and has never been pushed",
+          "label": "Pushed",
+          "value": "origin/main at 28228537 \u2014 in sync, 94 commits pushed 2026-08-27",
           "kind": "text"
         },
         {
