@@ -106,6 +106,63 @@ blindness described at the end of this note — a draw-call diff that cannot see
 pipe will report GREEN regardless of how the glyphs are tinted. A C4 on a function whose
 visible output is text should not be read as covering that text.
 
+**RESOLVED 2026-08-27 — the mechanism does not exist.** Dumped `LAB_00554940` with
+`re/tools/pedisasm.py` (660 instructions, `re/analysis/font_text_d3/LAB_00554940.asm`;
+no `0x0055xxxx` disassembly existed anywhere in the repo before this). Measured:
+
+- **All four vertex-colour writes** — `mov [ecx+0x18], eax` at `0x00554cd1`, `0x00554e2f`,
+  `0x00554fa9`, `0x00555111`, one per quad corner — are each preceded by the same
+  two-path ARGB assembly gated on `test byte ptr [esi+0x64], 1`. That is a **font-context
+  flag**, not a character value.
+- **The colour bytes come from `esi+0x60..0x63`** (the context struct) in every corner:
+  `0x00554cb5/cb8/cbb/cc5` and the three parallel sites. The alternate path converts
+  floats out of esp locals. Neither is per-character.
+- **The only codepoint compare in the whole function** is `cmp eax, 0x80` at
+  `0x00554a62` — the ASCII-LUT vs extended-table select, already plated as such — plus a
+  bound check `cmp eax, [ebp+0x128]` at `0x00554a71`. Nothing character-dependent reaches
+  the colour path.
+
+**So the original applies ONE colour per string, and cannot tint a glyph inside one.**
+Combined with the finding that `FUN_0043c5b0` hands the glyph pipe a single flat
+`0xFFFFFFFF` per prompt row (record `+0x0c`, set by `FUN_0042ad10`), and that the FGDC20
+atlas is a single page whose 1024-byte palette is entirely zero (coverage, not colour),
+every candidate mechanism is eliminated. The June note's premise — *"the in-binary
+color-switch mechanism ... is still to RE"* — is answered: **there is none.** The
+original must issue the arrow as a **separate draw** from its label.
+
+**What that makes our port.** `exe_main.cpp:2437-2439` branches on codepoint inside our
+own renderer (`gc >= 0x7f` -> `ctrl_glyph_argb`, with a hardcoded `gc == 0x7f` -> red).
+That is an invented rule at an address the original does not branch at, and the red
+special-case has **no cited evidence whatsoever** — a two-colour rule where the RE has
+now established exactly one. The green `0xff10ec00` came from a screenshot pixel sample
+with no recorded coordinate.
+
+**Next step is now cheap and specific:** confirm the original emits two draws for the
+footer strip (arrow, then label) rather than one, and read their two colours. That is a
+draw-count observation on the Im3D path, not more RE.
+
+### A2b. A separate port bug found while tracing this
+
+`Frontend/MenuDrawLoopTwin.cpp:92-105` (`StaticDraw`) passes `col_scratch` as the
+**shadow** colour. The original's `LAB_0043d185` shadow reads a different frame slot
+(`[esp+0x08]`) holding a never-modified `0xff000000`, written once at
+`0x0043c5ee..0x0043c5fd`. `col_scratch` is the port's analogue of `[esp+0x00]`, which
+`FUN_0042aad0` greys in place. The two agree **only after an item row has already greyed
+the scratch** — which is exactly what the C4 diff's `auxA = ['ffffffff','ff000000',...]`
+happens to show. **On a screen with no preceding item row, the port's shadow would draw
+white instead of black.** Not covered by the existing diff.
+
+### A2c. The C4 on `FUN_0043c5b0` is sound but out of scope, and should be annotated
+
+`re/frida/menu_drawloop_diff.py:28-29,64-72` hooks the RW device draw at
+`*(*(0x007d3ff8)+0x30)` and hexes 112 bytes of Im2D vertex scratch per call — chrome
+quad geometry. Glyphs never reach it: `LAB_00554940` emits through the **Im3D** path
+(`FUN_004cd070(DAT_00912a04, ptr, count, 5)` at `0x00554afa`/`0x00554b0e`, stride `0x24`),
+the same blind spot `parity_tooling.md:82-87` records. The 117-draw bit-identical result
+is real for what it measured and **structurally incapable** of seeing glyph colour, shape
+or position. Recommend annotating the `hooks.csv` row's scope rather than demoting.
+
+
 ### A3. s15 / s16 — layout and icon defects
 
 Reviewer: *"font size is smaller, player icon is smaller, joystick icon is not colored
