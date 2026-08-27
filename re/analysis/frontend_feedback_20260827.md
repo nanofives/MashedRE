@@ -64,19 +64,47 @@ the presented-window capture, not BBDUMP alone.**
 
 Reviewer: *"select icon should be filled green with black border, it's not that right now"*.
 
-The reviewer is describing a **decoded original law we have not ported**.
-`re/analysis/promote_c2_render_lowrva/00403fa0.md:29-30`: `FUN_00403fa0` draws each
-element **twice** — an opaque black copy at x=322.0 (`0xff000000`) and a coloured fill
-at x=320.0 (`0xc800d805`, annotated "colored green-fill"). That is a 2-virtual-px
-offset black pass behind a green fill, i.e. a border.
+> **RETRACTED 2026-08-27, same day, before any code was written.** An earlier draft of
+> this section said the reviewer's description matched `FUN_00403fa0` (black pass at
+> x=322.0 + green fill `0xc800d805` at x=320.0) and called it "a port gap with a decoded
+> law available". **That is wrong.** Reading `promote_c2_render_lowrva/00403fa0.md` in
+> full: `FUN_00403fa0` is a **scrolling animation** — `struct[0x10]` is a timer
+> multiplied and then decremented by the frame delta each call, feeding a Y-band
+> interpolation; it draws sprite ids `0x226..0x229` at a **hardcoded centred x=320**,
+> with pairs 3 and 4 conditional on `param_1 == 0` (first) and
+> `param_1 == DAT_005ea0b4 - 1` (last). `U-3131` on that note reads "likely race-result
+> scrolling animation timings", and its caller is the mode-10 result-screen loop. It is
+> the RESULTS scroll, not a menu icon. Porting it here would have put a results
+> animation where a menu glyph belongs. The claim came from a subagent's inference that
+> I repeated without reading the decode.
 
-Ours is a **1px down-right drop shadow** with a different green:
-`exe_main.cpp:3599-3603`, `ob = 1.0f * kVScale`, green `0xff10ec00`. The 2026-06-14
-comment at `:3592-3597` says this shape was chosen from cached screenshots
-("image-cache 1.png/2.png"), **not** from a draw-list diff.
+**What actually draws it.** The Select/Back icons are not sprites — they are **font
+glyphs**, produced by the `FUN_004277a0` control-code remap
+(`8->0x81 9->0x7f a->0x81 b->0x8d c->0x80 d->0x87 e->0x8f`, landed `ec08ddf2`,
+`frontend_feedback_20260612.md:62`). So this defect sits in the **text pipe**, which
+makes it a sibling of A1, not an independent sprite-law gap.
 
-`FUN_00403fa0` is C2 and unported (`hooks.csv:1441`); its draw callee `0x00427e00` is
-C2 too. So this is a port gap with a decoded law available, not an unknown.
+The draw loop that owns them, `FUN_0043c5b0` `MenuDrawLoop`, is **already C4 and
+ported** — `mashedmod/src/mashed_re/Frontend/MenuDrawLoopTwin.cpp`, Frida diff
+`re/analysis/standalone_menu_sm/diff_menu_drawloop_navdriven.json`.
+
+**The real gap is a named, un-RE'd mechanism inside that C4 function**, recorded at
+`frontend_feedback_20260612.md:243-245`:
+
+> "DrawMashedString gains a per-control-glyph color arg. **[The in-binary color-switch
+> mechanism — how FUN_0043c5b0 tints only the glyph — is still to RE; current approach
+> colors the remapped range.]**"
+
+So our arrow colour is applied by **our own heuristic** (tint the remapped codepoint
+range), not by the original's law. Ours is additionally a 1px down-right drop shadow
+with green `0xff10ec00` (`exe_main.cpp:3599-3603`), a shape chosen in 2026-06-14 from
+cached screenshots (`:3592-3597`), **not** from a draw-list diff.
+
+**Worth noting on its own:** `MenuDrawLoop` carries a clean C4 Frida diff while its
+per-glyph tinting is admittedly un-reverse-engineered. That is consistent with the text
+blindness described at the end of this note — a draw-call diff that cannot see the glyph
+pipe will report GREEN regardless of how the glyphs are tinted. A C4 on a function whose
+visible output is text should not be read as covering that text.
 
 ### A3. s15 / s16 — layout and icon defects
 

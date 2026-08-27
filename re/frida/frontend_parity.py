@@ -18,7 +18,14 @@
 # tolerance) + a labeled side-by-side, and a verdict table. Screens over the
 # threshold are flagged NON-FAITHFUL for follow-up.
 #
-# Usage: py -3.12 re/frida/frontend_parity.py [--out DIR] [scr ...]
+# Usage: py -3.12 re/frida/frontend_parity.py [--out DIR] [--keep-backdrop]
+#                                            [--no-unlock] [scr ...]
+#   --keep-backdrop  leave the original's video/preview/arc compositors alive, so
+#                    the map PREVIEW renders. Review-only: the backdrop is
+#                    non-deterministic, so the diff numbers become meaningless.
+#   --no-unlock      skip the runtime unlock-all. Default is UNLOCKED, because a
+#                    bare nav push has no cup/championship state and the original
+#                    then lists Arctic/Egypt and shows locked stars.
 #   default screens: the full 17-screen list; default DIR: a fresh
 #   verify/parity_run_<timestamp>/ -- see the OUT comment below, this harness
 #   used to write into TRACKED evidence and destroyed 17 files doing it.
@@ -68,6 +75,23 @@ const RVA_CURSCREEN=0x0067ecb0;
 // the original exposes ONLY the static chrome + content on black — matching the
 // RE side's MASHED_PARITY chrome-on-black render for an apples-to-apples diff.
 const RVA_BACKDROP=[0x00473c20,0x00474890,0x00473ee0];
+// Unlock-everything, applied AT RUNTIME ONLY.
+//   0x0042ef40 VehicleUnlockFlagGet — returns 1 iff the car's unlock byte
+//              (DAT_007f0e50 + idx*0xc) == 1; 5 callers, car-select/HUD availability.
+//   0x00430830 TrackAvailGet        — returns a championship-table dword
+//              (DAT_007f0a40, per game-mode column); track-select treats non-zero
+//              as available; 9 callers.
+// Both __cdecl. Overwriting each entry with MOV EAX,1 / RET makes every car read
+// unlocked and every track available in every mode (same two sites and the same
+// six bytes as scripts/patch_mashed_unlock_all.py).
+//
+// WHY RUNTIME AND NEVER ON DISK: CLAUDE.md forbids applying unlock_all to
+// original/MASHED.exe, because that binary is the diffing reference every
+// behavioural verification is measured against. Patching it on disk would make
+// future car-select / track-select / championship / save-restore diffs compare
+// modded against modded and still report GREEN. Memory.patchCode dies with the
+// process, so the reference binary is never touched.
+const RVA_UNLOCK=[0x0042ef40,0x00430830];
 let nav=null;
 function abs(r){return ptr(r+DELTA);}
 rpc.exports={
@@ -83,6 +107,14 @@ rpc.exports={
     });
     return RVA_BACKDROP.length;
   },
+  unlockAll:function(){
+    RVA_UNLOCK.forEach(function(r){
+      Memory.patchCode(abs(r),6,function(code){
+        code.writeByteArray([0xB8,0x01,0x00,0x00,0x00,0xC3]);  // MOV EAX,1 ; RET
+      });
+    });
+    return RVA_UNLOCK.length;
+  },
   phase:function(){ return abs(RVA_PHASE).readS32(); },
   depth:function(){ return abs(RVA_DEPTH).readS32(); },
   push:function(scr){ nav(scr,0); abs(RVA_CURSCREEN).writeS32(scr); return abs(RVA_DEPTH).readS32(); },
@@ -91,7 +123,7 @@ rpc.exports={
 '''
 
 
-def run_original(screens):
+def run_original(screens, keep_backdrop=False, unlock=True):
     SHOTS.mkdir(parents=True, exist_ok=True)
     REQ.parent.mkdir(parents=True, exist_ok=True)
     if REQ.exists():
@@ -104,7 +136,18 @@ def run_original(screens):
     sess = dev.attach(pid)
     scr = sess.create_script(AGENT); scr.on("message", lambda m, d: None); scr.load()
     scr.exports_sync.init()
-    scr.exports_sync.nop_backdrop()      # chrome-on-black: kill video/preview/arc
+    if unlock:
+        # runtime-only; see the RVA_UNLOCK comment. Fixes the track names
+        # (Arctic/Egypt instead of Angel Peak/Kharga Temple) and the stars,
+        # both of which are missing-state artifacts rather than port defects.
+        print(f"  [orig] unlock-all patched at {scr.exports_sync.unlock_all()} sites")
+    if keep_backdrop:
+        # leave the video/preview/arc compositors alive. Needed to review the
+        # map PREVIEW, which nop_backdrop() otherwise removes from the original
+        # -- a reviewer reasonably read that absence as a fault in the game.
+        print("  [orig] backdrop KEPT (non-deterministic; review-only, not for diffing)")
+    else:
+        scr.exports_sync.nop_backdrop()  # chrome-on-black: kill video/preview/arc
     dev.resume(pid)
     E = scr.exports_sync
     end = time.time() + 30
@@ -210,10 +253,17 @@ def main():
         OUT = (ROOT / args[i + 1]).resolve()
         SHOTS = OUT / "parity"
         del args[i:i + 2]
+    keep_backdrop = "--keep-backdrop" in args
+    if keep_backdrop:
+        args.remove("--keep-backdrop")
+    unlock = "--no-unlock" not in args
+    if not unlock:
+        args.remove("--no-unlock")
     screens = [int(a) for a in args] or SCREENS
     print(f"[out] {OUT.relative_to(ROOT) if OUT.is_relative_to(ROOT) else OUT}")
     print("[1/3] RE parity walk...");   print("  re:", run_re(screens))
-    print("[2/3] original parity walk..."); print("  orig:", run_original(screens))
+    print("[2/3] original parity walk...")
+    print("  orig:", run_original(screens, keep_backdrop, unlock))
     print("[3/3] compare...");           compare(screens)
     return 0
 
