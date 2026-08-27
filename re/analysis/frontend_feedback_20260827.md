@@ -163,6 +163,46 @@ is real for what it measured and **structurally incapable** of seeing glyph colo
 or position. Recommend annotating the `hooks.csv` row's scope rather than demoting.
 
 
+### A2d. TWO DISAGREEING SCREEN SCALES — found 2026-08-27 while sweeping stale comments
+
+This is the most load-bearing thing in this note and it was found by fact-checking a
+comment, not by looking at a screenshot.
+
+MEASURED:
+- The backbuffer is **640x480** and `kVScale = kWidth/640 = 1.0`
+  (`exe_main.cpp:344-346`, `:392`). 1280x960 only under `MASHED_HIRES`.
+- `Standalone_ScreenWidth()` returns **800** and `Standalone_ScreenHeight()` returns
+  **600**, hardcoded (`Compat/StandaloneRvaThunks.cpp:16-17`), and they are installed
+  over RVAs `0x0042b8b0` / `0x0042b8c0` (`exe_main.cpp:6160-6161`).
+- **At least nine ported frontend TUs call those RVAs directly** as their screen-scale
+  source: `Frontend/DrawQuadPrimitives.cpp:62-63`, `SpriteCluster.cpp:89-90,356`,
+  `MenuSpriteDispatch.cpp:31,35`, `Cluster_v3.cpp:44`, `LogoOverlayTwin.cpp:24-25`,
+  `MenuLeaves_af1.cpp:53-54`, `MenuMixed.cpp:51,56`, `HUD/TextCluster.cpp:199,207`,
+  `Frontend/BucketMixed_t3.cpp:225,228`.
+- The law they feed, quoted in `DrawQuadPrimitives.cpp:135-138`:
+  `fVar1 = (float)FUN_0042b8b0() * param_1 * _DAT_005cd5a8` (X) and the Y analogue.
+  `exe_main.cpp:617` glosses the same product as "multiplies by screenDim*1/640 /
+  1/480 = **our kVScale 1.25x**".
+
+DECODED consequence: **any draw routed through the getters is laid out for an 800x600
+target, while the frame is 640x480.** The standalone carries two screen scales that
+disagree by exactly the 1.25x factor, and which one a given element gets depends on
+whether its code path uses `kVScale` or the thunked RVAs.
+
+Why this fits the review. Menu **text** goes through `DrawMashedString`, which uses
+`kVScale` — consistent with the 2026-08-27 measurement that text row pitch and glyph
+size matched the original to 1.000. **Sprites, quads, plates, badges and icons** go
+through the getter-based paths — consistent with the reviewer's icon complaints being
+about size and placement ("player icon is smaller", "player icons are stretched",
+"arrows wrongly placed and wrong size", "the number 1 is right into it").
+
+**DO NOT simply change 800/600 to `kWidth`/`kHeight`.** Some layouts in these files may
+have been hand-calibrated against the 800/600 return, exactly as
+`exe_main.cpp:2399-2403` admits a non-derived `+0.055` fudge was calibrated against a
+baseline. Flipping the getters would move every element that currently looks right. The
+correct route is to measure which elements each path places, against the original, before
+changing the constant. Not attempted here.
+
 ### A3. s15 / s16 — layout and icon defects
 
 Reviewer: *"font size is smaller, player icon is smaller, joystick icon is not colored

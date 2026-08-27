@@ -36,7 +36,10 @@ public:
 
     bool  ready()          const { return m_ready; }
     int   handle()         const { return m_handle; }
-    float natural_height() const { return m_height; }   // cs+0x04 (33.0)
+    // 33.0, MEASURED from FGDC20.RWF's natural-height float at FILE offset
+    // 0x14 (= chunk header 0x0c + struct 0x08). The old citation "cs+0x04"
+    // was wrong under either convention; the value 33.0 is right.
+    float natural_height() const { return m_height; }
     // Charset header floats the renderer law needs (FUN_00554940 reads them
     // at cs+0x08 / cs+0x0c; RWF file offsets 0x18 / 0x1c):
     float baseline_c8()    const { return m_c8; }        // FGDC20: 0.151515

@@ -330,17 +330,36 @@ IDirectInputDevice8A* g_kbd           = nullptr;
 unsigned char         g_keys[256]     = {};   // raw DInput key state, set 0x80 if held
 unsigned char         g_keys_prev[256]= {};   // last frame, for edge detection
 
-// Backbuffer/window size. 640x480 matches the ORIGINAL's render resolution
-// 1:1, so the FGDC20 bitmap font (a ~27px atlas font) draws at its native
-// size = pixel-crisp (the original's own crispness). At 800x600 the same
-// glyph is drawn at ~34px = a 1.25x upscale of a fixed-resolution bitmap, which
-// no filtering/supersampling can sharpen (proven 2026-06-13: stroke width,
-// atlas, and filter all matched the original; only the upscale softened edges).
+// Backbuffer/window size. 640x480 matches the ORIGINAL's render resolution 1:1.
 // kVScale maps MASHED's 640x480 virtual coords onto the backbuffer; at 640x480
 // it is 1.0 (1:1). Every menu draw uses virtual*kVScale, so this one knob
 // rescales the whole frontend. RUNTIME (was constexpr) so env MASHED_HIRES=1
-// switches the whole standalone to 1280x960 (2x) for high-res parity capture —
-// the crisp 1:1 default stays 640x480. Set once in main before InitD3D9.
+// switches the whole standalone to 1280x960 (2x) for high-res parity capture.
+// Set once in main before InitD3D9.
+//
+// [CORRECTED 2026-08-27] This comment used to justify the 640x480 default with
+// "the FGDC20 bitmap font (a ~27px atlas font) draws at its native size =
+// pixel-crisp ... At 800x600 the same glyph is drawn at ~34px = a 1.25x upscale".
+// **The ~27px figure is wrong.** MEASURED from the shipped asset
+// (Font36.piz -> FGDC20.RWF, RW chunk 0x199, natural-height float at file
+// offset 0x14): the cell height is **33.0**, which is also what
+// MashedFont.h:59 carries as `m_height = 33.f`.
+//
+// So the arithmetic runs the other way. At 640x480 (kVScale 1.0) a 33px cell
+// drawn at the header's scale 0.8 lands on ~26.4 device px and at the prompt
+// rows' 0.6 on ~19.8 -- both DOWNSCALES of the atlas. At 800x600 (kVScale 1.25)
+// scale 0.8 was ~33px, i.e. 1:1. The 2026-06-13 change therefore moved the
+// header font FROM roughly native TO a ~0.8x downsample, on a premise that had
+// the atlas 6px smaller than it is.
+//
+// This is NOT a claim that reverting fixes anything, and it must not be treated
+// as one: the ORIGINAL also renders at 640x480 and its glyphs measure crisper
+// than ours (verify/d1_camera... no -- see the 5x zoom in the 2026-08-27
+// frontend review, re/analysis/frontend_feedback_20260827.md A1). If the
+// original downsamples the same 33px atlas and stays crisp, resolution is not
+// the differentiator and something else in the sampling is. Recorded here
+// because the stated justification for this default is unsound, and because
+// U-9045's "strongest lead" was written against the wrong number too.
 int   kWidth         = 640;
 int   kHeight        = 480;
 float kVScale        = 1.0f;     // = kWidth/640
@@ -3465,8 +3484,10 @@ bool RenderFrame() {
     //     gradient overlay = FUN_00472c60 / FUN_00473540 in the -0xfc0000 branch);
     //   - draw the 0x224 special item's triangle border (FUN_00472dc0) — colored,
     //     centered.
-    // Coords are MASHED's 640x480 virtual space; we scale by 1.25x to the 800x600
-    // backbuffer (the standalone-safe analogue of FUN_00427680/ChromeBaseDraw's
+    // Coords are MASHED's 640x480 virtual space, scaled by kVScale to the
+    // backbuffer -- which is 1.0 at the 640x480 default, NOT the 1.25x/800x600
+    // this comment claimed until 2026-08-27 (exe_main.cpp:344-346)
+    // (the standalone-safe analogue of FUN_00427680/ChromeBaseDraw's
     // screen-dimension scaling, whose RVA getters/scale globals are zeroed by the
     // image-pad and so cannot be called here — HudIm2DQuad takes absolute px).
     // F2: track-preview crossfade — verbatim phase math from the verified

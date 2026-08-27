@@ -14,11 +14,18 @@ namespace mashed_re {
 namespace D3d9Render {
 
 namespace {
-// Atlas supersampling: DISABLED (round-3). The standalone draws the 33px
-// glyph cell at ~34 device px (800x600) — essentially 1:1, same as the
-// original's ~0.82x at 640x480. The original simply uploads the raw FGDC20
-// intensity atlas and bilinear-samples it; matching that gives the original's
-// bold, smooth, solid glyphs. The 2x Catmull-Rom supersample was a mistake:
+// Atlas supersampling: DISABLED (round-3). The original simply uploads the raw
+// FGDC20 intensity atlas and bilinear-samples it; matching that gives the
+// original's bold, smooth, solid glyphs.
+//
+// [STALE PREMISE CORRECTED 2026-08-27] This used to read "The standalone draws
+// the 33px glyph cell at ~34 device px (800x600) — essentially 1:1, same as the
+// original's ~0.82x at 640x480." The 800x600 default is gone: the backbuffer is
+// 640x480 with kVScale 1.0 (exe_main.cpp:344-346), 1280x960 only under
+// MASHED_HIRES. So the standalone no longer draws the cell near 1:1 -- at the
+// header's scale 0.8 it lands on ~26.4 device px, a downsample. The 33px cell
+// size itself is MEASURED-correct (Font36.piz -> FGDC20.RWF natural-height
+// float at file offset 0x14 = 33.0). The 2x Catmull-Rom supersample was a mistake:
 // its negative lobes (ringing) eroded thin strokes and gave the edges a
 // ragged/noisy look (font_fair.png, round-3). Raw atlas + GPU LINEAR = match.
 // 2026-06-15: 2x supersample (kAtlasSS=2) tested for the jagged-font complaint
