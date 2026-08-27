@@ -293,6 +293,66 @@ GREEN or every remaining row cited; R10b closed so the result is reproducible.
 
 Closes v2's **R4**.
 
+#### Camera — measured 2026-08-27, and it changes how D1's in-race shots should be read
+
+`verify/d1_camera_20260826/RESULT.md`. The verbatim race camera
+(`Race/RaceCamera.cpp`, RVAs 0x00446520 / 0x00441820 / 0x0040e180 / 0x00410d10) had
+run every frame since June **with its pose discarded** and had never been compared
+against the original. It now has been, by an offline unit diff against 826 frames of
+live original telemetry, and it agrees to float precision:
+
+| | before | after |
+|---|---:|---:|
+| eye position, median | 4.4343 | **0.0001** |
+| aim angle, median | 37.27° | **0.0007°** |
+| most-separated pair, exact | 0.0% | **92.2%** |
+
+Two defects fixed, both ASM-cited: `0x004a2c48` implemented as `std::nearbyint` when
+it is `__ftol` (truncation), which indexed one past a 30-node ribbon on 591 of 766
+frames; and `MostSeparatedPair`'s out-params swapped.
+
+**The consequence for D1 is the important part.** The pose is *still* discarded —
+`race_cam_.pos()` and `.target()` have zero call sites in the tree, and the in-race
+view comes from an invented chase rig at `TrackRenderer.cpp:4097-4123`. So **every
+in-race shot D1 has ever compared was framed by our rig, not the game's camera.** That
+does not invalidate the D3D9-vs-librw A/B (both sides used the same wrong camera), but
+it does mean no in-race shot can currently answer "is this what Mashed looks like".
+
+Correction to `verify/d1_carproj/RESULT.md`: its Candidate A fed `ctrl+0x4c` as a
+look-at **point**. That field is an aim **direction** — deriving elev/azim from it
+reproduces the recorded `+0x34`/`+0x38` to 0.0000°, while `(tgt - pos)` is off by up to
+60°. So Candidate A was mis-specified and its rejection does not establish the
+conclusion drawn from it. Candidate B's positive result is unaffected.
+
+#### When human visual review becomes worth the user's time
+
+Recorded because it keeps being asked and the honest answer is "it depends which
+surface". Three tiers:
+
+**Valuable NOW — frontend and text.** Menu parity is closed (468/468 draw-list rows
+identical with matched saves), so any visible regression there is real signal. More
+importantly the harness is **structurally blind to text**: the original's RtCharset
+glyph draws never reach the hooked draw vtbl, so original captures contain no text at
+all (`re/analysis/parity_tooling.md:83-87`) and font raster has *no* automated coverage.
+Human eyes are the only instrument that exists for it today.
+
+**Valuable NOW — gestalt and orientation, on stills, side by side with the original.**
+This is the class the harness is worst at and a person is best at. Precedent:
+`verify/d1_basis/RESULT.md` found the standalone was rendering the world **mirrored**,
+and it took three analysis passes plus a false refutation to get there. A person
+looking at the track would likely have said "that is backwards" in seconds. Every
+`verify/` still from before 2026-08-16 is horizontally flipped for this reason.
+
+**NOT yet worth it — in-race framing, HUD, effects.** Default in-race today is a
+hand-written D3D9 scaffold, an invented chase camera, a scaffold HUD, scaffold
+particles, and no audio at all (`SESSION_VERIFICATION_AUDIT_2026-08-15.md` §2).
+Feedback on these would restate tracker rows that are already open, and would cost the
+reviewer real time for no new information.
+
+**The gate for in-race review** is therefore: the verbatim camera pose wired into the
+renderer, AND D1's default-renderer question settled. Until both hold, an in-race
+opinion is an opinion about the scaffold, not about the port.
+
 ### D2 — Default physics
 
 Invert `MASHED_REAL_PHYSICS`. The ported RWP-3.7 chain drives the car by default; the
