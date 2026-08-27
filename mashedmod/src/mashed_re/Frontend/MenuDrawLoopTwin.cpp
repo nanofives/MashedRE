@@ -86,20 +86,49 @@ constexpr std::uintptr_t kLastDir = 0x0067e844;
 constexpr std::uintptr_t kDimAll  = 0x008990e4;
 static const char* const kButton = reinterpret_cast<const char*>(0x005cda7c);
 
-// per-record draw for the static tag family (LAB_0043d185): shadow pass
-// colored from the persistent scratch, main pass from the record color;
-// 7-arg form (last = slide). Primary pair for type 0/2; secondary pair
+// per-record draw for the static tag family (LAB_0043d185): shadow pass at
+// +3.0 in x and y with a CONSTANT opaque black, main pass from the record
+// color; 7-arg form (last = slide). Primary pair for type 0/2; secondary pair
 // (sec_id) when type is neither.
-inline void StaticDraw(const Rec& r, std::uint32_t scratch) {
+//
+// kStaticShadow — FIXED 2026-08-27. This used to take the caller's
+// `col_scratch` as the shadow colour, which is a DIFFERENT frame slot from the
+// one the original reads. Verified against the PE:
+//
+//   0x0043c5b0  sub esp,0x48                     frame
+//   0x0043c5da..e9  [esp+0x00..03] = ff,ff,ff,ff  local +0x00 = 0xffffffff
+//   0x0043c5ee..fd  [esp+0x08..0b] = 00,00,00,ff  local +0x08 = 0xff000000
+//   ... 4 register pushes (popped edi/esi/ebp/ebx at 0x0043d271) -> locals +0x10
+//   0x0043d1ab  push edx / 0x0043d1af push ecx    -> locals +0x18
+//   0x0043d1b0  mov ecx,[esp+0x20]                = local +0x08, the SHADOW arg
+//   0x0043d1e4  push [esi-0x20]                   = record +0x0c, the MAIN arg
+//
+// So the shadow colour is local +0x08: written once at entry and NEVER touched
+// again (it is the only writer in the function). `col_scratch` is our analogue
+// of local +0x00, which `FUN_0042aad0` (CursorAuxEax) greys IN PLACE inside the
+// 0xff040000 item-row branch.
+//
+// Why the bug was invisible: on any screen where an item row is drawn before a
+// static row, the scratch has already been greyed to 0xff000000 and the two
+// agree by accident -- which is exactly what the C4 diff's
+// auxA = ['ffffffff','ff000000',...] shows. On a screen with NO preceding item
+// row, the port drew a WHITE shadow. The C4 could not catch it: its collector
+// hooks the Im2D device draw at *(*(0x007d3ff8)+0x30), and text goes out through
+// Im3D (LAB_00554940 -> FUN_004cd070), so glyph colour never enters that surface.
+//
+// 3.0f verified from the PE: 0x005cc31c = 00004040 = 3.0 exactly.
+constexpr std::uint32_t kStaticShadow = 0xff000000u;   // local +0x08
+
+inline void StaticDraw(const Rec& r) {
     if (r.type == 0 || r.type == 2) {
         if (r.prim_id == -1) return;
-        oItemText7(r.prim_id, r.x + 3.0f, r.y + 3.0f, scratch, r.scale,
+        oItemText7(r.prim_id, r.x + 3.0f, r.y + 3.0f, kStaticShadow, r.scale,
                    r.flag24, r.slide);
         oItemText7(r.prim_id, r.x, r.y, static_cast<std::uint32_t>(r.color),
                    r.scale, r.flag24, r.slide);
     } else {
         if (r.sec_id == -1) return;
-        oItemText7(r.sec_id, r.x + 3.0f, r.y + 3.0f, scratch, r.scale,
+        oItemText7(r.sec_id, r.x + 3.0f, r.y + 3.0f, kStaticShadow, r.scale,
                    r.flag24, r.slide);
         oItemText7(r.sec_id, r.x, r.y, static_cast<std::uint32_t>(r.color),
                    r.scale, r.flag24, r.slide);
@@ -248,7 +277,7 @@ extern "C" __declspec(dllexport) void __cdecl MenuDrawLoopTwin(void) {
                 }
                 (void)text_y_base; (void)hl_x; (void)h_quad;
             } else if (stat) {               // LAB_0043d185
-                StaticDraw(r, col_scratch);
+                StaticDraw(r);
             }
             // else: skip record (0x0043d25d)
         }
