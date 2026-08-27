@@ -15,10 +15,33 @@ namespace Race {
 
 namespace {
 
-// 0x004a2c48: FPU ROUND(st0) to integer, banker's rounding (round-to-
-// nearest-even, the x87 default mode the original runs in).
-inline int BankersRound(float v) {
-    return static_cast<int>(std::nearbyint(v));   // FE_TONEAREST default
+// 0x004a2c48 is `__ftol`, the MSVC float-to-long CRT helper — it TRUNCATES
+// TOWARD ZERO. It is NOT banker's rounding, which is what this helper used to
+// do (`std::nearbyint`) and what the comment used to claim.
+//
+// Evidence, in the order it was established:
+//   * hooks.csv 004a2c48 — "__ftol x87 round-to-i64", C3, byte-identical,
+//     verbatim naked port at Math/FPURound.cpp.
+//   * That port's header documents the algorithm: FISTP rounds per the FPU
+//     control word (round-to-nearest-even by default), and then a residual
+//     correction subtracts 1 for positive x whenever the CW rounded UP
+//     (SBB gated on the residual's sign bit). Net result: truncation.
+//     Its own "scattered inline copies" list already named this function:
+//     "RaceCamera.cpp BankersRound(float) — APPROX ... do NOT reproduce the
+//     exact CW-round + residual-correction semantics."
+//   * MEASURED 2026-08-26: nearbyint(29.5) = 30 makes PathSample index
+//     NodeDir(30) on a 30-node ribbon — one past the end — and drives frac
+//     negative. Against a live original capture that put the camera 38 deg off
+//     in elevation on 591 of 766 comparable frames, because the pre-race grid
+//     sits at path_prog 29.18..30.00, right at the ribbon wrap.
+//     A controlled path_prog sweep puts the discontinuity between 29.30 (fine)
+//     and 29.50 (broken), which is exactly where nearbyint and __ftol diverge.
+//
+// A plain C cast IS what __ftol implements, so this is faithful for every value
+// the camera can produce (prog >= 0, well inside int range). The naked port in
+// Math/FPURound.cpp remains the bit-exact reference for hook installation.
+inline int Ftol_4a2c48(float v) {
+    return static_cast<int>(v);                   // truncate toward zero
 }
 
 // 0x004c3ac0 Vec3Magnitude (C4-verified RW primitive; here the plain
@@ -124,11 +147,26 @@ void RaceCamera::NodeDir(int node, float out_dir[3], float* out_h) const {
     RotateAboutAxis(out_dir, axis, -25.f);
 }
 
-// path sample at progress: node = round(prog), blend with node+1 (wrap) by
-// frac = prog - node (0x00446f91..0x00447081; frac may be negative — the
-// original extrapolates and so do we).
+// path sample at progress: node = __ftol(prog) (TRUNCATED), blend with node+1
+// (wrapped) by frac = prog - node. Original block 0x00446f91..0x00447081:
+//   0x00446f95  call 0x408a50      prog = path progress for this car
+//   0x00446fa3  call 0x4a2c48      node = __ftol(prog)   <-- TRUNCATION
+//   0x00446fb7  call 0x441820      NodeDir(node, ...)    <-- node NOT wrapped
+//   0x00446fc2  add eax, 1         next = node + 1
+//   0x00446fcd  call 0x426bb0      count = GetCount()
+//   0x00446fd5  cmp / jl / mov 0   if (next >= count) next = 0  <-- only NEXT
+//   0x00446ffe  fild / fsubr       frac = prog - (float)node
+//
+// The original wraps `next` and NOT `node`, and that asymmetry is correct
+// BECAUSE the conversion truncates: prog < count implies node <= count-1, so
+// `node` can never go out of range and frac is always in [0,1).
+//
+// The earlier comment here claimed "frac may be negative — the original
+// extrapolates and so do we". That was wrong, and it codified the defect: only
+// a round-half-up conversion can make frac negative. With __ftol semantics it
+// cannot happen. See the Ftol_4a2c48 comment for the measurement that caught it.
 void RaceCamera::PathSample(float prog, float out_dir[3], float* out_h) const {
-    const int node = BankersRound(prog);                 // 0x004a2c48
+    const int node = Ftol_4a2c48(prog);                  // 0x004a2c48 (truncates)
     const float frac = prog - static_cast<float>(node);
     int next = node + 1;
     if (node_count_ <= next) next = 0;                   // 0x00446fd5 wrap
@@ -165,8 +203,36 @@ void RaceCamera::MostSeparatedPair(const RaceCamCar cars[4], int* a, int* b) {
     if (best_outer == -1) best_outer = best_inner;
     if (best_inner == -1) best_inner = 0;
     if (best_outer == -1) best_outer = 0;
-    *a = best_outer;
-    *b = best_inner;
+    // OUT-PARAM ORDER: first = INNER index, second = OUTER index. SOURCE-VERIFIED
+    // against the PE (re/analysis/race_camera/FUN_0040e180.asm, dumped with
+    // re/tools/pedisasm.py from MASHED.exe.unpatched at the SHA-256 anchor):
+    //   0x0040e19e  xor ebx, ebx          ebx = OUTER counter
+    //   0x0040e2c6  inc esi               esi = INNER counter (back edge 0x0040e2ca)
+    //   0x0040e2db  inc ebx               outer back edge 0x0040e2e3
+    //   on a new best:
+    //   0x0040e2b9  mov ebp, esi          ebp  <- INNER
+    //   0x0040e2bb  mov [esp+0x10], ebx   slot <- OUTER (-> edi at 0x0040e2d0)
+    //   tail:
+    //   0x0040e325  mov [eax], ebp        *out1 = INNER
+    //   0x0040e327  mov [ecx], edi        *out2 = OUTER
+    //
+    // This was `*a = best_outer; *b = best_inner` and that is backwards. It is NOT
+    // cosmetic: Update() leads only the A side (mid = (posA+posB)/2 + velA*k, the
+    // sep leads having cancelled), so a swap moves the camera target by
+    // k*(velA - velB) -- invisible while the cars are stationary, 0.22..0.45 at
+    // the captured racing speeds.
+    //
+    // MEASURED 2026-08-26 over 766 frames of live original telemetry: before, the
+    // port matched the original's stored pair (+0x994/+0x998) exactly 0.0% of the
+    // time and matched it swapped 92.2%; after, 92.2% exact, and the moving-tail
+    // pose residual went 0.231 -> 0.000. Two independent quantities, one change.
+    //
+    // The remaining 7.8% choose a genuinely DIFFERENT pair and are unexplained.
+    // Leading suspect, untested: the offline driver derives `active` as
+    // (alive != -1) instead of replicating IsCarSlotActive (0x0040e370), whose
+    // table walk the original applies here at 0x0040e1b5 via PTR 0x005f2770.
+    *a = best_inner;
+    *b = best_outer;
 }
 
 // ---- 0x00446520 race branch ------------------------------------------------
@@ -190,8 +256,26 @@ void RaceCamera::Update(const RaceCamCar cars[4], int track_type,
     leadA[0] += velLead[0];
     leadA[2] += velLead[2];
 
-    // separation = (posA - posB) with y forced 0 (0x00446bf0..0x00446c50);
-    // dy kept separately for the midpoint
+    // separation, y forced 0; dy kept separately for the midpoint. Transcribed:
+    //   0x00446b76  mov eax,[ebp-0x28] / call 0x46cb30   velA = GetOffset3D(A)
+    //   0x00446b89/95/a1  fmul [0x5ccd18]                velA *= 0.00015
+    //   0x00446bdb  fld [ebp-0x3c]  / fsub [edx+0x30]    sep.x = leadA.x - posB.x
+    //   0x00446be7  fld [ebp-0x38]  / fsub [eax+0x34]    sep.y = posA.y  - posB.y
+    //   0x00446bf3  fld [ebp-0xbc]  / fsub [ecx+0x38]    sep.z = leadA.z - posB.z
+    //   0x00446bff  mov edx,[ebp-0x28] / call 0x46cb30   <-- CAR A AGAIN, not B
+    //   0x00446c39  fld [ebp-0x20]  / fsub [ebp-0x50]    sep.x -= velA.x*k
+    //   0x00446c42  fld [ebp-0x18]  / fsub [ebp-0x48]    sep.z -= velA.z*k
+    //   0x00446c54  mov [ebp-0xc4], 0                    sep.y forced to 0
+    //
+    // BOTH velocity fetches pass `[ebp-0x28]`, the pair member A index, so the
+    // two lead terms CANCEL and sep is exactly posA - posB. Verified 2026-08-26
+    // against the PE: 0x005ccd18 = 0x391d4952 = 0.0001500000071246177, which is
+    // what 0.00015f compiles to, so the scale is not a gloss error either.
+    //
+    // A 2026-08-26 attempt to lead the B side here (sep -= velB*k) was REVERTED:
+    // it improved the look-at residual but broke zoom, which is computed from
+    // |sep| at 0x00446c6e..0x00446c76. Two compensating errors, not a fix. The
+    // real cause of that residual is the pair ORDER -- see MostSeparatedPair.
     const float dy = leadA[1] - cars[B].pos[1];
     float sep[3] = {leadA[0] - velLead[0] - cars[B].pos[0], 0.f,
                     leadA[2] - velLead[2] - cars[B].pos[2]};
