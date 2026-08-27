@@ -170,15 +170,56 @@ crossfade wash** (agent comment, `frontend_parity.py`). The missing preview is t
 harness neutralising the original, not a fault in the original or in our port. Any
 review of preview rendering must use a run without `nop_backdrop()`.
 
-### B2. Wrong track names (Arctic / Egypt), and stars showing.
+### B2. RETRACTED - the wrong track names are a REAL PORT DEFECT, on OUR side
 
-Reviewer: *"track names are not loaded, arctic and egypt are wrong names"*, *"stars
-should not appear if everything is unlocked"*.
+> **This section originally classified "Arctic / Egypt" as a harness artifact on the
+> ORIGINAL side and told the reviewer it was "not a data defect". That was wrong, and
+> backwards.**
 
-Already recorded: `verify/parity_20260819/RESULT.md:32-38` — the parity walk pushes a
-screen **without cup/championship state**, so it lists `Arctic`/`Egypt` where a
-real-boot original lists `Angel Peak`/`Kharga Temple`/`Neustein`/`Timgidski`. That note
-states plainly it is **not a data defect**. The stars are the same root: no unlock state.
+MEASURED 2026-08-27: **`Arctic` occurs 0 times in `MASHED.exe`.** Both strings are ours
+- `kAreas[0].name = L"Arctic"`, `kAreas[1].name = L"Egypt"` in
+`mashedmod/src/mashed_re/Race/GameFlow.cpp:29-30`, a hardcoded standalone area table
+with no original msgid behind it. `verify/parity_20260819/RESULT.md:32-38` attributes
+them to the **standalone's** walk, which is what I misread. So the reviewer was looking
+at OUR screen printing OUR hardcoded area names where the original prints cup
+place-names. Class A, not B.
+
+**What the original does instead.** s6/s7 content is drawn by **`FUN_00439210`**
+(0x00439210, ~5626 B), reached via `FUN_00431f30(6|7)` setting `DAT_0067e7b8 = 1` and
+the dispatcher `FUN_0043bf30`. It draws **13 rows at pitch 22** and issues
+`FUN_00427e00(0x49 + row, 64.0, row_Y, ...)` - msgids **0x49..0x55, the 13 cup
+place-names**, `0x49` = "Angel Peak" (`cup_place_names_REmap_20260616.md:40-46`). Row
+lock state comes from `DAT_007f0a40`, 13 rows x 0x30 bytes, the same span the save file
+carries (`Save/GameSaveFormat.h:40-45`). Note `kT6`/`kT7` in `Frontend/MenuNavSM.cpp:60-61`
+hold one record with string id `-1`: the descriptor carries **no** static labels, so every
+name must come from the content drawer. This also pins the s6/s7 drawer that two earlier
+notes left `[UNCERTAIN - not yet pinned]`.
+
+**Open contradiction, recorded not resolved:** `cup_place_names_REmap_20260616.md:83-86`
+asserts *"`0x49` base is never a msgid immediate ... NOT computed inline as `0x49 + index`"*
+while `hud_frontend_d2/0x00439210.md:48` gives exactly that call. Both MEASURED; they
+cannot both hold. Likely an instruction-search miss in the former.
+
+### B2b. The stars, and why the runtime unlock did nothing
+
+The bare push **does** set the panel flag, so the screen renders - but it never runs the
+action arm in `FUN_0043dfd0` that establishes cup state. Measured jumped-to state is
+`DAT_0067e9fc = 0` (game mode 0), which matches **none** of `FUN_00439210`'s header cases
+(6/7/8) and is outside `FUN_004309b0`'s mode-to-column table, falling to a garbage column.
+That, not availability, is the difference between a real boot and `E.push(6)` - which is
+exactly why patching the two availability getters moved the image 0.17-0.22 mean abs and
+left s18/s2 byte-identical.
+
+Candidate runtime write-set (DECODED, **unverified, not established**): `0x0067f184 = 1`
+then call `FUN_0042f6b0` (yields `0x0067e9fc = 3`, Challenge Cup); `0x0067f17c = 0`;
+`0x0067f180 = 0`; `0x0067f1a4 = 1`; `0x0067ecdc = 0`; `0x0067ed6c = 0`; `0x0067ea6c = 5`;
+`0x0067ea64 = 0`; `0x0067f1a8 = 0`; non-zero `DAT_007f0a40[col + row*0xc]` for rows 0..12.
+
+To make that authoritative, `FUN_00439210` needs decompiling in full
+(0x00439210..0x0043a604) for the per-row branch conditions. Cheaper second item:
+`FUN_0042ef40` is documented 1-arg in `patch_mashed_unlock_all.py` but called 2-arg in the
+`0x00439210` note. One is wrong.
+
 
 ---
 
