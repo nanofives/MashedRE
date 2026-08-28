@@ -4325,8 +4325,14 @@ bool RenderFrame() {
                 // every sheet in SFX.piz's INTERFACE.TXD is 256x256 and a
                 // non-square quad distorts the sprite -- the same mistake the VS
                 // separator made in its first round.
-                const float jw = 41.0f * kVScale, jh = 41.0f * kVScale;
-                const float jx = carX + 52.0f * kVScale;
+                // 48x26, NOT square. Round 3 measurement of the rendered ink:
+                //   ORIGINAL 28x30 at x193 (aspect 0.933)
+                //   ours     24x47 at x206 (aspect 0.511) -- too tall, too narrow
+                // so width x1.167 and height x0.638 off the 41x41 quad =
+                // 47.8 x 26.2. Squaring this quad was WRONG: unlike the VS
+                // sheet, the joypad cell's content is wider than it is tall.
+                const float jw = 48.0f * kVScale, jh = 26.2f * kVScale;
+                const float jx = carX + 44.0f * kVScale;  // ink x206 -> 193
                 const float jy = ry + (rowH - jh) * 0.5f;
                 if (g_inputicons_ready)
                     HudIm2DQuad(kHandleInputJoy, jx, jy, jw, jh, joyTint, uv_full);
@@ -4492,13 +4498,16 @@ bool RenderFrame() {
             // orig x74..471 y493..597, ours x85..461 y480..584. Heights are
             // identical (105 = 105), so size/pitch are left alone and only the
             // group origin moves: x 48 - 11/1.6 = 41.125, y 300 + 13/1.6 = 308.125.
-            // [UNCERTAIN] per-icon width and aspect on the original cannot be
-            // determined from this capture.
+            // CORRECTED round 3: the quad is 72x72 at (40 + 64c, 308), i.e.
+            // identical to the s18/s24 row -- the original's icon measures
+            // 26x79 on BOTH screens, and those s24 numbers reproduce it
+            // exactly. The old 56-wide quad rendered 21x80 here, which is
+            // the horizontal squash the user reported as 'stretched'.
             // "vs" separators, same law as the s18/s24 row (see there for the
             // measurement); origin shifted to this block's 41.125 icon base.
             for (int c = 0; c < 4; ++c)
-                HudIm2DQuad(kHandleCar0, (41.125f + c * 64.0f) * kVScale,
-                            308.125f * kVScale, 56.0f * kVScale, 72.0f * kVScale,
+                HudIm2DQuad(kHandleCar0, (40.0f + c * 64.0f) * kVScale,
+                            308.0f * kVScale, 72.0f * kVScale, 72.0f * kVScale,
                             white, uv_full);
             if (g_vs_ready) {
                 const float vsw = 54.0f * kVScale, vsh = 54.0f * kVScale;
