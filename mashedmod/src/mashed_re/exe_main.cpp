@@ -714,6 +714,17 @@ bool             g_inputicons_ready = false;
 constexpr std::uint32_t kSlotStar      = 60;
 constexpr int           kHandleStar    = 51;
 bool             g_star_ready = false;
+// The "vs" separator sprite (INTERFACE.TXD) was LOADED and registered to
+// kHandleVs but had no ready flag and no draw call anywhere — so it never
+// appeared. User-reported on s6/s18/s24 across two review rounds.
+bool             g_vs_ready   = false;
+// Per-player colour swatches (the s4 Player Colour Select row). Packed as the
+// bridge expects: A | B<<16 | G<<8 | R, so [0] = device (152,58,61) red.
+// Hoisted to file scope because the s15/s16 joypad icon is tinted with the
+// player's colour too, not just the s4 swatch strip.
+constexpr std::uint32_t kPlayerSwatch[6] = {
+    0xff3d3a98u, 0xffae894eu, 0xff567661u,
+    0xff62c3dbu, 0xffa7a7ebu, 0xff000000u };
 
 // Game Mode (s18/s24) vehicle preview sprites "car1".."car8" — the selected
 // vehicle's render (e.g. Hammerhead) shown center-right by FUN_0043af10's tail
@@ -4083,9 +4094,9 @@ bool RenderFrame() {
             // gave (= the FUN_004335f0 local_1c swatch table): #983A3D #4E89AE
             // #617656 #DBC362 #EBA7A7 #000000, packed for the bridge's untextured
             // R/B swap (A | B<<16 | G<<8 | R).
-            static const std::uint32_t kSwatch[6] = {
-                0xff3d3a98u, 0xffae894eu, 0xff567661u,
-                0xff62c3dbu, 0xffa7a7ebu, 0xff000000u };
+            // Single source now: kPlayerSwatch at file scope (the s15/s16
+            // joypad tint uses the same table).
+            const std::uint32_t* const kSwatch = kPlayerSwatch;
             const int selCol = (g_csel_p1_car >= 0 && g_csel_p1_car < 6)
                                    ? g_csel_p1_car : 0;
             for (int i = 0; i < 6; ++i) {
@@ -4233,14 +4244,31 @@ bool RenderFrame() {
                 HudIm2DQuad(kHandleCar0, carX, ry + rowH * 0.5f - csh * 0.5f,
                             csw, csh, white, uv_full);
                 // joypad icon (device[order=0]==joypad) then the number "1".
-                const float jx = carX + 34.0f * kVScale;
-                const float jy = ry + (rowH - 22.0f * kVScale) * 0.5f;
+                // TINTED by the player's colour, not white. MEASURED: the
+                // original's joypad pixels contain ZERO neutral greys — modal
+                // (96,36,40) with a bright (152,56,56) — while ours rendered
+                // pure grey. The s4 colour swatch for car 0 is 0xff3d3a98,
+                // which unpacks (A | B<<16 | G<<8 | R) to device (152,58,61),
+                // matching that bright value to within 2/5. All four rows are
+                // player 1 / car 0 at the jumped-to default, which is why every
+                // row reads the same red.
+                // [UNCERTAIN] the per-player mapping itself is still
+                // unmeasurable here: forcing the order array to {0,1,2,3} left
+                // rows 0-2 byte-identical because DAT_0067e938 is all zeros at
+                // a bare nav push, so only car 0's colour is confirmed.
+                const std::uint32_t joyTint = kPlayerSwatch[0];
+                // Size and x MEASURED against orig_s15: the original's joypad
+                // ink is 38x36 device at x=185, ours was <=31.8 wide with its
+                // right edge at 187 — so ~1.195x too small and ~30 device px
+                // too far left. 28 -> 33.5 / 22 -> 26.3 virtual, and the x
+                // offset 34 -> 52 moves the sprite right into place.
+                const float jw = 33.5f * kVScale, jh = 26.3f * kVScale;
+                const float jx = carX + 52.0f * kVScale;
+                const float jy = ry + (rowH - jh) * 0.5f;
                 if (g_inputicons_ready)
-                    HudIm2DQuad(kHandleInputJoy, jx, jy, 28.0f * kVScale,
-                                22.0f * kVScale, white, uv_full);
+                    HudIm2DQuad(kHandleInputJoy, jx, jy, jw, jh, joyTint, uv_full);
                 else
-                    HudIm2DQuad(0, jx, jy, 28.0f * kVScale, 22.0f * kVScale,
-                                0xff202020u, uv_full);
+                    HudIm2DQuad(0, jx, jy, jw, jh, 0xff202020u, uv_full);
                 if (g_font.ready())
                     DrawMashedString(L"1", jx + 34.0f * kVScale,
                                      ry + rowH * 0.5f, ncell, 0xff000000u, true);
@@ -4403,6 +4431,16 @@ bool RenderFrame() {
             // group origin moves: x 48 - 11/1.6 = 41.125, y 300 + 13/1.6 = 308.125.
             // [UNCERTAIN] per-icon width and aspect on the original cannot be
             // determined from this capture.
+            // "vs" separators, same law as the s18/s24 row (see there for the
+            // measurement); origin shifted to this block's 41.125 icon base.
+            if (g_vs_ready) {
+                const float vsw = 54.0f * kVScale, vsh = 54.0f * kVScale;
+                for (int c = 0; c < 3; ++c)
+                    HudIm2DQuad(kHandleVs,
+                                (105.625f + c * 64.0f) * kVScale - vsw * 0.5f,
+                                338.75f * kVScale - vsh * 0.5f,
+                                vsw, vsh, white, uv_full);
+            }
             for (int c = 0; c < 4; ++c)
                 HudIm2DQuad(kHandleCar0, (41.125f + c * 64.0f) * kVScale,
                             308.125f * kVScale, 56.0f * kVScale, 72.0f * kVScale,
@@ -4587,6 +4625,29 @@ bool RenderFrame() {
             // ambiguity. [UNCERTAIN] 72x72 being square is consistent with the
             // measurements (w 71.92+-0.68, h 72.13) but is not demonstrated.
             // Image-derived only -- no disassembly was read for these values.
+            // "vs" separator between adjacent car icons — 3 of them for 4 cars.
+            // MEASURED from orig_s18.bmp (1024x768): the glyph sits in each gap
+            // between the devils' red bboxes (77-147, 179-250, 282-352,
+            // 384-454 device), gap centres 101.9 / 166.3 / 230.0 virtual, i.e.
+            // spacing 64.05 = exactly the icon pitch. Its ink band measured
+            // inside the gaps (where nothing else can contribute) is y 514..570
+            // device = 321.3..356.3 virtual, so centre y 338.75, height ~35.6.
+            // SQUARE quad: every texture in SFX.piz's INTERFACE.TXD is 256x256,
+            // so a non-square quad distorts the sprite. Round 1 used 44x35.6
+            // (aspect 1.24) and measured 1946 gap-ink px against the original's
+            // 2898 with content height 51 vs 57 -- too thin AND too short,
+            // which is the squash. Content fills ~0.895 of the quad, so a
+            // 57-device content height needs a 63.7-device = 40-virtual quad.
+            // Drawn BEFORE the cars: in the original the devils occlude the
+            // sprite's left and right ends, so it is behind them.
+            if (g_vs_ready) {
+                const float vsw = 54.0f * kVScale, vsh = 54.0f * kVScale;
+                for (int c = 0; c < 3; ++c)
+                    HudIm2DQuad(kHandleVs,
+                                (104.5f + c * 64.0f) * kVScale - vsw * 0.5f,
+                                338.75f * kVScale - vsh * 0.5f,
+                                vsw, vsh, 0xffffffffu, uvf);
+            }
             for (int c = 0; c < 4; ++c)
                 HudIm2DQuad(kHandleCar0, (40.0f + c * 64.0f) * kVScale,
                             308.0f * kVScale, 72.0f * kVScale, 72.0f * kVScale,
@@ -5284,6 +5345,7 @@ bool LoadCarColorSprites() {
             mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
                 kHandleVs, g_quad_renderer.slot_texture(kSlotVs));
             vs_ok = true;
+            g_vs_ready = true;
         }
         break;
     }
