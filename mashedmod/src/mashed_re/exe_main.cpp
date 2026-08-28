@@ -4107,25 +4107,73 @@ bool RenderFrame() {
                 HudIm2DQuad(kHandleCar0 + i, cx, 125.0f * kVScale,
                             64.0f * kVScale, 64.0f * kVScale, white, uv_full);
             }
+            // --- Controller rows. MEASURED from orig_s4.bmp (1024x768): four
+            // full-width orange bars, device y 282/336/391/445 -> virtual
+            // y0 = 176.2 pitch 34.0, x 74..934 device = 46.2 virtual wide 538.1,
+            // height 42 device = 26.2 virtual. Fill samples (120,52,8) — the
+            // SAME plate colour as s15/s16, so it reuses that constant
+            // (0x7f146ef0 renders (120,55,10); the +3/+2 residual is the one
+            // documented at the s15 site).
+            // This is the "no orange background" the user reported three times:
+            // the block below only ever drew a single free-floating cursor.
+            // [UNCERTAIN] ROW COUNT is live device state, not modelled. The
+            // original rendered THREE rows in one capture and FOUR in another
+            // (orange area 106203 -> 141622 px between two runs of the same
+            // harness), so 4 matches the latest reference rather than a derived
+            // value. Per-row device icon and number placement are likewise
+            // approximate: the bar's own gradient defeated a clean blob
+            // measurement of the icons, so they follow the s15 row convention.
+            {
+                const std::uint32_t rowFill = 0x7f146ef0u;
+                const std::uint32_t rowBord = 0xff1050b4u;
+                const float bx = 46.2f * kVScale, bw = 538.1f * kVScale;
+                const float bh = 26.2f * kVScale, bt2 = 1.0f * kVScale;
+                const float bdy = 34.0f * kVScale;
+                // BOTTOM-ANCHORED. Two captures of the same harness gave
+                // different row counts, and comparing them pins the law:
+                //   4 rows -> first bar y 176.2 virtual, last 176.2+3*34 = 278.2
+                //   3 rows -> first bar y 213.0 virtual, last 213.0+2*34 = 281.0
+                // The FIRST row moves and the LAST stays put at ~279, so the
+                // block grows upward from a fixed bottom. Anchoring there keeps
+                // the last row correct whatever count we end up modelling.
+                const int   nrows4 = 4;   // [UNCERTAIN] live device state
+                const float byLast = 279.0f * kVScale;
+                const float by0 = byLast - (nrows4 - 1) * bdy;
+                for (int r = 0; r < nrows4; ++r) {
+                    const float by = by0 + r * bdy;
+                    HudIm2DQuad(0, bx, by, bw, bh, rowFill, uv_full);
+                    HudIm2DQuad(0, bx, by, bw, bt2, rowBord, uv_full);
+                    HudIm2DQuad(0, bx, by + bh - bt2, bw, bt2, rowBord, uv_full);
+                    // Device icon: rows 0-2 joypad, row 3 keyboard in the
+                    // reference capture (a device assignment we do not model).
+                    const float isz = 22.0f * kVScale;
+                    const float ix = bx + 8.0f * kVScale;
+                    const float iy = by + (bh - isz) * 0.5f;
+                    const int   h_icon = (r == 3) ? kHandleInputKbd : kHandleInputJoy;
+                    if (g_inputicons_ready)
+                        HudIm2DQuad(h_icon, ix, iy, isz * 1.3f, isz,
+                                    kPlayerSwatch[r % 6], uv_full);
+                    if (g_font.ready()) {
+                        wchar_t num[2] = { static_cast<wchar_t>(L'1' + r), 0 };
+                        const float ncell2 = 0.55f * 0.0708f * 480.f * kVScale;
+                        DrawMashedString(num, ix + isz * 1.3f + 8.0f * kVScale,
+                                         by + bh * 0.5f, ncell2, 0xff000000u, true);
+                    }
+                }
+            }
             // Player cursor (FUN_004335f0 per-player controller at DAT_0067eaf8):
             // the device icon sits under the player's currently-selected colour
             // column and MOVES horizontally with L/R (g_csel_p1_car). Single-
             // player flow = one cursor; the keyboard sprite is drawn WIDER per the
             // user. [residual: multiplayer = one cursor per active player from the
             // setup-flow state, not yet tracked.]
-            const float kbw = 46.0f * kVScale, kbh = 24.0f * kVScale;  // wider keyboard
-            const float curx = (146.0f + selCol * 70.0f) * kVScale
-                             + (64.0f * kVScale - kbw) * 0.5f;
-            const float cury = 196.0f * kVScale;
-            if (g_inputicons_ready)
-                HudIm2DQuad(kHandleInputKbd, curx, cury, kbw, kbh, white, uv_full);
-            else
-                HudIm2DQuad(0, curx, cury, kbw, kbh, 0xff202020u, uv_full);
-            if (g_font.ready()) {
-                const float ncell = 0.5f * 0.0708f * 480.f * kVScale;
-                DrawMashedString(L"1", curx + kbw + 4.0f * kVScale,
-                                 cury + kbh * 0.5f, ncell, 0xff000000u, true);
-            }
+            // REMOVED 2026-08-28: this free-floating cursor was the placeholder
+            // that stood in while the controller rows above did not exist. The
+            // original draws NO such element — its device icons live at the LEFT
+            // of each row (which is also the "unselected zone at the left of all
+            // the icons" the user described), and nothing sits under the colour
+            // columns. Keeping it painted a second keyboard over the new bars.
+            (void)selCol;
         }
 
         // --- Ability Select (15, FUN_0042...) / Team Select (16, FUN_0043aa30):
@@ -4262,7 +4310,13 @@ bool RenderFrame() {
                 // right edge at 187 — so ~1.195x too small and ~30 device px
                 // too far left. 28 -> 33.5 / 22 -> 26.3 virtual, and the x
                 // offset 34 -> 52 moves the sprite right into place.
-                const float jw = 33.5f * kVScale, jh = 26.3f * kVScale;
+                // Round 2: ours carried 278 ink px against the original's 532,
+                // so linear scale sqrt(532/278) = 1.383 -> 33.5*1.383 = 46.3,
+                // 26.3*1.383 = 36.4; taken SQUARE at 41 (geometric mean) because
+                // every sheet in SFX.piz's INTERFACE.TXD is 256x256 and a
+                // non-square quad distorts the sprite -- the same mistake the VS
+                // separator made in its first round.
+                const float jw = 41.0f * kVScale, jh = 41.0f * kVScale;
                 const float jx = carX + 52.0f * kVScale;
                 const float jy = ry + (rowH - jh) * 0.5f;
                 if (g_inputicons_ready)
@@ -4516,10 +4570,16 @@ bool RenderFrame() {
             // 250 - 81 = 169 recovers the value the old comment discarded: 169
             // was the SOLID width, not the total, so widening it to 250 traded a
             // label overlap for a missing fade. Both are kept now.
-            const float plateX = 58.0f, plateW = 250.0f;
+            // plateX 62.5, not 58: the plate MEASURES device 100..500 at
+            // 1024x768 = virtual 62.5..312.5, and 58 put it 4.5 virtual left.
+            const float plateX = 62.5f, plateW = 250.0f;
             const float plateSolidW = 169.0f;
             const float plateFadeW  = plateW - plateSolidW;   // 81
-            const float labelX = 66.0f, valRight = plateX + plateW - 18.0f;
+            // valRight sits at the plate's RIGHT EDGE, no 18-virtual margin:
+            // the original's value glyphs run x375..~500 device, i.e. out to
+            // plateX+plateW. The old margin pulled the whole value (and the
+            // arrow anchored off it) 35 device px left of the original.
+            const float labelX = 66.0f, valRight = plateX + plateW;
             const float plateH = 26.0f, bt = 1.0f * kVScale;
             const float cell = 0.6f * 0.0708f * 480.f * kVScale;
             std::uint32_t uvf[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
@@ -4571,7 +4631,7 @@ bool RenderFrame() {
                 // unknown -- no ASM was read to confirm the original passes a
                 // different scale for the cursor row rather than, say, a second
                 // bold draw. Measured geometry match only, do not promote past C2.
-                const float labCell = (r == selRow) ? 0.79f * 0.0708f * 480.f * kVScale
+                const float labCell = (r == selRow) ? 0.776f * 0.0708f * 480.f * kVScale
                                                     : cell;
                 wchar_t lab[64];
                 if (GetMenuMessage(rows[r].label, lab, 64) > 0)
@@ -4586,11 +4646,19 @@ bool RenderFrame() {
                     // of each value, matching FUN_0040bb50("Arrow",...). Width is
                     // estimated from the glyph count (no measure fn in-scope).
                     if (g_menu_arrow_ready) {
-                        const float vw = static_cast<float>(std::wcslen(val)) *
-                                         cell * 0.62f;             // ~advance/char
-                        const float asz = 11.0f * kVScale;
+                        // Measure the value properly instead of estimating it
+                        // from the glyph count. The old 0.62*cell*len guess put
+                        // the arrow ~67 device px too far left, which is the
+                        // user's "arrow should be nearer the selected option".
+                        // MEASURED on orig_s24 row 1: the arrow occupies device
+                        // x350..370 (20x19) and "Standard" starts at 375, with
+                        // valRight = 464 device. 464 - 89(value) - 20(arrow) -
+                        // 5(gap) = 350, i.e. the formula lands exactly once the
+                        // value width is real. Arrow 20x19 device = 12.5 virtual.
+                        const float vw  = MeasureMashedString(val, cell);
+                        const float asz = 12.5f * kVScale;
                         HudIm2DQuad(kHandleMenuArrow,
-                                    valRight * kVScale - vw - asz - 1.0f * kVScale,
+                                    valRight * kVScale - vw - asz - 3.0f * kVScale,
                                     cy * kVScale - asz * 0.5f, asz, asz,
                                     0xff000000u, uvf);
                     }
