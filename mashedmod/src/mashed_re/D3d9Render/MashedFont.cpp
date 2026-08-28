@@ -213,11 +213,27 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
         const double a = std::pow(v / 255.0, gamma) * 255.0 + 0.5;
         alphaLut[v] = static_cast<std::uint8_t>(a < 0 ? 0 : (a > 255 ? 255 : a));
     }
+    // RGB carries the coverage too, not a flat 255. The palette entries this
+    // atlas actually uses are GREYSCALE with RGB == A (checked over the 53
+    // indices used more than 50 times: RGB all-equal, max|R-A| = 1), so the
+    // real texture is coverage in all four channels. The Im2D stage runs
+    // D3DTOP_MODULATE on BOTH colour and alpha (RwIm2DBridge.cpp:172-177), so
+    // the original composites coverage*colour * coverage = coverage^2 over
+    // black, while flat-255 RGB gave a linear coverage and therefore heavier
+    // edges. Measured after the palette fix: our s1 header ink was 2235 px
+    // against the original's 1816 (~23% bold) with flat RGB.
+    const bool rgb_from_cov = [] {
+        char v[8] = {};
+        return !(GetEnvironmentVariableA("MASHED_FONT_FLATRGB", v, sizeof(v)) > 0
+                 && v[0] == '1');
+    }();
     for (std::size_t i = 0; i < static_cast<std::size_t>(W) * H; ++i) {
-        bgra[i * 4 + 0] = 255;            // B
-        bgra[i * 4 + 1] = 255;            // G
-        bgra[i * 4 + 2] = 255;            // R
-        bgra[i * 4 + 3] = alphaLut[cov[i]];  // A = gamma-boosted coverage
+        const std::uint8_t a = alphaLut[cov[i]];
+        const std::uint8_t c = rgb_from_cov ? a : 255;
+        bgra[i * 4 + 0] = c;              // B
+        bgra[i * 4 + 1] = c;              // G
+        bgra[i * 4 + 2] = c;              // R
+        bgra[i * 4 + 3] = a;              // A = coverage
     }
     std::free(cov);
     const bool up = qr.UploadBGRAToSlot(slot, W, H, bgra);

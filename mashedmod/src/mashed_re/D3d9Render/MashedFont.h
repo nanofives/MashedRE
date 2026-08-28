@@ -1,10 +1,19 @@
 // Mashed RE — faithful FGDC20 font (B19 faithful-glyph path).
 //
 // Decodes MASHED's actual menu font from Font36.piz:
-//   FGDC20.TXD — 512x256 8bpp direct-intensity glyph atlas (RW TXD variant
-//                ver 0x1c02000a: root 0x23 -> rwID_IMAGE chunk @0x14 -> struct
-//                [w,h,depth,stride] @0x2c, all-zero 0x400 palette @0x3c,
-//                pixels @0x43c — NOT 0x438; see MashedFont.cpp chunk math).
+//   FGDC20.TXD — 512x256 8bpp PALETTISED glyph atlas (RW TXD variant ver
+//                0x1c02000a: root 0x23 -> rwID_IMAGE chunk @0x14 -> struct
+//                [w,h,depth,stride] @0x2c, PIXELS @0x3c (stride*h), then the
+//                0x400 PALETTE at 0x3c+stride*h — the palette FOLLOWS the
+//                pixels, per Txd/TxdDecoder.h:6-26).
+//                CORRECTED 2026-08-28: this previously read "all-zero palette
+//                @0x3c, pixels @0x43c", which was backwards. The zeros it saw
+//                were the atlas's first two blank rows, and the palette is
+//                real and NOT identity (pal[67]=253, pal[192]=13), so using
+//                the index as alpha corrupted every anti-aliased edge.
+//                Entries used by this atlas are greyscale with RGB == A, so
+//                the upload puts coverage in ALL FOUR channels — the Im2D
+//                stage modulates colour and alpha both, giving coverage^2.
 //   FGDC20.RWF — RW chunk 0x199 (RtCharset). Cracked from the deserializer
 //                FUN_00554390: header [ext_base u32 @0x24 (=0x80), glyphCount
 //                u32 @0x28 (=225), ext_count u32 @0x2c (=128)], EXTENDED

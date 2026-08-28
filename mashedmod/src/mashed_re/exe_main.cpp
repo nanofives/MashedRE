@@ -5428,15 +5428,27 @@ bool LoadLoadIconFromExe() {
             auto rd32 = [&](std::size_t o) {
                 std::uint32_t v; std::memcpy(&v, d + o, 4); return v; };
             const std::uint32_t w = rd32(0x2c), h = rd32(0x30), depth = rd32(0x34);
-            const std::size_t pix = 0x43c;
-            if (depth == 8 && w && h && w <= 1024 && h <= 1024 &&
-                pix + static_cast<std::size_t>(w) * h <= sz) {
+            const std::uint32_t stride = rd32(0x38);
+            // CORRECTED 2026-08-28, same bug as MashedFont carried: the PALETTE
+            // FOLLOWS THE PIXELS (Txd/TxdDecoder.h:6-26, and TxdDecoder.cpp:169
+            // does it right). Pixels start at 0x3c, palette at 0x3c+stride*h.
+            // Reading pixels at 0x43c both skipped the palette and started the
+            // image 1024 bytes late. FGDC20 showed how much that costs: the
+            // palette is NOT identity (pal[67]=253, pal[192]=13), so using the
+            // index as alpha corrupts every anti-aliased edge.
+            const std::size_t pix = 0x3c;
+            const std::size_t pal = pix + static_cast<std::size_t>(stride) * h;
+            if (depth == 8 && w && h && w <= 1024 && h <= 1024 && stride >= w &&
+                pal + 1024 <= sz) {
                 std::uint8_t* bgra = static_cast<std::uint8_t*>(
                     std::malloc(static_cast<std::size_t>(w) * h * 4));
                 if (bgra) {
-                    for (std::size_t i = 0; i < static_cast<std::size_t>(w) * h; ++i) {
+                    for (std::uint32_t y = 0; y < h; ++y)
+                    for (std::uint32_t x = 0; x < w; ++x) {
+                        const std::size_t i = static_cast<std::size_t>(y) * w + x;
+                        const std::uint8_t ix = d[pix + static_cast<std::size_t>(y) * stride + x];
                         bgra[i*4+0] = 255; bgra[i*4+1] = 255; bgra[i*4+2] = 255;
-                        bgra[i*4+3] = d[pix + i];
+                        bgra[i*4+3] = d[pal + static_cast<std::size_t>(ix) * 4 + 3];
                     }
                     ok = g_quad_renderer.UploadBGRAToSlot(kSlotLoadIcon, w, h, bgra);
                     std::free(bgra);
