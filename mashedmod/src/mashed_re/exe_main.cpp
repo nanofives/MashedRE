@@ -4136,7 +4136,9 @@ bool RenderFrame() {
                 // The FIRST row moves and the LAST stays put at ~279, so the
                 // block grows upward from a fixed bottom. Anchoring there keeps
                 // the last row correct whatever count we end up modelling.
-                const int   nrows4 = 4;   // [UNCERTAIN] live device state
+                // 3, matching the reference capture. 4 made the comparison
+                // unfair (user). The count is live device state either way.
+                const int   nrows4 = 3;   // [UNCERTAIN] live device state
                 const float byLast = 279.0f * kVScale;
                 const float by0 = byLast - (nrows4 - 1) * bdy;
                 for (int r = 0; r < nrows4; ++r) {
@@ -4146,17 +4148,24 @@ bool RenderFrame() {
                     HudIm2DQuad(0, bx, by + bh - bt2, bw, bt2, rowBord, uv_full);
                     // Device icon: rows 0-2 joypad, row 3 keyboard in the
                     // reference capture (a device assignment we do not model).
-                    const float isz = 22.0f * kVScale;
+                    // NEUTRAL, not tinted, and SQUARE. MEASURED on orig_s4:
+                    // the row icons are 69%/92% neutral-grey pixels, and the
+                    // joypad's ink is 28x26 device = aspect 1.08. The tint
+                    // belongs to the s15 rows (where a player has taken a
+                    // colour); here the icons sit in the LEFT unselected zone
+                    // and have no colour yet, exactly as the user described.
+                    // The old 1.3 width multiplier was the visible stretch.
+                    const float isz = 30.0f * kVScale;
                     const float ix = bx + 8.0f * kVScale;
                     const float iy = by + (bh - isz) * 0.5f;
-                    const int   h_icon = (r == 3) ? kHandleInputKbd : kHandleInputJoy;
+                    const int   h_icon = (r == nrows4 - 1) ? kHandleInputKbd
+                                                           : kHandleInputJoy;
                     if (g_inputicons_ready)
-                        HudIm2DQuad(h_icon, ix, iy, isz * 1.3f, isz,
-                                    kPlayerSwatch[r % 6], uv_full);
+                        HudIm2DQuad(h_icon, ix, iy, isz, isz, white, uv_full);
                     if (g_font.ready()) {
                         wchar_t num[2] = { static_cast<wchar_t>(L'1' + r), 0 };
                         const float ncell2 = 0.55f * 0.0708f * 480.f * kVScale;
-                        DrawMashedString(num, ix + isz * 1.3f + 8.0f * kVScale,
+                        DrawMashedString(num, ix + isz + 6.0f * kVScale,
                                          by + bh * 0.5f, ncell2, 0xff000000u, true);
                     }
                 }
@@ -4487,6 +4496,10 @@ bool RenderFrame() {
             // determined from this capture.
             // "vs" separators, same law as the s18/s24 row (see there for the
             // measurement); origin shifted to this block's 41.125 icon base.
+            for (int c = 0; c < 4; ++c)
+                HudIm2DQuad(kHandleCar0, (41.125f + c * 64.0f) * kVScale,
+                            308.125f * kVScale, 56.0f * kVScale, 72.0f * kVScale,
+                            white, uv_full);
             if (g_vs_ready) {
                 const float vsw = 54.0f * kVScale, vsh = 54.0f * kVScale;
                 for (int c = 0; c < 3; ++c)
@@ -4495,10 +4508,6 @@ bool RenderFrame() {
                                 338.75f * kVScale - vsh * 0.5f,
                                 vsw, vsh, white, uv_full);
             }
-            for (int c = 0; c < 4; ++c)
-                HudIm2DQuad(kHandleCar0, (41.125f + c * 64.0f) * kVScale,
-                            308.125f * kVScale, 56.0f * kVScale, 72.0f * kVScale,
-                            white, uv_full);
             // Separator: orig x511..513 y493..620 -> 319.375 / 308.125, w 1.875,
             // h 128 device = 80 virtual (height already matched exactly).
             HudIm2DQuad(0, 319.375f * kVScale, 308.125f * kVScale,
@@ -4706,8 +4715,11 @@ bool RenderFrame() {
             // 2898 with content height 51 vs 57 -- too thin AND too short,
             // which is the squash. Content fills ~0.895 of the quad, so a
             // 57-device content height needs a 63.7-device = 40-virtual quad.
-            // Drawn BEFORE the cars: in the original the devils occlude the
-            // sprite's left and right ends, so it is behind them.
+            // Drawn AFTER the cars (on top) -- see the s18/s24 note.
+            for (int c = 0; c < 4; ++c)
+                HudIm2DQuad(kHandleCar0, (40.0f + c * 64.0f) * kVScale,
+                            308.0f * kVScale, 72.0f * kVScale, 72.0f * kVScale,
+                            0xffffffffu, uvf);
             if (g_vs_ready) {
                 const float vsw = 54.0f * kVScale, vsh = 54.0f * kVScale;
                 for (int c = 0; c < 3; ++c)
@@ -4716,10 +4728,6 @@ bool RenderFrame() {
                                 338.75f * kVScale - vsh * 0.5f,
                                 vsw, vsh, 0xffffffffu, uvf);
             }
-            for (int c = 0; c < 4; ++c)
-                HudIm2DQuad(kHandleCar0, (40.0f + c * 64.0f) * kVScale,
-                            308.0f * kVScale, 72.0f * kVScale, 72.0f * kVScale,
-                            0xffffffffu, uvf);
             // Separator: original white bar occupies device cols 511..513, rows
             // 493..620 -> x 319.375, w 1.875, y 308.125, h 80.0 virtual.
             HudIm2DQuad(0, 319.5f * kVScale, 308.0f * kVScale,
