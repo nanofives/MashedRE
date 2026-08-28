@@ -172,6 +172,29 @@ void __cdecl Bridge_DrawPrimitive(int count, void* verts, int /*unused*/) {
         g_device->SetTextureStageState(0, D3DTSS_COLOROP,   D3DTOP_MODULATE);
         g_device->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
         g_device->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+        // MODULATE, not MODULATE2X — 2x was tried 2026-08-28 and REVERTED.
+        // Findings worth keeping (all measured at 1024x768):
+        //   FGDC20's two nav-arrow cells (atlas x405-435, x477-507) never reach
+        //   full intensity: max 254/245, mean 171.5/123.6, ZERO texels at 255,
+        //   while the neighbouring rectangle glyph is clean (132 px at 255).
+        //   Our Select arrow is the x477 cell (its most common texel is 67) and
+        //   we render modal (0,62,4) = 26% — i.e. we reproduce the asset
+        //   FAITHFULLY. The original renders a saturated (0,236,16) core, which
+        //   no straight alpha=coverage reading of that cell can produce.
+        //   Alpha MODULATE2X lands the arrow EXACTLY on the original (modal and
+        //   peak both (0,236,16)/236) but over-bolds text: header ink goes
+        //   1790 -> 2152 px where the original is 1816, so plain MODULATE was
+        //   already right for text. A GLOBAL 2x is therefore wrong.
+        // Conclusion: the boost is scoped to the arrow glyphs, not the atlas —
+        // either the original sources them from a different raster, or it
+        // applies a per-raster modulate (cf. the per-raster filter field in
+        // FUN_00554940 noted above). Unresolved; do not fudge it per-glyph
+        // without identifying the mechanism.
+        // Ruled out: FGMC20 (nav region empty, 73 px at 255 atlas-wide) and a
+        // decode error (stride 512 == width, palette all-zero as assumed).
+        // Not yet checked: FONT.TXD, which unlike FGDC20 has a NON-zero palette
+        // and a different platform field (0x1803ffff vs 0x1c02000a), so it needs
+        // its own chunk parse.
         g_device->SetTextureStageState(0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE);
         g_device->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
         g_device->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
