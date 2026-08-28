@@ -133,17 +133,53 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
     const std::uint32_t h     = RdU32(txd, 0x30);
     const std::uint32_t depth = RdU32(txd, 0x34);
     if (w == 0 || h == 0 || w > 4096 || h > 4096 || depth != 8) return false;
-    // Chunk layout (byte-exact, 2026-06-12): root 0x23 -> 4 raw bytes @0x0c ->
-    // rwID_IMAGE (0x18) chunk @0x14 whose size 0x2041c = 12 (struct hdr) +
-    // 0x10 (w,h,depth,STRIDE @0x2c..0x3b) + 0x400 (palette @0x3c..0x43b, all
-    // zeros -> direct intensity) + 0x20000 (pixels). Pixels therefore start at
-    // 0x43c — the previous 0x438 read the palette's last dword as the first
-    // four pixels, shifting the WHOLE atlas 4 columns left (every glyph showed
-    // its neighbor's edge column and lost its rightmost columns = the
-    // long-standing "leading tick" + cut-off glyph edges).
-    const std::size_t pix_off = 0x3c + 1024;          // = 0x43c
-    if (pix_off + static_cast<std::size_t>(w) * h > txd_len) return false;
-    const std::uint8_t* intensity = txd + pix_off;
+    // Chunk layout — CORRECTED 2026-08-28 against the documented format in
+    // Txd/TxdDecoder.h:6-26 (source-of-truth FUN_0054f8d0):
+    //   root 0x23 hdr(12) | numTex|deviceId @0x0c | numMips @0x10
+    //   IMAGE hdr @0x14 | STRUCT hdr @0x20 | w,h,depth,STRIDE @0x2c..0x3b
+    //   PIXELS  @0x3c            (stride*h bytes)
+    //   PALETTE @0x3c+stride*h   (1024 bytes, depth<9)
+    // The PALETTE FOLLOWS THE PIXELS. The previous code had it backwards —
+    // palette @0x3c, pixels @0x43c — which did two things wrong at once:
+    //   1. it read the first 1024 pixel bytes (= the first TWO rows at
+    //      stride 512) as a "palette", saw them as zeros, and concluded the
+    //      palette was unused / the bytes were direct intensity;
+    //   2. it then started the pixels 1024 bytes late, shifting the whole
+    //      atlas up by two rows.
+    // Arithmetic check on FGDC20: 0x3c + 512*256 = 0x2003c palette, +0x400 =
+    // 0x2043c, + the trailing TEXTURE chunk = 0x20488 = the exact entry size.
+    // The palette is REAL: 255 distinct entries forming a greyscale ramp
+    // (R=G=B~=A). Using the INDEX as alpha only looks right where the ramp is
+    // near-identity — pal[0]=0 and pal[255]=255 — which is most of a glyph
+    // BODY, so letters looked fine. It is badly wrong in between:
+    //   pal[67]=253  pal[96]=251  pal[120]=250  pal[136]=211  pal[80]=96
+    // i.e. every anti-aliased EDGE pixel was rendered at the wrong alpha, and
+    // any glyph built mostly from mid indices was rendered at a fraction of
+    // its intensity. The footer nav arrows are exactly that: the Select arrow's
+    // most common index is 67, which we drew at 67/255 = 26% instead of
+    // 253/255 = 99%, giving the measured modal (0,62,4) against the original's
+    // saturated (0,236,16). Root cause of both "fonts look filtered / poor
+    // resolution" (U-9045) and "Select/Back not rendered properly".
+    const std::uint32_t stride = RdU32(txd, 0x38);
+    if (stride == 0 || stride < w) return false;
+    const std::size_t pix_off = 0x3c;
+    const std::size_t pix_bytes = static_cast<std::size_t>(stride) * h;
+    const std::size_t pal_off = pix_off + pix_bytes;
+    if (pal_off + 1024 > txd_len) return false;
+    const std::uint8_t* pixels = txd + pix_off;
+    const std::uint8_t* palette = txd + pal_off;
+    // Palette-map into a tight w*h coverage plane (also drops any stride pad),
+    // taking the palette entry's ALPHA byte.
+    std::uint8_t* mapped = static_cast<std::uint8_t*>(
+        std::malloc(static_cast<std::size_t>(w) * h));
+    if (!mapped) return false;
+    for (std::uint32_t y = 0; y < h; ++y) {
+        const std::uint8_t* srow = pixels + static_cast<std::size_t>(y) * stride;
+        std::uint8_t* drow = mapped + static_cast<std::size_t>(y) * w;
+        for (std::uint32_t x = 0; x < w; ++x)
+            drow[x] = palette[static_cast<std::size_t>(srow[x]) * 4 + 3];
+    }
+    const std::uint8_t* intensity = mapped;
 
     // Supersample the coverage map (see kAtlasSS), then expand to BGRA:
     // white text, alpha = coverage (so it alpha-blends).
@@ -151,6 +187,7 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
     std::uint8_t* cov = UpscaleCoverage(intensity,
                                         static_cast<int>(w),
                                         static_cast<int>(h), kAtlasSS);
+    std::free(mapped);          // UpscaleCoverage has copied out of it
     if (!cov) return false;
     std::uint8_t* bgra = static_cast<std::uint8_t*>(
         std::malloc(static_cast<std::size_t>(W) * H * 4));
