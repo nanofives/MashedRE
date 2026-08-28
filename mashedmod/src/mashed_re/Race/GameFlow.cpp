@@ -51,7 +51,14 @@ const int kAreaCount = static_cast<int>(sizeof(kAreas) / sizeof(kAreas[0]));
 // place-name<->area pairing + per-cup membership live in the binary cup table
 // (FUN_0040b6c0 track-name table + DAT_007f0a40 13x12 cup/unlock table). Pairing
 // those place-names to areas needs that table RE'd — not guessed here.
-const int kCupTrackCount = 8;     // the 8 main race areas
+// Challenge Cup 1 holds FOUR tracks, not 8. MEASURED behaviourally: an
+// Interceptor on the string-draw entry 0x00427e00 (whose first cdecl arg is a
+// message id) while screen 6 is displayed logs exactly four track msgids --
+// 0x49, 0x4a, 0x4b, 0x4c -- at 72 calls each over 72 frames, i.e. one per row
+// per frame. Locked rows are requested too, so 4 is the cup's TOTAL size and
+// not the unlocked count. Names: Angel Peak / Kharga Temple / Neustein /
+// Timgidski (ENGLISH.DAT in Font36.piz).
+const int kCupTrackCount = 4;     // Challenge Cup 1: 4 tracks (msgid 0x49..0x4c)
 Cup       g_cup;                  // rebuilt by Campaign_CurrentCup()
 
 void log(const char* m) {

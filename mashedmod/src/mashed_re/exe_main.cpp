@@ -4304,7 +4304,17 @@ bool RenderFrame() {
             // right: original centre 57.507 dev = 35.942 virtual, minus half the
             // new size -> 35.942 - 31.6165/2 = 20.134.
             const float stx = 20.134f * kVScale, sts = 31.616f * kVScale;
-            const float row0 = 116.0f * kVScale, rowdy = 22.0f * kVScale;
+            // row0 144, not 116. This was previously unmeasurable: with the cup
+            // at 8 rows against the original's 4, no anchoring rule (top /
+            // centre / bottom) could be distinguished. Setting kCupTrackCount=4
+            // from the msgid trace removed the confound -- star PITCH now agrees
+            // (orig 35.17 device, ours 35.3) and the count agrees, so the
+            // residual is a pure origin offset. Star centroids measured on the
+            // 1024x768 capture: orig 233.0/268.5/303.5/338.5, ours
+            // 188.0/223.0/259.0/294.0 -> 45.0 device = 28.125 virtual high.
+            // 116 + 28.125 = 144.125; an independent solve in the s6 lane put
+            // the original's row-0 centre at 143.94 virtual. Taking 144.0.
+            const float row0 = 144.0f * kVScale, rowdy = 22.0f * kVScale;
             // animated star pulse (triangle wave, no <cmath> dep).
             const float ph = (DetTicks() % 800u) / 800.0f;
             const float pulse = 0.82f + 0.18f * (ph < 0.5f ? ph * 2.f : (1.f - ph) * 2.f);
@@ -4329,16 +4339,39 @@ bool RenderFrame() {
                 // (ours was 109 at draw-x 108.8). [UNCERTAIN] the left
                 // side-bearing scales with lcell, which just changed, so this is
                 // sub-pixel-approximate and should be re-measured.
-                // NOTE the user's "track names sit lower" and "unselected rows
-                // are black" reports are both REFUTED by measurement: relative
-                // to its own row bar our text centre is within 0.5 device px of
-                // the original's, and our unselected colour renders (200,200,200),
-                // not black. The original capture contains ZERO unselected named
-                // rows (one cup slot unlocked), so its unselected colour is
-                // unmeasurable here -- 0xffc8c8c8 is unverified, not confirmed.
-                if (cup.tracks[i].unlocked && g_font.ready())
-                    DrawMashedString(cup.tracks[i].name, 64.375f * kVScale, cy, lcell,
-                                     selrow ? 0xff000000u : 0xffc8c8c8u, true);
+                //
+                // NAME comes from the message table, NOT from kAreas. The list
+                // row is a CUP TRACK SLOT, which is a different thing from an
+                // area: the original's row 0 reads "Angel Peak" while our
+                // kAreas[0] is "Arctic" (an internal area name from COURSE.LUA).
+                // Law measured behaviourally -- an Interceptor on 0x00427e00
+                // (arg0 = msgid) at screen 6 logs 0x49,0x4a,0x4b,0x4c, 72 calls
+                // each over 72 frames => msgid = 0x49 + row. Note this is NOT
+                // 0x49 + areaIndex: the two orders differ (our kAreas[5] is
+                // "Neustein" but msgid 0x49+5 is "Keister Bay", while the real
+                // Neustein is 0x4b), so indexing by area would have produced
+                // real-looking but MISMAPPED names. kAreas still drives which
+                // .piz loads; only the label changes here.
+                // [UNCERTAIN] the row -> area mapping (which area each cup slot
+                // actually loads) is still unverified, so a row's label and the
+                // track it launches are not yet proven to agree.
+                //
+                // COLOUR: black on EVERY row, selected or not. The original
+                // requests all four names every frame yet the capture measures
+                // ZERO ink on unselected rows -- text that is drawn but invisible
+                // over a black backdrop is black text. (Our previous 0xffc8c8c8
+                // rendered them light grey; the earlier note claiming the user's
+                // "unselected track has black font" report was REFUTED is itself
+                // wrong and is retracted here. It only looked unmeasurable
+                // because the parity harness nops the video backdrop to black,
+                // against which black text vanishes.)
+                // Drawn for LOCKED rows too, matching the original's request set.
+                if (g_font.ready()) {
+                    wchar_t tname[64];
+                    if (GetMenuMessage(0x49 + i, tname, 64) > 0)
+                        DrawMashedString(tname, 64.375f * kVScale, cy, lcell,
+                                         0xff000000u, true);
+                }
             }
             // Right side: the selected track's map preview rect + a semi-transparent
             // black detail panel (with a white divider) + the challenge details.
@@ -4350,7 +4383,12 @@ bool RenderFrame() {
             HudIm2DQuad(0, 330.0f * kVScale, 264.0f * kVScale,
                         290.0f * kVScale, bt, white, uv_full);                     // top divider
             if (g_font.ready()) {
-                DrawMashedString(cup.tracks[sel].name, 340.0f * kVScale,
+                // Same msgid law as the list, so the panel cannot disagree with
+                // the row it describes.
+                wchar_t sname[64];
+                if (GetMenuMessage(0x49 + sel, sname, 64) <= 0)
+                    sname[0] = L'\0';
+                DrawMashedString(sname, 340.0f * kVScale,
                                  280.0f * kVScale, lcell, white, true);
                 DrawMashedString(cup.tracks[sel].unlocked ? L"Bronze Challenge"
                                                           : L"Locked",
