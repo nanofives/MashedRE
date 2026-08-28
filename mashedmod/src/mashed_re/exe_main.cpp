@@ -2471,8 +2471,16 @@ void DrawMashedString(const wchar_t* s, float cx, float anchor_y,
         // single prompt row can contain BOTH ("Select ... Back"), so the
         // choice MUST be per-glyph, not per-string.
         std::uint32_t use = argb;
+        // Back-arrow red is (248,48,48), not pure red. MEASURED on the footer
+        // band of orig_s15/s24/s1/s6 (all four byte-identical): mode RGB
+        // (248,48,48). Ours was 0xff0000ff -> (255,0,0), G=B=0 on every pixel.
+        // Byte order proven by a known-good control: the green constant
+        // 0xff10ec00 renders as the measured original green (0,236,16), i.e.
+        // out.R = const.B, out.G = const.G, out.B = const.R. Target (248,48,48)
+        // => const.B=0xf8, const.G=0x30, const.R=0x30 => 0xff3030f8.
+        // The green constant is already correct and is left alone.
         if (ctrl_glyph_argb != 0 && gc >= 0x7f)
-            use = (gc == 0x7f) ? 0xff0000ffu /*red*/ : ctrl_glyph_argb;
+            use = (gc == 0x7f) ? 0xff3030f8u /*red (248,48,48)*/ : ctrl_glyph_argb;
         if (grad_bot_frac < 0.999f) {
             const std::uint32_t a = use >> 24;
             const std::uint32_t ab =
@@ -4153,7 +4161,16 @@ bool RenderFrame() {
             static const wchar_t* kCols2[2] = { L"Team 1", L"Team 2" };
             const int ncol = team ? 2 : 4;
             const wchar_t* const* cols = team ? kCols2 : kCols4;
-            const float hcell = 0.55f * 0.0708f * 480.f * kVScale;
+            // 0.752, not 0.55. Cap heights measured on all four difficulty words
+            // in the 1024x768 capture: original 22 device, ours 16-17. Ratio by
+            // cap height 1.354 (modal 1.375), cross-checked by word ink-bbox
+            // width 1.381 -- the two agree within 2.0%, so this is a UNIFORM size
+            // error, not an aspect error. 0.55 * 1.3675 = 0.752 (bracket
+            // 0.745..0.759 across the two estimators).
+            // Do NOT estimate this from ink AREA: area ratios read 1.54-1.60
+            // because stroke weight does not scale linearly at 16-22px, which
+            // would overshoot the correction by roughly 15%.
+            const float hcell = 0.752f * 0.0708f * 480.f * kVScale;
             const float hy = 140.0f * kVScale, hh = 26.0f * kVScale;
             for (int c = 0; c < ncol; ++c) {
                 const float hx = (team ? (248.0f + c * 180.0f)
@@ -4259,11 +4276,34 @@ bool RenderFrame() {
             if (sel >= cup.trackCount) sel = cup.trackCount - 1;
             Campaign_SetSelectedTrack(sel);
             const std::uint32_t white = 0xffffffffu;
-            const std::uint32_t barFill = 0xa0146ef0u;     // selected = orange
-            const std::uint32_t bord = 0xff1050b4u;
-            const float bt = 1.0f * kVScale;
-            const float lcell = 0.55f * 0.0708f * 480.f * kVScale;
-            const float stx = 42.0f * kVScale, sts = 16.0f * kVScale;
+            // Colours MEASURED from orig_s6.bmp (1024x768). Both sides render a
+            // perfectly flat fill (per-channel std exactly 0), so these are
+            // exact targets, not gradient averages:
+            //   plate  original (120, 72, 8)   ours was (151, 69, 13)
+            //   border original (176,100, 8)   ours was (180, 80, 16), and the
+            //          original's border is 3 device rows where ours drew 2.
+            // NOTE the plate here is NOT the s15/s16 plate: that one measures
+            // (120,52,8), this one (120,72,8). f06e14 at ANY alpha yields G=55,
+            // so neither screen's plate can come from that constant and there is
+            // no single global plate colour. Base solved at the existing alpha
+            // 0xa0 (160/255 = 0.62745): R 120/0.62745 = 191 = 0xbf, G 72/0.62745
+            // = 115 = 0x73, B 8/0.62745 = 13 = 0x0d, which re-renders (120,72,8)
+            // exactly. [UNCERTAIN] the original's own constant/alpha split is
+            // unknown - this is a measured match, not a ported decomposition.
+            const std::uint32_t barFill = 0xa00d73bfu;     // selected = orange
+            const std::uint32_t bord = 0xff0864b0u;
+            const float bt = 1.875f * kVScale;             // 3 device rows
+            // Track-name cap height: original 19 device, ours was 17 -> 0.55 *
+            // (19/17) = 0.6147.
+            const float lcell = 0.6147f * 0.0708f * 480.f * kVScale;
+            // Star was a uniform 0.504x. Threshold-free intensity 2nd moments:
+            // sx 4.4125 vs 2.2233 (1.9847), sy 4.6025 vs 2.3393 (1.9675),
+            // geometric mean 1.97603 -> 16.0 * 1.97603 = 31.6165. Shape ratio
+            // sx/sy 0.9587 vs 0.9504 differs by 0.87%, so it is uniformly
+            // scaled and NOT stretched. Star centre x was 14.1 virtual too far
+            // right: original centre 57.507 dev = 35.942 virtual, minus half the
+            // new size -> 35.942 - 31.6165/2 = 20.134.
+            const float stx = 20.134f * kVScale, sts = 31.616f * kVScale;
             const float row0 = 116.0f * kVScale, rowdy = 22.0f * kVScale;
             // animated star pulse (triangle wave, no <cmath> dep).
             const float ph = (DetTicks() % 800u) / 800.0f;
@@ -4272,10 +4312,12 @@ bool RenderFrame() {
                 const float cy = row0 + i * rowdy;          // row centre
                 const bool selrow = (i == sel);
                 if (selrow) {
-                    const float by = cy - 11.0f * kVScale, bh = 22.0f * kVScale;
-                    HudIm2DQuad(0, 0.f, by, 311.0f * kVScale, bh, barFill, uv_full);
-                    HudIm2DQuad(0, 0.f, by, 311.0f * kVScale, bt, bord, uv_full);
-                    HudIm2DQuad(0, 0.f, by + bh - bt, 311.0f * kVScale, bt, bord, uv_full);
+                    // Bar: original y220..254 = 35 device = 21.875 virtual tall,
+                    // x0..499 = 500 device = 312.5 virtual wide.
+                    const float by = cy - 11.0f * kVScale, bh = 21.875f * kVScale;
+                    HudIm2DQuad(0, 0.f, by, 312.5f * kVScale, bh, barFill, uv_full);
+                    HudIm2DQuad(0, 0.f, by, 312.5f * kVScale, bt, bord, uv_full);
+                    HudIm2DQuad(0, 0.f, by + bh - bt, 312.5f * kVScale, bt, bord, uv_full);
                 }
                 const float ss = selrow ? sts * pulse : sts;   // animated star
                 if (g_star_ready)
@@ -4283,8 +4325,19 @@ bool RenderFrame() {
                                 cy - ss * 0.5f, ss, ss, white, uv_full);
                 else
                     HudIm2DQuad(0, stx, cy - sts * 0.5f, sts, sts, 0xff20c0e0u, uv_full);
+                // Text x: original ink left edge 103 device = 64.375 virtual
+                // (ours was 109 at draw-x 108.8). [UNCERTAIN] the left
+                // side-bearing scales with lcell, which just changed, so this is
+                // sub-pixel-approximate and should be re-measured.
+                // NOTE the user's "track names sit lower" and "unselected rows
+                // are black" reports are both REFUTED by measurement: relative
+                // to its own row bar our text centre is within 0.5 device px of
+                // the original's, and our unselected colour renders (200,200,200),
+                // not black. The original capture contains ZERO unselected named
+                // rows (one cup slot unlocked), so its unselected colour is
+                // unmeasurable here -- 0xffc8c8c8 is unverified, not confirmed.
                 if (cup.tracks[i].unlocked && g_font.ready())
-                    DrawMashedString(cup.tracks[i].name, 68.0f * kVScale, cy, lcell,
+                    DrawMashedString(cup.tracks[i].name, 64.375f * kVScale, cy, lcell,
                                      selrow ? 0xff000000u : 0xffc8c8c8u, true);
             }
             // Right side: the selected track's map preview rect + a semi-transparent
@@ -4305,12 +4358,21 @@ bool RenderFrame() {
                                  0xffc8c8c8u, true);
             }
             // 4 challenge-cup devil icons + vertical separator at the bottom-left.
+            // Group placement measured: the original's 4 devils merge into one
+            // blob (no column gaps) so only the GROUP extents are observable --
+            // orig x74..471 y493..597, ours x85..461 y480..584. Heights are
+            // identical (105 = 105), so size/pitch are left alone and only the
+            // group origin moves: x 48 - 11/1.6 = 41.125, y 300 + 13/1.6 = 308.125.
+            // [UNCERTAIN] per-icon width and aspect on the original cannot be
+            // determined from this capture.
             for (int c = 0; c < 4; ++c)
-                HudIm2DQuad(kHandleCar0, (48.0f + c * 64.0f) * kVScale,
-                            300.0f * kVScale, 56.0f * kVScale, 72.0f * kVScale,
+                HudIm2DQuad(kHandleCar0, (41.125f + c * 64.0f) * kVScale,
+                            308.125f * kVScale, 56.0f * kVScale, 72.0f * kVScale,
                             white, uv_full);
-            HudIm2DQuad(0, 315.0f * kVScale, 304.0f * kVScale,
-                        2.0f * kVScale, 80.0f * kVScale, white, uv_full);
+            // Separator: orig x511..513 y493..620 -> 319.375 / 308.125, w 1.875,
+            // h 128 device = 80 virtual (height already matched exactly).
+            HudIm2DQuad(0, 319.375f * kVScale, 308.125f * kVScale,
+                        1.875f * kVScale, 80.0f * kVScale, white, uv_full);
         }
 
         // --- Game Mode setup (18 MP / 24 SP): the nav item list (above) draws
@@ -4420,9 +4482,24 @@ bool RenderFrame() {
                 HudIm2DQuadCorners(0, px + psw, pt + plateH * kVScale - bt, pfw, bt,
                                    bord, bord0, bord, bord0, uvf);
                 if (!g_font.ready()) continue;
+                // The SELECTED row's label is drawn larger than the idle rows.
+                // Measured cap heights on the 1024x768 capture, per row, orig vs
+                // ours: r0 22/17, r1 16/17, r2 16/16, r3 16/16, r4 17/18,
+                // r5 17/18, r6 18/18, r7 18/18. Only row 0 -- the cursor row --
+                // is undersized; rows 1..7 already match within 0-1px. So this
+                // is a per-row cell, NOT a global bump: raising `cell` for every
+                // row would have broken the seven rows that were already right.
+                // Selected factor: cap-height P 0.6*(22/17)=0.776, cap-height G
+                // 0.6*(24/18)=0.800, width "Play Game" 0.6*(186/139)=0.803.
+                // 0.79 sits in the 0.776..0.803 bracket. [UNCERTAIN] mechanism
+                // unknown -- no ASM was read to confirm the original passes a
+                // different scale for the cursor row rather than, say, a second
+                // bold draw. Measured geometry match only, do not promote past C2.
+                const float labCell = (r == selRow) ? 0.79f * 0.0708f * 480.f * kVScale
+                                                    : cell;
                 wchar_t lab[64];
                 if (GetMenuMessage(rows[r].label, lab, 64) > 0)
-                    DrawMashedString(lab, labelX * kVScale, cy * kVScale, cell,
+                    DrawMashedString(lab, labelX * kVScale, cy * kVScale, labCell,
                                      0xff000000u, /*anchor_left*/ true);
                 if (rows[r].value >= 0) {
                     wchar_t val[64];
@@ -4453,13 +4530,33 @@ bool RenderFrame() {
                             145.0f * kVScale, 141.0f * kVScale, 0xffffffffu, uvf);
             // 4 red-devil "vs" car icons + separator at the bottom-left (the
             // FUN_004368e0 active-player car row; all car0/red at the default).
-            // Box measured from orig_s24.bmp: x49..287, y313..371.
+            // Geometry RE-MEASURED from the 1024x768 capture (kVScale 1.6). The
+            // s24 and s18 icon-row regions are byte-identical, so one set of
+            // constants serves both. Mask R>185,G<55,B<55 (excludes the plate,
+            // which is (120,52,8) on the original).
+            //   original  4 icons, each ~70x96 dev, x 77/179/282/384, y 498..595
+            //   ours      4 icons, each ~53x78 dev, x 88/189/290/391, y 505..583
+            // Ratio ours/orig 0.754 w, 0.811 h -- NOT the ~2.0 factor the s15
+            // player icon needed, so that fix does NOT generalise here.
+            // Two independent solves agree: red-bbox transfer gives w=71.92
+            // (sd 0.68) and H=72.13 virtual; an IoU fit over anisotropic scale
+            // with FFT alignment gives sx=1.330, sy=1.250 -> 54*1.330=71.82 and
+            // 58*1.250=72.50. Pitch measured 63.83..64.02 -> 64.
+            // [UNCERTAIN] y: the red-bbox transfer solves 307.21 but the
+            // separator's hard edge solves 308.13, and the two do not overlap
+            // within their 1px quantisation bands. 308 is taken from the
+            // separator, which is an untextured quad with no sprite-alpha
+            // ambiguity. [UNCERTAIN] 72x72 being square is consistent with the
+            // measurements (w 71.92+-0.68, h 72.13) but is not demonstrated.
+            // Image-derived only -- no disassembly was read for these values.
             for (int c = 0; c < 4; ++c)
-                HudIm2DQuad(kHandleCar0, (49.0f + c * 63.0f) * kVScale,
-                            313.0f * kVScale, 54.0f * kVScale, 58.0f * kVScale,
+                HudIm2DQuad(kHandleCar0, (40.0f + c * 64.0f) * kVScale,
+                            308.0f * kVScale, 72.0f * kVScale, 72.0f * kVScale,
                             0xffffffffu, uvf);
-            HudIm2DQuad(0, 315.0f * kVScale, 313.0f * kVScale,
-                        2.0f * kVScale, 64.0f * kVScale, 0xffffffffu, uvf);
+            // Separator: original white bar occupies device cols 511..513, rows
+            // 493..620 -> x 319.375, w 1.875, y 308.125, h 80.0 virtual.
+            HudIm2DQuad(0, 319.5f * kVScale, 308.0f * kVScale,
+                        2.0f * kVScale, 80.0f * kVScale, 0xffffffffu, uvf);
         }
 
         // --- bottom prompt strip: F4 CLOSED 2026-06-11. FUN_00432b30 is now
