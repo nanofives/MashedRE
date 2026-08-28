@@ -187,13 +187,29 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
     std::free(bgra);
     if (!up) return false;
     RwIm2DBridge_RegisterTexture(bridge_handle, qr.slot_texture(slot));
-    // LINEAR sampling (bridge default). The menu drawer FUN_00428140 sets
-    // render-state 9 = 2 (rwFILTERLINEAR) before printing; FUN_00554940's
-    // per-raster override value (*(texture+0x50)&0xff) is [UNCERTAIN] without
-    // a runtime read. The earlier POINT switch was compensating for the
-    // 4-column atlas shift (pixels @0x438 instead of 0x43c) — with the
-    // correct base, LINEAR renders clean solid glyphs and at the original's
-    // 640x480 (cell scale 1.03x) LINEAR and POINT are visually identical.
+    // POINT sampling. This RESOLVES the [UNCERTAIN] the previous note left on
+    // FUN_00554940's per-raster override, and it reverses this file's earlier
+    // LINEAR conclusion — that conclusion was reached at 640x480, where the
+    // note itself records "cell scale 1.03x, LINEAR and POINT are visually
+    // identical". At 1.03x the two are indistinguishable, so the test could not
+    // separate them. The 1024x768 capture magnifies the atlas ~1.6x and does:
+    //   POINT  at 1.6x -> most output pixels land on exact texel values, so the
+    //                     glyph keeps a flat core (modal == peak).
+    //   LINEAR at 1.6x -> most output pixels are blends, so modal << peak.
+    // Measured on the footer Select arrow (same atlas, drawn as a glyph run):
+    //   ORIGINAL  modal (0,236,16) x78, peak G 236, fill 0.390
+    //   ours      modal (0,  62, 4) x23, peak G 206, fill 0.586
+    // The original's modal EQUALS its peak; ours is 26% of peak. That is the
+    // POINT/LINEAR signature, measured, and it agrees with the independent
+    // ASM-side note in RwIm2DBridge.cpp:178-181 (FUN_00554940 sets render-state
+    // 9 from the raster's native field on bind) over FUN_00428140's global
+    // rwFILTERLINEAR — a per-raster override is exactly what would beat it.
+    // Also the single root cause behind BOTH long-standing user reports: "font
+    // rendering has weird filtering" (U-9045) and "Select/Back not rendered
+    // properly". Quad size and pen advance were always correct to 1px.
+    // NOTE the mechanism existed and was dead: RwIm2DBridge_SetTexturePointFilter
+    // had ZERO call sites, so every texture ran point_filter=false.
+    RwIm2DBridge_SetTexturePointFilter(bridge_handle, true);
     m_handle = bridge_handle;
     m_atlasW = static_cast<float>(w);
     m_atlasH = static_cast<float>(h);
