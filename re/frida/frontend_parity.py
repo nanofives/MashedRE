@@ -93,6 +93,16 @@ const RVA_BACKDROP=[0x00473c20,0x00474890,0x00473ee0];
 // modded against modded and still report GREEN. Memory.patchCode dies with the
 // process, so the reference binary is never touched.
 const RVA_UNLOCK=[0x0042ef40,0x00430830];
+// Per-player active-slot ("order") array, stride 0x10: DAT_007f1a14/24/34/44.
+// Cited at Ai/AiState.h:34-35 (slot = *(int*)(0x007f1a14 + v*0x10)) and
+// Frontend/BatchAA_s3.cpp:108-110 / FrontendLeaves_ad1.cpp:56,91.
+// At a bare nav push the whole array reads 0, so the s15/s16 ability/team draw
+// resolves every one of its four rows to player 0 -- same car, same input
+// device, same "1". That makes the per-player joypad TINT unmeasurable: all
+// four rows are byte-identical on both sides. Writing {0,1,2,3} here gives four
+// DISTINCT players so the tint palette can actually be read off the capture.
+// Runtime-only, like unlockAll: the reference binary is never touched.
+const RVA_ORDER=[0x007f1a14,0x007f1a24,0x007f1a34,0x007f1a44];
 let nav=null;
 function abs(r){return ptr(r+DELTA);}
 rpc.exports={
@@ -116,6 +126,27 @@ rpc.exports={
     });
     return RVA_UNLOCK.length;
   },
+  // Read the order array back BEFORE touching it, so the report states the
+  // observed default rather than assuming {0,0,0,0}.
+  readOrder:function(){
+    return RVA_ORDER.map(function(r){ return abs(r).readS32(); });
+  },
+  players4:function(){
+    RVA_ORDER.forEach(function(r,i){ abs(r).writeS32(i); });
+    return RVA_ORDER.map(function(r){ return abs(r).readS32(); });
+  },
+  // DAT_0067e938 — per-slot record, stride 3 dwords (MenuNavSM.cpp:181-194,
+  // SkeletonAndScatter_t6.cpp:217). Dump 4 slots x 3 fields so the field
+  // meanings can be identified from observed values rather than guessed.
+  dumpSlots:function(){
+    const out=[];
+    for (let s=0; s<4; s++){
+      const row=[];
+      for (let f=0; f<3; f++) row.push(abs(0x0067e938 + (s*3+f)*4).readS32());
+      out.push(row);
+    }
+    return out;
+  },
   phase:function(){ return abs(RVA_PHASE).readS32(); },
   depth:function(){ return abs(RVA_DEPTH).readS32(); },
   push:function(scr){ nav(scr,0); abs(RVA_CURSCREEN).writeS32(scr); return abs(RVA_DEPTH).readS32(); },
@@ -124,7 +155,7 @@ rpc.exports={
 '''
 
 
-def run_original(screens, keep_backdrop=False, unlock=True):
+def run_original(screens, keep_backdrop=False, unlock=True, players4=False):
     SHOTS.mkdir(parents=True, exist_ok=True)
     REQ.parent.mkdir(parents=True, exist_ok=True)
     if REQ.exists():
@@ -162,12 +193,20 @@ def run_original(screens, keep_backdrop=False, unlock=True):
         time.sleep(0.2)
     time.sleep(1.5)
     base = E.depth()
+    if players4:
+        # AFTER the menu is live (phase 3): the array is game state and a write
+        # before resume gets clobbered by setup. Report the observed default so
+        # the "{0,0,0,0}" premise is measured, not assumed.
+        print(f"  [orig] order array default {E.read_order()} -> {E.players4()}")
+        print(f"  [orig] DAT_0067e938 slots (4 x 3 dwords) {E.dump_slots()}")
     got = []
     for s in screens:
         for _ in range(8):
             if E.depth() <= base:
                 break
             E.pop(); time.sleep(0.12)
+        if players4:
+            E.players4()      # re-assert: a nav push may re-run player setup
         E.push(s); time.sleep(2.4)             # settle the slide-in (let the animation finish)
         out = SHOTS / f"orig_s{s}.bmp"
         if out.exists():
@@ -266,11 +305,23 @@ def main():
     unlock = "--no-unlock" not in args
     if not unlock:
         args.remove("--no-unlock")
+    # --players4: force the original's per-player order array to {0,1,2,3} so
+    # s15/s16 show four DISTINCT players. Investigation aid for the joypad tint
+    # (all four rows are identical at the default, so the palette is
+    # unmeasurable). Original side only -- our side still draws its own default,
+    # so a --players4 run is NOT a valid parity diff, only a colour probe.
+    players4 = "--players4" in args
+    if players4:
+        args.remove("--players4")
     screens = [int(a) for a in args] or SCREENS
     print(f"[out] {OUT.relative_to(ROOT) if OUT.is_relative_to(ROOT) else OUT}")
     print("[1/3] RE parity walk...");   print("  re:", run_re(screens))
     print("[2/3] original parity walk...")
-    print("  orig:", run_original(screens, keep_backdrop, unlock))
+    print("  orig:", run_original(screens, keep_backdrop, unlock, players4))
+    if players4:
+        print("[3/3] compare SKIPPED — --players4 changes the original's state "
+              "only, so a diff against our default-state render is meaningless.")
+        return 0
     print("[3/3] compare...");           compare(screens)
     return 0
 

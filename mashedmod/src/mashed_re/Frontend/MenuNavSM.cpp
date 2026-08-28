@@ -487,8 +487,20 @@ void PlaceCursor(NavSlot& slot) {
         if (gs.has_savedata == 0) av[3] = 0;
         // (also FUN_0040e480(0..3,0): clears external player-ready flags; no avail)
         break;
-    case 2:   // L31: if DAT_007f0ad4==0 -> avail[1]=0 (no profiles)
-        if (gs.has_profiles == 0) av[1] = 0;
+    case 2:   // L31: if DAT_007f0ad4==0 -> avail[2]=0 (no profiles)
+        // CORRECTED 2026-08-28: this cleared av[1] (Quick Battle); the original
+        // clears av[2] (Time Trial). Verbatim from the binary:
+        //   0x0043290a  cmp  dword ptr [0x7f0ad4], ebp        ; profiles == 0 ?
+        //   0x00432910  jne  0x432a1d
+        //   0x00432916  mov  dword ptr [esi + 0x67ed8c], ebp  ; avail[2] = 0
+        // 0x67ed8c is avail[2] per the offset table above (ed88 would be
+        // avail[1]). Confirmed against the 1024x768 parity capture by counting
+        // high-contrast text pixels per row on screen 2 — original row1 4334 /
+        // row2 1896 (row2 dim), ours was row1 1662 / row2 2938 (row1 dim), i.e.
+        // the greying sat one row too high. The parity metric scored s2 as
+        // 1.0% FAITHFUL throughout, so a draw-list/ink diff could not see this;
+        // it took a human looking at the screen.
+        if (gs.has_profiles == 0) av[2] = 0;
         break;
     case 8:   // L41: FUN_00492d10()==1 -> none; else avail[2]=0 then avail[3]=0
         // LIVE-PROBED 2026-06-12: DAT_00771968 == 1 at the original's menu
