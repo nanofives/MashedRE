@@ -243,9 +243,16 @@ void Campaign_LoadProgress() {
         if (n == kSaveSize && ParseImage(img, kSaveSize, span, &counter)) {
             ApplyProgressFromSpan(span);
             g_saveCounter = counter;
-            // Drive the menu grey-out / unlock state from the SAME real image (the
-            // real reader Nav_GameStateLoadSave consumes the full gamesave.bin).
-            mashed_re::Frontend::Nav_GameStateLoadSave(img, kSaveSize);
+            // DISABLED 2026-08-28 — second of the two boot-time span restores
+            // (the other was exe_main.cpp's original/gamesave.bin load). Same
+            // wrong premise: the original leaves this span ZERO at the main menu
+            // (measured live: DAT_007f0f2c = 0, DAT_007f0ad4 = 0), so driving
+            // the grey-out state from a save image at boot makes screen 1's
+            // Bonus Features render ENABLED where the original greys it.
+            // Progression still loads — ApplyProgressFromSpan above populates
+            // g_progUnlock/g_progTrophy, which is what Campaign_CurrentCup
+            // actually consults; only the menu-gate span restore is dropped.
+            // mashed_re::Frontend::Nav_GameStateLoadSave(img, kSaveSize);
         }
     }
     char m[112];

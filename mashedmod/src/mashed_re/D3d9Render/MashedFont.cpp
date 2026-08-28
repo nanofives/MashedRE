@@ -187,29 +187,28 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
     std::free(bgra);
     if (!up) return false;
     RwIm2DBridge_RegisterTexture(bridge_handle, qr.slot_texture(slot));
-    // POINT sampling. This RESOLVES the [UNCERTAIN] the previous note left on
-    // FUN_00554940's per-raster override, and it reverses this file's earlier
-    // LINEAR conclusion — that conclusion was reached at 640x480, where the
-    // note itself records "cell scale 1.03x, LINEAR and POINT are visually
-    // identical". At 1.03x the two are indistinguishable, so the test could not
-    // separate them. The 1024x768 capture magnifies the atlas ~1.6x and does:
-    //   POINT  at 1.6x -> most output pixels land on exact texel values, so the
-    //                     glyph keeps a flat core (modal == peak).
-    //   LINEAR at 1.6x -> most output pixels are blends, so modal << peak.
-    // Measured on the footer Select arrow (same atlas, drawn as a glyph run):
-    //   ORIGINAL  modal (0,236,16) x78, peak G 236, fill 0.390
-    //   ours      modal (0,  62, 4) x23, peak G 206, fill 0.586
-    // The original's modal EQUALS its peak; ours is 26% of peak. That is the
-    // POINT/LINEAR signature, measured, and it agrees with the independent
-    // ASM-side note in RwIm2DBridge.cpp:178-181 (FUN_00554940 sets render-state
-    // 9 from the raster's native field on bind) over FUN_00428140's global
-    // rwFILTERLINEAR — a per-raster override is exactly what would beat it.
-    // Also the single root cause behind BOTH long-standing user reports: "font
-    // rendering has weird filtering" (U-9045) and "Select/Back not rendered
-    // properly". Quad size and pen advance were always correct to 1px.
-    // NOTE the mechanism existed and was dead: RwIm2DBridge_SetTexturePointFilter
-    // had ZERO call sites, so every texture ran point_filter=false.
-    RwIm2DBridge_SetTexturePointFilter(bridge_handle, true);
+    // LINEAR sampling (bridge default) — CONFIRMED 2026-08-28, keep it.
+    // FUN_00428140 sets render-state 9 = 2 (rwFILTERLINEAR) before printing.
+    //
+    // A POINT switch was tried and REVERTED. It was justified by a numeric
+    // proxy that turned out to be worthless: at 1024x768 the original's footer
+    // glyph has modal == peak ((0,236,16), 78px) while ours had modal at 26% of
+    // peak, which reads like the POINT/LINEAR signature. Switching to POINT did
+    // move every number toward the original (modal count 23->60, peak 206->227,
+    // bbox 39x28->38x27) — and a 5x zoom of the rendered footer showed it made
+    // the text visibly WORSE: hard aliased glyph edges against the original's
+    // smooth anti-aliased ones. modal==peak is also what a large solid core
+    // with a soft AA fringe produces, so the proxy could not distinguish the
+    // two. The original is anti-aliased; LINEAR is right.
+    // Lesson recorded on purpose: a metric that moves the right way is not
+    // evidence when a direct look is available and cheap.
+    //
+    // The remaining defect it was chasing is NOT filtering: our footer arrow
+    // glyph renders speckled/hollow under BOTH filters, while normal white text
+    // measures FULL intensity (255,255,255, modal count 1377 vs the original's
+    // 756 on the s1 header). So the atlas decode and this alpha path are sound
+    // and the fault is specific to the CONTROL-GLYPH cells (gc >= 0x7f) — a
+    // wrong cell or UV rect, not sampling. Tracked separately.
     m_handle = bridge_handle;
     m_atlasW = static_cast<float>(w);
     m_atlasH = static_cast<float>(h);

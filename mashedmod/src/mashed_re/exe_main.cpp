@@ -6530,14 +6530,33 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         // the state-gated routing/grey-out branches see the real save (unlock
         // arrays, savedata/profile gates). A blank save (magic != 0xDEADBEEF,
         // as shipped) keeps the fresh-menu defaults.
+        // DISABLED 2026-08-28 — the original does NOT restore this span at boot.
+        // Read live from the original at the main menu (Frida, phase 3):
+        //   DAT_007f0f2c (savedata) = 0
+        //   DAT_007f0ad4 (profiles) = 0
+        //   DAT_0067e9fc (game mode) = 0
+        // all zero, even though original/gamesave.bin on disk IS a real save
+        // (magic 0xDEADBEEF, all 13 championship rows unlocked). The original
+        // populates the span when a save is actually LOADED, not at boot.
+        // The R2-2 rationale below had it backwards: restoring the span at boot
+        // to "let the grey-out branches see the real save" made those branches
+        // see something the original's never see at this point, so screen 1's
+        // item 3 (Bonus Features) rendered ENABLED where the original greys it
+        // (has_savedata is the sole gate — MenuNavSM.cpp:487, av[3]).
+        // Progression is unaffected: campaign unlocks come from g_progUnlock /
+        // mashed_re_gamesave.bin (GameFlow.cpp), a separate store, and
+        // Campaign_CurrentCup already falls back to it when the span is zero.
+        constexpr bool kBootRestoreSaveSpan = false;
         {
             bool save_ok = false;
+            if (kBootRestoreSaveSpan) {
             if (std::FILE* sf = std::fopen("original/gamesave.bin", "rb")) {
                 static unsigned char buf[0x24FA0];
                 const size_t n = std::fread(buf, 1, sizeof(buf), sf);
                 std::fclose(sf);
                 save_ok = mashed_re::Frontend::Nav_GameStateLoadSave(
                     buf, static_cast<unsigned>(n));
+            }
             }
             std::FILE* log = std::fopen(kLogPath, "a");
             if (log) {
