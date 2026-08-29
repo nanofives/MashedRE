@@ -718,6 +718,7 @@ bool             g_star_ready = false;
 // kHandleVs but had no ready flag and no draw call anywhere — so it never
 // appeared. User-reported on s6/s18/s24 across two review rounds.
 bool             g_vs_ready   = false;
+bool             g_powerups_ready = false;
 // Per-player colour swatches (the s4 Player Colour Select row). Packed as the
 // bridge expects: A | B<<16 | G<<8 | R, so [0] = device (152,58,61) red.
 // Hoisted to file scope because the s15/s16 joypad icon is tinted with the
@@ -732,6 +733,10 @@ constexpr std::uint32_t kPlayerSwatch[6] = {
 // from 0x5f66a8, 2026-06-14). Sourced from SFX.piz/TRACKIMAGES.TXD.
 constexpr std::uint32_t kSlotVehPrev0  = 61;   // slots 61..68
 constexpr int           kHandleVehPrev0 = 52;  // handles 52..59
+// s24/s18 power-up preview row (POWERUPICONS.TXD in POWERUPS/Powerups.piz).
+// STANDARD mode only -- see the draw site for why Chaos is not drawn.
+constexpr std::uint32_t kSlotPowerup0   = 69;   // slots 69..72
+constexpr int           kHandlePowerup0 = 60;   // handles 60..63
 bool             g_vehprev_ready = false;
 
 // R4 opener — track fly-through mode (env MASHED_TRACK_VIEW=<piz path or 1
@@ -4798,6 +4803,31 @@ bool RenderFrame() {
             // 493..620 -> x 319.375, w 1.875, y 308.125, h 80.0 virtual.
             HudIm2DQuad(0, 319.5f * kVScale, 308.0f * kVScale,
                         2.0f * kVScale, 80.0f * kVScale, 0xffffffffu, uvf);
+            // --- power-up preview row, bottom right.
+            // GATED ON THE POWER-UP MODE, which is what this row actually
+            // follows -- established by forcing DAT_0067ea74 on the original and
+            // re-dumping s24:
+            //   ea74 = 0 "Off"      -> the original draws NO icons at all
+            //   ea74 = 1 "Standard" -> 4 icons, and the SAME four every run
+            //   ea74 = 2 "Chaos"    -> a RANDOMISED set: two runs gave
+            //                          [depthcharge, oil, depthcharge] and
+            //                          [machinegun, machinegun, depthcharge]
+            //                          -- duplicates allowed, count varies
+            // So Off and Standard are portable and Chaos is not: reproducing it
+            // needs the original's selection RNG, which is not identified.
+            // Drawing the Standard four under Chaos would be a fixed answer to a
+            // random question, so Chaos draws nothing until that is understood.
+            // [UNCERTAIN] Chaos content, and where the per-mode list lives.
+            // GEOMETRY measured at BOTH resolutions (1024x768 and 640x480, which
+            // is what separates the virtual constants from rounding):
+            //   size 32, pitch 38, first x 448, y 376 virtual.
+            if (g_powerups_ready && gs.ea74 == 1) {
+                const float pz = 32.0f * kVScale;
+                for (int i = 0; i < 4; ++i)
+                    HudIm2DQuad(kHandlePowerup0 + i,
+                                (448.0f + i * 38.0f) * kVScale,
+                                376.0f * kVScale, pz, pz, 0xffffffffu, uvf);
+            }
         }
 
         // --- bottom prompt strip: F4 CLOSED 2026-06-11. FUN_00432b30 is now
@@ -5277,6 +5307,61 @@ bool UploadAllTexturesForAtlas() {
                   uploaded);
     if (g_hwnd) SetWindowTextA(g_hwnd, g_windowTitle);
     return uploaded > 0;
+}
+
+// s24/s18 power-up preview row. Loads the four STANDARD-mode icons from
+// POWERUPS/Powerups.piz :: POWERUPICONS.TXD (11 textures, PAL8, 7 mips) into
+// kSlotPowerup0.. / kHandlePowerup0.. Order is the on-screen left-to-right
+// order MEASURED on the original, not the dictionary order.
+bool LoadPowerupIcons() {
+    // Standard-mode contents, measured twice at two resolutions by matching each
+    // on-screen icon's square-fill corner to the TXD mip-0 palette corner:
+    //   x448 (52,185,230)->mortar  x486 (230,33,36)->mine
+    //   x524 (14,6,236)->oil       x562 (246,214,6)->machinegun
+    // and the set is STABLE across runs (see the Chaos note at the draw site).
+    static const char* kNames[4] = { "mortar", "mine", "oil", "machinegun" };
+    mashed_re::Piz::Archive piz;
+    if (!piz.Load("original/TOASTART/Common/POWERUPS/Powerups.piz")) {
+        if (std::FILE* lg = std::fopen(kLogPath, "a")) {
+            std::fprintf(lg, "powerup icons: piz.Load FAILED\n"); std::fclose(lg); }
+        return false;
+    }
+    const std::uint8_t* blob = nullptr;
+    std::uint32_t blen = 0;
+    for (std::uint32_t i = 0; i < piz.count(); ++i) {
+        if (_stricmp(piz.entry(i).name, "POWERUPICONS.TXD") == 0) {
+            blob = piz.blob(i, &blen);
+            break;
+        }
+    }
+    if (!blob) return false;
+    mashed_re::Txd::Dictionary dict;
+    if (!dict.Decode(blob, blen)) {
+        if (std::FILE* lg = std::fopen(kLogPath, "a")) {
+            std::fprintf(lg, "powerup icons: dict.Decode FAILED\n"); std::fclose(lg); }
+        return false;
+    }
+    int loaded = 0;
+    for (int n = 0; n < 4; ++n) {
+        for (std::uint32_t i = 0; i < dict.count(); ++i) {
+            const auto& tex = dict.texture(i);
+            if (_stricmp(tex.name, kNames[n]) != 0) continue;
+            const std::uint32_t slot = kSlotPowerup0 + static_cast<std::uint32_t>(n);
+            if (g_quad_renderer.UploadFromTextureToSlot(slot, tex)) {
+                mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                    kHandlePowerup0 + n, g_quad_renderer.slot_texture(slot));
+                ++loaded;
+            }
+            break;
+        }
+    }
+    g_powerups_ready = (loaded == 4);
+    if (std::FILE* lg = std::fopen(kLogPath, "a")) {
+        std::fprintf(lg, "powerup icons: dict=%u loaded=%d ready=%d\n",
+                     dict.count(), loaded, g_powerups_ready ? 1 : 0);
+        std::fclose(lg);
+    }
+    return g_powerups_ready;
 }
 
 // R2-5: load sfx.piz/BADGES.TXD (the named-sprite dictionary MASHED loads at
@@ -6662,6 +6747,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         // R2-5: badge sprites (highlight-bar "Button" cap from badges.txd).
         g_menu_badge_ready = LoadBadgeSprites();
         g_previews_ready = LoadTrackPreviews();   // F2 crossfade textures
+        LoadPowerupIcons();                       // s24/s18 power-up preview row
         g_carsel_ready = LoadCarColorSprites();   // #25 color-select car previews
         g_inputicons_ready = LoadInputIcons();    // #10 keyboard/joypad row icons
         g_loadicon_ready = LoadLoadIconFromExe(); // loading-screen spinning disc

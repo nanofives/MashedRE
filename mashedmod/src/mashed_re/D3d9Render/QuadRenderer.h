@@ -33,7 +33,11 @@ class QuadRenderer {
 public:
     // Hard cap on atlas slots. 8 atlas + bg/logo/font + badge sprites (R2-5)
     // = 17 in use; 20 leaves headroom.
-    static constexpr std::uint32_t kMaxSlots = 64;  // +24 track previews (F2) +11 color-select (#25)
+    // 80. Was 64, which was ALREADY OVERFLOWED before the power-up icons:
+    // kSlotVehPrev0 is 61..68, so vehicle previews 4..8 (slots 64..68) fell
+    // outside the array and UploadFromTextureToSlot silently returned false
+    // for them -- a latent bug found while adding kSlotPowerup0 (69..72).
+    static constexpr std::uint32_t kMaxSlots = 80;  // +24 track previews (F2) +11 color-select (#25) +8 veh +4 powerup
 
     QuadRenderer() = default;
     ~QuadRenderer() { Shutdown(); }
