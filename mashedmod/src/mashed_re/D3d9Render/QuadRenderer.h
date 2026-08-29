@@ -37,6 +37,16 @@ public:
     // kSlotVehPrev0 is 61..68, so vehicle previews 4..8 (slots 64..68) fell
     // outside the array and UploadFromTextureToSlot silently returned false
     // for them -- a latent bug found while adding kSlotPowerup0 (69..72).
+    // A/B MEASURED, not inferred -- flipped the ceiling and read the loader's
+    // own log line both ways:
+    //   kMaxSlots 64 -> "veh 3/8",  powerup "loaded=0 ready=0"
+    //   kMaxSlots 80 -> "veh 8/8",  powerup "loaded=4 ready=1"
+    // 3 is exactly slots 61/62/63 succeeding while 64..68 fall outside
+    // m_textures[]. It survived because the failure was SILENT TWICE OVER:
+    // UploadFromTextureToSlot returns false without logging, and
+    // LoadTrackPreviews sets g_vehprev_ready = (veh > 0), so 3 of 8 still
+    // read as "ready" -- and the only preview drawn by default (car1,
+    // slot 61) was inside the valid range, so nothing looked wrong.
     static constexpr std::uint32_t kMaxSlots = 80;  // +24 track previews (F2) +11 color-select (#25) +8 veh +4 powerup
 
     QuadRenderer() = default;
