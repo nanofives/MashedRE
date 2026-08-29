@@ -6704,23 +6704,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         // the state-gated routing/grey-out branches see the real save (unlock
         // arrays, savedata/profile gates). A blank save (magic != 0xDEADBEEF,
         // as shipped) keeps the fresh-menu defaults.
-        // DISABLED 2026-08-28 — the original does NOT restore this span at boot.
-        // Read live from the original at the main menu (Frida, phase 3):
-        //   DAT_007f0f2c (savedata) = 0
-        //   DAT_007f0ad4 (profiles) = 0
-        //   DAT_0067e9fc (game mode) = 0
-        // all zero, even though original/gamesave.bin on disk IS a real save
-        // (magic 0xDEADBEEF, all 13 championship rows unlocked). The original
-        // populates the span when a save is actually LOADED, not at boot.
-        // The R2-2 rationale below had it backwards: restoring the span at boot
-        // to "let the grey-out branches see the real save" made those branches
-        // see something the original's never see at this point, so screen 1's
-        // item 3 (Bonus Features) rendered ENABLED where the original greys it
-        // (has_savedata is the sole gate — MenuNavSM.cpp:487, av[3]).
-        // Progression is unaffected: campaign unlocks come from g_progUnlock /
-        // mashed_re_gamesave.bin (GameFlow.cpp), a separate store, and
-        // Campaign_CurrentCup already falls back to it when the span is zero.
-        constexpr bool kBootRestoreSaveSpan = false;
+        // RE-ENABLED 2026-08-29. I disabled this on 2026-08-28 on the reading
+        // that "the original does NOT restore the span at boot", because three
+        // spot-checked fields all read zero live (0x007f0f2c savedata,
+        // 0x007f0ad4 profiles, 0x0067e9fc game mode). That inference was WRONG:
+        // dumping the WHOLE span from the original at the menu shows 166 of 328
+        // dwords NON-ZERO, including the championship table's per-row col4 = 2.
+        // The original does restore it. Those three fields are zero because
+        // they are ZERO IN THE SAVE FILE, not because no restore happened:
+        //   original/gamesave.bin span  +0x010 = 2  +0x018 = 0
+        //                               +0x094 = 0  +0x4ec = 0
+        // So restoring from original/gamesave.bin reproduces the original's
+        // state field-for-field, Bonus Features greying included -- has_savedata
+        // comes out 0 either way, which is the whole reason the disable
+        // "worked". Disabling it also zeroed unlock_track[0], which the original
+        // has at 2, and that broke s18's row-1 availability (U-9046).
+        // The ACTUAL culprit was our own store, kept disabled in GameFlow.cpp:
+        //   mashed_re_gamesave.bin span +0x010 = 2  +0x4ec = 1   <-- the 1
+        // i.e. WE wrote has_savedata=1 into our own save and then restored it
+        // over the correct 0. One save file was right and the other was not;
+        // the blunt fix threw out both.
+        constexpr bool kBootRestoreSaveSpan = true;
         {
             bool save_ok = false;
             if (kBootRestoreSaveSpan) {
