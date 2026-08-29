@@ -4651,15 +4651,30 @@ bool RenderFrame() {
                 // bold draw. Measured geometry match only, do not promote past C2.
                 const float labCell = (r == selRow) ? 0.776f * 0.0708f * 480.f * kVScale
                                                     : cell;
+                // DISABLED rows draw BLACK AT ALPHA 0x30, not full black. This
+                // block previously ignored availability entirely and drew every
+                // label/value at 0xff000000, so nothing ever greyed here.
+                // MEASURED on the original at screen 18 (Frida, arg3 of
+                // 0x00427e00 is the colour): greyed rows come through as
+                // 0x30000000 against 0xff000000 for the rest, and the avail
+                // array for that screen -- found by scanning 0x0067ec00..+0x600
+                // for the pattern rather than trusting an offset -- sits at
+                // 0x0067edc4 reading [1,1,1,0,1,1,0]. Zeros at rows 3 and 6,
+                // exactly the two rows that render grey.
+                // CORRECTS my own earlier claim that this was NOT the avail
+                // path: that came from probing 0x0067ed84 with no depth offset,
+                // i.e. the depth-0 slot, which is trivially all ones.
+                const bool rowOff = !Nav_ItemEnabled(r);
+                const std::uint32_t inkCol = rowOff ? 0x30000000u : 0xff000000u;
                 wchar_t lab[64];
                 if (GetMenuMessage(rows[r].label, lab, 64) > 0)
                     DrawMashedString(lab, labelX * kVScale, cy * kVScale, labCell,
-                                     0xff000000u, /*anchor_left*/ true);
+                                     inkCol, /*anchor_left*/ true);
                 if (rows[r].value >= 0) {
                     wchar_t val[64];
                     if (GetMenuMessage(rows[r].value, val, 64) > 0)
                         DrawMashedString(val, valRight * kVScale, cy * kVScale, cell,
-                                         0xff000000u, false, 1.0f, /*anchor_right*/ true);
+                                         inkCol, false, 1.0f, /*anchor_right*/ true);
                     // The "Arrow" sprite (BADGES.TXD, kHandleMenuArrow) just left
                     // of each value, matching FUN_0040bb50("Arrow",...). Width is
                     // estimated from the glyph count (no measure fn in-scope).
