@@ -463,10 +463,29 @@ bool Q_PlayerActive(int player) {
 }
 
 // FUN_00430b60 (0x00430b60) - count of active team slots (DAT_007f1a14/24/34/44
-// != -1). Fresh menu = 0. Used by the screen-0x12 grey-out.
+// != -1). VERBATIM, reading the same four globals the original reads:
+//   0x00430b60  mov edx, [0x7f1a14]      ; or ecx, -1 ; xor eax, eax
+//   0x00430b6b  cmp edx, ecx / je        ; eax = 1 if slot0 != -1
+//   0x00430b74  cmp [0x7f1a24], ecx / je ; inc eax
+//   0x00430b7d  cmp [0x7f1a34], ecx / je ; inc eax
+//   0x00430b86  cmp [0x7f1a44], ecx / je ; inc eax
+// CORRECTED 2026-08-29. This used g_game_state.team_slot[], a PLACEHOLDER that
+// MenuNavSM initialises to -1 ("standalone has no team table loaded"), so it
+// always returned 0 -- and the old comment above asserted "Fresh menu = 0" as
+// if that were the original's behaviour. It is not: the four globals read
+// [0,0,0,0] at a bare nav push (measured live), and 0 is NOT the -1 sentinel,
+// so the ORIGINAL RETURNS 4. Confirmed by calling FUN_00430b60 through Frida on
+// the original at screen 18: it returns 4.
+// That difference is load-bearing. PlaceCursor case 0x12 has
+//   if (!(Q_ActivePlayerCount() != 4 && ea64 == 0)) av[3] = 0;
+// which with count 4 disables row 3 (Extra Opponents) -- exactly the row the
+// original greys and we did not (U-9046).
 int Q_ActivePlayerCount() {
+    const std::int32_t* const slot0 =
+        reinterpret_cast<const std::int32_t*>(0x007f1a14);
     int n = 0;
-    for (int i = 0; i < 4; ++i) if (g_game_state.team_slot[i] != -1) ++n;
+    for (int i = 0; i < 4; ++i)
+        if (slot0[i * 4] != -1) ++n;      // stride 0x10 bytes = 4 int32s
     return n;
 }
 
