@@ -4139,7 +4139,12 @@ bool RenderFrame() {
                 // 3, matching the reference capture. 4 made the comparison
                 // unfair (user). The count is live device state either way.
                 const int   nrows4 = 3;   // [UNCERTAIN] live device state
-                const float byLast = 279.0f * kVScale;
+                // 261.25, not 279. MEASURED bar tops (device, 1024x768):
+                //   original 309 / 364 / 418   ours 338 / 392 / 447
+                // ours sat 29 device = 18.1 virtual too LOW; the original's
+                // last bar top is 418/1.6 = 261.25. Pitch already agreed
+                // (54.5 device = 34.1 virtual vs our 34).
+                const float byLast = 261.25f * kVScale;
                 const float by0 = byLast - (nrows4 - 1) * bdy;
                 for (int r = 0; r < nrows4; ++r) {
                     const float by = by0 + r * bdy;
@@ -4155,17 +4160,26 @@ bool RenderFrame() {
                     // colour); here the icons sit in the LEFT unselected zone
                     // and have no colour yet, exactly as the user described.
                     // The old 1.3 width multiplier was the visible stretch.
-                    const float isz = 30.0f * kVScale;
-                    const float ix = bx + 8.0f * kVScale;
-                    const float iy = by + (bh - isz) * 0.5f;
+                    // WIDE quad, not square -- same lesson as the s15 joypad:
+                    // this sprite's cell content is wider than it is tall, so a
+                    // square quad squashes it horizontally. MEASURED ink at
+                    // 1024x768: original 31x31 at x121, ours 18x32 at x102 --
+                    // far too narrow (the user's 'very stretched'). Widening
+                    // 30 -> 51.7 virtual takes 18 -> 31; height 30 -> 29 keeps
+                    // the measured 31. x offset 8 -> 13.1: 20 overshot, landing
+                    // the ink at x132 against the original's 121.
+                    const float isw = 51.7f * kVScale;
+                    const float ish = 29.0f * kVScale;
+                    const float ix = bx + 13.1f * kVScale;
+                    const float iy = by + (bh - ish) * 0.5f;
                     const int   h_icon = (r == nrows4 - 1) ? kHandleInputKbd
                                                            : kHandleInputJoy;
                     if (g_inputicons_ready)
-                        HudIm2DQuad(h_icon, ix, iy, isz, isz, white, uv_full);
+                        HudIm2DQuad(h_icon, ix, iy, isw, ish, white, uv_full);
                     if (g_font.ready()) {
                         wchar_t num[2] = { static_cast<wchar_t>(L'1' + r), 0 };
                         const float ncell2 = 0.55f * 0.0708f * 480.f * kVScale;
-                        DrawMashedString(num, ix + isz + 6.0f * kVScale,
+                        DrawMashedString(num, ix + isw + 5.0f * kVScale,
                                          by + bh * 0.5f, ncell2, 0xff000000u, true);
                     }
                 }
@@ -4331,7 +4345,11 @@ bool RenderFrame() {
                 // so width x1.167 and height x0.638 off the 41x41 quad =
                 // 47.8 x 26.2. Squaring this quad was WRONG: unlike the VS
                 // sheet, the joypad cell's content is wider than it is tall.
-                const float jw = 48.0f * kVScale, jh = 26.2f * kVScale;
+                // Round 3: ours 29x33 ink (aspect 0.879, 266 px) against the
+                // original's 28x30 (0.933, 318 px) -- slightly too tall and
+                // 16% short on ink. Widen and shorten toward 0.933, and lift
+                // the area ~5%.
+                const float jw = 52.0f * kVScale, jh = 26.5f * kVScale;
                 const float jx = carX + 44.0f * kVScale;  // ink x206 -> 193
                 const float jy = ry + (rowH - jh) * 0.5f;
                 if (g_inputicons_ready)
@@ -4510,11 +4528,14 @@ bool RenderFrame() {
                             308.0f * kVScale, 72.0f * kVScale, 72.0f * kVScale,
                             white, uv_full);
             if (g_vs_ready) {
-                const float vsw = 54.0f * kVScale, vsh = 54.0f * kVScale;
+                // 60, and 1.75 lower. MEASURED VS band in the icon gaps:
+                // original y 514..570 (h 57), ours y 514..564 (h 51) -- so
+                // ~1.118x small and its centre 3 device px high.
+                const float vsw = 63.0f * kVScale, vsh = 63.0f * kVScale;
                 for (int c = 0; c < 3; ++c)
                     HudIm2DQuad(kHandleVs,
                                 (105.625f + c * 64.0f) * kVScale - vsw * 0.5f,
-                                338.75f * kVScale - vsh * 0.5f,
+                                340.5f * kVScale - vsh * 0.5f,
                                 vsw, vsh, white, uv_full);
             }
             // Separator: orig x511..513 y493..620 -> 319.375 / 308.125, w 1.875,
@@ -4763,11 +4784,14 @@ bool RenderFrame() {
                             308.0f * kVScale, 72.0f * kVScale, 72.0f * kVScale,
                             0xffffffffu, uvf);
             if (g_vs_ready) {
-                const float vsw = 54.0f * kVScale, vsh = 54.0f * kVScale;
+                // 60, and 1.75 lower. MEASURED VS band in the icon gaps:
+                // original y 514..570 (h 57), ours y 514..564 (h 51) -- so
+                // ~1.118x small and its centre 3 device px high.
+                const float vsw = 63.0f * kVScale, vsh = 63.0f * kVScale;
                 for (int c = 0; c < 3; ++c)
                     HudIm2DQuad(kHandleVs,
                                 (104.5f + c * 64.0f) * kVScale - vsw * 0.5f,
-                                338.75f * kVScale - vsh * 0.5f,
+                                340.5f * kVScale - vsh * 0.5f,
                                 vsw, vsh, 0xffffffffu, uvf);
             }
             // Separator: original white bar occupies device cols 511..513, rows
