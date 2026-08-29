@@ -4664,6 +4664,21 @@ bool RenderFrame() {
                 // CORRECTS my own earlier claim that this was NOT the avail
                 // path: that came from probing 0x0067ed84 with no depth offset,
                 // i.e. the depth-0 slot, which is trivially all ones.
+                // [UNCERTAIN] the original uses TWO dim levels here, we use one.
+                // Text-vs-plate contrast measured on s18 at 640x480:
+                //            row3 (grey)  row6 (grey)  row4 (normal)
+                //   original      32           64           111
+                //   ours          28           28           117
+                // Our single 0x30000000 matches the original's row 3 (28 vs 32)
+                // and the normal rows match (117 vs 111), but the original greys
+                // row 6 at roughly HALF the strength of row 3. So "disabled" is
+                // not one state over there. Both rows come back avail=0 from
+                // 0x0067edc4 = [1,1,1,0,1,1,0], so the second level is decided
+                // somewhere else -- and note the LABELS do not go through
+                // 0x00427e00 at all (a trace of 0x00427680 / 0x004282a0 /
+                // 0x00427e00 on s18 catches every VALUE msgid and no label), so
+                // label and value alpha need not share a source. The greyed SET
+                // is correct and visually matches; only the degree differs.
                 const bool rowOff = !Nav_ItemEnabled(r);
                 const std::uint32_t inkCol = rowOff ? 0x30000000u : 0xff000000u;
                 wchar_t lab[64];
