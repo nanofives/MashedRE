@@ -4664,32 +4664,35 @@ bool RenderFrame() {
                 // CORRECTS my own earlier claim that this was NOT the avail
                 // path: that came from probing 0x0067ed84 with no depth offset,
                 // i.e. the depth-0 slot, which is trivially all ones.
-                // [UNCERTAIN] the original uses TWO dim levels here, we use one.
-                // Text-vs-plate contrast measured on s18 at 640x480:
-                //            row3 (grey)  row6 (grey)  row4 (normal)
-                //   original      32           64           111
-                //   ours          28           28           117
-                // Our single 0x30000000 matches the original's row 3 (28 vs 32)
-                // and the normal rows match (117 vs 111), but the original greys
-                // row 6 at roughly HALF the strength of row 3. So "disabled" is
-                // not one state over there. Both rows come back avail=0 from
-                // 0x0067edc4 = [1,1,1,0,1,1,0], so the second level is decided
-                // somewhere else -- and note the LABELS do not go through
-                // 0x00427e00 at all (a trace of 0x00427680 / 0x004282a0 /
-                // 0x00427e00 on s18 catches every VALUE msgid and no label), so
-                // label and value alpha need not share a source. The greyed SET
-                // is correct and visually matches; only the degree differs.
+                // Disabled rows: the LABEL and the VALUE use DIFFERENT alphas.
+                // Traced on the original at s18 by hooking both draw entries and
+                // keying on the row Y (keying on X collapses the row-6 label into
+                // the screen title, which is what hid this the first time):
+                //   labels  FUN_00428140   y182 0x103 -> 80000000
+                //                          y272 0x24d -> 80000000   (rest ff000000)
+                //   values  FUN_00427e00   y182 0x59  -> 30000000
+                //                          y272 0xec  -> 30000000   (rest ff000000)
+                // So greyed label = alpha 0x80, greyed value = alpha 0x30, and it
+                // is perfectly consistent across both greyed rows. We used
+                // 0x30000000 for BOTH, which left our labels twice as faint as
+                // the original's.
+                // RETRACTS the "original uses two dim levels per row" note I put
+                // here earlier: that came from a contrast measurement over a fixed
+                // x66..190 window, in which "Extra Opponents" overflows and "Game
+                // Mode" does not, so the two rows sampled different glyph
+                // fractions. There is ONE label level and ONE value level.
                 const bool rowOff = !Nav_ItemEnabled(r);
-                const std::uint32_t inkCol = rowOff ? 0x30000000u : 0xff000000u;
+                const std::uint32_t labInk = rowOff ? 0x80000000u : 0xff000000u;
+                const std::uint32_t valInk = rowOff ? 0x30000000u : 0xff000000u;
                 wchar_t lab[64];
                 if (GetMenuMessage(rows[r].label, lab, 64) > 0)
                     DrawMashedString(lab, labelX * kVScale, cy * kVScale, labCell,
-                                     inkCol, /*anchor_left*/ true);
+                                     labInk, /*anchor_left*/ true);
                 if (rows[r].value >= 0) {
                     wchar_t val[64];
                     if (GetMenuMessage(rows[r].value, val, 64) > 0)
                         DrawMashedString(val, valRight * kVScale, cy * kVScale, cell,
-                                         inkCol, false, 1.0f, /*anchor_right*/ true);
+                                         valInk, false, 1.0f, /*anchor_right*/ true);
                     // The "Arrow" sprite (BADGES.TXD, kHandleMenuArrow) just left
                     // of each value, matching FUN_0040bb50("Arrow",...). Width is
                     // estimated from the glyph count (no measure fn in-scope).
