@@ -71,7 +71,17 @@ int  g_dstBlend     = 6;     // state 11 (rwBLENDINVSRCALPHA == D3DBLEND_INVSRCA
 
 // Small handle -> texture map. The frontend uses small integer texture handles;
 // 16 slots is ample for the menu (matches QuadRenderer::kMaxSlots).
-constexpr int     kMaxTexHandles = 64;
+// 96, raised from 64 on 2026-08-29. RwIm2DBridge_RegisterTexture SILENTLY
+// DROPS a registration once the map is full ("if (g_texMapCount <
+// kMaxTexHandles)" with no else), so overflowing it does not fail loudly --
+// it just leaves later textures unregistered and the draw samples whatever
+// was last bound. Observed: raising QuadRenderer::kMaxSlots let 5 more
+// vehicle previews register, and loading all 11 power-up icons added 7
+// more, which pushed the count past 64; the FONT registered after those and
+// was dropped, so every menu string rendered as solid white blocks. Census
+// of current users: 24 previews + 8 veh + 10 cars + 11 powerups + 5 menu
+// items + bg/logo/font/badge/arrow/vs/star/loadicon/bigE/kbd/joy = ~70.
+constexpr int     kMaxTexHandles = 96;
 struct TexEntry { int handle; IDirect3DTexture9* tex; bool point_filter; };
 TexEntry          g_texMap[kMaxTexHandles] = {};
 int               g_texMapCount = 0;

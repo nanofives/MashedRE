@@ -174,6 +174,10 @@
 #include "Race/RaceModes.h"                 // [WS-G1] real game-mode -> race-rule pipeline
 #include "Audio/AudioEngine.h"              // real DirectSound playback (in-race ambience)
 
+// s24/s18 power-up table lives in the save-span MODEL, not at the literal
+// 0x007f0a40 (our port does not mirror the span back to the image).
+namespace mashed_re { namespace Frontend { unsigned char* Nav_SaveSpanData(); } }
+
 // B15 — the frontend's bit-identical C3 Im2D quad draw (0x00450b10,
 // Frontend/DrawQuadPrimitives.cpp). Writes the DAT_00898a20 vertex buffer and
 // dispatches through *(0x007d3ff8) — which RwIm2DBridge_Install() points at our
@@ -719,6 +723,19 @@ bool             g_star_ready = false;
 // appeared. User-reported on s6/s18/s24 across two review rounds.
 bool             g_vs_ready   = false;
 bool             g_powerups_ready = false;
+constexpr int    kPowerupIconCount = 11;
+// Power-up ID -> icon index, transcribed from FUN_00458630's jump table.
+//   0x00458630  mov eax,[esp+4] / add eax,-2 / cmp eax,0x14 / ja 0x0045873f
+//   0x00458640  jmp [eax*4 + 0x458744]        ; 21 entries, ids 2..22
+//   0x0045873f  xor eax,eax / ret             ; NULL -- NO fallback
+// Seven IN-RANGE ids (3,4,5,8,14,15,20) point their table slot straight at the
+// NULL case, and the original's draw loop skips a null sprite via its own
+// "test edi,edi / je". The aliasing is deliberate, not a fallback: ids 6/12/13
+// all share one case (mine) and 2/16 share flamethrower.
+// -1 = no icon. Index is into kNames in POWERUPICONS.TXD dictionary order.
+constexpr signed char kPowerupIdToIcon[23] = {
+    -1, -1,  9, -1, -1, -1,  7,  6, -1,  8,  5,  4,
+     7,  7, -1, -1,  9,  3,  2, 10, -1,  1,  0 };
 // Per-player colour swatches (the s4 Player Colour Select row). Packed as the
 // bridge expects: A | B<<16 | G<<8 | R, so [0] = device (152,58,61) red.
 // Hoisted to file scope because the s15/s16 joypad icon is tinted with the
@@ -734,9 +751,9 @@ constexpr std::uint32_t kPlayerSwatch[6] = {
 constexpr std::uint32_t kSlotVehPrev0  = 61;   // slots 61..68
 constexpr int           kHandleVehPrev0 = 52;  // handles 52..59
 // s24/s18 power-up preview row (POWERUPICONS.TXD in POWERUPS/Powerups.piz).
-// STANDARD mode only -- see the draw site for why Chaos is not drawn.
-constexpr std::uint32_t kSlotPowerup0   = 69;   // slots 69..72
-constexpr int           kHandlePowerup0 = 60;   // handles 60..63
+// ALL 11 icons, so any id the original's table can name is drawable.
+constexpr std::uint32_t kSlotPowerup0   = 69;   // slots 69..79 (11)
+constexpr int           kHandlePowerup0 = 60;   // handles 60..70
 bool             g_vehprev_ready = false;
 
 // R4 opener — track fly-through mode (env MASHED_TRACK_VIEW=<piz path or 1
@@ -4803,30 +4820,58 @@ bool RenderFrame() {
             // 493..620 -> x 319.375, w 1.875, y 308.125, h 80.0 virtual.
             HudIm2DQuad(0, 319.5f * kVScale, 308.0f * kVScale,
                         2.0f * kVScale, 80.0f * kVScale, 0xffffffffu, uvf);
-            // --- power-up preview row, bottom right.
-            // GATED ON THE POWER-UP MODE, which is what this row actually
-            // follows -- established by forcing DAT_0067ea74 on the original and
-            // re-dumping s24:
-            //   ea74 = 0 "Off"      -> the original draws NO icons at all
-            //   ea74 = 1 "Standard" -> 4 icons, and the SAME four every run
-            //   ea74 = 2 "Chaos"    -> a RANDOMISED set: two runs gave
-            //                          [depthcharge, oil, depthcharge] and
-            //                          [machinegun, machinegun, depthcharge]
-            //                          -- duplicates allowed, count varies
-            // So Off and Standard are portable and Chaos is not: reproducing it
-            // needs the original's selection RNG, which is not identified.
-            // Drawing the Standard four under Chaos would be a fixed answer to a
-            // random question, so Chaos draws nothing until that is understood.
-            // [UNCERTAIN] Chaos content, and where the per-mode list lives.
-            // GEOMETRY measured at BOTH resolutions (1024x768 and 640x480, which
-            // is what separates the virtual constants from rounding):
-            //   size 32, pitch 38, first x 448, y 376 virtual.
+            // --- power-up preview row, bottom right. VERBATIM against the
+            // original's own table rather than a hardcoded set.
+            // The original's loop (inside FUN_0043af10) is:
+            //   0x0043b9c3  cmp dword ptr [0x67ea74], 1   ; Standard only
+            //   0x0043b9da  jne 0x43be4a                  ; Off / Chaos branch
+            //   0x0043b9e5  add edx, ecx                  ; edx = esi + edi*5
+            //   0x0043b9e7  mov eax, [edx*4 + 0x7f0cb0]   ; the LIST
+            //   0x0043b9ee  cmp eax, -1 / jle             ; -1 -> skip slot
+            //   0x0043b9f8  call 0x458630                 ; id -> sprite
+            //   0x0043bbf7  cmp esi, 5                    ; five columns
+            // so: int32[row][5] at 0x007f0cb0, row from DAT_0067f17c, -1 empty.
+            // Read live on the original at s24 (row selector 0):
+            //   row0 [9,19,12,7,-1]  row1 [9,19,12,7,11]
+            //   row2 [9,18,12,7,11]  row3 [9,17,16,19,7]
+            // The table lives INSIDE the save span (0x007f0a40..0x007f0f60) at
+            // +0x270, so our restored span carries it; DAT_0067f17c sits outside
+            // the span and is 0 on both sides.
+            // X law: the original fills RIGHT-TO-LEFT -- esi 0..3 drew ids
+            // 9/19/12/7 at x 562/524/486/448, i.e. x = 562 - col*38. Icon 32x32,
+            // pitch 38, y 376 virtual, all confirmed at 1024x768 AND 640x480.
+            // GATE: ea74 must be 1. Off (0) draws nothing, and Chaos (2) is
+            // RANDOMISED -- two captures gave [depthcharge,oil,depthcharge] and
+            // [machinegun,machinegun,depthcharge], with the table unchanged, so
+            // Chaos is generated in the 0x0043be4a branch. Drawing the table
+            // under Chaos would be a fixed answer to a random question.
+            // [UNCERTAIN] the Chaos branch is not ported.
             if (g_powerups_ready && gs.ea74 == 1) {
+                // Read the span MODEL, not the literal address. Our port does
+                // NOT mirror the save span back to 0x007f0a40..0x007f0f60 --
+                // Nav_GameStateLoadSave copies it into a private g_save_span
+                // ("stands in for live 0x007f0a40", MenuNavSM.cpp:1386) exposed
+                // as Nav_SaveSpanData(). Reading 0x007f0cb0 directly returned
+                // zeroed .bss, every id resolved to 0 -> kPowerupIdToIcon[0] =
+                // -1, and nothing drew. Table offset = 0x007f0cb0 - 0x007f0a40.
+                const std::int32_t* const puTable =
+                    reinterpret_cast<const std::int32_t*>(
+                        mashed_re::Frontend::Nav_SaveSpanData() + 0x270);
+                // Row selector is OUTSIDE the span (0x0067f17c < 0x007f0a40) and
+                // measured 0 on the original at s24; our .bss default is 0 too.
+                const int puRow = 0;
                 const float pz = 32.0f * kVScale;
-                for (int i = 0; i < 4; ++i)
-                    HudIm2DQuad(kHandlePowerup0 + i,
-                                (448.0f + i * 38.0f) * kVScale,
-                                376.0f * kVScale, pz, pz, 0xffffffffu, uvf);
+                if (puRow >= 0 && puRow < 4) {
+                    for (int col = 0; col < 5; ++col) {
+                        const std::int32_t id = puTable[puRow * 5 + col];
+                        if (id < 0 || id > 22) continue;          // -1 terminator
+                        const int icon = kPowerupIdToIcon[id];
+                        if (icon < 0) continue;                   // NULL sprite
+                        HudIm2DQuad(kHandlePowerup0 + icon,
+                                    (562.0f - col * 38.0f) * kVScale,
+                                    376.0f * kVScale, pz, pz, 0xffffffffu, uvf);
+                    }
+                }
             }
         }
 
@@ -5314,12 +5359,11 @@ bool UploadAllTexturesForAtlas() {
 // kSlotPowerup0.. / kHandlePowerup0.. Order is the on-screen left-to-right
 // order MEASURED on the original, not the dictionary order.
 bool LoadPowerupIcons() {
-    // Standard-mode contents, measured twice at two resolutions by matching each
-    // on-screen icon's square-fill corner to the TXD mip-0 palette corner:
-    //   x448 (52,185,230)->mortar  x486 (230,33,36)->mine
-    //   x524 (14,6,236)->oil       x562 (246,214,6)->machinegun
-    // and the set is STABLE across runs (see the Chaos note at the draw site).
-    static const char* kNames[4] = { "mortar", "mine", "oil", "machinegun" };
+    // All 11, in POWERUPICONS.TXD dictionary order. kPowerupIdToIcon below maps
+    // the original's power-up IDs onto these indices.
+    static const char* kNames[kPowerupIconCount] = {
+        "Airstrike", "Chaos", "flare", "shotgun", "missile", "depthcharge",
+        "mortar", "mine", "machinegun", "flamethrower", "oil" };
     mashed_re::Piz::Archive piz;
     if (!piz.Load("original/TOASTART/Common/POWERUPS/Powerups.piz")) {
         if (std::FILE* lg = std::fopen(kLogPath, "a")) {
@@ -5342,7 +5386,7 @@ bool LoadPowerupIcons() {
         return false;
     }
     int loaded = 0;
-    for (int n = 0; n < 4; ++n) {
+    for (int n = 0; n < kPowerupIconCount; ++n) {
         for (std::uint32_t i = 0; i < dict.count(); ++i) {
             const auto& tex = dict.texture(i);
             if (_stricmp(tex.name, kNames[n]) != 0) continue;
@@ -5355,7 +5399,7 @@ bool LoadPowerupIcons() {
             break;
         }
     }
-    g_powerups_ready = (loaded == 4);
+    g_powerups_ready = (loaded == kPowerupIconCount);
     if (std::FILE* lg = std::fopen(kLogPath, "a")) {
         std::fprintf(lg, "powerup icons: dict=%u loaded=%d ready=%d\n",
                      dict.count(), loaded, g_powerups_ready ? 1 : 0);
