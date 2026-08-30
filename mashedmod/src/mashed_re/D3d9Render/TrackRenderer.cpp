@@ -351,49 +351,89 @@ inline void RelightAppend(std::vector<TrackRenderer::V>& dst,
 IDirect3DTexture9* MakeTexture(IDirect3DDevice9* dev,
                                const mashed_re::Txd::Texture& tex) {
     if (tex.mip_count == 0) return nullptr;
-    const auto& mip = tex.mips[0];
-    const std::uint32_t w = mip.width, h = mip.height;
-    if (w == 0 || h == 0) return nullptr;
-    IDirect3DTexture9* out = nullptr;
-    if (FAILED(dev->CreateTexture(w, h, 1, 0, D3DFMT_A8R8G8B8,
-                                  D3DPOOL_MANAGED, &out, nullptr)))
-        return nullptr;
-    D3DLOCKED_RECT lr;
-    if (FAILED(out->LockRect(0, &lr, nullptr, 0))) { out->Release(); return nullptr; }
-    for (std::uint32_t y = 0; y < h; ++y) {
-        std::uint32_t* dst = reinterpret_cast<std::uint32_t*>(
-            static_cast<std::uint8_t*>(lr.pBits) + static_cast<std::size_t>(y) * lr.Pitch);
-        const std::uint8_t* row = mip.pixels + static_cast<std::size_t>(y) * mip.stride;
-        for (std::uint32_t x = 0; x < w; ++x) {
-            std::uint8_t r, g, b, a;
-            if (mip.depth == 32) {
-                r = row[x * 4 + 0]; g = row[x * 4 + 1];
-                b = row[x * 4 + 2]; a = row[x * 4 + 3];
-            } else {
-                // PAL4 and PAL8 are BOTH stored one byte per pixel; `depth`
-                // selects the PALETTE SIZE (16 vs 256 entries), not the storage
-                // width. Measured 2026-07-31 over every TXD in the game
-                // (re/tools/txd_format_census.py, 5194 mips): stride is always
-                // max(4, width * bpp) with bpp==1 for depth 4 AND 8, zero
-                // violations, and stride*height+palette exactly fills the IMAGE
-                // chunk (total slack 0). Independently, no byte in any depth-4
-                // mip exceeds 0x0F -- impossible if two indices were packed per
-                // byte. This previously read `row[x >> 1]` and unpacked nibble
-                // pairs, which squashed every PAL4 track texture to half width
-                // and scrambled its indices (dump.piz "Roadslipblend2" rendered
-                // as vertical stripes). Affects Warzone/training/rouabout/sands/
-                // City/Forest/Neustein/dump + SFX BADGES.
-                const std::uint32_t idx =
-                    (mip.depth == 4) ? (row[x] & 0x0Fu) : row[x];
-                const std::uint8_t* pe = mip.palette + idx * 4;
-                r = pe[0]; g = pe[1]; b = pe[2]; a = pe[3];
+    const std::uint32_t w0 = tex.mips[0].width, h0 = tex.mips[0].height;
+    if (w0 == 0 || h0 == 0) return nullptr;
+
+    // Decode level 0 to a linear ARGB8888 buffer.
+    std::vector<std::uint32_t> lvl0(static_cast<std::size_t>(w0) * h0);
+    {
+        const auto& mip = tex.mips[0];
+        for (std::uint32_t y = 0; y < h0; ++y) {
+            std::uint32_t* dst = &lvl0[static_cast<std::size_t>(y) * w0];
+            const std::uint8_t* row = mip.pixels + static_cast<std::size_t>(y) * mip.stride;
+            for (std::uint32_t x = 0; x < w0; ++x) {
+                std::uint8_t r, g, b, a;
+                if (mip.depth == 32) {
+                    r = row[x * 4 + 0]; g = row[x * 4 + 1];
+                    b = row[x * 4 + 2]; a = row[x * 4 + 3];
+                } else {
+                    // PAL4 and PAL8 are BOTH stored one byte per pixel; `depth`
+                    // selects the PALETTE SIZE (16 vs 256 entries), not storage
+                    // width. Census 2026-07-31 (5194 mips): stride == max(4,
+                    // width*bpp), bpp==1 for depth 4 AND 8, no depth-4 byte > 0x0F.
+                    const std::uint32_t idx =
+                        (mip.depth == 4) ? (row[x] & 0x0Fu) : row[x];
+                    const std::uint8_t* pe = mip.palette + idx * 4;
+                    r = pe[0]; g = pe[1]; b = pe[2]; a = pe[3];
+                }
+                dst[x] = (static_cast<std::uint32_t>(a) << 24) |
+                         (static_cast<std::uint32_t>(r) << 16) |
+                         (static_cast<std::uint32_t>(g) << 8) | b;
             }
-            dst[x] = (static_cast<std::uint32_t>(a) << 24) |
-                     (static_cast<std::uint32_t>(r) << 16) |
-                     (static_cast<std::uint32_t>(g) << 8) | b;
         }
     }
-    out->UnlockRect(0);
+
+    // MIP-FIX: the shipped TXDs store a SINGLE level per track texture
+    // (mip_count==1). The original RW D3D9 pipeline auto-generates the mip chain
+    // at load, so minified track/terrain surfaces trilinear-filter (smooth,
+    // slightly darker) instead of point-sampling mip 0 (sharp / bright / grainy).
+    // Software-generate a box-filtered chain from level 0 down to 1x1 and upload
+    // all levels; the sampler adds D3DSAMP_MIPFILTER=LINEAR.
+    std::uint32_t nlevels = 1;
+    for (std::uint32_t d = (w0 > h0 ? w0 : h0); d > 1; d >>= 1) ++nlevels;
+
+    IDirect3DTexture9* out = nullptr;
+    if (FAILED(dev->CreateTexture(w0, h0, nlevels, 0, D3DFMT_A8R8G8B8,
+                                  D3DPOOL_MANAGED, &out, nullptr)))
+        return nullptr;
+
+    std::vector<std::uint32_t> cur = std::move(lvl0);
+    std::uint32_t cw = w0, ch = h0;
+    for (std::uint32_t lvl = 0; lvl < nlevels; ++lvl) {
+        D3DLOCKED_RECT lr;
+        if (FAILED(out->LockRect(lvl, &lr, nullptr, 0))) { out->Release(); return nullptr; }
+        for (std::uint32_t y = 0; y < ch; ++y) {
+            std::uint32_t* dst = reinterpret_cast<std::uint32_t*>(
+                static_cast<std::uint8_t*>(lr.pBits) + static_cast<std::size_t>(y) * lr.Pitch);
+            std::memcpy(dst, &cur[static_cast<std::size_t>(y) * cw],
+                        static_cast<std::size_t>(cw) * 4);
+        }
+        out->UnlockRect(lvl);
+        if (lvl + 1 == nlevels) break;
+        // box-downsample cur -> next (2x2 average; clamp odd dims to >=1).
+        const std::uint32_t nw = cw > 1 ? cw >> 1 : 1;
+        const std::uint32_t nh = ch > 1 ? ch >> 1 : 1;
+        std::vector<std::uint32_t> nxt(static_cast<std::size_t>(nw) * nh);
+        for (std::uint32_t y = 0; y < nh; ++y) {
+            const std::uint32_t y0 = y * 2, y1 = (y * 2 + 1 < ch) ? y * 2 + 1 : y0;
+            for (std::uint32_t x = 0; x < nw; ++x) {
+                const std::uint32_t x0 = x * 2, x1 = (x * 2 + 1 < cw) ? x * 2 + 1 : x0;
+                const std::uint32_t p00 = cur[static_cast<std::size_t>(y0) * cw + x0];
+                const std::uint32_t p01 = cur[static_cast<std::size_t>(y0) * cw + x1];
+                const std::uint32_t p10 = cur[static_cast<std::size_t>(y1) * cw + x0];
+                const std::uint32_t p11 = cur[static_cast<std::size_t>(y1) * cw + x1];
+                std::uint32_t o = 0;
+                for (int s = 0; s < 32; s += 8) {
+                    const std::uint32_t c =
+                        (((p00 >> s) & 0xFF) + ((p01 >> s) & 0xFF) +
+                         ((p10 >> s) & 0xFF) + ((p11 >> s) & 0xFF) + 2) >> 2;
+                    o |= (c & 0xFF) << s;
+                }
+                nxt[static_cast<std::size_t>(y) * nw + x] = o;
+            }
+        }
+        cur = std::move(nxt); cw = nw; ch = nh;
+    }
     return out;
 }
 
@@ -2129,6 +2169,8 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
     // body batches exclude wheel atomics; wheels collected pivot-relative
     car_batches_.assign(model.materials.size(), {});
     car_relit_.assign(model.materials.size(), {});
+    // DBG_CARLIGHT diagnostic tallies (env-gated, reported after the loop).
+    int dbg_tot = 0, dbg_lit = 0, dbg_hasn = 0, dbg_relit = 0, dbg_pl = 0;
     wheels_.clear();
     if (nwheels == 4) {
         for (int q = 0; q < 4; ++q) {
@@ -2159,6 +2201,8 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
         // before. `rs` stays in lockstep with `vs` whenever relighting is on
         // so merged per-material arrays keep parallel indexing.
         const bool relit_b = car_relight && b.lit && has_n;
+        if (!is_wheel) { ++dbg_tot; if (b.lit) ++dbg_lit; if (has_n) ++dbg_hasn;
+                         if (relit_b) ++dbg_relit; if (!b.prelit.empty()) ++dbg_pl; }
         std::vector<V> vs;
         std::vector<RelitSrc> rs;
         const std::size_t n = b.tris.size();
@@ -2219,6 +2263,21 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
             out.insert(out.end(), vs.begin(), vs.end());
             if (!rs.empty())
                 rout.insert(rout.end(), rs.begin(), rs.end());
+        }
+    }
+    if (std::getenv("MASHED_DBG_CARLIGHT")) {
+        if (std::FILE* lf = std::fopen("mashed_re_carlight.log", "a")) {
+            std::fprintf(lf,
+                "CARLIGHT rp_on=%d car_relight=%d has_sun=%d"
+                " amb=(%.3f,%.3f,%.3f) sun=(%.3f,%.3f,%.3f) L=(%.3f,%.3f,%.3f)"
+                " body_batches: tot=%d lit=%d hasN=%d relit=%d prelit=%d\n",
+                rp_light_on_ ? 1 : 0, car_relight ? 1 : 0,
+                car_light.has_sun ? 1 : 0,
+                amb_f_[0], amb_f_[1], amb_f_[2],
+                sun_f_[0], sun_f_[1], sun_f_[2],
+                sun_L_[0], sun_L_[1], sun_L_[2],
+                dbg_tot, dbg_lit, dbg_hasn, dbg_relit, dbg_pl);
+            std::fclose(lf);
         }
     }
     car_ground_off_ = -model.bbox[1];   // lift so model min-Y sits on ground
@@ -4267,6 +4326,8 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     dev->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
     dev->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
     dev->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+    // MIP-FIX: trilinear across the now-uploaded TXD mip pyramid (MakeTexture).
+    dev->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
     dev->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
     dev->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
     dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);

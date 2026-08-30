@@ -25,6 +25,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <vector>
 
 #include "../Piz/PizReader.h"
 
@@ -79,8 +80,21 @@ void* RasterFromTxdTexture(const Txd::Texture& tex) {
     const std::int32_t w = static_cast<std::int32_t>(mip.width);
     const std::int32_t h = static_cast<std::int32_t>(mip.height);
 
-    rw::Raster* ras = rw::Raster::create(
-        w, h, 32, rw::Raster::C8888 | rw::Raster::TEXTURE);
+    // MIP-FIX: the shipped TXDs store a SINGLE level but request a MIP filter
+    // (filt=4 MIPLINEAR for RoadTarmac/Dirt/CliffEdge/Wall/... on TRAINING,
+    // verified 2026-08-30 via MASHED_LIBRW_TEXLOG; only Sky asks filt=2). The
+    // original RW pipeline auto-generates the chain, so minified track surfaces
+    // mip-filter (smooth); a single-level librw raster cannot honour the filter
+    // and aliases (sharp / bright / grainy). Create a MIPMAP raster (librw
+    // allocates calculateNumLevels levels, d3d.cpp:422-423) and box-filter the
+    // chain below. MASHED_LIBRW_NOMIP=1 reverts to a single level for A/B.
+    static const bool s_nomip = [] {
+        const char* e = std::getenv("MASHED_LIBRW_NOMIP");
+        return e && e[0] == '1' && e[1] == '\0';
+    }();
+    std::uint32_t cflags = rw::Raster::C8888 | rw::Raster::TEXTURE;
+    if (!s_nomip) cflags |= rw::Raster::MIPMAP;
+    rw::Raster* ras = rw::Raster::create(w, h, 32, cflags);
     if (!ras) return nullptr;
 
     std::uint8_t* dst = ras->lock(0, rw::Raster::LOCKWRITE);
@@ -108,6 +122,53 @@ void* RasterFromTxdTexture(const Txd::Texture& tex) {
         }
     }
     ras->unlock(0);
+
+    // MIP-FIX: box-filter level 0 down the allocated mip chain. lock/unlock are
+    // self-contained (rasterUnlock restores width/height/stride), so each level
+    // write is independent; ras->stride inside a lock is that level's pitch.
+    const std::int32_t nlev = ras->getNumLevels();
+    if (nlev > 1) {
+        std::vector<std::uint32_t> cur(static_cast<std::size_t>(w) * h);
+        if (std::uint8_t* p0 = ras->lock(0, rw::Raster::LOCKREAD)) {
+            for (std::int32_t y = 0; y < h; ++y)
+                std::memcpy(&cur[static_cast<std::size_t>(y) * w],
+                            p0 + static_cast<std::size_t>(y) * ras->stride,
+                            static_cast<std::size_t>(w) * 4);
+            ras->unlock(0);
+        }
+        std::int32_t cw = w, ch = h;
+        for (std::int32_t lvl = 1; lvl < nlev; ++lvl) {
+            const std::int32_t nw = cw > 1 ? cw >> 1 : 1;
+            const std::int32_t nh = ch > 1 ? ch >> 1 : 1;
+            std::vector<std::uint32_t> nxt(static_cast<std::size_t>(nw) * nh);
+            for (std::int32_t y = 0; y < nh; ++y) {
+                const std::int32_t y0 = y * 2, y1 = (y * 2 + 1 < ch) ? y * 2 + 1 : y0;
+                for (std::int32_t x = 0; x < nw; ++x) {
+                    const std::int32_t x0 = x * 2, x1 = (x * 2 + 1 < cw) ? x * 2 + 1 : x0;
+                    const std::uint32_t p00 = cur[static_cast<std::size_t>(y0) * cw + x0];
+                    const std::uint32_t p01 = cur[static_cast<std::size_t>(y0) * cw + x1];
+                    const std::uint32_t p10 = cur[static_cast<std::size_t>(y1) * cw + x0];
+                    const std::uint32_t p11 = cur[static_cast<std::size_t>(y1) * cw + x1];
+                    std::uint32_t o = 0;
+                    for (int s = 0; s < 32; s += 8) {
+                        const std::uint32_t c =
+                            (((p00 >> s) & 0xFF) + ((p01 >> s) & 0xFF) +
+                             ((p10 >> s) & 0xFF) + ((p11 >> s) & 0xFF) + 2) >> 2;
+                        o |= (c & 0xFF) << s;
+                    }
+                    nxt[static_cast<std::size_t>(y) * nw + x] = o;
+                }
+            }
+            if (std::uint8_t* pl = ras->lock(lvl, rw::Raster::LOCKWRITE)) {
+                for (std::int32_t y = 0; y < nh; ++y)
+                    std::memcpy(pl + static_cast<std::size_t>(y) * ras->stride,
+                                &nxt[static_cast<std::size_t>(y) * nw],
+                                static_cast<std::size_t>(nw) * 4);
+                ras->unlock(lvl);
+            }
+            cur = std::move(nxt); cw = nw; ch = nh;
+        }
+    }
 
     // D-S3-SEA probe: the vertex colours and both texture decoders have been
     // shown identical, so the surviving candidate for the sea's 1.5x is whether
