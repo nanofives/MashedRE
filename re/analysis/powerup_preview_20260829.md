@@ -72,14 +72,35 @@ a different resolution. Order is left-to-right as listed.
      `.rdata` pool (`oil` 0x5ce4fc, `mortar` 0x5ce58c, `mine` 0x5ce594,
      `machinegun` 0x5ce59c), but no 4-pointer run anywhere in `.data`/`.rdata`
      contains three or more of them.
-  Next step should be RUNTIME, not another byte search: trace the texture bind
-  for the four icon quads and walk back to whatever selected the raster. Static
-  searching has now produced two confident wrong answers on this screen alone.
+  The runtime trace was then done and **located the draw site**, though not yet
+  the list's storage. Chain, all measured:
+  - `rw_set_state` is `*(*(0x007d3ff8) + 0x20)` with `(state, value)`; state 1
+    binds the texture raster. Hooking it on s24 shows caller `0x0047397d`
+    binding four rasters at exactly 25 calls each (one per frame).
+  - That site reads the raster as `*(texture)` from a texture passed in, i.e.
+    it is a generic sprite-draw helper entered at **`0x00473870`** (37 callers).
+  - Hooking THAT and logging `(returnAddress, arg0, arg1)` finds the icon row:
+    caller **`0x0043bbea`**, drawing BY NAME with arg1 = the x coordinate --
+    `mortar` x=448, `mine` x=486, `oil` x=524, `machinegun` x=562. Those are
+    exactly the measured on-screen positions.
+  - Two siblings in the same drawer: **`0x0043baee`** draws a sprite named
+    `PowerupSurround` at x = 444/482/520/558 (the same row, offset 4) BEFORE
+    the icons, and `0x0043b595` draws the `Arrow` sprites for the value column.
+  - No call targets exist in `0x0043b000..0x0043bc00`, so `0x0043bbea` is inside
+    `FUN_0043af10` -- the s18/s24 screen drawer whose row loop was traced for
+    the greying work.
+  STILL OPEN: where the four NAMES come from. The helper takes a sprite struct
+  and reads its name field, so the selector is doing a lookup per icon; what it
+  indexes has not been identified.
 - **No TXD loader for `Powerups.piz`.** `LoadPngAssetToSlot` is PNG-only; this
   needs the `Txd::Dictionary` path used by the badge/car loaders. Mechanical,
   not blocked.
-- **Insertion point** is chosen by geometry and screen-guard, not an ASM call
-  site. [UNCERTAIN]
+- **Insertion point** is now ASM-anchored: the original draws this row inside
+  `FUN_0043af10` at `0x0043bbea`, right after the `PowerupSurround` pass at
+  `0x0043baee`. Our draw sits in the equivalent screen block.
+- **`PowerupSurround` is NOT drawn by us at all.** The original lays a sprite
+  of that name under each icon at x = 444/482/520/558. Worth checking whether
+  it is visible or fully covered by the 32-wide icon on top. [UNCERTAIN]
 
 ## Why this was not implemented yet
 
