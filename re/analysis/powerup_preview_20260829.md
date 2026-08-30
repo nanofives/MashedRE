@@ -56,10 +56,13 @@ a different resolution. Order is left-to-right as listed.
 
 ## Still open
 
-- **The Chaos-mode list.** Three icons at (88,133,14), (14,6,238) = `oil`, and
-  (88,133,14) again. Two share a corner colour, which no single-texture reading
-  explains; note the dictionary contains a texture literally named `Chaos`.
-  Not identified. [UNCERTAIN]
+- **The Chaos-mode list.** Randomised (two runs gave different sets, with
+  duplicates). It does NOT come from `0x007f0cb0` -- that table is identical at
+  ea74 = 1 and 2 -- so Chaos is generated in the `0x0043be4a` branch. Not
+  followed. [UNCERTAIN]
+- **The full id -> sprite map.** `FUN_00458630` does the lookup. Four ids are
+  pinned from the drawn order (9 mortar, 19 mine, 12 oil, 7 machinegun); rows
+  1-3 additionally use 11, 16, 17, 18, which are unmapped. [UNCERTAIN]
 - **Where the per-mode list lives.** Still unknown. Two static hypotheses were
   tried and BOTH REFUTED:
   1. *A dword table of icon indices.* The Standard set is `mortar, mine, oil,
@@ -89,9 +92,39 @@ a different resolution. Order is left-to-right as listed.
   - No call targets exist in `0x0043b000..0x0043bc00`, so `0x0043bbea` is inside
     `FUN_0043af10` -- the s18/s24 screen drawer whose row loop was traced for
     the greying work.
-  STILL OPEN: where the four NAMES come from. The helper takes a sprite struct
-  and reads its name field, so the selector is doing a lookup per icon; what it
-  indexes has not been identified.
+  **RESOLVED.** Disassembling from the function entry `FUN_0043af10` (starting
+  mid-function decodes garbage; only an entry-anchored decode aligns) gives the
+  loop body verbatim:
+
+      0x0043b9c3  cmp dword ptr [0x67ea74], 1      ; Standard?
+      0x0043b9da  jne 0x43be4a                     ; not-Standard branch
+      0x0043b9e0  lea ecx, [esi + edi*4]
+      0x0043b9e5  add edx, ecx                     ; edx = esi + edi*5
+      0x0043b9e7  mov eax, [edx*4 + 0x7f0cb0]      ; the LIST
+      0x0043b9ee  cmp eax, -1
+      0x0043b9f1  jle 0x43bbf3                     ; -1 -> skip this slot
+      0x0043b9f8  call 0x458630                    ; id -> sprite pointer
+      0x0043ba05  mov edi, eax                     ; sprite = arg0 of the draw
+      0x0043bbf7  cmp esi, 5                       ; five columns per row
+
+  So the list is a table at **`0x007f0cb0`**, `int32[row][5]`, indexed
+  `[row*5 + col]`, with `-1` marking an empty slot; the row comes from
+  **`DAT_0067f17c`**; and `FUN_00458630` maps an id to a sprite. That is why the
+  loop runs five times and draws four icons.
+
+  Read live on s24 (`DAT_0067f17c` = 0):
+
+      row0: [ 9, 19, 12,  7, -1]      <- the drawn set
+      row1: [ 9, 19, 12,  7, 11]
+      row2: [ 9, 18, 12,  7, 11]
+      row3: [ 9, 17, 16, 19,  7]
+
+  Combined with the drawn order, the ids resolve: **9 = mortar, 19 = mine,
+  12 = oil, 7 = machinegun**. The table reads IDENTICALLY at ea74 = 1 and 2, so
+  Chaos does not use it -- it takes the `jne 0x43be4a` branch, which is also
+  where Off lands. Note `0x007f0cb0` sits INSIDE the save span
+  (0x007f0a40..0x007f0f60), so this is save/game state, not a static table --
+  which is why byte-searching the image for it was never going to work.
 - **No TXD loader for `Powerups.piz`.** `LoadPngAssetToSlot` is PNG-only; this
   needs the `Txd::Dictionary` path used by the badge/car loaders. Mechanical,
   not blocked.
