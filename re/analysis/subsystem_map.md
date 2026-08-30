@@ -86,14 +86,16 @@ For each subsystem: a short prose description of its role, the RVAs of its top e
 - **Fingerprints:** front-end array `DAT_008a94f0` and global `DAT_008a95ac`; menu-alpha global `DAT_0067ecb0`; sprite tables at `0x0040bbxx`; button-detector cluster at `0x0042axxx..0x0042bxxx`; `Frontend.piz` asset references; cluster `re/analysis/frontend_promote_menus*`, `frontend_c0_promote*`, `frontend_unmapped_a*`.
 
 ### input
-- **Role:** DirectInput8 device creation, controller config load, Lua-driven joypad remap.
+- **Role:** DirectInput8 device creation, controller config load, `contcfg%d.bin` binding table.
+  (Corrected 2026-08-29: the remap is **not** Lua-driven on PC. See `re/analysis/lua_remap_correction_20260829.md`.)
 - **Entry points:**
   - `CreateDInputObject` @ `0x00495530` (C3 — DI8Create wrapper; callees include `DirectInput8Create` and `0x004987b0`)
   - `DInputInitPredicate` @ `0x004955b0` (C3 — DInput-init predicate, gates device enumeration)
   - `ControllerConfigLoad_j5` @ `0x004971b0` (C3 — controller config loader; reads remap data)
   - `JoypadStrcpy` @ `0x00495830` (C3 — joypad-name strcpy helper)
   - `DirectInput8Create` @ `0x0049b300` (C1 — import thunk to `dinput8.dll!DirectInput8Create`)
-- **Fingerprints:** `dinput8.dll` import (`DirectInput8Create`); `remap.lua` string anchor; controller-config block referenced by `0x004971b0`; cluster `re/analysis/input_dinput*`, `input_lua*`.
+- **Fingerprints:** `dinput8.dll` import (`DirectInput8Create`); `contcfg%d.bin` string at `0x005d000c`; controller-config block `DAT_007e95c0` (stride `0x200`) referenced by `0x004971b0`; cluster `re/analysis/input_dinput*`.
+  NOTE: the `input_lua*` cluster is a **historical mislabel** — those RVAs are Lua interpreter internals, not input code. There is no `remap.lua` string anchor; that fingerprint was wrong.
 
 ### save
 - **Role:** Game-save read/write, `videocfg.bin` settings persistence, video-settings dialog.

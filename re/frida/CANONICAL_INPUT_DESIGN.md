@@ -36,7 +36,10 @@ affect anything outside the target process.
 
 ### Alternative (if the dinput8 boundary is awkward)
 Find MASHED's *processed* input global (the normalized key/pad state the menu
-logic reads after its own poll — the Lua joypad-remap layer suggests one exists),
+logic reads after its own poll — the `contcfg` binding table at `DAT_007e95c0`
+confirms one exists: `FUN_00497310` cooks raw device state into the per-player
+descriptor at `DAT_007f1038`, stride `0x4c`. Corrected 2026-08-29: there is no
+Lua joypad-remap layer on PC, see `re/analysis/lua_remap_correction_20260829.md`),
 and `Memory.write` the pressed bits for a frame, synced to the frame tick. Needs
 RE of which global the menu reads; the dinput8-buffer patch above avoids that.
 
