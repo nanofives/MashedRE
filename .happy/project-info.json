@@ -1,143 +1,44 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-27T09:20:00Z",
+  "updatedAt": "2026-08-30T09:10:00Z",
   "sections": [
     {
-      "heading": "Both lanes merged to main (2026-08-27)",
+      "heading": "Current slice",
       "fields": [
-        {
-          "label": "A8 / D2 physics",
-          "value": "slip deficit filed as U-9044; eight candidates eliminated; slip kept as D2's gate by ruling",
-          "kind": "text"
-        },
-        {
-          "label": "D1 camera",
-          "value": "first-ever measurement of the verbatim race camera; two defects found and fixed",
-          "kind": "text"
-        },
-        {
-          "label": "Pushed",
-          "value": "origin/main at 28228537 \u2014 in sync, 94 commits pushed 2026-08-27",
-          "kind": "text"
-        },
-        {
-          "label": "Merged branches",
-          "value": [
-            "a8-slip-deficit-measurement",
-            "d1-camera-pose",
-            "a8-velocity-vector-motion (older)"
-          ],
-          "kind": "list"
-        }
+        { "label": "Focus", "value": "Race first-frame parity (TRAINING, pose-transplanted)", "kind": "text" },
+        { "label": "Branch", "value": "race/first-frame-parity @ 56df8d2f", "kind": "text" },
+        { "label": "Shipped baseline", "value": "mean 18.47 / 42.35% over threshold", "kind": "text" },
+        { "label": "Progression today", "value": "50.37/83.89% -> 20.52/48.22% -> 18.47/42.35%", "kind": "text" },
+        { "label": "Available, not shipped", "value": "15.52 / 33.48% if the prelit ambient fill is scoped off", "kind": "text" }
       ]
     },
     {
-      "heading": "D2 default physics \u00e2\u20ac\u201d OPEN, gate is SLIP (ruling 2026-08-26)",
+      "heading": "Fleet: all 5 children archived",
       "fields": [
-        {
-          "label": "Sole gate item",
-          "value": "U-9044 \u00e2\u20ac\u201d the A8 slip deficit",
-          "kind": "text"
-        },
-        {
-          "label": "Slip gap",
-          "value": "1.29-1.36x at 2000-2600; 2.70-5.38x at 500-1000 (band- and run-dependent)",
-          "kind": "text"
-        },
-        {
-          "label": "Eliminated by measurement",
-          "value": 8,
-          "kind": "number"
-        },
-        {
-          "label": "Ruling",
-          "value": "re-gating onto the trajectory was proposed on the p[0x1b] precedent and DECLINED",
-          "kind": "text"
-        },
-        {
-          "label": "Strongest untaken lead",
-          "value": "momentum identity's ABSOLUTE effective dt is 12-33x of 1/60 and speed-dependent on BOTH sides \u00e2\u20ac\u201d possible second lateral force term",
-          "kind": "text"
-        }
+        { "label": "Merged", "value": "race/relight (mip chain), race/grid (spawn formation), race/camera (director wired)", "kind": "text" },
+        { "label": "Unmerged", "value": "race/camframe 96d2e83a (U-9058 resolved), race/terrain 188b9297 (diagnostic only)", "kind": "text" }
       ]
     },
     {
-      "heading": "D1 camera \u00e2\u20ac\u201d measured, two defects fixed",
+      "heading": "Mechanisms closed today",
       "fields": [
-        {
-          "label": "Pose agreement",
-          "value": "eye 4.4343 -> 0.0001, aim 37.27deg -> 0.0007deg, pair 0% -> 92.2% exact",
-          "kind": "text"
-        },
-        {
-          "label": "Defect 1",
-          "value": "0x004a2c48 is __ftol (truncates), was std::nearbyint \u00e2\u20ac\u201d out-of-bounds ribbon index on 591 of 766 frames",
-          "kind": "text"
-        },
-        {
-          "label": "Defect 2",
-          "value": "MostSeparatedPair out-params swapped (source-verified against the PE)",
-          "kind": "text"
-        },
-        {
-          "label": "Next",
-          "value": "re/analysis/plans/KICKOFF_camera_nodedir_hook.md \u00e2\u20ac\u201d hook 0x00441820, the only missing C3 criterion",
-          "kind": "text"
-        },
-        {
-          "label": "Still open",
-          "value": "7.8% of frames pick a different pair; the verbatim pose is still discarded at TrackRenderer.cpp:4059-4135",
-          "kind": "text"
-        }
+        { "label": "Roll drop", "value": "librw rebuilt its camera from a lossy eye/at pair; basis now published", "kind": "text" },
+        { "label": "Roll source", "value": "roll_deg = 30.0 * sin((DAT_007f101c & 0x3ff) * 2pi/1024), applied by FUN_00445aa0; Camera::Apply output is OVERWRITTEN", "kind": "text" },
+        { "label": "Mip chain", "value": "both texture paths uploaded 1 level while TXDs request MIPLINEAR", "kind": "text" },
+        { "label": "Grid", "value": "2x2 box replaced by the original staggered line (FUN_00408b00)", "kind": "text" },
+        { "label": "Terrain band", "value": "uniform brightness offset: ambient fill added to non-lit prelit ground (TrackRenderer.cpp:228)", "kind": "text" }
       ]
     },
     {
-      "heading": "New tooling",
+      "heading": "Open",
       "fields": [
-        {
-          "label": "Offline diffs",
-          "value": [
-            "re/tools/statediff/a8_momentum.py",
-            "re/tools/statediff/a8_radius.py",
-            "re/tools/camera/ (driver + diff)"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "re/tools/pedisasm.py",
-          "value": "disassemble any RVA from the PE with capstone \u00e2\u20ac\u201d no Ghidra project, no pool lock; verifies the SHA-256 anchor first",
-          "kind": "text"
-        },
-        {
-          "label": "Harness knobs",
-          "value": "MASHED_STEER_HOLD / _AFTER (held-steer capture)",
-          "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "Traps hit this session",
-      "fields": [
-        {
-          "label": "Duplicate RVA copies drift",
-          "value": "both camera defects were written down in comments before they were measured, and shipped anyway",
-          "kind": "text"
-        },
-        {
-          "label": "Tracker writes",
-          "value": "a literal pipe breaks an UNCERTAINTIES row even in backticks; Python text-mode flips CHANGELOG CRLF->LF into a whole-file rewrite",
-          "kind": "text"
-        },
-        {
-          "label": "Stale ground truth",
-          "value": "camera_trace.csv (2026-06-10) had invalid car columns for eleven weeks; the probe now self-checks",
-          "kind": "text"
-        },
-        {
-          "label": "Untracked",
-          "value": "dbg_avail.txt (predates this session, deliberately not committed)",
-          "kind": "text"
-        }
+        { "label": "Next", "value": [
+            "Scope the :228 ambient fill off for non-lit prelit scenery without regressing Arctic sea / cars",
+            "Residual 1.39x band brightness after ambient removal: prelit decode vs texture vs exposure",
+            "Port FUN_00445aa0 verbatim so the standalone camera generates the basis incl. roll phase",
+            "Standalone draws a countdown digit the reference lacks - inflates 2 cells, harness artifact",
+            "Trackers UNCOMMITTED: U-9058 (needs RESOLVE), 6 CHANGELOG entries, 3 hooks.csv notes"
+          ], "kind": "list" }
       ]
     }
   ]
