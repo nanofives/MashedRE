@@ -4054,6 +4054,22 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             &s_campose[8], &s_campose[9], &s_campose[10], &s_campose[11]);
         return s_campose_n == 6 || s_campose_n == 12;
     }();
+    // RACE-CAM RENDER (child-C, 2026-08-30): drive the in-race eye/target from
+    // the VERBATIM race-camera director (race_cam_, FUN_00446520 port) instead
+    // of the invented WS-E s3 chase rig below. race_cam_ is already advanced
+    // every frame in UpdateRace() (:3488) and its pos()/target() hold the
+    // most-recent director output (UpdateCar->UpdateRace runs before Render each
+    // frame, exe_main.cpp:2797/2810 -> :2921). Default ON so the render is
+    // measured against the ORIGINAL rather than against taste; MASHED_CHASE_RIG=1
+    // reverts to the old rig for A/B. NOTE: the port outputs a look-at PAIR only
+    // (RaceCamera.cpp:482-495 writes pos_out_/tgt_out_ and defers the frame build
+    // to a Y-up LookAt, roll=0). The original's Camera::Apply (0x00441760) applies
+    // a THIRD rotation about the forward axis by cam[+0x3c] (00441760.md l.22),
+    // i.e. it CAN carry roll; the port does not yet compute that angle, so this
+    // path publishes a roll-free basis. See the report for the roll gap.
+    static const bool s_chase_rig =
+        GetEnvironmentVariableA("MASHED_CHASE_RIG", nullptr, 0) != 0;
+    const bool use_race_cam = !s_chase_rig;
     // Camera: auto-orbit by default; any movement input switches to free
     // mode (WASD/QE move relative to look direction, mouse/arrow look).
     float eye[3];
@@ -4094,6 +4110,30 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         at[0] = eye_[0] + std::cos(yaw_) * cp;
         at[1] = eye_[1] + sp;
         at[2] = eye_[2] + std::sin(yaw_) * cp;
+    } else if (car_ready_ && use_race_cam) {
+        // Verbatim race camera drives the render: eye = director pos, target =
+        // director look-at. These frame ALL FOUR cars exactly as the original's
+        // shared camera does (RaceCamera.cpp Update, FUN_00446520). No roll here
+        // (see the s_chase_rig comment above); the Y-up LookAt below builds the
+        // view from this pair. A degenerate {0,0,0} pos (director not yet run)
+        // falls through to the chase rig so a mis-timed first frame is never a
+        // camera-at-origin blank.
+        const float* rp = race_cam_.pos();
+        const float* rt = race_cam_.target();
+        const bool primed = (rp[0] != 0.f || rp[1] != 0.f || rp[2] != 0.f ||
+                             rt[0] != 0.f || rt[1] != 0.f || rt[2] != 0.f);
+        if (primed) {
+            for (int i = 0; i < 3; ++i) { eye[i] = rp[i]; at[i] = rt[i]; }
+        } else {
+            const float fwd[3] = {std::cos(car_yaw_), 0.f, std::sin(car_yaw_)};
+            const float L = car_len_;
+            eye[0] = car_pos_[0] - fwd[0] * L * 1.5f;
+            eye[1] = car_pos_[1] + L * 1.0f;
+            eye[2] = car_pos_[2] - fwd[2] * L * 1.5f;
+            at[0]  = car_pos_[0] + fwd[0] * L * 1.5f;
+            at[1]  = car_pos_[1] + car_height_ * 0.5f;
+            at[2]  = car_pos_[2] + fwd[2] * L * 1.5f;
+        }
     } else if (car_ready_) {
         // WS-E s3 GROUND CHASE (2026-06-28): a behind-the-car chase rig — the
         // distilled single-follow form of the RE'd shared race camera
@@ -4151,6 +4191,35 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         }
     }
     for (int i = 0; i < 3; ++i) { last_eye_[i] = eye[i]; last_at_[i] = at[i]; }
+    // MASHED_DBG_CAM=1 (child-C): append the verbatim race camera's raw director
+    // output AND the resolved render eye/at each frame to log/cam_re.txt
+    // (override MASHED_DBG_CAM_OUT). Lets the basis be compared numerically to
+    // the original's captured frame basis, not just via the pixel diff.
+    {
+        static const bool s_dbgcam =
+            GetEnvironmentVariableA("MASHED_DBG_CAM", nullptr, 0) != 0;
+        if (s_dbgcam) {
+            static int s_cam_frame = 0;
+            char cpath[MAX_PATH] = {};
+            if (GetEnvironmentVariableA("MASHED_DBG_CAM_OUT", cpath,
+                                        sizeof(cpath)) == 0)
+                std::strcpy(cpath, "log/cam_re.txt");
+            const float* rp = race_cam_.pos();
+            const float* rt = race_cam_.target();
+            if (std::FILE* f = std::fopen(cpath, "a")) {
+                std::fprintf(f,
+                    "f%d rcpos=(%.5f,%.5f,%.5f) rctgt=(%.5f,%.5f,%.5f) "
+                    "eye=(%.5f,%.5f,%.5f) at=(%.5f,%.5f,%.5f) "
+                    "reqzoom=%.4f vw=%.4f car_ready=%d use_race_cam=%d\n",
+                    s_cam_frame, rp[0], rp[1], rp[2], rt[0], rt[1], rt[2],
+                    eye[0], eye[1], eye[2], at[0], at[1], at[2],
+                    race_cam_.required_zoom(), race_cam_.view_window(),
+                    (int)car_ready_, (int)use_race_cam);
+                std::fclose(f);
+            }
+            ++s_cam_frame;
+        }
+    }
     // Publish the BASIS too, not just the lossy at-point. librw is the default
     // renderer and draws the static world from what it is handed; handing it the
     // pair silently dropped the roll for the world pass (RaceSceneState.h).
