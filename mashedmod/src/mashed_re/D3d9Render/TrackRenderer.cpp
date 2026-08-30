@@ -3191,31 +3191,48 @@ void TrackRenderer::StartRound() {
     // F4: reset the race clock + the player's per-lap split records.
     race_time_ = 0.f;
     for (int k = 0; k < kMaxSplits; ++k) { split_time_[k] = 0.f; split_done_[k] = false; }
-    // grid: 2x2 behind gate 0, offset along the start line's lateral axis
+    // grid: the ORIGINAL's staggered zig-zag formation, ported verbatim from
+    // FUN_00408b00 (0x00408b00, "race grid start-position calculator"; decode in
+    // verify/grid_orig_ts/FUN_00408b00_decomp.txt). The prior 2x2 box was
+    // invented (see :80 "instead of the original's AI tile grid") and did not
+    // match the original — measured 2026-08-30, the original spawns a single-file
+    // 4-rank stagger, frozen on the grid through the countdown (byte-identical
+    // t=0.121..6.910s, so this IS the grid, not roll-away; verify/grid_orig_ts/).
+    //
+    // Original per-slot (param_3==4): pos_s = A + F*fwdOff[s] - L*latOff[s], with
+    //   A = FUN_00426cb0() anchor, F = normalize(node0-node3), L = FUN_00426cc0()
+    //   fwdOff = 0.8*(1-/+0.4) = {+0.48,-1.12,+1.12,-0.48}   (_cc9bc, _ccac0)
+    //   latOff = {0, 1.1, 2.2, 3.3}                          (_ccabc/ab8/ab4)
+    // The standalone start-line frame maps 1:1: gate0 == A (both ~(0.03,·,-2.0)),
+    // lat == F, dir == L (dir~=(0,0,-1), lat~=(1,0,0), yaw=-1.576). So:
+    //   pos_s = g0 + lat*latMul[s] - dir*dirMul[s]
+    // reproduces the original grid to <=0.02 in x/z. See verify/grid_orig_ts/
+    // ANALYSIS.md for the algebra and the measured-vs-formula check.
     const float* g0 = gates_[0].center;
     const float* g1 = gates_[1].center;
     float dir[2] = {g1[0] - g0[0], g1[2] - g0[2]};
     const float dl = std::sqrt(dir[0]*dir[0] + dir[1]*dir[1]);
     dir[0] /= dl; dir[1] /= dl;
     const float lat[2] = {-dir[1], dir[0]};
-    auto place = [&](float* pos, float* yaw, int row, int col) {
-        const float side = (col == 0) ? -0.9f : 0.9f;
-        const float back = 1.2f + 1.8f * static_cast<float>(row);
-        const float x = g0[0] - dir[0] * back + lat[0] * side;
-        const float z = g0[2] - dir[1] * back + lat[1] * side;
+    // slot == spawn order: player=0, ai0=1, ai1=2, ai2=3
+    static const float kLatMul[4] = { 0.48f, -1.12f, 1.12f, -0.48f };
+    static const float kDirMul[4] = { 0.00f,  1.10f, 2.20f,  3.30f };
+    auto place = [&](float* pos, float* yaw, int slot) {
+        const float x = g0[0] + lat[0] * kLatMul[slot] - dir[0] * kDirMul[slot];
+        const float z = g0[2] + lat[1] * kLatMul[slot] - dir[1] * kDirMul[slot];
         bool ok = false;
         const float y = GroundHeight(x, z, &ok);
         pos[0] = x; pos[2] = z;
         pos[1] = (ok ? y : g0[1]) + car_ground_off_;
         *yaw = std::atan2(dir[1], dir[0]);
     };
-    place(car_pos_, &car_yaw_, 0, 0);
+    place(car_pos_, &car_yaw_, 0);
     car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
     car_speed_ = 0.f;
     ai_cars_.assign(3, AiCar{});
     for (int i = 0; i < 3; ++i) {
         AiCar& a = ai_cars_[static_cast<std::size_t>(i)];
-        place(a.pos, &a.yaw, (i + 1) / 2, (i + 1) % 2);
+        place(a.pos, &a.yaw, i + 1);   // ai i -> slot i+1
         a.target = 1;
         // staggered top speeds (all faster than the auto-driven player) +
         // distinct racing lanes so they spread out and overtake
