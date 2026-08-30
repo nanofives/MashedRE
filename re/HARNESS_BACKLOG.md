@@ -107,6 +107,42 @@ idling or reviving dead batch lanes.
   completion on record, so the ROI is reasoned (smaller blast radius per crash), not measured —
   treat the default of 16 as untuned.
 
+- **T-ARCTIC — pose-matched ORIGINAL Arctic reference. BLOCKS shipping `race/geomlight`.**
+
+  The librw prelit-ambient-fold fix (`race/geomlight` a62ee92c) takes TRAINING from
+  18.47 mean / 42.35% over-threshold to **15.45 / 33.48%** (independently reproduced
+  2026-08-30), and is RW-correct: `ROAD.DFF` carries GEOM flags `0x2008b`, no
+  rpGEOMETRYLIGHT, so per RW it receives no runtime ambient. But it also darkens the
+  Arctic sea (`0x1000f`, same non-lit prelit class) from lum ~24 to ~11, and there is
+  **no pose-matched original Arctic frame** to say whether that is right. That single
+  capture is the whole gate.
+
+  **Probed 2026-08-30, so do not re-probe this part.** `re/frida/race_draw_burst.py`
+  cannot currently reach Arctic on the original side:
+
+  | `--mode-sel` | result |
+  |---|---|
+  | 0 | reaches race, loads **TRAINING.PIZ** |
+  | 1 (default, Quick Battle) | reaches race, loads **TRAINING.PIZ** |
+  | 2 | reaches race, loads **TRAINING.PIZ** |
+  | 3 | **never reaches race** — stalls at `phase=3`, i.e. a deeper screen the nav recipe does not traverse |
+
+  `--track-sel` is wired (it writes the cursor at depth 5, after `confirm_to(5,4)`,
+  `race_draw_burst.py:317-322`) but has **no effect** in mode 2: `--track-sel 1` still
+  loaded TRAINING, `--track-sel 3` failed to reach a race at all. So depth 5 is not the
+  track list for these modes, and modes 0/1/2 force TRAINING.
+
+  **What the work actually is:** teach the nav recipe to traverse the mode-3 flow
+  (championship/challenge cup -> cup -> track), which is where a real track choice
+  lives. Note the save state matters — the standalone reports `2/13 tracks unlocked`,
+  so the original's `gamesave.bin` may gate which tracks are reachable. Do NOT solve
+  that with `unlock_all`/`unlock_tracks`: those mod the diffing reference and would make
+  every comparison compare modded against modded.
+
+  Until this lands, `race/geomlight` stays unmerged. The TRAINING gain is real and
+  verified; the Arctic risk is real and unmeasured.
+
+
 ## Done
 
 - **T1 delegation-reach test — DONE 2026-07-06: SHELL-BLOCKED.** The account2 worker has no shell
