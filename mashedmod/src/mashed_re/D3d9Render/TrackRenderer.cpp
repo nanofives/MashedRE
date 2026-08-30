@@ -4151,6 +4151,17 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         }
     }
     for (int i = 0; i < 3; ++i) { last_eye_[i] = eye[i]; last_at_[i] = at[i]; }
+    // Publish the BASIS too, not just the lossy at-point. librw is the default
+    // renderer and draws the static world from what it is handed; handing it the
+    // pair silently dropped the roll for the world pass (RaceSceneState.h).
+    last_basis_valid_ = campose_basis;
+    if (campose_basis) {
+        for (int i = 0; i < 3; ++i) {
+            last_right_[i] = s_campose[3 + i];
+            last_up_[i]    = s_campose[6 + i];
+            last_atdir_[i] = s_campose[9 + i];
+        }
+    }
 
     D3DMATRIX viewm, projm, worldm;
     if (campose_basis)
@@ -4496,6 +4507,40 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         }
     }
     ds_flush("world");   // reports zeros when rw_world drew instead (inert today)
+
+    // MASHED_DBG_CARPOS=1 appends this frame's car WORLD positions to
+    // log/carpos_re.txt (override MASHED_DBG_CARPOS_OUT). Built for race
+    // first-frame parity: the original side already reports its car array
+    // (re/frida/race_draw_burst.py CARPROJ), and without the same numbers from
+    // this side there is no way to tell "the standalone did not DRAW the cars"
+    // from "the standalone drew them somewhere else" -- the two look identical
+    // in a screenshot taken through a transplanted camera. Off unless asked for.
+    {
+        static const bool s_carpos = [] {
+            return GetEnvironmentVariableA("MASHED_DBG_CARPOS", nullptr, 0) != 0;
+        }();
+        if (s_carpos) {
+            static int s_cp_frame = 0;
+            char path[MAX_PATH] = {};
+            if (GetEnvironmentVariableA("MASHED_DBG_CARPOS_OUT", path,
+                                        sizeof(path)) == 0)
+                std::strcpy(path, "log/carpos_re.txt");
+            if (std::FILE* f = std::fopen(path, "a")) {
+                std::fprintf(f, "f%d player_ready=%d pos=(%.4f,%.4f,%.4f) "
+                                "yaw=%.4f ai_n=%d\n",
+                             s_cp_frame, (int)car_ready_,
+                             car_pos_[0], car_pos_[1], car_pos_[2], car_yaw_,
+                             (int)ai_cars_.size());
+                for (std::size_t i = 0; i < ai_cars_.size(); ++i)
+                    std::fprintf(f, "f%d ai%u pos=(%.4f,%.4f,%.4f) yaw=%.4f\n",
+                                 s_cp_frame, (unsigned)i,
+                                 ai_cars_[i].pos[0], ai_cars_[i].pos[1],
+                                 ai_cars_[i].pos[2], ai_cars_[i].yaw);
+                std::fclose(f);
+            }
+            ++s_cp_frame;
+        }
+    }
 
     MARK(d_world);   // static world geometry batches_ (DrawPrimitiveUP)
     // R6: track props — instanced DFF batches (tyre walls, crates, sea,

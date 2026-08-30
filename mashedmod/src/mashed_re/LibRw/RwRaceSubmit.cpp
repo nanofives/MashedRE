@@ -137,6 +137,30 @@ void SetCameraLookAt(const float eye[3], const float at_pt[3]) {
     cf->updateObjects();
 }
 
+// Set the camera frame from a full ORTHONORMAL BASIS rather than an eye/at pair.
+// SetCameraLookAt above rebuilds `up` as cross(fwd, cross(worldUp, fwd)), which
+// pins up to the world +Y plane and throws roll away. The original's race camera
+// has roll, so for a transplanted pose that reconstruction is lossy and the
+// static world (which librw draws) came out level while D3D9's sky came out
+// banked -- measured 2026-08-30, verify/parity_race_20260830/noroll.
+//
+// The basis is written VERBATIM, with no negation of `right`. It is read straight
+// off the original's RwCamera frame and librw's camera frame is the same kind of
+// object, so the two conventions already agree; librw's own X negation in
+// beginUpdate IS the original's convention (see the [D-S3-4 REVERTED] block
+// above -- verbatim basis measured 89.68% against right-axis-negated 33.79%).
+void SetCameraBasis(const float pos[3], const float right[3],
+                    const float up[3], const float at_dir[3]) {
+    rw::Frame*  cf = g_cam->getFrame();
+    rw::Matrix* m  = &cf->matrix;
+    m->right.x = right[0];  m->right.y = right[1];  m->right.z = right[2];
+    m->up.x    = up[0];     m->up.y    = up[1];     m->up.z    = up[2];
+    m->at.x    = at_dir[0]; m->at.y    = at_dir[1]; m->at.z    = at_dir[2];
+    m->pos.x   = pos[0];    m->pos.y   = pos[1];    m->pos.z   = pos[2];
+    m->update();
+    cf->updateObjects();
+}
+
 }  // namespace
 
 // D1 (2026-08-18): the flag is INVERTED. librw is the DEFAULT renderer for the
@@ -451,7 +475,13 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
     rw::SetRenderState(rw::ZWRITEENABLE, 1);
 
     // ---- camera: read what TrackRenderer resolved, never re-derive it -------
-    SetCameraLookAt(st.last_eye_, st.last_at_);
+    // Prefer the full basis when TrackRenderer published one: the eye/at pair
+    // cannot carry roll, and re-deriving up from world +Y here is exactly the
+    // "re-derive it" this comment forbids.
+    if (st.last_basis_valid_)
+        SetCameraBasis(st.last_eye_, st.last_right_, st.last_up_, st.last_atdir_);
+    else
+        SetCameraLookAt(st.last_eye_, st.last_at_);
 
     // RW expresses the frustum as a view WINDOW at unit distance, not an FOV:
     // half-height = tan(fov/2), half-width = that * aspect. This is the exact

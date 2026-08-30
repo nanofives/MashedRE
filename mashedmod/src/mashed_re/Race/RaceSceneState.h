@@ -68,6 +68,23 @@ struct RaceSceneState {
     float last_eye_[3] = {};
     float last_at_[3]  = {};
 
+    // Full camera BASIS, published alongside the lossy eye/at pair above.
+    // last_at_ is a look-at POINT, so it assumes up is world +Y and therefore
+    // cannot express roll. The original's race camera measurably has roll
+    // (RwCamera frame right.y = 0.440, ~26 deg), and librw -- the DEFAULT
+    // renderer (RwRaceSubmit.cpp:142) -- draws the static world from whatever
+    // camera it is handed. Feeding it the pair dropped the roll for the world
+    // pass while D3D9's sky pass kept it, which is measurable: rendering the
+    // same pose with the roll zeroed changed ONLY the sky band and left the
+    // lower two thirds of the frame bit-identical (2026-08-30,
+    // verify/parity_race_20260830/noroll). These fields carry the basis
+    // verbatim off the RwCamera frame so the roll survives to the world too.
+    // Valid only when last_basis_valid_; consumers fall back to the pair.
+    float last_right_[3] = {};
+    float last_up_[3]    = {};
+    float last_atdir_[3] = {};
+    bool  last_basis_valid_ = false;
+
     // ---- collision + render triangle soups ---------------------------------
     // Collision world (flat soup for the ground raycast) plus the render
     // world's soup (spawn validation: ground must be VISIBLE — the frozen-bay

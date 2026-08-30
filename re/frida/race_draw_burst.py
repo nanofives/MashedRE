@@ -382,7 +382,17 @@ def main():
             print(f"  CAMPOSE eye=({eye[0]:.2f},{eye[1]:.2f},{eye[2]:.2f}) "
                   f"dir=({dirv[0]:.2f},{dirv[1]:.2f},{dirv[2]:.2f}) "
                   f"at=({at[0]:.2f},{at[1]:.2f},{at[2]:.2f})")
-            print(f"  MASHED_CAM_POSE={pose}")
+            # DO NOT feed this 6-float form to MASHED_CAM_POSE. It comes from the
+            # controller struct DAT_00897fe0 +0x40/+0x4c, which is NOT the world
+            # camera, and it cannot express roll (the original's race camera has
+            # ~26 deg of it). The faithful value is the 12-float basis printed
+            # below as MASHED_CAM_POSE(basis)=, read off the RwCamera FRAME.
+            # See mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp:4029-4045
+            # ("this is the part that was wrong for months") and the CARPROJ block
+            # below, whose z 4.4-7.5 against the capture's ~18.5-21.8 is the tell.
+            # Kept printed because it is what the struct holds and a later reader
+            # must be able to re-check the comparison; labelled so nobody pastes it.
+            print(f"  campose_ctrl_DISCREDITED_do_not_transplant={pose}")
             # LENS: the measured RwCamera view window, and the fovy it implies.
             # Written as JSON so the raw fields survive alongside the derived
             # angle -- RenderWare stores no angle, so the angle is OUR arithmetic
@@ -415,7 +425,7 @@ def main():
                     "%.5f" % v for v in
                     (L["pos"] + L["right"] + L["up"] + L["at"]))
                 (out_bmp.parent / "orig_cambasis.txt").write_text(basis + "\n")
-                print(f"  MASHED_CAM_POSE(basis)={basis}")
+                print(f"  MASHED_CAM_POSE={basis}   <-- USE THIS ONE (12-float basis)")
                 (out_bmp.parent / "orig_frame.json").write_text(
                     json.dumps({"frame": fr, "euler": eul,
                                 "ctrl_eye": eye, "ctrl_dir_0x4c": dirv},
@@ -446,16 +456,30 @@ def main():
                 def _nn(v):
                     L = _m.sqrt(_dot(v, v)) or 1.0
                     return [c / L for c in v]
-                fwd = _nn(_sub(at, eye))
-                rgt = _nn(_crs([0.0, 1.0, 0.0], fwd))
-                upv = _crs(fwd, rgt)
+                # Project through the FRAME BASIS when we have one. Deriving the
+                # basis from eye/at (below) reconstructs up from world +Y, which
+                # throws the camera's roll away -- and it also uses the
+                # discredited controller eye. Doing that here is what produced
+                # the z 4.4-7.5 spread that disagreed with the capture's
+                # ~18.5-21.8 and made these screen coords unusable.
+                _ltm = (fr or {}).get("ltm")
+                if _ltm:
+                    org = _ltm["pos"]
+                    rgt = _nn(_ltm["right"])
+                    upv = _nn(_ltm["up"])
+                    fwd = _nn(_ltm["at"])
+                else:
+                    org = eye
+                    fwd = _nn(_sub(at, eye))
+                    rgt = _nn(_crs([0.0, 1.0, 0.0], fwd))
+                    upv = _crs(fwd, rgt)
                 vwx, vwy = lens0["view_window"]
                 W, H = 640, 480
                 rows = []
                 for i, c in enumerate(cars):
                     if not c or not isinstance(c, list) or len(c) != 3:
                         rows.append(f"    car{i}: (absent)"); continue
-                    d = _sub(c, eye)
+                    d = _sub(c, org)
                     z = _dot(d, fwd)
                     if z <= 1e-4:
                         rows.append(f"    car{i}: world=({c[0]:.2f},{c[1]:.2f},"
@@ -470,7 +494,8 @@ def main():
                     rows.append(f"    car{i}: world=({c[0]:.2f},{c[1]:.2f},{c[2]:.2f})"
                                 f" z={z:6.2f} -> screen=({sx:7.1f},{sy:6.1f})"
                                 f" {'ON-SCREEN' if onscreen else 'off-screen'}")
-                print("  CARPROJ (pose+lens as transplanted, 640x480):")
+                print("  CARPROJ (FRAME BASIS + lens, 640x480):" if _ltm
+                      else "  CARPROJ (eye/at fallback, NO roll, 640x480):")
                 for r in rows: print(r)
                 (out_bmp.parent / "orig_carproj.txt").write_text(
                     "eye=%r\nat=%r\nviewWindow=%r\n%s\n"
