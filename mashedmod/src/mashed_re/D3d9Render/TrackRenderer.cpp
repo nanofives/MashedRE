@@ -1155,6 +1155,21 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             else            { has_sun_dir_ = false; }
         }
     }
+    // [TERRAIN-DIAG] MASHED_TERRAIN_NOLIGHT=1 zeros the runtime ambient+sun so
+    // every prop/atomic renders at its pure baked prelit (no +amb / +sun*ndl in
+    // LightAtomicVertex). Diagnostic ONLY: isolates whether the race first-frame
+    // terrain over-brightness comes from runtime lighting or the baked prelit.
+    // =1 zero both, =2 zero ambient only, =3 zero sun only.
+    const char* e_nolight = std::getenv("MASHED_TERRAIN_NOLIGHT");
+    if (e_nolight && (e_nolight[0] == '1' || e_nolight[0] == '2')) {
+        amb_f_[0] = amb_f_[1] = amb_f_[2] = 0.f;
+        amb_world_ = 0;
+    }
+    if (e_nolight && (e_nolight[0] == '1' || e_nolight[0] == '3')) {
+        sun_f_[0] = sun_f_[1] = sun_f_[2] = 0.f;
+        sun_color_ = 0;
+        has_sun_dir_ = false;
+    }
     if (log)
         std::fprintf(log,
                      "  WS-E lights: ambient=0x%06lX (RGB %lu,%lu,%lu)"
