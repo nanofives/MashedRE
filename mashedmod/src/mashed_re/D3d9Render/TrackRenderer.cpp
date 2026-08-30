@@ -225,7 +225,32 @@ inline D3DCOLOR LightAtomicVertex(const AtomicLight& lt, bool lit, bool modmat,
         // the sea-heavy chase view) — further from the original's exposure than
         // keeping the fill. The dominant teal cast lived in the WORLD path (fixed
         // above); fog was measured negligible here, so the fill stays.
-        r += lt.amb[0]; g += lt.amb[1]; b += lt.amb[2];
+        // [TERRAIN-DIAG mode 4] MASHED_TERRAIN_NOLIGHT=4 drops the fill HERE ONLY,
+        // i.e. scoped to non-lit prelit atomics, leaving the lit branch above
+        // untouched. Modes 1/2 zero amb_f_ at load time and therefore hit BOTH
+        // branches. Diagnostic only; default behaviour unchanged.
+        //
+        // RESULT, MEASURED 2026-08-30 -- THIS IS NOT THE SITE. Mode 4 on TRAINING
+        // at the parity pose gives mean 18.47 / 42.35%, BIT-IDENTICAL to base.
+        // The race terrain never reaches this function on the default path:
+        // librw is the default renderer (RwRaceSubmit.cpp:142) and lights
+        // IN-SHADER -- see the note at :1428, "the lit batches librw cannot dump
+        // (they carry no uploaded vertex colour -- lit in-shader)". The ambient
+        // that over-brightens the terrain is applied by the librw AMBIENT light,
+        // RwRaceSubmit.cpp:555 g_amb->setColor(st.amb_f_) with flags
+        // LIGHTATOMICS|LIGHTWORLD at :550. re/analysis/race_terrain_ambient_20260830.md
+        // attributes the effect to line 228 below; that attribution is WRONG,
+        // though its measurement (the cause is the ambient, not the sun) stands.
+        // Consequence: the "zeroing it darkens the Arctic sea / cars go near-black"
+        // objections were measured against a GLOBAL amb_f_ zero and do not
+        // necessarily apply to a fix made at the librw light instead.
+        static const bool s_scoped_nofill = [] {
+            const char* e = std::getenv("MASHED_TERRAIN_NOLIGHT");
+            return e && e[0] == '4';
+        }();
+        if (!s_scoped_nofill) {
+            r += lt.amb[0]; g += lt.amb[1]; b += lt.amb[2];
+        }
     }
     if (modmat) {
         r *= mat[0]/255.f; g *= mat[1]/255.f; b *= mat[2]/255.f;
