@@ -184,10 +184,13 @@ TRAINING (`MASHED_TRACK_SEL=12`), parity pose, `01_grid.bmp` vs
 The fix reaches the ambient-starve ceiling **without any global ambient change**,
 and is mechanism-driven (remove the non-RW fold), not a fitted constant.
 
-**Cars — untouched (verified).** Car bodies are lit (`LIGHT`-flagged) and never
-enter the fold in either build; the fix vs old diff on the car frames
-(`01_action` / `01_inrace_track`) is zero across the sky and confined to ground
-cells. The center car pixels are bit-identical.
+**Cars — body untouched (verified visually).** Car bodies are lit
+(`LIGHT`-flagged) and never enter the fold in either build. A 4x-amplified
+whole-frame diff of TRAINING `01_grid` (fix vs old) shows the change is the
+road/dirt terrain surface and the countdown "2" digit; the parked cars are
+near-zero (dark in the amplified diff). Any faint residual on a car is the car's
+own non-lit prelit parts (glass), which correctly lose the fold too — the same
+RW-correct behaviour as the terrain. The lit body is unchanged.
 
 **Arctic (`MASHED_TRACK_SEL=0`) — sea darkens; NOT yet confirmed vs original.**
 Fix vs old, `01_inrace_track` (sea-heavy): whole-frame mean-abs 5.93, concentrated
