@@ -1,5 +1,20 @@
 # RIGHT-TERRAIN band = ambient fill added to non-lit prelit ground (2026-08-30)
 
+> **CORRECTED 2026-08-30 (branch `race/geomlight`).** The *measurements* in this
+> note stand (the band is the ambient, not the sun; zeroing ambient moves it toward
+> the original). The *site attribution below is WRONG.* This note blames
+> `LightAtomicVertex` / `TrackRenderer.cpp:228`. That function is the D3D9 bake and
+> the race terrain never reaches it on the default path: **librw is the default
+> renderer** (`RwRaceSubmit.cpp` flag inverted 2026-08-18), and scoping the :228
+> fill off (`MASHED_TERRAIN_NOLIGHT=4`) is **bit-identical to base** (commit
+> `3551ba83`). The real site is the **manual prelit fold in `BuildClump`
+> (`RwSceneBuild.cpp:479`)**, which adds `amb_world_` into the vertex colours of
+> **non-lit prelit** DFF batches. It is NOT the librw ambient light
+> (`RwRaceSubmit.cpp:555`): that light only reaches `rw::Geometry::LIGHT`-flagged
+> geometry (cars/props), and the terrain ground carries no such flag — see below.
+> The fix (default now: skip the fold, honour the asset flag) and the three-track
+> measurements are in the CORRECTION section at the end of this file.
+
 Branch `race/terrain`. Scene: TRAINING race first frame, 640x480, transplanted
 pose, `01_grid.bmp` (pre-start, cars parked). Reference:
 `verify/parity_race_20260830/orig_race.bmp`. Metric: `re/tools/imgdiff.py --grid 8x6`.
@@ -103,3 +118,98 @@ shared lighting unilaterally.
    where the original lights them dynamically -- likely the same shared-lighting knot.
 
 Artifacts: `verify/terrain_{base,nolight,ambonly,sunonly,prelitonly,worldonly,matid,nofog}/`.
+
+---
+
+# CORRECTION — the real site is the librw prelit fold, and the fix (2026-08-30, branch `race/geomlight`)
+
+## The asset flags (read from the shipped TRAINING piz)
+
+`re/tools/dff_dump.py` + per-geometry flag enumeration of
+`original/TOASTART/TRACKS/training.piz`:
+
+| DFF                | GEOM flags | rpGEOMETRYLIGHT (0x20) | NORMALS (0x10) | PRELIT (0x08) | role |
+|--------------------|-----------|------------------------|----------------|---------------|------|
+| ROAD.DFF (all 21 geos) | `0x2008b` | **no** | no | yes | the ground/terrain band |
+| LAKE / WATER02 / WATER03.DFF | `0x1000f` | **no** | no | yes | water (== Arctic sea's `0x1000f`) |
+| TEST.DFF (shrub)   | `0x1000f` | no  | no  | yes | scenery |
+| SIGN02 / CRATE01.DFF | `0x10037` | **yes** | yes | no  | lit props |
+
+So the TRAINING ground (`ROAD.DFF`, loaded as a `Clump_Filename` prop at
+`TrackRenderer.cpp:1607-1614`) is **non-lit prelit with no rpGEOMETRYLIGHT** —
+exactly like `sea.dff` (`0x1000f`). Per RenderWare an atomic whose geometry lacks
+rpGEOMETRYLIGHT receives **no runtime lighting**; its prelit is the final colour.
+
+## Does BuildClump propagate the flag? YES — it was never the bug
+
+`BuildClump` (`RwSceneBuild.cpp:411`) sets the librw geometry flags **per batch**,
+not blanket: `RwSceneBuild.cpp:468` `if (b.lit) flags |= rw::Geometry::LIGHT;`,
+where `b.lit = geo.lit && have_n` and `geo.lit = (flags & 0x20)`
+(`DffModel.cpp:186`/`:346`). ROAD.DFF has neither the flag nor normals, so `b.lit`
+is false, so librw's geometry never gets `LIGHT`, so `lightingCB_Shader` never runs
+for it and the `g_amb` light (`RwRaceSubmit.cpp:555`) **cannot touch it**. The
+librw pipeline already honours the asset. The over-brightness came from OUR OWN
+code.
+
+## The real site: the manual prelit fold (`RwSceneBuild.cpp:479`)
+
+The `[D-S3-6]` fold at `RwSceneBuild.cpp:473-500` runs `if (ambient &&
+!b.prelit.empty() && !b.lit)` and adds `amb_world_` straight into the prelit vertex
+colours of non-lit prelit batches — the librw analogue of the D3D9
+`LightAtomicVertex:252` fill. Both were the same defect: injecting a runtime
+ambient into geometry the asset says gets none.
+
+**Decisive discriminator (measured):** the fix below skips the fold but leaves the
+`g_amb` light at `:555` fully active. TRAINING still drops to the ambient-starve
+ceiling. Therefore the light contributes **nothing** to the terrain band — the fold
+was the entire effect. This rules out `:555` as the site.
+
+## The fix
+
+`RwSceneBuild.cpp` — gate the fold. Default now **skips** it (honour the asset
+flag); `MASHED_LIBRW_AMBFOLD=1` restores the old fold for A/B. No ambient light
+change, no per-name special-casing.
+
+## Three-track measurement (one binary; env toggles the fold)
+
+TRAINING (`MASHED_TRACK_SEL=12`), parity pose, `01_grid.bmp` vs
+`verify/parity_race_20260830/orig_race.bmp`:
+
+| build                          | frame mean | over-thresh 16 | hottest terrain cell |
+|--------------------------------|-----------|----------------|----------------------|
+| old fold (`MASHED_LIBRW_AMBFOLD=1`) | 18.47 | 42.35% | 50.4 |
+| **fix (fold off, default)**    | **15.45** | **33.48%** | 37.9 |
+| (ambient-starve ceiling, prior) | 15.52 | 33.48% | — |
+
+The fix reaches the ambient-starve ceiling **without any global ambient change**,
+and is mechanism-driven (remove the non-RW fold), not a fitted constant.
+
+**Cars — untouched (verified).** Car bodies are lit (`LIGHT`-flagged) and never
+enter the fold in either build; the fix vs old diff on the car frames
+(`01_action` / `01_inrace_track`) is zero across the sky and confined to ground
+cells. The center car pixels are bit-identical.
+
+**Arctic (`MASHED_TRACK_SEL=0`) — sea darkens; NOT yet confirmed vs original.**
+Fix vs old, `01_inrace_track` (sea-heavy): whole-frame mean-abs 5.93, concentrated
+in the lower/sea rows, B-channel most (Arctic ambient is teal). Absolute sea region
+(bottom-40%) brightness: old lum ~24 → fix lum ~11 — the foreground sea goes from
+dark-teal-textured to near-black. This is the RW-correct result for a `0x1000f`
+non-lit prelit surface, and the one original Arctic frame on hand
+(`verify/carpos_probe/burst_arctic/`) is a dark, dim scene with no over-bright
+terrain — consistent with the fix. **But** there is no pose-matched original Arctic
+reference for the harbour/sea section, so the darker sea cannot be *proven* an
+improvement. The old "sea goes near-black / cars go near-black" objections were
+measured against a GLOBAL `amb_f_` zero (which also starves the lit path); this
+scoped fix leaves cars alone, but the sea darkening is real and unconfirmed.
+
+## Shippability verdict
+
+Confirmed correct on the one track with a real reference (TRAINING) and per RW
+semantics; provably harmless to cars. **Merge to `main` is gated on a pose-matched
+original Arctic reference for the sea section** — until then the near-black sea is
+an unconfirmed risk, exactly the case this note is meant to flag rather than paper
+over. Kept on branch `race/geomlight`, default = honour-the-flag, with
+`MASHED_LIBRW_AMBFOLD=1` as the restore switch.
+
+Artifacts (branch `race/geomlight`):
+`verify/geomlight_train_{fix,old}/`, `verify/geomlight_arctic_{fix,old}/`.

@@ -408,6 +408,28 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
     return rww;
 }
 
+// [geomlight 2026-08-30] Per RenderWare, an atomic whose geometry lacks
+// rpGEOMETRYLIGHT (0x20) receives NO runtime lighting -- its prelit is the final
+// colour. The TRAINING ground ROAD.DFF (all 21 geos flags=0x2008b) and the water
+// props (LAKE/WATER0x.DFF flags=0x1000f) carry no rpGEOMETRYLIGHT and no normals,
+// so DffModel sets b.lit=false (DffModel.cpp:186/:346) and the original engine
+// adds them NO ambient. BuildClump already honours this for librw's OWN pipeline:
+// with b.lit false it never sets rw::Geometry::LIGHT (:468), so lightingCB_Shader
+// never runs and the g_amb light (RwRaceSubmit.cpp:555) cannot touch these
+// atomics. The over-brightness came from OUR manual [D-S3-6] fold below, which
+// injected amb_world_ straight into the prelit -- the librw analogue of the D3D9
+// LightAtomicVertex non-lit fill (TrackRenderer.cpp:252). Both were the same
+// defect. Default now SKIPS the fold so non-lit prelit renders with its authored
+// prelit alone, matching the asset flag. MASHED_LIBRW_AMBFOLD=1 restores the old
+// fold for A/B measurement.
+static bool AmbientFoldEnabled() {
+    static const bool on = [] {
+        const char* e = std::getenv("MASHED_LIBRW_AMBFOLD");
+        return e && e[0] == '1' && e[1] == '\0';
+    }();
+    return on;
+}
+
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  std::uint32_t ambient,
                  std::vector<std::uint32_t>* out_atomic_mat) {
@@ -476,7 +498,7 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
         // lightingCB_Shader takes the setAmbient(black) branch).
         std::vector<std::uint32_t> prelit_amb;
         const std::vector<std::uint32_t>* prelit_src = &b.prelit;
-        if (ambient && !b.prelit.empty() && !b.lit) {
+        if (AmbientFoldEnabled() && ambient && !b.prelit.empty() && !b.lit) {
             // CHANNEL ORDER, and it bit once. `ambient` (amb_world_) is
             // 0x00RRGGBB, but DffModel prelit is RW-native RGBA bytes, i.e.
             // 0xAABBGGRR -- FillVertexData below reads red from the LOW byte and
