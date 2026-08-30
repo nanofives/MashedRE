@@ -60,9 +60,9 @@ a different resolution. Order is left-to-right as listed.
   duplicates). It does NOT come from `0x007f0cb0` -- that table is identical at
   ea74 = 1 and 2 -- so Chaos is generated in the `0x0043be4a` branch. Not
   followed. [UNCERTAIN]
-- **The full id -> sprite map.** `FUN_00458630` does the lookup. Four ids are
-  pinned from the drawn order (9 mortar, 19 mine, 12 oil, 7 machinegun); rows
-  1-3 additionally use 11, 16, 17, 18, which are unmapped. [UNCERTAIN]
+- ~~The full id -> sprite map~~ **RESOLVED** -- see the corrected table above.
+  Rows 1-3's extra ids resolve too: 11 = missile, 16 = flamethrower,
+  17 = shotgun, 18 = flare.
 - **Where the per-mode list lives.** Still unknown. Two static hypotheses were
   tried and BOTH REFUTED:
   1. *A dword table of icon indices.* The Standard set is `mortar, mine, oil,
@@ -119,8 +119,24 @@ a different resolution. Order is left-to-right as listed.
       row2: [ 9, 18, 12,  7, 11]
       row3: [ 9, 17, 16, 19,  7]
 
-  Combined with the drawn order, the ids resolve: **9 = mortar, 19 = mine,
-  12 = oil, 7 = machinegun**. The table reads IDENTICALLY at ea74 = 1 and 2, so
+  **CORRECTED**: calling `FUN_00458630(id)` directly and reading the sprite's
+  name (offset 16 in the returned struct) gives the real map --
+
+      id  2 flamethrower   id  6 mine        id  7 mortar
+      id  9 machinegun     id 10 depthcharge id 11 missile
+      id 12 mine           id 13 mine        id 16 flamethrower
+      id 17 shotgun        id 18 flare       id 19 oil
+      id 21 Chaos          id 22 Airstrike
+
+  So `row0 = [9, 19, 12, 7]` is **machinegun, oil, mine, mortar** -- the REVERSE
+  of the drawn left-to-right order (mortar, mine, oil, machinegun at x =
+  448/486/524/562). The loop therefore fills the row right-to-left. An earlier
+  revision of this note read the ids off by pairing table order with draw order
+  and got all four wrong; the direct call is authoritative.
+  [UNCERTAIN] ids 6/12/13 all return the same sprite pointer (mine), as do 2
+  and 16 (flamethrower), so the id space is not 1:1 with textures -- either
+  several power-up types share an icon, or `FUN_00458630` falls back for
+  unmapped ids. Not distinguished. The table reads IDENTICALLY at ea74 = 1 and 2, so
   Chaos does not use it -- it takes the `jne 0x43be4a` branch, which is also
   where Off lands. Note `0x007f0cb0` sits INSIDE the save span
   (0x007f0a40..0x007f0f60), so this is save/game state, not a static table --
