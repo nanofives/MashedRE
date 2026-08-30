@@ -133,10 +133,23 @@ a different resolution. Order is left-to-right as listed.
   448/486/524/562). The loop therefore fills the row right-to-left. An earlier
   revision of this note read the ids off by pairing table order with draw order
   and got all four wrong; the direct call is authoritative.
-  [UNCERTAIN] ids 6/12/13 all return the same sprite pointer (mine), as do 2
-  and 16 (flamethrower), so the id space is not 1:1 with textures -- either
-  several power-up types share an icon, or `FUN_00458630` falls back for
-  unmapped ids. Not distinguished. The table reads IDENTICALLY at ea74 = 1 and 2, so
+  **NO FALLBACK -- resolved.** `FUN_00458630` is a jump table:
+
+      0x00458630  mov eax, [esp+4]          ; id
+      0x00458634  add eax, -2
+      0x00458637  cmp eax, 0x14             ; ids 2..22 only
+      0x0045863a  ja  0x0045873f
+      0x00458640  jmp [eax*4 + 0x458744]    ; 21-entry table
+      ...
+      0x0045873f  xor eax, eax / ret        ; NULL
+
+  The out-of-range path returns NULL, and seven in-range ids (3, 4, 5, 8, 14,
+  15, 20) have their table slot pointing straight at that same NULL case. So an
+  unmapped id yields a null sprite, which the draw loop then skips via its
+  `test edi, edi / je 0x43bbed`. Nothing is substituted.
+  The aliasing is therefore DELIBERATE, not a fallback: ids 6, 12 and 13 all
+  point at one real case (0x0045865b -> mine), and 2/16 likewise share
+  flamethrower. Several power-up types genuinely share one icon. The table reads IDENTICALLY at ea74 = 1 and 2, so
   Chaos does not use it -- it takes the `jne 0x43be4a` branch, which is also
   where Off lands. Note `0x007f0cb0` sits INSIDE the save span
   (0x007f0a40..0x007f0f60), so this is save/game state, not a static table --
