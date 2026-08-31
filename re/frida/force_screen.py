@@ -52,6 +52,7 @@ const RVA_GATEFLAG  = 0x0067ec28;   // action-7 effect flag
 const pushFn = new NativeFunction(ptr(RVA_PUSH), 'void', ['int', 'int'], 'mscdecl');
 
 let force   = {player: -1, action: -1};
+let held    = {player: -1, action: -1};
 let fired   = 0;
 let armed   = false;
 let tickHook = null;
@@ -98,6 +99,8 @@ rpc.exports = {
           ret.replace(ptr(0xff));
           force.action = -1;
           fired++;
+        } else if (held.action >= 0 && this.p === held.player && this.c === held.action) {
+          ret.replace(ptr(0xff));
         }
       }
     });
@@ -105,6 +108,8 @@ rpc.exports = {
     return 1;
   },
   press: function (player, action) { force = {player: player, action: action}; return 1; },
+  hold:  function (player, action) { held  = {player: player, action: action}; return 1; },
+  release: function () { held = {player: -1, action: -1}; return 1; },
   fired: function () { return fired; },
 
   // Arm a one-shot push executed on the game thread at the top of the menu tick.
@@ -124,6 +129,7 @@ rpc.exports = {
   pushed: function () { return pushed; },
   lasterr: function () { return lastErr; },
   detach: function () { Interceptor.detachAll(); tickHook = null; armed = false; return 1; },
+  pokeflag: function () { ptr(0x0067ec28).writeS32(1); return ptr(0x0067ec28).readS32(); },
   page: function () { try { return ptr(0x0067ea08).readS32(); } catch (e) { return -999; } },
   stack: function (n) { return readStack(n); }
 };
@@ -166,6 +172,25 @@ def main():
     ap.add_argument("--to-race", type=int, default=0, metavar="MAXPRESS",
                     help="drive into a race through the FRONTEND with action-4 confirms, "
                          "stop pressing on DAT_007f0f10==2, then run the control/fire windows")
+    ap.add_argument("--poke-flag", action="store_true",
+                    help="after the push, write DAT_0067ec28=1 directly. Tests the "
+                         "CONSUMER half of action 7 (flag -> FUN_0042c960 -> "
+                         "FUN_0042c510 -> page advance) without needing the producer "
+                         "gate [ESP+0x34], which a forced push does not set up.")
+    ap.add_argument("--race-seq", default="",
+                    help="actions fired IN ORDER once in-race, before --await-gate; "
+                         "e.g. 6,12,12,12,4 = pause, down x3, select (= Quit Race)")
+    ap.add_argument("--seq-delay", type=float, default=1.4)
+    ap.add_argument("--hold", type=int, default=-1, metavar="ACTION",
+                    help="hold this action continuously during the await window "
+                         "(0 = accelerate) so the race actually progresses")
+    ap.add_argument("--await-gate", type=int, default=-1, metavar="TYPE",
+                    help="after --to-race, wait until the menu-stack gate reads TYPE "
+                         "(e.g. 5 = Race Results reached NATURALLY), then fire")
+    ap.add_argument("--await-secs", type=float, default=180.0,
+                    help="how long to wait for --await-gate")
+    ap.add_argument("--speed", default="",
+                    help="MASHED_SPEED for the run (needs the qol asi); speeds the race up")
     ap.add_argument("--fire", type=int, default=-1,
                     help="action fired on the pushed screen; shots taken before and after")
     args = ap.parse_args()
@@ -176,6 +201,14 @@ def main():
     env["MASHED_ORIG_BBDUMP_REQ"] = str(REQ_FILE)
     env["MASHED_WIN_POS"] = "left-bl"
     env["MASHED_RE_NO_AUTO_HOOK"] = "1"
+    if args.speed:
+        # MASHED_SPEED only works with the qol asi AND with the dev hooks off --
+        # mashed_re_dev.asi replaces the quantizer at 0x00493480 (FrameDispatch.cpp)
+        # and would silently bypass it. MASHED_RE_NO_AUTO_HOOK=1 is already set above.
+        env["MASHED_QOL"] = "1"
+        env["MASHED_DECOUPLE"] = "1"
+        env["MASHED_SPEED"] = args.speed
+
     if REQ_FILE.exists():
         REQ_FILE.unlink()
 
@@ -234,6 +267,47 @@ def main():
             print("  settling 6s in-race with NO input ...")
             time.sleep(6.0)
 
+        if args.await_gate >= 0:
+            if args.race_seq:
+                scr.exports_sync.arm()
+                for a in [int(x) for x in args.race_seq.split(",") if x.strip()]:
+                    scr.exports_sync.press(0, a)
+                    time.sleep(args.seq_delay)
+                    st = scr.exports_sync.stack(0)
+                    print(f"    seq {a}: depth={st.get('depth')} gate={st.get('gate')} "
+                          f"sphase={st.get('sphase')} fired={scr.exports_sync.fired()}")
+            if args.hold >= 0:
+                scr.exports_sync.arm()
+                scr.exports_sync.hold(0, args.hold)
+                print(f"  holding action {args.hold} (player 0) for the whole wait")
+            print(f"  waiting up to {args.await_secs}s for gate == {args.await_gate} ...")
+            t0 = time.perf_counter()
+            seen, hit = [], False
+            while time.perf_counter() - t0 < args.await_secs:
+                st = scr.exports_sync.stack(0)
+                key = (st.get("depth"), st.get("gate"), st.get("sphase"))
+                if not seen or seen[-1] != key:
+                    seen.append(key)
+                    print(f"    t={time.perf_counter()-t0:6.1f}s depth={st.get('depth')} "
+                          f"gate={st.get('gate')} sphase={st.get('sphase')} "
+                          f"page={st.get('ea08')}")
+                if st.get("gate") == args.await_gate:
+                    hit = True
+                    print(f"    *** gate == {args.await_gate} reached naturally ***")
+                    break
+                time.sleep(0.3)
+            rec["await_path"] = [list(k) for k in seen]
+            rec["await_hit"] = hit
+            if not hit:
+                print("    never reached the target gate; not firing (invalid test)")
+                Path(args.out).write_text(json.dumps(rec, indent=2, default=str),
+                                          encoding="utf-8")
+                return
+            scr.exports_sync.release()
+            time.sleep(0.6)
+            rec["at_gate"] = scr.exports_sync.stack(0)
+            rec["shot_at_gate"] = shot(f"await{args.await_gate}_before.bmp")
+
         if args.watch > 0:
             import copy
             def sample(tag, secs):
@@ -275,6 +349,34 @@ def main():
             st = scr.exports_sync.stack(0)
             path = shot(f"screen_{sid}.bmp")
             st["shot"] = path
+            if args.poke_flag:
+                def tl(tag, secs, step=0.3):
+                    out, t0 = [], time.perf_counter()
+                    while time.perf_counter() - t0 < secs:
+                        st2 = scr.exports_sync.stack(0)
+                        out.append((round(time.perf_counter() - t0, 2),
+                                    scr.exports_sync.page(), st2.get('flag'),
+                                    st2.get('ebc8')))
+                        time.sleep(step)
+                    uniq = [out[0]]
+                    for r in out[1:]:
+                        if r[1:] != uniq[-1][1:]:
+                            uniq.append(r)
+                    print('    [' + tag + '] t,page,flag,queue: ' + str(uniq))
+                    return out
+                # long control FIRST: does the page auto-advance on its own?
+                ctrl = tl('control 12s', 12.0)
+                pages_ctrl = sorted(set(r[1] for r in ctrl))
+                wrote = scr.exports_sync.pokeflag()
+                print('    poked DAT_0067ec28 = ' + str(wrote))
+                after = tl('after poke 6s', 6.0)
+                pages_after = sorted(set(r[1] for r in after))
+                st['poke'] = {'control_pages': pages_ctrl,
+                              'after_pages': pages_after,
+                              'control': ctrl, 'after': after}
+                print('    control saw pages ' + str(pages_ctrl)
+                      + ' ; after poke ' + str(pages_after))
+                st['shot_after_poke'] = shot('poke_screen' + str(sid) + '.bmp')
             if args.fire >= 0:
                 st["pre_page"] = scr.exports_sync.page()
                 st["fired_before"] = scr.exports_sync.fired()
