@@ -1,13 +1,13 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-31T20:05:00Z",
+  "updatedAt": "2026-08-31T22:40:00Z",
   "sections": [
     {
-      "heading": "Shipped today on race/first-frame-parity",
+      "heading": "Shipping state — race/first-frame-parity",
       "fields": [
-        { "label": "Water fold", "value": "Scoped by DFF asset name (SEA/WATER/LAKE/RIVER), default ON", "kind": "text" },
-        { "label": "Clump exclusion", "value": "Clump_Exclude_From_World decoded; excluded clumps now LOAD, default ON", "kind": "text" },
-        { "label": "Reverts", "value": ["MASHED_LIBRW_AMBFOLD_SEA=0", "MASHED_TRACK_SKIP_EXCLUDED=1"], "kind": "list" }
+        { "label": "Clump exclusion", "value": "DECODED and fixed; excluded clumps load. Default ON", "kind": "text" },
+        { "label": "Water ambient fold", "value": "Default OFF — reverted, it only fits Arctic", "kind": "text" },
+        { "label": "Reverts", "value": ["MASHED_TRACK_SKIP_EXCLUDED=1", "MASHED_LIBRW_AMBFOLD_SEA=1"], "kind": "list" }
       ]
     },
     {
@@ -16,22 +16,23 @@
         { "label": "City", "value": "25.43 -> 11.23", "kind": "text" },
         { "label": "Dump", "value": "84.78 -> 9.62", "kind": "text" },
         { "label": "TRAINING (headline)", "value": "15.45 -> 15.40", "kind": "text" },
-        { "label": "Arctic s8", "value": "18.85 unchanged; sea 9.1 -> 29.8 vs orig 28.0", "kind": "text" }
+        { "label": "Arctic s8", "value": "18.85 -> 20.24 (accepted cost: sea ships dark)", "kind": "text" },
+        { "label": "New baselines", "value": "Forest s8 15.37 | SuperG s14 39.19", "kind": "text" }
       ]
     },
     {
-      "heading": "Closed",
+      "heading": "Closed today",
       "fields": [
-        { "label": "T-ARCTIC", "value": "Closed; race/geomlight merged", "kind": "text" },
-        { "label": "U-9062 / U-9063", "value": "Resolved — one root cause, not two lighting bugs", "kind": "text" }
+        { "label": "T-ARCTIC", "value": "Closed; race/geomlight + race/arctic-cap merged", "kind": "text" },
+        { "label": "U-9062 / U-9063", "value": "Resolved — one decoded root cause, not two lighting bugs", "kind": "text" }
       ]
     },
     {
-      "heading": "Open debt",
+      "heading": "Open",
       "fields": [
-        { "label": "Unverified water", "value": "Forest (1.84%) and SuperG (0.86%) now fold water with no original reference", "kind": "text" },
-        { "label": "Undecoded", "value": "What world registration changes beyond the one gated call (PVS, culling, draw order)", "kind": "text" },
-        { "label": "Capture flake", "value": "Demo hangs at challenge-select ~1 run in 5; drivers retry 3x", "kind": "text" }
+        { "label": "U-9064", "value": "Arctic sea ships too dark (~9 vs ~28); no fold setting is right everywhere", "kind": "text" },
+        { "label": "Best lead", "value": "Original uses real RW lights (Lights.dff + RpWorldAddLight at 0x00479330), not a prelit fold", "kind": "text" },
+        { "label": "Also unexplained", "value": "Forest water over-bright even unfolded (39-44 vs 20-22)", "kind": "text" }
       ]
     }
   ]
