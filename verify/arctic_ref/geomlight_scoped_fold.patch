@@ -1,0 +1,89 @@
+diff --git a/mashedmod/src/mashed_re/LibRw/RwSceneBuild.cpp b/mashedmod/src/mashed_re/LibRw/RwSceneBuild.cpp
+index af1d7ee1..b7222f99 100644
+--- a/mashedmod/src/mashed_re/LibRw/RwSceneBuild.cpp
++++ b/mashedmod/src/mashed_re/LibRw/RwSceneBuild.cpp
+@@ -430,6 +430,25 @@ static bool AmbientFoldEnabled() {
+     return on;
+ }
+ 
++// [geomlight class-scope 2026-08-31] The blanket fold (AMBFOLD=1) restores ambient
++// for BOTH the road (ROAD.DFF 0x2008b) and the water (LAKE/WATER0x.DFF 0x1000f).
++// Measured against the pose-matched Arctic reference (verify/arctic_ref): the
++// original keeps the road DARK (no ambient -> TRAINING 18.47->15.45 came from
++// dropping the fold there) but the SEA BRIGHT (sea luma ~28-33; fold-off crushes it
++// to ~9). So the correct behaviour is class-scoped: fold water, not road. Water is
++// the numTexCoordSets==1 non-lit prelit class (0x1000f, bits 16-23 == 1); the road
++// is numTexCoordSets==2 (0x2008b). MASHED_LIBRW_AMBFOLD_SEA=1 selects this.
++static bool AmbientFoldScopedSea() {
++    static const bool on = [] {
++        const char* e = std::getenv("MASHED_LIBRW_AMBFOLD_SEA");
++        return e && e[0] == '1' && e[1] == '\0';
++    }();
++    return on;
++}
++static bool BatchIsWaterClass(std::uint32_t geo_flags) {
++    return ((geo_flags >> 16) & 0xFFu) <= 1u;   // numTexCoordSets<=1 => water 0x1000f
++}
++
+ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
+                  std::uint32_t ambient,
+                  std::vector<std::uint32_t>* out_atomic_mat) {
+@@ -498,7 +517,13 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
+         // lightingCB_Shader takes the setAmbient(black) branch).
+         std::vector<std::uint32_t> prelit_amb;
+         const std::vector<std::uint32_t>* prelit_src = &b.prelit;
+-        if (AmbientFoldEnabled() && ambient && !b.prelit.empty() && !b.lit) {
++        // Fold gate: blanket (AMBFOLD, road+water) OR class-scoped (AMBFOLD_SEA,
++        // water 0x1000f only). Default (neither) still skips the fold entirely.
++        const bool fold_this =
++            ambient && !b.prelit.empty() && !b.lit &&
++            (AmbientFoldEnabled() ||
++             (AmbientFoldScopedSea() && BatchIsWaterClass(b.geo_flags)));
++        if (fold_this) {
+             // CHANNEL ORDER, and it bit once. `ambient` (amb_world_) is
+             // 0x00RRGGBB, but DffModel prelit is RW-native RGBA bytes, i.e.
+             // 0xAABBGGRR -- FillVertexData below reads red from the LOW byte and
+diff --git a/mashedmod/src/mashed_re/Track/DffModel.cpp b/mashedmod/src/mashed_re/Track/DffModel.cpp
+index b6e568c5..576cb364 100644
+--- a/mashedmod/src/mashed_re/Track/DffModel.cpp
++++ b/mashedmod/src/mashed_re/Track/DffModel.cpp
+@@ -169,6 +169,7 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
+         std::uint32_t nmats = 0;
+         bool lit = false;                    // WS-E s2: rpGEOMETRYLIGHT (0x20)
+         bool modmat = false;                 // WS-E s2: MODULATEMATERIALCOLOR(0x40)
++        std::uint32_t flags = 0;             // geomlight class-scope: raw RW format dword
+     };
+     std::vector<Geo> geos;
+     std::size_t q = gst.payload + gst.size;
+@@ -185,6 +186,7 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
+         Geo geo;
+         geo.lit    = (flags & 0x20u) != 0;   // rpGEOMETRYLIGHT
+         geo.modmat = (flags & 0x40u) != 0;   // rpGEOMETRYMODULATEMATERIALCOLOR
++        geo.flags  = flags;                  // geomlight class-scope: keep raw format
+         if (!(flags & 0x01000000u)) {  // !NATIVE
+             if (flags & 0x08u) {       // PRELIT
+                 geo.prelit.resize(static_cast<std::size_t>(nverts));
+@@ -345,6 +347,7 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
+                 b.atomic = found_atomics - 1;
+                 b.lit          = geo.lit && have_n;   // WS-E s2
+                 b.modulate_mat = geo.modmat;          // WS-E s2
++                b.geo_flags    = geo.flags;           // geomlight class-scope
+                 std::memcpy(b.abox, abox, sizeof(abox));
+                 for (std::size_t i = 0; i < geo.tris.size() / 4; ++i) {
+                     if (geo.nmats && geo.tris[i * 4] != mi) continue;
+diff --git a/mashedmod/src/mashed_re/Track/DffModel.h b/mashedmod/src/mashed_re/Track/DffModel.h
+index e928786e..6afece53 100644
+--- a/mashedmod/src/mashed_re/Track/DffModel.h
++++ b/mashedmod/src/mashed_re/Track/DffModel.h
+@@ -44,6 +44,11 @@ struct DffBatch {
+     //                  panels, flags 0x73).
+     bool lit          = false;
+     bool modulate_mat = false;
++    // [geomlight class-scope 2026-08-31] owning geometry's raw RW format dword, so
++    // the ambient fold can be scoped by class: ROAD.DFF=0x2008b (numTexCoordSets 2),
++    // water LAKE/WATER0x.DFF=0x1000f (numTexCoordSets 1). numTexCoordSets = bits
++    // 16-23. Lets RwSceneBuild fold ambient into the water prelit only.
++    std::uint32_t geo_flags = 0;
+ };
+ 
+ class DffModel {

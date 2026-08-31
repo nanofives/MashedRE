@@ -184,6 +184,17 @@ idling or reviving dead batch lanes.
   (sea only 2.5% of view, occluded by the foreground player car); always judge this on a
   sea-dominant pose.
 
+  **CLASS-SCOPED FOLD PROTOTYPED + VALIDATED 2026-08-31
+  (`verify/arctic_ref/geomlight_cmp/PROTOTYPE.md`, patch
+  `verify/arctic_ref/geomlight_scoped_fold.patch`).** New `MASHED_LIBRW_AMBFOLD_SEA=1`
+  folds ambient into the water class only (`numTexCoordSets<=1` = `0x1000f`), leaving the
+  road (`0x2008b`) unfolded. Results: TRAINING trON 15.45 / trSEA 15.45 (geomON-vs-geomSEA
+  = 0.000, byte-identical — road untouched, win kept); Arctic sea geomSEA luma 30.1/27.7 =
+  fold-all = matches original (Δ2-5). So the fix keeps the win AND fixes the sea.
+  **Next: parent applies the patch to `race/geomlight`, makes the scoped mode default,
+  re-runs the parity harness on the other cup tracks, then merges.** T-ARCTIC's capture +
+  gate + fix are done; the residual is the merge decision + a broad-track re-check.
+
 
 ## Done
 
