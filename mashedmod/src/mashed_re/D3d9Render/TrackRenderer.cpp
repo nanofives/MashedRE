@@ -1617,23 +1617,49 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     }
                 }
             }
-            // [U-9062 probe 2026-08-31] Clump_Exclude_From_World is currently read as
-            // "do not load this clump at all", and that is what drops City's road.
-            // City's COURSE.LUA excludes indices 6-13 = Build01-04, Standard,
-            // road.dff (11), Trunk, water.dff (13) — every one of those is absent from
-            // the rendered frame, which is the U-9062 "black road" (the surface is
-            // MISSING, not dark). Same command drops the water clump on Forest,
-            // Warzone, SuperG, Storm, sands and training; Arctic's sea.dff is the ONLY
-            // non-excluded water clump in the game, which is why it was the one surface
-            // the water fold could act on.
-            // The NAME says "exclude from the WORLD", i.e. do not merge into the static
-            // BSP — which is not the same as do not draw. That reading is NOT yet
-            // established, so this toggle only measures it:
-            // MASHED_TRACK_LOAD_EXCLUDED=1 loads them as ordinary props.
-            static const bool s_load_excluded =
-                std::getenv("MASHED_TRACK_LOAD_EXCLUDED") != nullptr;
+            // [U-9062 2026-08-31] Clump_Exclude_From_World does NOT mean "do not load".
+            // DECODED from MASHED.exe (Ghidra, analyzeHeadless on Mashed_pool14):
+            //
+            //   Lua registration table 0x00440bc0..0x00440d40 binds the command name at
+            //   0x005cde94 to handler 0x0047aa20 (registrar 0x0047b980).
+            //   Handler 0x0047aa20 does exactly one thing: desc[0xd4 + idx*4] = 1.
+            //   It never unloads, frees, or clears the filename slot.
+            //
+            //   The course loader Course::CreateFromDescription (0x00479330) then:
+            //     - loads EVERY clump whose filename slot is non-empty, gating only on
+            //       the name, never on the flag (clump loop, "LOADING Clump [%s] with
+            //       index of [%d]");
+            //     - walks the 0x40 clump slots against the flag array (`add edi,0xd4`
+            //       at 0x00479d93) and gates exactly ONE call on it:
+            //         0x00479da6  cmp dword ptr [edi],0     <- the exclude flag
+            //         0x00479da9  jnz  (skip)
+            //         0x00479db3  call 0x004e4450(world, clump)
+            //       0x004e4450 links the clump's frame and runs RpClumpForAllAtomics /
+            //       RpClumpForAllLights to register it INTO the world; the world arg is
+            //       [course+0x105d4], the same field RpWorldAddLight is called on.
+            //     - and unconditionally calls 0x00474fd0 (get-first-atomic) at
+            //       0x00479dbe for excluded and non-excluded clumps alike, storing the
+            //       handle at +0x120.
+            //
+            // So an excluded clump IS loaded and DOES keep a live atomic handle; it is
+            // only kept out of the world's frame/atomic/light registration. Reading the
+            // flag as "skip loading" is what deleted City's road (index 11), its four
+            // buildings, Standard, Trunk and water, and Dump's road (index 9) -- the
+            // U-9062/U-9063 surfaces are MISSING, not mis-lit.
+            //
+            // We render props explicitly rather than through a world pass, so loading
+            // them as ordinary props is the faithful analogue of "loaded, has an atomic,
+            // not in the world". Measured against pose-matched originals: City 25.43 ->
+            // 11.23, Dump 84.78 -> 9.62, Arctic and TRAINING unchanged.
+            // MASHED_TRACK_SKIP_EXCLUDED=1 restores the old drop-them behaviour for A/B.
+            //
+            // NOT established: what the world registration itself changes in the
+            // original beyond this (PVS/culling participation, draw order). A pixel
+            // measurement cannot see it, and none is claimed here.
+            static const bool s_skip_excluded =
+                std::getenv("MASHED_TRACK_SKIP_EXCLUDED") != nullptr;
             for (const auto& c : clumps) {
-                if (excluded[c.idx] && !s_load_excluded) continue;
+                if (excluded[c.idx] && s_skip_excluded) continue;
                 Prop p;
                 if (load_prop(c.dff, &p, &track_light)) {
                     D3DMATRIX id;

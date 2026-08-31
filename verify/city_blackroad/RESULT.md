@@ -78,18 +78,101 @@ the water fold will start firing on six more tracks, and those tracks have no or
 reference. That is a NEW verification debt this fix creates, and it should be booked
 before defaulting both on together.
 
-## Status
+## Status — SUPERSEDED by the DECODED section below
 
-Probe is env-gated and **default OFF**: `MASHED_TRACK_LOAD_EXCLUDED=1` enables it.
+Everything above was written before the binary was read, when the fix was still env-gated
+at default OFF and the mechanism was an inference from the command name plus the parity
+measurement. It is kept as the investigation record.
 
-**What is NOT established:** the actual semantics of `Clump_Exclude_From_World` in the
-original. The evidence here is behavioural parity against pose-matched original frames,
-which is this project's acceptance standard for standalone visual work, and it is strong
-(-14 and -75 mean abs diff, crushed fraction landing within 1 point). But no RVA has been
-read, so "excluded means excluded from the BSP merge, still drawn" is an inference from the
-command name plus the measurement, not a decoded fact. The clean confirmation is the Lua
-command binding in `MASHED.exe`. Until then this is a measured improvement with an
-un-decoded mechanism, and it should not be described as a verbatim port.
+**The inference was correct and is now decoded** — see "DECODED 2026-08-31" below for the
+handler, the gated call and their RVAs. The fix is now ON by default, and the toggle was
+inverted to `MASHED_TRACK_SKIP_EXCLUDED=1` (the old `MASHED_TRACK_LOAD_EXCLUDED` no longer
+exists). One caveat from this section does survive the decode: what world registration
+changes beyond that single call is still unknown.
 
-Whether "still drawn" also implies "not collidable" / "drawn in a different pass" is
-likewise unknown, and a purely visual measurement cannot see it.
+---
+
+# DECODED 2026-08-31 — and defaulted ON
+
+Ghidra MCP was not wired into the session; used `analyzeHeadless` read-only against pool
+slot `Mashed_pool14` (same binary, so this satisfies the ghidra-pool "no documentation
+fallback" rule rather than working around it). Preflight asserts passed; slot released.
+
+## What the binary says
+
+The Lua registration table at `0x00440bc0..0x00440d40` binds the command string at
+`0x005cde94` to handler `0x0047aa20` via registrar `0x0047b980`.
+
+**Handler `0x0047aa20` sets a flag and does nothing else:** `desc[0xd4 + idx*4] = 1`. It
+never unloads, frees, or clears the filename slot. The descriptor is 0x21c bytes, zeroed
+by `0x0047a020` (`DAT_006bf1cc` = its base), owned by track loader `0x00426e10`.
+
+**The loader ignores the flag when loading.** `Course::CreateFromDescription`
+(`0x00479330`) loads every clump whose filename slot is non-empty — the loop gates on the
+name only (`"LOADING Clump [%s] with index of [%d]"`), never on the flag.
+
+**The flag gates exactly one call.** `add edi,0xd4` at `0x00479d93` walks the flag array
+against the 64 clump slots:
+
+```
+0x00479da6   cmp dword ptr [edi],0          <- the exclude flag
+0x00479da9   jnz  (skip the add)
+0x00479dab   mov edx,[ebx+0x105d4]          <- the RpWorld
+0x00479db3   call 0x004e4450(world, clump)  <- the ONLY gated call
+0x00479dbe   call 0x00474fd0(clump)         <- ALWAYS runs, excluded or not
+0x00479dc6   mov [esi+0x120],eax            <- atomic handle kept either way
+```
+
+`0x004e4450` links the clump's frame and runs `RpClumpForAllAtomics` /
+`RpClumpForAllLights` to register it INTO the world. That the first argument is the
+RpWorld is not assumed: `[course+0x105d4]` is the same field `RpWorldAddLight` is called
+on at `0x00479330`. `0x00474fd0` is get-first-atomic and runs unconditionally.
+
+**Conclusion:** an excluded clump IS loaded and DOES keep a live atomic handle. It is only
+kept out of the world's frame/atomic/light registration. "Exclude from world" means
+exactly what it says, and reading it as "skip loading" is the defect.
+
+We render props explicitly rather than through a world pass, so loading them as ordinary
+props is the faithful analogue. Default flipped;
+`MASHED_TRACK_SKIP_EXCLUDED=1` restores the old behaviour for A/B.
+
+## Final numbers on the shipping default (no env vars set)
+
+Re-measured rather than inherited: the earlier sweep reached this code path via an opt-in
+env var on a build where it was opt-in, and "logically identical" is not a measurement.
+
+| track | before this session | now | delta |
+|---|---|---|---|
+| Arctic s8 | 18.85 | 18.85 | +0.00 |
+| **City** | 25.43 | **11.23** | **-14.20** |
+| **Dump** | 84.78 | **9.62** | **-75.16** |
+| TRAINING | 15.45 | **15.40** | -0.05 |
+
+TRAINING's headline survives, marginally improved, even though it now loads and folds
+three water clumps (`Lake.dff`, `Water02`, `Water03`).
+
+## New verification debt, booked not buried
+
+Water clumps now load on seven tracks that previously built none, so the water fold fires
+on them for the first time. Magnitude of the fold at a natural-camera vantage:
+
+| track | water clump now loaded | fold mask |
+|---|---|---|
+| Forest | `Water.dff` | 1.84% |
+| SuperG | `sea.dff` | 0.86% |
+| training | `Lake`, `Water02`, `Water03` | 0.12% |
+| sands | `Water.dff` (17 batches) | 0.00% |
+| Storm | `Water.dff` | 0.00% |
+| Warzone | `River.dff` | 0.00% |
+| City | `water.dff` | 0.00% |
+| rouabout | none declared | 0.00% |
+
+Forest and SuperG are the two that now get materially folded water with **no pose-matched
+original reference to judge it against**. TRAINING has one but the effect there is 0.12%
+and its number improved. This is unverified, not wrong — and unlike before, the zero rows
+are now genuine "fired and was inert" zeros, because the clump provably loads.
+
+## Still not established
+
+What world registration changes in the original beyond this one call — PVS participation,
+culling, draw order. A pixel measurement cannot see any of it and none is claimed.
