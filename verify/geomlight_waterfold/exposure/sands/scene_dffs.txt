@@ -1,0 +1,8 @@
+clump[0]: dff='skydome.dff' water_asset=0 mats=1 named=1 resolved=1 batches=1
+clump[1]: dff='WhiteTyre.dff' water_asset=0 mats=1 named=1 resolved=1 batches=1
+clump[2]: dff='RedTyre.dff' water_asset=0 mats=1 named=1 resolved=1 batches=1
+clump[3]: dff='Sign02.dff' water_asset=0 mats=1 named=1 resolved=1 batches=1
+clump[4]: dff='Fence.dff' water_asset=0 mats=1 named=1 resolved=1 batches=1
+clump[5]: dff='Road.dff' water_asset=0 mats=40 named=40 resolved=40 batches=40
+clump[6]: dff='Camman.dff' water_asset=0 mats=1 named=1 resolved=1 batches=1
+clump[7]: dff='(unnamed)' water_asset=0 mats=71 named=44 resolved=44 batches=71

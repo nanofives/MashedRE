@@ -1,44 +1,38 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-30T09:10:00Z",
+  "updatedAt": "2026-08-31T18:20:00Z",
   "sections": [
     {
-      "heading": "Current slice",
+      "heading": "T-ARCTIC: CLOSED — water fold shipped",
       "fields": [
-        { "label": "Focus", "value": "Race first-frame parity (TRAINING, pose-transplanted)", "kind": "text" },
-        { "label": "Branch", "value": "race/first-frame-parity @ 56df8d2f", "kind": "text" },
-        { "label": "Shipped baseline", "value": "mean 18.47 / 42.35% over threshold", "kind": "text" },
-        { "label": "Progression today", "value": "50.37/83.89% -> 20.52/48.22% -> 18.47/42.35%", "kind": "text" },
-        { "label": "Available, not shipped", "value": "15.52 / 33.48% if the prelit ambient fill is scoped off", "kind": "text" }
+        { "label": "Branch", "value": "race/first-frame-parity (race/geomlight merged)", "kind": "text" },
+        { "label": "Fold key", "value": "DFF asset name (SEA/WATER/LAKE/RIVER) AND flag class — default ON", "kind": "text" },
+        { "label": "Off-switch", "value": "MASHED_LIBRW_AMBFOLD_SEA=0", "kind": "text" },
+        { "label": "TRAINING win", "value": "15.45 / 33.48% — holds, byte-identical both arms", "kind": "text" }
       ]
     },
     {
-      "heading": "Fleet: all 5 children archived",
+      "heading": "Arctic sea vs original (fold mask luma)",
       "fields": [
-        { "label": "Merged", "value": "race/relight (mip chain), race/grid (spawn formation), race/camera (director wired)", "kind": "text" },
-        { "label": "Unmerged", "value": "race/camframe 96d2e83a (U-9058 resolved), race/terrain 188b9297 (diagnostic only)", "kind": "text" }
+        { "label": "s8 mask 69.6%", "value": "orig 28.0 | unfolded 9.1 | folded 29.8", "kind": "text" },
+        { "label": "s14 mask 58.4%", "value": "orig 32.6 | unfolded 9.8 | folded 27.2", "kind": "text" },
+        { "label": "Exact no-ops", "value": ["City", "Dump", "TRAINING"], "kind": "list" },
+        { "label": "Attribution", "value": "sea.dff only; 32 other DFFs water_asset=0", "kind": "text" }
       ]
     },
     {
-      "heading": "Mechanisms closed today",
+      "heading": "Filed this session",
       "fields": [
-        { "label": "Roll drop", "value": "librw rebuilt its camera from a lossy eye/at pair; basis now published", "kind": "text" },
-        { "label": "Roll source", "value": "roll_deg = 30.0 * sin((DAT_007f101c & 0x3ff) * 2pi/1024), applied by FUN_00445aa0; Camera::Apply output is OVERWRITTEN", "kind": "text" },
-        { "label": "Mip chain", "value": "both texture paths uploaded 1 level while TXDs request MIPLINEAR", "kind": "text" },
-        { "label": "Grid", "value": "2x2 box replaced by the original staggered line (FUN_00408b00)", "kind": "text" },
-        { "label": "Terrain band", "value": "uniform brightness offset: ambient fill added to non-lit prelit ground (TrackRenderer.cpp:228)", "kind": "text" }
+        { "label": "U-9062", "value": "City road crushed black — luma<12 is 11.32% orig vs 57.88% ours", "kind": "text" },
+        { "label": "U-9063", "value": "Dump sky blown white — luma>240 is 0.03% orig vs 41.44% ours", "kind": "text" },
+        { "label": "Both", "value": "Fold-independent (identical across arms, 0.00% mask)", "kind": "text" }
       ]
     },
     {
-      "heading": "Open",
+      "heading": "Left open (not claimed closed)",
       "fields": [
-        { "label": "Next", "value": [
-            "Scope the :228 ambient fill off for non-lit prelit scenery without regressing Arctic sea / cars",
-            "Residual 1.39x band brightness after ambient removal: prelit decode vs texture vs exposure",
-            "Port FUN_00445aa0 verbatim so the standalone camera generates the basis incl. roll phase",
-            "Standalone draws a countdown digit the reference lacks - inflates 2 cells, harness artifact",
-            "Trackers UNCOMMITTED: U-9058 (needs RESOLVE), 6 CHANGELOG entries, 3 hooks.csv notes"
-          ], "kind": "list" }
+        { "label": "Other water tracks", "value": "Forest/sands/Storm/SuperG/Warzone/rouabout: 0.00% mask, but ZERO water clumps built — untested, not verified", "kind": "text" },
+        { "label": "Question", "value": "Is their water world/BSP geometry rather than a prop?", "kind": "text" }
       ]
     }
   ]

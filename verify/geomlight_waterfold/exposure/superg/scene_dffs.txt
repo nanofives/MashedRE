@@ -1,0 +1,2 @@
+clump[0]: dff='CamMan.dff' water_asset=0 mats=1 named=1 resolved=1 batches=1
+clump[1]: dff='(unnamed)' water_asset=0 mats=71 named=44 resolved=44 batches=71

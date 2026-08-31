@@ -44,6 +44,11 @@ struct DffBatch {
     //                  panels, flags 0x73).
     bool lit          = false;
     bool modulate_mat = false;
+    // [geomlight class-scope 2026-08-31] owning geometry's raw RW format dword, so
+    // the ambient fold can be scoped by class: ROAD.DFF=0x2008b (numTexCoordSets 2),
+    // water LAKE/WATER0x.DFF=0x1000f (numTexCoordSets 1). numTexCoordSets = bits
+    // 16-23. Lets RwSceneBuild fold ambient into the water prelit only.
+    std::uint32_t geo_flags = 0;
 };
 
 class DffModel {
@@ -52,6 +57,17 @@ public:
     // atomic counts, index ranges); false + last_error() on violation.
     bool Parse(const std::uint8_t* d, std::size_t len);
     const char* last_error() const { return err_; }
+
+    // [geomlight water-scope 2026-08-31] The asset name this model was parsed
+    // from (e.g. "SEA.DFF"), as passed to TrackRenderer's load_prop. Parse()
+    // cannot know it -- the caller fills it in. Empty when the caller did not
+    // set one (the world path and the car model), which reads as "not water".
+    // RwSceneBuild::BuildClump uses it as the ambient-fold discriminator:
+    // the RW geometry flags alone cannot separate a water surface from an
+    // awning / lamppost / skydome (all are numTexCoordSets<=1 non-lit prelit),
+    // which is what over-brightened City and Dump. See
+    // verify/geomlight_broadcheck/RESULT.md.
+    char                     source_name[64] = {};
 
     std::vector<DffMaterial> materials;
     std::vector<DffBatch>    batches;     // one per (atomic, material) pair

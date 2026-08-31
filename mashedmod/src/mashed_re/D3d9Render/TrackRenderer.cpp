@@ -235,15 +235,22 @@ inline D3DCOLOR LightAtomicVertex(const AtomicLight& lt, bool lit, bool modmat,
         // The race terrain never reaches this function on the default path:
         // librw is the default renderer (RwRaceSubmit.cpp:142) and lights
         // IN-SHADER -- see the note at :1428, "the lit batches librw cannot dump
-        // (they carry no uploaded vertex colour -- lit in-shader)". The ambient
-        // that over-brightens the terrain is applied by the librw AMBIENT light,
-        // RwRaceSubmit.cpp:555 g_amb->setColor(st.amb_f_) with flags
-        // LIGHTATOMICS|LIGHTWORLD at :550. re/analysis/race_terrain_ambient_20260830.md
-        // attributes the effect to line 228 below; that attribution is WRONG,
-        // though its measurement (the cause is the ambient, not the sun) stands.
+        // (they carry no uploaded vertex colour -- lit in-shader)".
+        // [CORRECTED 2026-08-30, branch race/geomlight] The terrain over-brightness
+        // is NOT the librw AMBIENT light (RwRaceSubmit.cpp:555): that light only
+        // reaches rw::Geometry::LIGHT-flagged geometry, and TRAINING's ground
+        // ROAD.DFF carries flags 0x2008b -- no rpGEOMETRYLIGHT -- so BuildClump
+        // never sets LIGHT for it (RwSceneBuild.cpp:468) and the light cannot touch
+        // it. The real site is the MANUAL prelit fold in BuildClump
+        // (RwSceneBuild.cpp:479), which adds amb_world_ into non-lit prelit vertex
+        // colours -- the librw twin of the :252 fill just below. PROVEN: skipping
+        // the fold while leaving the :555 light active drops TRAINING to the
+        // ambient-starve ceiling (18.47->15.45), so the light contributes nothing
+        // here. See re/analysis/race_terrain_ambient_20260830.md CORRECTION.
         // Consequence: the "zeroing it darkens the Arctic sea / cars go near-black"
-        // objections were measured against a GLOBAL amb_f_ zero and do not
-        // necessarily apply to a fix made at the librw light instead.
+        // objections were measured against a GLOBAL amb_f_ zero; the scoped fold
+        // fix leaves cars (lit) alone but the Arctic sea (also non-lit prelit,
+        // 0x1000f) does darken and is not yet confirmed against an original.
         static const bool s_scoped_nofill = [] {
             const char* e = std::getenv("MASHED_TERRAIN_NOLIGHT");
             return e && e[0] == '4';
@@ -1373,6 +1380,12 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             if (!db) return false;
             Track::DffModel m;
             if (!m.Parse(db, dl)) return false;
+            // [geomlight water-scope 2026-08-31] Parse() gets only a blob, so the
+            // asset name has to be attached here -- this is the one place that
+            // knows it. RwSceneBuild::BuildClump uses it to scope the ambient fold
+            // to actual water surfaces (SEA/WATER/LAKE/RIVER); the RW geometry
+            // flags alone also match awnings, lampposts and skydomes.
+            std::snprintf(m.source_name, sizeof(m.source_name), "%s", dff_name);
             BuildDffBatches(dev, m, dicts, &p->batches, &p->textures, lt);
         // D-S3-6 probe: what does the D3D9 bake produce for vertex 0 of this
         // prop, and was an AtomicLight applied? Compare against the raw prelit
