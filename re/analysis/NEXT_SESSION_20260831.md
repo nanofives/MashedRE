@@ -180,10 +180,108 @@ U-9055: what `0x1000` denotes).
 both shipped and verified. What remains are the two genuinely large ones (resizable window,
 >4 players) plus the power-up runtime dial.
 
+## SECOND HALF -- 2026-08-31 (same continuous session)
+
+The 08-30 half above named actions 6 and 7 and shipped rebinding + game speed. The 08-31 half
+went after U-9059's residual and turned up something more useful than the residual itself.
+
+### The headline: which actions a screen accepts is DATA
+
+`[ESP+0x34]`, action 7's producer gate, is not computed from game state. `FUN_0043dfd0` zeroes
+seven enable slots at `0x0043e3ff..0x0043e417`, then walks the CURRENT SCREEN'S `ff<op>0000`
+opcode stream and sets one slot per bare opcode (`0x0043e420..0x0043e48f`):
+
+| opcode | slot | meaning |
+|---|---|---|
+| `ff11` | `[ESP+0x20]` | |
+| `ff0b` | `[ESP+0x24]` | |
+| `ff0c` | `[ESP+0x28]` | |
+| `ff0d` | `[ESP+0x2c]` | |
+| `ff0e` | `[ESP+0x30]` | |
+| `ff10` / `ff23` | `EDX` | |
+| **`ff12`** | **`[ESP+0x1c]`** | **action 6 enable** (gate `0x0043fef9`) |
+| **`ff33`** | **`[ESP+0x34]`** | **action 7 enable** (gate `0x004409c8`) |
+
+The scan runs between an `ff09` marker and `ff0a`. **If `ff09` is absent where expected, the
+`JNZ` at `0x0043e3ec` skips the ENTIRE action-dispatch block** to `0x004409f2` -- the likeliest
+reason a forced push of screen 5 left the gate clear.
+
+**New tool: `re/tools/screen_opcodes.py`.** Decodes all 34 records in `PTR_DAT_005f7638` and
+prints each screen's message id and enable run; `--op ff33` asks which screens carry an opcode.
+Use it to answer "which actions does screen N accept" from data instead of by navigating -- that
+question cost several failed probe runs before the tool existed.
+
+It also produced an **independent witness for both action names**, from a direction with nothing
+to do with images or behaviour: `ff33` appears in exactly ONE screen's enable run (5, Race
+Results -- the screen whose footer says `Change Stat`) and `ff12` in exactly ONE (0, the pause
+menu -- and action 6 is Pause). Both names now rest on three independent witnesses.
+
+### Structural finding: no frontend menu tick runs during a race
+
+Measured over 4 s in phase 3: `FUN_0043dfd0` 0/s, `FUN_0043d7c0` 0/s, `FUN_0042ae10` 0/s,
+`FUN_0042af50` 0/s, `FUN_0042b770` 0/s -- while the input cook `FUN_00496530` runs at 180/s.
+**When PAUSED all of them run at 60/s**, except `FUN_0042b770` which stays 0/s (consistent with
+its entry-type-5 gate). So action 6/7 probing can only ever work in a menu or paused state. The
+in-race attempts that failed earlier were structurally doomed, not badly executed.
+
+### The observable that unblocked menu probing
+
+The per-entry **selection index** is at `0x0067ed80 + idx*0x40` (written by `FUN_0043d2a0` mode 0
+as `(&DAT_0067ed80)[idx*0x10] = 0`). **`depth` and `gate` do NOT move when the cursor moves**,
+which made a fully working input path look dead. With `sel`, action 12 walks the cursor reliably
+and action 4 selects.
+
+**Retracted:** an earlier claim in this session that the pause menu "reads input through a path
+the `FUN_00497310` return-override does not reach". It reaches it fine; the observable was
+missing.
+
+### Pause menu, mapped end to end
+
+Items `Continue / Options / Restart Race / Quit Race / Quit Game` at `sel` 0..4. Quit Race opens
+a modal, "Are you sure you want to quit the race?", Yes = action 4 / No = action 5. **The modal
+moves neither `depth` nor `gate` nor `sel`**, which is why select looked inert until it was
+screenshotted. Confirming Yes lands on entry type **7 (Challenge Select)**, `sphase` 4 -> 1 -- so
+Quit Race does NOT pass through Race Results.
+
+### Open finding, not yet its own row: cars are FROZEN in a live race
+
+All four car records (`0x008815a0`, stride `0xd04`, velocity `+0x9b0..b8`) read `vel=[0,0,0]` in
+a live phase-3 race -- **including the AI car** -- while the engine demonstrably ticks at 60/s.
+Records 0/1 have `grounded=4` (two cars visible on the track, no countdown overlay), 2/3 have
+`grounded=0`. Held accelerate does nothing; three `action 4` confirms do not clear it.
+**PRE-EXISTING:** `scenario_launch.py` prints `vel=[0, 0, 0]` in its own success verdict at the
+same point, which is presumably why that harness pulses control 4 continuously. This blocks
+EVERY "drive the race" probe, not just action 7's. Worth its own uncertainty row.
+
+### Tracker outcome
+
+- **U-9060** (was mis-numbered U-9059) **RESOLVED** -- the gate question is answered.
+- **U-9061** opened, deliberately narrow: the one unobserved link, an action-7 edge setting
+  `DAT_0067ec28` with the enable genuinely satisfied rather than poked. Written up as a
+  COMPLETENESS item, not a correctness doubt.
+- **ID COLLISION, multi-session:** `U-9059` was allocated twice -- by me and by the render-lane
+  session, which inserts at the TOP of the Active section while this lane inserts at the bottom,
+  so neither write saw the other. **Checking max-id before writing is not sufficient; re-check
+  for duplicates AFTER.**
+- Also flagged, pre-existing and untouched: ~130 rows in `UNCERTAINTIES.md` with a non-8 pipe
+  count and 6 duplicated ids. A repair pass needs its own session.
+
+### Method note worth carrying
+
+Five wrong conclusions this session, every one from an observable that was **missing,
+self-written, or silently conditional**: `kEffectsClock` (written by my own hook), a 1.0x speed
+baseline (bit-identical to stock by design), the race clock (gated on `DAT_0063ba8c == 7`), the
+menu cursor (no `sel` observable), and the "1.45x ceiling" (noise from the frozen clock, for
+which I had invented a plausible mechanism). In four of the five the fix was to find an
+observable the instrumentation does not touch. In the fifth -- today's -- the fix was to stop
+driving the game and read the data table.
+
 ## Open, ranked by cost
 
-1. **`DAT_0063ba8c`** — the game-state enum that freezes the race clock at 7 (and 10..11). Known
-   mechanically, not named. Cheap, and it would firm up every clock-based measurement.
+1. **The frozen-car condition** — cars at `vel=[0,0,0]` in a live phase-3 race while ticks
+   run at 60/s. Blocks every in-race probe. Not yet filed as a row; should be.
+2. **`DAT_0063ba8c`** — the game-state enum that freezes the race clock at 7 (and 10..11).
+   Known mechanically, not named. Cheap, and it firms up every clock-based measurement.
 2. **U-9059** — confirm action 7 actually fires. Enter Race Results by finishing a race, fire
    action 7, watch `DAT_0067ea08`. Upgrades action 7 from image+code to observed.
 3. **U-9053-adjacent, U-9054** — what panel state `2` causes; decompile one paired tick function
@@ -211,38 +309,51 @@ both shipped and verified. What remains are the two genuinely large ones (resiza
 ## Paste this
 
 ```
-Continue the Mashed work from 2026-08-30. Read
-re/analysis/NEXT_SESSION_20260831.md first. The five-mod status table in it is
-the map; re/analysis/structs/contcfg_record.md has the input-lane detail.
+Continue the Mashed work. Read re/analysis/NEXT_SESSION_20260831.md first --
+BOTH halves, the 08-30 one and the "SECOND HALF -- 2026-08-31" section. The
+five-mod status table is the map; re/analysis/structs/contcfg_record.md has the
+input-lane detail.
 
 DONE and verified: all 13 contcfg actions named; key rebinding (re/tools/
 contcfg_ui.py, passed verify_rebind.py 3/3); game speed (MASHED_SPEED, linear
-0.5x..3.0x by executed-tick count).
+0.5x..3.0x by executed-tick count). U-9049/U-9050/U-9053/U-9060 resolved.
 
 Pick ONE:
   A) Power-up runtime dial -- per-track already works via POWERUPS*.LUA; the
      runtime knob needs the pod pool timer at 0x0068b198 +0x1c.
   B) Resizable window -- backbuffer and the getters at 0x00498bc0/0x00498bd0
      must move ATOMICALLY or you hit the null-raster AV at 0x004c7785.
-  C) Small and useful: name DAT_0063ba8c (the state enum that freezes the race
-     clock at 7 / 10..11), or close U-9059 (confirm action 7 actually fires on a
-     naturally-entered Race Results).
+  C) The frozen-car condition: all four car records read vel=[0,0,0] in a live
+     phase-3 race (incl. the AI car) while ticks run at 60/s. PRE-EXISTING --
+     scenario_launch.py shows it too. Unblocks every in-race probe if solved.
+  D) Small: close U-9061 (find which guard bails on a forced push of screen 5 --
+     the ff09 test at 0x0043e3ec, or iVar8 != 0 && DAT_0067eab0 == 0 -- then
+     fire action 7; needs no race), or name DAT_0063ba8c.
 
 HARD-WON GOTCHAS, do not rediscover these:
+- Which actions a screen accepts is DATA: ff12 enables action 6, ff33 enables
+  action 7, in the screen record. Use re/tools/screen_opcodes.py instead of
+  navigating to find out.
+- NO frontend menu tick runs during a race (all 0/s); they run at 60/s only when
+  PAUSED. In-race action probing cannot work.
+- The menu CURSOR is at 0x0067ed80 + idx*0x40. depth/gate do NOT move when it
+  does. Modals move none of the three -- screenshot them.
 - mashed_re_dev.asi SILENTLY disables MASHED_SPEED (RH_ScopedInstall of
-  FpsDiscretise at 0x00493480 replaces the quantizer). Use
-  MASHED_RE_NO_AUTO_HOOK=1.
+  FpsDiscretise at 0x00493480). Use MASHED_RE_NO_AUTO_HOOK=1.
 - A 1.0x speed run is NOT a control: at 60fps decoupled == stock bit-identically.
-- The race clock DAT_007f0ff4 FREEZES when DAT_0063ba8c == 7. Never fit a rate
-  over a fixed window without gating on it; speed_probe.py does.
-- Never pixel-diff a frontend screen -- the background is animated and reports
-  "changed" for confirmed no-ops. Use footer crops and state globals.
+- The race clock DAT_007f0ff4 FREEZES when DAT_0063ba8c == 7. Gate on it before
+  fitting any rate; speed_probe.py does. Above 1.0x prefer counting real ticks.
+- Player 0 sits on a JOYPAD slot on this machine (Keychron enumerates as two
+  GAMECTRL devices; keyboard is slot 2). Keyboard-bitmap injection drives a
+  DIFFERENT slot -- use the FUN_00497310 return-override for slot-0 probing.
+- Never pixel-diff a frontend screen; the background is animated.
 - Ghidra MCP not connected; analyzeHeadless works via
   re/tools/ghidra_scripts/{DecompBatch,XrefRange}.java (RVAs in a FILE, cmd.exe
-  eats commas). re/frida/force_screen.py force-pushes any frontend screen and can
-  drive into a race. Use MASHED_ORIG_BBDUMP_REQ for screenshots.
-- Another session edits mashedmod/src and the trackers. Check git status, and
-  insert CHANGELOG entries with a CRLF-EXACT marker match ("<!-- ENTRIES -->"
-  appears 3 times, twice in prose).
+  eats commas). Use MASHED_ORIG_BBDUMP_REQ for screenshots.
+- Another session shares this working tree AND the trackers, and inserts at the
+  TOP of UNCERTAINTIES.md while this lane inserts at the bottom. U-9059 got
+  allocated twice. Re-check for duplicate ids AFTER writing, and insert CHANGELOG
+  entries with a CRLF-EXACT marker match.
 ```
+
 
