@@ -118,9 +118,56 @@ the fold provably does not touch them). Carried over from the broadcheck, filed 
 
 They dominate any City/Dump whole-frame parity number regardless of the geomlight decision.
 
+## Exposure of the default flip on the other water tracks — measured, with a caveat
+
+Defaulting the fold ON (`MASHED_LIBRW_AMBFOLD_SEA=0` is now the off-switch) exposes five
+tracks that carry water DFFs but have **no pose-matched original reference**: Forest,
+sands, Storm, SuperG, Warzone. `rouabout` is included because the broadcheck left it
+"suspect, not judged". `run_waterexposure.ps1` runs both arms on each, standalone-only,
+natural camera — this cannot deliver a parity verdict, only a magnitude.
+
+**All six: fold mask 0.00%. The flip is inert on every one of them.**
+
+**But the reason matters, and it is not the flattering one.** A 0.00% mask has two
+possible causes: (a) a water asset is in view, the fold fired, and it changed nothing, or
+(b) no water asset is in view, so the fold never ran. Only (a) would license "these
+tracks are safe". `run_exposure_probe.ps1` settles it with the per-clump `water_asset=`
+log: **zero `water_asset=1` clumps on all six tracks.** Cause (b).
+
+The loaded prop sets show why — the water DFFs never reach `BuildClump` at all:
+
+| track | DFFs loaded through the prop path |
+|---|---|
+| Forest | `skydome.dff`, `CamMan.dff` |
+| Storm | `sky.dff`, `CamMan.dff`, `Bush.dff` |
+| SuperG | `CamMan.dff` |
+| Warzone | 20+ props (`SkyDome`, `Wall01-04`, `Tower`, `Hut01`, …) — but no `RIVER.DFF` |
+
+Warzone is the informative row: it loads a full prop set and still no water, so this is
+not simply "the demo loads nothing". Either those tracks' water is authored through the
+world/BSP path (where this fold does not exist) rather than as a prop, or it is not
+reached at these vantages. **Which of the two is not established here**, and it is the
+open question this leaves behind.
+
+So the defensible claim is narrow and stated as such: **the default flip changes nothing
+measurable on these six tracks in these runs, and the mechanism is that no water clump is
+built.** It is NOT "the fold is verified correct on Forest/sands/Storm/SuperG/Warzone" —
+those remain unverified, exactly as they were before the flip. The flip cannot regress
+them, because on this evidence it cannot touch them.
+
+`sands/foldON` timed out on the first sweep (180 s) and succeeded on the probe re-run; the
+`sands` mask number comes from the completed pair.
+
 ## Status
 
-The scope key is no longer the blocker. What remains is a defaulting decision: the refined
-fold is still behind `MASHED_LIBRW_AMBFOLD_SEA=1`, so the shipping default still leaves the
-Arctic sea at luma ~9 against the original's ~28. Making it the default is what turns this
-measurement into a shipped fix.
+The scope key is no longer the blocker, and the fold is **ON by default** as of
+2026-08-31 (`MASHED_LIBRW_AMBFOLD_SEA=0` restores the unfolded behaviour for A/B). The
+Arctic sea now ships at 29.8 against an original 28.0 instead of 9.1.
+
+Open, and deliberately not claimed as closed:
+
+1. Whether the other water tracks' surfaces are authored as world/BSP geometry rather than
+   props (see the exposure section). If they are, this fold reaches only prop water and a
+   world-path analogue may be needed. No evidence either way yet.
+2. U-9062 (City road crushed to black) and U-9063 (Dump sky blown white) — filed
+   separately, both proven fold-independent, both dominating their tracks' parity numbers.
