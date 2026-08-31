@@ -200,9 +200,20 @@ idling or reviving dead batch lanes.
   geomON-vs-geomSEA = 0.000 on both, and both frames carry real terrain (sandy canyon /
   snow road) that already matches the original. So the scope key does NOT over-catch their
   terrain. Validated on 4 Bronze-Cup-1 tracks now: TRAINING (win kept), Arctic (sea fixed),
-  EGYPT + NEUSTEIN (no-op/safe). Residual: the other 9 `kAreas[]` tracks (need a wider save
-  unlock to reach) are still unchecked — any with a water body would be folded; parent
-  should run the harness across them before shipping broadly.
+  EGYPT + NEUSTEIN (no-op/safe).
+
+  **FULL 13-TRACK CHECK 2026-08-31 (`verify/geomlight_broadcheck/RESULT.md`): the scope key
+  `numTexCoordSets<=1` is NOT precise enough to ship.** Wider save unlock (col1=1+col3=2 on
+  all 13 rows extends the challenge list to every track; full index->area map recorded).
+  Standalone geomON-vs-geomSEA sweep + original-reference check: fold is a no-op on 9/13
+  (safe), FIXES Arctic sea, but **OVER-BRIGHTENS non-water prelit props on CITY (green
+  awning/lamppost, orig 73.9 vs geomSEA 148.4) and DUMP (sky sliver, orig 53.5 vs 92.5)**,
+  and ROUNDABOUT fires in some vantages (suspect). Flags alone can't separate water from
+  awning/lamppost/sky (all `numTexCoordSets<=1` non-lit prelit) — the precise fix needs the
+  DFF asset name (LAKE/WATER0x) or a water material/texture signature plumbed to BuildClump.
+  Also filed: separate pre-existing standalone bugs on CITY (black road) and DUMP (white
+  sky), independent of the fold. **Net: no single global fold setting is correct for all
+  tracks with this key; refine the water discriminator before merging geomlight.**
 
 
 ## Done
