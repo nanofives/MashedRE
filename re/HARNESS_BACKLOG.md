@@ -139,6 +139,36 @@ idling or reviving dead batch lanes.
   that with `unlock_all`/`unlock_tracks`: those mod the diffing reference and would make
   every comparison compare modded against modded.
 
+  **UPDATE 2026-08-30 (branch race/nav-champ) — the mode-3 flow was mapped and the
+  blocker is now RESOLVED as a save-state gate, not a nav gap. Arctic is unlock-gated
+  in the reference save; it cannot be captured without progressing/modding the save,
+  which is barred. Full evidence + screenshots: `verify/nav_shots/FINDINGS.md`;
+  discovery tool `re/frida/nav_champ_probe.py`.** Summary:
+
+  - The mode-3 (Challenge Cup) flow DOES traverse: Single Player menu (depth 3,
+    cursor 0 -> `game_mode` DAT_0067e9fc = 3) -> Player Colour (depth 4) ->
+    Challenge Select (depth 5). The stall reported above was because the old recipe
+    set `--mode-sel 3`, which selects **Top Dog/Team (game_mode 6)** — a 2-player
+    branch that stalls at depth 4. Challenge Cup is **cursor 0**, not 3.
+  - Challenge Select shows **only "Angel Peak" unlocked (gold/star) + 3 padlocks**;
+    confirming Angel Peak loads **TRAINING.PIZ**. The other cup entries are locked.
+  - Authoritative: the championship table **DAT_007f0a40** (dumped live from the
+    current save) gates launches at `[FUN_004309b0(mode) + track*0xc]`
+    (FUN_004309b0: mode3->col1, mode10->col11). **Only row 0 is unlocked**
+    (col1=1 and col11=1 on row0; 0 on every other row). Both single-player race
+    modes (Challenge Cup, Quick Battle) therefore reach only row 0 = TRAINING.
+    Time Trial is greyed/LOCKED on this save.
+  - `original/gamesave.bin` (151456 = 0x24FA0 bytes, 2025-09-17, sha bd18788182b23...)
+    is minimal-progress and was left untouched.
+  - Control codes 11/12 (nav_agent.js "up"/"down") were verified to **NOT** move any
+    selection; only confirm (4) and `setsel` (direct cursor write) work. So even the
+    challenge-select cursor cannot be driven by presses today.
+
+  **To capture Arctic later WITHOUT corrupting the reference:** play the Challenge
+  Cup on a SEPARATE copy of gamesave.bin until Arctic's row unlocks, point MASHED at
+  that copy (never `original/gamesave.bin`), then run the capture. No `unlock_*`
+  patch and no live table write.
+
   Until this lands, `race/geomlight` stays unmerged. The TRAINING gain is real and
   verified; the Arctic risk is real and unmeasured.
 
