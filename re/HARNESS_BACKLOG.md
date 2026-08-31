@@ -117,30 +117,103 @@ idling or reviving dead batch lanes.
   **no pose-matched original Arctic frame** to say whether that is right. That single
   capture is the whole gate.
 
-  **Probed 2026-08-30, so do not re-probe this part.** `re/frida/race_draw_burst.py`
-  cannot currently reach Arctic on the original side:
+  **RESOLVED 2026-08-31 (branch `race/arctic-cap`).** A pose-matched ORIGINAL Arctic
+  in-race reference was captured. Deliverables in `verify/arctic_ref/`:
+  `orig_arctic.bmp` (confirmed by eye: night storm, rain, harbour, mountain, 4-car
+  light cluster center-frame — an ARCTIC.PIZ in-race frame, not a menu),
+  `orig_cambasis.txt` (12-float same-frame basis), `orig_lens.json`
+  (viewWindow 0.60/0.45, fovy 48.46, near 0.10, far 70, `recip_ok`+`setupfov_ok`),
+  `orig_frame.json`, `orig_track.txt` (ARCTIC, one piz open), plus
+  `orig_arctic.bmp.draw3d.json` (draw_calls 115 / prims 43613 / verts 28406).
 
-  | `--mode-sel` | result |
-  |---|---|
-  | 0 | reaches race, loads **TRAINING.PIZ** |
-  | 1 (default, Quick Battle) | reaches race, loads **TRAINING.PIZ** |
-  | 2 | reaches race, loads **TRAINING.PIZ** |
-  | 3 | **never reaches race** — stalls at `phase=3`, i.e. a deeper screen the nav recipe does not traverse |
+  **How Arctic was reached (resolves U-9059).** Arctic is unlock-gated in
+  `original/gamesave.bin`, so the whole path was to (a) unlock a cup row on a SAVE
+  COPY only and (b) drive the mode-3 Challenge-Cup flow to the right entry:
 
-  `--track-sel` is wired (it writes the cursor at depth 5, after `confirm_to(5,4)`,
-  `race_draw_burst.py:317-322`) but has **no effect** in mode 2: `--track-sel 1` still
-  loaded TRAINING, `--track-sel 3` failed to reach a race at all. So depth 5 is not the
-  track list for these modes, and modes 0/1/2 force TRAINING.
+  1. Unlock: `re/tools/gamesave_edit.py <copy> -o <edited> --rows 0,1,2,3 --set c1=1,c11=1`
+     flips the championship-span launch gates (col1 = mode-3, col11 = mode-10) on the
+     4 Bronze-cup rows. Every ORIGINAL launch was wrapped in
+     `re/tools/run_with_unlocked_save.py <edited> -- <cmd>`, which swaps the save for
+     ONE command and restores + sha-verifies the reference in a finally.
+     `original/gamesave.bin` was **never** hand-edited and is pristine at the end
+     (sha `bd18788182b2343e5203eb98…`, re-checked after the run).
 
-  **What the work actually is:** teach the nav recipe to traverse the mode-3 flow
-  (championship/challenge cup -> cup -> track), which is where a real track choice
-  lives. Note the save state matters — the standalone reports `2/13 tracks unlocked`,
-  so the original's `gamesave.bin` may gate which tracks are reachable. Do NOT solve
-  that with `unlock_all`/`unlock_tracks`: those mod the diffing reference and would make
-  every comparison compare modded against modded.
+  2. Challenge-select index global = **DAT_0067f17c** (NOT the per-depth cursor
+     `0x0067ee80` that `setsel()` writes — writing that had no effect, matching the
+     2026-08-30 negative). With rows 0-3 unlocked the entries become selectable:
+     down (code 12) steps `DAT_0067f17c` 0→1→2→3 and up steps it back, capping at 3,
+     and the on-screen highlight + track preview follow it
+     (`verify/nav_shots/chall_step{0..3}.bmp`). The launch consumes this index as
+     `track` in `(&DAT_007f0a40)[FrontendModeIndex(mode)+track*0xc]`.
 
-  Until this lands, `race/geomlight` stays unmerged. The TRAINING gain is real and
-  verified; the Arctic risk is real and unmeasured.
+  3. **Bronze Cup 1 row/entry → area(.piz) map** (behaviourally confirmed, each entry
+     launched under the unlocked save and the loaded `TRACKS\*.piz` read from
+     `CreateFileA/W`):
+
+     | challenge index (`DAT_0067f17c`) | preview | loaded .piz |
+     |---|---|---|
+     | 0 | dusty canyon (Battle, 1 opp) | **TRAINING.PIZ** |
+     | 1 | desert arena (Battle, 2 opp) | **EGYPT.PIZ** |
+     | 2 | snow (Battle, 3 opp) | **NEUSTEIN.PIZ** |
+     | 3 | night storm / harbour (Race, 3 lap) | **ARCTIC.PIZ** |
+
+  So a `col1=1` span edit on row 3 + navigating the challenge index to 3 is sufficient
+  to reach Arctic — no cup progression, no reference-exe mod. `race_draw_burst.py` gained
+  a `--challenge N` argument that forces the mode-3 flow and reaches entry N by N
+  down-presses; the capture command was:
+  `run_with_unlocked_save.py <edited> -- race_draw_burst.py --challenge 3 --settle 4.0 --out verify/arctic_ref/orig_arctic.bmp`.
+
+  [UNCERTAIN] sub-frame roll drift: the basis is read via Frida one frame before the
+  shim dumps the BMP, and the race camera rolls on a 1024-tick sine
+  (memory `race-camera-rolls-30deg-sine`), so the basis and BMP can differ by ~1 frame
+  of roll. This is the same same-frame method `race_draw_burst.py` uses for TRAINING;
+  the drift is small but not zero.
+
+  `race/geomlight` can now be gated on the Arctic-sea comparison against this reference.
+
+  **geomlight GATE RESULT 2026-08-31 (`verify/arctic_ref/geomlight_cmp/RESULT.md`): FAIL —
+  do NOT merge `race/geomlight` unscoped.** Ran its `mashed_re.exe` on Arctic
+  (`MASHED_TRACK_SEL=0`) with three transplanted original bases, fold-removed (default) vs
+  fold-restored (`MASHED_LIBRW_AMBFOLD=1`). Over the fold-affected `0x1000f` sea mask on
+  two sea-dominant vantages: original sea luma 27.9 / 32.5; fold-removed (geomlight) 9.1 /
+  9.8 (Δ18-23, crushed to near-black); fold-restored 30.1 / 27.7 (Δ2-5, matches). Visual:
+  `sea_search/s8_3way_orig_geomON_geomOFF.png`. The blanket fold removal is right for the
+  road (`0x2008b`, TRAINING's win) but darkens the Arctic sea (`0x1000f`) far below the
+  original. Path: scope the fold by geometry class (drop for `0x2008b`, keep for
+  `0x1000f`) and re-run. [NOTE] the START-GRID frame gave a false "supports shipping" read
+  (sea only 2.5% of view, occluded by the foreground player car); always judge this on a
+  sea-dominant pose.
+
+  **CLASS-SCOPED FOLD PROTOTYPED + VALIDATED 2026-08-31
+  (`verify/arctic_ref/geomlight_cmp/PROTOTYPE.md`, patch
+  `verify/arctic_ref/geomlight_scoped_fold.patch`).** New `MASHED_LIBRW_AMBFOLD_SEA=1`
+  folds ambient into the water class only (`numTexCoordSets<=1` = `0x1000f`), leaving the
+  road (`0x2008b`) unfolded. Results: TRAINING trON 15.45 / trSEA 15.45 (geomON-vs-geomSEA
+  = 0.000, byte-identical — road untouched, win kept); Arctic sea geomSEA luma 30.1/27.7 =
+  fold-all = matches original (Δ2-5). So the fix keeps the win AND fixes the sea.
+  **Next: parent applies the patch to `race/geomlight`, makes the scoped mode default,
+  re-runs the parity harness on the other cup tracks, then merges.** T-ARCTIC's capture +
+  gate + fix are done; the residual is the merge decision + a broad-track re-check.
+
+  **BROAD-TRACK CHECK 2026-08-31 (`verify/geomlight_broadcheck/RESULT.md`):** the scoped
+  fold is a byte-identical NO-OP on EGYPT (challenge 1) and NEUSTEIN (challenge 2) —
+  geomON-vs-geomSEA = 0.000 on both, and both frames carry real terrain (sandy canyon /
+  snow road) that already matches the original. So the scope key does NOT over-catch their
+  terrain. Validated on 4 Bronze-Cup-1 tracks now: TRAINING (win kept), Arctic (sea fixed),
+  EGYPT + NEUSTEIN (no-op/safe).
+
+  **FULL 13-TRACK CHECK 2026-08-31 (`verify/geomlight_broadcheck/RESULT.md`): the scope key
+  `numTexCoordSets<=1` is NOT precise enough to ship.** Wider save unlock (col1=1+col3=2 on
+  all 13 rows extends the challenge list to every track; full index->area map recorded).
+  Standalone geomON-vs-geomSEA sweep + original-reference check: fold is a no-op on 9/13
+  (safe), FIXES Arctic sea, but **OVER-BRIGHTENS non-water prelit props on CITY (green
+  awning/lamppost, orig 73.9 vs geomSEA 148.4) and DUMP (sky sliver, orig 53.5 vs 92.5)**,
+  and ROUNDABOUT fires in some vantages (suspect). Flags alone can't separate water from
+  awning/lamppost/sky (all `numTexCoordSets<=1` non-lit prelit) — the precise fix needs the
+  DFF asset name (LAKE/WATER0x) or a water material/texture signature plumbed to BuildClump.
+  Also filed: separate pre-existing standalone bugs on CITY (black road) and DUMP (white
+  sky), independent of the fold. **Net: no single global fold setting is correct for all
+  tracks with this key; refine the water discriminator before merging geomlight.**
 
 
 ## Done
