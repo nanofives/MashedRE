@@ -227,6 +227,16 @@ def main():
                          "that to find the N you want, then pass it to reproduce. "
                          "Counterpart on the standalone side is MASHED_TRACK_SEL, "
                          "which indexes kAreas[] in Race/GameFlow.cpp.")
+    ap.add_argument("--challenge", type=int, default=None, metavar="N",
+                    help="Take the Challenge-Cup flow (game_mode 3) instead of "
+                         "Quick Battle and launch challenge-select index N. This "
+                         "forces the depth-3 mode cursor to 0 (Challenge Cup) and "
+                         "reaches entry N at depth 5 by pressing down N times "
+                         "(the real challenge index is DAT_0067f17c, which setsel/ "
+                         "0x0067ee80 does NOT drive — measured race/arctic-cap "
+                         "2026-08-31). Bronze Cup 1 map: 0=TRAINING, 1=EGYPT, "
+                         "2=NEUSTEIN, 3=ARCTIC. Requires cup row N unlocked in the "
+                         "swapped gamesave (run under run_with_unlocked_save.py).")
     args = ap.parse_args()
 
     out_bmp = Path(args.out).resolve()
@@ -313,11 +323,23 @@ def main():
         # (measured) -- so it cannot vary the track, and anything needing a
         # second track (e.g. deciding whether the camera's far plane is a
         # constant or track-derived) has to enter through a different mode.
-        E.setsel(args.mode_sel); time.sleep(0.3)
+        mode_sel = 0 if args.challenge is not None else args.mode_sel
+        E.setsel(mode_sel); time.sleep(0.3)
         confirm_to(4, 4); confirm_to(5, 4)
+        if args.challenge is not None:
+            # Challenge-Cup flow: the depth-5 challenge index is DAT_0067f17c, NOT
+            # the per-depth cursor setsel() writes. Reach index N by real down-
+            # presses; the on-screen highlight + preview follow it (verified with
+            # nav_shots/chall_step{0..3}.bmp on race/arctic-cap). Then fall through
+            # to the shared confirm-to-launch loop below.
+            time.sleep(0.5)
+            for _ in range(args.challenge):
+                E.press(12, 180); time.sleep(0.5)
+            sel = E.snap([0x0067f17c])[0]
+            print(f"  challenge index 0x67f17c={sel} (wanted {args.challenge})")
         # Track select. setsel() writes the cursor at the CURRENT depth, so this
         # must happen after confirm_to(5) and before the confirm that loads.
-        if args.track_sel is not None:
+        elif args.track_sel is not None:
             E.setsel(args.track_sel); time.sleep(0.3)
             print(f"  track-sel cursor set to {args.track_sel} at depth={E.depth()}")
         press(4); time.sleep(1.5)

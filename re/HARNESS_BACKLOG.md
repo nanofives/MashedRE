@@ -117,30 +117,59 @@ idling or reviving dead batch lanes.
   **no pose-matched original Arctic frame** to say whether that is right. That single
   capture is the whole gate.
 
-  **Probed 2026-08-30, so do not re-probe this part.** `re/frida/race_draw_burst.py`
-  cannot currently reach Arctic on the original side:
+  **RESOLVED 2026-08-31 (branch `race/arctic-cap`).** A pose-matched ORIGINAL Arctic
+  in-race reference was captured. Deliverables in `verify/arctic_ref/`:
+  `orig_arctic.bmp` (confirmed by eye: night storm, rain, harbour, mountain, 4-car
+  light cluster center-frame — an ARCTIC.PIZ in-race frame, not a menu),
+  `orig_cambasis.txt` (12-float same-frame basis), `orig_lens.json`
+  (viewWindow 0.60/0.45, fovy 48.46, near 0.10, far 70, `recip_ok`+`setupfov_ok`),
+  `orig_frame.json`, `orig_track.txt` (ARCTIC, one piz open), plus
+  `orig_arctic.bmp.draw3d.json` (draw_calls 115 / prims 43613 / verts 28406).
 
-  | `--mode-sel` | result |
-  |---|---|
-  | 0 | reaches race, loads **TRAINING.PIZ** |
-  | 1 (default, Quick Battle) | reaches race, loads **TRAINING.PIZ** |
-  | 2 | reaches race, loads **TRAINING.PIZ** |
-  | 3 | **never reaches race** — stalls at `phase=3`, i.e. a deeper screen the nav recipe does not traverse |
+  **How Arctic was reached (resolves U-9059).** Arctic is unlock-gated in
+  `original/gamesave.bin`, so the whole path was to (a) unlock a cup row on a SAVE
+  COPY only and (b) drive the mode-3 Challenge-Cup flow to the right entry:
 
-  `--track-sel` is wired (it writes the cursor at depth 5, after `confirm_to(5,4)`,
-  `race_draw_burst.py:317-322`) but has **no effect** in mode 2: `--track-sel 1` still
-  loaded TRAINING, `--track-sel 3` failed to reach a race at all. So depth 5 is not the
-  track list for these modes, and modes 0/1/2 force TRAINING.
+  1. Unlock: `re/tools/gamesave_edit.py <copy> -o <edited> --rows 0,1,2,3 --set c1=1,c11=1`
+     flips the championship-span launch gates (col1 = mode-3, col11 = mode-10) on the
+     4 Bronze-cup rows. Every ORIGINAL launch was wrapped in
+     `re/tools/run_with_unlocked_save.py <edited> -- <cmd>`, which swaps the save for
+     ONE command and restores + sha-verifies the reference in a finally.
+     `original/gamesave.bin` was **never** hand-edited and is pristine at the end
+     (sha `bd18788182b2343e5203eb98…`, re-checked after the run).
 
-  **What the work actually is:** teach the nav recipe to traverse the mode-3 flow
-  (championship/challenge cup -> cup -> track), which is where a real track choice
-  lives. Note the save state matters — the standalone reports `2/13 tracks unlocked`,
-  so the original's `gamesave.bin` may gate which tracks are reachable. Do NOT solve
-  that with `unlock_all`/`unlock_tracks`: those mod the diffing reference and would make
-  every comparison compare modded against modded.
+  2. Challenge-select index global = **DAT_0067f17c** (NOT the per-depth cursor
+     `0x0067ee80` that `setsel()` writes — writing that had no effect, matching the
+     2026-08-30 negative). With rows 0-3 unlocked the entries become selectable:
+     down (code 12) steps `DAT_0067f17c` 0→1→2→3 and up steps it back, capping at 3,
+     and the on-screen highlight + track preview follow it
+     (`verify/nav_shots/chall_step{0..3}.bmp`). The launch consumes this index as
+     `track` in `(&DAT_007f0a40)[FrontendModeIndex(mode)+track*0xc]`.
 
-  Until this lands, `race/geomlight` stays unmerged. The TRAINING gain is real and
-  verified; the Arctic risk is real and unmeasured.
+  3. **Bronze Cup 1 row/entry → area(.piz) map** (behaviourally confirmed, each entry
+     launched under the unlocked save and the loaded `TRACKS\*.piz` read from
+     `CreateFileA/W`):
+
+     | challenge index (`DAT_0067f17c`) | preview | loaded .piz |
+     |---|---|---|
+     | 0 | dusty canyon (Battle, 1 opp) | **TRAINING.PIZ** |
+     | 1 | desert arena (Battle, 2 opp) | **EGYPT.PIZ** |
+     | 2 | snow (Battle, 3 opp) | **NEUSTEIN.PIZ** |
+     | 3 | night storm / harbour (Race, 3 lap) | **ARCTIC.PIZ** |
+
+  So a `col1=1` span edit on row 3 + navigating the challenge index to 3 is sufficient
+  to reach Arctic — no cup progression, no reference-exe mod. `race_draw_burst.py` gained
+  a `--challenge N` argument that forces the mode-3 flow and reaches entry N by N
+  down-presses; the capture command was:
+  `run_with_unlocked_save.py <edited> -- race_draw_burst.py --challenge 3 --settle 4.0 --out verify/arctic_ref/orig_arctic.bmp`.
+
+  [UNCERTAIN] sub-frame roll drift: the basis is read via Frida one frame before the
+  shim dumps the BMP, and the race camera rolls on a 1024-tick sine
+  (memory `race-camera-rolls-30deg-sine`), so the basis and BMP can differ by ~1 frame
+  of roll. This is the same same-frame method `race_draw_burst.py` uses for TRAINING;
+  the drift is small but not zero.
+
+  `race/geomlight` can now be gated on the Arctic-sea comparison against this reference.
 
 
 ## Done
