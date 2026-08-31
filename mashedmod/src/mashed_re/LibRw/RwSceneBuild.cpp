@@ -436,11 +436,17 @@ static bool AmbientFoldEnabled() {
 // original keeps the road DARK (no ambient -> TRAINING 18.47->15.45 came from
 // dropping the fold there) but the SEA BRIGHT (sea luma ~28-33; fold-off crushes it
 // to ~9). So the correct behaviour is scoped: fold water, not road.
-// MASHED_LIBRW_AMBFOLD_SEA=1 selects the scoped fold.
+//
+// DEFAULT ON since 2026-08-31, once the scope key became a real water discriminator
+// (ModelIsWaterAsset below). Measured against the pose-matched originals: the Arctic
+// sea goes 9.1 -> 29.8 against an original 28.0, and City / Dump / TRAINING are EXACT
+// no-ops (fold mask 0.00%), so enabling it costs nothing on the tracks the flags-only
+// prototype broke. verify/geomlight_waterfold/RESULT.md.
+// MASHED_LIBRW_AMBFOLD_SEA=0 restores the unfolded behaviour for A/B.
 static bool AmbientFoldScopedSea() {
     static const bool on = [] {
         const char* e = std::getenv("MASHED_LIBRW_AMBFOLD_SEA");
-        return e && e[0] == '1' && e[1] == '\0';
+        return !(e && e[0] == '0' && e[1] == '\0');   // default ON; only "0" disables
     }();
     return on;
 }
@@ -562,8 +568,9 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
         // lightingCB_Shader takes the setAmbient(black) branch).
         std::vector<std::uint32_t> prelit_amb;
         const std::vector<std::uint32_t>* prelit_src = &b.prelit;
-        // Fold gate: blanket (AMBFOLD, road+water) OR water-scoped (AMBFOLD_SEA,
-        // water asset AND water flag class). Default (neither) skips the fold.
+        // Fold gate: blanket (AMBFOLD=1, road+water) OR water-scoped (water ASSET
+        // and water flag class), the latter being the DEFAULT. AMBFOLD_SEA=0 turns
+        // the water fold off, which is the "no fold at all" arm.
         const bool fold_this =
             ambient && !b.prelit.empty() && !b.lit &&
             (AmbientFoldEnabled() ||
