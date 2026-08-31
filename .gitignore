@@ -139,3 +139,6 @@ verify/menu_crash_pc44/*.dmp
 verify/**/*.bmp
 verify/**/*.msd
 verify/**/*.png
+
+# transient reference-save backup (never commit)
+original/gamesave.bin.refbak_*
