@@ -195,6 +195,15 @@ idling or reviving dead batch lanes.
   re-runs the parity harness on the other cup tracks, then merges.** T-ARCTIC's capture +
   gate + fix are done; the residual is the merge decision + a broad-track re-check.
 
+  **BROAD-TRACK CHECK 2026-08-31 (`verify/geomlight_broadcheck/RESULT.md`):** the scoped
+  fold is a byte-identical NO-OP on EGYPT (challenge 1) and NEUSTEIN (challenge 2) —
+  geomON-vs-geomSEA = 0.000 on both, and both frames carry real terrain (sandy canyon /
+  snow road) that already matches the original. So the scope key does NOT over-catch their
+  terrain. Validated on 4 Bronze-Cup-1 tracks now: TRAINING (win kept), Arctic (sea fixed),
+  EGYPT + NEUSTEIN (no-op/safe). Residual: the other 9 `kAreas[]` tracks (need a wider save
+  unlock to reach) are still unchecked — any with a water body would be folded; parent
+  should run the harness across them before shipping broadly.
+
 
 ## Done
 
