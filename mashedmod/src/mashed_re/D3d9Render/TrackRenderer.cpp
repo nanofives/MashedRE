@@ -1380,6 +1380,12 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             if (!db) return false;
             Track::DffModel m;
             if (!m.Parse(db, dl)) return false;
+            // [geomlight water-scope 2026-08-31] Parse() gets only a blob, so the
+            // asset name has to be attached here -- this is the one place that
+            // knows it. RwSceneBuild::BuildClump uses it to scope the ambient fold
+            // to actual water surfaces (SEA/WATER/LAKE/RIVER); the RW geometry
+            // flags alone also match awnings, lampposts and skydomes.
+            std::snprintf(m.source_name, sizeof(m.source_name), "%s", dff_name);
             BuildDffBatches(dev, m, dicts, &p->batches, &p->textures, lt);
         // D-S3-6 probe: what does the D3D9 bake produce for vertex 0 of this
         // prop, and was an AtomicLight applied? Compare against the raw prelit

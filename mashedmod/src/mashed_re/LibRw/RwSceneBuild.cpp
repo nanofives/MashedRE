@@ -430,10 +430,69 @@ static bool AmbientFoldEnabled() {
     return on;
 }
 
+// [geomlight class-scope 2026-08-31] The blanket fold (AMBFOLD=1) restores ambient
+// for BOTH the road (ROAD.DFF 0x2008b) and the water (LAKE/WATER0x.DFF 0x1000f).
+// Measured against the pose-matched Arctic reference (verify/arctic_ref): the
+// original keeps the road DARK (no ambient -> TRAINING 18.47->15.45 came from
+// dropping the fold there) but the SEA BRIGHT (sea luma ~28-33; fold-off crushes it
+// to ~9). So the correct behaviour is scoped: fold water, not road.
+// MASHED_LIBRW_AMBFOLD_SEA=1 selects the scoped fold.
+static bool AmbientFoldScopedSea() {
+    static const bool on = [] {
+        const char* e = std::getenv("MASHED_LIBRW_AMBFOLD_SEA");
+        return e && e[0] == '1' && e[1] == '\0';
+    }();
+    return on;
+}
+
+// The geometry-flag half of the scope key: water carries no rpGEOMETRYLIGHT and
+// one texcoord set (0x1000f, bits 16-23 == 1); the road carries two (0x2008b).
+static bool BatchIsWaterClass(std::uint32_t geo_flags) {
+    return ((geo_flags >> 16) & 0xFFu) <= 1u;   // numTexCoordSets<=1
+}
+
+// [geomlight water-scope 2026-08-31] The ASSET-NAME half of the scope key, and the
+// reason this exists: the flag half alone is NOT a water discriminator. The broad
+// 13-track check (verify/geomlight_broadcheck/RESULT.md) found `numTexCoordSets<=1
+// && !lit && prelit` is also satisfied by a green awning and a lamppost on City
+// and by a skydome sliver on Dump, so the scoped fold over-brightened those props
+// (City orig 73.9 -> geomSEA 148.4; Dump orig 53.5 -> 92.5) while correctly fixing
+// the Arctic sea. Water surfaces live in single-purpose DFFs across all 13 tracks
+// (piz listings, 2026-08-31):
+//   Arctic SEA.DFF | City WATER.DFF | Forest WATER.DFF WATERFALL.DFF
+//   sands WATER.DFF | Storm WATER.DFF | SuperG SEA.DFF
+//   training LAKE.DFF WATER02.DFF WATER03.DFF | Warzone RIVER.DFF
+//   Egypt/Highway/Neustein/rouabout/dump: none
+// so the name is a sound key. MIST.DFF (Arctic, Storm) is deliberately NOT matched:
+// it is a fog billboard, not a water surface, and folding ambient into it is the
+// same additive over-bright defect. The two halves are ANDed, which makes this
+// scope strictly NARROWER than the flags-only prototype -- every track the
+// prototype was a no-op on stays a no-op.
+static bool ModelIsWaterAsset(const char* name) {
+    if (!name || !name[0]) return false;         // world path / car model
+    char up[64];
+    std::size_t n = 0;
+    for (; n + 1 < sizeof(up) && name[n]; ++n) {
+        const char c = name[n];
+        up[n] = (c >= 'a' && c <= 'z') ? static_cast<char>(c - 'a' + 'A') : c;
+    }
+    up[n] = '\0';
+    // Prefix match, not substring: the basename of a water asset always STARTS
+    // with the class word (SEA/WATER/LAKE/RIVER). A substring test would drag in
+    // anything merely containing them.
+    return std::strncmp(up, "SEA",   3) == 0 ||
+           std::strncmp(up, "WATER", 5) == 0 ||
+           std::strncmp(up, "LAKE",  4) == 0 ||
+           std::strncmp(up, "RIVER", 5) == 0;
+}
+
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  std::uint32_t ambient,
                  std::vector<std::uint32_t>* out_atomic_mat) {
     if (out_atomic_mat) out_atomic_mat->clear();
+    // [geomlight water-scope] Model-level half of the ambient-fold scope key.
+    // Evaluated once here, not per batch -- it depends only on the asset name.
+    const bool water_asset = ModelIsWaterAsset(model.source_name);
     std::vector<rw::Material*> mats;
     int named = 0, resolved = 0;
     BuildMaterials(model.materials, tex, mats, &named, &resolved);
@@ -445,8 +504,13 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
     {
         static int s_clump_no = 0;
         const int id = s_clump_no++;
-        SLog("clump[%d]: mats=%zu named=%d resolved=%d batches=%zu",
-             id, model.materials.size(), named, resolved, model.batches.size());
+        // [geomlight water-scope] name + water_asset are logged so a capture can
+        // NAME the asset the fold fired on instead of inferring it from a mask.
+        SLog("clump[%d]: dff='%s' water_asset=%d mats=%zu named=%d resolved=%d "
+             "batches=%zu",
+             id, model.source_name[0] ? model.source_name : "(unnamed)",
+             (int)water_asset, model.materials.size(), named, resolved,
+             model.batches.size());
         for (std::size_t i = 0; i < model.materials.size(); ++i) {
             const auto& m = model.materials[i];
             const bool has_tex = m.tex_name[0] != 0;
@@ -498,7 +562,14 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
         // lightingCB_Shader takes the setAmbient(black) branch).
         std::vector<std::uint32_t> prelit_amb;
         const std::vector<std::uint32_t>* prelit_src = &b.prelit;
-        if (AmbientFoldEnabled() && ambient && !b.prelit.empty() && !b.lit) {
+        // Fold gate: blanket (AMBFOLD, road+water) OR water-scoped (AMBFOLD_SEA,
+        // water asset AND water flag class). Default (neither) skips the fold.
+        const bool fold_this =
+            ambient && !b.prelit.empty() && !b.lit &&
+            (AmbientFoldEnabled() ||
+             (AmbientFoldScopedSea() && water_asset &&
+              BatchIsWaterClass(b.geo_flags)));
+        if (fold_this) {
             // CHANNEL ORDER, and it bit once. `ambient` (amb_world_) is
             // 0x00RRGGBB, but DffModel prelit is RW-native RGBA bytes, i.e.
             // 0xAABBGGRR -- FillVertexData below reads red from the LOW byte and

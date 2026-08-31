@@ -169,6 +169,7 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
         std::uint32_t nmats = 0;
         bool lit = false;                    // WS-E s2: rpGEOMETRYLIGHT (0x20)
         bool modmat = false;                 // WS-E s2: MODULATEMATERIALCOLOR(0x40)
+        std::uint32_t flags = 0;             // geomlight class-scope: raw RW format dword
     };
     std::vector<Geo> geos;
     std::size_t q = gst.payload + gst.size;
@@ -185,6 +186,7 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
         Geo geo;
         geo.lit    = (flags & 0x20u) != 0;   // rpGEOMETRYLIGHT
         geo.modmat = (flags & 0x40u) != 0;   // rpGEOMETRYMODULATEMATERIALCOLOR
+        geo.flags  = flags;                  // geomlight class-scope: keep raw format
         if (!(flags & 0x01000000u)) {  // !NATIVE
             if (flags & 0x08u) {       // PRELIT
                 geo.prelit.resize(static_cast<std::size_t>(nverts));
@@ -345,6 +347,7 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                 b.atomic = found_atomics - 1;
                 b.lit          = geo.lit && have_n;   // WS-E s2
                 b.modulate_mat = geo.modmat;          // WS-E s2
+                b.geo_flags    = geo.flags;           // geomlight class-scope
                 std::memcpy(b.abox, abox, sizeof(abox));
                 for (std::size_t i = 0; i < geo.tris.size() / 4; ++i) {
                     if (geo.nmats && geo.tris[i * 4] != mi) continue;
