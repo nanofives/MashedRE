@@ -171,6 +171,19 @@ idling or reviving dead batch lanes.
 
   `race/geomlight` can now be gated on the Arctic-sea comparison against this reference.
 
+  **geomlight GATE RESULT 2026-08-31 (`verify/arctic_ref/geomlight_cmp/RESULT.md`): FAIL —
+  do NOT merge `race/geomlight` unscoped.** Ran its `mashed_re.exe` on Arctic
+  (`MASHED_TRACK_SEL=0`) with three transplanted original bases, fold-removed (default) vs
+  fold-restored (`MASHED_LIBRW_AMBFOLD=1`). Over the fold-affected `0x1000f` sea mask on
+  two sea-dominant vantages: original sea luma 27.9 / 32.5; fold-removed (geomlight) 9.1 /
+  9.8 (Δ18-23, crushed to near-black); fold-restored 30.1 / 27.7 (Δ2-5, matches). Visual:
+  `sea_search/s8_3way_orig_geomON_geomOFF.png`. The blanket fold removal is right for the
+  road (`0x2008b`, TRAINING's win) but darkens the Arctic sea (`0x1000f`) far below the
+  original. Path: scope the fold by geometry class (drop for `0x2008b`, keep for
+  `0x1000f`) and re-run. [NOTE] the START-GRID frame gave a false "supports shipping" read
+  (sea only 2.5% of view, occluded by the foreground player car); always judge this on a
+  sea-dominant pose.
+
 
 ## Done
 

@@ -1,74 +1,81 @@
 # geomlight vs the Arctic reference — result (2026-08-31, branch race/arctic-cap)
 
-**Question (T-ARCTIC gate):** `race/geomlight` removes a non-RW manual prelit ambient
-fold (RwSceneBuild.cpp:479-500). It helps TRAINING (18.47→15.45) but darkens the Arctic
-sea (prelit class 0x1000f). With no pose-matched Arctic reference the ship decision was
-blocked. Now there is one (`../orig_arctic.bmp`). This is that diff.
+**VERDICT: geomlight over-darkens the Arctic sea. Do NOT merge it unscoped.**
+The feared regression is real. On a sea-dominant pose-matched Arctic frame, removing the
+prelit ambient fold crushes the sea/dock surface (prelit class `0x1000f`) to luma ~9-10,
+while the original renders it bright (~28-33); the fold-RESTORED baseline matches the
+original within ~2-5. The fold fix must be scoped (keep the fold for `0x1000f`, drop it
+for the road `0x2008b`) before `race/geomlight` can ship.
+
+> Supersedes the first cut of this file (commit ef4a21e0), which read "supports
+> shipping" off the START-GRID frame. That was WRONG: on the grid frame the sea is only
+> 2.5% of the view and is occluded by the standalone's foreground player car, so the
+> luma there (orig 30.5 / geomON 33.5 / geomOFF 37.3) accidentally favoured geomON. The
+> sea-dominant frames below (56-69% sea) are authoritative and reverse it.
 
 ## Setup
 
-Standalone = `.worktrees/race-geomlight/mashedmod/build/mashed_re.exe` (branch
-`race/geomlight` @ 984bca34, build 2026-08-30, clean). Driven into the Arctic race demo
-with the ORIGINAL's transplanted 12-float camera basis:
+Standalone = `.worktrees/race-geomlight/mashedmod/build/mashed_re.exe` (`race/geomlight`
+@ 984bca34). Driven into the Arctic race demo with an ORIGINAL 12-float camera basis
+transplanted via `MASHED_CAM_POSE` (so the standalone renders the same Arctic world from
+the same vantage; the sea is static geometry, so basis-match = same sea in view):
 
 ```
-MASHED_ROOT=<main repo>  MASHED_RACE_DEMO=1 MASHED_GOTO=6 MASHED_DETERMINISTIC=1
+MASHED_ROOT=<main repo> MASHED_RACE_DEMO=1 MASHED_GOTO=6 MASHED_DETERMINISTIC=1
 MASHED_TRACK_SEL=0   # 0 = Arctic in kAreas[]
-MASHED_CAM_POSE=-25.52725,4.55718,39.87078,-0.87753,0.47719,-0.04718,0.47952,0.87327,-0.08634,-0.00000,-0.09839,-0.99515
+MASHED_CAM_POSE=<basis from the matching original capture>
+# geomON  = default (fold removed);  geomOFF = MASHED_LIBRW_AMBFOLD=1 (fold restored)
 ```
 
-- **geomON** (candidate, fold removed = default): `geomON/race1/01_grid.bmp`
-- **geomOFF** (baseline, fold restored via `MASHED_LIBRW_AMBFOLD=1`): `geomOFF/race1/01_grid.bmp`
+Three original Arctic vantages were captured (`race_draw_burst.py --challenge 3 --settle
+{4,8,14}`, each wrapped in `run_with_unlocked_save.py`): the start grid (`orig_arctic.bmp`)
+and two mid-race dock views (`sea_search/s8`, `sea_search/s14`).
 
-Compared against `../orig_arctic.bmp` with `imgdiff.py --grid 8x6`.
+## The sea signal — luma over the fold-affected mask (authoritative)
 
-## Whole-frame diff vs the Arctic reference
+The fold toggle changes ONLY the `0x1000f` prelit surface, so `mask = |geomON-geomOFF|>6`
+IS the sea/dock. Mean luma over that mask, all three builds:
+
+| frame | sea mask | original | geomON (fold off) | geomOFF (fold on) |
+|---|---|---|---|---|
+| grid (`orig_arctic.bmp`) | 2.5% | 30.5 | 33.5 (Δ3.0) | 37.3 (Δ6.8) |
+| **s8** | **68.7%** | **27.9** | **9.1 (Δ18.8)** | **30.1 (Δ2.2)** |
+| **s14** | **56.5%** | **32.5** | **9.8 (Δ22.7)** | **27.7 (Δ4.8)** |
+
+On the two sea-dominant frames the original sea is bright (28-33) and:
+- **geomON (the geomlight candidate) is 18-23 luma too dark** — it crushes the sea to ~9.
+- **geomOFF (fold restored) matches the original** within 2-5 luma.
+
+Confirmed by eye: `sea_search/s8_3way_orig_geomON_geomOFF.png` — orig = wet grey-brown
+dock with reflections; geomON = near-black; geomOFF = wet blue-grey dock, matches orig.
+
+## Whole-frame 8x6 imgdiff vs the grid reference (for completeness)
 
 | build | mean abs | over threshold 16 |
 |---|---|---|
-| geomON (fold removed) | 15.19 | 34.64% |
-| geomOFF (fold restored) | 15.11 | 34.86% |
+| geomON | 15.19 | 34.64% |
+| geomOFF | 15.11 | 34.86% |
 
-Near-tie (Δ0.08 mean), both ~parity with TRAINING's 15.45. The AMBFOLD toggle changes
-only a localized lower-center patch (geomON-vs-geomOFF = 0.81 mean / 2.51% of pixels, max
-cell 9.3) — the prelit sea/road surface. The whole-frame number is **confounded**: HUD
-player-squares, the countdown digit "2", and the foreground player car all render in the
-standalone but not in the original reference, and there is sub-frame roll drift. Those
-pollute exactly the cells the fold touches, so the 15.19-vs-15.11 tie is NOT a clean sea
-measurement.
+Near-tie on the grid frame ONLY because its sea is tiny and the frame is confounded by
+HUD player-squares, the countdown digit, the foreground player car, and sub-frame roll
+drift. Not a sea measurement — see the luma table above.
 
-## Isolated prelit sea/road patch — mean luma (the clean signal)
+## Recommendation
 
-Patch = box (240,240)-(500,480), the region the AMBFOLD toggle actually changes:
-
-| | mean luma | Δ from original |
-|---|---|---|
-| **original** | **30.5** | — |
-| geomON (fold removed) | 33.5 | **3.0** |
-| geomOFF (fold restored) | 37.3 | 6.8 |
-
-The original's sea/road surface is **darker** than both standalone builds, and removing
-the fold moves the standalone **toward** the original (33.5 vs 37.3). Confirmed by eye
-(`sea_patch_cmp.png`, orig | geomON | geomOFF): on the exposed road strips geomON is
-darker, matching the original; geomOFF is greyer/brighter.
-
-## Verdict
-
-**The feared regression does not occur.** On the pose-matched Arctic reference:
-- Whole-frame: geomlight is **neutral** (within 0.08 mean-abs of the baseline).
-- On the prelit sea/road surface it targets, geomlight is an **improvement** — the
-  darker sea matches the original (Δ3.0 vs Δ6.8).
-
-By the handoff's own decision rule ("if the darker sea matches → merge geomlight; if not
-→ track-scope the fold fix"), the darker sea **matches**. The Arctic reference therefore
-**supports shipping `race/geomlight`**, not blocking it. Recommend the parent merge
-`race/geomlight` (do not merge from this branch).
+Do NOT merge `race/geomlight` as an unconditional default. The blanket removal of the
+manual prelit ambient fold (RwSceneBuild.cpp:479-500) is right for the road (`0x2008b`,
+which TRAINING's 18.47->15.45 win came from) but WRONG for the Arctic sea (`0x1000f`),
+which the original keeps bright. The original is therefore NOT doing pure-RW no-ambient
+lighting on `0x1000f`; the manual fold approximates whatever it does. Scope the fold fix
+by geometry class/flags (drop for `0x2008b`, keep for `0x1000f`) and re-run this diff.
 
 ## [UNCERTAIN] / caveats
 
-- One frame only, and the sea is a small fraction of this rolled grid view; a
-  sea-dominant pose would strengthen the luma signal.
-- Sub-frame roll drift between the reference basis and BMP (memory
-  `race-camera-rolls-30deg-sine`) adds per-pixel noise to the whole-frame mean.
-- Standalone HUD/countdown/foreground-car artifacts inflate both absolute numbers
-  equally (they cancel in the geomON-vs-geomOFF comparison, not in vs-original).
+- Car positions differ between the original and the deterministic standalone demo, so the
+  per-pixel whole-frame diff is noisy; the class-masked luma is the clean metric and is
+  robust to the car mismatch (mask is 56-69% dock).
+- Sub-frame roll drift between the transplanted basis and the BMP adds noise but cannot
+  explain an 18-23 luma gap.
+- The exact scoped-fix mechanism (per-class fold) is a recommendation, not yet verified;
+  the measured fact is only that fold-removed != original and fold-restored ~= original
+  on `0x1000f`.
