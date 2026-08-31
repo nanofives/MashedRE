@@ -1617,8 +1617,23 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     }
                 }
             }
+            // [U-9062 probe 2026-08-31] Clump_Exclude_From_World is currently read as
+            // "do not load this clump at all", and that is what drops City's road.
+            // City's COURSE.LUA excludes indices 6-13 = Build01-04, Standard,
+            // road.dff (11), Trunk, water.dff (13) — every one of those is absent from
+            // the rendered frame, which is the U-9062 "black road" (the surface is
+            // MISSING, not dark). Same command drops the water clump on Forest,
+            // Warzone, SuperG, Storm, sands and training; Arctic's sea.dff is the ONLY
+            // non-excluded water clump in the game, which is why it was the one surface
+            // the water fold could act on.
+            // The NAME says "exclude from the WORLD", i.e. do not merge into the static
+            // BSP — which is not the same as do not draw. That reading is NOT yet
+            // established, so this toggle only measures it:
+            // MASHED_TRACK_LOAD_EXCLUDED=1 loads them as ordinary props.
+            static const bool s_load_excluded =
+                std::getenv("MASHED_TRACK_LOAD_EXCLUDED") != nullptr;
             for (const auto& c : clumps) {
-                if (excluded[c.idx]) continue;
+                if (excluded[c.idx] && !s_load_excluded) continue;
                 Prop p;
                 if (load_prop(c.dff, &p, &track_light)) {
                     D3DMATRIX id;
