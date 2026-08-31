@@ -158,6 +158,26 @@ them, because on this evidence it cannot touch them.
 `sands/foldON` timed out on the first sweep (180 s) and succeeded on the probe re-run; the
 `sands` mask number comes from the completed pair.
 
+## Post-merge re-verification (race/first-frame-parity)
+
+`race/first-frame-parity` carries 13 commits `race/geomlight` never saw — camera basis,
+mip chain, spawn grid — so the pre-merge numbers do not transfer for free. Both gates were
+re-run on the merged tree (`run_postmerge.ps1`):
+
+| gate | pre-merge | merged tree |
+|---|---|---|
+| Arctic s8 sea (mask 69.63%) | orig 28.0, unfolded 9.1, folded **29.8** | **identical** |
+| TRAINING imgdiff 8x6, fold ON | **15.45** / 33.48% | **15.45** / 33.48% |
+| TRAINING imgdiff 8x6, fold OFF | 15.45 / 33.48% | **15.45** / 33.48% |
+
+Every figure reproduces exactly, so the merge introduces no interaction with the camera,
+mip or grid work.
+
+The TRAINING `foldOFF` control hung at challenge-select on the first attempt and was killed
+at its 180 s budget; a re-run completed and is the number above. That flake also hit
+`sands/foldON` earlier in the session, on the opposite arm, so it is not correlated with
+the fold flag — it is a launch/nav flake worth knowing about when scripting these sweeps.
+
 ## Status
 
 The scope key is no longer the blocker, and the fold is **ON by default** as of
