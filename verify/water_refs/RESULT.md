@@ -67,5 +67,47 @@ does not share it (151.9 vs 148.0), so it is not a general water problem.
 
 ## Consequence
 
-The shipping default is a net regression on 2 of the 3 water tracks that now have
-pose-matched references. This needs a decision before anything else lands.
+~~The shipping default is a net regression on 2 of the 3 water tracks that now have
+pose-matched references. This needs a decision before anything else lands.~~ RESOLVED below: fold defaulted OFF.
+
+---
+
+# Resolution 2026-08-31: fold DEFAULTED OFF
+
+`MASHED_LIBRW_AMBFOLD_SEA` now defaults **OFF** (`=1` enables). Chosen because off is
+correct on 2 of the 3 referenced water tracks, and the cost is stated rather than hidden:
+**the Arctic sea ships too dark** (luma ~9 against the original's ~28). Filed as U-9064.
+
+## Branch state — shipping default, no env vars, every referenced track
+
+| track | session start | shipping | over threshold |
+|---|---|---|---|
+| Arctic s8 | 18.85 | **20.24** | 56.83% |
+| City | 25.43 | **11.23** | 22.52% |
+| Dump | 84.78 | **9.62** | 17.26% |
+| TRAINING | 15.45 | **15.40** | 33.40% |
+| Forest s8 | (new reference) | 15.37 | 24.70% |
+| SuperG s14 | (new reference) | 39.19 | 40.95% |
+
+Arctic's whole-frame number gets *worse* (18.85 -> 20.24). That is the Arctic sea going
+back to unfolded, and it is the deliberate trade, not a surprise.
+
+SuperG's whole-frame 39.19 is dominated by things outside this decision (HUD, car
+positions); its WATER is within ~5 luma of the original unfolded, which is the number the
+fold decision turns on.
+
+## Process note — a self-inflicted redo worth recording
+
+The first pass pruned captures with `find verify/water_refs -name "*.bmp" -delete`, which
+deleted the **original reference** BMPs along with the standalone arm shots. The Forest and
+SuperG references had to be re-captured. Re-capture is NOT bit-reproducible: `--settle` is
+wall-clock, so the car is at a slightly different point and the camera basis differs
+(Forest eye moved ~0.1u, SuperG ~1.0u). The new `orig.bmp` and the new
+`orig_cambasis.txt` are therefore a MATCHED PAIR and must be used together; the standalone
+arms were re-run against the new bases.
+
+The fold-vs-original numbers in the table above this section are unaffected — each was
+measured against its own contemporaneous reference and basis.
+
+**Rule for next time: prune arm shots only, never `orig*`.** An original-side capture costs
+a full unlocked-save game run; a standalone arm costs 90 seconds.

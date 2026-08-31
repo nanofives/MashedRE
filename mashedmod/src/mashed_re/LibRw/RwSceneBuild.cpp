@@ -437,16 +437,36 @@ static bool AmbientFoldEnabled() {
 // dropping the fold there) but the SEA BRIGHT (sea luma ~28-33; fold-off crushes it
 // to ~9). So the correct behaviour is scoped: fold water, not road.
 //
-// DEFAULT ON since 2026-08-31, once the scope key became a real water discriminator
-// (ModelIsWaterAsset below). Measured against the pose-matched originals: the Arctic
-// sea goes 9.1 -> 29.8 against an original 28.0, and City / Dump / TRAINING are EXACT
-// no-ops (fold mask 0.00%), so enabling it costs nothing on the tracks the flags-only
-// prototype broke. verify/geomlight_waterfold/RESULT.md.
-// MASHED_LIBRW_AMBFOLD_SEA=0 restores the unfolded behaviour for A/B.
+// DEFAULT OFF. It was defaulted ON earlier on 2026-08-31 on the strength of Arctic
+// alone, and REVERTED the same day once Forest and SuperG got pose-matched references
+// (verify/water_refs/RESULT.md). The fold does not generalise:
+//
+//   track       water mask   original   unfolded          folded
+//   Arctic s8      69.63%       28.0    9.1  (d18.9)      29.8 (d1.8)
+//   SuperG s14     41.78%      154.1    159.4 (d5.3)     190.8 (d36.7)
+//   SuperG s8      26.89%      148.0    151.9 (d3.9)     187.8 (d39.8)
+//   Forest s8       4.32%       21.6    44.1 (d22.5)      63.3 (d41.7)
+//
+// Arctic's water is far too DARK unfolded and the fold rescues it; SuperG's is already
+// right unfolded (within 4-5 luma) and the fold pushes it 37-40 AWAY. Same code, same
+// surface class, opposite verdicts -- so "non-lit prelit water needs ambient folded in"
+// is NOT the rule. The fold was fitted to Arctic. Off by default is correct on 2 of the
+// 3 referenced water tracks; the cost is that the ARCTIC SEA SHIPS TOO DARK (luma ~9
+// against the original's ~28), which is a known, filed defect and not an oversight.
+//
+// The real mechanism is unresolved and is NOT this: no track declares Ambient_RGB in
+// COURSE.LUA, all declare Lights_Filename("Lights.dff"), and the decompiled course
+// loader 0x00479330 loads that clump and calls RpWorldAddLight per light -- i.e. the
+// original lights these surfaces with real RenderWare lights, which this manual prelit
+// fold only imitates. How those lights reach a non-rpGEOMETRYLIGHT atomic has not been
+// read, and until it is, no fold setting is right everywhere.
+//
+// MASHED_LIBRW_AMBFOLD_SEA=1 enables the water fold (restores the Arctic sea, breaks
+// Forest/SuperG). MASHED_LIBRW_AMBFOLD=1 is the older blanket road+water fold.
 static bool AmbientFoldScopedSea() {
     static const bool on = [] {
         const char* e = std::getenv("MASHED_LIBRW_AMBFOLD_SEA");
-        return !(e && e[0] == '0' && e[1] == '\0');   // default ON; only "0" disables
+        return e && e[0] == '1' && e[1] == '\0';   // default OFF; only "1" enables
     }();
     return on;
 }
