@@ -44,6 +44,7 @@ that produced it (`re/analysis/parity_tooling.md` for draw-list/screenshot sets,
 
 | directory | blobs | blob bytes | text | newest | cited by |
 |---|---:|---:|---:|---|---|
+| `screen_id` | 44 | 33,709,964 | 35 | 2026-08-30 | re/analysis/structs/contcfg_record.md; UNCERTAINTIES.md (U-9049, U-9050); re/analysis/CHANGELOG.md; verify/screen_id/README.md |
 | `carpos_probe` | 858 | 875,664,990 | 1 | 2026-08-03 | re/analysis/QOL_PATCH_PLAN_2026-08.md; re/orchestrator/state.json |
 | `statediff_proto` | 24 | 60,241,872 | 9 | 2026-08-21 | mashedmod/src/mashed_re/Vehicle/VehiclePhysicsRun.cpp; re/analysis/CHANGELOG.md; re/orchestrator/state.json; re/tools/statediff/NOISE_MASK.md; re/tools/statediff/README.md |
 | `dsproof` | 64 | 58,985,856 | 3 | 2026-08-16 | mashedmod/src/mashed_re/exe_main.cpp; re/analysis/CHANGELOG.md; re/orchestrator/state.json; verify/d1_measure/BISECT_ROUND_BOUNDARY.md; verify/inrace_ab/RESULT.md |

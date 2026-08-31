@@ -7,6 +7,43 @@
 //                       keep SaveStatusClear(0) + return 0 (game thinks it saved).
 //                       Evidence: mashedmod/src/mashed_re/Save/GameSave.cpp (C3),
 //                       disasm 0x00404f50..0x00404f70.
+//   MASHED_SPEED=<mult> - game-speed multiplier, 0.05..20.0, default 1.0.
+//     REQUIRES MASHED_DECOUPLE=1: it scales the measured delta fed to the
+//     quantizer FUN_00493480, so with decoupling off it does nothing.
+//
+//     *** CONFLICT: mashed_re_dev.asi SILENTLY DISABLES THIS. ***
+//     FrameDispatch.cpp installs RH_ScopedInstall(FpsDiscretise, 0x00493480),
+//     a verbatim port that REPLACES the quantizer and calls FUN_00493390
+//     directly, bypassing the call site this .asi retargets. Ultimate-ASI-Loader
+//     loads every .asi in the folder, so with both deployed the dev hook wins and
+//     MASHED_SPEED has NO EFFECT and NO ERROR. Set MASHED_RE_NO_AUTO_HOOK=1 (or
+//     remove mashed_re_dev.asi) when using MASHED_SPEED. This cost a full
+//     debugging cycle on 2026-08-30: the 1.0x 'baseline' looked correct because
+//     at 60fps decoupled and stock are bit-identical by design, so the control
+//     could not detect that the hook was not running at all.
+//
+//     MEASURED (re/frida/speed_probe.py, MASHED_RE_NO_AUTO_HOOK=1, fps cap 165).
+//     The authoritative observable is EXECUTED GAME TICKS -- a counter on the
+//     per-tick update FUN_004111c0 -- NOT the race clock (see the warning below):
+//        speed   real ticks/s   expected (60*mult)   error
+//         0.5        30.0             30             -0.1%
+//         1.0        60.1             60             +0.1%
+//         1.5        90.0             90             -0.0%
+//         2.0       120.0            120             -0.0%
+//         3.0       179.5            180             -0.3%
+//     LINEAR across the whole range; no ceiling, and the frame loop holds a solid
+//     165 fps throughout (so the scaling is not costing frames either).
+//
+//     RACE-CLOCK CAVEAT (root-caused 2026-08-30). DAT_007f0ff4 is a fine
+//     observable but it FREEZES in some game states: FUN_0040fc00 @0x0040fe46
+//     skips the update entirely when DAT_0063ba8c == 7 (states 10..11 are gated
+//     the same way earlier in that function). A naive fit over a fixed wall
+//     window therefore under-reports by exactly the frozen fraction, and that
+//     fraction GROWS with the multiplier because the race hits round transitions
+//     sooner: measured 15% frozen at 1.5x and 38% at 2.0x. That artifact produced
+//     a false 'speed-up saturates near 1.45x' reading, retracted the same day.
+//     speed_probe.py now excludes frozen intervals, after which the clock agrees
+//     with the tick counter to 0.1% (2.0x: clock 120.1 vs real 120.2 ticks/s).
 //   MASHED_DECOUPLE=1 — framerate decoupling: retarget the CALL @0x00493480 so the
 //                       frame-time source feeds MEASURED time (not a pinned 1-tick
 //                       constant) into the game's own native tick quantizer. Game
@@ -32,6 +69,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <cstdlib>   // strtod, for MASHED_SPEED
 
 namespace {
 
@@ -56,6 +94,23 @@ bool EnvSet(const char* name) {
     char buf[8] = {0};
     DWORD r = GetEnvironmentVariableA(name, buf, sizeof(buf));
     return r > 0 && buf[0] != '\0' && buf[0] != '0';
+}
+
+// Read a decimal multiplier into Q16.16 fixed point. Returns kQ16One when the
+// variable is absent, empty or unparseable, so a typo degrades to STOCK speed
+// rather than to zero -- a 0 multiplier would emit no ticks and wedge the game.
+constexpr std::uint32_t kQ16One = 1u << 16;
+
+std::uint32_t EnvQ16(const char* name, double lo, double hi, bool* present) {
+    char buf[32] = {0};
+    DWORD r = GetEnvironmentVariableA(name, buf, sizeof(buf) - 1);
+    if (present) *present = (r > 0 && buf[0] != '\0');
+    if (r == 0 || buf[0] == '\0') return kQ16One;
+    char* end = nullptr;
+    const double v = strtod(buf, &end);
+    if (end == buf || v <= 0.0) return kQ16One;
+    const double c = (v < lo) ? lo : ((v > hi) ? hi : v);
+    return static_cast<std::uint32_t>(c * 65536.0 + 0.5);
 }
 
 // ─── patch helpers ───────────────────────────────────────────────────────────
@@ -217,12 +272,27 @@ constexpr std::uint32_t  kUnitsCap     = 200;         // stock clamp = 200000 ra
 std::uint32_t s_prevTimer = 0;
 std::uint32_t s_rem       = 0;   // sub-unit remainder carry (truncation costs ~3.5% at 165fps otherwise)
 
+// MASHED_SPEED -- game-speed multiplier in Q16.16, 1.0 == kQ16One == stock.
+// Applied to the MEASURED delta, i.e. to elapsed game time, so everything the
+// tick count drives scales together: physics, the sub-frame accumulator and the
+// cosmetic clock below. Integer math at runtime; the parse is the only
+// floating-point step and happens once in Apply().
+std::uint32_t s_speedQ16 = kQ16One;
+
 void __cdecl FrameTimeSourceFix() {
     reinterpret_cast<void(__cdecl*)()>(kOrigFn)();
     const std::uint32_t now = static_cast<std::uint32_t>(
         reinterpret_cast<TimerFn>(kTimerFn)());
     std::uint32_t d = now - s_prevTimer;
     s_prevTimer = now;
+    // Scale BEFORE the hitch cap, so the cap still bounds the step the engine
+    // actually takes -- it is the stock 4-tick clamp, an engine limit, not a
+    // real-time one. s_rem is already in the scaled domain and so is added
+    // AFTER scaling; scaling it again would compound the carry.
+    if (s_speedQ16 != kQ16One) {
+        d = static_cast<std::uint32_t>(
+                (static_cast<std::uint64_t>(d) * s_speedQ16) >> 16);
+    }
     if (d > kUnitsCap * 1000u) { d = kUnitsCap * 1000u; s_rem = 0; }  // first call / hitches
     d += s_rem;
     std::uint32_t units = d / 1000u;              // 1/3000 s units; 50 = 1/60 s
@@ -243,8 +313,17 @@ void Apply() {
     const std::uint32_t rel = Rel32(kCallSite + 5,
         reinterpret_cast<std::uintptr_t>(&FrameTimeSourceFix));
     std::memcpy(&patch[1], &rel, 4);
-    if (WriteMem(kCallSite, patch, sizeof(patch)))
+    bool havespeed = false;
+    s_speedQ16 = EnvQ16("MASHED_SPEED", 0.05, 20.0, &havespeed);
+    if (WriteMem(kCallSite, patch, sizeof(patch))) {
         LogLine("DECOUPLE: tick source = measured frame time (native quantizer live)");
+        if (havespeed) {
+            char m[128];
+            _snprintf_s(m, _TRUNCATE, "DECOUPLE: MASHED_SPEED = %.4fx (Q16 %u)",
+                        s_speedQ16 / 65536.0, s_speedQ16);
+            LogLine(m);
+        }
+    }
     else
         LogLine("DECOUPLE: write failed — SKIPPED");
 }
