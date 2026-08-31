@@ -1,38 +1,37 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-31T18:20:00Z",
+  "updatedAt": "2026-08-31T20:05:00Z",
   "sections": [
     {
-      "heading": "T-ARCTIC: CLOSED — water fold shipped",
+      "heading": "Shipped today on race/first-frame-parity",
       "fields": [
-        { "label": "Branch", "value": "race/first-frame-parity (race/geomlight merged)", "kind": "text" },
-        { "label": "Fold key", "value": "DFF asset name (SEA/WATER/LAKE/RIVER) AND flag class — default ON", "kind": "text" },
-        { "label": "Off-switch", "value": "MASHED_LIBRW_AMBFOLD_SEA=0", "kind": "text" },
-        { "label": "TRAINING win", "value": "15.45 / 33.48% — holds, byte-identical both arms", "kind": "text" }
+        { "label": "Water fold", "value": "Scoped by DFF asset name (SEA/WATER/LAKE/RIVER), default ON", "kind": "text" },
+        { "label": "Clump exclusion", "value": "Clump_Exclude_From_World decoded; excluded clumps now LOAD, default ON", "kind": "text" },
+        { "label": "Reverts", "value": ["MASHED_LIBRW_AMBFOLD_SEA=0", "MASHED_TRACK_SKIP_EXCLUDED=1"], "kind": "list" }
       ]
     },
     {
-      "heading": "Arctic sea vs original (fold mask luma)",
+      "heading": "Parity vs pose-matched originals (imgdiff 8x6)",
       "fields": [
-        { "label": "s8 mask 69.6%", "value": "orig 28.0 | unfolded 9.1 | folded 29.8", "kind": "text" },
-        { "label": "s14 mask 58.4%", "value": "orig 32.6 | unfolded 9.8 | folded 27.2", "kind": "text" },
-        { "label": "Exact no-ops", "value": ["City", "Dump", "TRAINING"], "kind": "list" },
-        { "label": "Attribution", "value": "sea.dff only; 32 other DFFs water_asset=0", "kind": "text" }
+        { "label": "City", "value": "25.43 -> 11.23", "kind": "text" },
+        { "label": "Dump", "value": "84.78 -> 9.62", "kind": "text" },
+        { "label": "TRAINING (headline)", "value": "15.45 -> 15.40", "kind": "text" },
+        { "label": "Arctic s8", "value": "18.85 unchanged; sea 9.1 -> 29.8 vs orig 28.0", "kind": "text" }
       ]
     },
     {
-      "heading": "Filed this session",
+      "heading": "Closed",
       "fields": [
-        { "label": "U-9062", "value": "City road crushed black — luma<12 is 11.32% orig vs 57.88% ours", "kind": "text" },
-        { "label": "U-9063", "value": "Dump sky blown white — luma>240 is 0.03% orig vs 41.44% ours", "kind": "text" },
-        { "label": "Both", "value": "Fold-independent (identical across arms, 0.00% mask)", "kind": "text" }
+        { "label": "T-ARCTIC", "value": "Closed; race/geomlight merged", "kind": "text" },
+        { "label": "U-9062 / U-9063", "value": "Resolved — one root cause, not two lighting bugs", "kind": "text" }
       ]
     },
     {
-      "heading": "Left open (not claimed closed)",
+      "heading": "Open debt",
       "fields": [
-        { "label": "Other water tracks", "value": "Forest/sands/Storm/SuperG/Warzone/rouabout: 0.00% mask, but ZERO water clumps built — untested, not verified", "kind": "text" },
-        { "label": "Question", "value": "Is their water world/BSP geometry rather than a prop?", "kind": "text" }
+        { "label": "Unverified water", "value": "Forest (1.84%) and SuperG (0.86%) now fold water with no original reference", "kind": "text" },
+        { "label": "Undecoded", "value": "What world registration changes beyond the one gated call (PVS, culling, draw order)", "kind": "text" },
+        { "label": "Capture flake", "value": "Demo hangs at challenge-select ~1 run in 5; drivers retry 3x", "kind": "text" }
       ]
     }
   ]
