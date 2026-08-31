@@ -52,6 +52,9 @@ const RVA_GATEFLAG  = 0x0067ec28;   // action-7 effect flag
 const pushFn = new NativeFunction(ptr(RVA_PUSH), 'void', ['int', 'int'], 'mscdecl');
 
 let force   = {player: -1, action: -1};
+let injKey  = -1;
+let injN    = 0;
+let injArmed = false;
 let held    = {player: -1, action: -1};
 let fired   = 0;
 let armed   = false;
@@ -129,6 +132,29 @@ rpc.exports = {
   pushed: function () { return pushed; },
   lasterr: function () { return lastErr; },
   detach: function () { Interceptor.detachAll(); tickHook = null; armed = false; return 1; },
+  // Keyboard-bitmap injection, copied from re/frida/verify_rebind.py. Unlike the
+  // FUN_00497310 return-override above, this drives the chain from the BOTTOM:
+  // the bitmap at 0x0077313c is filled by FUN_004972b0 earlier in the frame and
+  // read by FUN_00497310 later, so writing it on entry to the cook FUN_00496530
+  // lands between the two. Needed because the in-race / pause menus do NOT react
+  // to the return-override even though it demonstrably fires (U-9060).
+  arminject: function () {
+    if (injArmed) return 1;
+    Interceptor.attach(ptr(0x00496530), {
+      onEnter() {
+        if (injKey < 0) return;
+        const k = injKey;
+        const q = ptr(0x0077313c + (k >> 3));
+        q.writeU8(q.readU8() | (1 << (k & 7)));
+        injKey = -1;
+        injN++;
+      }
+    });
+    injArmed = true;
+    return 1;
+  },
+  inject: function (k) { injKey = k; return 1; },
+  injected: function () { return injN; },
   pokeflag: function () { ptr(0x0067ec28).writeS32(1); return ptr(0x0067ec28).readS32(); },
   page: function () { try { return ptr(0x0067ea08).readS32(); } catch (e) { return -999; } },
   stack: function (n) { return readStack(n); }
@@ -177,6 +203,11 @@ def main():
                          "CONSUMER half of action 7 (flag -> FUN_0042c960 -> "
                          "FUN_0042c510 -> page advance) without needing the producer "
                          "gate [ESP+0x34], which a forced push does not set up.")
+    ap.add_argument("--inject-seq", default="",
+                    help="comma list of DIK scancodes injected into the keyboard bitmap "
+                         "once in-race, e.g. 0x01,0xd0,0xd0,0xd0,0x1c = ESC, down x3, RETURN. "
+                         "Use this for in-race/pause menus; the FUN_00497310 override does "
+                         "not reach them.")
     ap.add_argument("--race-seq", default="",
                     help="actions fired IN ORDER once in-race, before --await-gate; "
                          "e.g. 6,12,12,12,4 = pause, down x3, select (= Quit Race)")
@@ -268,6 +299,21 @@ def main():
             time.sleep(6.0)
 
         if args.await_gate >= 0:
+            if args.inject_seq:
+                scr.exports_sync.arminject()
+                for tok in [t for t in args.inject_seq.split(',') if t.strip()]:
+                    k = int(tok, 0)
+                    n0 = scr.exports_sync.injected()
+                    scr.exports_sync.inject(k)
+                    time.sleep(args.seq_delay)
+                    st = scr.exports_sync.stack(0)
+                    print('    inject 0x%02x: landed=%s depth=%s gate=%s sphase=%s'
+                          % (k, scr.exports_sync.injected() - n0, st.get('depth'),
+                             st.get('gate'), st.get('sphase')))
+                    rec.setdefault('inject_path', []).append(
+                        {'key': k, 'depth': st.get('depth'), 'gate': st.get('gate'),
+                         'sphase': st.get('sphase')})
+                rec['shot_after_inject'] = shot('inject_seq.bmp')
             if args.race_seq:
                 scr.exports_sync.arm()
                 for a in [int(x) for x in args.race_seq.split(",") if x.strip()]:
