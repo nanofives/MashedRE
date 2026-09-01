@@ -148,11 +148,18 @@ RH_ScopedInstall(AiVehicleVelocity3, 0x0046d510);
 // ---------------------------------------------------------------------------
 // More call-throughs for the steering + wall-ahead leaves.
 namespace {
-typedef void   (__cdecl* fn_norm_t)(float*, float*);            // RwV3dNormalize
+// FUN_004c39b0 (RwV3dNormalize) RETURNS float10 IN ST0 (Ghidra: `float10 FUN_004c39b0`,
+// it returns the squared-length). The forwarding fn-ptr MUST be declared returning a
+// value (float) so the x87 .asi emits an FSTP that pops ST0 — a `void` decl leaks the
+// x87 register stack, and AiSteeringAngleError calls it TWICE, so an in-thread double-
+// invoke overflows the 8-deep x87 stack within a frame and every later FP op goes NaN
+// (whole-sim freeze). [[feedback_x87_st0_float10_return_fnptr]]; same rule as
+// AiLineOfSight.cpp's Vec2Length. FOUND via the parent's booted-race freeze trace.
+typedef float  (__cdecl* fn_norm_t)(float*, float*);            // RwV3dNormalize -> float10 ST0
 typedef double (__cdecl* fn_acos_t)(double);                    // acos (float10 in ST0)
 typedef void   (__cdecl* fn_velget_t)(std::uint32_t*, int);     // velocity vec3 getter
 typedef char   (__cdecl* fn_tile2_t)(float, float);            // tile query (float args)
-inline void   call_004c39b0(float* d, float* s) { reinterpret_cast<fn_norm_t>(0x004c39b0)(d, s); }
+inline float  call_004c39b0(float* d, float* s) { return reinterpret_cast<fn_norm_t>(0x004c39b0)(d, s); }
 inline double call_004a3384(double x)           { return reinterpret_cast<fn_acos_t>(0x004a3384)(x); }
 inline void   call_0046d510(std::uint32_t* o, int v) { reinterpret_cast<fn_velget_t>(0x0046d510)(o, v); }
 inline char   call_00443d10(float x, float z)   { return reinterpret_cast<fn_tile2_t>(0x00443d10)(x, z); }
