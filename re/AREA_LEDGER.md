@@ -41,7 +41,7 @@ Based on the POST-SWEEP integrated tip `race/first-frame-parity` @ b5c17457 (FLE
 | render | cmtiy2ect9qwpqj1crb903tla | area/render | (child-acquired) | 747 residue, largest area; carried round 1 |
 | frontend | cmtiy3oum9r5fqj1cpyfngies | area/frontend | (child-acquired) | 80 residue; 2 C3s in round 1 (1 parked, U-9065) |
 | ai | cmtiy4kef9rchqj1c8un3bo1q | area/ai | (child-acquired) | 29 residue; 1 C3 in round 1 |
-| vehicle | cmtiy5ksp9rjfqj1cegp9nnpx | area/vehicle | (child-acquired) | NEVER SWEPT; 87 residue, 34 with scenarios |
+| vehicle | cmtiy5ksp9rjfqj1cegp9nnpx | area/vehicle | Mashed_pool4 | round 1: landed 1 C3 (SubStripQuadUV 0x00482030); recreated a stale pool4 clone before decoding |
 | util | cmtiy6r049rq1qj1cr0xix213 | area/util | (child-acquired) | NEVER SWEPT; 334 residue, 222 with scenarios; RW math leaves are the known cheap-win shape ([[render-cheapest-wins-are-rw-math-leaves]]) |
 
 **Not staffed this round, and why (recorded rather than silently dropped):** **hud** reached 2 consecutive dry rounds, the ledger's own MINED-OUT trigger, and its one lead B-0001 was REFUTED — revisit when the ~15 Rt2d rows are reclassified OUT. **track** is BLOCKED on U-9066: its course-load verifier FAILS at baseline with zero hooks, so a track child has no path to C3 until the PARENT recalibrates the assert. Staffing either would have been a guaranteed dry round.
@@ -55,7 +55,7 @@ Parent owns [[CROSS_AREA_BUS]] + this ledger; children report cross-area finding
 | ai | 29 | 45 | 4 | 0 | n/a (non-visual) | ACTIVE — 1 C3 VERIFIED (0x00415e20 AiSteeringAngleError, parent booted-race 3585-call 0-mism GREEN); found+fixed a real x87 ST0-leak reimpl bug en route |
 | track | 60 | 3 | 1 | 1 | — | **BLOCKED** (U-9066) — the course-load verifier was authored in r1 but never run; the sweep ran it and it FAILS AT BASELINE with zero hooks (DAT_0063ba8c expected 1, got 3), so it cannot judge any hook. Not staffed in round 2. REVISIT WHEN: the parent recalibrates the assert to a PASSING zero-hook baseline. |
 | frontend | 80 | 153 | 3 | 0 | scr1 118/118 GREEN (unchanged) | ACTIVE |
-| vehicle | 87 | 1 | 0 | 0 | — | QUEUED (round 2, never swept) |
+| vehicle | 86 | 2 | 1 | 0 | n/a (non-visual) | ACTIVE — r1 landed 1 C3 (0x00482030 SubStripQuadUV, path1 GREEN 8/8; path2 queued to parent) |
 | util | 334 | 2 | 0 | 0 | n/a (non-visual) | QUEUED (round 2, never swept) |
 
 State vocab: QUEUED | ACTIVE | MINED-OUT | COVERED.
@@ -177,6 +177,7 @@ State vocab: QUEUED | ACTIVE | MINED-OUT | COVERED.
 
 | round | date | candidates | landed C3+ | parity delta | dry? | note |
 |---|---|---|---|---|---|---|
+| 1 | 2026-09-01 | 87 residue scanned; 7 zero-callee leaves triaged | 1 (SubStripQuadUV 0x00482030, path1 GREEN 8/8) | n/a (ai/util-class: no parity recipe) | no | Fixed a STALE pool-slot-4 clone (43M vs master 81M, force-recreated) before any decode. Cheapest win = the sole implemented+linked leaf. Replay/ghost family (0x00411870/ae0/ce0/d90) + VehicleSeedWritePair (0x00448700, already known live-race-flaky per 2026-06-25) are live-state -> NOT worked (would be degenerate synthetic green). Damage/physics C2 rows (0x0046c5f0/18de0/19760...) already refused 2026-05-18 for arg_type/callee-gate. Queued path2 to parent (account2 can't run it). |
 
 ---
 
