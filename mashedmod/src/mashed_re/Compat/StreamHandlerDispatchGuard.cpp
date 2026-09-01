@@ -1,8 +1,9 @@
 // Mashed RE — Compat: garbage-handler guard for the RW stream chunk-handler
 // tail-dispatch at 0x005ab148  (JMP dword ptr [EAX+0x44]).
 //
-// 2026-06-01 DEV WORKAROUND. After the FUN_004277a0 NULL-out guard (see
-// IntroTextNullGuard.cpp) cleared the ~90 s title/intro-text crash, the boot
+// 2026-06-01 DEV WORKAROUND. After the FUN_004277a0 NULL-out guard (folded into
+// Frontend/TextCtrlCodeRemap.cpp as of U-9065; was Compat/IntroTextNullGuard.cpp)
+// cleared the ~90 s title/intro-text crash, the boot
 // crash MOVED to a near-null code-pointer transfer: AV with eip=0x44, esi=0,
 // eax=edi=<chunk-state-obj>, ecx=0x80a (log/crash_eip.txt). Crash-site recovery
 // (caller chain boot 0x4028e0 -> FUN_004669b0 -> FUN_0045d460 [RW chunk 0x809
