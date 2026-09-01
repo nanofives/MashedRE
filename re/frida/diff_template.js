@@ -682,6 +682,33 @@ function callFn(fn, input, buf) {
         }
         return '0x' + (result || '0');
     }
+    // seed_globals_fold_ret — scalar-return function GATED ON READ-ONLY globals.
+    // Per-test seed a scattered set of globals ({addr,val}), call fn(...args), and
+    // FOLD (compare) the RETURN VALUE; snapshot+restore every seeded global so the
+    // diff is non-destructive to live state. This is cache_setter_observe with the
+    // observable moved from scattered OUTPUT globals to the return (no obs list) —
+    // for functions that READ globals to compute a scalar rather than writing them.
+    // Distinct seeds/args MUST produce distinct returns (non-degenerate) or it is a
+    // false green ([[scratch-field-false-green]]). SWEEP-CRITICAL: paired handler in
+    // verify_hook_install_template.js (both must ride the sweep together).
+    //   tests[i] = { seed:[{addr:'0x..', val:<u32>}], args:[<u32>, ...] }
+    // (area-frontend r6, for 0x00430670 clean path DAT_0067e9fc==10.)
+    if (CONFIG.arg_type === 'seed_globals_fold_ret') {
+        const seeds = input.seed || [];
+        const seedSaved = seeds.map(s => ptr(s.addr).readU32() >>> 0);
+        for (let s = 0; s < seeds.length; s++) ptr(seeds[s].addr).writeU32(seeds[s].val >>> 0);
+        const callArgs = (input.args || []).map(a => (a >>> 0));
+        let ret;
+        try {
+            const r = fn.apply(null, callArgs);
+            ret = (r === null || r === undefined) ? 0
+                : (typeof r === 'object') ? (parseInt(r.toString(), 16) >>> 0)
+                : (r >>> 0);
+        } finally {
+            for (let s = 0; s < seeds.length; s++) ptr(seeds[s].addr).writeU32(seedSaved[s] >>> 0);
+        }
+        return '0x' + ('00000000' + ret.toString(16)).slice(-8);
+    }
     // write_global_call_int0 — write sentinel to target_global, call fn(0), return value
     // Use for getters where non-trivial domain requires injecting known values.
     // MECHANISM: Seeds `CONFIG.target_global` with `input>>>0` (uint32), calls `fn(0)` - one stack

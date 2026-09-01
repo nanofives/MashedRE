@@ -269,6 +269,30 @@ function callFn(fn, input, buf) {
         }
         return '0x' + s;
     }
+    if (CONFIG.arg_type === 'seed_globals_fold_ret') {
+        // Scalar-return fn GATED ON READ-ONLY globals. Seed a scattered set of globals
+        // per test ({addr,val}), call through the installed site fn(...args), and FOLD
+        // (compare) the RETURN value; snapshot+restore each seeded global so live state
+        // is untouched between tests in the same process. Mirrors the diff_template.js
+        // path1 handler exactly. EXPLICIT case, positioned ABOVE the 0-arg fallback
+        // guard (U-9067: an explicit handler must never depend on falling through).
+        //   input = { seed:[{addr:'0x..', val:<u32>}], args:[<u32>, ...] }
+        // (area-frontend r6, for 0x00430670 clean path DAT_0067e9fc==10.)
+        const seeds = input.seed || [];
+        const seedSaved = seeds.map(s => ptr(s.addr).readU32() >>> 0);
+        for (let s = 0; s < seeds.length; s++) ptr(seeds[s].addr).writeU32(seeds[s].val >>> 0);
+        const callArgs = (input.args || []).map(a => (a >>> 0));
+        let ret;
+        try {
+            const r = fn.apply(null, callArgs);
+            ret = (r === null || r === undefined) ? 0
+                : (typeof r === 'object') ? (parseInt(r.toString(), 16) >>> 0)
+                : (r >>> 0);
+        } finally {
+            for (let s = 0; s < seeds.length; s++) ptr(seeds[s].addr).writeU32(seedSaved[s] >>> 0);
+        }
+        return '0x' + ('00000000' + ret.toString(16)).slice(-8);
+    }
     // FALLBACK, and it must stay LAST. A function with zero declared parameters must be
     // called with zero args, regardless of arg_type: the NativeFunction at TARGET_ADDR is
     // built from CONFIG.signature.args, so honor that same ground truth. Without this,
