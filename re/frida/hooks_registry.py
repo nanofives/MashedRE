@@ -2938,6 +2938,41 @@ HOOKS = {
         ],
     },
 
+    # 0x0045db50 FloatSliderStep(dir): steps the clamped slider global DAT_0068fc8c by a
+    # direction code, then clamps to [0,1]. dir 0 -= step1(0x005cc9c0); 1 += step1;
+    # 2 = 0.0 (zero-store, no clamp); 3 -= step2(0x005cd0ec); >3 no step, re-clamp only.
+    # Clamp bounds 1.0f(0x005cc320)/0.0f(0x005d757c), all .rdata. Verbatim naked x87 (jump
+    # table -> branch ladder) -> Util/FloatSliderStep.cpp. PURE LEAF, no callees, no live
+    # state -> synthetic-safe at menu-attach.
+    # WITNESSING OBSERVABLE: the single mutated global DAT_0068fc8c read AFTER the call is
+    # the discriminant (this function's own write). cache_setter_observe snapshots+RESTORES
+    # it around every call, so successive tests do not run against a perturbed value
+    # (parent constraint on live-global seeding). Non-degenerate: each seed+dir moves the
+    # value to a distinct result (0.5-/+step, 0.0, 0.5-step2, and the two clamp saturations),
+    # so a pass genuinely witnesses the step+clamp, not an inert global.
+    'float_slider_step': {
+        'rva':            0x0045db50,
+        'export':         'FloatSliderStep',
+        'signature':      {'ret': 'void', 'args': ['int']},
+        'arg_type':       'cache_setter_observe',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x3f000000}], 'args': [0], 'obs': ['0x0068fc8c']},  # 0.5, dir0 dec1
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x3f000000}], 'args': [1], 'obs': ['0x0068fc8c']},  # 0.5, dir1 inc1
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x3f000000}], 'args': [2], 'obs': ['0x0068fc8c']},  # 0.5, dir2 zero
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x3f000000}], 'args': [3], 'obs': ['0x0068fc8c']},  # 0.5, dir3 dec2
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x3f733333}], 'args': [1], 'obs': ['0x0068fc8c']},  # 0.95, dir1 -> upper clamp region
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x3d4ccccd}], 'args': [0], 'obs': ['0x0068fc8c']},  # 0.05, dir0 -> lower clamp region
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x40000000}], 'args': [5], 'obs': ['0x0068fc8c']},  # 2.0, dir>3 -> clamp to 1.0
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0xbf800000}], 'args': [7], 'obs': ['0x0068fc8c']},  # -1.0, dir>3 -> clamp to 0.0
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x3f000000}], 'args': [4], 'obs': ['0x0068fc8c']},  # 0.5, dir>3 -> unchanged (in range)
+        ],
+        'path2_tests': [
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x3f000000}], 'args': [3], 'obs': ['0x0068fc8c']},  # dir3 dec2 (moves)
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x40000000}], 'args': [5], 'obs': ['0x0068fc8c']},  # clamp to 1.0
+        ],
+    },
+
     # 0x004c3910 Vec3NormalizeScale(out, in): out = in * (1/|in|); returns the scale
     # (1/|in|) in ST0. Inv-sqrt sibling of RwV3dNormalize; reads the RW3 invsqrt LUT
     # (device globals DAT_007d3ff8 / DAT_007d3ffc, table slot +4) -> run live (menu:
