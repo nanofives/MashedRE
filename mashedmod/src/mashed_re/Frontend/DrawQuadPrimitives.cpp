@@ -326,12 +326,15 @@ RH_ScopedInstall(TextSpriteUVExplicit, 0x00473870);  // re-enabled 2026-05-24 c3
 //
 // Texture/blend dispatch identical shape to TextSpriteUVExplicit.
 //
-// **STAGED AT C2-IMPL — not promoted to C3.** Two [Blocks C3] uncertainties on
-// file: U-0458 (UV corner mapping to U/V min/max not confirmed vs RW Im2DVertex
-// spec) and U-0459 (param_11==2 mode's coord system unidentified — DAT_005ceac4
-// writer not traced). Promotion requires Ghidra-side resolution of both U-IDs.
-// Hook installed so the harness can run draw_quad_observe against it; a clean
-// diff is runtime evidence relevant to U-0458 but doesn't unblock U-0459.
+// **C3 as of 2026-09-01 (area-loop frontend round 1).** Both [Blocks C3]
+// uncertainties resolved: U-0458 (UV corner mapping) RESOLVED 2026-05-21 via
+// runtime evidence + decomp; U-0459 (param_11==2 coord system) RESOLVED 2026-09-01
+// — DAT_005ceac4 has NO code writer (XrefRange 0x005ceac4: 4 refs all read, 2 here
+// @ 0x00473a15/0x00473a33); it is a static .data constant 0x3b122549 = 1/448, so
+// mode 2 normalizes Y against a 448-unit frame (vs default Y _005cc560=1/480, X
+// _005cd5a8=1/640). Static => no caller-context variability; the hardcoded read is
+// bit-identical. Path1 GREEN 10/10; path2 install FULL PASS. Evidence
+// re/analysis/frontend_u0459_005ceac4_resolution.md.
 // ---------------------------------------------------------------------------
 
 // 0x004739f0

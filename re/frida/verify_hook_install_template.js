@@ -162,6 +162,58 @@ function callFn(fn, input, buf) {
                    : (ret >>> 0);
         return [(retU & 0xffff).toString(16), fp(bufA).toString(16), fp(bufB).toString(16)].join(',');
     }
+    if (CONFIG.arg_type === 'draw_quad_observe') {
+        // 12-arg Im2D quad draw: `input` is the full arg vector. path2 had no case
+        // for it, so the dispatcher fell through to `fn(input)` and every call died
+        // with "bad argument count" BEFORE entry -- the JMP install verified but the
+        // call-through falsely FAILED (same class as the 0-arg allocator_nonnull hole
+        // and the scalars hole). Marshal exactly as diff_template.js packArgs does:
+        // 'pointer' args via ptr((v|0)>>>0), all others passed raw. Void return.
+        // (area-loop frontend round 1, 2026-09-01.)
+        const sigArgs = CONFIG.signature.args;
+        const a = [];
+        for (let k = 0; k < sigArgs.length; k++) {
+            if (sigArgs[k] === 'pointer') a.push(ptr((input[k] | 0) >>> 0));
+            else a.push(input[k]);
+        }
+        return fn.apply(null, a);
+    }
+    if (CONFIG.arg_type === 'eax_ptr_ebx_outbuf') {
+        // Register-convention leaf: EAX=src-ptr, EBX=dst-ptr, no stack args. The
+        // NativeFunction at TARGET_ADDR (`fn`) cannot set EAX/EBX, so build a
+        // trampoline to TARGET_ADDR (the installed JMP routes it to the reimpl,
+        // firing the interceptor). `input` is a u16 array written verbatim into
+        // src; observe the dst buffer as FP_LEN/2 u16 words. Mirrors the path1
+        // diff_template.js handler. (area-frontend r3.)
+        const SRC_LEN = 128, DST_LEN = 128, FP_LEN = 64;
+        const src = Memory.alloc(SRC_LEN), dst = Memory.alloc(DST_LEN);
+        for (let k = 0; k < SRC_LEN; k += 2) src.add(k).writeU16(0);
+        for (let k = 0; k < input.length; k++) src.add(k * 2).writeU16(input[k] & 0xffff);
+        for (let k = 0; k < DST_LEN; k += 2) dst.add(k).writeU16(0);
+        const code = Memory.alloc(Process.pageSize);
+        Memory.patchCode(code, 18, function (cw) {
+            const w = new X86Writer(cw, { pc: code });
+            w.putU8(0x53);                              // push ebx
+            w.putBytes([0xB8, 0, 0, 0, 0]);            // mov eax, src (patch +2)
+            w.putBytes([0xBB, 0, 0, 0, 0]);            // mov ebx, dst (patch +7)
+            w.putU8(0xE8);                              // call rel32
+            const rel = TARGET_ADDR.sub(code.add(16)).toInt32();
+            w.putBytes([rel & 0xff, (rel >>> 8) & 0xff,
+                        (rel >>> 16) & 0xff, (rel >>> 24) & 0xff]);
+            w.putU8(0x5B);                              // pop ebx
+            w.putU8(0xC3);                              // ret
+            w.flush();
+        });
+        code.add(2).writeU32(parseInt(src.toString(), 16) >>> 0);
+        code.add(7).writeU32(parseInt(dst.toString(), 16) >>> 0);
+        const Fn = new NativeFunction(code, 'void', [], 'mscdecl');
+        Fn();
+        let s = '';
+        for (let k = 0; k < FP_LEN; k += 2) {
+            s += ('0000' + (dst.add(k).readU16() & 0xffff).toString(16)).slice(-4);
+        }
+        return '0x' + s;
+    }
     return fn(input);
 }
 

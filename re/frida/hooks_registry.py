@@ -8668,6 +8668,35 @@ HOOKS = {
         ],
     },
 
+    # 0x004277a0  TextCtrlCodeRemap — length-prefixed u16 string copy with control-
+    # code remap. Register convention: EAX=src (length-prefixed: [count, ch0..]),
+    # EBX=dst. Pure leaf (0 callees); callers MenuMenusBA/BB (C3).
+    # arg_type='eax_ptr_ebx_outbuf' (NEW handler — SWEEP-CRITICAL: neither
+    # diff_template.js nor verify_hook_install_template.js is auto-merged by
+    # frida-sweep, so both handlers must be carried into the sweep). Each test is a
+    # u16 array, element[0]=count; observable is the dst buffer fingerprint.
+    # ref: re/analysis/frontend_004277a0_c3_plan.md
+    'text_ctrl_code_remap': {
+        'rva':            0x004277a0,
+        'export':         'TextCtrlCodeRemap',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'eax_ptr_ebx_outbuf',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0],                                    # count 0 -> only the terminator
+            [1, 8], [1, 9], [1, 10], [1, 0x0b],     # each remap arm
+            [1, 0x0c], [1, 0x0d], [1, 0x0e],
+            [1, 7], [1, 0x0f], [1, 0x41],           # boundary passthroughs (7, 0xf, 'A')
+            [5, 0x41, 8, 0x42, 0x0d, 0x43],         # mixed string
+            [16, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 8, 9, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+             0x41, 0x42, 0x43, 0x44],               # long: passthrough + every ctrl code
+        ],
+        'path2_tests': [
+            [0],
+            [5, 0x41, 8, 0x42, 0x0d, 0x43],
+        ],
+    },
+
     # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Session c3-batch-n-s1 â€” hud_drift_replay  (C2â†’C3, HUD Im2D cluster)
     # Frontend/DrawQuadPrimitives.cpp â€” HudIm2DQuad (7-arg explicit-UV quad)
