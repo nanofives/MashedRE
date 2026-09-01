@@ -26,7 +26,7 @@ Round order: **render** (pilot) -> hud -> ai -> track -> frontend.
 | hud | 77 | 36 | 0 | 0 | — | QUEUED |
 | ai | 30 | 45 | 0 | 0 | n/a (non-visual) | QUEUED |
 | track | 60 | 3 | 0 | 0 | — | QUEUED |
-| frontend | 82 | 152 | 0 | 0 | scr1 118/118 GREEN | QUEUED |
+| frontend | 81 | 152 | 1 | 0 | scr1 118/118 GREEN (unchanged) | ACTIVE |
 
 State vocab: QUEUED | ACTIVE | MINED-OUT | COVERED.
 
@@ -69,4 +69,16 @@ _QUEUED — game-mode slice; only 3 implemented .cpp, expect a long area._
 
 ## frontend
 
-_QUEUED — tail; draw-list parity already GREEN-capable (scr1 118/118)._
+- **Coverage target (S-DoD):** every executed frontend function at F-DoD, TU linked into `mashed_re.exe` and reached on the default path, `frontend` STUBS section empty, formats round-trip.
+- **Visual target:** scr1 draw-list parity stays GREEN 118/118 (reference recipe — a RED here means a round broke composition).
+- **Open visual defects:** none currently filed for frontend.
+- **Worktree:** `.worktrees/area-frontend` (branch `area/frontend`); pool slot `Mashed_pool3`.
+- **Cheapest-win note:** the 3 implemented+linked residue rows are NOT free diffs — TextSpriteScaled (done r1) was gated on U-0459; MenuMenusBC (`0x0042f8d0`) synthetic force-call TIMES OUT (calls the real quad drawer 5x, needs render context — canonical-scenario validation required, not a synthetic diff); HardwareShowIntroVideo (`0x00495350`) has Sleep+infinite-loop + canonical AV crash + 8 unported callees.
+
+### Rounds
+
+<!-- round | date | candidates | landed C3+ | parity delta | dry? | note -->
+
+| round | date | candidates | landed C3+ | parity delta | dry? | note |
+|---|---|---|---|---|---|---|
+| 1 | 2026-09-01 | 3 examined (004739f0 TextSpriteScaled, 0042f8d0 MenuMenusBC, 00495350 HardwareShowIntroVideo) | 1 (004739f0) | none (no runtime code touched — scr1 stays 118/118 by construction) | no | Worktree off `main` was 49 commits behind the parent branch (missing all area-loop tooling + recent frontend work); reset the clean worktree onto `race/first-frame-parity` tip before scoping. Landed **TextSpriteScaled C2->C3**: resolved U-0459 via analyzeHeadless XrefRange on `0x005ceac4` — NO code writer (4 refs all read, 2 in FUN_004739f0), a static `.data` const `0x3b122549` = **1/448**, so `param_11==2` normalizes Y against a 448-unit frame (vs default Y `_005cc560`=1/480, X `_005cd5a8`=1/640); static => port's hardcoded read is bit-identical. Path1 GREEN 10/10; path2 install FULL PASS (interceptor 2/2) after fixing a real harness gap: `verify_hook_install_template.js` callFn had no `draw_quad_observe` case so the 12-arg vector fell through to `fn(input)` -> "bad argument count" (same class as GAP-5 0-arg). Fix marshals like `diff_template.js` packArgs. re-classify C2->C3 applied (hooks.csv/CHANGELOG/UNCERTAINTIES/source); queued to PROMOTION_QUEUE. MenuMenusBC + HardwareShowIntroVideo left as documented hard-blocked rows (see cheapest-win note). Evidence `re/analysis/frontend_u0459_005ceac4_resolution.md`. |

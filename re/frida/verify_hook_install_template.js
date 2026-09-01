@@ -133,6 +133,22 @@ function callFn(fn, input, buf) {
     if (CONFIG.arg_type === 'idx_out2') {
         return fn(input >>> 0, buf, buf.add(4));
     }
+    if (CONFIG.arg_type === 'draw_quad_observe') {
+        // 12-arg Im2D quad draw: `input` is the full arg vector. path2 had no case
+        // for it, so the dispatcher fell through to `fn(input)` and every call died
+        // with "bad argument count" BEFORE entry -- the JMP install verified but the
+        // call-through falsely FAILED (same class as the 0-arg allocator_nonnull hole
+        // and the scalars hole). Marshal exactly as diff_template.js packArgs does:
+        // 'pointer' args via ptr((v|0)>>>0), all others passed raw. Void return.
+        // (area-loop frontend round 1, 2026-09-01.)
+        const sigArgs = CONFIG.signature.args;
+        const a = [];
+        for (let k = 0; k < sigArgs.length; k++) {
+            if (sigArgs[k] === 'pointer') a.push(ptr((input[k] | 0) >>> 0));
+            else a.push(input[k]);
+        }
+        return fn.apply(null, a);
+    }
     return fn(input);
 }
 
