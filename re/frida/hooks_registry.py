@@ -8873,6 +8873,72 @@ HOOKS = {
         ],
     },
 
+    # 0x00430670  MenuOrdinalToPlayerSlot — int __cdecl(int ordinal) -> player slot
+    # index (or -1). CLEAN path (DAT_0067e9fc==10) is pure reads of the frontend-state
+    # global block: counts non-zero (&DAT_0067ea98)[0..3], returns (&DAT_0067ea94)[k]-1.
+    # arg_type='seed_globals_fold_ret' (NEW handler — SWEEP-CRITICAL: paired in
+    # diff_template.js AND verify_hook_install_template.js; frida-sweep auto-merges
+    # neither, so both must ride the sweep). OBSERVABLE = the scalar RETURN value.
+    # Seed window: gate 0x0067e9fc=10 + the 5 dwords 0x0067ea94..0x0067eaa4 (arr94[k]
+    # overlaps arr98[k-1]). Vectors are NON-DEGENERATE — returns 5/8/3/7/-1/7/3/-1/0/0x63.
+    # The ELSE path (DAT_0067e9fc!=10) CALLs FUN_00413f90 (live table) -> NEEDS-BOOTED-RACE.
+    # ref: re/analysis/frontend_round5_frontier.md
+    'menu_ordinal_to_player_slot': {
+        'rva':            0x00430670,
+        'export':         'MenuOrdinalToPlayerSlot',
+        'signature':      {'ret': 'int', 'args': ['int']},
+        'arg_type':       'seed_globals_fold_ret',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # scenario A: arr98[0..3]={6,9,4,8} (all nonzero), arr94[0]=0x64
+            {'seed': [{'addr': '0x0067e9fc', 'val': 10}, {'addr': '0x0067ea94', 'val': 0x64},
+                      {'addr': '0x0067ea98', 'val': 6}, {'addr': '0x0067ea9c', 'val': 9},
+                      {'addr': '0x0067eaa0', 'val': 4}, {'addr': '0x0067eaa4', 'val': 8}], 'args': [1]},  # ->5
+            {'seed': [{'addr': '0x0067e9fc', 'val': 10}, {'addr': '0x0067ea94', 'val': 0x64},
+                      {'addr': '0x0067ea98', 'val': 6}, {'addr': '0x0067ea9c', 'val': 9},
+                      {'addr': '0x0067eaa0', 'val': 4}, {'addr': '0x0067eaa4', 'val': 8}], 'args': [2]},  # ->8
+            {'seed': [{'addr': '0x0067e9fc', 'val': 10}, {'addr': '0x0067ea94', 'val': 0x64},
+                      {'addr': '0x0067ea98', 'val': 6}, {'addr': '0x0067ea9c', 'val': 9},
+                      {'addr': '0x0067eaa0', 'val': 4}, {'addr': '0x0067eaa4', 'val': 8}], 'args': [3]},  # ->3
+            {'seed': [{'addr': '0x0067e9fc', 'val': 10}, {'addr': '0x0067ea94', 'val': 0x64},
+                      {'addr': '0x0067ea98', 'val': 6}, {'addr': '0x0067ea9c', 'val': 9},
+                      {'addr': '0x0067eaa0', 'val': 4}, {'addr': '0x0067eaa4', 'val': 8}], 'args': [4]},  # ->7
+            {'seed': [{'addr': '0x0067e9fc', 'val': 10}, {'addr': '0x0067ea94', 'val': 0x64},
+                      {'addr': '0x0067ea98', 'val': 6}, {'addr': '0x0067ea9c', 'val': 9},
+                      {'addr': '0x0067eaa0', 'val': 4}, {'addr': '0x0067eaa4', 'val': 8}], 'args': [5]},  # ->-1
+            # scenario B: arr98[1]=0 (zero-skip branch)
+            {'seed': [{'addr': '0x0067e9fc', 'val': 10}, {'addr': '0x0067ea94', 'val': 0x64},
+                      {'addr': '0x0067ea98', 'val': 6}, {'addr': '0x0067ea9c', 'val': 0},
+                      {'addr': '0x0067eaa0', 'val': 4}, {'addr': '0x0067eaa4', 'val': 8}], 'args': [3]},  # ->7
+            {'seed': [{'addr': '0x0067e9fc', 'val': 10}, {'addr': '0x0067ea94', 'val': 0x64},
+                      {'addr': '0x0067ea98', 'val': 6}, {'addr': '0x0067ea9c', 'val': 0},
+                      {'addr': '0x0067eaa0', 'val': 4}, {'addr': '0x0067eaa4', 'val': 8}], 'args': [2]},  # ->3
+            # scenario C: all arr98 zero -> count never reaches param_1 -> -1
+            {'seed': [{'addr': '0x0067e9fc', 'val': 10}, {'addr': '0x0067ea94', 'val': 0x64},
+                      {'addr': '0x0067ea98', 'val': 0}, {'addr': '0x0067ea9c', 'val': 0},
+                      {'addr': '0x0067eaa0', 'val': 0}, {'addr': '0x0067eaa4', 'val': 0}], 'args': [1]},  # ->-1
+            # scenario D: arr94[1]=1 -> return 1-1=0 (exercises the DEC to zero)
+            {'seed': [{'addr': '0x0067e9fc', 'val': 10}, {'addr': '0x0067ea94', 'val': 0x64},
+                      {'addr': '0x0067ea98', 'val': 1}, {'addr': '0x0067ea9c', 'val': 1},
+                      {'addr': '0x0067eaa0', 'val': 1}, {'addr': '0x0067eaa4', 'val': 1}], 'args': [1]},  # ->0
+            # scenario C, ordinal 0: EDX>=ESI at ECX=0 -> return arr94[0]-1 = 0x64-1 = 0x63
+            {'seed': [{'addr': '0x0067e9fc', 'val': 10}, {'addr': '0x0067ea94', 'val': 0x64},
+                      {'addr': '0x0067ea98', 'val': 0}, {'addr': '0x0067ea9c', 'val': 0},
+                      {'addr': '0x0067eaa0', 'val': 0}, {'addr': '0x0067eaa4', 'val': 0}], 'args': [0]},  # ->0x63
+        ],
+        'path2_tests': [
+            {'seed': [{'addr': '0x0067e9fc', 'val': 10}, {'addr': '0x0067ea94', 'val': 0x64},
+                      {'addr': '0x0067ea98', 'val': 6}, {'addr': '0x0067ea9c', 'val': 9},
+                      {'addr': '0x0067eaa0', 'val': 4}, {'addr': '0x0067eaa4', 'val': 8}], 'args': [1]},  # ->5
+            {'seed': [{'addr': '0x0067e9fc', 'val': 10}, {'addr': '0x0067ea94', 'val': 0x64},
+                      {'addr': '0x0067ea98', 'val': 6}, {'addr': '0x0067ea9c', 'val': 9},
+                      {'addr': '0x0067eaa0', 'val': 4}, {'addr': '0x0067eaa4', 'val': 8}], 'args': [5]},  # ->-1
+            {'seed': [{'addr': '0x0067e9fc', 'val': 10}, {'addr': '0x0067ea94', 'val': 0x64},
+                      {'addr': '0x0067ea98', 'val': 0}, {'addr': '0x0067ea9c', 'val': 0},
+                      {'addr': '0x0067eaa0', 'val': 0}, {'addr': '0x0067eaa4', 'val': 0}], 'args': [0]},  # ->0x63
+        ],
+    },
+
     # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Session c3-batch-n-s1 â€” hud_drift_replay  (C2â†’C3, HUD Im2D cluster)
     # Frontend/DrawQuadPrimitives.cpp â€” HudIm2DQuad (7-arg explicit-UV quad)
