@@ -2841,6 +2841,45 @@ HOOKS = {
         ],
     },
 
+    # 0x004d8680 RwStricmp(char* s1, char* s2) -> int: canonical case-insensitive string
+    # compare. NULL-guard on either arg -> 0. Per char: fold 'A'..'Z' (+0x20) via SIGNED
+    # byte range checks (JL/JG), compare, on mismatch return MOVSX-extended (int)a-(int)c
+    # of the folded bytes. PURE LEAF: no callees/globals/FP -> plain-C transcription is
+    # bit-identical -> Render/RwStricmp.cpp. Stored at the RW string vtable slot +0xf0.
+    # arg_type stricmp_pair: two 512B seeded bufs (NUL-terminated), JS null -> NULL ptr;
+    # observable is the signed int return as uint32. Vectors span equal / same-vs-mixed
+    # case / less / greater / both prefix directions / the 'A'-vs-'[' fold boundary /
+    # '@'-vs-'`' (neither folded) / a 0x80+ byte (signed-extension discriminant) / NULL.
+    # Expected (uint32): [0, 0, -1=0xffffffff, 1, -99=0xffffff9d, 99, 6, -32=0xffffffe0,
+    #   -160=0xffffff60 (0xc1 signed -63 minus 'a' 97 -> proves MOVSX not zero-extend),
+    #   0 (null s1), 0 (null s2), 0 (both empty)].
+    'rw_stricmp': {
+        'rva':            0x004d8680,
+        'export':         'RwStricmp',
+        'signature':      {'ret': 'int', 'args': ['pointer', 'pointer']},
+        'arg_type':       'stricmp_pair',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 's1': 'hello', 's2': 'hello' },          # equal -> 0
+            { 's1': 'Hello', 's2': 'hELLO' },          # case-fold equal -> 0
+            { 's1': 'abc',   's2': 'abd'   },          # less -> -1
+            { 's1': 'abd',   's2': 'abc'   },          # greater -> 1
+            { 's1': 'ab',    's2': 'abc'   },          # s1 prefix -> 0-0x63 = -99
+            { 's1': 'abc',   's2': 'ab'    },          # s2 prefix -> 0x63-0 = 99
+            { 's1': 'A',     's2': '['     },          # fold boundary: 0x61-0x5b = 6
+            { 's1': '@',     's2': '`'     },          # neither folded: 0x40-0x60 = -32
+            { 's1': 'Á','s2': 'a'     },          # signed byte: (-63)-97 = -160
+            { 's1': None,    's2': 'x'     },          # null s1 -> 0
+            { 's1': 'x',     's2': None    },          # null s2 -> 0
+            { 's1': '',      's2': ''      },          # both empty -> 0
+        ],
+        'path2_tests': [
+            { 's1': 'Hello', 's2': 'hELLO' },          # case-fold equal -> 0
+            { 's1': 'A',     's2': '['     },          # fold boundary -> 6
+            { 's1': 'Á','s2': 'a'     },          # signed-extension discriminant -> -160
+        ],
+    },
+
     # 0x004c3910 Vec3NormalizeScale(out, in): out = in * (1/|in|); returns the scale
     # (1/|in|) in ST0. Inv-sqrt sibling of RwV3dNormalize; reads the RW3 invsqrt LUT
     # (device globals DAT_007d3ff8 / DAT_007d3ffc, table slot +4) -> run live (menu:
@@ -16890,6 +16929,33 @@ HOOKS = {
         'seed_globals': [{'addr': '0x00898994', 'val': 0}],
         'path1_tests': [0x11111111, 0x22222222, 0x33333333, 0x44444444, 0x55555555],
         'path2_tests': [0x11111111, 0x22222222],
+    },
+    # 0x00482030  SubStripQuadUV (vehicle) — void(float* out, int p2, uint p3): zero-callee
+    #   pure leaf. Computes q=(uint)(p2<<2)/p3, then writes 2 floats to out[0..1] by the
+    #   4-case quadrant switch (verbatim x87; see Vehicle/SubStripUV.cpp). Self-diffable
+    #   synthetic path1: draw_quad_observe passes the out pointer FROM the test vector
+    #   (coerced via ptr()) and fingerprints VBUF at vbuf_addr_str, so out MUST be the VBUF
+    #   address 0x00898a20 (handler's default scratch, saved+restored). vbuf_len=8 = 2 floats.
+    #   Tests cover cases 0..3, the >3 default (no write), both int<0 unsigned-fixup branches.
+    'sub_strip_quad_uv': {
+        'rva': 0x00482030, 'export': 'SubStripQuadUV',
+        'signature': {'ret': 'void', 'args': ['pointer', 'int32', 'int32']},
+        'arg_type': 'draw_quad_observe', 'vbuf_addr_str': '0x00898a20', 'vbuf_len': 8,
+        'crash_equal_ok': True, 'lut_root_delta': 0,
+        'path1_tests': [
+            [0x00898a20, 0, 4],    # q=0 -> case0
+            [0x00898a20, 1, 4],    # q=1 -> case1
+            [0x00898a20, 2, 4],    # q=2 -> case2
+            [0x00898a20, 3, 4],    # q=3 -> case3
+            [0x00898a20, 4, 4],    # q=4 -> default (no write)
+            [0x00898a20, 5, 3],    # q=6 -> default; non-multiple
+            [0x00898a20, -1, 4],   # p2<0 unsigned-fixup branch; q=0x3fffffff -> default
+            [0x00898a20, -1, -1],  # p2<0 AND p3<0 branches; q=0 -> case0
+        ],
+        'path2_tests': [
+            [0x00898a20, 2, 4],
+            [0x00898a20, 3, 4],
+        ],
     },
     # 0x0046d510 VehicleVelocityWorldGet - RE-WIRED orch-iter21, IN-RACE lane.
     # Closes the last open row of the out3_idx audit

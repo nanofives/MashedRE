@@ -329,6 +329,7 @@ cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe
     "Vehicle\VehicleState.cpp" ^
     "Vehicle\ShapeOwnerHandlePool.cpp" ^
     "Vehicle\VehicleSeed.cpp" ^
+    "Vehicle\SubStripUV.cpp" ^
     "Camera\CameraPathPredicates.cpp" ^
     "Ai\VehicleVelocityWorldGet.cpp" ^
     "Physics\SmplFzxStateBlock.cpp" ^
@@ -358,6 +359,7 @@ cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe
     "Frontend\MenuLeaves_af5.cpp" ^
     "Render\CameraProjCoeffs.cpp" ^
     "Render\RwMatrixInvert.cpp" ^
+    "Render\RwStricmp.cpp" ^
     "Render\SlotObjectAccessors.cpp" ^
     "Render\StateBatchGetters.cpp" ^
     "Render\ParticleEmitterCtors.cpp" ^
