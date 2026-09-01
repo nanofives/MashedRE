@@ -2506,6 +2506,75 @@ function runDiff() {
         return;
     }
 
+    // ── eax_ptr_ebx_outbuf (area-frontend r3, SWEEP-CRITICAL) ────────────────
+    // Register-convention leaf: EAX = source pointer, EBX = destination pointer,
+    // no stack args, plain RET. Same trampoline shape as esi_idx_ecx_outbuf4 but
+    // with EAX (per-test seeded src) + EBX (per-side out buffer). Each test is a
+    // uint16 array written verbatim into src (the fn reads its own length prefix);
+    // src and dst are SEPARATE per side (the fn only reads src / writes dst, never
+    // stores src ptr into dst, so no shared-buffer aliasing is needed). Observable
+    // is the dst buffer fingerprinted as FP_LEN/2 u16 words. NOTE for frida-sweep:
+    // diff_template.js is NOT auto-merged — this handler must land in the sweep.
+    // First consumer: 0x004277a0 TextCtrlCodeRemap.
+    if (CONFIG.arg_type === 'eax_ptr_ebx_outbuf') {
+        const SRC_LEN = (CONFIG.src_len | 0) || 128;
+        const DST_LEN = (CONFIG.dst_len | 0) || 128;
+        const FP_LEN  = (CONFIG.fp_len  | 0) || 64;
+        const srcO = Memory.alloc(SRC_LEN), srcR = Memory.alloc(SRC_LEN);
+        const dstO = Memory.alloc(DST_LEN), dstR = Memory.alloc(DST_LEN);
+        function buildEaxEbxTramp(targetAddr, srcAddr, dstAddr) {
+            const code = Memory.alloc(Process.pageSize);
+            Memory.patchCode(code, 18, function (cw) {
+                const w = new X86Writer(cw, { pc: code });
+                w.putU8(0x53);                              // push ebx
+                w.putBytes([0xB8, 0, 0, 0, 0]);            // mov eax, srcAddr (patch +2)
+                w.putBytes([0xBB, 0, 0, 0, 0]);            // mov ebx, dstAddr (patch +7)
+                w.putU8(0xE8);                              // call rel32
+                const rel = targetAddr.sub(code.add(16)).toInt32();
+                w.putBytes([rel & 0xff, (rel >>> 8) & 0xff,
+                            (rel >>> 16) & 0xff, (rel >>> 24) & 0xff]);
+                w.putU8(0x5B);                              // pop ebx
+                w.putU8(0xC3);                              // ret
+                w.flush();
+            });
+            code.add(2).writeU32(parseInt(srcAddr.toString(), 16) >>> 0);
+            code.add(7).writeU32(parseInt(dstAddr.toString(), 16) >>> 0);
+            return code;
+        }
+        const trampO = buildEaxEbxTramp(TARGET_ADDR, srcO, dstO);
+        const trampR = buildEaxEbxTramp(reimplAddr,  srcR, dstR);
+        const FnO = new NativeFunction(trampO, 'void', [], 'mscdecl');
+        const FnR = new NativeFunction(trampR, 'void', [], 'mscdecl');
+        function seedSrc(p, arr) {
+            for (let k = 0; k < SRC_LEN; k += 2) p.add(k).writeU16(0);
+            for (let k = 0; k < arr.length; k++) p.add(k * 2).writeU16(arr[k] & 0xffff);
+        }
+        function fpDst(p) {
+            let s = '';
+            for (let k = 0; k < FP_LEN; k += 2) {
+                s += ('0000' + (p.add(k).readU16() & 0xffff).toString(16)).slice(-4);
+            }
+            return '0x' + s;
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const arr = CONFIG.tests[i];
+            let origV = null, reimV = null, errO = null, errR = null;
+            seedSrc(srcO, arr);
+            for (let k = 0; k < DST_LEN; k += 2) dstO.add(k).writeU16(0);
+            try { FnO(); origV = fpDst(dstO); } catch (e) { errO = e.message; }
+            seedSrc(srcR, arr);
+            for (let k = 0; k < DST_LEN; k += 2) dstR.add(k).writeU16(0);
+            try { FnR(); reimV = fpDst(dstR); } catch (e) { errR = e.message; }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: JSON.stringify(arr),
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── reg_this_callee_stub (orch-iter6, SWEEP-CRITICAL) ─────────────────────
     // FIRST handler that intercepts CALLEES rather than seeding inputs. For the
     // render particle-emitter ctor family (EBX/ESI/EAX-implicit `this`) whose
