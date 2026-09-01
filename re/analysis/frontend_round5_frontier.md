@@ -67,3 +67,27 @@ scalar-return-gated-on-globals frontend cluster. SWEEP-CRITICAL when authored
 No unverifiable reimpl authored into the tree (respects the acceptance bar; see the
 track area's same discipline). Round 5 is a characterization round: 0 C3 landed,
 next win (00430670 clean path) is one `seed_globals+fold_ret` arg_type away.
+
+## Round 7 addendum (2026-09-01) — cluster hypothesis REFUTED
+
+After landing 0x00430670 (r6) with the new `seed_globals_fold_ret` arg_type, the parent
+asked whether the handler unlocks a CLUSTER of the ~59 remaining rows. Decoded 12 more
+frontend-range doc-only rows (DecompBatch/pool14):
+`00422470, 004224d0, 00424270, 00424b80, 00425b90, 00425bf0, 00425c00, 00425ca0, 00426d20, 00426d90, 004273e0, 004274e0`.
+
+**Result: 0 of 12 read the frontend-state block (0x0067ea9x/0x0067ecx); all are void
+side-effecting.** So `seed_globals_fold_ret` unlocked exactly ONE row — 0x00430670 was a
+singleton scalar-return getter, not a cluster head. Combined with r2 (8) + r5 (10), that
+is **30 of 76 doc-only rows decoded**, and the pattern is decisive: the frontend residue
+is void setters / cleanup loops / RW wrappers / file-I/O one-liners, plus rare scalar
+getters. The CHEAP synthetic scalar-return frontier is exhausted.
+
+**Remaining shape is block-write setters (medium effort, per-row, NOT a cluster).**
+Worked example, teed up: `0x004224d0` `void(int slot, u32* p2, u32 p3)` zero-fills a
+0xf40 slot at `&DAT_006403e8 + slot*0xf40` (callee `FUN_004b6520` ZeroFillWrapper **C3**)
+then writes ~15 fields (index, p2[0..3], constants 0x3f000000/0xbfe66666/0x3f800000/
+0xbf59999a, DAT_005f6154, p3). Diffable via the EXISTING `cache_setter_observe` (args
+[slot, null->buf, p3], observe the written slot offsets) — no new arg_type. But it is a
+verbatim ~15-store reimpl + a buffer arg + a scattered-observe list per row, i.e. medium
+effort each, not a cheap sweep. Verdict: frontend is WORKABLE but no longer CHEAP; the
+per-row block-observe lane is the same acceptance shape ai/track reached.
