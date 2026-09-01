@@ -560,6 +560,24 @@ function callFn(fn, input, buf) {
         for (let j = 0; j <= s.length; j++) out.push(b.add(j).readU8());
         return out.join(',');
     }
+    // str_char_search — fn(char* s, int c) -> char* pointing INTO s (or NULL), e.g.
+    // RwStrchr 0x004d8730 (first match) / RwStrrchr 0x004d8750 (last match). One 512-byte
+    // scratch seeded with test.s + NUL; only the low byte of test.c is used by the callee
+    // (matches the terminator when c==0). Observable is the return as a byte OFFSET from
+    // buf start (-1 for NULL), so first-vs-last is distinguished directly (repeated-char
+    // vectors are the discriminant). The callee has NO null-guard on s, so s is always a
+    // real buffer here (never null). tests[i] = { s:"...", c:<int charcode> }.
+    if (CONFIG.arg_type === 'str_char_search') {
+        const b = Memory.alloc(512);
+        const s = String(input.s);
+        for (let j = 0; j < s.length; j++) b.add(j).writeU8(s.charCodeAt(j) & 0xff);
+        b.add(s.length).writeU8(0);
+        const c = (input.c | 0) & 0xff;
+        const ret = fn(b, c);
+        const rp = (ret === null || ret === undefined) ? NULL
+                 : (typeof ret === 'object' ? ret : ptr(ret >>> 0));
+        return rp.isNull() ? -1 : rp.sub(b).toInt32();
+    }
     // container_find_scalar — fn(container_ptr, int key) -> int32, where
     // container = [dataPtr@+0, count@+4]. The harness FABRICATES the container
     // per test so no live state is touched: input.data ints are written into a

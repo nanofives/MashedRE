@@ -2896,6 +2896,64 @@ HOOKS = {
         ],
     },
 
+    # 0x004d8730 RwStrchr(char* s, char c) -> char*: FIRST occurrence of c in s, else
+    # NULL. Matches the NUL terminator when c==0 (returns ptr to terminator). NO null
+    # guard on s (derefs immediately). PURE LEAF (0 callees/globals/FP) -> plain-C
+    # bit-identical -> Render/RwStrSearch.cpp. RW string vtable slot +0xe0
+    # (RwEngineRegisterStringFunctions 0x004d8570 C3). arg_type str_char_search:
+    # observable is the return OFFSET from buf start (-1 = NULL). Repeated-char vectors
+    # ('l','o','aaa') are the first-vs-last discriminant vs RwStrrchr.
+    'rw_strchr': {
+        'rva':            0x004d8730,
+        'export':         'RwStrchr',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'int']},
+        'arg_type':       'str_char_search',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 's': 'hello,world', 'c': 0x6c },  # 'l' first -> 2
+            { 's': 'hello,world', 'c': 0x6f },  # 'o' first -> 4
+            { 's': 'hello,world', 'c': 0x7a },  # 'z' absent -> -1
+            { 's': 'hello,world', 'c': 0x68 },  # 'h' -> 0
+            { 's': 'hello,world', 'c': 0x64 },  # 'd' last char -> 10
+            { 's': 'hello,world', 'c': 0x00 },  # NUL terminator -> 11
+            { 's': 'aaa',         'c': 0x61 },  # 'a' first -> 0
+            { 's': '',            'c': 0x61 },  # empty, absent -> -1
+            { 's': '',            'c': 0x00 },  # empty, NUL -> 0
+        ],
+        'path2_tests': [
+            { 's': 'hello,world', 'c': 0x6c },  # -> 2
+            { 's': 'hello,world', 'c': 0x7a },  # -> -1
+        ],
+    },
+
+    # 0x004d8750 RwStrrchr(char* s, char c) -> char*: LAST occurrence of c in s, else
+    # NULL. Matches the NUL terminator when c==0. NO null guard on s. PURE LEAF ->
+    # Render/RwStrSearch.cpp. RW string vtable slot +0xdc (sibling of RwStrchr).
+    # arg_type str_char_search (return offset). The repeated-char vectors return the
+    # LAST index here (vs FIRST for RwStrchr), proving the two are not confused.
+    'rw_strrchr': {
+        'rva':            0x004d8750,
+        'export':         'RwStrrchr',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'int']},
+        'arg_type':       'str_char_search',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 's': 'hello,world', 'c': 0x6c },  # 'l' last -> 9
+            { 's': 'hello,world', 'c': 0x6f },  # 'o' last -> 7
+            { 's': 'hello,world', 'c': 0x7a },  # 'z' absent -> -1
+            { 's': 'hello,world', 'c': 0x68 },  # 'h' only one -> 0
+            { 's': 'hello,world', 'c': 0x00 },  # NUL terminator -> 11
+            { 's': 'aaa',         'c': 0x61 },  # 'a' last -> 2
+            { 's': 'abcabc',      'c': 0x62 },  # 'b' last -> 4
+            { 's': '',            'c': 0x61 },  # empty, absent -> -1
+            { 's': '',            'c': 0x00 },  # empty, NUL -> 0
+        ],
+        'path2_tests': [
+            { 's': 'hello,world', 'c': 0x6c },  # -> 9
+            { 's': 'aaa',         'c': 0x61 },  # -> 2
+        ],
+    },
+
     # 0x004b4550 Vec3Centroid(out, points, count): out[0..2] = (1/count)*sum(points[i]).
     # points = packed vec3 array (stride 12B); seeds out from points[0], sums the rest with a
     # 4-unrolled inner loop + 1..3 remainder, then multiplies by the 1/count reciprocal
@@ -2935,6 +2993,45 @@ HOOKS = {
                              'f18': 0x40800000, 'f1c': 0xc0a00000, 'f20': 0x40c00000,
                              'f24': 0x3f800000, 'f28': 0x40000000, 'f2c': 0x40400000,
                              'f30': 0x42480000, 'f34': 0xc2340000, 'f38': 0x42200000}, 'p3': 5, 'p4': 0 },  # count=5
+        ],
+    },
+
+    # 0x004d8680 RwStricmp(char* s1, char* s2) -> int: canonical case-insensitive string
+    # compare. NULL-guard on either arg -> 0. Per char: fold 'A'..'Z' (+0x20) via SIGNED
+    # byte range checks (JL/JG), compare, on mismatch return MOVSX-extended (int)a-(int)c
+    # of the folded bytes. PURE LEAF: no callees/globals/FP -> plain-C transcription is
+    # bit-identical -> Render/RwStricmp.cpp. Stored at the RW string vtable slot +0xf0.
+    # arg_type stricmp_pair: two 512B seeded bufs (NUL-terminated), JS null -> NULL ptr;
+    # observable is the signed int return as uint32. Vectors span equal / same-vs-mixed
+    # case / less / greater / both prefix directions / the 'A'-vs-'[' fold boundary /
+    # '@'-vs-'`' (neither folded) / a 0x80+ byte (signed-extension discriminant) / NULL.
+    # Expected (uint32): [0, 0, -1=0xffffffff, 1, -99=0xffffff9d, 99, 6, -32=0xffffffe0,
+    #   -160=0xffffff60 (0xc1 signed -63 minus 'a' 97 -> proves MOVSX not zero-extend),
+    #   0 (null s1), 0 (null s2), 0 (both empty)].
+    'rw_stricmp': {
+        'rva':            0x004d8680,
+        'export':         'RwStricmp',
+        'signature':      {'ret': 'int', 'args': ['pointer', 'pointer']},
+        'arg_type':       'stricmp_pair',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 's1': 'hello', 's2': 'hello' },          # equal -> 0
+            { 's1': 'Hello', 's2': 'hELLO' },          # case-fold equal -> 0
+            { 's1': 'abc',   's2': 'abd'   },          # less -> -1
+            { 's1': 'abd',   's2': 'abc'   },          # greater -> 1
+            { 's1': 'ab',    's2': 'abc'   },          # s1 prefix -> 0-0x63 = -99
+            { 's1': 'abc',   's2': 'ab'    },          # s2 prefix -> 0x63-0 = 99
+            { 's1': 'A',     's2': '['     },          # fold boundary: 0x61-0x5b = 6
+            { 's1': '@',     's2': '`'     },          # neither folded: 0x40-0x60 = -32
+            { 's1': 'Á','s2': 'a'     },          # signed byte: (-63)-97 = -160
+            { 's1': None,    's2': 'x'     },          # null s1 -> 0
+            { 's1': 'x',     's2': None    },          # null s2 -> 0
+            { 's1': '',      's2': ''      },          # both empty -> 0
+        ],
+        'path2_tests': [
+            { 's1': 'Hello', 's2': 'hELLO' },          # case-fold equal -> 0
+            { 's1': 'A',     's2': '['     },          # fold boundary -> 6
+            { 's1': 'Á','s2': 'a'     },          # signed-extension discriminant -> -160
         ],
     },
 

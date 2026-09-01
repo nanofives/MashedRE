@@ -1,47 +1,46 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-01T18:05:00Z",
+  "updatedAt": "2026-09-01T20:15:00Z",
   "sections": [
     {
       "heading": "Today (2026-09-01)",
       "fields": [
-        { "label": "C3s landed", "value": 6, "kind": "number" },
-        { "label": "Landed", "value": [
-            "0x004c4eb0 RwMatrixInvert (render)",
-            "0x004739f0 TextSpriteScaled (frontend)",
-            "0x00415e20 AiSteeringAngleError (ai)",
-            "0x0040d440 Course::LoadCurrent (track)",
-            "0x0040d020 Track_LoadByIndex (track)",
-            "0x004277a0 TextCtrlCodeRemap (frontend, unparked)"
+        { "label": "C3s landed", "value": 14, "kind": "number" },
+        { "label": "Refused on principle", "value": 2, "kind": "number" },
+        { "label": "By area", "value": [
+            "render 4 - RwStricmp, RwStrupr, RwStrlwr, RwMatrixInvert",
+            "frontend 2 - TextSpriteScaled, TextCtrlCodeRemap",
+            "util 2 - RwMatrixInvertEntry, Vec3Centroid",
+            "vehicle 2 - SubStripQuadUV, SplineCubicBlend3",
+            "ai 2 - AiSteeringAngleError, AiLeaderProgressRangeGate",
+            "track 2 - Course::LoadCurrent, Track_LoadByIndex"
           ], "kind": "list" },
-        { "label": "Refused on principle", "value": "0x0047b9e0 render-quad thunk - unobserved, would be a degenerate green", "kind": "text" },
-        { "label": "Uncertainties closed", "value": "U-9065, U-9066, U-9067 (all filed and resolved same day)", "kind": "text" }
+        { "label": "Uncertainties closed", "value": "U-9065, U-9066, U-9067 (filed and resolved same day)", "kind": "text" }
       ]
     },
     {
-      "heading": "Area-loop round 2 (running)",
+      "heading": "Fleet (round 2, all 5 running)",
       "fields": [
-        { "label": "Tip", "value": "race/first-frame-parity @ b1801809", "kind": "text" },
-        { "label": "Children active", "value": 5, "kind": "number" },
-        { "label": "Areas", "value": [
-            "render (747)", "frontend (79, r4 done)", "ai (29)",
-            "vehicle (87, never swept)", "util (334, never swept)"
+        { "label": "Tip", "value": "race/first-frame-parity @ c946cd27", "kind": "text" },
+        { "label": "Next rounds", "value": [
+            "render r5 - RwStrchr/RwStrrchr",
+            "frontend r6 - author seed_globals+fold_ret arg_type",
+            "ai r7 - map the 0x0041582c jump table",
+            "util r3 - 0x0045db50 with live-global restore",
+            "vehicle r3 - continue leaf lane"
           ], "kind": "list" },
-        { "label": "Not staffed", "value": [
-            "hud - MINED-OUT, 2 dry rounds",
-            "track - now UNBLOCKED, restaff in round 3"
-          ], "kind": "list" }
+        { "label": "Not staffed", "value": "hud MINED-OUT; track unblocked, restaff later", "kind": "text" }
       ]
     },
     {
-      "heading": "Parent queue",
+      "heading": "Open / parent-owned",
       "fields": [
-        { "label": "Still open", "value": [
-            "B-0003: 0x004726f0 void-typed but returns ST0 float (shipped-C3 bug)",
-            "0x004161e0 AiSplineTargetInit re-classify drift",
-            "0x0047b9e0 needs a real observable before it can promote"
+        { "label": "Refused, need an observable", "value": [
+            "0x0047b9e0 - no assert witnesses it",
+            "0x00415200 - blocked on jump-table switch-arm coverage"
           ], "kind": "list" },
-        { "label": "New tools", "value": "CallersPC.java (caller half of the C3 gate); course-load verifier now trustworthy", "kind": "text" }
+        { "label": "Still mine", "value": "B-0003 (0x004726f0 ST0 float typed void); 0x004161e0 re-classify drift", "kind": "text" },
+        { "label": "Infra note", "value": "Ghidra pool clones are NOT guaranteed analyzed - verify size vs master", "kind": "text" }
       ]
     }
   ]
