@@ -54,6 +54,16 @@ function callFn(fn, input, buf) {
     if (input && typeof input === 'object' && Array.isArray(input.scalars)) {
         return fn.apply(null, input.scalars);
     }
+    // A function with zero declared parameters must be called with zero args,
+    // regardless of arg_type. The NativeFunction at TARGET_ADDR is built from
+    // CONFIG.signature.args (below), so honor that same ground truth here. Without
+    // this, self-emitting 0-arg handlers (e.g. allocator_nonnull) fell through to
+    // `fn(input)` and died with "bad argument count" BEFORE entry — the install
+    // verified but call-through falsely FAILED. Keyed on the signature, not the
+    // arg_type name, so it covers every 0-arg handler. (area-loop round 1, 2026-08-31.)
+    if (CONFIG.signature && Array.isArray(CONFIG.signature.args) && CONFIG.signature.args.length === 0) {
+        return fn();
+    }
     if (CONFIG.arg_type === 'none') {
         // Zero-arg invocation; `input` is a dummy iteration marker.
         return fn();
