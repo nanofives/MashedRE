@@ -13,6 +13,7 @@
 "Vehicle\VehicleState.cpp"
 "Vehicle\ShapeOwnerHandlePool.cpp"
 "Vehicle\VehicleSeed.cpp"
+"Vehicle\SubStripUV.cpp"
 "Camera\CameraPathPredicates.cpp"
 "Ai\VehicleVelocityWorldGet.cpp"
 "Physics\SmplFzxStateBlock.cpp"
