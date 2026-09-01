@@ -1,39 +1,21 @@
 {
-  "title": "Mashed RE",
-  "updatedAt": "2026-08-31T23:55:00Z",
+  "title": "Mashed RE — area-loop fleet",
+  "updatedAt": "2026-09-01T00:45:00Z",
   "sections": [
     {
-      "heading": "Session closed — handoff written",
+      "heading": "Area-loop fleet (5 children, star topology)",
       "fields": [
-        { "label": "Branch", "value": "race/first-frame-parity (clean)", "kind": "text" },
-        { "label": "Handoff", "value": "re/analysis/NEXT_SESSION_race_parity_20260831.md", "kind": "text" },
-        { "label": "T-ARCTIC", "value": "Blocker cleared; geomlight + arctic-cap merged", "kind": "text" }
+        { "label": "Children active", "value": 5, "kind": "number" },
+        { "label": "Areas", "value": ["render (pool4, r2)", "hud (pool14, r1)", "ai (pool2, r1)", "track (pool15, r1)", "frontend (pool3, r1)"], "kind": "list" },
+        { "label": "Parent role", "value": "orchestrator; owns AREA_LEDGER + CROSS_AREA_BUS; routes cross-area findings; runs frida-sweep", "kind": "text" }
       ]
     },
     {
-      "heading": "Parity vs pose-matched originals (imgdiff 8x6)",
+      "heading": "Coverage & defects",
       "fields": [
-        { "label": "City", "value": "25.43 -> 11.23", "kind": "text" },
-        { "label": "Dump", "value": "84.78 -> 9.62", "kind": "text" },
-        { "label": "TRAINING (headline)", "value": "15.45 -> 15.40", "kind": "text" },
-        { "label": "Arctic s8", "value": "18.85 -> 20.24 (accepted: sea ships dark)", "kind": "text" },
-        { "label": "New references", "value": "Forest s8 15.37 | SuperG s14 39.19", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "NEXT SLICE — librw fog colour",
-      "fields": [
-        { "label": "Symptom", "value": "P7 fogcolor: d3d9=282C30 librw_ps=(0,0,0) MISMATCH — fog inert everywhere", "kind": "text" },
-        { "label": "Suspect", "value": "FOGCOLOR set before beginUpdate (the fog RANGE had this exact bug)", "kind": "text" },
-        { "label": "Verdict test", "value": "One edit, one run: the P7 fogcolor mismatch clearing", "kind": "text" },
-        { "label": "Guard rails", "value": ["TRAINING must hold 15.45", "City 11.23 no regression", "Dump 9.62 no regression"], "kind": "list" }
-      ]
-    },
-    {
-      "heading": "Open trackers",
-      "fields": [
-        { "label": "U-9064", "value": "Arctic sea too dark — mechanism found (fog), fix not applied", "kind": "text" },
-        { "label": "Also open", "value": "Forest water over-bright unfolded; shader fog start=5.0 vs 0.1", "kind": "text" }
+        { "label": "Last C3 landed", "value": "0x004c5890 RwTexDictionaryCreate", "kind": "text" },
+        { "label": "Residue <C3", "value": ["render 748", "hud 77", "ai 30", "track 60", "frontend 82"], "kind": "list" },
+        { "label": "Open render defects", "value": ["City black-road", "Dump white-sky", "terrain-ambient overbrighten", "T-ARCTIC (no pose-matched frame)"], "kind": "list" }
       ]
     }
   ]

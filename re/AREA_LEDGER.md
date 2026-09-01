@@ -20,13 +20,27 @@
 Baseline snapshot: **2026-08-31** (from `hooks.csv`, `scripts/progress.py`, `build.bat`).
 Round order: **render** (pilot) -> hud -> ai -> track -> frontend.
 
+### Fleet roster (spawned 2026-09-01, star topology — all ACTIVE)
+
+| area | child session id | branch | pool slot | notes |
+|---|---|---|---|---|
+| render | cmti6ok6y8wccqj1c7z0z1ble | area/render | Mashed_pool4 | round 2; an earlier render session (cmti3pv1z8ux6qj1c3zmpd3qh) was created DEAD in a daemon hiccup and abandoned (unstoppable, ignore it) |
+| hud | cmti6ml7p8vvaqj1cj2tf7s8l | area/hud | Mashed_pool14 | round 1 |
+| ai | cmti6ndt38w1iqj1c27t82i0b | area/ai | Mashed_pool2 | non-visual, parity N/A; round 1 |
+| track | cmti6nqjc8w4eqj1cec4ocplb | area/track | Mashed_pool15 | game-mode slice, authoring-heavy; round 1 |
+| frontend | cmti6o4d98w7qqj1c9tgq2c3o | area/frontend | Mashed_pool3 | guard scr1 118/118; round 1 |
+
+All 5 bootstrapped 2026-09-01 with distinct pool slots (no collision) and distinct branches. GAP-2 (pool acquire) did NOT bite — all five slots bound cleanly.
+
+Parent owns [[CROSS_AREA_BUS]] + this ledger; children report cross-area findings via send_to_session, never edit the bus. Spawn lesson: spawn ONE AT A TIME (a 5-way burst 500'd the endpoint and left one dead session). Watch for pool-slot contention — 5 children each acquiring a Ghidra slot + worktree + MASHED launch on one machine; GAP-2 (ghidra_pool.ps1) is unverified and children are told to STOP+report if acquire fails.
+
 | area | residue<C3 | implemented .cpp | rounds run | dry streak | last parity | state |
 |---|---|---|---|---|---|---|
 | render | 748 | 165 | 1 | 0 | none (round 1) | ACTIVE (pilot) |
-| hud | 77 | 36 | 0 | 0 | — | QUEUED |
-| ai | 30 | 45 | 0 | 0 | n/a (non-visual) | QUEUED |
-| track | 60 | 3 | 0 | 0 | — | QUEUED |
-| frontend | 82 | 152 | 0 | 0 | scr1 118/118 GREEN | QUEUED |
+| hud | 77 | 36 | 1 | 1 | — | ACTIVE — no cheap wins; ~15 rows pending Rt2d reclass-OUT (B-0001); filed 3 cross-area findings |
+| ai | 29 | 45 | 3 | 0 | n/a (non-visual) | ACTIVE — 1 C3 VERIFIED (0x00415e20 AiSteeringAngleError, parent booted-race 3585-call 0-mism GREEN); found+fixed a real x87 ST0-leak reimpl bug en route |
+| track | 60 | 3 | 1 | 1 | — | ACTIVE — no free synthetic wins; needs course-load verifier (2nd dry -> MINED-OUT, revisit=verifier built) |
+| frontend | 82 | 152 | 0 | 0 | scr1 118/118 GREEN | ACTIVE (merging infra base) |
 
 State vocab: QUEUED | ACTIVE | MINED-OUT | COVERED.
 

@@ -65,6 +65,20 @@ with `frida-sweep` (merge child branches, rebuild the `.asi`, integration-diff e
 hook -- the GREEN gate). `ghidra-sweep` is **dormant** (no MCP master writeback this config);
 symbol/comment writeback is deferred, the trackers + `.cpp` are the truth.
 
+**Own the verification lane** (policy fixed 2026-09-01). On account2 the children can characterize,
+author, and run *synthetic* path1 diffs, but *booted-race* verification stalls on them (prompts).
+So most `ai` / `track` / render-parity C3s can only be AUTHORED by the child, not landed. Children
+append those to `re/PROMOTION_QUEUE.md` tagged **`NEEDS-BOOTED-RACE`**; the PARENT drives the race
+(`run_diff.py <hook>` with scenario:'race', or the scenario-attach lane) here on account2, one at a
+time, approving its own prompts, and promotes on GREEN. Children NEVER boot a race. This keeps the
+whole loop on one account and serializes the machine-bound half (which must be serial anyway).
+
+**Base consistency** (GAP-6, learned 2026-09-01). Every child worktree MUST branch from the commit
+that carries the area-loop infra (currently on `race/first-frame-parity`, not `main`). Two children
+defaulted to `main`, lacked `area_residue.py`/recipes/ledger, and had to `git merge
+race/first-frame-parity` to converge. When spawning, pin the base ref explicitly, or land the infra
+on `main` first.
+
 **Stop rule.** All areas COVERED or MINED-OUT => loop done. Emit a paste-ready resume kickoff.
 
 ---
