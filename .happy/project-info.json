@@ -1,44 +1,41 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-01T22:30:00Z",
+  "updatedAt": "2026-09-01T23:55:00Z",
   "sections": [
     {
-      "heading": "Today (2026-09-01)",
+      "heading": "Fleet migrated to Sonnet",
       "fields": [
-        { "label": "C3s landed", "value": 16, "kind": "number" },
-        { "label": "Refused / closed on evidence", "value": 2, "kind": "number" },
-        { "label": "By area", "value": [
-            "render 5 - the whole RW string vtable family (3 from C0)",
-            "frontend 2, util 2, vehicle 2, ai 2, track 2"
-          ], "kind": "list" },
-        { "label": "Uncertainties closed", "value": "U-9065, U-9066, U-9067 - all filed and resolved same day", "kind": "text" },
-        { "label": "Cross-area filed", "value": "B-0005 frontend-state block; B-0006 per-vehicle record", "kind": "text" }
+        { "label": "Tip", "value": "race/first-frame-parity @ 8ddfe149", "kind": "text" },
+        { "label": "Children", "value": "5 on Sonnet (old Opus set stopped)", "kind": "text" },
+        { "label": "Active", "value": "frontend (r9 block-write row)", "kind": "text" },
+        { "label": "Mined-out / holding", "value": [
+            "render - r9 vtable scan, zero pure-CPU slots left",
+            "vehicle - r6 landed, synthetic lane done",
+            "ai - dead-code proof closed its last row",
+            "util - r4 authored, awaiting booted race"
+          ], "kind": "list" }
       ]
     },
     {
-      "heading": "Fleet",
+      "heading": "Today's C3s",
       "fields": [
-        { "label": "Tip", "value": "race/first-frame-parity @ e1330483", "kind": "text" },
-        { "label": "Working", "value": [
-            "render r6 - the 11 DEMOTED rows (stale-demotion vein)",
-            "frontend r6 - seed_globals+fold_ret arg_type",
-            "util r3 - 0x0045db50",
-            "vehicle r4 - per_vehicle_record_seed, 0x0046b1c0 first"
-          ], "kind": "list" },
-        { "label": "Holding", "value": "ai - MINED-OUT on evidence, awaiting reschedule", "kind": "text" },
-        { "label": "Unstaffed", "value": "hud MINED-OUT; track unblocked and available", "kind": "text" }
+        { "label": "Landed", "value": 23, "kind": "number" },
+        { "label": "Latest", "value": [
+            "0x00411ce0 Ghost::SetupRender (vehicle r6, Sonnet)",
+            "0x004224d0 MenuSlotInit (frontend r8)"
+          ], "kind": "list" }
       ]
     },
     {
-      "heading": "Parent-owned",
+      "heading": "Parent queue (my lane)",
       "fields": [
-        { "label": "Open", "value": [
-            "B-0003 - 0x004726f0 typed void but returns ST0 float",
-            "0x004161e0 AiSplineTargetInit re-classify drift",
-            "0x0047b9e0 - needs an observable before it can promote",
-            "vehicle Group C - replay/ghost, booted-race lane"
+        { "label": "Pending booted-race / path2", "value": [
+            "frontend MenuSlotInit path2",
+            "util r4 FloatSlider2 self-test",
+            "render's 12-row texture/raster cluster (one capture)",
+            "render 9 DEMOTED rows, vehicle replay/ghost family"
           ], "kind": "list" },
-        { "label": "Closed as unreachable", "value": "0x00415200 - dead in steady race, proof in ai_00415220_jumptable_reachability.md", "kind": "text" }
+        { "label": "Open user calls", "value": "ai/render/vehicle reschedule vs wind-down", "kind": "text" }
       ]
     }
   ]
