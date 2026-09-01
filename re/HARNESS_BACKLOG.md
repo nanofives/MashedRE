@@ -36,6 +36,16 @@ idling or reviving dead batch lanes.
    orchestrator lane (`AiControllerAB.cpp` pattern: window snapshot + RNG-ring restore +
    retry-once) to other live-state orchestrator families. This is what made the WS-R6 AI chain
    drain possible.
+   - **NEXT PULL (identified 2026-09-01, area-loop track child, pool15):** build a **course-load
+     scenario verifier** — path2-install + drive_to_race with a load-integrity assert (C4-shaped).
+     It unblocks the ENTIRE track load-dispatcher cluster (60 C2 residue: 0047b9e0->FUN_00496c10
+     render-quad emitter, 0040d440 Course::LoadCurrent->FUN_0040d270 Course::Finish, 0040d020->
+     FUN_00426e10 .piz+COURSE.LUA/LAPDATA.LUA loader, 0047a1b0 Lua filename-handler family) the way
+     the (already-live) allocator_nonnull arg_type unblocked render's allocator class. These are
+     course-LOAD-TIME dispatchers + Lua config handlers with NO synthetic path1 (unpopulated-state
+     diffs are degenerate greens per the out3_idx audit rule), so track cannot make C3 progress
+     without this. Author on account2 (child); RUN on the parent booted-race lane. Evidence: track
+     round 1, AREA_LEDGER track section.
 4. **Discovery drains** — demand map §4 lists **1,788 undiscovered RVAs** inside the race slice's
    static call-closure (no hooks.csv row). Run `ghidra-sweep` SCRIBE_QUEUE drains (11 queued as
    of 2026-07-03) and demand-map discovery sessions; budget discovery alongside promotion.
