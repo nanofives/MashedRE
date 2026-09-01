@@ -605,30 +605,54 @@ rpc.exports = {
     });
   },
   phase: function(){ try { return ga(PHASE).readU8(); } catch(e){ return -1; } },
-  // COURSE-LOAD VERIFIER (area-track r1). Three cheap deterministic observables that
-  // are all true once a course has finished loading, each cited to the load chain:
+  // COURSE-LOAD VERIFIER (area-track r1; assert set CORRECTED 2026-09-01, U-9066).
+  //
+  // TWO deterministic load-integrity observables, each cited to the load chain:
   //   DAT_0066d704 == 1   set at the tail of FUN_00426e10 (0x00426e10) after the track
   //                       .piz + COURSE.LUA/LAPDATA.LUA load.
-  //   DAT_0063ba8c == 1   set at LAB_0040d3c3 in FUN_0040d270 (Course::Finish, 0x0040d270).
   //   DAT_0063ba78 == DAT_0063ba7c   loaded-course == selected-course after
   //                       FUN_0040d440 (Course::LoadCurrent, 0x0040d440).
+  //
+  // DAT_0063ba8c IS NOT AN ASSERT — it is reported as a raw OBSERVATION only.
+  // As originally written this verifier asserted DAT_0063ba8c == 1 and therefore FAILED
+  // ITS OWN ZERO-HOOK BASELINE (expected 1, got 3, stable across 3 runs / 2 tracks), which
+  // made every verdict uninformative. Root cause, from an XrefRange scan of
+  // [0x0063ba8c..0x0063ba8f] on the anchored binary (28 refs): the address is a race STATE
+  // MACHINE, not a load-complete flag. It is written with 12 distinct constants by 8
+  // functions -- 0x0040d3e7 FUN_0040d270 (Course::Finish) writes 1, but later writers
+  // advance it: 0x0040dbf5/dc17/dc30/dc40 FUN_0040dbd0 write 5; 0x0040dda3 write 2 and
+  // 0x0040ddf5 write 0xa and 0x004100dd write 2 and 0x00410279 write 3 and 0x00410287 /
+  // 0x004102ac write 4 and 0x00410b02 write 9, all in FUN_004111c0 (the spawn loop);
+  // 0x00410387 FUN_004102f0 writes 4; 0x004104e3 FUN_004103a0 writes 6; 0x00410645
+  // FUN_00410510 writes 0xb; 0x00410a5e / 0x00410a6e FUN_00410860 write 9 and 8;
+  // 0x004111a6 FUN_00411170 writes 7; 0x0040e364 FUN_0040e360 writes EAX. Readers include
+  // 0x0040fe46 FUN_0040fc00 (CMP against 0x7). So "1" is one transient state of at least
+  // eleven, Course::Finish is only its FIRST writer, and by race-running the spawn loop has
+  // legitimately moved it on. The value 3 observed at phase 3 is written at 0x00410279.
+  // NO SEMANTIC IS ASSIGNED to 3 or to any other value here -- it is reported raw so a
+  // reader can diff baseline against hooked runs, and the pass/fail verdict does not
+  // depend on it. Reinstating it as an assert requires establishing what state each
+  // constant denotes; until then it cannot carry a load-integrity claim.
+  //
   // Read-only. Baseline (no hooks) must be pass=true; each dispatcher hook live must
   // KEEP it pass=true (no-regression). Not perturbed by the render-quad thunk 0x0047b9e0.
   courseLoadAsserts: function(){
     try {
       const flag_66d704 = ga(0x0066d704).readU32();
-      const flag_63ba8c = ga(0x0063ba8c).readU32();
+      const state_63ba8c = ga(0x0063ba8c).readU32();
       const loaded      = ga(0x0063ba78).readS32();
       const selected    = ga(0x0063ba7c).readS32();
       const a1 = (flag_66d704 === 1);
-      const a2 = (flag_63ba8c === 1);
       const a3 = (loaded === selected);
       return JSON.stringify({
-        pass: (a1 && a2 && a3),
+        pass: (a1 && a3),
         asserts: {
           'DAT_0066d704==1': {ok: a1, got: flag_66d704},
-          'DAT_0063ba8c==1': {ok: a2, got: flag_63ba8c},
           'DAT_0063ba78==DAT_0063ba7c': {ok: a3, loaded: loaded, selected: selected}
+        },
+        observations: {
+          // raw state-machine value, NOT asserted -- see the comment above (U-9066).
+          'DAT_0063ba8c': state_63ba8c
         }
       });
     } catch(e){ return JSON.stringify({pass:false, err:''+e}); }
@@ -774,10 +798,14 @@ def main():
                          "its steer-sign convention (steerAng +0x1a8 vs velocity-heading change) "
                          "can be measured against the ported chain.")
     ap.add_argument("--assert-course-load", action="store_true",
-                    help="COURSE-LOAD VERIFIER (area-track r1): after reaching a loaded-course "
-                         "state (phase 3), read three deterministic load-integrity observables "
-                         "(DAT_0066d704==1, DAT_0063ba8c==1, DAT_0063ba78==DAT_0063ba7c) and "
-                         "print PASS/FAIL + write log/course_load_assert.json. Baseline (no "
+                    help="COURSE-LOAD VERIFIER (area-track r1; assert set corrected 2026-09-01, "
+                         "U-9066): after reaching a loaded-course state (phase 3), check two "
+                         "deterministic load-integrity observables (DAT_0066d704==1 and "
+                         "DAT_0063ba78==DAT_0063ba7c) and print PASS/FAIL + write "
+                         "log/course_load_assert.json. DAT_0063ba8c is REPORTED RAW, not "
+                         "asserted: an XrefRange scan shows it is a race state machine written "
+                         "with 12 distinct constants by 8 functions, so the original "
+                         "'DAT_0063ba8c==1' assert failed its own zero-hook baseline. Baseline (no "
                          "--hooks) must PASS; run again with --hooks <dispatcher cluster> and it "
                          "must STILL pass (no-regression) — that is how the load-dispatcher hooks "
                          "get their booted-race verification. Exits shortly after the assert "
@@ -921,6 +949,10 @@ def main():
             print("\n  === COURSE-LOAD VERIFIER ===")
             for k, v in (res.get("asserts") or {}).items():
                 print(f"    {'OK ' if v.get('ok') else 'FAIL'}  {k}   {v}")
+            for k, v in (res.get("observations") or {}).items():
+                # NOT asserted: raw state-machine values, printed so baseline and hooked
+                # runs can be diffed by eye without the verdict depending on them (U-9066).
+                print(f"    obs   {k} = {v}   (not asserted)")
             if res.get("err"):
                 print(f"    agent err: {res['err']}")
             verdict = "PASS" if res.get("pass") else "FAIL"
