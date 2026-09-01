@@ -111,7 +111,23 @@ State vocab: QUEUED | ACTIVE | MINED-OUT | COVERED.
 
 ## track
 
-_QUEUED — game-mode slice; only 3 implemented .cpp, expect a long area._
+- **Coverage target (S-DoD):** every executed track/course-load function at F-DoD, linked into `mashed_re.exe` and reached on the default course-load path, `track` STUBS section empty, formats round-trip.
+- **Baseline (2026-08-31):** 60 residue<C3, all doc-only C2 (0 implemented .cpp among the residue; the only 3 track C3 are trivial global setters in `Util/PromoLoop_*.cpp` — already done). Game-mode name-match (`mode|champ|cup|race|challenge`) returns 0 rows: the mode/championship dispatchers are not separately named in the residue; they live inside the course-load chain (`FUN_00426e10` / `FUN_0040d270`).
+- **Round-1 finding (harness gap, evidence-backed):** track has **no free synthetic C2→C3 wins**. Decoded the cheapest candidates (0047b9e0, 0040d440, 0040d020 + callees) via analyzeHeadless/pool15:
+  - `0047b9e0` forwards `(p1,p2)` to `FUN_00496c10`, which is `void FUN_00496c10(void)` (render-quad emitter, gated on `DAT_00636b70`). Args are ignored by the callee and there is **no scalar observable** → synthetic path1 has nothing to diff (rejected by `run_diff.py:465` no-op guard).
+  - `0040d440` (Course::LoadCurrent) calls `FUN_0040d270` (Course::Finish, ~100-line load/teardown driver: file work, printf, `**(param_1+param_2*4)` derefs). Not synthetic-safe.
+  - `0040d020` derefs a track-table entry into `FUN_00426e10`, which opens the track `.piz` + runs `COURSE.LUA`/`LAPDATA.LUA` (heavy file I/O). Not synthetic-safe.
+  - Lua config-handler cluster (`0047a1b0` family: Occluder/Mts/Clump/Spline/AI-Bsp filenames) reads a live `lua_State` (`FUN_004b6fc0`/`FUN_004b70d0`) populated only during `COURSE.LUA` execution → needs a Lua scenario, not synthetic re-calls.
+  - **Net:** the residue is course-**load-time** code. C3 promotion needs a course-load scenario verifier (path2-install + `drive_to_race` load with a load-integrity assert — C4-shaped), NOT synthetic path1. Reported to parent as a HARNESS_BACKLOG gap. No unverifiable heavyweight loader code authored into the tree (respects the acceptance bar).
+- **Revisit condition (if MINED-OUT):** a course-load scenario verifier lands in the Frida harness (install hook, drive into a race, assert the track loads identically) — then the load-dispatcher cluster becomes promotable.
+
+### Rounds
+
+<!-- Append one row per round: round | date | candidates | landed C3+ | parity delta | dry? | note -->
+
+| round | date | candidates | landed C3+ | parity delta | dry? | note |
+|---|---|---|---|---|---|---|
+| 1 | 2026-09-01 | 8 decoded; VERIFIER + 3 thin thunks authored+linked+queued | 0 landed (verifier + 3-thunk cluster queued; parent verifies) | n/a (non-visual load path) | no | Preflight ✓ (anchor bdcae093; pool15; baseline build compiles both targets — only shared-`original\` .asi deploy fails, expected in a worktree; r1 build re-verified REAL not a GAP-7 false-pass: .asi 02:28:50 bumped, 16 CourseLoadDispatch.obj refs in map; switched to PowerShell build). Scoped 60 C2 residue: all course-load-time (no free synthetic C2→C3 wins, same as render round-0). Per parent's steer: (1) PRIORITY — authored the **course-load VERIFIER** by extending the canonical lane `re/frida/scenario_launch.py` additively (rpc `courseLoadAsserts` + flag `--assert-course-load`): drives to loaded-course via the existing phase-2 poke, asserts 3 cited post-load observables (DAT_0066d704==1 @0x00426e10 tail; DAT_0063ba8c==1 @0x0040d270 LAB_0040d3c3; DAT_0063ba78==DAT_0063ba7c @0x0040d440). Queued NEEDS-BOOTED-RACE VERIFIER. (2) Finished the **3 thin thunks** (0x0040d020, 0x0040d440, 0x0047b9e0) in `Track/CourseLoadDispatch.cpp`, linked into asi_sources.rsp, build ✓ (all 3 exported+auto-registered, .asi bumped), 3 hooks_registry.py entries (parses, 1092 hooks), queued NEEDS-BOOTED-RACE CLUSTER. PULLED heavyweight 0x0040cea0 back to DEFERRED per parent's acceptance-bar call (author after verifier green); 0x0040d110 stays DEFERRED (fragile stack-struct callees). Did NOT spawn MASHED (parent runs the verifier + cluster). NOT dry: authored the leverage verifier + advanced LINKED coverage +3. |
 
 ## frontend
 
