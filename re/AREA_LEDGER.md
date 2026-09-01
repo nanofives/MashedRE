@@ -23,7 +23,7 @@ Round order: **render** (pilot) -> hud -> ai -> track -> frontend.
 | area | residue<C3 | implemented .cpp | rounds run | dry streak | last parity | state |
 |---|---|---|---|---|---|---|
 | render | 748 | 165 | 1 | 0 | none (round 1) | ACTIVE (pilot) |
-| hud | 77 | 36 | 0 | 0 | — | QUEUED |
+| hud | 77 | 36 | 1 | 1 | n/a (scoping round) | ACTIVE |
 | ai | 30 | 45 | 0 | 0 | n/a (non-visual) | QUEUED |
 | track | 60 | 3 | 0 | 0 | — | QUEUED |
 | frontend | 82 | 152 | 0 | 0 | scr1 118/118 GREEN | QUEUED |
@@ -57,7 +57,22 @@ State vocab: QUEUED | ACTIVE | MINED-OUT | COVERED.
 
 ## hud
 
-_QUEUED — section stub, filled when scheduler activates it._
+- **Coverage target (S-DoD):** every executed hud function at F-DoD, linked into `mashed_re.exe`, reached on the default path, `hud` STUBS section empty, formats round-trip.
+- **Worktree/slot:** `.worktrees/area-hud` on `area/hud`, pool slot `Mashed_pool14`, log dir `log/area-hud`.
+- **Structural facts (round 1):**
+  - Residue = 77 below C3; only **2 implemented+linked** and both are traps: `00552e40 FontCtx_FlushMatrix` (Frida GREEN is `crash_equal_ok` NULL-cam, body unverified — false-green) and `00552b60 FontSys_InitSeq` (deadlocks at quiescent menu). The remaining 75 are doc-only C2 needing authoring.
+  - The `0x00553000-0x00557fff` font-vector band (~15 rows: `00554010/150/200/390`, `00555830`, `00556780`, `00556e40`, `005571c0/e0`, `FontSys_*`) is **suspected vendored RenderWare Rt2d** (module-vendor-doubt in the plates; FlushMatrix's callers `00552890/00552920` already reclassed `third-party-library[renderware]` Rt2d). A confirmed Rt2d calibration reclasses-OUT these -> biggest single lever on hud residue. **Cross-area (hud->render), reported to parent (F1).**
+  - The real game-hud functions (`0x0041xxxx` VehicleIcons/label-trail, `0x0047xxxx` event-markers) are `void`/GPU-side-effecting/register-convention/stateful per-frame emitters — none is a clean bit-identity diff; they are asm-exact port work, not cheap wins.
+- **Open findings (see `re/analysis/area_hud_round1_scoping.md`):** F1 Rt2d band reclass; F2 `004a2c48`=`__ftol` not "QPC tick"; F3 `004726f0` returns float on ST0 (plated `void`).
+- **Parity:** no hud-specific recipe run in round 1 (scoping only).
+
+### Rounds
+
+<!-- round | date | candidates | landed C3+ | parity delta | dry? | note -->
+
+| round | date | candidates | landed C3+ | parity delta | dry? | note |
+|---|---|---|---|---|---|---|
+| 1 | 2026-09-01 | 9 decoded (00552e40, 00552b60, 004128f0, 00413b80/bb0/cb0/f50, 00412cf0, 00455b50, 0047d640, 0047def0, +leaves 004a2c48/00412f30/004726f0) | 0 | n/a (scoping) | yes | No clean cheap C2->C3 win in hud (mirrors render round-0). FlushMatrix GREEN = crash_equal_ok false-green (rejected); FontSys_InitSeq deadlocks; VehicleIcons trio + 004128f0 void/GPU/register-convention; 00412cf0 gate-satisfied but Ghidra decomp is LOSSY (drops 004726f0's ST0 return + the K²·_DAT_005cd04c chain into byte+0x27 — needs asm-exact port). 3 cross-area findings reported to parent (F1 Rt2d band, F2 __ftol label, F3 004726f0 float return). Added `DisasmPC.java` (account2 asm dumper, no MCP). |
 
 ## ai
 
