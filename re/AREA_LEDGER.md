@@ -38,11 +38,11 @@ Based on the POST-SWEEP integrated tip `race/first-frame-parity` @ b5c17457 (FLE
 
 | area | child session id | branch | pool slot | notes |
 |---|---|---|---|---|
-| render | (pending) | area/render | (child-acquired) | 747 residue, largest area; carried round 1 |
-| frontend | (pending) | area/frontend | (child-acquired) | 80 residue; 2 C3s in round 1 (1 parked, U-9065) |
-| ai | (pending) | area/ai | (child-acquired) | 29 residue; 1 C3 in round 1 |
-| vehicle | (pending) | area/vehicle | (child-acquired) | NEVER SWEPT; 87 residue, 34 with scenarios |
-| util | (pending) | area/util | (child-acquired) | NEVER SWEPT; 334 residue, 222 with scenarios; RW math leaves are the known cheap-win shape ([[render-cheapest-wins-are-rw-math-leaves]]) |
+| render | cmtiy2ect9qwpqj1crb903tla | area/render | (child-acquired) | 747 residue, largest area; carried round 1 |
+| frontend | cmtiy3oum9r5fqj1cpyfngies | area/frontend | (child-acquired) | 80 residue; 2 C3s in round 1 (1 parked, U-9065) |
+| ai | cmtiy4kef9rchqj1c8un3bo1q | area/ai | (child-acquired) | 29 residue; 1 C3 in round 1 |
+| vehicle | cmtiy5ksp9rjfqj1cegp9nnpx | area/vehicle | (child-acquired) | NEVER SWEPT; 87 residue, 34 with scenarios |
+| util | cmtiy6r049rq1qj1cr0xix213 | area/util | (child-acquired) | NEVER SWEPT; 334 residue, 222 with scenarios; RW math leaves are the known cheap-win shape ([[render-cheapest-wins-are-rw-math-leaves]]) |
 
 **Not staffed this round, and why (recorded rather than silently dropped):** **hud** reached 2 consecutive dry rounds, the ledger's own MINED-OUT trigger, and its one lead B-0001 was REFUTED — revisit when the ~15 Rt2d rows are reclassified OUT. **track** is BLOCKED on U-9066: its course-load verifier FAILS at baseline with zero hooks, so a track child has no path to C3 until the PARENT recalibrates the assert. Staffing either would have been a guaranteed dry round.
 
