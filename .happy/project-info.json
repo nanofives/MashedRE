@@ -1,46 +1,44 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-01T20:15:00Z",
+  "updatedAt": "2026-09-01T22:30:00Z",
   "sections": [
     {
       "heading": "Today (2026-09-01)",
       "fields": [
-        { "label": "C3s landed", "value": 14, "kind": "number" },
-        { "label": "Refused on principle", "value": 2, "kind": "number" },
+        { "label": "C3s landed", "value": 16, "kind": "number" },
+        { "label": "Refused / closed on evidence", "value": 2, "kind": "number" },
         { "label": "By area", "value": [
-            "render 4 - RwStricmp, RwStrupr, RwStrlwr, RwMatrixInvert",
-            "frontend 2 - TextSpriteScaled, TextCtrlCodeRemap",
-            "util 2 - RwMatrixInvertEntry, Vec3Centroid",
-            "vehicle 2 - SubStripQuadUV, SplineCubicBlend3",
-            "ai 2 - AiSteeringAngleError, AiLeaderProgressRangeGate",
-            "track 2 - Course::LoadCurrent, Track_LoadByIndex"
+            "render 5 - the whole RW string vtable family (3 from C0)",
+            "frontend 2, util 2, vehicle 2, ai 2, track 2"
           ], "kind": "list" },
-        { "label": "Uncertainties closed", "value": "U-9065, U-9066, U-9067 (filed and resolved same day)", "kind": "text" }
+        { "label": "Uncertainties closed", "value": "U-9065, U-9066, U-9067 - all filed and resolved same day", "kind": "text" },
+        { "label": "Cross-area filed", "value": "B-0005 frontend-state block; B-0006 per-vehicle record", "kind": "text" }
       ]
     },
     {
-      "heading": "Fleet (round 2, all 5 running)",
+      "heading": "Fleet",
       "fields": [
-        { "label": "Tip", "value": "race/first-frame-parity @ c946cd27", "kind": "text" },
-        { "label": "Next rounds", "value": [
-            "render r5 - RwStrchr/RwStrrchr",
-            "frontend r6 - author seed_globals+fold_ret arg_type",
-            "ai r7 - map the 0x0041582c jump table",
-            "util r3 - 0x0045db50 with live-global restore",
-            "vehicle r3 - continue leaf lane"
+        { "label": "Tip", "value": "race/first-frame-parity @ e1330483", "kind": "text" },
+        { "label": "Working", "value": [
+            "render r6 - the 11 DEMOTED rows (stale-demotion vein)",
+            "frontend r6 - seed_globals+fold_ret arg_type",
+            "util r3 - 0x0045db50",
+            "vehicle r4 - per_vehicle_record_seed, 0x0046b1c0 first"
           ], "kind": "list" },
-        { "label": "Not staffed", "value": "hud MINED-OUT; track unblocked, restaff later", "kind": "text" }
+        { "label": "Holding", "value": "ai - MINED-OUT on evidence, awaiting reschedule", "kind": "text" },
+        { "label": "Unstaffed", "value": "hud MINED-OUT; track unblocked and available", "kind": "text" }
       ]
     },
     {
-      "heading": "Open / parent-owned",
+      "heading": "Parent-owned",
       "fields": [
-        { "label": "Refused, need an observable", "value": [
-            "0x0047b9e0 - no assert witnesses it",
-            "0x00415200 - blocked on jump-table switch-arm coverage"
+        { "label": "Open", "value": [
+            "B-0003 - 0x004726f0 typed void but returns ST0 float",
+            "0x004161e0 AiSplineTargetInit re-classify drift",
+            "0x0047b9e0 - needs an observable before it can promote",
+            "vehicle Group C - replay/ghost, booted-race lane"
           ], "kind": "list" },
-        { "label": "Still mine", "value": "B-0003 (0x004726f0 ST0 float typed void); 0x004161e0 re-classify drift", "kind": "text" },
-        { "label": "Infra note", "value": "Ghidra pool clones are NOT guaranteed analyzed - verify size vs master", "kind": "text" }
+        { "label": "Closed as unreachable", "value": "0x00415200 - dead in steady race, proof in ai_00415220_jumptable_reachability.md", "kind": "text" }
       ]
     }
   ]
