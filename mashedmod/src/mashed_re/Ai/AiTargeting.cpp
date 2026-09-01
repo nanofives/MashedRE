@@ -29,6 +29,9 @@
 #include "AiState.h"
 
 #include <cstdint>
+#include <cstring>
+#include <cstdlib>
+#include <windows.h>
 
 using namespace Ai;
 
@@ -222,7 +225,92 @@ float __cdecl AiSteeringAngleError(int param_1, float param_2, float param_3)
     return result;
 }
 
-RH_ScopedInstall(AiSteeringAngleError, 0x00415e20);
+// ── in-race A/B self-test for AiSteeringAngleError (env MASHED_AI_STEER_SELFTEST) ──
+// Mirrors Ai/AiLineOfSight.cpp's LosDispatch: the function is PURE (reads the vehicle
+// struct + velocity via forwarded RVAs, returns a float via ST0, no writes), so the A/B
+// just compares the returned float BIT PATTERN and RETURNS ORIG so game behaviour is
+// unchanged during measurement (SAFE PASSTHROUGH when not self-testing). Must be run in
+// a booted race (the vehicle table + velocity blocks the callees read are only live
+// there); at the menu both sides read the same unset state -> a dead run, not evidence.
+// U-9025 (the mid-race wedge once feared here) is RESOLVED (audio-thread bug in
+// FUN_005aef00, commit f1855ad9), so the full hook set completes races 10/10.
+namespace {
+
+// Orig trampoline: the RH_ScopedInstall JMP (5 bytes) overwrites SUB ESP,0x10 (3) +
+// PUSH ESI (1) + first byte of MOV ESI,[ESP+0x18]; re-exec all three (8 bytes) then
+// jmp to the next instruction boundary 0x00415e28 (LEA EAX,[ESP+4]). After the two
+// stack adjusts, [ESP+0x18] == the original [ESP+4] == param_1 (vehicle), matching the
+// original's own ESI load. The .asi is x87 (no SSE2) so the original's ST0 result is the
+// float return; declaring float pops ST0 correctly.
+void* g_orig_415e28 = reinterpret_cast<void*>(0x00415e28);
+__declspec(naked) float OrigSteeringAngleError(int /*veh*/, float /*tx*/, float /*tz*/) {
+    __asm {
+        sub  esp, 0x10
+        push esi
+        mov  esi, dword ptr [esp + 0x18]
+        jmp  dword ptr [g_orig_415e28]
+    }
+}
+
+inline int SteerSelfTestEnabled() {
+    static int v = -1;
+    if (v < 0) { const char* s = std::getenv("MASHED_AI_STEER_SELFTEST"); v = (s && s[0]) ? 1 : 0; }
+    return v;
+}
+void SteerSelfTestLog(const char* s) {
+    HANDLE h = CreateFileA("ai_steer_selftest.log", FILE_APPEND_DATA, FILE_SHARE_READ,
+                           nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (h == INVALID_HANDLE_VALUE) return;
+    DWORD wrote; WriteFile(h, s, (DWORD)std::strlen(s), &wrote, nullptr); CloseHandle(h);
+}
+long g_steer_calls = 0, g_steer_mismatch = 0;
+const long kSteerMaxCompare = 40000;
+
+// A/B: compare the returned float's exact bits (NaN-safe), log mismatches, return ORIG.
+float SteerDispatch(int veh, float tx, float tz) {
+    if (SteerSelfTestEnabled() && g_steer_calls < kSteerMaxCompare) {
+        float o = OrigSteeringAngleError(veh, tx, tz);
+        float m = AiSteeringAngleError(veh, tx, tz);
+        ++g_steer_calls;
+        std::uint32_t ob, mb;
+        std::memcpy(&ob, &o, 4); std::memcpy(&mb, &m, 4);
+        if (ob != mb) {
+            ++g_steer_mismatch;
+            char line[192];
+            std::uint32_t tbx, tbz;
+            std::memcpy(&tbx, &tx, 4); std::memcpy(&tbz, &tz, 4);
+            wsprintfA(line, "[%ld] MISMATCH o=%08x m=%08x  veh=%d tx=%08x tz=%08x\r\n",
+                      g_steer_calls, ob, mb, veh, tbx, tbz);
+            SteerSelfTestLog(line);
+        }
+        if ((g_steer_calls & 0x7f) == 1) {
+            char line[128];
+            wsprintfA(line, "[%ld] calls=%ld mism=%ld %s\r\n", g_steer_calls, g_steer_calls,
+                      g_steer_mismatch, g_steer_mismatch ? "" : "ALL-GREEN");
+            SteerSelfTestLog(line);
+        }
+        return o;
+    }
+    return OrigSteeringAngleError(veh, tx, tz);
+}
+
+// Naked entry installed at 0x00415e20 — forwards the 3 __cdecl stack args (veh,tx,tz)
+// to SteerDispatch and leaves the float result in ST0 for the original caller.
+__declspec(naked) void AiSteer_Entry() {
+    __asm {
+        // [esp]=ret [esp+4]=veh [esp+8]=tx [esp+0xc]=tz
+        push dword ptr [esp + 0x0c]   // tz
+        push dword ptr [esp + 0x0c]   // tx (esp shifted 4 after 1st push)
+        push dword ptr [esp + 0x0c]   // veh (esp shifted 8)
+        call SteerDispatch
+        add  esp, 0x0c                // cdecl: clean our 3 forwarded args
+        ret                           // ST0 = float result; original is caller-cleans
+    }
+}
+
+}  // namespace
+
+RH_ScopedInstall(AiSteer_Entry, 0x00415e20);
 
 // ===========================================================================
 // 0x00415d00  AiWallAhead(vehicle) -> 1 wall ahead / 0 clear

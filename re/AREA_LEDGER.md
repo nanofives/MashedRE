@@ -24,7 +24,7 @@ Round order: **render** (pilot) -> hud -> ai -> track -> frontend.
 |---|---|---|---|---|---|---|
 | render | 748 | 165 | 1 | 0 | none (round 1) | ACTIVE (pilot) |
 | hud | 77 | 36 | 0 | 0 | — | QUEUED |
-| ai | 30 | 45 | 1 | 1 | n/a (non-visual) | ACTIVE |
+| ai | 30 | 45 | 2 | 0 | n/a (non-visual) | ACTIVE |
 | track | 60 | 3 | 0 | 0 | — | QUEUED |
 | frontend | 82 | 152 | 0 | 0 | scr1 118/118 GREEN | QUEUED |
 
@@ -73,7 +73,8 @@ _QUEUED — section stub, filled when scheduler activates it._
 
 | round | date | candidates | landed C3+ | parity delta | dry? | note |
 |---|---|---|---|---|---|---|
-| 1 | 2026-09-01 | 30 scoped (top: 00415e20, 004161e0) | 0 | n/a (non-visual) | yes | Characterization + gate. Gate GREEN: worktree area-ai on Mashed_pool2, anchor bdcae093 matches, baseline build.bat exit 0 (both targets); preflight staleness was a shared-pool CWD path artifact (real `.rep` in main `mashed_pool`). No synthetic cheap win exists — all 30 residue read live state; the C3 route is a booted-race self-test. **Finding: U-9025 stale** (resolved 2026-07-28 as an audio-thread bug), so `AiSteeringAngleError` is unblocked, not wedged. account2 child cannot boot a race (prompt/stall); race-run half reported to parent for the scenario/sweep lane. `AiSplineTargetInit` mapped->impl drift noted (deferred to a re-classify pass). 0 landed because the only acceptance (a live-race Frida diff) is not child-executable on account2, not fabricated GREEN. |
+| 1 | 2026-09-01 | 30 scoped (top: 00415e20, 004161e0) | 0 | n/a (non-visual) | yes | Characterization + gate. Gate: worktree area-ai on Mashed_pool2, anchor bdcae093 matches; preflight staleness was a shared-pool CWD path artifact (real `.rep` in main `mashed_pool`). ~~baseline build.bat exit 0~~ **CORRECTED in r2: that was a FALSE PASS** — `cmd /c "mashedmod\build.bat"` from Git Bash mangled the path and ran nothing (log was a 3-line cmd banner, `mashedmod/build/` never created); the real build was run+verified in r2. No synthetic cheap win exists — all 30 residue read live state; the C3 route is a booted-race self-test. **Finding: U-9025 stale** (resolved 2026-07-28 as an audio-thread bug), so `AiSteeringAngleError` is unblocked, not wedged. account2 child cannot boot a race (prompt/stall); race-run half reported to parent for the scenario/sweep lane. `AiSplineTargetInit` mapped->impl drift noted. 0 landed because the only acceptance (a live-race Frida diff) is not child-executable on account2, not fabricated GREEN. |
+| 2 | 2026-09-01 | 1 (00415e20 AiSteeringAngleError) | 0 (queued NEEDS-BOOTED-RACE) | n/a (non-visual) | no | Parent chose option (b): child does the non-stalling half, no race boot here. **Authored + built the in-race A/B self-test harness for AiSteeringAngleError**, mirroring Ai/AiLineOfSight.cpp LosDispatch. Decoded the prologue via capstone off MASHED.exe.unpatched (SUB ESP,0x10 / PUSH ESI / MOV ESI,[ESP+0x18] / LEA @0x00415e28) to build the OrigSteeringAngleError trampoline; SteerDispatch does the bit-exact float A/B and returns orig (safe passthrough); naked entry AiSteer_Entry installed at 0x00415e20. **Build now genuinely verified via PowerShell**: compile+link GREEN both targets (mashed_re.exe 1.68MB + mashed_re_dev.asi 857KB), AiTargeting.cpp only the benign C4996 getenv warning (same as LOS). The lone failure was the deploy-to-`original\` step, environmental in a worktree (no original/ junction). Queued to re/PROMOTION_QUEUE.md as area-ai-r2 (NEEDS-BOOTED-RACE) + area-ai-r2-drift (AiSplineTargetInit re-classify request). NOT dry: authored+built a real C3 harness; only the race-run acceptance is parent/account3-gated. |
 
 ## track
 
