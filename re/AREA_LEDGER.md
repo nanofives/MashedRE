@@ -65,7 +65,23 @@ _QUEUED — non-visual; parity gate N/A, exit gate is coverage + Frida diff only
 
 ## track
 
-_QUEUED — game-mode slice; only 3 implemented .cpp, expect a long area._
+- **Coverage target (S-DoD):** every executed track/course-load function at F-DoD, linked into `mashed_re.exe` and reached on the default course-load path, `track` STUBS section empty, formats round-trip.
+- **Baseline (2026-08-31):** 60 residue<C3, all doc-only C2 (0 implemented .cpp among the residue; the only 3 track C3 are trivial global setters in `Util/PromoLoop_*.cpp` — already done). Game-mode name-match (`mode|champ|cup|race|challenge`) returns 0 rows: the mode/championship dispatchers are not separately named in the residue; they live inside the course-load chain (`FUN_00426e10` / `FUN_0040d270`).
+- **Round-1 finding (harness gap, evidence-backed):** track has **no free synthetic C2→C3 wins**. Decoded the cheapest candidates (0047b9e0, 0040d440, 0040d020 + callees) via analyzeHeadless/pool15:
+  - `0047b9e0` forwards `(p1,p2)` to `FUN_00496c10`, which is `void FUN_00496c10(void)` (render-quad emitter, gated on `DAT_00636b70`). Args are ignored by the callee and there is **no scalar observable** → synthetic path1 has nothing to diff (rejected by `run_diff.py:465` no-op guard).
+  - `0040d440` (Course::LoadCurrent) calls `FUN_0040d270` (Course::Finish, ~100-line load/teardown driver: file work, printf, `**(param_1+param_2*4)` derefs). Not synthetic-safe.
+  - `0040d020` derefs a track-table entry into `FUN_00426e10`, which opens the track `.piz` + runs `COURSE.LUA`/`LAPDATA.LUA` (heavy file I/O). Not synthetic-safe.
+  - Lua config-handler cluster (`0047a1b0` family: Occluder/Mts/Clump/Spline/AI-Bsp filenames) reads a live `lua_State` (`FUN_004b6fc0`/`FUN_004b70d0`) populated only during `COURSE.LUA` execution → needs a Lua scenario, not synthetic re-calls.
+  - **Net:** the residue is course-**load-time** code. C3 promotion needs a course-load scenario verifier (path2-install + `drive_to_race` load with a load-integrity assert — C4-shaped), NOT synthetic path1. Reported to parent as a HARNESS_BACKLOG gap. No unverifiable heavyweight loader code authored into the tree (respects the acceptance bar).
+- **Revisit condition (if MINED-OUT):** a course-load scenario verifier lands in the Frida harness (install hook, drive into a race, assert the track loads identically) — then the load-dispatcher cluster becomes promotable.
+
+### Rounds
+
+<!-- Append one row per round: round | date | candidates | landed C3+ | parity delta | dry? | note -->
+
+| round | date | candidates | landed C3+ | parity delta | dry? | note |
+|---|---|---|---|---|---|---|
+| 1 | 2026-09-01 | 6 decoded (0047b9e0, 00496c10, 0040d440, 0040d270, 0040d020, 00426e10) | 0 | n/a (non-visual load path) | yes | Scoping round. Preflight ✓ (anchor bdcae093 matches; worktree area-track on pool15; baseline build compiled both targets — only the shared-`original\` .asi deploy failed, expected in a worktree). Finding: track C2 residue are course-load-time dispatchers/Lua handlers with no synthetic observable (see section above). C3 promotion blocked on a course-load scenario verifier (harness gap reported to parent). Did NOT author unverifiable loader code. |
 
 ## frontend
 
