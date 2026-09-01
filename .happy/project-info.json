@@ -1,28 +1,46 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-01T15:35:00Z",
+  "updatedAt": "2026-09-01T16:40:00Z",
   "sections": [
     {
-      "heading": "Frida-sweep 20260901",
+      "heading": "Area-loop round 2 (running)",
       "fields": [
-        { "label": "Branch", "value": "sweep/20260901 (5 area branches merged)", "kind": "text" },
-        { "label": "C3s landed GREEN", "value": 3, "kind": "number" },
-        { "label": "Landed", "value": [
-            "0x004c4eb0 RwMatrixInvert - path1 5/5, path2 FULL PASS",
-            "0x004739f0 TextSpriteScaled - path1 10/10, path2 FULL PASS",
-            "0x00415e20 AiSteeringAngleError - booted race 3585 calls, 0 mism"
+        { "label": "Base", "value": "race/first-frame-parity @ 471c854c (post-sweep)", "kind": "text" },
+        { "label": "Children active", "value": 5, "kind": "number" },
+        { "label": "Areas", "value": [
+            "render (747 residue)",
+            "frontend (80) - owns the U-9065 fix",
+            "ai (29)",
+            "vehicle (87) - never swept",
+            "util (334) - never swept"
           ], "kind": "list" },
-        { "label": "Blocked", "value": [
-            "0x004277a0 TextCtrlCodeRemap - path1 13/13 GREEN, path2 FAIL (duplicate RH_ScopedInstall)",
-            "track cluster - course-load verifier FAILs at baseline (miscalibrated assert)"
+        { "label": "Not staffed", "value": [
+            "hud - MINED-OUT, 2 dry rounds",
+            "track - BLOCKED on U-9066"
           ], "kind": "list" }
       ]
     },
     {
-      "heading": "Build",
+      "heading": "Sweep 20260901 (closed)",
       "fields": [
-        { "label": "Canonical .asi", "value": "rebuilt 2026-09-01, epoch-checked (10s)", "kind": "text" },
-        { "label": "Next", "value": "resolve 0x004277a0 installer, then spawn next area fleet", "kind": "text" }
+        { "label": "C3s landed GREEN", "value": 3, "kind": "number" },
+        { "label": "Landed", "value": [
+            "0x004c4eb0 RwMatrixInvert - path1 5/5, path2 PASS",
+            "0x004739f0 TextSpriteScaled - path1 10/10, path2 PASS",
+            "0x00415e20 AiSteeringAngleError - 3585 calls, 0 mism"
+          ], "kind": "list" },
+        { "label": "Parked", "value": "0x004277a0 TextCtrlCodeRemap - path2 FAIL, U-9065", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Parent queue",
+      "fields": [
+        { "label": "Owned by parent", "value": [
+            "booted-race + path2 runs (children are path1-only)",
+            "recalibrate the U-9066 course-load assert",
+            "B-0003: 0x004726f0 void-typed but returns ST0 float",
+            "0x004161e0 re-classify request still queued"
+          ], "kind": "list" }
       ]
     }
   ]
