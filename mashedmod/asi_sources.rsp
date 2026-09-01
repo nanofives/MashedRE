@@ -25,6 +25,7 @@
 "Util\TimerState.cpp"
 "Util\TimerSubarrayInit.cpp"
 "Util\Vec3Centroid.cpp"
+"Util\FloatSliderStep.cpp"
 "Util\GameStateGetters.cpp"
 "Util\EventTable.cpp"
 "Util\TimerInit.cpp"

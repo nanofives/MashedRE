@@ -2996,42 +2996,38 @@ HOOKS = {
         ],
     },
 
-    # 0x004d8680 RwStricmp(char* s1, char* s2) -> int: canonical case-insensitive string
-    # compare. NULL-guard on either arg -> 0. Per char: fold 'A'..'Z' (+0x20) via SIGNED
-    # byte range checks (JL/JG), compare, on mismatch return MOVSX-extended (int)a-(int)c
-    # of the folded bytes. PURE LEAF: no callees/globals/FP -> plain-C transcription is
-    # bit-identical -> Render/RwStricmp.cpp. Stored at the RW string vtable slot +0xf0.
-    # arg_type stricmp_pair: two 512B seeded bufs (NUL-terminated), JS null -> NULL ptr;
-    # observable is the signed int return as uint32. Vectors span equal / same-vs-mixed
-    # case / less / greater / both prefix directions / the 'A'-vs-'[' fold boundary /
-    # '@'-vs-'`' (neither folded) / a 0x80+ byte (signed-extension discriminant) / NULL.
-    # Expected (uint32): [0, 0, -1=0xffffffff, 1, -99=0xffffff9d, 99, 6, -32=0xffffffe0,
-    #   -160=0xffffff60 (0xc1 signed -63 minus 'a' 97 -> proves MOVSX not zero-extend),
-    #   0 (null s1), 0 (null s2), 0 (both empty)].
-    'rw_stricmp': {
-        'rva':            0x004d8680,
-        'export':         'RwStricmp',
-        'signature':      {'ret': 'int', 'args': ['pointer', 'pointer']},
-        'arg_type':       'stricmp_pair',
+    # 0x0045db50 FloatSliderStep(dir): steps the clamped slider global DAT_0068fc8c by a
+    # direction code, then clamps to [0,1]. dir 0 -= step1(0x005cc9c0); 1 += step1;
+    # 2 = 0.0 (zero-store, no clamp); 3 -= step2(0x005cd0ec); >3 no step, re-clamp only.
+    # Clamp bounds 1.0f(0x005cc320)/0.0f(0x005d757c), all .rdata. Verbatim naked x87 (jump
+    # table -> branch ladder) -> Util/FloatSliderStep.cpp. PURE LEAF, no callees, no live
+    # state -> synthetic-safe at menu-attach.
+    # WITNESSING OBSERVABLE: the single mutated global DAT_0068fc8c read AFTER the call is
+    # the discriminant (this function's own write). cache_setter_observe snapshots+RESTORES
+    # it around every call, so successive tests do not run against a perturbed value
+    # (parent constraint on live-global seeding). Non-degenerate: each seed+dir moves the
+    # value to a distinct result (0.5-/+step, 0.0, 0.5-step2, and the two clamp saturations),
+    # so a pass genuinely witnesses the step+clamp, not an inert global.
+    'float_slider_step': {
+        'rva':            0x0045db50,
+        'export':         'FloatSliderStep',
+        'signature':      {'ret': 'void', 'args': ['int']},
+        'arg_type':       'cache_setter_observe',
         'lut_root_delta': 0,
         'path1_tests': [
-            { 's1': 'hello', 's2': 'hello' },          # equal -> 0
-            { 's1': 'Hello', 's2': 'hELLO' },          # case-fold equal -> 0
-            { 's1': 'abc',   's2': 'abd'   },          # less -> -1
-            { 's1': 'abd',   's2': 'abc'   },          # greater -> 1
-            { 's1': 'ab',    's2': 'abc'   },          # s1 prefix -> 0-0x63 = -99
-            { 's1': 'abc',   's2': 'ab'    },          # s2 prefix -> 0x63-0 = 99
-            { 's1': 'A',     's2': '['     },          # fold boundary: 0x61-0x5b = 6
-            { 's1': '@',     's2': '`'     },          # neither folded: 0x40-0x60 = -32
-            { 's1': 'Á','s2': 'a'     },          # signed byte: (-63)-97 = -160
-            { 's1': None,    's2': 'x'     },          # null s1 -> 0
-            { 's1': 'x',     's2': None    },          # null s2 -> 0
-            { 's1': '',      's2': ''      },          # both empty -> 0
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x3f000000}], 'args': [0], 'obs': ['0x0068fc8c']},  # 0.5, dir0 dec1
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x3f000000}], 'args': [1], 'obs': ['0x0068fc8c']},  # 0.5, dir1 inc1
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x3f000000}], 'args': [2], 'obs': ['0x0068fc8c']},  # 0.5, dir2 zero
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x3f000000}], 'args': [3], 'obs': ['0x0068fc8c']},  # 0.5, dir3 dec2
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x3f733333}], 'args': [1], 'obs': ['0x0068fc8c']},  # 0.95, dir1 -> upper clamp region
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x3d4ccccd}], 'args': [0], 'obs': ['0x0068fc8c']},  # 0.05, dir0 -> lower clamp region
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x40000000}], 'args': [5], 'obs': ['0x0068fc8c']},  # 2.0, dir>3 -> clamp to 1.0
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0xbf800000}], 'args': [7], 'obs': ['0x0068fc8c']},  # -1.0, dir>3 -> clamp to 0.0
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x3f000000}], 'args': [4], 'obs': ['0x0068fc8c']},  # 0.5, dir>3 -> unchanged (in range)
         ],
         'path2_tests': [
-            { 's1': 'Hello', 's2': 'hELLO' },          # case-fold equal -> 0
-            { 's1': 'A',     's2': '['     },          # fold boundary -> 6
-            { 's1': 'Á','s2': 'a'     },          # signed-extension discriminant -> -160
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x3f000000}], 'args': [3], 'obs': ['0x0068fc8c']},  # dir3 dec2 (moves)
+            {'seed': [{'addr': '0x0068fc8c', 'val': 0x40000000}], 'args': [5], 'obs': ['0x0068fc8c']},  # clamp to 1.0
         ],
     },
 
