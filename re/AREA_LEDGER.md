@@ -23,7 +23,7 @@ Round order: **render** (pilot) -> hud -> ai -> track -> frontend.
 | area | residue<C3 | implemented .cpp | rounds run | dry streak | last parity | state |
 |---|---|---|---|---|---|---|
 | render | 748 | 165 | 1 | 0 | none (round 1) | ACTIVE (pilot) |
-| hud | 77 | 36 | 1 | 1 | n/a (scoping round) | ACTIVE |
+| hud | 77 | 36 | 2 | 2* | n/a | ACTIVE (*2nd dry is a parent-directed calibration, not a cheap-win hunt — parent to decide MINED-OUT) |
 | ai | 30 | 45 | 0 | 0 | n/a (non-visual) | QUEUED |
 | track | 60 | 3 | 0 | 0 | — | QUEUED |
 | frontend | 82 | 152 | 0 | 0 | scr1 118/118 GREEN | QUEUED |
@@ -73,6 +73,7 @@ State vocab: QUEUED | ACTIVE | MINED-OUT | COVERED.
 | round | date | candidates | landed C3+ | parity delta | dry? | note |
 |---|---|---|---|---|---|---|
 | 1 | 2026-09-01 | 9 decoded (00552e40, 00552b60, 004128f0, 00413b80/bb0/cb0/f50, 00412cf0, 00455b50, 0047d640, 0047def0, +leaves 004a2c48/00412f30/004726f0) | 0 | n/a (scoping) | yes | No clean cheap C2->C3 win in hud (mirrors render round-0). FlushMatrix GREEN = crash_equal_ok false-green (rejected); FontSys_InitSeq deadlocks; VehicleIcons trio + 004128f0 void/GPU/register-convention; 00412cf0 gate-satisfied but Ghidra decomp is LOSSY (drops 004726f0's ST0 return + the K²·_DAT_005cd04c chain into byte+0x27 — needs asm-exact port). 3 cross-area findings reported to parent (F1 Rt2d band, F2 __ftol label, F3 004726f0 float return). Added `DisasmPC.java` (account2 asm dumper, no MCP). |
+| 2 | 2026-09-01 | B-0001 Rt2d calibration (9 Group-B band rows + 8 callee classifications) | 0 | n/a | yes (parent-directed calibration, not a cheap-win hunt) | **REFUTE**: the font-vector band is FIRST-PARTY, not vendored RW. Callees that make it "look RW" are first-party render/boot (004cd070 RwRenderPrimitiveSubmit render-C2, 004cd140 render-C3, 005c4c60/4d30/4da0 boot); FGDC20.RWF is a Mashed asset (Font36.piz); the port already reimplements it (D3d9Render/MashedFont.cpp). No reclass-OUT queued — would discard first-party work + doesn't shrink residue. Also flagged the ~15-row list conflated Group A (named/C3-impl first-party — never reclass) with Group B. B-0001 -> REFUTED. Evidence: re/analysis/area_hud_round2_rt2d_calibration.md. Held before HUD-render verifier pending parent (premise flipped). |
 
 ## ai
 
