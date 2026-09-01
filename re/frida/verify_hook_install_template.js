@@ -201,6 +201,21 @@ function callFn(fn, input, buf) {
         for (let j = 0; j <= s.length; j++) out.push(b.add(j).readU8());
         return out.join(',');
     }
+    if (CONFIG.arg_type === 'str_char_search') {
+        // fn(char* s, int c) -> char* into s (or NULL). Mirror diff_template: one 512-byte
+        // scratch seeded with test.s + NUL, low byte of test.c; observable is return as a
+        // byte offset from buf start (-1 for NULL). path2 had no case for the {s,c} test-dict
+        // shape (same "bad argument count" hole class). (area-loop render round 5, 2026-09-01.)
+        const b = Memory.alloc(512);
+        const s = String(input.s);
+        for (let j = 0; j < s.length; j++) b.add(j).writeU8(s.charCodeAt(j) & 0xff);
+        b.add(s.length).writeU8(0);
+        const c = (input.c | 0) & 0xff;
+        const ret = fn(b, c);
+        const rp = (ret === null || ret === undefined) ? NULL
+                 : (typeof ret === 'object' ? ret : ptr(ret >>> 0));
+        return rp.isNull() ? -1 : rp.sub(b).toInt32();
+    }
     if (CONFIG.arg_type === 'draw_quad_observe') {
         // 12-arg Im2D quad draw: `input` is the full arg vector. path2 had no case
         // for it, so the dispatcher fell through to `fn(input)` and every call died

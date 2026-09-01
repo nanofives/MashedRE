@@ -359,6 +359,7 @@ cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe
     "Render\RwMatrixInvert.cpp" ^
     "Render\RwStricmp.cpp" ^
     "Render\RwStrCase.cpp" ^
+    "Render\RwStrSearch.cpp" ^
     "Render\SlotObjectAccessors.cpp" ^
     "Render\StateBatchGetters.cpp" ^
     "Render\ParticleEmitterCtors.cpp" ^

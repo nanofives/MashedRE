@@ -2859,6 +2859,64 @@ HOOKS = {
         ],
     },
 
+    # 0x004d8730 RwStrchr(char* s, char c) -> char*: FIRST occurrence of c in s, else
+    # NULL. Matches the NUL terminator when c==0 (returns ptr to terminator). NO null
+    # guard on s (derefs immediately). PURE LEAF (0 callees/globals/FP) -> plain-C
+    # bit-identical -> Render/RwStrSearch.cpp. RW string vtable slot +0xe0
+    # (RwEngineRegisterStringFunctions 0x004d8570 C3). arg_type str_char_search:
+    # observable is the return OFFSET from buf start (-1 = NULL). Repeated-char vectors
+    # ('l','o','aaa') are the first-vs-last discriminant vs RwStrrchr.
+    'rw_strchr': {
+        'rva':            0x004d8730,
+        'export':         'RwStrchr',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'int']},
+        'arg_type':       'str_char_search',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 's': 'hello,world', 'c': 0x6c },  # 'l' first -> 2
+            { 's': 'hello,world', 'c': 0x6f },  # 'o' first -> 4
+            { 's': 'hello,world', 'c': 0x7a },  # 'z' absent -> -1
+            { 's': 'hello,world', 'c': 0x68 },  # 'h' -> 0
+            { 's': 'hello,world', 'c': 0x64 },  # 'd' last char -> 10
+            { 's': 'hello,world', 'c': 0x00 },  # NUL terminator -> 11
+            { 's': 'aaa',         'c': 0x61 },  # 'a' first -> 0
+            { 's': '',            'c': 0x61 },  # empty, absent -> -1
+            { 's': '',            'c': 0x00 },  # empty, NUL -> 0
+        ],
+        'path2_tests': [
+            { 's': 'hello,world', 'c': 0x6c },  # -> 2
+            { 's': 'hello,world', 'c': 0x7a },  # -> -1
+        ],
+    },
+
+    # 0x004d8750 RwStrrchr(char* s, char c) -> char*: LAST occurrence of c in s, else
+    # NULL. Matches the NUL terminator when c==0. NO null guard on s. PURE LEAF ->
+    # Render/RwStrSearch.cpp. RW string vtable slot +0xdc (sibling of RwStrchr).
+    # arg_type str_char_search (return offset). The repeated-char vectors return the
+    # LAST index here (vs FIRST for RwStrchr), proving the two are not confused.
+    'rw_strrchr': {
+        'rva':            0x004d8750,
+        'export':         'RwStrrchr',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'int']},
+        'arg_type':       'str_char_search',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 's': 'hello,world', 'c': 0x6c },  # 'l' last -> 9
+            { 's': 'hello,world', 'c': 0x6f },  # 'o' last -> 7
+            { 's': 'hello,world', 'c': 0x7a },  # 'z' absent -> -1
+            { 's': 'hello,world', 'c': 0x68 },  # 'h' only one -> 0
+            { 's': 'hello,world', 'c': 0x00 },  # NUL terminator -> 11
+            { 's': 'aaa',         'c': 0x61 },  # 'a' last -> 2
+            { 's': 'abcabc',      'c': 0x62 },  # 'b' last -> 4
+            { 's': '',            'c': 0x61 },  # empty, absent -> -1
+            { 's': '',            'c': 0x00 },  # empty, NUL -> 0
+        ],
+        'path2_tests': [
+            { 's': 'hello,world', 'c': 0x6c },  # -> 9
+            { 's': 'aaa',         'c': 0x61 },  # -> 2
+        ],
+    },
+
     # 0x004c3910 Vec3NormalizeScale(out, in): out = in * (1/|in|); returns the scale
     # (1/|in|) in ST0. Inv-sqrt sibling of RwV3dNormalize; reads the RW3 invsqrt LUT
     # (device globals DAT_007d3ff8 / DAT_007d3ffc, table slot +4) -> run live (menu:
