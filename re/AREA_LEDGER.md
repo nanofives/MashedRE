@@ -37,7 +37,7 @@ Parent owns [[CROSS_AREA_BUS]] + this ledger; children report cross-area finding
 | area | residue<C3 | implemented .cpp | rounds run | dry streak | last parity | state |
 |---|---|---|---|---|---|---|
 | render | 748 | 165 | 1 | 0 | none (round 1) | ACTIVE (pilot) |
-| hud | 77 | 36 | 1 | 1 | — | ACTIVE — no cheap wins; ~15 rows pending Rt2d reclass-OUT (B-0001); filed 3 cross-area findings |
+| hud | 77 | 36 | 2 | 2* | n/a | ACTIVE — no cheap wins; ~15 rows pending Rt2d reclass-OUT (B-0001 REFUTED, band is first-party); filed 3 cross-area findings (*2nd dry is a parent-directed calibration, not a cheap-win hunt — parent to decide MINED-OUT) |
 | ai | 29 | 45 | 3 | 0 | n/a (non-visual) | ACTIVE — 1 C3 VERIFIED (0x00415e20 AiSteeringAngleError, parent booted-race 3585-call 0-mism GREEN); found+fixed a real x87 ST0-leak reimpl bug en route |
 | track | 60 | 3 | 1 | 1 | — | ACTIVE — no free synthetic wins; needs course-load verifier (2nd dry -> MINED-OUT, revisit=verifier built) |
 | frontend | 82 | 152 | 0 | 0 | scr1 118/118 GREEN | ACTIVE (merging infra base) |
@@ -71,7 +71,23 @@ State vocab: QUEUED | ACTIVE | MINED-OUT | COVERED.
 
 ## hud
 
-_QUEUED — section stub, filled when scheduler activates it._
+- **Coverage target (S-DoD):** every executed hud function at F-DoD, linked into `mashed_re.exe`, reached on the default path, `hud` STUBS section empty, formats round-trip.
+- **Worktree/slot:** `.worktrees/area-hud` on `area/hud`, pool slot `Mashed_pool14`, log dir `log/area-hud`.
+- **Structural facts (round 1):**
+  - Residue = 77 below C3; only **2 implemented+linked** and both are traps: `00552e40 FontCtx_FlushMatrix` (Frida GREEN is `crash_equal_ok` NULL-cam, body unverified — false-green) and `00552b60 FontSys_InitSeq` (deadlocks at quiescent menu). The remaining 75 are doc-only C2 needing authoring.
+  - The `0x00553000-0x00557fff` font-vector band (~15 rows: `00554010/150/200/390`, `00555830`, `00556780`, `00556e40`, `005571c0/e0`, `FontSys_*`) is **suspected vendored RenderWare Rt2d** (module-vendor-doubt in the plates; FlushMatrix's callers `00552890/00552920` already reclassed `third-party-library[renderware]` Rt2d). A confirmed Rt2d calibration reclasses-OUT these -> biggest single lever on hud residue. **Cross-area (hud->render), reported to parent (F1).**
+  - The real game-hud functions (`0x0041xxxx` VehicleIcons/label-trail, `0x0047xxxx` event-markers) are `void`/GPU-side-effecting/register-convention/stateful per-frame emitters — none is a clean bit-identity diff; they are asm-exact port work, not cheap wins.
+- **Open findings (see `re/analysis/area_hud_round1_scoping.md`):** F1 Rt2d band reclass; F2 `004a2c48`=`__ftol` not "QPC tick"; F3 `004726f0` returns float on ST0 (plated `void`).
+- **Parity:** no hud-specific recipe run in round 1 (scoping only).
+
+### Rounds
+
+<!-- round | date | candidates | landed C3+ | parity delta | dry? | note -->
+
+| round | date | candidates | landed C3+ | parity delta | dry? | note |
+|---|---|---|---|---|---|---|
+| 1 | 2026-09-01 | 9 decoded (00552e40, 00552b60, 004128f0, 00413b80/bb0/cb0/f50, 00412cf0, 00455b50, 0047d640, 0047def0, +leaves 004a2c48/00412f30/004726f0) | 0 | n/a (scoping) | yes | No clean cheap C2->C3 win in hud (mirrors render round-0). FlushMatrix GREEN = crash_equal_ok false-green (rejected); FontSys_InitSeq deadlocks; VehicleIcons trio + 004128f0 void/GPU/register-convention; 00412cf0 gate-satisfied but Ghidra decomp is LOSSY (drops 004726f0's ST0 return + the K²·_DAT_005cd04c chain into byte+0x27 — needs asm-exact port). 3 cross-area findings reported to parent (F1 Rt2d band, F2 __ftol label, F3 004726f0 float return). Added `DisasmPC.java` (account2 asm dumper, no MCP). |
+| 2 | 2026-09-01 | B-0001 Rt2d calibration (9 Group-B band rows + 8 callee classifications) | 0 | n/a | yes (parent-directed calibration, not a cheap-win hunt) | **REFUTE**: the font-vector band is FIRST-PARTY, not vendored RW. Callees that make it "look RW" are first-party render/boot (004cd070 RwRenderPrimitiveSubmit render-C2, 004cd140 render-C3, 005c4c60/4d30/4da0 boot); FGDC20.RWF is a Mashed asset (Font36.piz); the port already reimplements it (D3d9Render/MashedFont.cpp). No reclass-OUT queued — would discard first-party work + doesn't shrink residue. Also flagged the ~15-row list conflated Group A (named/C3-impl first-party — never reclass) with Group B. B-0001 -> REFUTED. Evidence: re/analysis/area_hud_round2_rt2d_calibration.md. Held before HUD-render verifier pending parent (premise flipped). |
 
 ## ai
 
