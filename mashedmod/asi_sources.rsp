@@ -22,6 +22,7 @@
 "Vehicle\Physics.cpp"
 "Util\TimerState.cpp"
 "Util\TimerSubarrayInit.cpp"
+"Util\Vec3Centroid.cpp"
 "Util\GameStateGetters.cpp"
 "Util\EventTable.cpp"
 "Util\TimerInit.cpp"
