@@ -24,7 +24,7 @@ Round order: **render** (pilot) -> hud -> ai -> track -> frontend.
 |---|---|---|---|---|---|---|
 | render | 748 | 165 | 1 | 0 | none (round 1) | ACTIVE (pilot) |
 | hud | 77 | 36 | 0 | 0 | — | QUEUED |
-| ai | 30 | 45 | 0 | 0 | n/a (non-visual) | QUEUED |
+| ai | 30 | 45 | 1 | 1 | n/a (non-visual) | ACTIVE |
 | track | 60 | 3 | 0 | 0 | — | QUEUED |
 | frontend | 82 | 152 | 0 | 0 | scr1 118/118 GREEN | QUEUED |
 
@@ -61,7 +61,19 @@ _QUEUED — section stub, filled when scheduler activates it._
 
 ## ai
 
-_QUEUED — non-visual; parity gate N/A, exit gate is coverage + Frida diff only._
+- **Coverage target (S-DoD):** every executed AI function at F-DoD, TU linked into the `.asi`/exe and reached on the default path, `ai` STUBS section empty. Non-visual: **parity gate N/A**, exit gate is coverage + Frida diff only.
+- **Area shape (round 1):** 30 residue<C3, of which **29 are doc-only C2** (need a `.cpp` authored) and **1 is implemented+linked** (`00415e20 AiSteeringAngleError`, whose sibling `004161e0 AiSplineTargetInit` is also implemented+installed in `Ai/AiTargeting.cpp` but its hooks.csv `file` col still points at the `.md`, so it reads `mapped`/`link=no` — tracker drift, not a real gap).
+- **No synthetic cheap win.** Every AI residue row reads/writes live vehicle+track state, so a hook-bypassed path1 diff on unpopulated state is a degenerate green ([[scratch-field-false-green]]; the out3_idx audit demoted `VehicleVelocityWorldGet` for exactly this). The three AI functions that reached C3 each used a **live race**: `AiLineOfSight`/`AiWallAhead` via in-process A/B self-tests (`MASHED_AI_*_SELFTEST`, scenario=race, ad-hoc — no push-button runner), `VehicleVelocityWorldGet` via a contrived-state `run_diff_scenario` (`cache_setter_observe`). The spline/targeting leaves are not cleanly contrive-able: they call **unverified C2 callees** (`FUN_00443dc0`, itself a residue row) with large unenumerated global footprints.
+- **Stale-blocker cleared (finding, round 1):** `AiSteeringAngleError`'s hooks.csv note reads "still wedges later — NOT fully resolved, see U-9025." **U-9025 is RESOLVED** (2026-07-28, commit f1855ad9): the wedge was a dropped implicit return in `FUN_005aef00` (AudioThreadDescInit), not AI; the hooked build completes 10/10 races. So `AiSteeringAngleError` is **no longer wedge-blocked** — it is a pure float-returning candidate one in-race self-test A/B from C3 (mirror `AiLineOfSight.cpp`'s `LosDispatch`, compare the returned float bits, passthrough orig).
+- **account2 blocker for the child:** the AI C3 route requires a **booted race**; running `MASHED.exe` + Frida is keep-local execution that prompts/stalls on account2, so the child cannot complete a race diff. The race-run half belongs to the parent's scenario/sweep lane (or an account3 run). Reported to parent.
+
+### Rounds
+
+<!-- Append one row per round: round | date | candidates | landed C3+ | parity delta | dry? | note -->
+
+| round | date | candidates | landed C3+ | parity delta | dry? | note |
+|---|---|---|---|---|---|---|
+| 1 | 2026-09-01 | 30 scoped (top: 00415e20, 004161e0) | 0 | n/a (non-visual) | yes | Characterization + gate. Gate GREEN: worktree area-ai on Mashed_pool2, anchor bdcae093 matches, baseline build.bat exit 0 (both targets); preflight staleness was a shared-pool CWD path artifact (real `.rep` in main `mashed_pool`). No synthetic cheap win exists — all 30 residue read live state; the C3 route is a booted-race self-test. **Finding: U-9025 stale** (resolved 2026-07-28 as an audio-thread bug), so `AiSteeringAngleError` is unblocked, not wedged. account2 child cannot boot a race (prompt/stall); race-run half reported to parent for the scenario/sweep lane. `AiSplineTargetInit` mapped->impl drift noted (deferred to a re-classify pass). 0 landed because the only acceptance (a live-race Frida diff) is not child-executable on account2, not fabricated GREEN. |
 
 ## track
 
