@@ -375,6 +375,10 @@ def build_config(hook, asi_path=None):
     if 'ret_kind' in hook:
         config['ret_kind'] = hook['ret_kind']
     for _k in ('seed_off', 'read_off', 'read_size', 'read_offs', 'fold_ret',
+               # per_vehicle_record_seed (area-vehicle r4): strided per-vehicle
+               # record seed+fingerprint+restore. slot_base_addr/slot_stride already
+               # forwarded above; these carry the observe window + input width.
+               'out_off', 'out_len', 'in_floats', 'slot_max',
                'idx_call_str', 'idx_arrays', 'prep_call_str', 'prep_arg_types',
                'pre_fill_byte', 'list_op', 'node_link_off', 'cmp_field_off',
                'object_size', 'init_rva_str', 'pushback_rva_str',

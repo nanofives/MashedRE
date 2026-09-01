@@ -269,6 +269,25 @@ function callFn(fn, input, buf) {
         }
         return '0x' + s;
     }
+    if (CONFIG.arg_type === 'per_vehicle_record_seed') {
+        // fn(uint slot, float* inN) writes a derived block into the strided per-vehicle
+        // record at base+slot*stride+out_off. Call slot 0 with a seeded input so the
+        // install call-through has valid args; SAVE/RESTORE the touched region so path2
+        // does not perturb live state. Mirrors the diff_template.js handler. (area-vehicle r4.)
+        const base   = ptr(CONFIG.slot_base_addr || '0x008815a0');
+        const outOff = (CONFIG.out_off | 0);
+        const outLen = (CONFIG.out_len | 0) || 0xa8;
+        const inN    = (CONFIG.in_floats | 0) || 6;
+        const inBuf  = Memory.alloc(inN * 4);
+        for (let k = 0; k < inN; k++) inBuf.add(k * 4).writeFloat(1.0 + k);
+        const region = base.add(outOff);            // slot 0
+        const saved = new Array(outLen);
+        for (let k = 0; k < outLen; k++) saved[k] = region.add(k).readU8();
+        let ret;
+        try { ret = fn(0, inBuf); }
+        finally { for (let k = 0; k < outLen; k++) region.add(k).writeU8(saved[k]); }
+        return ret;
+    }
     // FALLBACK, and it must stay LAST. A function with zero declared parameters must be
     // called with zero args, regardless of arg_type: the NativeFunction at TARGET_ADDR is
     // built from CONFIG.signature.args, so honor that same ground truth. Without this,

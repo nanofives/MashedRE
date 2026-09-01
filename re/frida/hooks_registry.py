@@ -17140,6 +17140,36 @@ HOOKS = {
             [0.75, 0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
         ],
     },
+    # 0x0046b1c0  VehicleSlotAabbExpand (vehicle) — int(uint slot, float* in6): zero-callee
+    #   straight-line PURE LEAF. Writes 42 dwords (0xa8 bytes) at 0x008815a0+slot*0xd04+0x90
+    #   derived ENTIRELY from in6[0..5] + consts 0x005cc32c(0.5f)/0x005ce034 (back-reads are
+    #   same-call writes; verbatim x87 naked asm Vehicle/VehicleSlotAabbExpand.cpp). NEW
+    #   arg_type per_vehicle_record_seed (SWEEP-CRITICAL, in BOTH diff_template.js AND
+    #   verify_hook_install_template.js): seed in6, SAVE the 0xa8-byte region, call, fingerprint,
+    #   RESTORE; fold_ret covers the slot>0xf guard arm (returns 0, writes nothing). The write
+    #   target is the per-vehicle record ai reads at 0x00881f74+veh*0xd04 (CROSS_AREA_BUS) but
+    #   the computation is input-pure -> synthetically diffable.
+    'vehicle_slot_aabb_expand': {
+        'rva': 0x0046b1c0, 'export': 'VehicleSlotAabbExpand',
+        'signature': {'ret': 'int32', 'args': ['int32', 'pointer']},
+        'arg_type': 'per_vehicle_record_seed',
+        'slot_base_addr': '0x008815a0', 'slot_stride': 0xd04,
+        'out_off': 0x90, 'out_len': 0xa8, 'in_floats': 6, 'slot_max': 16,
+        'fold_ret': True, 'crash_equal_ok': True, 'lut_root_delta': 0,
+        'path1_tests': [
+            [0,  -1.0, -2.0, -3.0,  1.0,  2.0,  3.0],
+            [1,  0.5, -0.5, 2.5,  3.5, -4.5, 5.5],
+            [7,  10.0, 20.0, 30.0, -10.0, -20.0, -30.0],
+            [15, 100.0, -200.0, 300.0, -400.0, 500.0, -600.0],  # max in-range slot
+            [2,  0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [3,  1e-6, -1e6, 3.14159, -2.71828, 0.0, 123456.0],
+            [16, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],                 # OUT-OF-RANGE -> guard arm (ret 0)
+        ],
+        'path2_tests': [
+            [0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+            [1, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0],
+        ],
+    },
     # 0x0046d510 VehicleVelocityWorldGet - RE-WIRED orch-iter21, IN-RACE lane.
     # Closes the last open row of the out3_idx audit
     # (re/analysis/out3_idx_false_green_audit_20260731.md). Row is C2, demoted from C3.
