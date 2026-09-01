@@ -2734,6 +2734,34 @@ HOOKS = {
         ],
     },
 
+    # 0x004c4eb0 RwMatrixInvert(out, in): 3x3 cofactor/adjugate inverse of `in`'s
+    # rotation, plus the inverse translation (-R^-1 * t). RwMatrix is 4x4 floats
+    # (0x40B): right@+0x00, up@+0x10, at@+0x20, pos@+0x30. Reads only in's 3x3 +
+    # translation, writes out's 3x3 + translation, forces out+0x0c=0. PURE LEAF:
+    # sole global is the +1.0 reciprocal-numerator const @0x005cc320; det==0 guard
+    # keeps numerator=1.0 (no fdiv). Verbatim naked x87 -> Render/RwMatrixInvert.cpp.
+    # fmt_desc_pair_compare 2-arg: bufA=out (left zeroed), bufB=in (seeded matrix);
+    # both bufs fingerprinted, so the computed inverse in bufA is the discriminant.
+    # Void ret -> retU16=0 both sides. Tests: 4 invertible + 1 singular (guard path).
+    'rw_matrix_invert': {
+        'rva':            0x004c4eb0,
+        'export':         'RwMatrixInvert',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'pointer']},
+        'arg_type':       'fmt_desc_pair_compare',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f04': 0x00000000, 'f08': 0x00000000, 'f10': 0x00000000, 'f14': 0x3f800000, 'f18': 0x00000000, 'f20': 0x00000000, 'f24': 0x00000000, 'f28': 0x3f800000, 'f30': 0x40a00000, 'f34': 0x40c00000, 'f38': 0x40e00000} },  # identity rot + T(5,6,7)
+            { 'a': {}, 'b': {'f00': 0x40000000, 'f04': 0x00000000, 'f08': 0x00000000, 'f10': 0x00000000, 'f14': 0x40400000, 'f18': 0x00000000, 'f20': 0x00000000, 'f24': 0x00000000, 'f28': 0x40800000, 'f30': 0x3f800000, 'f34': 0xc0000000, 'f38': 0x40400000} },  # scale(2,3,4) + T(1,-2,3)
+            { 'a': {}, 'b': {'f00': 0x3f5db3d7, 'f04': 0x3f000000, 'f08': 0x00000000, 'f10': 0xbf000000, 'f14': 0x3f5db3d7, 'f18': 0x00000000, 'f20': 0x00000000, 'f24': 0x00000000, 'f28': 0x3f800000, 'f30': 0x41200000, 'f34': 0x41a00000, 'f38': 0x41f00000} },  # Zrot30 + T(10,20,30)
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f04': 0x40000000, 'f08': 0x00000000, 'f10': 0x00000000, 'f14': 0x3f800000, 'f18': 0x40400000, 'f20': 0x40800000, 'f24': 0x00000000, 'f28': 0x3f800000, 'f30': 0x3f800000, 'f34': 0x3f800000, 'f38': 0x3f800000} },  # general non-ortho det=25
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f04': 0x00000000, 'f08': 0x00000000, 'f10': 0x40000000, 'f14': 0x00000000, 'f18': 0x00000000, 'f20': 0x00000000, 'f24': 0x00000000, 'f28': 0x3f800000, 'f30': 0x00000000, 'f34': 0x00000000, 'f38': 0x00000000} },  # singular det=0 (guard path)
+        ],
+        'path2_tests': [
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f14': 0x3f800000, 'f28': 0x3f800000, 'f30': 0x40a00000, 'f34': 0x40c00000, 'f38': 0x40e00000} },  # identity rot + T(5,6,7)
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f04': 0x40000000, 'f14': 0x3f800000, 'f18': 0x40400000, 'f20': 0x40800000, 'f28': 0x3f800000, 'f30': 0x3f800000, 'f34': 0x3f800000, 'f38': 0x3f800000} },  # general non-ortho det=25
+        ],
+    },
+
     # 0x004c3910 Vec3NormalizeScale(out, in): out = in * (1/|in|); returns the scale
     # (1/|in|) in ST0. Inv-sqrt sibling of RwV3dNormalize; reads the RW3 invsqrt LUT
     # (device globals DAT_007d3ff8 / DAT_007d3ffc, table slot +4) -> run live (menu:
