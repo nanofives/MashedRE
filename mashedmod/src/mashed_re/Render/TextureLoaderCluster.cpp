@@ -248,7 +248,8 @@ RwTextureSetName(std::uint32_t* param_1, const char* param_2)
     return param_1;  // cited 0x004c5b40
 }
 
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(RwTextureSetName, 0x004c5ae0);
+// Re-enabled area-render r6 2026-09-01 (DEMOTED-row re-promotion; path1 struct_str_set GREEN).
+RH_ScopedInstall(RwTextureSetName, 0x004c5ae0);
 
 // ---------------------------------------------------------------------------
 // 0x004c5b50  FUN_004c5b50  RwTextureSetMaskName   (109 bytes)
@@ -307,4 +308,5 @@ RwTextureSetMaskName(std::uint32_t* param_1, const char* param_2)
     return param_1;  // cited 0x004c5bb0
 }
 
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(RwTextureSetMaskName, 0x004c5b50);
+// Re-enabled area-render r6 2026-09-01 (DEMOTED-row re-promotion; path1 struct_str_set GREEN).
+RH_ScopedInstall(RwTextureSetMaskName, 0x004c5b50);

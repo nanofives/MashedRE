@@ -2954,6 +2954,61 @@ HOOKS = {
         ],
     },
 
+    # 0x004c5ae0 RwTextureSetName(tex, name) -> tex: strncpy(tex+0x10, name, 0x20) via the
+    # LIVE RW engine vtable (DAT_007d3ff8 slot +0xd0), then strlen via slot +0xf4; if len>31
+    # emits err 0x8000001e (FUN_004d7ff0/004d8480) and forces tex+0x2f=0. Reimpl already present
+    # in Render/TextureLoaderCluster.cpp (faithful vtable dispatch); RH_ScopedInstall re-enabled r6.
+    # DEMOTED-row re-promotion: was C4->C2 (broken-loader-window canonical evidence 2026-06-09);
+    # never had a path1 baseline. arg_type struct_str_set observes tex[0x10..0x2f] (name + overflow
+    # null). Runs at menu-attach (engine vtable live, same class as RwStringGetSizeAligned C3).
+    'rw_texture_set_name': {
+        'rva':            0x004c5ae0,
+        'export':         'RwTextureSetName',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'pointer']},
+        'arg_type':       'struct_str_set',
+        'struct_size':    0x60,
+        'observe_offset': 0x10,
+        'observe_length': 0x20,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 's': 'hi' },                                 # short -> "hi" + zero pad
+            { 's': 'texture01' },                          # typical
+            { 's': 'abcdefghijklmnopqrstuvwxyz01234' },    # 31 chars, no overflow
+            { 's': 'abcdefghijklmnopqrstuvwxyz012345' },   # 32 chars -> overflow, +0x2f forced 0
+            { 's': '' },                                   # empty -> all zero
+        ],
+        'path2_tests': [
+            { 's': 'texture01' },
+            { 's': 'abcdefghijklmnopqrstuvwxyz012345' },   # overflow path
+        ],
+    },
+
+    # 0x004c5b50 RwTextureSetMaskName(tex, name) -> tex: identical to RwTextureSetName but the
+    # name field is at tex+0x30 and the overflow null at tex+0x4f. Same live-vtable dispatch.
+    # Reimpl present in Render/TextureLoaderCluster.cpp; RH_ScopedInstall re-enabled r6. DEMOTED-row
+    # re-promotion. arg_type struct_str_set observes tex[0x30..0x4f].
+    'rw_texture_set_mask_name': {
+        'rva':            0x004c5b50,
+        'export':         'RwTextureSetMaskName',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'pointer']},
+        'arg_type':       'struct_str_set',
+        'struct_size':    0x60,
+        'observe_offset': 0x30,
+        'observe_length': 0x20,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 's': 'mask' },
+            { 's': 'alpha_mask_7' },
+            { 's': 'abcdefghijklmnopqrstuvwxyz01234' },    # 31 chars
+            { 's': 'abcdefghijklmnopqrstuvwxyz012345' },   # 32 chars -> overflow
+            { 's': '' },
+        ],
+        'path2_tests': [
+            { 's': 'alpha_mask_7' },
+            { 's': 'abcdefghijklmnopqrstuvwxyz012345' },
+        ],
+    },
+
     # 0x004b4550 Vec3Centroid(out, points, count): out[0..2] = (1/count)*sum(points[i]).
     # points = packed vec3 array (stride 12B); seeds out from points[0], sums the rest with a
     # 4-unrolled inner loop + 1..3 remainder, then multiplies by the 1/count reciprocal
