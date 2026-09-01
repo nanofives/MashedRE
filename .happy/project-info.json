@@ -1,13 +1,13 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-08-31T22:40:00Z",
+  "updatedAt": "2026-08-31T23:55:00Z",
   "sections": [
     {
-      "heading": "Shipping state — race/first-frame-parity",
+      "heading": "Session closed — handoff written",
       "fields": [
-        { "label": "Clump exclusion", "value": "DECODED and fixed; excluded clumps load. Default ON", "kind": "text" },
-        { "label": "Water ambient fold", "value": "Default OFF — reverted, it only fits Arctic", "kind": "text" },
-        { "label": "Reverts", "value": ["MASHED_TRACK_SKIP_EXCLUDED=1", "MASHED_LIBRW_AMBFOLD_SEA=1"], "kind": "list" }
+        { "label": "Branch", "value": "race/first-frame-parity (clean)", "kind": "text" },
+        { "label": "Handoff", "value": "re/analysis/NEXT_SESSION_race_parity_20260831.md", "kind": "text" },
+        { "label": "T-ARCTIC", "value": "Blocker cleared; geomlight + arctic-cap merged", "kind": "text" }
       ]
     },
     {
@@ -16,23 +16,24 @@
         { "label": "City", "value": "25.43 -> 11.23", "kind": "text" },
         { "label": "Dump", "value": "84.78 -> 9.62", "kind": "text" },
         { "label": "TRAINING (headline)", "value": "15.45 -> 15.40", "kind": "text" },
-        { "label": "Arctic s8", "value": "18.85 -> 20.24 (accepted cost: sea ships dark)", "kind": "text" },
-        { "label": "New baselines", "value": "Forest s8 15.37 | SuperG s14 39.19", "kind": "text" }
+        { "label": "Arctic s8", "value": "18.85 -> 20.24 (accepted: sea ships dark)", "kind": "text" },
+        { "label": "New references", "value": "Forest s8 15.37 | SuperG s14 39.19", "kind": "text" }
       ]
     },
     {
-      "heading": "Closed today",
+      "heading": "NEXT SLICE — librw fog colour",
       "fields": [
-        { "label": "T-ARCTIC", "value": "Closed; race/geomlight + race/arctic-cap merged", "kind": "text" },
-        { "label": "U-9062 / U-9063", "value": "Resolved — one decoded root cause, not two lighting bugs", "kind": "text" }
+        { "label": "Symptom", "value": "P7 fogcolor: d3d9=282C30 librw_ps=(0,0,0) MISMATCH — fog inert everywhere", "kind": "text" },
+        { "label": "Suspect", "value": "FOGCOLOR set before beginUpdate (the fog RANGE had this exact bug)", "kind": "text" },
+        { "label": "Verdict test", "value": "One edit, one run: the P7 fogcolor mismatch clearing", "kind": "text" },
+        { "label": "Guard rails", "value": ["TRAINING must hold 15.45", "City 11.23 no regression", "Dump 9.62 no regression"], "kind": "list" }
       ]
     },
     {
-      "heading": "Open",
+      "heading": "Open trackers",
       "fields": [
-        { "label": "U-9064", "value": "Arctic sea ships too dark (~9 vs ~28); no fold setting is right everywhere", "kind": "text" },
-        { "label": "Best lead", "value": "Original uses real RW lights (Lights.dff + RpWorldAddLight at 0x00479330), not a prelit fold", "kind": "text" },
-        { "label": "Also unexplained", "value": "Forest water over-bright even unfolded (39-44 vs 20-22)", "kind": "text" }
+        { "label": "U-9064", "value": "Arctic sea too dark — mechanism found (fog), fix not applied", "kind": "text" },
+        { "label": "Also open", "value": "Forest water over-bright unfolded; shader fog start=5.0 vs 0.1", "kind": "text" }
       ]
     }
   ]
