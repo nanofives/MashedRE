@@ -560,6 +560,31 @@ function callFn(fn, input, buf) {
         for (let j = 0; j <= s.length; j++) out.push(b.add(j).readU8());
         return out.join(',');
     }
+    // struct_str_set — fn(void* struct, const char* name) -> struct ptr, for the RW
+    // Texture name/mask setters (RwTextureSetName 0x004c5ae0 -> tex+0x10, RwTextureSetMaskName
+    // 0x004c5b50 -> tex+0x30). Both dispatch strncpy(dst,name,0x20)+strlen(name) through the
+    // LIVE RW engine vtable (DAT_007d3ff8 slots +0xd0/+0xf4), so this runs at menu-attach where
+    // that global is populated (same live-vtable class as RwStringGetSizeAligned 0x004d8770 C3).
+    // Per side: a fresh zeroed CONFIG.struct_size (default 0x60) struct + a 512B name buffer
+    // seeded with test.s + NUL; observable is CONFIG.observe_len (default 0x20) struct bytes from
+    // CONFIG.observe_off (0x10 name / 0x30 mask), which captures the strncpy result AND the
+    // overflow null at +0x2f/+0x4f. Both sides call the SAME live vtable strncpy so bit-identity
+    // holds. tests[i] = { s:"..." }.
+    if (CONFIG.arg_type === 'struct_str_set') {
+        const SZ  = (CONFIG.struct_size | 0) || 0x60;
+        const off = (CONFIG.observe_offset | 0);
+        const len = (CONFIG.observe_length | 0) || 0x20;
+        const st = Memory.alloc(SZ);
+        for (let k = 0; k < SZ; k += 4) st.add(k).writeU32(0);
+        const nm = Memory.alloc(512);
+        const s = String(input.s);
+        for (let j = 0; j < s.length; j++) nm.add(j).writeU8(s.charCodeAt(j) & 0xff);
+        nm.add(s.length).writeU8(0);
+        fn(st, nm);
+        const out = [];
+        for (let k = 0; k < len; k++) out.push(st.add(off + k).readU8());
+        return out.join(',');
+    }
     // str_char_search — fn(char* s, int c) -> char* pointing INTO s (or NULL), e.g.
     // RwStrchr 0x004d8730 (first match) / RwStrrchr 0x004d8750 (last match). One 512-byte
     // scratch seeded with test.s + NUL; only the low byte of test.c is used by the callee

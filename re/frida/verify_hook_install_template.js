@@ -191,6 +191,25 @@ function callFn(fn, input, buf) {
         for (let j = 0; j <= s.length; j++) out.push(b.add(j).readU8());
         return out.join(',');
     }
+    if (CONFIG.arg_type === 'struct_str_set') {
+        // fn(void* struct, const char* name) -> struct ptr; writes name into struct via
+        // the live RW strncpy vtable. Mirror diff_template: fresh zeroed struct + seeded
+        // name buffer; observable is CONFIG.observe_len struct bytes from CONFIG.observe_off.
+        // (area-loop render round 6, 2026-09-01 — DEMOTED-row re-promotion.)
+        const SZ  = (CONFIG.struct_size | 0) || 0x60;
+        const off = (CONFIG.observe_offset | 0);
+        const len = (CONFIG.observe_length | 0) || 0x20;
+        const st = Memory.alloc(SZ);
+        for (let k = 0; k < SZ; k += 4) st.add(k).writeU32(0);
+        const nm = Memory.alloc(512);
+        const s = String(input.s);
+        for (let j = 0; j < s.length; j++) nm.add(j).writeU8(s.charCodeAt(j) & 0xff);
+        nm.add(s.length).writeU8(0);
+        fn(st, nm);
+        const out = [];
+        for (let k = 0; k < len; k++) out.push(st.add(off + k).readU8());
+        return out.join(',');
+    }
     if (CONFIG.arg_type === 'str_char_search') {
         // fn(char* s, int c) -> char* into s (or NULL). Mirror diff_template: one 512-byte
         // scratch seeded with test.s + NUL, low byte of test.c; observable is return as a
