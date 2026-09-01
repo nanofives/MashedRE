@@ -1036,7 +1036,15 @@ constexpr std::uintptr_t kDat_005cc9a4   = 0x005cc9a4;
 constexpr std::uintptr_t kDat_005cc9a0   = 0x005cc9a0;
 
 typedef float (__cdecl* Fn_Vec3Mag_t)(const float*);
-typedef void  (__cdecl* Fn_004726f0_t)(float*, float*);
+// B-0003 FIX 2026-09-01: was `typedef void (__cdecl*)(float*, float*)`. 0x004726f0 returns a
+// float in ST0 (its own C3 reimpl, PromoLoop_sessionB.cpp Dot4726f0, is declared `float` and
+// every exit path leaves one value on the stack). Calling it through a VOID fn-ptr never emits
+// the FSTP, so each call leaked one x87 register -- the same class that overflowed the 8-deep
+// stack and froze the sim in the ai lane ([[x87-st0-float10-fnptr-void-leak]]). The ORIGINAL
+// also discards the result (0x00412cf0 decomp: `FUN_004726f0(&local_c,&local_18);` as a
+// statement), but a compiler discarding a float return emits the pop; a void-typed indirect
+// call does not. Declared float and the value explicitly discarded below so the pop is emitted.
+typedef float (__cdecl* Fn_004726f0_t)(float*, float*);
 } // namespace
 
 extern "C" __declspec(dllexport) void __cdecl LabelTrailRecordAppend(
@@ -1079,7 +1087,11 @@ extern "C" __declspec(dllexport) void __cdecl LabelTrailRecordAppend(
         *reinterpret_cast<const float*>(param_3 + 0x24),
         *reinterpret_cast<const float*>(param_3 + 0x28),
     };
-    fn_rotdelta(src_rot, tgt_rot);
+    // Result is genuinely unused here -- the original discards it too (0x00412cf0 decomp calls
+    // FUN_004726f0 as a bare statement). Bound to a variable rather than called bare so the
+    // float return is popped off the x87 stack; see the Fn_004726f0_t note above (B-0003).
+    const float rot_delta_unused = fn_rotdelta(src_rot, tgt_rot);
+    (void)rot_delta_unused;
 
     // Output record (11 floats + 1 uint = 0x2c bytes)
     param_1[0] = src_x + delta[0] * param_5;
