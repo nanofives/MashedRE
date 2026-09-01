@@ -361,3 +361,116 @@ std::uint32_t __cdecl AiWallAhead(int param_1)
 }
 
 RH_ScopedInstall(AiWallAhead, 0x00415d00);
+
+// ===========================================================================
+// 0x00415200  AiVehicle0ZeroProgressGuard() -> 1 if veh0 progress == 0.0f else 0
+//
+// Exact disasm (pool2, 2026-09-01):
+//   00415200  6a00              PUSH 0x0
+//   00415202  e8b9da0200        CALL 0x00442cc0                 ; progress getter
+//   00415207  d81d7c755d00      FCOMP float ptr [0x005d757c]    ; == sentinel (0.0f)
+//   0041520d  83c404            ADD ESP,0x4
+//   00415210  dfe0              FNSTSW AX
+//   00415212  f6c444            TEST AH,0x44                    ; C3|C2 mask -> equality
+//   00415215  7a06              JP 0x0041521d
+//   00415217  b801000000        MOV EAX,0x1
+//   0041521c  c3                RET
+//   0041521d  33c0              XOR EAX,EAX
+//   0041521f  c3                RET
+//
+// FUN_00442cc0(i) (0x00442cc0, pure leaf): `CMP EAX,4; JGE .; FLD [EAX*4+0x008989b0]`
+// -> returns the per-vehicle progress float (global array base 0x008989b0), or the
+// sentinel at 0x005d757c when i>=4. It RETURNS A FLOAT IN ST0, so the forwarding fn-ptr
+// MUST be declared returning `float` (an FSTP pops ST0) — a `void` decl leaks the x87
+// stack ([[x87-st0-float10-fnptr-void-leak]], the same class root-caused for
+// AiSteeringAngleError). Sentinel 0x005d757c == 0.0f (dword; cited above at line ~199).
+// The FCOMP compares two exact float32 values, so plain C float-equality reproduces it
+// bit-for-bit under x87 (no intermediate rounding) — no naked-asm body needed.
+// ref: re/analysis/bucket_ai_00415d00_00452ea0/0x00442cc0.md, .../0x00415200.md
+// ===========================================================================
+namespace {
+typedef float (__cdecl* fn_progress_t)(int);            // FUN_00442cc0 -> float10 ST0
+inline float call_00442cc0(int i) { return reinterpret_cast<fn_progress_t>(0x00442cc0)(i); }
+} // namespace
+
+extern "C" __declspec(dllexport)
+std::uint32_t __cdecl AiVehicle0ZeroProgressGuard(void)
+{
+    float p = call_00442cc0(0);                 // g_progress[0]
+    return (p == F32(0x005d757cu)) ? 1u : 0u;   // == sentinel (0.0f)
+}
+
+// ── in-race A/B self-test for AiVehicle0ZeroProgressGuard (env MASHED_AI_V0GUARD_SELFTEST) ──
+// Mirrors SteerDispatch above: the function is PURE (calls the read-only progress getter,
+// returns an int, no writes), so the A/B compares the returned EAX and RETURNS ORIG (safe
+// passthrough; behaviour unchanged when the env var is unset). MUST be run in a booted race
+// — g_progress[0] (0x008989b0) is only live there. Both branches are exercised: veh0's
+// progress is exactly 0.0f on the grid (==sentinel -> returns 1) and becomes nonzero once
+// moving (returns 0). At the menu both sides read the same unset state = a dead run.
+namespace {
+
+// Orig trampoline: the RH_ScopedInstall JMP (5 bytes) overwrites PUSH 0 (2) + the first 3
+// bytes of CALL 0x00442cc0 (5). Re-exec the two stolen instructions (PUSH 0; CALL getter)
+// then jmp to the next clean boundary 0x00415207 (FCOMP), which runs the equality tail and
+// RETs with EAX set. The CALL is re-issued indirectly through a global so MSVC does not need
+// to encode a relative displacement. The getter's ST0 result is consumed by the FCOMP at
+// 0x00415207 (pops ST0), so the x87 stack stays balanced on this side too.
+void* g_442cc0       = reinterpret_cast<void*>(0x00442cc0);
+void* g_orig_415207  = reinterpret_cast<void*>(0x00415207);
+__declspec(naked) std::uint32_t OrigVehicle0ZeroProgressGuard(void) {
+    __asm {
+        push 0
+        call dword ptr [g_442cc0]
+        jmp  dword ptr [g_orig_415207]
+    }
+}
+
+inline int V0GuardSelfTestEnabled() {
+    static int v = -1;
+    if (v < 0) { const char* s = std::getenv("MASHED_AI_V0GUARD_SELFTEST"); v = (s && s[0]) ? 1 : 0; }
+    return v;
+}
+void V0GuardSelfTestLog(const char* s) {
+    HANDLE h = CreateFileA("ai_v0guard_selftest.log", FILE_APPEND_DATA, FILE_SHARE_READ,
+                           nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (h == INVALID_HANDLE_VALUE) return;
+    DWORD wrote; WriteFile(h, s, (DWORD)std::strlen(s), &wrote, nullptr); CloseHandle(h);
+}
+long g_v0guard_calls = 0, g_v0guard_mismatch = 0;
+const long kV0GuardMaxCompare = 40000;
+
+// A/B: compare the returned int exactly, log mismatches, return ORIG (safe passthrough).
+std::uint32_t V0GuardDispatch(void) {
+    if (V0GuardSelfTestEnabled() && g_v0guard_calls < kV0GuardMaxCompare) {
+        std::uint32_t o = OrigVehicle0ZeroProgressGuard();
+        std::uint32_t m = AiVehicle0ZeroProgressGuard();
+        ++g_v0guard_calls;
+        if (o != m) {
+            ++g_v0guard_mismatch;
+            char line[128];
+            wsprintfA(line, "[%ld] MISMATCH o=%u m=%u\r\n", g_v0guard_calls, o, m);
+            V0GuardSelfTestLog(line);
+        }
+        if ((g_v0guard_calls & 0x7f) == 1) {
+            char line[128];
+            wsprintfA(line, "[%ld] calls=%ld mism=%ld %s\r\n", g_v0guard_calls, g_v0guard_calls,
+                      g_v0guard_mismatch, g_v0guard_mismatch ? "" : "ALL-GREEN");
+            V0GuardSelfTestLog(line);
+        }
+        return o;
+    }
+    return OrigVehicle0ZeroProgressGuard();
+}
+
+// Naked entry installed at 0x00415200 — void(void) cdecl: just call the dispatch and RET,
+// leaving the 0/1 result in EAX for the original caller (no args to clean).
+__declspec(naked) void AiV0Guard_Entry() {
+    __asm {
+        call V0GuardDispatch
+        ret
+    }
+}
+
+}  // namespace
+
+RH_ScopedInstall(AiV0Guard_Entry, 0x00415200);

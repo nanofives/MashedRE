@@ -2762,6 +2762,43 @@ HOOKS = {
         ],
     },
 
+    # 0x004c4dc0 RwMatrixInvertEntry(out, in): the PUBLIC RwMatrix inverse entry (23
+    # callers). Reads the RW3 matrix-opt flag table [DAT_007d4028 + DAT_007d3ff8 + 4] and
+    # dispatches on in's flag word (in[3] @ +0x0c): bit 0x20000 -> identity memcpy;
+    # (flags&3)==3 -> orthonormal 3x3-transpose + inverse-translation (sets out+0x0c=3);
+    # else -> 3x3 cofactor fallback (0x004c4eb0, sets out+0x0c=0). Verbatim naked x87 ->
+    # Render/RwMatrixInvert.cpp (RwMatrixInvertEntry). Live at menu-attach: DAT_007d3ff8 is
+    # the same device global the FastInvSqrt LUT uses, so both sides read identical globals
+    # and select the same branch -> byte-for-byte match regardless of which path fires.
+    # fmt_desc_pair_compare 2-arg (same as rw_matrix_invert): bufA=out (zeroed), bufB=in
+    # (seeded, incl. the f0c flag word driving the branch). Tests: f0c=0 -> cofactor path
+    # (3 incl. singular guard); f0c=3 -> orthonormal transpose (3 incl. identity+rotations);
+    # f0c=0x20003 -> identity-fast-path probe (memcpy if the engine mask has 0x20000, else
+    # orthonormal) -- bit-identical either way.
+    'rw_matrix_invert_entry': {
+        'rva':            0x004c4dc0,
+        'export':         'RwMatrixInvertEntry',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'pointer']},
+        'arg_type':       'fmt_desc_pair_compare',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # --- branch 3: general cofactor fallback (f0c = 0) ---
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f14': 0x3f800000, 'f28': 0x3f800000, 'f30': 0x40a00000, 'f34': 0x40c00000, 'f38': 0x40e00000, 'f0c': 0x00000000} },  # identity rot + T(5,6,7)
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f04': 0x40000000, 'f14': 0x3f800000, 'f18': 0x40400000, 'f20': 0x40800000, 'f28': 0x3f800000, 'f30': 0x3f800000, 'f34': 0x3f800000, 'f38': 0x3f800000, 'f0c': 0x00000000} },  # general non-ortho det=25
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f10': 0x40000000, 'f28': 0x3f800000, 'f0c': 0x00000000} },  # singular det=0 (guard path)
+            # --- branch 2: orthonormal transpose + inverse translation (f0c = 3) ---
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f14': 0x3f800000, 'f28': 0x3f800000, 'f30': 0x40a00000, 'f34': 0x40c00000, 'f38': 0x40e00000, 'f0c': 0x00000003} },  # identity rot + T(5,6,7)
+            { 'a': {}, 'b': {'f00': 0x3f5db3d7, 'f04': 0x3f000000, 'f10': 0xbf000000, 'f14': 0x3f5db3d7, 'f28': 0x3f800000, 'f30': 0x41200000, 'f34': 0x41a00000, 'f38': 0x41f00000, 'f0c': 0x00000003} },  # Zrot30 + T(10,20,30)
+            { 'a': {}, 'b': {'f00': 0x3f000000, 'f08': 0xbf5db3d7, 'f14': 0x3f800000, 'f20': 0x3f5db3d7, 'f28': 0x3f000000, 'f30': 0xc0a00000, 'f34': 0x40000000, 'f38': 0x41100000, 'f0c': 0x00000003} },  # Yrot-ish + T
+            # --- branch 1 probe: identity fast-path bit (f0c has 0x20000; low bits 3) ---
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f14': 0x3f800000, 'f28': 0x3f800000, 'f30': 0x40a00000, 'f34': 0x40c00000, 'f38': 0x40e00000, 'f0c': 0x00020003} },  # memcpy-or-orthonormal
+        ],
+        'path2_tests': [
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f04': 0x40000000, 'f14': 0x3f800000, 'f18': 0x40400000, 'f20': 0x40800000, 'f28': 0x3f800000, 'f30': 0x3f800000, 'f34': 0x3f800000, 'f38': 0x3f800000, 'f0c': 0x00000000} },  # cofactor path
+            { 'a': {}, 'b': {'f00': 0x3f5db3d7, 'f04': 0x3f000000, 'f10': 0xbf000000, 'f14': 0x3f5db3d7, 'f28': 0x3f800000, 'f30': 0x41200000, 'f34': 0x41a00000, 'f38': 0x41f00000, 'f0c': 0x00000003} },  # orthonormal path
+        ],
+    },
+
     # 0x004d8680 RwStricmp(char* s1, char* s2) -> int: canonical case-insensitive string
     # compare. NULL-guard on either arg -> 0. Per char: fold 'A'..'Z' (+0x20) via SIGNED
     # byte range checks (JL/JG), compare, on mismatch return MOVSX-extended (int)a-(int)c
@@ -2914,6 +2951,48 @@ HOOKS = {
         'path2_tests': [
             { 's': 'hello,world', 'c': 0x6c },  # -> 9
             { 's': 'aaa',         'c': 0x61 },  # -> 2
+        ],
+    },
+
+    # 0x004b4550 Vec3Centroid(out, points, count): out[0..2] = (1/count)*sum(points[i]).
+    # points = packed vec3 array (stride 12B); seeds out from points[0], sums the rest with a
+    # 4-unrolled inner loop + 1..3 remainder, then multiplies by the 1/count reciprocal
+    # (fild count / fdivr +1.0f const @0x005cc320). PURE LEAF, no callees, no live globals ->
+    # synthetic-safe at any attach point. Verbatim naked x87 -> Util/Vec3Centroid.cpp.
+    # fmt_desc_pair_compare 4-ARG form (args len 4 so t.p3=count is routed; the __cdecl reimpl
+    # ignores the harmless 4th, caller-cleaned): bufA=out (zeroed, the discriminant), bufB=points
+    # (seeded fNN floats), p3=count. bufB is 0x40B = up to 5 vec3s, so count in 1..5. Void ret.
+    # Tests cover count=1 (memcpy+divide only), 2..4 (remainder loop), 5 (unrolled path).
+    'vec3_centroid': {
+        'rva':            0x004b4550,
+        'export':         'Vec3Centroid',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'pointer', 'int', 'int']},
+        'arg_type':       'fmt_desc_pair_compare',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 'a': {}, 'b': {'f00': 0x40a00000, 'f04': 0xc0c00000, 'f08': 0x40e00000}, 'p3': 1, 'p4': 0 },  # count=1 -> centroid = point0 (5,-6,7)
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f04': 0x40000000, 'f08': 0x40400000,
+                             'f0c': 0x40800000, 'f10': 0x40a00000, 'f14': 0x40c00000}, 'p3': 2, 'p4': 0 },  # count=2 (remainder 1)
+            { 'a': {}, 'b': {'f00': 0x00000000, 'f04': 0x3f800000, 'f08': 0xbf800000,
+                             'f0c': 0x40000000, 'f10': 0xc0000000, 'f14': 0x40400000,
+                             'f18': 0xc0400000, 'f1c': 0x40800000, 'f20': 0xc0800000}, 'p3': 3, 'p4': 0 },  # count=3 (remainder 2)
+            { 'a': {}, 'b': {'f00': 0x3dcccccd, 'f04': 0x3e4ccccd, 'f08': 0x3e99999a,
+                             'f0c': 0x3ecccccd, 'f10': 0x3f000000, 'f14': 0x3f19999a,
+                             'f18': 0x3f333333, 'f1c': 0x3f4ccccd, 'f20': 0x3f666666,
+                             'f24': 0x3f800000, 'f28': 0x3f8ccccd, 'f2c': 0x3f99999a}, 'p3': 4, 'p4': 0 },  # count=4 (remainder 3)
+            { 'a': {}, 'b': {'f00': 0x41200000, 'f04': 0x41a00000, 'f08': 0x41f00000,
+                             'f0c': 0xc1200000, 'f10': 0x41100000, 'f14': 0x40400000,
+                             'f18': 0x40800000, 'f1c': 0xc0a00000, 'f20': 0x40c00000,
+                             'f24': 0x3f800000, 'f28': 0x40000000, 'f2c': 0x40400000,
+                             'f30': 0x42480000, 'f34': 0xc2340000, 'f38': 0x42200000}, 'p3': 5, 'p4': 0 },  # count=5 (unrolled path)
+        ],
+        'path2_tests': [
+            { 'a': {}, 'b': {'f00': 0x40a00000, 'f04': 0xc0c00000, 'f08': 0x40e00000}, 'p3': 1, 'p4': 0 },  # count=1
+            { 'a': {}, 'b': {'f00': 0x41200000, 'f04': 0x41a00000, 'f08': 0x41f00000,
+                             'f0c': 0xc1200000, 'f10': 0x41100000, 'f14': 0x40400000,
+                             'f18': 0x40800000, 'f1c': 0xc0a00000, 'f20': 0x40c00000,
+                             'f24': 0x3f800000, 'f28': 0x40000000, 'f2c': 0x40400000,
+                             'f30': 0x42480000, 'f34': 0xc2340000, 'f38': 0x42200000}, 'p3': 5, 'p4': 0 },  # count=5
         ],
     },
 
@@ -16966,6 +17045,33 @@ HOOKS = {
         'seed_globals': [{'addr': '0x00898994', 'val': 0}],
         'path1_tests': [0x11111111, 0x22222222, 0x33333333, 0x44444444, 0x55555555],
         'path2_tests': [0x11111111, 0x22222222],
+    },
+    # 0x00482030  SubStripQuadUV (vehicle) — void(float* out, int p2, uint p3): zero-callee
+    #   pure leaf. Computes q=(uint)(p2<<2)/p3, then writes 2 floats to out[0..1] by the
+    #   4-case quadrant switch (verbatim x87; see Vehicle/SubStripUV.cpp). Self-diffable
+    #   synthetic path1: draw_quad_observe passes the out pointer FROM the test vector
+    #   (coerced via ptr()) and fingerprints VBUF at vbuf_addr_str, so out MUST be the VBUF
+    #   address 0x00898a20 (handler's default scratch, saved+restored). vbuf_len=8 = 2 floats.
+    #   Tests cover cases 0..3, the >3 default (no write), both int<0 unsigned-fixup branches.
+    'sub_strip_quad_uv': {
+        'rva': 0x00482030, 'export': 'SubStripQuadUV',
+        'signature': {'ret': 'void', 'args': ['pointer', 'int32', 'int32']},
+        'arg_type': 'draw_quad_observe', 'vbuf_addr_str': '0x00898a20', 'vbuf_len': 8,
+        'crash_equal_ok': True, 'lut_root_delta': 0,
+        'path1_tests': [
+            [0x00898a20, 0, 4],    # q=0 -> case0
+            [0x00898a20, 1, 4],    # q=1 -> case1
+            [0x00898a20, 2, 4],    # q=2 -> case2
+            [0x00898a20, 3, 4],    # q=3 -> case3
+            [0x00898a20, 4, 4],    # q=4 -> default (no write)
+            [0x00898a20, 5, 3],    # q=6 -> default; non-multiple
+            [0x00898a20, -1, 4],   # p2<0 unsigned-fixup branch; q=0x3fffffff -> default
+            [0x00898a20, -1, -1],  # p2<0 AND p3<0 branches; q=0 -> case0
+        ],
+        'path2_tests': [
+            [0x00898a20, 2, 4],
+            [0x00898a20, 3, 4],
+        ],
     },
     # 0x0046d510 VehicleVelocityWorldGet - RE-WIRED orch-iter21, IN-RACE lane.
     # Closes the last open row of the out3_idx audit
