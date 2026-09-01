@@ -2762,6 +2762,43 @@ HOOKS = {
         ],
     },
 
+    # 0x004c4dc0 RwMatrixInvertEntry(out, in): the PUBLIC RwMatrix inverse entry (23
+    # callers). Reads the RW3 matrix-opt flag table [DAT_007d4028 + DAT_007d3ff8 + 4] and
+    # dispatches on in's flag word (in[3] @ +0x0c): bit 0x20000 -> identity memcpy;
+    # (flags&3)==3 -> orthonormal 3x3-transpose + inverse-translation (sets out+0x0c=3);
+    # else -> 3x3 cofactor fallback (0x004c4eb0, sets out+0x0c=0). Verbatim naked x87 ->
+    # Render/RwMatrixInvert.cpp (RwMatrixInvertEntry). Live at menu-attach: DAT_007d3ff8 is
+    # the same device global the FastInvSqrt LUT uses, so both sides read identical globals
+    # and select the same branch -> byte-for-byte match regardless of which path fires.
+    # fmt_desc_pair_compare 2-arg (same as rw_matrix_invert): bufA=out (zeroed), bufB=in
+    # (seeded, incl. the f0c flag word driving the branch). Tests: f0c=0 -> cofactor path
+    # (3 incl. singular guard); f0c=3 -> orthonormal transpose (3 incl. identity+rotations);
+    # f0c=0x20003 -> identity-fast-path probe (memcpy if the engine mask has 0x20000, else
+    # orthonormal) -- bit-identical either way.
+    'rw_matrix_invert_entry': {
+        'rva':            0x004c4dc0,
+        'export':         'RwMatrixInvertEntry',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'pointer']},
+        'arg_type':       'fmt_desc_pair_compare',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # --- branch 3: general cofactor fallback (f0c = 0) ---
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f14': 0x3f800000, 'f28': 0x3f800000, 'f30': 0x40a00000, 'f34': 0x40c00000, 'f38': 0x40e00000, 'f0c': 0x00000000} },  # identity rot + T(5,6,7)
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f04': 0x40000000, 'f14': 0x3f800000, 'f18': 0x40400000, 'f20': 0x40800000, 'f28': 0x3f800000, 'f30': 0x3f800000, 'f34': 0x3f800000, 'f38': 0x3f800000, 'f0c': 0x00000000} },  # general non-ortho det=25
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f10': 0x40000000, 'f28': 0x3f800000, 'f0c': 0x00000000} },  # singular det=0 (guard path)
+            # --- branch 2: orthonormal transpose + inverse translation (f0c = 3) ---
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f14': 0x3f800000, 'f28': 0x3f800000, 'f30': 0x40a00000, 'f34': 0x40c00000, 'f38': 0x40e00000, 'f0c': 0x00000003} },  # identity rot + T(5,6,7)
+            { 'a': {}, 'b': {'f00': 0x3f5db3d7, 'f04': 0x3f000000, 'f10': 0xbf000000, 'f14': 0x3f5db3d7, 'f28': 0x3f800000, 'f30': 0x41200000, 'f34': 0x41a00000, 'f38': 0x41f00000, 'f0c': 0x00000003} },  # Zrot30 + T(10,20,30)
+            { 'a': {}, 'b': {'f00': 0x3f000000, 'f08': 0xbf5db3d7, 'f14': 0x3f800000, 'f20': 0x3f5db3d7, 'f28': 0x3f000000, 'f30': 0xc0a00000, 'f34': 0x40000000, 'f38': 0x41100000, 'f0c': 0x00000003} },  # Yrot-ish + T
+            # --- branch 1 probe: identity fast-path bit (f0c has 0x20000; low bits 3) ---
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f14': 0x3f800000, 'f28': 0x3f800000, 'f30': 0x40a00000, 'f34': 0x40c00000, 'f38': 0x40e00000, 'f0c': 0x00020003} },  # memcpy-or-orthonormal
+        ],
+        'path2_tests': [
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f04': 0x40000000, 'f14': 0x3f800000, 'f18': 0x40400000, 'f20': 0x40800000, 'f28': 0x3f800000, 'f30': 0x3f800000, 'f34': 0x3f800000, 'f38': 0x3f800000, 'f0c': 0x00000000} },  # cofactor path
+            { 'a': {}, 'b': {'f00': 0x3f5db3d7, 'f04': 0x3f000000, 'f10': 0xbf000000, 'f14': 0x3f5db3d7, 'f28': 0x3f800000, 'f30': 0x41200000, 'f34': 0x41a00000, 'f38': 0x41f00000, 'f0c': 0x00000003} },  # orthonormal path
+        ],
+    },
+
     # 0x004c3910 Vec3NormalizeScale(out, in): out = in * (1/|in|); returns the scale
     # (1/|in|) in ST0. Inv-sqrt sibling of RwV3dNormalize; reads the RW3 invsqrt LUT
     # (device globals DAT_007d3ff8 / DAT_007d3ffc, table slot +4) -> run live (menu:
