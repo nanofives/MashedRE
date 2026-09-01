@@ -54,16 +54,6 @@ function callFn(fn, input, buf) {
     if (input && typeof input === 'object' && Array.isArray(input.scalars)) {
         return fn.apply(null, input.scalars);
     }
-    // A function with zero declared parameters must be called with zero args,
-    // regardless of arg_type. The NativeFunction at TARGET_ADDR is built from
-    // CONFIG.signature.args (below), so honor that same ground truth here. Without
-    // this, self-emitting 0-arg handlers (e.g. allocator_nonnull) fell through to
-    // `fn(input)` and died with "bad argument count" BEFORE entry — the install
-    // verified but call-through falsely FAILED. Keyed on the signature, not the
-    // arg_type name, so it covers every 0-arg handler. (area-loop round 1, 2026-08-31.)
-    if (CONFIG.signature && Array.isArray(CONFIG.signature.args) && CONFIG.signature.args.length === 0) {
-        return fn();
-    }
     if (CONFIG.arg_type === 'none') {
         // Zero-arg invocation; `input` is a dummy iteration marker.
         return fn();
@@ -190,22 +180,33 @@ function callFn(fn, input, buf) {
         for (let k = 0; k < SRC_LEN; k += 2) src.add(k).writeU16(0);
         for (let k = 0; k < input.length; k++) src.add(k * 2).writeU16(input[k] & 0xffff);
         for (let k = 0; k < DST_LEN; k += 2) dst.add(k).writeU16(0);
+        // The immediates are emitted INSIDE Memory.patchCode, not written afterwards.
+        // diff_template.js patches them after the callback returns and that works on the
+        // path1 lane, but here the post-hoc `code.add(2).writeU32()` did NOT take effect:
+        // the reimpl was entered (interceptor 2/2) and immediately AV'd "accessing 0x0",
+        // i.e. it executed `mov si,[eax]` with EAX still the placeholder 0. Emitting the
+        // real pointer bytes inside the callback removes the second write entirely, so
+        // there is no window in which the page can be remapped or the write discarded.
+        // (frida-sweep parent lane, 2026-09-01, after the U-9065 install fix made the
+        // call-through reachable for the first time and exposed this.)
+        const u32le = function (p) {
+            const v = parseInt(p.toString(), 16) >>> 0;
+            return [v & 0xff, (v >>> 8) & 0xff, (v >>> 16) & 0xff, (v >>> 24) & 0xff];
+        };
         const code = Memory.alloc(Process.pageSize);
         Memory.patchCode(code, 18, function (cw) {
             const w = new X86Writer(cw, { pc: code });
-            w.putU8(0x53);                              // push ebx
-            w.putBytes([0xB8, 0, 0, 0, 0]);            // mov eax, src (patch +2)
-            w.putBytes([0xBB, 0, 0, 0, 0]);            // mov ebx, dst (patch +7)
-            w.putU8(0xE8);                              // call rel32
+            w.putU8(0x53);                                       // push ebx
+            w.putBytes([0xB8].concat(u32le(src)));               // mov eax, src
+            w.putBytes([0xBB].concat(u32le(dst)));               // mov ebx, dst
+            w.putU8(0xE8);                                       // call rel32
             const rel = TARGET_ADDR.sub(code.add(16)).toInt32();
             w.putBytes([rel & 0xff, (rel >>> 8) & 0xff,
                         (rel >>> 16) & 0xff, (rel >>> 24) & 0xff]);
-            w.putU8(0x5B);                              // pop ebx
-            w.putU8(0xC3);                              // ret
+            w.putU8(0x5B);                                       // pop ebx
+            w.putU8(0xC3);                                       // ret
             w.flush();
         });
-        code.add(2).writeU32(parseInt(src.toString(), 16) >>> 0);
-        code.add(7).writeU32(parseInt(dst.toString(), 16) >>> 0);
         const Fn = new NativeFunction(code, 'void', [], 'mscdecl');
         Fn();
         let s = '';
@@ -213,6 +214,24 @@ function callFn(fn, input, buf) {
             s += ('0000' + (dst.add(k).readU16() & 0xffff).toString(16)).slice(-4);
         }
         return '0x' + s;
+    }
+    // FALLBACK, and it must stay LAST. A function with zero declared parameters must be
+    // called with zero args, regardless of arg_type: the NativeFunction at TARGET_ADDR is
+    // built from CONFIG.signature.args, so honor that same ground truth. Without this,
+    // self-emitting 0-arg handlers (e.g. allocator_nonnull) fell through to `fn(input)`
+    // and died "bad argument count" BEFORE entry — install verified, call-through falsely
+    // FAILED. (area-loop round 1, 2026-08-31.)
+    //
+    // MOVED FROM THE TOP OF callFn TO HERE, 2026-09-01 (frida-sweep parent lane). While it
+    // sat above the arg_type chain it SHADOWED every handler whose function takes zero
+    // STACK arguments but still needs registers set up by a trampoline. text_ctrl_code_remap
+    // (0x004277a0) declares args: [] because it is EAX/EBX register-convention, so this
+    // guard returned `fn()` and the eax_ptr_ebx_outbuf trampoline below was never reached:
+    // the reimpl was entered with EAX = 0 and AV'd "accessing 0x0" on `mov si,[eax]`. The
+    // interceptor still fired, so the failure looked like a broken reimpl rather than a
+    // harness dispatch bug. Explicit arg_type handlers must win; this is only the default.
+    if (CONFIG.signature && Array.isArray(CONFIG.signature.args) && CONFIG.signature.args.length === 0) {
+        return fn();
     }
     return fn(input);
 }

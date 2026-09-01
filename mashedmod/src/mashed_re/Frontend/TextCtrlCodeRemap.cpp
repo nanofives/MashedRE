@@ -27,6 +27,17 @@
 // Callers: MenuMenusBA (0x004282a0, C3), MenuMenusBB (0x00427ad0, C3).
 // ref: re/analysis/promote_c1_low_ab1/0x004277a0.md ;
 //      re/analysis/frontend_004277a0_c3_plan.md ; listing 0x004277a0..0x00427832
+//
+// U-9065 (2026-09-01): this TU is the SOLE installer at 0x004277a0. The dev-only
+// EBX==0 boot guard formerly in Compat/IntroTextNullGuard.cpp (a SECOND
+// RH_ScopedInstall that WON the site and shadowed this reimpl -> path2 measured
+// 0/2 install) is folded in below, gated `#ifndef MASHED_STANDALONE`. The stock
+// fn NULL-writes out[count] when a system-DLL intro-text caller passes EBX=0 ~90 s
+// into the modded boot -> AV; the dev .asi needs that one case skipped to reach the
+// menu for runtime verification. The shipping greenfield exe (MASHED_STANDALONE)
+// never hooks MASHED, so the stock crash cannot occur there -> guard compiled out,
+// leaving the pure verbatim body. For every valid caller (EBX!=0) and the path1
+// harness the guard falls straight through, so the destination stays bit-identical.
 // ---------------------------------------------------------------------------
 
 #include "../Core/HookSystem.h"
@@ -36,6 +47,13 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl TextCtrlCodeRema
 {
     __asm {
         // EAX = src (length-prefixed u16), EBX = dst  (set by caller / harness).
+#ifndef MASHED_STANDALONE
+        // U-9065 dev-only boot guard: skip the broken EBX==0 (NULL out buffer) case.
+        test ebx, ebx
+        jnz  do_work
+        ret
+    do_work:
+#endif
         push esi
         mov  si, word ptr [eax]                  // count
         add  eax, 2                              // src -> first char
