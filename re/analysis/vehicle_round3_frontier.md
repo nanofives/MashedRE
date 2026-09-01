@@ -37,6 +37,22 @@ to the parent via send_to_session (children never edit the bus).
 
 ## Per-row observable + witness
 
+> **CORRECTION (r5, 2026-09-01).** Of the three Group-S rows below, only
+> `0x0046b1c0` was a genuinely-new vehicle row (landed r4, C3). The two GETTERS
+> are **already C3** — under the **ai** subsystem, so they never appeared in the
+> vehicle residue queue and this map wrongly listed them as promotable:
+>   - `0x0046d4a0` = **PtrCompute881ec8** (ai C3, Util/PromoLoop_round58.cpp,
+>     arg_type `ptr_compute_get` — an existing handler for exactly this shape).
+>     r5 lesson-1 grep caught this before a duplicate `RH_ScopedInstall` shipped
+>     (U-9065 class). No new handler was needed; the r5 `per_vehicle_record_seed`
+>     generalization was reverted as having no consumer.
+>   - `0x0046d510` = **VehicleVelocityWorldGet** (ai C3, cache_setter_observe lane).
+>     NOTE: it has **TWO** installers — `AiVehicleVelocity3` (Ai/AiTargeting.cpp)
+>     AND `VehicleVelocityWorldGet` (Ai/VehicleVelocityWorldGet.cpp) — a
+>     pre-existing U-9065-class duplicate in ai, reported to the parent.
+> Net: Group S is effectively DONE. The remaining child-workable vehicle frontier
+> is Group R (`0x00411ce0`, C2, no installer yet); Group C stays booted-race.
+
 ### Group S — seed a record field/param, call, fingerprint the out, restore
 Shared harness shape: seed N bytes of the per-vehicle record at `0x00881630+idx*0xd04`
 (and/or matrix `0x00614708`), call `fn(out, idx)`, fingerprint the out region + fold

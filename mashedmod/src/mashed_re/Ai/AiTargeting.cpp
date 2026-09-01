@@ -143,7 +143,23 @@ std::uint32_t __cdecl AiVehicleVelocity3(std::uint32_t* param_1, std::uint32_t p
     return 1;
 }
 
-RH_ScopedInstall(AiVehicleVelocity3, 0x0046d510);
+// INSTALLER REMOVED 2026-09-01 (U-9065 class, found by area/vehicle r5's pre-queue grep).
+// 0x0046d510 had TWO RH_ScopedInstall calls: this one and VehicleVelocityWorldGet
+// (Ai/VehicleVelocityWorldGet.cpp:54). Whichever ran last silently won the site, which is
+// exactly the defect that left 0x004277a0 bit-identical and never installed.
+// VehicleVelocityWorldGet is the keeper on three independent grounds: hooks.csv points its
+// C3 row at that file, hooks_registry's vehicle_velocity_world_get maps the RVA to that
+// export, and its TU is in BOTH build.bat and asi_sources.rsp (this one is .asi-only), so it
+// is the body that reaches the standalone exe.
+// The two bodies are FUNCTIONALLY IDENTICAL - verified, not assumed. This one's helper
+// call_004c3df0(dst, src, mtx) forwards (dst, src, 1, mtx) and is called here as
+// (vel, 0x00614708, 0x00881ec8+off), yielding (vel, matrix, 1, struct); VehicleVelocityWorldGet
+// passes (vel, matrix, 1, struct) directly. Same call, so removing this installer changes no
+// behaviour. NOTE the helper's parameter NAMES at line 53 are misleading - its second
+// parameter receives the matrix and its third the source - which is what made the two look
+// divergent at a glance.
+// AiVehicleVelocity3 has no internal callers and is left defined but uninstalled.
+// RH_ScopedInstall(AiVehicleVelocity3, 0x0046d510);  // <- do not re-enable
 
 // ---------------------------------------------------------------------------
 // More call-throughs for the steering + wall-ahead leaves.
