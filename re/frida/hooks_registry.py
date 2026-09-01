@@ -2799,6 +2799,103 @@ HOOKS = {
         ],
     },
 
+    # 0x004d8680 RwStricmp(char* s1, char* s2) -> int: canonical case-insensitive string
+    # compare. NULL-guard on either arg -> 0. Per char: fold 'A'..'Z' (+0x20) via SIGNED
+    # byte range checks (JL/JG), compare, on mismatch return MOVSX-extended (int)a-(int)c
+    # of the folded bytes. PURE LEAF: no callees/globals/FP -> plain-C transcription is
+    # bit-identical -> Render/RwStricmp.cpp. Stored at the RW string vtable slot +0xf0.
+    # arg_type stricmp_pair: two 512B seeded bufs (NUL-terminated), JS null -> NULL ptr;
+    # observable is the signed int return as uint32. Vectors span equal / same-vs-mixed
+    # case / less / greater / both prefix directions / the 'A'-vs-'[' fold boundary /
+    # '@'-vs-'`' (neither folded) / a 0x80+ byte (signed-extension discriminant) / NULL.
+    # Expected (uint32): [0, 0, -1=0xffffffff, 1, -99=0xffffff9d, 99, 6, -32=0xffffffe0,
+    #   -160=0xffffff60 (0xc1 signed -63 minus 'a' 97 -> proves MOVSX not zero-extend),
+    #   0 (null s1), 0 (null s2), 0 (both empty)].
+    'rw_stricmp': {
+        'rva':            0x004d8680,
+        'export':         'RwStricmp',
+        'signature':      {'ret': 'int', 'args': ['pointer', 'pointer']},
+        'arg_type':       'stricmp_pair',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 's1': 'hello', 's2': 'hello' },          # equal -> 0
+            { 's1': 'Hello', 's2': 'hELLO' },          # case-fold equal -> 0
+            { 's1': 'abc',   's2': 'abd'   },          # less -> -1
+            { 's1': 'abd',   's2': 'abc'   },          # greater -> 1
+            { 's1': 'ab',    's2': 'abc'   },          # s1 prefix -> 0-0x63 = -99
+            { 's1': 'abc',   's2': 'ab'    },          # s2 prefix -> 0x63-0 = 99
+            { 's1': 'A',     's2': '['     },          # fold boundary: 0x61-0x5b = 6
+            { 's1': '@',     's2': '`'     },          # neither folded: 0x40-0x60 = -32
+            { 's1': 'Á','s2': 'a'     },          # signed byte: (-63)-97 = -160
+            { 's1': None,    's2': 'x'     },          # null s1 -> 0
+            { 's1': 'x',     's2': None    },          # null s2 -> 0
+            { 's1': '',      's2': ''      },          # both empty -> 0
+        ],
+        'path2_tests': [
+            { 's1': 'Hello', 's2': 'hELLO' },          # case-fold equal -> 0
+            { 's1': 'A',     's2': '['     },          # fold boundary -> 6
+            { 's1': 'Á','s2': 'a'     },          # signed-extension discriminant -> -160
+        ],
+    },
+
+    # 0x004d86d0 RwStrupr(char* s) -> void: in-place ASCII upper-case. Per char: if in
+    # 'a'..'z' (SIGNED byte range JL/JG) subtract 0x20; else leave. NULL/empty guard ->
+    # no-op. First-party (null-guards; NOT the vendored CRT), registered into the RW
+    # string vtable slot +0xf8 by RwEngineRegisterStringFunctions 0x004d8570 (C3). PURE
+    # LEAF (0 callees/globals/FP) -> plain-C in-place transcription is bit-identical ->
+    # Render/RwStrCase.cpp. arg_type str_inplace_transform: observable is the mutated
+    # buffer bytes. Vectors span lower/mixed/digits-punct(untouched)/fold-edges
+    # ('`'=0x60,'{'=0x7b just outside)/0x80+ byte(signed, untouched)/empty/NULL.
+    'rw_strupr': {
+        'rva':            0x004d86d0,
+        'export':         'RwStrupr',
+        'signature':      {'ret': 'void', 'args': ['pointer']},
+        'arg_type':       'str_inplace_transform',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 's': 'hello' },        # -> HELLO
+            { 's': 'Hello World' },  # -> HELLO WORLD
+            { 's': 'abcXYZ123' },    # digits/upper untouched -> ABCXYZ123
+            { 's': '`{' },           # 0x60,0x7b just outside a..z -> unchanged
+            { 's': 'az' },           # range ends -> AZ
+            { 's': '@[Z' },          # 0x40,0x5b + already-upper -> unchanged
+            { 's': 'Á' },       # 0xc1 signed-negative -> untouched
+            { 's': '' },             # empty guard
+            { 's': None },           # NULL guard
+        ],
+        'path2_tests': [
+            { 's': 'Hello World' },  # -> HELLO WORLD
+            { 's': '`{az' },         # fold edges + range ends
+        ],
+    },
+
+    # 0x004d8700 RwStrlwr(char* s) -> void: in-place ASCII lower-case. Per char: if in
+    # 'A'..'Z' (SIGNED byte range) add 0x20; else leave. NULL/empty guard -> no-op.
+    # First-party, RW string vtable slot +0xfc (sibling of RwStrupr). PURE LEAF ->
+    # Render/RwStrCase.cpp. arg_type str_inplace_transform (observes mutated buffer).
+    'rw_strlwr': {
+        'rva':            0x004d8700,
+        'export':         'RwStrlwr',
+        'signature':      {'ret': 'void', 'args': ['pointer']},
+        'arg_type':       'str_inplace_transform',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 's': 'HELLO' },        # -> hello
+            { 's': 'Hello World' },  # -> hello world
+            { 's': 'ABCxyz123' },    # digits/lower untouched -> abcxyz123
+            { 's': '@[' },           # 0x40,0x5b just outside A..Z -> unchanged
+            { 's': 'AZ' },           # range ends -> az
+            { 's': '`{a' },          # 0x60,0x7b + already-lower -> unchanged
+            { 's': 'Á' },       # 0xc1 signed-negative -> untouched
+            { 's': '' },             # empty guard
+            { 's': None },           # NULL guard
+        ],
+        'path2_tests': [
+            { 's': 'Hello World' },  # -> hello world
+            { 's': '@[AZ' },         # fold edges + range ends
+        ],
+    },
+
     # 0x004b4550 Vec3Centroid(out, points, count): out[0..2] = (1/count)*sum(points[i]).
     # points = packed vec3 array (stride 12B); seeds out from points[0], sums the rest with a
     # 4-unrolled inner loop + 1..3 remainder, then multiplies by the 1/count reciprocal
@@ -2838,45 +2935,6 @@ HOOKS = {
                              'f18': 0x40800000, 'f1c': 0xc0a00000, 'f20': 0x40c00000,
                              'f24': 0x3f800000, 'f28': 0x40000000, 'f2c': 0x40400000,
                              'f30': 0x42480000, 'f34': 0xc2340000, 'f38': 0x42200000}, 'p3': 5, 'p4': 0 },  # count=5
-        ],
-    },
-
-    # 0x004d8680 RwStricmp(char* s1, char* s2) -> int: canonical case-insensitive string
-    # compare. NULL-guard on either arg -> 0. Per char: fold 'A'..'Z' (+0x20) via SIGNED
-    # byte range checks (JL/JG), compare, on mismatch return MOVSX-extended (int)a-(int)c
-    # of the folded bytes. PURE LEAF: no callees/globals/FP -> plain-C transcription is
-    # bit-identical -> Render/RwStricmp.cpp. Stored at the RW string vtable slot +0xf0.
-    # arg_type stricmp_pair: two 512B seeded bufs (NUL-terminated), JS null -> NULL ptr;
-    # observable is the signed int return as uint32. Vectors span equal / same-vs-mixed
-    # case / less / greater / both prefix directions / the 'A'-vs-'[' fold boundary /
-    # '@'-vs-'`' (neither folded) / a 0x80+ byte (signed-extension discriminant) / NULL.
-    # Expected (uint32): [0, 0, -1=0xffffffff, 1, -99=0xffffff9d, 99, 6, -32=0xffffffe0,
-    #   -160=0xffffff60 (0xc1 signed -63 minus 'a' 97 -> proves MOVSX not zero-extend),
-    #   0 (null s1), 0 (null s2), 0 (both empty)].
-    'rw_stricmp': {
-        'rva':            0x004d8680,
-        'export':         'RwStricmp',
-        'signature':      {'ret': 'int', 'args': ['pointer', 'pointer']},
-        'arg_type':       'stricmp_pair',
-        'lut_root_delta': 0,
-        'path1_tests': [
-            { 's1': 'hello', 's2': 'hello' },          # equal -> 0
-            { 's1': 'Hello', 's2': 'hELLO' },          # case-fold equal -> 0
-            { 's1': 'abc',   's2': 'abd'   },          # less -> -1
-            { 's1': 'abd',   's2': 'abc'   },          # greater -> 1
-            { 's1': 'ab',    's2': 'abc'   },          # s1 prefix -> 0-0x63 = -99
-            { 's1': 'abc',   's2': 'ab'    },          # s2 prefix -> 0x63-0 = 99
-            { 's1': 'A',     's2': '['     },          # fold boundary: 0x61-0x5b = 6
-            { 's1': '@',     's2': '`'     },          # neither folded: 0x40-0x60 = -32
-            { 's1': 'Á','s2': 'a'     },          # signed byte: (-63)-97 = -160
-            { 's1': None,    's2': 'x'     },          # null s1 -> 0
-            { 's1': 'x',     's2': None    },          # null s2 -> 0
-            { 's1': '',      's2': ''      },          # both empty -> 0
-        ],
-        'path2_tests': [
-            { 's1': 'Hello', 's2': 'hELLO' },          # case-fold equal -> 0
-            { 's1': 'A',     's2': '['     },          # fold boundary -> 6
-            { 's1': 'Á','s2': 'a'     },          # signed-extension discriminant -> -160
         ],
     },
 
@@ -16955,6 +17013,34 @@ HOOKS = {
         'path2_tests': [
             [0x00898a20, 2, 4],
             [0x00898a20, 3, 4],
+        ],
+    },
+    # 0x00482ae0  SplineCubicBlend3 (vehicle) — void(float t, float* out, float* p0..p3):
+    #   zero-callee straight-line pure leaf. Fixed cubic blend of 4 control points -> out[0..2]
+    #   (verbatim x87; Vehicle/SplineCubicBlend.cpp). Self-diffable synthetic path1 via
+    #   draw_quad_observe: out ptr routed to VBUF 0x00898a20 (vbuf_len=12 = 3 floats); the 4
+    #   control-point pointers point at distinct, non-overlapping, stable .rdata float triples
+    #   (0x005cc300/310/320/330), read identically by both sides so output is deterministic-
+    #   equal; t varied per test for non-degeneracy. Consts 0x005cc31c/32c/358/35c.
+    'spline_cubic_blend3': {
+        'rva': 0x00482ae0, 'export': 'SplineCubicBlend3',
+        'signature': {'ret': 'void',
+                      'args': ['float', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer']},
+        'arg_type': 'draw_quad_observe', 'vbuf_addr_str': '0x00898a20', 'vbuf_len': 12,
+        'crash_equal_ok': True, 'lut_root_delta': 0,
+        'path1_tests': [
+            [0.0,  0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+            [0.25, 0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+            [0.5,  0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+            [0.75, 0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+            [1.0,  0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+            [1.5,  0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+            [-0.5, 0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+            [2.0,  0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+        ],
+        'path2_tests': [
+            [0.25, 0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+            [0.75, 0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
         ],
     },
     # 0x0046d510 VehicleVelocityWorldGet - RE-WIRED orch-iter21, IN-RACE lane.

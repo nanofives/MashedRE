@@ -474,3 +474,133 @@ __declspec(naked) void AiV0Guard_Entry() {
 }  // namespace
 
 RH_ScopedInstall(AiV0Guard_Entry, 0x00415200);
+
+// ===========================================================================
+// 0x00415190  AiLeaderProgressRangeGate(veh, lo, hi) -> 1 / 0
+//
+// Exact disasm (pool2, 2026-09-01), body 0x00415190..0x004151f8:
+//   00415190  8b442404          MOV EAX,[ESP+4]                 ; veh
+//   00415194  57                PUSH EDI
+//   00415195  50                PUSH EAX
+//   00415196  e825db0200        CALL 0x00442cc0                 ; progress[veh] -> ST0
+//   0041519b  d81d7c755d00      FCOMP float ptr [0x005d757c]    ; == 0.0f (at-grid)?
+//   004151a1  83c404            ADD ESP,4
+//   004151a4  dfe0/f6c444/7a4a  FNSTSW/TEST AH,0x44/JP 0x4151f5 ; not-equal -> return 0
+//   004151ab  56 / 83cfff/33f6  PUSH ESI / EDI=-1 / ESI=0       ; iVar3=-1, i=0
+//   004151b1  56 e8..0040e470   loop: FUN_0040e470(i)           ; -> EAX (int flag)
+//   004151ba  83f801 7502 8bfe  CMP EAX,1; JNZ; MOV EDI,ESI     ; if ==1: iVar3=i
+//   004151c1  46 83fe04 7cea    INC ESI; CMP 4; JL 0x4151b1
+//   004151c7  83ffff 5e 7428    CMP EDI,-1; POP ESI; JZ 0x4151f5; iVar3==-1 -> 0
+//   004151cd  57 e8..0x00442cc0 CALL FUN_00442cc0(iVar3) -> ST0 (progress[last])
+//   004151d3  d8542410          FCOM  float ptr [ESP+0x10]      ; vs lo (param_2)
+//   004151d7  83c404 dfe0 f6c401/7512  ADD 4; if ST0<lo (C0) -> FSTP+return 0
+//   004151e1  d85c2410          FCOMP float ptr [ESP+0x10]      ; vs hi (param_3)
+//   004151e5  dfe0 f6c441 7a09  if !(ST0<hi strict) -> return 0
+//   004151ec  b801000000        MOV EAX,1                       ; else return 1
+// Semantics: if progress[veh]==0.0f AND some vehicle `last` (the highest i in 0..3 with
+// FUN_0040e470(i)==1) has lo <= progress[last] < hi, return 1, else 0.
+//
+// FUN_00442cc0 returns float10 in ST0 -> fn-ptr declared `float` (ST0 pop; the standing
+// [[x87-st0-float10-fnptr-void-leak]] rule). FUN_0040e470 is consumed as EAX (int) by the
+// original (CMP EAX,1), so its fn-ptr is `int`, no ST0 traffic. All three FP comparisons
+// are float32 (dword operands) -> plain C is bit-identical under x87, no naked body.
+// progress[last] is fetched ONCE and compared twice (FCOM then FCOMP), so the port must
+// call the getter once and reuse. Caller: FUN_00415220 (C2, 4 sites — CallersPC 2026-09-01).
+// ref: re/analysis/bucket_ai_00407a40_00415880/0x00415190.md
+// ===========================================================================
+namespace {
+typedef int (__cdecl* fn_0040e470_t)(int);
+inline int call_0040e470(int i) { return reinterpret_cast<fn_0040e470_t>(0x0040e470)(i); }
+} // namespace
+
+extern "C" __declspec(dllexport)
+std::uint32_t __cdecl AiLeaderProgressRangeGate(int param_1, float param_2, float param_3)
+{
+    if (call_00442cc0(param_1) == F32(0x005d757cu)) {   // progress[veh] == 0.0f
+        int last = -1;
+        for (int i = 0; i < 4; ++i)
+            if (call_0040e470(i) == 1) last = i;        // highest i with flag==1
+        if (last != -1) {
+            float q = call_00442cc0(last);              // progress[last] (once)
+            if (param_2 <= q && q < param_3) return 1u;  // lo <= q < hi (strict)
+        }
+    }
+    return 0u;
+}
+
+// ── in-race A/B self-test for AiLeaderProgressRangeGate (env MASHED_AI_LEADERGATE_SELFTEST) ──
+// Same shape as SteerDispatch: PURE (two read-only getters, int return, no writes) -> A/B
+// compares EAX and RETURNS ORIG (safe passthrough when the env var is unset). MUST run in a
+// booted race (the progress array 0x008989b0 and FUN_0040e470's state are only live there).
+namespace {
+
+// Orig trampoline: the 5-byte RH_ScopedInstall JMP overwrites MOV EAX,[ESP+4] (4) + PUSH
+// EDI (1) exactly (0x00415190..0x00415194); re-exec both then jmp to the next boundary
+// 0x00415195 (PUSH EAX). [ESP+4] there == the trampoline caller's param_1 (veh), matching
+// the original's own load, and PUSH EDI reproduces the frame the FCOM [ESP+0x10] offsets
+// assume. cdecl float return is via ST0/EAX per the tail; here EAX (int).
+void* g_orig_415195 = reinterpret_cast<void*>(0x00415195);
+__declspec(naked) std::uint32_t OrigLeaderProgressRangeGate(int /*veh*/, float /*lo*/, float /*hi*/) {
+    __asm {
+        mov  eax, dword ptr [esp + 4]
+        push edi
+        jmp  dword ptr [g_orig_415195]
+    }
+}
+
+inline int LeaderGateSelfTestEnabled() {
+    static int v = -1;
+    if (v < 0) { const char* s = std::getenv("MASHED_AI_LEADERGATE_SELFTEST"); v = (s && s[0]) ? 1 : 0; }
+    return v;
+}
+void LeaderGateSelfTestLog(const char* s) {
+    HANDLE h = CreateFileA("ai_leadergate_selftest.log", FILE_APPEND_DATA, FILE_SHARE_READ,
+                           nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (h == INVALID_HANDLE_VALUE) return;
+    DWORD wrote; WriteFile(h, s, (DWORD)std::strlen(s), &wrote, nullptr); CloseHandle(h);
+}
+long g_leadergate_calls = 0, g_leadergate_mismatch = 0;
+const long kLeaderGateMaxCompare = 40000;
+
+std::uint32_t LeaderGateDispatch(int veh, float lo, float hi) {
+    if (LeaderGateSelfTestEnabled() && g_leadergate_calls < kLeaderGateMaxCompare) {
+        std::uint32_t o = OrigLeaderProgressRangeGate(veh, lo, hi);
+        std::uint32_t m = AiLeaderProgressRangeGate(veh, lo, hi);
+        ++g_leadergate_calls;
+        if (o != m) {
+            ++g_leadergate_mismatch;
+            char line[160];
+            std::uint32_t lb, hb;
+            std::memcpy(&lb, &lo, 4); std::memcpy(&hb, &hi, 4);
+            wsprintfA(line, "[%ld] MISMATCH o=%u m=%u  veh=%d lo=%08x hi=%08x\r\n",
+                      g_leadergate_calls, o, m, veh, lb, hb);
+            LeaderGateSelfTestLog(line);
+        }
+        if ((g_leadergate_calls & 0x7f) == 1) {
+            char line[128];
+            wsprintfA(line, "[%ld] calls=%ld mism=%ld %s\r\n", g_leadergate_calls, g_leadergate_calls,
+                      g_leadergate_mismatch, g_leadergate_mismatch ? "" : "ALL-GREEN");
+            LeaderGateSelfTestLog(line);
+        }
+        return o;
+    }
+    return OrigLeaderProgressRangeGate(veh, lo, hi);
+}
+
+// Naked entry at 0x00415190 — forward the 3 cdecl stack args (veh,lo,hi) to the dispatch,
+// clean our copies, RET with EAX = result (original is caller-cleans).
+__declspec(naked) void AiLeaderGate_Entry() {
+    __asm {
+        // [esp]=ret [esp+4]=veh [esp+8]=lo [esp+0xc]=hi
+        push dword ptr [esp + 0x0c]   // hi
+        push dword ptr [esp + 0x0c]   // lo
+        push dword ptr [esp + 0x0c]   // veh
+        call LeaderGateDispatch
+        add  esp, 0x0c
+        ret
+    }
+}
+
+}  // namespace
+
+RH_ScopedInstall(AiLeaderGate_Entry, 0x00415190);
