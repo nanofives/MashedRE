@@ -605,6 +605,34 @@ rpc.exports = {
     });
   },
   phase: function(){ try { return ga(PHASE).readU8(); } catch(e){ return -1; } },
+  // COURSE-LOAD VERIFIER (area-track r1). Three cheap deterministic observables that
+  // are all true once a course has finished loading, each cited to the load chain:
+  //   DAT_0066d704 == 1   set at the tail of FUN_00426e10 (0x00426e10) after the track
+  //                       .piz + COURSE.LUA/LAPDATA.LUA load.
+  //   DAT_0063ba8c == 1   set at LAB_0040d3c3 in FUN_0040d270 (Course::Finish, 0x0040d270).
+  //   DAT_0063ba78 == DAT_0063ba7c   loaded-course == selected-course after
+  //                       FUN_0040d440 (Course::LoadCurrent, 0x0040d440).
+  // Read-only. Baseline (no hooks) must be pass=true; each dispatcher hook live must
+  // KEEP it pass=true (no-regression). Not perturbed by the render-quad thunk 0x0047b9e0.
+  courseLoadAsserts: function(){
+    try {
+      const flag_66d704 = ga(0x0066d704).readU32();
+      const flag_63ba8c = ga(0x0063ba8c).readU32();
+      const loaded      = ga(0x0063ba78).readS32();
+      const selected    = ga(0x0063ba7c).readS32();
+      const a1 = (flag_66d704 === 1);
+      const a2 = (flag_63ba8c === 1);
+      const a3 = (loaded === selected);
+      return JSON.stringify({
+        pass: (a1 && a2 && a3),
+        asserts: {
+          'DAT_0066d704==1': {ok: a1, got: flag_66d704},
+          'DAT_0063ba8c==1': {ok: a2, got: flag_63ba8c},
+          'DAT_0063ba78==DAT_0063ba7c': {ok: a3, loaded: loaded, selected: selected}
+        }
+      });
+    } catch(e){ return JSON.stringify({pass:false, err:''+e}); }
+  },
   setup: function(cfg){
     try {
       ga(TRACK_ENG ).writeS32(cfg.track);
@@ -745,6 +773,15 @@ def main():
                          "accel is always full. Lets the original be driven with a held steer so "
                          "its steer-sign convention (steerAng +0x1a8 vs velocity-heading change) "
                          "can be measured against the ported chain.")
+    ap.add_argument("--assert-course-load", action="store_true",
+                    help="COURSE-LOAD VERIFIER (area-track r1): after reaching a loaded-course "
+                         "state (phase 3), read three deterministic load-integrity observables "
+                         "(DAT_0066d704==1, DAT_0063ba8c==1, DAT_0063ba78==DAT_0063ba7c) and "
+                         "print PASS/FAIL + write log/course_load_assert.json. Baseline (no "
+                         "--hooks) must PASS; run again with --hooks <dispatcher cluster> and it "
+                         "must STILL pass (no-regression) — that is how the load-dispatcher hooks "
+                         "get their booted-race verification. Exits shortly after the assert "
+                         "(no long hold needed); combine with --hold 0.")
     ap.add_argument("--spike-telemetry", default="",
                     help="tag: sample the player car at 10 Hz (render pos/vel/speed/yaw-rate/"
                          "heading/grounded) and write log/d1_spike_<tag>.json. In control "
@@ -867,6 +904,30 @@ def main():
         ph3 = wait_phase(3, 40, "race running (phase 3)")
         if ph3 is None: raise SystemExit
         print("\n  *** RACE RUNNING (phase 3) ***")
+        if args.assert_course_load:
+            import json
+            # Give the phase-2 load chain a moment to finish writing the post-load flags.
+            time.sleep(1.0)
+            try:
+                res = json.loads(E.course_load_asserts())
+            except Exception as ex:
+                res = {"pass": False, "err": f"rpc failed: {ex}"}
+            res["run"] = {"track": args.track, "mode": args.mode, "cars": args.cars,
+                          "hooks": args.hooks or None, "pid": pid,
+                          "ts": time.strftime("%Y-%m-%d %H:%M:%S")}
+            out = ROOT / "log" / "course_load_assert.json"
+            out.parent.mkdir(exist_ok=True)
+            out.write_text(json.dumps(res, indent=1))
+            print("\n  === COURSE-LOAD VERIFIER ===")
+            for k, v in (res.get("asserts") or {}).items():
+                print(f"    {'OK ' if v.get('ok') else 'FAIL'}  {k}   {v}")
+            if res.get("err"):
+                print(f"    agent err: {res['err']}")
+            verdict = "PASS" if res.get("pass") else "FAIL"
+            print(f"  COURSE-LOAD VERDICT: {verdict}   hooks={args.hooks or 'none(baseline)'}   -> {out}")
+            rc = 0 if res.get("pass") else 4
+            # No long hold needed for the verifier; tear down after the assert.
+            raise SystemExit
         if args.statediff_out and args.statediff_drive_late:
             # D2 variant B: arm the cook injector only NOW, so phase 2 (track
             # load + car spawn) runs with 0x00496530 uninstrumented. Costs the

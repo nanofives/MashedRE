@@ -17214,13 +17214,14 @@ HOOKS = {
         'needs_booted_race': True,
         'path1_tests': [], 'path2_tests': [],
     },
-    'track_vehiclesurfacesetup_40cea0': {
-        # 0x0040cea0 void(int table, int idx, u32 p3) — opens dirt.piz, table lookups,
-        # writes DAT_0063ba90/94, 4-iter apply loop. BOOTED-RACE ONLY (live table + piz).
-        'rva': 0x0040cea0, 'export': 'Track_VehicleSurfaceSetup_40cea0',
-        'signature': {'ret': 'void', 'args': ['int', 'int', 'uint32']},
+    'track_renderquad_thunk_47b9e0': {
+        # 0x0047b9e0 void(u32,u32) — thin thunk to FUN_00496c10 (render-quad, void(void),
+        # ignores args). BOOTED-RACE CLUSTER: no scalar observable in isolation; verified by
+        # the course-load VERIFIER no-regression run (does not perturb load-integrity asserts).
+        'rva': 0x0047b9e0, 'export': 'Track_RenderQuadThunk_47b9e0',
+        'signature': {'ret': 'void', 'args': ['uint32', 'uint32']},
         'arg_type': 'none', 'lut_root_delta': 0,
-        'stub_at': [0x004c5c80, 0x0042a8d0, 0x00495280, 0x004952f0], 'stub_nargs': 3, 'stub_ret': 0,
+        'stub_at': [0x00496c10], 'stub_nargs': 2, 'stub_ret': 0,
         'needs_booted_race': True,
         'path1_tests': [], 'path2_tests': [],
     },
