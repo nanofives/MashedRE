@@ -375,6 +375,9 @@ def build_config(hook, asi_path=None):
     if 'ret_kind' in hook:
         config['ret_kind'] = hook['ret_kind']
     for _k in ('seed_off', 'read_off', 'read_size', 'read_offs', 'fold_ret',
+               # render_state_seq_observe (area-vehicle r6): device-vtable-slot
+               # RwRenderStateSet(state,value) sequence recorder.
+               'device_global_str', 'slot_off', 'stub_nargs', 'stub_abi',
                # per_vehicle_record_seed (area-vehicle r4): strided per-vehicle
                # record seed+fingerprint+restore. slot_base_addr/slot_stride already
                # forwarded above; these carry the observe window + input width.

@@ -362,6 +362,30 @@ function callFn(fn, input, buf) {
         finally { for (let k = 0; k < outLen; k++) region.add(k).writeU8(saved[k]); }
         return ret;
     }
+    if (CONFIG.arg_type === 'render_state_seq_observe') {
+        // Group-R install check: seed the mode/replay globals, patch the device
+        // vtable slot with a no-op recorder so nothing real dispatches, call fn()
+        // once (fires the interceptor), then RESTORE the slot + globals. Stays ABOVE
+        // the 0-arg fallback guard (U-9067). Mirrors diff_template's handler.
+        // (area-vehicle r6.)
+        const devG    = ptr(CONFIG.device_global_str || '0x007d3ff8');
+        const slotOff = (CONFIG.slot_off | 0) || 0x20;
+        const NA      = (CONFIG.stub_nargs === undefined) ? 2 : (CONFIG.stub_nargs | 0);
+        const seeds   = CONFIG.seed_globals || [];
+        const savedG = [];
+        for (const s of seeds) { const a = ptr(s.addr); savedG.push(a.readU32()); a.writeU32(s.val >>> 0); }
+        const types = []; for (let k = 0; k < NA; k++) types.push('uint32');
+        const rec = new NativeCallback(function () {}, 'void', types, CONFIG.stub_abi || 'mscdecl');
+        let slot = null, origFn = null;
+        try { const dev = devG.readPointer(); slot = dev.add(slotOff); origFn = slot.readPointer(); slot.writePointer(rec); } catch (e) {}
+        let ret;
+        try { ret = fn(); }
+        finally {
+            try { if (slot && origFn) slot.writePointer(origFn); } catch (e) {}
+            for (let k = 0; k < seeds.length; k++) { try { ptr(seeds[k].addr).writeU32(savedG[k]); } catch (e) {} }
+        }
+        return ret;
+    }
     // FALLBACK, and it must stay LAST. A function with zero declared parameters must be
     // called with zero args, regardless of arg_type: the NativeFunction at TARGET_ADDR is
     // built from CONFIG.signature.args, so honor that same ground truth. Without this,

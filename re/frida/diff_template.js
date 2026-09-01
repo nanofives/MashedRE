@@ -4505,6 +4505,57 @@ function runDiff() {
         return;
     }
 
+    // ── render_state_seq_observe ────────────────────────────────────────────
+    // For a void() that, gated by a mode global, emits a FIXED ordered sequence of
+    // (state,value) pairs through a RUNTIME device vtable slot [*device_global +
+    // slot_off] (RwRenderStateSet). The pairs are constants, so the witness is their
+    // exact sequence — a reimpl with wrong order / count / values, or one whose gate
+    // never opens (emits nothing), FAILS. Per side: seed CONFIG.seed_globals (the
+    // mode global -> gate open; any replay/ghost pointers -> 0 so conditional callees
+    // stay dormant), read dev=[device_global], SAVE the slot fn-ptr, write a
+    // NativeCallback recorder into it (so nothing real dispatches — no live device
+    // mutation), call fn(), collect the pairs, RESTORE the slot + globals.
+    // CONFIG: device_global_str ('0x007d3ff8'), slot_off (0x20), stub_nargs (2),
+    //   stub_abi ('mscdecl'), seed_globals [{addr,val}]. tests = iteration markers.
+    if (CONFIG.arg_type === 'render_state_seq_observe') {
+        const devG    = ptr(CONFIG.device_global_str || '0x007d3ff8');
+        const slotOff = (CONFIG.slot_off | 0) || 0x20;
+        const NA      = (CONFIG.stub_nargs === undefined) ? 2 : (CONFIG.stub_nargs | 0);
+        const seeds   = CONFIG.seed_globals || [];
+        function runSide(fn) {
+            const savedG = [];
+            for (const s of seeds) { const a = ptr(s.addr); savedG.push(a.readU32()); a.writeU32(s.val >>> 0); }
+            const calls = [];
+            const types = []; for (let k = 0; k < NA; k++) types.push('uint32');
+            const rec = new NativeCallback(function () {
+                const got = [];
+                for (let k = 0; k < arguments.length; k++) got.push('0x' + (arguments[k] >>> 0).toString(16));
+                calls.push(got.join(','));
+            }, 'void', types, CONFIG.stub_abi || 'mscdecl');
+            let err = null, slot = null, origFn = null;
+            try {
+                const dev = devG.readPointer();
+                slot = dev.add(slotOff);
+                origFn = slot.readPointer();
+                slot.writePointer(rec);
+            } catch (e) { err = e.message; }
+            try { fn(); } catch (e) { if (err === null) err = e.message; }
+            try { if (slot && origFn) slot.writePointer(origFn); } catch (e) {}
+            for (let k = 0; k < seeds.length; k++) { try { ptr(seeds[k].addr).writeU32(savedG[k]); } catch (e) {} }
+            return { seq: calls.join('|'), err };
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const o = runSide(Orig), r = runSide(Reimpl);
+            const crashEqual = CONFIG.crash_equal_ok && o.err !== null && r.err !== null && o.err === r.err;
+            results.push({ idx: i, input: JSON.stringify(CONFIG.tests[i]),
+                           original: o.seq, reimpl: r.seq,
+                           match: crashEqual || (o.err === null && r.err === null && o.seq === r.seq),
+                           err_original: o.err, err_reimpl: r.err });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── out_buf_fmt_2 ───────────────────────────────────────────────────────
     // For MenusLapTimeFmt-style: void(int p1, uint32 p2, char* outA, char* outB).
     // Both output buffers receive sprintf-style formatted bytes; observable is

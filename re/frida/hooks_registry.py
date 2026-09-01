@@ -17266,6 +17266,28 @@ HOOKS = {
     #   RESTORE; fold_ret covers the slot>0xf guard arm (returns 0, writes nothing). The write
     #   target is the per-vehicle record ai reads at 0x00881f74+veh*0xd04 (CROSS_AREA_BUS) but
     #   the computation is input-pure -> synthetically diffable.
+    # 0x00411ce0  GhostSetupRender (vehicle) — void(): gated by GetRaceSubMode()==2
+    #   (0x0042f6a0 util C3, reads 0x0067e9fc), emits 5 fixed RwRenderStateSet(state,value)
+    #   pairs through the device vtable slot [*0x007d3ff8+0x20]: (0xa,5)(0xb,6)(8,1)(6,1)(0x14,2).
+    #   NEW arg_type render_state_seq_observe (SWEEP-CRITICAL, both JS templates): seed mode->2
+    #   + replay ptrs 0x0063bb10/0c/28->0 (so the 2 conditional callees stay dormant), patch the
+    #   vtable slot with a recorder, observe the exact pair SEQUENCE, restore. Fixed constants ->
+    #   witness is the sequence (empty on a gate that never opens -> RED). Caller FUN_00410b30 render C2.
+    'ghost_setup_render': {
+        'rva': 0x00411ce0, 'export': 'GhostSetupRender',
+        'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'render_state_seq_observe',
+        'device_global_str': '0x007d3ff8', 'slot_off': 0x20, 'stub_nargs': 2, 'stub_abi': 'mscdecl',
+        'seed_globals': [
+            {'addr': 0x0067e9fc, 'val': 2},   # GetRaceSubMode -> 2 (opens the gate)
+            {'addr': 0x0063bb10, 'val': 0},   # replay/ghost record ptrs -> 0 (skip FUN_0041a960/FUN_00483a70)
+            {'addr': 0x0063bb0c, 'val': 0},
+            {'addr': 0x0063bb28, 'val': 0},
+        ],
+        'crash_equal_ok': True, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 2],   # iteration markers; witness is the fixed 5-pair sequence
+        'path2_tests': [0, 1],
+    },
     'vehicle_slot_aabb_expand': {
         'rva': 0x0046b1c0, 'export': 'VehicleSlotAabbExpand',
         'signature': {'ret': 'int32', 'args': ['int32', 'pointer']},
