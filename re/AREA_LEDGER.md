@@ -53,15 +53,9 @@ Parent owns [[CROSS_AREA_BUS]] + this ledger; children report cross-area finding
 | render | 746 | 166 | 3 | 0 | none (bit-identical) | ACTIVE (pilot) |
 | hud | 77 | 36 | 2 | 2 | n/a | **MINED-OUT** (parent decision 2026-09-01, post-sweep) — 2 consecutive dry rounds; B-0001 REFUTED (band is first-party); ~15 rows pending Rt2d reclass-OUT; filed 3 cross-area findings. REVISIT WHEN: the Rt2d rows are reclassified OUT, which re-scopes the area. |
 | ai | 29 | 45 | 4 | 0 | n/a (non-visual) | ACTIVE — 1 C3 VERIFIED (0x00415e20 AiSteeringAngleError, parent booted-race 3585-call 0-mism GREEN); found+fixed a real x87 ST0-leak reimpl bug en route |
-<<<<<<< HEAD
 | track | 58 | 3 | 1 | 1 | — | **UNBLOCKED 2026-09-01** — U-9066 RESOLVED by the parent: the `DAT_0063ba8c==1` assert failed its own zero-hook baseline because the address is a 12-valued race state machine, not a load flag; it is now reported raw and the baseline PASSES. Cluster then ran on tracks 0/1/3: **0x0040d440 and 0x0040d020 promoted C2->C3** (installs proven, no-regression on observables that witness their own writes); **0x0047b9e0 REFUSED** (unobserved by either assert — would be a degenerate green). Not staffed in round 2, but the verifier lane is now live for round 3, and the 60-row load-dispatcher residue is workable. |
 | frontend | 79 | 153 | 4 | 0 | scr1 118/118 GREEN (unchanged) | ACTIVE — r4 RESOLVED its round-1 debt U-9065: TextCtrlCodeRemap is now the sole installer at 0x004277a0 (dev-only EBX==0 guard folded in behind #ifndef MASHED_STANDALONE, IntroTextNullGuard.cpp deleted). Parent verified: path2 FULL PASS 2/2, path1 13/13, row UNPARKED to fully-verified C3. Exposed+fixed U-9067 (callFn 0-arg guard shadowed the eax_ptr_ebx_outbuf trampoline; guard moved to last). |
-| vehicle | 87 | 1 | 0 | 0 | — | QUEUED (round 2, never swept) |
-=======
-| track | 60 | 3 | 1 | 1 | — | **BLOCKED** (U-9066) — the course-load verifier was authored in r1 but never run; the sweep ran it and it FAILS AT BASELINE with zero hooks (DAT_0063ba8c expected 1, got 3), so it cannot judge any hook. Not staffed in round 2. REVISIT WHEN: the parent recalibrates the assert to a PASSING zero-hook baseline. |
-| frontend | 80 | 153 | 3 | 0 | scr1 118/118 GREEN (unchanged) | ACTIVE |
 | vehicle | 86 | 2 | 1 | 0 | n/a (non-visual) | ACTIVE — r1 landed 1 C3 (0x00482030 SubStripQuadUV, path1 GREEN 8/8; path2 queued to parent) |
->>>>>>> area/vehicle
 | util | 334 | 2 | 0 | 0 | n/a (non-visual) | QUEUED (round 2, never swept) |
 
 State vocab: QUEUED | ACTIVE | MINED-OUT | COVERED.
