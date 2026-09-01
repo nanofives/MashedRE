@@ -16812,6 +16812,33 @@ HOOKS = {
         'path1_tests': [0x11111111, 0x22222222, 0x33333333, 0x44444444, 0x55555555],
         'path2_tests': [0x11111111, 0x22222222],
     },
+    # 0x00482030  SubStripQuadUV (vehicle) — void(float* out, int p2, uint p3): zero-callee
+    #   pure leaf. Computes q=(uint)(p2<<2)/p3, then writes 2 floats to out[0..1] by the
+    #   4-case quadrant switch (verbatim x87; see Vehicle/SubStripUV.cpp). Self-diffable
+    #   synthetic path1: draw_quad_observe passes the out pointer FROM the test vector
+    #   (coerced via ptr()) and fingerprints VBUF at vbuf_addr_str, so out MUST be the VBUF
+    #   address 0x00898a20 (handler's default scratch, saved+restored). vbuf_len=8 = 2 floats.
+    #   Tests cover cases 0..3, the >3 default (no write), both int<0 unsigned-fixup branches.
+    'sub_strip_quad_uv': {
+        'rva': 0x00482030, 'export': 'SubStripQuadUV',
+        'signature': {'ret': 'void', 'args': ['pointer', 'int32', 'int32']},
+        'arg_type': 'draw_quad_observe', 'vbuf_addr_str': '0x00898a20', 'vbuf_len': 8,
+        'crash_equal_ok': True, 'lut_root_delta': 0,
+        'path1_tests': [
+            [0x00898a20, 0, 4],    # q=0 -> case0
+            [0x00898a20, 1, 4],    # q=1 -> case1
+            [0x00898a20, 2, 4],    # q=2 -> case2
+            [0x00898a20, 3, 4],    # q=3 -> case3
+            [0x00898a20, 4, 4],    # q=4 -> default (no write)
+            [0x00898a20, 5, 3],    # q=6 -> default; non-multiple
+            [0x00898a20, -1, 4],   # p2<0 unsigned-fixup branch; q=0x3fffffff -> default
+            [0x00898a20, -1, -1],  # p2<0 AND p3<0 branches; q=0 -> case0
+        ],
+        'path2_tests': [
+            [0x00898a20, 2, 4],
+            [0x00898a20, 3, 4],
+        ],
+    },
     # 0x0046d510 VehicleVelocityWorldGet - RE-WIRED orch-iter21, IN-RACE lane.
     # Closes the last open row of the out3_idx audit
     # (re/analysis/out3_idx_false_green_audit_20260731.md). Row is C2, demoted from C3.
