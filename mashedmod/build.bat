@@ -320,6 +320,7 @@ cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe
     "Util\TimerSetters.cpp" ^
     "Util\TimerSlot.cpp" ^
     "Util\UtilLeaves.cpp" ^
+    "Util\Vec3Centroid.cpp" ^
     "Util\SmallLeaves_o6.cpp" ^
     "Util\UtilLeaves_ab6.cpp" ^
     "Util\UtilLeaves_ac.cpp" ^

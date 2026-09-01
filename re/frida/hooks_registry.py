@@ -2896,6 +2896,48 @@ HOOKS = {
         ],
     },
 
+    # 0x004b4550 Vec3Centroid(out, points, count): out[0..2] = (1/count)*sum(points[i]).
+    # points = packed vec3 array (stride 12B); seeds out from points[0], sums the rest with a
+    # 4-unrolled inner loop + 1..3 remainder, then multiplies by the 1/count reciprocal
+    # (fild count / fdivr +1.0f const @0x005cc320). PURE LEAF, no callees, no live globals ->
+    # synthetic-safe at any attach point. Verbatim naked x87 -> Util/Vec3Centroid.cpp.
+    # fmt_desc_pair_compare 4-ARG form (args len 4 so t.p3=count is routed; the __cdecl reimpl
+    # ignores the harmless 4th, caller-cleaned): bufA=out (zeroed, the discriminant), bufB=points
+    # (seeded fNN floats), p3=count. bufB is 0x40B = up to 5 vec3s, so count in 1..5. Void ret.
+    # Tests cover count=1 (memcpy+divide only), 2..4 (remainder loop), 5 (unrolled path).
+    'vec3_centroid': {
+        'rva':            0x004b4550,
+        'export':         'Vec3Centroid',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'pointer', 'int', 'int']},
+        'arg_type':       'fmt_desc_pair_compare',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 'a': {}, 'b': {'f00': 0x40a00000, 'f04': 0xc0c00000, 'f08': 0x40e00000}, 'p3': 1, 'p4': 0 },  # count=1 -> centroid = point0 (5,-6,7)
+            { 'a': {}, 'b': {'f00': 0x3f800000, 'f04': 0x40000000, 'f08': 0x40400000,
+                             'f0c': 0x40800000, 'f10': 0x40a00000, 'f14': 0x40c00000}, 'p3': 2, 'p4': 0 },  # count=2 (remainder 1)
+            { 'a': {}, 'b': {'f00': 0x00000000, 'f04': 0x3f800000, 'f08': 0xbf800000,
+                             'f0c': 0x40000000, 'f10': 0xc0000000, 'f14': 0x40400000,
+                             'f18': 0xc0400000, 'f1c': 0x40800000, 'f20': 0xc0800000}, 'p3': 3, 'p4': 0 },  # count=3 (remainder 2)
+            { 'a': {}, 'b': {'f00': 0x3dcccccd, 'f04': 0x3e4ccccd, 'f08': 0x3e99999a,
+                             'f0c': 0x3ecccccd, 'f10': 0x3f000000, 'f14': 0x3f19999a,
+                             'f18': 0x3f333333, 'f1c': 0x3f4ccccd, 'f20': 0x3f666666,
+                             'f24': 0x3f800000, 'f28': 0x3f8ccccd, 'f2c': 0x3f99999a}, 'p3': 4, 'p4': 0 },  # count=4 (remainder 3)
+            { 'a': {}, 'b': {'f00': 0x41200000, 'f04': 0x41a00000, 'f08': 0x41f00000,
+                             'f0c': 0xc1200000, 'f10': 0x41100000, 'f14': 0x40400000,
+                             'f18': 0x40800000, 'f1c': 0xc0a00000, 'f20': 0x40c00000,
+                             'f24': 0x3f800000, 'f28': 0x40000000, 'f2c': 0x40400000,
+                             'f30': 0x42480000, 'f34': 0xc2340000, 'f38': 0x42200000}, 'p3': 5, 'p4': 0 },  # count=5 (unrolled path)
+        ],
+        'path2_tests': [
+            { 'a': {}, 'b': {'f00': 0x40a00000, 'f04': 0xc0c00000, 'f08': 0x40e00000}, 'p3': 1, 'p4': 0 },  # count=1
+            { 'a': {}, 'b': {'f00': 0x41200000, 'f04': 0x41a00000, 'f08': 0x41f00000,
+                             'f0c': 0xc1200000, 'f10': 0x41100000, 'f14': 0x40400000,
+                             'f18': 0x40800000, 'f1c': 0xc0a00000, 'f20': 0x40c00000,
+                             'f24': 0x3f800000, 'f28': 0x40000000, 'f2c': 0x40400000,
+                             'f30': 0x42480000, 'f34': 0xc2340000, 'f38': 0x42200000}, 'p3': 5, 'p4': 0 },  # count=5
+        ],
+    },
+
     # 0x004c3910 Vec3NormalizeScale(out, in): out = in * (1/|in|); returns the scale
     # (1/|in|) in ST0. Inv-sqrt sibling of RwV3dNormalize; reads the RW3 invsqrt LUT
     # (device globals DAT_007d3ff8 / DAT_007d3ffc, table slot +4) -> run live (menu:
