@@ -16839,6 +16839,34 @@ HOOKS = {
             [0x00898a20, 3, 4],
         ],
     },
+    # 0x00482ae0  SplineCubicBlend3 (vehicle) — void(float t, float* out, float* p0..p3):
+    #   zero-callee straight-line pure leaf. Fixed cubic blend of 4 control points -> out[0..2]
+    #   (verbatim x87; Vehicle/SplineCubicBlend.cpp). Self-diffable synthetic path1 via
+    #   draw_quad_observe: out ptr routed to VBUF 0x00898a20 (vbuf_len=12 = 3 floats); the 4
+    #   control-point pointers point at distinct, non-overlapping, stable .rdata float triples
+    #   (0x005cc300/310/320/330), read identically by both sides so output is deterministic-
+    #   equal; t varied per test for non-degeneracy. Consts 0x005cc31c/32c/358/35c.
+    'spline_cubic_blend3': {
+        'rva': 0x00482ae0, 'export': 'SplineCubicBlend3',
+        'signature': {'ret': 'void',
+                      'args': ['float', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer']},
+        'arg_type': 'draw_quad_observe', 'vbuf_addr_str': '0x00898a20', 'vbuf_len': 12,
+        'crash_equal_ok': True, 'lut_root_delta': 0,
+        'path1_tests': [
+            [0.0,  0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+            [0.25, 0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+            [0.5,  0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+            [0.75, 0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+            [1.0,  0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+            [1.5,  0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+            [-0.5, 0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+            [2.0,  0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+        ],
+        'path2_tests': [
+            [0.25, 0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+            [0.75, 0x00898a20, 0x005cc300, 0x005cc310, 0x005cc320, 0x005cc330],
+        ],
+    },
     # 0x0046d510 VehicleVelocityWorldGet - RE-WIRED orch-iter21, IN-RACE lane.
     # Closes the last open row of the out3_idx audit
     # (re/analysis/out3_idx_false_green_audit_20260731.md). Row is C2, demoted from C3.

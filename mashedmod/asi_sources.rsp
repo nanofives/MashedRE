@@ -14,6 +14,7 @@
 "Vehicle\ShapeOwnerHandlePool.cpp"
 "Vehicle\VehicleSeed.cpp"
 "Vehicle\SubStripUV.cpp"
+"Vehicle\SplineCubicBlend.cpp"
 "Camera\CameraPathPredicates.cpp"
 "Ai\VehicleVelocityWorldGet.cpp"
 "Physics\SmplFzxStateBlock.cpp"
