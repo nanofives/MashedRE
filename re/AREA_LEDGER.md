@@ -50,13 +50,13 @@ Parent owns [[CROSS_AREA_BUS]] + this ledger; children report cross-area finding
 
 | area | residue<C3 | implemented .cpp | rounds run | dry streak | last parity | state |
 |---|---|---|---|---|---|---|
-| render | 746 | 166 | 3 | 0 | none (bit-identical) | ACTIVE (pilot) |
+| render | 746 | 167 | 3 | 0 | none (bit-identical) | ACTIVE (pilot) — r3 landed RwStricmp 0x004d8680 C3 (path1 12/12 + parent path2 3/3); added arg_type stricmp_pair to BOTH JS templates |
 | hud | 77 | 36 | 2 | 2 | n/a | **MINED-OUT** (parent decision 2026-09-01, post-sweep) — 2 consecutive dry rounds; B-0001 REFUTED (band is first-party); ~15 rows pending Rt2d reclass-OUT; filed 3 cross-area findings. REVISIT WHEN: the Rt2d rows are reclassified OUT, which re-scopes the area. |
-| ai | 29 | 45 | 4 | 0 | n/a (non-visual) | ACTIVE — 1 C3 VERIFIED (0x00415e20 AiSteeringAngleError, parent booted-race 3585-call 0-mism GREEN); found+fixed a real x87 ST0-leak reimpl bug en route |
+| ai | 29 | 46 | 5 | 0 | n/a (non-visual) | ACTIVE — r5 authored 0x00415200 but the parent REFUSED C3: the hook NEVER EXECUTED in a booted race (sole caller FUN_00415220 is unreached), so it is unobserved, not wrong. Child reports the area near MINED-OUT: 29 residue, all doc-only C2, 0 scenarios, no child-completable synthetic win left. AWAITING PARENT DECISION on reschedule. |
 | track | 58 | 3 | 1 | 1 | — | **UNBLOCKED 2026-09-01** — U-9066 RESOLVED by the parent: the `DAT_0063ba8c==1` assert failed its own zero-hook baseline because the address is a 12-valued race state machine, not a load flag; it is now reported raw and the baseline PASSES. Cluster then ran on tracks 0/1/3: **0x0040d440 and 0x0040d020 promoted C2->C3** (installs proven, no-regression on observables that witness their own writes); **0x0047b9e0 REFUSED** (unobserved by either assert — would be a degenerate green). Not staffed in round 2, but the verifier lane is now live for round 3, and the 60-row load-dispatcher residue is workable. |
 | frontend | 79 | 153 | 4 | 0 | scr1 118/118 GREEN (unchanged) | ACTIVE — r4 RESOLVED its round-1 debt U-9065: TextCtrlCodeRemap is now the sole installer at 0x004277a0 (dev-only EBX==0 guard folded in behind #ifndef MASHED_STANDALONE, IntroTextNullGuard.cpp deleted). Parent verified: path2 FULL PASS 2/2, path1 13/13, row UNPARKED to fully-verified C3. Exposed+fixed U-9067 (callFn 0-arg guard shadowed the eax_ptr_ebx_outbuf trampoline; guard moved to last). |
-| vehicle | 86 | 2 | 1 | 0 | n/a (non-visual) | ACTIVE — r1 landed 1 C3 (0x00482030 SubStripQuadUV, path1 GREEN 8/8; path2 queued to parent) |
-| util | 334 | 2 | 0 | 0 | n/a (non-visual) | QUEUED (round 2, never swept) |
+| vehicle | 86 | 2 | 1 | 0 | n/a | ACTIVE — r1 landed SubStripQuadUV 0x00482030 C3, the area's first (path1 8/8 + parent path2 2/2). Correctly QUEUED the live-state replay/ghost family instead of forcing a degenerate synthetic green. Infra note: its Mashed_pool4 clone was STALE (43M, never analyzed) and was force-recreated from master while holding its lock — pool clones are not guaranteed analyzed. |
+| util | 333 | 3 | 1 | 0 | n/a (non-visual) | ACTIVE — r1 landed RwMatrixInvertEntry 0x004c4dc0 C3, the public 23-caller RwMatrix entry (path1 7/7 + parent path2 2/2). Confirms the RW-math-leaf thesis the area was staffed on. Its U-9067 was renumbered U-9068 (same-day ID collision with the parent's). |
 
 State vocab: QUEUED | ACTIVE | MINED-OUT | COVERED.
 
