@@ -1,21 +1,28 @@
 {
-  "title": "Mashed RE — area-loop fleet",
-  "updatedAt": "2026-09-01T00:45:00Z",
+  "title": "Mashed RE",
+  "updatedAt": "2026-09-01T15:35:00Z",
   "sections": [
     {
-      "heading": "Area-loop fleet (5 children, star topology)",
+      "heading": "Frida-sweep 20260901",
       "fields": [
-        { "label": "Children active", "value": 5, "kind": "number" },
-        { "label": "Areas", "value": ["render (pool4, r2)", "hud (pool14, r1)", "ai (pool2, r1)", "track (pool15, r1)", "frontend (pool3, r1)"], "kind": "list" },
-        { "label": "Parent role", "value": "orchestrator; owns AREA_LEDGER + CROSS_AREA_BUS; routes cross-area findings; runs frida-sweep", "kind": "text" }
+        { "label": "Branch", "value": "sweep/20260901 (5 area branches merged)", "kind": "text" },
+        { "label": "C3s landed GREEN", "value": 3, "kind": "number" },
+        { "label": "Landed", "value": [
+            "0x004c4eb0 RwMatrixInvert - path1 5/5, path2 FULL PASS",
+            "0x004739f0 TextSpriteScaled - path1 10/10, path2 FULL PASS",
+            "0x00415e20 AiSteeringAngleError - booted race 3585 calls, 0 mism"
+          ], "kind": "list" },
+        { "label": "Blocked", "value": [
+            "0x004277a0 TextCtrlCodeRemap - path1 13/13 GREEN, path2 FAIL (duplicate RH_ScopedInstall)",
+            "track cluster - course-load verifier FAILs at baseline (miscalibrated assert)"
+          ], "kind": "list" }
       ]
     },
     {
-      "heading": "Coverage & defects",
+      "heading": "Build",
       "fields": [
-        { "label": "Last C3 landed", "value": "0x004c5890 RwTexDictionaryCreate", "kind": "text" },
-        { "label": "Residue <C3", "value": ["render 748", "hud 77", "ai 30", "track 60", "frontend 82"], "kind": "list" },
-        { "label": "Open render defects", "value": ["City black-road", "Dump white-sky", "terrain-ambient overbrighten", "T-ARCTIC (no pose-matched frame)"], "kind": "list" }
+        { "label": "Canonical .asi", "value": "rebuilt 2026-09-01, epoch-checked (10s)", "kind": "text" },
+        { "label": "Next", "value": "resolve 0x004277a0 installer, then spawn next area fleet", "kind": "text" }
       ]
     }
   ]
