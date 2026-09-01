@@ -103,7 +103,6 @@
 "Input\DirectInput.cpp"
 "Input\DInput.cpp"
 "Compat\PizWin32Bypass.cpp"
-"Compat\IntroTextNullGuard.cpp"
 "Compat\StreamHandlerDispatchGuard.cpp"
 "Harness\HarnessStubs.cpp"
 "Frontend\Leaves.cpp"
