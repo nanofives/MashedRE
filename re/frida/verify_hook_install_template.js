@@ -152,6 +152,28 @@ function callFn(fn, input, buf) {
                    : (ret >>> 0);
         return [(retU & 0xffff).toString(16), fp(bufA).toString(16), fp(bufB).toString(16)].join(',');
     }
+    if (CONFIG.arg_type === 'stricmp_pair') {
+        // fn(const char* s1, const char* s2) -> int. Mirror diff_template exactly:
+        // two self-allocated 512-byte scratch buffers seeded byte-by-byte + NUL; a JS
+        // `null` operand is passed as a real NULL pointer to hit the callee null-guard.
+        // path2 had no case for the {s1,s2} test-dict shape, so it would fall through to
+        // fn(input) and die "bad argument count" BEFORE entry (same class as the 0-arg /
+        // vec3_normalize / fmt_desc_pair_compare holes). Observable is the signed int
+        // return coerced to uint32. (area-loop render round 3, 2026-09-01.)
+        function seedStr(sval) {
+            if (sval === null) return ptr(0);
+            const b = Memory.alloc(512);
+            const s = String(sval);
+            for (let j = 0; j < s.length; j++) b.add(j).writeU8(s.charCodeAt(j) & 0xff);
+            b.add(s.length).writeU8(0);
+            return b;
+        }
+        const p1 = seedStr((input && input.s1 !== undefined) ? input.s1 : '');
+        const p2 = seedStr((input && input.s2 !== undefined) ? input.s2 : '');
+        const ret = fn(p1, p2);
+        return (ret === null || ret === undefined) ? 0
+             : (typeof ret === 'object' ? (ret.toInt32() >>> 0) : (ret >>> 0));
+    }
     if (CONFIG.arg_type === 'draw_quad_observe') {
         // 12-arg Im2D quad draw: `input` is the full arg vector. path2 had no case
         // for it, so the dispatcher fell through to `fn(input)` and every call died

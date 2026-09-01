@@ -514,6 +514,30 @@ function callFn(fn, input, buf) {
         return (ret === null || ret === undefined) ? 0
              : (typeof ret === 'object' ? (ret.toInt32() >>> 0) : (ret >>> 0));
     }
+    // stricmp_pair — fn(const char* s1, const char* s2) -> int, for string-compare
+    // leaves (e.g. RwStricmp 0x004d8680). Two per-side 512-byte scratch buffers, each
+    // seeded byte-by-byte with a test JS string plus an explicit NUL (same idiom as
+    // str_arg_int_get; Memory.allocUtf8String avoided). A JS `null` for either operand
+    // is passed as a real NULL pointer so the callee's null-guard arm is exercised.
+    // Observable is fn's signed int return coerced to uint32; no out-buffer, no globals.
+    // Non-degeneracy: the registry vectors must span equal / less / greater / prefix /
+    // empty / case-fold-boundary (letters vs the 0x40-0x5b edge) / NULL to expose any
+    // folding or sign divergence. tests[i] = { s1:"...", s2:"..." } (either may be null).
+    if (CONFIG.arg_type === 'stricmp_pair') {
+        function seedStr(sval) {
+            if (sval === null) return ptr(0);
+            const b = Memory.alloc(512);
+            const s = String(sval);
+            for (let j = 0; j < s.length; j++) b.add(j).writeU8(s.charCodeAt(j) & 0xff);
+            b.add(s.length).writeU8(0);
+            return b;
+        }
+        const p1 = seedStr((input && input.s1 !== undefined) ? input.s1 : '');
+        const p2 = seedStr((input && input.s2 !== undefined) ? input.s2 : '');
+        const ret = fn(p1, p2);
+        return (ret === null || ret === undefined) ? 0
+             : (typeof ret === 'object' ? (ret.toInt32() >>> 0) : (ret >>> 0));
+    }
     // container_find_scalar — fn(container_ptr, int key) -> int32, where
     // container = [dataPtr@+0, count@+4]. The harness FABRICATES the container
     // per test so no live state is touched: input.data ints are written into a
