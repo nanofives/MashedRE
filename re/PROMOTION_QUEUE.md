@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-09-01  area-track-r1  rvas=0x0040d440,0x0040d020,0x0040cea0  branch=area/track  evidence=log/area-track/build_r1.log(compiled+linked+exported+auto-registered);re/analysis decode via analyzeHeadless/pool15  note=NEEDS-BOOTED-RACE. Course-load dispatch cluster, verbatim ports in Track/CourseLoadDispatch.cpp, hooked into .asi. Run at COURSE LOAD not on demand -> synthetic path1 re-call crashes (FUN_00426e10 opens track .piz+COURSE.LUA; FUN_0040d270 drives load/teardown). PARENT booted-race verification = install live, drive to race, confirm tracks load identically (no-regression). Registry keys: course_loadcurrent_40d440 (0-arg, SYNTHETIC-CHECKABLE with FUN_0040d270 stubbed -> observe 0x0063ba78=DAT_0063ba7c), track_loadbyindex_40d020 + track_vehiclesurfacesetup_40cea0 (booted-race only, deref live track-table base *0x005f2770). stub_at set per entry. Sibling 0x0040d110 DEFERRED (fragile stack-struct passing to FUN_0041a8d0/004220d0 - decode those callees first).
 ```
 
 ## Merged

@@ -17187,6 +17187,43 @@ HOOKS = {
         'path1_tests': [{'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}],
         'path2_tests': [{'args': []}, {'args': []}, {'args': []}],
     },
+    # --- area-track round 1: course-load dispatch cluster (NEEDS-BOOTED-RACE) ---
+    # These run at COURSE LOAD, not on demand: a synthetic path1 re-call crashes
+    # (FUN_00426e10 opens the track .piz + runs COURSE.LUA; FUN_0040d270 drives
+    # load/teardown). Verification is the PARENT's booted-race no-regression run
+    # (install live, drive to race, confirm tracks load identically). No invented
+    # seed/observe vectors here (that is the degenerate-GREEN trap).
+    'course_loadcurrent_40d440': {
+        # 0x0040d440 void() — FUN_0040d270(*0x005f2770, DAT_0063ba7c); DAT_0063ba78 = DAT_0063ba7c.
+        # SYNTHETIC-CHECKABLE: with FUN_0040d270 stubbed, the observable is the global copy.
+        'rva': 0x0040d440, 'export': 'Course_LoadCurrent_40d440', 'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'scalars_to_scattered_globals',
+        'observe': [{'addr': '0x0063ba78', 'len': 4, 'fill': 0xFF}], 'lut_root_delta': 0,
+        'stub_at': [0x0040d270], 'stub_nargs': 2, 'stub_ret': 0,
+        'needs_booted_race': True,
+        'path1_tests': [{'args': []}, {'args': []}, {'args': []}],
+        'path2_tests': [{'args': []}, {'args': []}, {'args': []}],
+    },
+    'track_loadbyindex_40d020': {
+        # 0x0040d020 void(int table, int idx) — FUN_00426e10(**(table + idx*4)).
+        # BOOTED-RACE ONLY: derefs a live track-table base (*0x005f2770); synthetic args crash.
+        'rva': 0x0040d020, 'export': 'Track_LoadByIndex_40d020',
+        'signature': {'ret': 'void', 'args': ['int', 'int']},
+        'arg_type': 'none', 'lut_root_delta': 0,
+        'stub_at': [0x00426e10], 'stub_nargs': 1, 'stub_ret': 0,
+        'needs_booted_race': True,
+        'path1_tests': [], 'path2_tests': [],
+    },
+    'track_vehiclesurfacesetup_40cea0': {
+        # 0x0040cea0 void(int table, int idx, u32 p3) — opens dirt.piz, table lookups,
+        # writes DAT_0063ba90/94, 4-iter apply loop. BOOTED-RACE ONLY (live table + piz).
+        'rva': 0x0040cea0, 'export': 'Track_VehicleSurfaceSetup_40cea0',
+        'signature': {'ret': 'void', 'args': ['int', 'int', 'uint32']},
+        'arg_type': 'none', 'lut_root_delta': 0,
+        'stub_at': [0x004c5c80, 0x0042a8d0, 0x00495280, 0x004952f0], 'stub_nargs': 3, 'stub_ret': 0,
+        'needs_booted_race': True,
+        'path1_tests': [], 'path2_tests': [],
+    },
 
     # ---- promote-round round 27 (worklist batch: global getters) --------------
     'global_67eca4_get': {

@@ -363,3 +363,4 @@
 "Audio\RingHeaderInit.cpp"
 "Render\StoreEaxAtEcx.cpp"
 "Gameplay\SubsystemARecordFind.cpp"
+"Track\CourseLoadDispatch.cpp"
