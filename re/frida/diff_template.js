@@ -538,6 +538,28 @@ function callFn(fn, input, buf) {
         return (ret === null || ret === undefined) ? 0
              : (typeof ret === 'object' ? (ret.toInt32() >>> 0) : (ret >>> 0));
     }
+    // str_inplace_transform — void fn(char* s) that MUTATES the string in place (e.g.
+    // RwStrupr 0x004d86d0 / RwStrlwr 0x004d8700). One per-side 512-byte scratch buffer
+    // seeded with test.s + explicit NUL; a JS null is passed as a real NULL pointer to
+    // exercise the callee null-guard. Return value is void/ignored; the observable is the
+    // post-call NUL-terminated buffer bytes (comma-joined u8s over the seeded length),
+    // so a reimpl that transforms wrong OR mutates the wrong span is caught. Both sides
+    // see identical memory -> bit-identity. Non-degeneracy: vectors must include lower,
+    // upper, mixed, the 'A'-1/'Z'+1 and 'a'-1/'z'+1 fold edges, digits/punctuation (must
+    // be untouched), a 0x80+ byte (signed range check, untouched), empty, and NULL.
+    // tests[i] = { s:"..." } (s may be null).
+    if (CONFIG.arg_type === 'str_inplace_transform') {
+        const sval = (input && input.s !== undefined) ? input.s : input;
+        if (sval === null) { fn(ptr(0)); return 'NULL'; }
+        const s = String(sval);
+        const b = Memory.alloc(512);
+        for (let j = 0; j < s.length; j++) b.add(j).writeU8(s.charCodeAt(j) & 0xff);
+        b.add(s.length).writeU8(0);
+        fn(b);
+        const out = [];
+        for (let j = 0; j <= s.length; j++) out.push(b.add(j).readU8());
+        return out.join(',');
+    }
     // container_find_scalar — fn(container_ptr, int key) -> int32, where
     // container = [dataPtr@+0, count@+4]. The harness FABRICATES the container
     // per test so no live state is touched: input.data ints are written into a

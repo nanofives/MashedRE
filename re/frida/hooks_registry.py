@@ -2838,6 +2838,64 @@ HOOKS = {
         ],
     },
 
+    # 0x004d86d0 RwStrupr(char* s) -> void: in-place ASCII upper-case. Per char: if in
+    # 'a'..'z' (SIGNED byte range JL/JG) subtract 0x20; else leave. NULL/empty guard ->
+    # no-op. First-party (null-guards; NOT the vendored CRT), registered into the RW
+    # string vtable slot +0xf8 by RwEngineRegisterStringFunctions 0x004d8570 (C3). PURE
+    # LEAF (0 callees/globals/FP) -> plain-C in-place transcription is bit-identical ->
+    # Render/RwStrCase.cpp. arg_type str_inplace_transform: observable is the mutated
+    # buffer bytes. Vectors span lower/mixed/digits-punct(untouched)/fold-edges
+    # ('`'=0x60,'{'=0x7b just outside)/0x80+ byte(signed, untouched)/empty/NULL.
+    'rw_strupr': {
+        'rva':            0x004d86d0,
+        'export':         'RwStrupr',
+        'signature':      {'ret': 'void', 'args': ['pointer']},
+        'arg_type':       'str_inplace_transform',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 's': 'hello' },        # -> HELLO
+            { 's': 'Hello World' },  # -> HELLO WORLD
+            { 's': 'abcXYZ123' },    # digits/upper untouched -> ABCXYZ123
+            { 's': '`{' },           # 0x60,0x7b just outside a..z -> unchanged
+            { 's': 'az' },           # range ends -> AZ
+            { 's': '@[Z' },          # 0x40,0x5b + already-upper -> unchanged
+            { 's': 'Á' },       # 0xc1 signed-negative -> untouched
+            { 's': '' },             # empty guard
+            { 's': None },           # NULL guard
+        ],
+        'path2_tests': [
+            { 's': 'Hello World' },  # -> HELLO WORLD
+            { 's': '`{az' },         # fold edges + range ends
+        ],
+    },
+
+    # 0x004d8700 RwStrlwr(char* s) -> void: in-place ASCII lower-case. Per char: if in
+    # 'A'..'Z' (SIGNED byte range) add 0x20; else leave. NULL/empty guard -> no-op.
+    # First-party, RW string vtable slot +0xfc (sibling of RwStrupr). PURE LEAF ->
+    # Render/RwStrCase.cpp. arg_type str_inplace_transform (observes mutated buffer).
+    'rw_strlwr': {
+        'rva':            0x004d8700,
+        'export':         'RwStrlwr',
+        'signature':      {'ret': 'void', 'args': ['pointer']},
+        'arg_type':       'str_inplace_transform',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 's': 'HELLO' },        # -> hello
+            { 's': 'Hello World' },  # -> hello world
+            { 's': 'ABCxyz123' },    # digits/lower untouched -> abcxyz123
+            { 's': '@[' },           # 0x40,0x5b just outside A..Z -> unchanged
+            { 's': 'AZ' },           # range ends -> az
+            { 's': '`{a' },          # 0x60,0x7b + already-lower -> unchanged
+            { 's': 'Á' },       # 0xc1 signed-negative -> untouched
+            { 's': '' },             # empty guard
+            { 's': None },           # NULL guard
+        ],
+        'path2_tests': [
+            { 's': 'Hello World' },  # -> hello world
+            { 's': '@[AZ' },         # fold edges + range ends
+        ],
+    },
+
     # 0x004c3910 Vec3NormalizeScale(out, in): out = in * (1/|in|); returns the scale
     # (1/|in|) in ST0. Inv-sqrt sibling of RwV3dNormalize; reads the RW3 invsqrt LUT
     # (device globals DAT_007d3ff8 / DAT_007d3ffc, table slot +4) -> run live (menu:

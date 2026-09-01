@@ -338,6 +338,7 @@
 "Render\CameraProjCoeffs.cpp"
 "Render\RwMatrixInvert.cpp"
 "Render\RwStricmp.cpp"
+"Render\RwStrCase.cpp"
 "Render\SlotObjectAccessors.cpp"
 "Render\StateBatchGetters.cpp"
 "Render\ParticleEmitterCtors.cpp"

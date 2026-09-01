@@ -174,6 +174,23 @@ function callFn(fn, input, buf) {
         return (ret === null || ret === undefined) ? 0
              : (typeof ret === 'object' ? (ret.toInt32() >>> 0) : (ret >>> 0));
     }
+    if (CONFIG.arg_type === 'str_inplace_transform') {
+        // void fn(char* s) in-place mutator (RwStrupr/RwStrlwr). Mirror diff_template:
+        // one 512-byte scratch seeded with test.s + NUL, JS null -> NULL ptr; observable
+        // is the post-call NUL-terminated buffer bytes. Void return ignored. path2 had no
+        // case for the {s} test-dict shape (same "bad argument count" hole class as the
+        // other self-allocating handlers). (area-loop render round 4, 2026-09-01.)
+        const sval = (input && input.s !== undefined) ? input.s : input;
+        if (sval === null) { fn(ptr(0)); return 'NULL'; }
+        const s = String(sval);
+        const b = Memory.alloc(512);
+        for (let j = 0; j < s.length; j++) b.add(j).writeU8(s.charCodeAt(j) & 0xff);
+        b.add(s.length).writeU8(0);
+        fn(b);
+        const out = [];
+        for (let j = 0; j <= s.length; j++) out.push(b.add(j).readU8());
+        return out.join(',');
+    }
     if (CONFIG.arg_type === 'draw_quad_observe') {
         // 12-arg Im2D quad draw: `input` is the full arg vector. path2 had no case
         // for it, so the dispatcher fell through to `fn(input)` and every call died
