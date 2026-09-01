@@ -15,6 +15,7 @@
 "Vehicle\VehicleSeed.cpp"
 "Vehicle\SubStripUV.cpp"
 "Vehicle\SplineCubicBlend.cpp"
+"Vehicle\VehicleSlotAabbExpand.cpp"
 "Camera\CameraPathPredicates.cpp"
 "Ai\VehicleVelocityWorldGet.cpp"
 "Physics\SmplFzxStateBlock.cpp"

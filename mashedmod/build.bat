@@ -332,6 +332,7 @@ cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe
     "Vehicle\VehicleSeed.cpp" ^
     "Vehicle\SubStripUV.cpp" ^
     "Vehicle\SplineCubicBlend.cpp" ^
+    "Vehicle\VehicleSlotAabbExpand.cpp" ^
     "Camera\CameraPathPredicates.cpp" ^
     "Ai\VehicleVelocityWorldGet.cpp" ^
     "Physics\SmplFzxStateBlock.cpp" ^

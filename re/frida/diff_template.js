@@ -4418,6 +4418,68 @@ function runDiff() {
         return;
     }
 
+    // ── per_vehicle_record_seed ─────────────────────────────────────────────
+    // For a fn(uint slot, float* inN) that writes a derived output block into a
+    // strided per-vehicle record at CONFIG.slot_base_addr + slot*CONFIG.slot_stride,
+    // where the output is a PURE function of (slot, inN) — target-shared, input-live
+    // being distinct (see re/analysis/vehicle_round3_frontier.md). Per test:
+    //   seed inN floats into a harness buffer, SAVE the CONFIG.out_len-byte region at
+    //   base+slot*stride+CONFIG.out_off, call fn(slot, inbuf), fingerprint that region,
+    //   RESTORE it. fold_ret XORs the return value in (covers the slot>slot_max guard
+    //   arm, which returns 0 and writes nothing). Out-of-range slots skip the region
+    //   read entirely (address would be OOB) and observe the return only.
+    // Tests: [slot, f0, f1, ... f{inN-1}]. CONFIG: slot_base_addr, slot_stride,
+    //   out_off, out_len, in_floats (default 6), slot_max (default 16), fold_ret.
+    if (CONFIG.arg_type === 'per_vehicle_record_seed') {
+        const base    = ptr(CONFIG.slot_base_addr || '0x008815a0');
+        const stride  = (CONFIG.slot_stride | 0) || 0xd04;
+        const outOff  = (CONFIG.out_off | 0);
+        const outLen  = (CONFIG.out_len | 0) || 0xa8;
+        const inN     = (CONFIG.in_floats | 0) || 6;
+        const slotMax = (CONFIG.slot_max | 0) || 16;
+        const foldRet = CONFIG.fold_ret ? true : false;
+        const inBuf   = Memory.alloc(inN * 4);
+
+        function fpRegion(addr, len) {
+            let fp = 0;
+            for (let k = 0; k < len; k++) fp = ((fp * 31) ^ addr.add(k).readU8()) >>> 0;
+            return fp;
+        }
+        function runSide(fn, slot, floats) {
+            for (let k = 0; k < inN; k++) inBuf.add(k * 4).writeFloat(floats[k] || 0.0);
+            const inRange = (slot >= 0 && slot < slotMax);
+            const region  = inRange ? base.add(slot * stride + outOff) : null;
+            let saved = null;
+            if (inRange) {
+                saved = new Array(outLen);
+                for (let k = 0; k < outLen; k++) saved[k] = region.add(k).readU8();
+            }
+            let ret = 0, err = null, fp = 0;
+            try { ret = fn(slot, inBuf) >>> 0; }
+            catch (e) { err = e.message; }
+            if (inRange) {
+                fp = fpRegion(region, outLen);
+                for (let k = 0; k < outLen; k++) region.add(k).writeU8(saved[k]);
+            }
+            return { obs: foldRet ? ((fp ^ ret) >>> 0) : fp, err };
+        }
+
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            const slot = t[0] | 0;
+            const floats = t.slice(1);
+            const o = runSide(Orig, slot, floats);
+            const r = runSide(Reimpl, slot, floats);
+            const crashEqual = CONFIG.crash_equal_ok && o.err !== null && r.err !== null && o.err === r.err;
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: o.obs, reimpl: r.obs,
+                           match: crashEqual || (o.err === null && r.err === null && o.obs === r.obs),
+                           err_original: o.err, err_reimpl: r.err });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── out_buf_fmt_2 ───────────────────────────────────────────────────────
     // For MenusLapTimeFmt-style: void(int p1, uint32 p2, char* outA, char* outB).
     // Both output buffers receive sprintf-style formatted bytes; observable is
