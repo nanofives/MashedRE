@@ -1,46 +1,47 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-01T16:40:00Z",
+  "updatedAt": "2026-09-01T18:05:00Z",
   "sections": [
     {
-      "heading": "Area-loop round 2 (running)",
+      "heading": "Today (2026-09-01)",
       "fields": [
-        { "label": "Base", "value": "race/first-frame-parity @ 471c854c (post-sweep)", "kind": "text" },
-        { "label": "Children active", "value": 5, "kind": "number" },
-        { "label": "Areas", "value": [
-            "render (747 residue)",
-            "frontend (80) - owns the U-9065 fix",
-            "ai (29)",
-            "vehicle (87) - never swept",
-            "util (334) - never swept"
+        { "label": "C3s landed", "value": 6, "kind": "number" },
+        { "label": "Landed", "value": [
+            "0x004c4eb0 RwMatrixInvert (render)",
+            "0x004739f0 TextSpriteScaled (frontend)",
+            "0x00415e20 AiSteeringAngleError (ai)",
+            "0x0040d440 Course::LoadCurrent (track)",
+            "0x0040d020 Track_LoadByIndex (track)",
+            "0x004277a0 TextCtrlCodeRemap (frontend, unparked)"
           ], "kind": "list" },
-        { "label": "Not staffed", "value": [
-            "hud - MINED-OUT, 2 dry rounds",
-            "track - BLOCKED on U-9066"
-          ], "kind": "list" }
+        { "label": "Refused on principle", "value": "0x0047b9e0 render-quad thunk - unobserved, would be a degenerate green", "kind": "text" },
+        { "label": "Uncertainties closed", "value": "U-9065, U-9066, U-9067 (all filed and resolved same day)", "kind": "text" }
       ]
     },
     {
-      "heading": "Sweep 20260901 (closed)",
+      "heading": "Area-loop round 2 (running)",
       "fields": [
-        { "label": "C3s landed GREEN", "value": 3, "kind": "number" },
-        { "label": "Landed", "value": [
-            "0x004c4eb0 RwMatrixInvert - path1 5/5, path2 PASS",
-            "0x004739f0 TextSpriteScaled - path1 10/10, path2 PASS",
-            "0x00415e20 AiSteeringAngleError - 3585 calls, 0 mism"
+        { "label": "Tip", "value": "race/first-frame-parity @ b1801809", "kind": "text" },
+        { "label": "Children active", "value": 5, "kind": "number" },
+        { "label": "Areas", "value": [
+            "render (747)", "frontend (79, r4 done)", "ai (29)",
+            "vehicle (87, never swept)", "util (334, never swept)"
           ], "kind": "list" },
-        { "label": "Parked", "value": "0x004277a0 TextCtrlCodeRemap - path2 FAIL, U-9065", "kind": "text" }
+        { "label": "Not staffed", "value": [
+            "hud - MINED-OUT, 2 dry rounds",
+            "track - now UNBLOCKED, restaff in round 3"
+          ], "kind": "list" }
       ]
     },
     {
       "heading": "Parent queue",
       "fields": [
-        { "label": "Owned by parent", "value": [
-            "booted-race + path2 runs (children are path1-only)",
-            "recalibrate the U-9066 course-load assert",
-            "B-0003: 0x004726f0 void-typed but returns ST0 float",
-            "0x004161e0 re-classify request still queued"
-          ], "kind": "list" }
+        { "label": "Still open", "value": [
+            "B-0003: 0x004726f0 void-typed but returns ST0 float (shipped-C3 bug)",
+            "0x004161e0 AiSplineTargetInit re-classify drift",
+            "0x0047b9e0 needs a real observable before it can promote"
+          ], "kind": "list" },
+        { "label": "New tools", "value": "CallersPC.java (caller half of the C3 gate); course-load verifier now trustworthy", "kind": "text" }
       ]
     }
   ]
