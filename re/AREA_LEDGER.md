@@ -20,7 +20,7 @@
 Baseline snapshot: **2026-08-31** (from `hooks.csv`, `scripts/progress.py`, `build.bat`).
 Round order: **render** (pilot) -> hud -> ai -> track -> frontend.
 
-### Fleet roster (spawned 2026-09-01, star topology — all ACTIVE)
+### Fleet roster ROUND 1 (spawned 2026-09-01, star topology) — ALL CLOSED, swept in sweep/20260901
 
 | area | child session id | branch | pool slot | notes |
 |---|---|---|---|---|
@@ -32,15 +32,31 @@ Round order: **render** (pilot) -> hud -> ai -> track -> frontend.
 
 All 5 bootstrapped 2026-09-01 with distinct pool slots (no collision) and distinct branches. GAP-2 (pool acquire) did NOT bite — all five slots bound cleanly.
 
+### Fleet roster ROUND 2 (spawned 2026-09-01 post-sweep, star topology)
+
+Based on the POST-SWEEP integrated tip `race/first-frame-parity` @ b5c17457 (FLEET_KICKOFF rule 1 — branching from a pre-sweep base is what caused the round-1 base divergence). Round-1 worktrees `.worktrees/area-*` were removed via `scripts/diag.py wt-remove` (all 5 branches verified merged first; NEVER `--force`) so the round-2 children can reuse the `area-{AREA}` names.
+
+| area | child session id | branch | pool slot | notes |
+|---|---|---|---|---|
+| render | (pending) | area/render | (child-acquired) | 747 residue, largest area; carried round 1 |
+| frontend | (pending) | area/frontend | (child-acquired) | 80 residue; 2 C3s in round 1 (1 parked, U-9065) |
+| ai | (pending) | area/ai | (child-acquired) | 29 residue; 1 C3 in round 1 |
+| vehicle | (pending) | area/vehicle | (child-acquired) | NEVER SWEPT; 87 residue, 34 with scenarios |
+| util | (pending) | area/util | (child-acquired) | NEVER SWEPT; 334 residue, 222 with scenarios; RW math leaves are the known cheap-win shape ([[render-cheapest-wins-are-rw-math-leaves]]) |
+
+**Not staffed this round, and why (recorded rather than silently dropped):** **hud** reached 2 consecutive dry rounds, the ledger's own MINED-OUT trigger, and its one lead B-0001 was REFUTED — revisit when the ~15 Rt2d rows are reclassified OUT. **track** is BLOCKED on U-9066: its course-load verifier FAILS at baseline with zero hooks, so a track child has no path to C3 until the PARENT recalibrates the assert. Staffing either would have been a guaranteed dry round.
+
 Parent owns [[CROSS_AREA_BUS]] + this ledger; children report cross-area findings via send_to_session, never edit the bus. Spawn lesson: spawn ONE AT A TIME (a 5-way burst 500'd the endpoint and left one dead session). Watch for pool-slot contention — 5 children each acquiring a Ghidra slot + worktree + MASHED launch on one machine; GAP-2 (ghidra_pool.ps1) is unverified and children are told to STOP+report if acquire fails.
 
 | area | residue<C3 | implemented .cpp | rounds run | dry streak | last parity | state |
 |---|---|---|---|---|---|---|
 | render | 747 | 166 | 2 | 0 | none (bit-identical) | ACTIVE (pilot) |
-| hud | 77 | 36 | 2 | 2* | n/a | ACTIVE — no cheap wins; ~15 rows pending Rt2d reclass-OUT (B-0001 REFUTED, band is first-party); filed 3 cross-area findings (*2nd dry is a parent-directed calibration, not a cheap-win hunt — parent to decide MINED-OUT) |
+| hud | 77 | 36 | 2 | 2 | n/a | **MINED-OUT** (parent decision 2026-09-01, post-sweep) — 2 consecutive dry rounds; B-0001 REFUTED (band is first-party); ~15 rows pending Rt2d reclass-OUT; filed 3 cross-area findings. REVISIT WHEN: the Rt2d rows are reclassified OUT, which re-scopes the area. |
 | ai | 29 | 45 | 4 | 0 | n/a (non-visual) | ACTIVE — 1 C3 VERIFIED (0x00415e20 AiSteeringAngleError, parent booted-race 3585-call 0-mism GREEN); found+fixed a real x87 ST0-leak reimpl bug en route |
-| track | 60 | 3 | 1 | 1 | — | ACTIVE — no free synthetic wins; needs course-load verifier (2nd dry -> MINED-OUT, revisit=verifier built) |
+| track | 60 | 3 | 1 | 1 | — | **BLOCKED** (U-9066) — the course-load verifier was authored in r1 but never run; the sweep ran it and it FAILS AT BASELINE with zero hooks (DAT_0063ba8c expected 1, got 3), so it cannot judge any hook. Not staffed in round 2. REVISIT WHEN: the parent recalibrates the assert to a PASSING zero-hook baseline. |
 | frontend | 80 | 153 | 3 | 0 | scr1 118/118 GREEN (unchanged) | ACTIVE |
+| vehicle | 87 | 1 | 0 | 0 | — | QUEUED (round 2, never swept) |
+| util | 334 | 2 | 0 | 0 | n/a (non-visual) | QUEUED (round 2, never swept) |
 
 State vocab: QUEUED | ACTIVE | MINED-OUT | COVERED.
 
@@ -146,3 +162,33 @@ State vocab: QUEUED | ACTIVE | MINED-OUT | COVERED.
 | 1 | 2026-09-01 | 3 examined (004739f0 TextSpriteScaled, 0042f8d0 MenuMenusBC, 00495350 HardwareShowIntroVideo) | 1 (004739f0) | none (no runtime code touched — scr1 stays 118/118 by construction) | no | Worktree off `main` was 49 commits behind the parent branch (missing all area-loop tooling + recent frontend work); reset the clean worktree onto `race/first-frame-parity` tip before scoping. Landed **TextSpriteScaled C2->C3**: resolved U-0459 via analyzeHeadless XrefRange on `0x005ceac4` — NO code writer (4 refs all read, 2 in FUN_004739f0), a static `.data` const `0x3b122549` = **1/448**, so `param_11==2` normalizes Y against a 448-unit frame (vs default Y `_005cc560`=1/480, X `_005cd5a8`=1/640); static => port's hardcoded read is bit-identical. Path1 GREEN 10/10; path2 install FULL PASS (interceptor 2/2) after fixing a real harness gap: `verify_hook_install_template.js` callFn had no `draw_quad_observe` case so the 12-arg vector fell through to `fn(input)` -> "bad argument count" (same class as GAP-5 0-arg). Fix marshals like `diff_template.js` packArgs. re-classify C2->C3 applied (hooks.csv/CHANGELOG/UNCERTAINTIES/source); queued to PROMOTION_QUEUE. MenuMenusBC + HardwareShowIntroVideo left as documented hard-blocked rows (see cheapest-win note). Evidence `re/analysis/frontend_u0459_005ceac4_resolution.md`. |
 | 2 | 2026-09-01 | 8 decoded (00423b00, 00425ea0, 00425fa0, 00426460, 00426b40, 00426c50, 004277a0, 0043dfd0) | 0 | none | **yes** (dry #1) | Scoping/decode round: batch-decoded the top doc-only C2 residue to find the next cheapest win. Finding: NO free getters/standard-conv leaves remain — the rows are `(void)`-signature side-effecting functions (clump destroy, render/update ticks) calling other FUN_s. Best candidate is **`0x004277a0`** (pure leaf, 0 callees, 2 C3 callers MenuMenusBA/BB): a deterministic control-code remap over a length-prefixed short array. Its ONLY blocker is that no existing arg_type delivers its EAX=src-ptr / EBX=dst-ptr convention. Fully specced a new `eax_ptr_ebx_outbuf` arg_type (small delta from `esi_idx_ecx_outbuf4`) + naked reimpl + test vectors in `re/analysis/frontend_004277a0_c3_plan.md` — round 3 can author it with zero re-discovery. Dry by strict definition (0 C3 landed), but the frontier is now mapped and the next win is teed up. |
 | 3 | 2026-09-01 | 1 (004277a0, per the r2 spec) | 1 (004277a0) | none (no `mashed_re.exe` code touched — TextCtrlCodeRemap is a dev-hook .asi TU; scr1 unaffected) | no (resets dry streak) | Executed the r2 spec. Authored **TextCtrlCodeRemap** (`mashedmod/src/mashed_re/Frontend/TextCtrlCodeRemap.cpp`) as a VERBATIM transcription of the `0x004277a0..0x00427832` disasm (pulled the exact bytes+disasm from the binary; pure integer, no FP → dst bit-identical by construction). Built the new `eax_ptr_ebx_outbuf` arg_type in BOTH `diff_template.js` and `verify_hook_install_template.js` (register-conv trampoline: `push ebx; mov eax,src; mov ebx,dst; call target; pop ebx; ret`). Linked into `asi_sources.rsp`, built via PowerShell (`.asi` timestamp advanced, TextCtrlCodeRemap.cpp compiled, no errors). **path1 GREEN 13/13** (`log/diff_text_ctrl_code_remap.csv`) — every remap arm + passthroughs + long mixed string. re-classify C2->C3 applied; queued to PROMOTION_QUEUE tagged SWEEP-CRITICAL (both JS handlers must ride the sweep). **path2 DEFERRED to the parent frida-sweep**: run_verify_hook uses the autoloaded shared `original\mashed_re_dev.asi`, which the worktree cannot update without clobbering siblings' newer hooks — the sweep's canonical rebuild resolves it. C3 gate met on path1 + structural (RH_ScopedInstall live, callers MenuMenusBA/BB C3, pure-leaf callee exemption). |
+
+---
+
+## vehicle
+
+- **First swept:** round 2, 2026-09-01 (never staffed before).
+- **Coverage target (S-DoD):** every executed vehicle function at F-DoD, TU linked into `mashed_re.exe` and reached on the default path, `vehicle` STUBS section empty.
+- **Baseline (area_residue.py, post-sweep tip b5c17457):** 87 rows below C3 — implemented .cpp 1, linked 1, has-scenario 34, green-unpromoted 0, DEMOTED 0, BLOCKED 0, doc-only 86.
+- **Why staffed:** 34 of 87 already carry a scenario, and the area has almost no implementation yet (1 .cpp), so the cheap-win queue is unexplored rather than mined out.
+- **Watch:** the replay/ghost family (`Replay::LapFinish` 0x00411870, `Ghost::PlaybackTick` 0x00411ae0, `Ghost::SetupRender` 0x00411ce0, `Replay::CreateOrLoad` 0x00411d90) sits at the top of the queue and is live-state shaped — expect NEEDS-BOOTED-RACE, not synthetic path1.
+
+### Rounds
+
+| round | date | candidates | landed C3+ | parity delta | dry? | note |
+|---|---|---|---|---|---|---|
+
+---
+
+## util
+
+- **First swept:** round 2, 2026-09-01 (never staffed before).
+- **Coverage target (S-DoD):** every executed util function at F-DoD, TU linked, `util` STUBS section empty. Non-visual, so parity is N/A — the gate is bit-identity, not a scoreboard.
+- **Baseline (area_residue.py, post-sweep tip b5c17457):** 334 rows below C3 — implemented .cpp 2, linked 2, has-scenario 222, green-unpromoted 0, DEMOTED 2, BLOCKED 0, doc-only 332.
+- **Why staffed:** 222 of 334 carry a scenario and the area is dominated by RenderWare math leaves, which is the exact shape that produced the cheapest round-1 win ([[render-cheapest-wins-are-rw-math-leaves]]: named RW math leaves, capstone raw-disasm + naked verbatim x87). `RwMatrixInvert` 0x004c4dc0 (C2, 23 callers) is in this area and is the direct caller of the 0x004c4eb0 cofactor path landed in sweep/20260901.
+- **Watch:** the x87 ST0 leak class ([[x87-st0-float10-fnptr-void-leak]]) is a live hazard for exactly this kind of float-returning RW leaf — never forward a `float10`-returning function through a `void` fn-ptr.
+
+### Rounds
+
+| round | date | candidates | landed C3+ | parity delta | dry? | note |
+|---|---|---|---|---|---|---|
