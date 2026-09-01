@@ -9087,6 +9087,73 @@ HOOKS = {
         ],
     },
 
+    # 0x004224d0  MenuSlotInit — void(int slot, u32* src4, u32 p3). Zero-fills a 0xf40 slot
+    # at &DAT_006403e8 + slot*0xf40 (callee FUN_004b6520 ZeroFillWrapper C3) then writes ~15
+    # fields. arg_type='cache_setter_observe' (EXISTING; now in both templates as of the
+    # parent's FloatSliderStep fix today). OBSERVABLE = the written slot block. Design: call
+    # slot=2 (base 0x00642268); pass src4 = slot-0 base 0x006403e8 (seeded, far from the
+    # slot-2 write); seed DAT_005f6154; seed slot-2 base +0x0 and +0x100 to 0xDEADBEEF
+    # sentinels so the observe WITNESSES the zero-fill (not just the const stores — the
+    # exact false-green shape [[scratch-field-false-green]]). NON-DEGENERATE: src4[0..3]/p3/
+    # DAT_005f6154 vary per test, so the src4-copy (+0xf00..+0xf0c), +0xf28 (DAT) and +0xf38
+    # (p3) observe offsets differ across tests; the sentinels prove ZeroFillWrapper ran.
+    # ref: re/analysis/frontend_round5_frontier.md (r7 addendum)
+    'menu_slot_init': {
+        'rva':            0x004224d0,
+        'export':         'MenuSlotInit',
+        'signature':      {'ret': 'void', 'args': ['int', 'int', 'int']},  # slot, src4-ptr(as u32), p3
+        'arg_type':       'cache_setter_observe',
+        'lut_root_delta': 0,
+        # slot-2 written offsets (base 0x00642268) + the two zero-fill witnesses.
+        'obs_globals': [
+            '0x00643168', '0x0064316c', '0x00643170', '0x00643174',  # +0xf00..0f0c src4[0..3]
+            '0x00643178', '0x0064317c', '0x00643180',                # +0xf10/14/18 consts
+            '0x00643184', '0x00643188', '0x0064318c',                # +0xf1c const, +0xf20 zero, +0xf24 const
+            '0x00643190', '0x00643194',                              # +0xf28 DAT_005f6154, +0xf2c slot
+            '0x0064319c', '0x006431a0',                              # +0xf34 zero, +0xf38 p3
+            '0x00642268', '0x00642368',                              # slot base +0x0 / +0x100: zero-fill witnesses
+        ],
+        'path1_tests': [
+            {'seed': [{'addr': '0x006403e8', 'val': 0x11111111}, {'addr': '0x006403ec', 'val': 0x22222222},
+                      {'addr': '0x006403f0', 'val': 0x33333333}, {'addr': '0x006403f4', 'val': 0x44444444},
+                      {'addr': '0x005f6154', 'val': 0x66666666},
+                      {'addr': '0x00642268', 'val': 0xDEADBEEF}, {'addr': '0x00642368', 'val': 0xDEADBEEF}],
+             'args': [2, 0x006403e8, 0x55555555]},
+            {'seed': [{'addr': '0x006403e8', 'val': 0xAABBCCDD}, {'addr': '0x006403ec', 'val': 0x01020304},
+                      {'addr': '0x006403f0', 'val': 0xDEADBEEF}, {'addr': '0x006403f4', 'val': 0xCAFEBABE},
+                      {'addr': '0x005f6154', 'val': 0x12345678},
+                      {'addr': '0x00642268', 'val': 0xDEADBEEF}, {'addr': '0x00642368', 'val': 0xDEADBEEF}],
+             'args': [2, 0x006403e8, 0x0F0F0F0F]},
+            {'seed': [{'addr': '0x006403e8', 'val': 0}, {'addr': '0x006403ec', 'val': 0},
+                      {'addr': '0x006403f0', 'val': 0}, {'addr': '0x006403f4', 'val': 0},
+                      {'addr': '0x005f6154', 'val': 0},
+                      {'addr': '0x00642268', 'val': 0xDEADBEEF}, {'addr': '0x00642368', 'val': 0xDEADBEEF}],
+             'args': [2, 0x006403e8, 0]},
+            {'seed': [{'addr': '0x006403e8', 'val': 0x7fffffff}, {'addr': '0x006403ec', 'val': 0x80000000},
+                      {'addr': '0x006403f0', 'val': 0xffffffff}, {'addr': '0x006403f4', 'val': 0x00000001},
+                      {'addr': '0x005f6154', 'val': 0x5A5A5A5A},
+                      {'addr': '0x00642268', 'val': 0xDEADBEEF}, {'addr': '0x00642368', 'val': 0xDEADBEEF}],
+             'args': [2, 0x006403e8, 0xABCDEF01]},
+            {'seed': [{'addr': '0x006403e8', 'val': 0xC0DEC0DE}, {'addr': '0x006403ec', 'val': 0xFEEDFACE},
+                      {'addr': '0x006403f0', 'val': 0x8BADF00D}, {'addr': '0x006403f4', 'val': 0xB16B00B5},
+                      {'addr': '0x005f6154', 'val': 0x2468ACE0},
+                      {'addr': '0x00642268', 'val': 0xDEADBEEF}, {'addr': '0x00642368', 'val': 0xDEADBEEF}],
+             'args': [2, 0x006403e8, 0x13371337]},
+        ],
+        'path2_tests': [
+            {'seed': [{'addr': '0x006403e8', 'val': 0x11111111}, {'addr': '0x006403ec', 'val': 0x22222222},
+                      {'addr': '0x006403f0', 'val': 0x33333333}, {'addr': '0x006403f4', 'val': 0x44444444},
+                      {'addr': '0x005f6154', 'val': 0x66666666},
+                      {'addr': '0x00642268', 'val': 0xDEADBEEF}, {'addr': '0x00642368', 'val': 0xDEADBEEF}],
+             'args': [2, 0x006403e8, 0x55555555]},
+            {'seed': [{'addr': '0x006403e8', 'val': 0xC0DEC0DE}, {'addr': '0x006403ec', 'val': 0xFEEDFACE},
+                      {'addr': '0x006403f0', 'val': 0x8BADF00D}, {'addr': '0x006403f4', 'val': 0xB16B00B5},
+                      {'addr': '0x005f6154', 'val': 0x2468ACE0},
+                      {'addr': '0x00642268', 'val': 0xDEADBEEF}, {'addr': '0x00642368', 'val': 0xDEADBEEF}],
+             'args': [2, 0x006403e8, 0x13371337]},
+        ],
+    },
+
     # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Session c3-batch-n-s1 â€” hud_drift_replay  (C2â†’C3, HUD Im2D cluster)
     # Frontend/DrawQuadPrimitives.cpp â€” HudIm2DQuad (7-arg explicit-UV quad)

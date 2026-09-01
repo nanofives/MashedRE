@@ -119,6 +119,7 @@
 "Frontend\DrawQuadPrimitives.cpp"
 "Frontend\TextCtrlCodeRemap.cpp"
 "Frontend\MenuOrdinalToPlayerSlot.cpp"
+"Frontend\MenuSlotInit.cpp"
 "Frontend\MenuLeaves_af1.cpp"
 "Frontend\SmallLeaves_n2.cpp"
 "Frontend\SmallLeaves_t1.cpp"
