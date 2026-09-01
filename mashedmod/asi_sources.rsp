@@ -335,6 +335,7 @@
 "Collision\CollisionBodyCreate.cpp"
 "Collision\PhysicsWorldBuild.cpp"
 "Render\CameraProjCoeffs.cpp"
+"Render\RwMatrixInvert.cpp"
 "Render\SlotObjectAccessors.cpp"
 "Render\StateBatchGetters.cpp"
 "Render\ParticleEmitterCtors.cpp"

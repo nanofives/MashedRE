@@ -133,6 +133,35 @@ function callFn(fn, input, buf) {
     if (CONFIG.arg_type === 'idx_out2') {
         return fn(input >>> 0, buf, buf.add(4));
     }
+    if (CONFIG.arg_type === 'fmt_desc_pair_compare') {
+        // fn(bufA, bufB [, p3, p4]); mirror diff_template exactly: two 0x40 scratch
+        // buffers, sparse `fNN` -> u32@offset writes, fingerprint BOTH buffers plus
+        // the (void->0) return. path2 had no case for the {a,b} test-dict shape, so
+        // it fell through to fn(input) and every call died "bad argument count"
+        // BEFORE entry -- the JMP bytes verified but the call-through falsely FAILED
+        // and the interceptor fired 0 times (same class as the 0-arg / vec3_normalize
+        // holes). Self-allocates its buffers so it does not depend on `buf` sizing.
+        // (area-loop render round 2, 2026-09-01.)
+        const SZ = 0x40;
+        const bufA = Memory.alloc(SZ), bufB = Memory.alloc(SZ);
+        function fillBuf(b, fields) {
+            for (let k = 0; k < SZ; k += 4) b.add(k).writeU32(0);
+            if (fields) for (const key of Object.keys(fields)) {
+                if (key[0] !== 'f') continue;
+                const off = parseInt(key.slice(1), 16);
+                if (!Number.isNaN(off) && off + 4 <= SZ) b.add(off).writeU32(fields[key] >>> 0);
+            }
+        }
+        function fp(b) { let f = 0; for (let k = 0; k < SZ; k += 4) f = ((f * 31) ^ b.add(k).readU32()) >>> 0; return f; }
+        fillBuf(bufA, input && input.a); fillBuf(bufB, input && input.b);
+        const argc = CONFIG.signature.args.length;
+        const ret = (argc === 4) ? fn(bufA, bufB, (input.p3 | 0), (input.p4 | 0))
+                                 : fn(bufA, bufB);
+        const retU = (ret === null || ret === undefined) ? 0
+                   : (typeof ret === 'object') ? (parseInt(ret.toString(), 16) >>> 0)
+                   : (ret >>> 0);
+        return [(retU & 0xffff).toString(16), fp(bufA).toString(16), fp(bufB).toString(16)].join(',');
+    }
     return fn(input);
 }
 

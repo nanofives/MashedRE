@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-09-01  area-render-r2  rvas=0x004c4eb0  hook=rw_matrix_invert  export=RwMatrixInvert  arg_type=fmt_desc_pair_compare  branch=area/render  evidence=log/diff_rw_matrix_invert.csv:GREEN-5/5-BITIDENTICAL  note=RwMatrixInvert_CofactorPath C2->C3 (render); verbatim naked-x87 transcription of the 0x152B cofactor matrix-inverse body 0x004c4eb0..0x004c5001 -> Render/RwMatrixInvert.cpp (added to build.bat exe list AND asi_sources.rsp). path1 5/5 GREEN bit-identical (4 invertible + 1 singular det==0 guard); path2 FULL PASS (JMP 0xE9 + site verified + interceptor 2x + call-through GREEN). Pure leaf, sole global DAT_005cc320=1.0f; callers 004c4dc0(util C2)/004c5470(render C2), no callees/stubs. RESOLVES U-4930. SWEEP-CRITICAL: verify_hook_install_template.js gained a fmt_desc_pair_compare callFn case (2 self-allocated 0x40 buffers, sparse fNN u32 writes, dual-buffer fingerprint) — must be on main before the integration path2 or any fmt_desc_pair_compare hook's call-through re-FAILs. anchor BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E verified.
 ```
 
 ## Merged
