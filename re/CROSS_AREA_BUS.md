@@ -25,11 +25,12 @@
 
 # Cross-area finding bus
 
-Next id: **B-0004**
+Next id: **B-0006**
 
 ## Active
 
 <!-- ENTRIES -->
+B-0005 | 2026-09-01 | frontend | hud | shared-global-block | 0x0067ea94-0x0067ecf4 | The frontend-state global block. area/frontend r5 characterised its remaining ~59 doc-only C2 rows and found EVERY one gated on reads/writes into this dword window (enumerated for 0x00430670 as DAT_0067e9fc plus 0x0067ea94..0x0067eaa8), which is why the child-synthetic frontier there is exhausted: hook-bypassed path1 on these is a degenerate green. FILED FOR HUD because hud is highly likely to read the same window and would otherwise re-derive it from scratch; hud is currently MINED-OUT (2 dry rounds, B-0001 refuted) so this is a note for whenever it is restaffed, NOT a live blocker. NOT ESTABLISHED, and deliberately not asserted: which specific offsets hud reads, and whether any are written by both areas. Evidence re/analysis/frontend_round5_frontier.md. Parent is authorising frontend to author a seed_globals+fold_ret arg_type to seed this window per-test, which is the harness both areas would share.
 B-0004 | 2026-09-01 | render | audio | harness | re/frida/verify_hook_install_template.js:callFn | fmt_desc_pair_compare path2 call-through now wired (2 self-alloc 0x40 bufs, sparse fNN u32 writes, dual-buffer fingerprint); audio fmt-desc hooks 0x005ac5f0/0x005ac9e0/0x005ad540 get working path2 call-through once this lands on main. Same class as GAP-5. | OPEN | SWEEP-CRITICAL: carry the callFn change into the frida-sweep before any audio path2. On branch area/render.
 B-0003 | 2026-09-01 | hud | gameplay | signature-correction | 0x004726f0 | FUN_004726f0 (C3, plated void(float*,float*) in the port) actually RETURNS a float on ST0 — evidence: in 00412cf0 the FPU is empty after Vec3Magnitude's FSTP, then CALL 004726f0, then FCOM reads ST0 = its return; result feeds record byte+0x27. A void-typed port breaks every ST0-dependent caller. | OPEN | PARENT-OWNED (no gameplay child): verify via headless decomp + fix the port signature; highest severity (shipped C3 correctness).
 B-0002 | 2026-09-01 | hud | util | doc-correctness | 0x004a2c48 | FUN_004a2c48 is __ftol (x87 float->int64, C3, Math/FPURound.cpp), NOT "QPC tick" as the util_c0_promote / 0x00412cf0.md plate labels it. | OPEN | PARENT-OWNED (no util child): plate/doc fix, defer to a re-classify pass. Low severity.
