@@ -288,6 +288,37 @@ function callFn(fn, input, buf) {
         }
         return '0x' + s;
     }
+    if (CONFIG.arg_type === 'cache_setter_observe') {
+        // Per-test scatter-seed -> call -> scatter-observe, mirroring the path1 handler in
+        // diff_template.js exactly. input.seed=[{addr,val}] written pre-call, input.args
+        // passed to fn (a null entry gets the harness buf), input.obs (or CONFIG.obs_globals)
+        // read post-call as a hex fingerprint; every seeded AND observed global is snapshotted
+        // and restored so path2 leaves live state untouched.
+        //
+        // ADDED 2026-09-01 (parent lane). This handler had existed in diff_template.js ONLY,
+        // so any row using it passed path1 and then died in path2 with "expected an integer" —
+        // callFn fell through to `fn(input)` and handed the whole test DICT to a NativeFunction.
+        // Caught on float_slider_step (0x0045db50), whose path2 reported interceptor 0/2 with
+        // the JMP correctly installed. This is the SAME one-template-only class that already
+        // cost two rows (fmt_desc_pair_compare, draw_quad_observe): a new arg_type must land in
+        // BOTH templates or the install check silently tests nothing.
+        const seeds = input.seed || [];
+        const obs   = input.obs || CONFIG.obs_globals || [];
+        const seedSaved = seeds.map(s => ptr(s.addr).readU32() >>> 0);
+        const obsSaved  = obs.map(a => ptr(a).readU32() >>> 0);
+        for (let s = 0; s < seeds.length; s++) ptr(seeds[s].addr).writeU32(seeds[s].val >>> 0);
+        const callArgs = (input.args || []).map(a => (a === null ? buf : (a >>> 0)));
+        let result = '';
+        try {
+            fn.apply(null, callArgs);
+            for (let o = 0; o < obs.length; o++)
+                result += ('00000000' + (ptr(obs[o]).readU32() >>> 0).toString(16)).slice(-8);
+        } finally {
+            for (let o = 0; o < obs.length; o++) ptr(obs[o]).writeU32(obsSaved[o] >>> 0);
+            for (let s = 0; s < seeds.length; s++) ptr(seeds[s].addr).writeU32(seedSaved[s] >>> 0);
+        }
+        return '0x' + (result || '0');
+    }
     if (CONFIG.arg_type === 'seed_globals_fold_ret') {
         // Scalar-return fn GATED ON READ-ONLY globals. Seed a scattered set of globals
         // per test ({addr,val}), call through the installed site fn(...args), and FOLD
