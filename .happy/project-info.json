@@ -25,7 +25,7 @@
       "heading": "Remaining parent queue",
       "fields": [
         { "label": "Not yet started", "value": [
-            "render 12-row texture/raster cluster (one texture-load capture)",
+            "render 12-row cluster: capture DONE, 10/12 have a witness, ports unauthored",
             "render 9 DEMOTED rows (need a path1 harness authored)",
             "vehicle replay/ghost family 0x00411870 / 0x00411ae0 / 0x00411d90",
             "ai 0x004161e0 AiSplineTargetInit (booted)",
