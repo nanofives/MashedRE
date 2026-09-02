@@ -573,9 +573,98 @@ function sdArm(car){
 }
 // ---------------------------------------------------------------------------
 
+// --- TEXTURE/RASTER CLUSTER OBSERVATION (2026-09-02, parent booted lane) ----
+// Records what the ORIGINAL does, per call, for a set of RVAs during a real
+// track load. This is the witness table a later port is diffed against.
+//
+// Why it exists: the 12-row texture/raster cluster dispatches the RW DEVICE
+// vtable (D3D9-backed), so a synthetic path1 on a fabricated raster either
+// returns 0 (degenerate green) or faults - r8 established that. The route
+// around it is to observe the real thing. But counting invocations is NOT
+// enough on its own: that is exactly what got 0x0047b9e0 refused (install
+// proven, nothing distinguishing "ran and was correct" from "never ran").
+// So this captures VALUES - args, return, and per-RVA dereferenced memory -
+// so each row can be judged on whether it HAS a non-degenerate observable
+// before anyone authors a port for it.
+//
+// Data-driven: the spec comes from python as JSON, so the JS stays generic.
+//   spec = [{rva:"0x004d5340", cap:24, nargs:6,
+//            obs:[{from:2, off:0, size:4}, ...]}]
+// `from` is an ARG INDEX (0-based); the arg is treated as a pointer and read
+// at +off. Reads are individually try/caught - a null or wild pointer records
+// "ERR" for that field and does not disturb the run.
+//
+// Cost control: each RVA stops RECORDING after `cap` calls but keeps COUNTING,
+// so the hot member of the set (0x004cc5e0, 15262 calls in a track load) does
+// not blow the buffer or the 1000/s Interceptor budget for the rest of the run.
+const TEXOBS = { rows: {}, armed: false };
+function texObserve(specJson){
+  try {
+    if (TEXOBS.armed) return 'already armed';
+    const spec = JSON.parse(specJson);
+    const out = [];
+    spec.forEach(function(s){
+      const rva = parseInt(s.rva, 16);
+      const p = ga(rva);
+      if (!p) { out.push(s.rva + '=NOBASE'); return; }
+      const row = { rva: s.rva, calls: 0, recs: [], cap: s.cap || 24,
+                    nargs: s.nargs || 4, obs: s.obs || [], err: null };
+      TEXOBS.rows[s.rva] = row;
+      Interceptor.attach(p, {
+        onEnter: function(){
+          this.rec = null;
+          row.calls++;
+          if (row.recs.length >= row.cap) return;
+          const a = [];
+          try {
+            const sp = this.context.esp;
+            for (let i = 0; i < row.nargs; i++) {
+              a.push('0x' + sp.add(4 + i * 4).readU32().toString(16));
+            }
+          } catch(e){ if (!row.err) row.err = 'args ' + e; }
+          this.rec = { n: row.calls, args: a, ret: null, obs: [] };
+          this.argv = a;
+        },
+        onLeave: function(rv){
+          if (!this.rec) return;
+          try { this.rec.ret = '0x' + rv.toUInt32().toString(16); }
+          catch(e){ this.rec.ret = 'ERR'; }
+          // Post-call dereferences. Read AFTER the call so an out-param write
+          // or a flag-bit set by the callee is visible; reading on entry would
+          // only show what the caller passed in.
+          for (let i = 0; i < row.obs.length; i++) {
+            const o = row.obs[i];
+            let v = 'ERR';
+            try {
+              const base = ptr(this.argv[o.from]);
+              const at = base.add(o.off || 0);
+              const sz = o.size || 4;
+              v = '0x' + (sz === 1 ? at.readU8()
+                        : sz === 2 ? at.readU16()
+                        : at.readU32()).toString(16);
+            } catch(e){ v = 'ERR'; }
+            this.rec.obs.push({ from: o.from, off: o.off || 0, size: o.size || 4, v: v });
+          }
+          row.recs.push(this.rec);
+        }
+      });
+      out.push(s.rva + '=observing(cap ' + row.cap + ')');
+    });
+    TEXOBS.armed = true;
+    return out.join(' ');
+  } catch(e){ return 'ERR ' + e; }
+}
+function texResults(){
+  try { return JSON.stringify(TEXOBS.rows); }
+  catch(e){ return JSON.stringify({ error: '' + e }); }
+}
+// ---------------------------------------------------------------------------
+
 rpc.exports = {
   ready: function(){ return modBase() ? 1 : 0; },
   sdArm: function(car){ return sdArm(car); },
+  texObserve: function(specJson){ return texObserve(specJson); },
+  texResults: function(){ return texResults(); },
   sdStats: function(){ return JSON.stringify(SD); },
   armCounters: function(csv){ return armCounters(csv); },
   rearmAsi: function(){ return rearmAsi(); },
@@ -699,6 +788,67 @@ send({kind:'ready'});
 '''
 
 
+# --- texture/raster cluster observation spec (2026-09-02, parent booted lane) --
+#
+# The 12 rows r8 mapped as the texture/raster neighbourhood
+# (re/analysis/bucket_00549580/r8_texture_raster_neighbourhood.md). Measured
+# 2026-09-02: ALL 12 fire on an ordinary track load (--track 3 --mode 10, counts
+# 4..15262), so no special provocation is needed - a plain scenario run IS the
+# "one real texture-load capture" r8 recommended.
+#
+# CORRECTION recorded here because it contradicts r8's stated mechanism: r8 says
+# the 12 "all fire in FUN_0054fd60's own execution". In that same measured run
+# FUN_0054fd60 was called ZERO times while all 12 callees ran. They are reached
+# through some other path in a race load. Co-location under one capture still
+# holds (which is what the recommendation was for); the explanation does not.
+#
+# `obs` entries dereference an ARG (by 0-based index) at +off after the call.
+# Signatures are r8's; where r8 gives only a role and no signature, nargs is a
+# conservative 4 and there are no derefs - args and return are still recorded,
+# which is the point: for those 7 rows r8 identified NO observable at all, and
+# this run is what decides whether one exists.
+TEXTURE_CLUSTER_SPEC = [
+    # -- Group A: the 5 Ghidra-leaves, RW DEVICE/RASTER vtable dispatch --------
+    # f(raster, mode, *w,*h,*d,*fmt) - "locks raster, reads back w/h/d +
+    # byte-swapped stride into out-params" (vtable +0x6c). The 4 out-params ARE
+    # the observable; r8's degenerate mode is "fake buf -> lock returns 0 ->
+    # out-params untouched".
+    {"rva": "0x004d5340", "cap": 24, "nargs": 6,
+     "obs": [{"from": 2, "off": 0, "size": 4}, {"from": 3, "off": 0, "size": 4},
+             {"from": 4, "off": 0, "size": 4}, {"from": 5, "off": 0, "size": 4}]},
+    # int f(raster) - "returns 1 if flag +0x23 high-bit clear, else calls
+    # device" (vtable +0xb8). Read the flag byte so the return can be attributed
+    # to a branch: r8 warns the no-call path returns constant 1 (degenerate).
+    {"rva": "0x004c76f0", "cap": 24, "nargs": 4,
+     "obs": [{"from": 0, "off": 0x23, "size": 1}]},
+    # uint f(raster, level, flags) - "lock mip level, returns level or 0"
+    # (vtable +0x84). Return is the observable.
+    {"rva": "0x004c7860", "cap": 24, "nargs": 4, "obs": []},
+    # int f(raster, image) - "device copy, sets raster flag +0x22 bit0"
+    # (vtable +0x64). Both the return AND the flag bit are observable.
+    {"rva": "0x004d5310", "cap": 24, "nargs": 4,
+     "obs": [{"from": 0, "off": 0x22, "size": 1}]},
+    # f(raster) - unlock (vtable +0x88). r8: "pure side-effect on the device; no
+    # scalar observable". Read both flag bytes anyway - the note's claim is a
+    # claim, and this is the cheapest way to test it rather than inherit it.
+    {"rva": "0x004c7600", "cap": 24, "nargs": 4,
+     "obs": [{"from": 0, "off": 0x22, "size": 1}, {"from": 0, "off": 0x23, "size": 1}]},
+    # -- Group B: allocators / stream readers / dispatchers --------------------
+    # r8 names NO observable for any of these seven. Return value is the only
+    # candidate it implies (allocators return the thing they allocated).
+    {"rva": "0x004c77c0", "cap": 24, "nargs": 4, "obs": []},   # RasterCreate
+    # HOT: 15262 calls per load. cap raised 12->200 after the first capture came
+    # back "one constant" - at cap 12 that was a sample of the first 0.08% of
+    # calls, which is a statement about the cap, not about the function.
+    {"rva": "0x004cc5e0", "cap": 200, "nargs": 4, "obs": []},  # sub-chunk header read
+    {"rva": "0x004cee90", "cap": 24, "nargs": 4, "obs": []},   # level-image stream read (allocates)
+    {"rva": "0x004cefd0", "cap": 24, "nargs": 4, "obs": []},   # gamma/flag fixup on read image
+    {"rva": "0x004cdd00", "cap": 64, "nargs": 4, "obs": []},   # image destroy (frees) - likely void, watch d_args
+    {"rva": "0x004c7650", "cap": 24, "nargs": 4, "obs": []},   # raster pre-resize helper (only 4 calls/load)
+    {"rva": "0x004db2e0", "cap": 24, "nargs": 4, "obs": []},   # per-level image->raster mip convert
+]
+
+
 def _keep_display_awake():
     """Stop the screensaver / display-sleep from tearing down the D3D device mid-race, and
     nudge the input queue to dismiss an already-active screensaver. Scoped to THIS process:
@@ -797,6 +947,17 @@ def main():
                          "accel is always full. Lets the original be driven with a held steer so "
                          "its steer-sign convention (steerAng +0x1a8 vs velocity-heading change) "
                          "can be measured against the ported chain.")
+    ap.add_argument("--observe-texture-cluster", action="store_true",
+                    help="TEXTURE/RASTER CLUSTER CAPTURE (2026-09-02, parent booted lane). Record "
+                         "what the ORIGINAL does - args, return value, and per-row dereferenced "
+                         "memory - for the 12 rows of r8's texture/raster neighbourhood during a "
+                         "real track load, and write log/texture_cluster_observe.json plus a "
+                         "per-row degenerate/non-degenerate verdict. These 12 dispatch the RW "
+                         "DEVICE vtable (D3D9-backed), so a synthetic path1 on a fabricated "
+                         "raster returns 0 or faults; observing the real load is the route "
+                         "around that. Counting invocations alone is NOT the point and is not "
+                         "enough - that is what got 0x0047b9e0 refused. Use with a plain race "
+                         "(all 12 fire on an ordinary track load; no special provocation).")
     ap.add_argument("--assert-course-load", action="store_true",
                     help="COURSE-LOAD VERIFIER (area-track r1; assert set corrected 2026-09-01, "
                          "U-9066): after reaching a loaded-course state (phase 3), check two "
@@ -881,6 +1042,13 @@ def main():
     _count_csv = os.environ.get("MASHED_COUNT_RVAS", "").strip()
     if _count_csv:
         print("  [counters]", E.arm_counters(_count_csv))
+
+    # Arm the texture/raster observation BEFORE the phase poke, for the same
+    # reason the counters are armed here: the track load is what exercises this
+    # cluster, and it happens during the poke, not after it.
+    if args.observe_texture_cluster:
+        import json as _tj
+        print("  [texobs]", E.tex_observe(_tj.dumps(TEXTURE_CLUSTER_SPEC)))
 
     def wait_phase(target, timeout, label):
         end = time.time() + timeout
@@ -1187,6 +1355,43 @@ def main():
                 print("  [counters] " + E.counters())
             except Exception as ex:
                 print(f"  [counters] fetch failed: {ex}")
+        if args.observe_texture_cluster:
+            try:
+                import json as _tj
+                rows = _tj.loads(E.tex_results())
+                outp = ROOT / "log" / "texture_cluster_observe.json"
+                outp.parent.mkdir(parents=True, exist_ok=True)
+                outp.write_text(_tj.dumps(rows, indent=1), encoding="utf-8")
+                print(f"  [texobs] -> {outp}")
+                # Per-row verdict on the SPOT, because the whole point of this
+                # capture is to decide which rows even HAVE a witnessable
+                # observable. distinct(ret) and distinct(obs) are the numbers
+                # that separate "ran and was correct" from "never ran": a row
+                # whose return and derefs are one constant across every call is
+                # degenerate and must NOT be promoted off this run.
+                # distinct_args matters independently of distinct_ret: a void
+                # function's return register is whatever the body happened to
+                # leave in EAX, so a constant there is not evidence of anything.
+                # Varying INPUT with a constant output is the real degenerate
+                # shape; constant input is just an under-exercised capture.
+                print("  rva          calls  recs  d_args  d_ret  d_obs  verdict")
+                for rva, r in rows.items():
+                    recs = r.get("recs") or []
+                    dargs = {tuple(x.get("args") or []) for x in recs}
+                    drets = {x.get("ret") for x in recs}
+                    dobs = {tuple(o.get("v") for o in (x.get("obs") or [])) for x in recs}
+                    if not recs:
+                        v = "NEVER RAN"
+                    elif len(drets) > 1 or len(dobs) > 1:
+                        v = "non-degenerate"
+                    elif len(dargs) > 1:
+                        v = "DEGENERATE (varying args, constant output)"
+                    else:
+                        v = "UNDER-EXERCISED (input constant too)"
+                    print(f"  {rva}  {r.get('calls',0):6d}  {len(recs):4d}  "
+                          f"{len(dargs):6d}  {len(drets):5d}  {len(dobs):5d}  {v}")
+            except Exception as ex:
+                print(f"  [texobs] fetch failed: {ex}")
         try: sess.detach()
         except Exception: pass
         try:
