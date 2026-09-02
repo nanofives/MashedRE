@@ -20,6 +20,30 @@
 Baseline snapshot: **2026-08-31** (from `hooks.csv`, `scripts/progress.py`, `build.bat`).
 Round order: **render** (pilot) -> hud -> ai -> track -> frontend.
 
+### Fleet roster ROUND 3 (spawned 2026-09-02, single child, star topology)
+
+Spawned from the post-sweep integrated tip `036e8b5a` on `race/first-frame-parity`, with
+`re/PROMOTION_QUEUE.md` empty — the FLEET_KICKOFF rule 1 base condition.
+
+| area | child session id | branch | pool slot | notes |
+|---|---|---|---|---|
+| render-texcluster | cmtk5y7ey07o5t920wnqrb7p8 | area/render-texcluster | (child-acquired) | Sonnet/high. Authors verbatim ports for the 5 RW device-vtable leaves `0x004d5340`, `0x004c76f0`, `0x004c7860`, `0x004d5310`, `0x004c7600` against the measured witness table in `re/analysis/bucket_00549580/r10_texture_cluster_capture.md`. **path1 is explicitly FORBIDDEN for these rows** (D3D9-backed; a synthetic raster gives a degenerate 0 or faults) — verification is the parent's booted capture only. |
+
+**Why this round is ONE child and not two.** The r10 capture found 10 of the 12 texture/raster rows
+had a measured observable, and the obvious split was 5 device-vtable leaves + 5 allocators/stream
+readers. The second group was **not dispatched**, on evidence rather than caution: for
+`0x004c77c0` (RasterCreate), `0x004cee90`, `0x004cefd0`, `0x004db2e0` and `0x004cc5e0` the only
+observable r10 measured is a **freshly allocated pointer**. In an A/B the modded pass allocates a
+*second* raster or image, so the returned pointers differ by construction and cannot be compared —
+and stubbing the allocator is unsafe because the result is dereferenced downstream. That is the
+same wall that stopped `0x00411d90 Replay::CreateOrLoad` the same day. Dispatching a child at those
+five would have been sending it to fail. They need the two-boot structural-comparison design
+written up in `re/analysis/promote_c2_vehicle_lowrva/replay_ghost_family_witness_20260902.md`.
+
+Excluded outright by r10: `0x004cdd00` (constant return `0x1` over 64 records on two tracks — no
+return observable) and `0x004c7650` (4 calls per load with identical args on two tracks — this
+scenario discriminates nothing about it).
+
 ### Fleet roster ROUND 1 (spawned 2026-09-01, star topology) — ALL CLOSED, swept in sweep/20260901
 
 | area | child session id | branch | pool slot | notes |
