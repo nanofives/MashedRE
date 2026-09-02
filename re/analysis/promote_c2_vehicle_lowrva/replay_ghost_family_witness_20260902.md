@@ -154,6 +154,54 @@ current anchor** — they were recorded against differently-patched binaries bet
 06-22. `003-race-drive` still replays into a live race, so the divergence does not break replay, but
 a new recording should be re-anchored.
 
+## Authoring outcome (2026-09-02, later the same day)
+
+### `0x00411ae0` — PORTED and promoted C2 -> C3
+
+`mashedmod/src/mashed_re/Vehicle/GhostPlaybackTick.cpp`. Verbatim naked transcription of
+`0x00411ae0..0x00411cd0`; the trampoline re-execs the single 5-byte stolen instruction
+`MOV EAX,[0x0063bb24]` (`a1 24 bb 63 00`) and jumps to `0x00411ae5`, so no instruction is split.
+Byte-verified against the fleet `ds:[imm]` note. Verified at 385 calls / 0 mismatches /
+**moved 385/385**, with the slider2 self-test as a same-boot control at 3713 green calls.
+
+Three arms remain unverified and are recorded in the `hooks.csv` row: the `DAT_0063bb24` override,
+the clamp, and the entire Time-Trial-gated interpolation half. They unblock with `0x00411870`.
+
+### `0x00411d90` — NOT AUTHORED, deliberately
+
+After pulling the full disassembly (`0x00411d90..0x00411f29`) this is not worth authoring yet, for
+three reasons that come out of the disassembly rather than out of caution:
+
+1. **The evidence ceiling is one sample.** It runs exactly once per race, so an in-race A/B yields
+   a single comparison per boot — and only on one of its two branches, since the disk-load arm
+   needs `c:\toast\ReplayN.rep` and `DAT_0063bb2c` measured `0` (fresh alloc) every time.
+2. **The A/B is hazardous.** It allocates (`FUN_00482930`) and loads from disk (`FUN_00483d10`), so
+   a modded pass has to stub both. But the loaded pointer is immediately dereferenced —
+   `0x00411ea6  MOV EAX,[EAX+0x174]` — and passed to `FUN_00411350`. A stub returning a fake buffer
+   faults; one returning null takes a different branch. A clean single-side-effect invariant means
+   running the original first and feeding the modded pass the pointers it produced, and a bug there
+   corrupts the live replay control block rather than just failing a test.
+3. It also carries a security cookie whose tail is `JMP __security_check_cookie` (`0x004a2be9`)
+   rather than a `RET`, plus a vtable-indirect sprintf through `DAT_007d3ff8+0xc4`. All
+   transcribable, none of it free.
+
+Two acceptance designs that would make it worth authoring:
+- **(a)** Put a `.rep` on disk so both branches fire; then the in-race A/B earns its cost.
+- **(b)** Skip the A/B and do a **two-boot structural comparison**: stock original under the
+  existing block capture, then a boot with the port installed as a full replacement, comparing the
+  `DAT_0063bb04..DAT_0063bb2c` block. Weaker on purpose — the slot pointers are heap addresses that
+  differ per boot, so this compares *structure* (which fields are null, `bb14 == bb04`, the `bb2c`
+  branch flag, `bb18`) and not bit-identity.
+
+## Harness finding: the full-hook-set replay lane is currently broken
+
+A `--asi` replay of `003-race-drive` with the **full** hook set exits the game partway through.
+This is **pre-existing, not caused by the new port** — verified rather than assumed: a rebuild with
+`Vehicle\GhostPlaybackTick.cpp` removed from `asi_sources.rsp` exits identically, and the
+known-good slider2 hook logs 3713 green calls under the same replay+asi combination. The
+verification above is therefore scoped with `MASHED_HOOK_ONLY`. Worth its own investigation: it
+means the full-hook-set replay lane cannot currently be used end to end.
+
 ## Net
 
 - `0x00411d90` — measured observable, reproducible. The mode-2 create path is witnessed (block

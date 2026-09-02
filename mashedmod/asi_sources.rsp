@@ -17,6 +17,7 @@
 "Vehicle\SplineCubicBlend.cpp"
 "Vehicle\VehicleSlotAabbExpand.cpp"
 "Vehicle\GhostSetupRender.cpp"
+"Vehicle\GhostPlaybackTick.cpp"
 "Camera\CameraPathPredicates.cpp"
 "Ai\VehicleVelocityWorldGet.cpp"
 "Physics\SmplFzxStateBlock.cpp"
