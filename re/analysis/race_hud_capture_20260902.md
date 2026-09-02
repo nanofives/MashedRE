@@ -62,9 +62,12 @@ now pinned by measurement:
 | **3** | mid-race **driving** | With `--no-press-settle`, 320/321 `0x0040dfc0` entries read 3, and the captured frames show the race. Holds on TRAINING and on `--track 1`. |
 | **5 / 6** | between-round **standings** screen | Reached only when confirm is pulsed. Captured draw list is letterbox bands plus the strings "MASHED" and "Current Standings". |
 
-Values `0x2` and `0x4` were each seen once, at transitions. `[UNCERTAIN]` 7 was
-never observed; `0xa`, `0xb`, `8`, `9` appear in the static scan but not in any
-run here.
+Values `0x2` and `0x4` were each seen once, at transitions. ~~`[UNCERTAIN]` 7 was
+never observed~~ — **superseded by Finding 3**: 7 IS reached, but only after a ~28 s
+settle, and it is then the dominant value (1927 of 2989 dispatcher entries). The
+short-settle runs behind this paragraph simply never got there.
+`[UNCERTAIN U-9073]` `0xa`, `0xb`, `8`, `9` appear in the static scan but in no run
+here, so their states are still unidentified.
 
 ## Finding 1: `HudIngameDispatch 0x0040dfc0` is NOT the driving HUD
 
@@ -106,7 +109,11 @@ driving are on **none** of: the Im2D device slot, the charset/font pipeline, or
 `HudIngameDispatch`. `0x00422a50` is the one live emitter identified and is the
 next thing to chase.
 
-`[UNCERTAIN]` The Im3D arg decode is **not** trustworthy. Using the offsets from
+~~`[UNCERTAIN]`~~ **RESOLVED by Finding 4** (capstone disasm of both call sites gave
+the real shape: `arg1 = verts_ptr`, `arg2 = count`, stride `0x24` proven by the
+divide-by-36 reciprocal magic). The paragraph below records the wrong reading that
+Finding 4 corrected — kept because it is why the first Im3D numbers looked like
+garbage. The Im3D arg decode was **not** trustworthy. Using the offsets from
 STUBS S-2120's cited call site (`0x00554afa`, `(base_ptr, ptr, count, prim=5)`)
 against this caller yields `count=0 prim=25 base=0x1ae2d4`, i.e. `prim` is not 5
 and `base` is not `DAT_00912a04`. Either this caller passes a different shape or
@@ -203,10 +210,13 @@ them on the **standard RW render pipeline**, not the immediate-mode pipes:
 | `0x20` | `0x004d7480` | ~200 | render-state setter (`0x410b3d`, `0x42710f`) |
 | `0x4c` / `0x70` | `0x004ca160` / `0x004cab30` | 10 each | begin/end-update wrappers, `(0, obj, 0)` — NOT draws (disassembled at `0x004c2b92`/`0x004c2bcf`) |
 
-`[UNCERTAIN]` Which of `0x118`/`0x11c`/`0xe8` carries the UI sprites, and their
+`[UNCERTAIN U-9074]` Which of `0x118`/`0x11c`/`0xe8` carries the UI sprites, and their
 vertex buffers, are not established. Their retaddr chains run through RW
 internals (`0x004e3xxx` pipeline exec) and then into system DLLs, so
-backtrace attribution stops being useful there.
+backtrace attribution stops being useful there. **Largely moot as of Finding 14**: the
+layer was identified structurally instead (the `endpointpanel` clump's 24 `RpAtomic`s,
+which is *why* it lands on pipeline slots), and Findings 15/16 port it through
+`HudIm2DQuad` without needing to capture those slots at all.
 
 **Harness caution:** the vtable is a STRUCT — past roughly slot `0x120` it holds
 data, not code (`0x3`, `0x200000`, `0x80000000`, heap pointers). Attaching an
@@ -235,7 +245,11 @@ Interceptor to those **crashed the game**. The scan now range-checks
 - Preferring the ASCII string decode hid every real string behind its first
   letter. UTF-16 is now tried first; raw bytes are always stored.
 
-`[UNCERTAIN]` Frame anchor `0x004c1be0` is used because `scenario_launch.py`
+~~`[UNCERTAIN]`~~ **RESOLVED by Finding 5** — and resolved as a NO: `0x004c1be0` fires
+~5-10x per frame, so this anchor was wrong and every "frame" captured through it was a
+sub-frame slice. Frame boundaries now come from the d3d9 shim's exported Present
+counter; the anchor path is retained only for comparison. The original caveat read:
+frame anchor `0x004c1be0` is used because `scenario_launch.py`
 drives its statediff clock from it at ~60/s. Once-per-frame is **not**
 established anywhere in the tree. Observed quads/frame is exactly 1.00, which is
 consistent but not proof. `--anchor` overrides it.
@@ -423,7 +437,7 @@ means one frame cannot be diffed at a single `--scale-b`; the earlier
 `--scale-b 1` choice was right for the raw-pixel scaffold and wrong for anything
 ported through the scaling path.
 
-`[UNCERTAIN]` The band alpha comes from `BL`, set before `0x0042a240`; its
+`[UNCERTAIN U-9075]` The band alpha comes from `BL`, set before `0x0042a240`; its
 animated source is not established. `0xff` is the settled value in every captured
 frame, so a fade-in is not modelled.
 
@@ -536,10 +550,13 @@ The bar frame is the cleanest signal; the icon boxes and point circles
 independently agree on the same four centres, which is what makes the row
 positions trustworthy rather than a single reading.
 
-`[UNCERTAIN]` These are pixel extents of **visible ink, not emitter arguments** —
-a sprite with transparent margin measures smaller than its quad. The icon, bar
-frame and circle **art is not ported**; the coloured rects remain placeholders.
-Only the LAYOUT is evidence-based.
+`[UNCERTAIN U-9076]` These are pixel extents of **visible ink, not emitter arguments** —
+a sprite with transparent margin measures smaller than its quad, so the rects may be
+tighter than the original's actual quads. ~~The icon, bar frame and circle art is not
+ported; the coloured rects remain placeholders.~~ **That half is superseded by Findings
+14-16**: the real `endpointpanel` TXD art IS now ported and the placeholders are gone
+(they survive only as an asset-missing fallback). The measurement caveat stands, because
+the port still takes its LAYOUT from these pixel extents rather than from emitter args.
 
 **Verification** (`re/tools/hud_rows_check.py`, emitted draws scaled x0.8 back
 into the original's space):
@@ -814,8 +831,18 @@ pointer at `group+0x80 + slot*4` — populating the child array `FUN_0041c9a0` w
   is a render-state write, not a current-TXD setter). PANEL.TXD is loaded by the
   in-race panel init, not by `FUN_0041cb10`.
 
-`[UNCERTAIN]` Whether a per-character portrait raster is bound at runtime onto one of
-the `NFL*` materials. Evidence missing: `FUN_0041cb10` binds no vehicle/character TXD,
+~~`[UNCERTAIN]`~~ **RESOLVED later in this same session — do not file, do not act on the
+text below.** This marker asked whether a per-character portrait raster is bound at
+runtime onto one of the `NFL*` materials, and concluded on the then-available evidence
+that the "car icon" was a flat colour swatch. **Both halves are wrong.** Finding 14's
+asset table (below) locates six real `NFL*` badge bitmaps (128x128 PAL8) in
+`SFX.piz :: INTERFACE.TXD`, and Finding 16 shows the badge is selected per-car by
+Player Colour index via `1 << (colour & 0x1f)`. So no runtime portrait binding exists or
+is needed: the variety comes from six pre-authored textures. The stale conclusion is kept
+visible rather than deleted because it briefly justified the coloured-rect placeholder,
+which Finding 16 then removed.
+
+The superseded reasoning read: `FUN_0041cb10` binds no vehicle/character TXD,
 and neither Panel TXD holds a portrait, so on the evidence the "car icon" is a flat
 colour swatch (which matches the standalone's existing coloured-rect scaffold). The
 mapping of the 24 atomics to specific screen elements was not enumerated per-geometry.
@@ -931,7 +958,7 @@ quads make one pixel-pointless). All changes are additive, inside `exe_main.cpp`
    race with only the countdown, no rows.
 2. **The crown drew every round**; the per-round reference
    (`orig_drive_late.bmp`) has none. Gated to the match-end screen
-   (`match_winner() >= 0`) and flagged `[UNCERTAIN]` (no reference for that
+   (`match_winner() >= 0`) and flagged `[UNCERTAIN U-9071]` (no reference for that
    screen; the enable flag lives in the unreversed group update `FUN_0041c410`).
 
 ### Verification
@@ -962,10 +989,10 @@ quads make one pixel-pointless). All changes are additive, inside `exe_main.cpp`
    character threaded into `RaceSceneState` (or `DAT_007f1a1c` reversed). Left as
    an obvious placeholder rather than fitted to one scenario (all-red), per the
    evidence-discipline rule.
-2. **Score-bar fill** is a single `OrangeDisplay` quad stretched over the score
-   fraction, not the original's exact 4-UV-sub-rect composition (atomics
+2. **Score-bar fill** `[UNCERTAIN U-9072]` is a single `OrangeDisplay` quad stretched
+   over the score fraction, not the original's exact 4-UV-sub-rect composition (atomics
    a20-a23). Real art, growing with score; not the exact tiling.
-3. **Crown trigger/position** unreversed (see fix #2 above).
+3. **Crown trigger/position** `[UNCERTAIN U-9071]` unreversed (see fix #2 above).
 
 ## Finding 16: DAT_007f1a1c reversed = per-car Player Colour; badge bound to it
 
@@ -1045,7 +1072,7 @@ avoided by poking distinct colours:
 - **Chrome regression intact**: `matched 4, mismatched 0` on every pinned standings
   frame after the change.
 
-`[UNCERTAIN]` The endpointpanel DFF has 5 badge atomics (Pink,Red,Bluejay,Melon,
+`[UNCERTAIN U-9070]` The endpointpanel DFF has 5 badge atomics (Pink,Red,Bluejay,Melon,
 Gold), no Shadow badge, so colour 5 (SHADOW) has no dedicated atomic in that panel;
 the port maps colour 5 -> `NFLShadow` (loaded), which the original endpointpanel may
 render differently. Edge case (SHADOW character in a round), not exercised by the
