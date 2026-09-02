@@ -245,6 +245,15 @@ struct RaceSceneState {
     int   score_delta_[kRaceCars] = {};            // DAT_008a9520
     float delta_timer_[kRaceCars] = {};            // DAT_008a9510 (ms)
     int   elim_order_[kRaceCars]  = {-1, -1, -1, -1};  // DAT_008a94c0
+    // Per-car Player Colour index 0..5 (RED/BLUEJAY/MELON/GOLD/PINK/SHADOW).
+    // This IS what the original carries per car: the array at 0x007f1a14
+    // (stride 0x10, field +8; car i = *(0x007f1a1c + i*0x10)), written by the
+    // car-select flow (FUN_0043dfd0) / default assign (FUN_0042b9e0) and read
+    // per car to pick the standings badge -- FUN_0041adb0 sets the badge atomic
+    // `1 << (&DAT_007f1a1c)[car*4]`. Mirrored here (not a derived duplicate) so
+    // the HUD binds to the real colour. Default 0 (= RED), which matches the
+    // all-RED reference (verify/race_hud/orig_drive_late.bmp). See Finding 16.
+    int   colour_[kRaceCars]      = {};            // DAT_007f1a1c per-car
     int   elim_count_   = 0;
     int   match_winner_ = -1;
     int   round_no_     = 0;

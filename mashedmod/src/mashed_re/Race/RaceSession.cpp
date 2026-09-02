@@ -116,6 +116,11 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         // First-to-3-rounds match (the ported elimination/scoring rules). This
         // grids all 4 cars at the start line and runs the countdown.
         track->StartMatch(3);
+        // Finding 16: bind the standings badge to the real per-car Player Colour
+        // (the original's DAT_007f1a1c per-car array). The config's cars[i].colour
+        // IS that value; copy it into the scene so the HUD reads the same source.
+        for (int i = 0; i < 4; ++i)
+            track->SetCarColour(i, m_cfg.cars[i].colour);
         // Race objective from the chosen game mode (0 = elimination, 1 = laps).
         track->SetRaceMode(m_cfg.raceMode, m_cfg.laps);
         // [D-11052] arm the per-rule win-condition engine with the real race

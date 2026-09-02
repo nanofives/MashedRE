@@ -327,6 +327,10 @@ public:
     int   match_winner() const { return match_winner_; }
     int   round_no() const { return round_no_; }
     int   score(int car) const { return (car >= 0 && car < kRaceCars) ? scores_[car] : 0; }
+    // Per-car Player Colour 0..5 (DAT_007f1a1c mirror, Finding 16). Drives the
+    // standings car badge. Default 0 (RED).
+    int   car_colour(int car) const { return (car >= 0 && car < kRaceCars) ? colour_[car] : 0; }
+    void  SetCarColour(int car, int c) { if (car >= 0 && car < kRaceCars) colour_[car] = c; }
     int   score_delta(int car) const { return (car >= 0 && car < kRaceCars) ? score_delta_[car] : 0; }
     float delta_timer(int car) const { return (car >= 0 && car < kRaceCars) ? delta_timer_[car] : 0.f; }
     float countdown() const { return countdown_; }

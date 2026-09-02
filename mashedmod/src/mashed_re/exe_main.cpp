@@ -3074,19 +3074,22 @@ bool RenderFrame() {
                 const float iy = (cy - kIconH * 0.5f) * kUiS;
                 const float iw = kIconW * kUiS, ih = kIconH * kUiS;
                 // ---- car badge (SFX.piz::INTERFACE.TXD NFL* art) ------------
-                // [UNCERTAIN] per-car COLOUR binding: the race scene carries no
-                // per-car badge/colour (RaceSceneState::RaceCar), and the
-                // original's per-car colour source is unreversed (DAT_007f1a1c,
-                // TrackRenderer.h:104). The ART below is the real badge; only
-                // which of Pink/Red/Bluejay/Melon lands on which row is a
-                // documented stand-in in row order, not a faithful mapping.
-                // NFLShadow is drawn behind at the same box.
-                static const int kBadge[4] = {kStandPink, kStandRed,
-                                              kStandBluejay, kStandMelon};
+                // Finding 16: the badge is the car's Player Colour, bound to the
+                // real source (DAT_007f1a1c per-car array in the original;
+                // g_track.car_colour(i) here). The original selects the badge
+                // atomic as `1 << (&DAT_007f1a1c)[car*4]` (FUN_0041adb0), and the
+                // colour->name map is {0:Red,1:Bluejay,2:Melon,3:Gold,4:Pink,
+                // 5:Shadow} (audio DAT_006041f0, AudioEngine.h:62). NFLShadow is
+                // the drop shadow drawn behind the badge (and is itself colour 5).
+                static const int kColourBadge[6] = {
+                    kStandRed, kStandBluejay, kStandMelon,
+                    kStandGold, kStandPink, kStandShadow };
+                int col = g_track.car_colour(i);
+                if (col < 0 || col > 5) col = 0;
                 if (g_standings_ready) {
                     HudIm2DQuad(kHandleStand0 + kStandShadow, ix, iy, iw, ih,
                                 0xffffffffu, uvf);
-                    HudIm2DQuad(kHandleStand0 + kBadge[i], ix, iy, iw, ih,
+                    HudIm2DQuad(kHandleStand0 + kColourBadge[col], ix, iy, iw, ih,
                                 0xffffffffu, uvf);
                 } else {
                     HudIm2DQuad(0, ix, iy, iw, ih, kFbCol[i], uvf);
@@ -7204,6 +7207,26 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                         CreateDirectoryA("verify\\r6", nullptr);
                         const int n = std::atoi(rv);
                         g_track.StartMatch(n > 1 ? n : 3);
+                        // Finding 16: the R6 demo spawns 4 identical cars with no
+                        // per-car colour, so all four badges default to colour 0
+                        // (RED) -- which matches the all-RED reference. To VERIFY
+                        // the per-car badge binding NON-DEGENERATELY (each colour
+                        // maps to a distinct badge), MASHED_ROUND_COLOURS="a,b,c,d"
+                        // pokes the per-car Player Colour 0..5 directly (the real
+                        // source the original writes via car-select). Not set in
+                        // normal play; this is the deliberate poke the harness
+                        // uses to prove the mapping.
+                        char rc[64] = {};
+                        if (GetEnvironmentVariableA("MASHED_ROUND_COLOURS", rc,
+                                                    sizeof(rc)) > 0) {
+                            int ci = 0; char* tok = std::strtok(rc, ",");
+                            while (tok && ci < 4) {
+                                int c = std::atoi(tok);
+                                if (c < 0) c = 0; if (c > 5) c = 5;
+                                g_track.SetCarColour(ci++, c);
+                                tok = std::strtok(nullptr, ",");
+                            }
+                        }
                     }
                 }
             }

@@ -967,6 +967,92 @@ quads make one pixel-pointless). All changes are additive, inside `exe_main.cpp`
    a20-a23). Real art, growing with score; not the exact tiling.
 3. **Crown trigger/position** unreversed (see fix #2 above).
 
+## Finding 16: DAT_007f1a1c reversed = per-car Player Colour; badge bound to it
+
+Owner-approved faithful route: reverse the real source and bind to it rather than
+thread a parallel character field. Done on account3 (Ghidra), pool slot
+`Mashed_pool14`. Every RVA confirmed via MCP.
+
+### What DAT_007f1a1c is
+
+`DAT_007f1a1c` is one element of a **per-car array**: base `0x007f1a14`, **stride
+`0x10`** (4 dwords/car), the value field at **+8**, four cars. Car *i*'s value is
+`*(0x007f1a1c + i*0x10)`. Proven by two independent witnesses that iterate it as a
+4-entry per-car array:
+
+- **Writer** `FUN_0042b9e0` (default assignment, `0x0042baf8`): `piVar2 =
+  &DAT_007f1a1c; ... *piVar2 = iVar4-1; piVar2 += 4 (0x10 bytes)`, 4 slots — writes
+  a value `0..5`.
+- **Reader** `FUN_0040d040` (`0x0040d0c0`): `piVar5 = &DAT_007f1a1c; ... piVar5 +=
+  4; while (piVar5 <= 0x7f1a5b)` — 4 iterations.
+- **Real car-select writer**: `FUN_0043dfd0` (`0x0043e575` / `0x0043e57e` /
+  `0x0043f8d5`).
+
+The value is the **Player Colour index 0..5**. Two badge emitters select the car
+badge atomic directly from it, **per car**:
+
+- `FUN_0041adb0` (`0x0041adcd`): `*(this+0x68) = 1 << ((&DAT_007f1a1c)[car*4] &
+  0x1f)` — enables the badge atomic for the car's colour. (Also writes the
+  `0xff323232` grey bar override via `FUN_004b5260`, matching Finding 14.)
+- `FUN_0041cdb0` (`0x0041cdd6`): packs several cars' badges, `colour + i*6` per car
+  (6-colour blocks).
+
+`[car*4]` on a `stride-0x10` array is per-car, so the badge is **per-car colour,
+not player-0** — and the scalar-`DAT_007f1a1c` draw `FUN_0041de80` is dead in-race
+(its only caller `FUN_0041ded0` counted 0, Finding 13), so it is not the standings
+path.
+
+### The colour -> name map (already in-tree, cross-confirmed)
+
+The port already reversed this table for the audio character banks (`DAT_006041f0`,
+stride `0x80`, `AudioEngine.h:62`, `AudioCharacterBankPaths.cpp:54`):
+
+```
+0=RED  1=BLUEJAY  2=MELON  3=GOLD  4=PINK  5=SHADOW
+```
+
+Badge texture = `NFL<Name>` (all six strings present `0x005cd864..0x005cd898`).
+This resolves the reference: `orig_drive_late.bmp`'s four red-devil badges are
+colour 0 = RED = `NFLRed` — i.e. all four demo cars are colour 0, which is why they
+are identical. The mapping is by colour **name**, not DFF-atomic order (which is
+Pink,Red,Bluejay,Melon,Gold) — the all-RED reference confirms colour 0 -> Red.
+
+### Binding implemented
+
+- `RaceSceneState.h`: `int colour_[kRaceCars]` — mirrors the original's per-car
+  `0x007f1a14` colour (what the original carries, not a derived duplicate); default
+  0 = RED. `TrackRenderer::car_colour(i)` / `SetCarColour(i,c)`.
+- `RaceSession::Begin`: `SetCarColour(i, m_cfg.cars[i].colour)` after `StartMatch` —
+  the config's `cars[i].colour` IS the standalone's copy of `DAT_007f1a1c`.
+- HUD badge: `badge = kColourBadge[car_colour(i)]`, `kColourBadge =
+  {Red,Bluejay,Melon,Gold,Pink,Shadow}` — replaces the Finding-15 row-index
+  placeholder.
+- R6 demo (`MASHED_ROUND`) sets no colour -> all default 0 -> all RED (matches the
+  reference). `MASHED_ROUND_COLOURS="a,b,c,d"` pokes distinct per-car colours for
+  non-degenerate verification (the real source the original writes via car-select).
+
+### Verification (non-degenerate, per the standing rule)
+
+The degenerate trap (all-same input yields all-same badge under any mapping) is
+avoided by poking distinct colours:
+
+- **`MASHED_ROUND_COLOURS=0,1,2,3`** -> four **distinct, correct** badges: RED
+  devil / BLUEJAY blue-J / MELON green / GOLD eagle
+  (`verify/race_hud/re_stand_finding16_colours.png`). Distinct colours produce
+  distinct badges matching the map — the binding is proven, not degenerate.
+- **Default (no poke)** -> all four RED, reproducing `orig_drive_late.bmp`
+  (`verify/race_hud/re_stand_finding16_default.png`).
+- **Chrome regression intact**: `matched 4, mismatched 0` on every pinned standings
+  frame after the change.
+
+`[UNCERTAIN]` The endpointpanel DFF has 5 badge atomics (Pink,Red,Bluejay,Melon,
+Gold), no Shadow badge, so colour 5 (SHADOW) has no dedicated atomic in that panel;
+the port maps colour 5 -> `NFLShadow` (loaded), which the original endpointpanel may
+render differently. Edge case (SHADOW character in a round), not exercised by the
+demo. Also, the standalone R6 demo cannot itself produce distinct colours (its cars
+have no colour source); distinct-colour verification is via the deliberate poke or
+the nav car-select flow.
+
 ## Not done / next
 
 1. Recover the icons / score bars / point circles. They are on the RW **pipeline**
