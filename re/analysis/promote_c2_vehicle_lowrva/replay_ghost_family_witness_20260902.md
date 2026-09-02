@@ -56,7 +56,36 @@ would have that arm untested; say so rather than claim full coverage.
 The path buffer `DAT_008a94a8` (U-1567, "exact format unknown") did **not** change across the call
 in the fresh-alloc branch — consistent with the sprintf living on the disk-load path.
 
-### `0x00411ae0` Ghost::PlaybackTick — RUNS, but writes nothing in this scenario
+### `0x00411ae0` Ghost::PlaybackTick — WITNESSED under a replayed human scenario
+
+**This section supersedes the one below it, which reported this row as inert. That reading was
+wrong and the error is instructive.**
+
+Replaying the recorded human scenario `003-race-drive` under the same capture
+(`replay_session.py --observe`) gives **writes on 48/48 calls**, and the observable is exact:
+
+```
+args [0x32, 0x1612, 0x1612]  ->  cursor +0x18 = 0x1612
+args [0x32, 0x1644, 0x1644]  ->  cursor +0x18 = 0x1644
+args [0x32, 0x1676, 0x1676]  ->  cursor +0x18 = 0x1676
+```
+
+`DAT_0063bb1c := arg1` exactly, stepping by `0x32` per tick (which is also `arg0`). Arg index 3
+reads `0x4112d2`, a code address, so the real arg count is at most 3.
+
+**Why the earlier run looked inert, and the method lesson.** In the auto-driven Time Trial the
+arguments were `[0x0, 0x0, <float>]` — `arg1` was **0 on every call**, so the function performed its
+write and stored the same `0` the cursor already held. The pre/post delta test reports "did not
+move", which is true and yet the opposite of the conclusion I drew from it: **a write of an
+unchanged value is invisible to a delta test**. The delta is necessary but not sufficient. Where a
+row can write a constant, the argument that feeds the write has to be varied by the scenario before
+"did not move" means anything — the same shape as needing coverage counters rather than a bare
+GREEN count.
+
+The remaining unexercised part is the Time-Trial-gated matrix interpolation, which still needs
+`DAT_0063bb0c` (ghost) or `DAT_0063bb10` (best lap) non-null.
+
+### `0x00411ae0` Ghost::PlaybackTick — superseded first reading (auto-driver only)
 
 9016 calls in a 150 s Time Trial. The block **never moved**, across 48 consecutive recorded calls,
 in three separate runs. Return `0x0` every time. This is not a defect in the capture — the same
@@ -106,23 +135,54 @@ That is consistent with `FUN_00408ad0()` returning lap progress rather than wall
 drives by pulsing control 4 (accelerate) with no steering, so the car never gets round the track.
 **The blocker is the driver, not these functions.**
 
+## The replay driver, and why it was worth wiring up
+
+`replay_session.py` re-drives a recorded human's DirectInput keyboard state per frame, indexed by
+`GetDeviceState` call number rather than wall clock, so a game state a human reached is re-reached
+without a human. It now takes `--observe SPEC.json`, sharing
+`re/frida/observe_block.js` with `scenario_launch.py` so the two capture drivers cannot drift (the
+block was extracted from `scenario_launch.py` for this; the refactor was regression-checked to give
+byte-identical results on the same spec).
+
+That was the whole difference for `PlaybackTick`: the auto-driver pulses accelerate with no
+steering and produced a constant-`0` argument, while a replayed human race varies it and the
+observable falls straight out.
+
+Note the four existing recordings (`001-nav-demo`, `002/003-race-drive`, `004-ramp-airborne`) are
+all quick-race drives, and each `meta.json` carries a **different `exe_sha256`, none matching the
+current anchor** — they were recorded against differently-patched binaries between 2026-06-20 and
+06-22. `003-race-drive` still replays into a live race, so the divergence does not break replay, but
+a new recording should be re-anchored.
+
 ## Net
 
-- `0x00411d90` — has a measured observable and a scenario that reproduces it. Port is authorable;
-  the disk-load arm will be unverified without a `.rep` present.
-- `0x00411ae0` — observable named but **not reachable in a meaningful state** until a best lap or a
-  ghost exists. Depends on `0x00411870` having run at least once.
-- `0x00411870` — trigger fully characterised, still unreachable. Needs a completed Time Trial lap.
+- `0x00411d90` — measured observable, reproducible. The mode-2 create path is witnessed (block
+  all-zero to populated) and the mode!=2 skip path is witnessed under the replay (returns 9, block
+  untouched). The **disk-load arm remains unverified** without a `.rep` present.
+- `0x00411ae0` — **witnessed**, `DAT_0063bb1c := arg1`, 48/48 under the replayed human race. The
+  Time-Trial-gated matrix interpolation is still unexercised.
+- `0x00411870` — trigger fully characterised, still never runs. This is the one genuine blocker
+  left, and it needs a **completed Time Trial lap**.
 
-The family is therefore a **dependency chain gated on completing one Time Trial lap**. Ways to get
-one, none of them taken here because they are a user-level call:
-1. Drive a real lap and record it with the existing `re/frida/record_session.py` /
-   `replay_session.py` pair, then replay it as the scenario driver. Faithful, no contrived state.
+Options for that last one, with the evidential cost of each stated:
+1. **Record a human Time Trial lap** with `record_session.py`, then replay it. Faithful, no
+   contrived state. Needs a person at the keyboard once; after that it is reproducible forever.
 2. Poke `DAT_008991bc` to `0xb` and force `FUN_0040e350()` to 6. Cheap, but it **bypasses the very
-   computation that decides the call**, and the resulting run would witness LapFinish's body while
-   proving nothing about when it should fire. C3-grade contrived state at best.
+   computation that decides the call** — the run would witness LapFinish's body while proving
+   nothing about when it fires. C3-grade contrived state at best.
 3. Place a `c:\toast\ReplayN.rep` on disk to light up `CreateOrLoad`'s load branch and
-   `PlaybackTick`'s ghost branch without needing LapFinish. Only helps two of the three rows.
+   `PlaybackTick`'s ghost branch. Helps two rows, does nothing for LapFinish.
+
+Recording command for option 1, with the candidate set already pointed at this family and its live
+caller:
+```
+py -3.12 re/frida/record_session.py --name tt-lap --cov 0x00411870,0x00411ae0,0x00411d90,0x00429310 --seconds 300
+```
+Then drive: main menu, **Time Trial**, any track, and complete **one full lap**. Replay it with
+```
+py -3.12 re/frida/replay_session.py re/scenarios/00N-tt-lap --observe re/frida/specs/replay_ghost_family.json
+```
+`coverage.tsv` will say directly whether `0x00411870` was hit.
 
 Captures: `log/replay_ghost_observe_tt.json`, `log/replay_ghost_observe_tt_long.json`,
 `log/replay_ghost_observe_pokelap.json`, `log/sector_probe.json`.

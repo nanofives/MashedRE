@@ -573,128 +573,19 @@ function sdArm(car){
 }
 // ---------------------------------------------------------------------------
 
-// --- TEXTURE/RASTER CLUSTER OBSERVATION (2026-09-02, parent booted lane) ----
-// Records what the ORIGINAL does, per call, for a set of RVAs during a real
-// track load. This is the witness table a later port is diffed against.
-//
-// Why it exists: the 12-row texture/raster cluster dispatches the RW DEVICE
-// vtable (D3D9-backed), so a synthetic path1 on a fabricated raster either
-// returns 0 (degenerate green) or faults - r8 established that. The route
-// around it is to observe the real thing. But counting invocations is NOT
-// enough on its own: that is exactly what got 0x0047b9e0 refused (install
-// proven, nothing distinguishing "ran and was correct" from "never ran").
-// So this captures VALUES - args, return, and per-RVA dereferenced memory -
-// so each row can be judged on whether it HAS a non-degenerate observable
-// before anyone authors a port for it.
-//
-// Data-driven: the spec comes from python as JSON, so the JS stays generic.
-//   spec = [{rva:"0x004d5340", cap:24, nargs:6,
-//            obs:[{from:2, off:0, size:4}, ...]}]
-// `from` is an ARG INDEX (0-based); the arg is treated as a pointer and read
-// at +off. Reads are individually try/caught - a null or wild pointer records
-// "ERR" for that field and does not disturb the run.
-//
-// Cost control: each RVA stops RECORDING after `cap` calls but keeps COUNTING,
-// so the hot member of the set (0x004cc5e0, 15262 calls in a track load) does
-// not blow the buffer or the 1000/s Interceptor budget for the rest of the run.
-const TEXOBS = { rows: {}, armed: false };
-// Read an absolute-VA block as a hex string. `abs` is an RVA in MASHED.exe, so
-// it goes through ga() like every other address here (the image is not always
-// at its preferred base). Returns 'ERR' rather than throwing - a wild read must
-// not disturb the run it is observing.
-function readBlock(o){
-  try {
-    const p = ga(parseInt(o.abs, 16));
-    if (!p) return 'NOBASE';
-    const b = new Uint8Array(p.readByteArray(o.len || 4));
-    let s = '';
-    for (let i = 0; i < b.length; i++) s += ('0' + b[i].toString(16)).slice(-2);
-    return s;
-  } catch(e){ return 'ERR'; }
-}
-function texObserve(specJson){
-  try {
-    if (TEXOBS.armed) return 'already armed';
-    const spec = JSON.parse(specJson);
-    const out = [];
-    spec.forEach(function(s){
-      const rva = parseInt(s.rva, 16);
-      const p = ga(rva);
-      if (!p) { out.push(s.rva + '=NOBASE'); return; }
-      const row = { rva: s.rva, calls: 0, recs: [], cap: s.cap || 24,
-                    nargs: s.nargs || 4, obs: s.obs || [], err: null };
-      TEXOBS.rows[s.rva] = row;
-      Interceptor.attach(p, {
-        onEnter: function(){
-          this.rec = null;
-          row.calls++;
-          if (row.recs.length >= row.cap) return;
-          const a = [];
-          try {
-            const sp = this.context.esp;
-            for (let i = 0; i < row.nargs; i++) {
-              a.push('0x' + sp.add(4 + i * 4).readU32().toString(16));
-            }
-          } catch(e){ if (!row.err) row.err = 'args ' + e; }
-          this.rec = { n: row.calls, args: a, ret: null, obs: [], pre: [] };
-          this.argv = a;
-          // ABSOLUTE-BLOCK observables are read on BOTH sides of the call. A
-          // post-only read cannot distinguish "ran and wrote this" from "this
-          // was already the value" - the delta is the witness. Arg-deref
-          // observables stay post-only (they are out-params by construction).
-          for (let i = 0; i < row.obs.length; i++) {
-            const o = row.obs[i];
-            if (!o.abs) { this.rec.pre.push(null); continue; }
-            this.rec.pre.push(readBlock(o));
-          }
-        },
-        onLeave: function(rv){
-          if (!this.rec) return;
-          try { this.rec.ret = '0x' + rv.toUInt32().toString(16); }
-          catch(e){ this.rec.ret = 'ERR'; }
-          // Post-call dereferences. Read AFTER the call so an out-param write
-          // or a flag-bit set by the callee is visible; reading on entry would
-          // only show what the caller passed in.
-          for (let i = 0; i < row.obs.length; i++) {
-            const o = row.obs[i];
-            if (o.abs) {
-              const post = readBlock(o);
-              this.rec.obs.push({ abs: o.abs, len: o.len || 4,
-                                  pre: this.rec.pre[i], v: post,
-                                  moved: this.rec.pre[i] !== post });
-              continue;
-            }
-            let v = 'ERR';
-            try {
-              const base = ptr(this.argv[o.from]);
-              const at = base.add(o.off || 0);
-              const sz = o.size || 4;
-              v = '0x' + (sz === 1 ? at.readU8()
-                        : sz === 2 ? at.readU16()
-                        : at.readU32()).toString(16);
-            } catch(e){ v = 'ERR'; }
-            this.rec.obs.push({ from: o.from, off: o.off || 0, size: o.size || 4, v: v });
-          }
-          row.recs.push(this.rec);
-        }
-      });
-      out.push(s.rva + '=observing(cap ' + row.cap + ')');
-    });
-    TEXOBS.armed = true;
-    return out.join(' ');
-  } catch(e){ return 'ERR ' + e; }
-}
-function texResults(){
-  try { return JSON.stringify(TEXOBS.rows); }
-  catch(e){ return JSON.stringify({ error: '' + e }); }
-}
+// --- CANONICAL-OBSERVATION BLOCK ------------------------------------------
+// The texObserve/texResults implementation lives in re/frida/observe_block.js
+// and is CONCATENATED onto this agent below (see OBSERVE_JS). It used to be
+// inline here; it was extracted once replay_session.py needed the same
+// capture, because two copies of an observation harness is exactly the
+// duplicate-implementation drift this project has already been bitten by.
+// It registers itself onto rpc.exports, so it must be appended AFTER the
+// rpc.exports assignment below.
 // ---------------------------------------------------------------------------
 
 rpc.exports = {
   ready: function(){ return modBase() ? 1 : 0; },
   sdArm: function(car){ return sdArm(car); },
-  texObserve: function(specJson){ return texObserve(specJson); },
-  texResults: function(){ return texResults(); },
   sdStats: function(){ return JSON.stringify(SD); },
   armCounters: function(csv){ return armCounters(csv); },
   rearmAsi: function(){ return rearmAsi(); },
@@ -877,6 +768,13 @@ TEXTURE_CLUSTER_SPEC = [
     {"rva": "0x004c7650", "cap": 24, "nargs": 4, "obs": []},   # raster pre-resize helper (only 4 calls/load)
     {"rva": "0x004db2e0", "cap": 24, "nargs": 4, "obs": []},   # per-level image->raster mip convert
 ]
+
+
+# The canonical-observation block is shared with replay_session.py. Appending it
+# here (rather than keeping a second copy) is what keeps the two capture drivers
+# byte-identical; it registers its own rpc.exports entries, so it has to land
+# after the agent's own rpc.exports assignment - i.e. at the very end.
+AGENT = AGENT + '\n' + (Path(__file__).resolve().parent / 'observe_block.js').read_text(encoding='utf-8')
 
 
 def _keep_display_awake():

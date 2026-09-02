@@ -80,6 +80,16 @@ def main():
     ap.add_argument("--asi", action="store_true", help="load dev .asi (installed-hook diff lane)")
     ap.add_argument("--seconds", type=int, default=0, help="override window (default: trace span + 30s)")
     ap.add_argument("--env", action="append", default=[])
+    ap.add_argument("--observe", metavar="SPEC.json",
+                    help="CANONICAL-OBSERVATION CAPTURE (2026-09-02). Record args, return value "
+                         "and per-row observables for the RVAs in SPEC.json while this recorded "
+                         "human scenario replays, and write log/<--observe-out>. Shares "
+                         "re/frida/observe_block.js with scenario_launch.py, so the two capture "
+                         "drivers cannot drift. This is the route to functions the auto-driver "
+                         "cannot reach: a replayed human lap gets to game states that pulsing "
+                         "accelerate never does.")
+    ap.add_argument("--observe-out", default="replay_observe.json",
+                    help="filename under log/ for the --observe capture")
     args = ap.parse_args()
 
     scn_dir = Path(args.scenario)
@@ -121,8 +131,22 @@ def main():
         if p.get("kind") in ("info", "err"):
             print("  [agent]", p.get("msg"))
 
-    scr = sess.create_script(AGENT); scr.on("message", on_msg); scr.load()
+    agent_src = AGENT
+    if args.observe:
+        agent_src = agent_src + "\n" + (Path(__file__).resolve().parent
+                                        / "observe_block.js").read_text(encoding="utf-8")
+    scr = sess.create_script(agent_src); scr.on("message", on_msg); scr.load()
     scr.exports_sync.setplan(plan)
+    if args.observe:
+        spec_path = Path(args.observe)
+        if not spec_path.is_absolute():
+            spec_path = ROOT / spec_path
+        spec = json.loads(spec_path.read_text(encoding="utf-8"))
+        # Armed BEFORE resume, so the capture covers the whole replayed run
+        # including boot and track load - the same ordering reason the counters
+        # in scenario_launch.py are armed before the phase poke.
+        print(f"  [observe] {spec_path.name} ({len(spec)} rows):",
+              scr.exports_sync.tex_observe(json.dumps(spec)))
     dev.resume(pid)
     print(f"  resumed; replaying {len(plan)} frame-indexed input events in-process\n")
 
@@ -142,6 +166,35 @@ def main():
     except KeyboardInterrupt:
         print("\n  interrupted.")
     finally:
+        if args.observe:
+            try:
+                rows = json.loads(scr.exports_sync.tex_results())
+                outp = ROOT / "log" / args.observe_out
+                outp.parent.mkdir(parents=True, exist_ok=True)
+                outp.write_text(json.dumps(rows, indent=1), encoding="utf-8")
+                print(f"\n  [observe] -> {outp}")
+                print("  rva          calls  recs  d_args  d_ret  d_obs  moved  verdict")
+                for rva, r in rows.items():
+                    recs = r.get("recs") or []
+                    dargs = {tuple(x.get("args") or []) for x in recs}
+                    drets = {x.get("ret") for x in recs}
+                    dobs = {tuple(o.get("v") for o in (x.get("obs") or [])) for x in recs}
+                    moved = sum(1 for x in recs
+                                if any(o.get("moved") for o in (x.get("obs") or [])))
+                    if not recs:
+                        v = "NEVER RAN"
+                    elif moved:
+                        v = f"non-degenerate (writes on {moved}/{len(recs)})"
+                    elif len(drets) > 1 or len(dobs) > 1:
+                        v = "non-degenerate"
+                    elif len(dargs) > 1:
+                        v = "DEGENERATE (varying args, constant output)"
+                    else:
+                        v = "UNDER-EXERCISED (input constant too)"
+                    print(f"  {rva}  {r.get('calls',0):6d}  {len(recs):4d}  "
+                          f"{len(dargs):6d}  {len(drets):5d}  {len(dobs):5d}  {moved:5d}  {v}")
+            except Exception as ex:
+                print(f"\n  [observe] fetch failed: {ex}")
         try:
             if not psutil or psutil.pid_exists(pid): dev.kill(pid)
         except Exception: pass
