@@ -598,6 +598,20 @@ function sdArm(car){
 // so the hot member of the set (0x004cc5e0, 15262 calls in a track load) does
 // not blow the buffer or the 1000/s Interceptor budget for the rest of the run.
 const TEXOBS = { rows: {}, armed: false };
+// Read an absolute-VA block as a hex string. `abs` is an RVA in MASHED.exe, so
+// it goes through ga() like every other address here (the image is not always
+// at its preferred base). Returns 'ERR' rather than throwing - a wild read must
+// not disturb the run it is observing.
+function readBlock(o){
+  try {
+    const p = ga(parseInt(o.abs, 16));
+    if (!p) return 'NOBASE';
+    const b = new Uint8Array(p.readByteArray(o.len || 4));
+    let s = '';
+    for (let i = 0; i < b.length; i++) s += ('0' + b[i].toString(16)).slice(-2);
+    return s;
+  } catch(e){ return 'ERR'; }
+}
 function texObserve(specJson){
   try {
     if (TEXOBS.armed) return 'already armed';
@@ -622,8 +636,17 @@ function texObserve(specJson){
               a.push('0x' + sp.add(4 + i * 4).readU32().toString(16));
             }
           } catch(e){ if (!row.err) row.err = 'args ' + e; }
-          this.rec = { n: row.calls, args: a, ret: null, obs: [] };
+          this.rec = { n: row.calls, args: a, ret: null, obs: [], pre: [] };
           this.argv = a;
+          // ABSOLUTE-BLOCK observables are read on BOTH sides of the call. A
+          // post-only read cannot distinguish "ran and wrote this" from "this
+          // was already the value" - the delta is the witness. Arg-deref
+          // observables stay post-only (they are out-params by construction).
+          for (let i = 0; i < row.obs.length; i++) {
+            const o = row.obs[i];
+            if (!o.abs) { this.rec.pre.push(null); continue; }
+            this.rec.pre.push(readBlock(o));
+          }
         },
         onLeave: function(rv){
           if (!this.rec) return;
@@ -634,6 +657,13 @@ function texObserve(specJson){
           // only show what the caller passed in.
           for (let i = 0; i < row.obs.length; i++) {
             const o = row.obs[i];
+            if (o.abs) {
+              const post = readBlock(o);
+              this.rec.obs.push({ abs: o.abs, len: o.len || 4,
+                                  pre: this.rec.pre[i], v: post,
+                                  moved: this.rec.pre[i] !== post });
+              continue;
+            }
             let v = 'ERR';
             try {
               const base = ptr(this.argv[o.from]);
@@ -1048,7 +1078,17 @@ def main():
     # cluster, and it happens during the poke, not after it.
     if args.observe_texture_cluster:
         import json as _tj
-        print("  [texobs]", E.tex_observe(_tj.dumps(TEXTURE_CLUSTER_SPEC)))
+        # MASHED_OBSERVE_SPEC=<path.json> points the same capture at any RVA set.
+        # The machinery is not texture-specific - it records args/return/derefs
+        # for whatever it is given - and the next two lanes (the replay/ghost
+        # family, and finding an observable for 0x0047b9e0) need exactly this.
+        _spec_path = os.environ.get("MASHED_OBSERVE_SPEC", "").strip()
+        if _spec_path:
+            _spec = _tj.loads(Path(_spec_path).read_text(encoding="utf-8"))
+            print(f"  [texobs] spec from {_spec_path} ({len(_spec)} rows)")
+        else:
+            _spec = TEXTURE_CLUSTER_SPEC
+        print("  [texobs]", E.tex_observe(_tj.dumps(_spec)))
 
     def wait_phase(target, timeout, label):
         end = time.time() + timeout
@@ -1359,7 +1399,8 @@ def main():
             try:
                 import json as _tj
                 rows = _tj.loads(E.tex_results())
-                outp = ROOT / "log" / "texture_cluster_observe.json"
+                outp = ROOT / "log" / (os.environ.get("MASHED_OBSERVE_OUT", "").strip()
+                                       or "texture_cluster_observe.json")
                 outp.parent.mkdir(parents=True, exist_ok=True)
                 outp.write_text(_tj.dumps(rows, indent=1), encoding="utf-8")
                 print(f"  [texobs] -> {outp}")
@@ -1374,14 +1415,23 @@ def main():
                 # leave in EAX, so a constant there is not evidence of anything.
                 # Varying INPUT with a constant output is the real degenerate
                 # shape; constant input is just an under-exercised capture.
-                print("  rva          calls  recs  d_args  d_ret  d_obs  verdict")
+                print("  rva          calls  recs  d_args  d_ret  d_obs  moved  verdict")
                 for rva, r in rows.items():
                     recs = r.get("recs") or []
                     dargs = {tuple(x.get("args") or []) for x in recs}
                     drets = {x.get("ret") for x in recs}
                     dobs = {tuple(o.get("v") for o in (x.get("obs") or [])) for x in recs}
+                    # moved = calls where an absolute-block observable actually
+                    # CHANGED across the call. This is the strongest signal in
+                    # the table: it is a within-call delta, so unlike a distinct
+                    # count it cannot be produced by the surrounding scenario
+                    # drifting on its own.
+                    moved = sum(1 for x in recs
+                                if any(o.get("moved") for o in (x.get("obs") or [])))
                     if not recs:
                         v = "NEVER RAN"
+                    elif moved:
+                        v = f"non-degenerate (writes on {moved}/{len(recs)})"
                     elif len(drets) > 1 or len(dobs) > 1:
                         v = "non-degenerate"
                     elif len(dargs) > 1:
@@ -1389,7 +1439,7 @@ def main():
                     else:
                         v = "UNDER-EXERCISED (input constant too)"
                     print(f"  {rva}  {r.get('calls',0):6d}  {len(recs):4d}  "
-                          f"{len(dargs):6d}  {len(drets):5d}  {len(dobs):5d}  {v}")
+                          f"{len(dargs):6d}  {len(drets):5d}  {len(dobs):5d}  {moved:5d}  {v}")
             except Exception as ex:
                 print(f"  [texobs] fetch failed: {ex}")
         try: sess.detach()

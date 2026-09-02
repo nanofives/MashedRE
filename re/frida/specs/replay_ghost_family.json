@@ -1,0 +1,23 @@
+[
+ {"_": "0x00411870 Replay::LapFinish. Notes: promote_c2_vehicle_lowrva/0x00411870.md. Gated FUN_0042f6a0()==2 (Time Trial) and DAT_0063bb20==0 (once per lap). Writes DAT_0063bb18/bb10/bb14/bb1c/bb20/bb2c and DAT_005f29c8. WITNESS = the replay control block delta across the call: on a lap finish it must set bb20=1, bb2c=1, zero bb1c, and on a promoted lap toggle bb18 and reassign bb10/bb14. Nothing in that block should move if it early-returns, which is exactly what separates ran-and-worked from never-ran.",
+  "rva": "0x00411870", "cap": 32, "nargs": 4,
+  "obs": [{"abs": "0x0063bb04", "len": 44},
+          {"abs": "0x005f29c8", "len": 4},
+          {"abs": "0x007f0ff4", "len": 4},
+          {"abs": "0x007f1008", "len": 4}]},
+
+ {"_": "0x00411ae0 Ghost::PlaybackTick. Notes: promote_c2_vehicle_lowrva/0x00411ae0.md. The cursor write DAT_0063bb1c=param_2 happens BEFORE the mode gate, which is why this already logged 2084 calls in a plain quick race; only the matrix interpolation is Time-Trial-gated. WITNESS = the cursor advancing inside the block, plus the clamp to *(DAT_0063bb10+0x174). The ghost branch needs DAT_0063bb0c!=0 and the best-lap branch DAT_0063bb10!=0, both inside the same block, so the block snapshot also tells us WHICH branch was live.",
+  "rva": "0x00411ae0", "cap": 48, "nargs": 4,
+  "obs": [{"abs": "0x0063bb04", "len": 44},
+          {"abs": "0x007f1038", "len": 4},
+          {"abs": "0x007f1079", "len": 2}]},
+
+ {"_": "0x00411d90 Replay::CreateOrLoad. Notes: promote_c2_vehicle_lowrva/0x00411d90.md. Runs once at lap start/setup (measured: 1 call per race). Writes DAT_0063bb04/bb08/bb10/bb14/bb18/bb2c. WITNESS = the block going from zeroed to populated slot pointers; bb2c distinguishes the two branches (1 = loaded c:\\toast\\ReplayN.rep from disk, 0 = fresh alloc). Also snapshot the path buffer DAT_008a94a8, which the sprintf fills (U-1567 says its exact format is unknown - this measures it rather than assuming).",
+  "rva": "0x00411d90", "cap": 8, "nargs": 4,
+  "obs": [{"abs": "0x0063bb04", "len": 44},
+          {"abs": "0x008a94a8", "len": 64}]},
+
+ {"_": "CONTROL ROW. 0x00411ce0 Ghost::SetupRender is ALREADY C3 and fires ~2445 times per race. It is here so a run that produces no records for the three rows above is distinguishable from a run where the capture itself did not arm - the same absent-log discipline that the self-test lane uses.",
+  "rva": "0x00411ce0", "cap": 4, "nargs": 4,
+  "obs": [{"abs": "0x0063bb04", "len": 44}]}
+]
