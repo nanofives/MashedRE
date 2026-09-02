@@ -1,13 +1,13 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-02T18:40:00Z",
+  "updatedAt": "2026-09-02T20:15:00Z",
   "sections": [
     {
       "heading": "Parent booted-race lane (solo)",
       "fields": [
         { "label": "Tip", "value": "race/first-frame-parity @ a9eb9776", "kind": "text" },
         { "label": "PROMOTION_QUEUE", "value": "empty", "kind": "text" },
-        { "label": "C3s this lane", "value": 3, "kind": "number" },
+        { "label": "C3s this lane", "value": 8, "kind": "number" },
         { "label": "Promoted", "value": [
             "0x0045dbe0 FloatSlider2Adjust (util)",
             "0x00411ae0 Ghost::PlaybackTick (vehicle)",
@@ -37,7 +37,7 @@
       "heading": "Open items",
       "fields": [
         { "label": "Not started", "value": [
-            "render 12-row cluster: 10/12 have a witness, ports unauthored",
+            "render 12-row cluster: 5 device-vtable leaves LANDED; 5 allocator rows still need a design",
             "render 9 DEMOTED rows (need a path1 harness)",
             "0x00411d90 CreateOrLoad (two acceptance designs written up)"
           ], "kind": "list" },
@@ -46,3 +46,4 @@
     }
   ]
 }
+
