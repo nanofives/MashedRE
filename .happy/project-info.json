@@ -1,39 +1,47 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-02T00:35:00Z",
+  "updatedAt": "2026-09-02T18:40:00Z",
   "sections": [
     {
       "heading": "Parent booted-race lane (solo)",
       "fields": [
-        { "label": "Tip", "value": "race/first-frame-parity", "kind": "text" },
-        { "label": "PROMOTION_QUEUE", "value": "empty - all 8 rows drained", "kind": "text" },
-        { "label": "Closed this session", "value": [
-            "6 path2 install-verifications, all FULL PASS",
-            "0x0045dbe0 FloatSlider2Adjust C2->C3 (booted race)",
-            "0x00415200 reachability claim overturned, C3 still refused"
+        { "label": "Tip", "value": "race/first-frame-parity @ a9eb9776", "kind": "text" },
+        { "label": "PROMOTION_QUEUE", "value": "empty", "kind": "text" },
+        { "label": "C3s this lane", "value": 3, "kind": "number" },
+        { "label": "Promoted", "value": [
+            "0x0045dbe0 FloatSlider2Adjust (util)",
+            "0x00411ae0 Ghost::PlaybackTick (vehicle)",
+            "0x004161e0 AiSplineTargetInit (ai)"
           ], "kind": "list" }
       ]
     },
     {
-      "heading": "C3 count",
+      "heading": "New harness",
       "fields": [
-        { "label": "Landed 2026-09-01", "value": 24, "kind": "number" },
-        { "label": "Latest", "value": "0x0045dbe0 FloatSlider2Adjust (util, booted race)", "kind": "text" }
+        { "label": "Capture", "value": "--observe-texture-cluster + MASHED_OBSERVE_SPEC, shared observe_block.js", "kind": "text" },
+        { "label": "Replay driver", "value": "replay_session.py --observe (reaches states the auto-driver cannot)", "kind": "text" }
       ]
     },
     {
-      "heading": "Remaining parent queue",
+      "heading": "Blocked, cause identified",
       "fields": [
-        { "label": "Not yet started", "value": [
-            "render 12-row cluster: capture DONE, 10/12 have a witness, ports unauthored",
-            "render 9 DEMOTED rows (need a path1 harness authored)",
-            "vehicle replay/ghost family 0x00411870 / 0x00411ae0 / 0x00411d90",
-            "ai 0x004161e0 AiSplineTargetInit (booted)",
-            "0x0047b9e0 still needs an observable"
+        { "label": "Powerup-gated", "value": [
+            "0x0047b9e0 - needs effect 0x1f or 0x21 active",
+            "0x00415200 - names powerup cases 7/9/0xb/0x10/0x11"
           ], "kind": "list" },
-        { "label": "Blocked on a trigger", "value": "0x00415200 - fires 1 run in 8, needs a powerup-forcing scenario", "kind": "text" },
-        { "label": "Parked", "value": "frontend r9 WIP Boot/PanelSortInit.cpp @ 8a7ea053", "kind": "text" },
-        { "label": "Open user call", "value": "spawn a fresh fleet for audio (444) / boot (245)?", "kind": "text" }
+        { "label": "Needs a TT lap", "value": "0x00411870 Replay::LapFinish (DAT_008991bc must reach 0xb)", "kind": "text" },
+        { "label": "Next best investment", "value": "one powerup-forcing scenario unblocks two rows", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Open items",
+      "fields": [
+        { "label": "Not started", "value": [
+            "render 12-row cluster: 10/12 have a witness, ports unauthored",
+            "render 9 DEMOTED rows (need a path1 harness)",
+            "0x00411d90 CreateOrLoad (two acceptance designs written up)"
+          ], "kind": "list" },
+        { "label": "Known broken", "value": "full-hook-set --asi replay exits mid-run (pre-existing)", "kind": "text" }
       ]
     }
   ]
