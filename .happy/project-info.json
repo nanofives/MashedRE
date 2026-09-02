@@ -1,41 +1,39 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-01T23:55:00Z",
+  "updatedAt": "2026-09-02T00:35:00Z",
   "sections": [
     {
-      "heading": "Fleet migrated to Sonnet",
+      "heading": "Parent booted-race lane (solo)",
       "fields": [
-        { "label": "Tip", "value": "race/first-frame-parity @ 8ddfe149", "kind": "text" },
-        { "label": "Children", "value": "5 on Sonnet (old Opus set stopped)", "kind": "text" },
-        { "label": "Active", "value": "frontend (r9 block-write row)", "kind": "text" },
-        { "label": "Mined-out / holding", "value": [
-            "render - r9 vtable scan, zero pure-CPU slots left",
-            "vehicle - r6 landed, synthetic lane done",
-            "ai - dead-code proof closed its last row",
-            "util - r4 authored, awaiting booted race"
+        { "label": "Tip", "value": "race/first-frame-parity", "kind": "text" },
+        { "label": "PROMOTION_QUEUE", "value": "empty - all 8 rows drained", "kind": "text" },
+        { "label": "Closed this session", "value": [
+            "6 path2 install-verifications, all FULL PASS",
+            "0x0045dbe0 FloatSlider2Adjust C2->C3 (booted race)",
+            "0x00415200 reachability claim overturned, C3 still refused"
           ], "kind": "list" }
       ]
     },
     {
-      "heading": "Today's C3s",
+      "heading": "C3 count",
       "fields": [
-        { "label": "Landed", "value": 23, "kind": "number" },
-        { "label": "Latest", "value": [
-            "0x00411ce0 Ghost::SetupRender (vehicle r6, Sonnet)",
-            "0x004224d0 MenuSlotInit (frontend r8)"
-          ], "kind": "list" }
+        { "label": "Landed 2026-09-01", "value": 24, "kind": "number" },
+        { "label": "Latest", "value": "0x0045dbe0 FloatSlider2Adjust (util, booted race)", "kind": "text" }
       ]
     },
     {
-      "heading": "Parent queue (my lane)",
+      "heading": "Remaining parent queue",
       "fields": [
-        { "label": "Pending booted-race / path2", "value": [
-            "frontend MenuSlotInit path2",
-            "util r4 FloatSlider2 self-test",
-            "render's 12-row texture/raster cluster (one capture)",
-            "render 9 DEMOTED rows, vehicle replay/ghost family"
+        { "label": "Not yet started", "value": [
+            "render 12-row texture/raster cluster (one texture-load capture)",
+            "render 9 DEMOTED rows (need a path1 harness authored)",
+            "vehicle replay/ghost family 0x00411870 / 0x00411ae0 / 0x00411d90",
+            "ai 0x004161e0 AiSplineTargetInit (booted)",
+            "0x0047b9e0 still needs an observable"
           ], "kind": "list" },
-        { "label": "Open user calls", "value": "ai/render/vehicle reschedule vs wind-down", "kind": "text" }
+        { "label": "Blocked on a trigger", "value": "0x00415200 - fires 1 run in 8, needs a powerup-forcing scenario", "kind": "text" },
+        { "label": "Parked", "value": "frontend r9 WIP Boot/PanelSortInit.cpp @ 8a7ea053", "kind": "text" },
+        { "label": "Open user call", "value": "spawn a fresh fleet for audio (444) / boot (245)?", "kind": "text" }
       ]
     }
   ]

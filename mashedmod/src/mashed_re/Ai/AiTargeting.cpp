@@ -453,6 +453,12 @@ void V0GuardSelfTestLog(const char* s) {
     DWORD wrote; WriteFile(h, s, (DWORD)std::strlen(s), &wrote, nullptr); CloseHandle(h);
 }
 long g_v0guard_calls = 0, g_v0guard_mismatch = 0;
+// Coverage counters (2026-09-01, parent booted-race lane). This guard returns 0 or 1, so a bare
+// "N calls, 0 mismatches" cannot separate "both branches were compared" from "the FCOMP went the
+// same way every call and the run only ever witnessed one constant" ([[scratch-field-false-green]]).
+// ret1 = calls where the original returned 1 (progress[0] == 0.0f); ret1 in (0, calls) is the
+// non-degeneracy proof.
+long g_v0guard_ret1 = 0;
 const long kV0GuardMaxCompare = 40000;
 
 // A/B: compare the returned int exactly, log mismatches, return ORIG (safe passthrough).
@@ -461,6 +467,7 @@ std::uint32_t V0GuardDispatch(void) {
         std::uint32_t o = OrigVehicle0ZeroProgressGuard();
         std::uint32_t m = AiVehicle0ZeroProgressGuard();
         ++g_v0guard_calls;
+        if (o != 0) ++g_v0guard_ret1;
         if (o != m) {
             ++g_v0guard_mismatch;
             char line[128];
@@ -469,8 +476,10 @@ std::uint32_t V0GuardDispatch(void) {
         }
         if ((g_v0guard_calls & 0x7f) == 1) {
             char line[128];
-            wsprintfA(line, "[%ld] calls=%ld mism=%ld %s\r\n", g_v0guard_calls, g_v0guard_calls,
-                      g_v0guard_mismatch, g_v0guard_mismatch ? "" : "ALL-GREEN");
+            wsprintfA(line, "[%ld] calls=%ld mism=%ld ret1=%ld ret0=%ld %s\r\n", g_v0guard_calls,
+                      g_v0guard_calls, g_v0guard_mismatch, g_v0guard_ret1,
+                      g_v0guard_calls - g_v0guard_ret1,
+                      g_v0guard_mismatch ? "" : "ALL-GREEN");
             V0GuardSelfTestLog(line);
         }
         return o;

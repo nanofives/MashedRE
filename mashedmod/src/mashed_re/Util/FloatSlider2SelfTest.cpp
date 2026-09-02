@@ -150,6 +150,14 @@ void Slider2SelfTestLog(const char* s) {
     DWORD wrote; WriteFile(h, s, (DWORD)std::strlen(s), &wrote, nullptr); CloseHandle(h);
 }
 long g_slider2_calls = 0, g_slider2_mismatch = 0;
+// Coverage counters (2026-09-01, parent booted-race lane). A GREEN count alone cannot tell
+// "every compared field was exercised" from "the branch never fired and only the slider half
+// was ever compared" — argBad is gated on origFlag!=0. These make the degenerate shape visible
+// in the log itself: flagTaken = calls where the COM branch was taken (arg half compared),
+// moved = calls where the slider value actually changed, argFold = XOR of the compared float
+// bits (0 or constant => a single repeated value), dirMask = bitmask of the dir values seen.
+long g_slider2_flagTaken = 0, g_slider2_moved = 0;
+std::uint32_t g_slider2_argFold = 0, g_slider2_dirMask = 0;
 const long kSlider2MaxCompare = 40000;
 
 // A/B dispatch. Snapshot the slider, run the modded reimpl with the COM call suppressed (capture
@@ -178,6 +186,9 @@ void Slider2Dispatch(int dir) {
         const std::uint32_t origArg    = Slider2ArgRecompute();
 
         ++g_slider2_calls;
+        if (origFlag != 0) { ++g_slider2_flagTaken; g_slider2_argFold ^= origArg; }
+        if (origSlider != snap) ++g_slider2_moved;
+        g_slider2_dirMask |= (dir >= 0 && dir < 32) ? (1u << dir) : 0x80000000u;
         const bool sliderBad = (modSlider != origSlider);
         const bool flagBad   = (modFlag  != origFlag);
         const bool argBad    = (origFlag != 0) && (modArg != origArg);
@@ -189,9 +200,11 @@ void Slider2Dispatch(int dir) {
             Slider2SelfTestLog(line);
         }
         if ((g_slider2_calls & 0x7f) == 1) {
-            char line[160];
-            wsprintfA(line, "[%ld] calls=%ld mism=%ld %s\r\n", g_slider2_calls, g_slider2_calls,
-                      g_slider2_mismatch, g_slider2_mismatch ? "" : "ALL-GREEN");
+            char line[224];
+            wsprintfA(line, "[%ld] calls=%ld mism=%ld flagTaken=%ld moved=%ld argFold=%08X dirMask=%08X %s\r\n",
+                      g_slider2_calls, g_slider2_calls, g_slider2_mismatch,
+                      g_slider2_flagTaken, g_slider2_moved, g_slider2_argFold, g_slider2_dirMask,
+                      g_slider2_mismatch ? "" : "ALL-GREEN");
             Slider2SelfTestLog(line);
         }
         return;   // original already applied the real step + COM call
