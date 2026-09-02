@@ -53,6 +53,28 @@ The single place that records every recurring execution failure: its **signature
 - **Fallback:** read ground truth without Ghidra: `py -3.12 re/tools/console/xtwin.py
   0x<rva>` (Xbox twin) or capstone (`py -3.12 scripts/dump_asm.py 0x<rva>:<size>`).
 
+## GHIDRA-POOL-DOUBLE-ISSUE — `acquire` can hand the SAME slot to two sessions (INCIDENT 2026-09-02)
+- **Signature:** a child reports binding `Mashed_poolN`; a later `ghidra_pool.ps1 acquire` in
+  another session (e.g. the parent) returns **the same N**. Symptom on the loser's side is a
+  headless run reporting the project locked, or — worse — an output file that is **missing or
+  truncated while the invocation otherwise looks successful**.
+- **Root cause:** the child's binding is not represented by a root-level `mashed_pool\Mashed_poolN.lock`,
+  so `acquire` sees the slot as free. Observed on 2026-09-02: pool14 was held by a child while the
+  root held stale locks only for pool0/1/10-13. Distinct from GHIDRA-STALE-LOCK, which is the
+  opposite failure (a slot reported LOCKED with no JVM).
+- **Why it is dangerous rather than merely annoying:** every routine pool script
+  (`DecompPC`/`DisasmPC`/`CallersPC`/`XrefRange`) runs `-noanalysis` and read-only, so the project
+  is not corrupted — but a **truncated disassembly listing silently becomes a bad verbatim
+  transcription**, and verbatim transcription is the whole product. A lost lock does not always
+  announce itself: on 2026-09-02 `DisasmPC` emitted no `wrote` line and no file for a valid RVA,
+  and a plain retry worked.
+- **Mitigation (until fixed):** exchange slot ownership **by message** between parent and child;
+  do not infer it from the script. Never call `ghidra_pool.ps1 release N` for a slot you did not
+  acquire in that same command. Before transcribing, check each listing starts with
+  `# function FUN_xxxxxxxx @ xxxxxxxx` and ends at a `RET` (or tail `JMP`); re-run anything short.
+- **Proper fix:** have `acquire` write and honour a root-level per-slot lock stamped with the
+  owning session id, so a second `acquire` skips it.
+
 ## WORKTREE-SYMLINK-WIPE — `git worktree remove --force` deleted original/ (INCIDENT 2026-06-27)
 - **What happened:** the `worktree` skill **symlinks `original/`** (the immutable game
   install) into each worktree so subagents can read assets (SKILL.md line 40). diag
