@@ -120,7 +120,141 @@ void __cdecl AiSplineTargetInit(void* param_1, void* param_2, int param_3)
     call_00443dc0(param_1, xz, param_2, param_3);
 }
 
-RH_ScopedInstall(AiSplineTargetInit, 0x004161e0);
+// ---------------------------------------------------------------------------
+// 0x004161e0 in-race A/B self-test (2026-09-02, parent booted lane).
+//
+// This row's acceptance design was written into its hooks.csv row when it was assessed:
+// "seeding the vehicle struct's +0x30/+0x38 and comparing the resulting outTargetIdx". The
+// function writes nothing itself - its whole contribution is (fetch own-struct ptr, read X at
+// +0x30 and Z at +0x38, pass them in that order) - so the only observable is what the CALLEE
+// produces from those inputs.
+//
+// THE CALLEE IS NOT SIDE-EFFECT FREE, and this is the load-bearing detail. FUN_00443dc0 contains
+//     if (param_5 != 0) { iVar6 = (&DAT_008032d4)[param_4*5];
+//                         ...continuity constraint on iVar10 using iVar6...
+//                         (&DAT_008032d4)[param_4*5] = iVar10; }
+// and this call site passes param_5 = 1. So it WRITES a per-vehicle spline-index cache and
+// re-reads it to constrain the next result. A naive run-both-and-compare A/B would have the second
+// pass read what the first pass wrote, which self-poisons the comparison and could produce either
+// a false mismatch or a false green. The cache is therefore snapshotted and restored around every
+// pass. Address: DAT_008032d4 is an int array indexed [param_4*5], i.e. byte offset param_4*20.
+//
+// RESTORE VALIDATION, because "I restored the state I know about" is an assumption and this makes
+// it a measurement: the ORIGINAL is run TWICE with a restore in between. If o1 != o2 or c1 != c2
+// the restore did not capture everything that feeds the result, and the comparison for that call
+// is declared VOID rather than counted as a pass. Only when the two original passes agree is the
+// modded pass compared against them.
+//   LIMITATION, stated rather than left implicit: this catches state that AFFECTS THE RESULT. If
+//   the callee tree writes state that never feeds back into its own output, three executions would
+//   touch it three times and the validation would not notice. The cap below bounds that exposure.
+//
+// Net state after the sequence is exactly one original execution (cache = c1, out = o1), so the
+// game behaves as unhooked. Capped at kSplineMaxCompare because the callee is a 3464-byte spline
+// search and this row fires ~143 times/second in a 4-car race; past the cap this is a pure
+// passthrough with zero extra work.
+long g_spline_calls = 0, g_spline_mismatch = 0, g_spline_void = 0;
+long g_spline_outMoved = 0, g_spline_cacheMoved = 0;
+std::uint32_t g_spline_outFold = 0;
+const long kSplineMaxCompare = 400;
+
+typedef void (__cdecl* fn_spline_t)(void*, void*, int);
+void* g_orig_4161e8 = reinterpret_cast<void*>(0x004161e8);
+
+// Trampoline. The 5-byte install JMP covers SUB ESP,0xc (3) + PUSH ESI (1) + the FIRST BYTE of
+// MOV ESI,[ESP+0x1c] - so it splits that MOV and all three instructions must be re-executed
+// before rejoining at the clean boundary 0x004161e8 (LEA EAX,[ESP+4]). Declared __cdecl with the
+// same three args, so [ESP+0x1c] resolves to param_3 exactly as in the original frame.
+__declspec(naked) void OrigSplineTargetInit(void* /*p1*/, void* /*p2*/, int /*p3*/) {
+    __asm {
+        sub    esp, 0xc
+        push   esi
+        mov    esi, dword ptr [esp + 0x1c]
+        jmp    dword ptr [g_orig_4161e8]
+    }
+}
+
+inline int SplineSelfTestEnabled() {
+    static int v = -1;
+    if (v < 0) { const char* s = std::getenv("MASHED_AI_SPLINE_SELFTEST"); v = (s && s[0]) ? 1 : 0; }
+    return v;
+}
+void SplineSelfTestLog(const char* s) {
+    HANDLE h = CreateFileA("ai_spline_target_selftest.log", FILE_APPEND_DATA, FILE_SHARE_READ,
+                           nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (h == INVALID_HANDLE_VALUE) return;
+    DWORD wrote; WriteFile(h, s, (DWORD)std::strlen(s), &wrote, nullptr); CloseHandle(h);
+}
+
+void SplineTargetDispatch(void* p1, void* p2, int p3) {
+    if (SplineSelfTestEnabled() && g_spline_calls < kSplineMaxCompare && p2 != nullptr) {
+        volatile std::uint32_t* pOut =
+            reinterpret_cast<volatile std::uint32_t*>(p2);
+        volatile std::uint32_t* pCache =
+            reinterpret_cast<volatile std::uint32_t*>(0x008032d4u + (unsigned)p3 * 20u);
+        const std::uint32_t out0 = *pOut;
+        const std::uint32_t c0   = *pCache;
+
+        OrigSplineTargetInit(p1, p2, p3);                 // original pass 1
+        const std::uint32_t o1 = *pOut, c1 = *pCache;
+
+        *pOut = out0; *pCache = c0;
+        OrigSplineTargetInit(p1, p2, p3);                 // original pass 2 (restore validation)
+        const std::uint32_t o2 = *pOut, c2 = *pCache;
+
+        *pOut = out0; *pCache = c0;
+        AiSplineTargetInit(p1, p2, p3);                   // modded pass
+        const std::uint32_t m = *pOut, mc = *pCache;
+
+        // Leave exactly one original execution's worth of state behind.
+        *pOut = o1; *pCache = c1;
+
+        ++g_spline_calls;
+        const bool restoreOk = (o1 == o2) && (c1 == c2);
+        if (!restoreOk) {
+            ++g_spline_void;
+        } else {
+            if (o1 != out0) ++g_spline_outMoved;
+            if (c1 != c0)   ++g_spline_cacheMoved;
+            g_spline_outFold ^= o1;
+            if (m != o1 || mc != c1) {
+                ++g_spline_mismatch;
+                char line[192];
+                wsprintfA(line, "[%ld] MISMATCH out m=%08X o=%08X | cache m=%08X o=%08X | v=%d\r\n",
+                          g_spline_calls, m, o1, mc, c1, p3);
+                SplineSelfTestLog(line);
+            }
+        }
+        if ((g_spline_calls & 0x3f) == 1) {
+            char line[256];
+            wsprintfA(line, "[%ld] calls=%ld mism=%ld void=%ld outMoved=%ld cacheMoved=%ld "
+                            "outFold=%08X %s\r\n",
+                      g_spline_calls, g_spline_calls, g_spline_mismatch, g_spline_void,
+                      g_spline_outMoved, g_spline_cacheMoved, g_spline_outFold,
+                      g_spline_mismatch ? "" : "ALL-GREEN");
+            SplineSelfTestLog(line);
+        }
+        return;
+    }
+    // Not testing: the reimpl IS the shipped behaviour for this row.
+    AiSplineTargetInit(p1, p2, p3);
+}
+
+// Naked entry installed at 0x004161e0 - __cdecl void(p1, p2, p3): forward all three, RET.
+__declspec(naked) void AiSplineTarget_Entry() {
+    __asm {
+        mov    eax, dword ptr [esp + 0xc]
+        push   eax
+        mov    eax, dword ptr [esp + 0xc]
+        push   eax
+        mov    eax, dword ptr [esp + 0xc]
+        push   eax
+        call   SplineTargetDispatch
+        add    esp, 0xc
+        ret
+    }
+}
+
+RH_ScopedInstall(AiSplineTarget_Entry, 0x004161e0);
 
 // ===========================================================================
 // 0x0046d510  AiVehicleVelocity3(outVec3, vehicleIdx) -> 1 ok / 0 OOB
