@@ -15,6 +15,27 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 
+2026-09-02  area-render-texcluster-r1  rvas=0x004c7600,0x004c76f0,0x004c7860,0x004d5310,0x004d5340  branch=area/render-texcluster  evidence=NEEDS-BOOTED-RACE(raster_unlock_selftest.log,raster_canlk_selftest.log,raster_miplk_selftest.log,raster_copy_selftest.log,raster_lkread_selftest.log,pending);build=.asi 873984B +5632 vs baseline (868352B)  note=Five RW device/raster vtable wrapper leaves C2->C3 candidates (r10 cluster). NEW FILE Render/RasterDeviceWrappers.cpp, added to asi_sources.rsp ONLY (NOT build.bat — all five call MASHED VAs by fn-ptr through the RW vtable at DAT_007d3ff8). NOT SWEEP-CRITICAL (env-gated self-test only; no diff_template.js / run_diff.py / hooks_registry.py changes). Binary anchor BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. SOLE RH_ScopedInstall ownership grep-confirmed for all five before authoring. SINGLE-DEVICE-CALL INVARIANT HELD: modded pass routes device calls through suppressible fn-ptrs to capture stubs (no real device call); only the ORIGINAL (via trampoline) performs the one real device call. NO path1 (run_diff.py) — device vtable makes path1 degenerate-green on fabricated rasters, per r8/r10 analysis.
+
+  TO RUN (parent): build in a checkout WITH original/, launch a booted race (any track, hold >=20s), set ALL 5 env vars listed below plus a known-good CONTROL (e.g. MASHED_UTIL_SLIDER2_SELFTEST=1). The 5 functions fire during texture cluster streaming at track load. Check all 5 logs for ALL-GREEN 0-mismatch AND required non-degenerate coverage:
+
+  0x004c7600 RasterUnlock — MASHED_RENDER_UNLOCK_SELFTEST=1 -> raster_unlock_selftest.log. Trampoline re-execs stolen instr a1 f8 3f 7d 00 (5B, 1 insn), rejoin 0x004c7605. Own contribution: return param_1. Non-degenerate: retFold!=0 (return values not all-zero). Mismatch: modded and original return different values (both should return param_1).
+
+  0x004c76f0 RasterCanLock — MASHED_RENDER_CANLK_SELFTEST=1 -> raster_canlk_selftest.log. Trampoline re-execs 8b 4c 24 04 8a 41 23 (7B, 2 insns), rejoin 0x004c76f7. Own contribution: flag+0x23 high-bit branch; return 1 on clear path; args (&p1, p1, 0) on device path. Non-degenerate: clearPath>0 AND devicePath>0 (BOTH branches must fire per r10 measurement — flag is 0x03 at clear and 0x82 at set in one load). Mismatch: branch decision disagreement (highBitSet XOR modDeviceCalled).
+
+  0x004c7860 RasterMipLock — MASHED_RENDER_MIPLK_SELFTEST=1 -> raster_miplk_selftest.log. Trampoline re-execs 8b 44 24 08 8b 54 24 0c (8B, 2 insns), rejoin 0x004c7868. Own contribution: arg3 = (param_2 & 0xff) << 8 + param_3. Verified by comparing capturedArg3 (from stub) vs expectedArg3 (computed inline from inputs) — no direct comparison against original (device return differs). Non-degenerate: lockSucceeded>0 AND arg3Fold!=0 (arg3 must vary across calls). Mismatch: capturedArg3 != expectedArg3.
+
+  0x004d5310 RasterImageCopy — MASHED_RENDER_COPY_SELFTEST=1 -> raster_copy_selftest.log. Trampoline re-execs a1 f8 3f 7d 00 (5B, 1 insn), rejoin 0x004d5315. Own contribution: raster+0x22 |= 1 when stub_success AND (*param_2 & 2). Stub simulates success (returns 1). Compared: whether modded wrote raster+0x22 matches (*param_2 & 2) predicate. Restore: raster+0x22 snapshotted before modded pass, restored before original. Non-degenerate: flagSet>0 (the (*param_2 & 2) branch must fire at least once). Mismatch: flagShouldWrite AND bit0 not set by modded.
+
+  0x004d5340 RasterLockRead — MASHED_RENDER_LKREAD_SELFTEST=1 -> raster_lkread_selftest.log. Trampoline re-execs 8b 44 24 08 + 8b 15 f8 3f 7d 00 (10B, 2 insns), rejoin 0x004d534a. Own contribution: reads struct+0x0c/0x10/0x14/0x20/0x23, writes *p3..*p6, byte-swap formula (stride_high<<8 | stride_low). Mock-based verification: capture stub fills struct with kMockW=0x100 kMockH=0x80 kMockD=0x10 kMockStride=0x12000078 (kMockBswap=0x1278), reimpl reads them and writes out-params, dispatch compares against expected. Restore: *p3..*p6 snapshotted before modded pass, restored before original. Non-degenerate: lockSucceeded>0 AND wFold!=0 AND bswapFold!=0 (structs with different w/d vary across 24 r10 records). Mismatch: any of modW/modH/modD/modBswap != expected mock value.
+
+  ds:[imm] BYTE-VERIFY (required before C3 promotion): grep or dumpbin the .asi for encodings:
+    0x004c7600 trampoline: a1 f8 3f 7d 00 (MOV EAX,DS:[0x7d3ff8])
+    0x004c76f0 trampoline: 8b 4c 24 04 8a 41 23 (MOV ECX,[ESP+4]; MOV AL,[ECX+0x23])
+    0x004c7860 trampoline: 8b 44 24 08 8b 54 24 0c (MOV EAX,[ESP+8]; MOV EDX,[ESP+0xc])
+    0x004d5310 trampoline: a1 f8 3f 7d 00 (MOV EAX,DS:[0x7d3ff8])
+    0x004d5340 trampoline: 8b 44 24 08 8b 15 f8 3f 7d 00 (MOV EAX,[ESP+8]; MOV EDX,DS:[0x7d3ff8])
+  In reimpl bodies: all five MOV EAX,DS:[0x7d3ff8] = a1 f8 3f 7d 00 (NOT b8 immediate). anchor BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E.
 
 
 
