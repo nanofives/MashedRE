@@ -3087,6 +3087,27 @@ bool RenderFrame() {
             // reimpl's R<->B swap turns these into the intended screen colours).
             static const std::uint32_t kFbCol[4] = {0xff4040e0u, 0xffffa040u,
                                                     0xff60d040u, 0xff40c0e0u};
+            // U-9072 non-degenerate verification: MASHED_ROUND_SCORES="a,b,c,d"
+            // overrides the per-row bar cell count so distinct known mid-range
+            // scores can be captured (a tiling difference is invisible at 0 or
+            // full, or when all rows are equal). Display-only, not set in play;
+            // analogous to MASHED_ROUND_COLOURS.
+            static int  s_hud_scores[4]  = {0, 0, 0, 0};
+            static bool s_hud_scores_set = false;
+            static bool s_hud_scores_init = false;
+            if (!s_hud_scores_init) {
+                s_hud_scores_init = true;
+                char sc[64] = {};
+                if (GetEnvironmentVariableA("MASHED_ROUND_SCORES", sc,
+                                            sizeof(sc)) > 0) {
+                    s_hud_scores_set = true;
+                    int ci = 0; char* tok = std::strtok(sc, ",");
+                    while (tok && ci < 4) {
+                        s_hud_scores[ci++] = std::atoi(tok);
+                        tok = std::strtok(nullptr, ",");
+                    }
+                }
+            }
             for (int i = 0; i < 4; ++i) {
                 const float cy = kRowCy[i];
                 const float ix = kIconX * kUiS;
@@ -3113,28 +3134,48 @@ bool RenderFrame() {
                 } else {
                     HudIm2DQuad(0, ix, iy, iw, ih, kFbCol[i], uvf);
                 }
-                // ---- score bar: grey backing + OrangeDisplay fill -----------
-                // The grey backing is the original's a18/a19 quads, whose baked
-                // 0xCCCCCC is overridden every frame to 0xff323232 by the
-                // renderer's colour write (Finding 14). 0xff323232 is symmetric
-                // under HudIm2DQuad's R<->B swap, so it is passed verbatim.
+                // ---- score bar: OrangeDisplay FRAME + dark fill cells --------
+                // U-9072 / Finding 18. The bar is an OrangeDisplay orange frame
+                // (static, full width) with DARK 0xff323232 fill cells drawn
+                // left-to-right, ONE PER POINT. The original scales a cell-
+                // patterned dark element by score/max (FUN_0041c410 applies
+                // FUN_004c13e0(atom,{score/max,1,1}) = an RwFrame X-scale to the
+                // fill atoms group+0x88/0x94; score = (&DAT_008a94e0)[car] via
+                // FUN_0040b6d0, max = 8 or 12 via FUN_0040b890). With an integer
+                // score and a 12-slot frame that yields exactly `score` visible
+                // dark cells. The 0xff323232 IS the fill (the Finding-14 "grey
+                // override"), OrangeDisplay is the FRAME -- Finding 15 had these
+                // swapped (grey backing + orange fill). Cell geometry MEASURED
+                // from verify/race_hud/orig_drive_late.bmp (640-space): first
+                // cell x=90 (=kBarX+3), pitch 7, dark width 6, ~8 px tall centred
+                // on the row; rows there read 8/7/5/4 cells == their scores.
+                // max is hardcoded 12 (the default; FUN_0040b890 returns 8 in
+                // some game modes -- U-9072 note, not exercised by the demo).
                 const float bx = kBarX * kUiS;
                 const float by = (cy - kBarH * 0.5f) * kUiS;
                 const float bw = kBarW * kUiS, bh = kBarH * kUiS;
-                HudIm2DQuad(0, bx, by, bw, bh, 0xff323232u, uvf);
-                const int pts = g_track.score(i) < 12 ? g_track.score(i) : 12;
-                if (pts > 0) {
-                    const float fillw = bw * (static_cast<float>(pts) / 12.0f);
-                    // [UNCERTAIN] the original composes the fill from 4
-                    // OrangeDisplay UV sub-rects (a20-a23); this stretches the
-                    // display texture over the filled fraction — real art that
-                    // grows with score, but not the exact 4-piece tiling.
-                    if (g_standings_ready)
-                        HudIm2DQuad(kHandleStand0 + kStandBar, bx, by, fillw, bh,
-                                    0xffffffffu, uvf);
-                    else
-                        HudIm2DQuad(0, bx, by, fillw, bh, kFbCol[i], uvf);
-                }
+                // OrangeDisplay (128x64) stacks TWO bar graphics; use the TOP
+                // half's frame sub-rect (the game's a22 mapping: u 0.178..1.0,
+                // v 0.0..0.5) so the single 17px bar isn't a squashed double.
+                std::uint32_t uvbar[4];
+                { const float f[4] = {0.178f, 0.0f, 1.0f, 0.5f};
+                  std::memcpy(uvbar, f, sizeof(uvbar)); }
+                if (g_standings_ready)
+                    HudIm2DQuad(kHandleStand0 + kStandBar, bx, by, bw, bh,
+                                0xffffffffu, uvbar);   // orange frame, full width
+                else
+                    HudIm2DQuad(0, bx, by, bw, bh, kFbCol[i], uvf);
+                int pts = s_hud_scores_set ? s_hud_scores[i] : g_track.score(i);
+                if (pts < 0) pts = 0;
+                if (pts > 12) pts = 12;
+                const float cellX0 = (kBarX + 3.0f) * kUiS;
+                const float cellPitch = 7.0f * kUiS;
+                const float cellW = 6.0f * kUiS;
+                const float cellY = (cy - 3.5f) * kUiS;
+                const float cellH = 8.0f * kUiS;
+                for (int p = 0; p < pts; ++p)
+                    HudIm2DQuad(0, cellX0 + p * cellPitch, cellY, cellW, cellH,
+                                0xff323232u, uvf);   // dark fill cell (1 = 1 pt)
                 // ---- point circle for this round's delta --------------------
                 // New{Zero,Plus1,Plus2,Minus1,Minus2} chosen by score_delta
                 // (DAT_008a9520). Persistent on the standings screen — the

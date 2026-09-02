@@ -1141,6 +1141,72 @@ Im2D stream). Both pre-existing.
 **Disposition: U-9075 RESOLVED.** The chrome animates as a 5-frame position slide
 (no fade); modelled and verified per-frame against the original in states 6 and 7.
 
+## Finding 18: score-bar fill is a DARK-cell fill over an OrangeDisplay frame — U-9072 resolved
+
+U-9072 asked the score-bar tiling: the exact sub-rects, cells-per-point, and
+whether the fill is discrete or continuous. Reversed (Ghidra `Mashed_pool14`) and
+measured; the Finding-15 port had the layering **backwards**.
+
+### The rule
+
+The bar is an **OrangeDisplay orange frame (static, full width)** with **DARK
+`0xff323232` fill cells drawn left-to-right, one per point**. The `0xff323232` is the
+fill (the Finding-14 "grey override"), OrangeDisplay is the frame — Finding 15 drew a
+grey backing + orange growing fill, which is inverted.
+
+Mechanism (`FUN_0041c410`): the fill atoms `group+0x88`/`group+0x94` are X-scaled by
+`score/max` — `FUN_004c13e0(atom, {score/max, 1, 1})` → `FUN_004c5010(atom+0x10, …)`,
+an RwFrame matrix scale. `score = (&DAT_008a94e0)[car]` (`FUN_0040b6d0`); `max = 8 or
+12` (`FUN_0040b890`, `0xc` default). It is a **continuous** X-scale of a
+cell-patterned dark element; with an integer score over a 12-slot frame it yields
+exactly `score` visible dark cells (so it reads as discrete). A second atom pair
+`group+0x98`/`group+0x8c` gets a `fsin` pulse scale when bit `0x40` is set — a
+recent-change highlight, separate from the fill.
+
+`OrangeDisplay` (128×64, `PANEL.TXD`) holds **two stacked bar graphics** (metallic
+frame + orange interior + a dashed empty-track line). The DFF maps sub-rects
+(a22 top-half u 0.178..1.0 v 0..0.5; a23 the dark left cap u 0..0.178; a20 the thin
+divider strip v 0.13..0.17). The port uses the a22 top-half sub-rect for the frame
+(a single quad) rather than the exact 4-piece composition.
+
+### Cell geometry — MEASURED from `orig_drive_late.bmp` (640-space)
+
+First cell **x=90** (= bar-frame `kBarX`=87 + 3), **pitch 7**, dark width **6**, ~8 px
+tall centred on the row. The reference's four rows read **8 / 7 / 5 / 4** dark cells
+= their scores.
+
+### Ported
+
+`exe_main.cpp` draws the OrangeDisplay frame full-width (a22 UV sub-rect), then
+`min(score,12)` dark `0xff323232` cells at x0=90, pitch 7, width 6, h 8 (×`kUiS`).
+max hardcoded 12 (default; `FUN_0040b890` returns 8 in some modes — flagged residual).
+
+### Verification (non-degenerate — the degenerate trap avoided a 3rd time)
+
+A tiling difference is invisible at 0/full or when all rows are equal, so distinct
+known mid-range scores were poked: **`MASHED_ROUND_SCORES=8,7,5,4`** (display-only,
+analogous to `MASHED_ROUND_COLOURS`).
+
+- **Numeric (standalone drawstream):** the emitted dark cells are **8 / 7 / 5 / 4**
+  per row, all at **x0=90.00, pitch 7.0** (640-space) — exactly the measured original
+  geometry. (Verified via `drawlist_diff.normalize` on the `0xff323232` quads.)
+- **Colour:** standalone orange `(247,148,29)` ≈ reference `(248,152,40)`.
+- **Pixel (imgdiff, per-bar crop):** mean-abs-diff ~58–70 all-channel. This is
+  cross-renderer noise, **not** a structural mismatch: the orange colour matches and
+  the cells align; the residual is the dashed-track pattern phase and sub-pixel
+  alignment between librw and the original RW render (a whole-frame or even bar-crop
+  imgdiff can't go to zero across two renderers). The structural gates (cell count +
+  geometry + colour) are the acceptance; imgdiff is corroborating only.
+- **Chrome regression:** `matched 4 / mismatched 0` on all slide + settled frames vs
+  `orig_guard6_frames.json` — the bar change did not disturb the chrome.
+- Screenshot: `verify/race_hud/re_stand_finding18_scores8754.png` — orange frames with
+  8/7/5/4 dark cells filling from the left, matching `orig_drive_late.bmp`.
+
+**Disposition: U-9072 RESOLVED.** Tiling rule reversed + measured + ported + verified
+non-degenerately. Minor flagged residuals: the frame is a single-UV approximation of
+the a20–a23 4-piece composition (only the empty-track dashes differ), and `max` is
+hardcoded 12 (8 in some modes).
+
 ## Not done / next
 
 1. Recover the icons / score bars / point circles. They are on the RW **pipeline**
