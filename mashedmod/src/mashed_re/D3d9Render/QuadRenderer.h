@@ -47,7 +47,13 @@ public:
     // LoadTrackPreviews sets g_vehprev_ready = (veh > 0), so 3 of 8 still
     // read as "ready" -- and the only preview drawn by default (car1,
     // slot 61) was inside the valid range, so nothing looked wrong.
-    static constexpr std::uint32_t kMaxSlots = 80;  // +24 track previews (F2) +11 color-select (#25) +8 veh +4 powerup
+    // 96 (2026-09-02): +13 in-race standings-overlay textures (kSlotStand0
+    // 80..92 -- the RE'd endpointpanel car badges / point circles / score bar /
+    // crown, see re/analysis/race_hud_capture_20260902.md Finding 14). Slots
+    // 80..92 fall outside an 80-cap array, so without this bump every standings
+    // UploadFromTextureToSlot would silently return false (same latent-overflow
+    // class as the 64->80 bump documented above).
+    static constexpr std::uint32_t kMaxSlots = 96;  // +24 track previews (F2) +11 color-select (#25) +8 veh +4 powerup +13 standings
 
     QuadRenderer() = default;
     ~QuadRenderer() { Shutdown(); }

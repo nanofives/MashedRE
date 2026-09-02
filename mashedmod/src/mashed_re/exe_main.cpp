@@ -756,6 +756,26 @@ constexpr std::uint32_t kSlotPowerup0   = 69;   // slots 69..79 (11)
 constexpr int           kHandlePowerup0 = 60;   // handles 60..70
 bool             g_vehprev_ready = false;
 
+// In-race standings/results overlay art. The original renders the "Current
+// Standings" screen as ENDPOINTPANEL.DFF (24 coplanar RpAtomics) cloned per row
+// on the RW pipeline device (0x0041c9a0, see re/analysis/race_hud_capture_
+// 20260902.md Finding 14). The port draws the same 13 real textures through the
+// Im2D screen-space primitive (HudIm2DQuad); for 24 flat quads this is
+// pixel-equivalent to an ortho clump render, so no clump subsystem is added
+// (approved 2026-09-02). PLACEMENT is the pixel-measured Finding 10 layout, NOT
+// the DFF (the DFF carries only relative model coords; absolute placement lives
+// in the RW screen camera). Slots 80..92, bridge handles 71..83.
+//   TXD sources: NFL* car badges + shadow  -> SFX.piz :: INTERFACE.TXD (128^2)
+//                New{Zero,Plus1,Plus2,Minus1,Minus2} circles -> Panel.piz :: ENDPOINTPANEL.TXD (64^2)
+//                OrangeDisplay bar + NewPanelCrown -> Panel.piz :: PANEL.TXD
+constexpr std::uint32_t kSlotStand0   = 80;   // slots 80..92 (13)
+constexpr int           kHandleStand0 = 71;   // handles 71..83
+enum {  // index within the standings texture block (slot/handle = base + this)
+    kStandShadow = 0, kStandPink, kStandRed, kStandBluejay, kStandMelon,
+    kStandGold, kStandZero, kStandPlusOne, kStandPlusTwo, kStandMinusOne,
+    kStandMinusTwo, kStandBar, kStandCrown, kStandTexCount };
+bool             g_standings_ready = false;
+
 // R4 opener — track fly-through mode (env MASHED_TRACK_VIEW=<piz path or 1
 // for Arctic>). Renders the cracked RW world (Track/TrackWorld) through the
 // spike renderer (D3d9Render/TrackRenderer) with an auto-orbit camera.
@@ -3023,39 +3043,114 @@ bool RenderFrame() {
             // ChromeBaseDraw / kWidth). Previously these passed RAW unscaled
             // pixels, which at 800x600 put them in the upper-left ON TOP OF the
             // ported title — that is the defect this replaces.
+            // Finding 14: the per-car rows now draw the REAL endpointpanel art
+            // (car badge + point circle + score bar) via HudIm2DQuad, on the
+            // Finding-10 measured layout. Placeholder rects are kept only as a
+            // fallback when the assets did not load (do NOT silently blank).
+            //
+            // The rows draw ONLY on the standings screen (same gate as the
+            // chrome above), matching the original: HudIngameDispatch renders the
+            // endpointpanel widget groups only in states {5,6,7}, never while
+            // driving (state 3 has NO 2D HUD — Finding 3). The earlier scaffold
+            // drew them every round-mode frame; with real badges that over-draws
+            // the live driving view, so gate them here.
+            if (standings) {
+            // Leader (for the crown): top score, ties to lowest index; a decided
+            // round/match winner overrides.
+            int leader = -1, bestScore = -1;
             for (int i = 0; i < 4; ++i) {
-                // (placeholder colours, packed-dword convention: the reimpl's
-                // R<->B swap turns these into the intended screen colours)
-                const std::uint32_t col[4] = {0xff4040e0u, 0xffffa040u,
-                                              0xff60d040u, 0xff40c0e0u};
+                const int s = g_track.score(i);
+                if (s > bestScore) { bestScore = s; leader = i; }
+            }
+            if (g_track.match_winner() >= 0)      leader = g_track.match_winner();
+            else if (g_track.round_winner() >= 0) leader = g_track.round_winner();
+            // Fallback placeholder colours (packed-dword convention: the
+            // reimpl's R<->B swap turns these into the intended screen colours).
+            static const std::uint32_t kFbCol[4] = {0xff4040e0u, 0xffffa040u,
+                                                    0xff60d040u, 0xff40c0e0u};
+            for (int i = 0; i < 4; ++i) {
                 const float cy = kRowCy[i];
-                // car icon placeholder, on the measured icon box
-                HudIm2DQuad(0, kIconX * kUiS, (cy - kIconH * 0.5f) * kUiS,
-                            kIconW * kUiS, kIconH * kUiS, col[i], uvf);
-                // PORTED score data (FUN_0040b290 array DAT_008a94e0): one
-                // bar segment per point (match win at >11, 0x00410510).
-                // Segments now subdivide the measured 93-wide frame instead of
-                // marching off at a fixed 14px pitch, so a full bar ends where
-                // the original's frame ends.
+                const float ix = kIconX * kUiS;
+                const float iy = (cy - kIconH * 0.5f) * kUiS;
+                const float iw = kIconW * kUiS, ih = kIconH * kUiS;
+                // ---- car badge (SFX.piz::INTERFACE.TXD NFL* art) ------------
+                // [UNCERTAIN] per-car COLOUR binding: the race scene carries no
+                // per-car badge/colour (RaceSceneState::RaceCar), and the
+                // original's per-car colour source is unreversed (DAT_007f1a1c,
+                // TrackRenderer.h:104). The ART below is the real badge; only
+                // which of Pink/Red/Bluejay/Melon lands on which row is a
+                // documented stand-in in row order, not a faithful mapping.
+                // NFLShadow is drawn behind at the same box.
+                static const int kBadge[4] = {kStandPink, kStandRed,
+                                              kStandBluejay, kStandMelon};
+                if (g_standings_ready) {
+                    HudIm2DQuad(kHandleStand0 + kStandShadow, ix, iy, iw, ih,
+                                0xffffffffu, uvf);
+                    HudIm2DQuad(kHandleStand0 + kBadge[i], ix, iy, iw, ih,
+                                0xffffffffu, uvf);
+                } else {
+                    HudIm2DQuad(0, ix, iy, iw, ih, kFbCol[i], uvf);
+                }
+                // ---- score bar: grey backing + OrangeDisplay fill -----------
+                // The grey backing is the original's a18/a19 quads, whose baked
+                // 0xCCCCCC is overridden every frame to 0xff323232 by the
+                // renderer's colour write (Finding 14). 0xff323232 is symmetric
+                // under HudIm2DQuad's R<->B swap, so it is passed verbatim.
+                const float bx = kBarX * kUiS;
+                const float by = (cy - kBarH * 0.5f) * kUiS;
+                const float bw = kBarW * kUiS, bh = kBarH * kUiS;
+                HudIm2DQuad(0, bx, by, bw, bh, 0xff323232u, uvf);
                 const int pts = g_track.score(i) < 12 ? g_track.score(i) : 12;
-                const float segW = kBarW / 12.0f;
-                for (int w = 0; w < pts; ++w)
-                    HudIm2DQuad(0, (kBarX + w * segW) * kUiS,
-                                (cy - kBarH * 0.5f) * kUiS,
-                                (segW - 1.0f) * kUiS, kBarH * kUiS,
-                                col[i], uvf);
-                // the signed +/- delta flash, 6000 ms (DAT_008a9520/10),
-                // centred on the measured point-circle position
-                if (g_font.ready() && g_track.delta_timer(i) > 0.f &&
-                    g_track.score_delta(i) != 0) {
-                    wchar_t d[8];
-                    swprintf(d, 8, L"%+d", g_track.score_delta(i));
-                    DrawMashedString(d, kCircCx * kUiS, cy * kUiS,
-                                     24.f * kUiS,
+                if (pts > 0) {
+                    const float fillw = bw * (static_cast<float>(pts) / 12.0f);
+                    // [UNCERTAIN] the original composes the fill from 4
+                    // OrangeDisplay UV sub-rects (a20-a23); this stretches the
+                    // display texture over the filled fraction — real art that
+                    // grows with score, but not the exact 4-piece tiling.
+                    if (g_standings_ready)
+                        HudIm2DQuad(kHandleStand0 + kStandBar, bx, by, fillw, bh,
+                                    0xffffffffu, uvf);
+                    else
+                        HudIm2DQuad(0, bx, by, fillw, bh, kFbCol[i], uvf);
+                }
+                // ---- point circle for this round's delta --------------------
+                // New{Zero,Plus1,Plus2,Minus1,Minus2} chosen by score_delta
+                // (DAT_008a9520). Persistent on the standings screen — the
+                // original draws the circle, not a timed +/- text flash.
+                if (g_standings_ready) {
+                    const int d = g_track.score_delta(i);
+                    int circ = kStandZero;
+                    if      (d >=  2) circ = kStandPlusTwo;
+                    else if (d ==  1) circ = kStandPlusOne;
+                    else if (d == -1) circ = kStandMinusOne;
+                    else if (d <= -2) circ = kStandMinusTwo;
+                    const float cs = 40.0f * kUiS;
+                    HudIm2DQuad(kHandleStand0 + circ, kCircCx * kUiS - cs * 0.5f,
+                                cy * kUiS - cs * 0.5f, cs, cs, 0xffffffffu, uvf);
+                } else if (g_font.ready() && g_track.delta_timer(i) > 0.f &&
+                           g_track.score_delta(i) != 0) {
+                    wchar_t dd[8];
+                    swprintf(dd, 8, L"%+d", g_track.score_delta(i));
+                    DrawMashedString(dd, kCircCx * kUiS, cy * kUiS, 24.f * kUiS,
                                      g_track.score_delta(i) > 0
                                          ? 0xff80ff80u : 0xff8080ffu);
                 }
+                // ---- leader crown (Panel.piz::PANEL.TXD NewPanelCrown) ------
+                // [UNCERTAIN] the per-round standings reference
+                // (verify/race_hud/orig_drive_late.bmp) shows NO crown, so it is
+                // NOT a per-round element; its true trigger/position is unreversed
+                // (the enable flag lives in the widget-group update, FUN_0041c410).
+                // Gated to the match-end screen only (match_winner >= 0), drawn at
+                // the winner's icon top-left, flagged pending a reference for that
+                // screen. Draw it every round and it contradicts the reference.
+                if (g_standings_ready && g_track.match_winner() >= 0 &&
+                    i == leader && leader >= 0) {
+                    const float ch = 20.0f * kUiS;
+                    HudIm2DQuad(kHandleStand0 + kStandCrown, ix - ch * 0.4f,
+                                iy - ch * 0.5f, ch, ch, 0xffffffffu, uvf);
+                }
             }
+            }  // if (standings)
             if (g_font.ready()) {
                 const float cd = g_track.countdown();
                 if (cd > 0.f) {
@@ -5568,6 +5663,87 @@ bool LoadPowerupIcons() {
     return g_powerups_ready;
 }
 
+// Finding 14 port: load N named textures from one .piz::<TXD> into the standings
+// texture block (slot kSlotStand0 + idxs[k], handle kHandleStand0 + idxs[k]).
+// Mirrors LoadPowerupIcons / LoadTrackPreviews exactly (Archive + Dictionary are
+// local; UploadFromTextureToSlot copies pixels into the D3D9 texture in-scope).
+// Returns the count actually decoded+registered. A texture that fails to decode
+// is logged and left unregistered so its draw is SKIPPED, never substituted.
+static int LoadStandTexList(const char* piz_path, const char* txd_entry,
+                            const char* const* names, const int* idxs, int n) {
+    mashed_re::Piz::Archive piz;
+    if (!piz.Load(piz_path)) {
+        if (std::FILE* lg = std::fopen(kLogPath, "a")) {
+            std::fprintf(lg, "standings: %s load FAILED: %s\n",
+                         piz_path, piz.last_error()); std::fclose(lg); }
+        return 0;
+    }
+    const std::uint8_t* blob = nullptr;
+    std::uint32_t blen = 0;
+    for (std::uint32_t i = 0; i < piz.count(); ++i) {
+        if (_stricmp(piz.entry(i).name, txd_entry) == 0) {
+            blob = piz.blob(i, &blen); break; }
+    }
+    if (!blob) {
+        if (std::FILE* lg = std::fopen(kLogPath, "a")) {
+            std::fprintf(lg, "standings: %s not found in %s\n",
+                         txd_entry, piz_path); std::fclose(lg); }
+        return 0;
+    }
+    mashed_re::Txd::Dictionary dict;
+    if (!dict.Decode(blob, blen)) {
+        if (std::FILE* lg = std::fopen(kLogPath, "a")) {
+            std::fprintf(lg, "standings: %s::%s Decode FAILED: %s\n",
+                         piz_path, txd_entry, dict.last_error()); std::fclose(lg); }
+        return 0;
+    }
+    int loaded = 0;
+    for (int k = 0; k < n; ++k) {
+        for (std::uint32_t i = 0; i < dict.count(); ++i) {
+            const auto& tex = dict.texture(i);
+            if (_stricmp(tex.name, names[k]) != 0) continue;
+            const std::uint32_t slot =
+                kSlotStand0 + static_cast<std::uint32_t>(idxs[k]);
+            if (g_quad_renderer.UploadFromTextureToSlot(slot, tex)) {
+                mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                    kHandleStand0 + idxs[k], g_quad_renderer.slot_texture(slot));
+                ++loaded;
+            }
+            break;
+        }
+    }
+    return loaded;
+}
+
+bool LoadStandingsAssets() {
+    // Car badges (+ drop shadow) — SFX.piz :: INTERFACE.TXD, 128x128 PAL8.
+    static const char* kIface[]  = {"NFLShadow","NFLPink","NFLRed",
+                                    "NFLBluejay","NFLMelon","NFLGold"};
+    static const int   kIfaceI[] = {kStandShadow,kStandPink,kStandRed,
+                                    kStandBluejay,kStandMelon,kStandGold};
+    // Point circles — Panel.piz :: ENDPOINTPANEL.TXD, 64x64 PAL8.
+    static const char* kEpp[]    = {"NewZero","NewPlusOne","NewPlusTwo",
+                                    "NewMinusOne","NewMinusTwo"};
+    static const int   kEppI[]   = {kStandZero,kStandPlusOne,kStandPlusTwo,
+                                    kStandMinusOne,kStandMinusTwo};
+    // Score-bar display + leader crown — Panel.piz :: PANEL.TXD.
+    static const char* kPnl[]    = {"OrangeDisplay","NewPanelCrown"};
+    static const int   kPnlI[]   = {kStandBar,kStandCrown};
+    int a = LoadStandTexList("original/TOASTART/Common/SFX.piz",
+                             "INTERFACE.TXD", kIface, kIfaceI, 6);
+    int b = LoadStandTexList("original/TOASTART/Common/PANEL/Panel.piz",
+                             "ENDPOINTPANEL.TXD", kEpp, kEppI, 5);
+    int c = LoadStandTexList("original/TOASTART/Common/PANEL/Panel.piz",
+                             "PANEL.TXD", kPnl, kPnlI, 2);
+    g_standings_ready = (a + b + c) == kStandTexCount;
+    if (std::FILE* lg = std::fopen(kLogPath, "a")) {
+        std::fprintf(lg, "standings assets: iface=%d/6 epp=%d/5 panel=%d/2 "
+                     "ready=%d\n", a, b, c, g_standings_ready ? 1 : 0);
+        std::fclose(lg);
+    }
+    return g_standings_ready;
+}
+
 // R2-5: load sfx.piz/BADGES.TXD (the named-sprite dictionary MASHED loads at
 // FUN_0040bbb0 via FUN_0042a6b0("badges.txd",0,0) into DAT_0063b8fc), decode it
 // with Txd::Dictionary, and upload the "Button" texture (16x32 PAL8 — the
@@ -6952,6 +7128,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         g_menu_badge_ready = LoadBadgeSprites();
         g_previews_ready = LoadTrackPreviews();   // F2 crossfade textures
         LoadPowerupIcons();                       // s24/s18 power-up preview row
+        LoadStandingsAssets();                    // Finding 14 in-race standings art
         g_carsel_ready = LoadCarColorSprites();   // #25 color-select car previews
         g_inputicons_ready = LoadInputIcons();    // #10 keyboard/joypad row icons
         g_loadicon_ready = LoadLoadIconFromExe(); // loading-screen spinning disc

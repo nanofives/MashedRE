@@ -895,6 +895,78 @@ Standalone infrastructure confirmed by an account2-worker read-only survey
 `HudIm2DQuad` `exe_main.cpp:188`; `LoadPngAssetToSlot` recipe `exe_main.cpp:5856`;
 no ortho-clump path exists — screen-space is Im2D-only).
 
+## Finding 15: standings art PORTED (approach B) and screenshot-verified
+
+Approach B (owner-approved 2026-09-02): draw the real `endpointpanel` textures
+through the existing Im2D screen-space primitive `HudIm2DQuad`, on the Finding-10
+measured layout. No ortho-clump subsystem (the port has none, and 24 coplanar
+quads make one pixel-pointless). All changes are additive, inside `exe_main.cpp`
++ a one-line `QuadRenderer.h` cap bump — no new TU, so no `build.bat` /
+`asi_sources.rsp` change.
+
+### What landed
+
+- **`QuadRenderer.h`**: `kMaxSlots` 80 -> 96 (slots 80..92 for 13 standings
+  textures; without the bump every `UploadFromTextureToSlot` silently returns
+  false, the documented 64->80 overflow class).
+- **`exe_main.cpp`** — `kSlotStand0=80` / `kHandleStand0=71` block + a
+  `LoadStandTexList` helper (mirrors `LoadPowerupIcons`: `Piz::Archive` +
+  `Txd::Dictionary::Decode` + `UploadFromTextureToSlot` + `RwIm2DBridge_
+  RegisterTexture` — the decode->bridge path already existed, no new plumbing).
+  `LoadStandingsAssets()` loads all 13, wired at frontend init after
+  `LoadPowerupIcons()`. Log confirms `iface=6/6 epp=5/5 panel=2/2 ready=1`.
+- The standings per-car loop now draws, per row on the measured rects: car badge
+  (`NFLShadow` + `NFL<colour>`), grey `0xff323232` bar backing + `OrangeDisplay`
+  fill scaled by score, and the `New{PlusTwo/PlusOne/Zero/MinusOne/MinusTwo}`
+  circle for `score_delta`. Placeholder rects survive only as an asset-missing
+  fallback (never a silent blank).
+
+### Two bugs found and fixed during verification
+
+1. **Rows drew every round-mode frame, including while driving** (inherited from
+   the scaffold). The original renders the endpointpanel widget groups only in
+   states {5,6,7} (`HudIngameDispatch`), never state 3. With real badges this
+   over-drew the live driving view. Fixed by gating the row loop on the same
+   `standings` flag as the chrome. Confirmed: `re_drive_finding14.png` shows the
+   race with only the countdown, no rows.
+2. **The crown drew every round**; the per-round reference
+   (`orig_drive_late.bmp`) has none. Gated to the match-end screen
+   (`match_winner() >= 0`) and flagged `[UNCERTAIN]` (no reference for that
+   screen; the enable flag lives in the unreversed group update `FUN_0041c410`).
+
+### Verification
+
+- **Chrome regression (the only diffable layer) is intact.** Pinning matched
+  standings frames (`drawlist_diff.py --label-a f2019.. --label-b f778,f1200,
+  f1300 --scale-b 0.8 --exclude-tex 9`): **matched 4, mismatched 0** every frame.
+  `missing 1` = the transparent 512^2 quad (deliberately unported); `extra 18` =
+  the new textured rows, invisible to the original's Im2D stream as established
+  in Findings 4/10. The default file-order pairing reports match=0 because it
+  pairs the original's standings frames against the standalone's *driving*
+  frames (f700..) — a harness frame-selection artifact, not a regression.
+- **Screenshots** (800x600, `MASHED_TRACK_VIEW=1 MASHED_CAR=1 MASHED_ROUND=1
+  MASHED_RESULT_DEMO=1`): `verify/race_hud/re_stand_finding14.png` (+ `_late`)
+  vs `orig_drive_late.bmp` — real badges, orange point circles, grey+orange bars,
+  letterbox, `Continue` prompt, all on the measured layout. `re_drive_finding14.
+  png` confirms no HUD over the driving view.
+
+### Known divergences (flagged in code, NOT silently papered over)
+
+1. **Car-icon colour per row is a placeholder.** The original shows each car's
+   character badge; in this scenario all four cars are the same (all red devil in
+   `orig_drive_late.bmp`), while the port draws four different badges by row
+   index. Root cause: the race scene carries **no per-car character/colour**
+   (`RaceSceneState::RaceCar`), and the original's source is unreversed
+   (`DAT_007f1a1c`, `TrackRenderer.h:104`). The **art is real**; only the
+   which-badge-per-row binding is provisional. A faithful fix needs per-car
+   character threaded into `RaceSceneState` (or `DAT_007f1a1c` reversed). Left as
+   an obvious placeholder rather than fitted to one scenario (all-red), per the
+   evidence-discipline rule.
+2. **Score-bar fill** is a single `OrangeDisplay` quad stretched over the score
+   fraction, not the original's exact 4-UV-sub-rect composition (atomics
+   a20-a23). Real art, growing with score; not the exact tiling.
+3. **Crown trigger/position** unreversed (see fix #2 above).
+
 ## Not done / next
 
 1. Recover the icons / score bars / point circles. They are on the RW **pipeline**
