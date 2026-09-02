@@ -17,3 +17,7 @@ EXPORTS
     Direct3DShaderValidatorCreate9           = Forward_Direct3DShaderValidatorCreate9
     PSGPError                                = Forward_PSGPError
     PSGPSampleTexture                        = Forward_PSGPSampleTexture
+; Not a d3d9 API — capture-tool accessor for the Present frame counter.
+; Present is the only true frame boundary in MASHED (see the comment on
+; MashedShim_PresentCounter in d3d9_shim.cpp).
+    MashedShim_PresentCounter

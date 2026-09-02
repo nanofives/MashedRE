@@ -219,6 +219,21 @@ LONG      g_PresentCount         = 0;
 int       g_DumpFrames[16]       = {};
 int       g_DumpFrameCount       = -1;   // -1 = env unparsed
 
+// Present-count accessor for external capture tools (re/frida/race_hud_burst.py).
+// Present is the ONLY true frame boundary available: MASHED has no verified
+// once-per-frame function to anchor on. Both candidates tried and failed —
+// 0x004c1be0 fires ~5-10x per frame (so every "frame" captured was really a
+// sub-frame slice, quad_out:quad_in ran ~9:1) and 0x00492e90 is no better, while
+// DAT_0063ba8c cannot gate frames because it is mutated many times per frame.
+// Returning the ADDRESS (not the value) lets a Frida agent read the counter
+// inline in a draw hook with no extra call per draw, so every captured draw can
+// be tagged with the frame it belongs to. Read-only by contract: the shim owns
+// the write via InterlockedIncrement in Present_BBDump.
+extern "C" __declspec(dllexport) const volatile LONG* MashedShim_PresentCounter()
+{
+    return &g_PresentCount;
+}
+
 void ParseDumpFramesOnce() {
     if (g_DumpFrameCount != -1) return;
     g_DumpFrameCount = 0;

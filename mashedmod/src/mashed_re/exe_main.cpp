@@ -2606,6 +2606,17 @@ bool RenderFrame() {
     const bool results = (mashed_re::Race::GameFlow_Mode() ==
                           mashed_re::Race::GameMode::Results);
     if ((g_track_view || in_race || results) && g_track.ready()) {
+        // Parity harness: race/results frame delimiter for MASHED_DBG_DRAWSTREAM.
+        // This branch `return true`s below (see the end of the block) WITHOUT
+        // ever reaching the frontend delimiter further down, so before this call
+        // existed the frame counter never advanced during a race and every
+        // in-race draw was dropped on DrawStreamDump's Capturing() guard --
+        // making the standalone's drawstream frontend-only in practice and a
+        // race-state capture silently empty. Must arm the bucket BEFORE the
+        // HUD/results draws in this block, not after, or they land in the
+        // previous frame's bucket.
+        mashed_re::D3d9Render::DrawStreamDump_OnFrameBegin();
+
         // WS-A s3 frame profiler (env MASHED_FRAME_PROF): wall-clock attribution of
         // the in-race frame to UpdateCar / Render / Present, to locate the real hot
         // path (the physics step measured ~0.5ms — NOT the bottleneck). QPC-based.
@@ -2940,25 +2951,107 @@ bool RenderFrame() {
         // draw correctly here.
         if (g_track.round_mode_ && g_bridge_installed && !results) {
             std::uint32_t uvf[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
-            // scoreboard: one pip row per car, width = wins
+
+            // Standings row layout, MEASURED from the original reference
+            // backbuffer verify/race_hud/orig_drive_late.png (640x480) by pixel
+            // analysis of the saturated UI ink. This layer had to be measured
+            // from pixels rather than a draw list because it is emitted on the
+            // RW pipeline device slots (0x118/0x11c/0xe8), NOT on the Im2D or
+            // Im3D pipes, so it appears in no capture — see
+            // re/analysis/race_hud_capture_20260902.md Findings 4 and 6.
+            //
+            // Score-bar frame is the cleanest signal: 4 bands, each h=17,
+            // x 87..179 (w=93), centres y = 107.0 / 160.0 / 213.0 / 267.0,
+            // i.e. pitch 53.33. The icon red-ink box (x 33..74, w=42, h=48) and
+            // the point circles (x 185..246, diameter ~40) independently agree
+            // on those four centres.
+            //
+            // [UNCERTAIN] These are pixel extents of VISIBLE INK, not emitter
+            // arguments. The true quad rects may be larger than the ink they
+            // contain (a sprite with transparent margin measures small), and the
+            // icon/bar/circle art itself is not ported — the coloured rects
+            // below remain placeholders. Only the LAYOUT is evidence-based.
+            const float kUiS   = static_cast<float>(kWidth) / 640.0f;  // 1.25 @800
+            // The four measured centres are used VERBATIM rather than a uniform
+            // pitch: the measured spacing is 53, 53, 54 (not a constant), so a
+            // single 53.333 pitch drifted the two middle rows by 0.67px.
+            const float kRowCy[4] = {107.0f, 160.0f, 213.0f, 267.0f};
+            const float kIconX = 33.0f, kIconW = 42.0f, kIconH = 48.0f;
+            const float kBarX  = 87.0f, kBarW  = 93.0f, kBarH  = 17.0f;
+            const float kCircCx = 215.0f;   // (185+246)/2
+
+            // ---- Standings chrome: letterbox bands + edge rules -------------
+            // PORTED (not invented). The original draws these on its standings
+            // screen (DAT_0063ba8c in {5,6,7}) as four consecutive
+            // ChromeBaseDraw 0x00472c60 calls; args recovered by disassembling
+            // the call sites 0x0042a2a8 / 0x0042a2d4 / 0x0042a302 / 0x0042a327
+            // (cdecl, last push = arg1), and every constant is read from the
+            // image rather than inferred:
+            //   _DAT_005cd6d8 = 480.0   (0x0042a2ad fld)
+            //   _DAT_005cd6d4 =  64.0   (0x0042a2c2 fsub)
+            //   _DAT_005cc730 =  80.0   (0x0042a30d fadd)
+            //   band height    = 80.0   (0x0042a27c push 0x42a00000)
+            //   width          = 640.0  (0x0042a289 push 0x44200000)
+            //   DAT_008991b4   =   0.0  band offset, 0 at settle
+            // Emission order matches the captured original stream (band top,
+            // band bottom, rule at bottom edge, rule at top edge) — see
+            // re/analysis/race_hud_capture_20260902.md Finding 6.
+            //
+            // Colours are the ORIGINAL's packed dwords, NOT pre-swapped screen
+            // ARGB: ChromeBaseDraw's own cited R<->B swap (U-3415) is the only
+            // conversion, per the parity-harness colour convention.
+            //
+            // [UNCERTAIN] The band alpha comes from BL, set before 0x0042a240;
+            // its animated source is not established. 0xff is the settled value
+            // observed in every captured frame, so the fade-in is not modelled.
+            const bool standings = (g_track.round_winner() >= 0 ||
+                                    g_track.match_winner() >= 0);
+            if (standings) {
+                const float band_off = 0.0f;                        // DAT_008991b4
+                const float band_h   = 80.0f;
+                const float bottom_y = 480.0f - band_off - 64.0f;   // = 416
+                const float rule_y   = band_off + 80.0f;            // = 80
+                ChromeBaseDraw(0.0f, band_off, 640.0f, band_h, 0xff000000u);
+                ChromeBaseDraw(0.0f, bottom_y, 640.0f, band_h, 0xff000000u);
+                ChromeBaseDraw(0.0f, bottom_y, 640.0f, 1.0f,   0xffffffffu);
+                ChromeBaseDraw(0.0f, rule_y,   640.0f, 1.0f,   0xffffffffu);
+            }
+            // ----------------------------------------------------------------
+            // Scoreboard: one row per car. Rows are placed on the MEASURED
+            // layout above and scaled by kUiS so they share the coordinate
+            // space of the ported chrome/text (which scale through
+            // ChromeBaseDraw / kWidth). Previously these passed RAW unscaled
+            // pixels, which at 800x600 put them in the upper-left ON TOP OF the
+            // ported title — that is the defect this replaces.
             for (int i = 0; i < 4; ++i) {
-                // (invented colors, packed-dword convention: the reimpl's
-                // R<->B swap turns these into the intended screen colors)
+                // (placeholder colours, packed-dword convention: the reimpl's
+                // R<->B swap turns these into the intended screen colours)
                 const std::uint32_t col[4] = {0xff4040e0u, 0xffffa040u,
                                               0xff60d040u, 0xff40c0e0u};
-                const float y = 24.f + i * 26.f;
-                HudIm2DQuad(0, 20.f, y, 22.f, 20.f, col[i], uvf);   // car tag
+                const float cy = kRowCy[i];
+                // car icon placeholder, on the measured icon box
+                HudIm2DQuad(0, kIconX * kUiS, (cy - kIconH * 0.5f) * kUiS,
+                            kIconW * kUiS, kIconH * kUiS, col[i], uvf);
                 // PORTED score data (FUN_0040b290 array DAT_008a94e0): one
-                // bar segment per point (match win at >11, 0x00410510)
-                for (int w = 0; w < g_track.score(i) && w < 12; ++w)
-                    HudIm2DQuad(0, 50.f + w * 14.f, y, 10.f, 20.f,
+                // bar segment per point (match win at >11, 0x00410510).
+                // Segments now subdivide the measured 93-wide frame instead of
+                // marching off at a fixed 14px pitch, so a full bar ends where
+                // the original's frame ends.
+                const int pts = g_track.score(i) < 12 ? g_track.score(i) : 12;
+                const float segW = kBarW / 12.0f;
+                for (int w = 0; w < pts; ++w)
+                    HudIm2DQuad(0, (kBarX + w * segW) * kUiS,
+                                (cy - kBarH * 0.5f) * kUiS,
+                                (segW - 1.0f) * kUiS, kBarH * kUiS,
                                 col[i], uvf);
-                // the signed +/- delta flash, 6000 ms (DAT_008a9520/10)
+                // the signed +/- delta flash, 6000 ms (DAT_008a9520/10),
+                // centred on the measured point-circle position
                 if (g_font.ready() && g_track.delta_timer(i) > 0.f &&
                     g_track.score_delta(i) != 0) {
                     wchar_t d[8];
                     swprintf(d, 8, L"%+d", g_track.score_delta(i));
-                    DrawMashedString(d, 240.f, y + 10.f, 24.f,
+                    DrawMashedString(d, kCircCx * kUiS, cy * kUiS,
+                                     24.f * kUiS,
                                      g_track.score_delta(i) > 0
                                          ? 0xff80ff80u : 0xff8080ffu);
                 }
@@ -2977,8 +3070,75 @@ bool RenderFrame() {
                     else swprintf(b, 24, L"CAR %d WINS", g_track.match_winner() + 1);
                     DrawMashedString(b, 400.f, 60.f, 48.f, 0xff80e0ffu);
                 } else if (g_track.round_winner() >= 0) {
-                    DrawMashedString(L"CURRENT STANDINGS", 400.f, 60.f, 36.f,
-                                     0xffffffffu);
+                    // PORTED standings text (replaces the invented centered
+                    // all-caps banner). MEASURED from the original's standings
+                    // screen via the text channel of re/frida/race_hud_burst.py
+                    // (hook on the font-ctx thunk FUN_00556ca0, emitter
+                    // 0x00427ed2) — see re/analysis/race_hud_capture_20260902.md.
+                    //
+                    // The original passes NORMALISED coords, and the captured
+                    // fracs decode as:
+                    //   x_px = frac_x * 640          (left origin)
+                    //   y_px = (1 - frac_y) * 480    (BOTTOM origin)
+                    // Cross-check against the reference shot
+                    // verify/race_hud/orig_drive_late.bmp: "MASHED" frac_y
+                    // 0.8758 -> 59.6px from the top (title sits at ~y=45-60),
+                    // " Continue" frac_y 0.09 -> 436.8px (prompt at ~y=428).
+                    // A top-origin reading would put "Continue" at y=54, i.e.
+                    // stacked on the title, which the shot rules out.
+                    //
+                    // Sizes: the thunk receives p5 * 0.0708 (the 0.0708 em
+                    // factor already present in DrawMashedString's top_y law),
+                    // so the captured 0.0566 / 0.0425 are p5 = 0.80 / 0.60.
+                    // Cell height is the captured frac of screen height.
+                    //
+                    // Strings are the original's VERBATIM code units, read from
+                    // the captured str_raw hex rather than from a rendered
+                    // decode. The prompt line's first code unit is 0x0081, NOT
+                    // a space: the captured units are
+                    //   81 20 43 6f 6e 74 69 6e 75 65  =  L"\x81 Continue"
+                    // 0x81 is the remapped "Select" nav glyph (the 0x7f..0x8f
+                    // control range documented at DrawMashedString's per-glyph
+                    // colour switch), which is why the original shows a green
+                    // circular-arrow prompt before the word. An earlier pass
+                    // here mis-read 0x81 as a leading space and called it
+                    // padding that "reserves room for the glyph"; the glyph is
+                    // IN the string, and no separate draw exists for it — the
+                    // text channel captures exactly 3 strings per frame.
+                    //
+                    // ctrl green 0xff10ec00 is the port's established prompt
+                    // colour (exe_main.cpp:3816, 5139-5145); DrawMashedString
+                    // applies it per-glyph to codepoints >= 0x7f only, so the
+                    // word itself stays white.
+                    struct StandLine {
+                        const wchar_t* s; float fx, fy, fscale; std::uint32_t ctrl;
+                    };
+                    // Fracs verified scenario-invariant across track1/4cars and
+                    // track3/2cars (identical bits in both captures). The
+                    // prompt fy is 0.0933334082 (bits 0x3dbf2596) — an earlier
+                    // pass baked 0.0900 by reading the ROUNDED preview output
+                    // ("xy_f=(0.10,0.09)") instead of the raw float, which put
+                    // the line ~2px low.
+                    static const StandLine kStand[3] = {
+                        {L"MASHED",            0.1f, 0.8758f,       0.0566f, 0u},
+                        {L"Current Standings", 0.1f, 0.8433f,       0.0425f, 0u},
+                        {L"\x81 Continue",     0.1f, 0.0933334082f, 0.0425f,
+                                                                 0xff10ec00u},
+                    };
+                    for (const StandLine& L_ : kStand) {
+                        const float x_px = L_.fx * static_cast<float>(kWidth);
+                        const float y_px =
+                            (1.0f - L_.fy) * static_cast<float>(kHeight);
+                        const float h_px =
+                            L_.fscale * static_cast<float>(kHeight);
+                        // anchor_left: the original is left-aligned at frac_x
+                        // (FUN_00427680 default align), not centered.
+                        DrawMashedString(L_.s, x_px, y_px, h_px, 0xffffffffu,
+                                         /*anchor_left=*/true,
+                                         /*grad_bot_frac=*/1.0f,
+                                         /*anchor_right=*/false,
+                                         /*ctrl_glyph_argb=*/L_.ctrl);
+                    }
                 }
                 // Laps mode: player lap + race position (top-right).
                 if (g_track.race_mode() == 1 && g_track.countdown() <= 0.f) {

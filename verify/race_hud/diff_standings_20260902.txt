@@ -1,0 +1,85 @@
+== f2019 (A: 5 draws, x1.0) vs f1338 (B: 7 draws, x1.0)
+   matched 0  mismatched 0  missing 5  extra 7
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=00000000  @0x450c7a,0x4271ed
+  MISSING  A[  1] x=   0.00 y=   0.00 w= 640.00 h= 80.00 col=ff000000  @0x472db4,0x42a2ad
+  MISSING  A[  2] x=   0.00 y= 416.00 w= 640.00 h= 80.00 col=ff000000  @0x472db4,0x42a2d9
+  MISSING  A[  3] x=   0.00 y= 416.00 w= 640.00 h=  1.00 col=ffffffff  @0x472db4,0x42a307
+  MISSING  A[  4] x=   0.00 y=  80.00 w= 640.00 h=  1.00 col=ffffffff  @0x472db4,0x42a32c
+  EXTRA    B[  0] x=  20.00 y=  24.00 w=  22.00 h= 20.00 col=ffe04040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  1] x=  20.00 y=  50.00 w=  22.00 h= 20.00 col=ff40a0ff tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  2] x=  50.00 y=  50.00 w=  10.00 h= 20.00 col=ff40a0ff tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  3] x=  20.00 y=  76.00 w=  22.00 h= 20.00 col=ff40d060 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  4] x=  20.00 y= 102.00 w=  22.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  5] x=  50.00 y= 102.00 w=  10.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  6] x=  64.00 y= 102.00 w=  10.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+== f2020 (A: 5 draws, x1.0) vs f1339 (B: 7 draws, x1.0)
+   matched 0  mismatched 0  missing 5  extra 7
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=00000000  @0x450c7a,0x4271ed
+  MISSING  A[  1] x=   0.00 y=   0.00 w= 640.00 h= 80.00 col=ff000000  @0x472db4,0x42a2ad
+  MISSING  A[  2] x=   0.00 y= 416.00 w= 640.00 h= 80.00 col=ff000000  @0x472db4,0x42a2d9
+  MISSING  A[  3] x=   0.00 y= 416.00 w= 640.00 h=  1.00 col=ffffffff  @0x472db4,0x42a307
+  MISSING  A[  4] x=   0.00 y=  80.00 w= 640.00 h=  1.00 col=ffffffff  @0x472db4,0x42a32c
+  EXTRA    B[  0] x=  20.00 y=  24.00 w=  22.00 h= 20.00 col=ffe04040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  1] x=  20.00 y=  50.00 w=  22.00 h= 20.00 col=ff40a0ff tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  2] x=  50.00 y=  50.00 w=  10.00 h= 20.00 col=ff40a0ff tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  3] x=  20.00 y=  76.00 w=  22.00 h= 20.00 col=ff40d060 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  4] x=  20.00 y= 102.00 w=  22.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  5] x=  50.00 y= 102.00 w=  10.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  6] x=  64.00 y= 102.00 w=  10.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+== f2021 (A: 5 draws, x1.0) vs f1340 (B: 7 draws, x1.0)
+   matched 0  mismatched 0  missing 5  extra 7
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=00000000  @0x450c7a,0x4271ed
+  MISSING  A[  1] x=   0.00 y=   0.00 w= 640.00 h= 80.00 col=ff000000  @0x472db4,0x42a2ad
+  MISSING  A[  2] x=   0.00 y= 416.00 w= 640.00 h= 80.00 col=ff000000  @0x472db4,0x42a2d9
+  MISSING  A[  3] x=   0.00 y= 416.00 w= 640.00 h=  1.00 col=ffffffff  @0x472db4,0x42a307
+  MISSING  A[  4] x=   0.00 y=  80.00 w= 640.00 h=  1.00 col=ffffffff  @0x472db4,0x42a32c
+  EXTRA    B[  0] x=  20.00 y=  24.00 w=  22.00 h= 20.00 col=ffe04040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  1] x=  20.00 y=  50.00 w=  22.00 h= 20.00 col=ff40a0ff tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  2] x=  50.00 y=  50.00 w=  10.00 h= 20.00 col=ff40a0ff tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  3] x=  20.00 y=  76.00 w=  22.00 h= 20.00 col=ff40d060 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  4] x=  20.00 y= 102.00 w=  22.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  5] x=  50.00 y= 102.00 w=  10.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  6] x=  64.00 y= 102.00 w=  10.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+== f2022 (A: 5 draws, x1.0) vs f1341 (B: 7 draws, x1.0)
+   matched 0  mismatched 0  missing 5  extra 7
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=00000000  @0x450c7a,0x4271ed
+  MISSING  A[  1] x=   0.00 y=   0.00 w= 640.00 h= 80.00 col=ff000000  @0x472db4,0x42a2ad
+  MISSING  A[  2] x=   0.00 y= 416.00 w= 640.00 h= 80.00 col=ff000000  @0x472db4,0x42a2d9
+  MISSING  A[  3] x=   0.00 y= 416.00 w= 640.00 h=  1.00 col=ffffffff  @0x472db4,0x42a307
+  MISSING  A[  4] x=   0.00 y=  80.00 w= 640.00 h=  1.00 col=ffffffff  @0x472db4,0x42a32c
+  EXTRA    B[  0] x=  20.00 y=  24.00 w=  22.00 h= 20.00 col=ffe04040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  1] x=  20.00 y=  50.00 w=  22.00 h= 20.00 col=ff40a0ff tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  2] x=  50.00 y=  50.00 w=  10.00 h= 20.00 col=ff40a0ff tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  3] x=  20.00 y=  76.00 w=  22.00 h= 20.00 col=ff40d060 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  4] x=  20.00 y= 102.00 w=  22.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  5] x=  50.00 y= 102.00 w=  10.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  6] x=  64.00 y= 102.00 w=  10.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+== f2023 (A: 5 draws, x1.0) vs f1342 (B: 7 draws, x1.0)
+   matched 0  mismatched 0  missing 5  extra 7
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=00000000  @0x450c7a,0x4271ed
+  MISSING  A[  1] x=   0.00 y=   0.00 w= 640.00 h= 80.00 col=ff000000  @0x472db4,0x42a2ad
+  MISSING  A[  2] x=   0.00 y= 416.00 w= 640.00 h= 80.00 col=ff000000  @0x472db4,0x42a2d9
+  MISSING  A[  3] x=   0.00 y= 416.00 w= 640.00 h=  1.00 col=ffffffff  @0x472db4,0x42a307
+  MISSING  A[  4] x=   0.00 y=  80.00 w= 640.00 h=  1.00 col=ffffffff  @0x472db4,0x42a32c
+  EXTRA    B[  0] x=  20.00 y=  24.00 w=  22.00 h= 20.00 col=ffe04040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  1] x=  20.00 y=  50.00 w=  22.00 h= 20.00 col=ff40a0ff tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  2] x=  50.00 y=  50.00 w=  10.00 h= 20.00 col=ff40a0ff tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  3] x=  20.00 y=  76.00 w=  22.00 h= 20.00 col=ff40d060 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  4] x=  20.00 y= 102.00 w=  22.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  5] x=  50.00 y= 102.00 w=  10.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  6] x=  64.00 y= 102.00 w=  10.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+== f2024 (A: 5 draws, x1.0) vs f1343 (B: 7 draws, x1.0)
+   matched 0  mismatched 0  missing 5  extra 7
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=00000000  @0x450c7a,0x4271ed
+  MISSING  A[  1] x=   0.00 y=   0.00 w= 640.00 h= 80.00 col=ff000000  @0x472db4,0x42a2ad
+  MISSING  A[  2] x=   0.00 y= 416.00 w= 640.00 h= 80.00 col=ff000000  @0x472db4,0x42a2d9
+  MISSING  A[  3] x=   0.00 y= 416.00 w= 640.00 h=  1.00 col=ffffffff  @0x472db4,0x42a307
+  MISSING  A[  4] x=   0.00 y=  80.00 w= 640.00 h=  1.00 col=ffffffff  @0x472db4,0x42a32c
+  EXTRA    B[  0] x=  20.00 y=  24.00 w=  22.00 h= 20.00 col=ffe04040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  1] x=  20.00 y=  50.00 w=  22.00 h= 20.00 col=ff40a0ff tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  2] x=  50.00 y=  50.00 w=  10.00 h= 20.00 col=ff40a0ff tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  3] x=  20.00 y=  76.00 w=  22.00 h= 20.00 col=ff40d060 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  4] x=  20.00 y= 102.00 w=  22.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  5] x=  50.00 y= 102.00 w=  10.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+  EXTRA    B[  6] x=  64.00 y= 102.00 w=  10.00 h= 20.00 col=ffe0c040 tex=0 blend=1:5/6  @0x76df8<HudIm2DQuad+0x188>,0x186b8<WinMain@16+0x1878>
+VERDICT: RED (match=0 mismatch=0 missing=30 extra=42)

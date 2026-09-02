@@ -1,0 +1,85 @@
+== f2014 (A: 5 draws, x1.0) vs f1291 (B: 15 draws, x0.8)
+   matched 4  mismatched 0  missing 1  extra 11
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 640.00 h=480.00 col=00dcdcff  @0x450c7a,0x42888d
+  EXTRA    B[  4] x=  33.00 y=  83.00 w=  42.00 h= 48.00 col=ffe04040 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  5] x=  33.00 y= 136.00 w=  42.00 h= 48.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  6] x=  87.00 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  7] x=  94.75 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  8] x= 102.50 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  9] x= 110.25 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 10] x=  33.00 y= 189.00 w=  42.00 h= 48.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 11] x=  87.00 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 12] x=  94.75 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 13] x= 102.50 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 14] x=  33.00 y= 243.00 w=  42.00 h= 48.00 col=ffe0c040 tex=0 blend=1:5/6  @0x770b8,0x18978
+== f2015 (A: 5 draws, x1.0) vs f1292 (B: 15 draws, x0.8)
+   matched 4  mismatched 0  missing 1  extra 11
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 640.00 h=480.00 col=00dcdcff  @0x450c7a,0x42888d
+  EXTRA    B[  4] x=  33.00 y=  83.00 w=  42.00 h= 48.00 col=ffe04040 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  5] x=  33.00 y= 136.00 w=  42.00 h= 48.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  6] x=  87.00 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  7] x=  94.75 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  8] x= 102.50 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  9] x= 110.25 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 10] x=  33.00 y= 189.00 w=  42.00 h= 48.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 11] x=  87.00 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 12] x=  94.75 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 13] x= 102.50 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 14] x=  33.00 y= 243.00 w=  42.00 h= 48.00 col=ffe0c040 tex=0 blend=1:5/6  @0x770b8,0x18978
+== f2016 (A: 5 draws, x1.0) vs f1293 (B: 15 draws, x0.8)
+   matched 4  mismatched 0  missing 1  extra 11
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 640.00 h=480.00 col=00dcdcff  @0x450c7a,0x42888d
+  EXTRA    B[  4] x=  33.00 y=  83.00 w=  42.00 h= 48.00 col=ffe04040 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  5] x=  33.00 y= 136.00 w=  42.00 h= 48.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  6] x=  87.00 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  7] x=  94.75 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  8] x= 102.50 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  9] x= 110.25 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 10] x=  33.00 y= 189.00 w=  42.00 h= 48.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 11] x=  87.00 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 12] x=  94.75 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 13] x= 102.50 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 14] x=  33.00 y= 243.00 w=  42.00 h= 48.00 col=ffe0c040 tex=0 blend=1:5/6  @0x770b8,0x18978
+== f2017 (A: 5 draws, x1.0) vs f1294 (B: 15 draws, x0.8)
+   matched 4  mismatched 0  missing 1  extra 11
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 640.00 h=480.00 col=00dcdcff  @0x450c7a,0x42888d
+  EXTRA    B[  4] x=  33.00 y=  83.00 w=  42.00 h= 48.00 col=ffe04040 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  5] x=  33.00 y= 136.00 w=  42.00 h= 48.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  6] x=  87.00 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  7] x=  94.75 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  8] x= 102.50 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  9] x= 110.25 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 10] x=  33.00 y= 189.00 w=  42.00 h= 48.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 11] x=  87.00 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 12] x=  94.75 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 13] x= 102.50 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 14] x=  33.00 y= 243.00 w=  42.00 h= 48.00 col=ffe0c040 tex=0 blend=1:5/6  @0x770b8,0x18978
+== f2018 (A: 5 draws, x1.0) vs f1295 (B: 15 draws, x0.8)
+   matched 4  mismatched 0  missing 1  extra 11
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 640.00 h=480.00 col=00dcdcff  @0x450c7a,0x42888d
+  EXTRA    B[  4] x=  33.00 y=  83.00 w=  42.00 h= 48.00 col=ffe04040 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  5] x=  33.00 y= 136.00 w=  42.00 h= 48.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  6] x=  87.00 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  7] x=  94.75 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  8] x= 102.50 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  9] x= 110.25 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 10] x=  33.00 y= 189.00 w=  42.00 h= 48.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 11] x=  87.00 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 12] x=  94.75 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 13] x= 102.50 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 14] x=  33.00 y= 243.00 w=  42.00 h= 48.00 col=ffe0c040 tex=0 blend=1:5/6  @0x770b8,0x18978
+== f2019 (A: 5 draws, x1.0) vs f1296 (B: 15 draws, x0.8)
+   matched 4  mismatched 0  missing 1  extra 11
+  MISSING  A[  0] x=   0.00 y=   0.00 w= 640.00 h=480.00 col=00dcdcff  @0x450c7a,0x42888d
+  EXTRA    B[  4] x=  33.00 y=  83.00 w=  42.00 h= 48.00 col=ffe04040 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  5] x=  33.00 y= 136.00 w=  42.00 h= 48.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  6] x=  87.00 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  7] x=  94.75 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  8] x= 102.50 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[  9] x= 110.25 y= 151.50 w=   6.75 h= 17.00 col=ff40a0ff tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 10] x=  33.00 y= 189.00 w=  42.00 h= 48.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 11] x=  87.00 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 12] x=  94.75 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 13] x= 102.50 y= 204.50 w=   6.75 h= 17.00 col=ff40d060 tex=0 blend=1:5/6  @0x770b8,0x18978
+  EXTRA    B[ 14] x=  33.00 y= 243.00 w=  42.00 h= 48.00 col=ffe0c040 tex=0 blend=1:5/6  @0x770b8,0x18978
+VERDICT: RED (match=24 mismatch=0 missing=6 extra=66)
