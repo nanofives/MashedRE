@@ -1,13 +1,12 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-02T18:00:00Z",
+  "updatedAt": "2026-09-02T19:30:00Z",
   "sections": [
     {
       "heading": "Project Status",
       "fields": [
-        { "label": "Current branch", "value": "race/first-frame-parity", "kind": "text" },
+        { "label": "Current branch", "value": "race/first-frame-parity (pushed)", "kind": "text" },
         { "label": "ROADMAP", "value": "v3 (2026-08-15); D0 DONE, D1-D2 blocked, D3-D5 open", "kind": "text" },
-        { "label": "Phase D0", "value": "DONE 2026-08-18 (audit, flag inventory, linkage gap resolved)", "kind": "text" },
         { "label": "Phase D1", "value": "BLOCKED: renderer divergence accumulates multi-round (state leakage)", "kind": "text" },
         { "label": "Phase D2", "value": "BLOCKED: steer defect with MASHED_REAL_PHYSICS (missing steer→lateral vel)", "kind": "text" }
       ]
@@ -18,36 +17,34 @@
         { "label": "Total rows", "value": 5930, "kind": "number" },
         { "label": "First-party", "value": "3,682 (28.8% C3+)", "kind": "text" },
         { "label": "C3 (Frida verified)", "value": 924, "kind": "number" },
-        { "label": "C4 (canonical)", "value": 0, "kind": "number" },
-        { "label": "Strongest subsystems", "value": ["save 93.8%", "frontend 68.9%", "ai 61.0%"], "kind": "list" }
+        { "label": "C4 (canonical)", "value": 0, "kind": "number" }
       ]
     },
     {
       "heading": "Open Debt",
       "fields": [
         { "label": "STUBS", "value": 1107, "kind": "number" },
-        { "label": "UNCERTAINTIES", "value": 2999, "kind": "number" },
+        { "label": "UNCERTAINTIES", "value": "2999 + U-9070..U-9077 filed this lane", "kind": "text" },
         { "label": "DEFERRED", "value": 43, "kind": "number" },
         { "label": "PROMOTION_QUEUE", "value": "empty", "kind": "text" }
       ]
     },
     {
-      "heading": "Current Lane",
+      "heading": "Standings port — lane CLOSED 2026-09-02",
       "fields": [
-        { "label": "Work", "value": "In-race UI/HUD port — measure phase (original-side capture)", "kind": "text" },
-        { "label": "Tool added", "value": "re/frida/race_hud_burst.py (3-channel in-race draw capture)", "kind": "text" },
-        { "label": "DAT_0063ba8c", "value": "3 = driving, 5/6/7 = standings (newly pinned)", "kind": "text" },
-        { "label": "Key finding", "value": "No driving HUD exists — the in-race UI is the standings/results overlay (guard 5/6/7)", "kind": "text" },
-        { "label": "Reference captured", "value": "state-7 standings, frame-accurate: 5 quads + 3 strings + 10 Im3D per frame", "kind": "text" },
-        { "label": "Frame boundaries", "value": "SOLVED — d3d9 shim exports MashedShim_PresentCounter; every draw tagged with its frame (30 frames, zero variance)", "kind": "text" },
-        { "label": "Blocked on", "value": "icons/score bars/point circles are on the Im3D pipe, undecoded; emitters 0x00422a50 + 0x00555187 need Ghidra (unavailable on account2)", "kind": "text" },
-        { "label": "Ported so far", "value": ["chrome: letterbox bands + 2 rules (4/4 matched, 0 mismatch)", "text: MASHED / Current Standings at normalised coords", "prompt: green 0x81 nav glyph + Continue (10 glyphs, 1 ctrl-coloured)", "rows: scaled + placed on measured layout (exact to the pixel)"], "kind": "list" },
-        { "label": "Row layout source", "value": "pixel-measured from orig_drive_late.png — that layer is on RW pipeline slots, in no draw list; art still placeholder", "kind": "text" },
-        { "label": "Scenario check", "value": "chrome + text bit-identical across track1/4cars and track3/2cars; both diffs match=24 mismatch=0", "kind": "text" },
-        { "label": "BLOCKED — needs account3", "value": "art port: decompile 0x0041c9a0 (state-7 standings renderer) + 0x0041b340 (states 5/6); Ghidra MCP hard-blocked on account2", "kind": "text" },
-        { "label": "Capture requirement", "value": "MASHED_RES=800x600 — ScreenWidth thunk is hardcoded 800 while kWidth defaults 640, so chrome lands off-screen otherwise", "kind": "text" },
-        { "label": "Diff residuals", "value": ["missing 1/frame: 512x512 transparent no-op quad", "extra 11/frame: [SCAFFOLD] pips + score bars (raw-px, overlap the title)"], "kind": "list" },
-        { "label": "Prior", "value": "8 C3s landed (raster, ghost, AI, util); 3 blocked on preconditions", "kind": "text" }
+        { "label": "Headline", "value": "There is NO driving HUD — DAT_0063ba8c 3=driving (nothing drawn), 5/6/7=standings overlay", "kind": "text" },
+        { "label": "Done + verified", "value": ["chrome + entry slide (matched 4/0, two scenarios, through the animation)", "text + 0x81 prompt glyph at normalised coords", "badges bound to real Player Colour DAT_007f1a1c", "point circles, bar cells, max 8/12 binding"], "kind": "list" },
+        { "label": "Still approximate", "value": ["U-9077 bar frame single-UV (4-piece tried and FALSIFIED)", "U-9070 colour-5 badge, U-9071 crown, U-9073/74/76", "bar pixel parity ~58-70: uniform librw-vs-RW, not dash phase"], "kind": "list" },
+        { "label": "Next slice", "value": "reverse endpointpanel per-atom RW frame transforms — unblocks U-9077 and replaces the pixel-measured layout; needs Ghidra", "kind": "text" },
+        { "label": "Commits", "value": 8, "kind": "number" }
+      ]
+    },
+    {
+      "heading": "Capture rules (cost real time)",
+      "fields": [
+        { "label": "Mandatory", "value": "MASHED_RES=800x600 for standalone captures — else chrome is off-screen and the diff still says matched", "kind": "text" },
+        { "label": "Frame boundary", "value": "d3d9 shim MashedShim_PresentCounter; no in-game fn is once-per-frame", "kind": "text" },
+        { "label": "Trap", "value": "degenerate verification bit 3x — force DISTINCT known inputs before believing any binding", "kind": "text" }
       ]
     }
   ]

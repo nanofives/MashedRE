@@ -1,96 +1,95 @@
 # Next session — kickoff prompt
 
-Written at the end of the 2026-09-02 parent booted-race session (tip `c6505667` on
-`race/first-frame-parity`, tree clean, `re/PROMOTION_QUEUE.md` empty). Paste the block below.
+Written at the end of the 2026-09-02 **standings-port** lane (tip `b75fc0d1` on
+`race/first-frame-parity`, tree clean, pushed). Paste the block below.
 
 ---
 
-Resume the Mashed parent booted-race lane. Branch `race/first-frame-parity` @ `c6505667`, tree
-clean, `re/PROMOTION_QUEUE.md` empty, no children running, no worktrees or pool slots held.
+Resume the Mashed in-race UI lane. Branch `race/first-frame-parity` @ `b75fc0d1`,
+tree clean, no children running, no worktrees or pool slots held.
 
-Read `re/analysis/CHANGELOG.md` (head only — newest first, the 2026-09-02 entries) and the memory
-index before acting. Do NOT re-read the whole session history; the CHANGELOG entries are written to
-be self-contained.
+Read `re/analysis/race_hud_capture_20260902.md` — start with **"State of the
+standings port"**, then Findings 13-19. Do NOT re-read the whole file top to
+bottom; the early Findings contain conclusions that later Findings in the SAME
+file overturn (they are struck in place, but reading them cold will mislead you).
+The four struck ones are: guard value 7 "never observed", the Im3D arg decode,
+the `0x004c1be0` frame anchor, and "the car icon is a flat colour swatch".
 
-**State.** 8 C3s landed 2026-09-02: `0x0045dbe0` FloatSlider2Adjust (util), `0x00411ae0`
-Ghost::PlaybackTick (vehicle), `0x004161e0` AiSplineTargetInit (ai), and five render raster rows
-`0x004c7600` / `0x004c76f0` / `0x004c7860` / `0x004d5310` / `0x004d5340`. All verified by booted
-in-race A/B self-tests with a control hook in the same boot.
+**The headline finding, so you do not re-derive it: there is NO driving HUD.**
+`DAT_0063ba8c == 3` is mid-race driving and draws exactly one fully transparent
+quad per frame with the font pipe silent. `5/6/7` are the between-round
+**standings** screen, which is precisely `HudIngameDispatch 0x0040dfc0`'s
+`{5,6,7}` guard. "In-race UI" means the standings overlay. State 7 needs a ~28 s
+settle to reach; state 5 draws no chrome at all.
 
-**Two harnesses were built and are the main leverage available to you:**
-- `scenario_launch.py --observe-texture-cluster` with `MASHED_OBSERVE_SPEC=<spec.json>` and
-  `MASHED_OBSERVE_OUT=<name>` — records args, return value and per-row observables for ANY set of
-  RVAs during a real booted run, and prints a per-row degenerate/non-degenerate verdict. `obs`
-  entries can dereference an argument (post-call) or read an **absolute block pre AND post**, so a
-  within-call delta is available. Shared agent code lives in `re/frida/observe_block.js`; specs in
-  `re/frida/specs/`.
-- `replay_session.py --observe` — same capture, but driving a **recorded human input trace**
-  instead of the auto-driver. This reaches game states the auto-driver cannot: it is what made
-  `Ghost::PlaybackTick` witnessable after the auto-driver made it look inert.
+## What is DONE and verified — do not redo
 
-**Pick up one of these, in descending value:**
+| element | evidence |
+|---|---|
+| letterbox chrome + white rules | draw-list diff `matched 4 / mismatched 0`, across two scenarios AND through the entry animation |
+| chrome entry **slide** (5 frames, `B` −65→0 in 640-space, alpha constant) | both sides byte-identical, guard 6 + 7 |
+| text: `MASHED` / `Current Standings` / `\x81 Continue` | normalised coords (y is BOTTOM-origin), UTF-16, prompt glyph `0x81` in ctrl green |
+| per-car badges bound to real Player Colour (`DAT_007f1a1c`) | non-degenerate: distinct colours → distinct correct badges |
+| point circles, bar cells, `max` 8/12 binding | non-degenerate: distinct scores, and rule 1 vs 0 move as predicted |
 
-1. **The 5 allocator/stream-reader rows of the texture/raster cluster** — `0x004c77c0` RasterCreate,
-   `0x004cc5e0`, `0x004cee90`, `0x004cefd0`, `0x004db2e0`. All C2, no reimpl. They were deliberately
-   NOT dispatched to the round-3 child: their only measured observable is a freshly allocated
-   pointer, so an A/B cannot compare returns (the modded pass allocates a second object) and
-   stubbing the allocator is unsafe because the result is dereferenced downstream. **This is a
-   design task first, not an authoring task.** The candidate design is the two-boot structural
-   comparison written up in
-   `re/analysis/promote_c2_vehicle_lowrva/replay_ghost_family_witness_20260902.md` — and note it is
-   deliberately weaker than bit-identity, because heap pointers differ per boot, so it compares
-   structure (which fields are null, invariants between fields, branch flags). Decide whether that
-   clears the C3 bar BEFORE authoring anything.
+## What is still approximate
 
-2. **`FUN_0043d2a0`** — the revised unblock for `0x0047b9e0`. That row needs TWO independent
-   preconditions, not one: an effect ID of `0x1f`/`0x21` in the table at `0x0067ed3c + idx*0x40`,
-   **and** `DAT_007f0f50 != 0`. The second was measured 0 in every run including with powerups
-   enabled, and `FUN_0043d2a0` (write site `0x0043d3c6`) is its only semantic writer. Characterise
-   when it runs and what makes it write non-zero. Do this before any powerup-scenario work for this
-   row — an earlier claim that one powerup scenario would unblock both `0x0047b9e0` and
-   `0x00415200` was measured and partly disproved; it holds only for `0x00415200`.
+- **U-9077** — the bar frame is a single-UV (a22) approximation of the original's
+  4-piece `a20`-`a23` composition. **The 4-piece was tried and FALSIFIED**: the
+  UVs are known but their *screen placement is not in the DFF* (only relative
+  model-X; the transform lives in the RW camera), and the only DFF-derivable
+  mapping made imgdiff worse on every row (58→79, 58→82, 65→91, 70→94). Do not
+  retry it the same way — it needs the per-atom RW frame transforms first.
+- **U-9070** colour 5 (SHADOW) has no dedicated badge atomic; **U-9071** crown
+  trigger/position; **U-9074** which pipeline slot carries the sprites (moot);
+  **U-9073** guard values 8/9/0xa/0xb; **U-9076** row rects are visible-ink
+  extents, not emitter args.
+- `DAT_0067ea64` / participant-count determinants of `max` are unmodelled.
+- Cross-renderer bar pixel parity: imgdiff ~58-70 per bar, established as a
+  **uniform** librw-vs-RW render difference (region grid is flat across the bar),
+  NOT dash phase — that attribution was tested and corrected.
 
-3. **A powerup-forcing scenario** for `0x00415200` AiVehicle0ZeroProgressGuard, whose gate IS the
-   powerup case directly (7/9/0xb/0x10/0x11). Its port is already authored and installed and its
-   self-test already exists; the row fires ~1 run in 8, and the one green run predates its
-   `ret1/ret0` coverage counters, so it needs a reproducible trigger and then a re-run requiring
-   `ret1>0 AND ret0>0`. Useful lever already proven: `--powerups <n>` does take effect
-   (`DAT_0067e9f8` moves 0 -> 1, and the indexed record then holds `0x16`).
+## The obvious next slice
 
-4. **A completed Time Trial lap.** This unblocks `0x00411870` Replay::LapFinish (gate:
-   `DAT_008991bc == 0xb && FUN_0040e350() == 6`, and the sector counter reaches only 1 in 150 s
-   because the auto-driver never steers) AND the three unverified arms of the freshly-promoted
-   `0x00411ae0`. Needs a human lap recorded via `record_session.py --name tt-lap --cov
-   0x00411870,0x00411ae0,0x00411d90,0x00429310 --seconds 300`, then replayed. **This one requires
-   the user at the keyboard once** — ask, do not assume.
+Reverse the **endpointpanel per-atom RW frame transforms** to get true screen
+placement. That single piece unblocks U-9077 (4-piece frame), would replace the
+pixel-measured row layout (U-9076) with emitter-derived rects, and is the only
+thing standing between this screen and a fully derived port. Needs Ghidra.
 
-5. **Two infra defects, both filed with proposed fixes**: `GHIDRA-POOL-DOUBLE-ISSUE` in
-   `re/diag/KNOWN_ISSUES.md` (`ghidra_pool.ps1 acquire` can hand the same slot to two sessions; fix
-   is a root-level per-slot lock stamped with the owning session id), and the pre-existing
-   full-hook-set `--asi` replay exit (a full-hook-set replay of `003-race-drive` exits the game
-   partway through; verified pre-existing by rebuilding with the new TU removed).
+## Tooling built this lane
 
-**Standing rules that earned their place this session — do not relearn them:**
-- Build via PowerShell `& "mashedmod\build.bat"` and epoch-check the `.asi` is < 120 s old.
-- Every booted verification gets a **control hook known to fire in the same boot**. An absent log
-  with a live control is a real negative; an absent control means a broken run, not a negative.
-- **Arm coverage counters BEFORE the first run**, not after it turns green. A bare
-  `calls=N mism=0 ALL-GREEN` cannot separate "every compared field was exercised" from "the branch
-  never fired". Count each branch, each observable that actually CHANGED, and an XOR fold so a
-  repeated constant is visible.
-- **A write of an unchanged value is invisible to a delta test.** "Did not move" is not "did not
-  write". This produced a wrong "inert" verdict on `0x00411ae0` and a false MISMATCH on
-  `0x004d5310` in the same day.
-- **Count it before designing a witness for it.** `0x0047b9e0` had an "add an observable" task that
-  was premature: it executes 0 times in a race. One `MASHED_COUNT_RVAS` run beats a harness design.
-- **Check the callee is side-effect free before any run-both-and-compare A/B**, and where you
-  snapshot/restore, **validate the restore** by running the original twice and counting VOID on
-  disagreement.
-- **A dispatch declared `void` perturbs its callers.** Garbage EAX reaching a caller that gates on
-  the return value collapsed a whole child dataset. Dispatches must return the original's value.
-- Grep for the **sole `RH_ScopedInstall`** before promoting any row, and put the macro at file scope.
-- Shell state does NOT persist between tool calls — set env vars in the SAME command as the run.
-- Never `git worktree remove --force`; use `py -3.12 scripts/diag.py wt-remove <path>`.
+- `re/frida/race_hud_burst.py` — original-side in-race draw capture. Three
+  channels (Im2D quads / text at the font thunk AND glyph renderer / Im3D),
+  coverage counters, `--guard-eq` to pin the race state, `--free-run`,
+  `--bbdump`, `--driver warp|nav`.
+- `re/tools/`: `hudburst_to_drawlist.py`, `hud_rows_check.py`,
+  `hud_text_check.py`, `hud_text_fracs.py`, `band_slide_check.py`.
+- d3d9 shim exports `MashedShim_PresentCounter` — **Present is the only true
+  frame boundary in MASHED**; every captured draw is tagged with its real frame.
 
-Ask before spawning a fleet (it re-acquires worktrees and slots), and before anything needing a
-human at the keyboard.
+## Standing rules that cost real time this lane
+
+- **`MASHED_RES=800x600` is mandatory for standalone captures.**
+  `Standalone_ScreenWidth()` is a hardcoded 800 while `kWidth` defaults to 640, so
+  `ChromeBaseDraw` always emits 800-space; at 640x480 the chrome lands off-screen
+  AND `--scale-b 0.8` reports it as matched anyway. The diff will hide the defect.
+  Do NOT "fix" that thunk — it underpins the frontend's GREEN 118/118 scr1 baseline.
+- **Read raw values, never the formatted preview.** A rounded `xy_f=(0.10,0.09)`
+  baked a 2px error; `str_utf16` hid the `0x81` nav glyph as a "leading space".
+  Both shipped before being caught.
+- **No in-game function is once-per-frame.** `0x004c1be0` fires 5-10x per frame;
+  `DAT_0063ba8c` is mutated many times per frame so it cannot gate frames. Use
+  the shim Present counter.
+- **Never synthesise input during a capture window** — pulsing confirm carries the
+  game out of the race into standings and silently changes what you measure.
+- **The degenerate trap bit three times, differently each time**: all-same
+  characters, settled-only frames, all-same scores. Before believing any binding,
+  force DISTINCT known inputs and check the outputs differ AND match.
+- **The RW device vtable is a STRUCT** — past ~slot `0x120` it holds data, not
+  code. Attaching an Interceptor there crashes the game. Range-check.
+- Sweep `[UNCERTAIN]` markers at END of session: in a long single-session note the
+  early markers get answered by later findings, so filing them as you go creates
+  rows that are already resolved.
+- Kill only PIDs you spawned. Never `git worktree remove --force`.
+
+Ask before spawning a fleet or anything needing a human at the keyboard.
