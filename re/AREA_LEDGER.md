@@ -27,7 +27,38 @@ Spawned from the post-sweep integrated tip `036e8b5a` on `race/first-frame-parit
 
 | area | child session id | branch | pool slot | notes |
 |---|---|---|---|---|
-| render-texcluster | cmtk5y7ey07o5t920wnqrb7p8 | area/render-texcluster | (child-acquired) | Sonnet/high. Authors verbatim ports for the 5 RW device-vtable leaves `0x004d5340`, `0x004c76f0`, `0x004c7860`, `0x004d5310`, `0x004c7600` against the measured witness table in `re/analysis/bucket_00549580/r10_texture_cluster_capture.md`. **path1 is explicitly FORBIDDEN for these rows** (D3D9-backed; a synthetic raster gives a degenerate 0 or faults) — verification is the parent's booted capture only. |
+| render-texcluster | cmtk5y7ey07o5t920wnqrb7p8 | area/render-texcluster | Mashed_pool14 (released) | **CLOSED — 5/5 C3 landed, merged `eda80abd`, child stood down.** Sonnet/high. Ported the 5 RW device-vtable leaves against the r10 witness table. path1 was FORBIDDEN for these rows (D3D9-backed) and none was attempted; verification was the parent's booted capture only. **Took two submissions** — see below. |
+
+**Round-3 outcome: 5 C3s, and the rejected first submission was worth more than the second.**
+Round 1 was rejected on three defects, none of which was a wrong transcription:
+
+1. **Every dispatch was declared `void`**, so garbage EAX reached callers that gate further calls on
+   the return value. Observed call counts collapsed to 1–257; returning the original's value lifted
+   them to 641–769. The lesson generalises beyond this family: *a dispatch that drops the return
+   does not merely fail to test, it perturbs the thing it is measuring* — so the whole r1 dataset
+   was suspect, not just the row where the symptom showed.
+2. `RasterImageCopy` reported a **false mismatch**: the test asked "did the flag byte move" while
+   bit0 was already set, and an idempotent OR cannot move it. **Unobservable is not incorrect.**
+   Same trap that produced a wrong "inert" verdict on `Ghost::PlaybackTick` hours earlier.
+3. `RasterLockRead` compared against **hand-picked mock constants**, so the stub supplied both the
+   inputs and the expectation — a mis-read byte-swap would have agreed with itself and still printed
+   ALL-GREEN. Redesigned original-first.
+
+Coverage limits are recorded per row in `hooks.csv` rather than promoted silently: `RasterUnlock`
+and `RasterMipLock` are **oracle-based**, not A/Bs; `RasterMipLock`'s lock-failure arm went
+unexercised (769/769 succeeded); `RasterLockRead` keeps one residually circular field (the stride,
+synthesised by inverting the swap under test). Strongest two: `RasterCanLock` (both branch arms,
+71 clear / 58 device — disproving r8's worry that the constant-1 path dominates) and
+`RasterImageCopy` (writes its own observable, `VOID=0` over 769 calls).
+
+Also surfaced by this round: **GHIDRA-POOL-DOUBLE-ISSUE** (`re/diag/KNOWN_ISSUES.md`) — the parent
+was handed the child's slot by `ghidra_pool.ps1 acquire`. The transcriptions were unaffected only
+because the child had switched to Python PE parsing of the anchored exe after `DisasmPC.java`
+silently produced no file.
+
+**The 5 allocator/stream-reader rows remain undispatched.** The child declined them on the
+reasonable ground that a two-boot structural comparison is a fresh design phase deserving a clean
+context rather than a second brief in a spent session.
 
 **Why this round is ONE child and not two.** The r10 capture found 10 of the 12 texture/raster rows
 had a measured observable, and the obvious split was 5 device-vtable leaves + 5 allocators/stream
