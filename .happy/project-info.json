@@ -1,17 +1,22 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-02T20:15:00Z",
+  "updatedAt": "2026-09-02T20:20:00Z",
   "sections": [
     {
       "heading": "Parent booted-race lane (solo)",
       "fields": [
-        { "label": "Tip", "value": "race/first-frame-parity @ a9eb9776", "kind": "text" },
+        { "label": "Tip", "value": "race/first-frame-parity @ 64b1bf86", "kind": "text" },
         { "label": "PROMOTION_QUEUE", "value": "empty", "kind": "text" },
         { "label": "C3s this lane", "value": 8, "kind": "number" },
         { "label": "Promoted", "value": [
             "0x0045dbe0 FloatSlider2Adjust (util)",
             "0x00411ae0 Ghost::PlaybackTick (vehicle)",
-            "0x004161e0 AiSplineTargetInit (ai)"
+            "0x004161e0 AiSplineTargetInit (ai)",
+            "0x004c7600 RasterUnlock (render)",
+            "0x004c76f0 RasterCanLock (render)",
+            "0x004c7860 RasterMipLock (render)",
+            "0x004d5310 RasterImageCopy (render)",
+            "0x004d5340 RasterLockRead (render)"
           ], "kind": "list" }
       ]
     },
@@ -19,31 +24,31 @@
       "heading": "New harness",
       "fields": [
         { "label": "Capture", "value": "--observe-texture-cluster + MASHED_OBSERVE_SPEC, shared observe_block.js", "kind": "text" },
-        { "label": "Replay driver", "value": "replay_session.py --observe (reaches states the auto-driver cannot)", "kind": "text" }
+        { "label": "Replay driver", "value": "replay_session.py --observe (reaches states the auto-driver cannot)", "kind": "text" },
+        { "label": "Fleet", "value": "1 child, area/render-texcluster, merged after one rejected round", "kind": "text" }
       ]
     },
     {
       "heading": "Blocked, cause identified",
       "fields": [
-        { "label": "Powerup-gated", "value": [
-            "0x0047b9e0 - needs effect 0x1f or 0x21 active",
-            "0x00415200 - names powerup cases 7/9/0xb/0x10/0x11"
-          ], "kind": "list" },
-        { "label": "Needs a TT lap", "value": "0x00411870 Replay::LapFinish (DAT_008991bc must reach 0xb)", "kind": "text" },
-        { "label": "Next best investment", "value": "one powerup-forcing scenario unblocks two rows", "kind": "text" }
+        { "label": "0x0047b9e0", "value": "TWO preconditions: effect ID 0x1f/0x21 AND DAT_007f0f50 != 0 (measured 0 always). Characterise FUN_0043d2a0 first.", "kind": "text" },
+        { "label": "0x00415200", "value": "powerup cases 7/9/0xb/0x10/0x11; fires 1 run in 8", "kind": "text" },
+        { "label": "0x00411870", "value": "needs a completed Time Trial lap (DAT_008991bc must reach 0xb)", "kind": "text" }
       ]
     },
     {
       "heading": "Open items",
       "fields": [
         { "label": "Not started", "value": [
-            "render 12-row cluster: 5 device-vtable leaves LANDED; 5 allocator rows still need a design",
+            "5 allocator/stream-reader rows need the two-boot structural design",
             "render 9 DEMOTED rows (need a path1 harness)",
             "0x00411d90 CreateOrLoad (two acceptance designs written up)"
           ], "kind": "list" },
-        { "label": "Known broken", "value": "full-hook-set --asi replay exits mid-run (pre-existing)", "kind": "text" }
+        { "label": "Known broken", "value": [
+            "full-hook-set --asi replay exits mid-run (pre-existing)",
+            "ghidra_pool acquire can double-issue a slot (GHIDRA-POOL-DOUBLE-ISSUE)"
+          ], "kind": "list" }
       ]
     }
   ]
 }
-
