@@ -1080,6 +1080,67 @@ demo. Also, the standalone R6 demo cannot itself produce distinct colours (its c
 have no colour source); distinct-colour verification is via the deliberate poke or
 the nav car-select flow.
 
+## Finding 17: standings chrome ANIMATES (5-frame slide, no fade) — U-9075 resolved
+
+U-9075 asked what animates the standings chrome on entry (band alpha from `BL`,
+band offset `B = DAT_008991b4`). Reversed on account3 (Ghidra, `Mashed_pool14`) and
+verified against a state the diff had never covered.
+
+### What animates: a POSITION slide, not an alpha fade
+
+The chrome draw is `FUN_00429e10`. The band **alpha is a constant `0xff000000`
+literal** in every `ChromeBaseDraw`/`FUN_00472c60` argument — the Finding-14/7
+"[UNCERTAIN] alpha from BL" was **wrong**; there is no fade. The only variable is the
+band offset `B = DAT_008991b4`, which positions all four elements (top band `y=B`,
+bottom `480-B-64`, rules `B+80` and `480-B-64`):
+
+- **Init** `FUN_00429b70` (once, `DAT_008991b0==0`, submode ∈ {3,4,5}):
+  `DAT_008991b0=0xeb; DAT_008991b8=0; B = -(_DAT_005cd6c8 / tick)`, `_DAT_005cd6c8 =
+  48064.0`, `tick = DAT_0067ea56` — B starts **negative** (bands off-screen).
+- **Per-frame** `FUN_00429310`: `if (B != DAT_005d757c) { B += tick*_DAT_005cc9a4;
+  if (DAT_005d757c <= B) B = 0.0; }`, `_DAT_005cc9a4 = 0.025`, `DAT_005d757c = 0.0`
+  — B ramps **up to 0** and clamps, so the bands slide in from the edges. The
+  "Continue" prompt (`0xd1`) is gated on `B == 0.0`, i.e. only after settling.
+- **Teardown** `FUN_00429820`: `DAT_008991b0=0; B=0`.
+
+### Measured (the degenerate trap avoided)
+
+Settled frames show `B=0` in every state, so a settled-only sample would wrongly read
+"constant". Captured the **transition** instead (`race_hud_burst.py --free-run` across
+entry, every draw tagged with its true Present-counter frame index). Top-band y over
+f1681..f1686 (800-space): **`-81.25, -62.5, -43.75, -25.0, -6.25, 0.0`**, alpha
+`0xff` throughout — a 5-frame linear slide (+18.75/frame), then hold.
+
+Per-state (guard-gated captures): **state 5 draws no chrome** (360 frames, 0 bands);
+**states 6 and 7 both carry the identical slide** then settle (guard-6: slide
+f1954..f1958 `-81.25..-6.25`, settled f1959+). So the slide is the entry into the
+standings/results chrome, state 5 is the pre-chrome beat.
+
+### Ported and verified
+
+`exe_main.cpp` now ramps `band_off` from **-65 to 0 over 5 frames** (+15/frame in the
+640-space input; `ChromeBaseDraw` scales ×1.25, so it emits the measured
+`-81.25..0`), reset on the `standings` rising edge. Alpha stays `0xff` (unchanged).
+
+- **Ramp is byte-identical to the original.** Standalone drawstream top-band y over
+  f1141..f1146: `-81.25, -62.5, -43.75, -25.0, -6.25, 0.0`, alpha `0xff` — the same
+  six values as the measured original.
+- **Per-frame diff vs original guard-6 (slide + settled), matching 800-space scale:
+  matched 4, mismatched 0 on all six frames** — the ported chrome matches the
+  original through the animation, not just at rest (`verify/race_hud/
+  orig_guard6_frames.json` is the new committed guard-6 reference).
+- Settled diff vs the committed guard-7 reference: still **matched 4/0**.
+- **Coverage extended from state 7 to states 5/6/7** — the gap U-9075 point 2
+  flagged (5/6 never diffed) is closed: 5 = no chrome both sides, 6 = slide+settled
+  4/0, 7 = settled 4/0.
+
+`missing 1` = the transparent 512² quad (deliberately unported); `extra 18` = the
+standings badge/circle/bar rows (the RW-pipeline layer, invisible to the original's
+Im2D stream). Both pre-existing.
+
+**Disposition: U-9075 RESOLVED.** The chrome animates as a 5-frame position slide
+(no fade); modelled and verified per-frame against the original in states 6 and 7.
+
 ## Not done / next
 
 1. Recover the icons / score bars / point circles. They are on the RW **pipeline**

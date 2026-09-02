@@ -3021,16 +3021,35 @@ bool RenderFrame() {
             // ARGB: ChromeBaseDraw's own cited R<->B swap (U-3415) is the only
             // conversion, per the parity-harness colour convention.
             //
-            // [UNCERTAIN] The band alpha comes from BL, set before 0x0042a240;
-            // its animated source is not established. 0xff is the settled value
-            // observed in every captured frame, so the fade-in is not modelled.
+            // Chrome ENTRY SLIDE (U-9075 / Finding 17). The original slides the
+            // bands+rules in from the screen edges over ~6 frames on entry, then
+            // holds. It is a POSITION slide via the band offset B = DAT_008991b4,
+            // NOT an alpha fade: the alpha is a constant 0xff000000 literal in
+            // every ChromeBaseDraw arg (FUN_00429e10) -- the old "alpha from BL"
+            // note was wrong. The game inits B negative (FUN_00429b70:
+            // B = -(48064/tick), _DAT_005cd6c8=48064) and ramps it to 0 by
+            // +tick*0.025/frame (FUN_00429310, _DAT_005cc9a4=0.025), clamping at 0
+            // (DAT_005d757c=0.0). MEASURED on the original (race_hud_burst free-run
+            // across entry, per-frame Present index): top-band y =
+            // -81.25,-62.5,-43.75,-25,-6.25,0 over f1681..f1686 at 800-space,
+            // alpha 0xff throughout, identical in states 6 and 7 (state 5 draws no
+            // chrome). In this 640-space input that is band_off -65..0 by +15/frame
+            // (ChromeBaseDraw scales x1.25 to emit). Replicated as a 5-frame linear
+            // ramp; the port is fixed-60Hz like the shim-capped original measured.
             const bool standings = (g_track.round_winner() >= 0 ||
                                     g_track.match_winner() >= 0);
+            static int  s_chrome_slide = 6;      // >=6 settled; reset on entry edge
+            static bool s_stand_prev   = false;
+            if (standings && !s_stand_prev) s_chrome_slide = 0;   // rising edge
+            s_stand_prev = standings;
             if (standings) {
-                const float band_off = 0.0f;                        // DAT_008991b4
+                // band_off = B: -65 -> 0 over 5 frames (+15/frame), then holds.
+                float band_off = -65.0f + 15.0f * static_cast<float>(s_chrome_slide);
+                if (band_off > 0.0f) band_off = 0.0f;
+                if (s_chrome_slide < 6) ++s_chrome_slide;
                 const float band_h   = 80.0f;
-                const float bottom_y = 480.0f - band_off - 64.0f;   // = 416
-                const float rule_y   = band_off + 80.0f;            // = 80
+                const float bottom_y = 480.0f - band_off - 64.0f;  // settled = 416
+                const float rule_y   = band_off + 80.0f;           // settled = 80
                 ChromeBaseDraw(0.0f, band_off, 640.0f, band_h, 0xff000000u);
                 ChromeBaseDraw(0.0f, bottom_y, 640.0f, band_h, 0xff000000u);
                 ChromeBaseDraw(0.0f, bottom_y, 640.0f, 1.0f,   0xffffffffu);
