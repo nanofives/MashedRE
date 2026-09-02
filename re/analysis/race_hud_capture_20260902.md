@@ -1207,6 +1207,105 @@ non-degenerately. Minor flagged residuals: the frame is a single-UV approximatio
 the a20–a23 4-piece composition (only the empty-track dashes differ), and `max` is
 hardcoded 12 (8 in some modes).
 
+## Finding 19: U-9072 residuals — max binding done (B), 4-piece frame falsified (A)
+
+### Residual B — max = 8 vs 12: RESOLVED and bound
+
+`FUN_0040b890` (@`0x0040b890`) returns the bar's max: `max = 12` iff
+`FUN_0040e340()==4` **and** `FUN_0042f500()==0` **and** `DAT_007f0fd0 ∉ {1,2}`; else
+`8`. The leaves are simple getters: `FUN_0040e340 = DAT_008a94d0` = **participant
+count** (`= 4` for the standalone round — `TrackRenderer.cpp:3501/3675`);
+`FUN_0042f500 = DAT_0067ea64` = a setup flag written by the car-select family
+(`FUN_0043dfd0`/`FUN_0043f*`); `DAT_007f0fd0` = race rule. So a 4-player race at rule
+0 → max 12; rule 1/2 (or ≠4 players, or the flag) → max 8.
+
+**Frame-slot finding (the user's question):** the `OrangeDisplay` frame is a **fixed
+12-slot** dash pattern, and the dark fill scales *continuously* by `score/max`
+(Finding 18). So the visible cells = `round(score/max · 12)` — **NOT 1 cell/point**.
+The clean 1:1 seen at the default is a **max=12 coincidence**; at max=8, score 4 →
+`round(4/8·12)=6` cells. Ported: `exe_main.cpp` binds `max` from `race_rule()`
+(rule 1/2 → 8, else 12; participant count is 4 in the demo and `DAT_0067ea64` is
+unmodelled) and draws `round(score/max·12)` cells.
+
+**Observable verification** (`MASHED_ROUND_RULE` test hook added, like the score/colour
+pokes), scores poked to 8,7,5,4:
+
+| mode | max | emitted cells |
+|---|---|---|
+| rule 0 | 12 | **8 / 7 / 5 / 4** (unchanged; default preserved) |
+| rule 1 | 8 | **12 / 11 / 8 / 6** (= `round(score/8·12)`) |
+
+Cell counts differ in the predicted direction (more cells at max=8) — the mode→max
+binding and the non-1:1 mapping are both confirmed.
+
+### Residual A — 4-piece frame: ATTEMPTED, FALSIFIED, left open
+
+Falsifiable gate (stated up front by the owner): if the imgdiff residue were dash
+phase, composing the real 4 pieces should DROP the per-bar imgdiff. It did the
+opposite. **Explicit before/after** (identical crop/scores 8,7,5,4/frame selection,
+per-bar all-channel mean abs diff):
+
+| row | single-UV (baseline) | 4-piece (linear map) |
+|---|---|---|
+| 0 | 58.62 | 79.25 |
+| 1 | 58.50 | 81.80 |
+| 2 | 64.61 | 90.71 |
+| 3 | 70.12 | 93.69 |
+
+The 4-piece **raised** the diff by ~20–24 per row. Cause: the a20–a23 UVs are known
+(Finding 14) but their **screen placement is not in the DFF** — only relative model-X
+extents are, and the model→screen transform is the RW camera (the same limit Finding
+14 hit for the row layout). The only DFF-derivable mapping (linear: model span
+−0.1533..0.2499 → bar rect) puts the a23 **dark end cap over the right 57%** of the
+bar (verified visually — a large dark region, nothing like the mostly-orange
+reference). So the composition is not cleanly portable, and the single-UV a22 frame
+is retained (it reproduces the reference visual; the numeric cell gate is the
+acceptance).
+
+**Two attributions corrected by this:** (1) the residue is **not** dash phase — the
+imgdiff region grid is roughly uniform across the whole bar (row0 columns
+58/48/54/55/70/66) with 77% of pixels over threshold, i.e. a uniform
+render/alignment difference between librw and the original RW, not a frame-UV
+artefact; (2) a DFF-faithful change is only worth landing if the derivation is
+sound — here the piece placement is a guess that the metric rejects, so it is **not**
+landed. Residual A stays open (UVs known, per-piece screen placement unreversed) —
+filed as U-9077.
+
+Chrome regression after both changes: `matched 4 / mismatched 0` on all slide +
+settled frames vs `orig_guard6_frames.json`.
+
+## State of the standings port (end of this lane)
+
+**Faithful and verified** (draw-list diff or measured/observable gate):
+- Letterbox chrome — 4 rows, positions, colour, and the **5-frame entry slide** —
+  `matched 4/0` vs the original across states 5/6/7 (Findings 7, 17).
+- The three text strings + `\x81` prompt glyph — measured fracs, diff-matched
+  (Findings 8, 11, 12).
+- Car badge **per Player Colour** (`DAT_007f1a1c`) — non-degenerately verified with
+  distinct colours → distinct correct badges (Finding 16).
+- Point circles by `score_delta`; score-bar **dark cells = round(score/max·12)** over
+  the OrangeDisplay frame — cell counts + geometry match the measured original, and
+  the max=8/12 binding is observably correct (Findings 18, 19).
+
+**Approximate (flagged):**
+- Score-bar **frame** is a single OrangeDisplay UV sub-rect, not the real a20–a23
+  4-piece composition (U-9077 — screen placement unreversed).
+- `DAT_0067ea64` (a max=8 determinant) and the participant-count determinant are not
+  modelled; the port binds only the reachable `race_rule` leaf.
+- Cross-renderer pixel parity of the bar is ~58–70 mean abs diff (uniform
+  render/alignment difference; not closable across librw vs original RW).
+
+**What a future session would need to finish it:**
+- Reverse the endpointpanel widget's per-atom **screen frame transforms** (the RW
+  camera placement of a20–a23 and the badge/circle atoms) to render the frame as the
+  true 4-piece composition and to derive absolute placement instead of the
+  pixel-measured Finding-10 layout. This is the one remaining "needs the RW pipeline
+  structs" item from Finding 4/13.
+- Model `DAT_008a94d0` (participants) and `DAT_0067ea64` for the full max law.
+- Optionally, verbatim-render the endpointpanel clump (approach A from the 2026-09-02
+  handoff) if pixel-exact frame parity is ever required — but the Im2D path is
+  visually faithful and is the shipped choice.
+
 ## Not done / next
 
 1. Recover the icons / score bars / point circles. They are on the RW **pipeline**

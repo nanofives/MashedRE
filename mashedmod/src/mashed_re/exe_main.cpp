@@ -3154,9 +3154,21 @@ bool RenderFrame() {
                 const float bx = kBarX * kUiS;
                 const float by = (cy - kBarH * 0.5f) * kUiS;
                 const float bw = kBarW * kUiS, bh = kBarH * kUiS;
-                // OrangeDisplay (128x64) stacks TWO bar graphics; use the TOP
-                // half's frame sub-rect (the game's a22 mapping: u 0.178..1.0,
-                // v 0.0..0.5) so the single 17px bar isn't a squashed double.
+                // Frame: single OrangeDisplay sub-rect (a22 top-half, u 0.178..1.0
+                // v 0..0.5) stretched across the bar. U-9072 residual A tried the
+                // real 4-piece composition (a22 body left 43% + a23 dark end cap
+                // right 57%, from the DFF's model-X extents) but the DFF carries
+                // only RELATIVE model coords -- the model->screen transform is the
+                // RW camera, not in the DFF (same limit as Finding 14's row
+                // layout). The only DFF-derivable mapping (linear) placed the dark
+                // cap over the right 57% (clearly wrong vs the mostly-orange
+                // reference) and RAISED the per-bar imgdiff 58->79..94. So the
+                // 4-piece is NOT cleanly portable; the single-UV frame is retained
+                // (it reproduces the reference visual and the imgdiff residue is
+                // uniform render/alignment difference, not a frame-UV artefact --
+                // the earlier "dash phase" attribution was disproved by the region
+                // grid). Residual A stays OPEN (see Finding 19): UVs known, screen
+                // placement of the pieces unreversed.
                 std::uint32_t uvbar[4];
                 { const float f[4] = {0.178f, 0.0f, 1.0f, 0.5f};
                   std::memcpy(uvbar, f, sizeof(uvbar)); }
@@ -3165,8 +3177,25 @@ bool RenderFrame() {
                                 0xffffffffu, uvbar);   // orange frame, full width
                 else
                     HudIm2DQuad(0, bx, by, bw, bh, kFbCol[i], uvf);
-                int pts = s_hud_scores_set ? s_hud_scores[i] : g_track.score(i);
-                if (pts < 0) pts = 0;
+                // Cells shown = round(score/max * 12). The OrangeDisplay frame
+                // is a FIXED 12-slot pattern and the dark fill scales CONTINUOUSLY
+                // by score/max (FUN_0041c410 X-scale). max = 8 or 12
+                // (FUN_0040b890 @0x0040b890): 12 iff participants==4 (DAT_008a94d0,
+                // = 4 for the standalone round) AND race rule not in {1,2}
+                // (DAT_007f0fd0) AND the setup flag DAT_0067ea64==0; else 8. So at
+                // max=8 the mapping is NOT 1 cell/point (score 4 -> round(4/8*12)=
+                // 6 cells) -- the discrete-looking 1:1 is a max=12 coincidence.
+                // The port binds the reachable determinant (race_rule); the
+                // participant count is 4 in the demo and DAT_0067ea64 is unmodeled
+                // (defaults to the max=12 path).
+                const int rr = g_track.race_rule();
+                int maxpts = (rr == 1 || rr == 2) ? 8 : 12;
+                int score = s_hud_scores_set ? s_hud_scores[i] : g_track.score(i);
+                if (score < 0) score = 0;
+                if (score > maxpts) score = maxpts;
+                int pts = static_cast<int>(static_cast<float>(score) /
+                                           static_cast<float>(maxpts) * 12.0f
+                                           + 0.5f);   // nearest of 12 frame cells
                 if (pts > 12) pts = 12;
                 const float cellX0 = (kBarX + 3.0f) * kUiS;
                 const float cellPitch = 7.0f * kUiS;
@@ -7287,6 +7316,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                                 tok = std::strtok(nullptr, ",");
                             }
                         }
+                        // U-9072 residual B test hook: MASHED_ROUND_RULE=<n> sets
+                        // the race rule so a max=8 mode (rule 1 or 2, FUN_0040b890)
+                        // can be reached to confirm the bar's score->cell mapping
+                        // is score/max*12 (not 1:1). Not set in normal play.
+                        char rr[16] = {};
+                        if (GetEnvironmentVariableA("MASHED_ROUND_RULE", rr,
+                                                    sizeof(rr)) > 0)
+                            g_track.SetRaceRule(std::atoi(rr));
                     }
                 }
             }
