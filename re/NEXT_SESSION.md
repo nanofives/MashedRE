@@ -92,4 +92,26 @@ thing standing between this screen and a fully derived port. Needs Ghidra.
   rows that are already resolved.
 - Kill only PIDs you spawned. Never `git worktree remove --force`.
 
+## If you need Ghidra or any MCP — delegation policy
+
+**Ghidra MCP is hard-blocked on this account (account2).** When a task needs
+Ghidra decompilation, or any other MCP this account cannot reach:
+
+- Spawn a child on **account3** with `mcp__happy__spawn_child`, passing
+  `account: "claude3"` and **`model: "sonnet"`** — not opus. The child exists to
+  be an **MCP proxy**, not a second engineer.
+- **Do the heavy lifting in the parent session.** Keep the judgment work here:
+  what to ask, what counts as evidence, designing the verification, deciding
+  whether a result is degenerate, the port itself, and the tracker transaction.
+  Send the child narrow, well-specified questions and have it return
+  decompilation plus RVA-cited facts.
+- Give it the context it cannot infer: the measured facts it must NOT re-derive,
+  the traps below, and the working-tree state. A cheap model with a precise brief
+  outperforms an expensive one guessing at scope.
+- **Verify what it returns before acting on it.** Every claim relayed from a
+  child this lane was re-checked here first, and that caught real errors in both
+  directions (a false "no Resolved section exists" from the child, and an
+  unfounded wrong-file suspicion from me).
+- Stand it down with `mcp__happy__close_child` when the MCP work is done.
+
 Ask before spawning a fleet or anything needing a human at the keyboard.
