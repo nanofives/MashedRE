@@ -1437,6 +1437,29 @@ translation (`f00.pos = 0.05, 0.0, 0.075`) is discarded at runtime.
 | 2 | `8f c2 f5 3e  cd cc 4c 3d  00 00 80 3f` | 0.48 | 0.05 | 1.0 |
 | 3 | `8f c2 f5 3e  cd cc 4c bd  00 00 80 3f` | 0.48 | −0.05 | 1.0 |
 
+The table is **not a static constant** — it is populated at runtime by
+`FUN_0041cbc0` @`0x0041cbc0` (body `0x0041cbc0..0x0041cc44`, sole caller
+`FUN_004111c0` @`0x004111c0`), which builds the twelve dwords from inline immediates on
+its stack and block-copies them into `DAT_005f337c`, then zeroes `DAT_0063d270` (the
+crown-pulse tick). Verified in the binary at file offset `0x1cbc0`:
+
+```
+83 ec 30              SUB ESP,0x30
+56 57                 PUSH ESI / PUSH EDI
+b9 0c 00 00 00        MOV ECX,0xc              ; 12 dwords
+8d 74 24 08           LEA ESI,[ESP+8]          ; src = stack array
+bf 7c 33 5f 00        MOV EDI,0x005f337c       ; dst = the table
+c7 44 24 08 8f c2 f5 3e   MOV [ESP+0x08],0.48
+c7 44 24 0c 00 00 80 3e   MOV [ESP+0x0c],0.25
+c7 44 24 10 00 00 80 3f   MOV [ESP+0x10],1.0
+... (rows 1-3 identically) ...
+f3 a5                 REP MOVSD
+c7 05 70 d2 63 00 00 00 00 00   MOV [0x0063d270],0
+```
+
+So `FUN_0041cbc0` is the only known writer of the row positions, and
+`FUN_0041c410` the only reader.
+
 ### Result: the row layout is now derived, not measured
 
 Applying the row transform to the DFF geometry and projecting:
@@ -1491,6 +1514,13 @@ In the other direction, this session briefly claimed `DAT_005f337c` was not a fl
 table but `.text` instructions, on the strength of a local raw dump. That dump used a
 **broken RVA→file-offset mapping** (it read the section header's `VirtualSize` field
 where `VirtualAddress` was intended, so every lookup landed in the wrong section). The
-child's address was right: `0x005f337c` is in `.data`, file offset `0x1f337c`. Corrected
-here by re-reading the bytes with a fixed mapping. Both the wrong claim and the
-correction are recorded because the wrong one was stated to the child as fact.
+child's address was right: `0x005f337c` is in `.data`, file offset `0x1f337c`.
+
+The instructive part is that **both readings were true at once**, and the bug hid it.
+The bytes that dump surfaced were real `MOV [ESP+..], imm32` instructions — they are the
+initialiser `FUN_0041cbc0` at file `0x1cbc0`. What the broken mapper corrupted was only
+the *label*: it reported them at RVA `0x005e54b7` instead of `0x0041cbc0`. So "the 0.48
+immediates are in code" and "`DAT_005f337c` is a `.data` table" were never in conflict —
+the code writes the table. Chasing the mislabelled RVA cost a round; a plausible-looking
+disassembly at a wrong address was what made the false claim credible enough to state to
+the child as fact.
