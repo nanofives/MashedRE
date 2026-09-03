@@ -1543,9 +1543,48 @@ scale = (pulse, pulse, 1.0)                  // applied only when group+0x10c & 
 All four constants read from `.rdata`: `0x005cc94c` = `00 00 80 4f` = 4294967296.0,
 `0x005cc9c0` = `cd cc 4c 3e` = 0.2, `0x005cc8f0` = `9a 99 19 3e` = 0.15, `0x005cc320` =
 `00 00 80 3f` = 1.0. So the crown breathes +/-15% about its size at 0.2 rad/frame.
-Derived crown position is x 240.2 .. 277.7 (w 37.5), right of the point circle; no crown
-is visible at that location in `orig_stand7.bmp`, which is consistent with the `0x40`
-leader gate being clear in that frame but is **not** positive confirmation of placement.
+Derived crown position is x 240.2 .. 277.7 (w 37.5), vertically centred on the row, to
+the right of the point circle. The crown atomic's own frame origin sits at local
+x -0.325 -- exactly the centre of its quad -- so the scale pulses it about its centre.
+
+### U-9071 crown PORTED and numerically verified (position + pulse only)
+
+Ported in `exe_main.cpp`: the crown now draws at the derived rect
+(640-space centre x 259.0, row centre y, side `37.5 * pulse`) instead of the previous
+placeholder at the icon's top-left corner, and it pulses by the law above using a
+standings-frame tick that mirrors `DAT_0063d270`.
+
+Verified by measuring the standalone's own output over nine independent standings frames
+(`verify/run_32508/r6/*_result.bmp`, 800x600, `MASHED_ROUND=1`,
+`MASHED_ROUND_SCORES=8,7,5,4`, `MASHED_CROWN_TEST=0`; crown ink isolated to
+x 296..360 so the point circle, which ends at x=290 in 800-space, cannot contaminate it):
+
+| quantity | derived | measured |
+|---|---|---|
+| centre x (800-space) | 323.7 | **323.3** (mean of 9) |
+| row-0 centre y | 133.4 | **133.8** (mean of 9) |
+| side, envelope | 39.9 .. 53.9 | **38 .. 52** |
+
+Non-degenerate: the size varies across the nine frames (implied pulse 0.832 .. 1.109
+against a predicted 0.85 .. 1.15) while the centre stays put to within 0.5 px, which is
+the signature of a scale about the quad centre and not a reposition. Both measured ends
+sit ~2.5% under the predicted envelope by the same factor, consistent with the crown ink
+being slightly inset from its quad. Screenshot: `verify/race_hud/re_crown_u9071.png`.
+
+**Scope of that claim — read it narrowly.** This measures the port against the
+derivation, so it proves the port implements the DFF+`FUN_0041c410` law correctly. It is
+**not** a parity check: no capture in `verify/race_hud` has ever shown the original's
+crown, so there is no original-side reference to diff against. The derivation itself
+rests on the DFF geometry, the camera constants and the decompiled scale call, all cited
+above.
+
+`[UNCERTAIN]` **TRIGGER, unchanged.** The original gate is `group+0x10c & 0x40`, set from
+`DAT_0063cde8[playerIndex] != 0`, filled by `FUN_0040b930` at the top of `FUN_0041cc50`.
+`FUN_0040b930` is unreversed, so what earns a crown is unknown. The shipped gate was
+therefore left as-is (match end, leader only) and was **not** relaxed; the crown only
+appears above because `MASHED_CROWN_TEST=<car>` forces it, a verification-only poke in
+the same family as `MASHED_ROUND_COLOURS` / `MASHED_ROUND_RULE`. Reversing
+`FUN_0040b930` is what would close U-9071 fully.
 
 ### Port impact
 

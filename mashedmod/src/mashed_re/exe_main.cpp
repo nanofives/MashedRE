@@ -3239,18 +3239,65 @@ bool RenderFrame() {
                                          ? 0xff80ff80u : 0xff8080ffu);
                 }
                 // ---- leader crown (Panel.piz::PANEL.TXD NewPanelCrown) ------
-                // [UNCERTAIN] the per-round standings reference
-                // (verify/race_hud/orig_drive_late.bmp) shows NO crown, so it is
-                // NOT a per-round element; its true trigger/position is unreversed
-                // (the enable flag lives in the widget-group update, FUN_0041c410).
-                // Gated to the match-end screen only (match_winner >= 0), drawn at
-                // the winner's icon top-left, flagged pending a reference for that
-                // screen. Draw it every round and it contradicts the reference.
-                if (g_standings_ready && g_track.match_winner() >= 0 &&
-                    i == leader && leader >= 0) {
-                    const float ch = 20.0f * kUiS;
-                    HudIm2DQuad(kHandleStand0 + kStandCrown, ix - ch * 0.4f,
-                                iy - ch * 0.5f, ch, ch, 0xffffffffu, uvf);
+                // U-9071. POSITION and PULSE are now reversed (Finding 20);
+                // the TRIGGER is not. Keep those three apart when reading this.
+                //
+                // Position (evidenced): the crown pair is atomics a06/a07 of
+                // ENDPOINTPANEL.DFF -- coincident quads, two variants gated by
+                // 0x800 / 0x400 in FUN_0041c410's enable word. Projected through
+                // the standings camera (ortho, view window {0.6,0.45}, identity
+                // frame, root scale _DAT_005cd118 = 1.125) they land at 640-space
+                // x 240.2..277.7, 37.5 square, vertically centred on the row --
+                // to the RIGHT of the point circle, NOT at the icon corner where
+                // the previous placeholder drew it. The crown atomic's own frame
+                // origin is at local x -0.325, exactly the quad centre, so the
+                // scale below pulses it about its centre.
+                //
+                // Pulse (evidenced), FUN_0041c410 @0x0041c410:
+                //   if (tick < 0) tick += 4294967296.0f;   // _DAT_005cc94c
+                //   pulse = sinf(tick * 0.2f) * 0.15f + 1.0f;
+                //          // _DAT_005cc9c0 / _DAT_005cc8f0 / _DAT_005cc320
+                //   scale = (pulse, pulse, 1.0f)           // applied when 0x40 set
+                // tick is DAT_0063d270, zeroed once by the table initialiser
+                // FUN_0041cbc0 @0x0041cbc0 and incremented once per dispatch at
+                // the end of FUN_0041cc50 @0x0041cc50 -- i.e. free-running over
+                // standings frames, not reset per entry. s_crownTick mirrors that.
+                //
+                // [UNCERTAIN] TRIGGER only. The original gate is
+                // group+0x10c & 0x40, set from DAT_0063cde8[playerIndex] != 0,
+                // which FUN_0040b930 fills at the top of FUN_0041cc50.
+                // FUN_0040b930 is unreversed, so what actually earns a crown is
+                // unknown. No reference frame in verify/race_hud shows a crown at
+                // all (0x40 is clear for all four rows in every capture taken), so
+                // this draw is UNVERIFIED -- there is nothing to diff it against.
+                // The conservative match-end gate is therefore retained unchanged:
+                // drawing it per round would contradict orig_drive_late.bmp.
+                static int s_crownTick = 0;
+                if (i == 0) ++s_crownTick;      // once per standings frame
+                // Verification-only poke, same pattern as MASHED_ROUND_COLOURS /
+                // MASHED_ROUND_RULE: MASHED_CROWN_TEST=<car> forces the crown on
+                // that row so the derived rect and the pulse can be measured off
+                // the drawstream. The real gate needs a match end (first-to-N
+                // rounds), which the round-end demo never reaches. Not set in
+                // normal play; it does NOT relax the shipped gate.
+                static int s_crownTest = -2;
+                if (s_crownTest == -2) {
+                    char ct[16] = {};
+                    s_crownTest =
+                        GetEnvironmentVariableA("MASHED_CROWN_TEST", ct, sizeof(ct)) > 0
+                            ? std::atoi(ct) : -1;
+                }
+                const bool crown_on =
+                    (g_track.match_winner() >= 0 && i == leader && leader >= 0) ||
+                    (s_crownTest >= 0 && i == s_crownTest);
+                if (g_standings_ready && crown_on) {
+                    const float pulse =
+                        std::sin(static_cast<float>(s_crownTick) * 0.2f) * 0.15f + 1.0f;
+                    const float kCrownCx = 259.0f;   // (240.2 + 277.7) / 2
+                    const float ch = 37.5f * pulse * kUiS;
+                    HudIm2DQuad(kHandleStand0 + kStandCrown,
+                                kCrownCx * kUiS - ch * 0.5f,
+                                cy * kUiS - ch * 0.5f, ch, ch, 0xffffffffu, uvf);
                 }
             }
             }  // if (standings)

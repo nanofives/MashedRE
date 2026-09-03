@@ -1,50 +1,31 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-02T19:30:00Z",
+  "updatedAt": "2026-09-02T00:00:00Z",
   "sections": [
     {
-      "heading": "Project Status",
+      "heading": "Current lane",
       "fields": [
-        { "label": "Current branch", "value": "race/first-frame-parity (pushed)", "kind": "text" },
-        { "label": "ROADMAP", "value": "v3 (2026-08-15); D0 DONE, D1-D2 blocked, D3-D5 open", "kind": "text" },
-        { "label": "Phase D1", "value": "BLOCKED: renderer divergence accumulates multi-round (state leakage)", "kind": "text" },
-        { "label": "Phase D2", "value": "BLOCKED: steer defect with MASHED_REAL_PHYSICS (missing steer→lateral vel)", "kind": "text" }
+        { "label": "Lane", "value": "In-race UI (standings overlay)", "kind": "text" },
+        { "label": "Branch", "value": "race/first-frame-parity", "kind": "text" },
+        { "label": "Head", "value": "e666c30e — root scale 1.125, placement residual closed", "kind": "text" },
+        { "label": "Phase", "value": "R7 — full game systems", "kind": "text" }
       ]
     },
     {
-      "heading": "Function Coverage",
+      "heading": "Standings port",
       "fields": [
-        { "label": "Total rows", "value": 5930, "kind": "number" },
-        { "label": "First-party", "value": "3,682 (28.8% C3+)", "kind": "text" },
-        { "label": "C3 (Frida verified)", "value": 924, "kind": "number" },
-        { "label": "C4 (canonical)", "value": 0, "kind": "number" }
+        { "label": "Verified", "value": ["Letterbox chrome + 5-frame entry slide (4/0)", "Text strings + prompt glyph", "Per-car badge bound to Player Colour", "Point circles, bar cells, max 8/12"], "kind": "list" },
+        { "label": "Just resolved", "value": "U-9077 — 4-piece bar frame was a false premise; shipped single-UV a22 is DFF-exact", "kind": "text" },
+        { "label": "Still approximate", "value": ["U-9070 colour-5 badge", "U-9073/74/76", "Slot-to-atomic map (DFF plugin data unparsed)"], "kind": "list" },
+        { "label": "U-9071 crown", "value": "Pulse law decoded: sin(tick*0.2)*0.15+1.0, leader-gated", "kind": "text" }
       ]
     },
     {
-      "heading": "Open Debt",
+      "heading": "Newly reversed",
       "fields": [
-        { "label": "STUBS", "value": 1107, "kind": "number" },
-        { "label": "UNCERTAINTIES", "value": "2999 + U-9070..U-9077 filed this lane", "kind": "text" },
-        { "label": "DEFERRED", "value": 43, "kind": "number" },
-        { "label": "PROMOTION_QUEUE", "value": "empty", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "Standings port — lane CLOSED 2026-09-02",
-      "fields": [
-        { "label": "Headline", "value": "There is NO driving HUD — DAT_0063ba8c 3=driving (nothing drawn), 5/6/7=standings overlay", "kind": "text" },
-        { "label": "Done + verified", "value": ["chrome + entry slide (matched 4/0, two scenarios, through the animation)", "text + 0x81 prompt glyph at normalised coords", "badges bound to real Player Colour DAT_007f1a1c", "point circles, bar cells, max 8/12 binding"], "kind": "list" },
-        { "label": "Still approximate", "value": ["U-9077 bar frame single-UV (4-piece tried and FALSIFIED)", "U-9070 colour-5 badge, U-9071 crown, U-9073/74/76", "bar pixel parity ~58-70: uniform librw-vs-RW, not dash phase"], "kind": "list" },
-        { "label": "Next slice", "value": "reverse endpointpanel per-atom RW frame transforms — unblocks U-9077 and replaces the pixel-measured layout; needs Ghidra", "kind": "text" },
-        { "label": "Commits", "value": 8, "kind": "number" }
-      ]
-    },
-    {
-      "heading": "Capture rules (cost real time)",
-      "fields": [
-        { "label": "Mandatory", "value": "MASHED_RES=800x600 for standalone captures — else chrome is off-screen and the diff still says matched", "kind": "text" },
-        { "label": "Frame boundary", "value": "d3d9 shim MashedShim_PresentCounter; no in-game fn is once-per-frame", "kind": "text" },
-        { "label": "Trap", "value": "degenerate verification bit 3x — force DISTINCT known inputs before believing any binding", "kind": "text" }
+        { "label": "Camera", "value": "FUN_0040de30 — ortho, view window {0.6,0.45}, identity frame; screen = (1-w/vw)*half on both axes", "kind": "text" },
+        { "label": "Row placement", "value": "FUN_0041c410 via FUN_0041cc50 — DAT_005f337c 4x vec3 {0.48, y, 1.0}", "kind": "text" },
+        { "label": "Row Y match", "value": "106.7/160.0/213.3/266.7 vs measured 107/160/213/267", "kind": "text" }
       ]
     }
   ]
