@@ -3112,7 +3112,7 @@ bool RenderFrame() {
             // searching DAT_0063cdf8 for its player index (group+0x108) -- so row 0
             // is the highest scorer. Modes 4/7 replace the order wholesale via
             // FUN_00417740 and mode 9 uses a fixed two-entry order; neither is
-            // reachable here -- [UNCERTAIN], unmodelled.
+            // reachable here -- [UNCERTAIN U-9080], unmodelled.
             //
             // This was previously row == car. That is invisibly correct whenever
             // the scores already descend with car index -- which is exactly the
@@ -3137,7 +3137,7 @@ bool RenderFrame() {
             // Crown threshold, FUN_0040b8e0 @0x0040b8e0: 7 when the race rule is 1
             // or 2, when DAT_0067ea64 != 0, or with fewer than 4 participants;
             // otherwise 10. The port always has 4 participants and does not model
-            // DAT_0067ea64 -- the same reachable-determinant binding the score-bar
+            // DAT_0067ea64 ([UNCERTAIN U-9078]) -- the same reachable-determinant binding the score-bar
             // max uses (U-9072 residual B). Note max = threshold + 2 in both arms.
             const int kWinThreshold =
                 (g_track.race_rule() == 1 || g_track.race_rule() == 2) ? 7 : 10;

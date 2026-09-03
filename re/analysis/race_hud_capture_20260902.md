@@ -1524,7 +1524,7 @@ neither frame index nor geometry index reproduces the observed slots {2,3,5,6} f
 backing/crown pairs.
 
 So `FUN_004b5190`'s value is produced at runtime by something outside the DFF.
-`[UNCERTAIN]` — what populates it is not determined; it needs Ghidra on the
+`[UNCERTAIN U-9079]` — what populates it is not determined; it needs Ghidra on the
 `FUN_00543d40` / `FUN_00543d70` / `FUN_00543df0` accessor family and on the clump loader
 `FUN_0042a5d0`. This only matters if the enable-flag semantics are ever ported; the
 shipped Im2D path drives visibility with its own logic and does not need the slot map.
@@ -1625,7 +1625,7 @@ for (i = 0; i < 4; ++i) {
 // adjacent-swap sort, descending on local[], carrying out[] along
 ```
 (Modes 4/7 replace the order via `FUN_00417740`; mode 9 uses a fixed two-entry order.
-Neither is reachable here — `[UNCERTAIN]`, unmodelled.)
+Neither is reachable here — `[UNCERTAIN U-9080]`, unmodelled.)
 
 **The port drew row r for car r.** That is invisibly correct whenever the scores already
 descend with car index — which is true in the demo *and* in `orig_stand7.bmp` (8,7,5,4),
@@ -1651,8 +1651,8 @@ bar carries a dashed pattern, so the authoritative cell verification remains Fin
 drawstream one, which this change does not touch. Screenshot:
 `verify/race_hud/re_crown_rowsort_u9071.png`.
 
-Still `[UNCERTAIN]`: `DAT_0067ea64`'s meaning (`FUN_0042f500` is a bare getter), and the
-mode-4/7/9 row-order overrides. Neither is reachable in the port's current modes.
+Still `[UNCERTAIN U-9078]`: `DAT_0067ea64`'s meaning (`FUN_0042f500` is a bare getter), and the
+mode-4/7/9 row-order overrides. Neither is reachable in the port's current modes. (`DAT_0067ea64` = U-9078; the row-order overrides = U-9080.)
 
 Bits named in passing, all from the same accessor family and all reading the score array
 `DAT_008a94e0`: **0x80** = tied for highest score (`FUN_0040b9a0` @`0x0040b9a0`),
@@ -1680,7 +1680,7 @@ Also decoded on the way: `FUN_004b5190` @`0x004b5190` returns the slot index bak
 the atomic's **frame plugin data** (`*(atomic+0x18)` → plugin block at
 `frame + DAT_007dc634`, entry `+0xc`, `[0]`), read via `FUN_00543d40` / `FUN_00543d70` /
 `FUN_00543df0` @`0x00543df0`. The DFF atomic → slot map is in the DFF's frame plugin
-extension, not in code. `[UNCERTAIN]` — not parsed; needed only if the enable-flag
+extension, not in code. `[UNCERTAIN U-9079]` — not parsed; needed only if the enable-flag
 semantics are ported.
 
 ### Method note
