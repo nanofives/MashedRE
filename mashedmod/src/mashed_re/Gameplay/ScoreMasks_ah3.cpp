@@ -155,3 +155,68 @@ extern "C" __declspec(dllexport) int __cdecl CountNonZeroPairs(void) {
 }
 
 RH_ScopedInstall(CountNonZeroPairs, 0x0040cd90);  // harness/scenario-attach 2026-06-08
+
+// 0x00417740  FUN_00417740 — mode-4/7 row-order override, returns the player
+// index for a given row. C2 (re/analysis/promote_c1_low_ab1/0x00417740.md);
+// called at its original VA.
+static auto* const s_FUN_00417740 =
+    reinterpret_cast<int(__cdecl*)(int)>(0x00417740u);
+
+// 0x0040b540  FUN_0040b540  void(int* out)
+// STANDINGS ROW ORDER. Writes out[row] = the player index ranked at that row, so
+// row 0 is the highest scorer. FUN_0041c410 @0x0041c410 locates a standings
+// group's screen row by searching this array for the group's player index
+// (group+0x108), and FUN_0041cc50 @0x0041cc50 passes &DAT_0063cdf8 here.
+//
+//   for (i = 0; i < 4; ++i) {
+//       local[i] = DAT_008a94e0[i];                      // per-car score
+//       if (DAT_007f1a14[i*4] == -1) local[i] = -100;     // absent slot sentinel
+//       out[i] = i;
+//   }
+//   adjacent-swap bubble sort, DESCENDING on local[], carrying out[] along
+//   if (DAT_007f0fd0 == 4 || == 7) for (i) out[i] = FUN_00417740(i);
+//   if (DAT_007f0fd0 == 9) out[0..1] = DAT_007f0fcc ? {0,1} : {1,0};
+//
+// The per-slot record base is 0x007f1a14 with stride 0x10 (the Player Colour that
+// Finding 16 bound lives at +8 of the same record, 0x007f1a1c). The `-100`
+// substitution is what pushes absent players to the bottom rather than sorting
+// them by a stale score.
+//
+// Comparison is strict `<` with no tiebreaker, so equal scores keep their
+// original relative order across these three passes.
+// Evidence: re/analysis/race_hud_capture_20260902.md Finding 20.
+extern "C" __declspec(dllexport) void __cdecl PlayerScoreRankOrder(int* param_1) {
+    int  local_10[4];
+    int* rec = reinterpret_cast<int*>(0x007f1a14);
+    for (int i = 0; i < 4; ++i) {
+        local_10[i] = reinterpret_cast<int*>(0x008a94e0)[i];
+        if (*rec == -1) local_10[i] = -100;
+        param_1[i] = i;
+        rec += 4;                        // stride 0x10 bytes
+    }
+    for (int a = 3; a > 0; --a) {        // 3 passes, matching the original
+        for (int b = 0; b < a; ++b) {
+            const int t = local_10[b];
+            if (t < local_10[b + 1]) {
+                local_10[b]     = local_10[b + 1];
+                local_10[b + 1] = t;
+                const int o     = param_1[b];
+                param_1[b]      = param_1[b + 1];
+                param_1[b + 1]  = o;
+            }
+        }
+    }
+    const int rule = *reinterpret_cast<int*>(0x007f0fd0);
+    if (rule == 4 || rule == 7) {
+        for (int i = 0; i < 4; ++i) param_1[i] = s_FUN_00417740(i);
+    }
+    if (rule == 9) {
+        if (*reinterpret_cast<int*>(0x007f0fcc) != 0) {
+            param_1[0] = 0; param_1[1] = 1;
+            return;
+        }
+        param_1[0] = 1; param_1[1] = 0;
+    }
+}
+
+RH_ScopedInstall(PlayerScoreRankOrder, 0x0040b540);  // C3 2026-09-03 (Finding 20; caller 0x0041cc50 C2, callee 0x00417740 C2)

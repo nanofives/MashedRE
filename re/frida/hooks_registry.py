@@ -20555,4 +20555,49 @@ HOOKS = {
         'path2_tests':    [{'scalars': [0x0063cde8]}, {'scalars': [0x0063cde8]}],
     },
 
+    # 0x0040b540  PlayerScoreRankOrder -- the STANDINGS ROW ORDER.
+    # out[row] = player index ranked at that row (row 0 = highest score).
+    # FUN_0041cc50 @0x0041cc50 passes &DAT_0063cdf8; FUN_0041c410 @0x0041c410 finds a
+    # group's screen row by searching this array for its player index (group+0x108).
+    # The port previously drew row r for car r -- correct ONLY when scores already
+    # descend with car index, which they do in the demo and in orig_stand7.bmp
+    # (8,7,5,4), so no capture could catch it. Vector 1 below is exactly that
+    # degenerate arrangement; vector 0 is the case it got wrong.
+    #
+    # NON-DEGENERACY: four vectors, four DISTINCT orders, each isolating one
+    # behaviour -- reorder, identity, tie stability (strict `<`, no tiebreaker), and
+    # the absent-slot sentinel (DAT_007f1a14[i*4] == -1 -> score treated as -100 so
+    # the slot sinks to the bottom). Output slots are pre-seeded 0x5eed000N so a
+    # port that writes nothing reads as a miss, not a match. Rule is pinned to 0 so
+    # the mode-4/7 and mode-9 override arms stay out of the comparison (U-9080).
+    #
+    # SAFE: cache_setter_observe snapshots and restores every seeded and observed
+    # address, including the per-slot records at 0x007f1a14 (stride 0x10).
+    'score_rank_order': {
+        'rva':            0x0040b540,
+        'export':         'PlayerScoreRankOrder',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'cache_setter_observe',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # scores 4,10,5,7 all present, rule 0 -> order 1,3,2,0 (the reorder case)
+            {'seed': [{'addr': '0x008a94e0', 'val': 4}, {'addr': '0x008a94e4', 'val': 10}, {'addr': '0x008a94e8', 'val': 5}, {'addr': '0x008a94ec', 'val': 7}, {'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 0}, {'addr': '0x007f1a34', 'val': 0}, {'addr': '0x007f1a44', 'val': 0}, {'addr': '0x007f0fd0', 'val': 0}, {'addr': '0x0063cdf8', 'val': 0x5eed0000}, {'addr': '0x0063cdfc', 'val': 0x5eed0001}, {'addr': '0x0063ce00', 'val': 0x5eed0002}, {'addr': '0x0063ce04', 'val': 0x5eed0003}],
+             'args': [0x0063cdf8],
+             'obs':  ['0x0063cdf8', '0x0063cdfc', '0x0063ce00', '0x0063ce04']},
+            # scores 8,7,5,4 -> order 0,1,2,3 (identity; the reference arrangement)
+            {'seed': [{'addr': '0x008a94e0', 'val': 8}, {'addr': '0x008a94e4', 'val': 7}, {'addr': '0x008a94e8', 'val': 5}, {'addr': '0x008a94ec', 'val': 4}, {'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 0}, {'addr': '0x007f1a34', 'val': 0}, {'addr': '0x007f1a44', 'val': 0}, {'addr': '0x007f0fd0', 'val': 0}, {'addr': '0x0063cdf8', 'val': 0x5eed0000}, {'addr': '0x0063cdfc', 'val': 0x5eed0001}, {'addr': '0x0063ce00', 'val': 0x5eed0002}, {'addr': '0x0063ce04', 'val': 0x5eed0003}],
+             'args': [0x0063cdf8],
+             'obs':  ['0x0063cdf8', '0x0063cdfc', '0x0063ce00', '0x0063ce04']},
+            # scores 5,5,9,1 -> order 2,0,1,3 (ties keep original relative order)
+            {'seed': [{'addr': '0x008a94e0', 'val': 5}, {'addr': '0x008a94e4', 'val': 5}, {'addr': '0x008a94e8', 'val': 9}, {'addr': '0x008a94ec', 'val': 1}, {'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 0}, {'addr': '0x007f1a34', 'val': 0}, {'addr': '0x007f1a44', 'val': 0}, {'addr': '0x007f0fd0', 'val': 0}, {'addr': '0x0063cdf8', 'val': 0x5eed0000}, {'addr': '0x0063cdfc', 'val': 0x5eed0001}, {'addr': '0x0063ce00', 'val': 0x5eed0002}, {'addr': '0x0063ce04', 'val': 0x5eed0003}],
+             'args': [0x0063cdf8],
+             'obs':  ['0x0063cdf8', '0x0063cdfc', '0x0063ce00', '0x0063ce04']},
+            # slot 1 ABSENT (-1 -> -100): scores 4,10,5,7 -> order 3,2,0,1
+            {'seed': [{'addr': '0x008a94e0', 'val': 4}, {'addr': '0x008a94e4', 'val': 10}, {'addr': '0x008a94e8', 'val': 5}, {'addr': '0x008a94ec', 'val': 7}, {'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 0xffffffff}, {'addr': '0x007f1a34', 'val': 0}, {'addr': '0x007f1a44', 'val': 0}, {'addr': '0x007f0fd0', 'val': 0}, {'addr': '0x0063cdf8', 'val': 0x5eed0000}, {'addr': '0x0063cdfc', 'val': 0x5eed0001}, {'addr': '0x0063ce00', 'val': 0x5eed0002}, {'addr': '0x0063ce04', 'val': 0x5eed0003}],
+             'args': [0x0063cdf8],
+             'obs':  ['0x0063cdf8', '0x0063cdfc', '0x0063ce00', '0x0063ce04']},
+        ],
+        'path2_tests':    [{'scalars': [0x0063cdf8]}, {'scalars': [0x0063cdf8]}],
+    },
+
 }
