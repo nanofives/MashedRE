@@ -20475,4 +20475,84 @@ HOOKS = {
         'path2_tests':    [0, 3],
     },
 
+    # 0x0040b930  PlayerScoreThresholdMask -- the standings LEADER-CROWN gate
+    # (Finding 20). ALREADY PORTED AND HOOKED since c3_batch_ah s3 in
+    # Gameplay/ScoreMasks_ah3.cpp:95; that batch deferred it for want of a
+    # non-degenerate observable, and hooks.csv was left stale at C2/plate-only.
+    # This entry supplies the missing observable. Do NOT add a second
+    # RH_ScopedInstall for this RVA -- one was written here on 2026-09-03 and
+    # lost the JMP race (path1 GREEN, path2 rel32 FAIL), the U-9065 failure mode.
+    # void(int* out): for i in 0..3, out[i] = (DAT_008a94e0[i] >= GetScoreThreshold7or10()).
+    # Live call site FUN_0041cc50 @0x0041cc50 passes &DAT_0063cde8; FUN_0041c410
+    # @0x0041c410 turns a set entry into enable bit 0x40 of the standings group's
+    # word, which is what draws + pulses the crown. So the crown is NOT "the
+    # leader" -- it is every car that has reached the win threshold.
+    #
+    # NON-DEGENERACY (standing rule; this exact family already produced one
+    # deferred false-green -- see the DEFER note atop Thresholds_ah4.cpp): called
+    # bare at the menu the scores are all zero, so the flags are all zero and any
+    # broken port matches. Every vector therefore SEEDS four distinct scores AND
+    # pins all three threshold determinants, covering BOTH arms of the threshold:
+    #   DAT_008a94d0=4 (participants), DAT_0067ea64=0, DAT_007f0fd0=0 -> threshold 10
+    #   DAT_007f0fd0=1                                                -> threshold  7
+    # The four output slots are pre-seeded with 0x5eed0000 so "wrote nothing" reads
+    # as a miss instead of a stale match. Expected patterns differ per vector
+    # (0110 / 1110 / 1010 / 0100): a port that ignores the threshold, hardcodes
+    # 1 or 0, drops the loop, or hoists the comparison the wrong way fails one.
+    #
+    # SAFE: cache_setter_observe snapshots and restores every seeded and observed
+    # address, so the live score table and mode globals are unchanged afterwards.
+    'crown_flags_set': {
+        'rva':            0x0040b930,
+        'export':         'PlayerScoreThresholdMask',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'cache_setter_observe',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # threshold 10; scores 8,10,11,4 -> flags 0,1,1,0
+            {'seed': [{'addr': '0x008a94e0', 'val': 8},  {'addr': '0x008a94e4', 'val': 10},
+                      {'addr': '0x008a94e8', 'val': 11}, {'addr': '0x008a94ec', 'val': 4},
+                      {'addr': '0x008a94d0', 'val': 4},  {'addr': '0x0067ea64', 'val': 0},
+                      {'addr': '0x007f0fd0', 'val': 0},
+                      {'addr': '0x0063cde8', 'val': 0x5eed0000}, {'addr': '0x0063cdec', 'val': 0x5eed0001},
+                      {'addr': '0x0063cdf0', 'val': 0x5eed0002}, {'addr': '0x0063cdf4', 'val': 0x5eed0003}],
+             'args': [0x0063cde8],
+             'obs':  ['0x0063cde8', '0x0063cdec', '0x0063cdf0', '0x0063cdf4']},
+            # threshold 7 (rule 1); same scores -> flags 1,1,1,0
+            {'seed': [{'addr': '0x008a94e0', 'val': 8},  {'addr': '0x008a94e4', 'val': 10},
+                      {'addr': '0x008a94e8', 'val': 11}, {'addr': '0x008a94ec', 'val': 4},
+                      {'addr': '0x008a94d0', 'val': 4},  {'addr': '0x0067ea64', 'val': 0},
+                      {'addr': '0x007f0fd0', 'val': 1},
+                      {'addr': '0x0063cde8', 'val': 0x5eed0000}, {'addr': '0x0063cdec', 'val': 0x5eed0001},
+                      {'addr': '0x0063cdf0', 'val': 0x5eed0002}, {'addr': '0x0063cdf4', 'val': 0x5eed0003}],
+             'args': [0x0063cde8],
+             'obs':  ['0x0063cde8', '0x0063cdec', '0x0063cdf0', '0x0063cdf4']},
+            # threshold 10; boundary pair 10 and 9 -> flags 1,0,1,0
+            {'seed': [{'addr': '0x008a94e0', 'val': 10}, {'addr': '0x008a94e4', 'val': 9},
+                      {'addr': '0x008a94e8', 'val': 10}, {'addr': '0x008a94ec', 'val': 0},
+                      {'addr': '0x008a94d0', 'val': 4},  {'addr': '0x0067ea64', 'val': 0},
+                      {'addr': '0x007f0fd0', 'val': 0},
+                      {'addr': '0x0063cde8', 'val': 0x5eed0000}, {'addr': '0x0063cdec', 'val': 0x5eed0001},
+                      {'addr': '0x0063cdf0', 'val': 0x5eed0002}, {'addr': '0x0063cdf4', 'val': 0x5eed0003}],
+             'args': [0x0063cde8],
+             'obs':  ['0x0063cde8', '0x0063cdec', '0x0063cdf0', '0x0063cdf4']},
+            # DAT_0067ea64 != 0 forces threshold 7 even at 4 players / rule 0;
+            # scores 6,7,6,6 -> flags 0,1,0,0 (only the 7 reaches it)
+            {'seed': [{'addr': '0x008a94e0', 'val': 6},  {'addr': '0x008a94e4', 'val': 7},
+                      {'addr': '0x008a94e8', 'val': 6},  {'addr': '0x008a94ec', 'val': 6},
+                      {'addr': '0x008a94d0', 'val': 4},  {'addr': '0x0067ea64', 'val': 1},
+                      {'addr': '0x007f0fd0', 'val': 0},
+                      {'addr': '0x0063cde8', 'val': 0x5eed0000}, {'addr': '0x0063cdec', 'val': 0x5eed0001},
+                      {'addr': '0x0063cdf0', 'val': 0x5eed0002}, {'addr': '0x0063cdf4', 'val': 0x5eed0003}],
+             'args': [0x0063cde8],
+             'obs':  ['0x0063cde8', '0x0063cdec', '0x0063cdf0', '0x0063cdf4']},
+        ],
+        # path2 call-through needs the {'scalars': [...]} shape -- bare ints fall
+        # through to fn(input) and die 'bad argument count' before the function is
+        # ever entered (the documented callFn hole). The pointer is the real
+        # DAT_0063cde8 flag array, which the standings update rewrites every frame,
+        # so no restore is needed. path2 proves ENTRY + install, not values.
+        'path2_tests':    [{'scalars': [0x0063cde8]}, {'scalars': [0x0063cde8]}],
+    },
+
 }
