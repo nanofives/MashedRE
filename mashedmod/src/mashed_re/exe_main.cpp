@@ -3155,20 +3155,31 @@ bool RenderFrame() {
                 const float by = (cy - kBarH * 0.5f) * kUiS;
                 const float bw = kBarW * kUiS, bh = kBarH * kUiS;
                 // Frame: single OrangeDisplay sub-rect (a22 top-half, u 0.178..1.0
-                // v 0..0.5) stretched across the bar. U-9072 residual A tried the
-                // real 4-piece composition (a22 body left 43% + a23 dark end cap
-                // right 57%, from the DFF's model-X extents) but the DFF carries
-                // only RELATIVE model coords -- the model->screen transform is the
-                // RW camera, not in the DFF (same limit as Finding 14's row
-                // layout). The only DFF-derivable mapping (linear) placed the dark
-                // cap over the right 57% (clearly wrong vs the mostly-orange
-                // reference) and RAISED the per-bar imgdiff 58->79..94. So the
-                // 4-piece is NOT cleanly portable; the single-UV frame is retained
-                // (it reproduces the reference visual and the imgdiff residue is
-                // uniform render/alignment difference, not a frame-UV artefact --
-                // the earlier "dash phase" attribution was disproved by the region
-                // grid). Residual A stays OPEN (see Finding 19): UVs known, screen
-                // placement of the pieces unreversed.
+                // v 0..0.5) stretched across the bar. This is DFF-EXACT, not an
+                // approximation -- U-9077 RESOLVED, see Finding 20.
+                //
+                // The "4-piece composition" premise of Finding 14 / U-9072 residual
+                // A was FALSE. Projecting ENDPOINTPANEL.DFF through the standings
+                // camera (orthographic, view window {0.6,0.45}, camera frame forced
+                // to identity every frame by FUN_0040de30 @0x0040de30, so
+                // screen_x = (wx/0.6+1)*320) gives, for the four OrangeDisplay
+                // atomics:
+                //   a21  93.1 px wide, UV u 0.178..1.0  v 0.5..1.0
+                //   a22  93.1 px wide, UV u 0.178..1.0  v 0.0..0.5   <- shipped
+                //   a20  90.8 px wide, UV u 0.200..0.964 v 0.130..0.171 (thin strip)
+                //   a23 122.0 px wide, UV u 0.0..0.178  v 0.0..0.5, 6 verts / 4 tris
+                // a21 and a22 are COINCIDENT full-bar quads carrying complementary
+                // half-UVs of the same 128x64 texture -- two alternate states of one
+                // element, drawn one at a time, NOT two pieces of a composition.
+                // a23 is a separate element sitting entirely to the RIGHT of the bar
+                // and is not part of it at all. That is why the residual-A attempt
+                // (linear-mapping all four across the bar rect) put the a23 end cap
+                // over the right 57% and RAISED the per-bar imgdiff 58->79..94.
+                // 93.1 projected vs 93 measured (0.1%) fixes a22 as the frame.
+                // The remaining imgdiff residue is uniform render/alignment
+                // difference between librw and the original RW, not a frame-UV
+                // artefact (the earlier "dash phase" attribution was already
+                // disproved by the region grid).
                 std::uint32_t uvbar[4];
                 { const float f[4] = {0.178f, 0.0f, 1.0f, 0.5f};
                   std::memcpy(uvbar, f, sizeof(uvbar)); }

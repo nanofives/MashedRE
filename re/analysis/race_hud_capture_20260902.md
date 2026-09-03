@@ -1325,3 +1325,172 @@ settled frames vs `orig_guard6_frames.json`.
 3. The standalone's text (`DrawMashedString`) shares the original's blind spot
    on the `+0x30` slot, so a text diff needs the standalone mirrored into the
    drawstream (precedent: the menu video quad's tex sentinel `-1`).
+
+## Finding 20: the standings camera reversed; U-9077 RESOLVED (the 4-piece premise was false)
+
+Ghidra work done via an account3 MCP-proxy child session (pool slot `Mashed_pool14`);
+every RVA below was returned from decompilation. The DFF arithmetic was done locally
+against the real bytes (`re/tools/dff_dump.py` `parse_clump` + `world_matrix` over
+`Panel.piz :: ENDPOINTPANEL.DFF`).
+
+### The camera (this is the piece Finding 4/13/14 kept hitting)
+
+`FUN_00492e90` wraps the standings dispatch:
+
+```
+cam = FUN_004671c0()            // returns DAT_006905b4
+FUN_0040de30(cam)               // camera setup, below
+FUN_004c1a00(cam)               // begin update
+  vtable(DAT_007d3ff8+0x20)(6,0); vtable(...)(8,0)
+  FUN_0040dfc0()                // HudIngameDispatch
+  vtable(...)(6,1); vtable(...)(8,1)
+FUN_004c19f0(cam)               // end update
+```
+
+`FUN_0040de30` @`0x0040de30` saves the camera's existing frame matrix / view window /
+projection, then every frame writes:
+
+| what | via | value |
+|---|---|---|
+| camera frame matrix `frame+0x10` | `FUN_004c1480` @`0x004c1480` | **identity** (diagonals `0x3f800000` = 1.0f) |
+| view window `cam+0x68` / `cam+0x6c` | `FUN_004c1c80` @`0x004c1c80` | `0x3f19999a` = **0.6f**, `0x3ee66666` = **0.45f** (consts at `0x0040de5a`/`0x0040de5e`) |
+| projection `cam+0x14` | `FUN_004c1c10` @`0x004c1c10` | **2** = parallel/orthographic |
+
+So the model→screen map for this layer, at 640×480, is exactly:
+
+```
+screen_x = (world_x / 0.6  + 1.0) * 320      // 533.33 px per world unit
+screen_y = (1.0 - world_y / 0.45) * 240
+```
+
+**Independently confirmed, not fitted:** projecting the DFF's own baked world extents
+gives the `OrangeDisplay` bar quad at **93.1 px** wide against a pixel-measured bar
+width of **93 px** (0.1%), the point circle at 41.2 px against a measured ink diameter
+of ~40, and the crown at 33.3 px. Sizes come out right without any free parameter.
+
+### U-9077 RESOLVED — a20-a23 are not four pieces of one bar
+
+Projected rects and UV sub-rects for the four `OrangeDisplay` atomics, one row:
+
+| atomic | screen w × h | UV (u, v) | texels of the 128×64 | verts/tris |
+|---|---|---|---|---|
+| a20 | 90.8 × 21.2 | u 0.200..0.964, v 0.130..0.171 | 97.8 × 2.7 | 4 / 2 |
+| a21 | 93.1 × 24.1 | u 0.178..1.000, v **0.500..1.000** | 105.2 × 32 | 4 / 2 |
+| a22 | 93.1 × 24.1 | u 0.178..1.000, v **0.000..0.500** | 105.2 × 32 | 4 / 2 |
+| a23 | 122.0 × 24.1 | u 0.000..0.178, v 0.000..0.500 | 22.8 × 32 | **6 / 4** |
+
+- **a21 and a22 are coincident** — identical screen rects, complementary *half*-UVs of
+  the same texture. They are two alternate states of one element, drawn one at a time
+  under the enable flags, not two pieces of a composition.
+- **a23 sits entirely to the right of the bar** (projected x 331.3..453.3 vs the bar's
+  238.2..331.3), is 5.4 px per texel where a22 is 0.885, and is a 6-vert / 4-tri mesh,
+  not a quad. It is not part of the bar.
+- a20 is a thin inset strip.
+
+This is the quantitative cause of the Finding-19 falsification: linear-mapping all four
+across the bar rect forced a23 (an off-bar element) into the right 57%.
+
+**Verdict: the shipped single-UV a22 frame is DFF-exact**, in UV and in width to 0.1%.
+U-9077 is resolved as a false premise, not as an unreachable target. No code change is
+needed; `exe_main.cpp` comment corrected.
+
+### The runtime placement transform — REVERSED
+
+The DFF's *authored* positions are not the screen positions, but the gap is fully
+accounted for by two things.
+
+**1. The X axis is mirrored, exactly like Y.** The correct map is
+
+```
+screen_x = (1.0 - world_x / 0.6 ) * 320
+screen_y = (1.0 - world_y / 0.45) * 240
+```
+
+not `(wx/0.6 + 1)*320`. With the `+1` form every element lands off the artwork; with the
+mirrored form the icon and bar land on it (below). This also explains the apparent
+"DFF order is crown/circle/bar/icon, screen order is icon/bar/circle" reversal noted
+earlier in this session — there is no reversal, the X axis was being read with the wrong
+sign. The DFF carries **no rotation at all**: all 29 frames are identity rotation with
+translation only.
+
+**2. `FUN_0041c410` @`0x0041c410` places each row.** It is dispatched per frame, once
+per enabled group, by `FUN_0041cc50` @`0x0041cc50` (`ESI` = group ptr; the group's own
+`+0x108` player index drives the lookup via a linear search over `DAT_0063cdf8`). It:
+
+```
+FUN_004c51a0(&m, &DAT_005f337c + row*3, 0);   // RwMatrixTranslate
+FUN_004c1480(*(group+0x104), &m, 0);          // RwFrameTransform(rootFrame, m, REPLACE)
+scale = (1,1,1) * _DAT_005cd118;
+FUN_004c13e0(*(group+0x104), &scale, 1);      // RwFrameScale(rootFrame, ..., PRECONCAT)
+```
+
+Because the transform **replaces** the root frame matrix, the DFF's authored root
+translation (`f00.pos = 0.05, 0.0, 0.075`) is discarded at runtime.
+
+**`DAT_005f337c` — 4 entries × 3 floats, stride 12, read from `.data` (file offset
+`0x1f337c`), raw bytes:**
+
+| row | bytes | X | Y | Z |
+|---|---|---|---|---|
+| 0 | `8f c2 f5 3e  00 00 80 3e  00 00 80 3f` | 0.48 | 0.25 | 1.0 |
+| 1 | `8f c2 f5 3e  9a 99 19 3e  00 00 80 3f` | 0.48 | 0.15 | 1.0 |
+| 2 | `8f c2 f5 3e  cd cc 4c 3d  00 00 80 3f` | 0.48 | 0.05 | 1.0 |
+| 3 | `8f c2 f5 3e  cd cc 4c bd  00 00 80 3f` | 0.48 | −0.05 | 1.0 |
+
+### Result: the row layout is now derived, not measured
+
+Applying the row transform to the DFF geometry and projecting:
+
+| element | derived (640-space, row 0) | measured ink | delta |
+|---|---|---|---|
+| row centres y | **106.7 / 160.0 / 213.3 / 266.7** | 107 / 160 / 213 / 267 | < 0.5 px |
+| car icon x | 30.0 .. 82.0 | 33 .. 73 | quad vs ink |
+| bar frame x | 79.4 .. 172.4 | 88 .. 177 | ~8 px |
+| point circle x | 175.8 .. 217.1 | ~186 .. 232 | ~12 px, ink 1.09× wider |
+
+The four row Y positions come out of the table **exactly**. The icon and bar land on the
+artwork. This independently confirms the Finding-10 pixel-measured layout rather than
+replacing it.
+
+**Residual, stated honestly:** the bar is ~8 px and the circle ~12 px left of the ink,
+and the circle's ink is ~1.09× the derived quad. A single global scale does not
+reconcile them (the bar wants ~0.96, the circle ~1.09), which is consistent with
+`FUN_0041c410` applying **per-child** scales after the root transform — it calls
+`FUN_004c13e0` on children `+0x88`, `+0x8c`, `+0x94` and `+0x98` (one of them the
+`score/max` bar-fill X-scale from `FUN_0040b6d0`/`FUN_0040b890`, another the crown sine
+pulse driven by `DAT_0063d270`). Those per-child scales, and `_DAT_005cd118`, are not
+yet valued. Until they are, the measured rects remain the shipped layout.
+
+**Clean negatives** (Ghidra proxy, explicit): no frame or matrix write exists in
+`FUN_0041cb10` @`0x0041cb10` (init), `FUN_0041c320` @`0x0041c320` (group build),
+`FUN_0041c9a0` @`0x0041c9a0` (row draw) or `FUN_0041ccc0` @`0x0041ccc0` (row loop).
+`FUN_0041c320` writes exactly `group+0x100` = clump ptr and `group+0x104` = clump root
+frame; `FUN_0041cb10`'s only per-row write is `group+0x108` = player index;
+`FUN_0041c9a0` has zero static callees. All placement happens in `FUN_0041c410`.
+
+Also decoded on the way: `FUN_004b5190` @`0x004b5190` returns the slot index baked in
+the atomic's **frame plugin data** (`*(atomic+0x18)` → plugin block at
+`frame + DAT_007dc634`, entry `+0xc`, `[0]`), read via `FUN_00543d40` / `FUN_00543d70` /
+`FUN_00543df0` @`0x00543df0`. The DFF atomic → slot map is in the DFF's frame plugin
+extension, not in code. `[UNCERTAIN]` — not parsed; needed only if the enable-flag
+semantics are ported.
+
+### Method note
+
+Two errors were caught by cross-checking, one on each side.
+
+The proxy child's first pass reported "DFF baked world positions ARE the screen
+positions", verified against the bar rect. That check was **circular** — it inverted the
+screen measurement it had been handed to produce the world coordinate it then
+confirmed. Caught by re-deriving the world coordinates from the DFF bytes locally. Its
+follow-up "per-row Y is baked in the DFF" was wrong for the same reason (the DFF holds
+one row, not four). The camera constants it found are correct and are now confirmed the
+other way round (DFF → screen, sizes match with no free parameter).
+
+In the other direction, this session briefly claimed `DAT_005f337c` was not a float
+table but `.text` instructions, on the strength of a local raw dump. That dump used a
+**broken RVA→file-offset mapping** (it read the section header's `VirtualSize` field
+where `VirtualAddress` was intended, so every lookup landed in the wrong section). The
+child's address was right: `0x005f337c` is in `.data`, file offset `0x1f337c`. Corrected
+here by re-reading the bytes with a fixed mapping. Both the wrong claim and the
+correction are recorded because the wrong one was stated to the child as fact.
