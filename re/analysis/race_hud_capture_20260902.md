@@ -1460,29 +1460,80 @@ c7 05 70 d2 63 00 00 00 00 00   MOV [0x0063d270],0
 So `FUN_0041cbc0` is the only known writer of the row positions, and
 `FUN_0041c410` the only reader.
 
-### Result: the row layout is now derived, not measured
+### Result: the row layout is derived, not measured — residual closed
 
-Applying the row transform to the DFF geometry and projecting:
+The root scale is **`_DAT_005cd118` = 1.125** (`.rdata`, raw `00 00 90 3f`), read from the
+binary. `FUN_0041c410` scales the group root frame by it uniformly *after* the row
+translate, with the scale applying to the clump's local coordinates and **not** to the
+row translation (the row centres are unaffected by `k`, which is why they matched
+exactly before `k` was known). The complete map, at 640x480:
 
-| element | derived (640-space, row 0) | measured ink | delta |
+```
+k        = 1.125                         // _DAT_005cd118
+screen_x = (1 - (0.48  + k*local_x) / 0.6 ) * 320   =  64 - 600*local_x
+screen_y = (1 - (rowY  + k*local_y) / 0.45) * 240
+rowY     in {0.25, 0.15, 0.05, -0.05}     // DAT_005f337c
+local_*  = DFF world coords minus the authored root translation f00.pos
+```
+
+Derived vs observed, row 0 (observed edges read off `orig_stand7.bmp` at 5x with a pixel
+ruler, not colour thresholds):
+
+| element | derived at k=1.125 | observed | note |
 |---|---|---|---|
-| row centres y | **106.7 / 160.0 / 213.3 / 266.7** | 107 / 160 / 213 / 267 | < 0.5 px |
-| car icon x | 30.0 .. 82.0 | 33 .. 73 | quad vs ink |
-| bar frame x | 79.4 .. 172.4 | 88 .. 177 | ~8 px |
-| point circle x | 175.8 .. 217.1 | ~186 .. 232 | ~12 px, ink 1.09× wider |
+| row centres y | 106.7 / 160.0 / 213.3 / 266.7 | 107 / 160 / 213 / 267 | < 0.5 px |
+| bar frame a22 | x 81.3 .. 186.0 (w 104.7) | ~84 .. 186 (w ~102) | right edge exact |
+| bar backing a18 | x 87.9 .. 177.5 (w 89.6) | orange inner fill | matches |
+| point circle a08 | x 189.8 .. 236.2 (w 46.4) | ~186 .. 232 (w ~46) | width exact, ~4 px right |
+| car icon a00 | x 25.8 .. 84.3 | badge ink 33 .. 73 | quad encloses ink |
 
-The four row Y positions come out of the table **exactly**. The icon and bar land on the
-artwork. This independently confirms the Finding-10 pixel-measured layout rather than
-replacing it.
+At `k = 1.0` the bar's right edge came out at 172.4 (inside the bar) and the circle was
+41.2 px wide against ~46 observed. Both are corrected by `k = 1.125`, so the value is
+confirmed by the image and not just read from `.rdata`. Remaining disagreement is
+~0-4 px, at the level of transparent texture margin.
 
-**Residual, stated honestly:** the bar is ~8 px and the circle ~12 px left of the ink,
-and the circle's ink is ~1.09× the derived quad. A single global scale does not
-reconcile them (the bar wants ~0.96, the circle ~1.09), which is consistent with
-`FUN_0041c410` applying **per-child** scales after the root transform — it calls
-`FUN_004c13e0` on children `+0x88`, `+0x8c`, `+0x94` and `+0x98` (one of them the
-`score/max` bar-fill X-scale from `FUN_0040b6d0`/`FUN_0040b890`, another the crown sine
-pulse driven by `DAT_0063d270`). Those per-child scales, and `_DAT_005cd118`, are not
-yet valued. Until they are, the measured rects remain the shipped layout.
+**Earlier hypothesis FALSIFIED.** This note previously attributed the residual to the
+per-child `FUN_004c13e0` scales. That is wrong, and the decompilation already in hand
+disproves it. The four calls take children at `group+0x88`, `+0x8c`, `+0x94`, `+0x98`,
+i.e. slot indices `(offset - 0x80)/4` = **2, 3, 5, 6**:
+
+- slots **2 and 5** get `vec = (score/max, 1, 1)` — an X-only scale from
+  `FUN_0040b6d0` (score) over `FUN_0040b890` (max). These are the same two children
+  `FUN_0041c9a0` writes `0xff323232` to, i.e. the grey bar backing (a18/a19).
+- slots **3 and 6** get `vec = (pulse, pulse, 1)`, gated on flag `group+0x10c & 0x40`
+  (else 1.0) — the crown pair (a06/a07).
+
+None of the four touches the circle, the bar frame or the icon, so they cannot produce a
+placement error in those. `[UNCERTAIN]` — the slot-to-atomic identification rests on the
+matching behaviour (grey override, score scaling, leader gate), not on the DFF plugin
+slot map, which is still unparsed.
+
+### Crown pulse law (bears on U-9071)
+
+For the crown pair, with `tick = DAT_0063d270` (incremented once per frame at the end of
+`FUN_0041cc50`, zeroed by `FUN_0041cbc0`):
+
+```
+if (tick < 0) tick += 4294967296.0;          // _DAT_005cc94c, 0x4f800000
+pulse = sin(tick * 0.2) * 0.15 + 1.0;        // _DAT_005cc9c0, _DAT_005cc8f0, _DAT_005cc320
+scale = (pulse, pulse, 1.0)                  // applied only when group+0x10c & 0x40
+```
+
+All four constants read from `.rdata`: `0x005cc94c` = `00 00 80 4f` = 4294967296.0,
+`0x005cc9c0` = `cd cc 4c 3e` = 0.2, `0x005cc8f0` = `9a 99 19 3e` = 0.15, `0x005cc320` =
+`00 00 80 3f` = 1.0. So the crown breathes +/-15% about its size at 0.2 rad/frame.
+Derived crown position is x 240.2 .. 277.7 (w 37.5), right of the point circle; no crown
+is visible at that location in `orig_stand7.bmp`, which is consistent with the `0x40`
+leader gate being clear in that frame but is **not** positive confirmation of placement.
+
+### Port impact
+
+None applied. The derived layout agrees with the shipped Finding-10 measured constants
+to within ~4 px, and acceptance for this layer is screenshot-only (it is invisible to
+`drawlist_diff.py`). Swapping verified constants for derived ones of equal accuracy would
+be churn with no better acceptance signal. The value of this is that the measured layout
+is now **independently corroborated by the emitter**, and that the crown pulse and the
+`score/max` bar scaling are now laws rather than observations.
 
 **Clean negatives** (Ghidra proxy, explicit): no frame or matrix write exists in
 `FUN_0041cb10` @`0x0041cb10` (init), `FUN_0041c320` @`0x0041c320` (group build),
