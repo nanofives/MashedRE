@@ -1,31 +1,122 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-02T00:00:00Z",
+  "updatedAt": "2026-09-03T00:00:00Z",
   "sections": [
     {
       "heading": "Current lane",
       "fields": [
-        { "label": "Lane", "value": "In-race UI (standings overlay)", "kind": "text" },
-        { "label": "Branch", "value": "race/first-frame-parity", "kind": "text" },
-        { "label": "Head", "value": "e666c30e — root scale 1.125, placement residual closed", "kind": "text" },
-        { "label": "Phase", "value": "R7 — full game systems", "kind": "text" }
+        {
+          "label": "Lane",
+          "value": "In-race UI (standings overlay)",
+          "kind": "text"
+        },
+        {
+          "label": "Branch",
+          "value": "race/first-frame-parity",
+          "kind": "text"
+        },
+        {
+          "label": "Head",
+          "value": "b5c25d1d \u2014 3 standings functions promoted to C3",
+          "kind": "text"
+        },
+        {
+          "label": "Phase",
+          "value": "R7 \u2014 full game systems",
+          "kind": "text"
+        }
       ]
     },
     {
       "heading": "Standings port",
       "fields": [
-        { "label": "Verified", "value": ["Letterbox chrome + 5-frame entry slide (4/0)", "Text strings + prompt glyph", "Per-car badge bound to Player Colour", "Point circles, bar cells, max 8/12"], "kind": "list" },
-        { "label": "Just resolved", "value": "U-9077 — 4-piece bar frame was a false premise; shipped single-UV a22 is DFF-exact", "kind": "text" },
-        { "label": "Still approximate", "value": ["U-9070 colour-5 badge", "U-9073/74/76", "Slot-to-atomic map (DFF plugin data unparsed)"], "kind": "list" },
-        { "label": "U-9071 crown", "value": "Pulse law decoded: sin(tick*0.2)*0.15+1.0, leader-gated", "kind": "text" }
+        {
+          "label": "Verified",
+          "value": [
+            "Letterbox chrome + 5-frame entry slide (4/0)",
+            "Text strings + prompt glyph",
+            "Per-car badge bound to Player Colour",
+            "Point circles, bar cells, max 8/12"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Just resolved",
+          "value": "U-9077 \u2014 4-piece bar frame was a false premise; shipped single-UV a22 is DFF-exact",
+          "kind": "text"
+        },
+        {
+          "label": "Still approximate",
+          "value": [
+            "U-9070 colour-5 badge",
+            "U-9073/74/76",
+            "Slot-to-atomic map (DFF plugin data unparsed)"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "U-9071 crown",
+          "value": "Pulse law decoded: sin(tick*0.2)*0.15+1.0, leader-gated",
+          "kind": "text"
+        }
       ]
     },
     {
       "heading": "Newly reversed",
       "fields": [
-        { "label": "Camera", "value": "FUN_0040de30 — ortho, view window {0.6,0.45}, identity frame; screen = (1-w/vw)*half on both axes", "kind": "text" },
-        { "label": "Row placement", "value": "FUN_0041c410 via FUN_0041cc50 — DAT_005f337c 4x vec3 {0.48, y, 1.0}", "kind": "text" },
-        { "label": "Row Y match", "value": "106.7/160.0/213.3/266.7 vs measured 107/160/213/267", "kind": "text" }
+        {
+          "label": "Camera",
+          "value": "FUN_0040de30 \u2014 ortho, view window {0.6,0.45}, identity frame; screen = (1-w/vw)*half on both axes",
+          "kind": "text"
+        },
+        {
+          "label": "Row placement",
+          "value": "FUN_0041c410 via FUN_0041cc50 \u2014 DAT_005f337c 4x vec3 {0.48, y, 1.0}",
+          "kind": "text"
+        },
+        {
+          "label": "Row Y match",
+          "value": "106.7/160.0/213.3/266.7 vs measured 107/160/213/267",
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "heading": "C3 promotions (2026-09-03)",
+      "fields": [
+        {
+          "label": "0x0040b930 PlayerScoreThresholdMask",
+          "value": "crown gate: score >= win threshold (row was STALE, port existed)",
+          "kind": "text"
+        },
+        {
+          "label": "0x0040b540 PlayerScoreRankOrder",
+          "value": "standings row order, descending by score (newly hooked)",
+          "kind": "text"
+        },
+        {
+          "label": "0x0041cc50 HudSlotUpdateCc50",
+          "value": "standings per-frame update, 5 fills + tick (newly hooked)",
+          "kind": "text"
+        },
+        {
+          "label": "Evidence",
+          "value": [
+            "path1 GREEN + non-degenerate on all three",
+            "path2 install verified on all three",
+            "0x0041cc50: 63/63 predicted dwords matched"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "C4 blockers",
+          "value": [
+            "path1 is hook-bypassed (rule caps at C3)",
+            "S-0491 stub in 0x0040b540 mode-4/7 arm",
+            "0x0041c410 arm excluded from the 0x0041cc50 diff"
+          ],
+          "kind": "list"
+        }
       ]
     }
   ]
