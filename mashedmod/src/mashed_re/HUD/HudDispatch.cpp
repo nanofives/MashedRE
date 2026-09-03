@@ -362,3 +362,76 @@ void __cdecl FUN_0041c2d0()
 // Phase A2 audit 2026-05-24: synthetic diff produces AV/AV crash both sides
 // (banned per phase-A1 rule). Function (hud_dispatch_draw4 in registry)
 // derefs HUD state globals not present at diff-attach time.
+
+// ---------------------------------------------------------------------------
+// 0x0041cc50  HudSlotUpdateCc50   (100 bytes)
+//
+// The STANDINGS PER-FRAME UPDATE, and the twin of HudSlotLoopCcc0 above: same
+// array (0x0063ce20, stride 0x114), same enable flag (+0x110), but it drives the
+// per-row UPDATE (FUN_0041c410) where Ccc0 drives the per-row DRAW (FUN_0041c9a0).
+// Called from Race::Tick 0x0040fc00 (non-ghost branch 2), C2.
+//
+// Body, in order:
+//   FUN_0040b930(&DAT_0063cde8);      // crown flags: score >= win threshold
+//   FUN_0040b9a0(&DAT_0063ce08, 0);   // tied-for-highest-score flags
+//   FUN_0040ba00(&DAT_0063cdd4);      // lowest-score flags
+//   FUN_0040b970(&DAT_0063cdc0);      // score == 0 flags
+//   FUN_0040b540(&DAT_0063cdf8);      // row order, descending by score
+//   for each of 4 groups: if (*(group+0x110) != 0) FUN_0041c410();  // ESI = group
+//   ++DAT_0063d270;                   // crown-pulse tick
+//
+// FUN_0041c410 then folds those four flag arrays into bits 0x40/0x80/0x100/0x200
+// of each group's enable word at +0x10c, places the row from DAT_005f337c using
+// the DAT_0063cdf8 order, and pulses the crown off DAT_0063d270.
+// Evidence: re/analysis/race_hud_capture_20260902.md Finding 20.
+//
+// NOTE on 0x0063d270: it is BOTH the loop's exclusive end bound (0x0063ce20 +
+// 4*0x114 == 0x0063d270) AND the tick counter incremented afterwards. The counter
+// lives immediately past the end of the group array. Not a typo -- verbatim.
+//
+// FUN_0041c410 takes `this` in ESI (register convention), unlike FUN_0041c9a0 /
+// FUN_0041b340 above which take it in EAX. The original emits
+//   MOV ESI,<entry> ; CALL 0x0041c410
+// so the asm thunk sets ESI, not EAX. ESI is callee-saved in this ABI, so it is
+// pushed/popped around the call -- the EAX/ECX thunks above need no such guard
+// because both of those registers are volatile.
+//
+// All six callees are C2+: 0x0040b930 C3, 0x0040b9a0 C4, 0x0040ba00 C3,
+// 0x0040b970 C3, 0x0040b540 C3, 0x0041c410 C2. The five flag-array fills are
+// called at their original VAs, which route through our own installed hooks for
+// the four that we have ported -- exactly what the game does.
+// ---------------------------------------------------------------------------
+
+typedef void (__cdecl *FillFn)(void* out);
+typedef void (__cdecl *FillFn2)(void* out, std::int32_t sel);
+
+// 0x0041cc50
+extern "C" __declspec(dllexport) void __cdecl HudSlotUpdateCc50() {
+    reinterpret_cast<FillFn >(0x0040b930)(reinterpret_cast<void*>(0x0063cde8u));
+    reinterpret_cast<FillFn2>(0x0040b9a0)(reinterpret_cast<void*>(0x0063ce08u), 0);
+    reinterpret_cast<FillFn >(0x0040ba00)(reinterpret_cast<void*>(0x0063cdd4u));
+    reinterpret_cast<FillFn >(0x0040b970)(reinterpret_cast<void*>(0x0063cdc0u));
+    reinterpret_cast<FillFn >(0x0040b540)(reinterpret_cast<void*>(0x0063cdf8u));
+
+    std::uint8_t* puVar1 = reinterpret_cast<std::uint8_t*>(0x0063ce20u);
+    constexpr std::uintptr_t kCallee0041c410 = 0x0041c410u;
+    do {
+        if (*reinterpret_cast<const std::int32_t*>(puVar1 + 0x110) != 0) {
+            // Replicate MOV ESI,<entry> ; CALL 0x0041c410
+            const std::uintptr_t fn_addr = kCallee0041c410;
+            std::uint8_t* entry = puVar1;
+            __asm {
+                push esi
+                mov  esi, entry
+                mov  ecx, fn_addr
+                call ecx
+                pop  esi
+            }
+        }
+        puVar1 += 0x114;
+    } while (reinterpret_cast<std::int32_t>(puVar1) < static_cast<std::int32_t>(0x0063d270u));
+
+    ++*reinterpret_cast<std::int32_t*>(0x0063d270u);
+}
+
+RH_ScopedInstall(HudSlotUpdateCc50, 0x0041cc50);  // C3 2026-09-03 (Finding 20; caller 0x0040fc00 C2, callees C2+)

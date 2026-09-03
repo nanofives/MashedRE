@@ -20600,4 +20600,55 @@ HOOKS = {
         'path2_tests':    [{'scalars': [0x0063cdf8]}, {'scalars': [0x0063cdf8]}],
     },
 
+    # 0x0041cc50  HudSlotUpdateCc50 -- the STANDINGS PER-FRAME UPDATE, twin of
+    # HudSlotLoopCcc0 (same array/stride/flag, but drives the per-row UPDATE
+    # FUN_0041c410 where Ccc0 drives the per-row DRAW FUN_0041c9a0).
+    # Body: five flag-array fills off DAT_008a94e0, then a guarded per-group
+    # FUN_0041c410, then ++DAT_0063d270 (the crown-pulse tick).
+    #
+    # OBSERVABLE is all five filled arrays PLUS the tick -- 21 dwords, so this is
+    # a whole-composition check rather than one value: crown flags (score >= win
+    # threshold), tied-for-max, min, score==0, and the row order.
+    #
+    # NON-DEGENERACY: three vectors chosen so that EVERY one of the five arrays
+    # differs somewhere between them, and no array is all-zero in every vector
+    # (vector 2 is the only one where any car reaches the threshold; vector 1 is
+    # the only one with zero scores, which is what makes the score==0 array
+    # non-trivial). Vector 2 also flips the rule global to 1 so the 7-vs-10
+    # threshold arm is exercised. Every output slot is pre-seeded 0x5eed0000 so a
+    # fill that never runs reads as a miss, and the tick is seeded 0x1000 so the
+    # increment must be observed as 0x1001 rather than inferred.
+    #
+    # DELIBERATE EXCLUSION: the four group guards at +0x110 are seeded to 0, so
+    # the FUN_0041c410 arm does NOT run. That arm writes live RW frame matrices
+    # and is itself still C2/unported; letting it fire at diff-attach would be
+    # non-deterministic and could AV. What this diff covers is the fill+tick
+    # composition and the guard logic; the update arm is out of scope and stays
+    # named in the row notes.
+    #
+    # SAFE: cache_setter_observe snapshots and restores every seeded and observed
+    # address, including the score table, the mode globals and the tick.
+    'hud_slot_update_cc50': {
+        'rva':            0x0041cc50,
+        'export':         'HudSlotUpdateCc50',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'cache_setter_observe',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # scores 4,10,5,7 rule 0 (thr 10) -> crown 0,1,0,0 | max 0,1,0,0 | min 1,0,0,0 | zero 0,0,0,0 | order 1,3,2,0 | tick 0x1001
+            {'seed': [{'addr': '0x008a94e0', 'val': 4}, {'addr': '0x008a94e4', 'val': 10}, {'addr': '0x008a94e8', 'val': 5}, {'addr': '0x008a94ec', 'val': 7}, {'addr': '0x008a94d0', 'val': 4}, {'addr': '0x0067ea64', 'val': 0}, {'addr': '0x007f0fd0', 'val': 0}, {'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 0}, {'addr': '0x007f1a34', 'val': 0}, {'addr': '0x007f1a44', 'val': 0}, {'addr': '0x0063cf30', 'val': 0}, {'addr': '0x0063d044', 'val': 0}, {'addr': '0x0063d158', 'val': 0}, {'addr': '0x0063d26c', 'val': 0}, {'addr': '0x0063d270', 'val': 0x1000}, {'addr': '0x0063cde8', 'val': 0x5eed0000}, {'addr': '0x0063cdec', 'val': 0x5eed0000}, {'addr': '0x0063cdf0', 'val': 0x5eed0000}, {'addr': '0x0063cdf4', 'val': 0x5eed0000}, {'addr': '0x0063ce08', 'val': 0x5eed0000}, {'addr': '0x0063ce0c', 'val': 0x5eed0000}, {'addr': '0x0063ce10', 'val': 0x5eed0000}, {'addr': '0x0063ce14', 'val': 0x5eed0000}, {'addr': '0x0063cdd4', 'val': 0x5eed0000}, {'addr': '0x0063cdd8', 'val': 0x5eed0000}, {'addr': '0x0063cddc', 'val': 0x5eed0000}, {'addr': '0x0063cde0', 'val': 0x5eed0000}, {'addr': '0x0063cdc0', 'val': 0x5eed0000}, {'addr': '0x0063cdc4', 'val': 0x5eed0000}, {'addr': '0x0063cdc8', 'val': 0x5eed0000}, {'addr': '0x0063cdcc', 'val': 0x5eed0000}, {'addr': '0x0063cdf8', 'val': 0x5eed0000}, {'addr': '0x0063cdfc', 'val': 0x5eed0000}, {'addr': '0x0063ce00', 'val': 0x5eed0000}, {'addr': '0x0063ce04', 'val': 0x5eed0000}],
+             'args': [],
+             'obs':  ['0x0063cde8', '0x0063cdec', '0x0063cdf0', '0x0063cdf4', '0x0063ce08', '0x0063ce0c', '0x0063ce10', '0x0063ce14', '0x0063cdd4', '0x0063cdd8', '0x0063cddc', '0x0063cde0', '0x0063cdc0', '0x0063cdc4', '0x0063cdc8', '0x0063cdcc', '0x0063cdf8', '0x0063cdfc', '0x0063ce00', '0x0063ce04', '0x0063d270']},
+            # scores 0,0,3,0 rule 0 -> crown 0,0,0,0 | max 0,0,1,0 | min 1,1,0,1 | zero 1,1,0,1 | order 2,0,1,3
+            {'seed': [{'addr': '0x008a94e0', 'val': 0}, {'addr': '0x008a94e4', 'val': 0}, {'addr': '0x008a94e8', 'val': 3}, {'addr': '0x008a94ec', 'val': 0}, {'addr': '0x008a94d0', 'val': 4}, {'addr': '0x0067ea64', 'val': 0}, {'addr': '0x007f0fd0', 'val': 0}, {'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 0}, {'addr': '0x007f1a34', 'val': 0}, {'addr': '0x007f1a44', 'val': 0}, {'addr': '0x0063cf30', 'val': 0}, {'addr': '0x0063d044', 'val': 0}, {'addr': '0x0063d158', 'val': 0}, {'addr': '0x0063d26c', 'val': 0}, {'addr': '0x0063d270', 'val': 0x1000}, {'addr': '0x0063cde8', 'val': 0x5eed0000}, {'addr': '0x0063cdec', 'val': 0x5eed0000}, {'addr': '0x0063cdf0', 'val': 0x5eed0000}, {'addr': '0x0063cdf4', 'val': 0x5eed0000}, {'addr': '0x0063ce08', 'val': 0x5eed0000}, {'addr': '0x0063ce0c', 'val': 0x5eed0000}, {'addr': '0x0063ce10', 'val': 0x5eed0000}, {'addr': '0x0063ce14', 'val': 0x5eed0000}, {'addr': '0x0063cdd4', 'val': 0x5eed0000}, {'addr': '0x0063cdd8', 'val': 0x5eed0000}, {'addr': '0x0063cddc', 'val': 0x5eed0000}, {'addr': '0x0063cde0', 'val': 0x5eed0000}, {'addr': '0x0063cdc0', 'val': 0x5eed0000}, {'addr': '0x0063cdc4', 'val': 0x5eed0000}, {'addr': '0x0063cdc8', 'val': 0x5eed0000}, {'addr': '0x0063cdcc', 'val': 0x5eed0000}, {'addr': '0x0063cdf8', 'val': 0x5eed0000}, {'addr': '0x0063cdfc', 'val': 0x5eed0000}, {'addr': '0x0063ce00', 'val': 0x5eed0000}, {'addr': '0x0063ce04', 'val': 0x5eed0000}],
+             'args': [],
+             'obs':  ['0x0063cde8', '0x0063cdec', '0x0063cdf0', '0x0063cdf4', '0x0063ce08', '0x0063ce0c', '0x0063ce10', '0x0063ce14', '0x0063cdd4', '0x0063cdd8', '0x0063cddc', '0x0063cde0', '0x0063cdc0', '0x0063cdc4', '0x0063cdc8', '0x0063cdcc', '0x0063cdf8', '0x0063cdfc', '0x0063ce00', '0x0063ce04', '0x0063d270']},
+            # scores 12,7,7,1 rule 1 (thr 7) -> crown 1,1,1,0 | max 1,0,0,0 | min 0,0,0,1 | zero 0,0,0,0 | order 0,1,2,3
+            {'seed': [{'addr': '0x008a94e0', 'val': 12}, {'addr': '0x008a94e4', 'val': 7}, {'addr': '0x008a94e8', 'val': 7}, {'addr': '0x008a94ec', 'val': 1}, {'addr': '0x008a94d0', 'val': 4}, {'addr': '0x0067ea64', 'val': 0}, {'addr': '0x007f0fd0', 'val': 1}, {'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 0}, {'addr': '0x007f1a34', 'val': 0}, {'addr': '0x007f1a44', 'val': 0}, {'addr': '0x0063cf30', 'val': 0}, {'addr': '0x0063d044', 'val': 0}, {'addr': '0x0063d158', 'val': 0}, {'addr': '0x0063d26c', 'val': 0}, {'addr': '0x0063d270', 'val': 0x1000}, {'addr': '0x0063cde8', 'val': 0x5eed0000}, {'addr': '0x0063cdec', 'val': 0x5eed0000}, {'addr': '0x0063cdf0', 'val': 0x5eed0000}, {'addr': '0x0063cdf4', 'val': 0x5eed0000}, {'addr': '0x0063ce08', 'val': 0x5eed0000}, {'addr': '0x0063ce0c', 'val': 0x5eed0000}, {'addr': '0x0063ce10', 'val': 0x5eed0000}, {'addr': '0x0063ce14', 'val': 0x5eed0000}, {'addr': '0x0063cdd4', 'val': 0x5eed0000}, {'addr': '0x0063cdd8', 'val': 0x5eed0000}, {'addr': '0x0063cddc', 'val': 0x5eed0000}, {'addr': '0x0063cde0', 'val': 0x5eed0000}, {'addr': '0x0063cdc0', 'val': 0x5eed0000}, {'addr': '0x0063cdc4', 'val': 0x5eed0000}, {'addr': '0x0063cdc8', 'val': 0x5eed0000}, {'addr': '0x0063cdcc', 'val': 0x5eed0000}, {'addr': '0x0063cdf8', 'val': 0x5eed0000}, {'addr': '0x0063cdfc', 'val': 0x5eed0000}, {'addr': '0x0063ce00', 'val': 0x5eed0000}, {'addr': '0x0063ce04', 'val': 0x5eed0000}],
+             'args': [],
+             'obs':  ['0x0063cde8', '0x0063cdec', '0x0063cdf0', '0x0063cdf4', '0x0063ce08', '0x0063ce0c', '0x0063ce10', '0x0063ce14', '0x0063cdd4', '0x0063cdd8', '0x0063cddc', '0x0063cde0', '0x0063cdc0', '0x0063cdc4', '0x0063cdc8', '0x0063cdcc', '0x0063cdf8', '0x0063cdfc', '0x0063ce00', '0x0063ce04', '0x0063d270']},
+        ],
+        'path2_tests':    [{'scalars': []}, {'scalars': []}],
+    },
+
 }
