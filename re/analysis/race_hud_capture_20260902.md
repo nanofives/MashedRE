@@ -1578,13 +1578,87 @@ crown, so there is no original-side reference to diff against. The derivation it
 rests on the DFF geometry, the camera constants and the decompiled scale call, all cited
 above.
 
-`[UNCERTAIN]` **TRIGGER, unchanged.** The original gate is `group+0x10c & 0x40`, set from
-`DAT_0063cde8[playerIndex] != 0`, filled by `FUN_0040b930` at the top of `FUN_0041cc50`.
-`FUN_0040b930` is unreversed, so what earns a crown is unknown. The shipped gate was
-therefore left as-is (match end, leader only) and was **not** relaxed; the crown only
-appears above because `MASHED_CROWN_TEST=<car>` forces it, a verification-only poke in
-the same family as `MASHED_ROUND_COLOURS` / `MASHED_ROUND_RULE`. Reversing
-`FUN_0040b930` is what would close U-9071 fully.
+### U-9071 TRIGGER reversed — the crown is a win-threshold test, not a leader election
+
+`FUN_0040b930` @`0x0040b930`, which fills the `0x40` source array, is:
+
+```c
+for (i = 0; i < 4; ++i)
+    DAT_0063cde8[i] = (DAT_008a94e0[i] >= FUN_0040b8e0());   // score >= threshold
+```
+
+`FUN_0040b8e0` @`0x0040b8e0` returns the **win threshold**:
+
+| condition | threshold |
+|---|---|
+| `DAT_007f0fd0` (race rule) == 1 or 2 | 7 |
+| `DAT_0067ea64 != 0` (via `FUN_0042f500` @`0x0042f500`) | 7 |
+| fewer than 4 participants (`FUN_0040e340`) | 7 |
+| 4 participants, other rule, flag clear | **10** |
+
+So the crown is **not** "the leader" — it is *every* car whose score has reached the
+value that wins the match. Note the threshold arms line up with the score-bar max from
+`FUN_0040b890` (U-9072 residual B): max 12 pairs with threshold 10, max 8 with 7, i.e.
+`max = threshold + 2` in both arms, off the same three determinants.
+
+**This rule predicts the reference.** `orig_stand7.bmp`'s four scores are 8/7/5/4 and the
+4-player threshold is 10, so `0x40` is legitimately clear on all four rows — which is
+exactly why no capture in `verify/race_hud` has ever shown a crown. The absence stops
+being an unexplained gap. This is non-circular: the threshold was decompiled without
+reference to those scores.
+
+Ported: the guessed match-end/leader gate is **replaced** by `score >= threshold`, with
+the threshold bound to the reachable determinant (`race_rule`), participants fixed at 4
+and `DAT_0067ea64` unmodelled — the same binding U-9072 uses.
+
+### Row order was WRONG: the original sorts by score (found in the same round)
+
+`FUN_0040b540` @`0x0040b540` fills `DAT_0063cdf8`, and `FUN_0041c410` finds a group's row
+by searching it for the group's player index. It is a descending bubble sort:
+
+```c
+for (i = 0; i < 4; ++i) {
+    local[i] = DAT_008a94e0[i];                       // score
+    if (DAT_007f1a14[i*4] == -1) local[i] = -100;     // absent slot sentinel
+    out[i] = i;
+}
+// adjacent-swap sort, descending on local[], carrying out[] along
+```
+(Modes 4/7 replace the order via `FUN_00417740`; mode 9 uses a fixed two-entry order.
+Neither is reachable here — `[UNCERTAIN]`, unmodelled.)
+
+**The port drew row r for car r.** That is invisibly correct whenever the scores already
+descend with car index — which is true in the demo *and* in `orig_stand7.bmp` (8,7,5,4),
+so no capture could ever have caught it. Fourth appearance of the degenerate trap in this
+lane. Fixed: rows are now ordered by the same descending sort.
+
+### Verification (non-degenerate, two scenarios)
+
+Distinct scores were poked with distinct per-car colours (`MASHED_ROUND_COLOURS=0,1,2,3`)
+so the row order is readable off the badges. Crown presence measured as gold-ink pixel
+count inside the derived crown box, isolated past the point circle's x=290 edge.
+
+| run | scores | predicted row->car | measured badges | crown |
+|---|---|---|---|---|
+| A | 8,7,5,4 | 0,1,2,3 (identity) | Red, Bluejay, Melon, Gold = **0,1,2,3** | **none on any row** |
+| B | 4,10,5,7 | **1,3,2,0** | Bluejay, Gold, Melon, Red = **1,3,2,0** | **row 0 only** (189 px) |
+
+Run B is the non-degenerate case: its row order differs from car index, and the old code
+would have drawn it wrong. Run A reproduces the reference arrangement and, correctly,
+draws no crown — the same outcome as `orig_stand7.bmp`. Bar cells read 10/7/5/4 in run B
+off the image; an automated cell count is unreliable here because the empty part of the
+bar carries a dashed pattern, so the authoritative cell verification remains Finding 18's
+drawstream one, which this change does not touch. Screenshot:
+`verify/race_hud/re_crown_rowsort_u9071.png`.
+
+Still `[UNCERTAIN]`: `DAT_0067ea64`'s meaning (`FUN_0042f500` is a bare getter), and the
+mode-4/7/9 row-order overrides. Neither is reachable in the port's current modes.
+
+Bits named in passing, all from the same accessor family and all reading the score array
+`DAT_008a94e0`: **0x80** = tied for highest score (`FUN_0040b9a0` @`0x0040b9a0`),
+**0x100** = lowest score (`FUN_0040ba00` @`0x0040ba00`), **0x200** = score is exactly zero
+(`FUN_0040b970` @`0x0040b970`). `FUN_0040b420` @`0x0040b420` is a bare read of
+`DAT_008a9500[car]` — the score delta feeding the point-circle switch.
 
 ### Port impact
 

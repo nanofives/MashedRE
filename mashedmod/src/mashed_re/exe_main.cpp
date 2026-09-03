@@ -3074,15 +3074,10 @@ bool RenderFrame() {
             // drew them every round-mode frame; with real badges that over-draws
             // the live driving view, so gate them here.
             if (standings) {
-            // Leader (for the crown): top score, ties to lowest index; a decided
-            // round/match winner overrides.
-            int leader = -1, bestScore = -1;
-            for (int i = 0; i < 4; ++i) {
-                const int s = g_track.score(i);
-                if (s > bestScore) { bestScore = s; leader = i; }
-            }
-            if (g_track.match_winner() >= 0)      leader = g_track.match_winner();
-            else if (g_track.round_winner() >= 0) leader = g_track.round_winner();
+            // (The old "leader" computation lived here -- top score, ties to
+            // lowest index, overridden by a decided round/match winner. It was a
+            // guess at the crown gate and is gone: FUN_0040b930 shows the crown is
+            // a per-car score>=threshold test, not a single-leader election.)
             // Fallback placeholder colours (packed-dword convention: the
             // reimpl's R<->B swap turns these into the intended screen colours).
             static const std::uint32_t kFbCol[4] = {0xff4040e0u, 0xffffa040u,
@@ -3108,8 +3103,47 @@ bool RenderFrame() {
                     }
                 }
             }
-            for (int i = 0; i < 4; ++i) {
-                const float cy = kRowCy[i];
+            // ---- row order: sorted DESCENDING by score -------------------
+            // FUN_0040b540 @0x0040b540. The original does NOT draw row r for
+            // car r. It copies the per-car scores DAT_008a94e0[0..3], substitutes
+            // -100 for absent slots (DAT_007f1a14[slot*4] == -1), bubble-sorts
+            // DESCENDING carrying the player index along, and stores the result in
+            // DAT_0063cdf8[row]. FUN_0041c410 then locates a group's row by
+            // searching DAT_0063cdf8 for its player index (group+0x108) -- so row 0
+            // is the highest scorer. Modes 4/7 replace the order wholesale via
+            // FUN_00417740 and mode 9 uses a fixed two-entry order; neither is
+            // reachable here -- [UNCERTAIN], unmodelled.
+            //
+            // This was previously row == car. That is invisibly correct whenever
+            // the scores already descend with car index -- which is exactly the
+            // case in the demo and in orig_stand7.bmp (8,7,5,4) -- so no capture
+            // ever caught it. All four participants exist in the port, so the
+            // -100 absent-slot sentinel has no effect and is not modelled.
+            auto EffScore = [&](int car) {
+                return s_hud_scores_set ? s_hud_scores[car] : g_track.score(car);
+            };
+            int order[4] = {0, 1, 2, 3};
+            {
+                int sk[4];
+                for (int a = 0; a < 4; ++a) sk[a] = EffScore(a);
+                for (int a = 3; a > 0; --a)          // adjacent-swap, descending
+                    for (int b = 0; b < a; ++b)
+                        if (sk[b] < sk[b + 1]) {
+                            const int ts = sk[b]; sk[b] = sk[b + 1]; sk[b + 1] = ts;
+                            const int to = order[b]; order[b] = order[b + 1];
+                            order[b + 1] = to;
+                        }
+            }
+            // Crown threshold, FUN_0040b8e0 @0x0040b8e0: 7 when the race rule is 1
+            // or 2, when DAT_0067ea64 != 0, or with fewer than 4 participants;
+            // otherwise 10. The port always has 4 participants and does not model
+            // DAT_0067ea64 -- the same reachable-determinant binding the score-bar
+            // max uses (U-9072 residual B). Note max = threshold + 2 in both arms.
+            const int kWinThreshold =
+                (g_track.race_rule() == 1 || g_track.race_rule() == 2) ? 7 : 10;
+            for (int r = 0; r < 4; ++r) {
+                const int i = order[r];
+                const float cy = kRowCy[r];
                 const float ix = kIconX * kUiS;
                 const float iy = (cy - kIconH * 0.5f) * kUiS;
                 const float iw = kIconW * kUiS, ih = kIconH * kUiS;
@@ -3263,15 +3297,16 @@ bool RenderFrame() {
                 // the end of FUN_0041cc50 @0x0041cc50 -- i.e. free-running over
                 // standings frames, not reset per entry. s_crownTick mirrors that.
                 //
-                // [UNCERTAIN] TRIGGER only. The original gate is
-                // group+0x10c & 0x40, set from DAT_0063cde8[playerIndex] != 0,
-                // which FUN_0040b930 fills at the top of FUN_0041cc50.
-                // FUN_0040b930 is unreversed, so what actually earns a crown is
-                // unknown. No reference frame in verify/race_hud shows a crown at
-                // all (0x40 is clear for all four rows in every capture taken), so
-                // this draw is UNVERIFIED -- there is nothing to diff it against.
-                // The conservative match-end gate is therefore retained unchanged:
-                // drawing it per round would contradict orig_drive_late.bmp.
+                // TRIGGER, now reversed (was a guess: match-end + leader).
+                // group+0x10c & 0x40 comes from DAT_0063cde8[car] != 0, filled by
+                // FUN_0040b930 @0x0040b930:
+                //     for (i = 0; i < 4; ++i)
+                //         DAT_0063cde8[i] = (DAT_008a94e0[i] >= FUN_0040b8e0());
+                // i.e. the crown is NOT "the leader" -- it is every car whose score
+                // has REACHED THE WIN THRESHOLD. That is why no capture in
+                // verify/race_hud shows a crown: orig_stand7.bmp's four scores are
+                // 8/7/5/4 and the 4-player threshold is 10, so 0x40 is legitimately
+                // clear on all four rows. The rule predicts the reference.
                 static int s_crownTick = 0;
                 if (i == 0) ++s_crownTick;      // once per standings frame
                 // Verification-only poke, same pattern as MASHED_ROUND_COLOURS /
@@ -3287,9 +3322,8 @@ bool RenderFrame() {
                         GetEnvironmentVariableA("MASHED_CROWN_TEST", ct, sizeof(ct)) > 0
                             ? std::atoi(ct) : -1;
                 }
-                const bool crown_on =
-                    (g_track.match_winner() >= 0 && i == leader && leader >= 0) ||
-                    (s_crownTest >= 0 && i == s_crownTest);
+                const bool crown_on = (EffScore(i) >= kWinThreshold) ||
+                                      (s_crownTest >= 0 && i == s_crownTest);
                 if (g_standings_ready && crown_on) {
                     const float pulse =
                         std::sin(static_cast<float>(s_crownTick) * 0.2f) * 0.15f + 1.0f;
