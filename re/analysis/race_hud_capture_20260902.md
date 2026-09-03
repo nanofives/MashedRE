@@ -1504,9 +1504,30 @@ i.e. slot indices `(offset - 0x80)/4` = **2, 3, 5, 6**:
   (else 1.0) — the crown pair (a06/a07).
 
 None of the four touches the circle, the bar frame or the icon, so they cannot produce a
-placement error in those. `[UNCERTAIN]` — the slot-to-atomic identification rests on the
-matching behaviour (grey override, score scaling, leader gate), not on the DFF plugin
-slot map, which is still unparsed.
+placement error in those.
+
+The slot-2/5 identification is on firm ground: `FUN_0041c9a0`'s write is
+`*(*(*(child+0x18)+0x20)+4) = 0xff323232`, a material-colour override, and a18/a19 are
+the only two atomics in the clump with **no texture** and a baked flat `0xCCCCCC`
+(Finding 14). Slots 3/6 as the crown pair rests on the leader gate (`0x40`) plus the
+pulse being uniform in X and Y, which suits a badge and not a bar.
+
+**The general slot map is NOT in the DFF — clean negative from the bytes.** The earlier
+claim (carried from the Ghidra proxy) that `FUN_004b5190` returns "the slot index baked
+into that atomic's DFF frame plugin data, set by the DFF authoring tool" is **false**.
+Parsing `ENDPOINTPANEL.DFF`'s chunk tree shows **all 29 frame extension chunks and all
+24 atomic extension chunks are zero-length** — there is no frame plugin data, no frame
+names, and no atomic extension data in the file at all. Every atomic struct is
+`flags=0x5, unused=0x0`, and geometry index simply equals enumeration order
+(a00→geom0 … a23→geom23). Frame indices are 23,24,25,26,27,28,22,21,9..20,4,5,6,1, and
+neither frame index nor geometry index reproduces the observed slots {2,3,5,6} for the
+backing/crown pairs.
+
+So `FUN_004b5190`'s value is produced at runtime by something outside the DFF.
+`[UNCERTAIN]` — what populates it is not determined; it needs Ghidra on the
+`FUN_00543d40` / `FUN_00543d70` / `FUN_00543df0` accessor family and on the clump loader
+`FUN_0042a5d0`. This only matters if the enable-flag semantics are ever ported; the
+shipped Im2D path drives visibility with its own logic and does not need the slot map.
 
 ### Crown pulse law (bears on U-9071)
 
