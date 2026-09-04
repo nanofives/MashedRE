@@ -321,6 +321,22 @@ public:
 
     void  ScoreAward(int car, int delta);          // FUN_0040b290 mode-0 path
     void  ScoreOnElimination(int victim);          // FUN_0040eee0 4-player path
+    // FUN_0040eee0's TEAM arms (the DAT_0067ea64 != 0 side of every
+    // FUN_0042f500 test). Team ids come from the original's own per-slot field
+    // DAT_007f1a18 + slot*0x10, which MenuTeamBalance (0x0042bb60) fills:
+    // -1 = slot has no assigned player, 0 / 1 = the two teams. A car with -1
+    // is skipped exactly as the original's `piVar8[-1] != -1` guard skips a
+    // slot with no profile.
+    void  SetTeamPlay(bool on, const int team_of[4]);
+    void  ScoreOnEliminationTeams(int victim);     // FUN_0040eee0 team arms
+    void  KillCar(int car);                        // FUN_00422fd0 equivalent
+    void  AwardByTeam(int winTeam, int delta);
+    float RacePct(int car) const;                  // 0x00408ad0 equivalent
+    bool  ProgBehind(int A, int B) const;          // 80/20/100 wrap compare
+    bool  team_play() const { return team_play_; }
+    int   team_of(int car) const {
+        return (car >= 0 && car < kRaceCars) ? team_of_[car] : -1;
+    }
     void  StartRound();           // grid all 4 cars at the start line
     void  StartMatch(int first_to);  // reset scores, start round 1
     void  NextRoundOrEnd();          // check match win, start next round

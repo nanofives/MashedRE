@@ -2625,3 +2625,82 @@ in the image. The same scan pins the ability value's **consumer**: that site
 passes it to `FUN_0046dc00(slot, ability)` on menu action `0xff3b0000`. Stated
 limit: `XrefRange` can miss a write whose base is computed at runtime, but all
 34 sites carry the base as a fixed immediate.
+
+---
+
+## Finding 31: team scoring runs in the standalone (2026-09-04)
+
+Finding 24 decoded the rule and found the chain already implemented — as a
+`.asi` hook. The standalone could not use any of it. It can now: the team arms
+of `FUN_0040eee0` are implemented exe-side in
+`D3d9Render/TrackRenderer.cpp` (`ScoreOnEliminationTeams`, `AwardByTeam`,
+`ProgBehind`, `KillCar`), on the standalone's own liveness and score arrays.
+
+### Why not just call the ported function
+
+`Race/ScoringHooks.cpp` is `asi_sources.rsp`-only, and adding it to the exe list
+would not help: it forwards through about twenty-five raw `.text` RVAs
+(`0x00422fd0`, `0x0046c7b0`, `0x0042f6a0`, `0x0046c700`, `0x00431d80`,
+`0x0040d590`, `0x00408a50`/`70`, `0x0040e340`/`350`/`370`, `0x0040b6d0`, …), of
+which only two have a TU in the exe build, and it reads `PTR_PTR_005f2770` plus
+a dozen global blocks the standalone never commits. Every one of those is the
+latent-tunnel shape that AV'd `CarSlotAssign`. So this is the rule ported into
+the race layer, not a second copy of the hook, and no RVA changed level.
+
+### The arms, as written
+
+| alive after the kill | rule |
+|---|---|
+| 3 | fires ONLY if all three are on the SAME team: eliminates two of them by the progress compare, then `+/-delta` by team. Cannot happen in a 2v2; it exists for the 1v3 split `MenuTeamBalance` also accepts |
+| 2 | if the two are on the same team, eliminate the one behind and award `+/-1` by that team. **If they are on different teams the original does nothing at all** |
+| 1 | `+/-1` by the survivor's team, then `LAB_0040fbbb` equalizes every car's path progress to the survivor's |
+
+Two things kept rather than smoothed: the **delta asymmetry** (the 3-alive arm
+awards `+/-param_2`, the other two a literal `+/-1` — `uVar12 = 1 /
+0xffffffff`), and the fact that the **victim takes no direct penalty** in team
+play, unlike the free-for-all arms.
+
+### The control that found a real defect
+
+Team ids come from the original's own per-slot field `DAT_007f1a18`. The first
+wiring wrote that field directly from `MASHED_TEAMS` — and the control run with
+team play on and **no** `MASHED_TEAMS` came back `teams=0,0,0,0`, put all four
+cars on one team and awarded `+1` to everybody.
+
+The cause is that the standalone commits that granule **zeroed**, while the
+original's "no assigned player" value is `-1`. Writing the field directly cannot
+tell the two apart. The fix is Finding 26's lesson applied again: seed the
+**assigner's input** — the per-profile pick table `DAT_0067e938` (1 = team A,
+2 = team B, the 3-state selector `MenuTeamSelectTick` edits) plus each slot's
+profile — and let `MenuTeamBalance` (`0x0042bb60`, C3, already in the exe build)
+derive `DAT_007f1a18` and validate the split. With no seed the picks are 0,
+every slot derives `-1`, and nothing scores.
+
+`MASHED_TEAM_PLAY=1` now also **writes `DAT_0067ea64`** instead of setting a
+private display bool, so the points target, the crown threshold and the scorer
+read one source rather than two that can drift.
+
+### Verification (`log/team_scoring_2026-09-04.txt`)
+
+Instrumented, with the arm-entry counters armed before the first run — an arm
+that never executes and an arm that executes and awards nothing are the same
+silence in the score column.
+
+| config | result |
+|---|---|
+| `MASHED_TEAMS=0,0,1,1` (2v2) | `balance=0x1000`; every award moves both team-mates together (`0,0,1,1` → `1,1,0,0` → …), loser team floored at 0 |
+| `MASHED_TEAMS=0,1,1,1` (1v3) | `balance=0x1000`; **the 3-alive collapse arm fires 11 times** (`TEAM_COLLAPSE arm=3 team=1`), team 1 sweeps |
+| team play on, no teams | `balance=0x1` (fewer than two participants), `teams=-1,-1,-1,-1`, three arm entries per round and **zero awards** |
+| team play off | one line, `play=0`; no `TEAM_ELIM`, no `TEAM_AWARD` — the free-for-all path is untouched |
+
+**Not covered, stated rather than glossed:** the 2-alive same-team branch was
+ENTERED on every round (`TEAM_ELIM … alive=2`) but its collapse never fired,
+because it needs both eliminations in a 2v2 to come from one team and the
+elimination rule did not produce that in ~12 rounds; in a 1v3 it is unreachable,
+since the 3-alive arm collapses straight to one survivor. Implemented and
+transcribed, not observed.
+
+A backbuffer capture of the team-scored standings was attempted and did not
+land — `MASHED_DBG_BBDUMP` did not fire on the `MASHED_ROUND` race path at
+either frame 1500 or 2600. The instrumentation log is the evidence here, which
+is the preferred channel anyway.

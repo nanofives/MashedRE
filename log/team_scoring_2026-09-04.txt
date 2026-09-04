@@ -1,0 +1,126 @@
+# team scoring evidence, 2026-09-04 (TrackRenderer::ScoreOnEliminationTeams)
+
+=== 2v2  MASHED_TEAM_PLAY='1' MASHED_TEAMS='0,0,1,1' ===
+TEAM_SCORING play=1 balance=0x1000 teams=0,0,1,1
+TEAM_ELIM victim=0 alive=3 teams=0,0,1,1
+TEAM_ELIM victim=2 alive=2 teams=0,0,1,1
+TEAM_ELIM victim=1 alive=1 teams=0,0,1,1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,0,1,1 scores=0,0,1,1
+TEAM_ELIM victim=3 alive=3 teams=0,0,1,1
+TEAM_ELIM victim=0 alive=2 teams=0,0,1,1
+TEAM_ELIM victim=2 alive=1 teams=0,0,1,1
+TEAM_AWARD win=0 delta=1 alive=1 teams=0,0,1,1 scores=1,1,0,0
+TEAM_ELIM victim=3 alive=3 teams=0,0,1,1
+TEAM_ELIM victim=0 alive=2 teams=0,0,1,1
+TEAM_ELIM victim=1 alive=1 teams=0,0,1,1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,0,1,1 scores=0,0,1,1
+TEAM_ELIM victim=3 alive=3 teams=0,0,1,1
+TEAM_ELIM victim=0 alive=2 teams=0,0,1,1
+TEAM_ELIM victim=1 alive=1 teams=0,0,1,1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,0,1,1 scores=0,0,2,2
+TEAM_ELIM victim=3 alive=3 teams=0,0,1,1
+TEAM_ELIM victim=0 alive=2 teams=0,0,1,1
+TEAM_ELIM victim=1 alive=1 teams=0,0,1,1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,0,1,1 scores=0,0,3,3
+TEAM_ELIM victim=3 alive=3 teams=0,0,1,1
+TEAM_ELIM victim=0 alive=2 teams=0,0,1,1
+TEAM_ELIM victim=1 alive=1 teams=0,0,1,1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,0,1,1 scores=0,0,4,4
+TEAM_ELIM victim=3 alive=3 teams=0,0,1,1
+TEAM_ELIM victim=0 alive=2 teams=0,0,1,1
+TEAM_ELIM victim=1 alive=1 teams=0,0,1,1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,0,1,1 scores=0,0,5,5
+TEAM_ELIM victim=3 alive=3 teams=0,0,1,1
+TEAM_ELIM victim=0 alive=2 teams=0,0,1,1
+TEAM_ELIM victim=1 alive=1 teams=0,0,1,1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,0,1,1 scores=0,0,6,6
+TEAM_ELIM victim=3 alive=3 teams=0,0,1,1
+TEAM_ELIM victim=0 alive=2 teams=0,0,1,1
+TEAM_ELIM victim=1 alive=1 teams=0,0,1,1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,0,1,1 scores=0,0,7,7
+TEAM_ELIM victim=3 alive=3 teams=0,0,1,1
+TEAM_ELIM victim=0 alive=2 teams=0,0,1,1
+TEAM_ELIM victim=1 alive=1 teams=0,0,1,1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,0,1,1 scores=0,0,8,8
+
+=== 1v3  MASHED_TEAM_PLAY='1' MASHED_TEAMS='0,1,1,1' ===
+TEAM_SCORING play=1 balance=0x1000 teams=0,1,1,1
+TEAM_ELIM victim=0 alive=3 teams=0,1,1,1
+TEAM_COLLAPSE arm=3 team=1 kept=3 dropped=1,3
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,1,1 scores=0,1,1,1
+TEAM_ELIM victim=0 alive=3 teams=0,1,1,1
+TEAM_COLLAPSE arm=3 team=1 kept=3 dropped=1,3
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,1,1 scores=0,2,2,2
+TEAM_ELIM victim=0 alive=3 teams=0,1,1,1
+TEAM_COLLAPSE arm=3 team=1 kept=3 dropped=1,3
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,1,1 scores=0,3,3,3
+TEAM_ELIM victim=0 alive=3 teams=0,1,1,1
+TEAM_COLLAPSE arm=3 team=1 kept=3 dropped=1,3
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,1,1 scores=0,4,4,4
+TEAM_ELIM victim=0 alive=3 teams=0,1,1,1
+TEAM_COLLAPSE arm=3 team=1 kept=3 dropped=1,3
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,1,1 scores=0,5,5,5
+TEAM_ELIM victim=0 alive=3 teams=0,1,1,1
+TEAM_COLLAPSE arm=3 team=1 kept=3 dropped=1,3
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,1,1 scores=0,6,6,6
+TEAM_ELIM victim=0 alive=3 teams=0,1,1,1
+TEAM_COLLAPSE arm=3 team=1 kept=3 dropped=1,3
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,1,1 scores=0,7,7,7
+TEAM_ELIM victim=0 alive=3 teams=0,1,1,1
+TEAM_COLLAPSE arm=3 team=1 kept=3 dropped=1,3
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,1,1 scores=0,8,8,8
+TEAM_ELIM victim=0 alive=3 teams=0,1,1,1
+TEAM_COLLAPSE arm=3 team=1 kept=3 dropped=1,3
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,1,1 scores=0,9,9,9
+TEAM_ELIM victim=0 alive=3 teams=0,1,1,1
+TEAM_COLLAPSE arm=3 team=1 kept=3 dropped=1,3
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,1,1 scores=0,10,10,10
+TEAM_ELIM victim=0 alive=3 teams=0,1,1,1
+TEAM_COLLAPSE arm=3 team=1 kept=3 dropped=1,3
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,1,1 scores=0,11,11,11
+
+=== unassigned-control  MASHED_TEAM_PLAY='1' MASHED_TEAMS='' ===
+TEAM_SCORING play=1 balance=0x1 teams=-1,-1,-1,-1
+TEAM_ELIM victim=0 alive=3 teams=-1,-1,-1,-1
+TEAM_ELIM victim=2 alive=2 teams=-1,-1,-1,-1
+TEAM_ELIM victim=1 alive=1 teams=-1,-1,-1,-1
+TEAM_AWARD win=-1 delta=1 alive=1 teams=-1,-1,-1,-1 scores=0,0,0,0
+TEAM_ELIM victim=3 alive=3 teams=-1,-1,-1,-1
+TEAM_ELIM victim=0 alive=2 teams=-1,-1,-1,-1
+TEAM_ELIM victim=2 alive=1 teams=-1,-1,-1,-1
+TEAM_AWARD win=-1 delta=1 alive=1 teams=-1,-1,-1,-1 scores=0,0,0,0
+TEAM_ELIM victim=3 alive=3 teams=-1,-1,-1,-1
+TEAM_ELIM victim=0 alive=2 teams=-1,-1,-1,-1
+TEAM_ELIM victim=1 alive=1 teams=-1,-1,-1,-1
+TEAM_AWARD win=-1 delta=1 alive=1 teams=-1,-1,-1,-1 scores=0,0,0,0
+TEAM_ELIM victim=3 alive=3 teams=-1,-1,-1,-1
+TEAM_ELIM victim=0 alive=2 teams=-1,-1,-1,-1
+TEAM_ELIM victim=1 alive=1 teams=-1,-1,-1,-1
+TEAM_AWARD win=-1 delta=1 alive=1 teams=-1,-1,-1,-1 scores=0,0,0,0
+TEAM_ELIM victim=3 alive=3 teams=-1,-1,-1,-1
+TEAM_ELIM victim=0 alive=2 teams=-1,-1,-1,-1
+TEAM_ELIM victim=1 alive=1 teams=-1,-1,-1,-1
+TEAM_AWARD win=-1 delta=1 alive=1 teams=-1,-1,-1,-1 scores=0,0,0,0
+TEAM_ELIM victim=3 alive=3 teams=-1,-1,-1,-1
+TEAM_ELIM victim=0 alive=2 teams=-1,-1,-1,-1
+TEAM_ELIM victim=1 alive=1 teams=-1,-1,-1,-1
+TEAM_AWARD win=-1 delta=1 alive=1 teams=-1,-1,-1,-1 scores=0,0,0,0
+TEAM_ELIM victim=3 alive=3 teams=-1,-1,-1,-1
+TEAM_ELIM victim=0 alive=2 teams=-1,-1,-1,-1
+TEAM_ELIM victim=1 alive=1 teams=-1,-1,-1,-1
+TEAM_AWARD win=-1 delta=1 alive=1 teams=-1,-1,-1,-1 scores=0,0,0,0
+TEAM_ELIM victim=3 alive=3 teams=-1,-1,-1,-1
+TEAM_ELIM victim=0 alive=2 teams=-1,-1,-1,-1
+TEAM_ELIM victim=1 alive=1 teams=-1,-1,-1,-1
+TEAM_AWARD win=-1 delta=1 alive=1 teams=-1,-1,-1,-1 scores=0,0,0,0
+TEAM_ELIM victim=3 alive=3 teams=-1,-1,-1,-1
+TEAM_ELIM victim=0 alive=2 teams=-1,-1,-1,-1
+TEAM_ELIM victim=1 alive=1 teams=-1,-1,-1,-1
+TEAM_AWARD win=-1 delta=1 alive=1 teams=-1,-1,-1,-1 scores=0,0,0,0
+TEAM_ELIM victim=3 alive=3 teams=-1,-1,-1,-1
+TEAM_ELIM victim=0 alive=2 teams=-1,-1,-1,-1
+TEAM_ELIM victim=1 alive=1 teams=-1,-1,-1,-1
+TEAM_AWARD win=-1 delta=1 alive=1 teams=-1,-1,-1,-1 scores=0,0,0,0
+
+=== ffa-control  MASHED_TEAM_PLAY='' MASHED_TEAMS='' ===
+TEAM_SCORING play=0 balance=0x1 teams=-1,-1,-1,-1

@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-04T23:55:00Z",
+  "updatedAt": "2026-09-05T01:20:00Z",
   "sections": [
     {
       "heading": "Project",
@@ -17,7 +17,7 @@
         },
         {
           "label": "Latest",
-          "value": "0x0043a610 + 0x0043aa30 renderers C2->C3; 0x0042f8d0 takes its alpha in AL",
+          "value": "team scoring live in the standalone (FUN_0040eee0 arms in TrackRenderer)",
           "kind": "text"
         },
         {

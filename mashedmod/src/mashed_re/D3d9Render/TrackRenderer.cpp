@@ -3503,8 +3503,175 @@ void TrackRenderer::ScoreAward(int car, int delta) {
 // original's FUN_00422fd0-then-callback order). AI auto-resolve branches
 // (FUN_0040e470 type-2 fast-forward) are not ported — the player is always
 // in our round.
+void TrackRenderer::SetTeamPlay(bool on, const int team_of[4]) {
+    team_play_ = on;
+    for (int i = 0; i < kRaceCars; ++i) team_of_[i] = team_of ? team_of[i] : -1;
+}
+
+// 0x00408ad0 equivalent: race progress on a 0..100 scale. Same expression the
+// camera feed uses at the RaceCamCar fill (`prog_in_lap / n * 100`), factored
+// out so the tie-break below reads the identical value the elimination rule
+// does rather than a second approximation of it.
+float TrackRenderer::RacePct(int car) const {
+    if (car < 0 || car >= kRaceCars || gates_.empty()) return 0.f;
+    const float n = static_cast<float>(gates_.size());
+    return std::fmod(race_[car].progress, n) / n * 100.f;
+}
+
+// The wrap-adjusted "is A behind B?" compare, 0x00410f4a..0x00410fa6 and the
+// repeated blocks inside FUN_0040eee0. Bands 80.0 (_DAT_005cc730) / 20.0
+// (_DAT_005ccd6c), period 100.0 (_DAT_005cc568). Only `a` is (float)-cast in
+// the original; both are already float here.
+bool TrackRenderer::ProgBehind(int A, int B) const {
+    float a = RacePct(A), b = RacePct(B);
+    if ((a <= 80.f) || (20.f <= b)) {
+        if ((80.f < b) && (a < 20.f)) b = b - 100.f;
+    } else {
+        a = a - 100.f;
+    }
+    return a <= b;
+}
+
+// FUN_00422fd0 equivalent at the standalone's own liveness: drop the car and
+// stop its AI, mirroring what the UpdateRace call site does for the camera's
+// own victim. Used only by the team arms, which eliminate cars themselves.
+void TrackRenderer::KillCar(int car) {
+    if (car < 0 || car >= kRaceCars || !race_[car].alive) return;
+    race_[car].alive = false;
+    --round_alive_;
+    if (car > 0 && car - 1 < static_cast<int>(ai_cars_.size()))
+        ai_cars_[static_cast<std::size_t>(car - 1)].speed = 0.f;
+}
+
+// Award +delta to every ASSIGNED slot on `winTeam` and -delta to every other
+// assigned slot. This is the shape all three team arms end in:
+//     if (piVar8[-1] != -1) FUN_0040b290(i, team(i) == winTeam ? +d : -d)
+// with the guard being "the slot has a player", which team_of_ == -1 carries.
+void TrackRenderer::AwardByTeam(int winTeam, int delta) {
+    for (int i = 0; i < kRaceCars; ++i) {
+        if (team_of_[i] == -1) continue;
+        ScoreAward(i, (team_of_[i] == winTeam) ? delta : -delta);
+    }
+    // Instrumented, not inferred: a team award that never fires and a team
+    // award that fires with the wrong winner look identical in the standings
+    // (both leave a plausible-looking score column).
+    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+        std::fprintf(lf,
+            "TEAM_AWARD win=%d delta=%d alive=%d teams=%d,%d,%d,%d "
+            "scores=%d,%d,%d,%d\n",
+            winTeam, delta, round_alive_,
+            team_of_[0], team_of_[1], team_of_[2], team_of_[3],
+            scores_[0], scores_[1], scores_[2], scores_[3]);
+        std::fclose(lf);
+    }
+}
+
+// 0x0040eee0, DAT_008a94d0 == 4 with FUN_0042f500() != 0 (TEAM PLAY).
+// Three arms, by cars still alive AFTER the victim dropped:
+//
+//   3 alive -- fires ONLY when all three are on the SAME team (the original
+//       counts matches against the first alive car's team and acts at 3). It
+//       then eliminates two of them by the progress compare and awards
+//       +/-delta by team. In a 2v2 this arm cannot fire; it exists for the
+//       1v3 split MenuTeamBalance also accepts.
+//   2 alive -- if the two are on the same team, eliminate the one behind and
+//       award +/-1 by that team. If they are on DIFFERENT teams the original
+//       does NOTHING: no award, no elimination. Transcribed as written.
+//   1 alive -- award +/-1 by the survivor's team, then equalize every car's
+//       path progress to the survivor's (LAB_0040fbbb, FUN_00408a50/70).
+//
+// NOTE the delta asymmetry, which is in the original and is not smoothed: the
+// 3-alive arm awards +/-param_2 while the 2- and 1-alive arms award a literal
+// +/-1 (uVar12 = 1 / 0xffffffff). The standalone's caller passes delta = 1, so
+// the two agree here, but the code says what the original says.
+// The victim itself gets NO direct penalty in team play, unlike the FFA arms.
+void TrackRenderer::ScoreOnEliminationTeams(int victim) {
+    (void)victim;                       // team arms never score the victim
+    const int remaining = round_alive_;
+    const int delta = 1;                // param_2 from 0x00410d10
+    // Arm-entry counters, armed BEFORE the first run: an arm that never
+    // executes and an arm that executes and awards nothing are the same
+    // silence in the score column, and only the 1-alive arm fires in a typical
+    // round. TEAM_ELIM is one line per elimination; the arms are distinguished
+    // by `alive`, and TEAM_COLLAPSE marks the same-team cases that eliminate a
+    // car of their own.
+    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+        std::fprintf(lf, "TEAM_ELIM victim=%d alive=%d teams=%d,%d,%d,%d\n",
+                     victim, remaining,
+                     team_of_[0], team_of_[1], team_of_[2], team_of_[3]);
+        std::fclose(lf);
+    }
+
+    if (remaining == 3) {
+        int count = 0, teamFirst = -1, first = -1, second = -1;
+        for (int car = 0; car < kRaceCars; ++car) {
+            if (!race_[car].alive) continue;
+            if (teamFirst == -1) {
+                teamFirst = team_of_[car]; count = 1; first = car;
+            } else if (teamFirst == team_of_[car]) {
+                if (count == 1) second = car;
+                ++count;
+                if (count == 3) {
+                    // The original's three-way pick, goto structure preserved.
+                    int keep, drop;
+                    if (ProgBehind(car, first)) {
+                        KillCar(car);
+                        keep = second; drop = first;
+                        if (!ProgBehind(first, second)) drop = keep;
+                    } else {
+                        KillCar(first);
+                        keep = car; drop = second;
+                        if (ProgBehind(car, second)) drop = keep;
+                    }
+                    KillCar(drop);
+                    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                        std::fprintf(lf, "TEAM_COLLAPSE arm=3 team=%d kept=%d dropped=%d,%d\n",
+                                     team_of_[car], keep, first, drop);
+                        std::fclose(lf);
+                    }
+                    AwardByTeam(team_of_[car], delta);
+                }
+            }
+        }
+        return;
+    }
+
+    if (remaining == 2) {
+        int teamFirst = -1, firstCar = -1;
+        for (int car = 0; car < kRaceCars; ++car) {
+            if (!race_[car].alive) continue;
+            if (teamFirst == -1) {
+                teamFirst = team_of_[car]; firstCar = car;
+            } else if (teamFirst == team_of_[car]) {
+                const int winTeam = team_of_[car];   // captured before the swap
+                int loser = car;
+                if (!ProgBehind(car, firstCar)) loser = firstCar;
+                KillCar(loser);
+                if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                    std::fprintf(lf, "TEAM_COLLAPSE arm=2 team=%d loser=%d\n",
+                                 winTeam, loser);
+                    std::fclose(lf);
+                }
+                AwardByTeam(winTeam, 1);
+            }
+        }
+        return;
+    }
+
+    if (remaining == 1) {
+        int survivor = -1;
+        for (int i = 0; i < kRaceCars; ++i) if (race_[i].alive) survivor = i;
+        if (survivor < 0) return;
+        AwardByTeam(team_of_[survivor], 1);
+        // LAB_0040fbbb: every car's path progress is set to the survivor's.
+        const float p = race_[survivor].progress;
+        for (int i = 0; i < kRaceCars; ++i) race_[i].progress = p;
+    }
+}
+
 void TrackRenderer::ScoreOnElimination(int victim) {
     if (elim_count_ < kRaceCars) elim_order_[elim_count_++] = victim;  // DAT_008a94c0
+    if (team_play_) { ScoreOnEliminationTeams(victim); return; }
     const int remaining = round_alive_;
     if (remaining == 3) {
         ScoreAward(victim, -2);             // param_2 * -2

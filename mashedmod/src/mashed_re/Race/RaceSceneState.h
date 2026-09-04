@@ -254,6 +254,14 @@ struct RaceSceneState {
     // the HUD binds to the real colour. Default 0 (= RED), which matches the
     // all-RED reference (verify/race_hud/orig_drive_late.bmp). See Finding 16.
     int   colour_[kRaceCars]      = {};            // DAT_007f1a1c per-car
+    // TEAM PLAY (FUN_0040eee0's DAT_0067ea64 arms). team_of_[car] mirrors the
+    // original's per-slot team field DAT_007f1a18 + slot*0x10 that
+    // MenuTeamBalance (0x0042bb60) writes: -1 = no assigned player, 0 / 1 =
+    // the two teams. -1 doubles as the original's `piVar8[-1] != -1` skip,
+    // because MenuTeamBalance only ever writes a team for a slot whose profile
+    // field is set and clears every other slot to -1.
+    int   team_of_[kRaceCars]     = {-1, -1, -1, -1};  // DAT_007f1a18 per-slot
+    bool  team_play_    = false;                       // DAT_0067ea64 != 0
     int   elim_count_   = 0;
     int   match_winner_ = -1;
     int   round_no_     = 0;

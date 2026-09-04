@@ -3279,19 +3279,17 @@ bool RenderFrame() {
             // 8-1 -- so the old "max = threshold + 2 in both arms" comment here
             // was wrong; it is reported as the code computes it, not smoothed.
             //
-            // The port exposes no Team Play mode, so the flag is 0 in normal
-            // play and MASHED_TEAM_PLAY=1 pokes it for verification
-            // (display-only, same pattern as MASHED_ROUND_SCORES /
-            // MASHED_CROWN_TEST). It pokes ONLY these two scoring determinants
-            // -- it does not switch the port to team scoring, which is
-            // unported (0x0040eee0, U-9082). The participant count is 4
+            // UPDATED 2026-09-04: this no longer reads a private display bool.
+            // Team scoring IS ported now (TrackRenderer::ScoreOnEliminationTeams,
+            // the DAT_0067ea64 arms of FUN_0040eee0), and MASHED_TEAM_PLAY=1
+            // writes the real global at race start, so the points target, the
+            // crown threshold and the scorer all read DAT_0067ea64 itself --
+            // one source, not two that can drift. The participant count is 4
             // (kRaceCars); a variable-participant race would feed it here
             // rather than needing this code changed.
-            static int s_team_play = -1;
-            if (s_team_play < 0)
-                s_team_play = (GetEnvironmentVariableA("MASHED_TEAM_PLAY", nullptr, 0) > 0) ? 1 : 0;
             const int kParticipants = 4;                       // DAT_008a94d0
-            const int kEa64         = s_team_play;             // DAT_0067ea64
+            const int kEa64 =                                  // DAT_0067ea64
+                *reinterpret_cast<const std::int32_t*>(0x0067ea64);
             const int rule_now      = g_track.race_rule();     // DAT_007f0fd0
             // FUN_0040b890
             int kPointsTarget = (kParticipants == 4) ? 12 : 8;
@@ -7992,6 +7990,77 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                         if (GetEnvironmentVariableA("MASHED_ROUND_RULE", rr,
                                                     sizeof(rr)) > 0)
                             g_track.SetRaceRule(std::atoi(rr));
+                        // ---- TEAM PLAY -------------------------------------
+                        // Team scoring is now ported into the race layer
+                        // (TrackRenderer::ScoreOnEliminationTeams, the
+                        // DAT_0067ea64 arms of FUN_0040eee0). Two inputs, and
+                        // BOTH are read from the original's own globals first:
+                        //
+                        //   flag  DAT_0067ea64 (0x0067ea64) -- Team Play
+                        //         (U-9078). MASHED_TEAM_PLAY=1 now WRITES this
+                        //         global rather than setting a private display
+                        //         bool, so the standings target/crown and the
+                        //         scorer read one source instead of two.
+                        //   teams DAT_007f1a18 + slot*0x10 -- what
+                        //         MenuTeamBalance wrote on Team Select: -1 for
+                        //         an unassigned slot, else 0 / 1.
+                        //
+                        // MASHED_TEAMS="0,0,1,1" says which team each car slot
+                        // is on when the setup screen has not run in this
+                        // process (a race reached through MASHED_ROUND never
+                        // visits screen 16).
+                        //
+                        // It seeds the ASSIGNER'S INPUT, not its output --
+                        // Finding 26's lesson, and this run needed it: writing
+                        // 0x007f1a18 directly and reading it back cannot tell
+                        // "unassigned" from "team 0", because the standalone
+                        // commits that granule ZEROED while the original's
+                        // unassigned value is -1. A control run with team play
+                        // on and no MASHED_TEAMS duly read teams=0,0,0,0, put
+                        // all four cars on one team and awarded +1 to
+                        // everybody. So the port does what the original does:
+                        // seed the per-profile pick table DAT_0067e938 (1 =
+                        // team A, 2 = team B, 0 = none, the 3-state selector
+                        // MenuTeamSelectTick edits) plus each slot's profile
+                        // field, then let MenuTeamBalance (0x0042bb60, C3,
+                        // already in the exe build) derive DAT_007f1a18 = pick
+                        // - 1 and validate the split. With no seed at all the
+                        // picks are 0, every slot derives -1, and no car
+                        // scores -- which is the correct "no teams" state.
+                        if (GetEnvironmentVariableA("MASHED_TEAM_PLAY", nullptr, 0) > 0)
+                            *reinterpret_cast<std::int32_t*>(0x0067ea64) = 1;
+                        char tm[32] = {};
+                        if (GetEnvironmentVariableA("MASHED_TEAMS", tm, sizeof(tm)) > 0) {
+                            int ci = 0; char* tok = std::strtok(tm, ",");
+                            while (tok && ci < 4) {
+                                const int t = std::atoi(tok);
+                                // slot ci is driven by profile ci
+                                *reinterpret_cast<std::int32_t*>(
+                                    0x007f1a14 + ci * 16) = ci;
+                                *reinterpret_cast<std::int32_t*>(
+                                    0x0067e938 + ci * 12) =
+                                    (t == 0 || t == 1) ? (t + 1) : 0;
+                                ++ci; tok = std::strtok(nullptr, ",");
+                            }
+                        }
+                        {
+                            const int bal = MenuTeamBalance();   // fills 0x007f1a18
+                            int teams[4];
+                            for (int i = 0; i < 4; ++i)
+                                teams[i] = *reinterpret_cast<const std::int32_t*>(
+                                    0x007f1a18 + i * 16);
+                            const bool tp =
+                                *reinterpret_cast<const std::int32_t*>(0x0067ea64) != 0;
+                            g_track.SetTeamPlay(tp, teams);
+                            if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+                                std::fprintf(lf,
+                                    "TEAM_SCORING play=%d balance=0x%x "
+                                    "teams=%d,%d,%d,%d\n",
+                                    tp ? 1 : 0, static_cast<unsigned>(bal),
+                                    teams[0], teams[1], teams[2], teams[3]);
+                                std::fclose(lf);
+                            }
+                        }
                     }
                 }
             }
