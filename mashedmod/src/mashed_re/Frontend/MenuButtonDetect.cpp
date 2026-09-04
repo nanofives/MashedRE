@@ -65,7 +65,28 @@ static inline std::uint32_t CallSlotState(int idx) {
 typedef void (__cdecl *FunSlotWriteFn)(int param_1, std::uint32_t param_2);
 static constexpr std::uintptr_t kFun0040e480     = 0x0040e480;
 static inline void CallSlotWrite(int idx, std::uint32_t val) {
+#ifdef MASHED_STANDALONE
+    // 0x0040e480 is MASHED .text. The standalone maps no such code (only the
+    // 0x00420000 and 0x00470000 .text granules are claimed, by
+    // Compat/StandaloneRvaThunks), so calling through this RVA AVs the process
+    // -- observed as rc 0xC0000005 the first time mashed_re.exe called
+    // CarSlotAssign, 2026-09-04.
+    //
+    // No-op rather than an inline write: the callee sets the per-slot CAR-ALIVE
+    // entry, whose only consumers are race-side functions that are themselves
+    // unported (FUN_0040eee0 and the elimination counters read it). The
+    // standalone tracks car liveness in TrackRenderer instead, so nothing in
+    // the exe reads what this would have written. What the exe DOES need from
+    // CarSlotAssign -- the slot table at 0x007f1a14 (profile index + Player
+    // Colour) and the 0x1000 verdict -- is unaffected.
+    //
+    // Deliberately NOT an inline write to `*(PTR_PTR_005f2770) + idx*4 + 0x34`:
+    // 0x005f2770 is not one of the committed granules, so dereferencing it here
+    // would trade one access violation for another.
+    (void)idx; (void)val;
+#else
     reinterpret_cast<FunSlotWriteFn>(kFun0040e480)(idx, val);
+#endif
 }
 
 // ---------------------------------------------------------------------------

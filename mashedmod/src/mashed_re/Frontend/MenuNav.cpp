@@ -182,6 +182,101 @@ extern "C" __declspec(dllexport) int __cdecl MenuTeamBalance() {
 RH_ScopedInstall(MenuTeamBalance, 0x0042bb60);  // re-enabled 2026-05-24 c3-frontend-a
 
 // ---------------------------------------------------------------------------
+// 0x0042fa00  MenuTeamSelectTick   (163 bytes)
+//
+// THE PLAYER-SETUP HANDLER: the per-frame input step of the Team Select screen
+// (nav screen 16, renderer FUN_0043aa30). It is what makes teams assignable at
+// all -- MenuTeamBalance above only DERIVES `DAT_007f1a18[n]` from the table
+// this function edits, so without it the table stays at its cold-boot zeros,
+// every team resolves to -1, and the balance check can never return a legal
+// split. Ported 2026-09-04; sole caller FUN_0043c000 @0x0043c44a (C4).
+//
+// Per profile i in 0..11 (loop bound: the processed pointer runs to 0x007f1894
+// exclusive at stride 0x4c, giving exactly 12 iterations):
+//   if i is one of the four assigned car slots (DAT_007f1a14/24/34/44):
+//       if UP   newly pressed and table[i] != 0   -> table[i] -= 1
+//       if DOWN newly pressed and table[i] <  2   -> table[i] += 1
+//
+// "newly pressed" is the established active/processed edge test (active != 0 &&
+// processed == 0), and the columns are 0 = UP and 1 = DOWN -- NOT left/right.
+// The decompiler renders them as the byte displacements `pcVar3[-0x4c0]` /
+// `pcVar3[-0x4bf]` off the PROCESSED pointer, which resolve as:
+//   active   UP   0x007f1044 + i*0x4c + 0      processed UP   0x007f1504 + ...
+//   active   DOWN 0x007f1044 + i*0x4c + 1      processed DOWN 0x007f1505 + ...
+// matching the column model already documented at exe_main.cpp:2205.
+//
+// So each player scrolls their own marker through THREE states, and the value
+// is a 3-state selector, not a boolean:
+//   0 = no team  (MenuTeamBalance yields team -1)
+//   1 = team A   (team 0)
+//   2 = team B   (team 1)
+// which is why MenuTeamBalance subtracts 1, and why the Team Select screen has
+// two team panels (measured at x=248/428, exe_main.cpp:4818) with a player able
+// to sit in neither.
+//
+// The entry fixup `if (DAT_0067ea88 == 2) DAT_0067ea88 = 0;` is verbatim and is
+// kept even though the port never sets that global to 2: it is the same
+// DAT_0067ea88 the car-select arm reads to pick the race rule
+// (FUN_0043dfd0: ea88 == 2 -> rule 2 AND DAT_0067ea64 = 1), so silently
+// dropping it would change a determinant the standings screen reads.
+// ---------------------------------------------------------------------------
+static constexpr std::uintptr_t kTeamProfiles      = 12;         // loop count
+static constexpr std::uintptr_t kInputRecStride    = 0x4c;       // per-profile
+static constexpr std::uintptr_t kActiveBaseCol0    = 0x007f1044; // active   UP
+static constexpr std::uintptr_t kProcessedBaseCol0 = 0x007f1504; // processed UP
+static constexpr std::uintptr_t kModeSelGlobal     = 0x0067ea88; // DAT_0067ea88
+
+// 0x0042fa00
+extern "C" __declspec(dllexport) void __cdecl MenuTeamSelectTick() {
+    // Latched BEFORE the loop in the original (slots 3 and 0 into registers).
+    const std::int32_t iVar2 = *reinterpret_cast<std::int32_t*>(kPlayerSlotBase + 3 * 16);
+    const std::int32_t iVar1 = *reinterpret_cast<std::int32_t*>(kPlayerSlotBase + 0 * 16);
+
+    if (*reinterpret_cast<std::int32_t*>(kModeSelGlobal) == 2)
+        *reinterpret_cast<std::int32_t*>(kModeSelGlobal) = 0;
+
+    for (std::int32_t i = 0; i < static_cast<std::int32_t>(kTeamProfiles); ++i) {
+        const std::int32_t slot2 = *reinterpret_cast<std::int32_t*>(kPlayerSlotBase + 2 * 16);
+        const std::int32_t slot1 = *reinterpret_cast<std::int32_t*>(kPlayerSlotBase + 1 * 16);
+        // Original's short-circuit order: slot3, slot2, slot1, slot0.
+        if (iVar2 == i || slot2 == i || slot1 == i || iVar1 == i) {
+            std::int32_t* const team = reinterpret_cast<std::int32_t*>(
+                kTeamTableBase + static_cast<std::uintptr_t>(i) * 12);
+            const std::uint8_t* const act =
+                reinterpret_cast<const std::uint8_t*>(
+                    kActiveBaseCol0 + static_cast<std::uintptr_t>(i) * kInputRecStride);
+            const std::uint8_t* const prc =
+                reinterpret_cast<const std::uint8_t*>(
+                    kProcessedBaseCol0 + static_cast<std::uintptr_t>(i) * kInputRecStride);
+            if (act[0] != 0 && prc[0] == 0 && *team != 0) *team -= 1;   // UP
+            if (act[1] != 0 && prc[1] == 0 && *team <  2) *team += 1;   // DOWN
+        }
+    }
+}
+
+// DELIBERATELY NOT INSTALLED. 0x0042fa00 already has a live hook: the
+// .asi-side PlayerSlotEdgeAdjust in Frontend/SkeletonAndScatter_t6.cpp (C3,
+// GREEN 0/10). This is its EXE-SIDE TWIN and exists only because that TU is in
+// asi_sources.rsp but NOT in build.bat's exe list, so the standalone cannot
+// reach it -- which is the actual reason the standalone could not assign teams.
+// MenuNav.cpp is in both lists, so putting the copy here makes it available to
+// mashed_re.exe without dragging a PIZ/Im2D-heavy TU into the exe link.
+//
+// A second RH_ScopedInstall on one RVA is the U-9065 failure mode: both
+// register, one silently wins, and the other becomes dead code that still reads
+// as C3. This copy therefore registers nothing, and the .asi keeps the
+// established install.
+//
+// KNOWN DIVERGENCE between the twins, both inert, recorded so it cannot drift
+// unnoticed: PlayerSlotEdgeAdjust guards with `*piVar5 > 0` and then adds a
+// trailing `if (<0) =0; if (>2) =2;` clamp pair. The original has NEITHER --
+// it guards `*piVar5 != 0` and clamps only through the two ±1 guards
+// (0x0042fa00 body). Both forms are equivalent for values already in [0,2],
+// which is why that copy diffed GREEN. This copy follows the original.
+// Verified path1 GREEN 7/7 non-degenerate as `menu_team_select_tick`
+// (log/diff_menu_team_select_tick.csv).
+
+// ---------------------------------------------------------------------------
 // 0x0042aff0  MenuButtonDetectA
 // Detects a "button pressed" event on byte-column +2 (0x7f1046) with hold-
 // repeat for screens 6-7, using timer _DAT_0067f1b0.

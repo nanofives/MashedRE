@@ -672,6 +672,50 @@ constexpr int           kHandleCar0   = 35;   // bridge handles 35..44
 constexpr std::uint32_t kSlotVs       = 54;   // "vs" separator
 constexpr int           kHandleVs     = 45;
 bool             g_carsel_ready = false;
+// Team Select (nav screen 16) player-setup state. g_team_balance caches the
+// last MenuTeamBalance() verdict: 0x1000 = legal split, 1/2/3 = rejection
+// codes, -1 = participant count outside 2..4, 0 = the 2-player unbalanced case
+// (FUN_0042bb60 @0x0042bb60). The teams themselves live where the original
+// keeps them, at 0x007f1a18 + slot*0x10.
+int              g_team_balance = -1;
+// Last CarSlotAssign() verdict on entering Team Select: 0x1000 = slots assigned,
+// 1 = fewer than two participating profiles, 0 = two profiles picked the same.
+int              g_team_assign  = -1;
+extern "C" void          __cdecl MenuTeamSelectTick();  // 0x0042fa00, Frontend/MenuNav.cpp
+extern "C" int           __cdecl MenuTeamBalance();     // 0x0042bb60, Frontend/MenuNav.cpp
+extern "C" std::uint32_t __cdecl CarSlotAssign();       // 0x0042b9e0, Frontend/MenuButtonDetect.cpp
+// Raw team-table pick (0 = none, 1 = team A, 2 = team B) for the profile
+// occupying car slot n. This is the UNBIASED value FUN_0043aa30 uses for the
+// row sprite's X and the roster stacks -- distinct from DAT_007f1a18's team id,
+// which MenuTeamBalance derives as pick - 1.
+// Player Colour of the car slot (its +0x08 field), clamped to the 10-entry
+// NFL* sprite range. CarSlotAssign writes it as the profile's pick - 1.
+static inline int SlotColour(int slot) {
+    if (slot < 0 || slot >= 4) return 0;
+    const std::int32_t c =
+        *reinterpret_cast<const std::int32_t*>(0x007f1a1c + slot * 16);
+    return (c < 0 || c > 9) ? 0 : static_cast<int>(c);
+}
+// Ability index (0..3) of the profile occupying car slot n, from the 12-entry
+// stride-12 table at DAT_0067e850 that FUN_0043a610 walks. The entry into
+// screens 15/16 sets every entry to 1 (Finding 26), so the cold default puts
+// each player in ability column 1.
+static inline int AbilityPick(int slot) {
+    if (slot < 0 || slot >= 4) return 0;
+    const std::int32_t prof =
+        *reinterpret_cast<const std::int32_t*>(0x007f1a14 + slot * 16);
+    if (prof < 0 || prof >= 12) return 0;
+    const std::int32_t a =
+        *reinterpret_cast<const std::int32_t*>(0x0067e850 + prof * 12);
+    return (a < 0 || a > 3) ? 0 : static_cast<int>(a);
+}
+static inline int TeamPick(int slot) {
+    if (slot < 0 || slot >= 4) return 0;
+    const std::int32_t prof =
+        *reinterpret_cast<const std::int32_t*>(0x007f1a14 + slot * 16);
+    if (prof < 0 || prof >= 12) return 0;
+    return *reinterpret_cast<const std::int32_t*>(0x0067e938 + prof * 12);
+}
 // Per-player chosen car index. The standalone has no multiplayer setup flow yet,
 // so these default to a representative 2-player config (Red vs Bluejay); LEFT/
 // RIGHT on screen 4 cycles player 1's car. [residual: the per-player selection
@@ -2961,15 +3005,48 @@ bool RenderFrame() {
         if (mashed_re::LibRw::RaceSubmit_Active())
             mashed_re::LibRw::RaceSubmit_Render(g_track);
         if (s_fprof) { QueryPerformanceCounter(&rB); msRender = QpcMs(rA, rB); }
-        // [SCAFFOLD] R6 HUD overlay — invented pips/banner; the REAL game
-        // uses team badges + score bars + "+1/-1" points on a Current
-        // Standings screen (verify/parity3d/orig_race_t03.png). Replace via
-        // RE of the standings/score functions.
-        // R6 HUD overlay (2D, on top of the 3D scene): countdown number,
-        // per-car round-win scoreboard, round/result banner. The track
-        // renderer leaves ZENABLE off on exit, so HudIm2DQuad/DrawMashedString
-        // draw correctly here.
-        if (g_track.round_mode_ && g_bridge_installed && !results) {
+        // In-race 2D overlay (on top of the 3D scene). The track renderer
+        // leaves ZENABLE off on exit, so HudIm2DQuad/DrawMashedString draw
+        // correctly here.
+        //
+        // FAITHFULNESS BOUNDARY. Everything under `if (standings)` below, plus
+        // the three kStand text lines, is a PORT of the original's between-round
+        // "Current Standings" screen (DAT_0063ba8c in {5,6,7} — HudIngameDispatch
+        // 0x0040dfc0's guard). Everything gated on s_dev_hud is INVENTED
+        // presentation with no original counterpart and is OFF by default.
+        //
+        // Why off by default: while DRIVING the original draws NO 2D HUD at all.
+        // DAT_0063ba8c == 3 is mid-race driving and emits exactly one fully
+        // transparent quad per frame with the font pipe silent — measured over a
+        // free-running capture, re/analysis/race_hud_capture_20260902.md
+        // Finding 3 / Finding 20. So a lap counter, a position readout, a
+        // countdown number, a winner banner and power-up text are all things
+        // this port made up: there is no RVA to cite for any of them and they
+        // cannot appear in a draw-list diff except as extra rows. They stay
+        // available for development because the standalone is otherwise hard to
+        // drive blind, behind MASHED_DEV_HUD=1.
+        static const bool s_dev_hud =
+            (GetEnvironmentVariableA("MASHED_DEV_HUD", nullptr, 0) > 0);
+        // NOTE the gate no longer excludes `results`, and now ADMITS it even
+        // without round_mode_. The original has no separate post-race results
+        // screen: the end-of-match screen IS this standings screen (states
+        // 5/6/7), so the Results GameMode renders the ported overlay rather than
+        // the invented panel that used to live at the bottom of this block.
+        //
+        // `|| results` is DEFENSIVE, not load-bearing: round_mode_ is in fact
+        // true on both routes into a race — RaceSession::Begin calls
+        // StartMatch(3) (RaceSession.cpp:118) for a frontend race, and the
+        // MASHED_ROUND dev path calls it at exe_main.cpp:7482. The term is kept
+        // so the results dwell cannot end up with a blank screen if a third
+        // route ever reaches Results without a match having been started.
+        //
+        // Verified 2026-09-03 on the race-demo flow (MASHED_RACE_DEMO=1
+        // MASHED_RESULT_DEMO=1 MASHED_GOTO=6, 800x600):
+        // verify/run_31960/race1/00_results.bmp shows the ported chrome, the
+        // three text lines, four badge rows and the point circles on the Results
+        // screen, and 01_grid.bmp (mid-race, no winner yet) is clean — no HUD
+        // ink at all, matching the original's silent driving state.
+        if ((g_track.round_mode_ || results) && g_bridge_installed) {
             std::uint32_t uvf[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
 
             // Standings row layout, MEASURED from the original reference
@@ -2986,11 +3063,24 @@ bool RenderFrame() {
             // the point circles (x 185..246, diameter ~40) independently agree
             // on those four centres.
             //
-            // [UNCERTAIN] These are pixel extents of VISIBLE INK, not emitter
-            // arguments. The true quad rects may be larger than the ink they
-            // contain (a sprite with transparent margin measures small), and the
-            // icon/bar/circle art itself is not ported — the coloured rects
-            // below remain placeholders. Only the LAYOUT is evidence-based.
+            // [UNCERTAIN U-9076] These are pixel extents of VISIBLE INK, not
+            // emitter arguments, so the true quad rects may be larger than the
+            // ink they contain (a sprite with transparent margin measures
+            // small). Residual is a ~0-4 px ink-vs-quad reconciliation; close it
+            // by diffing emitted quad rects, not ink.
+            //
+            // The layout is now emitter-CORROBORATED: projecting
+            // ENDPOINTPANEL.DFF's row translations {0.48, y, 1.0}, y in
+            // {0.25, 0.15, 0.05, -0.05} (DAT_005f337c, written by
+            // FUN_0041cbc0 @0x0041cbc0) through the standings camera
+            // (FUN_0040de30 @0x0040de30: identity frame, parallel projection,
+            // view window {0.6, 0.45}) gives row centres 106.7 / 160.0 /
+            // 213.3 / 266.7 against the 107 / 160 / 213 / 267 measured here.
+            //
+            // The icon/bar/circle art IS ported now (real endpointpanel
+            // atomics, Findings 14/16/18/20); the coloured rects that used to
+            // stand in for them survive only as the g_standings_ready == false
+            // fallback so a failed asset load does not silently blank the row.
             const float kUiS   = static_cast<float>(kWidth) / 640.0f;  // 1.25 @800
             // The four measured centres are used VERBATIM rather than a uniform
             // pitch: the measured spacing is 53, 53, 54 (not a constant), so a
@@ -3036,8 +3126,12 @@ bool RenderFrame() {
             // chrome). In this 640-space input that is band_off -65..0 by +15/frame
             // (ChromeBaseDraw scales x1.25 to emit). Replicated as a 5-frame linear
             // ramp; the port is fixed-60Hz like the shim-capped original measured.
+            // `|| results` is what makes the Results GameMode render this ported
+            // screen. It is not redundant with match_winner(): it also pins the
+            // overlay up for the whole frozen-scene results dwell regardless of
+            // what the race layer does with its winner fields after the match.
             const bool standings = (g_track.round_winner() >= 0 ||
-                                    g_track.match_winner() >= 0);
+                                    g_track.match_winner() >= 0 || results);
             static int  s_chrome_slide = 6;      // >=6 settled; reset on entry edge
             static bool s_stand_prev   = false;
             if (standings && !s_stand_prev) s_chrome_slide = 0;   // rising edge
@@ -3134,13 +3228,67 @@ bool RenderFrame() {
                             order[b + 1] = to;
                         }
             }
-            // Crown threshold, FUN_0040b8e0 @0x0040b8e0: 7 when the race rule is 1
-            // or 2, when DAT_0067ea64 != 0, or with fewer than 4 participants;
-            // otherwise 10. The port always has 4 participants and does not model
-            // DAT_0067ea64 ([UNCERTAIN U-9078]) -- the same reachable-determinant binding the score-bar
-            // max uses (U-9072 residual B). Note max = threshold + 2 in both arms.
-            const int kWinThreshold =
-                (g_track.race_rule() == 1 || g_track.race_rule() == 2) ? 7 : 10;
+            // ---- points target + crown threshold (U-9078 RESOLVED) -------
+            // Both are now the ported functions rather than the two ad-hoc
+            // expressions that used to live here and at the score bar below.
+            //
+            // DAT_0067ea64 != 0 means TEAM PLAY. The long-standing "team-mode
+            // flag" label in this tree is CORRECT; what it lacked was evidence,
+            // which is now cited (U-9078 RESOLVED, Finding 23):
+            //   * the mode-select entry that sets it is ENGLISH.DAT message
+            //     0x140 "Team Play" -> menu action 0xff2e0000 -> FUN_0043dfd0
+            //     `DAT_0067ea64 = (uVar10 == 0xff2e0000)`. Its sibling 0x13e is
+            //     "Standard Play".
+            //   * FUN_004368e0 @0x00436e1a keeps it in sync with the setup
+            //     screen's row-7 toggle: `DAT_0067ea64 = DAT_0067eaac ^ 1`
+            //     (toggle written ^1 at 0x004403b5 / 0x00440920).
+            //   * that same branch draws a two-line DESCRIPTION CAPTION of the
+            //     resulting scoring, at fixed screen positions: message 0x124
+            //     "First to 12 points wins." when eaac != 0 with 3 extra
+            //     players, else 0x12c "First to 8 points wins."
+            // CAUTION, because a first pass got this wrong: 0x124/0x12c are the
+            // CONSEQUENCE caption, not the flag's name. Reading them as the
+            // definition yields "ea64 is the points-target selector", which
+            // fits both consumers below and is still WRONG -- it cannot explain
+            // the 0x140 "Team Play" writer or the team-scoring grouping over
+            // DAT_007f1a18 in 0x0040eee0. The points target is what team play
+            // IMPLIES, not what the flag means.
+            // So: team play -> target 8 / crown 7; standard play with 4
+            // participants -> target 12 / crown 10.
+            //
+            // FUN_0040b890 @0x0040b890 (points target == score-bar max):
+            //   base = 12 if participants == 4 else 8   (DAT_008a94d0)
+            //   -> 8 if DAT_0067ea64 != 0; -> 8 if rule == 1; -> 8 if rule == 2
+            // FUN_0040b8e0 @0x0040b8e0 (crown threshold), same shape:
+            //   base = 10 if participants == 4 else 7
+            //   -> 7 if DAT_0067ea64 != 0; -> 7 if rule == 1; -> 7 if rule == 2
+            // The arms therefore pair as (target 12, crown 10) and
+            // (target 8, crown 7). Note the offset is NOT constant -- 12-2 but
+            // 8-1 -- so the old "max = threshold + 2 in both arms" comment here
+            // was wrong; it is reported as the code computes it, not smoothed.
+            //
+            // The port exposes no Team Play mode, so the flag is 0 in normal
+            // play and MASHED_TEAM_PLAY=1 pokes it for verification
+            // (display-only, same pattern as MASHED_ROUND_SCORES /
+            // MASHED_CROWN_TEST). It pokes ONLY these two scoring determinants
+            // -- it does not switch the port to team scoring, which is
+            // unported (0x0040eee0, U-9082). The participant count is 4
+            // (kRaceCars); a variable-participant race would feed it here
+            // rather than needing this code changed.
+            static int s_team_play = -1;
+            if (s_team_play < 0)
+                s_team_play = (GetEnvironmentVariableA("MASHED_TEAM_PLAY", nullptr, 0) > 0) ? 1 : 0;
+            const int kParticipants = 4;                       // DAT_008a94d0
+            const int kEa64         = s_team_play;             // DAT_0067ea64
+            const int rule_now      = g_track.race_rule();     // DAT_007f0fd0
+            // FUN_0040b890
+            int kPointsTarget = (kParticipants == 4) ? 12 : 8;
+            if (kEa64 != 0)                      kPointsTarget = 8;
+            if (rule_now == 1 || rule_now == 2)  kPointsTarget = 8;
+            // FUN_0040b8e0
+            int kWinThreshold = (kParticipants == 4) ? 10 : 7;
+            if (kEa64 != 0)                      kWinThreshold = 7;
+            if (rule_now == 1 || rule_now == 2)  kWinThreshold = 7;
             for (int r = 0; r < 4; ++r) {
                 const int i = order[r];
                 const float cy = kRowCy[r];
@@ -3224,17 +3372,18 @@ bool RenderFrame() {
                     HudIm2DQuad(0, bx, by, bw, bh, kFbCol[i], uvf);
                 // Cells shown = round(score/max * 12). The OrangeDisplay frame
                 // is a FIXED 12-slot pattern and the dark fill scales CONTINUOUSLY
-                // by score/max (FUN_0041c410 X-scale). max = 8 or 12
-                // (FUN_0040b890 @0x0040b890): 12 iff participants==4 (DAT_008a94d0,
-                // = 4 for the standalone round) AND race rule not in {1,2}
-                // (DAT_007f0fd0) AND the setup flag DAT_0067ea64==0; else 8. So at
-                // max=8 the mapping is NOT 1 cell/point (score 4 -> round(4/8*12)=
-                // 6 cells) -- the discrete-looking 1:1 is a max=12 coincidence.
-                // The port binds the reachable determinant (race_rule); the
-                // participant count is 4 in the demo and DAT_0067ea64 is unmodeled
-                // (defaults to the max=12 path).
-                const int rr = g_track.race_rule();
-                int maxpts = (rr == 1 || rr == 2) ? 8 : 12;
+                // by score/max (FUN_0041c410 X-scale, now the ported
+                // HudStandingsRowUpdate). So at max=8 the mapping is NOT
+                // 1 cell/point (score 4 -> round(4/8*12) = 6 cells) -- the
+                // discrete-looking 1:1 is a max=12 coincidence.
+                //
+                // max IS the points target and comes from the single
+                // FUN_0040b890 evaluation above (kPointsTarget) rather than a
+                // second copy of the rule test. That duplicate is what made the
+                // ea64 arm look unmodelled in two places at once; U-9078 is
+                // resolved (ea64 = Team Play) and it now feeds both consumers
+                // from one place.
+                const int maxpts = kPointsTarget;
                 int score = s_hud_scores_set ? s_hud_scores[i] : g_track.score(i);
                 if (score < 0) score = 0;
                 if (score > maxpts) score = maxpts;
@@ -3337,18 +3486,30 @@ bool RenderFrame() {
             }  // if (standings)
             if (g_font.ready()) {
                 const float cd = g_track.countdown();
-                if (cd > 0.f) {
+                // [DEV-ONLY — INVENTED, no original counterpart] the pre-race
+                // countdown digit and the end-of-match banner. Both draw while
+                // DAT_0063ba8c would be 3 (driving), where the original's font
+                // pipe is silent. Kept for development only; see s_dev_hud.
+                if (s_dev_hud && cd > 0.f) {
                     const int n = static_cast<int>(cd) + 1;
                     wchar_t b[2] = {static_cast<wchar_t>(L'0' + (n > 3 ? 3 : n)), 0};
                     DrawMashedString(b, 400.f, 250.f, 120.f, 0xff80e0ffu);
-                } else if (g_track.match_winner() >= 0) {
+                } else if (s_dev_hud && g_track.match_winner() >= 0) {
                     wchar_t b[24];
                     // [D-11052] EvaluateResult == -1 (ended with no winner —
                     // draw / player failed; FUN_00410510 LAB_00410801 path).
                     if (g_track.match_draw()) swprintf(b, 24, L"RACE OVER");
                     else swprintf(b, 24, L"CAR %d WINS", g_track.match_winner() + 1);
                     DrawMashedString(b, 400.f, 60.f, 48.f, 0xff80e0ffu);
-                } else if (g_track.round_winner() >= 0) {
+                }
+                // PORTED. Gated on the SAME `standings` bool as the chrome and
+                // the rows above, not on round_winner alone: the original emits
+                // exactly these three strings per frame for the whole standings
+                // screen, so on the end-of-match/Results dwell they must appear
+                // too. (Previously this was the third arm of an else-if chain
+                // headed by the two invented lines above, which meant the
+                // invented banner SUPPRESSED the ported text at match end.)
+                if (standings) {
                     // PORTED standings text (replaces the invented centered
                     // all-caps banner). MEASURED from the original's standings
                     // screen via the text channel of re/frida/race_hud_burst.py
@@ -3419,6 +3580,21 @@ bool RenderFrame() {
                                          /*ctrl_glyph_argb=*/L_.ctrl);
                     }
                 }
+                // ---- [DEV-ONLY — INVENTED] driving readouts ------------------
+                // Lap/position, the rule-10 checkpoint clock and the power-up
+                // banner are all this port's own presentation. The original
+                // draws NO 2D HUD while driving (Finding 3: state 3 emits one
+                // fully transparent quad, font pipe silent), so there is no
+                // original function to cite for any of them and nothing to
+                // diff them against. They remain useful for driving the
+                // standalone during development, hence MASHED_DEV_HUD=1.
+                //
+                // The rule-10 timer and the power-up NAME below are themselves
+                // bound to real state ([D-11052] DAT_007f0fe4; the LUA-verified
+                // type code via PickupField::RealTypeName) — it is only their
+                // on-screen presentation that is invented. Do not read this
+                // gate as a claim that the underlying values are unfaithful.
+                if (s_dev_hud) {
                 // Laps mode: player lap + race position (top-right).
                 if (g_track.race_mode() == 1 && g_track.countdown() <= 0.f) {
                     wchar_t lp[32];
@@ -3451,12 +3627,28 @@ bool RenderFrame() {
                     DrawMashedString(L"BOOST", 20.f, 410.f, 22.f, 0xff60ff70u);
                 if (g_track.shield_active())
                     DrawMashedString(L"SHIELD", 120.f, 410.f, 22.f, 0xffc0a0ffu);
+                }  // if (s_dev_hud) — invented driving readouts
             }
         }
-        // Post-race RESULTS overlay (GameMode::Results): final standings over
-        // the frozen scene, cars sorted by points (winner first). [SCAFFOLD] the
-        // original draws a themed results screen; this is a functional stand-in.
-        if (results && g_font.ready() && g_bridge_installed) {
+        // Post-race RESULTS overlay — RETIRED as the shipping path.
+        //
+        // This used to be a [SCAFFOLD] "RACE RESULTS" panel: a dark quad, an
+        // invented title, four text rows and an "[ESC] Continue" prompt. It has
+        // no original counterpart. The original has no separate post-race
+        // results screen at all — the end-of-match screen IS the between-round
+        // standings screen (DAT_0063ba8c in {5,6,7}), which this port already
+        // reproduces verbatim in the block above (ported chrome + entry slide +
+        // endpointpanel rows + the three measured text lines). The Results
+        // GameMode now falls through to that block via the `|| results` term in
+        // `standings`, so the faithful screen renders instead of this one.
+        //
+        // Retained ONLY under MASHED_DEV_HUD=1, next to the other invented
+        // readouts, because its numeric rows (laps in laps-mode, points
+        // otherwise) are a convenient text dump of the race outcome while
+        // developing. It draws OVER the ported overlay when enabled.
+        static const bool s_dev_results =
+            (GetEnvironmentVariableA("MASHED_DEV_HUD", nullptr, 0) > 0);
+        if (s_dev_results && results && g_font.ready() && g_bridge_installed) {
             std::uint32_t uvf[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
             HudIm2DQuad(0, 90.f, 70.f, 460.f, 300.f, 0xe0100c0cu, uvf);  // dark panel
             DrawMashedString(L"RACE RESULTS", 400.f, 96.f, 42.f, 0xffffffffu);
@@ -4660,7 +4852,7 @@ bool RenderFrame() {
             (void)selCol;
         }
 
-        // --- Ability Select (15, FUN_0042...) / Team Select (16, FUN_0043aa30):
+        // --- Ability Select (15, FUN_0043a610) / Team Select (16, FUN_0043aa30):
         // ORANGE header tabs (FUN_0042f8d0 0x146ef0 plate, BLACK text) + one row
         // per player slot. The team/ability draws iterate the player ORDER array
         // DAT_007f1a14 (probed jumped-to default = {0,0,0,0}); with every order 0
@@ -4670,12 +4862,179 @@ bool RenderFrame() {
         // clean captures verify/parity/orig_s15.bmp / orig_s16.bmp: header tabs
         // virtual y=140 h=26 — ability x=63 w=124 pitch=128 ×4, team x=248/428
         // w=144; player rows y=200/240/280/320 (pitch 40, h=27). [Residual: the
-        // real per-flow player count / team pairing / per-player selection cell
-        // need the player-setup state (DAT_0067e938 enter handler) — not ported;
-        // this mirrors the cold-boot default the original shows when jumped-to.]
+        // real per-flow player count / per-player selection cell still need more
+        // of the setup flow. RESOLVED for TEAMS 2026-09-04: the DAT_0067e938
+        // enter handler IS now ported (MenuTeamSelectTick 0x0042fa00), so
+        // screen 16 is no longer a cold-boot mirror -- teams are assignable and
+        // the per-row team below is real state, not a default.]
         if ((Nav_ScreenId() == 15 || Nav_ScreenId() == 16) && g_carsel_ready) {
             const bool team = (Nav_ScreenId() == 16);
             const std::uint32_t white   = 0xffffffffu;
+            // ---- player-setup state: teams are now assignable ---------------
+            // The Team Select screen used to be display-only against the
+            // cold-boot default, because the handler that edits the team table
+            // was unported (the residual noted a few lines below). It is now
+            // MenuTeamSelectTick (0x0042fa00, Frontend/MenuNav.cpp), and it
+            // operates on the REAL MASHED addresses -- 0x0067e938 (table),
+            // 0x007f1a14 (slots) and 0x007f1044/0x007f1504 (input) all live in
+            // granules this exe already reserves AND commits (kNeededGranules),
+            // so the ported function runs unmodified in the standalone.
+            //
+            // Three pieces of PORT-SIDE GLUE, none of them a port of anything:
+            //  1. Slot seeding. A bare nav push leaves the four slot records at
+            //     profile 0, so all four rows are the same player and only one
+            //     team is editable. On the entry edge the port seeds slots
+            //     0..3 with profiles 0..3, which is what a real player-setup
+            //     flow would have produced. This also resolves the [UNCERTAIN]
+            //     recorded below it: with distinct profiles the rows stop being
+            //     byte-identical.
+            //  2. The consume step. MASHED's convention is `active != 0 &&
+            //     processed == 0` for a fresh press, with the CONSUMER writing
+            //     processed = active afterwards; FUN_0042fa00 itself does not.
+            //     WriteMashedInputGlobalsFromKeyboard re-arms processed only on
+            //     the rising edge, so without a consume step a held UP would
+            //     retrigger every frame and slam the value to 0 instantly.
+            //  3. Only profile 0 has an input device in the standalone
+            //     (keyboard), so only player 1's team is editable here. That is
+            //     a device-count limit, not a port gap.
+            // s_ts_on tracks presence on screen 16 so the seed runs on the
+            // ENTRY EDGE and re-arms when the screen is left, rather than once
+            // per process.
+            // The entry sequence runs for EITHER screen: FUN_0043dfd0's
+            // 0xff1d0000 arm does the assign + team reset FIRST and only then
+            // picks screen 15 or 16 on DAT_0067ea64, so Ability Select needs
+            // assigned slots just as much (without them drawN collapses to the
+            // single fallback row).
+            static bool s_ts_on = false;
+            {
+                if (!s_ts_on) {
+                    s_ts_on = true;
+                    // ENTRY SEQUENCE, following the original's own transition
+                    // into this screen (FUN_0043dfd0, menu action 0xff1d0000):
+                    //     if (FUN_0042b9e0() == 0x1000) {
+                    //         for (off = 0; off < 0x90; off += 0xc) {
+                    //             DAT_0067e850[off] = 1;
+                    //             DAT_0067e938[off] = 0;      // teams reset
+                    //         }
+                    //         for (i = 0; i < 4; ++i) FUN_0046dc00(i, 1);
+                    //     }
+                    // The FUN_0046dc00(i, 1) loop is deliberately NOT called:
+                    // it is unported, so invoking it from the standalone would
+                    // jump into an RVA this exe does not implement. It is left
+                    // in the quoted sequence so the omission is visible rather
+                    // than looking like the sequence ends at the reset.
+                    // This replaces the hand-seeded slot table an earlier pass
+                    // put here. Hand-seeding wrote 0x007f1a14 directly and so
+                    // BYPASSED the assigner -- it produced four slots that no
+                    // original code path would ever produce, and it skipped the
+                    // team-table reset, leaving stale picks across entries.
+                    //
+                    // What the port must supply is the INPUT to the assigner,
+                    // not its output: CarSlotAssign (0x0042b9e0, already ported
+                    // in Frontend/MenuButtonDetect.cpp and already in the exe
+                    // build) reads the per-profile car-choice table at
+                    // 0x0067eaf0 (12 entries, stride 3 dwords). A profile with
+                    // a choice >= 1 participates; the assigner rejects
+                    // duplicates (returns 0), demands at least two participants
+                    // (returns 1), and on success writes each slot's profile
+                    // index at +0x00 and its Player Colour (choice - 1) at
+                    // +0x08, returning 0x1000.
+                    //
+                    // MASHED_PLAYERS=N (2..4, default 2) chooses how many
+                    // profiles get a distinct choice. Two is the standalone's
+                    // established default elsewhere in this file (the
+                    // "representative 2-player config"), and two is also the
+                    // smallest legal team split: 1 v 1.
+                    static int s_players = -1;
+                    if (s_players < 0) {
+                        char pv[8] = {};
+                        s_players = (GetEnvironmentVariableA("MASHED_PLAYERS", pv, sizeof(pv)) > 0)
+                                        ? std::atoi(pv) : 2;
+                        if (s_players < 2) s_players = 2;
+                        if (s_players > 4) s_players = 4;
+                    }
+                    for (int i = 0; i < 12; ++i)
+                        *reinterpret_cast<std::int32_t*>(0x0067eaf0 + i * 12) =
+                            (i < s_players) ? (i + 1) : 0;   // distinct picks 1..N
+                    const std::uint32_t asg = CarSlotAssign();
+                    if (asg == 0x1000u) {
+                        for (int off = 0; off < 0x90; off += 0xc) {
+                            *reinterpret_cast<std::int32_t*>(0x0067e850 + off) = 1;
+                            *reinterpret_cast<std::int32_t*>(0x0067e938 + off) = 0;
+                        }
+                    }
+                    g_team_assign = static_cast<int>(asg);
+                }
+            }
+            // The per-frame INPUT tick is team-only: FUN_0043c000 calls
+            // FUN_0042fa00 solely while the team panel's state global
+            // DAT_0067e7e0 == 1 (0x0043c150). Ability Select has its own input
+            // handler which is NOT ported -- so ability values stay at the
+            // entry default of 1 and no ability input is invented here.
+            if (team) {
+                // Verification poke, display-only and not set in normal play
+                // (same family as MASHED_ROUND_SCORES / MASHED_CROWN_TEST).
+                // MASHED_TEAM_KEYS is a comma-separated list of
+                // "<profile><keys>" tokens -- e.g. "0d,1dd" taps profile 0 DOWN
+                // once and profile 1 DOWN twice -- applied one tap per 30
+                // frames, in order, by writing the SAME active/processed
+                // protocol a real key would.
+                //
+                // Two reasons it is per-profile rather than player-1-only.
+                // First, OS-level key injection (keybd_event via sa_capture)
+                // does not reach this exe's DirectInput device, so the handler
+                // cannot be exercised in an unattended capture at all without
+                // it. Second, a LEGAL team split needs at least two profiles to
+                // choose opposing teams, and the standalone has exactly one
+                // physical device -- so a capture can only demonstrate the
+                // 0x1000 verdict if it can drive profile 1 as well. That is a
+                // device-count limitation of this machine, not of the port: the
+                // handler reads all 12 profiles' input records, and a second
+                // real device would drive profile 1 with no code change.
+                //
+                // It injects INPUT, not state -- MenuTeamSelectTick still does
+                // the work, so a regression in the handler still surfaces.
+                struct Tap { int profile; int col; };
+                static Tap s_tk[32];
+                static int s_tk_n = -1, s_tk_i = 0, s_tk_f = 0;
+                if (s_tk_n < 0) {
+                    s_tk_n = 0;
+                    char kb[64] = {};
+                    if (GetEnvironmentVariableA("MASHED_TEAM_KEYS", kb, sizeof(kb)) > 0) {
+                        char* tok = std::strtok(kb, ",");
+                        while (tok && s_tk_n < 32) {
+                            const int prof = (tok[0] >= '0' && tok[0] <= '9')
+                                                 ? (tok[0] - '0') : 0;
+                            for (const char* q = tok + 1; *q && s_tk_n < 32; ++q) {
+                                s_tk[s_tk_n].profile = prof;
+                                s_tk[s_tk_n].col = (*q == 'u' || *q == 'U') ? 0 : 1;
+                                ++s_tk_n;
+                            }
+                            tok = std::strtok(nullptr, ",");
+                        }
+                    }
+                }
+                if (s_tk_n > 0 && s_tk_i < s_tk_n && ++s_tk_f % 30 == 0) {
+                    const Tap t = s_tk[s_tk_i++];
+                    const std::uintptr_t rec = static_cast<std::uintptr_t>(t.profile) * 0x4c;
+                    reinterpret_cast<std::uint8_t*>(0x007f1044 + rec)[t.col] = 1;
+                    reinterpret_cast<std::uint8_t*>(0x007f1504 + rec)[t.col] = 0;
+                }
+                MenuTeamSelectTick();
+                // consume cols 0 (UP) and 1 (DOWN) for every profile the tick
+                // could have read, mirroring the original's post-consume latch.
+                for (int i = 0; i < 12; ++i) {
+                    std::uint8_t* const act =
+                        reinterpret_cast<std::uint8_t*>(0x007f1044 + i * 0x4c);
+                    std::uint8_t* const prc =
+                        reinterpret_cast<std::uint8_t*>(0x007f1504 + i * 0x4c);
+                    prc[0] = act[0];
+                    prc[1] = act[1];
+                }
+                g_team_balance = MenuTeamBalance();   // derives 0x007f1a18[n]
+            } else {
+                s_ts_on = false;                      // left screen 16
+            }
             // Plate alpha 0x7f, NOT 0xa0. FUN_0042f8d0 builds the plate colour
             // byte-by-byte on its stack slot and HALVES the caller's alpha:
             //   0x0042f8d9  mov bl, al        ; bl = caller alpha
@@ -4714,11 +5073,19 @@ bool RenderFrame() {
             // because stroke weight does not scale linearly at 16-22px, which
             // would overshoot the correction by roughly 15%.
             const float hcell = 0.752f * 0.0708f * 480.f * kVScale;
-            const float hy = 140.0f * kVScale, hh = 26.0f * kVScale;
+            // Header plates, now EXACT from both renderers rather than measured:
+            //   team    (FUN_0043aa30) 2 plates x 250.0 / 430.0, w 140.0
+            //   ability (FUN_0043a610) 4 plates x 65.0 + c * 130.0, w 120.0
+            // both y 140.0 h 28.0 (the four FUN_0042f8d0(x, 140.0, w, 28.0)
+            // calls at 0x0043a610 + the two in FUN_0043aa30). The measured
+            // values were 248/428 w144 and 63/128-pitch w124 -- within a couple
+            // of px, so this tightens rather than overturns them, and the
+            // ability pitch 130 is the SAME constant the row sprite slides by.
+            const float hy = 140.0f * kVScale, hh = 28.0f * kVScale;
             for (int c = 0; c < ncol; ++c) {
-                const float hx = (team ? (248.0f + c * 180.0f)
-                                       : (63.0f  + c * 128.0f)) * kVScale;
-                const float hw = (team ? 144.0f : 124.0f) * kVScale;
+                const float hx = (team ? (250.0f + c * 180.0f)
+                                       : (65.0f  + c * 130.0f)) * kVScale;
+                const float hw = (team ? 140.0f : 120.0f) * kVScale;
                 HudIm2DQuad(0, hx, hy, hw, hh, hdrFill, uv_full);
                 HudIm2DQuad(0, hx, hy, hw, bt, hdrBord, uv_full);
                 HudIm2DQuad(0, hx, hy + hh - bt, hw, bt, hdrBord, uv_full);
@@ -4726,16 +5093,69 @@ bool RenderFrame() {
                     DrawMashedString(cols[c], hx + hw * 0.5f, hy + hh * 0.5f,
                                      hcell, 0xff000000u /*black, centered*/);
             }
-            // 4 player rows (jumped-to default): car0 + joypad + "1".
-            const float rowX  = (team ? 68.0f  : 58.0f)  * kVScale;
-            const float rowW  = (team ? 513.0f : 526.0f) * kVScale;
-            // carX back-solved from the devil-bbox measurement below (was
-            // team 88 / solo 70, fitted against the half-size quad).
-            const float carX  = (team ? 81.0f  : 63.0f)  * kVScale;
-            const float rowH  = 27.0f * kVScale;
+            // Player rows. For TEAM SELECT these are now read out of the
+            // original renderer FUN_0043aa30 rather than measured off a
+            // jumped-to capture, so the geometry below is exact for that screen:
+            //
+            //   plate      x 70.0  w 510.0  h 28.0, first y 200.0
+            //              (uStack_74 / uStack_30 / uStack_2c / fStack_70)
+            //   row pitch  40.0    (_DAT_005cd274, added per DRAWN row)
+            //   car sprite 48 x 48 at x = team * 180.0 + 82.0, y = rowY - 10.0
+            //              (fStack_64 = iVar4 * 0xb4 + _DAT_005cd95c = 82.0;
+            //               fStack_60 = (fStack_70 - 2.0) - 8.0)
+            //
+            // Two of those independently confirm the old measurements rather
+            // than overturning them: the fitted carX was 81 against the code's
+            // 82, and the fitted vertical centring `ry + rowH/2 - h/2` is
+            // exactly `ry - 10` once h is the code's 48. The fitted sprite SIZE
+            // (51.5 x 47, from a red-ink bbox with a scale fudge) is superseded
+            // by the literal 48 x 48 -- an ink bbox was never going to recover
+            // the quad, which is the point of preferring the emitter.
+            //
+            // ROW COUNT: one row per ASSIGNED SLOT, in PROFILE order -- not a
+            // fixed four. FUN_0043aa30 loops 12 profiles outer, the 4 slot
+            // records inner, and draws only where a slot's profile index at
+            // +0x00 equals the current profile; the Y cursor advances only on a
+            // drawn row. So an unassigned slot (profile index -1, which is what
+            // CarSlotAssign leaves for a 2-player game) contributes NO row, and
+            // the rows are ordered by profile rather than by slot.
+            //
+            // ABILITY SELECT (screen 15) keeps the old fixed-4 measured layout:
+            // it has a different renderer that has not been read, and there is
+            // no evidence its loop shares this shape.
+            // Row plate, exact for BOTH screens now:
+            //   team    x 70.0 w 510.0   (FUN_0043aa30 uStack_74 / uStack_30)
+            //   ability x 60.0 w 523.0   (FUN_0043a610 local_38 / local_28)
+            // both h 28.0, first y 200.0, pitch 40.0 (_DAT_005cd274).
+            // [UNCERTAIN] the ability row plate's 4th argument decompiles as a
+            // reused register (uVar4, clobbered by the FUN_0042fab0 call on the
+            // next line), so its height is taken as 28.0 by analogy with the
+            // headers and the team rows rather than read off the listing.
+            const float rowX  = (team ? 70.0f  : 60.0f)  * kVScale;
+            const float rowW  = (team ? 510.0f : 523.0f) * kVScale;
+            const float carX  = (team ? 82.0f  : 64.0f)  * kVScale;
+            const float rowH  = 28.0f * kVScale;
             const float rowY0 = 200.0f * kVScale, rowDY = 40.0f * kVScale;
             const float ncell = 0.55f * 0.0708f * 480.f * kVScale;
-            for (int r = 0; r < 4; ++r) {
+            // Draw order: profile-major for team select, slot order otherwise.
+            // BOTH screens use the same loop shape -- outer over 12 profiles,
+            // inner over the 4 slot records, a row only where the slot's
+            // profile index matches, and the Y cursor advancing only on a drawn
+            // row. FUN_0043aa30 walks DAT_0067e938 (bound 0x67e9c7) and
+            // FUN_0043a610 walks DAT_0067e850 (bound 0x67e8e0); both are 12
+            // entries at stride 12 and both inner loops run &DAT_007f1a1c to
+            // 0x7f1a5c. So the row count is the number of ASSIGNED slots on
+            // Ability Select too, and the old fixed-four there was the same
+            // jumped-to-default artefact.
+            int drawSlot[4] = {0, 1, 2, 3};
+            int drawN = 0;
+            for (int prof = 0; prof < 12 && drawN < 4; ++prof)
+                for (int sl = 0; sl < 4 && drawN < 4; ++sl)
+                    if (*reinterpret_cast<const std::int32_t*>(0x007f1a14 + sl * 16) == prof)
+                        drawSlot[drawN++] = sl;
+            if (drawN == 0) { drawSlot[0] = 0; drawN = 1; }   // never draw nothing
+            for (int r = 0; r < drawN; ++r) {
+                const int   slot = drawSlot[r];
                 const float ry = rowY0 + r * rowDY;
                 HudIm2DQuad(0, rowX, ry, rowW, rowH, rowFill, uv_full);
                 HudIm2DQuad(0, rowX, ry, rowW, bt, rowBord, uv_full);
@@ -4771,9 +5191,31 @@ bool RenderFrame() {
                 // LANDSCAPE (w/h = 1.097) where ours was square; that asymmetry
                 // is unexplained and could equally be a texture-sampling
                 // difference, so it is recorded, not rationalised.
-                const float csw = 51.5f * kVScale;
-                const float csh = 47.0f * kVScale;
-                HudIm2DQuad(kHandleCar0, carX, ry + rowH * 0.5f - csh * 0.5f,
+                const float csw = 48.0f * kVScale;   // both renderers: 48 x 48
+                const float csh = 48.0f * kVScale;
+                // On Team Select the sprite SLIDES horizontally with the pick:
+                // x = team * 180 + 82 (FUN_0043aa30 `iVar4 * 0xb4 + 82.0`,
+                // where iVar4 is the raw 0/1/2 table value, not the -1-biased
+                // team id). That slide IS the original's marker -- the thing
+                // the scaffold letter was standing in for.
+                // Both screens slide the sprite between their columns:
+                //   team    x = pick    * 180.0 + 82.0   (0xb4, _DAT_005cd95c)
+                //   ability x = ability * 130.0 + 64.0   (0x82, _DAT_005cd6d4)
+                // 130 is exactly the ability header pitch, and 180 the team
+                // header spacing -- the sprite lands in the chosen column.
+                const float cx = team
+                    ? ((static_cast<float>(TeamPick(slot))    * 180.0f + 82.0f) * kVScale)
+                    : ((static_cast<float>(AbilityPick(slot)) * 130.0f + 64.0f) * kVScale);
+                // Sprite is the PLAYER'S COLOUR, not car 0: the original draws
+                // FUN_0042fab0(*piVar5) where piVar5 is the slot's +0x08 field,
+                // i.e. the Player Colour CarSlotAssign wrote as pick - 1
+                // (Finding 26). kHandleCar0 + colour is the same NFL* range the
+                // colour-select screen already uses at exe_main.cpp:4739.
+                // This also retires the [UNCERTAIN] a few lines below about the
+                // per-player mapping being unmeasurable: it was unmeasurable
+                // only because every row was car 0 at the jumped-to default.
+                HudIm2DQuad(kHandleCar0 + SlotColour(slot),
+                            cx, ry + rowH * 0.5f - csh * 0.5f,
                             csw, csh, white, uv_full);
                 // joypad icon (device[order=0]==joypad) then the number "1".
                 // TINTED by the player's colour, not white. MEASURED: the
@@ -4820,6 +5262,66 @@ bool RenderFrame() {
                 if (g_font.ready())
                     DrawMashedString(L"1", jx + 34.0f * kVScale,
                                      ry + rowH * 0.5f, ncell, 0xff000000u, true);
+                // ---- [SCAFFOLD presentation, FAITHFUL state] ---------------
+                // The team each player is on is now real: it is
+                // 0x007f1a18 + r*0x10, derived by MenuTeamBalance from the
+                // table MenuTeamSelectTick edits. How the ORIGINAL shows it is
+                // not measured -- the screen has two team panels (headers at
+                // x=248/428) and presumably moves each player's row marker
+                // between them, but no capture of a populated Team Select
+                // screen exists yet. So the state is drawn as a letter in the
+                // row rather than guessed at as a layout: A / B, or a dash for
+                // "no team chosen" (table value 0 -> team -1), which is the
+                // cold-boot state for every player until someone presses
+                // UP/DOWN. Replace with the measured marker once a populated
+                // capture exists; do NOT infer the marker geometry from the
+                // two header positions.
+                if (team && g_font.ready()) {
+                    // Keyed off SLOT, not the row ordinal: rows are now drawn
+                    // in profile order, so row r and slot r are not the same
+                    // thing. Retained alongside the (faithful) horizontal slide
+                    // above as a legibility aid at this resolution; it is still
+                    // [SCAFFOLD] and has no counterpart in FUN_0043aa30.
+                    const std::int32_t tid =
+                        *reinterpret_cast<std::int32_t*>(0x007f1a18 + slot * 16);
+                    const wchar_t* lbl = (tid == 0) ? L"A" : (tid == 1) ? L"B" : L"-";
+                    DrawMashedString(lbl, rowX + rowW - 24.0f * kVScale,
+                                     ry + rowH * 0.5f, ncell, 0xff000000u, true);
+                }
+            }
+            // ---- team roster stacks (PORTED, FUN_0043aa30) -----------------
+            // When a player has picked, the original draws a SECOND copy of
+            // their car sprite into that team's panel at the top of the screen:
+            //   team 1 (pick 1): x = 250.0 + n * 34.0
+            //   team 2 (pick 2): x = 430.0 + n * 34.0
+            //   both:            y = 108.0, 48 x 48, n counted per team
+            // (`iStack_48 = iStack_40 * 0x22 + 0xfa`, `iStack_44 = iStack_3c *
+            // 0x22 + 0x1ae`, drawn at uStack_24 = 108.0). The two bases are the
+            // same 250 / 430 as the panel headers, so the rosters grow rightward
+            // underneath them. Counted in the same profile order as the rows.
+            if (team) {
+                int n1 = 0, n2 = 0;
+                for (int r = 0; r < drawN; ++r) {
+                    const int pick = TeamPick(drawSlot[r]);
+                    float rx;
+                    if      (pick == 1) rx = 250.0f + static_cast<float>(n1++) * 34.0f;
+                    else if (pick == 2) rx = 430.0f + static_cast<float>(n2++) * 34.0f;
+                    else                continue;
+                    HudIm2DQuad(kHandleCar0 + SlotColour(drawSlot[r]),
+                                rx * kVScale, 108.0f * kVScale,
+                                48.0f * kVScale, 48.0f * kVScale, white, uv_full);
+                }
+            }
+            // Balance verdict, same scaffold caveat: the original surely
+            // reports an illegal split somewhere (MenuTeamBalance's 1/2/3 codes
+            // exist to be shown), but which string and where is unmeasured.
+            if (team && g_font.ready()) {
+                const wchar_t* v = (g_team_assign != 0x1000) ? L"slots unassigned"
+                                 : (g_team_balance == 0x1000) ? L"teams ok"
+                                 : (g_team_balance == -1)     ? L"bad player count"
+                                                              : L"teams unbalanced";
+                DrawMashedString(v, rowX, (rowY0 + 4 * rowDY) + 8.0f * kVScale,
+                                 ncell, 0xffffffffu, true);
             }
         }
 
@@ -7612,9 +8114,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
             PostQuitMessage(0);
         }
         // B14: mirror DInput keyboard state into MASHED's input globals
-        // (0x007f1044 active / 0x007f1504 processed, player 0). No frontend
-        // code currently reads these in standalone, but the wiring exists
-        // for B16's frontend_mode_dispatch loop.
+        // (0x007f1044 active / 0x007f1504 processed, player 0). As of
+        // 2026-09-04 this is no longer write-only in the standalone:
+        // MenuTeamSelectTick (0x0042fa00) reads cols 0/1 of these on the
+        // Team Select screen, so changing the column mapping now changes
+        // real behaviour rather than only feeding future frontend code.
         WriteMashedInputGlobalsFromKeyboard();
         // Top-level game-flow scaffold: drives the Frontend->LoadingRace->InRace
         // state machine + the RaceSession subsystem stubs. In Frontend mode (the
