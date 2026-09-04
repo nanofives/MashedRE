@@ -2890,3 +2890,87 @@ copy; only the secondary `MenuStringTable` (the verdict line, the
 A wrong reference table produces confident, self-consistent, wrong readings —
 five independent pairings all "fit" a `+1` that did not exist. What settled it
 was reading the LOADER instead of pattern-matching the strings.
+
+---
+
+## Finding 34: port-side text audit after U-9083 (2026-09-04)
+
+Swept every text-draw site in the standalone for the class U-9083 belongs to:
+text that does not come from the table and id the original uses.
+
+### The main path was never wrong
+
+`LoadMessageTable("…/Font36.piz", "ENGLISH.DAT")` fills `g_msg_dat`, and
+`GetMenuMessage` resolves `off = *(u32*)(base + id*4)`, record
+`[u16 len][len * u16]` — the same law as `FUN_00427780`, no bias, no header
+skip. Every drawn menu label already goes through it: the splash lines
+(`0x1e5`..`0x1eb`, `0x222`), the chrome decal and modal title (`0x41`), the
+footer prompt row ids, menu record ids, the Challenge Select names
+(`0x49 + row`), the s18/s24 label and value id tables, the modal body
+(`g_modal_body_id`) and buttons (`0x2e`/`0x2f`/`0x2d`).
+
+The wrong-table defect was confined to the SECOND object, `g_menu_str`, which
+fed **exactly one** draw — the team verdict line. That is fixed, and
+`MenuStringTable::LoadFile` now carries the caution at its declaration.
+
+### A second trap in the same family: the locale entries are not interchangeable
+
+`Font36.piz` carries both `ENGLISH.DAT` and `USA.DAT`, both 677 ids, and they
+share the id space — but they differ in **8 ids**, and one pair is not cosmetic:
+
+| id | ENGLISH.DAT | USA.DAT |
+|---|---|---|
+| `0x124` | "First to 12 points wins." | " " |
+| `0x125` | " " | "First to 12 points wins." |
+| `0x11` | "Languages" | "NOT USED" |
+| `0x130` / `0x131` / `0x24a` / `0x1f9` / `0x229` | Colour / … | Color / … |
+
+**`0x124` and `0x125` are swapped.** Finding 23 cites `0x124` for the points
+caption, which resolves only under the english selection. Which entry the game
+streams comes from `DAT_007f0f60`, written by `FUN_004274d0` as
+`DAT_007f0f60 = DAT_007719e8`; `DAT_007719e8` lies past the raw size of `.data`
+in the image, so it is zero at load — selector 0, `"english.dat"` — unless
+something sets it first. [UNCERTAIN] what does: MashedRunner documents a
+launcher language parameter, and that path is not traced here. The port loads
+`ENGLISH.DAT`, which matches the zero default.
+
+### Fixed here: the setup-screen headers are sourced now
+
+`kCols4` / `kCols2` were literals. They are drawn by id — `0xe3`/`0xd2`/`0xd3`/
+`0xd4` and `0x9f`/`0xa0`, the ids both original renderers pass to
+`FUN_00427e00` — with the literals kept only as a fallback for a failed table
+load. The wording is unchanged (`verify/abilsel_hdr_byid.bmp`,
+`verify/teamsel_hdr_byid.bmp`): Elite / Pro / Amateur / Rookie and
+Team 1 / Team 2. That is the point — they were right, but unsourced, and an
+unsourced label is exactly what U-9083 was.
+
+### Still literal, with what each would need
+
+| site | literal | to source it |
+|---|---|---|
+| `exe_main.cpp:4664` | `{Off, Auto, Manual}` insults tri-state | only `0x59` = "Off" is known; the other two ids are unidentified |
+| `exe_main.cpp:4676` | autosave `On`/`Off` | same |
+| `exe_main.cpp:5582` | "Bronze Challenge" / "Locked" | no id cited anywhere in the tree |
+| `Race/GameFlow.cpp:29-42` | `kAreas[13]` names | already flagged 2026-08-27 as a real defect ("Arctic" occurs 0 times in `MASHED.exe`); not currently drawn |
+| `exe_main.cpp:5359` | `A`/`B`/`-` | `[SCAFFOLD]`; the original's marker is the sprite slide (Finding 27) |
+| `exe_main.cpp:5426` | "slots unassigned" | port-side state with no original counterpart |
+| dev HUD / results panel | BOOST, SHIELD, RACE RESULTS, … | invented by design, behind `MASHED_DEV_HUD` (Finding 21) |
+
+The standings trio (`MASHED`, `Current Standings`, ` Continue`) stays
+literal on purpose: those are transcribed code units from a text-channel
+capture, and `0x41`/`0x42`/`0x2d` decode to exactly them.
+
+### One asymmetry recorded rather than changed
+
+`GetMenuMessage` has no `off == 0` unused-id rejection, so a hole id decodes
+garbage; `MenuStringTable::Decode` does reject it. The ORIGINAL does not check
+either — `FUN_00427780` is three instructions — so adding the guard to the
+faithful path would be a divergence. Noted, not "fixed".
+
+### The class was already known
+
+`re/analysis/frontend_config_screens_REmap_20260614.md` warns that the loose
+file "is NOT the table the game reads", and a 2026-06-12 fix moved the
+colour-select screen after a loose-table misread routed it to screen 7. The
+port still slipped again, in a new object, three months later — which is the
+argument for the caution now sitting on `LoadFile` itself rather than in a note.

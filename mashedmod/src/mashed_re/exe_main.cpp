@@ -5131,10 +5131,23 @@ bool RenderFrame() {
             const std::uint32_t rowFill = 0x7f146ef0u;
             const std::uint32_t rowBord = 0xff1050b4u;
             const float bt = 1.0f * kVScale;
+            // Column headers BY MESSAGE ID, not by literal (2026-09-04 text
+            // audit, Finding 34). The ids are the ones both renderers pass to
+            // FUN_00427e00: ability 0xe3/0xd2/0xd3/0xd4, team 0x9f/0xa0 (see
+            // Frontend/SetupScreenRenderers.cpp). Against the table the game
+            // actually reads -- Font36.piz/ENGLISH.DAT, which g_msg_dat holds
+            // -- they decode to Elite/Pro/Amateur/Rookie and Team 1/Team 2, so
+            // the literals that used to sit here were right; they were just
+            // unsourced, and an unsourced label is the class of defect U-9083
+            // came from. The literals stay only as a fallback for a failed
+            // table load.
+            static const int kColIds4[4] = { 0xe3, 0xd2, 0xd3, 0xd4 };
+            static const int kColIds2[2] = { 0x9f, 0xa0 };
             static const wchar_t* kCols4[4] = { L"Elite", L"Pro", L"Amateur", L"Rookie" };
             static const wchar_t* kCols2[2] = { L"Team 1", L"Team 2" };
             const int ncol = team ? 2 : 4;
             const wchar_t* const* cols = team ? kCols2 : kCols4;
+            const int* const colIds = team ? kColIds2 : kColIds4;
             // 0.752, not 0.55. Cap heights measured on all four difficulty words
             // in the 1024x768 capture: original 22 device, ours 16-17. Ratio by
             // cap height 1.354 (modal 1.375), cross-checked by word ink-bbox
@@ -5161,9 +5174,13 @@ bool RenderFrame() {
                 HudIm2DQuad(0, hx, hy, hw, hh, hdrFill, uv_full);
                 HudIm2DQuad(0, hx, hy, hw, bt, hdrBord, uv_full);
                 HudIm2DQuad(0, hx, hy + hh - bt, hw, bt, hdrBord, uv_full);
-                if (g_font.ready())
-                    DrawMashedString(cols[c], hx + hw * 0.5f, hy + hh * 0.5f,
+                if (g_font.ready()) {
+                    wchar_t hdr[48];
+                    const wchar_t* lbl =
+                        (GetMenuMessage(colIds[c], hdr, 48) > 0) ? hdr : cols[c];
+                    DrawMashedString(lbl, hx + hw * 0.5f, hy + hh * 0.5f,
                                      hcell, 0xff000000u /*black, centered*/);
+                }
             }
             // Player rows. For TEAM SELECT these are now read out of the
             // original renderer FUN_0043aa30 rather than measured off a

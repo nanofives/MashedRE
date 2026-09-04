@@ -26,8 +26,13 @@ namespace D3d9Render {
 
 class MenuStringTable {
 public:
-    // Load the language .DAT id-table. `dat_path` is a raw file (e.g.
-    // original/TOASTART/Common/FONT/USA.dat) — exactly what FUN_004274e0 streams.
+    // Load the language .DAT id-table from a raw file.
+    //
+    // CAUTION (U-9083, 2026-09-04): the loose files under
+    // original/TOASTART/Common/FONT/ are NOT what the game reads.
+    // FUN_004274e0 streams the name through FUN_004cc230, which resolves
+    // inside Font36.piz — 677 ids there against the loose file's 449, agreeing
+    // only up to id 0x15. Prefer LoadPizEntry; this entry point is a fallback.
     // Returns true on success.
     bool LoadFile(const char* dat_path);
     // Alternate source: a .piz entry (e.g. Font36.piz/USA.DAT), mirroring the
