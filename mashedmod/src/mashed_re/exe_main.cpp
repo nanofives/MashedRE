@@ -774,6 +774,20 @@ bool             g_inputicons_ready = false;
 constexpr std::uint32_t kSlotStar      = 60;
 constexpr int           kHandleStar    = 51;
 bool             g_star_ready = false;
+// Challenge Select detail panel: the per-mode LOCK icon. FUN_00439210 draws
+// FUN_0040bb50("lock" | "check", x, y, w, h, colour, 1) per row; "Lock" is a
+// texture in the same INTERFACE.TXD the Star comes from.
+// [UNCERTAIN] "check" resolves to NOTHING here: neither INTERFACE.TXD nor
+// Frontend.piz/TEXTURES.TXD contains a texture of that name (INTERFACE.TXD has
+// Lock, Star and Tick; "Tick" is a candidate but the original asks for
+// "check"). FUN_0040bb50 is a plain dictionary lookup
+// (FUN_004c5c00(DAT_0063b8fc, name)), so on this build the unlocked rows most
+// likely draw no icon at all. Not modelled either way: the port draws the Lock
+// for a locked row and nothing for an unlocked one, which is what the evidence
+// supports.
+constexpr std::uint32_t kSlotLock      = 61;
+constexpr int           kHandleLock    = 52;
+bool             g_lock_ready = false;
 // The "vs" separator sprite (INTERFACE.TXD) was LOADED and registered to
 // kHandleVs but had no ready flag and no draw call anywhere — so it never
 // appeared. User-reported on s6/s18/s24 across two review rounds.
@@ -5631,10 +5645,60 @@ bool RenderFrame() {
                     sname[0] = L'\0';
                 DrawMashedString(sname, 340.0f * kVScale,
                                  280.0f * kVScale, lcell, white, true);
-                DrawMashedString(cup.tracks[sel].unlocked ? L"Bronze Challenge"
-                                                          : L"Locked",
-                                 340.0f * kVScale, 304.0f * kVScale, lcell,
-                                 0xffc8c8c8u, true);
+                // The panel's real content, read out of FUN_00439210 (C4)
+                // 2026-09-04 (Finding 36). It is NOT a one-line
+                // "Bronze Challenge / Locked" caption -- that wording was
+                // invented and appears nowhere in the message table. It is a
+                // per-track MODE CHECKLIST: a heading plus three mode names,
+                // each with a lock icon when that mode is still locked for the
+                // selected challenge.
+                //
+                //   heading  DAT_0067ea64 == 0 ? 0x22 "Multi Player"
+                //                              : 0x140 "Team Play"   (330, 316)
+                //   row 0    0x56  "Power Ups"      (330, 334)
+                //   row 1    0x24b "Hold the Flag"  (330, 350)
+                //   row 2    0x141 "The Fugitive"   (330, 366)
+                //   all at scale 0x3f19999a = 0.6
+                //
+                // Unlock flags, per selected challenge DAT_0067f17c (stride
+                // 0x30): 0x007f0a50 (Power Ups), 0x007f0a58 (Hold the Flag),
+                // 0x007f0a5c (The Fugitive). Row 2 is additionally forced
+                // LOCKED whenever FUN_0042f500() != 0, i.e. under Team Play.
+                //
+                // Icons: x = width * 0x208/0x280 = 520, y = height * 0x140/0x1e0
+                // = 320 stepping by height * 0x10/0x1e0 = 16, size
+                // width * 0.0375 x height * 0.05 = 24 x 24.
+                {
+                    const int chal = *reinterpret_cast<const std::int32_t*>(0x0067f17c);
+                    const int ea64 = *reinterpret_cast<const std::int32_t*>(0x0067ea64);
+                    const std::uintptr_t base =
+                        static_cast<std::uintptr_t>(chal) * 0x30u;
+                    const int flags[3] = {
+                        *reinterpret_cast<const std::int32_t*>(0x007f0a50 + base),
+                        *reinterpret_cast<const std::int32_t*>(0x007f0a58 + base),
+                        *reinterpret_cast<const std::int32_t*>(0x007f0a5c + base),
+                    };
+                    const int teamPlay = (ea64 != 0) ? 1 : 0;   // FUN_0042f500
+                    static const int kRowIds[3] = { 0x56, 0x24b, 0x141 };
+                    static const float kRowY[3] = { 334.0f, 350.0f, 366.0f };
+                    wchar_t mbuf[64];
+                    if (GetMenuMessage(ea64 == 0 ? 0x22 : 0x140, mbuf, 64) > 0)
+                        DrawMashedString(mbuf, 330.0f * kVScale,
+                                         316.0f * kVScale, lcell, white, true);
+                    for (int m = 0; m < 3; ++m) {
+                        if (GetMenuMessage(kRowIds[m], mbuf, 64) > 0)
+                            DrawMashedString(mbuf, 330.0f * kVScale,
+                                             kRowY[m] * kVScale, lcell,
+                                             0xffc8c8c8u, true);
+                        const bool locked =
+                            (flags[m] == 0) || (m == 2 && teamPlay != 0);
+                        if (locked && g_lock_ready)
+                            HudIm2DQuad(kHandleLock, 520.0f * kVScale,
+                                        (320.0f + 16.0f * m) * kVScale,
+                                        24.0f * kVScale, 24.0f * kVScale,
+                                        white, uv_full);
+                    }
+                }
             }
             // 4 challenge-cup devil icons + vertical separator at the bottom-left.
             // Group placement measured: the original's 4 devils merge into one
@@ -6813,6 +6877,17 @@ bool LoadCarColorSprites() {
             mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
                 kHandleStar, g_quad_renderer.slot_texture(kSlotStar));
             g_star_ready = true;
+        }
+        break;
+    }
+    // Challenge-select per-mode "Lock" icon (same INTERFACE.TXD).
+    for (std::uint32_t i = 0; i < dict.count(); ++i) {
+        const auto& tex = dict.texture(i);
+        if (_stricmp(tex.name, "Lock") != 0) continue;
+        if (g_quad_renderer.UploadFromTextureToSlot(kSlotLock, tex)) {
+            mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                kHandleLock, g_quad_renderer.slot_texture(kSlotLock));
+            g_lock_ready = true;
         }
         break;
     }

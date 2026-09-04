@@ -3039,3 +3039,75 @@ the insults row and the autosave row. The port uses `0.72` for insults and
 port's is a font-cell height fitted to a measured capture), so this is not a
 straight substitution and it is left alone — but the original having ONE value
 where the port has two is worth knowing before anyone re-fits that row.
+
+---
+
+## Finding 36: the Challenge Select detail panel is a mode checklist, not a caption (2026-09-04)
+
+The last flagged literal pair, `"Bronze Challenge"` / `"Locked"`, is **invented**
+— neither string exists anywhere in the message table (`"Challenge Locked"` does,
+at `0x263`, and nothing in this path uses it). What the original draws in that
+panel is a per-track **unlocked-modes checklist**, read out of `FUN_00439210`
+(C4, the screen 6/7/8 renderer):
+
+```
+if (FUN_00430760() == 0) {
+  if (DAT_0067e9fc == 6) {
+    uVar33 = (DAT_0067ea64 == 0) ? 0x22 : 0x140;
+    FUN_00427e00(uVar33, 330.0, 316.0, colour, 0.6, 0);        ; heading
+    FUN_00427e00(0x56,   330.0, 334.0, colour, 0.6, 0);        ; Power Ups
+    pcVar32 = (*(int *)(&DAT_007f0a50 + DAT_0067f17c * 0x30) == 0) ? "lock" : "check";
+    ...
+    FUN_00427e00(0x24b,  330.0, 350.0, colour, 0.6, 0);        ; Hold the Flag
+    pcVar32 = (*(int *)(&DAT_007f0a58 + DAT_0067f17c * 0x30) == 0) ? "lock" : "check";
+    ...
+    FUN_00427e00(0x141,  330.0, 366.0, colour, 0.6, 0);        ; The Fugitive
+    pcVar32 = ((*(int *)(&DAT_007f0a5c + DAT_0067f17c * 0x30) == 0) ||
+               (FUN_0042f500() != 0)) ? "lock" : "check";
+```
+
+| element | id | string |
+|---|---|---|
+| heading | `0x22` / `0x140` on `DAT_0067ea64` | "Multi Player" / "Team Play" |
+| row 0 | `0x56` | "Power Ups" |
+| row 1 | `0x24b` | "Hold the Flag" |
+| row 2 | `0x141` | "The Fugitive" |
+
+Row 2 is additionally forced LOCKED whenever `FUN_0042f500() != 0` — Team Play
+disables The Fugitive. Screens 7 and 8 use the same shape with heading ids
+`0x142` / `0x143`, both of which decode to **"NOT USED"** in this build, and
+rows `0x151` "Select Your Vehicle" / `0x152` "Position Powerups" / `0x24b` /
+`0x141`, all with `"check"`.
+
+Icon geometry, all from screen-dimension fractions: x = `width * 0x208/0x280` =
+**520**, y = `height * 0x140/0x1e0` = **320** stepping by `height * 0x10/0x1e0`
+= **16**, size `width * 0.0375` x `height * 0.05` = **24 x 24**.
+
+### The `"check"` sprite does not exist in this build
+
+`FUN_0040bb50(name)` is a plain dictionary lookup —
+`FUN_004c5c00(DAT_0063b8fc, name)`. `INTERFACE.TXD` (the dictionary the Star on
+this same screen comes from) contains **Lock**, **Star** and **Tick**;
+`Frontend.piz/TEXTURES.TXD` contains none of the three. There is no texture
+named `"check"` in either. [UNCERTAIN] whether the lookup is case- or
+prefix-tolerant enough to reach "Tick", and which dictionary `DAT_0063b8fc`
+actually holds — so the reading that an UNLOCKED row draws no icon at all is
+supported but not proven. The port therefore draws the Lock for a locked row
+and nothing for an unlocked one, which is exactly what the evidence supports and
+nothing more.
+
+### Port change
+
+The invented caption is gone. The panel now draws the heading and the three
+mode names by id, and a Lock icon per still-locked mode, reading the three real
+flags at `0x007f0a50` / `0x007f0a58` / `0x007f0a5c + DAT_0067f17c * 0x30` and
+honouring the Team Play override on row 2.
+
+`verify/chalsel_panel.bmp`: "Multi Player" over Power Ups / Hold the Flag / The
+Fugitive, each with a padlock, on the port-side track-name row ("Angel Peak",
+id `0x49 + sel`, which is the port's own addition to this panel).
+
+**Residual:** on a fresh save all three flags read 0, so every row is locked and
+the capture cannot discriminate "reads the flags" from "always draws". Proving
+that needs a save with unlocks — `re/tools/run_with_unlocked_save.py` is the
+lane, and it swaps the shared diffing reference, so it was not run here.
