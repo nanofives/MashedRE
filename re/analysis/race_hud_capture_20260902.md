@@ -2526,3 +2526,102 @@ and 1 of the same records.
 The screen-15 row-plate height stays `[UNCERTAIN]` at 28.0 (Finding 28), and the
 per-row `A`/`B`/`-` letter and verdict line on screen 16 stay `[SCAFFOLD]`.
 Neither is touched by this.
+
+---
+
+## Finding 30: both setup-screen renderers ported, C2 -> C3; `FUN_0042f8d0` takes an argument in AL (2026-09-04)
+
+`FUN_0043a610` and `FUN_0043aa30` are now implemented verbatim in
+`mashedmod/src/mashed_re/Frontend/SetupScreenRenderers.cpp` and installed. The TU
+is **ASI-only**: every draw callee is reached at its original `.text` RVA, so
+calling these from `mashed_re.exe` would tunnel into unmapped code. The
+standalone keeps its own transcription of the same geometry.
+
+### A fifth argument, in a register, that no decompilation shows
+
+`FUN_0042f8d0` (the bordered plate) reads the panel alpha out of **AL**:
+
+```
+0x0042f8d0  sub esp, 0xc
+0x0042f8d9  mov bl, al        ; <-- the alpha; never a stack argument
+0x0042f8e7  shr cl, 1         ; the fill gets alpha >> 1
+```
+
+and every call site reloads it first — `0x0043a67a mov al,[0x67e7dc]` for the
+first ability plate, then `0x0043a70a` / `0x0043a733` / `0x0043a75b` /
+`0x0043a7fc` from stack copies of that byte, and `0x0043ab53` / `0x0043ab8a` /
+`0x0043ac91` `mov al, bl` on the team side. Ghidra's four-float signature is
+complete for the stack and silent about the register, and the earlier note that
+this function "halves the caller's alpha" described the effect without naming
+where the alpha came from.
+
+**The A/B is what found it.** The first cut of the port compiled, installed, and
+drew the screen — with byte-identical geometry and **328 colour-only
+mismatches** (plate `0x00`, border `0x90`, against the original's `0x7f` /
+`0xff`). Nothing about the screenshot would have said "missing argument"; the
+draw stream said exactly that, because x/y/w/h matched to the last bit while
+only the alpha channel moved.
+
+Two smaller traps in the fix: MSVC's inline assembler resolves `bh` / `bx` /
+`bw` as **registers** before locals, so `push bh` silently assembles as a
+register push (warning C4409, which is the only sign); and `FUN_004282a0` must
+be declared **void** even though it returns a float in ST0, because
+`FUN_004a2c48` on the next line is what consumes it — a `float` declaration
+would make the compiler emit an `FSTP` and hand the rounder an empty stack.
+
+### Why there is no path1 entry for either
+
+Recorded so nobody adds one back. A synthetic force-call cannot judge these:
+
+1. **Context.** Both dereference the RW device at `DAT_007d3ff8` on their first
+   statement, and `run_diff` attaches about a second after spawn, before the
+   device exists. Every vector AVs on both sides. An attempt with
+   `crash_equal_ok: True` reported **GREEN 8/8 over eight empty observations** —
+   the exact both-sides-erroring shape the `0x004987b0` note already warned is
+   "no evidence at all". That GREEN was discarded.
+2. **Racy observable.** Driven to a live scenario the calls do run and return
+   real vertex data, but a renderer's only observable is the draw stream, and
+   the natural proxy — the shared vertex buffer `DAT_00898a20` that
+   `draw_quad_observe` fingerprints — is being rewritten by the game's own
+   render thread between the seed, the call and the read.
+
+### Accepted evidence: hook-on vs hook-off draw stream, with a control
+
+Stronger than path1 here, because the hook is actually installed and the GAME
+calls it, in context:
+
+```
+py -3.12 re/frida/menu_draw_burst.py --screen 15 --frames 4 --settle 9 ...
+MASHED_RE_NO_AUTO_HOOK=0  MASHED_HOOK_ONLY=0x0043a610,0x0043aa30   (same again)
+py -3.12 re/tools/drawlist_diff.py <off>.json <on>.json --scale-b 1
+```
+
+| pair | screen 15 | screen 16 |
+|---|---|---|
+| hook-on vs hook-off | match 332 / mismatch 168 | 292 / 168 |
+| **OFF vs OFF (control)** | **332 / 168** | **292 / 168** |
+
+The control is the point: hooked and unhooked differ from each other exactly as
+much as two unhooked runs differ, and **every** mismatching draw comes from one
+call site, `0x474464,0x42e89c` — the animated prompt strip, whose phase differs
+between any two boots. Zero missing, zero extra, and not one mismatch at the
+renderers' own call sites. `menu_draw_burst.py` now honours a caller-set
+`MASHED_RE_NO_AUTO_HOOK` so the A/B is runnable at all.
+
+### Two uncertainties closed on the way
+
+**The ability row plate's height is 28.0, read off the listing.** Finding 28
+took it by analogy because the 4th argument decompiles as a register clobbered
+by the next call. It is not: the bottom of every drawn row restores
+`uVar4 = local_24`, and `local_24` is set to `0x41e00000` at entry and never
+written again.
+
+**U-4259 RESOLVED.** `XrefRange` over `[0x0067e850..0x0067e8e0]` returns 34
+references and every one lands on **offset 0** of a stride-12 entry. The single
+site that looked like a different stride, `0x0043f349
+MOV EAX,[EDX*0x4 + 0x67e850]`, is preceded by `0x0043f346 LEA EDX,[EAX + EAX*2]`
+— profile*3*4, the same offset 0. So `+4` and `+8` have no reader and no writer
+in the image. The same scan pins the ability value's **consumer**: that site
+passes it to `FUN_0046dc00(slot, ability)` on menu action `0xff3b0000`. Stated
+limit: `XrefRange` can miss a write whose base is computed at runtime, but all
+34 sites carry the base as a fixed immediate.

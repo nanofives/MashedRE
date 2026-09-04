@@ -145,7 +145,11 @@ def main():
                            else "title")
 
     env = dict(os.environ)
-    env["MASHED_RE_NO_AUTO_HOOK"] = "1"
+    # Stock behaviour by default. A caller that wants the .asi's hooks LIVE
+    # (hook-on vs hook-off draw-stream A/B for a ported renderer) exports
+    # MASHED_RE_NO_AUTO_HOOK=0 itself, optionally with MASHED_HOOK_ONLY to
+    # limit the installed set to the RVAs under test.
+    env.setdefault("MASHED_RE_NO_AUTO_HOOK", "1")
     dev = frida.get_local_device()
     pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
     sess = dev.attach(pid)

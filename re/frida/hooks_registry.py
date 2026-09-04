@@ -20952,4 +20952,41 @@ HOOKS = {
         'path2_tests':    [{'scalars': []}, {'scalars': []}],
     },
 
+    # ---------------------------------------------------------------------
+    # 0x0043a610 AbilitySelectRender / 0x0043aa30 TeamSelectRender have NO
+    # path1 entry ON PURPOSE (C2 -> C3 2026-09-04,
+    # Frontend/SetupScreenRenderers.cpp). Do not add one back without reading
+    # this.
+    #
+    # Two independent reasons the synthetic force-call lane cannot judge them:
+    #
+    # 1. CONTEXT. Both are void(void) draw paths that dereference the RW device
+    #    at DAT_007d3ff8 on their first statement. run_diff attaches ~1 s after
+    #    spawn, long before the device exists, so a menu-attach call AVs on
+    #    BOTH sides -- which, per the recorded doctrine on 0x004987b0, is not
+    #    evidence of correctness, it is no evidence at all. An attempt with
+    #    'crash_equal_ok': True duly reported GREEN 8/8 over eight empty
+    #    observations; that GREEN was worthless and was thrown away.
+    # 2. RACY OBSERVABLE. Driven to a live scenario the calls do run, but the
+    #    only observable a renderer has is the draw stream, and the natural
+    #    proxy -- the shared vertex buffer at DAT_00898a20 that
+    #    draw_quad_observe fingerprints -- is being rewritten by the game's own
+    #    render thread between the seed, the call and the read. The scenario run
+    #    produced real vertex data and 6/8 mismatches whose differences were
+    #    frame-phase, not implementation (log/diff_scenario_ability_select_render.csv).
+    #
+    # ACCEPTED EVIDENCE INSTEAD: a hook-on vs hook-off draw-stream A/B on the
+    # ORIGINAL, which is stronger than path1 here because the hook is actually
+    # installed and the game calls it itself, in context:
+    #   py -3.12 re/frida/menu_draw_burst.py --screen 15 --frames 4 --settle 9
+    #   MASHED_RE_NO_AUTO_HOOK=0 MASHED_HOOK_ONLY=0x0043a610,0x0043aa30 (same)
+    #   py -3.12 re/tools/drawlist_diff.py <off>.json <on>.json --scale-b 1
+    # Screen 15: match 332 / mismatch 168; screen 16: 292 / 168 -- and the
+    # OFF-vs-OFF CONTROL scores exactly the same on both screens, with every
+    # mismatching draw coming from the single animated prompt-strip call site
+    # 0x474464,0x42e89c. Zero missing, zero extra, and no mismatch at any of the
+    # renderers' own call sites.
+    # ---------------------------------------------------------------------
+
+
 }

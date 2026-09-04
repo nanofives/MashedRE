@@ -71,6 +71,7 @@
 "Frontend\MenuRaceEnd.cpp"
 "Frontend\TextMeasure.cpp"
 "Frontend\SpriteDispatch.cpp"
+"Frontend\SetupScreenRenderers.cpp"
 "Frontend\MenuTime.cpp"
 "Frontend\MenuHelpers.cpp"
 "Frontend\VehicleMeta.cpp"

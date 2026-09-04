@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-04T21:30:00Z",
+  "updatedAt": "2026-09-04T23:55:00Z",
   "sections": [
     {
       "heading": "Project",
@@ -17,7 +17,7 @@
         },
         {
           "label": "Latest",
-          "value": "0x0042f7b0 = Ability Select input step, wired + re-verified (8/8 non-degenerate)",
+          "value": "0x0043a610 + 0x0043aa30 renderers C2->C3; 0x0042f8d0 takes its alpha in AL",
           "kind": "text"
         },
         {
@@ -32,7 +32,7 @@
         },
         {
           "label": "Setup screens 15/16",
-          "value": "both fully interactive: teams AND abilities editable, no invented input",
+          "value": "renderers hooked + draw-stream A/B clean against an off-vs-off control",
           "kind": "text"
         },
         {
