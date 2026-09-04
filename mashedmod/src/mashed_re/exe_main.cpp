@@ -684,6 +684,18 @@ int              g_team_assign  = -1;
 extern "C" void          __cdecl MenuTeamSelectTick();  // 0x0042fa00, Frontend/MenuNav.cpp
 extern "C" int           __cdecl MenuTeamBalance();     // 0x0042bb60, Frontend/MenuNav.cpp
 extern "C" std::uint32_t __cdecl CarSlotAssign();       // 0x0042b9e0, Frontend/MenuButtonDetect.cpp
+// Ability Select's per-frame input step -- the exact sibling of
+// MenuTeamSelectTick. FUN_0043c000 calls it under the screen-15 panel flag:
+//   0x0043c17d  mov eax, dword ptr [0x67e7d8]
+//   0x0043c182  cmp eax, esi            ; esi = 1
+//   0x0043c184  jne 0x43c1a9
+//   0x0043c1a2  call 0x42f7b0           <-- here
+// against the team arm's 0x0043c434..0x0043c44a call 0x42fa00, and
+// FUN_00431f30 sets DAT_0067e7d8 = 1 for page id 0xf (screen 15) exactly as it
+// sets DAT_0067e7e0 = 1 for 9 / 0x10 (screen 16). Already implemented and C3 as
+// FrontendCursorUpdate; that TU is in BOTH build lists, so the exe calls the
+// established copy and no second install is created (the U-9065 shape).
+extern "C" void          __cdecl FrontendCursorUpdate();  // 0x0042f7b0, Frontend/MenuHelpers.cpp
 // Raw team-table pick (0 = none, 1 = team A, 2 = team B) for the profile
 // occupying car slot n. This is the UNBIASED value FUN_0043aa30 uses for the
 // row sprite's X and the roster stacks -- distinct from DAT_007f1a18's team id,
@@ -4866,9 +4878,25 @@ bool RenderFrame() {
         // of the setup flow. RESOLVED for TEAMS 2026-09-04: the DAT_0067e938
         // enter handler IS now ported (MenuTeamSelectTick 0x0042fa00), so
         // screen 16 is no longer a cold-boot mirror -- teams are assignable and
-        // the per-row team below is real state, not a default.]
-        if ((Nav_ScreenId() == 15 || Nav_ScreenId() == 16) && g_carsel_ready) {
-            const bool team = (Nav_ScreenId() == 16);
+        // the per-row team below is real state, not a default. RESOLVED for
+        // ABILITIES 2026-09-04 as well: screen 15's input step is FUN_0042f7b0
+        // (FrontendCursorUpdate), wired below, so the ability columns are real
+        // state too and neither screen is display-only any more.]
+        // Entry-edge tracking for the two setup screens. This must be sampled
+        // on EVERY menu frame, not only while one of them is up: the previous
+        // arrangement cleared the flag in the `else` of the team branch, so on
+        // screen 15 it was cleared every frame and the entry sequence re-ran
+        // every frame -- which re-slammed every ability back to 1 and would
+        // have silently swallowed the input step added below.
+        static int  s_setup_scr = -1;
+        static bool s_ts_on     = false;
+        const int   scr_now     = Nav_ScreenId();
+        if (s_setup_scr != scr_now) {
+            s_setup_scr = scr_now;
+            s_ts_on     = false;          // re-arm on any screen change
+        }
+        if ((scr_now == 15 || scr_now == 16) && g_carsel_ready) {
+            const bool team = (scr_now == 16);
             const std::uint32_t white   = 0xffffffffu;
             // ---- player-setup state: teams are now assignable ---------------
             // The Team Select screen used to be display-only against the
@@ -4897,15 +4925,14 @@ bool RenderFrame() {
             //  3. Only profile 0 has an input device in the standalone
             //     (keyboard), so only player 1's team is editable here. That is
             //     a device-count limit, not a port gap.
-            // s_ts_on tracks presence on screen 16 so the seed runs on the
-            // ENTRY EDGE and re-arms when the screen is left, rather than once
-            // per process.
+            // s_ts_on (declared above, alongside the screen tracker) makes the
+            // seed run on the ENTRY EDGE of either setup screen and re-arm when
+            // the screen changes, rather than once per process.
             // The entry sequence runs for EITHER screen: FUN_0043dfd0's
             // 0xff1d0000 arm does the assign + team reset FIRST and only then
             // picks screen 15 or 16 on DAT_0067ea64, so Ability Select needs
             // assigned slots just as much (without them drawN collapses to the
             // single fallback row).
-            static bool s_ts_on = false;
             {
                 if (!s_ts_on) {
                     s_ts_on = true;
@@ -4966,19 +4993,37 @@ bool RenderFrame() {
                     g_team_assign = static_cast<int>(asg);
                 }
             }
-            // The per-frame INPUT tick is team-only: FUN_0043c000 calls
-            // FUN_0042fa00 solely while the team panel's state global
-            // DAT_0067e7e0 == 1 (0x0043c150). Ability Select has its own input
-            // handler which is NOT ported -- so ability values stay at the
-            // entry default of 1 and no ability input is invented here.
-            if (team) {
+            // The per-frame INPUT tick, one arm per screen. FUN_0043c000 runs
+            // both off the panel-state flags FUN_00431f30 sets from the page id:
+            //   page 0xf  (15) -> DAT_0067e7d8 = 1 -> 0x0043c1a2 call 0x42f7b0
+            //   page 9/0x10(16)-> DAT_0067e7e0 = 1 -> 0x0043c44a call 0x42fa00
+            // The port gates on the screen id instead of on the flags because it
+            // does not run FUN_00431f30's flag block; the mapping is 1:1 and is
+            // read off the switch, not assumed.
+            //
+            // FUN_0042f7b0 is the ability step and was ALREADY ported and C3 as
+            // FrontendCursorUpdate (Frontend/MenuHelpers.cpp, GREEN 10/10). It
+            // walks the same 12 profiles the team step does, 4 unrolled per
+            // iteration -- input stride 0x130 = 4 * 0x4c, cursor stride 0x30 =
+            // 4 * 12 -- and edits exactly the DAT_0067e850 table AbilityPick()
+            // reads (piVar1 = &DAT_0067e85c, so piVar1[-3] is 0x0067e850),
+            // clamped to [0, 3] for the four ability columns.
+            {
                 // Verification poke, display-only and not set in normal play
                 // (same family as MASHED_ROUND_SCORES / MASHED_CROWN_TEST).
-                // MASHED_TEAM_KEYS is a comma-separated list of
-                // "<profile><keys>" tokens -- e.g. "0d,1dd" taps profile 0 DOWN
-                // once and profile 1 DOWN twice -- applied one tap per 30
-                // frames, in order, by writing the SAME active/processed
-                // protocol a real key would.
+                // MASHED_TEAM_KEYS (or MASHED_ABIL_KEYS, the same parser under
+                // a name that reads right on screen 15) is a comma-separated
+                // list of "<profile><keys>" tokens -- e.g. "0d,1dd" taps
+                // profile 0 DOWN once and profile 1 DOWN twice -- applied one
+                // tap per 30 frames, in order, by writing the SAME
+                // active/processed protocol a real key would.
+                //
+                // It drives BOTH setup screens because both handlers read the
+                // same two columns of the same records: the team step's
+                // pcVar3[-0x4c0]/[-0x4bf] and the ability step's
+                // pcVar2[-0x4c0]/[-0x4bf] are the same active bytes, cols 0 and
+                // 1. On screen 15 col 0 steps the ability left (toward Elite)
+                // and col 1 right (toward Rookie).
                 //
                 // Two reasons it is per-profile rather than player-1-only.
                 // First, OS-level key injection (keybd_event via sa_capture)
@@ -4992,15 +5037,16 @@ bool RenderFrame() {
                 // handler reads all 12 profiles' input records, and a second
                 // real device would drive profile 1 with no code change.
                 //
-                // It injects INPUT, not state -- MenuTeamSelectTick still does
-                // the work, so a regression in the handler still surfaces.
+                // It injects INPUT, not state -- the ported handler still does
+                // the work, so a regression in it still surfaces.
                 struct Tap { int profile; int col; };
                 static Tap s_tk[32];
                 static int s_tk_n = -1, s_tk_i = 0, s_tk_f = 0;
                 if (s_tk_n < 0) {
                     s_tk_n = 0;
                     char kb[64] = {};
-                    if (GetEnvironmentVariableA("MASHED_TEAM_KEYS", kb, sizeof(kb)) > 0) {
+                    if (GetEnvironmentVariableA("MASHED_TEAM_KEYS", kb, sizeof(kb)) > 0 ||
+                        GetEnvironmentVariableA("MASHED_ABIL_KEYS", kb, sizeof(kb)) > 0) {
                         char* tok = std::strtok(kb, ",");
                         while (tok && s_tk_n < 32) {
                             const int prof = (tok[0] >= '0' && tok[0] <= '9')
@@ -5020,9 +5066,38 @@ bool RenderFrame() {
                     reinterpret_cast<std::uint8_t*>(0x007f1044 + rec)[t.col] = 1;
                     reinterpret_cast<std::uint8_t*>(0x007f1504 + rec)[t.col] = 0;
                 }
-                MenuTeamSelectTick();
-                // consume cols 0 (UP) and 1 (DOWN) for every profile the tick
-                // could have read, mirroring the original's post-consume latch.
+                if (team) {
+                    MenuTeamSelectTick();             // 0x0042fa00
+                } else {
+                    // 0x0042f7b0. Instrument the handler's own early-out rather
+                    // than assume it is clear: it returns immediately while
+                    // DAT_0067eab0 != 0, so a silent no-move on screen 15 would
+                    // otherwise be indistinguishable from a wiring bug. Logged
+                    // once, with the ability table alongside it.
+                    static bool s_ab_logged = false;
+                    if (!s_ab_logged) {
+                        s_ab_logged = true;
+                        if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+                            std::fprintf(lf,
+                                "ABIL_TICK eab0=%d abil=%d,%d,%d,%d slots=%d,%d,%d,%d\n",
+                                *reinterpret_cast<const std::int32_t*>(0x0067eab0),
+                                *reinterpret_cast<const std::int32_t*>(0x0067e850 + 0 * 12),
+                                *reinterpret_cast<const std::int32_t*>(0x0067e850 + 1 * 12),
+                                *reinterpret_cast<const std::int32_t*>(0x0067e850 + 2 * 12),
+                                *reinterpret_cast<const std::int32_t*>(0x0067e850 + 3 * 12),
+                                *reinterpret_cast<const std::int32_t*>(0x007f1a14 + 0 * 16),
+                                *reinterpret_cast<const std::int32_t*>(0x007f1a14 + 1 * 16),
+                                *reinterpret_cast<const std::int32_t*>(0x007f1a14 + 2 * 16),
+                                *reinterpret_cast<const std::int32_t*>(0x007f1a14 + 3 * 16));
+                            std::fclose(lf);
+                        }
+                    }
+                    FrontendCursorUpdate();
+                }
+                // consume cols 0 and 1 for every profile the tick could have
+                // read, mirroring the original's post-consume latch. Both
+                // handlers read the same two columns of the same 12 records, so
+                // one consume step serves both arms.
                 for (int i = 0; i < 12; ++i) {
                     std::uint8_t* const act =
                         reinterpret_cast<std::uint8_t*>(0x007f1044 + i * 0x4c);
@@ -5031,9 +5106,8 @@ bool RenderFrame() {
                     prc[0] = act[0];
                     prc[1] = act[1];
                 }
-                g_team_balance = MenuTeamBalance();   // derives 0x007f1a18[n]
-            } else {
-                s_ts_on = false;                      // left screen 16
+                if (team)
+                    g_team_balance = MenuTeamBalance();   // derives 0x007f1a18[n]
             }
             // Plate alpha 0x7f, NOT 0xa0. FUN_0042f8d0 builds the plate colour
             // byte-by-byte on its stack slot and HALVES the caller's alpha:

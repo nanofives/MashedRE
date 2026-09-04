@@ -4008,8 +4008,13 @@ HOOKS = {
         'path2_tests':    [10, 11, 12],
     },
 
-    # 0x0042f7b0  FrontendCursorUpdate
-    # void(void): 4-player cursor updater; release-edge detection on d-pad.
+    # 0x0042f7b0  FrontendCursorUpdate -- GUARD-ONLY COVERAGE, see
+    # 'frontend_cursor_update_abil' below for the vectors that reach the body.
+    # Every vector here seeds DAT_0067eab0 NON-ZERO, and the function returns at
+    # its first instruction when that global is non-zero, so this entry's GREEN
+    # 10/10 proves the early-out and nothing else.
+    # void(void): ABILITY SELECT (nav screen 15) per-frame input step; 12
+    # profiles, 4 unrolled per iteration; newly-pressed edges on cols 0/1.
     # Guard: DAT_0067eab0 != 0 => immediate return without touching cursor state.
     # Strategy: void_write_observe on 0x0067eab0.
     #   Write sentinel t to DAT_0067eab0 (non-zero => early return).
@@ -20876,6 +20881,75 @@ HOOKS = {
         # install had displaced the established one. This entry is a path1
         # bit-identity check of the exe-side copy against the original; the
         # RVA's C3 rests on the installed twin, and nothing here promotes it.
+    },
+
+    # 0x0042f7b0  FrontendCursorUpdate -- ABILITY SELECT's per-frame input step
+    # (nav screen 15), the sibling of MenuTeamSelectTick. FUN_0043c000 calls it
+    # under the screen-15 panel flag: 0x0043c17d mov eax,[0x67e7d8] /
+    # 0x0043c182 cmp eax,esi (esi = 1) / 0x0043c184 jne -> 0x0043c1a2
+    # call 0x42f7b0, against the team arm's 0x0043c44a call 0x42fa00;
+    # FUN_00431f30 sets DAT_0067e7d8 = 1 for page id 0xf exactly as it sets
+    # DAT_0067e7e0 = 1 for 9 / 0x10.
+    #
+    # WHY THIS ENTRY EXISTS ALONGSIDE 'frontend_cursor_update': that entry seeds
+    # DAT_0067eab0 NON-ZERO in all ten of its vectors, so the function returns at
+    # its first instruction every time. Its GREEN 10/10 covers the guard and only
+    # the guard, and says nothing about the loop body. These vectors clear the
+    # guard and exercise the arms.
+    #
+    # The table is DAT_0067e850 + profile*12 -- the one FUN_0043a610 reads for
+    # the row sprite's x = ability * 130 + 64 -- clamped to [0, 3] for the four
+    # ability columns. Columns are 0 / 1 of the same input records the team step
+    # reads: active 0x007f1044 + p*0x4c, processed 0x007f1504 + p*0x4c, seeded
+    # here as DWORDS so 0x00000001 = col 0 and 0x00000100 = col 1. Unlike the
+    # team step there is NO slot-assignment guard, so no slot table is seeded --
+    # every profile's entry is editable.
+    #
+    # NON-DEGENERACY: profiles 0-4 and 11 are observed on every vector and seeded
+    # to distinct values, and 4 and 11 sit in the 2nd and 3rd unrolled groups, so
+    # a wrong stride or a loop that stops early moves the wrong dword rather than
+    # averaging out.
+    'frontend_cursor_update_abil': {
+        'rva':            0x0042f7b0,
+        'export':         'FrontendCursorUpdate',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'cache_setter_observe',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # v0 col1 (DOWN) on profile 0 -> 1 becomes 2
+            {'seed': [{'addr': '0x0067eab0', 'val': 0}, {'addr': '0x0067e850', 'val': 1}, {'addr': '0x0067e85c', 'val': 0}, {'addr': '0x0067e868', 'val': 2}, {'addr': '0x0067e874', 'val': 3}, {'addr': '0x0067e880', 'val': 2}, {'addr': '0x0067e8d4', 'val': 1}, {'addr': '0x007f1044', 'val': 256}, {'addr': '0x007f1504', 'val': 0}, {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0}, {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0}, {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}, {'addr': '0x007f1174', 'val': 0}, {'addr': '0x007f1634', 'val': 0}, {'addr': '0x007f1388', 'val': 0}, {'addr': '0x007f1848', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e850', '0x0067e85c', '0x0067e868', '0x0067e874', '0x0067e880', '0x0067e8d4', '0x0067eab0']},
+            # v1 col1 with profile 0 already at 3 -> clamps (the `< 3` guard)
+            {'seed': [{'addr': '0x0067eab0', 'val': 0}, {'addr': '0x0067e850', 'val': 3}, {'addr': '0x0067e85c', 'val': 0}, {'addr': '0x0067e868', 'val': 2}, {'addr': '0x0067e874', 'val': 1}, {'addr': '0x0067e880', 'val': 2}, {'addr': '0x0067e8d4', 'val': 1}, {'addr': '0x007f1044', 'val': 256}, {'addr': '0x007f1504', 'val': 0}, {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0}, {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0}, {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}, {'addr': '0x007f1174', 'val': 0}, {'addr': '0x007f1634', 'val': 0}, {'addr': '0x007f1388', 'val': 0}, {'addr': '0x007f1848', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e850', '0x0067e85c', '0x0067e868', '0x0067e874', '0x0067e880', '0x0067e8d4', '0x0067eab0']},
+            # v2 col0 (UP) on profile 0 -> 2 becomes 1
+            {'seed': [{'addr': '0x0067eab0', 'val': 0}, {'addr': '0x0067e850', 'val': 2}, {'addr': '0x0067e85c', 'val': 3}, {'addr': '0x0067e868', 'val': 0}, {'addr': '0x0067e874', 'val': 1}, {'addr': '0x0067e880', 'val': 3}, {'addr': '0x0067e8d4', 'val': 2}, {'addr': '0x007f1044', 'val': 1}, {'addr': '0x007f1504', 'val': 0}, {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0}, {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0}, {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}, {'addr': '0x007f1174', 'val': 0}, {'addr': '0x007f1634', 'val': 0}, {'addr': '0x007f1388', 'val': 0}, {'addr': '0x007f1848', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e850', '0x0067e85c', '0x0067e868', '0x0067e874', '0x0067e880', '0x0067e8d4', '0x0067eab0']},
+            # v3 col0 with profile 0 already at 0 -> clamps (the `!= 0` guard)
+            {'seed': [{'addr': '0x0067eab0', 'val': 0}, {'addr': '0x0067e850', 'val': 0}, {'addr': '0x0067e85c', 'val': 3}, {'addr': '0x0067e868', 'val': 1}, {'addr': '0x0067e874', 'val': 2}, {'addr': '0x0067e880', 'val': 3}, {'addr': '0x0067e8d4', 'val': 2}, {'addr': '0x007f1044', 'val': 1}, {'addr': '0x007f1504', 'val': 0}, {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0}, {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0}, {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}, {'addr': '0x007f1174', 'val': 0}, {'addr': '0x007f1634', 'val': 0}, {'addr': '0x007f1388', 'val': 0}, {'addr': '0x007f1848', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e850', '0x0067e85c', '0x0067e868', '0x0067e874', '0x0067e880', '0x0067e8d4', '0x0067eab0']},
+            # v4 col1 on profile 0 but processed already latched -> edge test, no change
+            {'seed': [{'addr': '0x0067eab0', 'val': 0}, {'addr': '0x0067e850', 'val': 1}, {'addr': '0x0067e85c', 'val': 0}, {'addr': '0x0067e868', 'val': 2}, {'addr': '0x0067e874', 'val': 3}, {'addr': '0x0067e880', 'val': 2}, {'addr': '0x0067e8d4', 'val': 1}, {'addr': '0x007f1044', 'val': 256}, {'addr': '0x007f1504', 'val': 256}, {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0}, {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0}, {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}, {'addr': '0x007f1174', 'val': 0}, {'addr': '0x007f1634', 'val': 0}, {'addr': '0x007f1388', 'val': 0}, {'addr': '0x007f1848', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e850', '0x0067e85c', '0x0067e868', '0x0067e874', '0x0067e880', '0x0067e8d4', '0x0067eab0']},
+            # v5 col1 on profiles 1 and 3 only -> those two move, 0/2 held (per-profile arms)
+            {'seed': [{'addr': '0x0067eab0', 'val': 0}, {'addr': '0x0067e850', 'val': 1}, {'addr': '0x0067e85c', 'val': 1}, {'addr': '0x0067e868', 'val': 1}, {'addr': '0x0067e874', 'val': 1}, {'addr': '0x0067e880', 'val': 1}, {'addr': '0x0067e8d4', 'val': 1}, {'addr': '0x007f1044', 'val': 0}, {'addr': '0x007f1504', 'val': 0}, {'addr': '0x007f1090', 'val': 256}, {'addr': '0x007f1550', 'val': 0}, {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0}, {'addr': '0x007f1128', 'val': 256}, {'addr': '0x007f15e8', 'val': 0}, {'addr': '0x007f1174', 'val': 0}, {'addr': '0x007f1634', 'val': 0}, {'addr': '0x007f1388', 'val': 0}, {'addr': '0x007f1848', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e850', '0x0067e85c', '0x0067e868', '0x0067e874', '0x0067e880', '0x0067e8d4', '0x0067eab0']},
+            # v6 col1 on profile 4 (2nd unrolled group) and col0 on profile 11 (3rd, last) -> both move, proving the pointer advance reaches all 12
+            {'seed': [{'addr': '0x0067eab0', 'val': 0}, {'addr': '0x0067e850', 'val': 1}, {'addr': '0x0067e85c', 'val': 1}, {'addr': '0x0067e868', 'val': 1}, {'addr': '0x0067e874', 'val': 1}, {'addr': '0x0067e880', 'val': 1}, {'addr': '0x0067e8d4', 'val': 1}, {'addr': '0x007f1044', 'val': 0}, {'addr': '0x007f1504', 'val': 0}, {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0}, {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0}, {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}, {'addr': '0x007f1174', 'val': 256}, {'addr': '0x007f1634', 'val': 0}, {'addr': '0x007f1388', 'val': 1}, {'addr': '0x007f1848', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e850', '0x0067e85c', '0x0067e868', '0x0067e874', '0x0067e880', '0x0067e8d4', '0x0067eab0']},
+            # v7 DAT_0067eab0 seeded 1 -> the early-out holds every entry despite a live col1
+            {'seed': [{'addr': '0x0067eab0', 'val': 1}, {'addr': '0x0067e850', 'val': 1}, {'addr': '0x0067e85c', 'val': 2}, {'addr': '0x0067e868', 'val': 0}, {'addr': '0x0067e874', 'val': 3}, {'addr': '0x0067e880', 'val': 2}, {'addr': '0x0067e8d4', 'val': 1}, {'addr': '0x007f1044', 'val': 256}, {'addr': '0x007f1504', 'val': 0}, {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0}, {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0}, {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}, {'addr': '0x007f1174', 'val': 256}, {'addr': '0x007f1634', 'val': 0}, {'addr': '0x007f1388', 'val': 0}, {'addr': '0x007f1848', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e850', '0x0067e85c', '0x0067e868', '0x0067e874', '0x0067e880', '0x0067e8d4', '0x0067eab0']},
+        ],
+        'path2_tests':    [{'scalars': []}, {'scalars': []}],
     },
 
 }

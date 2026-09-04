@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-04T17:30:00Z",
+  "updatedAt": "2026-09-04T21:30:00Z",
   "sections": [
     {
       "heading": "Project",
@@ -17,7 +17,7 @@
         },
         {
           "label": "Latest",
-          "value": "0x0041c410 standings row update C2->C3; in-race UI now fully ported",
+          "value": "0x0042f7b0 = Ability Select input step, wired + re-verified (8/8 non-degenerate)",
           "kind": "text"
         },
         {
@@ -27,12 +27,12 @@
         },
         {
           "label": "U-9078",
-          "value": "RESOLVED \u2014 0x67ea64 = Team Play (msg 0x140); target 8/crown 7",
+          "value": "RESOLVED — 0x67ea64 = Team Play (msg 0x140); target 8/crown 7",
           "kind": "text"
         },
         {
           "label": "Setup screens 15/16",
-          "value": "both ported: 1 row/participant, column slide, per-player car",
+          "value": "both fully interactive: teams AND abilities editable, no invented input",
           "kind": "text"
         },
         {

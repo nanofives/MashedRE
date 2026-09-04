@@ -2415,3 +2415,114 @@ no ability input is invented.
 | `verify/abilsel_2p.bmp` | **two** rows, two distinct cars, both under the "Pro" column (ability 1 -> x 194 against that header's x 195) |
 | `verify/abilsel_4p.bmp` | **four** rows, four distinct cars (Red / Bluejay / Melon / Gold), all in column 1 |
 | `verify/teamsel_rows4p.bmp` | Team Select unregressed after the restructure: 4 rows, 2v2, rosters, "teams ok" |
+
+---
+
+## Finding 29: Ability Select's input handler is `FUN_0042f7b0`, already ported (2026-09-04)
+
+Closes the last gap Finding 28 left. The handler was not missing from the port at
+all -- it was implemented, installed and marked C3 under a name that did not say
+what it does, and nothing called it.
+
+### The identity, read off the two witnesses that constrain it
+
+Not by adjacency (Finding 28 paid for that once). Two independent citations:
+
+```
+FUN_00431f30   case 0xf:  DAT_0067e7d8 = 1        ; screen 15
+               case 9 / case 0x10: DAT_0067e7e0 = 1   ; screen 16
+
+FUN_0043c000   0x0043c17d  mov eax, dword ptr [0x67e7d8]
+               0x0043c182  cmp eax, esi              ; esi = 1
+               0x0043c184  jne 0x43c1a9
+               0x0043c1a2  call 0x42f7b0             <-- ability step
+               ...
+               0x0043c445  mov byte ptr [0x67e7e4], al
+               0x0043c44a  call 0x42fa00             <-- team step
+```
+
+So the two setup screens have exactly parallel wiring: page id -> panel-state
+flag -> per-frame input step. `FUN_0042f7b0` is to screen 15 what `FUN_0042fa00`
+is to screen 16.
+
+The body settles it a second time: `piVar1 = &DAT_0067e85c` with arms on
+`piVar1[-3]` / `[0]` / `[3]` / `[6]` walks `DAT_0067e850 + profile*12` -- the
+table `FUN_0043a610` reads for the row sprite's `x = ability * 130 + 64`, and the
+one the entry sequence sets to 1 for all twelve entries -- clamped to `[0, 3]`,
+which is the four ability columns.
+
+### What the decompiler's "4 slots, stride 0x130" really is
+
+The C1 plate read the loop as 4 iterations over a 0x130-byte record. It is a
+**12-profile loop with four profiles unrolled per iteration**: `0x130 = 4 * 0x4c`
+input records and `0x30 = 4 * 12` table entries, three iterations. The four arm
+pairs' displacements differ by exactly `0x4c` (`-0x4c0/-0x4bf`, `-0x474/-0x473`,
+`-0x428/-0x427`, `-0x3dc/-0x3db`), i.e. consecutive profiles -- the same 12 the
+team step covers. Two further label corrections in the same plate: the negative
+displacements are the ACTIVE array (`0x7f1504 - 0x4c0 = 0x7f1044`), so the test is
+`active != 0 && processed == 0` (**newly pressed**, not a release edge), and the
+columns are 0 / 1 -- the same two the team step reads, not left/right.
+
+Unlike the team step there is **no slot-assignment guard**: every profile's entry
+is editable whether or not it holds a car slot.
+
+### The trap this one was hiding: a GREEN that covered only the guard
+
+`0x0042f7b0` was already C3 as `FrontendCursorUpdate`
+(`Frontend/MenuHelpers.cpp`), `GREEN 10/10`, `arg_type void_write_observe`. All
+ten vectors seed `DAT_0067eab0` NON-ZERO -- and the function's first instruction
+returns when that global is non-zero. The GREEN was real and proved the guard;
+it never executed one line of the loop. A second registry entry,
+`frontend_cursor_update_abil`, clears the guard and exercises the arms; the old
+entry is kept and annotated as guard-only rather than deleted.
+
+`path1 GREEN 8/8` (`log/diff_frontend_cursor_update_abil.csv`), observing entries
+for profiles 0-4 and 11 plus the guard on every vector:
+
+| v | input | result |
+|---|---|---|
+| 0 | col 1 on profile 0, entry `1` | `1 -> 2` |
+| 1 | col 1, profile 0 at `3` | clamped (`< 3` guard) |
+| 2 | col 0 on profile 0, entry `2` | `2 -> 1` |
+| 3 | col 0, profile 0 at `0` | clamped (`!= 0` guard) |
+| 4 | col 1, processed already latched | unchanged (edge test) |
+| 5 | col 1 on profiles 1 and 3 | those two move, 0 and 2 held |
+| 6 | col 1 on profile 4, col 0 on profile 11 | both move -- 2nd and 3rd unrolled groups |
+| 7 | `DAT_0067eab0 = 1` with a live col 1 | every entry held |
+
+`path2 PASS`: opcode `0xE9`, `rel32 0x645c3bfb` matches, reimpl interceptor fired
+2/2. Unlike the team step there is no twin here -- `MenuHelpers.cpp` is in BOTH
+build lists, so the exe calls the established install and no second
+`RH_ScopedInstall` was created.
+
+### The port-side bug the wiring exposed
+
+`s_ts_on`, the entry-edge flag, was cleared in the `else` of the team branch. On
+screen 15 that meant the entry sequence re-ran EVERY FRAME, re-slamming all
+twelve abilities to 1 -- so any input step would have looked broken while being
+correct. It is now driven by a screen-id change tracker sampled every menu frame.
+Recorded because the failure mode is silent: the handler moves the value and the
+next frame's re-seed erases it.
+
+`DAT_0067eab0` was instrumented rather than assumed (`ABIL_TICK eab0=0
+abil=1,1,1,1 slots=0,1,-1,-1` in `mashed_re.log`), since a zero-movement capture
+could not otherwise be told apart from a wiring bug.
+
+### Verification
+
+`MASHED_ABIL_KEYS` is the same per-profile tap parser as `MASHED_TEAM_KEYS`
+(both names accepted); it drives either screen because both handlers read cols 0
+and 1 of the same records.
+
+| capture | taps | result |
+|---|---|---|
+| `verify/abilsel_ctl.bmp` | none | two rows, both under "Pro" (column 1) |
+| `verify/abilsel_keys.bmp` | `0d,1dd` | row 0 under **Amateur** (2), row 1 under **Rookie** (3) |
+| `verify/abilsel_clamp.bmp` | `0uu,1ddd` | row 0 clamped at **Elite** (0), row 1 clamped at **Rookie** (3) |
+| `verify/teamsel_2v2.bmp` | `0d,1d,2dd,3dd`, 4 players | Team Select unregressed: 4 rows, A A B B, rosters, "teams ok" |
+
+### Still open
+
+The screen-15 row-plate height stays `[UNCERTAIN]` at 28.0 (Finding 28), and the
+per-row `A`/`B`/`-` letter and verdict line on screen 16 stay `[SCAFFOLD]`.
+Neither is touched by this.

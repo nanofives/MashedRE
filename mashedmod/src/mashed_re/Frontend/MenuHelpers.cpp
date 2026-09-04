@@ -116,29 +116,58 @@ RH_ScopedInstall(FrontendPlayerSlotCheck, 0x0042ebe0);  // re-enabled 2026-05-24
 // ---------------------------------------------------------------------------
 // FrontendCursorUpdate  --  0x0042f7b0
 //
-// Original: FUN_0042f7b0 (288 bytes, 0x0042f7b0..0x0042f8cf)
+// Original: FUN_0042f7b0 (281 bytes, 0x0042f7b0..0x0042f8c8)
 // Signature: void FUN_0042f7b0(void)
-//   Controller cursor updater: 4-player cursor positions from d-pad release edges.
+//
+// IDENTIFIED 2026-09-04: this is ABILITY SELECT's (nav screen 15) per-frame
+// input step -- the exact sibling of the Team Select step FUN_0042fa00.
+// FUN_0043c000 drives both off the panel-state flags:
+//   0x0043c17d  mov eax, dword ptr [0x67e7d8]   ; ability panel state
+//   0x0043c182  cmp eax, esi                    ; esi = 1
+//   0x0043c184  jne 0x43c1a9
+//   0x0043c1a2  call 0x42f7b0                   ; <-- this function
+// against the team arm at 0x0043c434..0x0043c44a `call 0x42fa00`, and
+// FUN_00431f30 sets DAT_0067e7d8 = 1 for page id 0xf (screen 15) exactly as it
+// sets DAT_0067e7e0 = 1 for 9 / 0x10 (screen 16).
+//
+// The table it edits is DAT_0067e850 (12 entries, stride 12 bytes) -- the same
+// table FUN_0043a610 walks to place each row's car sprite at
+// x = ability * 130 + 64, and the one the screen-15/16 entry sequence resets to
+// 1 for all twelve entries. piVar1 starts at &DAT_0067e85c, so piVar1[-3] is
+// entry 0.
 //
 // Guard: if DAT_0067eab0 != 0, return immediately.
 //
-// Loop: 4 player slots
-//   pcVar2 = &DAT_007f1504  (input state, stride 0x130 bytes per slot)
-//   piVar1 = &DAT_0067e85c  (cursor state, stride 0x30 bytes = 12 ints per slot)
+// Loop: 12 profiles, FOUR UNROLLED PER ITERATION (3 iterations).
+//   pcVar2 = &DAT_007f1504  (PROCESSED input, per-profile stride 0x4c;
+//                            0x130 = 4 * 0x4c per iteration)
+//   piVar1 = &DAT_0067e85c  (ability table, per-profile stride 12;
+//                            0x30 bytes = 4 * 12 per iteration)
+// The negative displacements resolve to the ACTIVE array: 0x7f1504 - 0x4c0 =
+// 0x7f1044, i.e. active[col] with col 0 / col 1 -- the same two columns
+// FUN_0042fa00 reads, NOT left/right. The edge test is `active != 0 &&
+// processed == 0` (newly pressed), MASHED's standard protocol; an earlier
+// reading of these as "release edges" had the two arrays backwards.
 //
-// Per slot, 8 axis/direction checks (release-edge = prev!=0 && cur==0):
-//   Left:       pcVar2[-0x4c0] != 0 && *pcVar2 == 0     => piVar1[-3]-- (clamp >= 0)
-//   Right:      pcVar2[-0x4bf] != 0 && pcVar2[1] == 0   => piVar1[-3]++ (clamp <= 3)
-//   Up:         pcVar2[-0x474] != 0 && pcVar2[0x4c] == 0 => *piVar1-- (clamp >= 0)
-//   Down:       pcVar2[-0x473] != 0 && pcVar2[0x4d] == 0 => *piVar1++ (clamp <= 3)
-//   Back-left:  pcVar2[-0x428] != 0 && pcVar2[0x98] == 0 => piVar1[3]-- (clamp >= 0)
-//   Back-right: pcVar2[-0x427] != 0 && pcVar2[0x99] == 0 => piVar1[3]++ (clamp <= 3)
-//   Alt-back-L: pcVar2[-0x3dc] != 0 && pcVar2[0xe4] == 0 => piVar1[6]-- (clamp >= 0)
-//   Alt-back-R: pcVar2[-0x3db] != 0 && pcVar2[0xe5] == 0 => piVar1[6]++ (clamp <= 3)
+// Per iteration, 4 profiles x 2 directions (profile p at active/processed
+// offset p * 0x4c, ability entry piVar1[3 * p - 3]):
+//   p0 col0: pcVar2[-0x4c0] != 0 && pcVar2[0]    == 0 => piVar1[-3]-- (guard != 0)
+//   p0 col1: pcVar2[-0x4bf] != 0 && pcVar2[1]    == 0 => piVar1[-3]++ (guard  < 3)
+//   p1 col0: pcVar2[-0x474] != 0 && pcVar2[0x4c] == 0 => *piVar1--    (guard != 0)
+//   p1 col1: pcVar2[-0x473] != 0 && pcVar2[0x4d] == 0 => *piVar1++    (guard  < 3)
+//   p2 col0: pcVar2[-0x428] != 0 && pcVar2[0x98] == 0 => piVar1[3]--  (guard != 0)
+//   p2 col1: pcVar2[-0x427] != 0 && pcVar2[0x99] == 0 => piVar1[3]++  (guard  < 3)
+//   p3 col0: pcVar2[-0x3dc] != 0 && pcVar2[0xe4] == 0 => piVar1[6]--  (guard != 0)
+//   p3 col1: pcVar2[-0x3db] != 0 && pcVar2[0xe5] == 0 => piVar1[6]++  (guard  < 3)
+// Range [0, 3] = the four ability columns (Elite / Pro / Amateur / Rookie).
+// Unlike the team step there is NO slot-assignment guard: every profile's entry
+// is editable whether or not it holds a car slot.
 //
-// Loop end: pcVar2 >= 0x7f1894
+// Loop end: pcVar2 >= 0x7f1894 (the original is a do-while; pcVar2 starts at
+// 0x7f1504, so the pre-test form below is equivalent).
 //
 // ref: re/analysis/promote_c2_frontend_menus/0x0042f7b0.md
+// ref: re/analysis/race_hud_capture_20260902.md (Finding 29)
 // ---------------------------------------------------------------------------
 
 // 0x0042f7b0
@@ -151,56 +180,57 @@ extern "C" __declspec(dllexport) void __cdecl FrontendCursorUpdate() {
     std::int32_t* piVar1 = reinterpret_cast<std::int32_t*>(0x0067e85cu);
 
     while (reinterpret_cast<std::uintptr_t>(pcVar2) < 0x007f1894u) {
-        // Left: release edge -> decrement piVar1[-3], clamp >= 0
+        // profile 0, col 0: newly pressed -> decrement piVar1[-3], guard != 0
         if (pcVar2[-0x4c0] != 0 && pcVar2[0] == 0) {
             if (piVar1[-3] > 0) {
                 piVar1[-3]--;
             }
         }
-        // Right: release edge -> increment piVar1[-3], clamp <= 3
+        // profile 0, col 1: newly pressed -> increment piVar1[-3], guard < 3
         if (pcVar2[-0x4bf] != 0 && pcVar2[1] == 0) {
             if (piVar1[-3] < 3) {
                 piVar1[-3]++;
             }
         }
-        // Up: release edge -> decrement *piVar1, clamp >= 0
+        // profile 1, col 0: newly pressed -> decrement *piVar1, guard != 0
         if (pcVar2[-0x474] != 0 && pcVar2[0x4c] == 0) {
             if (*piVar1 > 0) {
                 (*piVar1)--;
             }
         }
-        // Down: release edge -> increment *piVar1, clamp <= 3
+        // profile 1, col 1: newly pressed -> increment *piVar1, guard < 3
         if (pcVar2[-0x473] != 0 && pcVar2[0x4d] == 0) {
             if (*piVar1 < 3) {
                 (*piVar1)++;
             }
         }
-        // Back-left: release edge -> decrement piVar1[3], clamp >= 0
+        // profile 2, col 0: newly pressed -> decrement piVar1[3], guard != 0
         if (pcVar2[-0x428] != 0 && pcVar2[0x98] == 0) {
             if (piVar1[3] > 0) {
                 piVar1[3]--;
             }
         }
-        // Back-right: release edge -> increment piVar1[3], clamp <= 3
+        // profile 2, col 1: newly pressed -> increment piVar1[3], guard < 3
         if (pcVar2[-0x427] != 0 && pcVar2[0x99] == 0) {
             if (piVar1[3] < 3) {
                 piVar1[3]++;
             }
         }
-        // Alt-back-left: release edge -> decrement piVar1[6], clamp >= 0
+        // profile 3, col 0: newly pressed -> decrement piVar1[6], guard != 0
         if (pcVar2[-0x3dc] != 0 && pcVar2[0xe4] == 0) {
             if (piVar1[6] > 0) {
                 piVar1[6]--;
             }
         }
-        // Alt-back-right: release edge -> increment piVar1[6], clamp <= 3
+        // profile 3, col 1: newly pressed -> increment piVar1[6], guard < 3
         if (pcVar2[-0x3db] != 0 && pcVar2[0xe5] == 0) {
             if (piVar1[6] < 3) {
                 piVar1[6]++;
             }
         }
 
-        // Advance: input stride 0x130 bytes; cursor stride 0x30 bytes (12 ints)
+        // Advance one unrolled group of 4 profiles: input 0x130 = 4 * 0x4c,
+        // ability table 0x30 bytes = 4 * 12
         pcVar2 += 0x130;
         piVar1 += 0x30 / sizeof(std::int32_t);  // 12 ints
     }
