@@ -5384,16 +5384,54 @@ bool RenderFrame() {
                                 48.0f * kVScale, 48.0f * kVScale, white, uv_full);
                 }
             }
-            // Balance verdict, same scaffold caveat: the original surely
-            // reports an illegal split somewhere (MenuTeamBalance's 1/2/3 codes
-            // exist to be shown), but which string and where is unmeasured.
+            // Balance verdict. MEASURED 2026-09-04 (Finding 32) -- the wording
+            // is no longer invented. The original does NOT annotate this
+            // screen: it validates on CONFIRM and, on a rejection, posts a
+            // modal and refuses to advance. FUN_0043dfd0 @0x0043f396:
+            //   call 0x42bb60                      ; MenuTeamBalance
+            //   cmp eax, 0x1000 / jne 0x43f3e2     ; legal -> reset abilities,
+            //                                      ;   FUN_0046dc00 x4,
+            //                                      ;   FUN_0043d2a0(0xf) = screen 15
+            //   0x0043f3e2  eax == 0 -> FUN_0042bf30(0xd6, 0, 1, 0x2d, 0, 0)
+            //   0x0043f3ff  eax == 1 -> FUN_0042bf30(0xd7, ...)
+            //   0x0043f41c  eax == 2 -> FUN_0042bf30(0xd8, ...)
+            //   0x0043f43a  eax == 3 -> FUN_0042bf30(0xd9, ...)
+            //   otherwise (-1)       -> nothing at all
+            // FUN_0042bf30 posts the request block at 0x0067eab4.. and raises
+            // DAT_0067eab0; FUN_00433f40 renders it: body = DAT_0067eab4 drawn
+            // by FUN_004278d0, prompt = p4 = 0x2d ". Continue", layout = p3 = 1.
+            // (Same DAT_0067eab0 the ability input step early-outs on, so a
+            // posted modal freezes setup input.)
+            //
+            // [UNCERTAIN] the code's body id N reads as OUR message table's
+            // N+1: the four codes 0/1/2/3 pass 0xd6/0xd7/0xd8/0xd9 and the
+            // strings that FIT them are at 0xd7/0xd8/0xd9/0xda -- "Both Players
+            // Must Select A Team" for the 2-player case, "Team 1 / Team 2 Does
+            // Not Have Enough Players" for the empty-team codes (1 = team A
+            // empty, 2 = team B empty in FUN_0042bb60), "All Players Must
+            // Select A Team" for code 3. Five independent pairings fit under
+            // +1 and none under 0 (the same +1 holds for CarSlotAssign's 0x31
+            // -> "There must be at least 2 players for a multi player game.").
+            // The MECHANISM is not measured: DAT_0067eadc IS an id bias the
+            // renderer adds, but it is a page counter (0x0043dac7 `inc eax`,
+            // wrapped at DAT_0067ead8) gated on DAT_0067ead4, not a constant.
+            // So the pairing is measured and the cause is open.
             if (team && g_font.ready()) {
-                const wchar_t* v = (g_team_assign != 0x1000) ? L"slots unassigned"
-                                 : (g_team_balance == 0x1000) ? L"teams ok"
-                                 : (g_team_balance == -1)     ? L"bad player count"
-                                                              : L"teams unbalanced";
-                DrawMashedString(v, rowX, (rowY0 + 4 * rowDY) + 8.0f * kVScale,
-                                 ncell, 0xffffffffu, true);
+                // Port-side PLACEMENT (the original has no such line); the TEXT
+                // is the original's, pulled from the game's own table.
+                static wchar_t s_verdict[64];
+                const wchar_t* v = nullptr;
+                if (g_team_assign != 0x1000) {
+                    v = L"slots unassigned";        // port-side: no such state
+                } else if (g_team_balance != 0x1000 && g_team_balance >= 0 &&
+                           g_team_balance <= 3) {
+                    const int id = 0xd6 + g_team_balance + 1;   // see above
+                    const int n = g_menu_str.Decode(id, s_verdict, 63);
+                    if (n > 0) { s_verdict[n] = 0; v = s_verdict; }
+                }
+                if (v)
+                    DrawMashedString(v, rowX, (rowY0 + 4 * rowDY) + 8.0f * kVScale,
+                                     ncell, 0xffffffffu, true);
             }
         }
 
@@ -8180,6 +8218,30 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                 // Self-check: the standalone main-menu record ids (FUN_0043d2a0
                 // root table[0] expands to these) must resolve to real labels.
                 static const int kCheck[] = { 0x21, 0x22, 0x23, 0x24, 0x27 };
+                // MASHED_MSG_IDS="0xd6,0xd7,..." dumps arbitrary ids through
+                // the game's OWN decoder, so a message cited from a call site
+                // can be read as text instead of guessed. Diagnostic only.
+                int extra[32]; int nextra = 0;
+                {
+                    char mv[128] = {};
+                    if (GetEnvironmentVariableA("MASHED_MSG_IDS", mv, sizeof(mv)) > 0) {
+                        char* tok = std::strtok(mv, ",");
+                        while (tok && nextra < 32) {
+                            extra[nextra++] = (int)std::strtol(tok, nullptr, 0);
+                            tok = std::strtok(nullptr, ",");
+                        }
+                    }
+                }
+                for (int i = 0; i < nextra; ++i) {
+                    wchar_t w[64];
+                    const int n = g_menu_str.Decode(extra[i], w, 64);
+                    char a[64]; int k = 0;
+                    for (; k < n && k < 63; ++k)
+                        a[k] = (w[k] >= 32 && w[k] < 127) ? (char)w[k] : '.';
+                    a[k] = 0;
+                    std::fprintf(log, "  MSG id 0x%x len=%d \"%s\"\n",
+                                 extra[i], n, a);
+                }
                 for (int id : kCheck) {
                     wchar_t w[64];
                     int n = g_menu_str.Decode(id, w, 64);

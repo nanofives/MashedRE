@@ -2704,3 +2704,97 @@ A backbuffer capture of the team-scored standings was attempted and did not
 land — `MASHED_DBG_BBDUMP` did not fire on the `MASHED_ROUND` race path at
 either frame 1500 or 2600. The instrumentation log is the evidence here, which
 is the preferred channel anyway.
+
+---
+
+## Finding 32: how the original surfaces a rejected team split (2026-09-04)
+
+The last `[SCAFFOLD]` on the setup screens was the verdict line: the state was
+faithful, the wording invented. It is measured now, and the answer is that the
+original **does not annotate the screen at all**.
+
+### The confirm path
+
+`FUN_0043dfd0`, the menu-action dispatcher, validates on CONFIRM:
+
+```
+0x0043f396  call 0x42bb60            ; MenuTeamBalance
+0x0043f39b  cmp eax, 0x1000
+0x0043f3a0  jne 0x43f3e2             ; -> the rejection ladder
+            ; legal: reset all 12 ability entries to 1, FUN_0046dc00(i,1) x4,
+0x0043f3d5  call 0x43d2a0            ; push 0xf = screen 15, Ability Select
+```
+
+so a legal split simply advances to Ability Select. The rejection ladder is four
+arms, one per code, each posting a message and staying put:
+
+```
+0x0043f3e2  eax == 0 -> FUN_0042bf30(0xd6, 0, 1, 0x2d, 0, 0)
+0x0043f3ff  eax == 1 -> FUN_0042bf30(0xd7, ...)
+0x0043f41c  eax == 2 -> FUN_0042bf30(0xd8, ...)
+0x0043f43a  eax == 3 -> FUN_0042bf30(0xd9, ...)
+otherwise (-1)       -> nothing at all
+```
+
+`ebx` is 0 for the whole function (`0x0043e02e xor ebx, ebx`), which is what
+makes arm 0 a comparison against zero.
+
+### The modal
+
+`FUN_0042bf30` (C3, `Post0042bf30`) does not draw: it POSTS. It writes the six
+arguments into the request block at `0x0067eab4..0x0067ead0` and raises
+`DAT_0067eab0`. `FUN_00433f40` renders whatever is posted, once the alpha ramp
+`DAT_0067eab8` reaches `0x28`:
+
+| slot | value here | role in `FUN_00433f40` |
+|---|---|---|
+| p1 `DAT_0067eab4` | `0xd6`..`0xd9` | **body**, drawn by `FUN_004278d0` |
+| p3 `DAT_0067eac0` | `1` | layout switch; case 1 draws a single prompt |
+| p4 `DAT_0067eac8` | `0x2d` | **prompt**, ". Continue" |
+
+`DAT_0067eab0` is the same global `FUN_0042f7b0` early-outs on (Finding 29), so
+a posted modal freezes setup input while it is up — one flag doing both jobs.
+
+### The strings, and an off-by-one that is measured but not explained
+
+Read through the game's own table (`MASHED_MSG_IDS`, a new diagnostic that
+decodes arbitrary ids with the port's decoder):
+
+| code | meaning in `FUN_0042bb60` | id passed | string that fits |
+|---|---|---|---|
+| 0 | 2 participants, not 1v1 | `0xd6` | "Both Players Must Select A Team" |
+| 1 | 3-4 participants, team A empty | `0xd7` | "Team 1 Does Not Have Enough Players" |
+| 2 | 3-4 participants, team B empty | `0xd8` | "Team 2 Does Not Have Enough Players" |
+| 3 | 3-4, both teams non-empty, split still illegal | `0xd9` | "All Players Must Select A Team" |
+| -1 | participants outside 2..4 | — | no message |
+
+Every one of those strings sits at **id + 1** in the table this port decodes,
+and `0xd6` itself decodes to "Team Select" — the group's label sitting directly
+before its four sentences. Five independent pairings fit under +1 and none
+under 0; the same +1 holds for `CarSlotAssign`'s `0x31` → "There must be at
+least 2 players for a multi player game."
+
+The mechanism is **not** established, and I am not going to assert one. The
+renderer does add an id bias (`DAT_0067eadc + DAT_0067eab4` when
+`DAT_0067ead4 != 0`), but `DAT_0067eadc` is a page counter — `0x0043dac7
+INC EAX`, wrapped against `DAT_0067ead8` — not a constant. Filed as **U-9083**
+with the one observation that settles it: hook `FUN_004278d0` in the original
+with a modal up and record the id against the glyphs actually drawn.
+
+Separately: `FUN_00427e00`'s first argument is **not in this id space**. The
+ability headers pass `0xe3`/`0xd2`/`0xd3`/`0xd4`, which decode to "10 mins" /
+"End Game Next Point" / "Pro" / "Amateur" — a different table, so the port's
+`{Elite, Pro, Amateur, Rookie}` column labels remain unverified by this route.
+
+### Port change
+
+The verdict line keeps its port-side PLACEMENT (the original has no such line)
+but no longer invents wording: it pulls the original's string for the live
+balance code, and draws **nothing** when the split is legal, because that is
+when the original advances instead of commenting.
+
+| capture | taps | line |
+|---|---|---|
+| `verify/teamsel_reject_default.bmp` | none | "Both Players Must Select A Team" (code 0) |
+| `verify/teamsel_reject_sameteam.bmp` | `0d,1d` | rows **A A**, same string |
+| `verify/teamsel_reject_legal.bmp` | `0d,1dd` | rows **A B**, **no line at all** |

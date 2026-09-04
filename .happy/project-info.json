@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-05T01:20:00Z",
+  "updatedAt": "2026-09-05T02:40:00Z",
   "sections": [
     {
       "heading": "Project",
@@ -17,7 +17,7 @@
         },
         {
           "label": "Latest",
-          "value": "team scoring live in the standalone (FUN_0040eee0 arms in TrackRenderer)",
+          "value": "rejected team split measured: modal, 4 codes -> 4 strings (U-9083 on an id+1)",
           "kind": "text"
         },
         {
@@ -32,7 +32,7 @@
         },
         {
           "label": "Setup screens 15/16",
-          "value": "renderers hooked + draw-stream A/B clean against an off-vs-off control",
+          "value": "renderers + both input steps ported; verdict wording now the original’s",
           "kind": "text"
         },
         {
