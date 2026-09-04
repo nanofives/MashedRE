@@ -291,6 +291,20 @@ def build_config(hook, asi_path=None):
     # sprite_table_dispatch — hex addr of the callee to Interceptor.replace.
     if 'callee_rva_str' in hook:
         config['callee_rva_str'] = hook['callee_rva_str']
+    # esi_row_update_rw (0x0041c410) — register-`this` selector, struct size,
+    # the six callee RVAs the handler stubs, and the six globals it seeds.
+    # These MUST be forwarded: build_config is a WHITELIST, so a registry entry
+    # naming keys that are not listed here has them silently dropped and the
+    # handler falls back to its defaults. That is a quiet failure mode — the
+    # 0x0041c410 diff first went GREEN with all of these being ignored, purely
+    # because the handler's defaults happened to match the entry.
+    for _k in ('this_reg', 'struct_size',
+               'callee_delta_str', 'callee_score_str', 'callee_max_str',
+               'callee_mattrans_str', 'callee_frametf_str', 'callee_framescale_str',
+               'flag_crown', 'flag_tied', 'flag_lowest', 'flag_zero',
+               'row_order', 'pulse_tick'):
+        if _k in hook:
+            config[_k] = hook[_k]
     # spin_angle_observe — optional spin-angle global addr override.
     if 'angle_global_str' in hook:
         config['angle_global_str'] = hook['angle_global_str']

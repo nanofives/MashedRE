@@ -2840,6 +2840,276 @@ function runDiff() {
         return;
     }
 
+    // -- esi_row_update_rw (2026-09-03, standings row update 0x0041c410) ------
+    // Authored for FUN_0041c410, the standings PER-ROW UPDATE. That function is
+    // not leaf-callable cold for two reasons at once: `this` arrives in ESI, and
+    // its back half drives the LIVE RenderWare frame graph (RwMatrixTranslate
+    // 0x004c51a0, frame-transform 0x004c1480, frame-scale 0x004c13e0 x5). So
+    // this handler seeds every input it reads and STUBS all six callees with
+    // recorders, turning the whole function into a pure input->output mapping.
+    //
+    // What makes the observation complete rather than a front-half-only check:
+    // the three RW callees are exactly where the computed values LEAVE the
+    // function, so recording their arguments captures the row translation
+    // pointer (i.e. the chosen row index), the caller-built matrix, the
+    // score-bar X scale, the crown pulse, and the ORDER + TARGET of all five
+    // frame applies. Nothing the function computes escapes unobserved.
+    //
+    // Seeded, per test:
+    //   0x0063cde8[type] crown flag   -> enable bit 0x40 (and the fsin arm)
+    //   0x0063ce08[type] tied flag    -> bit 0x80
+    //   0x0063cdd4[type] lowest flag  -> bit 0x100
+    //   0x0063cdc0[type] zero flag    -> bit 0x200
+    //   0x0063cdf8[0..3] row order    -> which vec3 of DAT_005f337c is used
+    //   0x0063d270       pulse tick   -> signed; a NEGATIVE test exercises the
+    //                                   +2^32 wrap arm at 0x0041c8b2
+    // Stubs (global by RVA, so the original and the reimpl hit the identical
+    // stub, and reverted afterwards):
+    //   0x0040b420 delta classifier -> records arg0, returns t.delta_class
+    //   0x0040b6d0 score getter     -> records arg0, returns t.score
+    //   0x0040b890 bar max          -> returns t.maxpts
+    //   0x004c51a0 RwMatrixTranslate-> records the caller's matrix + v + combine
+    //   0x004c1480 frame transform  -> records frame + combine
+    //   0x004c13e0 frame scale      -> records frame + the 3 floats + mode
+    //
+    // FLAGS CAVEAT, deliberate. The matrix flags word at matrix+0x0c is a
+    // read-modify-write of UNINITIALISED stack in the original (0x0041c756
+    // `mov edx,[esp+0x24]` / 0x0041c75a `or edx,0x20003`), so its bits outside
+    // 0x20003 are frame-history dependent on BOTH sides. The recorder therefore
+    // masks that word to 0x20003 and compares only the bits the OR guarantees.
+    // This is not a convenience: asserting the whole word would compare two
+    // different stacks' garbage. It is also the only field excluded, and it is
+    // unobservable downstream anyway -- RwMatrixTranslate with combine == 0
+    // rewrites all twelve floats and repeats the same `| 0x20003` itself.
+    //
+    // CONFIG: this_reg (default 'esi'), struct_size (default 0x114),
+    //   callee_delta_str, callee_score_str, callee_max_str,
+    //   callee_mattrans_str, callee_frametf_str, callee_framescale_str,
+    //   flag_crown/flag_tied/flag_lowest/flag_zero/row_order/pulse_tick
+    //   (global addresses, hex strings), signature {ret:'void', args:[]},
+    //   tests = [{type, crown, tied, lowest, zero, order:[4], delta_class,
+    //             score, maxpts, tick, handles:[32 bools]}, ...].
+    // MECHANISM: Delivers `this` in CONFIG.this_reg (default esi) via an x86 trampoline over a
+    // per-side scratch struct; seeds six MASHED globals per test (four per-type flag arrays, the
+    // 4-entry row order, the signed pulse tick) and snapshots/restores them; stubs six callees with
+    // recorders so the live RenderWare frame graph is never touched; observable is the per-side
+    // struct fingerprint (all struct_size bytes, with the four per-side atom-holder pointers
+    // zeroed) CONCATENATED with the ordered recorded-call log (matrix, translate vector ptr, frame
+    // targets, scale triples, combine modes). The matrix flags dword is masked to 0x20003 because
+    // the original ORs it over uninitialised stack.
+    // CONFIG: `this_reg`, `struct_size`, `callee_*_str`, `flag_*`, `row_order`, `pulse_tick`.
+    if (CONFIG.arg_type === 'esi_row_update_rw') {
+        const structSize = CONFIG.struct_size || 0x114;
+        const thisReg    = (CONFIG.this_reg || 'esi').toLowerCase();
+        const MOV_OP = { eax: 0xB8, ecx: 0xB9, edx: 0xBA, ebx: 0xBB, esi: 0xBE, edi: 0xBF };
+        const REGNUM = { eax: 0, ecx: 1, edx: 2, ebx: 3, esp: 4, ebp: 5, esi: 6, edi: 7 };
+        const thisOp = MOV_OP[thisReg];
+        if (thisOp === undefined) { send({ type: 'error', msg: 'bad this_reg ' + thisReg }); return; }
+
+        const G = function (k, dflt) { return ptr(CONFIG[k] || dflt); };
+        const gCrown  = G('flag_crown',  '0x63cde8');
+        const gTied   = G('flag_tied',   '0x63ce08');
+        const gLowest = G('flag_lowest', '0x63cdd4');
+        const gZero   = G('flag_zero',   '0x63cdc0');
+        const gOrder  = G('row_order',   '0x63cdf8');
+        const gTick   = G('pulse_tick',  '0x63d270');
+
+        const _keep = [];
+        // Per-side scratch group. +0x104 frame, +0x88/+0x8c/+0x94/+0x98 atomic
+        // holders (each dereferenced at +4), +0x108 type, +0x10c enable word,
+        // +0x80+i*4 handle table, +0x00+i*4 per-slot results.
+        const thisO = Memory.alloc(structSize); _keep.push(thisO);
+        const thisR = Memory.alloc(structSize); _keep.push(thisR);
+        // The +0x80 array IS the atomic-pointer table, 32 entries -- the fields
+        // the back half scales (+0x88/+0x8c/+0x94/+0x98) are literally handle
+        // slots 2, 3, 5 and 6 of that same array (0x80 + 2*4 == 0x88, and so
+        // on). So each slot is seeded with a POINTER to a 16-byte stand-in
+        // atomic whose +4 holds a distinct frame sentinel; the visibility test
+        // () sees a non-null pointer, and the four scaled slots
+        // dereference +4 as the original does. Establishing this cost a RED
+        // round: seeding the slots with opaque non-pointer handles made
+        // *(this+0x94)+4 read 0x...09 and AV on BOTH sides.
+        const atomsO = Memory.alloc(32 * 16); _keep.push(atomsO);
+        const atomsR = Memory.alloc(32 * 16); _keep.push(atomsR);
+
+        let log = [];
+        function hexd(v) { return ('00000000' + ((v >>> 0).toString(16))).slice(-8); }
+        function f32bits(p) { return hexd(p.readU32()); }
+
+        const filled = [];
+        function replaceCallee(a, cb) { Interceptor.replace(a, cb); filled.push(a); }
+
+        let T_DELTA = 0, T_SCORE = 0, T_MAX = 12;
+        const cbDelta = new NativeCallback(function (type) {
+            log.push('D(' + hexd(type) + ')'); return T_DELTA | 0;
+        }, 'int', ['uint32'], 'mscdecl');
+        const cbScore = new NativeCallback(function (type) {
+            log.push('S(' + hexd(type) + ')'); return T_SCORE | 0;
+        }, 'int', ['uint32'], 'mscdecl');
+        const cbMax = new NativeCallback(function () {
+            log.push('M()'); return T_MAX | 0;
+        }, 'int', [], 'mscdecl');
+        const cbMatTrans = new NativeCallback(function (m, v, c) {
+            // Caller-built matrix, 16 dwords. The original writes exactly 13 of
+            // them; index 3 is a read-modify-write of uninitialised stack and
+            // indices 7, 11 and 15 (matrix+0x1c/+0x2c/+0x3c, the RwMatrix pads)
+            // are never written at all. Enumerated from the stores at
+            // 0x0041c776..0x0041c7ce against a frame base of ESP+0x18:
+            //   +0x00 +0x04 +0x08        right   (1,0,0)
+            //   +0x0c                    flags   |= 0x20003 over stack garbage
+            //   +0x10 +0x14 +0x18        up      (0,1,0)
+            //   +0x20 +0x24 +0x28        at      (0,0,1)
+            //   +0x30 +0x34 +0x38        pos     (0,0,0)
+            //   +0x1c +0x2c +0x3c        NOT WRITTEN
+            // So index 3 is masked to the bits the OR guarantees and 7/11/15
+            // are zeroed. This is not slack in the check: those four slots are
+            // whatever the caller's stack held, on BOTH sides, and asserting
+            // them would compare two different stacks' garbage. A first run of
+            // this diff proved it -- every other dword was already identical
+            // and only 7, 11 and 15 differed.
+            const UNDEF = { 7: 1, 11: 1, 15: 1 };
+            let s = '';
+            for (let k = 0; k < 16; k++) {
+                const w = m.add(k * 4).readU32() >>> 0;
+                s += hexd(UNDEF[k] ? 0 : (k === 3 ? (w & 0x20003) : w));
+            }
+            log.push('T(m=' + s + ',v=' + v.readU32().toString(16) + ',' +
+                     v.add(4).readU32().toString(16) + ',' +
+                     v.add(8).readU32().toString(16) + ',c=' + hexd(c) + ')');
+            return 0;
+        }, 'int', ['pointer', 'pointer', 'int'], 'mscdecl');
+        const cbFrameTf = new NativeCallback(function (f, m, c) {
+            log.push('X(f=' + hexd(f) + ',c=' + hexd(c) + ')');
+            return f | 0;
+        }, 'int', ['uint32', 'pointer', 'int'], 'mscdecl');
+        const cbFrameScale = new NativeCallback(function (f, v, c) {
+            log.push('C(f=' + hexd(f) + ',v=' + f32bits(v) + f32bits(v.add(4)) +
+                     f32bits(v.add(8)) + ',c=' + hexd(c) + ')');
+            return f | 0;
+        }, 'int', ['uint32', 'pointer', 'int'], 'mscdecl');
+
+        replaceCallee(ptr(CONFIG.callee_delta_str      || '0x40b420'), cbDelta);
+        replaceCallee(ptr(CONFIG.callee_score_str      || '0x40b6d0'), cbScore);
+        replaceCallee(ptr(CONFIG.callee_max_str        || '0x40b890'), cbMax);
+        replaceCallee(ptr(CONFIG.callee_mattrans_str   || '0x4c51a0'), cbMatTrans);
+        replaceCallee(ptr(CONFIG.callee_frametf_str    || '0x4c1480'), cbFrameTf);
+        replaceCallee(ptr(CONFIG.callee_framescale_str || '0x4c13e0'), cbFrameScale);
+        Interceptor.flush();
+
+        function buildTramp(targetAddr, thisAddr) {
+            const code = Memory.alloc(Process.pageSize);
+            Memory.patchCode(code, 13, function (cw) {
+                const w = new X86Writer(cw, { pc: code });
+                w.putU8(0x50 + REGNUM[thisReg]);          // push <thisReg>
+                w.putBytes([thisOp, 0, 0, 0, 0]);         // mov <thisReg>, this (patch +2)
+                w.putU8(0xE8);                            // call rel32
+                const rel = targetAddr.sub(code.add(11)).toInt32();
+                w.putBytes([rel & 0xff, (rel >>> 8) & 0xff, (rel >>> 16) & 0xff, (rel >>> 24) & 0xff]);
+                w.putU8(0x58 + REGNUM[thisReg]);          // pop <thisReg>
+                w.putU8(0xC3);                            // ret
+                w.flush();
+            });
+            code.add(2).writeU32(thisAddr >>> 0);
+            return code;
+        }
+        const trampO = buildTramp(TARGET_ADDR, parseInt(thisO.toString(), 16) >>> 0);
+        const trampR = buildTramp(reimplAddr,  parseInt(thisR.toString(), 16) >>> 0);
+        const FnO = new NativeFunction(trampO, 'void', [], 'mscdecl');
+        const FnR = new NativeFunction(trampR, 'void', [], 'mscdecl');
+
+        // Snapshot the six globals so a menu-attach run leaves game state as it
+        // found it (these are live standings globals during a race).
+        const savedFlags = [];
+        for (const g of [gCrown, gTied, gLowest, gZero, gOrder]) {
+            const row = [];
+            for (let k = 0; k < 4; k++) row.push(g.add(k * 4).readU32() >>> 0);
+            savedFlags.push(row);
+        }
+        const savedTick = gTick.readU32() >>> 0;
+
+        function seedSide(self, atoms, t) {
+            for (let k = 0; k < structSize; k += 4) self.add(k).writeU32(0);
+            const abase = parseInt(atoms.toString(), 16) >>> 0;
+            self.add(0x104).writeU32(0xF0000000 >>> 0);                   // group frame
+            self.add(0x108).writeS32(t.type | 0);
+            self.add(0x10c).writeU32((t.enable_seed != null ? t.enable_seed : 0) >>> 0);
+            // Atomic-pointer table at +0x80: every slot present by default so
+            // all 32 switch arms run. Slot i's stand-in atomic carries frame
+            // sentinel 0xA00000<i>, so the recorded frame identifies WHICH slot
+            // each scale was applied to -- a port that swaps +0x94 with +0x88
+            // records a different sentinel and REDs.
+            for (let i = 0; i < 32; i++) {
+                const on = (t.handles && t.handles.length === 32) ? !!t.handles[i] : true;
+                atoms.add(i * 16 + 4).writeU32((0xA0000000 + i) >>> 0);
+                self.add(0x80 + i * 4).writeU32(on ? ((abase + i * 16) >>> 0) : 0);
+            }
+        }
+        // The whole +0x80..+0xff atomic-pointer table holds per-side allocation
+        // addresses, so it is zeroed out of the fingerprint. Nothing is lost:
+        // the function never writes that table, and the effect of which slot it
+        // read is compared through the 0xA00000xx frame sentinels the recorders
+        // log. What remains compared is exactly what the function WRITES -- the
+        // 32 per-slot result dwords at +0x00..+0x7f and the enable word.
+        function fp(self) {
+            let s = '';
+            for (let k = 0; k < structSize; k += 4) {
+                const skip = (k >= 0x80 && k < 0x100);
+                s += hexd(skip ? 0 : self.add(k).readU32());
+            }
+            return s;
+        }
+
+        try {
+            for (let i = 0; i < CONFIG.tests.length; i++) {
+                const t = CONFIG.tests[i] || {};
+                const ty = (t.type | 0);
+                T_DELTA = (t.delta_class != null ? t.delta_class : 0) | 0;
+                T_SCORE = (t.score != null ? t.score : 0) | 0;
+                T_MAX   = (t.maxpts != null ? t.maxpts : 12) | 0;
+                for (let k = 0; k < 4; k++) {
+                    gCrown.add(k * 4).writeU32(0); gTied.add(k * 4).writeU32(0);
+                    gLowest.add(k * 4).writeU32(0); gZero.add(k * 4).writeU32(0);
+                    gOrder.add(k * 4).writeS32((t.order && t.order.length === 4) ? (t.order[k] | 0) : -1);
+                }
+                if (ty >= 0 && ty < 4) {
+                    gCrown.add(ty * 4).writeU32(t.crown ? 1 : 0);
+                    gTied.add(ty * 4).writeU32(t.tied ? 1 : 0);
+                    gLowest.add(ty * 4).writeU32(t.lowest ? 1 : 0);
+                    gZero.add(ty * 4).writeU32(t.zero ? 1 : 0);
+                }
+                gTick.writeS32((t.tick != null ? t.tick : 0) | 0);
+
+                let origV = null, reimV = null, errO = null, errR = null;
+                seedSide(thisO, atomsO, t);
+                log = [];
+                try { FnO(); origV = fp(thisO) + '|' + log.join(''); } catch (e) { errO = e.message; }
+                seedSide(thisR, atomsR, t);
+                log = [];
+                try { FnR(); reimV = fp(thisR) + '|' + log.join(''); } catch (e) { errR = e.message; }
+                results.push({
+                    idx: i,
+                    input: ('type=' + ty + ' crown=' + (t.crown ? 1 : 0) +
+                            ' tied=' + (t.tied ? 1 : 0) + ' low=' + (t.lowest ? 1 : 0) +
+                            ' zero=' + (t.zero ? 1 : 0) + ' delta=' + T_DELTA +
+                            ' score=' + T_SCORE + '/' + T_MAX + ' tick=' + (t.tick | 0) +
+                            ' order=[' + ((t.order || []).join(',')) + ']'),
+                    original: origV, reimpl: reimV,
+                    match: (origV !== null && reimV !== null && origV === reimV),
+                    err_original: errO, err_reimpl: errR
+                });
+            }
+        } finally {
+            const gs = [gCrown, gTied, gLowest, gZero, gOrder];
+            for (let j = 0; j < gs.length; j++)
+                for (let k = 0; k < 4; k++) gs[j].add(k * 4).writeU32(savedFlags[j][k]);
+            gTick.writeU32(savedTick);
+            for (const a of filled) Interceptor.revert(a);
+            Interceptor.flush();
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── reg_this_call_observe (orch-iter8, SWEEP-CRITICAL) ────────────────────
     // Sibling of reg_this_callee_stub for VOID functions whose only effect is a
     // single call — e.g. the particle-emitter destructors

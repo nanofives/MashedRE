@@ -62,6 +62,7 @@
 "Frontend\FrontendAccessors.cpp"
 "Frontend\FrontendMode.cpp"
 "HUD\HudDispatch.cpp"
+"HUD\HudStandingsRowUpdate.cpp"
 "HUD\FontCtx.cpp"
 "HUD\HudBatch.cpp"
 "Frontend\MenuScoreGetters.cpp"

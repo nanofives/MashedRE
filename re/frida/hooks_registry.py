@@ -20651,4 +20651,231 @@ HOOKS = {
         'path2_tests':    [{'scalars': []}, {'scalars': []}],
     },
 
+
+    # 0x0041c410  HudStandingsRowUpdate -- the STANDINGS PER-ROW UPDATE, called
+    # once per widget group per frame by HudSlotUpdateCc50 0x0041cc50 with the
+    # group in ESI. Folds the four per-type score-flag arrays into the group's
+    # enable word at +0x10c, drives a 32-slot per-atomic visibility switch,
+    # places the row from DAT_005f337c using the DAT_0063cdf8 order, scales the
+    # score-bar fill by score/max and pulses the crown off DAT_0063d270.
+    # Evidence: re/analysis/race_hud_capture_20260902.md Finding 20 + the C2
+    # plate re/analysis/bucket_gameplay_0041a980_0041d910/0041c410.md.
+    #
+    # WHY A DEDICATED arg_type (esi_row_update_rw): `this` is in ESI, and the
+    # back half calls into the LIVE RenderWare frame graph, so the function is
+    # not leaf-callable cold. The handler seeds every global it reads and stubs
+    # all six callees with recorders. That is what makes the observation whole
+    # rather than front-half-only: the three RW callees are precisely where the
+    # computed values leave the function, so the recorded arguments carry the
+    # chosen row's translate vector, the caller-built matrix, the score-bar X
+    # scale, the crown pulse, and the order and target of all five applies.
+    #
+    # OBSERVABLE per vector = the full 0x114-byte group fingerprint (32 slot
+    # result dwords + the enable word) CONCATENATED with the ordered call log.
+    # The four atom-holder pointers at +0x88/+0x8c/+0x94/+0x98 are per-side
+    # allocations and are zeroed out of the fingerprint; their effect is still
+    # compared through the 0xA00000xx frame sentinels the recorders log, so a
+    # port that swaps +0x94 with +0x88 still REDs.
+    #
+    # NON-DEGENERACY, by construction across the five vectors:
+    #   both flag cleanups        v0 sets tied+lowest (clears 0x180) AND
+    #                             crown+lowest (clears 0x100)
+    #   all five delta arms       v0 +1 (0x2000), v1 -1 (0x8000, which is also
+    #                             the byte-1 sign source for slots 0x12/0x17),
+    #                             v2 -2 (0x10000), v3 default (0x4000), v4 +2
+    #                             (0x1000)
+    #   row lookup               v0 -> index 1, v1 -> 0, v2 -> 3, v4 -> 0, and
+    #                             v3's order OMITS its type so the no-match
+    #                             fallback to index 0 is exercised
+    #   crown pulse              v0 tick=5 (positive), v1 tick=-7 (the +2^32
+    #                             wrap arm at 0x0041c8b2), v2/v3 crown=0 (the
+    #                             constant-1.0 arm)
+    #   bar scale                7/12, 3/8, 12/12, 0/12, 5/12 -- five distinct
+    #                             ratios including the 0 and 1 endpoints, and
+    #                             two different denominators
+    # Every handle slot is seeded non-null in all vectors, so all 32 switch arms
+    # (including the 0xd/0xe/0x1a..0x1f fall-through-to-zero ones) execute.
+    #
+    # SAFE at menu attach: the handler snapshots and restores all six seeded
+    # globals, and no live RW object is ever touched because the RW callees are
+    # replaced for the duration of the run.
+    'hud_standings_row_update': {
+        'rva':            0x0041c410,
+        'export':         'HudStandingsRowUpdate',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'esi_row_update_rw',
+        'lut_root_delta': 0,
+        'this_reg':       'esi',
+        'struct_size':    0x114,
+        'callee_delta_str':      '0x40b420',
+        'callee_score_str':      '0x40b6d0',
+        'callee_max_str':        '0x40b890',
+        'callee_mattrans_str':   '0x4c51a0',
+        'callee_frametf_str':    '0x4c1480',
+        'callee_framescale_str': '0x4c13e0',
+        'flag_crown':  '0x63cde8',
+        'flag_tied':   '0x63ce08',
+        'flag_lowest': '0x63cdd4',
+        'flag_zero':   '0x63cdc0',
+        'row_order':   '0x63cdf8',
+        'pulse_tick':  '0x63d270',
+        'path1_tests': [
+            {'type': 1, 'crown': 1, 'tied': 1, 'lowest': 1, 'zero': 0,
+             'order': [3, 1, 2, 0], 'delta_class': 1,  'score': 7,  'maxpts': 12, 'tick': 5},
+            {'type': 2, 'crown': 1, 'tied': 0, 'lowest': 0, 'zero': 1,
+             'order': [2, 0, 1, 3], 'delta_class': -1, 'score': 3,  'maxpts': 8,  'tick': -7},
+            {'type': 0, 'crown': 0, 'tied': 1, 'lowest': 0, 'zero': 0,
+             'order': [1, 2, 3, 0], 'delta_class': -2, 'score': 12, 'maxpts': 12, 'tick': 0},
+            {'type': 3, 'crown': 0, 'tied': 0, 'lowest': 1, 'zero': 1,
+             'order': [0, 1, 2, 0], 'delta_class': 99, 'score': 0,  'maxpts': 12, 'tick': 100},
+            {'type': 1, 'crown': 1, 'tied': 0, 'lowest': 0, 'zero': 0,
+             'order': [1, 0, 2, 3], 'delta_class': 2,  'score': 5,  'maxpts': 12, 'tick': 1024},
+            # v5..v7 seed the INCOMING enable word. Bits 0x1..0x3f, 0x400 and
+            # 0x800 are the ones this function does not compute -- it preserves
+            # them (the score-delta mask is 0xfffe0fff and the four flag phases
+            # only touch 0x40/0x80/0x100/0x200) -- so without seeding them every
+            # slot arm keyed on 0x400/0x800/0x1..0x20 takes its zero branch and
+            # 24 of the 26 switch arms produce an identical 0. That is exactly
+            # the degeneracy trap this project has hit four times: v0..v4 were
+            # GREEN with 30 of 32 slot dwords zero on both sides.
+            #   v5  0x800 + bits 0x1/0x4/0x10 -> slots 1,2 store 0x800; slot 3
+            #       stores 1 (crown AND 0x800); 7,9,0xb store their raw bits;
+            #       0xf..0x13 gate the delta bit against 0x800
+            #   v6  0x400 + bits 0x2/0x8/0x20, crown CLEAR -> slots 4,5 store
+            #       0x400; slot 6 stores 0 (crown clear, so the compound arm is
+            #       distinguishable from slots 4/5); 0x14..0x18 gate against 0x400
+            #   v7  0x400|0x800 + all six low bits, delta -1 -> both compound
+            #       families fire at once and the byte-1 sign arms (0x12, 0x17)
+            #       are reached with their partner bit set
+            {'type': 0, 'crown': 1, 'tied': 0, 'lowest': 0, 'zero': 0, 'enable_seed': 0x815,
+             'order': [0, 1, 2, 3], 'delta_class': 1,  'score': 6,  'maxpts': 12, 'tick': 3},
+            {'type': 2, 'crown': 0, 'tied': 0, 'lowest': 0, 'zero': 0, 'enable_seed': 0x42a,
+             'order': [0, 1, 2, 3], 'delta_class': -2, 'score': 2,  'maxpts': 8,  'tick': 9},
+            {'type': 3, 'crown': 1, 'tied': 0, 'lowest': 0, 'zero': 0, 'enable_seed': 0xc3f,
+             'order': [0, 3, 1, 2], 'delta_class': -1, 'score': 11, 'maxpts': 12, 'tick': -1},
+        ],
+        'path2_tests':    [{'scalars': []}, {'scalars': []}],
+    },
+
+
+    # 0x0042fa00  MenuTeamSelectTick -- THE PLAYER-SETUP HANDLER for the Team
+    # Select screen (nav screen 16). Sole caller FUN_0043c000 @0x0043c44a (C4).
+    # For each of 12 profiles that is one of the four assigned car slots
+    # (DAT_007f1a14/24/34/44, stride 0x10), an edge-detected UP decrements and
+    # DOWN increments that profile's entry in the team table
+    # (DAT_0067e938 + profile*12), clamped to [0, 2]. MenuTeamBalance 0x0042bb60
+    # then derives DAT_007f1a18[slot] = table[profile] - 1, so the three states
+    # are 0 = no team, 1 = team A, 2 = team B.
+    #
+    # Columns are 0 = UP and 1 = DOWN (NOT left/right): the decompiler shows the
+    # byte displacements -0x4c0 / -0x4bf off the PROCESSED pointer, which resolve
+    # to active 0x007f1044 + i*0x4c + {0,1} against processed 0x007f1504 + ... .
+    # The seeds below write those as DWORDS, so 0x00000001 = UP held and
+    # 0x00000100 = DOWN held (little-endian byte 0 / byte 1).
+    #
+    # NON-DEGENERACY -- the arms are separated one per vector, and the table is
+    # seeded to DISTINCT per-profile values every time so a port that wrote the
+    # wrong profile's entry, or used the wrong stride, moves a different dword:
+    #   v0  DOWN, table 0/1/2/1  -> profile 0 increments 0 -> 1
+    #   v1  DOWN, table 2/0/1/0  -> profile 0 CLAMPS at 2 (the `< 2` guard)
+    #   v2  UP,   table 1/2/0/2  -> profile 0 decrements 1 -> 0
+    #   v3  UP,   table 0/2/1/2  -> profile 0 CLAMPS at 0 (the `!= 0` guard)
+    #   v4  DOWN but processed already set -> NO change (the edge test)
+    #   v5  DOWN, slots {4,5,6,7} so profile 0 is UNASSIGNED -> NO change
+    #       (the slot-membership guard), while profile 4's entry DOES move
+    #   v6  DAT_0067ea88 seeded 2 -> observed 0 (the entry fixup), with DOWN
+    #       also moving profile 1 to prove the fixup is not the only effect
+    # Every vector observes all four table entries plus DAT_0067ea88, so an arm
+    # that fires on the wrong profile is caught rather than merely averaged out.
+    'menu_team_select_tick': {
+        'rva':            0x0042fa00,
+        'export':         'MenuTeamSelectTick',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'cache_setter_observe',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # v0 DOWN on profile 0 -> 0 becomes 1
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3},
+                      {'addr': '0x0067e938', 'val': 0}, {'addr': '0x0067e944', 'val': 1}, {'addr': '0x0067e950', 'val': 2}, {'addr': '0x0067e95c', 'val': 1},
+                      {'addr': '0x0067ea88', 'val': 0},
+                      {'addr': '0x007f1044', 'val': 0x00000100}, {'addr': '0x007f1504', 'val': 0},
+                      {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
+            # v1 DOWN with profile 0 already at 2 -> clamps
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3},
+                      {'addr': '0x0067e938', 'val': 2}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 0},
+                      {'addr': '0x0067ea88', 'val': 0},
+                      {'addr': '0x007f1044', 'val': 0x00000100}, {'addr': '0x007f1504', 'val': 0},
+                      {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
+            # v2 UP on profile 0 -> 1 becomes 0
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3},
+                      {'addr': '0x0067e938', 'val': 1}, {'addr': '0x0067e944', 'val': 2}, {'addr': '0x0067e950', 'val': 0}, {'addr': '0x0067e95c', 'val': 2},
+                      {'addr': '0x0067ea88', 'val': 0},
+                      {'addr': '0x007f1044', 'val': 0x00000001}, {'addr': '0x007f1504', 'val': 0},
+                      {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
+            # v3 UP with profile 0 already at 0 -> clamps
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3},
+                      {'addr': '0x0067e938', 'val': 0}, {'addr': '0x0067e944', 'val': 2}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2},
+                      {'addr': '0x0067ea88', 'val': 0},
+                      {'addr': '0x007f1044', 'val': 0x00000001}, {'addr': '0x007f1504', 'val': 0},
+                      {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
+            # v4 DOWN but processed already latched -> edge test, no change
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3},
+                      {'addr': '0x0067e938', 'val': 1}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 2}, {'addr': '0x0067e95c', 'val': 1},
+                      {'addr': '0x0067ea88', 'val': 0},
+                      {'addr': '0x007f1044', 'val': 0x00000100}, {'addr': '0x007f1504', 'val': 0x00000100},
+                      {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
+            # v5 profile 0 NOT an assigned slot -> guard holds it; profile 4 moves
+            {'seed': [{'addr': '0x007f1a14', 'val': 4}, {'addr': '0x007f1a24', 'val': 5}, {'addr': '0x007f1a34', 'val': 6}, {'addr': '0x007f1a44', 'val': 7},
+                      {'addr': '0x0067e938', 'val': 1}, {'addr': '0x0067e944', 'val': 1}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 1},
+                      {'addr': '0x0067e968', 'val': 0},
+                      {'addr': '0x0067ea88', 'val': 0},
+                      {'addr': '0x007f1044', 'val': 0x00000100}, {'addr': '0x007f1504', 'val': 0},
+                      {'addr': '0x007f1174', 'val': 0x00000100}, {'addr': '0x007f1634', 'val': 0},
+                      {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067e968', '0x0067ea88']},
+            # v6 the DAT_0067ea88 == 2 entry fixup, with a live DOWN on profile 1
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3},
+                      {'addr': '0x0067e938', 'val': 2}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2},
+                      {'addr': '0x0067ea88', 'val': 2},
+                      {'addr': '0x007f1044', 'val': 0}, {'addr': '0x007f1504', 'val': 0},
+                      {'addr': '0x007f1090', 'val': 0x00000100}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
+        ],
+        # NO path2_tests ON PURPOSE. path2 asserts that the inline JMP at the
+        # RVA points at THIS export, and it does not: 0x0042fa00's installed
+        # hook is the .asi-side twin PlayerSlotEdgeAdjust
+        # (Frontend/SkeletonAndScatter_t6.cpp). MenuTeamSelectTick is the
+        # EXE-SIDE copy, registered nowhere by design, so a path2 run here
+        # would either FAIL or -- worse -- pass only because a duplicate
+        # install had displaced the established one. This entry is a path1
+        # bit-identity check of the exe-side copy against the original; the
+        # RVA's C3 rests on the installed twin, and nothing here promotes it.
+    },
+
 }
