@@ -1709,3 +1709,709 @@ immediates are in code" and "`DAT_005f337c` is a `.data` table" were never in co
 the code writes the table. Chasing the mislabelled RVA cost a round; a plausible-looking
 disassembly at a wrong address was what made the false claim credible enough to state to
 the child as fact.
+
+---
+
+## Finding 21: the two remaining invented in-race UI sites, retired (2026-09-03)
+
+Scope: no new function was reversed. This is a **faithfulness** pass over the
+standalone's in-race UI, acting on Finding 3 / Finding 20 rather than adding to them.
+Two sites in `exe_main.cpp` drew UI with no original counterpart; both are now either
+dev-gated or replaced by already-ported code.
+
+### 1. The driving HUD was invented; the original has none
+
+`DAT_0063ba8c == 3` (mid-race driving) emits exactly one fully transparent quad per
+frame with the font pipe silent — Finding 3, measured over a free-running capture. So
+every one of these had no RVA to cite and could not appear in a draw-list diff except as
+an extra row:
+
+| element | site | note |
+|---|---|---|
+| pre-race countdown digit | `exe_main.cpp` countdown branch | invented |
+| `CAR n WINS` / `RACE OVER` banner | match-winner branch | invented |
+| `LAP n/m   POS p/4` | laps-mode readout | invented |
+| `TIME %.1f` rule-10 clock | `[D-11052]` | value real (`DAT_007f0fe4`), presentation invented |
+| `PWR: <name>  [SPACE]`, `BOOST`, `SHIELD` | power-up block | name real (LUA-verified), presentation invented |
+
+All are now behind `MASHED_DEV_HUD=1`, **off by default**. The underlying values stay
+bound to their real sources; only the widgets are gated. The standalone is hard to drive
+blind, so they are kept rather than deleted.
+
+### 2. The post-race RESULTS panel is retired — the results screen IS the standings screen
+
+The `GameMode::Results` overlay was a `[SCAFFOLD]` dark panel plus `RACE RESULTS`, four
+text rows and `[ESC] Continue`. The original has no such screen: the end-of-match screen
+is the same between-round standings screen (`DAT_0063ba8c` in `{5,6,7}`,
+`HudIngameDispatch 0x0040dfc0`'s guard) that this port already reproduces verbatim.
+Results now renders that ported overlay, via a `|| results` term in the `standings` bool
+and the removal of `!results` from the block gate. The invented panel is retained only
+under `MASHED_DEV_HUD=1` as a text dump of the outcome.
+
+Two corrections this turned up:
+
+- **`round_mode_` is set on BOTH routes into a race**, not only the `MASHED_ROUND` dev
+  path: `RaceSession::Begin` calls `StartMatch(3)` (`RaceSession.cpp:118`). The `||
+  results` term is therefore defensive, not load-bearing.
+- The ported standings text was the **third arm of an else-if chain** headed by the two
+  invented lines, so the invented `CAR n WINS` banner **suppressed** the three ported
+  strings at match end. It is now gated on the same `standings` bool as the chrome and
+  the rows, matching the original's three-strings-per-standings-frame emission.
+
+### Evidence (800x600, standalone `DumpBackbufferBMP`, not `PrintWindow`)
+
+| capture | env | result |
+|---|---|---|
+| `verify/run_31960/race1/00_results.bmp` | `MASHED_RACE_DEMO=1 MASHED_RESULT_DEMO=1 MASHED_GOTO=6` | Results screen shows ported chrome + white rules, the three text lines, four badge rows, bar frames and point circles. No `RACE RESULTS` |
+| `verify/run_31960/race1/01_grid.bmp` | same | mid-race, no winner yet — **clean**, no HUD ink at all |
+| `verify/run_32632/race1/01_grid.bmp` | same `+ MASHED_DEV_HUD=1` | same frame, countdown digit `2` present — A/B on one capture point |
+| `verify/run_32632/race1/00_results.bmp` | same `+ MASHED_DEV_HUD=1` | invented banner + panel draw over the ported overlay, as documented |
+| `verify/run_32604/r6/round2_result.bmp` | `MASHED_TRACK_VIEW=1 MASHED_CAR=1 MASHED_ROUND=1 MASHED_ROUND_SCORES=4,10,5,7 MASHED_ROUND_COLOURS=0,1,2,3` | round-mode standings path unregressed and **non-degenerate**: rows ordered `[1,3,2,0]` for scores `10,7,5,4`, distinct badges (Bluejay/Gold/Melon/Red), distinct deltas `+2/-2/+1/-1`, crown on row 0 only (score 10 >= threshold 10) |
+| `verify/run_32604/r6/round2_go.bmp` | same | driving frame — clean |
+
+No ported draw call changed, so the GREEN standings draw-list diff (`matched 4 / 0`
+chrome, plus the text rows) is unaffected. The one behavioural delta is strictly toward
+the original: three ported strings now emit at match end where the invented banner used
+to suppress them.
+
+---
+
+## Finding 22: `FUN_0041c410` ported and promoted C2 -> C3 (2026-09-03)
+
+The standings row update, the last C2 in the standings chain, is now
+`HudStandingsRowUpdate` in `mashedmod/src/mashed_re/HUD/HudStandingsRowUpdate.cpp`
+and installed at `0x0041c410`. Decompilation and disassembly were re-pulled against
+the anchored binary before writing it (analyzeHeadless + `DecompPC.java`, and capstone
+over the image; the Ghidra MCP is hard-blocked on this account).
+
+Finding 20 already had the semantics right. Three things it did NOT have:
+
+### 1. `group+0x80` is the 32-entry ATOMIC-POINTER table, and the four scaled fields are slots of it
+
+`+0x88`, `+0x8c`, `+0x94` and `+0x98` are not separate fields sitting near the handle
+table -- they ARE entries 2, 3, 5 and 6 of it (`0x80 + 2*4 == 0x88`, `0x80 + 3*4 == 0x8c`,
+`0x80 + 5*4 == 0x94`, `0x80 + 6*4 == 0x98`). So the loop's `*(this+0x80+i*4) != 0`
+visibility test is a null-POINTER test on an atomic, and the back half dereferences four
+of those same pointers at `+4` to reach their frames.
+
+This cost a RED round and is worth carrying forward as a shape, not a fact: the first
+version of the diff seeded those slots with opaque non-pointer handles `0x7000+i`, and
+BOTH sides AV'd at `0x7009`. The address is the tell -- `0x7005 + 4`, i.e. slot 5's
+"handle" dereferenced as the `+0x94` atomic. An identical AV on both sides is a harness
+bug, not a port defect ([[verifier-needs-passing-baseline]]).
+
+### 2. The original leaves four of the matrix's sixteen dwords undefined -- U-9081
+
+It writes the twelve basis/position floats and read-modify-writes the flags word at
+`+0x0c` over uninitialised stack (`0x0041c756` / `0x0041c75a` / `0x0041c76c`). The three
+RwMatrix pads at `+0x1c`, `+0x2c`, `+0x3c` are never written at all. The port reproduces
+that rather than defining it, and the diff recorder masks those four slots. Evidence that
+this is the original's property and not the port's: the first clean run had every other
+dword already bit-identical and ONLY indices 3, 7, 11 and 15 differing. Do not
+zero-initialise the matrix to make the diff prettier -- see U-9081.
+
+### 3. The function is IDEMPOTENT, which is why an A/B on live state would have been legal
+
+Worth recording because it was checked before designing the harness
+([[count-it-before-designing-a-witness]]). `FUN_004c1480` -> `RwMatrixCombine 0x004c52f0`
+with `combine == 0` copies 16 dwords (replace), and `FUN_004c13e0` -> `RwMatrixScale
+0x004c5010` with `mode == 0` resets the matrix to identity before writing the diagonal
+(also replace). The only `mode == 1` (pre-concat) call lands on the group frame that step
+6 just replaced. So the whole function recomputes its outputs from its inputs every frame
+rather than accumulating -- which is also why the rows do not drift over a standings
+screen's hundreds of frames.
+
+### Verification
+
+`arg_type esi_row_update_rw`, new in `re/frida/diff_template.js`: seeds the six globals
+the function reads and stubs all six callees with recorders, so the live RW graph is never
+touched and the function becomes a pure input -> output mapping. The three RW recorders
+are where the computed values leave the function, so the log carries the chosen row's
+translate vector, the caller-built matrix, the bar scale, the pulse, and the order and
+target of all five applies.
+
+| leg | result |
+|---|---|
+| path1 | **GREEN 8/8**, `log/diff_hud_standings_row_update.csv` |
+| path2 | install verified -- opcode `0xE9`, rel32 match, interceptor 2/2. The call-through FAIL is the known 0-arg/register-`this` verifier gap: the function takes `this` in ESI and `run_verify_hook.py` has no way to supply it |
+| production | 45 s `scenario_launch.py` race with the hook live; `spawnFired` stepped 12 -> 16 -> 20, i.e. rounds ENDED and restarted, so the standings arm ran every frame. No AV, `grounded=4` throughout (no x87 NaN freeze) |
+
+That production leg closes the open risk carried in `re/NEXT_SESSION.md`: the
+`HudSlotUpdateCc50` guard-SET arm was previously unexercised outside a boot smoke test.
+
+**Non-degeneracy.** Vectors v0-v4 were GREEN with 30 of the 32 slot dwords zero on both
+sides, because the enable bits `0x1..0x3f`, `0x400` and `0x800` are ones this function
+PRESERVES rather than computes (the delta mask is `0xfffe0fff` and the four flag phases
+only touch `0x40/0x80/0x100/0x200`) -- so 24 of the 26 switch arms took their zero branch.
+v5-v7 seed the incoming enable word and lift that to 9, 8 and 16 non-zero slots. Final
+coverage: both flag cleanups, all five delta arms, all four row translations (y = 0.25,
+0.15, 0.05, -0.05) plus the no-match fallback, all 26 slot arms, seven bar ratios
+including both endpoints, and the pulse in all three arms -- positive tick, negative tick
+through the `+2^32` wrap, and crown clear.
+
+**C4 is blocked**, for the ordinary reason plus one extra: path1 is hook-bypassed
+synthetic, and the RW callees are stubbed rather than live.
+
+---
+
+## Finding 23: `DAT_0067ea64` = TEAM PLAY, now evidenced (U-9078 RESOLVED, 2026-09-03)
+
+### The answer, and a correction of this section's own first draft
+
+`DAT_0067ea64 != 0` means **Team Play**. The "team-mode flag" label this tree has carried
+for months is **correct**; what it lacked was evidence, not accuracy. Two independent
+citations:
+
+1. **The mode-select entry that sets it is named.** ENGLISH.DAT message `0x140` is
+   **"Team Play"**, mapping to menu action `0xff2e0000`, and `FUN_0043dfd0` does
+   `DAT_0067ea64 = (uVar10 == 0xff2e0000)` on that arm. Its sibling `0x13e` is
+   **"Standard Play"**. The id -> action pairing is already recorded independently at
+   `mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp:1075`.
+2. **The setup screen keeps it in sync with its own toggle.** `FUN_004368e0` at
+   `0x00436e1a` does `DAT_0067ea64 = DAT_0067eaac ^ 1` every frame; the toggle is written
+   `^ 1` at `0x004403b5` and `0x00440920` (the left/right handlers' `iVar8 == 7` row) and
+   initialised to 0 at `0x00431d3a`.
+
+**The trap, recorded because I fell into it in this very section.** That same
+`FUN_004368e0` branch also draws two strings at fixed screen positions:
+
+```
+0x00436e1a   DAT_0067ea64 = DAT_0067eaac ^ 1;
+             if (extra_players == 3 && DAT_0067eaac != 0) {
+                 FUN_00427e00(0x124, 344.0, 334.0, ...);  // "First to 12 points wins."
+                 FUN_00427e00(0x125, 344.0, 350.0, ...);  // " "
+             } else {
+                 FUN_00427e00(0x12c, 344.0, 334.0, ...);  // "First to 8 points wins."
+                 FUN_00427e00(0x12d, 344.0, 350.0, ...);  // " "
+             }
+```
+
+Those are a two-line **description caption** stating the CONSEQUENCE of the current
+configuration. The first draft of this finding read them as the flag's DEFINITION and
+concluded "`DAT_0067ea64` is the points-target selector, not a team flag" -- and went as
+far as filing an uncertainty asserting the team label was unsupported. That reading fits
+both consumers below perfectly, which is exactly what made it convincing, and it is still
+wrong: it cannot explain the `0x140` "Team Play" writer, and it cannot explain the
+team-scoring grouping at `0x0040eee0`. **A string near a write describes the write's
+effect; it does not necessarily name the variable.** The generalisable rule is the one
+this project already applies to decimal glosses -- prefer the witness that constrains the
+identity (a named menu entry that WRITES the flag) over the witness that merely
+correlates (a caption drawn beside it).
+
+Strings decoded from `ENGLISH.DAT` (Font36.piz) through the `FUN_00427780` offset table
+(`entry = base + *(u32*)(base + id*4)`, then `[u16 len][len x u16 UTF-16LE]`), self-checked
+against id `0x21` -> `"Single Player"` and `0x23` -> `"Championship"`.
+
+### The mechanics, which the correction does not change
+
+| | `FUN_0040b890` @`0x0040b890` (points target / bar max) | `FUN_0040b8e0` @`0x0040b8e0` (crown threshold) |
+|---|---|---|
+| base | `12` if `DAT_008a94d0 == 4` else `8` | `10` if `DAT_008a94d0 == 4` else `7` |
+| `ea64 != 0` (team play) | -> `8` | -> `7` |
+| rule `== 1` / `== 2` (`DAT_007f0fd0`) | -> `8` | -> `7` |
+
+So **team play -> (target 8, crown 7)** and **standard play with 4 participants ->
+(target 12, crown 10)**, which is what the caption reports and why the caption was such a
+plausible definition. The bar max IS the points target.
+
+**Correction to an older note:** the offset between target and threshold is NOT constant
+(`12-2` but `8-1`), so the `exe_main.cpp` comment claiming "max = threshold + 2 in both
+arms" was wrong. Reported as the code computes it.
+
+**Reachability** -- the open half of U-9078's question -- is **yes**: Team Play is a
+player-facing mode choice, and the setup screen's 12-point caption additionally requires 3
+extra players, mirroring `FUN_0040b890`'s `participants == 4` arm.
+
+### Port change
+
+`exe_main.cpp` previously evaluated the rule test **twice** -- once for the crown threshold
+and once, separately, for the bar max -- with `ea64` unmodelled in both, which is what made
+the flag look doubly unbound. Both functions are now transcribed once and both consumers
+read `kPointsTarget` / `kWinThreshold` from that single evaluation.
+
+`MASHED_TEAM_PLAY=1` pokes the flag (display-only, same pattern as `MASHED_ROUND_SCORES` /
+`MASHED_CROWN_TEST`). It moves **only these two scoring determinants** -- it does not
+switch the port to team scoring, which is unported (`0x0040eee0`, U-9082). The participant
+count is `kRaceCars`, so a variable-participant race feeds it rather than needing this code
+touched.
+
+Verified by capture A/B at identical scores `4,7,5,2`:
+
+| run | mode | result |
+|---|---|---|
+| `verify/run_13464/r6/round2_result.bmp` | standard (flag 0) | no crown; the score-7 row shows 7 bar cells |
+| `verify/run_20684/r6/round2_result.bmp` | team (flag 1) | crown on the score-7 row (7 >= 7) and a visibly fuller bar, `round(7/8*12) = 11` cells |
+
+One flag, both consumers flipping together -- which is what U-9078 asked, and it is the
+binding rather than the decode that closes it.
+
+### Residue
+
+**U-9082**: team scoring itself is unported. `FUN_0040eee0` walks
+`(&DAT_007f1a18)[i*4]` and aggregates players into groups when the flag is set;
+`DAT_007f1a18` is field `+0x04` of the stride-`0x10` per-player record whose `+0x00` is the
+absent-slot sentinel and whose `+0x08` is Player Colour. "Team affiliation" is the natural
+reading and is consistent with this finding, but the field's writer and the grouping's
+output are still unread -- and note that an xref scan will MISS the writer, because a
+per-player write is `base + i*0x10 + 4`.
+
+---
+
+## Finding 24: team scoring decoded end to end (2026-09-03)
+
+Follow-on from Finding 23. **Nothing here required a new port change** — the whole chain
+was already implemented; what was missing was a stated rule and three uncited constants.
+U-9082, which I filed claiming this was unported, is withdrawn as never-valid.
+
+### The record
+
+Per-car records at `0x007f1a14 + i*0x10`, four slots, block end `0x007f1a58`:
+
+| offset | meaning | evidence |
+|---|---|---|
+| `+0x00` | **player/profile index**, `-1` = no player assigned | `FUN_0043df00` writes `1` to `0x007f1a24` and `2` to `0x007f1a34` (records 1 and 2); `MenuTeamBalance` uses it as an index into a stride-3 table |
+| `+0x04` | **team id**, `0` or `1`, `-1` = unassigned | `FUN_0042bb60` clears all four to `-1` then assigns |
+| `+0x08` | Player Colour | Finding 16 |
+
+**Correction to an earlier reading:** `+0x00` is not merely an absent-slot sentinel. It is a
+player index, so the team loop's `piVar8[-1] != -1` guard means "this slot has an assigned
+player" — team points go to *player* slots, not to every car.
+
+### Assignment — `FUN_0042bb60` = `MenuTeamBalance` (C3, `Frontend/MenuNav.cpp`)
+
+```
+for (p = &DAT_007f1a18; p < 0x7f1a58; p += 0x10)  *p = -1;      // clear
+for each slot i with record[+0x00] >= 0:
+    team_i = (&DAT_0067e938)[ record[+0x00] * 3 ] - 1;          // 0 or 1
+```
+
+So the team comes from a **stride-3-dword per-player table at `0x0067e938`**, biased by
+`-1` (stored 1/2 -> team 0/1). `MenuNav.cpp:131` already documented that derivation.
+
+The rest of the function is a **team-split validator** over the counts
+`n` = occupied slots, `a` = slots on team 0, `b` = slots on team 1:
+
+| n | condition | returns |
+|---|---|---|
+| 2 | `a==1 && b==1` | `0x1000` |
+| 3 | `(a==1&&b==2)` or `(a==2&&b==1)` | `0x1000` |
+| 4 | `(a==2&&b==2)`, `(a==1&&b==3)` or `(a==3&&b==1)` | `0x1000` |
+| 3 or 4 | `a==0` | `1` |
+| otherwise | | `(b != 0) + 2`  (i.e. `2` or `3`) |
+| n not in 2..4 | | `-1` |
+
+`0x1000` is the only legal-split result; `1`/`2`/`3` are the rejection codes (every
+non-`0x1000` case has at least one empty team). So **both teams must be non-empty**.
+
+### Consumption — `FUN_0040eee0` (C3, `Race/ScoringHooks.cpp`)
+
+`FUN_0040eee0(car, delta)` runs at a round end. It counts survivors, appends `car` to the
+elimination-order list at `DAT_008a94c0`, then dispatches on participants
+(`DAT_008a94d0` == 2 / 3 / 4) and, inside each, on `FUN_0042f500()` — the Team Play flag of
+Finding 23. The team arms all reduce to one rule:
+
+```
+winning_team = TeamId(surviving_or_tiebreak_winner);
+for i in 0..3:
+    if (record_i[+0x00] != -1)
+        FUN_0040b290(i, TeamId(i) == winning_team ? +delta : -delta);
+```
+
+`FUN_0040b290` is the score adder (C4, verified). Individual play instead awards per car:
+`-delta` to the eliminated car and `+1`/`+2` to the survivor.
+
+### The same-team tie-break, and its three constants
+
+When the last survivors are on the **same** team there is no winner to read off, so the
+function compares race progress and eliminates the one behind. Newly cited here:
+
+```
+a = (float)RaceScoreFloatGetBySlot(carA);        // 0x00408ad0, C3
+b =        RaceScoreFloatGetBySlot(carB);
+if (a <= 80.0 || 20.0 <= b) { if (80.0 < b && a < 20.0) b -= 100.0; }
+else                        {                            a -= 100.0; }
+if (a <= b)  eliminate carA;  else  eliminate carB;
+```
+
+| address | value | role |
+|---|---|---|
+| `_DAT_005cc730` | **80.0** | high band |
+| `_DAT_005ccd6c` | **20.0** | low band |
+| `_DAT_005cc568` | **100.0** | wrap period |
+
+That is a wraparound comparison on a **0..100 progress scale**: if one car is just past the
+lap boundary (`< 20`) and the other just short of it (`> 80`), a period of `100.0` is
+subtracted from the trailing value before comparing, so a car that has just crossed the
+line is correctly ranked ahead. `_DAT_005cc730` = 80.0 is the same constant the standings
+chrome uses as a band height (Finding 6) — a shared literal, not a shared meaning.
+
+### Residue
+
+Not an RE unknown but a **port gap**, already recorded at `exe_main.cpp:4822`: the
+player-setup enter handler that writes `DAT_0067e938` is not ported, so the standalone
+cannot assign teams and `MenuTeamBalance` has nothing to balance. Team Play support would
+start there, not in the scoring code, which is done.
+
+---
+
+## Finding 25: the player-setup handler ported; teams assignable in the standalone (2026-09-04)
+
+Closes the port gap Finding 24 left: the standalone can now assign teams.
+
+### What the handler is
+
+`FUN_0042fa00` is the per-frame input step of the **Team Select** screen (nav screen 16,
+renderer `FUN_0043aa30`), sole caller `FUN_0043c000` @`0x0043c44a` (C4). For each of 12
+profiles that is one of the four assigned car slots (`DAT_007f1a14/24/34/44`, stride
+`0x10`):
+
+```
+if UP   newly pressed and table[i] != 0   ->  table[i] -= 1
+if DOWN newly pressed and table[i] <  2   ->  table[i] += 1      table = 0x0067e938 + i*12
+```
+
+Two decodes worth stating, because both are easy to get backwards:
+
+- **The columns are 0 = UP and 1 = DOWN, not left/right.** The decompiler renders them as
+  byte displacements `pcVar3[-0x4c0]` / `pcVar3[-0x4bf]` off the PROCESSED pointer, which
+  resolve to active `0x007f1044 + i*0x4c + {0,1}` against processed `0x007f1504 + ...`,
+  matching the column model at `exe_main.cpp:2205`.
+- **The value is a 3-state selector, not a boolean**: `0` = no team, `1` = team A, `2` =
+  team B. That is why `MenuTeamBalance` subtracts 1 (Finding 24) and why a player can sit
+  in neither of the screen's two team panels.
+
+The loop count is 12, from the processed pointer running to `0x007f1894` exclusive at
+stride `0x4c`. The entry fixup `if (DAT_0067ea88 == 2) DAT_0067ea88 = 0;` is kept verbatim:
+`DAT_0067ea88` is the same global the car-select arm reads to pick the race rule
+(`ea88 == 2` -> rule 2 **and** `DAT_0067ea64 = 1`), so dropping it would move a determinant
+the standings screen reads.
+
+### A duplicate-implementation trap, hit and backed out
+
+`0x0042fa00` was **already C3-implemented** as `PlayerSlotEdgeAdjust`
+(`Frontend/SkeletonAndScatter_t6.cpp`, GREEN 0/10). I wrote a second implementation before
+checking, and shipped a second `RH_ScopedInstall` on the same RVA — the U-9065 shape, where
+both register, one silently wins and the other becomes dead code still reading as C3. The
+path2 run actually confirmed *my* export had displaced the established one.
+
+The second copy is nonetheless **needed**, for a reason worth remembering: that TU is in
+`asi_sources.rsp` but **not** in `build.bat`'s exe list, so the standalone cannot reach it —
+which is precisely why teams were unassignable. The resolution is one RVA, one install:
+the copy lives in `Frontend/MenuNav.cpp` (in *both* build lists, next to `MenuTeamBalance`),
+and **registers no hook**. The `.asi` keeps the established install.
+
+Recorded inert divergence between the twins: `PlayerSlotEdgeAdjust` guards `*piVar5 > 0`
+and adds a trailing `[0,2]` clamp pair; the original has neither (it guards `!= 0` and
+clamps only through the two ±1 guards). Equivalent for values already in range, which is
+why it diffed GREEN. The new copy follows the original.
+
+### Verification
+
+`path1 GREEN 7/7 non-degenerate` (`log/diff_menu_team_select_tick.csv`, arg_type
+`cache_setter_observe`). Each vector isolates one arm and every observation moved exactly
+as predicted:
+
+| v | input | result |
+|---|---|---|
+| 0 | DOWN, table `0,1,2,1` | profile 0 `0 -> 1` |
+| 1 | DOWN, profile 0 at `2` | clamped, unchanged (`< 2` guard) |
+| 2 | UP, table `1,2,0,2` | profile 0 `1 -> 0` |
+| 3 | UP, profile 0 at `0` | clamped, unchanged (`!= 0` guard) |
+| 4 | DOWN, processed already latched | unchanged (edge test) |
+| 5 | DOWN, slots `{4,5,6,7}` | profile 0 HELD by the slot guard while profile 4 moves `0 -> 1` |
+| 6 | `DAT_0067ea88 = 2`, DOWN on profile 1 | fixup fires (`-> 0`) **and** profile 1 moves |
+
+No path2 entry on purpose: path2 asserts the RVA's JMP points at that export, and it points
+at the installed twin.
+
+### Standalone wiring, and what is port-side glue
+
+Three pieces of glue, none of them a port of anything, all marked as such in source:
+slot seeding on the screen-16 entry edge (`profiles 0..3`, replacing the cold-boot
+all-zeros that made every row the same player); the **consume step** (`processed = active`
+after the tick — MASHED's convention, which `FUN_0042fa00` itself does not perform, and
+without which a held key retriggers every frame); and the fact that only profile 0 has an
+input device in the standalone, so only player 1's team is editable — a device-count limit,
+not a port gap.
+
+`MASHED_TEAM_KEYS="dd"` taps UP/DOWN through the same active/processed protocol a real key
+would. It exists because OS-level key injection (`keybd_event` via `sa_capture`) does not
+reach this exe's DirectInput device, so the handler could not otherwise be exercised in an
+unattended capture. It injects **input**, not state, so a regression in the handler still
+surfaces.
+
+| capture | taps | rows |
+|---|---|---|
+| `verify/teamsel_default.bmp` | none | all `-`, "teams unbalanced" |
+| `verify/teamsel_keys.bmp` | `d` | row 0 = **A** |
+| `verify/teamsel_keys2.bmp` | `dd` | row 0 = **B** |
+
+The verdict correctly stays "teams unbalanced" throughout: `MenuTeamBalance` counts all
+four slots, three of which have no device and so stay at team `-1`, which is a rejection
+case by the Finding 24 table.
+
+The per-row `A`/`B`/`-` letter and the verdict line are **[SCAFFOLD] presentation** — the
+state is faithful but how the original displays it is unmeasured (it has two team panels at
+x=248/428 and presumably moves a row marker between them). No capture of a populated Team
+Select screen exists yet; do not infer the marker geometry from the two header positions.
+
+---
+
+## Finding 26: a legal team split in the standalone (2026-09-04)
+
+Finding 25 made teams assignable but every capture read "teams unbalanced", because only
+one profile could pick. This closes that.
+
+### There is no AI-slot route — the original assigns no teams automatically
+
+Worth settling, since it was one of the two candidate approaches. The transition into this
+screen (`FUN_0043dfd0`, menu action `0xff1d0000`) does:
+
+```
+if (FUN_00430760() == 0) {                  // game mode in {2,3,4,5,10}
+    if (FUN_0042b9e0() == 0x1000) {         // slot assignment succeeded
+        for (off = 0; off < 0x90; off += 0xc) {
+            DAT_0067e850[off] = 1;
+            DAT_0067e938[off] = 0;          // EVERY team reset to "no team"
+        }
+        for (i = 0; i < 4; ++i) FUN_0046dc00(i, 1);
+        FUN_0043d2a0(DAT_0067ea64 == 0 ? 0xf : 0x10, 0);   // -> screen 15 or 16
+    } else if (... rejection codes -> messages 0x24a / 0x31 / ...)
+}
+```
+
+All twelve team entries are reset to 0 on entry, so **nobody is auto-assigned** — every
+participant picks by hand. An AI slot cannot be given a team by any code path here. Note
+also the screen choice: `DAT_0067ea64 == 0` goes to Ability Select (15), non-zero to Team
+Select (16), which independently corroborates Finding 23's Team Play reading.
+
+### What actually gates participation: `FUN_0042b9e0` (`CarSlotAssign`, C3, already ported)
+
+Each profile has a pick in a **12-entry stride-3-dword table at `0x0067eaf0`**; `0` means
+not participating, `1..6` is the chosen player number. The assigner:
+
+1. clears the four car slots;
+2. counts entries `>= 1` and returns **1** if fewer than two;
+3. scans for two equal positive entries and returns **0** on a duplicate;
+4. resets the four slot records' `+0x00` to `-1`;
+5. walks picks `1..6` in order, and for each match writes slot `+0x00` = profile index and
+   slot `+0x08` = pick − 1 (the **Player Colour**, matching Finding 16), returning `0x1000`.
+
+So a legal split needs **at least two participating profiles**, and the port's job is to
+supply the assigner's INPUT, not to fabricate its output.
+
+### Port change
+
+The screen-16 entry now follows the original's sequence: seed the pick table, call
+`CarSlotAssign()`, and on `0x1000` reset the team table exactly as the original does. This
+replaces the hand-seeded slot table from Finding 25, which wrote `0x007f1a14` directly and
+so bypassed the assigner — producing four slots no original path would produce, and
+skipping the team reset so picks leaked across entries. `MASHED_PLAYERS=N` (2..4, default
+2) chooses how many profiles get a distinct pick.
+
+`FUN_0046dc00(i, 1)` is deliberately **not** called — unported, so invoking it from the exe
+would jump into an RVA this binary does not implement. It is left in the quoted sequence so
+the omission is visible.
+
+### One real defect found and fixed: an RVA tunnel that AV'd the standalone
+
+The first run of this crashed at `0xC0000005`. `CarSlotAssign` calls `FUN_0040e480`
+(`CarSlotStateSet`) through its original `.text` RVA, and the standalone maps no such code
+— only the `0x00420000` and `0x00470000` `.text` granules are claimed. The function was in
+`build.bat`'s exe list but had never been *called* from the exe, so the tunnel was latent.
+
+Fixed at the single point rather than by duplicating the assigner: `CallSlotWrite` is a
+no-op under `/DMASHED_STANDALONE` (the exe's existing build macro), leaving the `.asi` path
+byte-identical. A no-op is correct, not a shortcut — the callee sets the per-slot CAR-ALIVE
+entry whose only consumers (`FUN_0040eee0` and the elimination counters) are themselves
+unported, and the standalone tracks liveness in `TrackRenderer`. An inline write to
+`*(PTR_PTR_005f2770) + idx*4 + 0x34` was rejected because `0x005f2770` is not a committed
+granule — that would trade one access violation for another.
+
+`.asi` boot smoke after the change: 22 s, alive, killed by PID.
+
+### Verification — the verdict discriminates
+
+`MASHED_TEAM_KEYS` is now per-profile (`"0d,1dd"` = profile 0 DOWN once, profile 1 DOWN
+twice). It injects input through the same active/processed protocol a real key uses, and it
+exists because this machine has one device: the handler reads all twelve profiles' input
+records, so a second real device would drive profile 1 with no code change.
+
+| capture | players / taps | rows | verdict |
+|---|---|---|---|
+| `verify/teamsel_default.bmp` | 2, none | `-` `-` `-` `-` | teams unbalanced |
+| `verify/teamsel_split.bmp` | 2, `0d,1dd` | **A B** `-` `-` | **teams ok** |
+| `verify/teamsel_sameteam.bmp` | 2, `0d,1d` | **A A** `-` `-` | teams unbalanced |
+| `verify/teamsel_2v2.bmp` | 4, `0d,1d,2dd,3dd` | **A A B B** | **teams ok** |
+
+Those are exactly the Finding 24 validator's predictions: `n=2 a=1 b=1` -> `0x1000`;
+`n=2 a=2 b=0` -> `0`; `n=4 a=2 b=2` -> `0x1000`. The unassigned rows correctly read `-`,
+since slots 2 and 3 stay at `-1` with two participants and are not counted.
+
+### Remaining scaffold
+
+The per-row `A`/`B`/`-` letter and the verdict line are still `[SCAFFOLD]` presentation
+(Finding 25) — and the row COUNT is too: the port draws four rows regardless, while the
+original presumably draws one per participant. The state behind them is faithful; the
+layout is not measured, and no capture of a populated Team Select screen exists yet.
+
+---
+
+## Finding 27: Team Select row model read out of `FUN_0043aa30` (2026-09-04)
+
+The row count is **one per assigned car slot, in profile order** — not a fixed four. Taken
+from the renderer rather than from a capture, which matters because the only capture we had
+(`verify/parity/orig_s16.bmp`) was a jumped-to default where all four slots held profile 0,
+so four rows was an artefact of that state.
+
+### The loop
+
+```
+iStack_7c = 0; piStack_34 = &DAT_0067e938;          // outer: 12 PROFILES
+do {
+    piVar5 = &DAT_007f1a1c;                          // inner: 4 SLOT records, stride 0x10
+    do {
+        if (piVar5[-2] == iStack_7c) {               // slot's profile index == this profile
+            ... draw plate, car sprite, name, number ...
+            fStack_70 += _DAT_005cd274;              // Y advances ONLY on a drawn row
+        }
+        piVar5 += 4;
+    } while (piVar5 < 0x7f1a5c);
+    piStack_34 += 3; iStack_7c++;
+} while (piStack_34 <= 0x67e9c7);                    // 12 profiles
+```
+
+So an unassigned slot (profile index `-1`, which is what `CarSlotAssign` leaves for a
+2-player game) contributes no row at all, and rows are ordered by **profile**, not by slot —
+row `r` and slot `r` are different things, which the per-row team lookup now respects.
+
+### Exact geometry, replacing measured approximations
+
+| element | value | source |
+|---|---|---|
+| row plate | x `70.0`, w `510.0`, h `28.0`, first y `200.0` | `uStack_74` / `uStack_30` / `uStack_2c` / `fStack_70` |
+| row pitch | `40.0` | `_DAT_005cd274` |
+| car sprite | `48 x 48` at x = `pick * 180.0 + 82.0`, y = `rowY - 10.0` | `fStack_64 = iVar4 * 0xb4 + _DAT_005cd95c`; `fStack_60 = (fStack_70 - 2.0) - 8.0` |
+| team roster | `48 x 48` at y `108.0`, x = `250.0`/`430.0` + n * `34.0` | `iStack_48 = iStack_40 * 0x22 + 0xfa`, `iStack_44 = iStack_3c * 0x22 + 0x1ae`, `uStack_24` |
+| headers | x `250.0`/`430.0`, w `140.0`, h `28.0`, y `140.0`; text x `320.0`/`500.0` y `154.0` | the two `FUN_0042f8d0` + `FUN_00427e00` pairs |
+
+Two of these **confirm** the earlier measurements rather than overturning them: the fitted
+`carX` was 81 against the code's 82, and the fitted vertical centring `ry + rowH/2 - h/2` is
+exactly `ry - 10` once the height is the code's 48. The fitted sprite SIZE (51.5 x 47, from
+a red-ink bbox with a scale fudge) is superseded — an ink bbox was never going to recover a
+quad with transparent margin, which is the case for preferring the emitter.
+
+**The horizontal slide IS the original's marker.** `x = pick * 180 + 82` moves each row's
+car sprite between three positions as that player scrolls 0/1/2, and a second copy of the
+sprite is stacked into the team panel at the top. That is what the `[SCAFFOLD]` A/B/- letter
+was standing in for. The letter is kept as a legibility aid at this resolution and is still
+marked scaffold; the slide and the rosters are ported.
+
+**Sprite identity**: the row draws `FUN_0042fab0(*piVar5)` where `piVar5` is the slot's
+`+0x08` field — the Player Colour `CarSlotAssign` wrote as `pick - 1` (Finding 26) — so each
+row shows that player's car, via the same `kHandleCar0 + colour` NFL* range the colour-select
+screen already uses. This retires the old `[UNCERTAIN]` about the per-player mapping being
+unmeasurable: it was unmeasurable only because every row was car 0 at the jumped-to default.
+
+Ability Select (screen 15) keeps its fixed-four measured layout — different renderer, not
+read, no evidence its loop shares this shape.
+
+### Verification
+
+| capture | players | result |
+|---|---|---|
+| `verify/teamsel_rows2p.bmp` | 2 | **two** rows, Red at team-1 x and Bluejay at team-2 x, one roster sprite under each header, "teams ok" |
+| `verify/teamsel_rows4p.bmp` | 4 | **four** rows with four DISTINCT cars (Red / Bluejay / Melon / Gold), two per team, rosters stacked at pitch 34 under each header, "teams ok" |
+
+### A false diagnosis, recorded
+
+An intermediate capture showed all four rows red, and I attributed it to `SlotColour`
+returning 0. Instrumenting instead of reasoning proved the opposite: the log line read
+`asg=0x1000 picks=1,2,3,4 slots=(p0,c0)(p1,c1)(p2,c2)(p3,c3)`, i.e. the assigner and the
+colours were correct the whole time, and the all-red frame was a stale BMP from before the
+rebuild landed. The lesson is the cheap one — a capture is a file on disk, and a file that
+predates the build proves nothing about the build. The diagnostic has been removed.
+
+---
+
+## Finding 28: Ability Select (screen 15) renderer identified and ported (2026-09-04)
+
+`FUN_0043a610` is the Ability Select renderer. The port had it recorded only as
+"`(15, FUN_0042...)`", i.e. unknown.
+
+### Identifying it, including a wrong guess
+
+The panels are **not** a screen-id switch. `FUN_0043bf30` is a flat list of
+`if (flag != 0) render()` pairs — independent fading overlays. `FUN_0043c000` (the frontend
+tick, C4) drives them: `DAT_0067e7e0` is the team panel's state (`1` up, `2` fading) with
+`DAT_0067e7e4` its alpha, which is exactly the byte `FUN_0043aa30` reads at entry, and
+`FUN_0042fa00` is called **only** while that state is `1` (`0x0043c150`) — independently
+confirming Finding 25's team-only gating.
+
+I first guessed the sibling flag `DAT_0067e7e8` -> `FUN_0042fb70` on adjacency. **Wrong**:
+that function is a 3-row settings strip (track / player-count / music) with Arrow sprites,
+looping `iVar7 < 3` over `DAT_0067ea84` / `DAT_0067ea78` / `DAT_0067ea80`. Adjacency in a
+flag block is not evidence of relatedness. `FUN_0043a610` is the real one, and it is
+identifiable from its body without needing the flag: four header plates and the same
+profile-major row loop.
+
+### Same shape as Team Select
+
+```
+piStack_44 = &DAT_0067e850;                  // outer: 12 profiles, stride 12, bound 0x67e8e0
+do {
+    piVar6 = &DAT_007f1a1c;                  // inner: 4 slot records, stride 0x10, bound 0x7f1a5c
+    do {
+        if (piVar6[-2] == iStack_70) {       // slot's profile index == this profile
+            ...
+            local_34 += _DAT_005cd274;       // Y advances ONLY on a drawn row
+        }
+        piVar6 += 4;
+    } while (piVar6 < 0x7f1a5c);
+    piStack_44 = piVar7 + 3; iStack_70++;
+} while (piStack_44 < 0x67e8e0);
+```
+
+So Ability Select is **one row per assigned slot in profile order** as well, and its old
+fixed-four was the same jumped-to-default artefact. The outer table `DAT_0067e850` is the
+one the entry sequence sets to 1 for all twelve entries (Finding 26) — which is why the
+cold default puts every player in ability column 1.
+
+### Exact geometry
+
+| element | ability (`FUN_0043a610`) | team (`FUN_0043aa30`) |
+|---|---|---|
+| headers | x `65.0 + c * 130.0`, w `120.0`, 4 of them | x `250.0` / `430.0`, w `140.0` |
+| header y / h | `140.0` / `28.0` | same |
+| row plate | x `60.0`, w `523.0` | x `70.0`, w `510.0` |
+| row y / pitch | `200.0` / `40.0` | same |
+| car sprite | `48 x 48` at x = `ability * 130.0 + 64.0`, y = `rowY - 10.0` | x = `pick * 180.0 + 82.0`, same y |
+
+The sprite slide is the same mechanism on both screens, and on Ability Select the slide
+constant `130` **is** the header pitch, so the sprite lands under the chosen column. The
+previously measured header values (63 / w124 / pitch 128) were within a few px, so this
+tightens them rather than overturning them.
+
+[UNCERTAIN] the ability row plate's 4th argument decompiles as a reused register (`uVar4`,
+clobbered by the `FUN_0042fab0` call on the following line), so its height is taken as
+`28.0` by analogy with the headers and the team rows rather than read off the listing.
+
+### Port change
+
+Both screens now share the profile-major row loop, the exact header/plate geometry, the
+48x48 sprite, and the per-player colour sprite. The entry sequence (assign + team reset)
+was moved out of the team-only branch, because `FUN_0043dfd0`'s `0xff1d0000` arm runs it
+BEFORE choosing 15 or 16 — Ability Select needs assigned slots just as much, and without
+them `drawN` collapses to the single fallback row.
+
+The per-frame INPUT tick stays team-only, on the cited gate: Ability Select has its own
+input handler which is **not** ported, so ability values stay at the entry default of 1 and
+no ability input is invented.
+
+### Verification
+
+| capture | result |
+|---|---|
+| `verify/abilsel_2p.bmp` | **two** rows, two distinct cars, both under the "Pro" column (ability 1 -> x 194 against that header's x 195) |
+| `verify/abilsel_4p.bmp` | **four** rows, four distinct cars (Red / Bluejay / Melon / Gold), all in column 1 |
+| `verify/teamsel_rows4p.bmp` | Team Select unregressed after the restructure: 4 rows, 2v2, rosters, "teams ok" |

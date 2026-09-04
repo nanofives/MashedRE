@@ -1,13 +1,13 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-03T00:00:00Z",
+  "updatedAt": "2026-09-04T17:30:00Z",
   "sections": [
     {
-      "heading": "Current lane",
+      "heading": "Project",
       "fields": [
         {
-          "label": "Lane",
-          "value": "In-race UI (standings overlay)",
+          "label": "Phase",
+          "value": "Roadmap v3 (default-build rule)",
           "kind": "text"
         },
         {
@@ -16,106 +16,89 @@
           "kind": "text"
         },
         {
-          "label": "Head",
-          "value": "b5c25d1d \u2014 3 standings functions promoted to C3",
+          "label": "Latest",
+          "value": "0x0041c410 standings row update C2->C3; in-race UI now fully ported",
           "kind": "text"
         },
         {
-          "label": "Phase",
-          "value": "R7 \u2014 full game systems",
+          "label": "Standings chain",
+          "value": "4 C3s, no C2 left",
+          "kind": "text"
+        },
+        {
+          "label": "U-9078",
+          "value": "RESOLVED \u2014 0x67ea64 = Team Play (msg 0x140); target 8/crown 7",
+          "kind": "text"
+        },
+        {
+          "label": "Setup screens 15/16",
+          "value": "both ported: 1 row/participant, column slide, per-player car",
+          "kind": "text"
+        },
+        {
+          "label": "Invented UI left in-race",
+          "value": 0,
+          "kind": "number"
+        }
+      ]
+    },
+    {
+      "heading": "Coverage (first-party, 3682 functions)",
+      "fields": [
+        {
+          "label": "C4 verified",
+          "value": 185,
+          "kind": "number"
+        },
+        {
+          "label": "C3 ported",
+          "value": 916,
+          "kind": "number"
+        },
+        {
+          "label": "C3+ total",
+          "value": "28.8%",
           "kind": "text"
         }
       ]
     },
     {
-      "heading": "Standings port",
+      "heading": "Debt",
       "fields": [
         {
-          "label": "Verified",
-          "value": [
-            "Letterbox chrome + 5-frame entry slide (4/0)",
-            "Text strings + prompt glyph",
-            "Per-car badge bound to Player Colour",
-            "Point circles, bar cells, max 8/12"
-          ],
-          "kind": "list"
+          "label": "UNCERTAINTIES",
+          "value": 2980,
+          "kind": "number"
         },
         {
-          "label": "Just resolved",
-          "value": "U-9077 \u2014 4-piece bar frame was a false premise; shipped single-UV a22 is DFF-exact",
-          "kind": "text"
+          "label": "STUBS",
+          "value": 1072,
+          "kind": "number"
         },
         {
-          "label": "Still approximate",
-          "value": [
-            "U-9070 colour-5 badge",
-            "U-9073/74/76",
-            "Slot-to-atomic map (DFF plugin data unparsed)"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "U-9071 crown",
-          "value": "Pulse law decoded: sin(tick*0.2)*0.15+1.0, leader-gated",
-          "kind": "text"
+          "label": "DEFERRED",
+          "value": 43,
+          "kind": "number"
         }
       ]
     },
     {
-      "heading": "Newly reversed",
+      "heading": "Strongest subsystems",
       "fields": [
         {
-          "label": "Camera",
-          "value": "FUN_0040de30 \u2014 ortho, view window {0.6,0.45}, identity frame; screen = (1-w/vw)*half on both axes",
+          "label": "Save",
+          "value": "93.8% C3+",
           "kind": "text"
         },
         {
-          "label": "Row placement",
-          "value": "FUN_0041c410 via FUN_0041cc50 \u2014 DAT_005f337c 4x vec3 {0.48, y, 1.0}",
+          "label": "Frontend",
+          "value": "68.9% C3+",
           "kind": "text"
         },
         {
-          "label": "Row Y match",
-          "value": "106.7/160.0/213.3/266.7 vs measured 107/160/213/267",
+          "label": "AI",
+          "value": "61.0% C3+",
           "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "C3 promotions (2026-09-03)",
-      "fields": [
-        {
-          "label": "0x0040b930 PlayerScoreThresholdMask",
-          "value": "crown gate: score >= win threshold (row was STALE, port existed)",
-          "kind": "text"
-        },
-        {
-          "label": "0x0040b540 PlayerScoreRankOrder",
-          "value": "standings row order, descending by score (newly hooked)",
-          "kind": "text"
-        },
-        {
-          "label": "0x0041cc50 HudSlotUpdateCc50",
-          "value": "standings per-frame update, 5 fills + tick (newly hooked)",
-          "kind": "text"
-        },
-        {
-          "label": "Evidence",
-          "value": [
-            "path1 GREEN + non-degenerate on all three",
-            "path2 install verified on all three",
-            "0x0041cc50: 63/63 predicted dwords matched"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "C4 blockers",
-          "value": [
-            "path1 is hook-bypassed (rule caps at C3)",
-            "S-0491 stub in 0x0040b540 mode-4/7 arm",
-            "0x0041c410 arm excluded from the 0x0041cc50 diff"
-          ],
-          "kind": "list"
         }
       ]
     }
