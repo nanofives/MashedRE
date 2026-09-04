@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-05T02:40:00Z",
+  "updatedAt": "2026-09-05T03:20:00Z",
   "sections": [
     {
       "heading": "Project",
@@ -17,7 +17,7 @@
         },
         {
           "label": "Latest",
-          "value": "rejected team split measured: modal, 4 codes -> 4 strings (U-9083 on an id+1)",
+          "value": "U-9083 resolved: port read the wrong ENGLISH.DAT (loose vs Font36.piz)",
           "kind": "text"
         },
         {

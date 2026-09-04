@@ -5403,19 +5403,20 @@ bool RenderFrame() {
             // (Same DAT_0067eab0 the ability input step early-outs on, so a
             // posted modal freezes setup input.)
             //
-            // [UNCERTAIN] the code's body id N reads as OUR message table's
-            // N+1: the four codes 0/1/2/3 pass 0xd6/0xd7/0xd8/0xd9 and the
-            // strings that FIT them are at 0xd7/0xd8/0xd9/0xda -- "Both Players
-            // Must Select A Team" for the 2-player case, "Team 1 / Team 2 Does
-            // Not Have Enough Players" for the empty-team codes (1 = team A
-            // empty, 2 = team B empty in FUN_0042bb60), "All Players Must
-            // Select A Team" for code 3. Five independent pairings fit under
-            // +1 and none under 0 (the same +1 holds for CarSlotAssign's 0x31
-            // -> "There must be at least 2 players for a multi player game.").
-            // The MECHANISM is not measured: DAT_0067eadc IS an id bias the
-            // renderer adds, but it is a page counter (0x0043dac7 `inc eax`,
-            // wrapped at DAT_0067ead8) gated on DAT_0067ead4, not a constant.
-            // So the pairing is measured and the cause is open.
+            // U-9083 RESOLVED 2026-09-04, and it was not an id-space
+            // question at all: the port was reading the WRONG FILE. The game
+            // streams "english.dat" (FUN_004274e0 -> FUN_004cc230(2,1,name))
+            // into &DAT_0066d828 verbatim and FUN_00427780 resolves
+            // `base + *(int*)(base + id*4)`, so there is no bias anywhere in
+            // the path. The copy that stream delivers is the one inside
+            // Font36.piz (677 ids), while this port's MenuStringTable had
+            // loaded the loose FONT/English.dat (449 ids). The two agree up to
+            // id 0x15 and are shifted from 0x16 on. Against the PIZ copy the
+            // four codes map with NO offset:
+            //   0 (2 participants, not 1v1) 0xd6 "Both Players Must Select A Team"
+            //   1 (team A empty)            0xd7 "Team 1 Does Not Have Enough Players"
+            //   2 (team B empty)            0xd8 "Team 2 Does Not Have Enough Players"
+            //   3 (illegal, both non-empty) 0xd9 "All Players Must Select A Team"
             if (team && g_font.ready()) {
                 // Port-side PLACEMENT (the original has no such line); the TEXT
                 // is the original's, pulled from the game's own table.
@@ -5425,7 +5426,7 @@ bool RenderFrame() {
                     v = L"slots unassigned";        // port-side: no such state
                 } else if (g_team_balance != 0x1000 && g_team_balance >= 0 &&
                            g_team_balance <= 3) {
-                    const int id = 0xd6 + g_team_balance + 1;   // see above
+                    const int id = 0xd6 + g_team_balance;
                     const int n = g_menu_str.Decode(id, s_verdict, 63);
                     if (n > 0) { s_verdict[n] = 0; v = s_verdict; }
                 }
@@ -8202,11 +8203,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                 std::fclose(log);
             }
         }
-        // Menu id->glyph-string table (sprite-atlas-by-id for menu records). Load
-        // the localized labels (English.dat carries the real text; USA.dat is a
-        // sparse placeholder) + run a small self-check that known menu ids resolve.
+        // Menu id->glyph-string table (sprite-atlas-by-id for menu records).
+        //
+        // SOURCE CORRECTED 2026-09-04 (U-9083). This used to load the LOOSE
+        // original/TOASTART/Common/FONT/English.dat. That is NOT the table the
+        // game reads. FUN_004274e0 streams "english.dat" through the file
+        // system (FUN_004cc230(2, 1, name)) straight into &DAT_0066d828, and
+        // FUN_00427780 resolves `base + *(int*)(base + id*4)` -- so the id
+        // space is whatever that stream delivers, which is the copy inside
+        // Font36.piz: 677 ids / 33626 bytes against the loose file's 449 ids /
+        // 20894 bytes. The two agree up to id 0x15 and are shifted from 0x16
+        // on, which is exactly why the main-menu self-check ids never noticed.
+        // Read against the PIZ copy every cited id checks out: 0xe3/0xd2/0xd3/
+        // 0xd4 = Elite/Pro/Amateur/Rookie (the ability headers), 0x41 =
+        // "MASHED" (the modal title), 0x140/0x13e = Team Play/Standard Play
+        // (re-confirming U-9078 independently), 0x31 and 0x24a = the
+        // CarSlotAssign rejections, 0xd6..0xd9 = the four team-split
+        // rejections. The loose file stays as a fallback only.
         {
-            bool sok = g_menu_str.LoadFile(
+            bool sok = g_menu_str.LoadPizEntry(
+                           "original/TOASTART/Common/Font36.piz", "ENGLISH.DAT") ||
+                       g_menu_str.LoadFile(
                            "original/TOASTART/Common/FONT/English.dat") ||
                        g_menu_str.LoadFile(
                            "original/TOASTART/Common/FONT/USA.dat");

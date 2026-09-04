@@ -2757,6 +2757,11 @@ a posted modal freezes setup input while it is up — one flag doing both jobs.
 
 ### The strings, and an off-by-one that is measured but not explained
 
+> **Superseded by Finding 33 (same day).** The off-by-one below is real but the
+> diagnosis is wrong: the port was reading a different FILE, not a shifted id
+> space, and `FUN_00427e00` does NOT use a second table. Read Finding 33 for the
+> resolved mapping.
+
 Read through the game's own table (`MASHED_MSG_IDS`, a new diagnostic that
 decodes arbitrary ids with the port's decoder):
 
@@ -2798,3 +2803,75 @@ when the original advances instead of commenting.
 | `verify/teamsel_reject_default.bmp` | none | "Both Players Must Select A Team" (code 0) |
 | `verify/teamsel_reject_sameteam.bmp` | `0d,1d` | rows **A A**, same string |
 | `verify/teamsel_reject_legal.bmp` | `0d,1dd` | rows **A B**, **no line at all** |
+
+---
+
+## Finding 33: U-9083 settled — it was the wrong FILE, not a shifted id space (2026-09-04)
+
+Finding 32 measured a consistent `+1` between the ids the code passes and the
+strings that fit, and filed the mechanism as open. Settling it took two
+functions and no runtime at all, and it overturns two of that finding's claims.
+
+### The resolution path has no bias anywhere
+
+```
+FUN_00427780 (17 bytes):
+    return &DAT_0066d828 + *(int *)(&DAT_0066d828 + param_1 * 4);
+
+FUN_004274e0:
+    FUN_004cc230(2, 1, "english.dat")           ; stream by name
+    FUN_004cbd30(handle, &DAT_0066d828, 0x10000) ; verbatim, no header skip
+```
+
+`id * 4` into an offset table at the blob's own base — precisely what this
+port's `MenuStringTable::Resolve` does. There is no `+1` in the game's path.
+
+### The offset was between two files
+
+`FUN_004cc230` streams **by name**, so it delivers the copy inside
+`Font36.piz`. The port's `MenuStringTable` had been loading the loose
+`TOASTART/Common/FONT/English.dat` instead:
+
+| | ids | bytes |
+|---|---|---|
+| `Font36.piz` → `ENGLISH.DAT` (the game's) | **677** | 33626 |
+| loose `FONT/English.dat` (the port's) | 449 | 20894 |
+
+They agree up to id `0x15` and are shifted from `0x16` on — which is exactly why
+the main-menu self-check ids (`0x21`..`0x27`, identical in both) matched and hid
+it for as long as they did.
+
+### Everything checks out against the right copy, with no offset
+
+| id | string | what cited it |
+|---|---|---|
+| `0xd6` `0xd7` `0xd8` `0xd9` | "Both Players Must Select A Team" / "Team 1 Does Not Have Enough Players" / "Team 2 Does Not Have Enough Players " / "All Players Must Select A Team" | the four rejection arms, in code order |
+| `0xe3` `0xd2` `0xd3` `0xd4` | **Elite / Pro / Amateur / Rookie** | `FUN_0043a610`'s four ability headers |
+| `0x41` | "MASHED" | the modal title |
+| `0x31` / `0x24a` | "There must be at least 2 players for a multi player game." / the duplicate-colour rejection | `CarSlotAssign`'s arms (Finding 26) |
+| `0x140` / `0x13e` | "Team Play" / "Standard Play" | U-9078, re-confirmed from an independent direction |
+
+**Finding 32 was wrong about `FUN_00427e00`.** It concluded from the loose
+table's nonsense ("10 mins" / "End Game Next Point") that the ability headers
+used a different id space. They do not — `FUN_00427e00`, `FUN_004278d0` and
+`FUN_004282a0` all resolve through `FUN_00427780`, and against the right copy
+the headers read Elite/Pro/Amateur/Rookie, which also **confirms the port's
+column labels** that had been carried as measured-from-a-capture.
+
+### Port change
+
+`g_menu_str` now loads the PIZ entry (loose file kept only as a fallback), and
+the verdict line's `+1` compensation is deleted. The capture is unchanged —
+`verify/teamsel_reject_sameteam.bmp` still reads "Both Players Must Select A
+Team" — which is the point: same string, no fudge.
+
+Blast radius was one table. The port's on-screen text goes through
+`LoadMessageTable("…/Font36.piz", "ENGLISH.DAT")`, which was already the right
+copy; only the secondary `MenuStringTable` (the verdict line, the
+`MASHED_MSG_IDS` dump and the self-check) was reading the wrong file.
+
+### The lesson worth keeping
+
+A wrong reference table produces confident, self-consistent, wrong readings —
+five independent pairings all "fit" a `+1` that did not exist. What settled it
+was reading the LOADER instead of pattern-matching the strings.
