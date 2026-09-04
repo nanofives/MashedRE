@@ -124,3 +124,46 @@ TEAM_AWARD win=-1 delta=1 alive=1 teams=-1,-1,-1,-1 scores=0,0,0,0
 
 === ffa-control  MASHED_TEAM_PLAY='' MASHED_TEAMS='' ===
 TEAM_SCORING play=0 balance=0x1 teams=-1,-1,-1,-1
+
+=== 2v2-crossed  MASHED_TEAM_PLAY='1' MASHED_TEAMS='0,1,0,1'  (reaches the 2-alive arm) ===
+TEAM_SCORING play=1 balance=0x1000 teams=0,1,0,1
+TEAM_ELIM victim=0 alive=3 teams=0,1,0,1
+TEAM_ELIM victim=2 alive=2 teams=0,1,0,1
+TEAM_COLLAPSE arm=2 team=1 loser=1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,0,1 scores=0,1,0,1
+TEAM_ELIM victim=0 alive=3 teams=0,1,0,1
+TEAM_ELIM victim=2 alive=2 teams=0,1,0,1
+TEAM_COLLAPSE arm=2 team=1 loser=1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,0,1 scores=0,2,0,2
+TEAM_ELIM victim=0 alive=3 teams=0,1,0,1
+TEAM_ELIM victim=2 alive=2 teams=0,1,0,1
+TEAM_COLLAPSE arm=2 team=1 loser=1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,0,1 scores=0,3,0,3
+TEAM_ELIM victim=0 alive=3 teams=0,1,0,1
+TEAM_ELIM victim=2 alive=2 teams=0,1,0,1
+TEAM_COLLAPSE arm=2 team=1 loser=1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,0,1 scores=0,4,0,4
+TEAM_ELIM victim=0 alive=3 teams=0,1,0,1
+TEAM_ELIM victim=2 alive=2 teams=0,1,0,1
+TEAM_COLLAPSE arm=2 team=1 loser=1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,0,1 scores=0,5,0,5
+TEAM_ELIM victim=0 alive=3 teams=0,1,0,1
+TEAM_ELIM victim=2 alive=2 teams=0,1,0,1
+TEAM_COLLAPSE arm=2 team=1 loser=1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,0,1 scores=0,6,0,6
+TEAM_ELIM victim=0 alive=3 teams=0,1,0,1
+TEAM_ELIM victim=2 alive=2 teams=0,1,0,1
+TEAM_COLLAPSE arm=2 team=1 loser=1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,0,1 scores=0,7,0,7
+TEAM_ELIM victim=0 alive=3 teams=0,1,0,1
+TEAM_ELIM victim=2 alive=2 teams=0,1,0,1
+TEAM_COLLAPSE arm=2 team=1 loser=1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,0,1 scores=0,8,0,8
+TEAM_ELIM victim=0 alive=3 teams=0,1,0,1
+TEAM_ELIM victim=2 alive=2 teams=0,1,0,1
+TEAM_COLLAPSE arm=2 team=1 loser=1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,0,1 scores=0,9,0,9
+TEAM_ELIM victim=0 alive=3 teams=0,1,0,1
+TEAM_ELIM victim=2 alive=2 teams=0,1,0,1
+TEAM_COLLAPSE arm=2 team=1 loser=1
+TEAM_AWARD win=1 delta=1 alive=1 teams=0,1,0,1 scores=0,10,0,10

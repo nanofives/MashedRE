@@ -2693,12 +2693,27 @@ silence in the score column.
 | team play on, no teams | `balance=0x1` (fewer than two participants), `teams=-1,-1,-1,-1`, three arm entries per round and **zero awards** |
 | team play off | one line, `play=0`; no `TEAM_ELIM`, no `TEAM_AWARD` — the free-for-all path is untouched |
 
-**Not covered, stated rather than glossed:** the 2-alive same-team branch was
-ENTERED on every round (`TEAM_ELIM … alive=2`) but its collapse never fired,
-because it needs both eliminations in a 2v2 to come from one team and the
-elimination rule did not produce that in ~12 rounds; in a 1v3 it is unreachable,
-since the 3-alive arm collapses straight to one survivor. Implemented and
-transcribed, not observed.
+**All three arms are now covered.** The 2-alive branch was initially unobserved:
+it needs both eliminations in a 2v2 to come from one team, and the assignment
+`0,0,1,1` never produced that in ~12 rounds. It is reachable without touching
+the physics, by choosing a different LEGAL 2v2 assignment that matches the
+elimination order the game already produces — `MASHED_TEAMS=0,1,0,1`, still
+`balance=0x1000`, puts the two cars the rule eliminates first (0 then 2) on the
+same team, and the arm fires every round:
+
+```
+TEAM_ELIM victim=0 alive=3 teams=0,1,0,1     -> 3 alive are MIXED, arm 3 no-ops
+TEAM_ELIM victim=2 alive=2 teams=0,1,0,1     -> 2 alive both team 1
+TEAM_COLLAPSE arm=2 team=1 loser=1
+TEAM_AWARD win=1 delta=1 alive=1 scores=0,1,0,1
+```
+
+10 firings in one match. Note what the award does and that it is faithful: car 1
+is the car the arm just ELIMINATED, and it still receives `+1`, because the
+original's loop awards by team membership over every assigned slot with no
+exclusion for the car it just killed (`uVar12 = (*piVar8 == iVar7) ? 1 :
+0xffffffff`). It reads like a bug and is transcribed as written.
+
 
 A backbuffer capture of the team-scored standings was attempted and did not
 land — `MASHED_DBG_BBDUMP` did not fire on the `MASHED_ROUND` race path at
