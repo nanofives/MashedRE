@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-05T04:10:00Z",
+  "updatedAt": "2026-09-05T04:50:00Z",
   "sections": [
     {
       "heading": "Project",
@@ -17,7 +17,7 @@
         },
         {
           "label": "Latest",
-          "value": "text audit: main path clean; headers now by id; ENGLISH/USA swap 0x124-0x125 found",
+          "value": "options value ids sourced (0x59/0x1b2/0x1b1, 0x59+flag); 2 more literals retired",
           "kind": "text"
         },
         {

@@ -4660,20 +4660,55 @@ bool RenderFrame() {
                 // x=457 = 378 + 70 + 9 pad).
                 float dyn_rax = rax;
                 const float vth = 0.6f * 0.0708f * 480.f * S;
+                // VALUE TEXT BY MESSAGE ID (2026-09-04, Finding 35). Both were
+                // literals; both originals pick an id and hand it to
+                // FUN_00427e00, so the ids are read off the listing:
+                //
+                //   insults  FUN_00430b90 case 3 (screen 19 = page 0x13, flag
+                //            DAT_0067e7f8):
+                //              DAT_007f0f10 == 0 -> 0x59   "Off"
+                //                             == 1 -> 0x1b2 "Auto"
+                //                             == 2 -> 0x1b1 "Manual"
+                //            note the ids DESCEND across 1 -> 2, so the order
+                //            cannot be guessed from the numbering; it is read.
+                //   autosave FUN_00431240 (screen 32 = page 0x20, flag
+                //            DAT_0067e838):
+                //              cVar10 = (FUN_0040ad20() != 0) + 'Y'
+                //            i.e. 0x59 "Off" / 0x5a "On" -- Ghidra prints the
+                //            0x59 base as the character 'Y'.
+                //
+                // Decoded against the table the game reads (Font36.piz/
+                // ENGLISH.DAT) the six strings are exactly what the literals
+                // said, so this changes no wording; it removes the guess.
+                // Literals stay as a fallback for a failed table load.
+                static const int  kInsultIds[3] = { 0x59, 0x1b2, 0x1b1 };
+                static const wchar_t* kInsults[3] = { L"Off", L"Auto", L"Manual" };
+                wchar_t vbuf[48];
                 if (kind == kTriText && g_font.ready()) {
-                    static const wchar_t* kInsults[3] = { L"Off", L"Auto", L"Manual" };
                     const int m = (g_settings.insults_on >= 0 &&
                                    g_settings.insults_on <= 2)
                                       ? g_settings.insults_on : 0;
+                    const wchar_t* val =
+                        (GetMenuMessage(kInsultIds[m], vbuf, 48) > 0) ? vbuf
+                                                                      : kInsults[m];
                     // #8 (2026-06-13): the insults value reads a little small —
                     // bump it to scale 0.72 (the volume rows keep the 0.6 law).
+                    // [UNCERTAIN] the original passes 0x3f333333 = 0.7 as the
+                    // scale for BOTH this row and the autosave row, so the
+                    // port's 0.6/0.72 split has no counterpart there. Left
+                    // alone because 0.6 was fitted to a measured capture and
+                    // the two scale laws are not the same quantity; recorded
+                    // rather than tuned.
                     const float vthIns = 0.72f * 0.0708f * 480.f * S;
-                    DrawMashedString(kInsults[m], 378.0f * S + slideX,
+                    DrawMashedString(val, 378.0f * S + slideX,
                                      rec.y * S - 1.0f * S, vthIns, 0xff000000u, true);
                     dyn_rax = 378.0f * S +
-                              MeasureMashedString(kInsults[m], vthIns) + 9.0f * S;
+                              MeasureMashedString(val, vthIns) + 9.0f * S;
                 } else if (kind == kToggle && g_font.ready()) {
-                    const wchar_t* tv = g_settings.autosave ? L"On" : L"Off";
+                    const int tid = 0x59 + (g_settings.autosave ? 1 : 0);
+                    const wchar_t* tv =
+                        (GetMenuMessage(tid, vbuf, 48) > 0)
+                            ? vbuf : (g_settings.autosave ? L"On" : L"Off");
                     DrawMashedString(tv, 378.0f * S + slideX, rec.y * S,
                                      vth, 0xff000000u, true);
                     dyn_rax = 378.0f * S + MeasureMashedString(tv, vth) + 9.0f * S;

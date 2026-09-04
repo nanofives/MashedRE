@@ -2974,3 +2974,68 @@ file "is NOT the table the game reads", and a 2026-06-12 fix moved the
 colour-select screen after a loose-table misread routed it to screen 7. The
 port still slipped again, in a new object, three months later — which is the
 argument for the caution now sitting on `LoadFile` itself rather than in a note.
+
+---
+
+## Finding 35: the options-screen value ids, sourced (2026-09-04)
+
+Two of the literals Finding 34 flagged are now read off the listing. Both
+screens' renderers pick a message id and hand it to `FUN_00427e00`, so nothing
+had to be guessed.
+
+### Insults tri-state — screen 19, `FUN_00430b90` case 3
+
+Reached through `FUN_00431f30` case `0x13` → `DAT_0067e7f8` → `FUN_00430b90`
+(C4, `Frontend/SpriteCluster.cpp`), whose per-row switch ends:
+
+```
+case 3:
+  if      (DAT_007f0f10 == 0) iStack_28 = 0x59;
+  else if (DAT_007f0f10 == 1) iStack_28 = 0x1b2;
+  else if (DAT_007f0f10 == 2) iStack_28 = 0x1b1;
+  FUN_00427e00(iStack_28, 376.0, rowY, colour, 0.7, 0);
+```
+
+| setting | id | string |
+|---|---|---|
+| 0 | `0x59` | "Off" |
+| 1 | `0x1b2` | "Auto" |
+| 2 | `0x1b1` | "Manual" |
+
+The ids **descend** across states 1 → 2, so the order is not derivable from the
+numbering — it is read from the ladder. The port's literal table happened to be
+in the right order.
+
+### Autosave toggle — screen 32, `FUN_00431240`
+
+```
+iVar9  = FUN_0040ad20();          ; the autosave flag
+cVar10 = (iVar9 != 0) + 'Y';      ; 'Y' is Ghidra printing 0x59
+FUN_00427e00(cVar10, x, y, colour, 0.7, 0);
+```
+
+so `0x59` "Off" / `0x5a` "On" — an arithmetic id, not a table.
+
+### Port change and verification
+
+Both now resolve through `GetMenuMessage` against `Font36.piz/ENGLISH.DAT`,
+with the literals kept as a fallback. The wording is unchanged, so a capture at
+the DEFAULT values would be degenerate — both arms read "Off" either way. The
+non-default arms were captured instead, by moving `mashed_re_settings.bin`
+aside so the built-in defaults (insults 2, autosave 1) apply:
+
+| capture | value | id exercised |
+|---|---|---|
+| `verify/opt19_byid_manual.bmp` | **Manual** | `0x1b1` |
+| `verify/opt32_byid_on.bmp` | **On** | `0x5a` |
+| `verify/opt19_byid.bmp` / `opt32_byid.bmp` | Off / Off | `0x59` (saved settings) |
+
+### One residual, recorded rather than tuned
+
+Both original call sites pass scale `0x3f333333` = **0.7** — the same value for
+the insults row and the autosave row. The port uses `0.72` for insults and
+`0.6` for the toggle, a split introduced on 2026-06-13 from an eyeball
+("reads a little small"). The two scale laws are not the same quantity (the
+port's is a font-cell height fitted to a measured capture), so this is not a
+straight substitution and it is left alone — but the original having ONE value
+where the port has two is worth knowing before anyone re-fits that row.
