@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-05T06:40:00Z",
+  "updatedAt": "2026-09-05T07:00:00Z",
   "sections": [
     {
       "heading": "Project",
@@ -17,7 +17,7 @@
         },
         {
           "label": "Latest",
-          "value": "save-path proven: challenge flags survive restore into live memory; MASHED_SAVE override added",
+          "value": "setup-screen + team-scoring lane wrapped; 4 C3s, kickoff in re/NEXT_SESSION.md",
           "kind": "text"
         },
         {
@@ -32,7 +32,7 @@
         },
         {
           "label": "Setup screens 15/16",
-          "value": "renderers + both input steps ported; verdict wording now the original’s",
+          "value": "fully ported + sourced: renderers C3, both input steps, text by id, no invented UI",
           "kind": "text"
         },
         {

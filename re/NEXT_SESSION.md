@@ -1,90 +1,100 @@
 # Next session — kickoff prompt
 
-Written at the end of the 2026-09-03/04 **in-race UI faithfulness + player-setup** lane
-(branch `race/first-frame-parity`). Paste the block below.
+Written at the end of the 2026-09-04 **setup-screen faithfulness + team scoring +
+text-source audit** lane (branch `race/first-frame-parity`). Paste the block below.
 
 ---
 
-Resume the Mashed frontend/UI lane. Branch `race/first-frame-parity`, tree clean, no
-children running, no worktrees or pool slots held.
+Resume the Mashed frontend/UI lane. Branch `race/first-frame-parity`, tree clean
+apart from an untracked `videocfg.bin` (a standalone-run byproduct — do NOT
+commit it), no children running, no worktrees or pool slots held.
 
-Read `re/analysis/race_hud_capture_20260902.md` **Findings 21–28** (the newest eight, all
-from this lane). Do NOT read the file top to bottom — early Findings are overturned by
-later ones in the SAME file. In particular **Finding 23 corrects its own first draft**, and
-**U-9082 is WITHDRAWN as never-valid**; read both as written, not as summarised elsewhere.
+Read `re/analysis/race_hud_capture_20260902.md` **Findings 29–36** (the newest
+eight, all from this lane). Do NOT read the file top to bottom — later Findings
+overturn earlier ones in the SAME file. In particular **Finding 33 corrects
+Finding 32** (there is no `+1` message-id offset; it was the wrong FILE), and
+**Finding 34's claim about `FUN_00427e00` is itself corrected by 33** — read
+both as written.
 
 ## What this lane established (do not re-derive)
 
-**The in-race UI is fully ported and contains no invented elements.**
+The two player-setup screens (15 Ability Select, 16 Team Select) are now **fully
+ported and fully sourced** — no invented renderer, no invented input, no
+invented text.
 
 | thing | state |
 |---|---|
-| driving HUD (lap/pos, countdown, winner banner, power-up text) | INVENTED; the original draws no 2D HUD while driving. Now behind `MASHED_DEV_HUD=1`, off by default |
-| post-race RESULTS screen | the original has none — the end-of-match screen IS the standings screen. Results now renders the ported overlay |
-| `0x0041c410` standings row update | **C2 → C3**, `HUD/HudStandingsRowUpdate.cpp`, path1 GREEN 8/8, path2 install-verified, 45 s race smoke |
-| `DAT_0067ea64` | **U-9078 RESOLVED** = Team Play (msg `0x140` "Team Play" vs `0x13e` "Standard Play"). Consequence: target 8 / crown 7; standard 4-player 12 / 10 |
-| team scoring | decoded (Finding 24): `+delta` to every player slot on the winning team, `-delta` to the rest; same-team tie-break on a 0..100 progress scale, wrap period 100.0, bands 80.0 / 20.0 |
-| player setup | `0x0042fa00` ported as an exe-side twin; teams assignable; legal splits reachable (1v1 and 2v2 verified) |
-| setup screens 15/16 | both renderers read out of the binary (`FUN_0043a610` / `FUN_0043aa30`): **one row per assigned slot, profile order**, exact geometry, column slide, per-player car sprite |
+| `0x0042f7b0` ability input step | IDENTIFIED = Ability Select's per-frame input (sibling of `0x0042fa00`), already C3 as `FrontendCursorUpdate`; wired into screen 15. New registry entry `frontend_cursor_update_abil` (the old GREEN was guard-only). path1 8/8, path2 PASS. Finding 29 |
+| `0x0043a610` / `0x0043aa30` renderers | **C2 → C3**, `Frontend/SetupScreenRenderers.cpp` (ASI-only TU). `0x0042f8d0` takes its **alpha in AL** — a register arg no decomp shows, found by a hook-on/off draw-stream A/B. No path1 (device-null AV + racy VBUF); accepted evidence is the draw-stream A/B with an off-vs-off control. Finding 30 |
+| team scoring | the `DAT_0067ea64` arms of `0x0040eee0` ported exe-side in `TrackRenderer` (`ScoreOnEliminationTeams`); all three arms observed (`0,1,0,1` reaches the 2-alive one). `MASHED_TEAM_PLAY`/`MASHED_TEAMS`. The victim still gets `+delta` in team play — faithful, recorded. Findings 31, +2-alive |
+| rejection modal | the original does NOT annotate Team Select; it posts a modal (`0x0042bf30` → `0x00433f40`) with body id `0xd6..0xd9` and refuses to advance. Verdict line now pulls the real string, draws nothing on a legal split. Finding 32 |
+| **U-9083** | RESOLVED — the port's `g_menu_str` read the loose `FONT/English.dat` (449 ids); the game reads the `Font36.piz` copy (677 ids), shifted from id `0x16`. Fixed. Finding 33. Memory `[[two-copies-of-english-dat]]` |
+| **U-4259** | RESOLVED — `DAT_0067e850` is stride-12 single-dword; `+4`/`+8` have no reader/writer (XrefRange, 34 refs all at offset 0). Finding 30 |
+| text audit | main draw path was always correct (`GetMenuMessage` on `Font36.piz`); only `g_menu_str` was wrong. Setup headers, options values (insults `0x59`/`0x1b2`/`0x1b1`, autosave `0x59+flag`) and the Challenge panel now draw by id. Findings 34, 35, 36 |
+| Challenge Select panel | was an INVENTED "Bronze Challenge / Locked" caption; is actually a per-track mode checklist (`0x22`/`0x140` heading + `0x56`/`0x24b`/`0x141`) with per-flag Lock icons. Flag-dependence proven both by poke AND through the real save restore. Finding 36 |
+| save-span mirror | **DEFECT FIXED**: `Nav_GameStateLoadSave` only filled a private `g_save_span`, so consumers reading live `0x007f0a40..` saw zeroed `.bss`. Now mirrors to the live range. `MASHED_SAVE=<path>` overrides the save file without swapping the shared reference. Finding 36 |
 
 ## Traps this lane paid for — carry these forward
 
-- **A string near a write describes the write's EFFECT; it does not name the variable.**
-  Reading the caption `"First to 12 points wins."` as `DAT_0067ea64`'s definition produced a
-  confident, self-consistent, WRONG conclusion that fit both consumers. The witness that
-  settled it was a named menu entry that *writes* the flag. Prefer the witness that
-  constrains identity over the one that merely correlates.
-- **Check `hooks.csv` AND `grep -rn "RH_ScopedInstall(..., 0x<rva>)"` BEFORE writing an
-  implementation.** `0x0042fa00` already had one; I shipped a second install on one RVA and
-  path2 confirmed *my* export had displaced the established one. One RVA, one install.
-- **But a second copy is sometimes legitimate**: some TUs are in `asi_sources.rsp` and NOT
-  in `build.bat`'s exe list, so the standalone cannot reach them. That is a real reason for
-  an exe-side twin — which must register nothing.
-- **RVA tunnels are latent until called.** `CarSlotAssign` was in the exe build list for
-  months and AV'd (`0xC0000005`) the first time the exe actually called it, because it jumps
-  to `FUN_0040e480` in unmapped `.text`. Guard at the single point with
-  `#ifdef MASHED_STANDALONE`.
-- **A capture is a file on disk.** An all-red frame was misdiagnosed as a `SlotColour` bug;
-  instrumenting showed the state was correct all along and the BMP predated the rebuild.
-  Instrument rather than infer from pixels.
-- **Adjacency is not relatedness.** The flag next to the team panel's belongs to a settings
-  strip, not to Ability Select.
-- `build_config` in `run_diff.py` is a **whitelist** — a new arg_type's CONFIG keys are
-  silently dropped unless forwarded there, and the handler can go GREEN with all of them
-  ignored. Prove a forwarded key by toggling it.
-- OS key injection (`keybd_event` via `sa_capture`) does **not** reach this exe's
-  DirectInput. Use `MASHED_TEAM_KEYS` (per-profile taps through the real active/processed
-  protocol) for unattended verification.
-- `MASHED_RES=800x600` is mandatory for standalone captures, and `sa_capture`'s PrintWindow
-  path ignores it — use the game's own `MASHED_DBG_BBDUMP` / `MASHED_DBG_BBDUMP_OUT`.
-- Ghidra MCP is hard-blocked on this account. `analyzeHeadless` + `DecompPC.java` /
-  `XrefRange.java` / `CallersPC.java` against a pool slot works and IS Ghidra on the same
-  binary. `XrefRange` misses computed writes (`base + i*stride + field`).
+- **A wrong reference TABLE gives confident, self-consistent, wrong readings.**
+  U-9083 fit a `+1` across five independent pairings that did not exist. Reading
+  the LOADER settled it, not comparing more strings. `[[two-copies-of-english-dat]]`
+- **Decomp is silent about register arguments.** `0x0042f8d0` takes its alpha in
+  AL; the tell is a `mov al, …` at the call site with no matching stack push, and
+  the symptom in a draw-stream diff is matching geometry with colour-only
+  mismatches. `[[decomp-is-silent-about-register-args]]`
+- **The standalone commits original globals ZEROED**, so a field whose absent
+  value is `-1` (team id `0x007f1a18`) reads as a valid `0`. Seed the producer's
+  input and let the original derive; never poke the derived field.
+  `[[zeroed-granule-vs-minus-one-sentinel]]`
+- **An inherited GREEN can be guard-only.** `0x0042f7b0`'s 10/10 seeded the
+  early-out guard in every vector and never ran the loop. Read the vectors before
+  trusting a C3. `[[inherited-green-may-be-guard-only]]`
+- **Arm-entry counters armed BEFORE the first run.** An arm that never fires and
+  an arm that fires and awards nothing are the same silence in the score column.
+- **A capture at the default state is often degenerate** (both option arms read
+  "Off"; a fresh save locks every challenge row). Drive to a non-default state or
+  the frame proves nothing.
+- **Do NOT swap `original/gamesave.bin`** (or any file under `original/`) to test
+  a save — it is the shared diffing reference. Use `MASHED_SAVE=<path>` with a
+  scratch copy; verify the reference SHA is unchanged after.
 
 ## New verification knobs (display-only, not set in normal play)
 
-`MASHED_DEV_HUD=1`, `MASHED_TEAM_PLAY=1`, `MASHED_PLAYERS=2..4`,
-`MASHED_TEAM_KEYS="0d,1dd"` (per-profile UP/DOWN taps).
+`MASHED_ABIL_KEYS` / `MASHED_TEAM_KEYS` (per-profile taps), `MASHED_TEAM_PLAY=1`
+(now written at BOOT, so the frontend sees it), `MASHED_TEAMS="0,0,1,1"`,
+`MASHED_PLAYERS=2..4`, `MASHED_MSG_IDS="0xd6,…"` (dump ids through the port's
+decoder), `MASHED_CHAL_UNLOCK="a,b,c"` (poke the three challenge flags),
+`MASHED_SAVE=<path>` (override the restored save file).
 
 ## Candidate next slices
 
-1. **Screen 15's input handler.** The only piece of the two setup screens still missing:
-   ability values sit at the entry default of 1 because no ability input is ported (and
-   none was invented). Find it the way `FUN_0042fa00` was found — it will be gated on that
-   panel's state global in `FUN_0043c000`.
-2. **`FUN_0043a610` / `FUN_0043aa30` to C2/C3 proper.** Both are read end-to-end now and
-   currently sit DEFERRED in `Frontend/HudFrontendDispatchers_t4.cpp`'s catalogue. The
-   geometry is transcribed into the port but the functions themselves are not hooked.
-3. **Team scoring in the standalone.** Finding 24 has the rule; `TrackRenderer` scores
-   per-car. Needs the race layer, not the frontend.
-4. **Leave the lane.** R7 has other subsystems; the standings/setup chain is done.
+1. **`0x0042f8d0` / `0x0042bf30` / `0x00433f40` to C3 proper.** The plate drawer
+   (with its AL arg now understood), the modal poster and the modal renderer are
+   all read end-to-end this lane but only the first is installed anywhere. The
+   modal pair would make the rejection flow a real hook rather than a port-side
+   verdict line.
+2. **Sournce the remaining literals.** Still hardcoded: `GameFlow.cpp` `kAreas`
+   (a real defect flagged 2026-08-27 — "Arctic" occurs 0 times in the exe; not
+   currently drawn but wired into `g_cup.tracks[].name`), and the `A`/`B`/`-`
+   team marker (`[SCAFFOLD]`; the original's marker is the sprite slide, Finding
+   27 — the letter has no id and should probably just be dropped).
+3. **The `"check"` sprite question.** Finding 36 left it `[UNCERTAIN]` whether
+   `FUN_0040bb50("check", …)` resolves to anything (INTERFACE.TXD has Lock, Star,
+   Tick; no "check"). A Frida read of the dictionary `DAT_0063b8fc` at screen 6
+   would settle whether an unlocked row draws Tick or nothing.
+4. **Leave the frontend lane.** R7 has other subsystems; the standings/setup/team
+   chain is done and sourced.
 
-## Open risks
+## Open risks / residuals (all recorded, none blocking)
 
-- The per-row `A`/`B`/`-` letter and the "teams ok" verdict line are still `[SCAFFOLD]`
-  presentation. The state behind them is faithful; how the original surfaces a rejected
-  split (`MenuTeamBalance`'s 1/2/3 codes exist to be shown) is unmeasured.
-- Screen 15's row-plate height is `[UNCERTAIN]` — taken as 28.0 by analogy because the
-  4th argument decompiles as a clobbered register.
-- An untracked `verify/`-style `videocfg.bin` may appear at the repo root from standalone
-  runs. It is a byproduct; do not commit it.
+- The **2-alive same-team COLLAPSE** on a `0,0,1,1` split needs both eliminations
+  from one team, which ~12 rounds did not produce; reached instead via `0,1,0,1`.
+  Implemented and now observed, but the `0,0,1,1` path itself is unforced.
+- The **insults/autosave scale**: the original passes `0.7` for both rows, the
+  port uses `0.72`/`0.6` (a June eyeball). Left alone — the two scale laws are not
+  the same quantity — but flagged before anyone re-fits that row.
+- **Save WRITE is not claimed.** Only that the restore carries the challenge
+  flags into live memory; whether the port emits a save the original would accept
+  is untouched, as is every other span field.
+- The `videocfg.bin` byproduct at the repo root — do not commit it.
