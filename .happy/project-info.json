@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-05T05:30:00Z",
+  "updatedAt": "2026-09-05T06:00:00Z",
   "sections": [
     {
       "heading": "Project",
@@ -17,7 +17,7 @@
         },
         {
           "label": "Latest",
-          "value": "Challenge panel decoded: mode checklist + lock icons, invented caption retired",
+          "value": "challenge-panel flag dependence proven (3-state A/B/C, incl. Team Play override)",
           "kind": "text"
         },
         {

@@ -8193,8 +8193,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                         // - 1 and validate the split. With no seed at all the
                         // picks are 0, every slot derives -1, and no car
                         // scores -- which is the correct "no teams" state.
-                        if (GetEnvironmentVariableA("MASHED_TEAM_PLAY", nullptr, 0) > 0)
-                            *reinterpret_cast<std::int32_t*>(0x0067ea64) = 1;
                         char tm[32] = {};
                         if (GetEnvironmentVariableA("MASHED_TEAMS", tm, sizeof(tm)) > 0) {
                             int ci = 0; char* tok = std::strtok(tm, ",");
@@ -8278,6 +8276,45 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         }
         // Standalone progression (sidecar) — overlays unlock/trophy onto the cup.
         mashed_re::Race::Campaign_LoadProgress();
+        // Verification poke, display-only and not set in normal play (same
+        // family as MASHED_ROUND_SCORES / MASHED_TEAM_KEYS).
+        // MASHED_CHAL_UNLOCK="a,b,c" writes the three per-challenge mode-unlock
+        // flags FUN_00439210's detail panel reads -- 0x007f0a50 (Power Ups),
+        // 0x007f0a58 (Hold the Flag), 0x007f0a5c (The Fugitive), stride 0x30 by
+        // challenge index -- for every challenge slot.
+        //
+        // It exists because a fresh save leaves all three at 0, so every row
+        // draws a padlock and a capture cannot tell "the renderer reads the
+        // flags" from "the renderer always draws a padlock". It pokes the SAME
+        // addresses the save restore writes, and only those; it does not
+        // fabricate a save or claim anything about the save format. Proving the
+        // real save path drives them is a separate question, and would want a
+        // save-file override rather than a swap of the shared reference.
+        // MASHED_TEAM_PLAY=1 raises DAT_0067ea64 (Team Play, U-9078) at BOOT,
+        // not at race start: the frontend reads it too -- FUN_00439210's
+        // detail-panel heading picks 0x22 vs 0x140 from it, and it force-locks
+        // The Fugitive row. One write, one source, both layers.
+        if (GetEnvironmentVariableA("MASHED_TEAM_PLAY", nullptr, 0) > 0)
+            *reinterpret_cast<std::int32_t*>(0x0067ea64) = 1;
+        {
+            char cu[32] = {};
+            if (GetEnvironmentVariableA("MASHED_CHAL_UNLOCK", cu, sizeof(cu)) > 0) {
+                int v[3] = {0, 0, 0};
+                int ci = 0; char* tok = std::strtok(cu, ",");
+                while (tok && ci < 3) { v[ci++] = std::atoi(tok); tok = std::strtok(nullptr, ","); }
+                for (int i = 0; i < 13; ++i) {
+                    const std::uintptr_t b = static_cast<std::uintptr_t>(i) * 0x30u;
+                    *reinterpret_cast<std::int32_t*>(0x007f0a50 + b) = v[0];
+                    *reinterpret_cast<std::int32_t*>(0x007f0a58 + b) = v[1];
+                    *reinterpret_cast<std::int32_t*>(0x007f0a5c + b) = v[2];
+                }
+                if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+                    std::fprintf(lf, "CHAL_UNLOCK poke %d,%d,%d (13 slots)\n",
+                                 v[0], v[1], v[2]);
+                    std::fclose(lf);
+                }
+            }
+        }
         // Initialize the ported nav state machine at the root screen (id 0).
         // Analogue of FUN_0043df00's FUN_0043d2a0(0,2) frontend-enter reload.
         // From here the menu is state-machine-driven (push/pop/cursor), replacing

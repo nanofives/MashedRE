@@ -3107,7 +3107,30 @@ honouring the Team Play override on row 2.
 Fugitive, each with a padlock, on the port-side track-name row ("Angel Peak",
 id `0x49 + sel`, which is the port's own addition to this panel).
 
-**Residual:** on a fresh save all three flags read 0, so every row is locked and
-the capture cannot discriminate "reads the flags" from "always draws". Proving
-that needs a save with unlocks — `re/tools/run_with_unlocked_save.py` is the
-lane, and it swaps the shared diffing reference, so it was not run here.
+### Flag-dependence PROVEN (2026-09-04, same session)
+
+The residual noted that a fresh save leaves all three flags at 0, so the first
+capture could not tell "reads the flags" from "always draws a padlock".
+`MASHED_CHAL_UNLOCK="a,b,c"` settles it: a display-only poke, in the same family
+as `MASHED_ROUND_SCORES`, writing the three per-challenge flags for all 13 slots
+at boot — the same addresses the save restore writes, and only those.
+
+| capture | flags / mode | panel |
+|---|---|---|
+| `verify/chalsel_panel.bmp` | `0,0,0` | heading "Multi Player", **three** padlocks |
+| `verify/chalsel_panel_unlocked.bmp` | `1,0,1` | only the **middle** row keeps its padlock |
+| `verify/chalsel_panel_teamplay.bmp` | `1,1,1` + Team Play | heading flips to **"Team Play"**, and **The Fugitive re-locks** despite its flag being 1 |
+
+Three things fall out of that middle row: the icon follows its own flag, the
+row-to-flag binding is not off by one (the flag I zeroed and the padlock that
+stayed are the same row), and the third capture proves the
+`FUN_0042f500() != 0` override on row 2 AND the `0x22` -> `0x140` heading switch
+in the same frame.
+
+`MASHED_TEAM_PLAY=1` now raises `DAT_0067ea64` at BOOT rather than at race
+start, because the frontend reads it too — one write, one source, both layers.
+
+**Still not proven, and worth keeping separate:** that the real SAVE path drives
+these flags. That is a save-format question, and the honest way to answer it is
+a save-file override for the standalone rather than swapping
+`original/gamesave.bin`, which is the shared diffing reference.
