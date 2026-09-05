@@ -8257,20 +8257,29 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         constexpr bool kBootRestoreSaveSpan = true;
         {
             bool save_ok = false;
-            if (kBootRestoreSaveSpan) {
-            if (std::FILE* sf = std::fopen("original/gamesave.bin", "rb")) {
+            // MASHED_SAVE=<path> overrides the save the standalone restores
+            // from. It exists so an edited save can be tested WITHOUT touching
+            // original/gamesave.bin, which is the shared diffing reference
+            // every behavioural verification is measured against and which
+            // concurrent sessions also read. Default unchanged.
+            char savepath[260] = {};
+            if (GetEnvironmentVariableA("MASHED_SAVE", savepath,
+                                        sizeof(savepath)) == 0)
+                std::strcpy(savepath, "original/gamesave.bin");
+            if (kBootRestoreSaveSpan)
+            if (std::FILE* sf = std::fopen(savepath, "rb")) {
                 static unsigned char buf[0x24FA0];
                 const size_t n = std::fread(buf, 1, sizeof(buf), sf);
                 std::fclose(sf);
                 save_ok = mashed_re::Frontend::Nav_GameStateLoadSave(
                     buf, static_cast<unsigned>(n));
             }
-            }
             std::FILE* log = std::fopen(kLogPath, "a");
             if (log) {
-                std::fprintf(log, "R2-2 gamesave load: %s\n",
+                std::fprintf(log, "R2-2 gamesave load: %s (%s)\n",
                              save_ok ? "LOADED (DEADBEEF save)"
-                                     : "blank/absent -> fresh defaults");
+                                     : "blank/absent -> fresh defaults",
+                             savepath);
                 std::fclose(log);
             }
         }

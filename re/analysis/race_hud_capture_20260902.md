@@ -3130,7 +3130,35 @@ in the same frame.
 `MASHED_TEAM_PLAY=1` now raises `DAT_0067ea64` at BOOT rather than at race
 start, because the frontend reads it too — one write, one source, both layers.
 
-**Still not proven, and worth keeping separate:** that the real SAVE path drives
-these flags. That is a save-format question, and the honest way to answer it is
-a save-file override for the standalone rather than swapping
-`original/gamesave.bin`, which is the shared diffing reference.
+### The real save path drives them too (2026-09-04, closed)
+
+The `MASHED_CHAL_UNLOCK` proof above pokes the live addresses directly, so it
+left one question open: does the actual SAVE-RESTORE path reach them? It did
+not, and reading the loader showed why — `Nav_GameStateLoadSave` copied the
+restored span into a **private** `g_save_span` only, never mirroring it back to
+the live `0x007f0a40..` range the original's `FUN_00404e80` writes with a
+`REP MOVSD`. Every consumer reading the real addresses saw zeroed `.bss`; an
+earlier lane hit this with the powerup-icon table and worked around it by
+reading the model. Fixed at the source: the restore now also `memcpy`s the span
+to `0x007f0a40`, one restore with one representation, and the private buffer
+stays for `Save/GameSaveBuffer.cpp`'s by-name bind.
+
+Two new knobs make this testable without touching the shared reference:
+`MASHED_SAVE=<path>` overrides which file the standalone restores from, and the
+synthetic save was written to the scratchpad, not over `original/gamesave.bin`.
+
+| capture | `MASHED_SAVE` | challenge 0 flags in the file | panel |
+|---|---|---|---|
+| `verify/chalsel_save_ref.bmp` | default (`original/gamesave.bin`) | `+0x10=2` `+0x18=0` `+0x1c=0` | Power Ups clear, **Hold the Flag + The Fugitive padlocked** |
+| `verify/chalsel_save_edited.bmp` | scratchpad `save_chalunlock.bin` | `+0x10=1` `+0x18=0` `+0x1c=1` | only **Hold the Flag** padlocked |
+
+The reference save is real data, not a poke — its Power Ups flag is a genuine
+non-zero (`2`), so that row draws clear on its own. The edited save flips only
+`+0x1c` from 0 to 1 and only The Fugitive's padlock disappears, so the restore
+path carries the per-flag, per-row value end to end. `mashed_re.log` confirms
+each run loaded the intended file (`gamesave load: LOADED … (<path>)`), and the
+reference SHA is byte-identical before and after both runs.
+
+That closes the residual. What is NOT claimed: that the port WRITES a save the
+original would accept, or that any other span field is wired — only that the
+challenge-panel flags survive the restore into the addresses the renderer reads.

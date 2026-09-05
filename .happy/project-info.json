@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-05T06:00:00Z",
+  "updatedAt": "2026-09-05T06:40:00Z",
   "sections": [
     {
       "heading": "Project",
@@ -17,7 +17,7 @@
         },
         {
           "label": "Latest",
-          "value": "challenge-panel flag dependence proven (3-state A/B/C, incl. Team Play override)",
+          "value": "save-path proven: challenge flags survive restore into live memory; MASHED_SAVE override added",
           "kind": "text"
         },
         {

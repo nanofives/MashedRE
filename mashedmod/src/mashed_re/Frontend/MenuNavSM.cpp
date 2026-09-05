@@ -1399,6 +1399,20 @@ bool Nav_GameStateLoadSave(const unsigned char* data, unsigned len) {
     if (magic != 0xDEADBEEFu) return false;
 
     std::memcpy(g_save_span, data + kSpanFile, kSpanBytes);
+    // AND to the LIVE span, which is what the original actually does:
+    // FUN_00404e80 step 1 is a REP MOVSD at 0x00404e91 from save_buf+0x24A40
+    // into 0x007f0a40 for 0x148 dwords. The port used to keep the restore in
+    // the private buffer above ONLY, which meant every consumer reading the
+    // real addresses saw zeroed .bss no matter what the save contained -- the
+    // powerup-icon table hit this in an earlier lane and worked around it by
+    // reading the model (exe_main.cpp, "Read the span MODEL, not the literal
+    // address"), and the Challenge Select detail panel hits it again through
+    // 0x007f0a50/58/5c. Mirroring the span removes the class rather than adding
+    // a second workaround: one restore, one representation. The private buffer
+    // stays because Save/GameSaveBuffer.cpp binds to it by name.
+    // Inert with the shipped blank save, which fails the magic gate above and
+    // never reaches this line.
+    std::memcpy(reinterpret_cast<void*>(0x007f0a40u), data + kSpanFile, kSpanBytes);
 
     // Re-derive the MenuGameState fields the grey-out/routing ports read,
     // straight from the restored span (offsets relative to 0x007f0a40):
