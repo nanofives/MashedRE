@@ -281,97 +281,189 @@ RH_ScopedInstall(MenuMenusBB, 0x00427ad0);  // re-enabled 2026-05-24 c3-frontend
 // ---------------------------------------------------------------------------
 // MenuMenusBC  --  0x0042f8d0
 //
-// Original: FUN_0042f8d0  (body 0x0042f8d0..0x0042f9f8)
-// Signature: void FUN_0042f8d0(float param_1, float param_2, float param_3, float param_4)
-//   param_1..4: (x1, y1, x2, y2) screen space
-//   [color passed via AL register — Ghidra CONCAT13 artifact]
+// Original: FUN_0042f8d0  (body 0x0042f8d0..0x0042f9f8, 102 instructions)
+// Signature: void __cdecl FUN_0042f8d0(float x, float y, float w, float h)
+//            PLUS a fifth argument, the panel ALPHA, passed in AL.
 //
-// Draws a background quad decomposed into 5 calls to FUN_00472c60:
-//   1. center fill: (param_1, param_2, param_3, param_4, color_A)
-//   2. left edge:   (param_1 - _DAT_005cc574, param_2, 0x40000000, param_4, color_B)
-//   3. top edge:    (param_1 - _DAT_005cc574, param_2, fVar1, 0x40000000, color_B)
-//   4. bottom edge: (param_1 - _DAT_005cc574, fVar2+param_2, fVar1, 0x40000000, color_B)
-//   5. right edge:  (param_3 + param_1 + _DAT_005cc574, param_2 - fVar2, 0x40000000, param_4, color_B)
-//   fVar1 = param_3 + _DAT_005cc35c
-//   fVar2 = param_4 - _DAT_005cc574
+// THE ALPHA IS A REGISTER ARGUMENT (0x0042f8d9 `mov bl, al`, before any stack
+// slot is touched). Ghidra does surface it, as `byte in_AL` feeding two
+// CONCAT13s; the 2026-05-11 transcription replaced below read that as a
+// decompiler artifact and hardcoded both colours to 0. Every call site reloads
+// AL first: 0x0043a67a `mov al,[0x67e7dc]` for the first ability plate, then
+// 0x0043a70a / 0x0043a733 / 0x0043a75b / 0x0043a7fc from stack copies, and
+// 0x0043ab53 / 0x0043ab8a / 0x0043ac91 `mov al, bl` on the team side.
+// See re/analysis/race_hud_capture_20260902.md Finding 30.
 //
-// Colors: color_A / color_B are passed via the in_AL / CONCAT13 mechanism at
-//   0x0042f8d0. The color is a uint32 constructed from AL byte.
-//   In reimpl, the color args are passed implicitly through the calling convention
-//   as part of the stack at entry. Ghidra shows: color_A via `CONCAT13(in_AH_...., in_AL)`.
-//   We replicate by taking the full 5-arg signature per the C2 analysis note.
+// Ghidra (headless against a pool slot, 2026-09-05):
+//   local_c = CONCAT13(in_AL >> 1, 0x146ef0);
+//   FUN_00472c60(param_1, param_2, param_3, param_4, local_c);
+//   param_1 = param_1 - _DAT_005cc574;                    <-- ARG SLOT REWRITTEN
+//   local_c = CONCAT13(in_AL, 0x1050b4);
+//   FUN_00472c60(param_1, param_2, 0x40000000, param_4, local_c);
+//   fVar1 = param_3 + _DAT_005cc35c;
+//   FUN_00472c60(param_1, param_2, fVar1, 0x40000000, local_c);
+//   fVar2 = param_4 - _DAT_005cc574;
+//   param_2 = fVar2 + param_2;                            <-- ARG SLOT REWRITTEN
+//   FUN_00472c60(param_1, param_2, fVar1, 0x40000000, local_c);
+//   FUN_00472c60(param_3 + param_1 + _DAT_005cc574, param_2 - fVar2,
+//                0x40000000, param_4, local_c);
 //
-// NOTE: The AL-passed color is an unusual MSVC calling convention artifact.
-// The actual function at 0x0042f8d0 treats the 5th arg (color) as passed via
-// the stack (it becomes a CONCAT13 of local register values). Since the analysis
-// note only documents 4 float params, we mirror the 4-float signature and let
-// the in-process call supply whatever default color context is active.
+// Calls 1-4 were transcribed correctly in 2026-05. Call 5 was not: it reads the
+// ALREADY-REWRITTEN param_1 and param_2, so its x is (w + (x - BX)) + BX and
+// its y is (y + (h - BX)) - (h - BX), NOT `w + x + BX` and `y - (h - BX)`,
+// which is what the old body computed. The two rewrites land in the CALLER's
+// argument slots, at 0x0042f933 (`fstp [esp+0x34]`, the x slot) and 0x0042f996
+// (`fstp [esp+0x6c]`, the y slot).
+//
+// WHY NAKED VERBATIM RATHER THAN C. One store in the middle is `fst`, not
+// `fstp`:
+//   0x0042f97d  fld  dword ptr [esp+0x54]     ; h (local copy)
+//   0x0042f981  fsub dword ptr [0x5cc574]     ; ST0 = h - BX
+//   0x0042f98d  fst  dword ptr [esp+0x54]     ; rounds to float IN MEMORY only
+//   0x0042f992  fadd dword ptr [esp+0x6c]     ; ST0 (UNROUNDED) + y
+// so fVar2 exists at two precisions at once: the rounded float that call 5's
+// `fsub` reads back, and the register value call 4's `fadd` consumes. No
+// `float` local holds both, and reproducing it with `double` would silently
+// depend on whichever x87 precision-control bits MASHED's CRT has set. The
+// transcription below is the instruction sequence, so the question does not
+// arise. Only the five `E8 rel32` calls change form, to a memory-indirect call
+// through g_menuBc_Quad: same stack effect, and it clobbers no register.
+//
+// Colours, built byte-by-byte on the 12-byte local block:
+//   A (fill)   0x0042f8e9..0x0042f8f7  ->  0x{alpha>>1}146ef0
+//   B (border) 0x0042f920..0x0042f92f  ->  0x{alpha}1050b4
 //
 // Globals:
-//   _DAT_005cc574  border inset X  (0x0042f90b)
-//   _DAT_005cc35c  border inset Y  (0x0042f91f)
+//   _DAT_005cc574  border inset X  (read at 0x0042f91a, 0x0042f981, 0x0042f9b5)
+//   _DAT_005cc35c  border inset Y  (read at 0x0042f959)
 //
 // ref: re/analysis/frontend_promote_menus_b/0042f8d0.md
+//      re/analysis/race_hud_capture_20260902.md Finding 30
 // ---------------------------------------------------------------------------
 
-// Global addresses (cited from 0x0042f8d0 body):
-static constexpr std::uintptr_t kMenuBc_BorderX = 0x005cc574u;  // 0x0042f90b
-static constexpr std::uintptr_t kMenuBc_BorderY = 0x005cc35cu;  // 0x0042f91f
-
-// Color constants: in original, color_A and color_B are constructed from in_AL
-// via CONCAT13. At quiescent state both will default to 0; we pass 0 to match.
-// The Frida diff calls both sides with identical args so any color logic is mirrored.
-static constexpr std::uint32_t kMenuBc_ColorA = 0u;
-static constexpr std::uint32_t kMenuBc_ColorB = 0u;
+// Indirection cell for the five `call 0x00472c60` sites. A naked body cannot
+// emit the original's `E8 rel32` (it would resolve against our own address), so
+// each becomes `call dword ptr [g_menuBc_Quad]`: 6 bytes instead of 5, same
+// push-return-address stack effect, no scratch register consumed. Deliberately
+// non-const so the storage is guaranteed to exist for the asm to reference.
+void* g_menuBc_Quad = reinterpret_cast<void*>(0x00472c60u);
 
 // 0x0042f8d0
-extern "C" __declspec(dllexport) void __cdecl MenuMenusBC(
-    float param_1, float param_2, float param_3, float param_4)
+// Verbatim transcription. Every line carries the address of the instruction it
+// reproduces; the stack displacements are the original's and are only valid
+// against this exact prologue, so do not "tidy" the pushes.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl MenuMenusBC(
+    float /*x*/, float /*y*/, float /*w*/, float /*h*/)
 {
-    float border_x = *reinterpret_cast<float*>(kMenuBc_BorderX);  // _DAT_005cc574
-    float border_y = *reinterpret_cast<float*>(kMenuBc_BorderY);  // _DAT_005cc35c
-
-    // fVar1 = param_3 + _DAT_005cc35c  (cited at 0x0042f91f)
-    float fVar1 = param_3 + border_y;
-
-    // fVar2 = param_4 - _DAT_005cc574  (cited at 0x0042f90e)
-    float fVar2 = param_4 - border_x;
-
-    // 0x40000000 as a Ghidra float literal = 2.0f in IEEE-754 (sign=0, exp=128, mantissa=0).
-    // Passed as the width/height arg for the edge sub-rects.
-    static const float k2f = 2.0f;
-
-    // 1. Center fill  (0x0042f8e0)
-    s_FUN_00472c60(param_1, param_2, param_3, param_4, kMenuBc_ColorA);
-
-    // 2. Left edge  (0x0042f8f4): width = 2.0 (0x40000000)
-    s_FUN_00472c60(param_1 - border_x, param_2,
-                   k2f,
-                   param_4, kMenuBc_ColorB);
-
-    // 3. Top edge  (0x0042f908): height = 2.0 (0x40000000)
-    s_FUN_00472c60(param_1 - border_x, param_2,
-                   fVar1,
-                   k2f,
-                   kMenuBc_ColorB);
-
-    // 4. Bottom edge  (0x0042f920): height = 2.0
-    s_FUN_00472c60(param_1 - border_x, fVar2 + param_2,
-                   fVar1,
-                   k2f,
-                   kMenuBc_ColorB);
-
-    // 5. Right edge  (0x0042f934): width = 2.0
-    s_FUN_00472c60(param_3 + param_1 + border_x, param_2 - fVar2,
-                   k2f,
-                   param_4, kMenuBc_ColorB);
+    __asm {
+        sub  esp, 0xc                           // 0x0042f8d0
+        push ebx                                // 0x0042f8d3
+        push ebp                                // 0x0042f8d4
+        mov  ebp, dword ptr [esp + 0x1c]        // 0x0042f8d5  ebp = y
+        mov  bl, al                             // 0x0042f8d9  bl  = ALPHA (AL arg)
+        mov  eax, dword ptr [esp + 0x20]        // 0x0042f8db  eax = w
+        push esi                                // 0x0042f8df
+        mov  cl, bl                             // 0x0042f8e0
+        push edi                                // 0x0042f8e2
+        mov  edi, dword ptr [esp + 0x2c]        // 0x0042f8e3  edi = h
+        shr  cl, 1                              // 0x0042f8e7  fill alpha = a >> 1
+        mov  byte ptr [esp + 0x13], cl          // 0x0042f8e9
+        mov  byte ptr [esp + 0x10], 0xf0        // 0x0042f8ed  colour A = 0x{a>>1}146ef0
+        mov  byte ptr [esp + 0x11], 0x6e        // 0x0042f8f2
+        mov  byte ptr [esp + 0x12], 0x14        // 0x0042f8f7
+        mov  edx, dword ptr [esp + 0x10]        // 0x0042f8fc
+        push edx                                // 0x0042f900  arg5 colour A
+        push edi                                // 0x0042f901  arg4 h
+        push eax                                // 0x0042f902  arg3 w
+        mov  dword ptr [esp + 0x20], eax        // 0x0042f903  local copy of w
+        mov  eax, dword ptr [esp + 0x2c]        // 0x0042f907  eax = x
+        push ebp                                // 0x0042f90b  arg2 y
+        push eax                                // 0x0042f90c  arg1 x
+        mov  dword ptr [esp + 0x2c], edi        // 0x0042f90d  local copy of h
+        call dword ptr [g_menuBc_Quad]          // 0x0042f911  call 1: centre fill
+        fld  dword ptr [esp + 0x34]             // 0x0042f916  x
+        fsub dword ptr ds:[0x005cc574]          // 0x0042f91a  x - BX
+        mov  byte ptr [esp + 0x24], 0xb4        // 0x0042f920  colour B = 0x{a}1050b4
+        mov  byte ptr [esp + 0x25], 0x50        // 0x0042f925
+        mov  byte ptr [esp + 0x26], 0x10        // 0x0042f92a
+        mov  byte ptr [esp + 0x27], bl          // 0x0042f92f  full alpha, not halved
+        fstp dword ptr [esp + 0x34]             // 0x0042f933  REWRITE caller's x slot
+        mov  esi, dword ptr [esp + 0x24]        // 0x0042f937  esi = colour B
+        push esi                                // 0x0042f93b  arg5
+        push edi                                // 0x0042f93c  arg4 h
+        mov  edi, dword ptr [esp + 0x3c]        // 0x0042f93d  edi = x - BX
+        mov  dword ptr [esp + 0x44], 0x40000000 // 0x0042f941  2.0f
+        mov  ecx, dword ptr [esp + 0x44]        // 0x0042f949
+        push ecx                                // 0x0042f94d  arg3 2.0
+        push ebp                                // 0x0042f94e  arg2 y
+        push edi                                // 0x0042f94f  arg1 x - BX
+        call dword ptr [g_menuBc_Quad]          // 0x0042f950  call 2: left edge
+        fld  dword ptr [esp + 0x3c]             // 0x0042f955  w
+        fadd dword ptr ds:[0x005cc35c]          // 0x0042f959  w + BY
+        push esi                                // 0x0042f95f  arg5
+        mov  dword ptr [esp + 0x58], 0x40000000 // 0x0042f960  2.0f
+        mov  ebx, dword ptr [esp + 0x58]        // 0x0042f968  ebx: alpha is spent here
+        push ebx                                // 0x0042f96c  arg4 2.0
+        fstp dword ptr [esp + 0x58]             // 0x0042f96d
+        mov  edx, dword ptr [esp + 0x58]        // 0x0042f971
+        push edx                                // 0x0042f975  arg3 w + BY
+        push ebp                                // 0x0042f976  arg2 y
+        push edi                                // 0x0042f977  arg1 x - BX
+        call dword ptr [g_menuBc_Quad]          // 0x0042f978  call 3: top edge
+        fld  dword ptr [esp + 0x54]             // 0x0042f97d  h
+        fsub dword ptr ds:[0x005cc574]          // 0x0042f981  ST0 = h - BX
+        mov  eax, dword ptr [esp + 0x64]        // 0x0042f987  eax = w + BY
+        push esi                                // 0x0042f98b  arg5
+        push ebx                                // 0x0042f98c  arg4 2.0
+        fst  dword ptr [esp + 0x54]             // 0x0042f98d  NOT fstp: ST0 survives
+        push eax                                // 0x0042f991  arg3 w + BY
+        fadd dword ptr [esp + 0x6c]             // 0x0042f992  unrounded (h-BX) + y
+        fstp dword ptr [esp + 0x6c]             // 0x0042f996  REWRITE caller's y slot
+        mov  ecx, dword ptr [esp + 0x6c]        // 0x0042f99a
+        push ecx                                // 0x0042f99e  arg2 y + (h - BX)
+        push edi                                // 0x0042f99f  arg1 x - BX
+        call dword ptr [g_menuBc_Quad]          // 0x0042f9a0  call 4: bottom edge
+        fld  dword ptr [esp + 0x64]             // 0x0042f9a5  w
+        fadd dword ptr [esp + 0x70]             // 0x0042f9a9  + REWRITTEN x (x - BX)
+        mov  edx, dword ptr [esp + 0x68]        // 0x0042f9ad  edx = h
+        add  esp, 0x50                          // 0x0042f9b1  drop calls 1-4 args
+        push esi                                // 0x0042f9b4  arg5
+        fadd dword ptr ds:[0x005cc574]          // 0x0042f9b5  + BX
+        mov  eax, edx                           // 0x0042f9bb
+        mov  dword ptr [esp + 0x2c], 0x40000000 // 0x0042f9bd  2.0f
+        mov  ecx, dword ptr [esp + 0x2c]        // 0x0042f9c5
+        fstp dword ptr [esp + 0x24]             // 0x0042f9c9
+        mov  dword ptr [esp + 0x30], edx        // 0x0042f9cd  restore h into its slot
+        fld  dword ptr [esp + 0x28]             // 0x0042f9d1  REWRITTEN y
+        push eax                                // 0x0042f9d5  arg4 h
+        fsub dword ptr [esp + 0x18]             // 0x0042f9d6  - rounded (h - BX)
+        fstp dword ptr [esp + 0x2c]             // 0x0042f9da
+        mov  edx, dword ptr [esp + 0x2c]        // 0x0042f9de
+        mov  eax, dword ptr [esp + 0x28]        // 0x0042f9e2
+        push ecx                                // 0x0042f9e6  arg3 2.0
+        push edx                                // 0x0042f9e7  arg2
+        push eax                                // 0x0042f9e8  arg1
+        call dword ptr [g_menuBc_Quad]          // 0x0042f9e9  call 5: right edge
+        add  esp, 0x14                          // 0x0042f9ee
+        pop  edi                                // 0x0042f9f1
+        pop  esi                                // 0x0042f9f2
+        pop  ebp                                // 0x0042f9f3
+        pop  ebx                                // 0x0042f9f4
+        add  esp, 0xc                           // 0x0042f9f5
+        ret                                     // 0x0042f9f8  __cdecl, caller cleans
+    }
 }
 
-// MASS-DISABLED 2026-05-24 hangs-harness: RH_ScopedInstall(MenuMenusBC, 0x0042f8d0);
-// Phase A1 audit 2026-05-24: synthetic diff TIMES OUT — function hangs both
-// sides under repeated bare-int invocation (likely a render-loop or wait-on-
-// global pattern). 60s harness deadline insufficient. Canonical-scenario
-// at MENUS-B-C screen render is the appropriate validation path.
+// RE-ENABLED 2026-09-05 (was MASS-DISABLED 2026-05-24 hangs-harness).
+// The 2026-05-24 note recorded the right symptom and the wrong conclusion: the
+// synthetic path1 diff does not "hang", it drives a renderer with no live RW
+// device and no live vertex buffer. arg_type='none' also called this with a
+// zero-length argument list, so all four floats and the AL alpha were whatever
+// happened to be left in the frame. The registry entry is retired (see
+// re/frida/hooks_registry.py 'menu_menus_bc'); acceptance for this function is
+// the hook-on vs hook-off draw-stream A/B with an off-vs-off control, which is
+// the channel that detected the missing AL argument in the first place.
+RH_ScopedInstall(MenuMenusBC, 0x0042f8d0);
 
 // ---------------------------------------------------------------------------
 // MenuMenusBD  --  0x0040b460

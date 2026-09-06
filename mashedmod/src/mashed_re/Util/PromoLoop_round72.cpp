@@ -32,6 +32,20 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl AudioStateActive(void) {
 RH_ScopedInstall(AudioStateActive, 0x004627b0);
 
 // 0x0042bf30
+// TRACKER NAME: MenuModalPost (hooks.csv, re-filed frontend 2026-09-05).
+// This is the modal POSTER: it fills the request block at 0x0067eab4..0x0067ead0
+// and raises DAT_0067eab0. It never draws. The renderer is 0x00433f40,
+// MenuModalRender, in Frontend/MenuModal.cpp, which paints whatever is posted
+// here once the ramp DAT_0067eab8 reaches 0x28.
+//
+// The exported symbol below KEEPS the old Post0042bf30 name on purpose, as does
+// the registry key 'post_0042bf30', so the 2026-06-13 promotion evidence
+// (log/diff_post_0042bf30.csv) and hooks_registry.py keep resolving. Do not
+// rename it to match the tracker without re-running that diff.
+//
+// Its gate DAT_0067eab0 doubles as the setup-screen input freeze that
+// 0x0042f7b0 (FrontendCursorUpdate) early-outs on -- one flag, two jobs.
+// See re/analysis/race_hud_capture_20260902.md Findings 29, 32 and 37.
 extern "C" __declspec(dllexport) void __cdecl Post0042bf30(std::uint32_t p1, std::uint32_t p2, std::uint32_t p3,
                                                            std::uint32_t p4, std::uint32_t p5, std::uint32_t p6) {
     if (*reinterpret_cast<std::int32_t*>(0x0067eab0u) == 0) {

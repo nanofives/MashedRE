@@ -8612,12 +8612,25 @@ HOOKS = {
     },
 
     # 0x0042f8d0  MenuMenusBC
-    # void FUN_0042f8d0(float x1, float y1, float x2, float y2)
-    # Background rect drawn as 5 calls to FUN_00472c60 using _DAT_005cc574/35c
-    # border offsets. arg_type='none' (4-float-arg sig unsupported in harness;
-    # call with no args â€” both sides crash at FUN_00472c60 render path identically).
-    # crash_equal_ok=True. 10 iterations.
-    # ref: re/analysis/frontend_promote_menus_b/0042f8d0.md
+    # void __cdecl FUN_0042f8d0(float x, float y, float w, float h) + ALPHA IN AL.
+    #
+    # RETIRED AS EVIDENCE 2026-09-05. Do NOT promote off this entry, and do not
+    # "fix" it by adding the four floats: path1 cannot judge this function at all.
+    #   * arg_type='none' calls it with a zero-length argument list, so the four
+    #     floats AND the AL alpha are whatever was left in the frame.
+    #   * crash_equal_ok=True then scored ten both-sides-AV observations as
+    #     GREEN 10/10. run_diff attaches about a second after spawn, before the
+    #     RW device at DAT_007d3ff8 exists, so every vector dies in FUN_00472c60
+    #     on both sides. That is the shape the 0x004987b0 note calls "no evidence
+    #     at all", and it is what let the missing AL argument survive four months.
+    #   * driven to a live scenario instead, the observable is the shared vertex
+    #     buffer DAT_00898a20, which the game's own render thread rewrites
+    #     between seed, call and read.
+    # Acceptance is the hook-on vs hook-off draw-stream A/B with an off-vs-off
+    # control (re/frida/menu_draw_burst.py + re/tools/drawlist_diff.py), which is
+    # the channel that found the AL argument.
+    # ref: re/analysis/race_hud_capture_20260902.md Findings 30 and 37
+    #      re/analysis/frontend_promote_menus_b/0042f8d0.md
     'menu_menus_bc': {
         'rva':            0x0042f8d0,
         'export':         'MenuMenusBC',

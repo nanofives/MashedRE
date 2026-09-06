@@ -3162,3 +3162,230 @@ reference SHA is byte-identical before and after both runs.
 That closes the residual. What is NOT claimed: that the port WRITES a save the
 original would accept, or that any other span field is wired — only that the
 challenge-panel flags survive the restore into the addresses the renderer reads.
+
+---
+
+## Finding 37: the modal chain to C3 -- `0x0042f8d0`, `0x00433f40`, `0x0042bf30` (2026-09-05)
+
+Three RVAs that Findings 30 and 32 read end-to-end but left at the wrong level,
+the wrong name or the wrong body. All three are settled here. Two promotions and
+one re-file; no new invented anything.
+
+### `0x0042f8d0` -- the bordered plate had THREE defects, not one
+
+Finding 30 found the AL argument from the outside, through a colour-only draw
+diff, and worked around it in `SetupScreenRenderers.cpp` by setting AL at the
+call site. The function's own C2 body was never revisited. Read now against both
+witnesses -- capstone over `MASHED.exe.unpatched` and a headless Ghidra decomp --
+the 2026-05-11 transcription is wrong in three places:
+
+| | the original | the C2 body |
+|---|---|---|
+| fill colour | `CONCAT13(in_AL >> 1, 0x146ef0)` | `kMenuBc_ColorA = 0` |
+| border colour | `CONCAT13(in_AL, 0x1050b4)` | `kMenuBc_ColorB = 0` |
+| call 5 x | `(w + (x - BX)) + BX` | `w + x + BX` |
+| call 5 y | `(y + (h - BX)) - (h - BX)` | `y - (h - BX)` |
+
+The colours are the AL story. The other two are a different mistake and a more
+interesting one: **the function writes into its CALLER's argument slots and then
+reads them back.** `0x0042f933 fstp [esp+0x34]` replaces the caller's `x` with
+`x - BX`, and `0x0042f996 fstp [esp+0x6c]` replaces `y` with `y + (h - BX)`.
+Calls 2-4 were transcribed from the decompiler's post-assignment `param_1` and
+came out right by luck; call 5 was transcribed as if `param_1` and `param_2`
+still held the entry values. Ghidra prints the reassignments plainly
+(`param_1 = param_1 - _DAT_005cc574;`). They were read as C-level convenience
+rather than as the aliasing they are.
+
+**Ghidra was not silent about the AL argument here.** It emits `byte in_AL` and
+uses it in both CONCAT13s. The 2026-05 note called it "an unusual MSVC calling
+convention artifact" and hardcoded zero. So the lesson from Finding 30 needs
+narrowing: the decompiler often *does* surface a register argument; what it
+cannot do is make you believe it.
+
+**Why the replacement is naked verbatim.** One store is `fst`, not `fstp`:
+
+```
+0x0042f97d  fld  dword ptr [esp+0x54]     ; h
+0x0042f981  fsub dword ptr [0x5cc574]     ; ST0 = h - BX
+0x0042f98d  fst  dword ptr [esp+0x54]     ; rounds to float IN MEMORY only
+0x0042f992  fadd dword ptr [esp+0x6c]     ; ST0, UNROUNDED, + y
+```
+
+so `fVar2` exists at two precisions simultaneously: the rounded float that call
+5's `fsub` reads back out of memory, and the register value that call 4's `fadd`
+consumes. No `float` local holds both. Reproducing it with `double` would work
+only under a particular x87 precision-control setting, which is MASHED's CRT's
+business and not something to depend on silently. The transcription is the
+instruction sequence instead; only the five `E8 rel32` calls change form, to
+`call dword ptr [g_menuBc_Quad]` (same stack effect, no register consumed).
+
+Verified as a transcription before it was verified as behaviour: the compiled
+export was located in the `.asi` export table, disassembled with capstone and
+compared line-by-line against the original listing -- **95 of 95 instructions
+identical**, the only differences being the disassembler printing `ds:` and the
+five call encodings.
+
+### `0x00433f40` -- the modal renderer, ported and renamed
+
+`hooks.csv` carried it as `RaceEndFadeOverlay`, subsystem `render`, `mapped`,
+from a 2026-05-23 skeleton pass that named it off the fade guards at the top. It
+is the generic posted-modal renderer, and its four best-evidenced callers are the
+team-split rejection arms of Finding 32. Now implemented in
+`Frontend/MenuModal.cpp` (ASI-only for the usual reason: every callee sits at a
+raw `.text` RVA) and re-filed `frontend`.
+
+Three things the decompilation gets wrong, all caught by reading the listing:
+
+1. **`FUN_004278d0` takes three arguments, not one.** Ghidra prints
+   `FUN_004278d0(DAT_0067eab4)`. All three call sites push three dwords and clean
+   `0xc` (`0x00434170`/`0x00434175`, `0x0043417b`/`0x00434180`), and the callee
+   consumes param_2 as the colour and param_3 as the scale. Taking the printed
+   arity would have dropped both on the floor. Confirmed live afterwards:
+   `4278d0(id=0xd6, col=0xffdcdcdc, scale=0.60)`.
+2. **`FUN_0042aae0` is not `__fastcall`** despite Ghidra's declaration. The
+   `push ecx` at `0x0042aae0` is MSVC's 4-byte local allocation, the vtable call
+   at `0x0042aaea` takes two arguments (`add esp,8` at `0x0042ab05`, not three),
+   and it ends in a plain `ret` at `0x0042abfe`.
+3. **`FUN_0042c090` reads its colour by address** (`&stack0x00000004`), which is
+   why Ghidra prints it `void(void)`. That address is the caller's pushed
+   argument slot, so an ordinary `__cdecl` parameter is exactly right.
+
+The prompt-layout jump table at `0x00434328` was read out of the image rather
+than inferred from the switch arms: `1`/`7`/`0xb` draw one prompt, `2`/`9`/`0xc`
+draw two, and `3`/`4`/`5`/`6`/`8`/`0xa` all target the default arm. The `/GS`
+stack cookie is deliberately not ported; it computes nothing and draws nothing.
+
+### The evidence, and the control that nearly fooled me
+
+Same channel as Finding 30, and the same shape of answer. For `0x0042f8d0`, on
+screens 15 and 16:
+
+| pair | screen 15 | screen 16 |
+|---|---|---|
+| hook-on vs hook-off | 332 / 168, 0 missing, **0 extra** | 292 / 168, 0 / 0 |
+| OFF vs OFF (control) | 332 / 168, 0 missing, **8 extra** | 292 / 168, 0 / 0 |
+
+All 320 mismatch lines on both screens come from one call site,
+`0x474464,0x42e89c` -- the animated prompt strip whose phase differs between any
+two boots. Zero mismatches at the plate drawer's own sites. The hooked pair is no
+further from the original than two unhooked runs are, and on screen 15 it is
+strictly closer.
+
+**The near-miss is worth recording.** At `--settle 9` the first batch looked like
+a clean, reproducible regression: three OFF runs with 0 extra draws, three ON
+runs with exactly 8, the same two gradient panels every time. A null-hook control
+(ASI loaded, `MASHED_HOOK_ONLY` set to a name that matches nothing) also showed
+0 extra, which appeared to pin the delta on our function. It was a screen
+transition still in flight, whose phase the install happened to shift; at
+`--settle 20` the extras move to the OFF side and the hooked pair goes clean. So
+"reproducible across three runs per arm, with a control" was still not enough --
+what settled it was changing the variable the artifact actually depended on.
+Two lessons compounding: run the control, and then make sure the control varies
+the right thing.
+
+For `0x00433f40` the modal has to be up, so `menu_draw_burst.py` gained
+`--post-modal` (posts through the game's own `0x0042bf30`, then waits for the
+ramp), `--modal-aux` (seeds `0x0067ea5c`, the poster's own gate, so it raises the
+id-bias flag -- seeding the producer, not the derived field) and `--text-trace`.
+
+The ramp is polled to **saturation**, not merely past the `0x28` gate. It is the
+top byte of all five modal colours, so sampling mid-climb makes every colour a
+function of when the burst armed and buries a real diff in noise.
+
+Result: 332 / 168, 0 missing, 0 extra, identical to the off-vs-off control, and
+all ten modal quads bit-identical -- with our ASI return addresses
+(`0x72ba3e53`, `0x72ba3ed5/3f04/3f2c`, `0x72ba3f3a`) standing where the OFF run
+has `0x434009`, `0x4340a7/c5/e2`, `0x4340ec`. That substitution is the proof the
+hook fired; without it the GREEN would have been free.
+
+**The vertex channel cannot see text at all.** Glyph draws never reach
+`RwIm2DRenderPrimitive` with `0x00433f40` in the first five backtrace frames, so
+the title, body and prompt arms were invisible to the draw diff -- a C3 claim
+resting on it alone would have covered about half the function. `--text-trace`
+records the arguments of the four text entry points instead, gated to the burst
+window so `0x00427e00` is not left attached on a menu:
+
+| posted layout | text calls / frame | modal's own lines | off == on |
+|---|---|---|---|
+| 1 | 7 | title `0x41`, body `0x4278d0(0xd6, 0xffdcdcdc, 0.60)`, prompt `0x2d` at 140/345 | yes |
+| `0xc` | 8 | same + second prompt `0x2f` at **270**/345 | yes |
+| 5 | 6 | title + body only, no prompt | yes |
+| 1, bias on | 7 | title id flips `0x41` -> **`0xb8`** | yes |
+
+The call counts alone confirm the jump-table read, and the bias run confirms the
+`DAT_0067ead4` branch is taken. Its body id stays `0xd6` because the page counter
+`DAT_0067eadc` is 0 in that state, so the addend is zero -- the branch is proven,
+the non-zero addend is not.
+
+Not exercised, and stated as such: the `0x27b` buffer branch
+(`0x00427be0` + `0x00427990`), and a non-zero id bias.
+
+### Widening: the other nine call sites, and why five stay uncaptured
+
+Re-enabling `0x0042f8d0`'s `RH_ScopedInstall` is a bigger change than it looks.
+The install had been commented out since 2026-05-24, so the defective 2026-05
+body was never actually serving anyone; turning it back on puts our code under
+**all seventeen** direct callers, and only eight of those are in the two setup
+renderers this lane had captured.
+
+Ghidra puts the other nine inside a single function, `FUN_00434720` (8369 bytes,
+the championship / cup progress screen, sole caller `FUN_0043bf30`). Its panel
+flag `DAT_0067e7c8` is set by page id **5** (`FUN_00431f30` case 5), so it is
+reachable with a plain `--screen 5` push.
+
+| screen 5, settle 35 | result |
+|---|---|
+| hook-on vs hook-off | 348 / 168, 0 missing, **0 extra** |
+| OFF vs OFF (control) | 348 / 168, 0 missing, 0 extra |
+
+with all 320 mismatch lines again from the one animated prompt strip, and the
+plate output identical: **35 quads, 0 through the original body and 35 through
+the ASI body** in the hooked run.
+
+Four of the nine sites fire in that state (`0x00434938`, `0x00434eee` four times
+in a loop, `0x004361bb`, `0x00436676` = 7 plates x 5 quads). The remaining five
+sit behind the `DAT_0067e9fc == 2` co-op split-screen branch and were not reached.
+
+**That is not an evidence gap, and it is worth being precise about why.**
+`0x0042f8d0` contains **zero branches** -- 95 instructions, five calls, not one
+`jcc` or `jmp`. Every call site executes the identical body. So per-call-site
+coverage measures the *callers'* arguments, not this function; what carries the
+correctness claim is the 95/95 byte-identity plus at least one exercised site.
+The screen-5 run adds a genuinely independent check anyway: a different alpha
+source (`DAT_0067e7cc` rather than `DAT_0067e7dc`) and different geometry.
+
+One operational note: **the transition-artifact settle threshold is
+screen-dependent.** Screen 5 still showed the same two gradient panels
+(`0x474bd3`/`0x474d0c` via `0x42e80c`) at `--settle 20`, the setting that was
+already clean for screen 15, and only went clean at 35. Do not carry a settle
+value across screens and assume it holds.
+
+### `0x0042bf30` -- a re-file, not a promotion
+
+Already C3 since 2026-06-13. What was wrong was the filing: subsystem `vehicle`
+(it is frontend), and the name `Post0042bf30`, which says nothing. Now
+`MenuModalPost`, subsystem `frontend`.
+
+The exported C++ symbol and the registry key `post_0042bf30` are deliberately
+**unchanged**, so the 2026-06-13 diff CSV and `hooks_registry.py` keep resolving;
+a comment at the definition records the split so the two names cannot drift
+apart unnoticed.
+
+### One registry entry retired
+
+`menu_menus_bc` is kept in `hooks_registry.py` but marked as **not evidence**.
+It declared `arg_type='none'` -- a zero-length argument list against a function
+with four floats and a register argument -- and `crash_equal_ok=True`, which
+scored ten both-sides-AV observations as `GREEN 10/10`. That is the shape the
+`0x004987b0` note already calls "no evidence at all", and it is what let the
+missing AL argument sit unnoticed for four months while the row read C3. The
+comment above it now says why path1 cannot judge this function and what the
+acceptance channel is instead.
+
+### New
+
+`U-9084`: the modal renderer hands `0x00427be0` a 512-byte stack buffer it never
+initialises, and the callee's decompilation never reads through the pointer. The
+port passes the same uninitialised buffer rather than zeroing it, because zeroing
+would define something the original leaves undefined -- the U-9081 lesson. Blocks
+nothing at C3; a C4 would have to drive the `0x27b` branch anyway.
