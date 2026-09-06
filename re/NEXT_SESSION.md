@@ -1,100 +1,100 @@
 # Next session — kickoff prompt
 
-Written at the end of the 2026-09-04 **setup-screen faithfulness + team scoring +
-text-source audit** lane (branch `race/first-frame-parity`). Paste the block below.
+Written at the end of the 2026-09-05 **Challenge-Select icon dictionary + literals**
+lane (branch `race/first-frame-parity`, commit `f6d873c8`). Paste the block below.
 
 ---
 
-Resume the Mashed frontend/UI lane. Branch `race/first-frame-parity`, tree clean
-apart from an untracked `videocfg.bin` (a standalone-run byproduct — do NOT
-commit it), no children running, no worktrees or pool slots held.
+Resume the Mashed frontend/UI lane. Branch `race/first-frame-parity` @ `f6d873c8`.
 
-Read `re/analysis/race_hud_capture_20260902.md` **Findings 29–36** (the newest
-eight, all from this lane). Do NOT read the file top to bottom — later Findings
-overturn earlier ones in the SAME file. In particular **Finding 33 corrects
-Finding 32** (there is no `+1` message-id offset; it was the wrong FILE), and
-**Finding 34's claim about `FUN_00427e00` is itself corrected by 33** — read
-both as written.
+**FIRST: `git status`.** Another session's **modal-pair slice is still uncommitted**
+here — `Frontend/MenuModal.cpp` (untracked) plus edits to `hooks.csv`,
+`UNCERTAINTIES.md` (U-9084), `re/analysis/CHANGELOG.md`,
+`re/analysis/race_hud_capture_20260902.md` (Finding 37), `re/frida/hooks_registry.py`,
+`re/frida/menu_draw_burst.py`, `MenuMenusB.cpp`, `PromoLoop_round72.cpp`,
+`asi_sources.rsp`. That work is complete and correct — do **not** commit it, edit it,
+or revert it. Untracked `videocfg.bin` is a byproduct; never commit it.
+
+Read `re/analysis/chalsel_icon_dictionary_20260905.md` (short, self-contained). It is
+the successor to `race_hud_capture_20260902.md` Finding 36 and **overturns Finding 36's
+icon paragraph** — read it after 36, and do not re-derive it. It was filed as its own
+note rather than appended to the findings file only because that file was dirty.
 
 ## What this lane established (do not re-derive)
 
-The two player-setup screens (15 Ability Select, 16 Team Select) are now **fully
-ported and fully sourced** — no invented renderer, no invented input, no
-invented text.
-
 | thing | state |
 |---|---|
-| `0x0042f7b0` ability input step | IDENTIFIED = Ability Select's per-frame input (sibling of `0x0042fa00`), already C3 as `FrontendCursorUpdate`; wired into screen 15. New registry entry `frontend_cursor_update_abil` (the old GREEN was guard-only). path1 8/8, path2 PASS. Finding 29 |
-| `0x0043a610` / `0x0043aa30` renderers | **C2 → C3**, `Frontend/SetupScreenRenderers.cpp` (ASI-only TU). `0x0042f8d0` takes its **alpha in AL** — a register arg no decomp shows, found by a hook-on/off draw-stream A/B. No path1 (device-null AV + racy VBUF); accepted evidence is the draw-stream A/B with an off-vs-off control. Finding 30 |
-| team scoring | the `DAT_0067ea64` arms of `0x0040eee0` ported exe-side in `TrackRenderer` (`ScoreOnEliminationTeams`); all three arms observed (`0,1,0,1` reaches the 2-alive one). `MASHED_TEAM_PLAY`/`MASHED_TEAMS`. The victim still gets `+delta` in team play — faithful, recorded. Findings 31, +2-alive |
-| rejection modal | the original does NOT annotate Team Select; it posts a modal (`0x0042bf30` → `0x00433f40`) with body id `0xd6..0xd9` and refuses to advance. Verdict line now pulls the real string, draws nothing on a legal split. Finding 32 |
-| **U-9083** | RESOLVED — the port's `g_menu_str` read the loose `FONT/English.dat` (449 ids); the game reads the `Font36.piz` copy (677 ids), shifted from id `0x16`. Fixed. Finding 33. Memory `[[two-copies-of-english-dat]]` |
-| **U-4259** | RESOLVED — `DAT_0067e850` is stride-12 single-dword; `+4`/`+8` have no reader/writer (XrefRange, 34 refs all at offset 0). Finding 30 |
-| text audit | main draw path was always correct (`GetMenuMessage` on `Font36.piz`); only `g_menu_str` was wrong. Setup headers, options values (insults `0x59`/`0x1b2`/`0x1b1`, autosave `0x59+flag`) and the Challenge panel now draw by id. Findings 34, 35, 36 |
-| Challenge Select panel | was an INVENTED "Bronze Challenge / Locked" caption; is actually a per-track mode checklist (`0x22`/`0x140` heading + `0x56`/`0x24b`/`0x141`) with per-flag Lock icons. Flag-dependence proven both by poke AND through the real save restore. Finding 36 |
-| save-span mirror | **DEFECT FIXED**: `Nav_GameStateLoadSave` only filled a private `g_save_span`, so consumers reading live `0x007f0a40..` saw zeroed `.bss`. Now mirrors to the live range. `MASHED_SAVE=<path>` overrides the save file without swapping the shared reference. Finding 36 |
+| two sprite dictionaries | `0x0040bb50`→`DAT_0063b8fc`=`BADGES.TXD` (23 tex) and `0x0040bb90`→`DAT_0063b904`=`INTERFACE.TXD` (30 tex), each with its own slot gate (`0x0042ee00` lock/dot/check 16x16; `0x004391b0` Lock/Star/tick 32x32). A third head is `DAT_0063b8f8` behind `0x0040bb30`. Memory `[[two-sprite-dictionaries-badges-vs-interface]]` |
+| the checklist icons | **RESOLVED.** `FUN_00439210` rows call the BADGES forwarder: `0x004395c6` tests the flag, `0x004395d9` pushes `"check"`, `0x004395e6` pushes `"lock"`. The original draws an icon on EVERY row. Port fixed: unlocked rows now draw `check`; locked rows now draw BADGES' 16x16 `lock` instead of INTERFACE's 32x32 `Lock` |
+| `"Tick"` | never a candidate — wrong dictionary, has its own user as lowercase `"tick"` (`0x005cda3c`), and `FUN_004c5c00` is not prefix-tolerant (`0x004c5c5a` needs both strings to end together) |
+| handle collision | `kSlotLock` 61 collided with `kSlotVehPrev0` (61..68) and `kHandleLock` 52 with `kHandleVehPrev0` (52..59). Moved to 93/94 and 84/85; bridge census comment corrected (~85 of 96, headroom ~11) |
+| screen-6 Star | **unchanged, deliberately.** `0x00435f82`/`0x00435fdd` do push `"Star"` into `bb50`, but they are inside `FUN_00434720` (screen 5). The screen-6 star goes through the `bb90` gate, so the port's INTERFACE Star stands |
+| A/B/- team marker | **DROPPED.** `[SCAFFOLD]`, no counterpart in `FUN_0043aa30`. The original's marker is the sprite slide + roster stack, both already ported — the letter was inventing output on top of faithful output |
+| `kAreas[].name` / `Cup::name` | **DROPPED.** "Arctic" occurs 0 times in the exe; the names fed `Cup::tracks[].name`, which nothing read. Row labels come from the message table (id `0x49 + row`). The `piz` column keeps the identity |
 
-## Traps this lane paid for — carry these forward
+## Left open, with reasons
 
-- **A wrong reference TABLE gives confident, self-consistent, wrong readings.**
-  U-9083 fit a `+1` across five independent pairings that did not exist. Reading
-  the LOADER settled it, not comparing more strings. `[[two-copies-of-english-dat]]`
-- **Decomp is silent about register arguments.** `0x0042f8d0` takes its alpha in
-  AL; the tell is a `mov al, …` at the call site with no matching stack push, and
-  the symptom in a draw-stream diff is matching geometry with colour-only
-  mismatches. `[[decomp-is-silent-about-register-args]]`
-- **The standalone commits original globals ZEROED**, so a field whose absent
-  value is `-1` (team id `0x007f1a18`) reads as a valid `0`. Seed the producer's
-  input and let the original derive; never poke the derived field.
-  `[[zeroed-granule-vs-minus-one-sentinel]]`
-- **An inherited GREEN can be guard-only.** `0x0042f7b0`'s 10/10 seeded the
-  early-out guard in every vector and never ran the loop. Read the vectors before
-  trusting a C3. `[[inherited-green-may-be-guard-only]]`
-- **Arm-entry counters armed BEFORE the first run.** An arm that never fires and
-  an arm that fires and awards nothing are the same silence in the score column.
-- **A capture at the default state is often degenerate** (both option arms read
-  "Off"; a fresh save locks every challenge row). Drive to a non-default state or
-  the frame proves nothing.
-- **Do NOT swap `original/gamesave.bin`** (or any file under `original/`) to test
-  a save — it is the shared diffing reference. Use `MASHED_SAVE=<path>` with a
-  scratch copy; verify the reference SHA is unchanged after.
+1. **No screenshot of the fixed panel.** The standalone **exits on focus loss**, and a
+   non-interactive session has no foreground desktop, so neither `MASHED_NAV_DEMO` nor
+   `MASHED_PARITY` reaches frontend asset loading — no `walk_*.bmp`, no `parity/re_s6.bmp`,
+   and `LoadMenuBadgeSprite`'s new `F38:` log line is **unverified at runtime**. The port
+   change rests on the static branch read plus the live dictionary walk, which is the
+   load-bearing evidence, but the render itself is unconfirmed. **First thing to do next
+   session, from an interactive desktop:**
+   `MASHED_NAV_DEMO=1 MASHED_CHAL_UNLOCK="1,0,1" MASHED_WIN_POS=left-bl mashedmod\build\mashed_re.exe`
+   then check `verify/walk_06_challengeselect.bmp` shows a check on rows 0 and 2 and a
+   padlock on row 1, and `log/mashed_re.log` for two `F38: badges.txd ... upload OK` lines.
+   Compare against `verify/chalsel_panel_unlocked.bmp` (the pre-fix shot, same flags).
+2. **No tracker rows.** `hooks.csv`, `UNCERTAINTIES.md` and `CHANGELOG.md` are dirty with
+   the other session's transaction and are `re-classify`-only. Once that lands, file:
+   **U-9085** (below), and a note on the `0x00439210` row that its icon sourcing is now
+   pinned.
+3. **U-9085 — a C3 body that does not match its RVA.** `LinkedListStringSearch`
+   (`0x004c5c00`, `Frontend/SpriteCluster.cpp`) has the sentinel as `*(head+8)` when the
+   binary makes it the ADDRESS `head+8` (`0x004c5c05 add eax,8`, loop test `0x004c5c68`),
+   and reads the name as a pointer at `node+8` when it is an INLINE array
+   (`0x004c5c1c lea ecx,[eax+0x10]`, `0x004c5c27 mov cl,[esi]`). Return value and case
+   folding are right. Its `RH_ScopedInstall` has been commented out since 2026-05-24, so
+   nothing has mis-executed — same shape as `0x0042f8d0` in Finding 37. **Decide the
+   demotion deliberately; do not fix it in passing.** Memory
+   `[[stale-c3-body-behind-disabled-install]]`.
+4. The probe observed **zero natural `FUN_0040bb50` calls** — a synthetic
+   `FUN_0043d2a0` push does not satisfy the panel guard (`FUN_00430760()==0 &&
+   DAT_0067e9fc==6`), so the checklist block never ran. Stated, not read as agreement.
 
-## New verification knobs (display-only, not set in normal play)
+## Traps carried forward
 
-`MASHED_ABIL_KEYS` / `MASHED_TEAM_KEYS` (per-profile taps), `MASHED_TEAM_PLAY=1`
-(now written at BOOT, so the frontend sees it), `MASHED_TEAMS="0,0,1,1"`,
-`MASHED_PLAYERS=2..4`, `MASHED_MSG_IDS="0xd6,…"` (dump ids through the port's
-decoder), `MASHED_CHAL_UNLOCK="a,b,c"` (poke the three challenge flags),
-`MASHED_SAVE=<path>` (override the restored save file).
+- **A wrong reference TABLE gives confident, self-consistent, wrong readings.** Third
+  time this lane paid for it (U-9083 the wrong `English.dat`; now the wrong TXD). Both
+  times the LOADER settled it, not more string comparisons.
+- **Case folding can make a wrong-dictionary guess look right.** `"lock"` resolves in
+  both dictionaries; only `"check"` and the live head value separate them. When a lookup
+  folds case, an offline file dump is not sufficient — read the runtime head.
+- **A MASS-DISABLED body is unverified**, whatever `hooks.csv` says.
+- Structure-level agreement with field-level disagreement (right node COUNT, garbage
+  names) means the traversal is right and an OFFSET is wrong.
+- Everything from the 2026-09-04 list still stands: register args, zeroed granules vs
+  `-1` sentinels, guard-only GREENs, degenerate default states, never swap anything
+  under `original/`.
+- **Don't `Remove-Item` under `verify/`** to make room for a capture — `verify/parity/*.bmp`
+  are tracked reference shots and are not bit-reproducible. (Deleted `re_s6.bmp` here and
+  restored it from git; it was force-added precisely because `*.bmp` is gitignored.)
+
+## Knobs
+
+`MASHED_CHAL_UNLOCK="a,b,c"`, `MASHED_TEAM_PLAY=1` (BOOT), `MASHED_TEAMS`,
+`MASHED_PLAYERS`, `MASHED_ABIL_KEYS`/`MASHED_TEAM_KEYS`, `MASHED_MSG_IDS`,
+`MASHED_SAVE=<path>`, `MASHED_NAV_DEMO=1`, `MASHED_PARITY=1`,
+`MASHED_DBG_BBDUMP=<frame>` + `MASHED_DBG_BBDUMP_OUT=<path>`, `MASHED_WIN_POS=left-bl`.
+New probe: `py -3.12 re/frida/chal_icon_probe.py [--screen 6]`.
 
 ## Candidate next slices
 
-1. **`0x0042f8d0` / `0x0042bf30` / `0x00433f40` to C3 proper.** The plate drawer
-   (with its AL arg now understood), the modal poster and the modal renderer are
-   all read end-to-end this lane but only the first is installed anywhere. The
-   modal pair would make the rejection flow a real hook rather than a port-side
-   verdict line.
-2. **Sournce the remaining literals.** Still hardcoded: `GameFlow.cpp` `kAreas`
-   (a real defect flagged 2026-08-27 — "Arctic" occurs 0 times in the exe; not
-   currently drawn but wired into `g_cup.tracks[].name`), and the `A`/`B`/`-`
-   team marker (`[SCAFFOLD]`; the original's marker is the sprite slide, Finding
-   27 — the letter has no id and should probably just be dropped).
-3. **The `"check"` sprite question.** Finding 36 left it `[UNCERTAIN]` whether
-   `FUN_0040bb50("check", …)` resolves to anything (INTERFACE.TXD has Lock, Star,
-   Tick; no "check"). A Frida read of the dictionary `DAT_0063b8fc` at screen 6
-   would settle whether an unlocked row draws Tick or nothing.
-4. **Leave the frontend lane.** R7 has other subsystems; the standings/setup/team
-   chain is done and sourced.
-
-## Open risks / residuals (all recorded, none blocking)
-
-- The **2-alive same-team COLLAPSE** on a `0,0,1,1` split needs both eliminations
-  from one team, which ~12 rounds did not produce; reached instead via `0,1,0,1`.
-  Implemented and now observed, but the `0,0,1,1` path itself is unforced.
-- The **insults/autosave scale**: the original passes `0.7` for both rows, the
-  port uses `0.72`/`0.6` (a June eyeball). Left alone — the two scale laws are not
-  the same quantity — but flagged before anyone re-fits that row.
-- **Save WRITE is not claimed.** Only that the restore carries the challenge
-  flags into live memory; whether the port emits a save the original would accept
-  is untouched, as is every other span field.
-- The `videocfg.bin` byproduct at the repo root — do not commit it.
+1. **Close out this one properly** — the screen-6 capture in (1) above, then the tracker
+   rows in (2) and the U-9085 decision in (3). Small, and it is the honest finish.
+2. **Audit the other `FUN_0040bb50` / `FUN_0040bb90` call sites the same way.** The
+   dictionary split was mis-assumed once; the port has ~16 texture registrations and
+   several were named off whichever TXD was open at the time. `0x00434720`'s badges
+   `Star` on screen 5 is a known, unexamined instance.
+3. **Leave the frontend lane.** R7 has other subsystems; the standings/setup/team/
+   challenge chain is now ported and sourced.
