@@ -114,3 +114,41 @@ Orchestration note: the Agent worktree isolation forked children from a ~10-day-
 commit (`350ac4ca`), so the two worktree fixes (#2, #4) were re-based onto HEAD by
 hand (#2's hunks re-applied; #4 was diagnosis-only). Wave 2 runs in the main tree to
 avoid that. Memory: `[[agent-worktree-forks-stale]]` (to be filed).
+
+## Results — wave 2 (2026-09-06)
+
+- **#6 focus-gate in-race input — FIXED (pending desktop).** Committed `11fd98e7`.
+  One guard `s_live_input_ok = g_active || g_nav_demo || g_race_demo ||
+  g_cfgedit_demo` ANDed onto the three in-race input reads (free-cam, RMB look,
+  steer/accel). Demo/capture bypasses + `g_det_clock` preserved; no pause reintroduced.
+- **#3 pause menu — FIXED core (pending desktop); genuine bug, not faithful-as-is.**
+  Committed `10d737cc`. The original HAS a pause (FUN_004929d0 mode 3<->7; race tick
+  FUN_004111c0 skipped in mode 7). Ported the faithful core: ESC pauses+freezes,
+  ESC resumes, ENTER quits (-0xce0000); demo/capture paths keep exit-on-ESC. The
+  overlay is a `[SCOPED]` placeholder — the original menu chrome (event 0xff210000 /
+  FUN_0043d7c0 Resume/Restart/Quit strings + Restart -0xe00000 -> FUN_0040de10) is
+  NOT reversed and deliberately not invented.
+
+## Desktop verification checklist (one nav-demo run + one race)
+
+Run `MASHED_NAV_DEMO=1 MASHED_WIN_POS=left-bl mashedmod\build\mashed_re.exe`, then
+play a race manually:
+1. **#1** Colour Select: LEFT/RIGHT cycles the car colour.
+2. **#2** Challenge Select: UP/DOWN moves across all 4 cup rows; a locked row won't launch.
+3. **row icons** (earlier commit db4da943): selected row shows MultiPlayer, others a
+   faint check, no star. (Same screen as #2.)
+4. **#6** In a race, unfocus the window + press arrows -> car/camera must NOT move;
+   refocus -> they do.
+5. **#3** In a race, ESC -> cars freeze + "PAUSED" overlay; ESC -> resume; ENTER while
+   paused -> back to menu.
+
+## Remaining follow-ups (open)
+
+- **#5 all-red** — confirm on desktop whether the colour shows after confirm (it reads
+  0x007f1a1c via CarSlotAssign, not the 0x0067ea98 cursor #1 writes). If per-slot
+  multiplayer colours are wanted, wire CarSlotAssign's input. Own slice.
+- **#4 points** — needs a scored single-player race with DAT_008a94e0[0..3] /
+  DAT_0067e9fc / DAT_0067ea64 logged per elimination + whether FUN_0040d590 fires;
+  fix in TrackRenderer/RuleEngine. Own slice.
+- **#3 full pause menu** — reverse the 0xff210000 / FUN_0043d7c0 chrome + Restart,
+  replace the placeholder overlay. Own slice.
