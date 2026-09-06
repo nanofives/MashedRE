@@ -2,11 +2,11 @@
 
 Written at the end of the 2026-09-05 **Challenge-Select icon dictionary + literals
 + sprite-forwarder audit** lane (branch `race/first-frame-parity`, commit
-`acee5d52`). Paste the block below.
+`7d027314`). Paste the block below.
 
 ---
 
-Resume the Mashed frontend/UI lane. Branch `race/first-frame-parity` @ `acee5d52`.
+Resume the Mashed frontend/UI lane. Branch `race/first-frame-parity` @ `7d027314`.
 
 **FIRST: `git status`.** Another session's **modal-pair slice is still uncommitted**
 here — `Frontend/MenuModal.cpp` (untracked) plus edits to `hooks.csv`,
@@ -94,18 +94,23 @@ New probe: `py -3.12 re/frida/chal_icon_probe.py [--screen 6]`.
 
 1. **Close out this one properly** — the screen-6 capture in (1) above, then the tracker
    rows in (2) and the U-9085 decision in (3). Small, and it is the honest finish.
-2. **The Challenge-Select ROW state-icon model** — the real find of the audit, and
-   the biggest known frontend defect left. `FUN_00439210` draws a per-row icon keyed
-   on the cup-table state `*(u32*)(0x007f0a40 + idx*4)` (NOT the `0x007f0a50/58/5c`
-   per-mode flags the detail panel uses), through one of the two gates:
-   `0` → `Lock`/`lock`, `1` → `Star`/`dot`, `2` → `tick`/`check`, `3` → `Star`; and
-   one arm skips the draw entirely when the state is `1` (`0x0043a174`/`0x0043a17c`).
-   **The port draws an unconditional pulsing Star on every row** and models none of
-   it, so a locked row shows a star where the original shows a padlock. Marked
-   `[SCAFFOLD]` inline in `exe_main.cpp` with the evidence. To finish it: trace the
-   arm selection around `0x0043a162`/`0x0043a1ae` (note `0x0043a1ae` is a jump target
-   reached from elsewhere in the row loop, so read the whole loop, do not guess which
-   arm applies), then drive mixed states with `MASHED_SAVE=<scratch>` and capture —
-   a fresh save gives every row the same state, which is the degenerate-capture trap.
+2. **Finish the Challenge-Select ROW state-icon fix** — arm selection is now TRACED
+   and confirmed live (commit `7d027314`, second Addendum in
+   `re/analysis/chalsel_icon_dictionary_20260905.md`). MEASURED model: per cup row the
+   slot value is cup-table **column 3** (`*(u32*)(0x007f0a40 + row*0x30 + 0xc)`);
+   the **selected** row draws it through the INTERFACE gate `0x004391b0`
+   (`0→Lock 1→Star 2→tick 3→Star`) plus a category sprite (`MultiPlayer`/`QuickRace`
+   via `0x0042ee40`), **other** rows through the BADGES gate `0x0042ee00`
+   (`0→lock 1→dot 2→check 3→none`). On a fresh save every row has col3=2, so the
+   original shows tick(selected)/check(others), NEVER a Star — the port's pulsing
+   Star on every row is wrong. **Two things left before the code change is faithful,
+   both deliberately not guessed:** (a) the icon GEOMETRY — x is clear
+   (`width*0.34375`) but y and the two sizes run through `_DAT_005cd0f8`/`_005cc560`/
+   `_005cc32c` + unresolved x87 state, needs a capstone geometry pass; (b) the port's
+   existing per-row star was itself MEASURED against `orig_s6` centroids, so confirm
+   whether it corresponds to one of these draws (don't regress a measured element).
+   Settle both by capturing the original at mixed col-3 states (`MASHED_SAVE=<scratch>`
+   with non-uniform values — the fresh save is the degenerate trap) and matching
+   texture + position. Probe ready: `chal_icon_probe.py --mode 3 --poke v0,v1,v2,v3`.
 3. **Leave the frontend lane.** R7 has other subsystems; the standings/setup/team/
    challenge chain is now ported and sourced.
