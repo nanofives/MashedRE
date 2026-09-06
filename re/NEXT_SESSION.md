@@ -45,12 +45,17 @@ icon paragraph** — read it after 36, and do not re-derive it.
    Compare against `verify/chalsel_panel_unlocked.bmp` (the pre-fix shot, same flags).
 2. **Tracker rows: FILED** (commit `d30fafaf`). U-9085, the `0x00439210` identity/icon
    note, and two CHANGELOG entries are in. Nothing left here.
-3. **U-9085: RESOLVED** (commit `f59e60ad`). `0x004c5c00` re-transcribed verbatim —
-   the traversal now matches the disasm (sentinel = ADDRESS `head+8`, inline name at
-   `node+8`), corroborated live by `chal_icon_probe.py`. Stays C3; install left
-   MASS-DISABLED (re-enabling is a separate decision — the `0040bb30/50/70/90`
-   forwarders call the original RVA, so nothing depends on the port copy). Nothing
-   left here.
+3. **U-9085: RESOLVED + hook VERIFIED** (commits `f59e60ad`, `8754e74e`). `0x004c5c00`
+   has TWO reimpls: the naked `Search4c5c00` (`Util/PromoLoop_sessionB.cpp`,
+   RH_ScopedInstall ACTIVE, byte-faithful — the installed copy) and the C
+   `LinkedListStringSearch` (`Frontend/SpriteCluster.cpp`, standalone-only via
+   `SpriteLookupC`). The C copy had the traversal bug and was re-transcribed; it stays
+   uninstalled so it can't double-install with `Search4c5c00` (U-9065). Do NOT re-enable
+   it. The live hook was verified: path1 `early_window_leaf_diff` GREEN 5/5, path2 install
+   confirmed (0xE9+rel32; call-through hit the known 0-arg harness gap). Stays C3.
+   Also fixed a CSV-quote defect this lane introduced (two rows had unterminated notes
+   fields, merging 8 rows on parse — see `8754e74e`). Memory
+   `[[duplicate-rva-implementations-drift]]`. Nothing left here.
 4. The probe observed **zero natural `FUN_0040bb50` calls** — a synthetic
    `FUN_0043d2a0` push does not satisfy the panel guard (`FUN_00430760()==0 &&
    DAT_0067e9fc==6`), so the checklist block never ran. Stated, not read as agreement.
