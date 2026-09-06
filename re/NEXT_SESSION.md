@@ -45,15 +45,12 @@ icon paragraph** — read it after 36, and do not re-derive it.
    Compare against `verify/chalsel_panel_unlocked.bmp` (the pre-fix shot, same flags).
 2. **Tracker rows: FILED** (commit `d30fafaf`). U-9085, the `0x00439210` identity/icon
    note, and two CHANGELOG entries are in. Nothing left here.
-3. **U-9085 disposition still OPEN — decide it.** `LinkedListStringSearch`
-   (`0x004c5c00`, `Frontend/SpriteCluster.cpp`) has a C3 body that does not match its
-   RVA: sentinel read as `*(head+8)` where the binary makes it the ADDRESS `head+8`
-   (`0x004c5c05 add eax,8`, loop test `0x004c5c68`), and the name read as a pointer at
-   `node+8` where it is an INLINE array (`0x004c5c1c lea ecx,[eax+0x10]`,
-   `0x004c5c27 mov cl,[esi]`). Return value + case folding are right. Its
-   `RH_ScopedInstall` has been off since 2026-05-24 so nothing mis-executed — same
-   shape as `0x0042f8d0` (Finding 37). The uncertainty is filed; the **re-transcribe-
-   vs-demote call** is not made. Memory `[[stale-c3-body-behind-disabled-install]]`.
+3. **U-9085: RESOLVED** (commit `f59e60ad`). `0x004c5c00` re-transcribed verbatim —
+   the traversal now matches the disasm (sentinel = ADDRESS `head+8`, inline name at
+   `node+8`), corroborated live by `chal_icon_probe.py`. Stays C3; install left
+   MASS-DISABLED (re-enabling is a separate decision — the `0040bb30/50/70/90`
+   forwarders call the original RVA, so nothing depends on the port copy). Nothing
+   left here.
 4. The probe observed **zero natural `FUN_0040bb50` calls** — a synthetic
    `FUN_0043d2a0` push does not satisfy the panel guard (`FUN_00430760()==0 &&
    DAT_0067e9fc==6`), so the checklist block never ran. Stated, not read as agreement.
@@ -86,9 +83,9 @@ New probe: `py -3.12 re/frida/chal_icon_probe.py [--screen 6]`.
 
 ## Candidate next slices
 
-1. **Close out this one properly** — the screen-6 capture (Left-open #1) and the
-   U-9085 disposition (#3). Small, and it is the honest finish. (Tracker rows already
-   filed.)
+1. **Close out this one properly** — only the screen-6 capture (Left-open #1) remains;
+   it needs a desktop (the standalone exits on focus loss here). Tracker rows filed and
+   U-9085 resolved.
 2. **Implement the Challenge-Select ROW state-icon (geometry now MEASURED)** — the
    full trace/geometry is done (commits `7d027314`/`df2a7124`, Addenda 2+3 of
    `re/analysis/chalsel_icon_dictionary_20260905.md`); this is now a scoped
