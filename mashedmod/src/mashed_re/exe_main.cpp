@@ -2841,6 +2841,20 @@ bool RenderFrame() {
             return n ? atoi(b) : 60; }();
         // Free camera: WASD move, Q/E down/up, arrows OR right-button mouse
         // look, R = back to auto-orbit.
+        // #6 (user review): the in-race driving/camera input below reads GLOBAL
+        // DirectInput key + mouse state, which stays live even when our window
+        // is unfocused (the device is DISCL_BACKGROUND|DISCL_NONEXCLUSIVE) --
+        // so arrow keys pressed in another app were steering the car and moving
+        // the camera during a race. Gate the LIVE human read on window focus
+        // (g_active, set by WM_ACTIVATE). Mirrors the UpdateMenuSelection focus
+        // gate (~:1868): the demo drivers bypass it so unattended capture keeps
+        // working. g_race_demo/g_nav_demo/g_cfgedit_demo keep input flowing when
+        // set; g_det_clock (deterministic capture) already suppresses ambient
+        // input on its own, and the scripted MASHED_DRIVE_DEMO/PLAY_DEMO/
+        // STEER_HOLD drivers inject on branches that take precedence over the
+        // human read below, so none of them are affected by this gate.
+        const bool s_live_input_ok =
+            g_active || g_nav_demo || g_race_demo || g_cfgedit_demo;
         mashed_re::D3d9Render::TrackRenderer::CamInput ci;
         ci.dt = dt;
         // R10b: a deterministic capture must be immune to AMBIENT input. The
@@ -2851,7 +2865,7 @@ bool RenderFrame() {
         // a chase-cam frame and a high-orbit frame of the same simulation instant.
         // The demo drivers inject their own input, so suppressing live input here
         // costs the capture nothing.
-        if (g_kbd && !g_det_clock) {
+        if (g_kbd && !g_det_clock && s_live_input_ok) {   // #6: no unfocused cam
             auto dn = [&](int k) { return (g_keys[k] & 0x80) != 0; };
             ci.move_fwd    = (dn(DIK_W) ? 1.f : 0.f) - (dn(DIK_S) ? 1.f : 0.f);
             ci.move_strafe = (dn(DIK_D) ? 1.f : 0.f) - (dn(DIK_A) ? 1.f : 0.f);
@@ -2862,7 +2876,7 @@ bool RenderFrame() {
                               (dn(DIK_DOWN) ? 1.f : 0.f)) * 1.0f * dt;
             ci.reset_orbit = dn(DIK_R);
         }
-        if (!g_det_clock) {
+        if (!g_det_clock && s_live_input_ok) {   // #6: no unfocused mouse-look
             static POINT s_last{};
             static bool  s_had = false;
             if (GetAsyncKeyState(VK_RBUTTON) & 0x8000) {
@@ -2911,7 +2925,7 @@ bool RenderFrame() {
                 // keeps the run on the visible road, off the frozen bay.
                 di.accel = (t < 3.0f) ? 1.f : 0.f;
                 di.steer = (t > 1.5f) ? 0.35f * std::sin(t * 0.8f) : 0.f;
-            } else if (g_kbd && !g_det_clock) {   // R10b: no ambient steering
+            } else if (g_kbd && !g_det_clock && s_live_input_ok) {   // R10b/#6: no ambient/unfocused steering
                 auto dn = [&](int k) { return (g_keys[k] & 0x80) != 0; };
                 di.accel = (dn(DIK_UP) ? 1.f : 0.f) - (dn(DIK_DOWN) ? 1.f : 0.f);
                 di.steer = (dn(DIK_RIGHT) ? 1.f : 0.f) - (dn(DIK_LEFT) ? 1.f : 0.f);
