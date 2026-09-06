@@ -1,11 +1,12 @@
 # Next session — kickoff prompt
 
-Written at the end of the 2026-09-05 **Challenge-Select icon dictionary + literals**
-lane (branch `race/first-frame-parity`, commit `f6d873c8`). Paste the block below.
+Written at the end of the 2026-09-05 **Challenge-Select icon dictionary + literals
++ sprite-forwarder audit** lane (branch `race/first-frame-parity`, commit
+`acee5d52`). Paste the block below.
 
 ---
 
-Resume the Mashed frontend/UI lane. Branch `race/first-frame-parity` @ `f6d873c8`.
+Resume the Mashed frontend/UI lane. Branch `race/first-frame-parity` @ `acee5d52`.
 
 **FIRST: `git status`.** Another session's **modal-pair slice is still uncommitted**
 here — `Frontend/MenuModal.cpp` (untracked) plus edits to `hooks.csv`,
@@ -24,11 +25,12 @@ note rather than appended to the findings file only because that file was dirty.
 
 | thing | state |
 |---|---|
-| two sprite dictionaries | `0x0040bb50`→`DAT_0063b8fc`=`BADGES.TXD` (23 tex) and `0x0040bb90`→`DAT_0063b904`=`INTERFACE.TXD` (30 tex), each with its own slot gate (`0x0042ee00` lock/dot/check 16x16; `0x004391b0` Lock/Star/tick 32x32). A third head is `DAT_0063b8f8` behind `0x0040bb30`. Memory `[[two-sprite-dictionaries-badges-vs-interface]]` |
+| **four** sprite dictionaries | read out of the loader `FUN_0040bbb0`: `bb30`→`0x0063b8f8`=`FX.TXD`, `bb50`→`0x0063b8fc`=`BADGES.TXD` (23 tex), `bb70`→`0x0063b900`=`TrackImages.txd`, `bb90`→`0x0063b904`=`Interface.txd` (30 tex). Fifth head `0x0068b9ac` = powerups. Three arg-rewriting gates feed them: `0x0042ee00`→bb50 (lock/dot/check 16x16), `0x004391b0`→bb90 (Lock/Star/tick 32x32), `0x0042fab0`→bb90 (10 NFL* colours). Map any call site with `py -3.12 re/tools/sprite_forwarder_map.py`. Memory `[[two-sprite-dictionaries-badges-vs-interface]]` |
 | the checklist icons | **RESOLVED.** `FUN_00439210` rows call the BADGES forwarder: `0x004395c6` tests the flag, `0x004395d9` pushes `"check"`, `0x004395e6` pushes `"lock"`. The original draws an icon on EVERY row. Port fixed: unlocked rows now draw `check`; locked rows now draw BADGES' 16x16 `lock` instead of INTERFACE's 32x32 `Lock` |
 | `"Tick"` | never a candidate — wrong dictionary, has its own user as lowercase `"tick"` (`0x005cda3c`), and `FUN_004c5c00` is not prefix-tolerant (`0x004c5c5a` needs both strings to end together) |
 | handle collision | `kSlotLock` 61 collided with `kSlotVehPrev0` (61..68) and `kHandleLock` 52 with `kHandleVehPrev0` (52..59). Moved to 93/94 and 84/85; bridge census comment corrected (~85 of 96, headroom ~11) |
-| screen-6 Star | **unchanged, deliberately.** `0x00435f82`/`0x00435fdd` do push `"Star"` into `bb50`, but they are inside `FUN_00434720` (screen 5). The screen-6 star goes through the `bb90` gate, so the port's INTERFACE Star stands |
+| screen-6 Star | **SETTLED, correct as-is.** All seven gate calls are inside `FUN_00439210` (screen 6/7/8), so the screen-6 row star is INTERFACE's 32x32. The two badges-`Star` sites (`0x00435f87`/`0x00435fe2`) are in `FUN_00434720` (screen 5). The two screens genuinely use different Star textures |
+| forwarder audit | **all 107 call sites swept; no further texture-source defects.** Button/Arrow/NFL*/vs/Star/lock/check and the 24 previews all already came from the right dictionary. Negative result recorded so nobody re-runs it — see the Addendum in `re/analysis/chalsel_icon_dictionary_20260905.md` |
 | A/B/- team marker | **DROPPED.** `[SCAFFOLD]`, no counterpart in `FUN_0043aa30`. The original's marker is the sprite slide + roster stack, both already ported — the letter was inventing output on top of faithful output |
 | `kAreas[].name` / `Cup::name` | **DROPPED.** "Arctic" occurs 0 times in the exe; the names fed `Cup::tracks[].name`, which nothing read. Row labels come from the message table (id `0x49 + row`). The `piz` column keeps the identity |
 
@@ -92,9 +94,18 @@ New probe: `py -3.12 re/frida/chal_icon_probe.py [--screen 6]`.
 
 1. **Close out this one properly** — the screen-6 capture in (1) above, then the tracker
    rows in (2) and the U-9085 decision in (3). Small, and it is the honest finish.
-2. **Audit the other `FUN_0040bb50` / `FUN_0040bb90` call sites the same way.** The
-   dictionary split was mis-assumed once; the port has ~16 texture registrations and
-   several were named off whichever TXD was open at the time. `0x00434720`'s badges
-   `Star` on screen 5 is a known, unexamined instance.
+2. **The Challenge-Select ROW state-icon model** — the real find of the audit, and
+   the biggest known frontend defect left. `FUN_00439210` draws a per-row icon keyed
+   on the cup-table state `*(u32*)(0x007f0a40 + idx*4)` (NOT the `0x007f0a50/58/5c`
+   per-mode flags the detail panel uses), through one of the two gates:
+   `0` → `Lock`/`lock`, `1` → `Star`/`dot`, `2` → `tick`/`check`, `3` → `Star`; and
+   one arm skips the draw entirely when the state is `1` (`0x0043a174`/`0x0043a17c`).
+   **The port draws an unconditional pulsing Star on every row** and models none of
+   it, so a locked row shows a star where the original shows a padlock. Marked
+   `[SCAFFOLD]` inline in `exe_main.cpp` with the evidence. To finish it: trace the
+   arm selection around `0x0043a162`/`0x0043a1ae` (note `0x0043a1ae` is a jump target
+   reached from elsewhere in the row loop, so read the whole loop, do not guess which
+   arm applies), then drive mixed states with `MASHED_SAVE=<scratch>` and capture —
+   a fresh save gives every row the same state, which is the degenerate-capture trap.
 3. **Leave the frontend lane.** R7 has other subsystems; the standings/setup/team/
    challenge chain is now ported and sourced.
