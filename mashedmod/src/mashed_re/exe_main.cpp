@@ -5590,20 +5590,31 @@ bool RenderFrame() {
             // 116 + 28.125 = 144.125; an independent solve in the s6 lane put
             // the original's row-0 centre at 143.94 virtual. Taking 144.0.
             const float row0 = 144.0f * kVScale, rowdy = 22.0f * kVScale;
-            // [SCAFFOLD — known wrong, 2026-09-05 forwarder audit] The star
-            // below is drawn on EVERY row. The original draws a per-row STATE
-            // icon: FUN_00439210 keys a slot gate on the cup-table state
-            // *(u32*)(0x007f0a40 + idx*4) — a different quantity from the
-            // 0x007f0a50/58/5c per-mode flags the detail panel uses — and the
-            // gate maps 0 -> Lock/lock, 1 -> Star/dot, 2 -> tick/check,
-            // 3 -> Star. One arm skips the draw entirely when the state is 1
-            // (0x0043a174 cmp / 0x0043a17c je). So a locked row should show a
-            // padlock, not a star. NOT fixed here: which of the two gate arms
-            // (0x004391b0 INTERFACE 32x32 vs 0x0042ee00 BADGES 16x16) runs for
-            // which row depends on branch structure around 0x0043a162/0x0043a1ae
-            // that the audit did not finish tracing, and guessing it is the exact
-            // mistake that note exists to record. See
-            // re/analysis/chalsel_icon_dictionary_20260905.md (Addendum).
+            // [SCAFFOLD — known imprecise, 2026-09-05] The star below is drawn
+            // on EVERY row, pulsing. The MEASURED original (arm selection traced
+            // via Ghidra + confirmed live with re/frida/chal_icon_probe.py
+            // --mode 3, and a poke test on the cup table) draws a per-row STATE
+            // icon instead, keyed on cup-table COLUMN 3 = *(u32*)(0x007f0a40 +
+            // row*0x30 + 0xc):
+            //   selected row  -> INTERFACE gate 0x004391b0 (32x32):
+            //                    0->Lock 1->Star 2->tick 3->Star
+            //   other rows    -> BADGES gate 0x0042ee00 (16x16):
+            //                    0->lock 1->dot  2->check 3->(none, no draw)
+            // and the SELECTED row additionally draws a category sprite
+            // (MultiPlayer/QuickRace/... via the screen-dispatch gate
+            // 0x0042ee40) at an animated x. Measured 3:1 badges:interface over
+            // 180 frames on a fresh save (rows 0-3, sel=0); the poke test proved
+            // the slot tracks each row's own col-3 value, not a fixed one. On a
+            // fresh save every cup row has col3=2, so the original shows
+            // tick(selected)/check(others) — NOT a Star on any row.
+            // NOT fixed here on purpose: the icon TEXTURE model is fully
+            // measured, but the faithful GEOMETRY (x = width*0.34375 is clear;
+            // y and sizes run through unresolved x87/DAT state) is not, and this
+            // port's star was itself measured against orig_s6 centroids in
+            // earlier work — so replacing it with a half-measured icon would
+            // trade a measured element for a guessed one, the exact mistake
+            // re/analysis/chalsel_icon_dictionary_20260905.md exists to record.
+            // Full trace + handoff in that note's second Addendum.
             // animated star pulse (triangle wave, no <cmath> dep).
             const float ph = (DetTicks() % 800u) / 800.0f;
             const float pulse = 0.82f + 0.18f * (ph < 0.5f ? ph * 2.f : (1.f - ph) * 2.f);

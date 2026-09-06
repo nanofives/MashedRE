@@ -83,8 +83,23 @@ const RVA_NAV=0x0043d2a0, RVA_DEPTH=0x0067e9f8, RVA_CURSCREEN=0x0067ecb0;
 // The two dictionary heads and their forwarders.
 const RVA_DICT_BADGES=0x0063b8fc, RVA_DICT_IFACE=0x0063b904;
 const RVA_LOOKUP_BADGES=0x0040bb50, RVA_LOOKUP_IFACE=0x0040bb90;
-let nav=null, lookupB=null, lookupI=null;
-let natural=[], hooked=0;
+// --- row-icon trace -------------------------------------------------------
+// The two slot GATES in front of the forwarders. FUN_00439210 picks between
+// them per row: selected row -> the INTERFACE gate, other rows -> the BADGES
+// gate. NOTE THE CONVENTIONS DIFFER, which is the whole reason to trace rather
+// than read: 0x0042ee00 takes its slot on the STACK (push ecx / call), while
+// 0x004391b0 takes it in EAX (0x0043a184 mov eax,[eax*4+0x7f0a40] / call, and
+// the callee opens with `test eax,eax`). Ghidra prints FUN_004391b0() with no
+// argument at all.
+const RVA_GATE_BADGES=0x0042ee00, RVA_GATE_IFACE=0x004391b0;
+// Screen id DAT_0067e9fc is DERIVED: FUN_0042f6b0 maps DAT_0067f184 through a
+// jump table at 0x0042f724 (f184=3 -> e9fc=6, Challenge Select). Seed the
+// producer f184 and call the mapper; do not poke e9fc.
+const RVA_MODE=0x0067f184, RVA_SCREENID=0x0067e9fc, RVA_SETSCREEN=0x0042f6b0;
+const RVA_SEL=0x0067f17c;             // selected challenge index
+const RVA_STATETBL=0x007f0a40;        // 13 rows x 12 dwords cup/unlock table
+let nav=null, lookupB=null, lookupI=null, setScreen=null;
+let natural=[], hooked=0, rows=[], rowHooked=0;
 function abs(r){return ptr(r+DELTA);}
 
 // FUN_004c5c00's list layout, read off the anchored binary (0x004c5c00..72),
@@ -119,8 +134,55 @@ rpc.exports={
     nav=new NativeFunction(abs(RVA_NAV),'void',['int','int']);
     lookupB=new NativeFunction(abs(RVA_LOOKUP_BADGES),'pointer',['pointer']);
     lookupI=new NativeFunction(abs(RVA_LOOKUP_IFACE),'pointer',['pointer']);
+    setScreen=new NativeFunction(abs(RVA_SETSCREEN),'void',[]);
     return DELTA;
   },
+  // Seed the PRODUCER (DAT_0067f184) and let FUN_0042f6b0 derive the screen id.
+  mode:function(m){ abs(RVA_MODE).writeS32(m); setScreen();
+                    return abs(RVA_SCREENID).readS32(); },
+  screenid:function(){ return abs(RVA_SCREENID).readS32(); },
+  sel:function(){ return abs(RVA_SEL).readS32(); },
+  // The 13x12 cup table, so measured gate slots can be correlated to a column.
+  table:function(){
+    const out=[];
+    for(let r=0;r<13;r++){
+      const row=[];
+      for(let c=0;c<12;c++) row.push(abs(RVA_STATETBL+ (r*12+c)*4).readS32());
+      out.push(row);
+    }
+    return JSON.stringify(out);
+  },
+  // Log every NATURAL gate call: which gate, and the slot it was handed.
+  armrows:function(){
+    if(rowHooked) return 1;
+    Interceptor.attach(abs(RVA_GATE_BADGES), {
+      onEnter(args){ rows.push({gate:'badges16', slot:args[0].toInt32()}); }
+    });
+    Interceptor.attach(abs(RVA_GATE_IFACE), {
+      onEnter(){ rows.push({gate:'iface32', slot:this.context.eax.toInt32()}); }
+    });
+    rowHooked=1; return 1;
+  },
+  // DISCRIMINATOR. The measured slot is the same for every row on a stock save
+  // because rows 0..3 all hold 2 in column 3 -- so "the index carries the row"
+  // and "the index is loop-invariant" predict the SAME observation. Poke
+  // distinct values into column 3 of rows 0..3 and re-measure: if the badges
+  // gate then sees several distinct slots, the index carries the row; if it
+  // still sees only row 0's value, it does not. Live-memory poke on a table the
+  // renderer only READS, and the process is killed straight after; nothing
+  // under original/ is touched.
+  poke:function(vals){
+    const v=JSON.parse(vals), before=[];
+    for(let r=0;r<v.length;r++){
+      const a=abs(RVA_STATETBL + (r*12+3)*4);
+      before.push(a.readS32()); a.writeS32(v[r]);
+    }
+    return JSON.stringify(before);
+  },
+  rowreport:function(){ const c={}; for(const r of rows){
+      const k=r.gate+' slot='+r.slot; c[k]=(c[k]||0)+1; }
+      return JSON.stringify({counts:c, total:rows.length}); },
+  rowclear:function(){ rows=[]; return 1; },
   phase:function(){ return abs(RVA_PHASE).readS32(); },
   push:function(scr){ nav(scr,0); abs(RVA_CURSCREEN).writeS32(scr);
                       return abs(RVA_DEPTH).readS32(); },
@@ -159,6 +221,13 @@ def main():
     ap.add_argument("--screen", type=int, default=6,
                     help="nav screen to push before reading (6 = Challenge Select)")
     ap.add_argument("--settle", type=float, default=3.0)
+    ap.add_argument("--poke", default=None, metavar="v0,v1,v2,v3",
+                    help="write distinct values into column 3 of cup rows 0..N "
+                         "and re-measure, to test whether the gate slot varies "
+                         "per row")
+    ap.add_argument("--mode", type=int, default=None,
+                    help="seed DAT_0067f184 and derive the screen id via "
+                         "FUN_0042f6b0 (3 = Challenge Select / screen 6)")
     ap.add_argument("--out", default=str(ROOT / "log" / "chal_icon_probe.json"))
     args = ap.parse_args()
 
@@ -185,7 +254,15 @@ def main():
         time.sleep(1.5)
 
         E.arm()
+        E.armrows()
+        # Drive the screen id through its producer, not by poking the derived
+        # global: FUN_0042f6b0 maps DAT_0067f184 -> DAT_0067e9fc.
+        if args.mode is not None:
+            print(f"mode DAT_0067f184={args.mode} -> screen id DAT_0067e9fc =",
+                  E.mode(args.mode))
         print(f"push {args.screen} -> depth", E.push(args.screen))
+        time.sleep(args.settle)
+        E.rowclear()                    # drop transition-frame calls
         time.sleep(args.settle)
 
         dicts = json.loads(E.dicts())
@@ -214,10 +291,35 @@ def main():
         for k, v in sorted(nat.items()):
             print(f"   {v:5d}x  {k}")
 
+        # Discriminating pass: give rows 0..3 distinct column-3 values and see
+        # whether the gates start receiving distinct slots.
+        if args.poke:
+            vals = [int(t, 0) for t in args.poke.split(",")]
+            print("\npoke cup col3 rows 0..%d -> %s (was %s)"
+                  % (len(vals) - 1, vals, E.poke(json.dumps(vals))))
+            time.sleep(args.settle)
+            E.rowclear()
+            time.sleep(args.settle)
+
+        rowrep = json.loads(E.rowreport())
+        tbl = json.loads(E.table())
+        print(f"\n== row-icon gate calls (screen id {E.screenid()}, "
+              f"selected row DAT_0067f17c = {E.sel()}), total {rowrep['total']}")
+        if not rowrep["counts"]:
+            print("   <none — FUN_00439210's row loop did not run in this window>")
+        for k, v in sorted(rowrep["counts"].items()):
+            print(f"   {v:5d}x  {k}")
+        print("\n== cup table 0x007f0a40, 13 rows x 12 dwords (col 3 = the gate slot)")
+        for r, row in enumerate(tbl):
+            if any(row):
+                print(f"   row {r:2d}: " + " ".join(f"{v:3d}" for v in row))
+
         out = Path(args.out)
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(
-            {"screen": args.screen, "dicts": dicts, "matrix": matrix, "natural": nat},
+            {"screen": args.screen, "screen_id": E.screenid(), "selected": E.sel(),
+             "dicts": dicts, "matrix": matrix, "natural": nat,
+             "rows": rowrep, "cup_table": tbl},
             indent=1))
         print("\n->", out)
     finally:

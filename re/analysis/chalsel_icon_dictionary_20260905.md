@@ -341,3 +341,100 @@ the row loop. Guessing the arm selection would be exactly the mistake this note
 exists to record. It needs its own slice: finish the arm trace, then drive the
 states with a save that has mixed values (`MASHED_SAVE=<scratch>`) and capture,
 rather than inferring from a fresh save where every row reads the same.
+
+---
+
+# Second Addendum: the row state-icon model, traced and measured (2026-09-05)
+
+Follow-up to the "row-state icon model" the forwarder audit flagged. The arm
+selection is now **traced in Ghidra and confirmed live**; the icon-selection
+model is fully measured; the faithful geometry is not, and is handed off.
+
+## Method
+
+- Headless decomp of `FUN_00439210` and its helpers (read-only, pool slot
+  `Mashed_pool15`, `DecompPC.java`, `-noanalysis -readOnly`; slot lock taken and
+  released per the parent/child pool-collision rule).
+- Live trace + control, original, `re/frida/chal_icon_probe.py --mode 3`. Two new
+  probe exports: `armrows` hooks **both** slot gates and logs the slot each
+  receives (`0x0042ee00` takes it on the stack, `0x004391b0` in EAX — the reason
+  Ghidra prints `FUN_004391b0()` with no arg); `poke` writes distinct values into
+  the cup table to break the fresh-save degeneracy. The screen id is driven
+  through its producer: `FUN_0042f6b0` maps `DAT_0067f184` → `DAT_0067e9fc` via a
+  jump table at `0x0042f724` (`f184=3` → `e9fc=6`), so the probe seeds `f184` and
+  calls the mapper rather than poking the derived id — the same
+  seed-the-producer discipline as `[[zeroed-granule-vs-minus-one-sentinel]]`.
+
+## Arm selection — CONFIRMED
+
+Per cup row, `FUN_00439210` draws a state icon:
+
+- **selected row** (`iStack_78 == DAT_0067f17c`) → INTERFACE gate `0x004391b0`
+  (32x32): `0→Lock 1→Star 2→tick 3→Star`. The `tick` arm (slot 2) is itself
+  gated on `FUN_00430760()` and excludes screen ids 2 and 0xa (fine for 6).
+  The selected row ALSO draws a category sprite (`MultiPlayer`/`QuickRace`/…)
+  through a *third* gate `FUN_0042ee40` at an animated x.
+- **other rows** → BADGES gate `0x0042ee00` (16x16): `0→lock 1→dot 2→check
+  3→(none)`.
+
+The slot value each gate receives is **cup-table column 3**:
+`*(u32*)(0x007f0a40 + row*0x30 + 0xc)`. This is a *different* quantity from the
+`0x007f0a50/58/5c` per-mode flags the detail-panel checklist uses (fixed in the
+main note) — `FUN_00439210` reads both, for two different UI elements.
+
+Live evidence (fresh save, rows 0-3, `sel=0`), 180 frames:
+
+```
+iface32  slot=2   180x        (row 0, the selected row)
+badges16 slot=2   540x        (rows 1,2,3, each col3=2)   [pre-poke]
+```
+
+Poke `col3[0..3] = {2,1,0,3}` and re-measure:
+
+```
+iface32  slot=2   180x        row 0 (selected) -> its own col3 = 2
+badges16 slot=1   180x        row 1 -> its own col3 = 1
+badges16 slot=0   180x        row 2 -> its own col3 = 0
+(row 3 col3=3 -> BADGES gate returns null -> NO draw, hence absent)
+```
+
+This is the discriminator that settles it: the slot **tracks each row's own
+column-3 value**, not a fixed one, and a value of 3 through the badges gate draws
+nothing. So it is genuinely per-row, and the "one icon per row" reading is right;
+the earlier "unconditional" phrasing was wrong.
+
+## On a fresh save the original shows tick/check, not Star
+
+Every cup row has `col3 = 2` on a fresh save, so the selected row draws INTERFACE
+`tick` and the others draw BADGES `check`. **No row shows a `Star`** — `Star` is
+only reached through the INTERFACE gate at slot 1 or 3, which needs a non-2
+column-3 value on the selected row.
+
+The port draws a pulsing INTERFACE `Star` on every row. That is wrong on texture
+(should be state-dependent tick/check/lock/dot) and on count (a badges slot-3 row
+draws nothing).
+
+## Why this is NOT fixed in code yet
+
+The icon **selection** is fully measured, but a faithful **draw** needs two
+things this trace did not close, and shipping without them would trade a measured
+element for a guessed one:
+
+1. **Geometry.** The icon x is clear (`fVar11 = width * 0xdc/0x280` = width ×
+   0.34375), but its y and the two sizes (32x32 selected via `fVar9/fVar10`,
+   16x16 others via `fVar7/fVar8`) are built from `_DAT_005cd0f8` (row pitch),
+   `_DAT_005cc560`, `_DAT_005cc32c` and several x87 intermediates
+   (`extraout_ST*`) the decompiler leaves unresolved. Extracting them faithfully
+   is its own capstone pass.
+2. **Reconciliation with the port's existing star.** This port's per-row star was
+   *measured* against `orig_s6.bmp` star centroids in earlier (Finding-era) work
+   and its pitch/count were fitted to the original. So the star is not obviously
+   invented the way the A/B letter was — it may correspond to one of these draws
+   at a resolved position. Ripping it out for a half-measured icon model would
+   regress a measured element. This has to be settled by capturing the original's
+   screen-6 icons at known non-uniform states (`MASHED_SAVE=<scratch>` with mixed
+   col-3 values) and matching texture + position, not by inference.
+
+Handed off as the top follow-up in `re/NEXT_SESSION.md`. The `[SCAFFOLD]` comment
+at the star draw in `exe_main.cpp` now carries the measured model inline so the
+next pass starts from evidence, not from the old guess.
