@@ -75,3 +75,42 @@ read on `g_active` too (keep a demo/capture bypass env, as the menu path does).
 All of these need desktop runtime verification to accept (this session is headless
 and cannot drive the frontend — the standalone auto-races without a real interactive
 desktop). None started, so nothing is half-changed.
+
+---
+
+## Results — wave 1 (2026-09-06, orchestrated child sessions)
+
+All fixes are **measured/RVA-cited but UNVERIFIED AT RUNTIME** (headless auto-races;
+verify on desktop with `MASHED_NAV_DEMO=1`). Committed `47ed32db`.
+
+- **#1 colour cycle — FIXED (pending desktop).** The original's screen-4 handler is
+  the `case 0x18` arm of `FUN_0043dfd0`: LEFT/RIGHT dec/inc the per-player colour
+  global `0x0067ea98`(/9c/a0) wrap 0..6, then `FUN_00431b80(EAX=player, ESI=dir)`.
+  Ported: `exe_main` sid==4 LEFT/RIGHT → `GameModeCarSelect::CarSelectCycleColour(0,±1)`.
+- **#5 all-red — PARTIAL, NOT closed.** #1 cycles the colour cursor (`0x0067ea98`),
+  but liveries read `0x007f1a1c`, which `CarSlotAssign` (`0x0042b9e0`) writes from
+  `0x0067eaf0` — so the pick only shows after the confirm path runs `CarSlotAssign`.
+  This matches the original; forcing a copy would exceed the LEFT/RIGHT scope. Needs
+  its own slice: confirm on desktop whether the colour shows post-confirm, and if
+  multi-player per-slot colours are expected, wire `CarSlotAssign`'s input.
+- **#2 track cursor — FIXED (pending desktop); hypothesis was WRONG.** Not
+  avail[]-locking: screens 6/7 have `item_count==1` (one `0xff040000` item in
+  kT6/kT7), so `Nav_MoveCursor` wrapped mod-1 and pinned row 0 while the draw shows
+  `cup.trackCount` rows. Fix: screen-6/7 branch in `Nav_MoveCursor` traverses all cup
+  rows (rest-on-locked) + a locked-track launch guard in exe_main. `[UNCERTAIN]`
+  whether the original rests-on vs skips fully-locked rows (`FUN_00430830`).
+- **#4 points — DIAGNOSIS ONLY (no fix; needs runtime).** Non-team scoring arithmetic
+  is faithful. Candidate defect: the original, for single-player races with AI
+  survivors, calls the progress-based finish-order resolver `FUN_0040d590` and returns
+  early, whereas the port eliminates cars one-by-one and awards by that order — if the
+  orders differ, opponent points are wrong. Also possible: round-end timing in
+  `Race/RuleEngine` scoring nobody who was never eliminated. Needs a scored single-player
+  race with `DAT_008a94e0[0..3]`, `DAT_0067e9fc`, `DAT_0067ea64` logged per elimination,
+  and whether `FUN_0040d590` fires. Fix would be in `TrackRenderer`/`RuleEngine`.
+- **#6 focus-gate in-race input — in progress (wave 2).**
+- **#3 pause menu — queued (wave 2); a new in-race feature.**
+
+Orchestration note: the Agent worktree isolation forked children from a ~10-day-stale
+commit (`350ac4ca`), so the two worktree fixes (#2, #4) were re-based onto HEAD by
+hand (#2's hunks re-applied; #4 was diagnosis-only). Wave 2 runs in the main tree to
+avoid that. Memory: `[[agent-worktree-forks-stale]]` (to be filed).
