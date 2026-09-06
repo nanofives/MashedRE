@@ -100,6 +100,7 @@ const RVA_SEL=0x0067f17c;             // selected challenge index
 const RVA_STATETBL=0x007f0a40;        // 13 rows x 12 dwords cup/unlock table
 let nav=null, lookupB=null, lookupI=null, setScreen=null;
 let natural=[], hooked=0, rows=[], rowHooked=0;
+let draws=[], drawHooked=0, lastGate=null;
 function abs(r){return ptr(r+DELTA);}
 
 // FUN_004c5c00's list layout, read off the anchored binary (0x004c5c00..72),
@@ -156,10 +157,12 @@ rpc.exports={
   armrows:function(){
     if(rowHooked) return 1;
     Interceptor.attach(abs(RVA_GATE_BADGES), {
-      onEnter(args){ rows.push({gate:'badges16', slot:args[0].toInt32()}); }
+      onEnter(args){ rows.push({gate:'badges16', slot:args[0].toInt32()});
+                     lastGate='badges16'; }
     });
     Interceptor.attach(abs(RVA_GATE_IFACE), {
-      onEnter(){ rows.push({gate:'iface32', slot:this.context.eax.toInt32()}); }
+      onEnter(){ rows.push({gate:'iface32', slot:this.context.eax.toInt32()});
+                 lastGate='iface32'; }
     });
     rowHooked=1; return 1;
   },
@@ -179,6 +182,40 @@ rpc.exports={
     }
     return JSON.stringify(before);
   },
+  // Hook the actual sprite draw FUN_00473870(tex,x,y,w,h,argb,blend) so the
+  // measured geometry is read, not derived from the decompiler's x87 leftovers.
+  // Correlate each draw with the immediately-preceding gate return so we know
+  // which draws are the per-row state icons vs everything else on the screen.
+  armdraw:function(){
+    if(drawHooked) return 1;
+    Interceptor.attach(abs(0x00473870),{
+      onEnter(args){
+        // __cdecl: [esp+4]=tex, +8=x, +0xc=y, +0x10=w, +0x14=h, +0x18=argb.
+        const sp=this.context.esp;
+        draws.push({
+          tex:'0x'+sp.add(4).readU32().toString(16),
+          x:sp.add(8).readFloat(), y:sp.add(0xc).readFloat(),
+          w:sp.add(0x10).readFloat(), h:sp.add(0x14).readFloat(),
+          argb:'0x'+(sp.add(0x18).readU32()>>>0).toString(16),
+          lastgate:lastGate
+        });
+        lastGate=null;   // consume: a following non-gate draw reads '-'
+      }
+    });
+    drawHooked=1; return 1;
+  },
+  drawreport:function(){
+    // bucket by (rounded x, rounded w) so the columns are obvious
+    const c={}, alpha={};
+    for(const d of draws){
+      const k='x='+Math.round(d.x)+' w='+Math.round(d.w)+' gate='+(d.lastgate||'-');
+      c[k]=(c[k]||0)+1;
+      if(d.lastgate){ const a=d.argb; alpha[a]=(alpha[a]||0)+1; }
+    }
+    return JSON.stringify({counts:c, alpha:alpha, sample:draws.slice(0,12),
+                           total:draws.length});
+  },
+  drawclear:function(){ draws=[]; return 1; },
   rowreport:function(){ const c={}; for(const r of rows){
       const k=r.gate+' slot='+r.slot; c[k]=(c[k]||0)+1; }
       return JSON.stringify({counts:c, total:rows.length}); },
@@ -255,6 +292,7 @@ def main():
 
         E.arm()
         E.armrows()
+        E.armdraw()
         # Drive the screen id through its producer, not by poking the derived
         # global: FUN_0042f6b0 maps DAT_0067f184 -> DAT_0067e9fc.
         if args.mode is not None:
@@ -263,6 +301,7 @@ def main():
         print(f"push {args.screen} -> depth", E.push(args.screen))
         time.sleep(args.settle)
         E.rowclear()                    # drop transition-frame calls
+        E.drawclear()
         time.sleep(args.settle)
 
         dicts = json.loads(E.dicts())
@@ -314,12 +353,22 @@ def main():
             if any(row):
                 print(f"   row {r:2d}: " + " ".join(f"{v:3d}" for v in row))
 
+        drawrep = json.loads(E.drawreport())
+        print(f"\n== FUN_00473870 draw columns (screen {E.screenid()}), "
+              f"total {drawrep['total']}")
+        for k, v in sorted(drawrep["counts"].items()):
+            print(f"   {v:5d}x  {k}")
+        print("   -- sample draws (x,y,w,h,gate):")
+        for d in drawrep["sample"]:
+            print(f"      x={d['x']:7.2f} y={d['y']:7.2f} w={d['w']:6.2f} "
+                  f"h={d['h']:6.2f} argb={d['argb']:>10} gate={d['lastgate'] or '-'}")
+
         out = Path(args.out)
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(
             {"screen": args.screen, "screen_id": E.screenid(), "selected": E.sel(),
              "dicts": dicts, "matrix": matrix, "natural": nat,
-             "rows": rowrep, "cup_table": tbl},
+             "rows": rowrep, "cup_table": tbl, "draws": drawrep},
             indent=1))
         print("\n->", out)
     finally:

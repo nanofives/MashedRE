@@ -5605,16 +5605,28 @@ bool RenderFrame() {
             // 0x0042ee40) at an animated x. Measured 3:1 badges:interface over
             // 180 frames on a fresh save (rows 0-3, sel=0); the poke test proved
             // the slot tracks each row's own col-3 value, not a fixed one. On a
-            // fresh save every cup row has col3=2, so the original shows
-            // tick(selected)/check(others) — NOT a Star on any row.
-            // NOT fixed here on purpose: the icon TEXTURE model is fully
-            // measured, but the faithful GEOMETRY (x = width*0.34375 is clear;
-            // y and sizes run through unresolved x87/DAT state) is not, and this
-            // port's star was itself measured against orig_s6 centroids in
-            // earlier work — so replacing it with a half-measured icon would
-            // trade a measured element for a guessed one, the exact mistake
-            // re/analysis/chalsel_icon_dictionary_20260905.md exists to record.
-            // Full trace + handoff in that note's second Addendum.
+            // fresh save every cup row has col3=2.
+            //
+            // GEOMETRY MEASURED 2026-09-05 (chal_icon_probe.py draw hook on
+            // FUN_00473870; numbers are in THIS virtual-640 space — the detail
+            // panel measured x=520 w=24, matching the 520.0f/24.0f draw below):
+            //   non-selected row: state icon at x=220, w=h=22, argb=0x3f000000
+            //                     (semi-transparent BLACK, stable over 723
+            //                     draws), texture via the BADGES gate.
+            //   selected row:     a category sprite (MultiPlayer on screen 6,
+            //                     via 0x0042ee40) at x~208 w~45 white; its
+            //                     INTERFACE tick is SUPPRESSED by FUN_00430760()
+            //                     on this state, so no small badge draws.
+            //   => no Star on any row, and nothing at x~36 where this star sits.
+            // NOT fixed here on purpose: the faithful change is a multi-texture
+            // COMPOSITION rewrite (load the category sprites + `dot`, draw
+            // category-on-selected / black status-glyph-on-others at the
+            // measured geometry, remove this star, model FUN_00430760's
+            // suppression). CLAUDE.md/CONFIDENCE.md hold composition fixes above
+            // compile-and-run, and this headless session can produce no capture
+            // (the standalone exits on focus loss), so it is handed off rather
+            // than shipped blind. Full geometry + plan:
+            // re/analysis/chalsel_icon_dictionary_20260905.md, third Addendum.
             // animated star pulse (triangle wave, no <cmath> dep).
             const float ph = (DetTicks() % 800u) / 800.0f;
             const float pulse = 0.82f + 0.18f * (ph < 0.5f ? ph * 2.f : (1.f - ph) * 2.f);

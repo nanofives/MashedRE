@@ -438,3 +438,64 @@ element for a guessed one:
 Handed off as the top follow-up in `re/NEXT_SESSION.md`. The `[SCAFFOLD]` comment
 at the star draw in `exe_main.cpp` now carries the measured model inline so the
 next pass starts from evidence, not from the old guess.
+
+---
+
+# Third Addendum: the geometry, measured (2026-09-05)
+
+Extended `chal_icon_probe.py` to hook the sprite draw `FUN_00473870(tex,x,y,w,h,
+argb,blend)` and read the actual columns at screen 6 (`--mode 3`), correlating
+each draw with the preceding slot-gate call. `FUN_0042b8b0`/`FUN_0042b8c0` return
+`DAT_0067ea54`/`DAT_0067ea56` (screen width/height), and the measured x/w/h come
+out directly in the port's virtual-640 space (the detail-panel column measured
+`x=520 w=24`, which is exactly what the port already draws as `520.0f * kVScale` /
+`24.0f * kVScale` — so measured numbers are usable as `N * kVScale` verbatim).
+
+## Screen-6 row list, complete measured model (fresh save, sel=0)
+
+| element | x | y | w×h | colour | gate / source | condition |
+|---|---|---|---|---|---|---|
+| category sprite | ~208 (anim 197–209) | ~126 + row·pitch | ~45×45 (anim) | `0xffffffff` | `FUN_0042ee40` → INTERFACE (`MultiPlayer` on screen 6) | selected row only |
+| state icon | **220** | ~159, pitch **22** | **22×22** | **`0x3f000000`** (stable over 723 draws) | BADGES gate `0x0042ee00` | non-selected rows |
+| (selected state icon) | 220 | — | 44×44 | white | INTERFACE gate `0x004391b0` | **suppressed** here: slot-2 `tick` is gated on `FUN_00430760()`, which returns non-zero on this state, so the gate returns 0 and nothing draws |
+| detail-panel checklist | 520 | 320 step 16 | 24×24 | `0xffffffff` | BADGES gate (per-mode flags) | already ported (main note) |
+
+So on a fresh save, screen 6 shows: the **selected** row with a big white
+`MultiPlayer` category icon and no small badge; the **other** rows each with a
+faint (`α=0x3f`) black `check` at x=220. There is **no Star on any row**, and
+nothing at all at x≈36.
+
+## What the port draws instead
+
+A bright white pulsing `Star` on **every** row at x≈36 (`stx=20.134`,
+`sts=31.616`), plus the orange selection bar and the name. The star column
+(x≈36) matches **no** measured original draw on screen 6; the real per-row
+element is the x=220 status glyph, and the selected row's real icon is the
+`MultiPlayer` category sprite the port does not load. The earlier "star measured
+against orig_s6 centroids" note could not be reconciled with this trace — no draw
+lands near x=36 — so that measurement was of something else or on another state;
+it is not screen 6's row element.
+
+## Why the fix is NOT shipped in this session
+
+The geometry pass is **done** — every column, size, colour, gate and the
+selected-row suppression are measured. But turning it into code is a
+multi-texture **composition** change:
+
+1. load the category sprites (`MultiPlayer`/`QuickRace`/… from INTERFACE.TXD via
+   the `FUN_0042ee40` screen dispatch) — not currently loaded;
+2. load `dot` (BADGES) alongside the `lock`/`check` already added;
+3. draw the category icon on the selected row and the `α=0x3f` black status glyph
+   on the others, at the measured geometry;
+4. remove the unmatched pulsing star;
+5. model `FUN_00430760()`'s suppression of the selected-row tick.
+
+`re/CONFIDENCE.md` and CLAUDE.md hold composition fixes to more than
+compile-and-run (a parity/draw-stream or screenshot check). This headless session
+**cannot produce any capture** — the standalone exits on focus loss and there is
+no foreground desktop — so shipping a dramatic visual change (removing a
+prominent element, adding two new sprite families) with zero verification would
+violate that bar and risks a visibly broken screen with no safety net. The
+measured model above makes it a ~15-minute implement-and-verify for a session
+with a desktop; it is handed off rather than shipped blind. The `[SCAFFOLD]`
+comment at the star draw carries the exact numbers inline.
