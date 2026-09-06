@@ -27,6 +27,12 @@ strings.
 
 ## There are TWO named-sprite dictionaries, with two forwarders and two gates
 
+> **SUPERSEDED by this note's own Addendum below: there are FOUR** (`FX.TXD`,
+> `BADGES.TXD`, `TrackImages.txd`, `Interface.txd`), read straight out of the
+> loader `FUN_0040bbb0`, plus a fifth head at `0x0068b9ac` outside the array. The
+> two below are the two this slice needed, and everything said about them holds.
+> Do not quote the count from this section.
+
 Both forwarders end in the same search routine, `FUN_004c5c00`, but over different
 list heads:
 
@@ -224,3 +230,114 @@ never been installed and nothing has mis-executed — the same shape as the
 install, its level never re-tested. **Not corrected in this note** (it is outside
 this slice and its `hooks.csv` row is in another session's dirty tree); filed as
 `U-9085` so the demotion is decided deliberately rather than in passing.
+
+---
+
+# Addendum: the full forwarder audit (2026-09-05)
+
+Follow-up sweep over **every** call site of the sprite-dictionary forwarders, to
+check whether the mis-sourced icon above was an isolated slip or a pattern.
+Scanned `MASHED.exe.unpatched` for direct `call`s to each forwarder and walked a
+backward instruction window at each site to recover the pushed name literal.
+**107 direct call sites** (FX 52, BADGES 34, INTERFACE 19, TrackImages 2).
+Reproduce with `py -3.12 re/tools/sprite_forwarder_map.py`.
+
+## There are FOUR dictionaries, not two — read off the loader
+
+`FUN_0040bbb0` opens `d:\toastart\common\sfx.piz` (`0x005ccce4`) and fills four
+contiguous heads by calling `FUN_0042a6b0(<name>, 0, 0)` four times:
+
+| head | forwarder | TXD | `0x0040bbb0` store |
+|---|---|---|---|
+| `0x0063b8f8` | `0x0040bb30` | **FX.TXD** (`0x005cccdc`) | `0x0040bbd2` |
+| `0x0063b8fc` | `0x0040bb50` | **BADGES.TXD** (`0x005cccd0`) | `0x0040bbf3` |
+| `0x0063b900` | `0x0040bb70` | **TrackImages.txd** (`0x005cccc0`) | `0x0040bc06` |
+| `0x0063b904` | `0x0040bb90` | **Interface.txd** (`0x005cccb0`) | `0x0040bc17` |
+
+All four forwarders are byte-identical apart from the head they load
+(`0x0040bb30`/`50`/`70`/`90`, 20 bytes each, `.text` padded with `nop`). This is
+the authoritative map and it retires the guesswork for good — the main note above
+had inferred only two of the four, and the FX one not at all. A **fifth** head
+exists outside this array at `0x0068b9ac`, used by `FUN_00458630` (powerup
+type-to-name lookup) directly through `FUN_004c5c00`.
+
+## Which dictionary each name comes from
+
+- **FX.TXD** (`bb30`, 52 sites) — the world/effects set: `smoke`, `scorch`,
+  `wfall`, `shockwave`, `crosshair`/`crosshair2`, `beam`, `car_shadow`,
+  `headlight`/`Headlight`, `lensflare-fs8`, `flash`, `oil`/`oilShine`, `puglow`,
+  `tyre`, `flames3`, `animFire`, `exp_cloud`/`exp_cloud2`/`exp_flash`,
+  `fireball`, `flatshad`, `shine`, `RWObjShad`, `VehicleIcons`. Four sites take
+  the key in a register and are not resolvable statically (`0x00448b1a`,
+  `0x0044cc23`, `0x004512fa`, and one more).
+- **BADGES.TXD** (`bb50`, 38 sites) — `Arrow` (15 sites), `check` (7), `lock` (3),
+  `Star` (2), `Button` (2), `SemiC`/`SemiC2`, `tritex`.
+- **Interface.txd** (`bb90`, 19 sites) — `vs` (10), `question` (2),
+  `Powerupshadow` (3), plus `Lock`/`Star`/`tick` via the gate.
+- **TrackImages.txd** (`bb70`) — **zero** direct call sites; the previews are
+  resolved by another path.
+
+## Three arg-rewriting gates, not two
+
+Alongside `0x0042ee00` (bb50) and `0x004391b0` (bb90) there is a third:
+**`FUN_0042fab0`**, a 10-case jump table (`0x0042fabd jmp [eax*4 + 0x42fb48]`)
+that rewrites its stack argument to an `NFL*` name and tail-jumps to
+`0x0040bb90` — so the car-colour badges are INTERFACE, as the port has them.
+
+## Result: no further texture-source defects
+
+Cross-checking every texture the port uploads against the dictionary the original
+resolves it from, **all of them now agree**:
+
+| port slot | name | port source | original path | verdict |
+|---|---|---|---|---|
+| `kSlotMenuBadge` | `Button` | BADGES | `bb50` @`0x0043cbbe` | correct |
+| `kSlotMenuArrow` | `Arrow` | BADGES | `bb50` x15 | correct |
+| `kSlotCar0..9` | `NFL*` | INTERFACE | `FUN_0042fab0` -> `bb90` | correct |
+| `kSlotVs` | `vs` | INTERFACE | `bb90` x10 | correct |
+| `kSlotStar` | `Star` | INTERFACE | `bb90` gate slot 1/3, and see below | correct |
+| `kSlotLock`/`kSlotCheck` | `lock`/`check` | BADGES | `bb50` @`0x004395eb` etc. | correct (fixed above) |
+| track previews | 24 names | TRACKIMAGES | head `0x0063b900` | correct |
+
+The mis-sourced checklist icon was an isolated slip, not a pattern. Recording the
+negative result so nobody re-runs this sweep.
+
+**The screen-6 Star question from the main note is now settled, not merely left
+alone.** All seven gate calls — `0x00439b7c`, `0x0043a18b`, `0x0043a1c3`,
+`0x0043a350`, `0x0043a38f`, `0x0043a523`, `0x0043a562` — are inside
+`FUN_00439210`, the screen 6/7/8 renderer, and the screen-6 row star comes
+through the `bb90` gate. The two badges-`Star` sites (`0x00435f87`,
+`0x00435fe2`) are inside `FUN_00434720` (screen 5). So the two screens genuinely
+use different Star textures (16x16 badges vs 32x32 interface), and the port's
+INTERFACE Star for screen 6 is right.
+
+## What the sweep DID surface: the row-state icon model (port defect, not fixed here)
+
+`FUN_00439210` draws a per-row icon whose gate slot is the cup-table state
+`*(u32*)(0x007f0a40 + idx*4)` — a different quantity from the `0x007f0a50/58/5c`
+per-mode flags the detail panel uses. Both gates map that state to a sprite:
+
+| state | `0x004391b0` (INTERFACE 32x32) | `0x0042ee00` (BADGES 16x16) |
+|---|---|---|
+| 0 | `Lock` | `lock` |
+| 1 | `Star` | `dot` |
+| 2 | `tick` (gated on `FUN_00430760()` and screen id not in {2, 0xa}) | `check` |
+| 3 | `Star` | — (returns 0) |
+| other | 0 | 0 |
+
+and one arm additionally skips the draw outright when the state is 1
+(`0x0043a174 cmp dword [edx*4 + 0x7f0a40],1 / 0x0043a17c je`), unless
+`FUN_0042ef40(..., idx + 0x3e8)` returned non-zero at `0x0043a162`.
+
+**The port draws an unconditional pulsing Star on every row**
+(`exe_main.cpp`, `if (g_star_ready) HudIm2DQuad(kHandleStar, ...)` in the
+`cup.trackCount` loop) and models none of this: a locked row should show a
+padlock, a state-2 row a tick, and a state-1 row nothing at all.
+
+**Deliberately not fixed in this pass.** Which of the two arms runs for which row
+depends on branch structure around `0x0043a162`/`0x0043a1ae` that this sweep did
+not finish tracing, and `0x0043a1ae` is a jump target reached from elsewhere in
+the row loop. Guessing the arm selection would be exactly the mistake this note
+exists to record. It needs its own slice: finish the arm trace, then drive the
+states with a save that has mixed values (`MASHED_SAVE=<scratch>`) and capture,
+rather than inferring from a fresh save where every row reads the same.

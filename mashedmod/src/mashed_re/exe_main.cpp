@@ -778,11 +778,16 @@ bool             g_star_ready = false;
 // draws FUN_0040bb50("lock" | "check", x, y, w, h, colour, 1) per row.
 //
 // RESOLVED 2026-09-05 (Finding 38) — the 2026-09-04 note here was wrong in two
-// directions because it looked in the wrong dictionary. There are TWO
-// named-sprite dictionaries, each behind its own forwarder onto FUN_004c5c00:
-//     0x0040bb50 -> DAT_0063b8fc  = sfx.piz :: BADGES.TXD    (23 textures)
-//     0x0040bb90 -> DAT_0063b904  = sfx.piz :: INTERFACE.TXD (30 textures)
-// and a slot gate in front of each, with disjoint name sets:
+// directions because it looked in the wrong dictionary. There are FOUR
+// named-sprite dictionaries, each behind its own forwarder onto FUN_004c5c00.
+// FUN_0040bbb0 opens sfx.piz and fills four contiguous heads:
+//     0x0040bb30 -> DAT_0063b8f8  = sfx.piz :: FX.TXD          (world/effects)
+//     0x0040bb50 -> DAT_0063b8fc  = sfx.piz :: BADGES.TXD      (23 textures)
+//     0x0040bb70 -> DAT_0063b900  = sfx.piz :: TrackImages.txd
+//     0x0040bb90 -> DAT_0063b904  = sfx.piz :: Interface.txd   (30 textures)
+// (a fifth head, 0x0068b9ac, sits outside the array and serves FUN_00458630's
+// powerup lookup). The two that matter here have a slot gate in front of each,
+// with disjoint name sets:
 //     0x0042ee00 -> bb50: 0 "lock" @0x005cd7b8, 1 "dot" @0x005cd7b4,
 //                         2 "check" @0x005cd7ac
 //     0x004391b0 -> bb90: 0 "Lock" @0x005cda44, 1/3 "Star" @0x005cd970,
@@ -5585,6 +5590,20 @@ bool RenderFrame() {
             // 116 + 28.125 = 144.125; an independent solve in the s6 lane put
             // the original's row-0 centre at 143.94 virtual. Taking 144.0.
             const float row0 = 144.0f * kVScale, rowdy = 22.0f * kVScale;
+            // [SCAFFOLD — known wrong, 2026-09-05 forwarder audit] The star
+            // below is drawn on EVERY row. The original draws a per-row STATE
+            // icon: FUN_00439210 keys a slot gate on the cup-table state
+            // *(u32*)(0x007f0a40 + idx*4) — a different quantity from the
+            // 0x007f0a50/58/5c per-mode flags the detail panel uses — and the
+            // gate maps 0 -> Lock/lock, 1 -> Star/dot, 2 -> tick/check,
+            // 3 -> Star. One arm skips the draw entirely when the state is 1
+            // (0x0043a174 cmp / 0x0043a17c je). So a locked row should show a
+            // padlock, not a star. NOT fixed here: which of the two gate arms
+            // (0x004391b0 INTERFACE 32x32 vs 0x0042ee00 BADGES 16x16) runs for
+            // which row depends on branch structure around 0x0043a162/0x0043a1ae
+            // that the audit did not finish tracing, and guessing it is the exact
+            // mistake that note exists to record. See
+            // re/analysis/chalsel_icon_dictionary_20260905.md (Addendum).
             // animated star pulse (triangle wave, no <cmath> dep).
             const float ph = (DetTicks() % 800u) / 800.0f;
             const float pulse = 0.82f + 0.18f * (ph < 0.5f ? ph * 2.f : (1.f - ph) * 2.f);
