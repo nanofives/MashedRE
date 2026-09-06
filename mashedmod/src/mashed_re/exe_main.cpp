@@ -819,6 +819,14 @@ bool             g_lock_ready = false;
 constexpr std::uint32_t kSlotCheck     = 94;
 constexpr int           kHandleCheck   = 85;
 bool             g_check_ready = false;
+// Challenge-Select SELECTED-row category sprite (Finding 38). FUN_00439210
+// draws it via the screen-dispatch gate 0x0042ee40, which on screen 6 returns
+// "MultiPlayer" from INTERFACE.TXD. Measured: size-pulsing quad centred at
+// (231, row-centre+4), size 44..68 (base 56). Slot 95 is the last kMaxSlots-1
+// slot — recount kMaxSlots before adding another texture family here.
+constexpr std::uint32_t kSlotCategoryMP = 95;
+constexpr int           kHandleCategoryMP = 86;
+bool             g_category_mp_ready = false;
 // The "vs" separator sprite (INTERFACE.TXD) was LOADED and registered to
 // kHandleVs but had no ready flag and no draw call anywhere — so it never
 // appeared. User-reported on s6/s18/s24 across two review rounds.
@@ -5571,14 +5579,9 @@ bool RenderFrame() {
             // Track-name cap height: original 19 device, ours was 17 -> 0.55 *
             // (19/17) = 0.6147.
             const float lcell = 0.6147f * 0.0708f * 480.f * kVScale;
-            // Star was a uniform 0.504x. Threshold-free intensity 2nd moments:
-            // sx 4.4125 vs 2.2233 (1.9847), sy 4.6025 vs 2.3393 (1.9675),
-            // geometric mean 1.97603 -> 16.0 * 1.97603 = 31.6165. Shape ratio
-            // sx/sy 0.9587 vs 0.9504 differs by 0.87%, so it is uniformly
-            // scaled and NOT stretched. Star centre x was 14.1 virtual too far
-            // right: original centre 57.507 dev = 35.942 virtual, minus half the
-            // new size -> 35.942 - 31.6165/2 = 20.134.
-            const float stx = 20.134f * kVScale, sts = 31.616f * kVScale;
+            // (The old per-row pulsing "Star" at x~36 was removed 2026-09-06 —
+            // the FUN_00473870 draw hook found no original draw there; the real
+            // per-row element is the status glyph / category sprite below.)
             // row0 144, not 116. This was previously unmeasurable: with the cup
             // at 8 rows against the original's 4, no anchoring rule (top /
             // centre / bottom) could be distinguished. Setting kCupTrackCount=4
@@ -5627,9 +5630,9 @@ bool RenderFrame() {
             // (the standalone exits on focus loss), so it is handed off rather
             // than shipped blind. Full geometry + plan:
             // re/analysis/chalsel_icon_dictionary_20260905.md, third Addendum.
-            // animated star pulse (triangle wave, no <cmath> dep).
+            // Row icon triangle-wave phase (no <cmath> dep).
             const float ph = (DetTicks() % 800u) / 800.0f;
-            const float pulse = 0.82f + 0.18f * (ph < 0.5f ? ph * 2.f : (1.f - ph) * 2.f);
+            const float tri = (ph < 0.5f) ? ph * 2.f : (1.f - ph) * 2.f;  // 0..1..0
             for (int i = 0; i < cup.trackCount; ++i) {
                 const float cy = row0 + i * rowdy;          // row centre
                 const bool selrow = (i == sel);
@@ -5641,12 +5644,33 @@ bool RenderFrame() {
                     HudIm2DQuad(0, 0.f, by, 312.5f * kVScale, bt, bord, uv_full);
                     HudIm2DQuad(0, 0.f, by + bh - bt, 312.5f * kVScale, bt, bord, uv_full);
                 }
-                const float ss = selrow ? sts * pulse : sts;   // animated star
-                if (g_star_ready)
-                    HudIm2DQuad(kHandleStar, stx - (ss - sts) * 0.5f,
-                                cy - ss * 0.5f, ss, ss, white, uv_full);
-                else
-                    HudIm2DQuad(0, stx, cy - sts * 0.5f, sts, sts, 0xff20c0e0u, uv_full);
+                // ---- Row icon (Finding 38, MEASURED via chal_icon_probe.py's
+                // FUN_00473870 draw hook; all coords in this virtual-640 space).
+                // Non-selected rows: a faint status glyph. On a fresh save every
+                // cup row is "check" (col-3 == 2; the lock/dot/none arms are for
+                // states screen 6 does not reach in normal play). Selected row: a
+                // size-pulsing MultiPlayer category sprite (INTERFACE.TXD, via the
+                // screen-dispatch gate 0x0042ee40) and NO small glyph — its tick is
+                // suppressed by FUN_00430760. The port's old pulsing Star at x~36
+                // matched no original draw and is gone.
+                //   check:    x=220, w=h=22, argb=0x3f000000, centre_y = cy + 4
+                //   category: centred (231, cy+4), size 44..68 (base 56, +/-21.4%)
+                // [UNCERTAIN] the pulse PERIOD is not measured (one frame cannot
+                // show it) — reusing the 800-tick triangle. Under Team Play the
+                // category id may differ (0x0042ee40 is screen/mode-gated); the
+                // standalone default is Multi Player.
+                const float icy = cy + 4.0f * kVScale;   // icon-column centre
+                if (selrow) {
+                    if (g_category_mp_ready) {
+                        const float csz =
+                            (56.0f + 12.0f * (2.0f * tri - 1.0f)) * kVScale;  // 44..68
+                        HudIm2DQuad(kHandleCategoryMP, 231.0f * kVScale - csz * 0.5f,
+                                    icy - csz * 0.5f, csz, csz, white, uv_full);
+                    }
+                } else if (g_check_ready) {
+                    HudIm2DQuad(kHandleCheck, 220.0f * kVScale, icy - 11.0f * kVScale,
+                                22.0f * kVScale, 22.0f * kVScale, 0x3f000000u, uv_full);
+                }
                 // Text x: original ink left edge 103 device = 64.375 virtual
                 // (ours was 109 at draw-x 108.8). [UNCERTAIN] the left
                 // side-bearing scales with lcell, which just changed, so this is
@@ -6966,6 +6990,22 @@ bool LoadCarColorSprites() {
                 kHandleStar, g_quad_renderer.slot_texture(kSlotStar));
             g_star_ready = true;
         }
+        break;
+    }
+    // Challenge-Select SELECTED-row category sprite (Finding 38): "MultiPlayer"
+    // from THIS dictionary — FUN_00439210 draws it on the selected row via the
+    // screen-dispatch gate 0x0042ee40, which returns "MultiPlayer" on screen 6.
+    for (std::uint32_t i = 0; i < dict.count(); ++i) {
+        const auto& tex = dict.texture(i);
+        if (_stricmp(tex.name, "MultiPlayer") != 0) continue;
+        if (g_quad_renderer.UploadFromTextureToSlot(kSlotCategoryMP, tex)) {
+            mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                kHandleCategoryMP, g_quad_renderer.slot_texture(kSlotCategoryMP));
+            g_category_mp_ready = true;
+        }
+        if (log) std::fprintf(log, "F38: interface.txd 'MultiPlayer' %ux%u upload %s\n",
+                              tex.width(), tex.height(),
+                              g_category_mp_ready ? "OK" : "FAILED");
         break;
     }
     // NOTE: the challenge-select per-mode lock icon used to be loaded here from
