@@ -12,6 +12,7 @@ namespace Race {
 
 namespace {
 GameMode    g_mode = GameMode::Frontend;
+bool        g_paused = false;          // in-race pause (mode 3 <-> 7); see GameFlow.h
 RaceSession g_session;
 RaceConfig  g_pending;
 int         g_loadFrames = 0;
@@ -140,6 +141,17 @@ std::uint32_t* GameFlow_SaveCounterPtr() { return &g_saveCounter; }
 GameMode GameFlow_Mode() { return g_mode; }
 RaceSession& GameFlow_Session() { return g_session; }
 
+// In-race pause toggle (mode 3 <-> 7). Only meaningful while InRace; a request in
+// any other mode is ignored so the flag can never strand a non-race state frozen.
+bool GameFlow_IsPaused() { return g_paused && g_mode == GameMode::InRace; }
+void GameFlow_SetPaused(bool paused) {
+    if (g_mode != GameMode::InRace) { g_paused = false; return; }
+    g_paused = paused;
+    // The original ducks nothing extra on pause here (mode 7 keeps the race
+    // stream running; see re/analysis/audio_music_state_dispatch_20260711.md), so
+    // audio state is left as-is.
+}
+
 void GameFlow_RequestRace(const RaceConfig& cfg,
                           D3d9Render::TrackRenderer* track,
                           IDirect3DDevice9* dev) {
@@ -153,6 +165,7 @@ void GameFlow_RequestRace(const RaceConfig& cfg,
 
 void GameFlow_RequestExit() {
     if (g_mode == GameMode::Frontend) return;
+    g_paused = false;                 // leaving the race clears the pause state
     g_session.End();
     g_mode = GameMode::Frontend;
     // 0x00466b50 mode dispatch: exit-to-menu-shaped modes (0/6) snap the
@@ -164,6 +177,7 @@ void GameFlow_RequestExit() {
 
 void GameFlow_RequestResults() {
     if (g_mode != GameMode::InRace) return;
+    g_paused = false;                 // the match resolved; drop any pause
     g_mode = GameMode::Results;       // session stays active (scene + scores held)
     // 0x00466b50 mode 5 (stream-drain/post-race) snaps the FUN_0045dbe0
     // envelope to 0 once all 4 audio streams report state 3 for >=3 frames;
@@ -189,7 +203,10 @@ void GameFlow_Update(float dt) {
             }
             break;
         case GameMode::InRace:
-            g_session.Tick(dt);
+            // Mode 7 (paused) skips the race tick in the original's FUN_00492d30
+            // (0x00492d30). Freeze the session tick here too; exe_main gates its
+            // own physics step on GameFlow_IsPaused().
+            if (!g_paused) g_session.Tick(dt);
             break;
         case GameMode::Results:
             break;

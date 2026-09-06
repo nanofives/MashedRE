@@ -28,6 +28,24 @@ void     GameFlow_RequestExit();
 // Match over: InRace -> Results (keeps the session/scene for the results
 // overlay; the sim is frozen). Esc/timeout from Results -> Frontend.
 void     GameFlow_RequestResults();
+// In-race PAUSE (faithful port of the original's mode 3 <-> mode 7 toggle). The
+// pause key freezes the sim while the frozen 3D scene keeps rendering; it does
+// NOT exit to the frontend (exit is an OPTION inside the pause menu). RVA map:
+//   - master mode machine FUN_004929d0 (0x004929d0): case 3 (driving) sets mode 7
+//     when FUN_0042c1c0 (0x0042c1c0) != 0; case 7 (paused) sets mode 3 on resume.
+//   - pause-arm: FUN_0042c220 (0x0042c220) samples the pause button and pushes the
+//     pause-menu event via FUN_0042c280 (0x0042c280) -> FUN_0042bf30 (0x0042bf30,
+//     event 0xff210000), which raises DAT_0067eab0 (read by FUN_0042c1c0).
+//   - sim freeze: game-logic tick FUN_00492d30 (0x00492d30) runs the race tick
+//     FUN_004111c0 (0x004111c0) only in case 3; mode 7 skips it (sim frozen) while
+//     the render tick FUN_00492e90 (0x00492e90) draws case 7 identically to case 3.
+//   - pause-menu quit-to-frontend: action -0xce0000 in the overlay FUN_0043d7c0
+//     (0x0043d7c0) -> FUN_0043d2a0(1,0). Restart: -0xe00000 -> FUN_0040de10.
+// The standalone steps the sim in exe_main's RenderFrame, so the caller consults
+// GameFlow_IsPaused() to gate the physics step and to draw a minimal overlay; this
+// state object is the single source of truth. Paused only ever holds in InRace.
+bool     GameFlow_IsPaused();
+void     GameFlow_SetPaused(bool paused);
 // Driven once per frame from exe_main's main loop (after the frontend update).
 void     GameFlow_Update(float dt);
 // Draw the race frame when in race; no-op in Frontend (the menu draws itself).

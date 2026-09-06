@@ -1875,11 +1875,45 @@ bool UpdateMenuSelection() {
     const bool esc_now   = (g_keys[DIK_ESCAPE]    & 0x80) != 0;
     const bool esc_prev  = (g_keys_prev[DIK_ESCAPE]& 0x80) != 0;
     // ROUND 1: while in a race OR on the results screen the menu is hidden —
-    // Esc exits back to the frontend; swallow all other menu input.
+    // swallow all other menu input. Results: Esc exits back to the frontend.
+    // InRace: Esc PAUSES (faithful mode 3<->7), it does NOT exit — see below.
     {
         const mashed_re::Race::GameMode gm = mashed_re::Race::GameFlow_Mode();
-        if (gm == mashed_re::Race::GameMode::InRace ||
-            gm == mashed_re::Race::GameMode::Results) {
+        if (gm == mashed_re::Race::GameMode::InRace) {
+            // [#3 playtest, 2026-09-06] FAITHFUL in-race pause. In the original the
+            // pause button freezes the sim and shows the pause menu (master mode
+            // machine FUN_004929d0 0x004929d0: driving mode 3 -> paused mode 7);
+            // it does NOT tear the race down to the frontend. Exit-to-menu is an
+            // OPTION *inside* the pause menu. Full RVA map: Race/GameFlow.h.
+            //
+            // Capture/demo drivers inject ESC to *exit* a race (RunRaceDemo taps,
+            // e.g. "RequestExit -> Frontend" ~:1596 below). Keep that exit for them
+            // so headless parity captures are unchanged; only interactive play
+            // pauses. g_det_clock (deterministic capture) also keeps exit-on-ESC.
+            const bool demo = g_nav_demo || g_race_demo || g_cfgedit_demo ||
+                              g_det_clock;
+            if (demo) {
+                if (esc_now && !esc_prev)
+                    mashed_re::Race::GameFlow_RequestExit();
+                return false;
+            }
+            if (esc_now && !esc_prev) {
+                mashed_re::Race::GameFlow_SetPaused(
+                    !mashed_re::Race::GameFlow_IsPaused());  // toggle pause/resume
+            } else if (mashed_re::Race::GameFlow_IsPaused() && ent_now &&
+                       !ent_prev) {
+                // Pause-menu QUIT-to-frontend (original overlay action -0xce0000 in
+                // FUN_0043d7c0 -> FUN_0043d2a0(1,0)): ENTER while paused exits the
+                // race. [SCOPED] the full pause menu (event 0xff210000 /
+                // FUN_0043d7c0 records: Resume / Restart / Quit) is not yet
+                // reversed; this wires the two core actions (resume via ESC, quit
+                // via ENTER) without inventing the menu's exact text/layout.
+                // Restart (-0xe00000 -> FUN_0040de10) is left for the full port.
+                mashed_re::Race::GameFlow_RequestExit();
+            }
+            return false;
+        }
+        if (gm == mashed_re::Race::GameMode::Results) {
             if (esc_now && !esc_prev) {
                 // [D-11059(a)] Dismissing the RESULTS of a completed cup race
                 // (championship 3 / tier cups 4/5 — the D-11054 mode->column
@@ -2895,7 +2929,11 @@ bool RenderFrame() {
         // proving motion + ground snap.
         static int s_frame = 0;
         ++s_frame;
-        if (g_track.car_ready() && !results) {   // sim frozen on the results screen
+        // sim frozen on the results screen AND while paused (#3: faithful mode 7 —
+        // the original's game-logic tick FUN_00492d30 skips the race tick in the
+        // paused state; only the frozen scene keeps rendering).
+        const bool paused = mashed_re::Race::GameFlow_IsPaused();
+        if (g_track.car_ready() && !results && !paused) {
             mashed_re::D3d9Render::TrackRenderer::DriveInput di;
             di.dt = dt;
             static const bool s_drive_demo =
@@ -3790,6 +3828,22 @@ bool RenderFrame() {
                                  p == 0 ? 0xff80ff80u : 0xffffffffu);
             }
             DrawMashedString(L"[ESC] Continue", 250.f, 350.f, 22.f, 0xffb0b0b0u);
+        }
+        // [#3 playtest] PAUSE overlay. Drawn on top of the frozen 3D scene while
+        // paused (the original renders the frozen scene identically to driving —
+        // FUN_00492e90 case 7 == case 3 — with the pause menu FUN_0043d7c0 over it).
+        // [SCOPED] This is a minimal stand-in for that menu: the original's exact
+        // pause-menu records (event 0xff210000 / FUN_0043d7c0: Resume/Restart/Quit,
+        // drawn from the message table) are not yet reversed, so this shows only the
+        // two wired actions rather than inventing the original's layout/strings. It
+        // never appears in a parity capture (demo/capture drivers exit on ESC and
+        // never pause), so it cannot pollute a draw-list diff.
+        if (paused && g_font.ready() && g_bridge_installed) {
+            std::uint32_t uvf[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
+            HudIm2DQuad(0, 210.f, 210.f, 380.f, 190.f, 0xc0100c0cu, uvf);  // dim panel
+            DrawMashedString(L"PAUSED",            250.f, 232.f, 40.f, 0xffffffffu);
+            DrawMashedString(L"[ESC]   Resume",    250.f, 300.f, 24.f, 0xffc0ffc0u);
+            DrawMashedString(L"[ENTER] Quit to Menu", 250.f, 336.f, 24.f, 0xffffc0c0u);
         }
         g_device->EndScene();
         const bool car = g_track.car_ready();
