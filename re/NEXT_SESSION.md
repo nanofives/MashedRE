@@ -6,12 +6,46 @@ literals + sprite-forwarder audit + row-icon trace** lane (branch
 
 ---
 
-Resume the Mashed frontend/UI lane. Branch `race/first-frame-parity` @ `d30fafaf`.
+Resume the Mashed frontend/UI lane. Branch `race/first-frame-parity` @ `b8eabd8a`.
 
-**Tree is clean** apart from an untracked `videocfg.bin` (a run byproduct — never
-commit it). The other session's modal-pair transaction and this lane's tracker rows
-are all committed now (its accidental whole-file CRLF strip of `CHANGELOG.md` was
-re-normalized to CRLF when landed, so the history diff is the real entries only).
+**Tree has ONE deliberately-uncommitted change** — the Challenge-Select row-icon
+composition fix in `mashedmod/src/mashed_re/exe_main.cpp` (56+/16-, `git diff` to
+see it). It is measured-faithful and builds, but was left uncommitted pending a
+**desktop screenshot** (this session's headless env auto-races and can't drive the
+frontend — see "FIRST STEP" below). Do NOT lose it. Also untracked: `videocfg.bin`
+(run byproduct — never commit). Everything else (modal-pair txn, tracker rows,
+U-9085 re-transcription + verification) is committed.
+
+## FIRST STEP — verify & commit the staged row-icon fix
+
+The `exe_main.cpp` change replaces the wrong per-row pulsing Star on Challenge
+Select with the MEASURED composition: non-selected rows draw a faint `check`
+(x=220, 22x22, argb=0x3f000000); the selected row draws a size-pulsing
+`MultiPlayer` category sprite (centre 231,148; size 44..68); the star is gone.
+New texture load: `MultiPlayer` from INTERFACE.TXD -> kSlotCategoryMP(95)/
+kHandleCategoryMP(86). All numbers are from `chal_icon_probe.py`'s FUN_00473870
+draw hook, in the port's `N*kVScale` space (the detail panel's measured x=520/w=24
+matched the existing draw, which pins the space).
+
+To close it, on a real desktop:
+1. `mashedmod\build.bat` (already built, but rebuild if the tree moved).
+2. `MASHED_NAV_DEMO=1 MASHED_WIN_POS=left-bl mashedmod\build\mashed_re.exe`
+   (keep the window focused so it doesn't drop into the race loop).
+3. Check `verify/walk_06_challengeselect.bmp`: selected row = pulsing MultiPlayer
+   icon (no small badge); rows 1-3 = faint check at x~220; NO star at x~36. And
+   `log/mashed_re.log` should show `F38: interface.txd 'MultiPlayer' ... OK` and
+   `F38: badges.txd 'check' ... OK`.
+4. If it renders right, commit `exe_main.cpp` with the ready message below. If the
+   check washes out against the backdrop or MultiPlayer is mispositioned, adjust
+   (the geometry is measured, so a miss is a render-path bug, not a number).
+
+Ready commit message:
+> `frontend: Challenge-Select row icons - check/MultiPlayer, star removed (screenshot-verified)`
+> Implements the measured screen-6 row composition (Addenda 3, chalsel_icon note):
+> non-selected check x=220 22x22 0x3f000000, selected MultiPlayer category sprite
+> centred 231,148 pulsing 44..68, star removed. Screenshot verify/walk_06_*.bmp
+> confirms. Residuals: pulse PERIOD assumed (800-tick triangle); Team-Play category
+> id not modelled (0x0042ee40 screen/mode-gated; standalone default is Multi Player).
 
 Read `re/analysis/chalsel_icon_dictionary_20260905.md` (short, self-contained). It is
 the successor to `race_hud_capture_20260902.md` Finding 36 and **overturns Finding 36's
@@ -32,17 +66,15 @@ icon paragraph** — read it after 36, and do not re-derive it.
 
 ## Left open, with reasons
 
-1. **No screenshot of the fixed panel.** The standalone **exits on focus loss**, and a
-   non-interactive session has no foreground desktop, so neither `MASHED_NAV_DEMO` nor
-   `MASHED_PARITY` reaches frontend asset loading — no `walk_*.bmp`, no `parity/re_s6.bmp`,
-   and `LoadMenuBadgeSprite`'s new `F38:` log line is **unverified at runtime**. The port
-   change rests on the static branch read plus the live dictionary walk, which is the
-   load-bearing evidence, but the render itself is unconfirmed. **First thing to do next
-   session, from an interactive desktop:**
-   `MASHED_NAV_DEMO=1 MASHED_CHAL_UNLOCK="1,0,1" MASHED_WIN_POS=left-bl mashedmod\build\mashed_re.exe`
-   then check `verify/walk_06_challengeselect.bmp` shows a check on rows 0 and 2 and a
-   padlock on row 1, and `log/mashed_re.log` for two `F38: badges.txd ... upload OK` lines.
-   Compare against `verify/chalsel_panel_unlocked.bmp` (the pre-fix shot, same flags).
+1. **No runtime screenshot of ANY of the icon work** — this session is headless and
+   the standalone auto-races at boot without a real interactive desktop (diagnosed:
+   the frontend never settles, one confirm-handler auto-launches races in a loop; the
+   port DOES render the menu on a real desktop, per the pre-existing
+   `verify/chalsel_panel*.bmp`). So the detail-panel BADGES lock/check fix
+   (`F38: badges.txd ...` — committed) AND the staged row-icon composition (see FIRST
+   STEP) are both **measured-faithful but unverified-at-runtime**. One desktop nav-demo
+   run confirms both at once: check `verify/walk_06_challengeselect.bmp` +
+   `log/mashed_re.log` for the `F38: ... OK` lines.
 2. **Tracker rows: FILED** (commit `d30fafaf`). U-9085, the `0x00439210` identity/icon
    note, and two CHANGELOG entries are in. Nothing left here.
 3. **U-9085: RESOLVED + hook VERIFIED** (commits `f59e60ad`, `8754e74e`). `0x004c5c00`
@@ -88,30 +120,15 @@ New probe: `py -3.12 re/frida/chal_icon_probe.py [--screen 6]`.
 
 ## Candidate next slices
 
-1. **Close out this one properly** — only the screen-6 capture (Left-open #1) remains;
-   it needs a desktop (the standalone exits on focus loss here). Tracker rows filed and
-   U-9085 resolved.
-2. **Implement the Challenge-Select ROW state-icon (geometry now MEASURED)** — the
-   full trace/geometry is done (commits `7d027314`/`df2a7124`, Addenda 2+3 of
-   `re/analysis/chalsel_icon_dictionary_20260905.md`); this is now a scoped
-   implement-and-**screenshot-verify**, held back only because this headless session
-   could produce no capture. MEASURED screen-6 model (numbers already in the port's
-   `N*kVScale` space):
-   - **non-selected rows**: state icon at **x=220, w=h=22, argb=0x3f000000** (faint
-     black), texture via BADGES gate on cup-table **column 3**
-     (`*(u32*)(0x007f0a40 + row*0x30 + 0xc)`): `0→lock 1→dot 2→check 3→none`;
-   - **selected row**: a category sprite (`MultiPlayer` on screen 6, via the
-     screen-dispatch gate `0x0042ee40`) at **x~208 w~45 white**, and NO small badge —
-     its INTERFACE tick is suppressed by `FUN_00430760()` on this state;
-   - **no Star on any row.** The port's pulsing white Star at x~36 matches nothing.
-   Faithful change = a multi-texture composition rewrite: load the category sprites
-   (`MultiPlayer`/`QuickRace`/… from INTERFACE.TXD) + `dot` (BADGES, alongside the
-   `lock`/`check` already loaded), draw category-on-selected / black-status-glyph-on-
-   others at the measured geometry, remove the star, model `FUN_00430760`'s
-   suppression. **Do it from a desktop** and confirm with
-   `MASHED_NAV_DEMO=1 MASHED_CHAL_UNLOCK=... mashedmod\build\mashed_re.exe` →
-   `verify/walk_06_challengeselect.bmp`. Drive non-uniform states with
-   `MASHED_SAVE=<scratch>` / the probe's `--poke v0,v1,v2,v3` (the fresh save is the
-   degenerate all-col3=2 trap).
-3. **Leave the frontend lane.** R7 has other subsystems; the standings/setup/team/
+1. **Verify + commit the staged row-icon fix** — see FIRST STEP at the top. The
+   composition is already implemented and staged uncommitted; it just needs one
+   desktop nav-demo screenshot to confirm the render, then commit. This also confirms
+   the committed detail-panel BADGES fix in the same shot.
+   - Extension if you want to go further: the lock/dot/none arms (non-`check` col-3
+     states) and the Team-Play category id are modelled only for the default state.
+     Drive non-uniform states with `MASHED_SAVE=<scratch>` / the probe's
+     `--poke v0,v1,v2,v3` (the fresh save is the degenerate all-col3=2 trap) and the
+     Team-Play flag to see if the category sprite id changes (`0x0042ee40` is
+     screen/mode-gated).
+2. **Leave the frontend lane.** R7 has other subsystems; the standings/setup/team/
    challenge chain is now ported and sourced.
