@@ -21,6 +21,7 @@
 // existing TextRenderer/MashedFont path instead.
 
 #include "MenuNavSM.h"
+#include "../Race/GameFlow.h"   // Campaign_CurrentCup (challenge-cup row count)
 
 #include <cstring>
 
@@ -1053,6 +1054,31 @@ int  Nav_DevScreen() { return g_stack[g_nav_depth].screen_id; }
 
 void Nav_MoveCursor(int delta) {
     NavSlot& s = g_stack[g_nav_depth];
+    // [Bug #2 / 2026-09-06] Challenge Select (screens 6/7) selects a CUP TRACK
+    // ROW, not a descriptor menu-item. The harvested tables kT6/kT7 each hold
+    // exactly ONE 0xff040000 item (action 0xff260000), so CountItems -> item_count
+    // == 1 and the generic item_count-bounded scan below could never leave row 0
+    // (Angel Peak) -- the reported "auto-selects Angel Peak, can't move" bug. The
+    // screen instead draws cup.trackCount rows and reads Nav_Cursor() as the
+    // selected track index, so traverse those rows here.
+    //
+    // The original moves a SEPARATE challenge-row index (DAT_0067f17c) via
+    // FUN_004323c0 (MenuCursorBack) / its forward twin, not the menu-item cursor
+    // of FUN_00432800. Per the bug directive the cursor is allowed to REST on
+    // every cup row (locked included) and the LAUNCH is gated on unlock in the
+    // exe_main challenge-launch path. [UNCERTAIN] FUN_00430830's row-availability
+    // scan in the original may SKIP fully-locked rows rather than rest on them;
+    // this is not runtime-verifiable here (headless), so the directive's
+    // rest-on-locked + gated-launch behaviour is implemented -- confirm on desktop.
+    if (s.screen_id == 6 || s.screen_id == 7) {
+        const int rows = mashed_re::Race::Campaign_CurrentCup().trackCount;
+        if (rows <= 0) return;
+        int c = (s.cursor < 0) ? 0 : s.cursor;
+        if (c >= rows) c = rows - 1;
+        c = (c + (delta >= 0 ? 1 : -1) + rows) % rows;   // wrap; rest on every row
+        s.cursor = c;
+        return;
+    }
     if (s.item_count <= 0) return;
     int c = (s.cursor < 0) ? 0 : s.cursor;
     // Step over the avail[] mask (wrap). Mirrors the forward scan in FUN_00432800.

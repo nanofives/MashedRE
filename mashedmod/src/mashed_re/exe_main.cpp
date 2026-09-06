@@ -696,6 +696,10 @@ extern "C" std::uint32_t __cdecl CarSlotAssign();       // 0x0042b9e0, Frontend/
 // FrontendCursorUpdate; that TU is in BOTH build lists, so the exe calls the
 // established copy and no second install is created (the U-9065 shape).
 extern "C" void          __cdecl FrontendCursorUpdate();  // 0x0042f7b0, Frontend/MenuHelpers.cpp
+// [#1/#5] Player Colour Select (screen 4 / page 0x18) LEFT/RIGHT colour cursor —
+// faithful case-0x18 arm of FUN_0043dfd0 (writes 0x0067ea98+p*4, then
+// FUN_00431b80). Frontend/GameModeCarSelect.cpp.
+extern "C" void          __cdecl CarSelectCycleColour(int player, int dir);  // 0x00440337
 // Raw team-table pick (0 = none, 1 = team A, 2 = team B) for the profile
 // occupying car slot n. This is the UNBIASED value FUN_0043aa30 uses for the
 // row sprite's X and the roster stacks -- distinct from DAT_007f1a18's team id,
@@ -2109,6 +2113,22 @@ bool UpdateMenuSelection() {
                     }
                 }
             }
+            // [Bug #2 / 2026-09-06] Challenge-launch unlock guard. Now that the
+            // Challenge Select cursor can REST on locked cup rows (MenuNavSM
+            // Nav_MoveCursor traverses all cup.trackCount rows), the LAUNCH must
+            // stay gated on unlock: a locked track must not start a race. The
+            // mode-4/5 tier gate above only covers the tier columns; the mode-3
+            // (default challenge) path had no per-row gate. Refuse when the
+            // selected cup row is locked. Dev overrides (MASHED_TRACK_SEL /
+            // MASHED_GAME_MODE) bypass, matching the tier gate.
+            if (!trackOverride && !modeForced) {
+                const mashed_re::Race::Cup& cup = mashed_re::Race::Campaign_CurrentCup();
+                if (trackSel >= 0 && trackSel < cup.trackCount &&
+                    !cup.tracks[trackSel].unlocked) {
+                    mashed_re::Audio::SfxPlay("menu navigation", 0.5f);
+                    return false;                // locked cup row: no launch
+                }
+            }
             char piz[160];
             RaceTrackPizPath(mashed_re::Race::Campaign_SelectedTrack(), piz, sizeof(piz));
             if (g_track.Load(g_device, piz, kLogPath)) {
@@ -2248,10 +2268,36 @@ bool UpdateMenuSelection() {
             if (rgt_now && !rgt_prev) AdjustSoundSetting(101, +1);
             if (lft_now && !lft_prev) AdjustSoundSetting(101, -1);
         } else if (sid == 4) {                     // Player Colour Select (#25)
-            // Round-2: LEFT/RIGHT move the COLOUR TILE selection (6 tiles =
-            // the first six liveries; red selected by default).
-            if (rgt_now && !rgt_prev) g_csel_p1_car = (g_csel_p1_car + 1) % 6;
-            if (lft_now && !lft_prev) g_csel_p1_car = (g_csel_p1_car + 5) % 6;
+            // [#1/#5 2026-09-06] Faithful screen-4 (page id 0x18) LEFT/RIGHT:
+            // drive the REAL per-player colour cursor + FUN_00431b80, exactly
+            // as the original's case-0x18 arm of FUN_0043dfd0 — LEFT
+            // (0x00440337, ebp=-1): dec [0x0067ea98 + p*4], wrap <0 -> 6, then
+            // FUN_00431b80(EAX=p, ESI=-1); RIGHT twin: inc, wrap >6 -> 0,
+            // FUN_00431b80(EAX=p, ESI=+1). The port's screen 4 is the
+            // single-player colour screen (see the s4 content renderer note,
+            // ~line 4786), so this drives player 0 (0x0067ea98). Modelled on
+            // the sid 6/7 arm above (edge-triggered, one step per press, nav
+            // SFX on change). The OLD handler only cycled the port-local
+            // g_csel_p1_car — which the render void's (selCol at ~line 4950) —
+            // so the real colour globals never moved and every car stayed red
+            // (#5). CarSelectCycleColour reuses GameModeCarSelect.cpp's
+            // FUN_00431b80 wrapper (non-standard EAX/ESI, U-1655) — declared
+            // at file scope near the other Frontend externs.
+            // [residual/uncertain] SlotColour reads 0x007f1a1c (exe_main:705),
+            // which CarSlotAssign (0x0042b9e0) writes from the car-choice array
+            // 0x0067eaf0 — NOT ea98 — so the downstream livery/badge picks up
+            // the choice only once the confirm path runs CarSlotAssign; the
+            // ea98 colour cursor itself now cycles faithfully.
+            int csel_dir = 0;
+            if (rgt_now && !rgt_prev)      csel_dir = +1;
+            else if (lft_now && !lft_prev) csel_dir = -1;
+            if (csel_dir != 0) {
+                CarSelectCycleColour(0, csel_dir);
+                // mirror the port-local render index to the live cursor
+                const int v = *reinterpret_cast<const std::int32_t*>(0x0067ea98u);
+                g_csel_p1_car = (v < 0) ? 0 : (v > 5 ? 5 : v);
+                mashed_re::Audio::SfxPlay("menu navigation", 0.7f);
+            }
         }
     }
     // [D-11057] Game-setup config screens (sid 18/24): LEFT/RIGHT edits the
