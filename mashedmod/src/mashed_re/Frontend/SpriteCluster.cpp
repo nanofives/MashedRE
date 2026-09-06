@@ -148,53 +148,63 @@ static FUN_00472dc0_t const s_FUN_00472dc0 =
 // ============================================================================
 //
 // Original: FUN_004c5c00 (114 bytes, 0x004c5c00..0x004c5c72)
-// Signature: void* (int list_head_ptr, const char* key)
+// Signature: void* __cdecl (int list_head_ptr, const char* key)
 //
-// Searches a doubly-linked list rooted at (list_head_ptr + 8) for a node
-// whose embedded name at (node + 8) matches key, case-insensitively.
-// Case folding: char in 'a'..'z' → char - 0x20 (uppercase).
-// Returns pointer to (node - 8) on match, or NULL if not found.
+// A circular (ring-anchored) linked list of named nodes. Walks it for a node
+// whose INLINE name matches key case-insensitively; returns the node's struct
+// base (node - 8) on match, else NULL.
 //
-// Constants (cited at 0x004c5c00 body):
-//   +8  (0x00000008): offset to list root from head param; offset to name within node.
-//   0x20 (32 dec):    subtracted from char to map a–z → A–Z.
+// RE-TRANSCRIBED VERBATIM 2026-09-06 (U-9085). The prior body was C3 but did
+// not match this RVA in two places — it read the list wrongly and yielded
+// garbage names when walked (found while writing re/frida/chal_icon_probe.py,
+// where the same layout had to be read live). Corrected against capstone over
+// MASHED.exe.unpatched:
+//   0x004c5c05  add eax,8          ; eax = list_head_ptr + 8 IS the sentinel
+//                                  ;   ADDRESS (a ring anchor), NOT *(head+8).
+//                                  ;   The old body did *(head+8) then *that.
+//   0x004c5c0b  mov ebx,[eax]      ; ebx = first node = *(list_head_ptr + 8)
+//   0x004c5c11  cmp ebx,eax / je   ; empty list (first == sentinel) -> NULL
+//   0x004c5c19  lea eax,[ebx-8]    ; struct base = node - 8 (return candidate)
+//   0x004c5c1c  lea ecx,[eax+0x10] ; name = base + 0x10 = node + 8, an INLINE
+//                                  ;   char array — the old body chased it as
+//                                  ;   a `char*`.
+//   0x004c5c27..60 case-insensitive full-string compare, folding a-z -> A-Z on
+//                                  ;   BOTH sides (signed byte cmp: bytes >=0x80
+//                                  ;   are not folded, which `char` reproduces).
+//   0x004c5c62  mov ebx,[ebx]      ; next = *node (forward link)
+//   0x004c5c68  cmp ebx,eax / jne  ; loop while node != sentinel
+//   0x004c5c6c  xor eax,eax        ; exhausted -> NULL
+// The char-compare loop below was already faithful and is unchanged.
 //
-// Pure leaf (callees_depth1: []).
-// Leaf-exemption applies for C2->C3 (re/CONFIDENCE.md).
-//
-// ref: re/analysis/sprite_gate_c3/0x004c5c00.md
+// Constants: +8 = sentinel offset from head AND inline-name offset in node;
+//   node struct base is node-8; 0x20 folds a-z -> A-Z.
+// Pure leaf (callees_depth1: []); leaf-exemption applies for C3 (re/CONFIDENCE.md).
+// ref: re/analysis/sprite_gate_c3/0x004c5c00.md; U-9085,
+//   re/analysis/chalsel_icon_dictionary_20260905.md.
 
 // 0x004c5c00
 extern "C" __declspec(dllexport) void* __cdecl LinkedListStringSearch(
     std::int32_t list_head_ptr, const char* key)
 {
-    // 0x004c5c06: load sentinel node ptr = *(list_head_ptr + 8)
-    // The list is doubly-linked; sentinel root stored at offset +8 from param.
-    const std::int32_t sentinel_root =
-        *reinterpret_cast<const std::int32_t*>(
-            static_cast<std::uintptr_t>(list_head_ptr) + 8u);
-    // 0x004c5c0a: start iteration at *sentinel_root (first node pointer)
-    std::int32_t node = *reinterpret_cast<const std::int32_t*>(
-        static_cast<std::uintptr_t>(sentinel_root));
+    // 0x004c5c05: the sentinel is the ADDRESS list_head_ptr + 8 (ring anchor).
+    const std::uintptr_t sentinel =
+        static_cast<std::uintptr_t>(list_head_ptr) + 8u;
+    // 0x004c5c0b: first node = *(list_head_ptr + 8).
+    std::int32_t node = *reinterpret_cast<const std::int32_t*>(sentinel);
 
-    // 0x004c5c0e: loop while node != sentinel_root (sentinel list check)
-    while (node != sentinel_root) {
-        // 0x004c5c11: read name pointer from node+8
-        const char* node_name =
-            *reinterpret_cast<const char* const*>(
-                static_cast<std::uintptr_t>(node) + 8u);
+    // 0x004c5c11 / 0x004c5c68: loop while node != sentinel (empty list -> NULL).
+    while (static_cast<std::uintptr_t>(node) != sentinel) {
+        // 0x004c5c1c: the name is an INLINE char array at node + 8.
+        const char* n = reinterpret_cast<const char*>(
+            static_cast<std::uintptr_t>(node) + 8u);
         const char* k = key;
-        const char* n = node_name;
 
-        // 0x004c5c1c: compare key vs node_name character by character
-        // with case folding: if char in 'a'..'z', subtract 0x20.
+        // 0x004c5c27..0x004c5c60: case-insensitive full-string compare.
         bool match = true;
         while (true) {
             char kc = *k;
             char nc = *n;
-            // 0x004c5c27: fold lowercase key char to uppercase
             if (kc >= 'a' && kc <= 'z') kc = static_cast<char>(kc - 0x20);
-            // 0x004c5c34: fold lowercase node char to uppercase
             if (nc >= 'a' && nc <= 'z') nc = static_cast<char>(nc - 0x20);
             if (kc != nc) { match = false; break; }
             if (kc == '\0') break; // both '\0' and equal -> full match
@@ -202,17 +212,17 @@ extern "C" __declspec(dllexport) void* __cdecl LinkedListStringSearch(
         }
 
         if (match) {
-            // 0x004c5c68: return node - 8 (base of the structure)
+            // 0x004c5c19 / 0x004c5c6e: return node - 8 (the struct base).
             return reinterpret_cast<void*>(
                 static_cast<std::uintptr_t>(node) - 8u);
         }
 
-        // 0x004c5c6b: advance to next node (node = *node, the forward link)
+        // 0x004c5c62: advance to next node (node = *node, the forward link).
         node = *reinterpret_cast<const std::int32_t*>(
             static_cast<std::uintptr_t>(node));
     }
 
-    // 0x004c5c72: not found — return NULL
+    // 0x004c5c6c: not found — return NULL.
     return nullptr;
 }
 
