@@ -36,14 +36,25 @@ RaceSession& GameFlow_Session();
 
 // ---- Campaign scaffold (Challenge Cup data the Challenge Select reads) --------
 // trophy: 0=none/locked-incomplete, 1=bronze, 2=silver, 3=gold.
+//
+// No display NAME here, by design (2026-09-05). Both this struct and Cup used
+// to carry a `const wchar_t* name`, filled with strings that exist nowhere in
+// the game: the cup's "Challenge Cup 1", and per track the kAreas[] area names
+// ("Arctic", "Egypt", ... — cracked from COURSE.LUA, and flagged 2026-08-27 as
+// a defect because "Arctic" occurs 0 times in MASHED.exe). Neither field was
+// ever read: the Challenge Select list draws its row labels from the real
+// message table by id 0x49 + row (exe_main.cpp, measured behaviourally), and
+// reads only trackCount / unlocked / trophy off this struct. They were invented
+// strings one consumer away from being drawn, so they are gone rather than
+// re-sourced. Pairing the original's cup place-names to areas needs the binary
+// cup table (FUN_0040b6c0 + DAT_007f0a40) reversed; until then a row's label
+// and the track it launches are still not proven to agree.
 struct CupTrack {
     int            trackId;
-    const wchar_t* name;
     bool           unlocked;
     int            trophy;
 };
 struct Cup {
-    const wchar_t* name;
     int            trackCount;
     CupTrack       tracks[10];
 };

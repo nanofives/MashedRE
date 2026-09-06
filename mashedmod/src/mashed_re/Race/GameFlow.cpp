@@ -25,21 +25,28 @@ IDirect3DDevice9*          g_pendingDev   = nullptr;
 // (also indexes Common/LED.piz LE<id>.LED for the race camera). Loading a
 // track by its area .piz makes TrackRenderer derive the matching course_id_
 // from the area's own COURSE.LUA, so the camera/LED data lines up.
-struct Area { int courseId; const wchar_t* name; const char* piz; };
+// The display-NAME column was removed 2026-09-05. It held "Arctic", "Egypt",
+// "Roundabout" and so on -- area names read out of each track's COURSE.LUA
+// comments, which are internal asset names and NOT strings the game ever shows
+// ("Arctic" occurs 0 times in MASHED.exe; flagged 2026-08-27). Its only
+// consumer copied it into Cup::tracks[].name, which nothing read. The `piz`
+// column below still carries the same identity and is a real on-disk filename,
+// so nothing is lost. Row labels come from the message table (id 0x49 + row).
+struct Area { int courseId; const char* piz; };
 const Area kAreas[] = {
-    {  0, L"Arctic",     "Arctic"   },
-    {  3, L"Egypt",      "Egypt"    },
-    { 26, L"City",       "City"     },
-    { 34, L"Forest",     "Forest"   },
-    { 38, L"Highway",    "Highway"  },
-    { 39, L"Neustein",   "Neustein" },
-    { 36, L"Storm",      "Storm"    },
-    { 25, L"SuperG",     "SuperG"   },
-    { 33, L"Warzone",    "Warzone"  },
-    {  2, L"Roundabout", "rouabout" },
-    { 11, L"Sands",      "sands"    },
-    { 37, L"Dump",       "dump"     },
-    { 30, L"Training",   "training" },
+    {  0, "Arctic"   },
+    {  3, "Egypt"    },
+    { 26, "City"     },
+    { 34, "Forest"   },
+    { 38, "Highway"  },
+    { 39, "Neustein" },
+    { 36, "Storm"    },
+    { 25, "SuperG"   },
+    { 33, "Warzone"  },
+    {  2, "rouabout" },   // Roundabout
+    { 11, "sands"    },   // Sands
+    { 37, "dump"     },   // Dump
+    { 30, "training" },   // Training
 };
 const int kAreaCount = static_cast<int>(sizeof(kAreas) / sizeof(kAreas[0]));
 
@@ -200,12 +207,10 @@ const Cup& Campaign_CurrentCup() {
     // A blank/absent save leaves the table zero -> we fall back to "first
     // track unlocked" (the correct fresh-game state).
     const std::int32_t* unlockTbl = reinterpret_cast<const std::int32_t*>(0x007f0a40);
-    g_cup.name = L"Challenge Cup 1";
     g_cup.trackCount = kCupTrackCount;
     bool anyUnlocked = false;
     for (int i = 0; i < kCupTrackCount && i < 10; ++i) {
         g_cup.tracks[i].trackId  = i;             // index into kAreas
-        g_cup.tracks[i].name     = kAreas[i].name;
         // unlocked if the save table says so OR our own progress store does.
         bool unlocked = (unlockTbl[i * 12 + 4] != 0) ||
                         (i < kAreaCount && g_progUnlock[i] != 0);

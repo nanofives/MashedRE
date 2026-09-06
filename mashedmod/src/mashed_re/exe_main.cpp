@@ -774,20 +774,46 @@ bool             g_inputicons_ready = false;
 constexpr std::uint32_t kSlotStar      = 60;
 constexpr int           kHandleStar    = 51;
 bool             g_star_ready = false;
-// Challenge Select detail panel: the per-mode LOCK icon. FUN_00439210 draws
-// FUN_0040bb50("lock" | "check", x, y, w, h, colour, 1) per row; "Lock" is a
-// texture in the same INTERFACE.TXD the Star comes from.
-// [UNCERTAIN] "check" resolves to NOTHING here: neither INTERFACE.TXD nor
-// Frontend.piz/TEXTURES.TXD contains a texture of that name (INTERFACE.TXD has
-// Lock, Star and Tick; "Tick" is a candidate but the original asks for
-// "check"). FUN_0040bb50 is a plain dictionary lookup
-// (FUN_004c5c00(DAT_0063b8fc, name)), so on this build the unlocked rows most
-// likely draw no icon at all. Not modelled either way: the port draws the Lock
-// for a locked row and nothing for an unlocked one, which is what the evidence
-// supports.
-constexpr std::uint32_t kSlotLock      = 61;
-constexpr int           kHandleLock    = 52;
+// Challenge Select detail panel: the per-mode LOCK / CHECK icons. FUN_00439210
+// draws FUN_0040bb50("lock" | "check", x, y, w, h, colour, 1) per row.
+//
+// RESOLVED 2026-09-05 (Finding 38) — the 2026-09-04 note here was wrong in two
+// directions because it looked in the wrong dictionary. There are TWO
+// named-sprite dictionaries, each behind its own forwarder onto FUN_004c5c00:
+//     0x0040bb50 -> DAT_0063b8fc  = sfx.piz :: BADGES.TXD    (23 textures)
+//     0x0040bb90 -> DAT_0063b904  = sfx.piz :: INTERFACE.TXD (30 textures)
+// and a slot gate in front of each, with disjoint name sets:
+//     0x0042ee00 -> bb50: 0 "lock" @0x005cd7b8, 1 "dot" @0x005cd7b4,
+//                         2 "check" @0x005cd7ac
+//     0x004391b0 -> bb90: 0 "Lock" @0x005cda44, 1/3 "Star" @0x005cd970,
+//                         2 "tick" @0x005cda3c
+// The checklist picks between the first pair and calls the BADGES forwarder --
+// read off MASHED.exe.unpatched with capstone:
+//     0x004395c6  mov  eax,[edx + 0x7f0a50]   ; the per-mode unlock flag
+//     0x004395cc  test eax,eax
+//     0x004395d1  je   0x4395e0
+//     0x004395d9  push 0x5cd7ac               ; flag != 0 -> "check"
+//     0x004395e6  push 0x5cd7b8               ; flag == 0 -> "lock"
+//     0x004395eb  call 0x40bb50               ; BADGES, not INTERFACE
+//     0x004395f4  call 0x473870               ; TextSpriteUVExplicit(tex, ...)
+// (repeated at 0x0043966e/0x0043967b and 0x00439703/0x00439715).
+// So an unlocked row draws a CHECK, and a locked row draws BADGES' 16x16 PAL4
+// "lock" -- NOT INTERFACE's 32x32 PAL8 "Lock", which this port was uploading.
+// "Tick" is a red herring: it lives only in INTERFACE and is reached by the
+// OTHER gate as lowercase "tick"; FUN_004c5c00 folds case but is not
+// prefix-tolerant (0x004c5c5a compares the two chars at the first NUL, so both
+// strings must end together), and "check" can never reach it.
+// VERIFIED LIVE at screen 6 (re/frida/chal_icon_probe.py, log/chal_icon_probe
+// .json): walking DAT_0063b8fc yields exactly BADGES.TXD's 23 names, and the
+// direct-call matrix gives check->badges hit / iface MISS, Tick->badges MISS /
+// iface hit. The live read is load-bearing, not decorative: the lookup folds
+// case, so "lock" alone would also have matched INTERFACE's "Lock".
+constexpr std::uint32_t kSlotLock      = 93;   // was 61 — COLLIDED with kSlotVehPrev0 (61..68)
+constexpr int           kHandleLock    = 84;   // was 52 — COLLIDED with kHandleVehPrev0 (52..59)
 bool             g_lock_ready = false;
+constexpr std::uint32_t kSlotCheck     = 94;
+constexpr int           kHandleCheck   = 85;
+bool             g_check_ready = false;
 // The "vs" separator sprite (INTERFACE.TXD) was LOADED and registered to
 // kHandleVs but had no ready flag and no draw call anywhere — so it never
 // appeared. User-reported on s6/s18/s24 across two review rounds.
@@ -5400,32 +5426,21 @@ bool RenderFrame() {
                 if (g_font.ready())
                     DrawMashedString(L"1", jx + 34.0f * kVScale,
                                      ry + rowH * 0.5f, ncell, 0xff000000u, true);
-                // ---- [SCAFFOLD presentation, FAITHFUL state] ---------------
-                // The team each player is on is now real: it is
-                // 0x007f1a18 + r*0x10, derived by MenuTeamBalance from the
-                // table MenuTeamSelectTick edits. How the ORIGINAL shows it is
-                // not measured -- the screen has two team panels (headers at
-                // x=248/428) and presumably moves each player's row marker
-                // between them, but no capture of a populated Team Select
-                // screen exists yet. So the state is drawn as a letter in the
-                // row rather than guessed at as a layout: A / B, or a dash for
-                // "no team chosen" (table value 0 -> team -1), which is the
-                // cold-boot state for every player until someone presses
-                // UP/DOWN. Replace with the measured marker once a populated
-                // capture exists; do NOT infer the marker geometry from the
-                // two header positions.
-                if (team && g_font.ready()) {
-                    // Keyed off SLOT, not the row ordinal: rows are now drawn
-                    // in profile order, so row r and slot r are not the same
-                    // thing. Retained alongside the (faithful) horizontal slide
-                    // above as a legibility aid at this resolution; it is still
-                    // [SCAFFOLD] and has no counterpart in FUN_0043aa30.
-                    const std::int32_t tid =
-                        *reinterpret_cast<std::int32_t*>(0x007f1a18 + slot * 16);
-                    const wchar_t* lbl = (tid == 0) ? L"A" : (tid == 1) ? L"B" : L"-";
-                    DrawMashedString(lbl, rowX + rowW - 24.0f * kVScale,
-                                     ry + rowH * 0.5f, ncell, 0xff000000u, true);
-                }
+                // ---- the per-row team marker: DROPPED 2026-09-05 -----------
+                // This used to draw an A / B / - letter at the right edge of
+                // each row, added when no capture of a populated Team Select
+                // screen existed and the original's marker was unknown. It was
+                // [SCAFFOLD] with no counterpart anywhere in FUN_0043aa30 -- no
+                // message id, no draw call, no string in the image.
+                //
+                // The original's marker is now known and is already ported,
+                // twice over, so the letter was inventing output on top of
+                // faithful output:
+                //   * the row's car sprite SLIDES to the picked column,
+                //     x = pick * 180.0 + 82.0 (drawn above; Finding 27), and
+                //   * a second copy of that sprite is stacked into the picked
+                //     team's roster panel at y = 108.0 (drawn below).
+                // Nothing is drawn here now, matching FUN_0043aa30.
             }
             // ---- team roster stacks (PORTED, FUN_0043aa30) -----------------
             // When a player has picked, the original draws a SECOND copy of
@@ -5692,8 +5707,14 @@ bool RenderFrame() {
                                              0xffc8c8c8u, true);
                         const bool locked =
                             (flags[m] == 0) || (m == 2 && teamPlay != 0);
-                        if (locked && g_lock_ready)
-                            HudIm2DQuad(kHandleLock, 520.0f * kVScale,
+                        // Finding 38: the original draws an icon on EVERY row,
+                        // "lock" or "check" (0x004395d9 / 0x004395e6), both out
+                        // of the BADGES dictionary. Drawing nothing on an
+                        // unlocked row was a gap, not a faithful reading.
+                        const int  icon  = locked ? kHandleLock : kHandleCheck;
+                        const bool ready = locked ? g_lock_ready : g_check_ready;
+                        if (ready)
+                            HudIm2DQuad(icon, 520.0f * kVScale,
                                         (320.0f + 16.0f * m) * kVScale,
                                         24.0f * kVScale, 24.0f * kVScale,
                                         white, uv_full);
@@ -6810,6 +6831,31 @@ bool LoadBadgeSprites() {
                               tex.width(), tex.height(), g_menu_arrow_ready ? "OK" : "FAILED");
         break;
     }
+    // Finding 38: the Challenge-Select mode-checklist icons. Both names are
+    // resolved by the original through FUN_0040bb50, i.e. out of THIS
+    // dictionary — "lock" for a locked row, "check" for an unlocked one. Both
+    // are 16x16 PAL4 here; the port previously drew INTERFACE.TXD's 32x32
+    // "Lock" for locked rows and nothing at all for unlocked ones.
+    struct { const char* name; std::uint32_t slot; int handle; bool* ready; }
+    const kChalIcons[2] = {
+        { "lock",  kSlotLock,  kHandleLock,  &g_lock_ready  },
+        { "check", kSlotCheck, kHandleCheck, &g_check_ready },
+    };
+    for (const auto& want : kChalIcons) {
+        for (std::uint32_t i = 0; i < dict.count(); ++i) {
+            const auto& tex = dict.texture(i);
+            if (_stricmp(tex.name, want.name) != 0) continue;
+            if (g_quad_renderer.UploadFromTextureToSlot(want.slot, tex)) {
+                mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                    want.handle, g_quad_renderer.slot_texture(want.slot));
+                *want.ready = true;
+            }
+            if (log) std::fprintf(log, "F38: badges.txd '%s' %ux%u upload %s\n",
+                                  want.name, tex.width(), tex.height(),
+                                  *want.ready ? "OK" : "FAILED");
+            break;
+        }
+    }
     if (log) std::fclose(log);
     return ok;
 }
@@ -6880,17 +6926,11 @@ bool LoadCarColorSprites() {
         }
         break;
     }
-    // Challenge-select per-mode "Lock" icon (same INTERFACE.TXD).
-    for (std::uint32_t i = 0; i < dict.count(); ++i) {
-        const auto& tex = dict.texture(i);
-        if (_stricmp(tex.name, "Lock") != 0) continue;
-        if (g_quad_renderer.UploadFromTextureToSlot(kSlotLock, tex)) {
-            mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
-                kHandleLock, g_quad_renderer.slot_texture(kSlotLock));
-            g_lock_ready = true;
-        }
-        break;
-    }
+    // NOTE: the challenge-select per-mode lock icon used to be loaded here from
+    // INTERFACE.TXD's "Lock". It is NOT that texture — FUN_00439210 resolves it
+    // through FUN_0040bb50, which only ever searches the BADGES dictionary, so
+    // it is BADGES.TXD's 16x16 "lock". Moved into LoadMenuBadgeSprite()
+    // alongside its "check" sibling. See the kSlotLock comment for the evidence.
     if (log) {
         std::fprintf(log, "\n#25 color-select: INTERFACE.TXD cars %d/10, vs %s, "
                      "star %s (dict has %u textures)\n", cars,

@@ -79,8 +79,11 @@ int  g_dstBlend     = 6;     // state 11 (rwBLENDINVSRCALPHA == D3DBLEND_INVSRCA
 // vehicle previews register, and loading all 11 power-up icons added 7
 // more, which pushed the count past 64; the FONT registered after those and
 // was dropped, so every menu string rendered as solid white blocks. Census
-// of current users: 24 previews + 8 veh + 10 cars + 11 powerups + 5 menu
-// items + bg/logo/font/badge/arrow/vs/star/loadicon/bigE/kbd/joy = ~70.
+// of current users: 24 previews + 8 veh + 10 cars + 11 powerups + 13 standings
+// + 5 menu items + bg/logo/font/badge/arrow/vs/star/loadicon/bigE/kbd/joy
+// + lock/check (the Challenge-Select mode-checklist pair) = ~85. Headroom ~11.
+// Recount before adding another texture family, not after: an overflow here is
+// silent and shows up as some unrelated sprite rendering as white.
 constexpr int     kMaxTexHandles = 96;
 struct TexEntry { int handle; IDirect3DTexture9* tex; bool point_filter; };
 TexEntry          g_texMap[kMaxTexHandles] = {};
