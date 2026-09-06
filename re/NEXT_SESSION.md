@@ -118,3 +118,41 @@ New probe: `py -3.12 re/frida/chal_icon_probe.py [--screen 6]`.
    degenerate all-col3=2 trap).
 3. **Leave the frontend lane.** R7 has other subsystems; the standings/setup/team/
    challenge chain is now ported and sourced.
+
+---
+
+## READY-TO-FILE tracker block (blocked on the other session's transaction)
+
+The tracker rows for this lane are **not filed yet, on purpose.** `hooks.csv`,
+`UNCERTAINTIES.md` and `re/analysis/CHANGELOG.md` are dirty with the other
+session's uncommitted modal-pair transaction, and **`CHANGELOG.md` has been
+CRLF-stripped whole-file** by that session (repo is CRLF; `git diff
+--ignore-cr-at-eol` shows its real change is just 3 added entries). A clean
+`re-classify` transaction can't be produced on top of that without committing
+their work or hand-editing a churned file. So: **first land the other session's
+transaction** (re-normalize `CHANGELOG.md` back to CRLF so only the real entries
+diff — `git add --renormalize` or re-save as CRLF; their 3 entries survive), then
+apply the block below in ONE `re-classify` pass.
+
+### UNCERTAINTIES.md — new row
+
+```
+| U-9085 | correctness | `LinkedListStringSearch` @`0x004c5c00`, port `mashedmod/src/mashed_re/Frontend/SpriteCluster.cpp` | **The C3 body does not match its RVA.** It reads the sentinel as `*(head+8)` where the binary makes it the ADDRESS `head+8` (`0x004c5c05 add eax,8`; loop test `0x004c5c68 cmp ebx,eax`), and reads the node name as a pointer at `node+8` where it is an INLINE char array (`0x004c5c1c lea ecx,[eax+0x10]`, `0x004c5c27 mov cl,[esi]`). Return value (`node-8`) and case folding are correct. Found because walking the list the port's way yields garbage names while the node COUNT is exactly right. | Whether the divergence is behavioural (it is: the port would deref wrong addresses if run). | Re-transcribe the 114 bytes verbatim, or DEMOTE C3->C2. Its `RH_ScopedInstall` has been commented out since 2026-05-24, so nothing has mis-executed — same shape as `0x0042f8d0` (Finding 37). | **nothing runtime** (install disabled), but the C3 rating is unearned; decide the demotion deliberately. Memory `[[stale-c3-body-behind-disabled-install]]`. |
+```
+
+### hooks.csv — append to the `0x00439210` row's notes (do NOT rewrite the row)
+
+```
+| 2026-09-05 icon sourcing PINNED: per-row state icon = cup-table col 3 (0x007f0a40+row*0x30+0xc) via BADGES gate 0x0042ee00 (non-selected) / INTERFACE gate 0x004391b0 (selected); geometry measured x=220 w=22 argb=0x3f000000 (non-sel), category sprite MultiPlayer via 0x0042ee40 (selected). Detail-panel checklist via BADGES (lock/check). Port still draws a wrong pulsing Star; composition fix handed off. Evidence re/analysis/chalsel_icon_dictionary_20260905.md
+```
+
+### CHANGELOG.md — prepend two entries (newest first, below `<!-- ENTRIES -->`)
+
+```
+2026-09-05  Challenge-Select ROW state-icon traced + geometry MEASURED; composition fix handed off  FUN_00439210 draws a per-row icon keyed on cup-table COLUMN 3 (*(u32*)(0x007f0a40 + row*0x30 + 0xc)), NOT the 0x50/58/5c per-mode flags the detail panel uses. Arm selection confirmed live (chal_icon_probe.py --mode 3 + poke): selected row -> INTERFACE gate 0x004391b0, others -> BADGES gate 0x0042ee00; slot 3 through badges draws nothing. Geometry (draw hook on FUN_00473870, virtual-640 space): non-selected x=220 w=h=22 argb=0x3f000000 stable; selected row draws a MultiPlayer category sprite (x~208, via 0x0042ee40) and no small badge (its tick suppressed by FUN_00430760). No Star on any row; the port's pulsing Star at x~36 matches nothing. NOT shipped: faithful fix is a multi-texture composition rewrite this headless session cannot screenshot-verify. Evidence re/analysis/chalsel_icon_dictionary_20260905.md Addenda 2+3.
+2026-09-05  Challenge-Select checklist icons come from BADGES not INTERFACE; FOUR sprite dictionaries mapped  Finding 36's [UNCERTAIN] "check resolves to nothing" checked the wrong dict. FUN_0040bb50 searches DAT_0063b8fc = sfx.piz::BADGES.TXD (has lock/dot/check 16x16), not INTERFACE.TXD. Loader FUN_0040bbb0 fills FOUR heads: bb30/FX, bb50/BADGES, bb70/TrackImages, bb90/Interface. Full 107-call-site forwarder audit (re/tools/sprite_forwarder_map.py) found NO other texture-source defects. Port fix: unlocked rows draw check, locked rows draw BADGES 16x16 lock (was INTERFACE 32x32 Lock); kSlotLock/kHandleLock moved off a collision. Live-verified chal_icon_probe.py; anchor unchanged. Also filed U-9085 (0x004c5c00 body mismatches its RVA). Evidence re/analysis/chalsel_icon_dictionary_20260905.md.
+```
+
+Note: the two literal drops (A/B/- marker, `kAreas[].name`) are code-only, no
+tracker row needed. `chal_icon_probe.py` and `sprite_forwarder_map.py` are new
+research tools, not hooks, so no `hooks.csv` row.
