@@ -2,11 +2,11 @@
 
 Written at the end of the 2026-09-05 **Challenge-Select icon dictionary + literals
 + sprite-forwarder audit** lane (branch `race/first-frame-parity`, commit
-`7d027314`). Paste the block below.
+`df2a7124`). Paste the block below.
 
 ---
 
-Resume the Mashed frontend/UI lane. Branch `race/first-frame-parity` @ `7d027314`.
+Resume the Mashed frontend/UI lane. Branch `race/first-frame-parity` @ `df2a7124`.
 
 **FIRST: `git status`.** Another session's **modal-pair slice is still uncommitted**
 here — `Frontend/MenuModal.cpp` (untracked) plus edits to `hooks.csv`,
@@ -94,23 +94,27 @@ New probe: `py -3.12 re/frida/chal_icon_probe.py [--screen 6]`.
 
 1. **Close out this one properly** — the screen-6 capture in (1) above, then the tracker
    rows in (2) and the U-9085 decision in (3). Small, and it is the honest finish.
-2. **Finish the Challenge-Select ROW state-icon fix** — arm selection is now TRACED
-   and confirmed live (commit `7d027314`, second Addendum in
-   `re/analysis/chalsel_icon_dictionary_20260905.md`). MEASURED model: per cup row the
-   slot value is cup-table **column 3** (`*(u32*)(0x007f0a40 + row*0x30 + 0xc)`);
-   the **selected** row draws it through the INTERFACE gate `0x004391b0`
-   (`0→Lock 1→Star 2→tick 3→Star`) plus a category sprite (`MultiPlayer`/`QuickRace`
-   via `0x0042ee40`), **other** rows through the BADGES gate `0x0042ee00`
-   (`0→lock 1→dot 2→check 3→none`). On a fresh save every row has col3=2, so the
-   original shows tick(selected)/check(others), NEVER a Star — the port's pulsing
-   Star on every row is wrong. **Two things left before the code change is faithful,
-   both deliberately not guessed:** (a) the icon GEOMETRY — x is clear
-   (`width*0.34375`) but y and the two sizes run through `_DAT_005cd0f8`/`_005cc560`/
-   `_005cc32c` + unresolved x87 state, needs a capstone geometry pass; (b) the port's
-   existing per-row star was itself MEASURED against `orig_s6` centroids, so confirm
-   whether it corresponds to one of these draws (don't regress a measured element).
-   Settle both by capturing the original at mixed col-3 states (`MASHED_SAVE=<scratch>`
-   with non-uniform values — the fresh save is the degenerate trap) and matching
-   texture + position. Probe ready: `chal_icon_probe.py --mode 3 --poke v0,v1,v2,v3`.
+2. **Implement the Challenge-Select ROW state-icon (geometry now MEASURED)** — the
+   full trace/geometry is done (commits `7d027314`/`df2a7124`, Addenda 2+3 of
+   `re/analysis/chalsel_icon_dictionary_20260905.md`); this is now a scoped
+   implement-and-**screenshot-verify**, held back only because this headless session
+   could produce no capture. MEASURED screen-6 model (numbers already in the port's
+   `N*kVScale` space):
+   - **non-selected rows**: state icon at **x=220, w=h=22, argb=0x3f000000** (faint
+     black), texture via BADGES gate on cup-table **column 3**
+     (`*(u32*)(0x007f0a40 + row*0x30 + 0xc)`): `0→lock 1→dot 2→check 3→none`;
+   - **selected row**: a category sprite (`MultiPlayer` on screen 6, via the
+     screen-dispatch gate `0x0042ee40`) at **x~208 w~45 white**, and NO small badge —
+     its INTERFACE tick is suppressed by `FUN_00430760()` on this state;
+   - **no Star on any row.** The port's pulsing white Star at x~36 matches nothing.
+   Faithful change = a multi-texture composition rewrite: load the category sprites
+   (`MultiPlayer`/`QuickRace`/… from INTERFACE.TXD) + `dot` (BADGES, alongside the
+   `lock`/`check` already loaded), draw category-on-selected / black-status-glyph-on-
+   others at the measured geometry, remove the star, model `FUN_00430760`'s
+   suppression. **Do it from a desktop** and confirm with
+   `MASHED_NAV_DEMO=1 MASHED_CHAL_UNLOCK=... mashedmod\build\mashed_re.exe` →
+   `verify/walk_06_challengeselect.bmp`. Drive non-uniform states with
+   `MASHED_SAVE=<scratch>` / the probe's `--poke v0,v1,v2,v3` (the fresh save is the
+   degenerate all-col3=2 trap).
 3. **Leave the frontend lane.** R7 has other subsystems; the standings/setup/team/
    challenge chain is now ported and sourced.
