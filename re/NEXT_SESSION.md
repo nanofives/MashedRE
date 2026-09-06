@@ -1,25 +1,21 @@
 # Next session — kickoff prompt
 
-Written at the end of the 2026-09-05 **Challenge-Select icon dictionary + literals
-+ sprite-forwarder audit** lane (branch `race/first-frame-parity`, commit
-`df2a7124`). Paste the block below.
+Written at the end of the 2026-09-05/06 **Challenge-Select icon dictionary +
+literals + sprite-forwarder audit + row-icon trace** lane (branch
+`race/first-frame-parity`, commit `d30fafaf`). Paste the block below.
 
 ---
 
-Resume the Mashed frontend/UI lane. Branch `race/first-frame-parity` @ `df2a7124`.
+Resume the Mashed frontend/UI lane. Branch `race/first-frame-parity` @ `d30fafaf`.
 
-**FIRST: `git status`.** Another session's **modal-pair slice is still uncommitted**
-here — `Frontend/MenuModal.cpp` (untracked) plus edits to `hooks.csv`,
-`UNCERTAINTIES.md` (U-9084), `re/analysis/CHANGELOG.md`,
-`re/analysis/race_hud_capture_20260902.md` (Finding 37), `re/frida/hooks_registry.py`,
-`re/frida/menu_draw_burst.py`, `MenuMenusB.cpp`, `PromoLoop_round72.cpp`,
-`asi_sources.rsp`. That work is complete and correct — do **not** commit it, edit it,
-or revert it. Untracked `videocfg.bin` is a byproduct; never commit it.
+**Tree is clean** apart from an untracked `videocfg.bin` (a run byproduct — never
+commit it). The other session's modal-pair transaction and this lane's tracker rows
+are all committed now (its accidental whole-file CRLF strip of `CHANGELOG.md` was
+re-normalized to CRLF when landed, so the history diff is the real entries only).
 
 Read `re/analysis/chalsel_icon_dictionary_20260905.md` (short, self-contained). It is
 the successor to `race_hud_capture_20260902.md` Finding 36 and **overturns Finding 36's
-icon paragraph** — read it after 36, and do not re-derive it. It was filed as its own
-note rather than appended to the findings file only because that file was dirty.
+icon paragraph** — read it after 36, and do not re-derive it.
 
 ## What this lane established (do not re-derive)
 
@@ -47,19 +43,17 @@ note rather than appended to the findings file only because that file was dirty.
    then check `verify/walk_06_challengeselect.bmp` shows a check on rows 0 and 2 and a
    padlock on row 1, and `log/mashed_re.log` for two `F38: badges.txd ... upload OK` lines.
    Compare against `verify/chalsel_panel_unlocked.bmp` (the pre-fix shot, same flags).
-2. **No tracker rows.** `hooks.csv`, `UNCERTAINTIES.md` and `CHANGELOG.md` are dirty with
-   the other session's transaction and are `re-classify`-only. Once that lands, file:
-   **U-9085** (below), and a note on the `0x00439210` row that its icon sourcing is now
-   pinned.
-3. **U-9085 — a C3 body that does not match its RVA.** `LinkedListStringSearch`
-   (`0x004c5c00`, `Frontend/SpriteCluster.cpp`) has the sentinel as `*(head+8)` when the
-   binary makes it the ADDRESS `head+8` (`0x004c5c05 add eax,8`, loop test `0x004c5c68`),
-   and reads the name as a pointer at `node+8` when it is an INLINE array
-   (`0x004c5c1c lea ecx,[eax+0x10]`, `0x004c5c27 mov cl,[esi]`). Return value and case
-   folding are right. Its `RH_ScopedInstall` has been commented out since 2026-05-24, so
-   nothing has mis-executed — same shape as `0x0042f8d0` in Finding 37. **Decide the
-   demotion deliberately; do not fix it in passing.** Memory
-   `[[stale-c3-body-behind-disabled-install]]`.
+2. **Tracker rows: FILED** (commit `d30fafaf`). U-9085, the `0x00439210` identity/icon
+   note, and two CHANGELOG entries are in. Nothing left here.
+3. **U-9085 disposition still OPEN — decide it.** `LinkedListStringSearch`
+   (`0x004c5c00`, `Frontend/SpriteCluster.cpp`) has a C3 body that does not match its
+   RVA: sentinel read as `*(head+8)` where the binary makes it the ADDRESS `head+8`
+   (`0x004c5c05 add eax,8`, loop test `0x004c5c68`), and the name read as a pointer at
+   `node+8` where it is an INLINE array (`0x004c5c1c lea ecx,[eax+0x10]`,
+   `0x004c5c27 mov cl,[esi]`). Return value + case folding are right. Its
+   `RH_ScopedInstall` has been off since 2026-05-24 so nothing mis-executed — same
+   shape as `0x0042f8d0` (Finding 37). The uncertainty is filed; the **re-transcribe-
+   vs-demote call** is not made. Memory `[[stale-c3-body-behind-disabled-install]]`.
 4. The probe observed **zero natural `FUN_0040bb50` calls** — a synthetic
    `FUN_0043d2a0` push does not satisfy the panel guard (`FUN_00430760()==0 &&
    DAT_0067e9fc==6`), so the checklist block never ran. Stated, not read as agreement.
@@ -92,8 +86,9 @@ New probe: `py -3.12 re/frida/chal_icon_probe.py [--screen 6]`.
 
 ## Candidate next slices
 
-1. **Close out this one properly** — the screen-6 capture in (1) above, then the tracker
-   rows in (2) and the U-9085 decision in (3). Small, and it is the honest finish.
+1. **Close out this one properly** — the screen-6 capture (Left-open #1) and the
+   U-9085 disposition (#3). Small, and it is the honest finish. (Tracker rows already
+   filed.)
 2. **Implement the Challenge-Select ROW state-icon (geometry now MEASURED)** — the
    full trace/geometry is done (commits `7d027314`/`df2a7124`, Addenda 2+3 of
    `re/analysis/chalsel_icon_dictionary_20260905.md`); this is now a scoped
@@ -118,41 +113,3 @@ New probe: `py -3.12 re/frida/chal_icon_probe.py [--screen 6]`.
    degenerate all-col3=2 trap).
 3. **Leave the frontend lane.** R7 has other subsystems; the standings/setup/team/
    challenge chain is now ported and sourced.
-
----
-
-## READY-TO-FILE tracker block (blocked on the other session's transaction)
-
-The tracker rows for this lane are **not filed yet, on purpose.** `hooks.csv`,
-`UNCERTAINTIES.md` and `re/analysis/CHANGELOG.md` are dirty with the other
-session's uncommitted modal-pair transaction, and **`CHANGELOG.md` has been
-CRLF-stripped whole-file** by that session (repo is CRLF; `git diff
---ignore-cr-at-eol` shows its real change is just 3 added entries). A clean
-`re-classify` transaction can't be produced on top of that without committing
-their work or hand-editing a churned file. So: **first land the other session's
-transaction** (re-normalize `CHANGELOG.md` back to CRLF so only the real entries
-diff — `git add --renormalize` or re-save as CRLF; their 3 entries survive), then
-apply the block below in ONE `re-classify` pass.
-
-### UNCERTAINTIES.md — new row
-
-```
-| U-9085 | correctness | `LinkedListStringSearch` @`0x004c5c00`, port `mashedmod/src/mashed_re/Frontend/SpriteCluster.cpp` | **The C3 body does not match its RVA.** It reads the sentinel as `*(head+8)` where the binary makes it the ADDRESS `head+8` (`0x004c5c05 add eax,8`; loop test `0x004c5c68 cmp ebx,eax`), and reads the node name as a pointer at `node+8` where it is an INLINE char array (`0x004c5c1c lea ecx,[eax+0x10]`, `0x004c5c27 mov cl,[esi]`). Return value (`node-8`) and case folding are correct. Found because walking the list the port's way yields garbage names while the node COUNT is exactly right. | Whether the divergence is behavioural (it is: the port would deref wrong addresses if run). | Re-transcribe the 114 bytes verbatim, or DEMOTE C3->C2. Its `RH_ScopedInstall` has been commented out since 2026-05-24, so nothing has mis-executed — same shape as `0x0042f8d0` (Finding 37). | **nothing runtime** (install disabled), but the C3 rating is unearned; decide the demotion deliberately. Memory `[[stale-c3-body-behind-disabled-install]]`. |
-```
-
-### hooks.csv — append to the `0x00439210` row's notes (do NOT rewrite the row)
-
-```
-| 2026-09-05 icon sourcing PINNED: per-row state icon = cup-table col 3 (0x007f0a40+row*0x30+0xc) via BADGES gate 0x0042ee00 (non-selected) / INTERFACE gate 0x004391b0 (selected); geometry measured x=220 w=22 argb=0x3f000000 (non-sel), category sprite MultiPlayer via 0x0042ee40 (selected). Detail-panel checklist via BADGES (lock/check). Port still draws a wrong pulsing Star; composition fix handed off. Evidence re/analysis/chalsel_icon_dictionary_20260905.md
-```
-
-### CHANGELOG.md — prepend two entries (newest first, below `<!-- ENTRIES -->`)
-
-```
-2026-09-05  Challenge-Select ROW state-icon traced + geometry MEASURED; composition fix handed off  FUN_00439210 draws a per-row icon keyed on cup-table COLUMN 3 (*(u32*)(0x007f0a40 + row*0x30 + 0xc)), NOT the 0x50/58/5c per-mode flags the detail panel uses. Arm selection confirmed live (chal_icon_probe.py --mode 3 + poke): selected row -> INTERFACE gate 0x004391b0, others -> BADGES gate 0x0042ee00; slot 3 through badges draws nothing. Geometry (draw hook on FUN_00473870, virtual-640 space): non-selected x=220 w=h=22 argb=0x3f000000 stable; selected row draws a MultiPlayer category sprite (x~208, via 0x0042ee40) and no small badge (its tick suppressed by FUN_00430760). No Star on any row; the port's pulsing Star at x~36 matches nothing. NOT shipped: faithful fix is a multi-texture composition rewrite this headless session cannot screenshot-verify. Evidence re/analysis/chalsel_icon_dictionary_20260905.md Addenda 2+3.
-2026-09-05  Challenge-Select checklist icons come from BADGES not INTERFACE; FOUR sprite dictionaries mapped  Finding 36's [UNCERTAIN] "check resolves to nothing" checked the wrong dict. FUN_0040bb50 searches DAT_0063b8fc = sfx.piz::BADGES.TXD (has lock/dot/check 16x16), not INTERFACE.TXD. Loader FUN_0040bbb0 fills FOUR heads: bb30/FX, bb50/BADGES, bb70/TrackImages, bb90/Interface. Full 107-call-site forwarder audit (re/tools/sprite_forwarder_map.py) found NO other texture-source defects. Port fix: unlocked rows draw check, locked rows draw BADGES 16x16 lock (was INTERFACE 32x32 Lock); kSlotLock/kHandleLock moved off a collision. Live-verified chal_icon_probe.py; anchor unchanged. Also filed U-9085 (0x004c5c00 body mismatches its RVA). Evidence re/analysis/chalsel_icon_dictionary_20260905.md.
-```
-
-Note: the two literal drops (A/B/- marker, `kAreas[].name`) are code-only, no
-tracker row needed. `chal_icon_probe.py` and `sprite_forwarder_map.py` are new
-research tools, not hooks, so no `hooks.csv` row.

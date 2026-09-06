@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-05T07:00:00Z",
+  "updatedAt": "2026-09-06T11:00:00Z",
   "sections": [
     {
       "heading": "Project",
@@ -16,29 +16,19 @@
           "kind": "text"
         },
         {
-          "label": "Latest",
-          "value": "setup-screen + team-scoring lane wrapped; 4 C3s, kickoff in re/NEXT_SESSION.md",
+          "label": "Latest work",
+          "value": "Challenge-Select icons: fixed (from BADGES not INTERFACE); FOUR sprite dicts mapped; modal pair landed; last literals dropped",
           "kind": "text"
         },
         {
-          "label": "Standings chain",
-          "value": "4 C3s, no C2 left",
+          "label": "Row state-icon fix",
+          "value": "geometry MEASURED (x=220 w=22, MultiPlayer on selected); composition rewrite pending a desktop screenshot",
           "kind": "text"
         },
         {
-          "label": "U-9078",
-          "value": "RESOLVED — 0x67ea64 = Team Play (msg 0x140); target 8/crown 7",
+          "label": "Open issues",
+          "value": "U-9085 (0x004c5c00 body mismatches RVA, install off); U-9084 (0x27b branch buffer); row-icon fix unshipped",
           "kind": "text"
-        },
-        {
-          "label": "Setup screens 15/16",
-          "value": "fully ported + sourced: renderers C3, both input steps, text by id, no invented UI",
-          "kind": "text"
-        },
-        {
-          "label": "Invented UI left in-race",
-          "value": 0,
-          "kind": "number"
         }
       ]
     },
@@ -52,13 +42,18 @@
         },
         {
           "label": "C3 ported",
-          "value": 916,
+          "value": 921,
           "kind": "number"
         },
         {
           "label": "C3+ total",
-          "value": "28.8%",
+          "value": "30.0%",
           "kind": "text"
+        },
+        {
+          "label": "All RVAs tracked",
+          "value": 5899,
+          "kind": "number"
         }
       ]
     },
