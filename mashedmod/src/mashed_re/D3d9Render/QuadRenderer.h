@@ -53,7 +53,13 @@ public:
     // 80..92 fall outside an 80-cap array, so without this bump every standings
     // UploadFromTextureToSlot would silently return false (same latent-overflow
     // class as the 64->80 bump documented above).
-    static constexpr std::uint32_t kMaxSlots = 96;  // +24 track previews (F2) +11 color-select (#25) +8 veh +4 powerup +13 standings
+    // 97 (2026-09-07): +1 for the Challenge-Select non-selected-row "dot" status
+    // glyph (BADGES gate 0x0042ee00 slot 1, col-3 == 1). kSlotCategoryMP was
+    // already the last slot at 95 under a 96-cap array, so "dot" at slot 96 needs
+    // this bump or its UploadFromTextureToSlot silently returns false (same latent-
+    // overflow class as the 64->80 and 80->96 bumps above). The handle map
+    // (RwIm2DBridge kMaxTexHandles=96) still has headroom, so only the slot cap moves.
+    static constexpr std::uint32_t kMaxSlots = 97;  // +24 track previews (F2) +11 color-select (#25) +8 veh +4 powerup +13 standings +1 chalsel dot
 
     QuadRenderer() = default;
     ~QuadRenderer() { Shutdown(); }

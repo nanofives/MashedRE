@@ -831,6 +831,15 @@ bool             g_check_ready = false;
 constexpr std::uint32_t kSlotCategoryMP = 95;
 constexpr int           kHandleCategoryMP = 86;
 bool             g_category_mp_ready = false;
+// Challenge-Select NON-selected-row status glyph "dot" (BADGES.TXD 16x16 PAL4).
+// The BADGES gate 0x0042ee00 (SpriteGate.cpp) maps cup-table column 3 to a name:
+// 0->lock 1->dot 2->check 3->(none). The lock/check pair already loads in
+// LoadMenuBadgeSprite; "dot" is the missing slot-1 arm. Slot 96 needs the
+// QuadRenderer::kMaxSlots 96->97 bump made alongside this. See the row-icon draw
+// below and re/analysis/chalsel_icon_dictionary_20260905.md (2nd addendum).
+constexpr std::uint32_t kSlotDot       = 96;
+constexpr int           kHandleDot     = 87;
+bool             g_dot_ready = false;
 // The "vs" separator sprite (INTERFACE.TXD) was LOADED and registered to
 // kHandleVs but had no ready flag and no draw call anywhere — so it never
 // appeared. User-reported on s6/s18/s24 across two review rounds.
@@ -5760,19 +5769,32 @@ bool RenderFrame() {
                 }
                 // ---- Row icon (Finding 38, MEASURED via chal_icon_probe.py's
                 // FUN_00473870 draw hook; all coords in this virtual-640 space).
-                // Non-selected rows: a faint status glyph. On a fresh save every
-                // cup row is "check" (col-3 == 2; the lock/dot/none arms are for
-                // states screen 6 does not reach in normal play). Selected row: a
+                // Non-selected rows: a faint status glyph driven per-row by the
+                // cup-table column 3 (BADGES gate 0x0042ee00, SpriteGate.cpp):
+                // 0->lock 1->dot 2->check 3->(none). col-3 = *(u32*)(0x007f0a40 +
+                // row*0x30 + 0xc); this table is the same one the detail panel
+                // reads at base+0x10 (0x007f0a50). On a fresh save every row's
+                // col-3 == 2, so this draws "check"; lock/dot/none only differ once
+                // progression writes other states (live-confirmed with a poke test,
+                // chalsel_icon_dictionary_20260905.md 2nd addendum). Selected row: a
                 // size-pulsing MultiPlayer category sprite (INTERFACE.TXD, via the
                 // screen-dispatch gate 0x0042ee40) and NO small glyph — its tick is
                 // suppressed by FUN_00430760. The port's old pulsing Star at x~36
                 // matched no original draw and is gone.
-                //   check:    x=220, w=h=22, argb=0x3f000000, centre_y = cy + 4
+                //   glyph:    x=220, w=h=22, argb=0x3f000000, centre_y = cy + 4
                 //   category: centred (231, cy+4), size 44..68 (base 56, +/-21.4%)
-                // [UNCERTAIN] the pulse PERIOD is not measured (one frame cannot
-                // show it) — reusing the 800-tick triangle. Under Team Play the
-                // category id may differ (0x0042ee40 is screen/mode-gated); the
-                // standalone default is Multi Player.
+                // [UNCERTAIN] the pulse PERIOD/shape is not measured (one frame
+                // cannot show it) — reusing the 800-tick triangle. The C1 renderer
+                // note (re/analysis/hud_frontend_d2/0x00439210.md) records an
+                // animation accumulator 0x0067ed30 += DAT_007f1004 then sin(); the
+                // faithful curve is a sine whose per-frame increment DAT_007f1004
+                // and amplitude/offset are a needs-Ghidra read, so the triangle
+                // stands as an explicit stand-in.
+                // The selected-row category id does NOT switch under Team Play:
+                // 0x0042ee40 reads only the screen id 0x0067e9fc and count 0x0067f17c
+                // (never the team-play flag 0x0067ea64), and INTERFACE.TXD has no
+                // Team-Play category sprite. Team Play only swaps the detail-panel
+                // heading text (0x22 <-> 0x140), already modelled below.
                 const float icy = cy + 4.0f * kVScale;   // icon-column centre
                 if (selrow) {
                     if (g_category_mp_ready) {
@@ -5781,9 +5803,29 @@ bool RenderFrame() {
                         HudIm2DQuad(kHandleCategoryMP, 231.0f * kVScale - csz * 0.5f,
                                     icy - csz * 0.5f, csz, csz, white, uv_full);
                     }
-                } else if (g_check_ready) {
-                    HudIm2DQuad(kHandleCheck, 220.0f * kVScale, icy - 11.0f * kVScale,
-                                22.0f * kVScale, 22.0f * kVScale, 0x3f000000u, uv_full);
+                } else {
+                    // BADGES gate 0x0042ee00: slot = this row's cup-table column 3.
+                    // Row i maps to the original's row (its selection test is
+                    // iStack_78 == DAT_0067f17c, i.e. i == sel here). Same live
+                    // global read as the detail panel below (0x007f0a50 = base+0x10).
+                    const std::uintptr_t rowbase =
+                        static_cast<std::uintptr_t>(i) * 0x30u;
+                    const int col3 = *reinterpret_cast<const std::int32_t*>(
+                        0x007f0a40 + rowbase + 0xc);
+                    int  handle = 0; bool ready = false;
+                    switch (col3) {
+                        case 0: handle = kHandleLock;  ready = g_lock_ready;  break;
+                        case 1: handle = kHandleDot;   ready = g_dot_ready;   break;
+                        case 2: handle = kHandleCheck; ready = g_check_ready; break;
+                        default: break;   // 3 / other -> BADGES gate returns 0, no draw
+                    }
+                    // [UNCERTAIN] argb 0x3f000000 was measured over 723 draws, all
+                    // of which were "check" on a fresh save. The gate only swaps the
+                    // texture pointer; the draw's colour register is the same for
+                    // lock/dot, so it is reused for those arms.
+                    if (ready)
+                        HudIm2DQuad(handle, 220.0f * kVScale, icy - 11.0f * kVScale,
+                                    22.0f * kVScale, 22.0f * kVScale, 0x3f000000u, uv_full);
                 }
                 // Text x: original ink left edge 103 device = 64.375 virtual
                 // (ours was 109 at draw-x 108.8). [UNCERTAIN] the left
@@ -7017,9 +7059,12 @@ bool LoadBadgeSprites() {
     // are 16x16 PAL4 here; the port previously drew INTERFACE.TXD's 32x32
     // "Lock" for locked rows and nothing at all for unlocked ones.
     struct { const char* name; std::uint32_t slot; int handle; bool* ready; }
-    const kChalIcons[2] = {
+    const kChalIcons[3] = {
         { "lock",  kSlotLock,  kHandleLock,  &g_lock_ready  },
         { "check", kSlotCheck, kHandleCheck, &g_check_ready },
+        // "dot" is the BADGES gate's slot-1 arm (col-3 == 1) for non-selected
+        // Challenge-Select rows. Same 16x16 PAL4 family as lock/check.
+        { "dot",   kSlotDot,   kHandleDot,   &g_dot_ready   },
     };
     for (const auto& want : kChalIcons) {
         for (std::uint32_t i = 0; i < dict.count(); ++i) {

@@ -51,6 +51,25 @@ static constexpr std::uintptr_t kFun00431b80 = 0x00431b80;
 // ---------------------------------------------------------------------------
 static std::int32_t CallCursorMover(std::int32_t player_idx, std::int32_t direction) {
     std::int32_t result = 0;
+#ifdef MASHED_STANDALONE
+    // [#1 crash fix 2026-09-07] The absolute `call 0x00431b80` below jumps to the
+    // ORIGINAL MASHED.exe layout — valid only inside the injected .asi. In the
+    // greenfield standalone (mashed_re.exe, /DMASHED_STANDALONE) that VA is our
+    // own compiled code, so the call jumped into garbage and crashed the moment
+    // LEFT/RIGHT was pressed on Player Colour Select. The visible colour-cursor
+    // move (dec/inc + wrap) is already performed by CarSelectCycleColour BEFORE
+    // this call, so skipping the callee keeps the faithful single-player cursor
+    // motion; only FUN_00431b80's cross-player collision de-dup is dropped, which
+    // is a no-op for the single-player colour screen (one active slot). Its full
+    // C reimplementation needs a Ghidra pass to pin the collision comparand
+    // (DAT_0067e9f8) and is deferred — do NOT invent it here (NO-GUESSING).
+    // Return the current (already-moved) slot value so injected-parity callers
+    // that read the result (CarSelectReset) still see a sensible cursor pos.
+    (void)direction;
+    if (player_idx >= 0 && player_idx <= 2)
+        result = *reinterpret_cast<std::int32_t*>(kGlobal_ea98 + player_idx * 4);
+    return result;
+#else
     // kFun00431b80 = 0x00431b80; place in local for asm address operand
     const std::uintptr_t fn_addr = kFun00431b80;
     __asm {
@@ -61,6 +80,7 @@ static std::int32_t CallCursorMover(std::int32_t player_idx, std::int32_t direct
         mov result, eax
     }
     return result;
+#endif
 }
 
 // ---------------------------------------------------------------------------
