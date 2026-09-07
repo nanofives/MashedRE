@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-06T11:00:00Z",
+  "updatedAt": "2026-09-06T18:30:00Z",
   "sections": [
     {
       "heading": "Project",
@@ -17,18 +17,18 @@
         },
         {
           "label": "Latest work",
-          "value": "Challenge-Select icons: fixed (from BADGES not INTERFACE); FOUR sprite dicts mapped; modal pair landed; last literals dropped",
+          "value": "Playtest fix batch (6 bugs, orchestrated): #1 colour, #2 track cursor, #6 focus gate, #3 pause — all committed, DESKTOP-VERIFY PENDING",
           "kind": "text"
         },
         {
-          "label": "Row state-icon fix",
-          "value": "geometry MEASURED (x=220 w=22, MultiPlayer on selected); composition rewrite pending a desktop screenshot",
+          "label": "Verify next (desktop)",
+          "value": "MASHED_NAV_DEMO=1 run + 1 race; checklist in re/analysis/playtest_feedback_20260906.md",
           "kind": "text"
         },
         {
-          "label": "Open issues",
-          "value": "U-9085 (0x004c5c00 body mismatches RVA, install off); U-9084 (0x27b branch buffer); row-icon fix unshipped",
-          "kind": "text"
+          "label": "Open follow-ups",
+          "value": ["#5 all-red: wire CarSlotAssign colour flow", "#4 points: needs scored-race capture (FUN_0040d590)", "#3 full pause-menu chrome (core done)", "row-icon composition: desktop-verify"],
+          "kind": "list"
         }
       ]
     },

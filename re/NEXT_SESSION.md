@@ -1,8 +1,52 @@
 # Next session — kickoff prompt
 
+## ⇒ CURRENT STATE (2026-09-06 session close) — READ THIS FIRST
+
+Branch `race/first-frame-parity` @ `b8832297`. Tree clean except untracked
+`videocfg.bin` (byproduct — never commit). Everything below is committed but
+**UNVERIFIED AT RUNTIME** — this session was headless and the standalone
+auto-races without a real interactive desktop, so nothing frontend/in-race could
+be driven here. **First action: one desktop run verifies most of it** — see the
+5-step checklist in `re/analysis/playtest_feedback_20260906.md` ("Desktop
+verification checklist").
+
+**Committed this session, pending your desktop check:**
+- Challenge-Select row icons (check/MultiPlayer, star removed) — `db4da943`
+- Playtest #1 colour cycle + #2 track cursor — `47ed32db`
+- Playtest #6 in-race input focus gate — `11fd98e7`
+- Playtest #3 in-race pause (faithful core + scoped overlay) — `10d737cc`
+- Plus the earlier committed lane work (checklist-icon BADGES fix, forwarder audit,
+  U-9085 re-transcription+verify, tracker rows).
+
+**Open follow-ups (each its own slice; full detail + RVAs in
+`re/analysis/playtest_feedback_20260906.md`):**
+- **#5 all players red** — #1 cycles the colour cursor (`0x0067ea98`) but liveries
+  read `0x007f1a1c` via `CarSlotAssign` (`0x0042b9e0`) from `0x0067eaf0`. Needs the
+  car-select data flow wired (a feature slice) + desktop check whether the colour
+  shows post-confirm. Not runtime-verifiable headless.
+- **#4 points miscounted** — RUNTIME-BLOCKED. Non-team scoring is faithful; the
+  candidate is the original's finish-order resolver `FUN_0040d590` (single-player
+  AI survivors) that the port skips. Needs a scored single-player race logging
+  `DAT_008a94e0[0..3]` / `DAT_0067e9fc` / `DAT_0067ea64` per elimination + whether
+  `FUN_0040d590` fires; fix in `TrackRenderer`/`RuleEngine`. Do NOT port it blind.
+- **#3 full pause menu chrome** — the faithful pause CORE is in; the original menu
+  (event `0xff210000` / `FUN_0043d7c0`: Resume/Restart/Quit strings + Restart
+  `-0xe00000`→`FUN_0040de10`) is not reversed. Replace the `[SCOPED]` placeholder
+  overlay in a dedicated RE slice.
+- Row-icon composition residuals: pulse PERIOD assumed; Team-Play category id not
+  modelled; lock/dot/none col-3 arms not driven (default `check` only).
+
+Orchestration note: the Agent `isolation:"worktree"` forks children from a stale
+commit (was ~10 days behind HEAD) — re-apply their diffs onto HEAD, don't merge
+the branch. Memory `[[agent-worktree-forks-stale]]`.
+
+---
+
+## Icon-lane kickoff (prior context, still valid)
+
 Written at the end of the 2026-09-05/06 **Challenge-Select icon dictionary +
 literals + sprite-forwarder audit + row-icon trace** lane (branch
-`race/first-frame-parity`, commit `d30fafaf`). Paste the block below.
+`race/first-frame-parity`). Paste the block below.
 
 ---
 
