@@ -1,100 +1,15 @@
 {
-  "title": "Mashed RE",
-  "updatedAt": "2026-09-06T18:30:00Z",
+  "title": "Mashed RE — frontend playtest loop",
+  "updatedAt": "2026-09-07T02:00:00Z",
   "sections": [
     {
-      "heading": "Project",
+      "heading": "Wave 3 — playtest fan-out",
       "fields": [
-        {
-          "label": "Phase",
-          "value": "Roadmap v3 (default-build rule)",
-          "kind": "text"
-        },
-        {
-          "label": "Branch",
-          "value": "race/first-frame-parity",
-          "kind": "text"
-        },
-        {
-          "label": "Latest work",
-          "value": "Playtest fix batch (6 bugs, orchestrated): #1 colour, #2 track cursor, #6 focus gate, #3 pause — all committed, DESKTOP-VERIFY PENDING",
-          "kind": "text"
-        },
-        {
-          "label": "Verify next (desktop)",
-          "value": "MASHED_NAV_DEMO=1 run + 1 race; checklist in re/analysis/playtest_feedback_20260906.md",
-          "kind": "text"
-        },
-        {
-          "label": "Open follow-ups",
-          "value": ["#5 all-red: wire CarSlotAssign colour flow", "#4 points: needs scored-race capture (FUN_0040d590)", "#3 full pause-menu chrome (core done)", "row-icon composition: desktop-verify"],
-          "kind": "list"
-        }
-      ]
-    },
-    {
-      "heading": "Coverage (first-party, 3682 functions)",
-      "fields": [
-        {
-          "label": "C4 verified",
-          "value": 185,
-          "kind": "number"
-        },
-        {
-          "label": "C3 ported",
-          "value": 921,
-          "kind": "number"
-        },
-        {
-          "label": "C3+ total",
-          "value": "30.0%",
-          "kind": "text"
-        },
-        {
-          "label": "All RVAs tracked",
-          "value": 5899,
-          "kind": "number"
-        }
-      ]
-    },
-    {
-      "heading": "Debt",
-      "fields": [
-        {
-          "label": "UNCERTAINTIES",
-          "value": 2980,
-          "kind": "number"
-        },
-        {
-          "label": "STUBS",
-          "value": 1072,
-          "kind": "number"
-        },
-        {
-          "label": "DEFERRED",
-          "value": 43,
-          "kind": "number"
-        }
-      ]
-    },
-    {
-      "heading": "Strongest subsystems",
-      "fields": [
-        {
-          "label": "Save",
-          "value": "93.8% C3+",
-          "kind": "text"
-        },
-        {
-          "label": "Frontend",
-          "value": "68.9% C3+",
-          "kind": "text"
-        },
-        {
-          "label": "AI",
-          "value": "61.0% C3+",
-          "kind": "text"
-        }
+        { "label": "Colour-select crash (#1)", "value": "FIXED — call 0x00431b80 guarded under MASHED_STANDALONE", "kind": "text" },
+        { "label": "Colour select (#1b)", "value": "input works; NO visible selection (selCol discarded) — faithful fix queued for account3", "kind": "text" },
+        { "label": "Row-icon col-3 arms (B)", "value": "MERGED + built (lock/dot/check per cup col-3)", "kind": "text" },
+        { "label": "Queued for account3 (Ghidra)", "value": ["#1b colour-select render (FUN_004368e0/004335f0)", "#5 all-red ea98->eaf0 writer", "#4 points FUN_0040d590", "#3 pause chrome FUN_0043d7c0/0040de10"], "kind": "list" },
+        { "label": "Specs", "value": ["colour_select_visual_spec_20260907.md", "points_scoring_spec_20260907.md", "pause_menu_chrome_spec_20260907.md"], "kind": "list" }
       ]
     }
   ]

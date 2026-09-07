@@ -129,10 +129,19 @@ avoid that. Memory: `[[agent-worktree-forks-stale]]` (to be filed).
   FUN_0043d7c0 Resume/Restart/Quit strings + Restart -0xe00000 -> FUN_0040de10) is
   NOT reversed and deliberately not invented.
 
-## Desktop verification checklist (one nav-demo run + one race)
+## Desktop verification checklist (one manual run + one race)
 
-Run `MASHED_NAV_DEMO=1 MASHED_WIN_POS=left-bl mashedmod\build\mashed_re.exe`, then
-play a race manually:
+Run `MASHED_WIN_POS=left-bl mashedmod\build\mashed_re.exe` (NO `MASHED_NAV_DEMO`),
+click the window to focus it, then play a race manually:
+
+**Do NOT set `MASHED_NAV_DEMO=1` for a manual playtest** (corrected 2026-09-07 after
+it cost a run). `exe_main.cpp:1868` bypasses the #6 focus gate when `g_nav_demo` is
+set, and DirectInput is `DISCL_BACKGROUND`, so global key state drives the menu:
+launching from a terminal made the terminal's own ENTER confirm screen 6/7 and
+auto-launch a race before the frontend ever settled (`[gameflow] RequestRace` on the
+first frames, no `NAV_DEMO` lines, no `walk_*.bmp`). Nav-demo is the automated screen
+walker, not a playtest mode.
+
 1. **#1** Colour Select: LEFT/RIGHT cycles the car colour.
 2. **#2** Challenge Select: UP/DOWN moves across all 4 cup rows; a locked row won't launch.
 3. **row icons** (earlier commit db4da943): selected row shows MultiPlayer, others a
