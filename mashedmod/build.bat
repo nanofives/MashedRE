@@ -12,6 +12,13 @@ set OUT=%ROOT%build
 
 if not exist "%OUT%" mkdir "%OUT%"
 
+REM `build.bat clean` drops the per-TU object cache (see build_objs.ps1); the next
+REM run recompiles everything. MASHED_BUILD_FULL=1 does the same without deleting.
+if /i "%~1"=="clean" (
+    if exist "%OUT%\obj" rmdir /s /q "%OUT%\obj"
+    echo cleaned %OUT%\obj
+)
+
 call %VCVARS% >nul
 if errorlevel 1 (echo [ERROR] vcvars32.bat failed & exit /b 1)
 
@@ -174,218 +181,17 @@ REM /EHa (not /EHsc) for the exe target: the standalone boot chain relies on
 REM __try/__except to survive partial-wedge AVs (steps 2..7, B7/B14 probes);
 REM /EHa makes those SEH guards catch hardware exceptions. The .asi target keeps
 REM /EHsc (it runs inside MASHED, not the wedge).
-cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
-    "exe_main.cpp" ^
-    "Piz\PizReader.cpp" ^
-    "Rws\RwsChunkWalker.cpp" ^
-    "Txd\TxdDecoder.cpp" ^
-    "Track\TrackWorld.cpp" ^
-    "Track\DffModel.cpp" ^
-    "Track\TrackData.cpp" ^
-    "D3d9Render\TrackRenderer.cpp" ^
-    "D3d9Render\RwWorldRender.cpp" ^
-    "Ai\AiStandalone.cpp" ^
-    "Vehicle\ForceIntegrator.cpp" ^
-    "Vehicle\ForceIntegratorStubs.cpp" ^
-    "Vehicle\VehicleControl.cpp" ^
-    "Vehicle\Integrate2.cpp" ^
-    "Vehicle\BodyOrientationIntegrate.cpp" ^
-    "Vehicle\AeroStabilize.cpp" ^
-    "Vehicle\VehicleInit.cpp" ^
-    "Vehicle\VehiclePhysicsRun.cpp" ^
-    "Vehicle\VehicleCouplingBridge.cpp" ^
-    "Collision\ContactStubs.cpp" ^
-    "Collision\ContactProducer.cpp" ^
-    "Collision\CarWorldContacts.cpp" ^
-    "Collision\CarCarContacts.cpp" ^
-    "Collision\WheelContactSolver.cpp" ^
-    "Collision\RwpIntegrator.cpp" ^
-    "Collision\RwpSolverLeaves1.cpp" ^
-    "Collision\RwpSolverMath2.cpp" ^
-    "Collision\RwpSolverBroadphase3.cpp" ^
-    "Collision\RwpSolverCore4.cpp" ^
-    "Collision\RwpSolverGlue5.cpp" ^
-    "Collision\RwpSolverIntegrate6.cpp" ^
-    "Collision\RwpSolverCore7.cpp" ^
-    "Collision\RwpSolverCore8.cpp" ^
-    "Collision\RwpSolverCore9.cpp" ^
-    "Collision\RwpSolverCore10.cpp" ^
-    "Collision\RwpSolverCore11.cpp" ^
-    "Collision\RwpSolverCore12.cpp" ^
-    "Collision\RwpSolverPartition13.cpp" ^
-    "Collision\RwpSolverCore14.cpp" ^
-    "Collision\RwpSolverCore15.cpp" ^
-    "Collision\RwpSolverCore16.cpp" ^
-    "Collision\RwpSolverCore17.cpp" ^
-    "Collision\RwpSolverCore18.cpp" ^
-    "Collision\RwpSolverCore19.cpp" ^
-    "Collision\RwpSolverCore20.cpp" ^
-    "Collision\RwpSolverCore21.cpp" ^
-    "Collision\RwpSolverCore22.cpp" ^
-    "Collision\RwpSolverCore23.cpp" ^
-    "Collision\RwpVtableKV2.cpp" ^
-    "Collision\RwpVtableKV1.cpp" ^
-    "Collision\RwpBuildExterns.cpp" ^
-    "Collision\CollisionBodyCreate.cpp" ^
-    "Collision\PhysicsWorldBuild.cpp" ^
-    "Math\RwV3dTransformPointsCPU.cpp" ^
-    "Math\RwMatrixRotate.cpp" ^
-    "Math\RwMatrixRotateInner.cpp" ^
-    "Math\RwV3dNormalize.cpp" ^
-    "Math\Vec3.cpp" ^
-    "D3d9Render\RwWorldLoad.cpp" ^
-    "D3d9Render\RwWorldLoadStubs.cpp" ^
-    "D3d9Render\RwWorldStream.cpp" ^
-    "D3d9Render\ParticleSystem.cpp" ^
-    "D3d9Render\PickupField.cpp" ^
-    "Powerup\PowerupSystem.cpp" ^
-    "Powerup\PowerupEffects.cpp" ^
-    "Race\RaceCamera.cpp" ^
-    "Race\RaceSession.cpp" ^
-    "Race\GameFlow.cpp" ^
-    "Race\RaceModes.cpp" ^
-    "Race\RuleEngine.cpp" ^
-    "Audio\RwsBank.cpp" ^
-    "Audio\AudioEngine.cpp" ^
-    "D3d9Render\QuadRenderer.cpp" ^
-    "D3d9Render\RwIm2DBridge.cpp" ^
-    "D3d9Render\DrawStreamDump.cpp" ^
-    "D3d9Render\PngLoader.cpp" ^
-    "D3d9Render\MpegVideoTexture.cpp" ^
-    "D3d9Render\TextRenderer.cpp" ^
-    "D3d9Render\MashedFont.cpp" ^
-    "D3d9Render\MenuStringTable.cpp" ^
-    "Compat\StandaloneRvaThunks.cpp" ^
-    "Stubs\HookSystemNoOp.cpp" ^
-    "Frontend\MenuInit.cpp" ^
-    "Frontend\MenuButtonDetect.cpp" ^
-    "Frontend\FrontendState.cpp" ^
-    "Frontend\FrontendNav.cpp" ^
-    "Frontend\FrontendMode.cpp" ^
-    "Frontend\FrontendAccessors.cpp" ^
-    "Frontend\FrontendDispatch.cpp" ^
-    "Frontend\DrawQuadPrimitives.cpp" ^
-    "Frontend\MenuLeaves_af1.cpp" ^
-    "Frontend\MenuSpriteDispatch.cpp" ^
-    "Frontend\MenuGetters.cpp" ^
-    "Frontend\MenuChrome.cpp" ^
-    "Frontend\MenuHelpers.cpp" ^
-    "Frontend\MenuNav.cpp" ^
-    "Frontend\MenuNavSM.cpp" ^
-    "Frontend\MenuRaceEnd.cpp" ^
-    "Frontend\MenuScoreGetters.cpp" ^
-    "Frontend\MenuScoreSort.cpp" ^
-    "Frontend\MenuStateMachine.cpp" ^
-    "Frontend\GameModeInit.cpp" ^
-    "Frontend\GameModeCarSelect.cpp" ^
-    "Frontend\TimerReset.cpp" ^
-    "Frontend\SpriteGate.cpp" ^
-    "Frontend\Leaves.cpp" ^
-    "Frontend\TextMeasure.cpp" ^
-    "Frontend\VehicleMeta.cpp" ^
-    "Frontend\MenuTime.cpp" ^
-    "Frontend\SmallLeaves_n2.cpp" ^
-    "Frontend\SmallLeaves_t1.cpp" ^
-    "Frontend\SlotZeroers_s1.cpp" ^
-    "Frontend\MenuLeaves_s3.cpp" ^
-    "Frontend\MenuLeaves_af4.cpp" ^
-    "Frontend\GlobalGetters_s4.cpp" ^
-    "Frontend\GlobalGetters_s5.cpp" ^
-    "Frontend\MenuNearLeaves_s6.cpp" ^
-    "Frontend\MenuStateWriters_u1.cpp" ^
-    "Frontend\MenuMiscLeaves_t2.cpp" ^
-    "Frontend\BucketMixed_t3.cpp" ^
-    "Frontend\MenuLeaves_af6.cpp" ^
-    "Frontend\Cluster_v3.cpp" ^
-    "Frontend\BatchAA_s4.cpp" ^
-    "HUD\HudDispatch.cpp" ^
-    "HUD\Cluster_v2.cpp" ^
-    "HUD\ScenarioLeaves_sa1.cpp" ^
-    "HUD\ScenarioLeaves_sa2.cpp" ^
-    "HUD\ScenarioWriters_sa2s2.cpp" ^
-    "HUD\ScenarioWriters_sa2s1.cpp" ^
-    "Boot\GameStateCluster.cpp" ^
-    "Boot\BootLowRvaCluster.cpp" ^
-    "Boot\Window.cpp" ^
-    "Boot\VideoConfig.cpp" ^
-    "Boot\Teardown.cpp" ^
-    "Boot\LaunchHandshake.cpp" ^
-    "Boot\FrameDispatch.cpp" ^
-    "Boot\SubsystemInit.cpp" ^
-    "Util\GameStateGetters.cpp" ^
-    "Util\EventTable.cpp" ^
-    "Util\TimerInit.cpp" ^
-    "Util\TimerState.cpp" ^
-    "Util\TimerSubarrayInit.cpp" ^
-    "Util\TimerSetters.cpp" ^
-    "Util\TimerSlot.cpp" ^
-    "Util\UtilLeaves.cpp" ^
-    "Util\Vec3Centroid.cpp" ^
-    "Util\FloatSliderStep.cpp" ^
-    "Util\SmallLeaves_o6.cpp" ^
-    "Util\UtilLeaves_ab6.cpp" ^
-    "Util\UtilLeaves_ac.cpp" ^
-    "Util\SineOscillators.cpp" ^
-    "Math\MatrixOrthoResidual.cpp" ^
-    "Vehicle\VehicleState.cpp" ^
-    "Vehicle\ShapeOwnerHandlePool.cpp" ^
-    "Vehicle\VehicleSeed.cpp" ^
-    "Vehicle\SubStripUV.cpp" ^
-    "Vehicle\SplineCubicBlend.cpp" ^
-    "Vehicle\VehicleSlotAabbExpand.cpp" ^
-    "Vehicle\GhostSetupRender.cpp" ^
-    "Camera\CameraPathPredicates.cpp" ^
-    "Ai\VehicleVelocityWorldGet.cpp" ^
-    "Physics\SmplFzxStateBlock.cpp" ^
-    "Vehicle\SmallLeaves_o5.cpp" ^
-    "Vehicle\SmallLeaves_q4.cpp" ^
-    "Vehicle\MiscDamping.cpp" ^
-    "GameState\StateAccessors.cpp" ^
-    "Math\RwSqrt.cpp" ^
-    "Math\FPURound.cpp" ^
-    "Math\RwV2d.cpp" ^
-    "Math\RwV3dTransform.cpp" ^
-    "Math\RwV3dTransformPoints.cpp" ^
-    "Math\RwMatrixScale.cpp" ^
-    "Frontend\Cluster_v1.cpp" ^
-    "Frontend\BatchAA_s1.cpp" ^
-    "Frontend\BatchAA_s3.cpp" ^
-    "Frontend\BatchAA_s6.cpp" ^
-    "Render\BatchAB_s1.cpp" ^
-    "Render\BatchAB_s3.cpp" ^
-    "Render\BatchAB_s6.cpp" ^
-    "Render\RenderLeaves_ae1.cpp" ^
-    "Render\PaletteQuantizer.cpp" ^
-    "Render\RenderLeaves_ae2.cpp" ^
-    "Render\RenderLeaves_ae3.cpp" ^
-    "Render\RenderStateSettersA.cpp" ^
-    "Frontend\FrontendLeaves_ad2.cpp" ^
-    "Frontend\MenuLeaves_af5.cpp" ^
-    "Render\CameraProjCoeffs.cpp" ^
-    "Render\RwMatrixInvert.cpp" ^
-    "Render\RwStricmp.cpp" ^
-    "Render\RwStrCase.cpp" ^
-    "Render\RwStrSearch.cpp" ^
-    "Render\SlotObjectAccessors.cpp" ^
-    "Render\StateBatchGetters.cpp" ^
-    "Render\ParticleEmitterCtors.cpp" ^
-    "Audio\AudioQueuePop.cpp" ^
-    "Ai\VehicleFloatFieldAsInt.cpp" ^
-    "Camera\FollowTargetFieldPtr.cpp" ^
-    "Render\GlobalByteQuad.cpp" ^
-    "Render\GlobalByteQuadAB.cpp" ^
-    "Render\RwPluginLinkSet.cpp" ^
-    "Render\RwPluginLinkSetAB.cpp" ^
-    "Render\Vec3NormalizeScale.cpp" ^
-    "Ai\HeadingAtan2.cpp" ^
-    "Audio\AudioVecLength.cpp" ^
-    "Save\FsOpen.cpp" ^
-    "Save\VfsStream.cpp" ^
-    "Save\ReplayTimeFormat.cpp" ^
-    "Input\MemsetInline_ag1.cpp" ^
-    "Particle\ParticleLeaves_ad4.cpp" ^
-    "Particle\ParticleLeaves_ad5.cpp" ^
-    "Save\GameSaveBuffer.cpp" ^
+REM Per-TU object cache (2026-09-09): the source list moved to exe_sources.rsp (one
+REM quoted path per line, link order preserved). build_objs.ps1 compiles only the
+REM TUs whose .obj is missing/older than the .cpp or any repo header it includes
+REM (cl /sourceDependencies), into build\obj\exe\, then writes link.rsp with every
+REM object. A flag change wipes the cache; `build.bat clean` or MASHED_BUILD_FULL=1
+REM force a full rebuild. NEW EXE TUs GO IN exe_sources.rsp, NOT HERE.
+powershell -NoProfile -ExecutionPolicy Bypass -File "%ROOT%build_objs.ps1" -Target exe ^
+    -SrcRoot "%SRC%" -ObjDir "%OUT%\obj\exe" -Rsp "%ROOT%exe_sources.rsp" ^
+    -ClFlags "/EHa /W3 /O2 /DMASHED_STANDALONE" -RepoRoot "%ROOT%.."
+if errorlevel 1 (popd & echo [ERROR] exe compile failed & exit /b 1)
+cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fe"%OUT%\mashed_re.exe" @"%OUT%\obj\exe\link.rsp" ^
     "%OUT%\QhullBridge_exe.obj" ^
     "%OUT%\RwBridge_exe.obj" ^
     "%OUT%\RwRasterBridge_exe.obj" ^
@@ -399,7 +205,13 @@ if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)
 
 echo === Building mashed_re_dev.asi ===
 pushd "%SRC%"
-cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" @"%ROOT%asi_sources.rsp" ^
+REM Per-TU object cache (2026-09-09): build_objs.ps1 compiles only the stale subset of
+REM asi_sources.rsp into build\obj\asi\ and writes link.rsp (every .obj, list order).
+powershell -NoProfile -ExecutionPolicy Bypass -File "%ROOT%build_objs.ps1" -Target asi ^
+    -SrcRoot "%SRC%" -ObjDir "%OUT%\obj\asi" -Rsp "%ROOT%asi_sources.rsp" ^
+    -ClFlags "/EHsc /W3 /O2" -RepoRoot "%ROOT%.."
+if errorlevel 1 (popd & echo [ERROR] asi compile failed & exit /b 1)
+cl /nologo /EHsc /W3 /O2 /LD /Fe"%OUT%\mashed_re_dev.asi" @"%OUT%\obj\asi\link.rsp" ^
     "%OUT%\QhullBridge_asi.obj" ^
     /link /DLL /MAP:"%OUT%\mashed_re_dev.map" /MAPINFO:EXPORTS "%QHULL_LIB%"
 popd

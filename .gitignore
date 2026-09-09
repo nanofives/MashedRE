@@ -142,3 +142,6 @@ verify/**/*.png
 
 # transient reference-save backup (never commit)
 original/gamesave.bin.refbak_*
+
+# run byproduct of launching mashed_re.exe from the repo root (never commit)
+/videocfg.bin
