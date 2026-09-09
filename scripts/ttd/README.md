@@ -131,3 +131,50 @@ recording lane deferred on 2026-07-17, so today the backend can only consume
 `log/ttd/calls_004c3b30.csv`. Widening that capture's 8-value domain, and capturing other
 RVAs, is the next constraint on this lane — not the diff code.
 
+## RECORDING IS BLOCKED ON THIS MACHINE (2026-09-09) — Defender ASR
+
+The un-deferral was attempted and **failed**. Recording no longer works here, and the cause
+is machine policy, not the tooling:
+
+> Accion de riesgo bloqueada — El administrador bloqueo esta accion.
+> Aplicacion o proceso bloqueado: **TTD.exe**
+> Bloqueado por: **Reduccion de la superficie expuesta a ataques**
+> Regla: **Bloquear el uso de herramientas del sistema copiadas o suplantadas**
+> Elementos afectados: `...\Mashed\tools\ttd_x86\TTDInject.exe`
+
+The machine became organization-managed (RoboticCrew / Project Foodbox, for Teams + company
+files), so this ASR rule is now enforced by policy and cannot be turned off locally.
+
+**Why this rule hits precisely this lane:** `setup_recorder.ps1` *copies* the recorder out of
+the WinDbg AppX into `tools\ttd_x86\` because the WindowsApps ACLs block running it in place.
+"Copied system tool" is exactly what the rule is written to stop. The lane's one workaround
+is the thing that trips it.
+
+Symptom in the transcript: TTD reports an empty trace name and writes no `.run`, while the
+nav step succeeds and prints a valid `RACE_PID`.
+
+### Ways forward, in order of cost
+
+1. **Use TT-11 (`Core/ShadowAB.h`) instead.** It needs no external instrumentation tool at all
+   — it is compiled C++ inside the `.asi`, so it presents no ASR surface. The ASR block makes
+   the shadow-A/B lane *more* valuable, not less.
+2. **Ask the org admin for an ASR exclusion** for `tools\ttd_x86\` (path exclusion) or for the
+   `Block use of copied or impersonated system tools` rule. Needs whoever manages the device.
+3. Re-verify whether the AppX copy can be avoided entirely (run the recorder in place / via its
+   execution alias). The README's original note says WindowsApps ACLs prevent this; that was
+   recorded 2026-06-17 and has not been re-tested under the new policy.
+
+Until one of those lands, **`log/ttd/calls_004c3b30.csv` (8 distinct inputs) is the only
+capture this project has**, and the `asi:<Export>` backend is bounded by it.
+
+### capture_race.ps1 reported a FALSE SUCCESS — fixed
+
+Worth recording because it is the more dangerous half. When TTD wrote nothing, the script
+still printed `DONE -> MASHED_2026-06-17_221159.run  size: 2,048.0 MB` and a ready-to-run
+`extract_calls.py` line: it selected "the newest `.run` in the output directory" without
+checking that the file was **new**, so it handed back a trace from three months earlier.
+Feeding that into the diff lane would have produced "fresh" evidence from a stale tape.
+
+Fixed 2026-09-09: the script snapshots the pre-existing `.run` set before recording, accepts
+only a file absent from that set, and otherwise exits 4 with the ASR diagnosis above.
+

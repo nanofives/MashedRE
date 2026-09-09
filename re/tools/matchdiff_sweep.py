@@ -45,7 +45,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from matchdiff import (function_bytes_from_obj, disasm, operand_facts,  # noqa: E402
-                       parse_coff, load_func_entries)
+                       parse_coff, load_func_entries, function_relocs_named)
 
 import pefile  # noqa: E402
 
@@ -108,6 +108,46 @@ def load_conf():
                 pass
     return c
 
+
+
+def _wrapper_relief(rec, objdir, regs, bounds, pe, base, ents):
+    """If a FAIL is only MISSING addresses, and the same-object callees our exported symbol
+    delegates to cover every one of them, the row is a wrapper -- not a defect.
+    Returns a PASS detail string, or None. Miss direction only (see caller)."""
+    rva = int(rec["rva"], 16)
+    cpp = None
+    for (sym, r), (path, _inst) in regs.items():
+        if r == rva and sym == rec["symbol"]:
+            cpp = path
+            break
+    if cpp is None:
+        return None
+    objp = objdir / (cpp.stem + ".obj")
+    if not objp.exists() or rva not in bounds:
+        return None
+    data = objp.read_bytes()
+    try:
+        ours, relocs, _ = function_bytes_from_obj(data, rec["symbol"])
+    except SystemExit:
+        return None
+    orig = pe.get_data(rva - base, bounds[rva])
+    fo = operand_facts(disasm(ours, rva), [x[0] for x in relocs], rva, ents)
+    fg = operand_facts(disasm(orig, rva), [], rva, ents)
+    local = {x["name"] for x in parse_coff(data)[1] if x["sec"] > 0}
+    union, via = set(fo[0]), []
+    for _off, _t, tname in function_relocs_named(data, rec["symbol"]):
+        if tname not in local or tname.lstrip("_") == rec["symbol"]:
+            continue
+        try:
+            b, br, _ = function_bytes_from_obj(data, tname.lstrip("_"))
+        except SystemExit:
+            continue
+        union |= set(operand_facts(disasm(b, rva), [x[0] for x in br], rva, ents)[0])
+        via.append(tname.lstrip("_"))
+    if via and not (set(fg[0]) - union):
+        short = [v.split("@")[0].lstrip("?") for v in via][:2]
+        return "WRAPPER: resolved via " + ",".join(short)
+    return None
 
 def main():
     ap = argparse.ArgumentParser()
@@ -213,8 +253,21 @@ def main():
     if pick_rva or pick_sym:
         # single-hook mode: terse verdict + nonzero exit on FAIL, so it can gate a
         # workflow step (promote-c3-batch per-function step 6).
+        #
+        # The GATE is stricter about false positives than the census above, on purpose:
+        # a thin wrapper (a naked ABI shim, or a Core/ShadowAB.h SHADOW_AB site, where the
+        # exported symbol delegates to a *_impl in the same TU) leaves the exported body
+        # with none of the original's globals, and every one reads as "missing". Union the
+        # same-object callees into OUR side before judging -- MISS direction only, never
+        # extras (a helper's own globals say nothing about the original; folding them both
+        # ways made CANDIDATE go UP when tried in triage). Deeper/cross-TU chains still
+        # need matchdiff_triage.py.
         bad = 0
         for r in rows:
+            if r["verdict"] == "FAIL" and r["detail"].startswith("data -") and                "+-" in r["detail"].split("; imm")[0]:
+                rr = _wrapper_relief(r, objdir, regs, bounds, pe, base, ents)
+                if rr:
+                    r["verdict"], r["detail"] = "PASS", rr
             print("%s %s  %-30s %s" % (r["verdict"], r["rva"], r["symbol"][:30], r["detail"][:90]))
             bad += (r["verdict"] == "FAIL")
         if bad:

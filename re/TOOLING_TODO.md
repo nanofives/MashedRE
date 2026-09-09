@@ -77,7 +77,18 @@ original bytes. Compiler-version-independent, so it runs on the MSVC 2022 build 
   construction, over the whole tree, offline.
 - Skip naked-`__asm` TUs (67 files) — they are already byte-transcribed.
 
-## TT-10 — TTD capture -> offline replay diff — **REPLAY HALF DONE 2026-09-09**
+## TT-10 — TTD capture -> offline replay diff — **REPLAY DONE; RECORDING BLOCKED BY POLICY**
+
+> **Recording un-deferral attempted 2026-09-09 and FAILED.** Defender ASR rule "Block use
+> of copied or impersonated system tools" kills `tools\ttd_x86\TTDInject.exe`; the machine
+> is now organization-managed so the rule cannot be disabled locally. The rule targets
+> COPIED system tools, and copying the recorder out of the WinDbg AppX is exactly how this
+> lane works (WindowsApps ACLs block running it in place). Needs an admin path exclusion.
+> Detail + ways forward: `scripts/ttd/README.md`.
+>
+> Consequence: the `asi:<Export>` backend works but is bounded by the ONE existing capture
+> (8 distinct inputs). **This raises TT-11 above TT-10**: the shadow-A/B lane needs no
+> external instrumentation tool, so it has no ASR surface.
 
 > `scripts/ttd/ttd_reimpl_diff.py` gained the `asi:<Export>` backend its own docstring
 > had been asking for: spawn MASHED muted, use the dinput8-auto-loaded `.asi`, wait for

@@ -25,6 +25,7 @@
 // (FUN_004c52f0/004c51a0/00546b10), which are extern (bit-identity A/B under the .asi calls
 // the real game math at RVA — RwpBuildExterns.cpp forwards them). No transcendentals here.
 #include "../Core/HookSystem.h"
+#include "../Core/ShadowAB.h"
 #include <cstdlib>   // getenv
 #include <cstring>   // memcpy
 
@@ -110,21 +111,19 @@ static void b5cLeafLog(const char* fn, int n, int idx, int ndiff, const char* de
     b5cLog(hdr);
 }
 
-static int g_b5cTblCount = 0;
+// [TT-11 2026-09-09] FIRST SITE CONVERTED to the reusable Core/ShadowAB.h helper.
+// The 13 lines below replace ~13 lines of hand-rolled arm/uninstall/compare/log that were
+// identical in shape to the other five sites in this file. Behaviour is unchanged except:
+//   * the compare is memcmp, not `!=` (bitwise: correct for float/NaN/-0.0 returns);
+//   * output goes to shadow_ab.log instead of phys_c4_b5c_selftest.log;
+//   * MASHED_SHADOW_AB also arms it (ShadowAB::Enabled still honours
+//     MASHED_PHYS_C4_SELFTEST, so existing B5c runs keep arming this function).
+// The other five sites are left hand-written on purpose: convert them one at a time with
+// a race capture each, never in bulk, so a regression is attributable.
 extern "C" int __cdecl RwpBodyTableLookup(int key)
 {
-    if (!b5cSelfTestEnabled() || !b5cInRace() || g_b5cInSelfTest ||g_b5cTblCount >= kB5cLeafMax)
-        return RwpBodyTableLookup_impl(key);
-    g_b5cInSelfTest = true;
-    int idx = b5cHookIndex(0x0057c210u), origRet = 0;
-    if (idx >= 0) { HookSystem::Uninstall((std::size_t)idx);
-        origRet = reinterpret_cast<int(__cdecl*)(int)>(0x0057c210u)(key);
-        HookSystem::Install((std::size_t)idx); }
-    int mineRet = RwpBodyTableLookup_impl(key);
-    char det[64]; wsprintfA(det, " o=%08x,n=%08x", origRet, mineRet);
-    b5cLeafLog("RwpBodyTableLookup", g_b5cTblCount++, idx, (mineRet != origRet) ? 1 : 0, det);
-    g_b5cInSelfTest = false;
-    return mineRet;
+    SHADOW_AB_COUNTER(ab, "RwpBodyTableLookup", 0x0057c210u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, RwpBodyTableLookup_impl, key);
 }
 
 // ---------------------------------------------------------------------------

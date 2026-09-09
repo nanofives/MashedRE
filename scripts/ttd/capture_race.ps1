@@ -33,6 +33,15 @@ if (-not (Test-Admin)) {
         '-File',$PSCommandPath,'-Seconds',$Seconds,'-MaxFileMB',$MaxFileMB,'-Elevated')
     return
 }
+# The elevated relaunch opens its OWN console, so its output is invisible to the caller
+# (an un-elevated shell just sees "relaunching via UAC" and exits 0). Transcript every
+# elevated run to a log so a failed capture can be diagnosed after the fact instead of
+# guessing -- this cost a full debug cycle on 2026-09-09.
+$LogFile = Join-Path $OutDir ("capture_race_{0:yyyy-MM-dd_HHmmss}.log" -f (Get-Date))
+New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
+try { Start-Transcript -Path $LogFile -Force | Out-Null } catch { }
+Write-Host "[capture_race] transcript: $LogFile"
+
 if (-not (Test-Path $Ttd)) { throw "TTD.exe not found at $Ttd (run setup_recorder.ps1)." }
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 
@@ -47,6 +56,13 @@ if ($racePid -le 0) {
     if ($Elevated) { Read-Host "press Enter to close" }
     exit 3
 }
+# Snapshot the pre-existing traces. Reporting "the newest .run in the folder" is a
+# FALSE-SUCCESS generator: on 2026-09-09 TTD was blocked by Defender ASR and wrote
+# nothing, yet this script announced DONE and pointed at a trace from three months
+# earlier. A capture must only ever claim a file that did not exist before it ran.
+$preExisting = @(Get-ChildItem $OutDir -Filter *.run -ErrorAction SilentlyContinue |
+                 Select-Object -ExpandProperty FullName)
+
 Write-Host "[capture_race] race live in pid=$racePid; attaching TTD (full-process, ring=$MaxFileMB MB, ~$Seconds s)" -ForegroundColor Cyan
 
 # --- 2. TTD-attach the running race --------------------------------------------------
@@ -60,6 +76,7 @@ Write-Host "[capture_race] stopping recording (pid=$racePid)..." -ForegroundColo
 
 # --- 3. report -----------------------------------------------------------------------
 $run = Get-ChildItem $OutDir -Filter *.run -ErrorAction SilentlyContinue |
+       Where-Object { $preExisting -notcontains $_.FullName } |
        Sort-Object LastWriteTime -Descending | Select-Object -First 1
 if ($run) {
     Write-Host ""
@@ -67,7 +84,18 @@ if ($run) {
     Write-Host ("[capture_race] size: {0:N1} MB" -f ($run.Length/1MB)) -ForegroundColor Green
     Write-Host "Next: py -3.12 scripts\ttd\extract_calls.py $($run.FullName) --rva 0x4c3b30 --count 128" -ForegroundColor Green
 } else {
-    Write-Host "[capture_race] NO .run produced." -ForegroundColor Red
+    Write-Host '[capture_race] NO NEW .run produced -- the capture FAILED.' -ForegroundColor Red
+    Write-Host '[capture_race] TTD reporting an empty trace name and writing no file means the' -ForegroundColor Yellow
+    Write-Host '[capture_race] recorder was killed before it wrote anything. On this machine the' -ForegroundColor Yellow
+    Write-Host '[capture_race] known cause is the Defender ASR rule "Block use of copied or' -ForegroundColor Yellow
+    Write-Host '[capture_race] impersonated system tools" killing \ttd_x86\TTDInject.exe: the recorder' -ForegroundColor Yellow
+    Write-Host '[capture_race] is a COPY out of the WinDbg AppX, which is what that rule targets.' -ForegroundColor Yellow
+    Write-Host '[capture_race] Check Defender > Protection history, then see the TTD README.' -ForegroundColor Yellow
+    if ($Elevated) { Read-Host 'press Enter to close' }
+    exit 4
 }
+try { Stop-Transcript | Out-Null } catch { }
+Write-Host "[capture_race] transcript written: $LogFile"
+
 # leave MASHED running for inspection; user can close it.
 if ($Elevated) { Read-Host "press Enter to close" }
