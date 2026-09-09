@@ -77,3 +77,31 @@ order, i.e. link order — so it can flip silently when the source list changes.
 39 refusals is what **one** full-set boot produced. The accumulated log holds 1,252 distinct
 RVAs across months of differing hook configurations; that larger number is not a count of
 today's duplicates and should not be quoted as one.
+
+---
+
+# Addendum - the mis-tracked rows repaired (same day)
+
+**21 of the 25 repointed; 4 deferred as D-11069.**
+
+`hooks.csv`'s `file` column now names the copy that actually installs, and each repaired row
+gained a note recording BOTH symbols, which one is live, and that the winner is decided by
+static-init i.e. **link order** - so it can flip if a source list changes.
+
+Two deliberate restraints:
+
+* **`name` was not touched**, even though **23 of the 25 rows carry the DEAD symbol's name**.
+  Names resolve older diff CSVs and registry keys (memory: "exported symbol and registry key
+  deliberately unchanged so the 2026-06-13 diff CSV keeps resolving"). Each repaired note says
+  so explicitly rather than leaving a silent mismatch. That the whole row - name *and* file -
+  was written about the copy that never runs is the more interesting fact here: these were not
+  stale paths, they were rows authored against dead code.
+* **4 rows were left alone** because "dead" turned out to be target-specific. Where the winner
+  is `.asi`-only and the loser is in `exe`+`asi`, the loser is the EXE's only implementation.
+  Repointing those would trade one wrong row for another, and `hooks.csv` has a single `file`
+  column that cannot express "different implementation per target". Filed as **D-11069** for a
+  decision: delete the redundant copy, or teach the tracker about per-target implementations.
+
+Verification of the edit: 5,930 rows before and after, 21 `file` values changed, **0** `name`
+changes, **0** confidence changes.
+
