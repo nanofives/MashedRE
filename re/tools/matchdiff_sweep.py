@@ -60,21 +60,34 @@ REG = re.compile(r'RH_ScopedInstall\(\s*([A-Za-z_][A-Za-z0-9_:]*)\s*,\s*(0x[0-9a
 
 
 def load_registrations():
-    """symbol -> (rva, source .cpp). Later duplicates are reported, not silently kept."""
+    """(symbol, rva) -> source .cpp. Later duplicates are reported, not silently kept.
+
+    A COMMENTED-OUT `// RH_ScopedInstall(...)` still counts: the reimplementation is
+    compiled and comparable, only the install is disabled. 66 of 1,336 registrations are
+    in that state (e.g. 0x0040d590 RaceRankThreePlayers), which is itself worth knowing,
+    so it is recorded per row rather than filtered out."""
     out, dupes = {}, []
     for cpp in SRC.rglob("*.cpp"):
         try:
             text = cpp.read_text(encoding="utf-8", errors="replace")
         except OSError:
             continue
-        for m in REG.finditer(text):
+        for line in text.splitlines():
+            m = REG.search(line)
+            if not m:
+                continue
             sym, rva = m.group(1), int(m.group(2), 16)
             key = (sym, rva)
             if key in out:
                 dupes.append((sym, rva, cpp.name))
                 continue
-            out[key] = cpp
+            out[key] = (cpp, not line.lstrip().startswith("//"))
     return out, dupes
+
+
+def reg_paths(regs):
+    """Back-compat view: (symbol, rva) -> cpp path only."""
+    return {k: v[0] for k, v in regs.items()}
 
 
 def load_bounds():
@@ -125,12 +138,14 @@ def main():
         return obj_cache[path]
 
     rows, tally = [], collections.Counter()
-    for (sym, rva), cpp in sorted(regs.items(), key=lambda kv: kv[0][1]):
+    for (sym, rva), (cpp, installed) in sorted(regs.items(), key=lambda kv: kv[0][1]):
         c = conf.get(rva, ("", "", ""))
         if c[0] not in want:
             continue
         rec = dict(rva="%08x" % rva, symbol=sym, name=c[1], conf=c[0],
-                   subsystem=c[2], file=cpp.name, verdict="", imm="", detail="")
+                   subsystem=c[2], file=cpp.name,
+                   installed="yes" if installed else "COMMENTED",
+                   verdict="", imm="", detail="")
         objp = objdir / (cpp.stem + ".obj")
         if not objp.exists():
             rec.update(verdict="SKIP", detail="no obj (TU not in this target's list)")

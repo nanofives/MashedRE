@@ -9,7 +9,12 @@ Opened **2026-09-09** from the "do we have the right tools?" review. Companion t
 ranked where it is — no item goes in here without a reason it beats doing nothing.
 
 **Framing that produced this list.** First-party rows are C2 2,536 / C3 918 / C4 180, and
-**only 14 of the 2,536 C2 rows have a reimplementation file at all**. The bottleneck is
+~~only 14 of the 2,536 C2 rows have a reimplementation file at all~~ **[CORRECTED
+2026-09-09: that 14 came from `hooks.csv`'s `file` column, which for C2 rows usually
+holds the ANALYSIS-NOTE path, not the reimplementation — 50 of 62 comparable C2 rows
+are in that state. The real figure is ~185 C2 rows with a compiled reimplementation.
+See `re/analysis/matchdiff_c2_prescreen_20260909.md`.]** The conclusion stands (185 of
+2,536 is still a small fraction), but do not requote the 14. The bottleneck is
 authoring and default-path acceptance, not verification throughput. Two of the three
 default-build gates (D1 render, D3 AI/powerups/modes) have **no acceptance instrument**;
 the parity harness is frontend-only by its own scope note and is structurally blind to
@@ -45,8 +50,11 @@ corresponds exactly. Whether a period compiler closes it is untested.
 > **57 candidates remain for hand review** (C3 35 / C4 22) -- see
 > `re/analysis/matchdiff_triage_20260909.md`, which names three systematic sub-patterns
 > that are probably one explanation each rather than N defects.
-> **Next:** clear those three leads, extend the WRAPPER union to two levels (9 rows), and
-> decide whether to run the sweep over the C2 pool as an authoring pre-screen.
+> **Leads cleared + C2 pre-screen run (2026-09-09).** RWP guard explained, RW-math
+> hypothesis disproven, union extended cross-TU and made asymmetric; 52 candidates
+> genuinely open. C2 pre-screen: 176/185 PASS (95.1%), 3 candidates — worth wiring
+> into `promote-c3-batch` selection, but it reaches only 185 of 2,536 C2 rows.
+> **Next:** hand-review the 52 (start with the 9 at size ratio <0.5).
 
 
 Fell out of TT-1 and needs none of its blocked parts. `re/tools/matchdiff.py` compares the

@@ -36,7 +36,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from matchdiff import (function_bytes_from_obj, disasm, operand_facts,  # noqa: E402
                        parse_coff, load_func_entries, DATA, function_relocs_named)
 from matchdiff_sweep import (load_registrations, load_bounds, load_conf,  # noqa: E402
-                             OBJ_ASI, BOUNDS, EXE, ROOT)
+                             reg_paths, OBJ_ASI, BOUNDS, EXE, ROOT)
 
 import pefile  # noqa: E402
 
@@ -120,6 +120,7 @@ def main():
     want = set(a.conf.split(","))
 
     regs, _ = load_registrations()
+    regs = reg_paths(regs)
     bounds, conf = load_bounds(), load_conf()
     ents = load_func_entries()
     pe = pefile.PE(str(EXE), fast_load=True)

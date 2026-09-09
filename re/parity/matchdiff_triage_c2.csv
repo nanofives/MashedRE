@@ -1,0 +1,10 @@
+rva,symbol,conf,subsystem,file,klass,tests,n_miss,n_extra,ours_b,orig_b,ratio,miss,extra
+00410860,ScoreThresholdStateCheck,C2,util,UtilMid.cpp,CANDIDATE,,1,0,625,592,1.06,007f1a54,
+00419760,VehicleEliminationSlotInit,C2,vehicle,Damage.cpp,WINDOW,WINDOW,0,3,141,113,1.25,,"0063c028,0063c04c,0063c06c"
+0041d730,PlayerSlotConfigInit,C2,util,UtilMid.cpp,WINDOW,WINDOW,4,1,273,226,1.21,"007f1a18,007f1a28,007f1a38,007f1a48",0063d2a4
+00472dc0,Im2DTriangleDraw,C2,frontend,BucketMixed_t3.cpp,WINDOW,WINDOW,1,8,479,379,1.26,00898a7c,"00898a2c,00898a30,00898a44,00898a48,00898a4c,00898a60,00898a64,00898a68"
+0047c270,CameraPathAllNodesEq2,C2,camera,CameraPathPredicates.cpp,WRAPPER,"resolved-via:?AnyActiveNode@?A0x1bf0a936@@YAIHI@Z,?InvokeInner@?A0x1bf0a936@@YAHPAXHH0@Z",0,0,18,91,-,,
+0047c2d0,CameraPathAnyNodeNonzero,C2,camera,CameraPathPredicates.cpp,WRAPPER,"resolved-via:?AnyActiveNode@?A0x1bf0a936@@YAIHI@Z,?InvokeInner@?A0x1bf0a936@@YAHPAXHH0@Z",0,0,18,91,-,,
+00495350,HardwareShowIntroVideo,C2,frontend,IntroSplash.cpp,CANDIDATE,,0,1,366,402,0.91,,007d3ff8
+004b302f,StricmpThunk,C2,util,UtilMid.cpp,CANDIDATE,,1,0,5,105,0.05,00616be4,
+004b6710,PizWin32Open_Compat,C2,render,PizWin32Bypass.cpp,WRAPPER,resolved-via:_PizWin32Open_CompatImpl,0,0,14,87,-,,
