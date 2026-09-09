@@ -40,8 +40,13 @@ corresponds exactly. Whether a period compiler closes it is untested.
 > **First pass done:** 931 PASS / 155 FAIL / 44 SKIP over 1,130 rows (85.7%).
 > One real defect found and filed (**U-9086**, a C4 row). Tooling and the full CSV are
 > committed; `re/analysis/matchdiff_sweep_20260909.md` has the artifact taxonomy.
-> **Remaining work: triage the other 154 FAIL rows** against the four known false-positive
-> classes, and decide whether to run it over the C2 pool as an authoring pre-screen.
+> **Triage done (same day):** 98 of 155 explained by six evidence-tested artifact classes
+> (WINDOW 31, FOLDED-MEMBER 29, WRAPPER 16, UNROLLED 10, INDUCTION 9, INLINED 3);
+> **57 candidates remain for hand review** (C3 35 / C4 22) -- see
+> `re/analysis/matchdiff_triage_20260909.md`, which names three systematic sub-patterns
+> that are probably one explanation each rather than N defects.
+> **Next:** clear those three leads, extend the WRAPPER union to two levels (9 rows), and
+> decide whether to run the sweep over the C2 pool as an authoring pre-screen.
 
 
 Fell out of TT-1 and needs none of its blocked parts. `re/tools/matchdiff.py` compares the

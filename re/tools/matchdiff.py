@@ -88,6 +88,30 @@ def function_bytes_from_obj(data, symbol):
     return body, rel, sec['name']
 
 
+
+def function_relocs_named(data, symbol):
+    """[(offset_within_function, type, target_symbol_name)] for one function.
+
+    Normal calls to other TUs are COFF relocations, not absolute literals, so a
+    triage that only looks at literal call targets is blind to them (that is why the
+    first INLINED test fired 3 times out of 155).
+    """
+    sections, symbols, relocs = parse_coff(data)
+    cands = [x for x in symbols if x['name'] in (symbol, '_' + symbol) and x['sec'] > 0]
+    if not cands:
+        return []
+    sym = cands[0]
+    sec = sections[sym['sec'] - 1]
+    later = sorted(x['value'] for x in symbols
+                   if x['sec'] == sym['sec'] and x['value'] > sym['value'] and x['cls'] in (2, 3))
+    end = later[0] if later else sec['size']
+    by_index = {x['index']: x['name'] for x in symbols}
+    out = []
+    for r in relocs[sec['idx']]:
+        if sym['value'] <= r['off'] < end:
+            out.append((r['off'] - sym['value'], r['type'], by_index.get(r['sym'], '')))
+    return out
+
 def original_bytes(exe_path, rva, size):
     pe = pefile.PE(exe_path, fast_load=True)
     va = rva - pe.OPTIONAL_HEADER.ImageBase
