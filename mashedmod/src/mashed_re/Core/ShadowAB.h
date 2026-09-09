@@ -122,6 +122,7 @@ struct Counter {
     int            n      = 0;
     int            ndiff  = 0;
     bool           noted  = false;   // logged the "no hook index" case once
+    bool           proved = false;   // logged the patch-byte proof once
 };
 
 #define SHADOW_AB_COUNTER(var, name_, rva_, min_phase_)                       \
@@ -167,10 +168,31 @@ auto Run(Counter& c, F impl, A... args) -> decltype(impl(args...)) {
         return impl(args...);
     }
 
+    // PROOF THE A/B IS REAL, logged once per function. If Uninstall silently failed, the
+    // call below would re-enter OUR OWN inline-JMP and we would be comparing the port to
+    // itself -- trivially equal, i.e. a vacuous "all OK". Sampling the patch byte at the
+    // RVA inside the window settles it: installed it is 0xE9 (our JMP); uninstalled it must
+    // be the original prologue byte. Cheap, harmless and decisive. A control that instead
+    // corrupts the return value is NOT usable here: tried 2026-09-09, +1 on this body-pointer
+    // lookup crashes the solver before the first sample is ever written.
+    const unsigned char byte_installed = *reinterpret_cast<volatile unsigned char*>(c.rva);
+
     Ret o{};
     HookSystem::Uninstall(static_cast<std::size_t>(idx));
+    const unsigned char byte_uninstalled = *reinterpret_cast<volatile unsigned char*>(c.rva);
     o = reinterpret_cast<F>(c.rva)(args...);
     HookSystem::Install(static_cast<std::size_t>(idx));
+
+    if (!c.proved) {
+        c.proved = true;
+        char pb[112];
+        wsprintfA(pb, "[--] fn=%s PATCHBYTE installed=%02x uninstalled=%02x %s",
+                  c.name, byte_installed, byte_uninstalled,
+                  (byte_installed == 0xE9 && byte_uninstalled != 0xE9)
+                      ? "A/B-IS-REAL" : "SUSPECT-no-restore");
+        Log(pb);
+        Log("\r\n");
+    }
 
     Ret n = impl(args...);
 
