@@ -64,3 +64,33 @@ this screen, then align both the cursor clamp AND the tile count.
   `(void)selCol`), and the cursor clamp (~2341).
 - Depends on / pairs with §A (#5 all-red) in the fan-out ledger — same screen, same
   `ea98`/`eaf0`/`007f1a1c` data flow.
+
+## RESOLVED 2026-09-09 — Ghidra read (Mashed_pool14, read-only), every claim cited
+
+The "conflicting notes" question is settled: the screen draws the SIX static tiles AND
+the per-profile device icon is the selection indicator, and that icon both SLIDES and
+TINTS. Evidence (all from `mcp__ghidra__decomp_function` / `listing_disassemble_range`
+/ `memory_read` on the slot):
+
+| RVA | What it literally does |
+|---|---|
+| `FUN_004335f0` (0x004335f0) | SP path walks the profile array at `0x0067eaf8` (stride 12: `[-2]` choice, `[-1]` x, `[0]` y). On the first live profile it draws the six tiles: swatch `FUN_00472c60(143+i*70, y-38, 69, 20, local_1c[i+1])`, car `FUN_004739f0(FUN_0042fab0(i), 146+i*70, y-41-40, 64, 64, ...)` (constants `_DAT_005ccd0c`=70.0, `_DAT_005cd910`=38.0, `_DAT_005cd914`=41.0, `_DAT_005cd274`=40.0). Then per live profile: `FUN_0042bcb0(profile, x, y-1.0, argb, flag)` with argb = `local_1c[choice]`; choice 0 -> `e0e0e0`; choice 6 (`8.40779e-45` = int 6) -> `local_70` = `d7d7d7`, flag=1; a clash with another profile's equal choice brightens the argb by `FUN_004a2c48()` (doubled for choice 6). |
+| `FUN_004335f0` stack table | `local_1c[0..6]` = e0e0e0 / 98,3a,3d / 4e,89,ae / 61,76,56 / db,c3,62 / eb,a7,a7 / 00,00,00, alpha = `DAT_0067e7ac`. Indices 1..6 are the tile swatches; indices 1..5 + the d7d7d7 override are the icon tints. The port's `kPlayerSwatch[6]` equals `local_1c[1..6]`. |
+| `FUN_004332a0` (0x004332a0) | While `DAT_007f1a0c == 0x1000`, per profile: L decrements the choice if `0 < c`, R increments it if `c < 6` (input bytes `0x007f1044`/`0x007f1504` families) — the choice range is 0..6, NON-wrapping. Every frame it then recomputes the icon position: choice -1 -> set to 0; choice 0 -> `x = 0x42aa0000` (85.0), `y = row`; choice 1..6 -> `x = (choice*0x46 - 0x46) + _DAT_005cd90c` = `170.0 + 70*(choice-1)`, `y = row`; `row += _DAT_005cd908` (34.0) per live profile. Profiles not present (`thunk_FUN_00497450(i)==0`) get choice -1. |
+| `FUN_0042bcb0` (0x0042bcb0) | 5-arg glyph draw: picks `"keyboard"` when `DAT_007e96fc[profile*0x80] == 2`, the joypad name when `== 1`; draws CENTRED on (x, y): `local_1c = x*_DAT_005cd5a8 - _DAT_005cd18c`, `local_24 = x*_DAT_005cd5a8 + _DAT_005cd18c`; argb passed through to `FUN_004b5750`. It does not choose the colour. |
+| `FUN_0043dfd0` sites 0x0043f1f1 / 0x0043f2b3 | `MOV [EAX],EBP` loops over `0x0067eaf0..0x0067eb80` step 0xc — ONE register value into all 12 choice slots, immediately before `push 4; call 0x0043d2a0` (enter screen 4). Bulk reset, not a per-profile commit. EBP's value at that point: `[UNCERTAIN]` (not read this session). |
+| `FUN_00431b80` (0x00431b80) | Advances `(&DAT_0067ea98)[EAX]` by ESI with collision avoidance against `DAT_007f1a1c + 1` and the other three `ea98/ea9c/eaa0` values; wraps 7 -> 1 (or 7 -> 0 when param_1 != 0) and 0/-1 -> 6. This is the mover the port's `CarSelectCycleColour` calls; it does not touch `0x0067eaf0`. `[UNCERTAIN]` which original screen drives it — not needed for this slice. |
+
+Consequences for the port (applied to `exe_main.cpp` 2026-09-09, build clean, **screenshot-pending**):
+- The keyboard-row icon slides to centre `x = 170 + 70*(sel-1)` (85 when no choice) and tints
+  `kPlayerSwatch[sel-1]` for sel 1..5, `d7d7d7` for sel 6, `e0e0e0` for 0. The 2026-09-07 diff had
+  the slide base at 146 (the tile's LEFT edge; the original centres the icon at 170) and black for 6.
+- **D-11066's "missing writer" does not exist**: in the original `0x0067eaf0` IS the cursor
+  (moved in place by `FUN_004332a0`). The port keeps its `0x0067ea98` cursor and synthesises eaf0
+  at confirm time — a `[SCOPED]` shim, documented at the site. The faithful shape (make eaf0 the
+  cursor and retire ea98 on this screen) is a follow-up slice.
+- The cursor RANGE question: the original's choice is 0..6 non-wrapping (7 states incl. 6 = silver
+  icon over the black tile). The port's ea98 mover wraps per `FUN_00431b80`; alignment is part of
+  the same follow-up slice.
+- Only profile 0 is modelled; the original slides/tints EVERY live profile's icon by its own choice.
+

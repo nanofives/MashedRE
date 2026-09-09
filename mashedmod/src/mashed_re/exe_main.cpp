@@ -2178,13 +2178,29 @@ bool UpdateMenuSelection() {
                 mashed_re::Race::RaceConfig cfg;
                 cfg.trackId  = mashed_re::Race::Campaign_SelectedTrack();
                 cfg.gameMode = launchMode;
-                // Player vehicle from the frontend car-select cursor
-                // (DAT_0067ea98, player-0 slot — GameModeCarSelect). MASHED_CAR_SEL
-                // overrides for dev/verification. Clamped to the vehicle table;
-                // 0/unset -> car 0 (Advantage). [residual: the car-select screen
-                // isn't interactive in the standalone yet, so the global is
-                // usually 0 — the read is wired for when it becomes live.]
-                int carSel = *reinterpret_cast<const std::int32_t*>(0x0067ea98u);
+                // [#5 2026-09-07] 0x0067ea98 is the port's player-0 COLOUR cursor
+                // (moved by CarSelectCycleColour -> FUN_00431b80), NOT the car
+                // index — the old comment conflated the two. Drive cfg.cars[0].colour
+                // from it so the RACE livery + voice bank show the picked colour
+                // (RaceSession reads m_cfg.cars[].colour at spawn,
+                // RaceSession.cpp:123/175). Cursor is 0..6 (0 = grey/no-selection
+                // -> colour 0; 1..6 -> colour 0..5).
+                // [2026-09-09 Ghidra, Mashed_pool14] In the ORIGINAL the committed
+                // colour is the per-profile CHOICE field 0x0067eaf0 + 12*profile:
+                // FUN_004332a0 (0x004332a0) moves it IN PLACE on L/R (clamped 0..6)
+                // while DAT_007f1a0c == 0x1000, and FUN_004335f0 (0x004335f0) reads
+                // it for the icon tint. There is no ea98 -> eaf0 copy in the
+                // original; the port's ea98 cursor is a port-side construct, so
+                // the confirm block below synthesises eaf0 from it. [SCOPED]
+                const std::int32_t colcur =
+                    *reinterpret_cast<const std::int32_t*>(0x0067ea98u);
+                cfg.cars[0].colour = (colcur >= 1 && colcur <= 6) ? colcur - 1 : 0;
+                char cc[8] = {};
+                if (GetEnvironmentVariableA("MASHED_CAR_COLOUR", cc, sizeof(cc)) > 0)
+                    cfg.cars[0].colour = std::atoi(cc);
+                // Car index is a SEPARATE selection (not yet an interactive screen);
+                // default car 0 (Advantage), MASHED_CAR_SEL overrides for dev.
+                int carSel = 0;
                 char cs[8] = {};
                 if (GetEnvironmentVariableA("MASHED_CAR_SEL", cs, sizeof(cs)) > 0)
                     carSel = std::atoi(cs);
@@ -5044,12 +5060,44 @@ bool RenderFrame() {
                     // the ink at x132 against the original's 121.
                     const float isw = 51.7f * kVScale;
                     const float ish = 29.0f * kVScale;
-                    const float ix = bx + 13.1f * kVScale;
-                    const float iy = by + (bh - ish) * 0.5f;
                     const int   h_icon = (r == nrows4 - 1) ? kHandleInputKbd
                                                            : kHandleInputJoy;
+                    // [#1b 2026-09-07, corrected 2026-09-09 from Ghidra
+                    // (Mashed_pool14)] The player's device icon IS the selection
+                    // indicator and it BOTH slides and tints:
+                    //  - FUN_004332a0 (0x004332a0) recomputes each live profile's
+                    //    icon X from its choice every frame:
+                    //      choice 0      -> x = 85.0            (0x0043358a arm)
+                    //      choice 1..6   -> x = 170.0 + (choice-1)*70
+                    //                        (_DAT_005cd90c = 170.0f, 0x46 = 70)
+                    //    and the row Y steps 34.0 (_DAT_005cd908) per live profile.
+                    //  - FUN_004335f0 (0x004335f0) draws it via FUN_0042bcb0(profile,
+                    //    x, y-1, argb, flag) with argb = its stack table
+                    //    local_1c[choice]: choice 0 -> e0e0e0 (grey), 1..5 ->
+                    //    {983a3d,4e89ae,617656,dbc362,eba7a7} (= kPlayerSwatch[0..4],
+                    //    the SAME table the six tiles use), choice 6 -> d7d7d7 (the
+                    //    local_70 override; NOT the black tile-6 swatch).
+                    //  - FUN_0042bcb0 (0x0042bcb0) itself only picks the glyph name
+                    //    (DAT_007e96fc[profile*0x80]: 2 = "keyboard", 1 = joypad) and
+                    //    draws CENTRED on x (local_1c = x*s - k, local_24 = x*s + k).
+                    // The port models profile 0 on its keyboard row from the ea98
+                    // cursor (see Region A note); joypad rows stay parked at the
+                    // choice-0 position. [SCOPED: other profiles not modelled.]
+                    float ix = (85.0f * kVScale) - isw * 0.5f;
+                    std::uint32_t itint = white;
+                    if (h_icon == kHandleInputKbd) {
+                        const std::int32_t sel =
+                            *reinterpret_cast<const std::int32_t*>(0x0067ea98u);
+                        const float cx = (sel >= 1 && sel <= 6)
+                                             ? 170.0f + (sel - 1) * 70.0f : 85.0f;
+                        ix = cx * kVScale - isw * 0.5f;
+                        if (sel >= 1 && sel <= 5)      itint = kSwatch[sel - 1];
+                        else if (sel == 6)             itint = 0xffD7D7D7u;
+                        else                           itint = 0xffE0E0E0u;
+                    }
+                    const float iy = by + (bh - ish) * 0.5f;
                     if (g_inputicons_ready)
-                        HudIm2DQuad(h_icon, ix, iy, isw, ish, white, uv_full);
+                        HudIm2DQuad(h_icon, ix, iy, isw, ish, itint, uv_full);
                     if (g_font.ready()) {
                         wchar_t num[2] = { static_cast<wchar_t>(L'1' + r), 0 };
                         const float ncell2 = 0.55f * 0.0708f * 480.f * kVScale;
@@ -5058,18 +5106,18 @@ bool RenderFrame() {
                     }
                 }
             }
-            // Player cursor (FUN_004335f0 per-player controller at DAT_0067eaf8):
-            // the device icon sits under the player's currently-selected colour
-            // column and MOVES horizontally with L/R (g_csel_p1_car). Single-
-            // player flow = one cursor; the keyboard sprite is drawn WIDER per the
-            // user. [residual: multiplayer = one cursor per active player from the
-            // setup-flow state, not yet tracked.]
-            // REMOVED 2026-08-28: this free-floating cursor was the placeholder
-            // that stood in while the controller rows above did not exist. The
-            // original draws NO such element — its device icons live at the LEFT
-            // of each row (which is also the "unselected zone at the left of all
-            // the icons" the user described), and nothing sits under the colour
-            // columns. Keeping it painted a second keyboard over the new bars.
+            // [#1b 2026-09-07 CORRECTION, re-corrected 2026-09-09] The 2026-08-28
+            // note was wrong to say "the original draws NO selection element", and
+            // the 2026-09-07 note was wrong to say the icon does not translate.
+            // Ghidra (Mashed_pool14): FUN_004335f0 draws the six tiles STATIC and
+            // the per-profile device icon is the selection indicator; the icon's X
+            // is recomputed from the choice by FUN_004332a0 (85.0 for no choice,
+            // 170 + 70*(choice-1) otherwise) and its tint by FUN_004335f0's
+            // local_1c[choice] table. Both are now driven in the row loop above.
+            // What the 2026-08-28 removal got right: there is no SECOND, free-
+            // floating cursor — the moving element is the profile's own icon.
+            // selCol (g_csel_p1_car, clamped 0..5) is retained as the tile mirror;
+            // the icon reads ea98 raw to keep the 0=grey / 6=silver states.
             (void)selCol;
         }
 
@@ -5189,9 +5237,40 @@ bool RenderFrame() {
                         if (s_players < 2) s_players = 2;
                         if (s_players > 4) s_players = 4;
                     }
-                    for (int i = 0; i < 12; ++i)
-                        *reinterpret_cast<std::int32_t*>(0x0067eaf0 + i * 12) =
-                            (i < s_players) ? (i + 1) : 0;   // distinct picks 1..N
+                    // [#5 2026-09-07] Player 0's choice comes from the port's LIVE
+                    // colour cursor 0x0067ea98 (1..6; 0=grey -> fall back to 1).
+                    // CarSlotAssign then writes SlotColour[0] = choice-1 (0x0042b9e0
+                    // step 5), so the livery shows the picked colour instead of
+                    // always red. Other profiles take the lowest UNUSED choices so
+                    // the assigner's duplicate check never trips.
+                    // [2026-09-09 Ghidra, Mashed_pool14 — D-11066's "missing writer"
+                    // ANSWERED] The original has NO ea98 -> eaf0 copy. The choice
+                    // array 0x0067eaf0 (stride 12: choice, x, y) IS the live cursor:
+                    // FUN_004332a0 (0x004332a0) increments/decrements each profile's
+                    // choice in place on L/R (guards 0 < c and c < 6) while
+                    // DAT_007f1a0c == 0x1000. The only other writers, FUN_0043dfd0's
+                    // loops at 0x0043f1f1 and 0x0043f2b3, store ONE register value
+                    // (EBP, value [UNCERTAIN]) into all 12 entries right before
+                    // `push 4; call 0x0043d2a0` — a bulk reset on entering screen 4,
+                    // not a per-profile commit. This block therefore stays as a
+                    // [SCOPED] shim: it materialises eaf0 from the port's cursor at
+                    // confirm time; the faithful shape is to make eaf0 the cursor.
+                    {
+                        const std::int32_t cur =
+                            *reinterpret_cast<std::int32_t*>(0x0067ea98);
+                        const std::int32_t c0 = (cur >= 1 && cur <= 6) ? cur : 1;
+                        std::int32_t nxt = 1;
+                        for (int i = 0; i < 12; ++i) {
+                            std::int32_t choice = 0;
+                            if (i == 0) {
+                                choice = c0;
+                            } else if (i < s_players) {
+                                while (nxt == c0) ++nxt;   // never dup player 0's colour
+                                choice = nxt++;
+                            }
+                            *reinterpret_cast<std::int32_t*>(0x0067eaf0 + i * 12) = choice;
+                        }
+                    }
                     const std::uint32_t asg = CarSlotAssign();
                     if (asg == 0x1000u) {
                         for (int off = 0; off < 0x90; off += 0xc) {
