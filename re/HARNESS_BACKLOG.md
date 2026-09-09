@@ -13,6 +13,11 @@ idling or reviving dead batch lanes.
 - Items are ordered by measured ROI (AUDIT_2026-06-09 + the c2c3 pipeline lessons).
 - Refresh this list at milestone boundaries, same cadence as the master plan §1 counts.
 
+> **See also `re/TOOLING_TODO.md` (opened 2026-09-09)** — NEW instruments that do not
+> exist yet (TT-1..TT-9), as opposed to this file's pulls inside the lanes that do.
+> TT-9 proposes reranking THIS list by rows-unlocked: the x87 ST0 handler named as NEXT
+> PULL below unlocks 6 frontier rows, while the generalised mutator snapshot lane covers 43.
+
 ## Backlog (ROI order)
 
 1. **New `arg_type` handlers** — the #1 measured lever. Extend `re/frida/diff_template.js` for
