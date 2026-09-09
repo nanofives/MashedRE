@@ -128,6 +128,15 @@ def main():
     footprints = build_footprints(pe, base, bounds)
 
     sym_rva = {sname: srva for (sname, srva) in regs}
+    print("indexing defined symbols across %d objects..." % len(list(OBJ_ASI.glob('*.obj'))))
+    defined_in = {}
+    for op in OBJ_ASI.glob('*.obj'):
+        try:
+            for x in parse_coff(op.read_bytes())[1]:
+                if x['sec'] > 0 and x['name'] not in defined_in:
+                    defined_in[x['name']] = op
+        except Exception:                                    # noqa: BLE001
+            continue
     obj_cache = {}
     rows, tally = [], collections.Counter()
     for (sym, rva), cpp in sorted(regs.items(), key=lambda kv: kv[0][1]):
@@ -158,18 +167,45 @@ def main():
         # every original address reads as missing. Follow one level into local callees
         # and use the UNION as our effective footprint. Verified by hand on 4 rows.
         local_defs = {x['name'] for x in parse_coff(obj_cache[objp])[1] if x['sec'] > 0}
+        # cross-TU: a shared helper often lives in ANOTHER object (FastSqrt calls
+        # RwLutGuard::Resolve, defined in its own TU), so a same-object-only union
+        # cannot reach it. defined_in maps every defined symbol -> its object.
+        # TRADE-OFF: the wider the union, the weaker the test -- a real defect can hide
+        # behind a helper that happens to touch the right address. Depth is capped at 2
+        # and every followed symbol is recorded in the CSV's `tests` column.
         wrapped, our_data = [], set(fo[0])
-        for _off, _t, tname in function_relocs_named(obj_cache[objp], sym):
-            if tname in local_defs and tname.lstrip('_') != sym:
-                try:
-                    b, br, _ = function_bytes_from_obj(obj_cache[objp], tname.lstrip('_'))
-                except SystemExit:
-                    continue
-                our_data |= set(operand_facts(disasm(b, rva), [r[0] for r in br], rva, ents)[0])
-                wrapped.append(tname)
+        # Follow local callees to DEPTH 2. One level is not enough: a shared helper may
+        # itself delegate (Math/RwLutGuard.h RwLutRoot() reads 0x007d3ff8/0x007d3ffc for
+        # FastSqrt & friends), and naked shims sometimes chain shim -> body -> impl.
+        seen, frontier, cur_home = {sym}, [sym], {sym: objp}
+        for _depth in range(2):
+            nxt = []
+            for cur in frontier:
+                cur_obj = cur_home.get(cur, objp)
+                for _off, _t, tname in function_relocs_named(obj_cache[cur_obj], cur):
+                    base_name = tname.lstrip('_')
+                    home = objp if tname in local_defs else defined_in.get(tname)
+                    if home is None or base_name in seen:
+                        continue
+                    seen.add(base_name)
+                    if home not in obj_cache:
+                        obj_cache[home] = home.read_bytes()
+                    cur_home[base_name] = home
+                    try:
+                        b, br, _ = function_bytes_from_obj(obj_cache[home], base_name)
+                    except SystemExit:
+                        continue
+                    our_data |= set(operand_facts(disasm(b, rva), [r[0] for r in br], rva, ents)[0])
+                    wrapped.append(tname)
+                    nxt.append(base_name)
+            frontier = nxt
 
+        # ASYMMETRIC, deliberately: the callee union may only EXPLAIN missing addresses
+        # ("the original touches X inline; we touch it inside a helper we call"). It must
+        # not contribute EXTRAS -- a helper's own globals say nothing about the original,
+        # and folding them in made CANDIDATE go UP (57 -> 62) when first tried.
         miss = sorted(set(fg[0]) - our_data)
-        extra = sorted(our_data - set(fg[0]))
+        extra = sorted(set(fo[0]) - set(fg[0]))
         if not miss and not extra:
             if wrapped:
                 tally['WRAPPER'] += 1
