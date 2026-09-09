@@ -112,10 +112,19 @@ def load_conf():
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--conf", default="C3,C4")
+    ap.add_argument("--rva", action="append", default=[],
+                    help="check only this RVA (repeatable); ignores --conf. "
+                         "Use after authoring a hook, before spending a Frida boot.")
+    ap.add_argument("--symbol", action="append", default=[],
+                    help="check only this exported symbol (repeatable); ignores --conf.")
+    ap.add_argument("--quiet", action="store_true",
+                    help="print only the verdict lines (for workflow steps)")
     ap.add_argument("--out", default=str(ROOT / "re" / "parity" / "matchdiff_sweep.csv"))
     ap.add_argument("--obj-dir", default=str(OBJ_ASI))
     a = ap.parse_args()
     want = set(a.conf.split(","))
+    pick_rva = {int(x, 16) for x in a.rva}
+    pick_sym = set(a.symbol)
     objdir = Path(a.obj_dir)
 
     regs, dupes = load_registrations()
@@ -140,7 +149,10 @@ def main():
     rows, tally = [], collections.Counter()
     for (sym, rva), (cpp, installed) in sorted(regs.items(), key=lambda kv: kv[0][1]):
         c = conf.get(rva, ("", "", ""))
-        if c[0] not in want:
+        if pick_rva or pick_sym:
+            if rva not in pick_rva and sym not in pick_sym:
+                continue
+        elif c[0] not in want:
             continue
         rec = dict(rva="%08x" % rva, symbol=sym, name=c[1], conf=c[0],
                    subsystem=c[2], file=cpp.name,
@@ -186,6 +198,10 @@ def main():
         tally[rec["verdict"]] += 1
         rows.append(rec)
 
+    if not rows:
+        print("no rows matched (unknown RVA/symbol, or the TU is not in this target)")
+        return 2
+
     outp = Path(a.out)
     outp.parent.mkdir(parents=True, exist_ok=True)
     with open(outp, "w", encoding="utf-8", newline="") as fh:
@@ -193,6 +209,19 @@ def main():
                            ["rva", "symbol", "name", "conf", "subsystem", "file", "verdict", "detail"])
         w.writeheader()
         w.writerows(rows)
+
+    if pick_rva or pick_sym:
+        # single-hook mode: terse verdict + nonzero exit on FAIL, so it can gate a
+        # workflow step (promote-c3-batch per-function step 6).
+        bad = 0
+        for r in rows:
+            print("%s %s  %-30s %s" % (r["verdict"], r["rva"], r["symbol"][:30], r["detail"][:90]))
+            bad += (r["verdict"] == "FAIL")
+        if bad:
+            print("\n%d FAIL -- the port references .data addresses the original does not "
+                  "(or misses ones it does). Re-read the plate BEFORE spending a Frida boot; "
+                  "see the artifact classes in re/analysis/matchdiff_triage_20260909.md." % bad)
+        return 1 if bad else 0
 
     print("registrations parsed: %d (%d duplicate sites)" % (len(regs), len(dupes)))
     print("rows compared (%s): %d" % (a.conf, len(rows)))

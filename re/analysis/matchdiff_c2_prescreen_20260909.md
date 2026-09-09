@@ -71,3 +71,29 @@ single-player race) is still required before installing it.
 comparable, only the install is disabled. The sweep now records `installed=yes|COMMENTED` per
 row rather than filtering those out, because "a reimpl exists but is not hooked" is exactly the
 state D-11067 was mis-reading, and it is worth seeing.
+
+## Wired into `promote-c3-batch` (2026-09-09)
+
+The naive reading of "wire it into candidate selection" is impossible and the skill now says
+so: **a fresh C3 candidate has no reimplementation yet**, so there is nothing to check at
+selection time. It is wired at the two points where it can actually work.
+
+**(a) Per-function, after authoring, before the Frida boot** — `SKILL.md` per-function
+workflow step 6:
+
+    py -3.12 re/tools/matchdiff_sweep.py --symbol <Name>
+    # exit 0 = PASS, 1 = FAIL, 2 = symbol not found
+
+New single-hook mode (`--symbol` / `--rva`, repeatable) resolves the object and the original
+size itself, prints one verdict line per hook, and exits nonzero on FAIL so it can gate a
+workflow step. This is the cheapest possible moment to catch the U-9085 / U-9086 class: seconds
+of offline compute instead of a boot plus a harness slot spent on a diff that was going to be RED.
+
+**(b) Batch generation, on the filter-3 "stale-impl / tracker-drift" rows** — those DO have a
+compiled reimpl, so `--conf C2` applies. A drift row that FAILs is not a no-op re-classify; its
+reimplementation disagrees with the original about which globals it touches.
+
+Also added to the skill: a `(v5)` row in the pre-flight viability matrix, and two anti-patterns —
+**treating a PASS as promotion evidence** (it is a detector, not a gate; it can justify a re-read
+or a demotion, never a C-level), and skipping the check because the hook "looks right".
+

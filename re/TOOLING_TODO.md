@@ -54,6 +54,10 @@ corresponds exactly. Whether a period compiler closes it is untested.
 > hypothesis disproven, union extended cross-TU and made asymmetric; 52 candidates
 > genuinely open. C2 pre-screen: 176/185 PASS (95.1%), 3 candidates — worth wiring
 > into `promote-c3-batch` selection, but it reaches only 185 of 2,536 C2 rows.
+> **Wired into `promote-c3-batch` (2026-09-09):** per-function workflow step 6
+> (`matchdiff_sweep.py --symbol <Name>`, runs after authoring and BEFORE the Frida
+> boot, nonzero exit on FAIL) plus filter-3 drift-row validation, a `(v5)` matrix row,
+> and two anti-patterns. Not a candidate filter — a fresh candidate has no reimpl to check.
 > **Next:** hand-review the 52 (start with the 9 at size ratio <0.5).
 
 

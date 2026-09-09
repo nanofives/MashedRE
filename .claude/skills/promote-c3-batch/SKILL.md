@@ -111,6 +111,12 @@ invented arg_types), so dispatch prompts don't need to restate them.
    ```
    Emit a separate "tracker-drift" report alongside the batch file. The user runs a single `re-classify` pass on those rows rather than burning worker sessions on no-op "promotions".
 
+   **Validate those drift rows with the operand pre-screen** — they already have a compiled reimpl, so it applies at batch-generation time (unlike fresh candidates, which have nothing to check yet):
+   ```bash
+   py -3.12 re/tools/matchdiff_sweep.py --conf C2 --out re/parity/matchdiff_sweep_c2.csv
+   ```
+   Calibration 2026-09-09: 185 comparable C2 rows, **176 PASS / 9 FAIL (95.1%)**. A drift row that FAILs the pre-screen is not a no-op re-classify — its reimpl disagrees with the original on which globals it touches, so it needs a re-read before any promotion. Note the pre-screen also reports `installed=yes|COMMENTED`: **66 of 1,336 registrations are commented out**, i.e. the reimpl exists but is not hooked. That state reads as "not ported" in every other tracker view and is worth surfacing (it is how D-11067 came to claim the port "skips" `FUN_0040d590`, which it does not).
+
 4. **Inline-`[UNCERTAIN]`-in-body filter.** A `[UNCERTAIN]` marker anywhere in the note body OUTSIDE the `## Uncertainties` collected-items section is a hard refusal per the `re-classify` rubric. Markers inside `## Uncertainties` are legitimate (the catalog of known holes); inline markers in `## Mechanical description`, `## Constants`, etc. are not.
    ```bash
    # Returns 0 (and prints the path) if the note has inline UNCERTAIN outside ## Uncertainties.
@@ -174,6 +180,7 @@ Each filter above rejects a specific failure mode. Run the recipes, log how many
 | (v4-b) Live-state side-effect call | Synthetic Frida call corrupts game state | c3_batch_j s6: 4 of 5 refused candidates (DialogBoxParam, fopen/fwrite/fclose, CloseHandle) | Route to the **STATE lane** (§ below) — NOT to this fanout. Genuinely undiffable only if the side effect is irreversible (file/COM/handle); state-*reading* rows are the STATE lane's queue |
 | (v4-c) Tighter callee regex | v3 missed RVAs embedded in `FUN_xxxxxxxx`-style mentions (\b doesn't fire on `_`-boundary). The 0x004669b0 note had 4 C1 callees v3 silently dropped. | c3_batch_j: 36 of 107 v3-passes additionally rejected once `FUN_/DAT_/LAB_` prefixes are recognized | Defer; queue a callee-first promotion |
 | (v4-d) `Blocks: <C-level>` honoring | Catalogued U-IDs with `Blocks: C3` cannot be C3-promoted regardless of where the marker sits in the note | c3-batch-i-s1: 0x005aea00 lost to U-0125 Blocks=C3 (worker-side); v4 catches this at filter time | Defer until the U-ID is resolved |
+| (v5) Operand pre-screen (`matchdiff_sweep.py`) | Transcription defect: the reimpl touches the wrong `.data` globals | 2026-09-09: C2 pool 176/185 PASS; C3/C4 pool 932/1086, and it found U-9086 (a wrong pointer model in a **C4**-marked row) | **Not a candidate filter** — a fresh candidate has no reimpl to check. Applies (a) per-function after authoring, before the Frida boot (workflow step 6), and (b) to filter-3 drift rows at generation time |
 
 **Aggregate calibration.** c3_batch_h fielded ~30 candidates across 6 sessions; the upgraded filter set would have rejected roughly 15 of them before reaching any worker, and sessions 2/3/4 (which landed 0 promotions) would have been re-bucketed instead of run.
 
@@ -447,6 +454,18 @@ re-classify transactionally. Stay inside this worktree. Do not touch main.
      non-trivial input domain (≥10 test vectors for scalar; ≥10 sentinels
      for read_global; cover edge cases — 0, MAX, sign bit, alternating bits).
 5. Build: `cmd /c mashedmod\build.bat > log\build_<rva>.txt 2>&1`. Halt on failure.
+6. OPERAND PRE-SCREEN — run BEFORE any Frida boot. Costs seconds, offline:
+       py -3.12 re/tools/matchdiff_sweep.py --symbol <Name>
+   exit 0 = PASS, 1 = FAIL, 2 = symbol not found (TU missing from the .asi list).
+   It compares the .data globals your compiled hook touches against the ones the
+   ORIGINAL touches at that RVA. A FAIL means the transcription references a global
+   the original does not (or misses one it does) — re-read the plate and fix it NOW,
+   before spending a boot and a harness slot on a diff that was going to be RED.
+   A PASS is NOT evidence for promotion: identical operands with wrong control flow
+   still passes. It only says "no transcription defect detected".
+   Some FAILs are legitimate compiler/source-shape artifacts (loop-vs-unrolled,
+   base+offset folding, wrapper delegation). Check your delta against the six classes
+   in re/analysis/matchdiff_triage_20260909.md before assuming a defect.
 
 # Batch verification (run ONCE after all K hooks authored)
 1. scripts/frida_pool.sh cleanup
@@ -537,6 +556,8 @@ When invoked:
 - Emitting a batch that requires sweep coordination as the default — the C3 path should self-classify per-worktree; sweep is the exception.
 - Failing to declare the worktree branch name in every session block. Sessions that share branches will collide on commit.
 - Shipping a candidate with only a *suggested/approximate* arg_type. Every batched RVA must carry a **confirmed** arg_type that EXISTS in `re/frida/diff_template.js` today (grep the supported list and match it to the note's recovered signature). "Probably maps to int_pair" is how c3_batch_ab s1 ended up with all 7 candidates needing harness extensions mid-session → a forced stop-and-ask. If a candidate needs a new arg_type, it does NOT go in the batch — route it to a harness-extension pre-pass.
+- Treating an operand pre-screen PASS as promotion evidence. It is a transcription-defect *detector*, not a gate: identical operands with wrong control flow still passes, and it never substitutes for the `diff-original` Frida diff. It can justify a re-read or a demotion; it can never justify a C-level.
+- Skipping the pre-screen because the hook "looks right", then burning a boot on a RED diff the check would have caught in seconds.
 - Putting a whole session's worth of must-extend candidates in one block. If a session's confirmed-arg_type yield is < K, shrink that session or backfill from a different cluster; never ship a session that can only land 0–1 hooks (that guarantees a stop). When the viable pool is smaller than the requested shape, size DOWN and say so — do not pad with un-promotable RVAs.
 
 ## Default batch + scale guidance
