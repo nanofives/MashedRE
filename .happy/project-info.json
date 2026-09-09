@@ -1,15 +1,109 @@
 {
-  "title": "Mashed RE — frontend playtest loop",
-  "updatedAt": "2026-09-07T02:00:00Z",
+  "title": "Mashed RE — M2 Faithful Race (statediff residual)",
+  "updatedAt": "2026-09-09T22:15:00Z",
   "sections": [
     {
-      "heading": "Wave 3 — playtest fan-out",
+      "heading": "Milestone status",
       "fields": [
-        { "label": "Colour-select crash (#1)", "value": "FIXED — call 0x00431b80 guarded under MASHED_STANDALONE", "kind": "text" },
-        { "label": "Colour select (#1b)", "value": "input works; NO visible selection (selCol discarded) — faithful fix queued for account3", "kind": "text" },
-        { "label": "Row-icon col-3 arms (B)", "value": "MERGED + built (lock/dot/check per cup col-3)", "kind": "text" },
-        { "label": "Queued for account3 (Ghidra)", "value": ["#1b colour-select render (FUN_004368e0/004335f0)", "#5 all-red ea98->eaf0 writer", "#4 points FUN_0040d590", "#3 pause chrome FUN_0043d7c0/0040de10"], "kind": "list" },
-        { "label": "Specs", "value": ["colour_select_visual_spec_20260907.md", "points_scoring_spec_20260907.md", "pause_menu_chrome_spec_20260907.md"], "kind": "list" }
+        {
+          "label": "Active phase",
+          "value": "M2 Faithful Race — critical path: statediff residual",
+          "kind": "text"
+        },
+        {
+          "label": "D1 renderer",
+          "value": "librw IS default since 2026-08-19 (ROADMAP §D1 drift fixed 2026-09-09)",
+          "kind": "text"
+        },
+        {
+          "label": "D2 physics",
+          "value": "MASHED_REAL_PHYSICS still opt-in; blocked on A8 slip deficit",
+          "kind": "text"
+        },
+        {
+          "label": "Next gate",
+          "value": "M4 Ship (HUMAN-GATED tail)",
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "heading": "Port metrics",
+      "fields": [
+        {
+          "label": "C4 verified",
+          "value": 185,
+          "kind": "number"
+        },
+        {
+          "label": "C3",
+          "value": 921,
+          "kind": "number"
+        },
+        {
+          "label": "Total hooks",
+          "value": 5930,
+          "kind": "number"
+        }
+      ]
+    },
+    {
+      "heading": "Wave 3 playtest",
+      "fields": [
+        {
+          "label": "Status",
+          "value": "Colour-select icon fix committed (Ghidra-cited), desktop screenshot pending",
+          "kind": "text"
+        },
+        {
+          "label": "Fixed",
+          "value": [
+            "colour-select crash (#1)",
+            "Challenge-Select col-3 row icons",
+            "colour-select icon slide+tint (#1b, screenshot-pending)"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Pending",
+          "value": [
+            "desktop verify of all wave-2/3 commits",
+            "points scoring (#4, D-11067)",
+            "pause menu chrome (#3, D-11068)",
+            "make 0x0067eaf0 the cursor (D-11066 follow-up)"
+          ],
+          "kind": "list"
+        }
+      ]
+    },
+    {
+      "heading": "Tooling review (2026-09-09)",
+      "fields": [
+        {
+          "label": "Byte-match spike",
+          "value": "NOT reachable with cl 19.x — divergence is codegen-era only, logic matches (TT-1 blocked on a period cl 13.00)",
+          "kind": "text"
+        },
+        {
+          "label": "New instrument",
+          "value": "re/tools/matchdiff.py — static operand-correspondence check, 3/3 good PASS, 2/2 injected defects FAIL",
+          "kind": "text"
+        },
+        {
+          "label": "Backlog",
+          "value": "TT-1..TT-9 in re/TOOLING_TODO.md",
+          "kind": "text"
+        },
+        {
+          "label": "Build",
+          "value": "per-TU obj cache: 1-file edit ~18 s (was ~2 min)",
+          "kind": "text"
+        },
+        {
+          "label": "Branch debt",
+          "value": "main 272+ commits behind race/first-frame-parity; 12 stale worktrees",
+          "kind": "text"
+        }
       ]
     }
   ]
