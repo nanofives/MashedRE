@@ -23,6 +23,7 @@
 //   0x00410860  ScoreThresholdStateCheck   (591b, score/timeout state-machine)
 //   0x00412cf0  LabelTrailRecordAppend     (312b, lerp+color trail record)
 #include "../Core/HookSystem.h"
+#include "../Core/ShadowAB.h"
 
 #include <cstdint>
 #include <cstring>
@@ -536,7 +537,7 @@ typedef void          (__cdecl* Fn_004c51a0_t)(float*, float*, int);
 typedef void          (__cdecl* Fn_004c4d20_t)(float*, float*, int, int);
 } // namespace
 
-extern "C" __declspec(dllexport) void __cdecl TransformMatrixUpdate(int param_1) {
+static void TransformMatrixUpdate_impl(int param_1) {
     auto fn_label    = as_fn<Fn_0040dc90_t>(kFn_0040dc90_RVA);
     auto fn_fetch    = as_fn<Fn_0046d4a0_t>(kFn_0046d4a0_RVA);
     auto fn_accum    = as_fn<Fn_004c51a0_t>(kFn_004c51a0_RVA);
@@ -605,7 +606,33 @@ extern "C" __declspec(dllexport) void __cdecl TransformMatrixUpdate(int param_1)
     (void)local_18; (void)local_14; (void)local_10;  // silence unused-warning
 }
 
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(TransformMatrixUpdate, 0x00442440);
+// ─── 0x00442440 shadow A/B (TT-11) ──────────────────────────────────────────────────
+// Promoted through the in-process shadow lane because the FRIDA lane cannot diff it:
+// D-10793 refused it at C3 with "harness has no struct_ptr arg_type for matrices". Here the
+// argument is passed by the compiler at the real call site, so no arg_type is needed at all.
+//
+// OUTPUT REGION. Everything this function mutates lives in one contiguous span of the caller
+// struct, so a single snapshot covers it:
+//   param_1+0x4c .. +0x8b   the 16-float matrix (written in step 1, then accumulated into by
+//                           RwMatrixTranslate 0x004c51a0 / RwMatrixRotate 0x004c4d20)
+//   param_1+0xc0, +0xc8     the two int state fields (steps 3)
+// 0x4c + 0x80 = 0xcc covers all three; the 0x8c..0xbf gap is untouched by both sides.
+//
+// SAFE TO DOUBLE-EXECUTE: the sampled call runs the original AND our port. The other two
+// callees are pure getters - 0x0040dc90 UtilSlotIndexCondGet (C4) and 0x0046d4a0
+// PtrCompute881ec8 (C3) - and the two matrix ops write only inside the snapshotted span,
+// so nothing escapes the restore.
+extern "C" __declspec(dllexport) void __cdecl TransformMatrixUpdate(int param_1) {
+    SHADOW_AB_COUNTER(ab, "TransformMatrixUpdate", 0x00442440u, ShadowAB::kPhaseRace);
+    ShadowAB::RunRegion(ab, TransformMatrixUpdate_impl,
+                        reinterpret_cast<void*>(param_1 + 0x4c), 0x80, param_1);
+}
+// STILL DISABLED 2026-09-09 (TT-11 shadow A/B REFUSED the promotion, see D-10793):
+// the port does NOT reproduce the original. 48/48 sampled in-race calls diverged, always at
+// mat[12] pos.x and mat[14] pos.z, while mat[13] pos.y matched in all 48. (The other three
+// differing fields -- mat[7], mat[11], mat[15] -- are RwMatrix PADs, which this project
+// excludes from bit-identity by convention.) Re-enable only to work the defect.
+// RH_ScopedInstall(TransformMatrixUpdate, 0x00442440);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0043c000  TimerSlotTickDispatcher

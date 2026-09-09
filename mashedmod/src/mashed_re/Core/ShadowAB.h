@@ -276,9 +276,11 @@ void RunRegion(Counter& c, F impl, void* region, std::size_t bytes, A... args) {
     unsigned char before[1024], orig_out[1024];
     std::memcpy(before, region, bytes);
 
-    HookSystem::Uninstall(static_cast<std::size_t>(idx));
-    reinterpret_cast<F>(c.rva)(args...);
-    HookSystem::Install(static_cast<std::size_t>(idx));
+    {   // same window (and therefore the same PATCHBYTE proof) as Run(); RunRegion used to
+        // inline its own uninstall/install and silently produced results with no proof.
+        OriginalWindow win(c);
+        if (win.ok()) reinterpret_cast<F>(c.rva)(args...);
+    }
 
     std::memcpy(orig_out, region, bytes);
     std::memcpy(region, before, bytes);          // restore before running ours
@@ -296,8 +298,20 @@ void RunRegion(Counter& c, F impl, void* region, std::size_t bytes, A... args) {
                                           bytes - words * 4) != 0)
         ++nd;
 
-    char det[96] = {};
-    if (nd) wsprintfA(det, " fields=%d/%d", nd, static_cast<int>(words));
+    // Name the offsets. "5 of 32 differ" cannot be triaged; "+0x00,+0x04,..." can, and it is
+    // what separates a real port defect from a region whose bounds were guessed wrong.
+    char det[160];
+    int dp = wsprintfA(det, " fields=%d/%d", nd, static_cast<int>(words));
+    if (nd) {
+        int shown = 0;
+        for (std::size_t i = 0; i < words && shown < 8; ++i) {
+            if (std::memcmp(orig_out + i * 4,
+                            static_cast<unsigned char*>(region) + i * 4, 4) != 0) {
+                dp += wsprintfA(det + dp, "%s+%02x", shown ? "," : " @", (int)(i * 4));
+                ++shown;
+            }
+        }
+    }
     Record(c, idx, nd, det);
 }
 
