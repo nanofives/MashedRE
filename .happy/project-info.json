@@ -1,107 +1,98 @@
 {
-  "title": "Mashed RE — M2 Faithful Race (statediff residual)",
-  "updatedAt": "2026-09-09T22:15:00Z",
+  "title": "Mashed RE — D1 Verification & Default-Build",
+  "updatedAt": "2026-09-09T23:55:00Z",
   "sections": [
     {
-      "heading": "Milestone status",
+      "heading": "Phase & Status",
       "fields": [
         {
-          "label": "Active phase",
-          "value": "M2 Faithful Race — critical path: statediff residual",
+          "label": "ROADMAP phase",
+          "value": "D1 — Invert env-gated paths to default; verify all C3/C4",
           "kind": "text"
         },
         {
-          "label": "D1 renderer",
-          "value": "librw IS default since 2026-08-19 (ROADMAP §D1 drift fixed 2026-09-09)",
+          "label": "Current branch",
+          "value": "race/first-frame-parity",
           "kind": "text"
         },
         {
-          "label": "D2 physics",
-          "value": "MASHED_REAL_PHYSICS still opt-in; blocked on A8 slip deficit",
+          "label": "Active work",
+          "value": "TT-2 operand-correspondence sweep + triage",
           "kind": "text"
         },
         {
-          "label": "Next gate",
-          "value": "M4 Ship (HUMAN-GATED tail)",
+          "label": "Recent fix",
+          "value": "U-9086 PerModeRenderMachine (dereference bug, C4→C3)",
           "kind": "text"
         }
       ]
     },
     {
-      "heading": "Port metrics",
+      "heading": "Hook Coverage",
       "fields": [
         {
           "label": "C4 verified",
-          "value": 185,
+          "value": 184,
           "kind": "number"
         },
         {
-          "label": "C3",
-          "value": 921,
+          "label": "C3 high-confidence",
+          "value": 922,
           "kind": "number"
         },
         {
-          "label": "Total hooks",
-          "value": 5930,
+          "label": "C2 mapped",
+          "value": 3972,
+          "kind": "number"
+        },
+        {
+          "label": "Total rows",
+          "value": 5931,
           "kind": "number"
         }
       ]
     },
     {
-      "heading": "Wave 3 playtest",
+      "heading": "TT-2 Sweep Results",
       "fields": [
         {
-          "label": "Status",
-          "value": "Colour-select icon fix committed (Ghidra-cited), desktop screenshot pending",
+          "label": "Sweep scope",
+          "value": "1,130 C3/C4 rows, operand .data correspondence",
           "kind": "text"
         },
         {
-          "label": "Fixed",
-          "value": [
-            "colour-select crash (#1)",
-            "Challenge-Select col-3 row icons",
-            "colour-select icon slide+tint (#1b, screenshot-pending)"
-          ],
-          "kind": "list"
+          "label": "Pass rate",
+          "value": "931/1086 (85.7%)",
+          "kind": "text"
         },
         {
-          "label": "Pending",
-          "value": [
-            "desktop verify of all wave-2/3 commits",
-            "points scoring (#4, D-11067)",
-            "pause menu chrome (#3, D-11068)",
-            "make 0x0067eaf0 the cursor (D-11066 follow-up)"
-          ],
-          "kind": "list"
+          "label": "Candidates remain",
+          "value": "57 open (C3: 36, C4: 21)",
+          "kind": "text"
+        },
+        {
+          "label": "Lead resolution",
+          "value": "RWP gate explained (5 rows), RW-math union fixed (5 rows)",
+          "kind": "text"
         }
       ]
     },
     {
-      "heading": "Tooling review (2026-09-09)",
+      "heading": "Next Up",
       "fields": [
         {
-          "label": "Byte-match spike",
-          "value": "NOT reachable with cl 19.x — divergence is codegen-era only, logic matches (TT-1 blocked on a period cl 13.00)",
+          "label": "Wave 3 playtest",
+          "value": "colour-select committed, desktop verify pending (Ghidra-gated D-11065/67/68)",
           "kind": "text"
         },
         {
-          "label": "New instrument",
-          "value": "re/tools/matchdiff.py — static operand-correspondence check, 3/3 good PASS, 2/2 injected defects FAIL",
-          "kind": "text"
-        },
-        {
-          "label": "Backlog",
-          "value": "TT-1..TT-9 in re/TOOLING_TODO.md",
+          "label": "Flag inventory",
+          "value": "138 live env vars, 3 migration debt (librw, physics, inert rw_render)",
           "kind": "text"
         },
         {
           "label": "Build",
-          "value": "per-TU obj cache: 1-file edit ~18 s (was ~2 min)",
-          "kind": "text"
-        },
-        {
-          "label": "Branch debt",
-          "value": "main 272+ commits behind race/first-frame-parity; 12 stale worktrees",
+          "value": "per-TU obj cache live (~18 s per edit, was 2 min)",
           "kind": "text"
         }
       ]
