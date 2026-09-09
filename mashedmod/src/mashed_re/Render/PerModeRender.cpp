@@ -86,9 +86,28 @@ static FUN_004041c0_t const s_FUN_004041c0 =
 // DAT_007f0fd0 — game-mode/screen selector; compared against 5, 8, 9, 10.
 static constexpr std::uintptr_t kGameMode_007f0fd0 = 0x007f0fd0u;
 
-// DAT_007d3ff8 — RW globals base; [0] = camera ptr, [8] = render-state fn-ptr.
-// Layout: uint32_t* array at 0x007d3ff8; element[0] = camera; element[8] = rs_fn.
-static constexpr std::uintptr_t kRwGlobals_007d3ff8 = 0x007d3ff8u;
+// DAT_007d3ff8 — holds a POINTER to the RW globals/device object. Both fields are
+// reached THROUGH that pointer, not by address arithmetic on 0x007d3ff8 itself:
+//   0x00404335  mov eax, [0x7d3ff8]   ; load the pointer
+//   0x0040433a  mov esi, [eax]        ; camera   = *(ptr + 0x00)
+//   0x0040437c  mov ecx, [0x7d3ff8]
+//   0x00404385  call [ecx + 0x20]     ; rs_fn    = *(ptr + 0x20)
+// [U-9086, fixed 2026-09-09] The previous comment here called it an "array at
+// 0x007d3ff8" and the two helpers below dereferenced one level short, so SetRWState
+// read its function pointer from 0x007d4018 — an unrelated .data address. The rest of
+// the tree already had this right (HudFrontendDispatchers_t4.cpp:33 documents the same
+// +0x20 slot as `(**(DAT_007d3ff8 + 0x20))`, i.e. through the pointer); this TU was the
+// lone outlier. Found by the TT-2 operand-correspondence sweep.
+static constexpr std::uintptr_t kRwGlobalsPtr_007d3ff8 = 0x007d3ff8u;
+
+// Camera slot and render-state vtable slot, as offsets INTO the pointed-to object.
+static constexpr std::uint32_t kRwObj_CameraSlot  = 0x00u;   // 0x0040433a  mov esi,[eax]
+static constexpr std::uint32_t kRwObj_RenderState = 0x20u;   // 0x00404385  call [ecx+0x20]
+
+// The RW globals object itself (one dereference of 0x007d3ff8).
+static std::uintptr_t RwGlobalsObj() {
+    return *reinterpret_cast<const std::uintptr_t*>(kRwGlobalsPtr_007d3ff8);
+}
 
 // Camera struct offsets (view-window x/y, cited in analysis note):
 static constexpr std::uint32_t kCamViewWindowX_off = 0x68u;
@@ -114,18 +133,18 @@ static constexpr int kRS8 = 8;
 // Internal helpers
 // ---------------------------------------------------------------------------
 
-// Retrieve camera pointer from RW globals[0].
+// Camera pointer: *(obj + 0x00), where obj = *(0x007d3ff8).
+// 0x00404335 mov eax,[0x7d3ff8] ; 0x0040433a mov esi,[eax]
 static int GetCameraPtr() {
-    return *reinterpret_cast<const int*>(kRwGlobals_007d3ff8);
+    return *reinterpret_cast<const int*>(RwGlobalsObj() + kRwObj_CameraSlot);
 }
 
-// Call the RW render-state function: ((fn**)(globals[8]))(state_id, value).
-// DAT_007d3ff8[8] is a function pointer pointer at offset 8*4=32 bytes from base.
+// Render-state call through the object's vtable slot: (*(obj + 0x20))(state_id, value).
+// 0x0040437c mov ecx,[0x7d3ff8] ; 0x00404382 push edi ; 0x00404383 push 6 ;
+// 0x00404385 call [ecx+0x20]   -> cdecl args (state_id, value).
 static void SetRWState(int state_id, int value) {
     using RSFn_t = void (__cdecl*)(int, int);
-    // globals[8] = *(uint32_t*)(kRwGlobals_007d3ff8 + 8*4)
-    const std::uintptr_t rs_fn_ptr_addr = kRwGlobals_007d3ff8 + 8u * sizeof(std::uint32_t);
-    const RSFn_t fn = *reinterpret_cast<RSFn_t*>(rs_fn_ptr_addr);
+    const RSFn_t fn = *reinterpret_cast<RSFn_t*>(RwGlobalsObj() + kRwObj_RenderState);
     fn(state_id, value);
 }
 
