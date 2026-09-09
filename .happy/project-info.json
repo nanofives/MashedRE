@@ -1,100 +1,48 @@
 {
-  "title": "Mashed RE — D1 Verification & Default-Build",
-  "updatedAt": "2026-09-09T23:55:00Z",
+  "title": "Mashed RE — M2 Faithful Race (tooling + evidence integrity)",
+  "updatedAt": "2026-09-09T22:40:00Z",
   "sections": [
     {
-      "heading": "Phase & Status",
+      "heading": "Milestone status",
       "fields": [
-        {
-          "label": "ROADMAP phase",
-          "value": "D1 — Invert env-gated paths to default; verify all C3/C4",
-          "kind": "text"
-        },
-        {
-          "label": "Current branch",
-          "value": "race/first-frame-parity",
-          "kind": "text"
-        },
-        {
-          "label": "Active work",
-          "value": "TT-2 operand-correspondence sweep + triage",
-          "kind": "text"
-        },
-        {
-          "label": "Recent fix",
-          "value": "U-9086 PerModeRenderMachine (dereference bug, C4→C3)",
-          "kind": "text"
-        }
+        { "label": "Active phase", "value": "M2 Faithful Race — critical path: statediff residual", "kind": "text" },
+        { "label": "D1 renderer", "value": "librw IS default since 2026-08-19 (ROADMAP §D1 drift fixed)", "kind": "text" },
+        { "label": "D2 physics", "value": "MASHED_REAL_PHYSICS still opt-in; blocked on A8 slip deficit", "kind": "text" },
+        { "label": "Session close", "value": "2026-09-09 — tree clean @ 466e66f3, 21 commits, no strays", "kind": "text" }
       ]
     },
     {
-      "heading": "Hook Coverage",
+      "heading": "Port metrics",
       "fields": [
-        {
-          "label": "C4 verified",
-          "value": 184,
-          "kind": "number"
-        },
-        {
-          "label": "C3 high-confidence",
-          "value": 922,
-          "kind": "number"
-        },
-        {
-          "label": "C2 mapped",
-          "value": 3972,
-          "kind": "number"
-        },
-        {
-          "label": "Total rows",
-          "value": 5931,
-          "kind": "number"
-        }
+        { "label": "C4 verified", "value": 184, "kind": "number" },
+        { "label": "C3", "value": 922, "kind": "number" },
+        { "label": "Total hooks", "value": 5930, "kind": "number" },
+        { "label": "Trackers", "value": "DEFERRED 677 · UNCERTAINTIES 3040", "kind": "text" }
       ]
     },
     {
-      "heading": "TT-2 Sweep Results",
+      "heading": "New instruments (2026-09-09)",
       "fields": [
-        {
-          "label": "Sweep scope",
-          "value": "1,130 C3/C4 rows, operand .data correspondence",
-          "kind": "text"
-        },
-        {
-          "label": "Pass rate",
-          "value": "931/1086 (85.7%)",
-          "kind": "text"
-        },
-        {
-          "label": "Candidates remain",
-          "value": "57 open (C3: 36, C4: 21)",
-          "kind": "text"
-        },
-        {
-          "label": "Lead resolution",
-          "value": "RWP gate explained (5 rows), RW-math union fixed (5 rows)",
-          "kind": "text"
-        }
+        { "label": "Shadow A/B", "value": "Core/ShadowAB.h — in-process, no Frida, no arg_type; 304 samples / 6 fns / 1 boot", "kind": "text" },
+        { "label": "Operand check", "value": "matchdiff — static .data correspondence; C3/C4 932/1086, C2 176/185", "kind": "text" },
+        { "label": "TTD replay", "value": "asi:<Export> backend works (FastSqrt 128/128); RECORDING blocked by Defender ASR", "kind": "text" },
+        { "label": "Build", "value": "per-TU obj cache: 1-file edit ~18 s (was ~2 min)", "kind": "text" }
       ]
     },
     {
-      "heading": "Next Up",
+      "heading": "Open decisions (blocking)",
       "fields": [
-        {
-          "label": "Wave 3 playtest",
-          "value": "colour-select committed, desktop verify pending (Ghidra-gated D-11065/67/68)",
-          "kind": "text"
-        },
-        {
-          "label": "Flag inventory",
-          "value": "138 live env vars, 3 migration debt (librw, physics, inert rw_render)",
-          "kind": "text"
-        },
-        {
-          "label": "Build",
-          "value": "per-TU obj cache live (~18 s per edit, was 2 min)",
-          "kind": "text"
-        }
+        { "label": "U-9087", "value": "E9-thunk guard: 10 hooks never install (4 C4). Fix re-enables never-run hooks — needs a call", "kind": "text" },
+        { "label": "D-11069", "value": "4 duplicate RVAs whose two copies live in different build targets", "kind": "text" },
+        { "label": "Ready to work", "value": ["D-10793 TransformMatrixUpdate: pos.x/pos.z wrong, pos.y correct", "52 operand candidates (start with the 9 at ratio<0.5)", "grow the shadow lane — adoption is the throughput limit"], "kind": "list" }
+      ]
+    },
+    {
+      "heading": "Standing rules",
+      "fields": [
+        { "label": "Shadow lane", "value": "NEVER --hooks all (phase-2 wedge); check reachability with MASHED_COUNT_RVAS first", "kind": "text" },
+        { "label": "Evidence", "value": "A clean shadow/operand run is evidence for re-classify, never an automatic C-level", "kind": "text" },
+        { "label": "Default-build rule", "value": "No MASHED_* vars at ship; all gates env-var-free", "kind": "text" }
       ]
     }
   ]
