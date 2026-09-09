@@ -151,6 +151,54 @@ inline void Record(Counter& c, int idx, int ndiff, const char* detail) {
     Log(line);
 }
 
+// ── OriginalWindow: the uninstall/reinstall window on its own ───────────────────────
+// Run()/RunRegion() impose a shape: one return value, or one contiguous output region.
+// Several real sites fit neither -- RwpBodyMatrixRefresh writes TWO discontiguous regions
+// (0x40 matrix + 0x10 quaternion) AND returns a pointer. Forcing those into a generic
+// signature would be worse code than the bespoke compare they already have.
+//
+// What they were missing is only the PROOF that the A/B is real. This RAII window gives
+// them exactly that and nothing else: uninstall on entry, reinstall on exit, patch-byte
+// proof logged once per function. The site keeps its own snapshot/compare/log.
+//
+//   {
+//       ShadowAB::OriginalWindow win(ab);            // our JMP is OFF inside this scope
+//       if (win.ok()) reinterpret_cast<Fn>(RVA)(args...);
+//   }                                                // reinstalled here, even on early exit
+//
+// win.idx is -1 when the RVA is not in the registry; callers must check ok() before calling
+// the "original", because without the uninstall that call re-enters our own hook.
+struct OriginalWindow {
+    Counter& c;
+    int      idx;
+
+    explicit OriginalWindow(Counter& ctr) : c(ctr), idx(HookIndex(ctr.rva)) {
+        if (idx < 0) {
+            if (!c.noted) { c.noted = true; Record(c, idx, 0, " SKIP:no-hook-index"); }
+            return;
+        }
+        const unsigned char before = *reinterpret_cast<volatile unsigned char*>(c.rva);
+        HookSystem::Uninstall(static_cast<std::size_t>(idx));
+        const unsigned char after = *reinterpret_cast<volatile unsigned char*>(c.rva);
+        if (!c.proved) {
+            c.proved = true;
+            char pb[112];
+            wsprintfA(pb, "[--] fn=%s PATCHBYTE installed=%02x uninstalled=%02x %s",
+                      c.name, before, after,
+                      (before == 0xE9 && after != 0xE9) ? "A/B-IS-REAL" : "SUSPECT-no-restore");
+            Log(pb);
+            Log("\r\n");
+        }
+    }
+    ~OriginalWindow() {
+        if (idx >= 0) HookSystem::Install(static_cast<std::size_t>(idx));
+    }
+    bool ok() const { return idx >= 0; }
+
+    OriginalWindow(const OriginalWindow&) = delete;
+    OriginalWindow& operator=(const OriginalWindow&) = delete;
+};
+
 // ── return-value comparison ─────────────────────────────────────────────────────────
 // Ret must be trivially copyable and compared BITWISE: `==` on a float would call NaN
 // unequal to itself and +0.0 equal to -0.0, both of which hide real divergence.

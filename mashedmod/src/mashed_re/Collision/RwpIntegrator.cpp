@@ -142,10 +142,14 @@ extern "C" int __cdecl RwpWorldSolverHandle(int world, float dt)
     if (!b5cSelfTestEnabled() || !b5cInRace() || g_b5cInSelfTest ||g_b5cWshCount >= kB5cLeafMax)
         return RwpWorldSolverHandle_impl(world);
     g_b5cInSelfTest = true;
-    int idx = b5cHookIndex(0x0055deb0u), origRet = 0;
-    if (idx >= 0) { HookSystem::Uninstall((std::size_t)idx);
-        origRet = reinterpret_cast<int(__cdecl*)(int, float)>(0x0055deb0u)(world, dt);
-        HookSystem::Install((std::size_t)idx); }
+    SHADOW_AB_COUNTER(ab, "RwpWorldSolverHandle", 0x0055deb0u, ShadowAB::kPhaseRace);
+    int idx, origRet = 0;
+    {   // [TT-11] uninstall window + PATCHBYTE proof; bespoke compare below is unchanged
+        ShadowAB::OriginalWindow win(ab);
+        idx = win.idx;
+        if (win.ok())
+            origRet = reinterpret_cast<int(__cdecl*)(int, float)>(0x0055deb0u)(world, dt);
+    }
     int mineRet = RwpWorldSolverHandle_impl(world);
     char det[64]; wsprintfA(det, " o=%08x,n=%08x", origRet, mineRet);
     b5cLeafLog("RwpWorldSolverHandle", g_b5cWshCount++, idx, (mineRet != origRet) ? 1 : 0, det);
@@ -225,10 +229,14 @@ extern "C" void __cdecl RwpShapeActiveBitSet(int bitsetOwner, int body, int set)
     unsigned short sidx = *(unsigned short*)(body + 0x20);
     unsigned* p = (unsigned*)(*(int*)(bitsetOwner + 0x5c) + (unsigned)(sidx >> 5) * 4);
     unsigned snap = *p;
-    int idx = b5cHookIndex(0x0055ac00u);
-    if (idx >= 0) { HookSystem::Uninstall((std::size_t)idx);
-        reinterpret_cast<void(__cdecl*)(int, int, int)>(0x0055ac00u)(bitsetOwner, body, set);
-        HookSystem::Install((std::size_t)idx); }
+    SHADOW_AB_COUNTER(ab, "RwpShapeActiveBitSet", 0x0055ac00u, ShadowAB::kPhaseRace);
+    int idx;
+    {   // [TT-11] uninstall window + PATCHBYTE proof
+        ShadowAB::OriginalWindow win(ab);
+        idx = win.idx;
+        if (win.ok())
+            reinterpret_cast<void(__cdecl*)(int, int, int)>(0x0055ac00u)(bitsetOwner, body, set);
+    }
     unsigned orig = *p;
     *p = snap;                                                 // restore input
     RwpShapeActiveBitSet_impl(bitsetOwner, body, set);
@@ -280,11 +288,15 @@ extern "C" int* __cdecl RwpBodyMatrixRefresh(int* param_1, void* param_2)
     std::memcpy(snapQuat, quatSlot, 0x10);
 
     // (1) ORIGINAL 0x0055b800 via temporary uninstall (single-threaded physics -> safe)
-    int idx = b5cHookIndex(0x0055b800u);
-    if (idx >= 0) {
-        HookSystem::Uninstall((std::size_t)idx);
-        reinterpret_cast<int*(__cdecl*)(int*, void*)>(0x0055b800u)(param_1, param_2);
-        HookSystem::Install((std::size_t)idx);
+    SHADOW_AB_COUNTER(ab, "RwpBodyMatrixRefresh", 0x0055b800u, ShadowAB::kPhaseRace);
+    int idx;
+    {   // [TT-11] uninstall window + PATCHBYTE proof. This site keeps its bespoke compare:
+        // it writes TWO discontiguous regions (0x40 matrix + 0x10 quat) and returns a
+        // pointer, which neither Run() nor RunRegion() models.
+        ShadowAB::OriginalWindow win(ab);
+        idx = win.idx;
+        if (win.ok())
+            reinterpret_cast<int*(__cdecl*)(int*, void*)>(0x0055b800u)(param_1, param_2);
     }
     std::memcpy(origMtx, mtxSlot, 0x40);
     std::memcpy(origQuat, quatSlot, 0x10);
@@ -349,13 +361,18 @@ extern "C" void __cdecl RwpBodyRefreshGate(int body, int idx)
     if (!b5cSelfTestEnabled() || !b5cInRace() || g_b5cInSelfTest ||g_b5cGateCount >= kB5cLeafMax)
         { RwpBodyRefreshGate_impl(body, idx); return; }
     g_b5cInSelfTest = true;                 // matrix wrapper -> _impl (no nested A/B); capture still fires
-    int gidx = b5cHookIndex(0x0055dff0u);
+    int gidx;
     // (A) ORIGINAL gate (its tail-jmp reaches the still-hooked matrix wrapper -> _impl -> capture)
     g_gateCapture = true;
     g_gateCaptureN = 0; g_gateCaptureA0 = nullptr; g_gateCaptureA1 = nullptr;
-    if (gidx >= 0) { HookSystem::Uninstall((std::size_t)gidx);
-        reinterpret_cast<void(__cdecl*)(int, int)>(0x0055dff0u)(body, idx);
-        HookSystem::Install((std::size_t)gidx); }
+    {   // [TT-11] uninstall window + PATCHBYTE proof. Only THIS hook comes out: the
+        // original's tail-jmp must still reach the hooked matrix wrapper (see (A) above).
+        SHADOW_AB_COUNTER(ab, "RwpBodyRefreshGate", 0x0055dff0u, ShadowAB::kPhaseRace);
+        ShadowAB::OriginalWindow win(ab);
+        gidx = win.idx;
+        if (win.ok())
+            reinterpret_cast<void(__cdecl*)(int, int)>(0x0055dff0u)(body, idx);
+    }
     int   oN = g_gateCaptureN; int* oA0 = g_gateCaptureA0; void* oA1 = g_gateCaptureA1;
     // (B) MY gate
     g_gateCaptureN = 0; g_gateCaptureA0 = nullptr; g_gateCaptureA1 = nullptr;
@@ -414,10 +431,14 @@ extern "C" void __cdecl RwpSolverContextSet(unsigned* ctx, unsigned value)
         { RwpSolverContextSet_impl(ctx, value); return; }
     g_b5cInSelfTest = true;
     unsigned snap = *ctx;
-    int idx = b5cHookIndex(0x0055e200u);
-    if (idx >= 0) { HookSystem::Uninstall((std::size_t)idx);
-        reinterpret_cast<void(__cdecl*)(unsigned*, unsigned)>(0x0055e200u)(ctx, value);
-        HookSystem::Install((std::size_t)idx); }
+    SHADOW_AB_COUNTER(ab, "RwpSolverContextSet", 0x0055e200u, ShadowAB::kPhaseRace);
+    int idx;
+    {   // [TT-11] uninstall window + PATCHBYTE proof
+        ShadowAB::OriginalWindow win(ab);
+        idx = win.idx;
+        if (win.ok())
+            reinterpret_cast<void(__cdecl*)(unsigned*, unsigned)>(0x0055e200u)(ctx, value);
+    }
     unsigned orig = *ctx;
     *ctx = snap;                                              // restore input
     RwpSolverContextSet_impl(ctx, value);
