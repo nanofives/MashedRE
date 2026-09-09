@@ -161,7 +161,8 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
    the stricter regex missed. Only **3 flags are migration debt** (`MASHED_RENDER_LIBRW`,
    `MASHED_REAL_PHYSICS`, `MASHED_RW_RENDER` which is inert), and 3 are already correctly
    inverted. The 4 dead names are comment-only: a comment naming a flag that does not
-   exist is a false map — delete or implement.
+   exist is a false map — delete or implement. **Deleted 2026-09-09** (the four comments
+   now say the name is retired and point at the real gate).
 3. ~~Reconcile UNCERTAINTIES `Type` against `Blocks`.~~ **DONE 2026-08-15.** 2,547 rows are
    typed `semantic`/`structural` but only **644** carry a non-empty `Blocks` cell. The
    header rule (Type gates C3) is not what is practised and would have ~1,900 rows silently
@@ -248,6 +249,24 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
 
 Invert `MASHED_RENDER_LIBRW`. librw becomes the shipping path; the hand-written D3D9
 renderer becomes the fallback, then goes away.
+
+> **STATUS 2026-09-09 (drift correction). The flag IS inverted and librw IS the default.**
+> Landed 2026-08-19 in `f4815877` ("D1: invert render default to librw; prove the gate"):
+> `RaceSubmit_Requested()` (`LibRw/RwRaceSubmit.cpp`) returns true unless
+> `MASHED_RENDER_LIBRW=0`, which is the A/B revert to the legacy D3D9 path. The
+> "BLOCKED, divergence accumulates" paragraphs below are the 2026-08-15 measurement and
+> are HISTORY: the accumulation was root-caused on 2026-08-18 as a scaffold FX particle
+> defect on the D3D9 side, cut from the default build, and the re-measure is 16/16 shots
+> at or under 1.01% (`verify/d1_recheck_20260818/REPORT.md`, control pair 16/16
+> byte-identical `verify/d1_control_20260818/REPORT.md`; CHANGELOG 2026-08-30 "librw is
+> the DEFAULT renderer"). This section was not updated at the time, and a 2026-09-09
+> worker survey repeated "librw gated OFF" as fact from it.
+>
+> **What D1 still owes** (the gate is not closed): (1) faithfulness adjudication against the
+> ORIGINAL, not D3D9-vs-librw (`RE_MASTER_PLAN_2026-07.md` §7 item 1); (2) the verbatim
+> race-camera pose wired into the renderer (Camera subsection below, pose still discarded);
+> (3) the D3D9 fallback has not gone away. `FLAG_INVENTORY_2026-08-15.md` class A still
+> lists the flag as OFF; corrected there by a dated note, not by regenerating.
 
 **Measured 2026-08-15, and the inversion is BLOCKED on a new finding
 (`verify/d1_measure/MEASUREMENT.md`).** With the R10b-fixed gate, a like-for-like run
@@ -522,10 +541,11 @@ family replacing the gate-ribbon lane-follower), WS-D (powerup effects: the FUN_
 dispatcher + 9-entry type table), WS-G (real per-mode rules replacing the env-mapped
 elim/laps scaffold).
 
-Note the AI gating is currently mis-documented: `TrackRenderer.cpp:22,44` reference
-`MASHED_REAL_AI`, but **no `getenv("MASHED_REAL_AI")` exists anywhere**. The real gates
-are `MASHED_AI_DRIVES_PLAYER` (`TrackRenderer.cpp:2413`), `MASHED_AI_PUREPURSUIT`,
-`MASHED_AI_STEERFLIP`, `MASHED_AI_NAV`. D0's flag inventory fixes this.
+~~Note the AI gating is currently mis-documented: `TrackRenderer.cpp:22,44` reference
+`MASHED_REAL_AI`, but no `getenv("MASHED_REAL_AI")` exists anywhere.~~ **Fixed 2026-09-09:**
+both comments now name the real gates, `MASHED_GATE_RIBBON_AI` (`TrackRenderer.cpp:1813`,
+reverts to the ribbon scaffold) and `MASHED_AI_DRIVES_PLAYER` (`TrackRenderer.cpp:2660`);
+`MASHED_AI_PUREPURSUIT`, `MASHED_AI_STEERFLIP`, `MASHED_AI_NAV` remain as A/B knobs.
 
 **Gate:** clean-env race where opponents, powerups and mode rules are all the ported
 implementations.

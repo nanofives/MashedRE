@@ -19,7 +19,7 @@
 #include "RwWorldRender.h"          // WS-E1: RW world render path (behind MASHED_RW_RENDER)
 #include "../LibRw/RwRaceSubmit.h"  // E2'b step 3: in-loop librw submit (MASHED_RENDER_LIBRW)
 #include "DrawStreamDump.h"         // parity harness: MASHED_DBG_DRAWSTREAM3D race-3D summary
-#include "../Ai/AiStandalone.h"     // WS-C-WIRE: standalone AI tick (behind MASHED_REAL_AI)
+#include "../Ai/AiStandalone.h"     // WS-C-WIRE: standalone AI tick (DEFAULT; MASHED_GATE_RIBBON_AI reverts to the ribbon scaffold)
 #include "../Vehicle/VehiclePhysicsRun.h"  // WS-A8: ported physics chain (behind MASHED_REAL_PHYSICS)
 #include "../Ai/AiState.h"          // WS-AI-BRIDGE: ctrl-block / slot-table / spline addrs
 #include "../Ai/AiData.h"           // WS-AI-BRIDGE: .AI loader (AiData_LoadInto)
@@ -41,8 +41,10 @@ namespace {
 //       steers/throttles ai_cars_, REPLACING the gate-ribbon scaffold when on.
 // Absolute writes (0x007f1a9c, kSlotTableBase, kCtrlBlockBase) target the
 // image-pad in mashed_re.exe (valid writable memory — standalone-exe-phase-h);
-// everything is gated on MASHED_REAL_AI so the dev .asi (injected into MASHED.exe)
-// never clobbers the original's live AI image. PENDING diff-original C4 — the
+// everything runs only on the standalone path (there is NO MASHED_REAL_AI accessor —
+// dead name retired 2026-09-09, FLAG_INVENTORY_2026-08-15 class C; the live gates are
+// MASHED_GATE_RIBBON_AI at :1813 and MASHED_AI_DRIVES_PLAYER at :2660) so the dev .asi
+// (injected into MASHED.exe) never clobbers the original's live AI image. PENDING diff-original C4 — the
 // ctrl->yaw/throttle mapping (turn rate, accel bands) is APPROXIMATE: the exact
 // bands live in the un-ported FUN_00416250 ([U-C-BANDS]).
 // ===========================================================================
@@ -4739,7 +4741,8 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // Background: the WS-A s3 perf fix moved the device to HARDWARE vertex
     // processing (9->180 fps). Under HW T&L, *vertex* fog (D3DRS_FOGVERTEXMODE)
     // white-washes our pre-lit world/car verts, which is why the perf merge gated
-    // ALL chase fog off behind MASHED_CHASE_FOG. The HW-correct path is *table*
+    // ALL chase fog off behind a MASHED_CHASE_FOG gate (since removed; no accessor
+    // exists today — dead name retired 2026-09-09). The HW-correct path is *table*
     // (pixel) fog: FOGVERTEXMODE = NONE, FOGTABLEMODE = LINEAR, computed per-pixel
     // from interpolated depth — independent of vertex format, so it does NOT wash
     // out. The earlier "table fog also measured ~221 whiteout" reading pre-dated

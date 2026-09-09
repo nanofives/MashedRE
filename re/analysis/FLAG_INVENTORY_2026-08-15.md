@@ -18,7 +18,7 @@ real read.
 
 | Flag | Default | Meaning |
 |---|---|---|
-| `MASHED_RENDER_LIBRW` | **OFF** | librw vs hand-written D3D9 world renderer — port is OFF by default |
+| `MASHED_RENDER_LIBRW` | ~~**OFF**~~ **ON since 2026-08-19** | librw vs hand-written D3D9 world renderer — INVERTED in `f4815877`; `=0` reverts to D3D9 for A/B (class B shape). Row left in place, corrected 2026-09-09 |
 | `MASHED_REAL_PHYSICS` | **OFF** | ported RWP-3.7 chain vs kinematic scaffold — port is OFF by default |
 | `MASHED_RW_RENDER` | **OFF** | inert even when set (RwWorldRender.cpp:230) |
 
@@ -31,6 +31,9 @@ real read.
 | `MASHED_GATE_RIBBON_AI` | port is DEFAULT; flag turns it off for A/B |
 
 ## Class C — DEAD flag names (referenced in comments, NO accessor anywhere)
+
+**Retired 2026-09-09:** each comment now states the name is dead and cites the real gate
+(`TrackRenderer.cpp:22,44,4742`, `AiLeaderTimer.cpp:31`, `qol_asi/mashed_qol.cpp:1104`).
 
 A comment naming a flag that does not exist is a false map. Delete the comment or
 implement the flag.

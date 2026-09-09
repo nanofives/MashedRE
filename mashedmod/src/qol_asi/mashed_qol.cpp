@@ -1101,7 +1101,9 @@ void LerpFlushOne(int p, float alpha) {
 // output is frozen -> these objects step. Fix: snapshot the registry right
 // before the tick drain, then per rendered frame restore it with LERPED entry
 // positions and call the drain again — callbacks re-fill the same discard VBs
-// at interpolated positions. MASHED_INTERP_REGISTRY=0 disables.
+// at interpolated positions. (An earlier comment said MASHED_INTERP_REGISTRY=0
+// disables; no such accessor exists in this TU — always on. Dead name retired
+// 2026-09-09, FLAG_INVENTORY_2026-08-15 class C.)
 namespace registry {
 
 constexpr std::uintptr_t kCallSite = 0x0040fd07;   // E8 64 53 07 00

@@ -28,7 +28,9 @@
 // STATEFUL, it is verified via a snapshot/restore driver hooked at the orchestrator entry
 // FUN_00416250 that runs BOTH orig and mine into scratch, then ROLLS BACK the two globals
 // to their pre-call values (leaving the game state UNPERTURBED — the game's own natural
-// call, if any, is separate). Gate: MASHED_HOOK_ONLY=0x00416250 + MASHED_AI_LEADER_SELFTEST=1.
+// call, if any, is separate). Gate: MASHED_HOOK_ONLY=0x00416250. (An earlier comment also
+// named MASHED_AI_LEADER_SELFTEST=1; no such accessor exists anywhere in the tree —
+// dead name retired 2026-09-09, FLAG_INVENTORY_2026-08-15 class C.)
 
 #include "../Core/HookSystem.h"
 
