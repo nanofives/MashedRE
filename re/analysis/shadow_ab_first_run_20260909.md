@@ -70,3 +70,66 @@ Adding this function to the lane is now:
 Two lines, against ~13 lines of hand-rolled arm/uninstall/compare/log per site before. No
 Frida, no `arg_type`, no synthetic call, no per-function boot — and, given the Defender ASR
 block on TTD recording, no external instrumentation binary either.
+
+---
+
+# Addendum - how many functions sample in ONE race (same day)
+
+## `--hooks all` does NOT reach a race
+
+Arming the full canonical hook set stalled at **phase 2** (load+spawn) and timed out after
+51 s; zero phase-3 samples. **This is a documented pre-existing condition, not a new find** -
+`re/analysis/D2_WEDGE_REMEASURE_2026-08-20.md` already records "more than half of full-set
+boots do not produce a usable capture" and "the full-set configuration produced zero usable
+captures that day". Do not re-derive it.
+
+The mechanism is named in the code by the B5c author, and it is the same reason ShadowAB
+carries a per-function phase gate (`RwpIntegrator.cpp:55-57`):
+
+> The leaf helpers ALSO fire during load-time world build (`FUN_00481e00`), where the
+> Uninstall/call-original churn is unsafe pre-spawn - gate every A/B on phase 3.
+
+With everything armed, any self-test that is *not* phase-gated churns Uninstall/Install during
+the track load. The single-hook run reached phase 3 with the same `MASHED_PHYS_C4_SELFTEST=1`
+env, so the difference is the install set, not the self-test switch.
+
+### By-product: 39 DUAL-INSTALL REFUSALS in that one run
+
+`HookSystem` refuses a second hook on an already-hooked RVA - correctly, since it would save
+our own `E9` as the "original prologue" and permanently corrupt the restore path. **39 distinct
+RVAs** hit that in a single full-set boot, e.g.
+
+    0x0040B970  already hooked by 'PlayerScoreZeroTest'; NOT installing 'Bool0Out8a94e0'
+    0x004F8660  already hooked by 'PluginFieldReadA8';   NOT installing 'PluginDataDwordA'
+
+That is the duplicate-RVA drift class (U-9065, memory `duplicate-rva-implementations-drift`) at
+a scale worth noting: it is not 2-3 known cases, it is at least 39 RVAs carrying two competing
+implementations. The safety net holds, but whichever copy loses the race is dead code, and
+`hooks.csv` shows only one row per RVA so the loser is invisible there.
+
+## With a phase-3-gated subset: 6 functions, 304 samples, ONE boot
+
+    py -3.12 re/frida/scenario_launch.py --hold 30 \
+      --hooks 0x0055ac00,0x0055b800,0x0055deb0,0x0055dff0,0x0055e200,0x0057c210
+
+| samples | function | log | |
+|---:|---|---|---|
+| 64 | RwpBodyMatrixRefresh | phys_c4_b5c_selftest.log | hand-written |
+| 48 | RwpBodyRefreshGate | phys_c4_b5c_selftest.log | hand-written |
+| 48 | RwpShapeActiveBitSet | phys_c4_b5c_selftest.log | hand-written |
+| 48 | RwpWorldSolverHandle | phys_c4_b5c_selftest.log | hand-written |
+| 48 | RwpSolverContextSet | phys_c4_b5c_selftest.log | hand-written |
+| 48 | RwpBodyTableLookup | **shadow_ab.log** | **ShadowAB, `proof=REAL`** |
+
+**304 samples across 6 functions in one 41 s boot, 0 divergent.**
+
+## The number that actually matters
+
+Six is not the lane's ceiling - it is the total number of shadow-A/B sites that **exist in the
+whole tree**. Throughput per boot is bounded by adoption, not by the mechanism, and adoption is
+now two lines per function. Note also that only the converted site emits `PATCHBYTE ...
+A/B-IS-REAL`; the five hand-written ones produce a clean-looking result with no proof that
+`Uninstall` restored anything. That is the concrete argument for converting them.
+
+**Practical rule for this lane:** arm a phase-3-gated SUBSET, never `--hooks all`.
+
