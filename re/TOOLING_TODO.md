@@ -77,6 +77,44 @@ original bytes. Compiler-version-independent, so it runs on the MSVC 2022 build 
   construction, over the whole tree, offline.
 - Skip naked-`__asm` TUs (67 files) — they are already byte-transcribed.
 
+## TT-10 — TTD capture -> offline replay diff — **REPLAY HALF DONE 2026-09-09**
+
+> `scripts/ttd/ttd_reimpl_diff.py` gained the `asi:<Export>` backend its own docstring
+> had been asking for: spawn MASHED muted, use the dinput8-auto-loaded `.asi`, wait for
+> the RW engine, call the export once per TTD-captured input. One boot per CSV.
+> First result: `asi:FastSqrt` **128/128 bit-identical** vs the 2026-06-17 capture of
+> `0x004c3b30` — but that capture has only **8 distinct inputs**, and it is path1
+> (direct export call), so it is not an automatic C4. Controls pass: a wrong export
+> fails loudly, and `asi:FastInvSqrt` on the same capture scores 9/128.
+>
+> **Remaining: TTD RECORDING is still deferred** (2026-07-17). Until it runs, this lane
+> can only consume the one existing capture. Widening that 8-value domain and capturing
+> more RVAs is now the binding constraint — not the diff code.
+
+## TT-11 — Generalise the in-process shadow A/B into a macro (mass lane)
+
+The B5c pattern in `Collision/RwpIntegrator.cpp:35-130` snapshots the output region,
+`HookSystem::Uninstall`s the inline-JMP, calls the ORIGINAL at its RVA, restores, runs the
+port, and bit-compares — at the REAL call site, with **zero Frida overhead**.
+
+That sidesteps every blocker the Frida lane dies on: no `arg_type` (the compiler passes the
+args), no synthetic-call safety problem (state is real, the write region is restored), no
+hot-path instability, and N functions self-test per boot instead of one boot per function.
+
+- **State:** ~50 lines of hand-written boilerplate per function, 6 sites in
+  `RwpIntegrator.cpp` plus `VehicleCouplingBridge.cpp`. `HookSystem.h` has no macro for it.
+- **Do:** a `SHADOW_AB(Name, RVA, out_region)` macro + a registry, so adding a function is
+  one line. That is what turns a proven pattern into a mass lane.
+- **Limits:** `.asi` only (verifies logic, not standalone runtime); needs Uninstall/Install
+  to be safe (single-threaded, phase-gated — `b5cInRace()`); only covers what the scenario
+  reaches; each function needs its output region defined.
+
+## TT-12 — DynamoRIO `drwrap` as the capture feeder
+
+Never tried here. Wraps N functions' entry/exit and dumps args/returns at a few percent
+overhead, where Frida `Interceptor` destabilises MASHED above ~1000 calls/s. It is the
+missing capture half for TT-10 on hot functions, and pairs with the `drcov` idea in TT-4.
+
 ## TT-3 — Emulator-differential promotion for mutator/teardown rows
 
 `re/tools/veccap/` + `unicorn_diff.py` already give x87-bit-exact results (RW fast-sqrt 6/6,

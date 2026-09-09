@@ -79,3 +79,55 @@ reimpl), generalized from FastSqrt to the hard targets (camera director
 - `setup_recorder.ps1` — copy recorder/replay engine out of the WinDbg AppX.
 - `record_menu.ps1` — self-elevating attach-at-menu capture.
 - `extract_fastsqrt.txt` — WinDbg command script: census + in/out spot-check.
+
+## `asi:<Export>` backend (added 2026-09-09) — the real reimpl diff
+
+`ttd_reimpl_diff.py` used to carry only pure-Python stand-in backends, and its own
+docstring flagged the gap: "For a TRUE reimpl diff, add an `asi:<export>` backend."
+That backend now exists.
+
+    py -3.12 scripts/ttd/ttd_reimpl_diff.py log/ttd/calls_004c3b30.csv --reimpl asi:FastSqrt
+
+It spawns MASHED **muted**, lets the dinput8 proxy auto-load `mashed_re_dev.asi`, polls the
+session-phase global until the RW engine is up, resolves the export, and calls it once per
+captured input through Frida. One boot for the whole CSV, not one per call.
+
+Three project constraints are honoured in code, each a scar from an earlier session:
+
+* **Never `Module.load` the already-auto-loaded `.asi`** (memory `no-explicit-module-load-asi`
+  — a double load corrupts state). `Process.findModuleByName` first; `Module.load` only as a
+  last resort, and the status line says which happened (`ok-auto@` vs `ok-loaded@`).
+* **Launch muted** (`MASHED_MUTE=1`, memory `always-launch-muted`).
+* **Kill only the spawned PID**, never by image name (memory `multisession-mashed-kill-by-pid`).
+
+The scratch buffer is held in a module-scope JS var so Frida cannot reclaim it
+(memory `frida-keepalive-scratch-buffers`).
+
+### First result (2026-09-09)
+
+`asi:FastSqrt` vs the 2026-06-17 capture of `0x004c3b30`: **128/128 bit-identical**,
+phase=1 reached in 7.0 s.
+
+**Read that with its bound:** the capture holds 128 calls but only **8 distinct inputs**, so
+it is 8 values matched 16 times each, not 128 independent samples. The tool now prints the
+distinct-value domain on every run for exactly this reason, and calls out a domain with
+fewer than 2 distinct values as DEGENERATE.
+
+It is also **path1** — the export is called directly, which does not prove the inline-JMP is
+installed (memory `path1-green-does-not-prove-install`). Not an automatic C4.
+
+### Harness non-degeneracy, proven not assumed
+
+* wrong export (`asi:NoSuchExport`) → `init failed: no-export` + a module dump; it exits
+  before comparing, so it cannot report a false PASS.
+* a real but *different* export (`asi:FastInvSqrt` against the FastSqrt capture) →
+  **9/128** bit-identical, 119 divergent, max 108,865,074 ULP. The harness distinguishes a
+  correct implementation from an incorrect one.
+
+### Still deferred: TTD RECORDING
+
+This finishes the **replay/diff** half only. Producing NEW captures still needs the
+recording lane deferred on 2026-07-17, so today the backend can only consume
+`log/ttd/calls_004c3b30.csv`. Widening that capture's 8-value domain, and capturing other
+RVAs, is the next constraint on this lane — not the diff code.
+
