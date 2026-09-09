@@ -125,27 +125,85 @@ def norm_insn(insn, reloc_offsets, base):
 # catches transcription defects (wrong global, wrong stride/offset -- the U-9085
 # class) without needing a period-correct toolchain.
 
-def operand_facts(insns, reloc_offsets, base, lo=0x00400000, hi=0x00900000):
-    """(addresses touched, immediates used) as sorted multisets."""
-    addrs, imms = [], []
+SECURITY_COOKIE = 0x00616038   # __security_check_cookie global; we build /GS-, some
+                               # original TUs are /GS. Build-flag artifact, not a defect.
+
+# Section ranges of the anchored original (pefile dump of MASHED.exe.unpatched,
+# 2026-09-09; image base 0x00400000):
+#   .text   00401000-005cb000   _rwcseg 005cb000-005cc000
+#   .rdata  005cc000-005ea000   .data   005ea000-00914704
+TEXT = (0x00401000, 0x005cc000)
+RDATA = (0x005cc000, 0x005ea000)
+DATA = (0x005ea000, 0x00914704)
+
+
+def operand_facts(insns, reloc_offsets, base, func_entries=frozenset()):
+    """-> (data_addrs, code_addrs, rdata_addrs, imms), each a sorted multiset.
+
+    ONLY `data_addrs` (.data globals) is fit to gate on. Calibrated 2026-09-09 over
+    1,086 already-verified C3/C4 rows: a single combined address+immediate set failed
+    56% of them, and every dominant failure class turned out to be an artifact:
+
+    * CODE addresses (.text) are call targets and jump tables. The original encodes a
+      call as E8 rel32 -- position-relative, no absolute operand -- while a port calling
+      `reinterpret_cast<fn*>(0x00xxxxxx)` materialises the target as a literal; and a
+      switch compiles to `jmp [idx*4 + <table in .text>]` whose table address is
+      position-dependent. Comparing either compares ENCODINGS, not source facts.
+      183 of 608 failures were purely call targets; jump tables dominated another bucket.
+    * RDATA addresses are compiler-pooled literals (floats, strings). Ours land in our
+      own .rdata behind a COFF relocation, which is masked, so they can never correspond.
+    * IMMEDIATES drift with constant folding and control-flow shape: the original may
+      build an ARGB literal byte-by-byte into a stack buffer where we write one packed
+      dword (`-0x3a,0x3d,0x4e +0xff3d3a98`), and `xor r,r` vs `mov r,0` changes whether
+      a 0 appears at all. 217 of 608 failures were immediates-only.
+
+    .data addresses are what a transcription defect gets wrong (the U-9085 class: wrong
+    global, wrong base, wrong stride applied to a global), and they come from the source
+    rather than the optimiser. The other three rows are returned for triage, not gating.
+    """
+    data, code, rdata, imms = [], [], [], []
+
+    def note_addr(v):
+        if v == SECURITY_COOKIE:
+            return
+        if DATA[0] <= v < DATA[1]:
+            data.append(v)
+        elif RDATA[0] <= v < RDATA[1]:
+            rdata.append(v)
+        elif TEXT[0] <= v < TEXT[1]:
+            code.append(v)
+
     for ins in insns:
         off = ins.address - base
         if any(off <= r < off + ins.size for r in reloc_offsets):
             continue                      # relocated field: not a source constant
         for op in ins.operands:
             if op.type == capstone.x86.X86_OP_MEM:
-                d = op.mem.disp & 0xffffffff
-                if lo <= d < hi:
-                    addrs.append(d)
+                note_addr(op.mem.disp & 0xffffffff)
             elif op.type == capstone.x86.X86_OP_IMM:
-                v = op.imm & 0xffffffff
                 if ins.group(capstone.x86.X86_GRP_JUMP) or ins.group(capstone.x86.X86_GRP_CALL):
                     continue              # branch targets are position-dependent
-                if lo <= v < hi:
-                    addrs.append(v)
+                v = op.imm & 0xffffffff
+                if TEXT[0] <= v < DATA[1]:
+                    note_addr(v)
                 else:
                     imms.append(op.imm)
-    return sorted(addrs), sorted(imms)
+    return sorted(data), sorted(code), sorted(rdata), sorted(imms)
+
+
+
+def load_func_entries(path=None):
+    """Function entry points from the FuncBoundsPC.java cache (empty if absent)."""
+    import os
+    if path is None:
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            '..', 'console', 'cache', 'func_bounds.csv')
+    try:
+        with open(path, encoding='utf-8') as fh:
+            next(fh)
+            return frozenset(int(ln.split(',')[0], 16) for ln in fh if ln.strip())
+    except OSError:
+        return frozenset()
 
 
 def multiset_report(name, ours, orig):
@@ -219,12 +277,18 @@ def main():
           (len(di_ours), len(di_orig), match, n, 100.0 * match / n if n else 0))
     print('   VERDICT: %s' % verdict)
 
-    # compiler-version-independent correspondence
-    fa_ours = operand_facts(di_ours, reloc_offs, a.rva)
-    fa_orig = operand_facts(di_orig, [], a.rva)
-    ok_a = multiset_report('addresses', fa_ours[0], fa_orig[0])
-    ok_i = multiset_report('immediates', fa_ours[1], fa_orig[1])
-    print('   OPERAND CORRESPONDENCE: %s' % ('PASS' if (ok_a and ok_i) else 'FAIL'))
+    # compiler-version-independent correspondence (data addresses are the gate;
+    # code addresses and immediates are reported but never gate -- see operand_facts)
+    ents = load_func_entries()
+    fa_ours = operand_facts(di_ours, reloc_offs, a.rva, ents)
+    fa_orig = operand_facts(di_orig, [], a.rva, ents)
+    ok_d = multiset_report('.data addrs', fa_ours[0], fa_orig[0])
+    multiset_report('.text addrs', fa_ours[1], fa_orig[1])
+    multiset_report('.rdata addrs', fa_ours[2], fa_orig[2])
+    multiset_report('immediates', fa_ours[3], fa_orig[3])
+    print('   DATA-ADDRESS CORRESPONDENCE: %s%s' %
+          ('PASS' if ok_d else 'FAIL',
+           '   (.text/.rdata/imm rows are advisory only)'))
 
     if not a.quiet:
         for tag, i1, i2, j1, j2 in sm.get_opcodes():

@@ -35,7 +35,14 @@ corresponds exactly. Whether a period compiler closes it is untested.
   ranked C2 frontier rows. Would need a new evidence class in `re/CONFIDENCE.md`.
 - **Cost if it fails:** one afternoon; TT-2 is already banked either way.
 
-## TT-2 — Operand-correspondence sweep over all C3/C4 rows — READY, no blockers
+## TT-2 — Operand-correspondence sweep over all C3/C4 rows — **RUN 2026-09-09**
+
+> **First pass done:** 931 PASS / 155 FAIL / 44 SKIP over 1,130 rows (85.7%).
+> One real defect found and filed (**U-9086**, a C4 row). Tooling and the full CSV are
+> committed; `re/analysis/matchdiff_sweep_20260909.md` has the artifact taxonomy.
+> **Remaining work: triage the other 154 FAIL rows** against the four known false-positive
+> classes, and decide whether to run it over the C2 pool as an authoring pre-screen.
+
 
 Fell out of TT-1 and needs none of its blocked parts. `re/tools/matchdiff.py` compares the
 **distinct set** of absolute addresses and immediates between our compiled function and the
