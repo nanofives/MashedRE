@@ -1,0 +1,2 @@
+rva	name	verdict	n	ndiff	proof	detail	boot_state	group	log	at
+0047e9c0	FUN_0047e9c0	CRASH	0	0		" | cal-packages\Python312\site-packages\frida\core.py"", line 499, in _rpc_request /     raise result.error / frida.InvalidOperationError: script has been destroyed"	CRASH	1		2026-09-10T10:29:32

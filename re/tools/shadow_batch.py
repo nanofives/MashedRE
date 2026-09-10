@@ -33,6 +33,7 @@ import argparse
 import csv
 import datetime as dt
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -88,11 +89,31 @@ def boot(rvas, hold, extra):
     except subprocess.TimeoutExpired as ex:
         out = ((ex.stdout or "") + (ex.stderr or "")) if isinstance(ex.stdout, str) else ""
         out += "\n[shadow_batch] launcher TIMEOUT"
+    # A HUNG game (deadlock under the tracker) outlives the launcher: kill ONLY the PID the
+    # launcher printed for this boot (never by name -- other sessions' games coexist), then
+    # classify. The rotate is tolerant of the log still being open for a moment.
+    hung = False
+    m_pid = re.search(r"scenario_launch\s+pid=(\d+)", out)
+    if m_pid:
+        pid = int(m_pid.group(1))
+        alive = subprocess.run(["tasklist", "/FI", f"PID eq {pid}", "/NH"], capture_output=True,
+                               text=True).stdout
+        if "MASHED.exe" in alive:
+            hung = True
+            subprocess.run(["taskkill", "/PID", str(pid), "/F"], capture_output=True)
+            time.sleep(1.0)
     saved = None
     stamp = f"{dt.datetime.now():%Y%m%d_%H%M%S}"
     if LOG.exists():
         saved = LOGDIR / f"shadow_ab_{stamp}_{tag}.log"
-        shutil.move(str(LOG), str(saved))
+        for _try in range(5):
+            try:
+                shutil.move(str(LOG), str(saved))
+                break
+            except PermissionError:
+                time.sleep(1.0)
+        else:
+            shutil.copy(str(LOG), str(saved))
     # keep the launcher's own output next to the shadow log: a VOID boot with no launcher
     # transcript cannot be diagnosed (prescreen_batch.py learned the same lesson).
     (LOGDIR / f"launch_{stamp}_{tag}.txt").write_text(out, encoding="utf-8", errors="replace")
@@ -100,9 +121,11 @@ def boot(rvas, hold, extra):
     # crashed before the launcher's own exit check ran (seen at ~10 s with region sites, run 4)
     # "game exited while waiting for menu" = died at boot with the hooks installed: a port that
     # runs at init is wrong (Lane 2 first batch, 2026-09-10). That is a CRASH, not a harness VOID.
-    if ("game exited." in out or "TIMEOUT" in out or "script has been destroyed" in out
+    if hung:
+        state = "HUNG"            # process alive but stuck after the launcher gave up
+    elif ("game exited." in out or "TIMEOUT" in out or "script has been destroyed" in out
             or "game exited while waiting for" in out):
-        state = "CRASH"           # the game died (or hung) with these hooks installed
+        state = "CRASH"           # the game died with these hooks installed
     elif "reached a running race" in out:
         state = "RACE_OK"
     else:
@@ -197,7 +220,7 @@ def main():
             r = grp[0]
             row = rows.get(r, {"rva": r, "name": names.get(r, ""), "verdict": "", "n": 0,
                                "ndiff": 0, "proof": "", "detail": ""})
-            row["verdict"] = "CRASH" if state == "CRASH" else "VOID"
+            row["verdict"] = state if state in ("CRASH", "HUNG") else "VOID"
             row.update(boot_state=state, group=1, log=saved.name if saved else "", at=stamp,
                        detail=(row.get("detail") or "") + " | " + tail.replace("\n", " / ")[-160:])
             results[r] = row

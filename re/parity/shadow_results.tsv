@@ -1,13 +1,19 @@
 rva	name	verdict	n	ndiff	proof	detail	boot_state	group	log	at
+00403050	PreRaceLoadingScreenDraw	NO_SAMPLES	0	0			RACE_OK	2		2026-09-10T09:46:30
 00407600	PlayerPositionPtr	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06
 00407b00	RangeTableFindGroup	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=53		RACE_OK	16	shadow_ab_20260910_001251_16x_00407600.log	2026-09-10T00:12:51
+0040cf40	ReleaseResourcePair	NO_SAMPLES	0	0			RACE_OK	2		2026-09-10T09:46:30
 00421930	BodyGeometryFirstDword	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06
 00421980	L2_FUN_00421980	CRASH	0	0		 |   p0.grounded=4 airflag=1  vel=[-65.7, 0.1, 273.4]    /     + 13s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[2360.0, -23.3, 2333.9]    /   game exited.	CRASH	1		2026-09-10T09:38:40
+00423b00	FrontendInputDispatch	CRASH	0	0		" | cal-packages\Python312\site-packages\frida\core.py"", line 499, in _rpc_request /     raise result.error / frida.InvalidOperationError: script has been destroyed"	CRASH	1		2026-09-10T09:46:51
 004274e0	LocalizationFileLoad	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06
+0042bcb0	PlayerNameSpriteDraw	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T09:48:01
 0044b000	SlotRecordPositionPtr	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06
 0045d3f0	L2_FUN_0045d3f0	CLEAN	2	0	A/B-IS-REAL installed=e9 uninstalled=a1		RACE_OK	5	shadow_ab_20260910_023716_5x_005aeed0.log	2026-09-10T02:37:17
 004671d0	FollowTargetField40	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=e8		RACE_OK	16	shadow_ab_20260910_001251_16x_00407600.log	2026-09-10T00:12:51
 00467210	FollowTargetField10	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=e8		RACE_OK	16	shadow_ab_20260910_001251_16x_00407600.log	2026-09-10T00:12:51
+0047b9e0	Track_RenderQuadThunk_47b9e0	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T09:49:35
+0047e9c0	FUN_0047e9c0	CRASH	0	0		" | cal-packages\Python312\site-packages\frida\core.py"", line 499, in _rpc_request /     raise result.error / frida.InvalidOperationError: script has been destroyed"	CRASH	1		2026-09-10T09:49:46
 004840b0	ShapeOwnerHandleGet	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06
 004853b0	SmplFzxStateBlockGetLogged	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06
 004b4050	ClumpQueryField18	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06

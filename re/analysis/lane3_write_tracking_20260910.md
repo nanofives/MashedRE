@@ -52,14 +52,21 @@ two executions removes the first; comparing whatever was written removes the sec
 ## First live runs
 
 **Run 1 (20 tracked Lane 2 void ports, `batch_lane3_l2void.txt`)**: the 7-site group died 4 s
-into boot; `0x00421980` alone died 26 s in, mid-race. Both crash dumps end at the same audio
-frame (`eip 0x005bbf59`, `ecx` null or garbage). First reading: the pre-image restore reverted
-another thread's write on a shared page (contamination). **Control run** (same hooks installed
-LIVE, A/B disarmed via the new `--no-shadow` / `MASHED_NO_SELFTEST=1`): **identical crashes**
-at the same times. So both are **defects in the generated ports**, not in the tracker — the
-`L2_` opt-in guard exists for exactly this. The contamination reasoning still stands as a
-design hazard, and the tracker now suspends every other thread for the whole compare window
-(`SuspendOthers`/`ResumeOthers` in `ShadowTrack.h`, deadlock caveat documented there).
+into boot; `0x00421980`+`0x00421960` died 26 s in, mid-race. **Control run** (same hooks
+installed LIVE, A/B disarmed via the new `--no-shadow` / `MASHED_NO_SELFTEST=1`,
+`batch_control1.txt`): identical crashes at the same times, so these are **defects in the
+generated Lane 2 ports**, not in the tracker. Single-site bisect (`batch_control2.txt`):
+`0x00421960`, `0x004219c0`, `0x00495fe0` crash alone; `0x00421980`, `0x0041f290`, `0x0041f060`
+run a full race alone. CORRECTION to an earlier reading in this session: the "audio-frame
+crash dumps" I cited are dated 2026-09-09 and belong to another session; today's deaths wrote
+no dump. Nothing about the crash SITE is established from dumps.
+
+**Run 2 (55 tracked hand-ported C2 void sites, `batch_lane3_c2void.txt`)**: every site that
+actually FIRED under tracking crashed at its first sample (`0x00423b00 FrontendInputDispatch`,
+`0x0047e9c0` physics-scene init root, both ~10 s = race start); every site that never fired
+survived the boot. These ports run in every default boot, so this is the **tracker**. No dump,
+no log line (the crash precedes `Record`). Breadcrumbs (`MASHED_SHADOW_TRACE=1`, one line per
+stage outside the protected windows) were added to find the dying stage; see below.
 
 Lane 2 consequences (already applied to `decomp2port.py`): a callee whose own decompilation
 shows FEWER stack parameters than the call site passes is refused (`CALLEE_REG_ARG`: the extra
@@ -67,3 +74,30 @@ argument travels in a register a cdecl thunk cannot set); a loop that advances a
 never passes to a zero-arg call is refused (`HIDDEN_REG_ARG`). Neither rule flagged
 `0x00421980`/`0x00421960` or the boot-crash group, so a further hazard class is open; the
 single-site bisection (`batch_control2.txt`) names the exact ports.
+
+**Diagnosis of the run-2 crashes (breadcrumbs, 12 traced boots)**: the process died *silently*
+(no dump, no fault ever reaching the handler) inside the original's protected run. Per-stage
+crumbs written with `WriteFile` only narrowed it to: pages read-only, handler NOT yet marked
+active. `Protect()` ran before `s.active = true`, so a write by **any other thread** in that
+gap was an unhandled access violation and terminated the process. With private memory (heaps)
+protected that window was hit on the first sample every time; with exe-image pages only, three
+samples survived by luck and the fourth died. **Fix**: arm the handler before the first
+`VirtualProtect`, disarm after the last restore. Two further findings from the same traces:
+the ntdll region holding the vectored-handler node must never be protected (the dispatcher
+increments its refcount before calling any handler); and stop-the-world suspension deadlocked
+the physics-scene init root (59 threads suspended, CPU flat, window unresponsive), so it is
+now opt-in (`MASHED_SHADOW_STW=1`) and the default keeps threads running and **discards any
+sample where another thread faulted on a tracked page** (`NOISY`, not counted).
+
+**Run 3 (`batch_trace23.txt`, exe-image pages only, threads running)**: `0x0047e9c0`
+**24/24 CLEAN** (`pages=o:2,n:2,diff:0 stack=0 ret=0`), 13 further samples discarded as NOISY
+(`noise=2`: two other threads write exe `.data` during the window). The one earlier sample that
+had shown `diff:1 @00624048` was a NOISY sample — contamination, not a port defect, and the
+discard rule is what caught it. This is the first evidence the lane produces: effects of a void
+physics-init function compared page-for-page against the original at its real call site.
+
+Private memory (heaps) is tracked only with `MASHED_SHADOW_PRIVATE=1` (optionally bounded by
+`MASHED_SHADOW_PRIV_LO/HI`); regions below the exe image base are never protected (loader /
+WoW64 bookkeeping killed the process the instant it went read-only). Results of the private
+probe and the 55-site batch: see the run log names in the next section.
+
