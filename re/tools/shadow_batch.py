@@ -82,6 +82,13 @@ def boot(rvas, hold, extra):
     else:
         env["MASHED_SHADOW_AB"] = "1"
     t0 = time.time()
+    # Snapshot MASHED PIDs before the launch: whatever is NEW and still alive afterwards was
+    # spawned by this boot and may be killed. Never kill by name (other sessions' games).
+    def mashed_pids():
+        txt = subprocess.run(["tasklist", "/FI", "IMAGENAME eq MASHED.exe", "/NH", "/FO", "CSV"],
+                             capture_output=True, text=True).stdout
+        return {int(x.split(",")[1].strip('"')) for x in txt.splitlines() if x.startswith('"MASHED.exe"')}
+    before = mashed_pids()
     try:
         p = subprocess.run(cmd, cwd=str(ROOT), env=env, capture_output=True, text=True,
                            timeout=hold + 300, errors="replace")
@@ -94,8 +101,10 @@ def boot(rvas, hold, extra):
     # classify. The rotate is tolerant of the log still being open for a moment.
     hung = False
     m_pid = re.search(r"scenario_launch\s+pid=(\d+)", out)
+    new_alive = mashed_pids() - before
     if m_pid:
-        pid = int(m_pid.group(1))
+        new_alive.add(int(m_pid.group(1)))
+    for pid in sorted(new_alive):
         alive = subprocess.run(["tasklist", "/FI", f"PID eq {pid}", "/NH"], capture_output=True,
                                text=True).stdout
         if "MASHED.exe" in alive:

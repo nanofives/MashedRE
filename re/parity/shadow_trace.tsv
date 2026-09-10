@@ -1,2 +1,2 @@
 rva	name	verdict	n	ndiff	proof	detail	boot_state	group	log	at
-0047e9c0	FUN_0047e9c0	CRASH	0	0		" | cal-packages\Python312\site-packages\frida\core.py"", line 499, in _rpc_request /     raise result.error / frida.InvalidOperationError: script has been destroyed"	CRASH	1		2026-09-10T10:29:32
+0047e9c0	FUN_0047e9c0	DIVERGENT	24	1	A/B-IS-REAL installed=e9 uninstalled=8b	pages=o:3,n:2,diff:1 stack=0 noise=0 ovf=0 ret=0 @00624000+048 x1	RACE_OK	1	shadow_ab_20260910_115832_1x_0047e9c0.log	2026-09-10T11:58:32

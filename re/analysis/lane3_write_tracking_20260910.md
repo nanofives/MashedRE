@@ -124,3 +124,35 @@ the 24/24 effect-identical samples), 0 FAIL. **18 rows C2→C3** via re-classify
 markers filed as U-9116..U-9125 (the shared `font_text_d3` report of `0x004c51a0` was not swept:
 its markers are not this row's). C3 total 966 → 984.
 
+## Private-memory mode: traced, not solved (2026-09-10, 10 probe boots)
+
+Instrumentation added for this: syscall-only breadcrumbs inside the protected window, a
+per-fault crumb in the handler, and a **hang watchdog** (`MASHED_SHADOW_TRACE=1`: a helper
+thread that, 5 s into a stuck window, suspends the tracked thread and logs EIP/ESP/EBP, 8 stack
+words and 8 code bytes — Frida cannot attach to a process stuck under protection because thread
+injection needs loader structures that are read-only).
+
+What the probes established, in order:
+1. Protecting *all* private RW memory kills the process silently right after the protect pass:
+   the 64-bit WoW64 side writes 32-bit thread stacks/TEBs and its own low-memory heaps from
+   64-bit code, and a fault there never reaches a 32-bit handler. Excluding every thread's
+   stack and TEB (`NtQueryInformationThread`), the TEB64 span, the PEBs and every allocation
+   containing a guard page stopped the deaths.
+2. With that, the original's run **hangs** with zero faults reaching the handler. Restricting
+   private tracking to the committed regions of the 32-bit heaps (`GetProcessHeaps` +
+   `HeapWalk`) made faults flow again: 21 heap-page faults from the tracked thread were handled
+   normally — and then the thread parked in an ntdll wait syscall (`EIP 0x77a8b9dc`, stack
+   `77a9ff5c 77b49a54 … 77b4d3c8`) = blocked on a critical section held by another thread.
+3. Stop-the-world (all other threads suspended) plus taking every NT heap lock first
+   (`HeapLock`, recursive, so the original still allocates) produced the *same* wait: the lock is
+   not an NT heap lock. Candidates: the CRT's `_HEAP_LOCK` critical section (the game's CRT is
+   statically linked — no `msvcr*.dll` import — so it is not reachable by name), or Frida's
+   interceptor lock (the launcher's agent hooks a spawn counter that the physics init path hits).
+
+State left: `MASHED_SHADOW_PRIVATE=1` = heap-only private tracking, threads running by default
+(`MASHED_SHADOW_STW=1` to suspend, which then also locks the NT heaps first). It hangs on the
+first sample of `0x0047e9c0` and is therefore **not usable yet**. Exe-data tracking (the
+default) is unaffected — regression probe `batch_regr1.txt`. Next diagnostic step: resolve the
+critical section the tracked thread waits on (its address is the first argument of the
+`RtlpWaitOnCriticalSection` frame on the hung stack) and its owner thread id.
+

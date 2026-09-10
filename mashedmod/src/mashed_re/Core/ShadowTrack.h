@@ -92,9 +92,50 @@ struct State {
     std::uintptr_t  exe_base = 0;                    // MASHED.exe image base (tracked)
     PVOID           veh      = nullptr;
     bool            ready    = false;
+    volatile DWORD  active_since = 0;               // GetTickCount at s.active=true (watchdog)
+    DWORD           watchdog_tid = 0;               // never suspended by stop-the-world
+    volatile int    hang_logged  = 0;
 };
 
 inline State& S() { static State s; return s; }
+inline void HexCrumb(const char* tag, unsigned a, unsigned b, unsigned c);
+
+// HANG WATCHDOG (MASHED_SHADOW_TRACE=1 only). If a tracked window stays open > 5 s, suspend
+// the tracked thread, log EIP/ESP/EBP + 8 stack words + 4 code bytes at EIP, resume it. A
+// process stuck under protection cannot be attached by Frida (thread injection needs loader
+// structures that are read-only), so this is the only way to see where it sits.
+inline DWORD WINAPI Watchdog(LPVOID) {
+    for (;;) {
+        Sleep(250);
+        State& s = S();
+        if (!s.active || s.hang_logged || !s.active_since) continue;
+        if (GetTickCount() - s.active_since < 5000) continue;
+        s.hang_logged = 1;
+        HANDLE h = OpenThread(THREAD_SUSPEND_RESUME | THREAD_GET_CONTEXT | THREAD_QUERY_INFORMATION, FALSE, s.tid);
+        if (!h) { HexCrumb("hang-openthread-failed", GetLastError(), 0, 0); continue; }
+        if (SuspendThread(h) == (DWORD)-1) { HexCrumb("hang-suspend-failed", GetLastError(), 0, 0); CloseHandle(h); continue; }
+        CONTEXT ctx; ctx.ContextFlags = CONTEXT_CONTROL | CONTEXT_INTEGER;
+        if (GetThreadContext(h, &ctx)) {
+            HexCrumb("hang-eip-esp-ebp", ctx.Eip, ctx.Esp, ctx.Ebp);
+            HexCrumb("hang-eax-ecx-edx", ctx.Eax, ctx.Ecx, ctx.Edx);
+            const unsigned* sp = reinterpret_cast<const unsigned*>(ctx.Esp);
+            MEMORY_BASIC_INFORMATION m;
+            if (VirtualQuery(sp, &m, sizeof m) == sizeof m && m.State == MEM_COMMIT) {
+                HexCrumb("hang-stack0-2", sp[0], sp[1], sp[2]);
+                HexCrumb("hang-stack3-5", sp[3], sp[4], sp[5]);
+                HexCrumb("hang-stack6-8", sp[6], sp[7], sp[8]);
+            }
+            const unsigned char* ip = reinterpret_cast<const unsigned char*>(ctx.Eip);
+            if (VirtualQuery(ip, &m, sizeof m) == sizeof m && m.State == MEM_COMMIT)
+                HexCrumb("hang-code", (ip[0] << 24) | (ip[1] << 16) | (ip[2] << 8) | ip[3],
+                         (ip[4] << 24) | (ip[5] << 16) | (ip[6] << 8) | ip[7], 0);
+        } else {
+            HexCrumb("hang-getcontext-failed", GetLastError(), 0, 0);
+        }
+        ResumeThread(h);
+        CloseHandle(h);
+    }
+}
 
 inline bool Init() {
     State& s = S();
@@ -126,6 +167,11 @@ inline bool Init() {
     }
     s.exe_base = reinterpret_cast<std::uintptr_t>(GetModuleHandleA(nullptr));
     s.ready = true;
+    if (EnvOn("MASHED_SHADOW_TRACE")) {
+        DWORD wtid = 0;
+        HANDLE wt = CreateThread(nullptr, 0, &Watchdog, nullptr, 0, &wtid);
+        if (wt) { s.watchdog_tid = wtid; CloseHandle(wt); }
+    }
     return true;
 }
 
@@ -182,9 +228,19 @@ inline const Region* FindRegion(std::uintptr_t a) {
     return nullptr;
 }
 
+inline void HexCrumb(const char* tag, unsigned a, unsigned b, unsigned c);
+
 inline LONG CALLBACK Handler(EXCEPTION_POINTERS* ep) {
     State& s = S();
     if (!s.active) return EXCEPTION_CONTINUE_SEARCH;
+    // trace: every fault the handler sees (first 4000 per boot), syscall-only writer
+    static int traced = 0;
+    if (traced < 4000 && ep->ExceptionRecord->NumberParameters > 1) {
+        ++traced;
+        HexCrumb("fault", static_cast<unsigned>(ep->ExceptionRecord->ExceptionInformation[1]),
+                 static_cast<unsigned>(ep->ContextRecord->Eip),
+                 (GetCurrentThreadId() & 0xffff) | (static_cast<unsigned>(ep->ExceptionRecord->ExceptionInformation[0]) << 16));
+    }
     const EXCEPTION_RECORD* er = ep->ExceptionRecord;
     if (er->ExceptionCode != EXCEPTION_ACCESS_VIOLATION || er->NumberParameters < 2
         || er->ExceptionInformation[0] != 1) {               // 1 = write
@@ -243,6 +299,51 @@ inline bool Overlaps(std::uintptr_t lo, std::uintptr_t hi, std::uintptr_t a, std
     return lo < b && a < hi;
 }
 
+
+// EVERY thread's 32-bit stack and TEB must stay writable, not just ours. Under WoW64 the
+// 64-bit layer writes a thread's 32-bit context onto its 32-bit stack (syscall return, APC,
+// exception delivery); that write happens in 64-bit code and a fault there is dispatched to
+// the 64-bit chain, never to this 32-bit handler -> instant death. Measured 2026-09-10: with
+// private memory protected the process died right after a 64 KB private region (a stack) went
+// read-only, and with all threads suspended it deadlocked instead (suspended threads do not
+// fault). Enumerate threads, read each TEB's StackLimit/StackBase/DeallocationStack.
+typedef LONG (NTAPI* NtQueryInformationThread_t)(HANDLE, ULONG, PVOID, ULONG, PULONG);
+struct ThreadBasicInfo32 { LONG ExitStatus; PVOID TebBaseAddress; DWORD ClientIdProcess, ClientIdThread;
+                           ULONG_PTR AffinityMask; LONG Priority; LONG BasePriority; };
+struct Excl { std::uintptr_t lo, hi; };
+constexpr int kMaxExcl = 2 * kMaxThreads;
+
+inline int CollectThreadExclusions(Excl* out) {
+    int n = 0;
+    static NtQueryInformationThread_t q = reinterpret_cast<NtQueryInformationThread_t>(
+        GetProcAddress(GetModuleHandleA("ntdll.dll"), "NtQueryInformationThread"));
+    if (!q) return 0;
+    const DWORD pid = GetCurrentProcessId();
+    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
+    if (snap == INVALID_HANDLE_VALUE) return 0;
+    THREADENTRY32 te; te.dwSize = sizeof te;
+    if (Thread32First(snap, &te)) {
+        do {
+            if (te.th32OwnerProcessID != pid) continue;
+            HANDLE h = OpenThread(THREAD_QUERY_INFORMATION, FALSE, te.th32ThreadID);
+            if (!h) continue;
+            ThreadBasicInfo32 tbi{};
+            if (q(h, 0 /*ThreadBasicInformation*/, &tbi, sizeof tbi, nullptr) >= 0 && tbi.TebBaseAddress && n + 2 <= kMaxExcl) {
+                const std::uintptr_t teb = reinterpret_cast<std::uintptr_t>(tbi.TebBaseAddress);
+                const std::uintptr_t stack_base  = *reinterpret_cast<std::uintptr_t*>(teb + 0x04);
+                const std::uintptr_t stack_limit = *reinterpret_cast<std::uintptr_t*>(teb + 0x08);
+                const std::uintptr_t dealloc     = *reinterpret_cast<std::uintptr_t*>(teb + 0xE0C);   // DeallocationStack
+                const std::uintptr_t lo = dealloc ? dealloc : (stack_limit - 0x10000);
+                out[n++] = Excl{ lo, stack_base };
+                out[n++] = Excl{ teb - 0x2000, teb + 0x1000 };   // TEB64 (2 pages, precedes) + TEB32
+            }
+            CloseHandle(h);
+        } while (Thread32Next(snap, &te));
+    }
+    CloseHandle(snap);
+    return n;
+}
+
 // Enumerate + protect. Returns the number of regions protected.
 inline int Protect() {
     State& s = S();
@@ -253,6 +354,46 @@ inline int Protect() {
     HexCrumb("stack", static_cast<unsigned>(stack_lo), static_cast<unsigned>(stack_hi), static_cast<unsigned>(teb));
     HexCrumb("excl", static_cast<unsigned>(s.buf_lo), static_cast<unsigned>(s.buf_hi), static_cast<unsigned>(s.asi_lo));
     HexCrumb("excl2", static_cast<unsigned>(s.asi_hi), static_cast<unsigned>(s.exe_base), 0);
+    static Excl excl[kMaxExcl];                      // .asi .data: untracked
+    const int nexcl = CollectThreadExclusions(excl);
+    // PEB32 (fs:[0x30]) and the PEB64 that precedes it: written by the 64-bit side.
+    const std::uintptr_t peb = __readfsdword(0x30);
+    // Any allocation that contains a PAGE_GUARD page is a stack (32-bit or the WoW64 64-bit
+    // one, which no 32-bit API enumerates); the 64-bit side writes those from 64-bit code.
+    static std::uintptr_t guardAllocs[512];
+    int nguard = 0;
+    {
+        MEMORY_BASIC_INFORMATION g;
+        std::uintptr_t ga = 0x10000;
+        while (ga < 0x7fff0000u && VirtualQuery(reinterpret_cast<void*>(ga), &g, sizeof g) == sizeof g) {
+            if (g.State == MEM_COMMIT && (g.Protect & PAGE_GUARD) && nguard < 512)
+                guardAllocs[nguard++] = reinterpret_cast<std::uintptr_t>(g.AllocationBase);
+            ga = reinterpret_cast<std::uintptr_t>(g.BaseAddress) + g.RegionSize;
+        }
+    }
+    // Private memory: ONLY the committed regions of the 32-bit heaps (GetProcessHeaps +
+    // HeapWalk, valid because the heaps are locked by this thread under stop-the-world).
+    // Everything else private -- WoW64 / 64-bit ntdll heaps, Frida, loader bookkeeping -- is
+    // memory the 64-bit exception path itself may write; protecting it made the very first
+    // fault loop inside 64-bit code and never reach this 32-bit handler (2026-09-10, 0 faults,
+    // thread parked in a wait). The game's CRT and RenderWare allocations live in these heaps.
+    static Excl heapRanges[1024];
+    int nheap = 0;
+    if (EnvOn("MASHED_SHADOW_PRIVATE")) {
+        HANDLE hs[64];
+        const int nh = static_cast<int>(GetProcessHeaps(64, hs));
+        for (int i = 0; i < nh && i < 64; ++i) {
+            PROCESS_HEAP_ENTRY e; e.lpData = nullptr;
+            while (HeapWalk(hs[i], &e)) {
+                if ((e.wFlags & PROCESS_HEAP_REGION) && nheap < 1024) {
+                    const std::uintptr_t lo = reinterpret_cast<std::uintptr_t>(e.Region.lpFirstBlock);
+                    const std::uintptr_t hi = reinterpret_cast<std::uintptr_t>(e.Region.lpLastBlock);
+                    if (hi > lo) heapRanges[nheap++] = Excl{ lo & ~(kPage - 1), (hi + kPage - 1) & ~(kPage - 1) };
+                }
+            }
+        }
+    }
+    HexCrumb("threads", static_cast<unsigned>(nexcl / 2), static_cast<unsigned>(nguard), static_cast<unsigned>(nheap));
     MEMORY_BASIC_INFORMATION mbi;
     std::uintptr_t a = 0x10000;
     while (a < 0x7fff0000u && VirtualQuery(reinterpret_cast<void*>(a), &mbi, sizeof mbi) == sizeof mbi) {
@@ -268,7 +409,8 @@ inline int Protect() {
         static const bool  priv_on = EnvOn("MASHED_SHADOW_PRIVATE");
         static const std::uintptr_t priv_lo = [] { char b[16]; return (GetEnvironmentVariableA("MASHED_SHADOW_PRIV_LO", b, sizeof b) ? static_cast<std::uintptr_t>(strtoul(b, nullptr, 0)) : 0u); }();
         static const std::uintptr_t priv_hi = [] { char b[16]; return (GetEnvironmentVariableA("MASHED_SHADOW_PRIV_HI", b, sizeof b) ? static_cast<std::uintptr_t>(strtoul(b, nullptr, 0)) : 0xffffffffu); }();
-        const bool is_priv = mbi.Type == MEM_PRIVATE && priv_on && base >= priv_lo && base < priv_hi;
+        const bool in_heap = [&] { for (int k = 0; k < nheap; ++k) if (Overlaps(base, end, heapRanges[k].lo, heapRanges[k].hi)) return true; return false; }();
+        const bool is_priv = mbi.Type == MEM_PRIVATE && priv_on && in_heap && base >= priv_lo && base < priv_hi;
         const bool wanted = mbi.State == MEM_COMMIT && writable
             && (is_priv
                 || (mbi.Type == MEM_IMAGE
@@ -287,6 +429,10 @@ inline int Protect() {
             // bookkeeping (the 0x000a3000 region killed the process the instant it went
             // read-only, before any 32-bit fault could reach the handler). Skip it.
             && base >= s.exe_base
+            && [&] { for (int k = 0; k < nexcl; ++k) if (Overlaps(base, end, excl[k].lo, excl[k].hi)) return false; return true; }()
+            && !Overlaps(base, end, peb - 0x2000, peb + 0x1000)
+            && [&] { const std::uintptr_t ab = reinterpret_cast<std::uintptr_t>(mbi.AllocationBase);
+                     for (int k = 0; k < nguard; ++k) if (guardAllocs[k] == ab) return false; return true; }()
             && !Overlaps(base, end, stack_lo - 0x10000, stack_hi)    // stack + its guard/reserve
             && !Overlaps(base, end, teb, teb + kPage)
             && s.nregions < kMaxRegions) {
@@ -325,7 +471,7 @@ inline void SuspendOthers(Others& o) {
     THREADENTRY32 te; te.dwSize = sizeof te;
     if (Thread32First(snap, &te)) {
         do {
-            if (te.th32OwnerProcessID != pid || te.th32ThreadID == me) continue;
+            if (te.th32OwnerProcessID != pid || te.th32ThreadID == me || te.th32ThreadID == S().watchdog_tid) continue;
             HANDLE h = OpenThread(THREAD_SUSPEND_RESUME, FALSE, te.th32ThreadID);
             if (!h) continue;
             if (SuspendThread(h) == (DWORD)-1 || o.n >= kMaxThreads) { CloseHandle(h); continue; }
@@ -337,6 +483,24 @@ inline void SuspendOthers(Others& o) {
 inline void ResumeOthers(Others& o) {
     for (int i = 0; i < o.n; ++i) { ResumeThread(o.h[i]); CloseHandle(o.h[i]); }
     o.n = 0;
+}
+
+// HEAP LOCKS BEFORE STOP-THE-WORLD. Both deadlocks measured 2026-09-10 were the heap lock:
+// threads running -> the tracked thread blocked in an ntdll wait (watchdog: EIP in a syscall
+// stub, stack full of ntdll frames) because another thread that had faulted held it; threads
+// suspended -> the original blocked on a lock a suspended thread held. Heap critical sections
+// are recursive: if OUR thread acquires every heap's lock first, no other thread can be inside
+// a heap when we suspend them, and the original/port on our thread still allocate freely.
+struct Heaps { HANDLE h[64]; int n = 0; int locked = 0; };
+inline void LockHeaps(Heaps& hp) {
+    hp.n = static_cast<int>(GetProcessHeaps(64, hp.h));
+    if (hp.n > 64) hp.n = 64;
+    hp.locked = 0;
+    for (int i = 0; i < hp.n; ++i) if (HeapLock(hp.h[i])) ++hp.locked;
+}
+inline void UnlockHeaps(Heaps& hp) {
+    for (int i = 0; i < hp.n; ++i) HeapUnlock(hp.h[i]);
+    hp.n = 0; hp.locked = 0;
 }
 
 // One tracked execution of `call`. Fills pages/pre; the caller decides what to do with them.
@@ -352,12 +516,13 @@ inline void Execute(Fn call) {
     // unhandled fault and kills the process silently (2026-09-10: every "silent death" of the
     // first live runs was this -- three samples survived by luck, the fourth did not).
     s.active = true;
+    s.active_since = GetTickCount(); s.hang_logged = 0;
     const int nreg = Protect();
     RawCrumb("protected", static_cast<unsigned>(nreg));
     call();
     RawCrumb("call-returned", static_cast<unsigned>(s.npages));
     Unprotect();
-    s.active = false;
+    s.active = false; s.active_since = 0;
     if (s.veh) { RemoveVectoredExceptionHandler(s.veh); s.veh = nullptr; }
     Crumb("-", "execute-done", nreg, s.npages);
 }
@@ -381,12 +546,18 @@ inline Result Compare(const char* fn, O call_orig, P call_port, void* stackwin) 
     // window unresponsive) -- a suspended thread held a lock it needed. Default is to keep
     // threads running and DISCARD any sample where another thread faulted on a tracked page
     // (reported as NOISY, see RunTracked); contamination without a fault stays a known limit.
-    static const bool stw = EnvOn("MASHED_SHADOW_STW");
-    struct WorldGuard {                   // resume on every exit path
-        Others& o; bool on;
-        WorldGuard(Others& oo, bool en) : o(oo), on(en) { if (on) SuspendOthers(o); }
-        ~WorldGuard() { if (on) ResumeOthers(o); }
-    } world(others, stw);
+    // Stop-the-world is ON whenever private memory is tracked (the only configuration in which
+    // other threads' heap writes and the WoW64 64-bit side can corrupt the compare), and
+    // otherwise opt-in via MASHED_SHADOW_STW=1. Heap locks are taken first (see LockHeaps).
+    static const bool stw = EnvOn("MASHED_SHADOW_STW");   // private mode now filters to 32-bit heap pages; try threads running first
+    static Heaps heaps;                   // .asi .data: untracked
+    struct WorldGuard {                   // resume + unlock on every exit path
+        Others& o; Heaps& hp; bool on;
+        WorldGuard(Others& oo, Heaps& hh, bool en) : o(oo), hp(hh), on(en) {
+            if (on) { LockHeaps(hp); SuspendOthers(o); }
+        }
+        ~WorldGuard() { if (on) { ResumeOthers(o); UnlockHeaps(hp); } }
+    } world(others, heaps, stw);
     const std::uintptr_t stack_hi = __readfsdword(0x04);
     std::size_t win = kStackWindow;
     if (reinterpret_cast<std::uintptr_t>(stackwin) + win > stack_hi)
@@ -394,6 +565,7 @@ inline Result Compare(const char* fn, O call_orig, P call_port, void* stackwin) 
     static unsigned char stack_pre[kStackWindow], stack_post[kStackWindow];   // .asi .data: untracked
     std::memcpy(stack_pre, stackwin, win);
     Crumb(fn, "suspended+stacksnap", static_cast<int>(win), others.n);
+    if (stw) Crumb(fn, "heaps-locked", heaps.locked, heaps.n);
 
     // -- A: original ------------------------------------------------------------
     Execute(call_orig);
