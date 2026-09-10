@@ -243,10 +243,62 @@ Ruled out, each against the disassembly: argument shape/arity, loop base (+0x10)
 the float loop counter (wrong, fixed, not the cause), and now the apparent aliasing (faithful).
 Established: it dies **inside iteration 0** with `puVar3 == NULL` and `bound = 4`.
 
-**Next step, and it is cheap:** the trace instrument is in the tree. Move or duplicate the
-`fprintf` further down iteration 0's body — after the two `FUN_0055b750` calls, after
-`FUN_0056fad0`, after each `FUN_0056f1f0` — and the last line printed names the statement that
-dies. One boot per placement.
+### Staged the trace, and the answer changed the nature of the problem
+
+Added stage markers through iteration 0's body (a `F350_STAGE` macro, one per call site) so a
+single boot would name the dying statement. One traced boot:
+
+```
+k=0 bound=4 pfVar9=10EBA7E0 field=00000000 flags=00  ENTER
+  after the six deltas (local_e4=00000000 local_e0=10E2B60C)
+  after b750 #1
+  after b750 #2
+  after fad0 #1 (param_2)
+  after f1f0 #1          <-- last line; dies after this
+```
+
+So it dies after `FUN_0056f1f0((int*)param_1, local_78)`, with `local_e4` NULL (first `b750`
+skipped) and `local_e0` live.
+
+**Then it stopped crashing.** With the markers compiled in: **4 boots, 4× RACE_OK.** And the
+discriminating run matters — with the markers compiled in but **`MASHED_TRACE_F350` unset**, so
+the `fprintf` never executes, it is still **2/2 RACE_OK**. The logging is not what changes it;
+**the presence of the call sites is**, because they change MSVC's register allocation and stack
+frame.
+
+**So `0x0056f350`'s defect is FRAME-LAYOUT DEPENDENT.** That is the most useful single fact
+established about it, and it explains why every static comparison came back clean: the bug is not
+in an expression, it is in memory layout.
+
+### The obvious follow-up hypothesis, tested and REFUTED
+
+Header note 3 records that `local_78[0x19]` and `[0x1a]` are deliberately left uninitialised "as
+the original leaves them", and that `FUN_0056f1f0` copies `[0x1a]` **raw**. Consuming
+uninitialised stack is exactly the shape that would be frame-layout dependent. Tested it: reverted
+to the crashing baseline and added *only* `local_78[0x19] = 0; local_78[0x1a] = 0;`.
+
+**3 boots, 3× CRASH.** Not the cause. (Experiment reverted — that initialisation would not be
+faithful anyway.)
+
+### Where it stands, and the next step
+
+Ruled out, each against the disassembly or by experiment: argument shape/arity, loop base `+0x10`,
+field `+0xc`, stride `0x28`, re-read bound `+0xac`, `local_78[27]` sizing vs `FUN_0056fad0`
+(writes no further than dword `0xe`), the float loop counter (a real defect, fixed, not this),
+the apparent aliasing (faithful — three `FSQRT`s with `FST` write-backs), and the uninitialised
+`[0x19]/[0x1a]` slots (zeroed, still crashes 3/3).
+
+Established: dies inside iteration 0 after `FUN_0056f1f0 #1`; `bound=4`, `puVar3=NULL`,
+`local_e4=NULL`, `local_e0` live; and the defect follows the stack frame.
+
+**Next:** frame dependence points at either an overrun into a local adjacent to `local_78`, or a
+read of some *other* uninitialised local. `FUN_0056fad0` is cleared as the overrun source.
+`FUN_0056f1f0`'s writes through its buffer argument are **not yet cleared** — a naive scan found
+three `mov dword ptr [ebx], ebp` at displacement 0, but EBX is reassigned mid-function, so those
+may not be the buffer at all. That needs a proper def-use trace of EBX across
+`0x0056f1f0..0x0056f341`, not a regex. If `FUN_0056f1f0` writes past dword 26, `local_78[27]` is
+simply too small and the victim is whichever local MSVC placed next — which would explain every
+observation at once.
 
 ## `0x0056f0a0` — a NULL write in a *third* function, and only when the A/B is armed
 

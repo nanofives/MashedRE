@@ -96,9 +96,24 @@ Branch `race/first-frame-parity`, tree clean, no stray processes, pool locks cle
     - Ruled out so far, each against the disasm: argument shape/arity, base `+0x10`, field
       `+0xc`, stride `0x28`, re-read bound `+0xac`, `local_78[27]` sizing vs both callees, the
       float loop counter (real, fixed, not the cause), the aliasing (faithful).
-    - **NEXT, cheap:** move or duplicate the `fprintf` further down iteration 0 — after the two
-      `FUN_0055b750` calls, after `FUN_0056fad0`, after each `FUN_0056f1f0` — and the last line
-      printed names the dying statement. One boot per placement.
+    - **STAGED, and the nature of the problem changed.** Stage markers through iteration 0 gave
+      `ENTER / after the six deltas (local_e4=0 local_e0=10E2B60C) / after b750 #1 / after b750 #2 /
+      after fad0 #1 / after f1f0 #1` — dies after `FUN_0056f1f0 #1`. **Then it stopped crashing:
+      4 boots, 4× RACE_OK with the markers compiled in — and 2/2 RACE_OK with
+      `MASHED_TRACE_F350` UNSET, so the `fprintf` never runs.** The logging is not the variable;
+      **the call sites are**, because they change MSVC's register allocation and frame.
+      **⇒ the defect is FRAME-LAYOUT DEPENDENT**, which is why every static comparison came back
+      clean: it is not in an expression, it is in memory layout.
+    - **Uninitialised-slot hypothesis: TESTED and REFUTED.** Note 3 says `local_78[0x19]/[0x1a]`
+      are left uninitialised and `FUN_0056f1f0` copies `[0x1a]` raw. Zeroing exactly those two on
+      the crashing baseline: **3 boots, 3× CRASH.** Not the cause; experiment reverted.
+    - **NEXT, specific:** frame dependence means an overrun into a local adjacent to `local_78`,
+      or a read of another uninitialised local. `FUN_0056fad0` is cleared (writes ≤ dword `0xe`).
+      **`FUN_0056f1f0`'s writes through its buffer argument are NOT cleared** — a naive scan found
+      three `mov dword ptr [ebx], ebp` at displacement 0, but EBX is reassigned mid-function, so
+      settle it with a proper def-use trace of EBX across `0x0056f1f0..0x0056f341`, not a regex.
+      If it writes past dword 26 then `local_78[27]` is too small and the victim is whichever
+      local MSVC placed next — which would explain every observation at once.
   - **BOTH witness crashes are now SETTLED and out of the lane** (`SKIP:runtracked-unbounded-effects`,
     verdict `INVALID_WITNESS`). `0x0055bd80`'s fault is EIP `0x00564c8e` `fld [ecx+0x10]` with
     `ECX = 1`, inside `FUN_00564c80` — a target of its volume-descriptor dispatch

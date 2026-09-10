@@ -118,7 +118,7 @@ rva	name	verdict	n	ndiff	proof	detail	boot_state	group	log	at	control	control_at
 0056f020	FUN_0056f020	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	8	shadow_ab_20260910_120806_8x_0056caa0.log	2026-09-10T12:08:06		
 0056f0a0	FUN_0056f0a0	CRASH	0	0		 | p0.grounded=4 airflag=1  vel=[1639.6, -68.8, 1267.2]    /     + 18s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[-69.5, 35.2, -483.1]    /   game exited.	CRASH	1	shadow_ab_20260910_151653_1x_0056f0a0.log	2026-09-10T15:16:53	RACE_OK	2026-09-10T15:17:53
 0056f1f0	FUN_0056f1f0	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=51		RACE_OK	1	shadow_ab_20260910_121102_1x_0056f1f0.log	2026-09-10T12:11:02		
-0056f350	FUN_0056f350	CRASH	0	0		 |   p0.grounded=4 airflag=1  vel=[-83.7, 0.2, 331.1]    /     + 13s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[2322.9, -23.2, 2510.9]    /   game exited.	CRASH	1	shadow_ab_20260910_151900_1x_0056f350.log	2026-09-10T15:19:00	CRASH	2026-09-10T16:58:12
+0056f350	FUN_0056f350	CRASH	0	0		 |   p0.grounded=4 airflag=1  vel=[-83.7, 0.2, 331.1]    /     + 13s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[2322.9, -23.2, 2510.9]    /   game exited.	CRASH	1	shadow_ab_20260910_151900_1x_0056f350.log	2026-09-10T15:19:00	CRASH	2026-09-10T17:11:09
 0056fad0	FUN_0056fad0	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	1	shadow_ab_20260910_003450_1x_0056fad0.log	2026-09-10T00:34:50		
 0056fb90	FUN_0056fb90	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:24:14		
 0056fea0	FUN_0056fea0	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T14:32:02		
