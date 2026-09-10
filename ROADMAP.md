@@ -25,12 +25,13 @@ Verified 2026-08-15 against the source, not against a doc:
 With neither set, the shipping exe runs a hand-written D3D9 renderer (which is neither
 verbatim RW nor librw) and the kinematic drive model that v2 itself called "explicitly
 NOT the ported physics". `LibRw/RwRaceSubmit.cpp:218` states it plainly: *"with no env
-set the shipping D3D9 path still runs"*. A raw grep finds 149 distinct `MASHED_*` tokens under `mashedmod/src/`, of which
-**128 have an actual `getenv`/`GetEnvironmentVariableA` site** — the remainder are
-include guards, absolute-address macros, a compile-time `#define`, a filename and a
-prose prefix. So "what the exe does" currently has no single answer, and the honest
-flag number is **128**, not the 146 this document first claimed (that figure counted
-raw tokens; corrected 2026-08-15 during D0).
+set the shipping D3D9 path still runs"*. A generated inventory finds 150 distinct `MASHED_*` tokens under `mashedmod/src/`, of which
+**138 have an actual env-read site** (`getenv`/`GetEnvironmentVariableA`, plus the
+`envSet(...)`/`EnvSet(...)` accessors) — the remainder are 8 non-env tokens and 4 dead
+flag names. So "what the exe does" currently has no single answer, and the honest flag
+number is **138**, not the 146 this document first claimed nor the 128 the first D0 pass
+reported (146 counted raw tokens; 128 came from too strict a regex that missed the
+`envSet` accessors; corrected to 138 by D0.2, `re/analysis/FLAG_INVENTORY_2026-08-15.md`).
 
 **This is not a new requirement. It is a violation of the rule v2 already had.** S-DoD
 criterion 1 reads: *"The standalone exe runs the subsystem's canonical scenario natively
@@ -55,7 +56,7 @@ Corollaries, all enforceable:
    flagged on-demand" is the state v2 accepted; v3 calls that half-landed.
 3. **Every phase gate below is measured on a clean environment.** If a demo needs a flag
    set, the demo does not count. This applies retroactively to the phase ledger.
-4. **The flag inventory is a tracked number.** 128 real env vars today (149 raw tokens).
+4. **The flag inventory is a tracked number.** 138 real env vars today (150 raw tokens).
    It should fall. Count reproducibly, not by grepping the prefix — see D0.2.
 
 This rule costs something and the cost is worth naming: some flags exist because the
@@ -148,11 +149,15 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
    `re/analysis/SESSION_VERIFICATION_AUDIT_2026-08-15.md`. It surfaced two items that did
    not exist when D0 was written, both below (6 and 7), and one correction to this
    document's own premise: **env-gating is not the largest gap — non-linkage is.**
-   `build.bat` links 193 of 433 `.cpp` into `mashed_re.exe`; `Save/` contributes 0 of 17
-   files and `Audio/` 4 of 25, so 585 audio and 32 save rows — *including 28 save C4s* —
-   are absent from the deliverable and **no env var can reach them**. The default-build
+   `build.bat` linked **198 of 433** `.cpp` into `mashed_re.exe` **as audited 2026-08-15**
+   (D0.1 first counted 193 because it counted plain sources on the `cl` line and omitted the
+   5 isolated per-target `.obj`; it reported a plain-source count as a TU count. **204 after
+   batch 1** landed six files on 2026-08-18 — see item 7); `Save/` contributes
+   0 of 17 files and `Audio/` 4 of 25, so 585 audio and 32 save rows — *including 28 save
+   C4s* — are absent from the deliverable and **no env var can reach them**. The default-build
    rule therefore needs a second clause: a capability counts only if its TU is linked
-   into the exe *and* reached on the default path.
+   into the exe *and* reached on the default path. **Why they are absent is settled by D0.7
+   (item 7, answered 2026-08-18): this code is hook-shaped, not unlinked by drift** — see there.
 2. ~~Publish the flag inventory.~~ **DONE 2026-08-15** —
    `re/analysis/FLAG_INVENTORY_2026-08-15.md`, generated rather than hand-listed. **150
    tokens, 138 live env vars, 8 non-env tokens, 4 dead flag names.** Note the count moved
@@ -268,47 +273,81 @@ renderer becomes the fallback, then goes away.
 > (3) the D3D9 fallback has not gone away. `FLAG_INVENTORY_2026-08-15.md` class A still
 > lists the flag as OFF; corrected there by a dated note, not by regenerating.
 
-**Measured 2026-08-15, and the inversion is BLOCKED on a new finding
+**HISTORY — measured 2026-08-15, when the inversion still read as BLOCKED
 (`verify/d1_measure/MEASUREMENT.md`).** With the R10b-fixed gate, a like-for-like run
-differing only in that flag gives: 12 of 16 shots at or near parity (≤0.92%), and four
-that diverge — `01_inrace_track` 71.61%, `round3_result` 69.15%, `round2_result` 68.94%,
+differing only in that flag gave: 12 of 16 shots at or near parity (≤0.92%), and four
+that diverged — `01_inrace_track` 71.61%, `round3_result` 69.15%, `round2_result` 68.94%,
 `01_action` 21.69%.
 
-**The divergence accumulates.** `round1_result` 0.01% → `round2_result` 68.94% →
-`round3_result` 69.15%; `01_grid` (early race) 0.02% → `01_action` 21.69% →
-`01_inrace_track` (late) 71.61%. Parity holds for the first round and the start of a race
-and degrades after. That is leaked or unreset state, not a static shading difference —
-inverting now would ship a default renderer that drifts as you play. The
-round-1/round-2 boundary is a clean bisection point.
+**The A/B divergence that blocked this is CLOSED** — re-measured on a clean rebuild
+2026-08-18 (`verify/d1_recheck_20260818/REPORT.md`). The clean-env D3D9-vs-librw A/B is
+**16 of 16 shots ≤1.01%**, 14 of 16 ≤0.4%; the worst, `r5/car_3_weave` at 1.01%, is the
+pre-existing indexed-vs-unindexed fill-rule delta (the D-S3-BANK shot below), not a residue
+of this work. The paired control run — identical env on both arms — is **16/16
+byte-identical (0.00%)** (`verify/d1_control_20260818/REPORT.md`), so every delta above is
+signal, not harness noise.
 
-Note also what the measurement does **not** settle: which renderer is *faithful*. Both were
-compared to each other, not to the original. Resolving that needs an original-side capture
-at the same pose, which became possible today (`MASHED_CAM_POSE` + the shim's
-`draw3d.json`).
+**The accumulation this section was originally written around is gone.** The 2026-08-15
+figures — `01_inrace_track` 71.61%, `round3_result` 69.15%, `round2_result` 68.94%,
+`01_action` 21.69%, read as "leaked or unreset state" that would make the default renderer
+drift as you play — now measure **0.48% / 0.10% / 0.06% / 0.01%** on the same shots. There
+was never leaked state.
 
-~~Blocked by R10b.~~ **R10b CLOSED 2026-08-15 — the gate now has a zero noise floor on
-every shot (16/16 byte-identical across runs).**
+**The 2026-08-15 diagnosis was wrong five times over, and is recorded because the failure
+mode is instructive.** The divergence was read in turn as (1) an accumulating "leaked or
+unreset state"; (2) a per-channel R/G gain on the D3D9 side; (3) a D3D9 world-coverage
+failure; (4) — after that was refuted — a claim that the result screen never re-renders the
+world at all; and (5) a second, independent "orange sky" colour divergence. Every one was
+retracted by the next measurement (chain in `re/analysis/CHANGELOG.md`, 2026-08-15→16). The
+single actual cause is a **scaffold FX particle defect on the D3D9 side, present in both
+runs**: `ParticleSystem` kind==2 spawns 36 fully-opaque spin-out billboards that each
+subtend the whole viewport (`verify/d1_nopart/RESULT.md`, `verify/d1_fxbloom/RESULT.md`). It
+is now **cut from the default build** (draw-time kind mask; `MASHED_PARTS_KINDS=7` restores
+it; re-pickup condition: the ported `Particle/` system lands). The "accumulation" was a
+capture-timing artefact — spin-outs are eliminations, so the diverging frames were the ones
+captured just after one.
 
-The "8 of 13 shots differ between builds of identical source" figure this section was
-written around was already stale: R10b was root-caused on 2026-08-01 as ambient
-DirectInput (the device is opened `DISCL_BACKGROUND | DISCL_NONEXCLUSIVE`, so typing in
-another window flew the camera mid-capture), fixed, and reduced to 3 unstable shots.
+**A clean A/B is a precondition for inverting, not proof the port is faithful**
+(`verify/d1_fxcut/RESULT.md`). The two paths now agree with each other; neither has been
+fully adjudicated against MASHED.exe. That lane advanced materially the same day and is no
+longer blind:
 
-The residual was closed today by running the diagnostic the sizing doc had already
-specified but never executed — compare `RELIGHT_CAP` headings across two runs. **Headings
-were bit-identical while `02_back_to_menu` differed on 17.30% of pixels**, which localises
-the divergence to the renderer, not the simulation. Cause: `MpegVideoTexture::Update()`
-pulls whatever frame the live DirectShow graph is on, and `MASHED_DETERMINISTIC` pins the
-frame *index*, not wall-clock. Deterministic mode now freezes the backdrop after one
-upload — the menu still shows real video (93.2% non-black), and the frame reproduces.
+- **The standalone was rendering the world MIRRORED relative to the original**
+  (`verify/d1_basis/RESULT.md`) — self-consistent, so gameplay looked normal and it survived
+  a clean A/B for months. Fixed by negating the camera right axis on both paths, and the
+  compensating librw negation `[D-S3-4]` was reverted (librw's built-in X negation is the
+  original's convention; it had been tuned to match a mirrored reference). The A/B is
+  unchanged by this — a shared reflection cancels inside a D3D9-vs-librw comparison
+  (`verify/d1_mirrorfix/RESULT.md`).
+- **Lens is measured, not invented.** `fovy = 2·atan(0.45) = 48.46°`, `near = 0.1`, and the
+  far plane = `COURSE.LUA Setup_Fog`'s far argument, all read live from
+  `RwCamera::viewWindow` and adopted (`verify/d1_lens/RESULT.md`).
+- Against the original at a transplanted pose the figure is 89.68% → **33.79%** after the
+  mirror/lens work; the residual is a different sim moment plus lighting and texture, not a
+  structural transform (`verify/d1_mirrorfix/RESULT.md`). Whole-frame imgdiff cannot validate
+  a pose transplant, so it is not treated as a gate number either way.
+
+**Still open, and NOT the old blocker:** (a) a frame-accurate original-vs-standalone parity
+number, which needs the pose read synchronised to the capturing Present; (b) the sky
+cloud-layer / UV-scroll animation item (`re/analysis/DIVERGENCE_LEDGER_3D.md`) — note librw
+draws no sky, so this is a D3D9-vs-original question in both runs.
 
 Accepted delta on record: D-S3-BANK closed at floor 2026-08-04 — transform exact to
 4.6e-4 px, residual is a 1–2 px grazing-silhouette fill-rule difference from indexed
 sector-major (librw) vs unindexed material-major (D3D9) submission of identical
-vertices. Evidence committed at `verify/s3bank_iso/`. Blocks nothing.
+vertices. Evidence committed at `verify/s3bank_iso/`. Blocks nothing; it is the
+`car_3_weave` 1.01% shot above.
 
-**Gate:** clean-env `mashed_re.exe` renders a race through librw; `drawlist_diff.py`
-GREEN or every remaining row cited; R10b closed so the result is reproducible.
+~~Blocked by R10b.~~ **R10b CLOSED 2026-08-15** — the gate has a zero noise floor on every
+shot (16/16 byte-identical across runs, confirmed again 2026-08-18 by the control pair),
+root-caused as ambient DirectInput (`DISCL_BACKGROUND | DISCL_NONEXCLUSIVE`, so typing in
+another window flew the camera mid-capture) plus a `MASHED_DETERMINISTIC` backdrop that
+pinned the frame index but not wall-clock; both fixed, so every delta above is signal.
+
+**Gate:** clean-env `mashed_re.exe` renders a race through librw; `drawlist_diff.py` GREEN
+or every remaining row cited (the A/B condition is met — 16/16 ≤1.01%); and an original-side
+capture at a matched, frame-synced pose adjudicates faithfulness before the flag default is
+flipped. R10b closed so the result is reproducible.
 
 Closes v2's **R4**.
 
