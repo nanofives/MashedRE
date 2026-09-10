@@ -159,7 +159,7 @@ rva	name	file	subsystem	kind	ret	cc	params	phase	status
 005b0f40	AudioQueuePop	AudioQueuePop.cpp	audio	ret	std::uint32_t	__cdecl	void* obj	race	ALREADY:shadow-site-present
 005b8080	L2_FUN_005b8080	L2_005b8080.cpp	lane2	tracked	void	__cdecl		race	SKIP:irreversible-side-effect
 00421980	L2_FUN_00421980	L2_00421980.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-decomp2port-tracked
-00421960	L2_FUN_00421960	L2_00421960.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-decomp2port-tracked
+00421960	L2_FUN_00421960	L2_00421960.cpp	lane2	tracked	void	__cdecl		race	SKIP:callee-arity
 0041f290	L2_FUN_0041f290	L2_0041f290.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-decomp2port-tracked
 004219c0	L2_FUN_004219c0	L2_004219c0.cpp	lane2	tracked	void	__cdecl		race	SKIP:hidden-reg-arg
 00495fe0	L2_FUN_00495fe0	L2_00495fe0.cpp	lane2	tracked	void	__cdecl		race	SKIP:hidden-reg-arg

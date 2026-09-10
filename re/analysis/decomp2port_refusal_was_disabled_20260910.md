@@ -78,17 +78,63 @@ A pointer advanced 0x208 per iteration, never passed to a zero-argument call. Th
 comment describes this shape *verbatim, with this stride, citing this RVA* — it was written from
 this very failure and then never fired.
 
-### `0x00421960` — NOT this class
+### `0x00421960` — NOT this class, but a THIRD generator gap: shared stack arguments
 
 ```c
 uVar1 = UtilDeref55dec0(DAT_006ce274);
 L2T_FUN_00559c40(uVar1);
 ```
 
-No loop, no advanced local. The repaired heuristic correctly **accepts** it, and its crash is
-elsewhere: EIP `0x00559cb3`, inside `FUN_00559c40` itself, faulting on `mov edi,[eax+ebp]` at an
-unmapped address right after a bitset index computation (`shr ebp,5` / `shl ebp,2` /
-`and ecx,0x1f`). Still open, needs its own read.
+No loop, no advanced local — the repaired heuristic correctly **accepts** it. The real cause is
+that the original **shares one pushed argument block between two consecutive calls**:
+
+```
+0x00421966  push 7 / push -1 / push eax / push ecx
+0x0042196c  call 0x55dec0        ; FUN_0055dec0 -- 4 args
+0x00421971  add esp,4            ; pops ONE dword -- three args stay live
+0x00421974  push eax             ; the return value
+0x00421975  call 0x559c40        ; FUN_00559c40(eax_ret, eax_old, -1, 7)
+0x0042197a  add esp,0x10         ; now pops all four
+0x0042197d  ret
+```
+
+Ghidra models that as two independent **one-argument** calls, and the generated port duly calls
+`FUN_00559c40` with one argument. The callee reads arg1 and arg3:
+
+```
+0x00559c40  sub esp,0x20
+0x00559c43  push ebx
+0x00559c44  mov ebx,[esp+0x30]   ; = E+0xc  -> arg3, which the original supplies as -1
+0x00559c48  push esi
+0x00559c49  mov esi,[esp+0x2c]   ; = E+4    -> arg1
+0x00559c4d  cmp ebx,-1
+0x00559c51  jne 0x559ca2         ; <-- with garbage arg3 this branch is taken
+...
+0x00559ca6  mov ebp,ebx          ; garbage
+0x00559caa  shr ebp,5
+0x00559cad  shl ebp,2
+0x00559cb3  mov edi,[eax+ebp]    ; <-- FAULT, unmapped 0x1d9644f4
+```
+
+So arg3 is stack garbage instead of `-1`, the `cmp ebx,-1 / jne` takes the wrong branch, and the
+bitset index derived from that garbage faults — **exactly** the caught AV
+(`log/crash_eip_00421960.txt`, `mem_address 0x1d9644f4`, after `shr ebp,5 / shl ebp,2 /
+and ecx,0x1f`).
+
+**Why the generator missed it.** `decomp2port.py` already refuses `CALLEE_REG_ARG` when the
+callee's prototype shows **fewer** stack params than the site passes. The **opposite** mismatch —
+prototype shows *more* — only `log.append("CALLEE_ARITY … -> raw thunk")`ed and fell through,
+emitting a thunk built with the **site's** arity, i.e. a call that passes too few arguments. That
+is never safe. Now a refusal (`CALLEE_ARITY:… (site passes FEWER)`).
+
+The tell is the mismatched `add esp,N` after the call, and that is **not visible in the
+decompilation text** — which is why the refusal is on the arity disagreement itself rather than
+on detecting the idiom.
+
+**Caveat, stated because it cuts against the change:** this makes the generator stricter, so
+Lane 2 yield drops, and **any TU generated under the permissive rule is suspect** — not just
+this one. `0x00421960` is the proven instance; how many others took that path is not known,
+because the `CALLEE_ARITY` log lines were not retained.
 
 ## Verification
 

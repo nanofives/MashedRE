@@ -25,6 +25,16 @@ REFUSES with a reason (nothing emitted for that row):
   REGISTER_ABI        param in a register or `unaff_ESI`/`in_EAX` in the body -> needs naked asm
   INDIRECT_CALL       `(**(code **)(...))(...)` -- calling convention of the target unknown
   CALLEE_PROTO        a callee has no decompiler prototype and no existing port
+  CALLEE_REG_ARG      the callee's decomp shows FEWER stack params than the site passes -> the
+                      extra argument travels in a register Ghidra did not model
+  CALLEE_ARITY        the callee's decomp shows MORE stack params than the site passes. Added
+                      2026-09-10: this previously only LOGGED and emitted a raw thunk with the
+                      SITE's arity, i.e. a call passing too few arguments so the callee reads
+                      the rest as stack garbage. Measured on 0x00421960, where the original
+                      shares one pushed block between two consecutive calls (`add esp,4` after a
+                      4-arg call leaves three args live for the next one) and Ghidra models it as
+                      two 1-arg calls. NOTE this makes the generator stricter, so Lane 2 yield
+                      drops and any TU generated under the permissive rule is suspect.
   VARARGS / PSEUDO_OP  `...`, `CONCAT`, `SUB4`, `ZEXT`, `halt_baddata`, `in_ST0`, `float10` returns
   DECOMP_MISSING      the decompiler produced nothing usable
   IRREVERSIBLE_SIDE_EFFECT
@@ -372,7 +382,32 @@ def transcribe(fn, ports, log):
                 # (eip 0x005bbf59, 0x00421980 -> FUN_0055dec0/FUN_00559ee0) were this shape.
                 return None, f"CALLEE_REG_ARG:{cn} proto={len(tl)} site={n_site}"
             elif ok and r is not None:
-                log.append(f"CALLEE_ARITY {cn} proto={len(tl)} site={n_site} -> raw thunk")
+                # The OPPOSITE mismatch: the callee's decompilation saw MORE stack parameters
+                # than this call site passes. This used to only LOG and fall through to a raw
+                # thunk built with the SITE's arity -- i.e. it emitted a call that passes too
+                # few arguments, leaving the callee to read the rest as stack garbage. That is
+                # never safe, and it shipped a crasher.
+                #
+                # MEASURED on 0x00421960 (2026-09-10). The original shares one pushed argument
+                # block between two consecutive calls:
+                #     0x00421966  push 7 / push -1 / push eax / push ecx
+                #     0x0042196c  call 0x55dec0        ; 4 args
+                #     0x00421971  add esp,4            ; pops ONE -- three args stay live
+                #     0x00421974  push eax             ; the result
+                #     0x00421975  call 0x559c40        ; FUN_00559c40(eax_ret, eax_old, -1, 7)
+                #     0x0042197a  add esp,0x10         ; now pops all four
+                # Ghidra models that as two independent ONE-argument calls. The generated port
+                # duly called FUN_00559c40 with one argument, so its arg3 (read at
+                # 0x00559c44 `mov ebx,[esp+0x30]`) was stack garbage instead of -1; the
+                # `cmp ebx,-1 / jne` at 0x00559c4d then took the wrong branch and
+                # 0x00559cb3 `mov edi,[eax+ebp]` faulted on an address derived from that
+                # garbage via `shr ebp,5 / shl ebp,2` -- exactly the caught AV
+                # (log/crash_eip_00421960.txt, unmapped 0x1d9644f4).
+                #
+                # A mismatched `add esp,N` after a call is the tell, and it is not visible in
+                # the decompilation text -- so refuse on the arity disagreement itself rather
+                # than trying to detect the idiom.
+                return None, f"CALLEE_ARITY:{cn} proto={len(tl)} site={n_site} (site passes FEWER)"
         if ctypes_ is None:
             if not dp:
                 log.append(f"CALLEE_NO_DPROTO {cn} -> raw thunk arity {n_site}, ret undefined4")
