@@ -322,6 +322,60 @@ the strongest candidate (written unconditionally, differs per call) but "5 of 24
 conditionally-written slot better. The verdict above does not depend on which: any port whose
 frame layout differs makes the `stack=` channel unreliable, and the outputs agree 24/24.
 
+## `0x0055bd80` — and the rule that came out of it: `RunTracked` + indirect dispatch
+
+Caught the fault (`log/crash_eip_0055bd80.txt`): EIP `0x00564c8e`, `fld dword ptr [ecx+0x10]`
+with **`ECX = 1`**, reading address `0x11`. `bytes_before_eip` decodes the prologue, so the
+faulting function is `FUN_00564c80` (`sub esp,0x4c / mov edx,[esp+0x54] / mov ecx,[esp+0x58] /
+push ebx / mov eax,edx`), and `[esp+0x58]` after `sub esp,0x4c` + one push is **arg2** — so
+arg2 = 1 where a pointer is expected. `FUN_00564c80` is reached through `FUN_0055bd80`'s
+volume-descriptor dispatch `call dword ptr [edx+0x10]` at `0x0055bdca`.
+
+**The port matches the original everywhere checkable.** The original's three-way selection of
+that argument —
+
+```
+0x0055bd8f  jne 0x55bdb7        ; flag A set  -> arg2 = param_2   (0x0055bdb7)
+0x0055bd98  jne 0x55bdb7        ; flag B set  -> arg2 = param_2
+0x0055bda0  je  0x55bdb3        ; param_2==0  -> arg2 = param_1   (0x0055bdb3 mov eax,esi)
+0x0055bda9  call 0x4c4600       ; else        -> arg2 = the call's result
+```
+
+— is exactly what Ghidra's comma-in-condition idiom reproduces
+(`if ((A==0) && (B==0) && (iVar1 = param_1, param_2 != 0)) iVar1 = FUN_004c4600(...)`), including
+the short-circuit that leaves `iVar1 = param_2` when either flag is set. Argument order at the
+`FUN_004c4600` call matches the original's `push eax / push esi / push ecx` too, and the port
+declares it `uint *` so the return is not truncated. **And the `--no-shadow` control boots
+clean**, so the installed port is fine.
+
+### The screen, which refuted my first explanation
+
+I was about to write "indirect dispatch through a runtime table cannot be A/B'd". Screened the
+lane instead: **11** shadow sites make a runtime-dispatched indirect call, and the split is
+**not** by the dispatch —
+
+| witness kind | sites | outcome |
+|---|---:|---|
+| `Run` (return value only) | 9 | **8 of 8 sampled are CLEAN 48/48**; the 9th (`0x005729a0`) is NO_SAMPLES, never called |
+| `RunTracked` (pages + caller stack window) | 2 | **2 of 2 problematic** — `0x0055bd80` CRASH, `0x0055c2d0` DIVERGENT |
+
+So indirect dispatch is fine when the witness is bounded. The rule that survives is narrower and
+better supported (8/8 vs 0/2):
+
+> **`RunTracked` is the wrong witness for a function that makes a runtime-dispatched indirect
+> call.** `Run` compares one return value — bounded no matter where the dispatch goes.
+> `RunTracked` compares page writes plus the caller stack window *and runs the body twice*; for a
+> callee chosen at runtime from a data table, neither the write set nor the re-entrancy can be
+> bounded in advance.
+
+`0x0055c2d0` is the mild form of the same thing (its divergence is the port's own `/GS` frame,
+above). `0x0055bd80` is the severe form.
+
+**Disposition:** `0x0055bd80` should leave the lane. Converting it to `RunRegion` is not
+available — the region would have to cover whatever the dispatch target writes, which is exactly
+what is unknowable. [UNCERTAIN] why arg2 is specifically `1` on the second pass is not pinned;
+the verdict rests on the control being clean plus the witness/kind split, not on that value.
+
 ## Artifacts
 
 - `log/crash_eip_0056f350.txt`, `log/crash_eip_0056f0a0.txt`

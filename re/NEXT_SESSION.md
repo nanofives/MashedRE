@@ -82,6 +82,22 @@ Branch `race/first-frame-parity`, tree clean, no stray processes, pool locks cle
     **NEXT: a runtime probe, not more static reading** — log `k`, `[param_2+0xac]` and
     `[param_2+0xc+k*0x28+0x10]` per iteration from the port and diff against a Frida trace of the
     original's loop on the same call. Full detail in the analysis note.
+  - **BOTH witness crashes are now SETTLED and out of the lane** (`SKIP:runtracked-unbounded-effects`,
+    verdict `INVALID_WITNESS`). `0x0055bd80`'s fault is EIP `0x00564c8e` `fld [ecx+0x10]` with
+    `ECX = 1`, inside `FUN_00564c80` — a target of its volume-descriptor dispatch
+    `call dword ptr [edx+0x10]` at `0x0055bdca`. Its port matches the original everywhere
+    checkable (the three-way arg2 selection incl. the short-circuit, the `FUN_004c4600` argument
+    order, its `uint *` return) and its control boots clean.
+    **⇒ LANE RULE, and it refuted my first, broader explanation.** I nearly wrote "indirect
+    dispatch through a runtime table cannot be A/B'd". Screened instead: **11** sites make such a
+    call, and the split is by **witness kind**, not the dispatch — all **8 of 8** sampled `Run`
+    sites are CLEAN 48/48, and **2 of 2** `RunTracked` sites are broken. So:
+    > `RunTracked` is the wrong witness for a function making a runtime-dispatched indirect
+    > call. `Run` compares one return value (bounded wherever the dispatch goes); `RunTracked`
+    > compares pages + the caller stack window *and runs the body twice*, and for a callee chosen
+    > from a runtime table neither is boundable.
+    `RunRegion` is not an escape either: the region would have to cover whatever the dispatch
+    target writes.
   - `0x0056f0a0`: control boots clean, so the port is fine; the armed boot NULL-writes at
     `0x0056caf4` inside a **third** function, `FUN_0056caa0`. **Body read, and it is the excluded
     shape:** ~16 load/add/store accumulators (invisible to an `add [mem]` grep), four of them
