@@ -7087,8 +7087,16 @@ bool LoadBadgeSprites() {
                     if (fmt==mashed_re::Txd::PixelFormat::ARGB8888) {
                         const std::uint8_t* s=mp.pixels+(std::size_t)y*mp.stride+x*4;
                         rgba[0]=s[0];rgba[1]=s[1];rgba[2]=s[2];rgba[3]=s[3];
-                    } else if (fmt==mashed_re::Txd::PixelFormat::Paletted8 && mp.palette) {
-                        std::uint8_t idx=mp.pixels[(std::size_t)y*mp.stride+x];
+                    } else if ((fmt==mashed_re::Txd::PixelFormat::Paletted8 ||
+                                fmt==mashed_re::Txd::PixelFormat::Paletted4) && mp.palette) {
+                        // PAL4 added 2026-09-10 alongside the QuadRenderer fix
+                        // (re/analysis/pal4_quad_upload_20260910.md). Both are one
+                        // byte per pixel; PAL4 uses only the low nibble. Without
+                        // this arm a PAL4 sprite dumped as all-zero RGBA, which
+                        // reads as "decoded to nothing" rather than "not handled".
+                        const std::uint8_t mask =
+                            (fmt==mashed_re::Txd::PixelFormat::Paletted4) ? 0x0Fu : 0xFFu;
+                        std::uint8_t idx=mp.pixels[(std::size_t)y*mp.stride+x] & mask;
                         const std::uint8_t* p=mp.palette+idx*4;
                         rgba[0]=p[0];rgba[1]=p[1];rgba[2]=p[2];rgba[3]=p[3];
                     }

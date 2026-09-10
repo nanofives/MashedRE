@@ -71,7 +71,7 @@ F38: badges.txd 'dot'   16x16 fmt=PAL4 upload OK (ok)
 So the fix is confirmed as the cause, correctly scoped, and lands the restored draws at
 the measured columns.
 
-## [UNCERTAIN U-PAL4-S6] The restored draws cannot be gated against `verify/orig_screens/s6.bmp`
+## [UNCERTAIN U-9130] The restored draws cannot be gated against `verify/orig_screens/s6.bmp`
 
 Region diff over the checklist box (`x 518..545, y 318..375`) against that reference gets
 **worse**, 48.38 -> 68.25, and the region histogram says why: the original reference is a
