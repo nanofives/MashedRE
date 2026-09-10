@@ -79,9 +79,26 @@ Branch `race/first-frame-parity`, tree clean, no stray processes, pool locks cle
     int at `[esp+0x50]`), but the crash reproduced and **the fault MOVED** to a `cmov`-ised
     default-pointer ternary yielding 0 (`divss xmm0,[eax]`, `EAX=0`). So there is more than one
     divergent path and whack-a-mole is low yield. Standalone regression-checked: no-op there.
-    **NEXT: a runtime probe, not more static reading** — log `k`, `[param_2+0xac]` and
-    `[param_2+0xc+k*0x28+0x10]` per iteration from the port and diff against a Frida trace of the
-    original's loop on the same call. Full detail in the analysis note.
+    **TRACED 2026-09-10.** Instrument is in the tree behind **`MASHED_TRACE_F350=1`**
+    (`RwpSolverCore10.cpp`, `F350Trace()`; writes `original/f350_trace.txt`; inert when unset).
+    One boot gave **one line**: `k=0 bound=4 pfVar9=0F73A7E0 field[+0xc]=00000000 flags=00`. So
+    the bound is **4**, `puVar3` is **NULL** on iteration 0, and **it dies inside iteration 0's
+    body** — before the k=1 line. This supersedes the earlier "k=5" figure, which came from
+    reading `EAX−EDI` on an older build; **do not reuse it**.
+    - **⚠ The "obvious aliasing bug" in that body is FAITHFUL — do not fix it.** Three sequential
+      normalisations where each later `sqrt` re-reads a component the previous line overwrote. I
+      was about to hoist one reciprocal length. The original does the same:
+      `0x0056f8a4 fsqrt / 0x0056f8a6 fdivr [0x5cc320] / 0x0056f8ac fmul [esp+0x10] /
+      0x0056f8b0 **fst [esp+0x10]** / 0x0056f8b4 fmul [esp+0x10] / 0x0056f8be fsqrt /
+      0x0056f8ca fst [esp+0x14] / 0x0056f8d6 fsqrt` — three `FSQRT`s with write-backs between
+      them, a progressive renormalisation. The "cleanup" would inject a divergence into correct
+      code.
+    - Ruled out so far, each against the disasm: argument shape/arity, base `+0x10`, field
+      `+0xc`, stride `0x28`, re-read bound `+0xac`, `local_78[27]` sizing vs both callees, the
+      float loop counter (real, fixed, not the cause), the aliasing (faithful).
+    - **NEXT, cheap:** move or duplicate the `fprintf` further down iteration 0 — after the two
+      `FUN_0055b750` calls, after `FUN_0056fad0`, after each `FUN_0056f1f0` — and the last line
+      printed names the dying statement. One boot per placement.
   - **BOTH witness crashes are now SETTLED and out of the lane** (`SKIP:runtracked-unbounded-effects`,
     verdict `INVALID_WITNESS`). `0x0055bd80`'s fault is EIP `0x00564c8e` `fld [ecx+0x10]` with
     `ECX = 1`, inside `FUN_00564c80` — a target of its volume-descriptor dispatch

@@ -190,10 +190,63 @@ pixels confined to `x 212..259, y 130..178`**, the pulsing category-sprite band 
 same-build B-vs-B2 control already showed varies run to run. Nothing in the checklist column
 `x 524..541` moved.
 
-**Next step is a runtime probe, not more static reading:** log `k`, `[param_2+0xac]` and
-`[param_2+0xc+k*0x28+0x10]` per iteration out of the port, and diff against a Frida trace of the
-original's loop over the same call. Until the two iteration traces are side by side, the state
-divergence cannot be localised.
+### The runtime probe, built and run
+
+Added a temporary loop trace to the port behind **`MASHED_TRACE_F350=1`**
+(`RwpSolverCore10.cpp`, `F350Trace()` + one `fprintf` at the top of the loop body; nullptr and
+one static test per iteration when unset). It writes `f350_trace.txt` to the process CWD, i.e.
+`original/`. One traced boot produced **one line**:
+
+```
+k=0 bound=4 pfVar9=0F73A7E0 field[+0xc]=00000000 flags=00
+```
+
+So: the bound is **4** (the loop should run k=0..3), `puVar3` is **NULL** on iteration 0 — which
+sends the body down the `(puVar3 == 0)` branch — and **only k=0 was ever logged.** The crash
+happens *inside iteration 0's body*, before the k=1 line. That supersedes my earlier "k=5"
+reading, which came from interpreting `EAX−EDI` on an older build and does not survive direct
+measurement.
+
+### The apparent aliasing bug is FAITHFUL — do not "fix" it
+
+While reading iteration 0's body I found what looked like a clear defect: three sequential
+normalisations where each later `sqrt` re-reads a component the previous line just overwrote —
+
+```c
+local_f0 = (1.0f / sqrtf(local_f0*local_f0 + local_ec*local_ec + fVar4)) * local_f0;
+local_ec = (1.0f / sqrtf(local_f0*local_f0 + local_ec*local_ec + fVar4)) * local_ec;  // uses the NEW local_f0
+fVar2    = (1.0f / sqrtf(local_ec*local_ec + local_f0*local_f0 + fVar4)) * fVar2;
+```
+
+**The original does exactly the same thing**, and the disassembly is unambiguous:
+
+```
+0x0056f8a4  fsqrt                  ; sqrt #1
+0x0056f8a6  fdivr dword [0x5cc320] ; 1.0 / it
+0x0056f8ac  fmul  dword [esp+0x10]
+0x0056f8b0  fst   dword [esp+0x10] ; <-- STORES THE SCALED COMPONENT BACK
+0x0056f8b4  fmul  dword [esp+0x10] ; squares the NEW value
+0x0056f8be  fsqrt                  ; sqrt #2, over the already-scaled component
+0x0056f8ca  fst   dword [esp+0x14] ; <-- again
+0x0056f8d6  fsqrt                  ; sqrt #3
+```
+
+Three separate `fsqrt`s, with `fst` write-backs between them. It is a progressive
+renormalisation, it looks wrong, and it is what the binary does. **Recording it explicitly
+because the obvious "cleanup" — hoist one reciprocal length — would silently introduce a
+divergence into a faithful transcription.** This is what the NO-GUESSING rule is for.
+
+### Where `0x0056f350` stands
+
+Ruled out, each against the disassembly: argument shape/arity, loop base (+0x10), the field
+(+0xc), the stride (0x28), the re-read bound (+0xac), `local_78[27]` sizing against both callees,
+the float loop counter (wrong, fixed, not the cause), and now the apparent aliasing (faithful).
+Established: it dies **inside iteration 0** with `puVar3 == NULL` and `bound = 4`.
+
+**Next step, and it is cheap:** the trace instrument is in the tree. Move or duplicate the
+`fprintf` further down iteration 0's body — after the two `FUN_0055b750` calls, after
+`FUN_0056fad0`, after each `FUN_0056f1f0` — and the last line printed names the statement that
+dies. One boot per placement.
 
 ## `0x0056f0a0` — a NULL write in a *third* function, and only when the A/B is armed
 

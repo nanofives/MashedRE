@@ -37,9 +37,27 @@
 #include "../Core/ShadowTrack.h"
 #include "../Core/ShadowAB.h"
 #include <cmath>                    // sqrtf, fabsf — x87 FSQRT/FABS floor
+#include <cstdio>                   // TEMPORARY: MASHED_TRACE_F350 loop trace
+#include <windows.h>                // TEMPORARY: GetEnvironmentVariableA for that trace
 
 namespace mashed_re {
 namespace Collision {
+
+// TEMPORARY (MASHED_TRACE_F350=1). One-shot log handle for the 0x0056f350 loop trace; see
+// the instrumentation inside FUN_0056f350_impl. Returns nullptr unless the env var is set,
+// so the default build pays one static test per iteration and writes nothing.
+static std::FILE* F350Trace() {
+    static std::FILE* fp = nullptr;
+    static bool init = false;
+    if (!init) {
+        init = true;
+        char buf[8] = {};
+        DWORD n = GetEnvironmentVariableA("MASHED_TRACE_F350", buf, sizeof buf);
+        if (n > 0 && n < sizeof buf && buf[0] && buf[0] != '0')
+            fp = std::fopen("f350_trace.txt", "w");
+    }
+    return fp;
+}
 
 typedef unsigned char  byte;
 typedef unsigned short ushort;
@@ -304,6 +322,19 @@ static void __cdecl FUN_0056f350_impl(int param_1,float *param_2,float param_3) 
     pfVar8 = local_d0;
     do {
       puVar3 = *(undefined4 **)(pfVar9 + 3);     // raw pointer at pfVar9+0xc (MOV @0x0056f4a2)
+      // TEMPORARY INSTRUMENTATION (MASHED_TRACE_F350=1) -- the crash at iteration k=5 is
+      // data-dependent and static comparison against the disasm came up clean everywhere
+      // (base +0x10, field +0xc, stride 0x28, re-read bound +0xac, buffer sizing), so the
+      // only way to localise it is to see the per-iteration values. Logs k, the live bound,
+      // the walking base, and the field the fault dereferences. Remove once localised;
+      // re/analysis/shadow_crasher_bisect_20260910.md.
+      if (F350Trace()) {
+        std::fprintf(F350Trace(),
+                     "k=%d bound=%d pfVar9=%p field[+0xc]=%p flags=%02x\n",
+                     local_b0, *(int *)(param_2 + 0x2b), (void *)pfVar9, (void *)puVar3,
+                     puVar3 ? *(unsigned char *)((int)puVar3 + 0x1c) : 0u);
+        std::fflush(F350Trace());
+      }
       local_a0 = 0.0; local_9c = 0.0; local_98 = 0.0;
       local_ac = 0.0; local_a8 = 0.0; local_a4 = 0.0;
       if ((puVar3 == (undefined4 *)0x0) || ((*(byte *)((int)puVar3 + 0x1c) & 8) == 0)) {
