@@ -63,6 +63,18 @@ a track with walls, or drive input (`--statediff-drive`). `MASHED_COUNT_RVAS` fi
 and 7 GLOBAL_WRITES need a snapshot of the pointed-to/global state instead. Verify every span with
 the LHS scanner before applying — the worker's specs are claims.
 
+### G. C3->C4 through the shadow lane **[DECISION first: rubric L37 wording]**
+`re/analysis/promotion_lanes_assessment_20260910.md`: 387 C3 rows are shadow-generatable today
+(315 outside audio), 293 more need a region. `re/CONFIDENCE.md` L37 names a Frida CSV as the C4
+evidence; the shadow report is a stronger canonical-scenario diff but not a Frida CSV. Amend, or
+keep C4 Frida-only. If amended: `shadow_gen.py --sweep re/parity/matchdiff_sweep_c3.csv --apply`
+(exclude audio; frontend/hud with `--phase any`), then `shadow_batch.py --cars 4 --hold 60`.
+
+### H. Page-level write tracking in ShadowAB **[~1 day, no new dependency]**
+Replaces hand-verified regions and the idempotency caveat: mark writable pages read-only, catch
+write faults, the touched set is the region. Unblocks 293 (C3) + 55 (C2) void ports and the 43
+MUTATOR_LANE frontier rows. Design in the assessment note, Lane 3.
+
 ### F. Carried over from 2026-09-09, untouched
 U-9087 E9-thunk guard decision (10 hooks never install, 4 C4); D-11069 (4 duplicate RVAs in two
 targets); `TransformMatrixUpdate` pos.x/pos.z defect (D-10793); desktop verification of the
@@ -73,7 +85,7 @@ playtest commits; `main` 270+ commits behind; 6 orphaned pool locks (`Mashed_poo
 ## Ready-to-paste kickoff
 
 > Resume the Mashed RE lane on `race/first-frame-parity`. Read `re/NEXT_SESSION.md`, then pick ONE
-> of A–F. The shadow A/B mass lane is live (`re/tools/shadow_gen.py`, `shadow_batch.py`,
+> of A–H (G needs your rubric decision first). The shadow A/B mass lane is live (`re/tools/shadow_gen.py`, `shadow_batch.py`,
 > `shadow_ab_report.py`; write-up `re/analysis/shadow_lane_20260910.md`). Standing rules that bit
 > this session: run with `--cars 4 --hold 60` (a 1-car race never fires the contact solver); a
 > `Run()` DIVERGENT is not a defect until the body has been read for state it also writes; float10
