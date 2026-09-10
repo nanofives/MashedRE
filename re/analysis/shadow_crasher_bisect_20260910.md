@@ -43,7 +43,53 @@ needs the same lane decision, not a body change.
 | `0x0056fea0`, `0x00570090` | never crashers (armed `NO_SAMPLES`) |
 | `0x0056f0a0`, `0x0055bd80` | **witness** crashes — port fine, lane decision pending |
 | `0x0056f350` | genuine port defect, **more than one** divergent path; needs a per-iteration trace |
-| `0x00421960`, `0x004219c0`, `0x00495fe0` | Lane 2 generated, still untriaged |
+| `0x00421960`, `0x004219c0`, `0x00495fe0` | **all three genuine port defects**, three distinct faults (below) |
+
+### The three Lane 2 generated ports — all real, and not one shared bug
+
+Each crashes on **both** arms (armed and `--no-shadow` control), so all three are defects in the
+installed port, not in the witness. That is the expected shape for `decomp2port.py` output: it is
+mechanically generated, so it is the most likely to be wrong. Each fault is in **MASHED code
+downstream of the port**, at a different place:
+
+| RVA | EIP | faulting instruction | bad value |
+|---|---|---|---|
+| `0x00495fe0` | `0x00508bde` | `mov eax,[esi]` | `ESI = 0`, reads `0x0` |
+| `0x004219c0` | `0x004216b0` | `mov eax,[ebx+0xf4]` | `EBX = 2`, reads `0xf6` |
+| `0x00421960` | `0x00559cb3` | `mov edi,[eax+ebp]` | reads unmapped `0x1d9644f4` |
+
+`0x004219c0`: a small integer (2) is in a struct-pointer slot. `0x00421960`: the fault follows a
+bitset index computation (`shr ebp,5` / `shl ebp,2` / `and ecx,0x1f`), so a bitset base or index
+is garbage.
+
+#### `0x00495fe0` faults **inside the `fix_joypad` boot-patch code cave** — flag this loudly
+
+`0x00508bde` is 9 bytes into `0x00508bd5`, which CLAUDE.md documents as `fix_joypad`'s cave.
+Verified by diffing the two binaries at that address:
+
+```
+original/MASHED.exe            0x00508bd5  83ec6c    sub esp,0x6c
+                               0x00508bd8  a138606100 mov eax,[0x616038]
+                               0x00508bdd  50         push eax
+                               0x00508bde  8b06       mov eax,[esi]     <<< EIP, ESI = 0
+original/MASHED.exe.unpatched  0x00508bd5  cc         int3   (padding — no code here)
+```
+
+Two consequences:
+
+1. **This crash involves our patched reference binary.** Anyone re-testing `0x00495fe0` needs to
+   know a boot patch is in the fault path; it is not purely a port-vs-original question.
+2. The cave's guard reads `[esi]` **before** testing anything, so a NULL `ESI` reaches it
+   unguarded — it was written for the observed *garbage-pointer* case, not for NULL.
+   **[UNCERTAIN]** whether NULL can arrive there without this port installed is **untested**, so
+   this is not yet a claim that `patch_mashed_fix_joypad.py` is defective on its own.
+
+Consistent with the timing: `0x00495fe0` dies in 4–7s, i.e. at boot, and its callers
+(`0x004967e0`, `0x004976a0`) are in the input/boot cluster.
+
+**Next step for all three:** these are `decomp2port.py` outputs and need per-function review
+against the disasm, not a shared fix. `0x00495fe0` should be reviewed with the cave interaction
+in mind.
 
 So the group's crash localises to `0x0056f350` and `0x0056f0a0`, and those two are **different
 failure classes**. Two of the five were never crashers at all — they were guilty by association

@@ -96,8 +96,22 @@ Branch `race/first-frame-parity`, tree clean. Trackers: hooks.csv 5,930 rows
     decompiled and grepped for `extraout_EAX/ECX/EDX` — zero hits. One `extraout_ST1` /
     `extraout_ST1_00` in `FUN_00570090` (x87 stack depth) is now moot, since neither site it
     calls is a crasher.
-  - Still untriaged: `0x0055bd80` (at load), `0x00560260` (24 clean samples then heap effects
-    unrestored), Lane 2 generated `0x00421960 0x004219c0 0x00495fe0`. (B/H/I)
+  - **The whole 9-item list is now triaged.** Beyond the five above:
+    | RVA | armed | control | state |
+    |---|---|---|---|
+    | `0x00560260` | **CLEAN 24/24, twice** | RACE_OK | **promoted C3** — stale blocker, just needed re-running |
+    | `0x0055bd80` | CRASH (1 sample, ndiff=0) | **RACE_OK** | **witness** crash, port fine → lane decision |
+    | `0x00421960` | CRASH | CRASH | real port defect, EIP `0x00559cb3` `mov edi,[eax+ebp]`, unmapped `0x1d9644f4` after a bitset index calc |
+    | `0x004219c0` | CRASH | CRASH | real port defect, EIP `0x004216b0` `mov eax,[ebx+0xf4]`, **`EBX = 2`** — an int in a pointer slot |
+    | `0x00495fe0` | CRASH | CRASH | real port defect, EIP `0x00508bde` — **inside the `fix_joypad` boot-patch cave**, `mov eax,[esi]` with `ESI = 0` |
+    All three Lane 2 rows are `decomp2port.py` output and need **per-function** review against the
+    disasm — three distinct faults, not one shared bug.
+    - **`0x00495fe0` — flag:** `0x00508bde` is 9 bytes into `0x00508bd5`, which is `int3` padding
+      in `MASHED.exe.unpatched` and `fix_joypad`'s cave in the patched binary (verified by
+      diffing both). So a boot patch is in the fault path. The cave reads `[esi]` before testing
+      anything, so NULL reaches it unguarded — it was written for the garbage-pointer case.
+      **[UNCERTAIN]** whether NULL can arrive there without this port installed is **untested**,
+      so this is NOT yet a claim that `patch_mashed_fix_joypad.py` is defective on its own.
   - **Reusable recipe — this is the part that mattered:** (1) `--no-shadow` control, to decide
     port-vs-witness; (2) zero-hook baseline, for a passing control; (3)
     `re/frida/poll_attach_catch_crash.py` in a background job **alongside** `shadow_batch.py`,
