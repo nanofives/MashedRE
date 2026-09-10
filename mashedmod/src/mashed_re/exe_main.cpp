@@ -7154,9 +7154,15 @@ bool LoadBadgeSprites() {
                     want.handle, g_quad_renderer.slot_texture(want.slot));
                 *want.ready = true;
             }
-            if (log) std::fprintf(log, "F38: badges.txd '%s' %ux%u upload %s\n",
+            // Log the uploader's reason, not just OK/FAILED. A bare "FAILED"
+            // here hid a PAL4 rejection in QuadRenderer for the whole life of
+            // this feature (2026-09-10): the names matched, the dictionary was
+            // fine, and nothing said why.
+            if (log) std::fprintf(log, "F38: badges.txd '%s' %ux%u fmt=%s upload %s (%s)\n",
                                   want.name, tex.width(), tex.height(),
-                                  *want.ready ? "OK" : "FAILED");
+                                  mashed_re::Txd::PixelFormatName(tex.format()),
+                                  *want.ready ? "OK" : "FAILED",
+                                  g_quad_renderer.last_error());
             break;
         }
     }

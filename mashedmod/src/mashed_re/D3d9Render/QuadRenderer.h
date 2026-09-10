@@ -11,7 +11,8 @@
 // to lay out all 8 Frontend.piz textures as a 4x2 atlas in the 800x600 window.
 //
 // Deliberately scoped:
-//   - ARGB8888 + Paletted8 (CPU-expanded to BGRA on upload).
+//   - ARGB8888 + Paletted8 + Paletted4 (CPU-expanded to BGRA on upload; PAL4
+//     added 2026-09-10, see QuadRenderer.cpp UploadIntoTextureSlot).
 //   - Screen-space (no view/projection matrices).
 //   - No batching or sprite system.
 //

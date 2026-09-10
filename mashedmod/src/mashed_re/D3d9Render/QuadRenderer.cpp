@@ -131,13 +131,23 @@ bool QuadRenderer::UploadIntoTextureSlot(std::uint32_t slot,
     if (tex.mip_count == 0) { m_last_error = "texture has no mips"; return false; }
 
     const auto fmt = tex.format();
-    if (fmt != mashed_re::Txd::PixelFormat::ARGB8888 &&
-        fmt != mashed_re::Txd::PixelFormat::Paletted8) {
-        m_last_error = "unsupported format (need ARGB8888 or Paletted8)";
+    // PAL4 accepted 2026-09-10. It was rejected here while TrackRenderer.cpp's
+    // MakeTexture (:382) had handled it since 2026-07-31, and the asymmetry was
+    // silent: UploadIntoTextureSlot only records the reason in m_last_error, so
+    // every PAL4 sprite reported a bare "upload FAILED" and simply never drew.
+    // Measured cost: the whole Finding-38 Challenge-Select status-glyph family
+    // ("lock"/"check"/"dot", BADGES.TXD, 16x16 PAL4) has been dead since it
+    // landed -- log/build_chalsel_dot_20260910.txt's run shows all three FAILED
+    // while same-dictionary PAL8 siblings ("Button", "Arrow") uploaded OK.
+    const bool is_pal =
+        fmt == mashed_re::Txd::PixelFormat::Paletted8 ||
+        fmt == mashed_re::Txd::PixelFormat::Paletted4;
+    if (fmt != mashed_re::Txd::PixelFormat::ARGB8888 && !is_pal) {
+        m_last_error = "unsupported format (need ARGB8888, Paletted8 or Paletted4)";
         return false;
     }
-    if (fmt == mashed_re::Txd::PixelFormat::Paletted8 && !tex.mips[0].palette) {
-        m_last_error = "PAL8 texture has no palette";
+    if (is_pal && !tex.mips[0].palette) {
+        m_last_error = "paletted texture has no palette";
         return false;
     }
 
@@ -195,25 +205,35 @@ bool QuadRenderer::UploadIntoTextureSlot(std::uint32_t slot,
                 dst_row += lr.Pitch;
             }
         } else {
-            // Paletted8: each src byte is an index into mip.palette, which is
-            // 256 entries of 4 bytes RGBA. Expand to BGRA into the locked
-            // rect. Palette is per-mip in the TXD format (per the B3 spec)
-            // so we read mip.palette here, not tex.mips[0].palette.
+            // Paletted8/Paletted4: each src byte is an index into mip.palette,
+            // which is 256 (PAL8) or 16 (PAL4) entries of 4 bytes RGBA. Expand
+            // to BGRA into the locked rect. Palette is per-mip in the TXD format
+            // (per the B3 spec) so we read mip.palette here, not
+            // tex.mips[0].palette.
+            //
+            // PAL4 and PAL8 are BOTH stored one byte per pixel -- `depth` selects
+            // the PALETTE SIZE, not the storage width (TxdDecoder.h:66-70; census
+            // 2026-07-31 over 5194 mips found stride == max(4, width*1) for both
+            // and no depth-4 byte above 0x0F). So the loop below is shared and
+            // only the index is masked. Reading PAL4 as packed nibbles is the bug
+            // that corrupted every PAL4 track texture (RwRasterBridge.cpp:12).
             const std::uint8_t* pal = mip.palette;
             if (!pal) {
                 // Mip without its own palette: fall back to the base mip's.
                 pal = tex.mips[0].palette;
             }
             if (!pal) {
-                m_last_error = "PAL8 mip missing palette";
+                m_last_error = "paletted mip missing palette";
                 m_textures[slot]->UnlockRect(level);
                 SafeRelease(m_textures[slot]);
                 return false;
             }
+            const std::uint8_t idx_mask =
+                (fmt == mashed_re::Txd::PixelFormat::Paletted4) ? 0x0Fu : 0xFFu;
             for (std::uint32_t y = 0; y < mip.height; ++y) {
                 const std::uint8_t* src_row = src + static_cast<std::size_t>(y) * mip.stride;
                 for (std::uint32_t x = 0; x < mip.width; ++x) {
-                    const std::uint8_t idx = src_row[x];
+                    const std::uint8_t idx = src_row[x] & idx_mask;
                     const std::uint8_t r = pal[idx * 4 + 0];
                     const std::uint8_t g = pal[idx * 4 + 1];
                     const std::uint8_t b = pal[idx * 4 + 2];
