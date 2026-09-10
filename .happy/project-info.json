@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-10T16:40:00Z",
+  "updatedAt": "2026-09-10T17:30:00Z",
   "sections": [
     {
       "heading": "Status",
@@ -26,28 +26,29 @@
     {
       "heading": "AWAITING YOUR DECISION",
       "fields": [
-        { "label": "1. Build float model (D-11070, parked)", "value": "MEASURED as SSE2, not x87 - no /arch flag anywhere. Options: keep SSE2, /arch:IA32 globally, or per-TU on physics/math. Affects 85 TUs / 88 rows / 17 DIVERGENT*.", "kind": "text" },
-        { "label": "2. Four C4 rows may need demotion (U-9087)", "value": "0x00494ef0, 0x0040de00, 0x0040cd90, 0x00496900 - their installed-hook proof is the byte 0xE9, which is the ORIGINAL thunk's own first byte. hook_dual_install.log shows all 10 such hooks REFUSED every run, so they have never once installed.", "kind": "text" },
-        { "label": "3. HookSystem dual-install guard (U-9087)", "value": "Tagged ARCHITECTURE-LEVEL. Fix would discriminate by JMP target; verified 10/10 targets are inside MASHED.exe so it separates cleanly.", "kind": "text" }
+        { "label": "1. Build float model (D-11070, parked)", "value": "MEASURED as SSE2, not x87 - no /arch flag anywhere in build.bat. Keep SSE2 / add /arch:IA32 globally / per-TU on physics+math. Affects 85 TUs, 88 rows, 17 DIVERGENT*.", "kind": "text" },
+        { "label": "2. Four C4 rows may need demotion (U-9087)", "value": "0x00494ef0, 0x0040de00, 0x0040cd90, 0x00496900. Their installed-hook proof is the byte 0xE9 - which is the ORIGINAL thunk's own first byte. hook_dual_install.log shows all 10 such hooks REFUSED on every run, so they have never once installed.", "kind": "text" },
+        { "label": "3. HookSystem dual-install guard (U-9087)", "value": "Tagged ARCHITECTURE-LEVEL. Discriminating by JMP target would work: verified 10/10 targets are inside MASHED.exe.", "kind": "text" }
       ]
     },
     {
-      "heading": "Landed 2026-09-10 (second session, 31 commits)",
+      "heading": "Landed 2026-09-10 second session (38 commits)",
       "fields": [
         { "label": "Merges", "value": ["docs/reconcile", "race/nav-champ", "race/arctic-cap"], "kind": "list" },
-        { "label": "Promotions", "value": "3 rows C2->C3: 0x0056bce0, 0x00560260, 0x005a6e10 (C3 1008 -> 1011)", "kind": "text" },
+        { "label": "Promotions", "value": "3 rows C2->C3 (C3 1008 -> 1011): 0x0056bce0, 0x00560260, 0x005a6e10", "kind": "text" },
         { "label": "Product defects fixed", "value": ["QuadRenderer rejected PAL4 - every BADGES 16x16 sprite was dead", "0x0056bce0 caller-saved EDX contract (crash)", "0x0056bce0 denominator tree + double rounding", "0x0056f350 float loop counter"], "kind": "list" },
-        { "label": "Tooling defects fixed", "value": ["decomp2port: 13 control bytes had disabled HIDDEN_REG_ARG entirely", "decomp2port: CALLEE_ARITY only logged, never refused", "decomp2port: no IRREVERSIBLE_SIDE_EFFECT guard", "shadow_batch: control boot destroyed the armed verdict", "shadow_batch: stale snapshot clobbered concurrent edits", "shadow_batch: booted sites whose TU does not exist"], "kind": "list" },
-        { "label": "Crasher list", "value": "all 9 triaged: 2 promoted, 2 never crashed, 2 witness-only, 3 generator gaps, 1 open", "kind": "text" },
-        { "label": "New test", "value": "re/tools/tests/test_decomp2port_refusals.py - 9/9", "kind": "text" },
+        { "label": "Tooling defects fixed", "value": ["decomp2port: 13 control bytes had DISABLED the HIDDEN_REG_ARG guard entirely", "decomp2port: CALLEE_ARITY only logged, never refused", "decomp2port: no IRREVERSIBLE_SIDE_EFFECT guard", "shadow_batch: control boot destroyed the armed verdict", "shadow_batch: stale snapshot clobbered concurrent edits", "shadow_batch: booted sites whose TU does not exist"], "kind": "list" },
+        { "label": "Crasher list", "value": "all 9 dispositioned: 2 promoted, 2 never crashed, 2 invalid witnesses, 3 generator gaps, 1 pinned to an instruction", "kind": "text" },
+        { "label": "New tools/tests", "value": ["re/tools/tests/test_decomp2port_refusals.py (9/9)", "re/tools/defuse_trace.py", "MASHED_TRACE_F350 loop instrument"], "kind": "list" },
         { "label": "Filed", "value": "U-9130..U-9133, D-11070", "kind": "text" },
-        { "label": "Corrections to my own work", "value": 3, "kind": "number" }
+        { "label": "Corrections to my own claims", "value": 4, "kind": "number" }
       ]
     },
     {
-      "heading": "Next",
+      "heading": "Next (no decision needed)",
       "fields": [
-        { "label": "Open", "value": ["0x0056f350: per-iteration trace (>1 divergent path)", "0x0056f0a0 + 0x0055bd80: lane decision (witness, not port)", "0x00421960 + 2 siblings: regenerate or remove the TUs", "NO_SAMPLES: 43 confirmed never called - needs scenario enrichment", "private-memory tracking hang"], "kind": "list" },
+        { "label": "0x0056f350", "value": "One debugger read: is [esp+0x58] local_d0 or another spilled local? Fault is pinned to mulss xmm0,[eax] at _impl+0x62d with EAX=0.", "kind": "text" },
+        { "label": "Other open", "value": ["private-memory tracking hang", "43 NO_SAMPLES rows need scenario enrichment (--boost, --mode 2, walled track, drive input)", "Lane 1 C3->C4 rubric wording"], "kind": "list" },
         { "label": "Closed as unproductive", "value": "group-boot NO_SAMPLES re-runs: 31 boots, 0 of 31 converted", "kind": "text" }
       ]
     }
