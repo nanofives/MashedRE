@@ -57,6 +57,7 @@
 // whole-loop per-field body-state diff (NOT a C2 gate; project_phys_chain_float10_methodology).
 // dd40's rsqrtps approximation IS reproduced exactly (rsqrt_ss + Newton), not floored.
 #include "../Core/HookSystem.h"
+#include "../Core/ShadowTrack.h"
 #include "../Core/ShadowAB.h"
 #include <xmmintrin.h>              // _mm_rsqrt_ss — reproduce FUN_0056dd40's rsqrtps seed
 #include <cmath>                    // sqrtf — d3f0/e680 x87 FSQRT floor
@@ -119,7 +120,8 @@ static void __cdecl FUN_0056d350_impl(int *param_1,float *param_2,float *param_3
 //             jacobian rows and the min/max-bound arrays by the resulting factors with FLT_MAX
 //             sentinel guards. Header note 3 (positional stack-arg ABI). Verbatim data-flow.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_0056d3f0(
+extern "C" void __cdecl FUN_0056d3f0(int param_1, int a1_, int a2_, int a3_, int in_stack_00000014, int a5_, int a6_, int in_stack_00000020, int a8_, int a9_, int in_stack_0000002c, int a11_, int a12_, int in_stack_00000038, int a14_, int a15_, int in_stack_00000044, int a17_, int a18_, int in_stack_00000050, int a20_, int a21_, int in_stack_0000005c, int in_stack_00000060, int a24_, int in_stack_00000068, int a26_, int a27_, float in_stack_00000074);
+static void __cdecl FUN_0056d3f0_impl(
     int param_1, int a1_, int a2_, int a3_,
     int in_stack_00000014, int a5_, int a6_,
     int in_stack_00000020, int a8_, int a9_,
@@ -129,8 +131,7 @@ extern "C" void __cdecl FUN_0056d3f0(
     int in_stack_00000050, int a20_, int a21_,
     int in_stack_0000005c, int in_stack_00000060, int a24_,
     int in_stack_00000068, int a26_, int a27_,
-    float in_stack_00000074)
-{
+    float in_stack_00000074) {
   (void)a1_;(void)a2_;(void)a3_;(void)a5_;(void)a6_;(void)a8_;(void)a9_;(void)a11_;(void)a12_;
   (void)a14_;(void)a15_;(void)a17_;(void)a18_;(void)a20_;(void)a21_;(void)a24_;(void)a26_;(void)a27_;
 
@@ -311,7 +312,8 @@ extern "C" void __cdecl FUN_0056d3f0(
 //             (_DAT_005e5a60..) are identity on lanes 0-2, so the scalar dot products transcribe
 //             directly. Header note 4. Ported from re/analysis/b5e/decomp/FUN_0056dd40.c.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_0056dd40(
+extern "C" void __cdecl FUN_0056dd40(int param_1, int a1_, int a2_, int a3_, int in_stack_00000014, int a5_, int a6_, int in_stack_00000020_, int a8_, int a9_, int in_stack_0000002c, int a11_, int a12_, int in_stack_00000038, int a14_, int a15_, int in_stack_00000044, int a17_, int a18_, int in_stack_00000050, int a20_, int a21_, int in_stack_0000005c, int in_stack_00000060, int a24_, int in_stack_00000068, int a26_, int a27_, float in_stack_00000074);
+static void __cdecl FUN_0056dd40_impl(
     int param_1, int a1_, int a2_, int a3_,
     int in_stack_00000014, int a5_, int a6_,
     int in_stack_00000020_, int a8_, int a9_,
@@ -321,8 +323,7 @@ extern "C" void __cdecl FUN_0056dd40(
     int in_stack_00000050, int a20_, int a21_,
     int in_stack_0000005c, int in_stack_00000060, int a24_,
     int in_stack_00000068, int a26_, int a27_,
-    float in_stack_00000074)
-{
+    float in_stack_00000074) {
   (void)a1_;(void)a2_;(void)a3_;(void)a5_;(void)a6_;(void)a8_;(void)a9_;(void)a11_;(void)a12_;
   (void)a14_;(void)a15_;(void)a17_;(void)a18_;(void)a20_;(void)a21_;(void)a24_;(void)a26_;(void)a27_;
 
@@ -576,11 +577,11 @@ static void __cdecl FUN_0056ed60_impl(float *param_1,float *param_2,float *param
 //             transform), a cross-product Jacobian with a SQRT renormalization gated on FLT_MIN /
 //             0.25 constants, then the final 3x(mat3) accumulate into param_4. Header note 6.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_0056e680(int param_1,undefined4 param_2,int *param_3,int *param_4,
+extern "C" void __cdecl FUN_0056e680(int param_1,undefined4 param_2,int *param_3,int *param_4, int param_5,undefined4 param_6,int param_7,int *param_8,int param_9, undefined4 param_10,int param_11,undefined4 param_12,int param_13, undefined4 param_14,float param_15);
+static void __cdecl FUN_0056e680_impl(int param_1,undefined4 param_2,int *param_3,int *param_4,
                  int param_5,undefined4 param_6,int param_7,int *param_8,int param_9,
                  undefined4 param_10,int param_11,undefined4 param_12,int param_13,
-                 undefined4 param_14,float param_15)
-{
+                 undefined4 param_14,float param_15) {
   float *pfVar1;
   undefined4 uVar2;
   float fVar3,fVar4,fVar5,fVar6,fVar7,fVar8,fVar9,fVar10;
@@ -733,7 +734,27 @@ extern "C" void __cdecl FUN_0056d350(int *param_1,float *param_2,float *param_3,
     ShadowAB::RunRegion(ab, FUN_0056d350_impl, reinterpret_cast<void*>(param_2), 0x1c, param_1, param_2, param_3, param_4, param_5, param_6);
 }
 RH_ScopedInstall(FUN_0056d350, 0x0056d350);
+// --- 0x0056d3f0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// LANE 3: page-level write tracking (Core/ShadowTrack.h) -- no region spec; every page
+// the call writes plus the caller's 4 KB stack window is compared, pre-state restored
+// between the two runs. Verifies EFFECTS; read the pages= detail on a DIVERGENT row.
+extern "C" void __cdecl FUN_0056d3f0(int param_1, int a1_, int a2_, int a3_, int in_stack_00000014, int a5_, int a6_, int in_stack_00000020, int a8_, int a9_, int in_stack_0000002c, int a11_, int a12_, int in_stack_00000038, int a14_, int a15_, int in_stack_00000044, int a17_, int a18_, int in_stack_00000050, int a20_, int a21_, int in_stack_0000005c, int in_stack_00000060, int a24_, int in_stack_00000068, int a26_, int a27_, float in_stack_00000074) {
+    SHADOW_AB_COUNTER(ab, "FUN_0056d3f0", 0x0056d3f0u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, FUN_0056d3f0_impl, SHADOW_STACK_WINDOW(), param_1, a1_, a2_, a3_, in_stack_00000014, a5_, a6_, in_stack_00000020, a8_, a9_, in_stack_0000002c, a11_, a12_, in_stack_00000038, a14_, a15_, in_stack_00000044, a17_, a18_, in_stack_00000050, a20_, a21_, in_stack_0000005c, in_stack_00000060, a24_, in_stack_00000068, a26_, a27_, in_stack_00000074);
+}
 RH_ScopedInstall(FUN_0056d3f0, 0x0056d3f0);
+// --- 0x0056dd40 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// LANE 3: page-level write tracking (Core/ShadowTrack.h) -- no region spec; every page
+// the call writes plus the caller's 4 KB stack window is compared, pre-state restored
+// between the two runs. Verifies EFFECTS; read the pages= detail on a DIVERGENT row.
+extern "C" void __cdecl FUN_0056dd40(int param_1, int a1_, int a2_, int a3_, int in_stack_00000014, int a5_, int a6_, int in_stack_00000020_, int a8_, int a9_, int in_stack_0000002c, int a11_, int a12_, int in_stack_00000038, int a14_, int a15_, int in_stack_00000044, int a17_, int a18_, int in_stack_00000050, int a20_, int a21_, int in_stack_0000005c, int in_stack_00000060, int a24_, int in_stack_00000068, int a26_, int a27_, float in_stack_00000074) {
+    SHADOW_AB_COUNTER(ab, "FUN_0056dd40", 0x0056dd40u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, FUN_0056dd40_impl, SHADOW_STACK_WINDOW(), param_1, a1_, a2_, a3_, in_stack_00000014, a5_, a6_, in_stack_00000020_, a8_, a9_, in_stack_0000002c, a11_, a12_, in_stack_00000038, a14_, a15_, in_stack_00000044, a17_, a18_, in_stack_00000050, a20_, a21_, in_stack_0000005c, in_stack_00000060, a24_, in_stack_00000068, a26_, a27_, in_stack_00000074);
+}
 RH_ScopedInstall(FUN_0056dd40, 0x0056dd40);
 // --- 0x0056ed60 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
 // In-process original-vs-port comparison at the real call site; arm with
@@ -745,6 +766,16 @@ extern "C" void __cdecl FUN_0056ed60(float *param_1,float *param_2,float *param_
     ShadowAB::RunRegion(ab, FUN_0056ed60_impl, reinterpret_cast<void*>(param_1), 0x2c, param_1, param_2, param_3);
 }
 RH_ScopedInstall(FUN_0056ed60, 0x0056ed60);
+// --- 0x0056e680 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// LANE 3: page-level write tracking (Core/ShadowTrack.h) -- no region spec; every page
+// the call writes plus the caller's 4 KB stack window is compared, pre-state restored
+// between the two runs. Verifies EFFECTS; read the pages= detail on a DIVERGENT row.
+extern "C" void __cdecl FUN_0056e680(int param_1,undefined4 param_2,int *param_3,int *param_4, int param_5,undefined4 param_6,int param_7,int *param_8,int param_9, undefined4 param_10,int param_11,undefined4 param_12,int param_13, undefined4 param_14,float param_15) {
+    SHADOW_AB_COUNTER(ab, "FUN_0056e680", 0x0056e680u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, FUN_0056e680_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8, param_9, param_10, param_11, param_12, param_13, param_14, param_15);
+}
 RH_ScopedInstall(FUN_0056e680, 0x0056e680);
 
 }  // namespace Collision

@@ -9,6 +9,7 @@
 // ============================================================================
 #include "../Core/HookSystem.h"
 #include "../Core/ShadowAB.h"
+#include "../Core/ShadowTrack.h"
 #include <cstdint>
 #include <cstring>
 
@@ -34,7 +35,7 @@ typedef void           code;
 #define _DAT_005cc320 (*(const unsigned int*)0x005cc320u)   // .rdata, undefined4
 extern "C" void __cdecl FloatStep45df70(float);   // 0x0045df70 (ported)
 extern "C" void __cdecl L2_FUN_0045dfc0(void);
-extern "C" void __cdecl L2_FUN_0045dfc0(void)
+static void __cdecl L2_FUN_0045dfc0_impl(void)
 {
   if (DAT_006036cc < _DAT_005cc320) {
     FloatStep45df70((float)(DAT_006036cc));
@@ -42,6 +43,10 @@ extern "C" void __cdecl L2_FUN_0045dfc0(void)
   }
   FloatStep45df70(f32bits(0x3f800000u));
   return;
+}
+extern "C" void __cdecl L2_FUN_0045dfc0(void) {
+    SHADOW_AB_COUNTER(ab, "L2_FUN_0045dfc0", 0x0045dfc0u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, L2_FUN_0045dfc0_impl, SHADOW_STACK_WINDOW());
 }
 RH_ScopedInstall(L2_FUN_0045dfc0, 0x0045dfc0);
 #undef DAT_006036cc

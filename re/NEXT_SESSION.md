@@ -70,19 +70,13 @@ evidence; the shadow report is a stronger canonical-scenario diff but not a Frid
 keep C4 Frida-only. If amended: `shadow_gen.py --sweep re/parity/matchdiff_sweep_c3.csv --apply`
 (exclude audio; frontend/hud with `--phase any`), then `shadow_batch.py --cars 4 --hold 60`.
 
-### H. Page-level write tracking in ShadowAB **[~1 day, no new dependency]**
-Replaces hand-verified regions and the idempotency caveat: mark writable pages read-only, catch
-write faults, the touched set is the region. Unblocks 293 (C3) + 55 (C2) void ports and the 43
-MUTATOR_LANE frontier rows. Design in the assessment note, Lane 3.
-
-### I. Lane 2 transcriber — grow the accept set **[tooling]**
-`re/tools/decomp2port.py` (design: `re/analysis/lane2_decomp2port_design_20260910.md`). Pilot:
-25/53 reachable unported C2 rows compiled into `mashedmod/src/mashed_re/Lane2/L2_<rva>.cpp`
-(opt-in `L2_` hooks, never installed by default). Biggest refusal = indirect calls (22/53):
-add the RW device-slot vtable idiom table and disasm-based cc detection. Void ports (20) wait
-for Lane 3. Re-run: `decomp_pc.py --file rvas.txt --callees --port --json -o d.json` →
-`decomp2port.py d.json --emit-dir Lane2 --apply --report r.tsv` → `build.bat` →
-`decomp2port.py --prune-failed log/build_lane2.txt --report r.tsv`.
+### H. Lane 3 page-level write tracking — BUILT; read its first-run results **[verify]**
+`Core/ShadowTrack.h` (`ShadowAB::RunTracked`). 55 C2 void ports converted via
+`shadow_gen.py --tracked`; all Lane 2 ports use it. Results and limits:
+`re/analysis/lane3_write_tracking_20260910.md`. Next: run the 55 tracked C2 sites
+(`shadow_batch.py --group 8 --hold 60 --launch-arg=--cars --launch-arg=4` over the manifest
+rows with kind=tracked), triage DIVERGENT rows by `pages=`/`stk+` offsets, then the 293 C3
+void ports (`--sweep re/parity/matchdiff_sweep_c3.csv --tracked`).
 
 ### F. Carried over from 2026-09-09, untouched
 U-9087 E9-thunk guard decision (10 hooks never install, 4 C4); D-11069 (4 duplicate RVAs in two

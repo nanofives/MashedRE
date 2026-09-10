@@ -2,6 +2,7 @@ rva	name	verdict	n	ndiff	proof	detail	boot_state	group	log	at
 00407600	PlayerPositionPtr	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06
 00407b00	RangeTableFindGroup	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=53		RACE_OK	16	shadow_ab_20260910_001251_16x_00407600.log	2026-09-10T00:12:51
 00421930	BodyGeometryFirstDword	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06
+00421980	L2_FUN_00421980	CRASH	0	0		 |   p0.grounded=4 airflag=1  vel=[-65.7, 0.1, 273.4]    /     + 13s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[2360.0, -23.3, 2333.9]    /   game exited.	CRASH	1		2026-09-10T09:38:40
 004274e0	LocalizationFileLoad	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06
 0044b000	SlotRecordPositionPtr	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06
 0045d3f0	L2_FUN_0045d3f0	CLEAN	2	0	A/B-IS-REAL installed=e9 uninstalled=a1		RACE_OK	5	shadow_ab_20260910_023716_5x_005aeed0.log	2026-09-10T02:37:17
@@ -98,3 +99,4 @@ rva	name	verdict	n	ndiff	proof	detail	boot_state	group	log	at
 005aeed0	L2_FUN_005aeed0	NO_SAMPLES	0	0			RACE_OK	5	shadow_ab_20260910_023716_5x_005aeed0.log	2026-09-10T02:37:17
 005af010	L2_FUN_005af010	CLEAN	8	0	A/B-IS-REAL installed=e9 uninstalled=53		RACE_OK	5	shadow_ab_20260910_023716_5x_005aeed0.log	2026-09-10T02:37:17
 005b0f40	AudioQueuePop	NO_SAMPLES	0	0			RACE_OK	7		2026-09-10T00:26:48
+005b8080	L2_FUN_005b8080	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T09:37:46

@@ -9,6 +9,7 @@
 // ============================================================================
 #include "../Core/HookSystem.h"
 #include "../Core/ShadowAB.h"
+#include "../Core/ShadowTrack.h"
 #include <cstdint>
 #include <cstring>
 
@@ -31,9 +32,13 @@ typedef void           code;
 // hooks.csv row 0x005b8080. C-level unchanged by generation; see file header.
 // ---------------------------------------------------------------------------
 extern "C" void __cdecl L2_FUN_005b8080(int param_1);
-extern "C" void __cdecl L2_FUN_005b8080(int param_1)
+static void __cdecl L2_FUN_005b8080_impl(int param_1)
 {
   CloseHandle(*(HANDLE *)(param_1 + 0xc));
   return;
+}
+extern "C" void __cdecl L2_FUN_005b8080(int param_1) {
+    SHADOW_AB_COUNTER(ab, "L2_FUN_005b8080", 0x005b8080u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, L2_FUN_005b8080_impl, SHADOW_STACK_WINDOW(), param_1);
 }
 RH_ScopedInstall(L2_FUN_005b8080, 0x005b8080);

@@ -13,6 +13,7 @@
 // exactly-faithful C++ form, or that carry an ambiguous decomp type, are marked
 // // [VERIFY-DISASM]; x87 extended-precision (float10/double) intermediates are marked // [X87].
 #include "../Core/HookSystem.h"
+#include "../Core/ShadowTrack.h"
 #include "../Core/ShadowAB.h"
 #include <cmath>
 
@@ -63,9 +64,8 @@ static int (__cdecl* const s_rand_orig)(void) = (int(__cdecl*)(void))0x005c229bu
 // 0x005601f0  Builds compressed output rows from a stride-16 source param_2 indexed by
 //             param_5[0] (index array, count param_5[1]).
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_005601f0(int *param_1,int param_2,undefined4 param_3,undefined4 param_4,int *param_5)
-
-{
+extern "C" void __cdecl FUN_005601f0(int *param_1,int param_2,undefined4 param_3,undefined4 param_4,int *param_5);
+static void __cdecl FUN_005601f0_impl(int *param_1,int param_2,undefined4 param_3,undefined4 param_4,int *param_5) {
   undefined4 *puVar1;
   int iVar2;
   int iVar3;
@@ -94,9 +94,8 @@ extern "C" void __cdecl FUN_005601f0(int *param_1,int param_2,undefined4 param_3
 // ---------------------------------------------------------------------------
 // 0x00563e70  Inserts pair (param_2, param_3) into a hash-bucketed doubly-linked-list.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_00563e70(int param_1,ushort param_2,ushort param_3)
-
-{
+extern "C" void __cdecl FUN_00563e70(int param_1,ushort param_2,ushort param_3);
+static void __cdecl FUN_00563e70_impl(int param_1,ushort param_2,ushort param_3) {
   ushort uVar1;
   ushort uVar2;
   ushort uVar3;
@@ -134,9 +133,8 @@ extern "C" void __cdecl FUN_00563e70(int param_1,ushort param_2,ushort param_3)
 // 0x00563f60  Bucket-clear: removes all nodes in the linked-list chain headed by param_2's
 //             bucket and returns them to the free-list.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_00563f60(int param_1,ushort param_2)
-
-{
+extern "C" void __cdecl FUN_00563f60(int param_1,ushort param_2);
+static void __cdecl FUN_00563f60_impl(int param_1,ushort param_2) {
   ushort uVar1;
   ushort uVar2;
   ushort uVar3;
@@ -284,9 +282,8 @@ static uint __cdecl FUN_00564310_impl(float *param_1,float *param_2,float *param
 // 0x00565120  Writes the low 10 bits of an octant-table entry at
 //             this + 0x9820 + (param_3 + param_2*10)*2.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_00565120(int param_1,uint param_2,uint param_3,ushort param_4)
-
-{
+extern "C" void __cdecl FUN_00565120(int param_1,uint param_2,uint param_3,ushort param_4);
+static void __cdecl FUN_00565120_impl(int param_1,uint param_2,uint param_3,ushort param_4) {
   int iVar1;
 
   iVar1 = (param_3 & 0xffff) + (param_2 & 0xffff) * 10;
@@ -298,9 +295,8 @@ extern "C" void __cdecl FUN_00565120(int param_1,uint param_2,uint param_3,ushor
 // ---------------------------------------------------------------------------
 // 0x00565160  Octant-relocate helper (one of three, used by FUN_00564c80 octree-split).
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_00565160(int param_1,uint param_2,uint param_3)
-
-{
+extern "C" void __cdecl FUN_00565160(int param_1,uint param_2,uint param_3);
+static void __cdecl FUN_00565160_impl(int param_1,uint param_2,uint param_3) {
   uint *puVar1;
   int iVar2;
 
@@ -315,9 +311,8 @@ extern "C" void __cdecl FUN_00565160(int param_1,uint param_2,uint param_3)
 // ---------------------------------------------------------------------------
 // 0x005651b0  Octant-table primitive-count incrementer (matches FUN_00564c80 split-trigger).
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_005651b0(int param_1,uint param_2,uint param_3)
-
-{
+extern "C" void __cdecl FUN_005651b0(int param_1,uint param_2,uint param_3);
+static void __cdecl FUN_005651b0_impl(int param_1,uint param_2,uint param_3) {
   int iVar1;
   ushort uVar2;
 
@@ -504,9 +499,8 @@ static float10 __cdecl FUN_005667c0_impl(float *param_1,float *param_2) {
 // 0x00566830  Builds a perpendicular vector to param_2 into param_1 (zeroes the
 //             largest-magnitude axis, swaps/negates the other two).
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_00566830(float *param_1,float *param_2)
-
-{
+extern "C" void __cdecl FUN_00566830(float *param_1,float *param_2);
+static void __cdecl FUN_00566830_impl(float *param_1,float *param_2) {
   float fVar1;
   uint uVar2;
   uint uVar3;
@@ -529,9 +523,8 @@ extern "C" void __cdecl FUN_00566830(float *param_1,float *param_2)
 // ---------------------------------------------------------------------------
 // 0x005675d0  Zero-inits a solver-batch record at param_2 and seeds counts from param_3/4.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_005675d0(int param_1,int param_2,int param_3,undefined4 param_4)
-
-{
+extern "C" void __cdecl FUN_005675d0(int param_1,int param_2,int param_3,undefined4 param_4);
+static void __cdecl FUN_005675d0_impl(int param_1,int param_2,int param_3,undefined4 param_4) {
   int iVar1;
 
   *(undefined4 *)(param_2 + 0x20) = 0;
@@ -558,9 +551,8 @@ extern "C" void __cdecl FUN_005675d0(int param_1,int param_2,int param_3,undefin
 // 0x005684c0  Appends a stride-0x28 node into the array at param_1+8, wires the
 //             doubly-linked list through param_2/param_3 and two sub-lists (param_4/param_5).
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_005684c0(int param_1,int *param_2,int *param_3,undefined4 *param_4,undefined4 *param_5)
-
-{
+extern "C" void __cdecl FUN_005684c0(int param_1,int *param_2,int *param_3,undefined4 *param_4,undefined4 *param_5);
+static void __cdecl FUN_005684c0_impl(int param_1,int *param_2,int *param_3,undefined4 *param_4,undefined4 *param_5) {
   undefined4 *puVar1;
   int iVar2;
 
@@ -608,9 +600,8 @@ extern "C" void __cdecl FUN_005684c0(int param_1,int *param_2,int *param_3,undef
 // 0x00568560  Appends param_2 as a singly-linked tail node into the container at param_1 and
 //             enqueues optional sub-list heads (param_4/param_5).
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_00568560(int *param_1,int param_2,int *param_3,undefined4 *param_4,undefined4 *param_5)
-
-{
+extern "C" void __cdecl FUN_00568560(int *param_1,int param_2,int *param_3,undefined4 *param_4,undefined4 *param_5);
+static void __cdecl FUN_00568560_impl(int *param_1,int param_2,int *param_3,undefined4 *param_4,undefined4 *param_5) {
   if (param_2 != 0) {
     *param_1 = *param_1 + 1;
     *param_3 = param_2;
@@ -650,8 +641,38 @@ extern "C" void __cdecl FUN_00568560(int *param_1,int param_2,int *param_3,undef
 
 // --- gta-reversed-style hook registration (inert on the exe via HookSystemNoOp; installs the
 //     inline-JMP under the .asi for the diff-original A/B acceptance) — CLUSTER 1, all 19. ---
+// --- 0x005601f0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// LANE 3: page-level write tracking (Core/ShadowTrack.h) -- no region spec; every page
+// the call writes plus the caller's 4 KB stack window is compared, pre-state restored
+// between the two runs. Verifies EFFECTS; read the pages= detail on a DIVERGENT row.
+extern "C" void __cdecl FUN_005601f0(int *param_1,int param_2,undefined4 param_3,undefined4 param_4,int *param_5) {
+    SHADOW_AB_COUNTER(ab, "FUN_005601f0", 0x005601f0u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, FUN_005601f0_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3, param_4, param_5);
+}
 RH_ScopedInstall(FUN_005601f0, 0x005601f0);
+// --- 0x00563e70 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// LANE 3: page-level write tracking (Core/ShadowTrack.h) -- no region spec; every page
+// the call writes plus the caller's 4 KB stack window is compared, pre-state restored
+// between the two runs. Verifies EFFECTS; read the pages= detail on a DIVERGENT row.
+extern "C" void __cdecl FUN_00563e70(int param_1,ushort param_2,ushort param_3) {
+    SHADOW_AB_COUNTER(ab, "FUN_00563e70", 0x00563e70u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, FUN_00563e70_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3);
+}
 RH_ScopedInstall(FUN_00563e70, 0x00563e70);
+// --- 0x00563f60 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// LANE 3: page-level write tracking (Core/ShadowTrack.h) -- no region spec; every page
+// the call writes plus the caller's 4 KB stack window is compared, pre-state restored
+// between the two runs. Verifies EFFECTS; read the pages= detail on a DIVERGENT row.
+extern "C" void __cdecl FUN_00563f60(int param_1,ushort param_2) {
+    SHADOW_AB_COUNTER(ab, "FUN_00563f60", 0x00563f60u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, FUN_00563f60_impl, SHADOW_STACK_WINDOW(), param_1, param_2);
+}
 RH_ScopedInstall(FUN_00563f60, 0x00563f60);
 // --- 0x00564040 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
 // In-process original-vs-port comparison at the real call site; arm with
@@ -677,8 +698,38 @@ extern "C" uint __cdecl FUN_00564310(float *param_1,float *param_2,float *param_
     return ShadowAB::Run(ab, FUN_00564310_impl, param_1, param_2, param_3);
 }
 RH_ScopedInstall(FUN_00564310, 0x00564310);
+// --- 0x00565120 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// LANE 3: page-level write tracking (Core/ShadowTrack.h) -- no region spec; every page
+// the call writes plus the caller's 4 KB stack window is compared, pre-state restored
+// between the two runs. Verifies EFFECTS; read the pages= detail on a DIVERGENT row.
+extern "C" void __cdecl FUN_00565120(int param_1,uint param_2,uint param_3,ushort param_4) {
+    SHADOW_AB_COUNTER(ab, "FUN_00565120", 0x00565120u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, FUN_00565120_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3, param_4);
+}
 RH_ScopedInstall(FUN_00565120, 0x00565120);
+// --- 0x00565160 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// LANE 3: page-level write tracking (Core/ShadowTrack.h) -- no region spec; every page
+// the call writes plus the caller's 4 KB stack window is compared, pre-state restored
+// between the two runs. Verifies EFFECTS; read the pages= detail on a DIVERGENT row.
+extern "C" void __cdecl FUN_00565160(int param_1,uint param_2,uint param_3) {
+    SHADOW_AB_COUNTER(ab, "FUN_00565160", 0x00565160u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, FUN_00565160_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3);
+}
 RH_ScopedInstall(FUN_00565160, 0x00565160);
+// --- 0x005651b0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// LANE 3: page-level write tracking (Core/ShadowTrack.h) -- no region spec; every page
+// the call writes plus the caller's 4 KB stack window is compared, pre-state restored
+// between the two runs. Verifies EFFECTS; read the pages= detail on a DIVERGENT row.
+extern "C" void __cdecl FUN_005651b0(int param_1,uint param_2,uint param_3) {
+    SHADOW_AB_COUNTER(ab, "FUN_005651b0", 0x005651b0u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, FUN_005651b0_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3);
+}
 RH_ScopedInstall(FUN_005651b0, 0x005651b0);
 // --- 0x00565200 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
 // In-process original-vs-port comparison at the real call site; arm with
@@ -736,9 +787,49 @@ extern "C" float10 __cdecl FUN_005667c0(float *param_1,float *param_2) {
     return ShadowAB::Run(ab, FUN_005667c0_impl, param_1, param_2);
 }
 RH_ScopedInstall(FUN_005667c0, 0x005667c0);
+// --- 0x00566830 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// LANE 3: page-level write tracking (Core/ShadowTrack.h) -- no region spec; every page
+// the call writes plus the caller's 4 KB stack window is compared, pre-state restored
+// between the two runs. Verifies EFFECTS; read the pages= detail on a DIVERGENT row.
+extern "C" void __cdecl FUN_00566830(float *param_1,float *param_2) {
+    SHADOW_AB_COUNTER(ab, "FUN_00566830", 0x00566830u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, FUN_00566830_impl, SHADOW_STACK_WINDOW(), param_1, param_2);
+}
 RH_ScopedInstall(FUN_00566830, 0x00566830);
+// --- 0x005675d0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// LANE 3: page-level write tracking (Core/ShadowTrack.h) -- no region spec; every page
+// the call writes plus the caller's 4 KB stack window is compared, pre-state restored
+// between the two runs. Verifies EFFECTS; read the pages= detail on a DIVERGENT row.
+extern "C" void __cdecl FUN_005675d0(int param_1,int param_2,int param_3,undefined4 param_4) {
+    SHADOW_AB_COUNTER(ab, "FUN_005675d0", 0x005675d0u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, FUN_005675d0_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3, param_4);
+}
 RH_ScopedInstall(FUN_005675d0, 0x005675d0);
+// --- 0x005684c0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// LANE 3: page-level write tracking (Core/ShadowTrack.h) -- no region spec; every page
+// the call writes plus the caller's 4 KB stack window is compared, pre-state restored
+// between the two runs. Verifies EFFECTS; read the pages= detail on a DIVERGENT row.
+extern "C" void __cdecl FUN_005684c0(int param_1,int *param_2,int *param_3,undefined4 *param_4,undefined4 *param_5) {
+    SHADOW_AB_COUNTER(ab, "FUN_005684c0", 0x005684c0u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, FUN_005684c0_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3, param_4, param_5);
+}
 RH_ScopedInstall(FUN_005684c0, 0x005684c0);
+// --- 0x00568560 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// LANE 3: page-level write tracking (Core/ShadowTrack.h) -- no region spec; every page
+// the call writes plus the caller's 4 KB stack window is compared, pre-state restored
+// between the two runs. Verifies EFFECTS; read the pages= detail on a DIVERGENT row.
+extern "C" void __cdecl FUN_00568560(int *param_1,int param_2,int *param_3,undefined4 *param_4,undefined4 *param_5) {
+    SHADOW_AB_COUNTER(ab, "FUN_00568560", 0x00568560u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, FUN_00568560_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3, param_4, param_5);
+}
 RH_ScopedInstall(FUN_00568560, 0x00568560);
 
 }  // namespace Collision

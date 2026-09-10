@@ -228,6 +228,15 @@ unported C2 rows: 25 TUs compile (5 return-value, 20 void), 22 refused for indir
 `re/analysis/lane2_decomp2port_design_20260910.md`. Next: known-vtable idiom table for the
 RW device slot, disasm-based cc detection for other fn-ptr calls, reachability at pool scale.
 
+## TT-14 — Lane 3: page-level write tracking in the shadow A/B — **BUILT 2026-09-10**
+
+`Core/ShadowTrack.h`: `ShadowAB::RunTracked` protects every writable page (private + MASHED.exe
+image), catches first writes in a VEH, restores pre-state between the original and the port,
+compares touched pages + the caller's 4 KB stack window (+ return). Removes the region spec
+and the idempotency caveat of `Run()`. Wired into `decomp2port.py` (all Lane 2 ports) and
+`shadow_gen.py --tracked` (55 C2 void ports converted). Write-up + limits:
+`re/analysis/lane3_write_tracking_20260910.md`. First live runs recorded there.
+
 ## Considered and deliberately NOT pursued
 
 Recorded so nobody re-derives them. Consistent with CLAUDE.md's stated non-goals.

@@ -9,6 +9,7 @@
 // ============================================================================
 #include "../Core/HookSystem.h"
 #include "../Core/ShadowAB.h"
+#include "../Core/ShadowTrack.h"
 #include <cstdint>
 #include <cstring>
 
@@ -33,7 +34,7 @@ typedef void           code;
 static inline unsigned int L2T_FUN_005a9e60(unsigned int a0, unsigned int a1, int a2) { return reinterpret_cast<unsigned int(__cdecl*)(unsigned int, unsigned int, int)>(0x005a9e60u)(a0, a1, a2); }   // 0x005a9e60 (original, not ported)
 static inline void L2T_FUN_005a9f10(int a0, unsigned int a1) { reinterpret_cast<void(__cdecl*)(int, unsigned int)>(0x005a9f10u)(a0, a1); }   // 0x005a9f10 (original, not ported)
 extern "C" void __cdecl L2_FUN_005aa7a0(int param_1, unsigned int * param_2, unsigned int param_3, unsigned int param_4);
-extern "C" void __cdecl L2_FUN_005aa7a0(int param_1, unsigned int * param_2, unsigned int param_3, unsigned int param_4)
+static void __cdecl L2_FUN_005aa7a0_impl(int param_1, unsigned int * param_2, unsigned int param_3, unsigned int param_4)
 {
   int iVar1;
   
@@ -45,5 +46,9 @@ extern "C" void __cdecl L2_FUN_005aa7a0(int param_1, unsigned int * param_2, uns
   }
   L2T_FUN_005a9f10((int)(param_1), (unsigned int)(param_4));
   return;
+}
+extern "C" void __cdecl L2_FUN_005aa7a0(int param_1, unsigned int * param_2, unsigned int param_3, unsigned int param_4) {
+    SHADOW_AB_COUNTER(ab, "L2_FUN_005aa7a0", 0x005aa7a0u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, L2_FUN_005aa7a0_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3, param_4);
 }
 RH_ScopedInstall(L2_FUN_005aa7a0, 0x005aa7a0);

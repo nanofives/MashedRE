@@ -9,6 +9,7 @@
 // ============================================================================
 #include "../Core/HookSystem.h"
 #include "../Core/ShadowAB.h"
+#include "../Core/ShadowTrack.h"
 #include <cstdint>
 #include <cstring>
 
@@ -47,6 +48,6 @@ static unsigned int __cdecl L2_FUN_005ad2e0_impl(int param_1)
 }
 extern "C" unsigned int __cdecl L2_FUN_005ad2e0(int param_1) {
     SHADOW_AB_COUNTER(ab, "L2_FUN_005ad2e0", 0x005ad2e0u, ShadowAB::kPhaseRace);
-    return ShadowAB::Run(ab, L2_FUN_005ad2e0_impl, param_1);
+    return ShadowAB::RunTracked(ab, L2_FUN_005ad2e0_impl, SHADOW_STACK_WINDOW(), param_1);
 }
 RH_ScopedInstall(L2_FUN_005ad2e0, 0x005ad2e0);

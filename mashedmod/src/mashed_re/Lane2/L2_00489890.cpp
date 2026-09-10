@@ -9,6 +9,7 @@
 // ============================================================================
 #include "../Core/HookSystem.h"
 #include "../Core/ShadowAB.h"
+#include "../Core/ShadowTrack.h"
 #include <cstdint>
 #include <cstring>
 
@@ -34,7 +35,7 @@ typedef void           code;
 static inline void L2T_FUN_00476df0(int a0) { reinterpret_cast<void(__cdecl*)(int)>(0x00476df0u)(a0); }   // 0x00476df0 (original, not ported)
 static inline void L2T_FUN_00489500(int * a0) { reinterpret_cast<void(__cdecl*)(int *)>(0x00489500u)(a0); }   // 0x00489500 (original, not ported)
 extern "C" void __cdecl L2_FUN_00489890(int param_1);
-extern "C" void __cdecl L2_FUN_00489890(int param_1)
+static void __cdecl L2_FUN_00489890_impl(int param_1)
 {
   if (*(int *)(param_1 + 0x54) != 0) {
     L2T_FUN_00489500((int *)(param_1));
@@ -44,6 +45,10 @@ extern "C" void __cdecl L2_FUN_00489890(int param_1)
     *(undefined4 *)(param_1 + 0xc) = 1;
   }
   return;
+}
+extern "C" void __cdecl L2_FUN_00489890(int param_1) {
+    SHADOW_AB_COUNTER(ab, "L2_FUN_00489890", 0x00489890u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, L2_FUN_00489890_impl, SHADOW_STACK_WINDOW(), param_1);
 }
 RH_ScopedInstall(L2_FUN_00489890, 0x00489890);
 #undef _DAT_00703110

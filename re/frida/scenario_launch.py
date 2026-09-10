@@ -931,6 +931,11 @@ def main():
         env.pop("MASHED_RE_NO_AUTO_HOOK", None)
     else:
         env["MASHED_RE_NO_AUTO_HOOK"] = "1"     # stock original, no installed hooks
+    if os.environ.get("MASHED_NO_SELFTEST", "").strip() not in ("", "0"):
+        # Control run: hooks installed LIVE but the in-process shadow A/B NOT armed. Used to
+        # tell "the port crashes" from "the A/B harness crashes" (Lane 3 first run, 2026-09-10).
+        env.pop("MASHED_PHYS_C4_SELFTEST", None)
+        env.pop("MASHED_SHADOW_AB", None)
     if args.statediff_out:
         # The C4 selftest re-executes hook bodies in-process (A3 spawn runs 3x per
         # call with only partial rollback — survey 2026-07-31) and temp-patches

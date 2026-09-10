@@ -75,7 +75,11 @@ def boot(rvas, hold, extra):
     cmd = [sys.executable, str(LAUNCH), "--hooks", hooks, "--hold", str(hold)] + extra
     env = dict(os.environ)
     env.setdefault("MASHED_MUTE", "1")            # feedback_always_launch_muted
-    env["MASHED_SHADOW_AB"] = "1"
+    if os.environ.get("SHADOW_BATCH_NO_SHADOW"):
+        env["MASHED_NO_SELFTEST"] = "1"          # control: hooks live, A/B disarmed
+        env.pop("MASHED_SHADOW_AB", None)
+    else:
+        env["MASHED_SHADOW_AB"] = "1"
     t0 = time.time()
     try:
         p = subprocess.run(cmd, cwd=str(ROOT), env=env, capture_output=True, text=True,
@@ -94,7 +98,10 @@ def boot(rvas, hold, extra):
     (LOGDIR / f"launch_{stamp}_{tag}.txt").write_text(out, encoding="utf-8", errors="replace")
     # "script has been destroyed" = the Frida agent's process died under it, i.e. the game
     # crashed before the launcher's own exit check ran (seen at ~10 s with region sites, run 4)
-    if "game exited." in out or "TIMEOUT" in out or "script has been destroyed" in out:
+    # "game exited while waiting for menu" = died at boot with the hooks installed: a port that
+    # runs at init is wrong (Lane 2 first batch, 2026-09-10). That is a CRASH, not a harness VOID.
+    if ("game exited." in out or "TIMEOUT" in out or "script has been destroyed" in out
+            or "game exited while waiting for" in out):
         state = "CRASH"           # the game died (or hung) with these hooks installed
     elif "reached a running race" in out:
         state = "RACE_OK"
@@ -128,12 +135,19 @@ def main():
     ap.add_argument("--max-boots", type=int, default=12)
     ap.add_argument("--skip-done", action="store_true", help="skip RVAs already in --out with a non-VOID verdict")
     ap.add_argument("--launch-arg", action="append", default=[], help="extra arg passed to scenario_launch.py")
+    ap.add_argument("--no-shadow", action="store_true",
+                    help="CONTROL: install the hooks live but do not arm the A/B (MASHED_NO_SELFTEST=1). "
+                         "Verdicts are then only RACE_OK/CRASH -- separates a crashing PORT from a crashing harness")
     args = ap.parse_args()
+    if args.no_shadow:
+        os.environ["SHADOW_BATCH_NO_SHADOW"] = "1"
 
     restrict = {x.strip().lower().replace("0x", "").zfill(8) for x in args.rvas.split(",") if x.strip()}
     sites = live_sites(args.manifest, restrict)
     done = {}
     outp = Path(args.out)
+    if not outp.is_absolute():
+        outp = ROOT / outp
     if outp.exists():
         with open(outp, newline="", encoding="utf-8") as f:
             for r in csv.DictReader(f, delimiter="\t"):

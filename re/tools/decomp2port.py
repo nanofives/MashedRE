@@ -86,6 +86,8 @@ def existing_ports():
     m = {}
     rx = re.compile(r"^[ \t]*RH_ScopedInstall\(\s*(\w+)\s*,\s*0x0*([0-9a-fA-F]+)\s*\)", re.M)
     for dp, _, fn in os.walk(SRC):
+        if Path(dp).name == "Lane2":
+            continue            # generated TUs are candidates, not ports to call or to skip
         for f in fn:
             if f.endswith(".cpp"):
                 s = Path(dp, f).read_text(encoding="utf-8", errors="replace")
@@ -142,6 +144,22 @@ def transcribe(fn, ports, log):
             return None, "REGISTER_ABI:param " + p["name"] + " in " + p["storage"]
     if INDIRECT.search(body):
         return None, "INDIRECT_CALL"
+    # HIDDEN REGISTER ARGUMENT: a local that is advanced in a loop but never passed to the
+    # no-arg call inside that loop (`puVar1 = &DAT_x; do { FUN_y(); puVar1 += 0x208; } while`)
+    # means the callee reads it from a register Ghidra did not model. Calling the original
+    # through a cdecl thunk leaves that register undefined -> crash at boot (0x004219c0,
+    # Lane 3 first run 2026-09-10). Refuse when a zero-arg FUN_ call shares a loop body with a
+    # pointer/int local that is only ever assigned, never read as an argument or operand.
+    for m0 in re.finditer(r"FUN_[0-9a-fA-F]{8}\s*\(\s*\)", body):
+        # crude but honest: any local named like Ghidra's pointer/int temporaries that appears
+        # on the LHS of `+=`/`= x + n` and nowhere else as an rvalue
+        for lv in set(re.findall(r"((?:p[a-z]*Var|iVar|uVar)\d+)\s*=\s*\s*\+", body)):
+            body_nodecl = re.sub(r"^[ 	]*[A-Za-z_][\w \*]*%s;[ 	]*$" % lv, "", body, flags=re.M)
+            reads = len(re.findall(r"%s" % lv, body_nodecl))
+            writes = len(re.findall(r"%s\s*=" % lv, body))
+            conds = len(re.findall(r"%s[^;]*[<>]" % lv, body)) + len(re.findall(r"[<>][^;]*%s" % lv, body))
+            if reads - writes - conds <= 1:      # the only other read is its own increment
+                return None, "HIDDEN_REG_ARG:" + lv + " advanced but never passed to " + m0.group(0).split("(")[0]
     ret = ctype(proto["ret"])
     if ret is None:
         return None, "UNKNOWN_TYPE:ret " + proto["ret"]
@@ -231,6 +249,12 @@ def transcribe(fn, ports, log):
                 r = "long double"
             if ok and r is not None and len(tl) == n_site:
                 cret, ctypes_ = r, tl
+            elif ok and r is not None and len(tl) < n_site:
+                # The callee's own decompilation saw FEWER stack parameters than this call site
+                # passes: the extra argument travels in a register Ghidra did not model. A cdecl
+                # thunk leaves that register undefined. Both crashes of the first Lane 3 run
+                # (eip 0x005bbf59, 0x00421980 -> FUN_0055dec0/FUN_00559ee0) were this shape.
+                return None, f"CALLEE_REG_ARG:{cn} proto={len(tl)} site={n_site}"
             elif ok and r is not None:
                 log.append(f"CALLEE_ARITY {cn} proto={len(tl)} site={n_site} -> raw thunk")
         if ctypes_ is None:
@@ -318,20 +342,22 @@ def transcribe(fn, ports, log):
     # MASHED_HOOK_ONLY names them (or MASHED_HOOK_LANE2=1), so an unverified generated
     # port never rides along in a default .asi run. Callees keep their own names.
     hook = f"L2_{name}"
-    impl = f"{hook}_impl" if ret != "void" else hook
+    impl = f"{hook}_impl"
     out.append(f'extern "C" {ret} __cdecl {hook}({sig});')
-    out.append(f"{'static ' if ret != 'void' else 'extern \"C\" '}{ret} __cdecl {impl}({sig})")
+    out.append(f"static {ret} __cdecl {impl}({sig})")
     out.append("{" + body.rstrip() + "\n}")
-    if ret != "void":
-        out.append(f'extern "C" {ret} __cdecl {hook}({sig}) {{')
-        out.append(f'    SHADOW_AB_COUNTER(ab, "{hook}", 0x{rva}u, ShadowAB::kPhaseRace);')
-        out.append(f"    return ShadowAB::Run(ab, {impl}" + (f", {argnames}" if argnames else "") + ");")
-        out.append("}")
+    # Lane 3: every generated port (void or not) is verified by page-level write tracking
+    # (Core/ShadowTrack.h); the return is compared too when there is one.
+    out.append(f'extern "C" {ret} __cdecl {hook}({sig}) {{')
+    out.append(f'    SHADOW_AB_COUNTER(ab, "{hook}", 0x{rva}u, ShadowAB::kPhaseRace);')
+    out.append(f"    {'return ' if ret != 'void' else ''}ShadowAB::RunTracked(ab, {impl}, SHADOW_STACK_WINDOW()"
+               + (f", {argnames}" if argnames else "") + ");")
+    out.append("}")
     out.append(f"RH_ScopedInstall({hook}, 0x{rva});")
     for gname in sorted(set(GLOBAL.findall(body))):
         out.append(f"#undef {gname}")
     out.append("")
-    kind = "ret" if ret != "void" else "void(NEEDS_REGION)"
+    kind = "ret" if ret != "void" else "void(tracked)"
     return "\n".join(out), kind
 
 
@@ -346,6 +372,7 @@ HEADER = '''// =================================================================
 // ============================================================================
 #include "../Core/HookSystem.h"
 #include "../Core/ShadowAB.h"
+#include "../Core/ShadowTrack.h"
 #include <cstdint>
 #include <cstring>
 

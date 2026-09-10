@@ -147,7 +147,7 @@ def find_def(src, name):
     return ms
 
 
-def make_wrapper(m, rva, phase_expr, region, impl_name):
+def make_wrapper(m, rva, phase_expr, region, impl_name, tracked=False):
     ext = m.group("ext") or ""
     exp = m.group("exp") or ""
     ret = m.group("ret").strip()
@@ -161,7 +161,17 @@ def make_wrapper(m, rva, phase_expr, region, impl_name):
         f"// In-process original-vs-port comparison at the real call site; arm with",
         f"// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.",
     ]
-    if region:
+    if tracked:
+        lines += [
+            f"// LANE 3: page-level write tracking (Core/ShadowTrack.h) -- no region spec; every page",
+            f"// the call writes plus the caller's 4 KB stack window is compared, pre-state restored",
+            f"// between the two runs. Verifies EFFECTS; read the pages= detail on a DIVERGENT row.",
+            f"{ext}{exp}void {cc}{name}({params}) {{",
+            f'    SHADOW_AB_COUNTER(ab, "{name}", 0x{rva}u, {phase_expr});',
+            f"    ShadowAB::RunTracked(ab, {impl_name}, SHADOW_STACK_WINDOW()" + (f", {fwd}" if fwd else "") + ");",
+            "}",
+        ]
+    elif region:
         expr, nbytes = region
         lines += [
             f"// OUTPUT REGION: {nbytes} bytes at ({expr}) -- supplied by hand via --region;",
@@ -182,14 +192,17 @@ def make_wrapper(m, rva, phase_expr, region, impl_name):
     return "\n".join(lines) + "\n"
 
 
-def add_include(src):
-    if 'Core/ShadowAB.h"' in src:
-        return src
+def add_include(src, tracked=False):
     m = re.search(r'^[ \t]*#include\s+"([^"]*?)Core/HookSystem\.h"[^\n]*\n', src, re.M)
     if not m:
         return None
     prefix = m.group(1)
-    return src[: m.end()] + f'#include "{prefix}Core/ShadowAB.h"\n' + src[m.end():]
+    add = ""
+    if 'Core/ShadowAB.h"' not in src:
+        add += '#include "' + prefix + 'Core/ShadowAB.h"\n'
+    if tracked and 'Core/ShadowTrack.h"' not in src:
+        add += '#include "' + prefix + 'Core/ShadowTrack.h"\n'
+    return src[: m.end()] + add + src[m.end():]
 
 
 def process(rva, symbol, fname, subsystem, loc, args, regions):
@@ -248,14 +261,17 @@ def process(rva, symbol, fname, subsystem, loc, args, regions):
         rec["status"] = "SKIP:" + why
         return rec, None
     region = regions.get(rva)
+    tracked = False
     if ret == "void" and not region:
-        rec["kind"] = "needs_region"
-        rec["status"] = "NEEDS_REGION:void port; pass --region 0x%s=<expr>:<bytes>" % rva
-        return rec, None
+        if not args.tracked:
+            rec["kind"] = "needs_region"
+            rec["status"] = "NEEDS_REGION:void port; pass --region 0x%s=<expr>:<bytes> (or --tracked)" % rva
+            return rec, None
+        tracked = True
     if ret != "void" and region:
         rec["status"] = "SKIP:--region given for a non-void port (use Run, not RunRegion)"
         return rec, None
-    rec["kind"] = "region" if region else ("ret_float10" if ret == "float10" else "ret")
+    rec["kind"] = "tracked" if tracked else ("region" if region else ("ret_float10" if ret == "float10" else "ret"))
     # float10 = x87 80-bit ST0 in the original; MSVC long double is 64-bit, so Run() compares two
     # differently-rounded doubles. A DIVERGENT on such a row is a lane limit, not a port verdict
     # (FUN_005667c0, 48/48 low-mantissa mismatches, 2026-09-10). The reporter labels these.
@@ -274,13 +290,13 @@ def process(rva, symbol, fname, subsystem, loc, args, regions):
     params_flat = " ".join(m.group("params").split())
     fwd_decl = f"{lead}{ext}{exp}{ret} {cc} {symbol}({params_flat});" + chr(10)
     new_def = f"{fwd_decl}{lead}static {ret} {cc} {impl}({m.group('params')}) {{"
-    wrapper = make_wrapper(m, rva, PHASES[args.phase], region, impl)
+    wrapper = make_wrapper(m, rva, PHASES[args.phase], region, impl, tracked)
     new_src = src[: m.start()] + new_def + src[m.end():]
     # re-locate the install line in the rewritten text (offsets shifted)
     inst2 = re.search(r"^[ \t]*RH_ScopedInstall\(\s*%s\s*,\s*0x0*%s\s*\)" % (re.escape(symbol), rva.lstrip("0")),
                       new_src, re.M | re.I)
     new_src = new_src[: inst2.start()] + wrapper + new_src[inst2.start():]
-    with_inc = add_include(new_src)
+    with_inc = add_include(new_src, tracked)
     if with_inc is None:
         rec["status"] = "SKIP:no HookSystem.h include to anchor ShadowAB.h"
         return rec, None
@@ -296,6 +312,9 @@ def main():
                     help="0xRVA=<c++ expr over param names>:<bytes> -- RunRegion for a void port")
     ap.add_argument("--phase", choices=sorted(PHASES), default="race",
                     help="sampling phase gate (race = single-threaded in-race, the safe default)")
+    ap.add_argument("--tracked", action="store_true",
+                    help="void ports with no --region: emit a ShadowAB::RunTracked wrapper (Lane 3, "
+                         "page-level write tracking, Core/ShadowTrack.h) instead of NEEDS_REGION")
     ap.add_argument("--apply", action="store_true", help="write the rewritten sources (default: dry run)")
     ap.add_argument("--manifest", default=str(MANIFEST))
     args = ap.parse_args()

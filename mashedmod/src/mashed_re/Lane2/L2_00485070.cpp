@@ -9,6 +9,7 @@
 // ============================================================================
 #include "../Core/HookSystem.h"
 #include "../Core/ShadowAB.h"
+#include "../Core/ShadowTrack.h"
 #include <cstdint>
 #include <cstring>
 
@@ -37,7 +38,7 @@ typedef void           code;
 static inline void L2T_FUN_00484de0(void) { reinterpret_cast<void(__cdecl*)()>(0x00484de0u)(); }   // 0x00484de0 (original, not ported)
 static inline void L2T_FUN_00484f70(void) { reinterpret_cast<void(__cdecl*)()>(0x00484f70u)(); }   // 0x00484f70 (original, not ported)
 extern "C" void __cdecl L2_FUN_00485070(void);
-extern "C" void __cdecl L2_FUN_00485070(void)
+static void __cdecl L2_FUN_00485070_impl(void)
 {
   if (DAT_006e70c8 == 0) {
     L2T_FUN_00484f70();
@@ -49,6 +50,10 @@ extern "C" void __cdecl L2_FUN_00485070(void)
   DAT_006e70cc = 0;
   DAT_006e70d4 = 0;
   return;
+}
+extern "C" void __cdecl L2_FUN_00485070(void) {
+    SHADOW_AB_COUNTER(ab, "L2_FUN_00485070", 0x00485070u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, L2_FUN_00485070_impl, SHADOW_STACK_WINDOW());
 }
 RH_ScopedInstall(L2_FUN_00485070, 0x00485070);
 #undef DAT_006e70c8

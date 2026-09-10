@@ -9,6 +9,7 @@
 // ============================================================================
 #include "../Core/HookSystem.h"
 #include "../Core/ShadowAB.h"
+#include "../Core/ShadowTrack.h"
 #include <cstdint>
 #include <cstring>
 
@@ -33,7 +34,7 @@ typedef void           code;
 extern "C" unsigned int __cdecl GetRenderSubMode(void);   // 0x0040e350 (ported)
 static inline unsigned int L2T_FUN_0045cbe0(unsigned int a0, unsigned int a1, unsigned int a2) { return reinterpret_cast<unsigned int(__cdecl*)(unsigned int, unsigned int, unsigned int)>(0x0045cbe0u)(a0, a1, a2); }   // 0x0045cbe0 (original, not ported)
 extern "C" void __cdecl L2_FUN_0045cc50(void);
-extern "C" void __cdecl L2_FUN_0045cc50(void)
+static void __cdecl L2_FUN_0045cc50_impl(void)
 {
   int iVar1;
   
@@ -47,5 +48,9 @@ extern "C" void __cdecl L2_FUN_0045cc50(void)
     } while (iVar1 < 4);
   }
   return;
+}
+extern "C" void __cdecl L2_FUN_0045cc50(void) {
+    SHADOW_AB_COUNTER(ab, "L2_FUN_0045cc50", 0x0045cc50u, ShadowAB::kPhaseRace);
+    ShadowAB::RunTracked(ab, L2_FUN_0045cc50_impl, SHADOW_STACK_WINDOW());
 }
 RH_ScopedInstall(L2_FUN_0045cc50, 0x0045cc50);
