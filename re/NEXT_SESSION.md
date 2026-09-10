@@ -116,12 +116,25 @@ Branch `race/first-frame-parity`, tree clean, no stray processes, pool locks cle
     - **Stack exhaustion ruled out:** original `sub esp,0xf0` + 4 pushes = `0xfc`; port
       `sub esp,0xE8` + `/GS` cookie + 2 pushes. Comparable. Noted though: the port does
       `and esp,0FFFFFFF8h` (force-aligns ESP to 8) where the original does **not**.
-    - **NEXT, cheapest remaining probe — no boot needed.** Under the *baseline* build the crash
-      EIP was `0x6b47e8d7` = `divss xmm0,[eax]` with **`EAX = 0`**, reached via
-      `cmovae ecx,edx` / `cmovb eax,[esp+0x50]` with ECX/EDX holding the axis-table addresses
-      `0x5e57c4`/`0x5e57d0` (`log/crash_eip_0056f350_after_counterfix.txt`). Map `0x6b47e8d7`
-      through `mashed_re_dev.map` on that build to the exact source line and read what
-      `[esp+0x50]` holds there — that names the null divisor directly.
+    - **FAULT SITE PINNED TO THE INSTRUCTION.** Fresh EIP `0x6b5de98d` → asi offset `0x5e98d` →
+      `?FUN_0056f350_impl@…` **+0x62d** (`RwpSolverCore10.obj`). It is a **`mulss`**, not a
+      `divss` — the earlier "divide" came from the pre-counter-fix build, don't reuse it.
+      ```
+      1005E97B  mov    eax, 5E57D8h              ; = DAT_005e57d0 + 8 = *(float*)(puVar7 + 2)
+      1005E983  cmovb  eax, dword ptr [esp+58h]  ; <-- OTHER arm is a SPILLED LOCAL
+      1005E98D  mulss  xmm0, dword ptr [eax]     ; <-- FAULT, EAX = 0
+      ```
+      `0x5E57D8` pins the expression to `*(float *)(puVar7 + 2)`, so the sibling arm should be
+      `0x5e57cc` — **another immediate**. It is a spill-slot load instead, and the slot is **0**.
+      **⇒ one arm of the axis-table select is a variable, and it is null.** Prime suspect:
+      `pfVar8`, assigned twice from unrelated sources — `pfVar8 = local_d0` *outside* the
+      degenerate-axis test and `= DAT_005e57c4` *inside* it — so when `< _DAT_005cd03c` is false,
+      `pfVar8` is still `local_d0`. That chain (`**(int**)(*local_e0+0x10) + 0x30 +
+      local_e0[1]*0x40`) was re-verified against `0x0056f409..0x0056f41e` and **matches**, so the
+      chain is not the defect. **[UNCERTAIN]** whether the null is `local_d0` or another spilled
+      local at `[esp+0x58]` — one debugger read away, and that is the next step.
+      **This also explains the frame sensitivity:** the value comes from a spill slot, so adding
+      call sites changes what is spilled where and the arm reads something else.
   - **BOTH witness crashes are now SETTLED and out of the lane** (`SKIP:runtracked-unbounded-effects`,
     verdict `INVALID_WITNESS`). `0x0055bd80`'s fault is EIP `0x00564c8e` `fld [ecx+0x10]` with
     `ECX = 1`, inside `FUN_00564c80` — a target of its volume-descriptor dispatch

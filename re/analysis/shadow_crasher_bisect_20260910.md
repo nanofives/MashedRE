@@ -331,12 +331,47 @@ exhaustion. Established: dies inside iteration 0 after `FUN_0056f1f0 #1` with `b
 `puVar3=NULL`, `local_e4=NULL`, `local_e0` live, **and the defect follows MSVC's stack frame** —
 4/4 RACE_OK once extra call sites are compiled in, including 2/2 with the logging disabled.
 
-**Next, and it is now the cheapest remaining probe:** the crash EIP under the *baseline* build was
-`0x6b47e8d7` = `divss xmm0,[eax]` with `EAX = 0`, reached through `cmovae ecx,edx` /
-`cmovb eax,[esp+0x50]` with ECX/EDX holding the axis-table addresses `0x5e57c4`/`0x5e57d0`. Map
-`0x6b47e8d7` back through `mashed_re_dev.map` on the *baseline* binary to the exact source line
-and read what `[esp+0x50]` is at that point — that names the null divisor directly, without
-another boot.
+### The fault site, pinned to the instruction
+
+Caught a fresh EIP against the current build and resolved it: `0x6b5de98d`, asi base
+`0x6b580000`, offset `0x5e98d`, preferred-base `0x1005e98d` ->
+`?FUN_0056f350_impl@Collision@mashed_re@@YAXHPAMM@Z` at `0x1005e360`, **`+0x62d` into it**
+(`RwpSolverCore10.obj`). Note it is a **`mulss`**, not a `divss` -- the earlier "divide" reading
+came from the pre-counter-fix build.
+
+```
+1005E97B: mov    eax, 5E57D8h              ; = DAT_005e57d0 + 8, i.e. *(float*)(puVar7 + 2)
+1005E980: cmovae ecx, edx
+1005E983: cmovb  eax, dword ptr [esp+58h]  ; <-- the OTHER arm is a SPILLED LOCAL
+1005E988: mulss  xmm5, dword ptr [ecx+4]
+1005E98D: mulss  xmm0, dword ptr [eax]     ; <-- FAULT: EAX = 0
+1005E991: mov    eax, 5E57C4h
+1005E996: cmovae eax, edx
+```
+
+`0x5E57D8` is `DAT_005e57d0 + 8`, which identifies the expression exactly:
+`*(float *)(puVar7 + 2)` with `puVar7` an `undefined4*`, so `+2` is +8 bytes. Its sibling arm
+should therefore be `0x5e57c4 + 8 = 0x5e57cc` -- **another immediate**. Instead MSVC emitted
+`cmovb eax, dword ptr [esp+0x58]`, a load from a spill slot, and that slot holds **0**.
+
+**So one arm of the axis-table select is not a table constant at all** -- it is a variable, and
+that variable is null. The obvious candidate is `pfVar8`, which is assigned **twice** from
+unrelated sources: `pfVar8 = local_d0;` outside the degenerate-axis test, and
+`pfVar8 = (float *)DAT_005e57c4;` inside it. If the `< _DAT_005cd03c` test is false the inner
+assignment never runs and `pfVar8` is still `local_d0` -- which comes from the pointer chain
+`**(int **)(*local_e0 + 0x10) + 0x30 + local_e0[1] * 0x40`, running with `local_e0 = 10E2B60C`
+per the trace.
+
+That chain was re-verified against the original (`0x0056f409..0x0056f41e`: `mov edx,[eax]` /
+`mov eax,[eax+4]` / `shl eax,6` / `mov edx,[edx+0x10]` / `mov edx,[edx]` /
+`lea eax,[edx+eax+0x30]`) and the port matches it. **[UNCERTAIN]** whether the null is `local_d0`
+itself or a different spilled local at `[esp+0x58]` -- one debugger read away, and it is the next
+step.
+
+**Why this fits the frame sensitivity:** the value comes from a *spill slot*. Adding call sites
+changes which locals get spilled and where, so that arm reads something different -- or MSVC
+keeps a constant in a register and the cmov becomes harmless. That explains the 4/4 RACE_OK
+without needing any other mechanism.
 
 ## `0x0056f0a0` — a NULL write in a *third* function, and only when the A/B is armed
 
