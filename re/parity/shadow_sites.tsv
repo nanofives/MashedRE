@@ -177,3 +177,10 @@ rva	name	file	subsystem	kind	ret	cc	params	phase	status
 005ab1c0	L2_FUN_005ab1c0	L2_005ab1c0.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-decomp2port-tracked
 00475ef0	L2_FUN_00475ef0	L2_00475ef0.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-decomp2port-tracked
 005aa7a0	L2_FUN_005aa7a0	L2_005aa7a0.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-decomp2port-tracked
+00421560	L2_FUN_00421560	L2_00421560.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-idiom-rwslot
+0048fce0	L2_FUN_0048fce0	L2_0048fce0.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-idiom-rwslot
+0048fd10	L2_FUN_0048fd10	L2_0048fd10.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-idiom-rwslot
+0048fd40	L2_FUN_0048fd40	L2_0048fd40.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-idiom-rwslot
+00457610	L2_FUN_00457610	L2_00457610.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-idiom-rwslot
+00486f50	L2_FUN_00486f50	L2_00486f50.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-idiom-rwslot
+00490490	L2_FUN_00490490	L2_00490490.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-idiom-rwslot

@@ -156,3 +156,13 @@ default) is unaffected — regression probe `batch_regr1.txt`. Next diagnostic s
 critical section the tracked thread waits on (its address is the first argument of the
 `RtlpWaitOnCriticalSection` frame on the hung stack) and its owner thread id.
 
+## A reproducible first-call difference: `0x0047e9c0`, `.data+0x624048`
+
+Three separate boots (runs 22, c2void2, regr1) show the same thing: the FIRST sampled call of
+`0x0047e9c0` in a boot has the original touching 3 exe-data pages and the port 2, with one
+dword differing at `0x00624048`, `noise=0`; every later sample is 2 pages/2 pages identical.
+That is not contamination (it recurs at the same offset, first call only) — the original
+performs a one-time write on its first invocation that the port does not. Candidate real
+defect in the K24 root port (one-shot init or a static the port never sets). The row stays C2;
+this is the first concrete transcription finding the tracked lane has produced.
+

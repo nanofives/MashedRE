@@ -122,6 +122,80 @@ def body_of(c):
     return c[:i].strip(), c[i + 1:j]
 
 
+# INDIRECT-CALL IDIOM TABLE. An indirect call is refused unless its base is a known global
+# function-pointer table whose calling convention is established by an existing verified hand
+# port. Entry: global name -> (calling convention, source of the ruling). Add an entry only with
+# a citation; a wrong convention here becomes a crash in every generated port that uses it.
+INDIRECT_IDIOMS = {
+    # RW device slot: `(**(code **)(DAT_007d3ff8 + 0x20))(8, 0)` etc. Hand ports call it
+    # __cdecl (Frontend/MenuDrawLoopTwin.cpp `vt20`, D3d9Render/RwIm2DBridge.cpp kRwDeviceSlot).
+    "DAT_007d3ff8": ("__cdecl", "MenuDrawLoopTwin.cpp vt20 / RwIm2DBridge.cpp"),
+}
+IDIOM_CALL = re.compile(r"\(\*\*\s*\(code\s*\*\*\)\s*\(\s*(DAT_[0-9a-fA-F]{8})\s*\+\s*(0x[0-9a-fA-F]+)\s*\)\s*\)\s*\(")
+
+
+def rewrite_idioms(body, log):
+    """Replace known table-slot indirect calls with L2_slot_<global>_<off>_<arity>(args).
+    Returns (body, helpers) or (None, reason) when an idiom has inconsistent arity."""
+    helpers = {}
+    out, pos = [], 0
+    while True:
+        m = IDIOM_CALL.search(body, pos)
+        if not m:
+            break
+        gname, off = m.group(1), m.group(2)
+        if gname not in INDIRECT_IDIOMS:
+            pos = m.end()
+            continue
+        # paren-match the argument list starting at m.end()-1 ('(')
+        k = m.end() - 1
+        depth, q = 0, k
+        while q < len(body):
+            if body[q] == "(":
+                depth += 1
+            elif body[q] == ")":
+                depth -= 1
+                if depth == 0:
+                    break
+            q += 1
+        if depth != 0:
+            return None, "IDIOM:unbalanced call"
+        argtxt = body[k + 1:q]
+        parts, d, cur = [], 0, []
+        for ch in argtxt:
+            if ch in "([":
+                d += 1
+            elif ch in ")]":
+                d -= 1
+            if ch == "," and d == 0:
+                parts.append("".join(cur).strip()); cur = []
+            else:
+                cur.append(ch)
+        tail = "".join(cur).strip()
+        if tail:
+            parts.append(tail)
+        cc, why = INDIRECT_IDIOMS[gname]
+        name = f"L2_slot_{gname[4:].lower()}_{off}_{len(parts)}"
+        helpers[name] = (gname, off, len(parts), cc, why)
+        cast = ", ".join(f"(unsigned int)({a})" for a in parts)
+        out.append(body[pos:m.start()])
+        out.append(f"{name}({cast})")
+        pos = q + 1
+    out.append(body[pos:])
+    text = "".join(out)
+    decls = []
+    for name, (gname, off, n, cc, why) in sorted(helpers.items()):
+        sig = ", ".join(f"unsigned int a{i}" for i in range(n)) or "void"
+        args = ", ".join(f"a{i}" for i in range(n))
+        types = ", ".join(["unsigned int"] * n)
+        addr = "0x" + gname[4:].lower() + "u"
+        decls.append(f"// idiom: (*({gname}+{off}))(...) is {cc} per {why}")
+        decls.append(f"static inline unsigned int {name}({sig}) {{ return reinterpret_cast<unsigned int({cc}*)({types})>("
+                     f"*reinterpret_cast<unsigned int*>(*reinterpret_cast<unsigned int*>({addr}) + {off}))({args}); }}")
+        log.append(f"IDIOM {gname}+{off} arity={n} {cc}")
+    return text, decls
+
+
 def transcribe(fn, ports, log):
     name = fn["name"]
     rva = fn["entry"][2:].lower().zfill(8)
@@ -142,6 +216,9 @@ def transcribe(fn, ports, log):
     for p in proto["params"]:
         if not p["storage"].startswith("Stack"):
             return None, "REGISTER_ABI:param " + p["name"] + " in " + p["storage"]
+    body, idiom_decls = rewrite_idioms(body, log)
+    if body is None:
+        return None, idiom_decls
     if INDIRECT.search(body):
         return None, "INDIRECT_CALL"
     # HIDDEN REGISTER ARGUMENT: a local that is advanced in a loop but never passed to the
@@ -337,6 +414,7 @@ def transcribe(fn, ports, log):
     out.append(f"// hooks.csv row 0x{rva}. C-level unchanged by generation; see file header.")
     out.append(f"// ---------------------------------------------------------------------------")
     out += gdefs
+    out += idiom_decls
     out += decls
     # The hook symbol carries the L2_ prefix: HookSystem installs L2_* hooks ONLY when
     # MASHED_HOOK_ONLY names them (or MASHED_HOOK_LANE2=1), so an unverified generated

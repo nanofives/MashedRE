@@ -118,6 +118,22 @@ them out of every other session's boots. Two refusal rules came out of it (`CALL
 the ports' callees have 0-parameter stored prototypes, and the decompiler prototypes we thunk
 with may still miss register arguments the disassembly would show.
 
+### Indirect-call idiom table (added later the same day)
+`INDIRECT_IDIOMS` in `decomp2port.py`: a global function-pointer table base → calling convention,
+each entry citing the verified hand port that establishes it. First entry: the RenderWare device
+slot `DAT_007d3ff8` (`(**(code **)(DAT_007d3ff8 + 0x20))(a, b)`), `__cdecl` per `vt20` in
+`Frontend/MenuDrawLoopTwin.cpp` and `RwIm2DBridge.cpp`. The rewriter emits a per-slot/arity
+helper (`L2_slot_007d3ff8_0x20_2`) with C-cast arguments and leaves every other indirect call
+refused. Survey of the 22 refused pilot rows: 8 used only that slot (13 call sites) and are now
+generated; the rest are `*DAT_007d4110+off` (4 rows), `*DAT_007d4108+0x28` (1) and object
+vtables (2) — table entries to be added only once a hand port pins their convention. Pilot
+after the table: **29 TUs compile** (4 return-value, 25 void), 15 `INDIRECT_CALL` refusals left.
+
+Tracked shadow batch of the 7 idiom-recovered ports (`batch_lane2_idiom.txt`, 2 boots):
+**7/7 CLEAN, 24/24 samples each** — `0x00421560 0x0048fce0 0x0048fd10 0x0048fd40 0x00457610
+0x00486f50 0x00490490`. These are the first decompiler-generated ports verified effect-identical
+(touched pages + caller stack window) against the original at their real call sites.
+
 ## What Lane 2 needs to scale
 
 1. **Reachability at pool scale.** The pre-screen covers 210 rows; the C2 pool is 3,900. This

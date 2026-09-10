@@ -26,6 +26,20 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-09-10  LANE 2 FIRST PROMOTIONS: 7 C2 rows with NO prior port C2->C3 on decompiler-GENERATED ports (decomp2port.py + RW device-slot idiom table), each verified 24/24 effect-identical by the page-level write-tracking A/B; hooks are L2_ opt-in  Evidence: re/analysis/lane2_decomp2port_design_20260910.md, re/parity/shadow_results.tsv, log/shadow_ab/c3_gate_check_lane2.tsv. Gate: 7 PASS (caller FUN_0040bde0 C2; callee FUN_004770a0 C2 / RpClumpRender).
+2026-09-10  00421560  FUN_00421560  C2->C3  generated port (decomp2port), tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane2_decomp2port_design_20260910.md
+2026-09-10  00457610  FUN_00457610  C2->C3  generated port (decomp2port), tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane2_decomp2port_design_20260910.md
+2026-09-10  00486f50  FUN_00486f50  C2->C3  generated port (decomp2port), tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane2_decomp2port_design_20260910.md
+2026-09-10  0048fce0  FUN_0048fce0  C2->C3  generated port (decomp2port), tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane2_decomp2port_design_20260910.md
+2026-09-10  0048fd10  FUN_0048fd10  C2->C3  generated port (decomp2port), tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane2_decomp2port_design_20260910.md
+2026-09-10  0048fd40  FUN_0048fd40  C2->C3  generated port (decomp2port), tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane2_decomp2port_design_20260910.md
+2026-09-10  00490490  FUN_00490490  C2->C3  generated port (decomp2port), tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane2_decomp2port_design_20260910.md
+2026-09-10  REGION LANE: 5 void C2 rows C2->C3 through the shadow A/B RunRegion sites (shadow_gen.py --region, spans verified mechanically); U-9126 filed  Evidence: re/analysis/shadow_lane_20260910.md, re/parity/shadow_results.tsv, log/shadow_ab/c3_gate_check_region.tsv. Gate: 1 PASS / 4 LEAF, 0 FAIL. Each row: 48 sampled in-race calls, output region bit-identical, PATCHBYTE proof.
+2026-09-10  00546c50  FUN_00546c50  C2->C3  region shadow A/B 48/48 bit-identical, A/B-IS-REAL, gate PASS; re/analysis/shadow_lane_20260910.md
+2026-09-10  00565200  FUN_00565200  C2->C3  region shadow A/B 48/48 bit-identical, A/B-IS-REAL, gate LEAF; re/analysis/shadow_lane_20260910.md
+2026-09-10  0056cf90  FUN_0056cf90  C2->C3  region shadow A/B 48/48 bit-identical, A/B-IS-REAL, gate LEAF; re/analysis/shadow_lane_20260910.md
+2026-09-10  0056ed60  FUN_0056ed60  C2->C3  region shadow A/B 48/48 bit-identical, A/B-IS-REAL, gate LEAF; re/analysis/shadow_lane_20260910.md
+2026-09-10  0056fad0  FUN_0056fad0  C2->C3  region shadow A/B 48/48 bit-identical, A/B-IS-REAL, gate LEAF; re/analysis/shadow_lane_20260910.md
 2026-09-10  LANE 3 SWEEP: 18 void C2 rows C2->C3 through the page-level write-tracking A/B (Core/ShadowTrack.h via shadow_gen.py --tracked); 2 DIVERGENT and 2 CRASH kept at C2; 10 naming/intent uncertainties filed U-9116..U-9125  Evidence: re/analysis/lane3_write_tracking_20260910.md, re/parity/shadow_results.tsv, log/shadow_ab/c3_gate_check_tracked.tsv. Gate: 7 PASS / 11 LEAF (sole caller C2, leaf exemption L24), 0 FAIL. Each row: up to 24 sampled in-race calls, touched pages + caller stack window + return identical, PATCHBYTE proof.
 2026-09-10  00423b00  FUN_00423b00  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane3_write_tracking_20260910.md
 2026-09-10  004c51a0  RwMatrixTranslate  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane3_write_tracking_20260910.md
