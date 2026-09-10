@@ -230,7 +230,8 @@ static void __cdecl FUN_0056f350_impl(int param_1,float *param_2,float param_3) 
   float *local_d0;
   float local_cc,local_c8,local_c4,local_c0,local_bc,local_b8;
   float *local_b4;
-  float local_b0,local_ac,local_a8,local_a4,local_a0,local_9c,local_98,local_94,local_90,local_8c,
+  int   local_b0;              // note 4: the loop counter is an INT ([esp+0x50]), not a float
+  float local_ac,local_a8,local_a4,local_a0,local_9c,local_98,local_94,local_90,local_8c,
         local_88,local_84,local_80,local_7c;
   // note 3: local_78 is one contiguous row buffer (fad0 fills [0..0xe], f350 sets limits at
   // [0x10..0x18], f1f0 consumes). Mixed float/undefined4 by slot.
@@ -281,7 +282,22 @@ static void __cdecl FUN_0056f350_impl(int param_1,float *param_2,float param_3) 
   else {
     iVar10 = (int)(short)local_e0[8];
   }
-  local_b0 = 0.0;
+  // note 4 (2026-09-10): the loop counter is an INT in the original, not a float. Ghidra
+  // typed this local `float` and the port inherited it, which made MSVC emit a
+  // cvttss2si / inc / cvtdq2ps / movss round trip PLUS a helper call
+  // (`call 100B2910` before `cmp eax,[edi+0xAC]`) on every iteration. The original is a
+  // plain integer at [esp+0x50]:
+  //     0x0056f485  mov  dword ptr [esp+0x50], 0     ; init
+  //     0x0056faa0  mov  edi, dword ptr [esp+0x50]
+  //     0x0056faaa  inc  edi
+  //     0x0056faae  cmp  edi, ebx                    ; ebx = [esi+0xac], re-read each pass
+  //     0x0056fab0  mov  dword ptr [esp+0x50], edi
+  //     0x0056fab4  jb   0x56f4a2                    ; unsigned
+  // Numerically the float form agrees below 2^24, so this is NOT the 0x0056f350 crash
+  // (re/analysis/shadow_crasher_bisect_20260910.md) — it was corrected and the crash
+  // reproduced unchanged. It is fixed anyway: a float induction variable in an
+  // unsigned-compared counting loop is exactly the shape that hides a real bound defect.
+  local_b0 = 0;
   *(int *)(*(int *)(param_1 + 0xac) + 4 + *(int *)(param_1 + 0xf8) * 8) = iVar10;
   if (*(int *)(param_2 + 0x2b) != 0) {          // raw int count (note above)
     pfVar9 = param_2 + 4;
@@ -424,9 +440,9 @@ static void __cdecl FUN_0056f350_impl(int param_1,float *param_2,float param_3) 
           pfVar8 = local_d0;
         }
       }
-      local_b0 = (float)((int)local_b0 + 1);
-      pfVar9 = pfVar9 + 10;
-    } while ((uint)local_b0 < (uint)*(int *)(param_2 + 0x2b));   // raw int count
+      local_b0 = local_b0 + 1;                                   // note 4: int, was float
+      pfVar9 = pfVar9 + 10;                                      // +0x28 bytes (add ebp,0x28)
+    } while ((uint)local_b0 < (uint)*(int *)(param_2 + 0x2b));   // raw int count, re-read
   }
   FUN_0056f0a0(param_1);
   return;

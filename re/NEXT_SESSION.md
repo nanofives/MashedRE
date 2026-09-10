@@ -62,12 +62,18 @@ Branch `race/first-frame-parity`, tree clean. Trackers: hooks.csv 5,930 rows
   | `0x00570090` | RACE_OK **NO_SAMPLES** | RACE_OK | **not a crasher** → NO_SAMPLES bucket |
   | `0x0056f0a0` | CRASH 30s | **RACE_OK** | crash is in the **A/B window**, not the port |
   | `0x0056f350` | CRASH 27s | CRASH 26s | crash is in the **installed port** |
-  - `0x0056f350`: EIP resolves **into our own `FUN_0056f350_impl` +0x177** (`RwpSolverCore10.obj`),
-    faulting on `test byte [esi+0x1c],8` with **`ESI = 0x3f7f97e3` = the float 0.9984**. A float
-    is reaching a pointer slot → **argument-shape defect**, not the register class (its only
-    caller `0x00560260` has no `extraout_*`). NEXT: capstone the original's prologue and read how
-    it really consumes its three args against the port's `(int, float*, float)` — do this BEFORE
-    touching the body.
+  - `0x0056f350`: **argument shape CHECKED and CORRECT** — the original's three cdecl args
+    (`E+4`, `E+8`, `E+0xc` float) map exactly onto `(int, float*, float)`. Base (+0x10), field
+    (+0xc), stride (0x28), re-read bound (+0xac) and the `local_78[27]` sizing against both
+    callees all verified faithful. The fault is at **iteration k = 5** (computed `EAX−EDI`),
+    reading `[param_2+0x14C]` — the same address the original reads on the same iteration. Found
+    and fixed one real transcription defect (loop counter declared `float`; the original's is an
+    int at `[esp+0x50]`), but the crash reproduced and **the fault MOVED** to a `cmov`-ised
+    default-pointer ternary yielding 0 (`divss xmm0,[eax]`, `EAX=0`). So there is more than one
+    divergent path and whack-a-mole is low yield. Standalone regression-checked: no-op there.
+    **NEXT: a runtime probe, not more static reading** — log `k`, `[param_2+0xac]` and
+    `[param_2+0xc+k*0x28+0x10]` per iteration from the port and diff against a Frida trace of the
+    original's loop on the same call. Full detail in the analysis note.
   - `0x0056f0a0`: control boots clean, so the port is fine; the armed boot NULL-writes at
     `0x0056caf4` inside a **third** function, `FUN_0056caa0`. Suspect the A/B window: a side
     effect outside the tracked span that the restore cannot undo (`ShadowAB.h` LIMITS names this

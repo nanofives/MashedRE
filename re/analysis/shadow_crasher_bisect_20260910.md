@@ -49,10 +49,72 @@ This is the argument-shape class (`feedback_installed_hook_abi_mismatch`, memory
 `0x0056bce0` turned out to be — the register screen agrees: `0x0056f350`'s only caller
 `0x00560260` decompiles with **no** `extraout_*`.
 
-**Next step, and it is the same move that cracked `0x0056bce0`:** disassemble the original
-`0x0056f350` prologue with capstone and read how it actually consumes its three arguments,
-against the port's `(int, float*, float)`. Do that **before** touching the body — if the shape
-is wrong, every line of the body was transcribed against the wrong signature.
+### Argument shape: checked, and it is CORRECT
+
+Disassembled the original's prologue. `sub esp,0xf0` then `push ebx/ebp/esi` puts esp at
+`E-0xfc`, so `0x0056f359 mov esi,[esp+0x104]` = `E+8` = **arg2**; after `0x0056f365 push edi`
+(esp `E-0x100`) the later reads `[esp+0x104]` = `E+4` = **arg1** and
+`0x0056f677 fld [esp+0x10c]` = `E+0xc` = **arg3, a float**. Three cdecl args, and the port's
+`(int param_1, float *param_2, float param_3)` maps onto them exactly — the port's
+`mov eax,[ebp+8]` / `mov edi,[ebp+0Ch]` put arg1 and arg2 in the same roles the original's
+arg1/ESI have. **So the signature is not the defect.** ESI holding a float at the fault is a
+*downstream* value, not a mis-passed argument.
+
+### What was then checked line-by-line against the disasm, and HOLDS
+
+| port | original | verdict |
+|---|---|---|
+| `pfVar9 = param_2 + 4` (float*, = +0x10) | `0x0056f49f lea ebp,[esi+0x10]` | same base |
+| `puVar3 = *(void**)(pfVar9+3)` (= +0xc) | `0x0056f4a2 mov ebx,[ebp+0xc]` | same field |
+| `pfVar9 = pfVar9 + 10` (= +0x28) | `0x0056faab add ebp,0x28` | same stride |
+| bound `*(int*)(param_2+0x2b)` (= +0xac), re-read | `0x0056faa4 mov ebx,[esi+0xac]`, re-read | same |
+| `puVar3==0 \|\| !(byte[puVar3+0x1c]&8)` → body | `0x0056f4ad test/je` + `0x0056f4d9 test byte[ebx+0x1c],8 / jne` | same |
+| `local_78[27]` handed to `FUN_0056fad0` / `FUN_0056f1f0` | `fad0` writes ≤ dword `0xe`; `f1f0` only READS, ≤ `[ecx+0x60]` = dword `0x18` | 27 dwords suffices — **no stack overflow** |
+
+**Iteration index at the fault, computed:** `EAX 0x11aba8a4 − EDI 0x11aba7d0 = 0xD4`; minus the
+`+0xC` base leaves `0xC8`, `/0x28` = **k = 5**. So it faults reading
+`[param_2 + 0xC + 5*0x28 + 0x10]` = `[param_2 + 0x14C]` — and the original reads that **same
+address on that same iteration**. Since base, stride, field and bound all match, either the
+original does not reach k=5, or `param_2`'s array content differs by then. Neither is explicable
+from the callee alone, and only `0x0056f350`'s hook was installed
+(`MASHED_HOOK_ONLY`), so every callee (`FUN_0055b750`, `FUN_0056fad0`, `FUN_0056f1f0`) was the
+original.
+
+### One real transcription defect found — and it is NOT the crash
+
+The loop counter `local_b0` was declared `float`. The original's is a plain integer:
+
+```
+0x0056f485  mov  dword ptr [esp+0x50], 0
+0x0056faa0  mov  edi, dword ptr [esp+0x50]
+0x0056faaa  inc  edi
+0x0056faae  cmp  edi, ebx                 ; ebx = [esi+0xac]
+0x0056fab0  mov  dword ptr [esp+0x50], edi
+0x0056fab4  jb   0x56f4a2                 ; unsigned
+```
+
+Ghidra typed the local `float` and the port inherited it, so MSVC emitted
+`cvttss2si / inc / cvtdq2ps / movss` **plus a helper `call`** before
+`cmp eax,[edi+0xAC]` on every iteration. Retyped to `int`. It agrees numerically below 2^24, so
+it was never going to be the crash — **and it wasn't: the crash reproduced, but the fault
+MOVED**, to `0x6b47e8d7` (`divss xmm0,[eax]` with `EAX = 0`, reached through
+`cmovae ecx,edx` / `cmovb eax,[esp+0x50]`, with ECX/EDX holding the `.rdata` defaults
+`0x5e57c4`/`0x5e57d0`). A `cmov`-ised default-pointer ternary is yielding 0 where the original
+yields its `0x5e57cc`-family default.
+
+**That the fault moved is the finding:** `FUN_0056f350` has more than one path where the port
+reaches a state the original does not, and single-crash whack-a-mole on it is low yield.
+
+**Standalone regression checked** — the counter change is a no-op there. `MASHED_PARITY=1` walk,
+17 screens vs the pre-change build: 15/17 byte-identical, and the s6/s7 residue is **13 and 25
+pixels confined to `x 212..259, y 130..178`**, the pulsing category-sprite band that the
+same-build B-vs-B2 control already showed varies run to run. Nothing in the checklist column
+`x 524..541` moved.
+
+**Next step is a runtime probe, not more static reading:** log `k`, `[param_2+0xac]` and
+`[param_2+0xc+k*0x28+0x10]` per iteration out of the port, and diff against a Frida trace of the
+original's loop over the same call. Until the two iteration traces are side by side, the state
+divergence cannot be localised.
 
 ## `0x0056f0a0` — a NULL write in a *third* function, and only when the A/B is armed
 
