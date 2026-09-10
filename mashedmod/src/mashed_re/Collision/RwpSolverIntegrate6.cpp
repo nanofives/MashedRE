@@ -64,10 +64,24 @@
 //     via the RVA-fn-ptr idiom — under the .asi it converges on the ported/hooked body (same
 //     rationale as RwpSolverMath2.cpp's error-funnel forwards). Standalone rebind = KV/lane-end.
 //
-// x87 note: 80-bit ST0 chains carry the accepted <=1-ULP angular floor under MSVC's 64-bit
-// long double (project_phys_chain_float10_methodology). Build is x87 (no /arch:SSE2), so the
-// plain-float product/sum expressions below accumulate in 80-bit and round once per store,
-// matching the original FMUL/FADDP/FSTP stream.
+// FLOAT-MODEL NOTE — CORRECTED 2026-09-10. This block previously read "Build is x87 (no
+// /arch:SSE2), so the plain-float product/sum expressions below accumulate in 80-bit and round
+// once per store, matching the original FMUL/FADDP/FSTP stream." THAT WAS FALSE ON BOTH COUNTS
+// and it was load-bearing for every "verbatim x87 transcription" in this TU.
+//   * There is NO /arch: flag anywhere in build.bat -- the sole occurrence is a comment at
+//     line 26 about the qhull static lib. MSVC's x86 default has been /arch:SSE2 since VS2012,
+//     so this file compiles TO SSE2, the opposite of what the note claimed.
+//   * Measured in the shipped .asi: FUN_0055b750_impl (sibling TU, same idiom) is 13 movss /
+//     10 cvtps2pd / 6 subsd / 6 mulsd / 3 cvtpd2ps / 2 addss and ZERO x87 instructions.
+// Consequences that matter when reading the bodies below: `float10` (= long double = double on
+// MSVC) is a 53-bit mantissa evaluated in SSE2, not an 80-bit x87 chain; and plain `float`
+// expressions round to 32 bits after EVERY operation rather than accumulating at 80 bits. So a
+// multi-term expression transcribed instruction-for-instruction from an x87 stream can still
+// differ wherever intermediate rounding matters -- that is a build-level gap, not a
+// transcription defect. Association still matters (each SSE node rounds), which is why the
+// note-(a) denominator-tree correction below was necessary and sufficient for 48/48 CLEAN.
+// Full measurement, blast radius (85 TUs / 88 hooks.csv rows / 17 DIVERGENT* rows) and the
+// open /arch:IA32 decision: re/analysis/float_model_is_sse2_not_x87_20260910.md.
 #include "../Core/HookSystem.h"
 #include "../Core/ShadowTrack.h"
 #include "../Core/ShadowAB.h"

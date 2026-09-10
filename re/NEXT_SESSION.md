@@ -144,14 +144,58 @@ The crash was the caller's EDX, not the callee's signature. See
 Same shape as B but one register class over — see the bullet under "Open items". Confirm or refute
 whether `FUN_0056fea0`'s original leaves the x87 stack at a depth the port does not.
 
-### C. Settle the two aliasing rows + `0x0055b750` **[RunRegion re-test]**
+### ⚠ DECISION REQUIRED — the build is SSE2, not x87, and a load-bearing comment said otherwise
+`re/analysis/float_model_is_sse2_not_x87_20260910.md`. **There is no `/arch:` flag anywhere in
+`build.bat`** (the only occurrence is a comment at line 26 about the qhull static lib), so MSVC's
+x86 default `/arch:SSE2` applies. Measured in the shipped `.asi`: `FUN_0055b750_impl` is
+**13 `movss` / 10 `cvtps2pd` / 6 `subsd` / 6 `mulsd` / 3 `cvtpd2ps` / 2 `addss` and ZERO x87
+instructions**. Recompiling the same file with `/arch:IA32` added and nothing else changed gives
+**11 `fld` / 5 `fstp` / 3 `fxch` / 3 `fsub` / 3 `fmul` / 3 `fadd` / 1 `fsubp`** — the flag is the
+whole difference.
+
+Two TUs asserted the opposite in a header comment (`RwpSolverIntegrate6.cpp`,
+`Ai/AiTargeting.cpp`); **both comments are corrected in place** — a false statement about the
+build is worse than a known gap. What it means: `float10` is a 53-bit double in SSE2, not an
+80-bit x87 chain, and plain `float` expressions round after *every* op instead of accumulating at
+80 bits. Blast radius: **85 TUs use `float10`, covering 88 `hooks.csv` rows (C4 10, C3 76, C2 2)**,
+and **17 `DIVERGENT*` rows** in `shadow_results.tsv` plausibly trace to it.
+
+**The ask:** leave it SSE2 and accept the precision floor, add `/arch:IA32` globally, or apply it
+per-TU to the physics/math files only (the `QhullBridge` precedent, `build.bat:43/45`). Note
+`/arch:IA32` does **not** make `long double` 80-bit — that ABI is fixed — so only
+register-resident intermediates recover. Architecture-level, so not applied.
+
+### C. `0x0055b750` — CAUSE FOUND, and it is the float model above, not a transcription defect
+Traced the original `0x0055b750..0x0055b7fc` against the port: args, all three cross-product
+formulas (`s0 = r5*d2−r6*d1`, `s1 = r6*d0−r4*d2`, `s2 = r4*d1−r5*d0`), the rounding map (`s0`/`s1`
+`fstp dword`; `s2` kept live and added at 80 bits by `0x0055b7f2 fadd st(1)`) and the per-component
+pointer re-derivation at `0x0055b7c5`/`0x0055b7e0` **all match**. The divergence hits `+04` and
+`+08` and **never `+00`** — and `d0` is the only operand `s0` does not use. `d0` has the longest
+live range (held untouched in `ST2`/`ST3` from `0x0055b774` to `0x0055b7b1`); in the port it is a
+`float10` local at 53 bits. Reclassify as `DIVERGENT_FLOAT10` (build-caused) rather than chase it.
+
+### C-old. Settle the two aliasing rows **[RunRegion re-test]**
 Regenerate `0x00577be0`/`0x00577cb0` as `RunRegion` over their output buffer (worker review 2
 names it), re-boot, and read `0x0055b750`'s body against the disasm for a precision/transcription
 difference. Each is C3 on a clean re-run, or the first real defect this lane has found.
 
-### D. Reach the 29 NO_SAMPLES **[scenario work]**
-They are contact/broadphase paths a 4-car standing race does not hit. Try `--boost`, `--mode 2`,
-a track with walls, or drive input (`--statediff-drive`). `MASHED_COUNT_RVAS` first — it costs nothing.
+### D. NO_SAMPLES — PRESCREENED 2026-09-10. 43 of 48 are genuinely never called; **5 are a bug**
+`py -3.12 scripts/prescreen_batch.py --candidates re/analysis/plans/prescreen_candidates_nosamples_20260910.txt`
+Both chunks reached a race (**3/3 validated probes each**, so the zeros are meaningful, not a
+boot-only measurement): **c0 0/24 exercised, c1 5/24**. Result table:
+`re/analysis/plans/prescreen_result_nosamples_20260910.tsv` (`class` = `never` / `exercised_inrace`).
+
+- **43 `never`** — a 4-car standing race genuinely does not call them. Reaching them needs a
+  richer scenario (`--boost`, `--mode 2`, a walled track, `--statediff-drive`), exactly as this
+  item assumed.
+- **5 `exercised_inrace` yet the shadow A/B logged ZERO samples** —
+  `0x005a6e10 0x005ad2e0 0x005aeed0 0x005b0f40 0x005b8080`. The counter (armed LATE, in-race)
+  sees them fire; the A/B records nothing. **That is a harness bug, not a scenario gap**, and it
+  is the cheap half of this item. All five are in the `0x005a`–`0x005b` band. Check, in order:
+  their `status` in `re/parity/shadow_sites.tsv`; whether a `SHADOW_AB_COUNTER` phase gate other
+  than `kPhaseRace` is in play; whether `HookIndex(rva)` returns <0 (that logs
+  `SKIP:no-hook-index`, so its absence is itself informative); and whether their TU is linked
+  into the `.asi` at all.
 
 ### E. Next slice of void ports **[RunRegion with two spans]**
 12 MULTI_REGION rows in `log/shadow_ab/worker_void_regions.txt` need a `RunRegion2`; 18 INDIRECT

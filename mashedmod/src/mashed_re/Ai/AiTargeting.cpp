@@ -12,9 +12,22 @@
 // two args off the x87 FPU stack (void sig + __ftol(ST0) of caller values) — not
 // expressible as standard C++; needs a naked-asm shim. Carried for a later pass.
 //
-// Build is x87 (no /arch:SSE2) so plain C++ float math matches the original FPU
-// codegen ([[project-wsa2-rwmath-bitident]]); __ftol(ST0) of a locally-computed
-// value == (int)expr under x87.
+// FLOAT-MODEL NOTE — CORRECTED 2026-09-10. This previously read "Build is x87 (no
+// /arch:SSE2) so plain C++ float math matches the original FPU codegen
+// ([[project-wsa2-rwmath-bitident]]); __ftol(ST0) of a locally-computed value ==
+// (int)expr under x87." THE PREMISE IS FALSE: there is no /arch: flag anywhere in
+// build.bat (the only occurrence is a comment about the qhull static lib), so MSVC's
+// x86 default /arch:SSE2 applies and this TU compiles to SSE2 doubles/singles, not
+// x87. Measured in the shipped .asi on a sibling TU: 13 movss / 10 cvtps2pd / 6 subsd
+// / 6 mulsd / 3 cvtpd2ps / 2 addss, zero x87 instructions.
+// So "plain C++ float math matches the original FPU codegen" is NOT established here:
+// under SSE2 each float op rounds to 32 bits immediately, whereas the original's
+// FMUL/FADDP chains hold intermediates at 80 bits and round once at the FSTP. The
+// __ftol(ST0) == (int)expr equivalence also loses its x87 justification.
+// This does not by itself invalidate any measured GREEN in this TU -- a diff that
+// passed, passed -- but it removes the a-priori reason to expect bit-identity, so any
+// future claim here needs its own measurement. Full write-up, blast radius and the open
+// /arch:IA32 decision: re/analysis/float_model_is_sse2_not_x87_20260910.md.
 //
 // Anchored to MASHED.exe SHA-256:
 //   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
