@@ -75,10 +75,23 @@ Branch `race/first-frame-parity`, tree clean. Trackers: hooks.csv 5,930 rows
     `[param_2+0xc+k*0x28+0x10]` per iteration from the port and diff against a Frida trace of the
     original's loop on the same call. Full detail in the analysis note.
   - `0x0056f0a0`: control boots clean, so the port is fine; the armed boot NULL-writes at
-    `0x0056caf4` inside a **third** function, `FUN_0056caa0`. Suspect the A/B window: a side
-    effect outside the tracked span that the restore cannot undo (`ShadowAB.h` LIMITS names this
-    exactly). NEXT: read the body for an out-of-span side effect — if it has one this site is not
-    a RunRegion candidate at all and should leave the lane.
+    `0x0056caf4` inside a **third** function, `FUN_0056caa0`. **Body read, and it is the excluded
+    shape:** ~16 load/add/store accumulators (invisible to an `add [mem]` grep), four of them
+    into separately allocated arrays reached through pointers stored in the argument struct
+    (`[esi+0xb8]/[0xc4]/[0xd0]/[0xdc]`, indexed by cursors `[0xd4]/[0xe0]/[0xf8]`), plus it bumps
+    the cursor `[esi+0xf8]` itself, plus a loop through `FUN_0056f1f0` writing yet more
+    pointer-reached arrays. **Hedge:** a tree-wide screen for the accumulator shape flags 3 sites
+    and **2 are CLEAN 24/24** (`0x0056f020`, `0x0056d070`), so "accumulator ⇒ invalid" is FALSE.
+    The surviving discriminator (n=3) is narrower — those two accumulate *directly on the arg
+    struct*, `0x0056f0a0` is the only one going *through pointers loaded from it*.
+    **DECISION NEEDED, not another run:** if that reading holds, move this row out of the lane.
+  - **Harness defect FIXED — a control boot used to destroy the armed verdict.** `--no-shadow`
+    sets `MASHED_NO_SELFTEST=1`, so every site returns `NO_SAMPLES`, and `done.update(results)`
+    merged that over the real result. Seen directly: `0056f0a0` was `CRASH` at 14:34 and
+    `NO_SAMPLES` at 14:35 when its control ran — that is how a real crasher reads as "never
+    fired". `shadow_batch.py` now writes control outcomes to their own `control` / `control_at`
+    columns. **The results table now self-documents the discriminator:**
+    `0056f0a0 CRASH/RACE_OK` = witness problem, `0056f350 CRASH/CRASH` = port problem.
   - **The caller-saved-register class is RULED OUT for the other eight**: all 14 of their callers
     decompiled and grepped for `extraout_EAX/ECX/EDX` — zero hits. One `extraout_ST1` /
     `extraout_ST1_00` in `FUN_00570090` (x87 stack depth) is now moot, since neither site it

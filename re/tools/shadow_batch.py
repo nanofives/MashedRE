@@ -237,16 +237,47 @@ def main():
     if queue:
         print(f"\nbudget exhausted: {sum(len(g) for g in queue)} site(s) not booted")
 
-    done.update(results)
-    fields = ["rva", "name", "verdict", "n", "ndiff", "proof", "detail", "boot_state", "group", "log", "at"]
+    # ── control boots must NOT clobber an armed verdict ──────────────────────────────
+    # --no-shadow sets MASHED_NO_SELFTEST=1, so a control boot logs NO samples by
+    # construction and every site comes back NO_SAMPLES. Merging that like a normal result
+    # overwrote the armed verdict the control was run to EXPLAIN: on 2026-09-10 an armed
+    # CRASH on 0056f0a0 (14:34) became NO_SAMPLES (14:35) the moment its control ran, which
+    # is how a real crasher silently reads as "never fired". In control mode we therefore
+    # record the outcome in its own `control` column and leave verdict/n/ndiff/proof alone.
+    control_mode = bool(os.environ.get("SHADOW_BATCH_NO_SHADOW"))
+    if control_mode:
+        for r, row in results.items():
+            prev = done.get(r)
+            if prev:
+                prev["control"] = row.get("boot_state", "")
+                prev["control_at"] = row.get("at", "")
+            else:
+                row["control"] = row.get("boot_state", "")
+                row["control_at"] = row.get("at", "")
+                row["verdict"] = ""          # no armed verdict exists yet; do not invent one
+                done[r] = row
+        print("  [control] recorded in the `control` column; armed verdicts left untouched")
+    else:
+        for r, row in results.items():
+            prev = done.get(r)
+            if prev:                          # carry any earlier control result forward
+                row.setdefault("control", prev.get("control", ""))
+                row.setdefault("control_at", prev.get("control_at", ""))
+        done.update(results)
+    fields = ["rva", "name", "verdict", "n", "ndiff", "proof", "detail", "boot_state", "group",
+              "log", "at", "control", "control_at"]
     with open(outp, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=fields, delimiter="\t", extrasaction="ignore")
         w.writeheader()
         for k in sorted(done):
             w.writerow({fld: done[k].get(fld, "") for fld in fields})
     import collections
-    tally = collections.Counter(r["verdict"] for r in results.values())
-    print(f"\nthis run: {boots} boot(s)  " + "  ".join(f"{k}={v}" for k, v in sorted(tally.items())))
+    # In control mode the per-site `verdict` is meaningless (no samples are logged), so tally
+    # the boot outcome instead -- that IS the control's result.
+    key = "boot_state" if control_mode else "verdict"
+    tally = collections.Counter(r.get(key, "") for r in results.values())
+    label = "control" if control_mode else "this run"
+    print(f"\n{label}: {boots} boot(s)  " + "  ".join(f"{k}={v}" for k, v in sorted(tally.items())))
     print(f"results -> {outp.relative_to(ROOT)}")
     return 0
 

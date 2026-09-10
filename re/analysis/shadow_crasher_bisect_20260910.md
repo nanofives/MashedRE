@@ -142,10 +142,65 @@ already advanced. `ShadowAB.h`'s own LIMITS block names exactly this
 un-write a file"), and it is the same hazard memory `count-it-before-designing-a-witness`
 records: check the callee is side-effect free *before* designing a run-both-and-compare A/B.
 
-**Next step:** read `FUN_0056f0a0`'s body for a side effect outside its tracked span (`0x0056f0a0`
-is called from both `0x0056f350` and `0x00570090`). If it has one, this site is **not a
-RunRegion/RunTracked candidate at all** and should be moved out of the lane rather than
-re-tried — that is a finding about the witness, not about the port.
+### `0x0056f0a0`'s side effects, read — and they are exactly the excluded shape
+
+`FUN_0056f0a0` pads a contact batch to a 4-multiple and then **advances every running offset in
+the batch**. Confirmed on the original's disassembly (113 instructions, `0x0056f0a0..`):
+
+- ~16 read-modify-write accumulators. They are load/add/store *through registers*, not memory-RMW
+  instructions — which is why a naive `add [mem]` grep finds none:
+  `0x0056f178 mov ebp,[eax+edx*4]` / `0x0056f17e add ebp,edi` / `0x0056f180 mov [eax],ebp`.
+- Four of those accumulate into **separately allocated arrays reached through pointers stored in
+  the argument struct**, indexed by cursors also stored there: `[esi+0xb8]` (idx `[esi+0xf8]`),
+  `[esi+0xc4]` and `[esi+0xd0]` (idx `[esi+0xd4]`), `[esi+0xdc]` (idx `[esi+0xe0]`) —
+  `0x0056f0ae`, `0x0056f19e`, `0x0056f188`, `0x0056f169`.
+- It bumps the batch cursor itself: `[esi+0xf8] += 1` (`0x0056f1be` onward).
+- And it calls `FUN_0056f1f0` in a loop, which writes into yet more pointer-reached arrays
+  (`[eax+0x10]`, `+0x1c`, `+0x28`, `+0x34`, `+0x40`, `+0x4c`, `+0x58`, `+0x64`, `+0x88`, each
+  `+ edx*4`, plus an `[eax] + esi<<6` block).
+
+`RunTracked` restores the pages it observed being written between the two runs. A write set
+scattered across heap arrays selected by cursors *that the call itself advances* is what
+`ShadowAB.h`'s LIMITS block excludes ("the original must be re-entrant with respect to itself"),
+and it matches the observed failure: a table walk `mov ebx,[edx]` / `mov ebx,[ebx+eax*4-4]`
+returning 0 and then being written through.
+
+**Hedge, because the obvious generalisation is WRONG.** A screen of every `RunTracked`/`RunRegion`
+site in the tree for the accumulator shape flags exactly three, and **two of them are recorded
+CLEAN 24/24** (`0x0056f020`, `0x0056d070`). So "accumulator ⇒ invalid candidate" does not hold.
+The discriminator that survives n=3 is narrower: `0x0056f020`'s 7 accumulators are **direct on
+the argument struct** (same page as `param_1`, trivially in the tracked set) and `0x0056d070`'s
+are two `*piVar` locals — whereas `0x0056f0a0` is the only site whose accumulators go **through
+pointers loaded from the struct into other allocations**. That is a hypothesis with a named
+discriminator and n=3, not a law.
+
+**Next step:** decide the row rather than re-run it. If the pointer-indirected accumulator
+reading holds, `0x0056f0a0` should leave the lane — the CRASH is a finding about the witness, and
+the `--no-shadow` control already establishes the port itself is fine.
+
+### Harness defect found and fixed: a control boot destroyed the armed verdict
+
+The crash-triage recipe *requires* a `--no-shadow` control — and running one silently overwrote
+the result it was meant to explain. `--no-shadow` sets `MASHED_NO_SELFTEST=1`, so no samples are
+logged and every site returns `NO_SAMPLES`; `shadow_batch.py`'s `done.update(results)` merged that
+like a normal result. Observed directly in `re/parity/shadow_results.tsv`: `0056f0a0` was `CRASH`
+at 14:34 and `NO_SAMPLES` at 14:35, the moment its control ran. **That is how a real crasher
+silently reads as "never fired."**
+
+Fixed: control mode now records the boot outcome in its own `control` / `control_at` columns and
+leaves `verdict`/`n`/`ndiff`/`proof` untouched (creating a row with an empty verdict if none
+exists, rather than inventing one). Non-control runs carry any earlier `control` value forward.
+The tally line reports the boot outcome in control mode, since the per-site verdict is meaningless
+there. Verified end-to-end: armed boot → `verdict=CRASH`; control boot → row still
+`verdict=CRASH` with `control=RACE_OK`.
+
+The table now encodes the whole discriminator in one line, so nobody has to redo this triage:
+
+```
+rva       verdict  control
+0056f0a0  CRASH    RACE_OK    <- witness problem (port is fine)
+0056f350  CRASH    CRASH      <- port problem
+```
 
 ## Artifacts
 
