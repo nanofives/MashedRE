@@ -1,84 +1,44 @@
 {
-  "title": "Mashed RE — M2 Faithful Race (shadow lanes 1-3)",
-  "updatedAt": "2026-09-10T15:22:31Z",
+  "title": "Mashed RE",
+  "updatedAt": "2026-09-10T14:35:00Z",
   "sections": [
     {
-      "heading": "Milestone status",
+      "heading": "Status",
       "fields": [
-        {
-          "label": "Active phase",
-          "value": "M2 Faithful Race — critical path: statediff residual",
-          "kind": "text"
-        },
-        {
-          "label": "D1 renderer",
-          "value": "librw IS default since 2026-08-19",
-          "kind": "text"
-        },
-        {
-          "label": "D2 physics",
-          "value": "MASHED_REAL_PHYSICS still opt-in; blocked on A8 slip deficit",
-          "kind": "text"
-        },
-        {
-          "label": "Session close",
-          "value": "2026-09-10 — 86 rows C2→C3 today (44 shadow + 30 tracked + 5 region + 7 generated); Lane 2 + Lane 3 live",
-          "kind": "text"
-        }
+        { "label": "Branch", "value": "race/first-frame-parity", "kind": "text" },
+        { "label": "Phase", "value": "R7 - full game systems (scaffold to verbatim)", "kind": "text" },
+        { "label": "Last session", "value": "2026-09-10", "kind": "date" },
+        { "label": "Session focus", "value": "merge drain + open-item fixes", "kind": "text" }
       ]
     },
     {
-      "heading": "Port metrics",
+      "heading": "Trackers",
       "fields": [
-        {
-          "label": "C4 verified",
-          "value": 184,
-          "kind": "number"
-        },
-        {
-          "label": "C3",
-          "value": 1008,
-          "kind": "number"
-        },
-        {
-          "label": "Total hooks",
-          "value": 5930,
-          "kind": "number"
-        },
-        {
-          "label": "Trackers",
-          "value": "DEFERRED 677 · UNCERTAINTIES 3082 (42 naming/intent filed today)",
-          "kind": "text"
-        }
+        { "label": "hooks.csv rows", "value": 5930, "kind": "number" },
+        { "label": "C4", "value": 184, "kind": "number" },
+        { "label": "C3", "value": 1009, "kind": "number" },
+        { "label": "C2", "value": 3885, "kind": "number" },
+        { "label": "C1", "value": 821, "kind": "number" },
+        { "label": "UNCERTAINTIES", "value": 3083, "kind": "number" },
+        { "label": "DEFERRED", "value": 677, "kind": "number" }
       ]
     },
     {
-      "heading": "Shadow lanes (2026-09-10)",
+      "heading": "Landed 2026-09-10 (2nd session)",
       "fields": [
-        {
-          "label": "Lane 1 sweep",
-          "value": "44 CLEAN → C3; 10 DIVERGENT (0 established defects)",
-          "kind": "text"
-        },
-        {
-          "label": "Lane 2 decomp→port",
-          "value": "29/53 reachable C2 rows compile; 7 idiom-recovered ports PROMOTED C3; 3 generated ports crash alone",
-          "kind": "text"
-        },
-        {
-          "label": "Lane 3 write tracking",
-          "value": "Core/ShadowTrack.h: 30 CLEAN → C3 of 55; 3 CRASH, 2 DIVERGENT, 13 unreached, 7 unbooted; private-memory mode traced, still opt-in",
-          "kind": "text"
-        },
-        {
-          "label": "Next",
-          "value": [
-            "H: resolve the private-mode critical section / 0x0047e9c0 first-call diff",
-            "G: rubric decision for C3→C4 via shadow (387 sites)",
-            "I: next idiom-table entries (DAT_007d4110/4108)"
-          ],
-          "kind": "list"
-        }
+        { "label": "Merged", "value": ["docs/reconcile", "race/nav-champ", "race/arctic-cap"], "kind": "list" },
+        { "label": "Still unmerged", "value": "area/frontend (WIP checkpoint, unverified hook)", "kind": "text" },
+        { "label": "Fixes", "value": ["QuadRenderer rejected PAL4 - all BADGES 16x16 sprites were dead", "0x0056bce0 EDX contract - crash closed, C2 to C3 48/48", "0x0056bce0 denominator association + double rounding"], "kind": "list" },
+        { "label": "Filed", "value": "U-9130 (s6 reference not state-matched)", "kind": "text" },
+        { "label": "Captures protected", "value": 47, "kind": "number" }
+      ]
+    },
+    {
+      "heading": "Next",
+      "fields": [
+        { "label": "Top lead", "value": "extraout_ST1 on FUN_00570090 - x87 stack depth on 0x0056fea0 / 0x0056f0a0", "kind": "text" },
+        { "label": "Crash-triage recipe", "value": "--no-shadow control, zero-hook baseline, then poll_attach_catch_crash.py alongside shadow_batch", "kind": "text" },
+        { "label": "Open", "value": ["8 shadow crashers (EDX class ruled out)", "private-memory tracking hang", "0x0047e9c0 .data+0x624048 write", "Lane 1 C3->C4 rubric decision", "29 NO_SAMPLES sites"], "kind": "list" }
       ]
     }
   ]

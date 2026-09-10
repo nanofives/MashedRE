@@ -1,9 +1,32 @@
 # Next session — kickoff prompt
 
-## ⇒ CURRENT STATE (2026-09-10 session close) — READ THIS FIRST
+## ⇒ CURRENT STATE (2026-09-10, second session — merge + open-item drain) — READ THIS FIRST
 
-Branch `race/first-frame-parity`, tree clean, no stray processes. Trackers: hooks.csv 5,930 rows
-(C4 184, **C3 1,008** (was 922), C2 3,886, C1 821) · DEFERRED 677 · UNCERTAINTIES 3,082.
+Branch `race/first-frame-parity`, tree clean. Trackers: hooks.csv 5,930 rows
+(C4 184, **C3 1,009**, C2 3,885, C1 821) · DEFERRED 677 · UNCERTAINTIES 3,083.
+
+**Landed this session:**
+1. **Merges drained.** `docs/reconcile`, `race/nav-champ`, `race/arctic-cap` merged (the first two
+   needed conflict adjudication — HEAD's 2026-08-31 measurement SUPERSEDES nav-champ's
+   2026-08-30 "codes 11/12 are inert" claim, and `verify/nav_shots/FINDINGS.md` now carries a
+   dated header saying so). 47 unprotected original-side reference captures under
+   `verify/arctic_ref/` + `verify/geomlight_broadcheck/` force-added (they were untracked because
+   `verify/**/*.bmp` is gitignored; re-capture is not bit-reproducible). The uncommitted
+   Challenge-Select `dot` work was rescued off the stale agent worktree (37 commits behind) by
+   re-applying onto HEAD. **`area/frontend` is the ONLY branch still unmerged** — deliberately: it
+   is a WIP checkpoint whose `PanelSortInit` hook (`0x00420d00`) would go live in the dev ASI
+   unverified.
+2. **PAL4 was rejected by `QuadRenderer`**, so every BADGES 16x16 sprite silently never drew —
+   the whole Finding-38 status-glyph family and the detail-panel checklist have been dead since
+   they landed. Fixed; 15/17 screens byte-identical scope control. **U-9130** files the honest
+   limit: `verify/orig_screens/s6.bmp` is NOT state-matched (4 unlocked rows vs our 1) so it
+   cannot adjudicate the restored draws. `re/analysis/pal4_quad_upload_20260910.md`.
+3. **Item B CLOSED — `0x0056bce0` C2→C3, 48/48 CLEAN.** Its hypothesis was wrong (args ARE plain
+   cdecl); the real cause is an **implicit caller-saved-register contract**: callers
+   `0x0056c310`/`0x0056c0a0` deref EDX at `0x0056c3e7`/`0x0056c180` immediately after the call,
+   the original never writes EDX, and MSVC does. Fixed with a naked EDX-preserving shim, plus two
+   independent precision corrections. **This is a lane-wide class** —
+   `re/analysis/bce0_edx_contract_20260910.md`, and the screen below.
 **86 rows moved C2→C3 today**, none resting on a synthetic Frida call. Full write-ups:
 `re/analysis/shadow_lane_20260910.md` (Run/Region lanes), `lane2_decomp2port_design_20260910.md`
 (transcriber), `lane3_write_tracking_20260910.md` (write tracking), `promotion_lanes_assessment_20260910.md`
@@ -29,9 +52,22 @@ Branch `race/first-frame-parity`, tree clean, no stray processes. Trackers: hook
   the `RtlpWaitOnCriticalSection` frame and its owner thread id. (H)
 - **`0x0047e9c0` first-call write at `.data+0x624048`** the port omits — reproducible 3 boots,
   candidate real defect in the K24 root port. (H)
-- **Crashes to bisect**: tracked `0x0056f350 0x0056fea0 0x00570090` (group), `0x0055bd80` (at
-  load), `0x00560260` (after 24 clean samples, heap effects unrestored), `0x0056f0a0`; Lane 2
-  generated `0x00421960 0x004219c0 0x00495fe0`; RunRegion `0x0056bce0`. (B/H/I)
+- **Crashes to bisect**: `0x0056bce0` is **DONE** (C3, 48/48 — the caller-saved-register class).
+  The other eight were **screened for that same class and it is RULED OUT**: all 14 of their
+  callers were decompiled and grepped for `extraout_EAX/ECX/EDX` — zero hits. Remaining:
+  tracked `0x0056f350 0x0056fea0 0x00570090` (group), `0x0055bd80` (at load), `0x00560260`
+  (after 24 clean samples, heap effects unrestored), `0x0056f0a0`; Lane 2 generated
+  `0x00421960 0x004219c0 0x00495fe0`. (B/H/I)
+  - **ONE lead, different class:** `FUN_00570090` — the caller of BOTH `0x0056fea0` and
+    `0x0056f0a0` — decompiles with `extraout_ST1` / `extraout_ST1_00`, i.e. an **x87
+    stack-depth** dependency (memory `x87-st0-float10-fnptr-void-leak`). NOT confirmed: the
+    instruction after `0x00570222 call 0x56fea0` is `fld dword [esp+0x44]`, a plain memory load,
+    so the caller does not consume ST1 immediately. What to check: whether the original leaves
+    the x87 stack at a depth our port does not. **Recipe that worked on `0x0056bce0`, reuse it
+    verbatim:** (1) `--no-shadow` control to prove the installed port is the killer, not the A/B;
+    (2) zero-hook baseline to prove the scenario is clean; (3) run
+    `re/frida/poll_attach_catch_crash.py` in a background job alongside `shadow_batch.py` and
+    read the EIP. Step 3 is what turned a week-old "crash" into a one-line fix.
 - **Precision-class divergences**: `0x0055c2d0` (5/24 caller-frame bytes), `0x0055b750`
   (13/48 region), 5 float10 returns. (C)
 - **Lane 1 C3→C4 (387 sites)** waits on the rubric wording decision (G).
@@ -46,12 +82,16 @@ Branch `race/first-frame-parity`, tree clean, no stray processes. Trackers: hook
 
 ### A. DONE — the 5 region-lane rows are promoted (see CHANGELOG 2026-09-10 REGION LANE)
 
-### B. `0x0056bce0` crash **[Ghidra + one boot]**
-Disassemble the original's prologue/argument use: if `param_3` (float) is not a plain cdecl stack
-arg (x87 args are invisible to Ghidra — memory `feedback_zero_arg_argtype_false_green`), the shadow
-call through `void(__cdecl*)(float*,float*,float)` is the crash AND the installed port is ABI-wrong
-(memory `feedback_installed_hook_abi_mismatch`). Repro: `py -3.12 re/tools/shadow_batch.py --rvas
-0056bce0 --group 1 --max-boots 1 --launch-arg=--cars --launch-arg=4`.
+### B. DONE — `0x0056bce0` is C3 (48/48 CLEAN). The hypothesis below was WRONG; kept for the record.
+
+~~Disassemble the original's prologue/argument use: if `param_3` (float) is not a plain cdecl stack
+arg …~~ **Args ARE plain cdecl** (`0x0056bce3`/`0x0056bce7`/`[esp+0x1c]`, `add esp,0x10 / ret`).
+The crash was the caller's EDX, not the callee's signature. See
+`re/analysis/bce0_edx_contract_20260910.md` and the crash-triage recipe under "Open items".
+
+### B2. Chase the `extraout_ST1` lead on `0x0056fea0` / `0x0056f0a0` **[the natural successor]**
+Same shape as B but one register class over — see the bullet under "Open items". Confirm or refute
+whether `FUN_0056fea0`'s original leaves the x87 stack at a depth the port does not.
 
 ### C. Settle the two aliasing rows + `0x0055b750` **[RunRegion re-test]**
 Regenerate `0x00577be0`/`0x00577cb0` as `RunRegion` over their output buffer (worker review 2
