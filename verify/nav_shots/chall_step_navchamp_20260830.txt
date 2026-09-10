@@ -1,0 +1,16 @@
+# nav-champ 2026-08-30 draw-list sidecars (orphaned by a filename collision)
+#
+# These are the draw3d.json numbers race/nav-champ captured for its own
+# chall_step{1..5}.bmp shots on the MINIMAL reference save (only cup row 0
+# unlocked). Its BMPs were never committed. The tracked chall_step*.bmp files
+# under this directory come from race/arctic-cap 20e1e2b7 (2026-08-31) on an
+# UNLOCKED save copy, and their sidecars are the chall_step*.bmp.draw3d.json
+# files next to them. Preserved here so the 08-30 numbers are not lost, and
+# kept out of the *.bmp.draw3d.json namespace so no tool pairs them with the
+# 08-31 images.
+chall_step0 : (no nav-champ side)
+chall_step1 : {"draw_calls": 113, "prims": 466, "verts": 520, "dp": 103, "di": 10, "dpup": 0, "diup": 0}
+chall_step2 : {"draw_calls": 117, "prims": 474, "verts": 520, "dp": 107, "di": 10, "dpup": 0, "diup": 0}
+chall_step3 : {"draw_calls": 113, "prims": 466, "verts": 520, "dp": 103, "di": 10, "dpup": 0, "diup": 0}
+chall_step4 : {"draw_calls": 113, "prims": 466, "verts": 520, "dp": 103, "di": 10, "dpup": 0, "diup": 0}
+chall_step5 : {"draw_calls": 113, "prims": 466, "verts": 520, "dp": 103, "di": 10, "dpup": 0, "diup": 0}
