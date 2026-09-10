@@ -232,11 +232,39 @@ The crash was the caller's EDX, not the callee's signature. See
 Same shape as B but one register class over — see the bullet under "Open items". Confirm or refute
 whether `FUN_0056fea0`'s original leaves the x87 stack at a depth the port does not.
 
-### PARKED (D-11070) — the build is SSE2, not x87, and a load-bearing comment said otherwise
-**Owner parked the `/arch` decision 2026-09-10.** Filed as **D-11070** with its re-pickup
-conditions. The two false TU comments are already corrected, so nothing is left asserting an
-untrue premise, and the 17 `DIVERGENT*` rows can be reclassified `DIVERGENT_FLOAT10`
-(build-caused) **without** this decision. Detail below, kept because it is the cause of those rows.
+### ⚠ FIRST: single-boot shadow verdicts are NOT reliable (found 2026-09-10)
+The lane produces **transient windows of consecutive failing boots**. Measured while verifying
+`/arch`: failures at positions 4-5-6 and 15-16-17 of 24, no batch-position trend (mean 10.1 vs
+midpoint 12), and **6 of 8 failures were in TUs compiled SSE2 while only 2 were in the x87 TUs** —
+so the window is not a property of the build or the row. Consequences:
+- **Require TWO independent boots** before treating a CRASH/VOID/NO_SAMPLES as a property of a row.
+- Several of this session's conclusions rest on one boot each. The reproduced ones are solid
+  (`0x0056bce0` 48/48, `0x00560260` ×2, `0x005a6e10` ×2, `0x0055b750` ×2); the single-boot ones
+  are weaker than they were written.
+- **Top open question for the lane:** what causes the windows. Not GPU/driver degradation over a
+  run (failures cluster early, not late) and not group interference (all were `--group 1`).
+
+### DECIDED (D-11070) — per-TU `/arch:IA32` on 4 measured TUs; the build was SSE2, not x87
+**Decided by owner instruction and implemented.** `build_objs.ps1 -X87List` +
+`mashedmod/x87_tus.txt`, wired into **both** targets (all the TUs are in `exe_sources.rsp` too, and
+a split float model would stop an `.asi`-verified A/B transferring to the standalone). Mechanism
+verified selectively: the 4 listed objects are x87 only (zero SSE); unlisted controls are SSE only.
+
+**A 10-TU trial did NOT generalise from the pilot** — 47 boots over the 15 divergences plus the 32
+CLEAN rows in those TUs gave 4 fixes but 7 CRASHes and 3 VOIDs, so a blanket flag would have been
+a regression. Narrowed to the 4 TUs where it repeats. **What survives repetition: four
+DIVERGENT→CLEAN conversions each seen twice** (`0x0055b750`, `0x00577be0`, `0x00576880`,
+`0x00578b20`), one single-run one (`0x00578bd0`), three rows still DIVERGENT, and no repeated
+regression in a keeper TU.
+
+**I over-read the trial and corrected it:** I had dropped 6 TUs for "damage". Re-running showed
+only 4 of 10 damaged rows recovered *even with their TUs back on SSE2*, and 6 of 8 failures were in
+SSE2 TUs — so those TUs stay dropped for **no measured benefit**, not for damage.
+
+**[UNCERTAIN] the standalone's PHYSICS under x87 is unverified.** Frontend is fine (15/17
+byte-identical, the 2 being the known pulsing pair), but a `MASHED_RACE_DEMO=1` attempt did not
+reach a race in ~4.5 min — uninterpretable given the nav demo's focus fragility, not negative.
+Close it with a quiet-desktop race capture before and after.
 
 `re/analysis/float_model_is_sse2_not_x87_20260910.md`. **There is no `/arch:` flag anywhere in
 `build.bat`** (the only occurrence is a comment at line 26 about the qhull static lib), so MSVC's

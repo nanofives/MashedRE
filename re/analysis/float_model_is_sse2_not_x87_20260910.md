@@ -100,7 +100,164 @@ transcription defect — which was the plan recorded under item C in `re/NEXT_SE
 | `hooks.csv` rows whose `file` is one of those TUs | **88** (C4 10, C3 76, C2 2) |
 | `DIVERGENT*` rows in `re/parity/shadow_results.tsv` | **17** (5 already labelled `_FLOAT10`) |
 
-## The decision
+## DECIDED 2026-09-10 (owner instruction): per-TU `/arch:IA32`, measured first
+
+The decision was made **from a measurement, not from the argument below.** Recompiled
+`RwpSolverBroadphase3.cpp` alone with `/arch:IA32` (per-TU object swap + relink, `build.bat`
+untouched) and re-ran every shadow site in that TU:
+
+| RVA | before | after |
+|---|---|---|
+| `0x0055b750` | DIVERGENT **13/48** | **CLEAN 48/48** |
+| `0x0055c2d0` | DIVERGENT **5/24** | **CLEAN 24/24** |
+| `0x0055a1f0` | CLEAN 48/48 | CLEAN 48/48 (no regression) |
+| `0x0055bae0` | CLEAN 48/48 | CLEAN 48/48 (no regression) |
+
+**2 divergences fixed, 0 regressions.** Codegen for the TU went from
+13 `movss` / 10 `cvtps2pd` / 6 `subsd` / 6 `mulsd` to 11 `fld` / 5 `fstp` / `fmul` / `fadd` /
+`fsub` / `fxch`, i.e. the instruction family the original uses.
+
+Note `0x0055c2d0` also cleared, which the "`/GS` frame artefact" reading above did not predict —
+that reading correctly explained *why it diverged under SSE2 codegen*, but the artefact does not
+survive the x87 build. Recorded rather than quietly dropped.
+
+### What was implemented
+
+**Option 3 — per-TU, not global.** `/arch:IA32` globally would disable SSE2 for librw (the
+shipping renderer, gate D2) and every non-physics TU: a broad performance and codegen change with
+no measured benefit outside the physics lane.
+
+- `mashedmod/build_objs.ps1` gained **`-X87List <file>`**: TU basenames that get `/arch:IA32`
+  appended. Implemented as a second `cl` invocation because `/MP` shares one flag set across its
+  response file. **The list's content is part of the flag stamp**, so moving a TU in or out
+  invalidates the object cache exactly like a flag change.
+- `mashedmod/x87_tus.txt` holds the set, with the measurement and caveats inline.
+- **Both** targets are wired, deliberately: all 10 TUs appear in `exe_sources.rsp` *and*
+  `asi_sources.rsp`, so compiling them SSE2 in the exe while the `.asi` used x87 would make the
+  two targets compute physics differently — an A/B verified under the `.asi` would not transfer
+  to the standalone.
+
+### The 10-TU trial, and why the list is now 4 — the pilot did NOT generalise
+
+The first list was the pilot TU plus the 9 TUs holding the 15 remaining `DIVERGENT*` rows.
+Measured it properly: **all 47 affected rows** (the 15 divergences plus the **32 CLEAN rows in
+those same TUs**, i.e. the regression surface) at `--group 1`, 47 boots. Result:
+
+```
+CLEAN=28  CRASH=7  DIVERGENT=3  DIVERGENT_FLOAT10=2  VOID=3
+```
+
+Against the pre-change verdicts: **4 divergences fixed, 4 divergences turned into CRASHes, and
+6 of the 32 CLEAN rows stopped being CLEAN** (3 CRASH, 3 VOID). Net: 7 new crashes and 3 VOIDs
+against 4 fixes. **A blanket application would have been a regression**, and the pilot's
+"2 fixed, 0 regressions" did not carry to the other nine TUs.
+
+Attributing every outcome to its TU separates benefit from damage cleanly:
+
+| TU | fixed | held | still-div | CRASH | VOID | |
+|---|--:|--:|--:|--:|--:|---|
+| `RwpSolverBroadphase3` | 2 | 2 | 0 | 0 | 0 | **keep** (pilot) |
+| `RwpSolverCore17` | 2 | 1 | 2 | 0 | 0 | **keep** |
+| `RwpSolverCore14` | 1 | 2 | 1 | 0 | 0 | **keep** |
+| `RwpSolverCore15` | 1 | 0 | 0 | 0 | 0 | **keep** |
+| `RwpSolverCore16` | 0 | 2 | 2 | 0 | 0 | drop — buys nothing |
+| `RwpSolverCore18` | 0 | 4 | 0 | 1 | 0 | drop — damage |
+| `RwpSolverCore19` | 0 | 1 | 0 | 1 | 0 | drop — damage |
+| `RwpSolverCore20` | 0 | 1 | 0 | 1 | 0 | drop — damage |
+| `RwpSolverCore23` | 0 | 7 | 0 | 3 | 0 | drop — damage (2 were CLEAN) |
+| `RwpSolverLeaves1` | 0 | 8 | 2 | 1 | 3 | drop — damage (4 were CLEAN) |
+
+**Final list: 4 TUs — 6 divergences fixed, 0 regressions.** This is also the argument for having
+built the mechanism per-TU rather than flipping a global flag: the per-TU list is what let the
+measurement pick winners instead of forcing an all-or-nothing choice.
+
+### CORRECTION to the table above: the "damage" column is NOT established
+
+Re-ran the 4-TU list over the 14 keeper rows and the 10 rows the trial had damaged. Two things
+came out that undo part of my own reasoning:
+
+1. **Only 4 of the 10 damaged rows recovered**, even though their TUs are now back to SSE2. If a
+   row's TU is compiled SSE2 and it *still* fails, the flag never caused that failure.
+2. **The failures come in consecutive runs** — positions 4-5-6 and 15-16-17 of 24 — with no
+   batch-position trend (mean failure position 10.1 against a midpoint of 12, so it is not
+   degradation over the run either).
+
+And the clincher, checking which TU each failure belongs to:
+
+| pos | rva | TU | on x87 list? | verdict |
+|--:|---|---|---|---|
+| 4 | `0055bae0` | `RwpSolverBroadphase3` | **yes** | NO_SAMPLES |
+| 5 | `0055c2d0` | `RwpSolverBroadphase3` | **yes** | CRASH |
+| 6 | `0055fea0` | `RwpSolverCore23` | no | CRASH |
+| 8, 10 | `00563f60`, `00565120` | `RwpSolverLeaves1` | no | VOID |
+| 15, 16, 17 | `00574ad0`, `005752b0`, `00575560` | Core18/19/20 | no | CRASH |
+
+**6 of the 8 failures are in TUs compiled SSE2**, and the two x87-TU failures sit in the same
+consecutive window as an SSE2 one. **A failure window that hits x87 and SSE2 TUs alike cannot be
+attributed to the flag.**
+
+So the trial's per-TU "damage" attribution was **over-read**. Dropping those 6 TUs still costs
+nothing — none of them fixed anything — but the reason is "no measured benefit", **not** "measured
+damage". Corrected here rather than left standing.
+
+### What actually survives repetition
+
+| RVA | TU | evidence |
+|---|---|---|
+| `0055b750` | Broadphase3 | DIVERGENT 13/48 → **CLEAN 48/48, twice** (pilot + narrowed) |
+| `00577be0` | Core14 | DIVERGENT 38 → **CLEAN, twice** (trial + narrowed) |
+| `00576880` | Core15 | DIVERGENT 2 → **CLEAN, twice** |
+| `00578b20` | Core17 | DIVERGENT_FLOAT10 26 → **CLEAN, twice** |
+| `00578bd0` | Core17 | DIVERGENT_FLOAT10 15 → CLEAN (**one** run) |
+| `00577cb0`, `00578cb0`, `00578ff0` | Core14/17 | still DIVERGENT, consistently — the flag does not fix everything |
+
+**Four repeated DIVERGENT→CLEAN conversions, one single-run one, no repeated regression in a
+keeper TU.** That is the basis for keeping the list, and it is deliberately a weaker claim than
+the "6 fixed, 0 regressions" I wrote an hour ago.
+
+### The caveat that outlives this decision
+
+**The lane produces transient windows of consecutive failing boots, hitting x87 and SSE2 TUs
+alike.** A single-boot verdict is therefore not reliable evidence about a row. That applies beyond
+`/arch`: several of this session's earlier conclusions rest on one boot each. The ones reproduced
+across two independent runs — `0x0056bce0` 48/48, `0x00560260` twice, `0x005a6e10` twice,
+`0x0055b750` twice — are solid; the single-boot ones are weaker than they were presented.
+
+**Top open question for this lane:** what causes the consecutive-failure windows. Until that is
+understood, promotion evidence should require two independent boots, not one.
+
+**Adding a TU later:** measure it. Run its rows before and after; keep it only if it fixes
+something and regresses nothing. The list's content is in the object-cache flag stamp, so editing
+it forces a full rebuild of both targets. The other ~16 `Collision/` TUs carrying `float10`/x87
+markers remain unlisted.
+
+### Standalone side: partly verified, and the gap is stated
+
+The 10 TUs are in `exe_sources.rsp` too, so `mashed_re.exe` changed as well. What was checked:
+
+- **Builds clean**, both targets, and the exe reports `-> 10 TU(s) with /arch:IA32 (x87)`.
+- **Frontend unaffected:** `MASHED_PARITY=1` walk, 17 screens, **15/17 byte-identical** against
+  the pre-x87 baseline (`verify/x87_regr/` vs `verify/chalsel_dot_B/`). The two that differ are
+  `s6`/`s7`, the pair carrying the pulsing category sprite that the same-build B-vs-B2 control
+  already showed varies run to run. Expected: the changed TUs are physics, and the frontend walk
+  does not run the solver.
+
+**[UNCERTAIN] the standalone's PHYSICS under x87 is NOT verified.** A `MASHED_RACE_DEMO=1` run was
+attempted and did **not** reach a race in ~4.5 minutes — it sat at `phase=0 screen=1`. That is
+**not** reported as a regression: the nav demo is known to be fragile about desktop focus and
+leaked keystrokes (memory `nav-demo-bypasses-focus-gate`), and this session was issuing shell
+commands throughout, so the run is uninterpretable rather than negative. There is also no
+pre-x87 race-demo baseline from today to compare against.
+
+What would close it: a `MASHED_RACE_DEMO=1` capture on a quiet desktop, once before and once
+after the flag, compared with `re/tools/imgdiff.py`. Note race captures are not bit-reproducible
+(the camera rolls on a 1024-tick sine, memory `race-camera-rolls-30deg-sine`), so judge it on
+gross behaviour — does it race, do the cars stay grounded — not pixel equality.
+
+The `.asi` side *is* being verified directly, by the 47-row A/B batch below; that establishes the
+codegen change is correct in kind, and both targets now compile these TUs identically.
+
+### The argument that was on the table before the measurement
 
 Adding `/arch:IA32` to `build.bat` would restore x87 codegen and make the "verbatim x87
 transcription" claim true for intermediates. It is an **architecture-level change** touching every

@@ -187,9 +187,13 @@ REM TUs whose .obj is missing/older than the .cpp or any repo header it includes
 REM (cl /sourceDependencies), into build\obj\exe\, then writes link.rsp with every
 REM object. A flag change wipes the cache; `build.bat clean` or MASHED_BUILD_FULL=1
 REM force a full rebuild. NEW EXE TUs GO IN exe_sources.rsp, NOT HERE.
+REM The SAME x87 list applies to the exe: these 10 Collision/ TUs are in BOTH source
+REM lists, and compiling them SSE2 here while the .asi compiles them x87 would make the
+REM two targets compute physics differently -- an A/B verified under the .asi would not
+REM transfer to the standalone. Keep the float model identical across targets.
 powershell -NoProfile -ExecutionPolicy Bypass -File "%ROOT%build_objs.ps1" -Target exe ^
     -SrcRoot "%SRC%" -ObjDir "%OUT%\obj\exe" -Rsp "%ROOT%exe_sources.rsp" ^
-    -ClFlags "/EHa /W3 /O2 /DMASHED_STANDALONE" -RepoRoot "%ROOT%.."
+    -ClFlags "/EHa /W3 /O2 /DMASHED_STANDALONE" -RepoRoot "%ROOT%.." -X87List "%ROOT%x87_tus.txt"
 if errorlevel 1 (popd & echo [ERROR] exe compile failed & exit /b 1)
 cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fe"%OUT%\mashed_re.exe" @"%OUT%\obj\exe\link.rsp" ^
     "%OUT%\QhullBridge_exe.obj" ^
@@ -207,9 +211,17 @@ echo === Building mashed_re_dev.asi ===
 pushd "%SRC%"
 REM Per-TU object cache (2026-09-09): build_objs.ps1 compiles only the stale subset of
 REM asi_sources.rsp into build\obj\asi\ and writes link.rsp (every .obj, list order).
+REM -X87List (2026-09-10, decision D-11070): the TUs named in x87_tus.txt get /arch:IA32
+REM appended -- x87 codegen instead of MSVC's default /arch:SSE2. They are verbatim
+REM transcriptions of x87 instruction streams, and under SSE2 a `float` expression rounds
+REM to 32 bits after EVERY operation where the original rounds once at the FSTP.
+REM MEASURED on RwpSolverBroadphase3.cpp: 0x0055b750 DIVERGENT 13/48 -> CLEAN 48/48 and
+REM 0x0055c2d0 5/24 -> CLEAN 24/24, with its two already-CLEAN rows still CLEAN 48/48.
+REM Per-TU, NOT global, so librw (the shipping renderer) and every non-physics TU keep SSE2.
+REM Rationale, caveats and scope: re/analysis/float_model_is_sse2_not_x87_20260910.md
 powershell -NoProfile -ExecutionPolicy Bypass -File "%ROOT%build_objs.ps1" -Target asi ^
     -SrcRoot "%SRC%" -ObjDir "%OUT%\obj\asi" -Rsp "%ROOT%asi_sources.rsp" ^
-    -ClFlags "/EHsc /W3 /O2" -RepoRoot "%ROOT%.."
+    -ClFlags "/EHsc /W3 /O2" -RepoRoot "%ROOT%.." -X87List "%ROOT%x87_tus.txt"
 if errorlevel 1 (popd & echo [ERROR] asi compile failed & exit /b 1)
 cl /nologo /EHsc /W3 /O2 /LD /Fe"%OUT%\mashed_re_dev.asi" @"%OUT%\obj\asi\link.rsp" ^
     "%OUT%\QhullBridge_asi.obj" ^
