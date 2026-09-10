@@ -188,14 +188,29 @@ boot-only measurement): **c0 0/24 exercised, c1 5/24**. Result table:
 - **43 `never`** — a 4-car standing race genuinely does not call them. Reaching them needs a
   richer scenario (`--boost`, `--mode 2`, a walled track, `--statediff-drive`), exactly as this
   item assumed.
-- **5 `exercised_inrace` yet the shadow A/B logged ZERO samples** —
-  `0x005a6e10 0x005ad2e0 0x005aeed0 0x005b0f40 0x005b8080`. The counter (armed LATE, in-race)
-  sees them fire; the A/B records nothing. **That is a harness bug, not a scenario gap**, and it
-  is the cheap half of this item. All five are in the `0x005a`–`0x005b` band. Check, in order:
-  their `status` in `re/parity/shadow_sites.tsv`; whether a `SHADOW_AB_COUNTER` phase gate other
-  than `kPhaseRace` is in play; whether `HookIndex(rva)` returns <0 (that logs
-  `SKIP:no-hook-index`, so its absence is itself informative); and whether their TU is linked
-  into the `.asi` at all.
+- **5 `exercised_inrace` — RE-MEASURED PER-RVA, and the batch verdict was only 2/5 right.**
+  I first read all five as "fires but never sampled = harness bug". Wrong. Counting each RVA
+  individually (single run, `MASHED_COUNT_LATE=1`, gated on the 3 validated probes) gives:
+  | RVA | calls/race | reading |
+  |---|---:|---|
+  | `0x005a6e10` | **29,302** | fires — **harness bug is real here** |
+  | `0x005aeed0` | **22** | fires — **harness bug is real here** |
+  | `0x005b0f40` | **0** | prescreen FALSE POSITIVE; `NO_SAMPLES` was correct |
+  | `0x005b8080` | **0** | prescreen FALSE POSITIVE; `NO_SAMPLES` was correct |
+  | `0x005ad2e0` | — | **no TU exists** (`L2_005ad2e0.cpp` absent, not in `asi_sources.rsp`) — its `shadow_sites.tsv` row is a claim without an implementation |
+  Probe controls in the same runs: 5,696 / 1,538 / 39,343 — so the zeros are real zeros.
+  `0x005b8080` was additionally measured **with its hook installed**: the counter reported
+  `armed[JMP->mashed_re_dev.asi@0x6b495db0]` and `MASHED_HOOK_MANIFEST` shows `installed=1`, and
+  the call count was still **0**. So install, phase and scenario are all fine; the function
+  simply is not called.
+  **Lesson:** `prescreen_batch.py`'s per-chunk `EXERCISED` attribution is not reliable at the
+  row level — the five it named are exactly the five highest RVAs in the chunk. Trust the
+  chunk-level probe gate, verify any individual row with a single-RVA count before acting.
+  **Remaining real work (2 rows):** `0x005a6e10` and `0x005aeed0` fire in-race and log nothing.
+  Note `0x005a6e10` is a **hot path at ~29k calls/race** — CLAUDE.md's Interceptor warning
+  applies, and a shadow A/B that uninstalls/reinstalls per call may simply be unviable there.
+  Check `HookIndex(rva)` (its `SKIP:no-hook-index` path would log, so silence is informative)
+  and whether `Armed()`'s `Enabled()` one-shot ran before their first call.
 
 ### E. Next slice of void ports **[RunRegion with two spans]**
 12 MULTI_REGION rows in `log/shadow_ab/worker_void_regions.txt` need a `RunRegion2`; 18 INDIRECT
