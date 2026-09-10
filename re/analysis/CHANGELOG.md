@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-09-10  SESSION CLOSE: 86 rows C2->C3 (44 shadow Run + 30 tracked + 5 region + 7 decompiler-generated); C3 922->1008  BUILT: shadow_gen/shadow_batch/shadow_ab_report (mass shadow lane), decomp2port + DecompPC --port (Lane 2 transcriber, INDIRECT_IDIOMS table), Core/ShadowTrack.h (Lane 3 page-level write tracking, hang watchdog). OPEN: private-memory tracking waits on a non-heap critical section; 0x0047e9c0 first-call write at .data+0x624048 omitted by the port; crash groups listed in re/NEXT_SESSION.md. Notes: shadow_lane_20260910.md, lane2_decomp2port_design_20260910.md, lane3_write_tracking_20260910.md, promotion_lanes_assessment_20260910.md.
 2026-09-10  0056c8e0  FUN_0056c8e0  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF (sole caller 0x0056caa0 C3); re/analysis/lane3_write_tracking_20260910.md
 2026-09-10  LANE 3 SWEEP (2nd batch): 11 void C2 rows C2->C3 through the page-level write-tracking A/B; 3 naming/intent uncertainties filed U-9127..U-9129  Evidence: re/analysis/lane3_write_tracking_20260910.md, re/parity/shadow_results.tsv, log/shadow_ab/c3_gate_check_tracked2.tsv. Gate: 5 PASS / 6 LEAF (callers C2/C3), 0 FAIL. Each row: 24 sampled in-race calls, touched pages + caller stack window + return identical, PATCHBYTE proof.
 2026-09-10  0056c0a0  FUN_0056c0a0  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane3_write_tracking_20260910.md

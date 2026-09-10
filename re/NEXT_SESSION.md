@@ -2,37 +2,43 @@
 
 ## ⇒ CURRENT STATE (2026-09-10 session close) — READ THIS FIRST
 
-Branch `race/first-frame-parity`. Previous close: `d9d7682a` (2026-09-09). This session built the
-**shadow A/B mass lane** and ran its first sweep. Full write-up: `re/analysis/shadow_lane_20260910.md`.
+Branch `race/first-frame-parity`, tree clean, no stray processes. Trackers: hooks.csv 5,930 rows
+(C4 184, **C3 1,008** (was 922), C2 3,886, C1 821) · DEFERRED 677 · UNCERTAINTIES 3,082.
+**86 rows moved C2→C3 today**, none resting on a synthetic Frida call. Full write-ups:
+`re/analysis/shadow_lane_20260910.md` (Run/Region lanes), `lane2_decomp2port_design_20260910.md`
+(transcriber), `lane3_write_tracking_20260910.md` (write tracking), `promotion_lanes_assessment_20260910.md`
+(where the remaining volume is).
 
-### What was built (`re/tools/`)
-
+### Built today (`re/tools/`, `Core/`)
 | tool | one line |
 |---|---|
-| `shadow_gen.py` | installed C2 port -> `Name_impl` + `ShadowAB::Run`/`RunRegion` wrapper, mechanically; manifest `re/parity/shadow_sites.tsv` |
-| `shadow_batch.py` | boots site groups via `scenario_launch.py --hooks`, retries harness VOIDs, bisects CRASHes to one site; `re/parity/shadow_results.tsv`; raw logs `log/shadow_ab/` |
-| `shadow_ab_report.py` | `shadow_ab.log` -> CLEAN / DIVERGENT / DIVERGENT_FLOAT10 / UNPROVEN / SKIPPED / NO_SAMPLES |
+| `shadow_gen.py` | installed port → shadow site (`Run` / `--region` / `--tracked`); manifest `re/parity/shadow_sites.tsv` |
+| `shadow_batch.py` | boots site groups, retries harness VOIDs, bisects CRASH/HUNG to one site, kills only its own PIDs; `--no-shadow` control |
+| `shadow_ab_report.py` | log → CLEAN / DIVERGENT / DIVERGENT_FLOAT10 / UNPROVEN / SKIPPED / NO_SAMPLES |
+| `decomp2port.py` + `DecompPC.java --port` | Ghidra decomp → verbatim C++ TU per function, `L2_` opt-in hooks, `INDIRECT_IDIOMS` table, `--prune-failed` |
+| `Core/ShadowTrack.h` | `RunTracked`: page-level write tracking + caller stack window; `MASHED_SHADOW_TRACE=1` breadcrumbs + hang watchdog |
 
-### What it produced
+### Promotions today
+44 (Run lane, 48/48) + 30 (tracked, 24/24) + 5 (region, 48/48) + **7 decompiler-generated ports**
+(tracked 24/24) = 86. Every row cites its gate file under `log/shadow_ab/c3_gate_check*.tsv`.
 
-- **94 sites generated** (79 return-value + 15 verified region) from the 153 installed C2 ports.
-  23 boots. **44 rows C2->C3** (gate 32 PASS / 12 LEAF / 0 FAIL, `log/shadow_ab/c3_gate_check.tsv`).
-- **10 DIVERGENT, 0 established defects**: 7 proven non-idempotent (`rand()`, contact counters,
-  read-then-written axis fields — worker reviews at file:line), 2 unresolved aliasing cases
-  (`0x00577be0`, `0x00577cb0`), 1 real candidate on the region lane (`0x0055b750`, 13/48 on the
-  output vec3, RunRegion already restores the region).
-- **5 DIVERGENT_FLOAT10**: x87 80-bit return vs MSVC 64-bit long double — lane limit.
-- **1 CRASH**: `0x0056bce0` alone crashes the game at race start with the A/B armed (unarmed = default
-  `.asi`, boots fine). Cause not established.
-- **29 NO_SAMPLES** across both kinds even with `--cars 4 --hold 60`.
-- Two region CLEAN rows (`0x00546c50`, `0x00565200`) plus three from run 5 (`0x0056cf90`,
-  `0x0056ed60`, `0x0056fad0`) are **CLEAN but not yet gate-checked or promoted**.
-
-Corrections this session made to its own first readings, so they are not re-quoted: the run-2
-"CRASH" pair `0x00574ad0`+`0x00575120` did not reproduce in run 3; the first "14 SUSPECT" rows
-were callee wrappers reached through our own ported callers (proof shape `hook-not-installed`,
-still a real A/B); one worker region spec (`0x0056c8e0`) was wrong and was caught by the
-mechanical LHS verifier (`log/shadow_ab/region_verify.txt`).
+### Open items (all saved; none blocking)
+- **Private-memory tracking hangs** on its first sample: the tracked thread waits on a critical
+  section that is not an NT heap lock (CRT `_HEAP_LOCK` or Frida interceptor lock). Watchdog log
+  shows `EIP 0x77a8b9dc`, stack `77a9ff5c 77b49a54 … 77b4d3c8`. Next: read the CS address from
+  the `RtlpWaitOnCriticalSection` frame and its owner thread id. (H)
+- **`0x0047e9c0` first-call write at `.data+0x624048`** the port omits — reproducible 3 boots,
+  candidate real defect in the K24 root port. (H)
+- **Crashes to bisect**: tracked `0x0056f350 0x0056fea0 0x00570090` (group), `0x0055bd80` (at
+  load), `0x00560260` (after 24 clean samples, heap effects unrestored), `0x0056f0a0`; Lane 2
+  generated `0x00421960 0x004219c0 0x00495fe0`; RunRegion `0x0056bce0`. (B/H/I)
+- **Precision-class divergences**: `0x0055c2d0` (5/24 caller-frame bytes), `0x0055b750`
+  (13/48 region), 5 float10 returns. (C)
+- **Lane 1 C3→C4 (387 sites)** waits on the rubric wording decision (G).
+- **Lane 2**: 15 indirect-call refusals; next table entries `*DAT_007d4110+off`, `*DAT_007d4108+0x28`;
+  register-argument hazard class open. (I)
+- **29 NO_SAMPLES** sites need a richer scenario (D). **U-9087**, **D-11069**, `TransformMatrixUpdate`
+  (D-10793), `main` 270+ commits behind, 6 orphaned pool locks (F).
 
 ---
 
