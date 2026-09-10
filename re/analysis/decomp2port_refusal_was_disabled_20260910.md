@@ -34,6 +34,13 @@ and `+` — which no decompilation contains. One alternative of `INDIRECT` was a
 Repaired by byte-level replacement (`0x08` → `\b`, `0x01` → `\1`), 0 control bytes remaining,
 `ast.parse` clean.
 
+**Blast radius bounded by a repo-wide sweep.** Scanned **10,135** tracked-shape files
+(`.py .js .ps1 .sh .bat .md .tsv .csv .java`, excluding `.git`, `deps/`, `prior_art/`,
+worktrees, `build/`, `log/`) for `0x01 0x07 0x08 0x0b 0x0c`. **`decomp2port.py` was the only
+file affected**, so this was a single localised event and no Frida agent, build script or
+tracker carries the same silent breakage. Worth having run: a corrupted regex in a `.js`
+Frida agent would fail exactly as quietly.
+
 ## What it let through
 
 ### `0x00495fe0` — the crash inside the `fix_joypad` boot-patch cave, fully explained
