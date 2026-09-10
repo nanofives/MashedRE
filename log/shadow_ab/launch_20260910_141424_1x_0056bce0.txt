@@ -1,0 +1,10 @@
+  [keep-awake] display-sleep suppressed + wake nudge sent
+=== scenario_launch  pid=32348  track=0 mode=10 cars=4 ===
+  attaching ASAP...
+  [agent] ready
+    phase=0  (waiting for menu (phase 1))
+    phase=1  (waiting for menu (phase 1))
+  [setup] set track=0 mode=10 cars=4 car=0 rule=0 team=0
+  [launch] poke DAT_00771968 = 2 -> 1
+    phase=2  (waiting for race running (phase 3))
+  game exited while waiting for race running (phase 3)

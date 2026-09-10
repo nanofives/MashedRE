@@ -160,8 +160,37 @@ static void __cdecl FUN_0056bb80_impl(float *param_1,float *param_2,float param_
 // ---------------------------------------------------------------------------
 // 0x0056bce0  Quaternion small-angle integrate + renormalize: dq = 0.5*param_3*(omega x q),
 //             q += dq, then q *= 1/|q| (FSQRT). Writes the 4 quaternion floats back to
-//             param_1 in the order [3],[0],[1],[2]. Printed order matches disasm (inner
-//             adds commutative) — verbatim, no correction.
+//             param_1 in the order [3],[0],[1],[2]. The four MAD numerators DO match the
+//             disasm (their inner adds are single 2-term nodes, hence commutative) — each
+//             re-verified 2026-09-10 against 0x0056bceb..0x0056bd54.
+//
+//             TWO CORRECTIONS 2026-09-10, both from raw capstone disasm of
+//             0x0056bce0..0x0056bde3 (the note-7(b) class, which this function was left out
+//             of when its three siblings were corrected on 2026-07-17):
+//
+//             (a) NORMALIZATION DENOMINATOR ASSOCIATION. The FLD/FMUL-ST/FADDP cascade at
+//                 0x0056bd8b..0x0056bda9 combines {fVar3², fVar5²} FIRST, then + fVar1²,
+//                 then + fVar2²:
+//                   0056bd91 fld st(3) / 0056bd93 fmul st(4)   -> X*X   (X = fVar3)
+//                   0056bd95 fld st(2) / 0056bd97 fmul st(3)   -> Y*Y   (Y = fVar5)
+//                   0056bd99 faddp st(1)                       -> X²+Y²
+//                   0056bd9b fld st(1) / 0056bd9d fmul st(2)   -> Z*Z   (Z = fVar1)
+//                   0056bd9f faddp st(1)                       -> (X²+Y²)+Z²
+//                   0056bda1 fld [esp+0x14] / 0056bda5 fmul same -> W*W (W = fVar2)
+//                   0056bda9 faddp st(1)                       -> ((X²+Y²)+Z²)+W²
+//                 The port had the decomp's PRINTED left-assoc order
+//                 fVar2²+fVar1²+fVar5²+fVar3², which combines {W²,Z²} first — a DIFFERENT
+//                 tree, not a commutation. Written below fully right-associated, exactly as
+//                 note 7(b) writes the sibling sites: each node is commutative and the
+//                 combination tree is identical, so this form is the bit-identical match.
+//
+//             (b) ONE ROUNDING, NOT TWO. 0x0056bdab fsqrt leaves the root in 80-bit ST0;
+//                 0x0056bdb1 `fdivr dword [0x5cc320]` divides 1.0f by that 80-bit value; only
+//                 0x0056bdb7 `fstp dword [esp+0x1c]` rounds, once, to float32 — and the four
+//                 component multiplies then reload that float32. The port cast the SQRT to
+//                 float before dividing, inserting a rounding step the original does not
+//                 have. The cast is moved to the assignment so the reciprocal is formed in
+//                 extended precision and rounded exactly once.
 // ---------------------------------------------------------------------------
 extern "C" void __cdecl FUN_0056bce0(float *param_1,float *param_2,float param_3);
 static void __cdecl FUN_0056bce0_impl(float *param_1,float *param_2,float param_3) {
@@ -179,8 +208,14 @@ static void __cdecl FUN_0056bce0_impl(float *param_1,float *param_2,float param_
           _DAT_005cc32c * param_3 + param_1[1];
   fVar1 = (param_2[2] * param_1[3] + (param_1[1] * *param_2 - param_2[1] * *param_1)) *
           _DAT_005cc32c * param_3 + param_1[2];
-  fVar4 = _DAT_005cc320 / (float)std::sqrtl((float10)(fVar2 * fVar2 + fVar1 * fVar1 +
-                                                 fVar5 * fVar5 + fVar3 * fVar3));  // FSQRT [X87]
+  // note (a): denominator tree is ((fVar3²+fVar5²)+fVar1²)+fVar2², written right-associated.
+  // note (b): no cast on the sqrt — the reciprocal is formed in extended precision and the
+  //           single rounding to float32 happens at this assignment, matching fstp dword.
+  // The explicit (float) here IS the fstp dword at 0x0056bdb7 — it is the one and only
+  // rounding, applied AFTER the divide, not before the sqrt.
+  fVar4 = (float)(_DAT_005cc320 / std::sqrtl((float10)(fVar2 * fVar2 +
+                                                      (fVar1 * fVar1 +
+                                                      (fVar5 * fVar5 + fVar3 * fVar3)))));  // FSQRT [X87]
   param_1[3] = fVar2 * fVar4;
   *param_1   = fVar3 * fVar4;
   param_1[1] = fVar5 * fVar4;
@@ -532,9 +567,49 @@ RH_ScopedInstall(FUN_0056bb80, 0x0056bb80);
 // MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
 // OUTPUT REGION: 0x10 bytes at (param_1) -- supplied by hand via --region;
 // the claim that this span covers every write MUST be backed by the analysis note.
-extern "C" void __cdecl FUN_0056bce0(float *param_1,float *param_2,float param_3) {
+// note 10 (2026-09-10): THIS HOOK MUST PRESERVE EDX. Two of the three callers keep the
+// quaternion pointer live in EDX ACROSS the call and dereference it on the very next
+// instruction:
+//     0x0056c3e2  call 0x56bce0        (FUN_0056c310)
+//     0x0056c3e7  fld  dword [edx+4]   <-- EDX must still be the pointer
+//     0x0056c17b  call 0x56bce0        (FUN_0056c0a0)
+//     0x0056c180  fld  dword [edx+4]   <-- same
+// The original satisfies that contract by accident of its codegen: it uses only EAX
+// (param_1), ECX (param_2) and the x87 stack, and never writes EDX -- which is exactly what
+// header note 6 records as the source of the decompiler's `extraout_EDX`. Our C++ port has
+// no such constraint and MSVC uses EDX as scratch, so with the hook installed the caller's
+// EDX was destroyed and `fld [edx+4]` faulted.
+//
+// MEASURED, not inferred: the shadow-lane CRASH for this RVA was caught with
+// re/frida/poll_attach_catch_crash.py -- access-violation, EIP 0x0056c3e7, EDX 0x00000000,
+// mem_address 0x4, bytes_at_eip `d9 42 04` (= fld dword [edx+4]), bytes_before_eip ending
+// `e8 f9 f8 ff ff` (= call rel32 -1799 from 0x0056c3e7, i.e. exactly 0x0056bce0).
+// log/crash_eip.txt, re/analysis/bce0_edx_contract_20260910.md.
+//
+// FUN_0056be80's own call site is NOT exposed: it holds the pointer in ESI (0x0056bf6a
+// `fld [esi+4]`), which is callee-saved and which MSVC preserves for us anyway.
+//
+// The shim also restores EAX = param_1 on the way out. No caller currently reads EAX after
+// the call (both sites push EAX BEFORE it), but the original does leave EAX = param_1
+// (0x0056bce3 `mov eax,[esp+0x14]`, never rewritten), so matching it costs one instruction
+// and removes the same latent class. ECX is NOT restored: the original genuinely clobbers it
+// (0x0056bce7 `mov ecx,[esp+0x18]`), so preserving it would be less faithful, not more.
+extern "C" void __cdecl FUN_0056bce0_ab(float *param_1,float *param_2,float param_3) {
     SHADOW_AB_COUNTER(ab, "FUN_0056bce0", 0x0056bce0u, ShadowAB::kPhaseRace);
     ShadowAB::RunRegion(ab, FUN_0056bce0_impl, reinterpret_cast<void*>(param_1), 0x10, param_1, param_2, param_3);
+}
+extern "C" __declspec(naked) void __cdecl FUN_0056bce0(float *param_1,float *param_2,float param_3) {
+    __asm {
+        push edx                     // the register contract the two callers rely on
+        push dword ptr [esp+0x10]    // param_3  (esp+0x10 after 1 push)
+        push dword ptr [esp+0x10]    // param_2  (slot walks with esp)
+        push dword ptr [esp+0x10]    // param_1
+        call FUN_0056bce0_ab
+        add  esp, 0x0c               // __cdecl caller cleanup
+        pop  edx
+        mov  eax, dword ptr [esp+4]  // original leaves EAX = param_1
+        ret
+    }
 }
 RH_ScopedInstall(FUN_0056bce0, 0x0056bce0);
 // --- 0x0056bdf0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
