@@ -187,6 +187,17 @@ pointer re-derivation at `0x0055b7c5`/`0x0055b7e0` **all match**. The divergence
 live range (held untouched in `ST2`/`ST3` from `0x0055b774` to `0x0055b7b1`); in the port it is a
 `float10` local at 53 bits. Reclassify as `DIVERGENT_FLOAT10` (build-caused) rather than chase it.
 
+### C2. `0x0055c2d0` — also NOT a port defect: it is the port's own stack frame
+`stack=2 … stk+03c x4`, with `pages diff:0` and `ret=0` — outputs agree 24/24. The original is
+`sub esp,0x10`, no pushes, no cookie; the port is `sub esp,0x14` plus
+`mov eax,[10103AC0h] / xor eax,esp / mov [esp+0x10],eax` (an MSVC **`/GS` stack cookie**, written
+unconditionally at an address inside the original's frame footprint, of a value that differs per
+call by construction) and then `push esi / push edi`. **`RunTracked`'s `stack=` channel compares
+a window containing the callee's own scratch frame**, and every port's frame differs from its
+original's, so that channel cannot separate a real caller-frame write from a layout difference.
+Scope checked: **exactly 1** of the 17 `DIVERGENT*` rows is stack-only — this is a single-row
+explanation, not a systematic reclassification.
+
 ### C-old. Settle the two aliasing rows **[RunRegion re-test]**
 Regenerate `0x00577be0`/`0x00577cb0` as `RunRegion` over their output buffer (worker review 2
 names it), re-boot, and read `0x0055b750`'s body against the disasm for a precision/transcription

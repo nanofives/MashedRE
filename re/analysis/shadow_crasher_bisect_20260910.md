@@ -281,6 +281,47 @@ rva       verdict  control
 0056f350  CRASH    CRASH      <- port problem
 ```
 
+## `0x0055c2d0` — the one stack-only DIVERGENT, and it is the port's frame, not its arithmetic
+
+Detail: `pages=o:0,n:0,diff:0 stack=2 ... ret=0 stk+03c x4` (+ one more sample with `stack=1`).
+So 5 of 24 samples differ **only** in the caller-stack window, at `+0x3c`, while the function's
+actual outputs (`*param_4`, `*param_5`) and its page writes agree on all 24.
+
+Compared the two frames directly:
+
+```
+original 0x0055c2d0:   sub esp,0x10        ; 16-byte frame, loc[0..3] at [esp]..[esp+0xc]
+                       (no pushes, no cookie)
+
+port ?FUN_0055c2d0_impl @0x10049020:
+                       sub esp,0x14        ; 20 bytes
+                       mov eax,[10103AC0h]
+                       xor eax,esp
+                       mov [esp+0x10],eax  ; <-- /GS STACK COOKIE the original never writes,
+                                           ;     landing exactly past the original's frame
+                       ...
+                       push esi / push edi ; the original pushes nothing
+```
+
+The port's frame is 4 bytes larger **plus** two saved registers, and it performs a `/GS` cookie
+write at an address inside the original's frame footprint — a write the original does not make,
+of a value (`cookie XOR esp`) that differs between the two calls by construction.
+
+So the `stack=` channel of `RunTracked` is comparing a window that contains **the callee's own
+scratch frame**, and the port's frame necessarily differs from the original's. `0x0055c2d0`'s
+DIVERGENT is a **witness artefact**, not a port defect.
+
+**Scope, checked rather than assumed:** splitting all 17 `DIVERGENT*` rows by which channel
+diverges gives **exactly one** stack-only row (this one). The other 16 diverge in `pages`,
+`fields` or `ret`, i.e. in real outputs — five are already `DIVERGENT_FLOAT10` (the parked
+build issue, D-11070). So this is a single-row explanation, **not** a systematic reclassification,
+and I am not claiming one.
+
+[UNCERTAIN] which dword `+0x3c` is has not been pinned to the cookie specifically; the cookie is
+the strongest candidate (written unconditionally, differs per call) but "5 of 24" would fit a
+conditionally-written slot better. The verdict above does not depend on which: any port whose
+frame layout differs makes the `stack=` channel unreliable, and the outputs agree 24/24.
+
 ## Artifacts
 
 - `log/crash_eip_0056f350.txt`, `log/crash_eip_0056f0a0.txt`
