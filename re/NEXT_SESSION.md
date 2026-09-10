@@ -2,8 +2,16 @@
 
 ## ⇒ CURRENT STATE (2026-09-10, second session — merge + open-item drain) — READ THIS FIRST
 
-Branch `race/first-frame-parity`, tree clean. Trackers: hooks.csv 5,930 rows
-(C4 184, **C3 1,009**, C2 3,885, C1 821) · DEFERRED 677 · UNCERTAINTIES 3,083.
+Branch `race/first-frame-parity`, tree clean, no stray processes, pool locks clear
+(slot 0's 10-day orphan released). Trackers: hooks.csv 5,930 rows
+(C4 184, **C3 1,010**, C2 3,884, C1 821) · DEFERRED 677.
+
+> **UNCERTAINTIES count — the previous header's "3,082" is not reproducible.** Two rules give
+> two numbers: `grep -cE '^\| *U-[0-9]+ \|'` = **3,069** (open-format rows) and
+> `grep -cE '^\| *(~~)?U-[0-9]+'` = **3,151** (including struck-through/resolved). Neither is
+> 3,082, so whatever rule produced that figure is undocumented. Quoting 3,069 open with the
+> command that derives it, per the roadmap's "every number is reproducible from the repo by a
+> stated command" gate. Four rows were filed today (U-9130..U-9133).
 
 **Landed this session:**
 1. **Merges drained.** `docs/reconcile`, `race/nav-champ`, `race/arctic-cap` merged (the first two

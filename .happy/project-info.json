@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-10T14:35:00Z",
+  "updatedAt": "2026-09-10T16:05:00Z",
   "sections": [
     {
       "heading": "Status",
@@ -8,7 +8,8 @@
         { "label": "Branch", "value": "race/first-frame-parity", "kind": "text" },
         { "label": "Phase", "value": "R7 - full game systems (scaffold to verbatim)", "kind": "text" },
         { "label": "Last session", "value": "2026-09-10", "kind": "date" },
-        { "label": "Session focus", "value": "merge drain + open-item fixes", "kind": "text" }
+        { "label": "Session focus", "value": "merge drain + open-item loop", "kind": "text" },
+        { "label": "Tree", "value": "clean, no stray processes, pool locks clear", "kind": "text" }
       ]
     },
     {
@@ -16,11 +17,19 @@
       "fields": [
         { "label": "hooks.csv rows", "value": 5930, "kind": "number" },
         { "label": "C4", "value": 184, "kind": "number" },
-        { "label": "C3", "value": 1009, "kind": "number" },
-        { "label": "C2", "value": 3885, "kind": "number" },
+        { "label": "C3", "value": 1010, "kind": "number" },
+        { "label": "C2", "value": 3884, "kind": "number" },
         { "label": "C1", "value": 821, "kind": "number" },
-        { "label": "UNCERTAINTIES", "value": 3083, "kind": "number" },
+        { "label": "UNCERTAINTIES (open rows)", "value": 3069, "kind": "number" },
         { "label": "DEFERRED", "value": 677, "kind": "number" }
+      ]
+    },
+    {
+      "heading": "AWAITING YOUR DECISION",
+      "fields": [
+        { "label": "Build float model", "value": "The build is SSE2, not x87 - two TU comments claimed otherwise and were false. Choose: keep SSE2, /arch:IA32 globally, or per-TU on physics/math.", "kind": "text" },
+        { "label": "Affects", "value": "85 TUs use float10, covering 88 hooks.csv rows (C4 10, C3 76) and 17 DIVERGENT* rows", "kind": "text" },
+        { "label": "Note", "value": "re/analysis/float_model_is_sse2_not_x87_20260910.md", "kind": "text" }
       ]
     },
     {
@@ -28,17 +37,17 @@
       "fields": [
         { "label": "Merged", "value": ["docs/reconcile", "race/nav-champ", "race/arctic-cap"], "kind": "list" },
         { "label": "Still unmerged", "value": "area/frontend (WIP checkpoint, unverified hook)", "kind": "text" },
-        { "label": "Fixes", "value": ["QuadRenderer rejected PAL4 - all BADGES 16x16 sprites were dead", "0x0056bce0 EDX contract - crash closed, C2 to C3 48/48", "0x0056bce0 denominator association + double rounding"], "kind": "list" },
-        { "label": "Filed", "value": "U-9130 (s6 reference not state-matched)", "kind": "text" },
-        { "label": "Captures protected", "value": 47, "kind": "number" }
+        { "label": "Promotions", "value": ["0x0056bce0 C2->C3 (48/48 CLEAN, EDX contract fixed)", "0x00560260 C2->C3 (24/24 CLEAN twice, stale blocker)"], "kind": "list" },
+        { "label": "Defects fixed", "value": ["QuadRenderer rejected PAL4 - all BADGES 16x16 sprites were dead", "0x0056bce0 caller-saved EDX contract (crash)", "0x0056bce0 denominator tree + double rounding", "0x0056f350 float loop counter", "shadow_batch: control boot destroyed the armed verdict"], "kind": "list" },
+        { "label": "Crasher list", "value": "all 9 triaged: 2 -> C3, 2 never crashed, 2 witness-only, 4 real port defects", "kind": "text" },
+        { "label": "Filed", "value": "U-9130, U-9131, U-9132, U-9133", "kind": "text" }
       ]
     },
     {
       "heading": "Next",
       "fields": [
-        { "label": "Top lead", "value": "extraout_ST1 on FUN_00570090 - x87 stack depth on 0x0056fea0 / 0x0056f0a0", "kind": "text" },
-        { "label": "Crash-triage recipe", "value": "--no-shadow control, zero-hook baseline, then poll_attach_catch_crash.py alongside shadow_batch", "kind": "text" },
-        { "label": "Open", "value": ["8 shadow crashers (EDX class ruled out)", "private-memory tracking hang", "0x0047e9c0 .data+0x624048 write", "Lane 1 C3->C4 rubric decision", "29 NO_SAMPLES sites"], "kind": "list" }
+        { "label": "Top items", "value": ["/arch decision (above)", "0x0056f350: per-iteration trace, >1 divergent path", "0x0056f0a0 + 0x0055bd80: lane decision (witness, not port)", "3 Lane 2 ports: per-function review, one faults in the fix_joypad cave", "0x005a6e10 + 0x005aeed0: fire in-race, log nothing"], "kind": "list" },
+        { "label": "NO_SAMPLES", "value": "43 of 48 genuinely never called - needs a richer scenario", "kind": "text" }
       ]
     }
   ]
