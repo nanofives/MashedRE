@@ -166,3 +166,15 @@ performs a one-time write on its first invocation that the port does not. Candid
 defect in the K24 root port (one-shot init or a static the port never sets). The row stays C2;
 this is the first concrete transcription finding the tracked lane has produced.
 
+## Pool closed (later the same day)
+
+Second tracked batch + single-site bisects (`batch_lane3_c2void3..6.txt`): **12 more CLEAN rows
+promoted** (`0x0056c0a0 0x0056c310 0x0056c580 0x0056caa0 0x0056d070 0x0056dd40 0x0056e680
+0x0056ef30 0x0056efc0 0x0056f020 0x0056f1f0 0x0056c8e0`; gate 5 PASS / 7 LEAF; U-9127..U-9129).
+Final tally of the 55 converted void C2 ports: **30 CLEAN → all C3**, 13 NO_SAMPLES, 3 CRASH
+(`0x0055bd80` at load, `0x00560260` after 24 clean samples, `0x0056f0a0` 26 s in), 2 DIVERGENT
+(`0x0055c2d0` precision-class stack bytes, `0x0047e9c0` reproducible first-call page diff), and
+7 never booted alone (`0x0056f350 0x0056fea0 0x00570090` crash as a group; `0x00575b60
+0x00578d90 0x00579e50` + one more were behind them in the budget). The region lane's 5 CLEAN
+rows were promoted in the same pass (`c3_gate_check_region.tsv`).
+

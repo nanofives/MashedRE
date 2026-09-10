@@ -217,7 +217,7 @@ NEEDS_GHIDRA 29 / NEEDS_NEW_HANDLER 9 / DEFER 6 / READY 1.
 
 ---
 
-## TT-13 — Lane 2: decomp→port transcriber — **PILOT RUN 2026-09-10**
+## TT-13 — Lane 2: decomp→port transcriber — **FIRST PROMOTIONS 2026-09-10 (7 rows)**
 
 `re/tools/decomp2port.py` + `DecompPC.java --port` mode. Ghidra decompilation → verbatim MSVC
 C++ TU per function (Ghidra typedefs, absolute-address globals, raw-RVA thunks with C-cast
@@ -228,7 +228,7 @@ unported C2 rows: 25 TUs compile (5 return-value, 20 void), 22 refused for indir
 `re/analysis/lane2_decomp2port_design_20260910.md`. Next: known-vtable idiom table for the
 RW device slot, disasm-based cc detection for other fn-ptr calls, reachability at pool scale.
 
-## TT-14 — Lane 3: page-level write tracking in the shadow A/B — **WORKING 2026-09-10: 18 CLEAN / 55**
+## TT-14 — Lane 3: page-level write tracking in the shadow A/B — **WORKING 2026-09-10: 30 CLEAN / 55, all promoted**
 
 `Core/ShadowTrack.h`: `ShadowAB::RunTracked` protects every writable page (private + MASHED.exe
 image), catches first writes in a VEH, restores pre-state between the original and the port,

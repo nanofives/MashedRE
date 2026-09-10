@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — M2 Faithful Race (shadow lanes 1-3)",
-  "updatedAt": "2026-09-10T13:55:35Z",
+  "updatedAt": "2026-09-10T15:22:31Z",
   "sections": [
     {
       "heading": "Milestone status",
@@ -22,7 +22,7 @@
         },
         {
           "label": "Session close",
-          "value": "2026-09-10 — 62 rows C2→C3 (44 shadow + 18 tracked); Lane 2 transcriber; Lane 3 write tracking WORKS",
+          "value": "2026-09-10 — 86 rows C2→C3 today (44 shadow + 30 tracked + 5 region + 7 generated); Lane 2 + Lane 3 live",
           "kind": "text"
         }
       ]
@@ -37,7 +37,7 @@
         },
         {
           "label": "C3",
-          "value": 984,
+          "value": 1008,
           "kind": "number"
         },
         {
@@ -47,7 +47,7 @@
         },
         {
           "label": "Trackers",
-          "value": "DEFERRED 677 · UNCERTAINTIES 3078 (38 naming/intent filed today)",
+          "value": "DEFERRED 677 · UNCERTAINTIES 3082 (42 naming/intent filed today)",
           "kind": "text"
         }
       ]
@@ -62,20 +62,20 @@
         },
         {
           "label": "Lane 2 decomp→port",
-          "value": "25/53 reachable C2 rows compile; 3 crash alone (L2_ opt-in kept them out of default boots)",
+          "value": "29/53 reachable C2 rows compile; 7 idiom-recovered ports PROMOTED C3; 3 generated ports crash alone",
           "kind": "text"
         },
         {
           "label": "Lane 3 write tracking",
-          "value": "Core/ShadowTrack.h: 18 CLEAN → C3; 2 DIVERGENT, 2 CRASH, 11 unreached, 22 unbooted; private-memory mode opt-in",
+          "value": "Core/ShadowTrack.h: 30 CLEAN → C3 of 55; 3 CRASH, 2 DIVERGENT, 13 unreached, 7 unbooted; private-memory mode traced, still opt-in",
           "kind": "text"
         },
         {
           "label": "Next",
           "value": [
-            "H: boot the 22 unsampled tracked sites",
-            "H: trace private-memory mode",
-            "G: rubric decision for C3→C4 via shadow"
+            "H: resolve the private-mode critical section / 0x0047e9c0 first-call diff",
+            "G: rubric decision for C3→C4 via shadow (387 sites)",
+            "I: next idiom-table entries (DAT_007d4110/4108)"
           ],
           "kind": "list"
         }

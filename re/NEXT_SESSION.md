@@ -38,9 +38,7 @@ mechanical LHS verifier (`log/shadow_ab/region_verify.txt`).
 
 ## PICK ONE
 
-### A. Promote the 5 region CLEAN rows **[30 min, mechanical]**
-Ghidra gate check (callers/callees) for `0x00546c50 0x00565200 0x0056cf90 0x0056ed60 0x0056fad0`,
-then the same re-classify transaction as today's 44 (spec is in the CHANGELOG entry).
+### A. DONE — the 5 region-lane rows are promoted (see CHANGELOG 2026-09-10 REGION LANE)
 
 ### B. `0x0056bce0` crash **[Ghidra + one boot]**
 Disassemble the original's prologue/argument use: if `param_3` (float) is not a plain cdecl stack
@@ -70,24 +68,25 @@ evidence; the shadow report is a stronger canonical-scenario diff but not a Frid
 keep C4 Frida-only. If amended: `shadow_gen.py --sweep re/parity/matchdiff_sweep_c3.csv --apply`
 (exclude audio; frontend/hud with `--phase any`), then `shadow_batch.py --cars 4 --hold 60`.
 
-### H. Lane 3 — finish the 55 tracked sites **[mechanical]**
-`Core/ShadowTrack.h` works (`re/analysis/lane3_write_tracking_20260910.md`); the 18 CLEAN rows
-are PROMOTED (C3 = 984). Boot the 22 not-yet-sampled tracked sites (`shadow_batch.py --skip-done` over manifest rows kind=tracked,
-`--launch-arg=--cars --launch-arg=4 --hold 60`). Open: private-memory mode still dies silently
-on its first sample (`MASHED_SHADOW_PRIVATE=1 MASHED_SHADOW_TRACE=1`, one boot, read the last
-`hex prot` line); `0x0055bd80` crashes at load under the wrapper; `0x00560260` completes 24 clean
-samples then the game dies (heap effects not restored without private tracking); `0x0055c2d0`
-5/24 stack-window byte diffs (precision class); `0x0047e9c0` 1/24 intermittent page diff.
+### H. Lane 3 — pool closed; open defects and the private-memory mode **[investigation]**
+55 converted void C2 ports: 30 CLEAN (all promoted, C3 = 1008), 13 unreached, 3 CRASH, 2
+DIVERGENT, 7 unbooted (`re/analysis/lane3_write_tracking_20260910.md`). Open: (1) private-memory
+tracking hangs on the first sample — the tracked thread waits on a critical section that is not an
+NT heap lock (CRT `_HEAP_LOCK` or Frida's interceptor lock are the candidates); the hang watchdog
+(`MASHED_SHADOW_TRACE=1`) logs EIP/stack; next step is resolving the CS address on the hung stack
+and its owner thread. (2) `0x0047e9c0` reproducible first-call page diff at `.data+0x624048` = a
+real candidate defect in the K24 root port. (3) crash bisect of `0x0056f350 0x0056fea0 0x00570090`
+(`shadow_batch.py --rvas ... --group 1 --launch-arg=--cars --launch-arg=4`).
 
 ### I. Lane 2 transcriber — grow the accept set **[tooling]**
-`re/tools/decomp2port.py` (design: `re/analysis/lane2_decomp2port_design_20260910.md`). Pilot:
-25/53 reachable unported C2 rows compiled into `mashedmod/src/mashed_re/Lane2/L2_<rva>.cpp`
-(opt-in `L2_` hooks, never installed by default); 3 of them crash alone (`0x00421960`,
-`0x004219c0`, `0x00495fe0`) — the open hazard class is register arguments the callee prototypes
-miss. Biggest refusal = indirect calls (22/53): add the RW device-slot vtable idiom table and
-disasm-based cc detection. Re-run: `decomp_pc.py --file rvas.txt --callees --port --json -o d.json`
-→ `decomp2port.py d.json --emit-dir Lane2 --apply --report r.tsv` → `build.bat` →
-`decomp2port.py --prune-failed log/build_lane2.txt --report r.tsv`.
+`re/tools/decomp2port.py` + `INDIRECT_IDIOMS` table (design: `re/analysis/lane2_decomp2port_design_20260910.md`).
+29/53 reachable unported C2 rows compile; the 7 idiom-recovered ones are **promoted C3** (first
+decompiler-generated ports verified effect-identical). 15 indirect-call refusals remain: next table
+entries are `*DAT_007d4110+off` (4 rows) and `*DAT_007d4108+0x28` — add only with a hand port that
+pins the convention. 3 generated ports crash alone (`0x00421960 0x004219c0 0x00495fe0`): open hazard
+class (register args the callee prototypes miss). Re-run: `decomp_pc.py --file rvas.txt --callees
+--port --json -o d.json` → `decomp2port.py d.json --emit-dir Lane2 --apply --report r.tsv` →
+`build.bat` → `decomp2port.py --prune-failed log/build_lane2b.txt --report r.tsv`.
 
 ### F. Carried over from 2026-09-09, untouched
 U-9087 E9-thunk guard decision (10 hooks never install, 4 C4); D-11069 (4 duplicate RVAs in two
