@@ -68,7 +68,7 @@ GHIDRA_TYPES = {
     "float": "float", "double": "double", "void": "void", "code": "void",
 }
 PSEUDO = re.compile(r"\b(CONCAT\d+|SUB\d+|ZEXT\d+|SEXT\d+|halt_baddata|in_ST0|in_FS_OFFSET|swi\(|coprocessor)")
-INDIRECT = re.compile(r"\(\*+\s*\(code\s*\*+\)|code|\(\s*\*+\s*[A-Za-z_][\w\[\]\.\->+ ]*\)\s*\(")
+INDIRECT = re.compile(r"\(\*+\s*\(code\s*\*+\)|\bcode\b|\(\s*\*+\s*[A-Za-z_][\w\[\]\.\->+ ]*\)\s*\(")
 REGVAR = re.compile(r"\b(unaff_[A-Z]{2,3}|in_[A-Z]{2,3})\b")
 # Win32 calls whose effect the shadow A/B cannot undo between its two runs. Restoring memory
 # pages does not un-consume an event signal, un-close a handle or un-send a message, so a
@@ -266,14 +266,14 @@ def transcribe(fn, ports, log):
     # through a cdecl thunk leaves that register undefined -> crash at boot (0x004219c0,
     # Lane 3 first run 2026-09-10). Refuse when a zero-arg FUN_ call shares a loop body with a
     # pointer/int local that is only ever assigned, never read as an argument or operand.
-    for m0 in re.finditer(r"FUN_[0-9a-fA-F]{8}\s*\(\s*\)", body):
+    for m0 in re.finditer(r"\bFUN_[0-9a-fA-F]{8}\s*\(\s*\)", body):
         # crude but honest: any local named like Ghidra's pointer/int temporaries that appears
         # on the LHS of `+=`/`= x + n` and nowhere else as an rvalue
-        for lv in set(re.findall(r"((?:p[a-z]*Var|iVar|uVar)\d+)\s*=\s*\s*\+", body)):
-            body_nodecl = re.sub(r"^[ 	]*[A-Za-z_][\w \*]*%s;[ 	]*$" % lv, "", body, flags=re.M)
-            reads = len(re.findall(r"%s" % lv, body_nodecl))
-            writes = len(re.findall(r"%s\s*=" % lv, body))
-            conds = len(re.findall(r"%s[^;]*[<>]" % lv, body)) + len(re.findall(r"[<>][^;]*%s" % lv, body))
+        for lv in set(re.findall(r"\b((?:p[a-z]*Var|iVar|uVar)\d+)\s*=\s*\1\s*\+", body)):
+            body_nodecl = re.sub(r"^[ 	]*[A-Za-z_][\w \*]*\b%s;[ 	]*$" % lv, "", body, flags=re.M)
+            reads = len(re.findall(r"\b%s\b" % lv, body_nodecl))
+            writes = len(re.findall(r"\b%s\s*=" % lv, body))
+            conds = len(re.findall(r"\b%s\b[^;]*[<>]" % lv, body)) + len(re.findall(r"[<>][^;]*\b%s\b" % lv, body))
             if reads - writes - conds <= 1:      # the only other read is its own increment
                 return None, "HIDDEN_REG_ARG:" + lv + " advanced but never passed to " + m0.group(0).split("(")[0]
     ret = ctype(proto["ret"])
