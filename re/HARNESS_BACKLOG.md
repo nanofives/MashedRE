@@ -230,6 +230,18 @@ idling or reviving dead batch lanes.
   sky), independent of the fold. **Net: no single global fold setting is correct for all
   tracks with this key; refine the water discriminator before merging geomlight.**
 
+  **Superseded sub-thread (branch `race/nav-champ`, 2026-08-30).** That branch mapped the
+  mode-3 flow and concluded the challenge-select cursor could not be driven by presses
+  (control codes 11/12 read as inert) and that Arctic was unreachable without modding the
+  save. The 2026-08-31 measurement above REFUTES the first half: code 12 does step
+  `DAT_0067f17c` 0->1->2->3 once the cup rows are unlocked. What survives from it is the
+  navigation map and the screenshot set: Challenge Cup is depth-3 **cursor 0** (not 3 --
+  cursor 3 is Top Dog/Team, `game_mode` 6, which stalls at depth 4), and the launch gate is
+  `DAT_007f0a40[FUN_004309b0(mode) + track*0xc]` (mode3->col1, mode10->col11).
+  Screenshots + per-depth draw lists: `verify/nav_shots/FINDINGS.md`. Tool:
+  `re/frida/nav_champ_probe.py` (HEAD copy is the superset -- it carries the `challlaunch`
+  plan the branch copy lacked). `original/gamesave.bin` was left untouched throughout.
+
 
 ## Done
 
