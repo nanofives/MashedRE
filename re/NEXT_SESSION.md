@@ -75,6 +75,15 @@ Replaces hand-verified regions and the idempotency caveat: mark writable pages r
 write faults, the touched set is the region. Unblocks 293 (C3) + 55 (C2) void ports and the 43
 MUTATOR_LANE frontier rows. Design in the assessment note, Lane 3.
 
+### I. Lane 2 transcriber — grow the accept set **[tooling]**
+`re/tools/decomp2port.py` (design: `re/analysis/lane2_decomp2port_design_20260910.md`). Pilot:
+25/53 reachable unported C2 rows compiled into `mashedmod/src/mashed_re/Lane2/L2_<rva>.cpp`
+(opt-in `L2_` hooks, never installed by default). Biggest refusal = indirect calls (22/53):
+add the RW device-slot vtable idiom table and disasm-based cc detection. Void ports (20) wait
+for Lane 3. Re-run: `decomp_pc.py --file rvas.txt --callees --port --json -o d.json` →
+`decomp2port.py d.json --emit-dir Lane2 --apply --report r.tsv` → `build.bat` →
+`decomp2port.py --prune-failed log/build_lane2.txt --report r.tsv`.
+
 ### F. Carried over from 2026-09-09, untouched
 U-9087 E9-thunk guard decision (10 hooks never install, 4 C4); D-11069 (4 duplicate RVAs in two
 targets); `TransformMatrixUpdate` pos.x/pos.z defect (D-10793); desktop verification of the

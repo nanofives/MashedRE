@@ -217,6 +217,17 @@ NEEDS_GHIDRA 29 / NEEDS_NEW_HANDLER 9 / DEFER 6 / READY 1.
 
 ---
 
+## TT-13 — Lane 2: decomp→port transcriber — **PILOT RUN 2026-09-10**
+
+`re/tools/decomp2port.py` + `DecompPC.java --port` mode. Ghidra decompilation → verbatim MSVC
+C++ TU per function (Ghidra typedefs, absolute-address globals, raw-RVA thunks with C-cast
+args, `L2_` opt-in hook prefix, shadow wrapper on return-value ports), refusing register-ABI,
+indirect-call, pseudo-op and unknown-type bodies with a per-row reason. Pilot on 53 reachable
+unported C2 rows: 25 TUs compile (5 return-value, 20 void), 22 refused for indirect calls,
+4 for register ABI, 1 compile failure pruned. Design + scaling needs:
+`re/analysis/lane2_decomp2port_design_20260910.md`. Next: known-vtable idiom table for the
+RW device slot, disasm-based cc detection for other fn-ptr calls, reachability at pool scale.
+
 ## Considered and deliberately NOT pursued
 
 Recorded so nobody re-derives them. Consistent with CLAUDE.md's stated non-goals.

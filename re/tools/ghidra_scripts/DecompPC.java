@@ -16,6 +16,12 @@
 // call graph shows nothing.
 import ghidra.app.decompiler.DecompInterface;
 import ghidra.app.decompiler.DecompileResults;
+import ghidra.program.model.pcode.HighFunction;
+import ghidra.program.model.pcode.HighSymbol;
+import ghidra.program.model.pcode.FunctionPrototype;
+import ghidra.program.model.pcode.GlobalSymbolMap;
+import ghidra.program.model.listing.Parameter;
+import java.util.Iterator;
 import ghidra.app.script.GhidraScript;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.listing.Data;
@@ -48,6 +54,7 @@ public class DecompPC extends GhidraScript {
     private boolean mCallers;
     private boolean mXrefs;
     private boolean mStrings;
+    private boolean mPort;      // Lane 2: decompiler prototype + typed globals + callee prototypes
 
     @Override
     public void run() throws Exception {
@@ -73,6 +80,9 @@ public class DecompPC extends GhidraScript {
             }
             else if (m.equals("strings")) {
                 mStrings = true;
+            }
+            else if (m.equals("port")) {
+                mPort = true; mDecomp = true;
             }
             else if (m.equals("metadata")) {
                 continue;   // name/entry/size/signature only; emitted unconditionally
@@ -172,6 +182,9 @@ public class DecompPC extends GhidraScript {
         if (mDecomp && di != null) {
             DecompileResults res = di.decompileFunction(fn, 90, monitor);
             if (res.decompileCompleted()) {
+                if (mPort) {
+                    emitPort(w, fn, res, di);
+                }
                 w.println("      \"decomp\": \""
                         + esc(res.getDecompiledFunction().getC()) + "\"");
             }
@@ -182,6 +195,104 @@ public class DecompPC extends GhidraScript {
         else {
             w.println("      \"decomp\": null");
         }
+    }
+
+
+    // Lane 2 (decomp2port): what the plain C text does not carry. The DECOMPILER's
+    // prototype (not the stored signature, which is often `undefined f(void)` while the
+    // body uses params), every global the body references with its data type and
+    // address, and each direct callee's stored prototype + calling convention so the
+    // transcriber can emit raw-RVA thunks for unported callees.
+    private void emitPort(PrintWriter w, Function fn, DecompileResults res, DecompInterface di) {
+        HighFunction hf = res.getHighFunction();
+        StringBuilder sb = new StringBuilder();
+        if (hf != null) {
+            FunctionPrototype fp = hf.getFunctionPrototype();
+            sb.append("      \"proto\": {\"ret\": \"").append(esc(fp.getReturnType().getName()))
+              .append("\", \"cc\": \"").append(esc(String.valueOf(fn.getCallingConventionName())))
+              .append("\", \"varargs\": ").append(fp.isVarArg())
+              .append(", \"params\": [");
+            for (int i = 0; i < fp.getNumParams(); i++) {
+                HighSymbol p = fp.getParam(i);
+                if (i > 0) sb.append(", ");
+                sb.append("{\"name\": \"").append(esc(p.getName())).append("\", \"type\": \"")
+                  .append(esc(p.getDataType().getName())).append("\", \"size\": ")
+                  .append(p.getSize()).append(", \"storage\": \"")
+                  .append(esc(p.getStorage().toString())).append("\"}");
+            }
+            sb.append("]},\n");
+            sb.append("      \"globals\": [");
+            GlobalSymbolMap gm = hf.getGlobalSymbolMap();
+            Iterator<HighSymbol> it = gm.getSymbols();
+            boolean first = true;
+            while (it.hasNext()) {
+                HighSymbol g = it.next();
+                Address ga = g.getStorage().getMinAddress();
+                MemoryBlock blk = (ga == null) ? null : currentProgram.getMemory().getBlock(ga);
+                if (!first) sb.append(", ");
+                first = false;
+                sb.append("{\"name\": \"").append(esc(g.getName())).append("\", \"addr\": \"")
+                  .append(ga == null ? "" : "0x" + ga).append("\", \"type\": \"")
+                  .append(esc(g.getDataType().getName())).append("\", \"size\": ")
+                  .append(g.getSize()).append(", \"block\": \"")
+                  .append(blk == null ? "" : esc(blk.getName())).append("\", \"writable\": ")
+                  .append(blk != null && blk.isWrite()).append("}");
+            }
+            sb.append("],\n");
+        }
+        sb.append("      \"callee_protos\": [");
+        try {
+            Set<Function> set = fn.getCalledFunctions(monitor);
+            TreeSet<String> rows = new TreeSet<>();
+            for (Function f : set) {
+                StringBuilder r = new StringBuilder();
+                r.append("{\"name\": \"").append(esc(f.getName())).append("\", \"entry\": \"0x")
+                 .append(f.getEntryPoint()).append("\", \"proto\": \"")
+                 .append(esc(f.getSignature().getPrototypeString())).append("\", \"cc\": \"")
+                 .append(esc(String.valueOf(f.getCallingConventionName()))).append("\", \"ret\": \"")
+                 .append(esc(f.getReturnType().getName())).append("\", \"thunk\": ")
+                 .append(f.isThunk()).append(", \"external\": ").append(f.isExternal())
+                 .append(", \"params\": [");
+                Parameter[] ps = f.getParameters();
+                for (int i = 0; i < ps.length; i++) {
+                    if (i > 0) r.append(", ");
+                    r.append("{\"name\": \"").append(esc(ps[i].getName())).append("\", \"type\": \"")
+                     .append(esc(ps[i].getDataType().getName())).append("\"}");
+                }
+                r.append("]");
+                // stored signatures are mostly `undefined f(void)` in this project; the
+                // DECOMPILER's prototype is what a thunk for an unported callee needs
+                if (di != null && !f.isExternal()) {
+                    try {
+                        DecompileResults cr = di.decompileFunction(f, 30, monitor);
+                        HighFunction chf = cr.decompileCompleted() ? cr.getHighFunction() : null;
+                        if (chf != null) {
+                            FunctionPrototype cp = chf.getFunctionPrototype();
+                            r.append(", \"dproto\": {\"ret\": \"").append(esc(cp.getReturnType().getName()))
+                             .append("\", \"varargs\": ").append(cp.isVarArg()).append(", \"params\": [");
+                            for (int i = 0; i < cp.getNumParams(); i++) {
+                                HighSymbol p = cp.getParam(i);
+                                if (i > 0) r.append(", ");
+                                r.append("{\"name\": \"").append(esc(p.getName())).append("\", \"type\": \"")
+                                 .append(esc(p.getDataType().getName())).append("\", \"storage\": \"")
+                                 .append(esc(p.getStorage().toString())).append("\"}");
+                            }
+                            r.append("]}");
+                        }
+                    }
+                    catch (Exception e) { r.append(", \"dproto_error\": \"").append(esc(String.valueOf(e))).append("\""); }
+                }
+                r.append("}");
+                rows.add(r.toString());
+            }
+            boolean first = true;
+            for (String r : rows) { if (!first) sb.append(", "); first = false; sb.append(r); }
+        }
+        catch (Exception e) {
+            sb.append("{\"error\": \"").append(esc(String.valueOf(e))).append("\"}");
+        }
+        sb.append("],");
+        w.println(sb.toString());
     }
 
     // Sorted "name@entry" set, so output is stable across runs.

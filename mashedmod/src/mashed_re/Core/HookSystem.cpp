@@ -191,6 +191,15 @@ void InstallAll() {
             want = TokenMatch(only, e.name, rvatok);
         } else {
             want = (i >= lo && i < hi);
+            // Lane 2 (re/tools/decomp2port.py): generated, UNVERIFIED ports register under an
+            // L2_ prefix and are opt-in -- installed only through MASHED_HOOK_ONLY (above) or
+            // MASHED_HOOK_LANE2=1. A default .asi run must never carry a port nobody has
+            // A/B'd; the shadow batch names its candidates explicitly, so it is unaffected.
+            static const bool lane2 = [] {
+                const char* v = std::getenv("MASHED_HOOK_LANE2");
+                return v && v[0] && v[0] != '0';
+            }();
+            if (want && !lane2 && e.name && std::strncmp(e.name, "L2_", 3) == 0) want = false;
         }
         if (want && skip && skip[0] && TokenMatch(skip, e.name, rvatok)) {
             want = false;

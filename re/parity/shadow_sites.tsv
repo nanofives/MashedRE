@@ -152,3 +152,8 @@ rva	name	file	subsystem	kind	ret	cc	params	phase	status
 0057ae20	FUN_0057ae20	RwpSolverCore16.cpp	third-party-library[RenderWare-Physics-3.7]	ret	int	__cdecl	int param_1	race	ALREADY:shadow-site-present
 005aed20	AudioVectorLengthFast	AudioVecLength.cpp	audio					race	SKIP:definition-count=0
 005b0f40	AudioQueuePop	AudioQueuePop.cpp	audio	ret	std::uint32_t	__cdecl	void* obj	race	ALREADY:shadow-site-present
+005aeed0	L2_FUN_005aeed0	L2_005aeed0.cpp	lane2	ret		__cdecl		race	GENERATED:lane2-decomp2port
+005af010	L2_FUN_005af010	L2_005af010.cpp	lane2	ret		__cdecl		race	GENERATED:lane2-decomp2port
+005a6e10	L2_FUN_005a6e10	L2_005a6e10.cpp	lane2	ret		__cdecl		race	GENERATED:lane2-decomp2port
+0045d3f0	L2_FUN_0045d3f0	L2_0045d3f0.cpp	lane2	ret		__cdecl		race	GENERATED:lane2-decomp2port
+005ad2e0	L2_FUN_005ad2e0	L2_005ad2e0.cpp	lane2	ret		__cdecl		race	GENERATED:lane2-decomp2port

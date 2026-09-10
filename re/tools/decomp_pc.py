@@ -134,6 +134,8 @@ def main():
                          "that --callers cannot see")
     ap.add_argument("--strings", action="store_true",
                     help="string literals referenced from the function body")
+    ap.add_argument("--port", action="store_true",
+                    help="Lane 2: add decompiler prototype, typed globals and callee prototypes")
     ap.add_argument("--no-decomp", action="store_true",
                     help="skip decompilation (fast; pairs with --callees/--callers)")
     ap.add_argument("--slot", help="reuse an already-held pool slot index; not released")
@@ -157,7 +159,8 @@ def main():
              + (["callees"] if a.callees else [])
              + (["callers"] if a.callers else [])
              + (["xrefs"] if a.xrefs else [])
-             + (["strings"] if a.strings else []))
+             + (["strings"] if a.strings else [])
+             + (["port"] if a.port else []))
     if not modes:
         # --no-decomp with no other mode: metadata only (name/entry/size/signature).
         # Must NOT fall back to "decomp" -- that silently ignores --no-decomp and
