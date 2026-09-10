@@ -27,6 +27,14 @@ REFUSES with a reason (nothing emitted for that row):
   CALLEE_PROTO        a callee has no decompiler prototype and no existing port
   VARARGS / PSEUDO_OP  `...`, `CONCAT`, `SUB4`, `ZEXT`, `halt_baddata`, `in_ST0`, `float10` returns
   DECOMP_MISSING      the decompiler produced nothing usable
+  IRREVERSIBLE_SIDE_EFFECT
+                      the body calls a Win32 API whose effect the A/B cannot undo between its
+                      two runs (event wait/signal, handle close, file/registry write, message
+                      send, Interlocked*). Restoring memory pages does not un-consume an event
+                      signal or un-close a handle, so the site is not an A/B candidate at all --
+                      see ShadowAB.h LIMITS. Added 2026-09-10 after two such sites shipped:
+                      0x005aeed0 (WaitForSingleObject -> reproducible false ret-mismatch on the
+                      first sample) and 0x005b8080 (CloseHandle -> would double-close).
 
 WHAT A GENERATED TU IS NOT: it is not C3. It is a C2 row's reimplementation, at best. It becomes
 C3 only through the shadow lane (`shadow_gen.py` wrapper is emitted for return-value functions;
@@ -62,6 +70,20 @@ GHIDRA_TYPES = {
 PSEUDO = re.compile(r"\b(CONCAT\d+|SUB\d+|ZEXT\d+|SEXT\d+|halt_baddata|in_ST0|in_FS_OFFSET|swi\(|coprocessor)")
 INDIRECT = re.compile(r"\(\*+\s*\(code\s*\*+\)|code|\(\s*\*+\s*[A-Za-z_][\w\[\]\.\->+ ]*\)\s*\(")
 REGVAR = re.compile(r"\b(unaff_[A-Z]{2,3}|in_[A-Z]{2,3})\b")
+# Win32 calls whose effect the shadow A/B cannot undo between its two runs. Restoring memory
+# pages does not un-consume an event signal, un-close a handle or un-send a message, so a
+# function calling any of these is not an A/B candidate at all (ShadowAB.h LIMITS). Kept
+# deliberately narrow -- only APIs that mutate state OUTSIDE the process's own pages.
+IRREVERSIBLE = re.compile(
+    r"\b(WaitForSingleObject(?:Ex)?|WaitForMultipleObjects(?:Ex)?|SignalObjectAndWait"
+    r"|SetEvent|ResetEvent|PulseEvent"
+    r"|EnterCriticalSection|LeaveCriticalSection|TryEnterCriticalSection"
+    r"|ReleaseSemaphore|ReleaseMutex|WaitOnAddress|WakeByAddress\w*"
+    r"|CloseHandle|CreateEvent\w*|CreateMutex\w*|CreateSemaphore\w*|CreateThread"
+    r"|CreateFile\w*|DeleteFile\w*|MoveFile\w*|ReadFile|WriteFile|SetFilePointer\w*"
+    r"|Interlocked\w+"
+    r"|SendMessage\w*|PostMessage\w*|PostThreadMessage\w*"
+    r"|RegSetValue\w*|RegDeleteValue\w*|RegCreateKey\w*)\b")
 GLOBAL = re.compile(r"\b(_?DAT_[0-9a-fA-F]{8}|PTR_[A-Za-z_]*_[0-9a-fA-F]{8}|(?:_?s|_?u|_?f)_[A-Za-z0-9_]+_[0-9a-fA-F]{8})\b")
 CALLNAME = re.compile(r"\b(FUN_[0-9a-fA-F]{8})\s*\(")
 HEXLIT_FLOAT = re.compile(r"^0x[0-9a-fA-F]{8}$")
@@ -221,6 +243,23 @@ def transcribe(fn, ports, log):
         return None, idiom_decls
     if INDIRECT.search(body):
         return None, "INDIRECT_CALL"
+    # IRREVERSIBLE SIDE EFFECT -> the shadow A/B is structurally invalid, so do not emit a
+    # wrapper for it. ShadowAB.h's LIMITS block already says "a function whose side effects are
+    # irreversible (file/COM/handle) is NOT a candidate -- restoring a memory region does not
+    # un-write a file", but the generator never enforced it and shipped two such sites:
+    #   0x005aeed0  WaitForSingleObject(*param_1, 0) != WAIT_TIMEOUT -- an auto-reset event poll.
+    #               The A/B calls the original, then the port, on the SAME handle: the first call
+    #               CONSUMES the signal, so the second legitimately returns WAIT_TIMEOUT. Measured
+    #               2026-09-10: reproducible ret-mismatch on sample 0 and clean on every later
+    #               sample, on two independent boots. Not a port defect -- an invalid witness.
+    #   0x005b8080  CloseHandle(...) -- the A/B would call it TWICE, i.e. double-close a handle.
+    #               It happens never to fire in the 4-car race (measured 0 calls against probes
+    #               at 39k), which is the only reason this has not corrupted a run.
+    # Refuse at generation rather than filtering later, so the manifest never claims a site the
+    # lane cannot legitimately judge.
+    m_irr = IRREVERSIBLE.search(body)
+    if m_irr:
+        return None, "IRREVERSIBLE_SIDE_EFFECT:" + m_irr.group(1)
     # HIDDEN REGISTER ARGUMENT: a local that is advanced in a loop but never passed to the
     # no-arg call inside that loop (`puVar1 = &DAT_x; do { FUN_y(); puVar1 += 0x208; } while`)
     # means the callee reads it from a register Ghidra did not model. Calling the original

@@ -1,0 +1,5 @@
+[--] fn=L2_FUN_005aeed0 PATCHBYTE installed=e9 uninstalled=8b A/B-IS-REAL
+[0] fn=L2_FUN_005aeed0 rva=005aeed0 idx=1306 ndiff=1 pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=1
+[1] fn=L2_FUN_005aeed0 rva=005aeed0 idx=1306 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[2] fn=L2_FUN_005aeed0 rva=005aeed0 idx=1306 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[3] fn=L2_FUN_005aeed0 rva=005aeed0 idx=1306 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0

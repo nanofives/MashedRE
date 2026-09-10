@@ -154,10 +154,10 @@ rva	name	file	subsystem	kind	ret	cc	params	phase	status
 005a6e10	L2_FUN_005a6e10	L2_005a6e10.cpp	lane2	ret		__cdecl		race	GENERATED:lane2-decomp2port
 005ad2e0	L2_FUN_005ad2e0	L2_005ad2e0.cpp	lane2	ret		__cdecl		race	SKIP:tu-missing-on-disk
 005aed20	AudioVectorLengthFast	AudioVecLength.cpp	audio					race	SKIP:definition-count=0
-005aeed0	L2_FUN_005aeed0	L2_005aeed0.cpp	lane2	ret		__cdecl		race	GENERATED:lane2-decomp2port
+005aeed0	L2_FUN_005aeed0	L2_005aeed0.cpp	lane2	ret		__cdecl		race	SKIP:irreversible-side-effect
 005af010	L2_FUN_005af010	L2_005af010.cpp	lane2	ret		__cdecl		race	GENERATED:lane2-decomp2port
 005b0f40	AudioQueuePop	AudioQueuePop.cpp	audio	ret	std::uint32_t	__cdecl	void* obj	race	ALREADY:shadow-site-present
-005b8080	L2_FUN_005b8080	L2_005b8080.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-decomp2port-tracked
+005b8080	L2_FUN_005b8080	L2_005b8080.cpp	lane2	tracked	void	__cdecl		race	SKIP:irreversible-side-effect
 00421980	L2_FUN_00421980	L2_00421980.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-decomp2port-tracked
 00421960	L2_FUN_00421960	L2_00421960.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-decomp2port-tracked
 0041f290	L2_FUN_0041f290	L2_0041f290.cpp	lane2	tracked	void	__cdecl		race	GENERATED:lane2-decomp2port-tracked

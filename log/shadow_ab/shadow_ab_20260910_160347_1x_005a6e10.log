@@ -1,0 +1,32 @@
+[--] fn=L2_FUN_005a6e10 PATCHBYTE installed=e9 uninstalled=8b A/B-IS-REAL
+[0] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[1] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[2] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=L2_FUN_005a6e10 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[3] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[4] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[5] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[6] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[7] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=L2_FUN_005a6e10 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[8] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[9] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=L2_FUN_005a6e10 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[10] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[11] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=L2_FUN_005a6e10 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[12] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=L2_FUN_005a6e10 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[13] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[14] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[15] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=L2_FUN_005a6e10 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[16] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=L2_FUN_005a6e10 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[17] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[18] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[19] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[20] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[21] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[22] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[23] fn=L2_FUN_005a6e10 rva=005a6e10 idx=1303 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0

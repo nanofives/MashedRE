@@ -155,9 +155,9 @@ rva	name	verdict	n	ndiff	proof	detail	boot_state	group	log	at	control	control_at
 0057a9a0	FUN_0057a9a0	NO_SAMPLES	0	0			RACE_OK	7		2026-09-10T00:26:48		
 0057adb0	FUN_0057adb0	NO_SAMPLES	0	0			RACE_OK	7		2026-09-10T00:26:48		
 0057ae20	FUN_0057ae20	NO_SAMPLES	0	0			RACE_OK	7		2026-09-10T00:26:48		
-005a6e10	L2_FUN_005a6e10	NO_SAMPLES	0	0			RACE_OK	5	shadow_ab_20260910_023716_5x_005aeed0.log	2026-09-10T02:37:17		
+005a6e10	L2_FUN_005a6e10	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	1	shadow_ab_20260910_160347_1x_005a6e10.log	2026-09-10T16:03:47		
 005ad2e0	L2_FUN_005ad2e0	NO_PORT	0	0		manifest claimed GENERATED:lane2-decomp2port but L2_005ad2e0.cpp does not exist on disk and is not in asi_sources.rsp; the 2026-09-10T02:37 NO_SAMPLES was correct but for the wrong reason (nothing installed, not never called). Site status corrected to SKIP:tu-missing-on-disk.	RACE_OK	5	shadow_ab_20260910_023716_5x_005aeed0.log	2026-09-10T02:37:17		
-005aeed0	L2_FUN_005aeed0	NO_SAMPLES	0	0			RACE_OK	5	shadow_ab_20260910_023716_5x_005aeed0.log	2026-09-10T02:37:17		
+005aeed0	L2_FUN_005aeed0	INVALID_WITNESS	4	1	A/B-IS-REAL installed=e9 uninstalled=8b	body is `WaitForSingleObject(*param_1,0) != WAIT_TIMEOUT`, an auto-reset event poll. The A/B calls original-then-port on the SAME handle, so the first call CONSUMES the signal and the second legitimately returns WAIT_TIMEOUT -- reproducible ret-mismatch on sample 0 and clean thereafter on two independent boots. Not a port defect; the witness is invalid (ShadowAB.h LIMITS). Site status -> SKIP:irreversible-side-effect.	RACE_OK	1	shadow_ab_20260910_160431_1x_005aeed0.log	2026-09-10T16:04:32		
 005af010	L2_FUN_005af010	CLEAN	8	0	A/B-IS-REAL installed=e9 uninstalled=53		RACE_OK	5	shadow_ab_20260910_023716_5x_005aeed0.log	2026-09-10T02:37:17		
 005b0f40	AudioQueuePop	NO_SAMPLES	0	0			RACE_OK	7		2026-09-10T00:26:48		
-005b8080	L2_FUN_005b8080	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T15:48:07		
+005b8080	L2_FUN_005b8080	INVALID_WITNESS	0	0		body calls CloseHandle, so the A/B would call it TWICE = double-close. Measured 0 calls in the 4-car race (probes at 39k) with the hook installed and manifest installed=1, so it has never actually fired -- the only reason this has not corrupted a run. Site status -> SKIP:irreversible-side-effect.	RACE_OK	1		2026-09-10T15:48:07		

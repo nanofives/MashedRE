@@ -219,11 +219,23 @@ boot-only measurement): **c0 0/24 exercised, c1 5/24**. Result table:
   **Lesson:** `prescreen_batch.py`'s per-chunk `EXERCISED` attribution is not reliable at the
   row level — the five it named are exactly the five highest RVAs in the chunk. Trust the
   chunk-level probe gate, verify any individual row with a single-RVA count before acting.
-  **Remaining real work (2 rows):** `0x005a6e10` and `0x005aeed0` fire in-race and log nothing.
-  Note `0x005a6e10` is a **hot path at ~29k calls/race** — CLAUDE.md's Interceptor warning
-  applies, and a shadow A/B that uninstalls/reinstalls per call may simply be unviable there.
-  Check `HookIndex(rva)` (its `SKIP:no-hook-index` path would log, so silence is informative)
-  and whether `Armed()`'s `Enabled()` one-shot ran before their first call.
+  **SECOND CORRECTION — there was NO harness bug at either row. All five are closed:**
+  | RVA | outcome |
+  |---|---|
+  | `0x005a6e10` | **CLEAN 24/24 on two single-site boots → promoted C3.** ~29,302 calls/race, so the coverage is real. Its NO_SAMPLES came from a group-of-5 boot. |
+  | `0x005aeed0` | **INVALID_WITNESS, out of the lane.** Body is `WaitForSingleObject(*param_1,0) != WAIT_TIMEOUT` — an auto-reset event poll. The A/B runs original-then-port on the SAME handle, so the first call consumes the signal and the second correctly returns `WAIT_TIMEOUT`. That is exactly the measured shape (ret-mismatch on sample 0, clean after, twice). No page restore un-consumes an event. |
+  | `0x005b8080` | **INVALID_WITNESS.** Calls `CloseHandle` — the A/B would **double-close a handle**. Only saved by never firing (0 calls, probes at 39k, hook installed and manifest `installed=1`). |
+  | `0x005b0f40` | genuinely never called |
+  | `0x005ad2e0` | `NO_PORT` — no TU on disk |
+  **`decomp2port.py` hardened:** new `IRREVERSIBLE_SIDE_EFFECT` refusal (event wait/signal,
+  critical sections, semaphores/mutexes, handle close, thread/file/registry mutation, message
+  sends, `Interlocked*`). `ShadowAB.h`'s LIMITS block already excluded this in prose; nothing
+  enforced it. Self-tested: both real bodies refuse naming the API, a no-API control accepts.
+
+- **⇒ THE RULE THIS BUCKET TAUGHT, measured on four independent rows:** a **group-of-N boot
+  falsifies BOTH verdict classes.** It produced false CRASHes (`0x0056fea0`, `0x00570090` were
+  never crashers) *and* false NO_SAMPLES (`0x005a6e10` was CLEAN, `0x005aeed0` was sampling).
+  **Re-run any group verdict at `--group 1` before believing it, in either direction.**
 
 ### E. Next slice of void ports **[RunRegion with two spans]**
 12 MULTI_REGION rows in `log/shadow_ab/worker_void_regions.txt` need a `RunRegion2`; 18 INDIRECT
