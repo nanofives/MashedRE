@@ -101,3 +101,24 @@ Private memory (heaps) is tracked only with `MASHED_SHADOW_PRIVATE=1` (optionall
 WoW64 bookkeeping killed the process the instant it went read-only). Results of the private
 probe and the 55-site batch: see the run log names in the next section.
 
+## Results — 55 tracked hand-ported C2 void sites (exe-image pages, threads running)
+
+Runs `batch_lane3_c2void2.txt` + `batch_lane3_c2void3.txt`, 18 boots, 4 cars, 60 s:
+
+| verdict | n | reading |
+|---|---|---|
+| CLEAN | **18** | 24/24 tracked samples each, touched pages + caller stack window + return identical |
+| DIVERGENT | 2 | `0x0055c2d0` 5/24: 1–2 bytes at caller-frame `+0x3c` (a float out-param written through a pointer; precision-class, same family as the float10 limit — not a logic verdict). `0x0047e9c0` 1/24 with `noise=0` at `.data+0x624048` while 23/24 and a separate 24/24 run were identical: contamination by a non-faulting second writer (the one case the discard rule cannot see) or a data-dependent path; **intermittent, unclassified** |
+| CRASH | 2 | `0x0055bd80` dies during load (phase 2, before any sample); `0x00560260` completes 24 clean samples then the game dies — its effects go to the HEAP, which is not restored while private tracking is off, so the double execution leaks state |
+| NO_SAMPLES | 11 | never fired in this scenario |
+| not booted | 22 | budget |
+
+The private-memory probe (`MASHED_SHADOW_PRIVATE=1`, `batch_trace24_private.txt`) still dies
+silently on the first sample; it stays opt-in and unexplained. That is the next thing to trace
+(`MASHED_SHADOW_PRIVATE=1 MASHED_SHADOW_TRACE=1`, one boot), because heap-writing functions
+like `0x00560260` need it to be safe.
+
+**What this means for promotion**: 18 C2 rows now carry effect-level A/B evidence with the
+hook installed at the real call site, where before they had none (void, no region). They need
+the caller/callee gate and the `re-classify` transaction — not done in this session.
+

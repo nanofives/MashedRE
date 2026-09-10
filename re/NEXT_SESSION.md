@@ -70,13 +70,26 @@ evidence; the shadow report is a stronger canonical-scenario diff but not a Frid
 keep C4 Frida-only. If amended: `shadow_gen.py --sweep re/parity/matchdiff_sweep_c3.csv --apply`
 (exclude audio; frontend/hud with `--phase any`), then `shadow_batch.py --cars 4 --hold 60`.
 
-### H. Lane 3 page-level write tracking — BUILT; read its first-run results **[verify]**
-`Core/ShadowTrack.h` (`ShadowAB::RunTracked`). 55 C2 void ports converted via
-`shadow_gen.py --tracked`; all Lane 2 ports use it. Results and limits:
-`re/analysis/lane3_write_tracking_20260910.md`. Next: run the 55 tracked C2 sites
-(`shadow_batch.py --group 8 --hold 60 --launch-arg=--cars --launch-arg=4` over the manifest
-rows with kind=tracked), triage DIVERGENT rows by `pages=`/`stk+` offsets, then the 293 C3
-void ports (`--sweep re/parity/matchdiff_sweep_c3.csv --tracked`).
+### H. Lane 3 — promote the 18 tracked-CLEAN C2 rows; finish the 55 **[mechanical]**
+`Core/ShadowTrack.h` works (`re/analysis/lane3_write_tracking_20260910.md`): 18 hand-ported void
+C2 sites are 24/24 effect-identical (touched pages + caller stack window + return). Gate-check
+them (Ghidra callers/callees, as for the 44) and run the re-classify transaction. Then boot the
+22 not-yet-sampled tracked sites (`shadow_batch.py --skip-done` over manifest rows kind=tracked,
+`--launch-arg=--cars --launch-arg=4 --hold 60`). Open: private-memory mode still dies silently
+on its first sample (`MASHED_SHADOW_PRIVATE=1 MASHED_SHADOW_TRACE=1`, one boot, read the last
+`hex prot` line); `0x0055bd80` crashes at load under the wrapper; `0x00560260` completes 24 clean
+samples then the game dies (heap effects not restored without private tracking); `0x0055c2d0`
+5/24 stack-window byte diffs (precision class); `0x0047e9c0` 1/24 intermittent page diff.
+
+### I. Lane 2 transcriber — grow the accept set **[tooling]**
+`re/tools/decomp2port.py` (design: `re/analysis/lane2_decomp2port_design_20260910.md`). Pilot:
+25/53 reachable unported C2 rows compiled into `mashedmod/src/mashed_re/Lane2/L2_<rva>.cpp`
+(opt-in `L2_` hooks, never installed by default); 3 of them crash alone (`0x00421960`,
+`0x004219c0`, `0x00495fe0`) — the open hazard class is register arguments the callee prototypes
+miss. Biggest refusal = indirect calls (22/53): add the RW device-slot vtable idiom table and
+disasm-based cc detection. Re-run: `decomp_pc.py --file rvas.txt --callees --port --json -o d.json`
+→ `decomp2port.py d.json --emit-dir Lane2 --apply --report r.tsv` → `build.bat` →
+`decomp2port.py --prune-failed log/build_lane2.txt --report r.tsv`.
 
 ### F. Carried over from 2026-09-09, untouched
 U-9087 E9-thunk guard decision (10 hooks never install, 4 C4); D-11069 (4 duplicate RVAs in two
@@ -88,7 +101,7 @@ playtest commits; `main` 270+ commits behind; 6 orphaned pool locks (`Mashed_poo
 ## Ready-to-paste kickoff
 
 > Resume the Mashed RE lane on `race/first-frame-parity`. Read `re/NEXT_SESSION.md`, then pick ONE
-> of A–H (G needs your rubric decision first). The shadow A/B mass lane is live (`re/tools/shadow_gen.py`, `shadow_batch.py`,
+> of A–I (G needs your rubric decision first). The shadow A/B mass lane is live (`re/tools/shadow_gen.py`, `shadow_batch.py`,
 > `shadow_ab_report.py`; write-up `re/analysis/shadow_lane_20260910.md`). Standing rules that bit
 > this session: run with `--cars 4 --hold 60` (a 1-car race never fires the contact solver); a
 > `Run()` DIVERGENT is not a defect until the body has been read for state it also writes; float10

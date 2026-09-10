@@ -109,6 +109,15 @@ side-effecting callees run twice during a sampled call, which perturbs the game 
 of the boot. Lane 3's write tracking is the fix for both (it compares effects, not returns);
 until then, `shadow_ab_report.py` verdicts on Lane 2 rows should be read with the body open.
 
+### Live result of the 20 void ports (with the A/B disarmed, `batch_control1/2.txt`)
+Installed alone, `0x00421960`, `0x004219c0` and `0x00495fe0` crash the game (two at boot, one
+26 s into the race); `0x00421980`, `0x0041f290`, `0x0041f060` run a full race. So 3 of the
+first 26 generated ports are wrong in a crashing way, and the `L2_` opt-in guard is what kept
+them out of every other session's boots. Two refusal rules came out of it (`CALLEE_REG_ARG`,
+`HIDDEN_REG_ARG`); neither catches these three, so at least one more hazard class is open —
+the ports' callees have 0-parameter stored prototypes, and the decompiler prototypes we thunk
+with may still miss register arguments the disassembly would show.
+
 ## What Lane 2 needs to scale
 
 1. **Reachability at pool scale.** The pre-screen covers 210 rows; the C2 pool is 3,900. This
