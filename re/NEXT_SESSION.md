@@ -52,22 +52,40 @@ Branch `race/first-frame-parity`, tree clean. Trackers: hooks.csv 5,930 rows
   the `RtlpWaitOnCriticalSection` frame and its owner thread id. (H)
 - **`0x0047e9c0` first-call write at `.data+0x624048`** the port omits — reproducible 3 boots,
   candidate real defect in the K24 root port. (H)
-- **Crashes to bisect**: `0x0056bce0` is **DONE** (C3, 48/48 — the caller-saved-register class).
-  The other eight were **screened for that same class and it is RULED OUT**: all 14 of their
-  callers were decompiled and grepped for `extraout_EAX/ECX/EDX` — zero hits. Remaining:
-  tracked `0x0056f350 0x0056fea0 0x00570090` (group), `0x0055bd80` (at load), `0x00560260`
-  (after 24 clean samples, heap effects unrestored), `0x0056f0a0`; Lane 2 generated
-  `0x00421960 0x004219c0 0x00495fe0`. (B/H/I)
-  - **ONE lead, different class:** `FUN_00570090` — the caller of BOTH `0x0056fea0` and
-    `0x0056f0a0` — decompiles with `extraout_ST1` / `extraout_ST1_00`, i.e. an **x87
-    stack-depth** dependency (memory `x87-st0-float10-fnptr-void-leak`). NOT confirmed: the
-    instruction after `0x00570222 call 0x56fea0` is `fld dword [esp+0x44]`, a plain memory load,
-    so the caller does not consume ST1 immediately. What to check: whether the original leaves
-    the x87 stack at a depth our port does not. **Recipe that worked on `0x0056bce0`, reuse it
-    verbatim:** (1) `--no-shadow` control to prove the installed port is the killer, not the A/B;
-    (2) zero-hook baseline to prove the scenario is clean; (3) run
-    `re/frida/poll_attach_catch_crash.py` in a background job alongside `shadow_batch.py` and
-    read the EIP. Step 3 is what turned a week-old "crash" into a one-line fix.
+- **Crashes to bisect — BISECTED, 5 of 9 resolved** (`re/analysis/shadow_crasher_bisect_20260910.md`).
+  The "group" `0x0056f350 0x0056fea0 0x00570090` had never been split; one site per boot plus a
+  `--no-shadow` control each gives:
+  | RVA | armed alone | control | verdict |
+  |---|---|---|---|
+  | `0x0056bce0` | CLEAN 48/48 | — | **C3, closed** |
+  | `0x0056fea0` | RACE_OK **NO_SAMPLES** | RACE_OK | **not a crasher** → NO_SAMPLES bucket |
+  | `0x00570090` | RACE_OK **NO_SAMPLES** | RACE_OK | **not a crasher** → NO_SAMPLES bucket |
+  | `0x0056f0a0` | CRASH 30s | **RACE_OK** | crash is in the **A/B window**, not the port |
+  | `0x0056f350` | CRASH 27s | CRASH 26s | crash is in the **installed port** |
+  - `0x0056f350`: EIP resolves **into our own `FUN_0056f350_impl` +0x177** (`RwpSolverCore10.obj`),
+    faulting on `test byte [esi+0x1c],8` with **`ESI = 0x3f7f97e3` = the float 0.9984**. A float
+    is reaching a pointer slot → **argument-shape defect**, not the register class (its only
+    caller `0x00560260` has no `extraout_*`). NEXT: capstone the original's prologue and read how
+    it really consumes its three args against the port's `(int, float*, float)` — do this BEFORE
+    touching the body.
+  - `0x0056f0a0`: control boots clean, so the port is fine; the armed boot NULL-writes at
+    `0x0056caf4` inside a **third** function, `FUN_0056caa0`. Suspect the A/B window: a side
+    effect outside the tracked span that the restore cannot undo (`ShadowAB.h` LIMITS names this
+    exactly). NEXT: read the body for an out-of-span side effect — if it has one this site is not
+    a RunRegion candidate at all and should leave the lane.
+  - **The caller-saved-register class is RULED OUT for the other eight**: all 14 of their callers
+    decompiled and grepped for `extraout_EAX/ECX/EDX` — zero hits. One `extraout_ST1` /
+    `extraout_ST1_00` in `FUN_00570090` (x87 stack depth) is now moot, since neither site it
+    calls is a crasher.
+  - Still untriaged: `0x0055bd80` (at load), `0x00560260` (24 clean samples then heap effects
+    unrestored), Lane 2 generated `0x00421960 0x004219c0 0x00495fe0`. (B/H/I)
+  - **Reusable recipe — this is the part that mattered:** (1) `--no-shadow` control, to decide
+    port-vs-witness; (2) zero-hook baseline, for a passing control; (3)
+    `re/frida/poll_attach_catch_crash.py` in a background job **alongside** `shadow_batch.py`,
+    then resolve the EIP against `mashed_re_dev.map` at preferred base `0x10000000`. WER produced
+    **no** minidump for any of these, so waiting on one finds nothing.
+  - **Harness caveat:** `--no-shadow` sets `MASHED_NO_SELFTEST=1`, so a control logs no samples
+    by construction. Only an **armed** RACE_OK with n=0 means "never fired".
 - **Precision-class divergences**: `0x0055c2d0` (5/24 caller-frame bytes), `0x0055b750`
   (13/48 region), 5 float10 returns. (C)
 - **Lane 1 C3→C4 (387 sites)** waits on the rubric wording decision (G).
