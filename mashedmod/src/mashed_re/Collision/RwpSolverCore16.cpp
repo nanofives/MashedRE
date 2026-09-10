@@ -28,6 +28,7 @@
 //    ONE array. Ported as `neg[3]` (=local_18/14/10) and `outc[3]` (=local_c/8/4).
 // ============================================================================
 #include "../Core/HookSystem.h"
+#include "../Core/ShadowAB.h"
 #include <cmath>       // fabsf (ABS)
 
 namespace mashed_re {
@@ -51,9 +52,8 @@ extern "C" void* __cdecl FUN_0055c000(int shape,void* mtx,float* dir,float* out)
 // ---------------------------------------------------------------------------
 // 0x005735f0  out = p1 + cross(p1[4..6], p3 - p2)   (zeroes out on null p1)
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl
-FUN_005735f0(float *param_1,float *param_2,float *param_3,float *param_4)
-{
+extern "C" void __cdecl FUN_005735f0(float *param_1,float *param_2,float *param_3,float *param_4);
+static void __cdecl FUN_005735f0_impl(float *param_1,float *param_2,float *param_3,float *param_4) {
   float fVar1;
   float fVar2;
   float fVar3;
@@ -86,9 +86,8 @@ FUN_005735f0(float *param_1,float *param_2,float *param_3,float *param_4)
 // 0x00575120  contact insert: reject if within L1(param_4) of the last/first
 //             existing contact; else append (xyz, id, clear +0x1c) and bump count.
 // ---------------------------------------------------------------------------
-extern "C" undefined4 __cdecl
-FUN_00575120(float *param_1,undefined4 param_2,int param_3,float param_4)
-{
+extern "C" undefined4 __cdecl FUN_00575120(float *param_1,undefined4 param_2,int param_3,float param_4);
+static undefined4 __cdecl FUN_00575120_impl(float *param_1,undefined4 param_2,int param_3,float param_4) {
   int iVar1;
   uint uVar2;
   float fVar3;
@@ -125,9 +124,8 @@ FUN_00575120(float *param_1,undefined4 param_2,int param_3,float param_4)
 // ---------------------------------------------------------------------------
 // 0x005751f0  |cross(p3-p1, p2-p1)|² / (|p3-p1|²·|p3-p1|² + 1)   — float10 return
 // ---------------------------------------------------------------------------
-extern "C" float10 __cdecl
-FUN_005751f0(float *param_1,float *param_2,float *param_3)
-{
+extern "C" float10 __cdecl FUN_005751f0(float *param_1,float *param_2,float *param_3);
+static float10 __cdecl FUN_005751f0_impl(float *param_1,float *param_2,float *param_3) {
   float fVar1;
   float fVar2;
   float fVar3;
@@ -156,9 +154,8 @@ FUN_005751f0(float *param_1,float *param_2,float *param_3)
 // 0x00576640  broadphase pair generation: emit (bodyA,bodyB) index pairs whose
 //             AABBs overlap within param_1[0x1c], honoring the two filter matrices.
 // ---------------------------------------------------------------------------
-extern "C" uint __cdecl
-FUN_00576640(int *param_1,uint param_2,uint param_3,int param_4,int param_5)
-{
+extern "C" uint __cdecl FUN_00576640(int *param_1,uint param_2,uint param_3,int param_4,int param_5);
+static uint __cdecl FUN_00576640_impl(int *param_1,uint param_2,uint param_3,int param_4,int param_5) {
   float fVar1;
   int iVar2;
   int *piVar3;
@@ -239,9 +236,8 @@ FUN_00576640(int *param_1,uint param_2,uint param_3,int param_4,int param_5)
 // 0x00579b50  coplanarity test: |plane_normal·(p1[3..5] - manifold[0xc..0x14])| <
 //             tol·0.1 + max(|manifold+0x18|,|p1[6]|)·0.5  ?  1 : 0
 // ---------------------------------------------------------------------------
-extern "C" undefined4 __cdecl
-FUN_00579b50(float *param_1,int param_2,float param_3)
-{
+extern "C" undefined4 __cdecl FUN_00579b50(float *param_1,int param_2,float param_3);
+static undefined4 __cdecl FUN_00579b50_impl(float *param_1,int param_2,float param_3) {
   float fVar1;
 
   if (*(int *)(param_2 + 0xac) == 0) {
@@ -264,9 +260,8 @@ FUN_00579b50(float *param_1,int param_2,float param_3)
 // 0x00579c00  weighted centroid of the selected simplex features; returns 0 if
 //             the min barycentric weight is below -eps of the max, else 1.
 // ---------------------------------------------------------------------------
-extern "C" undefined4 __cdecl
-FUN_00579c00(float *param_1,uint param_2,int param_3,float *param_4)
-{
+extern "C" undefined4 __cdecl FUN_00579c00(float *param_1,uint param_2,int param_3,float *param_4);
+static undefined4 __cdecl FUN_00579c00_impl(float *param_1,uint param_2,int param_3,float *param_4) {
   float fVar1;
   float fVar2;
   float *pfVar3;
@@ -334,9 +329,8 @@ FUN_00579c00(float *param_1,uint param_2,int param_3,float *param_4)
 //             optional offset; returns dot(dir, result) as float10.
 //             Contiguous vec3 out-params: neg[3]=local_18/14/10, outc[3]=local_c/8/4.
 // ---------------------------------------------------------------------------
-extern "C" float10 __cdecl
-FUN_00579d50(float *param_1,float *param_2,int param_3,int *param_4,float *param_5)
-{
+extern "C" float10 __cdecl FUN_00579d50(float *param_1,float *param_2,int param_3,int *param_4,float *param_5);
+static float10 __cdecl FUN_00579d50_impl(float *param_1,float *param_2,int param_3,int *param_4,float *param_5) {
   int iVar1;
   void *uVar2;
   void *uVar3;
@@ -535,22 +529,79 @@ FUN_00579ee0(float *param_1)
 // ---------------------------------------------------------------------------
 // 0x0057ae20  offset accessor: return p + 0x30
 // ---------------------------------------------------------------------------
-extern "C" int __cdecl
-FUN_0057ae20(int param_1)
-{
+extern "C" int __cdecl FUN_0057ae20(int param_1);
+static int __cdecl FUN_0057ae20_impl(int param_1) {
   return param_1 + 0x30;
 }
 
 // --- gta-reversed-style hook registration — CLUSTER 16. ---
+// --- 0x005735f0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// OUTPUT REGION: 0xc bytes at (param_4) -- supplied by hand via --region;
+// the claim that this span covers every write MUST be backed by the analysis note.
+extern "C" void __cdecl FUN_005735f0(float *param_1,float *param_2,float *param_3,float *param_4) {
+    SHADOW_AB_COUNTER(ab, "FUN_005735f0", 0x005735f0u, ShadowAB::kPhaseRace);
+    ShadowAB::RunRegion(ab, FUN_005735f0_impl, reinterpret_cast<void*>(param_4), 0xc, param_1, param_2, param_3, param_4);
+}
 RH_ScopedInstall(FUN_005735f0, 0x005735f0);
+// --- 0x00575120 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" undefined4 __cdecl FUN_00575120(float *param_1,undefined4 param_2,int param_3,float param_4) {
+    SHADOW_AB_COUNTER(ab, "FUN_00575120", 0x00575120u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00575120_impl, param_1, param_2, param_3, param_4);
+}
 RH_ScopedInstall(FUN_00575120, 0x00575120);
+// --- 0x005751f0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" float10 __cdecl FUN_005751f0(float *param_1,float *param_2,float *param_3) {
+    SHADOW_AB_COUNTER(ab, "FUN_005751f0", 0x005751f0u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_005751f0_impl, param_1, param_2, param_3);
+}
 RH_ScopedInstall(FUN_005751f0, 0x005751f0);
+// --- 0x00576640 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" uint __cdecl FUN_00576640(int *param_1,uint param_2,uint param_3,int param_4,int param_5) {
+    SHADOW_AB_COUNTER(ab, "FUN_00576640", 0x00576640u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00576640_impl, param_1, param_2, param_3, param_4, param_5);
+}
 RH_ScopedInstall(FUN_00576640, 0x00576640);
+// --- 0x00579b50 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" undefined4 __cdecl FUN_00579b50(float *param_1,int param_2,float param_3) {
+    SHADOW_AB_COUNTER(ab, "FUN_00579b50", 0x00579b50u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00579b50_impl, param_1, param_2, param_3);
+}
 RH_ScopedInstall(FUN_00579b50, 0x00579b50);
+// --- 0x00579c00 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" undefined4 __cdecl FUN_00579c00(float *param_1,uint param_2,int param_3,float *param_4) {
+    SHADOW_AB_COUNTER(ab, "FUN_00579c00", 0x00579c00u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00579c00_impl, param_1, param_2, param_3, param_4);
+}
 RH_ScopedInstall(FUN_00579c00, 0x00579c00);
+// --- 0x00579d50 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" float10 __cdecl FUN_00579d50(float *param_1,float *param_2,int param_3,int *param_4,float *param_5) {
+    SHADOW_AB_COUNTER(ab, "FUN_00579d50", 0x00579d50u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00579d50_impl, param_1, param_2, param_3, param_4, param_5);
+}
 RH_ScopedInstall(FUN_00579d50, 0x00579d50);
 RH_ScopedInstall(FUN_00579e50, 0x00579e50);
 RH_ScopedInstall(FUN_00579ee0, 0x00579ee0);
+// --- 0x0057ae20 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" int __cdecl FUN_0057ae20(int param_1) {
+    SHADOW_AB_COUNTER(ab, "FUN_0057ae20", 0x0057ae20u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_0057ae20_impl, param_1);
+}
 RH_ScopedInstall(FUN_0057ae20, 0x0057ae20);
 
 }  // namespace Collision

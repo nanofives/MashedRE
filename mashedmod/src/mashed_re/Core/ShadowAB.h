@@ -35,6 +35,23 @@
 //   * The original must be re-entrant with respect to itself for the duration of the call.
 //     A function whose side effects are irreversible (file/COM/handle) is NOT a candidate
 //     for RunRegion — restoring a memory region does not un-write a file.
+//   * Run() executes the function TWICE on the same inputs and compares only the return.
+//     A NON-IDEMPOTENT function (CRT rand(), pool allocators, counters) legitimately
+//     returns two different values, so a DIVERGENT row from Run() means "port differs OR
+//     function is stateful" until a reviewer has read the body. Measured 2026-09-10:
+//     FUN_00564310 (octree octant pick) diverged 20/48 purely because it calls rand()
+//     (re/analysis/shadow_lane_20260910.md). CLEAN rows are not weakened by this.
+//   * PATCHBYTE has THREE shapes, not two. installed=E9/uninstalled!=E9 is the intended
+//     proof. installed!=E9 with both bytes equal means the hook was NEVER installed and the
+//     wrapper was reached through OUR ported caller — the code at the RVA is the untouched
+//     original, so the comparison is still real (re/tools/shadow_ab_report.py labels it
+//     "A/B-IS-REAL(hook-not-installed)"). E9 on both sides is the vacuous case.
+//
+// ─── MASS GENERATION ────────────────────────────────────────────────────────────────
+//   re/tools/shadow_gen.py rewrites an installed port into `Name_impl` + this wrapper
+//   mechanically (return-value ports; void ports need --region from the analysis note).
+//   re/tools/shadow_batch.py boots groups of sites and bisects crashers;
+//   re/tools/shadow_ab_report.py turns shadow_ab.log into per-function verdicts.
 //
 // ─── USAGE ──────────────────────────────────────────────────────────────────────────
 //   // return-value leaf

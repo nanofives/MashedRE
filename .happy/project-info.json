@@ -1,48 +1,31 @@
 {
-  "title": "Mashed RE — M2 Faithful Race (tooling + evidence integrity)",
-  "updatedAt": "2026-09-09T22:40:00Z",
+  "title": "Mashed RE — M2 Faithful Race (shadow A/B mass lane)",
+  "updatedAt": "2026-09-10T01:00:00Z",
   "sections": [
     {
       "heading": "Milestone status",
       "fields": [
         { "label": "Active phase", "value": "M2 Faithful Race — critical path: statediff residual", "kind": "text" },
-        { "label": "D1 renderer", "value": "librw IS default since 2026-08-19 (ROADMAP §D1 drift fixed)", "kind": "text" },
+        { "label": "D1 renderer", "value": "librw IS default since 2026-08-19", "kind": "text" },
         { "label": "D2 physics", "value": "MASHED_REAL_PHYSICS still opt-in; blocked on A8 slip deficit", "kind": "text" },
-        { "label": "Session close", "value": "2026-09-09 — tree clean @ 466e66f3, 21 commits, no strays", "kind": "text" }
+        { "label": "Session close", "value": "2026-09-10 — shadow lane sweep: 94 sites, 23 boots, 44 rows C2→C3", "kind": "text" }
       ]
     },
     {
       "heading": "Port metrics",
       "fields": [
         { "label": "C4 verified", "value": 184, "kind": "number" },
-        { "label": "C3", "value": 922, "kind": "number" },
+        { "label": "C3", "value": 966, "kind": "number" },
         { "label": "Total hooks", "value": 5930, "kind": "number" },
-        { "label": "Trackers", "value": "DEFERRED 677 · UNCERTAINTIES 3040", "kind": "text" }
+        { "label": "Trackers", "value": "DEFERRED 677 · UNCERTAINTIES 3068 (28 naming/intent filed today)", "kind": "text" }
       ]
     },
     {
-      "heading": "New instruments (2026-09-09)",
+      "heading": "Shadow A/B mass lane (2026-09-10)",
       "fields": [
-        { "label": "Shadow A/B", "value": "Core/ShadowAB.h — in-process, no Frida, no arg_type; 304 samples / 6 fns / 1 boot", "kind": "text" },
-        { "label": "Operand check", "value": "matchdiff — static .data correspondence; C3/C4 932/1086, C2 176/185", "kind": "text" },
-        { "label": "TTD replay", "value": "asi:<Export> backend works (FastSqrt 128/128); RECORDING blocked by Defender ASR", "kind": "text" },
-        { "label": "Build", "value": "per-TU obj cache: 1-file edit ~18 s (was ~2 min)", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "Open decisions (blocking)",
-      "fields": [
-        { "label": "U-9087", "value": "E9-thunk guard: 10 hooks never install (4 C4). Fix re-enables never-run hooks — needs a call", "kind": "text" },
-        { "label": "D-11069", "value": "4 duplicate RVAs whose two copies live in different build targets", "kind": "text" },
-        { "label": "Ready to work", "value": ["D-10793 TransformMatrixUpdate: pos.x/pos.z wrong, pos.y correct", "52 operand candidates (start with the 9 at ratio<0.5)", "grow the shadow lane — adoption is the throughput limit"], "kind": "list" }
-      ]
-    },
-    {
-      "heading": "Standing rules",
-      "fields": [
-        { "label": "Shadow lane", "value": "NEVER --hooks all (phase-2 wedge); check reachability with MASHED_COUNT_RVAS first", "kind": "text" },
-        { "label": "Evidence", "value": "A clean shadow/operand run is evidence for re-classify, never an automatic C-level", "kind": "text" },
-        { "label": "Default-build rule", "value": "No MASHED_* vars at ship; all gates env-var-free", "kind": "text" }
+        { "label": "Tools", "value": "re/tools/shadow_gen.py · shadow_batch.py · shadow_ab_report.py", "kind": "text" },
+        { "label": "Sweep", "value": ["44 CLEAN → C3", "10 DIVERGENT, 0 established defects (7 non-idempotent, 2 aliasing, 1 candidate 0x0055b750)", "5 float10 lane-limit", "1 CRASH 0x0056bce0 (A/B armed only)", "29 NO_SAMPLES (needs richer scenario)"], "kind": "list" },
+        { "label": "Next", "value": ["A: gate-check + promote 5 region CLEAN rows", "B: 0x0056bce0 crash — check original ABI", "C: RunRegion re-test of 0x00577be0/cb0 + 0x0055b750"], "kind": "list" }
       ]
     }
   ]

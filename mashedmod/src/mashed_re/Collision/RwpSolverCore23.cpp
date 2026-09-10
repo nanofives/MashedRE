@@ -67,6 +67,7 @@
 //     FUN_00560260 does not read them.
 // ============================================================================
 #include "../Core/HookSystem.h"
+#include "../Core/ShadowAB.h"
 
 namespace mashed_re {
 namespace Collision {
@@ -167,8 +168,8 @@ extern "C" void __cdecl FUN_0047e9c0(int param_1, undefined4 param_2);   // K24 
 // ---------------------------------------------------------------------------
 // 0x0055fe50  Broadphase kick — 10-arg call to FUN_0055a1f0 (K3).
 // ---------------------------------------------------------------------------
-extern "C" int __cdecl FUN_0055fe50(int param_1)
-{
+extern "C" int __cdecl FUN_0055fe50(int param_1);
+static int __cdecl FUN_0055fe50_impl(int param_1) {
   FUN_0055a1f0(**(undefined4 **)(param_1 + 0x70),*(undefined4 *)(param_1 + 0x74),
                *(undefined4 *)(param_1 + 0x7c),(undefined4)(param_1 + 0x78),
                *(undefined4 *)(param_1 + 0x80),*(undefined4 *)(param_1 + 0x88),
@@ -181,8 +182,8 @@ extern "C" int __cdecl FUN_0055fe50(int param_1)
 // 0x0055fea0  Two-loop body-array pass — seed active-body manifold headers,
 //   clear per-joint +0x2c, then pump pairs via FUN_00568990 (K21).
 // ---------------------------------------------------------------------------
-extern "C" int __cdecl FUN_0055fea0(int param_1)
-{
+extern "C" int __cdecl FUN_0055fea0(int param_1);
+static int __cdecl FUN_0055fea0_impl(int param_1) {
   int *piVar1;
   uint uVar2;
   int iVar3;
@@ -229,8 +230,8 @@ extern "C" int __cdecl FUN_0055fea0(int param_1)
 // ---------------------------------------------------------------------------
 // 0x0055ff70  Guard → world sweep FUN_0056bb30 (K21) when world+0xc set.
 // ---------------------------------------------------------------------------
-extern "C" int __cdecl FUN_0055ff70(int param_1)
-{
+extern "C" int __cdecl FUN_0055ff70(int param_1);
+static int __cdecl FUN_0055ff70_impl(int param_1) {
   if (*(int *)(*(int *)(param_1 + 0x70) + 0xc) != 0) {
     FUN_0056bb30(param_1);
   }
@@ -240,8 +241,8 @@ extern "C" int __cdecl FUN_0055ff70(int param_1)
 // ---------------------------------------------------------------------------
 // 0x0055ff90  Arena mark + island-active-flag walk.
 // ---------------------------------------------------------------------------
-extern "C" int __cdecl FUN_0055ff90(int param_1)
-{
+extern "C" int __cdecl FUN_0055ff90(int param_1);
+static int __cdecl FUN_0055ff90_impl(int param_1) {
   ushort uVar1;
   uint uVar2;
   int iVar3;
@@ -351,8 +352,8 @@ LAB_005601b3:
 //   (count) and param_8+0x10=frame[29] (base), then derefs base+0x14.
 //   14-arg __cdecl call (arg14 = ctx+0x408 vestigial — FUN_00560260 reads 13).
 // ---------------------------------------------------------------------------
-extern "C" int __cdecl FUN_00561040(int param_1)
-{
+extern "C" int __cdecl FUN_00561040(int param_1);
+static int __cdecl FUN_00561040_impl(int param_1) {
   undefined4 *puVar1;
   int iVar2;
   uint uVar3;
@@ -428,8 +429,8 @@ extern "C" int __cdecl FUN_00561040(int param_1)
 // ---------------------------------------------------------------------------
 // 0x00561c50  Pair-record AABB gate + active-bit set (FUN_0055ac00, DONE).
 // ---------------------------------------------------------------------------
-extern "C" int __cdecl FUN_00561c50(int param_1)
-{
+extern "C" int __cdecl FUN_00561c50(int param_1);
+static int __cdecl FUN_00561c50_impl(int param_1) {
   int iVar1;
   float fVar2;
   float fVar3;
@@ -508,14 +509,14 @@ extern "C" int __cdecl FUN_00561c50(int param_1)
 // ---------------------------------------------------------------------------
 // 0x00561e60 / 0x00561e80  1-line wrappers → K11 FUN_00568fd0 / FUN_00568dd0.
 // ---------------------------------------------------------------------------
-extern "C" int __cdecl FUN_00561e60(int param_1)
-{
+extern "C" int __cdecl FUN_00561e60(int param_1);
+static int __cdecl FUN_00561e60_impl(int param_1) {
   FUN_00568fd0(*(undefined4 *)(param_1 + 0xc0),(undefined4)(param_1 + 0xc4));
   return param_1;
 }
 
-extern "C" int __cdecl FUN_00561e80(int param_1)
-{
+extern "C" int __cdecl FUN_00561e80(int param_1);
+static int __cdecl FUN_00561e80_impl(int param_1) {
   FUN_00568dd0(*(undefined4 *)(param_1 + 0xc0),(undefined4)(param_1 + 0xc4));
   return param_1;
 }
@@ -534,8 +535,8 @@ extern "C" int __cdecl FUN_00561e80(int param_1)
 //       FUN_0056be80 (K6) + body +0x1c apply loop.
 //   See the header note for the INT-counter / buffer-array / KV-frame decisions.
 // ---------------------------------------------------------------------------
-extern "C" int __cdecl FUN_00561390(int param_1)
-{
+extern "C" int __cdecl FUN_00561390(int param_1);
+static int __cdecl FUN_00561390_impl(int param_1) {
   float fVar1; float fVar2; float fVar3; float fVar4; float fVar5; float fVar6; float fVar7;
   ushort uVar8;
   undefined4 *puVar9;
@@ -882,14 +883,77 @@ extern "C" void __cdecl FUN_0047e9c0(int param_1, undefined4 param_2)
 
 // --- gta-reversed-style hook registration — CLUSTER 23 (9/9) + K24 root. ---
 RH_ScopedInstall(FUN_0047e9c0, 0x0047e9c0);
+// --- 0x00561390 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" int __cdecl FUN_00561390(int param_1) {
+    SHADOW_AB_COUNTER(ab, "FUN_00561390", 0x00561390u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00561390_impl, param_1);
+}
 RH_ScopedInstall(FUN_00561390, 0x00561390);
+// --- 0x0055fe50 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" int __cdecl FUN_0055fe50(int param_1) {
+    SHADOW_AB_COUNTER(ab, "FUN_0055fe50", 0x0055fe50u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_0055fe50_impl, param_1);
+}
 RH_ScopedInstall(FUN_0055fe50, 0x0055fe50);
+// --- 0x0055fea0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" int __cdecl FUN_0055fea0(int param_1) {
+    SHADOW_AB_COUNTER(ab, "FUN_0055fea0", 0x0055fea0u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_0055fea0_impl, param_1);
+}
 RH_ScopedInstall(FUN_0055fea0, 0x0055fea0);
+// --- 0x0055ff70 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" int __cdecl FUN_0055ff70(int param_1) {
+    SHADOW_AB_COUNTER(ab, "FUN_0055ff70", 0x0055ff70u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_0055ff70_impl, param_1);
+}
 RH_ScopedInstall(FUN_0055ff70, 0x0055ff70);
+// --- 0x0055ff90 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" int __cdecl FUN_0055ff90(int param_1) {
+    SHADOW_AB_COUNTER(ab, "FUN_0055ff90", 0x0055ff90u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_0055ff90_impl, param_1);
+}
 RH_ScopedInstall(FUN_0055ff90, 0x0055ff90);
+// --- 0x00561040 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" int __cdecl FUN_00561040(int param_1) {
+    SHADOW_AB_COUNTER(ab, "FUN_00561040", 0x00561040u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00561040_impl, param_1);
+}
 RH_ScopedInstall(FUN_00561040, 0x00561040);
+// --- 0x00561c50 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" int __cdecl FUN_00561c50(int param_1) {
+    SHADOW_AB_COUNTER(ab, "FUN_00561c50", 0x00561c50u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00561c50_impl, param_1);
+}
 RH_ScopedInstall(FUN_00561c50, 0x00561c50);
+// --- 0x00561e60 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" int __cdecl FUN_00561e60(int param_1) {
+    SHADOW_AB_COUNTER(ab, "FUN_00561e60", 0x00561e60u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00561e60_impl, param_1);
+}
 RH_ScopedInstall(FUN_00561e60, 0x00561e60);
+// --- 0x00561e80 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" int __cdecl FUN_00561e80(int param_1) {
+    SHADOW_AB_COUNTER(ab, "FUN_00561e80", 0x00561e80u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00561e80_impl, param_1);
+}
 RH_ScopedInstall(FUN_00561e80, 0x00561e80);
 
 }  // namespace Collision

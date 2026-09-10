@@ -13,6 +13,7 @@
 // exactly-faithful C++ form, or that carry an ambiguous decomp type, are marked
 // // [VERIFY-DISASM]; x87 extended-precision (float10/double) intermediates are marked // [X87].
 #include "../Core/HookSystem.h"
+#include "../Core/ShadowAB.h"
 #include <cmath>
 
 namespace mashed_re {
@@ -177,9 +178,8 @@ extern "C" void __cdecl FUN_00563f60(int param_1,ushort param_2)
 //             K3 broadphase callers FUN_0055a1f0 (@0x0055a331) / FUN_0055a9a0
 //             (@0x0055aa08) consume it. Was ported `void` at K1.
 // ---------------------------------------------------------------------------
-extern "C" uint __cdecl FUN_00564040(int param_1,ushort param_2,int param_3,int param_4,int param_5)
-
-{
+extern "C" uint __cdecl FUN_00564040(int param_1,ushort param_2,int param_3,int param_4,int param_5);
+static uint __cdecl FUN_00564040_impl(int param_1,ushort param_2,int param_3,int param_4,int param_5) {
   ushort uVar1;
   ushort uVar2;
   int iVar3;
@@ -224,9 +224,8 @@ extern "C" uint __cdecl FUN_00564040(int param_1,ushort param_2,int param_3,int 
 // 0x005641b0  AABB-containment test with hysteresis. param_1/param_2 are 8-float AABBs
 //             (min at +0..+8, max at +0x10..+0x18).
 // ---------------------------------------------------------------------------
-extern "C" bool __cdecl FUN_005641b0(float *param_1,float *param_2)
-
-{
+extern "C" bool __cdecl FUN_005641b0(float *param_1,float *param_2);
+static bool __cdecl FUN_005641b0_impl(float *param_1,float *param_2) {
   return (byte)((*param_1 < param_2[4] * _DAT_005e5418 + *param_2 * _DAT_005cc318) +
                 ((param_1[1] < param_2[5] * _DAT_005e5418 + param_2[1] * _DAT_005cc318) +
                 (param_1[2] < param_2[6] * _DAT_005e5418 + param_2[2] * _DAT_005cc318) * '\x02') *
@@ -240,9 +239,8 @@ extern "C" bool __cdecl FUN_005641b0(float *param_1,float *param_2)
 // 0x00564310  Selects an octree octant (3-bit code in [0..7]) where param_2 (loose AABB)
 //             overlaps param_3 (parent AABB). Uses CRT rand (via s_rand_orig thunk).
 // ---------------------------------------------------------------------------
-extern "C" uint __cdecl FUN_00564310(float *param_1,float *param_2,float *param_3)
-
-{
+extern "C" uint __cdecl FUN_00564310(float *param_1,float *param_2,float *param_3);
+static uint __cdecl FUN_00564310_impl(float *param_1,float *param_2,float *param_3) {
   float fVar1;
   float fVar2;
   float fVar3;
@@ -335,9 +333,8 @@ extern "C" void __cdecl FUN_005651b0(int param_1,uint param_2,uint param_3)
 // 0x00565200  Reads per-primitive tight AABB at this + (param_2 & 0xffff)*0x20, expanded by
 //             the scalar at this + 0xc014.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_00565200(int param_1,uint param_2,float *param_3)
-
-{
+extern "C" void __cdecl FUN_00565200(int param_1,uint param_2,float *param_3);
+static void __cdecl FUN_00565200_impl(int param_1,uint param_2,float *param_3) {
   float *pfVar1;
 
   pfVar1 = (float *)((param_2 & 0xffff) * 0x20 + param_1);
@@ -353,18 +350,16 @@ extern "C" void __cdecl FUN_00565200(int param_1,uint param_2,float *param_3)
 // ---------------------------------------------------------------------------
 // 0x00565550  Trivial accessor: return *(ushort*)(this + 0xb810 + (param_2 & 0xffff)*2).
 // ---------------------------------------------------------------------------
-extern "C" undefined2 __cdecl FUN_00565550(int param_1,uint param_2)
-
-{
+extern "C" undefined2 __cdecl FUN_00565550(int param_1,uint param_2);
+static undefined2 __cdecl FUN_00565550_impl(int param_1,uint param_2) {
   return *(undefined2 *)(param_1 + 0xb810 + (param_2 & 0xffff) * 2);
 }
 
 // ---------------------------------------------------------------------------
 // 0x00565ef0  Per-axis min/max merge of two 8-float AABBs (min +0, max +4) into param_1.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_00565ef0(float *param_1,float *param_2,float *param_3)
-
-{
+extern "C" void __cdecl FUN_00565ef0(float *param_1,float *param_2,float *param_3);
+static void __cdecl FUN_00565ef0_impl(float *param_1,float *param_2,float *param_3) {
   float fVar1;
 
   if (param_2[4] < param_3[4] == (param_2[4] == param_3[4])) {
@@ -413,9 +408,8 @@ extern "C" void __cdecl FUN_00565ef0(float *param_1,float *param_2,float *param_
 // ---------------------------------------------------------------------------
 // 0x00565fa0  Builds an AABB spanning param_2 and param_3, inflated by param_4.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_00565fa0(float *param_1,float *param_2,float *param_3,float param_4)
-
-{
+extern "C" void __cdecl FUN_00565fa0(float *param_1,float *param_2,float *param_3,float param_4);
+static void __cdecl FUN_00565fa0_impl(float *param_1,float *param_2,float *param_3,float param_4) {
   float fVar1;
 
   if (*param_3 <= *param_2) {
@@ -450,9 +444,8 @@ extern "C" void __cdecl FUN_00565fa0(float *param_1,float *param_2,float *param_
 // 0x00566200  Transforms an AABB (param_2) by a 4x3 matrix (param_3) into a re-fit AABB
 //             (param_1); center/extent form scaled by _DAT_005cc32c.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_00566200(float *param_1,float *param_2,float *param_3)
-
-{
+extern "C" void __cdecl FUN_00566200(float *param_1,float *param_2,float *param_3);
+static void __cdecl FUN_00566200_impl(float *param_1,float *param_2,float *param_3) {
   float fVar1;
   float fVar2;
   float fVar3;
@@ -487,9 +480,8 @@ extern "C" void __cdecl FUN_00566200(float *param_1,float *param_2,float *param_
 // 0x005667c0  Normalizes vec3 param_2 into param_1 (guarded by threshold PTR_DAT_005ceabc);
 //             returns the x87 float10 scaled magnitude.
 // ---------------------------------------------------------------------------
-extern "C" float10 __cdecl FUN_005667c0(float *param_1,float *param_2)
-
-{
+extern "C" float10 __cdecl FUN_005667c0(float *param_1,float *param_2);
+static float10 __cdecl FUN_005667c0_impl(float *param_1,float *param_2) {
   float10 fVar1;
   float10 fVar2;
 
@@ -661,17 +653,88 @@ extern "C" void __cdecl FUN_00568560(int *param_1,int param_2,int *param_3,undef
 RH_ScopedInstall(FUN_005601f0, 0x005601f0);
 RH_ScopedInstall(FUN_00563e70, 0x00563e70);
 RH_ScopedInstall(FUN_00563f60, 0x00563f60);
+// --- 0x00564040 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" uint __cdecl FUN_00564040(int param_1,ushort param_2,int param_3,int param_4,int param_5) {
+    SHADOW_AB_COUNTER(ab, "FUN_00564040", 0x00564040u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00564040_impl, param_1, param_2, param_3, param_4, param_5);
+}
 RH_ScopedInstall(FUN_00564040, 0x00564040);
+// --- 0x005641b0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" bool __cdecl FUN_005641b0(float *param_1,float *param_2) {
+    SHADOW_AB_COUNTER(ab, "FUN_005641b0", 0x005641b0u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_005641b0_impl, param_1, param_2);
+}
 RH_ScopedInstall(FUN_005641b0, 0x005641b0);
+// --- 0x00564310 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" uint __cdecl FUN_00564310(float *param_1,float *param_2,float *param_3) {
+    SHADOW_AB_COUNTER(ab, "FUN_00564310", 0x00564310u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00564310_impl, param_1, param_2, param_3);
+}
 RH_ScopedInstall(FUN_00564310, 0x00564310);
 RH_ScopedInstall(FUN_00565120, 0x00565120);
 RH_ScopedInstall(FUN_00565160, 0x00565160);
 RH_ScopedInstall(FUN_005651b0, 0x005651b0);
+// --- 0x00565200 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// OUTPUT REGION: 0x1c bytes at (param_3) -- supplied by hand via --region;
+// the claim that this span covers every write MUST be backed by the analysis note.
+extern "C" void __cdecl FUN_00565200(int param_1,uint param_2,float *param_3) {
+    SHADOW_AB_COUNTER(ab, "FUN_00565200", 0x00565200u, ShadowAB::kPhaseRace);
+    ShadowAB::RunRegion(ab, FUN_00565200_impl, reinterpret_cast<void*>(param_3), 0x1c, param_1, param_2, param_3);
+}
 RH_ScopedInstall(FUN_00565200, 0x00565200);
+// --- 0x00565550 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" undefined2 __cdecl FUN_00565550(int param_1,uint param_2) {
+    SHADOW_AB_COUNTER(ab, "FUN_00565550", 0x00565550u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00565550_impl, param_1, param_2);
+}
 RH_ScopedInstall(FUN_00565550, 0x00565550);
+// --- 0x00565ef0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// OUTPUT REGION: 0x1c bytes at (param_1) -- supplied by hand via --region;
+// the claim that this span covers every write MUST be backed by the analysis note.
+extern "C" void __cdecl FUN_00565ef0(float *param_1,float *param_2,float *param_3) {
+    SHADOW_AB_COUNTER(ab, "FUN_00565ef0", 0x00565ef0u, ShadowAB::kPhaseRace);
+    ShadowAB::RunRegion(ab, FUN_00565ef0_impl, reinterpret_cast<void*>(param_1), 0x1c, param_1, param_2, param_3);
+}
 RH_ScopedInstall(FUN_00565ef0, 0x00565ef0);
+// --- 0x00565fa0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// OUTPUT REGION: 0x1c bytes at (param_1) -- supplied by hand via --region;
+// the claim that this span covers every write MUST be backed by the analysis note.
+extern "C" void __cdecl FUN_00565fa0(float *param_1,float *param_2,float *param_3,float param_4) {
+    SHADOW_AB_COUNTER(ab, "FUN_00565fa0", 0x00565fa0u, ShadowAB::kPhaseRace);
+    ShadowAB::RunRegion(ab, FUN_00565fa0_impl, reinterpret_cast<void*>(param_1), 0x1c, param_1, param_2, param_3, param_4);
+}
 RH_ScopedInstall(FUN_00565fa0, 0x00565fa0);
+// --- 0x00566200 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// OUTPUT REGION: 0x1c bytes at (param_1) -- supplied by hand via --region;
+// the claim that this span covers every write MUST be backed by the analysis note.
+extern "C" void __cdecl FUN_00566200(float *param_1,float *param_2,float *param_3) {
+    SHADOW_AB_COUNTER(ab, "FUN_00566200", 0x00566200u, ShadowAB::kPhaseRace);
+    ShadowAB::RunRegion(ab, FUN_00566200_impl, reinterpret_cast<void*>(param_1), 0x1c, param_1, param_2, param_3);
+}
 RH_ScopedInstall(FUN_00566200, 0x00566200);
+// --- 0x005667c0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" float10 __cdecl FUN_005667c0(float *param_1,float *param_2) {
+    SHADOW_AB_COUNTER(ab, "FUN_005667c0", 0x005667c0u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_005667c0_impl, param_1, param_2);
+}
 RH_ScopedInstall(FUN_005667c0, 0x005667c0);
 RH_ScopedInstall(FUN_00566830, 0x00566830);
 RH_ScopedInstall(FUN_005675d0, 0x005675d0);

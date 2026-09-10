@@ -102,7 +102,15 @@ original bytes. Compiler-version-independent, so it runs on the MSVC 2022 build 
 > can only consume the one existing capture. Widening that 8-value domain and capturing
 > more RVAs is now the binding constraint — not the diff code.
 
-## TT-11 — Generalise the in-process shadow A/B into a macro (mass lane)
+## TT-11 — Generalise the in-process shadow A/B into a macro (mass lane) — **MASS LANE LIVE 2026-09-10**
+
+2026-09-10 status: `re/tools/shadow_gen.py` generates sites mechanically (79 return-value +
+15 verified region sites from the 153 installed C2 ports), `shadow_batch.py` boots them in
+groups with crash bisection, `shadow_ab_report.py` produces verdicts. First sweep: 44 CLEAN,
+9 DIVERGENT (mostly non-idempotent functions — `rand()`, first-call flags — NOT port defects
+until reviewed), 5 float10 lane-limit, 21 unreached. Full write-up:
+`re/analysis/shadow_lane_20260910.md`. Remaining ceiling = scenario reach + idempotency +
+55 void ports without a verified region (12 need a two-span `RunRegion`).
 
 The B5c pattern in `Collision/RwpIntegrator.cpp:35-130` snapshots the output region,
 `HookSystem::Uninstall`s the inline-JMP, calls the ORIGINAL at its RVA, restores, runs the

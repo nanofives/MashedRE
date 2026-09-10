@@ -42,6 +42,7 @@
 //    FUN_0057a250 reuses param_4 (a pointer, saved as iVar5) as a float acc (fAcc).
 // ============================================================================
 #include "../Core/HookSystem.h"
+#include "../Core/ShadowAB.h"
 #include <cmath>       // fabsf / fabsl (ABS)
 
 namespace mashed_re {
@@ -133,9 +134,8 @@ FUN_00575b60(int param_1,int param_2,float *param_3,byte *param_4)
 // 0x00578b20  Signed support-span delta of the two shapes in param_1 along axis
 //   param_2; if the negative side wins, mirror the axis (*_DAT_005cc33c = -1).
 // ---------------------------------------------------------------------------
-extern "C" float10 __cdecl
-FUN_00578b20(int *param_1,float *param_2,float *param_3)
-{
+extern "C" float10 __cdecl FUN_00578b20(int *param_1,float *param_2,float *param_3);
+static float10 __cdecl FUN_00578b20_impl(int *param_1,float *param_2,float *param_3) {
   float local_8, local_4;
   float a4, a5;                              // &param_2, &param_1 slots reused
   FUN_0055c2d0(*(int *)(*param_1 + 8), *(float **)(*param_1 + 0x10), param_2, &local_8, &local_4);
@@ -155,9 +155,8 @@ FUN_00578b20(int *param_1,float *param_2,float *param_3)
 // 0x00578bd0  Support-span delta with face-A plane (param_2[3]/[4] bias); on the
 //   losing side, mirror param_2 into param_3 scaled by -1.
 // ---------------------------------------------------------------------------
-extern "C" float10 __cdecl
-FUN_00578bd0(int *param_1,float *param_2,float *param_3,float *param_4)
-{
+extern "C" float10 __cdecl FUN_00578bd0(int *param_1,float *param_2,float *param_3,float *param_4);
+static float10 __cdecl FUN_00578bd0_impl(int *param_1,float *param_2,float *param_3,float *param_4) {
   float *pfVar5 = param_2;
   int iVar3 = *(int *)(*param_1 + 0x10);
   float fVar4 = *(float *)(iVar3 + 0x38) * param_2[2] +
@@ -186,9 +185,8 @@ FUN_00578bd0(int *param_1,float *param_2,float *param_3,float *param_4)
 // 0x00578cb0  Support-span delta with face-B plane; mirror-scale on the losing
 //   side. Uses local out-floats only (no slot reuse).
 // ---------------------------------------------------------------------------
-extern "C" float10 __cdecl
-FUN_00578cb0(int *param_1,float *param_2,float *param_3,float *param_4)
-{
+extern "C" float10 __cdecl FUN_00578cb0(int *param_1,float *param_2,float *param_3,float *param_4);
+static float10 __cdecl FUN_00578cb0_impl(int *param_1,float *param_2,float *param_3,float *param_4) {
   float local_8, local_4;
   FUN_0055c2d0(*(int *)(*param_1 + 8), *(float **)(*param_1 + 0x10), param_2, &local_8, &local_4);
   int iVar1 = *(int *)(param_1[1] + 0x10);
@@ -243,9 +241,8 @@ FUN_00578d90(float *param_1,float *param_2,float *param_3,float *param_4)
 //   a box (offset via FUN_0057ae20), else the centroid-difference of the two
 //   AABBs; then refine by testing the three signed cardinal axes (FUN_00579d50).
 // ---------------------------------------------------------------------------
-extern "C" float10 __cdecl
-FUN_0057a660(int *param_1,float *param_2)
-{
+extern "C" float10 __cdecl FUN_0057a660(int *param_1,float *param_2);
+static float10 __cdecl FUN_0057a660_impl(int *param_1,float *param_2) {
   float *pfVar3 = param_2;                   // saved out ptr (param_2 not reused here)
   float loc[6];                              // [0]=l50 [1]=l4c [2]=l48 [3]=l44 [4]=l40 [5]=l3c
   float local_38[6];                         // 24-byte support work buffer
@@ -333,10 +330,9 @@ FUN_0057a660(int *param_1,float *param_2)
 //   the running direction (FUN_00579d50), and updates the incremental Gram basis
 //   (FUN_00579e50 / FUN_00579ee0) until the depth bound converges.
 // ---------------------------------------------------------------------------
-extern "C" int __cdecl
-FUN_0057a250(int *param_1,float *param_2,float param_3,int param_4,float *param_5,
-             float *param_6,float *param_7,float param_8)
-{
+extern "C" int __cdecl FUN_0057a250(int *param_1,float *param_2,float param_3,int param_4,float *param_5, float *param_6,float *param_7,float param_8);
+static int __cdecl FUN_0057a250_impl(int *param_1,float *param_2,float param_3,int param_4,float *param_5,
+             float *param_6,float *param_7,float param_8) {
   float *pfVar1;
   float fVar2, fVar3;
   uint uVar4, uVar6, uVar9;
@@ -461,10 +457,9 @@ LAB_0057a521:
 //   through the child support methods; branches on the shape kind word (*+0x5c).
 //   Bounds-checks the two arena counters at +0x10/+0x1c against +0x14/+0x20.
 // ---------------------------------------------------------------------------
-extern "C" uint __cdecl
-FUN_00575fe0(int param_1,uint *param_2,undefined4 param_3,int param_4,uint *param_5,
-             int param_6,uint *param_7,float *param_8,float *param_9,uint param_10)
-{
+extern "C" uint __cdecl FUN_00575fe0(int param_1,uint *param_2,undefined4 param_3,int param_4,uint *param_5, int param_6,uint *param_7,float *param_8,float *param_9,uint param_10);
+static uint __cdecl FUN_00575fe0_impl(int param_1,uint *param_2,undefined4 param_3,int param_4,uint *param_5,
+             int param_6,uint *param_7,float *param_8,float *param_9,uint param_10) {
   short *psVar1;
   float fVar2;
   uint uVar3, uVar5;
@@ -716,9 +711,8 @@ LAB_005761fb:
 //   [+0xac contact counts load via FILD; list-walks via +0xdc are int pointer
 //    chases; +0xa8 flag and the group index are ints — see header note.]
 // ---------------------------------------------------------------------------
-extern "C" uint __cdecl
-FUN_00578ff0(uint *param_1,uint param_2,int param_3,uint *param_4,uint param_5,float param_6)
-{
+extern "C" uint __cdecl FUN_00578ff0(uint *param_1,uint param_2,int param_3,uint *param_4,uint param_5,float param_6);
+static uint __cdecl FUN_00578ff0_impl(uint *param_1,uint param_2,int param_3,uint *param_4,uint param_5,float param_6) {
   undefined4 uVar1;
   float fVar2;
   uint *puVar3, *puVar12;
@@ -1191,13 +1185,62 @@ LAB_005793b0:
 
 // --- gta-reversed-style hook registration — CLUSTER 17. ---
 RH_ScopedInstall(FUN_00575b60, 0x00575b60);
+// --- 0x00575fe0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" uint __cdecl FUN_00575fe0(int param_1,uint *param_2,undefined4 param_3,int param_4,uint *param_5, int param_6,uint *param_7,float *param_8,float *param_9,uint param_10) {
+    SHADOW_AB_COUNTER(ab, "FUN_00575fe0", 0x00575fe0u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00575fe0_impl, param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8, param_9, param_10);
+}
 RH_ScopedInstall(FUN_00575fe0, 0x00575fe0);
+// --- 0x00578b20 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" float10 __cdecl FUN_00578b20(int *param_1,float *param_2,float *param_3) {
+    SHADOW_AB_COUNTER(ab, "FUN_00578b20", 0x00578b20u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00578b20_impl, param_1, param_2, param_3);
+}
 RH_ScopedInstall(FUN_00578b20, 0x00578b20);
+// --- 0x00578bd0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" float10 __cdecl FUN_00578bd0(int *param_1,float *param_2,float *param_3,float *param_4) {
+    SHADOW_AB_COUNTER(ab, "FUN_00578bd0", 0x00578bd0u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00578bd0_impl, param_1, param_2, param_3, param_4);
+}
 RH_ScopedInstall(FUN_00578bd0, 0x00578bd0);
+// --- 0x00578cb0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" float10 __cdecl FUN_00578cb0(int *param_1,float *param_2,float *param_3,float *param_4) {
+    SHADOW_AB_COUNTER(ab, "FUN_00578cb0", 0x00578cb0u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00578cb0_impl, param_1, param_2, param_3, param_4);
+}
 RH_ScopedInstall(FUN_00578cb0, 0x00578cb0);
 RH_ScopedInstall(FUN_00578d90, 0x00578d90);
+// --- 0x00578ff0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" uint __cdecl FUN_00578ff0(uint *param_1,uint param_2,int param_3,uint *param_4,uint param_5,float param_6) {
+    SHADOW_AB_COUNTER(ab, "FUN_00578ff0", 0x00578ff0u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_00578ff0_impl, param_1, param_2, param_3, param_4, param_5, param_6);
+}
 RH_ScopedInstall(FUN_00578ff0, 0x00578ff0);
+// --- 0x0057a250 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" int __cdecl FUN_0057a250(int *param_1,float *param_2,float param_3,int param_4,float *param_5, float *param_6,float *param_7,float param_8) {
+    SHADOW_AB_COUNTER(ab, "FUN_0057a250", 0x0057a250u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_0057a250_impl, param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8);
+}
 RH_ScopedInstall(FUN_0057a250, 0x0057a250);
+// --- 0x0057a660 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" float10 __cdecl FUN_0057a660(int *param_1,float *param_2) {
+    SHADOW_AB_COUNTER(ab, "FUN_0057a660", 0x0057a660u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_0057a660_impl, param_1, param_2);
+}
 RH_ScopedInstall(FUN_0057a660, 0x0057a660);
 
 }  // namespace Collision

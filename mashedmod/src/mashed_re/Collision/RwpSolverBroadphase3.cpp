@@ -72,6 +72,7 @@
 // x87 note: 80-bit ST0 chains carry the accepted <=1-ULP floor under MSVC's 64-bit long
 // double (project_phys_chain_float10_methodology) — [X87]-tagged above.
 #include "../Core/HookSystem.h"
+#include "../Core/ShadowAB.h"
 
 namespace mashed_re {
 namespace Collision {
@@ -106,9 +107,9 @@ typedef void   (__cdecl *RwpBodyFnSleep)(int*);                               //
 //             (+0x60) against wake/sleep via the body-object +0x10/+0x14 callbacks.
 //             Returns param_1. Verification notes 2, 5, 7.
 // ---------------------------------------------------------------------------
-extern "C" int __cdecl FUN_0055a1f0(uint param_1,int param_2,uint param_3,uint *param_4,int *param_5,
-                                    uint param_6,uint *param_7,int param_8,uint param_9,uint *param_10)
-{
+extern "C" int __cdecl FUN_0055a1f0(uint param_1,int param_2,uint param_3,uint *param_4,int *param_5, uint param_6,uint *param_7,int param_8,uint param_9,uint *param_10);
+static int __cdecl FUN_0055a1f0_impl(uint param_1,int param_2,uint param_3,uint *param_4,int *param_5,
+                                    uint param_6,uint *param_7,int param_8,uint param_9,uint *param_10) {
   ushort uVar1;
   int iVar2;
   uint uVar3;
@@ -435,9 +436,9 @@ LAB_0055a94f:
 //             (verification note 8), emits 0x14-byte pair records into param_4 capped at
 //             param_5. Returns the emitted-record count.
 // ---------------------------------------------------------------------------
-extern "C" int __cdecl FUN_0055a9a0(uint param_1,int param_2,uint param_3,int param_4,int param_5,
-                                    uint param_6)
-{
+extern "C" int __cdecl FUN_0055a9a0(uint param_1,int param_2,uint param_3,int param_4,int param_5, uint param_6);
+static int __cdecl FUN_0055a9a0_impl(uint param_1,int param_2,uint param_3,int param_4,int param_5,
+                                    uint param_6) {
   uint *puVar1;
   ushort uVar2;
   ushort uVar3;
@@ -512,8 +513,8 @@ extern "C" int __cdecl FUN_0055a9a0(uint param_1,int param_2,uint param_3,int pa
 //             the AABB buffer param_3 via FUN_00565200 and return param_3; else 0.
 //             (Original passes the index word with garbage high bits — note 4.)
 // ---------------------------------------------------------------------------
-extern "C" undefined4 __cdecl FUN_0055abb0(undefined4 *param_1,int param_2,undefined4 param_3)
-{
+extern "C" undefined4 __cdecl FUN_0055abb0(undefined4 *param_1,int param_2,undefined4 param_3);
+static undefined4 __cdecl FUN_0055abb0_impl(undefined4 *param_1,int param_2,undefined4 param_3) {
   ushort uVar1;
   undefined4 uVar2;
 
@@ -531,8 +532,8 @@ extern "C" undefined4 __cdecl FUN_0055abb0(undefined4 *param_1,int param_2,undef
 //             *(ushort*)(param_2+0x20)) — verification note 4. The decomp printed an
 //             argless call; the disasm rewrites both arg slots (0x0055ae50..0x0055ae66).
 // ---------------------------------------------------------------------------
-extern "C" undefined2 __cdecl FUN_0055ae50(int *param_1,int param_2)
-{
+extern "C" undefined2 __cdecl FUN_0055ae50(int *param_1,int param_2);
+static undefined2 __cdecl FUN_0055ae50_impl(int *param_1,int param_2) {
   return FUN_00565550(*param_1,*(ushort *)(param_2 + 0x20));
 }
 
@@ -543,8 +544,8 @@ extern "C" undefined2 __cdecl FUN_0055ae50(int *param_1,int param_2)
 //             idx*0x20 into (*(*param_1+0x10))[2], plus that row's +0/+4/+8 base.
 //             x87 rounding map in verification note 5.
 // ---------------------------------------------------------------------------
-extern "C" void __cdecl FUN_0055b750(int *param_1,float *param_2,float *param_3)
-{
+extern "C" void __cdecl FUN_0055b750(int *param_1,float *param_2,float *param_3);
+static void __cdecl FUN_0055b750_impl(int *param_1,float *param_2,float *param_3) {
   float *pfVar8;
   int iVar9;
 
@@ -574,8 +575,8 @@ extern "C" void __cdecl FUN_0055b750(int *param_1,float *param_2,float *param_3)
 // Returns the mutable point (EAX = the +0x08 getter's result, 0x0055baf6 TEST EAX,EAX;
 // preserved through the transform to the RET) — needed by K21 FUN_00561280, which tests it.
 // Was typed void in K3; the value was always in EAX, so return-ignoring callers are unaffected.
-extern "C" float * __cdecl FUN_0055bae0(int param_1,float *param_2,undefined4 param_3)
-{
+extern "C" float * __cdecl FUN_0055bae0(int param_1,float *param_2,undefined4 param_3);
+static float * __cdecl FUN_0055bae0_impl(int param_1,float *param_2,undefined4 param_3) {
   float *pfVar10;
 
   pfVar10 = ((RwpVolFnGetPoint)(*(void **)(*(int *)(param_1 + 0x5c) + 8)))(param_1,param_3);  // 0x0055baf0
@@ -696,11 +697,55 @@ extern "C" void __cdecl FUN_0055c2d0(int param_1,float *param_2,float *param_3,f
 
 // --- gta-reversed-style hook registration (inert on the exe via HookSystemNoOp; installs
 //     the inline-JMP under the .asi for the diff-original A/B acceptance) — CLUSTER 3. ---
+// --- 0x0055a1f0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" int __cdecl FUN_0055a1f0(uint param_1,int param_2,uint param_3,uint *param_4,int *param_5, uint param_6,uint *param_7,int param_8,uint param_9,uint *param_10) {
+    SHADOW_AB_COUNTER(ab, "FUN_0055a1f0", 0x0055a1f0u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_0055a1f0_impl, param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8, param_9, param_10);
+}
 RH_ScopedInstall(FUN_0055a1f0, 0x0055a1f0);
+// --- 0x0055a9a0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" int __cdecl FUN_0055a9a0(uint param_1,int param_2,uint param_3,int param_4,int param_5, uint param_6) {
+    SHADOW_AB_COUNTER(ab, "FUN_0055a9a0", 0x0055a9a0u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_0055a9a0_impl, param_1, param_2, param_3, param_4, param_5, param_6);
+}
 RH_ScopedInstall(FUN_0055a9a0, 0x0055a9a0);
+// --- 0x0055abb0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" undefined4 __cdecl FUN_0055abb0(undefined4 *param_1,int param_2,undefined4 param_3) {
+    SHADOW_AB_COUNTER(ab, "FUN_0055abb0", 0x0055abb0u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_0055abb0_impl, param_1, param_2, param_3);
+}
 RH_ScopedInstall(FUN_0055abb0, 0x0055abb0);
+// --- 0x0055ae50 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" undefined2 __cdecl FUN_0055ae50(int *param_1,int param_2) {
+    SHADOW_AB_COUNTER(ab, "FUN_0055ae50", 0x0055ae50u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_0055ae50_impl, param_1, param_2);
+}
 RH_ScopedInstall(FUN_0055ae50, 0x0055ae50);
+// --- 0x0055b750 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// OUTPUT REGION: 0xc bytes at (param_3) -- supplied by hand via --region;
+// the claim that this span covers every write MUST be backed by the analysis note.
+extern "C" void __cdecl FUN_0055b750(int *param_1,float *param_2,float *param_3) {
+    SHADOW_AB_COUNTER(ab, "FUN_0055b750", 0x0055b750u, ShadowAB::kPhaseRace);
+    ShadowAB::RunRegion(ab, FUN_0055b750_impl, reinterpret_cast<void*>(param_3), 0xc, param_1, param_2, param_3);
+}
 RH_ScopedInstall(FUN_0055b750, 0x0055b750);
+// --- 0x0055bae0 shadow A/B (TT-11) -- GENERATED by re/tools/shadow_gen.py -----------
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+extern "C" float * __cdecl FUN_0055bae0(int param_1,float *param_2,undefined4 param_3) {
+    SHADOW_AB_COUNTER(ab, "FUN_0055bae0", 0x0055bae0u, ShadowAB::kPhaseRace);
+    return ShadowAB::Run(ab, FUN_0055bae0_impl, param_1, param_2, param_3);
+}
 RH_ScopedInstall(FUN_0055bae0, 0x0055bae0);
 RH_ScopedInstall(FUN_0055bd70, 0x0055bd70);
 RH_ScopedInstall(FUN_0055c0f0, 0x0055c0f0);
