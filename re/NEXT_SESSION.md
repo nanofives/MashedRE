@@ -152,7 +152,12 @@ The crash was the caller's EDX, not the callee's signature. See
 Same shape as B but one register class over — see the bullet under "Open items". Confirm or refute
 whether `FUN_0056fea0`'s original leaves the x87 stack at a depth the port does not.
 
-### ⚠ DECISION REQUIRED — the build is SSE2, not x87, and a load-bearing comment said otherwise
+### PARKED (D-11070) — the build is SSE2, not x87, and a load-bearing comment said otherwise
+**Owner parked the `/arch` decision 2026-09-10.** Filed as **D-11070** with its re-pickup
+conditions. The two false TU comments are already corrected, so nothing is left asserting an
+untrue premise, and the 17 `DIVERGENT*` rows can be reclassified `DIVERGENT_FLOAT10`
+(build-caused) **without** this decision. Detail below, kept because it is the cause of those rows.
+
 `re/analysis/float_model_is_sse2_not_x87_20260910.md`. **There is no `/arch:` flag anywhere in
 `build.bat`** (the only occurrence is a comment at line 26 about the qhull static lib), so MSVC's
 x86 default `/arch:SSE2` applies. Measured in the shipped `.asi`: `FUN_0055b750_impl` is

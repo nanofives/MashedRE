@@ -50,14 +50,30 @@ REPORT = ROOT / "re" / "tools" / "shadow_ab_report.py"
 
 
 def live_sites(manifest, restrict):
-    rows = []
+    # A manifest row is a CLAIM that a shadow site exists; the TU on disk is the fact.
+    # Three rows (0x005ad2e0, 0x0045cc50, 0x00426030) said GENERATED:lane2-decomp2port while
+    # their .cpp did not exist -- decomp2port.py's --prune-failed removed the file without
+    # updating the row. Booting such a row burns a boot and records NO_SAMPLES, which then
+    # reads as "the scenario never calls it" when the truth is "there is nothing installed".
+    # That is precisely the false conclusion the 2026-09-10 prescreen correction came from, so
+    # check the file rather than trusting the status.
+    src_root = ROOT / "mashedmod" / "src" / "mashed_re"
+    on_disk = {p.name for p in src_root.rglob("*.cpp")} if src_root.is_dir() else set()
+    rows, phantom = [], []
     with open(manifest, newline="", encoding="utf-8") as f:
         for r in csv.DictReader(f, delimiter="\t"):
             if not r["status"].startswith(("GENERATED", "ALREADY")):
                 continue
             if restrict and r["rva"] not in restrict:
                 continue
+            tu = (r.get("file") or "").strip()
+            if tu and on_disk and tu not in on_disk:
+                phantom.append((r["rva"], r.get("name", ""), tu))
+                continue
             rows.append(r)
+    for rva, name, tu in phantom:
+        print(f"  [skip] {rva} {name}: manifest says {tu} but no such TU on disk "
+              f"-- fix the row's status, do not boot it")
     return rows
 
 

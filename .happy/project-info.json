@@ -1,15 +1,14 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-10T16:05:00Z",
+  "updatedAt": "2026-09-10T18:45:00Z",
   "sections": [
     {
       "heading": "Status",
       "fields": [
         { "label": "Branch", "value": "race/first-frame-parity", "kind": "text" },
         { "label": "Phase", "value": "R7 - full game systems (scaffold to verbatim)", "kind": "text" },
-        { "label": "Last session", "value": "2026-09-10", "kind": "date" },
-        { "label": "Session focus", "value": "merge drain + open-item loop", "kind": "text" },
-        { "label": "Tree", "value": "clean, no stray processes, pool locks clear", "kind": "text" }
+        { "label": "Tree", "value": "clean, no stray processes, pool locks clear", "kind": "text" },
+        { "label": "Last activity", "value": "2026-09-10", "kind": "date" }
       ]
     },
     {
@@ -21,33 +20,44 @@
         { "label": "C2", "value": 3884, "kind": "number" },
         { "label": "C1", "value": 821, "kind": "number" },
         { "label": "UNCERTAINTIES (open rows)", "value": 3069, "kind": "number" },
-        { "label": "DEFERRED", "value": 677, "kind": "number" }
+        { "label": "DEFERRED", "value": 678, "kind": "number" }
       ]
     },
     {
-      "heading": "AWAITING YOUR DECISION",
+      "heading": "Landed this session (2026-09-10 — second session)",
       "fields": [
-        { "label": "Build float model", "value": "The build is SSE2, not x87 - two TU comments claimed otherwise and were false. Choose: keep SSE2, /arch:IA32 globally, or per-TU on physics/math.", "kind": "text" },
-        { "label": "Affects", "value": "85 TUs use float10, covering 88 hooks.csv rows (C4 10, C3 76) and 17 DIVERGENT* rows", "kind": "text" },
-        { "label": "Note", "value": "re/analysis/float_model_is_sse2_not_x87_20260910.md", "kind": "text" }
+        { "label": "Merges", "value": ["docs/reconcile", "race/nav-champ", "race/arctic-cap"], "kind": "list" },
+        { "label": "Promotions", "value": "2 rows C2→C3: 0x0056bce0 (48/48 CLEAN after the EDX fix) + 0x00560260 (24/24 CLEAN twice, stale blocker). C3 1008→1010. The 86-row figure belongs to the EARLIER session on 2026-09-10, not this one.", "kind": "text" },
+        { "label": "Defects fixed", "value": ["QuadRenderer PAL4 rejection (all BADGES 16x16 sprites dead)", "0x0056bce0 caller-saved EDX contract", "0x0056bce0 denominator tree + rounding", "0x0056f350 loop counter float type"], "kind": "list" },
+        { "label": "Crashes triaged", "value": "9 of 9: 2→C3, 2 never crashed, 2 witness-only, 4 real port defects (open)", "kind": "text" }
       ]
     },
     {
-      "heading": "Landed 2026-09-10 (2nd session)",
+      "heading": "DECISION PARKED (D-11070)",
       "fields": [
-        { "label": "Merged", "value": ["docs/reconcile", "race/nav-champ", "race/arctic-cap"], "kind": "list" },
-        { "label": "Still unmerged", "value": "area/frontend (WIP checkpoint, unverified hook)", "kind": "text" },
-        { "label": "Promotions", "value": ["0x0056bce0 C2->C3 (48/48 CLEAN, EDX contract fixed)", "0x00560260 C2->C3 (24/24 CLEAN twice, stale blocker)"], "kind": "list" },
-        { "label": "Defects fixed", "value": ["QuadRenderer rejected PAL4 - all BADGES 16x16 sprites were dead", "0x0056bce0 caller-saved EDX contract (crash)", "0x0056bce0 denominator tree + double rounding", "0x0056f350 float loop counter", "shadow_batch: control boot destroyed the armed verdict"], "kind": "list" },
-        { "label": "Crasher list", "value": "all 9 triaged: 2 -> C3, 2 never crashed, 2 witness-only, 4 real port defects", "kind": "text" },
-        { "label": "Filed", "value": "U-9130, U-9131, U-9132, U-9133", "kind": "text" }
+        { "label": "Issue", "value": "Build float model: MEASURED as SSE2 (no /arch flag), not x87", "kind": "text" },
+        { "label": "Affects", "value": "85 TUs / 88 hooks.csv rows (C4 10, C3 76, C2 2) / 17 DIVERGENT* rows", "kind": "text" },
+        { "label": "Options", "value": ["Keep SSE2 as-is", "Add /arch:IA32 globally", "Add /arch:IA32 per-TU on physics/math only"], "kind": "list" },
+        { "label": "Note", "value": "No /arch flag anywhere in build.bat (line 26 is a comment); two false TU comments already corrected; 17 DIVERGENT* rows can be reclassified DIVERGENT_FLOAT10 without this decision", "kind": "text" }
       ]
     },
     {
-      "heading": "Next",
+      "heading": "Open items (priority order)",
       "fields": [
-        { "label": "Top items", "value": ["/arch decision (above)", "0x0056f350: per-iteration trace, >1 divergent path", "0x0056f0a0 + 0x0055bd80: lane decision (witness, not port)", "3 Lane 2 ports: per-function review, one faults in the fix_joypad cave", "0x005a6e10 + 0x005aeed0: fire in-race, log nothing"], "kind": "list" },
-        { "label": "NO_SAMPLES", "value": "43 of 48 genuinely never called - needs a richer scenario", "kind": "text" }
+        { "label": "#1", "value": "Resolve /arch decision (above) — blocks C4 promotion of 10 float-dependent rows", "kind": "text" },
+        { "label": "#2", "value": "0x0056f350 crash: per-iteration trace needed; crash moved from loop-counter to ternary", "kind": "text" },
+        { "label": "#3", "value": "0x0056f0a0 + 0x0055bd80: lane decision (witness-only, not port defect)", "kind": "text" },
+        { "label": "#4", "value": "3 Lane 2 ports: per-function review; one faults in fix_joypad cave", "kind": "text" },
+        { "label": "#5", "value": "0x005a6e10 + 0x005aeed0: fire in-race, log nothing (zero in-game coverage)", "kind": "text" },
+        { "label": "NO_SAMPLES", "value": "43 of 48 genuinely never called — needs a richer scenario", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Next session roadmap",
+      "fields": [
+        { "label": "If /arch chosen", "value": "Recompile, re-run shadow lane, reclassify float-model C3s to C4", "kind": "text" },
+        { "label": "If /arch deferred", "value": "Reclassify 17 DIVERGENT* → DIVERGENT_FLOAT10; continue Lane 2/3 ports", "kind": "text" },
+        { "label": "Immediate", "value": "0x0056f350 bisect finish (expand scenario); 3 Lane 2 reviews; U-9130..U-9133 witness gates", "kind": "text" }
       ]
     }
   ]
