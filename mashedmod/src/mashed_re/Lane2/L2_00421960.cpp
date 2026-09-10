@@ -1,4 +1,29 @@
 // ============================================================================
+//  EXCLUDED FROM THE BUILD 2026-09-10 -- removed from mashedmod/asi_sources.rsp.
+//  KEPT ON DISK AS EVIDENCE, NOT AS CODE. Do not re-add without regenerating.
+//
+//  This port should never have been generated. CALLEE ARITY: the original shares
+//  ONE pushed argument block between two consecutive calls --
+//        0x00421966  push 7 / push -1 / push eax / push ecx
+//        0x0042196c  call 0x55dec0        ; FUN_0055dec0, 4 args
+//        0x00421971  add esp,4            ; pops ONE -- three args stay live
+//        0x00421974  push eax             ; the return value
+//        0x00421975  call 0x559c40        ; FUN_00559c40(eax_ret, eax_old, -1, 7)
+//        0x0042197a  add esp,0x10         ; now pops all four
+//  Ghidra models that as two independent ONE-argument calls, so this port passes
+//  one argument and FUN_00559c40 reads its arg3 (0x00559c44 `mov ebx,[esp+0x30]`)
+//  as stack garbage instead of -1. The `cmp ebx,-1 / jne` at 0x00559c4d then takes
+//  the wrong branch and 0x00559cb3 `mov edi,[eax+ebp]` faults on an address
+//  derived from that garbage (log/crash_eip_00421960.txt, unmapped 0x1d9644f4).
+//  It CRASHES on both A/B arms.
+//
+//  The tell is the mismatched `add esp,N`, which is NOT visible in the
+//  decompilation text. decomp2port.py now refuses the arity disagreement itself
+//  (CALLEE_ARITY: proto > site).
+//  Full write-up: re/analysis/decomp2port_refusal_was_disabled_20260910.md
+//  Site status:   re/parity/shadow_sites.tsv -> SKIP:callee-arity
+// ============================================================================
+// ============================================================================
 //  L2_00421960.cpp -- Lane 2 GENERATED verbatim ports (re/tools/decomp2port.py, 2026-09-10)
 //  Every function below is a mechanical transcription of Ghidra's decompilation of
 //  MASHED.exe (anchor in CLAUDE.md). Nothing here is understood or verified by

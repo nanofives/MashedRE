@@ -1,4 +1,25 @@
 // ============================================================================
+//  EXCLUDED FROM THE BUILD 2026-09-10 -- removed from mashedmod/asi_sources.rsp.
+//  KEPT ON DISK AS EVIDENCE, NOT AS CODE. Do not re-add without regenerating.
+//
+//  This port should never have been generated. HIDDEN REGISTER ARGUMENT: the body
+//  is `puVar1 = &DAT_0063fb90; do { FUN_00421720(); puVar1 += 0x208; } while
+//  ((int)puVar1 < 0x6403b0)` -- a pointer advanced 0x208 per iteration and never
+//  passed to a zero-argument call, which means FUN_00421720 reads it from a
+//  register Ghidra did not model. Calling it through a cdecl thunk leaves that
+//  register undefined. It CRASHES on both A/B arms (armed and --no-shadow).
+//
+//  decomp2port.py's HIDDEN_REG_ARG refusal was written FROM THIS RVA -- its
+//  comment cites this address and this 0x208 stride -- but 13 stray control bytes
+//  had replaced `\b` with 0x08 and `\1` with 0x01 in its regexes, so the refusal
+//  could never fire and this TU generated anyway. The bytes are repaired and the
+//  refusal now rejects this body (re/tools/tests/test_decomp2port_refusals.py).
+//  Regenerating will therefore correctly produce nothing.
+//
+//  Full write-up: re/analysis/decomp2port_refusal_was_disabled_20260910.md
+//  Site status:   re/parity/shadow_sites.tsv -> SKIP:hidden-reg-arg
+// ============================================================================
+// ============================================================================
 //  L2_004219c0.cpp -- Lane 2 GENERATED verbatim ports (re/tools/decomp2port.py, 2026-09-10)
 //  Every function below is a mechanical transcription of Ghidra's decompilation of
 //  MASHED.exe (anchor in CLAUDE.md). Nothing here is understood or verified by

@@ -98,7 +98,7 @@ rva	name	verdict	n	ndiff	proof	detail	boot_state	group	log	at	control	control_at
 0056ba30	FUN_0056ba30	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	16	shadow_ab_20260910_001412_16x_00561e80.log	2026-09-10T00:14:12		
 0056bb30	FUN_0056bb30	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=56		RACE_OK	16	shadow_ab_20260910_001412_16x_00561e80.log	2026-09-10T00:14:12		
 0056bb80	FUN_0056bb80	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T00:31:17		
-0056bce0	FUN_0056bce0	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=83		RACE_OK	1	shadow_ab_20260910_142315_1x_0056bce0.log	2026-09-10T14:23:15		
+0056bce0	FUN_0056bce0	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=83		RACE_OK	1	shadow_ab_20260910_165530_1x_0056bce0.log	2026-09-10T16:55:30		
 0056bdf0	FUN_0056bdf0	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=53		RACE_OK	4	shadow_ab_20260910_104316_4x_005651b0.log	2026-09-10T10:43:16		
 0056be80	FUN_0056be80	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:22:50		
 0056c0a0	FUN_0056c0a0	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	8	shadow_ab_20260910_120656_8x_004f8670.log	2026-09-10T12:06:56		

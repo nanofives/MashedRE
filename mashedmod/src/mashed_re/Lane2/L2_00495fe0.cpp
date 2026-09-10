@@ -1,4 +1,27 @@
 // ============================================================================
+//  EXCLUDED FROM THE BUILD 2026-09-10 -- removed from mashedmod/asi_sources.rsp.
+//  KEPT ON DISK AS EVIDENCE, NOT AS CODE. Do not re-add without regenerating.
+//
+//  This port should never have been generated. HIDDEN REGISTER ARGUMENT: the
+//  original does
+//        0x00495fed  mov esi,0x771e88     ; ESI = base of the device array
+//        0x00495ff2  call 0x495870        ; FUN_00495870 reads its arg FROM ESI
+//        0x00495ffd  add esi,0x448        ; one device per iteration
+//  so FUN_00495870 takes its device pointer in ESI. Ghidra did not model that, so
+//  the decompilation shows a no-argument call plus an otherwise-unused counter and
+//  this port reproduces a call with NO register set up. With ESI undefined, the
+//  fix_joypad boot-patch cave at 0x00508bde executes `mov eax,[esi]` with ESI=0 --
+//  the caught access violation (log/crash_eip_00495fe0.txt). It CRASHES on both
+//  A/B arms, and dies at boot (4-7 s), not in the race.
+//
+//  NOTE the boot patch is NOT at fault; it simply never receives a valid pointer.
+//
+//  decomp2port.py's HIDDEN_REG_ARG refusal now rejects this body (it had been
+//  disabled by stray control bytes in its regexes).
+//  Full write-up: re/analysis/decomp2port_refusal_was_disabled_20260910.md
+//  Site status:   re/parity/shadow_sites.tsv -> SKIP:hidden-reg-arg
+// ============================================================================
+// ============================================================================
 //  L2_00495fe0.cpp -- Lane 2 GENERATED verbatim ports (re/tools/decomp2port.py, 2026-09-10)
 //  Every function below is a mechanical transcription of Ghidra's decompilation of
 //  MASHED.exe (anchor in CLAUDE.md). Nothing here is understood or verified by
