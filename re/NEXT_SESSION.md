@@ -107,13 +107,21 @@ Branch `race/first-frame-parity`, tree clean, no stray processes, pool locks cle
     - **Uninitialised-slot hypothesis: TESTED and REFUTED.** Note 3 says `local_78[0x19]/[0x1a]`
       are left uninitialised and `FUN_0056f1f0` copies `[0x1a]` raw. Zeroing exactly those two on
       the crashing baseline: **3 boots, 3× CRASH.** Not the cause; experiment reverted.
-    - **NEXT, specific:** frame dependence means an overrun into a local adjacent to `local_78`,
-      or a read of another uninitialised local. `FUN_0056fad0` is cleared (writes ≤ dword `0xe`).
-      **`FUN_0056f1f0`'s writes through its buffer argument are NOT cleared** — a naive scan found
-      three `mov dword ptr [ebx], ebp` at displacement 0, but EBX is reassigned mid-function, so
-      settle it with a proper def-use trace of EBX across `0x0056f1f0..0x0056f341`, not a regex.
-      If it writes past dword 26 then `local_78[27]` is too small and the victim is whichever
-      local MSVC placed next — which would explain every observation at once.
+    - **Both overrun candidates CLEARED by def-use** (not regex). Tracked arg2's taint from
+      `0x0056f234`/`0x0056f238` across all 114 instructions of `FUN_0056f1f0`: **zero writes** —
+      it is read-only through the row buffer. The naive scan's three `mov [ebx],ebp` all sit
+      *after* `0x0056f2a9 lea ebx,[esi+ebx+0x10]` redefines EBX, so they were never the buffer.
+      With `FUN_0056fad0` already cleared (≤ dword `0xe`) and the port's own writes inside
+      `[0x10..0x18]`, **no `local_78` overrun explains it.**
+    - **Stack exhaustion ruled out:** original `sub esp,0xf0` + 4 pushes = `0xfc`; port
+      `sub esp,0xE8` + `/GS` cookie + 2 pushes. Comparable. Noted though: the port does
+      `and esp,0FFFFFFF8h` (force-aligns ESP to 8) where the original does **not**.
+    - **NEXT, cheapest remaining probe — no boot needed.** Under the *baseline* build the crash
+      EIP was `0x6b47e8d7` = `divss xmm0,[eax]` with **`EAX = 0`**, reached via
+      `cmovae ecx,edx` / `cmovb eax,[esp+0x50]` with ECX/EDX holding the axis-table addresses
+      `0x5e57c4`/`0x5e57d0` (`log/crash_eip_0056f350_after_counterfix.txt`). Map `0x6b47e8d7`
+      through `mashed_re_dev.map` on that build to the exact source line and read what
+      `[esp+0x50]` holds there — that names the null divisor directly.
   - **BOTH witness crashes are now SETTLED and out of the lane** (`SKIP:runtracked-unbounded-effects`,
     verdict `INVALID_WITNESS`). `0x0055bd80`'s fault is EIP `0x00564c8e` `fld [ecx+0x10]` with
     `ECX = 1`, inside `FUN_00564c80` — a target of its volume-descriptor dispatch

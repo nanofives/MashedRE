@@ -291,14 +291,52 @@ the apparent aliasing (faithful — three `FSQRT`s with `FST` write-backs), and 
 Established: dies inside iteration 0 after `FUN_0056f1f0 #1`; `bound=4`, `puVar3=NULL`,
 `local_e4=NULL`, `local_e0` live; and the defect follows the stack frame.
 
-**Next:** frame dependence points at either an overrun into a local adjacent to `local_78`, or a
-read of some *other* uninitialised local. `FUN_0056fad0` is cleared as the overrun source.
-`FUN_0056f1f0`'s writes through its buffer argument are **not yet cleared** — a naive scan found
-three `mov dword ptr [ebx], ebp` at displacement 0, but EBX is reassigned mid-function, so those
-may not be the buffer at all. That needs a proper def-use trace of EBX across
-`0x0056f1f0..0x0056f341`, not a regex. If `FUN_0056f1f0` writes past dword 26, `local_78[27]` is
-simply too small and the victim is whichever local MSVC placed next — which would explain every
-observation at once.
+### Both overrun candidates now cleared, by def-use rather than regex
+
+Ran the def-use trace: track which registers hold arg2 (the row buffer) from its load at
+`0x0056f234 mov ecx,[esp+0x1c]` / `0x0056f238 mov ebx,ecx`, and report every memory write through
+a tainted register across `0x0056f1f0..0x0056f341` (114 instructions).
+
+**Zero writes.** `FUN_0056f1f0` is **read-only** through the row buffer, so it is cleared as the
+overrun source. The naive scan's three `mov dword ptr [ebx], ebp` hits are all at
+`0x0056f2af`/`0x0056f2de`/`0x0056f2f7` — *after* `0x0056f2a9 lea ebx,[esi + ebx + 0x10]`
+redefines EBX to something else. They were never the buffer, which is exactly the caution the
+previous entry flagged.
+
+With `FUN_0056fad0` already cleared (writes no further than dword `0xe`) and the port's own writes
+confined to `local_78[0x10..0x18]` (dwords 16–24, inside 27), **no `local_78` overrun explains it.**
+
+### Stack exhaustion also ruled out
+
+The two frames are comparable, so the port is not simply using far more stack:
+
+```
+original 0x0056f350:  sub esp,0xf0                      (240) + push ebx/ebp/esi/edi (16) = 0xfc
+port     @0x1005e360: push ebp / mov ebp,esp
+                      and esp,0FFFFFFF8h                <-- force-aligns ESP; the original does NOT
+                      sub esp,0E8h                      (232) + /GS cookie at [esp+0xE4] + 2 pushes
+```
+
+Noted but not a crash on its own: the port **force-aligns ESP to 8** where the original does not,
+so its locals sit at a different alignment, and adding call sites shifts them — consistent with
+the frame sensitivity without explaining it.
+
+### Where it stands
+
+The row is now very well fenced. Ruled out: argument shape/arity; loop base `+0x10`; field `+0xc`;
+stride `0x28`; re-read bound `+0xac`; the float loop counter (real, fixed, not this); the apparent
+aliasing (faithful); the uninitialised `[0x19]/[0x1a]` slots (zeroed, 3/3 still crash);
+`local_78` overrun from **either** callee (`fad0` by displacement, `f1f0` by def-use); stack
+exhaustion. Established: dies inside iteration 0 after `FUN_0056f1f0 #1` with `bound=4`,
+`puVar3=NULL`, `local_e4=NULL`, `local_e0` live, **and the defect follows MSVC's stack frame** —
+4/4 RACE_OK once extra call sites are compiled in, including 2/2 with the logging disabled.
+
+**Next, and it is now the cheapest remaining probe:** the crash EIP under the *baseline* build was
+`0x6b47e8d7` = `divss xmm0,[eax]` with `EAX = 0`, reached through `cmovae ecx,edx` /
+`cmovb eax,[esp+0x50]` with ECX/EDX holding the axis-table addresses `0x5e57c4`/`0x5e57d0`. Map
+`0x6b47e8d7` back through `mashed_re_dev.map` on the *baseline* binary to the exact source line
+and read what `[esp+0x50]` is at that point — that names the null divisor directly, without
+another boot.
 
 ## `0x0056f0a0` — a NULL write in a *third* function, and only when the A/B is armed
 
