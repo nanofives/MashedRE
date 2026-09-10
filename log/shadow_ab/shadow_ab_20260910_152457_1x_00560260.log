@@ -1,0 +1,234 @@
+[--] fn=FUN_00560260 PATCHBYTE installed=e9 uninstalled=83 A/B-IS-REAL
+[0] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[1] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[2] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[3] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[4] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[5] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[6] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[7] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[8] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_00560260 NOISY noise=2 pages=o:1,n:1 diff:0 (sample discarded)
+[9] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[10] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[11] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_00560260 NOISY noise=2 pages=o:1,n:1 diff:0 (sample discarded)
+[12] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[13] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_00560260 NOISY noise=2 pages=o:1,n:1 diff:0 (sample discarded)
+[~~] fn=FUN_00560260 NOISY noise=2 pages=o:1,n:1 diff:0 (sample discarded)
+[14] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[15] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[16] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[17] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[18] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[19] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_00560260 NOISY noise=4 pages=o:1,n:1 diff:0 (sample discarded)
+[20] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[21] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[22] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[23] fn=FUN_00560260 rva=00560260 idx=1158 ndiff=0 OK pages=o:1,n:1,diff:0 stack=0 noise=0 ovf=0 ret=0
+[--] fn=FUN_00567c00 PATCHBYTE installed=8b uninstalled=8b SUSPECT-no-restore
+[~~] fn=FUN_00567c00 NOISY noise=4 pages=o:0,n:0 diff:0 (sample discarded)
+[--] fn=FUN_0056efc0 PATCHBYTE installed=8b uninstalled=8b SUSPECT-no-restore
+[0] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[--] fn=FUN_0056f020 PATCHBYTE installed=8b uninstalled=8b SUSPECT-no-restore
+[~~] fn=FUN_0056f020 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[1] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[0] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[2] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[1] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[3] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[2] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[--] fn=FUN_0056e680 PATCHBYTE installed=83 uninstalled=83 SUSPECT-no-restore
+[0] fn=FUN_0056e680 rva=0056e680 idx=1141 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[--] fn=FUN_005675d0 PATCHBYTE installed=8b uninstalled=8b SUSPECT-no-restore
+[0] fn=FUN_005675d0 rva=005675d0 idx=1099 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[--] fn=FUN_0056dd40 PATCHBYTE installed=55 uninstalled=55 SUSPECT-no-restore
+[0] fn=FUN_0056dd40 rva=0056dd40 idx=1139 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[--] fn=FUN_0056d070 PATCHBYTE installed=83 uninstalled=83 SUSPECT-no-restore
+[0] fn=FUN_0056d070 rva=0056d070 idx=1136 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[--] fn=FUN_005601f0 PATCHBYTE installed=56 uninstalled=56 SUSPECT-no-restore
+[0] fn=FUN_005601f0 rva=005601f0 idx=1083 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[--] fn=FUN_0056caa0 PATCHBYTE installed=81 uninstalled=81 SUSPECT-no-restore
+[0] fn=FUN_0056caa0 rva=0056caa0 idx=1134 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[--] fn=FUN_0056c580 PATCHBYTE installed=83 uninstalled=83 SUSPECT-no-restore
+[0] fn=FUN_0056c580 rva=0056c580 idx=1132 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[--] fn=FUN_0056c310 PATCHBYTE installed=8b uninstalled=8b SUSPECT-no-restore
+[0] fn=FUN_0056c310 rva=0056c310 idx=1131 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[--] fn=FUN_0056bdf0 PATCHBYTE installed=53 uninstalled=53 SUSPECT-no-restore
+[0] fn=FUN_0056bdf0 rva=0056bdf0 idx=1128 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[0] fn=FUN_00567c00 rva=00567c00 idx=1148 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[4] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[3] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[5] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[4] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[6] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[5] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[7] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[6] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[1] fn=FUN_0056e680 rva=0056e680 idx=1141 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[1] fn=FUN_005675d0 rva=005675d0 idx=1099 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[1] fn=FUN_0056dd40 rva=0056dd40 idx=1139 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[1] fn=FUN_0056d070 rva=0056d070 idx=1136 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_005601f0 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[~~] fn=FUN_0056caa0 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[1] fn=FUN_0056c580 rva=0056c580 idx=1132 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[1] fn=FUN_0056c310 rva=0056c310 idx=1131 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[1] fn=FUN_0056bdf0 rva=0056bdf0 idx=1128 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[1] fn=FUN_00567c00 rva=00567c00 idx=1148 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[8] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_0056f020 NOISY noise=4 pages=o:0,n:0 diff:0 (sample discarded)
+[9] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[7] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[10] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[8] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[11] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[9] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[2] fn=FUN_0056e680 rva=0056e680 idx=1141 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[2] fn=FUN_005675d0 rva=005675d0 idx=1099 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[2] fn=FUN_0056dd40 rva=0056dd40 idx=1139 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[2] fn=FUN_0056d070 rva=0056d070 idx=1136 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[1] fn=FUN_005601f0 rva=005601f0 idx=1083 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[1] fn=FUN_0056caa0 rva=0056caa0 idx=1134 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[2] fn=FUN_0056c580 rva=0056c580 idx=1132 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[2] fn=FUN_0056c310 rva=0056c310 idx=1131 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_0056bdf0 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[2] fn=FUN_00567c00 rva=00567c00 idx=1148 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_0056efc0 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[10] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[12] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[11] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[13] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[12] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[14] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_0056f020 NOISY noise=3 pages=o:0,n:0 diff:0 (sample discarded)
+[~~] fn=FUN_0056e680 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[~~] fn=FUN_005675d0 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[3] fn=FUN_0056dd40 rva=0056dd40 idx=1139 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[3] fn=FUN_0056d070 rva=0056d070 idx=1136 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[2] fn=FUN_005601f0 rva=005601f0 idx=1083 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[2] fn=FUN_0056caa0 rva=0056caa0 idx=1134 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_0056c580 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[3] fn=FUN_0056c310 rva=0056c310 idx=1131 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[2] fn=FUN_0056bdf0 rva=0056bdf0 idx=1128 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[3] fn=FUN_00567c00 rva=00567c00 idx=1148 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[15] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[13] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[16] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[14] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[17] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[15] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[18] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[16] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[3] fn=FUN_0056e680 rva=0056e680 idx=1141 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_005675d0 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[4] fn=FUN_0056dd40 rva=0056dd40 idx=1139 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_0056d070 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[3] fn=FUN_005601f0 rva=005601f0 idx=1083 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[3] fn=FUN_0056caa0 rva=0056caa0 idx=1134 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[3] fn=FUN_0056c580 rva=0056c580 idx=1132 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[4] fn=FUN_0056c310 rva=0056c310 idx=1131 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[3] fn=FUN_0056bdf0 rva=0056bdf0 idx=1128 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[4] fn=FUN_00567c00 rva=00567c00 idx=1148 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[19] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[17] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[20] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_0056f020 NOISY noise=3 pages=o:0,n:0 diff:0 (sample discarded)
+[21] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[18] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[22] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[19] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[4] fn=FUN_0056e680 rva=0056e680 idx=1141 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[3] fn=FUN_005675d0 rva=005675d0 idx=1099 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[5] fn=FUN_0056dd40 rva=0056dd40 idx=1139 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[4] fn=FUN_0056d070 rva=0056d070 idx=1136 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[4] fn=FUN_005601f0 rva=005601f0 idx=1083 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[4] fn=FUN_0056caa0 rva=0056caa0 idx=1134 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[4] fn=FUN_0056c580 rva=0056c580 idx=1132 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[5] fn=FUN_0056c310 rva=0056c310 idx=1131 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[4] fn=FUN_0056bdf0 rva=0056bdf0 idx=1128 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[5] fn=FUN_00567c00 rva=00567c00 idx=1148 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[23] fn=FUN_0056efc0 rva=0056efc0 idx=1143 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[20] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[21] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[22] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[23] fn=FUN_0056f020 rva=0056f020 idx=1144 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[5] fn=FUN_0056e680 rva=0056e680 idx=1141 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[4] fn=FUN_005675d0 rva=005675d0 idx=1099 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[6] fn=FUN_0056dd40 rva=0056dd40 idx=1139 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[5] fn=FUN_0056d070 rva=0056d070 idx=1136 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[5] fn=FUN_005601f0 rva=005601f0 idx=1083 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[5] fn=FUN_0056caa0 rva=0056caa0 idx=1134 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[5] fn=FUN_0056c580 rva=0056c580 idx=1132 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[6] fn=FUN_0056c310 rva=0056c310 idx=1131 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[5] fn=FUN_0056bdf0 rva=0056bdf0 idx=1128 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[6] fn=FUN_00567c00 rva=00567c00 idx=1148 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[6] fn=FUN_0056e680 rva=0056e680 idx=1141 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[5] fn=FUN_005675d0 rva=005675d0 idx=1099 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[7] fn=FUN_0056dd40 rva=0056dd40 idx=1139 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[6] fn=FUN_0056d070 rva=0056d070 idx=1136 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_005601f0 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[~~] fn=FUN_0056caa0 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[6] fn=FUN_0056c580 rva=0056c580 idx=1132 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[7] fn=FUN_0056c310 rva=0056c310 idx=1131 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_0056bdf0 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[~~] fn=FUN_00567c00 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[7] fn=FUN_0056e680 rva=0056e680 idx=1141 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[6] fn=FUN_005675d0 rva=005675d0 idx=1099 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_0056dd40 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[~~] fn=FUN_0056d070 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[6] fn=FUN_005601f0 rva=005601f0 idx=1083 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[6] fn=FUN_0056caa0 rva=0056caa0 idx=1134 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[7] fn=FUN_0056c580 rva=0056c580 idx=1132 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[8] fn=FUN_0056c310 rva=0056c310 idx=1131 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[6] fn=FUN_0056bdf0 rva=0056bdf0 idx=1128 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[7] fn=FUN_00567c00 rva=00567c00 idx=1148 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[8] fn=FUN_0056e680 rva=0056e680 idx=1141 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[7] fn=FUN_005675d0 rva=005675d0 idx=1099 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[8] fn=FUN_0056dd40 rva=0056dd40 idx=1139 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[7] fn=FUN_0056d070 rva=0056d070 idx=1136 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_005601f0 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[7] fn=FUN_0056caa0 rva=0056caa0 idx=1134 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[8] fn=FUN_0056c580 rva=0056c580 idx=1132 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[9] fn=FUN_0056c310 rva=0056c310 idx=1131 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_0056bdf0 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[~~] fn=FUN_00567c00 NOISY noise=4 pages=o:0,n:0 diff:0 (sample discarded)
+[9] fn=FUN_0056e680 rva=0056e680 idx=1141 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[8] fn=FUN_005675d0 rva=005675d0 idx=1099 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[9] fn=FUN_0056dd40 rva=0056dd40 idx=1139 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[8] fn=FUN_0056d070 rva=0056d070 idx=1136 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[7] fn=FUN_005601f0 rva=005601f0 idx=1083 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[8] fn=FUN_0056caa0 rva=0056caa0 idx=1134 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[9] fn=FUN_0056c580 rva=0056c580 idx=1132 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[10] fn=FUN_0056c310 rva=0056c310 idx=1131 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[7] fn=FUN_0056bdf0 rva=0056bdf0 idx=1128 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[8] fn=FUN_00567c00 rva=00567c00 idx=1148 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[10] fn=FUN_0056e680 rva=0056e680 idx=1141 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[9] fn=FUN_005675d0 rva=005675d0 idx=1099 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[10] fn=FUN_0056dd40 rva=0056dd40 idx=1139 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[9] fn=FUN_0056d070 rva=0056d070 idx=1136 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[8] fn=FUN_005601f0 rva=005601f0 idx=1083 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[9] fn=FUN_0056caa0 rva=0056caa0 idx=1134 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[10] fn=FUN_0056c580 rva=0056c580 idx=1132 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[11] fn=FUN_0056c310 rva=0056c310 idx=1131 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_0056bdf0 NOISY noise=2 pages=o:0,n:0 diff:0 (sample discarded)
+[9] fn=FUN_00567c00 rva=00567c00 idx=1148 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[11] fn=FUN_0056e680 rva=0056e680 idx=1141 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[10] fn=FUN_005675d0 rva=005675d0 idx=1099 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[11] fn=FUN_0056dd40 rva=0056dd40 idx=1139 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[10] fn=FUN_0056d070 rva=0056d070 idx=1136 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[9] fn=FUN_005601f0 rva=005601f0 idx=1083 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[10] fn=FUN_0056caa0 rva=0056caa0 idx=1134 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[11] fn=FUN_0056c580 rva=0056c580 idx=1132 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[12] fn=FUN_0056c310 rva=0056c310 idx=1131 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[8] fn=FUN_0056bdf0 rva=0056bdf0 idx=1128 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[10] fn=FUN_00567c00 rva=00567c00 idx=1148 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[12] fn=FUN_0056e680 rva=0056e680 idx=1141 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[11] fn=FUN_005675d0 rva=005675d0 idx=1099 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[12] fn=FUN_0056dd40 rva=0056dd40 idx=1139 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[~~] fn=FUN_0056d070 NOISY noise=4 pages=o:0,n:0 diff:0 (sample discarded)
+[10] fn=FUN_005601f0 rva=005601f0 idx=1083 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[11] fn=FUN_0056caa0 rva=0056caa0 idx=1134 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[12] fn=FUN_0056c580 rva=0056c580 idx=1132 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0
+[13] fn=FUN_0056c310 rva=0056c310 idx=1131 ndiff=0 OK pages=o:0,n:0,diff:0 stack=0 noise=0 ovf=0 ret=0

@@ -11,6 +11,39 @@ one site per boot, and ran the two controls the original recipe did not:
 | `0x00570090` | RACE_OK, **NO_SAMPLES** (n=0) | RACE_OK | **not a crasher** → NO_SAMPLES bucket |
 | `0x0056f0a0` | **CRASH** 30s | **RACE_OK** | crash is in the **A/B window**, not the port |
 | `0x0056f350` | **CRASH** 27s | **CRASH** 26s | crash is in the **installed port** |
+| `0x0055bd80` | **CRASH** 17s (1 sample, ndiff=0) | **RACE_OK** | **witness** crash — port is fine |
+| `0x00560260` | **CLEAN 24/24**, twice | RACE_OK | **not a crasher any more → promoted C3** |
+
+### `0x00560260` was listed as a crasher and just runs clean — re-run before believing it
+
+`re/NEXT_SESSION.md` had it as "CRASH after 24 clean samples, heap effects unrestored". It now
+completes `RACE_OK` with `n=24 ndiff=0`, `pages diff:0 stack:0 noise:0 ovf:0`, proof
+`A/B-IS-REAL installed=e9 uninstalled=83`, and the control is `RACE_OK` too, so there is no
+witness problem either. Because the standing record called it a crasher, the CLEAN was **not
+taken on one boot** — reproduced on two independent boots (`..._152255`, `..._152457`), both
+24/24. This is the stale-blocker shape: the blocker had been fixed, or was a group/timing
+artefact, and the row simply needed re-running.
+
+Promoted C2→C3. Gate: caller `0x00561040` C3; callees `0x0056f350`/`0x00570090`/`0x0056f0a0` all
+C2; no stubs in `RwpSolverPartition13.cpp`. Its plate carried **three unfiled `[UNCERTAIN]`
+markers with zero rows in `UNCERTAINTIES.md`** — filed as **U-9131/U-9132/U-9133**, each
+`Blocks=none` under the standing rule for naming/intent uncertainties on an A/B-verified verbatim
+body, with the inline markers rewritten to carry their ids.
+
+`0x0055bd80` is **classified, not fixed**: armed CRASH after 1 sample (`ndiff=0`, real proof) but
+control `RACE_OK`, so like `0x0056f0a0` it is a witness crash with a working port. Stays C2; it
+needs the same lane decision, not a body change.
+
+### Running total on the 9-item list
+
+| RVA | state |
+|---|---|
+| `0x0056bce0` | **fixed → C3** (EDX contract) |
+| `0x00560260` | **CLEAN → C3** (stale blocker) |
+| `0x0056fea0`, `0x00570090` | never crashers (armed `NO_SAMPLES`) |
+| `0x0056f0a0`, `0x0055bd80` | **witness** crashes — port fine, lane decision pending |
+| `0x0056f350` | genuine port defect, **more than one** divergent path; needs a per-iteration trace |
+| `0x00421960`, `0x004219c0`, `0x00495fe0` | Lane 2 generated, still untriaged |
 
 So the group's crash localises to `0x0056f350` and `0x0056f0a0`, and those two are **different
 failure classes**. Two of the five were never crashers at all — they were guilty by association
