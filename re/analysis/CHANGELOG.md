@@ -26,6 +26,19 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-09-10  0056c8e0  FUN_0056c8e0  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF (sole caller 0x0056caa0 C3); re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  LANE 3 SWEEP (2nd batch): 11 void C2 rows C2->C3 through the page-level write-tracking A/B; 3 naming/intent uncertainties filed U-9127..U-9129  Evidence: re/analysis/lane3_write_tracking_20260910.md, re/parity/shadow_results.tsv, log/shadow_ab/c3_gate_check_tracked2.tsv. Gate: 5 PASS / 6 LEAF (callers C2/C3), 0 FAIL. Each row: 24 sampled in-race calls, touched pages + caller stack window + return identical, PATCHBYTE proof.
+2026-09-10  0056c0a0  FUN_0056c0a0  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  0056c310  FUN_0056c310  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  0056c580  FUN_0056c580  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  0056caa0  FUN_0056caa0  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  0056d070  FUN_0056d070  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  0056dd40  FUN_0056dd40  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  0056e680  FUN_0056e680  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  0056ef30  FUN_0056ef30  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  0056efc0  FUN_0056efc0  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  0056f020  FUN_0056f020  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  0056f1f0  FUN_0056f1f0  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
 2026-09-10  LANE 2 FIRST PROMOTIONS: 7 C2 rows with NO prior port C2->C3 on decompiler-GENERATED ports (decomp2port.py + RW device-slot idiom table), each verified 24/24 effect-identical by the page-level write-tracking A/B; hooks are L2_ opt-in  Evidence: re/analysis/lane2_decomp2port_design_20260910.md, re/parity/shadow_results.tsv, log/shadow_ab/c3_gate_check_lane2.tsv. Gate: 7 PASS (caller FUN_0040bde0 C2; callee FUN_004770a0 C2 / RpClumpRender).
 2026-09-10  00421560  FUN_00421560  C2->C3  generated port (decomp2port), tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane2_decomp2port_design_20260910.md
 2026-09-10  00457610  FUN_00457610  C2->C3  generated port (decomp2port), tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane2_decomp2port_design_20260910.md
