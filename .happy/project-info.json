@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-10T17:30:00Z",
+  "updatedAt": "2026-09-10T20:00:00Z",
   "sections": [
     {
       "heading": "Status",
@@ -20,36 +20,43 @@
         { "label": "C2", "value": 3883, "kind": "number" },
         { "label": "C1", "value": 821, "kind": "number" },
         { "label": "UNCERTAINTIES (open rows)", "value": 3069, "kind": "number" },
-        { "label": "DEFERRED", "value": 679, "kind": "number" }
+        { "label": "DEFERRED (active)", "value": 678, "kind": "number" }
       ]
     },
     {
-      "heading": "AWAITING YOUR DECISION",
+      "heading": "TOP FINDING - read before trusting any shadow verdict",
       "fields": [
-        { "label": "1. Build float model (D-11070, parked)", "value": "MEASURED as SSE2, not x87 - no /arch flag anywhere in build.bat. Keep SSE2 / add /arch:IA32 globally / per-TU on physics+math. Affects 85 TUs, 88 rows, 17 DIVERGENT*.", "kind": "text" },
-        { "label": "2. Four C4 rows may need demotion (U-9087)", "value": "0x00494ef0, 0x0040de00, 0x0040cd90, 0x00496900. Their installed-hook proof is the byte 0xE9 - which is the ORIGINAL thunk's own first byte. hook_dual_install.log shows all 10 such hooks REFUSED on every run, so they have never once installed.", "kind": "text" },
-        { "label": "3. HookSystem dual-install guard (U-9087)", "value": "Tagged ARCHITECTURE-LEVEL. Discriminating by JMP target would work: verified 10/10 targets are inside MASHED.exe.", "kind": "text" }
+        { "label": "Single-boot verdicts are unreliable", "value": "The lane produces transient windows of CONSECUTIVE failing boots. Measured: failures at positions 4-5-6 and 15-16-17 of 24, no position trend, and 6 of 8 were in SSE2 TUs vs 2 in x87 TUs - so the window is not a property of the row OR the build.", "kind": "text" },
+        { "label": "Rule", "value": "Require TWO independent boots before recording a CRASH/VOID/NO_SAMPLES or attributing it to a change.", "kind": "text" },
+        { "label": "Cause", "value": "UNKNOWN - top open question. Ruled out: long-run degradation, group interference, build variant.", "kind": "text" },
+        { "label": "8 results rows annotated", "value": "as failure-window artefacts, with their prior verdicts inline", "kind": "text" }
       ]
     },
     {
-      "heading": "Landed 2026-09-10 second session (38 commits)",
+      "heading": "Decisions closed this session",
+      "fields": [
+        { "label": "D-11070 float model", "value": "DECIDED: per-TU /arch:IA32 on 4 measured TUs (build_objs.ps1 -X87List + x87_tus.txt, both targets). The build was SSE2, not x87. A 10-TU trial did NOT generalise, so it was narrowed to what repeats: 4 DIVERGENT->CLEAN conversions seen twice each.", "kind": "text" },
+        { "label": "0x0056f350", "value": "CLOSED: port defect was a Ghidra-interleaving spill (fixed, spill cmov gone from codegen, control 3/3 RACE_OK). Residual crash is inherited witness invalidity - it calls FUN_0056f0a0. Out of the lane, stays C2.", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Landed 2026-09-10 second session (41 commits)",
       "fields": [
         { "label": "Merges", "value": ["docs/reconcile", "race/nav-champ", "race/arctic-cap"], "kind": "list" },
-        { "label": "Promotions", "value": "3 rows C2->C3 (C3 1008 -> 1011): 0x0056bce0, 0x00560260, 0x005a6e10", "kind": "text" },
-        { "label": "Product defects fixed", "value": ["QuadRenderer rejected PAL4 - every BADGES 16x16 sprite was dead", "0x0056bce0 caller-saved EDX contract (crash)", "0x0056bce0 denominator tree + double rounding", "0x0056f350 float loop counter"], "kind": "list" },
-        { "label": "Tooling defects fixed", "value": ["decomp2port: 13 control bytes had DISABLED the HIDDEN_REG_ARG guard entirely", "decomp2port: CALLEE_ARITY only logged, never refused", "decomp2port: no IRREVERSIBLE_SIDE_EFFECT guard", "shadow_batch: control boot destroyed the armed verdict", "shadow_batch: stale snapshot clobbered concurrent edits", "shadow_batch: booted sites whose TU does not exist"], "kind": "list" },
-        { "label": "Crasher list", "value": "all 9 dispositioned: 2 promoted, 2 never crashed, 2 invalid witnesses, 3 generator gaps, 1 pinned to an instruction", "kind": "text" },
-        { "label": "New tools/tests", "value": ["re/tools/tests/test_decomp2port_refusals.py (9/9)", "re/tools/defuse_trace.py", "MASHED_TRACE_F350 loop instrument"], "kind": "list" },
-        { "label": "Filed", "value": "U-9130..U-9133, D-11070", "kind": "text" },
-        { "label": "Corrections to my own claims", "value": 4, "kind": "number" }
+        { "label": "Promotions", "value": "3 rows C2->C3 (C3 1008 -> 1011)", "kind": "text" },
+        { "label": "Product defects fixed", "value": ["QuadRenderer rejected PAL4 - every BADGES 16x16 sprite was dead", "0x0056bce0 caller-saved EDX contract", "0x0056bce0 denominator tree + double rounding", "0x0056f350 axis-select spill + float loop counter"], "kind": "list" },
+        { "label": "Tooling defects fixed", "value": ["decomp2port: 13 control bytes had DISABLED the HIDDEN_REG_ARG guard", "decomp2port: CALLEE_ARITY only logged, never refused", "decomp2port: no IRREVERSIBLE_SIDE_EFFECT guard", "shadow_batch: control boot destroyed the armed verdict", "shadow_batch: stale snapshot clobbered concurrent edits", "shadow_batch: booted sites whose TU does not exist"], "kind": "list" },
+        { "label": "Crasher list", "value": "all 9 dispositioned; 3 invalid Lane 2 ports dropped from the build", "kind": "text" },
+        { "label": "New tools/tests", "value": ["re/tools/tests/test_decomp2port_refusals.py (9/9)", "re/tools/defuse_trace.py", "build_objs.ps1 -X87List", "MASHED_TRACE_F350"], "kind": "list" },
+        { "label": "Corrections to my own claims", "value": 6, "kind": "number" }
       ]
     },
     {
-      "heading": "Next (no decision needed)",
+      "heading": "Next",
       "fields": [
-        { "label": "0x0056f350", "value": "One debugger read: is [esp+0x58] local_d0 or another spilled local? Fault is pinned to mulss xmm0,[eax] at _impl+0x62d with EAX=0.", "kind": "text" },
-        { "label": "Other open", "value": ["private-memory tracking hang", "43 NO_SAMPLES rows need scenario enrichment (--boost, --mode 2, walled track, drive input)", "Lane 1 C3->C4 rubric wording"], "kind": "list" },
-        { "label": "Closed as unproductive", "value": "group-boot NO_SAMPLES re-runs: 31 boots, 0 of 31 converted", "kind": "text" }
+        { "label": "Highest value", "value": "Find the cause of the consecutive-failure windows - it gates the reliability of every verdict in this lane.", "kind": "text" },
+        { "label": "Still pending your call", "value": ["4 C4 rows may need demotion (U-9087) - their install proof is a byte the original already has", "The HookSystem dual-install guard fix that would unblock those 10 hooks"], "kind": "list" },
+        { "label": "Open work", "value": ["standalone physics under x87 unverified (needs a quiet-desktop race capture)", "43 NO_SAMPLES rows need scenario enrichment", "private-memory tracking hang"], "kind": "list" }
       ]
     }
   ]
