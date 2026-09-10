@@ -26,6 +26,25 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-09-10  LANE 3 SWEEP: 18 void C2 rows C2->C3 through the page-level write-tracking A/B (Core/ShadowTrack.h via shadow_gen.py --tracked); 2 DIVERGENT and 2 CRASH kept at C2; 10 naming/intent uncertainties filed U-9116..U-9125  Evidence: re/analysis/lane3_write_tracking_20260910.md, re/parity/shadow_results.tsv, log/shadow_ab/c3_gate_check_tracked.tsv. Gate: 7 PASS / 11 LEAF (sole caller C2, leaf exemption L24), 0 FAIL. Each row: up to 24 sampled in-race calls, touched pages + caller stack window + return identical, PATCHBYTE proof.
+2026-09-10  00423b00  FUN_00423b00  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  004c51a0  RwMatrixTranslate  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  0055c0f0  FUN_0055c0f0  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  005601f0  FUN_005601f0  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  00563e70  FUN_00563e70  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  00563f60  FUN_00563f60  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  005646c0  FUN_005646c0  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  00565120  FUN_00565120  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  005651b0  FUN_005651b0  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  00565260  FUN_00565260  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  005675d0  FUN_005675d0  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  00567c00  FUN_00567c00  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  00567c60  FUN_00567c60  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  00567f00  FUN_00567f00  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate PASS; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  005684c0  FUN_005684c0  C2->C3  tracked shadow A/B 18/18 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  00568560  FUN_00568560  C2->C3  tracked shadow A/B 9/9 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  005685f0  FUN_005685f0  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
+2026-09-10  0056bdf0  FUN_0056bdf0  C2->C3  tracked shadow A/B 24/24 effect-identical, A/B-IS-REAL, gate LEAF; re/analysis/lane3_write_tracking_20260910.md
 2026-09-10  SHADOW LANE SWEEP: 44 rows C2->C3 through the in-process shadow A/B (re/tools/shadow_gen.py + shadow_batch.py + shadow_ab_report.py); 9 DIVERGENT kept at C2 (4 proven non-idempotent, 4 under review, 1 float10 limit); 21 unreached; 28 naming/intent uncertainties filed U-9088..U-9115  Evidence: re/analysis/shadow_lane_20260910.md, re/parity/shadow_results.tsv, log/shadow_ab/c3_gate_check.tsv. Gate: 32 PASS / 12 LEAF (all callers C2), 0 FAIL. Each row: 48 sampled in-race calls, return bit-identical, PATCHBYTE proof installed=E9/uninstalled=original byte.
 2026-09-10  00407b00  FUN_00407b00  C2->C3  shadow A/B 48/48 bit-identical, A/B-IS-REAL, gate PASS; re/analysis/shadow_lane_20260910.md
 2026-09-10  004671d0  FUN_004671d0  C2->C3  shadow A/B 48/48 bit-identical, A/B-IS-REAL, gate PASS; re/analysis/shadow_lane_20260910.md

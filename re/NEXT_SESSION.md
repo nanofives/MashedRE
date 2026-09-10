@@ -70,11 +70,9 @@ evidence; the shadow report is a stronger canonical-scenario diff but not a Frid
 keep C4 Frida-only. If amended: `shadow_gen.py --sweep re/parity/matchdiff_sweep_c3.csv --apply`
 (exclude audio; frontend/hud with `--phase any`), then `shadow_batch.py --cars 4 --hold 60`.
 
-### H. Lane 3 — promote the 18 tracked-CLEAN C2 rows; finish the 55 **[mechanical]**
-`Core/ShadowTrack.h` works (`re/analysis/lane3_write_tracking_20260910.md`): 18 hand-ported void
-C2 sites are 24/24 effect-identical (touched pages + caller stack window + return). Gate-check
-them (Ghidra callers/callees, as for the 44) and run the re-classify transaction. Then boot the
-22 not-yet-sampled tracked sites (`shadow_batch.py --skip-done` over manifest rows kind=tracked,
+### H. Lane 3 — finish the 55 tracked sites **[mechanical]**
+`Core/ShadowTrack.h` works (`re/analysis/lane3_write_tracking_20260910.md`); the 18 CLEAN rows
+are PROMOTED (C3 = 984). Boot the 22 not-yet-sampled tracked sites (`shadow_batch.py --skip-done` over manifest rows kind=tracked,
 `--launch-arg=--cars --launch-arg=4 --hold 60`). Open: private-memory mode still dies silently
 on its first sample (`MASHED_SHADOW_PRIVATE=1 MASHED_SHADOW_TRACE=1`, one boot, read the last
 `hex prot` line); `0x0055bd80` crashes at load under the wrapper; `0x00560260` completes 24 clean

@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — M2 Faithful Race (shadow lanes 1-3)",
-  "updatedAt": "2026-09-10T13:44:35Z",
+  "updatedAt": "2026-09-10T13:55:35Z",
   "sections": [
     {
       "heading": "Milestone status",
@@ -22,7 +22,7 @@
         },
         {
           "label": "Session close",
-          "value": "2026-09-10 — 44 C2→C3; Lane 2 transcriber (25/53 compile); Lane 3 write tracking WORKS (18 CLEAN / 55)",
+          "value": "2026-09-10 — 62 rows C2→C3 (44 shadow + 18 tracked); Lane 2 transcriber; Lane 3 write tracking WORKS",
           "kind": "text"
         }
       ]
@@ -37,7 +37,7 @@
         },
         {
           "label": "C3",
-          "value": 966,
+          "value": 984,
           "kind": "number"
         },
         {
@@ -47,7 +47,7 @@
         },
         {
           "label": "Trackers",
-          "value": "DEFERRED 677 · UNCERTAINTIES 3068 (28 naming/intent filed today)",
+          "value": "DEFERRED 677 · UNCERTAINTIES 3078 (38 naming/intent filed today)",
           "kind": "text"
         }
       ]
@@ -67,13 +67,13 @@
         },
         {
           "label": "Lane 3 write tracking",
-          "value": "Core/ShadowTrack.h: 18 CLEAN 24/24, 2 DIVERGENT, 2 CRASH, 11 unreached, 22 unbooted; private-memory mode still opt-in",
+          "value": "Core/ShadowTrack.h: 18 CLEAN → C3; 2 DIVERGENT, 2 CRASH, 11 unreached, 22 unbooted; private-memory mode opt-in",
           "kind": "text"
         },
         {
           "label": "Next",
           "value": [
-            "H: gate-check + promote the 18 tracked-CLEAN rows",
+            "H: boot the 22 unsampled tracked sites",
             "H: trace private-memory mode",
             "G: rubric decision for C3→C4 via shadow"
           ],

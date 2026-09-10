@@ -118,7 +118,9 @@ silently on the first sample; it stays opt-in and unexplained. That is the next 
 (`MASHED_SHADOW_PRIVATE=1 MASHED_SHADOW_TRACE=1`, one boot), because heap-writing functions
 like `0x00560260` need it to be safe.
 
-**What this means for promotion**: 18 C2 rows now carry effect-level A/B evidence with the
-hook installed at the real call site, where before they had none (void, no region). They need
-the caller/callee gate and the `re-classify` transaction — not done in this session.
+**Promotion (done 2026-09-10, later the same session)**: gate check `log/shadow_ab/c3_gate_check_tracked.tsv`
+— 7 PASS, 11 LEAF (zero callees, sole caller C2; leaf exemption CONFIDENCE.md L24 satisfied by
+the 24/24 effect-identical samples), 0 FAIL. **18 rows C2→C3** via re-classify; 10 naming/intent
+markers filed as U-9116..U-9125 (the shared `font_text_d3` report of `0x004c51a0` was not swept:
+its markers are not this row's). C3 total 966 → 984.
 
