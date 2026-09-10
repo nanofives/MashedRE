@@ -253,6 +253,30 @@ def main():
     if queue:
         print(f"\nbudget exhausted: {sum(len(g) for g in queue)} site(s) not booted")
 
+    # ── RE-READ the results file before merging: a long batch must not clobber edits
+    #    made while it was running ────────────────────────────────────────────────────
+    # `done` was loaded ONCE at startup. A 31-boot sweep takes ~25 minutes, and anything
+    # written to the TSV in that window -- by a reviewer correcting a verdict, or by another
+    # session's batch -- is silently reverted when this run writes its stale snapshot back.
+    # Hit for real on 2026-09-10: three rows re-verdicted INVALID_PORT mid-sweep were back to
+    # CRASH the moment the sweep finished, losing the diagnosis with them.
+    # Re-read now and keep the on-disk row for anything this run did not touch.
+    if outp.exists():
+        try:
+            with open(outp, newline="", encoding="utf-8") as f:
+                fresh = {r["rva"]: r for r in csv.DictReader(f, delimiter="\t")}
+            changed = [k for k, v in fresh.items()
+                       if k not in results and done.get(k) != v]
+            for k, v in fresh.items():
+                if k not in results:       # untouched by this run -> disk wins
+                    done[k] = v
+            if changed:
+                print(f"  [merge] {len(changed)} row(s) changed on disk during this run; "
+                      f"kept the on-disk version")
+        except Exception as e:            # never lose a whole sweep to a merge problem
+            print(f"  [merge] WARNING could not re-read {outp.name} ({e}); "
+                  f"writing this run's snapshot")
+
     # ── control boots must NOT clobber an armed verdict ──────────────────────────────
     # --no-shadow sets MASHED_NO_SELFTEST=1, so a control boot logs NO samples by
     # construction and every site comes back NO_SAMPLES. Merging that like a normal result
