@@ -248,6 +248,16 @@ boot-only measurement): **c0 0/24 exercised, c1 5/24**. Result table:
   never crashers) *and* false NO_SAMPLES (`0x005a6e10` was CLEAN, `0x005aeed0` was sampling).
   **Re-run any group verdict at `--group 1` before believing it, in either direction.**
 
+- **THE REST OF THE BUCKET IS GENUINELY EMPTY — measured, and it corrects my own framing.** I
+  called the 32 group-boot NO_SAMPLES rows "a standing pool of possibly-free promotions". They
+  are not. Re-ran all 31 remaining ones at `--group 1`, one boot each: **31/31 `boot_state`
+  RACE_OK and 31/31 still `NO_SAMPLES`.** Zero converted. And the prescreen agrees on the same
+  31 by an independent method (Frida invocation counters gated on the 3 validated in-race
+  probes): **31/31 `never`**. Two methods, one conclusion — these functions are simply not
+  reached by a 4-car standing race, so **item D's original premise holds and the work is
+  scenario enrichment**, exactly as it said. The group-boot hazard is real but did not
+  contaminate this set.
+
 ### E. Next slice of void ports **[RunRegion with two spans]**
 12 MULTI_REGION rows in `log/shadow_ab/worker_void_regions.txt` need a `RunRegion2`; 18 INDIRECT
 and 7 GLOBAL_WRITES need a snapshot of the pointed-to/global state instead. Verify every span with

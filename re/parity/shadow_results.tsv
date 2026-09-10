@@ -1,25 +1,25 @@
 rva	name	verdict	n	ndiff	proof	detail	boot_state	group	log	at	control	control_at
 00403050	PreRaceLoadingScreenDraw	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T12:16:09		
-00407600	PlayerPositionPtr	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06		
+00407600	PlayerPositionPtr	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:09:38		
 00407b00	RangeTableFindGroup	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=53		RACE_OK	16	shadow_ab_20260910_001251_16x_00407600.log	2026-09-10T00:12:51		
 0040cf40	ReleaseResourcePair	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T12:17:04		
 00421560	L2_FUN_00421560	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=a1		RACE_OK	4	shadow_ab_20260910_120315_4x_00421560.log	2026-09-10T12:03:15		
-00421930	BodyGeometryFirstDword	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06		
-00421960	L2_FUN_00421960	INVALID_PORT	0	0		CALLEE ARITY. The original shares one pushed argument block between two consecutive calls: 0x00421966 push 7/-1/eax/ecx, 0x0042196c call 0x55dec0 (4 args), 0x00421971 add esp,4 pops only ONE so three args stay live, 0x00421974 push eax, 0x00421975 call 0x559c40 = FUN_00559c40(eax_ret, eax_old, -1, 7), 0x0042197a add esp,0x10. Ghidra models it as two independent 1-arg calls, so the port passes ONE argument and FUN_00559c40 reads arg3 (0x00559c44 mov ebx,[esp+0x30]) as stack garbage instead of -1; the cmp ebx,-1/jne at 0x00559c4d takes the wrong branch and 0x00559cb3 mov edi,[eax+ebp] faults on an address derived from that garbage. decomp2port.py now REFUSES CALLEE_ARITY (it previously only logged and emitted a site-arity thunk). Site -> SKIP:callee-arity.	CRASH	1	shadow_ab_20260910_152725_1x_00421960.log	2026-09-10T15:27:25	CRASH	2026-09-10T15:29:37
+00421930	BodyGeometryFirstDword	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:10:19		
+00421960	L2_FUN_00421960	CRASH	0	0		 |   p0.grounded=4 airflag=1  vel=[-83.7, 0.2, 331.1]    /     + 13s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[2322.9, -23.2, 2510.9]    /   game exited.	CRASH	1	shadow_ab_20260910_152725_1x_00421960.log	2026-09-10T15:27:25	CRASH	2026-09-10T15:29:37
 00421980	L2_FUN_00421980	CRASH	0	0		 |   p0.grounded=4 airflag=1  vel=[-65.7, 0.1, 273.4]    /     + 13s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[2360.0, -23.3, 2333.9]    /   game exited.	CRASH	1		2026-09-10T09:38:40		
-004219c0	L2_FUN_004219c0	INVALID_PORT	0	0		HIDDEN REGISTER ARGUMENT, same class as 0x00495fe0: `puVar1 = &DAT_0063fb90; do { FUN_00421720(); puVar1 += 0x208; } while (puVar1 < 0x6403b0)` -- a pointer advanced per iteration and never passed to a zero-arg call, so the callee reads it from an unmodelled register. decomp2port.py HIDDEN_REG_ARG now refuses this body; its comment was WRITTEN from this RVA but the regex was corrupted so it never fired. Site -> SKIP:hidden-reg-arg.	CRASH	1	shadow_ab_20260910_152737_1x_004219c0.log	2026-09-10T15:27:37	CRASH	2026-09-10T15:29:06
+004219c0	L2_FUN_004219c0	CRASH	0	0		" | cal-packages\Python312\site-packages\frida\core.py"", line 499, in _rpc_request /     raise result.error / frida.InvalidOperationError: script has been destroyed"	CRASH	1	shadow_ab_20260910_152737_1x_004219c0.log	2026-09-10T15:27:37	CRASH	2026-09-10T15:29:06
 00423b00	FrontendInputDispatch	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=83		RACE_OK	8	shadow_ab_20260910_103042_8x_00403050.log	2026-09-10T10:30:42		
-004274e0	LocalizationFileLoad	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06		
+004274e0	LocalizationFileLoad	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:11:02		
 0042bcb0	PlayerNameSpriteDraw	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T12:18:00		
-0044b000	SlotRecordPositionPtr	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06		
+0044b000	SlotRecordPositionPtr	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:11:43		
 00457610	L2_FUN_00457610	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=a1		RACE_OK	3	shadow_ab_20260910_120415_3x_00457610.log	2026-09-10T12:04:15		
 0045d3f0	L2_FUN_0045d3f0	CLEAN	2	0	A/B-IS-REAL installed=e9 uninstalled=a1		RACE_OK	5	shadow_ab_20260910_023716_5x_005aeed0.log	2026-09-10T02:37:17		
 004671d0	FollowTargetField40	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=e8		RACE_OK	16	shadow_ab_20260910_001251_16x_00407600.log	2026-09-10T00:12:51		
 00467210	FollowTargetField10	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=e8		RACE_OK	16	shadow_ab_20260910_001251_16x_00407600.log	2026-09-10T00:12:51		
 0047b9e0	Track_RenderQuadThunk_47b9e0	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T12:18:55		
 0047e9c0	FUN_0047e9c0	DIVERGENT	24	1	A/B-IS-REAL installed=e9 uninstalled=8b	pages=o:3,n:2,diff:1 stack=0 noise=0 ovf=0 ret=0 @00624000+048 x1	RACE_OK	8	shadow_ab_20260910_103042_8x_00403050.log	2026-09-10T10:30:42		
-004840b0	ShapeOwnerHandleGet	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06		
-004853b0	SmplFzxStateBlockGetLogged	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06		
+004840b0	ShapeOwnerHandleGet	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:12:25		
+004853b0	SmplFzxStateBlockGetLogged	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:13:07		
 00486f50	L2_FUN_00486f50	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=a1		RACE_OK	3	shadow_ab_20260910_120415_3x_00457610.log	2026-09-10T12:04:15		
 0048fce0	L2_FUN_0048fce0	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=a1		RACE_OK	4	shadow_ab_20260910_120315_4x_00421560.log	2026-09-10T12:03:15		
 0048fd10	L2_FUN_0048fd10	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=a1		RACE_OK	4	shadow_ab_20260910_120315_4x_00421560.log	2026-09-10T12:03:15		
@@ -27,21 +27,21 @@ rva	name	verdict	n	ndiff	proof	detail	boot_state	group	log	at	control	control_at
 00490490	L2_FUN_00490490	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=a1		RACE_OK	3	shadow_ab_20260910_120415_3x_00457610.log	2026-09-10T12:04:15		
 00490f50	ByteQuadSet50	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T12:19:51		
 00490f80	ByteQuadSet80	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T12:20:46		
-00495fe0	L2_FUN_00495fe0	INVALID_PORT	0	0		HIDDEN REGISTER ARGUMENT. The original 0x00495fe0 does `mov esi,0x771e88` / `call 0x495870` / `add esi,0x448` -- FUN_00495870 takes its device pointer in ESI, which Ghidra did not model, so the decomp shows FUN_00495870() with no args and an unused counter. The generated port calls it through a cdecl thunk with ESI undefined, and the fix_joypad boot-patch cave at 0x00508bde then does `mov eax,[esi]` with ESI=0 -- the caught AV. decomp2port.py HIDDEN_REG_ARG now refuses this body (the refusal was disabled by corrupted regex bytes). Site -> SKIP:hidden-reg-arg; the TU must be regenerated (it will refuse) or removed.	CRASH	1		2026-09-10T15:27:41	CRASH	2026-09-10T15:28:52
+00495fe0	L2_FUN_00495fe0	CRASH	0	0		 |  track=0 mode=10 cars=4 === /   attaching ASAP... /   [agent] ready /     phase=0  (waiting for menu (phase 1)) /   game exited while waiting for menu (phase 1)	CRASH	1		2026-09-10T15:27:41	CRASH	2026-09-10T15:28:52
 004a2bf7	Tbl4a2bf7	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T12:21:42		
-004b4050	ClumpQueryField18	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06		
+004b4050	ClumpQueryField18	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:13:48		
 004c4600	FUN_004c4600	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	16	shadow_ab_20260910_001251_16x_00407600.log	2026-09-10T00:12:51		
 004c51a0	FUN_004c51a0	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	4	shadow_ab_20260910_103201_4x_004a2bf7.log	2026-09-10T10:32:01		
 004c52f0	FUN_004c52f0	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	16	shadow_ab_20260910_001251_16x_00407600.log	2026-09-10T00:12:51		
 004d71f0	RenderState_GetTexturingOverride	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=a1		RACE_OK	16	shadow_ab_20260910_001251_16x_00407600.log	2026-09-10T00:12:51		
-004f8640	PluginFieldWriteA8	NO_SAMPLES	0	0			RACE_OK	7	shadow_ab_20260910_121354_7x_004f8640.log	2026-09-10T12:13:54		
-004f8670	PluginFieldWriteAC	NO_SAMPLES	0	0			RACE_OK	7	shadow_ab_20260910_121354_7x_004f8640.log	2026-09-10T12:13:54		
+004f8640	PluginFieldWriteA8	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:14:30		
+004f8670	PluginFieldWriteAC	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:15:11		
 00546b10	FUN_00546b10	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=53		RACE_OK	16	shadow_ab_20260910_001251_16x_00407600.log	2026-09-10T00:12:51		
-00546bf0	FUN_00546bf0	NO_SAMPLES	0	0			RACE_OK	8	shadow_ab_20260910_002854_8x_00546bf0.log	2026-09-10T00:28:54		
+00546bf0	FUN_00546bf0	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:15:52		
 00546c50	FUN_00546c50	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=56		RACE_OK	8	shadow_ab_20260910_002854_8x_00546bf0.log	2026-09-10T00:28:54		
-00546cb0	FUN_00546cb0	NO_SAMPLES	0	0			RACE_OK	8	shadow_ab_20260910_002854_8x_00546bf0.log	2026-09-10T00:28:54		
+00546cb0	FUN_00546cb0	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:16:33		
 0055a1f0	FUN_0055a1f0	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=83		RACE_OK	16	shadow_ab_20260910_001251_16x_00407600.log	2026-09-10T00:12:51		
-0055a9a0	FUN_0055a9a0	NO_SAMPLES	0	0			RACE_OK	8		2026-09-10T00:22:06		
+0055a9a0	FUN_0055a9a0	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:17:14		
 0055ab30	FUN_0055ab30	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=53		RACE_OK	16	shadow_ab_20260910_001331_16x_0055ab30.log	2026-09-10T00:13:31		
 0055abb0	FUN_0055abb0	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	16	shadow_ab_20260910_001718_16x_00407600.log	2026-09-10T00:17:18		
 0055ae50	FUN_0055ae50	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	16	shadow_ab_20260910_001331_16x_0055ab30.log	2026-09-10T00:13:31		
@@ -60,7 +60,7 @@ rva	name	verdict	n	ndiff	proof	detail	boot_state	group	log	at	control	control_at
 005601f0	FUN_005601f0	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=56		RACE_OK	2	shadow_ab_20260910_103453_2x_0055c2d0.log	2026-09-10T10:34:53		
 00560260	FUN_00560260	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=83		RACE_OK	1	shadow_ab_20260910_152457_1x_00560260.log	2026-09-10T15:24:57	RACE_OK	2026-09-10T15:23:40
 00561040	FUN_00561040	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=81		RACE_OK	16	shadow_ab_20260910_001331_16x_0055ab30.log	2026-09-10T00:13:31		
-00561280	FUN_00561280	NO_SAMPLES	0	0			RACE_OK	8	shadow_ab_20260910_002316_8x_00561280.log	2026-09-10T00:23:16		
+00561280	FUN_00561280	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:17:56		
 00561390	FUN_00561390	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=81		RACE_OK	16	shadow_ab_20260910_001331_16x_0055ab30.log	2026-09-10T00:13:31		
 00561c50	FUN_00561c50	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=83		RACE_OK	16	shadow_ab_20260910_001331_16x_0055ab30.log	2026-09-10T00:13:31		
 00561e60	FUN_00561e60	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=56		RACE_OK	16	shadow_ab_20260910_001331_16x_0055ab30.log	2026-09-10T00:13:31		
@@ -73,16 +73,16 @@ rva	name	verdict	n	ndiff	proof	detail	boot_state	group	log	at	control	control_at
 005646c0	FUN_005646c0	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=b8		RACE_OK	8	shadow_ab_20260910_103603_8x_00560260.log	2026-09-10T10:36:03		
 00564c80	FUN_00564c80	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=83		RACE_OK	16	shadow_ab_20260910_001412_16x_00561e80.log	2026-09-10T00:14:12		
 00565120	FUN_00565120	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	2	shadow_ab_20260910_104206_2x_00565120.log	2026-09-10T10:42:06		
-00565160	FUN_00565160	NO_SAMPLES	0	0			RACE_OK	7	shadow_ab_20260910_121354_7x_004f8640.log	2026-09-10T12:13:54		
+00565160	FUN_00565160	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:18:37		
 005651b0	FUN_005651b0	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	4	shadow_ab_20260910_104316_4x_005651b0.log	2026-09-10T10:43:16		
 00565200	FUN_00565200	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	8	shadow_ab_20260910_002854_8x_00546bf0.log	2026-09-10T00:28:54		
 00565260	FUN_00565260	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=83		RACE_OK	8	shadow_ab_20260910_103603_8x_00560260.log	2026-09-10T10:36:03		
 00565550	FUN_00565550	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	16	shadow_ab_20260910_001412_16x_00561e80.log	2026-09-10T00:14:12		
-00565ef0	FUN_00565ef0	NO_SAMPLES	0	0			RACE_OK	8	shadow_ab_20260910_002854_8x_00546bf0.log	2026-09-10T00:28:54		
-00565fa0	FUN_00565fa0	NO_SAMPLES	0	0			RACE_OK	8	shadow_ab_20260910_002854_8x_00546bf0.log	2026-09-10T00:28:54		
-00566200	FUN_00566200	NO_SAMPLES	0	0			RACE_OK	8	shadow_ab_20260910_002854_8x_00546bf0.log	2026-09-10T00:28:54		
+00565ef0	FUN_00565ef0	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:19:19		
+00565fa0	FUN_00565fa0	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:20:00		
+00566200	FUN_00566200	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:20:44		
 005667c0	FUN_005667c0	DIVERGENT_FLOAT10	48	48	A/B-IS-REAL installed=e9 uninstalled=8b	o=00000000,n=cb489a38 x9; o=20000000,n=efadf34d x7; o=a0000000,n=0b68e206 x5	RACE_OK	16	shadow_ab_20260910_001718_16x_00407600.log	2026-09-10T00:17:18		
-00566830	FUN_00566830	NO_SAMPLES	0	0			RACE_OK	7	shadow_ab_20260910_121354_7x_004f8640.log	2026-09-10T12:13:54		
+00566830	FUN_00566830	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:21:26		
 005675d0	FUN_005675d0	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	8	shadow_ab_20260910_103713_8x_00566830.log	2026-09-10T10:37:13		
 00567c00	FUN_00567c00	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	8	shadow_ab_20260910_103713_8x_00566830.log	2026-09-10T10:37:13		
 00567c60	FUN_00567c60	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	8	shadow_ab_20260910_103713_8x_00566830.log	2026-09-10T10:37:13		
@@ -94,13 +94,13 @@ rva	name	verdict	n	ndiff	proof	detail	boot_state	group	log	at	control	control_at
 00568dd0	FUN_00568dd0	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=83		RACE_OK	16	shadow_ab_20260910_001412_16x_00561e80.log	2026-09-10T00:14:12		
 00568fd0	FUN_00568fd0	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=83		RACE_OK	16	shadow_ab_20260910_001412_16x_00561e80.log	2026-09-10T00:14:12		
 0056b7a0	FUN_0056b7a0	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	16	shadow_ab_20260910_001412_16x_00561e80.log	2026-09-10T00:14:12		
-0056b9d0	FUN_0056b9d0	NO_SAMPLES	0	0			RACE_OK	8	shadow_ab_20260910_002316_8x_00561280.log	2026-09-10T00:23:16		
+0056b9d0	FUN_0056b9d0	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:22:08		
 0056ba30	FUN_0056ba30	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	16	shadow_ab_20260910_001412_16x_00561e80.log	2026-09-10T00:14:12		
 0056bb30	FUN_0056bb30	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=56		RACE_OK	16	shadow_ab_20260910_001412_16x_00561e80.log	2026-09-10T00:14:12		
 0056bb80	FUN_0056bb80	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T00:31:17		
 0056bce0	FUN_0056bce0	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=83		RACE_OK	1	shadow_ab_20260910_142315_1x_0056bce0.log	2026-09-10T14:23:15		
 0056bdf0	FUN_0056bdf0	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=53		RACE_OK	4	shadow_ab_20260910_104316_4x_005651b0.log	2026-09-10T10:43:16		
-0056be80	FUN_0056be80	NO_SAMPLES	0	0			RACE_OK	7	shadow_ab_20260910_121354_7x_004f8640.log	2026-09-10T12:13:54		
+0056be80	FUN_0056be80	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:22:50		
 0056c0a0	FUN_0056c0a0	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	8	shadow_ab_20260910_120656_8x_004f8670.log	2026-09-10T12:06:56		
 0056c310	FUN_0056c310	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	8	shadow_ab_20260910_120656_8x_004f8670.log	2026-09-10T12:06:56		
 0056c580	FUN_0056c580	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=83		RACE_OK	8	shadow_ab_20260910_120656_8x_004f8670.log	2026-09-10T12:06:56		
@@ -109,7 +109,7 @@ rva	name	verdict	n	ndiff	proof	detail	boot_state	group	log	at	control	control_at
 0056cf90	FUN_0056cf90	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	1	shadow_ab_20260910_003217_1x_0056cf90.log	2026-09-10T00:32:18		
 0056d070	FUN_0056d070	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=83		RACE_OK	8	shadow_ab_20260910_120806_8x_0056caa0.log	2026-09-10T12:08:06		
 0056d350	FUN_0056d350	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T00:33:08		
-0056d3f0	FUN_0056d3f0	NO_SAMPLES	0	0			RACE_OK	7	shadow_ab_20260910_121354_7x_004f8640.log	2026-09-10T12:13:54		
+0056d3f0	FUN_0056d3f0	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:23:32		
 0056dd40	FUN_0056dd40	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=55		RACE_OK	8	shadow_ab_20260910_120806_8x_0056caa0.log	2026-09-10T12:08:06		
 0056e680	FUN_0056e680	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=83		RACE_OK	8	shadow_ab_20260910_120806_8x_0056caa0.log	2026-09-10T12:08:06		
 0056ed60	FUN_0056ed60	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=83		RACE_OK	1	shadow_ab_20260910_003358_1x_0056ed60.log	2026-09-10T00:33:58		
@@ -120,12 +120,12 @@ rva	name	verdict	n	ndiff	proof	detail	boot_state	group	log	at	control	control_at
 0056f1f0	FUN_0056f1f0	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=51		RACE_OK	1	shadow_ab_20260910_121102_1x_0056f1f0.log	2026-09-10T12:11:02		
 0056f350	FUN_0056f350	CRASH	0	0		 |   p0.grounded=4 airflag=1  vel=[-83.7, 0.2, 331.1]    /     + 13s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[2322.9, -23.2, 2510.9]    /   game exited.	CRASH	1	shadow_ab_20260910_151900_1x_0056f350.log	2026-09-10T15:19:00	CRASH	2026-09-10T15:19:28
 0056fad0	FUN_0056fad0	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	1	shadow_ab_20260910_003450_1x_0056fad0.log	2026-09-10T00:34:50		
-0056fb90	FUN_0056fb90	NO_SAMPLES	0	0			RACE_OK	8	shadow_ab_20260910_002316_8x_00561280.log	2026-09-10T00:23:16		
+0056fb90	FUN_0056fb90	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:24:14		
 0056fea0	FUN_0056fea0	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T14:32:02		
 00570090	FUN_00570090	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T14:33:23		
-005729a0	FUN_005729a0	NO_SAMPLES	0	0			RACE_OK	8	shadow_ab_20260910_002316_8x_00561280.log	2026-09-10T00:23:16		
+005729a0	FUN_005729a0	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:24:56		
 005735f0	FUN_005735f0	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T00:35:41		
-00573670	FUN_00573670	NO_SAMPLES	0	0			RACE_OK	8	shadow_ab_20260910_002316_8x_00561280.log	2026-09-10T00:23:16		
+00573670	FUN_00573670	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:25:37		
 00574ad0	FUN_00574ad0	DIVERGENT	3	1	A/B-IS-REAL installed=e9 uninstalled=8b	o=00000001,n=00000000 x1	CRASH	16	shadow_ab_20260910_001753_16x_005729a0.log	2026-09-10T00:17:53		
 00575120	FUN_00575120	DIVERGENT	48	46	A/B-IS-REAL installed=e9 uninstalled=8b	o=00000001,n=00000000 x46	RACE_OK	8	shadow_ab_20260910_002316_8x_00561280.log	2026-09-10T00:23:16		
 005751f0	FUN_005751f0	DIVERGENT_FLOAT10	48	48	A/B-IS-REAL installed=e9 uninstalled=83	o=60000000,n=45d02c44 x1; o=e0000000,n=f7adff38 x1; o=40000000,n=77babab5 x1	RACE_OK	8	shadow_ab_20260910_002316_8x_00561280.log	2026-09-10T00:23:16		
@@ -148,13 +148,13 @@ rva	name	verdict	n	ndiff	proof	detail	boot_state	group	log	at	control	control_at
 00578e50	FUN_00578e50	CLEAN	48	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	8	shadow_ab_20260910_002538_8x_00578610.log	2026-09-10T00:25:38		
 00578ff0	FUN_00578ff0	DIVERGENT	48	5	A/B-IS-REAL installed=e9 uninstalled=81	o=00000002,n=00000001 x3; o=00000004,n=00000003 x1; o=00000003,n=00000002 x1	RACE_OK	8	shadow_ab_20260910_002538_8x_00578610.log	2026-09-10T00:25:38		
 00579b50	FUN_00579b50	CLEAN	39	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	8	shadow_ab_20260910_002538_8x_00578610.log	2026-09-10T00:25:38		
-00579c00	FUN_00579c00	NO_SAMPLES	0	0			RACE_OK	8	shadow_ab_20260910_002538_8x_00578610.log	2026-09-10T00:25:38		
-00579d50	FUN_00579d50	NO_SAMPLES	0	0			RACE_OK	7		2026-09-10T00:26:48		
-0057a250	FUN_0057a250	NO_SAMPLES	0	0			RACE_OK	7		2026-09-10T00:26:48		
-0057a660	FUN_0057a660	NO_SAMPLES	0	0			RACE_OK	7		2026-09-10T00:26:48		
-0057a9a0	FUN_0057a9a0	NO_SAMPLES	0	0			RACE_OK	7		2026-09-10T00:26:48		
-0057adb0	FUN_0057adb0	NO_SAMPLES	0	0			RACE_OK	7		2026-09-10T00:26:48		
-0057ae20	FUN_0057ae20	NO_SAMPLES	0	0			RACE_OK	7		2026-09-10T00:26:48		
+00579c00	FUN_00579c00	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:26:18		
+00579d50	FUN_00579d50	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:26:59		
+0057a250	FUN_0057a250	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:27:41		
+0057a660	FUN_0057a660	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:28:23		
+0057a9a0	FUN_0057a9a0	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:29:04		
+0057adb0	FUN_0057adb0	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:29:46		
+0057ae20	FUN_0057ae20	NO_SAMPLES	0	0			RACE_OK	1		2026-09-10T16:30:27		
 005a6e10	L2_FUN_005a6e10	CLEAN	24	0	A/B-IS-REAL installed=e9 uninstalled=8b		RACE_OK	1	shadow_ab_20260910_160347_1x_005a6e10.log	2026-09-10T16:03:47		
 005ad2e0	L2_FUN_005ad2e0	NO_PORT	0	0		manifest claimed GENERATED:lane2-decomp2port but L2_005ad2e0.cpp does not exist on disk and is not in asi_sources.rsp; the 2026-09-10T02:37 NO_SAMPLES was correct but for the wrong reason (nothing installed, not never called). Site status corrected to SKIP:tu-missing-on-disk.	RACE_OK	5	shadow_ab_20260910_023716_5x_005aeed0.log	2026-09-10T02:37:17		
 005aeed0	L2_FUN_005aeed0	INVALID_WITNESS	4	1	A/B-IS-REAL installed=e9 uninstalled=8b	body is `WaitForSingleObject(*param_1,0) != WAIT_TIMEOUT`, an auto-reset event poll. The A/B calls original-then-port on the SAME handle, so the first call CONSUMES the signal and the second legitimately returns WAIT_TIMEOUT -- reproducible ret-mismatch on sample 0 and clean thereafter on two independent boots. Not a port defect; the witness is invalid (ShadowAB.h LIMITS). Site status -> SKIP:irreversible-side-effect.	RACE_OK	1	shadow_ab_20260910_160431_1x_005aeed0.log	2026-09-10T16:04:32		
