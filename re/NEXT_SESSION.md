@@ -4,7 +4,7 @@
 
 Branch `race/first-frame-parity`, tree clean, no stray processes, pool locks clear
 (slot 0's 10-day orphan released). Trackers: hooks.csv 5,930 rows
-(C4 184, **C3 1,010**, C2 3,884, C1 821) · DEFERRED 677.
+(C4 184, **C3 1,011**, C2 3,883, C1 821) · DEFERRED 679.
 
 > **UNCERTAINTIES count — the previous header's "3,082" is not reproducible.** Two rules give
 > two numbers: `grep -cE '^\| *U-[0-9]+ \|'` = **3,069** (open-format rows) and
@@ -35,7 +35,9 @@ Branch `race/first-frame-parity`, tree clean, no stray processes, pool locks cle
    the original never writes EDX, and MSVC does. Fixed with a naked EDX-preserving shim, plus two
    independent precision corrections. **This is a lane-wide class** —
    `re/analysis/bce0_edx_contract_20260910.md`, and the screen below.
-**86 rows moved C2→C3 today**, none resting on a synthetic Frida call. Full write-ups:
+**From the EARLIER 2026-09-10 session (not this one): 86 rows moved C2→C3**, none resting
+on a synthetic Frida call. This session promoted **3** (`0x0056bce0`, `0x00560260`,
+`0x005a6e10`). Full write-ups:
 `re/analysis/shadow_lane_20260910.md` (Run/Region lanes), `lane2_decomp2port_design_20260910.md`
 (transcriber), `lane3_write_tracking_20260910.md` (write tracking), `promotion_lanes_assessment_20260910.md`
 (where the remaining volume is).
@@ -116,25 +118,34 @@ Branch `race/first-frame-parity`, tree clean, no stray processes, pool locks cle
     - **Stack exhaustion ruled out:** original `sub esp,0xf0` + 4 pushes = `0xfc`; port
       `sub esp,0xE8` + `/GS` cookie + 2 pushes. Comparable. Noted though: the port does
       `and esp,0FFFFFFF8h` (force-aligns ESP to 8) where the original does **not**.
-    - **FAULT SITE PINNED TO THE INSTRUCTION.** Fresh EIP `0x6b5de98d` → asi offset `0x5e98d` →
-      `?FUN_0056f350_impl@…` **+0x62d** (`RwpSolverCore10.obj`). It is a **`mulss`**, not a
-      `divss` — the earlier "divide" came from the pre-counter-fix build, don't reuse it.
-      ```
-      1005E97B  mov    eax, 5E57D8h              ; = DAT_005e57d0 + 8 = *(float*)(puVar7 + 2)
-      1005E983  cmovb  eax, dword ptr [esp+58h]  ; <-- OTHER arm is a SPILLED LOCAL
-      1005E98D  mulss  xmm0, dword ptr [eax]     ; <-- FAULT, EAX = 0
-      ```
-      `0x5E57D8` pins the expression to `*(float *)(puVar7 + 2)`, so the sibling arm should be
-      `0x5e57cc` — **another immediate**. It is a spill-slot load instead, and the slot is **0**.
-      **⇒ one arm of the axis-table select is a variable, and it is null.** Prime suspect:
-      `pfVar8`, assigned twice from unrelated sources — `pfVar8 = local_d0` *outside* the
-      degenerate-axis test and `= DAT_005e57c4` *inside* it — so when `< _DAT_005cd03c` is false,
-      `pfVar8` is still `local_d0`. That chain (`**(int**)(*local_e0+0x10) + 0x30 +
-      local_e0[1]*0x40`) was re-verified against `0x0056f409..0x0056f41e` and **matches**, so the
-      chain is not the defect. **[UNCERTAIN]** whether the null is `local_d0` or another spilled
-      local at `[esp+0x58]` — one debugger read away, and that is the next step.
-      **This also explains the frame sensitivity:** the value comes from a spill slot, so adding
-      call sites changes what is spilled where and the arm reads something else.
+    - **CLOSED 2026-09-10 — two separate things, both settled.**
+      **(1) The port defect is FOUND AND FIXED.** `[esp+0x58]` read straight out of the captured
+      dump (no extra boot — the catcher dumps the stack): **0**, with `[esp+0x44] = 0x5e57a4`
+      identifying `local_b4`, so the null slot was *not* `local_d0` as I had guessed. Cause:
+      Ghidra printed the six axis-table selects as `p = C4; <unrelated stmt>; if (cond) p = D0;`
+      — assignment and conditional reassignment split apart — which made MSVC hold one arm in a
+      spill slot never written on this path (`mov eax,5E57D8h` paired with
+      `cmovb eax,[esp+58h]`, where the sibling should have been the immediate `0x5e57cc`).
+      **The original proves the faithful shape:** it re-materialises the constant into a register
+      immediately before each of six uses, with a branch, never spilling
+      (`0x0056f7da`/`f7e6` → `0x0056f802 fld [ecx+8]`, and the same pair at `f7f6`/`f7fd`,
+      `f808`/`f826`, `f836`/`f83d`, `f847`/`f864`, `f874`/`f87b`). Rewritten as one point-of-use
+      ternary. **Verified a real fix, not another layout shuffle:** the new `_impl` has only
+      **two** cmovs, both register-to-register, no memory operand — the spill cmov is gone — and
+      the control arm is **3/3 RACE_OK** where it was 5+/5+ CRASH.
+      **(2) The residual armed crash is INHERITED witness invalidity, not a port defect.** Armed
+      boots still crash 2/2 but now log **one CLEAN sample first** (`ndiff=0`, pages `diff:0`,
+      proof `A/B-IS-REAL installed=e9 uninstalled=81`), because the body calls `FUN_0056f0a0`
+      (`RwpSolverCore10.cpp` L486) — already `INVALID_WITNESS`. Running the body twice runs
+      `f0a0` twice. Row moves out of the lane (`SKIP:runtracked-unbounded-effects`); `0x00570090`
+      gets the same status for the same reason.
+      **Stays C2:** the fix has mechanism + codegen + control evidence but no A/B, because its
+      witness cannot judge it.
+      **Rule, screened and constrained:** 5 sites call an invalid-witness function, and it is
+      *still* `RunTracked`-specific — **2 of 2 sampled `Run` sites are CLEAN 48/48**
+      (`FUN_00568990`, `FUN_0056b7a0`). `Run` compares one return value and does not care what
+      the body does to memory.
+
   - **BOTH witness crashes are now SETTLED and out of the lane** (`SKIP:runtracked-unbounded-effects`,
     verdict `INVALID_WITNESS`). `0x0055bd80`'s fault is EIP `0x00564c8e` `fld [ecx+0x10]` with
     `ECX = 1`, inside `FUN_00564c80` — a target of its volume-descriptor dispatch

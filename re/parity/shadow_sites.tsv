@@ -110,11 +110,11 @@ rva	name	file	subsystem	kind	ret	cc	params	phase	status
 0056f020	FUN_0056f020	RwpSolverCore9.cpp	third-party-library[RenderWare-Physics-3.7]	tracked	void	__cdecl	int param_1	race	GENERATED
 0056f0a0	FUN_0056f0a0	RwpSolverCore9.cpp	third-party-library[RenderWare-Physics-3.7]	tracked	void	__cdecl	int param_1	race	SKIP:runtracked-unbounded-effects
 0056f1f0	FUN_0056f1f0	RwpSolverCore9.cpp	third-party-library[RenderWare-Physics-3.7]	tracked	void	__cdecl	int *param_1,undefined4 *param_2	race	GENERATED
-0056f350	FUN_0056f350	RwpSolverCore10.cpp	third-party-library[RenderWare-Physics-3.7]	tracked	void	__cdecl	int param_1,float *param_2,float param_3	race	GENERATED
+0056f350	FUN_0056f350	RwpSolverCore10.cpp	third-party-library[RenderWare-Physics-3.7]	tracked	void	__cdecl	int param_1,float *param_2,float param_3	race	SKIP:runtracked-unbounded-effects
 0056fad0	FUN_0056fad0	RwpSolverCore9.cpp	third-party-library[RenderWare-Physics-3.7]	region	void	__cdecl	float *param_1,float *param_2,float *param_3,float *param_4, int param_5,int param_6	race	ALREADY:shadow-site-present
 0056fb90	FUN_0056fb90	RwpSolverCore10.cpp	third-party-library[RenderWare-Physics-3.7]	ret	int *	__cdecl	uint *param_1,float *param_2,float *param_3,int *param_4, float *param_5	race	ALREADY:shadow-site-present
 0056fea0	FUN_0056fea0	RwpSolverCore10.cpp	third-party-library[RenderWare-Physics-3.7]	tracked	void	__cdecl	float *param_1,float *param_2,float *param_3,float *param_4	race	GENERATED
-00570090	FUN_00570090	RwpSolverCore12.cpp	third-party-library[RenderWare-Physics-3.7]	tracked	void	__cdecl	int param_1,int param_2,float param_3,float param_4	race	GENERATED
+00570090	FUN_00570090	RwpSolverCore12.cpp	third-party-library[RenderWare-Physics-3.7]	tracked	void	__cdecl	int param_1,int param_2,float param_3,float param_4	race	SKIP:runtracked-unbounded-effects
 005729a0	FUN_005729a0	RwpSolverCore21.cpp	third-party-library[RenderWare-Physics-3.7]	ret	undefined4	__cdecl	float *param_1,int *param_2,float *param_3,float *param_4	race	ALREADY:shadow-site-present
 005735f0	FUN_005735f0	RwpSolverCore16.cpp	third-party-library[RenderWare-Physics-3.7]	region	void	__cdecl	float *param_1,float *param_2,float *param_3,float *param_4	race	ALREADY:shadow-site-present
 00573670	FUN_00573670	RwpSolverCore22.cpp	third-party-library[RenderWare-Physics-3.7]	ret	int	__cdecl	int param_1,int param_2,uint param_3,int param_4,int param_5,int param_6,int param_7	race	ALREADY:shadow-site-present

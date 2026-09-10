@@ -399,21 +399,29 @@ static void __cdecl FUN_0056f350_impl(int param_1,float *param_2,float param_3) 
             fVar2 = local_c8 * *param_2 - param_2[1] * local_cc;
             if (local_f0 * local_f0 + local_ec * local_ec + fVar2 * fVar2 < _DAT_005cd03c) {
               fVar2 = (*param_2 < 0.0f) ? -*param_2 : *param_2;   // ABS
-              puVar7 = (undefined4 *)DAT_005e57c4;
-              if (_DAT_005cc9b4 <= fVar2) puVar7 = (undefined4 *)DAT_005e57d0;
-              puVar6 = (undefined4 *)DAT_005e57c4;
-              if (_DAT_005cc9b4 <= fVar2) puVar6 = (undefined4 *)DAT_005e57d0;
-              pfVar8 = (float *)DAT_005e57c4;
-              local_f0 = *(float *)(puVar7 + 2) * param_2[1] - *(float *)(puVar6 + 1) * param_2[2];
-              if (_DAT_005cc9b4 <= fVar2) pfVar8 = (float *)DAT_005e57d0;
-              puVar7 = (undefined4 *)DAT_005e57c4;
-              if (_DAT_005cc9b4 <= fVar2) puVar7 = (undefined4 *)DAT_005e57d0;
-              puVar6 = (undefined4 *)DAT_005e57c4;
-              local_ec = param_2[2] * *pfVar8 - *(float *)(puVar7 + 2) * *param_2;
-              if (_DAT_005cc9b4 <= fVar2) puVar6 = (undefined4 *)DAT_005e57d0;
-              pfVar8 = (float *)DAT_005e57c4;
-              if (_DAT_005cc9b4 <= fVar2) pfVar8 = (float *)DAT_005e57d0;
-              fVar2 = *(float *)(puVar6 + 1) * *param_2 - param_2[1] * *pfVar8;
+              // ROOT-CAUSE FIX 2026-09-10 (crash at _impl+0x62d, `mulss xmm0,[eax]`, EAX=0).
+              // Ghidra printed these SIX axis-table selects as `p = C4; <unrelated stmt>;
+              // if (cond) p = D0;` -- an assignment and its conditional reassignment split
+              // apart by an intervening statement. That interleaving is a DECOMPILER ARTEFACT,
+              // not the original's shape, and it made MSVC hold one arm of the select in a
+              // SPILL SLOT ([esp+0x58]) that is not written on this path; the slot read 0 and
+              // `mulss xmm0,[eax]` faulted (log/crash_eip_0056f350_fresh.txt: EAX=0,
+              // ECX=0x5e57c4, EDX=0x5e57d0, [esp+0x58]=0, [esp+0x44]=0x5e57a4).
+              //
+              // The ORIGINAL re-materialises the constant into a register IMMEDIATELY BEFORE
+              // EACH USE -- six times, with a branch (`jnp`), never spilling:
+              //   0x0056f7da mov ecx,0x5e57c4 / 0x0056f7e4 jnp / 0x0056f7e6 mov ecx,0x5e57d0
+              //   0x0056f802 fld dword ptr [ecx + 8]        <-- used right there
+              //   0x0056f7f6 mov eax,0x5e57c4 / 0x0056f7fd mov eax,0x5e57d0
+              //   0x0056f80d fld dword ptr [eax + 4]
+              //   ... and the same pair again at f808/f826, f836/f83d, f847/f864, f874/f87b.
+              // So a ternary AT THE POINT OF USE is the faithful shape as well as the one that
+              // does not spill. Same value, same predicate, same six sites -- this is a
+              // code-shape correction, not a semantic change.
+              const unsigned int axis = (_DAT_005cc9b4 <= fVar2) ? DAT_005e57d0 : DAT_005e57c4;
+              local_f0 = *(float *)(axis + 8) * param_2[1] - *(float *)(axis + 4) * param_2[2];
+              local_ec = param_2[2] * *(float *)axis - *(float *)(axis + 8) * *param_2;
+              fVar2    = *(float *)(axis + 4) * *param_2 - param_2[1] * *(float *)axis;
             }
             fVar4 = fVar2 * fVar2;
             local_f0 = (_DAT_005cc320 / sqrtf(local_f0 * local_f0 + local_ec * local_ec + fVar4)) *
