@@ -11,9 +11,9 @@ C1 821 — unchanged, no function moved C-level this session) · DEFERRED 678 ac
 | measure | count | command |
 |---|---:|---|
 | open rows in the Active section | 3,029 | rows matching `^\| *U-[0-9]+` between `## Active uncertainties` and `## Resolved`, minus `~~`-prefixed |
-| of those, **actually gating** | **133** | same set, `Blocks` cell (index 7) exactly `C2->C3` or `C3` |
+| of those, **actually gating** | **121** | same set, `Blocks` cell (index 7) exactly `C2->C3` or `C3` |
 | gating at session start | 235 | — |
-| gating at session end | 133 (was 235) | render 107, hud 20, boot 4, audio 1, frontend 1 |
+| gating at session end | 121 (was 235) | render 97, hud 18, boot 4, audio 1, frontend 1 |
 | rows with a non-canonical column count | 131 | pre-existing baseline, unchanged by this session's 33 edits |
 
 ## What landed
@@ -66,7 +66,7 @@ the `main` ref without touching the working tree at all, so no file is ever
 re-materialised and autocrlf never gets a chance. Use that instead of
 `git checkout main && git merge --ff-only <branch> && git checkout <branch>`.
 
-### 3. Uncertainty loop — 235 → 133 gating
+### 3. Uncertainty loop — 235 → 121 gating
 
 **Pass 1 — 22 false gates.** The file's own D0.3 rule ("target is C3/C4 in hooks.csv with
 the row still open ⇒ it demonstrably did not gate") ran **once**, on 2026-08-15, and was
@@ -173,6 +173,28 @@ The dominant blocker is **not** "nobody decompiled this" — it is "nobody chase
 --callers` already produces exactly that, in batch, and one headless run covers ~160
 addresses in a few minutes.
 
+### ⇒ THE TWO SELF-SERVICE LANES — no Ghidra, no worker, no delegation
+Both run off the anchored `original/MASHED.exe.unpatched` and answered 10 rows this
+session. **Check these first for any new row.**
+
+- **`re/tools/memread.py <va>...`** — section, file offset, raw bytes, dword, float. Four
+  rows this session asked for nothing more than this. It also catches the case where the
+  address is not data at all: U-4706's `0x004951e0` turned out to be `e9 9b 05 00 00`, a
+  `JMP rel32`.
+- **`re/tools/disasm_fn.py <start> <end>`** — capstone over the anchored binary. Six rows
+  settled. **Always start from the containing function's entry** (get it with
+  `decomp_pc.py --no-decomp`); several cited addresses are mid-instruction and capstone
+  will happily decode garbage from a bad start.
+
+**What the disasm lane is actually good at is refuting hypotheses.** Four rows guessed a
+hidden register argument or a decompiler conflation; the instructions said otherwise
+every time (U-4714 ESI is loaded from the stack, U-4719 there is only one load, U-4780
+the signature is too small not too big, U-5675 the JMP means a tail call). Only U-4811
+turned out to be a real register argument.
+
+**Nine disasm rows remain and are teed up:** U-0007, U-4401, U-4412, U-4419, U-4426,
+U-4427, U-4780, U-4929, U-5190.
+
 ## PICK ONE
 
 ### A. DONE — the 41 parked claims are adjudicated (37 resolved, 4 refused)
@@ -257,6 +279,7 @@ a cell containing a pipe.
 > from PowerShell: `py -3.12 re\tools\decomp_pc.py --file rvas.txt --callees --xrefs
 > --json -o out.json` batches ~160 addresses in one run. `re/tools/memread.py` reads a
 > constant out of the anchored binary and refuses to guess at BSS addresses.
+
 
 
 
