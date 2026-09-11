@@ -76,7 +76,28 @@ explicit opt-in flag, documented as a deliberate departure.
   path. Untested. Settling it means either scanning the archives for the chunk type or
   instrumenting `FUN_004cc400`'s `local_9c` during a load.
 - The RenderWare name of the chunk types 2 and 0x13 is not assigned here.
-- `FUN_004cc400`'s own validation of the header, if any, was not read.
+
+## UPDATE 2026-09-11 — the header reader does NO validation, and that is now read
+
+`FUN_004cc400` had no Ghidra function until the master repair the same day. It does now,
+and it is `RwStreamReadChunkHeader`:
+
+```c
+iVar1 = FUN_004cbd30(param_1, &local_20, 0xc);   // read a fixed 12-byte header
+if (iVar1 != 0xc) { ...; return 0; }             // the ONLY check: did 12 bytes arrive
+...
+local_10 = local_1c;                             // second dword, verbatim
+if (param_3 != (undefined4 *)0x0) { *param_3 = local_10; }
+```
+
+In the caller that `param_3` is `&local_9c`. So **the byte count driving the write into a
+128-byte stack buffer is the second dword of the file's chunk header, passed through
+unchecked**. Across all 231 bytes of `FUN_004cc400` there is no comparison of that value
+against any capacity, and it has no capacity parameter to compare against.
+
+This closes the last open link in the chain. The remaining unknown is only whether a
+shipped asset actually carries an oversized value — the code path itself is now fully
+established end to end: file header → `local_9c` → `FUN_004d8810` → `local_80[128]`.
 
 ## How it was found
 

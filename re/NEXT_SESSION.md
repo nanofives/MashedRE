@@ -11,9 +11,9 @@ C1 821 — unchanged, no function moved C-level this session) · DEFERRED 678 ac
 | measure | count | command |
 |---|---:|---|
 | open rows in the Active section | 3,029 | rows matching `^\| *U-[0-9]+` between `## Active uncertainties` and `## Resolved`, minus `~~`-prefixed |
-| of those, **actually gating** | **140** | same set, `Blocks` cell (index 7) exactly `C2->C3` or `C3` |
+| of those, **actually gating** | **133** | same set, `Blocks` cell (index 7) exactly `C2->C3` or `C3` |
 | gating at session start | 235 | — |
-| gating at session end | 140 (was 235) | render 114, hud 20, boot 4, audio 1, frontend 1 |
+| gating at session end | 133 (was 235) | render 107, hud 20, boot 4, audio 1, frontend 1 |
 | rows with a non-canonical column count | 131 | pre-existing baseline, unchanged by this session's 33 edits |
 
 ## What landed
@@ -66,7 +66,7 @@ the `main` ref without touching the working tree at all, so no file is ever
 re-materialised and autocrlf never gets a chance. Use that instead of
 `git checkout main && git merge --ff-only <branch> && git checkout <branch>`.
 
-### 3. Uncertainty loop — 235 → 140 gating
+### 3. Uncertainty loop — 235 → 133 gating
 
 **Pass 1 — 22 false gates.** The file's own D0.3 rule ("target is C3/C4 in hooks.csv with
 the row still open ⇒ it demonstrably did not gate") ran **once**, on 2026-08-15, and was
@@ -129,8 +129,16 @@ present anywhere in `re/prior_art/`.
 addresses are referenced but have no containing function**, over 6,194 references, and
 **zero are CALLs**. The actionable subset is **826 targets DATA-referenced from a real
 analyzed function** (`re/analysis/plans/unanalyzed_addrtaken_20260911.csv`) — callbacks
-Ghidra never turned into functions. **Repair (creating functions in the master project)
-is flagged but NOT done — it is a master-Ghidra write and needs your call.**
+Ghidra never turned into functions. **REPAIRED the same day, owner-approved: 501 functions created.** Orphan addresses
+4,612 → 2,750, address-taken targets 826 → 387. Backup at
+`Mashed.rep.bak-20260911-pre-createfn` (gitignored). The 826 figure was too high — the
+dry run rejected 290 as `SKIP_DEFINED_DATA`, mostly pointer tables in `.text`.
+
+**That repair then unlocked 7 rows nothing else could reach**, including U-5380 (its
+"Ghidra does not recognize the boundary" complaint simply evaporated), U-5105 (the three
+`LAB_` callbacks are one-line `_malloc` / `_calloc` / `_realloc` thunks) and U-5130 as a
+side effect. **Any note dated before 2026-09-11 saying "not defined in Ghidra" may be
+stale.**
 
 **Pass 4 — the 41 parked claims adjudicated: 37 resolved, 4 refused.** Details under
 "A. DONE" below. Notable refutations, which are worth more than the confirmations:
@@ -249,6 +257,7 @@ a cell containing a pipe.
 > from PowerShell: `py -3.12 re\tools\decomp_pc.py --file rvas.txt --callees --xrefs
 > --json -o out.json` batches ~160 addresses in one run. `re/tools/memread.py` reads a
 > constant out of the anchored binary and refuses to guess at BSS addresses.
+
 
 
 
