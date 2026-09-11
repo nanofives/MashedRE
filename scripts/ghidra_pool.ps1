@@ -9,6 +9,17 @@ param(
 $bash = Join-Path $PSScriptRoot 'ghidra_pool.sh'
 if (-not (Test-Path $bash)) { Write-Error "ghidra_pool.sh not found at $bash"; exit 1 }
 
-$args = @($bash, $Action) + ($Rest | Where-Object { $_ })
-& bash @args
+# `bash` on PATH here is WSL (C:\WINDOWS\system32\bash.exe), which cannot open a
+# Windows path: it stripped the backslashes ('C:\Users\...' arrived as
+# 'C:Usersmaria...') and rejected the forward-slash form too, so every call died
+# with "No such file or directory". Resolve Git Bash explicitly and hand it a
+# forward-slash path.
+$gitBash = @(
+    'C:\Program Files\Git\bin\bash.exe',
+    'C:\Program Files (x86)\Git\bin\bash.exe'
+) | Where-Object { Test-Path $_ } | Select-Object -First 1
+if (-not $gitBash) { $gitBash = 'bash' }
+
+$argv = @(($bash -replace '\\', '/'), $Action) + ($Rest | Where-Object { $_ })
+& $gitBash @argv
 exit $LASTEXITCODE

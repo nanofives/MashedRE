@@ -29,13 +29,27 @@ GH = Path(r"C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra"
           r"\ghidra_12.0.3_PUBLIC\support\analyzeHeadless.bat")
 POOL_DIR = ROOT / "mashed_pool"
 POOL_SH = ROOT / "scripts" / "ghidra_pool.sh"
+# `bash` on this machine's PATH is WSL (C:\WINDOWS\system32\bash.exe), which cannot
+# open a Windows path at all: it ate the backslashes ("C:\Users\..." arrived as
+# "C:UsersmariaDesktop...") and then rejected the forward-slash form too, so every
+# pool acquire died with "No such file or directory". Resolve Git Bash explicitly.
+def _find_bash():
+    for c in (r"C:\Program Files\Git\bin\bash.exe",
+              r"C:\Program Files (x86)\Git\bin\bash.exe"):
+        if Path(c).exists():
+            return c
+    return "bash"
+
+
+BASH = _find_bash()
+POOL_SH_ARG = str(POOL_SH).replace("\\", "/")
 SCRIPTS = Path(__file__).resolve().parent / "ghidra_scripts"
 PROGRAM = "MASHED.exe"
 
 
 def acquire_slot():
     """Return (slot_name, slot_index). Raises on failure."""
-    res = subprocess.run(["bash", str(POOL_SH), "acquire"],
+    res = subprocess.run([BASH, POOL_SH_ARG, "acquire"],
                          capture_output=True, text=True, timeout=300)
     lines = [ln.strip() for ln in res.stdout.splitlines() if ln.strip()]
     if res.returncode != 0 or not lines:
@@ -49,7 +63,7 @@ def acquire_slot():
 
 
 def release_slot(idx):
-    subprocess.run(["bash", str(POOL_SH), "release", str(idx)],
+    subprocess.run([BASH, POOL_SH_ARG, "release", str(idx)],
                    capture_output=True, text=True, timeout=300)
 
 
