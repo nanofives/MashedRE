@@ -11,9 +11,9 @@ C1 821 — unchanged, no function moved C-level this session) · DEFERRED 678 ac
 | measure | count | command |
 |---|---:|---|
 | open rows in the Active section | 3,029 | rows matching `^\| *U-[0-9]+` between `## Active uncertainties` and `## Resolved`, minus `~~`-prefixed |
-| of those, **actually gating** | **165** | same set, `Blocks` cell (index 7) exactly `C2->C3` or `C3` |
+| of those, **actually gating** | **150** | same set, `Blocks` cell (index 7) exactly `C2->C3` or `C3` |
 | gating at session start | 235 | — |
-| gating by subsystem | render 131, hud 28, boot 4, audio 1, frontend 1 | — |
+| gating at session end | 150 (was 235) | — |
 | rows with a non-canonical column count | 131 | pre-existing baseline, unchanged by this session's 33 edits |
 
 ## What landed
@@ -51,7 +51,7 @@ resolve Git Bash explicitly. Memory: `bash-on-path-is-wsl-not-git-bash`.
 
 Pre-existing and left alone: `ghidra_pool.sh status` returns **exit 1 on success**.
 
-### 3. Uncertainty loop — 235 → 165 gating, in four passes
+### 3. Uncertainty loop — 235 → 150 gating, in six passes
 
 **Pass 1 — 22 false gates.** The file's own D0.3 rule ("target is C3/C4 in hooks.csv with
 the row still open ⇒ it demonstrably did not gate") ran **once**, on 2026-08-15, and was
@@ -132,7 +132,29 @@ two 128-byte stack buffers to `FUN_004d8810` as destinations, and the amount wri
 port guidance (do **not** silently add a bounds check — it is a behavioural divergence):
 `re/analysis/rw_native_raster_name_buffer_20260911.md`.
 
-### B. The data-xref lane — 24 rows want the WRITERS of a global **[now the top lane]**
+### B. DONE — the data-xref lane is built and drained
+`decomp_pc.py --datarefs` now answers "who writes this global": references split into
+writes / reads / other, each with the containing function and the referencing
+instruction, plus a per-address initialised check. Validated against two globals whose
+answers were already known independently.
+
+Drained: **7 resolved, 15 narrowed.** Ten globals turned out to have **zero writes
+anywhere**, so their file value is their runtime value — that alone closed four rows
+that had each asked "who writes this". `DAT_007d3ff8` is a pointer written twice with
+the literal `0x7d3ec8`, which identifies the object behind every `+N` dispatch in the
+tree and moves six vtable rows to NEEDS-EXTERNAL.
+
+### B2. DONE — the 47 PARTIAL rows: 7 resolved, 2 narrowed, lane mined out
+Needed only 14 new bodies, then 9 more for the rows that named a precise next callee.
+`re/analysis/plans/partial_readjudication_20260911.md`. **32 rows have no further body
+to fetch** — they need a runtime read or an RW/D3D9 reference, not another round.
+
+### B3. Two port notes came out of it, worth acting on
+- **U-4501:** `local_8`/`local_4` are NOT dead. `FUN_004c5010` reads three consecutive
+  floats through the pointer, so a transcription that drops them loses two of three
+  components.
+- **U-4581:** the discarded random call is **not** side-effect free — `FUN_00534870`
+  bumps a shared cursor. Optimising the call away desynchronises every later draw.
 `decomp_pc.py --xrefs` takes a function entry, not a data address, so this needs either a
 DecompPC.java addition for data xrefs or a `reference_to` equivalent. That one tool change
 unlocks the largest remaining sub-bucket.
@@ -175,5 +197,6 @@ a cell containing a pipe.
 > from PowerShell: `py -3.12 re\tools\decomp_pc.py --file rvas.txt --callees --xrefs
 > --json -o out.json` batches ~160 addresses in one run. `re/tools/memread.py` reads a
 > constant out of the anchored binary and refuses to guess at BSS addresses.
+
 
 
