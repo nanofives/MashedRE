@@ -152,3 +152,106 @@ and `0x004c610a` puts `FUN_004c6140` in `+0x30`.
 - **A `JMP` trampoline still forwards arguments.** `FUN_005aea00` tail-jumps to `+0x108`;
   declaring it `void(void)` because it "does no parameter handling" would drop
   `rwmalloc`'s two arguments and its return value (U-0125).
+
+---
+
+# Addendum: `RwRaster`, and the real `IDirect3DDevice9` vtable
+
+Added 2026-09-11, same session. These came from the same two reference sources and closed
+six more rows — including a **correction to U-5160 that I had landed earlier the same day**.
+
+## `RwRaster` (`rwcore.h:1622`)
+
+| Offset | Field | Notes |
+|---|---|---|
+| `+0x00` | `parent` | `RwRaster *`, top-level raster if this is a sub-raster |
+| `+0x04` | `cpPixels` | pixel pointer when locked |
+| `+0x08` | `palette` | |
+| `+0x0c` | `width` | |
+| `+0x10` | `height` | |
+| `+0x14` | `depth` | |
+| `+0x18` | `stride` | |
+| `+0x1c` / `+0x1e` | `nOffsetX` / `nOffsetY` | `RwInt16`, sub-raster offset |
+| `+0x20` | **`cType`** | `enum RwRasterType` (`:1506`), mask `0x07` |
+| `+0x21` | **`cFlags`** | `rwRASTERDONTALLOCATE = 0x80` |
+| `+0x22` | **`privateFlags`** | `enum RwRasterPrivateFlag` (`:1588`) |
+| `+0x23` | **`cFormat`** | format **>> 8** — see below |
+| `+0x24`.. | `originalPixels`, `originalWidth`, `originalHeight`, `originalStride` | |
+
+**`cFormat` holds the format shifted down by 8.** `rwRASTERFORMATMASK = 0xff00` is
+documented as "the whole format" while the field is one byte, so bit *n* of `cFormat` is
+format bit *n+8*:
+
+- `0x10` maps to `0x1000` `rwRASTERFORMATAUTOMIPMAP` ("RenderWare generated the mip levels")
+- `0x80` maps to `0x8000` `rwRASTERFORMATMIPMAP` ("mip mapping on")
+- `0x40` maps to `0x4000` `PAL4`, `0x20` maps to `0x2000` `PAL8`
+- low nibble is the pixel format (`rwRASTERFORMATPIXELFORMATMASK = 0x0f00`)
+
+**`privateFlags` (`+0x22`)**: `rwRASTERGAMMACORRECTED` `0x01`, `PIXELLOCKEDREAD` `0x02`,
+`PIXELLOCKEDWRITE` `0x04`, `PALETTELOCKEDREAD` `0x08`, `PALETTELOCKEDWRITE` `0x10`,
+`PIXELLOCKEDRAW` `0x20`.
+
+**`cType` (`+0x20`)**: `NORMAL` 0, `ZBUFFER` 1, `CAMERA` 2, `TEXTURE` 4, `CAMERATEXTURE` 5,
+mask `0x07`; plus `rwRASTERPALETTEVOLATILE 0x40` and `rwRASTERDONTALLOCATE 0x80` in the same
+flag space.
+
+These decode several previously-opaque masks exactly:
+
+- `0x004c763b and al,0xe7` on `+0x22` clears `0x08` and `0x10` — the two **palette** lock
+  bits, immediately after the unlock-palette `stdFunc` call. The mask matches the slot.
+- `0x004d033a and al,0xf9` on `+0x22` clears `0x02` and `0x04` — the two **pixel** lock bits.
+- `0x004d030c test al,4` on `+0x22` is `PIXELLOCKEDWRITE`.
+- `0x004d0491 and al,7` then `cmp al,5` on `+0x20` is
+  `(cType & rwRASTERTYPEMASK) == rwRASTERTYPECAMERATEXTURE`.
+- `0x004d532d test byte ptr [edi],2` on an `RwImage` (`rwIMAGEGAMMACORRECTED`) followed by
+  `0x004d5332 or byte ptr [esi + 0x22],1` on the raster (`rwRASTERGAMMACORRECTED`) is a
+  clean image-to-raster gamma-flag propagation, which confirms both names from opposite
+  directions.
+
+### The U-5160 correction
+
+Earlier the same day I landed a statement that `+0x23` was an unnamed flags byte and that
+bit `0x10` meant "contents must be read back into an image, **not** either label the row
+proposed". That was wrong. `+0x23` is `cFormat` and bit `0x10` is
+`rwRASTERFORMATAUTOMIPMAP`, so the row's own "has mipmaps" reading was substantially right.
+The gate reads: *on pixel unlock, if the format says RenderWare generated the mip levels,
+regenerate them* — which is exactly what `hooks.csv` already said for `FUN_004d0290`
+("calls FUN_004c5dd0 on mipmap invalidation"), a note I had discounted as possibly a guess.
+The mechanics in the earlier entry stand; only the naming was wrong.
+
+I reached "neither label is supported" from call-graph mechanics while the field's name was
+sitting in a vendored header on disk. **Check `re/prior_art/renderware/` before concluding
+that a RenderWare field is unnameable.**
+
+## `IDirect3DDevice9` vtable
+
+Enumerated from the Windows SDK header
+`C:/Program Files (x86)/Windows Kits/10/Include/10.0.19041.0/shared/d3d9.h` by matching every
+`STDMETHOD` / `STDMETHOD_` declaration inside `DECLARE_INTERFACE_(IDirect3DDevice9)`.
+Slot = `offset / 4`. `DAT_007d4110` holds the device (U-0007, via `FUN_004caea0`).
+
+**Parse hazard, hit and fixed here:** a regex that handles only `STDMETHOD(Name)` silently
+drops the `STDMETHOD_(type, Name)` forms — `GetAvailableTextureMem`, `SetCursorPosition`,
+`ShowCursor`, `GetNumberOfSwapChains`, `SetGammaRamp`, `GetGammaRamp`. That yields **115**
+methods and shifts every slot after the first omission, which made `+0xe4` look like
+`EndStateBlock`. The correct count is **119**, and it reproduces `+0xe4` = `SetRenderState`,
+agreeing with U-0007. If a device-slot name disagrees with an already-established one,
+suspect the enumeration before the established fact.
+
+| Offset | Slot | Method | Confirmed by |
+|---|---|---|---|
+| `+0x014` | 5 | `EvictManagedResources` | see U-5190: the swap-chain `+0x14` is a *different* interface |
+| `+0x094` | 37 | `SetRenderTarget` | 2 args; cache is an array indexed by arg 1 (`0x004c7a28`) |
+| `+0x09c` | 39 | `SetDepthStencilSurface` | 1 arg; single-value cache `DAT_007d4574` |
+| `+0x0b0` | 44 | `SetTransform` | 2 args; `push 0x100` = `D3DTS_WORLD`; arg 2 is a 16-dword `rep movsd` block = 64-byte `D3DMATRIX` |
+| `+0x0e4` | 57 | `SetRenderState` | 2 args (U-0007) |
+| `+0x104` | 65 | `SetTexture` | |
+| `+0x178` | 94 | `SetVertexShaderConstantF` | 3 args (`0x004cbb17`), which is why U-5033's "third argument" was never a mystery |
+
+**Method note that generalises:** every one of these was confirmed by **argument count**
+against the header signature, not by the slot arithmetic alone. Two rows in this batch had
+guessed a name the arity contradicted — U-4988 guessed `SetStreamSource` (slot 96, 29 slots
+away) and U-5033 guessed `SetTexture` (2 args versus the 3 actually pushed). In U-5033 the
+disagreement had even been *recorded* in the row, as a puzzle about a mystery parameter
+rather than as evidence the name was wrong. When the arity disagrees with the assumed
+signature, the name is the thing to doubt.
