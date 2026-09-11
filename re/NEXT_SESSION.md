@@ -61,6 +61,11 @@ Fixed with `*.sh text eol=lf` plus renormalising the 7 files. **If that rule is 
 lost, this comes straight back.** Tell-tale: a `.sh` that worked earlier in the session
 starts failing right after a branch switch.
 
+**Avoid the round-trip entirely when syncing main:** `git fetch . <branch>:main` moves
+the `main` ref without touching the working tree at all, so no file is ever
+re-materialised and autocrlf never gets a chance. Use that instead of
+`git checkout main && git merge --ff-only <branch> && git checkout <branch>`.
+
 ### 3. Uncertainty loop — 235 → 146 gating
 
 **Pass 1 — 22 false gates.** The file's own D0.3 rule ("target is C3/C4 in hooks.csv with
@@ -223,6 +228,7 @@ a cell containing a pipe.
 > from PowerShell: `py -3.12 re\tools\decomp_pc.py --file rvas.txt --callees --xrefs
 > --json -o out.json` batches ~160 addresses in one run. `re/tools/memread.py` reads a
 > constant out of the anchored binary and refuses to guess at BSS addresses.
+
 
 
 
