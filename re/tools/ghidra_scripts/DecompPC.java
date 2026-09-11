@@ -3,7 +3,7 @@
 // usage: DecompPC.java <manifest.txt> <out.json> [modes...]
 //   manifest.txt  one VA per line (hex, leading 0x optional); blank / '#' lines skipped
 //   out.json      output path
-//   modes         zero or more of {decomp,callees,callers,xrefs,strings} as SEPARATE
+//   modes         zero or more of {decomp,callees,callers,xrefs,strings,datarefs} as SEPARATE
 //                 args; default "decomp"
 //
 // GOTCHA: modes are separate args, never one comma-separated string. analyzeHeadless
@@ -55,13 +55,14 @@ public class DecompPC extends GhidraScript {
     private boolean mXrefs;
     private boolean mStrings;
     private boolean mPort;      // Lane 2: decompiler prototype + typed globals + callee prototypes
+    private boolean mDataRefs;  // treat each address as DATA and split its refs into writes/reads
 
     @Override
     public void run() throws Exception {
         String[] args = getScriptArgs();
         if (args.length < 2) {
             throw new IllegalArgumentException("usage: DecompPC.java <manifest.txt> "
-                    + "<out.json> [decomp] [callees] [callers] [xrefs] [strings]");
+                    + "<out.json> [decomp] [callees] [callers] [xrefs] [strings] [datarefs]");
         }
         mDecomp = (args.length < 3);   // default when no modes given
         for (int i = 2; i < args.length; i++) {
@@ -83,6 +84,12 @@ public class DecompPC extends GhidraScript {
             }
             else if (m.equals("port")) {
                 mPort = true; mDecomp = true;
+            }
+            else if (m.equals("datarefs")) {
+                // Answers "who WRITES this global". Every other mode keys off a Function,
+                // so a data address just returned "no function at or containing" and the
+                // whole writers-of-a-global question was unanswerable from this tool.
+                mDataRefs = true; mDecomp = false;
             }
             else if (m.equals("metadata")) {
                 continue;   // name/entry/size/signature only; emitted unconditionally
@@ -143,6 +150,11 @@ public class DecompPC extends GhidraScript {
         long va = Long.parseLong(raw.replaceFirst("^0[xX]", ""), 16);
         Address a = currentProgram.getAddressFactory()
                 .getDefaultAddressSpace().getAddress(va);
+
+        if (mDataRefs) {
+            emitDataRefs(w, a);
+            return;
+        }
 
         Function fn = currentProgram.getFunctionManager().getFunctionAt(a);
         boolean exact = (fn != null);
@@ -364,6 +376,84 @@ public class DecompPC extends GhidraScript {
 
     // Every reference to an address, including DATA (vtable / fn-pointer table).
     // Format: "<REFTYPE> 0x<from> in <containing fn or (data)>".
+    // "datarefs" mode: the address is a GLOBAL, not a function.
+    //
+    // The point of this mode is the write/read split. `xrefs` lumps every reference
+    // together, so answering "which code WRITES this global" meant eyeballing the list;
+    // and it could not be asked at all for a data address, because every other mode
+    // needs a Function and bailed with "no function at or containing".
+    //
+    // Each entry carries the containing function and the referencing INSTRUCTION TEXT,
+    // because for a write the instruction is usually the whole answer (what value, from
+    // which register) and it saves a second round trip into the decompiler.
+    private void emitDataRefs(PrintWriter w, Address a) {
+        w.println("      \"kind\": \"data\",");
+
+        MemoryBlock blk = currentProgram.getMemory().getBlock(a);
+        w.println("      \"block\": \"" + (blk == null ? "(none)" : esc(blk.getName())) + "\",");
+
+        // A read past the block's initialised bytes proves nothing about the runtime
+        // value, so say whether this address even has file-backed content.
+        boolean init = (blk != null && blk.isInitialized());
+        w.println("      \"initialized\": " + init + ",");
+
+        Listing listing = currentProgram.getListing();
+        Data d = listing.getDataAt(a);
+        if (d != null && d.isDefined()) {
+            w.println("      \"data_type\": \"" + esc(d.getDataType().getName()) + "\",");
+            w.println("      \"data_length\": " + d.getLength() + ",");
+            String rep = d.getDefaultValueRepresentation();
+            w.println("      \"value_repr\": \"" + esc(rep == null ? "" : rep) + "\",");
+        }
+        else {
+            w.println("      \"data_type\": null,");
+            w.println("      \"data_length\": 0,");
+            w.println("      \"value_repr\": null,");
+        }
+
+        Set<String> writes = new TreeSet<>();
+        Set<String> reads = new TreeSet<>();
+        Set<String> other = new TreeSet<>();
+        int total = 0;
+        try {
+            ReferenceIterator it = currentProgram.getReferenceManager().getReferencesTo(a);
+            while (it.hasNext()) {
+                Reference r = it.next();
+                total++;
+                Address from = r.getFromAddress();
+                Function owner = currentProgram.getFunctionManager()
+                        .getFunctionContaining(from);
+                Instruction ins = listing.getInstructionAt(from);
+                String entry = "0x" + from
+                        + " in " + (owner != null ? owner.getName() : "(data)")
+                        + "  [" + r.getReferenceType().getName() + "]"
+                        + (ins != null ? "  " + ins.toString() : "");
+                if (r.getReferenceType().isWrite()) {
+                    writes.add(entry);
+                }
+                else if (r.getReferenceType().isRead()) {
+                    reads.add(entry);
+                }
+                else {
+                    other.add(entry);
+                }
+            }
+        }
+        catch (Exception e) {
+            other.add("ERROR: " + e);
+        }
+
+        w.println("      \"ref_total\": " + total + ",");
+        w.println("      \"writes\": [" + jsonList(writes) + "],");
+        w.println("      \"reads\": [" + jsonList(reads) + "],");
+        w.println("      \"other_refs\": [" + jsonList(other) + "],");
+        // Distinguish "nothing references it" from "only reads reference it". A global
+        // with zero writes anywhere is either initialised in the file image or written
+        // through a pointer the reference model never resolved - both worth knowing,
+        // and they are NOT the same as an unused global.
+        w.println("      \"decomp\": null");
+    }
+
     private Set<String> xrefsTo(Address target) {
         Set<String> sorted = new TreeSet<>();
         try {
@@ -452,3 +542,4 @@ public class DecompPC extends GhidraScript {
         return b.toString();
     }
 }
+

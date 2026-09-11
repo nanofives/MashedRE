@@ -111,6 +111,26 @@ def render(data):
                 out.extend(f"//     {_oneline(it)}" for it in items)
             out.append("")
             continue
+        if fn.get("kind") == "data":
+            out.append(f"// {req}  DATA in {fn['block']}"
+                       + ("" if fn.get("initialized") else "  [UNINITIALISED - a static "
+                          "read here says nothing about the runtime value]"))
+            if fn.get("data_type"):
+                out.append(f"//   type {fn['data_type']} len {fn['data_length']}"
+                           f"  value {fn.get('value_repr')}")
+            else:
+                out.append("//   type: undefined bytes (Ghidra has no data definition here)")
+            out.append(f"//   {fn['ref_total']} reference(s) total")
+            for key, label in (("writes", "WRITES"), ("reads", "reads"),
+                               ("other_refs", "other")):
+                items = fn.get(key) or []
+                if not items:
+                    out.append(f"//   {label}: (none)")
+                    continue
+                out.append(f"//   {label} ({len(items)}):")
+                out.extend(f"//     {_oneline(it)}" for it in items)
+            out.append("")
+            continue
         hdr = f"// {fn['name']} @ {fn['entry']}  size={fn['size']}  ({data['program']})"
         if not fn.get("exact_entry", True):
             hdr += f"\n// NOTE: {req} is not a function entry; showing containing function"
@@ -150,6 +170,11 @@ def main():
                     help="string literals referenced from the function body")
     ap.add_argument("--port", action="store_true",
                     help="Lane 2: add decompiler prototype, typed globals and callee prototypes")
+    ap.add_argument("--datarefs", action="store_true",
+                    help="treat each address as a GLOBAL, not a function: emit its refs split "
+                         "into writes / reads / other, each with the containing function and "
+                         "the referencing instruction. This is the 'who writes this global' "
+                         "query; every other mode needs a Function and fails on a data address.")
     ap.add_argument("--no-decomp", action="store_true",
                     help="skip decompilation (fast; pairs with --callees/--callers)")
     ap.add_argument("--slot", help="reuse an already-held pool slot index; not released")
@@ -169,7 +194,22 @@ def main():
     if not GH.exists():
         raise SystemExit(f"analyzeHeadless not found: {GH}")
 
-    modes = (([] if a.no_decomp else ["decomp"])
+    if a.datarefs:
+        # datarefs is a different question, not an extra field: the address is a global,
+        # so there is no function to decompile, no callees and no callers. Mixing them
+        # would just emit a pile of nulls and invite the reader to think they mean
+        # something.
+        conflicting = [n for n, v in (("--callees", a.callees), ("--callers", a.callers),
+                                      ("--strings", a.strings), ("--port", a.port),
+                                      ("--xrefs", a.xrefs))
+                       if v]
+        if conflicting:
+            ap.error("--datarefs cannot be combined with " + ", ".join(conflicting)
+                     + " (a data address has no function to inspect; --datarefs already "
+                       "reports every reference, split into writes and reads)")
+        modes = ["datarefs"]
+    else:
+        modes = (([] if a.no_decomp else ["decomp"])
              + (["callees"] if a.callees else [])
              + (["callers"] if a.callers else [])
              + (["xrefs"] if a.xrefs else [])
