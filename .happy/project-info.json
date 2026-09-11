@@ -1,62 +1,55 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-10T20:00:00Z",
+  "updatedAt": "2026-09-11T03:30:00Z",
   "sections": [
     {
       "heading": "Status",
       "fields": [
         { "label": "Branch", "value": "race/first-frame-parity", "kind": "text" },
         { "label": "Phase", "value": "R7 - full game systems (scaffold to verbatim)", "kind": "text" },
-        { "label": "Tree", "value": "clean, no stray processes, pool slots free", "kind": "text" },
-        { "label": "Last activity", "value": "2026-09-10", "kind": "date" }
+        { "label": "Session focus", "value": "drain open items, merge worktrees, then loop on uncertainties", "kind": "text" },
+        { "label": "Tree", "value": "clean; 0 worktrees, 0 pool locks, 0 stray processes", "kind": "text" },
+        { "label": "Last activity", "value": "2026-09-11", "kind": "date" }
       ]
     },
     {
-      "heading": "Trackers",
+      "heading": "Merge + cleanup (done)",
       "fields": [
-        { "label": "hooks.csv rows", "value": 5930, "kind": "number" },
-        { "label": "C4", "value": 184, "kind": "number" },
-        { "label": "C3", "value": 1011, "kind": "number" },
-        { "label": "C2", "value": 3883, "kind": "number" },
-        { "label": "C1", "value": 821, "kind": "number" },
-        { "label": "UNCERTAINTIES (open rows)", "value": 3069, "kind": "number" },
-        { "label": "DEFERRED (active)", "value": 678, "kind": "number" }
+        { "label": "Worktrees removed", "value": 11, "kind": "number" },
+        { "label": "Unmerged work lost", "value": "none - all 11 branches were already ancestors of HEAD", "kind": "text" },
+        { "label": "Rescued first", "value": "verify/camera_racecam/race1/01_inrace_track.png was cited by a merged note but existed only inside a worktree, untracked (verify/**/*.png is gitignored)", "kind": "text" },
+        { "label": "Landmine cleared", "value": ".worktrees/d1-invert was a partially-removed worktree corpse: git had deregistered it but its original/ junction to the real game install was still live. Junction deleted non-recursively first, then 334 MB removed; all 10,938 files verified duplicated in main.", "kind": "text" },
+        { "label": "Ghidra pool locks cleared", "value": 10, "kind": "number" },
+        { "label": "Still unmerged, deliberately", "value": "area/frontend - WIP checkpoint whose PanelSortInit hook (0x00420d00) would go live in the dev ASI unverified", "kind": "text" }
       ]
     },
     {
-      "heading": "TOP FINDING - read before trusting any shadow verdict",
+      "heading": "TOP FINDING this session",
       "fields": [
-        { "label": "Single-boot verdicts are unreliable", "value": "The lane produces transient windows of CONSECUTIVE failing boots. Measured: failures at positions 4-5-6 and 15-16-17 of 24, no position trend, and 6 of 8 were in SSE2 TUs vs 2 in x87 TUs - so the window is not a property of the row OR the build.", "kind": "text" },
-        { "label": "Rule", "value": "Require TWO independent boots before recording a CRASH/VOID/NO_SAMPLES or attributing it to a change.", "kind": "text" },
-        { "label": "Cause", "value": "UNKNOWN - top open question. Ruled out: long-run degradation, group interference, build variant.", "kind": "text" },
-        { "label": "8 results rows annotated", "value": "as failure-window artefacts, with their prior verdicts inline", "kind": "text" }
+        { "label": "Ghidra headless was unreachable from PowerShell", "value": "bash on PATH is WSL (C:\\WINDOWS\\system32\\bash.exe), not Git Bash. It cannot open a Windows path as an argv entry, so every pool acquire died and decomp_pc.py only ever worked from a Git Bash session. Both decomp_pc.py and ghidra_pool.ps1 now resolve Git Bash explicitly.", "kind": "text" },
+        { "label": "The gating bucket is xref-shaped, not decomp-shaped", "value": "Of the 213 still-gating uncertainty rows, 128 need the WRITERS of a global or the CALLERS of a function - not a decompilation. decomp_pc.py --xrefs/--callers already produces that in batch, so it is the next automated lane.", "kind": "text" },
+        { "label": "Port hazard found (U-4508)", "value": "The 'pool-commit skips the found-slot pointer' was never a skip - the pointer is passed in EAX (0x004777a5 sets it, the commit block pushes four stack args without touching it, callee reads in_EAX). A cdecl prototype for 0x00477450 silently drops its first argument.", "kind": "text" }
       ]
     },
     {
-      "heading": "Decisions closed this session",
+      "heading": "Uncertainties",
       "fields": [
-        { "label": "D-11070 float model", "value": "DECIDED: per-TU /arch:IA32 on 4 measured TUs (build_objs.ps1 -X87List + x87_tus.txt, both targets). The build was SSE2, not x87. A 10-TU trial did NOT generalise, so it was narrowed to what repeats: 4 DIVERGENT->CLEAN conversions seen twice each.", "kind": "text" },
-        { "label": "0x0056f350", "value": "CLOSED: port defect was a Ghidra-interleaving spill (fixed, spill cmov gone from codegen, control 3/3 RACE_OK). Residual crash is inherited witness invalidity - it calls FUN_0056f0a0. Out of the lane, stays C2.", "kind": "text" }
+        { "label": "Open rows", "value": 3029, "kind": "number" },
+        { "label": "Of those, actually gating", "value": "204 (the other 2,124 block nothing - transcription residue)", "kind": "text" },
+        { "label": "Gating count this session", "value": "235 -> 204", "kind": "text" },
+        { "label": "Pass 1 - false gates repaired", "value": "22 rows claimed to block a promotion their own function had already passed (D0.3 evidence rule, last run 2026-08-15 and never re-run)", "kind": "text" },
+        { "label": "Pass 2 - resolved with citations", "value": ["U-4416 RpClumpForAllAtomics signature + dispatch", "U-4417 per-element size, not total or alignment", "U-4508 EAX register argument (port hazard)", "U-5107 signed % 2, traced on 7/8/-3", "U-5161 tex+0x14 and tex+0x50 are one field", "U-5645 ctx+0x138 is a function pointer"], "kind": "list" },
+        { "label": "Pass 3 - one binary read closed three rows", "value": "U-4420 / U-4750 / U-4800 all wanted the same unread float. DAT_005d757c = 0.0f. Not a -FLT_MAX sentinel, not a negative bias.", "kind": "text" },
+        { "label": "Verdicts rejected on review", "value": "1 of 5 worker ANSWERED calls did not survive (U-4508 was 'answered' by restating its own premise). Chasing it properly is what found the register-argument hazard.", "kind": "text" }
       ]
     },
     {
-      "heading": "Landed 2026-09-10 second session (41 commits)",
+      "heading": "Carried forward - still your call",
       "fields": [
-        { "label": "Merges", "value": ["docs/reconcile", "race/nav-champ", "race/arctic-cap"], "kind": "list" },
-        { "label": "Promotions", "value": "3 rows C2->C3 (C3 1008 -> 1011)", "kind": "text" },
-        { "label": "Product defects fixed", "value": ["QuadRenderer rejected PAL4 - every BADGES 16x16 sprite was dead", "0x0056bce0 caller-saved EDX contract", "0x0056bce0 denominator tree + double rounding", "0x0056f350 axis-select spill + float loop counter"], "kind": "list" },
-        { "label": "Tooling defects fixed", "value": ["decomp2port: 13 control bytes had DISABLED the HIDDEN_REG_ARG guard", "decomp2port: CALLEE_ARITY only logged, never refused", "decomp2port: no IRREVERSIBLE_SIDE_EFFECT guard", "shadow_batch: control boot destroyed the armed verdict", "shadow_batch: stale snapshot clobbered concurrent edits", "shadow_batch: booted sites whose TU does not exist"], "kind": "list" },
-        { "label": "Crasher list", "value": "all 9 dispositioned; 3 invalid Lane 2 ports dropped from the build", "kind": "text" },
-        { "label": "New tools/tests", "value": ["re/tools/tests/test_decomp2port_refusals.py (9/9)", "re/tools/defuse_trace.py", "build_objs.ps1 -X87List", "MASHED_TRACE_F350"], "kind": "list" },
-        { "label": "Corrections to my own claims", "value": 6, "kind": "number" }
-      ]
-    },
-    {
-      "heading": "Next",
-      "fields": [
-        { "label": "Highest value", "value": "Find the cause of the consecutive-failure windows - it gates the reliability of every verdict in this lane.", "kind": "text" },
-        { "label": "Still pending your call", "value": ["4 C4 rows may need demotion (U-9087) - their install proof is a byte the original already has", "The HookSystem dual-install guard fix that would unblock those 10 hooks"], "kind": "list" },
-        { "label": "Open work", "value": ["standalone physics under x87 unverified (needs a quiet-desktop race capture)", "43 NO_SAMPLES rows need scenario enrichment", "private-memory tracking hang"], "kind": "list" }
+        { "label": "main is 270+ commits behind", "value": "race/first-frame-parity has not been merged to main; that is a branch decision, not done unilaterally", "kind": "text" },
+        { "label": "U-9087", "value": "4 C4 rows may need demotion - their install proof is a byte the original already has", "kind": "text" },
+        { "label": "Shadow lane", "value": "single-boot verdicts unreliable (transient consecutive-failure windows, cause still unknown); require two boots", "kind": "text" },
+        { "label": "Open work", "value": ["standalone physics under x87 unverified", "43 NO_SAMPLES rows need scenario enrichment", "private-memory tracking hang"], "kind": "list" }
       ]
     }
   ]
