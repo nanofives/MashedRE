@@ -393,9 +393,20 @@ public class DecompPC extends GhidraScript {
         w.println("      \"block\": \"" + (blk == null ? "(none)" : esc(blk.getName())) + "\",");
 
         // A read past the block's initialised bytes proves nothing about the runtime
-        // value, so say whether this address even has file-backed content.
-        boolean init = (blk != null && blk.isInitialized());
+        // value, so say whether THIS ADDRESS has file-backed content.
+        //
+        // MemoryBlock.isInitialized() is block-level and too coarse here: MASHED's .data
+        // block spans 0x32a704 virtual bytes over only 0x4d000 raw, so it reports
+        // initialized=true for BSS-like addresses well past the file image (0x007f108b
+        // was the case that caught this). Ask the memory map per address instead.
+        boolean init = currentProgram.getMemory()
+                .getLoadedAndInitializedAddressSet().contains(a);
         w.println("      \"initialized\": " + init + ",");
+        // Note this can legitimately disagree with a raw read of the file: Ghidra's PE
+        // loader materialises a section's whole VirtualSize, zero-filling the tail past
+        // SizeOfRawData, and so does the Windows loader. So "initialized" here means
+        // "has a defined value at process start", which for a BSS tail is 0 - it does
+        // NOT mean the bytes exist in MASHED.exe on disk.
 
         Listing listing = currentProgram.getListing();
         Data d = listing.getDataAt(a);

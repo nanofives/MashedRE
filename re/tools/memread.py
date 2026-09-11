@@ -40,8 +40,15 @@ for va_s in sys.argv[1:]:
     delta = rva - vaddr
     print(f"  section {name}  vaddr 0x{vaddr:06x} vsz 0x{vsz:x} raw 0x{roff:x} rsz 0x{rsz:x}")
     if delta >= rsz:
-        print("  UNINITIALISED: past the section's raw data (BSS-like). A static read here "
-              "proves nothing about the runtime value.")
+        # NOT "proves nothing" - that was this tool's original wording and it was too
+        # cautious, which cost a real answer once. A PE section whose VirtualSize
+        # exceeds SizeOfRawData has its tail ZERO-FILLED by the loader, so the value
+        # at process start is definitely 0. What is unknown is only whether code
+        # writes it afterwards, and `decomp_pc.py --datarefs` answers exactly that.
+        print("  BSS TAIL: past the section's raw data, so there are no bytes in the file.")
+        print("  The PE loader zero-fills a section's virtual tail, so the value AT PROCESS")
+        print("  START is 0. Whether anything writes it later is a separate question ->")
+        print(f"  py -3.12 re/tools/decomp_pc.py {va_s} --datarefs")
         continue
     off = roff + delta
     b = data[off:off + 16]
