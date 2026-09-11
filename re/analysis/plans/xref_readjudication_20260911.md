@@ -127,22 +127,24 @@ U-5704 | NO-NEW-EVIDENCE | block states "NO NEW EVIDENCE AVAILABLE" | writers/co
 U-5705 | NO-NEW-EVIDENCE | block states "NO NEW EVIDENCE AVAILABLE" | writers/contents of DAT_00623f70/f74/f78/f7c
 TOTALS: RESOLVED=3 PARTIAL=2 NO-NEW-EVIDENCE=8 IDS=13
 
-## STATUS OF THIS FILE - read before acting on any row above
+## STATUS OF THIS FILE - ADJUDICATED 2026-09-11, do not re-run
 
-These are WORKER CLAIMS, not verified findings. 43 rows are marked RESOLVED; only
-U-5427 and U-5584 have been checked against the disassembly and written into
-UNCERTAINTIES.md. The remaining 41 are UNVERIFIED and must not be treated as closed.
+All 43 RESOLVED claims here have been reviewed and dispositioned. Do not treat this
+file as a work queue any more; UNCERTAINTIES.md is authoritative.
 
-Two reasons to re-check each one before landing it:
+- 39 landed as resolved (37 in this pass, plus U-5427 and U-5584 earlier).
+- 4 refused, each kept gating with the reason written into its row:
+  U-4583 (names not established - data-xref lane), U-4586 (addressing settled, bone
+  IDs still unmapped), U-4707 (behaviour read, RenderWare name unconfirmed),
+  U-5162 (CONFIRMED as a real memory-safety item - see
+  re/analysis/rw_native_raster_name_buffer_20260911.md).
 
-1. Chunk 3 alone claims 27 of 48 RESOLVED while the other three chunks run 4/24, 9/39
-   and 3/13. That asymmetry is unexplained and is itself a reason for suspicion.
-2. Several claims attach an interpretive gloss the quoted code does not carry -
-   "(module init)", "(coalesces free block with neighbors)", "(arena init 0/1)",
-   "(rounded strlen)". The quoted expressions are literal; the glosses are inference
-   and violate NO-GUESSING if copied into the tracker verbatim. Re-word mechanically.
+The chunk-3 asymmetry that originally caused the parking was measured and explained:
+chunk 3 held 46% identity-shaped rows vs 8-29% elsewhere, and those are the rows a
+callee body answers. It was composition, not leniency - the earlier suspicion in this
+file was wrong.
 
-Precedent from pass 1: 1 of 5 worker ANSWERED verdicts did not survive review
-(U-4508 was "answered" by restating its own premise). Chasing it properly is what
-found the EAX register-argument hazard, so review is not a formality here - it is
-where the findings come from.
+Two review gates were used and both earned their keep. A mechanical one (does every
+quoted symbol actually occur in the decomp corpus?) passed 41/41. A judgment one
+(does the evidence answer the question asked?) failed 4 - including U-5162, where the
+quoted code was not in the cited function at all.
