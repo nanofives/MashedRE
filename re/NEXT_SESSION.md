@@ -11,9 +11,9 @@ C1 821 — unchanged, no function moved C-level this session) · DEFERRED 678 ac
 | measure | count | command |
 |---|---:|---|
 | open rows in the Active section | 3,029 | rows matching `^\| *U-[0-9]+` between `## Active uncertainties` and `## Resolved`, minus `~~`-prefixed |
-| of those, **actually gating** | **150** | same set, `Blocks` cell (index 7) exactly `C2->C3` or `C3` |
+| of those, **actually gating** | **146** | same set, `Blocks` cell (index 7) exactly `C2->C3` or `C3` |
 | gating at session start | 235 | — |
-| gating at session end | 150 (was 235) | — |
+| gating at session end | 146 (was 235) | render 120, hud 20, boot 4, audio 1, frontend 1 |
 | rows with a non-canonical column count | 131 | pre-existing baseline, unchanged by this session's 33 edits |
 
 ## What landed
@@ -51,7 +51,17 @@ resolve Git Bash explicitly. Memory: `bash-on-path-is-wsl-not-git-bash`.
 
 Pre-existing and left alone: `ghidra_pool.sh status` returns **exit 1 on success**.
 
-### 3. Uncertainty loop — 235 → 150 gating, in six passes
+### ⚠ 2b. A BRANCH CHECKOUT CRLF-CORRUPTS EVERY `.sh` — fixed at the root
+`core.autocrlf=true` is set locally and `.gitattributes` had **no `*.sh` rule**, so a
+`git checkout main` + back round-trip re-materialised every shell script that differed
+between the two commits with CRLF. bash then dies on line 1 with `$'\r': command not
+found`. It hit **7 of 9** of our scripts including `scripts/ghidra_pool.sh`, which every
+headless Ghidra run acquires its slot through, so all decompilation silently stopped.
+Fixed with `*.sh text eol=lf` plus renormalising the 7 files. **If that rule is ever
+lost, this comes straight back.** Tell-tale: a `.sh` that worked earlier in the session
+starts failing right after a branch switch.
+
+### 3. Uncertainty loop — 235 → 146 gating
 
 **Pass 1 — 22 false gates.** The file's own D0.3 rule ("target is C3/C4 in hooks.csv with
 the row still open ⇒ it demonstrably did not gate") ran **once**, on 2026-08-15, and was
@@ -76,9 +86,25 @@ resolved by this** and every repaired row says so. Memory:
 **One unread constant closed three rows.** U-4420, U-4750 and U-4800 all wanted
 `DAT_005d757c` and none had read it: it is `0.0f`. Built `re/tools/memread.py` for this —
 it prints section, file offset, raw bytes, dword and float from the anchored
-`MASHED.exe.unpatched`, and it **refuses to invent a value**: asked for `0x00773208` it
-reports the address is past `.data`'s raw size and that a static read proves nothing,
-which is why U-4717 was left alone rather than "answered" with a zero.
+`MASHED.exe.unpatched`. **Its original wording was over-cautious and was corrected later
+the same day:** it said a BSS-tail address "proves nothing about the runtime value", but
+a PE section's virtual tail is zero-filled by the loader, so the value at process start
+is definitely `0` — and whether anything writes it afterwards is exactly what
+`--datarefs` answers. It now says that and points at the follow-up command.
+
+**Passes 5–6 — the data-xref lane, then the callers lane.** `decomp_pc.py --datarefs`
+(new) answers "who writes this global": refs split into writes / reads / other, each with
+the containing function and the referencing instruction. It resolved 7 and narrowed 15.
+Ten globals have **zero writes anywhere**, so their file value is their runtime value —
+that alone closed four rows. `DAT_007d3ff8` is a pointer written twice with the literal
+`0x7d3ec8`, identifying the object behind every `+N` dispatch in the tree.
+
+**`"no callers found"` is usually an ANALYSIS GAP, not pointer dispatch.** U-4398 and
+U-5302 both hypothesised a function pointer. Disassembly shows plain direct `call`
+instructions (`0x00450a87`, `0x00452e5d`, `0x0054364a`) sitting in `.text` regions Ghidra
+never assigned to a function. U-5648 is the genuine counter-case: its only reference is a
+`DATA` xref from the store that installs it, with no CALL reference at all.
+**Discriminator: does any CALL reference exist, not whether the call graph looks empty.**
 
 **Pass 4 — the 41 parked claims adjudicated: 37 resolved, 4 refused.** Details under
 "A. DONE" below. Notable refutations, which are worth more than the confirmations:
@@ -197,6 +223,8 @@ a cell containing a pipe.
 > from PowerShell: `py -3.12 re\tools\decomp_pc.py --file rvas.txt --callees --xrefs
 > --json -o out.json` batches ~160 addresses in one run. `re/tools/memread.py` reads a
 > constant out of the anchored binary and refuses to guess at BSS addresses.
+
+
 
 
 
