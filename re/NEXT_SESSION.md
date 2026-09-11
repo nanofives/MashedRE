@@ -11,8 +11,9 @@ C1 821 — unchanged, no function moved C-level this session) · DEFERRED 678 ac
 | measure | count | command |
 |---|---:|---|
 | open rows in the Active section | 3,029 | rows matching `^\| *U-[0-9]+` between `## Active uncertainties` and `## Resolved`, minus `~~`-prefixed |
-| of those, **actually gating** | **202** | same set, `Blocks` cell (index 7) exactly `C2->C3` or `C3` |
+| of those, **actually gating** | **165** | same set, `Blocks` cell (index 7) exactly `C2->C3` or `C3` |
 | gating at session start | 235 | — |
+| gating by subsystem | render 131, hud 28, boot 4, audio 1, frontend 1 | — |
 | rows with a non-canonical column count | 131 | pre-existing baseline, unchanged by this session's 33 edits |
 
 ## What landed
@@ -50,7 +51,7 @@ resolve Git Bash explicitly. Memory: `bash-on-path-is-wsl-not-git-bash`.
 
 Pre-existing and left alone: `ghidra_pool.sh status` returns **exit 1 on success**.
 
-### 3. Uncertainty loop — 235 → 202 gating
+### 3. Uncertainty loop — 235 → 165 gating, in four passes
 
 **Pass 1 — 22 false gates.** The file's own D0.3 rule ("target is C3/C4 in hooks.csv with
 the row still open ⇒ it demonstrably did not gate") ran **once**, on 2026-08-15, and was
@@ -79,6 +80,14 @@ it prints section, file offset, raw bytes, dword and float from the anchored
 reports the address is past `.data`'s raw size and that a static read proves nothing,
 which is why U-4717 was left alone rather than "answered" with a zero.
 
+**Pass 4 — the 41 parked claims adjudicated: 37 resolved, 4 refused.** Details under
+"A. DONE" below. Notable refutations, which are worth more than the confirmations:
+`U-4429`'s `param_1` is a pure OUT parameter so the row's premise is false; `U-5158` is
+none of forAll/deInit/readData; `U-5614` has no reference count in 35 bytes; `U-5621`'s
+`0x301a1` vs `0x401a1` are masked with `0xff0000` and handed to one allocator as flags,
+not separate arenas. `U-4602` settled a three-way outright: a **sphere against six
+planes** with a tri-state return, not a point test and not an AABB.
+
 ### ⚠ The two hazards are a matched pair — read both before trusting either
 `U-4508` and `U-5584` are real register arguments. `U-5427` **looked identical and was
 not**: `sub esp,8` plus four pushes moved ESP to entry−0x18, so `[esp+0x1c]` was ordinary
@@ -106,21 +115,24 @@ addresses in a few minutes.
 
 ## PICK ONE
 
-### A. Finish pass 3 — 41 parked worker claims **[highest immediate yield, needs care]**
-`re/analysis/plans/xref_readjudication_20260911.md` holds 43 RESOLVED claims; 2 are landed,
-**41 are unverified and must not be treated as closed.** The file says so at the top. Two
-reasons they were parked:
-1. **Chunk 3 claims 27 of 48** while the other chunks run 4/24, 9/39, 3/13 — unexplained
-   asymmetry.
-2. Several attach an interpretive gloss the quoted code does not carry — "(module init)",
-   "(coalesces free block with neighbors)", "(arena init 0/1)", "(rounded strlen)".
-   The quoted expressions are literal; the glosses are inference and would import guesses
-   into the tracker verbatim. **Re-word mechanically before landing.**
+### A. DONE — the 41 parked claims are adjudicated (37 resolved, 4 refused)
+See CHANGELOG 2026-09-11 "pass 4". My reason for parking them was **wrong and I measured
+it**: chunk 3's 27/48 hit rate came from holding 46% identity-shaped rows against 8-29%
+elsewhere, and those are exactly what a callee body answers. Composition, not leniency.
 
-Precedent: 1 of 5 pass-1 ANSWERED verdicts did not survive review, and chasing that one
-properly is what found the EAX hazard. Review is where the findings come from here.
+Two review gates, both worth reusing. **Mechanical:** check that every `FUN_`/`DAT_`/hex
+token a claim quotes actually occurs in the decomp corpus — 41/41 passed, so nothing was
+fabricated. **Judgment:** does the evidence answer the question *asked* — 4 failed there,
+which is why the first gate is necessary and not sufficient.
 
-### B. The data-xref lane — 24 rows want the WRITERS of a global
+**The one that inverted is now a memory-safety item.** U-5162's claim "proved" safety by
+quoting a 0x80 clamp that **is not in the function the row is about**. `0x004cf5a0` hands
+two 128-byte stack buffers to `FUN_004d8810` as destinations, and the amount written is
+`local_9c` straight from the stream chunk header, never compared against 128. Write-up and
+port guidance (do **not** silently add a bounds check — it is a behavioural divergence):
+`re/analysis/rw_native_raster_name_buffer_20260911.md`.
+
+### B. The data-xref lane — 24 rows want the WRITERS of a global **[now the top lane]**
 `decomp_pc.py --xrefs` takes a function entry, not a data address, so this needs either a
 DecompPC.java addition for data xrefs or a `reference_to` equivalent. That one tool change
 unlocks the largest remaining sub-bucket.
@@ -163,3 +175,5 @@ a cell containing a pipe.
 > from PowerShell: `py -3.12 re\tools\decomp_pc.py --file rvas.txt --callees --xrefs
 > --json -o out.json` batches ~160 addresses in one run. `re/tools/memread.py` reads a
 > constant out of the anchored binary and refuses to guess at BSS addresses.
+
+

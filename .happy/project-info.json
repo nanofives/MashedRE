@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE",
-  "updatedAt": "2026-09-11T03:30:00Z",
+  "updatedAt": "2026-09-11T05:10:00Z",
   "sections": [
     {
       "heading": "Status",
@@ -35,12 +35,14 @@
       "heading": "Uncertainties",
       "fields": [
         { "label": "Open rows", "value": 3029, "kind": "number" },
-        { "label": "Of those, actually gating", "value": "204 (the other 2,124 block nothing - transcription residue)", "kind": "text" },
-        { "label": "Gating count this session", "value": "235 -> 204", "kind": "text" },
+        { "label": "Of those, actually gating", "value": "165 (render 131, hud 28, boot 4, audio 1, frontend 1)", "kind": "text" },
+        { "label": "Gating count this session", "value": "235 -> 165, in four passes", "kind": "text" },
         { "label": "Pass 1 - false gates repaired", "value": "22 rows claimed to block a promotion their own function had already passed (D0.3 evidence rule, last run 2026-08-15 and never re-run)", "kind": "text" },
         { "label": "Pass 2 - resolved with citations", "value": ["U-4416 RpClumpForAllAtomics signature + dispatch", "U-4417 per-element size, not total or alignment", "U-4508 EAX register argument (port hazard)", "U-5107 signed % 2, traced on 7/8/-3", "U-5161 tex+0x14 and tex+0x50 are one field", "U-5645 ctx+0x138 is a function pointer"], "kind": "list" },
         { "label": "Pass 3 - one binary read closed three rows", "value": "U-4420 / U-4750 / U-4800 all wanted the same unread float. DAT_005d757c = 0.0f. Not a -FLT_MAX sentinel, not a negative bias.", "kind": "text" },
-        { "label": "Verdicts rejected on review", "value": "1 of 5 worker ANSWERED calls did not survive (U-4508 was 'answered' by restating its own premise). Chasing it properly is what found the register-argument hazard.", "kind": "text" }
+        { "label": "Pass 4 - the 41 parked claims", "value": "37 resolved, 4 refused. My reason for parking them was wrong and measured: chunk 3 held 46% identity-shaped rows vs 8-29% elsewhere, which is composition not leniency.", "kind": "text" },
+        { "label": "Verdicts rejected on review", "value": "5 of 46 worker claims did not survive. U-4508 was answered by restating its own premise; U-5162 was dismissed with a clamp that is in a different function entirely.", "kind": "text" },
+        { "label": "MEMORY-SAFETY FINDING (U-5162)", "value": "0x004cf5a0 hands two 128-byte stack buffers to FUN_004d8810 as destinations, and the byte count comes from the stream chunk header via FUN_004cc400 and is never compared against 128. A verbatim port must reproduce it - a bounds check is a behavioural divergence. re/analysis/rw_native_raster_name_buffer_20260911.md", "kind": "text" }
       ]
     },
     {
@@ -54,3 +56,4 @@
     }
   ]
 }
+
