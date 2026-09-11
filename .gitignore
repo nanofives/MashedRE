@@ -145,3 +145,7 @@ original/gamesave.bin.refbak_*
 
 # run byproduct of launching mashed_re.exe from the repo root (never commit)
 /videocfg.bin
+
+# Ghidra master-project backups taken before bulk writes. 80 MB each; never commit.
+/Mashed.rep.bak-*/
+/Mashed.gpr.bak-*

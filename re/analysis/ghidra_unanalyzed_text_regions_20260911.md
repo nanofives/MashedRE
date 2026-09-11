@@ -107,7 +107,45 @@ than a vague concern.
 - Whether the master project (`Mashed.gpr`) differs from the read-only pool clones here.
   All observations are from pool clones.
 
-## Repair option, NOT taken
+## REPAIRED 2026-09-11 — 501 functions created in the master project
+
+Owner approved the master-project write. Done with
+`re/tools/ghidra_scripts/CreateMissedFunctions.java`, which refuses an address unless
+every guard passes (`SKIP_NOT_EXEC`, `SKIP_HAS_FUNCTION`, `SKIP_MID_INSTR`,
+`SKIP_DEFINED_DATA`, `SKIP_NO_CODE`) and has a dry-run mode.
+
+**The 826 figure above was too high, and the guards are what showed it.** Dry run against
+a pool clone: 536 would-create, **290 `SKIP_DEFINED_DATA`** — 263 of those are `pointer`
+data, i.e. jump tables and pointer arrays embedded in `.text`. Disassembling one
+(`0x00402a24`) gives `mov eax,0xb1004027` / `daa` / `inc eax` — garbage. Those are
+address-takes of **data**, not of functions, and creating functions there would have been
+wrong. So the real population was **536**, not 826.
+
+Applied to the master: **501 CREATED, 290 SKIP_DEFINED_DATA, 35 SKIP_NO_CODE, 0 FAILED.**
+The 35 are the delta from the dry run — addresses in the "needs disassembly" subset where
+`disassemble()` produced no instruction, which only shows up in the write path.
+
+**Verified three ways, not by trusting the exit code:**
+
+1. Re-ran `UnanalyzedRefs.java` against the master. Orphan addresses **4,612 → 2,750**,
+   references **6,194 → 3,578**, address-taken-from-a-real-function targets **826 → 387**.
+   The drop is far larger than 501 because creating a function absorbs every jump target
+   inside its body.
+2. Spot-decompiled three created functions from the master: all recover real signatures
+   and bodies (`void FUN_00407670(int,int)`, a five-parameter `FUN_00407a90`, and
+   `undefined4 FUN_0040bb10(undefined4,undefined4)` which is a two-line forwarder).
+3. Ran `ghidra_pool.sh sync` (16 slots refreshed) and confirmed the ordinary
+   `decomp_pc.py` path now returns the new functions.
+
+**Backup before the write:** `Mashed.rep.bak-20260911-pre-createfn` + `Mashed.gpr.bak-…`
+(80 MB, verified file-for-file, and added to `.gitignore` so they cannot be committed).
+Preconditions checked first: no lock files, no Java process, no other session.
+
+**Residual 387** address-taken targets still have no function — they are the
+`SKIP_DEFINED_DATA` set plus the 35 that would not disassemble. Those need a judgement
+per address, not a bulk pass.
+
+## Repair option as originally written, superseded by the section above
 
 Creating functions at these addresses in the master Ghidra project would fix the class
 permanently and improve every future decompilation. That is a **master-project write**,
