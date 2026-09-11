@@ -5,3 +5,10 @@ re/pipeline/**/*.js text eol=lf
 scripts/diag.py text eol=lf
 scripts/pipeline_plan.py text eol=lf
 scripts/dump_asm.py text eol=lf
+
+# Shell scripts must be LF. core.autocrlf=true is set locally, and with no rule here a
+# branch checkout re-materializes every .sh that differs between the two commits with
+# CRLF - bash then fails on the first line with "$'\r': command not found". This broke
+# 7 of 9 scripts (including ghidra_pool.sh, which every headless Ghidra run depends on)
+# during a main<->branch round-trip on 2026-09-11.
+*.sh text eol=lf
