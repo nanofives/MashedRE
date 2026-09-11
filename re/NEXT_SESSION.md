@@ -4,7 +4,8 @@
 
 Branch `race/first-frame-parity`, tree clean, no stray processes, pool locks clear
 (slot 0's 10-day orphan released). Trackers: hooks.csv 5,930 rows
-(C4 184, **C3 1,011**, C2 3,883, C1 821) · DEFERRED 679.
+(C4 184, **C3 1,011**, C2 3,883, C1 821) · DEFERRED 678 active
+(D-11070 struck through on decision, so it leaves the active count).
 
 > **UNCERTAINTIES count — the previous header's "3,082" is not reproducible.** Two rules give
 > two numbers: `grep -cE '^\| *U-[0-9]+ \|'` = **3,069** (open-format rows) and
