@@ -11,9 +11,9 @@ C1 821 — unchanged, no function moved C-level this session) · DEFERRED 678 ac
 | measure | count | command |
 |---|---:|---|
 | open rows in the Active section | 3,029 | rows matching `^\| *U-[0-9]+` between `## Active uncertainties` and `## Resolved`, minus `~~`-prefixed |
-| of those, **actually gating** | **146** | same set, `Blocks` cell (index 7) exactly `C2->C3` or `C3` |
+| of those, **actually gating** | **140** | same set, `Blocks` cell (index 7) exactly `C2->C3` or `C3` |
 | gating at session start | 235 | — |
-| gating at session end | 146 (was 235) | render 120, hud 20, boot 4, audio 1, frontend 1 |
+| gating at session end | 140 (was 235) | render 114, hud 20, boot 4, audio 1, frontend 1 |
 | rows with a non-canonical column count | 131 | pre-existing baseline, unchanged by this session's 33 edits |
 
 ## What landed
@@ -66,7 +66,7 @@ the `main` ref without touching the working tree at all, so no file is ever
 re-materialised and autocrlf never gets a chance. Use that instead of
 `git checkout main && git merge --ff-only <branch> && git checkout <branch>`.
 
-### 3. Uncertainty loop — 235 → 146 gating
+### 3. Uncertainty loop — 235 → 140 gating
 
 **Pass 1 — 22 false gates.** The file's own D0.3 rule ("target is C3/C4 in hooks.csv with
 the row still open ⇒ it demonstrably did not gate") ran **once**, on 2026-08-15, and was
@@ -110,6 +110,27 @@ instructions (`0x00450a87`, `0x00452e5d`, `0x0054364a`) sitting in `.text` regio
 never assigned to a function. U-5648 is the genuine counter-case: its only reference is a
 `DATA` xref from the store that installs it, with no CALL reference at all.
 **Discriminator: does any CALL reference exist, not whether the call graph looks empty.**
+
+**Passes 7–8 — the reference material was in the repo and on the machine all along.**
+Two "EXTERNAL" rows were answerable from **vendored librw**
+(`re/prior_art/renderware/librw/src/d3d/rwd3d.h`) and two more from the **local Windows
+SDK** (`Windows Kits/10/Include/.../shared/d3d9types.h`). **The recurring trap is the
+base: those enums are DECIMAL and the rows quote hex.** `0x51`=81=`D3DFMT_L16`,
+`0x3d`=61=`D3DFMT_L6V5U5`, `0x88`/`0x89`=136/137=`D3DRS_CLIPPING`/`D3DRS_LIGHTING`.
+Three rows had drawn a wrong conclusion from that mismatch.
+
+**Do NOT cite librw's `RenderState` enum for Mashed's numbers** — librw is a clean-room
+reimplementation and its ordering is its own. The real `rwRENDERSTATETYPE` is **not**
+present anywhere in `re/prior_art/`.
+
+### ⇒ The Ghidra project has a measured analysis gap
+`re/analysis/ghidra_unanalyzed_text_regions_20260911.md` +
+`re/tools/ghidra_scripts/UnanalyzedRefs.java` (new, read-only). **4,612 distinct `.text`
+addresses are referenced but have no containing function**, over 6,194 references, and
+**zero are CALLs**. The actionable subset is **826 targets DATA-referenced from a real
+analyzed function** (`re/analysis/plans/unanalyzed_addrtaken_20260911.csv`) — callbacks
+Ghidra never turned into functions. **Repair (creating functions in the master project)
+is flagged but NOT done — it is a master-Ghidra write and needs your call.**
 
 **Pass 4 — the 41 parked claims adjudicated: 37 resolved, 4 refused.** Details under
 "A. DONE" below. Notable refutations, which are worth more than the confirmations:
@@ -228,6 +249,7 @@ a cell containing a pipe.
 > from PowerShell: `py -3.12 re\tools\decomp_pc.py --file rvas.txt --callees --xrefs
 > --json -o out.json` batches ~160 addresses in one run. `re/tools/memread.py` reads a
 > constant out of the anchored binary and refuses to guess at BSS addresses.
+
 
 
 
