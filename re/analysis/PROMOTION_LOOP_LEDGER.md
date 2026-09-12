@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 255
-- total_green: 428
+- rounds_run: 256
+- total_green: 433
 - dry_counter: 0
 - RESUMED 2026-06-15 (round 239) via /loop /promote-round. Near-leaf lane active
   (scripts/near_leaf_frontier.py -> 112 candidates). HARNESS LIMIT: pure-jmp thunks (b0==0xE9)
@@ -157,6 +157,17 @@ skip (the formula recovery is the C2 value; sub-ulp x87 parity is low-ROI).
   **Float-math leaves: port as naked x87, always.** The decompiler's operand ORDER is not
   the evaluation order; r254's first block associated differently from its own siblings.
 
+- ROUND 256 (2026-09-12) — **do not let a plausible name into hooks.csv.** Five ports
+  were drafted with invented role names (ParticlePool…, SpriteBatch…, InputAxis…) inferred
+  from neighbouring code. None was supported by anything read. Renamed to
+  `Fwd<callee>_<literal>` and BOTH paths re-run, because an export rename is not cosmetic.
+  Use a grounded name only when one exists (a C4/named callee gives you one).
+  Also: **a 0-arg fixed-literal forwarder yields ONE distinct fingerprint and that is fine** —
+  say so in the row, and lean on the SIBLING as the discriminator, rather than padding the
+  vector list to look non-degenerate.
+  Fresh pool this round: c3_filter_v4 over vehicle/hud/frontend/particle/track/ai/camera/input
+  gave 296 C2 rows; caller_screen kept **227**, blocked 69.
+
 ## Lane queues
 
 ### L0 — c3_batch_race1 leftovers
@@ -257,6 +268,12 @@ do not pre-list here. Done/deferred rows accumulate below.
 DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 
 ## Done (promoted to C3, with round + evidence)
+
+- **Round 256 (2026-09-12) — five forwarders.** `0x00487140`, `0x00413bb0` (sibling
+  pair, same callee, different literal), `0x00428760` (7-arg, arity from `add esp,0x1c`),
+  `0x004b5580` (literal callback address), `0x00495080` (naked x87, float-on-stack so the
+  recorder captures raw IEEE bits). All path2 FULL PASS.
+
 
 - **Round 255 (2026-09-12) — two callback walkers.** `0x004d8060`
   RwPluginListDispatch3 (5/5 distinct; SIBLING offsets seeded with sentinels and observed
