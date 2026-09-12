@@ -7,28 +7,28 @@
       "fields": [
         {
           "label": "C4 / C3 / C2 / C1",
-          "value": "184 / 1024 / 3870 / 821",
+          "value": "184 / 1029 / 3865 / 821",
           "kind": "text"
         },
         {
           "label": "Promotion rounds run",
-          "value": 255,
+          "value": 256,
           "kind": "number"
         },
         {
           "label": "Total GREEN promotions",
-          "value": 428,
+          "value": 433,
           "kind": "number"
         },
         {
           "label": "Promoted this session",
-          "value": 13,
+          "value": 18,
           "kind": "number"
         }
       ]
     },
     {
-      "heading": "This session (r249-r255)",
+      "heading": "This session (r249-r256)",
       "fields": [
         {
           "label": "Functions",
@@ -37,7 +37,8 @@
             "r252 x4 leaves",
             "r253 x3 (1 refused on caller rule)",
             "r254 RwMatrixInvertOrthonormal (naked x87)",
-            "r255 x2 callback walkers"
+            "r255 x2 callback walkers",
+            "r256 x5 forwarders"
           ],
           "kind": "list"
         },
@@ -73,12 +74,12 @@
       "fields": [
         {
           "label": "Status",
-          "value": "NOT dry \u2014 ~1,395 candidates pass c3_filter_v4",
+          "value": "NOT dry - 227 caller-screened candidates in the current slice alone",
           "kind": "text"
         },
         {
-          "label": "Pure leaves (non-CRT)",
-          "value": 109,
+          "label": "Caller-blocked (cannot promote)",
+          "value": 69,
           "kind": "number"
         },
         {
