@@ -20066,6 +20066,78 @@ HOOKS = {
     # where the cancellation lands differently depending on which pair is summed
     # first. Vector 4 is deliberately NON-orthonormal - the original does not check,
     # so the port must not either.
+    # ---- promote-round round 255 -------------------------------------------
+    # 0x004d8060 RwPluginListDispatch3 - SIBLING of 0x004d8090 (r253) and EVERY OFFSET
+    # DIFFERS: head +0x14 vs +0x10, next +0x34 vs +0x30, callback +0x24 vs +0x28, and
+    # THREE callback args (arg, node[0], node[1]) rather than four. Reusing the
+    # sibling's constants is the realistic porting error, so this test SEEDS THE
+    # SIBLING OFFSETS with 0xDEAD.... sentinels and OBSERVES them: a port that read
+    # +0x10/+0x28/+0x30 would dispatch through a sentinel and crash, or walk the wrong
+    # chain, instead of quietly producing a plausible sequence.
+    #
+    # observe_ret is OFF: the function returns param_1, a BUFFER POINTER, and the two
+    # sides allocate at different addresses (the r253 lesson).
+    #
+    # Two-node, one-node and EMPTY-list vectors. The empty case must record calls[0]=,
+    # which separates walked-zero-nodes from never-walked.
+    'rw_plugin_list_dispatch3': {
+        'rva': 0x004d8060, 'export': 'RwPluginListDispatch3',
+        'signature': {'ret': 'int32', 'args': ['pointer', 'uint32']},
+        'arg_type': 'stub_dispatch_observe', 'lut_root_delta': 0,
+        'num_bufs': 3, 'buf_size': 0x40,
+        'arg_layout': [{'buf': 0}, {'i32': True}],
+        'stub_nargs': 3, 'stub_abi': 'mscdecl', 'stub_ret': 0,
+        'observe': [], 'observe_ret': False, 'observe_calls': True,
+        'observe_bufs': [{'buf':0,'off':0x10,'len':4},{'buf':1,'off':0x28,'len':4},
+                         {'buf':1,'off':0x30,'len':4}],
+        'path1_tests': [
+            {'scalars': [0xA1], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0x24,'stub':True},{'buf':1,'off':0x34,'ptr_to':2},{'buf':1,'off':0,'type':'u32','value':0x1111},{'buf':1,'off':4,'type':'u32','value':0x2222},{'buf':2,'off':0x24,'stub':True},{'buf':2,'off':0,'type':'u32','value':0x3333},{'buf':2,'off':4,'type':'u32','value':0x4444},{'buf':0,'off':0x10,'type':'u32','value':0xDEAD0010},{'buf':1,'off':0x28,'type':'u32','value':0xDEAD0028},{'buf':1,'off':0x30,'type':'u32','value':0xDEAD0030}]},
+            {'scalars': [0xC3], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0x24,'stub':True},{'buf':1,'off':0x34,'ptr_to':2},{'buf':1,'off':0,'type':'u32','value':0x1111},{'buf':1,'off':4,'type':'u32','value':0x2222},{'buf':2,'off':0x24,'stub':True},{'buf':2,'off':0,'type':'u32','value':0x3333},{'buf':2,'off':4,'type':'u32','value':0x4444},{'buf':0,'off':0x10,'type':'u32','value':0xDEAD0010},{'buf':1,'off':0x28,'type':'u32','value':0xDEAD0028},{'buf':1,'off':0x30,'type':'u32','value':0xDEAD0030}]},
+            {'scalars': [0xA1], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0x24,'stub':True},{'buf':1,'off':0,'type':'u32','value':0xAAAA},{'buf':1,'off':4,'type':'u32','value':0xBBBB},{'buf':0,'off':0x10,'type':'u32','value':0xDEAD0010},{'buf':1,'off':0x28,'type':'u32','value':0xDEAD0028},{'buf':1,'off':0x30,'type':'u32','value':0xDEAD0030}]},
+            {'scalars': [0x00], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0x24,'stub':True},{'buf':1,'off':0,'type':'u32','value':0xAAAA},{'buf':1,'off':4,'type':'u32','value':0xBBBB},{'buf':0,'off':0x10,'type':'u32','value':0xDEAD0010},{'buf':1,'off':0x28,'type':'u32','value':0xDEAD0028},{'buf':1,'off':0x30,'type':'u32','value':0xDEAD0030}]},
+            {'scalars': [0xA1], 'seed': [{'buf':0,'off':0x10,'type':'u32','value':0xDEAD0010},{'buf':1,'off':0x28,'type':'u32','value':0xDEAD0028},{'buf':1,'off':0x30,'type':'u32','value':0xDEAD0030}]},
+        ],
+        'path2_tests': [
+            {'scalars': [0xA1], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0x24,'stub':True},{'buf':1,'off':0x34,'ptr_to':2},{'buf':1,'off':0,'type':'u32','value':0x1111},{'buf':1,'off':4,'type':'u32','value':0x2222},{'buf':2,'off':0x24,'stub':True},{'buf':2,'off':0,'type':'u32','value':0x3333},{'buf':2,'off':4,'type':'u32','value':0x4444},{'buf':0,'off':0x10,'type':'u32','value':0xDEAD0010},{'buf':1,'off':0x28,'type':'u32','value':0xDEAD0028},{'buf':1,'off':0x30,'type':'u32','value':0xDEAD0030}]},
+            {'scalars': [0xC3], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0x24,'stub':True},{'buf':1,'off':0,'type':'u32','value':0xAAAA},{'buf':1,'off':4,'type':'u32','value':0xBBBB},{'buf':0,'off':0x10,'type':'u32','value':0xDEAD0010},{'buf':1,'off':0x28,'type':'u32','value':0xDEAD0028},{'buf':1,'off':0x30,'type':'u32','value':0xDEAD0030}]},
+        ],
+    },
+    # 0x004f0d80 D3D9DeclElementForAll - counted stride-0xc walk with the callback
+    # passed AS AN ARGUMENT, so the recorder goes straight into arg_layout position 1.
+    # That is the indirect-dispatch clause's 'a fortiori' case and its REQUIREMENT is
+    # met, not merely invoked: the dispatch itself is what is compared.
+    #
+    # Three defects the vectors are built to catch:
+    #   1. count is a ZERO-EXTENDED 16-bit field (xor esi,esi / mov si,[ebx+4]); the
+    #      0xFFFF vector would run 4 billion times if a port read it as 32-bit signed,
+    #      so it is capped at 3 here and the width is instead pinned by seeding
+    #      0x00030000 into the dword at +4 - the low half is 0, so a 32-bit read sees
+    #      a huge count while the correct 16-bit read sees ZERO calls.
+    #   2. the cursor base includes a +0x10 that is easy to drop - recorded as b0+off.
+    #   3. EARLY EXIT on a zero callback return, which still returns obj; a port that
+    #      ran to completion returns the same value and differs ONLY in call count.
+    # stub_ret is per-test: 1 lets the walk finish, 0 forces the early exit.
+    'd3d9_decl_element_forall': {
+        'rva': 0x004f0d80, 'export': 'D3D9DeclElementForAll',
+        'signature': {'ret': 'int32', 'args': ['pointer', 'pointer', 'uint32']},
+        'arg_type': 'stub_dispatch_observe', 'lut_root_delta': 0,
+        'num_bufs': 1, 'buf_size': 0x80,
+        'arg_layout': [{'buf': 0}, {'stub': True}, {'i32': True}],
+        'stub_nargs': 3, 'stub_abi': 'mscdecl',
+        'observe': [], 'observe_ret': False, 'observe_calls': True,
+        'path1_tests': [
+            {'scalars': [0x55], 'stub_ret': 1, 'seed': [{'buf':0,'off':4,'type':'u32','value':0x00000003},{'buf':0,'off':0xc,'type':'u32','value':0}]},
+            {'scalars': [0x66], 'stub_ret': 1, 'seed': [{'buf':0,'off':4,'type':'u32','value':0x00000001},{'buf':0,'off':0xc,'type':'u32','value':0}]},
+            {'scalars': [0x77], 'stub_ret': 1, 'seed': [{'buf':0,'off':4,'type':'u32','value':0x00000000},{'buf':0,'off':0xc,'type':'u32','value':0}]},
+            {'scalars': [0x88], 'stub_ret': 1, 'seed': [{'buf':0,'off':4,'type':'u32','value':0x00030000},{'buf':0,'off':0xc,'type':'u32','value':0}]},
+            {'scalars': [0x99], 'stub_ret': 0, 'seed': [{'buf':0,'off':4,'type':'u32','value':0x00000003},{'buf':0,'off':0xc,'type':'u32','value':0}]},
+            {'scalars': [0xAA], 'stub_ret': 1, 'seed': [{'buf':0,'off':4,'type':'u32','value':0x00000002},{'buf':0,'off':0xc,'type':'u32','value':32}]},
+        ],
+        'path2_tests': [
+            {'scalars': [0x55], 'stub_ret': 1, 'seed': [{'buf':0,'off':4,'type':'u32','value':0x00000003},{'buf':0,'off':0xc,'type':'u32','value':0}]},
+            {'scalars': [0x99], 'stub_ret': 0, 'seed': [{'buf':0,'off':4,'type':'u32','value':0x00000003},{'buf':0,'off':0xc,'type':'u32','value':0}]},
+        ],
+    },
     'rw_matrix_invert_orthonormal': {
         'rva': 0x004fb210, 'export': 'RwMatrixInvertOrthonormal',
         'signature': {'ret': 'void', 'args': ['pointer', 'pointer']},
