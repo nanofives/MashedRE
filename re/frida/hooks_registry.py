@@ -19905,6 +19905,79 @@ HOOKS = {
     # With observe_calls the expected fingerprints are
     #   r=<size>|calls[1]=0x5cf24c,0x<size in hex>
     # i.e. each seed checks the return AND both logger arguments.
+    # ---- promote-round round 249: RW plugin-registry forwarder ---------------
+    # 0x004c2d90 RwEngineRegisterPlugin, 36 bytes. Whole body is one forwarded
+    # call: FUN_004d7de0(&DAT_00617fe0, p1, p2, p3, p4, 0) then `add esp,0x18; ret`.
+    #
+    # WHY THE CALLEE MUST BE STUBBED (this is the whole design of the test).
+    # FUN_004d7de0 is the plugin-registry core and it MUTATES the registry:
+    # `iVar1 = (size + 3U & 0xfffffffc) + *param_1;` then `*param_1 = iVar1;`.
+    # Its return is the running block offset. So a plain sequential A/B --
+    # call Orig, then call Reimpl -- advances the offset between the two calls
+    # and the second side returns a DIFFERENT value for identical inputs. That
+    # is a guaranteed FALSE RED, and worse, registering junk plugins into the
+    # live engine registry is a real side effect on the running process.
+    # It also duplicate-checks the id (`if (piVar3[2] == param_3)`) and raises
+    # FUN_004d7ff0(0x80000017), so the second call could take a different path
+    # entirely. Stubbing removes all three problems at once.
+    #
+    # WHAT IS ACTUALLY VERIFIED. With the callee stubbed, observe_calls records
+    # the six arguments it RECEIVED. That is precisely the content of this
+    # function -- there is nothing else in its 36 bytes. Each seed checks:
+    #   arg1 = 0x617fe0   the hard-coded registry pointer  [0x004c2da6]
+    #   arg2..arg5        the four parameters, IN ORDER    [0x004c2d9c..0x004c2da5]
+    #   arg6 = 0          the hard-coded NULL callback slot[0x004c2d9c]
+    # A port that swapped two arguments, bound the wrong registry, or dropped
+    # the trailing 0 fails. Argument ORDER is the likeliest porting error here
+    # and it is exactly what this catches.
+    #
+    # stub_nargs is 6, matching the six pushes and the `add esp,0x18` (24 bytes)
+    # at 0x004c2db0. A larger value would read stack garbage past the frame that
+    # can differ between sides (false RED); a smaller one would silently stop
+    # checking the trailing literal 0, which is one of the two constants under
+    # test.
+    #
+    # stub_ret is 0x5EED, a fixed non-zero sentinel. observe_ret then proves the
+    # EAX passthrough: Ghidra types this function `void`, but nothing between
+    # `call` and `ret` touches EAX and FUN_00472380 tests the result
+    # (`if (iVar1 < 0) return false;`). A void port would return garbage instead
+    # of 0x5EED. The return is CONSTANT across seeds by construction -- it is a
+    # passthrough assertion, not the non-degeneracy dimension. The varying
+    # dimension is observe_calls, which differs on every seed below.
+    #
+    # Vectors: seed 1 is the real in-game call from FUN_00472380 (size 0, id 4,
+    # both callbacks = the identity stub FUN_004d7ff0). The rest vary each
+    # argument independently so no two seeds share a fingerprint, and seeds 5/6
+    # make the four arguments pairwise distinct so a transposition cannot hide.
+    'rw_engine_register_plugin': {
+        'rva':        0x004c2d90,
+        'export':     'RwEngineRegisterPlugin',
+        'signature':  {'ret': 'int32', 'args': ['uint32', 'uint32', 'uint32', 'uint32']},
+        'arg_type':   'stub_dispatch_observe',
+        'num_bufs':   0,
+        'arg_layout': [{'i32': True}, {'i32': True}, {'i32': True}, {'i32': True}],
+        'stub_at':    [0x004d7de0],   # the plugin-registry core
+        'stub_nargs': 6,              # six pushes; `add esp,0x18` at 0x004c2db0
+        'stub_abi':   'mscdecl',
+        'stub_ret':   0x5EED,         # sentinel; observe_ret proves passthrough
+        'buf_size':   0x80,           # unused (scalar-only layout); pinned
+        'observe':    [],
+        'observe_ret':   True,
+        'observe_calls': True,
+        'path1_tests': [
+            {'scalars': [0x00000000, 0x00000004, 0x004d7ff0, 0x004d7ff0]},
+            {'scalars': [0x00000010, 0x26990004, 0x00472330, 0x00472360]},
+            {'scalars': [0x00000001, 0x00000002, 0x00000003, 0x00000004]},
+            {'scalars': [0xFFFFFFFF, 0x00000000, 0x00000000, 0x00000000]},
+            {'scalars': [0x11111111, 0x22222222, 0x33333333, 0x44444444]},
+            {'scalars': [0x44444444, 0x33333333, 0x22222222, 0x11111111]},
+        ],
+        'path2_tests': [
+            {'scalars': [0x00000000, 0x00000004, 0x004d7ff0, 0x004d7ff0]},
+            {'scalars': [0x11111111, 0x22222222, 0x33333333, 0x44444444]},
+            {'scalars': [0x44444444, 0x33333333, 0x22222222, 0x11111111]},
+        ],
+    },
     'replay_get_size': {
         'rva':        0x00482900,
         'export':     'ReplayGetSize',
