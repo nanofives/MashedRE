@@ -20039,6 +20039,55 @@ HOOKS = {
     # matches the two pushes and `add esp,8` at 0x004b400c. stub_ret 0x4B40 is a
     # sentinel: observe_ret proves the passthrough, which Ghidra's typing would lose
     # (same defect class as 0x004c2d90 in r249).
+    # ---- promote-round round 254: RW orthonormal matrix inverse -------------
+    # 0x004fb210 RwMatrixInvertOrthonormal(float* out, const float* in): transposes
+    # the 3x3 rotation and writes the negated dot products of the old translation
+    # against each original row into out[12..14].
+    #
+    # PORTED AS NAKED x87 ASM, NOT C, AND THE REASON IS TESTABLE. The decompilation
+    # renders the first translation term as -(e*2 + c*0 + d*1), which in C means
+    # ((e*2 + c*0) + d*1). The instruction stream groups it differently: it computes
+    # (in[13]*in[1] + in[12]*in[0]) FIRST and adds in[14]*in[2] LAST. Float addition
+    # is not associative, so those two groupings can round differently. The first
+    # block also loads its operands in a different order from blocks 2 and 3, so one
+    # reused C expression would be wrong for at least one row.
+    #
+    # arg_type ptr_seed_observe: buf0 = out, buf1 = in. Observed as f32, which this
+    # handler reads as RAW BITS (its own note says so) - a true bit-identity compare,
+    # not a float comparison that would hide a 1-ulp divergence.
+    #
+    # OUT IS OBSERVED AT ALL 12 WRITTEN SLOTS. The nine rotation elements move as
+    # DWORDS in the original so they cannot round; observing them proves the
+    # TRANSPOSE INDEXING instead, which is the other thing a port gets wrong. The
+    # three translation slots are the FPU-sensitive ones. out[3], out[7], out[11] and
+    # out[15] are NOT written by the original and are deliberately not observed.
+    #
+    # Vector 5 is the one that earns the naked asm: a huge term against two tiny ones,
+    # where the cancellation lands differently depending on which pair is summed
+    # first. Vector 4 is deliberately NON-orthonormal - the original does not check,
+    # so the port must not either.
+    'rw_matrix_invert_orthonormal': {
+        'rva': 0x004fb210, 'export': 'RwMatrixInvertOrthonormal',
+        'signature': {'ret': 'void', 'args': ['pointer', 'pointer']},
+        'arg_type': 'ptr_seed_observe', 'lut_root_delta': 0,
+        'num_bufs': 2, 'buf_size': 0x40,
+        'arg_layout': [{'buf': 0}, {'buf': 1}],
+        'observe_ret': False,
+        'observe': [{'buf':0,'off':0,'type':'f32'}, {'buf':0,'off':4,'type':'f32'}, {'buf':0,'off':8,'type':'f32'}, {'buf':0,'off':16,'type':'f32'}, {'buf':0,'off':20,'type':'f32'}, {'buf':0,'off':24,'type':'f32'}, {'buf':0,'off':32,'type':'f32'}, {'buf':0,'off':36,'type':'f32'}, {'buf':0,'off':40,'type':'f32'}, {'buf':0,'off':48,'type':'f32'}, {'buf':0,'off':52,'type':'f32'}, {'buf':0,'off':56,'type':'f32'}],
+        'path1_tests': [
+            {'seed': [{'buf':1,'off':0,'type':'u32','value':0x3f800000}, {'buf':1,'off':4,'type':'u32','value':0x00000000}, {'buf':1,'off':8,'type':'u32','value':0x00000000}, {'buf':1,'off':16,'type':'u32','value':0x00000000}, {'buf':1,'off':20,'type':'u32','value':0x3f800000}, {'buf':1,'off':24,'type':'u32','value':0x00000000}, {'buf':1,'off':32,'type':'u32','value':0x00000000}, {'buf':1,'off':36,'type':'u32','value':0x00000000}, {'buf':1,'off':40,'type':'u32','value':0x3f800000}, {'buf':1,'off':48,'type':'u32','value':0x40000000}, {'buf':1,'off':52,'type':'u32','value':0x40400000}, {'buf':1,'off':56,'type':'u32','value':0x40800000}]},
+            {'seed': [{'buf':1,'off':0,'type':'u32','value':0x3f800000}, {'buf':1,'off':4,'type':'u32','value':0x00000000}, {'buf':1,'off':8,'type':'u32','value':0x00000000}, {'buf':1,'off':16,'type':'u32','value':0x00000000}, {'buf':1,'off':20,'type':'u32','value':0x3f800000}, {'buf':1,'off':24,'type':'u32','value':0x00000000}, {'buf':1,'off':32,'type':'u32','value':0x00000000}, {'buf':1,'off':36,'type':'u32','value':0x00000000}, {'buf':1,'off':40,'type':'u32','value':0x3f800000}, {'buf':1,'off':48,'type':'u32','value':0x00000000}, {'buf':1,'off':52,'type':'u32','value':0x00000000}, {'buf':1,'off':56,'type':'u32','value':0x00000000}]},
+            {'seed': [{'buf':1,'off':0,'type':'u32','value':0x00000000}, {'buf':1,'off':4,'type':'u32','value':0x00000000}, {'buf':1,'off':8,'type':'u32','value':0xbf800000}, {'buf':1,'off':16,'type':'u32','value':0x00000000}, {'buf':1,'off':20,'type':'u32','value':0x3f800000}, {'buf':1,'off':24,'type':'u32','value':0x00000000}, {'buf':1,'off':32,'type':'u32','value':0x3f800000}, {'buf':1,'off':36,'type':'u32','value':0x00000000}, {'buf':1,'off':40,'type':'u32','value':0x00000000}, {'buf':1,'off':48,'type':'u32','value':0x40a00000}, {'buf':1,'off':52,'type':'u32','value':0x40c00000}, {'buf':1,'off':56,'type':'u32','value':0x40e00000}]},
+            {'seed': [{'buf':1,'off':0,'type':'u32','value':0x40000000}, {'buf':1,'off':4,'type':'u32','value':0x40400000}, {'buf':1,'off':8,'type':'u32','value':0x40a00000}, {'buf':1,'off':16,'type':'u32','value':0x40e00000}, {'buf':1,'off':20,'type':'u32','value':0x41300000}, {'buf':1,'off':24,'type':'u32','value':0x41500000}, {'buf':1,'off':32,'type':'u32','value':0x41880000}, {'buf':1,'off':36,'type':'u32','value':0x41980000}, {'buf':1,'off':40,'type':'u32','value':0x41b80000}, {'buf':1,'off':48,'type':'u32','value':0x41e80000}, {'buf':1,'off':52,'type':'u32','value':0x41f80000}, {'buf':1,'off':56,'type':'u32','value':0x42140000}]},
+            {'seed': [{'buf':1,'off':0,'type':'u32','value':0x4b189680}, {'buf':1,'off':4,'type':'u32','value':0x3f800000}, {'buf':1,'off':8,'type':'u32','value':0xcb189680}, {'buf':1,'off':16,'type':'u32','value':0x3f800000}, {'buf':1,'off':20,'type':'u32','value':0x4b189680}, {'buf':1,'off':24,'type':'u32','value':0xcb189680}, {'buf':1,'off':32,'type':'u32','value':0x33d6bf95}, {'buf':1,'off':36,'type':'u32','value':0x33d6bf95}, {'buf':1,'off':40,'type':'u32','value':0x33d6bf95}, {'buf':1,'off':48,'type':'u32','value':0x3f800000}, {'buf':1,'off':52,'type':'u32','value':0x3f800000}, {'buf':1,'off':56,'type':'u32','value':0x3f800000}]},
+            {'seed': [{'buf':1,'off':0,'type':'u32','value':0xbf000000}, {'buf':1,'off':4,'type':'u32','value':0x3e800000}, {'buf':1,'off':8,'type':'u32','value':0xbe000000}, {'buf':1,'off':16,'type':'u32','value':0x3f400000}, {'buf':1,'off':20,'type':'u32','value':0xbfc00000}, {'buf':1,'off':24,'type':'u32','value':0x40100000}, {'buf':1,'off':32,'type':'u32','value':0xc0580000}, {'buf':1,'off':36,'type':'u32','value':0x40900000}, {'buf':1,'off':40,'type':'u32','value':0xc0b40000}, {'buf':1,'off':48,'type':'u32','value':0xbf8ccccd}, {'buf':1,'off':52,'type':'u32','value':0x400ccccd}, {'buf':1,'off':56,'type':'u32','value':0xc0533333}]},
+            {'seed': [{'buf':1,'off':0,'type':'u32','value':0x1e3ce508}, {'buf':1,'off':4,'type':'u32','value':0x1e3ce508}, {'buf':1,'off':8,'type':'u32','value':0x1e3ce508}, {'buf':1,'off':16,'type':'u32','value':0x1e3ce508}, {'buf':1,'off':20,'type':'u32','value':0x1e3ce508}, {'buf':1,'off':24,'type':'u32','value':0x1e3ce508}, {'buf':1,'off':32,'type':'u32','value':0x1e3ce508}, {'buf':1,'off':36,'type':'u32','value':0x1e3ce508}, {'buf':1,'off':40,'type':'u32','value':0x1e3ce508}, {'buf':1,'off':48,'type':'u32','value':0x60ad78ec}, {'buf':1,'off':52,'type':'u32','value':0x60ad78ec}, {'buf':1,'off':56,'type':'u32','value':0x60ad78ec}]},
+        ],
+        'path2_tests': [
+            {'seed': [{'buf':1,'off':0,'type':'u32','value':0x3f800000}, {'buf':1,'off':4,'type':'u32','value':0x00000000}, {'buf':1,'off':8,'type':'u32','value':0x00000000}, {'buf':1,'off':16,'type':'u32','value':0x00000000}, {'buf':1,'off':20,'type':'u32','value':0x3f800000}, {'buf':1,'off':24,'type':'u32','value':0x00000000}, {'buf':1,'off':32,'type':'u32','value':0x00000000}, {'buf':1,'off':36,'type':'u32','value':0x00000000}, {'buf':1,'off':40,'type':'u32','value':0x3f800000}, {'buf':1,'off':48,'type':'u32','value':0x40000000}, {'buf':1,'off':52,'type':'u32','value':0x40400000}, {'buf':1,'off':56,'type':'u32','value':0x40800000}]},
+            {'seed': [{'buf':1,'off':0,'type':'u32','value':0x3f800000}, {'buf':1,'off':4,'type':'u32','value':0x00000000}, {'buf':1,'off':8,'type':'u32','value':0x00000000}, {'buf':1,'off':16,'type':'u32','value':0x00000000}, {'buf':1,'off':20,'type':'u32','value':0x3f800000}, {'buf':1,'off':24,'type':'u32','value':0x00000000}, {'buf':1,'off':32,'type':'u32','value':0x00000000}, {'buf':1,'off':36,'type':'u32','value':0x00000000}, {'buf':1,'off':40,'type':'u32','value':0x3f800000}, {'buf':1,'off':48,'type':'u32','value':0x00000000}, {'buf':1,'off':52,'type':'u32','value':0x00000000}, {'buf':1,'off':56,'type':'u32','value':0x00000000}]},
+        ],
+    },
     'piz_open_default_mode': {
         'rva': 0x004b4000, 'export': 'PizOpenDefaultMode',
         'signature': {'ret': 'int32', 'args': ['uint32']},
