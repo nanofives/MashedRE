@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 253
-- total_green: 425
+- rounds_run: 254
+- total_green: 426
 - dry_counter: 0
 - RESUMED 2026-06-15 (round 239) via /loop /promote-round. Near-leaf lane active
   (scripts/near_leaf_frontier.py -> 112 candidates). HARNESS LIMIT: pure-jmp thunks (b0==0xE9)
@@ -149,6 +149,14 @@ skip (the formula recovery is the C2 value; sub-ulp x87 parity is low-ROI).
   Also reusable: when a function RETURNS one of its pointer arguments, turn `observe_ret`
   OFF — the two sides allocate at different addresses and it REDs every seed spuriously.
 
+- ROUND 254 (2026-09-12) — **the caller-screened picker exists and should be used every
+  round**: `scratchpad/screen.py` shape — join the cached decomp batch against hooks.csv and
+  keep only rows with >=1 caller at C2+ OR a caller with a recovered (non-`FUN_`) name.
+  On the 102-row cached batch: **67 promotable, 35 caller-blocked** — a 34% waste rate
+  avoided. Validated by confirming it flags `0x004f10e0`, the row r253 had to refuse.
+  **Float-math leaves: port as naked x87, always.** The decompiler's operand ORDER is not
+  the evaluation order; r254's first block associated differently from its own siblings.
+
 ## Lane queues
 
 ### L0 — c3_batch_race1 leftovers
@@ -249,6 +257,12 @@ do not pre-list here. Done/deferred rows accumulate below.
 DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 
 ## Done (promoted to C3, with round + evidence)
+
+- **0x004fb210 RwMatrixInvertOrthonormal** — round 254, 2026-09-12. Naked x87.
+  GREEN 7/7, 7/7 distinct, f32 observed as RAW BITS. The decompiled operand order
+  MISREPRESENTS the x87 association, and block 1 differs from blocks 2-3, so a C
+  transcription would have carried a latent rounding divergence. path2 FULL PASS.
+
 
 - **Round 253 (2026-09-12) — three promoted, one REFUSED on the caller rule.**
   `0x004b4000` PizOpenDefaultMode, `0x004d8550` RwPipeModuleDtor, `0x004d8090`
