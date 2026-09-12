@@ -7,43 +7,44 @@
       "fields": [
         {
           "label": "C4 / C3 / C2 / C1",
-          "value": "184 / 1021 / 3873 / 821",
+          "value": "184 / 1022 / 3872 / 821",
           "kind": "text"
         },
         {
           "label": "Promotion rounds run",
-          "value": 253,
+          "value": 254,
           "kind": "number"
         },
         {
           "label": "Total GREEN promotions",
-          "value": 425,
+          "value": 426,
           "kind": "number"
         },
         {
           "label": "Promoted this session",
-          "value": 10,
+          "value": 11,
           "kind": "number"
         }
       ]
     },
     {
-      "heading": "This session (r249-r252)",
+      "heading": "This session (r249-r254)",
       "fields": [
         {
           "label": "Functions",
           "value": [
-            "r249 004c2d90 RwEngineRegisterPlugin",
-            "r250 004c2c90 RwDeviceSystemRequest",
-            "r251 004d8470 RwErrorModuleDtor",
-            "r252 x4 (intensity, indexed fetch, 2 frame setters)",
-            "r253 x3 (piz open, pipe dtor, plugin list dispatch)"
+            "r249 RwEngineRegisterPlugin",
+            "r250 RwDeviceSystemRequest",
+            "r251 RwErrorModuleDtor",
+            "r252 x4 leaves",
+            "r253 x3 (1 refused on caller rule)",
+            "r254 RwMatrixInvertOrthonormal (naked x87)"
           ],
           "kind": "list"
         },
         {
           "label": "Harness work",
-          "value": "observe_bufs (path1) + path2 buffer-arg support; 15 entries unblocked",
+          "value": "observe_bufs; path2 buffer-arg support (15 entries); re/tools/caller_screen.py",
           "kind": "text"
         }
       ]
