@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE \u2014 greenfield source port",
-  "updatedAt": "2026-09-12T00:00:00Z",
+  "updatedAt": "2026-09-12T22:49:12Z",
   "sections": [
     {
       "heading": "Confidence ladder",
@@ -103,6 +103,35 @@
           "label": "New tooling",
           "value": "re/tools/caller_screen.py; observe_bufs; path2 buffer-arg support",
           "kind": "text"
+        }
+      ]
+    },
+    {
+      "heading": "Repo hygiene",
+      "fields": [
+        {
+          "label": "Last push to origin",
+          "value": "2026-09-12",
+          "kind": "date"
+        },
+        {
+          "label": "Pushed",
+          "value": [
+            "main 69fb06e7",
+            "race/first-frame-parity b9798b02",
+            "area/frontend 8a7ea053 (new remote)"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Last backup",
+          "value": "2026-09-12 (20260912-194450, 469 MB, anchor verified)",
+          "kind": "text"
+        },
+        {
+          "label": "Stashes",
+          "value": 0,
+          "kind": "number"
         }
       ]
     }
