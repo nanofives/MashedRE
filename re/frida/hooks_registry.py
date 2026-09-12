@@ -20198,7 +20198,7 @@ HOOKS = {
         'path2_tests': [{'scalars': [0.1, 0x44]}, {'scalars': [1.0, 0x22]}],
     },
     'rw_plugin_list_dispatch3': {
-        'rva': 0x004d8060, 'export': 'RwPluginListDispatch3',
+        'rva': 0x004d8060, 'export': 'RwPluginListDestructDispatch',
         'signature': {'ret': 'int32', 'args': ['pointer', 'uint32']},
         'arg_type': 'stub_dispatch_observe', 'lut_root_delta': 0,
         'num_bufs': 3, 'buf_size': 0x40,
@@ -20235,7 +20235,7 @@ HOOKS = {
     #      ran to completion returns the same value and differs ONLY in call count.
     # stub_ret is per-test: 1 lets the walk finish, 0 forces the early exit.
     'd3d9_decl_element_forall': {
-        'rva': 0x004f0d80, 'export': 'D3D9DeclElementForAll',
+        'rva': 0x004f0d80, 'export': 'CountedStride0cForAll',
         'signature': {'ret': 'int32', 'args': ['pointer', 'pointer', 'uint32']},
         'arg_type': 'stub_dispatch_observe', 'lut_root_delta': 0,
         'num_bufs': 1, 'buf_size': 0x80,
@@ -20256,7 +20256,7 @@ HOOKS = {
         ],
     },
     'rw_matrix_invert_orthonormal': {
-        'rva': 0x004fb210, 'export': 'RwMatrixInvertOrthonormal',
+        'rva': 0x004fb210, 'export': 'Mat4x3InvertOrthonormal',
         'signature': {'ret': 'void', 'args': ['pointer', 'pointer']},
         'arg_type': 'ptr_seed_observe', 'lut_root_delta': 0,
         'num_bufs': 2, 'buf_size': 0x40,
@@ -20278,7 +20278,7 @@ HOOKS = {
         ],
     },
     'piz_open_default_mode': {
-        'rva': 0x004b4000, 'export': 'PizOpenDefaultMode',
+        'rva': 0x004b4000, 'export': 'Fwd4b3fc0_Arg2Zero',
         'signature': {'ret': 'int32', 'args': ['uint32']},
         'arg_type': 'stub_dispatch_observe', 'lut_root_delta': 0,
         'num_bufs': 0, 'buf_size': 0x40,
@@ -20336,7 +20336,7 @@ HOOKS = {
     # check. Node A is buf1, node B is buf2; buf1+0x30 wires to buf2 and buf2+0x30 stays
     # zero to terminate. Both nodes' +0x28 hold the recorder.
     'rw_plugin_list_dispatch': {
-        'rva': 0x004d8090, 'export': 'RwPluginListDispatch',
+        'rva': 0x004d8090, 'export': 'RwPluginListCopyDispatch',
         'signature': {'ret': 'int32', 'args': ['pointer', 'uint32', 'uint32']},
         'arg_type': 'stub_dispatch_observe', 'lut_root_delta': 0,
         'num_bufs': 3, 'buf_size': 0x40,
@@ -20365,7 +20365,7 @@ HOOKS = {
     # and a zero decl. The tag-with-bit-clear cases are the discriminating ones - a port
     # that tested the tag alone, or the bit alone, passes everything else.
     'd3d9_stream_stride_for_decl': {
-        'rva': 0x004f10e0, 'export': 'D3D9StreamStrideForDecl',
+        'rva': 0x004f10e0, 'export': 'StrideSelectByTagAndBit',
         'signature': {'ret': 'uint32', 'args': ['pointer', 'pointer']},
         'arg_type': 'ptr_seed_observe', 'lut_root_delta': 0,
         'num_bufs': 2, 'buf_size': 0x40,
@@ -20387,7 +20387,7 @@ HOOKS = {
         ],
     },
     'rw_rgba_to_intensity_scaled': {
-        'rva': 0x004dfab0, 'export': 'RwRGBAToIntensityScaled',
+        'rva': 0x004dfab0, 'export': 'WeightedByteSumScaled',
         'signature': {'ret': 'uint32', 'args': ['pointer']},
         'arg_type': 'bgra_encode', 'lut_root_delta': 0,
         'tests': [[0,0,0,255],[255,255,255,255],[255,255,255,0],[1,0,0,255],[0,1,0,255],[3,3,3,255],[100,150,200,128],[255,0,0,1],[0,0,255,255],[7,11,13,17]],
@@ -20401,7 +20401,7 @@ HOOKS = {
     # distinct dwords so each index returns a different value. observe_ret is the
     # whole observable - the function writes nothing.
     'd3d9_indexed_dword_fetch': {
-        'rva': 0x004f3bd0, 'export': 'D3D9IndexedDwordFetch',
+        'rva': 0x004f3bd0, 'export': 'IndexedDwordFetch',
         'signature': {'ret': 'uint32', 'args': ['pointer', 'int32']},
         'arg_type': 'ptr_seed_observe', 'lut_root_delta': 0,
         'num_bufs': 2, 'buf_size': 0x40,
@@ -20425,7 +20425,7 @@ HOOKS = {
     # the target must change AND the sibling offset must stay at its seeded sentinel.
     # Observing only the written slot would not catch a port that wrote both.
     'rw_frame_head_set': {
-        'rva': 0x004ec720, 'export': 'RwFrameHeadSet',
+        'rva': 0x004ec720, 'export': 'Store_Deref14_Off00',
         'signature': {'ret': 'void', 'args': ['pointer', 'uint32']},
         'arg_type': 'ptr_seed_observe', 'lut_root_delta': 0,
         'num_bufs': 2, 'buf_size': 0x40,
@@ -20444,7 +20444,7 @@ HOOKS = {
         ],
     },
     'rw_frame_field0c_set': {
-        'rva': 0x004ec740, 'export': 'RwFrameField0cSet',
+        'rva': 0x004ec740, 'export': 'Store_Deref14_Off0c',
         'signature': {'ret': 'void', 'args': ['pointer', 'uint32']},
         'arg_type': 'ptr_seed_observe', 'lut_root_delta': 0,
         'num_bufs': 2, 'buf_size': 0x40,
@@ -20507,7 +20507,7 @@ HOOKS = {
     },
     'rw_device_system_request': {
         'rva':        0x004c2c90,
-        'export':     'RwDeviceSystemRequest',
+        'export':     'DriverSystemDispatch',
         'signature':  {'ret': 'int32',
                        'args': ['pointer', 'int32', 'pointer', 'int32', 'int32']},
         'arg_type':   'stub_dispatch_observe',

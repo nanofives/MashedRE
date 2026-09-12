@@ -1,8 +1,8 @@
-// Mashed RE — promote-round round 254 (RW orthonormal matrix inverse).
+// Mashed RE — promote-round round 254 (orthonormal 4x3 matrix inverse).
 //
 // Function in this file:
-//   0x004fb210  RwMatrixInvertOrthonormal — transposes the 3x3 rotation part of a
-//               RwMatrix and rewrites the translation row as the negated dot
+//   0x004fb210  Mat4x3InvertOrthonormal — transposes the 3x3 rotation block and
+//               rewrites the translation row as the negated dot
 //               products of the old translation against each original row.
 //
 // Anchored to MASHED.exe SHA-256:
@@ -12,7 +12,14 @@
 #include "../Core/HookSystem.h"
 
 // ---------------------------------------------------------------------------
-// RwMatrixInvertOrthonormal  --  0x004fb210   (141 bytes, 0x004fb210..0x004fb29c)
+// Mat4x3InvertOrthonormal  --  0x004fb210   (141 bytes, 0x004fb210..0x004fb29c)
+//
+// NAME: the GEOMETRY is read from the instruction stream (transpose of the 3x3
+// block plus negated dot products of the translation), so Mat4x3InvertOrthonormal
+// claims only what was seen. An earlier draft called it RwMatrixInvertOrthonormal;
+// the Rw prefix was a TYPE inference from the 0/0x10/0x20/0x30 layout, and this
+// address sits in a band the notes attest as statically-linked Microsoft PSGP
+// rather than RenderWare — so the prefix was withdrawn in the r256 naming audit.
 //
 // void fn(float* out /*[esp+4] -> ECX*/, const float* in /*[esp+8] -> EAX*/)
 //
@@ -95,7 +102,7 @@
 
 // 0x004fb210
 extern "C" __declspec(dllexport) __declspec(naked) void __cdecl
-RwMatrixInvertOrthonormal(float* /*out*/, const float* /*in*/)
+Mat4x3InvertOrthonormal(float* /*out*/, const float* /*in*/)
 {
     __asm {
         mov     eax, dword ptr [esp + 8]
@@ -159,4 +166,4 @@ RwMatrixInvertOrthonormal(float* /*out*/, const float* /*in*/)
     }
 }
 
-RH_ScopedInstall(RwMatrixInvertOrthonormal, 0x004fb210);
+RH_ScopedInstall(Mat4x3InvertOrthonormal, 0x004fb210);

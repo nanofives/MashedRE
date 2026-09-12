@@ -1,11 +1,11 @@
 // Mashed RE — promote-round round 253 (RW plugin-registry + D3D9 leaves).
 //
 // Functions in this file:
-//   0x004b4000  PizOpenDefaultMode      — 2-arg forwarder, binds a literal 0.
+//   0x004b4000  Fwd4b3fc0_Arg2Zero      — 2-arg forwarder, binds a literal 0.
 //   0x004d8550  RwPipeModuleDtor        — plugin close callback, id 0x409.
-//   0x004d8090  RwPluginListDispatch    — walks a plugin list, calls each node's
+//   0x004d8090  RwPluginListCopyDispatch    — walks a plugin list, calls each node's
 //                                         callback with (a, b, node[0], node[1]).
-//   0x004f10e0  D3D9StreamStrideForDecl — branch-selected stride formula.
+//   0x004f10e0  StrideSelectByTagAndBit — branch-selected stride formula.
 //
 // Anchored to MASHED.exe SHA-256:
 //   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
@@ -16,7 +16,7 @@
 #include <cstdint>
 
 // ---------------------------------------------------------------------------
-// PizOpenDefaultMode  --  0x004b4000
+// Fwd4b3fc0_Arg2Zero  --  0x004b4000
 //
 // Complete disassembly (0x004b4000..0x004b400f):
 //   mov eax,[esp+4] / push 0 / push eax / call 0x4b3fc0 / add esp,8 / ret
@@ -27,16 +27,16 @@
 // Sole caller FUN_00479330.
 // ---------------------------------------------------------------------------
 
-typedef int(__cdecl* PizOpen_t)(std::uint32_t, std::uint32_t);
+typedef int(__cdecl* Fwd4b3fc0_t)(std::uint32_t, std::uint32_t);
 
 // 0x004b4000
-extern "C" __declspec(dllexport) int __cdecl PizOpenDefaultMode(std::uint32_t arg)
+extern "C" __declspec(dllexport) int __cdecl Fwd4b3fc0_Arg2Zero(std::uint32_t arg)
 {
     // FUN_004b3fc0(param_1, 0); EAX falls through. [0x004b4004..0x004b400f]
-    return reinterpret_cast<PizOpen_t>(0x004b3fc0u)(arg, 0u);
+    return reinterpret_cast<Fwd4b3fc0_t>(0x004b3fc0u)(arg, 0u);
 }
 
-RH_ScopedInstall(PizOpenDefaultMode, 0x004b4000);
+RH_ScopedInstall(Fwd4b3fc0_Arg2Zero, 0x004b4000);
 
 // ---------------------------------------------------------------------------
 // RwPipeModuleDtor  --  0x004d8550
@@ -64,7 +64,7 @@ extern "C" __declspec(dllexport) int __cdecl RwPipeModuleDtor(int object)
 RH_ScopedInstall(RwPipeModuleDtor, 0x004d8550);
 
 // ---------------------------------------------------------------------------
-// RwPluginListDispatch  --  0x004d8090
+// RwPluginListCopyDispatch  --  0x004d8090
 //
 // Decompilation (complete):
 //   int FUN_004d8090(int param_1,undefined4 param_2,undefined4 param_3)
@@ -91,7 +91,7 @@ RH_ScopedInstall(RwPipeModuleDtor, 0x004d8550);
 // ---------------------------------------------------------------------------
 
 // 0x004d8090
-extern "C" __declspec(dllexport) int __cdecl RwPluginListDispatch(
+extern "C" __declspec(dllexport) int __cdecl RwPluginListCopyDispatch(
     int registry, std::uint32_t a, std::uint32_t b)
 {
     for (std::uint32_t* node = *reinterpret_cast<std::uint32_t**>(registry + 0x10);
@@ -104,10 +104,10 @@ extern "C" __declspec(dllexport) int __cdecl RwPluginListDispatch(
     return registry;
 }
 
-RH_ScopedInstall(RwPluginListDispatch, 0x004d8090);
+RH_ScopedInstall(RwPluginListCopyDispatch, 0x004d8090);
 
 // ---------------------------------------------------------------------------
-// D3D9StreamStrideForDecl  --  0x004f10e0
+// StrideSelectByTagAndBit  --  0x004f10e0
 //
 // Complete disassembly, 0x004f10e0..0x004f112c. Pure: two pointer arguments,
 // no globals, no callees, two return paths.
@@ -136,7 +136,7 @@ RH_ScopedInstall(RwPluginListDispatch, 0x004d8090);
 // ---------------------------------------------------------------------------
 
 // 0x004f10e0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl D3D9StreamStrideForDecl(
+extern "C" __declspec(dllexport) std::uint32_t __cdecl StrideSelectByTagAndBit(
     std::int32_t decl, const std::uint8_t* elem)
 {
     const std::uint8_t tag = elem[0];
@@ -155,4 +155,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl D3D9StreamStrideForDecl(
                 *reinterpret_cast<const std::uint16_t*>(decl + 4)) * 2u) * 4u + 0xcu;
 }
 
-RH_ScopedInstall(D3D9StreamStrideForDecl, 0x004f10e0);
+RH_ScopedInstall(StrideSelectByTagAndBit, 0x004f10e0);

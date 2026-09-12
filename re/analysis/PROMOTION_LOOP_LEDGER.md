@@ -168,6 +168,25 @@ skip (the formula recovery is the C2 value; sub-ulp x87 parity is low-ROI).
   Fresh pool this round: c3_filter_v4 over vehicle/hud/frontend/particle/track/ai/camera/input
   gave 296 C2 rows; caller_screen kept **227**, blocked 69.
 
+- **NAMING AUDIT (2026-09-12, after r256) — read before naming anything.**
+  11 of this session's 18 names were withdrawn or corrected. The rule that would have
+  prevented all of them: **a name may not claim more than its own comment does.**
+  Checks worth running on any batch before committing names:
+    1. Diff the name against the PRE-SESSION `hooks.csv`. If the old note already carried
+       a name or a role, inherit it — do not re-invent a different one.
+    2. Check the BAND attestation. `0x004ec000..0x004fc9e0` is attested as statically-linked
+       **Microsoft PSGP (D3DX9), not RenderWare**, and its notes warn that plates there carry
+       RW-catalog names *from an agent*. An `Rw` prefix in that range is actively misleading.
+    3. Check the SUBSYSTEM column. `PizOpenDefaultMode` sat on a **particle** row.
+    4. If the comment says a thing is NOT claimed, the name must not claim it either
+       (`RwRGBAToIntensityScaled` vs a comment refusing to assign channel order).
+  A grounded name is available whenever the callee is a C4 row or a named library API —
+  use that. Otherwise `Fwd<callee>_<literal>` / `<Op><Operand>` says enough.
+  **And: an export rename is NOT cosmetic — re-run both paths.** The rename script here
+  replaced by dict order, so `RwPluginListDispatch` was substituted inside
+  `RwPluginListDispatch3`; only the re-run caught it. Sort replacement keys by DESCENDING
+  LENGTH.
+
 ## Lane queues
 
 ### L0 — c3_batch_race1 leftovers

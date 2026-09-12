@@ -1,7 +1,7 @@
 // Mashed RE — promote-round round 250 (RenderWare driver-system dispatcher).
 //
 // Function in this file:
-//   0x004c2c90  RwDeviceSystemRequest — dispatches a command through a
+//   0x004c2c90  DriverSystemDispatch — dispatches a command through a
 //               caller-supplied device vtable, then supplies defaults for the
 //               commands the device declined to handle.
 //
@@ -16,7 +16,7 @@
 #include <cstdint>
 
 // ---------------------------------------------------------------------------
-// RwDeviceSystemRequest  --  0x004c2c90
+// DriverSystemDispatch  --  0x004c2c90
 //
 // Original: FUN_004c2c90 (0x004c2c90..0x004c2d4e), jump table at 0x004c2d50.
 //
@@ -71,7 +71,7 @@ typedef int(__cdecl* RwErrorPush_t)(int /*a*/, int /*b*/);
 typedef int(__cdecl* RwErrorReport_t)(int* /*rec*/);
 
 // 0x004c2c90
-extern "C" __declspec(dllexport) int __cdecl RwDeviceSystemRequest(
+extern "C" __declspec(dllexport) int __cdecl DriverSystemDispatch(
     int deviceObj, int cmd, int* out, int in1, int in2)
 {
     // 1. Ask the device first. [0x004c2caf]
@@ -127,4 +127,4 @@ extern "C" __declspec(dllexport) int __cdecl RwDeviceSystemRequest(
     return status; // [0x004c2d45]
 }
 
-RH_ScopedInstall(RwDeviceSystemRequest, 0x004c2c90);
+RH_ScopedInstall(DriverSystemDispatch, 0x004c2c90);

@@ -1,9 +1,9 @@
 // Mashed RE — promote-round round 255 (two callback walkers).
 //
 // Functions in this file:
-//   0x004d8060  RwPluginListDispatch3 — walks the plugin list at +0x14 and calls
+//   0x004d8060  RwPluginListDestructDispatch — walks the plugin list at +0x14 and calls
 //                each node's callback with THREE arguments.
-//   0x004f0d80  D3D9DeclElementForAll — walks a counted stride-0xc array and calls
+//   0x004f0d80  CountedStride0cForAll — walks a counted stride-0xc array and calls
 //                a CALLER-SUPPLIED callback until it returns 0.
 //
 // Anchored to MASHED.exe SHA-256:
@@ -15,7 +15,7 @@
 #include <cstdint>
 
 // ---------------------------------------------------------------------------
-// RwPluginListDispatch3  --  0x004d8060
+// RwPluginListDestructDispatch  --  0x004d8060
 //
 // int fn(int registry /*[esp+4]*/, uint32 arg /*[esp+8]*/)
 //
@@ -48,7 +48,7 @@
 // ---------------------------------------------------------------------------
 
 // 0x004d8060
-extern "C" __declspec(dllexport) int __cdecl RwPluginListDispatch3(
+extern "C" __declspec(dllexport) int __cdecl RwPluginListDestructDispatch(
     int registry, std::uint32_t arg)
 {
     for (std::uint32_t* node = *reinterpret_cast<std::uint32_t**>(registry + 0x14);
@@ -60,10 +60,10 @@ extern "C" __declspec(dllexport) int __cdecl RwPluginListDispatch3(
     return registry;
 }
 
-RH_ScopedInstall(RwPluginListDispatch3, 0x004d8060);
+RH_ScopedInstall(RwPluginListDestructDispatch, 0x004d8060);
 
 // ---------------------------------------------------------------------------
-// D3D9DeclElementForAll  --  0x004f0d80
+// CountedStride0cForAll  --  0x004f0d80
 //
 // int fn(int obj /*[esp+4]*/, code* cb /*[esp+8]*/, uint32 user /*[esp+0xc]*/)
 //
@@ -102,7 +102,7 @@ RH_ScopedInstall(RwPluginListDispatch3, 0x004d8060);
 // ---------------------------------------------------------------------------
 
 // 0x004f0d80
-extern "C" __declspec(dllexport) int __cdecl D3D9DeclElementForAll(
+extern "C" __declspec(dllexport) int __cdecl CountedStride0cForAll(
     std::int32_t obj, void* cb, std::uint32_t user)
 {
     std::uint32_t remaining = *reinterpret_cast<std::uint16_t*>(obj + 4);  // zero-extended
@@ -120,4 +120,4 @@ extern "C" __declspec(dllexport) int __cdecl D3D9DeclElementForAll(
     return obj;
 }
 
-RH_ScopedInstall(D3D9DeclElementForAll, 0x004f0d80);
+RH_ScopedInstall(CountedStride0cForAll, 0x004f0d80);

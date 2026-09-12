@@ -1,10 +1,10 @@
 // Mashed RE — promote-round round 252 (four RW/D3D9-backend pure leaves).
 //
 // Functions in this file (all pure leaves, no callees):
-//   0x004dfab0  RwRGBAToIntensityScaled — weighted RGB intensity, alpha-scaled.
-//   0x004f3bd0  D3D9IndexedDwordFetch   — *(*p + i*4), a double-deref table read.
-//   0x004ec720  RwFrameHeadSet          — **(p+0x14) = v.
-//   0x004ec740  RwFrameField0cSet       — *(*(p+0x14) + 0xc) = v.
+//   0x004dfab0  WeightedByteSumScaled — weighted RGB intensity, alpha-scaled.
+//   0x004f3bd0  IndexedDwordFetch   — *(*p + i*4), a double-deref table read.
+//   0x004ec720  Store_Deref14_Off00          — **(p+0x14) = v.
+//   0x004ec740  Store_Deref14_Off0c       — *(*(p+0x14) + 0xc) = v.
 //
 // Anchored to MASHED.exe SHA-256:
 //   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
@@ -15,7 +15,7 @@
 #include <cstdint>
 
 // ---------------------------------------------------------------------------
-// RwRGBAToIntensityScaled  --  0x004dfab0
+// WeightedByteSumScaled  --  0x004dfab0
 //
 // Decompilation (complete):
 //   uint FUN_004dfab0(byte *param_1)
@@ -42,7 +42,7 @@
 // ---------------------------------------------------------------------------
 
 // 0x004dfab0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl RwRGBAToIntensityScaled(
+extern "C" __declspec(dllexport) std::uint32_t __cdecl WeightedByteSumScaled(
     const std::uint8_t* p)
 {
     // Literal transcription, both truncating divisions kept in place.
@@ -54,10 +54,10 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RwRGBAToIntensityScaled(
     return (weighted * static_cast<std::uint32_t>(p[3])) / 0xffu;
 }
 
-RH_ScopedInstall(RwRGBAToIntensityScaled, 0x004dfab0);
+RH_ScopedInstall(WeightedByteSumScaled, 0x004dfab0);
 
 // ---------------------------------------------------------------------------
-// D3D9IndexedDwordFetch  --  0x004f3bd0
+// IndexedDwordFetch  --  0x004f3bd0
 //
 // Decompilation (complete):
 //   undefined4 FUN_004f3bd0(int *param_1,int param_2)
@@ -73,17 +73,17 @@ RH_ScopedInstall(RwRGBAToIntensityScaled, 0x004dfab0);
 // ---------------------------------------------------------------------------
 
 // 0x004f3bd0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl D3D9IndexedDwordFetch(
+extern "C" __declspec(dllexport) std::uint32_t __cdecl IndexedDwordFetch(
     std::int32_t* p, std::int32_t index)
 {
     // *(*p + index*4) — no bounds check in the original, none added here.
     return *reinterpret_cast<std::uint32_t*>(*p + index * 4);
 }
 
-RH_ScopedInstall(D3D9IndexedDwordFetch, 0x004f3bd0);
+RH_ScopedInstall(IndexedDwordFetch, 0x004f3bd0);
 
 // ---------------------------------------------------------------------------
-// RwFrameHeadSet  --  0x004ec720
+// Store_Deref14_Off00  --  0x004ec720
 //
 // Decompilation (complete):
 //   void FUN_004ec720(int param_1,undefined4 param_2)
@@ -94,17 +94,17 @@ RH_ScopedInstall(D3D9IndexedDwordFetch, 0x004f3bd0);
 // ---------------------------------------------------------------------------
 
 // 0x004ec720
-extern "C" __declspec(dllexport) void __cdecl RwFrameHeadSet(
+extern "C" __declspec(dllexport) void __cdecl Store_Deref14_Off00(
     std::int32_t obj, std::uint32_t value)
 {
     // **(p+0x14) = value
     **reinterpret_cast<std::uint32_t**>(obj + 0x14) = value;
 }
 
-RH_ScopedInstall(RwFrameHeadSet, 0x004ec720);
+RH_ScopedInstall(Store_Deref14_Off00, 0x004ec720);
 
 // ---------------------------------------------------------------------------
-// RwFrameField0cSet  --  0x004ec740
+// Store_Deref14_Off0c  --  0x004ec740
 //
 // Decompilation (complete):
 //   void FUN_004ec740(int param_1,undefined4 param_2)
@@ -120,7 +120,7 @@ RH_ScopedInstall(RwFrameHeadSet, 0x004ec720);
 // ---------------------------------------------------------------------------
 
 // 0x004ec740
-extern "C" __declspec(dllexport) void __cdecl RwFrameField0cSet(
+extern "C" __declspec(dllexport) void __cdecl Store_Deref14_Off0c(
     std::int32_t obj, std::uint32_t value)
 {
     // *(*(p+0x14) + 0xc) = value
@@ -128,4 +128,4 @@ extern "C" __declspec(dllexport) void __cdecl RwFrameField0cSet(
         *reinterpret_cast<std::int32_t*>(obj + 0x14) + 0xc) = value;
 }
 
-RH_ScopedInstall(RwFrameField0cSet, 0x004ec740);
+RH_ScopedInstall(Store_Deref14_Off0c, 0x004ec740);
