@@ -20032,6 +20032,122 @@ HOOKS = {
     #   [100,150,200,128] exercises both truncations at once
     #   [255,0,0,1]  isolates the second division (x1 then /255)
     #   plus the saturated and alpha-zero corners.
+    # ---- promote-round round 253 -------------------------------------------
+    # 0x004b4000 PizOpenDefaultMode - forwards FUN_004b3fc0(param_1, 0) and lets the
+    # callee's EAX fall through. The literal 0 and the argument order ARE the function,
+    # so the callee is stubbed and observe_calls records what it received. stub_nargs 2
+    # matches the two pushes and `add esp,8` at 0x004b400c. stub_ret 0x4B40 is a
+    # sentinel: observe_ret proves the passthrough, which Ghidra's typing would lose
+    # (same defect class as 0x004c2d90 in r249).
+    'piz_open_default_mode': {
+        'rva': 0x004b4000, 'export': 'PizOpenDefaultMode',
+        'signature': {'ret': 'int32', 'args': ['uint32']},
+        'arg_type': 'stub_dispatch_observe', 'lut_root_delta': 0,
+        'num_bufs': 0, 'buf_size': 0x40,
+        'arg_layout': [{'i32': True}],
+        'stub_at': [0x004b3fc0], 'stub_nargs': 2, 'stub_abi': 'mscdecl',
+        'stub_ret': 0x4B40,
+        'observe': [], 'observe_ret': True, 'observe_calls': True,
+        'path1_tests': [
+            {'scalars': [0x00000000]},
+            {'scalars': [0x00000001]},
+            {'scalars': [0xDEADBEEF]},
+            {'scalars': [0xFFFFFFFF]},
+            {'scalars': [0x12345678]},
+            {'scalars': [0x7FFFFFFF]},
+        ],
+        'path2_tests': [{'scalars': [0x00000001]}, {'scalars': [0xDEADBEEF]}],
+    },
+    # 0x004d8550 RwPipeModuleDtor - `call 0x4d3d50` with NO arguments pushed, then
+    # `mov eax,[esp+4]` returns param_1 verbatim. stub_nargs is 0 for exactly that
+    # reason: the call site pushes nothing, so a recorder declaring more would read
+    # stack bytes that can differ between sides and produce a false RED (the lesson
+    # already recorded on replay_get_size). observe_calls therefore proves the callee
+    # was reached; observe_ret proves the param_1 passthrough.
+    'rw_pipe_module_dtor': {
+        'rva': 0x004d8550, 'export': 'RwPipeModuleDtor',
+        'signature': {'ret': 'int32', 'args': ['uint32']},
+        'arg_type': 'stub_dispatch_observe', 'lut_root_delta': 0,
+        'num_bufs': 0, 'buf_size': 0x40,
+        'arg_layout': [{'i32': True}],
+        'stub_at': [0x004d3d50], 'stub_nargs': 0, 'stub_abi': 'mscdecl',
+        'stub_ret': 0,
+        'observe': [], 'observe_ret': True, 'observe_calls': True,
+        'path1_tests': [
+            {'scalars': [0x00000000]},
+            {'scalars': [0x00000001]},
+            {'scalars': [0xCAFEBABE]},
+            {'scalars': [0xFFFFFFFF]},
+            {'scalars': [0x0000040F]},
+            {'scalars': [0x5A5A5A5A]},
+        ],
+        'path2_tests': [{'scalars': [0xCAFEBABE]}, {'scalars': [0x0000040F]}],
+    },
+    # 0x004d8090 RwPluginListDispatch - walks the list at registry+0x10 via node[0xc]
+    # and calls node[10] with (a, b, node[0], node[1]).
+    #
+    # observe_ret IS DELIBERATELY OFF. The function returns param_1, which is a BUFFER
+    # POINTER, and the two sides allocate at different addresses - folding it in would
+    # make every seed differ and RED the row for a reason that has nothing to do with
+    # the port. observe_calls normalises pointer arguments against the buffer bases,
+    # which is why the recorded sequence compares cleanly while the raw return does not.
+    #
+    # THE LIST IS TWO NODES, not one, and that is the point: argument order and node
+    # field order are this function's entire content, so a port that walked backwards or
+    # swapped node[0] with node[1] would give the same call COUNT and pass a count-only
+    # check. Node A is buf1, node B is buf2; buf1+0x30 wires to buf2 and buf2+0x30 stays
+    # zero to terminate. Both nodes' +0x28 hold the recorder.
+    'rw_plugin_list_dispatch': {
+        'rva': 0x004d8090, 'export': 'RwPluginListDispatch',
+        'signature': {'ret': 'int32', 'args': ['pointer', 'uint32', 'uint32']},
+        'arg_type': 'stub_dispatch_observe', 'lut_root_delta': 0,
+        'num_bufs': 3, 'buf_size': 0x40,
+        'arg_layout': [{'buf': 0}, {'i32': True}, {'i32': True}],
+        'stub_nargs': 4, 'stub_abi': 'mscdecl', 'stub_ret': 0,
+        'observe': [], 'observe_ret': False, 'observe_calls': True,
+        'path1_tests': [
+            {'scalars': [0xA1, 0xB2], 'seed': [{'buf':0,'off':0x10,'ptr_to':1},{'buf':1,'off':0x28,'stub':True},{'buf':1,'off':0x30,'ptr_to':2},{'buf':1,'off':0,'type':'u32','value':0x1111},{'buf':1,'off':4,'type':'u32','value':0x2222},{'buf':2,'off':0x28,'stub':True},{'buf':2,'off':0,'type':'u32','value':0x3333},{'buf':2,'off':4,'type':'u32','value':0x4444}]},
+            {'scalars': [0xC3, 0xD4], 'seed': [{'buf':0,'off':0x10,'ptr_to':1},{'buf':1,'off':0x28,'stub':True},{'buf':1,'off':0x30,'ptr_to':2},{'buf':1,'off':0,'type':'u32','value':0x1111},{'buf':1,'off':4,'type':'u32','value':0x2222},{'buf':2,'off':0x28,'stub':True},{'buf':2,'off':0,'type':'u32','value':0x3333},{'buf':2,'off':4,'type':'u32','value':0x4444}]},
+            {'scalars': [0xA1, 0xB2], 'seed': [{'buf':0,'off':0x10,'ptr_to':1},{'buf':1,'off':0x28,'stub':True},{'buf':1,'off':0,'type':'u32','value':0xAAAA},{'buf':1,'off':4,'type':'u32','value':0xBBBB}]},
+            {'scalars': [0x00, 0x00], 'seed': [{'buf':0,'off':0x10,'ptr_to':1},{'buf':1,'off':0x28,'stub':True},{'buf':1,'off':0,'type':'u32','value':0xAAAA},{'buf':1,'off':4,'type':'u32','value':0xBBBB}]},
+            # empty list: head at +0x10 stays NULL, so the loop body never runs and
+            # the recorded sequence must be EMPTY. Distinguishes 'walked zero nodes'
+            # from 'never walked'.
+            {'scalars': [0xA1, 0xB2], 'seed': []},
+        ],
+        'path2_tests': [
+            {'scalars': [0xA1, 0xB2], 'seed': [{'buf':0,'off':0x10,'ptr_to':1},{'buf':1,'off':0x28,'stub':True},{'buf':1,'off':0x30,'ptr_to':2},{'buf':1,'off':0,'type':'u32','value':0x1111},{'buf':1,'off':4,'type':'u32','value':0x2222},{'buf':2,'off':0x28,'stub':True},{'buf':2,'off':0,'type':'u32','value':0x3333},{'buf':2,'off':4,'type':'u32','value':0x4444}]},
+            {'scalars': [0xC3, 0xD4], 'seed': [{'buf':0,'off':0x10,'ptr_to':1},{'buf':1,'off':0x28,'stub':True},{'buf':1,'off':0,'type':'u32','value':0xAAAA},{'buf':1,'off':4,'type':'u32','value':0xBBBB}]},
+        ],
+    },
+    # 0x004f10e0 D3D9StreamStrideForDecl - pure, two pointer args, two return paths.
+    # SHORT is taken only when the tag byte at elem[0] is 8 or 7 AND bit 0x1000000 is
+    # set at elem+8; everything else is LONG. Vectors cover: both SHORT tags with the
+    # bit set, both tags with the bit CLEAR (must fall to LONG), a tag that is neither,
+    # and a zero decl. The tag-with-bit-clear cases are the discriminating ones - a port
+    # that tested the tag alone, or the bit alone, passes everything else.
+    'd3d9_stream_stride_for_decl': {
+        'rva': 0x004f10e0, 'export': 'D3D9StreamStrideForDecl',
+        'signature': {'ret': 'uint32', 'args': ['pointer', 'pointer']},
+        'arg_type': 'ptr_seed_observe', 'lut_root_delta': 0,
+        'num_bufs': 2, 'buf_size': 0x40,
+        'arg_layout': [{'buf': 0}, {'buf': 1}],
+        'observe_ret': True, 'observe': [],
+        'path1_tests': [
+            {'seed': [{'buf':1,'off':0,'type':'u8','value':8},{'buf':1,'off':8,'type':'u32','value':0x01000000},{'buf':0,'off':4,'type':'u16','value':5},{'buf':0,'off':8,'type':'u32','value':100}]},
+            {'seed': [{'buf':1,'off':0,'type':'u8','value':7},{'buf':1,'off':8,'type':'u32','value':0x01000000},{'buf':0,'off':4,'type':'u16','value':5},{'buf':0,'off':8,'type':'u32','value':100}]},
+            {'seed': [{'buf':1,'off':0,'type':'u8','value':8},{'buf':1,'off':8,'type':'u32','value':0x00000000},{'buf':0,'off':4,'type':'u16','value':5},{'buf':0,'off':8,'type':'u32','value':100}]},
+            {'seed': [{'buf':1,'off':0,'type':'u8','value':7},{'buf':1,'off':8,'type':'u32','value':0x00000000},{'buf':0,'off':4,'type':'u16','value':5},{'buf':0,'off':8,'type':'u32','value':100}]},
+            {'seed': [{'buf':1,'off':0,'type':'u8','value':9},{'buf':1,'off':8,'type':'u32','value':0x01000000},{'buf':0,'off':4,'type':'u16','value':5},{'buf':0,'off':8,'type':'u32','value':100}]},
+            {'seed': [{'buf':1,'off':0,'type':'u8','value':8},{'buf':1,'off':8,'type':'u32','value':0x01000000},{'buf':0,'off':4,'type':'u16','value':0},{'buf':0,'off':8,'type':'u32','value':0}]},
+            {'seed': [{'buf':1,'off':0,'type':'u8','value':3},{'buf':1,'off':8,'type':'u32','value':0xFFFFFFFF},{'buf':0,'off':4,'type':'u16','value':7},{'buf':0,'off':8,'type':'u32','value':3}]},
+            {'seed': [{'buf':1,'off':0,'type':'u8','value':8},{'buf':1,'off':8,'type':'u32','value':0x00FFFFFF},{'buf':0,'off':4,'type':'u16','value':9},{'buf':0,'off':8,'type':'u32','value':11}]},
+        ],
+        'path2_tests': [
+            {'seed': [{'buf':1,'off':0,'type':'u8','value':8},{'buf':1,'off':8,'type':'u32','value':0x01000000},{'buf':0,'off':4,'type':'u16','value':5},{'buf':0,'off':8,'type':'u32','value':100}]},
+            {'seed': [{'buf':1,'off':0,'type':'u8','value':8},{'buf':1,'off':8,'type':'u32','value':0x00000000},{'buf':0,'off':4,'type':'u16','value':5},{'buf':0,'off':8,'type':'u32','value':100}]},
+        ],
+    },
     'rw_rgba_to_intensity_scaled': {
         'rva': 0x004dfab0, 'export': 'RwRGBAToIntensityScaled',
         'signature': {'ret': 'uint32', 'args': ['pointer']},
