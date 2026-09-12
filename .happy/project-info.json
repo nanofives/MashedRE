@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE \u2014 greenfield source port",
-  "updatedAt": "2026-09-12T22:49:12Z",
+  "updatedAt": "2026-09-12T23:05:31Z",
   "sections": [
     {
       "heading": "Confidence ladder",
@@ -47,12 +47,12 @@
         },
         {
           "label": "Open rows",
-          "value": 3031,
+          "value": 3030,
           "kind": "number"
         },
         {
           "label": "Caveat",
-          "value": "29 of the 46 were DE-GATED, not resolved \u2014 still open",
+          "value": "29 of the 46 were DE-GATED, not resolved; U-9134/U-9135 band audits RESOLVED 2026-09-12, U-9136 filed (hlsl band holds PSGP CPU bodies)",
           "kind": "text"
         }
       ]
@@ -130,6 +130,31 @@
         },
         {
           "label": "Stashes",
+          "value": 0,
+          "kind": "number"
+        }
+      ]
+    },
+    {
+      "heading": "Band audit 2026-09-12",
+      "fields": [
+        {
+          "label": "PSGP band",
+          "value": "narrowed to 0x4ec760..0x4ef25b + 0x4fb9aa..0x4fc9e0; middle 0x4ef25c..0x4fb9a9 = RW D3D9 driver",
+          "kind": "text"
+        },
+        {
+          "label": "Lua span",
+          "value": "ends 0x4c0735; 16 rows -> render, 10 -> unknown",
+          "kind": "text"
+        },
+        {
+          "label": "hooks.csv rows touched",
+          "value": 205,
+          "kind": "number"
+        },
+        {
+          "label": "C-levels changed",
           "value": 0,
           "kind": "number"
         }
