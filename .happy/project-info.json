@@ -5,17 +5,24 @@
     {
       "heading": "Confidence ladder",
       "fields": [
-        { "label": "C4 / C3 / C2 / C1", "value": "184 / 1012 / 3882 / 821", "kind": "text" },
-        { "label": "Last promotion", "value": "0x004c2d90 RwEngineRegisterPlugin C2->C3 (r249)", "kind": "text" },
-        { "label": "Promotion rounds run", "value": 249, "kind": "number" },
-        { "label": "Total GREEN promotions", "value": 416, "kind": "number" }
+        { "label": "C4 / C3 / C2 / C1", "value": "184 / 1014 / 3880 / 821", "kind": "text" },
+        { "label": "Promotion rounds run", "value": 251, "kind": "number" },
+        { "label": "Total GREEN promotions", "value": 418, "kind": "number" },
+        { "label": "This session", "value": ["r249 004c2d90 RwEngineRegisterPlugin", "r250 004c2c90 RwDeviceSystemRequest", "r251 004d8470 RwErrorModuleDtor"], "kind": "list" }
+      ]
+    },
+    {
+      "heading": "Promotable pool",
+      "fields": [
+        { "label": "Status", "value": "NOT dry — 1,395 candidates passed c3_filter_v4", "kind": "text" },
+        { "label": "Pure leaves (non-CRT)", "value": 117, "kind": "number" },
+        { "label": "Dry-round counter", "value": 0, "kind": "number" }
       ]
     },
     {
       "heading": "Uncertainties",
       "fields": [
         { "label": "Gating (blocks a C2->C3)", "value": 0, "kind": "number" },
-        { "label": "Gating trend", "value": ["2026-09-11 start: 235", "2026-09-11 end: 121", "2026-09-12 start: 46", "2026-09-12 end: 0"], "kind": "list" },
         { "label": "Open rows (Active section)", "value": 3030, "kind": "number" },
         { "label": "Caveat", "value": "29 of the 46 were de-gated, not resolved — still open", "kind": "text" }
       ]
@@ -25,15 +32,8 @@
       "fields": [
         { "label": "Branch", "value": "race/first-frame-parity", "kind": "text" },
         { "label": "Worktrees", "value": 0, "kind": "number" },
-        { "label": "Unmerged branches", "value": "area/frontend only (deliberate WIP hold)", "kind": "text" },
-        { "label": "Build", "value": "clean — mashed_re.exe + mashed_re_dev.asi", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "Next",
-      "fields": [
-        { "label": "Ready to run", "value": "0x004c9f60 (spec in ledger; __stdcall vtable hazard)", "kind": "text" },
-        { "label": "Open owner decisions", "value": ["U-9134 library band audit", "D-11069 hooks.csv schema", "U-9087 four C4 demotions", "C4 evidence rubric L37"], "kind": "list" }
+        { "label": "Build", "value": "clean — mashed_re.exe + mashed_re_dev.asi", "kind": "text" },
+        { "label": "Open owner decisions", "value": ["U-9134 library band audit", "D-11069 hooks.csv schema", "U-9087 four C4 demotions", "verifier arg_layout gap (L5 wishlist)"], "kind": "list" }
       ]
     }
   ]
