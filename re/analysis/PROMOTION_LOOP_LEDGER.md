@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 250
-- total_green: 417
+- rounds_run: 251
+- total_green: 418
 - dry_counter: 0
 - RESUMED 2026-06-15 (round 239) via /loop /promote-round. Near-leaf lane active
   (scripts/near_leaf_frontier.py -> 112 candidates). HARNESS LIMIT: pure-jmp thunks (b0==0xE9)
@@ -125,6 +125,14 @@ skip (the formula recovery is the C2 value; sub-ulp x87 parity is low-ROI).
   argument and needs its four dirty-flag globals observed. Two additive fields
   (`call_args`, `obs_globals`) would cover it.
 
+- ROUND 251 (2026-09-12) — **the L3 pool is NOT dry: c3_filter_v4 passed 1,395 rows**
+  (render 424, audio 377, boot 186, util 111, particle 100, vehicle 43, track 41, hud 37,
+  frontend 36, ai 22, input 12, camera 6) -> `re/analysis/plans/loop_round_251_passed.tsv`.
+  117 of them are PURE LEAVES outside the boot/audio CRT bands (render 74, particle 21,
+  frontend 12, util 6, track 2, vehicle 2) — that is the cheap lane, and it is deep.
+  Regenerate the tsv each round rather than reusing this one; it reflects the ladder at
+  the moment it ran.
+
 ## Lane queues
 
 ### L0 — c3_batch_race1 leftovers
@@ -225,6 +233,13 @@ do not pre-list here. Done/deferred rows accumulate below.
 DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 
 ## Done (promoted to C3, with round + evidence)
+
+- **0x004d8470 RwErrorModuleDtor** — round 251, 2026-09-12. TWO entries for one
+  16-byte function (`rw_error_module_dtor_count` + `rw_error_module_dtor_ret`): no single
+  handler folds both the global decrement and the return pass-through, and shipping one
+  alone reports GREEN on half a function. Both 6/6 GREEN, both 6/6 distinct. path2 FULL
+  PASS. Key vector: seed 0 -> 0xffffffff, pinning the ABSENCE of a zero-clamp.
+
 
 - **0x004c2c90 RwDeviceSystemRequest** — round 250, 2026-09-12. path1 GREEN 7/7,
   SEVEN distinct fingerprints (`log/diff_rw_device_system_request.csv`). Needed the
