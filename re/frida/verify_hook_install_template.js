@@ -43,6 +43,13 @@ function pollLutThenRun(triesLeft) {
     setTimeout(function () { pollLutThenRun(triesLeft - 1); }, 200);
 }
 
+// Roots for NativeCallbacks and scratch buffers created per call by the
+// buffer-argument handlers below. Frida collects a NativeCallback as soon as JS
+// drops the last reference, and a collected recorder becomes a wild pointer the
+// moment the target dispatches through it — so anything handed to native code
+// has to stay reachable for the life of the agent.
+var verifyKeep = [];
+
 function callFn(fn, input, buf) {
     // Registry entries for ptr_seed_observe / stub_dispatch_observe express their
     // test vectors as {'scalars': [...]} rather than a bare value or array. path2
@@ -51,7 +58,18 @@ function callFn(fn, input, buf) {
     // entered — the same class of hole vec3_normalize had. Keyed off the TEST
     // SHAPE, not the arg_type, so it covers every handler that adopts the shape.
     // (orch-iter21.)
-    if (input && typeof input === 'object' && Array.isArray(input.scalars)) {
+    //
+    // NARROWED 2026-09-12 (round 252). Keying off the test SHAPE made this
+    // branch SHADOW the layout-aware handlers added below: a ptr_seed_observe
+    // entry whose signature declares a pointer argument carries its buffer in
+    // arg_layout, NOT in scalars, so applying scalars alone passes too few
+    // arguments and still dies "bad argument count" — the very symptom this
+    // branch was written to cure, now for the opposite reason. Same shadowing
+    // class as U-9067 (the 0-arg guard that had to move to the bottom).
+    // It now defers whenever an arg_layout is present; entries without one keep
+    // the orch-iter21 behaviour exactly.
+    const _hasLayout = Array.isArray(CONFIG.arg_layout) && CONFIG.arg_layout.length > 0;
+    if (!_hasLayout && input && typeof input === 'object' && Array.isArray(input.scalars)) {
         return fn.apply(null, input.scalars);
     }
     if (CONFIG.arg_type === 'none') {
@@ -386,6 +404,89 @@ function callFn(fn, input, buf) {
         }
         return ret;
     }
+    // ── buffer-argument handlers (round 252, 2026-09-12) ────────────────────
+    // bgra_encode / ptr_seed_observe / stub_dispatch_observe existed in
+    // diff_template.js ONLY, so every row using them passed path1 and then died
+    // in path2 with "bad argument count" or "expected a pointer": callFn fell
+    // through to `fn(input)` and handed the whole test DICT to a NativeFunction
+    // whose signature declares pointer arguments. Install verified, call-through
+    // falsely FAILED — the exact one-template-only class this file already
+    // records for cache_setter_observe, fmt_desc_pair_compare and
+    // draw_quad_observe. It cost r250 (0x004c2c90) a full path2 and then all
+    // FOUR r252 rows in one run, which is what finally made the count worth
+    // measuring: 15 registry entries carry a {buf:...} position in arg_layout.
+    //
+    // These MUST sit above the 0-arg fallback (U-9067): an explicit handler must
+    // never depend on falling through.
+    //
+    // Buffers are per-call and freshly zeroed, matching the path1 handlers. This
+    // is an INSTALL check, so only the call needs to succeed and route through
+    // the reimpl — the fingerprint comparison is path1's job, and nothing here
+    // is compared against the original.
+    if (CONFIG.arg_type === 'bgra_encode') {
+        // fn(byte* buf) -> uint32; tests[i] = [b0,b1,b2,b3] written as bytes.
+        const b = Memory.alloc(4);
+        const t = Array.isArray(input) ? input : [0, 0, 0, 0];
+        for (let k = 0; k < 4; k++) b.add(k).writeU8((t[k] | 0) & 0xff);
+        return fn(b);
+    }
+    if (CONFIG.arg_type === 'ptr_seed_observe' ||
+        CONFIG.arg_type === 'stub_dispatch_observe') {
+        // Mirrors the path1 buildArgs/applySeed pair: arg_layout maps each call
+        // position to a scratch-buffer pointer, a scalar from input.scalars, or
+        // (stub_dispatch_observe only) the recorder stub. input.seed supports
+        // flat field writes and ptr_to cross-buffer wiring so a real struct GRAPH
+        // can be built — without it a double-deref target just AVs on a garbage
+        // inner pointer and the call-through fails for the wrong reason.
+        const layout = CONFIG.arg_layout || [];
+        const NB = (CONFIG.num_bufs | 0) ||
+                   layout.filter(function (a) { return a && a.buf !== undefined; }).length || 1;
+        const BS = (CONFIG.buf_size | 0) || 64;
+        const bufs = [];
+        for (let k = 0; k < NB; k++) {
+            const nb = Memory.alloc(BS);
+            for (let z = 0; z < BS; z++) nb.add(z).writeU8(0);
+            bufs.push(nb);
+        }
+        // A recorder for the stub positions. Its return is CONFIG.stub_ret (or
+        // the per-test override), matching path1 so the callee-declines branch
+        // is the one exercised here too.
+        const NA = (CONFIG.stub_nargs === undefined) ? 3 : (CONFIG.stub_nargs | 0);
+        const stubRet = (input && input.stub_ret !== undefined)
+            ? (input.stub_ret | 0) : ((CONFIG.stub_ret | 0) || 0);
+        const stubTypes = [];
+        for (let k = 0; k < NA; k++) stubTypes.push('uint32');
+        const stub = new NativeCallback(function () { return stubRet; },
+                                        'int', stubTypes, CONFIG.stub_abi || undefined);
+        if (!verifyKeep) verifyKeep = [];
+        verifyKeep.push(stub, bufs);
+        const wrv = function (p, off, type, value) {
+            const a = p.add(off);
+            switch (type) {
+                case 'u8':  a.writeU8(value & 0xff); break;
+                case 'u16': a.writeU16(value & 0xffff); break;
+                case 's32': a.writeS32(value | 0); break;
+                case 'f32': a.writeFloat(value); break;
+                default:    a.writeU32(value >>> 0); break;
+            }
+        };
+        ((input && input.seed) || []).forEach(function (s) {
+            if (s.stub) bufs[s.buf].add(s.off).writePointer(stub);
+            else if (s.ptr_to !== undefined) bufs[s.buf].add(s.off).writePointer(bufs[s.ptr_to]);
+            else wrv(bufs[s.buf], s.off, s.type, s.value);
+        });
+        const scalars = (input && input.scalars) || [];
+        const args = [];
+        let si = 0;
+        for (let k = 0; k < layout.length; k++) {
+            const a = layout[k];
+            if (a && a.stub) args.push(stub);
+            else if (a && a.buf !== undefined) args.push(bufs[a.buf]);
+            else args.push(scalars[si++]);
+        }
+        return fn.apply(null, args);
+    }
+
     // FALLBACK, and it must stay LAST. A function with zero declared parameters must be
     // called with zero args, regardless of arg_type: the NativeFunction at TARGET_ADDR is
     // built from CONFIG.signature.args, so honor that same ground truth. Without this,

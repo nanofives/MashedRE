@@ -89,6 +89,18 @@ def main():
         'stub_at':        [f"0x{a:08x}" for a in hook.get('stub_at', [])],
         'stub_nargs':     hook.get('stub_nargs', 3),
         'stub_ret':       hook.get('stub_ret', 0),
+        # Buffer-argument delivery (round 252). Same rule as the stub_at comment
+        # above, and it bit in exactly the same way: the verify template gained
+        # ptr_seed_observe / stub_dispatch_observe handlers, but with arg_layout
+        # missing from CONFIG the layout read as EMPTY, so the handler called the
+        # export with ZERO arguments against a signature declaring two, and path2
+        # failed "bad argument count" while looking like a broken reimpl. A
+        # handler in the template is only half the change; the config builder is
+        # a whitelist and silently drops everything it does not name.
+        'arg_layout':     hook.get('arg_layout', []),
+        'num_bufs':       hook.get('num_bufs', 0),
+        'buf_size':       hook.get('buf_size', 0),
+        'stub_abi':       hook.get('stub_abi', None),
         'tests':          hook['path2_tests'],
     }
 

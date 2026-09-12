@@ -20016,6 +20016,98 @@ HOOKS = {
     # to pin the absence of a zero-clamp: the original decrements unconditionally,
     # so a port that "helpfully" guarded at zero FAILS exactly there. That vector
     # is the point of this entry, not padding.
+    # ---- promote-round round 252: four RW/D3D9-backend pure leaves ----------
+    # 0x004dfab0 RwRGBAToIntensityScaled - reads 4 bytes through its sole pointer and
+    # returns a scalar, which is exactly the shape bgra_encode documents itself as
+    # covering (any fn(byte*) -> uint reading <=4 bytes and returning a packed scalar).
+    #
+    # THE VECTORS TARGET THE TWO TRUNCATING DIVISIONS, which is where a port goes
+    # wrong. The original divides the weighted sum by 100 FIRST and only then
+    # multiplies by byte[3] and divides by 0xff. An algebraically equivalent
+    # single-expression port that multiplies before the /100 diverges whenever the
+    # weighted sum is not a multiple of 100, so the set deliberately straddles that:
+    #   [1,0,0,255]  weighted 30  -> /100 truncates to 0
+    #   [0,1,0,255]  weighted 59  -> truncates to 0
+    #   [3,3,3,255]  weighted 300 -> exactly 3, no truncation
+    #   [100,150,200,128] exercises both truncations at once
+    #   [255,0,0,1]  isolates the second division (x1 then /255)
+    #   plus the saturated and alpha-zero corners.
+    'rw_rgba_to_intensity_scaled': {
+        'rva': 0x004dfab0, 'export': 'RwRGBAToIntensityScaled',
+        'signature': {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type': 'bgra_encode', 'lut_root_delta': 0,
+        'tests': [[0,0,0,255],[255,255,255,255],[255,255,255,0],[1,0,0,255],[0,1,0,255],[3,3,3,255],[100,150,200,128],[255,0,0,1],[0,0,255,255],[7,11,13,17]],
+        'path1_tests': [[0,0,0,255],[255,255,255,255],[255,255,255,0],[1,0,0,255],[0,1,0,255],[3,3,3,255],[100,150,200,128],[255,0,0,1],[0,0,255,255],[7,11,13,17]],
+        'path2_tests': [[255,255,255,255],[3,3,3,255],[100,150,200,128]],
+    },
+    # 0x004f3bd0 D3D9IndexedDwordFetch - return *(*p + i*4). DOUBLE deref, so a flat
+    # seed cannot reach it: the inner pointer must be a real address or both sides
+    # merely AV and agree, which is not evidence. buf0+0 is wired ptr_to buf1 so the
+    # graph is structurally identical per side while never sharing memory; buf1 holds
+    # distinct dwords so each index returns a different value. observe_ret is the
+    # whole observable - the function writes nothing.
+    'd3d9_indexed_dword_fetch': {
+        'rva': 0x004f3bd0, 'export': 'D3D9IndexedDwordFetch',
+        'signature': {'ret': 'uint32', 'args': ['pointer', 'int32']},
+        'arg_type': 'ptr_seed_observe', 'lut_root_delta': 0,
+        'num_bufs': 2, 'buf_size': 0x40,
+        'arg_layout': [{'buf': 0}, {'i32': True}],
+        'observe_ret': True, 'observe': [],
+        'path1_tests': [
+            {'scalars': [0], 'seed': [{'buf':0,'off':0,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0x11111111},{'buf':1,'off':4,'type':'u32','value':0x22222222},{'buf':1,'off':8,'type':'u32','value':0x33333333},{'buf':1,'off':12,'type':'u32','value':0x44444444}]},
+            {'scalars': [1], 'seed': [{'buf':0,'off':0,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0x11111111},{'buf':1,'off':4,'type':'u32','value':0x22222222},{'buf':1,'off':8,'type':'u32','value':0x33333333},{'buf':1,'off':12,'type':'u32','value':0x44444444}]},
+            {'scalars': [2], 'seed': [{'buf':0,'off':0,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0x11111111},{'buf':1,'off':4,'type':'u32','value':0x22222222},{'buf':1,'off':8,'type':'u32','value':0x33333333},{'buf':1,'off':12,'type':'u32','value':0x44444444}]},
+            {'scalars': [3], 'seed': [{'buf':0,'off':0,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0x11111111},{'buf':1,'off':4,'type':'u32','value':0x22222222},{'buf':1,'off':8,'type':'u32','value':0x33333333},{'buf':1,'off':12,'type':'u32','value':0x44444444}]},
+            {'scalars': [5], 'seed': [{'buf':0,'off':0,'ptr_to':1},{'buf':1,'off':20,'type':'u32','value':0xcafebabe}]},
+        ],
+        'path2_tests': [
+            {'scalars': [0], 'seed': [{'buf':0,'off':0,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0x11111111},{'buf':1,'off':4,'type':'u32','value':0x22222222},{'buf':1,'off':8,'type':'u32','value':0x33333333},{'buf':1,'off':12,'type':'u32','value':0x44444444}]},
+            {'scalars': [2], 'seed': [{'buf':0,'off':0,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0x11111111},{'buf':1,'off':4,'type':'u32','value':0x22222222},{'buf':1,'off':8,'type':'u32','value':0x33333333},{'buf':1,'off':12,'type':'u32','value':0x44444444}]},
+        ],
+    },
+    # 0x004ec720 / 0x004ec740 - sibling double-deref stores off the SAME pointer at
+    # p+0x14, differing ONLY in the final offset (0 vs 0xc). The realistic porting
+    # error is copy-pasting one into the other, so EACH entry observes BOTH offsets:
+    # the target must change AND the sibling offset must stay at its seeded sentinel.
+    # Observing only the written slot would not catch a port that wrote both.
+    'rw_frame_head_set': {
+        'rva': 0x004ec720, 'export': 'RwFrameHeadSet',
+        'signature': {'ret': 'void', 'args': ['pointer', 'uint32']},
+        'arg_type': 'ptr_seed_observe', 'lut_root_delta': 0,
+        'num_bufs': 2, 'buf_size': 0x40,
+        'arg_layout': [{'buf': 0}, {'i32': True}],
+        'observe_ret': False,
+        'observe': [{'buf':1,'off':0,'type':'u32'}, {'buf':1,'off':12,'type':'u32'}],
+        'path1_tests': [
+            {'scalars': [0xAAAAAAAA], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0xDEADBEEF},{'buf':1,'off':12,'type':'u32','value':0xFEEDFACE}]},
+            {'scalars': [0x00000000], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0xDEADBEEF},{'buf':1,'off':12,'type':'u32','value':0xFEEDFACE}]},
+            {'scalars': [0xFFFFFFFF], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0xDEADBEEF},{'buf':1,'off':12,'type':'u32','value':0xFEEDFACE}]},
+            {'scalars': [0x12345678], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0xDEADBEEF},{'buf':1,'off':12,'type':'u32','value':0xFEEDFACE}]},
+        ],
+        'path2_tests': [
+            {'scalars': [0xAAAAAAAA], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0xDEADBEEF},{'buf':1,'off':12,'type':'u32','value':0xFEEDFACE}]},
+            {'scalars': [0x12345678], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0xDEADBEEF},{'buf':1,'off':12,'type':'u32','value':0xFEEDFACE}]},
+        ],
+    },
+    'rw_frame_field0c_set': {
+        'rva': 0x004ec740, 'export': 'RwFrameField0cSet',
+        'signature': {'ret': 'void', 'args': ['pointer', 'uint32']},
+        'arg_type': 'ptr_seed_observe', 'lut_root_delta': 0,
+        'num_bufs': 2, 'buf_size': 0x40,
+        'arg_layout': [{'buf': 0}, {'i32': True}],
+        'observe_ret': False,
+        'observe': [{'buf':1,'off':0,'type':'u32'}, {'buf':1,'off':12,'type':'u32'}],
+        'path1_tests': [
+            {'scalars': [0xAAAAAAAA], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0xDEADBEEF},{'buf':1,'off':12,'type':'u32','value':0xFEEDFACE}]},
+            {'scalars': [0x00000000], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0xDEADBEEF},{'buf':1,'off':12,'type':'u32','value':0xFEEDFACE}]},
+            {'scalars': [0xFFFFFFFF], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0xDEADBEEF},{'buf':1,'off':12,'type':'u32','value':0xFEEDFACE}]},
+            {'scalars': [0x12345678], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0xDEADBEEF},{'buf':1,'off':12,'type':'u32','value':0xFEEDFACE}]},
+        ],
+        'path2_tests': [
+            {'scalars': [0xAAAAAAAA], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0xDEADBEEF},{'buf':1,'off':12,'type':'u32','value':0xFEEDFACE}]},
+            {'scalars': [0x12345678], 'seed': [{'buf':0,'off':0x14,'ptr_to':1},{'buf':1,'off':0,'type':'u32','value':0xDEADBEEF},{'buf':1,'off':12,'type':'u32','value':0xFEEDFACE}]},
+        ],
+    },
     'rw_error_module_dtor_count': {
         'rva':    0x004d8470,
         'export': 'RwErrorModuleDtor',
