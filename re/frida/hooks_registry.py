@@ -19995,6 +19995,70 @@ HOOKS = {
     # it falls through to the default arm, for the reason above. Expected distinct
     # fingerprints: 0x0d -> bufs 01000000, 0x0f -> 00000000, 0x11/0x12 ->
     # efbeadde (untouched), 0x10 -> efbeadde but a different recorded cmd.
+    # ---- promote-round round 251: RW error-module plugin close callback -----
+    # 0x004d8470, 16 bytes, complete:
+    #   *(int*)0x007d6c60 -= 1; return param_1;
+    #
+    # TWO ENTRIES FOR ONE FUNCTION, DELIBERATELY. The function has exactly two
+    # observable effects and NO SINGLE existing handler folds both:
+    #   (a) the unconditional decrement of the global at 0x007d6c60
+    #   (b) the verbatim pass-through of param_1 as the return value
+    # cache_setter_observe seeds and observes scattered globals but does not fold
+    # the return; seed_globals_fold_ret folds the return but has no observe list.
+    # Running BOTH covers the whole function with zero harness work. The
+    # alternative -- inventing a third handler -- is not justified for a 16-byte
+    # leaf, and shipping only one of the two would leave half the function
+    # unverified while reporting GREEN.
+    #
+    # (a) THE DECREMENT. Seeds vary per test so the observable varies: seed N,
+    # observe N-1. The seeded global is snapshotted and restored by the handler,
+    # so the live RW error module is not disturbed. Vectors include 0 -> 0xffffffff
+    # to pin the absence of a zero-clamp: the original decrements unconditionally,
+    # so a port that "helpfully" guarded at zero FAILS exactly there. That vector
+    # is the point of this entry, not padding.
+    'rw_error_module_dtor_count': {
+        'rva':    0x004d8470,
+        'export': 'RwErrorModuleDtor',
+        'signature': {'ret': 'int32', 'args': ['uint32']},
+        'arg_type': 'cache_setter_observe',
+        'obs_globals': ['0x007d6c60'],
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'seed': [{'addr': '0x007d6c60', 'val': 1}],          'args': [0x11111111], 'obs': ['0x007d6c60']},
+            {'seed': [{'addr': '0x007d6c60', 'val': 2}],          'args': [0x22222222], 'obs': ['0x007d6c60']},
+            {'seed': [{'addr': '0x007d6c60', 'val': 0}],          'args': [0x33333333], 'obs': ['0x007d6c60']},
+            {'seed': [{'addr': '0x007d6c60', 'val': 0x7fffffff}], 'args': [0x44444444], 'obs': ['0x007d6c60']},
+            {'seed': [{'addr': '0x007d6c60', 'val': 0x80000000}], 'args': [0x55555555], 'obs': ['0x007d6c60']},
+            {'seed': [{'addr': '0x007d6c60', 'val': 0xdeadbeef}], 'args': [0x66666666], 'obs': ['0x007d6c60']},
+        ],
+        'path2_tests': [
+            {'seed': [{'addr': '0x007d6c60', 'val': 1}], 'args': [0x11111111], 'obs': ['0x007d6c60']},
+            {'seed': [{'addr': '0x007d6c60', 'val': 0}], 'args': [0x33333333], 'obs': ['0x007d6c60']},
+        ],
+    },
+    # (b) THE RETURN PASS-THROUGH. Same RVA, return folded instead. Distinct args
+    # give distinct returns, which is what makes this non-degenerate -- a port
+    # returning a constant, or returning the counter instead of the argument,
+    # fails here and would have been invisible to entry (a).
+    'rw_error_module_dtor_ret': {
+        'rva':    0x004d8470,
+        'export': 'RwErrorModuleDtor',
+        'signature': {'ret': 'int32', 'args': ['uint32']},
+        'arg_type': 'seed_globals_fold_ret',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'seed': [{'addr': '0x007d6c60', 'val': 1}], 'args': [0x00000000]},
+            {'seed': [{'addr': '0x007d6c60', 'val': 1}], 'args': [0x00000001]},
+            {'seed': [{'addr': '0x007d6c60', 'val': 5}], 'args': [0xdeadbeef]},
+            {'seed': [{'addr': '0x007d6c60', 'val': 5}], 'args': [0x7fffffff]},
+            {'seed': [{'addr': '0x007d6c60', 'val': 0}], 'args': [0xffffffff]},
+            {'seed': [{'addr': '0x007d6c60', 'val': 0}], 'args': [0x12345678]},
+        ],
+        'path2_tests': [
+            {'seed': [{'addr': '0x007d6c60', 'val': 1}], 'args': [0x00000001]},
+            {'seed': [{'addr': '0x007d6c60', 'val': 5}], 'args': [0xdeadbeef]},
+        ],
+    },
     'rw_device_system_request': {
         'rva':        0x004c2c90,
         'export':     'RwDeviceSystemRequest',
