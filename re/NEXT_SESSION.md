@@ -1,140 +1,135 @@
 # Next session — kickoff prompt
 
-## ⇒ CURRENT STATE (2026-09-12, gating-drain session) — READ THIS FIRST
+## ⇒ CURRENT STATE (2026-09-12, uncertainty-drain + 8 promotion rounds) — READ THIS FIRST
 
-Branch `race/first-frame-parity`. **Zero worktrees, zero Ghidra pool locks.** `main` is
-level with HEAD (`git rev-list --left-right --count main...HEAD` → `0 0`).
+Branch `race/first-frame-parity`, tree clean, **27 commits** this session. Zero worktrees,
+zero Ghidra pool locks, zero stray processes. Anchor verified.
 
-**Uncertainties, with the command that derives each number:**
-
-| measure | count | command |
+| measure | value | how to re-derive |
 |---|---:|---|
-| open rows in the Active section | 3,030 | rows matching `^\| *U-[0-9]+` between `## Active uncertainties` and `## Resolved`, minus `~~`-prefixed |
-| of those, **actually gating** | **0** | same set, `Blocks` cell (index 7) exactly `C2->C3` or `C3` |
-| gating at session start | 46 | (was 235 → 121 on 2026-09-11, → 46, → **0**) |
-| rows with a non-canonical column count | 131 | pre-existing baseline, **unchanged** by this session's 47 edits |
+| C4 / C3 / C2 / C1 | 184 / **1029** / 3865 / 821 | `Import-Csv hooks.csv \| Group-Object confidence` |
+| gating uncertainties | **0** | `Blocks` cell exactly `C2->C3` or `C3`, Active section only |
+| open uncertainty rows | 3,031 | rows `^\| *U-[0-9]+` between the Active and Resolved headers |
+| promotion rounds run | 256 | ledger `rounds_run` |
+| non-canonical column count | 131 | pre-existing baseline, unchanged all session |
 
-**The gating bucket is empty. That is the headline, and it is also the thing most
-likely to be misread** — see the next section before you act on it.
+## ⇒ THE TWO THINGS MOST LIKELY TO BE MISREAD
 
-## ⇒ WHAT "0 GATING" DOES AND DOES NOT MEAN
+**1. "0 gating" does NOT mean "everything is answered."** 46 rows were gating this morning.
+17 were **resolved on evidence**; **29 were DE-GATED** and are still open, carrying their
+evidence and next command. The de-gate rests on `re/CONFIDENCE.md`'s own C2→C3 wording — a
+field may be named *or* explicitly marked `[UNCERTAIN]` with the marker recorded — so a
+properly recorded row is the rubric's sanctioned alternative to a name. Owner-approved.
+The test applied to each: *would a byte-for-byte verbatim transcription be wrong without
+this answer?* For all 29, no.
 
-**17 rows were resolved on evidence. 29 were DE-GATED, and de-gating is not resolving.**
-Every de-gated row is still OPEN, still carries its evidence and its next command, and
-records the value its `Blocks` cell replaced.
-
-The de-gate rests on `re/CONFIDENCE.md`'s own C2→C3 wording: a field must be named
-**"(or is explicitly marked `[UNCERTAIN]` with the marker recorded in `UNCERTAINTIES.md`)"**.
-A properly recorded row *is* the rubric's sanctioned alternative to a name, not a blocker.
-Owner-approved before applying.
-
-**The test applied to each row, one at a time:** would a byte-for-byte verbatim
-transcription of the row's own function be **wrong** without this answer? For all 29 the
-answer was no — they ask what something is *called* (which joint is index `0x33`, what the
-six emitter pools are named, which space a matrix maps between), and the port emits the
-same bytes either way.
-
-**Exactly one row in the 46 was a genuine transcription gate, and it dissolved on
-inspection** — U-5588. See the corrections below.
-
-**Consequence for the next promoter:** nothing in `UNCERTAINTIES.md` now blocks a C2→C3.
-If you hit a function you cannot transcribe, that is a *new* finding — open a new row, do
-not assume an old one covers it.
+**2. If you hit a function you cannot transcribe, that is a NEW finding.** Open a new row;
+do not assume an old one covers it.
 
 ## What landed
 
-### 1. Method — two Ghidra batches plus the two self-service lanes
-`decomp_pc.py` ran twice (115 functions + 27 globals, then 26 + 8), which is the whole
-Ghidra cost of the session. Everything else came from `memread.py` and `disasm_fn.py` over
-the anchored `original/MASHED.exe.unpatched`. **The disasm lane settled the hardest rows**,
-including all four of the strongest results below.
+### Uncertainty drain: 46 → 0 gating
+17 resolved with citations. The ones worth knowing:
+- **U-4780** — takes **five** stack args, not three; `[E+0xc]` proven never addressed.
+- **U-4700** — the three constants are DirectShow GUIDs (`MEDIATYPE_Video`,
+  `MEDIASUBTYPE_RGB24`, `FORMAT_VideoInfo`), named from the **local Windows SDK**
+  `uuids.h`, matched at `+0x00/+0x10/+0x2c` = `AM_MEDIA_TYPE` per `strmif.h`.
+- **U-4713** — a full 4×4 carrying translation, not a normal matrix: exactly four `fchs`
+  negate the whole first row *including* `-pos.x`.
+- **U-4701** — `0x00494b65` **is not a function**; it is the `jne` target inside `0x00494b50`.
+- **U-5654** — the `-3` is one uniform 3-pixel inset on both axes (float `3.0` at `0x005cc31c`).
 
-### 2. The 17 resolutions worth remembering
+**Three corrections to the existing record**, which matter more than the wins:
+- Ghidra's *"could not recover jumptable at `0x0041dec0`"* is a **misclassification** — it is
+  `jmp dword ptr [eax+0x48]`, a vtable tail call. That was the only genuine transcription
+  gate among the 46 and it existed because nobody disassembled the address.
+- **U-4313's fourth write site does not exist.** `0x0043f8d5 mov [ebx+8],edx` never lands on
+  `0x007f1a1c`; EBX is never loaded with that constant in the range.
+- **U-4583's `DAT_006668f8`** is a digit transposition of `DAT_007668f8`.
 
-| row | outcome |
-|---|---|
-| U-4780 | Takes **five** stack args, not three. Full ESP accounting across four pushes: reads `E+4`, `E+8`, `E+0x10`, `E+0x14`; `[E+0xc]` (Ghidra's `param_3`) is never addressed by any instruction. Both halves of the old question settle at once. |
-| U-4700 | The three blocks are DirectShow GUIDs — `MEDIATYPE_Video`, `MEDIASUBTYPE_RGB24`, `FORMAT_VideoInfo` — matched at `+0x00/+0x10/+0x2c` = `AM_MEDIA_TYPE` majortype/subtype/formattype. |
-| U-4713 | A **full 4x4 carrying translation**, not a 3x3 inverse-transpose for normals. Exactly four `fchs` negate the entire first output row *including* `-pos.x`; a normal matrix would not carry that. |
-| U-4715 | The four matrix outputs pinned by ESP accounting: product / the `0x00496ec0` matrix / identity. `0x004ed6ba` is `jmp dword ptr [0x6187b4]`, outside every IAT range — a runtime fn-ptr, not a named import. |
-| U-4702 | Vtable slot 3 of `0x005cfd70`. The class name is **proven unavailable**, not merely unfound: the word at `0x005cfd6c` is `0`, so there is no RTTI locator. |
-| U-4423 | The `+0xc0` reader is `FUN_00476440`, found via the **array base's** xrefs. |
-| U-4514 | The constant at `0x005ceb10` is the string `"tyre"` — the function is a dictionary lookup, not a loader. |
-| U-4726 | `+0xc4` = VertexShaderVersion, `+0xcc` = PixelShaderVersion — the fields name *themselves* in the writer's own log format strings. |
-| U-4583 | `FUN_0048eac0` names all six pools with string literals: `animFire`, `smoke`, `fireball`, and three `exp_cloud` sinks separated only by capacity. |
+### 18 promotions across rounds 249–256
+`RwEngineRegisterPlugin`, `DriverSystemDispatch`, `RwErrorModuleDtor`, four r252 leaves,
+three r253, `Mat4x3InvertOrthonormal`, two r255 walkers, five r256 forwarders.
+**One deliberate non-promotion:** `0x004f10e0` is GREEN 8/8 with path2 PASS and **stays C2** —
+both callers are anonymous (`FUN_004e4300` C1; `FUN_004e41e0` has no hooks.csv row), so
+promoting would be an island promotion. Evidence banked; unblock by raising either caller.
 
-(Also U-4388, U-4504, U-4509-adjacent, U-4701, U-4709, U-4716, U-5103, U-5595, U-5654.)
+### Harness work (all SWEEP-CRITICAL)
+- **`observe_bufs`** on `stub_dispatch_observe` (path1) — three arms of `0x004c2c90` all
+  return 1 and differ only through an out-pointer, so return-only observation could not tell
+  a correct port from a swapped one.
+- **path2 buffer-arg support** — `bgra_encode` / `ptr_seed_observe` / `stub_dispatch_observe`
+  added to the verify template, the missing CONFIG forwarding added to `run_verify_hook.py`,
+  and an `orch-iter21` test-shape branch narrowed because it was **shadowing** the new
+  handlers. Unblocked 15 registry entries; all 17 `arg_layout` entries re-run, no regressions.
+- **`re/tools/caller_screen.py`** — applies the C2→C3 caller rule *before* any code is
+  written. On the r256 slice: 227 promotable, 69 caller-blocked.
 
-### ⚠ 3. THREE CORRECTIONS TO THE EXISTING RECORD — these matter more than the wins
+## ⇒ STANDING RULE LEARNED THE HARD WAY: a new arg_type has FOUR homes
+`diff_template.js`, `verify_hook_install_template.js`, **and** the config builders in
+`run_diff.py` **and** `run_verify_hook.py`. Both builders are **whitelists that drop unknown
+keys silently**. Miss the template and path1 goes GREEN while path2 dies `bad argument
+count`; miss the builder and the handler runs against an EMPTY config. This bit three
+separate ways in one round. Also check `callFn`'s branch ORDER — a branch keyed off *test
+shape* rather than arg_type will shadow later handlers (same lesson as U-9067).
 
-- **U-5588: Ghidra's "Could not recover jumptable at `0x0041dec0`. Too many branches" is a
-  MISCLASSIFICATION.** `0x0041dec0` is `jmp dword ptr [eax + 0x48]` — a vtable **tail call**,
-  exactly parallel to the `call dword ptr [eax + 0x48]` six bytes above it. The decomp line
-  was correct and complete all along. This was the only genuine transcription gate in the
-  46 and it existed only because nobody disassembled the address.
-  **Generalise it: a jumptable warning is a hypothesis, not a finding.**
-- **U-4313: one of the four recorded write sites does not exist.** `0x0043f8d5
-  mov [ebx+8],edx` does not land on `0x007f1a1c`. EBX is never loaded with that constant in
-  `0x0043f890..0x0043f8e0`; the only materialization there is `0x0043f8b2 mov eax,0x7f1a1c`
-  and EAX is used read-only. A `--datarefs` record attributing a register-indirect store is
-  a **candidate**, not a fact, until the register's provenance is read.
-- **U-4583's cited `DAT_006668f8` is a digit transposition** of `DAT_007668f8`; the former
-  has `ref_total: 0`. Cheap to check, and it had been carried for months.
+## ⇒ AND: a name may not claim more than its comment does
+A naming audit of this session's own work **withdrew or corrected 11 of 18 names**.
+`RwFrameHeadSet` asserted a frame type and a head field, neither ever read.
+`PizOpenDefaultMode` sat on a **particle** row. `RwRGBAToIntensityScaled` claimed a channel
+order its own comment explicitly declined to claim. Grounded names were kept (a C4 or
+named-library callee gives you one); otherwise `Fwd<callee>_<literal>` says enough.
+**An export rename is not cosmetic — re-run both paths.** The rename script itself replaced
+by dict order and substituted `RwPluginListDispatch` *inside* `RwPluginListDispatch3`; only
+the re-run caught it. Sort replacement keys by descending length.
 
-### 4. NEW ROW U-9134 — the library band may be over-broad
-`hooks.csv` bands `004c0c20` as `third-party-library[lua-4.0]`, but the body dereferences
-`DAT_007d3ff8` (RwGlobals) and frees through slot `+0x11c`. **The band was assigned by
-ADDRESS RANGE** (`0x004b4a80..0x004c4000`), so every function in the span inherited the
-label with no per-function evidence — and the note's own text says `lua-5.0` while the band
-says `lua-4.0`. Only this one function was checked. **The span needs auditing before the
-library-skip policy is trusted there**; it may be excluding functions that are ours.
-Not fixed here — `hooks.csv` is mutated only through `re-classify`.
+## PICK ONE
 
-## PICK ONE (next session)
+### A. **U-9135 — decide the PSGP band disposition.** (recommended, and it is a decision, not research)
+103 rows are tagged `render` (first-party) while carrying a note asserting they are
+statically-linked Microsoft PSGP. The attested range `0x004ec000..0x004fc9e0` holds 198 rows
+that the per-row tag splits into **four contiguous, non-interleaved blocks** — render 25,
+psgp 79, render 80, psgp 14 — and only 93 are tagged `d3dx9-psgp`, while 12 psgp-tagged rows
+sit outside the range. The clean block structure is the evidence. Same shape as U-9134.
+Either **narrow the attestation** to the two genuine psgp blocks, or **re-band** the 103 rows
+under library-skip. Do not edit either field before deciding: both are range-assigned and the
+wrong choice mislabels 100+ rows. Seven rows in the range are already C3 (five promoted this
+session) — **all seven are in the render blocks**, so under the per-row tag they are fine.
 
-- **A. Audit the `0x004b4a80..0x004c4000` band (U-9134).** Sweep the span for bodies that
-  dereference `DAT_007d3ff8` or call RW APIs. Highest value of the three: if the band is
-  over-broad, there is reachable first-party work currently invisible to every tracker.
-- **B. Promote.** Nothing gates a C2→C3 any more. `promote-c3-batch` / `/promote-round`.
-- **C. The carried-over owner decisions below.** None was touched this session.
+### B. **U-9134 — audit the `0x004b4a80..0x004c4000` lua band.** Same class, one row proven
+mis-banded (`004c0c20` dereferences RwGlobals). May be hiding reachable first-party work.
+
+### C. **More promotion rounds.** The pool is deep and the loop is cheap now: no path2
+friction since r252, and `caller_screen.py` removes ~30% of dead ends before authoring.
 
 ## Carried over, still needing YOUR call
-- **`area/frontend` is the one unmerged branch, deliberately** — a WIP checkpoint whose
-  `PanelSortInit` hook (`0x00420d00`) would go live in the dev ASI unverified.
-- **D-11069** — 4 duplicate-RVA rows need `hooks.csv` to express "different implementation
-  per build target", which the single `file` column cannot. Schema change, affects every parser.
-- **U-9087** — 4 C4 rows may need demotion; their install proof is a byte the original already has.
-- **G / rubric L37** — 387 C3 rows are shadow-generatable but `re/CONFIDENCE.md` names a
-  Frida CSV as the C4 evidence. Amend, or keep C4 Frida-only.
+- **`area/frontend` is the one unmerged branch**, deliberately (WIP `PanelSortInit` hook).
+- **D-11069** — 4 duplicate-RVA rows need a `hooks.csv` schema change.
+- **U-9087** — 4 C4 rows may need demotion; their install proof is a byte the original has.
+- **`main` is level with HEAD**; nothing pushed to `origin` (182 commits ahead).
 
-## Tooling notes that cost time to learn
-- **`re/tools/memread.py <va>...`** — section, file offset, raw bytes, dword, float. It also
-  catches "the address is not data at all".
-- **`re/tools/disasm_fn.py <start> <end>`** — capstone over the anchored binary. **Always
-  start from the containing function's entry**; cited addresses are often mid-instruction
-  and capstone will decode garbage from a bad start. This lane is best at **refuting**.
-- **`decomp_pc.py --datarefs`** answers "who writes this global", split into writes / reads /
-  other. Register-indirect writes it reports still need the register's provenance read.
-- **Batch everything.** One `decomp_pc.py` invocation costs ~30-60 s of project-open
-  regardless of how many addresses you pass.
-- **Writing a resolution? Do not put a pipe in the cell.** A literal `|` splits the row and
-  shifts every later column. The transaction script refuses any cell containing one — it
-  fired twice this session on claims quoting a bitwise OR. Spell the operator `OR`.
-- **A Python script that reads text and writes text will STRIP CRLF.** It showed as all
-  3,240 lines changed. Read and write **bytes**, or convert back before committing —
-  `git diff --stat` is the tell.
+## Harness wishlist (measured, per the ledger's own rule)
+- **`ptr_to` cannot express buf+OFFSET**, which blocks intrusive CIRCULAR lists whose
+  sentinel is an interior address — `0x004c59c0` (`param_1+8`), `0x004d8280`/`0x004d8300`
+  (`param_1+0x90`). NULL-terminated lists are unaffected. **Count the rows before spending a
+  round on it.**
+- Absolute-global seeding combined with `stub_at` — blocks `0x004c9f60` (spec in ledger L2c,
+  including the `__stdcall` vtable-slot hazard at `0x004c9f85`).
 
 ## Standing rules that bit earlier sessions
-- Shadow lane: **single-boot verdicts are unreliable**. Require two independent boots.
-- Run races with `--cars 4 --hold 60`; a 1-car race never fires the contact solver.
+- Shadow lane: single-boot verdicts are unreliable; require two boots.
+- Races need `--cars 4 --hold 60`; a 1-car race never fires the contact solver.
 - Never `git worktree remove --force` — use `py -3.12 scripts/diag.py wt-remove`.
 - Kill only PIDs you spawned; never blanket-kill MASHED by name.
-- External web is unusable on the worker account (it fabricated results). Run web on account3.
+- A Python script that reads text and writes text **strips CRLF**. Read/write bytes.
+  `git diff --stat` is the tell (3,240 lines "changed" = you did it).
+- Do not put a literal `|` in an UNCERTAINTIES cell — it splits the row. Spell it `OR`.
 
 ## Ready-to-paste kickoff
 
 > Resume the Mashed RE lane on `race/first-frame-parity`. Read `re/NEXT_SESSION.md` first —
-> **gating uncertainties are at 0, but 29 of the 46 were de-gated rather than resolved**, so
-> read "WHAT 0 GATING DOES AND DOES NOT MEAN" before treating the frontier as clear. Then
-> pick A (audit the `0x004b4a80..0x004c4000` library band, U-9134 — likely hides first-party
-> work), B (promote; nothing gates a C2→C3 now), or C (the carried-over owner decisions).
+> note that **gating uncertainties are 0 but 29 of the 46 were de-gated, not resolved**, and
+> that **U-9135 is an open owner decision affecting 103 rows**. Then pick A (decide U-9135),
+> B (audit the lua band, U-9134), or C (more promotion rounds — run
+> `py -3.12 re/tools/decomp_pc.py --file rvas.txt --callers --json -o batch.json` then
+> `py -3.12 re/tools/caller_screen.py batch.json` and author only from the PROMOTABLE list).

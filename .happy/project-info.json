@@ -16,76 +16,14 @@
           "kind": "number"
         },
         {
-          "label": "Total GREEN promotions",
-          "value": 433,
-          "kind": "number"
-        },
-        {
-          "label": "Promoted this session",
+          "label": "Promoted last session",
           "value": 18,
           "kind": "number"
-        }
-      ]
-    },
-    {
-      "heading": "This session (r249-r256)",
-      "fields": [
-        {
-          "label": "Functions",
-          "value": [
-            "r249-251: 3 RW plugin/registry fns",
-            "r252 x4 leaves",
-            "r253 x3 (1 refused on caller rule)",
-            "r254 RwMatrixInvertOrthonormal (naked x87)",
-            "r255 x2 callback walkers",
-            "r256 x5 forwarders"
-          ],
-          "kind": "list"
         },
         {
-          "label": "Harness work",
-          "value": "observe_bufs; path2 buffer-arg support (15 entries); re/tools/caller_screen.py",
+          "label": "Refused (evidence banked)",
+          "value": "004f10e0 \u2014 both callers anonymous",
           "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "Refused, evidence banked",
-      "fields": [
-        {
-          "label": "004f10e0 D3D9StreamStrideForDecl",
-          "value": "GREEN 8/8 + path2 PASS, but stays C2",
-          "kind": "text"
-        },
-        {
-          "label": "Why",
-          "value": "both callers anonymous (FUN_004e4300 C1; FUN_004e41e0 not in hooks.csv) - island promotion",
-          "kind": "text"
-        },
-        {
-          "label": "Unblock",
-          "value": "raise either caller to C2, or recover a real name; diff need not re-run",
-          "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "Promotable pool",
-      "fields": [
-        {
-          "label": "Status",
-          "value": "NOT dry - 227 caller-screened candidates in the current slice alone",
-          "kind": "text"
-        },
-        {
-          "label": "Caller-blocked (cannot promote)",
-          "value": 69,
-          "kind": "number"
-        },
-        {
-          "label": "Dry-round counter",
-          "value": 0,
-          "kind": "number"
         }
       ]
     },
@@ -98,14 +36,48 @@
           "kind": "number"
         },
         {
-          "label": "Open rows (Active section)",
-          "value": 3030,
+          "label": "Trend",
+          "value": [
+            "2026-09-11 start: 235",
+            "2026-09-11 end: 121",
+            "2026-09-12 start: 46",
+            "2026-09-12 end: 0"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Open rows",
+          "value": 3031,
           "kind": "number"
         },
         {
           "label": "Caveat",
-          "value": "29 of the 46 were de-gated, not resolved \u2014 still open",
+          "value": "29 of the 46 were DE-GATED, not resolved \u2014 still open",
           "kind": "text"
+        }
+      ]
+    },
+    {
+      "heading": "Open owner decisions",
+      "fields": [
+        {
+          "label": "U-9135 (new)",
+          "value": "103 rows tagged render carry a Microsoft-PSGP attestation \u2014 narrow the range or re-band",
+          "kind": "text"
+        },
+        {
+          "label": "U-9134",
+          "value": "lua band 0x004b4a80..0x004c4000 may be over-broad",
+          "kind": "text"
+        },
+        {
+          "label": "Others",
+          "value": [
+            "D-11069 hooks.csv schema",
+            "U-9087 four C4 demotions",
+            "area/frontend still unmerged"
+          ],
+          "kind": "list"
         }
       ]
     },
@@ -114,11 +86,11 @@
       "fields": [
         {
           "label": "Branch",
-          "value": "race/first-frame-parity",
+          "value": "race/first-frame-parity (clean, 27 commits last session)",
           "kind": "text"
         },
         {
-          "label": "Worktrees",
+          "label": "Worktrees / pool locks",
           "value": 0,
           "kind": "number"
         },
@@ -128,14 +100,9 @@
           "kind": "text"
         },
         {
-          "label": "Open owner decisions",
-          "value": [
-            "U-9134 library band audit",
-            "D-11069 hooks.csv schema",
-            "U-9087 four C4 demotions",
-            "area/frontend still unmerged"
-          ],
-          "kind": "list"
+          "label": "New tooling",
+          "value": "re/tools/caller_screen.py; observe_bufs; path2 buffer-arg support",
+          "kind": "text"
         }
       ]
     }
