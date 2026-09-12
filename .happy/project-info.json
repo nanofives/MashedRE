@@ -1,159 +1,30 @@
 {
-  "title": "Mashed RE",
-  "updatedAt": "2026-09-11T18:30:00Z",
+  "title": "Mashed RE — greenfield source port",
+  "updatedAt": "2026-09-12T00:00:00Z",
   "sections": [
-    {
-      "heading": "Status",
-      "fields": [
-        {
-          "label": "Branch",
-          "value": "race/first-frame-parity",
-          "kind": "text"
-        },
-        {
-          "label": "Phase",
-          "value": "R7 - full game systems (scaffold to verbatim)",
-          "kind": "text"
-        },
-        {
-          "label": "Session focus",
-          "value": "drain open items, merge worktrees, then loop on uncertainties",
-          "kind": "text"
-        },
-        {
-          "label": "Tree",
-          "value": "clean; 0 worktrees, 0 pool locks, 0 stray processes",
-          "kind": "text"
-        },
-        {
-          "label": "Last activity",
-          "value": "2026-09-11",
-          "kind": "date"
-        }
-      ]
-    },
-    {
-      "heading": "Merge + cleanup (done)",
-      "fields": [
-        {
-          "label": "Worktrees removed",
-          "value": 11,
-          "kind": "number"
-        },
-        {
-          "label": "Unmerged work lost",
-          "value": "none - all 11 branches were already ancestors of HEAD",
-          "kind": "text"
-        },
-        {
-          "label": "Rescued first",
-          "value": "verify/camera_racecam/race1/01_inrace_track.png was cited by a merged note but existed only inside a worktree, untracked (verify/**/*.png is gitignored)",
-          "kind": "text"
-        },
-        {
-          "label": "Landmine cleared",
-          "value": ".worktrees/d1-invert was a partially-removed worktree corpse: git had deregistered it but its original/ junction to the real game install was still live. Junction deleted non-recursively first, then 334 MB removed; all 10,938 files verified duplicated in main.",
-          "kind": "text"
-        },
-        {
-          "label": "Ghidra pool locks cleared",
-          "value": 10,
-          "kind": "number"
-        },
-        {
-          "label": "Still unmerged, deliberately",
-          "value": "area/frontend - WIP checkpoint whose PanelSortInit hook (0x00420d00) would go live in the dev ASI unverified",
-          "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "TOP FINDING this session",
-      "fields": [
-        {
-          "label": "Ghidra headless was unreachable from PowerShell",
-          "value": "bash on PATH is WSL (C:\\WINDOWS\\system32\\bash.exe), not Git Bash. It cannot open a Windows path as an argv entry, so every pool acquire died and decomp_pc.py only ever worked from a Git Bash session. Both decomp_pc.py and ghidra_pool.ps1 now resolve Git Bash explicitly.",
-          "kind": "text"
-        },
-        {
-          "label": "The gating bucket is xref-shaped, not decomp-shaped",
-          "value": "Of the 213 still-gating uncertainty rows, 128 need the WRITERS of a global or the CALLERS of a function - not a decompilation. decomp_pc.py --xrefs/--callers already produces that in batch, so it is the next automated lane.",
-          "kind": "text"
-        },
-        {
-          "label": "Port hazard found (U-4508)",
-          "value": "The 'pool-commit skips the found-slot pointer' was never a skip - the pointer is passed in EAX (0x004777a5 sets it, the commit block pushes four stack args without touching it, callee reads in_EAX). A cdecl prototype for 0x00477450 silently drops its first argument.",
-          "kind": "text"
-        },
-        {
-          "label": "dOpenDevice is at DAT_007d3ff8+0x10",
-          "value": "That base offset names the whole RwDevice call surface: +0x20 = fpRenderStateSet, +0x2c = fpIm2DRenderTriangle, +0x18 = zBufferNear. Confirmed three ways by argument counts and by a float reaching a vertex, not from the layout table alone.",
-          "kind": "text"
-        },
-        {
-          "label": "capstone sweeps stop at the first bad byte",
-          "value": "disasm() is a generator that ends silently on an undecodable byte. A full .text sweep actually covered only to ~0x408890 and reported 0 writers for a field that has 130 accesses. A control on a known-present offset is what caught it; findoffset.py now resyncs.",
-          "kind": "text"
-        }
-      ]
-    },
     {
       "heading": "Uncertainties",
       "fields": [
-        {
-          "label": "Of those, actually gating",
-          "value": 104,
-          "kind": "number"
-        },
-        {
-          "label": "Gating count this session",
-          "value": "235 -> 104",
-          "kind": "text"
-        },
-        {
-          "label": "Remaining lanes",
-          "value": [
-            "36 decomp (mostly exhausted)",
-            "18 reference",
-            "7 struct",
-            "0 pcode-search - lane closed"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Malformed rows",
-          "value": "131 (pre-existing baseline, unchanged all session)",
-          "kind": "text"
-        }
+        { "label": "Gating (blocks a C2->C3)", "value": 0, "kind": "number" },
+        { "label": "Gating trend", "value": ["2026-09-11 start: 235", "2026-09-11 end: 121", "2026-09-12 start: 46", "2026-09-12 end: 0"], "kind": "list" },
+        { "label": "Open rows (Active section)", "value": 3030, "kind": "number" },
+        { "label": "Last drain", "value": "17 resolved on evidence, 29 de-gated (still open)", "kind": "text" }
       ]
     },
     {
-      "heading": "Carried forward - still your call",
+      "heading": "Repo state",
       "fields": [
-        {
-          "label": "main",
-          "value": "MERGED - fast-forwarded to the branch tip. NOT pushed: main is 370+ ahead of origin/main and pushing is outward-facing.",
-          "kind": "text"
-        },
-        {
-          "label": "U-9087",
-          "value": "4 C4 rows may need demotion - their install proof is a byte the original already has",
-          "kind": "text"
-        },
-        {
-          "label": "Shadow lane",
-          "value": "single-boot verdicts unreliable (transient consecutive-failure windows, cause still unknown); require two boots",
-          "kind": "text"
-        },
-        {
-          "label": "Open work",
-          "value": [
-            "standalone physics under x87 unverified",
-            "43 NO_SAMPLES rows need scenario enrichment",
-            "private-memory tracking hang"
-          ],
-          "kind": "list"
-        }
+        { "label": "Branch", "value": "race/first-frame-parity", "kind": "text" },
+        { "label": "main vs HEAD", "value": "level (0 ahead / 0 behind)", "kind": "text" },
+        { "label": "Worktrees", "value": 0, "kind": "number" },
+        { "label": "Unmerged branches", "value": "area/frontend only (deliberate WIP hold)", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Next",
+      "fields": [
+        { "label": "Phase", "value": "R7 — full game systems (scaffold to verbatim)", "kind": "text" },
+        { "label": "Open owner decisions", "value": ["U-9134 library band audit", "D-11069 hooks.csv schema", "U-9087 four C4 demotions", "C4 evidence rubric L37"], "kind": "list" }
       ]
     }
   ]
