@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 248
-- total_green: 415
+- rounds_run: 249
+- total_green: 416
 - dry_counter: 0
 - RESUMED 2026-06-15 (round 239) via /loop /promote-round. Near-leaf lane active
   (scripts/near_leaf_frontier.py -> 112 candidates). HARNESS LIMIT: pure-jmp thunks (b0==0xE9)
@@ -105,6 +105,14 @@ LESSON: x87 float leaves whose original store-and-reloads intermediates are
 NOT reliably reproducible in /fp:precise C — budget inline-asm for them, or
 skip (the formula recovery is the C2 value; sub-ulp x87 parity is low-ROI).
 
+- ROUND 249 (2026-09-12) — LOOP RESUMED after a 3-month gap (last activity 2026-06-15).
+  THE LEDGER'S LANE QUEUES WERE STALE AND MUST BE RE-CHECKED AGAINST hooks.csv BEFORE USE:
+  of L1's 32 rows, 15 were already C3 and 1 C4; of L2's 33, 11 were already C3. Only the
+  still-C2 remainder is real work. Re-check with an Import-Csv join, do not trust the list.
+  Also note the whole gating-uncertainty bucket went 46 -> 0 on 2026-09-12, so "blocked by a
+  U-row" is no longer a reason to skip a candidate — but 29 of those were DE-GATED, not
+  resolved (see re/NEXT_SESSION.md).
+
 ## Lane queues
 
 ### L0 — c3_batch_race1 leftovers
@@ -168,6 +176,34 @@ CANDIDATES — VETTED r214 (most fail the bar; do NOT re-investigate via early_w
 NEW early_window handlers this session (SWEEP-CRITICAL): near_leaf_memset2,
 struct_list_float_set, seed_indirect_ctx_obs.
 
+### L2c — screened r249, SPEC READY, not yet run
+**0x004c9f60** (67 bytes, 0x004c9f60..0x004c9fa2) — conditional setter.
+Body, read from the anchored binary 2026-09-12:
+```
+  if (DAT_007d413c == v) return;              // 0x004c9f69 cmp eax,ecx / je 0x4c9fa2
+  disp = DAT_007d4120;                        // 0x004c9f6d
+  DAT_007d413c = v;                           // 0x004c9f72
+  if (disp != 0) {                            // 0x004c9f78 test eax,eax / je 0x4c9f89
+      obj = DAT_007d4110;                     // 0x004c9f7c
+      (*(void(**)(void*,int))(*(int*)obj + 0x50))(obj, v);   // 0x004c9f85
+      return;                                 // 0x004c9f88
+  }
+  DAT_006181b4 = DAT_006181b8 = DAT_006181bc = DAT_006181c0 = 1;  // 0x004c9f89..0x004c9f9d
+```
+**PORT HAZARD — the vtable slot at +0x50 is `__stdcall`, not `__cdecl`.** The `call dword
+ptr [edx+0x50]` at 0x004c9f85 is followed IMMEDIATELY by `ret` at 0x004c9f88 and the two
+pushed arguments are never cleaned, so the callee must clean them. A plain C `__cdecl`
+function-pointer transcription corrupts the stack. Declare the pointer `__stdcall` or write
+the arm as naked asm.
+**TEST SHAPE.** Do NOT just seed DAT_007d4120=0 and call it done — that exercises only the
+dirty-flag arm and leaves the dispatch, the thing `re/CONFIDENCE.md`'s indirect-dispatch
+clause specifically requires the A/B to exercise, untested. Use `stub_dispatch_observe` with
+a scratch buffer wired as the object, its +0x50 vtable slot pointed at the recorder, and
+seeds covering all three paths: (a) v == DAT_007d413c -> early return, no writes;
+(b) v != and disp == 0 -> the four dirty flags become 1; (c) v != and disp != 0 -> the
+recorder sees (obj, v). Observe the four flag globals AND the recorded call.
+U-0213 is open against it but does NOT gate (Blocks = none).
+
 ### L3 — broad confirmed-shape pool
 Generated per round via c3_filter_v4.py over all first-party subsystems;
 do not pre-list here. Done/deferred rows accumulate below.
@@ -177,6 +213,16 @@ do not pre-list here. Done/deferred rows accumulate below.
 DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 
 ## Done (promoted to C3, with round + evidence)
+
+- **0x004c2d90 RwEngineRegisterPlugin** — round 249, 2026-09-12. path1 GREEN 6/6
+  non-degenerate (`log/diff_rw_engine_register_plugin.csv`), path2 install PASS
+  (`log/verify_hook_install_rw_engine_register_plugin.txt`). arg_type
+  `stub_dispatch_observe` + `stub_at:[0x004d7de0]`, stub_nargs 6, stub_ret 0x5EED.
+  TWO REUSABLE LESSONS: (1) the callee MUST be stubbed — it mutates the registry and
+  returns a running offset, so a sequential A/B false-REDs by construction and also
+  dirties the live engine; (2) Ghidra typed this `void` and it is not — the callee's
+  EAX falls through and FUN_00472380 tests it. stub_ret proved the passthrough.
+
 
 - 00408af0 AiVehicleFieldPtrGet — round 1, log/diff_ai_vehicle_field_ptr_get.csv 10/10 GREEN
 - 00442cc0 AiVehicleFloat4Get — round 1, log/diff_ai_vehicle_float4_get.csv 10/10 GREEN
