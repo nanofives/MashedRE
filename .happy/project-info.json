@@ -5,17 +5,24 @@
     {
       "heading": "Confidence ladder",
       "fields": [
-        { "label": "C4 / C3 / C2 / C1", "value": "184 / 1014 / 3880 / 821", "kind": "text" },
-        { "label": "Promotion rounds run", "value": 251, "kind": "number" },
-        { "label": "Total GREEN promotions", "value": 418, "kind": "number" },
-        { "label": "This session", "value": ["r249 004c2d90 RwEngineRegisterPlugin", "r250 004c2c90 RwDeviceSystemRequest", "r251 004d8470 RwErrorModuleDtor"], "kind": "list" }
+        { "label": "C4 / C3 / C2 / C1", "value": "184 / 1018 / 3876 / 821", "kind": "text" },
+        { "label": "Promotion rounds run", "value": 252, "kind": "number" },
+        { "label": "Total GREEN promotions", "value": 422, "kind": "number" },
+        { "label": "Promoted this session", "value": 7, "kind": "number" }
+      ]
+    },
+    {
+      "heading": "This session (r249-r252)",
+      "fields": [
+        { "label": "Functions", "value": ["004c2d90 RwEngineRegisterPlugin", "004c2c90 RwDeviceSystemRequest", "004d8470 RwErrorModuleDtor", "004dfab0 RwRGBAToIntensityScaled", "004f3bd0 D3D9IndexedDwordFetch", "004ec720 RwFrameHeadSet", "004ec740 RwFrameField0cSet"], "kind": "list" },
+        { "label": "Harness work", "value": "observe_bufs (path1) + path2 buffer-arg support; 15 entries unblocked", "kind": "text" }
       ]
     },
     {
       "heading": "Promotable pool",
       "fields": [
-        { "label": "Status", "value": "NOT dry — 1,395 candidates passed c3_filter_v4", "kind": "text" },
-        { "label": "Pure leaves (non-CRT)", "value": 117, "kind": "number" },
+        { "label": "Status", "value": "NOT dry — ~1,395 candidates pass c3_filter_v4", "kind": "text" },
+        { "label": "Pure leaves (non-CRT)", "value": 109, "kind": "number" },
         { "label": "Dry-round counter", "value": 0, "kind": "number" }
       ]
     },
@@ -33,7 +40,7 @@
         { "label": "Branch", "value": "race/first-frame-parity", "kind": "text" },
         { "label": "Worktrees", "value": 0, "kind": "number" },
         { "label": "Build", "value": "clean — mashed_re.exe + mashed_re_dev.asi", "kind": "text" },
-        { "label": "Open owner decisions", "value": ["U-9134 library band audit", "D-11069 hooks.csv schema", "U-9087 four C4 demotions", "verifier arg_layout gap (L5 wishlist)"], "kind": "list" }
+        { "label": "Open owner decisions", "value": ["U-9134 library band audit", "D-11069 hooks.csv schema", "U-9087 four C4 demotions", "area/frontend still unmerged"], "kind": "list" }
       ]
     }
   ]
