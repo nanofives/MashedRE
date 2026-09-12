@@ -20080,6 +20080,123 @@ HOOKS = {
     #
     # Two-node, one-node and EMPTY-list vectors. The empty case must record calls[0]=,
     # which separates walked-zero-nodes from never-walked.
+    # ---- promote-round round 256: five forwarders ---------------------------
+    # 0x00487140 and 0x00413bb0 are a SIBLING PAIR: identical four-instruction bodies
+    # calling the SAME callee 0x004768c0 and differing ONLY in the pushed literal
+    # (0x703068 vs 0x63bd50). That literal is the entire content of each function, so
+    # each entry asserts its own address via observe_calls and would fail if the two
+    # were swapped. Both take no arguments, so the recorded call IS the whole test;
+    # observe_ret adds the pass-through (`pop ecx` cleans one arg and does not touch
+    # EAX, so the callee's return falls through - Ghidra types both void, the same
+    # mistyping corrected on 0x004c2d90 in r249).
+    # stub_nargs 1 matches the single push.
+    'pool_703068_reset': {
+        'rva': 0x00487140, 'export': 'Fwd4768c0_703068',
+        'signature': {'ret': 'int32', 'args': []},
+        'arg_type': 'stub_dispatch_observe', 'lut_root_delta': 0,
+        'num_bufs': 0, 'buf_size': 0x40, 'arg_layout': [],
+        'stub_at': [0x004768c0], 'stub_nargs': 1, 'stub_abi': 'mscdecl',
+        'stub_ret': 0x5151,
+        'observe': [], 'observe_ret': True, 'observe_calls': True,
+        'path1_tests': [{'scalars': []}, {'scalars': []}, {'scalars': []}],
+        'path2_tests': [{'scalars': []}, {'scalars': []}],
+    },
+    'sprite_63bd50_reset': {
+        'rva': 0x00413bb0, 'export': 'Fwd4768c0_63bd50',
+        'signature': {'ret': 'int32', 'args': []},
+        'arg_type': 'stub_dispatch_observe', 'lut_root_delta': 0,
+        'num_bufs': 0, 'buf_size': 0x40, 'arg_layout': [],
+        'stub_at': [0x004768c0], 'stub_nargs': 1, 'stub_abi': 'mscdecl',
+        'stub_ret': 0x5151,
+        'observe': [], 'observe_ret': True, 'observe_calls': True,
+        'path1_tests': [{'scalars': []}, {'scalars': []}, {'scalars': []}],
+        'path2_tests': [{'scalars': []}, {'scalars': []}],
+    },
+    # 0x00428760 ViewportScaledRectDraw_Arg7Zero - six forwarded args plus a HARD-CODED trailing 0.
+    # stub_nargs 7, fixed by `add esp,0x1c` (28 bytes) at 0x00428785, NOT guessed from
+    # the decompiled signature. The prologue reloads each argument at a different ESP
+    # depth as the pushes accumulate, so the order had to be worked rather than
+    # pattern-matched; the vectors use six pairwise-distinct values so any transposition
+    # shows up in the recorded call.
+    'menu_text_draw6': {
+        'rva': 0x00428760, 'export': 'ViewportScaledRectDraw_Arg7Zero',
+        'signature': {'ret': 'int32', 'args': ['uint32']*6},
+        'arg_type': 'stub_dispatch_observe', 'lut_root_delta': 0,
+        'num_bufs': 0, 'buf_size': 0x40,
+        'arg_layout': [{'i32': True}]*6,
+        'stub_at': [0x00428610], 'stub_nargs': 7, 'stub_abi': 'mscdecl',
+        'stub_ret': 0x2860,
+        'observe': [], 'observe_ret': True, 'observe_calls': True,
+        'path1_tests': [
+            {'scalars': [0x11, 0x22, 0x33, 0x44, 0x55, 0x66]},
+            {'scalars': [0x66, 0x55, 0x44, 0x33, 0x22, 0x11]},
+            {'scalars': [0, 0, 0, 0, 0, 0]},
+            {'scalars': [0xFFFFFFFF, 1, 2, 3, 4, 5]},
+            {'scalars': [0xAAAA0001, 0xAAAA0002, 0xAAAA0003, 0xAAAA0004, 0xAAAA0005, 0xAAAA0006]},
+        ],
+        'path2_tests': [
+            {'scalars': [0x11, 0x22, 0x33, 0x44, 0x55, 0x66]},
+            {'scalars': [0x66, 0x55, 0x44, 0x33, 0x22, 0x11]},
+        ],
+    },
+    # 0x004b5580 - RpClumpForAllAtomics(a1, FUN_004b5560, a2). The MIDDLE argument is a
+    # LITERAL CALLBACK ADDRESS and is the whole point of the function: a port that bound
+    # the wrong callback has an identical call shape and argument count, and is caught
+    # ONLY by recording that value. The callee (0x004e66d0, RpClumpForAllAtomics, whose
+    # mechanics U-4416 settled on 2026-09-11) is stubbed, so no list walk runs.
+    'clump_forall_atomics_5560': {
+        'rva': 0x004b5580, 'export': 'ClumpForAllAtomics_Cb4b5560',
+        'signature': {'ret': 'int32', 'args': ['uint32', 'uint32']},
+        'arg_type': 'stub_dispatch_observe', 'lut_root_delta': 0,
+        'num_bufs': 0, 'buf_size': 0x40,
+        'arg_layout': [{'i32': True}, {'i32': True}],
+        'stub_at': [0x004e66d0], 'stub_nargs': 3, 'stub_abi': 'mscdecl',
+        'stub_ret': 0xB558,
+        'observe': [], 'observe_ret': True, 'observe_calls': True,
+        'path1_tests': [
+            {'scalars': [0x1000, 0x2000]},
+            {'scalars': [0x2000, 0x1000]},
+            {'scalars': [0, 0]},
+            {'scalars': [0xDEADBEEF, 0xCAFEBABE]},
+        ],
+        'path2_tests': [{'scalars': [0x1000, 0x2000]}, {'scalars': [0xDEADBEEF, 0xCAFEBABE]}],
+    },
+    # 0x00495080 - FUN_00494fd0(a1 + a1 + 0.5f, a2), ported as NAKED x87 (the r254
+    # reason): the stream keeps an 80-bit intermediate across `fadd st,st` and
+    # `fadd [0x5cc32c]` and rounds to 32-bit ONCE at the fstp, whereas an SSE2-compiled
+    # C expression rounds after each step. The doubling is exact; the + 0.5f is not
+    # guaranteed to be, and this build already mixes SSE2 and /arch:IA32 TUs.
+    #
+    # The float reaches the callee ON THE STACK, so the recorder - which reads its args
+    # as uint32 - captures the RAW IEEE-754 BITS. That is exactly what a bit-identity
+    # test needs; a float-valued comparison would have hidden a 1-ulp divergence.
+    # stub_nargs 2 matches `add esp,8`. NOTE the original's `push ecx` is NOT a third
+    # argument: it reserves the 4 bytes that `fstp [esp]` then overwrites with the float.
+    #
+    # Vectors straddle the rounding: 0.1f and 0.3f have no exact binary form, so
+    # 2*x + 0.5 is where a differently-rounded implementation diverges; 0.25 and 1.0 are
+    # exact controls; the large value checks behaviour when 0.5 falls below the ulp.
+    'input_axis_scale_bias_apply': {
+        'rva': 0x00495080, 'export': 'Fwd494fd0_DoublePlusHalf',
+        'signature': {'ret': 'void', 'args': ['float', 'uint32']},
+        'arg_type': 'stub_dispatch_observe', 'lut_root_delta': 0,
+        'num_bufs': 0, 'buf_size': 0x40,
+        'arg_layout': [{'f32': True}, {'i32': True}],
+        'stub_at': [0x00494fd0], 'stub_nargs': 2, 'stub_abi': 'mscdecl',
+        'stub_ret': 0,
+        'observe': [], 'observe_ret': False, 'observe_calls': True,
+        'path1_tests': [
+            {'scalars': [0.0, 0x11]},
+            {'scalars': [1.0, 0x22]},
+            {'scalars': [0.25, 0x33]},
+            {'scalars': [0.1, 0x44]},
+            {'scalars': [0.3, 0x55]},
+            {'scalars': [-1.0, 0x66]},
+            {'scalars': [10000000.0, 0x77]},
+            {'scalars': [-0.25, 0x88]},
+        ],
+        'path2_tests': [{'scalars': [0.1, 0x44]}, {'scalars': [1.0, 0x22]}],
+    },
     'rw_plugin_list_dispatch3': {
         'rva': 0x004d8060, 'export': 'RwPluginListDispatch3',
         'signature': {'ret': 'int32', 'args': ['pointer', 'uint32']},
