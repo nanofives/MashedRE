@@ -3496,6 +3496,43 @@ function runDiff() {
                     : (typeof ret === 'object' ? ret.toInt32() : (ret | 0)) >>> 0));
             if (CONFIG.observe_calls)
                 parts.push('calls[' + calls.length + ']=' + calls.join(';'));
+            // observe_bufs (round 250, SWEEP-CRITICAL): fold raw bytes of the
+            // SCRATCH BUFFERS into the fingerprint. Additive and defaulted --
+            // absent, the fingerprint is byte-for-byte what it was before, so
+            // every existing entry is unaffected.
+            //
+            // WHY IT IS NEEDED. Until now this handler could only see the
+            // return value and the recorded dispatch arguments. That is blind
+            // to a function whose real output is written THROUGH an out-pointer
+            // argument. Concrete case that forced it (0x004c2c90): three
+            // separate switch arms all `return 1` and differ ONLY in what they
+            // write to *out -- cmd 0xd writes 1 (0x004c2cd0), cmd 0xf writes 0
+            // (0x004c2d04), and cmd 0x11/0x12 never touch it (0x004c2d0a).
+            // Without this field those three are the SAME fingerprint, so a
+            // port that swapped the two defaults would pass. That is a
+            // false-GREEN generator, not merely a weak test.
+            //
+            // Read per side from sideBufs, which buildArgs/applySeed have
+            // already pointed at the current side's buffers, so Orig and Reimpl
+            // are each observed through their own allocation.
+            //
+            // CONFIG.observe_bufs: [{buf, off, len}] -- len defaults to 4.
+            // Seed the observed slot with a sentinel in test.seed so
+            // "untouched" is distinguishable from a legitimately written 0.
+            if (CONFIG.observe_bufs && CONFIG.observe_bufs.length && sideBufs) {
+                const obs = CONFIG.observe_bufs.map(function (ob) {
+                    const b = sideBufs[ob.buf | 0];
+                    const off = ob.off | 0;
+                    const len = (ob.len | 0) || 4;
+                    let s = '';
+                    try {
+                        for (let z = 0; z < len; z++)
+                            s += ('0' + b.add(off + z).readU8().toString(16)).slice(-2);
+                    } catch (e) { s = 'ERR'; }
+                    return 'b' + (ob.buf | 0) + '+' + off + ':' + s;
+                });
+                parts.push('bufs=' + obs.join(','));
+            }
             return parts.join('|');
         };
         for (let i = 0; i < CONFIG.tests.length; i++) {

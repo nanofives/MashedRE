@@ -19949,6 +19949,97 @@ HOOKS = {
     # both callbacks = the identity stub FUN_004d7ff0). The rest vary each
     # argument independently so no two seeds share a fingerprint, and seeds 5/6
     # make the four arguments pairwise distinct so a transposition cannot hide.
+    # ---- promote-round round 250: RW driver-system dispatcher ---------------
+    # 0x004c2c90 RwDeviceSystemRequest(deviceObj, cmd, out*, in1, in2).
+    # Dispatches through a CALLER-SUPPLIED vtable at deviceObj+4, then supplies
+    # defaults for the commands the device declined.
+    #
+    # WHY observe_bufs HAD TO EXIST FOR THIS ROW (round-250 harness extension).
+    # THREE separate arms all `return 1` and differ ONLY in the out-pointer:
+    #   cmd 0x0d -> *out = 1        [0x004c2cd0]
+    #   cmd 0x0f -> *out = 0        [0x004c2d04]
+    #   cmd 0x11/0x12 -> *out NEVER written  [0x004c2d0a]
+    # With only observe_ret + observe_calls those three produce the SAME
+    # fingerprint on the return dimension, so a port that swapped the two
+    # defaults, or that wrote *out in the 0x11 arm, would pass. That is a
+    # false-GREEN generator. observe_bufs folds the out-slot bytes in.
+    # The slot is seeded with 0xDEADBEEF so "untouched" is distinguishable from
+    # a legitimately written 0 -- without the sentinel, cmd 0x0f and cmd 0x11
+    # would still collide on a zeroed buffer.
+    #
+    # THE DISPATCH IS EXERCISED, which is what CONFIDENCE.md's indirect-dispatch
+    # clause REQUIRES rather than merely permits. buf0 is the device object and
+    # its +4 slot is seeded with the recorder ({'buf':0,'off':4,'stub':True}),
+    # so the call at 0x004c2caf lands in the harness. observe_calls then records
+    # the four forwarded arguments (cmd, out, in1, in2) with the out-pointer
+    # normalised to "b1+0", so the two sides' different allocations compare
+    # equal. This is the argument-passed-as-data case the clause calls "a
+    # fortiori" -- the callee is literally caller-supplied.
+    #
+    # stub_nargs is 4, matching the four pushes at 0x004c2cab..0x004c2cae and
+    # the `add esp,0x10` at 0x004c2cb4.
+    #
+    # THE DEFAULT ARM IS DELIBERATELY NOT EXERCISED. Reaching 0x004c2d24 calls
+    # FUN_004d7ff0(0x18,cmd) and FUN_004d8480(&rec) -- two real callees with
+    # DIFFERENT arities (2 and 1). stub_at plants one recorder with a single
+    # stub_nargs, so covering them here would over-read the stack for at least
+    # one of them and could false-RED. Likewise cmd 0x0e dispatches through live
+    # RwGlobals (*0x007d3ff8 + 0xcc) and is out of scope for a synthetic A/B.
+    # The port implements both paths; this run does not claim to cover them.
+    #
+    # Vectors. 1-5 walk the table arms with in2=0; 6 makes the DEVICE handle the
+    # request (per-test stub_ret nonzero) so the early return at 0x004c2cb7 is
+    # covered and the switch is proven to be skipped -- *out must stay 0xDEADBEEF.
+    # 7 repeats cmd 0x0d with a distinct in1 so the RECORDED dispatch arguments
+    # are checked, not just the out-slot. cmd 0x10 with in2 != 0 is EXCLUDED:
+    # it falls through to the default arm, for the reason above. Expected distinct
+    # fingerprints: 0x0d -> bufs 01000000, 0x0f -> 00000000, 0x11/0x12 ->
+    # efbeadde (untouched), 0x10 -> efbeadde but a different recorded cmd.
+    'rw_device_system_request': {
+        'rva':        0x004c2c90,
+        'export':     'RwDeviceSystemRequest',
+        'signature':  {'ret': 'int32',
+                       'args': ['pointer', 'int32', 'pointer', 'int32', 'int32']},
+        'arg_type':   'stub_dispatch_observe',
+        'num_bufs':   2,              # buf0 = device object, buf1 = out
+        'buf_size':   0x80,
+        'arg_layout': [{'buf': 0}, {'i32': True}, {'buf': 1}, {'i32': True}, {'i32': True}],
+        'stub_nargs': 4,              # four pushes; `add esp,0x10` at 0x004c2cb4
+        'stub_abi':   'mscdecl',
+        'stub_ret':   0,              # device declines -> the switch runs
+        'observe':    [],
+        'observe_ret':   True,
+        'observe_calls': True,
+        'observe_bufs':  [{'buf': 1, 'off': 0, 'len': 4}],
+        'path1_tests': [
+            # device declines (stub_ret 0) -> table arms. in2 = 0 throughout.
+            {'scalars': [0x0d, 0, 0], 'seed': [{'buf': 0, 'off': 4, 'stub': True},
+                                               {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF}]},
+            {'scalars': [0x0f, 0, 0], 'seed': [{'buf': 0, 'off': 4, 'stub': True},
+                                               {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF}]},
+            {'scalars': [0x11, 0, 0], 'seed': [{'buf': 0, 'off': 4, 'stub': True},
+                                               {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF}]},
+            {'scalars': [0x12, 0, 0], 'seed': [{'buf': 0, 'off': 4, 'stub': True},
+                                               {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF}]},
+            {'scalars': [0x10, 0, 0], 'seed': [{'buf': 0, 'off': 4, 'stub': True},
+                                               {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF}]},
+            # device HANDLES it -> early return at 0x004c2cb7, switch skipped.
+            {'scalars': [0x0d, 0, 0], 'stub_ret': 0x77,
+             'seed': [{'buf': 0, 'off': 4, 'stub': True},
+                      {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF}]},
+            # distinct in1/in2 so the recorded dispatch args are checked too.
+            {'scalars': [0x0d, 0x1234, 0], 'seed': [{'buf': 0, 'off': 4, 'stub': True},
+                                                    {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF}]},
+        ],
+        'path2_tests': [
+            {'scalars': [0x0d, 0, 0], 'seed': [{'buf': 0, 'off': 4, 'stub': True},
+                                               {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF}]},
+            {'scalars': [0x0f, 0, 0], 'seed': [{'buf': 0, 'off': 4, 'stub': True},
+                                               {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF}]},
+            {'scalars': [0x11, 0, 0], 'seed': [{'buf': 0, 'off': 4, 'stub': True},
+                                               {'buf': 1, 'off': 0, 'type': 'u32', 'value': 0xDEADBEEF}]},
+        ],
+    },
     'rw_engine_register_plugin': {
         'rva':        0x004c2d90,
         'export':     'RwEngineRegisterPlugin',

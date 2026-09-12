@@ -436,7 +436,12 @@ def build_config(hook, asi_path=None):
         config['observe_callee_str'] = f"0x{hook['observe_callee']:08x}"
     # stub_dispatch_observe (orch-iter19): plant a recorder where the function
     # expects a callee — in a fake vtable, or passed straight as an argument.
-    for _k in ('stub_nargs', 'stub_abi', 'stub_ret', 'observe_calls'):
+    # observe_bufs (round 250): fold scratch-buffer bytes into the fingerprint,
+    # for functions whose real output goes through an out-POINTER argument that
+    # neither observe_ret nor observe_calls can see. MUST be forwarded here —
+    # this builder is a whitelist, and an unforwarded key is dropped SILENTLY,
+    # leaving a fingerprint that still goes GREEN while proving nothing.
+    for _k in ('stub_nargs', 'stub_abi', 'stub_ret', 'observe_calls', 'observe_bufs'):
         if _k in hook:
             config[_k] = hook[_k]
     # stub_at (orch-iter20): the same recorder, but planted at a callee reached
