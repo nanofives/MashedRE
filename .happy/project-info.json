@@ -3,27 +3,36 @@
   "updatedAt": "2026-09-12T00:00:00Z",
   "sections": [
     {
+      "heading": "Confidence ladder",
+      "fields": [
+        { "label": "C4 / C3 / C2 / C1", "value": "184 / 1012 / 3882 / 821", "kind": "text" },
+        { "label": "Last promotion", "value": "0x004c2d90 RwEngineRegisterPlugin C2->C3 (r249)", "kind": "text" },
+        { "label": "Promotion rounds run", "value": 249, "kind": "number" },
+        { "label": "Total GREEN promotions", "value": 416, "kind": "number" }
+      ]
+    },
+    {
       "heading": "Uncertainties",
       "fields": [
         { "label": "Gating (blocks a C2->C3)", "value": 0, "kind": "number" },
         { "label": "Gating trend", "value": ["2026-09-11 start: 235", "2026-09-11 end: 121", "2026-09-12 start: 46", "2026-09-12 end: 0"], "kind": "list" },
         { "label": "Open rows (Active section)", "value": 3030, "kind": "number" },
-        { "label": "Last drain", "value": "17 resolved on evidence, 29 de-gated (still open)", "kind": "text" }
+        { "label": "Caveat", "value": "29 of the 46 were de-gated, not resolved — still open", "kind": "text" }
       ]
     },
     {
       "heading": "Repo state",
       "fields": [
         { "label": "Branch", "value": "race/first-frame-parity", "kind": "text" },
-        { "label": "main vs HEAD", "value": "level (0 ahead / 0 behind)", "kind": "text" },
         { "label": "Worktrees", "value": 0, "kind": "number" },
-        { "label": "Unmerged branches", "value": "area/frontend only (deliberate WIP hold)", "kind": "text" }
+        { "label": "Unmerged branches", "value": "area/frontend only (deliberate WIP hold)", "kind": "text" },
+        { "label": "Build", "value": "clean — mashed_re.exe + mashed_re_dev.asi", "kind": "text" }
       ]
     },
     {
       "heading": "Next",
       "fields": [
-        { "label": "Phase", "value": "R7 — full game systems (scaffold to verbatim)", "kind": "text" },
+        { "label": "Ready to run", "value": "0x004c9f60 (spec in ledger; __stdcall vtable hazard)", "kind": "text" },
         { "label": "Open owner decisions", "value": ["U-9134 library band audit", "D-11069 hooks.csv schema", "U-9087 four C4 demotions", "C4 evidence rubric L37"], "kind": "list" }
       ]
     }
