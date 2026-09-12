@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 249
-- total_green: 416
+- rounds_run: 250
+- total_green: 417
 - dry_counter: 0
 - RESUMED 2026-06-15 (round 239) via /loop /promote-round. Near-leaf lane active
   (scripts/near_leaf_frontier.py -> 112 candidates). HARNESS LIMIT: pure-jmp thunks (b0==0xE9)
@@ -113,6 +113,18 @@ skip (the formula recovery is the C2 value; sub-ulp x87 parity is low-ROI).
   U-row" is no longer a reason to skip a candidate — but 29 of those were DE-GATED, not
   resolved (see re/NEXT_SESSION.md).
 
+- ROUND 250 (2026-09-12) — shipped 0x004c2c90 + the `observe_bufs` harness extension.
+  **The cheap-shape lane in L1/L2 is thinning.** Screened and rejected this round, with
+  reasons, so nobody re-screens them: 004b6540 and 00494f20 are pure-`E9` JMP thunks (the
+  documented NO_AUTO_HOOK harness limit); 004aa3e4 / 004a774d / 004aa3fe / 004ac04a /
+  004a8a04 are CRT-band (library-skip policy); 00493900 carries a stack cookie and a
+  callee. **0x004c9f60 remains spec'd in L2c and still needs a DIFFERENT extension** —
+  absolute-global seeding plus a stub. `render_state_seq_observe` is the closest existing
+  handler (it patches a vtable slot reached through a global and seeds globals) but it
+  calls `fn()` with no arguments and observes only the call sequence; 004c9f60 takes an
+  argument and needs its four dirty-flag globals observed. Two additive fields
+  (`call_args`, `obs_globals`) would cover it.
+
 ## Lane queues
 
 ### L0 — c3_batch_race1 leftovers
@@ -213,6 +225,15 @@ do not pre-list here. Done/deferred rows accumulate below.
 DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 
 ## Done (promoted to C3, with round + evidence)
+
+- **0x004c2c90 RwDeviceSystemRequest** — round 250, 2026-09-12. path1 GREEN 7/7,
+  SEVEN distinct fingerprints (`log/diff_rw_device_system_request.csv`). Needed the
+  round-250 `observe_bufs` extension: three arms all return 1 and differ only through
+  the out-pointer, so return-only observation could not separate a correct port from a
+  swapped one. path2 INSTALL PASS, CALL-THROUGH NOT EXERCISED (verifier does not build
+  arg_layout buffers — see wishlist). Indirect dispatch exercised via a recorder seeded
+  at buf0+4.
+
 
 - **0x004c2d90 RwEngineRegisterPlugin** — round 249, 2026-09-12. path1 GREEN 6/6
   non-degenerate (`log/diff_rw_engine_register_plugin.csv`), path2 install PASS
@@ -366,6 +387,16 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
   reference_to), resolve/downgrade U-5102, then classify-only (no re-diff)
 
 ## Harness-extension wishlist (lane L5: implement when one entry unlocks ≥10 rows)
+
+- **run_verify_hook.py: honour `arg_layout` / `seed` (path2 call-through for buffer-arg hooks).**
+  Round 250 hit this: the verifier passes `path2_tests[i]['scalars']` straight to the export,
+  so any hook whose signature includes pointer args built by `arg_layout` fails with
+  `bad argument count` BEFORE reaching the reimpl. The install half still verifies (opcode +
+  rel32), so it is not fatal, but every buffer-arg hook will log a partial path2 until this
+  lands. Same family as the known 0-arg call-through gap. Mirror the ~15 lines of
+  `applySeed`/`buildArgs` from `stub_dispatch_observe`. UNLOCK COUNT NOT YET MEASURED — count
+  registry entries having `arg_layout` with a `{'buf':…}` position before scheduling it as L5.
+
 
 - DONE (rounds 19-20): outbuf_only handler (SWEEP-CRITICAL, diff_template.js)
   with out_buf_size + round-20 fold_ret + seed_global. Promoted 0040b620,
