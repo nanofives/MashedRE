@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 251
-- total_green: 418
+- rounds_run: 252
+- total_green: 422
 - dry_counter: 0
 - RESUMED 2026-06-15 (round 239) via /loop /promote-round. Near-leaf lane active
   (scripts/near_leaf_frontier.py -> 112 candidates). HARNESS LIMIT: pure-jmp thunks (b0==0xE9)
@@ -133,6 +133,13 @@ skip (the formula recovery is the C2 value; sub-ulp x87 parity is low-ROI).
   Regenerate the tsv each round rather than reusing this one; it reflects the ladder at
   the moment it ran.
 
+- ROUND 252 (2026-09-12) — **read this before adding a new arg_type.** A handler must land in
+  BOTH `diff_template.js` AND `verify_hook_install_template.js`, AND its CONFIG keys must be
+  forwarded in BOTH `run_diff.py` and `run_verify_hook.py`. Those builders are whitelists and
+  drop unknown keys SILENTLY. This bit three separate ways in one round and has now cost eight
+  rows across the project's history. Also: a dispatch branch keyed off TEST SHAPE rather than
+  arg_type will shadow later handlers — check `callFn`'s ordering (U-9067 is the same lesson).
+
 ## Lane queues
 
 ### L0 — c3_batch_race1 leftovers
@@ -233,6 +240,14 @@ do not pre-list here. Done/deferred rows accumulate below.
 DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 
 ## Done (promoted to C3, with round + evidence)
+
+- **Round 252 (2026-09-12) — FOUR pure leaves, plus the path2 verifier repair.**
+  `0x004dfab0` RwRGBAToIntensityScaled (10/10, 5 distinct; vectors aimed at the two
+  truncating divisions), `0x004f3bd0` D3D9IndexedDwordFetch (5/5 distinct; double-deref,
+  no bounds check and none added), `0x004ec720` RwFrameHeadSet + `0x004ec740`
+  RwFrameField0cSet (4/4 each; sibling pair observing BOTH offsets so a copy-paste between
+  them fails). All four path2 FULL PASS after the repair below.
+
 
 - **0x004d8470 RwErrorModuleDtor** — round 251, 2026-09-12. TWO entries for one
   16-byte function (`rw_error_module_dtor_count` + `rw_error_module_dtor_ret`): no single
@@ -403,7 +418,12 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 
 ## Harness-extension wishlist (lane L5: implement when one entry unlocks ≥10 rows)
 
-- **run_verify_hook.py: honour `arg_layout` / `seed` (path2 call-through for buffer-arg hooks).**
+- ~~**run_verify_hook.py: honour `arg_layout` / `seed`.**~~ **DONE round 252, 2026-09-12.**
+  Measured first, as this list requires: 15 entries carry a `{buf:...}` position, clearing the
+  >=10 bar. Took THREE fixes in the same place — missing handlers in the verify template,
+  missing CONFIG forwarding in run_verify_hook.py, and an orch-iter21 test-shape branch that
+  SHADOWED the new handlers. All 17 arg_layout entries re-run; no regressions. Original note:
+
   Round 250 hit this: the verifier passes `path2_tests[i]['scalars']` straight to the export,
   so any hook whose signature includes pointer args built by `arg_layout` fails with
   `bad argument count` BEFORE reaching the reimpl. The install half still verifies (opcode +
