@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 254
-- total_green: 426
+- rounds_run: 255
+- total_green: 428
 - dry_counter: 0
 - RESUMED 2026-06-15 (round 239) via /loop /promote-round. Near-leaf lane active
   (scripts/near_leaf_frontier.py -> 112 candidates). HARNESS LIMIT: pure-jmp thunks (b0==0xE9)
@@ -258,6 +258,13 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 
 ## Done (promoted to C3, with round + evidence)
 
+- **Round 255 (2026-09-12) — two callback walkers.** `0x004d8060`
+  RwPluginListDispatch3 (5/5 distinct; SIBLING offsets seeded with sentinels and observed
+  untouched, because every offset differs from r253's `0x004d8090`) and `0x004f0d80`
+  D3D9DeclElementForAll (count width, cursor base +0x10, and early-exit all targeted).
+  Both path2 FULL PASS.
+
+
 - **0x004fb210 RwMatrixInvertOrthonormal** — round 254, 2026-09-12. Naked x87.
   GREEN 7/7, 7/7 distinct, f32 observed as RAW BITS. The decompiled operand order
   MISREPRESENTS the x87 association, and block 1 differs from blocks 2-3, so a C
@@ -450,6 +457,16 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
   reference_to), resolve/downgrade U-5102, then classify-only (no re-diff)
 
 ## Harness-extension wishlist (lane L5: implement when one entry unlocks ≥10 rows)
+
+- **`ptr_to` cannot express a pointer to buf+OFFSET, which blocks intrusive CIRCULAR lists.**
+  Found r255 screening `0x004c59c0`: its list sentinel is the INTERIOR address `param_1+8`,
+  so terminating the walk needs `node_last[0] = bufs[0] + 8`. `ptr_to` writes a buffer BASE
+  only, so the list cannot be closed and the walk runs off into garbage. Same shape blocks
+  `0x004d8280` / `0x004d8300` (RwFrame child lists, sentinel `param_1+0x90`). An additive
+  `{'buf':i,'off':o,'ptr_to':j,'ptr_off':k}` field would unlock the whole family — COUNT THE
+  ROWS FIRST, as this list requires. NULL-terminated lists (`0x004d8060`, `0x004d8090`) are
+  unaffected and already promotable.
+
 
 - ~~**run_verify_hook.py: honour `arg_layout` / `seed`.**~~ **DONE round 252, 2026-09-12.**
   Measured first, as this list requires: 15 entries carry a `{buf:...}` position, clearing the
