@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 252
-- total_green: 422
+- rounds_run: 253
+- total_green: 425
 - dry_counter: 0
 - RESUMED 2026-06-15 (round 239) via /loop /promote-round. Near-leaf lane active
   (scripts/near_leaf_frontier.py -> 112 candidates). HARNESS LIMIT: pure-jmp thunks (b0==0xE9)
@@ -140,6 +140,15 @@ skip (the formula recovery is the C2 value; sub-ulp x87 parity is low-ROI).
   rows across the project's history. Also: a dispatch branch keyed off TEST SHAPE rather than
   arg_type will shadow later handlers — check `callFn`'s ordering (U-9067 is the same lesson).
 
+- ROUND 253 (2026-09-12) — **screen the CALLERS before authoring, not after.** A clean
+  GREEN does not make a C3: `0x004f10e0` cost a full author+diff+path2 cycle and still
+  could not be promoted, because both its callers are anonymous `FUN_` names. Add a
+  caller-C-level check to the candidate screen: for each candidate, require at least one
+  caller at C2+ OR with a recovered real name, BEFORE writing any code. `c3_filter_v4`
+  does not appear to apply this, so it passes rows that cannot be promoted.
+  Also reusable: when a function RETURNS one of its pointer arguments, turn `observe_ret`
+  OFF — the two sides allocate at different addresses and it REDs every seed spuriously.
+
 ## Lane queues
 
 ### L0 — c3_batch_race1 leftovers
@@ -240,6 +249,16 @@ do not pre-list here. Done/deferred rows accumulate below.
 DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 
 ## Done (promoted to C3, with round + evidence)
+
+- **Round 253 (2026-09-12) — three promoted, one REFUSED on the caller rule.**
+  `0x004b4000` PizOpenDefaultMode, `0x004d8550` RwPipeModuleDtor, `0x004d8090`
+  RwPluginListDispatch (two-node list; order + field order pinned; `observe_ret` OFF
+  because it returns a buffer pointer that differs per side). All path2 FULL PASS.
+  **`0x004f10e0` D3D9StreamStrideForDecl is GREEN 8/8 and path2 PASS but stays C2**:
+  both callers are anonymous (`FUN_004e4300` C1, `FUN_004e41e0` has no hooks.csv row),
+  so the caller half fails and promoting would be an island promotion. Evidence banked;
+  unblock by raising either caller to C2 or recovering a name for one.
+
 
 - **Round 252 (2026-09-12) — FOUR pure leaves, plus the path2 verifier repair.**
   `0x004dfab0` RwRGBAToIntensityScaled (10/10, 5 distinct; vectors aimed at the two
