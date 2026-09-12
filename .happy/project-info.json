@@ -7,38 +7,37 @@
       "fields": [
         {
           "label": "C4 / C3 / C2 / C1",
-          "value": "184 / 1022 / 3872 / 821",
+          "value": "184 / 1024 / 3870 / 821",
           "kind": "text"
         },
         {
           "label": "Promotion rounds run",
-          "value": 254,
+          "value": 255,
           "kind": "number"
         },
         {
           "label": "Total GREEN promotions",
-          "value": 426,
+          "value": 428,
           "kind": "number"
         },
         {
           "label": "Promoted this session",
-          "value": 11,
+          "value": 13,
           "kind": "number"
         }
       ]
     },
     {
-      "heading": "This session (r249-r254)",
+      "heading": "This session (r249-r255)",
       "fields": [
         {
           "label": "Functions",
           "value": [
-            "r249 RwEngineRegisterPlugin",
-            "r250 RwDeviceSystemRequest",
-            "r251 RwErrorModuleDtor",
+            "r249-251: 3 RW plugin/registry fns",
             "r252 x4 leaves",
             "r253 x3 (1 refused on caller rule)",
-            "r254 RwMatrixInvertOrthonormal (naked x87)"
+            "r254 RwMatrixInvertOrthonormal (naked x87)",
+            "r255 x2 callback walkers"
           ],
           "kind": "list"
         },
