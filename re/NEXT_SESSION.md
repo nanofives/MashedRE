@@ -1,6 +1,17 @@
 # Next session — kickoff prompt
 
-## => KICKOFF PROMPT - D2 slip-angle session (written 2026-09-13, paste verbatim)
+## => D2 slip-angle session 1 DONE 2026-09-13 (twenty-fifth follow-up in the A8 data note)
+
+> **Read section 6 of the twenty-fifth follow-up for the next measurement.** Settled: the orientation half
+> MATCHES (both sides rotate the body from steer x grip, not from +0x9c0; the prompt below is STALE on that
+> point - the "alignment block" no longer exists). The per-wheel force law matches on all four wheels. What
+> differs: the A6a angular-velocity state +0x9c0 is 22-42% low in the port at equal body rotation, and the
+> rotation-path wheel-point velocity term weighs half as much per unit av on the port. The 500-1000 "5x" is a
+> regime mismatch and is withdrawn. Tools: a8_orient.py, a8_wheelfit.py, a8_run_port.py; capture
+> verify/a8_orient_20260913/. Next: port Rw_MatrixFromAxisAngle + the wheel-point velocity to Python and
+> evaluate it on the original record; then log block-#5 torque and #6 damping per frame on the port.
+
+## (stale on the orientation point) KICKOFF PROMPT - D2 slip-angle session (written 2026-09-13)
 
 ```
 Session goal: explain the A8 slip-angle deficit on ported physics (ROADMAP section D2,

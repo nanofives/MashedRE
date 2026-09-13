@@ -1928,3 +1928,151 @@ itself into being done.
 
 Not established, and deliberately not chased: what actually makes the two ground
 queries disagree. That is collision-scaffold work (D1/D3), not A8.
+
+---
+
+# Twenty-fifth follow-up — the ORIENTATION half matches; the per-wheel force law matches on all four wheels; what differs is the A6a angular-velocity STATE and the wheel-point velocity term it feeds
+
+Session 2026-09-13. Everything below is measured from files on disk plus ONE new port
+capture; no Frida, no Ghidra. New tools: `re/tools/statediff/a8_orient.py` (orientation
+half), `a8_wheelfit.py` (per-wheel coefficient fit, both sides), `a8_run_port.py` (spawn /
+kill-by-PID / collect). New port fields on the `MASHED_MOTION_DIAG` line
+(`VehiclePhysicsRun.cpp`, tag `[A8-ORIENT]`): `wf=` per-wheel force X/Z, `wax=` per-wheel
+axis X/Z, `wle4=`/`wld4=` Integrate2 block-#4 `le4`/`ld4` per wheel (globals
+`g_a8WheelLe4/Ld4` in `ForceIntegrator.h`). Capture: `verify/a8_orient_20260913/motion_diag.log`
+(1088 lines, held-lock recipe, HEAD e13de1f5 + the diag edit; PROVENANCE.txt).
+
+## 1. The orientation half MATCHES (the kickoff's hypothesis is refuted before it was tested)
+
+The kickoff prompt suspected the port's body heading was pulled toward the velocity
+heading by an "alignment block" at `VehiclePhysicsRun.cpp:582-589`. That block no longer
+exists: the port integrates a body basis from `BodyOrient_OmegaFromSteer` (steer
+differential x speed-grip, `BodyOrientationIntegrate.cpp:208`) and deliberately ignores
+`+0x9c0`. `a8_orient.py` on `orig_steerR.msd` vs `cleanhold_motion.log`, full-lock,
+grounded, consecutive pairs, reseeds dropped:
+
+| band | dBodyH/frame orig | port | r(dBodyH, +0x9c0) orig | port | r(dBodyH, steer*grip) orig | port | dB/dV orig | port |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 500-1000 | -0.0245 | -0.0206 | -0.19 | -0.69 | **-0.985** | **-1.000** | 6.53 | 1.03 |
+| 1000-1500 | -0.0387 | -0.0325 | -0.66 | -0.44 | **-0.998** | **-1.000** | 1.28 | 1.17 |
+| 1500-2000 | -0.0446 | -0.0425 | -0.03 | 0.08 | nan (const) | nan | 1.05 | 1.11 |
+| 2000-2600 | -0.0446 | -0.0425 | -0.01 | 0.11 | nan | nan | 1.04 | 1.05 |
+
+On BOTH sides the body rotation per frame correlates ~1.0 with steer x grip(speed) and
+essentially not with `+0x9c0`. The original rotates its body from the steer torque exactly
+as the port's `+0x10 == 0` arm does; the port's arm choice is right, and the per-frame
+rotation rates match within 5-16%. **Orientation is not the mechanism.** Also: dB/dV ~ 1.0
+in the steady bands on both sides — body and velocity turn together, so steady-state slip is
+an EQUILIBRIUM value, not a growth rate.
+
+## 2. The 500-1000 band is a REGIME MISMATCH, not a physics gap (trap 6, again)
+
+The original's 139 low-band pairs are not a launch: they are scattered through
+idx 1107..2203, i.e. brief speed dips inside a sustained ~1900-2100 full-lock turn, with
+slip 0.28-0.32 and dVelH turning the WRONG way in several 20-pair chunks — mid-slide
+moments. The port's 449 low-band pairs are post-reseed recoveries (age median 8, median
+speed 897). Comparing those two populations produced the "5x at low speed". It is
+withdrawn as a like-for-like number; the low band needs its own regime control before it
+can be quoted.
+
+## 3. The per-wheel lateral force law MATCHES on all four wheels
+
+Decomposition per wheel (force projected on the wheel axis and on the wheel-lateral
+direction), spikes excluded, steady bands. Wheels 0/1 are the steered fronts (axis 31.3
+deg / 33.9 deg off body forward), 2/3 the rears.
+
+| wheel | band | orig |F| | port |F| | orig axial | port axial | orig lateral/ld4_body | port lateral/ld4_body | port lateral/wld4 |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| w0 | 1800-2100 | 78604 | 73706 | +20372 | +15874 | -103154 | -106854 (ld4 0.673) | -106854 |
+| w1 | 1800-2100 | 76781 | 72175 | +19601 | +15128 | -100819 | -106000 | -106000 |
+| w2 | 1800-2100 | 36288 | 30541 | -9526 | -9078 | **-205322** | -112779 | -112779 (wld4 0.259 vs body 0.143) |
+| w3 | 1800-2100 | 15958 | 13809 | -4747 | -4515 | **-89275** | -55684 | -55684 |
+
+The rears' "2x" against ld4 computed from BODY velocity is an artifact of that
+computation: the port's OWN `ld4` (`wld4`, which includes the wheel-point velocity term of
+the rotation path at `Integrate2.cpp:286-295`) is 1.83x the body-velocity value on the rears
+(0.262 vs 0.143), and the original's implied ratio is the same 1.8x, so relative to the true
+`ld4` both sides' rear coefficients equal `lbc = p[0x15]*p[0x1b]*_DAT_0088e5f0*min(le4,1024)*0.0009766`
+(113k / 56k). Fronts: 102k vs 107k. The rears' axial -9.1k/-4.5k on both sides is the
+`p[0x16]*p[0x1b]*susp` term (0.0125*1085*692 = 9.4k). Block #4 was re-read against the
+decomp (`A6a_FUN_00467650_decomp_20260824.txt:382-431`): verbatim, no wheel-type branch.
+`fl=` (p[-1]) is 0 on all four wheels on both sides; inputs (255,0,255,0) throughout.
+
+## 4. WHAT DIFFERS: the A6a angular-velocity state `+0x9c0`, and the weight of the wheel-point velocity term
+
+`+0x9c0` is not used for orientation on this arm, but it IS the input to the rotation
+path's wheel-point velocity (via `+0x9e8 = |av|`, confirmed equal to |(+0x9bc..)| on the
+original to 5 decimals) and hence to every wheel's `ld4`. Regime-controlled (full lock,
+grounded, no reseed, port additionally spike-free +-30 frames and age >= 20):
+
+| band | slip orig | slip port | av.y orig (min) | av.y port (min) |
+|---|---:|---:|---:|---:|
+| 1500-2000 | 0.1913 | 0.1239 (1.54x) | +1.143 (0.891) | +1.047 (0.103) |
+| 2000-2600 | 0.2498 | 0.1827 (1.37x) | +1.464 (1.054) | +0.811 (0.713), n=21 |
+
+`av.y / dBodyH` per frame: original -30.4, port -23.8 (22% low). The port's av.y is low
+relative to the same body rotation, and it goes NEGATIVE in a spin-out event at log rows
+382-401 (sp ~2450, all grounded, no reseed: wheel-1 |F| 217k-234k, slip 0.35-0.44,
+av.y -0.24 -> -0.70) that the original run never shows; those 20 frames plus +-30 were
+excluded above. Reseeds do NOT zero av (drops of ~5-10% at a reseed, e.g. 0.89 -> 0.84 -> 0.79).
+
+How av enters the rears' lateral magnitude, regressed per side
+(`ld4_true = a*ld4_body + b*(av.y*sp/1e3) + c`; original `ld4_true := |F_wlat|/lbc`,
+port `ld4_true := wld4`):
+
+| side | wheel | a (ld4_body) | b (av.y*sp/1e3) | c | med ld4_true | med av.y*sp/1e3 |
+|---|---|---:|---:|---:|---:|---:|
+| ORIGINAL | w2 | 0.212 | **0.0669** | 0.123 | 0.365 | 2.90 |
+| ORIGINAL | w3 | 0.187 | 0.0523 | 0.125 | 0.320 | 2.90 |
+| PORT | w2 | 0.874 | **0.0324** | 0.069 | 0.262 | 1.69 |
+| PORT | w3 | 0.867 | 0.0172 | 0.074 | 0.236 | 1.69 |
+
+On the ORIGINAL the rear wheel's lateral magnitude is carried mostly by the av*speed term
+(0.19 of 0.365) and only weakly by body slip; on the PORT body slip carries it (0.125 of
+0.262) and the av term has HALF the weight per unit av*speed. Two things compound: the
+port's av.y is lower (1.69 vs 2.90 in av*sp units, i.e. 42% low in these frames), and its
+rotation term contributes less per unit av. Since the equilibrium slip is where the summed
+lateral force balances the (matching) body turn rate, a rear lateral term that is fed
+less by rotation must be fed more by body slip — in the port that is what the numbers say,
+except the port ends up at LESS slip, so the sign of that reasoning is not yet settled.
+STATED AS MEASUREMENT, NOT MECHANISM: the rotation-path term (`Integrate2.cpp:286-295`,
+`f = max(sp*0.008, 8) * (+0x9e8) * 0.019877 * 360`, `dst = R(av, 270deg) * wheelpos`,
+`wheelvel = dst*f - vel`) is where the two sides diverge measurably, and `+0x9c0` itself is
+low in the port.
+
+Two smaller input gaps, recorded not explained:
+- The original's wheel axes all sit **2.56 deg** off its `+0x9d4/+0x9dc` forward vector
+  (fronts 31.31 deg = 33.87 - 2.56; rears 2.56 deg), constant over 853 frames; the port's sit
+  at 0.00 deg. Either the original's `+0x9d4` is not the same basis row the wheel axes come
+  from, or A5 rotates the axes. [UNCERTAIN] which; it changes `lc0 = u.bodyfwd` and hence
+  `ld4` by a small amount.
+- `_DAT_0088e5f0` implied from the original's FRONT coefficients is 623 (643 if the
+  fronts' ld4_true/ld4_body is the port's 0.97) vs the port's 692.3 = 3000/(1560*1/360)
+  per `A8_suspdt_formula_20260826.md` Q5. 7-11%. [UNCERTAIN] whether this is the fronts'
+  wheel-point term or a real constant difference.
+
+## 5. Eliminated / re-confirmed this session
+
+- Orientation arm and rate (new, section 1). - Body-forward integration from +0x9c0 (refuted
+  on both sides). - Per-wheel law block #4 (verbatim; coefficients equal given the same ld4).
+- p[-1] flag arms (all zero both sides). - Reseeds zeroing av (no). - Rear-only extra term
+  (was an artifact of body-velocity ld4).
+
+## 6. Next measurement (a specific formula, not a hunt)
+
+1. Port `Rw_MatrixFromAxisAngle(av, 270, mode 0)` and the wheel-point velocity
+   (`Integrate2.cpp:286-295`) to Python and evaluate it on the ORIGINAL's record fields
+   (av +0x9bc.., +0x9e8, wheelpos p[-9..-7], speed) to get the original's `ld4_true` per
+   wheel WITHOUT the lbc assumption; compare with `|F_wlat|/lbc`. If they agree, the
+   rotation-path formula is right and only av differs; if not, the formula/constants
+   (`_DAT_005cea14/005cc9f4/005cea18/005ccac4`, k270) are the defect.
+2. Why is the port's `+0x9c0` 22-42% low at equal body rotation? It is integrated from
+   block #5 torques (per-wheel force x lever arm p[-9..-7], p[-0xb]) and damped in
+   grip-clamp #6. Log the per-frame torque accumulator and the #6 damping factor on the
+   port; reconstruct the same from the original's record fields (forces and lever arms
+   are record fields: original p[-9..-7] = (0,0,1.2) (-1.1,0,0.6) (1.4,0,-0.5)
+   (-0.2,0,-1.5), p[-0xb] 1.301/1.558, p[-0xa] 0.397/0.530 — compare with VehicleInit.cpp).
+3. Run the low band with its own regime control (matched manoeuvre AND matched age),
+   or stop quoting it.
+4. The spin-out event at rows 382-401 is a port-only behaviour on this recipe; its cause
+   is a separate finding (contact spike on wheel 1), not part of the slip equilibrium.

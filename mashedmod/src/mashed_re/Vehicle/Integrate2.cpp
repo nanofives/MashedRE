@@ -313,6 +313,11 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 // forward axis, so it lies in [0,1]. It is the sole non-speed
                 // input to l_60 (:250) and therefore to grip. Track it per frame.
                 g2_ld4sum += ld4; g2_le4sum += le4; ++g2_ld4n;
+                // [A8-ORIENT 2026-09-13] per-wheel le4 (wheel-point speed, post-cap) and
+                // ld4 (lateral unit magnitude) for the MASHED_MOTION_DIAG line, so the
+                // per-wheel lateral coefficient F/ld4 can be fitted on the port side the
+                // same way it is fitted on the original's record fields.
+                if (wheel >= 0 && wheel < 4) { g_a8WheelLe4[wheel] = le4; g_a8WheelLd4[wheel] = ld4; }
                 unsigned l94 = (unsigned)p[-1];
                 l_60 = (double)ld4 * (double)le4 + l_60;             // [U-A6A-FLOAT10]
                 if ((l94 & 0x100) == 0) {

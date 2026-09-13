@@ -91,6 +91,8 @@ extern float g_gravScale;       // _DAT_00803340
 extern float g_gravX, g_gravY, g_gravZ;  // _DAT_00803334/38/3c
 extern float g_suspDtTerm;      // _DAT_0088e610 (gravity*dt per frame)
 extern float g_suspScale;       // _DAT_0088e5f0
+extern float g_a8WheelLe4[4];   // [A8-ORIENT] per-wheel le4 from Integrate2 block #4 (diag only)
+extern float g_a8WheelLd4[4];   // [A8-ORIENT] per-wheel ld4 from Integrate2 block #4 (diag only)
 extern float g_rubberBand[16];  // DAT_008989b0 (per-player catch-up float)
 extern int   g_rubberRefCar;    // DAT_008989c8
 extern int*  g_vehicleArrayBase;// DAT_008815a0 (16-car array; other cars' contact summary + drafting)

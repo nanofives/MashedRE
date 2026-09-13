@@ -23,6 +23,8 @@ float g_gravScale      = 0.0f;       // _DAT_00803340
 float g_gravX = 0.0f, g_gravY = 0.0f, g_gravZ = 0.0f;  // _DAT_00803334/38/3c
 float g_suspDtTerm     = 0.0f;       // _DAT_0088e610
 float g_suspScale      = 0.0f;       // _DAT_0088e5f0
+float g_a8WheelLe4[4]  = {0,0,0,0};  // [A8-ORIENT] diag only
+float g_a8WheelLd4[4]  = {0,0,0,0};  // [A8-ORIENT] diag only
 float g_rubberBand[16] = {0};        // DAT_008989b0
 int   g_rubberRefCar   = 0;          // DAT_008989c8
 int*  g_vehicleArrayBase = nullptr;  // DAT_008815a0

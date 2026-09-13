@@ -779,7 +779,11 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                     "reseed=%d gear=%d gtmr=%d ftot=[%g,%g,%g] susp=%g p15=%g p16=%g w1b=[%g,%g,%g,%g] fl=[%d,%d,%d,%d] "
                     "b14=[%g,%g,%g] gt=[%.2f,%.2f,%.2f,%.2f,%.2f,%.2f] in=(%u,%u,%u,%u) steer=%+.3f gnd=%.1f sp=%.2f horiz=%.2f "
                     "velH=%.4f bodyH=%.4f slip=%+.4f "
-                    "d=(%.5f,%.5f) av=(%g,%g,%g)\n",
+                    "d=(%.5f,%.5f) av=(%g,%g,%g) "
+                    // [A8-ORIENT 2026-09-13] per-wheel force X/Z (p[0x1c]/p[0x1e]), wheel
+                    // axis X/Z (p[0x1f]/p[0x21]), and Integrate2's le4/ld4, wheels 0..3.
+                    "wf=[%g,%g,%g,%g,%g,%g,%g,%g] wax=[%g,%g,%g,%g,%g,%g,%g,%g] "
+                    "wle4=[%g,%g,%g,%g] wld4=[%g,%g,%g,%g]\n",
                     g_bodyBasisReseed[slot] ? 1 : 0,
                     I(r, 0x490), I(r, 0x494),   // gearbox state (Integrate2.cpp:137-143)
                     // [A8-FTOTDIR] the SUMMED per-wheel force VECTOR, p[0x1c..0x1e]
@@ -817,7 +821,12 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                     io.steer, F(r, 0x9e0), F(r, off::kSpeed), hs,
                     velH, io.yaw, slip,
                     posDelta[0], posDelta[2],
-                    F(r, 0x9bc), F(r, 0x9c0), F(r, 0x9c4));
+                    F(r, 0x9bc), F(r, 0x9c0), F(r, 0x9c4),
+                    F(r,0x214), F(r,0x21c), F(r,0x2d8), F(r,0x2e0), F(r,0x39c), F(r,0x3a4), F(r,0x460), F(r,0x468),
+                    F(r,0x1a4+0x7c), F(r,0x1a4+0x84), F(r,0x268+0x7c), F(r,0x268+0x84),
+                    F(r,0x32c+0x7c), F(r,0x32c+0x84), F(r,0x3f0+0x7c), F(r,0x3f0+0x84),
+                    g_a8WheelLe4[0], g_a8WheelLe4[1], g_a8WheelLe4[2], g_a8WheelLe4[3],
+                    g_a8WheelLd4[0], g_a8WheelLd4[1], g_a8WheelLd4[2], g_a8WheelLd4[3]);
                 std::fclose(lf);
                 g_bodyBasisReseed[slot] = false;
             }

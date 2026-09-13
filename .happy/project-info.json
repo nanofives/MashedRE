@@ -1,18 +1,18 @@
 {
   "title": "Mashed RE \u2014 greenfield source port",
-  "updatedAt": "2026-09-13T05:19:10Z",
+  "updatedAt": "2026-09-13T05:44:42Z",
   "sections": [
     {
       "heading": "Next session",
       "fields": [
         {
-          "label": "Kickoff",
-          "value": "D2 slip-angle: measure the orientation half (bodyH) per side; prompt in re/NEXT_SESSION.md",
+          "label": "D2 status",
+          "value": "session 1 done 2026-09-13: orientation half MATCHES; per-wheel law matches; +0x9c0 is 22-42% low in port; rotation-path term weighs half",
           "kind": "text"
         },
         {
-          "label": "D2 gate",
-          "value": "SLIP (ruling 2026-08-26); 8 causes eliminated; 1 partial lead (reseed zeroes slip)",
+          "label": "Next",
+          "value": "evaluate the wheel-point velocity formula on the original record (A8 follow-up 25, section 6)",
           "kind": "text"
         }
       ]
