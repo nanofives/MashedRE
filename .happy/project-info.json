@@ -1,18 +1,18 @@
 {
   "title": "Mashed RE \u2014 greenfield source port",
-  "updatedAt": "2026-09-13T18:27:54Z",
+  "updatedAt": "2026-09-13T20:47:13Z",
   "sections": [
     {
       "heading": "Next session",
       "fields": [
         {
           "label": "D2 status",
-          "value": "MECHANISM FOUND 2026-09-13: A4/A5/A6a ran after the substep loop; original runs them before. MASHED_A8_A4_FIRST=1 reproduces slip 1.00x/1.05x, av, axis phase, no spin-out, 12 reseeds vs 40",
+          "value": "A4-first order is the DEFAULT (2026-09-13). Clean-env held-lock: slip 0.192/0.263 vs orig 0.191/0.250, speed 1874 vs 1901. Ramp: ~10% above at full lock, old-order control not capturable",
           "kind": "text"
         },
         {
-          "label": "Owner call",
-          "value": "make the original order the default (v3 rule) and re-gate D2 on slip, which now passes",
+          "label": "Next",
+          "value": "original-side ramp capture (.msd) for a like-for-like ramp comparison; owner decides D2 close",
           "kind": "text"
         }
       ]

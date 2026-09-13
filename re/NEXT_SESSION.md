@@ -8,7 +8,12 @@
 > 1.14/1.46, the one-frame axis phase (+0.0425 vs +0.0446), and 12 reseeds and no spin-out vs 40 reseeds and 87 spike-window
 > rows in the same-build control. Every A6a law was verified on both sides first (a8_wheelvel_orig.py,
 > a8_angvel_orig.py, a8_angvel_port.py: 0.99 / 0.998 one-frame predictions).
-> **OWNER CALL NEEDED:** make the original order the default (v3 default-build rule) and re-gate D2 on
+> **DONE 2026-09-13:** A4-first is the DEFAULT (`MASHED_A8_A4_FIRST=0` reverts). Clean-env held-lock run
+> matches: slip 0.192/0.263 vs 0.191/0.250, speed 1874 vs 1901 (twenty-seventh follow-up). Ramp regime:
+> port ~10% ABOVE at full lock; old-order ramp control not obtainable (exits ~14 s in, no frames).
+> NEXT: an ORIGINAL-side ramp capture (re/frida scenario capture, .msd) for a like-for-like ramp comparison;
+> then the owner decides D2's close. Old text follows:
+> ~~**OWNER CALL NEEDED:** make the original order the default (v3 default-build rule) and re-gate D2 on~~
 > the standing SLIP metric, which now passes; then the D2 gate reduces to the ramp regime re-run.
 
 ## => D2 slip-angle session 1 done (superseded by the twenty-sixth) 2026-09-13 (twenty-fifth follow-up in the A8 data note)

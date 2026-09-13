@@ -588,8 +588,15 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // rotates -0.0446 rad/frame (A8 twenty-sixth follow-up), i.e. the axes A5 wrote are
     // one frame older than the forward vector FUN_0046e9e0 wrote after them. Here the
     // axes and +0x9d4 are written from the same post-rotation basis (0.00 rad apart).
-    // A/B knob, default OFF = the pre-2026-09-13 order.
-    static const bool s_a4First = (std::getenv("MASHED_A8_A4_FIRST") != nullptr);
+    // DEFAULT ON since 2026-09-13 (A8 twenty-sixth follow-up: same-build A/B on the
+    // held-lock recipe gives slip 0.192/0.263 vs the original's 0.191/0.250, av.y and
+    // the axis phase matching, no spin-out). `MASHED_A8_A4_FIRST=0` reverts to the
+    // pre-2026-09-13 order for A/B only (ROADMAP v3 default-build rule: the flag may
+    // only turn the ported behaviour OFF).
+    static const bool s_a4First = [] {
+        const char* e = std::getenv("MASHED_A8_A4_FIRST");
+        return !(e && e[0] == '0');
+    }();
     if (s_a4First) {
         g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
         VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis);

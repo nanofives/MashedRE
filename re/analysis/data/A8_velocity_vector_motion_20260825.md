@@ -2201,3 +2201,55 @@ reseed lines: a4first 12 control 40 a8_orient 40
 - Not re-run on the RAMP regime or the low band; the held-lock regime is the one the ruling cites.
 - [UNCERTAIN] the 6-11 deg / 6-10% residual in section 1; the earlier note's "reseed zeroes slip" observation is not re-analysed on the knob-on run (12 reseeds, dropped per frame as before).
 - `Collision/ContactStubs.cpp` still stubs `Rw_TransformPoints` (identity) and `Rw_MatrixFromAxisAngle` (no-op) for the CarWorld/CarCar contact solvers; unrelated to A6a but found while checking the binding.
+
+---
+
+# Twenty-seventh follow-up — A4-first is the DEFAULT order; clean-env held-lock run matches the original; ramp regime measured, its old-order control not obtainable
+
+Session 2026-09-13, continued. `VehiclePhysicsRun.cpp`: the order knob is inverted —
+A4 -> A5 -> A6a run BEFORE the substep loop by default; `MASHED_A8_A4_FIRST=0` reverts to
+the pre-2026-09-13 order for A/B only (v3 default-build rule: a flag may only turn the
+ported behaviour OFF). Build HEAD de0ee130 + this inversion.
+
+## 1. Held-lock recipe, CLEAN ENV (no MASHED_A8_* variable), default build
+
+`verify/a8_ramp_20260913/held_default_cleanenv/motion_diag.log` (1084 lines, 12 reseeds,
+0 spike-window rows) vs `orig_steerR.msd`, `a8_slip_axis.py` / `a8_momentum.py`:
+
+| | 1500-2000 slip fwd / axis | av.y | 2000-2600 slip fwd / axis | av.y | driving-median speed | eff dt 2000-2600 port/orig |
+|---|---:|---:|---:|---:|---:|---:|
+| ORIGINAL | 0.1913 / 0.1467 | +1.143 | 0.2498 / 0.2052 | +1.464 | 1901 | - |
+| PORT default, clean env | **0.1916 / 0.1491** | **+1.120** | **0.2627 / 0.2202** | **+1.580** | **1874** | 1.033 |
+| PORT same build, `MASHED_A8_A4_FIRST=0` | 0.1161 / 0.1161 | +1.024 | 0.1813 / 0.1813 | +0.824 | (932 in the earlier control) | - |
+
+Identical to the knob-on run of the twenty-sixth follow-up (the harness is deterministic
+on this recipe), so the default build now carries the behaviour. Slip 1.00x / 1.05x on the
+standing metric; speed within 1.4%; momentum identity 0.95-1.06 across bands.
+
+## 2. Ramp regime (no MASHED_STEER_HOLD; the demo driver sweeps steer -0.5..+1.0)
+
+`verify/a8_ramp_20260913/default/motion_diag.log` (745 lines, 7 reseeds). Driving-median
+speed 2329, max 4046 (the original's held-lock capture never exceeds 2565, so the ramp's
+faster straights have no like-for-like original frames). At full lock (steer >= 0.9, all
+266 frames at 2000-2600): slip vs fwd **0.2750** vs 0.2498 (1.10x), slip vs axis 0.2325 vs
+0.2052 (1.13x), av.y 1.622 vs 1.464, turn radius 1.15x wider (`a8_radius.py`), momentum
+eff dt 0.539 vs 0.499 (1.08). So on the ramp the port now sits ~10% ABOVE the original's
+slip at full lock, where in August (old order) it sat below. The sub-full-lock bands are
+not comparable to a held-lock original and are not quoted.
+
+**The ramp CONTROL (old order) was NOT obtained**: three attempts with
+`MASHED_A8_A4_FIRST=0` on the ramp recipe exited on their own ~14 s in with no physics
+frames logged (the race-ended-early safety the twenty-third follow-up hit), while the
+same knob on the held-lock recipe logged 1085 lines. Not chased. The August ramp figures
+(thirteenth follow-up: driving-median 1831/1806 vs "original 1760"; that 1760 is a
+PLAY-DEMO figure, not this .msd's 1901) remain the only old-order ramp reference.
+
+## 3. Status
+
+- D2's standing metric (median slip angle, held-lock, vs the original) now passes on the
+  default build: 1.00x / 1.05x. The ROADMAP §D2 status note is updated; closing D2 is
+  the owner's decision, and the ramp's +10% and the missing ramp control are the open
+  residue to weigh.
+- Not done: an original-side RAMP capture (the .msd machinery exists:
+  `re/frida/` scenario capture) to make the ramp comparison like-for-like; the 6-11 deg
+  per-wheel residual of the twenty-sixth follow-up; the sub-full-lock bands.

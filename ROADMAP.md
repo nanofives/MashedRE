@@ -536,7 +536,10 @@ standalone-side capture and the diff are what remain. Open sub-question: the **s
 > Behind `MASHED_A8_A4_FIRST=1` the held-lock slip is 0.192/0.263 vs the original's 0.191/0.250 (1.00x/1.05x),
 > av.y and the one-frame axis phase match, and the run has no spin-out and 12 reseeds vs 40. Evidence and every law verified on
 > both sides: `re/analysis/data/A8_velocity_vector_motion_20260825.md` twenty-fifth and twenty-sixth
-> follow-ups. Under the default-build rule this is a knob, not a landing, until the order is the default.
+> follow-ups. **DEFAULT since 2026-09-13 (same day):** the order is the default build's; `MASHED_A8_A4_FIRST=0`
+> is the A/B revert. Clean-env held-lock run: slip 0.192/0.263 vs 0.191/0.250, speed 1874 vs 1901 (twenty-seventh
+> follow-up). Open residue: the ramp regime sits ~10% ABOVE the original's slip at full lock and its old-order
+> control could not be captured; an original-side ramp capture is the missing like-for-like.
 
 **RULING 2026-08-26 — the gate metric is SLIP, and D2 stays OPEN.** The standalone-side
 capture and diff now exist (`verify/a8_velvec_20260825/cleanhold_motion.log`, held full

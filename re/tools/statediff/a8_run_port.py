@@ -22,6 +22,8 @@ def main():
     secs = float(sys.argv[2]) if len(sys.argv) > 2 else 45.0
     env = dict(os.environ); env.update(RECIPE)
     for kv in sys.argv[3:]:
+        if kv.startswith("-"):            # "-VAR" unsets a recipe variable (ramp regime = no STEER_HOLD)
+            env.pop(kv[1:], None); continue
         k, v = kv.split("=", 1); env[k] = v
     log = ROOT / "motion_diag.log"
     if log.exists():
