@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE \u2014 greenfield source port",
-  "updatedAt": "2026-09-12T23:05:31Z",
+  "updatedAt": "2026-09-13T00:47:50Z",
   "sections": [
     {
       "heading": "Confidence ladder",
@@ -47,12 +47,12 @@
         },
         {
           "label": "Open rows",
-          "value": 3030,
+          "value": 3029,
           "kind": "number"
         },
         {
           "label": "Caveat",
-          "value": "29 of the 46 were DE-GATED, not resolved; U-9134/U-9135 band audits RESOLVED 2026-09-12, U-9136 filed (hlsl band holds PSGP CPU bodies)",
+          "value": "29 of the 46 were DE-GATED, not resolved; U-9134/U-9135/U-9136 band audits RESOLVED 2026-09-12",
           "kind": "text"
         }
       ]
@@ -149,13 +149,18 @@
           "kind": "text"
         },
         {
-          "label": "hooks.csv rows touched",
-          "value": 205,
-          "kind": "number"
+          "label": "HLSL band",
+          "value": "5 rows -> psgp, 68 -> d3dx9-shader-compiler (range label retired), psgp sub-band 0x5045ca..0x5102f0",
+          "kind": "text"
         },
         {
           "label": "C-levels changed",
           "value": 0,
+          "kind": "number"
+        },
+        {
+          "label": "hooks.csv rows touched",
+          "value": 283,
           "kind": "number"
         }
       ]

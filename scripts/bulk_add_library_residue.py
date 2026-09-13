@@ -50,6 +50,10 @@ BANDS = [
      "batch-aa-s1+s2 finding (Pentium-Specific Geometry Pipeline; dispatcher "
      "FUN_004fbe7a queries HKLM\\Software\\Microsoft\\Direct3D + CPUID; "
      "71-entry function table at PTR_FUN_006187a8 with SSE/SSE2/3DNow! variants)"),
+    # U-9136 (2026-09-12): the SSE/SSE2/3DNow PSGP bodies (install tables 0x004fc0b1/0x004fc21f/0x004fc467)
+    # sit INSIDE the hlsl span; every hooks.csv row in this sub-band is PSGP. Earlier band wins on overlap.
+    (0x005045ca, 0x005102f0, "d3dx9-psgp",
+     "U-9136: install-table targets of the three CPU-specific PSGP installers"),
     (0x004fcb51, 0x005112ca, "d3dx9-hlsl-shader-compiler",
      "batch-w-s4 preprocessor+byacc-parser+lexer+diagnostics+symbol-hashtable "
      "+ pre-batch breadth_unmapped_005xx assembler+math-primitives"),

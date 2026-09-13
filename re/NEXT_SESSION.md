@@ -88,7 +88,7 @@ the re-run caught it. Sort replacement keys by descending length.
 > **Options A and B were DONE 2026-09-12 (same day, later session).** U-9135: attestation NARROWED, not re-banded
 > (13 render rows -> psgp on dispatcher/table evidence, 92 keep `render`, 66 hlsl rows -> psgp; new U-9136 for
 > the hlsl band). U-9134: Lua ends at `0x004c0735`; 16 rows -> render, 10 -> unknown. 0 C-levels moved.
-> Method that settled both: `reference_to`/`reference_from` per function, never the range. Remaining pick: **C**, or D2.
+> Method that settled both: `reference_to`/`reference_from` per function, never the range. U-9136 (hlsl band) also DONE the same way: 5 -> psgp, 68 -> d3dx9-shader-compiler, range label retired. Remaining pick: **C**, or D2.
 
 ### A. **U-9135 — decide the PSGP band disposition.** (recommended, and it is a decision, not research)
 103 rows are tagged `render` (first-party) while carrying a note asserting they are
