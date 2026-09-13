@@ -1,6 +1,17 @@
 # Next session — kickoff prompt
 
-## => D2 slip-angle session 1 DONE 2026-09-13 (twenty-fifth follow-up in the A8 data note)
+## => D2 slip-angle: MECHANISM FOUND 2026-09-13 (twenty-sixth follow-up in the A8 data note)
+
+> **The port ran A4/A5/A6a AFTER the substep loop; the original runs them BEFORE it** (step 3 vs step 5
+> of FUN_00470c70). With `MASHED_A8_A4_FIRST=1` the port reproduces the original on the held-lock recipe:
+> slip 0.192/0.263 vs 0.191/0.250 (fwd), 0.149/0.221 vs 0.147/0.205 (wheel axis), av.y 1.12/1.58 vs
+> 1.14/1.46, the one-frame axis phase (+0.0425 vs +0.0446), and 12 reseeds and no spin-out vs 40 reseeds and 87 spike-window
+> rows in the same-build control. Every A6a law was verified on both sides first (a8_wheelvel_orig.py,
+> a8_angvel_orig.py, a8_angvel_port.py: 0.99 / 0.998 one-frame predictions).
+> **OWNER CALL NEEDED:** make the original order the default (v3 default-build rule) and re-gate D2 on
+> the standing SLIP metric, which now passes; then the D2 gate reduces to the ramp regime re-run.
+
+## => D2 slip-angle session 1 done (superseded by the twenty-sixth) 2026-09-13 (twenty-fifth follow-up in the A8 data note)
 
 > **Read section 6 of the twenty-fifth follow-up for the next measurement.** Settled: the orientation half
 > MATCHES (both sides rotate the body from steer x grip, not from +0x9c0; the prompt below is STALE on that

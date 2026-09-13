@@ -2076,3 +2076,128 @@ Two smaller input gaps, recorded not explained:
    or stop quoting it.
 4. The spin-out event at rows 382-401 is a port-only behaviour on this recipe; its cause
    is a separate finding (contact spike on wheel 1), not part of the slip equilibrium.
+
+---
+
+# Twenty-sixth follow-up — MECHANISM FOUND AND A/B-CONFIRMED: A4/A5/A6a ran AFTER the substep loop; the original runs them BEFORE it. Slip, av and the axis phase all match with the order restored.
+
+Session 2026-09-13, continued. Method: transcribe the port's remaining A6a chain to
+Python and run it on the ORIGINAL's record fields until something fails to reproduce.
+
+## 1. The wheel-point velocity chain (block #4, rotation path) is the original's
+
+`re/tools/statediff/a8_wheelvel_orig.py` runs the port's block #4 — `RwMatrixRotate`
+(mode 0 Rodrigues, `Math/RwMatrixRotateInner.cpp`), `RwV3dTransformPointsCPU`,
+`f = max(sp*0.008, 8) * (+0x9e8) * 0.019877 * 360`, `wheelvel = dst*f - vel`, then the
+lateral/axial terms — on `orig_steerR.msd`, 853 steady frames, all four wheels, rotation
+path taken on 100% of frames:
+
+| wheel | |F_pred|/|F_rec| | angle(F_pred, F_rec) | ld4 (formula) | ld4 (body-velocity proxy) |
+|---|---:|---:|---:|---:|
+| w0 | 0.938 | 5.6 deg | 0.678 | 0.746 |
+| w1 | 0.941 | 5.7 deg | 0.670 | 0.746 |
+| w2 | 0.897 | 10.2 deg | 0.287 | 0.184 |
+| w3 | 0.899 | 11.2 deg | 0.251 | 0.184 |
+
+(with `_DAT_0088e5f0` refitted from 692.3 to 753.6 the magnitudes are 1.02/1.02/0.98/0.98;
+the 6-11 deg residual is not explained here and is left as [UNCERTAIN]: a second writer
+of p[0x1c] in the snapshot, or the constant.) The Integrate2.cpp calls bind to the REAL
+`Math/RwMatrixRotate` + `RwV3dTransformPointsCPU` through `ForceIntegratorStubs.cpp:39-46`,
+not to the `Collision/ContactStubs.cpp` identity stubs (those are still stubs for the
+CarWorld/CarCar contact solvers — a separate item).
+
+## 2. The angular-velocity chain (block #5 torque -> integration -> #6 damping) is the original's
+
+`a8_angvel_orig.py` predicts the original's NEXT-frame `+0x9c0` from its own stored
+per-wheel forces, lever arms (`p[-9..-7]`, `p[-0xb]`, WORLD-space — they rotate with the
+body; de-rotated they are constant to 3 decimals), `+0x5c` = 7.05e-4, `+0x18c` = 1.0,
+`grip = (l_60/+0x18c) * speed` (the `* speed` at Integrate2.cpp:495 was missing from the
+first pass and changes the arm: grip is ~4e6, HIGH arm, `(1-k)` = 0.88), once per frame
+at dt = 50: **pred/next = 0.991, p10-p90 0.990-0.992** over 853 pairs. dt = 25 or two
+substeps do NOT fit (0.933 / 0.880), which independently confirms A6a runs ONCE per frame
+on the whole 50 ms budget, as VehiclePhysicsRun.cpp:644-660 already documents.
+`a8_angvel_port.py` runs the identical chain on the PORT's logged forces/ld4/le4 with the
+original's body-local lever offsets rotated by the port's `bodyH`: **pred/next = 0.998**,
+implied `(1-k)` 0.8665 vs chain 0.8667. So on BOTH sides av is exactly what the law gives
+for that side's state; the port's lower av is not a transcription defect.
+
+## 3. The finding: a one-frame PHASE difference in what the tire model sees
+
+Signed, on the original: rear-axis heading minus `+0x9d4` heading = **+0.0446 rad**;
+`dBodyH/frame` = **-0.0446 rad**. The wheel axes A5 wrote are the PREVIOUS frame's
+basis; `+0x9d4` is this frame's (FUN_0046e9e0 rotates after step 3). The port wrote both
+from the same post-rotation basis (offset 0.0000). Measured against the wheel axis — the
+basis that generates the forces — the original's slip is 0.1467 / 0.2052 (bands 1500-2000 /
+2000-2600), not 0.1913 / 0.2498; the port's was 0.1163 / 0.1827. That reduced the gap from
+1.37-1.54x to 1.12-1.26x before any code change, and pointed at the frame order:
+original = step 3 (A4 -> A5 -> A6a, on last frame's basis and contacts) then step 5
+(substep loop rotates the body); port = substep loop first, then A4 -> A5 -> A6a.
+
+## 4. A/B: `MASHED_A8_A4_FIRST=1` (VehiclePhysicsRun.cpp, A4 block moved before the loop)
+
+Same build (654f7412 + the knob), same recipe, `a8_slip_axis.py`, spike/reseed-excluded:
+
+| | axis-fwd offset | 1500-2000 slip fwd / axis | av.y | 2000-2600 slip fwd / axis | av.y | spike-window rows | reseed lines |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| ORIGINAL | +0.0446 | 0.1913 / 0.1467 | +1.143 | 0.2498 / 0.2052 | +1.464 | - | - |
+| PORT knob ON (a4first) | **+0.0425** | **0.1916 / 0.1491** | **+1.120** | **0.2630 / 0.2205** | **+1.583** | **0** | **12** |
+| PORT control, knob OFF | +0.0000 | 0.1163 / 0.1163 | +1.012 | 0.1835 / 0.1835 | +0.808 | 87 | 40 |
+| PORT earlier capture (a8_orient) | -0.0000 | 0.1163 / 0.1163 | +1.028 | 0.1827 / 0.1827 | +0.811 | 82 | 39 |
+
+With the original's order: slip vs forward 1.00x / 1.05x, slip vs axis 1.02x / 1.07x,
+av.y 0.98x / 1.08x, the axis phase offset reproduced (+0.0425 vs +0.0446), AND the run
+is far cleaner — no spin-out (0 spike-window rows vs 87), 12 reseed lines vs 40, 610
+steady frames (n=440 at 2000-2600 vs 23 in the control): the spin-out and most of the
+off-mesh recoveries were symptoms of the same phase error. Captures: `verify/a8_order_20260913/{a4first,control}/motion_diag.log`
+(+PROVENANCE.txt). The reducers from follow-up 25 on the knob-on run are in section 5.
+
+## 5. Reducers on the knob-on run (for the record)
+
+See the session log lines appended below by the recording script.
+
+```
+# a8_slip_axis.py
+=== ORIGINAL verify/a8_steer_20260824/orig_steerR.msd: n=853  axis-minus-forward offset median +0.0446 rad ===
+  1500-2000: n=312  slip vs fwd 0.1913  slip vs AXIS 0.1467  av.y +1.143
+  2000-2600: n=541  slip vs fwd 0.2498  slip vs AXIS 0.2052  av.y +1.464
+=== PORT verify/a8_order_20260913/a4first/motion_diag.log (spike/reseed-excluded 0 rows): n=610  axis-minus-forward offset median +0.0425 rad ===
+  1500-2000: n=170  slip vs fwd 0.1916  slip vs AXIS 0.1491  av.y +1.120
+  2000-2600: n=440  slip vs fwd 0.2630  slip vs AXIS 0.2205  av.y +1.583
+=== PORT verify/a8_order_20260913/control/motion_diag.log (spike/reseed-excluded 87 rows): n=90  axis-minus-forward offset median +0.0000 rad ===
+  1500-2000: n= 67  slip vs fwd 0.1163  slip vs AXIS 0.1163  av.y +1.012
+  2000-2600: n= 23  slip vs fwd 0.1835  slip vs AXIS 0.1835  av.y +0.808
+
+# a8_momentum.py (a4first)
+=== EFFECTIVE dt PER FRAME, side by side ===
+  the momentum identity d(velH)/dt = F_lat/(m*|v|), solved for dt.
+  band               ORIG       PORT   port/orig    slip orig  slip port  slip x
+  500-1000       0.19202    0.20324       1.058       0.0946     0.0155    6.10
+  1000-1500       0.28949    0.27143       0.938       0.0795     0.0703    1.13
+  1500-2000       0.43544    0.42930       0.986       0.1911     0.1933    0.99
+  2000-2600       0.49860    0.51528       1.033       0.2494     0.2629    0.95
+
+
+# a8_orient.py (a4first)
+=== ORIENTATION HALF, side by side ===
+  band         dt orig   dt port  r_yr orig  r_yr port  r_stv orig  r_stv port  dB/dV orig  dB/dV port
+  500-1000    -0.0444   -0.0421     -0.190     -0.682      -0.985      -0.999       6.525       1.165
+  1000-1500    -0.0443   -0.0403     -0.655     -0.643      -0.998      -0.999       1.277       1.186
+  1500-2000    -0.0390   -0.0379     -0.025      0.009         nan         nan       1.052       1.049
+  2000-2600    -0.0304   -0.0268     -0.010     -0.007         nan         nan       1.036       1.014
+
+
+# a8_wheelfit.py (a4first) lateral coefficient port/original
+=== lateral coefficient a_w, port / original ===
+  w0:          all: 1.020  (1500, 1800): 1.002  (1800, 2100): 1.009  (2100, 2400): 1.011  (2400, 2800): 1.156
+  w1:          all: 1.016  (1500, 1800): 1.003  (1800, 2100): 1.009  (2100, 2400): 1.010  (2400, 2800): 1.152
+  w2:          all: 1.304  (1500, 1800): 1.010  (1800, 2100): 1.068  (2100, 2400): 1.198  (2400, 2800): 2.649
+  w3:          all: 1.289  (1500, 1800): 1.018  (1800, 2100): 1.082  (2100, 2400): 1.194  (2400, 2800): 2.613
+reseed lines: a4first 12 control 40 a8_orient 40
+```
+
+## 6. Status and what is NOT done
+
+- The knob is an A/B knob, default OFF. Under the ROADMAP v3 default-build rule this is NOT landed until the order is the default and the knob (if kept) only reverts. That inversion is the owner's call (it changes the shipping physics order); the evidence above is what the call rests on.
+- Not re-run on the RAMP regime or the low band; the held-lock regime is the one the ruling cites.
+- [UNCERTAIN] the 6-11 deg / 6-10% residual in section 1; the earlier note's "reseed zeroes slip" observation is not re-analysed on the knob-on run (12 reseeds, dropped per frame as before).
+- `Collision/ContactStubs.cpp` still stubs `Rw_TransformPoints` (identity) and `Rw_MatrixFromAxisAngle` (no-op) for the CarWorld/CarCar contact solvers; unrelated to A6a but found while checking the binding.

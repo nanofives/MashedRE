@@ -531,6 +531,13 @@ and top speed ramps-and-resets in the stock shape since `8917e29c`. The original
 capture is already taken (`verify/a8_steer_20260823/orig_steerR.msd`, 2026-08-23); the
 standalone-side capture and the diff are what remain. Open sub-question: the **steer sign**.
 
+> **STATUS 2026-09-13 — the slip deficit has a MEASURED mechanism and an A/B that closes it.** The port ran
+> A4/A5/A6a after the substep loop; the original runs them before it (FUN_00470c70 step 3 then step 5).
+> Behind `MASHED_A8_A4_FIRST=1` the held-lock slip is 0.192/0.263 vs the original's 0.191/0.250 (1.00x/1.05x),
+> av.y and the one-frame axis phase match, and the run has no spin-out and 12 reseeds vs 40. Evidence and every law verified on
+> both sides: `re/analysis/data/A8_velocity_vector_motion_20260825.md` twenty-fifth and twenty-sixth
+> follow-ups. Under the default-build rule this is a knob, not a landing, until the order is the default.
+
 **RULING 2026-08-26 — the gate metric is SLIP, and D2 stays OPEN.** The standalone-side
 capture and diff now exist (`verify/a8_velvec_20260825/cleanhold_motion.log`, held full
 lock via the new `MASHED_STEER_HOLD`; reducers `re/tools/statediff/a8_momentum.py` and

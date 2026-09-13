@@ -580,6 +580,22 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
 
     // Subdivide the frame ms budget into <=50ms chunks (the FUN_00470c70 chunk loop,
     // local_24 = min(remaining,0x32)); A4's dt per chunk is that ms count.
+    // [A8-ORDER 2026-09-13] env MASHED_A8_A4_FIRST=1: run A4 -> A5 -> A6a BEFORE the
+    // substep loop, i.e. on the PRE-rotation basis and on last frame's contacts, which is
+    // the original's order (FUN_00470c70: step 3 = FUN_00470670 per vehicle, step 5 =
+    // the FUN_004709a0 substep loop that rotates the body). Evidence for the phase:
+    // in orig_steerR.msd every wheel axis sits +0.0446 rad from +0x9d4 while the body
+    // rotates -0.0446 rad/frame (A8 twenty-sixth follow-up), i.e. the axes A5 wrote are
+    // one frame older than the forward vector FUN_0046e9e0 wrote after them. Here the
+    // axes and +0x9d4 are written from the same post-rotation basis (0.00 rad apart).
+    // A/B knob, default OFF = the pre-2026-09-13 order.
+    static const bool s_a4First = (std::getenv("MASHED_A8_A4_FIRST") != nullptr);
+    if (s_a4First) {
+        g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
+        VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis);
+        ReassertContacts(r);
+    }
+
     float remMs = frameMs;
     int guard = 0;
     while (remMs > 0.0f && guard++ < 64) {
@@ -655,11 +671,13 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // A4 therefore consumes the WHOLE frame budget, and sees the contact state the
     // substep loop above left in the record — which is what the original does too,
     // since its contacts are solved in the loop that follows A4.
-    g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
-    VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis);
-    // A6a's drive block can clear wheel states in some branches; re-assert from the
-    // cached contact result (no re-broadphase) so the next frame stays engaged.
-    ReassertContacts(r);
+    if (!s_a4First) {   // [A8-ORDER] see the knob above the substep loop
+        g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
+        VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis);
+        // A6a's drive block can clear wheel states in some branches; re-assert from the
+        // cached contact result (no re-broadphase) so the next frame stays engaged.
+        ReassertContacts(r);
+    }
 
     // WS-A contacts telemetry: per-wheel contact NORMAL (+0x200) + LOAD (+0x20c, A5
     // Phase-5 weight-transfer slot) + STATE (+0x198), to prove they VARY with terrain
