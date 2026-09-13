@@ -1,5 +1,98 @@
 # Next session — kickoff prompt
 
+## => KICKOFF PROMPT - D2 slip-angle session (written 2026-09-13, paste verbatim)
+
+```
+Session goal: explain the A8 slip-angle deficit on ported physics (ROADMAP section D2,
+"RULING 2026-08-26"). D2 stays gated on SLIP, not trajectory. Do not re-gate it. Do not
+close it by inventing a mechanism. Phase = measure -> localise; port only if the
+localisation names a specific line.
+
+STATE YOU INHERIT (do not re-derive):
+- Default build: librw is the default renderer (D1 closed 2026-08-19). Physics default is
+  still the kinematic scaffold; MASHED_REAL_PHYSICS=1 selects the ported RWP-3.7 chain
+  (Vehicle/VehiclePhysicsRun.cpp:203). All 83 zeroed physics constants are fixed
+  (53e5c05d); the car steers (9cc41fa8); top speed ramps in the stock shape (8917e29c).
+- On matched full-lock inputs EVERY trajectory quantity matches the original: turn radius
+  within 3-11%, yaw rate within 4-10%, ramp-run speed within 1% (1778 vs 1760), summed
+  per-wheel force magnitude and direction and the grip chain within 4-22%.
+- Median slip angle is 1.36x-4.12x SHORT (worst at 500-1000 speed, ~5x; ~1.3x at
+  1500-2600). Numbers: re/tools/statediff/a8_momentum.py header and
+  re/analysis/data/A8_velocity_vector_motion_20260825.md follow-ups 19-24.
+- EIGHT causes are ELIMINATED BY MEASUREMENT. Do not re-test them: (1) grip/clamp chain
+  (l_60/ld4/le4/grip match), (2) per-wheel force magnitude, (3) force direction (lateral
+  fraction within 2%), (4) the constants (5 wrong-bit literals fixed, sub-0.02% effect),
+  (5) force->velocity application (velocity-turn momentum identity gives the same
+  effective dt on both sides, confirmed on three regimes), (6) steer-regime mismatch
+  (matching regimes changed nothing), (7) a tighter turn radius (radius matches),
+  (8) the off-mesh/reseed rate as a fidelity signal (it is a GroundHeight
+  collision-scaffold artifact; both sides report gnd=4.0 in every frame).
+- ONE PARTIAL LEAD, not yet run to ground (twenty-second follow-up): a body-basis reseed
+  ZEROES slip and it takes >12 frames to rebuild; ~29% of port driving frames sit in
+  that window. It explains part of the 1000-2000 bands and NOTHING at 500-1000 or
+  2000-2600. g_bodyBasisReseed is set only by VehiclePhysics_ResetOrientation
+  (VehiclePhysicsRun.cpp:409-418), reached from spawn/grid/off-mesh recovery.
+- THE UNTESTED HALF (a8_momentum.py says it in its own header): with the force->velocity
+  half proven equal, "the remaining suspect is the orientation half (bodyH)". The port's
+  slip is velH - io.yaw (VehiclePhysicsRun.cpp:775) and io.yaw comes from an ALIGNMENT
+  block that steers yaw toward the velocity heading (VehiclePhysicsRun.cpp:582-589), i.e.
+  the port's body heading is partly derived from velocity. The original's slip is between
+  independently stored record fields: forward axis +0x9d4/+0x9dc vs velocity
+  +0x9b0/+0x9b8 in the 0xd04 vehicle record (field_trace.py:65-70). A heading that is
+  pulled toward the velocity direction cannot hold a large slip angle. This is a
+  HYPOTHESIS, not a finding: it has not been measured.
+
+TASK, in order:
+1. Measure the orientation half per side, the way the momentum identity was measured for
+   the velocity half: d(bodyH)/dt per frame vs the integrated angular velocity (port:
+   av=(x,y,z) in motion_diag.log; original: the record's yaw-rate source, which you must
+   locate). If the port's bodyH rotates at a rate the original's does not, or is clamped
+   toward velH, that is the mechanism. Inputs already on disk, no game run needed:
+   verify/a8_steer_20260824/orig_steerR.msd and
+   verify/a8_velvec_20260825/cleanhold_motion.log (1097 samples, 50 reseeds) plus the
+   ramp run in verify/a8_standalone_20260824/. Reducers:
+   re/tools/statediff/a8_momentum.py, a8_radius.py (extend, do not fork).
+2. In Ghidra (ghidra-pool skill, read-only slot), find the ORIGINAL's writer of the
+   forward axis +0x9d4/+0x9dc. Offset reads are register-relative, so reference_to on the
+   record base DAT_008815a0 is the wrong tool; start from FUN_0046b540's init (0x0046bb30
+   wheel loop, WS-A1 note) and the A-series plates in re/analysis/ for the per-tick
+   orientation integration, and state mechanically what rotates the body basis and from
+   which quantity. Cite RVAs. If it is the angular-velocity integrator that B5c ported
+   (Vehicle/RwpIntegrator.cpp), diff that path's INPUTS per frame, not its output.
+3. Only then compare with VehiclePhysicsRun.cpp:582-589 and Vehicle/VehicleControl.cpp:155
+   (orient passed as nullptr, "orient bound at A8" - binding it reaches
+   Math/RwMatrixRotateInner.cpp:159-166 mode 1 through a function pointer that is
+   currently nullptr; A8 must handle that).
+4. Nail down or drop the weakest standing claim before building on anything: the
+   held-lock run's 897-vs-1941 median speed gap is ATTRIBUTED to 50 RecoverOffMesh 0.5x
+   halvings (TrackRenderer.cpp:1989) but the magnitude was never quantified.
+5. If step 1 names a mechanism, port the fix behind an env A/B knob, re-run the held-lock
+   recipe, reduce with a8_momentum.py, and report slip per speed band both sides. The
+   acceptance bar is the RULING: slip within the same tolerance the other quantities
+   already meet, on a run with the reseed contamination quantified.
+
+RECIPE for a port-side capture (from verify/a8_velvec_20260825/PROVENANCE.txt):
+  MASHED_REAL_PHYSICS=1 MASHED_RACE_DEMO=1 MASHED_PLAY_DEMO=1 MASHED_GOTO=6
+  MASHED_TRACK_SEL=0 MASHED_CAR_SEL=0 MASHED_DRIVE_HOLD=1 MASHED_WIN_POS=left-bl
+  MASHED_MOTION_DIAG=1 MASHED_STEER_HOLD=1 MASHED_STEER_HOLD_AFTER=4 MASHED_MUTE=1
+  Reduce: py -3.12 re/tools/statediff/a8_momentum.py <motion.log>
+          verify/a8_steer_20260824/orig_steerR.msd --orig-steer-min 33.0 --port-steer-min 0.9
+  Kill only the MASHED/mashed_re PID you spawned. Record the capture's git HEAD in
+  PROVENANCE.txt. *.log is gitignored: git add -f, as the existing captures did.
+
+RULES THAT BIT EARLIER A8 SESSIONS (all in the data note's "traps"):
+- A quantity computed from our own formula is not a measurement (trap 3).
+- age>=N / steer>=N filters are regime filters; report n per band, do not quote n<60
+  bands as solid (trap 6).
+- Re-measure on the CURRENT build before trusting any prior number (nineteenth
+  follow-up: every prior figure was stale).
+- Log both sides from record fields where possible; no Frida Interceptor on 0x00496530
+  during phase 2 (hangs 8/30).
+- Write findings into re/analysis/data/A8_velocity_vector_motion_20260825.md as the
+  twenty-fifth follow-up, same shape: what was measured, what was refuted, what is open.
+  Tracker moves only via re-classify.
+```
+
 ## ⇒ CURRENT STATE (2026-09-12, uncertainty-drain + 8 promotion rounds) — READ THIS FIRST
 
 Branch `race/first-frame-parity`, tree clean, **27 commits** this session. Zero worktrees,

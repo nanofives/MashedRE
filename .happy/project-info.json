@@ -1,7 +1,22 @@
 {
   "title": "Mashed RE \u2014 greenfield source port",
-  "updatedAt": "2026-09-13T00:47:50Z",
+  "updatedAt": "2026-09-13T05:19:10Z",
   "sections": [
+    {
+      "heading": "Next session",
+      "fields": [
+        {
+          "label": "Kickoff",
+          "value": "D2 slip-angle: measure the orientation half (bodyH) per side; prompt in re/NEXT_SESSION.md",
+          "kind": "text"
+        },
+        {
+          "label": "D2 gate",
+          "value": "SLIP (ruling 2026-08-26); 8 causes eliminated; 1 partial lead (reseed zeroes slip)",
+          "kind": "text"
+        }
+      ]
+    },
     {
       "heading": "Confidence ladder",
       "fields": [
