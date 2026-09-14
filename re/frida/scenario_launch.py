@@ -557,24 +557,128 @@ function armCounters(csv){
 // is python-timed, but the phase-2->3 transition is engine-driven. Fires
 // ~60/s — far under the 1000/s hot-path limit. Payload rides the Frida
 // binary-data channel; the python side writes MSD1 (re/tools/statediff/FORMAT.md).
+//
+// [D3 2026-09-14] The same tick ALSO samples the AI control block for the same car,
+// as an additive JSON field on the existing 'sd' message (the MSD1 binary payload is
+// untouched, so every existing .msd reader is unaffected). This is the observable the
+// D3 AI gate needs: the bytes the original's FUN_00416250 writes each frame.
+//   ctrl block   base 0x007f1038 stride 0x4c, slot = *(int*)(0x007f1a14 + car*0x10)
+//                (Ai/AiState.h, cited to FUN_00418560 @0x00418575 / 0x0041856c)
+//   byte map     [0],[1] steer pair  [3] fire  [4] accel  [5] brake
+//                (re/analysis/ai_ctrl_byte_map_RESOLVED_2026-06-16.md)
+//   ai record    base 0x0089a4cc stride 0x74: +0x00 line type, +0x04 spline index,
+//                +0x30 input-override countdown, +0x60 behaviour mode
+// Join to the .msd on the frame index for position/velocity; no field offset of the
+// 0xd04 record is assumed here.
 const RENDER_TICK = 0x004c1be0;   // render-frame clock
-const SD = { armed:false, frames:0, car:0, err:null };
-function sdArm(car){
+const CTRL_BASE   = 0x007f1038;   // FUN_00418560 0x00418575
+const CTRL_STRIDE = 0x4c;         // FUN_00418560 0x00418572
+const SLOT_TABLE  = 0x007f1a14;   // FUN_00418560 0x0041856c
+const SLOT_STRIDE = 0x10;
+const AISTATE     = 0x0089a4cc;   // stride 0x74
+const SD = { armed:false, frames:0, car:0, err:null, ai:false, aiErr:null };
+function sdArm(car, withAi){
   if (SD.armed) return 'already armed';
   SD.car = car;
+  SD.ai  = !!withAi;
   try {
     const rec = ga(CARREC).add(car * 0xd04);
     const ph  = ga(PHASE);
+    const slotp = ga(SLOT_TABLE).add(car * SLOT_STRIDE);
+    const aip   = ga(AISTATE).add(car * 0x74);
     Interceptor.attach(ga(RENDER_TICK), { onEnter(){
       try {
         if (ph.readU8() !== 3) return;
-        send({kind:'sd', f: SD.frames++}, rec.readByteArray(0xd04));
+        let msg = {kind:'sd', f: SD.frames++};
+        if (SD.ai && SD.aiErr === null) {
+          try {
+            const slot = slotp.readS32();
+            const c = ga(CTRL_BASE).add(slot * CTRL_STRIDE);
+            msg.ai = [slot, c.readU8(), c.add(1).readU8(), c.add(3).readU8(),
+                      c.add(4).readU8(), c.add(5).readU8(),
+                      aip.readS32(), aip.add(0x04).readS32(),
+                      aip.add(0x30).readS32(), aip.add(0x60).readS32()];
+            // [D3] slot-table cross-check: the first car-1 capture (2026-09-14) read
+            // slot==0 for car 1, i.e. the SAME block the player uses. Rather than assume
+            // the AiState.h indexing is right OR wrong, dump all four blocks' steer/
+            // accel/brake every frame; if blocks 1..3 carry distinct per-car commands
+            // then the lookup is at fault, and if they do not, the block really is
+            // shared. Read, do not infer.
+            for (let k = 0; k < 4; ++k) {
+              const b = ga(CTRL_BASE).add(k * CTRL_STRIDE);
+              msg.ai.push(b.readU8(), b.add(1).readU8(),
+                          b.add(4).readU8(), b.add(5).readU8());
+            }
+          } catch(e){ SD.aiErr = '' + e; }
+        }
+        send(msg, rec.readByteArray(0xd04));
       } catch(e){ if (!SD.err) SD.err = '' + e; }
     }});
     SD.armed = true;
-    return 'statediff armed (tick 0x004c1be0, car ' + car + ', rec@' + rec + ')';
+    return 'statediff armed (tick 0x004c1be0, car ' + car + ', rec@' + rec + ')'
+           + (SD.ai ? ' + aictrl (slot table @' + slotp + ')' : '');
   } catch(e){ return 'ERR ' + e; }
 }
+
+// --- AI CONTROL-STEP capture (D3, 2026-09-14) ------------------------------
+// Ground truth for what the ORIGINAL's opponent AI commands, taken at the
+// function boundary instead of through the slot table.
+//
+// WHY NOT THE SLOT TABLE: the first D3 capture read slot = *(int*)(0x007f1a14 +
+// car*0x10) == 0 for car 1, and blocks 1..3 stayed all-zero for 2710 frames while
+// only block 0 moved. FUN_00418560's decompilation (pool0, 2026-09-14) confirms the
+// AiState.h indexing is right -- `iVar7 = (&DAT_007f1a14)[param_1 * 4]` on an int*
+// IS byte offset param_1*0x10, and the writes land at block+0/+1/+4/+5 with
+// stride 0x4c -- so slot 0 is genuinely what the table HOLDS in a warp-launched
+// race. The table's writers are all in the frontend/race-launch band (WRITEs at
+// 0x0043df41, 0x0042b991, 0x0042bab0, 0x0042baf5, 0x0043f14f, 0x0043f820,
+// 0x0043f895), which the scenario warp poke does not run.
+//
+// So hook the control step and read the block pointer the caller actually passes.
+// FUN_00418560 @0x004187b7 calls FUN_00416250 cdecl with four stack args --
+// EAX=spline, EBP=v, EDI=block, 0x42c80000 -- pushed BEFORE the shared branch at
+// 0x004187b7 (which is why Ghidra renders the call with no arguments; cf.
+// feedback_ghidra_prebranch_args). EDI is THAT car's ctrl block, whatever the
+// slot table says. Fires once per AI car per frame (~180/s at 4 cars) -- well
+// under the 1000/s Interceptor limit in CLAUDE.md.
+//
+// Byte map (re/analysis/ai_ctrl_byte_map_RESOLVED_2026-06-16.md, re-confirmed
+// against FUN_00418560's writes this session): [0],[1] steer pair, [3] fire,
+// [4] accel, [5] brake.
+const CTRL_STEP = 0x00416250;
+const AS = { armed:false, rows:[], calls:0, err:null, cap:200000 };
+function aiStepArm(){
+  if (AS.armed) return 'already armed';
+  try {
+    const ph = ga(PHASE);
+    Interceptor.attach(ga(CTRL_STEP), {
+      onEnter(a){
+        this.skip = (ph.readU8() !== 3);
+        if (this.skip) return;
+        const sp = this.context.esp;
+        this.spline = sp.add(4).readU32();
+        this.v      = sp.add(8).readS32();
+        this.blk    = sp.add(12).readPointer();
+      },
+      onLeave(){
+        if (this.skip || AS.rows.length >= AS.cap) return;
+        try {
+          const b = this.blk;
+          const ai = ga(0x0089a4cc).add(this.v * 0x74);
+          AS.rows.push([SD.frames, AS.calls++, this.v, this.blk.toUInt32(),
+                        this.spline,
+                        b.readU8(), b.add(1).readU8(), b.add(3).readU8(),
+                        b.add(4).readU8(), b.add(5).readU8(),
+                        ai.readS32(), ai.add(0x04).readS32(),
+                        ai.add(0x30).readS32(), ai.add(0x60).readS32()]);
+        } catch(e){ if (!AS.err) AS.err = '' + e; }
+      }
+    });
+    AS.armed = true;
+    return 'aistep armed (FUN_00416250 @0x00416250)';
+  } catch(e){ return 'ERR ' + e; }
+}
+function aiStepDrain(){ const r = AS.rows; AS.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
 // --- CANONICAL-OBSERVATION BLOCK ------------------------------------------
@@ -589,7 +693,34 @@ function sdArm(car){
 
 rpc.exports = {
   ready: function(){ return modBase() ? 1 : 0; },
-  sdArm: function(car){ return sdArm(car); },
+  sdArm: function(car, withAi){ return sdArm(car, withAi); },
+  // [D3 2026-09-14] OUTPUT-SLOT TABLE repair. CONTRIVED state (C3-grade), same
+  // class as pokeLap/pokeCollect: it writes what the ORIGINAL's own allocator
+  // writes, because the warp launch skips the allocator.
+  //
+  // Evidence (pool0, 2026-09-14): the table is 4 entries at 0x007f1a14 stride 0x10
+  // (loop bound 0x007f1a54 at 0x0043f832). FUN_0042b9e0 @0x0042bab0 resets every
+  // entry to -1; the race-launch allocator at 0x0043f870..0x0043f8a4 then scans for
+  // the lowest index no entry holds and commits it with MOV [EBX],ESI @0x0043f895,
+  // followed by CarSlotStateSet(car,2) @0x0043f89a. Run in car order over 4 cars
+  // that yields 0,1,2,3. FUN_00418560 reads the entry at 0x0041856c and derives the
+  // ctrl block as 0x007f1038 + entry*0x4c, so leaving the table at its .bss zeros
+  // makes ALL FOUR cars write controller 0's block -- measured directly: 3 cars,
+  // 1 distinct block, blocks 1..3 all-zero for 2710 frames.
+  pokeCtrlSlots: function(){
+    try {
+      const out = [];
+      for (let i = 0; i < 4; ++i) {
+        const p = ga(0x007f1a14 + i * 0x10);
+        out.push(p.readS32());
+        p.writeS32(i);
+      }
+      return 'ctrl slot table was [' + out.join(',') + '] -> [0,1,2,3]';
+    } catch(e){ return 'ERR ' + e; }
+  },
+  aiStepArm: function(){ return aiStepArm(); },
+  aiStepDrain: function(){ return aiStepDrain(); },
+  aiStepStats: function(){ return JSON.stringify({armed:AS.armed, calls:AS.calls, pending:AS.rows.length, err:AS.err}); },
   sdStats: function(){ return JSON.stringify(SD); },
   armCounters: function(csv){ return armCounters(csv); },
   rearmAsi: function(){ return rearmAsi(); },
@@ -857,6 +988,33 @@ def main():
                          "pulses (wall-clock-timed input would break cross-boot determinism).")
     ap.add_argument("--statediff-car", type=int, default=0,
                     help="car slot to snapshot for --statediff-out (default 0 = player)")
+    ap.add_argument("--poke-ctrl-slots", action="store_true",
+                    help="[D3] write the AI output-slot table 0x007f1a14[0..3] = 0,1,2,3 just "
+                         "before the race starts. CONTRIVED state (C3-grade) but it restores "
+                         "what the ORIGINAL's own allocator commits at 0x0043f895 and the warp "
+                         "launch skips: without it every car reads slot 0 and all four AI "
+                         "cars write controller 0's ctrl block (measured 2026-09-14 -- 3 cars, "
+                         "1 block, blocks 1..3 all-zero for 2710 frames). REQUIRED for any AI "
+                         "behavioural capture; physics captures that drive block 0 directly "
+                         "(the cook injector) are unaffected.")
+    ap.add_argument("--statediff-aistep", action="store_true",
+                    help="[D3] hook the AI control step FUN_00416250 and write every call to "
+                         "<out>.aistep.csv: frame,seq,v,block,spline,c0,c1,c3,c4,c5,ai_type,"
+                         "ai_spline_idx,ai_override,ai_mode. This is the D3 AI ground truth -- "
+                         "it reads the ctrl block the CALLER passes (FUN_00418560 @0x004187b7, "
+                         "cdecl, EDI=block), so it does not depend on the slot table at "
+                         "0x007f1a14, which a warp-launched race leaves unpopulated. Covers "
+                         "every AI car in one run. ~180 calls/s at 4 cars.")
+    ap.add_argument("--statediff-aictrl", action="store_true",
+                    help="[D3] alongside --statediff-out, also sample the AI CONTROL BLOCK "
+                         "for the same car each phase-3 render tick and write it to "
+                         "<out>.aictrl.csv. Columns: frame,slot,c0,c1,c3,c4,c5,ai_type,"
+                         "ai_spline_idx,ai_override,ai_mode. c0/c1 = the steer pair, c4 = "
+                         "accel, c5 = brake (re/analysis/ai_ctrl_byte_map_RESOLVED_2026-06-16"
+                         ".md); block base 0x007f1038 stride 0x4c, slot = *(int*)(0x007f1a14 "
+                         "+ car*0x10). The MSD1 payload is unchanged, so join on the frame "
+                         "index for position/velocity. Use an OPPONENT slot (1..3) to capture "
+                         "what the original's FUN_00416250 commands.")
     ap.add_argument("--statediff-drive-late", action="store_true",
                     help="D2 variant B: like --statediff-drive but arm the cook injector only "
                          "AFTER phase 3 is reached, so track load runs uninstrumented. Requires "
@@ -970,12 +1128,15 @@ def main():
         return 3
 
     sd_records = []          # (frame_idx, 0xd04 bytes) — statediff capture buffer
+    sd_ai      = []          # [D3] (frame_idx, [slot,c0,c1,c3,c4,c5,type,idx,ovr,mode])
 
     def on_msg(m, d):
         if m.get("type") == "error": print("  agent error:", m.get("description")); return
         p = m.get("payload", {})
         if p.get("kind") == "sd" and d is not None:
-            sd_records.append((p["f"], d)); return
+            sd_records.append((p["f"], d))
+            if p.get("ai") is not None: sd_ai.append((p["f"], p["ai"]))
+            return
         if p.get("kind") in ("ready", "err"): print("  [agent]", p.get("msg") or "ready")
 
     scr = sess.create_script(AGENT); scr.on("message", on_msg); scr.load()
@@ -1035,7 +1196,9 @@ def main():
         print("  [setup]", E.setup(cfg))
         if args.statediff_out:
             # Arm BEFORE the phase poke so frame 0 = the very first phase-3 tick.
-            print("  [statediff]", E.sd_arm(args.statediff_car))
+            print("  [statediff]", E.sd_arm(args.statediff_car, args.statediff_aictrl))
+            if args.statediff_aistep:
+                print("  [statediff]", E.ai_step_arm())
             if args.statediff_drive and not args.statediff_drive_late:
                 print("  [statediff]", E.arm_cook())
                 print(f"  [statediff] drive: full accel, steer={args.statediff_steer:+d} ->",
@@ -1055,6 +1218,11 @@ def main():
         ph3 = wait_phase(3, 40, "race running (phase 3)")
         if ph3 is None: raise SystemExit
         print("\n  *** RACE RUNNING (phase 3) ***")
+        # [D3] Repair the output-slot table now that the race is up. It must happen
+        # AFTER phase 3 (the spawn path is what would normally have populated it) and
+        # BEFORE the AI has done meaningful work, so this is the only correct moment.
+        if args.poke_ctrl_slots:
+            print("  [ctrl-slots]", E.poke_ctrl_slots())
         if args.assert_course_load:
             import json
             # Give the phase-2 load chain a moment to finish writing the post-load flags.
@@ -1278,6 +1446,55 @@ def main():
                     print("  [statediff] WARNING: EMPTY capture — no phase-3 render tick observed")
                 elif distinct <= 1:
                     print("  [statediff] WARNING: DEGENERATE capture — record never changed")
+                # [D3 2026-09-14] AI control-block sidecar. Same non-degeneracy
+                # discipline as the .msd above: a ctrl trace whose bytes never move
+                # tells you the AI never commanded anything, which is a capture
+                # failure, not a measurement — so it is reported, not hidden.
+                if args.statediff_aistep:
+                    try: print("  [statediff] aistep agent:", E.ai_step_stats())
+                    except Exception: pass
+                    step_rows = []
+                    try: step_rows = E.ai_step_drain()
+                    except Exception as _e: print("  [statediff] aistep drain failed:", _e)
+                    stp = outp.with_suffix(outp.suffix + ".aistep.csv")
+                    with open(stp, "w", newline="") as f:
+                        f.write("frame,seq,v,block,spline,c0,c1,c3,c4,c5,"
+                                "ai_type,ai_spline_idx,ai_override,ai_mode" + chr(10))
+                        for r in step_rows:
+                            f.write(",".join(str(x) for x in r) + chr(10))
+                    cars = sorted({r[2] for r in step_rows})
+                    blocks = sorted({r[3] for r in step_rows})
+                    print(f"  [statediff] aistep {len(step_rows)} calls -> {stp}"
+                          f"  (cars={cars}, distinct blocks={len(blocks)})")
+                    # Non-degeneracy, same discipline as the .msd: one block for
+                    # several cars means the cars are overwriting each other, which
+                    # is a scenario defect, not a measurement.
+                    if not step_rows:
+                        print("  [statediff] WARNING: aistep EMPTY -- FUN_00416250 never ran "
+                              "at phase 3 (mode 4/8/9 take the FUN_00416a30/FUN_00417da0 tails)")
+                    elif len(blocks) < len(cars):
+                        print(f"  [statediff] WARNING: {len(cars)} cars share "
+                              f"{len(blocks)} ctrl block(s) -- slot table unpopulated")
+                if args.statediff_aictrl:
+                    ai_snapshot = list(sd_ai)
+                    aip = outp.with_suffix(outp.suffix + ".aictrl.csv")
+                    with open(aip, "w", newline="") as f:
+                        f.write("frame,slot,c0,c1,c3,c4,c5,ai_type,ai_spline_idx,"
+                                "ai_override,ai_mode,"
+                                "b0_c0,b0_c1,b0_c4,b0_c5,b1_c0,b1_c1,b1_c4,b1_c5,"
+                                "b2_c0,b2_c1,b2_c4,b2_c5,b3_c0,b3_c1,b3_c4,b3_c5\n")
+                        for idx, row in ai_snapshot:
+                            f.write(str(idx) + "," + ",".join(str(v) for v in row) + "\n")
+                    ai_distinct = len({tuple(r[1:6]) for _, r in ai_snapshot})
+                    print(f"  [statediff] aictrl {len(ai_snapshot)} frames -> {aip}"
+                          f"  (distinct ctrl tuples={ai_distinct})")
+                    if not ai_snapshot:
+                        print("  [statediff] WARNING: aictrl EMPTY — the block was never "
+                              "sampled (see sd_stats aiErr)")
+                    elif ai_distinct <= 1:
+                        print("  [statediff] WARNING: aictrl DEGENERATE — the AI never "
+                              "changed its command; car "
+                              f"{args.statediff_car} is probably not AI-driven")
                 # PROVENANCE SIDECAR (added 2026-08-24, D2/A8). A capture with no
                 # record of how it was made is not a datum: the 2026-08-23 A8
                 # capture verify/a8_steer_20260823/orig_steerR.msd could not be
@@ -1305,6 +1522,8 @@ def main():
                             "drive": bool(args.statediff_drive),
                             "drive_late": bool(args.statediff_drive_late),
                             "steer": args.statediff_steer,
+                            "aictrl": bool(args.statediff_aictrl),
+                            "aistep": bool(args.statediff_aistep),
                             "steer_schedule": args.statediff_steer_schedule,
                             "steer_schedule_applied": sched_log if args.statediff_steer_schedule else None,
                             "steer_schedule_t0_offset_s": (round(sched_t0 - t0, 2) if args.statediff_steer_schedule and sched_t0 else None),

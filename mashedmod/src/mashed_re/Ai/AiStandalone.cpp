@@ -433,8 +433,17 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
     // proportional controller reuses the sign-correct SteerAngleError (err<180 -> one way,
     // >180 -> the other) but scales the steer by how far off the car is (full lock only past
     // ~kFullDeg), so the car drives FORWARD through bends -> full laps. A ratified standalone
-    // shim (cf. the std::sqrt LUT fallback / contact stub). Env MASHED_AI_PUREPURSUIT=0 reverts
-    // to the verbatim bands.
+    // shim (cf. the std::sqrt LUT fallback / contact stub).
+    // [D3 2026-09-14] GATE POLARITY, corrected: this used to read "Env
+    // MASHED_AI_PUREPURSUIT=0 reverts to the verbatim bands", the INVERSE of the lambda
+    // directly below -- `return (e && e[0] != '0')` is OPT-IN, default OFF. The verbatim
+    // bands are the DEFAULT path inside ControlStep; MASHED_AI_PUREPURSUIT=1 opts IN to
+    // this shim. That polarity is the right way round for D3 (the flag turns a ported
+    // behaviour OFF). Measured consequence of the bands being default:
+    // re/analysis/D3_AI_TICK_WIRING_2026-09-14.md section 4.1 -- the standalone steer is
+    // bang-bang (2-3 distinct commands per car) where the original is proportional
+    // (33-96 per car), exactly as the paragraph above predicts, because FUN_00443300 and
+    // the FUN_00443dc0 curvature-walk tail are stubbed.
     static const bool s_pp = [] {
         const char* e = std::getenv("MASHED_AI_PUREPURSUIT");
         return (e && e[0] != '0');   // OPT-IN (default off -> verbatim bands). Experimental:
@@ -1056,9 +1065,33 @@ void PostStepPowerupBrake(int v, std::uint8_t* ctrl)
 // directly in the image-pad, same as any other kSpline*/kAiState* address).
 // U-3431 (struct identity at PTR_PTR_005f2770) stays open, non-blocking.
 // ---------------------------------------------------------------------------
+//
+// [D3 2026-09-14] CORRECTION -- the note above is right about the ORIGINAL and wrong
+// about the STANDALONE, and the difference is an access violation.
+//
+// Measured: the first wiring of Ai_Standalone_Tick into mashed_re.exe AV'd
+// (0xC0000005) on the first in-race frame. The stage tracer (MASHED_AI_TICKTRACE)
+// stopped at "pre-slotstate", i.e. inside this function. Cause: 0x005f2770 IS a
+// load-time .data constant -- reading original/MASHED.exe.unpatched at file offset
+// 0x1f2770 (section .data, raw_size 0x4d000, initialized on disk) gives
+// *(uint32*)0x005f2770 == 0x005f2728 -- but the STANDALONE does not load the
+// original's .data. Its image-pad owns the RVA range ZERO-FILLED (the same caveat
+// AiState.h records for the DAT_005ccXXX tuning constants). So `base` is 0 here and
+// the write lands at 0x34.
+//
+// This is NOT the same situation as the kSpline*/kAiState* addresses the original
+// comment compares it to: those are direct addresses this port itself writes into
+// the pad, whereas this one needs a VALUE that only the original's loaded image
+// supplies. A pointer read out of the pad is never safe to dereference.
+//
+// Guarded, not faked: when the pad has no pointer there is no struct to write, so
+// the poke is skipped. The original's effect (setting car slot v's state field at
+// +0x34+v*4 of the 0x005f2728 table) is NOT reproduced standalone -- tracked as an
+// open stub, see re/analysis/D3_AI_TICK_WIRING_2026-09-14.md.
 inline void CarSlotStateSet(int v, std::int32_t state)
 {
     const std::uintptr_t base = static_cast<std::uintptr_t>(U32(0x005f2770u));
+    if (base == 0) return;   // standalone image-pad: no table (see note above)
     I32(base + static_cast<std::uintptr_t>(v) * 4u + 0x34u) = state;
 }
 
@@ -1309,9 +1342,24 @@ bool Ai_ComputeTarget(int v, float ownX, float ownZ, float* outTx, float* outTz)
 }
 
 // FUN_00418860 — per-frame tick. Guard on race-line count; rubber-band STUB.
+// [D3 2026-09-14] Stage tracer. Wiring this tick into the standalone AVs
+// (0xC0000005) on the first in-race frame; MASHED_AI_TICKTRACE=<path> writes one
+// line per stage so the fault can be bisected without a debugger. Off unless set.
+static void TickTrace(const char* stage, int v)
+{
+    static const char* s_p = std::getenv("MASHED_AI_TICKTRACE");
+    if (!s_p || !s_p[0]) return;
+    static std::FILE* lf = nullptr;
+    if (!lf) { lf = std::fopen(s_p, "w"); if (!lf) return; }
+    std::fprintf(lf, "%s v=%d\n", stage, v);
+    std::fflush(lf);
+}
+
 void Ai_Standalone_Tick()
 {
+    TickTrace("enter", -1);
     if (I32(kSplineRaceCnt) <= 3) return;        // DAT_00801ca0 > 3 (splines loaded)
+    TickTrace("splines-ok", I32(kSplineRaceCnt));
 
     int r = s_host.round_type();
     int fd0 = s_host.game_mode_fd0();
@@ -1322,20 +1370,28 @@ void Ai_Standalone_Tick()
     // each of the 3 calls individually gated on FUN_0046c7b0(v)==1 (car_alive), NOT
     // unconditional as the older ai_path_following-20260512 plate's condensed
     // pseudocode implied -- corrected here against the live listing.
+    TickTrace("pre-slotstate", aiRound ? 1 : 0);
     if (aiRound) {
         if (s_host.car_alive(1) == 1) CarSlotStateSet(1, 2);
         if (s_host.car_alive(2) == 1) CarSlotStateSet(2, 2);
         if (s_host.car_alive(3) == 1) CarSlotStateSet(3, 2);
     }
 
+    TickTrace("pre-rubberband", -1);
     AiPreTickRubberBand();   // FUN_004177b0
+    TickTrace("post-rubberband", -1);
 
     for (int v = 0; v < 4; ++v) {
         int t = s_host.veh_type(v);
         if ((t != 0 && t != 1) || s_host.ai_target_enable() == 1) {
-            if (s_host.car_alive(v) == 1) VehicleStep(v);
+            if (s_host.car_alive(v) == 1) {
+                TickTrace("pre-vehiclestep", v);
+                VehicleStep(v);
+                TickTrace("post-vehiclestep", v);
+            }
         }
     }
+    TickTrace("leave", -1);
 }
 
 } // namespace Ai

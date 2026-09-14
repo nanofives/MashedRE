@@ -2849,6 +2849,35 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     const bool faithful_nav = g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3);
     if (faithful_nav) {
         g_aiTrack = this;   // bind the LOS host (aib_los_clear -> GroundHeight)
+        // [D3 2026-09-14] Run the PORTED tick spine FUN_00418860 (Ai_Standalone_Tick).
+        // Before this line it had zero call sites anywhere in the tree, so the ported
+        // FUN_00416250 control step, FUN_00418560 per-vehicle step and FUN_004177b0
+        // rubber-banding never executed in mashed_re.exe (audit
+        // re/analysis/D3_AUDIT_2026-09-14.md section 1). It now runs and writes the
+        // ctrl blocks, which MASHED_AI_STEPDUMP records for the D3 comparison against
+        // the original-side capture.
+        //
+        // The ctrl bytes are PRODUCED but not yet CONSUMED: the Option B motion model
+        // below still drives. That is deliberate and is the kickoff's phase order --
+        // measure before flipping a default. Switching the drive over to the ctrl bytes
+        // is gated on the comparison, and on inverting MASHED_AI_PUREPURSUIT
+        // (AiStandalone.cpp:439), which today selects a NON-verbatim pure-pursuit shim
+        // over the verbatim bands and so has exactly the wrong polarity for D3.
+        //
+        // MEASURED 2026-09-14: with the tick running unconditionally the standalone
+        // AVs (exit 0xC0000005) before the first screenshot. So it is gated on
+        // MASHED_AI_TICK=1 until the fault is localised -- a DEFAULT-OFF gate, which
+        // D3's rule forbids for a finished port, and is therefore recorded as the
+        // open AI gate rather than presented as a wiring that landed.
+        static const bool s_ai_tick = [] {
+            const char* e = std::getenv("MASHED_AI_TICK");
+            return e && e[0] && e[0] != '0';
+        }();
+        if (s_ai_tick) {
+            AiBridgeSnapshot();
+            Ai::Ai_Standalone_Tick();
+            AiStepDump();
+        }
         for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci) {
             AiCar& a = ai_cars_[static_cast<std::size_t>(ci)];
             const int v = ci + 1;
@@ -3228,6 +3257,76 @@ int TrackRenderer::MissileTargetAhead() const {
     }
     return best;
 }
+
+// [D3 2026-09-14] (2) HOST SNAPSHOT — the missing half of WS-AI-BRIDGE part (2).
+// The aib_* host fns above read g_aib.pos / .vel / .alive, and NOTHING wrote them:
+// aib_own_xz returned (0,0) for every car and aib_alive returned 0 for every car,
+// so Ai_Standalone_Tick's `if (s_host.car_alive(v) == 1) VehicleStep(v)` gate could
+// never fire. The tick was therefore inert as well as uncalled. Fill the snapshot
+// from live scene state each frame, before the tick.
+//   v0            = player (car_pos_ / car_vel_)
+//   v1..v3        = ai_cars_[v-1]
+//   alive         = race_[v].alive, except round_mode_ eliminations
+void TrackRenderer::AiBridgeSnapshot() {
+    g_aib.pos[0][0] = car_pos_[0];  g_aib.pos[0][1] = car_pos_[2];
+    g_aib.vel[0][0] = car_vel_[0];  g_aib.vel[0][1] = car_vel_[2];
+    g_aib.alive[0]  = (round_mode_ && !race_[0].alive) ? 0 : 1;
+    for (int i = 0; i < 3; ++i) {
+        const int v = i + 1;
+        if (i < static_cast<int>(ai_cars_.size())) {
+            const AiCar& a = ai_cars_[static_cast<std::size_t>(i)];
+            g_aib.pos[v][0] = a.pos[0];  g_aib.pos[v][1] = a.pos[2];
+            g_aib.vel[v][0] = a.vel[0];  g_aib.vel[v][1] = a.vel[2];
+            g_aib.alive[v]  = (round_mode_ && !race_[v].alive) ? 0 : 1;
+        } else {
+            g_aib.pos[v][0] = g_aib.pos[v][1] = 0.f;
+            g_aib.vel[v][0] = g_aib.vel[v][1] = 0.f;
+            g_aib.alive[v]  = 0;
+        }
+    }
+}
+
+// [D3 2026-09-14] (3a) STEP DUMP — the standalone side of the D3 AI measurement.
+// Mirrors the original-side capture taken by re/frida/scenario_launch.py
+// --statediff-aistep (which hooks FUN_00416250 and reads the ctrl block the caller
+// passes). Same columns, so the two CSVs diff directly. Env MASHED_AI_STEPDUMP=<path>.
+//
+// Reads the ctrl block exactly as FUN_00418560 does (decomp pool0 2026-09-14):
+//   slot  = *(int*)(0x007f1a14 + v*0x10)      @0x0041856c
+//   block = 0x007f1038 + slot*0x4c            @0x00418575
+//   bytes [0],[1] steer pair, [3] fire, [4] accel, [5] brake
+// The standalone already commits slot = v in Ai_BridgeLoad, which is what the
+// original's own allocator writes at 0x0043f895.
+void TrackRenderer::AiStepDump() {
+    static const char* s_path = std::getenv("MASHED_AI_STEPDUMP");
+    if (!s_path || !s_path[0]) return;
+    static std::FILE* lf = nullptr;
+    static int frame = 0;
+    static long seq = 0;
+    if (!lf) {
+        lf = std::fopen(s_path, "w");
+        if (!lf) { s_path = nullptr; return; }
+        std::fprintf(lf, "frame,seq,v,block,spline,c0,c1,c3,c4,c5,"
+                         "ai_type,ai_spline_idx,ai_override,ai_mode\n");
+    }
+    for (int v = 1; v <= 3; ++v) {
+        if (!g_aib.alive[v]) continue;
+        const std::uintptr_t slot = static_cast<std::uintptr_t>(
+            Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride));
+        const std::uintptr_t blk = Ai::kCtrlBlockBase + slot * Ai::kCtrlBlockStride;
+        const std::uintptr_t ai  = Ai::kAiStateBase +
+            static_cast<std::uintptr_t>(v) * Ai::kAiStateDwords * 4u;
+        std::fprintf(lf, "%d,%ld,%d,%lu,0,%u,%u,%u,%u,%u,%d,%d,%d,%d\n",
+                     frame, seq++, v, static_cast<unsigned long>(blk),
+                     Ai::U8(blk + 0), Ai::U8(blk + 1), Ai::U8(blk + 3),
+                     Ai::U8(blk + 4), Ai::U8(blk + 5),
+                     Ai::I32(ai + 0x00), Ai::I32(ai + 0x04),
+                     Ai::I32(ai + 0x30), Ai::I32(ai + 0x60));
+    }
+    std::fflush(lf);
+    ++frame;
+}
+
 
 void TrackRenderer::EnsurePowerupBackend() {
     if (!pu_be_) { pu_be_ = new PowerupBackendImpl(this); pw_.Init(pu_be_); }

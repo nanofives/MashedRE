@@ -298,6 +298,11 @@ private:
 
     // ported power-up dispatch + its host-visuals backend (WS-D2/D3).
     friend class PowerupBackendImpl;
+    // [D3 2026-09-14] AI bridge: fill g_aib (pos/vel/alive) from live scene state,
+    // then dump the ctrl blocks the ported tick wrote (env MASHED_AI_STEPDUMP).
+    // See re/analysis/D3_AUDIT_2026-09-14.md section 1.
+    void  AiBridgeSnapshot();
+    void  AiStepDump();
     void  EnsurePowerupBackend();                     // lazy Init(this)
     void  SyncHostCar();                              // fill pu_player_/pu_ai_
     void  PowerupFireOnce(int realCode);              // drive the dispatch one-shot
