@@ -1,4 +1,106 @@
 # Next session — kickoff prompt
+
+## => KICKOFF PROMPT - D3 session (default AI, powerups, modes), written 2026-09-14, paste verbatim
+
+```
+Session goal: ROADMAP v3 D3. Gate: a clean-env race (NO MASHED_* variable set) where
+opponents, powerups and mode rules are all the ported implementations, measured against
+the original. Phase order: audit what the default build ALREADY runs -> measure each of the
+three against the original -> port/wire only the named gaps -> invert any flag that still
+selects a scaffold (a flag may only turn a ported behaviour OFF). Do not re-port what is
+already verbatim; the WS ledger rows for WS-C/WS-D/WS-G in ROADMAP.md are STALE (2026-06-16)
+and the code is ahead of them.
+
+STATE YOU INHERIT (verified from the source 2026-09-14, not from the ledger):
+- D1 (librw) closed 2026-08-19; D2 (physics) closed 2026-09-14: the ported RWP-3.7 chain
+  with A4->A5->A6a before the substep loop is the default; MASHED_REAL_PHYSICS=0 and
+  MASHED_A8_A4_FIRST=0 are A/B reverts only. Evidence + method (transcribe a law to Python,
+  run it on the ORIGINAL's record fields, compare with what the original stored):
+  re/analysis/data/A8_velocity_vector_motion_20260825.md follow-ups 25-30. Reuse the
+  method; it found the D2 mechanism in one session after 24 follow-ups had not.
+- WS-C AI: the opponent AI is ALREADY the default. Ai/AiStandalone.cpp ports the tick
+  spine FUN_00418860 -> per-vehicle FUN_00418560 -> control step FUN_00416250 (+ mode
+  tails FUN_00416a30/FUN_00417da0), steering FUN_00415e20, target seed FUN_004161e0,
+  lookahead FUN_00443dc0, on the real AI<course>.AI line (Ai_BridgeLoad,
+  TrackRenderer.cpp:1809-1818). MASHED_GATE_RIBBON_AI=1 is the scaffold REVERT. Residual
+  A/B knobs: MASHED_AI_PUREPURSUIT, MASHED_AI_STEERFLIP, MASHED_AI_NAV (AiStandalone.cpp
+  :439/:500/:513), MASHED_AI_DRIVES_PLAYER (TrackRenderer.cpp:2662). hooks.csv: 77 ai
+  rows, FUN_00418860/FUN_00418560/FUN_004177b0 at C3. The header says "PENDING
+  diff-original C4". Open residue in the file's ledger: [U-C-STEER-MAG] the ROUND(ST0)
+  magnitude, [U-C-RATE0/1] the two rate floats FUN_0046d6a0/6d0 (speed substituted,
+  rate1=0). RaceSession.cpp:85 still says "gate-ribbon AI" - stale text.
+- WS-D powerups: dispatcher FUN_0045bba0 + lookup/activate/deactivate + the 9-entry type
+  table (orig 0x005f9998, stride 0x40) are VERBATIM in Powerup/PowerupSystem.cpp; the 9
+  per-type DECISION functions (ammo/cooldown/fire-mode/charge/jet) are verbatim in
+  Powerup/PowerupEffects.cpp; every LEAF (SpawnMissile, SpawnMortar, DropHazard,
+  HitscanForward, SpreadCone, FlameJet, BlindFlash, DropOilSlick, DEACT teardown) goes
+  through IPowerupBackend, implemented by PowerupBackendImpl in TrackRenderer.cpp:3070+
+  as STANDALONE reimplementations (renderer-side projectiles/FX), not ports of the
+  original leaves (orig pools DAT_006883bc stride 0x6c / DAT_00684ea8 stride 0x110,
+  RwFrameAddChild attach, FX FUN_00465e80/FUN_00465ca0, contacts FUN_004b4cd0 etc.).
+  The orb economy (collect/respawn) is the PickupField scaffold, data-faithful to the 9
+  codes. Map: re/analysis/structs/powerup_system.md (sections 8 input bridge, 9 gating).
+  Blockers recorded there for verbatim leaves: Ghidra fn-split of 0x00453f60-0x0045be81,
+  projectile-pool struct map, WS-B car<->projectile contacts. RaceSession.cpp:87 "effects
+  TODO" is stale. hooks.csv: 0045bba0 tagged `util` C2 - retag to powerups when touched.
+- WS-G modes: Race/RaceModes.cpp is a verbatim transcription of game-mode -> race-rule
+  (WS-G1, re/analysis/game_mode_rules_REmap_20260616.md; cup table 0x005f65c8), and
+  Race/RuleEngine.cpp transcribes the rule predicates (0x00405890, 0x004177b0 finish
+  order, ...). exe_main.cpp:2236-2256 derives raceRule/raceMode from game length via
+  RaceModes; MASHED_RACE_MODE / MASHED_LAPS / MASHED_GAME_LENGTH are dev overrides applied
+  AFTER the real derivation (allowed). Ledger says "no work since 2026-06-16" - stale.
+  What is NOT known: whether every mode's rule set (elimination zoom-sat, lap targets,
+  points, cup progression) is the ported one at runtime, or a scaffold path in
+  RaceSession/GameFlow (RaceSession.cpp:1 "scaffold impl", GameFlow.cpp:57 [SCAFFOLD]
+  area grouping) still decides outcomes.
+
+TASK, in order:
+1. AUDIT (no Ghidra, no game): for each of AI / powerups / modes, list what runs in a
+   clean-env race and which file decides it; list every MASHED_* read in Ai/, Powerup/,
+   Race/, GameFlow and the mode block of exe_main.cpp, and classify each as
+   revert-only (fine), scaffold-selecting (must be inverted or deleted), or dev-override
+   (fine). Write it as re/analysis/D3_AUDIT_2026-09-14.md. Fix the three stale ledger
+   strings in RaceSession.cpp (:85 :87) and ROADMAP's WS-C/D/G rows from the audit.
+2. AI MEASUREMENT: original-side capture of an AI car's record with the existing
+   statediff tool (`re/frida/scenario_launch.py --statediff-out ... --statediff-car N`,
+   N = an opponent slot; the player capture recipe is in
+   verify/a8_steer_20260824/orig_steerR.msd.provenance.json) on a normal race (no drive
+   injector), and the standalone's AI on the same track/car; compare the CONTROL BYTES
+   the AI writes ([0]/[1] steer, [4] accel, [5] brake - re/analysis/ai_ctrl_byte_map_
+   RESOLVED_2026-06-16.md) per frame against track position, and the lap time. That is
+   the AI's C4-shaped evidence and the D3 gate for opponents. If the bytes disagree,
+   apply the D2 method: transcribe the control step to Python, run it on the original's
+   AI record fields, find the input that differs.
+3. POWERUPS: the leaves are standalone reimplementations by design until the recorded
+   blockers land. For D3 the gate is BEHAVIOUR, not verbatim: for each of the 9 types,
+   one original-side capture of a fire event (player fires; record + projectile pool
+   fields) vs the standalone's, comparing the DECISION outcome (ammo decrement, cooldown,
+   fire-mode transition - these are verbatim and must match exactly) and the leaf's
+   observable (projectile spawned/hazard placed/flash applied, hit on the car ahead).
+   Start with OIL and FLASH (fewest vehicle-field dependencies, per powerup_system.md
+   section 9), then GUN/SHOTGUN (hitscan), then MISSILE/MORTAR/DRUM/P_MINE (need
+   car<->projectile contact: if WS-B contacts are still stubs - Collision/ContactStubs.cpp
+   still stubs Rw_TransformPoints (identity) and Rw_MatrixFromAxisAngle (no-op) for the
+   CarWorld/CarCar solvers, found 2026-09-13 - record that as the blocker, do not fake it).
+4. MODES: for each game mode the frontend can select, one clean-env race to its natural
+   end on the standalone and the same on the original (scenario_launch --mode/--cars);
+   compare the outcome fields the RuleEngine transcribes (0x0063a5d0/0x0063a5d4 counters,
+   finish order 0x0089a870.., points, elimination) at race end. Any mode whose outcome is
+   produced by a RaceSession/GameFlow scaffold path instead of RaceModes/RuleEngine is the
+   port target; wire the transcribed rule and invert its selector.
+5. Only after 2-4: invert or delete every scaffold-selecting flag found in step 1 (the
+   ribbon AI hatch may stay as a revert). Re-run one clean-env race and record the gate
+   table in ROADMAP section D3 the way section D2's CLOSED block does.
+
+RULES:
+- Cite RVAs for every original claim; NO-GUESSING; mark [UNCERTAIN] with a next command.
+- Track the PIDs you spawn; kill only those (a8_run_port.py and scenario_launch.py do).
+- Every launch muted (both launchers already set MASHED_MUTE=1).
+- Trackers only via re-classify; C4 needs a canonical run with the hook live (AI rows
+  are C3; a matching control-byte diff on a real race is the C4-shaped evidence).
+- Record findings as re/analysis/D3_*.md notes with the same shape as the A8 follow-ups:
+  what was measured, what was refuted, what is open. Update re/NEXT_SESSION.md at the end.
+```
 ## => D2 CLOSED 2026-09-14 — ported physics is the default build's drive model
 
 > `MASHED_REAL_PHYSICS=0` and `MASHED_A8_A4_FIRST=0` are the only remaining uses of those flags (A/B
