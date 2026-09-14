@@ -621,6 +621,15 @@ family replacing the gate-ribbon lane-follower), WS-D (powerup effects: the FUN_
 dispatcher + 9-entry type table), WS-G (real per-mode rules replacing the env-mapped
 elim/laps scaffold).
 
+**Step-1 audit done 2026-09-14** — `re/analysis/D3_AUDIT_2026-09-14.md`. Verdicts:
+**modes are already the ported path** (nothing to invert); **powerups** run the ported
+dispatcher + 9 decision functions but under a synthetic 1-2 frame invocation with no
+opponent owners (G-D1/G-D2); **AI is the real gap** — `Ai_Standalone_Tick` (FUN_00418860)
+has zero call sites, so the ported control step FUN_00416250, per-vehicle step
+FUN_00418560 and rubber-band FUN_004177b0 never execute. **No `MASHED_*` flag reachable
+in a clean-env race is scaffold-selecting**, so step 5 is a port-and-wire task, not a
+flag inversion.
+
 ~~Note the AI gating is currently mis-documented: `TrackRenderer.cpp:22,44` reference
 `MASHED_REAL_AI`, but no `getenv("MASHED_REAL_AI")` exists anywhere.~~ **Fixed 2026-09-09:**
 both comments now name the real gates, `MASHED_GATE_RIBBON_AI` (`TrackRenderer.cpp:1813`,
@@ -653,11 +662,11 @@ Definitions live in the archived v2 §Workstreams. Status as of 2026-08-15:
 |---|---|---|---|
 | WS-A | Vehicle physics | A1–A8 done; **D2 CLOSED 2026-09-14** — ported chain is the default drive model (`MASHED_REAL_PHYSICS=0` reverts); A8 slip diff passes 1.00x/1.07x | D2 ✓ |
 | WS-B | Collision / RW-Physics | B5e port DONE (K1..K24, `021a9f38`); C4-verify campaign open | D2 |
-| WS-C | AI drivers | C1 done (`re/analysis/ai_controller.md`); port + wire open | D3 |
-| WS-D | Powerup effects | D1 done (`structs/powerup_system.md`); D2/D3 gated on a Ghidra fn-split of 0x453f60–0x45be81 | D3 |
+| WS-C | AI drivers | Port DONE (`Ai/AiStandalone.cpp`), **WIRE OPEN** — `Ai_Standalone_Tick` (FUN_00418860) has **zero call sites**; the default build drives opponents from the ported racing-line target + a scaffold motion model (`TrackRenderer.cpp:2831-2960`). Audit `re/analysis/D3_AUDIT_2026-09-14.md` §1 | D3 |
+| WS-D | Powerup effects | Dispatcher FUN_0045bba0 + lifecycle + the 9 decision fns **are wired** (`TrackRenderer.cpp:3244`); leaves are standalone reimpls via `IPowerupBackend` by design. Open: G-D1 no per-frame dispatcher tick, G-D2 opponents never fire. Verbatim leaves still gated on the Ghidra fn-split of 0x453f60–0x45be81. Audit §2 | D3 |
 | WS-E | librw renderer | Gate D2 (2026-07-31) made librw the shipping renderer — **not yet the default** | D1 |
 | WS-F | Data formats | No work since 2026-06-16 | D4 |
-| WS-G | Modes & frontend | No work since 2026-06-16 | D3 |
+| WS-G | Modes & frontend | Ledger was stale. `Race/RaceModes` + `Race/RuleEngine` are the **default** path (`exe_main.cpp:2219/2244`, `RaceSession.cpp:129`, `TrackRenderer.cpp:3840`); every mode flag is revert-only or a post-derivation dev override. Open residues: G-G1 hardcoded `StartMatch(3)`, G-G2 `rule_engine_on_` defaults false. Audit §3 | D3 |
 | WS-H | Verification / C4 | Continuous; audit stale | D0, then continuous |
 | WS-I | Multiplayer | Deferred — D-11063, justification corrected 2026-08-14 | post-v1.0 |
 | WS-J | Audio remainder | No work since 2026-06-16 | D4 |

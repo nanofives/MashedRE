@@ -19,7 +19,10 @@
 #include "RwWorldRender.h"          // WS-E1: RW world render path (behind MASHED_RW_RENDER)
 #include "../LibRw/RwRaceSubmit.h"  // E2'b step 3: in-loop librw submit (MASHED_RENDER_LIBRW)
 #include "DrawStreamDump.h"         // parity harness: MASHED_DBG_DRAWSTREAM3D race-3D summary
-#include "../Ai/AiStandalone.h"     // WS-C-WIRE: standalone AI tick (DEFAULT; MASHED_GATE_RIBBON_AI reverts to the ribbon scaffold)
+#include "../Ai/AiStandalone.h"     // WS-C: racing-line target Ai_ComputeTarget is the DEFAULT
+                                    // (MASHED_GATE_RIBBON_AI reverts it to the ribbon scaffold).
+                                    // [D3 AUDIT 2026-09-14] the ported TICK Ai_Standalone_Tick is
+                                    // NOT wired -- see D3_AUDIT_2026-09-14.md section 1.
 #include "../Vehicle/VehiclePhysicsRun.h"  // WS-A8: ported physics chain (behind MASHED_REAL_PHYSICS)
 #include "../Ai/AiState.h"          // WS-AI-BRIDGE: ctrl-block / slot-table / spline addrs
 #include "../Ai/AiData.h"           // WS-AI-BRIDGE: .AI loader (AiData_LoadInto)
@@ -31,7 +34,13 @@ namespace {
 
 // ===========================================================================
 // WS-AI-BRIDGE (2026-06-17): make the standalone AI tick (Ai_Standalone_Tick,
-// Ai/AiStandalone.cpp) actually drive the opponents. Three parts:
+// Ai/AiStandalone.cpp) actually drive the opponents.
+// [D3 AUDIT 2026-09-14] NOT ACHIEVED. Part (1) landed and is the default; parts (2)/(3)
+// describe an adapter that does not exist -- Ai_Standalone_Tick has zero call sites, so
+// no ctrl-block output is ever produced or read. What actually drives the opponents is the
+// "Option B" block at :2831-2960: the ported target Ai_ComputeTarget feeding a SCAFFOLD
+// turn-rate/speed motion model. Wiring the tick is the open D3 AI gate.
+// Three parts, as originally planned:
 //   (1) Ai_BridgeLoad  — load AI<course>.AI (Common/AI.piz) into the controller
 //       image @0x007f1a9c so the race-line banks fill (tick non-inert) + init the
 //       per-vehicle slot table and behaviour records (race line, type0/idx0).
@@ -2656,7 +2665,9 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     }
     // [G4] AI-driven player (autonomous playthrough, MASHED_AI_DRIVES_PLAYER): source the
     // player's steer/accel from slot 0's AI ctrl block — the standalone AI controller already
-    // steps v0 (Ai_Standalone_Tick), so a complete race/cup can run + be verified headless on
+    // steps v0 -- [D3 AUDIT 2026-09-14] FALSE: Ai_Standalone_Tick is never called; this path
+    // reads no AI ctrl block, it runs its own pure-pursuit below. A complete race/cup can
+    // still run + be verified headless on
     // the REAL systems (no human, no gate-ribbon scaffold). Last frame's ctrl (the tick runs
     // later in this fn); one-frame lag is negligible. Requires the .AI bridge (real AI) loaded.
     static const bool s_ai_player = (std::getenv("MASHED_AI_DRIVES_PLAYER") != nullptr);

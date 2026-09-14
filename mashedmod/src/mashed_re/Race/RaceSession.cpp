@@ -75,16 +75,34 @@ const char* kAmbientCandidates[] = { "windy", "wind", "sea", "heavyrainloop",
 // host's in-race render block: UpdateCar->UpdateRace + the verbatim race camera
 // + the HUD overlay). These Update bodies are therefore no-ops (the engine owns
 // the per-frame work); the once() line records that the subsystem is engine-
-// backed. Audio + Particles are real HERE (see RaceAudio/ParticleSystem). Only
-// Powerups remains a genuine TODO stub.
+// backed. Audio + Particles are real HERE (see RaceAudio/ParticleSystem).
+// [D3 AUDIT 2026-09-14] The old "only Powerups remains a genuine TODO stub" line was
+// stale in both directions: powerups are largely wired, and the AI is LESS ported than
+// this file claimed. Per-subsystem verdicts are in the comments on each Update below;
+// the full audit is re/analysis/D3_AUDIT_2026-09-14.md.
 void ITrackRuntime::Load(int trackId)        { (void)trackId; once("TrackRuntime: REAL via TrackRenderer (GRAPH*.BSP world + collision + gates)"); ready = true; }
 void ITrackRuntime::Spawns(RaceConfig& c)    { (void)c; once("TrackRuntime::Spawns: REAL via StartRound grid (gate 0 start line)"); }
 void ITrackRuntime::Render()                 { once("TrackRuntime::Render: REAL via D3d9Render/TrackRenderer"); }
 
 void IVehicleSim::Update(RaceConfig& c, float dt)   { (void)c; (void)dt; once("VehicleSim: REAL via TrackRenderer::UpdateCar (handling integrator)"); ready = true; }
-void IAiController::Update(RaceConfig& c, float dt)  { (void)c; (void)dt; once("AiController: REAL via TrackRenderer::UpdateRace (gate-ribbon AI)"); ready = true; }
+// [D3 AUDIT 2026-09-14] Corrected: the default is NOT the gate ribbon, and it is NOT the
+// ported controller either. Opponents run "Option B" (TrackRenderer.cpp:2831-2960): the
+// PORTED racing-line target (Ai_ComputeTarget = SelectSpline + FUN_00443dc0 lookahead)
+// feeding a SCAFFOLD turn-rate/speed motion model. The ported tick spine FUN_00418860
+// (Ai_Standalone_Tick, AiStandalone.cpp:1312) has zero call sites — so ControlStep
+// (FUN_00416250), VehicleStep (FUN_00418560) and AiPreTickRubberBand (FUN_004177b0) do not
+// run in mashed_re.exe. Wiring them is the open D3 AI gate. See re/analysis/D3_AUDIT_2026-09-14.md §1.
+void IAiController::Update(RaceConfig& c, float dt)  { (void)c; (void)dt; once("AiController: PARTIAL via TrackRenderer::UpdateRace (ported racing-line target + scaffold drive model; FUN_00418860 tick NOT wired)"); ready = true; }
 void ICollisionWorld::Resolve(RaceConfig& c, float dt){ (void)c; (void)dt; once("CollisionWorld: REAL via TrackRenderer::GroundHeight (ground snap)"); ready = true; }
-void IPowerupSystem::Update(RaceConfig& c, float dt) { (void)c; (void)dt; once("PowerupSystem: REAL via TrackRenderer::pickups (orb collect/respawn; effects TODO)"); ready = true; }
+// [D3 AUDIT 2026-09-14] Corrected: "effects TODO" is stale. The ported dispatcher
+// FUN_0045bba0 + lifecycle + the 9 per-type DECISION functions ARE wired
+// (TrackRenderer::PowerupFireOnce, TrackRenderer.cpp:3244). Two gaps remain, neither
+// flag-selected: G-D1 no per-frame dispatcher tick (the original is a per-frame 3-pass
+// loop; the standalone pulses it for 1-2 frames per key press, so cooldown/charge/jet
+// state cannot be exercised), G-D2 opponents are never powerup OWNERS (slots 1..3 have
+// no fire path). Leaves stay standalone reimpls via IPowerupBackend, by design.
+// See re/analysis/D3_AUDIT_2026-09-14.md §2.
+void IPowerupSystem::Update(RaceConfig& c, float dt) { (void)c; (void)dt; once("PowerupSystem: PARTIAL via TrackRenderer (orb collect/respawn + ported dispatcher on player fire; no per-frame tick, opponents never fire)"); ready = true; }
 void IPowerupSystem::Render()                        { once("PowerupSystem::Render: REAL via PickupField billboards"); }
 void IRaceCameraDrv::Update(RaceConfig& c, float dt) { (void)c; (void)dt; once("RaceCamera: REAL via Race/RaceCamera verbatim port (0x00446520)"); ready = true; }
 void IParticleSystem::Update(float dt)               { (void)dt; once("ParticleSystem: REAL via D3d9Render/ParticleSystem (snow/dust billboards)"); ready = true; }
