@@ -539,7 +539,10 @@ standalone-side capture and the diff are what remain. Open sub-question: the **s
 > follow-ups. **DEFAULT since 2026-09-13 (same day):** the order is the default build's; `MASHED_A8_A4_FIRST=0`
 > is the A/B revert. Clean-env held-lock run: slip 0.192/0.263 vs 0.191/0.250, speed 1874 vs 1901 (twenty-seventh
 > follow-up). Open residue: the ramp regime sits ~10% ABOVE the original's slip at full lock and its old-order
-> control could not be captured; an original-side ramp capture is the missing like-for-like.
+> control could not be captured. An original-side ramp capture WAS then taken (twenty-eighth follow-up): the
+> original leaves the road and respawns within 2 s of the half-steer onset and is wedged thereafter, while the
+> port's collision scaffold keeps it driving — the ramp is not like-for-like at the WORLD level (D1/D3
+> residue), so it is neither for nor against the physics port. The held full-lock regime the ruling cites matches.
 
 **RULING 2026-08-26 — the gate metric is SLIP, and D2 stays OPEN.** The standalone-side
 capture and diff now exist (`verify/a8_velvec_20260825/cleanhold_motion.log`, held full

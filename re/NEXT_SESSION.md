@@ -11,7 +11,12 @@
 > **DONE 2026-09-13:** A4-first is the DEFAULT (`MASHED_A8_A4_FIRST=0` reverts). Clean-env held-lock run
 > matches: slip 0.192/0.263 vs 0.191/0.250, speed 1874 vs 1901 (twenty-seventh follow-up). Ramp regime:
 > port ~10% ABOVE at full lock; old-order ramp control not obtainable (exits ~14 s in, no frames).
-> NEXT: an ORIGINAL-side ramp capture (re/frida scenario capture, .msd) for a like-for-like ramp comparison;
+> DONE (twenty-eighth follow-up): original-side ramp capture taken with the port's schedule — the original
+> crashes, respawns and wedges within 2 s of half steer; the port's collision scaffold keeps it driving. The
+> ramp is a WORLD-level mismatch (D1/D3), not a physics one. scenario_launch.py now has
+> `--statediff-steer-schedule` and magnitude steer bytes. NEXT is the owner's D2 decision on the held-lock
+> evidence alone; a ramp comparison needs real world collision first (or a gentler schedule on both sides).
+> ~~NEXT: an ORIGINAL-side ramp capture (re/frida scenario capture, .msd) for a like-for-like ramp comparison;~~
 > then the owner decides D2's close. Old text follows:
 > ~~**OWNER CALL NEEDED:** make the original order the default (v3 default-build rule) and re-gate D2 on~~
 > the standing SLIP metric, which now passes; then the D2 gate reduces to the ramp regime re-run.

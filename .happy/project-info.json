@@ -1,18 +1,18 @@
 {
   "title": "Mashed RE \u2014 greenfield source port",
-  "updatedAt": "2026-09-13T20:47:13Z",
+  "updatedAt": "2026-09-14T00:37:17Z",
   "sections": [
     {
       "heading": "Next session",
       "fields": [
         {
           "label": "D2 status",
-          "value": "A4-first order is the DEFAULT (2026-09-13). Clean-env held-lock: slip 0.192/0.263 vs orig 0.191/0.250, speed 1874 vs 1901. Ramp: ~10% above at full lock, old-order control not capturable",
+          "value": "A4-first order is the DEFAULT (2026-09-13). Held-lock clean-env: slip 0.192/0.263 vs orig 0.191/0.250, speed 1874 vs 1901. Ramp: original crashes+respawns on the schedule; world-level mismatch (D1/D3), not physics",
           "kind": "text"
         },
         {
           "label": "Next",
-          "value": "original-side ramp capture (.msd) for a like-for-like ramp comparison; owner decides D2 close",
+          "value": "owner's D2 decision on the held-lock evidence; ramp comparison needs real world collision (D1/D3)",
           "kind": "text"
         }
       ]

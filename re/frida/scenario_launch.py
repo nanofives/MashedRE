@@ -140,9 +140,13 @@ let gAccel = 0, gSteer = 0, cookArmed = false;
 function armCook(){ if (cookArmed) return 'already on'; cookArmed = true;
   try { Interceptor.attach(ga(COOK_RVA), { onLeave(){ const b = ga(BLK0); if (!b) return;
     b.add(4).writeU8(gAccel ? 0xff : 0);
-    // steer, per the RVA-cited map (A4 reads these two)
-    b.add(0).writeU8(gSteer > 0 ? 0xff : 0);
-    b.add(1).writeU8(gSteer < 0 ? 0xff : 0);
+    // steer, per the RVA-cited map (A4 reads these two). MAGNITUDE-aware since
+    // 2026-09-13 (A8 ramp capture): A4 consumes the byte as a scalar
+    // (BodyOrientationIntegrate.cpp: sL = (float)in[0]), so |gSteer| in (0,1] maps
+    // to round(|gSteer|*255); +-1 still writes 0xff exactly as before.
+    const sm = Math.min(255, Math.round(Math.abs(gSteer) * 255));
+    b.add(0).writeU8(gSteer > 0 ? sm : 0);
+    b.add(1).writeU8(gSteer < 0 ? sm : 0);
     // retained legacy writes — see the note above; NOT known to be dead
     b.add(2).writeU8(gSteer > 0 ? 0xff : 0);
     b.add(3).writeU8(gSteer < 0 ? 0xff : 0);
@@ -868,6 +872,13 @@ def main():
                          "full accel / zero steer BEFORE the phase poke, so the forced input is "
                          "frame-locked to the race (cross-boot deterministic), unlike the "
                          "wall-clock-timed --spike drive arming")
+    ap.add_argument("--statediff-steer-schedule", default="",
+                    help="A8 ramp regime (2026-09-13): 't:steer,t:steer,...' with t in seconds "
+                         "after the FIRST DRIVING FRAME (record speed +0x9e4 > 50, polled every "
+                         "0.25 s) and steer a float in [-1,1] (fractions write A4's byte as "
+                         "round(|s|*255)). Overrides --statediff-steer once driving starts. The "
+                         "port's MASHED_PLAY_DEMO ramp is '0:0,1:0.5,6:-0.5,11:1,16:-1' in "
+                         "physics-log time (its td clock starts ~3 s earlier, in the countdown).")
     ap.add_argument("--statediff-steer", type=int, default=0, choices=[-1, 0, 1],
                     help="D2/A8 steer-sign: held steer for the drive injector. +1 -> descriptor "
                          "steer byte [2] (gSteer>0), -1 -> byte [3] (gSteer<0), 0 -> straight "
@@ -918,6 +929,7 @@ def main():
 
     env = dict(os.environ)
     env["MASHED_FPS_CAP"] = str(args.fps)
+    env.setdefault("MASHED_MUTE", "1")     # project rule: every launch muted
     if args.hooks == "all":
         # Full canonical hook set: default auto-hook (no MASHED_HOOK_ONLY filter).
         env["MASHED_RE_DEV"] = "1"
@@ -1105,9 +1117,33 @@ def main():
         print(f"\n  racing {args.hold}s — pulsing control 4 (confirm/accel) to skip the start intro + continue rounds...")
         t0 = time.time(); t = t0 + args.hold; n = 0; poked = False; oracle_cache = None
         tel_cache = None; bypass_armed = False; exited_early = False; steer_on = False
+        # A8 ramp schedule (2026-09-13): drive-relative steer steps, clock = first frame
+        # with record speed > 50. Applied through the same E.drive RPC as the held steer.
+        sched = []
+        if args.statediff_steer_schedule:
+            for kv in args.statediff_steer_schedule.split(","):
+                ts, sv = kv.split(":"); sched.append((float(ts), float(sv)))
+            sched.sort()
+        sched_t0 = None; sched_i = 0; sched_log = []
         while time.time() < t:
             if psutil and not psutil.pid_exists(pid):
                 print("\n  game exited."); exited_early = True; break
+            if sched:
+                try:
+                    if sched_t0 is None:
+                        cinfo = E.carinfo(); v = cinfo.get("vel", [0, 0, 0])
+                        if (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]) ** 0.5 > 50.0:
+                            sched_t0 = time.time()
+                            print(f"\n  [schedule] first driving frame at +{sched_t0 - t0:.1f}s (|vel|>50); schedule clock started")
+                    if sched_t0 is not None:
+                        td = time.time() - sched_t0
+                        while sched_i < len(sched) and td >= sched[sched_i][0]:
+                            sv = sched[sched_i][1]
+                            E.drive(1, sv); sched_log.append((round(td, 2), sv))
+                            print(f"\n  [schedule] td={td:.2f}s steer -> {sv:+.2f}")
+                            sched_i += 1
+                except Exception as ex:
+                    print(f"\n  [schedule] step failed: {ex}")
             if args.bypass_proxy and not bypass_armed and time.time() - t0 >= args.bypass_at:
                 bypass_armed = True
                 print(f"\n  [spike] +{time.time()-t0:.1f}s", E.arm_bypass())
@@ -1151,7 +1187,7 @@ def main():
             if args.spike_telemetry and n % 3 == 0:
                 try: tel_cache = E.telemetry()         # crash-proof incremental snapshot
                 except Exception: pass
-            time.sleep(0.6)
+            time.sleep(0.25 if sched else 0.6)
         print()
         if args.spike_telemetry:
             try:
@@ -1269,6 +1305,9 @@ def main():
                             "drive": bool(args.statediff_drive),
                             "drive_late": bool(args.statediff_drive_late),
                             "steer": args.statediff_steer,
+                            "steer_schedule": args.statediff_steer_schedule,
+                            "steer_schedule_applied": sched_log if args.statediff_steer_schedule else None,
+                            "steer_schedule_t0_offset_s": (round(sched_t0 - t0, 2) if args.statediff_steer_schedule and sched_t0 else None),
                             "noop_cook": bool(args.statediff_noop_cook),
                             "hooks": getattr(args, "hooks", ""),
                         },

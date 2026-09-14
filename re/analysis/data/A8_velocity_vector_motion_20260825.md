@@ -2253,3 +2253,59 @@ PLAY-DEMO figure, not this .msd's 1901) remain the only old-order ramp reference
 - Not done: an original-side RAMP capture (the .msd machinery exists:
   `re/frida/` scenario capture) to make the ramp comparison like-for-like; the 6-11 deg
   per-wheel residual of the twenty-sixth follow-up; the sub-full-lock bands.
+
+---
+
+# Twenty-eighth follow-up — original-side RAMP capture taken; the ramp regime is NOT like-for-like at the WORLD level (the original crashes and respawns; the port's collision scaffold keeps it driving)
+
+Session 2026-09-13, continued. `re/frida/scenario_launch.py` gained a drive-relative steer
+schedule (`--statediff-steer-schedule "t:s,..."`, clock = first frame with record speed
++0x9e4 > 50, polled every 0.25 s) and a magnitude-aware steer byte (A4 reads `in[0]`/`in[1]`
+as a scalar, so 0.5 writes 128 exactly as the port's PLAY_DEMO does). Launches now set
+`MASHED_MUTE=1`. Capture: `verify/a8_ramp_20260913/orig_ramp.msd` (2436 frames,
+provenance JSON alongside) with the port's schedule in physics-log time,
+`0:0,1:0.5,6:-0.5,11:1,16:-1`, applied at td 0.00 / 1.00 / 6.01 / 11.02 / 16.04 s.
+
+## What the original did on that schedule (per 60-frame chunk of the .msd)
+
+| idx | speed | steerAng0 | grounded | airflag | slip | av.y |
+|---:|---:|---:|---:|---:|---:|---:|
+| 900 | 559 | 0.00 | 4.0 | 1 | 0.000 | -0.000 |
+| 960 | **2568** | 9.42 | 4.0 | 1 | 0.096 | +0.280 |
+| 1020 | **62** | 11.83 | **3.0** | 1 | 0.117 | 0.000 |
+| 1200 | 62 | 11.83 | **2.0** | 1 | **1.821** | 0.000 |
+| 1260 | 0 | 0.00 | 4.0 | 0 | 1.761 | 0.000 |
+| 1380 | 407 | -10.98 | 4.0 | 1 | 0.015 | -0.070 |
+| 1440 | 390 | -15.23 | 4.0 | 1 | 0.099 | -0.187 |
+| 1500..2400 | 22-34 | -17 .. +33.87 .. -33.87 | 4.0 | 1 | - | 0.000 |
+
+Read: full throttle from standstill reaches 2568 within ~1 s; at the +0.5 steer onset the
+car leaves the road within ~2 s (speed 2568 -> 62, grounded 4 -> 3 -> 2, slip 1.8 rad = the
+car is sideways/over), the launcher's own telemetry shows the respawn (`spawnFired` 3 -> 4
+at +21 s, vel reset to 0), and after the respawn the car never exceeds speed 34 for the
+remaining ~30 s while the schedule keeps commanding full throttle and full lock: it is
+wedged. Note also the original's steer angle RAMPS (9.4 -> 11.8 deg over a second at a
+constant 128 byte, and -11 -> -15 -> -17 later): the steer hold-duration counters ported
+in the thirteenth follow-up are visible in the record.
+
+## What the port did on the same schedule (`verify/a8_ramp_20260913/default/motion_diag.log`)
+
+Speed 1200-4000 throughout, 7 reseeds (its off-mesh recovery teleports the car back onto
+the mesh), no wedge, all 745 frames driving; at +1.0 it sits in a full-lock turn at
+2280-2580 with slip 0.26-0.30.
+
+## Conclusion
+
+The ramp regime cannot be compared between the sides on this track: the original's world
+has walls, edges and a respawn; the port's has a GroundHeight scaffold and a reseed. That
+is the D1/D3 collision residue the twenty-fourth follow-up named, not a physics question,
+and the twenty-seventh follow-up's "~10% ABOVE at full lock on the ramp" was measured on
+a run the original cannot reproduce. The like-for-like regime both sides survive is the
+held full-lock donut, which is the regime the D2 ruling cites and which now matches
+(twenty-seventh follow-up). The ramp residue is therefore reclassified: it is not evidence
+for or against the physics port until the world collision is real.
+
+Options if a ramp comparison is still wanted: a gentler schedule the original survives
+(e.g. +0.25 with a shorter hold) run on BOTH sides — the port's PLAY_DEMO schedule is
+hard-coded (exe_main.cpp:2983-2987), so the port would need the same env schedule knob
+the launcher now has. Not done here.
