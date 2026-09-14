@@ -15,7 +15,11 @@
 > crashes, respawns and wedges within 2 s of half steer; the port's collision scaffold keeps it driving. The
 > ramp is a WORLD-level mismatch (D1/D3), not a physics one. scenario_launch.py now has
 > `--statediff-steer-schedule` and magnitude steer bytes. NEXT is the owner's D2 decision on the held-lock
-> evidence alone; a ramp comparison needs real world collision first (or a gentler schedule on both sides).
+> evidence alone. Gentler two-sided ramp TRIED (twenty-ninth follow-up): three more original captures; the
+> original's launch at full lock from standstill spins out at ~1.5 s and sometimes stays stopped until the
+> steer is released (partial bytes exonerated: 33.87x0.75 = 25.37 deg lands exactly). Under wall-clock input
+> timing no schedule repeats, so the port-side knob was NOT added. Prerequisite for any ramp comparison:
+> frame-anchored injection on the original (steps keyed to the 0x004c1be0 tick counter), then the port knob.
 > ~~NEXT: an ORIGINAL-side ramp capture (re/frida scenario capture, .msd) for a like-for-like ramp comparison;~~
 > then the owner decides D2's close. Old text follows:
 > ~~**OWNER CALL NEEDED:** make the original order the default (v3 default-build rule) and re-gate D2 on~~

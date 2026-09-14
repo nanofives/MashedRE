@@ -2309,3 +2309,73 @@ Options if a ramp comparison is still wanted: a gentler schedule the original su
 (e.g. +0.25 with a shorter hold) run on BOTH sides — the port's PLAY_DEMO schedule is
 hard-coded (exe_main.cpp:2983-2987), so the port would need the same env schedule knob
 the launcher now has. Not done here.
+
+---
+
+# Twenty-ninth follow-up — gentler two-sided ramp attempted on the original: no survivable schedule under wall-clock input timing; the port-side schedule knob was NOT added
+
+Session 2026-09-13, continued. Three more original-side captures with the new
+`--statediff-steer-schedule` (all `verify/a8_ramp2_20260913/`, provenance JSON alongside;
+per-second tables below from the .msd, td = seconds after the first frame with speed > 50):
+
+## `orig_gentle.msd` — `0:0,1:1,8:0.75,14:0.5,20:1` (straight 1 s, then full lock)
+Speed 1859 at td 1, then |vel| < 25 from td 2 to the end with all four wheels grounded:
+wedged from the moment full lock was applied at speed. Nothing usable.
+
+## `orig_lockwiden.msd` — `0:1,8:0.75,14:0.5,20:1` (full lock from standstill, then widen)
+
+| td | speed | steerAng0 | slip | av.y |
+|---:|---:|---:|---:|---:|
+| 0 | 750 | 20.46 | 0.038 | +0.309 |
+| 1 | 165 | 28.93 | 0.557 | +0.016 |
+| 2 | 155 | 33.87 | 0.741 | -0.026 |
+| 4 | 1668 | 33.87 | 0.194 | +1.158 |
+| 5 | 2191 | 33.87 | 0.268 | +1.476 |
+| 7 | 2021 | 33.87 | 0.225 | +1.400 |
+| 8 | 2205 | **25.37** | 0.181 | +0.977 |
+| 9..13 | 10-11 | 25.37 | - | 0.000 |
+| 14..19 | 10 | **17.00** | - | 0.000 |
+| 20..30 | 5-8 | 33.87 | - | 0.000 |
+
+The launch spins out at td 1-2 (slip 0.56-0.74, speed 155), recovers into the donut by
+td 4 (the August regime: speed 1700-2200, slip 0.19-0.27, av.y 1.2-1.5), and stops dead
+within a second of the 0.75 step, never to move again. The byte scaling is EXACT
+(33.87 x 0.75 = 25.37, x 0.5 = 17.00 in +0x1a8), so A4 consumed the partial byte correctly.
+
+## `orig_lockstraight.msd` — `0:1,8:0,14:1` (the diagnostic: a DIGITAL release instead of a partial byte)
+
+| td | speed | steerAng0 | slip | av.y |
+|---:|---:|---:|---:|---:|
+| 0 | 766 | 21.03 | 0.042 | +0.325 |
+| 1 | 105 | 29.49 | 0.211 | 0.000 |
+| 2..7 | 21-31 | 33.87 | - | -0.001 |
+| 8 | 135 | 0.00 | 0.103 | 0.000 |
+| 10..12 | 2622-3796 | 0.00 | 0.000-0.008 | ~0 |
+| 14 | 1425 | 20.74 | 0.154 | +0.614 |
+| 16..25 | 1068-2602 | 33.87 | 0.12-0.34 | +0.84..+1.93 |
+
+Here the wedge happened INSIDE the full-lock phase (td 2-7, speed 21, no partial byte
+anywhere), the digital straight step released it into a 3800-speed straight, and the final
+full-lock phase is a normal donut. So: (1) partial steer bytes are exonerated; (2) the
+wedge is a state of the original's own launch dynamics at full lock from standstill — the
+td ~1.5 s spin-out sometimes ends stopped and stays stopped until the steer is released —
+[UNCERTAIN] what the stopped state physically is (all four wheels grounded, drive flag
++0xb20 set, speed 5-30, av 0); (3) under wall-clock-timed injection (0.25 s poll) the
+outcome differs run to run, so no gentle schedule can be relied on to produce the same
+manoeuvre twice, let alone on both sides. The August 38 s capture applied the lock BEFORE
+launch (constant `--statediff-steer 1`), which is the one input pattern that has held.
+
+Side result, for the record: the last phase of `orig_lockstraight` (td 16-25, entered
+from a straight at 3800 rather than from standstill) sits at speed 2200-2600, slip
+0.21-0.34, av.y 1.3-1.9 — the same regime the twenty-seventh follow-up matched.
+
+## Port-side schedule knob: NOT ADDED (scope reduction, stated)
+
+`MASHED_STEER_SCHEDULE` for the port was the second half of this task. It is not added:
+there is no survivable two-sided schedule for it to serve, and adding an env flag with no
+consumer runs against the v3 rule that the flag count should fall. Adding it is a
+20-line change next to the `MASHED_STEER_HOLD` block (exe_main.cpp:3028-3057; clock =
+first driving frame, same as the launcher's) if a frame-anchored injection on the original
+side is built first — that is the real prerequisite: schedule steps keyed to the record's
+frame counter (the statediff tick hook at 0x004c1be0 already counts frames) instead of
+wall clock.
