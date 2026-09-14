@@ -411,7 +411,35 @@ reviewer real time for no new information.
 renderer, AND D1's default-renderer question settled. Until both hold, an in-race
 opinion is an opinion about the scaffold, not about the port.
 
-### D2 — Default physics
+### D2 — Default physics — **CLOSED 2026-09-14**
+
+> **CLOSED 2026-09-14.** `MASHED_REAL_PHYSICS` is inverted (`VehiclePhysicsRun.cpp`
+> `VehiclePhysics_Enabled`): the ported RWP-3.7 chain, with A4 -> A5 -> A6a run before the
+> substep loop (the original's FUN_00470c70 order, default since 2026-09-13), drives the car
+> with NO variable set. `MASHED_REAL_PHYSICS=0` reverts to the kinematic scaffold for A/B
+> only. Gate evidence, clean env (`verify/d2_close_20260914/cleanenv/`, held full-lock recipe,
+> physics variable and order knob both unset) vs `orig_steerR.msd`:
+>
+> | | slip 1500-2000 | slip 2000-2600 | av.y | driving-median speed | max speed | momentum eff-dt port/orig |
+> |---|---:|---:|---:|---:|---:|---:|
+> | original | 0.1913 | 0.2498 | 1.14 / 1.46 | 1901 | 2565 | - |
+> | default build | 0.1916 | 0.2668 | 1.12 / 1.59 | 1887 | 2573 | 0.98 / 0.99 / 1.03 |
+>
+> Drivability clause: top speed 2573 is the original's shape (2565), not a clamp; `car_yaw`
+> responds to steer (the whole run is a held donut). A8 clause: the slip metric of the
+> 2026-08-26 ruling passes at 1.00x / 1.07x; velocity turn rate (momentum identity) within
+> 3%; turn radius within 5-11% (twenty-fourth follow-up). Mechanism and the per-law
+> verification on both sides: `re/analysis/data/A8_velocity_vector_motion_20260825.md`
+> follow-ups 25-27; the ramp regime is a world-level (D1/D3) mismatch and is excluded on
+> evidence (follow-ups 28-29).
+>
+> **Residue carried out of D2, not blocking:** (a) the kinematic scaffold is RETAINED behind
+> `=0`, not deleted as this phase first specified — deletion is deferred until the A/B is no
+> longer needed; (b) open decision #2 below (re-measure the collision-FX skid thresholds now
+> that `vel[]` is real) is now DUE; (c) the 6-11 deg per-wheel force residual and the
+> original's launch-at-full-lock wedge (follow-up 29) are recorded [UNCERTAIN].
+
+Original phase text follows.
 
 Invert `MASHED_REAL_PHYSICS`. The ported RWP-3.7 chain drives the car by default; the
 kinematic scaffold is deleted, not flagged off.
@@ -623,7 +651,7 @@ Definitions live in the archived v2 §Workstreams. Status as of 2026-08-15:
 
 | WS | Scope | Status | Phase |
 |---|---|---|---|
-| WS-A | Vehicle physics | A1–A7 done; **A8 blocked on the coupling reduction** (not the statediff wedge — corrected 2026-08-21, see §D2) | D2 |
+| WS-A | Vehicle physics | A1–A8 done; **D2 CLOSED 2026-09-14** — ported chain is the default drive model (`MASHED_REAL_PHYSICS=0` reverts); A8 slip diff passes 1.00x/1.07x | D2 ✓ |
 | WS-B | Collision / RW-Physics | B5e port DONE (K1..K24, `021a9f38`); C4-verify campaign open | D2 |
 | WS-C | AI drivers | C1 done (`re/analysis/ai_controller.md`); port + wire open | D3 |
 | WS-D | Powerup effects | D1 done (`structs/powerup_system.md`); D2/D3 gated on a Ghidra fn-split of 0x453f60–0x45be81 | D3 |
@@ -634,7 +662,7 @@ Definitions live in the archived v2 §Workstreams. Status as of 2026-08-15:
 | WS-I | Multiplayer | Deferred — D-11063, justification corrected 2026-08-14 | post-v1.0 |
 | WS-J | Audio remainder | No work since 2026-06-16 | D4 |
 
-Critical path unchanged in shape: **D1 (render) and D2 (physics) are the two long poles**
+Critical path unchanged in shape: **D1 (render) and D2 (physics) were the two long poles** (both closed: D1 2026-08-19, D2 2026-09-14)
 and are independent of each other. Everything else is the proven parse/port/verify loop
 and parallelises.
 

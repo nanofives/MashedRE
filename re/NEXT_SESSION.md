@@ -1,4 +1,13 @@
 # Next session — kickoff prompt
+## => D2 CLOSED 2026-09-14 — ported physics is the default build's drive model
+
+> `MASHED_REAL_PHYSICS=0` and `MASHED_A8_A4_FIRST=0` are the only remaining uses of those flags (A/B
+> reverts). Clean-env held-lock run matches the original (thirtieth follow-up; ROADMAP §D2 CLOSED block).
+> NEXT CANDIDATES, in order: (1) ROADMAP open decision #2 — re-measure the collision-FX skid thresholds
+> now that `vel[]` is real (`TrackRenderer::EmitCarFx`, calibration caveat at TrackRenderer.cpp:4245);
+> (2) D3 — default AI / powerups / modes (WS-C dispatcher FUN_00418860 family, WS-D FUN_0045bba0 +
+> 9-entry table, WS-G mode rules); (3) delete the kinematic scaffold once the A/B is no longer needed.
+
 
 ## => D2 slip-angle: MECHANISM FOUND 2026-09-13 (twenty-sixth follow-up in the A8 data note)
 

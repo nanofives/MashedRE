@@ -1,18 +1,18 @@
 {
   "title": "Mashed RE \u2014 greenfield source port",
-  "updatedAt": "2026-09-14T00:49:53Z",
+  "updatedAt": "2026-09-14T12:42:05Z",
   "sections": [
     {
       "heading": "Next session",
       "fields": [
         {
-          "label": "D2 status",
-          "value": "A4-first order is the DEFAULT (2026-09-13). Held-lock clean-env: slip 0.192/0.263 vs orig 0.191/0.250, speed 1874 vs 1901. Ramp: not obtainable two-sided (original wedges at launch under wall-clock input); port knob not added",
+          "label": "D2",
+          "value": "CLOSED 2026-09-14: ported physics is the default (MASHED_REAL_PHYSICS=0 reverts); clean-env slip 0.192/0.267 vs orig 0.191/0.250, speed 1887 vs 1901",
           "kind": "text"
         },
         {
           "label": "Next",
-          "value": "owner's D2 decision on the held-lock evidence; ramp needs frame-anchored injection on the original first",
+          "value": "collision-FX skid thresholds re-measure (open decision #2), then D3 (default AI/powerups/modes)",
           "kind": "text"
         }
       ]

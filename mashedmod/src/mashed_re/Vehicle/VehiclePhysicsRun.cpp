@@ -200,7 +200,16 @@ void VehiclePhysics_SetWorld(const float* verts, int vertCount,
 }
 
 bool VehiclePhysics_Enabled() {
-    static const bool e = (std::getenv("MASHED_REAL_PHYSICS") != nullptr);
+    // ROADMAP v3 D2, inverted 2026-09-14: the ported RWP-3.7 chain is the DEFAULT drive
+    // model. `MASHED_REAL_PHYSICS=0` reverts to the kinematic scaffold for A/B only (the
+    // v3 default-build rule: a flag may only turn the ported behaviour OFF). Evidence:
+    // re/analysis/data/A8_velocity_vector_motion_20260825.md follow-ups 25-27 — on the
+    // held full-lock recipe the default order matches the original: slip 0.192/0.263 vs
+    // 0.191/0.250, av.y 1.12/1.58 vs 1.14/1.46, driving-median speed 1874 vs 1901.
+    static const bool e = [] {
+        const char* v = std::getenv("MASHED_REAL_PHYSICS");
+        return !(v && v[0] == '0');
+    }();
     return e;
 }
 

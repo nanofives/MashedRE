@@ -2,8 +2,8 @@
 //
 // Standalone driver for the verbatim physics chain (A3 VehicleInit -> A4
 // VehicleControlIntegrate -> A5 ForceIntegrator -> A6a Integrate2 -> A6b
-// AeroStabilize), behind the MASHED_REAL_PHYSICS env toggle (default OFF -> the
-// kinematic scaffold in TrackRenderer::UpdateCar stays the shipping path).
+// AeroStabilize), behind the MASHED_REAL_PHYSICS env toggle (default ON since 2026-09-14; MASHED_REAL_PHYSICS=0
+// reverts to the kinematic scaffold in TrackRenderer::UpdateCar for A/B only).
 //
 // This is the "make it RUN" half (NOT bit-identity C4 — that is WS-A-VERIFY-3).
 // It allocates the 0xd04 record array (standalone mirror of DAT_008815a0), runs
@@ -98,7 +98,7 @@ struct PlayerCarIO {
     float drive_delta[3];   // out: world-space position delta for this frame
 };
 
-bool VehiclePhysics_Enabled();                       // MASHED_REAL_PHYSICS set once
+bool VehiclePhysics_Enabled();                       // true unless MASHED_REAL_PHYSICS=0 (D2, 2026-09-14)
 void VehiclePhysics_Init(int carCount, int trackType);
 // Feed the track collision triangles (TrackRenderer col_verts_/col_tris_) to the
 // wheel solver's broadphase (Collision::g_worldTris). Call once at track load.

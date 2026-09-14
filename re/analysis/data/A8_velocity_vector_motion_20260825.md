@@ -2379,3 +2379,17 @@ first driving frame, same as the launcher's) if a frame-anchored injection on th
 side is built first — that is the real prerequisite: schedule steps keyed to the record's
 frame counter (the statediff tick hook at 0x004c1be0 already counts frames) instead of
 wall clock.
+
+---
+
+# Thirtieth follow-up — `MASHED_REAL_PHYSICS` inverted; clean-env default build matches; D2 CLOSED
+
+Session 2026-09-14. `VehiclePhysics_Enabled()` now returns true unless `MASHED_REAL_PHYSICS=0`.
+Held full-lock recipe with the physics variable AND the order knob unset
+(`verify/d2_close_20260914/cleanenv/motion_diag.log`, 1086 lines, 11 reseeds): slip vs fwd 0.1916 /
+0.2668 (bands 1500-2000 / 2000-2600) vs the original's 0.1913 / 0.2498; slip vs wheel axis 0.1491 /
+0.2243 vs 0.1467 / 0.2052; av.y +1.121 / +1.589 vs +1.143 / +1.464; driving-median speed 1887 vs 1901;
+max 2573 vs 2565; momentum eff-dt port/orig 0.982 / 0.989 / 1.033 across the three steady bands.
+Same-build `MASHED_REAL_PHYSICS=0` control produced no motion_diag.log, as expected: the log is written
+by the physics runner, which does not step under the scaffold — the flag still reverts, but that
+control carries no numbers. D2 is closed in ROADMAP.md on this evidence; residue listed there.
