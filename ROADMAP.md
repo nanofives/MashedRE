@@ -639,6 +639,32 @@ reverts to the ribbon scaffold) and `MASHED_AI_DRIVES_PLAYER` (`TrackRenderer.cp
 **Gate:** clean-env race where opponents, powerups and mode rules are all the ported
 implementations.
 
+#### D3 STATUS 2026-09-14 — NOT CLOSED. Gate table:
+
+| Third | Default path today | Measured against the original | Verdict |
+|---|---|---|---|
+| **AI (WS-C)** | ported racing-line TARGET + scaffold drive model | control-byte diff, `verify/d3_ai_20260914/` | **RED** |
+| **Powerups (WS-D)** | ported dispatcher + 9 decision fns, synthetic invocation | **not measured this session** | **OPEN** |
+| **Modes (WS-G)** | ported `RaceModes` -> `RuleEngine`, default-on | live oracle, rules 0/1/2: 0 mismatches over 1290-3963 calls per fn | **GREEN with 2 blind spots** |
+
+Notes: `re/analysis/D3_AUDIT_2026-09-14.md` (step 1), `D3_AI_TICK_WIRING_2026-09-14.md`
+(step 2), `D3_MODES_2026-09-14.md` (step 4).
+
+**No `MASHED_*` flag reachable in a clean-env race is scaffold-selecting** — step 5 has
+nothing to invert. The AI gap is a PORT, now named precisely: `FUN_00443300` and the
+`FUN_00443dc0` curvature-walk/wall-march tail are stubbed, so the bearing error fed to the
+verbatim steer bands lands in their full-steer range. Measured: the standalone commands
+2-3 distinct steer values per car where the original commands 33-96.
+
+`MASHED_AI_TICK=1` is a NEW default-OFF gate on the ported tick (which had zero call sites
+before this session). D3 exists to remove gates of that shape: it must be DELETED once the
+two stubs land, not inverted.
+
+Also found and fixed, wider than D3: every `scenario_launch.py` race left the AI
+output-slot table `0x007f1a14[0..3]` at its `.bss` zeros, so all four cars wrote
+controller 0's ctrl block. `--poke-ctrl-slots` restores what the original's own allocator
+commits at `0x0043f895`. A8/D2 physics captures are unaffected (they drive block 0 directly).
+
 ### D4 — Breadth to close P-DoD
 
 Only now does per-function coverage become the driving metric again, and only over the

@@ -1,183 +1,28 @@
 {
-  "title": "Mashed RE \u2014 greenfield source port",
-  "updatedAt": "2026-09-14T15:49:49Z",
+  "title": "Mashed RE",
+  "updatedAt": "2026-09-14T14:10:00Z",
   "sections": [
     {
-      "heading": "Next session",
+      "heading": "Roadmap v3",
       "fields": [
-        {
-          "label": "Kickoff",
-          "value": "D3 (default AI / powerups / modes): audit what the clean-env race already runs, measure each vs the original, port only the named gaps; prompt in re/NEXT_SESSION.md",
-          "kind": "text"
-        },
-        {
-          "label": "D2",
-          "value": "CLOSED 2026-09-14 (ported physics is the default)",
-          "kind": "text"
-        }
+        { "label": "Active phase", "value": "D3 — default AI, powerups, modes", "kind": "text" },
+        { "label": "Closed", "value": ["D1 render (librw) 2026-08-19", "D2 physics 2026-09-14"], "kind": "list" },
+        { "label": "D3 gate", "value": "NOT closed", "kind": "text" }
       ]
     },
     {
-      "heading": "Confidence ladder",
+      "heading": "D3 thirds (measured 2026-09-14)",
       "fields": [
-        {
-          "label": "C4 / C3 / C2 / C1",
-          "value": "184 / 1029 / 3865 / 821",
-          "kind": "text"
-        },
-        {
-          "label": "Promotion rounds run",
-          "value": 256,
-          "kind": "number"
-        },
-        {
-          "label": "Promoted last session",
-          "value": 18,
-          "kind": "number"
-        },
-        {
-          "label": "Refused (evidence banked)",
-          "value": "004f10e0 \u2014 both callers anonymous",
-          "kind": "text"
-        }
+        { "label": "Modes (WS-G)", "value": "GREEN — oracle, 0 mismatches, rules 0/1/2", "kind": "text" },
+        { "label": "AI (WS-C)", "value": "RED — cause localised to stubbed FUN_00443300 / FUN_00443dc0 tail", "kind": "text" },
+        { "label": "Powerups (WS-D)", "value": "OPEN — never measured", "kind": "text" }
       ]
     },
     {
-      "heading": "Uncertainties",
+      "heading": "Next up",
       "fields": [
-        {
-          "label": "Gating (blocks a C2->C3)",
-          "value": 0,
-          "kind": "number"
-        },
-        {
-          "label": "Trend",
-          "value": [
-            "2026-09-11 start: 235",
-            "2026-09-11 end: 121",
-            "2026-09-12 start: 46",
-            "2026-09-12 end: 0"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Open rows",
-          "value": 3029,
-          "kind": "number"
-        },
-        {
-          "label": "Caveat",
-          "value": "29 of the 46 were DE-GATED, not resolved; U-9134/U-9135/U-9136 band audits RESOLVED 2026-09-12",
-          "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "Open owner decisions",
-      "fields": [
-        {
-          "label": "U-9135 (new)",
-          "value": "103 rows tagged render carry a Microsoft-PSGP attestation \u2014 narrow the range or re-band",
-          "kind": "text"
-        },
-        {
-          "label": "U-9134",
-          "value": "lua band 0x004b4a80..0x004c4000 may be over-broad",
-          "kind": "text"
-        },
-        {
-          "label": "Others",
-          "value": [
-            "D-11069 hooks.csv schema",
-            "U-9087 four C4 demotions",
-            "area/frontend still unmerged"
-          ],
-          "kind": "list"
-        }
-      ]
-    },
-    {
-      "heading": "Repo state",
-      "fields": [
-        {
-          "label": "Branch",
-          "value": "race/first-frame-parity (clean, 27 commits last session)",
-          "kind": "text"
-        },
-        {
-          "label": "Worktrees / pool locks",
-          "value": 0,
-          "kind": "number"
-        },
-        {
-          "label": "Build",
-          "value": "clean \u2014 mashed_re.exe + mashed_re_dev.asi",
-          "kind": "text"
-        },
-        {
-          "label": "New tooling",
-          "value": "re/tools/caller_screen.py; observe_bufs; path2 buffer-arg support",
-          "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "Repo hygiene",
-      "fields": [
-        {
-          "label": "Last push to origin",
-          "value": "2026-09-12",
-          "kind": "date"
-        },
-        {
-          "label": "Pushed",
-          "value": [
-            "main 69fb06e7",
-            "race/first-frame-parity b9798b02",
-            "area/frontend 8a7ea053 (new remote)"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Last backup",
-          "value": "2026-09-12 (20260912-194450, 469 MB, anchor verified)",
-          "kind": "text"
-        },
-        {
-          "label": "Stashes",
-          "value": 0,
-          "kind": "number"
-        }
-      ]
-    },
-    {
-      "heading": "Band audit 2026-09-12",
-      "fields": [
-        {
-          "label": "PSGP band",
-          "value": "narrowed to 0x4ec760..0x4ef25b + 0x4fb9aa..0x4fc9e0; middle 0x4ef25c..0x4fb9a9 = RW D3D9 driver",
-          "kind": "text"
-        },
-        {
-          "label": "Lua span",
-          "value": "ends 0x4c0735; 16 rows -> render, 10 -> unknown",
-          "kind": "text"
-        },
-        {
-          "label": "HLSL band",
-          "value": "5 rows -> psgp, 68 -> d3dx9-shader-compiler (range label retired), psgp sub-band 0x5045ca..0x5102f0",
-          "kind": "text"
-        },
-        {
-          "label": "C-levels changed",
-          "value": 0,
-          "kind": "number"
-        },
-        {
-          "label": "hooks.csv rows touched",
-          "value": 283,
-          "kind": "number"
-        }
+        { "label": "Queue", "value": ["1. Powerups: build the FUN_0045bba0 fire-event instrument", "2. Port FUN_00443300 + FUN_00443dc0 tail, then delete MASHED_AI_TICK", "3. Modes: exercise the finish-order append branch; cover rules 5 and 10"], "kind": "list" },
+        { "label": "Kickoff prompt", "value": "re/NEXT_SESSION.md (top block)", "kind": "text" }
       ]
     }
   ]

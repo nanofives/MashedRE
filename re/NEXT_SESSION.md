@@ -1,5 +1,93 @@
 # Next session — kickoff prompt
 
+## => KICKOFF PROMPT - D3 continuation (written 2026-09-14), paste verbatim
+
+```
+Session goal: close ROADMAP v3 D3. The D3 step-1 audit and the AI + modes measurements
+are DONE (2026-09-14). Read the D3 STATUS block in ROADMAP.md first, then the three
+notes; do NOT re-derive any of it.
+
+WHAT IS SETTLED (evidence in the tree, not in a ledger):
+- re/analysis/D3_AUDIT_2026-09-14.md - what a clean-env race actually runs, per
+  subsystem, plus every MASHED_* read in Ai/, Powerup/, Race/ and exe_main's mode block
+  classified. Headline: NO flag reachable in a clean-env race is scaffold-selecting, so
+  D3 step 5 is a port task, not a flag inversion. Section 6 carries corrections made
+  after the measurements - read it, it amends section 1.3.
+- re/analysis/D3_MODES_2026-09-14.md - modes are GREEN. The live rules oracle
+  (scenario_launch.py --oracle) found 0 mismatches over 1290-3963 calls per function for
+  rules 0/1/2 against FUN_00410d10 / FUN_00410510 / FUN_004177b0.
+- re/analysis/D3_AI_TICK_WIRING_2026-09-14.md - AI is RED and the cause is LOCALISED.
+
+THREE THINGS TO DO, in this order.
+
+1. POWERUPS (WS-D) - the only third never measured. Gate is BEHAVIOUR, not verbatim
+   leaves. Build the original-side instrument the same way the AI one was built this
+   session: hook the dispatcher FUN_0045bba0 in re/frida/scenario_launch.py (add a
+   --statediff-puhook alongside --statediff-aistep, same CSV shape) and record, per fire
+   event, the DECISION outcome the port claims is verbatim - ammo decrement, cooldown,
+   fire-mode transition (primary->2, secondary->1, both->3). Compare against the
+   standalone's. Order: OIL and FLASH first (fewest vehicle-field dependencies, per
+   re/analysis/structs/powerup_system.md section 9), then GUN/SHOTGUN (hitscan), then
+   MISSILE/MORTAR/DRUM/P_MINE.
+   Two structural gaps are already named and need no re-discovery (audit section 2.1):
+   G-D1 the standalone has NO per-frame dispatcher tick - pw_.Tick() is called only
+   inside TrackRenderer::PowerupFireOnce (TrackRenderer.cpp:3244) as a 1-2 frame burst
+   per key press, against the original's per-frame 3-pass loop, so cooldown/charge/jet
+   state cannot be exercised; G-D2 opponents are never powerup OWNERS (no fire path for
+   slots 1..3). If Collision/ContactStubs.cpp still stubs Rw_TransformPoints (identity)
+   and Rw_MatrixFromAxisAngle (no-op), record that as the blocker for the four
+   contact-dependent types - do not fake it.
+
+2. THE AI PORT - FUN_00443300 and the FUN_00443dc0 curvature-walk/wall-march tail.
+   This is the named critical path and the measurement that named it is in
+   D3_AI_TICK_WIRING section 4.1: the verbatim steer bands are FAITHFUL, their INPUT is
+   not. With those two stubbed the bearing error sits in the bands' 30..180deg
+   full-steer range, so the standalone commands 2-3 distinct steer values per car where
+   the original commands 33-96. Port them, then re-run the diff:
+     original:   py -3.12 re/frida/scenario_launch.py --track 0 --mode 10 --cars 4                    --car 0 --poke-ctrl-slots --statediff-out verify/<d>/o.msd                    --statediff-car 1 --statediff-aistep --hold 60
+     standalone: py -3.12 re/tools/sa_capture.py verify/<d>/sa 8,18 MASHED_MUTE=1                    MASHED_TRACK_VIEW=Training MASHED_CAR=1 MASHED_ROUND=1                    MASHED_AI_TICK=1 MASHED_AI_STEPDUMP=verify/<d>/sa.csv
+   Both CSVs share columns, so they diff directly. Baselines from 2026-09-14 are in
+   verify/d3_ai_20260914/.
+   Then: consume the ctrl bytes (the tick produces them today, the Option B motion model
+   at TrackRenderer.cpp:2831-2960 still drives), and DELETE MASHED_AI_TICK - it is a
+   default-OFF gate on a ported behaviour, which is exactly what D3 exists to remove.
+   Smaller AI residues: the original-side accel distribution is [UNCERTAIN] because the
+   capture race was degenerate (D3_AI_TICK_WIRING section 4.3 has the next command); and
+   CarSlotStateSet is a guarded no-op standalone (section 2).
+
+3. MODES blind spots, to turn GREEN into CLOSED (D3_MODES section 3): the finish-order
+   APPEND branch never fired in any of five runs (ord.appends == 0, so the 3.0 threshold
+   and the -1.0 slot sentinel are untested - --poke-lap 0:3 did NOT move it), and only 3
+   of 11 rules are covered - run --rule 5 --poke-collect and --rule 10 --rule10-timer,
+   which exist for those two pre-blocks. Plus G-G1 (RaceSession.cpp:118 hardcodes
+   StartMatch(3) instead of deriving the round target from the rule) and G-G2
+   (RaceSceneState.h:273 rule_engine_on_ defaults false).
+
+RULES (unchanged):
+- Cite RVAs for every original claim; NO-GUESSING; mark [UNCERTAIN] with a next command.
+- ALWAYS pass --poke-ctrl-slots on any AI-behavioural capture. Without it the launcher
+  leaves 0x007f1a14[0..3] at zeros and all four cars write controller 0's ctrl block
+  (measured 2026-09-14). Physics captures that drive block 0 via the cook injector are
+  unaffected.
+- Never dereference a pointer READ OUT OF the standalone's image-pad: the pad is
+  zero-filled, so a .data pointer constant the original loads is 0 there. That is what
+  AV'd the first tick wiring (CarSlotStateSet, 0x005f2770).
+- Track the PIDs you spawn; kill only those. Every launch muted.
+- Trackers only via re-classify; C4 needs a canonical run with the hook live.
+- Record findings as re/analysis/D3_*.md notes shaped like the A8 follow-ups
+  (measured / refuted / open). Update re/NEXT_SESSION.md at the end.
+```
+
+## => D3 2026-09-14 — audit + AI + modes done; powerups NOT measured
+
+> Gate table in ROADMAP section D3. **Modes GREEN** (oracle, 0 mismatches over 1290-3963 calls
+> per fn, rules 0/1/2). **AI RED**, cause localised to the stubbed `FUN_00443300` /
+> `FUN_00443dc0` curvature-walk tail. **Powerups OPEN** — never measured. Two reusable findings:
+> `scenario_launch.py` left the AI output-slot table at zeros so all four cars shared one ctrl
+> block (`--poke-ctrl-slots` fixes it), and a pointer read out of the standalone's image-pad is
+> never safe to dereference (it AV'd the first tick wiring).
+
+
 ## => KICKOFF PROMPT - D3 session (default AI, powerups, modes), written 2026-09-14, paste verbatim
 
 ```
