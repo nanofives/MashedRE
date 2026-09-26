@@ -1,0 +1,22 @@
+  [0] OIL      frames=  46 CLEAN          checked=canfire_rets:46,charge:45,code_post:46,deact_ra:46,fire_modes:46,prev3:46
+  [1] FLASH    frames=   4 6 MISMATCH     checked=canfire_rets:3,code_post:3,deact_ra:3,fire_modes:3,prev3:3,sub:2
+        t+1: sub orig=3 port=4
+        t+2: code_post orig='18' port='-1'
+        t+2: fire_modes orig='1' port=''
+        ... 3 more
+  [2] GUN      frames= 164 400 MISMATCH   checked=ammo:163,canfire_rets:164,charge:163,code_post:164,cooldown:163,deact_ra:164,fire_modes:164,prev3:164
+        t+1: charge orig=3.0 port=0.0
+        t+2: charge orig=6.0 port=0.0
+        t+3: charge orig=5.0 port=0.0
+        ... 397 more
+  [3] SHOTGUN  frames=  37 41 MISMATCH    checked=ammo:2,canfire_rets:3,code_post:3,counter:2,deact_ra:3,fire_modes:3,prev3:3
+        t+0: ammo orig=4 port=0
+        t+1: ammo orig=3 port=0
+        t+1: counter orig=7 port=0
+        ... 38 more
+  [4] MISSILE  frames=  33 36 MISMATCH    checked=ammo:2,canfire_rets:3,code_post:3,deact_ra:3,fire_modes:3,jet:2,life:2,prev3:3
+        t+1: jet orig=1 port=0
+        t+1: life orig=0.4833333492279053 port=0.0
+        t+2: code_post orig='11' port='-1'
+        ... 33 more
+VERDICT: 483 mismatches

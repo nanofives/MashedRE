@@ -681,6 +681,182 @@ function aiStepArm(){
 function aiStepDrain(){ const r = AS.rows; AS.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
+// --- POWERUP DISPATCHER capture (D3 WS-D, 2026-09-26) ----------------------
+// Ground truth for the power-up DECISION logic, taken around the per-frame
+// dispatcher FUN_0045bba0 (sole caller 0x0040fcd0). Byte-level facts this block
+// relies on (capstone, MASHED.exe.unpatched, 2026-09-26):
+//   0x0045bba7  CALL FUN_0040e350 (= MOV EAX,[0x0063ba8c]; RET)  -> race sub-state
+//   0x0045bc2b  CMP EAX,6 / JNE 0x0045bdc1  -> per-slot state/fire logic only when ==6
+//   0x0045bc6b  state = DAT_0068d1f0[slot]  (4 -> skip, 2 -> set 3 + deactivate, 3 -> skip)
+//   0x0045bcab  armed = [slot+0xac]; ctrl = *(int*)(0x007f1a14 + slot*0x10)
+//   0x0045bd58  CANFIRE (*(entry+0x0c))(slot) cdecl; nonzero -> FUN_0045bac0 @0x0045bd62
+//   0x0045bd72  cur  = byte [0x007f103f + ctrl*0x4c]   (ctrl block 0x007f1038 +7)
+//   0x0045bd84  prev = byte [0x007f14ff + ctrl*0x4c]   (shadow 0x007f14f8 +7; the cook
+//               FUN_00496530 copies block->shadow with REP MOVSD at 0x00496552 and then
+//               zeroes the block at 0x00496568, so prev = LAST FRAME's cur)
+//   mode: cur&&!prev -> 2, cur&&prev -> 3, !cur&&prev -> 1; FIRE (*(entry+8))(slot,mode)
+//               cdecl at 0x0045bdbb
+//   0x0045be31  neither -> byte [0x007f1040+ctrl*0x4c] set and [0x007f1500+ctrl*0x4c]
+//               clear -> FUN_0045bac0 (deactivate) at 0x0045be4d
+//   0x0045bd24  not armed -> [0x007f1055+ctrl*0x4c] && ![0x007f1515+..] ->
+//               FUN_0045c010(slot, 0x10) at 0x0045bd47
+//   FUN_0045c010(idx, code) cdecl: slot = 0x0088fbe0 + idx*0xb4, JMP FUN_0045bfa0, which
+//               loads ESI = [esp+0xc] = the SECOND stack arg (the type code) at 0x0045bfa1.
+// CONTRIVED STATE (C3-grade, same class as pokeCtrlSlots): the scripted mode below
+// activates each type through the ORIGINAL's own activate path FUN_0045c010 and
+// writes the ctrl byte the dispatcher reads; everything downstream is the original.
+const PU_DISP = 0x0045bba0, PU_ACT = 0x0045c010, PU_DEACT = 0x0045bac0;
+const PU_SLOT0 = 0x0088fbe0, PU_SSTRIDE = 0xb4, PU_STATE = 0x0063ba8c;
+const PU_FIRE = {0x004561c0:9, 0x00454740:10, 0x00455150:11, 0x00457ef0:12, 0x0045a850:16,
+                 0x0045b6e0:17, 0x00454db0:18, 0x00457800:19, 0x004533b0:7};
+const PU_CANF = [0x004566d0, 0x00457ab0, 0x00455360, 0x0045a890, 0x0045b260, 0x00454a90,
+                 0x00456dd0, 0x00453610];
+// per-type pool record strides (powerup_effects_decomp.md §2) -- bytes dumped from the
+// ARM handle ([slot+0xac], a pool-record pointer: MISSILE ARM returns EBX=0x006885d0+
+// idx*0x2c at 0x004550f9, OIL ARM returns ESI=0x0068a250+idx*0x10 at 0x00456dc1)
+const PU_STRIDE = {9:0x48, 10:0x2c, 11:0x2c, 12:0x18, 16:0x68, 17:0x24, 18:0x14, 19:0x10, 7:0x1c};
+const PU = { armed:false, n:0, calls:0, rows:[], err:null, cap:200000, cur:null,
+             plan:[], subj:0, warm:120, pi:0, st:'warm', t:0, acts:[], lastArmed:0,
+             pat:[], held:0 };
+function puCode(e){ try { return e.isNull() ? -1 : e.readS32(); } catch(_){ return -2; } }
+function puRec(h, code){
+  const n = PU_STRIDE[code]; if (!n || h.isNull()) return '';
+  try { const u = new Uint8Array(h.readByteArray(n)); let s = '';
+        for (let i = 0; i < u.length; ++i) s += (u[i] < 16 ? '0' : '') + u[i].toString(16);
+        return s; } catch(_){ return 'ERR'; }
+}
+function puSnap(){
+  const o = [];
+  for (let s = 0; s < 4; ++s) {
+    const sl = ga(PU_SLOT0 + s * PU_SSTRIDE);
+    const e = sl.add(0xa8).readPointer(), h = sl.add(0xac).readPointer();
+    const code = puCode(e);
+    o.push({e:e, h:h, code:code, rec:puRec(h, code)});
+  }
+  return o;
+}
+// fire pattern for the scripted subject: [on,off] frame pairs, exercised in order.
+// Covers the press edge (mode 2), holds of 1/5/29 frames (mode 3) and release (mode 1).
+const PU_PATTERN = [[1,6],[2,6],[6,6],[30,8],[1,6],[1,6],[2,10],[60,10]];
+function puArm(planCsv, subj, warm){
+  if (PU.armed) return 'already armed';
+  try {
+    PU.plan = planCsv ? planCsv.split(',').map(x => parseInt(x, 10)) : [];
+    PU.subj = subj|0; PU.warm = warm|0;
+    const act = new NativeFunction(ga(PU_ACT), 'void', ['int', 'int'], 'mscdecl');
+    globalThis._puAct = act;
+    const ph = ga(PHASE), stg = ga(PU_STATE), dtp = ga(0x007f100c);
+    for (const k in PU_FIRE) {
+      const code = PU_FIRE[k];
+      Interceptor.attach(ga(parseInt(k)), { onEnter(){
+        if (!PU.cur) return;
+        const sp = this.context.esp;
+        PU.cur.ev.push(['F', sp.add(4).readPointer().toUInt32(), sp.add(8).readS32(), code]);
+      }});
+    }
+    for (const a of PU_CANF) {
+      Interceptor.attach(ga(a), {
+        onEnter(){ this.sl = PU.cur ? this.context.esp.add(4).readPointer().toUInt32() : 0; },
+        onLeave(r){ if (PU.cur && this.sl) PU.cur.ev.push(['C', this.sl, r.toInt32(), a]); }
+      });
+    }
+    Interceptor.attach(ga(PU_DEACT), { onEnter(){
+      if (!PU.cur) return;
+      PU.cur.ev.push(['D', this.context.esi.toUInt32(), this.returnAddress.toUInt32(), 0]);
+    }});
+    Interceptor.attach(ga(PU_DISP), {
+      onEnter(){
+        this.skip = true;
+        try {
+          if (ph.readU8() !== 3) return;
+          const state = stg.readS32();
+          PU.calls++;
+          this.skip = false; this.state = state;
+          const subj = PU.subj;
+          const ctrl = ga(0x007f1a14 + subj * 0x10).readS32();
+          let act = '';
+          if (state === 6 && PU.plan.length) {
+            PU.n++;
+            const sl = ga(PU_SLOT0 + subj * PU_SSTRIDE);
+            const held = !sl.add(0xa8).readPointer().isNull();
+            let cur = 0, disc = 0;
+            if (PU.st === 'warm') {
+              if (PU.n >= PU.warm) PU.st = 'arm';
+            }
+            if (PU.st === 'arm') {
+              if (PU.pi >= PU.plan.length) { PU.st = 'done'; }
+              else if (held) { disc = (PU.t++ % 2 === 0) ? 1 : 0; }   // discard a natural pickup
+              else {
+                const code = PU.plan[PU.pi];
+                act = 'A' + code;
+                try { globalThis._puAct(subj, code); } catch(e){ PU.err = 'act ' + e; }
+                PU.acts.push([PU.n, code]);
+                PU.st = 'fire'; PU.t = 0; PU.pat = []; PU.idle = 0;
+                for (const p of PU_PATTERN) { for (let i=0;i<p[0];++i) PU.pat.push(1);
+                                              for (let i=0;i<p[1];++i) PU.pat.push(0); }
+              }
+            } else if (PU.st === 'fire') {
+              if (!held) {                       // deactivated by the original itself
+                if (++PU.idle >= 30) { PU.pi++; PU.st = 'arm'; PU.t = 0; }
+              } else if (PU.t < PU.pat.length) {
+                cur = PU.pat[PU.t++];
+              } else {                           // pattern exhausted, still armed
+                disc = (PU.t++ % 2 === 0) ? 1 : 0;   // native discard edge (0x0045be31)
+              }
+            }
+            if (ctrl >= 0 && ctrl < 16) {
+              ga(0x007f103f + ctrl * 0x4c).writeU8(cur ? 0xff : 0);
+              if (disc) ga(0x007f1040 + ctrl * 0x4c).writeU8(0xff);
+            }
+          }
+          const c = [];
+          for (let s = 0; s < 4; ++s) {
+            const k = ga(0x007f1a14 + s * 0x10).readS32();
+            const ok = k >= 0 && k < 16;
+            c.push([k, ok ? ga(0x007f103f + k*0x4c).readU8() : -1,
+                       ok ? ga(0x007f14ff + k*0x4c).readU8() : -1,
+                       ok ? ga(0x007f1040 + k*0x4c).readU8() : -1,
+                       ok ? ga(0x007f1500 + k*0x4c).readU8() : -1,
+                       ga(0x0068d1f0 + s*4).readS32()]);
+          }
+          this.c = c; this.act = act;
+          this.dt = '0x' + dtp.readU32().toString(16);   // exact float bits of DAT_007f100c
+          this.pre = puSnap();
+          PU.cur = { ev: [] };
+        } catch(e){ if (!PU.err) PU.err = 'enter ' + e; this.skip = true; }
+      },
+      onLeave(){
+        if (this.skip) { PU.cur = null; return; }
+        try {
+          const post = puSnap(), ev = PU.cur ? PU.cur.ev : [];
+          PU.cur = null;
+          for (let s = 0; s < 4; ++s) {
+            const base = (PU_SLOT0 + s * PU_SSTRIDE) >>> 0;
+            const mine = ev.filter(x => x[1] === base);
+            const a = this.pre[s], b = post[s];
+            if (a.code === -1 && b.code === -1 && !mine.length) continue;
+            if (PU.rows.length >= PU.cap) return;
+            const f = mine.filter(x => x[0] === 'F'), cf = mine.filter(x => x[0] === 'C'),
+                  d = mine.filter(x => x[0] === 'D');
+            const cc = this.c[s];
+            PU.rows.push([SD.frames, PU.calls, this.state, s, cc[0], cc[1], cc[2], cc[3], cc[4],
+                          cc[5], this.dt, (s === PU.subj ? this.act : ''),
+                          a.code, a.h.toUInt32(), b.code, b.h.toUInt32(),
+                          f.map(x => x[2]).join('|'), cf.map(x => x[2]).join('|'),
+                          d.map(x => '0x' + (x[2] >>> 0).toString(16)).join('|'),
+                          a.rec, b.rec]);
+          }
+        } catch(e){ if (!PU.err) PU.err = 'leave ' + e; }
+      }
+    });
+    PU.armed = true;
+    return 'puhook armed (FUN_0045bba0 + 9 FIRE + 8 CANFIRE + FUN_0045bac0; plan=['
+           + PU.plan.join(',') + '] subj slot ' + PU.subj + ' warm ' + PU.warm + ')';
+  } catch(e){ return 'ERR ' + e; }
+}
+function puDrain(){ const r = PU.rows; PU.rows = []; return r; }
+// ---------------------------------------------------------------------------
+
 // --- CANONICAL-OBSERVATION BLOCK ------------------------------------------
 // The texObserve/texResults implementation lives in re/frida/observe_block.js
 // and is CONCATENATED onto this agent below (see OBSERVE_JS). It used to be
@@ -721,6 +897,10 @@ rpc.exports = {
   aiStepArm: function(){ return aiStepArm(); },
   aiStepDrain: function(){ return aiStepDrain(); },
   aiStepStats: function(){ return JSON.stringify({armed:AS.armed, calls:AS.calls, pending:AS.rows.length, err:AS.err}); },
+  puArm: function(plan, subj, warm){ return puArm(plan, subj, warm); },
+  puDrain: function(){ return puDrain(); },
+  puStats: function(){ return JSON.stringify({armed:PU.armed, calls:PU.calls, n6:PU.n, st:PU.st,
+                                              pi:PU.pi, acts:PU.acts, pending:PU.rows.length, err:PU.err}); },
   sdStats: function(){ return JSON.stringify(SD); },
   armCounters: function(csv){ return armCounters(csv); },
   rearmAsi: function(){ return rearmAsi(); },
@@ -1005,6 +1185,21 @@ def main():
                          "cdecl, EDI=block), so it does not depend on the slot table at "
                          "0x007f1a14, which a warp-launched race leaves unpopulated. Covers "
                          "every AI car in one run. ~180 calls/s at 4 cars.")
+    ap.add_argument("--statediff-puhook", action="store_true",
+                    help="[D3 WS-D] hook the power-up dispatcher FUN_0045bba0 (+ the 9 FIRE fns, "
+                         "8 CANFIRE fns and FUN_0045bac0) and write <out>.puhook.csv: one row per "
+                         "dispatcher call per slot that holds a power-up or had an event: frame,"
+                         "call,state,slot,ctrl,cur3,prev3,cur4,prev4,boxstate,dt,act,code_pre,"
+                         "h_pre,code_post,h_post,fire_modes,canfire_rets,deact_ra,rec_pre,"
+                         "rec_post. rec = the ARM handle's pool record, hex.")
+    ap.add_argument("--pu-plan", default="",
+                    help="[D3 WS-D] comma list of type codes to force-activate on --pu-subj "
+                         "through the original's FUN_0045c010(slot,code), each followed by a "
+                         "scripted fire pattern on ctrl byte 0x007f103f (CONTRIVED, C3-grade). "
+                         "Empty = observe natural pickups only.")
+    ap.add_argument("--pu-subj", type=int, default=0, help="slot the --pu-plan drives (default 0)")
+    ap.add_argument("--pu-warm", type=int, default=120,
+                    help="state-6 dispatcher calls to wait before the first activation")
     ap.add_argument("--statediff-aictrl", action="store_true",
                     help="[D3] alongside --statediff-out, also sample the AI CONTROL BLOCK "
                          "for the same car each phase-3 render tick and write it to "
@@ -1199,6 +1394,8 @@ def main():
             print("  [statediff]", E.sd_arm(args.statediff_car, args.statediff_aictrl))
             if args.statediff_aistep:
                 print("  [statediff]", E.ai_step_arm())
+            if args.statediff_puhook:
+                print("  [statediff]", E.pu_arm(args.pu_plan, args.pu_subj, args.pu_warm))
             if args.statediff_drive and not args.statediff_drive_late:
                 print("  [statediff]", E.arm_cook())
                 print(f"  [statediff] drive: full accel, steer={args.statediff_steer:+d} ->",
@@ -1475,6 +1672,26 @@ def main():
                     elif len(blocks) < len(cars):
                         print(f"  [statediff] WARNING: {len(cars)} cars share "
                               f"{len(blocks)} ctrl block(s) -- slot table unpopulated")
+                if args.statediff_puhook:
+                    try: print("  [statediff] puhook agent:", E.pu_stats())
+                    except Exception: pass
+                    pu_rows = []
+                    try: pu_rows = E.pu_drain()
+                    except Exception as _e: print("  [statediff] puhook drain failed:", _e)
+                    pup = outp.with_suffix(outp.suffix + ".puhook.csv")
+                    with open(pup, "w", newline="") as f:
+                        f.write("frame,call,state,slot,ctrl,cur3,prev3,cur4,prev4,boxstate,dt,act,"
+                                "code_pre,h_pre,code_post,h_post,fire_modes,canfire_rets,"
+                                "deact_ra,rec_pre,rec_post" + chr(10))
+                        for r in pu_rows:
+                            f.write(",".join(str(x) for x in r) + chr(10))
+                    fired = [r for r in pu_rows if r[16] != ""]
+                    codes = sorted({r[12] for r in pu_rows} | {r[14] for r in pu_rows})
+                    print(f"  [statediff] puhook {len(pu_rows)} rows -> {pup}"
+                          f"  (codes seen={codes}, rows with FIRE={len(fired)})")
+                    if not pu_rows:
+                        print("  [statediff] WARNING: puhook EMPTY -- no slot held a power-up "
+                              "at phase 3 (check state==6 at 0x0063ba8c)")
                 if args.statediff_aictrl:
                     ai_snapshot = list(sd_ai)
                     aip = outp.with_suffix(outp.suffix + ".aictrl.csv")

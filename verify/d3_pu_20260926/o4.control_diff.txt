@@ -1,0 +1,17 @@
+  [0] MORTAR   frames= 154 CLEAN          checked=ammo:153,canfire_rets:154,code_post:154,cooldown:153,deact_ra:154,fire_modes:154,prev3:154
+  [1] DRUM     frames=  10 13 MISMATCH    checked=ammo:2,canfire_rets:3,code_post:3,deact_ra:3,fire_modes:3,prev3:3
+        t+0: ammo orig=2 port=0
+        t+1: ammo orig=1 port=0
+        t+2: code_post orig='10' port='-1'
+        ... 10 more
+  [2] P_MINE   frames=  10 13 MISMATCH    checked=ammo:2,canfire_rets:3,code_post:3,deact_ra:3,fire_modes:3,prev3:3
+        t+0: ammo orig=2 port=0
+        t+1: ammo orig=1 port=0
+        t+2: code_post orig='12' port='-1'
+        ... 10 more
+  [3] R_FLAME  frames=  58 98 MISMATCH    checked=ammo:57,canfire_rets:58,code_post:58,cooldown:57,deact_ra:58,fire_modes:58,jet:57,prev3:58,sub:57
+        t+0: cooldown orig=0.0033333338797092438 port=0.019999999552965164
+        t+1: sub orig=1 port=0
+        t+1: cooldown orig=0.019999999552965164 port=0.0033333338797092438
+        ... 95 more
+VERDICT: 124 mismatches

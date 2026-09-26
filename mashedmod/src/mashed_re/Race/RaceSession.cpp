@@ -96,12 +96,11 @@ void IAiController::Update(RaceConfig& c, float dt)  { (void)c; (void)dt; once("
 void ICollisionWorld::Resolve(RaceConfig& c, float dt){ (void)c; (void)dt; once("CollisionWorld: REAL via TrackRenderer::GroundHeight (ground snap)"); ready = true; }
 // [D3 AUDIT 2026-09-14] Corrected: "effects TODO" is stale. The ported dispatcher
 // FUN_0045bba0 + lifecycle + the 9 per-type DECISION functions ARE wired
-// (TrackRenderer::PowerupFireOnce, TrackRenderer.cpp:3244). Two gaps remain, neither
-// flag-selected: G-D1 no per-frame dispatcher tick (the original is a per-frame 3-pass
-// loop; the standalone pulses it for 1-2 frames per key press, so cooldown/charge/jet
-// state cannot be exercised), G-D2 opponents are never powerup OWNERS (slots 1..3 have
-// no fire path). Leaves stay standalone reimpls via IPowerupBackend, by design.
-// See re/analysis/D3_AUDIT_2026-09-14.md §2.
+// (TrackRenderer::TickPowerupDispatch). [D3 2026-09-26] G-D1 closed: the dispatcher
+// ticks every race frame over 4 slots. G-D2 half-closed: AI slots can OWN (orb
+// collect) and read their fire byte, but the AI's fire decision FUN_00415220 is
+// stubbed in the ported AI tick, so they do not fire. Leaves stay standalone reimpls
+// via IPowerupBackend, by design. See re/analysis/D3_POWERUPS_2026-09-26.md.
 void IPowerupSystem::Update(RaceConfig& c, float dt) { (void)c; (void)dt; once("PowerupSystem: PARTIAL via TrackRenderer (orb collect/respawn + ported dispatcher on player fire; no per-frame tick, opponents never fire)"); ready = true; }
 void IPowerupSystem::Render()                        { once("PowerupSystem::Render: REAL via PickupField billboards"); }
 void IRaceCameraDrv::Update(RaceConfig& c, float dt) { (void)c; (void)dt; once("RaceCamera: REAL via Race/RaceCamera verbatim port (0x00446520)"); ready = true; }

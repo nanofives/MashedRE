@@ -54,6 +54,10 @@ public:
     // Advance bob/spin + respawn timers; collect orbs the player drives through.
     // Returns true on the frame an orb is collected (host may play an SFX).
     bool Update(float dt, const float carPos[3]);
+    // [D3 WS-D G-D2] collect an orb for ANOTHER car (an AI slot) without touching
+    // the player's held slot: same radius test as Update. On a hit, *type = the
+    // orb's real MASHED code (-1 for an index-only orb) and returns true.
+    bool CollectAt(const float carPos[3], int* type);
     void Render(IDirect3DDevice9* dev, const float camEye[3], const float camAt[3]);
 
     int  collected() const { return collected_; }

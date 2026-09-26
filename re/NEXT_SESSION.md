@@ -1,6 +1,6 @@
 # Next session — kickoff prompt
 
-## => KICKOFF PROMPT - D3 continuation (written 2026-09-14), paste verbatim
+## => KICKOFF PROMPT - D3 continuation (written 2026-09-14, powerups updated 2026-09-26), paste verbatim
 
 ```
 Session goal: close ROADMAP v3 D3. The D3 step-1 audit and the AI + modes measurements
@@ -18,27 +18,27 @@ WHAT IS SETTLED (evidence in the tree, not in a ledger):
   rules 0/1/2 against FUN_00410d10 / FUN_00410510 / FUN_004177b0.
 - re/analysis/D3_AI_TICK_WIRING_2026-09-14.md - AI is RED and the cause is LOCALISED.
 
+POWERUPS MEASURED 2026-09-26 (re/analysis/D3_POWERUPS_2026-09-26.md, read it, do not
+re-derive): scenario_launch.py --statediff-puhook captures the original's dispatcher
+FUN_0045bba0 per frame; re/tools/pu_replay + re/tools/pu_diff.py replay those inputs
+through the port TUs. All 9 types' decision traces are CLEAN, floats bit-exact (7 of 9
+were wrong and are fixed). G-D1 is CLOSED (per-frame, 4 slots, live in the exe).
+Criterion (b) is NOT met: AI slots can own but cannot fire, because the AI's fire decision
+FUN_00415220 (writes ctrl[7], the byte the dispatcher reads) is stubbed in the ported AI
+tick. Contact outcomes (MISSILE/MORTAR/DRUM/P_MINE impacts) stay BLOCKED on
+Collision/ContactStubs.cpp.
+
 THREE THINGS TO DO, in this order.
 
-1. POWERUPS (WS-D) - the only third never measured. Gate is BEHAVIOUR, not verbatim
-   leaves. Build the original-side instrument the same way the AI one was built this
-   session: hook the dispatcher FUN_0045bba0 in re/frida/scenario_launch.py (add a
-   --statediff-puhook alongside --statediff-aistep, same CSV shape) and record, per fire
-   event, the DECISION outcome the port claims is verbatim - ammo decrement, cooldown,
-   fire-mode transition (primary->2, secondary->1, both->3). Compare against the
-   standalone's. Order: OIL and FLASH first (fewest vehicle-field dependencies, per
-   re/analysis/structs/powerup_system.md section 9), then GUN/SHOTGUN (hitscan), then
-   MISSILE/MORTAR/DRUM/P_MINE.
-   Two structural gaps are already named and need no re-discovery (audit section 2.1):
-   G-D1 the standalone has NO per-frame dispatcher tick - pw_.Tick() is called only
-   inside TrackRenderer::PowerupFireOnce (TrackRenderer.cpp:3244) as a 1-2 frame burst
-   per key press, against the original's per-frame 3-pass loop, so cooldown/charge/jet
-   state cannot be exercised; G-D2 opponents are never powerup OWNERS (no fire path for
-   slots 1..3). If Collision/ContactStubs.cpp still stubs Rw_TransformPoints (identity)
-   and Rw_MatrixFromAxisAngle (no-op), record that as the blocker for the four
-   contact-dependent types - do not fake it.
+1. POWERUPS residue, small: (i) confirm AI orb ownership live -- no car, player included,
+   collected an orb in a 60 s Training drive demo (D3_POWERUPS section 6 item 2 has the
+   diagnostic to add); (ii) FUN_00415220 is part of the AI port below, and once it writes
+   ctrl[7] re-run the standalone with MASHED_PU_STEPDUMP and check slots 1..3 FIRE rows.
 
-2. THE AI PORT - FUN_00443300 and the FUN_00443dc0 curvature-walk/wall-march tail.
+2. THE AI PORT - FUN_00443300 and the FUN_00443dc0 curvature-walk/wall-march tail,
+   plus FUN_00415220 (power-up fire decision, 8 MOV [EDI+7],1 sites from 0x0041536c).
+   Note: the aistep CSV's c3 column is block+3, NOT the fire byte; fire is block+7
+   (AiState.h corrected 2026-09-26).
    This is the named critical path and the measurement that named it is in
    D3_AI_TICK_WIRING section 4.1: the verbatim steer bands are FAITHFUL, their INPUT is
    not. With those two stubbed the bearing error sits in the bands' 30..180deg

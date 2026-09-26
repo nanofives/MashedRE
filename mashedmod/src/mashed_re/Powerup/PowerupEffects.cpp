@@ -32,6 +32,14 @@ namespace Effect {
 namespace tune {
     constexpr int   kGunAmmo      = 50;    // REAL: pool +0x10 = 0x32 (FUN_00456040)
     constexpr float kGunRate      = 0.06f; // REAL: timer reset 0x3d75c28f (FUN_004561c0)
+    constexpr float kGunChargeCap = 40.0f; // REAL: _DAT_005cd274 (FCOMP 0x0045623d)
+    constexpr float kGunChargeStep= 4.0f;  // REAL: _DAT_005cc35c (FADD 0x00456251)
+    constexpr int   kDrumDrops    = 2;     // MEASURED: ARM leaves pool +0x08 = 2 for DRUM and
+                                           //   P_MINE (verify/d3_pu_20260926/o1,o2 rec0);
+                                           //   writer RVA [UNCERTAIN], see D3_POWERUPS §3
+    constexpr int   kShotgunRefire= 8;     // REAL: +0xc = 8 at 0x0045b3b9 (FUN_0045b390)
+    constexpr float kMissileLife  = 0.5f;  // MEASURED: flight timer +0x28 starts 0.5 on fire
+                                           //   (ARM stores 0x3f000000 at +0x14); writer [UNCERTAIN]
     constexpr int   kMissileAmmo  = 1;     // REAL: DAT_006885d8 = 1 (FUN_00455060)
     constexpr int   kMortarAmmo   = 3;     // REAL: (&DAT_00684e44)[] = 3 (FUN_00453350)
     constexpr float kMortarRate   = 0.4f;  // REAL: (&DAT_00684e48)[] = 0x3ecccccd (FUN_004533b0)
@@ -74,31 +82,47 @@ void Gun_Deact(PowerupSystem& sys, Slot&) {  // 0x4566f0: RwFrameRemoveChild (lo
     sys.backend()->EffectEnd(kGun, sys.owner().pos);
 }
 void Gun_Fire(PowerupSystem& sys, Slot& s, int /*mode*/) {  // 0x4561c0 (ignores mode)
-    if (s.cooldown > 0.f || s.ammo < 1) return;   // orig: timer==0.0 && ammo>0
+    // charge +0x18: FCOMP _DAT_005cd274(40.0) / TEST AH,5 / JP at 0x0045623d..0x00456248,
+    // then FADD _DAT_005cc35c(4.0) at 0x00456251 -- i.e. add 4 only while < 40, on
+    // EVERY fire call, before the rate gate.
+    if (s.charge < tune::kGunChargeCap) s.charge += tune::kGunChargeStep;
+    // rate gate: FCOMP 0.0 / TEST AH,0x44 / JP at 0x00456270..0x0045627b fires only when
+    // the timer is EXACTLY 0.0 (a negative timer blocks until the tick clamps it);
+    // ammo +0x10 > 0 at 0x00456281..0x00456289.
+    if (s.cooldown != 0.f || s.ammo < 1) return;
     s.ammo--;
-    s.cooldown = tune::kGunRate;
+    s.cooldown = tune::kGunRate;              // 0x3d75c28f at 0x0045628f
     float fwd[3]; OwnerForward(sys.owner(), fwd);
     sys.backend()->HitscanForward(sys.owner().pos, fwd);
     sys.backend()->SfxByName("shotgun", 0.7f);
 }
 void Gun_Tick(PowerupSystem& sys, float dt) {  // 0x4568d0 (lock indicator; timers)
-    if (sys.slot().activeCode == kGun && sys.slot().cooldown > 0.f)
-        sys.slot().cooldown -= dt;
+    Slot& s = sys.slot();
+    if (s.activeCode != kGun) return;
+    // charge: FSUB _DAT_005cc320(1.0) at 0x00456bbf, clamp <0 -> 0 at 0x00456bd8.
+    s.charge -= 1.0f;
+    if (s.charge < 0.f) s.charge = 0.f;
+    // timer +0x04: FCOMP 0.0 / TEST AH,0x41 / JNE at 0x00456be7..0x00456bf2:
+    // > 0 -> FSUB dt (0x00456bf7); <= 0 -> store 0 (0x00456c02).
+    if (s.cooldown > 0.f) s.cooldown -= dt;
+    else                  s.cooldown = 0.f;
 }
 
 // ============================== DRUM (10) ==================================
 // arm 0x453fe0 / fire 0x454740 / canfire 0x457ab0 / deact 0x457ad0 / tick 0x454820
 // Depth-charge: dropped once behind the car, then disarms.
-void Drum_Arm(PowerupSystem&, Slot& s) { s.subState = 1; }      // armed
-bool Drum_CanFire(PowerupSystem&, Slot& s) { return s.subState == 0; } // *(armed+8)==0
+void Drum_Arm(PowerupSystem&, Slot& s) { s.ammo = tune::kDrumDrops; }  // pool +0x08 = 2
+bool Drum_CanFire(PowerupSystem&, Slot& s) {  // 0x457ab0: SETE (*(rec+8)==0) at 0x00457ac1
+    return s.ammo == 0;
+}
 void Drum_Deact(PowerupSystem& sys, Slot&) {  // 0x457ad0: +0x10=2,+0xc=0 (pool state; dropped drum lives on)
     sys.backend()->EffectEnd(kDrum, sys.owner().pos);
 }
-void Drum_Fire(PowerupSystem& sys, Slot& s, int mode) {         // 0x454740: mode==2
-    if (mode != kFirePrimary || s.subState == 0) return;
-    sys.backend()->DropHazard(sys.owner().pos, /*proximity=*/false);
+void Drum_Fire(PowerupSystem& sys, Slot& s, int mode) {         // 0x454740: CMP 2 at 0x00454747
+    if (mode != kFirePrimary || s.ammo == 0) return;
+    sys.backend()->DropHazard(sys.owner().pos, /*proximity=*/false);  // FUN_004541e0 0x00454758
     sys.backend()->SfxByName("drop mine", 0.8f);
-    s.subState = 0;                          // consumed -> canfire true next frame
+    s.ammo--;   // MEASURED: +0x08 2->1->0, one per press edge (o1 call 1558 t+1/t+8)
 }
 void Drum_Tick(PowerupSystem&, float) {}     // 0x454820: host advances the hazard
 
@@ -106,8 +130,9 @@ void Drum_Tick(PowerupSystem&, float) {}     // 0x454820: host advances the haza
 // arm 0x455060 / fire 0x455150 / canfire 0x455360 / deact 0x455390 / tick 0x455c90
 // Homing missile (the §7 worked exemplar): fire on PRIMARY (mode==2), one shot.
 void Missile_Arm(PowerupSystem&, Slot& s) { s.ammo = tune::kMissileAmmo; }
-bool Missile_CanFire(PowerupSystem&, Slot& s) {  // 0x455360: inflight==0 && ammo<1
-    return s.ammo < 1;
+bool Missile_CanFire(PowerupSystem&, Slot& s) {  // 0x455360
+    if (s.jetState != 0) return false;            // in-flight +0x1c != 0 -> 0 (0x00455372..0x0045537b)
+    return s.ammo < 1;                            // then ammo +0x08 (0x0045537c)
 }
 void Missile_Deact(PowerupSystem& sys, Slot&) {  // 0x455390: detach launcher attachment
     sys.backend()->EffectEnd(kMissile, sys.owner().pos);
@@ -115,6 +140,8 @@ void Missile_Deact(PowerupSystem& sys, Slot&) {  // 0x455390: detach launcher at
 void Missile_Fire(PowerupSystem& sys, Slot& s, int mode) {  // 0x455150: only mode==2
     if (mode != kFirePrimary || s.ammo < 1) return;
     s.ammo--;
+    s.jetState = 1;                 // MEASURED: in-flight +0x1c 0->1 on the fire frame
+    s.life = tune::kMissileLife;    // MEASURED: +0x28 = 0.5 (then ticked the same frame)
     float fwd[3]; OwnerForward(sys.owner(), fwd);
     const float* p = sys.owner().pos;
     float vel[3] = { fwd[0] * tune::kMissileSpeed,
@@ -123,21 +150,30 @@ void Missile_Fire(PowerupSystem& sys, Slot& s, int mode) {  // 0x455150: only mo
     sys.backend()->SpawnMissile(p, vel, /*target=*/-1);  // host picks nearest ahead
     sys.backend()->SfxByName("missile exhaust", 0.8f);
 }
-void Missile_Tick(PowerupSystem&, float) {}  // 0x455c90: host flies/homes the missile
+void Missile_Tick(PowerupSystem& sys, float dt) {  // 0x455c90 (host flies/homes the missile)
+    // Flight TIMEOUT only, as measured (o1 call 1311, o2 call 1033): +0x28 -= dt each
+    // frame; the frame it would go <= 0 it is stored 0 and in-flight +0x1c cleared.
+    // The IMPACT end (contact FUN_0045bfe0 -> FUN_004b4d10 -> FUN_0045c350, then
+    // FUN_00455910/00455100) is NOT ported: it is blocked on Collision/ContactStubs.cpp.
+    Slot& s = sys.slot();
+    if (s.activeCode != kMissile || s.jetState == 0) return;
+    s.life -= dt;
+    if (s.life <= 0.f) { s.life = 0.f; s.jetState = 0; }
+}
 
 // ============================== P_MINE (12) ================================
 // arm 0x457a30 / fire 0x457ef0 / canfire 0x457ab0(shared) / deact 0x457ad0(shared)
 // Proximity mine: dropped once behind, arms on the ground.
-void PMine_Arm(PowerupSystem&, Slot& s) { s.subState = 1; }
-bool PMine_CanFire(PowerupSystem&, Slot& s) { return s.subState == 0; }
+void PMine_Arm(PowerupSystem&, Slot& s) { s.ammo = tune::kDrumDrops; }  // pool +0x08 = 2
+bool PMine_CanFire(PowerupSystem&, Slot& s) { return s.ammo == 0; }       // 0x457ab0 (shared)
 void PMine_Deact(PowerupSystem& sys, Slot&) {  // 0x457ad0 (shared w/ DRUM): pool state; dropped mine lives on
     sys.backend()->EffectEnd(kPMine, sys.owner().pos);
 }
 void PMine_Fire(PowerupSystem& sys, Slot& s, int mode) {  // 0x457ef0: mode==2
-    if (mode != kFirePrimary || s.subState == 0) return;
-    sys.backend()->DropHazard(sys.owner().pos, /*proximity=*/true);
+    if (mode != kFirePrimary || s.ammo == 0) return;
+    sys.backend()->DropHazard(sys.owner().pos, /*proximity=*/true);  // FUN_00457c10
     sys.backend()->SfxByName("drop mine", 0.8f);
-    s.subState = 0;
+    s.ammo--;   // MEASURED: +0x08 2->1->0 (o2 call 905 t+1/t+8)
 }
 void PMine_Tick(PowerupSystem&, float) {}    // 0x4582f0
 
@@ -182,7 +218,13 @@ void RFlame_Fire(PowerupSystem& sys, Slot& s, int mode) {  // 0x45a850
 }
 void RFlame_Tick(PowerupSystem& sys, float dt) {  // emission stepper FUN_0045a950 (from tick 0x45ae80)
     Slot& s = sys.slot();
-    if (s.activeCode != kRFlame || !s.jetState) return;  // gate +0x1c != 0 (0x0045a9c0)
+    if (s.activeCode != kRFlame) return;
+    // The +0x8 decrement at 0x0045aedd is in tick FUN_0045ae80's OUTER loop, ahead
+    // of the stepper's +0x1c gate: MEASURED running while the jet is off (o2 call
+    // 945 t+11..t+15: 0.00333 -> -0.0133 -> ... -0.08 with +0x1c == 0), so a relit
+    // jet emits on its first frame. (Previously gated on the jet -> 1 frame late.)
+    s.cooldown -= dt;
+    if (!s.jetState) return;                             // gate +0x1c != 0 (0x0045a9c0)
     // U-9015 RESOLVED (pool14 2026-07-10): tick FUN_0045ae80's outer per-slot
     // loop walks the pool with a record pointer ESI = recordBase+4 (confirmed:
     // loop start &DAT_0068bd04, stride SUB ESI,0x68 at 0x0045aeb3, terminal
@@ -190,8 +232,7 @@ void RFlame_Tick(PowerupSystem& sys, float dt) {  // emission stepper FUN_0045a9
     // The decrement `FLD [ESI+0x4]; FSUB [_DAT_007f100c]; FSTP [ESI+0x4]` at
     // 0x0045aedd is therefore recordBase+0x8 -- exactly the assumed +0x8
     // cooldown field; per-frame dt decrement confirmed, not assumed.
-    s.cooldown -= dt;
-    if (s.cooldown > 0.f) return;                        // gate +0x8 vs 0.0 (0x0045a9f0)
+    if (s.cooldown > 0.f) return;                       // gate +0x8 vs 0.0 (0x0045a9f0)
     s.cooldown = tune::kFlameSparkPeriod;                // re-arm 0.02 (0x0045aa4a)
     ++s.subState;                                        // sub++ (0x0045aa24/0x0045aa2a)
     if (s.subState >= tune::kFlameSparksPerBurst) {      // CMP 5 (0x0045aa27)
@@ -208,19 +249,32 @@ void RFlame_Tick(PowerupSystem& sys, float dt) {  // emission stepper FUN_0045a9
 // ============================== SHOTGUN (17) ===============================
 // arm 0x45b200 / fire 0x45b6e0 / canfire 0x45b260 / deact 0x45b290 / tick 0x45b700
 // Short-range spread: a small number of pellet bursts then disarms.
-void Shotgun_Arm(PowerupSystem&, Slot& s) { s.subState = tune::kShotgunPellets; }  // +0x10=4
-bool Shotgun_CanFire(PowerupSystem&, Slot& s) { return s.subState == 0; }           // 0x45b260
+void Shotgun_Arm(PowerupSystem&, Slot& s) {   // +0x10=4 (FUN_0045b200), +0xc=0
+    s.ammo = tune::kShotgunPellets; s.counter = 0;
+}
+bool Shotgun_CanFire(PowerupSystem&, Slot& s) {  // 0x45b260: +0x10==0 && +0xc==0
+    return s.ammo == 0 && s.counter == 0;        //   (0x0045b26a..0x0045b278)
+}
 void Shotgun_Deact(PowerupSystem& sys, Slot&) {  // 0x45b290: +0x18=2,+0x14=0 (pool state)
     sys.backend()->EffectEnd(kShotgun, sys.owner().pos);
 }
 void Shotgun_Fire(PowerupSystem& sys, Slot& s, int mode) {  // 0x45b6e0: mode==2 & +0x10!=0
-    if (mode != kFirePrimary || s.subState == 0) return;
+    if (mode != kFirePrimary || s.ammo == 0) return;          //   (0x0045b6e0..0x0045b6f6)
     float fwd[3]; OwnerForward(sys.owner(), fwd);
     sys.backend()->SpreadCone(sys.owner().pos, fwd);
     sys.backend()->SfxByName("shotgun", 0.85f);
-    s.subState = 0;                          // single discharge (FUN_0045b390)
+    // FUN_0045b390: one pellet per press edge -- DEC at 0x0045b3b5, +0xc = 8 at
+    // 0x0045b3b9. (Previously zeroed all 4 pellets on the first shot: MEASURED
+    // wrong, the original fires 4 times -- o1 call 1244 t+1/t+8/t+16/t+28.)
+    s.ammo--;
+    s.counter = tune::kShotgunRefire;
 }
-void Shotgun_Tick(PowerupSystem&, float) {}  // 0x45b700
+void Shotgun_Tick(PowerupSystem& sys, float) {  // 0x45b700
+    // MEASURED: +0xc steps down by 1 per frame to 0 (o1 call 1244 t+1..t+15);
+    // decrement site inside 0x45b700 [UNCERTAIN], see D3_POWERUPS §3.
+    Slot& s = sys.slot();
+    if (s.activeCode == kShotgun && s.counter > 0) --s.counter;
+}
 
 // ============================== FLASH (18) =================================
 // arm 0x454a40 / fire 0x454db0 / canfire 0x454a90 / deact 0x454ab0 / tick 0x454e00
@@ -231,19 +285,30 @@ void Flash_Deact(PowerupSystem& sys, Slot&) {  // 0x454ab0: +0xc=5,+8=0 (pool st
     sys.backend()->EffectEnd(kFlash, sys.owner().pos);
 }
 void Flash_Fire(PowerupSystem& sys, Slot& s, int mode) {       // 0x454db0: mode==2 & +0xc==1
-    if (mode != kFirePrimary || s.subState != 1) return;
+    if (mode != kFirePrimary || s.subState != 1) return;       //   (0x00454db7, 0x00454dc7)
     sys.backend()->BlindFlash(sys.owner().pos);   // orig FUN_00454c10 + FX 0x18
     sys.backend()->SfxByName("flash", 0.8f);
-    s.subState = 4;                          // -> canfire true -> deactivate
+    s.subState = 2;                               // FUN_00454c10: +0xc = 2 (0x00454c10)
 }
-void Flash_Tick(PowerupSystem&, float) {}    // 0x454e00
+void Flash_Tick(PowerupSystem& sys, float) {      // 0x454e00 -> FUN_00454c60 per record
+    // FUN_00454c60: state 2 -> 3 (0x00454c95), state 3 -> 4 (0x00454ca3), one step
+    // per frame. (Previously FIRE jumped straight to 4: MEASURED one frame early,
+    // o1 call 1016: 1 -> 3 on the fire frame, 4 next, deactivate the frame after.)
+    Slot& s = sys.slot();
+    if (s.activeCode != kFlash) return;
+    if (s.subState == 2)      s.subState = 3;
+    else if (s.subState == 3) s.subState = 4;
+}
 
 // ============================== OIL (19) ===================================
 // arm 0x456d80 / fire 0x457800 / canfire 0x456dd0 / deact 0x456e00 / tick 0x4577b0
 // Oil slick: drips a slick onto the ground at a distance cadence while held,
 // consuming a supply meter.
 void Oil_Arm(PowerupSystem&, Slot& s) { s.charge = 1.0f; }     // supply +0x00 = 1.0
-bool Oil_CanFire(PowerupSystem&, Slot& s) { return s.charge < 0.f; }  // 0x456dd0: supply<0
+// 0x456dd0: FCOMP 0.0 / TEST AH,0x41 / JP at 0x00456de3..0x00456dee returns 1 for
+// supply <= 0.0 (C0 or C3 alone), not < 0. Latent only: 1.0 - 10*0.1f lands on
+// -7.45e-8 (b3a00000, o1 call 950 t+34), never exactly 0.
+bool Oil_CanFire(PowerupSystem&, Slot& s) { return s.charge <= 0.f; }
 void Oil_Deact(PowerupSystem& sys, Slot&) {  // 0x456e00: detach drip attachment
     sys.backend()->EffectEnd(kOil, sys.owner().pos);
 }

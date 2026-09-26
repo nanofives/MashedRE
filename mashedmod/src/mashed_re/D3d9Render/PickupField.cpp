@@ -182,6 +182,26 @@ bool PickupField::Update(float dt, const float carPos[3]) {
     return got;
 }
 
+bool PickupField::CollectAt(const float carPos[3], int* type) {
+    if (!carPos) return false;
+    const float pickR = worldR_ * 0.04f;       // same collection radius as Update
+    const float pickR2 = pickR * pickR;
+    for (size_t i = 0; i < orbs_.size(); ++i) {
+        Orb& o = orbs_[i];
+        if (!o.active) continue;
+        const float dx = carPos[0] - o.pos[0];
+        const float dz = carPos[2] - o.pos[2];
+        const float dy = carPos[1] - o.pos[1];
+        if (dx*dx + dz*dz <= pickR2 && std::fabs(dy) <= pickR * 2.f) {
+            o.active = false;
+            o.cooldown = o.respawn;
+            if (type) *type = o.gameType;
+            return true;
+        }
+    }
+    return false;
+}
+
 void PickupField::Render(IDirect3DDevice9* dev, const float camEye[3],
                          const float camAt[3]) {
     if (!dev || orbs_.empty() || !EnsureTexture(dev)) return;

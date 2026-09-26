@@ -24,10 +24,16 @@ namespace Ai {
 // (= 0x13 DWORDs), indexed by output slot.  Byte→axis map RESOLVED 2026-06-16
 // (re/analysis/ai_ctrl_byte_map_RESOLVED_2026-06-16.md):
 //   [0],[1] = steer cmd pair   (FUN_00416250 from FUN_00415e20 angle error)
-//   [3]     = fire / powerup    (FUN_00415220)
+//   [3]     = labelled "fire / powerup (FUN_00415220)" by the 2026-06-16 map.
+//             [UNCERTAIN] D3 2026-09-26 found no power-up read of +3: see [7].
 //   [4]     = accel  0/0x40/0xff (consumer FUN_00467650 *(blk+4))
 //   [5]     = brake  0/0x40/0xff (consumer FUN_00467650 *(blk+5), neg force)
-//   [6],[7] = zeroed scratch
+//   [6]     = zeroed scratch (FUN_00418560 0x0041858b)
+//   [7]     = POWER-UP FIRE, not scratch (corrected D3 2026-09-26): the dispatcher
+//             FUN_0045bba0 reads [0x007f103f + ctrl*0x4c] at 0x0045bd72 (and last
+//             frame's copy at 0x007f14ff, 0x0045bd84); FUN_00415220 writes
+//             MOV BYTE [EDI+7],1 at 0x0041536c (8 sites); FUN_00418560 zeroes it at
+//             0x00418588 each step. re/analysis/D3_POWERUPS_2026-09-26.md §4.
 // ---------------------------------------------------------------------------
 static constexpr std::uintptr_t kCtrlBlockBase   = 0x007f1038u;  // FUN_00418560 0x00418575
 static constexpr std::uint32_t  kCtrlBlockStride = 0x4cu;        // FUN_00418560 0x00418572

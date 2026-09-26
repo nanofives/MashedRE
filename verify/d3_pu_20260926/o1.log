@@ -1,0 +1,29 @@
+  [keep-awake] display-sleep suppressed + wake nudge sent
+=== scenario_launch  pid=36332  track=0 mode=10 cars=4 ===
+  attaching ASAP...
+  [agent] ready
+    phase=0  (waiting for menu (phase 1))
+    phase=1  (waiting for menu (phase 1))
+  [setup] set track=0 mode=10 cars=4 car=0 rule=0 team=0
+  [statediff] statediff armed (tick 0x004c1be0, car 0, rec@0x8815a0)
+  [statediff] puhook armed (FUN_0045bba0 + 9 FIRE + 8 CANFIRE + FUN_0045bac0; plan=[19,18,9,17,11,7,10,12,16] subj slot 0 warm 120)
+  [statediff] cook injector armed (0x00496530)
+  [statediff] drive: full accel, steer=+0 -> 1
+  [launch] poke DAT_00771968 = 2 -> 1
+    phase=2  (waiting for race running (phase 3))
+    phase=3  (waiting for race running (phase 3))
+
+  *** RACE RUNNING (phase 3) ***
+  [ctrl-slots] ctrl slot table was [0,0,0,0] -> [0,1,2,3]
+  car spawn fired: 12   grounded=4  airflag=0
+  vel=[0, 0, 0]  fwd=[-8.742277657347586e-08, 0, -1]
+
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+
+  racing 75s — pulsing control 4 (confirm/accel) to skip the start intro + continue rounds...
+    +  4s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       +  9s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 13s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[0.1, 0, -136.0]       + 18s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[2250.2, -26.4, 1042.4]       + 23s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[-65.3, 264.8, 4364.3]       + 28s  ph=3  spawnFired=12  p0.grounded=0 airflag=1  vel=[0, 0, 0]       + 33s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[-59.8, 1.4, -30.4]       + 37s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[-0.3, 0.0, 0.2]       + 42s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[1.7, -0.2, -0.9]       + 47s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[4.0, -0.5, -2.1]       + 52s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[6.2, -0.8, -3.3]       + 57s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[-0.3, 0.0, 0.2]       + 61s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[2.0, -0.2, -1.0]       + 66s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[4.9, -0.6, -2.6]       + 71s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[-1.7, 0.2, 0.9]   
+  [statediff] agent: {"armed":true,"frames":4524,"car":0,"err":null,"ai":false,"aiErr":null}
+  [statediff] 4524 frames -> verify\d3_pu_20260926\o1.msd  (distinct payloads=3756, nonzero=4524)
+  [statediff] puhook agent: {"armed":true,"calls":4524,"n6":774,"st":"fire","pi":7,"acts":[[120,19],[186,18],[220,9],[414,17],[481,11],[544,7],[728,10],[768,12]],"pending":6902,"err":null}
+  [statediff] puhook 6902 rows -> verify\d3_pu_20260926\o1.msd.puhook.csv  (codes seen=[-1, 7, 9, 10, 11, 12, 17, 18, 19], rows with FIRE=287)
+  [statediff] provenance -> verify\d3_pu_20260926\o1.msd.provenance.json

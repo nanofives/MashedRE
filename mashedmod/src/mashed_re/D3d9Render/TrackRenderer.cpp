@@ -3078,6 +3078,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
 
     // power-up pickups: collect orbs the player drives through (respawn loop).
     pickups_.Update(in.dt, car_pos_);
+    // power-up DISPATCH, every frame (FUN_0045bba0; G-D1).
+    TickPowerupDispatch(in.dt);
     // power-up EFFECTS: advance boost/shield timers, missiles, mines.
     UpdatePowerups(in.dt);
 }
@@ -3347,27 +3349,70 @@ void TrackRenderer::SyncHostCar() {
     }
 }
 
-// Drive the ported dispatch for a single use of the held type. The original is a
-// per-frame fire-button loop; the standalone fires one pickup per key press, so
-// we pulse primary (mode 2) then secondary (mode 1) so whichever button the
-// type's FIRE gates on triggers, then deactivate (one use per collected pickup).
-void TrackRenderer::PowerupFireOnce(int code) {
+// [D3 WS-D, 2026-09-26] G-D1 + G-D2: the ported dispatcher FUN_0045bba0 now
+// ticks EVERY race frame over all 4 slots (it used to run as a 1-2 frame burst
+// per key press inside PowerupFireOnce, which could not exercise the cooldown,
+// burst or flight state; re/analysis/D3_POWERUPS_2026-09-26.md).
+//   slot 0 = player: armed from the pickup field's held orb; fire input = the
+//     fire key's held state, press/held/release derived by the dispatcher.
+//   slots 1..3 = ai_cars_[s-1]: armed when that AI car drives through an orb
+//     (the original's box collect, 0x00458a1b, serves every car -- measured: AI
+//     slots 1 and 2 held OIL and P_MINE in verify/d3_pu_20260926/o1). Fire
+//     input = the AI ctrl block byte [7] (0x007f1038 + s*0x4c + 7), which is
+//     exactly what the dispatcher reads (0x0045bd72) and what the AI's fire
+//     decision FUN_00415220 writes (MOV [EDI+7],1 at 0x0041536c, 8 sites). The
+//     ported AI tick stubs FUN_00415220 (AiStandalone.cpp, "mode-8 activation --
+//     STUB"), so opponents can OWN but do not yet FIRE. The slot->ctrl mapping
+//     is identity, as the original's race-launch allocator commits (0x0043f895).
+void TrackRenderer::TickPowerupDispatch(float dt) {
     EnsurePowerupBackend();
     SyncHostCar();
-    pw_.Activate(code);
-    pw_.SetFireButtons(true, false);  pw_.Tick(0.016f, pu_player_, 6);   // primary
-    if (pw_.Armed()) { pw_.SetFireButtons(false, true); pw_.Tick(0.016f, pu_player_, 6); }  // secondary
-    pw_.SetFireButtons(false, false);
-    pw_.Deactivate();
+    Powerup::HostCar cars[Powerup::PowerupSystem::kSlots];
+    cars[0] = pu_player_;
+    for (int s = 1; s < Powerup::PowerupSystem::kSlots; ++s) {
+        if (static_cast<std::size_t>(s - 1) < pu_ai_.size()) cars[s] = pu_ai_[static_cast<std::size_t>(s - 1)];
+        else { cars[s] = Powerup::HostCar(); cars[s].owner = s; cars[s].alive = false; }
+    }
+
+    // slot 0 ownership: the HUD held orb stays until the armed type deactivates.
+    if (!pw_.Armed(0)) {
+        if (pu_slot0_was_armed_) { pickups_.ConsumeHeld(); pu_slot0_was_armed_ = false; }
+        if (pickups_.held() >= 0) {
+            int code = pickups_.held_type();
+            if (code < 0) code = Powerup::kMissile;   // index-only orb -> a default weapon
+            pw_.Activate(0, code);
+            pu_slot0_was_armed_ = pw_.Armed(0);
+        }
+    }
+    // slots 1..3 ownership (G-D2).
+    for (int s = 1; s < Powerup::PowerupSystem::kSlots; ++s) {
+        if (!cars[s].alive || pw_.Armed(s)) continue;
+        int code = -1;
+        if (pickups_.CollectAt(cars[s].pos, &code)) {
+            if (code < 0) code = Powerup::kMissile;
+            pw_.Activate(s, code);
+        }
+    }
+
+    // inputs (cook-shadow latch inside SetInput gives prev).
+    const bool fire0 = pu_fire_held_ || pu_demo_fire_ > 0;
+    if (pu_demo_fire_ > 0) --pu_demo_fire_;
+    pw_.SetInput(0, fire0, false);
+    for (int s = 1; s < Powerup::PowerupSystem::kSlots; ++s) {
+        const std::uint8_t* blk = reinterpret_cast<const std::uint8_t*>(
+            Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(s) * Ai::kCtrlBlockStride);
+        pw_.SetInput(s, blk[7] != 0, blk[8] != 0);
+    }
+    // FUN_0040e350() == DAT_0063ba8c; the per-slot pass needs 6 (0x0045bc2b).
+    // [UNCERTAIN] the standalone has no DAT_0063ba8c state machine; "running
+    // race" (past the countdown -- UpdateCar returns early while it runs) is
+    // mapped to 6. Values 1..11 are written at 0x0040d3e7..0x004111a6.
+    pw_.Tick(dt, cars, 6);
 }
 
 bool TrackRenderer::FireHeldPowerup() {
-    if (!car_ready_) return false;
-    if (pickups_.held() < 0) return false;
-    int code = pickups_.held_type();          // real MASHED code, or -1 (index orb)
-    pickups_.ConsumeHeld();                    // clear the HUD held slot
-    if (code < 0) code = Powerup::kMissile;    // index-only orb -> a default weapon
-    PowerupFireOnce(code);
+    if (!car_ready_ || !pw_.Armed(0)) return false;
+    pu_demo_fire_ = 30;
     return true;
 }
 
@@ -3382,7 +3427,11 @@ void TrackRenderer::FirePowerupKind(int code) {
                                      Powerup::kFlash,    Powerup::kDrum, Powerup::kOil };
         real = demo[code];
     }
-    PowerupFireOnce(real);
+    EnsurePowerupBackend();
+    SyncHostCar();
+    pw_.Deactivate(0);
+    pw_.Activate(0, real);
+    pu_demo_fire_ = 30;
 }
 
 void TrackRenderer::UpdatePowerups(float dt) {

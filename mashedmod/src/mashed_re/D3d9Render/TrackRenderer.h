@@ -305,14 +305,17 @@ private:
     void  AiStepDump();
     void  EnsurePowerupBackend();                     // lazy Init(this)
     void  SyncHostCar();                              // fill pu_player_/pu_ai_
-    void  PowerupFireOnce(int realCode);              // drive the dispatch one-shot
+    // [D3 WS-D G-D1/G-D2] the per-frame dispatcher tick (FUN_0045bba0), 4 slots.
+    void  TickPowerupDispatch(float dt);
     int   MissileTargetAhead() const;                 // nearest AI ahead, or -1
 public:
-    // Use the held power-up (from the pickup field) — called on the fire key.
-    // Reads PickupField::held_type() (the real MASHED code) and runs the ported
-    // per-type effect; falls back to MISSILE for the index-only (-1) orb.
+    // The fire key's HELD state for this frame (slot 0). The dispatcher derives
+    // press/held/release (fire_mode 2/3/1) from it and last frame's value.
+    void SetPowerupFire(bool held) { pu_fire_held_ = held; }
+    // Demo: hold fire on the armed slot-0 power-up for ~0.5 s. False if none armed.
     bool FireHeldPowerup();
-    // Fire a specific power-up TYPE CODE regardless of inventory (demo/testing).
+    // Demo/testing: arm a specific power-up TYPE CODE on slot 0 (replacing any
+    // held one) and hold fire for ~0.5 s.
     void FirePowerupKind(int code);
     bool boost_active()  const { return boost_timer_  > 0.f; }
     bool shield_active() const { return shield_timer_ > 0.f; }

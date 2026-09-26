@@ -10,9 +10,15 @@
 //     - the dispatch architecture (3-pass per-frame loop, FUN_0045bba0),
 //     - the slot lifecycle: lookup FUN_0045baa0, activate FUN_0045bfa0,
 //       deactivate FUN_0045bac0, pickup-wrapper FUN_0045c010,
-//     - the fire_mode decode (primary->2, secondary->1, both->3, none->pickup),
+//     - the fire_mode decode. CORRECTED 2026-09-26: the two bytes are ONE button's
+//       current and previous-frame value (ctrl block +7 and its cook shadow), so
+//       2 = press edge, 3 = held, 1 = release edge -- not "primary/secondary",
 //     - each per-type effect's DECISION LOGIC (ammo/cooldown/fire-mode gating,
 //       charge/jet state transitions, target-acquisition branch structure).
+//   MEASURED 2026-09-26 (re/analysis/D3_POWERUPS_2026-09-26.md): all 9 types'
+//   decision traces replayed from the original's inputs diff CLEAN (fire mode,
+//   CANFIRE, deactivation frame, ammo/timer/state fields, floats bit-exact) --
+//   re/tools/pu_replay + re/tools/pu_diff.py on verify/d3_pu_20260926/o3,o4.
 //   STUBBED (subsystems NOT yet landed standalone — see SESSION_VERIFICATION_AUDIT
 //   _2026-06-16): every LEAF the original effects reach into —
 //     - RW scene-graph (WS-E):  RwFrameAddChild / RwFrameRemoveChild / FUN_004c0ed0…
@@ -124,26 +130,37 @@ public:
     virtual bool OilDropDue(int owner, const float pos[3]) = 0;
 };
 
-// One per-player power-up slot. Mirrors the real slot struct @0x0088fbe0:
+// One per-player power-up slot. Mirrors the real slot struct @0x0088fbe0
+// (4 slots, stride 0xb4):
 //   +0xa8 -> activeCode (which type entry is active; kCodeNone = none held)
-//   +0xac -> armed      (the ARM-result handle; != 0 means armed)
+//   +0xac -> armed      (the ARM-result handle = the per-type pool record; != 0 armed)
 //   +0xb0 -> owner
 // plus a compact per-type instance state standing in for the per-type pool
-// record the original ARM (entry+0x04) allocates.
+// record the original ARM (entry+0x04) allocates (field offsets per type are
+// cited at each effect in PowerupEffects.cpp, measured in
+// re/analysis/D3_POWERUPS_2026-09-26.md).
 struct Slot {
     int   owner      = 0;          // +0xb0
     int   activeCode = kCodeNone;  // +0xa8
     bool  armed      = false;      // +0xac != 0
     // compact instance state (per-type pool stand-in)
-    int   ammo       = 0;          // GUN/MISSILE/MORTAR shots remaining
-    float cooldown   = 0.f;        // MORTAR/GUN fire-rate gate
-    float charge     = 0.f;        // GUN spin-up charge (+0x18)
-    int   jetState   = 0;          // R_FLAME on/off counter (+0x14/+0x1c)
-    int   subState   = 0;          // DRUM/P_MINE/SHOTGUN/FLASH armed sub-state
-    // input bytes (orig DAT_007f103c+3 / DAT_007f14ff / DAT_007f1055)
-    bool  firePrimary   = false;
-    bool  fireSecondary = false;
-    bool  pickupFlag    = false;
+    int   ammo       = 0;          // GUN/MISSILE/MORTAR shots, SHOTGUN pellets, DRUM/P_MINE drops
+    float cooldown   = 0.f;        // GUN/MORTAR/R_FLAME fire-rate timer
+    float charge     = 0.f;        // GUN barrel charge (+0x18), OIL supply (+0x00)
+    int   jetState   = 0;          // R_FLAME jet (+0x1c), MISSILE in-flight (+0x1c)
+    int   subState   = 0;          // FLASH state (+0xc), R_FLAME sub (+0x18)
+    int   counter    = 0;          // SHOTGUN refire counter (+0xc)
+    float life       = 0.f;        // MISSILE flight timer (+0x28)
+    // Controller bytes the dispatcher reads (FUN_0045bba0), per slot through the
+    // slot->controller table 0x007f1a14:
+    //   fireCur  = [0x007f103f + ctrl*0x4c]  (ctrl block 0x007f1038 +7)   0x0045bd72
+    //   firePrev = [0x007f14ff + ctrl*0x4c]  (shadow   0x007f14f8 +7)    0x0045bd84
+    //   discCur  = [0x007f1040 + ctrl*0x4c]  (block +8)                  0x0045be31
+    //   discPrev = [0x007f1500 + ctrl*0x4c]  (shadow +8)                 0x0045be3f
+    // The shadow is LAST FRAME's block: the cook FUN_00496530 copies block->shadow
+    // (REP MOVSD, 0x00496552) before it rewrites the block. SetInput() mirrors that.
+    bool  fireCur  = false, firePrev = false;
+    bool  discCur  = false, discPrev = false;
 };
 
 // The 9-entry type table mirror. Each entry carries the real RVAs (for citation/
@@ -157,51 +174,70 @@ struct TypeEntry {
     bool (*canfire)(PowerupSystem&, Slot&);
     void (*deact) (PowerupSystem&, Slot&);
     void (*fire)  (PowerupSystem&, Slot&, int mode);
-    void (*tick)  (PowerupSystem&, float dt);
+    void (*tick)  (PowerupSystem&, float dt);   // runs once per slot (see Tick)
 };
 
 class PowerupSystem {
 public:
-    void Init(IPowerupBackend* be) { be_ = be; slot_ = Slot(); }
+    static constexpr int kSlots = 4;   // 0x0088fbe0 .. 0x0088ff40 / 0xb4
+
+    void Init(IPowerupBackend* be);
     IPowerupBackend* backend() const { return be_; }
 
     // --- lifecycle (verbatim FUN_0045baa0 / FUN_0045bfa0 / FUN_0045bac0) ---
     // 0x0045baa0 — linear lookup of the 9 entries for `code`; returns index/-1.
     static int Lookup(int code);
-    // 0x0045bfa0 (via pickup wrapper 0x0045c010) — activate a held type: set the
-    // active entry then call its ARM.
-    void Activate(int code);
+    // 0x0045c010(idx, code) -> 0x0045bfa0: slot = 0x0088fbe0 + idx*0xb4; the type
+    // code is the SECOND stack arg (MOV ESI,[ESP+0xc] at 0x0045bfa1). Sets the
+    // active entry then calls its ARM.
+    void Activate(int slot, int code);
     // 0x0045bac0 — deactivate: call the active type's DEACT then clear the slot.
-    void Deactivate();
+    void Deactivate(int slot);
 
-    bool Armed()      const { return slot_.armed; }
-    int  ActiveCode() const { return slot_.activeCode; }
-    Slot&       slot()       { return slot_; }
-    const Slot& slot() const { return slot_; }
+    bool Armed(int s)      const { return slots_[s].armed; }
+    int  ActiveCode(int s) const { return slots_[s].activeCode; }
+    Slot&       slot(int s)       { return slots_[s]; }
 
-    // Controller bridge (orig DAT_007f103c+3 primary, DAT_007f14ff secondary).
-    void SetFireButtons(bool primary, bool secondary) {
-        slot_.firePrimary = primary; slot_.fireSecondary = secondary;
+    // Cook-equivalent input latch for one slot: prev := cur, then cur := new
+    // (FUN_00496530 0x00496552 copy, then the rewrite). Call once per frame per
+    // slot BEFORE Tick.
+    void SetInput(int s, bool fire, bool discard) {
+        Slot& k = slots_[s];
+        k.firePrev = k.fireCur; k.discPrev = k.discCur;
+        k.fireCur = fire;       k.discCur = discard;
     }
-    // fire_mode decode exactly as FUN_0045bba0 (primary->2, secondary->1, both->3).
-    static int DecodeFireMode(bool primary, bool secondary);
+    // fire_mode decode, exactly FUN_0045bba0 0x0045bd72..0x0045bdaa:
+    // cur&&!prev -> 2, cur&&prev -> 3, !cur&&prev -> 1, neither -> 0.
+    static int DecodeFireMode(bool cur, bool prev);
 
-    // --- dispatcher (verbatim FUN_0045bba0, player-slot pass + per-type TICK) ---
-    // gameMode is FUN_0040e350()'s value; the original only runs when == 6.
-    void Tick(float dt, const HostCar& player, int gameMode);
+    // --- dispatcher (verbatim FUN_0045bba0: per-slot pass + per-type TICK) ---
+    // `cars[s]` is slot s's car; `raceState` is FUN_0040e350()'s value
+    // (= DAT_0063ba8c); the per-slot pass only runs when it is 6 (0x0045bc2b).
+    void Tick(float dt, const HostCar cars[kSlots], int raceState);
 
     // expose the static table (also used by re-classify / diff citation).
     static const TypeEntry* Table();
     static int TableCount();   // DAT_005f9bd8 == 9
 
+    // accessors used by the effect fns: the slot / car the dispatcher is
+    // currently servicing.
+    Slot&          slot()        { return slots_[cur_]; }
+    const HostCar& owner() const { return owners_[cur_]; }
+    int            current() const { return cur_; }
+
 private:
     IPowerupBackend* be_ = nullptr;
-    Slot             slot_;
-    HostCar          owner_;       // last player snapshot the dispatcher saw
-    friend struct TypeEntry;
+    Slot             slots_[kSlots];
+    HostCar          owners_[kSlots];
+    int              cur_ = 0;
+    std::uint32_t    frame_ = 0;
+    void             DumpRow(int s, int state, int codePre, int mode, int canf, int deact,
+                             float dt, const char* act);
 public:
-    // accessor used by the effect fns (they read the firing car from here).
-    const HostCar& owner() const { return owner_; }
+    // MASHED_PU_STEPDUMP=<csv>: one row per Tick per slot that holds a power-up or
+    // had an event, in the column shape of scenario_launch.py --statediff-puhook.
+    const char* pendingAct_[kSlots] = {nullptr, nullptr, nullptr, nullptr};
+    char        dumpPre_[kSlots][160] = {};
 };
 
 }  // namespace Powerup

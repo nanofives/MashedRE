@@ -216,10 +216,15 @@ struct RaceSceneState {
 
     Powerup::PowerupSystem        pw_;
     Powerup::IPowerupBackend*     pu_be_ = nullptr;   // lazily-created backend
-    Powerup::HostCar              pu_player_;         // filled each fire
+    Powerup::HostCar              pu_player_;         // filled each frame (SyncHostCar)
     std::vector<Powerup::HostCar> pu_ai_;
     float pu_oil_last_[3] = {0, 0, 0};                // OIL drop-distance trail
     bool  pu_oil_has_     = false;
+    // [D3 WS-D G-D1] per-frame dispatcher input for slot 0 (the player): the fire
+    // key's held state this frame (SetPowerupFire), plus a demo hold counter.
+    bool  pu_fire_held_       = false;
+    int   pu_demo_fire_       = 0;
+    bool  pu_slot0_was_armed_ = false;
 
     // ---- race bookkeeping ----------------------------------------------------
     struct RaceCar {           // per car (0 = player)

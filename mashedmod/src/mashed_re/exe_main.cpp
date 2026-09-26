@@ -3116,9 +3116,10 @@ bool RenderFrame() {
                     }
                 }
             }
-            // Fire the held power-up: SPACE (rising edge) when driving manually;
-            // in the drive demo, fire one of each effect on a schedule (kinds:
-            // 0=Missile 1=Mine 2=Shock 3=Boost 4=Shield) plus any collected one.
+            // Power-up fire input: SPACE's HELD state every frame when driving
+            // manually (the dispatcher derives press/held/release -- fire_mode
+            // 2/3/1 -- itself, D3 WS-D G-D1); in the drive demo, arm one of each
+            // effect on a schedule plus any collected one.
             if (s_drive_demo) {
                 static bool fm=false, fb=false, fs=false, fn=false;
                 if (!fm && t > 3.8f) { g_track.FirePowerupKind(0); fm=true; }
@@ -3127,9 +3128,7 @@ bool RenderFrame() {
                 if (!fn && t > 6.0f) { g_track.FirePowerupKind(1); fn=true; }
                 if (g_track.pickup_held() >= 0) g_track.FireHeldPowerup();
             } else if (g_kbd) {
-                const bool sp_now  = (g_keys[DIK_SPACE]      & 0x80) != 0;
-                const bool sp_prev = (g_keys_prev[DIK_SPACE] & 0x80) != 0;
-                if (sp_now && !sp_prev) g_track.FireHeldPowerup();
+                g_track.SetPowerupFire((g_keys[DIK_SPACE] & 0x80) != 0);
             }
         }
         // R6 match flow: when a round ends, hold ~3s on the result then start

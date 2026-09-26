@@ -680,16 +680,16 @@ implementations.
 "No `MASHED_*` flag is scaffold-selecting" (below) is a claim about flags only. The AI third
 still RUNS a scaffold by default (the motion model in (c)), so the gate is not met.
 
-#### D3 STATUS 2026-09-14 — NOT CLOSED. Gate table:
+#### D3 STATUS 2026-09-14 (powerups row 2026-09-26) — NOT CLOSED. Gate table:
 
 | Third | Default path today | Measured against the original | Verdict |
 |---|---|---|---|
 | **AI (WS-C)** | ported racing-line TARGET + scaffold drive model | control-byte diff, `verify/d3_ai_20260914/` | **RED** |
-| **Powerups (WS-D)** | ported dispatcher + 9 decision fns, synthetic invocation | **not measured this session** | **OPEN** |
+| **Powerups (WS-D)** | ported dispatcher, **per-frame over 4 slots since 2026-09-26** (G-D1 closed) | 2026-09-26: `--statediff-puhook` capture of all 9 types, replayed through the port TUs: **all 9 decision traces CLEAN, floats bit-exact** (7 of 9 were wrong before and fixed); control RED on 7/9 (`D3_POWERUPS_2026-09-26.md`) | **(a) met, (b) NOT met, (c) met on decision fields** - opponents own but cannot fire (`FUN_00415220` AI stub); contact outcomes of MISSILE/MORTAR/DRUM/P_MINE blocked on `ContactStubs.cpp` |
 | **Modes (WS-G)** | ported `RaceModes` -> `RuleEngine`, default-on | live oracle, rules 0/1/2: 0 mismatches over 1290-3963 calls per fn | **GREEN on rules 0/1/2 only** (3 of 11 rules, APPEND branch never fired, G-G1/G-G2 open) |
 
 Notes: `re/analysis/D3_AUDIT_2026-09-14.md` (step 1), `D3_AI_TICK_WIRING_2026-09-14.md`
-(step 2), `D3_MODES_2026-09-14.md` (step 4).
+(step 2), `D3_MODES_2026-09-14.md` (step 4), `D3_POWERUPS_2026-09-26.md` (powerups).
 
 **No `MASHED_*` flag reachable in a clean-env race is scaffold-selecting** — step 5 has
 nothing to invert. The AI gap is a PORT, now named precisely: `FUN_00443300` and the
@@ -748,7 +748,7 @@ against the D1 split and D3 steps 1-4):
 | WS-A | Vehicle physics | A1–A8 done; **D2 CLOSED 2026-09-14** — ported chain is the default drive model (`MASHED_REAL_PHYSICS=0` reverts); A8 slip diff passes 1.00x/1.07x | D2 ✓ |
 | WS-B | Collision / RW-Physics | B5e port DONE (K1..K24, `021a9f38`); ported chain is the default since D2 closed 2026-09-14. The per-row C4-verify campaign is NOT part of the D2 gate. Its remaining scope is unrecorded here [UNCERTAIN: needs a `hooks.csv` filter of B5e rows below C4] | D2 ✓ / D4 |
 | WS-C | AI drivers | **D3 step 2 (2026-09-14):** `Ai_Standalone_Tick` is now wired, behind the new default-OFF `MASHED_AI_TICK`. Measured RED because `FUN_00443300` + `FUN_00443dc0` are stubbed (2-3 distinct steer values vs the original's 33-96). Earlier status: Port DONE (`Ai/AiStandalone.cpp`), `Ai_Standalone_Tick` (FUN_00418860) had **zero call sites**; the default build drives opponents from the ported racing-line target + a scaffold motion model (`TrackRenderer.cpp:2831-2960`). Audit `re/analysis/D3_AUDIT_2026-09-14.md` §1 | D3 |
-| WS-D | Powerup effects | Dispatcher FUN_0045bba0 + lifecycle + the 9 decision fns **are wired** (`TrackRenderer.cpp:3244`); leaves are standalone reimpls via `IPowerupBackend` by design. Open: G-D1 no per-frame dispatcher tick, G-D2 opponents never fire. Verbatim leaves still gated on the Ghidra fn-split of 0x453f60–0x45be81. Audit §2 | D3 |
+| WS-D | Powerup effects | **D3 2026-09-26:** dispatcher FUN_0045bba0 ticks every frame over 4 slots (`TrackRenderer::TickPowerupDispatch`, G-D1 closed); all 9 per-type decision traces diff CLEAN against the original on replayed inputs (`D3_POWERUPS_2026-09-26.md`). Open: G-D2 fire (AI `FUN_00415220` stub), contact outcomes blocked on `ContactStubs.cpp`. Leaves are standalone reimpls via `IPowerupBackend` by design | D3 |
 | WS-E | librw renderer | librw is the **default** since `f4815877` (2026-08-19; decision DEC-2 of 2026-07-31 chose it). Open: D1-residue R1-R3 | D1 ✓ / D1-residue |
 | WS-F | Data formats | No work since 2026-06-16 | D4 |
 | WS-G | Modes & frontend | Ledger was stale. `Race/RaceModes` + `Race/RuleEngine` are the **default** path (`exe_main.cpp:2219/2244`, `RaceSession.cpp:129`, `TrackRenderer.cpp:3840`); every mode flag is revert-only or a post-derivation dev override. Open residues: G-G1 hardcoded `StartMatch(3)`, G-G2 `rule_engine_on_` defaults false. Audit §3 | D3 |
