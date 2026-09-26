@@ -1,6 +1,56 @@
 # Next session — kickoff prompt
 
-## => KICKOFF PROMPT - D3 continuation (written 2026-09-14, powerups updated 2026-09-26), paste verbatim
+## => KICKOFF PROMPT - D3 continuation (written 2026-09-26 after the AI port), paste verbatim
+
+```
+Session goal: close ROADMAP v3 D3. Read the D3 STATUS block and pass criteria in
+ROADMAP.md, then re/analysis/D3_AI_PORT_2026-09-26.md. Do NOT re-derive them.
+
+SETTLED 2026-09-26 (D3_AI_PORT_2026-09-26.md):
+- The ported AI tick FUN_00418860 runs every race frame and its ctrl bytes drive the
+  opponents through the ported physics chain (StepCar, raw_steer). MASHED_AI_TICK is
+  deleted. AI criteria (a), (c), (d) met.
+- AI criterion (b), tolerance in ROADMAP (written before the capture, commit eebaf511;
+  checker re/tools/ai_ctrl_window.py --check): cars 2 and 3 pass all 10 bands, car 1
+  fails 2 (c0/c1 distinct 7/82 vs 13..37/17..70). NOT met.
+- The 2026-09-14 bang-bang steer had a larger cause than the stubs: the AI clock
+  DAT_007f1008/DAT_007f0ff4 was never advanced standalone. Fixed (Ai_AdvanceClock).
+- Powerups criterion (b) met: slots 1, 2, 3 armed and fired in a 180 s race
+  (verify/d3_ai_20260926/sa4_pu.csv). Only OIL was on offer, so only that branch of
+  AiFireDecision (FUN_00415220) is observed live.
+- The original is NOT deterministic run to run: 2 of 5 captures take the
+  DAT_0089a368 == 1 accel x0.4 path.
+
+DO, in this order:
+1. AI (b) car 1. Add the lookahead target (look[]) and the FUN_00443440 curvature to
+   BOTH dumps (scenario_launch.py --statediff-aistep reads them at onLeave of
+   FUN_00416250; the standalone AiStepDump) and compare the err / curvature
+   distributions car by car. Candidates, none measured: the original's start launch
+   (+0x9e4 0 -> 1164 in 6 frames), the stubbed targeting modes, the FUN_00534870 RNG
+   stand-in. Re-check against the SAME tolerance; do not move the bands.
+2. Brake fraction: standalone 0.5% vs original 11-30% of window calls (inside the bands,
+   but a real gap). Same instrument as item 1.
+3. Targeting chain (modes 1..10): FUN_00414570/15880/14a70/14c30/150e0/14f00/148b0/
+   15020 + LOS FUN_00416060 + wall FUN_00415d00. The original reaches modes 3 and 7.
+4. FUN_00442a60 (the 0x008989b0 reference distances). Until ported, MORTAR/DRUM/P_MINE/
+   R_FLAME/SHOTGUN never pass their fire gates. Then run a track whose orbs are not all
+   OIL and show those types fire.
+5. MODES blind spots (unchanged from the previous kickoff): APPEND branch, rules 5 and
+   10, G-G1 (StartMatch(3)), G-G2 (rule_engine_on_).
+
+RULES (unchanged): cite RVAs, NO-GUESSING, [UNCERTAIN] + next command; always
+--poke-ctrl-slots; launch muted; kill only your PIDs; trackers only via re-classify;
+C4 needs a canonical run with the hook live; never dereference a pointer read out of
+the image-pad.
+```
+
+## => D3 2026-09-26 — AI port landed; AI (b) 2 of 3 cars; powerups (b) met
+
+> Gate table in ROADMAP section D3. Record: `re/analysis/D3_AI_PORT_2026-09-26.md`.
+> Open [UNCERTAIN] items with next commands are in its section 6 (U-D3-AIRAND,
+> U-D3-DIFF360, human slot state).
+
+## => HISTORY: D3 continuation kickoff (written 2026-09-14, powerups updated 2026-09-26), superseded
 
 ```
 Session goal: close ROADMAP v3 D3. The D3 step-1 audit and the AI + modes measurements

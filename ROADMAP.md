@@ -8,7 +8,8 @@ are carried forward below and remain the unit of work; what changes is the **gat
 > 2026-07-31 in `RE_MASTER_PLAN_2026-07.md` §5 are **DEC-2/4/6/7**. Older text that says "Gate
 > D2 (2026-07-31)" means DEC-2 (librw ships), not phase D2 (default physics).
 > **State 2026-09-26:** D0 ✓, D1 ✓ (default flip, residue R1-R3 open), D2 ✓, **D3 active**
-> (AI RED, powerups unmeasured, modes GREEN on 3/11 rules), D4-D5 not started.
+> (AI: ported tick drives the opponents, (b) 2 of 3 cars in tolerance; powerups (a)(b) met,
+> (c) met on decisions; modes GREEN on 3/11 rules), D4-D5 not started.
 
 ---
 
@@ -702,28 +703,32 @@ implementations.
   from the rule, not `StartMatch(3)`. (d) G-G2 `rule_engine_on_` default resolved.
 
 "No `MASHED_*` flag is scaffold-selecting" (below) is a claim about flags only. The AI third
-still RUNS a scaffold by default (the motion model in (c)), so the gate is not met.
+~~still RUNS a scaffold by default (the motion model in (c))~~ no longer does since
+2026-09-26 (`D3_AI_PORT_2026-09-26.md` §3); the gate is still not met on (b) and on the
+modes criteria.
 
-#### D3 STATUS 2026-09-14 (powerups row 2026-09-26) — NOT CLOSED. Gate table:
+#### D3 STATUS 2026-09-26 (AI + powerups rows 2026-09-26) — NOT CLOSED. Gate table:
 
 | Third | Default path today | Measured against the original | Verdict |
 |---|---|---|---|
-| **AI (WS-C)** | ported racing-line TARGET + scaffold drive model | control-byte diff, `verify/d3_ai_20260914/` | **RED** |
-| **Powerups (WS-D)** | ported dispatcher, **per-frame over 4 slots since 2026-09-26** (G-D1 closed) | 2026-09-26: `--statediff-puhook` capture of all 9 types, replayed through the port TUs: **all 9 decision traces CLEAN, floats bit-exact** (7 of 9 were wrong before and fixed); control RED on 7/9 (`D3_POWERUPS_2026-09-26.md`) | **(a) met, (b) NOT met, (c) met on decision fields** - opponents own but cannot fire (`FUN_00415220` AI stub); contact outcomes of MISSILE/MORTAR/DRUM/P_MINE blocked on `ContactStubs.cpp` |
+| **AI (WS-C)** | **ported tick FUN_00418860 every frame; its ctrl bytes drive the opponents through the ported physics chain** (2026-09-26) | control-byte diff vs the (b) tolerance, `verify/d3_ai_20260926/sa2.csv` vs 4 original runs: steer 80-96 distinct values per car (was 2-3; original 29-96) (`D3_AI_PORT_2026-09-26.md`) | **(a) met, (b) NOT met - cars 2/3 pass all 10 bands, car 1 fails 2 (`c0`/`c1` distinct 7/82 vs 13..37/17..70), (c) met, (d) met** (`MASHED_AI_TICK` deleted). Targeting modes 1..10 still stubbed |
+| **Powerups (WS-D)** | ported dispatcher, **per-frame over 4 slots since 2026-09-26** (G-D1 closed) | 2026-09-26: `--statediff-puhook` capture of all 9 types, replayed through the port TUs: **all 9 decision traces CLEAN, floats bit-exact** (7 of 9 were wrong before and fixed); control RED on 7/9 (`D3_POWERUPS_2026-09-26.md`) | **(a) met, (b) met 2026-09-26, (c) met on decision fields** - slots 1, 2, 3 armed and FIRED in a 180 s standalone race (`FUN_00415220` ported; OIL is the only type the Training orbs gave, so only that branch is observed live); contact outcomes of MISSILE/MORTAR/DRUM/P_MINE blocked on `ContactStubs.cpp` |
 | **Modes (WS-G)** | ported `RaceModes` -> `RuleEngine`, default-on | live oracle, rules 0/1/2: 0 mismatches over 1290-3963 calls per fn | **GREEN on rules 0/1/2 only** (3 of 11 rules, APPEND branch never fired, G-G1/G-G2 open) |
 
 Notes: `re/analysis/D3_AUDIT_2026-09-14.md` (step 1), `D3_AI_TICK_WIRING_2026-09-14.md`
-(step 2), `D3_MODES_2026-09-14.md` (step 4), `D3_POWERUPS_2026-09-26.md` (powerups).
+(step 2), `D3_MODES_2026-09-14.md` (step 4), `D3_POWERUPS_2026-09-26.md` (powerups),
+`D3_AI_PORT_2026-09-26.md` (AI port + powerups (b)).
 
 **No `MASHED_*` flag reachable in a clean-env race is scaffold-selecting** — step 5 has
-nothing to invert. The AI gap is a PORT, now named precisely: `FUN_00443300` and the
-`FUN_00443dc0` curvature-walk/wall-march tail are stubbed, so the bearing error fed to the
-verbatim steer bands lands in their full-steer range. Measured: the standalone commands
-2-3 distinct steer values per car where the original commands 33-96.
+nothing to invert. ~~The AI gap is a PORT: `FUN_00443300` and the `FUN_00443dc0` tail are
+stubbed~~ **Refined 2026-09-26** (`D3_AI_PORT_2026-09-26.md` §2): `FUN_00443300` was already
+verbatim. The bang-bang steer had a larger cause: nothing in `mashed_re.exe` advanced the AI
+clock (`DAT_007f1008`/`DAT_007f0ff4`, `0x0040fc63`/`0x0040fe5e`), so `FUN_00416250` never
+issued a fresh steer. Also fixed: the `FUN_00443dc0` wall-march tail, the missing
+`FUN_00443440` curvature walk, four band inputs, `FUN_004a2c48` = truncation, the forward
+vector heading, `FUN_00443080` = 0, and the difficulty tables.
 
-`MASHED_AI_TICK=1` is a NEW default-OFF gate on the ported tick (which had zero call sites
-before this session). D3 exists to remove gates of that shape: it must be DELETED once the
-two stubs land, not inverted.
+~~`MASHED_AI_TICK=1` is a NEW default-OFF gate~~ **DELETED 2026-09-26**, not inverted.
 
 Also found and fixed, wider than D3: every `scenario_launch.py` race left the AI
 output-slot table `0x007f1a14[0..3]` at its `.bss` zeros, so all four cars wrote
@@ -771,8 +776,8 @@ against the D1 split and D3 steps 1-4):
 |---|---|---|---|
 | WS-A | Vehicle physics | A1–A8 done; **D2 CLOSED 2026-09-14** — ported chain is the default drive model (`MASHED_REAL_PHYSICS=0` reverts); A8 slip diff passes 1.00x/1.07x | D2 ✓ |
 | WS-B | Collision / RW-Physics | B5e port DONE (K1..K24, `021a9f38`); ported chain is the default since D2 closed 2026-09-14. The per-row C4-verify campaign is NOT part of the D2 gate. Its remaining scope is unrecorded here [UNCERTAIN: needs a `hooks.csv` filter of B5e rows below C4] | D2 ✓ / D4 |
-| WS-C | AI drivers | **D3 step 2 (2026-09-14):** `Ai_Standalone_Tick` is now wired, behind the new default-OFF `MASHED_AI_TICK`. Measured RED because `FUN_00443300` + `FUN_00443dc0` are stubbed (2-3 distinct steer values vs the original's 33-96). Earlier status: Port DONE (`Ai/AiStandalone.cpp`), `Ai_Standalone_Tick` (FUN_00418860) had **zero call sites**; the default build drives opponents from the ported racing-line target + a scaffold motion model (`TrackRenderer.cpp:2831-2960`). Audit `re/analysis/D3_AUDIT_2026-09-14.md` §1 | D3 |
-| WS-D | Powerup effects | **D3 2026-09-26:** dispatcher FUN_0045bba0 ticks every frame over 4 slots (`TrackRenderer::TickPowerupDispatch`, G-D1 closed); all 9 per-type decision traces diff CLEAN against the original on replayed inputs (`D3_POWERUPS_2026-09-26.md`). Open: G-D2 fire (AI `FUN_00415220` stub), contact outcomes blocked on `ContactStubs.cpp`. Leaves are standalone reimpls via `IPowerupBackend` by design | D3 |
+| WS-C | AI drivers | **D3 2026-09-26:** the tick drives the opponents by default (ctrl bytes -> physics chain), `MASHED_AI_TICK` deleted, `FUN_00415220` fire decision + `FUN_00443440` + `FUN_00443dc0` tail ported; (b) 2 of 3 cars inside the tolerance (`D3_AI_PORT_2026-09-26.md`). Open: targeting modes 1..10, `FUN_00442a60`, car 1 `c0`/`c1` split, brake fraction. **D3 step 2 (2026-09-14):** `Ai_Standalone_Tick` is now wired, behind the new default-OFF `MASHED_AI_TICK`. Measured RED because `FUN_00443300` + `FUN_00443dc0` are stubbed (2-3 distinct steer values vs the original's 33-96). Earlier status: Port DONE (`Ai/AiStandalone.cpp`), `Ai_Standalone_Tick` (FUN_00418860) had **zero call sites**; the default build drives opponents from the ported racing-line target + a scaffold motion model (`TrackRenderer.cpp:2831-2960`). Audit `re/analysis/D3_AUDIT_2026-09-14.md` §1 | D3 |
+| WS-D | Powerup effects | **D3 2026-09-26:** dispatcher FUN_0045bba0 ticks every frame over 4 slots (`TrackRenderer::TickPowerupDispatch`, G-D1 closed); all 9 per-type decision traces diff CLEAN against the original on replayed inputs (`D3_POWERUPS_2026-09-26.md`). G-D2 closed: slots 1..3 own and fire (`D3_AI_PORT_2026-09-26.md` §5). Open: contact outcomes blocked on `ContactStubs.cpp`. Leaves are standalone reimpls via `IPowerupBackend` by design | D3 |
 | WS-E | librw renderer | librw is the **default** since `f4815877` (2026-08-19; decision DEC-2 of 2026-07-31 chose it). Open: D1-residue R1-R3 | D1 ✓ / D1-residue |
 | WS-F | Data formats | No work since 2026-06-16 | D4 |
 | WS-G | Modes & frontend | Ledger was stale. `Race/RaceModes` + `Race/RuleEngine` are the **default** path (`exe_main.cpp:2219/2244`, `RaceSession.cpp:129`, `TrackRenderer.cpp:3840`); every mode flag is revert-only or a post-derivation dev override. Open residues: G-G1 hardcoded `StartMatch(3)`, G-G2 `rule_engine_on_` defaults false. Audit §3 | D3 |

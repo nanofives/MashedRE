@@ -1,13 +1,19 @@
 {
   "title": "Mashed RE (ROADMAP v3: D3 — default game systems)",
-  "updatedAt": "2026-09-26T12:00:00Z",
+  "updatedAt": "2026-09-26T21:10:00Z",
   "sections": [
     {
       "heading": "Roadmap phases",
       "fields": [
         {
           "label": "Phases",
-          "value": ["D0 closed 2026-08-15", "D1 closed 2026-08-19 (residue R1-R3 owed before D5)", "D2 closed 2026-09-14", "D3 ACTIVE", "D4-D5 not started"],
+          "value": [
+            "D0 closed 2026-08-15",
+            "D1 closed 2026-08-19 (residue R1-R3 owed before D5)",
+            "D2 closed 2026-09-14",
+            "D3 ACTIVE",
+            "D4-D5 not started"
+          ],
           "kind": "list"
         },
         {
@@ -27,17 +33,17 @@
         },
         {
           "label": "AI (WS-C)",
-          "value": "RED—FUN_00443300/FUN_00443dc0 (curvature/wall-march) stubbed",
+          "value": "Ported tick drives opponents (MASHED_AI_TICK deleted); (a)(c)(d) met, (b) 2 of 3 cars in tolerance (car 1 c0/c1 split)",
           "kind": "text"
         },
         {
           "label": "Powerups (WS-D)",
-          "value": "OPEN—not yet measured vs original",
+          "value": "9/9 decision traces CLEAN; G-D1 + G-D2 closed (slots 1-3 own+fire, OIL only observed); impacts blocked on ContactStubs",
           "kind": "text"
         },
         {
           "label": "Next task",
-          "value": "1 measure powerups, 2 port the 2 AI stubs + delete MASHED_AI_TICK, 3 modes rules 5/10 + APPEND",
+          "value": "1 AI (b) car 1 via target/curvature dump; 2 brake fraction; 3 targeting modes 1..10; 4 FUN_00442a60; 5 modes rules 5/10 + APPEND",
           "kind": "text"
         }
       ]
