@@ -18,9 +18,9 @@
 // override-replay tail + the CarSlotStateSet alive-poke (P4b 2026-07-04).
 // Structural (constants flagged [UNCERTAIN]): the steering-angle calc
 // (FUN_00415e20). STUBBED with RVA TODO (see .cpp header): the full targeting
-// behaviour tree (modes 1..10), powerup activation (FUN_00415220), the spline
-// interpolation+curvature-walk+wall-march refinement (FUN_00443300 / tail of
-// FUN_00443dc0), and the .AI parser.
+// behaviour tree (modes 1..10) and the FUN_00442a60 reference-distance array. Ported
+// D3 2026-09-26: FUN_00415220 fire decision, FUN_00443440 curvature walk, the
+// FUN_00443dc0 wall-march tail (FUN_00443300 was already verbatim).
 //
 // Anchored to MASHED.exe SHA-256:
 //   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
@@ -52,6 +52,15 @@ struct Host {
     // track collision (GroundHeight). Default no-op returns 1 (= always clear), so
     // the lookahead keeps its farthest target when unbound.
     int   (*los_clear)(float ax, float az, float bx, float bz);
+    // [D3 2026-09-26] body FORWARD vector (X,Z) of vehicle v: FUN_0046d510 transforms
+    // DAT_00614708 = (0,0,1) by the car matrix and returns rec+0x9d4/+0x9dc. FUN_00415e20
+    // takes its heading from this, not from the velocity.
+    void  (*own_fwd_xz)(int v, float* fx, float* fz);
+    // float field of vehicle v's 0xd04 record (base 0x008815a0 in the original):
+    // +0x9e4 (FUN_0046d6d0) and +0xb0c (FUN_0046d6a0), read by FUN_00416250/FUN_00415220.
+    float (*veh_f32)(int v, int off);
+    // power-up type code vehicle v holds (*[0x0088fc88 + v*0xb4], 7..19), 0 = none.
+    int   (*held_powerup)(int v);
 };
 
 // Install the host (call once at race start). Passing nullptr restores no-op defaults.
@@ -69,5 +78,14 @@ void Ai_Standalone_Tick();
 // (the verbatim ControlStep bands' accel+brake deadlock against the approximate physics
 // chain is bypassed — see re/analysis/ai_spline_lookahead.md). Requires Ai_SetHost first.
 bool Ai_ComputeTarget(int v, float ownX, float ownZ, float* outTx, float* outTz);
+
+// [D3 2026-09-26] Advance the AI clock by one frame's tick budget: DAT_007f1008 = units,
+// DAT_007f0ff4 += units, DAT_007f0ff8 += units (original 0x0040fc63 / 0x0040fe5e).
+// The original's budget is 50 per 1/60 s frame. Call once per race frame before the tick.
+void Ai_AdvanceClock(int units);
+// FUN_00413fe0 per-vehicle AI-state reset + race-clock zeroing. Call at race start.
+void Ai_ResetRace();
+// FUN_00414030(v): force vehicle v's next lookahead to take the true nearest point.
+void Ai_ResetVehicleIndex(int v);
 
 } // namespace Ai

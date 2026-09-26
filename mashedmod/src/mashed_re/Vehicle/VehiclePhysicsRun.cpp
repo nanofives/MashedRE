@@ -426,6 +426,11 @@ void VehiclePhysics_ResetOrientation(int slot, float yaw) {
     g_bodyBasisReseed[slot] = true;   // heading discontinuity — see the decl comment
 }
 
+float VehiclePhysics_RecordF32(int slot, int off) {
+    if (!g_inited || slot < 0 || slot >= 16 || off < 0 || off > static_cast<int>(kRec) - 4) return 0.f;
+    return F(rec(slot), static_cast<std::size_t>(off));
+}
+
 void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
     VehiclePhysics_StepCar(0, dt, io);
 }
@@ -463,7 +468,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // FUN_004c4d20). +steer -> input[0] (sign A, +angle), -steer -> input[1] (sign B,
     // -angle); 0..255 magnitude exactly as AI writer FUN_00416250 / human cook
     // FUN_00496530 produce. Mutually exclusive (the original writes one or the other).
-    {
+    if (!io.raw_steer) {
         float st = io.steer;
         if (st >  1.0f) st =  1.0f;
         if (st < -1.0f) st = -1.0f;

@@ -85,23 +85,20 @@ void ITrackRuntime::Spawns(RaceConfig& c)    { (void)c; once("TrackRuntime::Spaw
 void ITrackRuntime::Render()                 { once("TrackRuntime::Render: REAL via D3d9Render/TrackRenderer"); }
 
 void IVehicleSim::Update(RaceConfig& c, float dt)   { (void)c; (void)dt; once("VehicleSim: REAL via TrackRenderer::UpdateCar (handling integrator)"); ready = true; }
-// [D3 AUDIT 2026-09-14] Corrected: the default is NOT the gate ribbon, and it is NOT the
-// ported controller either. Opponents run "Option B" (TrackRenderer.cpp:2831-2960): the
-// PORTED racing-line target (Ai_ComputeTarget = SelectSpline + FUN_00443dc0 lookahead)
-// feeding a SCAFFOLD turn-rate/speed motion model. The ported tick spine FUN_00418860
-// (Ai_Standalone_Tick, AiStandalone.cpp:1312) has zero call sites — so ControlStep
-// (FUN_00416250), VehicleStep (FUN_00418560) and AiPreTickRubberBand (FUN_004177b0) do not
-// run in mashed_re.exe. Wiring them is the open D3 AI gate. See re/analysis/D3_AUDIT_2026-09-14.md §1.
-void IAiController::Update(RaceConfig& c, float dt)  { (void)c; (void)dt; once("AiController: PARTIAL via TrackRenderer::UpdateRace (ported racing-line target + scaffold drive model; FUN_00418860 tick NOT wired)"); ready = true; }
+// [D3 2026-09-26] The ported tick spine FUN_00418860 (Ai_Standalone_Tick) runs every race
+// frame in TrackRenderer::UpdateCar and each opponent's ctrl block drives the ported
+// physics chain. Still stubbed: the targeting helpers (modes 1..10) and FUN_00442a60.
+// re/analysis/D3_AI_PORT_2026-09-26.md.
+void IAiController::Update(RaceConfig& c, float dt)  { (void)c; (void)dt; once("AiController: REAL via TrackRenderer::UpdateCar (ported FUN_00418860 tick -> ctrl bytes -> physics chain; targeting modes 1..10 stubbed)"); ready = true; }
 void ICollisionWorld::Resolve(RaceConfig& c, float dt){ (void)c; (void)dt; once("CollisionWorld: REAL via TrackRenderer::GroundHeight (ground snap)"); ready = true; }
 // [D3 AUDIT 2026-09-14] Corrected: "effects TODO" is stale. The ported dispatcher
 // FUN_0045bba0 + lifecycle + the 9 per-type DECISION functions ARE wired
 // (TrackRenderer::TickPowerupDispatch). [D3 2026-09-26] G-D1 closed: the dispatcher
-// ticks every race frame over 4 slots. G-D2 half-closed: AI slots can OWN (orb
-// collect) and read their fire byte, but the AI's fire decision FUN_00415220 is
-// stubbed in the ported AI tick, so they do not fire. Leaves stay standalone reimpls
-// via IPowerupBackend, by design. See re/analysis/D3_POWERUPS_2026-09-26.md.
-void IPowerupSystem::Update(RaceConfig& c, float dt) { (void)c; (void)dt; once("PowerupSystem: PARTIAL via TrackRenderer (orb collect/respawn + ported dispatcher on player fire; no per-frame tick, opponents never fire)"); ready = true; }
+// ticks every race frame over 4 slots. G-D2: AI slots OWN (orb collect) and, since the
+// FUN_00415220 port (D3 2026-09-26, AiFireDecision), FIRE through ctrl[7]. Leaves stay
+// standalone reimpls via IPowerupBackend, by design. See re/analysis/D3_POWERUPS_2026-09-26.md
+// and D3_AI_PORT_2026-09-26.md.
+void IPowerupSystem::Update(RaceConfig& c, float dt) { (void)c; (void)dt; once("PowerupSystem: PARTIAL via TrackRenderer (orb collect/respawn + ported per-frame dispatcher over 4 slots, AI fire via FUN_00415220; effect leaves scaffold)"); ready = true; }
 void IPowerupSystem::Render()                        { once("PowerupSystem::Render: REAL via PickupField billboards"); }
 void IRaceCameraDrv::Update(RaceConfig& c, float dt) { (void)c; (void)dt; once("RaceCamera: REAL via Race/RaceCamera verbatim port (0x00446520)"); ready = true; }
 void IParticleSystem::Update(float dt)               { (void)dt; once("ParticleSystem: REAL via D3d9Render/ParticleSystem (snow/dust billboards)"); ready = true; }

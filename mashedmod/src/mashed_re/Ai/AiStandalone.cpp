@@ -63,11 +63,27 @@
 //                      accessor and is approximated 0.0f [UNCERTAIN]. VehicleStep's
 //                      override-replay tail (+0x40..0x4c, FUN_00418560's last
 //                      block) ported — clean integer logic, no callees.
+//   DONE (D3 2026-09-26, Ghidra pool0 read-only, re/analysis/D3_AI_PORT_2026-09-26.md):
+//     FUN_00443300 Catmull-Rom: re-read against the decomp, ALREADY verbatim (the
+//                  STUBBED entry that stood here was stale).
+//     FUN_00443440 spline curvature walk (NEW, SplineCurvature) + FUN_004233e0 heading.
+//     FUN_00443dc0 tail: the wall-march over the .AI tile grid 0x007f1a9c/0x007f9a9c
+//                  (0x004446a4..0x00444a5e) + FUN_00416230 flag write; replaces the
+//                  host-LOS approximation. Phase 2 index continuity made verbatim
+//                  (reset value 1000 from FUN_00413fe0/FUN_00414030).
+//     FUN_00416250 bands CORRECTED against the listing 0x004165a5..0x00416a28:
+//                  magnitude = err * [+0x9e4] * k (x [curv]*0.05 when mode==0 and
+//                  curv>20), mirror uses (360-err), brake rule on the x87-carried
+//                  history value, speed-spike rule on [+0xb0c], 0x0089a368==1 accel
+//                  x0.4 rescale. FUN_004a2c48 TRUNCATES (listing 0x004a2c48), it is not
+//                  ROUND (the IDENTIFIED line above is wrong).
+//     FUN_00415220 AI power-up fire decision (NEW, AiFireDecision): writes ctrl[7].
 //   STUBBED (RVA TODO, port in WS-C follow-ups):
 //     FUN_00414570/00415880/00414a70/00414c30/004150e0/00414f00/004148b0/00415020
 //                  targeting + LOS helpers (modes 1..10) FUN_00416060 LOS  FUN_00415d00 wall
-//     FUN_00415220 powerup activation  FUN_00417cf0 mode-8
-//     FUN_00443300 spline interpolation + FUN_00443dc0 curvature-walk/wall-march tail
+//     FUN_00417cf0 mode-8
+//     FUN_00442a60 reference-distance array 0x008989b0 (read by FUN_00415220's gates);
+//                  standalone holds it at 0, the value FUN_00442a60 itself stores first.
 //     .AI parser (populates the 0x00801aa0 spline arrays + 0x007f1a9c tile grid)
 //   With targeting helpers stubbed, `mode`=0 (race-line follow); the REAL bands now
 //   drive steering/throttle toward the seed (was a crude turn-rate-2.4 placeholder).
@@ -90,11 +106,13 @@ int  h_zero_i()                 { return 0; }
 int  h_zero_iv(int)             { return 0; }
 void h_zero_xz(int, float* a, float* b) { *a = 0.0f; *b = 0.0f; }
 int  h_los_clear(float, float, float, float) { return 1; }   // no-op = always clear
+float h_zero_f(int, int) { return 0.0f; }
 
 Host s_host = {
     h_zero_i, h_zero_i, h_zero_i, h_zero_i,
     h_zero_iv, h_zero_iv, h_zero_i,
     h_zero_xz, h_zero_xz, h_los_clear,
+    h_zero_xz, h_zero_f, h_zero_iv,
 };
 
 inline float bits_to_f(std::uint32_t b) { float f; std::memcpy(&f, &b, 4); return f; }
@@ -156,8 +174,39 @@ float SteerAngleError(int v, float targetX, float targetZ)
     while (head < 0.0f) head += kWrap;
 
     float err = ang - head;
-    while (err < 0.0f) err += kWrap;
-    if (err < 0.0f) err += kWrap;           // (verbatim double-wrap guard)
+    while (err <= 0.0f) err += kWrap;       // `<0 != ==0` i.e. <=0 (decomp 0x00415e20 tail)
+    while (err < 0.0f) err += kWrap;        // (verbatim double-wrap guard)
+    while (kWrap < err) err -= kWrap;
+    return err;
+}
+
+// [D3 2026-09-26] FUN_00415e20 re-read (pool0): the HEADING operand is not the
+// velocity. The second half calls FUN_0046d510(&v3, v), which transforms the constant
+// DAT_00614708 = (0,0,1) by the car's matrix (rec+0x928) and returns rec+0x9d4..0x9dc,
+// the body FORWARD vector; then z is negated, y zeroed and the vector normalized. Every
+// angle wrap is `<= 0 -> += 360` (the `x < 0 != (x == 0)` idiom), so exact 0 maps to 360.
+// SteerAngleError above is kept for ControlStepM49/M8; ControlStep uses this one.
+float SteerAngleErrorFwd(int v, float targetX, float targetZ)
+{
+    auto angOf = [](float x, float z) -> float {          // (x, 0, z) already z-negated
+        const float n = std::sqrt(x * x + z * z);          // FUN_004c39b0 normalize
+        const float nx = (n > 0.0f) ? x / n : x;
+        const float nz = (n > 0.0f) ? z / n : z;
+        float d = nx;                                      // z*0 + y*0 + x (DAT_005d757c = 0)
+        if (d < kSteerThrLo) d = kSteerClampLo;
+        if (kSteerThrHi < d) d = kSteerClampHi;
+        float a = static_cast<float>(std::acos(d) * kSteerScale);   // FUN_004a3384 * 0x005cc970
+        if (nz < 0.0f) a = -a;
+        while (a <= 0.0f) a += kWrap;
+        return a;
+    };
+    float ownX, ownZ;  s_host.own_xz(v, &ownX, &ownZ);
+    const float ang = angOf(targetX - ownX, -(targetZ - ownZ));
+    float fx, fz;      s_host.own_fwd_xz(v, &fx, &fz);     // FUN_0046d510 -> rec+0x9d4/+0x9dc
+    const float head = angOf(fx, -fz);
+    float err = ang - head;
+    while (err <= 0.0f) err += kWrap;
+    while (err < 0.0f)  err += kWrap;
     while (kWrap < err) err -= kWrap;
     return err;
 }
@@ -199,6 +248,36 @@ inline void Normalize2(float* v) {
     if (m2 > 0.0f) { const float inv = 1.0f / std::sqrt(m2); v[0] *= inv; v[1] *= inv; }
 }
 
+// FUN_004233e0's rad->deg scale: DOUBLE at 0x005ccae0 = bytes 000000c0 dca54c40
+// = 57.295799255371094 (FMUL qword at 0x004233fd).
+inline double kRadToDeg4233() {
+    const std::uint64_t b = 0x404ca5dcc0000000ull; double d; std::memcpy(&d, &b, 8); return d;
+}
+
+// FUN_00443dc0 wall-march tile probe [D3 2026-09-26], one sample of the march at
+// 0x00444754..0x00444807 (centre line) / 0x00444910..0x004449c3 (offset line):
+//   rz = __ftol(z*4 +-0.5) - 0x10, rx = __ftol(x*4 +-0.5) - 0x10  (+0.5 when > 0, else
+//        -0.5; FUN_004a2c48 truncates, so this is round-half-away)
+//   s  = word [0x007f1a9c + (((rz+0x200)>>3)*0x80 + ((rx+0x200)>>3))*2]
+//   blocked iff 0 < s < 0x200 and byte [0x007f9a9c + ((rx&7) + s*8)*8 + (rz&7)] is 0 or 3.
+// The grid is the .AI payload Ai_BridgeLoad copies to 0x007f1a9c (AiData.h
+// kAiTileGridOff / kAiSubCellOff). The range guard is standalone-only: it keeps a
+// sample far off the 128x128 grid from reading outside the image-pad.
+inline int TruncHalfAway(float x) { return static_cast<int>(0.0f < x ? x + 0.5f : x - 0.5f); }
+bool TileBlocked(float x, float z)
+{
+    const int rz = TruncHalfAway(z * 4.0f) - 0x10;                 // ESI (first __ftol)
+    const int rx = TruncHalfAway(x * 4.0f) - 0x10;                 // EAX (second __ftol)
+    const int cell = ((rz + 0x200) >> 3) * 0x80 + ((rx + 0x200) >> 3);
+    if (cell < -0x8000 || cell > 0x10000) return false;            // standalone guard
+    const std::int16_t s = *reinterpret_cast<const std::int16_t*>(
+        0x007f1a9cu + static_cast<std::intptr_t>(cell) * 2);
+    if (s <= 0 || s >= 0x200) return false;
+    const std::uint8_t c = U8(0x007f9a9cu +
+        static_cast<std::uintptr_t>(((rx & 7) + s * 8) * 8 + (rz & 7)));
+    return c == 0 || c == 3;
+}
+
 // ===========================================================================
 // FUN_00443dc0 (param_5=1, param_6=0) — spline lookahead target finder. STAGE 1:
 // Phases 1-7 (nearest -> per-vehicle index continuity -> Catmull-Rom closest-param
@@ -223,29 +302,19 @@ void SplineLookahead(std::uintptr_t spline, float ownX, float ownZ, int v, float
     }
 
     // ---- Phase 2: per-vehicle index continuity (DAT_008032d4 + v*0x14) ----
-    // The original's "reject a jump >1" rule (anti-shortcut) assumes the stored index is
-    // roughly where the car was. The standalone never seeds it at spline placement, so a
-    // mid-track-spawned (or respawned, or knocked-off) car whose stored index is stale gets
-    // pinned forever. Self-heal: if the car is now FAR from the stored point (>6 local
-    // segment lengths, mirroring the old s_prog lost-reseed), accept the true nearest;
-    // otherwise apply the original jump-reject.
+    // [D3 2026-09-26] VERBATIM (decomp 0x00443e86..0x00443eb4): keep the stored index
+    // when the nearest point jumped by more than one (except the wrap step 1-count) AND
+    // the stored index is inside the bank. The stored index is reset to 1000 (>= any
+    // count, so the next call takes the true nearest) by FUN_00413fe0 at race reset and
+    // by FUN_00414030(v) per vehicle; the standalone calls those ports (AiResetAll /
+    // Ai_ResetVehicleIndex) at race start and whenever it relocates a car. This replaces
+    // the "far from stored point -> reseed" heuristic that stood here, which the
+    // original does not have.
     {
         const std::uintptr_t idxAddr = 0x008032d4u + static_cast<std::uintptr_t>(v) * 0x14u;
-        int prev = I32(idxAddr);
-        bool reseed = (prev < 0 || prev >= count);
-        if (!reseed) {
-            const int pn = (prev + 1) % count;
-            const float sx = F32(spline + (std::uintptr_t)pn*8)     - F32(spline + (std::uintptr_t)prev*8);
-            const float sz = F32(spline + (std::uintptr_t)pn*8 + 4) - F32(spline + (std::uintptr_t)prev*8 + 4);
-            const float segLen2 = sx*sx + sz*sz;
-            const float dx = F32(spline + (std::uintptr_t)prev*8)     - ownX;
-            const float dz = F32(spline + (std::uintptr_t)prev*8 + 4) - ownZ;
-            if (dx*dx + dz*dz > segLen2 * 36.0f) reseed = true;   // car teleported (spawn/respawn/knock-off)
-        }
-        if (!reseed) {
-            const int diff = nearest - prev;
-            if (diff != 1 - count && (diff < -1 || 1 < diff)) nearest = prev;
-        }
+        const int prev = I32(idxAddr);
+        const int diff = nearest - prev;
+        if (diff != 1 - count && (diff < -1 || 1 < diff) && prev < count) nearest = prev;
         I32(idxAddr) = nearest;
     }
 
@@ -307,19 +376,164 @@ void SplineLookahead(std::uintptr_t spline, float ownX, float ownZ, int v, float
     int best = 0; float bestM = 0.0f;   // init DAT_005d757c=0
     for (int i = 0; i < 16; ++i) if (bestM < metric[i]) { bestM = metric[i]; best = i; }
 
-    // ---- Phase 8: LOS wall-march. The original marches own->target across the AI
-    // tile grid (0x007f1a9c/0x007f9a9c) and, while a wall blocks the line, steps the
-    // target back 2 lookahead points until reachable (or the closest point). Here the
-    // host's los_clear backs the same logic with the track collision. This keeps the
-    // target on a drivable straight line, so the verbatim ControlStep bands don't
-    // full-lock / brake-latch at corners (the on-mesh stall root cause, 2026-06-30).
-    for (int guard = 0; guard < 8; ++guard) {
-        if (s_host.los_clear(ownX, ownZ, pts[best*2], pts[best*2 + 1])) break;
-        if (best <= 1) { best = 0; break; }   // fall back to the closest forward point
-        best -= 2;                              // step the target back (orig: iVar8 -= 2)
-    }
     out[0] = pts[best*2];
     out[1] = pts[best*2 + 1];
+
+    // ---- Phase 8: wall-march over the .AI tile grid [D3 2026-09-26, VERBATIM from the
+    // listing 0x004446a4..0x00444a5e, pool0]. Replaces the host los_clear approximation.
+    //   loop:
+    //     march the CENTRE line own -> target (0x004446a4..0x00444820): t = 0, 0.25, ...
+    //       while t < len; point = own + (d/len)*t; a point whose x equals own.x OR whose
+    //       z equals own.z is skipped (0x0044472e..0x0044474e); blocked => stop.
+    //     if the centre line is clear, march the OFFSET line (0x00444831..0x004449d6):
+    //       start = (own.x - 0.25*dz/len, own.z - 0.25*dx/len) -- x offset uses dz and z
+    //       offset uses dx, exactly as the listing (0x00444875..0x0044489d); same step,
+    //       same skip rule against the offset start.
+    //     either line blocked (0x004449de): idx 0/1 -> idx 0 and DONE; else idx -= 2
+    //       (target = pts[idx], not done). Both lines clear, or len <= 0: DONE (0x00444a14).
+    //     FUN_00416230(v, idx == 0) (0x00444a2c) every pass.
+    //   on DONE: if ANY pass was blocked (local_164, [ESP+0x4c]) step back once more
+    //     (0/1 -> 0, else -2) and take that point (0x00444a40..0x00444a5b).
+    int idx = best;
+    int anyBlocked = 0;   // local_164
+    for (;;) {
+        int done = 0;     // local_194
+        const float dx  = out[0] - ownX;
+        const float dz  = out[1] - ownZ;
+        const float len = std::sqrt(dx * dx + dz * dz);           // FUN_004c3bf0 (2-D)
+        bool blocked = false;
+        if (0.0f < len) {                                          // 0x004446d0..0x004446ef
+            const float inv = 1.0f / len;
+            for (float t = 0.0f; t < len && !blocked; t += 0.25f) { // 0x005cc564 = 0.25
+                const float px = dx * inv * t + ownX;
+                const float pz = inv * dz * t + ownZ;
+                if (px != ownX && pz != ownZ && TileBlocked(px, pz)) { blocked = true; anyBlocked = 1; }
+            }
+        }
+        if (!blocked) {
+            // offset line (0x00444831): recomputes d and len from the (unchanged) target
+            if (0.0f < len) {
+                const float ux = (1.0f / len) * dx;                // local_148
+                const float uz = dz * (1.0f / len);                // local_16c
+                const float sx = ownX - uz * 0.25f;                // local_160
+                const float sz = ownZ - ux * 0.25f;                // local_15c
+                for (float t = 0.0f; t < len && !blocked; t += 0.25f) {
+                    const float px = ux * t + sx;
+                    const float pz = uz * t + sz;
+                    if (px != sx && pz != sz && TileBlocked(px, pz)) { blocked = true; anyBlocked = 1; }
+                }
+            }
+            if (!blocked) done = 1;                                 // 0x00444a14
+        }
+        if (blocked) {                                              // 0x004449de
+            if (idx == 0 || idx == 1) { idx = 0; done = 1; }
+            else idx -= 2;
+            out[0] = pts[idx*2];
+            out[1] = pts[idx*2 + 1];
+        }
+        I32(0x0089a500u + static_cast<std::uintptr_t>(v) * 0x74u) = (idx == 0) ? 1 : 0; // FUN_00416230
+        if (done) break;
+    }
+    if (anyBlocked) {                                               // 0x00444a40
+        const int j = (idx == 0 || idx == 1) ? 0 : idx - 2;
+        out[0] = pts[j*2];
+        out[1] = pts[j*2 + 1];
+    }
+}
+
+// ===========================================================================
+// FUN_004233e0 — heading of (a, b) in degrees [D3 2026-09-26, listing 0x004233e0..
+// 0x0042347b]: b == 0 -> 90 (a >= 0) / 270 (a < 0); else 180 + atan(a/b)*57.29578
+// (0x005ccae0 is a DOUBLE 0x404ca5dcc0000000), +180 when b > 0, -360 when >= 360;
+// a == b == 0 -> 0.
+// ===========================================================================
+float Heading004233e0(float a, float b)
+{
+    float r;
+    if (b == 0.0f) {
+        r = (a >= 0.0f) ? 90.0f : 270.0f;                   // 0x005ccad0 / 0x005cd324
+    } else {
+        r = static_cast<float>(180.0 + std::atan(static_cast<double>(a) / b) * kRadToDeg4233());
+        if (0.0f < b) r += 180.0f;
+        if (360.0f <= r) r -= 360.0f;
+    }
+    if (a == 0.0f && b == 0.0f) r = 0.0f;
+    return r;
+}
+
+// ===========================================================================
+// FUN_00443440(spline, pos, dist, &out, 0) — spline curvature walk [D3 2026-09-26,
+// decomp pool0]. Called by FUN_00416250 at 0x004162b0 with dist = 10.0 (0x41200000);
+// its float10 return is discarded (FSTP ST0 at 0x004162b5), only *out is used.
+//   nearest point + 0.01/0.99 sub-segment pick + 16-step ternary (same as FUN_00443dc0)
+//   h0 = heading of the tangent (C(p+0.01) - C(p)) at the closest param
+//   walk +0.1 param steps accumulating SQUARED chord lengths until >= dist*0.5, then
+//   (h1, unused here) and on until >= dist; h2 = heading of the tangent there
+//   *out = h0 - h2 wrapped to [0,360) (`< 0 -> += 360`, 0x00443c.. for-loop)
+// ===========================================================================
+float SplineCurvature(std::uintptr_t spline, float ownX, float ownZ, float dist)
+{
+    const int count = I32(spline + 0x200);
+    if (count <= 0) return 0.0f;
+    int nearest = 0; float bestD = 100000.0f;
+    for (int i = 0; i < count; ++i) {
+        const float dx = F32(spline + static_cast<std::uintptr_t>(i)*8)     - ownX;
+        const float dz = F32(spline + static_cast<std::uintptr_t>(i)*8 + 4) - ownZ;
+        const float d  = dx*dx + dz*dz;
+        if (d < bestD) { nearest = i; bestD = d; }
+    }
+    float cx, cz;  CatmullRom(spline, nearest, 0.01f, &cx, &cz);
+    const float ex = cx - ownX, ez = cz - ownZ;
+    int prevIdx = nearest - 1; if (prevIdx < 0) prevIdx = count - 1;
+    float qx, qz;  CatmullRom(spline, prevIdx, 0.99f, &qx, &qz);
+    if ((qx-ownX)*(qx-ownX) + (qz-ownZ)*(qz-ownZ) < ex*ex + ez*ez) nearest = prevIdx;
+
+    const float kThird = bits_to_f(0x3eaaaa9fu);             // _DAT_005ce034
+    float hi = 1.0f, lo = 0.0f, hx, hz, lx, lz;
+    CatmullRom(spline, nearest, 1.0f, &hx, &hz);
+    float dHi = (hx-ownX)*(hx-ownX) + (hz-ownZ)*(hz-ownZ);
+    CatmullRom(spline, nearest, 0.0f, &lx, &lz);
+    float dLo = (lx-ownX)*(lx-ownX) + (lz-ownZ)*(lz-ownZ);
+    for (int it = 0; it < 16; ++it) {
+        if (dHi <= dLo) { lo = (lo + lo + hi) * kThird; CatmullRom(spline, nearest, lo, &lx, &lz);
+                          dLo = (lx-ownX)*(lx-ownX) + (lz-ownZ)*(lz-ownZ); }
+        else            { hi = (hi + hi + lo) * kThird; CatmullRom(spline, nearest, hi, &hx, &hz);
+                          dHi = (hx-ownX)*(hx-ownX) + (hz-ownZ)*(hz-ownZ); }
+    }
+    float param = hi, px = hx, pz = hz;                        // bVar7 = dLo < dHi -> lo
+    if (dLo < dHi) { param = lo; px = lx; pz = lz; }
+
+    const float kTan = bits_to_f(0x3c23d70au);                 // _DAT_005cc328 (0.01)
+    const float kWalk = bits_to_f(0x3dcccccdu);                // _DAT_005cc56c (0.1)
+    auto tangentHeading = [&](int seg, float p, float fromX, float fromZ) -> float {
+        float q = p + kTan;
+        if (1.0f < q) { q -= 1.0f; if (++seg == count) seg = 0; }
+        float tx, tz;  CatmullRom(spline, seg, q, &tx, &tz);
+        return Heading004233e0(tx - fromX, tz - fromZ);
+    };
+    const float h0 = tangentHeading(nearest, param, px, pz);  // separate index, fVar6 untouched
+
+    int   seg = nearest;
+    float acc = 0.0f, lastX = px, lastZ = pz;
+    auto step = [&]() {
+        param += kWalk;
+        if (1.0f < param) { param -= 1.0f; if (++seg == count) seg = 0; }
+        float wx, wz;  CatmullRom(spline, seg, param, &wx, &wz);
+        const float a = wx - lastX, b = wz - lastZ;
+        lastX = wx; lastZ = wz;
+        acc = a * a + b * b + acc;                             // SQUARED chord, as decompiled
+    };
+    const float half = dist * 0.5f;                            // _DAT_005cc32c
+    if (0.0f < half) { do { step(); } while (acc < half); }
+    // h1 = tangent here: its only consumer is the discarded float10 return, but the
+    // original ADVANCES param/seg by +0.01 before walking on (0x00443b..), so do the same.
+    param += kTan; if (1.0f < param) { param -= 1.0f; if (++seg == count) seg = 0; }
+    { float tx, tz; CatmullRom(spline, seg, param, &tx, &tz); (void)tx; (void)tz; }
+    while (acc < dist) step();
+    const float h2 = tangentHeading(seg, param, lastX, lastZ);
+    float out = h0 - h2;
+    while (out < 0.0f) out += 360.0f;                          // _DAT_005ccac4
+    return out;
 }
 
 // ===========================================================================
@@ -388,247 +602,275 @@ const float kSlowBand4Hi     = 62.0f;    // _DAT_005cd0f0
 //   0x007f0ff4 frame counter (host-ticked) ; 0x007f0ff8 race timer
 inline std::uintptr_t a14(std::uintptr_t b, int v){ return b + (std::uintptr_t)v*0x14u; }
 inline std::uintptr_t a74(std::uintptr_t b, int v){ return b + (std::uintptr_t)v*0x74u; }
-// FUN_004a2c48 = ROUND(ST0)→int; orig stores AL (low byte). [U: FPU rounding mode].
+// FUN_004a2c48 [D3 2026-09-26 CORRECTED]: the listing (0x004a2c48..) is FST + FISTP
+// qword (current rounding) + FILD + FSUBP and an ADC correction on the residual's sign,
+// i.e. the MSVC truncating __ftol: C float->int, toward zero. Not ROUND. Measured
+// consequence in the original: accel 0x40 * 0.4 = 25.6 is stored as 25
+// (verify/d3_ai_20260926/o_spread3.msd.aistep.csv). Callers store AL (low byte); every
+// ctrl-byte operand here is already clamped to [0,255] by the listing.
 inline std::uint8_t RoundST0(float x){
-    long r = std::lround(x);
+    long r = static_cast<long>(x);
     if (r < 0) r = 0; if (r > 255) r = 255;
     return (std::uint8_t)r;
 }
+inline long Ftol(float x) { return static_cast<long>(x); }
 
+// FUN_00472650(lo, hi) = (hi - lo) * (u & 0x7fffffff) * _DAT_005cd314 + lo, with
+// _DAT_005cd314 = 0x30000000 = 2^-31 and u = FUN_00534870(), RenderWare's additive
+// lagged generator over a ring whose seed/state the standalone does not have
+// ([UNCERTAIN] U-D3-AIRAND: next, read the ring at *(0x007dc578)+DAT_007d3ff8 in a live
+// original). The LAW is verbatim; u is a 32-bit LCG stand-in, deterministic per boot.
+float AiRand(float lo, float hi)
+{
+    static std::uint32_t s = 0x2545f491u;
+    s = s * 1664525u + 1013904223u;
+    return (hi - lo) * static_cast<float>(s & 0x7fffffffu) * 4.656612873e-10f + lo;
+}
+
+// ===========================================================================
+// FUN_00415220 — AI power-up fire decision [D3 2026-09-26, decomp + listing
+// 0x00415220..0x0041582a, pool0]. cdecl (spline, &target, &cand, v, curvInt). The
+// stack slot of arg 4 is overwritten by FUN_0046d6d0 with the car speed (+0x9e4) at
+// 0x00415244; arg 5 is __ftol of FUN_00443440's curvature (0x00416523). Every path
+// returns 0 (XOR EAX,EAX before each RET), so the caller's mode-8 commit is dead in the
+// original too. Writes ctrl[7] = 1 (MOV BYTE [EDI+7],1): the byte the power-up
+// dispatcher reads as FIRE (0x0045bd72). Per-vehicle state, stride 0x74:
+//   0x0089a51c held-time accumulator (+= DAT_007f1008), 0x0089a520 cooldown,
+//   0x0089a524 held > 60000 flag, 0x0089a528 latch.
+// Standalone inputs with no standalone writer, read from the image-pad exactly where
+// the original reads them (so 0 here), each recorded in D3_AI_PORT_2026-09-26.md:
+//   0x008989b0[v] (FUN_00442cc0; written by the unported FUN_00442a60),
+//   0x0068ba00+v*0x58 (FUN_0045a0f0), 0x006885e0+v*0x2c (FUN_00455b40),
+//   0x008a96dc+v*0x30c (FUN_00408af0).
+// ===========================================================================
+float RefDist(int c) { return (c < 4) ? F32(0x008989b0u + static_cast<std::uintptr_t>(c) * 4u) : 0.0f; } // FUN_00442cc0
+int   RefDistZero0() { return RefDist(0) == 0.0f ? 1 : 0; }                                           // FUN_00415200
+int   LeaderInRange(int v, float lo, float hi)                                                          // FUN_00415190
+{
+    if (RefDist(v) != 0.0f) return 0;
+    int found = -1;
+    for (int c = 0; c < 4; ++c) if (s_host.veh_type(c) == 1) found = c;   // FUN_0040e470(c) == 1
+    if (found == -1) return 0;
+    const float d = RefDist(found);
+    return (lo <= d && d < hi) ? 1 : 0;
+}
+int PuField45a0f0(int v) { return (v >= 0 && v < 4) ? I32(0x0068ba00u + static_cast<std::uintptr_t>(v) * 0x58u) : -1; }
+int PuField455b40(int v) { return I32(0x006885e0u + static_cast<std::uintptr_t>(v) * 0x2cu); }
+
+void AiFireDecision(int v, std::uint8_t* ctrl, int curvInt)
+{
+    const float speed = s_host.veh_f32(v, 0x9e4);                      // FUN_0046d6d0 @0x00415244
+    const std::uintptr_t acc = a74(0x0089a51cu, v), cd = a74(0x0089a520u, v);
+    const std::uintptr_t lng = a74(0x0089a524u, v), lat = a74(0x0089a528u, v);
+    const int dt = I32(0x007f1008u);
+    const int t = I32(acc) + dt;  I32(acc) = t;                         // 0x00415254..0x00415264
+    if (t > 60000) I32(lng) = 1;                                        // 0x0041525f / 0x00415271
+    if (t < 3000)  I32(cd) = 3000;                                      // 0x00415277 / 0x0041527e
+    if (I32(cd) != 0) { const int c = I32(cd) - dt; I32(cd) = (c < 0) ? 0 : c; }   // 0x00415288..0x0041529c
+    const int type = s_host.held_powerup(v);                            // *[0x0088fc88 + v*0xb4]
+    if (type == 0) return;                                              // 0x004152b6
+    auto fire = [&]() { ctrl[7] = 1; };
+    const float fc = static_cast<float>(curvInt);                       // FILD [ESP+0x44]
+    switch (type) {                                                     // table 0x0041582c, types 7..19
+    case 7:                                                             // MORTAR 0x004152d1
+        if (I32(lng) == 0) {
+            if (I32(cd) != 0) return;
+            if (!RefDistZero0()) return;
+            if (RefDist(v) <= 2.75f) return;                            // 0x005cd0c0
+            if (25.0f <= fc) return;                                    // 0x005cc9e0
+            const float r = AiRand(0.0f, 1.0f);
+            const long row = Ftol(F32(0x0089a360u));                    // 0x00415335..0x0041533e
+            const float thr = 1.0f - (10.0f - static_cast<float>(row)) * bits_to_f(0x3d888889u); // 0x005cd0bc
+            if (thr <= r) { I32(cd) = 3000; return; }                   // 0x00415366 -> 0x00415733
+        }
+        fire(); I32(cd) = 750; return;                                  // 0x0041536c / 0x00415371 (0x2ee)
+    case 9:                                                             // GUN 0x00415383
+        if (I32(lat) != 0) { fire(); if (PuField45a0f0(v) != 0) I32(lat) = 0; return; }
+        if (I32(lng) != 0) { I32(lat) = 1; return; }                    // 0x004157b4
+        if (I32(cd) != 0 || !RefDistZero0() || PuField45a0f0(v) != 0) return;
+        if (AiRand(0.0f, 1.0f) < 0.75f) I32(lat) = 1; else I32(cd) = 3000;   // 0x005cc950
+        return;
+    case 11:                                                            // MISSILE 0x00415421
+        if (I32(lng) != 0) fire();
+        if (I32(cd) != 0 || !RefDistZero0() || PuField45a0f0(v) != 0 || PuField455b40(v) == 0) return;
+        if (AiRand(0.0f, 1.0f) < 0.75f) fire(); else I32(cd) = 6000;    // 0x00415627 (0x1770)
+        return;
+    case 17: {                                                          // SHOTGUN 0x00415499
+        if (I32(lng) != 0) { fire(); I32(cd) = 500; return; }           // 0x00415593 (0x1f4)
+        if (I32(cd) != 0) return;
+        if (!LeaderInRange(v, 0.5f, 3.0f)) return;
+        float p0x, p0z, pvx, pvz;
+        s_host.own_xz(0, &p0x, &p0z);  s_host.own_xz(v, &pvx, &pvz);   // FUN_0046d4a0(0) / (v)
+        const float dx = p0x - pvx, dz = p0z - pvz;
+        const float len = std::sqrt(dx * dx + dz * dz);                 // FUN_004c3ac0 (y = 0)
+        const float nx = (len > 0.0f) ? dx / len : dx, nz = (len > 0.0f) ? dz / len : dz; // FUN_004c39b0
+        const std::uintptr_t pf = 0x008a96dcu + static_cast<std::uintptr_t>(v) * 0x30cu;   // FUN_00408af0
+        const float val = -((F32(pf + 8) * nz + nx * F32(pf) + F32(pf + 4) * 0.0f) * len);
+        if (!(-0.75f < val && val < 0.75f)) return;                     // 0x005cd0b0 / 0x005cc950
+        if (0.9f <= AiRand(0.0f, 1.0f)) { I32(cd) = 3000; return; }     // 0x005cc9c8
+        fire(); I32(cd) = 500; return;
+    }
+    case 10:                                                            // DRUM 0x004155aa
+        if (I32(lng) == 0) {
+            if (I32(cd) != 0) return;
+            if (speed <= 2000.0f) return;                               // 0x005cd0b8
+            if (!LeaderInRange(v, 4.0f, 10.0f)) return;
+            if (15.0f <= fc) return;                                    // 0x005cc9b0
+            if (!(AiRand(0.0f, 1.0f) < 0.9f)) { I32(cd) = 6000; return; }
+        }
+        fire(); I32(cd) = 1500; return;                                 // 0x004156a2 (0x5dc)
+    case 12:                                                            // P_MINE 0x0041563a
+        if (I32(lng) == 0) {
+            if (I32(cd) != 0) return;
+            if (speed <= 2000.0f) return;
+            if (!LeaderInRange(v, 4.0f, 10.0f)) return;
+            if (0.75f <= AiRand(0.0f, 1.0f)) { I32(cd) = 9000; return; } // 0x0041580d (0x2328)
+        }
+        fire(); I32(cd) = 1500; return;
+    case 16:                                                            // R_FLAME 0x004156b9
+        if (I32(lat) != 0) { fire(); return; }                          // 0x00415793
+        if (I32(lng) != 0) { I32(lat) = 1; return; }
+        if (I32(cd) != 0 || speed <= 2000.0f || !LeaderInRange(v, 3.0f, 10.0f)) return;
+        if (AiRand(0.0f, 1.0f) < 0.5f) I32(lat) = 1; else I32(cd) = 3000;    // 0x005cc32c
+        return;
+    case 18:                                                            // FLASH 0x00415746
+        if (I32(lng) != 0) fire();
+        if (I32(cd) != 0) return;
+        if (fc <= 80.0f) return;                                        // 0x005cc730
+        if (0.5f <= AiRand(0.0f, 1.0f)) { I32(cd) = 9000; return; }
+        fire(); return;
+    case 19:                                                            // OIL 0x004157a0
+        if (I32(lat) != 0) { fire(); return; }
+        if (I32(lng) != 0) { I32(lat) = 1; return; }
+        if (I32(cd) != 0) return;
+        if (fc <= 80.0f) return;
+        if (AiRand(0.0f, 1.0f) < 0.5f) I32(lat) = 1; else I32(cd) = 9000;
+        return;
+    default: return;                                                    // 8, 13..15 -> 0x00415822
+    }
+}
+
+// ===========================================================================
+// FUN_00416250 — primary per-vehicle control step [D3 2026-09-26: re-ported against
+// the listing 0x00416250..0x00416a2e, pool0; D3_AI_PORT_2026-09-26.md section 2].
+// Stack frame after the prologue (0x00416250..0x004162bb): [+0x10] mode (local_48),
+// [+0x14] err, [+0x18] curvature (FUN_00443440 out, folded to [0,180] at 0x004162be),
+// [+0x1c] FUN_0046d6d0 = rec+0x9e4 (speed), [+0x20] FUN_0046d6a0 = rec+0xb0c,
+// [+0x24] FUN_0040e350 sub-state. The x87 stack across the bands was traced by hand:
+// FUN_00415e20 leaves err in ST0 (FST, not FSTP, at 0x0041659e), a 0 is pushed above it
+// (0x004165a5) and replaced by a history value X; the accel rule at 0x00416818 compares
+// X (not err) with 20, the rules at 0x0041683e/0x00416863 compare err.
+// Targeting helpers (modes 1..10) remain STUBBED -> mode stays 0.
+// ===========================================================================
 void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
 {
-    const int gameMode = s_host.game_sub_mode();   // FUN_0040e350 (local_34) — the SUB-mode
-    // (race=6), NOT DAT_007f0fd0 (game_mode_fd0). The throttle gate below keeps accel for
-    // race-class sub-modes {6,5,9,10,11}; calling game_mode_fd0() here (=0) wrongly gated
-    // throttle OFF (ctrl[4]=0 -> AI cars never moved). [G3 fix 2026-06-18]
-    float ownX, ownZ;  s_host.own_xz(v, &ownX, &ownZ);
-    float vx, vz;      s_host.own_vel_xz(v, &vx, &vz);
-    const float speed = std::sqrt(vx*vx + vz*vz);  // local_38 ~ FUN_0046d6a0 [U-C-RATE0]
-    const float rate1 = 0.0f;                       // local_3c = FUN_0046d6d0 [U-C-RATE1]
+    const int gameMode = s_host.game_sub_mode();                     // FUN_0040e350 -> [+0x24]
+    const float rate0 = s_host.veh_f32(v, 0xb0c);                     // FUN_0046d6a0 -> [+0x20]
+    const float speed = s_host.veh_f32(v, 0x9e4);                     // FUN_0046d6d0 -> [+0x1c]
+    float ownX, ownZ;  s_host.own_xz(v, &ownX, &ownZ);                 // FUN_0046d4a0 +0x30/+0x38
 
-    // --- targeting chain (FUN_00414570/15880/14a70/14c30/150e0/14f00/148b0/15020/
-    //     15220 + LOS 00416060 + wall 00415d00). STUBBED → mode 0; target = the
-    //     FUN_004161e0 seed (spline lookahead). Port the helpers in a follow-up. ---
-    int mode = 0;
-    // FAITHFUL spline lookahead (FUN_00443dc0, param_5=1 param_6=0) — replaces the
-    // [G4] crude 1-raw-point s_prog crutch. Nearest -> per-vehicle index continuity ->
-    // Catmull-Rom closest-param -> 16-point forward walk -> max-aligned pick, so the
-    // target tracks the (smoothed) racing line and the verbatim bands below stop
-    // full-locking the steer at corners (the stall root cause measured 2026-06-30).
-    // re/analysis/ai_spline_lookahead.md. Phase-8 LOS wall-march is a follow-up.
+    float curv = SplineCurvature(spline, ownX, ownZ, 10.0f);          // FUN_00443440 @0x004162b0
+    if (kSteerSplit < curv) curv = kWrap - curv;                       // 0x004162be..0x004162d5
+
     float look[2] = { ownX, ownZ };
-    SplineLookahead(spline, ownX, ownZ, v, look);
-    float tx = look[0], tz = look[1];
-    I32(a74(0x0089a52cu, v)) = mode;                // commit behaviour mode
+    SplineLookahead(spline, ownX, ownZ, v, look);                     // FUN_004161e0 -> FUN_00443dc0(...,1,0)
+    const float tx = look[0], tz = look[1];
 
-    const float err = SteerAngleError(v, tx, tz);  // FUN_00415e20, [0,360)
-    const int   frame = I32(0x007f0ff4u);
-
-    // [G4] STANDALONE PURE-PURSUIT steering substitute. The ported ControlStep bands below
-    // full-lock the steer (ctrl=255) for any bearing error in 30..180deg ("mildly off" hard
-    // corrective) — correct in the original because its curvature-walk target (FUN_00443300 /
-    // FUN_00443dc0 tail) keeps the error <30deg, but that refinement is STUBBED here, so with
-    // the crude lookahead the error sits in the full-steer band at every corner and the car
-    // ORBITS / drives into the edge instead of negotiating it (all cars stalled ~gate 7). This
-    // proportional controller reuses the sign-correct SteerAngleError (err<180 -> one way,
-    // >180 -> the other) but scales the steer by how far off the car is (full lock only past
-    // ~kFullDeg), so the car drives FORWARD through bends -> full laps. A ratified standalone
-    // shim (cf. the std::sqrt LUT fallback / contact stub).
-    // [D3 2026-09-14] GATE POLARITY, corrected: this used to read "Env
-    // MASHED_AI_PUREPURSUIT=0 reverts to the verbatim bands", the INVERSE of the lambda
-    // directly below -- `return (e && e[0] != '0')` is OPT-IN, default OFF. The verbatim
-    // bands are the DEFAULT path inside ControlStep; MASHED_AI_PUREPURSUIT=1 opts IN to
-    // this shim. That polarity is the right way round for D3 (the flag turns a ported
-    // behaviour OFF). Measured consequence of the bands being default:
-    // re/analysis/D3_AI_TICK_WIRING_2026-09-14.md section 4.1 -- the standalone steer is
-    // bang-bang (2-3 distinct commands per car) where the original is proportional
-    // (33-96 per car), exactly as the paragraph above predicts, because FUN_00443300 and
-    // the FUN_00443dc0 curvature-walk tail are stubbed.
-    static const bool s_pp = [] {
-        const char* e = std::getenv("MASHED_AI_PUREPURSUIT");
-        return (e && e[0] != '0');   // OPT-IN (default off -> verbatim bands). Experimental:
-        // the nav trace showed steer has no effect once the car flings off-track + loses
-        // grounding (no +0x9c0 authority) + the edge-stop traps it — so neither the bands nor
-        // this pure-pursuit completes a lap yet. Kept as debugging infra; see PLAYTHROUGH_G4 doc.
-    }();
-    if (s_pp) {
-        // SIGNED continuous error in [-180,180] (0 = aligned). The previous split at err=180
-        // (err<180 -> one way, >180 -> other) was BANG-BANG: the car's error sat near 180 and
-        // flipped steer direction every crossing -> a U-turn limit cycle near spawn (velocity
-        // reversed north<->south each frame). A signed proportional steer has no discontinuity
-        // to oscillate around: it eases off as the car aligns. Magnitude capped low (anti-spin,
-        // G2's +0x9c0 is strong). toCtrl0 = (se>0): err<180 (se>0) -> ctrl[0], matching the bands.
-        float se = err; if (se > 180.0f) se -= kWrap;              // [-180,180]
-        // PD controller: proportional + DERIVATIVE damping. Proportional-only oscillated because
-        // G2's strong +0x9c0 yaw rate overshoots alignment (momentum) and swings back. The D term
-        // (rate of change of the error) opposes that overshoot -> the car SETTLES onto the target
-        // heading instead of donut-ing. Derivative is on the error signal (per-car prevSe) so no
-        // physics plumbing is needed; the wrap-corrected delta avoids the +-180 seam.
-        static float s_prevSe[4] = {0, 0, 0, 0};
-        float d = se - s_prevSe[v];
-        while (d > 180.0f) d -= kWrap; while (d < -180.0f) d += kWrap;
-        s_prevSe[v] = se;
-        // DEADBAND: steer 0 when roughly aligned so the car drives STRAIGHT (a continuous small
-        // steer makes it circle forever — that's why every car, incl. the AI-driven player,
-        // donut'd near spawn; G2's "smooth drive" was itself a CIRCLE, not a lap). Outside the
-        // band, steer proportionally toward the target; once within it, go straight and let the
-        // car cover ground -> it reaches the waypoint -> advance -> new target.
-        const float kDeadDeg = 12.0f;
-        const float kP = 1.0f / 90.0f;                             // full P at 90deg off
-        const float kD = 0.020f;                                   // damping (per-frame err rate)
-        float s;
-        if (se > -kDeadDeg && se < kDeadDeg) { s = 0.0f; }         // aligned -> drive straight
-        else { s = kP * se + kD * d; if (s > 1.0f) s = 1.0f; if (s < -1.0f) s = -1.0f; }
-        // [G4] kMaxSteer is PHYSICS-GROUNDED, not arbitrary: turn radius = worldSpeed/yawRate, and
-        // at the old 0.45 cap the AI turned at radius ~10 on a radius-80 TRACK — 3-4x too tight, so
-        // the car was geometrically LOCKED in a circle and could never reach a target ~20u ahead
-        // (it donut'd near spawn). The player's G2 circle: steer 0.5 -> radius ~13. To follow the
-        // track curvature the steer must arc at ~track radius -> steer ~0.08-0.12. Cap at 0.15 (a
-        // little margin for real corners) so the car drives nearly STRAIGHT with gentle correction.
-        const float kMaxSteer = 0.15f;
-        s *= kMaxSteer;
-        bool toCtrl0 = (s >= 0.0f);
-        int mag = static_cast<int>((s < 0.f ? -s : s) * 255.0f + 0.5f); if (mag > 255) mag = 255;
-        // [G4] STEER SIGN: the nav trace showed the car driving AWAY from the target — for a
-        // target to the car's east/north it applied ctrl[1] (which, per the verified physics in
-        // G2, increases yaw -> rotates forward toward -x/west = the WRONG way). The AI steer sign
-        // was long flagged [UNCERTAIN] ("steer-sign pending verify"); it is INVERTED. Flip it so
-        // err<180 -> ctrl[1] and err>180 -> ctrl[0]. Env MASHED_AI_STEERFLIP=0 reverts for A/B.
-        //
-        // [UNCERTAIN U-9040] This flip makes this path the EXACT OPPOSITE of the verbatim bands
-        // at :519-560 (err<180 -> ctrl[0]) — note the line above states the unflipped mapping was
-        // written to MATCH those bands. At most one of the two is faithful to the original, and
-        // which one is NOT decidable today: both are dead code on the default path, because once
-        // the .AI banks load the AI cars are steered by TrackRenderer.cpp:2679-2687's own
-        // world-space controller and never by ctrl[]. The inversion [G4] observed may instead
-        // live in the ctrl[] -> physics mapping (Vehicle/VehiclePhysicsRun.cpp:391-405), which
-        // BOTH paths share — in which case this flip is a symptomatic fix and the bands are
-        // still wrong. Resolution + the ready-made world-space A/B: UNCERTAINTIES.md U-9040,
-        // verify/d1_steersign/RESULT.md. Do not "resolve" by picking a sign without that run.
-        static const bool s_flip = [] {
-            const char* e = std::getenv("MASHED_AI_STEERFLIP");
-            return !(e && e[0] == '0');           // flipped by default
-        }();
-        bool c0 = s_flip ? !toCtrl0 : toCtrl0;
-        ctrl[0] = c0 ? static_cast<std::uint8_t>(mag) : 0;
-        ctrl[1] = c0 ? 0 : static_cast<std::uint8_t>(mag);
-        ctrl[4] = 0xff;                                            // accelerate (full; gentle steer
-        ctrl[5] = 0;                                               // handles corners, no mid-corner
-                                                                   // brake that bled momentum)
-        const int gm = s_host.game_sub_mode();
-        if (gm != 6 && gm != 5 && gm != 9 && gm != 10 && gm != 11) { ctrl[4] = 0; ctrl[5] = 0; }
-        // [G4] env MASHED_AI_NAV -> a6_diag.log: trace one car's nav to see the failure mode.
-        {
-            static const bool s_nav = (std::getenv("MASHED_AI_NAV") != nullptr);
-            static int s_nn = 0;
-            if (s_nav && v == 1 && (s_nn % 30) == 0 && s_nn < 1200) {
-                if (std::FILE* lf = std::fopen("ai_nav.log", "a")) {
-                    std::fprintf(lf, "NAV v1 own=(%.1f,%.1f) tgt=(%.1f,%.1f) err=%.0f "
-                                 "spd=%.1f vel=(%.1f,%.1f) ctrl[%d,%d,%d,%d]\n",
-                                 ownX, ownZ, tx, tz, err,
-                                 speed, vx, vz, ctrl[0], ctrl[1], ctrl[4], ctrl[5]);
-                    std::fclose(lf);
-                }
-            }
-            if (s_nav && v == 1) ++s_nn;
+    int mode = 0;                     // targeting chain FUN_00414570.. STUBBED (all return 0)
+    if (gameMode == 6 && s_host.ai_target_enable() == 0) {            // 0x0041649b / 0x004164a8
+        // mode == 0: FUN_004148b0 / FUN_00415020 are stubbed (return 0).
+        if (s_host.held_powerup(v) == 0) {                            // 0x0041651f -> 0x00416565
+            I32(a74(0x0089a51cu, v)) = 0;
+            I32(a74(0x0089a520u, v)) = 0;
+            I32(a74(0x0089a524u, v)) = 0;
+        } else {
+            AiFireDecision(v, ctrl, static_cast<int>(Ftol(curv)));    // 0x00416523..0x00416539
+            // returns 0 on every path, so the mode-8 commit at 0x0041655b is unreachable
         }
-        return;                                                    // skip the orbit-prone bands
     }
+    I32(a74(0x0089a52cu, v)) = mode;                                  // 0x00416590
 
-    // ---- STEER bands (asm 0x004165c0..) : anti-oscillation timer state machine ----
-    if (err < kSteerSplit) {                        // steer toward (state 1)
-        F32(a14(0x008032d8u, v)) = 360.0f;
-        F32(a14(0x008032dcu, v)) = err;
-        if (err > kSteerDeadband) {
-            const int st = I32(a74(0x0089a4ecu, v));
+    const float err = SteerAngleErrorFwd(v, tx, tz);                  // FUN_00415e20 @0x00416596
+    const int   frame = I32(0x007f0ff4u);
+    float X = 0.0f;                                                    // x87 value pushed at 0x004165a5
+
+    // ---- steer, err < 180 (0x004165c0..0x004166b4) ----
+    if (err < kSteerSplit) {
+        const float h = F32(a14(0x008032dcu, v));
+        F32(a14(0x008032d8u, v)) = 360.0f;                            // 0x004165cc
+        if (h < err) X = h;                                           // 0x004165d6..0x004165e3
+        F32(a14(0x008032dcu, v)) = err;                               // 0x004165f7
+        if (kSteerDeadband < err) {                                   // 0x004165f1..0x00416602
             const int el = frame - I32(a74(0x0089a4f0u, v));
-            if (st == 1 || el > kSettleFrames - 1) { // fresh steer
-                float mag = err * speed * kSteerMagScale; // [ESP+0x1c]~speed [U-C-STEER-MAG]
-                if (rate1 <= k20f) mag *= kSteerExtra;
-                if (mag > kSteerMagClamp) mag = kSteerMagClamp;
-                ctrl[0] = RoundST0(mag);
-                I32(a74(0x0089a4f4u, v)) = (long)std::lround(mag);
+            if (I32(a74(0x0089a4ecu, v)) == 1 || el >= kSettleFrames) {   // 0x00416608 / CMP 0xc8
+                float m = err * speed * kSteerMagScale;                // 0x00416648..0x00416656
+                if (mode == 0 && k20f < curv) m = m * (curv * kSteerExtra); // 0x0041665c..0x00416679
+                if (!(m <= kSteerMagClamp)) m = kSteerMagClamp;        // 0x0041667b..0x0041668a
+                ctrl[0] = RoundST0(m);                                 // 0x00416697
+                I32(a74(0x0089a4f4u, v)) = Ftol(m);                    // 0x004166a4
                 I32(a74(0x0089a4ecu, v)) = 1;
                 I32(a74(0x0089a4f0u, v)) = frame;
-            } else {                                 // counter-steer (settling)
-                float cs = (float)(kSettleFrames - el) * kCounterScale
-                           * (float)I32(a74(0x0089a4f4u, v));
-                ctrl[1] = RoundST0(cs);
+            } else {
+                const float cs = static_cast<float>(kSettleFrames - el) * kCounterScale
+                                 * static_cast<float>(I32(a74(0x0089a4f4u, v)));  // FILD/FMUL/FIMUL
+                ctrl[1] = RoundST0(cs);                                // 0x00416643
             }
         }
     }
-    if (err > kSteerSplit) {                         // steer the other way (state 2)
-        F32(a14(0x008032dcu, v)) = 0.0f;
-        F32(a14(0x008032d8u, v)) = err;
-        if (err < kSteer359) {
-            const int st = I32(a74(0x0089a4ecu, v));
+    // ---- steer, err > 180 (0x004166cf..0x004167cf) ----
+    if (kSteerSplit < err) {
+        const float h = F32(a14(0x008032d8u, v));
+        F32(a14(0x008032dcu, v)) = 0.0f;                              // 0x004166db
+        if (err < h) X = kWrap - h;                                   // 0x004166e5..0x004166f8
+        F32(a14(0x008032d8u, v)) = err;                               // 0x0041670c
+        if (err < kSteer359) {                                        // 0x00416706 / 0x00416717
             const int el = frame - I32(a74(0x0089a4f0u, v));
-            if (st == 2 || el > kSettleFrames - 1) { // fresh steer (mirror) [U-C-STEER-MAG]
-                float mag = err * speed * kSteerMagScale;
-                if (rate1 <= k20f) mag *= kSteerExtra;
-                if (mag > kSteerMagClamp) mag = kSteerMagClamp;
-                ctrl[1] = RoundST0(mag);
-                I32(a74(0x0089a4f4u, v)) = (long)std::lround(mag);
+            if (I32(a74(0x0089a4ecu, v)) == 2 || el >= kSettleFrames) {
+                float m = (kWrap - err) * speed * kSteerMagScale;      // 0x0041675c..0x00416770
+                if (mode == 0 && k20f < curv) m = m * (curv * kSteerExtra);
+                if (!(m <= kSteerMagClamp)) m = kSteerMagClamp;
+                ctrl[1] = RoundST0(m);                                 // 0x004167b1
+                I32(a74(0x0089a4f4u, v)) = Ftol(m);
                 I32(a74(0x0089a4ecu, v)) = 2;
                 I32(a74(0x0089a4f0u, v)) = frame;
             } else {
-                float cs = (float)(kSettleFrames - el) * kCounterScale
-                           * (float)I32(a74(0x0089a4f4u, v));
-                ctrl[0] = RoundST0(cs);
+                const float cs = static_cast<float>(kSettleFrames - el) * kCounterScale
+                                 * static_cast<float>(I32(a74(0x0089a4f4u, v)));
+                ctrl[0] = RoundST0(cs);                                // 0x00416758
             }
         }
     }
 
-    // ---- ACCEL / BRAKE bands ----
-    ctrl[4] = 0xff;                                  // accel full (default)
-    const float prevSpeed = F32(a14(0x008032e0u, v));
-    F32(a14(0x008032e0u, v)) = speed;
-    if (kBrakeSpeedDel < speed - prevSpeed && kBrakeMinSpeed < speed) { // hard speed spike
-        ctrl[4] = 0; ctrl[5] = 0xff;
-    }
-    if (k20f < err && kRate1Brake < rate1) { ctrl[4] = 0; ctrl[5] = 0xff; } // [U-C-RATE1]
-    if (err < kSteerSplit && kAccelErrLo < err) {   // mildly off → accel+brake+steer
-        ctrl[4] = 0xff; ctrl[5] = 0xff; ctrl[0] = 0xff;
-    }
-    if (kSteerSplit < err && err < kAccelErrHi) {
-        ctrl[4] = 0xff; ctrl[5] = 0xff; ctrl[1] = 0xff;
-    }
+    // ---- accel / brake (0x004167d5..0x0041688b) ----
+    ctrl[4] = 0xff;
+    const float prev0 = F32(a14(0x008032e0u, v));
+    F32(a14(0x008032e0u, v)) = rate0;                                 // 0x004167eb
+    if (kBrakeSpeedDel < rate0 - prev0 && kBrakeMinSpeed < rate0) { ctrl[4] = 0; ctrl[5] = 0xff; }
+    if (k20f < X && kRate1Brake < speed) { ctrl[4] = 0; ctrl[5] = 0xff; }   // 0x00416818..0x0041683a
+    if (err < kSteerSplit && kAccelErrLo < err) { ctrl[4] = 0xff; ctrl[5] = 0xff; ctrl[0] = 0xff; }
+    if (kSteerSplit < err && err < kAccelErrHi) { ctrl[4] = 0xff; ctrl[5] = 0xff; ctrl[1] = 0xff; }
 
-    // ---- behaviour-mode tails (7/5/9/2) : inert until targeting helpers ported ----
+    // ---- behaviour-mode tails (0x0041688d..0x004169de); mode stays 0 today ----
     const int m = I32(a74(0x0089a52cu, v));
     if (m == 7) { ctrl[4] = 0x40; }
-    else if (m == 9) {
-        if (kMode9BrakeA < rate1) { ctrl[4] = 0; ctrl[5] = 0xff; }   // [U-C-RATE1]
-        if (kMode9BrakeB < rate1) { ctrl[4] = 0; }
-    }
     else if (m == 5) {
-        // FUN_00416250 mode-5 tail (0x004168a4..0x00416900): drum/oil-slick recovery
-        // wiggle. m5 = per-vehicle field at kAiStateBase+0x1c (0x0089a4e8; AiState.h's
-        // "+0x1c frustration timer" comment cites 0x0089a4e4 -- 4 bytes off from the
-        // address this listing actually reads; this port follows the live listing).
         const float m5 = F32(a74(0x0089a4e8u, v));
-        if (!(m5 <= kMode5AccelGate)) ctrl[4] = 0;             // 0x004168aa/b7
-        if (!(m5 <= kMode5BrakeGate)) ctrl[5] = 0x40;          // 0x004168c1/ce
-        const int q = I32(0x007f0ff8u) / 0x3c;                 // race-timer /60 idiom
-        if (q & 0x20) ctrl[0] = 0xff; else ctrl[1] = 0xff;     // alternating steer wiggle
+        if (!(m5 <= kMode5AccelGate)) ctrl[4] = 0;
+        if (!(m5 <= kMode5BrakeGate)) ctrl[5] = 0x40;
+        const int q = I32(0x007f0ff8u) / 0x3c;
+        if (q & 0x20) ctrl[0] = 0xff; else ctrl[1] = 0xff;
+    }
+    else if (m == 9) {
+        if (kMode9BrakeA < speed) { ctrl[4] = 0; ctrl[5] = 0xff; }
+        if (kMode9BrakeB < speed) { ctrl[4] = 0; }
     }
     else if (m == 2) {
-        // FUN_00416250 mode-2 tail (0x00416942..0x004169e0): cross-product heading
-        // align vs. the FUN_00408af0 per-vehicle field-3 vector. pf = &DAT_008a96dc +
-        // v*0x30c (pure address, no deref -- AiVehicleFieldPtrGet/PromoLoop_round1.cpp).
-        // [UNCERTAIN U-9009] the original's vel[1] (Y/vertical velocity, FUN_0046d510) has
-        // no Host accessor (own_vel_xz is planar XZ only, matching SteerAngleError's own
-        // y/z-term-zeroing precedent); approximated 0.0f. Currently unreachable anyway:
-        // `mode` is hardcoded 0 above (targeting helpers 1..10 unported), so mode==2
-        // never executes yet -- same dead-tail status as mode==7/9 above.
         const std::uintptr_t pf = 0x008a96dcu + static_cast<std::uintptr_t>(v) * 0x30cu; // FUN_00408af0
         const float pf0 = F32(pf), pf1 = F32(pf + 4), pf2 = F32(pf + 8);
-        float velx, velz; s_host.own_vel_xz(v, &velx, &velz);
-        const float vely = 0.0f;   // [UNCERTAIN] vertical velocity unavailable via Host
-        const float dot   = pf1 * vely + velx * pf0 + velz * pf2;
-        const float cross = velx * pf2 - velz * pf0;
-        float absdot = dot;
-        if (dot < kZeroF) absdot = -dot;
+        float fx, fz; s_host.own_fwd_xz(v, &fx, &fz);                 // FUN_0046d510 (forward, y not held)
+        const float dot   = fz * pf2 + fx * pf0 + pf1 * 0.0f;
+        const float cross = fx * pf2 - fz * pf0;
+        const float absdot = (dot < kZeroF) ? -dot : dot;
         if (cross < kZeroF) {
             if (absdot < kMode2AbsDotHi) ctrl[1] = 0;
             if (absdot < kMode2AbsDotLo) ctrl[0] = 0xff;
@@ -638,7 +880,10 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
         }
     }
 
-    // ---- final game-mode gate (race-class modes 6/5/9/10/11 keep throttle) ----
+    // ---- 0x004169e0: difficulty flag == 1 -> accel * 0.4 (0x005ccac0), truncated ----
+    if (I32(0x0089a368u) == 1) ctrl[4] = RoundST0(static_cast<float>(ctrl[4]) * 0.4f);
+
+    // ---- final sub-state gate (0x00416a03..0x00416a24) ----
     if (gameMode != 6 && gameMode != 5 && gameMode != 9 &&
         gameMode != 10 && gameMode != 11) {
         ctrl[4] = 0; ctrl[5] = 0;
@@ -688,7 +933,7 @@ void ControlStepM49(std::uintptr_t spline, int v, std::uint8_t* ctrl)
                 if (rate1 <= k20f) mag *= kSteerExtra;
                 if (mag > kSteerMagClamp) mag = kSteerMagClamp;
                 ctrl[0] = RoundST0(mag);
-                I32(a74(0x0089a4f4u, v)) = (long)std::lround(mag);
+                I32(a74(0x0089a4f4u, v)) = Ftol(mag);
                 I32(a74(0x0089a4ecu, v)) = 1;
                 I32(a74(0x0089a4f0u, v)) = frame;
             } else {
@@ -709,7 +954,7 @@ void ControlStepM49(std::uintptr_t spline, int v, std::uint8_t* ctrl)
                 if (rate1 <= k20f) mag *= kSteerExtra;
                 if (mag > kSteerMagClamp) mag = kSteerMagClamp;
                 ctrl[1] = RoundST0(mag);
-                I32(a74(0x0089a4f4u, v)) = (long)std::lround(mag);
+                I32(a74(0x0089a4f4u, v)) = Ftol(mag);
                 I32(a74(0x0089a4ecu, v)) = 2;
                 I32(a74(0x0089a4f0u, v)) = frame;
             } else {
@@ -807,7 +1052,7 @@ void ControlStepM8(std::uintptr_t spline, int v, std::uint8_t* ctrl)
                 if (rate1 <= k20f) mag *= kSteerExtra;
                 if (mag > kSteerMagClamp) mag = kSteerMagClamp;
                 ctrl[0] = RoundST0(mag);
-                I32(a74(0x0089a4f4u, v)) = (long)std::lround(mag);
+                I32(a74(0x0089a4f4u, v)) = Ftol(mag);
                 I32(a74(0x0089a4ecu, v)) = 1;
                 I32(a74(0x0089a4f0u, v)) = frame;
             } else {
@@ -828,7 +1073,7 @@ void ControlStepM8(std::uintptr_t spline, int v, std::uint8_t* ctrl)
                 if (rate1 <= k20f) mag *= kSteerExtra;
                 if (mag > kSteerMagClamp) mag = kSteerMagClamp;
                 ctrl[1] = RoundST0(mag);
-                I32(a74(0x0089a4f4u, v)) = (long)std::lround(mag);
+                I32(a74(0x0089a4f4u, v)) = Ftol(mag);
                 I32(a74(0x0089a4ecu, v)) = 2;
                 I32(a74(0x0089a4f0u, v)) = frame;
             } else {
@@ -927,9 +1172,8 @@ inline void SplineBankTimerReset() {
 // original's fast-rsqrt LUT above). Only feeds BankSwitch's once-per-~9000-
 // frame cosmetic spline-index variety roll — does not affect steer/accel/
 // brake output.
-inline float RandUnit() {
-    return static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) + 1.0f);
-}
+// [D3 2026-09-26] now AiRand(0,1): the FUN_00472650 law with the LCG stand-in for u.
+inline float RandUnit() { return AiRand(0.0f, 1.0f); }
 
 // ===========================================================================
 // FUN_00417180 — AI spline-bank switcher (hooks.csv: AiBankSwitch, C3
@@ -1115,7 +1359,6 @@ inline int RoundToInt(float x) { return static_cast<int>(std::lround(x)); }
 // this session. Same deterministic stand-in precedent as ForceIntegratorStubs.cpp's
 // Fi_RandRange (`return lo;`): only feeds the slow-line difficulty-flag probability
 // roll below, not steer/accel/brake output.
-inline float RandFloatStub(float lo, float /*hi*/) { return lo; }
 
 // ===========================================================================
 // FUN_004177b0 — AiPreTick: per-frame race-metric update (lap-count + lap-
@@ -1130,6 +1373,18 @@ inline float RandFloatStub(float lo, float /*hi*/) { return lo; }
 // this session (see the const block above) and are used directly below; that
 // is a byte-level decode, not the semantic resolution U-8992 asks for.
 // ===========================================================================
+// [D3 2026-09-26] FUN_004177b0's two probability tables, int[row*5 + band], harvested
+// from the ORIGINAL .data (memory_read pool0 0x005f30a0 / 0x005f3180, 0xe0 bytes each).
+// The standalone image-pad holds zeros there, which with the old `return lo` random
+// stand-in set DAT_0089a368 = 1 on every band change. Row = __ftol(DAT_0089a360);
+// measured DAT_0089a360 = 2.5 in the original race (verify/d3_ai_20260926/o_inputs).
+const int kDiffProb1[56] = { 60,80,90,90,100, 40,60,75,80,100, 20,40,60,75,100, 10,30,50,70,90,
+    0,15,30,60,80, 0,15,20,50,70, 0,10,15,30,60, 0,10,15,20,50, 0,5,0,10,40, 0,5,0,0,30,
+    0,0,0,0,20, 0 };
+const int kDiffProb2[56] = { 10,10,10,10,0, 10,10,10,20,0, 10,10,15,30,0, 10,10,15,40,10,
+    10,15,20,50,20, 10,15,20,60,30, 15,20,25,70,40, 15,20,30,70,50, 15,25,35,75,60,
+    20,25,40,75,70, 20,30,50,75,80, 0 };
+
 void AiPreTickRubberBand()
 {
     if (s_host.ai_target_enable() != 0) I32(0x0089a368u) = 2;   // FUN_00443080 gate
@@ -1225,7 +1480,7 @@ void AiPreTickRubberBand()
         if (t > 180000) { I32(0x0089a368u) = 1; I32(0x0089a36cu) = 0; }
     }
 
-    const int row = RoundToInt(F32(0x0089a360u));              // FUN_004a2c48 (approx)
+    const int row = static_cast<int>(Ftol(F32(0x0089a360u)));  // FUN_004a2c48 truncates (D3 2026-09-26)
     int ecx = 0, edx = 0;
     const float tickscale = static_cast<float>(I32(kFrame0ff8)) * kTickScale;
     const float diff = tickscale - F32(0x0089a370u);
@@ -1259,16 +1514,15 @@ void AiPreTickRubberBand()
     if (I32(0x0089a368u) != 0) return;
     if (ecx == 0) return;
 
-    const std::uintptr_t off = static_cast<std::uintptr_t>(row * 5 + edx) * 4u;
-    const float prob1 = static_cast<float>(I32(0x005f30a0u + off));
-    const float rnd1 = RandFloatStub(0.0f, 100.0f);            // FUN_00472650(0,100.0f) approx
+    const float prob1 = static_cast<float>(kDiffProb1[(row * 5 + edx) % 56]);  // 0x005f30a0 + off
+    const float rnd1 = AiRand(0.0f, 100.0f);                   // FUN_00472650(0,100.0f)
     if (!(rnd1 > prob1)) {
         I32(0x0089a368u) = 1;
         for (std::uintptr_t a = 0x0089a4c0u; a < 0x0089a690u; a += 0x74u) I32(a) = 0;
         return;
     }
-    const float prob2 = static_cast<float>(I32(0x005f3180u + off));
-    const float rnd2 = RandFloatStub(0.0f, 100.0f);
+    const float prob2 = static_cast<float>(kDiffProb2[(row * 5 + edx) % 56]);  // 0x005f3180 + off
+    const float rnd2 = AiRand(0.0f, 100.0f);
     if (!(rnd2 > prob2)) {
         I32(0x0089a368u) = 2;
     }
@@ -1322,7 +1576,8 @@ void Ai_SetHost(const Host* host)
     if (host) s_host = *host;
     else {
         s_host = Host{ h_zero_i, h_zero_i, h_zero_i, h_zero_i,
-                       h_zero_iv, h_zero_iv, h_zero_i, h_zero_xz, h_zero_xz, h_los_clear };
+                       h_zero_iv, h_zero_iv, h_zero_i, h_zero_xz, h_zero_xz, h_los_clear,
+                       h_zero_xz, h_zero_f, h_zero_iv };
     }
 }
 
@@ -1392,6 +1647,48 @@ void Ai_Standalone_Tick()
         }
     }
     TickTrace("leave", -1);
+}
+
+
+// [D3 2026-09-26] AI clock. The original's per-frame race update stores its tick budget
+// in DAT_007f1008 (MOV [0x007f1008],ESI at 0x0040fc63; the same ESI is pushed to
+// FUN_00425a40 at 0x0040fc6b, which forwards it to the physics dispatcher) and adds it
+// to DAT_007f0ff4 and DAT_007f0ff8 (0x0040fe4f..0x0040fe5e, skipped in race sub-state 7
+// at 0x0040fe46). Measured in the original race: DAT_007f1008 == 50 on every AI step
+// and DAT_007f0ff4 advances by 50 per frame (verify/d3_ai_20260926/o_inputs). Before
+// this, nothing in mashed_re.exe wrote these three, so the FUN_00416250 steer timer
+// (el = DAT_007f0ff4 - start, fresh steer when el >= 200) never issued a fresh steer.
+void Ai_AdvanceClock(int units)
+{
+    I32(kOverrideStep) = units;          // DAT_007f1008
+    I32(0x007f0ff4u) += units;           // 0x0040fe5e
+    I32(kFrame0ff8)  += units;
+}
+
+// FUN_00413fe0 — per-vehicle AI-state reset (decomp pool0 2026-09-26): DAT_0089a36c = 0;
+// for v = 0..3 (stride 0x74 from 0x0089a4f0): +0x4ec/+0x4f0/+0x4f4, +0x4c4/+0x4c8/+0x4cc/
+// +0x4d0, +0x508, +0x51c/+0x520/+0x524/+0x528 = 0; DAT_008032d4[v*5] = 1000. Plus the race
+// clock zeroing at 0x0040ff17..0x0040ff23 (DAT_007f101c/0ff4/0ff8 = 0).
+void Ai_ResetRace()
+{
+    I32(0x0089a36cu) = 0;
+    for (int v = 0; v < 4; ++v) {
+        const std::uintptr_t b = 0x0089a4f0u + static_cast<std::uintptr_t>(v) * 0x74u;
+        I32(b - 4) = 0; I32(b) = 0; I32(b + 4) = 0;
+        I32(b - 0x2c) = 0; I32(b - 0x28) = 0; I32(b - 0x24) = 0; I32(b - 0x20) = 0;
+        I32(b + 0x18) = 0; I32(b + 0x2c) = 0; I32(b + 0x30) = 0; I32(b + 0x34) = 0; I32(b + 0x38) = 0;
+        I32(0x008032d4u + static_cast<std::uintptr_t>(v) * 0x14u) = 1000;
+    }
+    I32(0x007f0ff4u) = 0; I32(kFrame0ff8) = 0;
+}
+
+// FUN_00414030(v) — DAT_008032d4[v*5] = 1000 (decomp pool0 2026-09-26), so the next
+// FUN_00443dc0 call takes the true nearest spline point. The standalone calls it when
+// it relocates a car (its own respawn / off-mesh recovery).
+void Ai_ResetVehicleIndex(int v)
+{
+    if (v < 0 || v > 3) return;
+    I32(0x008032d4u + static_cast<std::uintptr_t>(v) * 0x14u) = 1000;
 }
 
 } // namespace Ai

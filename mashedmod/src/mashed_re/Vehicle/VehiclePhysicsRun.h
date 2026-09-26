@@ -96,6 +96,11 @@ struct PlayerCarIO {
     // The caller applies it as pos += drive_delta (already includes dt). 0 until
     // the first physics step.
     float drive_delta[3];   // out: world-space position delta for this frame
+    // [D3 2026-09-26] 1 = input[0]/[1] already hold the descriptor steer bytes (the AI
+    // tick's ctrl block, written by FUN_00416250) and `steer` is ignored; 0 = derive
+    // them from `steer` (the player path). The original's A4 FUN_00470670 reads the
+    // bytes directly (0x00470732 / 0x00470754), so for the AI this is the faithful feed.
+    int raw_steer = 0;
 };
 
 bool VehiclePhysics_Enabled();                       // true unless MASHED_REAL_PHYSICS=0 (D2, 2026-09-14)
@@ -119,6 +124,10 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io);
 // the car (spawn, grid placement, off-mesh recovery) must tell the physics module,
 // otherwise the integrated basis keeps the pre-teleport heading.
 void VehiclePhysics_ResetOrientation(int slot, float yaw);
+// [D3 2026-09-26] float at byte offset `off` of slot's 0xd04 record (the standalone mirror
+// of DAT_008815a0 + slot*0xd04): the AI reads +0x9e4 (FUN_0046d6d0) and +0xb0c
+// (FUN_0046d6a0). 0 before VehiclePhysics_Init or for an out-of-range slot/offset.
+float VehiclePhysics_RecordF32(int slot, int off);
 
 }  // namespace Vehicle
 }  // namespace mashed_re

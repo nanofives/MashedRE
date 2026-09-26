@@ -8501,6 +8501,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                         CreateDirectoryA("verify\\r6", nullptr);
                         const int n = std::atoi(rv);
                         g_track.StartMatch(n > 1 ? n : 3);
+                        // [D3 2026-09-26] place the power-up orbs, as the frontend
+                        // race path does (RaceSession.cpp:152). Without it this dev
+                        // race had ZERO orbs, measured by the MASHED_PU_STEPDUMP orb
+                        // diagnostic (verify/d3_ai_20260926/sa1_pu.csv.orbs.csv), so
+                        // no car could ever own a power-up here.
+                        g_track.InitPickups();
                         // Finding 16: the R6 demo spawns 4 identical cars with no
                         // per-car colour, so all four badges default to colour 0
                         // (RED) -- which matches the all-RED reference. To VERIFY

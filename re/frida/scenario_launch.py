@@ -670,7 +670,18 @@ function aiStepArm(){
                         b.readU8(), b.add(1).readU8(), b.add(3).readU8(),
                         b.add(4).readU8(), b.add(5).readU8(),
                         ai.readS32(), ai.add(0x04).readS32(),
-                        ai.add(0x30).readS32(), ai.add(0x60).readS32()]);
+                        ai.add(0x30).readS32(), ai.add(0x60).readS32(),
+                        // [D3 2026-09-26] inputs the AI port depends on, read at onLeave:
+                        // DAT_007f0ff4 clock, DAT_007f1008 step (0x0040fc63), DAT_0089a360
+                        // difficulty row float, DAT_0089a368 flag, DAT_00897ffc
+                        // (FUN_00443080), DAT_0063ba8c sub-state, rec+0x9e4 / +0xb0c
+                        // (FUN_0046d6d0 / FUN_0046d6a0), ctrl[7] fire byte.
+                        ga(0x007f0ff4).readS32(), ga(0x007f1008).readS32(),
+                        ga(0x0089a360).readFloat(), ga(0x0089a368).readS32(),
+                        ga(0x00897ffc).readS32(), ga(0x0063ba8c).readS32(),
+                        ga(0x008815a0).add(this.v * 0xd04 + 0x9e4).readFloat(),
+                        ga(0x008815a0).add(this.v * 0xd04 + 0xb0c).readFloat(),
+                        b.add(7).readU8()]);
         } catch(e){ if (!AS.err) AS.err = '' + e; }
       }
     });
@@ -1656,7 +1667,9 @@ def main():
                     stp = outp.with_suffix(outp.suffix + ".aistep.csv")
                     with open(stp, "w", newline="") as f:
                         f.write("frame,seq,v,block,spline,c0,c1,c3,c4,c5,"
-                                "ai_type,ai_spline_idx,ai_override,ai_mode" + chr(10))
+                                "ai_type,ai_spline_idx,ai_override,ai_mode,"
+                                "clk_0ff4,step_1008,diff_a360,flag_a368,tgt_7ffc,"
+                                "substate,rec_9e4,rec_b0c,c7" + chr(10))
                         for r in step_rows:
                             f.write(",".join(str(x) for x in r) + chr(10))
                     cars = sorted({r[2] for r in step_rows})

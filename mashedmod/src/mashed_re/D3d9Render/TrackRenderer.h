@@ -303,6 +303,7 @@ private:
     // See re/analysis/D3_AUDIT_2026-09-14.md section 1.
     void  AiBridgeSnapshot();
     void  AiStepDump();
+    void  AiOptionBStep(AiCar& a, int v, float dt, int ng);   // MASHED_REAL_PHYSICS=0 revert only
     void  EnsurePowerupBackend();                     // lazy Init(this)
     void  SyncHostCar();                              // fill pu_player_/pu_ai_
     // [D3 WS-D G-D1/G-D2] the per-frame dispatcher tick (FUN_0045bba0), 4 slots.

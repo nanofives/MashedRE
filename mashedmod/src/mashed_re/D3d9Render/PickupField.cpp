@@ -202,6 +202,23 @@ bool PickupField::CollectAt(const float carPos[3], int* type) {
     return false;
 }
 
+int PickupField::ActiveOrbCount() const {
+    int n = 0;
+    for (const Orb& o : orbs_) if (o.active) ++n;
+    return n;
+}
+
+float PickupField::NearestActiveOrbDist(const float pos[3]) const {
+    float best = -1.f;
+    for (const Orb& o : orbs_) {
+        if (!o.active) continue;
+        const float dx = pos[0] - o.pos[0], dz = pos[2] - o.pos[2];
+        const float d = std::sqrt(dx * dx + dz * dz);
+        if (best < 0.f || d < best) best = d;
+    }
+    return best;
+}
+
 void PickupField::Render(IDirect3DDevice9* dev, const float camEye[3],
                          const float camAt[3]) {
     if (!dev || orbs_.empty() || !EnsureTexture(dev)) return;

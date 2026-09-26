@@ -68,6 +68,13 @@ public:
     // Use the held power-up: returns its kind (or -1 if none) and clears it.
     int  ConsumeHeld() { int h = held_; held_ = -1; held_type_ = -1; return h; }
     bool enabled() const { return !orbs_.empty(); }
+    // [D3 2026-09-26] orb-ownership diagnostic (D3_POWERUPS_2026-09-26.md section 6
+    // item 2): orb count, active orbs, XZ distance from pos to the nearest active orb
+    // (-1 if none) and the collection radius CollectAt/Update use.
+    int   OrbCount() const { return static_cast<int>(orbs_.size()); }
+    int   ActiveOrbCount() const;
+    float NearestActiveOrbDist(const float pos[3]) const;
+    float PickRadius() const { return worldR_ * 0.04f; }
 
     // Map a MASHED powerup game type -> a Kind (effect) / orb colour.
     static int  KindFromType(int gameType);
