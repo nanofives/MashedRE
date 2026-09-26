@@ -1,5 +1,13 @@
 # Mashed RE — Master Execution Plan (RECONCILED 2026-08-18)
 
+> **FROZEN 2026-09-26.** This file is no longer a live status source. §1, §3 and §7 describe
+> 2026-07-31 / 2026-08-18 and are stale (M2 is done, since D2 closed 2026-09-14, and the counts
+> moved). Live status is `ROADMAP.md` (phase gates, D3 active) plus `re/NEXT_SESSION.md` (kickoff).
+> §5 remains authoritative for the four user decisions. They are renamed **DEC-2, DEC-4, DEC-6,
+> DEC-7** so they cannot be confused with ROADMAP's D-phases (DEC-2 "librw ships" is not phase
+> D2 "default physics"). The maintenance rule below is retired, because duplicating status here
+> is what drifted.
+
 Companion to `ROADMAP.md` (**v3, 2026-08-15, phases D0–D5**). ROADMAP defines the *gates*; this
 plan defines the *route*. **This is a reconciliation** of the 2026-07-31 rebuild against ROADMAP v3
 (prior text in git history — `git log -p re/analysis/RE_MASTER_PLAN_2026-07.md`). The 2026-07-31
@@ -83,8 +91,8 @@ The physics pole is ported; what remains is **convergence evidence**, then the g
    starting]: WS-D gated slice (MISSILE velocity, projectile pools), WS-J impact/skid FX,
    U-9016 vehicle→engine-class map.
 
-### M3 — "Shipping render via librw" — D2 DECIDED 2026-07-31
-**Gate D2 resolved (user): librw is the shipping renderer**, reversing the 2026-06-10
+### M3 — "Shipping render via librw" — DEC-2 DECIDED 2026-07-31
+**Gate DEC-2 resolved (user): librw is the shipping renderer**, reversing the 2026-06-10
 RW-verbatim ratification (~770 rows + ~217 stubs of avoided batch work). Verbatim RW ports
 continue only demand-driven where a behavior diff requires them. New lane (ROADMAP §WS-E,
 redefined): E1' vendor+build librw → E2' feed it from our renderer-agnostic loaders →
@@ -118,18 +126,18 @@ and remains available as low-judgment volume work.
 
 ## 5. Decision gates — ALL FOUR RESOLVED 2026-07-31 (user-decided, same session)
 
-- **D2 — RESOLVED: librw is the shipping renderer.** Reverses the 2026-06-10 RW-verbatim
+- **DEC-2 — RESOLVED: librw is the shipping renderer.** Reverses the 2026-06-10 RW-verbatim
   ratification; verbatim RW ports become demand-driven behavior islands only. M3 redefined
   (§3); ROADMAP §WS-E redefined (E1'–E4'); memory + gate brief note the supersession.
-- **D4 — RESOLVED: the A5 airborne 1-ULP float10 residual (U-8991) is accepted as
+- **DEC-4 — RESOLVED: the A5 airborne 1-ULP float10 residual (U-8991) is accepted as
   C4-grounded.** No float10 shim. Consistent with the angular-field ULP floor already
   accepted in the B5 verify campaign. U-8991's close goes through `re-classify` after
   multi-session coordination (UNCERTAINTIES.md is the defect session's file).
-- **D6 — RESOLVED: fund the `entity_field_set` per-side sentinel fix first.** Smallest
+- **DEC-6 — RESOLVED: fund the `entity_field_set` per-side sentinel fix first.** Smallest
   capital; fixes a shipped false-GREEN (iter26) and unlocks the strided-global-setter
   class. Acceptance for the fix itself: a known-wrong (non-writing) port must RED.
   The other §4 items stay ranked but unfunded.
-- **D7 — RESOLVED: the human tail runs SOON — the next session the user is present.**
+- **DEC-7 — RESOLVED: the human tail runs SOON — the next session the user is present.**
   D-11060 interactive playthrough + D-11061 full-loop recording (+ the G3 cup place-names
   Frida session while hands-on). Accepted cost: repeating the verification pass at ship.
   Prep checklist for that session: patched boot per BOOT_PATCHES.md, d3d9 shim deployed,
@@ -224,4 +232,4 @@ in the reconciliation read window]; U-8991 close via `re-classify`.
   pattern. The audit is cheap worker work — attach it to the next lane-B session.
 - **Second wedge mechanism** unbisected — until it falls, full-set statediff evidence caps at
   ~5/6 confidence and C4 claims on the physics loop wait.
-- **M3 size** (~770 rows) with D2 undecided — the largest avoidable token risk in the project.
+- **M3 size** (~770 rows) with DEC-2 undecided — the largest avoidable token risk in the project.

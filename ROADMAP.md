@@ -4,6 +4,12 @@ Supersedes v2 (2026-06-09), archived verbatim at
 `re/analysis/archive/ROADMAP_v2_2026-06-09.md`. v2's workstream definitions (WS-A..WS-J)
 are carried forward below and remain the unit of work; what changes is the **gate**.
 
+> **Naming, 2026-09-26.** In this file, D0–D5 are **phases**. The four user decisions of
+> 2026-07-31 in `RE_MASTER_PLAN_2026-07.md` §5 are **DEC-2/4/6/7**. Older text that says "Gate
+> D2 (2026-07-31)" means DEC-2 (librw ships), not phase D2 (default physics).
+> **State 2026-09-26:** D0 ✓, D1 ✓ (default flip, residue R1-R3 open), D2 ✓, **D3 active**
+> (AI RED, powerups unmeasured, modes GREEN on 3/11 rules), D4-D5 not started.
+
 ---
 
 ## Why v3 exists
@@ -250,7 +256,21 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
 
 **Gate:** every number in this roadmap is reproducible from the repo by a stated command.
 
-### D1 — Default renderer
+### D1 — Default renderer — **CLOSED 2026-08-19 (default flip); D1-residue OPEN**
+
+> **Reconciled 2026-09-26.** This section and the critical-path line under the workstream
+> ledger disagreed (one said closed, one said "the gate is not closed"). Both were half right,
+> so D1 is split, following D2's closed-with-residue form:
+>
+> - **D1 CLOSED 2026-08-19** (`f4815877`): librw is the default; `MASHED_RENDER_LIBRW=0` is
+>   A/B revert only; A/B condition met 16/16 ≤1.01% (`verify/d1_recheck_20260818/REPORT.md`).
+>   The flip happened before the original-side adjudication the gate text below asked for.
+>   That clause moved into the residue, and it was not silently dropped.
+> - **D1-residue, OPEN, must close before D5.** Gate: (R1) an original-side capture at a
+>   matched, frame-synced pose adjudicates faithfulness (`drawlist_diff.py` GREEN or every row
+>   cited); (R2) the verbatim race-camera pose from `Race/RaceCamera.cpp` drives the renderer
+>   (Camera subsection below); (R3) the legacy D3D9 race renderer and the
+>   `MASHED_RENDER_LIBRW=0` revert are deleted.
 
 Invert `MASHED_RENDER_LIBRW`. librw becomes the shipping path; the hand-written D3D9
 renderer becomes the fallback, then goes away.
@@ -267,7 +287,7 @@ renderer becomes the fallback, then goes away.
 > the DEFAULT renderer"). This section was not updated at the time, and a 2026-09-09
 > worker survey repeated "librw gated OFF" as fact from it.
 >
-> **What D1 still owes** (the gate is not closed): (1) faithfulness adjudication against the
+> **What D1 still owes** (now the D1-residue block above, R1-R3): (1) faithfulness adjudication against the
 > ORIGINAL, not D3D9-vs-librw (`RE_MASTER_PLAN_2026-07.md` §7 item 1); (2) the verbatim
 > race-camera pose wired into the renderer (Camera subsection below, pose still discarded);
 > (3) the D3D9 fallback has not gone away. `FLAG_INVENTORY_2026-08-15.md` class A still
@@ -639,13 +659,34 @@ reverts to the ribbon scaffold) and `MASHED_AI_DRIVES_PLAYER` (`TrackRenderer.cp
 **Gate:** clean-env race where opponents, powerups and mode rules are all the ported
 implementations.
 
+**Pass criteria per third (added 2026-09-26, so the gate is falsifiable like D2's):**
+
+- **AI.** (a) `FUN_00443300` and `FUN_00443dc0` are ported, not stubbed. (b) On the
+  `verify/d3_ai_20260914/` recipe (original `scenario_launch.py --poke-ctrl-slots
+  --statediff-aistep` vs standalone `MASHED_AI_STEPDUMP`), each opponent's control-byte
+  distribution (steer [0]/[1], accel [4], brake [5]) matches the original within a tolerance
+  **written into this section before the post-port capture is taken** (distinct-value count
+  and median, per car). (c) Opponents are driven by the ported ctrl bytes, not the
+  `TrackRenderer.cpp:2831-2960` scaffold motion model. (d) `MASHED_AI_TICK` is deleted.
+- **Powerups.** (a) G-D1 closed: the dispatcher `FUN_0045bba0` ticks every frame as in the
+  original, not in a 1-2 frame burst. (b) G-D2 closed: opponent slots 1..3 can own and fire.
+  (c) Every one of the 9 types fired in a `--statediff-puhook` capture diffs clean on ammo
+  decrement, cooldown and fire-mode transition. A type that is blocked on
+  `Collision/ContactStubs.cpp` is recorded as blocked, not passed.
+- **Modes.** (a) The live oracle covers all 11 rules, not 3. (b) The finish-order APPEND
+  branch fires at least once (`ord.appends > 0`). (c) G-G1 closed: the round target is derived
+  from the rule, not `StartMatch(3)`. (d) G-G2 `rule_engine_on_` default resolved.
+
+"No `MASHED_*` flag is scaffold-selecting" (below) is a claim about flags only. The AI third
+still RUNS a scaffold by default (the motion model in (c)), so the gate is not met.
+
 #### D3 STATUS 2026-09-14 — NOT CLOSED. Gate table:
 
 | Third | Default path today | Measured against the original | Verdict |
 |---|---|---|---|
 | **AI (WS-C)** | ported racing-line TARGET + scaffold drive model | control-byte diff, `verify/d3_ai_20260914/` | **RED** |
 | **Powerups (WS-D)** | ported dispatcher + 9 decision fns, synthetic invocation | **not measured this session** | **OPEN** |
-| **Modes (WS-G)** | ported `RaceModes` -> `RuleEngine`, default-on | live oracle, rules 0/1/2: 0 mismatches over 1290-3963 calls per fn | **GREEN with 2 blind spots** |
+| **Modes (WS-G)** | ported `RaceModes` -> `RuleEngine`, default-on | live oracle, rules 0/1/2: 0 mismatches over 1290-3963 calls per fn | **GREEN on rules 0/1/2 only** (3 of 11 rules, APPEND branch never fired, G-G1/G-G2 open) |
 
 Notes: `re/analysis/D3_AUDIT_2026-09-14.md` (step 1), `D3_AI_TICK_WIRING_2026-09-14.md`
 (step 2), `D3_MODES_2026-09-14.md` (step 4).
@@ -671,33 +712,51 @@ Only now does per-function coverage become the driving metric again, and only ov
 first-party denominator plus the ~1,788 undiscovered race-closure RVAs. WS-F (data
 formats), WS-J (audio remainder), and the C4 verification lane (WS-H) run here.
 
+Named D4 work items (added 2026-09-26, previously implicit):
+
+- **Link the Audio TUs.** D0.7 found 585 audio rows unlinked because the code is
+  hook-shaped. Plan the move from hook-shaped to standalone-linked before promoting any of it.
+- **Link the Save TUs.** `Save/`, 16 files, 28 C4, unlinked and RVA-tunneled (D0.7). The
+  standalone must read and write a `gamesave.bin` the original accepts.
+- **D1-residue R1-R3** if they are not already closed during D3.
+
 **Gate:** every subsystem S-DONE under the clarified S-DoD.
 
 ### D5 — v1.0 ship
 
 P-DoD met. Dev `.asi` out of the shipping matrix. `DEFERRED.md` holds only justified
-rows.
+rows. Shipping checklist (added 2026-09-26):
+
+- D1-residue closed (no legacy D3D9 race renderer, no `MASHED_RENDER_LIBRW=0`).
+- `mashed_re.exe` runs without the dev d3d9 shim, `d3d9_real.dll`, the dinput8 ASI loader,
+  or any `original/MASHED.exe` boot patch. Those are dev harness only.
+- First run works with no `videocfg.bin` / `contcfg%d.bin` present (defaults are written).
+- Runtime dependencies listed (CRT, D3D9, DirectShow for video) and checked on a clean machine.
+- Multiplayer (WS-I) is out of v1.0 scope per D-11063, and this is stated in the P-DoD.
+- Every default-OFF `MASHED_*` gate on a finished port is deleted, and only dev/debug
+  knobs remain.
 
 ---
 
 ## Workstream ledger (carried forward from v2)
 
-Definitions live in the archived v2 §Workstreams. Status as of 2026-08-15:
+Definitions live in the archived v2 §Workstreams. Status as of 2026-09-26 (rows re-checked
+against the D1 split and D3 steps 1-4):
 
 | WS | Scope | Status | Phase |
 |---|---|---|---|
 | WS-A | Vehicle physics | A1–A8 done; **D2 CLOSED 2026-09-14** — ported chain is the default drive model (`MASHED_REAL_PHYSICS=0` reverts); A8 slip diff passes 1.00x/1.07x | D2 ✓ |
-| WS-B | Collision / RW-Physics | B5e port DONE (K1..K24, `021a9f38`); C4-verify campaign open | D2 |
-| WS-C | AI drivers | Port DONE (`Ai/AiStandalone.cpp`), **WIRE OPEN** — `Ai_Standalone_Tick` (FUN_00418860) has **zero call sites**; the default build drives opponents from the ported racing-line target + a scaffold motion model (`TrackRenderer.cpp:2831-2960`). Audit `re/analysis/D3_AUDIT_2026-09-14.md` §1 | D3 |
+| WS-B | Collision / RW-Physics | B5e port DONE (K1..K24, `021a9f38`); ported chain is the default since D2 closed 2026-09-14. The per-row C4-verify campaign is NOT part of the D2 gate. Its remaining scope is unrecorded here [UNCERTAIN: needs a `hooks.csv` filter of B5e rows below C4] | D2 ✓ / D4 |
+| WS-C | AI drivers | **D3 step 2 (2026-09-14):** `Ai_Standalone_Tick` is now wired, behind the new default-OFF `MASHED_AI_TICK`. Measured RED because `FUN_00443300` + `FUN_00443dc0` are stubbed (2-3 distinct steer values vs the original's 33-96). Earlier status: Port DONE (`Ai/AiStandalone.cpp`), `Ai_Standalone_Tick` (FUN_00418860) had **zero call sites**; the default build drives opponents from the ported racing-line target + a scaffold motion model (`TrackRenderer.cpp:2831-2960`). Audit `re/analysis/D3_AUDIT_2026-09-14.md` §1 | D3 |
 | WS-D | Powerup effects | Dispatcher FUN_0045bba0 + lifecycle + the 9 decision fns **are wired** (`TrackRenderer.cpp:3244`); leaves are standalone reimpls via `IPowerupBackend` by design. Open: G-D1 no per-frame dispatcher tick, G-D2 opponents never fire. Verbatim leaves still gated on the Ghidra fn-split of 0x453f60–0x45be81. Audit §2 | D3 |
-| WS-E | librw renderer | Gate D2 (2026-07-31) made librw the shipping renderer — **not yet the default** | D1 |
+| WS-E | librw renderer | librw is the **default** since `f4815877` (2026-08-19; decision DEC-2 of 2026-07-31 chose it). Open: D1-residue R1-R3 | D1 ✓ / D1-residue |
 | WS-F | Data formats | No work since 2026-06-16 | D4 |
 | WS-G | Modes & frontend | Ledger was stale. `Race/RaceModes` + `Race/RuleEngine` are the **default** path (`exe_main.cpp:2219/2244`, `RaceSession.cpp:129`, `TrackRenderer.cpp:3840`); every mode flag is revert-only or a post-derivation dev override. Open residues: G-G1 hardcoded `StartMatch(3)`, G-G2 `rule_engine_on_` defaults false. Audit §3 | D3 |
 | WS-H | Verification / C4 | Continuous; audit stale | D0, then continuous |
 | WS-I | Multiplayer | Deferred — D-11063, justification corrected 2026-08-14 | post-v1.0 |
 | WS-J | Audio remainder | No work since 2026-06-16 | D4 |
 
-Critical path unchanged in shape: **D1 (render) and D2 (physics) were the two long poles** (both closed: D1 2026-08-19, D2 2026-09-14)
+Critical path unchanged in shape: **D1 (render) and D2 (physics) were the two long poles** (both closed: D1 2026-08-19 as a default flip with D1-residue R1-R3 still owed, D2 2026-09-14)
 and are independent of each other. Everything else is the proven parse/port/verify loop
 and parallelises.
 
@@ -790,9 +849,10 @@ render-interpolation findings currently do not).
 
 | # | Follow-up | Owner | Phase |
 |---|---|---|---|
-| 1 | Give the QoL strand a tracker row; reclassify borderless as port work (librw P5 exerciser) | — | D0 |
-| 2 | Re-measure the collision-FX thresholds once `MASHED_REAL_PHYSICS` is the default (real `vel[]` makes the slip term carry signal). ~~Suspected over-firing~~ **investigated and dismissed 2026-08-14** — see below | — | D2 |
+| 1 | Give the QoL strand a tracker row; reclassify borderless as port work (librw P5 exerciser). **Still open 2026-09-26**, and in the NEXT_SESSION housekeeping backlog | next housekeeping session (re-classify) | D3 housekeeping |
+| 2 | Re-measure the collision-FX thresholds once `MASHED_REAL_PHYSICS` is the default (real `vel[]` makes the slip term carry signal). ~~Suspected over-firing~~ **investigated and dismissed 2026-08-14** — see below. **DUE since D2 closed 2026-09-14**, in the NEXT_SESSION housekeeping backlog | next housekeeping session | D3 housekeeping |
 | 3 | ~~Verify collision FX in a race capture~~ **DONE 2026-08-15** — emission verified, `verify/fx_verify/`. Residual: the visual contribution of skid smoke specifically was NOT isolated (`MASHED_NO_PARTICLES` disables the whole particle block), and dark smoke `0x303030` on a night track may be invisible in practice | — | — |
+| 4 | Sweep evidence citations into `log/` (D0 item 6: 2,217 files under `log/`, 27 tracked). Every tracker row citing an untracked `log/` path either gets its file committed or gets re-cited. Added 2026-09-26, it had no owner | next housekeeping session | D3 housekeeping |
 
 **Over-firing: investigated 2026-08-15, no defect.** The "2,164 skids/race vs the 251 the
 calibration was tuned to" alarm was an **instrumentation artifact, not a behaviour

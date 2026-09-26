@@ -87,8 +87,24 @@ RULES (unchanged):
 > block (`--poke-ctrl-slots` fixes it), and a pointer read out of the standalone's image-pad is
 > never safe to dereference (it AV'd the first tick wiring).
 
+## => Roadmap reconciliation 2026-09-26 (docs only, no code)
 
-## => KICKOFF PROMPT - D3 session (default AI, powerups, modes), written 2026-09-14, paste verbatim
+> ROADMAP.md now gives D3 explicit **pass criteria per third** (§D3). Use them as the
+> acceptance line and **write the AI tolerance into §D3 before taking the post-port
+> capture**. D1 is split into CLOSED (default flip) plus **D1-residue R1-R3** (owed before
+> D5). RE_MASTER_PLAN is frozen, and its user decisions are now DEC-2/4/6/7.
+
+### Housekeeping backlog (small, not D3-gating; do these in a gap or a dedicated session)
+
+- ROADMAP open decision #1: QoL strand tracker row + reclassify borderless (librw P5) as port work (via re-classify).
+- ROADMAP open decision #2: re-measure the collision-FX skid thresholds now that real physics is the default (DUE since 2026-09-14).
+- ROADMAP open decision #4: sweep tracker citations into untracked `log/` paths (commit or re-cite).
+- Stale strings `RaceSession.cpp:85` ("gate-ribbon AI") and `:87` ("effects TODO"). Check whether they are still present, and fix them.
+- `hooks.csv` retag `0045bba0` util→powerups when it is next touched.
+- 182+ commits ahead of origin. Push when Mariano says so.
+
+
+## => HISTORY: original D3 kickoff (superseded by the continuation prompt at the top), written 2026-09-14
 
 ```
 Session goal: ROADMAP v3 D3. Gate: a clean-env race (NO MASHED_* variable set) where

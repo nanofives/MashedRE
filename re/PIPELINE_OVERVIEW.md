@@ -4,6 +4,13 @@
 who does what, where to look for status, and how visual feedback works. Technical sources:
 `re/CONFIDENCE.md`, `ROADMAP.md`, `re/analysis/RE_MASTER_PLAN_2026-07.md`, `re/analysis/parity_tooling.md`.*
 
+> **Current state, 2026-09-26.** The process description below (§1–§3) still holds. The status
+> and "what's next" parts are frozen at 2026-07-16, and B5e, A8 and D2 have all landed since.
+> Live status: `ROADMAP.md` (ROADMAP v3, phases D0–D5) and `re/NEXT_SESSION.md`.
+> - Phase: **D3** (default AI, powerups, modes). D0, D1 (librw default) and D2 (ported physics default) are closed.
+> - D3 gate: AI **RED** (2 stubbed functions), powerups **unmeasured**, modes **GREEN on 3 of 11 rules**.
+> - Confidence (`hooks.csv`, 2026-09-26): C4 184 · C3 1,029 · C2 3,865 · C1 821.
+
 ---
 
 ## 1. The pipeline — the life of one game function
