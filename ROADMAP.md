@@ -668,6 +668,30 @@ implementations.
   **written into this section before the post-port capture is taken** (distinct-value count
   and median, per car). (c) Opponents are driven by the ported ctrl bytes, not the
   `TrackRenderer.cpp:2831-2960` scaffold motion model. (d) `MASHED_AI_TICK` is deleted.
+
+  **(b) tolerance, written 2026-09-26 BEFORE any post-port capture.** Window, per car
+  v = 1..3: the 220 AI-step calls starting at the car's first call with accel `c4 != 0`
+  (the original steps the AI through the countdown with an all-zero block first; 220 is the
+  shortest racing span the recipe gives any original car). Checker:
+  `py -3.12 re/tools/ai_ctrl_window.py --check <aistep.csv>`. Each standalone car must lie
+  inside the ORIGINAL's envelope, min..max over 12 observations (4 runs x 3 cars:
+  `verify/d3_ai_20260914/orig_step_slots` + `verify/d3_ai_20260926/o_spread1..3`):
+
+  | metric (220-call window) | band | | metric | band |
+  |---|---|---|---|---|
+  | `c0` distinct | 13..37 | | `c0` median | 0 |
+  | `c1` distinct | 17..70 | | `c1` median | 0 |
+  | `c1-c0` distinct | 29..96 | | `abs(c1-c0)` median | 0..23 |
+  | `c4` distinct | 2..4 | | `c4` median | 25..255 |
+  | `c5` distinct | 2 | | `c5` median | 0 |
+
+  Why the envelope is pooled across cars and not per car: the original's run-to-run
+  spread on ONE car is as wide as its spread across cars. Runs 0-2 are bit-identical call
+  for call on all three cars; run 3 (`o_spread3`) is not (accel takes 25/102, the
+  `DAT_0089a368 == 1` accel-rescale at `0x004169e0`), and moves car 3 from 96 to 73 steer
+  values, `|steer|` median 23 -> 8, `c4` median 255 -> 102. A per-car band would therefore
+  be tighter than the original reproduces itself. Measured 2026-09-14 standalone baseline
+  (`sa_step.csv`) fails 4-7 of the 10 bands per car. Record: `re/analysis/D3_AI_PORT_2026-09-26.md`.
 - **Powerups.** (a) G-D1 closed: the dispatcher `FUN_0045bba0` ticks every frame as in the
   original, not in a 1-2 frame burst. (b) G-D2 closed: opponent slots 1..3 can own and fire.
   (c) Every one of the 9 types fired in a `--statediff-puhook` capture diffs clean on ammo
