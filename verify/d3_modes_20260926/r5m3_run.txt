@@ -1,0 +1,32 @@
+  [keep-awake] display-sleep suppressed + wake nudge sent
+=== scenario_launch  pid=44496  track=0 mode=3 cars=4 ===
+  attaching ASAP...
+  [agent] ready
+    phase=0  (waiting for menu (phase 1))
+    phase=1  (waiting for menu (phase 1))
+  [setup] set track=0 mode=3 cars=4 car=0 rule=5 team=0
+  [launch] poke DAT_00771968 = 2 -> 1
+  [oracle] oracle armed (0x00410d10 + 0x00410510 + 0x004177b0)
+    phase=2  (waiting for race running (phase 3))
+    phase=3  (waiting for race running (phase 3))
+
+  *** RACE RUNNING (phase 3) ***
+  [ctrl-slots] ctrl slot table was [0,0,0,0] -> [0,1,2,3]
+  car spawn fired: 12   grounded=4  airflag=0
+  vel=[0, 0, 0]  fwd=[-8.742277657347586e-08, 0, -1]
+
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+
+  racing 60s — pulsing control 4 (confirm/accel) to skip the start intro + continue rounds...
+    +  4s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[-369.5, -0.0, -1182.9]       +  9s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[40.2, -16.3, -513.1]       + 13s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[21.9, 0.1, -49.3]   
+  [poke-collect] total=3 done=3 -> 1
+
+  game exited.
+
+  (oracle: live fetch failed, using last incremental snapshot)
+
+  === RULES ORACLE (rule=5) ===
+  SegmentCheck  0x00410d10: calls=714 agree=714 MISMATCH=0 segment-end(ret!=0)=0 byRule={'5': {'calls': 714, 'agree': 714, 'mis': 0, 'ret1': 0}}
+  EvaluateResult 0x00410510: calls=0 agree=0 MISMATCH=0 byRule={}
+  FinishOrder   0x004177b0: calls=980 agree=980 MISMATCH=0 appends=0 round-resets=0
+  ORACLE VERDICT: GREEN   -> C:\Users\maria\Desktop\Proyectos\Mashed\log\rules_oracle_rule5.json

@@ -3604,10 +3604,20 @@ void TrackRenderer::StartRound() {
     // round-resets=1): the original DOES re-init the finish order on the
     // per-round restart path (order [0,-1,-1,-1] observed reset to all -1.0f
     // across a round cycle with no track reload). Mirror FUN_00414060's
-    // slot reset per round. The rule-10 countdown is NOT re-seeded per round
-    // (3 back-to-back expiry rounds observed with a stale timer) — leave it.
+    // slot reset per round.
     for (int s = 0; s < Race::RuleEngine::kCars; ++s)
         rulep_.finishOrder[s] = Race::RuleEngine::kEmptySlot;
+    // The rule-10 countdown IS re-seeded per round. REFUTES the earlier "NOT
+    // re-seeded" note here: D3 2026-09-26 oracle run (verify/d3_modes_20260926/
+    // rules_oracle_r10seed2.json, seed10[]) caught FUN_004046a0 (0x004046a0)
+    // exiting with DAT_007f0fe4 = 30.0 right after segment end #1 (SegmentCheck
+    // call 1050) and #2 (call 2206), besides its two setup calls. It writes the
+    // timer unconditionally (30.0 default branch) and rebuilds the 6-entry
+    // checkpoint table with every hit flag (0x00636b90 + i*0x14) = 0, so the
+    // hit mask and lap latch clear with it.
+    rulep_.timer = Race::RuleEngine::Rule10Seed(course_id_, 0.f, &rule10_bonus_);
+    rule10_hit_mask_ = 0;
+    rule10_lap_seen_ = -1;
     // [D-11056] re-arm the rule-5 collectible feed each round (collectTotal
     // is fixed per-track by SetRaceRule; only the per-round done state resets).
     rulep_.collectDone = 0;
@@ -3673,18 +3683,74 @@ void TrackRenderer::StartRound() {
     boost_timer_ = shield_timer_ = 0.f;
 }
 
-void TrackRenderer::StartMatch(int /*first_to: superseded by the ported
-                                 score rules — match win at score > 11
-                                 (0x00410510)*/) {
+namespace {
+// MASHED_RULE_ENGINE=0 is the only way to reach the legacy two-objective
+// collapse. G-G2 (D3 2026-09-26): read here AND in SetRaceRule, so a race that
+// is started without SetRaceRule (the MASHED_ROUND dev route with no
+// MASHED_ROUND_RULE) runs the rule engine too. The original has no engine-off
+// state: FUN_00411170 calls FUN_00410d10 / FUN_00410510 unconditionally.
+bool RuleEngineEnabled() {
+    const char* e = std::getenv("MASHED_RULE_ENGINE");
+    return !(e && e[0] == '0');
+}
+}  // namespace
+
+// Match start. G-G1 (D3 2026-09-26): there is no round-count parameter. The
+// original ends a match inside FUN_00410510 on a score target (0x00410510
+// first loop: score == 8 when DAT_008a94d0 is 2/3, FUN_0042f500() != 0 or
+// DAT_007f0fd0 == 2; score > 0xb when DAT_008a94d0 == 4), counted from the
+// FUN_0040b180 seed. FUN_00411170 has no round counter of its own: segment
+// over -> FUN_00410510 != 0 ends the match, else DAT_0063ba8c = 7 (next round).
+void TrackRenderer::StartMatch() {
     match_winner_ = -1;
     round_no_ = 1;
+    rule_engine_on_ = RuleEngineEnabled();
     for (int i = 0; i < kRaceCars; ++i) {
-        scores_[i] = score_prev_[i] = score_delta_[i] = 0;
-        delta_timer_[i] = 0.f;
+        // score_delta_ (DAT_008a9520) stays 0 here. FUN_0040b180 writes
+        // 0xfffffc18 (-1000) to it, but the standings circle picker
+        // (exe_main.cpp, `d <= -2` -> MinusTwo) is not the original's
+        // FUN_0040b420 classifier, so -1000 would draw a circle the original's
+        // classifier may not. [UNCERTAIN U-9137] what the original draws for -1000;
+        // open in re/analysis/D3_MODES_2026-09-26.md.
+        score_delta_[i] = 0;
+        delta_timer_[i] = 0.f;              // DAT_008a9510..1c = 0 (0x0040b180)
         elim_order_[i] = -1;
     }
+    SeedMatchScores();
     elim_count_ = 0;
     StartRound();
+}
+
+// DAT_008a94d0 equivalent (FUN_004111c0 0x0040ff40..0x0040ffb6: zeroed, then +1
+// per slot whose *(PTR_005f2770 + 0x34 + i*4) probe is set). The standalone's
+// occupied slots are the ones UpdateRace gives a position (P2[i] != nullptr):
+// the player plus up to three AI cars.
+int TrackRenderer::ParticipantCount() const {
+    const int ai = static_cast<int>(ai_cars_.size());
+    return 1 + (ai < kRaceCars - 1 ? ai : kRaceCars - 1);
+}
+
+// 0x0040b180 (sole caller FUN_004111c0, CALL @0x0040ffb8, directly after the
+// DAT_008a94d0 count). seed = 6; FUN_0040e340() (= DAT_008a94d0) == 2 -> 4;
+// == 3 -> 4; FUN_0042f500() (= DAT_0067ea64, team play) != 0 -> 4;
+// DAT_007f0fd0 == 1 || == 2 -> 4. Writes the seed to the score array
+// DAT_008a94e0..0x008a94ec and to the previous-score array 0x008a9570..7c.
+void TrackRenderer::SeedMatchScores() {
+    const int participants = ParticipantCount();
+    int seed = 6;
+    if (participants == 2) seed = 4;
+    if (participants == 3) seed = 4;
+    if (team_play_) seed = 4;
+    if (rule_ == 1 || rule_ == 2) seed = 4;
+    for (int i = 0; i < kRaceCars; ++i)
+        scores_[i] = score_prev_[i] = seed;
+    // setup-time only (StartMatch / SetRaceRule / SetTeamPlay), not per frame
+    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+        std::fprintf(lf, "MATCH-SEED rule=%d participants=%d teams=%d seed=%d "
+                         "engine=%d\n", rule_, participants, team_play_ ? 1 : 0,
+                     seed, rule_engine_on_ ? 1 : 0);
+        std::fclose(lf);
+    }
 }
 
 void TrackRenderer::InitPickups() {
@@ -3717,8 +3783,7 @@ void TrackRenderer::InitPickups() {
 // live, rules oracle round-resets=1 — so StartRound() now mirrors that.)
 void TrackRenderer::SetRaceRule(int rule) {
     rule_ = rule;
-    const char* e = std::getenv("MASHED_RULE_ENGINE");
-    rule_engine_on_ = !(e && e[0] == '0');
+    rule_engine_on_ = RuleEngineEnabled();
     rulep_ = Race::RuleEngine::Persist{};             // FUN_00414060: slots=-1.0
     rulep_.timer = Race::RuleEngine::Rule10Seed(course_id_, 0.f, &rule10_bonus_);
     rule10_hit_mask_ = 0;
@@ -3755,6 +3820,10 @@ void TrackRenderer::SetRaceRule(int rule) {
             std::fclose(lf);
         }
     }
+    // FUN_0040b180 reads DAT_007f0fd0: re-seed now that the rule is known
+    // (RaceSession::Begin calls StartMatch before SetRaceRule; no score has
+    // been awarded yet at either call).
+    SeedMatchScores();
 }
 
 // 0x0040b290 (standard path, mode 0 / no teams): prev snapshot, signed delta
@@ -3777,6 +3846,7 @@ void TrackRenderer::ScoreAward(int car, int delta) {
 void TrackRenderer::SetTeamPlay(bool on, const int team_of[4]) {
     team_play_ = on;
     for (int i = 0; i < kRaceCars; ++i) team_of_[i] = team_of ? team_of[i] : -1;
+    SeedMatchScores();       // FUN_0040b180 reads FUN_0042f500() (team play)
 }
 
 // 0x00408ad0 equivalent: race progress on a 0..100 scale. Same expression the
@@ -4110,7 +4180,10 @@ void TrackRenderer::UpdateRace(float dt) {
         if (match_winner_ >= 0) return;        // result declared (FUN_00443080)
         namespace RE = Race::RuleEngine;
         RE::Cars rc;
-        rc.participants = kRaceCars;           // DAT_008a94d0 (standalone round = 4)
+        rc.participants = ParticipantCount();  // DAT_008a94d0 (0x0040ff40 count)
+        // FUN_0042f500() (= DAT_0067ea64) is read live by FUN_00410510's score
+        // loop; the standalone's copy of that flag is team_play_.
+        rulep_.teams = team_play_;
         for (int i = 0; i < kRaceCars; ++i) {
             rc.active[i] = (P2[i] != nullptr);
             rc.alive[i]  = race_[i].alive && rc.active[i];
@@ -4175,6 +4248,14 @@ void TrackRenderer::UpdateRace(float dt) {
             RE::SegmentCheck(rule_, rc, rulep_, false, &runElim) == 1) {
             bool p0 = false;
             const int r = RE::EvaluateResult(rule_, rc, rulep_, &p0);
+            // once per segment end (round), not per frame
+            if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                std::fprintf(lf, "RULE-EVAL rule=%d round=%d participants=%d "
+                                 "r=%d timer=%.2f scores=%d,%d,%d,%d\n", rule_, round_no_,
+                             rc.participants, r, rulep_.timer, scores_[0], scores_[1],
+                             scores_[2], scores_[3]);
+                std::fclose(lf);
+            }
             if (r > 0) {                       // match over, winner r-1
                 match_winner_ = r - 1;
             } else if (r == -1) {              // over with no winner (draw /

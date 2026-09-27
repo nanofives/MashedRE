@@ -240,7 +240,29 @@ const OR = { armed:false, err:null,
   seg:{calls:0, agree:0, mis:0, ret1:0, byRule:{}},
   ev :{calls:0, agree:0, mis:0, byRule:{}},
   ord:{calls:0, agree:0, mis:0, appends:0, resets:0},
-  misrec:[], samp:[], lastOrder:null };
+  misrec:[], samp:[], lastOrder:null,
+  // D3 2026-09-26: per-rule ENTRY-input ranges over EVERY SegmentCheck call, so a
+  // run proves which pre-block inputs it actually exercised (samp only keeps
+  // segment ends). Non-degeneracy evidence, not a verdict.
+  seen:{},
+  // D3 2026-09-26: every FUN_004046a0 (rule-10 seed) exit: when (as a SegmentCheck
+  // call index) and what DAT_007f0fe4 it left. Cold (once per race/round setup).
+  seed10:[] };
+function orSeen(en){
+  const k = en.rule, s = OR.seen[k] || (OR.seen[k] = {n:0, collTotMax:0, collDoneMax:0,
+    timerMin:null, timerMax:null, snap1:{}, m0Max:null, m1Max:null, motion0Nz:0, deadMax:0});
+  s.n++;
+  if (en.collectTotal > s.collTotMax) s.collTotMax = en.collectTotal;
+  if (en.collectDone > s.collDoneMax) s.collDoneMax = en.collectDone;
+  if (s.timerMin === null || en.timer < s.timerMin) s.timerMin = en.timer;
+  if (s.timerMax === null || en.timer > s.timerMax) s.timerMax = en.timer;
+  if (Object.keys(s.snap1).length < 8) s.snap1[en.snapshot1] = (s.snap1[en.snapshot1] || 0) + 1;
+  else if (s.snap1[en.snapshot1] !== undefined) s.snap1[en.snapshot1]++;
+  if (s.m0Max === null || en.metric[0] > s.m0Max) s.m0Max = en.metric[0];
+  if (s.m1Max === null || en.metric[1] > s.m1Max) s.m1Max = en.metric[1];
+  if (en.motion[0] !== 0) s.motion0Nz++;
+  const dead = en.alive.filter(a => !a).length; if (dead > s.deadMax) s.deadMax = dead;
+}
 const ORF = {};
 const K = { FIN: 3.0, R10: 2.0, GAP: Math.fround(0.9) }; // 0x005cc31c/0x005cc574/0x005cc9c8
 function orPush(rec){ if (OR.misrec.length < 60) OR.misrec.push(rec); }
@@ -371,7 +393,7 @@ function armOracle(){
     ORF.mode  = new NativeFunction(ga(0x0042f6a0), 'int', [], 'mscdecl');
     ORF.alive = new NativeFunction(ga(0x0046c7b0), 'int', ['int'], 'mscdecl');
     Interceptor.attach(ga(0x00410d10), {
-      onEnter(){ try { this.en = orReadCars(); } catch(e){ OR.err = 'seg.enter '+e; } },
+      onEnter(){ try { this.en = orReadCars(); orSeen(this.en); } catch(e){ OR.err = 'seg.enter '+e; } },
       onLeave(ret){ try {
         if (!this.en) return;
         const exAlive = [];
@@ -445,8 +467,13 @@ function armOracle(){
         OR.lastOrder = exOrder;
       } catch(e){ OR.err = 'ord.leave '+e; } }
     });
+    Interceptor.attach(ga(0x004046a0), {
+      onLeave(){ try { if (OR.seed10.length < 40) OR.seed10.push({atSeg: OR.seg.calls,
+        segRet1: OR.seg.ret1, rule: ga(0x007f0fd0).readS32(), timer: ga(0x007f0fe4).readFloat(),
+        state: ga(0x0063ba8c).readS32()}); } catch(e){ OR.err = 'seed10 '+e; } }
+    });
     OR.armed = true;
-    return 'oracle armed (0x00410d10 + 0x00410510 + 0x004177b0)';
+    return 'oracle armed (0x00410d10 + 0x00410510 + 0x004177b0 + seed 0x004046a0)';
   } catch(e){ return 'ERR ' + e; }
 }
 // ---------------------------------------------------------------------------
@@ -1615,6 +1642,8 @@ def main():
                       f"MISMATCH={ev['mis']} byRule={ev['byRule']}")
                 print(f"  FinishOrder   0x004177b0: calls={ordr['calls']} agree={ordr['agree']} "
                       f"MISMATCH={ordr['mis']} appends={ordr['appends']} round-resets={ordr['resets']}")
+                print(f"  inputs seen (per rule, every SegmentCheck entry): {st.get('seen')}")
+                print(f"  rule-10 seed FUN_004046a0 exits: {st.get('seed10')}")
                 if st.get("err"): print(f"  agent err: {st['err']}")
                 verdict = "GREEN" if (seg["mis"] == 0 and ev["mis"] == 0 and ordr["mis"] == 0
                                       and (seg["calls"] or ev["calls"] or ordr["calls"])

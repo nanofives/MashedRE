@@ -3222,7 +3222,7 @@ bool RenderFrame() {
         //
         // `|| results` is DEFENSIVE, not load-bearing: round_mode_ is in fact
         // true on both routes into a race — RaceSession::Begin calls
-        // StartMatch(3) (RaceSession.cpp:118) for a frontend race, and the
+        // StartMatch() (RaceSession.cpp) for a frontend race, and the
         // MASHED_ROUND dev path calls it at exe_main.cpp:7482. The term is kept
         // so the results dwell cannot end up with a blank screen if a third
         // route ever reaches Results without a match having been started.
@@ -8493,14 +8493,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                         const int ptype = (cid == 0 || cid == 6) ? 1 : 2;
                         g_track.SetAmbientParticles(ptype);
                     }
-                    // R6: MASHED_ROUND=1 -> first-to-3-rounds match (countdown,
-                    // elimination, score, results). MASHED_ROUND=N sets the
-                    // round target.
+                    // R6: MASHED_ROUND=<any> -> a full match (countdown,
+                    // elimination, score, results). The value no longer sets a
+                    // round target: the original has none (G-G1, D3 2026-09-26;
+                    // match length = FUN_0040b180 seed + FUN_00410510 target).
                     char rv[16] = {};
                     if (GetEnvironmentVariableA("MASHED_ROUND", rv, sizeof(rv)) > 0) {
                         CreateDirectoryA("verify\\r6", nullptr);
-                        const int n = std::atoi(rv);
-                        g_track.StartMatch(n > 1 ? n : 3);
+                        g_track.StartMatch();
                         // [D3 2026-09-26] place the power-up orbs, as the frontend
                         // race path does (RaceSession.cpp:152). Without it this dev
                         // race had ZERO orbs, measured by the MASHED_PU_STEPDUMP orb

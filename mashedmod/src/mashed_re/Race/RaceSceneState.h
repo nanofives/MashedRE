@@ -275,7 +275,10 @@ struct RaceSceneState {
 
     // [D-11052] rule engine state (Race/RuleEngine). rule_ = DAT_007f0fd0.
     int   rule_                 = 0;
-    bool  rule_engine_on_       = false;
+    // G-G2 (D3 2026-09-26): default ON, as the original has no engine-off state
+    // (FUN_00411170 always runs FUN_00410d10/FUN_00410510). StartMatch and
+    // SetRaceRule both re-read MASHED_RULE_ENGINE=0 (the revert-only switch).
+    bool  rule_engine_on_       = true;
     bool  rule_engine_race_on_  = true;
     bool  match_draw_           = false;
     float rule10_bonus_         = 0.f;   // per-checkpoint award (FUN_004046a0)

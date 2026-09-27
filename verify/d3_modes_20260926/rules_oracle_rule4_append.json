@@ -1,0 +1,178 @@
+{
+ "armed": true,
+ "err": null,
+ "seg": {
+  "calls": 789,
+  "agree": 789,
+  "mis": 0,
+  "ret1": 1,
+  "byRule": {
+   "4": {
+    "calls": 789,
+    "agree": 789,
+    "mis": 0,
+    "ret1": 1
+   }
+  }
+ },
+ "ev": {
+  "calls": 1,
+  "agree": 1,
+  "mis": 0,
+  "byRule": {
+   "4": {
+    "calls": 1,
+    "agree": 1,
+    "mis": 0
+   }
+  }
+ },
+ "ord": {
+  "calls": 1187,
+  "agree": 1187,
+  "mis": 0,
+  "appends": 1,
+  "resets": 0
+ },
+ "misrec": [],
+ "samp": [
+  {
+   "fn": "seg",
+   "rule": 4,
+   "got": 1,
+   "want": 1,
+   "en": {
+    "rule": 4,
+    "participants": 4,
+    "metric": [
+     3.034794807434082,
+     1.121543526649475,
+     1.0548365116119385,
+     1.049075722694397
+    ],
+    "score": [
+     6,
+     6,
+     6,
+     6
+    ],
+    "alive": [
+     true,
+     true,
+     true,
+     true
+    ],
+    "motion": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     0,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 0,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "exActive": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "exAlive": [
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "fn": "ev",
+   "rule": 4,
+   "got": 1,
+   "fccGot": 1,
+   "pred": {
+    "ret": 1,
+    "fcc": 1
+   },
+   "en": {
+    "rule": 4,
+    "participants": 4,
+    "metric": [
+     3.034794807434082,
+     1.121543526649475,
+     1.0548365116119385,
+     1.049075722694397
+    ],
+    "score": [
+     6,
+     6,
+     6,
+     6
+    ],
+    "alive": [
+     true,
+     true,
+     true,
+     true
+    ],
+    "motion": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     0,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 0,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  }
+ ],
+ "lastOrder": [
+  0,
+  -1,
+  -1,
+  -1
+ ],
+ "run": {
+  "track": 0,
+  "mode": 10,
+  "cars": 4,
+  "rule": 4,
+  "hold": 60,
+  "pid": 27692,
+  "hooks": null,
+  "ts": "2026-09-26 20:58:39"
+ }
+}

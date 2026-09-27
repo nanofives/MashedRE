@@ -1,6 +1,6 @@
 # Next session — kickoff prompt
 
-## => KICKOFF PROMPT - D3 continuation (written 2026-09-26 after the AI port), paste verbatim
+## => KICKOFF PROMPT - D3 continuation (written 2026-09-26 after the AI port; modes item updated 2026-09-26 after the modes session), paste verbatim
 
 ```
 Session goal: close ROADMAP v3 D3. Read the D3 STATUS block and pass criteria in
@@ -20,6 +20,15 @@ SETTLED 2026-09-26 (D3_AI_PORT_2026-09-26.md):
   AiFireDecision (FUN_00415220) is observed live.
 - The original is NOT deterministic run to run: 2 of 5 captures take the
   DAT_0089a368 == 1 accel x0.4 path.
+- MODES (a)-(d) all met (re/analysis/D3_MODES_2026-09-26.md): live oracle covers all
+  11 rules at 0 mismatches, APPEND fired (rules 4/7/8/9; rules 0-3/5/6/10 never
+  append), G-G1 = FUN_0040b180 score seed (6, or 4) + FUN_00410510 target, ported,
+  G-G2 = engine on by default on every route. Also REFUTED + fixed: the rule-10
+  countdown IS re-seeded per round (FUN_004046a0 caught live).
+- WATCH for AI (b): the MASHED_ROUND capture route used by sa2 ran the LEGACY
+  collapse with scores seeded 0. It now runs the rule engine with scores seeded 6, so
+  rounds and matches end at different times than in sa2. Re-capture the standalone
+  before comparing against sa2-era numbers; the 220-call window itself is unchanged.
 
 DO, in this order:
 1. AI (b) car 1. Add the lookahead target (look[]) and the FUN_00443440 curvature to
@@ -35,14 +44,25 @@ DO, in this order:
 4. FUN_00442a60 (the 0x008989b0 reference distances). Until ported, MORTAR/DRUM/P_MINE/
    R_FLAME/SHOTGUN never pass their fire gates. Then run a track whose orbs are not all
    OIL and show those types fire.
-5. MODES blind spots (unchanged from the previous kickoff): APPEND branch, rules 5 and
-   10, G-G1 (StartMatch(3)), G-G2 (rule_engine_on_).
+5. MODES residues (none blocks the modes gate; D3_MODES_2026-09-26.md section 6):
+   feed team play into the frontend route (SetTeamPlay is dev-route only, so a menu
+   team game seeds 6 not 4); FUN_0040b420 decomp for the -1000 delta seed; rule-5
+   counter poke ends the process when total != registered count (decomp FUN_00406ce0);
+   motion0 exits of rules 8/9/10 never reached.
 
 RULES (unchanged): cite RVAs, NO-GUESSING, [UNCERTAIN] + next command; always
 --poke-ctrl-slots; launch muted; kill only your PIDs; trackers only via re-classify;
 C4 needs a canonical run with the hook live; never dereference a pointer read out of
 the image-pad.
 ```
+
+## => D3 2026-09-26 — modes (a)-(d) met
+
+> Record: `re/analysis/D3_MODES_2026-09-26.md`. Evidence: `verify/d3_modes_20260926/`.
+> Harness: `scenario_launch.py --oracle` now records `seen` (per-rule entry-input ranges
+> over every SegmentCheck call) and `seed10` (every FUN_004046a0 exit). Rule-10 runs need
+> `--mode 3` (the countdown ticks only in modes 3/4/5). Rule-5 runs need a KTC_NewCopter
+> track (Arctic `--track 3`) and a collect poke whose total equals the registrar's count.
 
 ## => D3 2026-09-26 — AI port landed; AI (b) 2 of 3 cars; powerups (b) met
 

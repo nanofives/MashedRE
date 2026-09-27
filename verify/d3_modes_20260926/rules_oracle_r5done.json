@@ -1,0 +1,196 @@
+{
+ "armed": true,
+ "err": null,
+ "seg": {
+  "calls": 1113,
+  "agree": 1113,
+  "mis": 0,
+  "ret1": 1,
+  "byRule": {
+   "5": {
+    "calls": 1113,
+    "agree": 1113,
+    "mis": 0,
+    "ret1": 1
+   }
+  }
+ },
+ "ev": {
+  "calls": 1,
+  "agree": 1,
+  "mis": 0,
+  "byRule": {
+   "5": {
+    "calls": 1,
+    "agree": 1,
+    "mis": 0
+   }
+  }
+ },
+ "ord": {
+  "calls": 1520,
+  "agree": 1520,
+  "mis": 0,
+  "appends": 0,
+  "resets": 0
+ },
+ "misrec": [],
+ "samp": [
+  {
+   "fn": "seg",
+   "rule": 5,
+   "got": 1,
+   "want": 1,
+   "en": {
+    "rule": 5,
+    "participants": 4,
+    "metric": [
+     2.327795289858159e-09,
+     0.05497784912586212,
+     0.056624989956617355,
+     0.05420685186982155
+    ],
+    "score": [
+     6,
+     5,
+     6,
+     4
+    ],
+    "alive": [
+     true,
+     false,
+     true,
+     false
+    ],
+    "motion": [
+     0,
+     255,
+     0,
+     255
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1002,
+    "timer": 0,
+    "collectTotal": 1,
+    "collectDone": 1,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 3,
+    "active": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "exActive": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "exAlive": [
+    true,
+    false,
+    true,
+    false
+   ]
+  },
+  {
+   "fn": "ev",
+   "rule": 5,
+   "got": 1,
+   "fccGot": 1,
+   "pred": {
+    "ret": 1,
+    "fcc": 1
+   },
+   "en": {
+    "rule": 5,
+    "participants": 4,
+    "metric": [
+     2.327795289858159e-09,
+     0.05497784912586212,
+     0.056624989956617355,
+     0.05420685186982155
+    ],
+    "score": [
+     6,
+     5,
+     6,
+     4
+    ],
+    "alive": [
+     true,
+     false,
+     true,
+     false
+    ],
+    "motion": [
+     0,
+     255,
+     0,
+     255
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1002,
+    "timer": 0,
+    "collectTotal": 1,
+    "collectDone": 1,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 3,
+    "active": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  }
+ ],
+ "lastOrder": [
+  -1,
+  -1,
+  -1,
+  -1
+ ],
+ "seen": {
+  "5": {
+   "n": 1113,
+   "collTotMax": 1,
+   "collDoneMax": 1,
+   "timerMin": 0,
+   "timerMax": 0,
+   "snap1": {
+    "0": 49,
+    "1002": 932,
+    "1003": 132
+   },
+   "m0Max": 2.327795289858159e-09,
+   "m1Max": 0.06277713924646378,
+   "motion0Nz": 0,
+   "deadMax": 2
+  }
+ },
+ "run": {
+  "track": 3,
+  "mode": 3,
+  "cars": 4,
+  "rule": 5,
+  "hold": 60,
+  "pid": 1476,
+  "hooks": null,
+  "ts": "2026-09-26 21:22:48"
+ }
+}

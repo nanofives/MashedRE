@@ -1,0 +1,28 @@
+== r5arctic
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+  SegmentCheck  0x00410d10: calls=5298 agree=5298 MISMATCH=0 segment-end(ret!=0)=0 byRule={'5': {'calls': 5298, 'agree': 5298, 'mis': 0, 'ret1': 0}}
+  EvaluateResult 0x00410510: calls=0 agree=0 MISMATCH=0 byRule={}
+  FinishOrder   0x004177b0: calls=5559 agree=5559 MISMATCH=0 appends=0 round-resets=0
+  inputs seen (per rule, every SegmentCheck entry): {'5': {'n': 5298, 'collTotMax': 1, 'collDoneMax': 0, 'timerMin': 0, 'timerMax': 0, 'snap1': {'0': 49, '1002': 4944, '1003': 305}, 'm0Max': 2.327795289858159e-09, 'm1Max': 0.3165455460548401, 'motion0Nz': 0, 'deadMax': 3}}
+  ORACLE VERDICT: GREEN   -> C:\Users\maria\Desktop\Proyectos\Mashed\log\rules_oracle_rule5.json
+== r10exp
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+  SegmentCheck  0x00410d10: calls=1801 agree=1801 MISMATCH=0 segment-end(ret!=0)=1 byRule={'10': {'calls': 1801, 'agree': 1801, 'mis': 0, 'ret1': 1}}
+  EvaluateResult 0x00410510: calls=1 agree=1 MISMATCH=0 byRule={'10': {'calls': 1, 'agree': 1, 'mis': 0}}
+  FinishOrder   0x004177b0: calls=2196 agree=2196 MISMATCH=0 appends=0 round-resets=0
+  inputs seen (per rule, every SegmentCheck entry): {'10': {'n': 1801, 'collTotMax': 0, 'collDoneMax': 0, 'timerMin': -0.016380786895751953, 'timerMax': 29.983333587646484, 'snap1': {'0': 884, '1003': 917}, 'm0Max': 0.10032835602760315, 'm1Max': 2.2553045749664307, 'motion0Nz': 0, 'deadMax': 2}}
+  ORACLE VERDICT: GREEN   -> C:\Users\maria\Desktop\Proyectos\Mashed\log\rules_oracle_rule10.json
+== r10win
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+  SegmentCheck  0x00410d10: calls=609 agree=609 MISMATCH=0 segment-end(ret!=0)=1 byRule={'10': {'calls': 609, 'agree': 609, 'mis': 0, 'ret1': 1}}
+  EvaluateResult 0x00410510: calls=1 agree=1 MISMATCH=0 byRule={'10': {'calls': 1, 'agree': 1, 'mis': 0}}
+  FinishOrder   0x004177b0: calls=1005 agree=1005 MISMATCH=0 appends=0 round-resets=0
+  inputs seen (per rule, every SegmentCheck entry): {'10': {'n': 609, 'collTotMax': 0, 'collDoneMax': 0, 'timerMin': 19.850154876708984, 'timerMax': 29.983333587646484, 'snap1': {'0': 167, '1003': 442}, 'm0Max': 2.146622657775879, 'm1Max': 0.18367333710193634, 'motion0Nz': 0, 'deadMax': 0}}
+  ORACLE VERDICT: GREEN   -> C:\Users\maria\Desktop\Proyectos\Mashed\log\rules_oracle_rule10.json
+== r9c2
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+  SegmentCheck  0x00410d10: calls=1727 agree=1727 MISMATCH=0 segment-end(ret!=0)=3 byRule={'0': {'calls': 938, 'agree': 938, 'mis': 0, 'ret1': 2}, '9': {'calls': 789, 'agree': 789, 'mis': 0, 'ret1': 1}}
+  EvaluateResult 0x00410510: calls=3 agree=3 MISMATCH=0 byRule={'0': {'calls': 2, 'agree': 2, 'mis': 0}, '9': {'calls': 1, 'agree': 1, 'mis': 0}}
+  FinishOrder   0x004177b0: calls=3022 agree=3022 MISMATCH=0 appends=1 round-resets=1
+  inputs seen (per rule, every SegmentCheck entry): {'0': {'n': 938, 'collTotMax': 0, 'collDoneMax': 0, 'timerMin': 0, 'timerMax': 0, 'snap1': {'0': 938}, 'm0Max': -7.748603820800781e-07, 'm1Max': 0.25139838457107544, 'motion0Nz': 0, 'deadMax': 2}, '9': {'n': 789, 'collTotMax': 0, 'collDoneMax': 0, 'timerMin': 0, 'timerMax': 0, 'snap1': {'0': 789}, 'm0Max': -0.018171489238739014, 'm1Max': 3.1262924671173096, 'motion0Nz': 0, 'deadMax': 2}}
+  ORACLE VERDICT: GREEN   -> C:\Users\maria\Desktop\Proyectos\Mashed\log\rules_oracle_rule9.json

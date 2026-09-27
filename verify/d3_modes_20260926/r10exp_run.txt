@@ -1,0 +1,29 @@
+  [keep-awake] display-sleep suppressed + wake nudge sent
+=== scenario_launch  pid=33912  track=0 mode=3 cars=4 ===
+  attaching ASAP...
+  [agent] ready
+    phase=0  (waiting for menu (phase 1))
+    phase=1  (waiting for menu (phase 1))
+  [setup] set track=0 mode=3 cars=4 car=0 rule=10 team=0
+  [launch] poke DAT_00771968 = 2 -> 1
+  [oracle] oracle armed (0x00410d10 + 0x00410510 + 0x004177b0)
+    phase=2  (waiting for race running (phase 3))
+    phase=3  (waiting for race running (phase 3))
+
+  *** RACE RUNNING (phase 3) ***
+  [ctrl-slots] ctrl slot table was [0,0,0,0] -> [0,1,2,3]
+  [rule10-timer] DAT_007f0fe4 = 2.0 -> 1
+  car spawn fired: 12   grounded=4  airflag=0
+  vel=[0, 0, 0]  fwd=[-8.742277657347586e-08, 0, -1]
+
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+
+  racing 40s — pulsing control 4 (confirm/accel) to skip the start intro + continue rounds...
+    +  4s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[-366.9, -0.0, -1174.1]       +  9s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 13s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 18s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 23s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 28s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 33s  ph=3  spawnFired=12  p0.grounded=0 airflag=0  vel=[0, 0, 0]       + 37s  ph=5  spawnFired=12  p0.grounded=2 airflag=0  vel=[0, 0, 0]   
+
+  === RULES ORACLE (rule=10) ===
+  SegmentCheck  0x00410d10: calls=1801 agree=1801 MISMATCH=0 segment-end(ret!=0)=1 byRule={'10': {'calls': 1801, 'agree': 1801, 'mis': 0, 'ret1': 1}}
+  EvaluateResult 0x00410510: calls=1 agree=1 MISMATCH=0 byRule={'10': {'calls': 1, 'agree': 1, 'mis': 0}}
+  FinishOrder   0x004177b0: calls=2196 agree=2196 MISMATCH=0 appends=0 round-resets=0
+  inputs seen (per rule, every SegmentCheck entry): {'10': {'n': 1801, 'collTotMax': 0, 'collDoneMax': 0, 'timerMin': -0.016380786895751953, 'timerMax': 29.983333587646484, 'snap1': {'0': 884, '1003': 917}, 'm0Max': 0.10032835602760315, 'm1Max': 2.2553045749664307, 'motion0Nz': 0, 'deadMax': 2}}
+  ORACLE VERDICT: GREEN   -> C:\Users\maria\Desktop\Proyectos\Mashed\log\rules_oracle_rule10.json

@@ -1,0 +1,42 @@
+== r3
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+  SegmentCheck  0x00410d10: calls=2121 agree=2121 MISMATCH=0 segment-end(ret!=0)=2 byRule={'3': {'calls': 2121, 'agree': 2121, 'mis': 0, 'ret1': 2}}
+  EvaluateResult 0x00410510: calls=2 agree=2 MISMATCH=0 byRule={'3': {'calls': 2, 'agree': 2, 'mis': 0}}
+  FinishOrder   0x004177b0: calls=3031 agree=3031 MISMATCH=0 appends=0 round-resets=0
+  ORACLE VERDICT: GREEN   -> C:\Users\maria\Desktop\Proyectos\Mashed\log\rules_oracle_rule3.json
+== r6
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+  SegmentCheck  0x00410d10: calls=2395 agree=2395 MISMATCH=0 segment-end(ret!=0)=1 byRule={'6': {'calls': 2395, 'agree': 2395, 'mis': 0, 'ret1': 1}}
+  EvaluateResult 0x00410510: calls=1 agree=1 MISMATCH=0 byRule={'6': {'calls': 1, 'agree': 1, 'mis': 0}}
+  FinishOrder   0x004177b0: calls=2951 agree=2951 MISMATCH=0 appends=0 round-resets=0
+  ORACLE VERDICT: GREEN   -> C:\Users\maria\Desktop\Proyectos\Mashed\log\rules_oracle_rule6.json
+== r5
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+  SegmentCheck  0x00410d10: calls=715 agree=715 MISMATCH=0 segment-end(ret!=0)=0 byRule={'5': {'calls': 715, 'agree': 715, 'mis': 0, 'ret1': 0}}
+  EvaluateResult 0x00410510: calls=0 agree=0 MISMATCH=0 byRule={}
+  FinishOrder   0x004177b0: calls=981 agree=981 MISMATCH=0 appends=0 round-resets=0
+  ORACLE VERDICT: GREEN   -> C:\Users\maria\Desktop\Proyectos\Mashed\log\rules_oracle_rule5.json
+== r7
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+  SegmentCheck  0x00410d10: calls=788 agree=788 MISMATCH=0 segment-end(ret!=0)=1 byRule={'7': {'calls': 788, 'agree': 788, 'mis': 0, 'ret1': 1}}
+  EvaluateResult 0x00410510: calls=1 agree=1 MISMATCH=0 byRule={'7': {'calls': 1, 'agree': 1, 'mis': 0}}
+  FinishOrder   0x004177b0: calls=1182 agree=1182 MISMATCH=0 appends=1 round-resets=0
+  ORACLE VERDICT: GREEN   -> C:\Users\maria\Desktop\Proyectos\Mashed\log\rules_oracle_rule7.json
+== r8
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+  SegmentCheck  0x00410d10: calls=1209 agree=1209 MISMATCH=0 segment-end(ret!=0)=2 byRule={'0': {'calls': 434, 'agree': 434, 'mis': 0, 'ret1': 1}, '8': {'calls': 775, 'agree': 775, 'mis': 0, 'ret1': 1}}
+  EvaluateResult 0x00410510: calls=2 agree=2 MISMATCH=0 byRule={'0': {'calls': 1, 'agree': 1, 'mis': 0}, '8': {'calls': 1, 'agree': 1, 'mis': 0}}
+  FinishOrder   0x004177b0: calls=2170 agree=2170 MISMATCH=0 appends=1 round-resets=1
+  ORACLE VERDICT: GREEN   -> C:\Users\maria\Desktop\Proyectos\Mashed\log\rules_oracle_rule8.json
+== r9
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+  SegmentCheck  0x00410d10: calls=1655 agree=1655 MISMATCH=0 segment-end(ret!=0)=5 byRule={'0': {'calls': 1654, 'agree': 1654, 'mis': 0, 'ret1': 4}, '9': {'calls': 1, 'agree': 1, 'mis': 0, 'ret1': 1}}
+  EvaluateResult 0x00410510: calls=5 agree=5 MISMATCH=0 byRule={'0': {'calls': 4, 'agree': 4, 'mis': 0}, '9': {'calls': 1, 'agree': 1, 'mis': 0}}
+  FinishOrder   0x004177b0: calls=3459 agree=3459 MISMATCH=0 appends=0 round-resets=0
+  ORACLE VERDICT: GREEN   -> C:\Users\maria\Desktop\Proyectos\Mashed\log\rules_oracle_rule9.json
+== r10
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+  SegmentCheck  0x00410d10: calls=2447 agree=2447 MISMATCH=0 segment-end(ret!=0)=1 byRule={'10': {'calls': 2447, 'agree': 2447, 'mis': 0, 'ret1': 1}}
+  EvaluateResult 0x00410510: calls=1 agree=1 MISMATCH=0 byRule={'10': {'calls': 1, 'agree': 1, 'mis': 0}}
+  FinishOrder   0x004177b0: calls=2925 agree=2925 MISMATCH=0 appends=0 round-resets=0
+  ORACLE VERDICT: GREEN   -> C:\Users\maria\Desktop\Proyectos\Mashed\log\rules_oracle_rule10.json

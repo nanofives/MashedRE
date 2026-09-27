@@ -1,0 +1,30 @@
+  [keep-awake] display-sleep suppressed + wake nudge sent
+=== scenario_launch  pid=4420  track=0 mode=3 cars=2 ===
+  attaching ASAP...
+  [agent] ready
+    phase=0  (waiting for menu (phase 1))
+    phase=1  (waiting for menu (phase 1))
+  [setup] set track=0 mode=3 cars=2 car=0 rule=9 team=0
+  [launch] poke DAT_00771968 = 2 -> 1
+  [oracle] oracle armed (0x00410d10 + 0x00410510 + 0x004177b0)
+    phase=2  (waiting for race running (phase 3))
+    phase=3  (waiting for race running (phase 3))
+
+  *** RACE RUNNING (phase 3) ***
+  [ctrl-slots] ctrl slot table was [0,0,0,0] -> [0,1,2,3]
+  car spawn fired: 6   grounded=4  airflag=0
+  vel=[0, 0, 0]  fwd=[-8.742277657347586e-08, 0, -1]
+
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+
+  racing 50s — pulsing control 4 (confirm/accel) to skip the start intro + continue rounds...
+    +  4s  ph=3  spawnFired=6  p0.grounded=4 airflag=0  vel=[0, 0, 0]       +  9s  ph=3  spawnFired=6  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 13s  ph=3  spawnFired=6  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+  [poke-lap] car 1 laps=3 -> 1
+    + 18s  ph=1  spawnFired=6  p0.grounded=4 airflag=1  vel=[-218.9, 0, -3703.3]       + 23s  ph=1  spawnFired=6  p0.grounded=4 airflag=1  vel=[-218.9, 0, -3703.3]       + 28s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 33s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 37s  ph=3  spawnFired=14  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 42s  ph=3  spawnFired=14  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 47s  ph=3  spawnFired=16  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+
+  === RULES ORACLE (rule=9) ===
+  SegmentCheck  0x00410d10: calls=1727 agree=1727 MISMATCH=0 segment-end(ret!=0)=3 byRule={'0': {'calls': 938, 'agree': 938, 'mis': 0, 'ret1': 2}, '9': {'calls': 789, 'agree': 789, 'mis': 0, 'ret1': 1}}
+  EvaluateResult 0x00410510: calls=3 agree=3 MISMATCH=0 byRule={'0': {'calls': 2, 'agree': 2, 'mis': 0}, '9': {'calls': 1, 'agree': 1, 'mis': 0}}
+  FinishOrder   0x004177b0: calls=3022 agree=3022 MISMATCH=0 appends=1 round-resets=1
+  inputs seen (per rule, every SegmentCheck entry): {'0': {'n': 938, 'collTotMax': 0, 'collDoneMax': 0, 'timerMin': 0, 'timerMax': 0, 'snap1': {'0': 938}, 'm0Max': -7.748603820800781e-07, 'm1Max': 0.25139838457107544, 'motion0Nz': 0, 'deadMax': 2}, '9': {'n': 789, 'collTotMax': 0, 'collDoneMax': 0, 'timerMin': 0, 'timerMax': 0, 'snap1': {'0': 789}, 'm0Max': -0.018171489238739014, 'm1Max': 3.1262924671173096, 'motion0Nz': 0, 'deadMax': 2}}
+  ORACLE VERDICT: GREEN   -> C:\Users\maria\Desktop\Proyectos\Mashed\log\rules_oracle_rule9.json

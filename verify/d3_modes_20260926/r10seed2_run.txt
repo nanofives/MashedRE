@@ -1,0 +1,30 @@
+  [keep-awake] display-sleep suppressed + wake nudge sent
+=== scenario_launch  pid=6436  track=0 mode=3 cars=4 ===
+  attaching ASAP...
+  [agent] ready
+    phase=0  (waiting for menu (phase 1))
+    phase=1  (waiting for menu (phase 1))
+  [setup] set track=0 mode=3 cars=4 car=0 rule=10 team=0
+  [launch] poke DAT_00771968 = 2 -> 1
+  [oracle] oracle armed (0x00410d10 + 0x00410510 + 0x004177b0 + seed 0x004046a0)
+    phase=2  (waiting for race running (phase 3))
+    phase=3  (waiting for race running (phase 3))
+
+  *** RACE RUNNING (phase 3) ***
+  [ctrl-slots] ctrl slot table was [0,0,0,0] -> [0,1,2,3]
+  [rule10-timer] DAT_007f0fe4 = 8.0 -> 1
+  car spawn fired: 12   grounded=4  airflag=0
+  vel=[0, 0, 0]  fwd=[-8.742277657347586e-08, 0, -1]
+
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+
+  racing 75s — pulsing control 4 (confirm/accel) to skip the start intro + continue rounds...
+    +  4s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[-364.7, -0.0, -1167.1]       +  9s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[39.0, -15.9, -500.6]       + 13s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[13.4, 0.1, -30.1]       + 18s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 23s  ph=3  spawnFired=16  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 28s  ph=3  spawnFired=16  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 33s  ph=3  spawnFired=16  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 37s  ph=3  spawnFired=16  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 42s  ph=3  spawnFired=16  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 47s  ph=3  spawnFired=20  p0.grounded=4 airflag=0  vel=[-762.8, -0.0, -414.8]       + 52s  ph=3  spawnFired=20  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 57s  ph=3  spawnFired=20  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 61s  ph=3  spawnFired=20  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 66s  ph=3  spawnFired=20  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 71s  ph=3  spawnFired=20  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+
+  === RULES ORACLE (rule=10) ===
+  SegmentCheck  0x00410d10: calls=3965 agree=3965 MISMATCH=0 segment-end(ret!=0)=2 byRule={'10': {'calls': 3965, 'agree': 3965, 'mis': 0, 'ret1': 2}}
+  EvaluateResult 0x00410510: calls=2 agree=2 MISMATCH=0 byRule={'10': {'calls': 2, 'agree': 2, 'mis': 0}}
+  FinishOrder   0x004177b0: calls=4868 agree=4868 MISMATCH=0 appends=0 round-resets=0
+  inputs seen (per rule, every SegmentCheck entry): {'10': {'n': 3965, 'collTotMax': 0, 'collDoneMax': 0, 'timerMin': 0.6836187839508057, 'timerMax': 29.983333587646484, 'snap1': {'0': 167, '1002': 1443, '1003': 2355}, 'm0Max': 0.8008055090904236, 'm1Max': 1.9991846084594727, 'motion0Nz': 0, 'deadMax': 3}}
+  rule-10 seed FUN_004046a0 exits: [{'atSeg': 0, 'segRet1': 0, 'rule': 10, 'timer': 30, 'state': 1}, {'atSeg': 0, 'segRet1': 0, 'rule': 10, 'timer': 30, 'state': 2}, {'atSeg': 1050, 'segRet1': 1, 'rule': 10, 'timer': 30, 'state': 2}, {'atSeg': 2206, 'segRet1': 2, 'rule': 10, 'timer': 30, 'state': 2}]
+  ORACLE VERDICT: GREEN   -> C:\Users\maria\Desktop\Proyectos\Mashed\log\rules_oracle_rule10.json

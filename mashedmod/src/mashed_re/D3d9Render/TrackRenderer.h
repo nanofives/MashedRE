@@ -347,7 +347,19 @@ public:
         return (car >= 0 && car < kRaceCars) ? team_of_[car] : -1;
     }
     void  StartRound();           // grid all 4 cars at the start line
-    void  StartMatch(int first_to);  // reset scores, start round 1
+    // Reset + seed scores (FUN_0040b180), start round 1. The match length is
+    // not a parameter: the original derives it from the seed (6, or 4) and
+    // FUN_00410510's per-rule target (score > 0xb, or == 8). D3 2026-09-26.
+    void  StartMatch();
+    // FUN_0040b180 (0x0040b180): initial score from rule / participants /
+    // teams. Re-run by SetRaceRule and SetTeamPlay (setup-only calls, before
+    // any scoring) so the seed sees the final inputs, as the original's single
+    // call at race setup (FUN_004111c0 @0x0040ffb8) does.
+    void  SeedMatchScores();
+    // DAT_008a94d0 equivalent: count of occupied car slots (the original's
+    // 0x0040ff40..0x0040ffb6 loop over *(PTR_005f2770+0x34+i*4)); the same
+    // predicate UpdateRace uses for RuleEngine::Cars::active.
+    int   ParticipantCount() const;
     void  NextRoundOrEnd();          // check match win, start next round
     int   match_winner() const { return match_winner_; }
     int   round_no() const { return round_no_; }

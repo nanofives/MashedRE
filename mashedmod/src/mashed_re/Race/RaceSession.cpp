@@ -127,9 +127,11 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         std::snprintf(dff0, sizeof(dff0), "%s0.DFF", ve.dffBase);
         const bool car = track->LoadCar(dev, ve.piz, dff0, kLog);
         const bool liv = track->LoadCarLiveries(dev, ve.piz, ve.dffBase, kLog);
-        // First-to-3-rounds match (the ported elimination/scoring rules). This
-        // grids all 4 cars at the start line and runs the countdown.
-        track->StartMatch(3);
+        // Start the match: seed scores (FUN_0040b180), grid all 4 cars at the
+        // start line and run the countdown. The match length follows from the
+        // seed and FUN_00410510's per-rule target; SetRaceRule below re-seeds
+        // with the real rule (G-G1, D3 2026-09-26).
+        track->StartMatch();
         // Finding 16: bind the standings badge to the real per-car Player Colour
         // (the original's DAT_007f1a1c per-car array). The config's cars[i].colour
         // IS that value; copy it into the scene so the HUD reads the same source.
@@ -149,7 +151,7 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         track->InitPickups();        // place power-up orbs along the gate ribbon
         m_powerups.ready = true;
         logf("Begin: track ready, vehicle=%s player_car=%d liveries=%d "
-             "-> StartMatch(3) particles=%d pickups=on gameMode=%d raceRule=%d "
+             "-> StartMatch particles=%d pickups=on gameMode=%d raceRule=%d "
              "mode=%s laps=%d [real sim active]",
              ve.dffBase, (int)car, (int)liv, ptype, m_cfg.gameMode, m_cfg.raceRule,
              m_cfg.raceMode == 1 ? "laps" : "elim", m_cfg.laps);

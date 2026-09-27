@@ -1,0 +1,67 @@
+{
+ "armed": true,
+ "err": null,
+ "seg": {
+  "calls": 5298,
+  "agree": 5298,
+  "mis": 0,
+  "ret1": 0,
+  "byRule": {
+   "5": {
+    "calls": 5298,
+    "agree": 5298,
+    "mis": 0,
+    "ret1": 0
+   }
+  }
+ },
+ "ev": {
+  "calls": 0,
+  "agree": 0,
+  "mis": 0,
+  "byRule": {}
+ },
+ "ord": {
+  "calls": 5559,
+  "agree": 5559,
+  "mis": 0,
+  "appends": 0,
+  "resets": 0
+ },
+ "misrec": [],
+ "samp": [],
+ "lastOrder": [
+  -1,
+  -1,
+  -1,
+  -1
+ ],
+ "seen": {
+  "5": {
+   "n": 5298,
+   "collTotMax": 1,
+   "collDoneMax": 0,
+   "timerMin": 0,
+   "timerMax": 0,
+   "snap1": {
+    "0": 49,
+    "1002": 4944,
+    "1003": 305
+   },
+   "m0Max": 2.327795289858159e-09,
+   "m1Max": 0.3165455460548401,
+   "motion0Nz": 0,
+   "deadMax": 3
+  }
+ },
+ "run": {
+  "track": 3,
+  "mode": 3,
+  "cars": 4,
+  "rule": 5,
+  "hold": 90,
+  "pid": 35244,
+  "hooks": null,
+  "ts": "2026-09-26 21:17:09"
+ }
+}

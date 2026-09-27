@@ -704,20 +704,21 @@ implementations.
 
 "No `MASHED_*` flag is scaffold-selecting" (below) is a claim about flags only. The AI third
 ~~still RUNS a scaffold by default (the motion model in (c))~~ no longer does since
-2026-09-26 (`D3_AI_PORT_2026-09-26.md` §3); the gate is still not met on (b) and on the
-modes criteria.
+2026-09-26 (`D3_AI_PORT_2026-09-26.md` §3); the gate is still not met on AI (b). The modes
+criteria are all met since 2026-09-26 (`D3_MODES_2026-09-26.md`).
 
-#### D3 STATUS 2026-09-26 (AI + powerups rows 2026-09-26) — NOT CLOSED. Gate table:
+#### D3 STATUS 2026-09-26 (AI + powerups + modes rows 2026-09-26) — NOT CLOSED (AI (b) open). Gate table:
 
 | Third | Default path today | Measured against the original | Verdict |
 |---|---|---|---|
 | **AI (WS-C)** | **ported tick FUN_00418860 every frame; its ctrl bytes drive the opponents through the ported physics chain** (2026-09-26) | control-byte diff vs the (b) tolerance, `verify/d3_ai_20260926/sa2.csv` vs 4 original runs: steer 80-96 distinct values per car (was 2-3; original 29-96) (`D3_AI_PORT_2026-09-26.md`) | **(a) met, (b) NOT met - cars 2/3 pass all 10 bands, car 1 fails 2 (`c0`/`c1` distinct 7/82 vs 13..37/17..70), (c) met, (d) met** (`MASHED_AI_TICK` deleted). Targeting modes 1..10 still stubbed |
 | **Powerups (WS-D)** | ported dispatcher, **per-frame over 4 slots since 2026-09-26** (G-D1 closed) | 2026-09-26: `--statediff-puhook` capture of all 9 types, replayed through the port TUs: **all 9 decision traces CLEAN, floats bit-exact** (7 of 9 were wrong before and fixed); control RED on 7/9 (`D3_POWERUPS_2026-09-26.md`) | **(a) met, (b) met 2026-09-26, (c) met on decision fields** - slots 1, 2, 3 armed and FIRED in a 180 s standalone race (`FUN_00415220` ported; OIL is the only type the Training orbs gave, so only that branch is observed live); contact outcomes of MISSILE/MORTAR/DRUM/P_MINE blocked on `ContactStubs.cpp` |
-| **Modes (WS-G)** | ported `RaceModes` -> `RuleEngine`, default-on | live oracle, rules 0/1/2: 0 mismatches over 1290-3963 calls per fn | **GREEN on rules 0/1/2 only** (3 of 11 rules, APPEND branch never fired, G-G1/G-G2 open) |
+| **Modes (WS-G)** | ported `RaceModes` -> `RuleEngine`, **default-on on every route** (G-G2 closed 2026-09-26); match target = ported `FUN_0040b180` seed + `FUN_00410510` score target (G-G1 closed) | 2026-09-26: live oracle, **all 11 rules**, 0 mismatches. Each rule's own `FUN_00410d10` branch ran on non-degenerate inputs (`seen` ranges); APPEND fired on rules 4/7/8/9; rule 10 needs mode 3/4/5 to tick (`D3_MODES_2026-09-26.md`) | **(a) met, (b) met, (c) met, (d) met.** Residues (§6 of the note): teams seed on the frontend route, delta -1000 display, time-attack flag, all `motion0` exits unreached |
 
 Notes: `re/analysis/D3_AUDIT_2026-09-14.md` (step 1), `D3_AI_TICK_WIRING_2026-09-14.md`
 (step 2), `D3_MODES_2026-09-14.md` (step 4), `D3_POWERUPS_2026-09-26.md` (powerups),
-`D3_AI_PORT_2026-09-26.md` (AI port + powerups (b)).
+`D3_AI_PORT_2026-09-26.md` (AI port + powerups (b)), `D3_MODES_2026-09-26.md` (modes (a)-(d)
++ the rule-10 per-round re-seed refutation).
 
 **No `MASHED_*` flag reachable in a clean-env race is scaffold-selecting** — step 5 has
 nothing to invert. ~~The AI gap is a PORT: `FUN_00443300` and the `FUN_00443dc0` tail are
