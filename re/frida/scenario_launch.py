@@ -673,13 +673,118 @@ function sdArm(car, withAi){
 // against FUN_00418560's writes this session): [0],[1] steer pair, [3] fire,
 // [4] accel, [5] brake.
 const CTRL_STEP = 0x00416250;
-const AS = { armed:false, rows:[], calls:0, err:null, cap:200000 };
-function aiStepArm(){
+// [D3 2026-09-27] SECOND probe, the one that answers "why does car 1 split
+// differently": the lookahead TARGET and the FUN_00443440 CURVATURE are stack
+// locals of FUN_00416250 and are gone by the time the outer onLeave runs.
+//
+// MEASURED 2026-09-27, two dead ends before this shape (both killed the game inside
+// 2 render ticks, with MASHED_AISTEP_LOCALS=0 as the control, which completed a
+// 5463-call capture): Interceptor.attach at 0x004165a5 (`fld [0x5d757c]`, esp == F)
+// and at 0x0041657c (`mov edx,[esp+0x38]`, esp == F). Frida's Interceptor is an
+// ENTRY hook — it swaps the dword at [esp] to route the return through its leave
+// trampoline — so pointing it mid-body makes it overwrite a LOCAL. The address being
+// a plain MOV rather than a call or an x87 op made no difference, which is what rules
+// out both the x87 and the call-relocation explanations.
+//
+// So take the two values at genuine FUNCTION ENTRIES instead, one callee each:
+//   0x00415e20  FUN_00415e20(v, tgt_x, tgt_z) — the FINAL target, after the whole
+//               targeting chain, because 0x00416580..0x0041658f pushes it straight
+//               out of [F+0x34]/[F+0x38] into this call.
+//   0x00443440  FUN_00443440(spline, &xz, 10.0f, &curv_out, 0) — args pushed at
+//               0x0041629a..0x004162ab; the out float is folded to [0,180] by the
+//               caller at 0x004162be..0x004162d5 (`if (180 < c) c = 360 - c`), so the
+//               fold is applied here to match what the bands actually see.
+// Both are strictly nested inside the FUN_00416250 call being recorded, so one
+// pending slot is enough on the single-threaded game loop, and the CTRL_STEP onEnter
+// clears it so a stale value can never be attributed to the next call.
+//
+// The steering ERROR is not read off the stack at all: FUN_00416250 stores it to a
+// GLOBAL on both band paths — 0x008032dc + v*0x14 at 0x004165f7 (band err < 180, with
+// 0x008032d8 forced to 360.0 at 0x004165cc) and 0x008032d8 + v*0x14 at 0x0041670c
+// (band err > 180, with 0x008032dc forced to 0.0 at 0x004166db). Reading both globals
+// at the outer onLeave gives the error AND which of the two steering bands took it,
+// with no stack dependency. Own x/z likewise come from the record base the existing
+// rec_9e4 column already uses (0x008815a0 + v*0xd04, +0x30/+0x38 per 0x0041628d).
+// [D3 2026-09-27 pass 2] FUN_00416230(v, idx == 0) is called once per pass of
+// FUN_00443dc0's phase-8 wall-march (0x00444a2c, inside the `je 0x4446a4` loop at
+// 0x00444a3a), and its whole body is `[0x89a500 + v*0x74] = arg2` (0x0041623b). So
+// counting its calls between two FUN_00416250 entries = how many times the lookahead
+// had to step its target back, and the last arg2 = whether it ended up at walk point 0.
+// That is the shared observable for "is the standalone's target short because the
+// wall-march keeps rejecting it".
+const MARCH_FN    = 0x00416230;
+// [D3 2026-09-27 pass 3] The car's own XZ. MEASURED: reading 0x008815a0 + v*0xd04 +
+// 0x30/+0x38 (the base the rec_9e4 column uses) returns 0.0 on every row, so that base
+// is NOT where FUN_00416250 gets the position: it calls FUN_0046d4a0(&p, v) and then
+// reads *(p + 0x30) / *(p + 0x38) (0x00416284 / 0x0041628d / 0x00416297). So learn the
+// per-vehicle record POINTER from FUN_0046d4a0 once, cache it, and detach — an entry
+// hook on a helper this hot would otherwise sit on the AI frame budget for the whole run.
+const RECPTR_FN   = 0x0046d4a0;
+const AS_RECP     = {};
+let AS_RECL       = null;
+const STEER_ANGLE = 0x00415e20;
+const CURV_FN     = 0x00443440;
+let AS_PEND = null;      // [tgt_x, tgt_z, curv, v_of_steer_call]
+let AS_MARCH = [0, -1];  // [passes since the last CTRL_STEP entry, last idx0 flag]
+const AS = { armed:false, rows:[], calls:0, err:null, cap:200000,
+             locals:0, curv:0, localsErr:null, joinMiss:0, noLocals:0 };
+function aiStepArm(withLocals){
   if (AS.armed) return 'already armed';
   try {
     const ph = ga(PHASE);
+    if (withLocals) {
+      Interceptor.attach(ga(CURV_FN), { onEnter(a){
+        try {
+          // only the FUN_00416250 call site: dist == 10.0f and the 5th arg == 0
+          const sp = this.context.esp;
+          if (sp.add(12).readU32() !== 0x41200000 || sp.add(20).readS32() !== 0) return;
+          this.out = sp.add(16).readPointer();
+        } catch(e){ if (!AS.localsErr) AS.localsErr = 'curvEnter ' + e; }
+      }, onLeave(){
+        try {
+          if (!this.out) return;
+          let c = this.out.readFloat();
+          if (c > 180.0) c = 360.0 - c;       // 0x004162be..0x004162d5
+          if (AS_PEND) AS_PEND[2] = c; else AS_PEND = [null, null, c, -1];
+          AS.curv++;
+        } catch(e){ if (!AS.localsErr) AS.localsErr = 'curvLeave ' + e; }
+      }});
+      AS_RECL = Interceptor.attach(ga(RECPTR_FN), {
+        onEnter(){ try { const sp = this.context.esp;
+                         this.o = sp.add(4).readPointer(); this.v = sp.add(8).readS32(); }
+                   catch(e){ this.o = null; } },
+        onLeave(){
+          try {
+            if (this.o === null || this.v < 0 || this.v > 3 || AS_RECP[this.v]) return;
+            AS_RECP[this.v] = this.o.readPointer();
+            if (AS_RECP[0] && AS_RECP[1] && AS_RECP[2] && AS_RECP[3] && AS_RECL) {
+              AS_RECL.detach(); AS_RECL = null;     // learned; stop paying for it
+            }
+          } catch(e){ if (!AS.localsErr) AS.localsErr = 'recLeave ' + e; }
+        }});
+      Interceptor.attach(ga(MARCH_FN), { onEnter(){
+        try {
+          const sp = this.context.esp;
+          AS_MARCH[0] += 1;
+          AS_MARCH[1] = sp.add(8).readS32();
+        } catch(e){ if (!AS.localsErr) AS.localsErr = 'marchEnter ' + e; }
+      }});
+      Interceptor.attach(ga(STEER_ANGLE), { onEnter(){
+        try {
+          const sp = this.context.esp;
+          const v  = sp.add(4).readS32();
+          const tx = sp.add(8).readFloat();
+          const tz = sp.add(12).readFloat();
+          if (AS_PEND) { AS_PEND[0] = tx; AS_PEND[1] = tz; AS_PEND[3] = v; }
+          else AS_PEND = [tx, tz, null, v];
+          AS.locals++;
+        } catch(e){ if (!AS.localsErr) AS.localsErr = 'steerEnter ' + e; }
+      }});
+    }
     Interceptor.attach(ga(CTRL_STEP), {
       onEnter(a){
+        AS_PEND = null;          // so a stale inner probe can never be attributed
+        AS_MARCH = [0, -1];
         this.skip = (ph.readU8() !== 3);
         if (this.skip) return;
         const sp = this.context.esp;
@@ -709,6 +814,25 @@ function aiStepArm(){
                         ga(0x008815a0).add(this.v * 0xd04 + 0x9e4).readFloat(),
                         ga(0x008815a0).add(this.v * 0xd04 + 0xb0c).readFloat(),
                         b.add(7).readU8()]);
+          // [D3 2026-09-27] the stack locals from the 0x00416596 probe plus the two
+          // steer-history globals, appended so the CSV stays a superset of the old
+          // columns. look_x,look_z,curv,mode,own_x,own_z,hist_d8,hist_dc.
+          const r = AS.rows[AS.rows.length - 1];
+          if (AS_PEND && (AS_PEND[3] === -1 || AS_PEND[3] === this.v)) {
+            r.push(AS_PEND[0] === null ? '' : AS_PEND[0],
+                   AS_PEND[1] === null ? '' : AS_PEND[1],
+                   AS_PEND[2] === null ? '' : AS_PEND[2]);
+          } else {
+            if (AS_PEND) AS.joinMiss++; else AS.noLocals++;
+            r.push('', '', '');
+          }
+          const rp = AS_RECP[this.v];
+          if (rp) r.push(rp.add(0x30).readFloat(), rp.add(0x38).readFloat()); // 0x0041628d/0x00416297
+          else    r.push('', '');
+          const h = ga(0x008032d8).add(this.v * 0x14);
+          r.push(h.readFloat(), h.add(4).readFloat());   // 0x004165cc/0x004165f7, 0x004166db/0x0041670c
+          r.push(AS_MARCH[0], AS_MARCH[1]);              // 0x00444a2c call count, last 0x0041623b arg
+          AS_PEND = null;
         } catch(e){ if (!AS.err) AS.err = '' + e; }
       }
     });
@@ -932,9 +1056,10 @@ rpc.exports = {
       return 'ctrl slot table was [' + out.join(',') + '] -> [0,1,2,3]';
     } catch(e){ return 'ERR ' + e; }
   },
-  aiStepArm: function(){ return aiStepArm(); },
+  aiStepArm: function(withLocals){ return aiStepArm(withLocals); },
   aiStepDrain: function(){ return aiStepDrain(); },
-  aiStepStats: function(){ return JSON.stringify({armed:AS.armed, calls:AS.calls, pending:AS.rows.length, err:AS.err}); },
+  aiStepStats: function(){ return JSON.stringify({armed:AS.armed, calls:AS.calls, pending:AS.rows.length, err:AS.err,
+                                                  locals:AS.locals, curv:AS.curv, localsErr:AS.localsErr, noLocals:AS.noLocals, joinMiss:AS.joinMiss, recp:Object.keys(AS_RECP).length}); },
   puArm: function(plan, subj, warm){ return puArm(plan, subj, warm); },
   puDrain: function(){ return puDrain(); },
   puStats: function(){ return JSON.stringify({armed:PU.armed, calls:PU.calls, n6:PU.n, st:PU.st,
@@ -1431,7 +1556,7 @@ def main():
             # Arm BEFORE the phase poke so frame 0 = the very first phase-3 tick.
             print("  [statediff]", E.sd_arm(args.statediff_car, args.statediff_aictrl))
             if args.statediff_aistep:
-                print("  [statediff]", E.ai_step_arm())
+                print("  [statediff]", E.ai_step_arm(os.environ.get("MASHED_AISTEP_LOCALS", "1") != "0"))
             if args.statediff_puhook:
                 print("  [statediff]", E.pu_arm(args.pu_plan, args.pu_subj, args.pu_warm))
             if args.statediff_drive and not args.statediff_drive_late:
@@ -1698,7 +1823,13 @@ def main():
                         f.write("frame,seq,v,block,spline,c0,c1,c3,c4,c5,"
                                 "ai_type,ai_spline_idx,ai_override,ai_mode,"
                                 "clk_0ff4,step_1008,diff_a360,flag_a368,tgt_7ffc,"
-                                "substate,rec_9e4,rec_b0c,c7" + chr(10))
+                                "substate,rec_9e4,rec_b0c,c7,"
+                                # [D3 2026-09-27] FUN_00416250 stack locals (probe
+                                # 0x00416596) + the two steer-history globals
+                                # 0x008032d8/0x008032dc + v*0x14, which carry the error
+                                # and which of the two steering bands took it.
+                                "look_x,look_z,curv,own_x,own_z,hist_d8,hist_dc,march_n,march_idx0"
+                                + chr(10))
                         for r in step_rows:
                             f.write(",".join(str(x) for x in r) + chr(10))
                     cars = sorted({r[2] for r in step_rows})

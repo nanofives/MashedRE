@@ -117,6 +117,16 @@ Host s_host = {
 
 inline float bits_to_f(std::uint32_t b) { float f; std::memcpy(&f, &b, 4); return f; }
 
+// [D3 2026-09-27] step-locals mirror, see AiStandalone.h / the 0x004165a5 probe.
+StepLocals s_step_locals[4] = {};
+void RecordStepLocals(int v, float lx, float lz, float curv, float err, int mode,
+                      float ox, float oz) {
+    if (v < 0 || v >= 4) return;
+    StepLocals& s = s_step_locals[v];
+    s.look_x = lx; s.look_z = lz; s.curv = curv; s.err = err;
+    s.own_x = ox;  s.own_z = oz;  s.mode = mode;  s.valid = true;
+}
+
 // per-vehicle behaviour record field address (base + v*0x74; AiState.h field bases).
 inline std::uintptr_t st_field(std::uintptr_t field, int v) {
     return field + static_cast<std::uintptr_t>(v) * 0x74u;
@@ -396,6 +406,7 @@ void SplineLookahead(std::uintptr_t spline, float ownX, float ownZ, int v, float
     //     (0/1 -> 0, else -2) and take that point (0x00444a40..0x00444a5b).
     int idx = best;
     int anyBlocked = 0;   // local_164
+    int marchPasses = 0;  // [D3 2026-09-27] = the original's FUN_00416230 call count
     for (;;) {
         int done = 0;     // local_194
         const float dx  = out[0] - ownX;
@@ -432,12 +443,20 @@ void SplineLookahead(std::uintptr_t spline, float ownX, float ownZ, int v, float
             out[1] = pts[idx*2 + 1];
         }
         I32(0x0089a500u + static_cast<std::uintptr_t>(v) * 0x74u) = (idx == 0) ? 1 : 0; // FUN_00416230
+        ++marchPasses;
         if (done) break;
     }
     if (anyBlocked) {                                               // 0x00444a40
         const int j = (idx == 0 || idx == 1) ? 0 : idx - 2;
         out[0] = pts[j*2];
         out[1] = pts[j*2 + 1];
+        idx = j;
+    }
+    // [D3 2026-09-27] diagnostic only (MASHED_AI_STEPDUMP), no state the port reads.
+    if (v >= 0 && v < 4) {
+        StepLocals& sl = s_step_locals[v];
+        sl.march_n = marchPasses; sl.march_idx0 = (idx == 0) ? 1 : 0;
+        sl.look_best = best; sl.look_idx = idx; sl.look_blk = anyBlocked;
     }
 }
 
@@ -615,16 +634,62 @@ inline std::uint8_t RoundST0(float x){
 }
 inline long Ftol(float x) { return static_cast<long>(x); }
 
+// U-D3-AIRAND RESOLVED 2026-09-27: the ring does not have to be read out of a live
+// original — FUN_00534990 builds it from a hard-coded seed with no entropy input.
+// [D3 2026-09-27] FUN_00534870 + its opener FUN_00534990, ported VERBATIM. The LCG
+// stand-in is gone. Measured cause for replacing it (D3_AI_RESIDUE_2026-09-27.md §3):
+// FUN_004177b0's one-shot band-0 roll is a 20% event, the original won it in every
+// capture taken this session and the stand-in lost it deterministically on every run,
+// which is what left DAT_0089a368 at 0 through the whole criterion-(b) window.
+//
+// State block, at `S = DAT_007dc578 + DAT_007d3ff8` in the original (0x00534876 on):
+//   S+0x0 ring base, S+0x4 cursor p, S+0x8 cursor q, S+0xc ring end.
+// FUN_00534990 allocates 0x7c bytes = 31 dwords (0x005349a0), seeds
+//   ring[0] = 0x9a319039                                        (0x005349e2)
+//   ring[i] = ring[i-1] * 0x41c64e6d + 0x3039, i = 1..30        (0x005349fb..0x00534a07)
+// sets p = base + 0xc, q = base, end = base + 0x7c (0x005349bd..0x005349da, repeated at
+// 0x00534a0e), then discards 0x136 = 310 draws (0x00534a22..0x00534a2f). There is NO
+// entropy input: the original's stream is fixed from engine init, so this is reproducible
+// standalone. What is NOT reproducible is the CALL INDEX — the original's other callers
+// (FUN_00472690, FUN_004b44f0, FUN_004b4510) draw from the same ring — so this makes the
+// distribution faithful, not the individual draw.
+std::uint32_t s_rw_ring[31];
+std::uint32_t* s_rw_p   = nullptr;
+std::uint32_t* s_rw_q   = nullptr;
+std::uint32_t* s_rw_end = nullptr;
+
+std::uint32_t RwRandomNext()                                    // FUN_00534870
+{
+    *s_rw_p += *s_rw_q;                                         // 0x00534876..0x00534884
+    std::uint32_t u = *s_rw_p;                                  // 0x00534889
+    ++s_rw_p;                                                   // 0x0053488e
+    u >>= 1;                                                    // 0x00534893
+    if (s_rw_end <= s_rw_p) {                                   // 0x0053489b
+        s_rw_p = s_rw_ring;                                     // 0x005348a3
+        ++s_rw_q;                                               // 0x005348ac (NOT wrapped here)
+        return u;
+    }
+    ++s_rw_q;                                                   // 0x005348b8
+    if (s_rw_end <= s_rw_q) s_rw_q = s_rw_ring;                 // 0x005348c1
+    return u;
+}
+
+void RwRandomOpen()                                             // FUN_00534990
+{
+    s_rw_ring[0] = 0x9a319039u;
+    for (int i = 1; i < 31; ++i) s_rw_ring[i] = s_rw_ring[i - 1] * 0x41c64e6du + 0x3039u;
+    s_rw_p = s_rw_ring + 3; s_rw_q = s_rw_ring; s_rw_end = s_rw_ring + 31;
+    for (int i = 0; i < 0x136; ++i) RwRandomNext();
+}
+
 // FUN_00472650(lo, hi) = (hi - lo) * (u & 0x7fffffff) * _DAT_005cd314 + lo, with
-// _DAT_005cd314 = 0x30000000 = 2^-31 and u = FUN_00534870(), RenderWare's additive
-// lagged generator over a ring whose seed/state the standalone does not have
-// ([UNCERTAIN] U-D3-AIRAND: next, read the ring at *(0x007dc578)+DAT_007d3ff8 in a live
-// original). The LAW is verbatim; u is a 32-bit LCG stand-in, deterministic per boot.
+// _DAT_005cd314 = 0x30000000 = 2^-31 and u = FUN_00534870(). Opened lazily once per
+// process, as the original opens it once at engine init and never reseeds.
 float AiRand(float lo, float hi)
 {
-    static std::uint32_t s = 0x2545f491u;
-    s = s * 1664525u + 1013904223u;
-    return (hi - lo) * static_cast<float>(s & 0x7fffffffu) * 4.656612873e-10f + lo;
+    if (!s_rw_p) RwRandomOpen();
+    const std::uint32_t u = RwRandomNext();
+    return (hi - lo) * static_cast<float>(u & 0x7fffffffu) * 4.656612873e-10f + lo;
 }
 
 // ===========================================================================
@@ -792,6 +857,10 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
 
     const float err = SteerAngleErrorFwd(v, tx, tz);                  // FUN_00415e20 @0x00416596
     const int   frame = I32(0x007f0ff4u);
+    // [D3 2026-09-27] mirror of the original-side probe at 0x004165a5 (esp == locals
+    // base there): the same six floats + mode, so the two step dumps stay column-for-
+    // column comparable. Diagnostic only; no state the ported logic reads.
+    RecordStepLocals(v, tx, tz, curv, err, mode, ownX, ownZ);
     float X = 0.0f;                                                    // x87 value pushed at 0x004165a5
 
     // ---- steer, err < 180 (0x004165c0..0x004166b4) ----
@@ -1680,6 +1749,20 @@ void Ai_ResetRace()
         I32(0x008032d4u + static_cast<std::uintptr_t>(v) * 0x14u) = 1000;
     }
     I32(0x007f0ff4u) = 0; I32(kFrame0ff8) = 0;
+    // [D3 2026-09-27] DIAGNOSTIC knob, default OFF, no effect on the shipping path.
+    // FUN_004177b0's band-0 roll (0x00417c43..0x00417c7a: prob 20 for difficulty row 2,
+    // table 0x005f30a0[10]) is a ONE-shot 20% chance per race — the band needs
+    // `tickscale - DAT_0089a370 > 1.0` AND `tickscale < 2.0`, and firing the band writes
+    // DAT_0089a370 = tickscale, so it can never come round again. MEASURED 2026-09-27: the
+    // original's o4 capture won that roll (DAT_0089a368 0 -> 1 at 61 calls into the racing
+    // window, on all three cars), the standalone's LCG stand-in for FUN_00534870 loses it
+    // and is deterministic per boot, so it loses it EVERY run. Setting this to 1 seeds the
+    // won-roll regime so the two captures can be compared in the same regime; it is a
+    // measurement aid, not a port of anything.
+    {
+        static const char* e = std::getenv("MASHED_AI_DIFFFLAG");
+        if (e && e[0]) I32(0x0089a368u) = std::atoi(e);
+    }
 }
 
 // FUN_00414030(v) — DAT_008032d4[v*5] = 1000 (decomp pool0 2026-09-26), so the next
@@ -1689,6 +1772,13 @@ void Ai_ResetVehicleIndex(int v)
 {
     if (v < 0 || v > 3) return;
     I32(0x008032d4u + static_cast<std::uintptr_t>(v) * 0x14u) = 1000;
+}
+
+// [D3 2026-09-27] diagnostic accessor for MASHED_AI_STEPDUMP.
+const StepLocals& Ai_LastStepLocals(int v)
+{
+    static const StepLocals kEmpty = {};
+    return (v >= 0 && v < 4) ? s_step_locals[v] : kEmpty;
 }
 
 } // namespace Ai

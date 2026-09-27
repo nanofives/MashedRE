@@ -3384,7 +3384,19 @@ void TrackRenderer::AiStepDump() {
         std::fprintf(lf, "frame,seq,v,block,spline,c0,c1,c3,c4,c5,"
                          "ai_type,ai_spline_idx,ai_override,ai_mode,"
                          "clk_0ff4,step_1008,diff_a360,flag_a368,tgt_7ffc,"
-                         "substate,rec_9e4,rec_b0c,c7\n");
+                         "substate,rec_9e4,rec_b0c,c7,"
+                         // [D3 2026-09-27] same columns the original-side capture adds:
+                         // the FUN_00416250 target/curvature (read there off the entry
+                         // hooks on FUN_00415e20 / FUN_00443440), the record's own x/z
+                         // (+0x30/+0x38 per 0x0041628d/0x00416297) and the two steer-history
+                         // globals 0x008032d8/0x008032dc + v*0x14, which carry the steering
+                         // error and which of the two bands took it.
+                         // march_n / march_idx0 mirror the original's FUN_00416230 call
+                         // count and last argument (0x00444a2c / 0x0041623b).
+                         "look_x,look_z,curv,own_x,own_z,hist_d8,hist_dc,march_n,march_idx0,"
+                         // standalone-only: the phase-8 walk index before and after the
+                         // wall-march, and whether any pass blocked.
+                         "look_best,look_idx,look_blk\n");
     }
     for (int v = 1; v <= 3; ++v) {
         if (!g_aib.alive[v]) continue;
@@ -3394,7 +3406,9 @@ void TrackRenderer::AiStepDump() {
         const std::uintptr_t ai  = Ai::kAiStateBase +
             static_cast<std::uintptr_t>(v) * Ai::kAiStateDwords * 4u;
         // [D3 2026-09-26] same trailing input columns as scenario_launch.py --statediff-aistep
-        std::fprintf(lf, "%d,%ld,%d,%lu,0,%u,%u,%u,%u,%u,%d,%d,%d,%d,%d,%d,%g,%d,%d,%d,%.9g,%.9g,%u\n",
+        const Ai::StepLocals& sl = Ai::Ai_LastStepLocals(v);
+        std::fprintf(lf, "%d,%ld,%d,%lu,0,%u,%u,%u,%u,%u,%d,%d,%d,%d,%d,%d,%g,%d,%d,%d,%.9g,%.9g,%u,"
+                         "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d,%d,%d,%d\n",
                      frame, seq++, v, static_cast<unsigned long>(blk),
                      Ai::U8(blk + 0), Ai::U8(blk + 1), Ai::U8(blk + 3),
                      Ai::U8(blk + 4), Ai::U8(blk + 5),
@@ -3405,7 +3419,13 @@ void TrackRenderer::AiStepDump() {
                      aib_ai_target_enable(), aib_game_sub_mode(),
                      static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x9e4)),
                      static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0xb0c)),
-                     Ai::U8(blk + 7));
+                     Ai::U8(blk + 7),
+                     static_cast<double>(sl.look_x), static_cast<double>(sl.look_z),
+                     static_cast<double>(sl.curv),
+                     static_cast<double>(sl.own_x), static_cast<double>(sl.own_z),
+                     static_cast<double>(Ai::F32(0x008032d8u + static_cast<std::uintptr_t>(v) * 0x14u)),
+                     static_cast<double>(Ai::F32(0x008032dcu + static_cast<std::uintptr_t>(v) * 0x14u)),
+                     sl.march_n, sl.march_idx0, sl.look_best, sl.look_idx, sl.look_blk);
     }
     std::fflush(lf);
     ++frame;

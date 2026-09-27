@@ -1,6 +1,71 @@
 # Next session — kickoff prompt
 
-## => KICKOFF PROMPT - D3 continuation (written 2026-09-26 after the AI port; modes item updated 2026-09-26 after the modes session), paste verbatim
+## => KICKOFF PROMPT - D3 AI (b), written 2026-09-27 after the residue session, paste verbatim
+
+```
+Session goal: close ROADMAP v3 D3 AI criterion (b). Read ROADMAP.md section D3 (pass
+criteria + the (b) tolerance, commit eebaf511) and re/analysis/D3_AI_RESIDUE_2026-09-27.md.
+Do NOT re-derive them. Do NOT change the tolerance bands.
+
+SETTLED 2026-09-27 (D3_AI_RESIDUE_2026-09-27.md — read it, do not re-measure):
+- (b) re-captured on the post-4ff428ad MASHED_ROUND route: IDENTICAL result. Cars 2/3
+  pass all 10 bands, car 1 fails the same 2 (c0/c1 distinct 7/82 vs 13..37/17..70).
+- CAUSE LOCALISED. DAT_0089a368 is 0 for the whole standalone window and 1 for 159 of
+  the original's 220 calls. It is set by a ONE-SHOT 20% roll (FUN_004177b0 tail
+  0x00417c43..0x00417c7a; row = __ftol(DAT_0089a360) = 2, band 0, table 0x005f30a0
+  row 2 = [20,40,60,75,100]). flag 1 -> BankSwitch sets line type 2 -> a different
+  spline bank -> curvature median 106 vs 10 -> the `mode==0 && curv>20` steer
+  multiplier at 0x0041665c saturates the magnitude -> few distinct c0/c1. Also
+  accel 255 -> 102 at 0x004169e0.
+- REFUTED: (i) "the ported lookahead target is too close" — that was an artifact of
+  own_x/own_z reading 0 at 0x008815a0+v*0xd04+0x30; with the record pointer taken from
+  FUN_0046d4a0 the two sides agree to within 15% on the max. (ii) "the phase-8
+  wall-march rejects the target" — march_n == 1 on 220/220 on BOTH sides.
+- U-D3-AIRAND RESOLVED: FUN_00534990 seeds the ring from a hard-coded constant with no
+  entropy, so FUN_00534870 is now ported VERBATIM (the LCG stand-in is gone). It does
+  NOT close (b) — the call index cannot match, only the distribution.
+- Both step dumps now carry the step INPUTS: look_x, look_z, curv, own_x, own_z,
+  hist_d8, hist_dc, march_n, march_idx0 (+ standalone-only look_best/look_idx/look_blk).
+  Compare with: py -3.12 re/tools/ai_step_compare.py <orig.aistep.csv> <sa.csv>
+- Frida note that cost a run: Interceptor.attach is an ENTRY hook (it swaps [esp]), so
+  it CANNOT be pointed mid-function. Probing 0x004165a5 and 0x0041657c each killed the
+  game in 2 ticks; MASHED_AISTEP_LOCALS=0 is the control.
+- MASHED_AI_DIFFFLAG=<n> seeds DAT_0089a368 at race reset. Diagnostic only, default OFF.
+
+DO, in this order:
+1. Decide (b) car 1 on evidence, not by moving a band. Either (a) port FUN_00414c30 so
+   modes 3/7 exist — the original's car 1 is in mode 7 for 115 of its 220 window calls —
+   which needs the world-object query FUN_00484c70 (stride 0x23 dwords) plus
+   FUN_0041f030 / FUN_0048a630 / FUN_00414300 / FUN_00414490 / FUN_00442cc0; or (b)
+   take 4 more ORIGINAL captures and establish whether the pooled envelope already
+   spans both DAT_0089a368 regimes, then state plainly whether the standalone lands
+   outside both. Whichever you pick, say so in the note before you run it.
+   FUN_00416060 (LOS) is a 20-line port on top of the existing TileBlocked, but it
+   cannot change a byte until a producer returns non-zero — do not land it alone.
+2. Brake share 0.005 standalone vs 0.109-0.268 original, unchanged by the RNG port AND
+   by MASHED_AI_DIFFFLAG=1. Rule 0x00416818 = (X > 20) && (rec+0x9e4 > 2000). X is
+   already derivable from hist_d8/hist_dc in both CSVs — find which conjunct fails.
+3. NEW, open: the standalone's opponents run 16-23% fast (rec_9e4 median 2818-2822 vs
+   2299-2423). No (b) band tests it. Check it against the D2 physics capture first — it
+   may be a physics residue, not AI.
+4. FUN_00442a60 is a SPECTATOR-CAMERA routine (it picks a car pair with FUN_0040e180
+   before filling 0x008989b0). Until FUN_0040e180 exists the array stays 0 and
+   MORTAR/DRUM/P_MINE/R_FLAME/SHOTGUN cannot pass their fire gates.
+5. MODES residues — unchanged, D3_MODES_2026-09-26.md section 6.
+
+RULES (unchanged): cite RVAs, NO-GUESSING, [UNCERTAIN] + next command; always
+--poke-ctrl-slots; launch muted; kill only your PIDs; trackers only via re-classify;
+C4 needs a canonical run with the hook live; never dereference a pointer read out of
+the image-pad.
+```
+
+## => D3 2026-09-27 — AI (b) still open, cause localised to DAT_0089a368
+
+> Record: `re/analysis/D3_AI_RESIDUE_2026-09-27.md`. Evidence: `verify/d3_ai_20260927/`
+> (`o4.msd.aistep.csv` original, `s6rng.csv` standalone, `s5flag.csv` the flag A/B).
+> Two hypotheses refuted, U-D3-AIRAND resolved and `FUN_00534870` ported verbatim.
+
+## => HISTORY: KICKOFF PROMPT - D3 continuation (written 2026-09-26 after the AI port; modes item updated 2026-09-26 after the modes session), superseded
 
 ```
 Session goal: close ROADMAP v3 D3. Read the D3 STATUS block and pass criteria in

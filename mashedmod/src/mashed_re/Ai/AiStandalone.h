@@ -88,4 +88,17 @@ void Ai_ResetRace();
 // FUN_00414030(v): force vehicle v's next lookahead to take the true nearest point.
 void Ai_ResetVehicleIndex(int v);
 
+// [D3 2026-09-27] Last control-step stack locals for vehicle v, so MASHED_AI_STEPDUMP
+// can carry the SAME seven columns the original-side probe at 0x004165a5 reads out of
+// FUN_00416250's frame (see re/frida/scenario_launch.py STEP_LOCALS). Order:
+//   look_x, look_z, curv, own_x, own_z  (+ the two steer-history globals, read direct)
+// march_n / march_idx0 mirror the original's FUN_00416230 call count and last argument
+// (0x00444a2c / 0x0041623b): how many times FUN_00443dc0's phase-8 wall-march stepped
+// the target back, and whether it ended at walk point 0. look_best / look_idx are
+// standalone-only and carry the pre- and post-march walk index.
+// `valid` is false until ControlStep has run once for v.
+struct StepLocals { float look_x, look_z, curv, err, own_x, own_z;
+                    int mode, march_n, march_idx0, look_best, look_idx, look_blk; bool valid; };
+const StepLocals& Ai_LastStepLocals(int v);
+
 } // namespace Ai
