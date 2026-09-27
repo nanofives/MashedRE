@@ -262,3 +262,72 @@ faked.
    sides, 220/220). Unchanged. Next: `reference_to 0x0089a360` WRITE sites in a pool slot.
 6. **Human slot state** (`FUN_0040e470(c) == 1`) — unchanged from 2026-09-26 §6.7.
 7. No C-level moved. `hooks.csv` untouched (trackers only via `re-classify`).
+
+## 9. PLAN — the (b) car-1 decision evidence (written BEFORE the captures)
+
+This section was committed on its own, with no capture run, so the analysis cannot be
+accused of having been shaped by its result. It takes **option (ii)** of §8 item 1 and
+`re/NEXT_SESSION.md` DO-1(b): establish by measurement whether the original's pooled (b)
+envelope spans **two** `DAT_0089a368` regimes, and whether the standalone lands outside
+both. **No tolerance band and no criterion text is touched by this session.** The output
+is evidence; the decision is the user's.
+
+### 9.1 What is being tested, and why the pooled envelope is suspect
+
+The envelope in `re/tools/ai_ctrl_window.py:50` `TOLERANCE` is the min..max over the
+original's 12 (run, car) observations. §1 of `D3_AI_PORT_2026-09-26.md` already records
+that **2 of those 5 runs took the flag path**, and §3 above shows the flag switches the
+spline bank, the curvature, the steer multiplier (`0x0041665c`) and the accel byte
+(`0x004169e0`). So the pooled envelope may be the **union of two disjoint regimes**
+rather than one population, in which case "inside the envelope" is a weaker statement
+than the criterion intends, and "outside it" for car 1 may mean outside BOTH regimes or
+outside only the one it is in. That distinction is the decision.
+
+### 9.2 The four steps, fixed in advance
+
+1. **N = 10 original captures** (N ≥ 8 required; 10 chosen for the rate estimate in
+   step 4), each on the **exact** recipe already in
+   `verify/d3_ai_20260927/o4.msd.provenance.json`:
+   ```
+   py -3.12 re/frida/scenario_launch.py --track 0 --mode 10 --cars 4 --car 0 \
+       --poke-ctrl-slots --statediff-out verify/d3_ai_20260927b/pN.msd \
+       --statediff-car 1 --statediff-aistep --hold 60
+   ```
+   `--poke-ctrl-slots` always; muted (`scenario_launch.py:1448` defaults
+   `MASHED_MUTE=1`). Runs are **sequential**, PIDs tracked and killed only by this
+   session. For each run and each car v ∈ {1,2,3} record the `flag_a368` sequence over
+   the 220-call window that `ai_ctrl_window.py` defines (first call with `c4 != 0`), and
+   `rec_9e4`.
+2. **Per-regime envelopes.** Split every (run, car) window into its `flag_a368 == 0`
+   prefix and its `flag_a368 == 1` suffix, and recompute **every one of the 10 band
+   columns** of `TOLERANCE` separately per regime. Because `*_distinct` counts grow with
+   the row count, each regime is measured over a **fixed** number of calls `K_r`, equal
+   to the minimum sub-window length over the qualifying observations (an observation
+   qualifies for regime r only if it has ≥ 30 calls of that regime), so all observations
+   in one envelope are measured on the same N. `K_0` and `K_1` are reported. New tool:
+   `re/tools/ai_flag_regime.py`, which reuses `ai_ctrl_window.py`'s window definition and
+   its stat set verbatim.
+3. **The standalone against each regime.** Two standalone captures on the recipe of
+   `D3_AI_PORT_2026-09-26.md` §4, one default (`DAT_0089a368` = 0 throughout) and one
+   with `MASHED_AI_DIFFFLAG=1` (§3.1; seeds the flag to 1 at `Ai_ResetRace`, ports
+   nothing). Each is scored with the same `K_r` truncation against the regime-0 and the
+   regime-1 envelope, per car. The result is a 3-way statement per car: inside regime 0,
+   inside regime 1, inside neither.
+4. **The flag-1 rate against 20%.** §3 item 1 reads the table entry as `20` at
+   `0x005f30a0` row 2 band 0. Band 0 is a one-shot, and §3 measures all three cars
+   flipping on the same call, so the trial is **once per run**, not per car. Report the
+   count of runs out of N that reached `flag_a368 == 1` inside the window, and its exact
+   binomial interval against p = 0.20. This is a consistency check on the reading of the
+   table, not a criterion.
+
+Also recorded in every run, per car, because §7 flagged it and no (b) band tests it:
+`rec_9e4` (speed) min / p05 / median / p95 / max, original vs both standalone regimes,
+to test the "standalone opponents run 16-23% fast" finding against the original's own
+run-to-run spread rather than against a single capture.
+
+### 9.3 What this plan does NOT do
+
+It does not port `FUN_00414c30` (option (i) of §8 item 1), it does not build, it does not
+touch `mashedmod/src`, and it does not move a band. If the per-regime envelopes turn out
+to be disjoint, the plan **reports that** and states the options; choosing among them is
+the user's call, recorded in §10.
