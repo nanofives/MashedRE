@@ -1136,6 +1136,120 @@ function puCxArm(listCsv){
   } catch(e){ PU_CX.err = '' + e; return 'ERR ' + e; }
 }
 function puCxDrain(){ const r = PU_CX.rows; PU_CX.rows = []; return r; }
+
+// --- D3-CONTACT 2026-09-28b: the TARGET-ACQUISITION inputs -----------------
+// Opt-in (--puhook-aim). Additive: its own channel, its own CSV, no change to
+// the .puhook.csv or .pucontact.csv schemas.
+//
+// WHY this channel exists. MORTAR, GUN and MISSILE all route their contact
+// calls through FUN_00459620, and its two query sites sit on OPPOSITE sides of
+// one branch: `if (local_104 == 0)`, the count of acquisition candidates.
+// Measured in verify/d3_contact_20260928 (pu_contact_report.py):
+//   g3 GUN     0x459c19 163/163 calls  -> candidate count was 0 on every call
+//   g4 GUN     0x459c19 163/163 calls  -> likewise
+//   g2 MISSILE 0x459c19   0/32  calls  -> a candidate on EVERY call
+//   g2 MORTAR  0x459c19  96/153 calls  -> split
+// So the branch is exercised both ways and no stub can be right. Reproducing it
+// needs the four car positions, their active flags and the firing car's aim
+// matrix -- none of which the capture recorded, and none of which the replay's
+// Backend::car[4] is ever given (it is default-constructed all-zero).
+//
+// Addresses, all disassembled from original/MASHED.exe.unpatched (the pinned
+// anchor) or decompiled from a read-only pool clone:
+//   FUN_00459620 prologue 0x00459620..0x004596b9:
+//     `SUB ESP,0x110` @0x00459620 then `MOV EDX,[ESP+0x114]` @0x00459626 = arg1.
+//     After `PUSH EBX/EBP/ESI/EDI` (0x10) the args sit at [ESP+0x124..0x134].
+//     `IMUL EBP,EBP,0x58` @0x00459632 + `ADD EBP,0x68b9f8` @0x00459638, so the
+//     aim record base is 0x0068b9f8 stride 0x58 -- NOT the 0x0068b9fc the
+//     decompiler glosses (it names the +4 field).
+//     `MOV [EBP+4],EAX` @0x0045966a  = arg4 (the cone limit)
+//     `MOV [EBP+0x18],ECX` @0x0045966d = arg3 (the range)
+//     [EBP+0x48..0x50] = arg2[0..2]  @0x00459685..0x00459693 (the origin)
+//     [EBP+0x38] = the 16-dword aim matrix buffer, filled by
+//     `CALL 0x41f220` @0x004596b0.
+//   FUN_0041f030 (0x0041f030): car position = 4 dwords at 0x0063dc38 + car*0x2ac.
+//   FUN_0040e370 (0x0040e370): `car > 3 -> false`, else
+//     `*(int*)([0x005f2770] + car*4 + 0x34) != 0`.
+//   FUN_004075a0 (0x004075a0): pure getter, `return [0x0063a5d0]` -- the second
+//     candidate list's count, which the acquisition loop also walks.
+//
+// Floats are emitted as raw hex dwords. The dt lesson from the 2026-09-27
+// captures applies: a 6-digit decimal is not the value the game computed with.
+const PU_AIM = { armed:false, rows:[], calls:0, cap:20000, pending:null,
+                 orphans:0, err:null };
+function puAimF(p){            // one float as its exact bits, never a decimal
+  try { return '0x' + (p.readU32() >>> 0).toString(16); } catch(_){ return ''; }
+}
+function puAimArm(){
+  if (PU_AIM.armed) return 'already armed';
+  try {
+    // (1) the aim matrix. FUN_0041f220 fills arg2 with 16 dwords copied from the
+    // car's own matrix; read it on LEAVE, because FUN_00459620's tail overwrites
+    // the same buffer (`FUN_004b42c0` + the 0x10-dword copy at its epilogue), so
+    // reading it at the aim call's EXIT would report the NEXT frame's basis.
+    // Attached at a function ENTRY, not mid-function: CLAUDE.md records that a
+    // mid-function Interceptor clobbers a local and kills the game in ~2 ticks.
+    //
+    // Call order is FUN_00459620.onEnter -> this onEnter/onLeave -> .onLeave, so
+    // this is where the pending row gets its at-row and where it is pushed. A row
+    // is emitted ONLY here: an acquisition call that somehow never reached
+    // 0x004596b0 would have no basis to report, and dropping it is honest where
+    // padding it with the previous call's basis would not be.
+    PU_AIM.lisMat = Interceptor.attach(ga(0x0041f220), {
+      onEnter(){
+        // only the call FUN_00459620 makes; RA of `CALL 0x41f220` @0x004596b0.
+        this.mine = (this.returnAddress.toUInt32() >>> 0) === 0x004596b5;
+        if (this.mine) this.dst = this.context.esp.add(8).readU32();
+      },
+      onLeave(){
+        if (!this.mine) return;
+        const row = PU_AIM.pending; PU_AIM.pending = null;
+        if (!row) { PU_AIM.orphans++; return; }
+        try {
+          const m = ptr(this.dst);
+          for (let i = 8; i < 11; ++i) row.push(puAimF(m.add(i * 4)));  // +0x20..0x28
+        } catch(_){ row.push('', '', ''); }
+        if (PU_AIM.rows.length < PU_AIM.cap) PU_AIM.rows.push(row);
+      }
+    });
+    // (2) the acquisition call itself.
+    PU_AIM.lis = Interceptor.attach(ga(0x00459620), {
+      onEnter(){
+        PU_AIM.calls++;
+        if (PU_AIM.rows.length >= PU_AIM.cap) return;
+        const sp = this.context.esp;            // pre-prologue: arg1 at esp+4
+        const row = [SD.frames, PU.calls];
+        let slot = -1;
+        try { slot = sp.add(4).readS32(); } catch(_){}
+        row.push(slot);
+        try {                                   // arg2 -> the origin vec3
+          const o = ptr(sp.add(8).readU32());
+          for (let i = 0; i < 3; ++i) row.push(puAimF(o.add(i * 4)));
+        } catch(_){ row.push('', '', ''); }
+        row.push(puAimF(sp.add(0x0c)));         // arg3 range
+        row.push(puAimF(sp.add(0x10)));         // arg4 cone limit
+        // the second candidate list's count, FUN_004075a0's global.
+        try { row.push(ga(0x0063a5d0).readS32()); } catch(_){ row.push(-1); }
+        // the four cars: active flag then position.
+        let base = null;
+        try { base = ptr(ga(0x005f2770).readU32()); } catch(_){}
+        for (let c = 0; c < 4; ++c) {
+          let act = -1;
+          try { act = base ? base.add(c * 4 + 0x34).readS32() : -1; } catch(_){}
+          row.push(act === 0 ? 0 : (act === -1 ? -1 : 1));
+          try {
+            const p = ga(0x0063dc38 + c * 0x2ac);
+            for (let i = 0; i < 3; ++i) row.push(puAimF(p.add(i * 4)));
+          } catch(_){ row.push('', '', ''); }
+        }
+        PU_AIM.pending = row;   // pushed by (1) above, once the at-row is known
+      }
+    });
+    PU_AIM.armed = true;
+    return 'puhook-aim armed (0x00459620 + 0x0041f220)';
+  } catch(e){ PU_AIM.err = '' + e; return 'ERR ' + e; }
+}
+function puAimDrain(){ const r = PU_AIM.rows; PU_AIM.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
 // --- CANONICAL-OBSERVATION BLOCK ------------------------------------------
@@ -1185,6 +1299,11 @@ rpc.exports = {
                                               pi:PU.pi, acts:PU.acts, pending:PU.rows.length, err:PU.err}); },
   puCxArm: function(list){ return puCxArm(list); },
   puCxDrain: function(){ return puCxDrain(); },
+  puAimArm: function(){ return puAimArm(); },
+  puAimDrain: function(){ return puAimDrain(); },
+  puAimStats: function(){ return JSON.stringify({armed:PU_AIM.armed,
+                          calls:PU_AIM.calls, rows:PU_AIM.rows.length,
+                          orphans:PU_AIM.orphans, err:PU_AIM.err}); },
   puCxStats: function(){ return JSON.stringify({armed:PU_CX.armed, counts:PU_CX.counts,
                                                 hot:PU_CX.hot, pending:PU_CX.rows.length,
                                                 err:PU_CX.err}); },
@@ -1485,6 +1604,17 @@ def main():
                          "scripted fire pattern on ctrl byte 0x007f103f (CONTRIVED, C3-grade). "
                          "Empty = observe natural pickups only.")
     ap.add_argument("--pu-subj", type=int, default=0, help="slot the --pu-plan drives (default 0)")
+    ap.add_argument("--puhook-aim", action="store_true",
+                    help="[D3-CONTACT] with --statediff-puhook, ALSO hook the target "
+                         "ACQUISITION routine FUN_00459620 (the one MORTAR, GUN and "
+                         "MISSILE share) and write <out>.puaim.csv. One row per "
+                         "acquisition call: the call's four arguments, the firing car's "
+                         "aim-matrix `at` row, the second candidate list's count, and "
+                         "all four cars' active flag + position. These are exactly the "
+                         "inputs to the `candidate count == 0` branch that decides "
+                         "whether the 0x459c19 query site fires; without them a replay "
+                         "cannot reproduce either query site's call count. Floats are "
+                         "emitted as raw hex dwords.")
     ap.add_argument("--puhook-contacts", nargs="?", const="all", default="",
                     help="[D3-CONTACT] with --statediff-puhook, ALSO hook the power-up "
                          "contact/impact chain and write <out>.pucontact.csv: frame,call,rva,"
@@ -1698,6 +1828,8 @@ def main():
                 print("  [statediff]", E.pu_arm(args.pu_plan, args.pu_subj, args.pu_warm))
                 if args.puhook_contacts:
                     print("  [statediff]", E.pu_cx_arm(args.puhook_contacts))
+                if args.puhook_aim:
+                    print("  [statediff]", E.pu_aim_arm())
             if args.statediff_drive and not args.statediff_drive_late:
                 print("  [statediff]", E.arm_cook())
                 print(f"  [statediff] drive: full accel, steer={args.statediff_steer:+d} ->",
@@ -2016,6 +2148,23 @@ def main():
                         for r in cx_rows:
                             f.write(",".join(str(x) for x in r) + chr(10))
                     print(f"  [statediff] pucontact {len(cx_rows)} rows -> {cxp}")
+                if args.statediff_puhook and args.puhook_aim:
+                    try: print("  [statediff] puhook-aim agent:", E.pu_aim_stats())
+                    except Exception as _e: print("  [statediff] puaim stats failed:", _e)
+                    aim_rows = []
+                    try: aim_rows = E.pu_aim_drain()
+                    except Exception as _e: print("  [statediff] puaim drain failed:", _e)
+                    aimp = outp.with_suffix(outp.suffix + ".puaim.csv")
+                    cols = ["frame", "call", "slot", "ox", "oy", "oz", "range", "cone",
+                            "list_n"]
+                    for c in range(4):
+                        cols += [f"c{c}_act", f"c{c}_x", f"c{c}_y", f"c{c}_z"]
+                    cols += ["at_x", "at_y", "at_z"]
+                    with open(aimp, "w", newline="") as f:
+                        f.write(",".join(cols) + chr(10))
+                        for r in aim_rows:
+                            f.write(",".join(str(x) for x in r) + chr(10))
+                    print(f"  [statediff] puaim {len(aim_rows)} rows -> {aimp}")
                 if args.statediff_aictrl:
                     ai_snapshot = list(sd_ai)
                     aip = outp.with_suffix(outp.suffix + ".aictrl.csv")
