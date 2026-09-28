@@ -12,7 +12,9 @@ Ghidra MCP did not load; no Ghidra project was opened for writing.
 ## 0. Headline
 
 1. **OIL, P_MINE, SHOTGUN and DRUM contact outcomes are ported and measure CLEAN**,
-   call site by call site, against fresh original-side captures (§4). P_MINE moved from
+   call site by call site, against fresh original-side captures (§4), and **R_FLAME
+   is exact on two of three captures** with the third's 2-of-546 residue diagnosed
+   to a named unported routine (§4.2d). P_MINE moved from
    **78 decision mismatches → 0** on the same `c2` capture the prior note measured
    it on (§4.3).
 2. **The dispatcher's armed sweep is ported** (§3.3), including the deactivation
@@ -31,7 +33,7 @@ Ghidra MCP did not load; no Ghidra project was opened for writing.
    two sites are reachable from one type only.
 5. **No regression.** The 9-type decision replay is CLEAN on the archived
    `o3`/`o4` and on all five current captures (§6).
-6. **The remaining four types are not blocked on the chain.** Their contact sites
+6. **The remaining three types are not blocked on the chain.** Their contact sites
    sit inside per-type **projectile updates** — decoded here (§5.3) — each of which
    integrates a position and a velocity the port does not own.
 7. **`FUN_00459620` is a SHARED projectile routine, not GUN's** (§5.2). A call-site
@@ -317,6 +319,44 @@ integrates the dt the capture supplies exactly. The trajectory decides *where* i
 lands, not *how many* queries it makes. That will not hold for a type whose flight
 can end some other way.
 
+### 4.2d R_FLAME — exact on two captures, 2 queries over on the third
+
+R_FLAME is a 100-record spark pool (4 owners × 25), decoded in §5.3, and its
+emission is driven by the two counters `RFlame_Tick` already tracked.
+
+| capture | query `0x45afcc` | lerp `0x45aff3` | basis `0x45b04c` |
+|---|---|---|---|
+| `c3` | **510 / 510** | 24 / 24 | 24 / 24 |
+| `g4` | **547 / 547** | 23 / 23 | 23 / 23 |
+| `g3` | 546 / **548** | 23 / 23 | 23 / 23 |
+
+The `g3` residue is **2 queries out of 546**, on the query site only, and it is
+diagnosed rather than assumed:
+
+- Reconstructing the emission calls from the per-call query counts and the landing
+  calls gives **25 emissions at identical calls on both sides** (986, 988, 990,
+  992, 994, 1001, … 1041).
+- The **landing calls are identical**, all 23, last at 1059.
+- The per-call query counts match **exactly from 986 through 1087**; the port alone
+  queries once at 1088 and once at 1089.
+- Ruled out by measurement, not by argument: the `_DAT_005cd114` ULP (simulating
+  the float32 accumulation at the captured `dt = 0x3c888888` gives a 55-frame
+  cutoff for **both** 0x3f8e38e3 and 0x3f8e38e4 — the port carries the correct bits
+  anyway), and a frame-vs-dispatcher-call drift (the `frame` and `call` columns
+  advance 1:1 across the whole window, 101 and 101).
+- **Mechanism.** `FUN_0045ac40` (`0x0045ac40`), which the original's tick calls
+  once per group of 5 immediately before the inner spark loop, **distance-sorts the
+  group** — it swaps whole `0xd`-dword records around a reference point that comes
+  from `FUN_004671d0(0)`. The port scans in fixed index order. When two sparks of
+  one group query on the same dispatcher call and only one hit is recorded, the
+  sort decides which one consumes it; the other survives and keeps probing. That
+  produces exactly this signature: same emissions, same landings, same counts until
+  the tail, then a surviving spark living a few frames longer.
+
+Not ported, because the sort's reference point (`FUN_004671d0`) is a viewport
+query the replay has no equivalent for. Recorded as the cause and as the residue's
+bound: 2 of 546 on one of three captures, on a count only.
+
 ### 4.3 The prior note's own captures
 
 `c2` and `c3` predate the `surface_gate` instrument, and `c2`/`c3`/`g2`/`g3`
@@ -405,6 +445,47 @@ that integrates a position and a velocity the ported effect module does not own.
 | GUN | `FUN_00459620` (2727 B) | two query sites, `0x459c19` (96 calls / 0 hits in `g3`) and `0x459d54` (163 / 98), plus two lerps `0x459c3c` (84/84) and `0x459db5` (98/98). `0x459c3c` is a site the prior note did not list |
 | MISSILE | not a Ghidra function | `0x00455cd9`, `0x00455de0`, `0x00455e07`, `0x00455e59` are inside the MISSILE TICK region past `0x00455c90`, which Ghidra has not defined. Create the function first, then decode |
 
+#### R_FLAME, decoded and PORTED (§4.2d) — kept here as the record
+
+Worth writing down because it is most of the slice:
+
+- **The emitter emits exactly ONE spark per stepper tick**, at a flat index the
+  decompilation gives in closed form. `FUN_0045a950` `0x0045a9fa`:
+  `iVar2 = sub + (owner + major + owner*4) * 5` = **`owner*25 + major*5 + sub`**,
+  with `sub` read BEFORE its increment (`iVar4 = sub + 1` follows). `owner` is
+  `car+0xb0`, `major` is `rec+0x14`, `sub` is `rec+0x18` — the two counters
+  `RFlame_Tick` already tracks as `ammo` and `subState`, and whose transitions
+  `pu_diff` already reports CLEAN.
+- **What the emitter writes**: `alive = 1` (`&DAT_0068bd30[idx*0xd]`), a random
+  angle in [-π, π] (`&DAT_0068bd28`), pos = the car frame's `+0x30..0x38` plus
+  `carVel * DAT_005d757c` — and `DAT_005d757c` reads **0.0**, so the term drops —
+  and vel = the car matrix `at` row `+0x20..0x28` × `_DAT_005ce4f0 (-0.02)` with a
+  `FUN_00472650(-0.002, 0.002) * _DAT_005cc9f4 (8.0)` jitter added to x and z.
+  It also re-arms `rec+0x8 = 0x3ca3d70a (0.02)` and, on `sub > 4`, does
+  `major++ / jet = 0 / sub = 0` — all three already in the port.
+- **Spark record**: stride `0xd` dwords (0x34 B). `[0..2]` pos, `[3..5]` vel,
+  `[6]` normalised age, `[8]` age seconds, `[11]` landed latch, `[12]` alive.
+  Both readers agree (`FUN_0045ae80`'s `pfVar8` is base+6; `FUN_0045ac40` tests
+  `pfVar10[0xc]` and `pfVar10[6]`).
+- **Per frame, while `alive && ageN < 1.0`**: if `landed == 0`, probe
+  `A = pos → B = pos + vel` (no `dt` — the velocity is per-frame);
+  miss → `vel.y -= _DAT_005ce018 (0.002)`; hit → lerp, `p += normal *
+  _DAT_005ce18c (0.02)`, `vel = 0`, `landed = 1`, basis. Then unconditionally
+  `age += dt`, `ageN = age * _DAT_005cd114 (1.1111)` clamped to 1.0, and
+  `pos += vel`. So a spark stops probing after **0.9 s** even without a hit.
+- **Pool geometry, RESOLVED** (the earlier ambiguity between the reset's range and
+  the emitter's base was a decompiler-pointer-arithmetic artifact). Read off
+  `FUN_0045a3a0`'s own instructions: outer `SUB EDI,0x514` from `0x0068d76c` down
+  to `CMP EDI,0x68c31c` = 4 owners (`0x514 = 25*0x34`); mid `SUB ESI,0x104` ×5 = 5
+  groups; inner `SUB EAX,0x34` ×5, clearing `[eax-4 .. eax+0x2c]`, so the record
+  base is `EAX-4`. Lowest base reached is `0x0068bd00`, highest `0x0068d11c` —
+  exactly **100 records** on that lattice, and the ten cleared dwords are indices
+  0-6, 8, 11, 12, i.e. pos, vel, ageN, age, landed, alive. ARM clears the WHOLE
+  pool, every owner's.
+- **What is NOT ported, and it is the `g3` residue's cause**: `FUN_0045ac40`
+  (`0x0045ac40`), the per-group distance sort the tick runs immediately before the
+  inner 5-spark loop. See §4.2d.
+
 So what each still needs is its **pool record + per-frame integration** ported into
 the Powerup TUs (the `DAT_006883xx` pools the `PowerupSystem.h` ledger already
 records as unmapped). Note the consequence for measurement: unlike OIL/P_MINE/
@@ -445,28 +526,30 @@ are not part of the guard and were not in the prior note's either.
 | FLASH | **clean** | no contact call exists (unchanged from the prior note) |
 | — armed sweep | **clean** | 280 / 309 / 207 / 309 queries across `c2`/`c3`/`g2`/`g3`+`g4`; the single `c2` deactivation reproduced |
 | DRUM | **clean** | query **83/83** on both `g2` and `c2`; lerp/basis 1/1 and 2/2 |
-| R_FLAME | blocked | `0x45afcc`→`0x004b4cd0` 413/15, `0x45aff3`→`0x004b4650` 23/23, `0x45b04c`→`0x004b5080` 23/23 (`g3`). Single-owner routine (`FUN_0045ae80`, the ported TICK's original), so it IS attributable — it needs the 25-spark pool |
+| R_FLAME | **clean on `c3` and `g4`, 2-query residue on `g3`** | query 510/510 (`c3`), 547/547 (`g4`), 546 vs 548 (`g3`); lerp and basis exact on all three. Residue mechanism cited in §4.2d: the unported per-group distance sort `FUN_0045ac40` |
 | MORTAR | blocked | `0x453789`→`0x004b4cd0`, `0x4537bb`→`0x0045c350`, `0x4537df`→`0x004b4650`, `0x45382c`→`0x004b5080`, all inside `FUN_00453730` (one caller, `0x004538fe`) — but the flight that drives them runs in the SHARED `FUN_00459620` |
 | GUN | blocked | its four apparent sites are inside the shared `FUN_00459620` (§5.2) and cannot be attributed to GUN at all until that routine is ported |
 | MISSILE | blocked | `0x455cd9`→`0x00455100` 31/30, `0x455e59`→`0x004b4cd0` 31/31, `0x455de0`→`0x004b4d10` 16/0, terminal `0x455e07`→`0x00455910` 1/1; also a `FUN_00459620` caller (`0x00455c29`) |
 
-**5 clean + the sweep, 4 blocked** (was 1 clean / 1 diverges / 7 blocked).
+**5 clean + the sweep, 1 near-clean (R_FLAME), 3 blocked** (was 1 clean / 1 diverges / 7 blocked).
 
-Why the four are still blocked, precisely: their contact sites are not in FIRE but
-in a **projectile/particle update** the port does not run (§5.3). The chain itself
-is no longer the blocker — `PowerupContact.cpp` provides every leaf they need.
-Three of the four (MORTAR, GUN, MISSILE) go through one shared routine,
-`FUN_00459620` (§5.2), which is therefore the single next slice.
+Why the three are still blocked, precisely: their contact sites are not in FIRE but
+in a **projectile update** the port does not run (§5.3). The chain itself is no
+longer the blocker — `PowerupContact.cpp` provides every leaf they need. All three
+(MORTAR, GUN, MISSILE) go through one shared routine, `FUN_00459620` (§5.2), which
+is therefore the single next slice.
 
 ## 8. OPEN
 
 1. **`FUN_00459620`, the shared projectile routine (§5.2).** One slice that
    unlocks MORTAR, MISSILE and GUN; until it exists none of the three can even be
    attributed. 2727 B, three callers, four contact sites inside it.
-2. **R_FLAME** — `FUN_0045ae80`, single-owner and therefore attributable today.
-   25 sparks (5 owners × 5 groups × 5), ballistic with `vel.y -= _DAT_005ce018`
-   on a miss and a `landed` latch on a hit. Structure and RVAs in §5.3. This is
-   the cheapest remaining type.
+2. ~~**R_FLAME**~~ — **DONE** (§4.2d, §5.3). What remains of it is one named
+   routine: **`FUN_0045ac40`** (`0x0045ac40`), the per-group distance sort the
+   original's tick runs immediately before the inner 5-spark loop. Not ported
+   because its reference point comes from `FUN_004671d0(0)`, a viewport query the
+   replay has no equivalent for. Bound on what that costs: **2 queries of 546 on
+   one of three captures, on a count only**; lerp and basis are exact on all three.
 3. **MORTAR's own detonation test** `FUN_00453730` (one caller, `0x004538fe`
    inside `FUN_004538b0`) once (1) lands.
 4. **P_MINE's and DRUM's segment direction** — [UNCERTAIN], §3.1. Both probe world

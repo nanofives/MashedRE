@@ -15,6 +15,9 @@ CONTACT CALL SITES (original capture vs port), slot 0
   DRUM   query 0x004b4cd0  0x45444f          0      0         0         0  clean
   DRUM   lerp  0x004b4650  0x45448a          0      0         0         0  clean
   DRUM   basis 0x004b5080  0x4544e0          0      0         0         0  clean
+  RFLAME query 0x004b4cd0  0x45afcc        546    548         2         0  DIVERGES
+  RFLAME lerp  0x004b4650  0x45aff3         23     23         0         0  clean
+  RFLAME basis 0x004b5080  0x45b04c         23     23         0         0  clean
   SWEEP  query 0x004b4b60  0x45bcd8        309    309         0         0  clean
   SWEEP  confirm 0x45c350  0x45bcea          0      0         0         0  clean
-CONTACT VERDICT: CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)
+CONTACT VERDICT: DIVERGES  (not-armed rows had no Frida listener when this capture was taken and are excluded)

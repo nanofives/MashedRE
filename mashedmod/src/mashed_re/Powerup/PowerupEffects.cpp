@@ -65,6 +65,16 @@ namespace tune {
     constexpr float kDrumVelFactor  = 40.0f; // REAL: _DAT_005cd274, drop vel = carVel*40
     constexpr float kDrumUpFactor   = 3.5f;  // REAL: _DAT_005ce26c, + up*3.5
     constexpr float kDrumLift       = 0.05f; // REAL: _DAT_005cc9a0, impact += normal*0.05
+    // R_FLAME spark ballistics (FUN_0045ae80 / emitter FUN_0045a950):
+    constexpr float kFlameGravity   = 0.002f;// REAL: _DAT_005ce018, vel.y -= on a miss
+    constexpr float kFlameLift      = 0.02f; // REAL: _DAT_005ce18c, impact += normal*0.02
+    // REAL: _DAT_005cd114 = 0x3f8e38e4. Written as the decimal that ROUNDS TO THOSE
+    // BITS: `1.1111111f` compiles to 0x3f8e38e3, one ULP low. MEASURED that the ULP
+    // does NOT change the cutoff (both reach ageN >= 1.0 on the 55th frame at the
+    // captured dt 0x3c888888), so it is not the cause of the g3 residue -- it is
+    // simply the correct value. The spark stops probing at ageN >= 1.0, i.e. 0.9 s.
+    constexpr float kFlameAgeRate   = 1.1111111640930176f;
+    constexpr float kFlameSparkSpeed = -0.02f;// REAL: _DAT_005ce4f0, at-row scale
     // REAL (harvested pool13 2026-07-06, instruction-cited at the R_FLAME /
     // MORTAR sections below):
     constexpr int   kFlameBursts         = 5;     // REAL: +0x14 shutoff JL 5 (0x0045a86c)
@@ -337,7 +347,36 @@ void PMine_Tick(PowerupSystem&, float) {}    // 0x4582f0
 // ((5 - major)*5 - sub) * DAT_005cd18c(0.04) -> 1.0 .. 0.0.
 // Slot mapping: ammo=major(+0x14), subState=sub(+0x18), jetState=+0x1c,
 // cooldown=+0x8, charge=derived meter.
+void RFlame_Step(PowerupSystem& sys, float dt);   // fwd: the emission stepper half
+
+// ---- R_FLAME spark pool ----------------------------------------------------
+// ORIGINAL base &DAT_0068bd00, stride 0x34 (0xd dwords), 100 records = 4 owners
+// x 25 (5 bursts x 5 sparks). Read off the reset FUN_0045a3a0's own instructions
+// (0x0045a3a0..0x0045a412), NOT the decompiler's pointer arithmetic: outer
+// `SUB EDI,0x514` from 0x0068d76c down to `CMP EDI,0x68c31c` = 4 owners
+// (0x514 = 25*0x34); mid `SUB ESI,0x104` x5 = 5 groups (0x104 = 5*0x34); inner
+// `SUB EAX,0x34` x5, clearing [eax-4 .. eax+0x2c], so the record base is EAX-4.
+// The lowest base that reaches is 0x0068bd00 and the highest 0x0068d11c, exactly
+// 100 records on that lattice.
+//
+// Field map, agreed by all three readers (emitter FUN_0045a950 0x0045a9fa.., tick
+// FUN_0045ae80 whose `pfVar8` is base+6, sorter FUN_0045ac40 which tests
+// `pfVar10[0xc]` and `pfVar10[6]`), and by the ten dwords the reset clears
+// (indices 0-6, 8, 11, 12):
+struct FlameSpark {
+    float pos[3];   // [0..2]
+    float vel[3];   // [3..5]  PER-FRAME, not per-second: the probe is pos -> pos+vel
+    float ageN;     // [6]     age * _DAT_005cd114, clamped to 1.0; >= 1.0 = done
+    float age;      // [8]     seconds
+    int   landed;   // [11]    latch set on a hit
+    int   alive;    // [12]
+};
+static FlameSpark s_sparks[100] = {};
+
 void RFlame_Arm(PowerupSystem&, Slot& s) {   // 0x45a7c0: +0x08=0.02 (0x3ca3d70a), FX FUN_00465e80(0x16)
+    // CALL 0x0045a3a0 @0x0045a7d9 -- the reset clears the WHOLE 100-record pool,
+    // every owner's, not just the arming one.
+    for (int i = 0; i < 100; ++i) s_sparks[i] = FlameSpark();
     s.ammo = 0; s.subState = 0; s.jetState = 0;
     s.cooldown = tune::kFlameSparkPeriod;
     s.charge = 1.0f;
@@ -363,6 +402,47 @@ void RFlame_Fire(PowerupSystem& sys, Slot& s, int mode) {  // 0x45a850
     }
 }
 void RFlame_Tick(PowerupSystem& sys, float dt) {  // emission stepper FUN_0045a950 (from tick 0x45ae80)
+    RFlame_Step(sys, dt);
+    // FUN_0045ae80's SECOND loop: the spark scan. It walks every owner's sparks
+    // after the first loop has run the stepper for every owner, and the sparks
+    // outlive the power-up, so it must run once per frame regardless of what any
+    // slot holds. PowerupSystem::Tick calls this with current() = 0,1,2,3 in
+    // order, so the last pass is where the scan belongs.
+    if (sys.current() != PowerupSystem::kSlots - 1) return;
+    for (int i = 0; i < 100; ++i) {
+        FlameSpark& k = s_sparks[i];
+        // `if ((pfVar8[6] != 0.0) && (*pfVar8 < _DAT_005cc320))` -- alive, and the
+        // normalised age still under 1.0.
+        if (!k.alive || k.ageN >= 1.0f) continue;
+        if (k.landed == 0) {                      // `if (pfVar8[5] == 0.0)`
+            const float seg[6] = { k.pos[0], k.pos[1], k.pos[2],
+                                   k.pos[0] + k.vel[0],
+                                   k.pos[1] + k.vel[1],
+                                   k.pos[2] + k.vel[2] };
+            Contact::WorldHit hit;
+            // CALL 0x004b4cd0 @0x0045afc7; TEST EAX,EAX @0x0045afcf;
+            // JE 0x0045b074 @0x0045afd1 -> the gravity arm.
+            if (Contact::SegmentQuery(seg, &hit, 0x0045afcc) == 0) {
+                k.vel[1] -= tune::kFlameGravity;        // _DAT_005ce018, Y ONLY
+            } else {
+                float p[3];
+                Contact::Vec3Lerp(p, seg, seg + 3, hit.t, 0x0045aff3);  // CALL @0x0045afee
+                for (int c = 0; c < 3; ++c) p[c] += hit.normal[c] * tune::kFlameLift;
+                k.vel[0] = 0.f; k.vel[1] = 0.f; k.vel[2] = 0.f;
+                k.landed = 1;                            // pfVar8[5] = 1
+                float m[16] = {0};
+                Contact::BasisFromTri(m, hit.vert, p, 0x0045b04c);      // CALL @0x0045b047
+            }
+        }
+        // Then, every frame, landed or not:
+        k.age += dt;
+        k.ageN = k.age * tune::kFlameAgeRate;
+        if (k.ageN > 1.0f) k.ageN = 1.0f;
+        k.pos[0] += k.vel[0]; k.pos[1] += k.vel[1]; k.pos[2] += k.vel[2];
+    }
+}
+
+void RFlame_Step(PowerupSystem& sys, float dt) {
     Slot& s = sys.slot();
     if (s.activeCode != kRFlame) return;
     // The +0x8 decrement at 0x0045aedd is in tick FUN_0045ae80's OUTER loop, ahead
@@ -380,6 +460,32 @@ void RFlame_Tick(PowerupSystem& sys, float dt) {  // emission stepper FUN_0045a9
     // cooldown field; per-frame dt decrement confirmed, not assumed.
     if (s.cooldown > 0.f) return;                       // gate +0x8 vs 0.0 (0x0045a9f0)
     s.cooldown = tune::kFlameSparkPeriod;                // re-arm 0.02 (0x0045aa4a)
+    // EMIT one spark. FUN_0045a950 0x0045a9fa computes the flat index as
+    //   sub + (owner + major + owner*4) * 5  ==  owner*25 + major*5 + sub
+    // with `sub` read BEFORE its increment (0x0045aa24 `iVar4 = sub + 1` follows).
+    {
+        const int idx = sys.current() * 25 + s.ammo * tune::kFlameSparksPerBurst + s.subState;
+        if (idx >= 0 && idx < 100) {
+            FlameSpark& k = s_sparks[idx];
+            k.alive = 1;                                  // (&DAT_0068bd30)[idx*0xd] = 1
+            // pos = car frame +0x30..0x38 + carVel * DAT_005d757c, and
+            // DAT_005d757c reads 0.0, so the velocity term drops out.
+            const HostCar& c = sys.owner();
+            k.pos[0] = c.pos[0]; k.pos[1] = c.pos[1]; k.pos[2] = c.pos[2];
+            // vel = car matrix `at` row (+0x20..0x28) * _DAT_005ce4f0(-0.02), with
+            // FUN_00472650(-0.002, 0.002) * _DAT_005cc9f4(8.0) added to x and z.
+            // STAND-IN: HostCar has no matrix, so the normalised forward stands in
+            // for the `at` row, and the jitter is omitted -- it is RANDOM, so the
+            // port could not reproduce the original's draw anyway. Neither changes
+            // the criterion-(c) counts: the trajectory decides WHERE a spark lands,
+            // and whether it lands at all is the injected query verdict.
+            float fwd[3]; OwnerForward(c, fwd);
+            for (int a = 0; a < 3; ++a) k.vel[a] = fwd[a] * tune::kFlameSparkSpeed;
+            // age / ageN / landed are NOT reset here: the original's emitter does
+            // not touch them either, because ARM's FUN_0045a3a0 cleared the whole
+            // pool and each index is used once per burst sequence.
+        }
+    }
     ++s.subState;                                        // sub++ (0x0045aa24/0x0045aa2a)
     if (s.subState >= tune::kFlameSparksPerBurst) {      // CMP 5 (0x0045aa27)
         ++s.ammo;                                        // major++ (0x0045aa2f/30)

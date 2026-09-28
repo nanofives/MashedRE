@@ -123,11 +123,13 @@ int SweepSlotOf(unsigned a2) {
 // wrong: verify/d3_contact_20260928/g2 has three 0x457ca5 rows, only two of which
 // are slot 0's -- the third lands inside slot 0's MORTAR window and belongs to
 // another slot's P_MINE.
-const unsigned kQuerySites[] = { 0x004578d1u, 0x00457ca5u, 0x0045b4c2u, 0x0045444fu };
+const unsigned kQuerySites[] = { 0x004578d1u, 0x00457ca5u, 0x0045b4c2u, 0x0045444fu,
+                                 0x0045afccu };
 const unsigned kGateSites[]  = { 0x0045790eu, 0x00457cf9u };
-const int      kQueryOwner[] = { 19 /*OIL*/,  12 /*P_MINE*/, 17 /*SHOTGUN*/, 10 /*DRUM*/ };
+const int      kQueryOwner[] = { 19 /*OIL*/,  12 /*P_MINE*/, 17 /*SHOTGUN*/, 10 /*DRUM*/,
+                                 16 /*R_FLAME*/ };
 const int      kGateOwner[]  = { 19,          12 };
-const int      kQueryN = 4, kGateN = 2;
+const int      kQueryN = 5, kGateN = 2;
 
 // Every contact call site the ported OIL/P_MINE FIRE path makes, in original
 // order, with the type whose window it belongs to. The last two of each group
@@ -161,6 +163,9 @@ const Site kSites[] = {
     { 0x0045444fu, 10, 0x004b4cd0u, 0u,          1, "DRUM   query 0x004b4cd0" },   // CALL @0x0045444a
     { 0x0045448au, 10, 0x004b4650u, 0x0045444fu, 1, "DRUM   lerp  0x004b4650" },   // CALL @0x00454485
     { 0x004544e0u, 10, 0x004b5080u, 0x0045444fu, 1, "DRUM   basis 0x004b5080" },   // CALL @0x004544db
+    { 0x0045afccu, 16, 0x004b4cd0u, 0u,          1, "RFLAME query 0x004b4cd0" },   // CALL @0x0045afc7
+    { 0x0045aff3u, 16, 0x004b4650u, 0x0045afccu, 1, "RFLAME lerp  0x004b4650" },   // CALL @0x0045afee
+    { 0x0045b04cu, 16, 0x004b5080u, 0x0045afccu, 1, "RFLAME basis 0x004b5080" },   // CALL @0x0045b047
     { 0x0045bcd8u, -1, 0x004b4b60u, 0u, 2, "SWEEP  query 0x004b4b60" },   // CALL @0x0045bcd3, slot by arg2
     { 0x0045bceau, -1, 0x0045c350u, 0x0045bcd8u, 2, "SWEEP  confirm 0x45c350" },   // CALL @0x0045bce5, slot by arg2
 };
