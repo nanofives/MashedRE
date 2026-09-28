@@ -1,6 +1,6 @@
 {
-  "title": "Mashed RE (ROADMAP v3: D3 — default game systems)",
-  "updatedAt": "2026-09-28T02:30:00Z",
+  "title": "Mashed RE (ROADMAP v3: D3 \u2014 default game systems)",
+  "updatedAt": "2026-09-28T23:10:00Z",
   "sections": [
     {
       "heading": "Roadmap phases",
@@ -18,7 +18,7 @@
         },
         {
           "label": "Last roadmap audit",
-          "value": "2026-09-27: D3 powerups (c) contact half measured, D3_CONTACT_2026-09-27.md",
+          "value": "2026-09-28b: D3 powerups (c) at 7 clean + sweep + shared acquisition / 1 near-clean / 1 partial, D3_CONTACT_PORT_2026-09-28.md",
           "kind": "text"
         }
       ]
@@ -38,7 +38,7 @@
         },
         {
           "label": "Powerups (WS-D)",
-          "value": "9/9 decision traces CLEAN; G-D1 + G-D2 closed. Contact half MEASURED 2026-09-27 (D3_CONTACT): FLASH clean, P_MINE DIVERGES (drop gated twice in FUN_00457c10, 6 of 7 press edges refused; armed sweep deactivated it at call 1229), 7 still blocked. Blocker re-identified: NOT ContactStubs (no Powerup->Collision path) but 8 unported C2 chain RVAs",
+          "value": "(a)(b) met; (c) 8 of 9 types done 2026-09-28b. CLEAN: OIL, P_MINE, SHOTGUN, DRUM, FLASH, GUN, MORTAR + the dispatcher sweep + the shared target acquisition FUN_00459620 (fallback query 187/187, both non-degeneracy controls diverge). NEAR-CLEAN: R_FLAME, exact on 2 of 3 captures, 2-of-546 residue pinned to the unported sort FUN_0045ac40. PARTIAL: MISSILE only - mapped (5 own sites, tick 0x00455c90 undefined in Ghidra, leaf 0x004b4d10 unported), not started",
           "kind": "text"
         },
         {

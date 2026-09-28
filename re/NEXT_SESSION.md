@@ -1,6 +1,89 @@
 # Next session — kickoff prompt
 
-## => KICKOFF PROMPT - D3 powerups (c), the four projectile types, written 2026-09-28, paste verbatim
+## => KICKOFF PROMPT - D3 powerups (c), MISSILE (the last type), written 2026-09-28b, paste verbatim
+
+```
+Session goal: close ROADMAP v3 D3 powerups criterion (c) by porting MISSILE, the
+ONE type still owing its own chain. Read ROADMAP.md section D3 (Powerups row) and
+re/analysis/D3_CONTACT_PORT_2026-09-28.md sections 4.2d-4.2g and 7. Do NOT
+re-derive any of it.
+
+SETTLED 2026-09-28b - 8 of 9 types are done. Criterion (c) stands at
+7 clean + the sweep + the shared acquisition / 1 near-clean / 1 partial:
+- CLEAN: OIL, P_MINE, SHOTGUN, DRUM, FLASH (makes no contact call), GUN, MORTAR.
+- NEAR-CLEAN: R_FLAME - exact on c3 and g4, 2 queries of 546 over on g3, cause
+  named (the unported per-group sort FUN_0045ac40, whose reference point is the
+  viewport query FUN_004671d0 the replay has no equivalent for). Do not re-open
+  unless you are porting that sort.
+- PARTIAL: MISSILE. That is this session.
+
+THREE PORTED MODULES to copy the shape of, in increasing order of relevance:
+- Powerup/PowerupContact.cpp - every contact leaf, with injectors for the replay.
+- Powerup/PowerupAim.cpp     - FUN_00459620, the target ACQUISITION routine
+  MORTAR/GUN/MISSILE share (it is NOT a projectile routine; the older notes are
+  wrong and say so now). MISSILE's acquisition is ALREADY COVERED by it:
+  FUN_00455b50 calls it at 0x00455c29 with 8.0 range / 30.0 cone, and m1 measures
+  0x459c19 32/32 and 0x459d54 32/32. Do not re-port it.
+- Powerup/PowerupMortar.cpp  - THE EXEMPLAR. Same shape as MISSILE: a pool found
+  off the tick's own loop bounds, a per-frame integrator, a detonation test whose
+  verdict is injected. Copy it.
+
+WHAT MISSILE NEEDS (map in section 4.2g, all measured or disassembled):
+- Its tick is 0x00455c90 and it is NOT a defined Ghidra function, so there is no
+  decompilation - only disassembly. Do NOT ask for a Ghidra master write: MORTAR's
+  pool was found off its tick's loop bounds the same way. First command:
+      py -3.12 re/tools/disasm_va.py 0x455c90 0x400
+  It walks TWO interleaved pools in one loop: aim records at 0x006885d0 stride
+  0x2c (4 entries; MOV EDI,0x6886ac @0x00455c9a, SUB EDI,0x2c @0x00455ca9) and
+  projectiles at stride 0x6c (MOV EBP,0x688620 @0x00455c9f, SUB EBP,0x6c
+  @0x00455caf). Find the EBP loop's bound to get the projectile count.
+- FIVE own sites, one of which (0x455df9) is missing from every earlier list:
+      0x455cd9 -> 0x00455100 impact        m1 31/30 hits, m2 12/12
+      0x455e59 -> 0x004b4cd0               m1 31/31,      m2 12/12
+      0x455de0 -> 0x004b4d10               m1 15/2,       m2 6/0
+      0x455df9 -> 0x0045c350 gate          m1 2/2
+      0x455e07 -> 0x00455910 terminal      g2 1/1
+- The chain's shape is already disassembled (0x00455de3..0x00455e07): query
+  0x4b4d10; JE skip; gate 0x45c350; JNE skip (NON-ZERO REFUSES, same polarity as
+  MORTAR's - use Contact::ConfirmGateAt, not SweepConfirm); then the terminal.
+- One leaf PowerupContact does NOT have: 0x004b4d10. Second command:
+      py -3.12 re/tools/decomp_pc.py 0x004b4d10 0x00455910 0x00455100 --slot 0
+
+HOW TO MEASURE IT (this is the part that makes it evidence, not a compile):
+1. Add a --puhook-missile channel to re/frida/scenario_launch.py, modelled on
+   --puhook-mortar: one row per projectile per frame with the record's PRE and
+   POST state. Both existing channels emit floats as RAW HEX DWORDS; keep that.
+2. Falsify the decode OFFLINE first, the way re/tools/mortar_model.py and
+   re/tools/aim_model.py do, BEFORE writing any C++. Both found real bugs this
+   way at zero cost. The detonation/impact verdicts are INPUTS taken from the
+   contact capture - the world queries behind them are.
+3. Port, wire into re/tools/pu_replay (kSites + the injector arrays + the
+   not-armed rule for a capture that lacks the channel), and measure.
+4. ADD A NON-DEGENERACY CONTROL, like MASHED_AIM_FORCE and MASHED_MORTAR_FORCE.
+   This is not optional: MEASURED on MORTAR, all three controls leave every
+   contact COUNT clean while the drift moves from 4.8e-07 to 6.03. Counts alone
+   pass a broken integrator. If your measurement is a drift, fold it into the
+   verdict as pu_replay now does for MORTAR.
+5. Regression guard after every change, all of it:
+      o3, o4, m1, m2   -> pu_diff.py, the 9-type decision replay
+      c2, c3, g2, g4, m1, m2 -> pu_replay contact, all CLEAN
+      g3 -> DIVERGES on exactly the R_FLAME 2-query residue and NOTHING else
+      mashedmoduild.bat -> both targets
+
+CAPTURE RECIPE (the two from this session, adapt --pu-plan):
+  py -3.12 re/frida/scenario_launch.py --track 0 --mode 10 --cars 4 --car 0
+    --poke-ctrl-slots --statediff-out verify/<dir>/<name>.msd --statediff-car 0
+    --statediff-drive --statediff-puhook --puhook-contacts --puhook-aim
+    --puhook-mortar --pu-plan 11,11,11 --pu-warm 60 --hold 110
+Launch muted (MASHED_MUTE=1), MASHED_WIN_POS=left-bl, always --poke-ctrl-slots.
+Track the PIDs you spawn and kill ONLY those.
+
+RULES: NO-GUESSING, cite RVAs, [UNCERTAIN] + the next command. Trackers only via
+re-classify. Commit cited evidence after each step (git add -f for small files;
+never commit a .msd, they are 22 MB). Do not push.
+```
+
+## => HISTORY: KICKOFF PROMPT - D3 powerups (c), the four projectile types, written 2026-09-28, SUPERSEDED by the 2026-09-28b prompt above
 
 ```
 Session goal: close ROADMAP v3 D3 powerups criterion (c) for the FIVE types still

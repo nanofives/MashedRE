@@ -540,6 +540,59 @@ Not ported, and none of it makes a contact call: the explosion effects
 (`FUN_00477760`, `FUN_00486610`, `FUN_00453210`) and the trail ribbon
 (`FUN_004532f0` / `FUN_00453100`, 15 segments).
 
+### 4.2g MISSILE — mapped, not ported, and the map corrects the site list
+
+MISSILE is the one type still owing its own chain. It was NOT started, so what
+follows is a map, measured and disassembled, not a claim about a port.
+
+**Its acquisition is already covered** by §4.2e: `FUN_00455b50` (`0x00455b50`)
+calls `FUN_00459620(car, matrix+0x30, 8.0, 30.0, ptr)` at `0x00455c29` —
+`PUSH 0x41000000` = **8.0 range**, `PUSH 0x41f00000` = **30.0 cone**, different
+from MORTAR's 15.0/20.0 and read straight off the call site. The `--puhook-aim`
+channel records whatever the call site passes, so both are covered by one port.
+Measured on `m1`'s MISSILE window: `0x459c19` 32/32 calls, `0x459d54` 32/32.
+
+**Two sites the earlier notes never listed**, both from `m1` and `m2`:
+
+| RA | leaf | `m1` | `m2` |
+|---|---|---|---|
+| `0x455cd9` | `0x00455100` impact | 31 / 30 hits | 12 / 12 |
+| `0x455e59` | `0x004b4cd0` | 31 / 31 | 12 / 12 |
+| `0x455de0` | `0x004b4d10` | 15 / 2 | 6 / 0 |
+| **`0x455df9`** | **`0x0045c350` gate** | **2 / 2** | — |
+| `0x455e07` | `0x00455910` terminal | 1 / 1 (in `g2`) | — |
+
+**The chain's shape, disassembled** (`0x00455de3`..`0x00455e07`):
+
+```
+0x00455de3  TEST EAX,EAX          ; the 0x4b4d10 query's result, RA 0x455de0
+0x00455de5  JE   0x455e07         ; miss -> skip the rest
+0x00455df4  CALL 0x45c350         ; RA 0x455df9
+0x00455dfc  TEST EAX,EAX
+0x00455dfe  JNE  0x455e07         ; NON-ZERO REFUSES
+0x00455e02  CALL 0x455910         ; RA 0x455e07, the terminal
+```
+
+That is the **same gate polarity** as MORTAR's (§4.2f) — non-zero refuses — which
+independently corroborates the polarity the mortar drift control pinned.
+
+**What porting it needs, and the one real blocker.** `0x00455c90` is the MISSILE
+tick and it walks **two interleaved pools** in one loop: the aim records
+(`0x006885d0`, stride `0x2c`, 4 entries — `MOV EDI,0x6886ac` `0x00455c9a`,
+`SUB EDI,0x2c` `0x00455ca9`) and the projectiles (stride `0x6c` —
+`MOV EBP,0x688620` `0x00455c9f`, `SUB EBP,0x6c` `0x00455caf`). It is **not a
+defined Ghidra function**, so there is no decompilation for it, only disassembly.
+It also needs one leaf `PowerupContact` does not have: `0x004b4d10`.
+
+Next commands, in order:
+```
+py -3.12 re/tools/disasm_va.py 0x455c90 0x400      # find the EBP loop's bound
+py -3.12 re/tools/decomp_pc.py 0x004b4d10 0x00455910 0x00455100 --slot 0
+```
+Do **not** reach for a Ghidra master write to define `0x00455c90`: MORTAR's pool
+was found off its tick's own loop bounds without one (§4.2f), and the same works
+here.
+
 ### 4.3 The prior note's own captures
 
 `c2` and `c3` predate the `surface_gate` instrument, and `c2`/`c3`/`g2`/`g3`
@@ -725,7 +778,7 @@ are not part of the guard and were not in the prior note's either.
 | — acquisition (shared) | **clean** | `FUN_00459620`'s four sites on `m1`: fallback query **187/187**, fallback lerp 33/33, LOS lerp 152/152, LOS query 348/348 (schedule-derived). Both non-degeneracy controls DIVERGE. §4.2e |
 | GUN | **clean** | no site beyond the acquisition four ever appears in a GUN window, and window attribution can only OVER-collect, so that negative is sound. The three others that do appear are not power-up sites: `0x479124` fires 6666 times in `g3` (~1/frame over the whole 6650-frame race, held or not), and `0x475229`/`0x4752b2` fire 1× in `g3` but 4× in `g4` and 4× in `m1`, i.e. outside GUN windows too |
 | MORTAR | **clean** | the acquisition four plus its OWN chain, all ported (§4.2f): `0x453789` 280/280, gate `0x4537bb` 2/2, lerp `0x4537df` 1/1, basis `0x45382c` 1/1, and the carried integration within **4.77e-07** over 280 steps and 3 projectile lives. All three non-degeneracy controls DIVERGE |
-| MISSILE | partial | the acquisition four are clean; its OWN chain is not ported — `0x455cd9`→`0x00455100` 31/30, `0x455e59`→`0x004b4cd0` 31/31, `0x455de0`→`0x004b4d10` 16/0, terminal `0x455e07`→`0x00455910` 1/1 |
+| MISSILE | partial | the acquisition sites are clean (32/32 on `m1`, and its range/cone are 8.0/30.0, not MORTAR's 15/20); its OWN chain is mapped but NOT ported (§4.2g) — 5 sites, one of them (`0x455df9`) missing from every earlier list, plus a leaf `PowerupContact` lacks (`0x004b4d10`) |
 
 **7 clean + the sweep + the shared acquisition, 1 near-clean (R_FLAME),
 1 partial (MISSILE)** — against 1 clean / 1 diverges / 7 blocked at the start of
