@@ -277,6 +277,23 @@ int SweepConfirm(int slot, const WorldHit* hit, std::uint32_t retAddr) {
     return r;
 }
 
+// 0x0045c350 again, but at MORTAR's call site 0x004537b6 (RA 0x004537bb) rather
+// than the dispatcher's. Same leaf, DIFFERENT attribution: the dispatcher's sweep
+// is keyed by slot through arg2, while a mortar in flight outlives its slot, so
+// this one has to be keyed by call site like the drop gates are.
+//
+// Polarity, from FUN_00453730's own branch: `CALL 0x45c350` @0x004537b6,
+// `TEST EAX,EAX`, and a NON-zero falls through to `return 0` -- i.e. non-zero
+// REFUSES the detonation and the projectile keeps flying. Measured on
+// verify/d3_contact_20260928b/m2.msd: of the 2 hits at 0x453789, one gate
+// returned 0 (detonated) and one returned 1 (refused).
+int ConfirmGateAt(const WorldHit* hit, std::uint32_t retAddr) {
+    int r = 0;                       // no material channel -> "allow", matching
+    if (s_gInject) r = s_gInject(s_injCtx, hit, retAddr);
+    Log(0x0045c350, "sweep_confirm", retAddr, 0, 0, 0, r);
+    return r;
+}
+
 }  // namespace Contact
 }  // namespace Powerup
 }  // namespace mashed_re

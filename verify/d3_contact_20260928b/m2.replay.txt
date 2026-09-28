@@ -1,4 +1,9 @@
-replayed 411 frames on slot 0
+replayed 260 frames on slot 0
+
+MORTAR PROJECTILE INTEGRATION (port carried vs capture POST)
+  updates replayed 280 of 327   projectile lives seeded 3
+  max position drift 4.77e-07   max age drift 0   (limit 0.0001)  clean
+  NOTE: 47 capture rows fell outside the replayed call range
 
 CONTACT CALL SITES (original capture vs port), slot 0
   site                     ret_addr       orig   port port-only orig-only  status
@@ -18,15 +23,14 @@ CONTACT CALL SITES (original capture vs port), slot 0
   RFLAME query 0x004b4cd0  0x45afcc          0      0         0         0  clean
   RFLAME lerp  0x004b4650  0x45aff3          0      0         0         0  clean
   RFLAME basis 0x004b5080  0x45b04c          0      0         0         0  clean
-  SWEEP  query 0x004b4b60  0x45bcd8        351    351         0         0  clean
-  SWEEP  confirm 0x45c350  0x45bcea          4      4         0         0  clean
-  AIM    fallback query    0x459c19        187    187         0         0  clean
-  AIM    fallback lerp     0x459c3c         33     33         0         0  clean
-  AIM    los      query    0x459d54        348    348         0         0  clean
-  AIM    los      lerp     0x459db5        152    152         0         0  clean
-  MORTAR query 0x004b4cd0  0x453789        335      0         0       335  not-armed
-  MORTAR gate  0x0045c350  0x4537bb          4      0         0         4  not-armed
-  MORTAR lerp  0x004b4650  0x4537df          2      0         0         0  not-armed
-  MORTAR basis 0x004b5080  0x45382c          2      0         0         0  not-armed
-CONTACT VERDICT: CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)
-         (no --puhook-mortar channel: the MORTAR rows are NOT tested by this capture)
+  SWEEP  query 0x004b4b60  0x45bcd8        170    170         0         0  clean
+  SWEEP  confirm 0x45c350  0x45bcea          3      3         0         0  clean
+  AIM    fallback query    0x459c19         65     65         0         0  clean
+  AIM    fallback lerp     0x459c3c         12     12         0         0  clean
+  AIM    los      query    0x459d54        166    166         0         0  clean
+  AIM    los      lerp     0x459db5         55     55         0         0  clean
+  MORTAR query 0x004b4cd0  0x453789        280    280         0         0  clean
+  MORTAR gate  0x0045c350  0x4537bb          2      2         0         0  clean
+  MORTAR lerp  0x004b4650  0x4537df          1      1         0         0  clean
+  MORTAR basis 0x004b5080  0x45382c          1      1         0         0  clean
+CONTACT VERDICT: CLEAN

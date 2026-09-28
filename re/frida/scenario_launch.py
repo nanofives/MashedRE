@@ -1250,6 +1250,95 @@ function puAimArm(){
   } catch(e){ PU_AIM.err = '' + e; return 'ERR ' + e; }
 }
 function puAimDrain(){ const r = PU_AIM.rows; PU_AIM.rows = []; return r; }
+
+// --- D3-CONTACT 2026-09-28b: the MORTAR projectile pool ---------------------
+// Opt-in (--puhook-mortar). Its own channel, its own CSV.
+//
+// MORTAR's own contact site (0x453789, inside FUN_00453730) fires once per
+// AIRBORNE PROJECTILE per frame, so reproducing its count needs the projectile's
+// per-frame integration, which lives in FUN_004538b0. Both were decompiled from
+// a read-only pool clone; the pool geometry is disassembled from the tick's own
+// second loop at 0x00453c30..0x00453c51:
+//   `MOV ESI,0x684ea8` @0x00453c28, `ADD ESI,0x110` @0x00453c45,
+//   `CMP ESI,0x6870a8` @0x00453c4b  ->  base 0x00684ea8, stride 0x110,
+//   (0x6870a8-0x684ea8)/0x110 = 32 records.
+// The tick's FIRST loop (0x00453b90..0x00453c22) is a separate per-CAR block at
+// 0x00684e3c stride 0x1c, 4 entries, and it is what calls the acquisition
+// routine: `PUSH 0x41a00000` @0x00453bca (20.0), `PUSH 0x41700000` @0x00453bcf
+// (15.0), `CALL 0x459620` @0x00453bd9 -- i.e. MORTAR's cone and range are
+// LITERALS at the call site, which is where --puhook-aim's recorded 20.0/15.0
+// come from.
+//
+// Record fields, by dword index, all from FUN_004538b0's body:
+//   [0]        owner car, passed to FUN_0046d4a0
+//   [2..4]     an offset added to the target's position to make the aim point
+//   [5..7]     position   -- FUN_00453730 reads rec+0x14 as segment point A
+//   [8..10]    velocity
+//   [0xb..0xd] previous position
+//   [0xe..0x10] this frame's delta -- FUN_00453730 reads rec+0x38 and probes
+//              A -> A + delta, so the detonation segment is the frame's travel
+//   [0x11]     homing flag        [0x13] age seconds   [0x14] age/1.3
+//   [0x15]     the arc's base Y
+//
+// PRE and POST state are both recorded, so the port's integration can be diffed
+// directly rather than inferred from a call count.
+const PU_MTR = { armed:false, rows:[], calls:0, cap:20000, pending:null,
+                 orphans:0, err:null };
+function puMtrArm(){
+  if (PU_MTR.armed) return 'already armed';
+  try {
+    const BASE = 0x00684ea8, STRIDE = 0x110;
+    const rdF = (p, i) => { try { return '0x' + (p.add(i*4).readU32() >>> 0).toString(16); }
+                            catch(_){ return ''; } };
+    const rdI = (p, i) => { try { return p.add(i*4).readS32(); } catch(_){ return 0; } };
+    const snap = (p, out) => {
+      for (const i of [5,6,7, 8,9,10, 0xe,0xf,0x10, 0x13,0x14]) out.push(rdF(p, i));
+      out.push(rdI(p, 0x11));
+    };
+    // the homing target. FUN_0046d4a0(&slot, rec[0]) then the position is read at
+    // [slot]+0x30..0x38 -- so arg1 holds a POINTER once the call returns.
+    // RA 0x0045394a is the homing-branch call (the other, 0x00453ada, is the
+    // render branch and reads the same thing one field later).
+    PU_MTR.lisTgt = Interceptor.attach(ga(0x0046d4a0), {
+      onEnter(){
+        this.mine = (this.returnAddress.toUInt32() >>> 0) === 0x0045394a;
+        if (this.mine) this.slot = this.context.esp.add(4).readU32();
+      },
+      onLeave(){
+        if (!this.mine || !PU_MTR.pending) return;
+        try {
+          const q = ptr(ptr(this.slot).readU32());
+          PU_MTR.pending.tgt = [rdF(q, 0xc), rdF(q, 0xd), rdF(q, 0xe)];  // +0x30..0x38
+        } catch(_){ PU_MTR.pending.tgt = null; }
+      }
+    });
+    PU_MTR.lis = Interceptor.attach(ga(0x004538b0), {
+      onEnter(){
+        PU_MTR.calls++;
+        const p = this.context.eax;
+        const idx = (p.toUInt32() - BASE) / STRIDE;
+        const pre = [];
+        snap(p, pre);
+        // the spawn-time fields the integrator reads but never writes
+        for (const i of [0, 2,3,4, 0x15]) pre.push(i === 0 ? rdI(p, 0) : rdF(p, i));
+        PU_MTR.pending = { fr: SD.frames, cl: PU.calls, idx: idx, p: p,
+                           pre: pre, tgt: null };
+      },
+      onLeave(){
+        const q = PU_MTR.pending; PU_MTR.pending = null;
+        if (!q) { PU_MTR.orphans++; return; }
+        if (PU_MTR.rows.length >= PU_MTR.cap) return;
+        const post = [];
+        snap(q.p, post);
+        const t = q.tgt || ['', '', ''];
+        PU_MTR.rows.push([q.fr, q.cl, q.idx].concat(q.pre, t, post));
+      }
+    });
+    PU_MTR.armed = true;
+    return 'puhook-mortar armed (0x004538b0 + 0x0046d4a0)';
+  } catch(e){ PU_MTR.err = '' + e; return 'ERR ' + e; }
+}
+function puMtrDrain(){ const r = PU_MTR.rows; PU_MTR.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
 // --- CANONICAL-OBSERVATION BLOCK ------------------------------------------
@@ -1301,6 +1390,11 @@ rpc.exports = {
   puCxDrain: function(){ return puCxDrain(); },
   puAimArm: function(){ return puAimArm(); },
   puAimDrain: function(){ return puAimDrain(); },
+  puMtrArm: function(){ return puMtrArm(); },
+  puMtrDrain: function(){ return puMtrDrain(); },
+  puMtrStats: function(){ return JSON.stringify({armed:PU_MTR.armed,
+                          calls:PU_MTR.calls, rows:PU_MTR.rows.length,
+                          orphans:PU_MTR.orphans, err:PU_MTR.err}); },
   puAimStats: function(){ return JSON.stringify({armed:PU_AIM.armed,
                           calls:PU_AIM.calls, rows:PU_AIM.rows.length,
                           orphans:PU_AIM.orphans, err:PU_AIM.err}); },
@@ -1604,6 +1698,16 @@ def main():
                          "scripted fire pattern on ctrl byte 0x007f103f (CONTRIVED, C3-grade). "
                          "Empty = observe natural pickups only.")
     ap.add_argument("--pu-subj", type=int, default=0, help="slot the --pu-plan drives (default 0)")
+    ap.add_argument("--puhook-mortar", action="store_true",
+                    help="[D3-CONTACT] with --statediff-puhook, ALSO hook the MORTAR "
+                         "projectile update FUN_004538b0 and write <out>.pumortar.csv: "
+                         "one row per projectile per frame with the record's PRE and "
+                         "POST state (position, velocity, this frame's delta, age, "
+                         "homing flag) plus the homing target. MORTAR's own contact "
+                         "site 0x453789 probes pos -> pos + delta, so this is what "
+                         "lets a replay reproduce both the segment and the call count. "
+                         "Pool 0x00684ea8, stride 0x110, 32 records. Floats are raw "
+                         "hex dwords.")
     ap.add_argument("--puhook-aim", action="store_true",
                     help="[D3-CONTACT] with --statediff-puhook, ALSO hook the target "
                          "ACQUISITION routine FUN_00459620 (the one MORTAR, GUN and "
@@ -1830,6 +1934,8 @@ def main():
                     print("  [statediff]", E.pu_cx_arm(args.puhook_contacts))
                 if args.puhook_aim:
                     print("  [statediff]", E.pu_aim_arm())
+                if args.puhook_mortar:
+                    print("  [statediff]", E.pu_mtr_arm())
             if args.statediff_drive and not args.statediff_drive_late:
                 print("  [statediff]", E.arm_cook())
                 print(f"  [statediff] drive: full accel, steer={args.statediff_steer:+d} ->",
@@ -2165,6 +2271,25 @@ def main():
                         for r in aim_rows:
                             f.write(",".join(str(x) for x in r) + chr(10))
                     print(f"  [statediff] puaim {len(aim_rows)} rows -> {aimp}")
+                if args.statediff_puhook and args.puhook_mortar:
+                    try: print("  [statediff] puhook-mortar agent:", E.pu_mtr_stats())
+                    except Exception as _e: print("  [statediff] pumortar stats failed:", _e)
+                    mt_rows = []
+                    try: mt_rows = E.pu_mtr_drain()
+                    except Exception as _e: print("  [statediff] pumortar drain failed:", _e)
+                    mtp = outp.with_suffix(outp.suffix + ".pumortar.csv")
+                    snapc = ["px", "py", "pz", "vx", "vy", "vz",
+                             "dx", "dy", "dz", "age", "agen", "homing"]
+                    cols = (["frame", "call", "rec"]
+                            + ["pre_" + c for c in snapc]
+                            + ["owner", "aim_x", "aim_y", "aim_z", "baseY"]
+                            + ["tgt_x", "tgt_y", "tgt_z"]
+                            + ["post_" + c for c in snapc])
+                    with open(mtp, "w", newline="") as f:
+                        f.write(",".join(cols) + chr(10))
+                        for r in mt_rows:
+                            f.write(",".join(str(x) for x in r) + chr(10))
+                    print(f"  [statediff] pumortar {len(mt_rows)} rows -> {mtp}")
                 if args.statediff_aictrl:
                     ai_snapshot = list(sd_ai)
                     aip = outp.with_suffix(outp.suffix + ".aictrl.csv")

@@ -24,4 +24,9 @@ CONTACT CALL SITES (original capture vs port), slot 0
   AIM    fallback lerp     0x459c3c          0      0         0         0  not-armed
   AIM    los      query    0x459d54          0      0         0         0  not-armed
   AIM    los      lerp     0x459db5          0      0         0         0  not-armed
+  MORTAR query 0x004b4cd0  0x453789          0      0         0         0  not-armed
+  MORTAR gate  0x0045c350  0x4537bb          0      0         0         0  not-armed
+  MORTAR lerp  0x004b4650  0x4537df          0      0         0         0  not-armed
+  MORTAR basis 0x004b5080  0x45382c          0      0         0         0  not-armed
 CONTACT VERDICT: CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --puhook-aim channel: the AIM rows are NOT tested by this capture)
+         (no --puhook-mortar channel: the MORTAR rows are NOT tested by this capture)

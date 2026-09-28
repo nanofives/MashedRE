@@ -109,6 +109,10 @@ int  SweepQuery(int slot, const float pos[3], WorldHit* out, std::uint32_t retAd
 // CONDEMNS the power-up: 0x0045bcef `JNE 0x0045bd14` keeps it, fall-through runs
 // FUN_0045bac0 at 0x0045bcf7 (the capture's deact_ra 0x45bcfc).
 int  SweepConfirm(int slot, const WorldHit* hit, std::uint32_t retAddr);
+// 0x0045c350 at MORTAR's call site (RA 0x004537bb) instead of the dispatcher's:
+// same leaf, keyed by CALL SITE rather than by slot, because a mortar in flight
+// outlives the slot that fired it. NON-zero REFUSES the detonation.
+int  ConfirmGateAt(const WorldHit* hit, std::uint32_t retAddr);
 
 // ---- MASHED_PU_CONTACTDUMP ------------------------------------------------
 // Writes <path> in the exact column shape of scenario_launch.py's

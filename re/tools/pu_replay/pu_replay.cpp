@@ -33,10 +33,12 @@
 #include "Powerup/PowerupSystem.h"
 #include "Powerup/PowerupContact.h"
 #include "Powerup/PowerupAim.h"
+#include "Powerup/PowerupMortar.h"
 
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <cmath>
 #include <map>
 #include <set>
 #include <string>
@@ -132,6 +134,11 @@ const unsigned kGateSites[]  = { 0x0045790eu, 0x00457cf9u };
 // (mode 3), not by the subject slot's held code: three types reach them.
 const unsigned kAimQuerySites[] = { 0x00459c19u, 0x00459d54u };
 const int      kAimQueryN = 2;
+// MORTAR's OWN chain (FUN_00453730). Mode 1: a mortar in flight outlives the slot
+// that fired it, so code_pre cannot attribute it -- the same reason DRUM is mode 1.
+const unsigned kMtrQuerySites[] = { 0x00453789u };
+const unsigned kMtrGateSites[]  = { 0x004537bbu };
+const int      kMtrQueryN = 1, kMtrGateN = 1;
 const int      kQueryOwner[] = { 19 /*OIL*/,  12 /*P_MINE*/, 17 /*SHOTGUN*/, 10 /*DRUM*/,
                                  16 /*R_FLAME*/ };
 const int      kGateOwner[]  = { 19,          12 };
@@ -184,6 +191,11 @@ const Site kSites[] = {
     { 0x00459c3cu, -1, 0x004b4650u, 0x00459c19u, 3, "AIM    fallback lerp " },   // CALL @0x00459c37
     { 0x00459d54u, -1, 0x004b4cd0u, 0u,          3, "AIM    los      query" },   // CALL @0x00459d4f
     { 0x00459db5u, -1, 0x004b4650u, 0x00459d54u, 3, "AIM    los      lerp " },   // CALL @0x00459db0
+    // MORTAR's own detonation test, FUN_00453730, one caller (0x004538fe).
+    { 0x00453789u,  7, 0x004b4cd0u, 0u,          1, "MORTAR query 0x004b4cd0" },   // CALL @0x00453784
+    { 0x004537bbu,  7, 0x0045c350u, 0x00453789u, 1, "MORTAR gate  0x0045c350" },   // CALL @0x004537b6
+    { 0x004537dfu,  7, 0x004b4650u, 0x004537bbu, 1, "MORTAR lerp  0x004b4650" },   // CALL @0x004537da
+    { 0x0045382cu,  7, 0x004b5080u, 0x004537bbu, 1, "MORTAR basis 0x004b5080" },   // CALL @0x00453827
 };
 const int kSiteCount = static_cast<int>(sizeof(kSites) / sizeof(kSites[0]));
 
@@ -353,6 +365,75 @@ int main(int argc, char** argv) {
         }
     }
 
+    // ---- load <base>.pumortar.csv, if present -----------------------------
+    // One row per MORTAR projectile per frame, with the pool record's PRE and
+    // POST state. The port is SEEDED from PRE on the first row of each
+    // projectile's life and then CARRIES ITS OWN STATE forward, so what is
+    // measured is the accumulated integration, not 327 independent one-step
+    // checks. The capture's POST columns are the reference; the max drift is
+    // reported alongside the contact counts.
+    //
+    // A new life is detected by the age going DOWN (or by the record index being
+    // seen for the first time): pool slots are reused, and the only field that
+    // resets is age.
+    struct MtrRow {
+        long call; int rec;
+        mashed_re::Powerup::Mortar::Record pre;
+        mashed_re::Powerup::Mortar::Target tgt;
+        float post[3];              // the capture's post position, for the drift
+        float postAge;
+    };
+    std::vector<MtrRow> mtrRows;
+    bool haveMtr = false;
+    {
+        std::string mtrPath = base + ".pumortar.csv";
+        if (std::FILE* mf = std::fopen(mtrPath.c_str(), "r")) {
+            haveMtr = true;
+            std::vector<std::string> mh;
+            while (std::fgets(line, sizeof line, mf)) {
+                auto c = Split(line);
+                if (mh.empty()) { mh = c; continue; }
+                auto col = [&](const char* n) -> std::string {
+                    for (std::size_t i = 0; i < mh.size(); ++i) if (mh[i] == n) return i < c.size() ? c[i] : "";
+                    return "";
+                };
+                auto fx = [&](const char* n) -> float {
+                    const std::string s2 = col(n);
+                    if (s2.size() > 2 && s2[0] == '0' && s2[1] == 'x') {
+                        const unsigned long u = std::strtoul(s2.c_str() + 2, nullptr, 16);
+                        float f; std::memcpy(&f, &u, 4); return f;
+                    }
+                    return static_cast<float>(std::atof(s2.c_str()));
+                };
+                MtrRow m; std::memset(&m, 0, sizeof m);
+                m.call = std::atol(col("call").c_str());
+                m.rec  = std::atoi(col("rec").c_str());
+                m.pre.owner = std::atoi(col("owner").c_str());
+                m.pre.aim[0] = fx("aim_x"); m.pre.aim[1] = fx("aim_y"); m.pre.aim[2] = fx("aim_z");
+                m.pre.baseY  = fx("baseY");
+                const char* ax = "xyz";
+                for (int i = 0; i < 3; ++i) {
+                    char k[16];
+                    std::snprintf(k, sizeof k, "pre_p%c", ax[i]); m.pre.pos[i]   = fx(k);
+                    std::snprintf(k, sizeof k, "pre_v%c", ax[i]); m.pre.vel[i]   = fx(k);
+                    std::snprintf(k, sizeof k, "pre_d%c", ax[i]); m.pre.delta[i] = fx(k);
+                    std::snprintf(k, sizeof k, "post_p%c", ax[i]); m.post[i]     = fx(k);
+                }
+                m.pre.homing = std::atoi(col("pre_homing").c_str());
+                m.pre.age    = fx("pre_age");
+                m.pre.ageN   = fx("pre_agen");
+                m.postAge    = fx("post_age");
+                const std::string tx = col("tgt_x");
+                m.tgt.valid = (tx.size() > 2 && tx[0] == '0' && tx[1] == 'x') ? 1 : 0;
+                if (m.tgt.valid) {
+                    m.tgt.pos[0] = fx("tgt_x"); m.tgt.pos[1] = fx("tgt_y"); m.tgt.pos[2] = fx("tgt_z");
+                }
+                mtrRows.push_back(m);
+            }
+            std::fclose(mf);
+        }
+    }
+
     // ---- load <base>.pucontact.csv, if present ----------------------------
     const std::string cxPath = base + ".pucontact.csv";
     bool haveCx = false;
@@ -404,6 +485,10 @@ int main(int argc, char** argv) {
                 g_inj.q[std::make_pair(cl, ra)].push_back(ret);
             for (int i = 0; i < kAimQueryN; ++i) if (kAimQuerySites[i] == ra)
                 g_inj.q[std::make_pair(cl, ra)].push_back(ret);
+            for (int i = 0; i < kMtrQueryN; ++i) if (kMtrQuerySites[i] == ra)
+                g_inj.q[std::make_pair(cl, ra)].push_back(ret);
+            for (int i = 0; i < kMtrGateN; ++i) if (kMtrGateSites[i] == ra)
+                g_inj.g[std::make_pair(cl, ra)].push_back(ret);
             for (int i = 0; i < kGateN; ++i) if (kGateSites[i] == ra)
                 g_inj.g[std::make_pair(cl, ra)].push_back(ret);
         }
@@ -429,6 +514,11 @@ int main(int argc, char** argv) {
     Backend be;
     PowerupSystem sys;
     sys.Init(&be);
+    std::size_t mtrNext = 0, mtrSteps = 0, mtrLives = 0;
+    std::map<int, mashed_re::Powerup::Mortar::Record> mtrLive;
+    std::map<int, float> mtrLast;
+    std::set<int> mtrSeen;
+    float mtrDrift = 0.f, mtrAgeDrift = 0.f;
     for (const Row& r : rows) {
         g_inj.curCall = r.call;
         if (r.act >= 0) sys.Activate(want, r.act);
@@ -444,6 +534,30 @@ int main(int argc, char** argv) {
             mashed_re::Powerup::Aim::Record arec;
             std::memset(&arec, 0, sizeof arec);
             mashed_re::Powerup::Aim::Acquire(want, ai->second, &arec);
+        }
+        // MORTAR's pool loop, for the projectiles this call had in flight. Pool
+        // order within a call is the capture's row order (the tick walks
+        // 0x00684ea8 upward), so replaying the rows in file order reproduces the
+        // original's call ORDER as well as its count.
+        while (mtrNext < mtrRows.size() && mtrRows[mtrNext].call == r.call) {
+            MtrRow& m = mtrRows[mtrNext++];
+            mashed_re::Powerup::Mortar::Record& live = mtrLive[m.rec];
+            // A new life: the record index is fresh, or the age went DOWN.
+            if (!mtrSeen.count(m.rec) || m.pre.age < mtrLast[m.rec]) {
+                live = m.pre;                       // seed once, from the capture
+                mtrSeen.insert(m.rec);
+                ++mtrLives;
+            }
+            mtrLast[m.rec] = m.pre.age;
+            mashed_re::Powerup::Mortar::Step(live, m.tgt, r.dt);
+            // drift of the port's CARRIED state against the capture's POST
+            for (int c = 0; c < 3; ++c) {
+                const float e = std::fabs(live.pos[c] - m.post[c]);
+                if (e > mtrDrift) mtrDrift = e;
+            }
+            const float ae = std::fabs(live.age - m.postAge);
+            if (ae > mtrAgeDrift) mtrAgeDrift = ae;
+            ++mtrSteps;
         }
     }
     mashed_re::Powerup::Contact::CloseDump();
@@ -472,6 +586,27 @@ int main(int argc, char** argv) {
         }
     }
 
+    // MORTAR's contact COUNTS are schedule-derived -- the port steps once per
+    // captured row, and the first thing a step does is the query -- so they pass
+    // even with the integrator broken. MEASURED: all three MASHED_MORTAR_FORCE
+    // controls leave every MORTAR row `clean` while the drift moves from 4.8e-07
+    // to 6.03 / 6.29 / 0.226. The drift is therefore part of the VERDICT, not a
+    // footnote, or this table would report a broken integrator as CLEAN.
+    const float kMtrDriftMax = 1e-4f;       // ~1e3 ULPs at these magnitudes; the
+                                            // real run sits 200x under it
+    bool mtrBad = false;
+    if (haveMtr) {
+        mtrBad = (mtrDrift > kMtrDriftMax) || (mtrAgeDrift > kMtrDriftMax);
+        std::printf("\nMORTAR PROJECTILE INTEGRATION (port carried vs capture POST)\n"
+                    "  updates replayed %zu of %zu   projectile lives seeded %zu\n"
+                    "  max position drift %.3g   max age drift %.3g   (limit %g)  %s\n",
+                    mtrSteps, mtrRows.size(), mtrLives, mtrDrift, mtrAgeDrift,
+                    kMtrDriftMax, mtrBad ? "DIVERGES" : "clean");
+        if (mtrSteps != mtrRows.size())
+            std::printf("  NOTE: %zu capture rows fell outside the replayed call range\n",
+                        mtrRows.size() - mtrSteps);
+    }
+
     std::printf("\nCONTACT CALL SITES (original capture vs port), slot %d\n", want);
     std::printf("  %-24s %-12s %6s %6s %9s %9s  %s\n",
                 "site", "ret_addr", "orig", "port", "port-only", "orig-only", "status");
@@ -494,6 +629,10 @@ int main(int argc, char** argv) {
         // test the acquisition sites.
         bool armed = armedRva.count(kSites[i].rva) != 0;
         if (kSites[i].mode == 3 && !haveAim) armed = false;
+        // Same rule for MORTAR's own chain: without the projectile channel the
+        // port never steps a projectile, so a 0-vs-0 row would be a missing
+        // input printed as a match.
+        if (kSites[i].owner == 7 && kSites[i].mode == 1 && !haveMtr) armed = false;
         for (unsigned g = kSites[i].gatedBy; armed && g; ) {
             int gi = -1;
             for (int j = 0; j < kSiteCount; ++j) if (kSites[j].ra == g) { gi = j; break; }
@@ -510,10 +649,13 @@ int main(int argc, char** argv) {
         if (armed && !contested && diff) bad = 1;
         if (!armed && (port || g_inj.origCalls[ra])) notArmed = 1;
     }
-    std::printf("CONTACT VERDICT: %s%s%s\n", bad ? "DIVERGES" : "CLEAN",
+    std::printf("CONTACT VERDICT: %s%s%s\n", (bad || mtrBad) ? "DIVERGES" : "CLEAN",
                 notArmed ? "  (not-armed rows had no Frida listener when this capture"
                            " was taken and are excluded)" : "",
                 haveAim ? "" : "  (no --puhook-aim channel: the AIM rows are NOT"
                                " tested by this capture)");
+    if (!haveMtr)
+        std::printf("         (no --puhook-mortar channel: the MORTAR rows are NOT"
+                    " tested by this capture)\n");
     return 0;
 }

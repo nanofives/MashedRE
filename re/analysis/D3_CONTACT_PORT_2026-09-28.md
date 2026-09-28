@@ -11,10 +11,12 @@ Ghidra MCP did not load; no Ghidra project was opened for writing.
 
 ## 0. Headline
 
-1. **OIL, P_MINE, SHOTGUN and DRUM contact outcomes are ported and measure CLEAN**,
-   call site by call site, against fresh original-side captures (§4), and **R_FLAME
-   is exact on two of three captures** with the third's 2-of-546 residue diagnosed
-   to a named unported routine (§4.2d). P_MINE moved from
+1. **Criterion (c) went from 1 clean / 1 diverges / 7 blocked to 7 clean +
+   the sweep + the shared acquisition, 1 near-clean, 1 partial.** OIL, P_MINE,
+   SHOTGUN, DRUM, GUN and MORTAR all measure CLEAN call site by call site against
+   fresh original-side captures (§4); **R_FLAME** is exact on two of three
+   captures, its 2-of-546 residue diagnosed to a named unported routine (§4.2d);
+   only **MISSILE** still owes its own projectile chain. P_MINE moved from
    **78 decision mismatches → 0** on the same `c2` capture the prior note measured
    it on (§4.3).
 2. **The dispatcher's armed sweep is ported** (§3.3), including the deactivation
@@ -456,6 +458,88 @@ bounded to `[_DAT_005cc33c, _DAT_005cc320] = [-1, +1]`, which is what keeps the
 `FUN_004a3384` acos in domain. `_DAT_005cc98c = 0x42652ee1 = 57.29578` (180/π),
 so the cone limit is **20.0 degrees** and the range **15.0**.
 
+### 4.2f MORTAR's own chain — ported, and measured on its INTEGRATION
+
+MORTAR's own contact site `0x453789` fires once per airborne projectile per
+frame, so its count comes out of the projectile's per-frame integration. Both
+halves are now ported (`Powerup/PowerupMortar.{h,cpp}`):
+
+| RVA | what |
+|---|---|
+| `0x00453730` | the detonation test. Probes `pos → pos + delta`; on a hit the gate allows, blows up and returns 1. One caller, `0x004538fe` |
+| `0x004538b0` | the per-frame update. Its **entire body** sits inside `if (FUN_00453730() == 0)`, so a detonation leaves the record untouched — age included |
+
+**Pool**, disassembled from the tick's own second loop: `MOV ESI,0x684ea8`
+(`0x00453c28`), `ADD ESI,0x110` (`0x00453c45`), `CMP ESI,0x6870a8`
+(`0x00453c4b`) → base `0x00684ea8`, stride `0x110`, **32 records**.
+
+**The arc.** Y is *not* integrated: `pos.y = h(age) * 1.5 + baseY`, with `h` a
+half-sine in normalised age for the first 1.625 s and a falling line after. The
+velocity's Y component is computed in the homing branch and then never used.
+That is what makes a mortar lob rather than fly straight.
+
+**Falsified offline first** (`re/tools/mortar_model.py`, on
+`verify/d3_contact_20260928b/m2.msd`, 327 updates, 88 of them homing):
+
+```
+INTEGRATION  match=326  mismatch=0  (tol 1e-05)     VERDICT: CLEAN
+  past expiry 1   detonated 1 (PRE must equal POST)
+```
+
+The one apparent mismatch at the first attempt was **not** a decode error: the
+projectile had detonated that frame, so the record was frozen and the model had
+integrated anyway. `FUN_00453730`'s verdict is an input — the world query behind
+it is — and the model now consumes it, exactly as the replay does. Tightening to
+`1e-6` leaves 2 fields at `1.91e-6`, i.e. float32 ULPs on a value near 16; the
+residual is `math.sin`/`math.sqrt` in doubles against x87 `FSIN` and the RW sqrt
+LUT, not a disagreement about the rule.
+
+**Ported and measured**, `m2.msd`:
+
+| site | orig | port | |
+|---|---|---|---|
+| `0x453789` query | 280 | 280 | clean |
+| `0x4537bb` gate  | 2 | 2 | clean |
+| `0x4537df` lerp  | 1 | 1 | clean |
+| `0x45382c` basis | 1 | 1 | clean |
+
+and, the number that actually carries the weight, the port **seeded once per
+projectile life and then carrying its own state**:
+
+```
+updates replayed 280 of 327   projectile lives seeded 3
+max position drift 4.77e-07   max age drift 0   (limit 1e-4)   clean
+```
+
+**Why the drift is in the verdict and not a footnote.** MORTAR's contact COUNTS
+are schedule-derived — the port steps once per captured row and the first thing a
+step does is the query — so they pass even with the integrator broken. That is
+measured, not argued: all three `MASHED_MORTAR_FORCE` controls leave **every**
+MORTAR row `clean`.
+
+| control | drift | count rows | verdict |
+|---|---|---|---|
+| `noarc` — Y integrates by velocity | **6.03** | all clean | DIVERGES |
+| `nohome` — homing branch never runs | **6.29** | all clean | DIVERGES |
+| `allow` — gate polarity inverted | **0.226**, age 0.0167 | all clean | DIVERGES |
+| *(unset, the real run)* | **4.77e-07** | all clean | CLEAN |
+
+So `pu_replay` now folds the drift into `CONTACT VERDICT`. Without that the table
+would have reported a broken integrator as clean — and note in particular that
+the gate's **polarity** (non-zero REFUSES, from `CALL 0x45c350` `0x004537b6`
+falling through to `return 0`) is pinned by the drift alone: inverting it leaves
+the lerp at 1/1, because the two recorded gate returns are one 0 and one 1.
+
+One correction it forced in `PowerupContact`: MORTAR's gate is `0x0045c350`, the
+sweep's *confirm* leaf, **not** the `0x0045c110` surface gate the OIL/P_MINE
+drops use — and it has to be keyed by **call site**, not by slot as the
+dispatcher's is, because a mortar in flight outlives the slot that fired it.
+Hence `Contact::ConfirmGateAt`.
+
+Not ported, and none of it makes a contact call: the explosion effects
+(`FUN_00477760`, `FUN_00486610`, `FUN_00453210`) and the trail ribbon
+(`FUN_004532f0` / `FUN_00453100`, 15 segments).
+
 ### 4.3 The prior note's own captures
 
 `c2` and `c3` predate the `surface_gate` instrument, and `c2`/`c3`/`g2`/`g3`
@@ -604,11 +688,12 @@ the flight integration has to be faithful before the count can be compared.
 - Archived 9-type guard, re-run after every change in this note:
   `verify/d3_contact_20260928/o3.diff.txt` (OIL, FLASH, GUN, SHOTGUN, MISSILE)
   **CLEAN**, `o4.diff.txt` (MORTAR, DRUM, P_MINE, R_FLAME) **CLEAN**.
-- The new `verify/d3_contact_20260928b/m1.diff.txt` (MORTAR, GUN, MISSILE)
-  **CLEAN** — a decision-side guard those three did not previously have.
+- The new `verify/d3_contact_20260928b/m1.diff.txt` and `m2.diff.txt` (MORTAR,
+  GUN, MISSILE) **CLEAN** — a decision-side guard those three did not previously
+  have.
 - Contact replay, re-run after the acquisition port on every capture:
-  `c2` CLEAN, `c3` CLEAN, `g2` CLEAN, `g4` CLEAN, `m1` CLEAN, and `g3` DIVERGES on
-  exactly the 2-query R_FLAME residue of §4.2d and nothing else.
+  `c2` CLEAN, `c3` CLEAN, `g2` CLEAN, `g4` CLEAN, `m1` CLEAN, `m2` CLEAN, and
+  `g3` DIVERGES on exactly the 2-query R_FLAME residue of §4.2d and nothing else.
 - All four current captures CLEAN (§4.4).
 - `mashedmod\build.bat` built both targets clean.
 
@@ -639,18 +724,19 @@ are not part of the guard and were not in the prior note's either.
 | R_FLAME | **clean on `c3` and `g4`, 2-query residue on `g3`** | query 510/510 (`c3`), 547/547 (`g4`), 546 vs 548 (`g3`); lerp and basis exact on all three. Residue mechanism cited in §4.2d: the unported per-group distance sort `FUN_0045ac40` |
 | — acquisition (shared) | **clean** | `FUN_00459620`'s four sites on `m1`: fallback query **187/187**, fallback lerp 33/33, LOS lerp 152/152, LOS query 348/348 (schedule-derived). Both non-degeneracy controls DIVERGE. §4.2e |
 | GUN | **clean** | no site beyond the acquisition four ever appears in a GUN window, and window attribution can only OVER-collect, so that negative is sound. The three others that do appear are not power-up sites: `0x479124` fires 6666 times in `g3` (~1/frame over the whole 6650-frame race, held or not), and `0x475229`/`0x4752b2` fire 1× in `g3` but 4× in `g4` and 4× in `m1`, i.e. outside GUN windows too |
-| MORTAR | partial | the acquisition four are clean; its OWN detonation test `FUN_00453730` is not ported — `0x453789`→`0x004b4cd0` (170 calls / 2 hits on `g2`), gate `0x4537bb`, lerp `0x4537df`, basis `0x45382c`. Single caller `0x004538fe` |
+| MORTAR | **clean** | the acquisition four plus its OWN chain, all ported (§4.2f): `0x453789` 280/280, gate `0x4537bb` 2/2, lerp `0x4537df` 1/1, basis `0x45382c` 1/1, and the carried integration within **4.77e-07** over 280 steps and 3 projectile lives. All three non-degeneracy controls DIVERGE |
 | MISSILE | partial | the acquisition four are clean; its OWN chain is not ported — `0x455cd9`→`0x00455100` 31/30, `0x455e59`→`0x004b4cd0` 31/31, `0x455de0`→`0x004b4d10` 16/0, terminal `0x455e07`→`0x00455910` 1/1 |
 
-**6 clean + the sweep + the shared acquisition, 1 near-clean (R_FLAME), 2 partial**
-(was 1 clean / 1 diverges / 7 blocked at the start of the day, and 5 clean /
-3 blocked before §4.2e).
+**7 clean + the sweep + the shared acquisition, 1 near-clean (R_FLAME),
+1 partial (MISSILE)** — against 1 clean / 1 diverges / 7 blocked at the start of
+the day.
 
-What MORTAR and MISSILE still owe is **not** the acquisition and **not** the
-contact chain: it is each one's own **projectile record + per-frame integration**
-(§5.3). `PowerupContact.cpp` provides every leaf, and `PowerupAim.cpp` now
-provides the shared target. GUN needed neither — the acquisition sites *are* its
-contact sites, which is why it closes outright.
+What MISSILE still owes is **not** the acquisition and **not** the contact chain:
+it is its own **projectile record + per-frame integration** (§5.3), the same
+shape MORTAR just closed in §4.2f. `PowerupContact.cpp` provides every leaf,
+`PowerupAim.cpp` the shared target, and `PowerupMortar.cpp` is the worked example
+of the remaining pattern. GUN needed neither — the acquisition sites *are* its
+contact sites, which is why it closed outright.
 
 ## 8. OPEN
 
@@ -668,10 +754,15 @@ contact sites, which is why it closes outright.
    because its reference point comes from `FUN_004671d0(0)`, a viewport query the
    replay has no equivalent for. Bound on what that costs: **2 queries of 546 on
    one of three captures, on a count only**; lerp and basis are exact on all three.
-3. **MORTAR's own detonation test** `FUN_00453730` (one caller, `0x004538fe`
-   inside `FUN_004538b0`) — now UNBLOCKED by (1), and the single next slice
-   alongside MISSILE's own chain. Both need a projectile record + per-frame
-   integration, not more of the contact chain.
+3. ~~**MORTAR's own detonation test**~~ — **DONE** (§4.2f). What is left of
+   MORTAR is only effects and the trail ribbon, neither of which makes a contact
+   call. **MISSILE's own chain is now the single next slice**, and it is the same
+   shape: `0x455cd9`→`0x00455100`, `0x455e59`→`0x004b4cd0`,
+   `0x455de0`→`0x004b4d10`, terminal `0x455e07`→`0x00455910`, all inside the
+   MISSILE tick region past `0x00455c90` which **Ghidra has not defined**. Start
+   by disassembling it (`re/tools/disasm_va.py 0x455c90 0x400`) and by finding
+   its pool the way MORTAR's was found — off the tick's own loop bounds — rather
+   than by asking for a Ghidra master write.
 4. **P_MINE's and DRUM's segment direction** — [UNCERTAIN], §3.1. Both probe world
    `-Y` because `HostCar` has no matrix up row. Next command in §3.1.
 5. **The sweep's sphere** `slot+0x80..0x8c`: the radius at `+0x8c` has no writer in
@@ -683,10 +774,14 @@ contact sites, which is why it closes outright.
 7. **SHOTGUN's per-pellet frames.** Both of the port's two passes probe from the
    owner car; the original probes from `param_1[1]` and `param_1[2]`. It did not
    change the counts on `g4`, but it moves both impact points.
-8. **The acquisition capture channel is new and thin.** `--puhook-aim` has been
-   run exactly once (`verify/d3_contact_20260928b/m1.msd`). Every pre-2026-09-28b
-   capture has no `.puaim.csv`, and `pu_replay` now prints those AIM rows as
-   `not-armed` rather than `clean` — a 0-vs-0 row is a missing input, not a match.
-   A second capture on a different track would harden §4.2e.
-9. Carried from the prior note: the Vehicle points/vectors defect (U-9138, latent,
-   untouched here), `Rw_VtableDispatch`, `Rw_SetRotation` / `Math_Acos`.
+8. **The two new capture channels are thin.** `--puhook-aim` has run twice (`m1`,
+   `m2`) and `--puhook-mortar` once (`m2`), all on track 0. Every earlier capture
+   has neither file, and `pu_replay` now prints those rows as `not-armed` rather
+   than `clean` — a 0-vs-0 row is a missing input, not a match. A capture on a
+   different track would harden §4.2e and §4.2f.
+9. **MORTAR's 3 projectile lives are few.** §4.2f's drift is measured over 280
+   updates but only 3 launches, all on one track. The `noarc`/`nohome`/`allow`
+   controls make it a real measurement rather than a lucky one, but more lives
+   would bound the homing branch better (88 of the 327 updates were homing).
+10. Carried from the prior note: the Vehicle points/vectors defect (U-9138, latent,
+    untouched here), `Rw_VtableDispatch`, `Rw_SetRotation` / `Math_Acos`.
