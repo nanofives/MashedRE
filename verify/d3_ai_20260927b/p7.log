@@ -1,0 +1,4 @@
+  [keep-awake] display-sleep suppressed + wake nudge sent
+=== scenario_launch  pid=30324  track=0 mode=10 cars=4 ===
+  attaching ASAP...
+  error: could not attach

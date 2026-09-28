@@ -1,0 +1,64 @@
+== regime flag_a368 == 0 :  K=61  observations=30
+   c0_distinct        13..24   (pooled 13..37)
+   c1_distinct        1..8   (pooled 17..70)
+   steer_distinct     13..30   (pooled 29..96)
+   c0_median          0..10   (pooled 0..0)
+   c1_median          0..0   (pooled 0..0)
+   abs_steer_median   8..37   (pooled 0..23)
+   accel_distinct     1..2   (pooled 2..4)
+   accel_median       255..255   (pooled 25..255)
+   brake_distinct     1..2   (pooled 2..2)
+   brake_median       0..0   (pooled 0..0)
+
+== regime flag_a368 == 1 :  K=159  observations=6
+   c0_distinct        3..24   (pooled 13..37)
+   c1_distinct        17..41   (pooled 17..70)
+   steer_distinct     19..64   (pooled 29..96)
+   c0_median          0..0   (pooled 0..0)
+   c1_median          0..0   (pooled 0..0)
+   abs_steer_median   0..13   (pooled 0..23)
+   accel_distinct     2..3   (pooled 2..4)
+   accel_median       25..102   (pooled 25..255)
+   brake_distinct     2..2   (pooled 2..2)
+   brake_median       0..0   (pooled 0..0)
+
+sa_d1.csv
+  v1  flags={'flag0': 220, 'flag1': 0}
+     vs regime0: FAIL c0_distinct=7 not in [13,24]; steer_distinct=7 not in [13,30]; abs_steer_median=4 not in [8,37]
+     vs regime1: NOT_IN_REGIME 
+  v2  flags={'flag0': 220, 'flag1': 0}
+     vs regime0: FAIL c0_distinct=28 not in [13,24]; c0_median=23 not in [0,10]
+     vs regime1: NOT_IN_REGIME 
+  v3  flags={'flag0': 220, 'flag1': 0}
+     vs regime0: PASS 
+     vs regime1: NOT_IN_REGIME 
+sa_d2.csv
+  v1  flags={'flag0': 220, 'flag1': 0}
+     vs regime0: FAIL c0_distinct=7 not in [13,24]; steer_distinct=7 not in [13,30]; abs_steer_median=4 not in [8,37]
+     vs regime1: NOT_IN_REGIME 
+  v2  flags={'flag0': 220, 'flag1': 0}
+     vs regime0: FAIL c0_distinct=28 not in [13,24]; c0_median=23 not in [0,10]
+     vs regime1: NOT_IN_REGIME 
+  v3  flags={'flag0': 220, 'flag1': 0}
+     vs regime0: PASS 
+     vs regime1: NOT_IN_REGIME 
+sa_f1.csv
+  v1  flags={'flag0': 0, 'flag1': 220}
+     vs regime0: NOT_IN_REGIME 
+     vs regime1: FAIL c1_median=5 not in [0,0]
+  v2  flags={'flag0': 0, 'flag1': 220}
+     vs regime0: NOT_IN_REGIME 
+     vs regime1: FAIL c0_distinct=35 not in [3,24]; c1_distinct=11 not in [17,41]; c0_median=10 not in [0,0]
+  v3  flags={'flag0': 0, 'flag1': 220}
+     vs regime0: NOT_IN_REGIME 
+     vs regime1: FAIL c1_distinct=5 not in [17,41]
+sa_f2.csv
+  v1  flags={'flag0': 0, 'flag1': 220}
+     vs regime0: NOT_IN_REGIME 
+     vs regime1: FAIL c1_median=5 not in [0,0]
+  v2  flags={'flag0': 0, 'flag1': 220}
+     vs regime0: NOT_IN_REGIME 
+     vs regime1: FAIL c0_distinct=35 not in [3,24]; c1_distinct=11 not in [17,41]; c0_median=10 not in [0,0]
+  v3  flags={'flag0': 0, 'flag1': 220}
+     vs regime0: NOT_IN_REGIME 
+     vs regime1: FAIL c1_distinct=5 not in [17,41]

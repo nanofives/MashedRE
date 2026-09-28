@@ -1,0 +1,1453 @@
+{
+ "n": 220,
+ "minrows": 30,
+ "pure": false,
+ "envelope_paths": [
+  "verify/d3_ai_20260927b/p1.msd.aistep.csv",
+  "verify/d3_ai_20260927b/p2.msd.aistep.csv",
+  "verify/d3_ai_20260927b/p3.msd.aistep.csv",
+  "verify/d3_ai_20260927b/p4.msd.aistep.csv",
+  "verify/d3_ai_20260927b/p6.msd.aistep.csv",
+  "verify/d3_ai_20260927b/p8.msd.aistep.csv",
+  "verify/d3_ai_20260927b/p9.msd.aistep.csv",
+  "verify/d3_ai_20260927b/p10.msd.aistep.csv",
+  "verify/d3_ai_20260927b/p11.msd.aistep.csv",
+  "verify/d3_ai_20260927b/p12.msd.aistep.csv"
+ ],
+ "regimes": {
+  "0": {
+   "k": 61,
+   "n_obs": 30,
+   "env": {
+    "c0_distinct": [
+     13,
+     24
+    ],
+    "c1_distinct": [
+     1,
+     8
+    ],
+    "steer_distinct": [
+     13,
+     30
+    ],
+    "c0_median": [
+     0,
+     10
+    ],
+    "c1_median": [
+     0,
+     0
+    ],
+    "abs_steer_median": [
+     8,
+     37
+    ],
+    "accel_distinct": [
+     1,
+     2
+    ],
+    "accel_median": [
+     255,
+     255
+    ],
+    "brake_distinct": [
+     1,
+     2
+    ],
+    "brake_median": [
+     0,
+     0
+    ]
+   },
+   "obs": {
+    "p1.msd.aistep.csv|v1": {
+     "c0_distinct": 13,
+     "c0_median": 8,
+     "c1_distinct": 1,
+     "c1_median": 0,
+     "steer_distinct": 13,
+     "abs_steer_median": 8,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 1,
+     "brake_median": 0
+    },
+    "p1.msd.aistep.csv|v2": {
+     "c0_distinct": 23,
+     "c0_median": 0,
+     "c1_distinct": 8,
+     "c1_median": 0,
+     "steer_distinct": 30,
+     "abs_steer_median": 37,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p1.msd.aistep.csv|v3": {
+     "c0_distinct": 24,
+     "c0_median": 10,
+     "c1_distinct": 4,
+     "c1_median": 0,
+     "steer_distinct": 27,
+     "abs_steer_median": 11,
+     "accel_distinct": 2,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p2.msd.aistep.csv|v1": {
+     "c0_distinct": 13,
+     "c0_median": 8,
+     "c1_distinct": 1,
+     "c1_median": 0,
+     "steer_distinct": 13,
+     "abs_steer_median": 8,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 1,
+     "brake_median": 0
+    },
+    "p2.msd.aistep.csv|v2": {
+     "c0_distinct": 23,
+     "c0_median": 0,
+     "c1_distinct": 8,
+     "c1_median": 0,
+     "steer_distinct": 30,
+     "abs_steer_median": 37,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p2.msd.aistep.csv|v3": {
+     "c0_distinct": 24,
+     "c0_median": 10,
+     "c1_distinct": 4,
+     "c1_median": 0,
+     "steer_distinct": 27,
+     "abs_steer_median": 11,
+     "accel_distinct": 2,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p3.msd.aistep.csv|v1": {
+     "c0_distinct": 13,
+     "c0_median": 8,
+     "c1_distinct": 1,
+     "c1_median": 0,
+     "steer_distinct": 13,
+     "abs_steer_median": 8,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 1,
+     "brake_median": 0
+    },
+    "p3.msd.aistep.csv|v2": {
+     "c0_distinct": 23,
+     "c0_median": 0,
+     "c1_distinct": 8,
+     "c1_median": 0,
+     "steer_distinct": 30,
+     "abs_steer_median": 37,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p3.msd.aistep.csv|v3": {
+     "c0_distinct": 24,
+     "c0_median": 10,
+     "c1_distinct": 4,
+     "c1_median": 0,
+     "steer_distinct": 27,
+     "abs_steer_median": 11,
+     "accel_distinct": 2,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p4.msd.aistep.csv|v1": {
+     "c0_distinct": 13,
+     "c0_median": 8,
+     "c1_distinct": 1,
+     "c1_median": 0,
+     "steer_distinct": 13,
+     "abs_steer_median": 8,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 1,
+     "brake_median": 0
+    },
+    "p4.msd.aistep.csv|v2": {
+     "c0_distinct": 23,
+     "c0_median": 0,
+     "c1_distinct": 8,
+     "c1_median": 0,
+     "steer_distinct": 30,
+     "abs_steer_median": 37,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p4.msd.aistep.csv|v3": {
+     "c0_distinct": 24,
+     "c0_median": 10,
+     "c1_distinct": 4,
+     "c1_median": 0,
+     "steer_distinct": 27,
+     "abs_steer_median": 11,
+     "accel_distinct": 2,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p6.msd.aistep.csv|v1": {
+     "c0_distinct": 13,
+     "c0_median": 8,
+     "c1_distinct": 1,
+     "c1_median": 0,
+     "steer_distinct": 13,
+     "abs_steer_median": 8,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 1,
+     "brake_median": 0
+    },
+    "p6.msd.aistep.csv|v2": {
+     "c0_distinct": 23,
+     "c0_median": 0,
+     "c1_distinct": 8,
+     "c1_median": 0,
+     "steer_distinct": 30,
+     "abs_steer_median": 37,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p6.msd.aistep.csv|v3": {
+     "c0_distinct": 24,
+     "c0_median": 10,
+     "c1_distinct": 4,
+     "c1_median": 0,
+     "steer_distinct": 27,
+     "abs_steer_median": 11,
+     "accel_distinct": 2,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p8.msd.aistep.csv|v1": {
+     "c0_distinct": 13,
+     "c0_median": 8,
+     "c1_distinct": 1,
+     "c1_median": 0,
+     "steer_distinct": 13,
+     "abs_steer_median": 8,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 1,
+     "brake_median": 0
+    },
+    "p8.msd.aistep.csv|v2": {
+     "c0_distinct": 23,
+     "c0_median": 0,
+     "c1_distinct": 8,
+     "c1_median": 0,
+     "steer_distinct": 30,
+     "abs_steer_median": 37,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p8.msd.aistep.csv|v3": {
+     "c0_distinct": 24,
+     "c0_median": 10,
+     "c1_distinct": 4,
+     "c1_median": 0,
+     "steer_distinct": 27,
+     "abs_steer_median": 11,
+     "accel_distinct": 2,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p9.msd.aistep.csv|v1": {
+     "c0_distinct": 13,
+     "c0_median": 8,
+     "c1_distinct": 1,
+     "c1_median": 0,
+     "steer_distinct": 13,
+     "abs_steer_median": 8,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 1,
+     "brake_median": 0
+    },
+    "p9.msd.aistep.csv|v2": {
+     "c0_distinct": 23,
+     "c0_median": 0,
+     "c1_distinct": 8,
+     "c1_median": 0,
+     "steer_distinct": 30,
+     "abs_steer_median": 37,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p9.msd.aistep.csv|v3": {
+     "c0_distinct": 24,
+     "c0_median": 10,
+     "c1_distinct": 4,
+     "c1_median": 0,
+     "steer_distinct": 27,
+     "abs_steer_median": 11,
+     "accel_distinct": 2,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p10.msd.aistep.csv|v1": {
+     "c0_distinct": 13,
+     "c0_median": 8,
+     "c1_distinct": 1,
+     "c1_median": 0,
+     "steer_distinct": 13,
+     "abs_steer_median": 8,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 1,
+     "brake_median": 0
+    },
+    "p10.msd.aistep.csv|v2": {
+     "c0_distinct": 23,
+     "c0_median": 0,
+     "c1_distinct": 8,
+     "c1_median": 0,
+     "steer_distinct": 30,
+     "abs_steer_median": 37,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p10.msd.aistep.csv|v3": {
+     "c0_distinct": 24,
+     "c0_median": 10,
+     "c1_distinct": 4,
+     "c1_median": 0,
+     "steer_distinct": 27,
+     "abs_steer_median": 11,
+     "accel_distinct": 2,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p11.msd.aistep.csv|v1": {
+     "c0_distinct": 13,
+     "c0_median": 8,
+     "c1_distinct": 1,
+     "c1_median": 0,
+     "steer_distinct": 13,
+     "abs_steer_median": 8,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 1,
+     "brake_median": 0
+    },
+    "p11.msd.aistep.csv|v2": {
+     "c0_distinct": 23,
+     "c0_median": 0,
+     "c1_distinct": 8,
+     "c1_median": 0,
+     "steer_distinct": 30,
+     "abs_steer_median": 37,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p11.msd.aistep.csv|v3": {
+     "c0_distinct": 24,
+     "c0_median": 10,
+     "c1_distinct": 4,
+     "c1_median": 0,
+     "steer_distinct": 27,
+     "abs_steer_median": 11,
+     "accel_distinct": 2,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p12.msd.aistep.csv|v1": {
+     "c0_distinct": 13,
+     "c0_median": 8,
+     "c1_distinct": 1,
+     "c1_median": 0,
+     "steer_distinct": 13,
+     "abs_steer_median": 8,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 1,
+     "brake_median": 0
+    },
+    "p12.msd.aistep.csv|v2": {
+     "c0_distinct": 23,
+     "c0_median": 0,
+     "c1_distinct": 8,
+     "c1_median": 0,
+     "steer_distinct": 30,
+     "abs_steer_median": 37,
+     "accel_distinct": 1,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p12.msd.aistep.csv|v3": {
+     "c0_distinct": 24,
+     "c0_median": 10,
+     "c1_distinct": 4,
+     "c1_median": 0,
+     "steer_distinct": 27,
+     "abs_steer_median": 11,
+     "accel_distinct": 2,
+     "accel_median": 255,
+     "brake_distinct": 2,
+     "brake_median": 0
+    }
+   },
+   "speed": {
+    "p1.msd.aistep.csv|v1": {
+     "min": 0,
+     "p05": 558,
+     "median": 2042,
+     "p95": 2710,
+     "max": 2769
+    },
+    "p1.msd.aistep.csv|v2": {
+     "min": 0,
+     "p05": 861,
+     "median": 1586,
+     "p95": 2298,
+     "max": 2374
+    },
+    "p1.msd.aistep.csv|v3": {
+     "min": 0,
+     "p05": 861,
+     "median": 2278,
+     "p95": 2710,
+     "max": 2756
+    },
+    "p2.msd.aistep.csv|v1": {
+     "min": 0,
+     "p05": 558,
+     "median": 2042,
+     "p95": 2710,
+     "max": 2769
+    },
+    "p2.msd.aistep.csv|v2": {
+     "min": 0,
+     "p05": 861,
+     "median": 1586,
+     "p95": 2298,
+     "max": 2374
+    },
+    "p2.msd.aistep.csv|v3": {
+     "min": 0,
+     "p05": 861,
+     "median": 2278,
+     "p95": 2710,
+     "max": 2756
+    },
+    "p3.msd.aistep.csv|v1": {
+     "min": 0,
+     "p05": 558,
+     "median": 2042,
+     "p95": 2710,
+     "max": 2769
+    },
+    "p3.msd.aistep.csv|v2": {
+     "min": 0,
+     "p05": 861,
+     "median": 1586,
+     "p95": 2298,
+     "max": 2374
+    },
+    "p3.msd.aistep.csv|v3": {
+     "min": 0,
+     "p05": 861,
+     "median": 2278,
+     "p95": 2710,
+     "max": 2756
+    },
+    "p4.msd.aistep.csv|v1": {
+     "min": 0,
+     "p05": 558,
+     "median": 2042,
+     "p95": 2710,
+     "max": 2769
+    },
+    "p4.msd.aistep.csv|v2": {
+     "min": 0,
+     "p05": 861,
+     "median": 1586,
+     "p95": 2298,
+     "max": 2374
+    },
+    "p4.msd.aistep.csv|v3": {
+     "min": 0,
+     "p05": 861,
+     "median": 2278,
+     "p95": 2710,
+     "max": 2756
+    },
+    "p6.msd.aistep.csv|v1": {
+     "min": 0,
+     "p05": 558,
+     "median": 2042,
+     "p95": 2710,
+     "max": 2769
+    },
+    "p6.msd.aistep.csv|v2": {
+     "min": 0,
+     "p05": 861,
+     "median": 1586,
+     "p95": 2298,
+     "max": 2374
+    },
+    "p6.msd.aistep.csv|v3": {
+     "min": 0,
+     "p05": 861,
+     "median": 2278,
+     "p95": 2710,
+     "max": 2756
+    },
+    "p8.msd.aistep.csv|v1": {
+     "min": 0,
+     "p05": 558,
+     "median": 2042,
+     "p95": 2710,
+     "max": 2769
+    },
+    "p8.msd.aistep.csv|v2": {
+     "min": 0,
+     "p05": 861,
+     "median": 1586,
+     "p95": 2298,
+     "max": 2374
+    },
+    "p8.msd.aistep.csv|v3": {
+     "min": 0,
+     "p05": 861,
+     "median": 2278,
+     "p95": 2710,
+     "max": 2756
+    },
+    "p9.msd.aistep.csv|v1": {
+     "min": 0,
+     "p05": 558,
+     "median": 2042,
+     "p95": 2710,
+     "max": 2769
+    },
+    "p9.msd.aistep.csv|v2": {
+     "min": 0,
+     "p05": 861,
+     "median": 1586,
+     "p95": 2298,
+     "max": 2374
+    },
+    "p9.msd.aistep.csv|v3": {
+     "min": 0,
+     "p05": 861,
+     "median": 2278,
+     "p95": 2710,
+     "max": 2756
+    },
+    "p10.msd.aistep.csv|v1": {
+     "min": 0,
+     "p05": 558,
+     "median": 2042,
+     "p95": 2710,
+     "max": 2769
+    },
+    "p10.msd.aistep.csv|v2": {
+     "min": 0,
+     "p05": 861,
+     "median": 1586,
+     "p95": 2298,
+     "max": 2374
+    },
+    "p10.msd.aistep.csv|v3": {
+     "min": 0,
+     "p05": 861,
+     "median": 2278,
+     "p95": 2710,
+     "max": 2756
+    },
+    "p11.msd.aistep.csv|v1": {
+     "min": 0,
+     "p05": 558,
+     "median": 2042,
+     "p95": 2710,
+     "max": 2769
+    },
+    "p11.msd.aistep.csv|v2": {
+     "min": 0,
+     "p05": 861,
+     "median": 1586,
+     "p95": 2298,
+     "max": 2374
+    },
+    "p11.msd.aistep.csv|v3": {
+     "min": 0,
+     "p05": 861,
+     "median": 2278,
+     "p95": 2710,
+     "max": 2756
+    },
+    "p12.msd.aistep.csv|v1": {
+     "min": 0,
+     "p05": 558,
+     "median": 2042,
+     "p95": 2710,
+     "max": 2769
+    },
+    "p12.msd.aistep.csv|v2": {
+     "min": 0,
+     "p05": 861,
+     "median": 1586,
+     "p95": 2298,
+     "max": 2374
+    },
+    "p12.msd.aistep.csv|v3": {
+     "min": 0,
+     "p05": 861,
+     "median": 2278,
+     "p95": 2710,
+     "max": 2756
+    }
+   }
+  },
+  "1": {
+   "k": 159,
+   "n_obs": 6,
+   "env": {
+    "c0_distinct": [
+     3,
+     24
+    ],
+    "c1_distinct": [
+     17,
+     41
+    ],
+    "steer_distinct": [
+     19,
+     64
+    ],
+    "c0_median": [
+     0,
+     0
+    ],
+    "c1_median": [
+     0,
+     0
+    ],
+    "abs_steer_median": [
+     0,
+     13
+    ],
+    "accel_distinct": [
+     2,
+     3
+    ],
+    "accel_median": [
+     25,
+     102
+    ],
+    "brake_distinct": [
+     2,
+     2
+    ],
+    "brake_median": [
+     0,
+     0
+    ]
+   },
+   "obs": {
+    "p6.msd.aistep.csv|v1": {
+     "c0_distinct": 3,
+     "c0_median": 0,
+     "c1_distinct": 17,
+     "c1_median": 0,
+     "steer_distinct": 19,
+     "abs_steer_median": 0,
+     "accel_distinct": 3,
+     "accel_median": 25,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p6.msd.aistep.csv|v2": {
+     "c0_distinct": 24,
+     "c0_median": 0,
+     "c1_distinct": 41,
+     "c1_median": 0,
+     "steer_distinct": 64,
+     "abs_steer_median": 13,
+     "accel_distinct": 2,
+     "accel_median": 102,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p6.msd.aistep.csv|v3": {
+     "c0_distinct": 18,
+     "c0_median": 0,
+     "c1_distinct": 38,
+     "c1_median": 0,
+     "steer_distinct": 55,
+     "abs_steer_median": 0,
+     "accel_distinct": 2,
+     "accel_median": 102,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p9.msd.aistep.csv|v1": {
+     "c0_distinct": 3,
+     "c0_median": 0,
+     "c1_distinct": 17,
+     "c1_median": 0,
+     "steer_distinct": 19,
+     "abs_steer_median": 0,
+     "accel_distinct": 3,
+     "accel_median": 25,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p9.msd.aistep.csv|v2": {
+     "c0_distinct": 24,
+     "c0_median": 0,
+     "c1_distinct": 41,
+     "c1_median": 0,
+     "steer_distinct": 64,
+     "abs_steer_median": 13,
+     "accel_distinct": 2,
+     "accel_median": 102,
+     "brake_distinct": 2,
+     "brake_median": 0
+    },
+    "p9.msd.aistep.csv|v3": {
+     "c0_distinct": 18,
+     "c0_median": 0,
+     "c1_distinct": 38,
+     "c1_median": 0,
+     "steer_distinct": 55,
+     "abs_steer_median": 0,
+     "accel_distinct": 2,
+     "accel_median": 102,
+     "brake_distinct": 2,
+     "brake_median": 0
+    }
+   },
+   "speed": {
+    "p6.msd.aistep.csv|v1": {
+     "min": 4,
+     "p05": 159,
+     "median": 2535,
+     "p95": 2938,
+     "max": 2959
+    },
+    "p6.msd.aistep.csv|v2": {
+     "min": 1341,
+     "p05": 1341,
+     "median": 2681,
+     "p95": 3396,
+     "max": 3441
+    },
+    "p6.msd.aistep.csv|v3": {
+     "min": 1087,
+     "p05": 1207,
+     "median": 2316,
+     "p95": 3457,
+     "max": 3595
+    },
+    "p9.msd.aistep.csv|v1": {
+     "min": 4,
+     "p05": 159,
+     "median": 2535,
+     "p95": 2938,
+     "max": 2959
+    },
+    "p9.msd.aistep.csv|v2": {
+     "min": 1341,
+     "p05": 1341,
+     "median": 2681,
+     "p95": 3396,
+     "max": 3441
+    },
+    "p9.msd.aistep.csv|v3": {
+     "min": 1087,
+     "p05": 1207,
+     "median": 2316,
+     "p95": 3457,
+     "max": 3595
+    }
+   }
+  }
+ },
+ "scored": {
+  "sa_d1.csv": {
+   "v1": {
+    "regime0": {
+     "verdict": "FAIL",
+     "fails": [
+      "c0_distinct=7 not in [13,24]",
+      "steer_distinct=7 not in [13,30]",
+      "abs_steer_median=4 not in [8,37]"
+     ],
+     "stats": {
+      "c0_distinct": 7,
+      "c0_median": 4,
+      "c1_distinct": 1,
+      "c1_median": 0,
+      "steer_distinct": 7,
+      "abs_steer_median": 4,
+      "accel_distinct": 2,
+      "accel_median": 255,
+      "brake_distinct": 2,
+      "brake_median": 0
+     },
+     "speed": {
+      "min": 0,
+      "p05": 121,
+      "median": 705,
+      "p95": 1449,
+      "max": 1526
+     }
+    },
+    "regime1": {
+     "verdict": "NOT_IN_REGIME",
+     "rows_available": 0,
+     "rows_needed": 159
+    },
+    "flag_counts": {
+     "flag0": 220,
+     "flag1": 0
+    }
+   },
+   "v2": {
+    "regime0": {
+     "verdict": "FAIL",
+     "fails": [
+      "c0_distinct=28 not in [13,24]",
+      "c0_median=23 not in [0,10]"
+     ],
+     "stats": {
+      "c0_distinct": 28,
+      "c0_median": 23,
+      "c1_distinct": 1,
+      "c1_median": 0,
+      "steer_distinct": 28,
+      "abs_steer_median": 23,
+      "accel_distinct": 2,
+      "accel_median": 255,
+      "brake_distinct": 2,
+      "brake_median": 0
+     },
+     "speed": {
+      "min": 0,
+      "p05": 121,
+      "median": 705,
+      "p95": 1447,
+      "max": 1524
+     }
+    },
+    "regime1": {
+     "verdict": "NOT_IN_REGIME",
+     "rows_available": 0,
+     "rows_needed": 159
+    },
+    "flag_counts": {
+     "flag0": 220,
+     "flag1": 0
+    }
+   },
+   "v3": {
+    "regime0": {
+     "verdict": "PASS",
+     "fails": [],
+     "stats": {
+      "c0_distinct": 14,
+      "c0_median": 10,
+      "c1_distinct": 1,
+      "c1_median": 0,
+      "steer_distinct": 14,
+      "abs_steer_median": 10,
+      "accel_distinct": 2,
+      "accel_median": 255,
+      "brake_distinct": 2,
+      "brake_median": 0
+     },
+     "speed": {
+      "min": 0,
+      "p05": 121,
+      "median": 705,
+      "p95": 1449,
+      "max": 1526
+     }
+    },
+    "regime1": {
+     "verdict": "NOT_IN_REGIME",
+     "rows_available": 0,
+     "rows_needed": 159
+    },
+    "flag_counts": {
+     "flag0": 220,
+     "flag1": 0
+    }
+   }
+  },
+  "sa_d2.csv": {
+   "v1": {
+    "regime0": {
+     "verdict": "FAIL",
+     "fails": [
+      "c0_distinct=7 not in [13,24]",
+      "steer_distinct=7 not in [13,30]",
+      "abs_steer_median=4 not in [8,37]"
+     ],
+     "stats": {
+      "c0_distinct": 7,
+      "c0_median": 4,
+      "c1_distinct": 1,
+      "c1_median": 0,
+      "steer_distinct": 7,
+      "abs_steer_median": 4,
+      "accel_distinct": 2,
+      "accel_median": 255,
+      "brake_distinct": 2,
+      "brake_median": 0
+     },
+     "speed": {
+      "min": 0,
+      "p05": 121,
+      "median": 705,
+      "p95": 1449,
+      "max": 1526
+     }
+    },
+    "regime1": {
+     "verdict": "NOT_IN_REGIME",
+     "rows_available": 0,
+     "rows_needed": 159
+    },
+    "flag_counts": {
+     "flag0": 220,
+     "flag1": 0
+    }
+   },
+   "v2": {
+    "regime0": {
+     "verdict": "FAIL",
+     "fails": [
+      "c0_distinct=28 not in [13,24]",
+      "c0_median=23 not in [0,10]"
+     ],
+     "stats": {
+      "c0_distinct": 28,
+      "c0_median": 23,
+      "c1_distinct": 1,
+      "c1_median": 0,
+      "steer_distinct": 28,
+      "abs_steer_median": 23,
+      "accel_distinct": 2,
+      "accel_median": 255,
+      "brake_distinct": 2,
+      "brake_median": 0
+     },
+     "speed": {
+      "min": 0,
+      "p05": 121,
+      "median": 705,
+      "p95": 1447,
+      "max": 1524
+     }
+    },
+    "regime1": {
+     "verdict": "NOT_IN_REGIME",
+     "rows_available": 0,
+     "rows_needed": 159
+    },
+    "flag_counts": {
+     "flag0": 220,
+     "flag1": 0
+    }
+   },
+   "v3": {
+    "regime0": {
+     "verdict": "PASS",
+     "fails": [],
+     "stats": {
+      "c0_distinct": 14,
+      "c0_median": 10,
+      "c1_distinct": 1,
+      "c1_median": 0,
+      "steer_distinct": 14,
+      "abs_steer_median": 10,
+      "accel_distinct": 2,
+      "accel_median": 255,
+      "brake_distinct": 2,
+      "brake_median": 0
+     },
+     "speed": {
+      "min": 0,
+      "p05": 121,
+      "median": 705,
+      "p95": 1449,
+      "max": 1526
+     }
+    },
+    "regime1": {
+     "verdict": "NOT_IN_REGIME",
+     "rows_available": 0,
+     "rows_needed": 159
+    },
+    "flag_counts": {
+     "flag0": 220,
+     "flag1": 0
+    }
+   }
+  },
+  "sa_f1.csv": {
+   "v1": {
+    "regime0": {
+     "verdict": "NOT_IN_REGIME",
+     "rows_available": 0,
+     "rows_needed": 61
+    },
+    "regime1": {
+     "verdict": "FAIL",
+     "fails": [
+      "c1_median=5 not in [0,0]"
+     ],
+     "stats": {
+      "c0_distinct": 18,
+      "c0_median": 0,
+      "c1_distinct": 21,
+      "c1_median": 5,
+      "steer_distinct": 38,
+      "abs_steer_median": 12,
+      "accel_distinct": 2,
+      "accel_median": 102,
+      "brake_distinct": 2,
+      "brake_median": 0
+     },
+     "speed": {
+      "min": 0,
+      "p05": 114,
+      "median": 1329,
+      "p95": 2452,
+      "max": 2542
+     }
+    },
+    "flag_counts": {
+     "flag0": 0,
+     "flag1": 220
+    }
+   },
+   "v2": {
+    "regime0": {
+     "verdict": "NOT_IN_REGIME",
+     "rows_available": 0,
+     "rows_needed": 61
+    },
+    "regime1": {
+     "verdict": "FAIL",
+     "fails": [
+      "c0_distinct=35 not in [3,24]",
+      "c1_distinct=11 not in [17,41]",
+      "c0_median=10 not in [0,0]"
+     ],
+     "stats": {
+      "c0_distinct": 35,
+      "c0_median": 10,
+      "c1_distinct": 11,
+      "c1_median": 0,
+      "steer_distinct": 45,
+      "abs_steer_median": 13,
+      "accel_distinct": 2,
+      "accel_median": 102,
+      "brake_distinct": 2,
+      "brake_median": 0
+     },
+     "speed": {
+      "min": 0,
+      "p05": 114,
+      "median": 1327,
+      "p95": 2455,
+      "max": 2544
+     }
+    },
+    "flag_counts": {
+     "flag0": 0,
+     "flag1": 220
+    }
+   },
+   "v3": {
+    "regime0": {
+     "verdict": "NOT_IN_REGIME",
+     "rows_available": 0,
+     "rows_needed": 61
+    },
+    "regime1": {
+     "verdict": "FAIL",
+     "fails": [
+      "c1_distinct=5 not in [17,41]"
+     ],
+     "stats": {
+      "c0_distinct": 24,
+      "c0_median": 0,
+      "c1_distinct": 5,
+      "c1_median": 0,
+      "steer_distinct": 28,
+      "abs_steer_median": 0,
+      "accel_distinct": 2,
+      "accel_median": 102,
+      "brake_distinct": 2,
+      "brake_median": 0
+     },
+     "speed": {
+      "min": 0,
+      "p05": 68,
+      "median": 1187,
+      "p95": 2371,
+      "max": 2470
+     }
+    },
+    "flag_counts": {
+     "flag0": 0,
+     "flag1": 220
+    }
+   }
+  },
+  "sa_f2.csv": {
+   "v1": {
+    "regime0": {
+     "verdict": "NOT_IN_REGIME",
+     "rows_available": 0,
+     "rows_needed": 61
+    },
+    "regime1": {
+     "verdict": "FAIL",
+     "fails": [
+      "c1_median=5 not in [0,0]"
+     ],
+     "stats": {
+      "c0_distinct": 18,
+      "c0_median": 0,
+      "c1_distinct": 21,
+      "c1_median": 5,
+      "steer_distinct": 38,
+      "abs_steer_median": 12,
+      "accel_distinct": 2,
+      "accel_median": 102,
+      "brake_distinct": 2,
+      "brake_median": 0
+     },
+     "speed": {
+      "min": 0,
+      "p05": 114,
+      "median": 1329,
+      "p95": 2452,
+      "max": 2542
+     }
+    },
+    "flag_counts": {
+     "flag0": 0,
+     "flag1": 220
+    }
+   },
+   "v2": {
+    "regime0": {
+     "verdict": "NOT_IN_REGIME",
+     "rows_available": 0,
+     "rows_needed": 61
+    },
+    "regime1": {
+     "verdict": "FAIL",
+     "fails": [
+      "c0_distinct=35 not in [3,24]",
+      "c1_distinct=11 not in [17,41]",
+      "c0_median=10 not in [0,0]"
+     ],
+     "stats": {
+      "c0_distinct": 35,
+      "c0_median": 10,
+      "c1_distinct": 11,
+      "c1_median": 0,
+      "steer_distinct": 45,
+      "abs_steer_median": 13,
+      "accel_distinct": 2,
+      "accel_median": 102,
+      "brake_distinct": 2,
+      "brake_median": 0
+     },
+     "speed": {
+      "min": 0,
+      "p05": 114,
+      "median": 1327,
+      "p95": 2455,
+      "max": 2544
+     }
+    },
+    "flag_counts": {
+     "flag0": 0,
+     "flag1": 220
+    }
+   },
+   "v3": {
+    "regime0": {
+     "verdict": "NOT_IN_REGIME",
+     "rows_available": 0,
+     "rows_needed": 61
+    },
+    "regime1": {
+     "verdict": "FAIL",
+     "fails": [
+      "c1_distinct=5 not in [17,41]"
+     ],
+     "stats": {
+      "c0_distinct": 24,
+      "c0_median": 0,
+      "c1_distinct": 5,
+      "c1_median": 0,
+      "steer_distinct": 28,
+      "abs_steer_median": 0,
+      "accel_distinct": 2,
+      "accel_median": 102,
+      "brake_distinct": 2,
+      "brake_median": 0
+     },
+     "speed": {
+      "min": 0,
+      "p05": 68,
+      "median": 1187,
+      "p95": 2371,
+      "max": 2470
+     }
+    },
+    "flag_counts": {
+     "flag0": 0,
+     "flag1": 220
+    }
+   }
+  }
+ },
+ "flag1_runs": {
+  "p1.msd.aistep.csv": {
+   "v1": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   },
+   "v2": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   },
+   "v3": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   }
+  },
+  "p2.msd.aistep.csv": {
+   "v1": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   },
+   "v2": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   },
+   "v3": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   }
+  },
+  "p3.msd.aistep.csv": {
+   "v1": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   },
+   "v2": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   },
+   "v3": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   }
+  },
+  "p4.msd.aistep.csv": {
+   "v1": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   },
+   "v2": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   },
+   "v3": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   }
+  },
+  "p6.msd.aistep.csv": {
+   "v1": {
+    "calls": 220,
+    "flag0": 61,
+    "flag1": 159,
+    "other": []
+   },
+   "v2": {
+    "calls": 220,
+    "flag0": 61,
+    "flag1": 159,
+    "other": []
+   },
+   "v3": {
+    "calls": 220,
+    "flag0": 61,
+    "flag1": 159,
+    "other": []
+   }
+  },
+  "p8.msd.aistep.csv": {
+   "v1": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   },
+   "v2": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   },
+   "v3": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   }
+  },
+  "p9.msd.aistep.csv": {
+   "v1": {
+    "calls": 220,
+    "flag0": 61,
+    "flag1": 159,
+    "other": []
+   },
+   "v2": {
+    "calls": 220,
+    "flag0": 61,
+    "flag1": 159,
+    "other": []
+   },
+   "v3": {
+    "calls": 220,
+    "flag0": 61,
+    "flag1": 159,
+    "other": []
+   }
+  },
+  "p10.msd.aistep.csv": {
+   "v1": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   },
+   "v2": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   },
+   "v3": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   }
+  },
+  "p11.msd.aistep.csv": {
+   "v1": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   },
+   "v2": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   },
+   "v3": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   }
+  },
+  "p12.msd.aistep.csv": {
+   "v1": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   },
+   "v2": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   },
+   "v3": {
+    "calls": 220,
+    "flag0": 220,
+    "flag1": 0,
+    "other": []
+   }
+  }
+ }
+}

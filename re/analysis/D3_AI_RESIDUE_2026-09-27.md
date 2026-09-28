@@ -15,6 +15,9 @@ below was read in Ghidra pool slot `Mashed_pool0` (read-only) on `MASHED.exe`
 | (b) cause | **localised, §3**: `DAT_0089a368` is 0 for the whole standalone window and 1 for 159 of the original's 220 calls. Downstream that is the spline BANK, the curvature, the steer-magnitude multiplier and the accel byte |
 | (a), (c), (d) | unchanged (met 2026-09-26) |
 
+**§9 is a plan committed before any capture; §10 is its executed result (2026-09-28).**
+§10 refutes §8 item 1 option (ii) and hands the user a decision, unmade here.
+
 Two prior hypotheses from `D3_AI_PORT_2026-09-26.md` §6 item 1 are **REFUTED** here
 (§4). One item, **U-D3-AIRAND, is RESOLVED** and its function ported verbatim (§5),
 which did **not** close (b).
@@ -331,3 +334,206 @@ It does not port `FUN_00414c30` (option (i) of §8 item 1), it does not build, i
 touch `mashedmod/src`, and it does not move a band. If the per-regime envelopes turn out
 to be disjoint, the plan **reports that** and states the options; choosing among them is
 the user's call, recorded in §10.
+
+## 10. EXECUTED — the result of the §9 plan
+
+**Deviations from §9: none in the recipe.** Two additions are marked as such below
+(§10.5 the full-window speed view, §10.3 the `--pure` view) and both use code paths that
+were in `re/tools/ai_flag_regime.py` before any capture was scored. No band, no
+criterion text, no `hooks.csv` row was touched. No build was run and `mashedmod/src` was
+not edited (a second session was building in this tree).
+
+Captures: 12 original launches attempted, **N = 10 usable**. `p5` and `p7` produced no
+data (`verify/d3_ai_20260927b/p5.log`, `p7.log`: `error: could not attach`, 167 bytes,
+no `.msd`), so they are excluded and are not counted in N. Every usable run carries a
+provenance JSON whose `argv` is the §9.2 step-1 command verbatim
+(`--poke-ctrl-slots`, `--hold 60`, muted), `git_head b747e7c6`. Standalone: `sa_d1`,
+`sa_d2` default and `sa_f1`, `sa_f2` with `MASHED_AI_DIFFFLAG=1`, all on the already-built
+`mashed_re.exe`.
+
+Reproduce:
+```
+py -3.12 re/tools/ai_flag_regime.py \
+  --envelope verify/d3_ai_20260927b/{p1,p2,p3,p4,p6,p8,p9,p10,p11,p12}.msd.aistep.csv \
+  --score   verify/d3_ai_20260927b/{sa_d1,sa_d2,sa_f1,sa_f2}.csv
+```
+Outputs committed: `verify/d3_ai_20260927b/regime_split.txt`, `regime_split.json`,
+`regime_pure220.txt`.
+
+### 10.1 MEASURED — the flag-1 rate: 2 of 10, and all three cars flip together
+
+| run | v1 flag0/flag1 | v2 | v3 |
+|---|---|---|---|
+| p1, p2, p3, p4, p8, p10, p11, p12 | 220 / 0 | 220 / 0 | 220 / 0 |
+| **p6** | **61 / 159** | 61 / 159 | 61 / 159 |
+| **p9** | **61 / 159** | 61 / 159 | 61 / 159 |
+
+No row carried a flag value other than 0 or 1 (`other: []` on all 30 observations), so
+the flag-2 arm of `0x00417c43` never fired in any window.
+
+- **Rate: 2 / 10 = 0.20.** Exact two-sided binomial test against p = 0.20: **p = 1.000**.
+  Clopper-Pearson 95% interval **[0.025, 0.556]**, which contains 0.20. The §3 item 1
+  reading of `DAT_005f30a0` row 2 band 0 = `20` is consistent with the observed rate.
+  N = 10 makes this a weak test (the interval also contains 0.05 and 0.50); it is a
+  consistency check on the table read, not a criterion, exactly as §9.2 step 4 states.
+- **The trial is once per run, confirmed rather than assumed.** In both flipping runs the
+  split is `61 / 159` on *all three* cars, i.e. the flip lands on the same window call
+  index for every car and in both runs. The per-car breakdown was printed precisely so
+  this could be re-checked; it holds.
+
+### 10.2 MEASURED — the per-regime envelopes (§9.2 step 2)
+
+`minrows = 30`. `K_0 = 61` (30 observations: all 10 runs x 3 cars qualify, and the
+minimum flag-0 prefix is the 61 of the two flipping runs). `K_1 = 159` (6 observations:
+2 runs x 3 cars). **The two regimes are measured on different call counts, so their
+columns are not comparable to each other, and neither is comparable to the pooled
+`TOLERANCE` (N = 220).** The pooled column is printed for orientation only.
+
+| band column | regime 0 (K=61, 30 obs) | regime 1 (K=159, 6 obs) | pooled `TOLERANCE` (N=220) |
+|---|---|---|---|
+| `c0_distinct` | 13..24 | 3..24 | 13..37 |
+| `c1_distinct` | **1..8** | **17..41** | 17..70 |
+| `steer_distinct` | 13..30 | 19..64 | 29..96 |
+| `c0_median` | 0..10 | 0..0 | 0..0 |
+| `c1_median` | 0..0 | 0..0 | 0..0 |
+| `abs_steer_median` | 8..37 | 0..13 | 0..23 |
+| `accel_distinct` | 1..2 | 2..3 | 2..4 |
+| `accel_median` | **255..255** | **25..102** | 25..255 |
+| `brake_distinct` | 1..2 | 2..2 | 2..2 |
+| `brake_median` | 0..0 | 0..0 | 0..0 |
+
+Two columns are **disjoint** between the regimes: `accel_median` (255 vs 25..102, the
+direct signature of `0x004169e0`'s `ctrl[4] *= 0.4`) and `c1_distinct` (1..8 vs 17..41,
+though this pair is confounded with K_0 != K_1). So the pooled envelope on those two
+columns **is** a union of two populations. `accel_median`'s pooled span `25..255` in
+particular admits any value in between, none of which the original ever produces.
+
+### 10.3 MEASURED (addition) — the same-K view: the pooled envelope is essentially regime 0
+
+To remove the K_0 != K_1 confound, `--pure` keeps only windows that are 100% one regime,
+so K = the full 220 and the envelope is directly comparable to `TOLERANCE`. Regime 1 has
+**no** pure observation (the flag is 0 at every window start, so no original window is
+all-flag-1), and regime 0 has 24 (the 8 non-flipping runs x 3 cars):
+
+| band column | pure regime 0 (K=220, 24 obs) | pooled `TOLERANCE` (K=220) |
+|---|---|---|
+| `c0_distinct` | 13..35 | 13..37 |
+| `c1_distinct` | 21..70 | 17..70 |
+| `steer_distinct` | 33..96 | 29..96 |
+| `abs_steer_median` | 7..23 | 0..23 |
+| `accel_distinct` | 2..3 | 2..4 |
+| `accel_median` | 255..255 | 25..255 |
+| the other 4 | identical to pooled | |
+
+**This is the answer to §8 item 1 option (ii), and it is negative.** On the six columns
+that vary, the single-regime envelope is within a few counts of the pooled one on five of
+them. The pooled envelope's *width* is therefore **not** an artifact of mixing two
+regimes, with the one exception of `accel_median` (and `accel_distinct`), where the
+pooled span is genuinely a union.
+
+### 10.4 MEASURED — the standalone against each regime (§9.2 step 3)
+
+`sa_d1` and `sa_d2` produce **identical** values on every statistic reported here, as do
+`sa_f1` and `sa_f2` (the CSVs differ in total length because the 60 s hold yields
+different total call counts, but the 220-call windows agree). The standalone is
+deterministic run-to-run on this recipe; only one of each pair is quoted.
+
+**Default build** (`flag_a368` = 0 on 220/220, so it is in regime 0 and `NOT_IN_REGIME`
+for regime 1):
+
+| car | vs regime 0, K=61 | vs regime 0 pure, K=220 |
+|---|---|---|
+| 1 | **FAIL** `c0_distinct`=7 not in 13..24; `steer_distinct`=7 not in 13..30; `abs_steer_median`=4 not in 8..37 | **FAIL** `c0_distinct`=7 not in 13..35; `c1_distinct`=82 not in 21..70; `abs_steer_median`=6 not in 7..23 |
+| 2 | FAIL `c0_distinct`=28 not in 13..24; `c0_median`=23 not in 0..10 | **PASS** |
+| 3 | **PASS** | **PASS** |
+
+**Flag-seeded build** (`MASHED_AI_DIFFFLAG=1`, `flag_a368` = 1 on 220/220, so
+`NOT_IN_REGIME` for regime 0 and no pure regime-1 envelope exists to score against):
+
+| car | vs regime 1, K=159 |
+|---|---|
+| 1 | FAIL `c1_median`=5 not in 0..0 |
+| 2 | FAIL `c0_distinct`=35 not in 3..24; `c1_distinct`=11 not in 17..41; `c0_median`=10 not in 0..0 |
+| 3 | FAIL `c1_distinct`=5 not in 17..41 |
+
+**The three-way statement §9.2 step 3 asked for, per car:**
+
+- **Car 1: inside NEITHER regime.** It fails regime 0 on 3 of 10 bands at both K=61 and
+  K=220, and it fails regime 1 on 1 band. This is the load-bearing result: car 1's
+  failure is **not** explained by the pooled envelope being a two-regime union. Measured
+  against 24 same-regime, same-K original observations it still falls outside on
+  `c0_distinct` (7, floor 13), `c1_distinct` (82, ceiling 70) and `abs_steer_median`
+  (6, floor 7).
+- **Car 2: inside regime 0 at K=220, outside it at K=61, outside regime 1.** The K=61
+  disagreement is a launch-window effect, not a contradiction: K=61 is the first 61 calls
+  of the race and covers the launch, where the original's own spread on `c0_median` is
+  0..10 and the standalone sits at 23.
+- **Car 3: inside regime 0 at both K, outside regime 1.**
+
+Both standalone regimes are *reachable* regimes of the original, so no comparison here is
+against an unobserved population. Neither standalone configuration reproduces the
+original's actual window, which is flag 0 for 61 calls then flag 1 for 159 (§3).
+
+### 10.5 MEASURED (addition) — speed, against the original's own run-to-run spread
+
+§7 recorded "standalone opponents run 16-23% fast" from a single original capture (`o4`,
+which was a flag-1 run). §9.2's closing paragraph asked for the same comparison against
+the original's run-to-run spread. `rec_9e4` median over the full 220-call window:
+
+| car | orig, 8 non-flip runs | orig, 2 flip runs | standalone default | standalone flag=1 |
+|---|---|---|---|---|
+| 1 | 2419..2419 | 2422..2422 | **2821** | 1864 |
+| 2 | 2396..2396 | 2376..2376 | **2818** | 1860 |
+| 3 | 2618..2618 | 2298..2298 | **2820** | 858 |
+
+**The original's run-to-run spread on this statistic is zero to the integer** within each
+regime group, on all three cars. So the excess is not run noise:
+
+- default standalone vs non-flip original: **+16.6% / +17.6% / +7.7%** (cars 1/2/3).
+- default standalone vs flip original: +16.5% / +18.6% / +22.7%.
+
+§7's "16-23%" therefore holds for cars 1 and 2 against any original regime, and for car 3
+only against the flag-1 original (against the flag-0 original car 3 is +7.7%). The
+finding survives; its range is **+7.7% to +22.7%** depending on car and original regime.
+The flag-seeded standalone overshoots the other way (-23% / -22% / -67%). §8 item 3's
+next step (compare against the D2 physics capture rather than the AI one) is unchanged
+and still open.
+
+Regime-truncated speed is also in `regime_split.json`. Note it inverts: over the first
+K_0 = 61 calls the default standalone is **slower** (median 705 vs the original's
+1586..2278). The standalone is slow off the line and fast thereafter. Not tested by any
+(b) band.
+
+### 10.6 What this changes in §8
+
+- **§8 item 1 option (ii) is REFUTED by §10.3 + §10.4.** The pooled envelope is not
+  meaningfully wider than the single-regime envelope on the columns car 1 fails, and car
+  1 lands outside both regimes. "The standalone simply lands outside both" is the
+  measured answer, and it is not exculpatory.
+- **§8 item 1 option (i) is untouched and remains the only identified path that would
+  close (b) by porting.** Its blocker is unchanged (§6: `FUN_00414c30` needs the world-
+  object query `FUN_00484c70`).
+- §8 items 2, 4, 5, 6, 7 unchanged. §8 item 3 refined by §10.5.
+
+### 10.7 The decision this hands to the user
+
+(b) for car 1 cannot be closed by reinterpreting the envelope. The options, stated
+neutrally, are in `ROADMAP.md` §D3's terms and none of them is taken here:
+
+1. **Port option (i).** Port `FUN_00414c30` and its world-object dependency chain
+   (`FUN_00484c70`, `FUN_0041f030`, `FUN_0048a630`, `FUN_00414300`/`FUN_00414490`,
+   `FUN_00442cc0`) so behaviour modes 3 and 7 exist in the standalone. This is the only
+   route identified that would close (b) by making the port more faithful. Cost: a
+   subsystem the standalone does not have at all. No evidence here says it *would* close
+   (b), only that the modes it produces are the largest unported difference (car 1 is in
+   mode 7 for 115 of 220 original calls).
+2. **Accept (b) as met on 2 of 3 cars and record car 1 as a named D3 residue** with the
+   three failing band values cited, deferring it behind D5 like the D1 residue block.
+3. **Change the criterion** so that (b) is scored per `DAT_0089a368` regime rather than
+   against a pooled envelope, and state which regime the standalone is required to match.
+   §10.2 shows the regimes are genuinely disjoint on `accel_median`, so this is a
+   defensible reading, but it would not make car 1 pass (§10.4) and it is a criterion
+   change, which is the user's call and is not made here.
+4. **Re-scope (b)'s bands.** Not evaluated and not recommended from this evidence: no
+   measurement here supports a specific new band, and moving a band to admit the value
+   that currently fails would make the criterion unfalsifiable on this function.
