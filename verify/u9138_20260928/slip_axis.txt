@@ -1,0 +1,21 @@
+=== ORIGINAL verify/a8_steer_20260824/orig_steerR.msd: n=853  axis-minus-forward offset median +0.0446 rad ===
+  1500-2000: n=312  slip vs fwd 0.1913  slip vs AXIS 0.1467  av.y +1.143
+  2000-2600: n=541  slip vs fwd 0.2498  slip vs AXIS 0.2052  av.y +1.464
+=== PORT verify/u9138_20260928/prefix3/motion_diag.log (spike/reseed-excluded 0 rows): n=1197  axis-minus-forward offset median +0.0425 rad ===
+  1500-2000: n=165  slip vs fwd 0.1283  slip vs AXIS 0.0858  av.y +1.094
+  2000-2600: n=772  slip vs fwd 0.2950  slip vs AXIS 0.2525  av.y +1.812
+=== PORT verify/u9138_20260928/postfix2/motion_diag.log (spike/reseed-excluded 0 rows): n=1197  axis-minus-forward offset median +0.0425 rad ===
+  1500-2000: n=165  slip vs fwd 0.1283  slip vs AXIS 0.0858  av.y +1.094
+  2000-2600: n=772  slip vs fwd 0.2950  slip vs AXIS 0.2525  av.y +1.812
+=== PORT verify/u9138_20260928/postfix3/motion_diag.log (spike/reseed-excluded 0 rows): n=1198  axis-minus-forward offset median +0.0425 rad ===
+  1500-2000: n=165  slip vs fwd 0.1283  slip vs AXIS 0.0858  av.y +1.094
+  2000-2600: n=773  slip vs fwd 0.2948  slip vs AXIS 0.2523  av.y +1.811
+=== PORT verify/u9138_20260928/postfix4/motion_diag.log (spike/reseed-excluded 0 rows): n=1196  axis-minus-forward offset median +0.0425 rad ===
+  1500-2000: n=165  slip vs fwd 0.1283  slip vs AXIS 0.0858  av.y +1.094
+  2000-2600: n=771  slip vs fwd 0.2950  slip vs AXIS 0.2525  av.y +1.812
+=== PORT verify/u9138_20260928/prefix/motion_diag.log (spike/reseed-excluded 0 rows): n=1075  axis-minus-forward offset median +0.0425 rad ===
+  1500-2000: n=165  slip vs fwd 0.1283  slip vs AXIS 0.0858  av.y +1.094
+  2000-2600: n=684  slip vs fwd 0.2942  slip vs AXIS 0.2517  av.y +1.808
+=== PORT verify/u9138_20260928/prefix2/motion_diag.log (spike/reseed-excluded 0 rows): n=1162  axis-minus-forward offset median +0.0425 rad ===
+  1500-2000: n= 72  slip vs fwd 0.1694  slip vs AXIS 0.1269  av.y +0.964
+  2000-2600: n=1056  slip vs fwd 0.2992  slip vs AXIS 0.2567  av.y +1.831

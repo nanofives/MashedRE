@@ -6,11 +6,6 @@
 // the ported Math/ RW primitives + the live race state). Until then these stubs
 // make the module compile + link inert. Each cites the real RVA / DAT.
 #include "ForceIntegrator.h"
-#define MASHED_U9138_DIAG 1   // TEMPORARY — U-9138 evidence build only; remove after.
-#ifdef MASHED_U9138_DIAG
-#include <cstdio>
-#include <cstring>
-#endif
 
 // Forward-decls at GLOBAL scope (must NOT be nested inside mashed_re::Vehicle).
 namespace mashed_re { namespace Math {
@@ -21,53 +16,6 @@ extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float a
 
 namespace mashed_re {
 namespace Vehicle {
-
-#ifdef MASHED_U9138_DIAG
-// TEMPORARY U-9138 evidence instrumentation. Counts, over a whole race, how many
-// Rw_TransformPoints calls the pre-fix (points) binding would have answered
-// differently from the post-fix (vectors) binding, and how many of those calls were
-// handed a matrix with a nonzero translation row at all. Dumped at process exit to
-// u9138_diag.txt (CWD-relative, like mashed_re.log). Removed after the measurement.
-static struct U9138Diag {
-    long long calls = 0, nonzeroPos = 0, mismatches = 0;
-    float firstBad[9] = {0};
-    ~U9138Diag() {
-        if (FILE* f = std::fopen("u9138_diag.txt", "w")) {
-            std::fprintf(f, "calls=%lld nonzero_pos_row=%lld value_mismatches=%lld\n",
-                         calls, nonzeroPos, mismatches);
-            if (mismatches)
-                std::fprintf(f, "first src=(%g,%g,%g) pos=(%g,%g,%g) pts=(%g,%g,%g)\n",
-                             firstBad[0], firstBad[1], firstBad[2], firstBad[3],
-                             firstBad[4], firstBad[5], firstBad[6], firstBad[7], firstBad[8]);
-            std::fclose(f);
-        }
-    }
-} g_u9138Diag;
-
-static void U9138_DiagCompare(const float* vecOut, const float* src, int count, const float* m)
-{
-    g_u9138Diag.calls += count;
-    if (!m) return;
-    if (m[12] != 0.0f || m[13] != 0.0f || m[14] != 0.0f) g_u9138Diag.nonzeroPos += count;
-    for (int i = 0; i < count; ++i) {
-        float pts[3];
-        mashed_re::Math::RwV3dTransformPointsCPU(pts, src + i * 3, 1, m);
-        const float* v = vecOut + i * 3;
-        if (std::memcmp(pts, v, sizeof pts) != 0) {
-            if (!g_u9138Diag.mismatches) {
-                g_u9138Diag.firstBad[0] = src[i * 3 + 0];
-                g_u9138Diag.firstBad[1] = src[i * 3 + 1];
-                g_u9138Diag.firstBad[2] = src[i * 3 + 2];
-                g_u9138Diag.firstBad[3] = m[12]; g_u9138Diag.firstBad[4] = m[13];
-                g_u9138Diag.firstBad[5] = m[14];
-                g_u9138Diag.firstBad[6] = pts[0]; g_u9138Diag.firstBad[7] = pts[1];
-                g_u9138Diag.firstBad[8] = pts[2];
-            }
-            ++g_u9138Diag.mismatches;
-        }
-    }
-}
-#endif  // MASHED_U9138_DIAG
 
 // --- runtime globals (B4 sets) ---------------------------------------------
 int   g_playerCount    = 0;          // DAT_007f0fd0
@@ -104,12 +52,6 @@ int*  g_vehicleArrayBase = nullptr;  // DAT_008815a0
 // cleared the flip: re/analysis/U9138_FIX_2026-09-28.md.
 void Rw_TransformPoints(float* dst, const float* src, int count, void* mtx) {
     mashed_re::Math::RwV3dTransformVectorsCPU(dst, src, count, reinterpret_cast<const float*>(mtx));
-#ifdef MASHED_U9138_DIAG
-    // TEMPORARY (U-9138 evidence build only, removed after the measurement): does the
-    // points form — the pre-fix binding — ever differ here in a real race? Output above
-    // is the fixed value, so this build is behaviourally identical to the shipping one.
-    U9138_DiagCompare(dst, src, count, reinterpret_cast<const float*>(mtx));
-#endif
 }
 // FUN_004c4d20 — RwMatrix from axis+angle. Bound to Math/RwMatrixRotate (0x004c4d20).
 // mode 0 (REPLACE) is standalone-correct; modes 1/2 (concat) dispatch the RW device
