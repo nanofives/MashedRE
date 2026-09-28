@@ -123,11 +123,11 @@ int SweepSlotOf(unsigned a2) {
 // wrong: verify/d3_contact_20260928/g2 has three 0x457ca5 rows, only two of which
 // are slot 0's -- the third lands inside slot 0's MORTAR window and belongs to
 // another slot's P_MINE.
-const unsigned kQuerySites[] = { 0x004578d1u, 0x00457ca5u, 0x0045b4c2u };
+const unsigned kQuerySites[] = { 0x004578d1u, 0x00457ca5u, 0x0045b4c2u, 0x0045444fu };
 const unsigned kGateSites[]  = { 0x0045790eu, 0x00457cf9u };
-const int      kQueryOwner[] = { 19 /*OIL*/,  12 /*P_MINE*/, 17 /*SHOTGUN*/ };
+const int      kQueryOwner[] = { 19 /*OIL*/,  12 /*P_MINE*/, 17 /*SHOTGUN*/, 10 /*DRUM*/ };
 const int      kGateOwner[]  = { 19,          12 };
-const int      kQueryN = 3, kGateN = 2;
+const int      kQueryN = 4, kGateN = 2;
 
 // Every contact call site the ported OIL/P_MINE FIRE path makes, in original
 // order, with the type whose window it belongs to. The last two of each group
@@ -136,20 +136,33 @@ const int      kQueryN = 3, kGateN = 2;
 // `gatedBy` = the site whose nonzero return is what lets this one run. If THAT
 // site was not instrumented, this one cannot be tested either: with no injected
 // verdict the port takes the refuse arm and never reaches here.
-struct Site { unsigned ra; int owner; unsigned rva; unsigned gatedBy; const char* what; };
+// `mode` says how a row is attributed to the subject slot:
+//   0  by the subject slot's code_pre on that call -- the site is inside code only
+//      the holding slot runs.
+//   1  by call range ONLY. Used for PROJECTILE sites: MEASURED on
+//      verify/d3_contact_20260928/g2, slot 0's DRUM window is calls 1181..1190 but
+//      its 0x45444f queries run 1182..1242 -- the dropped drum outlives the slot by
+//      52 calls, and two are in flight at once from 1189. code_pre cannot see it.
+//      Sound only when NO OTHER SLOT held that type in the capture, which the loader
+//      CHECKS (status `contested` otherwise, excluded from the verdict).
+//   2  by arg2 = slot_base + 0x80 (the dispatcher sweep).
+struct Site { unsigned ra; int owner; unsigned rva; unsigned gatedBy; int mode; const char* what; };
 const Site kSites[] = {
-    { 0x004578d1u, 19, 0x004b4cd0u, 0u, "OIL    query 0x004b4cd0" },   // CALL @0x004578cc
-    { 0x0045790eu, 19, 0x0045c110u, 0x004578d1u, "OIL    gate  0x0045c110" },   // CALL @0x00457909
-    { 0x00457932u, 19, 0x004b4650u, 0x0045790eu, "OIL    lerp  0x004b4650" },   // CALL @0x0045792d
-    { 0x0045797fu, 19, 0x004b5080u, 0x0045790eu, "OIL    basis 0x004b5080" },   // CALL @0x0045797a
-    { 0x00457ca5u, 12, 0x004b4cd0u, 0u, "P_MINE query 0x004b4cd0" },   // CALL @0x00457ca0
-    { 0x00457cf9u, 12, 0x0045c110u, 0x00457ca5u, "P_MINE gate  0x0045c110" },   // CALL @0x00457cf4
-    { 0x00457d1fu, 12, 0x004b4650u, 0x00457cf9u, "P_MINE lerp  0x004b4650" },   // CALL @0x00457d1a
-    { 0x00457db2u, 12, 0x004b5080u, 0x00457cf9u, "P_MINE basis 0x004b5080" },   // CALL @0x00457dad
-    { 0x0045b4c2u, 17, 0x004b4b20u, 0u, "SHOTGN query 0x004b4b20" },   // CALL @0x0045b4bd
-    { 0x0045b582u, 17, 0x004b5080u, 0x0045b4c2u, "SHOTGN basis 0x004b5080" },   // CALL @0x0045b57d
-    { 0x0045bcd8u, -1, 0x004b4b60u, 0u, "SWEEP  query 0x004b4b60" },   // CALL @0x0045bcd3, slot by arg2
-    { 0x0045bceau, -1, 0x0045c350u, 0x0045bcd8u, "SWEEP  confirm 0x45c350" },   // CALL @0x0045bce5, slot by arg2
+    { 0x004578d1u, 19, 0x004b4cd0u, 0u, 0, "OIL    query 0x004b4cd0" },   // CALL @0x004578cc
+    { 0x0045790eu, 19, 0x0045c110u, 0x004578d1u, 0, "OIL    gate  0x0045c110" },   // CALL @0x00457909
+    { 0x00457932u, 19, 0x004b4650u, 0x0045790eu, 0, "OIL    lerp  0x004b4650" },   // CALL @0x0045792d
+    { 0x0045797fu, 19, 0x004b5080u, 0x0045790eu, 0, "OIL    basis 0x004b5080" },   // CALL @0x0045797a
+    { 0x00457ca5u, 12, 0x004b4cd0u, 0u, 0, "P_MINE query 0x004b4cd0" },   // CALL @0x00457ca0
+    { 0x00457cf9u, 12, 0x0045c110u, 0x00457ca5u, 0, "P_MINE gate  0x0045c110" },   // CALL @0x00457cf4
+    { 0x00457d1fu, 12, 0x004b4650u, 0x00457cf9u, 0, "P_MINE lerp  0x004b4650" },   // CALL @0x00457d1a
+    { 0x00457db2u, 12, 0x004b5080u, 0x00457cf9u, 0, "P_MINE basis 0x004b5080" },   // CALL @0x00457dad
+    { 0x0045b4c2u, 17, 0x004b4b20u, 0u, 0, "SHOTGN query 0x004b4b20" },   // CALL @0x0045b4bd
+    { 0x0045b582u, 17, 0x004b5080u, 0x0045b4c2u, 0, "SHOTGN basis 0x004b5080" },   // CALL @0x0045b57d
+    { 0x0045444fu, 10, 0x004b4cd0u, 0u,          1, "DRUM   query 0x004b4cd0" },   // CALL @0x0045444a
+    { 0x0045448au, 10, 0x004b4650u, 0x0045444fu, 1, "DRUM   lerp  0x004b4650" },   // CALL @0x00454485
+    { 0x004544e0u, 10, 0x004b5080u, 0x0045444fu, 1, "DRUM   basis 0x004b5080" },   // CALL @0x004544db
+    { 0x0045bcd8u, -1, 0x004b4b60u, 0u, 2, "SWEEP  query 0x004b4b60" },   // CALL @0x0045bcd3, slot by arg2
+    { 0x0045bceau, -1, 0x0045c350u, 0x0045bcd8u, 2, "SWEEP  confirm 0x45c350" },   // CALL @0x0045bce5, slot by arg2
 };
 const int kSiteCount = static_cast<int>(sizeof(kSites) / sizeof(kSites[0]));
 
@@ -199,6 +212,9 @@ int main(int argc, char** argv) {
     // Dispatcher calls where the slot held nothing produce no row in the capture;
     // they still ran (the slot was idle), so replay a quiet frame for each gap.
     long lastCall = -1;
+    // code -> the set of slots that ever held it. A mode-1 (projectile) site can
+    // only be attributed by call range when this set is exactly {want}.
+    std::map<int, std::set<int> > heldBy;
     while (std::fgets(line, sizeof line, f)) {
         auto c = Split(line);
         if (hdr.empty()) { hdr = c; continue; }
@@ -206,6 +222,11 @@ int main(int argc, char** argv) {
             for (std::size_t i = 0; i < hdr.size(); ++i) if (hdr[i] == n) return i < c.size() ? c[i] : "";
             return "";
         };
+        {   // every (slot, code) pair the capture shows, for the mode-1 contested check
+            const int sl = std::atoi(col("slot").c_str());
+            const int cp = std::atoi(col("code_pre").c_str());
+            if (cp != -1) heldBy[cp].insert(sl);
+        }
         if (std::atoi(col("slot").c_str()) != want) continue;
         Row r;
         r.state = std::atoi(col("state").c_str());
@@ -284,11 +305,16 @@ int main(int argc, char** argv) {
                 (ra == 0x0045bcd8u ? g_inj.sq : g_inj.sc)[cl].push_back(ret);
                 continue;
             }
+            int mode = -1, owner = -1;
             for (int i = 0; i < kSiteCount; ++i)
-                if (kSites[i].ra == ra && held == kSites[i].owner) g_inj.origCalls[ra]++;
-            for (int i = 0; i < kQueryN; ++i) if (kQuerySites[i] == ra && held == kQueryOwner[i])
+                if (kSites[i].ra == ra) { mode = kSites[i].mode; owner = kSites[i].owner; }
+            if (mode < 0) continue;
+            const bool mine = (mode == 1) ? true : (held == owner);
+            if (!mine) continue;
+            g_inj.origCalls[ra]++;
+            for (int i = 0; i < kQueryN; ++i) if (kQuerySites[i] == ra)
                 g_inj.q[std::make_pair(cl, ra)].push_back(ret);
-            for (int i = 0; i < kGateN; ++i) if (kGateSites[i] == ra && held == kGateOwner[i])
+            for (int i = 0; i < kGateN; ++i) if (kGateSites[i] == ra)
                 g_inj.g[std::make_pair(cl, ra)].push_back(ret);
         }
         std::fclose(cf);
@@ -358,6 +384,9 @@ int main(int argc, char** argv) {
         if (ra == 0x0045bcd8u) for (auto& kv : g_inj.sq) leftover += (long)kv.second.size();
         if (ra == 0x0045bceau) for (auto& kv : g_inj.sc) leftover += (long)kv.second.size();
         const long port = portRows.count(ra) ? portRows[ra] : g_inj.portCalls[ra];
+        const bool contested = kSites[i].mode == 1 &&
+            (heldBy[kSites[i].owner].size() > 1 ||
+             (heldBy[kSites[i].owner].size() == 1 && !heldBy[kSites[i].owner].count(want)));
         bool armed = armedRva.count(kSites[i].rva) != 0;
         for (unsigned g = kSites[i].gatedBy; armed && g; ) {
             int gi = -1;
@@ -370,8 +399,9 @@ int main(int argc, char** argv) {
         std::printf("  %-24s 0x%-10x %6ld %6ld %9ld %9ld  %s\n",
                     kSites[i].what, ra, g_inj.origCalls[ra], port,
                     g_inj.unmatched[ra], leftover,
-                    !armed ? "not-armed" : (diff ? "DIVERGES" : "clean"));
-        if (armed && diff) bad = 1;
+                    !armed ? "not-armed" : contested ? "contested"
+                                                      : (diff ? "DIVERGES" : "clean"));
+        if (armed && !contested && diff) bad = 1;
         if (!armed && (port || g_inj.origCalls[ra])) notArmed = 1;
     }
     std::printf("CONTACT VERDICT: %s%s\n", bad ? "DIVERGES" : "CLEAN",

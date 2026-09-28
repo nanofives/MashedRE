@@ -1,6 +1,6 @@
 # Next session — kickoff prompt
 
-## => KICKOFF PROMPT - D3 powerups (c), the five projectile types, written 2026-09-28, paste verbatim
+## => KICKOFF PROMPT - D3 powerups (c), the four projectile types, written 2026-09-28, paste verbatim
 
 ```
 Session goal: close ROADMAP v3 D3 powerups criterion (c) for the FIVE types still
@@ -13,19 +13,32 @@ SETTLED 2026-09-28 (D3_CONTACT_PORT_2026-09-28.md - read it, do not re-measure):
   the sweep pair 0x004b4b60 / 0x0045c350, with the BSP walk FUN_00538c80 and the
   RpMaterial colour channel as stated stand-ins.
 - (c) is CLEAN, per call site, for OIL (10/10/10/10), P_MINE (2/2/2/2), SHOTGUN
-  (8/8 query, 7/7 basis) and the dispatcher's armed sweep (280/309/207/309). FLASH
-  makes no contact call. P_MINE went 78 decision mismatches -> 0 on c2.
+  (8/8 query, 7/7 basis), DRUM (83/83 query on TWO captures) and the dispatcher's
+  armed sweep (280/309/207/309). FLASH makes no contact call. P_MINE went 78
+  decision mismatches -> 0 on c2. DRUM is the worked PROJECTILE exemplar: pool of
+  8 records (orig &DAT_00688020 stride 0x44), state machine 0/1/2/3/4/5, flight
+  pos+=vel*dt, vel.y+=-5*dt, life gate 5.0s. Copy its shape.
 - RESOLVED: the gate that refused 6 of P_MINE's 7 press edges is the WORLD QUERY
   (JE 0x00457caa), not the surface gate. 0x0045c110 is now instrumented and has
   never been observed refusing a power-up drop.
-- The five that remain (MORTAR, DRUM, R_FLAME, GUN, MISSILE) each put their
-  contact call inside a per-frame PROJECTILE/PARTICLE update, decoded with RVAs in
-  section 5.1. Each needs its pool record + flight integration ported into the
-  Powerup TUs - the DAT_006883xx pools PowerupSystem.h records as unmapped.
-- MEASUREMENT WARNING, read before planning: unlike the four already clean, these
-  types' query COUNT is a function of flight time. Injecting the original's query
-  verdicts is NOT enough - the projectile must be born and die on the same
-  dispatcher calls, so the flight integration has to be faithful first.
+- The four that remain (R_FLAME, MORTAR, GUN, MISSILE) each put their contact call
+  inside a per-frame PROJECTILE/PARTICLE update, decoded with RVAs in section 5.3.
+- READ SECTION 5.2 BEFORE PLANNING. A .text call-site scan settles the attribution:
+  FUN_00459620 has THREE callers (0x00453bd9 MORTAR tick, 0x00455c29 MISSILE,
+  0x004569c5 GUN tick), so the four sites the 2026-09-27 note listed under GUN
+  (0x459c19, 0x459d54, 0x459db5, + 0x459c3c it missed) belong to whichever of the
+  three is in flight - they CANNOT be attributed to GUN. FUN_00453730 (MORTAR),
+  FUN_00454350 (DRUM) and FUN_0045b390 (SHOTGUN) each have exactly one caller,
+  which is why DRUM and SHOTGUN were the two closable today.
+- MEASUREMENT NOTE, refined by DRUM: a projectile's query COUNT is (frames in the
+  flying state until the hit or the life gate). The spawn frame comes from the
+  replayed press edge and the hit frame from the injected verdict, so the count is
+  reproducible WITHOUT faithful trajectory - as long as nothing else can end the
+  flight. Check that per type before assuming it.
+- ATTRIBUTION, third rule, learned on DRUM: a dropped projectile OUTLIVES its slot.
+  MEASURED on g2, slot 0 held DRUM for calls 1181..1190 but its 0x45444f queries run
+  1182..1242. pu_replay site mode 1 attributes those by call range only, and the
+  loader CHECKS that no other slot held the type (status `contested` otherwise).
 - Tooling, do not rebuild it:
     py -3.12 re/frida/scenario_launch.py --track 0 --mode 10 --cars 4 --car 0 \
        --poke-ctrl-slots --statediff-out <out>.msd --statediff-car 0 \
@@ -50,12 +63,14 @@ SETTLED 2026-09-28 (D3_CONTACT_PORT_2026-09-28.md - read it, do not re-measure):
   and the mark propagates to sites it gates. Do not "fix" a not-armed row.
 
 DO, in this order:
-1. DRUM (FUN_00454350) then MORTAR (FUN_00453730) - one projectile each, pos+vel+
-   life, smallest state. Port the pool record and the per-frame integration into
-   Powerup/, then add their sites to pu_replay and measure.
-2. R_FLAME (FUN_0045ae80, the TICK already ported) - 25 sparks, same shape.
-3. MISSILE - Ghidra has no function at 0x00455cd9; create it first, then decode.
-4. GUN (FUN_00459620, 2727 B) - two query sites and two lerp sites, last.
+1. R_FLAME (FUN_0045ae80, the TICK already ported, single caller so attributable
+   today) - 25 sparks (5 owners x 5 groups x 5), ballistic: miss -> vel.y -=
+   _DAT_005ce018(0.002); hit -> lerp 0x45aff3, p += normal*_DAT_005ce18c(0.02),
+   zero the velocity, latch pfVar8[5]=1, basis 0x45b04c. Copy the DRUM shape.
+2. FUN_00459620, the SHARED projectile routine (2727 B). One slice that unlocks
+   MORTAR, MISSILE and GUN; nothing about those three is measurable until it lands.
+3. MORTAR's own detonation test FUN_00453730 once (2) is in.
+4. MISSILE - Ghidra has no function at 0x00455cd9; create it first, then decode.
 
 DO NOT: flip Vehicle/ForceIntegratorStubs.cpp:39 to the vectors form without a D2
 re-measure (U-9138). Trackers only via re-classify. Launch muted (MASHED_MUTE=1),

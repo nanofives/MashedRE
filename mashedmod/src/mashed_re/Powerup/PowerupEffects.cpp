@@ -57,6 +57,14 @@ namespace tune {
     constexpr float kMineLift       = 0.005f;// REAL: _DAT_005cd0ec, FUN_00457c10 local_80 scale
     constexpr float kShotgunReach   = 1.5f;  // REAL: _DAT_005cc348, FUN_0045b390 local_d8/d4/d0
     constexpr float kShotgunLift    = 0.05f; // REAL: _DAT_005cc9a0, FUN_0045b390 local_fc/f8/f4
+    // DRUM projectile (FUN_00454350 / drop FUN_004541e0), harvested 2026-09-28:
+    constexpr float kDrumLife       = 5.0f;  // REAL: _DAT_005cc358, the state-2 gate
+    constexpr float kDrumGravY      = -5.0f; // REAL: _DAT_005ce430 (x/z are _DAT_005ce42c
+                                             //   and _DAT_005ce434, both 0.0)
+    constexpr float kDrumSpin       = 720.f; // REAL: _DAT_005ce438, param_1[0x10] rate
+    constexpr float kDrumVelFactor  = 40.0f; // REAL: _DAT_005cd274, drop vel = carVel*40
+    constexpr float kDrumUpFactor   = 3.5f;  // REAL: _DAT_005ce26c, + up*3.5
+    constexpr float kDrumLift       = 0.05f; // REAL: _DAT_005cc9a0, impact += normal*0.05
     // REAL (harvested pool13 2026-07-06, instruction-cited at the R_FLAME /
     // MORTAR sections below):
     constexpr int   kFlameBursts         = 5;     // REAL: +0x14 shutoff JL 5 (0x0045a86c)
@@ -130,13 +138,86 @@ bool Drum_CanFire(PowerupSystem&, Slot& s) {  // 0x457ab0: SETE (*(rec+8)==0) at
 void Drum_Deact(PowerupSystem& sys, Slot&) {  // 0x457ad0: +0x10=2,+0xc=0 (pool state; dropped drum lives on)
     sys.backend()->EffectEnd(kDrum, sys.owner().pos);
 }
+// ---- DRUM projectile pool --------------------------------------------------
+// ORIGINAL: &DAT_00688020, stride 0x44. The type TICK FUN_00454820 walks it with
+// `CMP puVar3,0x688240` (0x0045488a), so (0x688240-0x688020)/0x44 = 8 records --
+// 2 per owner, matching tune::kDrumDrops -- and calls FUN_00454350 on every one,
+// once per frame, unconditionally.
+//
+// D3 criterion (c), 2026-09-28: the drum is a BALLISTIC projectile that probes
+// the world every frame while it flies, and it OUTLIVES the slot that dropped it.
+// MEASURED on verify/d3_contact_20260928/g2: slot 0 held DRUM for calls
+// 1181..1190, but its 0x45444f queries run 1182..1242 (95 of them, two drums in
+// flight from 1189, landing at 1222 and 1242).
+struct DrumRec {
+    int   state;      // param_1[0xb] +0x2c: 0 free, 1 on the car, 2 flying, 3/4/5 post-landing
+    float pos[3];     // param_1[4..6] +0x10
+    float vel[3];     // param_1[7..9] +0x1c
+    float life;       // param_1[0xf]  +0x3c
+    float spin;       // param_1[0x10] +0x40
+};
+static DrumRec s_drums[8] = {};
+
 void Drum_Fire(PowerupSystem& sys, Slot& s, int mode) {         // 0x454740: CMP 2 at 0x00454747
     if (mode != kFirePrimary || s.ammo == 0) return;
-    sys.backend()->DropHazard(sys.owner().pos, /*proximity=*/false);  // FUN_004541e0 0x00454758
+    // FUN_004541e0 (CALL 0x00454758). It has NO contact call of its own; it takes
+    // the next instance pointer `*(rec + (drops-1)*4)`, decrements `rec+0x08`,
+    // seeds the instance from the car and sets state 2 (`*(inst+0x2c) = 2` at
+    // LAB_00454293), after which FUN_00454350 flies it.
+    DrumRec& d = s_drums[sys.current() * 2 + (tune::kDrumDrops - s.ammo)];
+    const HostCar& c = sys.owner();
+    d.state = 2;
+    d.pos[0] = c.pos[0]; d.pos[1] = c.pos[1]; d.pos[2] = c.pos[2];
+    // vel = carVel(+0x90..0x98) * _DAT_005cd274(40) + up(+0x10..0x18) * _DAT_005ce26c(3.5)
+    // [UNCERTAIN] same stand-in as P_MINE: HostCar has no matrix up row, so world +Y.
+    const float up[3] = { 0.f, 1.f, 0.f };
+    for (int i = 0; i < 3; ++i)
+        d.vel[i] = c.vel[i] * tune::kDrumVelFactor + up[i] * tune::kDrumUpFactor;
+    // The original does not reset +0x3c here; a record reaches state 2 only from
+    // the free list (state 5 -> FUN_00454170), where it was left zeroed.
+    d.life = 0.f; d.spin = 0.f;
+    sys.backend()->DropHazard(d.pos, /*proximity=*/false);
     sys.backend()->SfxByName("drop mine", 0.8f);
     s.ammo--;   // MEASURED: +0x08 2->1->0, one per press edge (o1 call 1558 t+1/t+8)
 }
-void Drum_Tick(PowerupSystem&, float) {}     // 0x454820: host advances the hazard
+// 0x454820 -> FUN_00454350 per record. The state machine, verbatim:
+//   1 -> pos tracks the car frame (the port never enters this state: its ARM does
+//        not attach a model), 2 -> fly, 3/4/5 -> one frame each, then free.
+void Drum_Tick(PowerupSystem& sys, float dt) {
+    if (sys.current() != 0) return;    // FUN_00454820 walks the pool ONCE per frame
+    for (int i = 0; i < 8; ++i) {
+        DrumRec& d = s_drums[i];
+        if (d.state == 0 || d.state == 1) continue;
+        if (d.state == 2) {
+            if (d.life <= tune::kDrumLife) {        // _DAT_005cc358 gate
+                const float seg[6] = { d.pos[0], d.pos[1], d.pos[2],
+                                       d.pos[0] + d.vel[0] * dt,
+                                       d.pos[1] + d.vel[1] * dt,
+                                       d.pos[2] + d.vel[2] * dt };
+                Contact::WorldHit hit;
+                // CALL 0x004b4cd0 @0x0045444a; TEST EAX,EAX @0x00454452;
+                // JE 0x00454547 @0x00454454 -> the integrate arm.
+                if (Contact::SegmentQuery(seg, &hit, 0x0045444f) == 0) {
+                    d.pos[0] = seg[3]; d.pos[1] = seg[4]; d.pos[2] = seg[5];
+                    d.vel[1] += tune::kDrumGravY * dt;   // x/z terms are 0.0
+                    d.spin   += tune::kDrumSpin  * dt;
+                    d.life   += dt;
+                    continue;
+                }
+                float p[3];
+                Contact::Vec3Lerp(p, seg, seg + 3, hit.t, 0x0045448a);  // CALL @0x00454485
+                for (int k = 0; k < 3; ++k) p[k] += hit.normal[k] * tune::kDrumLift;
+                float m[16] = {0};
+                Contact::BasisFromTri(m, hit.vert, p, 0x004544e0);      // CALL @0x004544db
+            }
+            d.state = 3;    // a HIT *or* life past the gate both land here
+            continue;
+        }
+        // 3 -> 4 (FX), 4 -> 5 (damage sweep FUN_00453eb0), 5 -> 0 (free,
+        // FUN_00454170). One frame each; none makes a contact-chain call.
+        if (d.state < 5) ++d.state; else d.state = 0;
+    }
+}
 
 // ============================== MISSILE (11) ===============================
 // arm 0x455060 / fire 0x455150 / canfire 0x455360 / deact 0x455390 / tick 0x455c90

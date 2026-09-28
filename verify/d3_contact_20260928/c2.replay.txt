@@ -12,6 +12,9 @@ CONTACT CALL SITES (original capture vs port), slot 0
   P_MINE basis 0x004b5080  0x457db2          1      1         0         0  not-armed
   SHOTGN query 0x004b4b20  0x45b4c2          0      0         0         0  not-armed
   SHOTGN basis 0x004b5080  0x45b582          0      0         0         0  not-armed
+  DRUM   query 0x004b4cd0  0x45444f         83     83         0         0  clean
+  DRUM   lerp  0x004b4650  0x45448a          2      2         0         0  clean
+  DRUM   basis 0x004b5080  0x4544e0          2      2         0         0  clean
   SWEEP  query 0x004b4b60  0x45bcd8        280    280         0         0  clean
   SWEEP  confirm 0x45c350  0x45bcea          1      1         0         0  clean
 CONTACT VERDICT: CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)
