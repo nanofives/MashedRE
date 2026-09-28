@@ -1,6 +1,84 @@
 # Next session — kickoff prompt
 
-## => KICKOFF PROMPT - D3 powerups (c), MISSILE (the last type), written 2026-09-28b, paste verbatim
+## => KICKOFF PROMPT - D3 powerups (b), the MORTAR->MISSILE decision defect, written 2026-09-28c, paste verbatim
+
+```
+Session goal: fix the ONE open powerup defect. It is in the DECISION half
+(criterion (b)), NOT the contact half -- criterion (c) is CLOSED. Read ROADMAP.md
+section D3 (Powerups row) and re/analysis/D3_CONTACT_PORT_2026-09-28.md sections
+4.4b and 8. Do NOT re-derive anything below.
+
+SETTLED 2026-09-28c. Criterion (c) is DONE: 8 clean + the dispatcher sweep + the
+shared target acquisition, 1 near-clean.
+- CLEAN: OIL, P_MINE, SHOTGUN, DRUM, FLASH, GUN, MORTAR, MISSILE.
+- NEAR-CLEAN: R_FLAME -- 2 queries of 546 over on g3 only, cause named
+  (FUN_0045ac40, the per-group sort whose reference point is the viewport query
+  FUN_004671d0). Do not re-open unless you are porting that sort.
+- Five ported modules: Powerup/PowerupContact.cpp (every leaf + the replay
+  injectors), PowerupAim.cpp (FUN_00459620, the target ACQUISITION routine
+  MORTAR/GUN/MISSILE share), PowerupMortar.cpp, PowerupMissile.cpp.
+
+THE DEFECT, measured and attributed:
+- Capture verify/d3_contact_20260928b/s2.msd (plan 11,7,11,11) is the first to
+  put a MISSILE pickup AFTER a MORTAR one. Its 9-type DECISION replay reports
+  181 mismatches, ALL on the third activation; the first MISSILE and the MORTAR
+  before it are both CLEAN.
+- Shape: from t+1 the PORT fires and the ORIGINAL does not --
+  fire_modes orig='' port='2', ammo orig=1 port=0, jet orig=0 port=1,
+  life orig=0.0 port=0.483.
+- It is NOT a regression. `re/tools/pu_replay/build_control.bat 5bb0d5e3` links
+  the pre-R_FLAME PowerupEffects.cpp against everything else current and
+  reproduces the SAME 181 mismatches. Do not spend time bisecting; that is done.
+- Consequence, so you do not chase the wrong row: the port holds that slot armed
+  longer, so the dispatcher sweep fires 33 EXTRA times (0x45bcd8, 152 vs 185),
+  and that single row is the WHOLE of s2's CONTACT VERDICT: DIVERGES. Every
+  MISSILE, MORTAR and AIM row on s2 is clean. s1 (plan 11,11,11,11, no MORTAR)
+  is clean throughout. Fixing the decision defect should clear the sweep row too.
+
+HYPOTHESIS TO TEST FIRST (stated as a hypothesis, not a finding): the original's
+MISSILE FIRE consults the AIM record and the port's does not. The tick tests the
+aim record's +0x1c before calling FUN_00455100 (0x00455cc7..0x00455cd4), and the
+aim pool is 0x006885d0 stride 0x2c, 5 entries. Start:
+    py -3.12 re/tools/decomp_pc.py 0x00455150 0x00455100 --create --slot <n>
+NOTE the --create flag: it was added this session and TRANSIENTLY defines a
+function Ghidra's auto-analysis missed, against a -readOnly pool clone. It is NOT
+a master write. 0x00455c90 (the MISSILE tick) is one such function; use it freely.
+
+HOW TO WORK (the discipline that found three real defects this week):
+1. Falsify the decode OFFLINE first, before any C++, the way re/tools/
+   aim_model.py, mortar_model.py and missile_model.py do. Each found a real bug
+   at zero cost.
+2. ADD A NON-DEGENERACY CONTROL and RUN IT (MASHED_AIM_FORCE,
+   MASHED_MORTAR_FORCE, MASHED_MISSILE_FORCE are the precedents). MEASURED: on
+   MORTAR all three controls left every contact COUNT clean while the drift moved
+   from 4.8e-07 to 6.03. A count the harness schedules is not evidence.
+3. Report an inert control as inert. MISSILE's `nolife` is inert on both captures
+   because no projectile aged out; that gap is recorded, not papered over.
+4. Regression guard after every change, all of it:
+     9-type:  o3, o4, m1, m2, s1 CLEAN (s2 is the one you are fixing)
+     contact: c2, c3, g2, g4, m1, m2, s1 CLEAN; g3 DIVERGES on exactly the
+              R_FLAME 2-query residue; s2 on exactly the sweep row
+     mashedmoduild.bat -> both targets
+
+ALSO OPEN, smaller (note section 8): MISSILE's 3.0 s lifetime gate has no control
+coverage -- a capture with a missile that TIMES OUT would close it (item 3c). All
+new capture channels are track 0 only, and the `hit_t` column exists on ONE
+capture (item 8).
+
+CAPTURE RECIPE:
+  py -3.12 re/frida/scenario_launch.py --track 0 --mode 10 --cars 4 --car 0
+    --poke-ctrl-slots --statediff-out verify/<dir>/<name>.msd --statediff-car 0
+    --statediff-drive --statediff-puhook --puhook-contacts --puhook-aim
+    --puhook-mortar --puhook-missile --pu-plan 11,7,11,11 --pu-warm 60 --hold 110
+Launch muted (MASHED_MUTE=1), MASHED_WIN_POS=left-bl, always --poke-ctrl-slots.
+Track the PIDs you spawn and kill ONLY those.
+
+RULES: NO-GUESSING, cite RVAs, [UNCERTAIN] + the next command. Trackers only via
+re-classify. Commit cited evidence after each step (git add -f for small files;
+never commit a .msd, they are 22 MB). Do not push.
+```
+
+## => HISTORY: KICKOFF PROMPT - D3 powerups (c), MISSILE (the last type), written 2026-09-28b, SUPERSEDED (MISSILE is done)
 
 ```
 Session goal: close ROADMAP v3 D3 powerups criterion (c) by porting MISSILE, the
