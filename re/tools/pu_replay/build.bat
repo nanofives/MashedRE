@@ -9,5 +9,5 @@ set SRC=%HERE%..\..\..\mashedmod\src\mashed_re
 set OUT=%HERE%out
 if not exist "%OUT%" mkdir "%OUT%"
 cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /I "%SRC%" /Fo"%OUT%\\" /Fe"%OUT%\pu_replay.exe" ^
-   "%HERE%pu_replay.cpp" "%SRC%\Powerup\PowerupSystem.cpp" "%SRC%\Powerup\PowerupEffects.cpp" "%SRC%\Powerup\PowerupContact.cpp"
+   "%HERE%pu_replay.cpp" "%SRC%\Powerup\PowerupSystem.cpp" "%SRC%\Powerup\PowerupEffects.cpp" "%SRC%\Powerup\PowerupContact.cpp" "%SRC%\Powerup\PowerupAim.cpp"
 exit /b %ERRORLEVEL%

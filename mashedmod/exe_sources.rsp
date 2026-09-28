@@ -64,6 +64,7 @@
 "Powerup\PowerupSystem.cpp"
 "Powerup\PowerupEffects.cpp"
 "Powerup\PowerupContact.cpp"
+"Powerup\PowerupAim.cpp"
 "Race\RaceCamera.cpp"
 "Race\RaceSession.cpp"
 "Race\GameFlow.cpp"

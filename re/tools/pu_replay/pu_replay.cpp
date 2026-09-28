@@ -32,6 +32,7 @@
 //        MASHED_PU_CONTACTDUMP=<out.pucontact.csv>)
 #include "Powerup/PowerupSystem.h"
 #include "Powerup/PowerupContact.h"
+#include "Powerup/PowerupAim.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -126,6 +127,11 @@ int SweepSlotOf(unsigned a2) {
 const unsigned kQuerySites[] = { 0x004578d1u, 0x00457ca5u, 0x0045b4c2u, 0x0045444fu,
                                  0x0045afccu };
 const unsigned kGateSites[]  = { 0x0045790eu, 0x00457cf9u };
+// The two ACQUISITION query sites (FUN_00459620). They are not in kQuerySites
+// because they are attributed by the --puhook-aim channel's own `slot` column
+// (mode 3), not by the subject slot's held code: three types reach them.
+const unsigned kAimQuerySites[] = { 0x00459c19u, 0x00459d54u };
+const int      kAimQueryN = 2;
 const int      kQueryOwner[] = { 19 /*OIL*/,  12 /*P_MINE*/, 17 /*SHOTGUN*/, 10 /*DRUM*/,
                                  16 /*R_FLAME*/ };
 const int      kGateOwner[]  = { 19,          12 };
@@ -148,6 +154,10 @@ const int      kQueryN = 5, kGateN = 2;
 //      Sound only when NO OTHER SLOT held that type in the capture, which the loader
 //      CHECKS (status `contested` otherwise, excluded from the verdict).
 //   2  by arg2 = slot_base + 0x80 (the dispatcher sweep).
+//   3  by the --puhook-aim channel's own `slot` column. Used for the ACQUISITION
+//      sites inside FUN_00459620, which MORTAR, GUN and MISSILE all reach, so
+//      neither code_pre nor call range can attribute them -- but the aim channel
+//      records the firing car index on every one of its calls.
 struct Site { unsigned ra; int owner; unsigned rva; unsigned gatedBy; int mode; const char* what; };
 const Site kSites[] = {
     { 0x004578d1u, 19, 0x004b4cd0u, 0u, 0, "OIL    query 0x004b4cd0" },   // CALL @0x004578cc
@@ -168,6 +178,12 @@ const Site kSites[] = {
     { 0x0045b04cu, 16, 0x004b5080u, 0x0045afccu, 1, "RFLAME basis 0x004b5080" },   // CALL @0x0045b047
     { 0x0045bcd8u, -1, 0x004b4b60u, 0u, 2, "SWEEP  query 0x004b4b60" },   // CALL @0x0045bcd3, slot by arg2
     { 0x0045bceau, -1, 0x0045c350u, 0x0045bcd8u, 2, "SWEEP  confirm 0x45c350" },   // CALL @0x0045bce5, slot by arg2
+    // FUN_00459620, shared by MORTAR/GUN/MISSILE. The FALLBACK pair runs only
+    // when the candidate count is 0; the LOS pair runs on every call.
+    { 0x00459c19u, -1, 0x004b4cd0u, 0u,          3, "AIM    fallback query" },   // CALL @0x00459c14
+    { 0x00459c3cu, -1, 0x004b4650u, 0x00459c19u, 3, "AIM    fallback lerp " },   // CALL @0x00459c37
+    { 0x00459d54u, -1, 0x004b4cd0u, 0u,          3, "AIM    los      query" },   // CALL @0x00459d4f
+    { 0x00459db5u, -1, 0x004b4650u, 0x00459d54u, 3, "AIM    los      lerp " },   // CALL @0x00459db0
 };
 const int kSiteCount = static_cast<int>(sizeof(kSites) / sizeof(kSites[0]));
 
@@ -267,12 +283,77 @@ int main(int argc, char** argv) {
         }
     }
 
-    // ---- load <base>.pucontact.csv, if present ----------------------------
+    // <base> = argv[1] with its ".puhook.csv" suffix removed; the sibling
+    // channels hang off it.
     std::string base(argv[1]);
-    const std::string suffix = ".puhook.csv";
-    if (base.size() > suffix.size() && base.compare(base.size() - suffix.size(),
-                                                    suffix.size(), suffix) == 0)
-        base.erase(base.size() - suffix.size());
+    {
+        const std::string suffix = ".puhook.csv";
+        if (base.size() > suffix.size() && base.compare(base.size() - suffix.size(),
+                                                        suffix.size(), suffix) == 0)
+            base.erase(base.size() - suffix.size());
+    }
+
+    // ---- load <base>.puaim.csv, if present --------------------------------
+    // One row per FUN_00459620 call: the call's own arguments plus the live
+    // subsystem reads the acquisition loop makes (the four car positions and
+    // active flags, the firing car's aim-matrix `at` row, the second list's
+    // count). Without it the acquisition sites cannot be replayed at all -- the
+    // replay's Backend::car[4] is default-constructed all-zero.
+    //
+    // WHAT THIS DOES AND DOES NOT TEST, stated plainly. The SCHEDULE comes from
+    // the capture: Acquire runs on exactly the calls the original ran it on, so
+    // the LOS site's count (one per aim row) is true by construction and is NOT
+    // evidence. The FALLBACK site's count is NOT: it fires only when the ported
+    // candidate loop finds nothing, so its 187-of-348 pattern is decided entirely
+    // by the port. That row is the criterion-(c) measurement here.
+    std::map<long, mashed_re::Powerup::Aim::Inputs> aimIn;
+    std::map<long, int> aimSlot;
+    bool haveAim = false;
+    {
+        std::string aimPath = base + ".puaim.csv";
+        if (std::FILE* af = std::fopen(aimPath.c_str(), "r")) {
+            haveAim = true;
+            std::vector<std::string> ah;
+            while (std::fgets(line, sizeof line, af)) {
+                auto c = Split(line);
+                if (ah.empty()) { ah = c; continue; }
+                auto col = [&](const char* n) -> std::string {
+                    for (std::size_t i = 0; i < ah.size(); ++i) if (ah[i] == n) return i < c.size() ? c[i] : "";
+                    return "";
+                };
+                // every float is recorded as its exact bits; a decimal is not the
+                // value the game computed with.
+                auto fx = [&](const char* n) -> float {
+                    const std::string s = col(n);
+                    if (s.size() > 2 && s[0] == '0' && s[1] == 'x') {
+                        const unsigned long u = std::strtoul(s.c_str() + 2, nullptr, 16);
+                        float f; std::memcpy(&f, &u, 4); return f;
+                    }
+                    return static_cast<float>(std::atof(s.c_str()));
+                };
+                const long cl = std::atol(col("call").c_str());
+                mashed_re::Powerup::Aim::Inputs in;
+                in.origin[0] = fx("ox"); in.origin[1] = fx("oy"); in.origin[2] = fx("oz");
+                in.range = fx("range"); in.cone = fx("cone");
+                in.at[0] = fx("at_x"); in.at[1] = fx("at_y"); in.at[2] = fx("at_z");
+                in.listCount = std::atoi(col("list_n").c_str());
+                for (int i = 0; i < 4; ++i) {
+                    char k[16];
+                    std::snprintf(k, sizeof k, "c%d_act", i);
+                    in.carActive[i] = std::atoi(col(k).c_str()) > 0 ? 1 : 0;
+                    for (int a = 0; a < 3; ++a) {
+                        std::snprintf(k, sizeof k, "c%d_%c", i, "xyz"[a]);
+                        in.carPos[i][a] = fx(k);
+                    }
+                }
+                aimIn[cl] = in;
+                aimSlot[cl] = std::atoi(col("slot").c_str());
+            }
+            std::fclose(af);
+        }
+    }
+
+    // ---- load <base>.pucontact.csv, if present ----------------------------
     const std::string cxPath = base + ".pucontact.csv";
     bool haveCx = false;
     // Which RVAs the capture's Frida listeners were armed for. A site whose RVA
@@ -314,10 +395,14 @@ int main(int argc, char** argv) {
             for (int i = 0; i < kSiteCount; ++i)
                 if (kSites[i].ra == ra) { mode = kSites[i].mode; owner = kSites[i].owner; }
             if (mode < 0) continue;
-            const bool mine = (mode == 1) ? true : (held == owner);
+            const bool mine = (mode == 1) ? true
+                            : (mode == 3) ? (aimSlot.count(cl) && aimSlot[cl] == want)
+                                          : (held == owner);
             if (!mine) continue;
             g_inj.origCalls[ra]++;
             for (int i = 0; i < kQueryN; ++i) if (kQuerySites[i] == ra)
+                g_inj.q[std::make_pair(cl, ra)].push_back(ret);
+            for (int i = 0; i < kAimQueryN; ++i) if (kAimQuerySites[i] == ra)
                 g_inj.q[std::make_pair(cl, ra)].push_back(ret);
             for (int i = 0; i < kGateN; ++i) if (kGateSites[i] == ra)
                 g_inj.g[std::make_pair(cl, ra)].push_back(ret);
@@ -350,6 +435,16 @@ int main(int argc, char** argv) {
         sys.SetInput(want, r.cur3 != 0, r.cur4 != 0);
         be.due = r.oilDue;
         sys.Tick(r.dt, be.car, r.state);
+        // FUN_00459620 runs once per frame while MORTAR, GUN or MISSILE has a
+        // projectile up. The ported ticks do not yet call it (their projectile
+        // pools are not landed), so the SCHEDULE is taken from the capture and
+        // only the BRANCH is the port's -- see the loader comment above.
+        auto ai = aimIn.find(r.call);
+        if (ai != aimIn.end() && aimSlot[r.call] == want) {
+            mashed_re::Powerup::Aim::Record arec;
+            std::memset(&arec, 0, sizeof arec);
+            mashed_re::Powerup::Aim::Acquire(want, ai->second, &arec);
+        }
     }
     mashed_re::Powerup::Contact::CloseDump();
     std::printf("replayed %zu frames on slot %d\n", rows.size(), want);
@@ -392,7 +487,13 @@ int main(int argc, char** argv) {
         const bool contested = kSites[i].mode == 1 &&
             (heldBy[kSites[i].owner].size() > 1 ||
              (heldBy[kSites[i].owner].size() == 1 && !heldBy[kSites[i].owner].count(want)));
+        // A mode-3 row with no --puhook-aim channel has ZERO original rows and
+        // zero port rows, which would print `clean` and mean nothing. That is the
+        // same false green the `not-armed` handling exists to prevent, so it gets
+        // the same treatment: a capture taken before 2026-09-28b simply cannot
+        // test the acquisition sites.
         bool armed = armedRva.count(kSites[i].rva) != 0;
+        if (kSites[i].mode == 3 && !haveAim) armed = false;
         for (unsigned g = kSites[i].gatedBy; armed && g; ) {
             int gi = -1;
             for (int j = 0; j < kSiteCount; ++j) if (kSites[j].ra == g) { gi = j; break; }
@@ -409,8 +510,10 @@ int main(int argc, char** argv) {
         if (armed && !contested && diff) bad = 1;
         if (!armed && (port || g_inj.origCalls[ra])) notArmed = 1;
     }
-    std::printf("CONTACT VERDICT: %s%s\n", bad ? "DIVERGES" : "CLEAN",
+    std::printf("CONTACT VERDICT: %s%s%s\n", bad ? "DIVERGES" : "CLEAN",
                 notArmed ? "  (not-armed rows had no Frida listener when this capture"
-                           " was taken and are excluded)" : "");
+                           " was taken and are excluded)" : "",
+                haveAim ? "" : "  (no --puhook-aim channel: the AIM rows are NOT"
+                               " tested by this capture)");
     return 0;
 }

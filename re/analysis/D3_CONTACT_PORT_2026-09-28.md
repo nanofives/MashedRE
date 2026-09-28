@@ -32,15 +32,19 @@ Ghidra MCP did not load; no Ghidra project was opened for writing.
    P_MINE rows are the only ones the window attribution gets right, because those
    two sites are reachable from one type only.
 5. **No regression.** The 9-type decision replay is CLEAN on the archived
-   `o3`/`o4` and on all five current captures (§6).
-6. **The remaining three types are not blocked on the chain.** Their contact sites
-   sit inside per-type **projectile updates** — decoded here (§5.3) — each of which
-   integrates a position and a velocity the port does not own.
-7. **`FUN_00459620` is a SHARED projectile routine, not GUN's** (§5.2). A call-site
-   scan of the whole `.text` finds three callers: `0x00453bd9` (MORTAR tick),
-   `0x00455c29` (MISSILE), `0x004569c5` (GUN tick). The prior note's GUN row
-   attributed its four sites to GUN by activation window; they belong to whichever
-   of the three is in flight. Porting `FUN_00459620` once unlocks all three.
+   `o3`/`o4`, on the new `m1`, and on all five current captures (§6).
+6. **GUN is CLOSED; MORTAR and MISSILE are down to their own projectile
+   integration.** Their remaining contact sites sit inside per-type **projectile
+   updates** — decoded here (§5.3) — each of which integrates a position and a
+   velocity the port does not own. Neither is blocked on the contact chain or on
+   the shared acquisition any more.
+7. **`FUN_00459620` is SHARED — and it is a TARGET-ACQUISITION routine, not a
+   projectile one** (§4.2e, §5.2). A call-site scan of the whole `.text` finds
+   three callers: `0x00453bd9` (MORTAR tick), `0x00455c29` (MISSILE), `0x004569c5`
+   (GUN tick). **It is now PORTED and measures clean**, including both
+   non-degeneracy controls. Doing so **closed GUN outright** and unblocked MORTAR
+   and MISSILE, whose only remaining debt is their own projectile integration.
+   It also required adding the capture channel the replay was missing — see (8).
 
 ## 1. What the chain actually is
 
@@ -357,6 +361,101 @@ Not ported, because the sort's reference point (`FUN_004671d0`) is a viewport
 query the replay has no equivalent for. Recorded as the cause and as the residue's
 bound: 2 of 546 on one of three captures, on a count only.
 
+### 4.2e The ACQUISITION routine — ported, and the blocker it removed
+
+`FUN_00459620` is **not** "the shared projectile routine" this note's own §5.2
+called it. It acquires a **target**: it scores every other car in a cone, picks
+the smallest angle, probes line of sight to it, and writes an aim record at
+`0x0068b9f8 + slot*0x58`. No projectile position is integrated anywhere in it.
+The record base is read off `IMUL EBP,EBP,0x58` (`0x00459632`) + `ADD
+EBP,0x68b9f8` (`0x00459638`); the decompiler's `&DAT_0068b9fc` names the +4 field.
+
+Its two query sites sit on opposite sides of one branch, `candidate count == 0`:
+
+| site | when |
+|---|---|
+| `0x459c19` | the **vertical fallback** probe at `origin + at*range`, `== 0` side only |
+| `0x459d54` | the **line-of-sight** probe, origin → endpoint, every call |
+
+**Two corrections to §5.3's GUN row**, both from `pu_contact_report.py` on the
+captures this note already cites. `0x459c19` on `g3` is **163 calls / 84 hits**,
+not "96 calls / 0 hits", and `0x459c3c` (84) is inside `0x459c19`'s own hit arm
+(`CALL 0x4b4cd0` `0x00459c14`, `TEST EAX,EAX` `0x00459c1c`, `JE 0x459c9a`
+`0x00459c1e`, `CALL 0x4b4650` `0x00459c37`) — so a 0-hit query paired with an
+84-call lerp was impossible on its face.
+
+**The branch is exercised both ways, so no stub could be right:**
+
+| capture / type | `0x459c19` calls | of hold |
+|---|---|---|
+| `g3` GUN | 163 | 163 — never a candidate |
+| `g4` GUN | 163 | 163 — never a candidate |
+| `g2` MISSILE | 0 | 32 — a candidate on every call |
+| `g2` MORTAR | 96 | 153 — split |
+
+**THE BLOCKER, named and then removed.** Reproducing that branch needs the four
+car positions, their active flags and the firing car's aim matrix. The capture
+recorded none of them, and `pu_replay`'s `Backend::car[4]` is **never populated**
+— default-constructed all-zero, with nothing in `main()` writing to it. That, not
+the contact chain, is what had blocked all three types.
+
+So the input was added rather than guessed at. `scenario_launch.py --puhook-aim`
+writes `<out>.puaim.csv`, one row per acquisition call: the four arguments, the
+`at` row, the second list's count, and all four cars' flag + position. Sources:
+car position `0x0063dc38 + car*0x2ac` (`FUN_0041f030`), active flag
+`[[0x005f2770] + car*4 + 0x34]` (`FUN_0040e370`), list count `[0x0063a5d0]`
+(`FUN_004075a0`). The `at` row is read on `FUN_0041f220`'s **leave**, filtered to
+RA `0x004596b5`, because `FUN_00459620`'s epilogue overwrites the same buffer.
+Both attachments are at function entries, never mid-function.
+
+**Falsified before it was ported.** `re/tools/aim_model.py` predicts the branch
+from those inputs and diffs it against the same run's contact rows:
+
+```
+aim calls 348   list_n {0: 348}   0x459c19 fired on 187   0x459d54 on 348
+BRANCH PREDICTION   match=348  mismatch=0     VERDICT: CLEAN
+```
+
+**Ported and measured** (`Powerup/PowerupAim.{h,cpp}`), on
+`verify/d3_contact_20260928b/m1.msd` — 6657 frames, MORTAR + GUN + MISSILE:
+
+| site | orig | port | |
+|---|---|---|---|
+| `0x459c19` fallback query | 187 | **187** | clean |
+| `0x459c3c` fallback lerp  | 33  | **33**  | clean |
+| `0x459d54` LOS query      | 348 | 348 | clean *(schedule-derived, see below)* |
+| `0x459db5` LOS lerp       | 152 | **152** | clean |
+
+**Non-degeneracy, run and reported** (`MASHED_AIM_FORCE`, in the TU):
+
+| control | `0x459c19` port | |
+|---|---|---|
+| `none` — loop always finds nothing | 348 (161 port-only) | DIVERGES |
+| `lock` — loop always finds one | 0 (187 orig-only) | DIVERGES |
+| *(unset, the real run)* | **187** | CLEAN |
+
+**What this does NOT test, plainly.** The **schedule** comes from the capture:
+`Acquire` runs on exactly the calls the original ran it on, because the ported
+MORTAR/GUN/MISSILE ticks do not own their projectile pools yet. So the LOS site's
+348 is true by construction and is **not** evidence. The fallback site's 187 is
+the measurement — it is decided entirely by the ported candidate loop, which the
+two controls confirm.
+
+Three things inside the routine are **not** ported, each for a stated reason:
+the **second candidate list** (`FUN_004075a0`/`FUN_004075b0`) — a *measured*
+no-op, `list_n == 0` on all 348 rows, carried as an input so a non-zero capture
+fails loudly; the **third loop** over RW atomics (`FUN_0047ce70`/`FUN_0047d130`)
+— makes no contact call, so it cannot move a criterion-(c) count; and the locked
+branch's **intercept prediction** (`FUN_0041f2c0`, with `FUN_00558b40` on its
+refusal) — `[UNCERTAIN]`, the capture records only 3 of the 4 position dwords
+(`tgt.w` is missing) and nothing about `FUN_0041f1c0`'s gate. Next command:
+`py -3.12 re/tools/decomp_pc.py 0x0041f2c0 0x0041f1c0 0x00558b40 --slot 0`.
+
+One correction the same read forced: `FUN_004726f0` is a **clamped** dot product,
+bounded to `[_DAT_005cc33c, _DAT_005cc320] = [-1, +1]`, which is what keeps the
+`FUN_004a3384` acos in domain. `_DAT_005cc98c = 0x42652ee1 = 57.29578` (180/π),
+so the cone limit is **20.0 degrees** and the range **15.0**.
+
 ### 4.3 The prior note's own captures
 
 `c2` and `c3` predate the `surface_gate` instrument, and `c2`/`c3`/`g2`/`g3`
@@ -411,6 +510,12 @@ frame the armed sweep fired. §3.3 closed them.
 
 ### 5.2 `FUN_00459620` is SHARED — the prior note's GUN row is a window artifact
 
+> **SUPERSEDED IN PART by §4.2e.** This section's call-site scan stands. Its
+> characterisation of `FUN_00459620` as a *projectile* routine does not: it
+> acquires a **target**, and integrates no projectile position anywhere. The
+> routine is now ported (`Powerup/PowerupAim.{h,cpp}`). Its GUN call counts below
+> are also wrong — see §4.2e for the measured ones.
+
 A scan of the whole `.text` for `E8` rel32 calls (every decoded operand confirmed,
 not a byte-pattern match) gives the exact caller sets:
 
@@ -442,7 +547,7 @@ that integrates a position and a velocity the ported effect module does not own.
 | MORTAR | `FUN_00453730` (0x00453730..0x004538a7, 377 B) | `A = rec+0x14..0x1c`, `B = A + rec+0x38..0x40`; `0x004b4cd0` @`0x00453784`→RA `0x453789`; on a hit `FUN_0045c350(&res, rec+0x14)` RA `0x4537bb`; on `== 0` lerp RA `0x4537df`, `p += normal*_DAT_005cc9a0(0.05)`, basis RA `0x45382c`, explosion, `FUN_00453210`, `return 1` (detonated) |
 | DRUM | **PORTED** — `FUN_00454350` (994 B) | state machine on `param_1[0xb]`: 1 = stuck to the car, **2 = flying**. Pos `param_1[4..6]`, vel `param_1[7..9]`, life `param_1[0xf]`, gated on `life <= _DAT_005cc358`. Each frame `B = pos + vel*dt`, `0x004b4cd0` RA `0x45444f`; **miss** → integrate and apply gravity `_DAT_005ce42c/430/434`; **hit** → the landing branch with lerp RA `0x45448a` and basis RA `0x4544e0` |
 | R_FLAME | `FUN_0045ae80` — the ported TICK's original | 5 owners × 5 groups × 5 sparks. A spark with `pfVar8[6] != 0`, `*pfVar8 < 1.0` and `pfVar8[5] == 0` probes `A = pfVar8[-6..-4]` → `B = A + pfVar8[-3..-1]`: `0x004b4cd0` RA `0x45afcc`; **miss** → `vel.y -= _DAT_005ce018(0.002)`; **hit** → lerp RA `0x45aff3`, `p += normal*_DAT_005ce18c(0.02)`, zero the velocity, set `pfVar8[5] = 1` (landed), basis RA `0x45b04c`. Age `pfVar8[2] += dt`, `*pfVar8 = age*_DAT_005cd114(1.1111)` clamped to 1.0 |
-| GUN | `FUN_00459620` (2727 B) | two query sites, `0x459c19` (96 calls / 0 hits in `g3`) and `0x459d54` (163 / 98), plus two lerps `0x459c3c` (84/84) and `0x459db5` (98/98). `0x459c3c` is a site the prior note did not list |
+| GUN | `FUN_00459620` (2727 B) | **PORTED, §4.2e.** Corrected counts: `0x459c19` is **163 calls / 84 hits** on `g3` (not "96 / 0"), `0x459d54` 163/98, lerps `0x459c3c` 84/84 and `0x459db5` 98/98. Not a projectile update at all — target acquisition |
 | MISSILE | not a Ghidra function | `0x00455cd9`, `0x00455de0`, `0x00455e07`, `0x00455e59` are inside the MISSILE TICK region past `0x00455c90`, which Ghidra has not defined. Create the function first, then decode |
 
 #### R_FLAME, decoded and PORTED (§4.2d) — kept here as the record
@@ -499,6 +604,11 @@ the flight integration has to be faithful before the count can be compared.
 - Archived 9-type guard, re-run after every change in this note:
   `verify/d3_contact_20260928/o3.diff.txt` (OIL, FLASH, GUN, SHOTGUN, MISSILE)
   **CLEAN**, `o4.diff.txt` (MORTAR, DRUM, P_MINE, R_FLAME) **CLEAN**.
+- The new `verify/d3_contact_20260928b/m1.diff.txt` (MORTAR, GUN, MISSILE)
+  **CLEAN** — a decision-side guard those three did not previously have.
+- Contact replay, re-run after the acquisition port on every capture:
+  `c2` CLEAN, `c3` CLEAN, `g2` CLEAN, `g4` CLEAN, `m1` CLEAN, and `g3` DIVERGES on
+  exactly the 2-query R_FLAME residue of §4.2d and nothing else.
 - All four current captures CLEAN (§4.4).
 - `mashedmod\build.bat` built both targets clean.
 
@@ -527,23 +637,31 @@ are not part of the guard and were not in the prior note's either.
 | — armed sweep | **clean** | 280 / 309 / 207 / 309 queries across `c2`/`c3`/`g2`/`g3`+`g4`; the single `c2` deactivation reproduced |
 | DRUM | **clean** | query **83/83** on both `g2` and `c2`; lerp/basis 1/1 and 2/2 |
 | R_FLAME | **clean on `c3` and `g4`, 2-query residue on `g3`** | query 510/510 (`c3`), 547/547 (`g4`), 546 vs 548 (`g3`); lerp and basis exact on all three. Residue mechanism cited in §4.2d: the unported per-group distance sort `FUN_0045ac40` |
-| MORTAR | blocked | `0x453789`→`0x004b4cd0`, `0x4537bb`→`0x0045c350`, `0x4537df`→`0x004b4650`, `0x45382c`→`0x004b5080`, all inside `FUN_00453730` (one caller, `0x004538fe`) — but the flight that drives them runs in the SHARED `FUN_00459620` |
-| GUN | blocked | its four apparent sites are inside the shared `FUN_00459620` (§5.2) and cannot be attributed to GUN at all until that routine is ported |
-| MISSILE | blocked | `0x455cd9`→`0x00455100` 31/30, `0x455e59`→`0x004b4cd0` 31/31, `0x455de0`→`0x004b4d10` 16/0, terminal `0x455e07`→`0x00455910` 1/1; also a `FUN_00459620` caller (`0x00455c29`) |
+| — acquisition (shared) | **clean** | `FUN_00459620`'s four sites on `m1`: fallback query **187/187**, fallback lerp 33/33, LOS lerp 152/152, LOS query 348/348 (schedule-derived). Both non-degeneracy controls DIVERGE. §4.2e |
+| GUN | **clean** | no site beyond the acquisition four ever appears in a GUN window, and window attribution can only OVER-collect, so that negative is sound. The three others that do appear are not power-up sites: `0x479124` fires 6666 times in `g3` (~1/frame over the whole 6650-frame race, held or not), and `0x475229`/`0x4752b2` fire 1× in `g3` but 4× in `g4` and 4× in `m1`, i.e. outside GUN windows too |
+| MORTAR | partial | the acquisition four are clean; its OWN detonation test `FUN_00453730` is not ported — `0x453789`→`0x004b4cd0` (170 calls / 2 hits on `g2`), gate `0x4537bb`, lerp `0x4537df`, basis `0x45382c`. Single caller `0x004538fe` |
+| MISSILE | partial | the acquisition four are clean; its OWN chain is not ported — `0x455cd9`→`0x00455100` 31/30, `0x455e59`→`0x004b4cd0` 31/31, `0x455de0`→`0x004b4d10` 16/0, terminal `0x455e07`→`0x00455910` 1/1 |
 
-**5 clean + the sweep, 1 near-clean (R_FLAME), 3 blocked** (was 1 clean / 1 diverges / 7 blocked).
+**6 clean + the sweep + the shared acquisition, 1 near-clean (R_FLAME), 2 partial**
+(was 1 clean / 1 diverges / 7 blocked at the start of the day, and 5 clean /
+3 blocked before §4.2e).
 
-Why the three are still blocked, precisely: their contact sites are not in FIRE but
-in a **projectile update** the port does not run (§5.3). The chain itself is no
-longer the blocker — `PowerupContact.cpp` provides every leaf they need. All three
-(MORTAR, GUN, MISSILE) go through one shared routine, `FUN_00459620` (§5.2), which
-is therefore the single next slice.
+What MORTAR and MISSILE still owe is **not** the acquisition and **not** the
+contact chain: it is each one's own **projectile record + per-frame integration**
+(§5.3). `PowerupContact.cpp` provides every leaf, and `PowerupAim.cpp` now
+provides the shared target. GUN needed neither — the acquisition sites *are* its
+contact sites, which is why it closes outright.
 
 ## 8. OPEN
 
-1. **`FUN_00459620`, the shared projectile routine (§5.2).** One slice that
-   unlocks MORTAR, MISSILE and GUN; until it exists none of the three can even be
-   attributed. 2727 B, three callers, four contact sites inside it.
+1. ~~**`FUN_00459620`**~~ — **DONE** (§4.2e), and it was an ACQUISITION routine,
+   not a projectile one. What remains of it is three named pieces, each with a
+   stated reason: the second candidate list (measured empty, `list_n == 0` on all
+   348 rows), the third loop over RW atomics (makes no contact call), and the
+   locked branch's intercept prediction `FUN_0041f2c0` ([UNCERTAIN] — the capture
+   records only 3 of the 4 position dwords and nothing about `FUN_0041f1c0`'s
+   gate). Next command:
+   `py -3.12 re/tools/decomp_pc.py 0x0041f2c0 0x0041f1c0 0x00558b40 --slot 0`.
 2. ~~**R_FLAME**~~ — **DONE** (§4.2d, §5.3). What remains of it is one named
    routine: **`FUN_0045ac40`** (`0x0045ac40`), the per-group distance sort the
    original's tick runs immediately before the inner 5-spark loop. Not ported
@@ -551,7 +669,9 @@ is therefore the single next slice.
    replay has no equivalent for. Bound on what that costs: **2 queries of 546 on
    one of three captures, on a count only**; lerp and basis are exact on all three.
 3. **MORTAR's own detonation test** `FUN_00453730` (one caller, `0x004538fe`
-   inside `FUN_004538b0`) once (1) lands.
+   inside `FUN_004538b0`) — now UNBLOCKED by (1), and the single next slice
+   alongside MISSILE's own chain. Both need a projectile record + per-frame
+   integration, not more of the contact chain.
 4. **P_MINE's and DRUM's segment direction** — [UNCERTAIN], §3.1. Both probe world
    `-Y` because `HostCar` has no matrix up row. Next command in §3.1.
 5. **The sweep's sphere** `slot+0x80..0x8c`: the radius at `+0x8c` has no writer in
@@ -563,5 +683,10 @@ is therefore the single next slice.
 7. **SHOTGUN's per-pellet frames.** Both of the port's two passes probe from the
    owner car; the original probes from `param_1[1]` and `param_1[2]`. It did not
    change the counts on `g4`, but it moves both impact points.
-8. Carried from the prior note: the Vehicle points/vectors defect (U-9138, latent,
+8. **The acquisition capture channel is new and thin.** `--puhook-aim` has been
+   run exactly once (`verify/d3_contact_20260928b/m1.msd`). Every pre-2026-09-28b
+   capture has no `.puaim.csv`, and `pu_replay` now prints those AIM rows as
+   `not-armed` rather than `clean` — a 0-vs-0 row is a missing input, not a match.
+   A second capture on a different track would harden §4.2e.
+9. Carried from the prior note: the Vehicle points/vectors defect (U-9138, latent,
    untouched here), `Rw_VtableDispatch`, `Rw_SetRotation` / `Math_Acos`.
