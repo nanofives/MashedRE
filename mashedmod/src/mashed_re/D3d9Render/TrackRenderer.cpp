@@ -3432,8 +3432,32 @@ void TrackRenderer::AiStepDump() {
 }
 
 
+// D3 criterion (c), 2026-09-28: the collision triangle source the ported
+// FUN_004b4cd0 segment query walks (Powerup/PowerupContact.cpp). This is the
+// stand-in for the original's BSP walk FUN_00538c80 over COLLI*.BSP; it hands the
+// same soup TrackRenderer::GroundProbe and the wheel contact solver already use.
+// matKey is reported 0 = "allow": col_mat_ carries a material INDEX, and the two
+// drop gates (FUN_0045c110 0x0045c116) key on the material's RwRGBA at +4, which
+// the standalone's collision soup does not carry. MEASURED: on the original,
+// every OIL and P_MINE gate call in verify/d3_contact_20260928/g2 and g3 returned
+// 0, so "allow" is the measured behaviour on these two sites, not an assumption.
+static int TrackTriSource(void* ctx, int i, float v9[9], std::uint32_t* matKey) {
+    const TrackRenderer* t = static_cast<const TrackRenderer*>(ctx);
+    const std::size_t nt = t->col_tris_.size() / 3;
+    if (i < 0 || static_cast<std::size_t>(i) >= nt) return 0;
+    for (int k = 0; k < 3; ++k) {
+        const std::uint32_t vi = t->col_tris_[static_cast<std::size_t>(i) * 3 + static_cast<std::size_t>(k)];
+        const float* p = &t->col_verts_[static_cast<std::size_t>(vi) * 3];
+        v9[k * 3 + 0] = p[0]; v9[k * 3 + 1] = p[1]; v9[k * 3 + 2] = p[2];
+    }
+    *matKey = 0;
+    return 1;
+}
+
 void TrackRenderer::EnsurePowerupBackend() {
     if (!pu_be_) { pu_be_ = new PowerupBackendImpl(this); pw_.Init(pu_be_); }
+    Powerup::Contact::SetTriSource(TrackTriSource, this,
+                                   static_cast<int>(col_tris_.size() / 3));
 }
 
 void TrackRenderer::SyncHostCar() {

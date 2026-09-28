@@ -22,7 +22,13 @@
 //   STUBBED (subsystems NOT yet landed standalone — see SESSION_VERIFICATION_AUDIT
 //   _2026-06-16): every LEAF the original effects reach into —
 //     - RW scene-graph (WS-E):  RwFrameAddChild / RwFrameRemoveChild / FUN_004c0ed0…
-//     - contact system (WS-B):  FUN_0045bfe0 -> FUN_004b4b60/4cd0/4d10 -> FUN_0045c350
+//     - contact system (WS-B):  FUN_004b4d10 (the MISSILE impact leg) — still a stub.
+//       PORTED 2026-09-28 (Powerup/PowerupContact.cpp, D3 criterion (c)):
+//       FUN_004b4cd0 / FUN_004b4650 / FUN_004b5080 / FUN_0045c110 on the OIL
+//       (FUN_00457800) and P_MINE (FUN_00457c10) FIRE paths, and the dispatcher's
+//       armed sweep FUN_004b4b60 / FUN_0045c350. Ported: the decision structure.
+//       Stand-in: the BSP walk FUN_00538c80 and the RpMaterial colour channel the
+//       gates key on. Evidence: re/analysis/D3_CONTACT_PORT_2026-09-28.md.
 //     - per-type projectile pools (0x006883xx.., strides in the D2 doc) — unmapped
 //     - the DAT_005c*/005d* tuning band — unharvested
 //   is routed through IPowerupBackend, which the host (TrackRenderer) realises on

@@ -15,6 +15,7 @@
 // C2-grade; do NOT mark C4. (See PowerupSystem.h ledger.)
 #include "PowerupSystem.h"
 #include "PowerupEffects.h"
+#include "PowerupContact.h"
 
 #include <cmath>
 
@@ -45,6 +46,15 @@ namespace tune {
     constexpr float kMortarRate   = 0.4f;  // REAL: (&DAT_00684e48)[] = 0x3ecccccd (FUN_004533b0)
     constexpr int   kShotgunPellets = 4;   // REAL: +0x10 = 4 (FUN_0045b200)
     constexpr float kOilDrop        = 0.1f;// REAL: _DAT_005cc56c = 0.1 -> supply 1.0/0.1 = 10 drops (FUN_00457800)
+    // REAL (harvested 2026-09-28 from original/MASHED.exe.unpatched with
+    // re/tools/disasm_va.py; the D3 contact-chain slice):
+    constexpr float kOilProbeDepth  = 1.0f;  // REAL: _DAT_005cc320, FSUB 0x004578a7 -- the
+                                             //   OIL ground segment is pos -> pos - (0,1,0)
+    constexpr float kOilLift        = 0.04f; // REAL: _DAT_005cd18c, FMUL 0x00457936/0x0045795a/
+                                             //   0x00457972 -- impact point += normal*0.04
+    constexpr float kMineProbeLen   = 0.5f;  // REAL: _DAT_005cc32c, FUN_00457c10 local_9c/98/94
+    constexpr float kMineProbeSign  = -1.0f; // REAL: _DAT_005cc33c, same three expressions
+    constexpr float kMineLift       = 0.005f;// REAL: _DAT_005cd0ec, FUN_00457c10 local_80 scale
     // REAL (harvested pool13 2026-07-06, instruction-cited at the R_FLAME /
     // MORTAR sections below):
     constexpr int   kFlameBursts         = 5;     // REAL: +0x14 shutoff JL 5 (0x0045a86c)
@@ -169,11 +179,64 @@ bool PMine_CanFire(PowerupSystem&, Slot& s) { return s.ammo == 0; }       // 0x4
 void PMine_Deact(PowerupSystem& sys, Slot&) {  // 0x457ad0 (shared w/ DRUM): pool state; dropped mine lives on
     sys.backend()->EffectEnd(kPMine, sys.owner().pos);
 }
+// FUN_00457ef0, disassembled 2026-09-28 from the pinned anchor:
+//   0x00457ef5  MOV ESI,[EAX+0xac]      ; rec = the ARM handle
+//   0x00457efb  CMP [ESP+0xc],2         ; fire mode
+//   0x00457f00  JNE 0x00457f21          ; -> bare `POP ESI; RET`
+//   0x00457f04  CALL 0x00457c10         ; the drop, rec in EAX
+//   0x00457f14  MOV [ESP+4],0x1b
+//   0x00457f1c  JMP 0x00465ca0          ; FX 0x1b at car+0x30 -- UNCONDITIONAL,
+//                                       ; it runs whether or not the drop happened
+// There is NO ammo test in FUN_00457ef0. The port keeps one because its CANFIRE
+// (0x457ab0, +0x08 == 0) is what stops FUN_00457c10's `*(rec + (count-1)*4)`
+// index going negative; with CANFIRE running first the guard can never fire.
+//
+// D3 criterion (c), 2026-09-28: the drop is gated TWICE inside FUN_00457c10 and
+// neither refusal changes any state (both jump to 0x00457e08, `POP ESI; ADD
+// ESP,0xb4; RET`). The previous port dropped once per press edge, which
+// D3_CONTACT_2026-09-27 §5.1 measured as 78 mismatches on c2 (7 press edges, 1
+// drop).
 void PMine_Fire(PowerupSystem& sys, Slot& s, int mode) {  // 0x457ef0: mode==2
-    if (mode != kFirePrimary || s.ammo == 0) return;
-    sys.backend()->DropHazard(sys.owner().pos, /*proximity=*/true);  // FUN_00457c10
-    sys.backend()->SfxByName("drop mine", 0.8f);
-    s.ammo--;   // MEASURED: +0x08 2->1->0 (o2 call 905 t+1/t+8)
+    if (mode != kFirePrimary) return;
+    if (s.ammo != 0) {
+        const HostCar& c = sys.owner();
+        // FUN_00457c10 0x00457c10..0x00457c9f: A = car+0x30..0x38 (world pos),
+        // B = A + up * _DAT_005cc33c(-1.0) * _DAT_005cc32c(0.5), where up is the
+        // car world matrix's second row (+0x10/+0x14/+0x18).
+        // [UNCERTAIN] HostCar carries pos/fwd/vel/yaw but no up row, so the port
+        // probes along world -Y. On a banked surface the original's segment tilts
+        // with the car and this one does not; it changes the impact point, not the
+        // gate counts this criterion is measured on. To resolve: add the car's
+        // matrix up row to HostCar in TrackRenderer's pu_ snapshot and re-run
+        //   py -3.12 re/tools/pu_contact_report.py <capture>.msd --slot 0
+        const float up[3] = { 0.f, 1.f, 0.f };
+        const float seg[6] = {
+            c.pos[0], c.pos[1], c.pos[2],
+            c.pos[0] + up[0] * tune::kMineProbeSign * tune::kMineProbeLen,
+            c.pos[1] + up[1] * tune::kMineProbeSign * tune::kMineProbeLen,
+            c.pos[2] + up[2] * tune::kMineProbeSign * tune::kMineProbeLen };
+        Contact::WorldHit hit;
+        // gate 1: CALL 0x004b4cd0 @0x00457ca0; TEST EAX,EAX @0x00457ca8;
+        //         JE 0x00457e08 @0x00457caa
+        if (Contact::SegmentQuery(seg, &hit, 0x00457ca5) != 0) {
+            // gate 2: CALL 0x0045c110 @0x00457cf4; TEST EAX,EAX @0x00457cfc;
+            //         JNE 0x00457e08 @0x00457cfe
+            if (Contact::SurfaceGate(&hit, 0x00457cf9) == 0) {
+                float p[3];
+                Contact::Vec3Lerp(p, seg, seg + 3, hit.t, 0x00457d1f);  // 0x00457d1a
+                // the ONLY state change: MOV EDI,[ESI+8] 0x00457d29 / DEC EDI
+                // 0x00457d2c / MOV [ESI+8],EDI 0x00457d2d -- after both gates.
+                s.ammo--;
+                p[0] += hit.normal[0] * tune::kMineLift;   // _DAT_005cd0ec
+                p[1] += hit.normal[1] * tune::kMineLift;
+                p[2] += hit.normal[2] * tune::kMineLift;
+                float m[16] = {0};
+                Contact::BasisFromTri(m, hit.vert, p, 0x00457db2);  // 0x00457dad
+                sys.backend()->DropHazard(p, /*proximity=*/true);
+            }
+        }
+    }
+    sys.backend()->SfxByName("drop mine", 0.8f);   // FX 0x1b, 0x00457f1c: unconditional
 }
 void PMine_Tick(PowerupSystem&, float) {}    // 0x4582f0
 
@@ -312,10 +375,44 @@ bool Oil_CanFire(PowerupSystem&, Slot& s) { return s.charge <= 0.f; }
 void Oil_Deact(PowerupSystem& sys, Slot&) {  // 0x456e00: detach drip attachment
     sys.backend()->EffectEnd(kOil, sys.owner().pos);
 }
+// FUN_00457800, disassembled 2026-09-28 from the pinned anchor. THREE exits, and
+// they differ in whether the supply is charged:
+//   A. distance gate  `FCOMP [0x5cc56c]` 0x0045785a / `TEST AH,5` 0x00457866 /
+//      `JNP 0x00457a18` 0x0045786b -> the bare epilogue. dot(pos-last,pos-last)
+//      below 0.1 costs nothing: no trail update, no query, NO supply decrement.
+//   B. query miss     `CALL 0x004b4cd0` 0x004578cc / `TEST EAX,EAX` 0x004578d4 /
+//      `JE 0x00457a0e` 0x004578d7 -> lands ON the decrement. A miss still charges
+//      the supply; only the slick is skipped.
+//   C. surface refuse `CALL 0x0045c110` 0x00457909 / `TEST EAX,EAX` 0x00457911 /
+//      `JNE 0x00457a18` 0x00457913 -> the bare epilogue. NO supply decrement.
+//   The decrement itself: `FLD [ESI]` 0x00457a0e / `FSUB [0x5cc56c]` /
+//   `FSTP [ESI]`, ESI = &DAT_0068a250[owner*16] (0x0045783b/0x00457846).
+// The trail store `lastDrop[owner] = pos` is 0x00457874..0x00457881, i.e. AFTER
+// the distance gate and BEFORE the query -- the backend's OilDropDue owns it.
 void Oil_Fire(PowerupSystem& sys, Slot& s, int /*mode*/) {     // 0x457800 (ignores mode)
-    // orig: drop only when the car has moved >= _DAT_005cc56c since the last drop.
-    if (!sys.backend()->OilDropDue(sys.owner().owner, sys.owner().pos)) return;
-    sys.backend()->DropOilSlick(sys.owner().pos);
+    if (!sys.backend()->OilDropDue(sys.owner().owner, sys.owner().pos)) return;   // exit A
+    const float* p = sys.owner().pos;
+    // segment = pos -> pos - (0, _DAT_005cc320, 0)  (0x004578a3 FLD [esp+0x2c],
+    // 0x004578a7 FSUB [0x5cc320], 0x004578b9 FSTP; x and z are copied unchanged)
+    const float seg[6] = { p[0], p[1], p[2], p[0], p[1] - tune::kOilProbeDepth, p[2] };
+    Contact::WorldHit hit;
+    if (Contact::SegmentQuery(seg, &hit, 0x004578d1) == 0) {
+        s.charge -= tune::kOilDrop;                                               // exit B
+        return;
+    }
+    if (Contact::SurfaceGate(&hit, 0x0045790e) != 0) return;                      // exit C
+    float q[3];
+    Contact::Vec3Lerp(q, seg, seg + 3, hit.t, 0x00457932);       // CALL 0x0045792d
+    q[0] += hit.normal[0] * tune::kOilLift;                      // _DAT_005cd18c
+    q[1] += hit.normal[1] * tune::kOilLift;
+    q[2] += hit.normal[2] * tune::kOilLift;
+    float m[16] = {0};
+    Contact::BasisFromTri(m, hit.vert, q, 0x0045797f);           // CALL 0x0045797a
+    // orig tail 0x00457982..0x00457a0b: random yaw about {0,0,1} (FUN_00472650
+    // 0..360 then FUN_004c4d20), a +/-0.2 xz jitter (FUN_004c51a0 combine 2), the
+    // slick spawn FUN_004577f0 -> FUN_00456eb0, then FX FUN_00465e80(0x17).
+    // The host's DropOilSlick is the stand-in for that whole tail.
+    sys.backend()->DropOilSlick(q);
     s.charge -= tune::kOilDrop;              // orig DAT_0068a250 -= _DAT_005cc56c
 }
 void Oil_Tick(PowerupSystem&, float) {}      // 0x4577b0

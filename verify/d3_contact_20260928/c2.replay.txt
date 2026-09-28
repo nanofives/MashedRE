@@ -1,0 +1,15 @@
+replayed 370 frames on slot 0
+
+CONTACT CALL SITES (original capture vs port), slot 0
+  site                     ret_addr       orig   port port-only orig-only
+  OIL    query 0x004b4cd0  0x4578d1          0      0         0         0
+  OIL    gate  0x0045c110  0x45790e          0      0         0         0
+  OIL    lerp  0x004b4650  0x457932          0      0         0         0
+  OIL    basis 0x004b5080  0x45797f          0      0         0         0
+  P_MINE query 0x004b4cd0  0x457ca5          7      7         0         0
+  P_MINE gate  0x0045c110  0x457cf9          0      1         1         0
+  P_MINE lerp  0x004b4650  0x457d1f          1      1         0         0
+  P_MINE basis 0x004b5080  0x457db2          1      1         0         0
+  SWEEP  query 0x004b4b60  0x45bcd8        280    280         0         0
+  SWEEP  confirm 0x45c350  0x45bcea          1      1         0         0
+CONTACT VERDICT: DIVERGES

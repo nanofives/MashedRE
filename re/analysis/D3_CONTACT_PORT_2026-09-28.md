@@ -1,0 +1,356 @@
+# D3 powerups criterion (c) — the contact chain, ported and measured (2026-09-28)
+
+Branch `race/first-frame-parity`. Continues `D3_CONTACT_2026-09-27.md` (commits
+`f39747af`, `61b06778`), whose §8 left three open items and whose §7 recorded
+criterion (c) as **1 clean / 1 diverges / 7 blocked**.
+
+Anchor: every byte-level claim was disassembled from `original/MASHED.exe.unpatched`
+(SHA-256 `BDCAE093…3C0E`, the pinned anchor) with `re/tools/disasm_va.py`, or
+decompiled from a read-only Ghidra pool clone with `re/tools/decomp_pc.py`. The
+Ghidra MCP did not load; no Ghidra project was opened for writing.
+
+## 0. Headline
+
+1. **OIL and P_MINE contact outcomes are ported and measure CLEAN**, call site by
+   call site, against fresh original-side captures (§4). P_MINE moved from
+   **78 decision mismatches → 0** on the same `c2` capture the prior note measured
+   it on (§4.3).
+2. **The dispatcher's armed sweep is ported** (§3.3), including the deactivation
+   branch at `0x0045bcf7`. That was the last residue in `c2`: the four remaining
+   P_MINE mismatches were all at `t+82`, the single frame the sweep fired.
+3. **`D3_CONTACT_2026-09-27.md` §8 item 1 is RESOLVED** (§2): the gate that refused
+   6 of P_MINE's 7 press edges in `c2` is the **first** one, `FUN_004b4cd0 == 0`
+   (`JE 0x00457e08` at `0x00457caa`). `FUN_0045c110` is now instrumented and
+   returned 0 on every power-up call in two fresh captures.
+4. **Two corrections to the prior note's §5 table** (§5): DRUM's contact chain is
+   gated on its own `0x004b4cd0` call at `0x0045444f` (the prior table listed only
+   the two placement leaves), and the chain sites it attributed to MORTAR/GUN by
+   activation window include other slots' and other systems' calls — the OIL and
+   P_MINE rows are the only ones the window attribution gets right, because those
+   two sites are reachable from one type only.
+5. **No regression.** The 9-type decision replay is CLEAN on the archived
+   `o3`/`o4` and on all four current captures (§6).
+
+## 1. What the chain actually is
+
+| RVA | what it does | evidence |
+|---|---|---|
+| `0x004b4cd0` | copies 6 dwords (a 2-point segment) to a local, writes tag `1`, tails `FUN_004b4c80` | decomp `FUN_004b4cd0` |
+| `0x004b4c80` | `local_14 = 0`; `FUN_00538c80(world, seg, FUN_004b4bb0, &local_10)`; `return local_14` | decomp |
+| `0x004b4bb0` | the collector. First hit stores `t`; later hits are written only when `t < bestT` (`LAB_004b4c68`); the count `*piVar1` increments on **every** candidate. Writes `puVar2[0..0xf]` | decomp `0x004b4bd4..0x004b4c5f` |
+| `0x004b4650` | `out[i] = a[i] + t*(b[i]-a[i])`, a pure vec3 lerp (already C3 as `Lerp4b4650`) | decomp; hooks.csv `004b4650` |
+| `0x004b5080` | orthonormal RwMatrix from the hit triangle: `right = norm(v0-v1)`, `at = norm(cross(A,B))`, `up = cross(at,right)`, `pos = 0`, flags `&= 0xfffdfffc`, then `RwMatrixTranslate(m, pos, 2)` | decomp |
+| `0x0045c110` | `uVar2 = *(uint*)(param_1+4)` — the hit triangle's RpMaterial RwRGBA — `return 1` for `0xff010101` and `0xffff0080` (`0x0045c116..0x0045c129`), else a compare tree over `FUN_00472550` opcodes, else 0 | decomp |
+| `0x004b4b60` | 4-dword copy, tag `3` (a sphere), tails `FUN_004b4a80` → the same walk with collector `FUN_004b49b0` | decomp |
+
+So the return of `0x004b4cd0` is an **intersection count**, and the `0x40`-byte
+result buffer holds the nearest hit. Offsets, confirmed twice over (by the
+collector's writes and by both readers):
+
+```
++0x00  normal[3]      +0x0c  triangle index      +0x10  3 vertices (9 floats)
++0x34  walked object  +0x38  t                   +0x3c  walker user data
++0x40  a 16-float RwMatrix scratch the caller hands to 0x004b5080
+```
+
+### 1.1 OIL, `FUN_00457800`, fully decoded
+
+`0x00457800..0x00457a20`. Three exits, and they differ in whether the supply is
+charged:
+
+| exit | branch | supply `DAT_0068a250[owner*16]` |
+|---|---|---|
+| A distance gate | `FCOMP [0x5cc56c]` `0x0045785a`, `TEST AH,5` `0x00457866`, `JNP 0x00457a18` `0x0045786b` | **unchanged** |
+| B query miss | `CALL 0x004b4cd0` `0x004578cc`, `TEST EAX,EAX` `0x004578d4`, `JE 0x00457a0e` `0x004578d7` | **charged** (the jump lands ON the decrement) |
+| C surface refuse | `CALL 0x0045c110` `0x00457909`, `TEST EAX,EAX` `0x00457911`, `JNE 0x00457a18` `0x00457913` | **unchanged** |
+
+Body: trail store `lastDrop[owner] = pos` at `0x00457874..0x00457881`
+(`&DAT_0068a290[owner*3]`, `LEA EDX,[EAX+0x68a290]` `0x0045782c`); segment
+`pos -> pos - (0, _DAT_005cc320, 0)` (`FLD [esp+0x2c]` `0x004578a3`,
+`FSUB [0x5cc320]` `0x004578a7`); material lookup
+`mat = (*(res+0x3c))->[0x10][ tri[res+0x0c].u16@+6 + (*(res+0x34))->u16@+0x80 ]`
+(`0x004578dd..0x00457905`); lerp `0x0045792d`; impact `+= normal * _DAT_005cd18c`
+(`FMUL` at `0x00457936` / `0x0045795a` / `0x00457972`); basis `0x0045797a`; then a
+random yaw about `{0,0,1}` (`FUN_00472650(0,360.0,1)` + `FUN_004c4d20`), a ±0.2 xz
+jitter (`FUN_004c51a0` combine 2), the slick spawn `FUN_004577f0 -> FUN_00456eb0`,
+and FX `FUN_00465e80(0x17)`. Decrement `FLD [ESI]; FSUB [0x5cc56c]; FSTP [ESI]` at
+`0x00457a0e`.
+
+Constants read from the anchor: `_DAT_005cc56c = 0.1f` (it is BOTH the squared
+distance threshold and the decrement), `_DAT_005cc320 = 1.0f`,
+`_DAT_005cd18c = 0.04f`, `0x00614708 = {0,0,1}`.
+
+### 1.2 P_MINE, `FUN_00457ef0` → `FUN_00457c10`
+
+`FUN_00457ef0` has **no ammo test**: `MOV ESI,[EAX+0xac]` `0x00457ef5`,
+`CMP [ESP+0xc],2` `0x00457efb`, `JNE 0x00457f21` `0x00457f00` (bare `POP ESI; RET`),
+`CALL 0x00457c10` `0x00457f04`, then `MOV [ESP+4],0x1b` / `JMP 0x00465ca0`
+`0x00457f1c` — the FX runs **whether or not the drop happened**.
+
+`FUN_00457c10`: segment `A = car+0x30..0x38`,
+`B = A + up * _DAT_005cc33c(-1.0) * _DAT_005cc32c(0.5)` where `up` is the car world
+matrix's second row (`+0x10/+0x14/+0x18`); gate 1 `JE 0x00457e08` at `0x00457caa`;
+gate 2 `JNE 0x00457e08` at `0x00457cfe`; `0x00457e08` is
+`POP ESI; ADD ESP,0xb4; RET`, so **a refused gate leaves no state change**. The
+only state change is `MOV EDI,[ESI+8]` `0x00457d29` / `DEC EDI` `0x00457d2c` /
+`MOV [ESI+8],EDI` `0x00457d2d`, and it sits after both gates and after the lerp.
+Then `impact += normal * _DAT_005cd0ec(0.005)`, `FUN_004b5080`, a `-90°` rotation
+about `{1,0,0}` (`0xc2b40000`), `FUN_004c1480`, `RwFrameAddChild`.
+
+## 2. RESOLVED — which gate refused P_MINE's 6 drops
+
+`re/frida/scenario_launch.py`'s `PU_CONTACT` gained `0x0045c110` → `surface_gate`
+(additive; a per-RVA cap `PU_CX_CAP` was added at the same time, 4000 for this one,
+because it has callers outside the power-up path). Two fresh captures, same recipes
+as the prior note's `c2`/`c3`:
+
+```
+py -3.12 re/frida/scenario_launch.py --track 0 --mode 10 --cars 4 --car 0 \
+   --poke-ctrl-slots --statediff-out verify/d3_contact_20260928/g2.msd \
+   --statediff-car 0 --statediff-drive --statediff-puhook --puhook-contacts \
+   --pu-plan 11,7,10,12 --pu-warm 60 --hold 110
+# g3: same with --pu-plan 19,16,18,9,17
+```
+
+Both muted, both launched and killed by the launcher, no crash: each 6650 frames /
+6653 dispatcher calls (the recipe is reproducible at this level). `surface_gate`
+fired 350 times in `g2` and 81 in `g3`, and was not hot in either.
+
+MEASURED (`verify/d3_contact_20260928/g2.contact.txt`):
+
+```
+query_4b4cd0  0x4b4cd0 from 0x457ca5  calls=3  ret!=0=3
+surface_gate  0x45c110 from 0x457cf9  calls=3  ret!=0=0
+query_4b4650  0x4b4650 from 0x457d1f  calls=3  ret!=0=3
+query_4b5080  0x4b5080 from 0x457db2  calls=3  ret!=0=3
+```
+
+Three press edges, three hits, three allows, three drops. The gate-2 call count
+equals the gate-1 nonzero count exactly, which is the control-flow model. In `c2`
+the same site recorded 7 calls / 1 nonzero and exactly 1 decrement, so the 6
+refusals were all `JE 0x00457caa` — **gate 1, the world query**. `FUN_0045c110` has
+not been observed refusing a power-up drop in any capture.
+
+## 3. The port
+
+New TU `mashedmod/src/mashed_re/Powerup/PowerupContact.{h,cpp}` (in
+`exe_sources.rsp`, and in `re/tools/pu_replay/build.bat`).
+
+### 3.1 What is ported and what is a stand-in
+
+**Ported verbatim**: the decision structure — which leaf is called, in what order,
+which branch each return takes, and what state each outcome changes. `0x004b4650`
+and `0x004b5080` are ported as expressions, instruction-cited.
+
+**Stand-in, stated plainly**:
+- the BSP walk `FUN_00538c80` over `COLLI*.BSP`. `SegmentQuery` reproduces the
+  collector's **result rule** (count every intersection, keep the smallest `t`)
+  over the standalone's flat collision soup — the same triangles
+  `TrackRenderer::GroundProbe` and the wheel solver already use, fed through a
+  `TriSource` hook installed in `TrackRenderer::EnsurePowerupBackend`.
+- the RpMaterial colour channel. `col_mat_` carries a material **index**;
+  `FUN_0045c110` keys on the material's RwRGBA at `+4`. `TriSource` reports
+  `matKey = 0`, so `SurfaceGate` allows. That is the **measured** behaviour on both
+  power-up sites (§2), not an assumption.
+- P_MINE's segment direction. `HostCar` has no matrix `up` row, so the port probes
+  world `-Y` rather than the car's `-up`. **[UNCERTAIN]** — it moves the impact
+  point on a banked surface, not the gate counts. To resolve: carry the up row in
+  `TrackRenderer::SyncHostCar`, then re-run
+  `py -3.12 re/tools/pu_contact_report.py <capture>.msd --slot 0`.
+- `FUN_004c39b0` (`RwV3dNormalize`) is the CPU sqrt, preserving the original's
+  `len² == 0 ⇒ zero vector` arm (`0x004c39d5`).
+
+This is **C2-grade**. No tracker promotion is claimed.
+
+### 3.2 OIL and P_MINE
+
+`Oil_Fire` and `PMine_Fire` in `Powerup/PowerupEffects.cpp` now run the chain with
+each branch RVA-cited inline. The P_MINE `s.ammo == 0` guard is kept and marked as
+port-added (the original has none; its CANFIRE is what stops the pool index going
+negative), and `SfxByName` moved outside the gates to match `0x00457f1c`.
+
+### 3.3 The dispatcher's armed sweep
+
+Disassembled `0x0045bca0..0x0045bd1b`. `EDI = slot + 0x90`, `EBP = EDI - 0x10 =
+slot + 0x80`; the dispatcher refreshes three floats at `slot+0x80` from `[EBX]`
+every pass (`0x0045bcb2..0x0045bcca`), then:
+
+```
+0x0045bcd3  CALL 0x004b4b60   (world, slot+0x80, &result)   -> sweep_query
+0x0045bcdd  TEST EAX,EAX / JE 0x45bd14
+0x0045bce5  CALL 0x0045c350   (&result, slot+0x80)          -> sweep_confirm
+0x0045bcef  TEST EAX,EAX / JNE 0x45bd14
+0x0045bcf7  CALL 0x0045bac0   deactivate       <- the capture's deact_ra 0x45bcfc
+0x0045bd0c  CALL 0x00476880   (slot+0x80, 0x6146fc, 360.0f, 1.5f)   FX
+0x0045bd14  MOV EAX,[EDI+0x1c] / JNE 0x45bd4e  <- armed RE-TESTED before CANFIRE
+```
+
+Ported into `PowerupSystem::Tick` in that order — **before** CANFIRE, with the
+armed re-test. `slot+0x8c` (the sphere radius) has no writer in the ported
+lifecycle, so with no injector `SweepQuery` returns 0 and the branch is inert in
+the shipping build: identical to the standalone's behaviour before it existed.
+MEASURED original rate: 1 hit in 3795 slot passes (`c2` 1/1016, `c3` 0/1348,
+`g2` 0/1431, `g3` 0/1448).
+
+### 3.4 Measuring it: `MASHED_PU_CONTACTDUMP` + injected verdicts
+
+`PowerupContact.cpp` writes `MASHED_PU_CONTACTDUMP` in the **exact** column shape
+of `scenario_launch.py`'s `<out>.pucontact.csv`, with the original's own
+`ret_addr` per call site and, for the sweep, `a2 = 0x0088fbe0 + slot*0xb4 + 0x80`
+— so `re/tools/pu_contact_report.py` reads an original capture and a port run the
+same way, including its slot rule.
+
+`re/tools/pu_replay` gained a second injected input (it already injected OIL's
+distance gate). With `<base>.pucontact.csv` present it feeds the original's
+MEASURED `FUN_004b4cd0` / `FUN_0045c110` / sweep verdicts back into the port,
+keyed on **(dispatcher call, call-site return address)** — and on slot, via the
+`a2` rule for the sweep and via `code_pre` for the per-type sites. What that
+measures is the **call structure and the state effect of each outcome**, not the
+query itself. Two attribution traps were hit and fixed while building it:
+
+1. rows outside the replayed call range are not divergences (the capture spans the
+   whole race);
+2. a `.pucontact.csv` row carries **no slot**, and these sites are per-type code
+   every slot runs. `g2` has three `0x457ca5` rows, only two of which are slot 0's
+   — the third lands inside slot 0's MORTAR window and is another slot's P_MINE.
+   Without the `code_pre` filter that reads as a port under-count.
+
+Captures with no `.pucontact.csv` (the archived `verify/d3_pu_20260926/*`) run
+under the permissive verdict and print a banner saying criterion (c) is not tested
+there — otherwise a missing input would read as a regression.
+
+## 4. MEASURED — criterion (c), per call site
+
+`verify/d3_contact_20260928/{c2,c3,g2,g3}.replay.txt`.
+
+### 4.1 OIL — CLEAN (`g3`)
+
+| site | ret_addr | orig | port | port-only | orig-only |
+|---|---|---|---|---|---|
+| OIL query `0x004b4cd0` | `0x4578d1` | 10 | 10 | 0 | 0 |
+| OIL gate `0x0045c110` | `0x45790e` | 10 | 10 | 0 | 0 |
+| OIL lerp `0x004b4650` | `0x457932` | 10 | 10 | 0 | 0 |
+| OIL basis `0x004b5080` | `0x45797f` | 10 | 10 | 0 | 0 |
+| SWEEP query / confirm | `0x45bcd8` / `0x45bcea` | 309 / 0 | 309 / 0 | 0 | 0 |
+
+`CONTACT VERDICT: CLEAN`. This is the exact acceptance the prior note's §8 item 3
+set for OIL ("one triple per drop, 10 drops, all 10 succeeding").
+
+### 4.2 P_MINE — CLEAN (`g2`)
+
+| site | ret_addr | orig | port |
+|---|---|---|---|
+| P_MINE query `0x004b4cd0` | `0x457ca5` | 2 | 2 |
+| P_MINE gate `0x0045c110` | `0x457cf9` | 2 | 2 |
+| P_MINE lerp `0x004b4650` | `0x457d1f` | 2 | 2 |
+| P_MINE basis `0x004b5080` | `0x457db2` | 2 | 2 |
+| SWEEP query / confirm | `0x45bcd8` / `0x45bcea` | 207 / 0 | 207 / 0 |
+
+`CONTACT VERDICT: CLEAN`.
+
+### 4.3 The prior note's own captures
+
+`c2` and `c3` predate the `surface_gate` instrument, so their gate rows have zero
+original data and the tool reports `DIVERGES` on that row alone. Every other row
+is exact:
+
+- `c2`: P_MINE query **7 / 7**, lerp **1 / 1**, basis **1 / 1**, sweep **280 / 280**,
+  sweep-confirm **1 / 1**. Seven press edges, one drop — the port now reproduces
+  the 6-in-7 refusal the prior note measured. Its gate row is `orig 0 / port 1`,
+  and 1 is exactly the number of times gate 1 returned nonzero.
+- `c3`: OIL query **10 / 10**, lerp **10 / 10**, basis **10 / 10**, sweep
+  **309 / 309**. Gate row `orig 0 / port 10`.
+
+### 4.4 Decision half, same runs
+
+`re/tools/pu_diff.py`, slot 0:
+
+| capture | types | verdict |
+|---|---|---|
+| `c2` | MISSILE, MORTAR, DRUM, **P_MINE** | **CLEAN** (was 78 mismatches, then 4, now 0) |
+| `c3` | OIL, R_FLAME, FLASH, GUN, SHOTGUN | CLEAN |
+| `g2` | MISSILE, MORTAR, DRUM, P_MINE | CLEAN |
+| `g3` | OIL, R_FLAME, FLASH, GUN, SHOTGUN | CLEAN |
+
+The four mismatches that survived the gate port were all at `c2` `t+82`
+(`code_post`, `fire_modes`, `canfire_rets`, `deact_ra orig='0x45bcfc'`) — the one
+frame the armed sweep fired. §3.3 closed them.
+
+## 5. Corrections to `D3_CONTACT_2026-09-27.md` §5
+
+1. **DRUM is gated too.** `g2` records `query_4b4cd0 0x4b4cd0 from 0x45444f
+   calls=9 ret!=0=0` inside slot 0's DRUM window and **no** placement leaf, while
+   the P_MINE window (another slot holding DRUM) records `0x45444f 11/1` with one
+   `0x45448a` lerp and one `0x4544e0` basis. So DRUM's drop runs the same
+   query-then-place shape; the prior table listed only the two leaves. It is **not**
+   in `FUN_004541e0` (decompiled: no contact call at all), so the site lives in the
+   drum's per-frame update past `0x00454311`. Not ported — see §7.
+2. **Window attribution over-collects.** `pu_contact_report.py` slot-attributes the
+   dispatcher sweep but not the per-type sites, so a type's window also shows other
+   slots' and other systems' calls. `g2`'s MORTAR window lists GUN sites
+   (`0x459c19`, `0x459d54`, `0x459db5`), a P_MINE triple and a `0x479124` row that
+   is a per-frame ground probe outside the power-up system entirely (6668 calls,
+   ~1 per frame). OIL's and P_MINE's rows are trustworthy only because those two
+   sites sit inside functions reachable from one type.
+
+## 6. No regression
+
+- Archived 9-type guard, re-run after every change in this note:
+  `verify/d3_contact_20260928/o3.diff.txt` (OIL, FLASH, GUN, SHOTGUN, MISSILE)
+  **CLEAN**, `o4.diff.txt` (MORTAR, DRUM, P_MINE, R_FLAME) **CLEAN**.
+- All four current captures CLEAN (§4.4).
+- `mashedmod\build.bat` built both targets clean.
+
+**How strong this guard is, stated plainly.** `pu_replay` links
+`Powerup/PowerupSystem.cpp`, `PowerupEffects.cpp` and now `PowerupContact.cpp` —
+the same TUs the exe links — so unlike the prior note's run it *does* cover the new
+code. What it does **not** cover is `TrackRenderer`'s `TriSource` wiring and the
+live `SegmentQuery` walk, which no capture on either side exercises comparably.
+Those are covered only by a clean build and by the fact that with `MASHED_PU_CONTACTDUMP`
+unset and no tri source the new code logs nothing and returns 0/allow.
+
+`o1`/`o2` were also replayed and show ~300 and ~68 float mismatches on accumulating
+timers (`cooldown`, `life`, drift ~3e-6). That is a **capture-format** artifact, not
+a regression: `o1`/`o2` record `dt` as the 6-digit decimal `0.016667`, while `o3`,
+`o4` and every 2026-09-27+ capture record the exact float bits (`0x3c888888`). They
+are not part of the guard and were not in the prior note's either.
+
+## 7. Verdict against ROADMAP §D3 powerups criterion (c)
+
+| type | (c) verdict | counts |
+|---|---|---|
+| OIL | **clean** | query/gate/lerp/basis 10/10/10/10 (`g3`), 10/–/10/10 (`c3`) |
+| P_MINE | **clean** | 2/2/2/2 (`g2`), 7/–/1/1 (`c2`) |
+| FLASH | **clean** | no contact call exists (unchanged from the prior note) |
+| — armed sweep | **clean** | 280/309/207/309 queries, the one `c2` deactivation reproduced |
+| MISSILE | blocked | `0x455cd9`→`0x00455100` 31/30, `0x455e59`→`0x004b4cd0` 31/31, `0x455de0`→`0x004b4d10` 16/0, terminal `0x455e07`→`0x00455910` 1/1 |
+| MORTAR | blocked | `0x453789`→`0x004b4cd0` 170/2, `0x4537bb`→`0x0045c350` 4/2, `0x4537df`→`0x004b4650` 2/2, `0x45382c`→`0x004b5080` 2/2 |
+| DRUM | blocked | `0x45444f`→`0x004b4cd0` gated, `0x45448a`→`0x004b4650`, `0x4544e0`→`0x004b5080` |
+| R_FLAME | blocked | `0x45afcc`→`0x004b4cd0` 406/15, `0x45aff3`→`0x004b4650` 15/15, `0x45b04c`→`0x004b5080` 15/15 |
+| GUN | blocked | `0x459c19`→`0x004b4cd0` 96/0, `0x459d54`→`0x004b4cd0` 185/96, `0x459db5`→`0x004b4650` 96/96 |
+| SHOTGUN | blocked | `0x45b582`→`0x004b5080` 8/8 |
+
+**3 clean + the sweep, 6 blocked** (was 1 clean / 1 diverges / 7 blocked).
+
+Why the six are still blocked, precisely: their contact sites are not in the FIRE
+function but in the **per-type TICK / projectile-update** path, which the port does
+not run (`PowerupEffects.cpp`'s TICKs advance timers only; the projectile pools
+`DAT_006883xx` and their per-frame update are unported). The leaves themselves are
+now available — `PowerupContact.cpp` provides all four — so each remaining type is
+a per-type projectile-update port on top of an existing chain, not a chain port.
+
+## 8. OPEN
+
+1. **The six remaining types.** Cheapest first by call-site count: SHOTGUN (one
+   `0x004b5080` per pellet burst, 8), DRUM and MORTAR (2 placements each), R_FLAME
+   (15), MISSILE (31 + a terminal), GUN (163 per held frame). Each needs its
+   projectile-update function decoded; start at the call sites listed in §7.
+2. **P_MINE's segment direction** — [UNCERTAIN], §3.1.
+3. **The sweep's sphere** `slot+0x80..0x8c`: the radius at `+0x8c` has no writer in
+   the ported lifecycle. Find it (`EBX` at `0x0045bcb2` is the source of the centre)
+   before the sweep can fire in the shipping build.
+4. **`FUN_0045c110`'s material channel.** `col_mat_` is an index, the gate keys on
+   the RwRGBA. Carrying the colour through the collision soup would let the gate be
+   real rather than a measured-allow stand-in.
+5. Carried from the prior note: the Vehicle points/vectors defect (U-9138, latent,
+   untouched here), `Rw_VtableDispatch`, `Rw_SetRotation` / `Math_Acos`.

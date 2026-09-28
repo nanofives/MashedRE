@@ -1054,7 +1054,23 @@ const PU_CONTACT = {
   0x004b5080: 'query_4b5080',    // §6 OIL ground placement
   0x00455910: 'missile_impact_a',
   0x00455100: 'missile_impact_b',
+  // D3_CONTACT_PORT 2026-09-28: the SECOND drop gate. Disassembled from the
+  // pinned anchor: OIL FUN_00457800 `CALL 0x0045c110` @0x00457909 / `TEST EAX,EAX`
+  // @0x00457911 / `JNE 0x00457a18` (bare epilogue) @0x00457913; P_MINE
+  // FUN_00457c10 `CALL 0x0045c110` @0x00457cf4 / `TEST EAX,EAX` @0x00457cfc /
+  // `JNE 0x00457e08` (bare epilogue) @0x00457cfe. Its argument is the hit
+  // triangle's RpMaterial; FUN_0045c110 reads *(uint*)(mat+4) (the RwRGBA) and
+  // returns 1 for 0xff010101 / 0xffff0080 (0x0045c116..0x0045c129). Added to
+  // close D3_CONTACT_2026-09-27 §8 item 1 -- which of the two gates refused 6 of
+  // P_MINE's 7 press edges.
+  0x0045c110: 'surface_gate',
 };
+// Per-RVA early cap. surface_gate sits behind a 0x004b4cd0 hit, whose own
+// measured rate is ~60/s, but it also has callers outside the power-up path
+// (FUN_0045c350), so it gets a low cap rather than the shared 20000: if it turns
+// out to be a hot path the listener detaches long before the ~6 s destabilisation
+// window CLAUDE.md records for >1000 calls/s Interceptor attachments.
+const PU_CX_CAP = { surface_gate: 4000 };
 // cap: once an RVA exceeds this many calls the listener DETACHES itself. Frida
 // Interceptor on a >1000 calls/s path destabilises MASHED in ~6 s (CLAUDE.md,
 // log/auto_count_at_menu.txt), and none of these RVAs has a measured rate yet, so
@@ -1084,7 +1100,7 @@ function puCxArm(listCsv){
       PU_CX.lis[nm] = Interceptor.attach(ga(rva), {
         onEnter(){
           PU_CX.counts[nm]++;
-          if (PU_CX.counts[nm] > PU_CX_HOT) {
+          if (PU_CX.counts[nm] > (PU_CX_CAP[nm] || PU_CX_HOT)) {
             if (!PU_CX.hot[nm]) { PU_CX.hot[nm] = 1;
               try { PU_CX.lis[nm].detach(); } catch(_){} }
             this.skip = true; return;

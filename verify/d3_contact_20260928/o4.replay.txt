@@ -1,0 +1,4 @@
+replayed 322 frames on slot 0
+contact: verify/d3_pu_20260926/o4.msd.pucontact.csv absent -- pre-2026-09-28 capture; the query leaves ran
+         under the permissive verdict (hit / allow), so the DECISION
+         half below is comparable and criterion (c) is NOT tested here.

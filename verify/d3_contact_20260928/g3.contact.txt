@@ -1,0 +1,61 @@
+capture: verify/d3_contact_20260928/g3.msd   (subject slot 0)
+contact rows: 9382
+
+ALL CALL SITES (name, rva, return address) -> calls, ret!=0
+  query_4b4cd0      0x4b4cd0   from 0x479124    calls=6666   ret!=0=6666
+  sweep_query       0x4b4b60   from 0x45bcd8    calls=1448   ret!=0=0
+  query_4b4cd0      0x4b4cd0   from 0x45afcc    calls=546    ret!=0=23
+  query_4b4cd0      0x4b4cd0   from 0x459c19    calls=163    ret!=0=84
+  query_4b4cd0      0x4b4cd0   from 0x459d54    calls=163    ret!=0=98
+  query_4b4650      0x4b4650   from 0x459db5    calls=98     ret!=0=98
+  query_4b4650      0x4b4650   from 0x459c3c    calls=84     ret!=0=84
+  surface_gate      0x45c110   from 0x4875ab    calls=53     ret!=0=0
+  query_4b4650      0x4b4650   from 0x45aff3    calls=23     ret!=0=23
+  query_4b5080      0x4b5080   from 0x45b04c    calls=23     ret!=0=23
+  sweep_query       0x4b4b60   from 0x487061    calls=18     ret!=0=18
+  surface_gate      0x45c110   from 0x45c39a    calls=18     ret!=0=0
+  sweep_confirm     0x45c350   from 0x48708c    calls=18     ret!=0=0
+  query_4b5080      0x4b5080   from 0x48711f    calls=18     ret!=0=18
+  query_4b4cd0      0x4b4cd0   from 0x4578d1    calls=10     ret!=0=10
+  surface_gate      0x45c110   from 0x45790e    calls=10     ret!=0=0
+  query_4b4650      0x4b4650   from 0x457932    calls=10     ret!=0=10
+  query_4b5080      0x4b5080   from 0x45797f    calls=10     ret!=0=10
+  sweep_query       0x4b4b60   from 0x475229    calls=1      ret!=0=1
+  query_4b5080      0x4b5080   from 0x4752b2    calls=1      ret!=0=1
+  query_4b5080      0x4b5080   from 0x45b582    calls=1      ret!=0=1
+
+DISPATCHER ARMED SWEEP (ret_addr 0x45bcd8 / 0x45bcea only), per slot
+  slot 0   query calls=309    ret!=0=0     deactivations=0 []
+  slot 1   query calls=504    ret!=0=0     deactivations=0 []
+  slot 2   query calls=635    ret!=0=0     deactivations=0 []
+
+[OIL     code=19] activated at call 909, held 45 calls (to 954)
+    query_4b4cd0      0x4b4cd0   from 0x479124   calls=45     ret!=0=45
+    query_4b4cd0      0x4b4cd0   from 0x4578d1   calls=10     ret!=0=10
+    surface_gate      0x45c110   from 0x45790e   calls=10     ret!=0=0
+    query_4b4650      0x4b4650   from 0x457932   calls=10     ret!=0=10
+    query_4b5080      0x4b5080   from 0x45797f   calls=10     ret!=0=10
+
+[R_FLAME code=16] activated at call 985, held 57 calls (to 1042)
+    query_4b4cd0      0x4b4cd0   from 0x45afcc   calls=413    ret!=0=15
+    query_4b4cd0      0x4b4cd0   from 0x479124   calls=57     ret!=0=57
+    query_4b4650      0x4b4650   from 0x45aff3   calls=15     ret!=0=15
+    query_4b5080      0x4b5080   from 0x45b04c   calls=15     ret!=0=15
+
+[FLASH   code=18] activated at call 1073, held 3 calls (to 1076)
+    query_4b4cd0      0x4b4cd0   from 0x45afcc   calls=3      ret!=0=0
+    query_4b4cd0      0x4b4cd0   from 0x479124   calls=3      ret!=0=3
+
+[GUN     code= 9] activated at call 1107, held 163 calls (to 1270)
+    query_4b4cd0      0x4b4cd0   from 0x459c19   calls=163    ret!=0=84
+    query_4b4cd0      0x4b4cd0   from 0x459d54   calls=163    ret!=0=98
+    query_4b4cd0      0x4b4cd0   from 0x479124   calls=163    ret!=0=163
+    query_4b4650      0x4b4650   from 0x459db5   calls=98     ret!=0=98
+    query_4b4650      0x4b4650   from 0x459c3c   calls=84     ret!=0=84
+    sweep_query       0x4b4b60   from 0x475229   calls=1      ret!=0=1
+    query_4b5080      0x4b5080   from 0x4752b2   calls=1      ret!=0=1
+
+[SHOTGUN code=17] activated at call 1301, held 36 calls (to 1337)
+    query_4b4cd0      0x4b4cd0   from 0x479124   calls=36     ret!=0=36
+    surface_gate      0x45c110   from 0x4875ab   calls=3      ret!=0=0
+    query_4b5080      0x4b5080   from 0x45b582   calls=1      ret!=0=1

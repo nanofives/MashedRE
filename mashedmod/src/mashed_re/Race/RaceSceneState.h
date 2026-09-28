@@ -43,6 +43,7 @@
 #include "RaceCamera.h"
 #include "RuleEngine.h"
 #include "../Powerup/PowerupSystem.h"
+#include "../Powerup/PowerupContact.h"
 #include "../Track/TrackData.h"
 
 namespace mashed_re {

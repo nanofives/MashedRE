@@ -63,6 +63,7 @@
 "D3d9Render\PickupField.cpp"
 "Powerup\PowerupSystem.cpp"
 "Powerup\PowerupEffects.cpp"
+"Powerup\PowerupContact.cpp"
 "Race\RaceCamera.cpp"
 "Race\RaceSession.cpp"
 "Race\GameFlow.cpp"

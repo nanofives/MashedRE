@@ -4,6 +4,7 @@
 // PORT-vs-STUB ledger and powerup_effects_decomp.md for the decompilation.
 #include "PowerupSystem.h"
 #include "PowerupEffects.h"
+#include "PowerupContact.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -143,7 +144,8 @@ void PowerupSystem::DumpRow(int s, int state, int codePre, int mode, int canf, i
                  frame_, frame_, state, s, s, k.fireCur ? 255 : 0, k.firePrev ? 255 : 0,
                  k.discCur ? 255 : 0, k.discPrev ? 255 : 0, dt, act ? "A" : "",
                  act ? act : "", codePre, k.activeCode, modes, cf,
-                 deact == 1 ? "0x45bd67" : deact == 2 ? "0x45be52" : "",
+                 deact == 1 ? "0x45bd67" : deact == 2 ? "0x45be52"
+                            : deact == 3 ? "0x45bcfc" : "",
                  dumpPre_[s], post);
 }
 
@@ -156,14 +158,25 @@ void PowerupSystem::DumpRow(int s, int state, int codePre, int mode, int canf, i
 //       mode != 0 -> FIRE (entry+0x08)(slot,mode) 0x0045bdbb
 //       mode == 0 && discCur && !discPrev (0x0045be31/0x0045be3f) -> FUN_0045bac0
 //       0x0045be4d
+// PORTED 2026-09-28 (D3 criterion (c)): the armed contact sweep FUN_0045bfe0 ->
+// FUN_004b4b60 -> FUN_0045c350 (0x0045bcb2..0x0045bd11), including the
+// deactivation branch at 0x0045bcf7 the capture reports as deact_ra 0x45bcfc.
+// Its two leaves live in Powerup/PowerupContact.cpp; the sphere they query
+// (slot+0x80..0x8c) has no writer in the ported lifecycle, so in the shipping
+// build the query returns 0 and the branch is inert. MEASURED under injection of
+// the original's own verdicts: verify/d3_contact_20260928 c2/c3/g2/g3, sweep
+// counts 280/309/207/309 exact and the one c2 deactivation reproduced.
 // NOT PORTED (recorded, not faked): the per-slot box state DAT_0068d1f0[slot]
-// (0x0045bc6b; states 2/3/4), the armed contact sweep FUN_0045bfe0 ->
-// FUN_004b4b60 -> FUN_0045c350 (0x0045bccd..0x0045bd0c, deactivates on failure),
+// (0x0045bc6b; states 2/3/4)
 // and the unarmed pickup branch (0x0045bd24..0x0045bd47, FUN_0045c010(slot,0x10)).
 // Pickups arrive through Activate() from the host instead. Per-type mode pass
 // (entry+0x38/+0x3c, 0x0045be11) and the tail FUN_0045a190/FUN_00459000 likewise.
 void PowerupSystem::Tick(float dt, const HostCar cars[kSlots], int raceState) {
     ++frame_;
+    // MASHED_PU_CONTACTDUMP rows carry the same (frame, call) pair the stepdump
+    // rows do, so re/tools/pu_contact_report.py pairs the two standalone CSVs the
+    // same way it pairs the two Frida ones.
+    Contact::SetCallCounter(frame_, frame_);
     for (int s = 0; s < kSlots; ++s) {
         owners_[s] = cars[s];
         slots_[s].owner = s;
@@ -174,7 +187,23 @@ void PowerupSystem::Tick(float dt, const HostCar cars[kSlots], int raceState) {
         Slot& k = slots_[s];
         codePre[s] = k.activeCode; modeOut[s] = kFireNone; canfOut[s] = -1; deactOut[s] = 0;
         if (raceState != 6) continue;             // 0x0045bc2b
-        if (!k.armed) continue;                   // pickup branch: host-driven (see above)
+        if (!k.armed) continue;                   // 0x0045bcab MOV EAX,[EDI+0x1c] / JE 0x45bd1b
+        // ARMED SWEEP, 0x0045bcb2..0x0045bd11 (D3 criterion (c), 2026-09-28).
+        // Order matters: the original runs it BEFORE CANFIRE and RE-TESTS the
+        // armed flag afterwards (0x0045bd14 `MOV EAX,[EDI+0x1c]` / `JNE 0x45bd4e`),
+        // because the sweep can deactivate the slot.
+        //   sweep_query != 0  AND  sweep_confirm == 0  ->  FUN_0045bac0 @0x0045bcf7
+        // The deactivation the capture records as deact_ra 0x45bcfc.
+        {
+            Contact::WorldHit sw;
+            cur_ = s;
+            if (Contact::SweepQuery(s, owners_[s].pos, &sw, 0x0045bcd8) != 0) {  // 0x0045bcdd
+                if (Contact::SweepConfirm(s, &sw, 0x0045bcea) == 0) {            // 0x0045bcef
+                    Deactivate(s); deactOut[s] = 3;
+                    continue;                      // 0x0045bd14 re-test: not armed
+                }
+            }
+        }
         const int e = Lookup(k.activeCode);
         if (e < 0) continue;
         cur_ = s;

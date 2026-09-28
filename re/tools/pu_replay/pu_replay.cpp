@@ -16,12 +16,27 @@
 // where the original's supply decreased. The replay therefore tests the OIL
 // decrement amount and deactivation timing, not the distance rule.
 //
-// Usage: pu_replay.exe <orig.puhook.csv> <slot>   (env MASHED_PU_STEPDUMP=<out.csv>)
+// D3 CONTACT (2026-09-28): a SECOND input is now injected, and the same way --
+// the contact chain's two query leaves. With <orig.puhook.csv>'s sibling
+// <orig.pucontact.csv> present, the replay feeds the ORIGINAL's MEASURED verdict
+// for FUN_004b4cd0 (hit count) and FUN_0045c110 (surface gate) back into the
+// ported Powerup/PowerupContact.cpp, keyed on (dispatcher call, call-site return
+// address). The standalone has no collision world here, so what this measures is
+// the CALL STRUCTURE and the STATE EFFECT of each outcome -- not the query. Every
+// port call with no matching original row, and every original row the port never
+// consumed, is counted and printed; that difference IS the criterion (c) verdict.
+// The port's own rows go to MASHED_PU_CONTACTDUMP in the capture's exact column
+// shape, so re/tools/pu_contact_report.py reads both sides identically.
+//
+// Usage: pu_replay.exe <orig.puhook.csv> <slot>   (env MASHED_PU_STEPDUMP=<out.csv>,
+//        MASHED_PU_CONTACTDUMP=<out.pucontact.csv>)
 #include "Powerup/PowerupSystem.h"
+#include "Powerup/PowerupContact.h"
 
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -34,7 +49,102 @@ struct Row {
     float dt = 0.f;
     int act = -1;
     bool oilDue = false;
+    long call = -1;     // the ORIGINAL dispatcher call number (contact key)
 };
+
+// ---- contact-verdict injector ---------------------------------------------
+// Keyed on (original dispatcher call, call-site return address), because a type
+// can reach the same RVA from several sites in one call and the report's whole
+// attribution rule is "by call site, not by RVA".
+struct Inject {
+    std::map<std::pair<long, unsigned>, std::vector<int> > q;   // 0x004b4cd0 sites
+    std::map<std::pair<long, unsigned>, std::vector<int> > g;   // 0x0045c110 sites
+    std::map<long, std::vector<int> > sq, sc;   // armed sweep, subject slot only
+    std::map<unsigned, long> origCalls, portCalls, matched, unmatched;
+    long curCall = -1;
+
+    int TakeSweep(std::map<long, std::vector<int> >& m, unsigned ra) {
+        portCalls[ra]++;
+        auto it = m.find(curCall);
+        if (it == m.end() || it->second.empty()) { unmatched[ra]++; return ra == 0x45bceau; }
+        const int v = it->second.front();
+        it->second.erase(it->second.begin());
+        matched[ra]++;
+        return v;
+    }
+
+    int Take(std::map<std::pair<long, unsigned>, std::vector<int> >& m, unsigned ra) {
+        portCalls[ra]++;
+        auto it = m.find(std::make_pair(curCall, ra));
+        if (it == m.end() || it->second.empty()) { unmatched[ra]++; return 0; }
+        const int v = it->second.front();
+        it->second.erase(it->second.begin());
+        matched[ra]++;
+        return v;
+    }
+};
+Inject g_inj;
+
+int QueryInject(void*, const float*, mashed_re::Powerup::Contact::WorldHit* out,
+                std::uint32_t ra) {
+    const int n = g_inj.Take(g_inj.q, ra);
+    // The replay has no triangles, so only the branch-deciding value is real.
+    // t = 0.5 keeps the lerp finite; nothing downstream of it is measured here.
+    if (n) { out->t = 0.5f; out->normal[1] = 1.f; }
+    return n;
+}
+int GateInject(void*, const mashed_re::Powerup::Contact::WorldHit*, std::uint32_t ra) {
+    return g_inj.Take(g_inj.g, ra);
+}
+int SweepInject(void*, int /*slot*/, int which) {   // 0 = query, 1 = confirm
+    return which == 0 ? g_inj.TakeSweep(g_inj.sq, 0x0045bcd8u)
+                      : g_inj.TakeSweep(g_inj.sc, 0x0045bceau);
+}
+
+// pu_contact_report.py's slot rule, verbatim: arg2 == 0x0088fbe0 + slot*0xb4 + 0x80.
+int SweepSlotOf(unsigned a2) {
+    const long off = static_cast<long>(a2) - 0x0088fbe0L - 0x80L;
+    if (off < 0 || off % 0xb4 || off / 0xb4 > 15) return -1;
+    return static_cast<int>(off / 0xb4);
+}
+
+// Call sites the injector owns. Every one was READ OFF the original: the RVA of
+// the call + its instruction length gives the return address the capture records.
+//   OIL    FUN_00457800: CALL 0x004b4cd0 @0x004578cc -> 0x004578d1
+//                        CALL 0x0045c110 @0x00457909 -> 0x0045790e
+//   P_MINE FUN_00457c10: CALL 0x004b4cd0 @0x00457ca0 -> 0x00457ca5
+//                        CALL 0x0045c110 @0x00457cf4 -> 0x00457cf9
+// A .pucontact.csv row carries no slot, and these sites are per-TYPE code that
+// every slot runs, so a row is the SUBJECT slot's only when the subject slot held
+// that type on that dispatcher call. (pu_contact_report.py hits the same problem
+// and solves the dispatcher-sweep case with the arg2 = slot_base+0x80 rule; there
+// is no such channel for the per-type sites.) MEASURED consequence of getting this
+// wrong: verify/d3_contact_20260928/g2 has three 0x457ca5 rows, only two of which
+// are slot 0's -- the third lands inside slot 0's MORTAR window and belongs to
+// another slot's P_MINE.
+const unsigned kQuerySites[] = { 0x004578d1u, 0x00457ca5u };
+const unsigned kGateSites[]  = { 0x0045790eu, 0x00457cf9u };
+const int      kQueryOwner[] = { 19 /*OIL*/,  12 /*P_MINE*/ };
+const int      kGateOwner[]  = { 19,          12 };
+
+// Every contact call site the ported OIL/P_MINE FIRE path makes, in original
+// order, with the type whose window it belongs to. The last two of each group
+// are NOT injected -- they are placement leaves that always run once the gates
+// pass, so their count is a pure consequence of the ported control flow.
+struct Site { unsigned ra; int owner; const char* what; };
+const Site kSites[] = {
+    { 0x004578d1u, 19, "OIL    query 0x004b4cd0" },   // CALL @0x004578cc
+    { 0x0045790eu, 19, "OIL    gate  0x0045c110" },   // CALL @0x00457909
+    { 0x00457932u, 19, "OIL    lerp  0x004b4650" },   // CALL @0x0045792d
+    { 0x0045797fu, 19, "OIL    basis 0x004b5080" },   // CALL @0x0045797a
+    { 0x00457ca5u, 12, "P_MINE query 0x004b4cd0" },   // CALL @0x00457ca0
+    { 0x00457cf9u, 12, "P_MINE gate  0x0045c110" },   // CALL @0x00457cf4
+    { 0x00457d1fu, 12, "P_MINE lerp  0x004b4650" },   // CALL @0x00457d1a
+    { 0x00457db2u, 12, "P_MINE basis 0x004b5080" },   // CALL @0x00457dad
+    { 0x0045bcd8u, -1, "SWEEP  query 0x004b4b60" },   // CALL @0x0045bcd3, slot by arg2
+    { 0x0045bceau, -1, "SWEEP  confirm 0x45c350" },   // CALL @0x0045bce5, slot by arg2
+};
+const int kSiteCount = static_cast<int>(sizeof(kSites) / sizeof(kSites[0]));
 
 std::vector<std::string> Split(const std::string& s) {
     std::vector<std::string> out; std::string cur;
@@ -110,19 +220,134 @@ int main(int argc, char** argv) {
         const std::string act = col("act");
         if (act.size() > 1 && act[0] == 'A') r.act = std::atoi(act.c_str() + 1);
         if (r.codePre == kOil && Word0(col("rec_post")) < Word0(col("rec_pre"))) r.oilDue = true;
+        r.call = call;
         rows.push_back(r);
     }
     std::fclose(f);
+    // gap rows carry no original call number; give them the run of calls they
+    // stand for so the contact key still lines up.
+    {
+        long next = rows.empty() ? 0 : rows.back().call;
+        for (std::size_t i = rows.size(); i-- > 0; ) {
+            if (rows[i].call >= 0) next = rows[i].call;
+            else rows[i].call = --next;
+        }
+    }
+
+    // ---- load <base>.pucontact.csv, if present ----------------------------
+    std::string base(argv[1]);
+    const std::string suffix = ".puhook.csv";
+    if (base.size() > suffix.size() && base.compare(base.size() - suffix.size(),
+                                                    suffix.size(), suffix) == 0)
+        base.erase(base.size() - suffix.size());
+    const std::string cxPath = base + ".pucontact.csv";
+    bool haveCx = false;
+    if (std::FILE* cf = std::fopen(cxPath.c_str(), "r")) {
+        haveCx = true;
+        std::vector<std::string> ch;
+        while (std::fgets(line, sizeof line, cf)) {
+            auto c = Split(line);
+            if (ch.empty()) { ch = c; continue; }
+            auto col = [&](const char* n) -> std::string {
+                for (std::size_t i = 0; i < ch.size(); ++i) if (ch[i] == n) return i < c.size() ? c[i] : "";
+                return "";
+            };
+            const long cl = std::atol(col("call").c_str());
+            // Only the calls this replay actually re-runs. The capture spans the
+            // whole race (all 4 slots, plus the frames before the subject slot's
+            // first state==6 row); rows outside that range have no port
+            // counterpart by construction and are not a divergence.
+            if (rows.empty() || cl < rows.front().call || cl > rows.back().call) continue;
+            const std::size_t ri = static_cast<std::size_t>(cl - rows.front().call);
+            const int held = (ri < rows.size()) ? rows[ri].codePre : -1;
+            const unsigned ra = static_cast<unsigned>(std::strtoul(col("ret_addr").c_str(), nullptr, 16));
+            const int ret = std::atoi(col("ret").c_str());
+            if (ra == 0x0045bcd8u || ra == 0x0045bceau) {
+                const unsigned a2 = static_cast<unsigned>(std::strtoul(col("a2").c_str(), nullptr, 16));
+                if (SweepSlotOf(a2) != want) continue;
+                g_inj.origCalls[ra]++;
+                (ra == 0x0045bcd8u ? g_inj.sq : g_inj.sc)[cl].push_back(ret);
+                continue;
+            }
+            for (int i = 0; i < kSiteCount; ++i)
+                if (kSites[i].ra == ra && held == kSites[i].owner) g_inj.origCalls[ra]++;
+            for (int i = 0; i < 2; ++i) if (kQuerySites[i] == ra && held == kQueryOwner[i])
+                g_inj.q[std::make_pair(cl, ra)].push_back(ret);
+            for (int i = 0; i < 2; ++i) if (kGateSites[i] == ra && held == kGateOwner[i])
+                g_inj.g[std::make_pair(cl, ra)].push_back(ret);
+        }
+        std::fclose(cf);
+        mashed_re::Powerup::Contact::SetInjectors(QueryInject, GateInject, nullptr);
+        mashed_re::Powerup::Contact::SetSweepInjector(SweepInject, nullptr);
+    }
+
+    if (!haveCx) {
+        // Captures taken before --puhook-contacts existed (verify/d3_pu_20260926/*)
+        // carry no query verdicts. The replay has no collision world either, so a
+        // non-injected SegmentQuery would return 0 and every drop would refuse --
+        // which would read as a regression when it is only a missing input. Run
+        // those under the permissive verdict (query hits, surface allows), i.e.
+        // exactly the model the port had before 2026-09-28, and say so.
+        mashed_re::Powerup::Contact::SetInjectors(
+            [](void*, const float*, mashed_re::Powerup::Contact::WorldHit* o, std::uint32_t) {
+                o->t = 0.5f; o->normal[1] = 1.f; return 1; },
+            [](void*, const mashed_re::Powerup::Contact::WorldHit*, std::uint32_t) { return 0; },
+            nullptr);
+    }
 
     Backend be;
     PowerupSystem sys;
     sys.Init(&be);
     for (const Row& r : rows) {
+        g_inj.curCall = r.call;
         if (r.act >= 0) sys.Activate(want, r.act);
         sys.SetInput(want, r.cur3 != 0, r.cur4 != 0);
         be.due = r.oilDue;
         sys.Tick(r.dt, be.car, r.state);
     }
+    mashed_re::Powerup::Contact::CloseDump();
     std::printf("replayed %zu frames on slot %d\n", rows.size(), want);
+    if (!haveCx) {
+        std::printf("contact: %s absent -- pre-2026-09-28 capture; the query leaves ran\n"
+                    "         under the permissive verdict (hit / allow), so the DECISION\n"
+                    "         half below is comparable and criterion (c) is NOT tested here.\n",
+                    cxPath.c_str());
+        return 0;
+    }
+    // Count what the PORT emitted, from its own MASHED_PU_CONTACTDUMP rows -- the
+    // same file, in the same schema, that re/tools/pu_contact_report.py reads.
+    std::map<unsigned, long> portRows;
+    if (const char* pd = std::getenv("MASHED_PU_CONTACTDUMP")) {
+        if (std::FILE* pf = std::fopen(pd, "r")) {
+            std::vector<std::string> ph;
+            while (std::fgets(line, sizeof line, pf)) {
+                auto c = Split(line);
+                if (ph.empty()) { ph = c; continue; }
+                for (std::size_t i = 0; i < ph.size() && i < c.size(); ++i)
+                    if (ph[i] == "ret_addr")
+                        portRows[static_cast<unsigned>(std::strtoul(c[i].c_str(), nullptr, 16))]++;
+            }
+            std::fclose(pf);
+        }
+    }
+
+    std::printf("\nCONTACT CALL SITES (original capture vs port), slot %d\n", want);
+    std::printf("  %-24s %-12s %6s %6s %9s %9s\n",
+                "site", "ret_addr", "orig", "port", "port-only", "orig-only");
+    int bad = 0;
+    for (int i = 0; i < kSiteCount; ++i) {
+        const unsigned ra = kSites[i].ra;
+        long leftover = 0;
+        for (auto& kv : g_inj.q) if (kv.first.second == ra) leftover += (long)kv.second.size();
+        for (auto& kv : g_inj.g) if (kv.first.second == ra) leftover += (long)kv.second.size();
+        if (ra == 0x0045bcd8u) for (auto& kv : g_inj.sq) leftover += (long)kv.second.size();
+        if (ra == 0x0045bceau) for (auto& kv : g_inj.sc) leftover += (long)kv.second.size();
+        const long port = portRows.count(ra) ? portRows[ra] : g_inj.portCalls[ra];
+        std::printf("  %-24s 0x%-10x %6ld %6ld %9ld %9ld\n",
+                    kSites[i].what, ra, g_inj.origCalls[ra], port,
+                    g_inj.unmatched[ra], leftover);
+        if (g_inj.origCalls[ra] != port || g_inj.unmatched[ra] || leftover) bad = 1;
+    }
+    std::printf("CONTACT VERDICT: %s\n", bad ? "DIVERGES" : "CLEAN");
     return 0;
 }
