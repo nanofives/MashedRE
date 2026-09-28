@@ -1,0 +1,81 @@
+### LINK 1 — AI ctrl bytes over the 220-call window
+src                          v   c4 set                 c4=255  c5 set         c5=255 
+p1.msd.aistep.csv            1   [0, 64, 255]           0.636   [0, 255]       0.214  
+p1.msd.aistep.csv            2   [0, 255]               0.918   [0, 255]       0.186  
+p1.msd.aistep.csv            3   [0, 255]               0.709   [0, 255]       0.300  
+p2.msd.aistep.csv            1   [0, 64, 255]           0.636   [0, 255]       0.214  
+p2.msd.aistep.csv            2   [0, 255]               0.918   [0, 255]       0.186  
+p2.msd.aistep.csv            3   [0, 255]               0.709   [0, 255]       0.300  
+p3.msd.aistep.csv            1   [0, 64, 255]           0.636   [0, 255]       0.214  
+p3.msd.aistep.csv            2   [0, 255]               0.918   [0, 255]       0.186  
+p3.msd.aistep.csv            3   [0, 255]               0.709   [0, 255]       0.300  
+p4.msd.aistep.csv            1   [0, 64, 255]           0.636   [0, 255]       0.214  
+p4.msd.aistep.csv            2   [0, 255]               0.918   [0, 255]       0.186  
+p4.msd.aistep.csv            3   [0, 255]               0.709   [0, 255]       0.300  
+p8.msd.aistep.csv            1   [0, 64, 255]           0.636   [0, 255]       0.214  
+p8.msd.aistep.csv            2   [0, 255]               0.918   [0, 255]       0.186  
+p8.msd.aistep.csv            3   [0, 255]               0.709   [0, 255]       0.300  
+p10.msd.aistep.csv           1   [0, 64, 255]           0.636   [0, 255]       0.214  
+p10.msd.aistep.csv           2   [0, 255]               0.918   [0, 255]       0.186  
+p10.msd.aistep.csv           3   [0, 255]               0.709   [0, 255]       0.300  
+p11.msd.aistep.csv           1   [0, 64, 255]           0.636   [0, 255]       0.214  
+p11.msd.aistep.csv           2   [0, 255]               0.918   [0, 255]       0.186  
+p11.msd.aistep.csv           3   [0, 255]               0.709   [0, 255]       0.300  
+p12.msd.aistep.csv           1   [0, 64, 255]           0.636   [0, 255]       0.214  
+p12.msd.aistep.csv           2   [0, 255]               0.918   [0, 255]       0.186  
+p12.msd.aistep.csv           3   [0, 255]               0.709   [0, 255]       0.300  
+sa_d1.csv                    1   [0, 255]               0.995   [0, 255]       0.005  
+sa_d1.csv                    2   [0, 255]               0.995   [0, 255]       0.005  
+sa_d1.csv                    3   [0, 255]               0.995   [0, 255]       0.005  
+
+### LINK 3 — speed under MATCHED ctrl (c4=255 and c5=0 on the side quoted)
+src                          v   med(all)   n(full)  med(full) 
+p1.msd.aistep.csv            1   2420       124      2255      
+p1.msd.aistep.csv            2   2397       179      2648      
+p1.msd.aistep.csv            3   2618       154      2691      
+p2.msd.aistep.csv            1   2420       124      2255      
+p2.msd.aistep.csv            2   2397       179      2648      
+p2.msd.aistep.csv            3   2618       154      2691      
+p3.msd.aistep.csv            1   2420       124      2255      
+p3.msd.aistep.csv            2   2397       179      2648      
+p3.msd.aistep.csv            3   2618       154      2691      
+p4.msd.aistep.csv            1   2420       124      2255      
+p4.msd.aistep.csv            2   2397       179      2648      
+p4.msd.aistep.csv            3   2618       154      2691      
+p8.msd.aistep.csv            1   2420       124      2255      
+p8.msd.aistep.csv            2   2397       179      2648      
+p8.msd.aistep.csv            3   2618       154      2691      
+p10.msd.aistep.csv           1   2420       124      2255      
+p10.msd.aistep.csv           2   2397       179      2648      
+p10.msd.aistep.csv           3   2618       154      2691      
+p11.msd.aistep.csv           1   2420       124      2255      
+p11.msd.aistep.csv           2   2397       179      2648      
+p11.msd.aistep.csv           3   2618       154      2691      
+p12.msd.aistep.csv           1   2420       124      2255      
+p12.msd.aistep.csv           2   2397       179      2648      
+p12.msd.aistep.csv           3   2618       154      2691      
+sa_d1.csv                    1   2822       219      2831      
+sa_d1.csv                    2   2818       219      2827      
+sa_d1.csv                    3   2821       219      2830      
+
+### VALIDATION GATE — simulator vs OBSERVED standalone (its own speed)
+  car 1: all four bytes exact 220/220 = 1.000  PASS
+  car 2: all four bytes exact 220/220 = 1.000  PASS
+  car 3: all four bytes exact 220/220 = 1.000  PASS
+
+### COUNTERFACTUAL — scored against the PURE regime-0 K=220 envelope
+  NOTE: err and speed are COUPLED in the live loop (a speed change moves the
+  trajectory and therefore next call's err). Holding one fixed is a BOUND, not
+  a prediction of what a rebuilt binary would do.
+  car 1 [own speed, own err   ] c0D=  7 c1D= 82 stD= 88 |st|Med=  6.0 -> FAIL c0_distinct=7 not in [13,35]; c1_distinct=82 not in [21,70]; abs_steer_median=6.0 not in [7,23]
+  car 1 [ORIG speed, own err  ] c0D= 11 c1D= 63 stD= 73 |st|Med= 12.0 -> FAIL c0_distinct=11 not in [13,35]
+  car 1 [own speed, ORIG err  ] c0D= 42 c1D= 10 stD= 51 |st|Med=  4.0 -> FAIL c0_distinct=42 not in [13,35]; c1_distinct=10 not in [21,70]; abs_steer_median=4.0 not in [7,23]
+  car 1 [ORIG speed, ORIG err ] c0D= 38 c1D= 13 stD= 52 |st|Med=  9.0 -> FAIL c0_distinct=38 not in [13,35]; c1_distinct=13 not in [21,70]
+  car 2 [own speed, own err   ] c0D= 28 c1D= 69 stD= 96 |st|Med= 20.0 -> PASS
+  car 2 [ORIG speed, own err  ] c0D= 47 c1D= 66 stD=112 |st|Med= 36.5 -> FAIL c0_distinct=47 not in [13,35]; steer_distinct=112 not in [33,96]; abs_steer_median=36.5 not in [7,23]
+  car 2 [own speed, ORIG err  ] c0D= 19 c1D= 43 stD= 62 |st|Med=  7.5 -> PASS
+  car 2 [ORIG speed, ORIG err ] c0D= 33 c1D= 42 stD= 76 |st|Med= 19.0 -> PASS
+  car 3 [own speed, own err   ] c0D= 14 c1D= 67 stD= 80 |st|Med= 10.5 -> PASS
+  car 3 [ORIG speed, own err  ] c0D= 29 c1D= 63 stD= 91 |st|Med= 27.0 -> FAIL abs_steer_median=27.0 not in [7,23]
+  car 3 [own speed, ORIG err  ] c0D= 13 c1D=102 stD=114 |st|Med= 43.0 -> FAIL c1_distinct=102 not in [21,70]; steer_distinct=114 not in [33,96]; c1_median=37.5 not in [0,0]; abs_steer_median=43.0 not in [7,23]
+  car 3 [ORIG speed, ORIG err ] c0D= 24 c1D=104 stD=127 |st|Med= 54.5 -> FAIL c1_distinct=104 not in [21,70]; steer_distinct=127 not in [33,96]; c1_median=50.5 not in [0,0]; abs_steer_median=54.5 not in [7,23]

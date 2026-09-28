@@ -1,0 +1,12 @@
+original MASHED.exe, --statediff-car 1, Training, mode 10: record +0x1f0 (wheel-0 block +0x58,
+the surface material RwRGBA the Integrate2 grip selector keys on)
+p1   frames=3621  +0x1f0: {'0xffc88080': 3591, '0xffb48080': 29, '0x00000000': 1}
+p2   frames=3627  +0x1f0: {'0xffc88080': 3597, '0xffb48080': 29, '0x00000000': 1}
+p3   frames=3620  +0x1f0: {'0xffc88080': 3590, '0xffb48080': 29, '0x00000000': 1}
+p4   frames=3629  +0x1f0: {'0xffc88080': 3599, '0xffb48080': 29, '0x00000000': 1}
+p8   frames=3623  +0x1f0: {'0xffc88080': 3593, '0xffb48080': 29, '0x00000000': 1}
+p10  frames=3617  +0x1f0: {'0xffc88080': 3587, '0xffb48080': 29, '0x00000000': 1}
+p11  frames=3628  +0x1f0: {'0xffc88080': 3598, '0xffb48080': 29, '0x00000000': 1}
+p12  frames=3629  +0x1f0: {'0xffc88080': 3599, '0xffb48080': 29, '0x00000000': 1}
+p6   frames=3625  +0x1f0: {'0xffc88080': 3517, '0xffb48080': 107, '0x00000000': 1}
+p9   frames=3624  +0x1f0: {'0xffc88080': 3516, '0xffb48080': 107, '0x00000000': 1}
