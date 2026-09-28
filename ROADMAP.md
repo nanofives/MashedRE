@@ -750,10 +750,13 @@ criteria are all met since 2026-09-26 (`D3_MODES_2026-09-26.md`).
   accelerates AI cars differently: +25.5% / +6.8% / +5.2% full-throttle median gain (cars
   1/2/3), and a slow launch (+182 vs +1542/+2053 over the first 11 calls, all wheels grounded).
   D2's gate was measured on the player car only. The gearbox pair `+0x490`/`+0x494` is the
-  first suspect. Next command: `D3_SPEED_GAP_2026-09-28.md` §6.3. It does not fail a written
-  D3 criterion. Whether it gates D3 is open for the user.
-- **D3 closes** when powerups (c) replays `s2` clean. D3-R1 and U-D3-DRIVE then carry
-  forward like the D1 residue.
+  first suspect. Next command: `D3_SPEED_GAP_2026-09-28.md` §6.3. **GATES D3 (user decision
+  2026-09-28).** New AI criterion (e): under matched ctrl bytes, AI-car speed gain (full-throttle
+  median and the first-11-call launch) matches the original within its own run-to-run spread,
+  with the spread measured and written here before the post-fix capture.
+- **D3 closes** when powerups (c) replays `s2` clean AND U-D3-DRIVE meets (e). Order: the
+  MISSILE decision fix first, then U-D3-DRIVE. D3-R1 (car 1) then carries forward like the D1
+  residue.
 
 Notes: `D3_AI_RESIDUE_2026-09-27.md` (AI (b) cause + the two refutations + the RNG port),
 `re/analysis/D3_AUDIT_2026-09-14.md` (step 1), `D3_AI_TICK_WIRING_2026-09-14.md`
