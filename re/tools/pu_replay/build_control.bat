@@ -13,5 +13,7 @@ set OUT=%HERE%out_control
 if not exist "%OUT%" mkdir "%OUT%"
 git -C "%HERE%..\..\.." show %REV%:mashedmod/src/mashed_re/Powerup/PowerupEffects.cpp > "%OUT%\PowerupEffects_%REV%.cpp" || exit /b 1
 cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /I "%SRC%" /I "%SRC%\Powerup" /Fo"%OUT%\\" /Fe"%OUT%\pu_replay_control.exe" ^
-   "%HERE%pu_replay.cpp" "%SRC%\Powerup\PowerupSystem.cpp" "%OUT%\PowerupEffects_%REV%.cpp"
+   "%HERE%pu_replay.cpp" "%SRC%\Powerup\PowerupSystem.cpp" "%OUT%\PowerupEffects_%REV%.cpp" ^
+   "%SRC%\Powerup\PowerupContact.cpp" "%SRC%\Powerup\PowerupAim.cpp" ^
+   "%SRC%\Powerup\PowerupMortar.cpp" "%SRC%\Powerup\PowerupMissile.cpp"
 exit /b %ERRORLEVEL%

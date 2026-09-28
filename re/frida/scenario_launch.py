@@ -1124,10 +1124,22 @@ function puCxArm(listCsv){
         onLeave(r){
           if (this.skip) return;
           if (PU_CX.rows.length >= PU_CX.cap) return;
+          // D3-CONTACT 2026-09-28c: also record the hit's SEGMENT PARAMETER.
+          // The 0x40-byte result buffer the query fills is arg3, and its `t` is
+          // at +0x38 (the collector FUN_004b4bb0 writes puVar2[0xe]). Without it
+          // a replay can only inject the COUNT, and anything the original derives
+          // from `t` is unreproducible -- which bit the MISSILE ground bias:
+          // pu_replay used to hardcode t = 0.5 with a comment saying nothing
+          // downstream was measured, and that stopped being true.
+          let ht = '';
+          if (r.toInt32() !== 0 && this.a[2]) {
+            try { ht = '0x' + (ptr(this.a[2]).add(0x38).readU32() >>> 0).toString(16); }
+            catch(_){ ht = ''; }
+          }
           PU_CX.rows.push([this.fr, this.cl, '0x' + rva.toString(16), nm,
                            '0x' + this.ra.toString(16),
                            '0x' + this.a[0].toString(16), '0x' + this.a[1].toString(16),
-                           '0x' + this.a[2].toString(16), r.toInt32()]);
+                           '0x' + this.a[2].toString(16), r.toInt32(), ht]);
         }
       });
     }
@@ -1339,6 +1351,90 @@ function puMtrArm(){
   } catch(e){ PU_MTR.err = '' + e; return 'ERR ' + e; }
 }
 function puMtrDrain(){ const r = PU_MTR.rows; PU_MTR.rows = []; return r; }
+
+// --- D3-CONTACT 2026-09-28c: the MISSILE projectile pool -------------------
+// Opt-in (--puhook-missile). Its own channel, its own CSV.
+//
+// The MISSILE tick is 0x00455c90 and Ghidra's auto-analysis never defined it, so
+// it was read with the `--create` mode added to re/tools/decomp_pc.py this
+// session (a TRANSIENT function definition against a -readOnly pool clone; it is
+// discarded on exit and is NOT a master write).
+//
+// It walks TWO pools in lockstep in one loop:
+//   aim records   0x006885d0 stride 0x2c, FIVE entries
+//     (`MOV EDI,0x6886ac` @0x00455c9a, `SUB EDI,0x2c` @0x00455ca9)
+//   projectiles   0x006883b0 stride 0x6c, FIVE entries
+//     (`MOV EBP,0x688620` @0x00455c9f, `SUB EBP,0x6c` @0x00455caf, loop exits at
+//      0x00688404 -- so the record BASES are 0x6883b0/41c/488/4f4/560)
+// The older note's "pool DAT_006883bc stride 0x6c" named the record's POSITION
+// field (base+0xc), not its base -- the same off-by-a-field the acquisition
+// record's &DAT_0068b9fc gloss had.
+//
+// Record fields, byte offsets from the base, from FUN_00455610/FUN_004556f0
+// (both __thiscall-style on ESI) and the tick's own indices:
+//   +0x0c..0x14  position          +0x1c..0x24  this frame's delta
+//   +0x28        the GROUND-FOLLOW bias added to delta.y -- written by the tick
+//                from the 0x4b4cd0 probe's result, so the port can reproduce it
+//                exactly from the injected verdict
+//   +0x18 age    +0x30 speed       +0x54/+0x58 target ids (-1,-1 = unguided)
+//   +0x50        live flag
+//
+// What the tick does per live record (0x00455cf9..0x00455e9f):
+//   flight step: (+0x54==-1 && +0x58==-1) ? FUN_00455610 : FUN_004556f0
+//   age += DAT_007f100c;  if (age > 3.0) -> FUN_00455910 terminal, done
+//   EVEN FRAMES ONLY (`DAT_007f101c & 0x80000001`): sphere query FUN_004b4d10
+//     with radius |delta|^2 * 1.5 + 0.05; on a hit, gate FUN_0045c350, and a
+//     ZERO gate -> FUN_00455910. That parity gate is why 0x455de0 shows ~half
+//     the calls of 0x455e59 in every capture (m1 15 vs 31, m2 6 vs 12).
+//   EVERY frame: ground probe FUN_004b4cd0 from pos to pos - (0,3,0).
+//
+// PRE and POST are both recorded, per record, once per tick.
+const PU_MIS = { armed:false, rows:[], calls:0, cap:20000, pending:null,
+                 orphans:0, err:null };
+function puMisArm(){
+  if (PU_MIS.armed) return 'already armed';
+  try {
+    const BASE = 0x006883b0, STRIDE = 0x6c, N = 5;
+    const rdF = (p, o) => { try { return '0x' + (p.add(o).readU32() >>> 0).toString(16); }
+                            catch(_){ return ''; } };
+    const rdI = (p, o) => { try { return p.add(o).readS32(); } catch(_){ return 0; } };
+    const snap = () => {
+      const out = [];
+      for (let i = 0; i < N; ++i) {
+        const p = ga(BASE + i * STRIDE);
+        out.push([rdI(p, 0x50),
+                  rdF(p, 0x0c), rdF(p, 0x10), rdF(p, 0x14),
+                  rdF(p, 0x1c), rdF(p, 0x20), rdF(p, 0x24),
+                  rdF(p, 0x28), rdF(p, 0x18), rdF(p, 0x30),
+                  rdI(p, 0x54), rdI(p, 0x58)]);
+      }
+      return out;
+    };
+    PU_MIS.lis = Interceptor.attach(ga(0x00455c90), {
+      onEnter(){
+        PU_MIS.calls++;
+        let fc = 0;
+        try { fc = ga(0x007f101c).readS32(); } catch(_){}
+        PU_MIS.pending = { fr: SD.frames, cl: PU.calls, fc: fc, pre: snap() };
+      },
+      onLeave(){
+        const q = PU_MIS.pending; PU_MIS.pending = null;
+        if (!q) { PU_MIS.orphans++; return; }
+        const post = snap();
+        for (let i = 0; i < N; ++i) {
+          // emit only records that were LIVE on entry: a dead slot's fields are
+          // stale, and a row for one would read as a projectile that never existed.
+          if (q.pre[i][0] === 0) continue;
+          if (PU_MIS.rows.length >= PU_MIS.cap) return;
+          PU_MIS.rows.push([q.fr, q.cl, i, q.fc].concat(q.pre[i], post[i]));
+        }
+      }
+    });
+    PU_MIS.armed = true;
+    return 'puhook-missile armed (0x00455c90, 5 records @0x006883b0 stride 0x6c)';
+  } catch(e){ PU_MIS.err = '' + e; return 'ERR ' + e; }
+}
+function puMisDrain(){ const r = PU_MIS.rows; PU_MIS.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
 // --- CANONICAL-OBSERVATION BLOCK ------------------------------------------
@@ -1390,6 +1486,11 @@ rpc.exports = {
   puCxDrain: function(){ return puCxDrain(); },
   puAimArm: function(){ return puAimArm(); },
   puAimDrain: function(){ return puAimDrain(); },
+  puMisArm: function(){ return puMisArm(); },
+  puMisDrain: function(){ return puMisDrain(); },
+  puMisStats: function(){ return JSON.stringify({armed:PU_MIS.armed,
+                          calls:PU_MIS.calls, rows:PU_MIS.rows.length,
+                          orphans:PU_MIS.orphans, err:PU_MIS.err}); },
   puMtrArm: function(){ return puMtrArm(); },
   puMtrDrain: function(){ return puMtrDrain(); },
   puMtrStats: function(){ return JSON.stringify({armed:PU_MTR.armed,
@@ -1698,6 +1799,14 @@ def main():
                          "scripted fire pattern on ctrl byte 0x007f103f (CONTRIVED, C3-grade). "
                          "Empty = observe natural pickups only.")
     ap.add_argument("--pu-subj", type=int, default=0, help="slot the --pu-plan drives (default 0)")
+    ap.add_argument("--puhook-missile", action="store_true",
+                    help="[D3-CONTACT] with --statediff-puhook, ALSO hook the MISSILE "
+                         "tick FUN_00455c90 and write <out>.pumissile.csv: one row per "
+                         "LIVE projectile per frame with the record's PRE and POST state "
+                         "and the frame counter DAT_007f101c (the tick gates its sphere "
+                         "query on that counter's parity, which is why 0x455de0 shows "
+                         "about half the calls of 0x455e59). Pool 0x006883b0, stride "
+                         "0x6c, 5 records. Floats are raw hex dwords.")
     ap.add_argument("--puhook-mortar", action="store_true",
                     help="[D3-CONTACT] with --statediff-puhook, ALSO hook the MORTAR "
                          "projectile update FUN_004538b0 and write <out>.pumortar.csv: "
@@ -1936,6 +2045,8 @@ def main():
                     print("  [statediff]", E.pu_aim_arm())
                 if args.puhook_mortar:
                     print("  [statediff]", E.pu_mtr_arm())
+                if args.puhook_missile:
+                    print("  [statediff]", E.pu_mis_arm())
             if args.statediff_drive and not args.statediff_drive_late:
                 print("  [statediff]", E.arm_cook())
                 print(f"  [statediff] drive: full accel, steer={args.statediff_steer:+d} ->",
@@ -2250,7 +2361,7 @@ def main():
                     except Exception as _e: print("  [statediff] pucontact drain failed:", _e)
                     cxp = outp.with_suffix(outp.suffix + ".pucontact.csv")
                     with open(cxp, "w", newline="") as f:
-                        f.write("frame,call,rva,name,ret_addr,a1,a2,a3,ret" + chr(10))
+                        f.write("frame,call,rva,name,ret_addr,a1,a2,a3,ret,hit_t" + chr(10))
                         for r in cx_rows:
                             f.write(",".join(str(x) for x in r) + chr(10))
                     print(f"  [statediff] pucontact {len(cx_rows)} rows -> {cxp}")
@@ -2290,6 +2401,23 @@ def main():
                         for r in mt_rows:
                             f.write(",".join(str(x) for x in r) + chr(10))
                     print(f"  [statediff] pumortar {len(mt_rows)} rows -> {mtp}")
+                if args.statediff_puhook and args.puhook_missile:
+                    try: print("  [statediff] puhook-missile agent:", E.pu_mis_stats())
+                    except Exception as _e: print("  [statediff] pumissile stats failed:", _e)
+                    mi_rows = []
+                    try: mi_rows = E.pu_mis_drain()
+                    except Exception as _e: print("  [statediff] pumissile drain failed:", _e)
+                    mip = outp.with_suffix(outp.suffix + ".pumissile.csv")
+                    snapc = ["live", "px", "py", "pz", "dx", "dy", "dz",
+                             "bias", "age", "speed", "tgt0", "tgt1"]
+                    cols = (["frame", "call", "rec", "framectr"]
+                            + ["pre_" + c for c in snapc]
+                            + ["post_" + c for c in snapc])
+                    with open(mip, "w", newline="") as f:
+                        f.write(",".join(cols) + chr(10))
+                        for r in mi_rows:
+                            f.write(",".join(str(x) for x in r) + chr(10))
+                    print(f"  [statediff] pumissile {len(mi_rows)} rows -> {mip}")
                 if args.statediff_aictrl:
                     ai_snapshot = list(sd_ai)
                     aip = outp.with_suffix(outp.suffix + ".aictrl.csv")

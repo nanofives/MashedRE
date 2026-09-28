@@ -109,6 +109,11 @@ int  SweepQuery(int slot, const float pos[3], WorldHit* out, std::uint32_t retAd
 // CONDEMNS the power-up: 0x0045bcef `JNE 0x0045bd14` keeps it, fall-through runs
 // FUN_0045bac0 at 0x0045bcf7 (the capture's deact_ra 0x45bcfc).
 int  SweepConfirm(int slot, const WorldHit* hit, std::uint32_t retAddr);
+// 0x004b4d10. The SPHERE sibling of 0x004b4cd0: 4 dwords (centre + radius), tag
+// 3, same FUN_004b4c80 walk, same returned intersection COUNT.
+int  SphereQueryAt(const float sphere[4], WorldHit* out, std::uint32_t retAddr,
+                   std::uint32_t rva = 0x004b4d10u,
+                   const char* name = "query_4b4d10");
 // 0x0045c350 at MORTAR's call site (RA 0x004537bb) instead of the dispatcher's:
 // same leaf, keyed by CALL SITE rather than by slot, because a mortar in flight
 // outlives the slot that fired it. NON-zero REFUSES the detonation.

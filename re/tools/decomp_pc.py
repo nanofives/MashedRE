@@ -175,6 +175,14 @@ def main():
                          "into writes / reads / other, each with the containing function and "
                          "the referencing instruction. This is the 'who writes this global' "
                          "query; every other mode needs a Function and fails on a data address.")
+    ap.add_argument("--create", action="store_true",
+                    help="if the address has no Ghidra function, DEFINE one transiently "
+                         "and decompile it anyway. Ghidra's auto-analysis misses functions "
+                         "reached only through a data table or a computed call, and some of "
+                         "those are load-bearing. Safe by construction: the pool clone is "
+                         "always opened -readOnly, so the created function is discarded on "
+                         "exit and nothing is persisted, not even to the clone. To make one "
+                         "STICK, use scripts CreateMissedFunctions.java against the master.")
     ap.add_argument("--no-decomp", action="store_true",
                     help="skip decompilation (fast; pairs with --callees/--callers)")
     ap.add_argument("--slot", help="reuse an already-held pool slot index; not released")
@@ -214,12 +222,13 @@ def main():
              + (["callers"] if a.callers else [])
              + (["xrefs"] if a.xrefs else [])
              + (["strings"] if a.strings else [])
-             + (["port"] if a.port else []))
+             + (["port"] if a.port else [])
+             + (["create"] if a.create else []))
     if not modes:
         # --no-decomp with no other mode: metadata only (name/entry/size/signature).
         # Must NOT fall back to "decomp" -- that silently ignores --no-decomp and
         # turns a cheap metadata sweep into a full decompile of every address.
-        modes = ["metadata"]
+        modes = ["metadata"] + (["create"] if a.create else [])
 
     if a.slot is not None:
         slot_name, idx, owned = f"Mashed_pool{a.slot}", a.slot, False

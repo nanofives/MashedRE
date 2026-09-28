@@ -277,6 +277,32 @@ int SweepConfirm(int slot, const WorldHit* hit, std::uint32_t retAddr) {
     return r;
 }
 
+// 0x004b4d10 — the SPHERE sibling of 0x004b4cd0. Decompiled: it copies FOUR
+// dwords from arg2 (centre + radius), writes tag 3 (`local_4 = 3`, where the
+// segment query writes 1) and tails the SAME FUN_004b4c80, i.e. the same walk
+// with the same nearest-keeps collector FUN_004b4bb0, and so returns the same
+// intersection COUNT. Its decompilation is typed `void`, but the MISSILE tick
+// tests its EAX (`iVar5 = FUN_004b4d10(...); if (iVar5 != 0)`), and the tail
+// call is what carries the count through.
+//
+// NOT independently modelled here: with no injector the stand-in returns 0, the
+// same inert arm the sweep's sphere takes. The shape difference (sphere vs
+// segment) is recorded, not simulated.
+int SphereQueryAt(const float sphere[4], WorldHit* out, std::uint32_t retAddr,
+                  std::uint32_t rva, const char* name) {
+    std::memset(out, 0, sizeof(*out));
+    out->normal[1] = 1.0f;
+    int n = 0;
+    if (s_qInject) {
+        // the injector is keyed on (call, retAddr) and does not read the geometry
+        const float seg[6] = { sphere[0], sphere[1], sphere[2],
+                               sphere[0], sphere[1], sphere[2] };
+        n = s_qInject(s_injCtx, seg, out, retAddr);
+    }
+    Log(rva, name, retAddr, 0, 0, 0, n);
+    return n;
+}
+
 // 0x0045c350 again, but at MORTAR's call site 0x004537b6 (RA 0x004537bb) rather
 // than the dispatcher's. Same leaf, DIFFERENT attribution: the dispatcher's sweep
 // is keyed by slot through arg2, while a mortar in flight outlives its slot, so

@@ -34,6 +34,7 @@
 #include "Powerup/PowerupContact.h"
 #include "Powerup/PowerupAim.h"
 #include "Powerup/PowerupMortar.h"
+#include "Powerup/PowerupMissile.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -86,15 +87,28 @@ struct Inject {
         matched[ra]++;
         return v;
     }
+    // The hit's SEGMENT PARAMETER, popped in lockstep with the count above. A
+    // capture taken before the `hit_t` column existed leaves this empty, and
+    // TakeT falls back to the old fixed 0.5 -- which is fine for every site whose
+    // `t` nothing downstream consumes, and NOT fine for MISSILE's ground bias,
+    // which is a pure function of it. `tPresent` says which case a run is in.
+    std::map<std::pair<long, unsigned>, std::vector<float> > qt;
+    bool tPresent = false;
+    float TakeT(unsigned ra) {
+        auto it = qt.find(std::make_pair(curCall, ra));
+        if (it == qt.end() || it->second.empty()) return 0.5f;
+        const float v = it->second.front();
+        it->second.erase(it->second.begin());
+        return v;
+    }
 };
 Inject g_inj;
 
 int QueryInject(void*, const float*, mashed_re::Powerup::Contact::WorldHit* out,
                 std::uint32_t ra) {
     const int n = g_inj.Take(g_inj.q, ra);
-    // The replay has no triangles, so only the branch-deciding value is real.
-    // t = 0.5 keeps the lerp finite; nothing downstream of it is measured here.
-    if (n) { out->t = 0.5f; out->normal[1] = 1.f; }
+    // The replay has no triangles, so only the capture's own values are real.
+    if (n) { out->t = g_inj.TakeT(ra); out->normal[1] = 1.f; }
     return n;
 }
 int GateInject(void*, const mashed_re::Powerup::Contact::WorldHit*, std::uint32_t ra) {
@@ -139,6 +153,11 @@ const int      kAimQueryN = 2;
 const unsigned kMtrQuerySites[] = { 0x00453789u };
 const unsigned kMtrGateSites[]  = { 0x004537bbu };
 const int      kMtrQueryN = 1, kMtrGateN = 1;
+// MISSILE's OWN chain (inside the tick FUN_00455c90). Mode 4: attributed by the
+// --puhook-missile channel, which records every live projectile per frame.
+const unsigned kMisQuerySites[] = { 0x00455de0u, 0x00455e59u };
+const unsigned kMisGateSites[]  = { 0x00455df9u };
+const int      kMisQueryN = 2, kMisGateN = 1;
 const int      kQueryOwner[] = { 19 /*OIL*/,  12 /*P_MINE*/, 17 /*SHOTGUN*/, 10 /*DRUM*/,
                                  16 /*R_FLAME*/ };
 const int      kGateOwner[]  = { 19,          12 };
@@ -161,6 +180,9 @@ const int      kQueryN = 5, kGateN = 2;
 //      Sound only when NO OTHER SLOT held that type in the capture, which the loader
 //      CHECKS (status `contested` otherwise, excluded from the verdict).
 //   2  by arg2 = slot_base + 0x80 (the dispatcher sweep).
+//   4  by the --puhook-missile channel: a row exists for every live projectile on
+//      that call, so "the port stepped one" and "the capture had one" line up
+//      without needing code_pre, which a missile in flight also outlives.
 //   3  by the --puhook-aim channel's own `slot` column. Used for the ACQUISITION
 //      sites inside FUN_00459620, which MORTAR, GUN and MISSILE all reach, so
 //      neither code_pre nor call range can attribute them -- but the aim channel
@@ -196,6 +218,12 @@ const Site kSites[] = {
     { 0x004537bbu,  7, 0x0045c350u, 0x00453789u, 1, "MORTAR gate  0x0045c350" },   // CALL @0x004537b6
     { 0x004537dfu,  7, 0x004b4650u, 0x004537bbu, 1, "MORTAR lerp  0x004b4650" },   // CALL @0x004537da
     { 0x0045382cu,  7, 0x004b5080u, 0x004537bbu, 1, "MORTAR basis 0x004b5080" },   // CALL @0x00453827
+    // MISSILE's own chain, inside FUN_00455c90. The sphere query runs on EVEN
+    // frames only (DAT_007f101c parity, 0x00455d83..0x00455d99), the ground probe
+    // every frame -- which is why the two counts differ by ~2x in every capture.
+    { 0x00455de0u, 11, 0x004b4d10u, 0u,          4, "MISSIL sphere 0x004b4d10" },  // CALL @0x00455ddb
+    { 0x00455df9u, 11, 0x0045c350u, 0x00455de0u, 4, "MISSIL gate   0x0045c350" },  // CALL @0x00455df4
+    { 0x00455e59u, 11, 0x004b4cd0u, 0u,          4, "MISSIL ground 0x004b4cd0" },  // CALL @0x00455e54
 };
 const int kSiteCount = static_cast<int>(sizeof(kSites) / sizeof(kSites[0]));
 
@@ -365,6 +393,66 @@ int main(int argc, char** argv) {
         }
     }
 
+    // ---- load <base>.pumissile.csv, if present ----------------------------
+    // One row per LIVE MISSILE projectile per frame, PRE and POST, plus the frame
+    // counter DAT_007f101c whose parity gates the sphere query.
+    //
+    // The port is seeded from PRE each frame for POSITION and DELTA -- the flight
+    // integration is NOT ported (it is a closed loop through the projectile's RW
+    // frame matrix) -- but it CARRIES its own `age`, `live` and `bias`. So the
+    // lifetime gate, the parity gate and the ground-bias value are the port's,
+    // and the two query counts follow from them rather than from the schedule.
+    struct MisRow {
+        long call; int rec; int framectr;
+        mashed_re::Powerup::Missile::Record pre;
+        float postBias; int postLive;
+    };
+    std::vector<MisRow> misRows;
+    bool haveMis = false;
+    {
+        std::string misPath = base + ".pumissile.csv";
+        if (std::FILE* mf = std::fopen(misPath.c_str(), "r")) {
+            haveMis = true;
+            std::vector<std::string> mh;
+            while (std::fgets(line, sizeof line, mf)) {
+                auto c = Split(line);
+                if (mh.empty()) { mh = c; continue; }
+                auto col = [&](const char* n) -> std::string {
+                    for (std::size_t i = 0; i < mh.size(); ++i) if (mh[i] == n) return i < c.size() ? c[i] : "";
+                    return "";
+                };
+                auto fx = [&](const char* n) -> float {
+                    const std::string s2 = col(n);
+                    if (s2.size() > 2 && s2[0] == '0' && s2[1] == 'x') {
+                        const unsigned long u = std::strtoul(s2.c_str() + 2, nullptr, 16);
+                        float f; std::memcpy(&f, &u, 4); return f;
+                    }
+                    return static_cast<float>(std::atof(s2.c_str()));
+                };
+                MisRow m; std::memset(&m, 0, sizeof m);
+                m.call = std::atol(col("call").c_str());
+                m.rec  = std::atoi(col("rec").c_str());
+                m.framectr = std::atoi(col("framectr").c_str());
+                m.pre.live = std::atoi(col("pre_live").c_str()) ? 1 : 0;
+                const char* ax = "xyz";
+                for (int i = 0; i < 3; ++i) {
+                    char k[16];
+                    std::snprintf(k, sizeof k, "pre_p%c", ax[i]); m.pre.pos[i]   = fx(k);
+                    std::snprintf(k, sizeof k, "pre_d%c", ax[i]); m.pre.delta[i] = fx(k);
+                }
+                m.pre.bias  = fx("pre_bias");
+                m.pre.age   = fx("pre_age");
+                m.pre.speed = fx("pre_speed");
+                m.pre.tgt0  = std::atoi(col("pre_tgt0").c_str());
+                m.pre.tgt1  = std::atoi(col("pre_tgt1").c_str());
+                m.postBias  = fx("post_bias");
+                m.postLive  = std::atoi(col("post_live").c_str()) ? 1 : 0;
+                misRows.push_back(m);
+            }
+            std::fclose(mf);
+        }
+    }
+
     // ---- load <base>.pumortar.csv, if present -----------------------------
     // One row per MORTAR projectile per frame, with the pool record's PRE and
     // POST state. The port is SEEDED from PRE on the first row of each
@@ -465,6 +553,16 @@ int main(int argc, char** argv) {
             const int held = (ri < rows.size()) ? rows[ri].codePre : -1;
             const unsigned ra = static_cast<unsigned>(std::strtoul(col("ret_addr").c_str(), nullptr, 16));
             const int ret = std::atoi(col("ret").c_str());
+            // `hit_t` exists only on captures from 2026-09-28c on.
+            float ht = 0.5f;
+            {
+                const std::string h = col("hit_t");
+                if (h.size() > 2 && h[0] == '0' && h[1] == 'x') {
+                    g_inj.tPresent = true;
+                    const unsigned long u = std::strtoul(h.c_str() + 2, nullptr, 16);
+                    std::memcpy(&ht, &u, 4);
+                }
+            }
             if (ra == 0x0045bcd8u || ra == 0x0045bceau) {
                 const unsigned a2 = static_cast<unsigned>(std::strtoul(col("a2").c_str(), nullptr, 16));
                 if (SweepSlotOf(a2) != want) continue;
@@ -477,17 +575,30 @@ int main(int argc, char** argv) {
                 if (kSites[i].ra == ra) { mode = kSites[i].mode; owner = kSites[i].owner; }
             if (mode < 0) continue;
             const bool mine = (mode == 1) ? true
+                            : (mode == 4) ? true
                             : (mode == 3) ? (aimSlot.count(cl) && aimSlot[cl] == want)
                                           : (held == owner);
             if (!mine) continue;
             g_inj.origCalls[ra]++;
-            for (int i = 0; i < kQueryN; ++i) if (kQuerySites[i] == ra)
+            for (int i = 0; i < kQueryN; ++i) if (kQuerySites[i] == ra) {
                 g_inj.q[std::make_pair(cl, ra)].push_back(ret);
-            for (int i = 0; i < kAimQueryN; ++i) if (kAimQuerySites[i] == ra)
+                g_inj.qt[std::make_pair(cl, ra)].push_back(ht);
+            }
+            for (int i = 0; i < kAimQueryN; ++i) if (kAimQuerySites[i] == ra) {
                 g_inj.q[std::make_pair(cl, ra)].push_back(ret);
-            for (int i = 0; i < kMtrQueryN; ++i) if (kMtrQuerySites[i] == ra)
+                g_inj.qt[std::make_pair(cl, ra)].push_back(ht);
+            }
+            for (int i = 0; i < kMtrQueryN; ++i) if (kMtrQuerySites[i] == ra) {
                 g_inj.q[std::make_pair(cl, ra)].push_back(ret);
+                g_inj.qt[std::make_pair(cl, ra)].push_back(ht);
+            }
             for (int i = 0; i < kMtrGateN; ++i) if (kMtrGateSites[i] == ra)
+                g_inj.g[std::make_pair(cl, ra)].push_back(ret);
+            for (int i = 0; i < kMisQueryN; ++i) if (kMisQuerySites[i] == ra) {
+                g_inj.q[std::make_pair(cl, ra)].push_back(ret);
+                g_inj.qt[std::make_pair(cl, ra)].push_back(ht);
+            }
+            for (int i = 0; i < kMisGateN; ++i) if (kMisGateSites[i] == ra)
                 g_inj.g[std::make_pair(cl, ra)].push_back(ret);
             for (int i = 0; i < kGateN; ++i) if (kGateSites[i] == ra)
                 g_inj.g[std::make_pair(cl, ra)].push_back(ret);
@@ -514,6 +625,10 @@ int main(int argc, char** argv) {
     Backend be;
     PowerupSystem sys;
     sys.Init(&be);
+    std::size_t misNext = 0, misSteps = 0, misLives = 0, misBiasBad = 0, misLiveBad = 0;
+    std::map<int, mashed_re::Powerup::Missile::Record> misLive;
+    std::map<int, float> misLastAge;
+    std::set<int> misSeen;
     std::size_t mtrNext = 0, mtrSteps = 0, mtrLives = 0;
     std::map<int, mashed_re::Powerup::Mortar::Record> mtrLive;
     std::map<int, float> mtrLast;
@@ -534,6 +649,35 @@ int main(int argc, char** argv) {
             mashed_re::Powerup::Aim::Record arec;
             std::memset(&arec, 0, sizeof arec);
             mashed_re::Powerup::Aim::Acquire(want, ai->second, &arec);
+        }
+        // MISSILE's pool loop. The tick walks EBP DOWNWARD, so record index 4 is
+        // stepped first; the capture emits rows in index order, so replay them
+        // descending to reproduce the original's per-call contact ORDER.
+        {
+            std::size_t lo = misNext;
+            while (misNext < misRows.size() && misRows[misNext].call == r.call) ++misNext;
+            for (std::size_t k = misNext; k-- > lo; ) {
+                MisRow& m = misRows[k];
+                mashed_re::Powerup::Missile::Record& live = misLive[m.rec];
+                // a new life: the slot is fresh, or its age went DOWN
+                if (!misSeen.count(m.rec) || m.pre.age < misLastAge[m.rec]) {
+                    live = m.pre;
+                    misSeen.insert(m.rec);
+                    ++misLives;
+                }
+                misLastAge[m.rec] = m.pre.age;
+                // position and delta are INPUTS (the flight step is not ported);
+                // age, live and bias are the port's and are carried forward.
+                for (int c = 0; c < 3; ++c) {
+                    live.pos[c]   = m.pre.pos[c];
+                    live.delta[c] = m.pre.delta[c];
+                }
+                live.live = 1;
+                mashed_re::Powerup::Missile::Step(live, r.dt, m.framectr);
+                if (std::fabs(live.bias - m.postBias) > 1e-6f) ++misBiasBad;
+                if (live.live != m.postLive) ++misLiveBad;
+                ++misSteps;
+            }
         }
         // MORTAR's pool loop, for the projectiles this call had in flight. Pool
         // order within a call is the capture's row order (the tick walks
@@ -586,6 +730,25 @@ int main(int argc, char** argv) {
         }
     }
 
+    bool misBad = false;
+    if (haveMis) {
+        // A bias mismatch only MEANS anything when the capture carries hit_t;
+        // without it the port computes from the fallback 0.5 and every hit row
+        // would 'diverge' on a missing input rather than on a defect.
+        misBad = (misLiveBad != 0) || (g_inj.tPresent && misBiasBad != 0);
+        std::printf("\nMISSILE PROJECTILE CONTACT HALF (port vs capture POST)\n"
+                    "  updates replayed %zu of %zu   projectile lives seeded %zu\n"
+                    "  ground-bias mismatches %zu   live-flag mismatches %zu   %s\n",
+                    misSteps, misRows.size(), misLives, misBiasBad, misLiveBad,
+                    misBad ? "DIVERGES" : "clean",
+                    g_inj.tPresent ? "present"
+                                   : "ABSENT -- pre-2026-09-28c capture, the bias "
+                                     "below is NOT tested");
+        if (misSteps != misRows.size())
+            std::printf("  NOTE: %zu capture rows fell outside the replayed call range\n",
+                        misRows.size() - misSteps);
+    }
+
     // MORTAR's contact COUNTS are schedule-derived -- the port steps once per
     // captured row, and the first thing a step does is the query -- so they pass
     // even with the integrator broken. MEASURED: all three MASHED_MORTAR_FORCE
@@ -633,6 +796,7 @@ int main(int argc, char** argv) {
         // port never steps a projectile, so a 0-vs-0 row would be a missing
         // input printed as a match.
         if (kSites[i].owner == 7 && kSites[i].mode == 1 && !haveMtr) armed = false;
+        if (kSites[i].mode == 4 && !haveMis) armed = false;
         for (unsigned g = kSites[i].gatedBy; armed && g; ) {
             int gi = -1;
             for (int j = 0; j < kSiteCount; ++j) if (kSites[j].ra == g) { gi = j; break; }
@@ -649,13 +813,17 @@ int main(int argc, char** argv) {
         if (armed && !contested && diff) bad = 1;
         if (!armed && (port || g_inj.origCalls[ra])) notArmed = 1;
     }
-    std::printf("CONTACT VERDICT: %s%s%s\n", (bad || mtrBad) ? "DIVERGES" : "CLEAN",
+    std::printf("CONTACT VERDICT: %s%s%s\n",
+                (bad || mtrBad || misBad) ? "DIVERGES" : "CLEAN",
                 notArmed ? "  (not-armed rows had no Frida listener when this capture"
                            " was taken and are excluded)" : "",
                 haveAim ? "" : "  (no --puhook-aim channel: the AIM rows are NOT"
                                " tested by this capture)");
     if (!haveMtr)
         std::printf("         (no --puhook-mortar channel: the MORTAR rows are NOT"
+                    " tested by this capture)\n");
+    if (!haveMis)
+        std::printf("         (no --puhook-missile channel: the MISSILE rows are NOT"
                     " tested by this capture)\n");
     return 0;
 }

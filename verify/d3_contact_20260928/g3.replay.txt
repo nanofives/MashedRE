@@ -28,5 +28,9 @@ CONTACT CALL SITES (original capture vs port), slot 0
   MORTAR gate  0x0045c350  0x4537bb          0      0         0         0  not-armed
   MORTAR lerp  0x004b4650  0x4537df          0      0         0         0  not-armed
   MORTAR basis 0x004b5080  0x45382c          0      0         0         0  not-armed
+  MISSIL sphere 0x004b4d10 0x455de0          0      0         0         0  not-armed
+  MISSIL gate   0x0045c350 0x455df9          0      0         0         0  not-armed
+  MISSIL ground 0x004b4cd0 0x455e59          0      0         0         0  not-armed
 CONTACT VERDICT: DIVERGES  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --puhook-aim channel: the AIM rows are NOT tested by this capture)
          (no --puhook-mortar channel: the MORTAR rows are NOT tested by this capture)
+         (no --puhook-missile channel: the MISSILE rows are NOT tested by this capture)

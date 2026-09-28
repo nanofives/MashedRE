@@ -11,12 +11,12 @@ Ghidra MCP did not load; no Ghidra project was opened for writing.
 
 ## 0. Headline
 
-1. **Criterion (c) went from 1 clean / 1 diverges / 7 blocked to 7 clean +
-   the sweep + the shared acquisition, 1 near-clean, 1 partial.** OIL, P_MINE,
-   SHOTGUN, DRUM, GUN and MORTAR all measure CLEAN call site by call site against
-   fresh original-side captures (§4); **R_FLAME** is exact on two of three
-   captures, its 2-of-546 residue diagnosed to a named unported routine (§4.2d);
-   only **MISSILE** still owes its own projectile chain. P_MINE moved from
+1. **Criterion (c) went from 1 clean / 1 diverges / 7 blocked to 8 clean +
+   the sweep + the shared acquisition, 1 near-clean.** OIL, P_MINE, SHOTGUN,
+   DRUM, FLASH, GUN, MORTAR and MISSILE all measure CLEAN call site by call site
+   against fresh original-side captures (§4); **R_FLAME** is the only residue,
+   exact on two of three captures with its 2-of-546 diagnosed to a named unported
+   routine (§4.2d). P_MINE moved from
    **78 decision mismatches → 0** on the same `c2` capture the prior note measured
    it on (§4.3).
 2. **The dispatcher's armed sweep is ported** (§3.3), including the deactivation
@@ -35,11 +35,11 @@ Ghidra MCP did not load; no Ghidra project was opened for writing.
    two sites are reachable from one type only.
 5. **No regression.** The 9-type decision replay is CLEAN on the archived
    `o3`/`o4`, on the new `m1`, and on all five current captures (§6).
-6. **GUN is CLOSED; MORTAR and MISSILE are down to their own projectile
-   integration.** Their remaining contact sites sit inside per-type **projectile
-   updates** — decoded here (§5.3) — each of which integrates a position and a
-   velocity the port does not own. Neither is blocked on the contact chain or on
-   the shared acquisition any more.
+6. **All four projectile types are closed** (§4.2d–§4.2h). Their contact sites
+   sat inside per-type projectile updates, and each is now ported with its own
+   non-degeneracy control. What is NOT closed is a separate, older thing: a
+   **decision-half** defect on a MORTAR-then-MISSILE sequence, found by a new
+   capture and shown by a control build to predate this session (§4.4b).
 7. **`FUN_00459620` is SHARED — and it is a TARGET-ACQUISITION routine, not a
    projectile one** (§4.2e, §5.2). A call-site scan of the whole `.text` finds
    three callers: `0x00453bd9` (MORTAR tick), `0x00455c29` (MISSILE), `0x004569c5`
@@ -593,6 +593,97 @@ Do **not** reach for a Ghidra master write to define `0x00455c90`: MORTAR's pool
 was found off its tick's own loop bounds without one (§4.2f), and the same works
 here.
 
+### 4.2h MISSILE — ported, and the last type
+
+The tick is `FUN_00455c90`. **Ghidra's auto-analysis never defined it**, which is
+why every earlier note stopped at a call-site count. It was read with a `--create`
+mode added to `re/tools/decomp_pc.py` this session: a **transient** function
+definition against a `-readOnly` pool clone, discarded on exit. That is not a
+master write, and none was needed.
+
+**Two pools, walked in lockstep in one loop**, both bounds disassembled:
+
+| pool | base | stride | count | from |
+|---|---|---|---|---|
+| aim records | `0x006885d0` | `0x2c` | **5** | `MOV EDI,0x6886ac` `0x00455c9a`, `SUB EDI,0x2c` `0x00455ca9` |
+| projectiles | `0x006883b0` | `0x6c` | **5** | `MOV EBP,0x688620` `0x00455c9f`, `SUB EBP,0x6c` `0x00455caf`, loop exit `0x00688404` |
+
+Two corrections this forces. §4.2g said the aim pool had **4** entries — it has
+**5** (4 intervals, 5 records). And the older `DAT_006883bc stride 0x6c` named the
+projectile record's **position field** (base + `0x0c`), not its base — the same
+off-by-a-field as the acquisition record's `&DAT_0068b9fc` gloss. **The loop walks
+DOWNWARD**, so record index 4 is stepped first, which is load-bearing for any
+per-frame zip against contact rows.
+
+**What the tick does per live record**, and the one thing that explains every
+earlier count: the sphere query is gated on the **parity of `DAT_007f101c`**
+(`AND ECX,0x80000001` + the signed fixup, `0x00455d83`..`0x00455d99`), while the
+ground probe runs every frame. That is why `0x455de0` sits at about half of
+`0x455e59` in every capture — `m1` 15 vs 31, `m2` 6 vs 12, `s1` 78 vs 155.
+
+**Falsified offline first** (`re/tools/missile_model.py`, on `s1`, 195 live
+projectile-frames over 195 frames):
+
+```
+even frames (parity gate) 98 of 195   0x455de0 rows 98   0x455e59 rows 195
+A sphere-query count  frames match=195 mismatch=0
+B ground-query count  frames match=195 mismatch=0
+C bias sentinel       records match=195 mismatch=0
+VERDICT: CLEAN
+```
+
+**Ported and measured** (`Powerup/PowerupMissile.{h,cpp}`):
+
+| site | `s1` | `s2` | |
+|---|---|---|---|
+| `0x455de0` sphere `0x004b4d10` | 78/78 | 44/44 | clean |
+| `0x455df9` gate `0x0045c350` | 1/1 | 1/1 | clean |
+| `0x455e59` ground `0x004b4cd0` | 155/155 | 87/87 | clean |
+| ground-bias value | *(no `hit_t`)* | **0 mismatches** | clean |
+
+**One defect the measurement caught**, worth recording because reasoning would
+not have: after the detonation call `CALL 0x455910` `0x00455e02`, execution
+**falls through** to `0x00455e07`, the ground probe. Only the AGE path skips it,
+via `JMP 0x455f2a` `0x00455d37`. The port returned early instead, and that cost
+exactly **one** ground query on `s1` (155 vs 154) — which is how it was found.
+
+**A missing replay input, closed.** `pu_replay`'s `QueryInject` hardcoded
+`out->t = 0.5f` with a comment saying nothing downstream of it was measured. That
+stopped being true: MISSILE's `+0x28` ground bias is a pure function of `t`
+(`(t*3 - 0.4)*2.5*-0.5`, floored at `-0.05`). The contact capture now records the
+hit's segment parameter as a `hit_t` column (the result buffer is arg3, `t` at
+`+0x38`), the replay feeds it back, and the bias goes from 107 mismatches to
+**0**. A capture without the column leaves the bias explicitly untested rather
+than failing it.
+
+**Non-degeneracy, run and reported:**
+
+| control | effect |
+|---|---|
+| `noparity` — sphere query every frame | `0x455de0` 155 vs 78 (`s1`), 87 vs 44 (`s2`) — **DIVERGES** |
+| `flatbias` — bias always the miss sentinel | 87 bias mismatches on `s2` — **DIVERGES** |
+| `nolife` — age gate never expires | **INERT on both captures** |
+| *(unset)* | every row clean |
+
+The `nolife` result is reported as what it is: **no projectile aged out in either
+capture**, so the 3.0 s lifetime gate has **no control coverage here**. Its two
+terminals both came from the sphere path. A capture with a missile that times out
+is what would close it.
+
+**Port boundary, wider than MORTAR's.** The FLIGHT INTEGRATION is *not* ported:
+`FUN_00455610` (unguided) and `FUN_004556f0` (homing) both read **and write** the
+projectile's RenderWare frame matrix through `FUN_004c1520` / `FUN_004c1340` /
+`FUN_004c15c0`, a closed loop the replay cannot reproduce without those RwMatrix
+ops. Position and delta are INPUTS. So the port decides what a missile *does*, not
+where it *is*. `FUN_00455100` (RA `0x455cd9`) belongs to the aim half and is not
+ported either.
+
+**`FUN_004b4d10` decoded**: it copies **four** dwords (centre + radius), writes
+tag **3**, and tails the **same** `FUN_004b4c80` as `0x004b4cd0` — so it is that
+query's sphere sibling and returns the same intersection count. Its decompilation
+is typed `void`; the tick tests its `EAX`, and the tail call is what carries the
+count.
+
 ### 4.3 The prior note's own captures
 
 `c2` and `c3` predate the `surface_gate` instrument, and `c2`/`c3`/`g2`/`g3`
@@ -627,6 +718,36 @@ as a divergence. With that rule all five captures report
 The four mismatches that survived the gate port were all at `c2` `t+82`
 (`code_post`, `fire_modes`, `canfire_rets`, `deact_ra orig='0x45bcfc'`) — the one
 frame the armed sweep fired. §3.3 closed them.
+
+### 4.4b A NEW decision-half defect, found by a new capture and NOT caused here
+
+`s2` (plan `11,7,11,11` — MISSILE, MORTAR, MISSILE, MISSILE) is the first capture
+to put a MISSILE pickup *after* a MORTAR one. Its **9-type decision** replay
+reports **181 mismatches**, all on the THIRD activation; the first MISSILE and the
+MORTAR before it are both CLEAN.
+
+The shape: from `t+1` on, the port FIRES and the original does not —
+`fire_modes orig='' port='2'`, `ammo orig=1 port=0`, `jet orig=0 port=1`,
+`life orig=0.0 port=0.483`.
+
+**It is not a regression from this session's work, and that is measured, not
+argued.** `re/tools/pu_replay/build_control.bat 5bb0d5e3` links the *pre-R_FLAME*
+`PowerupEffects.cpp` against everything else current, and it reports the **same
+181 mismatches**. The defect is older than every commit in this note. (The control
+build was extended this session to link the four new TUs, which is why it can run
+at all.)
+
+**Consequence for the contact table, stated so it is not mistaken for a
+criterion-(c) failure.** The port holds the third MISSILE armed longer than the
+original, so the dispatcher's armed sweep fires **33 extra times** —
+`SWEEP query 0x45bcd8` 152 vs 185. That single row is the *whole* of `s2`'s
+`CONTACT VERDICT: DIVERGES`. Every MISSILE, MORTAR and AIM row on `s2` is clean,
+and `s1` (plan `11,11,11,11`, no MORTAR) is CLEAN throughout including its sweep.
+
+Next command: replay `s2` with `--slot 0` and dump the third activation's
+`FUN_00455150` (MISSILE FIRE) gate inputs; the likely coupling is the aim record
+at `0x006885d0 + slot*0x2c`, whose `+0x1c` the tick tests before
+`FUN_00455100` — the port's FIRE consults no aim record at all.
 
 ## 5. Corrections to `D3_CONTACT_2026-09-27.md` §5
 
@@ -744,9 +865,14 @@ the flight integration has to be faithful before the count can be compared.
 - The new `verify/d3_contact_20260928b/m1.diff.txt` and `m2.diff.txt` (MORTAR,
   GUN, MISSILE) **CLEAN** — a decision-side guard those three did not previously
   have.
-- Contact replay, re-run after the acquisition port on every capture:
-  `c2` CLEAN, `c3` CLEAN, `g2` CLEAN, `g4` CLEAN, `m1` CLEAN, `m2` CLEAN, and
-  `g3` DIVERGES on exactly the 2-query R_FLAME residue of §4.2d and nothing else.
+- Contact replay, re-run after every change, on all NINE captures:
+  `c2`, `c3`, `g2`, `g4`, `m1`, `m2`, `s1` CLEAN; `g3` DIVERGES on exactly the
+  2-query R_FLAME residue of §4.2d; `s2` DIVERGES on exactly the dispatcher SWEEP
+  row, downstream of the older decision defect of §4.4b, with every MISSILE,
+  MORTAR and AIM row on it clean.
+- 9-type decision replay: `o3`, `o4`, `m1`, `m2`, `s1` CLEAN; `s2` 181 mismatches
+  which the **control build** (`build_control.bat 5bb0d5e3`, the pre-R_FLAME
+  effects) reproduces exactly — so it is not this session's.
 - All four current captures CLEAN (§4.4).
 - `mashedmod\build.bat` built both targets clean.
 
@@ -778,18 +904,19 @@ are not part of the guard and were not in the prior note's either.
 | — acquisition (shared) | **clean** | `FUN_00459620`'s four sites on `m1`: fallback query **187/187**, fallback lerp 33/33, LOS lerp 152/152, LOS query 348/348 (schedule-derived). Both non-degeneracy controls DIVERGE. §4.2e |
 | GUN | **clean** | no site beyond the acquisition four ever appears in a GUN window, and window attribution can only OVER-collect, so that negative is sound. The three others that do appear are not power-up sites: `0x479124` fires 6666 times in `g3` (~1/frame over the whole 6650-frame race, held or not), and `0x475229`/`0x4752b2` fire 1× in `g3` but 4× in `g4` and 4× in `m1`, i.e. outside GUN windows too |
 | MORTAR | **clean** | the acquisition four plus its OWN chain, all ported (§4.2f): `0x453789` 280/280, gate `0x4537bb` 2/2, lerp `0x4537df` 1/1, basis `0x45382c` 1/1, and the carried integration within **4.77e-07** over 280 steps and 3 projectile lives. All three non-degeneracy controls DIVERGE |
-| MISSILE | partial | the acquisition sites are clean (32/32 on `m1`, and its range/cone are 8.0/30.0, not MORTAR's 15/20); its OWN chain is mapped but NOT ported (§4.2g) — 5 sites, one of them (`0x455df9`) missing from every earlier list, plus a leaf `PowerupContact` lacks (`0x004b4d10`) |
+| MISSILE | **clean** | acquisition 32/32 on `m1` (its range/cone are 8.0/30.0, not MORTAR's 15/20) plus its OWN chain, ported (§4.2h): sphere `0x455de0` 78/78 and 44/44, gate `0x455df9` 1/1 and 1/1, ground `0x455e59` 155/155 and 87/87, and the ground-bias VALUE exact on `s2`. The `noparity` and `flatbias` controls DIVERGE; `nolife` is inert (no projectile aged out) |
 
-**7 clean + the sweep + the shared acquisition, 1 near-clean (R_FLAME),
-1 partial (MISSILE)** — against 1 clean / 1 diverges / 7 blocked at the start of
-the day.
+**8 clean + the sweep + the shared acquisition, 1 near-clean (R_FLAME)** —
+against 1 clean / 1 diverges / 7 blocked at the start of the day. Every type's
+contact outcomes are now ported and measured; R_FLAME is the only residue, and it
+is bounded at 2 queries of 546 on one of three captures.
 
-What MISSILE still owes is **not** the acquisition and **not** the contact chain:
-it is its own **projectile record + per-frame integration** (§5.3), the same
-shape MORTAR just closed in §4.2f. `PowerupContact.cpp` provides every leaf,
-`PowerupAim.cpp` the shared target, and `PowerupMortar.cpp` is the worked example
-of the remaining pattern. GUN needed neither — the acquisition sites *are* its
-contact sites, which is why it closed outright.
+What is NOT closed is a separate thing, and it is worth not confusing with this:
+the **decision** half diverges on one new capture (`s2`, §4.4b) in a
+MORTAR-then-MISSILE sequence. That is criterion (b) territory, it predates this
+session (measured against a control build), and it is what makes `s2`'s contact
+verdict read DIVERGES — through the dispatcher SWEEP row only, with every
+MISSILE, MORTAR and AIM row on that capture clean.
 
 ## 8. OPEN
 
@@ -807,15 +934,20 @@ contact sites, which is why it closed outright.
    because its reference point comes from `FUN_004671d0(0)`, a viewport query the
    replay has no equivalent for. Bound on what that costs: **2 queries of 546 on
    one of three captures, on a count only**; lerp and basis are exact on all three.
-3. ~~**MORTAR's own detonation test**~~ — **DONE** (§4.2f). What is left of
-   MORTAR is only effects and the trail ribbon, neither of which makes a contact
-   call. **MISSILE's own chain is now the single next slice**, and it is the same
-   shape: `0x455cd9`→`0x00455100`, `0x455e59`→`0x004b4cd0`,
-   `0x455de0`→`0x004b4d10`, terminal `0x455e07`→`0x00455910`, all inside the
-   MISSILE tick region past `0x00455c90` which **Ghidra has not defined**. Start
-   by disassembling it (`re/tools/disasm_va.py 0x455c90 0x400`) and by finding
-   its pool the way MORTAR's was found — off the tick's own loop bounds — rather
-   than by asking for a Ghidra master write.
+3. ~~**MORTAR's own detonation test**~~ and ~~**MISSILE's own chain**~~ — both
+   **DONE** (§4.2f, §4.2h). What is left of either is effects and trail ribbons,
+   none of which makes a contact call, plus MISSILE's flight integration
+   (`FUN_00455610` / `FUN_004556f0`), which is a closed loop through the
+   projectile's RW frame matrix and would need `FUN_004c1520` / `FUN_004c1340`
+   ported first.
+3b. **THE NEXT SLICE IS NOT criterion (c).** It is the decision-half defect of
+   §4.4b: on a MORTAR-then-MISSILE sequence the port fires a MISSILE the original
+   refuses, 181 mismatches on `s2`, reproduced by a control build against the
+   pre-R_FLAME effects so it is older than this note. Next command in §4.4b.
+3c. **MISSILE's 3.0 s lifetime gate has NO control coverage.** The `nolife`
+   control is inert on both `s1` and `s2` because no projectile aged out in
+   either — both terminals came from the sphere path. A capture with a missile
+   that times out would close it.
 4. **P_MINE's and DRUM's segment direction** — [UNCERTAIN], §3.1. Both probe world
    `-Y` because `HostCar` has no matrix up row. Next command in §3.1.
 5. **The sweep's sphere** `slot+0x80..0x8c`: the radius at `+0x8c` has no writer in
@@ -827,11 +959,12 @@ contact sites, which is why it closed outright.
 7. **SHOTGUN's per-pellet frames.** Both of the port's two passes probe from the
    owner car; the original probes from `param_1[1]` and `param_1[2]`. It did not
    change the counts on `g4`, but it moves both impact points.
-8. **The two new capture channels are thin.** `--puhook-aim` has run twice (`m1`,
-   `m2`) and `--puhook-mortar` once (`m2`), all on track 0. Every earlier capture
-   has neither file, and `pu_replay` now prints those rows as `not-armed` rather
-   than `clean` — a 0-vs-0 row is a missing input, not a match. A capture on a
-   different track would harden §4.2e and §4.2f.
+8. **The new capture channels are thin, and all on track 0.** `--puhook-aim` has
+   run four times, `--puhook-mortar` twice, `--puhook-missile` twice, and the
+   `hit_t` column exists on ONE capture (`s2`). Every earlier capture lacks them,
+   and `pu_replay` prints those rows as `not-armed` rather than `clean` — a 0-vs-0
+   row is a missing input, not a match. A capture on a different track would
+   harden §4.2e–§4.2h.
 9. **MORTAR's 3 projectile lives are few.** §4.2f's drift is measured over 280
    updates but only 3 launches, all on one track. The `noarc`/`nohome`/`allow`
    controls make it a real measurement rather than a lucky one, but more lives

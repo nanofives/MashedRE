@@ -3,7 +3,7 @@
 // usage: DecompPC.java <manifest.txt> <out.json> [modes...]
 //   manifest.txt  one VA per line (hex, leading 0x optional); blank / '#' lines skipped
 //   out.json      output path
-//   modes         zero or more of {decomp,callees,callers,xrefs,strings,datarefs} as SEPARATE
+//   modes         zero or more of {decomp,create,callees,callers,xrefs,strings,datarefs} as SEPARATE
 //                 args; default "decomp"
 //
 // GOTCHA: modes are separate args, never one comma-separated string. analyzeHeadless
@@ -55,6 +55,7 @@ public class DecompPC extends GhidraScript {
     private boolean mXrefs;
     private boolean mStrings;
     private boolean mPort;      // Lane 2: decompiler prototype + typed globals + callee prototypes
+    private boolean mCreate;    // transiently define a function at an undefined address
     private boolean mDataRefs;  // treat each address as DATA and split its refs into writes/reads
 
     @Override
@@ -69,6 +70,9 @@ public class DecompPC extends GhidraScript {
             String m = args[i].trim().toLowerCase();
             if (m.equals("decomp")) {
                 mDecomp = true;
+            }
+            else if (m.equals("create")) {
+                mCreate = true;
             }
             else if (m.equals("callees")) {
                 mCallees = true;
@@ -162,6 +166,29 @@ public class DecompPC extends GhidraScript {
             // Address may be mid-function; report which function contains it rather
             // than failing, so a wrong-by-a-few-bytes RVA still yields something.
             fn = currentProgram.getFunctionManager().getFunctionContaining(a);
+        }
+        if (fn == null && mCreate) {
+            // `create` mode: Ghidra's auto-analysis misses functions that are only
+            // reached through a data table or a computed call, and some of those are
+            // load-bearing (the MISSILE tick 0x00455c90 is one). Define the function
+            // HERE, in this session only.
+            //
+            // This is SAFE BY CONSTRUCTION and is not a master write: decomp_pc.py
+            // always opens a pool CLONE with -readOnly, so the transaction Ghidra
+            // wraps the script in is discarded on exit and nothing is persisted --
+            // not even to the clone. Use it to READ an undefined region; use
+            // CreateMissedFunctions.java (and the master) when you want it to stick.
+            try {
+                fn = createFunction(a, null);
+                if (fn != null) w.println("      \"created_transiently\": true,");
+            } catch (Exception e) {
+                w.println("      \"create_failed\": \"" + esc("" + e) + "\",");
+            }
+            if (fn == null) {
+                // A create can fail because the bytes are not disassembled yet.
+                try { disassemble(a); fn = createFunction(a, null); } catch (Exception e) { }
+                if (fn != null) w.println("      \"created_transiently\": true,");
+            }
         }
         if (fn == null) {
             // Don't just fail: a tracker RVA with no Ghidra function is itself a finding

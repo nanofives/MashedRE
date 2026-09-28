@@ -66,6 +66,7 @@
 "Powerup\PowerupContact.cpp"
 "Powerup\PowerupAim.cpp"
 "Powerup\PowerupMortar.cpp"
+"Powerup\PowerupMissile.cpp"
 "Race\RaceCamera.cpp"
 "Race\RaceSession.cpp"
 "Race\GameFlow.cpp"

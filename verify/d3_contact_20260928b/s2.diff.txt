@@ -1,0 +1,17 @@
+  [0] MISSILE  frames=  33 CLEAN          checked=ammo:32,canfire_rets:33,code_post:33,deact_ra:33,fire_modes:33,jet:32,life:32,prev3:33
+  [1] MORTAR   frames= 119 CLEAN          checked=ammo:118,canfire_rets:119,code_post:119,cooldown:118,deact_ra:119,fire_modes:119,prev3:119
+  [2] MISSILE  frames=  72 181 MISMATCH   checked=ammo:32,canfire_rets:33,code_post:33,deact_ra:33,fire_modes:33,jet:32,life:32,prev3:33
+        t+0: canfire_rets orig='' port='0'
+        t+1: fire_modes orig='' port='2'
+        t+1: canfire_rets orig='' port='0'
+        t+1: ammo orig=1 port=0
+        t+1: jet orig=0 port=1
+        t+1: life orig=0.0 port=0.4833333492279053
+        t+2: fire_modes orig='' port='1'
+        t+2: canfire_rets orig='' port='0'
+        t+2: ammo orig=1 port=0
+        t+2: jet orig=0 port=1
+        t+2: life orig=0.0 port=0.46666669845581055
+        t+3: canfire_rets orig='' port='0'
+        ... 169 more
+VERDICT: 181 mismatches

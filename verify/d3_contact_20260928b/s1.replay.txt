@@ -1,4 +1,9 @@
-replayed 411 frames on slot 0
+replayed 222 frames on slot 0
+
+MISSILE PROJECTILE CONTACT HALF (port vs capture POST)
+  updates replayed 155 of 195   projectile lives seeded 4
+  ground-bias mismatches 107   live-flag mismatches 0   clean
+  NOTE: 40 capture rows fell outside the replayed call range
 
 CONTACT CALL SITES (original capture vs port), slot 0
   site                     ret_addr       orig   port port-only orig-only  status
@@ -18,19 +23,18 @@ CONTACT CALL SITES (original capture vs port), slot 0
   RFLAME query 0x004b4cd0  0x45afcc          0      0         0         0  clean
   RFLAME lerp  0x004b4650  0x45aff3          0      0         0         0  clean
   RFLAME basis 0x004b5080  0x45b04c          0      0         0         0  clean
-  SWEEP  query 0x004b4b60  0x45bcd8        351    351         0         0  clean
-  SWEEP  confirm 0x45c350  0x45bcea          4      4         0         0  clean
-  AIM    fallback query    0x459c19        187    187         0         0  clean
-  AIM    fallback lerp     0x459c3c         33     33         0         0  clean
-  AIM    los      query    0x459d54        348    348         0         0  clean
-  AIM    los      lerp     0x459db5        152    152         0         0  clean
-  MORTAR query 0x004b4cd0  0x453789        335      0         0       335  not-armed
-  MORTAR gate  0x0045c350  0x4537bb          4      0         0         4  not-armed
-  MORTAR lerp  0x004b4650  0x4537df          2      0         0         0  not-armed
-  MORTAR basis 0x004b5080  0x45382c          2      0         0         0  not-armed
-  MISSIL sphere 0x004b4d10 0x455de0         16      0         0        16  not-armed
-  MISSIL gate   0x0045c350 0x455df9          2      0         0         2  not-armed
-  MISSIL ground 0x004b4cd0 0x455e59         32      0         0        32  not-armed
-CONTACT VERDICT: CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)
+  SWEEP  query 0x004b4b60  0x45bcd8        132    132         0         0  clean
+  SWEEP  confirm 0x45c350  0x45bcea          0      0         0         0  clean
+  AIM    fallback query    0x459c19         58     58         0         0  clean
+  AIM    fallback lerp     0x459c3c         22     22         0         0  clean
+  AIM    los      query    0x459d54        128    128         0         0  clean
+  AIM    los      lerp     0x459db5         49     49         0         0  clean
+  MORTAR query 0x004b4cd0  0x453789          0      0         0         0  not-armed
+  MORTAR gate  0x0045c350  0x4537bb          0      0         0         0  not-armed
+  MORTAR lerp  0x004b4650  0x4537df          0      0         0         0  not-armed
+  MORTAR basis 0x004b5080  0x45382c          0      0         0         0  not-armed
+  MISSIL sphere 0x004b4d10 0x455de0         78     78         0         0  clean
+  MISSIL gate   0x0045c350 0x455df9          1      1         0         0  clean
+  MISSIL ground 0x004b4cd0 0x455e59        155    155         0         0  clean
+CONTACT VERDICT: CLEAN
          (no --puhook-mortar channel: the MORTAR rows are NOT tested by this capture)
-         (no --puhook-missile channel: the MISSILE rows are NOT tested by this capture)
