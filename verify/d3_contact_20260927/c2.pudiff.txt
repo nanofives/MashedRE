@@ -1,0 +1,18 @@
+  [0] MISSILE  frames=  33 CLEAN          checked=ammo:32,canfire_rets:33,code_post:33,deact_ra:33,fire_modes:33,jet:32,life:32,prev3:33
+  [1] MORTAR   frames= 154 CLEAN          checked=ammo:153,canfire_rets:154,code_post:154,cooldown:153,deact_ra:154,fire_modes:154,prev3:154
+  [2] DRUM     frames=  10 CLEAN          checked=ammo:9,canfire_rets:10,code_post:10,deact_ra:10,fire_modes:10,prev3:10
+  [3] P_MINE   frames=  83 78 MISMATCH    checked=ammo:9,canfire_rets:10,code_post:10,deact_ra:10,fire_modes:10,prev3:10
+        t+8: ammo orig=1 port=0
+        t+9: code_post orig='12' port='-1'
+        t+9: fire_modes orig='3' port=''
+        t+9: canfire_rets orig='0' port='1'
+        t+9: deact_ra orig='' port='0x45bd67'
+        t+10: row only in orig (12->12 F[1] D[])
+        t+11: row only in orig (12->12 F[] D[])
+        t+12: row only in orig (12->12 F[] D[])
+        t+13: row only in orig (12->12 F[] D[])
+        t+14: row only in orig (12->12 F[] D[])
+        t+15: row only in orig (12->12 F[] D[])
+        t+16: row only in orig (12->12 F[2] D[])
+        ... 66 more
+VERDICT: 78 mismatches

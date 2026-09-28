@@ -11,7 +11,20 @@
 // Each stub cites the real RVA so the wiring step knows what to bind.
 //
 // Anchored to MASHED.exe BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E.
+//
+// 2026-09-27 (D3-CONTACT): the two RW-math residuals below are no longer stubs.
+// `Rw_TransformPoints` and `Rw_MatrixFromAxisAngle` are bound to the real ported
+// primitives, exactly as Vehicle/ForceIntegratorStubs.cpp:39-48 already binds the
+// identically-named Vehicle-namespace pair. The remaining entries stay stubbed and
+// each still cites its RVA.
 #include "ContactDeps.h"
+
+// Forward-decls at GLOBAL scope (must NOT be nested inside mashed_re::Collision).
+namespace mashed_re { namespace Math {
+    void RwV3dTransformPointsCPU(float* dst, const float* src, int count, const float* m);
+    void RwV3dTransformVectorsCPU(float* dst, const float* src, int count, const float* m);
+} }
+extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float angle_deg, int mode);
 
 namespace mashed_re {
 namespace Collision {
@@ -26,15 +39,56 @@ int*  g_terrainBatch            = nullptr;     // batch base (B4 sets)
 float g_suspScratch[12]         = {0};         // DAT_00881560 (shared w/ ForceIntegrator)
 int   g_playerCount             = 0;           // DAT_00803320 (B4/A sets)
 
-// --- residual engine deps (stubbed; real RVAs cited) ------------------------
-// FUN_004c3df0 — RwV3dTransformPoints. Real impl: Math/RwV3dTransformPoints.cpp.
-void Rw_TransformPoints(float* dst, const float* src, int count, void* /*mtx*/) {
-    for (int i = 0; i < count * 3; ++i) dst[i] = src[i];   // identity until wired
+// --- residual engine deps (real RVAs cited; two are now BOUND, rest stubbed) ---
+// FUN_004c3df0 — RwV3dTransformPoints.  BOUND 2026-09-27.
+// Argument contract MEASURED at caller 0x0046d53a (inside FUN_0046d510). The pushes
+// in reverse order are arg1 = EDI = ESI+0x881f74 (destination — 0x0046d53f reads the
+// result back with `MOV ECX,[EDI]`), arg2 = 0x614708, arg3 = 1, arg4 = ESI+0x881ec8.
+// The .data constant at 0x614708 is the vec3 {0.0, 0.0, 1.0} (bytes 00000000
+// 00000000 0000803f), i.e. the SOURCE point; arg4 is the RwMatrix inside the
+// 0xd04-stride vehicle record (`IMUL ESI,ESI,0xd04` at 0x0046d51e). So the contract
+// is (dstOut, srcIn, count, matrix) — the standard RW order, the same binding
+// Vehicle/ForceIntegratorStubs.cpp:39 already uses.  [The gloss
+// "fn(out_vec3, matrix, 1, in_vec3)" in Math/RwV3dTransformPoints.cpp:39 and
+// re/frida/hooks_registry.py:3188 has arg2/arg4 swapped; corrected from the asm.]
+//
+// The original 0x004c3df0 is a __cdecl thunk that dispatches the RW *device*
+// transform through *(DAT_007d3ffc + DAT_007d3ff8 + 0x14) (asm 0x004c3e02..
+// 0x004c3e10, caller-cleanup `ADD ESP,0x10` at 0x004c3e14, returns arg1 via
+// `MOV EAX,ESI` at 0x004c3e17). The standalone has no RW device table, so this binds
+// to a CPU stand-in. The device-dispatch form itself is ported and C4-verified in
+// Math/RwV3dTransformPoints.cpp (hooks.csv 004c3df0), used by the .asi target.
+//
+// WHICH stand-in: the VECTORS one. MEASURED 2026-09-27 that device slot +0x14
+// IGNORES the matrix translation row while slot +0xc (FUN_004c3d90) adds it —
+// log/diff_rw_v3d_transform_points_cpu.csv is RED on exactly the 4 of 10 vectors
+// with a nonzero pos row, and log/diff_rw_device_dispatch_0c_points.csv puts the
+// same points impl 9/10 bit-identical (1 ULP on the 10th) against +0xc. Full
+// evidence and the U-1891 resolution: Math/RwV3dTransformPointsCPU.cpp header.
+// `RwV3dTransformVectorsCPU` is bit-identical to the original on all 10 vectors
+// (log/diff_rw_v3d_transform_vectors_cpu.csv, hook rw_v3d_transform_vectors_cpu).
+void Rw_TransformPoints(float* dst, const float* src, int count, void* mtx) {
+    mashed_re::Math::RwV3dTransformVectorsCPU(dst, src, count,
+                                              reinterpret_cast<const float*>(mtx));
 }
 // FUN_004c3d90 — RW vtable contact query (indirect through DAT_007d3ffc table).
+// STILL STUBBED: this is device slot +0xc (hooks.csv 004c3d90, C2 "42b dispatch
+// shim"), whose method contract is not decoded. Unlike slot +0x14 there is no ported
+// CPU equivalent to bind to. Live at WheelContactSolver.cpp:83-84.
 void Rw_VtableDispatch(void* /*dst*/, void* /*src*/, int /*count*/, void* /*mtxBlock*/) {}
-// FUN_004c4d20 — RwMatrix from axis+angle. Real impl: Math/RwMatrixRotate.cpp.
-void Rw_MatrixFromAxisAngle(void* /*outMtx*/, const float* /*axis*/, float /*deg*/, int /*flag*/) {}
+// FUN_004c4d20 — RwMatrix from axis+angle (degrees).  BOUND 2026-09-27 to the ported
+// Math/RwMatrixRotate.cpp (hooks.csv 004c4d20, C4 verified). Disasm of the original
+// 0x004c4d20..0x004c4dba: `FLD [esp+0x18]; FMUL [0x5cd7a8]` (pi/180) at
+// 0x004c4d23..0x004c4d27; axis sum-of-squares 0x004c4d36..0x004c4d4e;
+// `CALL 0x4c3b90` (FastInvSqrt) at 0x004c4d5d; `FSIN` at 0x004c4d95;
+// `FCOS` + `FSUBR [0x5cc320]` (1.0f) at 0x004c4d9f..0x004c4da1;
+// `CALL 0x4c4a50` (Rodrigues inner) at 0x004c4dac.
+// Both call sites pass mode 0 (WheelContactSolver.cpp:243, CarWorldContacts.cpp:203),
+// the self-contained REPLACE build; modes 1/2 dispatch the RW device matrix-mult and
+// are not reachable from here.
+void Rw_MatrixFromAxisAngle(void* outMtx, const float* axis, float deg, int flag) {
+    RwMatrixRotate(outMtx, axis, deg, flag);
+}
 // FUN_004c4dc0 — derive working matrix from the vehicle contact-matrix block.
 void Rw_MatrixDerive(void* /*outMtx*/, void* /*srcMtx*/) {}
 // FUN_004c52f0 — set rotation on the wheel-ring RW matrix block.

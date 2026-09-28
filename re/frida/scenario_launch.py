@@ -1017,6 +1017,102 @@ function puArm(planCsv, subj, warm){
   } catch(e){ return 'ERR ' + e; }
 }
 function puDrain(){ const r = PU.rows; PU.rows = []; return r; }
+
+// --- D3-CONTACT 2026-09-27: the power-up CONTACT / IMPACT chain -------------
+// Opt-in (--puhook-contacts), additive: it does not touch puArm's hooks or the
+// .puhook.csv schema, so an existing capture recipe is unaffected.
+//
+// The dispatcher's armed sweep, disassembled at 0x0045bcc8..0x0045bd11 from
+// original/MASHED.exe.unpatched (the pinned anchor):
+//   0x0045bcc8  PUSH ECX / PUSH EBP
+//   0x0045bccd  CALL 0x45bfe0        ; 0x0045bfe0 is TWO instructions:
+//                                    ;   MOV EAX,[0x0080332c] ; RET
+//                                    ; a global getter, NOT a sweep. Its result is
+//                                    ; pushed at 0x0045bcd2 as the 3rd arg below.
+//   0x0045bcd3  CALL 0x4b4b60        ; 3 args, __cdecl (ADD ESP,0xc at 0x0045bcd8).
+//                                    ; 0x004b4b60 copies 4 dwords from arg1, pushes
+//                                    ; 1 / arg2 / &copy / arg3, writes 3 at [esp+0x28]
+//                                    ; and tails CALL 0x4b4a80 (0x004b4b7e..0x004b4b9b)
+//   0x0045bcdb  TEST EAX,EAX / JE 0x45bd14     ; 0 -> no contact, skip
+//   0x0045bce5  CALL 0x45c350        ; 2 args (&[esp+0x38], EBP)
+//   0x0045bced  TEST EAX,EAX / JNE 0x45bd14    ; nonzero -> keep the power-up
+//   0x0045bcf7  CALL 0x45bac0        ; deactivate (ESI = EDI-0x90)
+//   0x0045bd0c  CALL 0x476880        ; (0x6146fc, 0x43b40000=360.0f, 0x3fc00000=1.5f, EBP)
+// So "deactivate on failure" = sweep hit (0x4b4b60 != 0) AND 0x45c350 == 0.
+//
+// NOTE on naming: hooks.csv labels 0x0045bfe0 `Bezier::GetLocate`, 0x0045c350
+// `Bezier::Interpolate` and 0x004b4cd0 `Bezier::QueryWrapper`. 0x0045bfe0's body is
+// the 2-instruction getter above, which supports neither that name nor the
+// "armed contact sweep" gloss in re/analysis/D3_POWERUPS_2026-09-26.md §6. The
+// names are recorded here, not endorsed; this capture reports mechanics only.
+const PU_CONTACT = {
+  0x004b4b60: 'sweep_query',     // dispatcher armed sweep, 0x0045bcd3
+  0x0045c350: 'sweep_confirm',   // 0x0045bce5; == 0 -> deactivate
+  0x004b4d10: 'query_4b4d10',    // D3_POWERUPS §6 missile contact chain
+  0x004b4cd0: 'query_4b4cd0',    // §6 OIL ground placement
+  0x004b4650: 'query_4b4650',    // §6 OIL ground placement
+  0x004b5080: 'query_4b5080',    // §6 OIL ground placement
+  0x00455910: 'missile_impact_a',
+  0x00455100: 'missile_impact_b',
+};
+// cap: once an RVA exceeds this many calls the listener DETACHES itself. Frida
+// Interceptor on a >1000 calls/s path destabilises MASHED in ~6 s (CLAUDE.md,
+// log/auto_count_at_menu.txt), and none of these RVAs has a measured rate yet, so
+// the capture is designed to survive discovering that one of them is hot: the
+// count and the `hot` flag still come back, only the per-call rows stop.
+// MEASURED 2026-09-27 over a 110 s Training race (verify/d3_contact_20260927/c2.msd,
+// 6629 frames, all 8 attached, no crash): query_4b4cd0 6001 (capped; ~1 per frame,
+// ~60/s), sweep_query 1035, query_4b4650 98, query_4b4d10 44, missile_impact_b 31,
+// query_4b5080 21, sweep_confirm 18, missile_impact_a 1. None is a >1000/s path, so
+// the cap is set well above one long race rather than at the discovery value.
+const PU_CX_HOT = 20000;
+const PU_CX = { armed:false, rows:[], counts:{}, hot:{}, lis:{}, cap:40000, err:null };
+function puCxArm(listCsv){
+  if (PU_CX.armed) return 'already armed';
+  try {
+    let want = null;
+    if (listCsv && listCsv !== 'all') {
+      want = {}; for (const t of listCsv.split(',')) want[parseInt(t, 16) >>> 0] = 1;
+    }
+    const names = [];
+    for (const k in PU_CONTACT) {
+      const rva = parseInt(k) >>> 0;
+      if (want && !want[rva]) continue;
+      const nm = PU_CONTACT[k];
+      PU_CX.counts[nm] = 0; PU_CX.hot[nm] = 0;
+      names.push(nm);
+      PU_CX.lis[nm] = Interceptor.attach(ga(rva), {
+        onEnter(){
+          PU_CX.counts[nm]++;
+          if (PU_CX.counts[nm] > PU_CX_HOT) {
+            if (!PU_CX.hot[nm]) { PU_CX.hot[nm] = 1;
+              try { PU_CX.lis[nm].detach(); } catch(_){} }
+            this.skip = true; return;
+          }
+          this.skip = false;
+          const sp = this.context.esp;
+          this.a = [];
+          for (let i = 1; i <= 3; ++i) {
+            try { this.a.push(sp.add(i * 4).readU32() >>> 0); } catch(_){ this.a.push(0); }
+          }
+          this.fr = SD.frames; this.cl = PU.calls;
+          this.ra = this.returnAddress.toUInt32() >>> 0;
+        },
+        onLeave(r){
+          if (this.skip) return;
+          if (PU_CX.rows.length >= PU_CX.cap) return;
+          PU_CX.rows.push([this.fr, this.cl, '0x' + rva.toString(16), nm,
+                           '0x' + this.ra.toString(16),
+                           '0x' + this.a[0].toString(16), '0x' + this.a[1].toString(16),
+                           '0x' + this.a[2].toString(16), r.toInt32()]);
+        }
+      });
+    }
+    PU_CX.armed = true;
+    return 'puhook-contacts armed (' + names.join(',') + ')';
+  } catch(e){ PU_CX.err = '' + e; return 'ERR ' + e; }
+}
+function puCxDrain(){ const r = PU_CX.rows; PU_CX.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
 // --- CANONICAL-OBSERVATION BLOCK ------------------------------------------
@@ -1064,6 +1160,11 @@ rpc.exports = {
   puDrain: function(){ return puDrain(); },
   puStats: function(){ return JSON.stringify({armed:PU.armed, calls:PU.calls, n6:PU.n, st:PU.st,
                                               pi:PU.pi, acts:PU.acts, pending:PU.rows.length, err:PU.err}); },
+  puCxArm: function(list){ return puCxArm(list); },
+  puCxDrain: function(){ return puCxDrain(); },
+  puCxStats: function(){ return JSON.stringify({armed:PU_CX.armed, counts:PU_CX.counts,
+                                                hot:PU_CX.hot, pending:PU_CX.rows.length,
+                                                err:PU_CX.err}); },
   sdStats: function(){ return JSON.stringify(SD); },
   armCounters: function(csv){ return armCounters(csv); },
   rearmAsi: function(){ return rearmAsi(); },
@@ -1361,6 +1462,19 @@ def main():
                          "scripted fire pattern on ctrl byte 0x007f103f (CONTRIVED, C3-grade). "
                          "Empty = observe natural pickups only.")
     ap.add_argument("--pu-subj", type=int, default=0, help="slot the --pu-plan drives (default 0)")
+    ap.add_argument("--puhook-contacts", nargs="?", const="all", default="",
+                    help="[D3-CONTACT] with --statediff-puhook, ALSO hook the power-up "
+                         "contact/impact chain and write <out>.pucontact.csv: frame,call,rva,"
+                         "name,ret_addr,a1,a2,a3,ret (the 3 stack args and the return value of "
+                         "each call). Set = the dispatcher armed sweep 0x004b4b60 / 0x0045c350 "
+                         "(disassembled at 0x0045bcc8..0x0045bd11: sweep != 0 AND confirm == 0 "
+                         "-> FUN_0045bac0 deactivate) plus the RVAs D3_POWERUPS_2026-09-26.md "
+                         "§6 names for the MISSILE/OIL chains: 0x004b4d10, 0x004b4cd0, "
+                         "0x004b4650, 0x004b5080, 0x00455910, 0x00455100. Pass a comma list of "
+                         "hex RVAs to narrow it. Each listener DETACHES itself after 6000 calls "
+                         "(no RVA here has a measured rate; Interceptor on a >1000/s path "
+                         "destabilises MASHED in ~6 s), and the count plus a `hot` flag still "
+                         "come back in the stats line.")
     ap.add_argument("--pu-warm", type=int, default=120,
                     help="state-6 dispatcher calls to wait before the first activation")
     ap.add_argument("--statediff-aictrl", action="store_true",
@@ -1559,6 +1673,8 @@ def main():
                 print("  [statediff]", E.ai_step_arm(os.environ.get("MASHED_AISTEP_LOCALS", "1") != "0"))
             if args.statediff_puhook:
                 print("  [statediff]", E.pu_arm(args.pu_plan, args.pu_subj, args.pu_warm))
+                if args.puhook_contacts:
+                    print("  [statediff]", E.pu_cx_arm(args.puhook_contacts))
             if args.statediff_drive and not args.statediff_drive_late:
                 print("  [statediff]", E.arm_cook())
                 print(f"  [statediff] drive: full accel, steer={args.statediff_steer:+d} ->",
@@ -1865,6 +1981,18 @@ def main():
                     if not pu_rows:
                         print("  [statediff] WARNING: puhook EMPTY -- no slot held a power-up "
                               "at phase 3 (check state==6 at 0x0063ba8c)")
+                if args.statediff_puhook and args.puhook_contacts:
+                    try: print("  [statediff] puhook-contacts agent:", E.pu_cx_stats())
+                    except Exception as _e: print("  [statediff] pucontact stats failed:", _e)
+                    cx_rows = []
+                    try: cx_rows = E.pu_cx_drain()
+                    except Exception as _e: print("  [statediff] pucontact drain failed:", _e)
+                    cxp = outp.with_suffix(outp.suffix + ".pucontact.csv")
+                    with open(cxp, "w", newline="") as f:
+                        f.write("frame,call,rva,name,ret_addr,a1,a2,a3,ret" + chr(10))
+                        for r in cx_rows:
+                            f.write(",".join(str(x) for x in r) + chr(10))
+                    print(f"  [statediff] pucontact {len(cx_rows)} rows -> {cxp}")
                 if args.statediff_aictrl:
                     ai_snapshot = list(sd_ai)
                     aip = outp.with_suffix(outp.suffix + ".aictrl.csv")

@@ -58,6 +58,15 @@ _TRANS  = [1.0,0.0,0.0,0.0,  0.0,1.0,0.0,0.0,  0.0,0.0,1.0,0.0,  1.0,2.0,3.0,1.0
 _SCALE2 = [2.0,0.0,0.0,0.0,  0.0,2.0,0.0,0.0,  0.0,0.0,2.0,0.0,  0.0,0.0,0.0,1.0]
 _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0]
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
+# D3-CONTACT 2026-09-27: real Z-rotations (what the Rw_TransformPoints call sites
+# actually feed: matrices built by 0x004c4d20 RwMatrixRotate, mode 0) plus one with a
+# nonzero translation row, so a points-vs-vectors difference in the device method
+# cannot hide. RwMatrix layout: right@[0..2] flags@[3] up@[4..6] pad@[7]
+# at@[8..10] pad@[11] pos@[12..14] pad@[15].
+_C45    = 0.70710678118654752440
+_ROTZ90 = [0.0,1.0,0.0,0.0,   -1.0,0.0,0.0,0.0,  0.0,0.0,1.0,0.0,  0.0,0.0,0.0,1.0]
+_ROTZ45 = [_C45,_C45,0.0,0.0, -_C45,_C45,0.0,0.0, 0.0,0.0,1.0,0.0, 0.0,0.0,0.0,1.0]
+_ROTA   = [_C45,_C45,0.0,0.0, -_C45,_C45,0.0,0.0, 0.0,0.0,1.0,0.0, 1.5,-2.5,0.75,1.0]
 
 HOOKS = {
     # 0x0047d100 BoundedThunk47d100 (physics) - NEAR-LEAF bounds-checked adjustor thunk -> C3 0x4b5240.
@@ -3204,6 +3213,146 @@ HOOKS = {
         'path2_tests': [
             {'mat': _IDENT, 'in': [1.0, 2.0, 3.0]},
             {'mat': _MIXED, 'in': [1.0, 1.0, 1.0]},
+        ],
+    },
+
+    # --- D3-CONTACT 2026-09-27 -------------------------------------------------
+    # The entry above passes fn(out, mat, 1, in): arg2 and arg4 are SWAPPED relative
+    # to the original's own caller. MEASURED at call site 0x0046d53a (inside
+    # FUN_0046d510): the pushes in reverse order are arg1 = EDI = ESI+0x881f74 (the
+    # destination -- 0x0046d53f reads it back with `MOV ECX,[EDI]`), arg2 = 0x614708,
+    # arg3 = 1, arg4 = ESI+0x881ec8 (the RwMatrix inside the 0xd04-stride vehicle
+    # record, `IMUL ESI,ESI,0xd04` at 0x0046d51e). The .data constant at 0x614708 is
+    # the vec3 {0.0, 0.0, 1.0} (bytes 00000000 00000000 0000803f), i.e. the SOURCE.
+    # So the contract is (dst, src, count, matrix).
+    #
+    # The swap does not falsify the archived C4 GREEN (both sides dispatch the same
+    # device method, so it is GREEN by construction for any argument order), but it
+    # makes the 7 archived vectors DEGENERATE: log/diff_rw_v3d_transform_points.csv
+    # reproduces out = mat[0] * in-read-as-the-matrix's-right-row on all 7 rows
+    # (_TRANS/in=(1,1,1) -> (1,1,1): translation never applied; _MIXED/in=(-1,2,-3)
+    # -> (-2,4,-6)). The two entries below use arg_type `device_transform_points`,
+    # which calls fn(out, in, 1, mat).
+    #
+    # (1) the same dispatch thunk, re-diffed with the arguments in the measured order.
+    'rw_v3d_transform_points_argfix': {
+        'rva':            0x004c3df0,
+        'export':         'RwV3dTransformPoints',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'pointer', 'int32', 'pointer']},
+        'arg_type':       'device_transform_points',
+        'lut_root_delta': 0,   # device-table readiness poll (game-init gate)
+        'path1_tests': [
+            {'mat': _IDENT,  'in': [1.0,  2.0,  3.0]},
+            {'mat': _TRANS,  'in': [1.0,  1.0,  1.0]},
+            {'mat': _SCALE2, 'in': [1.0, -2.0,  3.0]},
+            {'mat': _ROTY90, 'in': [1.0,  0.0,  0.0]},
+            {'mat': _MIXED,  'in': [1.0,  1.0,  1.0]},
+            {'mat': _MIXED,  'in': [-1.0, 2.0, -3.0]},
+            {'mat': _ROTZ90, 'in': [1.0,  0.0,  0.0]},
+            {'mat': _ROTZ45, 'in': [1.0,  0.0,  0.0]},
+            {'mat': _ROTZ45, 'in': [0.3, -1.7, 2.25]},
+            {'mat': _ROTA,   'in': [0.3, -1.7, 2.25]},
+        ],
+        'path2_tests': [
+            {'mat': _IDENT,  'in': [1.0, 2.0, 3.0]},
+            {'mat': _ROTZ45, 'in': [0.3, -1.7, 2.25]},
+        ],
+    },
+
+    # (2) the STANDALONE substitute. mashed_re.exe has no RW device table, so
+    # Collision/ContactStubs.cpp and Vehicle/ForceIntegratorStubs.cpp bind
+    # Rw_TransformPoints to Math/RwV3dTransformPointsCPU.cpp (plain 3x4 matrix*vec3)
+    # instead of the 0x004c3df0 dispatch. `RwV3dTransformPointsCPU_C` is that impl
+    # behind a C-linkage export, diffed here against the ORIGINAL device method on
+    # the same vectors. This is the only lane that can say whether the substitute is
+    # bit-exact with what the original computes.
+    'rw_v3d_transform_points_cpu': {
+        'rva':            0x004c3df0,
+        'export':         'RwV3dTransformPointsCPU_C',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'pointer', 'int32', 'pointer']},
+        'arg_type':       'device_transform_points',
+        'lut_root_delta': 0,   # device-table readiness poll (game-init gate)
+        'path1_tests': [
+            {'mat': _IDENT,  'in': [1.0,  2.0,  3.0]},
+            {'mat': _TRANS,  'in': [1.0,  1.0,  1.0]},
+            {'mat': _SCALE2, 'in': [1.0, -2.0,  3.0]},
+            {'mat': _ROTY90, 'in': [1.0,  0.0,  0.0]},
+            {'mat': _MIXED,  'in': [1.0,  1.0,  1.0]},
+            {'mat': _MIXED,  'in': [-1.0, 2.0, -3.0]},
+            {'mat': _ROTZ90, 'in': [1.0,  0.0,  0.0]},
+            {'mat': _ROTZ45, 'in': [1.0,  0.0,  0.0]},
+            {'mat': _ROTZ45, 'in': [0.3, -1.7, 2.25]},
+            {'mat': _ROTA,   'in': [0.3, -1.7, 2.25]},
+        ],
+        'path2_tests': [
+            {'mat': _IDENT,  'in': [1.0, 2.0, 3.0]},
+            {'mat': _ROTZ45, 'in': [0.3, -1.7, 2.25]},
+        ],
+    },
+
+    # (3) CONTROL for (2). `rw_v3d_transform_points_cpu` is RED on exactly the 4
+    # vectors whose matrix has a nonzero translation row, which says the device method
+    # behind slot +0x14 transforms VECTORS (3x3, translation ignored) while
+    # RwV3dTransformPointsCPU adds m[12..14]. Two explanations survive that result on
+    # its own: (i) slot +0x14 is the vectors method, or (ii) the method branches on the
+    # RwMatrix flags word m[3], which these vectors leave 0. This entry discriminates
+    # them by diffing the SAME points impl against the OTHER device dispatcher,
+    # FUN_004c3d90 (slot +0xc, hooks.csv C2 "42b dispatch shim;
+    # *(DAT_007d3ffc + 0xc + DAT_007d3ff8)(p1..p4); returns p1"), with identical inputs
+    # and identical m[3] = 0. Same flags on both sides, so a different verdict can only
+    # come from the slot. NOT a port-acceptance diff: the "reimpl" side is a probe, not
+    # a reimplementation of 0x004c3d90.
+    'rw_device_dispatch_0c_points': {
+        'rva':            0x004c3d90,
+        'export':         'RwV3dTransformPointsCPU_C',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'pointer', 'int32', 'pointer']},
+        'arg_type':       'device_transform_points',
+        'lut_root_delta': 0,   # device-table readiness poll (game-init gate)
+        'path1_tests': [
+            {'mat': _IDENT,  'in': [1.0,  2.0,  3.0]},
+            {'mat': _TRANS,  'in': [1.0,  1.0,  1.0]},
+            {'mat': _SCALE2, 'in': [1.0, -2.0,  3.0]},
+            {'mat': _ROTY90, 'in': [1.0,  0.0,  0.0]},
+            {'mat': _MIXED,  'in': [1.0,  1.0,  1.0]},
+            {'mat': _MIXED,  'in': [-1.0, 2.0, -3.0]},
+            {'mat': _ROTZ90, 'in': [1.0,  0.0,  0.0]},
+            {'mat': _ROTZ45, 'in': [1.0,  0.0,  0.0]},
+            {'mat': _ROTZ45, 'in': [0.3, -1.7, 2.25]},
+            {'mat': _ROTA,   'in': [0.3, -1.7, 2.25]},
+        ],
+        'path2_tests': [
+            {'mat': _ROTA,   'in': [0.3, -1.7, 2.25]},
+        ],
+    },
+
+    # (4) the CORRECTED standalone substitute for 0x004c3df0. Entries (2) and (3)
+    # together say slot +0x14 transforms VECTORS (translation row ignored) and slot
+    # +0xc transforms POINTS. `RwV3dTransformVectorsCPU` (Math/RwV3dTransformPointsCPU
+    # .cpp) is the vectors form; Collision/ContactStubs.cpp:Rw_TransformPoints binds
+    # to it. Same 10 vectors as (2), which was RED 4/10 on exactly the nonzero-pos
+    # matrices — so a GREEN here is non-degenerate: the four discriminating vectors
+    # are still in the set.
+    'rw_v3d_transform_vectors_cpu': {
+        'rva':            0x004c3df0,
+        'export':         'RwV3dTransformVectorsCPU_C',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'pointer', 'int32', 'pointer']},
+        'arg_type':       'device_transform_points',
+        'lut_root_delta': 0,   # device-table readiness poll (game-init gate)
+        'path1_tests': [
+            {'mat': _IDENT,  'in': [1.0,  2.0,  3.0]},
+            {'mat': _TRANS,  'in': [1.0,  1.0,  1.0]},
+            {'mat': _SCALE2, 'in': [1.0, -2.0,  3.0]},
+            {'mat': _ROTY90, 'in': [1.0,  0.0,  0.0]},
+            {'mat': _MIXED,  'in': [1.0,  1.0,  1.0]},
+            {'mat': _MIXED,  'in': [-1.0, 2.0, -3.0]},
+            {'mat': _ROTZ90, 'in': [1.0,  0.0,  0.0]},
+            {'mat': _ROTZ45, 'in': [1.0,  0.0,  0.0]},
+            {'mat': _ROTZ45, 'in': [0.3, -1.7, 2.25]},
+            {'mat': _ROTA,   'in': [0.3, -1.7, 2.25]},
+        ],
+        'path2_tests': [
+            {'mat': _TRANS,  'in': [1.0, 1.0, 1.0]},
+            {'mat': _ROTA,   'in': [0.3, -1.7, 2.25]},
         ],
     },
 

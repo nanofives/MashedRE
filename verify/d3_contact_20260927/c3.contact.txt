@@ -1,0 +1,57 @@
+capture: verify\d3_contact_20260927\c3.msd   (subject slot 0)
+contact rows: 9068
+
+ALL CALL SITES (name, rva, return address) -> calls, ret!=0
+  query_4b4cd0      0x4b4cd0   from 0x479124    calls=6594   ret!=0=6594
+  sweep_query       0x4b4b60   from 0x45bcd8    calls=1348   ret!=0=0
+  query_4b4cd0      0x4b4cd0   from 0x45afcc    calls=510    ret!=0=24
+  query_4b4cd0      0x4b4cd0   from 0x459c19    calls=163    ret!=0=0
+  query_4b4cd0      0x4b4cd0   from 0x459d54    calls=163    ret!=0=163
+  query_4b4650      0x4b4650   from 0x459db5    calls=163    ret!=0=163
+  query_4b4650      0x4b4650   from 0x45aff3    calls=24     ret!=0=24
+  query_4b5080      0x4b5080   from 0x45b04c    calls=24     ret!=0=24
+  sweep_query       0x4b4b60   from 0x487061    calls=12     ret!=0=12
+  sweep_confirm     0x45c350   from 0x48708c    calls=11     ret!=0=0
+  query_4b5080      0x4b5080   from 0x48711f    calls=11     ret!=0=11
+  query_4b4cd0      0x4b4cd0   from 0x4578d1    calls=10     ret!=0=10
+  query_4b4650      0x4b4650   from 0x457932    calls=10     ret!=0=10
+  query_4b5080      0x4b5080   from 0x45797f    calls=10     ret!=0=10
+  query_4b5080      0x4b5080   from 0x45b582    calls=8      ret!=0=8
+  sweep_query       0x4b4b60   from 0x475229    calls=2      ret!=0=2
+  query_4b5080      0x4b5080   from 0x4752b2    calls=2      ret!=0=2
+  query_4b4cd0      0x4b4cd0   from 0x457ca5    calls=1      ret!=0=1
+  query_4b4650      0x4b4650   from 0x457d1f    calls=1      ret!=0=1
+  query_4b5080      0x4b5080   from 0x457db2    calls=1      ret!=0=1
+
+DISPATCHER ARMED SWEEP (ret_addr 0x45bcd8 / 0x45bcea only), per slot
+  slot 0   query calls=309    ret!=0=0     deactivations=0 []
+  slot 1   query calls=454    ret!=0=0     deactivations=0 []
+  slot 2   query calls=585    ret!=0=0     deactivations=0 []
+
+[OIL     code=19] activated at call 855, held 45 calls (to 900)
+    query_4b4cd0      0x4b4cd0   from 0x479124   calls=45     ret!=0=45
+    query_4b4cd0      0x4b4cd0   from 0x4578d1   calls=10     ret!=0=10
+    query_4b4650      0x4b4650   from 0x457932   calls=10     ret!=0=10
+    query_4b5080      0x4b5080   from 0x45797f   calls=10     ret!=0=10
+
+[R_FLAME code=16] activated at call 931, held 57 calls (to 988)
+    query_4b4cd0      0x4b4cd0   from 0x45afcc   calls=406    ret!=0=15
+    query_4b4cd0      0x4b4cd0   from 0x479124   calls=57     ret!=0=57
+    query_4b4650      0x4b4650   from 0x45aff3   calls=15     ret!=0=15
+    query_4b5080      0x4b5080   from 0x45b04c   calls=15     ret!=0=15
+
+[FLASH   code=18] activated at call 1019, held 3 calls (to 1022)
+    query_4b4cd0      0x4b4cd0   from 0x479124   calls=3      ret!=0=3
+
+[GUN     code= 9] activated at call 1053, held 163 calls (to 1216)
+    query_4b4cd0      0x4b4cd0   from 0x459c19   calls=163    ret!=0=0
+    query_4b4cd0      0x4b4cd0   from 0x459d54   calls=163    ret!=0=163
+    query_4b4650      0x4b4650   from 0x459db5   calls=163    ret!=0=163
+    query_4b4cd0      0x4b4cd0   from 0x479124   calls=163    ret!=0=163
+    query_4b4cd0      0x4b4cd0   from 0x457ca5   calls=1      ret!=0=1
+    query_4b4650      0x4b4650   from 0x457d1f   calls=1      ret!=0=1
+    query_4b5080      0x4b5080   from 0x457db2   calls=1      ret!=0=1
+
+[SHOTGUN code=17] activated at call 1247, held 36 calls (to 1283)
+    query_4b4cd0      0x4b4cd0   from 0x479124   calls=36     ret!=0=36
+    query_4b5080      0x4b5080   from 0x45b582   calls=8      ret!=0=8

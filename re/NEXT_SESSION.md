@@ -1,5 +1,57 @@
 # Next session — kickoff prompt
 
+## => KICKOFF PROMPT - D3 powerups (c), the contact chain, written 2026-09-27, paste verbatim
+
+```
+Session goal: close ROADMAP v3 D3 powerups criterion (c) for the 7 types still blocked on
+the contact chain. Read ROADMAP.md section D3 (Powerups row) and
+re/analysis/D3_CONTACT_2026-09-27.md. Do NOT re-derive them.
+
+SETTLED 2026-09-27 (D3_CONTACT_2026-09-27.md — read it, do not re-measure):
+- The old "blocked on Collision/ContactStubs.cpp" label is REFUTED. Powerup/*.cpp has no
+  call path into Collision/*.cpp, and 3 of the 4 callers of Rw_TransformPoints are dead.
+  Both stubs are now BOUND to the real ports and bit-exact; that changed nothing live.
+- The actual blocker is 8 unported C2 RVAs: 0x004b4b60, 0x0045c350, 0x004b4cd0,
+  0x004b4d10, 0x004b4650, 0x004b5080, 0x00455910, 0x00455100 — plus the scaffold
+  IPowerupBackend. None has an implementation in the powerup path.
+- Criterion (c) contact half, MEASURED per type: FLASH clean (no contact call exists),
+  P_MINE DIVERGES (cited mechanism, below), the other 7 blocked WITH a counted reference.
+- Captures + tooling exist, do not rebuild them:
+    py -3.12 re/frida/scenario_launch.py --track 0 --mode 10 --cars 4 --car 0 \
+       --poke-ctrl-slots --statediff-out <out>.msd --statediff-car 0 --statediff-drive \
+       --statediff-puhook --puhook-contacts --pu-plan 11,7,10,12 --pu-warm 60 --hold 110
+    py -3.12 re/tools/pu_contact_report.py <out>.msd --slot 0
+  --hold 110, NOT 45: the race sub-state reaches 6 only around dispatcher call ~860 and a
+  45 s run ends at ~776 with an empty .puhook.csv (verify/d3_contact_20260927/c1 is that
+  negative control). Reference captures: verify/d3_contact_20260927/c2 (MISSILE, MORTAR,
+  DRUM, P_MINE) and c3 (OIL, R_FLAME, FLASH, GUN, SHOTGUN).
+- TWO ATTRIBUTION RULES the report enforces, both learned by getting them wrong first:
+  key every count on (name, ret_addr) — 0x0045c350 ran 18 times in c2 but only ONCE from
+  the dispatcher — and attribute the dispatcher sweep by slot via arg2 = slot_base + 0x80,
+  not by activation window.
+
+DO, in this order:
+1. Port OIL's ground placement first — cheapest, and its reference is exact: one
+   0x004b4cd0 (from 0x4578d1) / 0x004b4650 (0x457932) / 0x004b5080 (0x45797f) triple per
+   drop, 10 drops, all 10 succeeding. Acceptance = the same three counts in the port.
+2. Fix P_MINE. The port drops on every press edge; the original gates each drop TWICE
+   inside FUN_00457c10 (reached only from FUN_00457ef0 on fire mode 2, CMP [ESP+0xc],2 /
+   JNE at 0x00457efb..0x00457f00): JE 0x00457e08 at 0x00457caa on CALL 0x004b4cd0, and
+   JNE 0x00457e08 at 0x00457cfe on CALL 0x0045c110, with 0x00457e08 the bare epilogue and
+   the +0x08 decrement (0x00457d29..0x00457d2d) after both. Measured: 7 press edges, 1
+   success, 1 decrement. FIRST add 0x0045c110 to PU_CONTACT in scenario_launch.py and
+   re-run c2 — which of the two gates refused the other 6 is the one open [UNCERTAIN].
+3. Then MISSILE (0x00455100 every in-flight frame from 0x455cd9, 0x004b4d10 from
+   0x455de0, terminal 0x00455910 from 0x455e07), then MORTAR/DRUM (2 placements each),
+   R_FLAME (15), GUN (163 per-frame), SHOTGUN (8).
+4. Port the dispatcher's armed sweep (0x0045bcc8..0x0045bd11). It fires rarely — once in
+   2364 slot-passes across c2+c3 — but that once is what deactivated P_MINE at call 1229.
+
+DO NOT: flip Vehicle/ForceIntegratorStubs.cpp:39 to the vectors form without a D2
+re-measure (U-9138 — latent defect, the D2 gate was closed against current behaviour).
+Trackers only via re-classify. Launch muted (MASHED_MUTE=1). Track and kill only your PIDs.
+```
+
 ## => KICKOFF PROMPT - D3 AI (b), written 2026-09-27 after the residue session, paste verbatim
 
 ```

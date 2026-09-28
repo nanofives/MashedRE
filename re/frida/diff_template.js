@@ -1317,6 +1317,40 @@ function callFn(fn, input, buf) {
         ].join(',');
     }
 
+    // MECHANISM: fn(dst_ptr, src_ptr, count_int, mat_ptr): the ARGUMENT-CORRECT form of
+    // device_transform_dispatch. Shared xfdBufs (out/mat/in, 64 bytes each, all fully zeroed
+    // before each call); seeds mat[16] and in[3] floats; observable = the 3 output floats as
+    // u32 bit-exact; no CONFIG keys; tests = [{mat:[16], in:[3]}].
+    //
+    // WHY A SECOND HANDLER (2026-09-27, D3-CONTACT): `device_transform_dispatch` above calls
+    // fn(out, mat, 1, in) -- arg2 and arg4 swapped relative to the original's own caller.
+    // MEASURED at caller 0x0046d53a (inside FUN_0046d510): pushes in reverse order give
+    // arg1 = EDI = ESI+0x881f74 (dst, read back by `MOV ECX,[EDI]` at 0x0046d53f),
+    // arg2 = 0x614708, arg3 = 1, arg4 = ESI+0x881ec8 (the RwMatrix in the 0xd04-stride
+    // vehicle record). The .data constant at 0x614708 is the vec3 {0,0,1}, i.e. the SOURCE.
+    // The swap is invisible to the old handler's verdict (both sides dispatch the same
+    // device method, so it is GREEN by construction), but it makes the 7 archived vectors
+    // DEGENERATE: log/diff_rw_v3d_transform_points.csv reproduces exactly
+    // out = mat[0]*in_as_right_row on all 7 rows (e.g. _MIXED/in=(-1,2,-3) -> (-2,4,-6),
+    // _TRANS/in=(1,1,1) -> (1,1,1), translation never applied), i.e. the device method read
+    // its matrix out of the zeroed tail of the 64-byte `in` buffer. The old entry is left
+    // untouched so its archived C4 GREEN is not silently redefined.
+    if (CONFIG.arg_type === 'device_transform_points') {
+        for (let j = 0; j < 16; j++) xfdBufs.mat.add(j * 4).writeU32(0);
+        for (let j = 0; j < 16; j++) xfdBufs.in.add(j * 4).writeU32(0);
+        for (let j = 0; j < 16; j++) xfdBufs.out.add(j * 4).writeU32(0);
+        for (let j = 0; j < 16; j++) xfdBufs.mat.add(j * 4).writeFloat(input.mat[j]);
+        xfdBufs.in.writeFloat(input.in[0]);
+        xfdBufs.in.add(4).writeFloat(input.in[1]);
+        xfdBufs.in.add(8).writeFloat(input.in[2]);
+        fn(xfdBufs.out, xfdBufs.in, 1, xfdBufs.mat);
+        return [
+            xfdBufs.out.readU32(),
+            xfdBufs.out.add(4).readU32(),
+            xfdBufs.out.add(8).readU32(),
+        ].join(',');
+    }
+
     // MECHANISM: fn(mat_ptr, axis_ptr, angle_float, mode_int): shared matrBufs (mat=64 bytes
     // alloc, axis=12 bytes); zeros matrBufs.mat before each call, seeds axis[3] floats; observable
     // = 13 of 16 output floats as u32 bit-exact (pad slots [7]/[11]/[15] excluded - documented
@@ -1546,7 +1580,8 @@ function runDiff() {
         v3nBufs = { out: Memory.alloc(12), in: Memory.alloc(12) };
         tmpF32  = Memory.alloc(4);
     }
-    if (CONFIG.arg_type === 'device_transform_dispatch') {
+    if (CONFIG.arg_type === 'device_transform_dispatch' ||
+        CONFIG.arg_type === 'device_transform_points') {
         // generous (64B) so any device-method over-read past the 3-float payload
         // stays inside a mapped allocation rather than faulting.
         xfdBufs = { out: Memory.alloc(64), mat: Memory.alloc(64), in: Memory.alloc(64) };
