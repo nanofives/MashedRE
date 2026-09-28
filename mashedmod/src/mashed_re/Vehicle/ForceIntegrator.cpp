@@ -53,9 +53,12 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
             piVar12[0x2f] = self[0x277];
         } else {
             unsigned char m[64];
-            // Hygiene only — `m` was read uninitialised (Rw_TransformPoints is a
-            // POINT transform and consumes the translation row). Kept because
-            // reading uninitialised memory is UB regardless.
+            // Hygiene only — `m` was read uninitialised. (The parenthetical that
+            // used to stand here, "Rw_TransformPoints is a POINT transform and
+            // consumes the translation row", is REFUTED: the original's call at
+            // 0x0046de5b targets 0x004c3df0, device slot +0x14, which ignores
+            // m[12..14] — re/analysis/D3_CONTACT_2026-09-27.md §2.2, U-9138.)
+            // Kept because reading uninitialised memory is UB regardless.
             //
             // D2 2026-08-21: this was ALSO tested as a fix for the steered-forward
             // defect and REFUTED. Symptom: a steered wheel's steered-forward comes
