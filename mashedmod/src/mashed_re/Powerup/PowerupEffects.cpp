@@ -55,6 +55,8 @@ namespace tune {
     constexpr float kMineProbeLen   = 0.5f;  // REAL: _DAT_005cc32c, FUN_00457c10 local_9c/98/94
     constexpr float kMineProbeSign  = -1.0f; // REAL: _DAT_005cc33c, same three expressions
     constexpr float kMineLift       = 0.005f;// REAL: _DAT_005cd0ec, FUN_00457c10 local_80 scale
+    constexpr float kShotgunReach   = 1.5f;  // REAL: _DAT_005cc348, FUN_0045b390 local_d8/d4/d0
+    constexpr float kShotgunLift    = 0.05f; // REAL: _DAT_005cc9a0, FUN_0045b390 local_fc/f8/f4
     // REAL (harvested pool13 2026-07-06, instruction-cited at the R_FLAME /
     // MORTAR sections below):
     constexpr int   kFlameBursts         = 5;     // REAL: +0x14 shutoff JL 5 (0x0045a86c)
@@ -331,6 +333,37 @@ void Shotgun_Fire(PowerupSystem& sys, Slot& s, int mode) {  // 0x45b6e0: mode==2
     // wrong, the original fires 4 times -- o1 call 1244 t+1/t+8/t+16/t+28.)
     s.ammo--;
     s.counter = tune::kShotgunRefire;
+    // D3 criterion (c), 2026-09-28 — FUN_0045b390's detonation loop. `local_c0 = 2`
+    // at 0x0045b3c2, and each pass walks to the next pellet frame
+    // (`piVar5 = piVar5 + 1`, i.e. param_1[1] then param_1[2]), takes its world
+    // matrix through FUN_004c0ed0, probes forward and, on a hit, orients a ground
+    // decal:
+    //   A   = frame+0x30..0x38, fwd = FUN_004c39b0(frame+0x20)
+    //   B   = A + fwd * _DAT_005cc348 (1.5)
+    //   CALL 0x004b4b20 @0x0045b4bd; TEST EAX,EAX @0x0045b4c5; JE 0x0045b5cb @0x0045b4c7
+    //   p   = A + fwd*(t*1.5) + normal*_DAT_005cc9a0 (0.05)
+    //   CALL 0x004b5080 @0x0045b57d   <- the 8/8 site the prior note counted
+    // STAND-IN: the port has no per-pellet frames, so both passes probe from the
+    // owner car along its forward. The per-car damage sweep that follows
+    // (FUN_00558b40 / FUN_0041f030 / FUN_00481750, and the t=0 FUN_004b4650 inside
+    // it) is NOT ported; it made no contact-chain call in any capture because
+    // FUN_00558b40 returned 0 every time.
+    const float* p = sys.owner().pos;
+    for (int k = 0; k < 2; ++k) {
+        const float seg[6] = { p[0], p[1], p[2],
+                               p[0] + fwd[0] * tune::kShotgunReach,
+                               p[1] + fwd[1] * tune::kShotgunReach,
+                               p[2] + fwd[2] * tune::kShotgunReach };
+        Contact::WorldHit hit;
+        if (Contact::SegmentQuery(seg, &hit, 0x0045b4c2, 0x004b4b20u, "query_4b4b20") == 0)
+            continue;
+        const float f = hit.t * tune::kShotgunReach;
+        float q[3] = { seg[0] + fwd[0]*f + hit.normal[0]*tune::kShotgunLift,
+                       seg[1] + fwd[1]*f + hit.normal[1]*tune::kShotgunLift,
+                       seg[2] + fwd[2]*f + hit.normal[2]*tune::kShotgunLift };
+        float m[16] = {0};
+        Contact::BasisFromTri(m, hit.vert, q, 0x0045b582);
+    }
 }
 void Shotgun_Tick(PowerupSystem& sys, float) {  // 0x45b700
     // MEASURED: +0xc steps down by 1 per frame to 0 (o1 call 1244 t+1..t+15);

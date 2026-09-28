@@ -1064,6 +1064,13 @@ const PU_CONTACT = {
   // close D3_CONTACT_2026-09-27 §8 item 1 -- which of the two gates refused 6 of
   // P_MINE's 7 press edges.
   0x0045c110: 'surface_gate',
+  // D3_CONTACT_PORT 2026-09-28: SHOTGUN's world query. FUN_0045b390 (the pellet
+  // detonation, reached from FIRE 0x0045b6e0) runs a 2-iteration loop; each pass
+  // does `CALL 0x004b4b20` @0x0045b4bd / `TEST EAX,EAX` @0x0045b4c5 /
+  // `JE 0x0045b5cb` @0x0045b4c7, and on a hit `CALL 0x004b5080` @0x0045b57d --
+  // the 0x45b582 site the prior note counted 8/8 for SHOTGUN. Without this row
+  // the gate that produces those 8 is invisible.
+  0x004b4b20: 'query_4b4b20',
 };
 // Per-RVA early cap. surface_gate sits behind a 0x004b4cd0 hit, whose own
 // measured rate is ~60/s, but it also has callers outside the power-up path

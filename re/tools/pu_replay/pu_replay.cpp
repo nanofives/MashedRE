@@ -37,6 +37,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -122,27 +123,33 @@ int SweepSlotOf(unsigned a2) {
 // wrong: verify/d3_contact_20260928/g2 has three 0x457ca5 rows, only two of which
 // are slot 0's -- the third lands inside slot 0's MORTAR window and belongs to
 // another slot's P_MINE.
-const unsigned kQuerySites[] = { 0x004578d1u, 0x00457ca5u };
+const unsigned kQuerySites[] = { 0x004578d1u, 0x00457ca5u, 0x0045b4c2u };
 const unsigned kGateSites[]  = { 0x0045790eu, 0x00457cf9u };
-const int      kQueryOwner[] = { 19 /*OIL*/,  12 /*P_MINE*/ };
+const int      kQueryOwner[] = { 19 /*OIL*/,  12 /*P_MINE*/, 17 /*SHOTGUN*/ };
 const int      kGateOwner[]  = { 19,          12 };
+const int      kQueryN = 3, kGateN = 2;
 
 // Every contact call site the ported OIL/P_MINE FIRE path makes, in original
 // order, with the type whose window it belongs to. The last two of each group
 // are NOT injected -- they are placement leaves that always run once the gates
 // pass, so their count is a pure consequence of the ported control flow.
-struct Site { unsigned ra; int owner; const char* what; };
+// `gatedBy` = the site whose nonzero return is what lets this one run. If THAT
+// site was not instrumented, this one cannot be tested either: with no injected
+// verdict the port takes the refuse arm and never reaches here.
+struct Site { unsigned ra; int owner; unsigned rva; unsigned gatedBy; const char* what; };
 const Site kSites[] = {
-    { 0x004578d1u, 19, "OIL    query 0x004b4cd0" },   // CALL @0x004578cc
-    { 0x0045790eu, 19, "OIL    gate  0x0045c110" },   // CALL @0x00457909
-    { 0x00457932u, 19, "OIL    lerp  0x004b4650" },   // CALL @0x0045792d
-    { 0x0045797fu, 19, "OIL    basis 0x004b5080" },   // CALL @0x0045797a
-    { 0x00457ca5u, 12, "P_MINE query 0x004b4cd0" },   // CALL @0x00457ca0
-    { 0x00457cf9u, 12, "P_MINE gate  0x0045c110" },   // CALL @0x00457cf4
-    { 0x00457d1fu, 12, "P_MINE lerp  0x004b4650" },   // CALL @0x00457d1a
-    { 0x00457db2u, 12, "P_MINE basis 0x004b5080" },   // CALL @0x00457dad
-    { 0x0045bcd8u, -1, "SWEEP  query 0x004b4b60" },   // CALL @0x0045bcd3, slot by arg2
-    { 0x0045bceau, -1, "SWEEP  confirm 0x45c350" },   // CALL @0x0045bce5, slot by arg2
+    { 0x004578d1u, 19, 0x004b4cd0u, 0u, "OIL    query 0x004b4cd0" },   // CALL @0x004578cc
+    { 0x0045790eu, 19, 0x0045c110u, 0x004578d1u, "OIL    gate  0x0045c110" },   // CALL @0x00457909
+    { 0x00457932u, 19, 0x004b4650u, 0x0045790eu, "OIL    lerp  0x004b4650" },   // CALL @0x0045792d
+    { 0x0045797fu, 19, 0x004b5080u, 0x0045790eu, "OIL    basis 0x004b5080" },   // CALL @0x0045797a
+    { 0x00457ca5u, 12, 0x004b4cd0u, 0u, "P_MINE query 0x004b4cd0" },   // CALL @0x00457ca0
+    { 0x00457cf9u, 12, 0x0045c110u, 0x00457ca5u, "P_MINE gate  0x0045c110" },   // CALL @0x00457cf4
+    { 0x00457d1fu, 12, 0x004b4650u, 0x00457cf9u, "P_MINE lerp  0x004b4650" },   // CALL @0x00457d1a
+    { 0x00457db2u, 12, 0x004b5080u, 0x00457cf9u, "P_MINE basis 0x004b5080" },   // CALL @0x00457dad
+    { 0x0045b4c2u, 17, 0x004b4b20u, 0u, "SHOTGN query 0x004b4b20" },   // CALL @0x0045b4bd
+    { 0x0045b582u, 17, 0x004b5080u, 0x0045b4c2u, "SHOTGN basis 0x004b5080" },   // CALL @0x0045b57d
+    { 0x0045bcd8u, -1, 0x004b4b60u, 0u, "SWEEP  query 0x004b4b60" },   // CALL @0x0045bcd3, slot by arg2
+    { 0x0045bceau, -1, 0x0045c350u, 0x0045bcd8u, "SWEEP  confirm 0x45c350" },   // CALL @0x0045bce5, slot by arg2
 };
 const int kSiteCount = static_cast<int>(sizeof(kSites) / sizeof(kSites[0]));
 
@@ -242,6 +249,12 @@ int main(int argc, char** argv) {
         base.erase(base.size() - suffix.size());
     const std::string cxPath = base + ".pucontact.csv";
     bool haveCx = false;
+    // Which RVAs the capture's Frida listeners were armed for. A site whose RVA
+    // appears NOWHERE in the capture was not instrumented when it was taken (the
+    // PU_CONTACT table grew on 2026-09-28), so its zero original rows are a
+    // missing input, not a port divergence. The distinction is load-bearing: the
+    // 2026-09-27 captures predate `surface_gate` and `g3` predates `query_4b4b20`.
+    std::set<unsigned> armedRva;
     if (std::FILE* cf = std::fopen(cxPath.c_str(), "r")) {
         haveCx = true;
         std::vector<std::string> ch;
@@ -252,6 +265,8 @@ int main(int argc, char** argv) {
                 for (std::size_t i = 0; i < ch.size(); ++i) if (ch[i] == n) return i < c.size() ? c[i] : "";
                 return "";
             };
+            armedRva.insert(static_cast<unsigned>(
+                std::strtoul(col("rva").c_str(), nullptr, 16)));
             const long cl = std::atol(col("call").c_str());
             // Only the calls this replay actually re-runs. The capture spans the
             // whole race (all 4 slots, plus the frames before the subject slot's
@@ -271,9 +286,9 @@ int main(int argc, char** argv) {
             }
             for (int i = 0; i < kSiteCount; ++i)
                 if (kSites[i].ra == ra && held == kSites[i].owner) g_inj.origCalls[ra]++;
-            for (int i = 0; i < 2; ++i) if (kQuerySites[i] == ra && held == kQueryOwner[i])
+            for (int i = 0; i < kQueryN; ++i) if (kQuerySites[i] == ra && held == kQueryOwner[i])
                 g_inj.q[std::make_pair(cl, ra)].push_back(ret);
-            for (int i = 0; i < 2; ++i) if (kGateSites[i] == ra && held == kGateOwner[i])
+            for (int i = 0; i < kGateN; ++i) if (kGateSites[i] == ra && held == kGateOwner[i])
                 g_inj.g[std::make_pair(cl, ra)].push_back(ret);
         }
         std::fclose(cf);
@@ -332,9 +347,9 @@ int main(int argc, char** argv) {
     }
 
     std::printf("\nCONTACT CALL SITES (original capture vs port), slot %d\n", want);
-    std::printf("  %-24s %-12s %6s %6s %9s %9s\n",
-                "site", "ret_addr", "orig", "port", "port-only", "orig-only");
-    int bad = 0;
+    std::printf("  %-24s %-12s %6s %6s %9s %9s  %s\n",
+                "site", "ret_addr", "orig", "port", "port-only", "orig-only", "status");
+    int bad = 0, notArmed = 0;
     for (int i = 0; i < kSiteCount; ++i) {
         const unsigned ra = kSites[i].ra;
         long leftover = 0;
@@ -343,11 +358,24 @@ int main(int argc, char** argv) {
         if (ra == 0x0045bcd8u) for (auto& kv : g_inj.sq) leftover += (long)kv.second.size();
         if (ra == 0x0045bceau) for (auto& kv : g_inj.sc) leftover += (long)kv.second.size();
         const long port = portRows.count(ra) ? portRows[ra] : g_inj.portCalls[ra];
-        std::printf("  %-24s 0x%-10x %6ld %6ld %9ld %9ld\n",
+        bool armed = armedRva.count(kSites[i].rva) != 0;
+        for (unsigned g = kSites[i].gatedBy; armed && g; ) {
+            int gi = -1;
+            for (int j = 0; j < kSiteCount; ++j) if (kSites[j].ra == g) { gi = j; break; }
+            if (gi < 0) break;
+            if (!armedRva.count(kSites[gi].rva)) armed = false;
+            g = kSites[gi].gatedBy;
+        }
+        const bool diff  = (g_inj.origCalls[ra] != port) || g_inj.unmatched[ra] || leftover;
+        std::printf("  %-24s 0x%-10x %6ld %6ld %9ld %9ld  %s\n",
                     kSites[i].what, ra, g_inj.origCalls[ra], port,
-                    g_inj.unmatched[ra], leftover);
-        if (g_inj.origCalls[ra] != port || g_inj.unmatched[ra] || leftover) bad = 1;
+                    g_inj.unmatched[ra], leftover,
+                    !armed ? "not-armed" : (diff ? "DIVERGES" : "clean"));
+        if (armed && diff) bad = 1;
+        if (!armed && (port || g_inj.origCalls[ra])) notArmed = 1;
     }
-    std::printf("CONTACT VERDICT: %s\n", bad ? "DIVERGES" : "CLEAN");
+    std::printf("CONTACT VERDICT: %s%s\n", bad ? "DIVERGES" : "CLEAN",
+                notArmed ? "  (not-armed rows had no Frida listener when this capture"
+                           " was taken and are excluded)" : "");
     return 0;
 }

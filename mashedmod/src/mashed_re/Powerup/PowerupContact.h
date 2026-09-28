@@ -78,7 +78,19 @@ void SetSweepInjector(SweepInjectFn s, void* ctx);
 // ---- the four ported functions --------------------------------------------
 // 0x004b4cd0 (-> FUN_004b4c80 -> FUN_00538c80 / FUN_004b4bb0). seg = {A, B}.
 // Returns the intersection COUNT; `out` holds the nearest (smallest t).
-int  SegmentQuery(const float seg[6], WorldHit* out, std::uint32_t retAddr);
+//
+// `rva`/`name` select which ORIGINAL wrapper this call stands in for, because the
+// two that take a 6-float segment differ only in their collector and both are
+// recorded separately by scenario_launch.py:
+//   0x004b4cd0 -> FUN_004b4c80 -> collector FUN_004b4bb0: keeps the NEAREST hit,
+//                 walks everything, returns the count.
+//   0x004b4b20 -> FUN_004b4a80 -> collector FUN_004b49b0: fills an ARRAY of
+//                 0x40-byte records up to a capacity (SHOTGUN passes 1, `PUSH 1`
+//                 at 0x004b4b31), so it keeps the FIRST hit and stops when full.
+// The stand-in walk is the same for both; the difference is noted, not modelled.
+int  SegmentQuery(const float seg[6], WorldHit* out, std::uint32_t retAddr,
+                  std::uint32_t rva = 0x004b4cd0u,
+                  const char* name = "query_4b4cd0");
 // 0x004b4650. Verbatim: out[i] = a[i] + t*(b[i]-a[i]).
 void Vec3Lerp(float out[3], const float a[3], const float b[3], float t,
               std::uint32_t retAddr);

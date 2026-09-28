@@ -11,8 +11,8 @@ Ghidra MCP did not load; no Ghidra project was opened for writing.
 
 ## 0. Headline
 
-1. **OIL and P_MINE contact outcomes are ported and measure CLEAN**, call site by
-   call site, against fresh original-side captures (§4). P_MINE moved from
+1. **OIL, P_MINE and SHOTGUN contact outcomes are ported and measure CLEAN**, call
+   site by call site, against fresh original-side captures (§4). P_MINE moved from
    **78 decision mismatches → 0** on the same `c2` capture the prior note measured
    it on (§4.3).
 2. **The dispatcher's armed sweep is ported** (§3.3), including the deactivation
@@ -22,14 +22,19 @@ Ghidra MCP did not load; no Ghidra project was opened for writing.
    6 of P_MINE's 7 press edges in `c2` is the **first** one, `FUN_004b4cd0 == 0`
    (`JE 0x00457e08` at `0x00457caa`). `FUN_0045c110` is now instrumented and
    returned 0 on every power-up call in two fresh captures.
-4. **Two corrections to the prior note's §5 table** (§5): DRUM's contact chain is
+4. **Two corrections to the prior note's §5 table** (§5), plus a decoded map of
+   the five types still blocked (§5.1): DRUM's contact chain is
    gated on its own `0x004b4cd0` call at `0x0045444f` (the prior table listed only
    the two placement leaves), and the chain sites it attributed to MORTAR/GUN by
    activation window include other slots' and other systems' calls — the OIL and
    P_MINE rows are the only ones the window attribution gets right, because those
    two sites are reachable from one type only.
 5. **No regression.** The 9-type decision replay is CLEAN on the archived
-   `o3`/`o4` and on all four current captures (§6).
+   `o3`/`o4` and on all five current captures (§6).
+6. **The remaining five types are not blocked on the chain.** Their contact sites
+   sit inside per-type **projectile updates** — decoded here (§5.1) — each of which
+   integrates a position and a velocity the port does not own. That is a
+   projectile-pool slice, not a chain slice.
 
 ## 1. What the chain actually is
 
@@ -162,10 +167,10 @@ and `0x004b5080` are ported as expressions, instruction-cited.
 
 This is **C2-grade**. No tracker promotion is claimed.
 
-### 3.2 OIL and P_MINE
+### 3.2 OIL, P_MINE and SHOTGUN
 
-`Oil_Fire` and `PMine_Fire` in `Powerup/PowerupEffects.cpp` now run the chain with
-each branch RVA-cited inline. The P_MINE `s.ammo == 0` guard is kept and marked as
+`Oil_Fire`, `PMine_Fire` and `Shotgun_Fire` in `Powerup/PowerupEffects.cpp` now run
+the chain with each branch RVA-cited inline. The P_MINE `s.ammo == 0` guard is kept and marked as
 port-added (the original has none; its CANFIRE is what stops the pool index going
 negative), and `SfxByName` moved outside the gates to match `0x00457f1c`.
 
@@ -248,18 +253,47 @@ set for OIL ("one triple per drop, 10 drops, all 10 succeeding").
 
 `CONTACT VERDICT: CLEAN`.
 
+### 4.2b SHOTGUN — CLEAN (`g4`)
+
+SHOTGUN's contact site is the one of the six that is **not** in a projectile
+update: `FUN_0045b390`, the pellet detonation, is reached straight from FIRE
+`0x0045b6e0`, which the port already runs. `0x004b4b20` — its query — was not in
+`PU_CONTACT`, so the prior note could count the `0x45b582` basis calls but not the
+gate that produced them. Added, and `g4` captured with the `c3` recipe:
+
+| site | ret_addr | orig | port |
+|---|---|---|---|
+| SHOTGUN query `0x004b4b20` | `0x45b4c2` | 8 | 8 |
+| SHOTGUN basis `0x004b5080` | `0x45b582` | 7 | 7 |
+
+4 pellet fires × the 2-iteration loop (`local_c0 = 2` at `0x0045b3c2`) = 8 queries;
+7 hit, so 7 basis calls — the one miss is reproduced too. `g4` also carries OIL
+10/10/10/10 and the sweep 309/309: `CONTACT VERDICT: CLEAN`.
+
+`0x004b4b20` is `FUN_004b4a80`'s wrapper, not `FUN_004b4c80`'s: same 6-float
+segment and tag 1 (`MOV [ESP+0x24],1` at `0x004b4b33`), but collector
+`FUN_004b49b0`, which fills an array up to a capacity (SHOTGUN passes 1,
+`PUSH 1` at `0x004b4b31`) and therefore keeps the **first** hit, not the nearest.
+Noted in `PowerupContact.h`, not modelled.
+
 ### 4.3 The prior note's own captures
 
-`c2` and `c3` predate the `surface_gate` instrument, so their gate rows have zero
-original data and the tool reports `DIVERGES` on that row alone. Every other row
-is exact:
+`c2` and `c3` predate the `surface_gate` instrument, and `c2`/`c3`/`g2`/`g3`
+predate `query_4b4b20`, so those rows have zero original data. `pu_replay` marks
+them **`not-armed`** (the site's RVA appears nowhere in the capture, so no Frida
+listener was attached) and excludes them from the verdict, and it propagates the
+mark to any site the not-armed one **gates** — with no injected verdict the port
+takes the refuse arm and never reaches the gated site, which would otherwise read
+as a divergence. With that rule all five captures report
+`CONTACT VERDICT: CLEAN`. Every armed row is exact:
 
 - `c2`: P_MINE query **7 / 7**, lerp **1 / 1**, basis **1 / 1**, sweep **280 / 280**,
   sweep-confirm **1 / 1**. Seven press edges, one drop — the port now reproduces
-  the 6-in-7 refusal the prior note measured. Its gate row is `orig 0 / port 1`,
-  and 1 is exactly the number of times gate 1 returned nonzero.
+  the 6-in-7 refusal the prior note measured.
 - `c3`: OIL query **10 / 10**, lerp **10 / 10**, basis **10 / 10**, sweep
-  **309 / 309**. Gate row `orig 0 / port 10`.
+  **309 / 309**.
+- `g3`: OIL **10 / 10 / 10 / 10** including its gate, P_MINE all zero (no P_MINE
+  in that recipe), sweep **309 / 309**.
 
 ### 4.4 Decision half, same runs
 
@@ -271,6 +305,7 @@ is exact:
 | `c3` | OIL, R_FLAME, FLASH, GUN, SHOTGUN | CLEAN |
 | `g2` | MISSILE, MORTAR, DRUM, P_MINE | CLEAN |
 | `g3` | OIL, R_FLAME, FLASH, GUN, SHOTGUN | CLEAN |
+| `g4` | OIL, R_FLAME, FLASH, GUN, SHOTGUN | CLEAN |
 
 The four mismatches that survived the gate port were all at `c2` `t+82`
 (`code_post`, `fire_modes`, `canfire_rets`, `deact_ra orig='0x45bcfc'`) — the one
@@ -284,7 +319,7 @@ frame the armed sweep fired. §3.3 closed them.
    `0x45448a` lerp and one `0x4544e0` basis. So DRUM's drop runs the same
    query-then-place shape; the prior table listed only the two leaves. It is **not**
    in `FUN_004541e0` (decompiled: no contact call at all), so the site lives in the
-   drum's per-frame update past `0x00454311`. Not ported — see §7.
+   drum's per-frame update past `0x00454311` — `FUN_00454350`, decoded in §5.1.
 2. **Window attribution over-collects.** `pu_contact_report.py` slot-attributes the
    dispatcher sweep but not the per-type sites, so a type's window also shows other
    slots' and other systems' calls. `g2`'s MORTAR window lists GUN sites
@@ -292,6 +327,28 @@ frame the armed sweep fired. §3.3 closed them.
    is a per-frame ground probe outside the power-up system entirely (6668 calls,
    ~1 per frame). OIL's and P_MINE's rows are trustworthy only because those two
    sites sit inside functions reachable from one type.
+
+### 5.1 The remaining five, decoded — each is a PROJECTILE slice
+
+Decompiled this session so the next one starts from a map, not a call-site count.
+All five put their contact call inside a **per-frame projectile/particle update**
+that integrates a position and a velocity the ported effect module does not own.
+
+| type | containing fn | shape |
+|---|---|---|
+| MORTAR | `FUN_00453730` (0x00453730..0x004538a7, 377 B) | `A = rec+0x14..0x1c`, `B = A + rec+0x38..0x40`; `0x004b4cd0` @`0x00453784`→RA `0x453789`; on a hit `FUN_0045c350(&res, rec+0x14)` RA `0x4537bb`; on `== 0` lerp RA `0x4537df`, `p += normal*_DAT_005cc9a0(0.05)`, basis RA `0x45382c`, explosion, `FUN_00453210`, `return 1` (detonated) |
+| DRUM | `FUN_00454350` (994 B) | state machine on `param_1[0xb]`: 1 = stuck to the car, **2 = flying**. Pos `param_1[4..6]`, vel `param_1[7..9]`, life `param_1[0xf]`, gated on `life <= _DAT_005cc358`. Each frame `B = pos + vel*dt`, `0x004b4cd0` RA `0x45444f`; **miss** → integrate and apply gravity `_DAT_005ce42c/430/434`; **hit** → the landing branch with lerp RA `0x45448a` and basis RA `0x4544e0` |
+| R_FLAME | `FUN_0045ae80` — the ported TICK's original | 5 owners × 5 groups × 5 sparks. A spark with `pfVar8[6] != 0`, `*pfVar8 < 1.0` and `pfVar8[5] == 0` probes `A = pfVar8[-6..-4]` → `B = A + pfVar8[-3..-1]`: `0x004b4cd0` RA `0x45afcc`; **miss** → `vel.y -= _DAT_005ce018(0.002)`; **hit** → lerp RA `0x45aff3`, `p += normal*_DAT_005ce18c(0.02)`, zero the velocity, set `pfVar8[5] = 1` (landed), basis RA `0x45b04c`. Age `pfVar8[2] += dt`, `*pfVar8 = age*_DAT_005cd114(1.1111)` clamped to 1.0 |
+| GUN | `FUN_00459620` (2727 B) | two query sites, `0x459c19` (96 calls / 0 hits in `g3`) and `0x459d54` (163 / 98), plus two lerps `0x459c3c` (84/84) and `0x459db5` (98/98). `0x459c3c` is a site the prior note did not list |
+| MISSILE | not a Ghidra function | `0x00455cd9`, `0x00455de0`, `0x00455e07`, `0x00455e59` are inside the MISSILE TICK region past `0x00455c90`, which Ghidra has not defined. Create the function first, then decode |
+
+So what each still needs is its **pool record + per-frame integration** ported into
+the Powerup TUs (the `DAT_006883xx` pools the `PowerupSystem.h` ledger already
+records as unmapped). Note the consequence for measurement: unlike OIL/P_MINE/
+SHOTGUN, whose query count is fixed by the decision logic, these types' query
+counts are a function of flight time. Injecting the original's verdicts is not
+enough — the projectile has to be born and die on the same dispatcher calls, so
+the flight integration has to be faithful before the count can be compared.
 
 ## 6. No regression
 
@@ -317,40 +374,42 @@ are not part of the guard and were not in the prior note's either.
 
 ## 7. Verdict against ROADMAP §D3 powerups criterion (c)
 
-| type | (c) verdict | counts |
+| type | (c) verdict | counts (orig / port, per call site) |
 |---|---|---|
-| OIL | **clean** | query/gate/lerp/basis 10/10/10/10 (`g3`), 10/–/10/10 (`c3`) |
-| P_MINE | **clean** | 2/2/2/2 (`g2`), 7/–/1/1 (`c2`) |
+| OIL | **clean** | query/gate/lerp/basis **10/10/10/10** on `g3` and `g4`; `c3` 10/–/10/10 |
+| P_MINE | **clean** | **2/2/2/2** on `g2`; `c2` 7/–/1/1 (7 press edges, 1 drop) |
+| SHOTGUN | **clean** | query **8/8**, basis **7/7** on `g4` |
 | FLASH | **clean** | no contact call exists (unchanged from the prior note) |
-| — armed sweep | **clean** | 280/309/207/309 queries, the one `c2` deactivation reproduced |
+| — armed sweep | **clean** | 280 / 309 / 207 / 309 queries across `c2`/`c3`/`g2`/`g3`+`g4`; the single `c2` deactivation reproduced |
+| MORTAR | blocked | `0x453789`→`0x004b4cd0`, `0x4537bb`→`0x0045c350`, `0x4537df`→`0x004b4650`, `0x45382c`→`0x004b5080` (2 detonations in `g2`) |
+| DRUM | blocked | `0x45444f`→`0x004b4cd0` (gated), `0x45448a`→`0x004b4650`, `0x4544e0`→`0x004b5080` |
+| R_FLAME | blocked | `0x45afcc`→`0x004b4cd0` 413/15, `0x45aff3`→`0x004b4650` 23/23, `0x45b04c`→`0x004b5080` 23/23 (`g3`) |
+| GUN | blocked | `0x459c19`→`0x004b4cd0` 96/0, `0x459d54`→`0x004b4cd0` 163/98, `0x459c3c`→`0x004b4650` 84/84, `0x459db5`→`0x004b4650` 98/98 (`g3`) |
 | MISSILE | blocked | `0x455cd9`→`0x00455100` 31/30, `0x455e59`→`0x004b4cd0` 31/31, `0x455de0`→`0x004b4d10` 16/0, terminal `0x455e07`→`0x00455910` 1/1 |
-| MORTAR | blocked | `0x453789`→`0x004b4cd0` 170/2, `0x4537bb`→`0x0045c350` 4/2, `0x4537df`→`0x004b4650` 2/2, `0x45382c`→`0x004b5080` 2/2 |
-| DRUM | blocked | `0x45444f`→`0x004b4cd0` gated, `0x45448a`→`0x004b4650`, `0x4544e0`→`0x004b5080` |
-| R_FLAME | blocked | `0x45afcc`→`0x004b4cd0` 406/15, `0x45aff3`→`0x004b4650` 15/15, `0x45b04c`→`0x004b5080` 15/15 |
-| GUN | blocked | `0x459c19`→`0x004b4cd0` 96/0, `0x459d54`→`0x004b4cd0` 185/96, `0x459db5`→`0x004b4650` 96/96 |
-| SHOTGUN | blocked | `0x45b582`→`0x004b5080` 8/8 |
 
-**3 clean + the sweep, 6 blocked** (was 1 clean / 1 diverges / 7 blocked).
+**4 clean + the sweep, 5 blocked** (was 1 clean / 1 diverges / 7 blocked).
 
-Why the six are still blocked, precisely: their contact sites are not in the FIRE
-function but in the **per-type TICK / projectile-update** path, which the port does
-not run (`PowerupEffects.cpp`'s TICKs advance timers only; the projectile pools
-`DAT_006883xx` and their per-frame update are unported). The leaves themselves are
-now available — `PowerupContact.cpp` provides all four — so each remaining type is
-a per-type projectile-update port on top of an existing chain, not a chain port.
+Why the five are still blocked, precisely: their contact sites are not in FIRE but
+in the **per-type projectile/particle update** (§5.1), which the port does not run.
+The chain itself is no longer the blocker — `PowerupContact.cpp` provides all five
+leaves the five need.
 
 ## 8. OPEN
 
-1. **The six remaining types.** Cheapest first by call-site count: SHOTGUN (one
-   `0x004b5080` per pellet burst, 8), DRUM and MORTAR (2 placements each), R_FLAME
-   (15), MISSILE (31 + a terminal), GUN (163 per held frame). Each needs its
-   projectile-update function decoded; start at the call sites listed in §7.
-2. **P_MINE's segment direction** — [UNCERTAIN], §3.1.
+1. **The five remaining types**, each a projectile-pool slice on top of a chain
+   that now exists. Cheapest first by how much state the pool needs: DRUM and
+   MORTAR (one projectile, pos + vel + life), R_FLAME (25 sparks, same shape),
+   MISSILE (needs the Ghidra function created first), GUN (2727 B, two query sites
+   and two lerp sites). Structures and RVAs in §5.1.
+2. **P_MINE's segment direction** — [UNCERTAIN], §3.1. Next command there.
 3. **The sweep's sphere** `slot+0x80..0x8c`: the radius at `+0x8c` has no writer in
-   the ported lifecycle. Find it (`EBX` at `0x0045bcb2` is the source of the centre)
-   before the sweep can fire in the shipping build.
+   the ported lifecycle, so the branch cannot fire in the shipping build. `EBX` at
+   `0x0045bcb2` is the source of the centre; start there.
 4. **`FUN_0045c110`'s material channel.** `col_mat_` is an index, the gate keys on
-   the RwRGBA. Carrying the colour through the collision soup would let the gate be
-   real rather than a measured-allow stand-in.
-5. Carried from the prior note: the Vehicle points/vectors defect (U-9138, latent,
+   the RwRGBA at `RpMaterial+4`. Carrying the colour through the collision soup
+   would make the gate real rather than a measured-allow stand-in.
+5. **SHOTGUN's per-pellet frames.** Both of the port's two passes probe from the
+   owner car; the original probes from `param_1[1]` and `param_1[2]`. It did not
+   change the counts on `g4`, but it moves both impact points.
+6. Carried from the prior note: the Vehicle points/vectors defect (U-9138, latent,
    untouched here), `Rw_VtableDispatch`, `Rw_SetRotation` / `Math_Acos`.

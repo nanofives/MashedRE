@@ -121,7 +121,8 @@ void CloseDump() { if (s_dump) { std::fclose(s_dump); s_dump = nullptr; } s_dump
 //   - it writes puVar2[0..0xf]: normal, tri index, 3 vertices, object, t, userdata.
 // So the return value is the intersection COUNT, and a nonzero return is what both
 // drop gates test (OIL `TEST EAX,EAX` 0x004578d4, P_MINE 0x00457ca8).
-int SegmentQuery(const float seg[6], WorldHit* out, std::uint32_t retAddr) {
+int SegmentQuery(const float seg[6], WorldHit* out, std::uint32_t retAddr,
+                 std::uint32_t rva, const char* name) {
     std::memset(out, 0, sizeof(*out));
     out->normal[1] = 1.0f;
     int n = 0;
@@ -160,7 +161,7 @@ int SegmentQuery(const float seg[6], WorldHit* out, std::uint32_t retAddr) {
             ++n;
         }
     }
-    Log(0x004b4cd0, "query_4b4cd0", retAddr, 0, 0, 0, n);
+    Log(rva, name, retAddr, 0, 0, 0, n);
     return n;
 }
 

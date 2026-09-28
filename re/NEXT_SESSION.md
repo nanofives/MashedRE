@@ -1,6 +1,69 @@
 # Next session — kickoff prompt
 
-## => KICKOFF PROMPT - D3 powerups (c), the contact chain, written 2026-09-27, paste verbatim
+## => KICKOFF PROMPT - D3 powerups (c), the five projectile types, written 2026-09-28, paste verbatim
+
+```
+Session goal: close ROADMAP v3 D3 powerups criterion (c) for the FIVE types still
+blocked. Read ROADMAP.md section D3 (Powerups row) and
+re/analysis/D3_CONTACT_PORT_2026-09-28.md. Do NOT re-derive them.
+
+SETTLED 2026-09-28 (D3_CONTACT_PORT_2026-09-28.md - read it, do not re-measure):
+- The contact CHAIN is no longer the blocker. Powerup/PowerupContact.cpp ports
+  0x004b4cd0 (and its 0x004b4b20 sibling), 0x004b4650, 0x004b5080, 0x0045c110 and
+  the sweep pair 0x004b4b60 / 0x0045c350, with the BSP walk FUN_00538c80 and the
+  RpMaterial colour channel as stated stand-ins.
+- (c) is CLEAN, per call site, for OIL (10/10/10/10), P_MINE (2/2/2/2), SHOTGUN
+  (8/8 query, 7/7 basis) and the dispatcher's armed sweep (280/309/207/309). FLASH
+  makes no contact call. P_MINE went 78 decision mismatches -> 0 on c2.
+- RESOLVED: the gate that refused 6 of P_MINE's 7 press edges is the WORLD QUERY
+  (JE 0x00457caa), not the surface gate. 0x0045c110 is now instrumented and has
+  never been observed refusing a power-up drop.
+- The five that remain (MORTAR, DRUM, R_FLAME, GUN, MISSILE) each put their
+  contact call inside a per-frame PROJECTILE/PARTICLE update, decoded with RVAs in
+  section 5.1. Each needs its pool record + flight integration ported into the
+  Powerup TUs - the DAT_006883xx pools PowerupSystem.h records as unmapped.
+- MEASUREMENT WARNING, read before planning: unlike the four already clean, these
+  types' query COUNT is a function of flight time. Injecting the original's query
+  verdicts is NOT enough - the projectile must be born and die on the same
+  dispatcher calls, so the flight integration has to be faithful first.
+- Tooling, do not rebuild it:
+    py -3.12 re/frida/scenario_launch.py --track 0 --mode 10 --cars 4 --car 0 \
+       --poke-ctrl-slots --statediff-out <out>.msd --statediff-car 0 \
+       --statediff-drive --statediff-puhook --puhook-contacts \
+       --pu-plan 11,7,10,12 --pu-warm 60 --hold 110       # c2 recipe
+       # c3/OIL/SHOTGUN recipe: --pu-plan 19,16,18,9,17
+    py -3.12 re/tools/pu_contact_report.py <out>.msd --slot 0
+    re\tools\pu_replay\build.bat  then
+    MASHED_PU_STEPDUMP=<p>.csv MASHED_PU_CONTACTDUMP=<p>.pucontact.csv \
+      re/tools/pu_replay/out/pu_replay.exe <orig>.msd.puhook.csv 0
+    py -3.12 re/tools/pu_diff.py <orig>.msd.puhook.csv <p>.csv --slot 0
+  pu_replay prints a per-call-site table (orig vs port) and a CONTACT VERDICT. Add
+  a new type by adding its sites to kSites / kQuerySites / kGateSites, with the
+  owning type code and the gatedBy site. Reference captures:
+  verify/d3_contact_20260928/g2 (P_MINE), g3 (OIL), g4 (OIL + SHOTGUN).
+- THREE attribution rules the tooling enforces, all learned by getting them wrong:
+  key every count on (name, ret_addr); attribute the dispatcher sweep by slot via
+  arg2 = slot_base + 0x80; and attribute a PER-TYPE site by the subject slot's
+  code_pre on that call - a .pucontact.csv row carries no slot, and g2 has three
+  0x457ca5 rows of which only two are slot 0's.
+- A site whose RVA is armed in no Frida listener is marked not-armed and excluded,
+  and the mark propagates to sites it gates. Do not "fix" a not-armed row.
+
+DO, in this order:
+1. DRUM (FUN_00454350) then MORTAR (FUN_00453730) - one projectile each, pos+vel+
+   life, smallest state. Port the pool record and the per-frame integration into
+   Powerup/, then add their sites to pu_replay and measure.
+2. R_FLAME (FUN_0045ae80, the TICK already ported) - 25 sparks, same shape.
+3. MISSILE - Ghidra has no function at 0x00455cd9; create it first, then decode.
+4. GUN (FUN_00459620, 2727 B) - two query sites and two lerp sites, last.
+
+DO NOT: flip Vehicle/ForceIntegratorStubs.cpp:39 to the vectors form without a D2
+re-measure (U-9138). Trackers only via re-classify. Launch muted (MASHED_MUTE=1),
+always --poke-ctrl-slots. Track and kill only your PIDs. Re-run the 9-type
+regression replay (verify/d3_pu_20260926/o3,o4) after every change.
+```
+
+## => HISTORY: KICKOFF PROMPT - D3 powerups (c), the contact chain, written 2026-09-27, SUPERSEDED by the 2026-09-28 prompt above
 
 ```
 Session goal: close ROADMAP v3 D3 powerups criterion (c) for the 7 types still blocked on
