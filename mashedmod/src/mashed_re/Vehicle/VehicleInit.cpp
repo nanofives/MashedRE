@@ -15,6 +15,7 @@
 #include <cstddef>   // std::ptrdiff_t (exe build's stricter include set surfaces this)
 #include <cstring>
 #include <cmath>
+#include <cstdlib>   // [U-9147] std::getenv / std::atoi for MASHED_HANDLING_TYPE
 
 namespace mashed_re {
 namespace Vehicle {
@@ -31,15 +32,61 @@ static inline void WF(char* r, int off, float v)            { std::memcpy(r + of
 static inline void WI(char* r, int off, std::int32_t v)     { std::memcpy(r + off, &v, 4); }
 static inline float RF(char* r, int off)                    { float v; std::memcpy(&v, r + off, 4); return v; }
 
-// Handling-override table @0x00613140 (5-int stride, -1 terminated). Harvested key-0 entry;
-// the original walks `&DAT_00613148` comparing piVar6[3] (nextKey) to the track-type.
-// [UNCERTAIN U-A3-TABLE]: only key 0 (Arctic-class) harvested clean; keys 6,12,… pending.
+// Handling-override table @0x00613140 (5-int stride, -1 terminated). The original walks
+// it as (`Vehicle/PhysicsChainHooks.cpp:2938-2951`, A3 body 0x0046b540):
+//     e = 0x00613148;  tag = [0x00613140];
+//     do { if (tag == typeIdx) { _DAT_00613108 = (float)e[-1];
+//                                _DAT_00613114 = (float)e[0];
+//                                _DAT_00613130 = (float)e[1] * 0.001;
+//                                _DAT_0061313c = (float)e[2] * 0.001; }
+//          tag = e[3]; e += 5; } while (tag != -1);
+//
+// [U-9147 2026-09-29] HARVESTED LIVE, closing the old `[UNCERTAIN U-A3-TABLE]` for the
+// first four entries. `re/frida/scenario_launch.py --peek` on a running
+// original/MASHED.exe read 0x00613148..0x00613180 as ints:
+//     0x00613148 40000  0x0061314c 1000  0x00613150 1500  0x00613154 6    0x00613158 105
+//     0x0061315c 40000  0x00613160 1000  0x00613164 1500  0x00613168 12   0x0061316c 95
+//     0x00613170 40000  0x00613174 1000  0x00613178 1500  0x0061317c 18   0x00613180 100
+// so, resolved through the walk above, tag 0 -> 100, tag 6 -> 105, tag 12 -> 95,
+// tag 18 -> 100, with spring/k1/k2 the same 40000/1000/1500 in every entry.
+// The previous row here recorded "{ 0, 100, ... }" only, which is why the port ran the
+// tag-0 value. [UNCERTAIN] tags past 18 are still unharvested.
 struct HandlingOverride { int key, paramA, spring, k1, k2; };
 static const HandlingOverride kHandlingTable[] = {
-    { 0, 100, 40000, 1000, 1500 },   // 0x00613144.. (next key 6)
-    // [UNCERTAIN] keys 6,12,… not yet harvested — non-0 track types fall through to defaults
-    { -1, 0, 0, 0, 0 },              // terminator
+    {  0, 100, 40000, 1000, 1500 },   // e[-1] = 0x00613144
+    {  6, 105, 40000, 1000, 1500 },   // e[-1] = 0x00613158   <- what the original uses
+    { 12,  95, 40000, 1000, 1500 },   // e[-1] = 0x0061316c
+    { 18, 100, 40000, 1000, 1500 },   // e[-1] = 0x00613180
+    { -1,   0,     0,    0,    0 },   // terminator
 };
+
+// [U-9147 2026-09-29] The selector. The original computes it as
+// `FUN_0040ce80(FUN_00430790())` — a vehicle/DFF type index, NOT a course id — and
+// neither of those is ported (no DFF in the standalone). `TrackRenderer.cpp` passes
+// `course_id_` here, which with MASHED_TRACK_SEL=0 is 0 and selects the tag-0 entry.
+//
+// MEASURED, not chosen: on the reference scenario (track 0, car 0, quick race) the
+// original's live `_DAT_00613108` is **105.0** — nine `--peek` samples over 30 s of a
+// running race — and 105 is the tag-6 entry. The other three globals come out
+// 40000 / 1.0 / 1.5 on the original, which is what every entry gives, so tag 6 changes
+// only `_DAT_00613108`.
+//
+// Consequence, and it is the whole of U-9147's first divergent quantity: at full lock
+// `BodyOrient_OmegaFromSteer` gives `dyaw/frame = in[0]*frameMs*_DAT_00613108*1e-4/3000`,
+// so 100 vs 105 is a flat 100/105 on the body yaw rate. Measured d(bodyH)/frame:
+// -0.04249 (port, tag 0) vs -0.04462 (original) = 0.9523.
+//
+// `MASHED_HANDLING_TYPE=0` reverts to the pre-fix selector for A/B (ROADMAP v3: a flag
+// may only turn the ported behaviour OFF). [UNCERTAIN] the producer FUN_0040ce80 is
+// still unported, so this cannot yet vary per car or per track.
+static int HandlingTypeIndex(int fallback) {
+    static const int s_t = [] {
+        const char* e = std::getenv("MASHED_HANDLING_TYPE");
+        return e ? std::atoi(e) : 6;
+    }();
+    (void)fallback;
+    return s_t;
+}
 
 constexpr float kScale001  = 0.001f;     // _DAT_005cc558 (override int->float scale, 0x3a83126f)
 constexpr float kRadiusK   = 0.277778f;  // _DAT_005cea44 (0x3e8e38e4) loop1 squared-sum factor
@@ -55,15 +102,20 @@ int VehicleInit(int slot, int trackType)
 
     // handling defaults (original globals _DAT_00613108 / DAT_00613114 / DAT_00613130 / 0061313c)
     float h_param  = 100.0f, h_spring = 40000.0f, h_k1 = 1.0f, h_k2 = 1.5f;
+    const int typeIdx = HandlingTypeIndex(trackType);   // [U-9147] see the note above
     for (const HandlingOverride* e = kHandlingTable; e->key != -1; ++e) {
-        if (e->key == trackType) {
+        if (e->key == typeIdx) {
             h_param  = (float)e->paramA;
             h_spring = (float)e->spring;
             h_k1     = (float)e->k1 * kScale001;
             h_k2     = (float)e->k2 * kScale001;
         }
     }
-    (void)h_param;  // _DAT_00613108: consumed by later subsystems, not this record write
+    // [U-9147 2026-09-29] _DAT_00613108. It used to be `(void)h_param` with the comment
+    // "consumed by later subsystems, not this record write" — true, and the later
+    // subsystem is BodyOrient_OmegaFromSteer, which hardcoded 100.0f and so never saw
+    // the override at all. Publish it instead of discarding it.
+    g_handlingTorque = h_param;
 
     char* rec = reinterpret_cast<char*>(g_vehicleArrayBase) + (std::ptrdiff_t)slot * 0xd04;
 

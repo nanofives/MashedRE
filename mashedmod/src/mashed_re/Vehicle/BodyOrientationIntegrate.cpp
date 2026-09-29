@@ -37,6 +37,7 @@
 // vector is a PARAMETER here rather than being computed in this file. When the
 // query lands, only the caller changes.
 
+#include "ForceIntegrator.h"   // [U-9147] g_handlingTorque (_DAT_00613108)
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
@@ -215,7 +216,16 @@ void BodyOrient_OmegaFromSteer(void* rec, float dtMs, const std::uint8_t* in,
     constexpr float kPct          = 0.01f;        // _DAT_005cc328 0x3c23d70a
     constexpr float kTorqueK      = 1.0000e-4f;   // _DAT_005cd03c 0x38d1b717
     const     float kDtK          = Cf(0x39aec33e); // _DAT_005cc948 = 1/3000 (EXACT)
-    constexpr float kTorque100    = 100.0f;       // _DAT_00613108 0x42c80000
+    // [U-9147 2026-09-29] _DAT_00613108 is NOT the constant 100.0. A3 seeds 100.0 at
+    // 0x0046b544 and then the handling-override table rewrites it; on the reference
+    // scenario the running original holds **105.0** (nine live
+    // `scenario_launch.py --peek 00613108:f` samples over 30 s). Hardcoding 100 here
+    // made the port's body yaw rate a flat 100/105 of the original's: measured
+    // d(bodyH)/frame -0.04249 (port) vs -0.04462 (original), ratio 0.9523, constant
+    // across both speed bands because `grip` saturates at 1 above speed 1500.
+    // Now read from the global VehicleInit publishes. See
+    // re/analysis/D2_REOPEN_2026-09-29.md section 9.
+    const     float kTorque100    = g_handlingTorque;  // _DAT_00613108
     constexpr float kSeedScale    = 0.5f;         // _DAT_005cc32c 0x3f000000
     constexpr float kDampNum      = 3000.0f;      // _DAT_005ccd08 0x453b8000 (same global
                                                   //   as the suspension numerator; confirmed

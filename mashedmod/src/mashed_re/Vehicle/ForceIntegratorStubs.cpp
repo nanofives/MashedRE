@@ -25,6 +25,10 @@ float g_gravScale      = 0.0f;       // _DAT_00803340
 float g_gravX = 0.0f, g_gravY = 0.0f, g_gravZ = 0.0f;  // _DAT_00803334/38/3c
 float g_suspDtTerm     = 0.0f;       // _DAT_0088e610
 float g_suspScale      = 0.0f;       // _DAT_0088e5f0
+// [U-9147] _DAT_00613108. 100.0 is A3's PRE-table seed (0x0046b544); VehicleInit
+// overwrites it from the handling table on every init, which on the reference
+// scenario gives the original's measured 105.0.
+float g_handlingTorque = 100.0f;     // _DAT_00613108
 float g_a8WheelLe4[4]  = {0,0,0,0};  // [A8-ORIENT] diag only
 float g_a8WheelLd4[4]  = {0,0,0,0};  // [A8-ORIENT] diag only
 A6aWheelDump g_a6aDump[4] = {};      // [U-9147] A6a block-#4 capture, diag only

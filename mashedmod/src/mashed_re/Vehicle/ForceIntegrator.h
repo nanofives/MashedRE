@@ -101,6 +101,13 @@ extern float g_gravScale;       // _DAT_00803340
 extern float g_gravX, g_gravY, g_gravZ;  // _DAT_00803334/38/3c
 extern float g_suspDtTerm;      // _DAT_0088e610 (gravity*dt per frame)
 extern float g_suspScale;       // _DAT_0088e5f0
+// [U-9147 2026-09-29] _DAT_00613108, the steer-torque scale A3 seeds to 100.0 and the
+// handling-override table then rewrites. MEASURED at 105.0 in the running original on
+// the reference scenario (nine `scenario_launch.py --peek 00613108:f` samples over 30 s).
+// Written by VehicleInit (A3 0x0046b540), read by BodyOrient_OmegaFromSteer. Was a
+// hardcoded 100.0f at BodyOrientationIntegrate.cpp:218, which made the port's body yaw
+// rate a flat 100/105 of the original's.
+extern float g_handlingTorque;  // _DAT_00613108
 extern float g_a8WheelLe4[4];   // [A8-ORIENT] per-wheel le4 from Integrate2 block #4 (diag only)
 extern float g_a8WheelLd4[4];   // [A8-ORIENT] per-wheel ld4 from Integrate2 block #4 (diag only)
 
