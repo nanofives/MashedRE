@@ -30,9 +30,13 @@ Superseded kickoff: the earlier 2026-09-29 one (player-regression U-9141 / U-914
 >   entry; max variant ±5%); "the port chases the velocity heading"
 >   (`BodyOrient_IntegrateStep` **is** wired at `VehiclePhysicsRun.cpp:812`).
 >
-> **PICK UP HERE — U-9147's first divergent channel is the REAR-WHEEL lateral coefficient
-> `p[0x15]`.** The port has ~**0.269 / 0.233** on the rear wheels where the original has a
-> **uniform 0.15 on all four**. Full analysis: `D2_REOPEN_2026-09-29.md` §6.0.
+> **PICK UP HERE — U-9147: the port's REAR wheels carry ~1.84x / ~1.59x the lateral force
+> their own `lbc` term specifies.** Every input to that coefficient MATCHES the original
+> (`p[0x15]` 0.15, `p[0x16]` 0.0125, `p[0x1b]` 1091.8/1083.8/1084.6/536.3, `p[-1]` 0 on all
+> four, `g_suspScale` 692.3 vs ~710, `le4` 1024 both sides), so this is an EXCESS FORCE on
+> the rears, not a wrong coefficient field. `a/lbc`: original 0.989/0.998/0.994/1.019 —
+> its force IS its `lbc` on all four wheels; port 0.960/0.946/**1.840**/**1.591**.
+> Full analysis: `D2_REOPEN_2026-09-29.md` §6.0.
 >
 > Two things were settled getting here, so don't redo them:
 > - **`a8_wheelfit.py` was measuring two different quantities** and its first answer
@@ -48,14 +52,13 @@ Superseded kickoff: the earlier 2026-09-29 one (player-regression U-9141 / U-914
 > 0.1529) matches the value read straight out of the record at `b+0x54` (0.15, one distinct
 > value over 853 frames) to within 2%. Trust these numbers.
 >
-> **Next command:** find the port's writer of that per-wheel slot and compare it to 0.15.
-> Address: reducer `b + 0x54` with `b = 0x1a4 + w*0xc4`; in the port's own wheel-block
-> addressing (`rec + 0x170 + i*0xc4`, `VehicleInit.cpp:111`) the same slot is **`+0x88`**
-> (`0x1a4 - 0x170 = 0x34`). It is **not** the `WB(rec, 0x54, ...)` at `VehicleInit.cpp:106`
-> — that one is record-relative and a different slot; don't confuse them. A3 `0x0046b540`
-> is the suspect (spawn-time wheel init, already carrying `[UNCERTAIN U-A3-TABLE]` at
-> `VehicleInit.cpp:36`) but **is not established** — establish it from the original's
-> disassembly, not from the port. Re-run to confirm a fix:
+> **Next command:** enumerate every writer of the per-wheel force accumulator
+> `p[0x1c]/p[0x1d]/p[0x1e]` in the port's A6a (`Vehicle/Integrate2.cpp`) and check each
+> against `0x00467650`. First suspect, **[UNCERTAIN] and not established**: the ADDITIVE
+> brake term at `:390-393` (`Wp(p, 0x1c, bf*Rp(p,0x1f) + Rp(p,0x1c))`), which sits directly
+> beside the rear-only `wheel > 1` branch at `:395-398`. Ruled out already: `p[-1]` reads 0
+> on all four wheels on BOTH sides, so the `(l94 & 0x100)` gate at `:441` takes the same arm
+> on both and is not the asymmetry. Re-run to confirm a fix:
 > ```
 > py -3.12 re/tools/statediff/a8_wheelfit.py --orig verify/a8_steer_20260824/orig_steerR.msd \
 >     --port verify/d2_reopen_20260929/solo_post1/motion_diag.log

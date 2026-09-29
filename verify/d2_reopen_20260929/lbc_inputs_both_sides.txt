@@ -1,0 +1,6 @@
+PORT solo_post1 -- lbc inputs read straight from motion_diag (1627 lines)
+  g_suspScale median 692.302
+  p15 median 0.15   p16 median 0.0125
+  p[0x1b] medians [1091.81, 1083.82, 1084.6, 536.32]
+  p[-1] distinct [[0], [0], [0], [0]]
+ORIGINAL (VehiclePhysicsRun.cpp:999 + msd read): p15=0.15 p16=0.0125 p[-1]=0 all four p[0x1b]=1091/1081/1086/536

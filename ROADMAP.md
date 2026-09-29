@@ -536,15 +536,26 @@ opinion is an opinion about the scaffold, not about the port.
 > 0.1529**) matches the value **read directly from the record** at `b+0x54` — **0.15 on all
 > four wheels, one distinct value over 853 frames** — to within 2%.
 >
-> **Corrected finding:** implied `p[0x15]` port vs original is **0.945 / 0.925** on the
-> fronts and **1.802 / 1.523** on the rears. The original's lateral coefficient is uniform
-> across all four wheels; the port's rears are ~1.8x and ~1.5x too large. `p[0x1b]` matches
-> on both sides, `le4` is capped at 1024 on **both** sides (so the clamp-saturation
-> hypothesis is **refuted**), and `g_suspScale` is a global that would scale all four wheels
-> equally — so the divergence is in the per-wheel field itself. Next command: find the
-> port's writer of that slot (`rec + 0x170 + i*0xc4 + 0x88` in the port's addressing) and
-> compare against the original's constant 0.15. A3 `0x0046b540` is the suspect, not yet
-> established.
+> **Corrected finding: the port's REAR wheels carry ~1.84x and ~1.59x the lateral force
+> their OWN `lbc` term specifies.** Every input to that coefficient matches the original,
+> read straight out of the port's own diag over 1627 lines: `p[0x15]` 0.15, `p[0x16]`
+> 0.0125, `p[0x1b]` 1091.8/1083.8/1084.6/536.3, `p[-1]` 0 on all four, `g_suspScale` 692.3
+> vs ~710, `le4` capped at 1024 on both sides (so the clamp-saturation hypothesis is
+> **refuted**). Fitted `a` against each side's own
+> `lbc = p[0x15]*p[0x1b]*g_suspScale*le4*0.0009766` (`Integrate2.cpp:424`):
+>
+> | | w0 | w1 | w2 rear | w3 rear |
+> |---|---:|---:|---:|---:|
+> | ORIGINAL `a/lbc` | 0.989 | 0.998 | **0.994** | **1.019** |
+> | PORT `a/lbc` | 0.960 | 0.946 | **1.840** | **1.591** |
+>
+> The original's lateral force *is* its `lbc` term on all four wheels; the port's is on the
+> fronts and is in excess on the rears. So something else adds into the per-wheel force
+> accumulator `p[0x1c..0x1e]` on wheels 2/3. Next command: enumerate every writer of
+> `p[0x1c..0x1e]` in `Vehicle/Integrate2.cpp` and check each against `0x00467650`; the
+> additive brake term at `:390-393` beside the rear-only `wheel > 1` branch at `:395-398`
+> is the first suspect, **[UNCERTAIN]**, not established. `p[-1]` is 0 on all four on both
+> sides, so the `(l94 & 0x100)` gate at `:441` is NOT the asymmetry.
 >
 > **Guards after the change** (reported, not gates — the shipping exe is behaviourally
 > unchanged, since the only exe edit was reverted): criterion (e) `ai_speed_env.py --check`
