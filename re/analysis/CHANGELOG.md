@@ -27,6 +27,8 @@ Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
 
+2026-09-29  U-9142  CLOSED by USER DECISION (Mariano)  KEEP the spawn settle, default-ON, MASHED_NO_SPAWN_SETTLE=1 retained as the A/B revert. The AI criterion (b) bands are NOT moved: cars 2/3's c1_distinct 72/75 vs a ceiling of 70 and steer_distinct 104 vs 96, and the accel/brake_distinct fall to 1 (artefact removal), are recorded as findings against the unchanged bands. AI (b) is re-baselined with the settle ON; ROADMAP section D3 records that. Same-day measurement independently supports it: with the start boost ported, MASHED_NO_SPAWN_SETTLE=1 FAILS criterion (e) on all three cars
+
 2026-09-29  00467650  VehicleWheelDrivetrainUpdate (A6a)  C4 unchanged (.asi copy) / exe-copy DEFECT FIXED  the mashed_re.exe body Vehicle/Integrate2.cpp was MISSING the +0xbf8 START BOOST block that the .asi copy PhysicsChainHooks.cpp always had -- it carried only "[U-A6A-ST0] ... shape only". Ported verbatim 0x00467d3a..0x00467e44 (5e6/wheel, or _DAT_005cea28 = 8e6 when FUN_0040e340()==4 and the car index is DAT_0088e668/66c). This was the WHOLE of U-9140's 8-9x drive-force gap. evidence re/analysis/D3_DRIVE_FORCE_2026-09-29.md, verify/d3_force_20260929/orig_boost_launch.txt, commit 9573f3a3
 
 2026-09-29  00470670  VehicleControlUpdate (A4)  C4 unchanged (.asi copy) / exe-copy [UNCERTAIN] RESOLVED  A6a param_1 decoded as the CAR INDEX (dispatcher 0x00471071 -> A4 0x0047094c) and plumbed through VehicleControlIntegrate; it had been a hardcoded 0 at VehicleControl.cpp:187. evidence re/analysis/D3_DRIVE_FORCE_2026-09-29.md section 2.3

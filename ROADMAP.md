@@ -846,8 +846,23 @@ criterion (e)), and this block's commit (guards + note). The §2.4 band of
   speed gain on 9 consecutive frames, which a multi-pass accumulation cannot do. So
   `[A8-B14CADENCE]` is refuted for this comparison, and the force→velocity conversion was
   never the defect. **U-9140 RESOLVED.**
-- **U-9142 answered by measurement: KEEP the spawn settle.** With `MASHED_NO_SPAWN_SETTLE=1`
-  and the boost on, (e) FAILS on all three cars by -2.1% to -6.9%. The settle is required.
+- **U-9142 CLOSED 2026-09-29 by USER DECISION (Mariano): KEEP the spawn settle, default-ON,
+  `MASHED_NO_SPAWN_SETTLE=1` retained as the A/B revert.** Consequence for this gate, and it
+  is a scoping change rather than a loosening: **AI criterion (b) is RE-BASELINED WITH THE
+  SETTLE ON.** Every (b) number quoted in this section from 2026-09-29 onward is the
+  settle-on arm, and the settle-off arm is no longer the reference for it.
+  **The (b) bands are NOT moved.** The two things the decision was weighed against are
+  recorded as FINDINGS against those unchanged bands:
+  - cars 2/3's margin failures — car 2 `c1_distinct` 72 and car 3 75 against a ceiling of 70,
+    car 2 `steer_distinct` 104 against a ceiling of 96;
+  - `accel_distinct` / `brake_distinct` falling to 1, which is the **removal of an artefact**:
+    pre-settle the port's only non-255 accel call in the 220-call window was the one the
+    spawn transient produced, so those two bands were being satisfied by the defect.
+  The same-day measurement supports the decision independently and is stronger than the
+  argument available when U-9142 was filed: with the start boost ported,
+  `MASHED_NO_SPAWN_SETTLE=1` **fails criterion (e)** on all three cars by -2.1% to -6.9%, so
+  the settle is required for the very gate the (b) cost was being traded against. (b) also
+  now fails in both arms on all three cars, so it can no longer discriminate between them.
 - **AI criterion (b): still NOT met, and now WIDER — the sole D3 blocker.**
   `MASHED_NO_START_BOOST=1` reproduces the 2026-09-28 (b) numbers exactly, so no new defect
   was introduced; the default arm adds `c1_median` 42-48 against a band of `[0,0]` and
