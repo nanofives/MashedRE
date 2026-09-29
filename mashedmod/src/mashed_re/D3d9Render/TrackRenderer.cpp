@@ -2943,10 +2943,16 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // MASHED_REAL_PHYSICS=0 (the D2 A/B revert) has no chain to feed, so on that
         // revert the opponents fall back to the pre-D3 Option B motion model below; it is
         // reachable ONLY through that revert flag.
+        // [U-9145 TEMPORARY DIAG 2026-09-29] MASHED_MEASURE_NOAITICK=1 skips the AI
+        // clock + snapshot + tick + dump only, to A/B whether the ported tick spine
+        // reaches the PLAYER. REMOVE once §6 of PLAYER_REGRESSION_2026-09-29.md is closed.
+        static const bool s_noAiTick = (std::getenv("MASHED_MEASURE_NOAITICK") != nullptr);
+        if (!s_noAiTick) {
         Ai::Ai_AdvanceClock(static_cast<int>(in.dt * 3000.0f + 0.5f));
         AiBridgeSnapshot();
         Ai::Ai_Standalone_Tick();
         AiStepDump();
+        }
         const bool phys = Vehicle::VehiclePhysics_Enabled();
         // [U-9141 2026-09-29] MASHED_MEASURE_NOOPP=1 — MEASUREMENT HARNESS ONLY. Skips the
         // whole per-opponent update below (nothing else), so the three AI cars stay parked
@@ -3800,8 +3806,14 @@ void TrackRenderer::StartRound() {
     place(car_pos_, &car_yaw_, 0);
     car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
     car_speed_ = 0.f;
-    ai_cars_.assign(3, AiCar{});
-    for (int i = 0; i < 3; ++i) {
+    // [U-9145 2026-09-29] MASHED_MEASURE_SOLO: StartRound RE-CREATES the opponents, so
+    // gating only the load-time spawn was not enough — MATCH-SEED still logged
+    // `participants=4` and the knob was inert. BOTH sites are gated; with the knob unset
+    // this is `ai_cars_.assign(3, AiCar{})` and `i < 3`, byte-for-byte as before.
+    static const bool s_measureSoloR = (std::getenv("MASHED_MEASURE_SOLO") != nullptr);
+    const int nAi = s_measureSoloR ? 0 : 3;
+    ai_cars_.assign(static_cast<std::size_t>(nAi), AiCar{});
+    for (int i = 0; i < nAi; ++i) {
         AiCar& a = ai_cars_[static_cast<std::size_t>(i)];
         place(a.pos, &a.yaw, i + 1);   // ai i -> slot i+1
         a.target = 1;
