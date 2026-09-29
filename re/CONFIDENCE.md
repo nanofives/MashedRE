@@ -40,12 +40,51 @@ Every row in `hooks.csv` carries a confidence label `C0..C4`. Promotion is one-w
 - All F-DoD criteria satisfied (see `ROADMAP.md`).
 - The function is canonical reference material; lower-confidence callers can lean on it.
 
+## Which copy the evidence covers (clause added 2026-09-29)
+
+**C3/C4 evidence names the copy it covers.** The project builds two targets from two
+different source lists (`mashedmod/exe_sources.rsp`, `mashedmod/asi_sources.rsp`), so one RVA
+can have two bodies. Every `RH_ScopedInstall` gate and every `diff-original` run above is
+defined over the **`.asi`** — in `mashed_re.exe`, `HookSystem::Register` is an empty function
+(`mashedmod/src/mashed_re/Stubs/HookSystemNoOp.cpp:19`), so registration proves nothing there.
+
+The `file` column of `hooks.csv` names the copy the evidence measured (by convention, the
+`.asi` copy). The `exe_file` column names the TU compiled into `mashed_re.exe` that carries a
+body for that RVA — empty when the exe has no port.
+
+A row is C3/C4 **for the shipping exe** only if **either**:
+
+- `exe_file` is empty or `exe_file == file` — one body, so the evidence covers what ships; **or**
+- the exe copy has **its own** evidence, cited in `notes`.
+
+When `exe_file != file`, the row's level describes the `.asi` copy only. It is **not** a claim
+about `mashed_re.exe`, and it must not be cited as one in a parity, D3-criterion or
+Definition-of-Done argument.
+
+Two corollaries, both learned the hard way:
+
+- **Fixing the exe copy by reading is not evidence for the exe copy.** A copy edited to match
+  the verified body has been *re-verified by reading*, which is a C2-grade statement about the
+  exe. It earns C3/C4 for the exe only through the normal gates, run against that copy.
+- **A "fixed" exe copy does not restore the row.** Demotion is judged per copy, not per RVA.
+
+ROADMAP phase D4 carries the burn-down: consolidate each pair into ONE shared TU judged
+against the original, at which point `exe_file == file` and this clause stops costing anything.
+`mashedmod/build.bat` runs `scripts/lint_rva_bodies.py` before the compile step to stop new
+pairs appearing; `re/tools/dual_copy_allowlist.txt` is the shrinking list of known ones.
+
+Precedent and the full finding: `re/analysis/DUAL_COPY_AUDIT_2026-09-29.md`,
+`re/analysis/DUAL_COPY_FIX_2026-09-29.md`.
+
 ## Demotion rules
 
 A function is **demoted** automatically when:
 - A diff regression is observed (C4 → C3 until re-verified).
 - A struct it depends on changes shape (any function touching that field at C3 → C2).
 - An `[UNCERTAIN]` it depends on is upgraded with new contradicting evidence.
+- Its **shipping-exe copy is shown to differ in behaviour** from the copy the evidence measured
+  (2026-09-29 clause above): the row drops to the level the exe copy's own evidence supports —
+  usually C2, since the decomp has been read but nothing has measured that body.
 
 Demotions are loud — emit a row in `re/analysis/CHANGELOG.md` so we don't lose track of regressions.
 
