@@ -1,0 +1,46 @@
+  pid=12324
+  booting to menu...
+  in race (phase=0); settling 16.0s
+  PICKUPRECS count=5 -> C:\Users\maria\Desktop\Proyectos\Mashed\verify\pickups_20260929\orig_qb.bmp.pickuprecs.json
+    rec[ 0] state=0 type=3212915145 angle=0.000 origin=(-20.220,-1.009,0.270) pos=(-20.220,0.000,0.000)
+    rec[ 1] state=0 type=1099327078 angle=0.000 origin=(0.800,16.800,-0.624) pos=(0.800,0.000,0.000)
+    rec[ 2] state=0 type=1098802790 angle=0.000 origin=(25.400,15.900,0.140) pos=(25.400,0.000,0.000)
+    rec[ 3] state=0 type=3211275641 angle=0.000 origin=(24.051,-0.907,0.270) pos=(24.051,0.000,0.000)
+    rec[ 4] state=0 type=1072750031 angle=0.000 origin=(-3.097,1.882,0.669) pos=(-3.097,0.000,0.000)
+    rec[ 5] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[ 6] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[ 7] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[ 8] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[ 9] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[10] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[11] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[12] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[13] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[14] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[15] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[16] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[17] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[18] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[19] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[20] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[21] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[22] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[23] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+    rec[24] state=0 type=0 angle=0.000 origin=(0.000,0.000,0.000) pos=(0.000,0.000,0.000)
+  ORIGINAL TRACK = TRAINING   (standalone: MASHED_TRACK_SEL = index of 'TRAINING' in kAreas[])
+  piz opens seen (1): TRAINING.PIZ
+  CAMPOSE eye=(-1.42,4.96,-2.47) dir=(0.60,-4.76,-7.16) at=(-0.83,0.21,-9.63)
+  campose_ctrl_DISCREDITED_do_not_transplant=-1.4228,4.9627,-2.4714,-0.8257,0.2062,-9.6294
+  MASHED_CAM_POSE=-1.42280,4.96274,-2.47145,-0.99654,0.00000,-0.08313,0.04590,0.83377,-0.55021,0.06931,-0.55212,-0.83088   <-- USE THIS ONE (12-float basis)
+  FRAME ltm.at=(0.069,-0.552,-0.831) vs 0x4c dir=(0.069,-0.552,-0.831)  ANGLE=0.00deg
+  FRAME ltm.pos=(-1.423,4.963,-2.471) vs ctrl eye  dist=0.0000   euler elev=33.51251220703125 azim=175.23150634765625 roll=0
+  CARPROJ (FRAME BASIS + lens, 640x480):
+    car0: world=(-0.21,0.30,-6.20) z=  5.76 -> screen=(  236.4, 404.6) ON-SCREEN
+    car1: world=(-1.31,0.11,-12.24) z= 10.80 -> screen=(  354.5, 174.1) ON-SCREEN
+    car2: world=(0.08,0.26,-7.46) z=  6.85 -> screen=(  235.5, 325.8) ON-SCREEN
+    car3: world=(-1.57,0.19,-9.85) z=  8.75 -> screen=(  366.3, 235.7) ON-SCREEN
+  LENS viewWindow=(0.6000,0.4500) fovy=48.46deg fovx=61.93deg near=0.1000 far=360.00 projType=1
+  LENS ctrl 0x58=0.6000000238418579 0x24=0.75 0x6c=1 0x70=1  recip_ok=True setupfov_ok=True
+  CAPTURED
+{"draw_calls": 233, "prims": 28750, "verts": 17550, "dp": 5, "di": 228, "dpup": 0, "diup": 0}
+
