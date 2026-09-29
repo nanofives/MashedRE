@@ -311,13 +311,118 @@ from -0.4% to +31% on the donut median. It is not the start boost (the `NO_START
 control is still +28%) and it is not the opponents' new drive model (the gate-ribbon arm,
 which has no AI tick and no ported opponent physics, is +31% as well). §4 bisects it.
 
-## 4. Which side is faithful — from the ORIGINAL
+## 4. U-9145 — the coupling, found: TWO channels, neither of them a physics global
 
-*(filled in after §3)*
+The §2.5 candidates (`g_torqueRingPhase` `DAT_007f101c`, `Collision::g_suspScratch`
+`DAT_00881560`, the power-up dispatcher) are all **refuted** by §3.2/§3.3 before any of them
+was A/B'd: the coupling exists at `56ad3806`, where the opponents never call
+`VehiclePhysics_StepCar`, and `MASHED_NO_PICKUPS=1` changes nothing. So the search was run
+on the trace instead — a temporary per-sim-step player dump (`MASHED_PLAYERTRACE=1`,
+`TrackRenderer.cpp`, `%.17g` on every field) A/B'd knob-ON vs knob-OFF at the same build.
 
-## 5. U-9145 — the coupling
+### 4.1 Channel A — the harness's steer-hold onset was on the REAL clock
 
-*(filled in after §3)*
+`verify/player_reg_20260929/pt2_*`: the two runs are **bit-identical for 58 sim steps** and
+then run **exactly one step out of phase** — the held full lock begins at sim step **60**
+with the opponents updated and at sim step **59** with them parked. Everything else
+(`pos`, `sp`, `vel`, `b14`, `b1c`, `+0x9e4`) matches to the last bit up to that point.
+
+Mechanism, in the source: `di.steer` was decided **once per RENDER frame** from the real
+clock (`td = t - s_drive_t0` against `MASHED_STEER_HOLD_AFTER`, `exe_main.cpp`), while the
+car sim runs on a **real-time fixed-timestep accumulator** (`s_simAccum += sim_real_dt`,
+`1/s_simHz` per step, 0..6 steps per render frame). So the *sim step* at which the hold began
+was a function of the *render frame rate*, i.e. of CPU load — and updating three opponents is
+CPU load. That one step is enough, because the donut is chaotic through the off-mesh recovery
+at `TrackRenderer.cpp:2805-2829`, which **halves `car_speed_` on every trigger**: 11 vs 71
+recoveries over the same 1080 frames (§3.3).
+
+**Fixed** by counting sim steps instead of real seconds (`steerHoldApply()` called inside
+both sim-step paths). Verified: bit-identity between the two arms extends from 58 steps to
+**157** (`verify/player_reg_20260929/fix_*`), and the solo arm below is now deterministic to
+every printed digit on 2/2 runs. Harness-only; the threshold is the same 4 s, now measured on
+the clock the car is actually integrated on.
+
+### 4.2 Channel B — the opponents get the PLAYER ELIMINATED at race time 2.6 s
+
+With channel A closed, the remaining first divergence (`verify/player_reg_20260929/pt3_*`,
+the post-`UpdateRace` dump) is a single field:
+
+```
+A (opponents parked)  post gate=2 lap=0 alive=1 prog=2.7822690 ng=94 rt=2.5999982
+B (opponents driving) post gate=2 lap=0 alive=0 prog=2.7822690 ng=94 rt=2.5999982
+```
+
+`race_[0].alive` goes **false at `race_time_ = 2.60 s`** when the opponents drive. The writer
+is `TrackRenderer.cpp:4349`/`:4404`, `race_cam_.EliminationCheck(cc)` — the ported
+`0x00410d10` standard path (`Race/RaceCamera.cpp:499`), which fires only when the camera's
+required zoom has saturated at exactly 10.0 (`0x00410ee3`, `fcomp [0x005cc55c]`) and then
+kills the least-progressed of the most separated pair (`0x0040e180` at `0x00410efb`,
+`0x00410fe2..0x00411014`). Three opponents racing away from a player doing a stationary donut
+saturate that zoom in 2.6 s; three parked opponents never do.
+
+**How a race-bookkeeping flag reaches the player's motion:** `UpdateRace`'s per-car `step()`
+returns immediately when `!r.alive` (`TrackRenderer.cpp:4127`), so `race_[0].gate` **freezes**
+— and `race_[0].gate` is the input to the player's own off-mesh re-aim,
+`gates_[(race_[0].gate + 3) % n]` at `TrackRenderer.cpp:2808`. Alive, the gate tracks the car
+and the re-aim churns, so the recovery loop re-fires (71 recoveries, median 691); eliminated,
+the gate is pinned and the re-aim is constant, so the car escapes it (median 2520).
+
+So the answer to U-9145 is: **the opponents do not couple into the player through any shared
+physics state. They couple through (A) the frame rate into the harness's own trigger, and (B)
+the camera-zoom elimination into `race_[0].alive` and from there into the player's off-mesh
+re-aim.** Both are cited above; neither is `DAT_007f101c` or `DAT_00881560`.
+
+## 5. WHICH SIDE IS FAITHFUL — measured on the ORIGINAL, and NEITHER port arm is
+
+`verify/a8_steer_20260824/orig_steerR.msd.provenance.json` records the reference's argv:
+
+```
+re/frida/scenario_launch.py --statediff-out … --statediff-drive --statediff-drive-late
+                            --statediff-steer 1 --hold 38
+```
+
+**No `--cars`.** `scenario_launch.py:1739` defaults `--cars` to **1**. So the D2 gate's
+original-side reference is a **SOLO race** — one car, no opponents.
+
+Re-run live on the original today with the identical recipe plus `--oracle --rule 0`
+(`verify/player_reg_20260929/orig_elim/`, `log/rules_oracle_rule0.json`, 2336 frames,
+`MASHED.exe` spawned and killed by the harness):
+
+```
+=== scenario_launch  pid=…  track=0 mode=10 cars=1 ===
+SegmentCheck  0x00410d10: calls=1448 agree=1448 MISMATCH=0 segment-end(ret!=0)=0
+FinishOrder   0x004177b0: calls=2446 agree=2446 MISMATCH=0 appends=0 round-resets=0
+inputs seen: {'0': {'n': 1448, …, 'm0Max': 0.0244…, 'm1Max': -1, …}}
+ORACLE VERDICT: GREEN
+```
+
+`m1Max = -1` — car 1 has no metric, i.e. **no second car exists** — and
+`segment-end = 0` over 1448 calls, i.e. **no elimination ever runs**. The original's D2
+reference was a one-car race from start to finish.
+
+**Consequence, stated plainly.** The port side of that same gate spawns **three** opponents
+(`TrackRenderer.cpp:2441-2473`, hard-coded). So:
+
+- the ROADMAP §D2 row was measured against an original capture **with a different scenario**;
+- `MASHED_MEASURE_NOOPP=1` does not fix that — it only *parks* the three, leaving them in
+  `ai_cars_`, in `UpdateRace`, in `ParticipantCount()` and in the camera framing;
+- **neither existing arm is the reference's scenario.**
+
+A third harness knob, `MASHED_MEASURE_SOLO=1` (`TrackRenderer.cpp`, at the AI spawn), spawns
+none, which is the reference's scenario. It is deterministic: two runs at HEAD agree to every
+printed digit.
+
+| arm | slip 1500-2000 | slip 2000-2600 | driving-median |
+|---|---:|---:|---:|
+| **ORIGINAL, solo (the reference)** | **0.1913** | **0.2498** | **1940.59** |
+| HEAD, **solo** (2 runs, identical) | 0.1424 | 0.2993 | 2519.82 |
+| HEAD, 3 opponents driving | 0.1323-0.1670 | 0.2992 | 2137-2540 |
+| HEAD, 3 opponents parked | 0.1609 | 0.2296 | 691 |
+| `56ad3806`, 3 opponents driving (the D2 row's arm) | 0.1916 | 0.2669 | 1932 |
+| `56ad3806`, 3 opponents parked | 0.1713 | 0.2372 | 705 |
+| ROADMAP §D2 row | 0.1916 | 0.2668 | 1887 |
+
+On the scenario the original actually ran, HEAD is **-25.6% / +19.8% / +29.8%**.
 
 ## 6. The fix, and the re-measurement
 

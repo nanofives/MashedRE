@@ -2444,7 +2444,26 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
             // spline passes near itself, so the faithful lookahead's geometric-nearest seed
             // landed on the wrong leg and the car drove backward into a jitter trap.)
             ai_cars_.clear();
-            if (gates_.size() > 8) {
+            // [U-9145 2026-09-29] MASHED_MEASURE_SOLO=1 — MEASUREMENT HARNESS ONLY, on
+            // the MASHED_STEER_HOLD / MASHED_MEASURE_NOOPP precedent: spawn NO AI
+            // opponents at all, so `ai_cars_` stays empty and every downstream consumer
+            // (UpdateRace, the RaceCamera framing, ParticipantCount, the rule engine)
+            // sees a one-car race. Default-OFF; with it unset this line is
+            // `if (gates_.size() > 8)`, byte-for-byte the previous behaviour.
+            //
+            // WHY IT EXISTS: the D2 gate's ORIGINAL-side reference
+            // verify/a8_steer_20260824/orig_steerR.msd was captured with
+            // `re/frida/scenario_launch.py` and NO `--cars` argument, i.e. its default
+            // `cars=1` — a SOLO race. Re-run live 2026-09-29 on the same recipe
+            // (verify/player_reg_20260929/orig_elim/, log/rules_oracle_rule0.json): the
+            // oracle reports `SegmentCheck 0x00410d10 calls=1448 segment-end=0` and
+            // `m1Max = -1`, i.e. no second car exists and no elimination ever runs. The
+            // port side of that same gate spawns THREE opponents here, so the two sides
+            // were never the same scenario. MASHED_MEASURE_NOOPP=1 only PARKS them,
+            // which still leaves them in ai_cars_, in the camera and in UpdateRace; this
+            // knob is the one that actually reproduces the reference's scenario.
+            static const bool s_measureSolo = (std::getenv("MASHED_MEASURE_SOLO") != nullptr);
+            if (gates_.size() > 8 && !s_measureSolo) {
                 const float* gg0 = gates_[0].center;
                 const float* gg1 = gates_[1].center;
                 float fx = gg1[0] - gg0[0], fz = gg1[2] - gg0[2];
@@ -2865,7 +2884,45 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         RecoverOffMesh();   // island edge / off-collision: steer back instead of freezing
     }
     }  // end MASHED_REAL_PHYSICS else (scaffold body)
+    // [U-9145 TEMPORARY DIAG 2026-09-29] MASHED_PLAYERTRACE=1 -> player_trace.log, one
+    // line per frame with the player state MASHED_MOTION_DIAG does NOT print (position,
+    // gate, dt). Used to find the first opponents-parked-vs-moving divergence. REMOVE.
+    {
+        static const bool s_ptrace = (std::getenv("MASHED_PLAYERTRACE") != nullptr);
+        static long s_pf = 0;
+        if (s_ptrace) {
+            ++s_pf;
+            if (std::FILE* pf = std::fopen("player_trace.log", "a")) {
+                std::fprintf(pf, "f=%ld dt=%.17g pos=(%.17g,%.17g,%.17g) yaw=%.17g sp=%.17g "
+                                 "vel=(%.17g,%.17g,%.17g) gate=%d lap=%d prog=%.17g "
+                                 "b14=%.17g b1c=%.17g v9e4=%.17g\n",
+                             s_pf, in.dt, car_pos_[0], car_pos_[1], car_pos_[2],
+                             car_yaw_, car_speed_, car_vel_[0], car_vel_[1], car_vel_[2],
+                             race_[0].gate, race_[0].laps, race_[0].progress,
+                             Vehicle::VehiclePhysics_RecordF32(0, 0xb14),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0xb1c),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x9e4));
+                std::fclose(pf);
+            }
+        }
+    }
     UpdateRace(in.dt);
+    {
+        static const bool s_ptrace2 = (std::getenv("MASHED_PLAYERTRACE") != nullptr);
+        if (s_ptrace2) {
+            if (std::FILE* pf = std::fopen("player_trace.log", "a")) {
+                const int gi = race_[0].gate;
+                const float* gc = gates_.empty() ? nullptr
+                    : gates_[static_cast<std::size_t>(gi) % gates_.size()].center;
+                std::fprintf(pf, "   post gate=%d lap=%d alive=%d prog=%.17g ng=%d "
+                                 "gc=(%.17g,%.17g) rt=%.17g\n",
+                             gi, race_[0].laps, race_[0].alive ? 1 : 0,
+                             race_[0].progress, (int)gates_.size(),
+                             gc ? gc[0] : 0.f, gc ? gc[2] : 0.f, race_time_);
+                std::fclose(pf);
+            }
+        }
+    }
     // Opponents: once the .AI banks load, the ported AI tick drives them (below). The
     // gate-ribbon scaffold is the fallback (no .AI, or MASHED_GATE_RIBBON_AI=1, the
     // documented A/B revert at the Ai_BridgeLoad call).

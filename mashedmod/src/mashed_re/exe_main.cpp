@@ -2966,6 +2966,28 @@ bool RenderFrame() {
             //      race-ended-early safety at :1374-1378 (CAPMODE logged
             //      mode=Frontend). A straight run-up first is what makes a sustained
             //      turn at speed observable at all.
+            //
+            // [U-9145 2026-09-29] THE ONSET IS COUNTED IN SIM STEPS, NOT REAL SECONDS.
+            // It used to be `td = t - s_drive_t0` against a real-time clock, decided
+            // ONCE PER RENDER FRAME, while the car sim runs on the fixed-timestep
+            // accumulator below (`s_simAccum += sim_real_dt`, 1/s_simHz per step). So
+            // the SIM STEP at which the hold begins was a function of the RENDER FRAME
+            // RATE, i.e. of CPU load. MEASURED (verify/player_reg_20260929/pt2_*,
+            // a8 recipe at HEAD, high-precision per-step player trace): with the three
+            // opponents updated the hold begins at sim step 60, with
+            // MASHED_MEASURE_NOOPP=1 it begins at sim step 59 — the traces are
+            // bit-identical for 58 steps and then run one frame out of phase. That one
+            // step is enough: the donut is chaotic through the off-mesh recovery at
+            // TrackRenderer.cpp:2805-2829, which HALVES car_speed_ on every trigger, and
+            // the two phases take 11 vs 71 recoveries over the same 1080 frames.
+            // That is the whole of U-9145 / U-D2-OPPONENT-COUPLING: the opponents do not
+            // couple into the player through any shared physics global, they couple
+            // through the frame rate into the HARNESS's own trigger. Counting sim steps
+            // removes the channel; the threshold is the same 4 s, now measured on the
+            // sim clock the car is actually integrated on.
+            bool  steerHoldOn        = false;
+            float steerHoldVal       = 0.f;
+            long  steerHoldAfterStep = 0;
             {
                 static const float s_steerHold = [] {
                     char buf[32];
@@ -2982,16 +3004,31 @@ bool RenderFrame() {
                     return (float)atof(buf);
                 }();
                 if (s_steerHold <= 1.f && s_steerHold >= -1.f) {
-                    if (s_drive_t0 < 0.f) s_drive_t0 = t;
-                    const float td = t - s_drive_t0;
+                    if (s_drive_t0 < 0.f) s_drive_t0 = t;   // kept: other diags read it
+                    steerHoldOn  = true;
+                    steerHoldVal = s_steerHold;
+                    const int hz = (s_simHz > 0) ? s_simHz : 60;
+                    steerHoldAfterStep =
+                        static_cast<long>(s_steerHoldAfter * static_cast<float>(hz) + 0.5f);
                     di.accel = 1.f;
-                    di.steer = (td < s_steerHoldAfter) ? 0.f : s_steerHold;
+                    di.steer = 0.f;   // replaced per SIM STEP below
                 }
             }
+            // The sim-step counter the hold is keyed on. It starts on the first frame
+            // this whole `car_ready_ && !results && !paused` block runs, i.e. exactly
+            // where `s_drive_t0` used to start, so the onset lands in the same place —
+            // it is only the CLOCK that changes, from render-real-time to sim-time.
+            static long s_steerHoldStep = 0;
+            auto steerHoldApply = [&]() {
+                if (!steerHoldOn) return;
+                di.steer = (s_steerHoldStep < steerHoldAfterStep) ? 0.f : steerHoldVal;
+                ++s_steerHoldStep;
+            };
             LARGE_INTEGER uA, uB; if (s_fprof) QueryPerformanceCounter(&uA);
             int simStepsThisFrame = 0;
             if (s_simHz <= 0) {
                 // A/B hatch (MASHED_SIM_HZ=0): original variable-dt single step.
+                steerHoldApply();
                 g_track.UpdateCar(di);   // di.dt already == the GetTickCount dt
                 simStepsThisFrame = 1;
             } else {
@@ -3005,6 +3042,7 @@ bool RenderFrame() {
                 s_simAccum += sim_real_dt;
                 while (s_simAccum >= (double)kSimStep && simStepsThisFrame < 6) {
                     di.dt = kSimStep;
+                    steerHoldApply();
                     g_track.UpdateCar(di);
                     s_simAccum -= (double)kSimStep;
                     ++simStepsThisFrame;
