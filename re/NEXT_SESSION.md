@@ -91,6 +91,18 @@ and treat a single run that reaches the 0.1283 attractor as BAD.
 - `MASHED_MOTION_DIAG_AI=1` logs the gearbox and launch fields for the **opponent** slots to
   `motion_diag_ai.log` — the widening `D3_SPEED_GAP` §6.3 asked for. Separate file on
   purpose: the `a8` reducers key on `reseed=` … `wax=[…]` and assume slot 0.
+- **`MASHED_TITLE` (from `a9da810a`, another session) — use it on every run.** The standalone
+  window title is now `Mashed RE | <label> | <state>`, where the label is `MASHED_TITLE` if
+  set and otherwise the run's `MASHED_*` env vars. Both harnesses forward bare `KEY=VAL`
+  arguments into the child env, so it needs no code change:
+  ```
+  py -3.12 re/tools/statediff/a8_run_port.py verify/<tag> 50 -MASHED_REAL_PHYSICS \
+      MASHED_D3_NOOPP=1 MASHED_TITLE="U-9141 bisect <sha>"
+  py -3.12 re/tools/sa_capture.py verify/<tag> 8,65 MASHED_MUTE=1 ... \
+      MASHED_TITLE="U-9140 cadence check"
+  ```
+  This session ran without it and had several near-identical windows open at once while
+  bisecting; label them.
 
 ## Standing gotchas this session paid for
 
