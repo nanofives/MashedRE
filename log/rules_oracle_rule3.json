@@ -1,0 +1,318 @@
+{
+ "armed": true,
+ "err": null,
+ "seg": {
+  "calls": 3064,
+  "agree": 3064,
+  "mis": 0,
+  "ret1": 2,
+  "byRule": {
+   "3": {
+    "calls": 3064,
+    "agree": 3064,
+    "mis": 0,
+    "ret1": 2
+   }
+  }
+ },
+ "ev": {
+  "calls": 2,
+  "agree": 2,
+  "mis": 0,
+  "byRule": {
+   "3": {
+    "calls": 2,
+    "agree": 2,
+    "mis": 0
+   }
+  }
+ },
+ "ord": {
+  "calls": 3967,
+  "agree": 3967,
+  "mis": 0,
+  "appends": 0,
+  "resets": 0
+ },
+ "misrec": [],
+ "samp": [
+  {
+   "fn": "seg",
+   "rule": 3,
+   "got": 1,
+   "want": 1,
+   "en": {
+    "rule": 3,
+    "participants": 4,
+    "metric": [
+     0.10644224286079407,
+     0.854499876499176,
+     0.200903981924057,
+     0.9589145183563232
+    ],
+    "score": [
+     4,
+     6,
+     5,
+     6
+    ],
+    "alive": [
+     false,
+     true,
+     false,
+     true
+    ],
+    "motion": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1003,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "exActive": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "exAlive": [
+    false,
+    false,
+    false,
+    true
+   ]
+  },
+  {
+   "fn": "ev",
+   "rule": 3,
+   "got": 0,
+   "fccGot": 0,
+   "pred": {
+    "ret": 0
+   },
+   "en": {
+    "rule": 3,
+    "participants": 4,
+    "metric": [
+     0.10644224286079407,
+     0.854499876499176,
+     0.200903981924057,
+     0.9589145183563232
+    ],
+    "score": [
+     4,
+     7,
+     5,
+     8
+    ],
+    "alive": [
+     false,
+     false,
+     false,
+     true
+    ],
+    "motion": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1003,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "fn": "seg",
+   "rule": 3,
+   "got": 1,
+   "want": 1,
+   "en": {
+    "rule": 3,
+    "participants": 4,
+    "metric": [
+     0.055417969822883606,
+     1.649959683418274,
+     0.653825044631958,
+     1.7586054801940918
+    ],
+    "score": [
+     2,
+     6,
+     5,
+     8
+    ],
+    "alive": [
+     false,
+     false,
+     true,
+     true
+    ],
+    "motion": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1002,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "exActive": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "exAlive": [
+    false,
+    false,
+    false,
+    true
+   ]
+  },
+  {
+   "fn": "ev",
+   "rule": 3,
+   "got": 0,
+   "fccGot": 0,
+   "pred": {
+    "ret": 0
+   },
+   "en": {
+    "rule": 3,
+    "participants": 4,
+    "metric": [
+     0.055417969822883606,
+     1.649959683418274,
+     0.653825044631958,
+     1.7586054801940918
+    ],
+    "score": [
+     2,
+     6,
+     6,
+     10
+    ],
+    "alive": [
+     false,
+     false,
+     false,
+     true
+    ],
+    "motion": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1002,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  }
+ ],
+ "lastOrder": [
+  -1,
+  -1,
+  -1,
+  -1
+ ],
+ "seen": {
+  "3": {
+   "n": 3064,
+   "collTotMax": 0,
+   "collDoneMax": 0,
+   "timerMin": 0,
+   "timerMax": 0,
+   "snap1": {
+    "0": 499,
+    "1000": 81,
+    "1002": 1769,
+    "1003": 715
+   },
+   "m0Max": 0.9897369146347046,
+   "m1Max": 1.94911527633667,
+   "motion0Nz": 0,
+   "deadMax": 2
+  }
+ },
+ "seed10": [],
+ "run": {
+  "track": 0,
+  "mode": 10,
+  "cars": 4,
+  "rule": 3,
+  "hold": 60,
+  "pid": 39876,
+  "hooks": null,
+  "ts": "2026-09-29 11:26:46"
+ }
+}

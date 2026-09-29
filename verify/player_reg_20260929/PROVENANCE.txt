@@ -1,0 +1,49 @@
+U-9141 / U-9145 player-regression session, 2026-09-29, branch race/first-frame-parity.
+Note: re/analysis/PLAYER_REGRESSION_2026-09-29.md.
+
+PORT captures (mashed_re.exe, built IN PLACE; no worktree; original/ never modified):
+  py -3.12 re/tools/statediff/a8_run_port.py verify/player_reg_20260929/<tag> 90 \
+      -MASHED_REAL_PHYSICS [arm knobs] MASHED_TITLE="player regression <tag>"
+  reduce, both ends identically:
+  py -3.12 re/tools/statediff/a8_slip_axis.py --orig verify/a8_steer_20260824/orig_steerR.msd \
+      --port verify/player_reg_20260929/<tag>/motion_diag.log --max-lines 1080
+  py -3.12 re/tools/statediff/a8_momentum.py  --orig verify/a8_steer_20260824/orig_steerR.msd \
+      --port verify/player_reg_20260929/<tag>/motion_diag.log --max-lines 1080 \
+      --orig-steer-min 33.0 --port-steer-min 0.9
+
+  ARM KNOBS
+    (none)                     default: three opponents driving
+    MASHED_MEASURE_NOOPP=1     opponents parked (the 1d0ca916 arm)
+    MASHED_MEASURE_SOLO=1      NO opponents  -- the reference's own scenario (0d889eee)
+    MASHED_PLAYERTRACE=1       per-sim-step %.17g player dump -> ./player_trace.log
+    MASHED_NO_PICKUPS=1 / MASHED_GATE_RIBBON_AI=1 / MASHED_NO_START_BOOST=1 /
+    MASHED_GAMEMODE_STUB=0 / MASHED_NO_SPAWN_SETTLE=1   -- pre-existing A/B reverts
+
+  OLD-COMMIT PROBES: git checkout <sha> -- mashedmod/ ; patch the knob in (the same two
+  substitutions 1d0ca916 / 0d889eee make, scripted, refusing on a non-unique anchor) ;
+  mashedmod\build.bat ; measure ; git checkout HEAD -- mashedmod/.
+  Tag map: i02=38dfeb17 i03=647a5e24 i04=09a73dc6 i06=286d99a2 i12=7f6b44d3 i15=c5bcf71c
+           i18=a9da810a i19=83a7b6ea i21=9573f3a3, g56/true_solo_g56*=56ad3806.
+  Tags solo_* PREDATE 0d889eee and are DEFAULT-arm runs, not solo (see the note, section 6.2).
+  Tags true_solo_* are genuinely solo (MATCH-SEED logs participants=1).
+
+ORIGINAL captures (MASHED.exe, the diffing reference; original/ never modified):
+  py -3.12 re/frida/scenario_launch.py --oracle --rule 0 --poke-ctrl-slots \
+      --statediff-out verify/player_reg_20260929/orig_elim/orig_a8_elim.msd \
+      --statediff-drive --statediff-drive-late --statediff-steer 1 --hold 38
+    -> cars=1, SegmentCheck 1448/1448 segment-end=0, m1Max=-1, ORACLE VERDICT GREEN.
+
+GUARDS
+  py -3.12 re/tools/sa_capture.py verify/player_reg_20260929/g_e1 8,30,60 MASHED_MUTE=1 \
+      MASHED_TRACK_VIEW=Training MASHED_CAR=1 MASHED_ROUND=1 MASHED_WIN_POS=left-bl \
+      MASHED_TITLE="player regression guard e1" \
+      MASHED_AI_STEPDUMP=verify/player_reg_20260929/g_e1.csv
+  py -3.12 re/tools/ai_speed_env.py   --check verify/player_reg_20260929/g_e1.csv
+  py -3.12 re/tools/ai_ctrl_window.py --check verify/player_reg_20260929/g_e1.csv
+  pwsh -NoProfile -File re/tools/pu_replay/sweep.ps1
+  py -3.12 re/frida/scenario_launch.py --oracle --rule 3 --cars 4 --poke-ctrl-slots --hold 60
+
+PID hygiene: every mashed_re.exe was spawned and killed by a8_run_port.py / sa_capture.py by
+PID; every MASHED.exe by scenario_launch.py. No blanket kill by name. No worktree. The large
+motion_diag.log / player_trace.log / .msd / .png payloads are gitignored; PROVENANCE.txt and
+the distilled tables in the note are committed.

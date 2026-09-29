@@ -1,0 +1,76 @@
+U-9141 / U-9145 -- distilled results, 2026-09-29. Commands: PROVENANCE.txt.
+Reducers: a8_slip_axis.py and a8_momentum.py, --max-lines 1080, orig = orig_steerR.msd.
+
+REFERENCE (original, solo, archived)          0.1913 / 0.2498 / 1940.59
+
+===== A. THE ARM THIS SESSION WAS HANDED (asymmetric: knob at HEAD only) =====
+56ad3806  no knob (opponents moving)          0.1916 / 0.2669 / 1932.09   <- 4938adba
+HEAD      knob   (opponents parked)           0.1609 / 0.2296 /  691.01   <- 4938adba
+  reported as -16.0% / -14.0% / -64.2%
+
+===== B. THE CONTROL THAT INVERTS IT (same treatment at both ends) =====
+647a5e24  no knob                             0.1916 / 0.2668 / 1931.36
+647a5e24  KNOB (same commit!)                 0.1726 / 0.2372 /  692.07
+56ad3806  no knob                             0.1916 / 0.2669 / 1932.09
+56ad3806  KNOB                                0.1713 / 0.2372 /  705.03
+  => the collapse is the KNOB, at the D2 close too. Symmetric parked arm,
+     HEAD vs 56ad3806: -6.1% / -3.2% / -2.0%, not -16 / -14 / -64.
+
+===== C. BISECT, DEFAULT (3-opponent) ARM, deterministic after the sim-clock fix =====
+56ad3806                                      0.1916 / 0.2669 / 1931.36   1084 lines
+647a5e24  (i03)                               0.1916 / 0.2669 / 1928.48   1085
+09a73dc6  (i04)                               0.1365 / 0.2423 / 2142.57   1624
+286d99a2  (i06)  single-run OUTLIER           0.1475 / 0.2993 / 2537.95   1624
+7f6b44d3  (i12)  x2 identical                 0.1365 / 0.2423 / 2142.57   1625/1626
+c5bcf71c  (i15)                               0.1365 / 0.2423 / 2142.57   1624
+a9da810a  (i18)                               0.1365 / 0.2423 / 2142.57   1624
+83a7b6ea  (i19)  spawn settle                 0.1366 / 0.2526 / 2208.94   1624
+9573f3a3  (i21)  start boost + GameMode 0->6  0.1323 / 0.2992 / 2538.13   1497
+HEAD             x4 identical                 0.1424 / 0.2993 / 2519.82   1496
+
+===== D. HEAD A/B ON THE DEFAULT ARM =====
+default                                       0.1424 / 0.2993 / 2519.82
+MASHED_NO_PICKUPS=1                           0.1424 / 0.2993 / 2519.82   (inert)
+MASHED_NO_SPAWN_SETTLE=1                      0.1412 / 0.2992 / 2512.66
+MASHED_NO_START_BOOST=1                       0.1414 / 0.2507 / 2196.12
+MASHED_GAMEMODE_STUB=0                        0.1479 / 0.2989 / 2103.92
+MASHED_MEASURE_NOAITICK=1                     0.1536 / 0.2171 / 1505.12
+MASHED_GATE_RIBBON_AI=1                       0.1354 / 0.2993 / 2539.80
+MASHED_MEASURE_NOOPP=1                        0.1609 / 0.2302 /  685.99
+MASHED_STEER_HOLD_AFTER=4.0167 / 4.05         0.1407 / 0.2993 / 2516.93 / 2521.50
+
+===== E. PER-SIM-STEP TRACE A/B -- FIRST DIFFERING FIELD (the decisive test) =====
+MASHED_GAMEMODE_STUB=0        race_[0].alive at rt=2.0999987   player state bit-identical
+MASHED_NO_START_BOOST=1       race_[0].alive at rt=2.5999982   player state bit-identical
+MASHED_MEASURE_NOAITICK=1     race_[0].alive at rt=2.5999982   player state bit-identical
+MASHED_MEASURE_SOLO=1         race_[0].alive at rt=2.5999982   player state bit-identical
+MASHED_NO_SPAWN_SETTLE=1      FRAME 1: sp 13.33 vs 216.67, b14 16813 vs 0
+  => no D3 commit touches the player's force path. The spawn settle does, deliberately.
+
+===== F. THE VERDICT -- MATCHED SCENARIO (MASHED_MEASURE_SOLO=1 at both ends) =====
+ORIGINAL (reference)                          0.1913 / 0.2498 / 1940.59
+56ad3806  solo   3/3 identical                0.1374 / 0.2181 / 1760.49
+HEAD      solo   4/5 identical                0.1332 / 0.2179 / 1818.47
+  HEAD vs 56ad3806                            -3.1%  / -0.1%  /  +3.3%    NO REGRESSION
+  56ad3806 vs ORIGINAL                       -28.2%  / -12.7% /  -9.3%    standing gap
+  HEAD     vs ORIGINAL                       -30.4%  / -12.8% /  -6.3%    standing gap
+  outlier: true_solo_head2                    0.1632 / 0.2171 / 1505.12  (1 of 5)
+
+===== G. PLAYER OFF-MESH RECOVERIES (reseed=1) IN THE FIRST 1080 FRAMES =====
+  56ad3806 / 647a5e24 default   11      median 1931 / 1928
+  286d99a2 / HEAD default       18      median 2538 / 2520
+  09a73dc6 / 7f6b44d3 default   25      median 2143
+  HEAD NOAITICK                 38      median 1505
+  HEAD / 56ad3806 parked        59/58   median  691 /  705
+  RecoverOffMesh (TrackRenderer.cpp:2142-2164) HALVES car_speed_ on every trigger and has
+  no original counterpart.
+
+===== H. GUARDS (shipping build) =====
+criterion (e)  ai_speed_env.py --check    PASS 3/3, identical to sa_b2 to every digit
+  launch 1426.4 / 2053.0 / 2055.2   ft_median_m0 2550.7 / 2053.0 / 2278.3
+criterion (b)  ai_ctrl_window.py --check  FAIL 3/3, byte-identical to the 2026-09-29 row
+power-ups      pu_replay/sweep.ps1        11/11 decision CLEAN; contact 10/11, g3 DIVERGES
+                                          (known R_FLAME residue, unchanged)
+modes rule 3   scenario_launch --oracle    GREEN 3064/3064, 2 segment-ends, 2/2, 3967/3967
+modes rule 0   scenario_launch --oracle    GREEN 1448/1448, segment-end 0, m1Max=-1
+build          mashedmod\build.bat         both targets clean; .asi untouched (418 up to date)

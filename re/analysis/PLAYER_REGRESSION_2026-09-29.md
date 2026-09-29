@@ -447,6 +447,150 @@ The 1080-frame discard rule and the continue-past-first-bad rule of §2.3 carry 
 unchanged. The knob is applied at **every** commit including `56ad3806`, so unlike §2.2
 the treatment does not change across the search boundary.
 
-### 6.2 MEASURED
+### 6.2 CORRECTION — the first `MASHED_MEASURE_SOLO` was inert, and what that relabels
 
-*(filled in below)*
+Found by reading `mashed_re.log` rather than trusting the knob: it still logged
+`MATCH-SEED rule=0 participants=4`. `StartRound` **re-creates** the opponents
+(`ai_cars_.assign(3, AiCar{})`), so gating only the load-time spawn did nothing to the
+race. Both sites are gated from `0d889eee`; `MATCH-SEED` now logs `participants=1`.
+
+**Therefore every run tagged `solo_*` below `0d889eee` was NOT solo — it was the DEFAULT
+three-opponent arm, and is relabelled as such here.** Those numbers are still sound: the
+sim-clock fix of §4.1 made the default arm deterministic (`solo_head_1` = `solo_head_2`, and
+`solo_i04` = `solo_i12` = `solo_i15` = `solo_i18`, all to every printed digit). True-solo
+runs are tagged `true_solo_*`.
+
+### 6.3 The bisect, on the now-deterministic DEFAULT (three-opponent) arm
+
+One run per commit; ties to every printed digit are the arm's determinism, not rounding.
+
+| # | commit | slip 1500-2000 | slip 2000-2600 | driving-median | lines |
+|---|---|---:|---:|---:|---:|
+| — | `56ad3806` | 0.1916 | 0.2669 | 1931.36 | 1084 |
+| 3 | `647a5e24` | 0.1916 | 0.2669 | 1928.48 | 1085 |
+| 4 | **`09a73dc6`** | **0.1365** | **0.2423** | **2142.57** | 1624 |
+| 6 | `286d99a2` | 0.1475 | 0.2993 | 2537.95 | 1624 |
+| 12 | `7f6b44d3` | 0.1365 | 0.2423 | 2142.57 | 1624 |
+| 15 | `c5bcf71c` | 0.1365 | 0.2423 | 2142.57 | 1624 |
+| 18 | `a9da810a` | 0.1365 | 0.2423 | 2142.57 | 1624 |
+| 19 | **`83a7b6ea`** (spawn settle) | 0.1366 | **0.2526** | **2208.94** | 1624 |
+| 21 | **`9573f3a3`** (start boost + `Fi_GameMode` 0→6) | 0.1323 | **0.2992** | **2538.13** | 1497 |
+| 23 | HEAD (4 runs identical) | 0.1424 | 0.2993 | 2519.82 | 1496 |
+
+`286d99a2` is a single-run outlier against a four-commit plateau that is bit-equal either
+side of it (`09a73dc6` = `7f6b44d3` = `c5bcf71c` = `a9da810a`); it is **not re-probed** and is
+reported as an unexplained outlier, not as a transition.
+
+### 6.4 And every one of those moves is CHANNEL B, not the player's force path
+
+The per-sim-step `%.17g` trace settles it. Four A/Bs at HEAD against the default arm, each
+one run, first differing line reported (`verify/player_reg_20260929/tr_*`, `tr2_*`):
+
+| A/B | first difference | what it means |
+|---|---|---|
+| `MASHED_GAMEMODE_STUB=0` (reverts `Fi_GameMode` 6→0) | `alive` 1→0 at `rt = 2.0999987` | player state **bit-identical** until the elimination flips **earlier** |
+| `MASHED_NO_START_BOOST=1` | `alive` at `rt = 2.5999982` | player state **bit-identical**; the base is eliminated, the control is not |
+| `MASHED_MEASURE_NOAITICK=1` (no clock/snapshot/tick/dump) | `alive` at `rt = 2.5999982` | player state **bit-identical** |
+| `MASHED_MEASURE_SOLO=1` | `alive` at `rt = 2.5999982` | player state **bit-identical** |
+| `MASHED_NO_SPAWN_SETTLE=1` | **frame 1**: `sp` 13.33 vs 216.67, `b14` 16813 vs 0 | the settle **does** change the player from the first step — deliberate, U-9142 closed by user decision, and required by criterion (e) |
+
+So `D3_DRIVE_FORCE_2026-09-29.md` §5's claim that *the player's force path is unchanged by
+construction* is **vindicated by direct measurement**, not merely argued: under the start
+boost, under `Fi_GameMode` 0→6, under the whole AI tick spine and under removing the
+opponents entirely, the player's own `pos`/`yaw`/`vel`/`+0xb14`/`+0xb1c`/`+0x9e4` are
+identical to the last bit for 156 sim steps, and the first thing that ever differs is
+`race_[0].alive`.
+
+### 6.5 THE VERDICT — measured on the reference's own scenario, at both ends
+
+`MASHED_MEASURE_SOLO=1` at both commits, which is `scenario_launch.py`'s `cars=1`:
+
+| arm | runs | slip 1500-2000 | slip 2000-2600 | driving-median |
+|---|---|---:|---:|---:|
+| **ORIGINAL (the reference)** | archived | **0.1913** | **0.2498** | **1940.59** |
+| `56ad3806` solo | **3/3 identical** | 0.1374 | 0.2181 | 1760.49 |
+| HEAD solo | **4/5 identical** | 0.1332 | 0.2179 | 1818.47 |
+| HEAD vs `56ad3806` | | **-3.1%** | **-0.1%** | **+3.3%** |
+| `56ad3806` vs ORIGINAL | | -28.2% | -12.7% | -9.3% |
+| HEAD vs ORIGINAL | | -30.4% | -12.8% | -6.3% |
+
+**THERE IS NO PLAYER-CAR PHYSICS REGRESSION SINCE D2 CLOSED.** On the scenario the D2
+reference was actually captured in, HEAD reproduces `56ad3806` to `-3.1% / -0.1% / +3.3%`:
+one statistic inside the ±2% C2 bound outright and the other two 1.1 and 1.3 percentage
+points outside it, against an apparent `-16% / -14% / -64%` on the arm this session was
+handed.
+
+What is real is a **standing gap that the gate recipe was hiding**: on matched scenarios the
+port is **~28% short on `slip 1500-2000` at BOTH commits**. The ROADMAP §D2 row's
+`0.1916` vs the original's `0.1913` was produced by a three-opponent port arm measured
+against a one-car original; with the scenarios matched the port has never reproduced that
+statistic.
+
+One discard reported: `true_solo_head5`'s first boot produced no `motion_diag.log` and was
+re-run. One outlier reported: `true_solo_head2` landed at `0.1632 / 0.2171 / 1505.12` where
+the other four runs of that identical configuration are `0.1332 / 0.2179 / 1818.47`.
+
+## 7. What was fixed, and the guards
+
+### 7.1 Fixed
+
+1. **The steer-hold onset is counted in SIM STEPS, not real seconds** (`exe_main.cpp`,
+   §4.1). Measurement harness; same 4 s threshold, on the clock the car is integrated on.
+   Effect: the default a8 arm became deterministic (`solo_head_1` = `solo_head_2`, and four
+   consecutive commits bit-equal), where before it was bimodal at `0.1411 / 0.1323`.
+2. **`MASHED_MEASURE_SOLO=1`** (`TrackRenderer.cpp`, both spawn sites, §5/§6.2): a
+   default-OFF harness knob that runs the port in the D2 reference's own scenario. This is
+   what makes the gate a like-for-like comparison.
+3. `MASHED_PLAYERTRACE=1`: a named default-OFF per-sim-step player dump, kept because §8's
+   open question needs it. `MASHED_MEASURE_NOAITICK` was temporary and is deleted.
+
+**No physics law was changed.** §6.4 is the reason: there is no player force-path defect in
+`56ad3806..HEAD` to change, and inventing one to move a number would be the opposite of the
+task. Both remaining gaps (the standing -28% slip, and §8) are named rather than papered
+over.
+
+### 7.2 Guards, re-run on the shipping build
+
+| guard | result |
+|---|---|
+| **criterion (e)** `ai_speed_env.py --check` | **PASS 3/3**, and identical to `sa_b2` to every printed digit: launch **1426.4 / 2053.0 / 2055.2**, `ft_median_m0` **2550.7 / 2053.0 / 2278.3** (`verify/player_reg_20260929/g_e1.csv`) |
+| **AI criterion (b)** `ai_ctrl_window.py --check` | **FAIL on all three cars, unchanged** — byte-identical to `D3_DRIVE_FORCE_2026-09-29.md` §4's default column (`c0_distinct` 7, `c1_distinct` 106/93/98, `steer_distinct` 112/121/116, `c1_median` 48.0/42.0/46.5, `abs_steer_median` 48.0/58.0/46.5) |
+| **power-ups** `re/tools/pu_replay/sweep.ps1` | **11/11 decision CLEAN**; contact CLEAN on 10/11 with `g3` **DIVERGES — the known R_FLAME residue, unchanged** |
+| **modes oracle rule 3** `scenario_launch.py --oracle --rule 3 --cars 4 --poke-ctrl-slots --hold 60` | **GREEN.** `SegmentCheck 0x00410d10` **3064/3064** MISMATCH 0 with **2 segment-ends**, `EvaluateResult 0x00410510` 2/2 MISMATCH 0, `FinishOrder 0x004177b0` 3967/3967 MISMATCH 0 (wider coverage than the 2468/2/3382 of 2026-09-29) |
+| **modes oracle rule 0** (new, §5) | **GREEN.** 1448/1448 MISMATCH 0, segment-end 0, `m1Max = -1` |
+| `mashedmod\build.bat` | both targets clean; **the .asi is untouched** (all 418 objects up to date) — every file changed is exe-only |
+
+## 8. Open
+
+- **[UNCERTAIN] U-9146 — the port ELIMINATES the player at `race_time_` 2.1-2.6 s in the a8
+  recipe whenever the opponents drive away, and the original does not.** The mechanism is
+  ported verbatim with RVAs (`RaceCamera::EliminationCheck`, `0x00410d10` standard path,
+  zoom-saturation gate `0x00410ee3`), so the *law* is not in question; what is not
+  established is whether the ORIGINAL, given three opponents and a stationary player, also
+  eliminates at ~2.5 s — the reference is solo, so it cannot say. Evidence missing: an
+  original-side capture at `--cars 4` with the same held-lock drive, reading the elimination
+  hook. Next command:
+  `py -3.12 re/frida/scenario_launch.py --oracle --rule 0 --cars 4 --poke-ctrl-slots --statediff-drive --statediff-drive-late --statediff-steer 1 --hold 38`
+  and read `segment-end` / `deadMax` out of `log/rules_oracle_rule0.json`. Separately, the
+  standalone's path from `race_[0].alive` into the player's own motion (via `race_[0].gate`
+  freezing and the off-mesh re-aim at `TrackRenderer.cpp:2808`) has **no original
+  counterpart** and is a scaffold coupling worth removing regardless of the answer.
+- **[UNCERTAIN] U-9147 — the ~28% `slip 1500-2000` shortfall on the matched-scenario arm**
+  (0.1374 / 0.1332 against the original's 0.1913), present at `56ad3806` as well as at HEAD,
+  i.e. **not** caused by anything in D3. This is a D2-era question that the gate recipe's
+  scenario mismatch concealed. Evidence missing: a per-frame port-vs-original comparison on
+  the solo arm (the D2 work only ever compared the three-opponent arm). Next command: capture
+  `MASHED_MEASURE_SOLO=1` with `MASHED_COUPLING_DIAG=1` and diff the per-wheel lateral force
+  against `orig_steerR.msd` frame by frame, as `A8_velocity_vector_motion_20260825.md`
+  follow-up 27 does.
+- **[UNCERTAIN] U-9148 — one HEAD solo run in five lands in a different attractor**
+  (`0.1632 / 0.2171 / 1505.12` vs `0.1332 / 0.2179 / 1818.47` on the other four), while
+  `56ad3806` solo is 3/3 identical. So a second real-time-keyed input survives the §4.1 fix
+  on the HEAD side only. Evidence missing: which field diverges first. Next command: two
+  `MASHED_PLAYERTRACE=1 MASHED_MEASURE_SOLO=1` runs at HEAD until the two attractors are both
+  sampled, then diff the traces for the first differing field.
+- The player's **off-mesh recovery loop** (`RecoverOffMesh`, `TrackRenderer.cpp:2142-2164`)
+  fires 11-59 times per 1080 frames depending on configuration and **halves `car_speed_`
+  every time**. It is a standalone scaffold with no original counterpart, and it is the
+  amplifier that turns a one-sim-step phase difference into a 3.7x median-speed difference.
+  Recorded here as the mechanism; deciding what replaces it is a world/collision (D1) call.
