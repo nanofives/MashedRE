@@ -808,6 +808,62 @@ criteria are all met since 2026-09-26 (`D3_MODES_2026-09-26.md`).
   is DONE (2026-09-28d, `s2` decision CLEAN and contact CLEAN); **U-D3-DRIVE is now the only
   remaining gate**. D3-R1 (car 1) then carries forward like the D1 residue.
 
+#### D3 closure state 2026-09-28e — **D3 is NOT CLOSED**, measured strictly against the gate
+
+Session note: `re/analysis/D3_DRIVE_2026-09-28.md`. Commits `3ec611b7` (step 0, the plan and
+the band, before any edit), `9aca6371` (the drift bisect), `83a7b6ea` (the spawn-settle fix),
+`b5923d20` (criterion (e) scored, and the (b) regression).
+
+- **Criterion (e): FAILS on all three AI cars, on both gated statistics.** Scored by
+  `re/tools/ai_speed_env.py --check`; both arms deterministic.
+  `launch` 200.5 against 1425.7 / 2052.5 / 2055.0 = **-85.9 / -90.2 / -90.2%**;
+  `ft_median_m0` 1364.3 / 200.5 / 353.2 against 2551.6 / 2052.5 / 2278.1 =
+  **-46.5 / -90.2 / -84.5%**. The gap was -87.2 / -91.1 / -91.1% and
+  -50.4 / -89.7 / -82.1% before this session's fix, so the fix is worth ~+10% and (e) is
+  nowhere near met.
+- **One real defect found and fixed — the SPAWN SETTLE.** The gearbox pair named as the first
+  suspect is the right site and the wrong cause: `+0x498` = 40000 and `+0x49c` = 4000 on
+  **both** sides. The cause is its input. `VehiclePhysics_Init` memsets the record, so the
+  port's first step ran with the per-wheel suspension loads at **zero**, gravity was unopposed
+  for that step and the body picked up 216.67 of downward velocity; that made A4's slide
+  measure `+0xb0c` (`VehicleControl.cpp:113`, at-rest zero arm `:106` / `0x0047072c`) read
+  216.668 instead of ~0, which shortened `fVar5_base` at `Integrate2.cpp:126`
+  (`FUN_00467650`) and tripped the gear-0 upshift at `:136-143` — and gear 0 is the only gear
+  with a nonzero drive term at standstill (`:134`). The original sits at rest with `vy` 0.000,
+  `+0xb0c` 0.0000 and loads `1083.3 / 1083.3 / 1083.3 / 541.7`
+  (`verify/d3_drive_20260928/orig_gearbox_launch.txt`). Fixed; verified field-for-field.
+- **[UNCERTAIN] U-9140 is the remaining (e) blocker.** After the settle the launch is still
+  ~10x short with the gear, the input bytes, the four contacts, the wheel states `2/2/1/1` and
+  the gearbox constants all matching on both sides. Localised to the drive accumulator
+  `+0xb14`/`+0xb1c` (the original's is 8-9x the port's at matched speed) but **not
+  established**, because the `[A8-B14CADENCE]` comment already warns a render-tick `+0xb14`
+  may be a post-substep residue. Cadence check first — `UNCERTAINTIES.md` U-9140.
+- **REGRESSION, and it is why this session's acceptance is not met: [UNCERTAIN] U-9142.** The
+  settle costs AI criterion **(b) on cars 2 and 3** (PASS -> FAIL: `c1_distinct` 72 and 75
+  against a ceiling of 70, `steer_distinct` 104 against 96, `accel_distinct`/`brake_distinct`
+  down to 1). Reported with a true control. The accel/brake half is the **removal of an
+  artefact** — pre-fix the port's only non-255 accel call in the 220-call window was the one
+  the spawn transient produced — and the `c1`/`steer` half is 2-8 counts of margin. The fix
+  ships **default-ON with the A/B revert `MASHED_NO_SPAWN_SETTLE=1`** (v3 rule: a flag may
+  only turn the ported behaviour off), both arms measured. **Keep-or-revert is a user
+  decision and was not taken.**
+- **The PHYSICS DRIFT row above is answered, and the answer changes the criterion.** First bad
+  commit `09a73dc6`; **it is not a drive-law change** — no commit in `56ad3806..HEAD` edits
+  the player's solver, and `f39747af`'s `Collision::Rw_TransformPoints` rebind (the suspect
+  U-9138 left unproven) is measured inert. What moved the table is that three RNG-driven
+  opponents now share the player's world (`09a73dc6`) and the race got longer (`4ff428ad`,
+  G-G1/G-G2) — both the port becoming **more** like the original. Today's `56ad3806` still
+  reproduces the D2 table 4/4, so the drift is real and its cause is the instrument.
+  **Therefore "restore the D2 table" is not achievable by fixing a drive law**; the `a8`
+  held-lock recipe needs a controlled arm (fixed frame count, opponents absent or seeded)
+  before it gates anything again. Residual filed as **U-9141**. Changing a closed phase's
+  gate recipe is a user decision and was not taken.
+- Guards, post-fix: D2 clean-env table **unchanged** (slip 0.1281 / 0.1281 / 0.1266,
+  driving-median 2489 / 2489 / 2508 vs 0.1283 / 2507.86); power-up sweep **11 of 11 decision
+  CLEAN**, contact CLEAN on 10 of 11 with `g3` DIVERGES unchanged (the known 2-of-546 R_FLAME
+  residue); modes oracle rule 3 **GREEN** (`SegmentCheck` 2589/2589, `FinishOrder` 2843/2843,
+  MISMATCH 0); both build targets clean.
+
 Notes: `D3_AI_RESIDUE_2026-09-27.md` (AI (b) cause + the two refutations + the RNG port),
 `re/analysis/D3_AUDIT_2026-09-14.md` (step 1), `D3_AI_TICK_WIRING_2026-09-14.md`
 (step 2), `D3_MODES_2026-09-14.md` (step 4), `D3_POWERUPS_2026-09-26.md` (powerups),

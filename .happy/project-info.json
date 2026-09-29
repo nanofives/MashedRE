@@ -1,101 +1,42 @@
 {
-  "title": "Mashed RE (ROADMAP v3: D3 — default game systems)",
-  "updatedAt": "2026-09-28T22:30:00Z",
+  "title": "Mashed RE — greenfield source port",
+  "updatedAt": "2026-09-29T03:55:00Z",
   "sections": [
     {
-      "heading": "Roadmap phases",
+      "heading": "Phase",
       "fields": [
-        {
-          "label": "Phases",
-          "value": [
-            "D0 closed 2026-08-15",
-            "D1 closed 2026-08-19 (residue R1-R3 owed before D5)",
-            "D2 closed 2026-09-14",
-            "D3 ACTIVE",
-            "D4-D5 not started"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Last roadmap audit",
-          "value": "2026-09-28d: D3 powerups (c) MET -- the s2 decision defect FIXED (dispatcher box-state gate DAT_0068d1f0[slot], 0x0045bc6b). U-D3-DRIVE is now the only gate on D3. D3_BOX_STATE_2026-09-28.md",
-          "kind": "text"
-        }
+        { "label": "Active phase", "value": "D3 — default AI, powerups, modes", "kind": "text" },
+        { "label": "D3 status", "value": "NOT CLOSED — AI (e) fails, AI (b) regressed", "kind": "text" },
+        { "label": "Closed phases", "value": ["D0 2026-08-15", "D1 2026-08-19 (residue R1-R3)", "D2 2026-09-14"], "kind": "list" },
+        { "label": "Branch", "value": "race/first-frame-parity (not pushed)", "kind": "text" }
       ]
     },
     {
-      "heading": "Phase D3 Status",
+      "heading": "D3 gate",
       "fields": [
-        {
-          "label": "Modes (WS-G)",
-          "value": "(a)-(d) MET 2026-09-26: oracle all 11 rules 0 mismatches, APPEND fired, G-G1 score seed ported, G-G2 engine default-on (4ff428ad)",
-          "kind": "text"
-        },
-        {
-          "label": "AI (WS-C)",
-          "value": "(a)(c)(d) met; (b) NOT met, unchanged after the 2026-09-27 re-capture: cars 2/3 pass all 10 bands, car 1 fails c0/c1 distinct 7/82. Cause localised to DAT_0089a368 (one-shot 20% roll at 0x00417c43) -> spline bank -> curvature -> the curv>20 steer multiplier. FUN_00534870 RNG now ported verbatim",
-          "kind": "text"
-        },
-        {
-          "label": "Powerups (WS-D)",
-          "value": "(a)(b)(c) ALL MET 2026-09-28d. The last blocker -- 181 decision mismatches on capture s2 -- was the dispatcher's per-slot BOX STATE DAT_0068d1f0[slot] (read 0x0045bc6b before the armed test at 0x0045bcab; 4/2/3 short-circuit the pass), NOT the MISSILE chain. s2: decision 181->0, contact DIVERGES->CLEAN (sweep 152/152). Other 10 captures unchanged; g3 keeps its known R_FLAME 2-of-546 residue. Control MASHED_PU_FORCE=nobox reproduces 181; second witness b3 via the new scenario_launch.py --pu-box",
-          "kind": "text"
-        },
-        {
-          "label": "Next task",
-          "value": "1 U-D3-DRIVE (criterion (e)): AI-car speed gain under matched ctrl -- measure the original's run-to-run spread and write it to ROADMAP BEFORE the post-fix capture; gearbox +0x490/+0x494 is the first suspect; 2 D3-R1 (AI car 1, FUN_00414c30 + FUN_00484c70), due before D5; 3 D1 residue block",
-          "kind": "text"
-        }
+        { "label": "Powerups (c)", "value": "MET — 11/11 decision CLEAN", "kind": "text" },
+        { "label": "Modes (a)-(d)", "value": "MET — rule 3 oracle GREEN", "kind": "text" },
+        { "label": "AI (b)", "value": "REGRESSED — cars 2/3 PASS -> FAIL (U-9142)", "kind": "text" },
+        { "label": "AI (e) speed", "value": "FAILS -46% to -90% on all 3 cars (U-9140)", "kind": "text" }
       ]
     },
     {
-      "heading": "Code Coverage (Honest Baseline)",
+      "heading": "Open decisions for Mariano",
       "fields": [
-        {
-          "label": "Total hooks.csv rows",
-          "value": 5931,
-          "kind": "number"
-        },
-        {
-          "label": "C4 (Proven)",
-          "value": 184,
-          "kind": "number"
-        },
-        {
-          "label": "C3+ (Ready to verify)",
-          "value": 1213,
-          "kind": "number"
-        },
-        {
-          "label": "First-party C3+",
-          "value": "28.8% of 3682",
-          "kind": "text"
-        },
-        {
-          "label": "Gating uncertainties",
-          "value": 0,
-          "kind": "number"
-        }
+        { "label": "Waiting on you", "value": [
+            "U-9142: keep the spawn settle (faithful) or revert it (keeps AI (b))?",
+            "U-9141: the a8 D2 gate recipe needs a controlled arm — change it?"
+          ], "kind": "list" },
+        { "label": "Next command", "value": "U-9140 cadence check: MASHED_COUPLING_DIAG=1", "kind": "text" }
       ]
     },
     {
-      "heading": "Standing Debt",
+      "heading": "Last session (2026-09-28)",
       "fields": [
-        {
-          "label": "STUBS (blocking subsystems)",
-          "value": 1363,
-          "kind": "number"
-        },
-        {
-          "label": "UNCERTAINTIES (open, de-gated 29/46)",
-          "value": 3031,
-          "kind": "number"
-        },
-        {
-          "label": "DEFERRED (out of scope)",
-          "value": 1235,
-          "kind": "number"
-        }
+        { "label": "Fixed", "value": "Spawn settle — first physics step ran with zero suspension load", "kind": "text" },
+        { "label": "Refuted", "value": ["gearbox constants (they match)", "f39747af Collision rebind (inert)", "the AI tick perturbing the player"], "kind": "list" },
+        { "label": "Drift verdict", "value": "first bad 09a73dc6 — the instrument, not a drive law", "kind": "text" },
+        { "label": "Kickoff", "value": "re/NEXT_SESSION.md", "kind": "text" }
       ]
     }
   ]
