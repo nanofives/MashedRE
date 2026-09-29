@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-09-29T02:40:00Z",
+  "updatedAt": "2026-09-29T13:00:00Z",
   "sections": [
     {
       "heading": "Roadmap",
@@ -14,18 +14,19 @@
     {
       "heading": "D3 gate",
       "fields": [
-        { "label": "Met", "value": ["Powerups (c): all 9 types", "Modes (a)-(d): oracle GREEN", "AI (a), (c), (d)", "AI (e): NEW 2026-09-29, within 0.05%"], "kind": "list" },
-        { "label": "Not met", "value": "AI (b)", "kind": "text" }
+        { "label": "Met", "value": ["Powerups (c): all 9 types", "Modes (a)-(d): oracle GREEN", "AI (a), (c), (d)", "AI (e): 2026-09-29, within 0.05%"], "kind": "list" },
+        { "label": "Not met", "value": "AI (b) — re-baselined with the spawn settle ON", "kind": "text" }
       ]
     },
     {
-      "heading": "Last session — U-D3-DRIVE-FORCE (2026-09-29)",
+      "heading": "Session 2026-09-29 — U-D3-DRIVE-FORCE + 2 user decisions",
       "fields": [
         { "label": "Root cause", "value": "A6a start boost (+0xbf8) never ported", "kind": "text" },
         { "label": "Criterion (e)", "value": "PASS 3/3 cars, all 6 gated values <0.05% off", "kind": "text" },
-        { "label": "Resolved", "value": ["U-9140 (the 8-9x drive-force gap)", "U-9142 (keep the spawn settle)"], "kind": "list" },
-        { "label": "Filed", "value": ["U-9143 boost-arm writer not located", "U-9144 boost order pinned to {2,3}"], "kind": "list" },
-        { "label": "Commits", "value": "9573f3a3, d165e6b4", "kind": "text" }
+        { "label": "Closed", "value": ["U-9140 the 8-9x drive-force gap", "U-9142 keep the spawn settle (user decision)"], "kind": "list" },
+        { "label": "Still open", "value": ["U-9141 D2 arm now CONTROLLED, but HEAD vs 56ad3806 off -16/-14/-64%", "U-9143 boost-arm writer not located", "U-9144 boost order pinned to {2,3}", "U-9145 opponents move the PLAYER 3.7x with no car-car path"], "kind": "list" },
+        { "label": "D2 recipe", "value": "amended: controlled arm (MASHED_MEASURE_NOOPP + --max-lines 1080)", "kind": "text" },
+        { "label": "Commits", "value": "9573f3a3 d165e6b4 c0b34ce6 4cda44fc 1d0ca916 4938adba 94f76d2a 8185e261", "kind": "text" }
       ]
     }
   ]
