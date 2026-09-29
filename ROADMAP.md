@@ -519,43 +519,24 @@ opinion is an opinion about the scaffold, not about the port.
 > `PLAYER_REGRESSION_2026-09-29.md` §7.3.6's "the only one of the five still capable of
 > explaining it" — all five dual-copy leads are now eliminated.
 >
-> **U-9147's first divergent channel is identified: the REAR-WHEEL lateral coefficient
-> `p[0x15]`.** (This paragraph was rewritten later the same day — the first version's
-> headline "the rears carry ~36% too much lateral grip" was an artifact of the measuring
-> tool. Full correction: `D2_REOPEN_2026-09-29.md` §6.0.)
+> **U-9147 is NOT localized. Three attempts today, all withdrawn.** The cross-side
+> lateral-coefficient comparison from `a8_wheelfit.py` is unsound in both modes: its
+> `port_frames` builds the port's `lat` from a 2-D velocity heading and ignores the `wld4`
+> the port logs, so the two sides' fit bases differ. The arithmetic tell: with `p[-1] == 0`
+> (measured on all four wheels on both sides) A6a's lateral scale `f5` satisfies
+> `f5 <= lbc` always (`Integrate2.cpp:441-450`), so the reported `a/lbc = 1.840` was a
+> broken fit, not a finding.
 >
-> `a8_wheelfit.py` built the original side's `u` from the BODY velocity while the port
-> side logs A6a's own internal value, which on this scenario is the WHEEL-POINT velocity —
-> A6a's spin branch (`Integrate2.cpp:404`) is taken in **853 of 853** scored frames
-> (max `|av.y|` = 1.858 against a 1e-5 band). Tool fixed (`--lat-mode wheelpoint`, default;
-> `--lat-mode body` reproduces the artifact).
+> **What is sound:** every input to the coefficient matches (read directly — `p[0x15]` 0.15,
+> `p[0x16]` 0.0125, `p[0x1b]` 1091.8/1083.8/1084.6/536.3, `p[-1]` 0 on all four,
+> `g_suspScale` 692.3 vs ~710, `le4` 1024 both sides); and A6a's own `|lat|`, which the port
+> logs and the corrected original side recomputes, agrees **1.001 / 1.003 / 0.948 / 0.960**.
+> On everything currently comparable the two sides are within 5%.
 >
-> The fix self-validates: with the correct `u`, the original's `a/p1b` becomes near-constant
-> across wheels (**105.4 / 106.3 / 105.9 / 108.6**, against **-97.8 / -96.4 / -139.0 /
-> -121.6** before), and the implied `p[0x15]` it recovers (**0.1484 / 0.1496 / 0.1491 /
-> 0.1529**) matches the value **read directly from the record** at `b+0x54` — **0.15 on all
-> four wheels, one distinct value over 853 frames** — to within 2%.
->
-> **Corrected finding: the port's REAR wheels carry ~1.84x and ~1.59x the lateral force
-> their OWN `lbc` term specifies.** Every input to that coefficient matches the original,
-> read straight out of the port's own diag over 1627 lines: `p[0x15]` 0.15, `p[0x16]`
-> 0.0125, `p[0x1b]` 1091.8/1083.8/1084.6/536.3, `p[-1]` 0 on all four, `g_suspScale` 692.3
-> vs ~710, `le4` capped at 1024 on both sides (so the clamp-saturation hypothesis is
-> **refuted**). Fitted `a` against each side's own
-> `lbc = p[0x15]*p[0x1b]*g_suspScale*le4*0.0009766` (`Integrate2.cpp:424`):
->
-> | | w0 | w1 | w2 rear | w3 rear |
-> |---|---:|---:|---:|---:|
-> | ORIGINAL `a/lbc` | 0.989 | 0.998 | **0.994** | **1.019** |
-> | PORT `a/lbc` | 0.960 | 0.946 | **1.840** | **1.591** |
->
-> The original's lateral force *is* its `lbc` term on all four wheels; the port's is on the
-> fronts and is in excess on the rears. So something else adds into the per-wheel force
-> accumulator `p[0x1c..0x1e]` on wheels 2/3. Next command: enumerate every writer of
-> `p[0x1c..0x1e]` in `Vehicle/Integrate2.cpp` and check each against `0x00467650`; the
-> additive brake term at `:390-393` beside the rear-only `wheel > 1` branch at `:395-398`
-> is the first suspect, **[UNCERTAIN]**, not established. `p[-1]` is 0 on all four on both
-> sides, so the `(l94 & 0x100)` gate at `:441` is NOT the asymmetry.
+> **Next step is instrumentation, not a fix:** log A6a's real `lac/la8/la4` and `f5`
+> (`Integrate2.cpp:448`/`:442`) on the port side and make `port_frames` read them. Until
+> then no lateral-coefficient ratio from this tool should be quoted. The `--lat-mode
+> wheelpoint` correction to the ORIGINAL side is right and stays.
 >
 > **Guards after the change** (reported, not gates — the shipping exe is behaviourally
 > unchanged, since the only exe edit was reverted): criterion (e) `ai_speed_env.py --check`

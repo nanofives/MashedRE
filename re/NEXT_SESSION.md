@@ -30,39 +30,29 @@ Superseded kickoff: the earlier 2026-09-29 one (player-regression U-9141 / U-914
 >   entry; max variant ±5%); "the port chases the velocity heading"
 >   (`BodyOrient_IntegrateStep` **is** wired at `VehiclePhysicsRun.cpp:812`).
 >
-> **PICK UP HERE — U-9147: the port's REAR wheels carry ~1.84x / ~1.59x the lateral force
-> their own `lbc` term specifies.** Every input to that coefficient MATCHES the original
-> (`p[0x15]` 0.15, `p[0x16]` 0.0125, `p[0x1b]` 1091.8/1083.8/1084.6/536.3, `p[-1]` 0 on all
-> four, `g_suspScale` 692.3 vs ~710, `le4` 1024 both sides), so this is an EXCESS FORCE on
-> the rears, not a wrong coefficient field. `a/lbc`: original 0.989/0.998/0.994/1.019 —
-> its force IS its `lbc` on all four wheels; port 0.960/0.946/**1.840**/**1.591**.
-> Full analysis: `D2_REOPEN_2026-09-29.md` §6.0.
+> **PICK UP HERE — U-9147 is NOT localized, and three attempts at localizing it today were
+> all withdrawn. Read `D2_REOPEN_2026-09-29.md` §6.0's third correction before touching it.**
 >
-> Two things were settled getting here, so don't redo them:
-> - **`a8_wheelfit.py` was measuring two different quantities** and its first answer
->   ("rears carry 36% too much grip") was an artifact. A6a's spin branch
->   (`Integrate2.cpp:404`) builds `u` from the WHEEL-POINT velocity and is taken in
->   **853/853** scored frames; the tool's original side used body velocity. **Fixed** —
->   `--lat-mode wheelpoint` is the default, `--lat-mode body` reproduces the artifact.
-> - **The `min(le4,1024)` clamp hypothesis is REFUTED.** The original's `le4` is also 1024
->   in every wheel and band.
+> `a8_wheelfit.py`'s cross-side lateral-coefficient comparison is **unsound in both modes**:
+> `port_frames` builds the port's `lat` from a 2-D velocity heading (`u = (cos velH, 0,
+> sin velH)`) and ignores the `wld4` the port actually logs, so the two sides' fit bases
+> differ. Arithmetic tell: with `p[-1] == 0` (measured, all four wheels, both sides) A6a's
+> lateral scale obeys `f5 <= lbc` always (`Integrate2.cpp:441-450`), so the `a/lbc = 1.840`
+> that was reported is impossible from that code path. **Do not quote a lateral-coefficient
+> ratio from this tool until the instrumentation below lands.**
 >
-> The corrected tool self-validates: the original's `a/p1b` is now near-constant
-> (105.4 / 106.3 / 105.9 / 108.6) and the `p[0x15]` it implies (0.1484 / 0.1496 / 0.1491 /
-> 0.1529) matches the value read straight out of the record at `b+0x54` (0.15, one distinct
-> value over 853 frames) to within 2%. Trust these numbers.
+> **What IS established and can be relied on:** every input to the coefficient matches the
+> original (`p[0x15]` 0.15, `p[0x16]` 0.0125, `p[0x1b]` 1091.8/1083.8/1084.6/536.3, `p[-1]`
+> 0 on all four, `g_suspScale` 692.3 vs ~710, `le4` capped 1024 both sides); and A6a's own
+> `|lat|` agrees **1.001 / 1.003 / 0.948 / 0.960** (port `wld4` vs the corrected original
+> side — both are A6a's quantity, so this one IS apples-to-apples). The
+> `min(le4,1024)`-clamp hypothesis is **refuted** (original is also 1024 everywhere).
 >
-> **Next command:** enumerate every writer of the per-wheel force accumulator
-> `p[0x1c]/p[0x1d]/p[0x1e]` in the port's A6a (`Vehicle/Integrate2.cpp`) and check each
-> against `0x00467650`. First suspect, **[UNCERTAIN] and not established**: the ADDITIVE
-> brake term at `:390-393` (`Wp(p, 0x1c, bf*Rp(p,0x1f) + Rp(p,0x1c))`), which sits directly
-> beside the rear-only `wheel > 1` branch at `:395-398`. Ruled out already: `p[-1]` reads 0
-> on all four wheels on BOTH sides, so the `(l94 & 0x100)` gate at `:441` takes the same arm
-> on both and is not the asymmetry. Re-run to confirm a fix:
-> ```
-> py -3.12 re/tools/statediff/a8_wheelfit.py --orig verify/a8_steer_20260824/orig_steerR.msd \
->     --port verify/d2_reopen_20260929/solo_post1/motion_diag.log
-> ```
+> **Next step is INSTRUMENTATION, not a fix.** Add A6a's real lateral basis to the port's
+> `[A8-ORIENT]` diag line — the vector `lac/la8/la4` (`Integrate2.cpp:448`) and the applied
+> lateral scale `f5` (`:442`/`:449`) — and make `a8_wheelfit.py`'s `port_frames` read them
+> instead of rebuilding `lat` from `velH`. Only then is `a/lbc` measurable on both sides.
+> The `--lat-mode wheelpoint` fix to the ORIGINAL side is correct and stays.
 >
 > Then, in order: **U-9152** (the `+0x928` vs `g_bodyBasis` storage split),
 > **`RecoverOffMesh`** (`TrackRenderer.cpp:2142-2164`, halves `car_speed_` 11-59x per 1080
