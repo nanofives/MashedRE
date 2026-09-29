@@ -2884,9 +2884,17 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         RecoverOffMesh();   // island edge / off-collision: steer back instead of freezing
     }
     }  // end MASHED_REAL_PHYSICS else (scaffold body)
-    // [U-9145 TEMPORARY DIAG 2026-09-29] MASHED_PLAYERTRACE=1 -> player_trace.log, one
-    // line per frame with the player state MASHED_MOTION_DIAG does NOT print (position,
-    // gate, dt). Used to find the first opponents-parked-vs-moving divergence. REMOVE.
+    // [U-9145 2026-09-29] MASHED_PLAYERTRACE=1 -> player_trace.log, DIAGNOSTIC ONLY,
+    // default-OFF, one pre-UpdateRace and one post-UpdateRace line per SIM STEP at
+    // %.17g. It prints the player state MASHED_MOTION_DIAG does not: world position,
+    // in.dt, race_[0].gate/laps/progress/alive, and three record floats.
+    //
+    // It is what found both U-9145 channels, and it is kept rather than deleted because
+    // the remaining open question needs it: with MASHED_MEASURE_SOLO=1 the a8 arm is
+    // still non-deterministic (two attractors, driving-median 1818.47 and 1505.12), so a
+    // second real-time-keyed input survives the sim-clock fix in exe_main.cpp. The A/B
+    // recipe is one run per configuration plus re/tools/…/firstdiff on the two traces:
+    // the first differing FIELD names the channel. Writes nothing when unset.
     {
         static const bool s_ptrace = (std::getenv("MASHED_PLAYERTRACE") != nullptr);
         static long s_pf = 0;
@@ -2943,16 +2951,10 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // MASHED_REAL_PHYSICS=0 (the D2 A/B revert) has no chain to feed, so on that
         // revert the opponents fall back to the pre-D3 Option B motion model below; it is
         // reachable ONLY through that revert flag.
-        // [U-9145 TEMPORARY DIAG 2026-09-29] MASHED_MEASURE_NOAITICK=1 skips the AI
-        // clock + snapshot + tick + dump only, to A/B whether the ported tick spine
-        // reaches the PLAYER. REMOVE once §6 of PLAYER_REGRESSION_2026-09-29.md is closed.
-        static const bool s_noAiTick = (std::getenv("MASHED_MEASURE_NOAITICK") != nullptr);
-        if (!s_noAiTick) {
         Ai::Ai_AdvanceClock(static_cast<int>(in.dt * 3000.0f + 0.5f));
         AiBridgeSnapshot();
         Ai::Ai_Standalone_Tick();
         AiStepDump();
-        }
         const bool phys = Vehicle::VehiclePhysics_Enabled();
         // [U-9141 2026-09-29] MASHED_MEASURE_NOOPP=1 — MEASUREMENT HARNESS ONLY. Skips the
         // whole per-opponent update below (nothing else), so the three AI cars stay parked
