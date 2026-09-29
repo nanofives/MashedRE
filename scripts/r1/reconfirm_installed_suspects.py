@@ -36,6 +36,8 @@ def main():
     hooks = REPO + r"\hooks.csv"
     with io.open(hooks, encoding="utf-8") as f:
         lines = f.readlines()
+    # Width from the live header, not a literal (2026-09-29 exe_file migration).
+    ncols = len(parse(lines[0]))
     done = []
     for i, line in enumerate(lines):
         if not line or "," not in line or line.startswith("#"):
@@ -43,8 +45,8 @@ def main():
         if "C4-EVIDENCE-SUSPECT:" not in line:
             continue
         fields = parse(line)
-        if len(fields) != 9:
-            sys.exit(f"row {i}: {len(fields)} cols")
+        if len(fields) != ncols:
+            sys.exit(f"row {i}: {len(fields)} cols, expected {ncols}")
         if fields[3] != "C4":
             sys.exit(f"{fields[0]} suspect-tagged but {fields[3]!r} — "
                      f"run demote pass first")

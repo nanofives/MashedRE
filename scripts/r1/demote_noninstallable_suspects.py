@@ -60,6 +60,8 @@ def main():
     targets.update({t: MARK_DISABLED for t in DISABLED})
     with io.open(hooks, encoding="utf-8") as f:
         lines = f.readlines()
+    # Width from the live header, not a literal (2026-09-29 exe_file migration).
+    ncols = len(parse(lines[0]))
     done = []
     for i, line in enumerate(lines):
         if not line or "," not in line or line.startswith("#"):
@@ -68,8 +70,8 @@ def main():
         if key not in targets:
             continue
         fields = parse(line)
-        if len(fields) != 9:
-            sys.exit(f"row {i}: {len(fields)} cols")
+        if len(fields) != ncols:
+            sys.exit(f"row {i}: {len(fields)} cols, expected {ncols}")
         if fields[3] == "C2":
             continue  # idempotent
         if fields[3] != "C4":

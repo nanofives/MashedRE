@@ -50,6 +50,9 @@ TAG_TRIO = ("C4-EVIDENCE-SUSPECT: evidence log/observe_hooks_at_menu.txt "
 def main() -> int:
     lines = CSV_PATH.read_text(encoding="utf-8").splitlines()
     header, body = lines[0], lines[1:]
+    # Field count comes from the live header, not a literal (2026-09-29: the
+    # exe_file migration made hooks.csv 10 columns wide).
+    ncols = len(next(csv.reader(io.StringIO(header))))
     out: list[str] = [header]
     stats = {"tagged_escapee": 0, "tagged_trio": 0, "cleared": 0,
              "skipped": [], "already_tagged": 0}
@@ -59,8 +62,8 @@ def main() -> int:
             out.append(ln)
             continue
         row = next(csv.reader(io.StringIO(ln)))
-        if len(row) != 9:
-            print(f"FATAL: row without 9 fields: {ln[:80]}")
+        if len(row) != ncols:
+            print(f"FATAL: row without {ncols} fields: {ln[:80]}")
             return 1
         rva, conf, scenario, notes = row[0], row[3], row[6], row[8]
         blob = (scenario + " " + notes)

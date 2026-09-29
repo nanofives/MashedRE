@@ -25,12 +25,21 @@ ROOT = Path(__file__).resolve().parents[2]
 CSV_PATH = ROOT / "hooks.csv"
 BACKUP = ROOT / "log" / "backups" / "hooks.csv.pre_r0"
 
-HEADER = "rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes"
+# Schema-width-agnostic (2026-09-29, exe_file migration). The repair must not
+# hardcode a field count: `exe_file` was appended as a 10th column, and folding
+# it into `notes` -- which the old `row[:8] + join(row[8:])` did -- would have
+# silently destroyed it. NCOLS is derived from the live header at run time.
+HEADER = None   # set in main() from hooks.csv line 1
+NCOLS = 0
+EXPECTED_PREFIX = "rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes"
 
 
 def main() -> int:
+    global HEADER, NCOLS
     raw = CSV_PATH.read_text(encoding="utf-8")
     lines = raw.splitlines()
+    HEADER = lines[0]
+    NCOLS = len(next(csv.reader(io.StringIO(HEADER))))
 
     stats = {"dup_header": 0, "spill_merged": 0, "prefix_norm": 0,
              "overlong_folded": 0, "short_padded": 0, "blank_dropped": 0}
@@ -38,7 +47,8 @@ def main() -> int:
     # Pass 1: drop duplicate headers / blanks, merge spill lines.
     logical: list[str] = []   # data lines only
     comments: list[str] = []  # '#' comment lines, preserved in original order
-    assert lines[0] == HEADER, "first line is not the expected header"
+    assert HEADER.startswith(EXPECTED_PREFIX), \
+        f"first line is not the expected header: {HEADER[:120]!r}"
     for ln in lines[1:]:
         if ln.strip() == "":
             stats["blank_dropped"] += 1
@@ -67,12 +77,19 @@ def main() -> int:
     out_rows: list[list[str]] = []
     for ln in logical:
         row = next(csv.reader(io.StringIO(ln)))
-        if len(row) > 9:
-            row = row[:8] + [",".join(row[8:])]
+        if len(row) > NCOLS:
+            # An unquoted comma inside `notes` (index 8) splits that field. Fold
+            # the spill back into notes and keep the trailing columns that come
+            # AFTER notes (exe_file at index 9) intact -- the pre-2026-09-29
+            # `row[:8] + join(row[8:])` would have swallowed exe_file into notes.
+            n_tail = NCOLS - 9
+            head, tail = (row[8:len(row) - n_tail], row[len(row) - n_tail:]) \
+                if n_tail else (row[8:], [])
+            row = row[:8] + [",".join(head)] + tail
             stats["overlong_folded"] += 1
-        elif len(row) < 9:
+        elif len(row) < NCOLS:
             print(f"WARN short row ({len(row)} fields): {ln[:100]}")
-            row = row + [""] * (9 - len(row))
+            row = row + [""] * (NCOLS - len(row))
             stats["short_padded"] += 1
         rva = row[0].strip()
         if rva.lower().startswith("0x"):
@@ -87,8 +104,8 @@ def main() -> int:
     if len(out_rows) != expected:
         print(f"FATAL: row count drifted {expected} -> {len(out_rows)}")
         return 1
-    if any(len(r) != 9 for r in out_rows):
-        print("FATAL: a row does not have exactly 9 fields after repair")
+    if any(len(r) != NCOLS for r in out_rows):
+        print(f"FATAL: a row does not have exactly {NCOLS} fields after repair")
         return 1
 
     BACKUP.parent.mkdir(parents=True, exist_ok=True)
