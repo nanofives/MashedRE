@@ -128,8 +128,14 @@ def scan_tu(rel: str) -> tuple[dict[int, tuple[str, int]], dict[int, list[tuple[
             if "{" not in blob or ";" in cand.split(")")[-1].split("{")[0]:
                 if "{" not in blob:
                     continue
-            name_m = re.search(r"([A-Za-z_~][\w:]*)\s*\(", cand)
-            name = name_m.group(1) if name_m else cand.strip()[:40]
+            # Strip leading attribute macros (`__declspec(noinline)`, `extern
+            # "C"`, `static`, `inline`, ...) before taking the function name,
+            # otherwise every annotated definition is reported as `__declspec`.
+            sig = re.sub(r'^\s*(?:extern\s+"C"\s+|__declspec\s*\([^)]*\)\s*|'
+                         r'static\s+|inline\s+|__forceinline\s+|naked\s+|'
+                         r'__cdecl\s+|__stdcall\s+|__fastcall\s+)+', "", cand)
+            name_m = re.search(r"([A-Za-z_~][\w:]*)\s*\(", sig)
+            name = name_m.group(1) if name_m else sig.strip()[:40]
             claimed[j] = (rva, name)      # last writer wins = closest comment
 
         # Active installs: the line must not be commented out.

@@ -22,6 +22,20 @@ if /i "%~1"=="clean" (
 call %VCVARS% >nul
 if errorlevel 1 (echo [ERROR] vcvars32.bat failed & exit /b 1)
 
+REM ===========================================================================
+REM ONE RVA, ONE BODY (2026-09-29). The two targets compile two different source
+REM lists, so an RVA can carry two bodies -- and nothing used to fail when they
+REM disagreed. Five shipping defects reached mashed_re.exe that way; the whole
+REM finding is re\analysis\DUAL_COPY_AUDIT_2026-09-29.md.
+REM The lint WARNs on every pair already listed in re\tools\dual_copy_allowlist.txt
+REM (a burn-down list, ROADMAP D4) and FAILS the build on any NEW one.
+REM Set MASHED_SKIP_RVA_LINT=1 to skip -- and then say so in whatever you commit.
+REM ===========================================================================
+if not "%MASHED_SKIP_RVA_LINT%"=="1" (
+    py -3.12 "%ROOT%..\scripts\lint_rva_bodies.py"
+    if errorlevel 1 (echo [ERROR] rva-body lint failed ^(see above^) & exit /b 1)
+)
+
 REM Vendored qhull-2002.1 (RWP-3.7's embedded convex-hull lib; B5b). Build the
 REM static lib once (x87 /arch:IA32 for bit-identity with the original) if absent.
 REM Linked into both targets; only referenced once the RwpQHullWrapper bridge

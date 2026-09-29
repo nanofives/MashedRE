@@ -1,0 +1,135 @@
+# dual_copy_allowlist.txt -- the burn-down list for `scripts/lint_rva_bodies.py`
+#
+# Every line here is an RVA that currently has MORE THAN ONE body (or more than
+# one active install). The guard WARNs on these and FAILS on anything new. The
+# list is meant to shrink to zero: ROADMAP phase D4 consolidates each pair into
+# ONE shared TU judged against `original/MASHED.exe`.
+#
+# Seeded 2026-09-29 from `py -3.12 scripts/lint_rva_bodies.py --seed` at commit
+# bd367bc1, on the findings of `re/analysis/DUAL_COPY_AUDIT_2026-09-29.md`.
+# Rationale and burn-down plan: `re/analysis/DUAL_COPY_FIX_2026-09-29.md`.
+#
+# Format: <CHECK>:<rva-8hex>:<comma-separated sorted TU paths>   # citation
+#   DUP-IN-TARGET  two bodies compiled into the SAME target
+#   CROSS-TARGET   a body in an exe-only TU and a body in an asi-only TU
+#   DUP-INSTALL    two ACTIVE RH_ScopedInstall for one RVA in .asi TUs (U-9065 class)
+#
+# The `audit=` tag is the verdict that row carried in the 2026-09-29 audit CSV.
+# `audit=UNREVIEWED` and rows with no tag are STRUCTURAL CANDIDATES that no one
+# has compared body-to-body yet -- they are allowlisted so the guard can go live,
+# NOT because they are known-safe.
+#
+# ADDING A LINE IS A DECISION. Do not silence a new finding here to get a build
+# through: the whole point is that the five 2026-09-29 defects would each have
+# produced exactly such a line.
+
+DUP-IN-TARGET:00408ad0:D3d9Render/TrackRenderer.cpp,Frontend/SmallLeaves_t1.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: D3d9Render/TrackRenderer.cpp:4007 (TrackRenderer::RacePct), Frontend/SmallLeaves_t1.cpp:42 (RaceScoreFloatGetBySlot)
+DUP-IN-TARGET:00422120:Util/TimerInit.cpp,Util/TimerSubarrayInit.cpp   # audit=UNREVIEWED; [exe] two bodies: Util/TimerInit.cpp:163 (TimerInitLoop), Util/TimerSubarrayInit.cpp:34 (TimerSubarrayInit)
+DUP-IN-TARGET:00426cb0:Frontend/FrontendLeaves_ad2.cpp,Frontend/MenuNearLeaves_s6.cpp   # audit=UNREVIEWED; [exe] two bodies: Frontend/FrontendLeaves_ad2.cpp:29 (FrontendSlotTablePtr426cb0), Frontend/MenuNearLeaves_s6.cpp:56 (SlotIndexToPtr)
+DUP-IN-TARGET:0042af50:Frontend/MenuStateMachine.cpp,Frontend/TimerReset.cpp   # audit=UNREVIEWED; [exe] two bodies: Frontend/MenuStateMachine.cpp:320 (MenuReadinessCheckC), Frontend/TimerReset.cpp:117 (MenuReadinessCheck)
+DUP-IN-TARGET:0042bde0:Frontend/BatchAA_s1.cpp,Frontend/MenuNearLeaves_s6.cpp   # audit=UNREVIEWED; [exe] two bodies: Frontend/BatchAA_s1.cpp:209 (), Frontend/MenuNearLeaves_s6.cpp:246 (HudRectEmitter)
+DUP-IN-TARGET:0042d3e0:Frontend/MenuInit.cpp,Frontend/MenuNavSM.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: Frontend/MenuInit.cpp:73 (MenuEntryArrayInit), Frontend/MenuNavSM.cpp:386 (RecordsZero)
+DUP-IN-TARGET:0042f6b0:Frontend/FrontendState.cpp,Race/RaceModes.cpp   # audit=not-in-audit; [exe] two bodies: Frontend/FrontendState.cpp:70 (MenuModeSync), Race/RaceModes.cpp:29 (SelectionToGameMode)
+DUP-IN-TARGET:00431b70:Frontend/BucketMixed_t3.cpp,Frontend/MenuLeaves_af5.cpp   # audit=UNREVIEWED; [exe] two bodies: Frontend/BucketMixed_t3.cpp:38 (GetDat007f0f10), Frontend/MenuLeaves_af5.cpp:76 (MenuFlagDat007f0f10Get)
+DUP-IN-TARGET:00468b40:Collision/CarWorldContacts.cpp,Vehicle/VehicleState.cpp   # audit=IDENTICAL; [exe] two bodies: Collision/CarWorldContacts.cpp:73 (ContactHistoryLookup), Vehicle/VehicleState.cpp:95 (VehicleContactHistoryLookup)
+DUP-IN-TARGET:0046dbe0:Vehicle/ForceIntegrator.cpp,Vehicle/VehicleState.cpp   # audit=IDENTICAL; [exe] two bodies: Vehicle/ForceIntegrator.cpp:325 (CarContactCount), Vehicle/VehicleState.cpp:77 (VehicleRacePositionGet)
+DUP-IN-TARGET:00498bf0:Boot/FrameDispatch.cpp,Boot/VideoConfig.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; [exe] two bodies: Boot/FrameDispatch.cpp:69 (DisplayActiveFlagGet), Boot/VideoConfig.cpp:84 (DisplayGetCursorGate)
+DUP-IN-TARGET:004a2c48:Ai/VehicleFloatFieldAsInt.cpp,Race/RaceCamera.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: Ai/VehicleFloatFieldAsInt.cpp:34 (FtolFrom), Race/RaceCamera.cpp:43 (Ftol_4a2c48)
+DUP-IN-TARGET:004c39b0:Math/RwV3dNormalize.cpp,Race/RaceCamera.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: Math/RwV3dNormalize.cpp:60 (), Race/RaceCamera.cpp:55 (Vec3Norm)
+DUP-IN-TARGET:004c4d20:Math/RwMatrixRotate.cpp,Race/RaceCamera.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: Math/RwMatrixRotate.cpp:52 (), Race/RaceCamera.cpp:66 (RotateAboutAxis)
+DUP-IN-TARGET:00556cc0:Frontend/BatchAA_s3.cpp,Frontend/Cluster_v1.cpp   # audit=UNREVIEWED; [exe] two bodies: Frontend/BatchAA_s3.cpp:154 (SetDat00912a20), Frontend/Cluster_v1.cpp:112 (FontAtlasSlotSet)
+DUP-IN-TARGET:00556cd0:Frontend/BatchAA_s6.cpp,Frontend/Cluster_v1.cpp   # audit=UNREVIEWED; [exe] two bodies: Frontend/BatchAA_s6.cpp:50 (GetDat00912a20), Frontend/Cluster_v1.cpp:80 (FontAtlasSlotGet)
+DUP-IN-TARGET:0055dec0:Collision/RwpBuildExterns.cpp,Util/UtilLeaves_ab6.cpp   # audit=UNREVIEWED; [exe] two bodies: Collision/RwpBuildExterns.cpp:67 (FUN_0055dec0), Util/UtilLeaves_ab6.cpp:233 (UtilDeref55dec0)
+DUP-IN-TARGET:0055e200:Collision/RwpIntegrator.cpp,Collision/RwpSolverCore23.cpp   # audit=not-in-audit; [exe] two bodies: Collision/RwpIntegrator.cpp:422 (RwpSolverContextSet_impl), Collision/RwpSolverCore23.cpp:140 (RwpSolverContextSet)
+DUP-IN-TARGET:00407640:Gameplay/RangeTable_ah1.cpp,Util/PromoLoop_round69.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; [asi] two bodies: Gameplay/RangeTable_ah1.cpp:37 (FindCopterByKeyIndex), Util/PromoLoop_round69.cpp:30 (CopterFind639dc4)
+DUP-IN-TARGET:004077e0:Gameplay/Thresholds_ah4.cpp,Util/PromoLoop_round61.cpp   # audit=UNREVIEWED; [asi] two bodies: Gameplay/Thresholds_ah4.cpp:94 (GetSelectedCopterField60), Util/PromoLoop_round61.cpp:29 (FloatIdx639de0)
+DUP-IN-TARGET:00407a20:Gameplay/RangeTable_ah1.cpp,Util/PromoLoop_round42.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; [asi] two bodies: Gameplay/RangeTable_ah1.cpp:274 (GetAiLapCounter), Util/PromoLoop_round42.cpp:26 (Table8a9648Get)
+DUP-IN-TARGET:004098a0:Gameplay/RangeTable_ah1.cpp,Util/PromoLoop_round40.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; [asi] two bodies: Gameplay/RangeTable_ah1.cpp:56 (GetLedEntryArrayBase), Util/PromoLoop_round40.cpp:32 (Ret63a5f0)
+DUP-IN-TARGET:0040b970:Gameplay/ScoreMasks_ah3.cpp,Util/PromoLoop_round67.cpp   # audit=UNREVIEWED; [asi] two bodies: Gameplay/ScoreMasks_ah3.cpp:47 (PlayerScoreZeroTest), Util/PromoLoop_round67.cpp:22 (Bool0Out8a94e0)
+DUP-IN-TARGET:0040b9a0:Gameplay/ScoreMasks_ah3.cpp,Util/PromoLoop_sessionB.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; [asi] two bodies: Gameplay/ScoreMasks_ah3.cpp:100 (PlayerScoreMaxTest), Util/PromoLoop_sessionB.cpp:4869 (MaxScoreFlags40b9a0)
+DUP-IN-TARGET:0040ba00:Gameplay/ScoreMasks_ah3.cpp,Util/PromoLoop_round67.cpp   # audit=UNREVIEWED; [asi] two bodies: Gameplay/ScoreMasks_ah3.cpp:62 (PlayerScoreMinTest), Util/PromoLoop_round67.cpp:29 (BoolMinOut8a94e0)
+DUP-IN-TARGET:0040ba60:Gameplay/ScoreMasks_ah3.cpp,Util/PromoLoop_sessionB.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; [asi] two bodies: Gameplay/ScoreMasks_ah3.cpp:125 (PlayerScoreGateInvert), Util/PromoLoop_sessionB.cpp:4837 (Active4Slots40ba60)
+DUP-IN-TARGET:00417640:Ai/AiController.cpp,Ai/AiStandalone.cpp   # audit=UNREVIEWED; [asi] two bodies: Ai/AiController.cpp:120 (), Ai/AiStandalone.cpp:1356 (PostStepPowerupBrake)
+DUP-IN-TARGET:004177b0:Ai/AiControllerAB.cpp,Ai/AiPreTick.cpp,Core/HookSystem.cpp   # audit=DIFFERS-BEHAVIOUR; [asi] two bodies: Ai/AiControllerAB.cpp:536 (void* g_orig_416256 = reinterpret_cast<v), Ai/AiPreTick.cpp:170 (), Core/HookSystem.cpp:157 (TokenMatch)
+DUP-IN-TARGET:00418860:Ai/AiController.cpp,HUD/ScenarioLeaves_sa2.cpp   # audit=DIFFERS-BEHAVIOUR; [asi] two bodies: Ai/AiController.cpp:316 (), HUD/ScenarioLeaves_sa2.cpp:438 (AiPerFrameTick)
+DUP-IN-TARGET:00420de0:Util/PromoLoop_sessionB.cpp,Vehicle/Damage.cpp   # audit=UNREVIEWED; [asi] two bodies: Util/PromoLoop_sessionB.cpp:2532 (Accum420de0), Vehicle/Damage.cpp:100 ()
+DUP-IN-TARGET:00422120:Util/TimerInit.cpp,Util/TimerSubarrayInit.cpp   # audit=UNREVIEWED; [asi] two bodies: Util/TimerInit.cpp:163 (TimerInitLoop), Util/TimerSubarrayInit.cpp:34 (TimerSubarrayInit)
+DUP-IN-TARGET:00426cb0:Frontend/FrontendLeaves_ad2.cpp,Frontend/MenuNearLeaves_s6.cpp   # audit=UNREVIEWED; [asi] two bodies: Frontend/FrontendLeaves_ad2.cpp:29 (FrontendSlotTablePtr426cb0), Frontend/MenuNearLeaves_s6.cpp:56 (SlotIndexToPtr)
+DUP-IN-TARGET:004298c0:Frontend/MenuLeaves_af5.cpp,Util/PromoLoop_round70.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; [asi] two bodies: Frontend/MenuLeaves_af5.cpp:107 (MenuQuadGlobalZero), Util/PromoLoop_round70.cpp:31 (Clear67d99c_x4)
+DUP-IN-TARGET:0042af50:Frontend/MenuStateMachine.cpp,Frontend/TimerReset.cpp   # audit=UNREVIEWED; [asi] two bodies: Frontend/MenuStateMachine.cpp:320 (MenuReadinessCheckC), Frontend/TimerReset.cpp:117 (MenuReadinessCheck)
+DUP-IN-TARGET:0042b8c0:Frontend/MenuButtonDetect.cpp,Frontend/SpriteCluster.cpp   # audit=NOT-A-PAIR; [asi] two bodies: Frontend/MenuButtonDetect.cpp:588 (ScreenHeightGet), Frontend/SpriteCluster.cpp:318 (ProgressBarSetA_RwState)
+DUP-IN-TARGET:0042bde0:Frontend/BatchAA_s1.cpp,Frontend/MenuNearLeaves_s6.cpp   # audit=UNREVIEWED; [asi] two bodies: Frontend/BatchAA_s1.cpp:209 (), Frontend/MenuNearLeaves_s6.cpp:246 (HudRectEmitter)
+DUP-IN-TARGET:0042f7b0:Frontend/MenuHelpers.cpp,Util/PromoLoop_round72.cpp   # audit=NOT-A-PAIR; [asi] two bodies: Frontend/MenuHelpers.cpp:174 (FrontendCursorUpdate), Util/PromoLoop_round72.cpp:49 (Post0042bf30)
+DUP-IN-TARGET:0042fa00:Frontend/MenuNav.cpp,Frontend/SkeletonAndScatter_t6.cpp   # audit=DIFFERS-BEHAVIOUR; [asi] two bodies: Frontend/MenuNav.cpp:230 (MenuTeamSelectTick), Frontend/SkeletonAndScatter_t6.cpp:249 (PlayerSlotEdgeAdjust)
+DUP-IN-TARGET:00431b10:Boot/PromoLoop_round12.cpp,Boot/SubsystemInit.cpp   # audit=not-in-audit; [asi] two bodies: Boot/PromoLoop_round12.cpp:65 (BootParamSet2), Boot/SubsystemInit.cpp:442 (void)
+DUP-IN-TARGET:00431b70:Frontend/BucketMixed_t3.cpp,Frontend/MenuLeaves_af5.cpp   # audit=UNREVIEWED; [asi] two bodies: Frontend/BucketMixed_t3.cpp:38 (GetDat007f0f10), Frontend/MenuLeaves_af5.cpp:76 (MenuFlagDat007f0f10Get)
+DUP-IN-TARGET:00431f30:Frontend/MenuLeaves_af6.cpp,Frontend/SkeletonAndScatter_t6.cpp   # audit=DIFFERS-COSMETIC + DUPLICATE-INSTALL; [asi] two bodies: Frontend/MenuLeaves_af6.cpp:111 (FrontendPageIdDispatch), Frontend/SkeletonAndScatter_t6.cpp:502 (FrontendPageFlagSet)
+DUP-IN-TARGET:0046c730:Util/PromoLoop_round10.cpp,Util/PromoLoop_round38.cpp   # audit=UNREVIEWED; [asi] two bodies: Util/PromoLoop_round10.cpp:85 (EntityDamageStateGet), Util/PromoLoop_round38.cpp:28 (Table882198Get)
+DUP-IN-TARGET:0046c750:Util/PromoLoop_round10.cpp,Util/PromoLoop_round38.cpp   # audit=UNREVIEWED; [asi] two bodies: Util/PromoLoop_round10.cpp:52 (EntityVelocityCounterGet), Util/PromoLoop_round38.cpp:20 (Table882194Get)
+DUP-IN-TARGET:0046cbb0:Util/PromoLoop_round25.cpp,Vehicle/VehicleState.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; [asi] two bodies: Util/PromoLoop_round25.cpp:51 (CarStatePairGet), Vehicle/VehicleState.cpp:137 (VehicleCarStateRead)
+DUP-IN-TARGET:0046cbe0:Vehicle/Physics.cpp,Vehicle/SmallLeaves_o5.cpp   # audit=not-in-audit; [asi] two bodies: Vehicle/Physics.cpp:48 (), Vehicle/SmallLeaves_o5.cpp:52 (VehicleCarStateSet)
+DUP-IN-TARGET:0046d510:Ai/AiTargeting.cpp,Ai/VehicleVelocityWorldGet.cpp   # audit=UNREVIEWED; [asi] two bodies: Ai/AiTargeting.cpp:279 (), Ai/VehicleVelocityWorldGet.cpp:40 (VehicleVelocityWorldGet)
+DUP-IN-TARGET:00485340:Physics/SmplFzxStateBlock.cpp,Util/PromoLoop_sessionB.cpp   # audit=NOT-A-PAIR; [asi] two bodies: Physics/SmplFzxStateBlock.cpp:27 (ValidateHandle), Util/PromoLoop_sessionB.cpp:1260 (Get485340)
+DUP-IN-TARGET:00496930:Util/PromoLoop_round17.cpp,Util/PromoLoop_round30.cpp   # audit=UNREVIEWED; [asi] two bodies: Util/PromoLoop_round17.cpp:78 (TimerTable773030Get), Util/PromoLoop_round30.cpp:32 (Table773030Get)
+DUP-IN-TARGET:004987b0:Input/DirectInput.cpp,Physics/SmplFzxStateBlock.cpp   # audit=NOT-A-PAIR; [asi] two bodies: Input/DirectInput.cpp:50 (game_printf_dbg), Physics/SmplFzxStateBlock.cpp:34 (GamePrintfDbg)
+DUP-IN-TARGET:00498bf0:Boot/FrameDispatch.cpp,Boot/VideoConfig.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; [asi] two bodies: Boot/FrameDispatch.cpp:69 (DisplayActiveFlagGet), Boot/VideoConfig.cpp:84 (DisplayGetCursorGate)
+DUP-IN-TARGET:00499710:Frontend/IntroSplash.cpp,Util/PromoLoop_round32.cpp   # audit=UNREVIEWED; [asi] two bodies: Frontend/IntroSplash.cpp:69 (OrigHwndGet), Util/PromoLoop_round32.cpp:25 (Global7e9584Get)
+DUP-IN-TARGET:004a2c48:Ai/VehicleFloatFieldAsInt.cpp,Frontend/SetupScreenRenderers.cpp   # audit=DIFFERS-BEHAVIOUR; [asi] two bodies: Ai/VehicleFloatFieldAsInt.cpp:34 (FtolFrom), Frontend/SetupScreenRenderers.cpp:110 (int)
+DUP-IN-TARGET:004a4368:Save/SettingsCfg.cpp,Save/SettingsConfig.cpp   # audit=UNREVIEWED; [asi] two bodies: Save/SettingsCfg.cpp:62 (game_ConfigFilenameGet), Save/SettingsConfig.cpp:88 (game_fclose)
+DUP-IN-TARGET:004a4541:Save/FsOpen.cpp,Save/SettingsConfig.cpp   # audit=NOT-A-PAIR; [asi] two bodies: Save/FsOpen.cpp:30 (FsopenSafe), Save/SettingsConfig.cpp:70 (game_fsopen)
+DUP-IN-TARGET:004b4650:Render/PromoLoop_round22.cpp,Util/PromoLoop_sessionB.cpp   # audit=DIFFERS-BEHAVIOUR; [asi] two bodies: Render/PromoLoop_round22.cpp:38 (Vec3Lerp), Util/PromoLoop_sessionB.cpp:1432 (Lerp4b4650)
+DUP-IN-TARGET:004c19f0:Boot/FrameDispatch.cpp,Frontend/IntroSplash.cpp   # audit=NOT-A-PAIR; [asi] two bodies: Boot/FrameDispatch.cpp:88 (RwVtableSlot07Call), Frontend/IntroSplash.cpp:92 (OrigRwSlot07)
+DUP-IN-TARGET:004c5c00:Frontend/SpriteCluster.cpp,Util/PromoLoop_sessionB.cpp   # audit=UNREVIEWED; [asi] two bodies: Frontend/SpriteCluster.cpp:186 (LinkedListStringSearch), Util/PromoLoop_sessionB.cpp:2775 (Search4c5c00)
+DUP-IN-TARGET:004cbd30:Audio/MixedC3Sweep.cpp,Render/TextureLoader_q6.cpp   # audit=DIFFERS-BEHAVIOUR; [asi] two bodies: Audio/MixedC3Sweep.cpp:41 (Orig_StreamRead), Render/TextureLoader_q6.cpp:75 (std::uint32_t __cdecl)
+DUP-IN-TARGET:004f8660:Render/PluginFields_ah4.cpp,Render/StateBatchGetters.cpp   # audit=not-in-audit; [asi] two bodies: Render/PluginFields_ah4.cpp:49 (PluginFieldReadA8), Render/StateBatchGetters.cpp:29 (PluginDataDwordA)
+DUP-IN-TARGET:004f8690:Render/PluginFields_ah4.cpp,Render/StateBatchGetters.cpp   # audit=DIFFERS-COSMETIC + DUPLICATE-INSTALL; [asi] two bodies: Render/PluginFields_ah4.cpp:76 (PluginFieldReadAC), Render/StateBatchGetters.cpp:44 (PluginDataDwordB)
+DUP-IN-TARGET:00556cc0:Frontend/BatchAA_s3.cpp,Frontend/Cluster_v1.cpp   # audit=UNREVIEWED; [asi] two bodies: Frontend/BatchAA_s3.cpp:154 (SetDat00912a20), Frontend/Cluster_v1.cpp:112 (FontAtlasSlotSet)
+DUP-IN-TARGET:00556cd0:Frontend/BatchAA_s6.cpp,Frontend/Cluster_v1.cpp   # audit=UNREVIEWED; [asi] two bodies: Frontend/BatchAA_s6.cpp:50 (GetDat00912a20), Frontend/Cluster_v1.cpp:80 (FontAtlasSlotGet)
+DUP-IN-TARGET:0055dec0:Collision/RwpBuildExterns.cpp,Util/UtilLeaves_ab6.cpp   # audit=UNREVIEWED; [asi] two bodies: Collision/RwpBuildExterns.cpp:67 (FUN_0055dec0), Util/UtilLeaves_ab6.cpp:233 (UtilDeref55dec0)
+DUP-IN-TARGET:0055e200:Collision/RwpIntegrator.cpp,Collision/RwpSolverCore23.cpp   # audit=not-in-audit; [asi] two bodies: Collision/RwpIntegrator.cpp:422 (RwpSolverContextSet_impl), Collision/RwpSolverCore23.cpp:140 (RwpSolverContextSet)
+DUP-IN-TARGET:005ab380:Audio/MixedC3Sweep.cpp,Audio/RwsStream.cpp   # audit=not-in-audit; [asi] two bodies: Audio/MixedC3Sweep.cpp:28 (Orig_ReadChunkHdr), Audio/RwsStream.cpp:50 (std::uint32_t __cdecl)
+DUP-IN-TARGET:005abf80:Audio/MixedC3Sweep.cpp,Audio/RwsStream.cpp   # audit=not-in-audit; [asi] two bodies: Audio/MixedC3Sweep.cpp:87 (Orig_DrainPump), Audio/RwsStream.cpp:204 (void __cdecl)
+DUP-IN-TARGET:005adf30:Audio/AudioRws.cpp,Audio/MixedC3Sweep.cpp   # audit=not-in-audit; [asi] two bodies: Audio/AudioRws.cpp:329 (AudioFmtKeyCompare), Audio/MixedC3Sweep.cpp:63 (Orig_FmtKeyCmp)
+DUP-IN-TARGET:005aea00:Audio/AudioRws.cpp,Audio/MixedC3Sweep.cpp   # audit=UNREVIEWED; [asi] two bodies: Audio/AudioRws.cpp:1119 (AudioPoolConstruct), Audio/MixedC3Sweep.cpp:35 (Orig_RawAlloc)
+DUP-IN-TARGET:005aea10:Audio/AudioMemory.cpp,Audio/MixedC3Sweep.cpp   # audit=not-in-audit; [asi] two bodies: Audio/AudioMemory.cpp:22 (AudioAlignedAlloc), Audio/MixedC3Sweep.cpp:69 (Orig_RawAlloc2)
+DUP-IN-TARGET:005aea40:Audio/AudioMemory.cpp,Audio/MixedC3Sweep.cpp   # audit=UNREVIEWED; [asi] two bodies: Audio/AudioMemory.cpp:44 (AudioAlignedFree), Audio/MixedC3Sweep.cpp:93 (Orig_FreePcmBuf)
+DUP-IN-TARGET:005aec30:Audio/AudioMemory.cpp,Audio/MixedC3Sweep.cpp   # audit=UNREVIEWED; [asi] two bodies: Audio/AudioMemory.cpp:111 (AudioByteSwapBuffer), Audio/MixedC3Sweep.cpp:75 (Orig_Bswap)
+DUP-IN-TARGET:005b3580:Audio/AudioLeaves_ab2.cpp,Audio/AudioList_ag.cpp   # audit=UNREVIEWED; [asi] two bodies: Audio/AudioLeaves_ab2.cpp:48 (AudioListHeaderInit), Audio/AudioList_ag.cpp:13 (AudioListInit)
+CROSS-TARGET:00405890:Race/RuleEngine.cpp,Util/PromoLoop_round78.cpp   # audit=IDENTICAL; exe-only Race/RuleEngine.cpp  vs  asi-only Util/PromoLoop_round78.cpp
+CROSS-TARGET:0040e180:Race/CameraClusterHooks.cpp,Race/RaceCamera.cpp   # audit=DIFFERS-COSMETIC; exe-only Race/RaceCamera.cpp  vs  asi-only Race/CameraClusterHooks.cpp
+CROSS-TARGET:00410510:Race/RuleEngine.cpp,Race/ScoringHooks.cpp   # audit=DIFFERS-BEHAVIOUR; exe-only Race/RuleEngine.cpp  vs  asi-only Race/ScoringHooks.cpp
+CROSS-TARGET:004177b0:Ai/AiControllerAB.cpp,Ai/AiPreTick.cpp,Core/HookSystem.cpp,Race/RuleEngine.cpp   # audit=DIFFERS-BEHAVIOUR; exe-only Race/RuleEngine.cpp  vs  asi-only Ai/AiControllerAB.cpp, Ai/AiPreTick.cpp, Core/HookSystem.cpp
+CROSS-TARGET:0042ad90:Frontend/MenuNavSM.cpp,Util/PromoLoop_sessionB.cpp   # audit=not-in-audit; exe-only Frontend/MenuNavSM.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+CROSS-TARGET:0045baa0:Powerup/PowerupSystem.cpp,Util/PromoLoop_sessionB.cpp   # audit=DIFFERS-BEHAVIOUR; exe-only Powerup/PowerupSystem.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
+CROSS-TARGET:00467650:Vehicle/Integrate2.cpp,Vehicle/PhysicsChainHooks.cpp   # audit=DIFFERS-BEHAVIOUR; exe-only Vehicle/Integrate2.cpp  vs  asi-only Vehicle/PhysicsChainHooks.cpp
+CROSS-TARGET:0046b540:Vehicle/PhysicsChainHooks.cpp,Vehicle/VehicleInit.cpp   # audit=DIFFERS-BEHAVIOUR; exe-only Vehicle/VehicleInit.cpp  vs  asi-only Vehicle/PhysicsChainHooks.cpp
+CROSS-TARGET:004a2c48:Frontend/SetupScreenRenderers.cpp,Race/RaceCamera.cpp   # audit=DIFFERS-BEHAVIOUR; exe-only Race/RaceCamera.cpp  vs  asi-only Frontend/SetupScreenRenderers.cpp
+CROSS-TARGET:004cbd30:Audio/MixedC3Sweep.cpp,D3d9Render/RwWorldStream.cpp,Render/TextureLoader_q6.cpp   # audit=DIFFERS-BEHAVIOUR; exe-only D3d9Render/RwWorldStream.cpp  vs  asi-only Audio/MixedC3Sweep.cpp, Render/TextureLoader_q6.cpp
+CROSS-TARGET:004cc050:D3d9Render/RwWorldStream.cpp,Render/TextureLoader_q6.cpp   # audit=DIFFERS-BEHAVIOUR; exe-only D3d9Render/RwWorldStream.cpp  vs  asi-only Render/TextureLoader_q6.cpp
+DUP-INSTALL:00407640:Gameplay/RangeTable_ah1.cpp,Util/PromoLoop_round69.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; installed from 2 files: Gameplay/RangeTable_ah1.cpp:51 FindCopterByKeyIndex, Util/PromoLoop_round69.cpp:39 CopterFind639dc4
+DUP-INSTALL:004077e0:Gameplay/Thresholds_ah4.cpp,Util/PromoLoop_round61.cpp   # audit=UNREVIEWED; installed from 2 files: Gameplay/Thresholds_ah4.cpp:99 GetSelectedCopterField60, Util/PromoLoop_round61.cpp:33 FloatIdx639de0
+DUP-INSTALL:00407a20:Gameplay/RangeTable_ah1.cpp,Util/PromoLoop_round42.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; installed from 2 files: Gameplay/RangeTable_ah1.cpp:277 GetAiLapCounter, Util/PromoLoop_round42.cpp:29 Table8a9648Get
+DUP-INSTALL:004098a0:Gameplay/RangeTable_ah1.cpp,Util/PromoLoop_round40.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; installed from 2 files: Gameplay/RangeTable_ah1.cpp:59 GetLedEntryArrayBase, Util/PromoLoop_round40.cpp:33 Ret63a5f0
+DUP-INSTALL:0040b970:Gameplay/ScoreMasks_ah3.cpp,Util/PromoLoop_round67.cpp   # audit=UNREVIEWED; installed from 2 files: Gameplay/ScoreMasks_ah3.cpp:58 PlayerScoreZeroTest, Util/PromoLoop_round67.cpp:26 Bool0Out8a94e0
+DUP-INSTALL:0040b9a0:Gameplay/ScoreMasks_ah3.cpp,Util/PromoLoop_sessionB.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; installed from 2 files: Gameplay/ScoreMasks_ah3.cpp:121 PlayerScoreMaxTest, Util/PromoLoop_sessionB.cpp:4916 MaxScoreFlags40b9a0
+DUP-INSTALL:0040ba00:Gameplay/ScoreMasks_ah3.cpp,Util/PromoLoop_round67.cpp   # audit=UNREVIEWED; installed from 2 files: Gameplay/ScoreMasks_ah3.cpp:78 PlayerScoreMinTest, Util/PromoLoop_round67.cpp:38 BoolMinOut8a94e0
+DUP-INSTALL:0040ba60:Gameplay/ScoreMasks_ah3.cpp,Util/PromoLoop_sessionB.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; installed from 2 files: Gameplay/ScoreMasks_ah3.cpp:135 PlayerScoreGateInvert, Util/PromoLoop_sessionB.cpp:4863 Active4Slots40ba60
+DUP-INSTALL:00415d00:Ai/AiTargeting.cpp,Ai/AiWallAhead.cpp   # audit=not-in-audit; installed from 2 files: Ai/AiTargeting.cpp:526 AiWallAhead, Ai/AiWallAhead.cpp:167 AiWallAhead_Entry
+DUP-INSTALL:00416060:Ai/AiLineOfSight.cpp,Ai/AiTargeting.cpp   # audit=not-in-audit; installed from 2 files: Ai/AiLineOfSight.cpp:162 AiLos_Entry, Ai/AiTargeting.cpp:117 AiLineOfSight
+DUP-INSTALL:00426cb0:Frontend/FrontendLeaves_ad2.cpp,Frontend/MenuNearLeaves_s6.cpp   # audit=UNREVIEWED; installed from 2 files: Frontend/FrontendLeaves_ad2.cpp:33 FrontendSlotTablePtr426cb0, Frontend/MenuNearLeaves_s6.cpp:62 SlotIndexToPtr
+DUP-INSTALL:004298c0:Frontend/MenuLeaves_af5.cpp,Util/PromoLoop_round70.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; installed from 2 files: Frontend/MenuLeaves_af5.cpp:114 MenuQuadGlobalZero, Util/PromoLoop_round70.cpp:37 Clear67d99c_x4
+DUP-INSTALL:0042af50:Frontend/MenuStateMachine.cpp,Frontend/TimerReset.cpp   # audit=UNREVIEWED; installed from 2 files: Frontend/MenuStateMachine.cpp:374 MenuReadinessCheckC, Frontend/TimerReset.cpp:166 MenuReadinessCheck
+DUP-INSTALL:0042bde0:Frontend/BatchAA_s1.cpp,Frontend/MenuNearLeaves_s6.cpp   # audit=UNREVIEWED; installed from 2 files: Frontend/BatchAA_s1.cpp:251 HudRectEmitter5, Frontend/MenuNearLeaves_s6.cpp:278 HudRectEmitter
+DUP-INSTALL:00431f30:Frontend/MenuLeaves_af6.cpp,Frontend/SkeletonAndScatter_t6.cpp   # audit=DIFFERS-COSMETIC + DUPLICATE-INSTALL; installed from 2 files: Frontend/MenuLeaves_af6.cpp:142 FrontendPageIdDispatch, Frontend/SkeletonAndScatter_t6.cpp:535 FrontendPageFlagSet
+DUP-INSTALL:0046c730:Util/PromoLoop_round10.cpp,Util/PromoLoop_round38.cpp   # audit=UNREVIEWED; installed from 2 files: Util/PromoLoop_round10.cpp:95 EntityDamageStateGet, Util/PromoLoop_round38.cpp:33 Table882198Get
+DUP-INSTALL:0046c750:Util/PromoLoop_round10.cpp,Util/PromoLoop_round38.cpp   # audit=UNREVIEWED; installed from 2 files: Util/PromoLoop_round10.cpp:62 EntityVelocityCounterGet, Util/PromoLoop_round38.cpp:25 Table882194Get
+DUP-INSTALL:0046cbb0:Util/PromoLoop_round25.cpp,Vehicle/VehicleState.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; installed from 2 files: Util/PromoLoop_round25.cpp:63 CarStatePairGet, Vehicle/VehicleState.cpp:143 VehicleCarStateRead
+DUP-INSTALL:0046cbe0:Vehicle/Physics.cpp,Vehicle/SmallLeaves_o5.cpp   # audit=not-in-audit; installed from 2 files: Vehicle/Physics.cpp:62 VehicleSpinoutStateSet, Vehicle/SmallLeaves_o5.cpp:60 VehicleCarStateSet
+DUP-INSTALL:004955b0:Boot/RwEngineInit.cpp,Input/DirectInput.cpp   # audit=not-in-audit; installed from 2 files: Boot/RwEngineInit.cpp:51 DInputInitPredicate, Input/DirectInput.cpp:165 CreateDInputObjectBool
+DUP-INSTALL:00496930:Util/PromoLoop_round17.cpp,Util/PromoLoop_round30.cpp   # audit=UNREVIEWED; installed from 2 files: Util/PromoLoop_round17.cpp:84 TimerTable773030Get, Util/PromoLoop_round30.cpp:35 Table773030Get
+DUP-INSTALL:00498bf0:Boot/FrameDispatch.cpp,Boot/VideoConfig.cpp   # audit=IDENTICAL + DUPLICATE-INSTALL; installed from 2 files: Boot/FrameDispatch.cpp:73 DisplayActiveFlagGet, Boot/VideoConfig.cpp:89 DisplayGetCursorGate
+DUP-INSTALL:004f8660:Render/PluginFields_ah4.cpp,Render/StateBatchGetters.cpp   # audit=not-in-audit; installed from 2 files: Render/PluginFields_ah4.cpp:53 PluginFieldReadA8, Render/StateBatchGetters.cpp:34 PluginDataDwordA
+DUP-INSTALL:004f8690:Render/PluginFields_ah4.cpp,Render/StateBatchGetters.cpp   # audit=DIFFERS-COSMETIC + DUPLICATE-INSTALL; installed from 2 files: Render/PluginFields_ah4.cpp:80 PluginFieldReadAC, Render/StateBatchGetters.cpp:49 PluginDataDwordB
+DUP-INSTALL:00556cc0:Frontend/BatchAA_s3.cpp,Frontend/Cluster_v1.cpp   # audit=UNREVIEWED; installed from 2 files: Frontend/BatchAA_s3.cpp:160 SetDat00912a20, Frontend/Cluster_v1.cpp:117 FontAtlasSlotSet
+DUP-INSTALL:00556cd0:Frontend/BatchAA_s6.cpp,Frontend/Cluster_v1.cpp   # audit=UNREVIEWED; installed from 2 files: Frontend/BatchAA_s6.cpp:56 GetDat00912a20, Frontend/Cluster_v1.cpp:85 FontAtlasSlotGet
+DUP-INSTALL:005b3580:Audio/AudioLeaves_ab2.cpp,Audio/AudioList_ag.cpp   # audit=UNREVIEWED; installed from 2 files: Audio/AudioLeaves_ab2.cpp:55 AudioListHeaderInit, Audio/AudioList_ag.cpp:20 AudioListInit
