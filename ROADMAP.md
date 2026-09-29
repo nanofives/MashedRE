@@ -432,7 +432,57 @@ reviewer real time for no new information.
 renderer, AND D1's default-renderer question settled. Until both hold, an in-race
 opinion is an opinion about the scaffold, not about the port.
 
-### D2 — Default physics — **CLOSED 2026-09-14**
+### D2 — Default physics — **CLOSED 2026-09-14** (gate RECIPE amended 2026-09-29, verdict re-checked)
+
+> #### AMENDMENT 2026-09-29 — the gate recipe gains a CONTROLLED arm; the D2 verdict is re-checked against it
+>
+> **User decision (2) of 2026-09-29.** The `a8` held-full-lock recipe below stopped being a
+> controlled instrument at `09a73dc6` (`D3_DRIVE_2026-09-28.md` §3.4, CONFIRMED: three
+> RNG-driven opponents share the player's world during a 50 s donut at the start line, and
+> HEAD's run-to-run spread on `slip 1500-2000` became 0.128..0.177). The recipe is therefore
+> **amended**, not the bands. Full pre-registration and results:
+> [`re/analysis/D2_CONTROLLED_ARM_2026-09-29.md`](re/analysis/D2_CONTROLLED_ARM_2026-09-29.md)
+> — §1 and §2 of that note were written and committed (`1d0ca916`) **before the first run**.
+>
+> **The controlled arm (C-A8-1)** = the recipe below plus exactly two controls:
+> `MASHED_MEASURE_NOOPP=1` (opponents not updated; a measurement-harness knob on the
+> `MASHED_STEER_HOLD` precedent — it commands the scenario, changes no computed value, is
+> default-OFF and is **not** a default-path change, proved by a knob-off control that
+> reproduces the pre-knob build to every printed digit), and `--max-lines 1080` on
+> `a8_slip_axis.py` / `a8_momentum.py` (a fixed 1080-frame = 18.0 s window, since the chain
+> dt is pinned at `frameMs = 50`). Both ends of any comparison run it.
+>
+> **The arm works.** Run-to-run spread on `slip 1500-2000` is **exactly 0** on 3/3 runs at
+> both HEAD and `56ad3806`, where the uncontrolled arm still spreads 0.0088.
+>
+> **The D2 row re-checked on the controlled arm at `56ad3806` (its own commit), 3 runs:**
+>
+> | | slip 1500-2000 | slip 2000-2600 | av.y | driving-median | verdict vs the row below, ±2% |
+> |---|---:|---:|---|---:|---|
+> | D2 row (2026-09-14) | 0.1916 | 0.2668 | 1.12 / 1.59 | 1887 | — |
+> | `56ad3806` controlled | **0.1916** | **0.2669** | **1.123 / 1.591** | **1932.1 / 1932.4 / 1931.4** | slip **0.00%** ✓, slip **+0.04%** ✓, av.y exact, median **+2.39%** ✗ |
+>
+> So **two of the three gated statistics and `av.y` reproduce essentially exactly, and the
+> driving-median is +2.39% — 0.4 percentage points outside the pre-registered ±2%.** The same
+> overshoot is already in the record independent of any control: `D3_DRIVE_2026-09-28.md` §3.1
+> measured today's `56ad3806` build at `1928.48 / 1914.91 / 1931.36 / 1928.48` and accepted
+> that as a reproduction. So the row's `1887` is itself ~2% below what the recipe produces at
+> its own commit. **The D2 CLOSURE BELOW IS NOT REOPENED** — the physics it certified is
+> unchanged and the two slip statistics and `av.y` are reproduced to four decimals — but the
+> `1887` figure is flagged as a recorded-value question, and re-baselining it would be a user
+> decision because it changes a closed phase's numbers.
+>
+> **What the arm exposed, and why U-9141 is still OPEN.** With the opponents absent at BOTH
+> ends, HEAD is `-16.0% / -14.0% / -64.2%` off `56ad3806` on the three statistics. The
+> 2026-09-28 bisect concluded *"no commit in `56ad3806..HEAD` edits the player's solver"* and
+> therefore that the drift was purely the instrument; **on a controlled instrument that does
+> not hold**, and the bisect has to be redone on the controlled arm — which is now cheap and
+> sound, because one run per commit is decisive at a spread of 0. Two `[UNCERTAIN]` rows carry
+> it: **U-9141** (the residual HEAD-vs-`56ad3806` player difference) and the new
+> **U-D2-OPPONENT-COUPLING** (the opponents move the player's median speed 2538 → 691 even
+> though `VehicleCarCarContact` `0x00469df0` has **zero callers** in the port, so the coupling
+> is shared mutable state; candidates and the per-global A/B next command are in §3.5 of the
+> note). Next commands for both are in that note, not here.
 
 > **CLOSED 2026-09-14.** `MASHED_REAL_PHYSICS` is inverted (`VehiclePhysicsRun.cpp`
 > `VehiclePhysics_Enabled`): the ported RWP-3.7 chain, with A4 -> A5 -> A6a run before the

@@ -121,4 +121,167 @@ No fourth outcome is available, and none of these bounds moves after the first n
 
 ## 3. MEASURED
 
-*(filled in after the runs; nothing above this line changes)*
+Nothing above this line was changed after the first run. Evidence `verify/d2_ctrl_20260929/`.
+
+### 3.1 The knob is inert when unset — the default-path proof, run first
+
+One default run (knob unset) on the build that **contains** the knob, against `g_d2_2` from
+earlier today on the build that **did not**:
+
+| | lines | slip 1500-2000 | slip 2000-2600 | driving-median |
+|---|---:|---:|---:|---:|
+| `g_d2_2`, pre-knob build | 1497 | 0.1323 | 0.2992 | 2538.13 |
+| `knoboff_1`, knob compiled in, unset | 1497 | **0.1323** | **0.2992** | **2538.13** |
+
+Identical to every printed digit, same line count. `MASHED_MEASURE_NOOPP` unset changes
+nothing, which is what "measurement-harness knob, not a default-path change" has to mean.
+
+### 3.2 The controlled arm, 3 runs per commit
+
+All six runs exceeded the 1080-frame floor (1268/1266/1268 at HEAD, 1085/1086/1084 at
+`56ad3806`), so **nothing was discarded**.
+
+| arm | run | slip 1500-2000 (n) | slip 2000-2600 (n) | av.y | driving-median (n) |
+|---|---|---:|---:|---|---:|
+| **`56ad3806`** controlled | g56_1 | **0.1916** (171) | **0.2669** (380) | +1.123 / +1.591 | **1932.09** (943) |
+| | g56_2 | **0.1916** (171) | **0.2669** (381) | +1.123 / +1.591 | **1932.37** (943) |
+| | g56_3 | **0.1916** (171) | **0.2669** (379) | +1.123 / +1.591 | **1931.36** (943) |
+| **HEAD** controlled | head_1 | **0.1609** (48) | **0.2296** (24) | +1.019 / +0.792 | **691.01** (626) |
+| | head_2 | **0.1609** (48) | **0.2296** (24) | +1.019 / +0.792 | **691.01** (626) |
+| | head_3 | **0.1609** (48) | **0.2296** (24) | +1.019 / +0.792 | **691.01** (626) |
+| ORIGINAL (untruncated, archived) | — | 0.1913 (312) | 0.2498 (541) | +1.143 / +1.464 | 1940.59 (1153) |
+| ROADMAP §D2 row (2026-09-14) | — | 0.1916 | 0.2668 | 1.12 / 1.59 | 1887 |
+
+### 3.3 The 2×2 — which control did what, measured rather than assumed
+
+The two controls were applied together, so each was also measured alone. `--max-lines 1080`
+costs nothing to apply retroactively, so the opponents-ON cell is the same logs reduced twice.
+
+| arm | slip 1500-2000, 3-4 runs | slip 2000-2600 | driving-median | spread on slip |
+|---|---|---:|---:|---:|
+| HEAD, opponents ON, **untruncated** | 0.1411 / 0.1323 / 0.1411 | 0.2993 / 0.2992 / 0.2993 | 2539.4 / 2538.2 / 2539.4 | 0.0088 |
+| HEAD, opponents ON, **trunc 1080** | 0.1411 / 0.1323 / 0.1411 / 0.1323 | 0.2993 / 0.2992 / 0.2993 / 0.2992 | 2516.4 / 2538.1 / 2516.4 / 2538.1 | 0.0088 |
+| HEAD, **opponents OFF**, trunc 1080 | 0.1609 / 0.1609 / 0.1609 | 0.2296 ×3 | 691.0 ×3 | **0.0000** |
+| `56ad3806`, trunc 1080 (this session) | 0.1916 / 0.1916 / 0.1916 | 0.2669 ×3 | 1932.1 / 1932.4 / 1931.4 | **0.0000** |
+| `56ad3806`, trunc 1080 (2026-09-28 logs) | 0.1916 / 0.1916 | 0.2668 / 0.2627 | — | 0.0000 |
+
+Read off it:
+
+1. **Truncation alone is not the confound.** The opponents-ON arm gives the same three slip
+   values truncated and untruncated, and its median moves only 2539 → 2516-2538. `--max-lines`
+   is a legitimate control (it pins a variable that provably moved, §3.5 of the 2026-09-28
+   note) but it was not what was wrong.
+2. **Opponent removal is the whole of it**, and it is large: slip 1500-2000 0.1411 → 0.1609,
+   slip 2000-2600 0.2993 → 0.2296, driving-median 2538 → **691**.
+3. **The control works.** With the opponents removed the instrument's run-to-run spread on
+   `slip 1500-2000` is **exactly 0** at both commits (3/3 identical to four decimals). With
+   them present it is 0.0088 — larger than C1's own ±0.005 bound. So the arm does what it was
+   built to do: it turns a non-deterministic recipe into a deterministic one.
+
+### 3.4 Verdict against the pre-registered rule
+
+| # | result | detail |
+|---|---|---|
+| **C1** | **PASS** | spread 0.0000 on `slip 1500-2000` at both commits, against a ±0.005 bound; and the uncontrolled arm's 0.0088 spread fails the same bound, which is the control's own positive. |
+| **C2** | **FAIL** | HEAD vs `56ad3806`: slip 1500-2000 `-16.02%`, slip 2000-2600 `-13.98%`, driving-median `-64.23%`. Bound ±2%. Not marginal. |
+| **C3** | **FAIL on 1 of 3** | `56ad3806` vs the D2 row: slip 1500-2000 `0.1916` vs `0.1916` = **0.00%** PASS; slip 2000-2600 `0.2669` vs `0.2668` = **+0.04%** PASS; driving-median `1932.09` vs `1887` = **+2.39%** FAIL (band 1849.3..1924.7). `av.y` `1.123`/`1.591` vs `1.12`/`1.59` matches exactly (reported, not gated). |
+
+**U-9141 does NOT close.** That is the pre-registered consequence of a C2 failure and it is
+honoured as written.
+
+**Two corrections to my own §2.3, stated rather than quietly reinterpreted.**
+
+- The outcome text attached to a C2 failure said *"the arm is not controlled either, the two
+  §3.6 controls are not sufficient"*. **That label is wrong, and §3.3 is why**: C1 passed with
+  a spread of exactly 0 and the arm demonstrably removes the non-determinism the uncontrolled
+  recipe still shows. The arm IS controlled. What C2's failure actually means is that the
+  controlled instrument has **exposed a real HEAD-vs-`56ad3806` difference in the player's own
+  trace** that the uncontrolled recipe was masking — its 0.128..0.177 spread brackets both
+  0.1609 and 0.1916, so it could not have told them apart. The pre-registered *decision*
+  (U-9141 stays open) stands; the *reason* is the opposite of what I wrote.
+- C3's driving-median miss is **0.4 percentage points** over a bound I will not move after the
+  fact. Worth recording that the same overshoot is already in the 2026-09-28 note: its §3.1
+  measured today's `56ad3806` build at `1928.48 / 1914.91 / 1931.36 / 1928.48` and called that
+  a reproduction of the D2 table. So the D2 row's `1887` is itself ~2% below what the recipe
+  produces at its own commit, independent of any control, and that is a question about the D2
+  row's recorded value — not about this arm.
+
+### 3.5 What the failure of C2 opens — TWO separate questions, both [UNCERTAIN]
+
+**[UNCERTAIN] U-D2-OPPONENT-COUPLING — how do the opponents change the PLAYER's trace at
+all?** Car-car contact is **not** in the standalone's player path: `VehicleCarCarContact`
+(`0x00469df0`, `Collision/CarCarContacts.cpp`) is compiled into `mashed_re.exe` but has
+**zero callers** anywhere in the port (`grep -rn VehicleCarCarContact mashedmod/src/mashed_re`
+finds only its definition and its `ContactSolvers.h` declaration), and `TrackRenderer` has no
+car-car collision call. So three parked or driving opponents should not be able to move the
+player by 3.7x in median speed — and they do. The coupling must be shared mutable state.
+Named candidates, each with its citation, **none of them assumed**:
+`g_torqueRingPhase` (`DAT_007f101c`), which `VehiclePhysics_StepCar` advances
+`(phase + 1) & 0xf` once per A4 call — four times per frame with opponents, once without —
+and which A4 uses to index the steer ring `+0x1ac + phase*4` / `+0x270 + phase*4`
+(`0x00470670`); `Collision::g_suspScratch` (`DAT_00881560`), documented in
+`ForceIntegratorStubs.cpp:32-33` as *"shared with the wheel solver"*; and the powerup
+dispatcher / pickup field the opponents drive. Next command:
+
+```
+# per-global A/B at HEAD, controlled arm, one temporary diag at a time, removed after:
+#   1. advance g_torqueRingPhase 4x/frame with the opponents OFF. If the player's trace
+#      returns to the opponents-ON values, the ring is the coupling and A4's ring write
+#      needs a reader audit (findoffset.py --writes 0x1ac / 0x270 and the read side).
+#   2. same shape for Collision::g_suspScratch.
+# The instrument is now deterministic (spread 0.0000), so ONE run per configuration decides
+# -- unlike the refuted one-run premise of D3_DRIVE_2026-09-28.md section 1.3, which was
+# refuted on the UNCONTROLLED arm.
+```
+
+**[UNCERTAIN] U-9141 itself, restated — the residual HEAD-vs-`56ad3806` player difference.**
+With the opponents absent at both ends, the player is `-16% / -14% / -64%` off its own
+`56ad3806` values. The 2026-09-28 bisect concluded *"no commit in `56ad3806..HEAD` edits the
+player's solver"* and therefore that the drift was purely the instrument; **on a controlled
+instrument that conclusion does not hold**, and the bisect has to be redone on the controlled
+arm. It is now cheap and sound to do so, because C1 makes one run per commit decisive:
+
+```
+# bisect 56ad3806..HEAD on the CONTROLLED arm, one run per commit, over the 17 commits of
+# D3_DRIVE_2026-09-28.md section 1.2 that touch mashedmod/:
+py -3.12 re/tools/statediff/a8_run_port.py verify/<tag> 50 -MASHED_REAL_PHYSICS \
+    MASHED_MEASURE_NOOPP=1 MASHED_TITLE="U-9141 controlled bisect <sha>"
+py -3.12 re/tools/statediff/a8_slip_axis.py --orig verify/a8_steer_20260824/orig_steerR.msd \
+    --port verify/<tag>/motion_diag.log --max-lines 1080
+# classification, fixed here: slip 1500-2000 >= 0.185 is GOOD, <= 0.170 is BAD, between is
+# INDETERMINATE and gets a second run. Commits before 09a73dc6 have no opponent loop to
+# disable, so the knob is a no-op there and the arm is the same measurement either way.
+```
+
+One asymmetry in the arm to carry into that bisect, stated now rather than discovered later:
+at `56ad3806` the opponents are not merely un-stepped, they are moved by the pre-D3 kinematic
+Option B model, whereas `MASHED_MEASURE_NOOPP=1` at HEAD leaves them **parked**. If
+U-D2-OPPONENT-COUPLING turns out to be real, that difference is itself a confound and the
+HEAD end should instead use the Option B treatment (§3.4's `NOAIPHYS` configuration, which
+that session measured at 0.1736 / 0.1561 / 0.1774 — closer to 0.1916, and not stable).
+
+### 3.6 Reproduce
+
+```
+# knob-off inertness control
+py -3.12 re/tools/statediff/a8_run_port.py verify/d2_ctrl_20260929/knoboff_1 50 \
+    -MASHED_REAL_PHYSICS MASHED_TITLE="D2 knob-off inertness control"
+# HEAD controlled arm, i = 1..3
+py -3.12 re/tools/statediff/a8_run_port.py verify/d2_ctrl_20260929/head_$i 50 \
+    -MASHED_REAL_PHYSICS MASHED_MEASURE_NOOPP=1 MASHED_TITLE="D2 controlled arm HEAD $i"
+# 56ad3806 controlled arm (no knob: the opponents never enter the chain there), i = 1..3
+git checkout 56ad3806 -- mashedmod/ && mashedmod\build.bat
+py -3.12 re/tools/statediff/a8_run_port.py verify/d2_ctrl_20260929/g56_$i 50 \
+    -MASHED_REAL_PHYSICS MASHED_TITLE="D2 controlled arm 56ad3806 $i"
+git checkout HEAD -- mashedmod/ && mashedmod\build.bat
+# reduce, both ends identically
+py -3.12 re/tools/statediff/a8_slip_axis.py --orig verify/a8_steer_20260824/orig_steerR.msd \
+    --port verify/d2_ctrl_20260929/<tag>/motion_diag.log --max-lines 1080
+py -3.12 re/tools/statediff/a8_momentum.py  --orig verify/a8_steer_20260824/orig_steerR.msd \
+    --port verify/d2_ctrl_20260929/<tag>/motion_diag.log --max-lines 1080 \
+    --orig-steer-min 33.0 --port-steer-min 0.9
+```
+
+`mashedmod/` was restored to HEAD after the probe and `git status --short -- mashedmod/` is
+empty; no worktree was created; `original/` was never touched; every `mashed_re.exe` PID was
+spawned and killed by `a8_run_port.py`, by PID.
