@@ -285,3 +285,18 @@ py -3.12 re/tools/statediff/a8_momentum.py  --orig verify/a8_steer_20260824/orig
 `mashedmod/` was restored to HEAD after the probe and `git status --short -- mashedmod/` is
 empty; no worktree was created; `original/` was never touched; every `mashed_re.exe` PID was
 spawned and killed by `a8_run_port.py`, by PID.
+
+### 3.7 Disclosure — a fourth concurrent commit landed mid-arm
+
+`5e023c64` ("U-SEA-ARCTIC: close U1 …", 2026-09-29 09:33) landed on
+`race/first-frame-parity` from the sea-level session between this session's U-9142 commit
+(`4cda44fc`, 09:28) and the controlled arm's pre-registration (`1d0ca916`, 09:34) — i.e.
+before the `56ad3806` probe and its `git checkout HEAD -- mashedmod/` restore, so it would
+have been pulled into the restored tree if it touched the build. It does not:
+`git show --name-only --format= 5e023c64 -- mashedmod/` is **empty**; the commit is
+`re/analysis/SEA_LEVEL_2026-09-29.md` plus `verify/sea_level_20260929/sea_tile.patch`. So
+every number in §3 was taken on a build whose source differs from `c0b34ce6` only by this
+session's own two files (the `MASHED_MEASURE_NOOPP` knob and the two reducer `--max-lines`
+arms, neither of which is on the default path). Together with §8 of
+`D3_DRIVE_FORCE_2026-09-29.md`, all four of the day's concurrent commits are checked and
+none touches `mashedmod/`.
