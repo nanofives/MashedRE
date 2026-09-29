@@ -136,6 +136,9 @@ bool          g_bodyBasisOk[16]   = { false };
 // re-aim shows up as a huge instantaneous yaw rate and inflates the bands — the
 // same artifact class as the round-boundary respawn in the PLAY-DEMO metric.
 bool          g_bodyBasisReseed[16] = { false };
+// [U-D3-DRIVE 2026-09-28] one-shot spawn-settle flag per slot; cleared by
+// VehiclePhysics_Init. See the SPAWN SETTLE block in VehiclePhysics_StepCar.
+bool          g_settled[16] = { false };
 
 // A8 position law constants (re/analysis/data/A8_position_law_20260825.md).
 // FUN_0046e9e0 builds the per-substep position increment as
@@ -216,6 +219,7 @@ bool VehiclePhysics_Enabled() {
 void VehiclePhysics_Init(int carCount, int trackType) {
     std::memset(g_records, 0, sizeof(g_records));
     for (int s = 0; s < 16; ++s) g_bodyBasisOk[s] = false;   // A8: basis reseeds at first step
+    for (int s = 0; s < 16; ++s) g_settled[s] = false;       // U-D3-DRIVE spawn settle
     // The integrator's "other cars" base (DAT_008815a0) -> our standalone array.
     g_vehicleArrayBase = reinterpret_cast<int*>(g_records);
     if (carCount < 1)  carCount = 1;
@@ -440,6 +444,62 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     if (dt <= 0.f) return;
     if (slot < 0 || slot >= 16) return;
     unsigned char* r = rec(slot);
+
+    // =====================================================================
+    // SPAWN SETTLE — U-D3-DRIVE, 2026-09-28. MEASURED, not inferred.
+    //
+    // VehiclePhysics_Init memsets the record, so the FIRST step of a race runs with
+    // the per-wheel suspension load (+0x210 / +0x2d4 / +0x398 / +0x45c) at ZERO.
+    // Gravity is therefore unopposed for exactly that one step and the body picks up
+    // ~216.67 of DOWNWARD velocity, after which it spends ~10 frames settling.
+    //
+    // The ORIGINAL never has such a step. Read out of its own capture
+    // (verify/d3_drive_20260928/e3.msd, re/tools/statediff/msd_fields.py, frames
+    // 857-859, i.e. at rest on the grid immediately before the race starts):
+    //     +0x9b4 (vy) = 0.000        +0x9e4 (speed) = 0.000     +0xb0c = 0.0000
+    //     loads = 1083.3 / 1083.3 / 1083.3 / 541.7
+    //     +0x490 (gear) = 0          +0x494 (shift timer) = 0
+    // It has been sitting on loaded suspension for the whole countdown (~800 frames
+    // on this recipe), because FUN_00470c70 runs during the countdown too.
+    //
+    // Why the transient is not cosmetic. At the first step the standalone's velocity
+    // is almost entirely vertical, so the slide measure +0xb0c — A4's
+    // (1 - |fwd . vel| / speed) * speed at VehicleControl.cpp:113, the at-rest zero
+    // arm at :106 / 0x0047072c — reads 216.668 instead of ~0. Integrate2.cpp:126
+    // (FUN_00467650) then shortens fVar5_base to 1500 - 216.668, so fVar5 falls from
+    // 2000 to 1711, and the gear-0 candidate (speed + 250) * 4 = 1862 now EXCEEDS it.
+    // That flips the upshift test at Integrate2.cpp:136-143: the port leaves gear 0 on
+    // its second step (gear=1, gtmr=2950 measured) and gear 0 is the only gear with a
+    // nonzero drive term at standstill (:134, t = (speed+250)*[+0x478]; every other
+    // gear is g * speed = 0). Measured consequence, D3_SPEED_GAP_2026-09-28.md §2.3:
+    // the launch gains +182 over the first 11 calls where the original gains
+    // +1426 / +2053.
+    //
+    // The fix reproduces the original's MEASURED rest state rather than inventing a
+    // schedule: run ONE step with an all-zero input block, which is what establishes
+    // the loads (measured: they reach 1083.34 / 1083.34 / 1083.34 / 541.671 after
+    // exactly one step, matching the original's 1083.3 / 541.7), then discard the
+    // velocity that step injected and reset the gearbox pair. No position is touched —
+    // StepCar returns motion through io.drive_delta, which the settle call discards.
+    if (!g_settled[slot]) {
+        g_settled[slot] = true;          // set BEFORE the call: the inner step must not re-enter
+        PlayerCarIO s = io;
+        for (int k = 0; k < 8; ++k) s.input[k] = 0;
+        s.steer = 0.f; s.raw_steer = 1;  // raw_steer so the zero bytes are used verbatim
+        s.vel[0] = s.vel[1] = s.vel[2] = 0.f;
+        s.speed = 0.f;
+        VehiclePhysics_StepCar(slot, dt, s);
+        for (std::size_t o = 0; o < 12; o += 4) {
+            F(r, off::kVelocity + o) = 0.f;   // +0x9b0..+0x9b8 linear
+            F(r, 0x9bc + o)          = 0.f;   // +0x9bc..+0x9c4 angular
+        }
+        F(r, off::kSpeed) = 0.f;   // +0x9e4
+        F(r, 0x9e8)       = 0.f;   // angular speed magnitude
+        F(r, 0xb0c)       = 0.f;   // slide measure, the original's at-rest value
+        I(r, 0x490)       = 0;     // gear
+        I(r, 0x494)       = 0;     // shift timer
+    }
+    // =====================================================================
 
     // PERF (MASHED_PHYS_PROF): slot 0 == frame boundary (player steps first). Flush
     // the previous frame's accumulators, then time this car's whole physics body.
@@ -822,7 +882,15 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                     // [A8-ORIENT 2026-09-13] per-wheel force X/Z (p[0x1c]/p[0x1e]), wheel
                     // axis X/Z (p[0x1f]/p[0x21]), and Integrate2's le4/ld4, wheels 0..3.
                     "wf=[%g,%g,%g,%g,%g,%g,%g,%g] wax=[%g,%g,%g,%g,%g,%g,%g,%g] "
-                    "wle4=[%g,%g,%g,%g] wld4=[%g,%g,%g,%g]\n",
+                    // [U-D3-DRIVE 2026-09-28] the three record fields the gearbox
+                    // upshift test at Integrate2.cpp:131-143 reads and the log did not
+                    // show: +0xb0c (the term that shortens fVar5_base, Integrate2.cpp:126)
+                    // and the pair +0x498/+0x49c (Integrate2.cpp:129-130). The ORIGINAL
+                    // holds b0c ~ 0 and 40000 / 4000 through its launch
+                    // (verify/d3_drive_20260928/e3.msd via re/tools/statediff/msd_fields.py),
+                    // and upshifts out of gear 0 only once +0x9e4 passes 250 -- which is
+                    // exactly (speed+250)*4 crossing fVar5 = 2000.
+                    "wle4=[%g,%g,%g,%g] wld4=[%g,%g,%g,%g] b0c=%g gb498=%g gb49c=%g\n",
                     g_bodyBasisReseed[slot] ? 1 : 0,
                     I(r, 0x490), I(r, 0x494),   // gearbox state (Integrate2.cpp:137-143)
                     // [A8-FTOTDIR] the SUMMED per-wheel force VECTOR, p[0x1c..0x1e]
@@ -865,9 +933,32 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                     F(r,0x1a4+0x7c), F(r,0x1a4+0x84), F(r,0x268+0x7c), F(r,0x268+0x84),
                     F(r,0x32c+0x7c), F(r,0x32c+0x84), F(r,0x3f0+0x7c), F(r,0x3f0+0x84),
                     g_a8WheelLe4[0], g_a8WheelLe4[1], g_a8WheelLe4[2], g_a8WheelLe4[3],
-                    g_a8WheelLd4[0], g_a8WheelLd4[1], g_a8WheelLd4[2], g_a8WheelLd4[3]);
+                    g_a8WheelLd4[0], g_a8WheelLd4[1], g_a8WheelLd4[2], g_a8WheelLd4[3],
+                    F(r, 0xb0c), F(r, 0x498), F(r, 0x49c));
                 std::fclose(lf);
                 g_bodyBasisReseed[slot] = false;
+            }
+        }
+    }
+
+    // [U-D3-DRIVE 2026-09-28] MASHED_MOTION_DIAG_AI=1 -> the same gearbox/launch fields
+    // for the OPPONENT slots, in their own file so the a8 reducers (which key on
+    // `reseed=` ... `wax=[...]` and assume slot 0) are untouched. Criterion (e) is scored
+    // on cars 1..3 and the slot-0-only diag above could not see them
+    // (D3_SPEED_GAP_2026-09-28.md section 6.3 asked for exactly this widening).
+    {
+        static const bool s_mdai = (std::getenv("MASHED_MOTION_DIAG_AI") != nullptr);
+        if (s_mdai && slot != 0) {
+            if (std::FILE* lf = std::fopen("motion_diag_ai.log", "a")) {
+                const float cvx = F(r, off::kVelocity + 0), cvz = F(r, off::kVelocity + 8);
+                std::fprintf(lf,
+                    "slot=%d gear=%d gtmr=%d b0c=%g gb498=%g gb49c=%g sp=%g horiz=%g "
+                    "in=(%u,%u,%u,%u) gnd=%d\n",
+                    slot, I(r, 0x490), I(r, 0x494), F(r, 0xb0c), F(r, 0x498), F(r, 0x49c),
+                    F(r, off::kSpeed), std::sqrt(cvx * cvx + cvz * cvz),
+                    (unsigned)input[0], (unsigned)input[1],
+                    (unsigned)input[4], (unsigned)input[5], io.grounded);
+                std::fclose(lf);
             }
         }
     }
