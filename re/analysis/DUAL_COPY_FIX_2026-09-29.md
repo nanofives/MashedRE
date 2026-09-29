@@ -122,10 +122,15 @@ behaviour from the copy the evidence measured.*
 
 ---
 
-## 3. Demotions (commit `7c178945`)
+## 3. Demotions (commits `7c178945`, `dc1e2f00`)
 
-**25 rows demoted to C2 — 8 × C4→C2, 17 × C3→C2.** `C4 184 → 176`, `C3 1029 → 1012`,
-`C2 3865 → 3890`, 5899 rows before and after.
+**29 rows demoted to C2 across two transactions — 9 × C4→C2, 20 × C3→C2.**
+`C4 184 → 175`, `C3 1029 → 1009`, `C2 3865 → 3894`, 5899 rows throughout.
+
+| transaction | scope | demoted |
+|---|---|---|
+| 1 — `7c178945` | the audit's 26 **DIFFERS-BEHAVIOUR** pairs | **25** (8 × C4, 17 × C3) |
+| 2 — `dc1e2f00` | the audit's 53 **UNREVIEWED** worklist, + 1 relabel | **4** (1 × C4, 3 × C3) |
 
 ### 3.1 Re-verification came first
 
@@ -214,12 +219,69 @@ body. That is a `DUP-IN-TARGET`, not a missing port.
   **with a constant** on one captured race — not a reimplementation of a global read
   (`*(uint32*)0x00897ffc`). The C3 gate requires a reimplementation, so a measured stub is C2.
 
-### 3.7 What the C-levels do and do not now say
+### 3.7 The 53 UNREVIEWED candidates, classified (transaction 2)
 
-The 25 demoted rows have **not** lost their analysis. Their decomp is read and transcribed on
+The audit listed these as a **worklist**, explicitly not scored — *"candidates from the
+structural channels, not verdicts"*. All 53 are now classified, in four parallel read-only
+passes, and every DIFFERS-BEHAVIOUR row was re-verified in-session by direct read before it
+was touched.
+
+| verdict | rows | what it means |
+|---|---|---|
+| **NO-EXE-COPY** | **21** | the exe has no body at all. The honest statement is *"the evidence does not cover the default build"*, which the empty `exe_file` cell now says without a demotion. |
+| **NOT-A-PAIR** | **20** | a trampoline, an extern function-pointer to the original, a comment-only mention, an A/B harness twin, or complementary fragments |
+| **BOTH-SHARED** | **8** | both TUs are in **both** rsp lists, so there is no per-target divergence — a `DUP-IN-TARGET` the guard already flags |
+| **DIFFERS-BEHAVIOUR** | **3** | demoted |
+| **DIFFERS-COSMETIC** | **1** | not demoted — see below |
+
+So **41 of the 53 are not dual-copy hazards**. That is worth stating plainly: the audit's
+structural channels are deliberately over-inclusive, and this pass is what separates a real
+second body from an `extern` pointer with the same RVA in a comment above it.
+
+**The 3 demoted (C3 → C2):**
+
+| RVA | the difference, verified at HEAD | shipping consequence |
+|---|---|---|
+| `0x00417640` | exe pins `const float rate = 0.0f;` (`Ai/AiStandalone.cpp:1363`), so the gate `kPowerupBrakeRateGate < rate` is **provably always false** and the copy always falls through to `ctrl[4]=0; ctrl[5]=0`. The `.asi` calls the real `call_0046d6d0` (`Ai/AiController.cpp:131`) and can apply full brake at `:141`. | opponent AI on track `0x21` never executes the powerup-brake full-stop override. Same `rate1`-pinning family as §3.4's AI block. |
+| `0x0042d5a0` | the exe has **no port** — `exe_main.cpp:8351` installs a thunk to `Standalone_CreditsNoOp`; the `.asi` installs the full 766-byte `MenusBodyA` credits renderer (`Frontend/MenuMixed.cpp:143`). | the credits screen renders **nothing** in the shipping build. |
+| `0x00497450` | different **data source**: exe returns the standalone placeholder `g_game_state.player_active[player]` (`Frontend/MenuNavSM.cpp:462`); the byte-verified `.asi` reads `*(u32*)(0x007e96fc + i*0x200)` (`Util/PromoLoop_sessionB.cpp:231`). The exe's own comment at `:459` also mis-states the stride as `*0x80`. | drives the screen-`0x1c` grey-out predicate. |
+
+**Not demoted, and why:** `0x00417180` (DIFFERS-COSMETIC). The exe rolls its variety value
+with an LCG stand-in `RandUnit()` (`Ai/AiStandalone.cpp:1324`) where the `.asi` calls the real
+`RandFloat(0x3f800000)` (`Ai/AiPreTick.cpp:154`). Branch structure and offsets agree, and
+`AiStandalone.cpp:1242` asserts it *"does not affect steer/accel/brake output"*. **That
+assertion is an in-file claim, not a measurement**, and it is the only thing holding the row.
+Left at C3 rather than moved on an unmeasured claim in **either** direction — flagged here
+instead, as a candidate for the D4 pass to settle.
+
+### 3.8 One relabel the audit did not ask for — flagged so it can be reversed
+
+**`0x0040e180` `MostSeparatedPair`, C4 → C2.** The audit scored it DIFFERS-COSMETIC, but its
+own text says *"cosmetic in structure but not in output"*. The exe copy takes the pair
+magnitude with `std::sqrt` (`Race/RaceCamera.cpp:50`, called at `:194`) where the original and
+the C4-verified `.asi` copy forward to the RW fast-sqrt LUT at `0x004c3ac0`
+(`Race/CameraClusterHooks.cpp:38`). That magnitude is the operand of the `best <= m`
+comparison at `RaceCamera.cpp:196` **that chooses the pair**, so an approximation difference
+flips near-ties. The exe copy's own comment records **7.8% of 766 captured frames choosing a
+genuinely different pair** from the original (`RaceCamera.cpp:225-233`).
+
+**Stated honestly:** that comment names a *different* leading suspect for the 7.8% — the
+offline driver's `active` derivation, untested — so the **cause is not established**. What is
+established is that the shipping copy is a different implementation and disagrees with the
+original on 7.8% of frames, on the default-build camera path. That is enough to say the C4
+does not describe what ships. If you disagree with the relabel, this is the one row to revert.
+
+### 3.9 What the C-levels do and do not now say
+
+The 29 demoted rows have **not** lost their analysis. Their decomp is read and transcribed on
 both sides — that is precisely what C2 means. What they have lost is the claim that anything
 **measured** the body `mashed_re.exe` runs. Each re-earns C3/C4 through the normal gates once
 its pair is consolidated (§5).
+
+And the converse is worth stating, because it is the larger number: **798 C3/C4 rows have an
+empty `exe_file`** and were **not** demoted. For those the exe has no port at all, so the
+evidence is not *wrong* — it simply does not cover the default build, and the empty cell now
+says so without moving a level.
 
 ---
 
