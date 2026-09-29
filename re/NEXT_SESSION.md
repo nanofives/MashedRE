@@ -1,5 +1,93 @@
 # Next session kickoff
 
+Updated 2026-09-29 at the close of the **D2 re-close attempt 2** session (U-9147 / U-9151).
+Branch `race/first-frame-parity`. Nothing is pushed.
+Superseded kickoff: the 2026-09-29 "re-close attempt 1" one (kept below).
+
+> ## START HERE — D2 is STILL REOPENED, but the map changed
+>
+> Read [`re/analysis/D2_REOPEN_2026-09-29.md`](analysis/D2_REOPEN_2026-09-29.md) **§9-§11**
+> and ROADMAP §D2's "Re-close attempt 2" block. **Do not re-derive any of it.**
+>
+> **The §3 bounds are unchanged and are not renegotiable.** PASS intervals:
+> `slip 1500-2000` **0.18855 .. 0.19635**, `slip 2000-2600` **0.24488 .. 0.25487**,
+> `driving-median` **1904.70 .. 1982.44**.
+>
+> | metric | attempt 1 | **now** | verdict |
+> |---|---:|---:|---|
+> | slip 1500-2000 | 0.1332 | **0.1445** | FAIL, -24.9% |
+> | slip 2000-2600 | 0.2179 | **0.2557** | FAIL, **+2.3% — 0.00083 over the upper bound** |
+> | driving-median | 1818.42 | **1740.54** | FAIL, -10.4% — **moved the wrong way**, kept per §3d |
+>
+> 4 of 5 runs identical; run 3 was the known U-9148 second attractor and is reported.
+>
+> **DONE, do not redo:**
+> - **U-9147 IS LOCALIZED.** The first divergent quantity is `d(bodyH)/frame`, a
+>   speed-independent constant: **-0.04249 (port) vs -0.04462 (original)** = **100/105**.
+>   `_DAT_00613108` is **105.0** in the running original (9 live `--peek` samples); the port
+>   hardcoded 100.0. **FIXED** — `g_handlingTorque`, the handling table completed with the
+>   measured tags 6/12/18, selector 6. `d(bodyH)/frame` and the axis-minus-forward offset
+>   now match the original exactly. `MASHED_HANDLING_TYPE=0` reverts.
+> - **U-9151 is CLOSED.** `0x004c4600` is a dispatcher; the multiply is the measured
+>   `0x005cb2a0`, ported naked-x87 (`Math/RwMatrixMultiplyCpu.cpp`, hooks.csv row at C3).
+>   Two GREEN diffs (12/12 and 10/10). The exe's A6b orient is **bound**: 7 runs of 7 exit 0,
+>   25 natural samples, `xfok=1` on all.
+> - **A6a is CLEARED by measurement**, with a tool that self-checks first
+>   (`re/tools/statediff/a6a_replay.py`, self-check 1 worst rel. error 7.8e-07). Block #4
+>   per-wheel law 0.7-1.9% per wheel; block-#5 yaw torque 1.1-1.7%; clamp #6 `k_vel` ±3%
+>   with opposite signs in the two bands; wheel geometry 0.002 rad. `g_suspScale` was
+>   MEASURED on the original at **692.3021850585938** — the port's to the last digit.
+> - **§6.2's handling-globals elimination is WITHDRAWN** (the A3 walk chains through `e[3]`
+>   and matches tag 6, giving 105).
+> - `a8_wheelfit.py`'s cross-side fit stays withdrawn. Do not quote a lateral-coefficient
+>   ratio from it.
+>
+> **PICK UP HERE — the residual is the VELOCITY heading, and the scored window is a
+> TRANSIENT.** With `d(bodyH)/frame` now exact on both sides:
+>
+> | | ORIG 1500-2000 | PORT | ORIG 2000-2600 | PORT |
+> |---|---:|---:|---:|---:|
+> | `d(bodyH)/frame` | -0.04462 | **-0.04462** | -0.04462 | **-0.04462** |
+> | `d(velH)/frame` | -0.04238 | -0.03965 | -0.04307 | -0.04135 |
+> | `beta` | 0.1929 | 0.1345 | 0.2498 | 0.2290 |
+>
+> `|d(velH)| < |d(bodyH)|` on **both** sides, so neither car is in steady state inside the
+> scored window — both are still building slip. And the band populations differ (port
+> n=227 vs original n=312 at 1500-2000). So the next question is **how far into the
+> spin-up each side is when the band is scored**, not the tire law:
+> `a8_momentum`'s effective-dt already matches to 0.3-5.7%, and every local law in A6a is
+> cleared above. Suggested first move: plot slip against *time since the steer-hold onset*
+> rather than against speed, on both sides, and see whether the port's curve is the same
+> curve sampled earlier — if it is, the defect is in how fast the car reaches the band
+> (acceleration / `RecoverOffMesh`), not in the cornering law.
+>
+> Then, in order: **`RecoverOffMesh`** (`TrackRenderer.cpp:2142-2164`, halves `car_speed_`
+> 11-59x per 1080 frames, no original counterpart — it bears directly on driving-median,
+> which is now the *worst* of the three at -10.4%), and **U-9152** (the `+0x928` vs
+> `g_bodyBasis` storage split).
+>
+> **New tooling this session, reuse it rather than rebuilding it:**
+> - `MASHED_A6ADUMP=<path>` — A6a's own per-wheel `lac/la8/la4 / f5 / le / lbc / dF` plus
+>   `l60 / grip / k_vel / arm`, at `%.17g`, in **two phases** (`act.*` = what A6a computed,
+>   `snap.*` = the render-tick record the `.msd` sees). Default-OFF.
+> - `re/tools/statediff/a6a_replay.py` — the replay, four self-checks, and the
+>   CROSS / GEOMETRY / HEADINGS / CLAMP #6 / ANGULAR tables. **Run the self-checks before
+>   believing any table.**
+> - `re/frida/scenario_launch.py --peek "<rva>:<f|d|i|u>,..."` — plain `Memory` reads of
+>   image globals, no `Interceptor`, no hook, no write. Forms: bare RVA, `@<abs>`, and
+>   `i<rvaA>+<rvaB>+<off>` (the RW device-table pattern). This is how `_DAT_00613108`,
+>   `_DAT_0088e5f0` and the device multiply were all pinned.
+> - `MASHED_A6BTEST=<path>` — the exe-side A6b witness.
+> - arg_type `matrix_multiply`; hooks `rw_matrix_multiply_cpu`, `rw_matrix_rotate_inner_cpu`.
+>
+> **Guards as of this session** (re-run them, don't assume): criterion (e) **PASS 3/3**;
+> AI (b) **FAIL 3/3** with `c1_median` 52.5 / 38.0 / 49.0; power-ups **11/11 decision
+> CLEAN** with `g3` contact diverging; oracle rule 3 **GREEN**; build with `rva-lint NEW=0`.
+>
+> **The D3 modes 3/7 hold stands.** D2 must close before it starts.
+
+## SUPERSEDED kickoff — D2 re-close attempt 1 (kept as history)
+
 Updated 2026-09-29 at the close of the **D2 re-close attempt 1** session (U-9149 / U-9147).
 Branch `race/first-frame-parity`. Nothing is pushed.
 Superseded kickoff: the earlier 2026-09-29 one (player-regression U-9141 / U-9145).

@@ -1,11 +1,11 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-09-29T18:40:00Z",
+  "updatedAt": "2026-09-29T23:55:00Z",
   "sections": [
     {
       "heading": "Phase",
       "fields": [
-        { "label": "Active phase", "value": "D2 REOPENED (re-close attempt 1 FAILED)", "kind": "text" },
+        { "label": "Active phase", "value": "D2 REOPENED (re-close attempt 2 FAILED — but U-9147 localized)", "kind": "text" },
         { "label": "D3 modes 3/7", "value": "ON HOLD until D2 re-closes", "kind": "text" },
         { "label": "Branch", "value": "race/first-frame-parity (unpushed)", "kind": "text" }
       ]
@@ -13,25 +13,30 @@
     {
       "heading": "D2 solo arm vs the original",
       "fields": [
-        { "label": "Pass rule", "value": "pre-registered 2026-09-29 (d81a8df6), 4 original captures", "kind": "text" },
-        { "label": "Scored (3/3 identical)", "value": ["slip 1500-2000: 0.1332 vs 0.18855-0.19635 FAIL", "slip 2000-2600: 0.2179 vs 0.24488-0.25487 FAIL", "driving-median: 1818.42 vs 1904.70-1982.44 FAIL"], "kind": "list" }
+        { "label": "Pass rule", "value": "pre-registered 2026-09-29 (d81a8df6), unchanged", "kind": "text" },
+        { "label": "Scored (4/5 identical)", "value": ["slip 1500-2000: 0.1445 vs 0.18855-0.19635 FAIL (-24.9%, was -30.8%)", "slip 2000-2600: 0.2557 vs 0.24488-0.25487 FAIL (+2.3%, 0.00083 over)", "driving-median: 1740.54 vs 1904.70-1982.44 FAIL (-10.4%, was -6.4%)"], "kind": "list" },
+        { "label": "Run 3 of 5", "value": "known U-9148 second attractor (0.1557 / 0.2493 / 1554.50), reported", "kind": "text" }
       ]
     },
     {
-      "heading": "U-9147",
+      "heading": "U-9147 — LOCALIZED, partially fixed, still open",
       "fields": [
-        { "label": "Status", "value": "NOT localized — 3 attempts today, all withdrawn", "kind": "text" },
-        { "label": "Sound so far", "value": ["all lbc inputs match (p15 0.15, p16 0.0125, p1b, p[-1]=0, suspScale, le4)", "A6a |lat| agrees 1.001/1.003/0.948/0.960", "min(le4,1024) clamp hypothesis REFUTED"], "kind": "list" },
-        { "label": "Next step", "value": "port must log A6a's lac/la8/la4 + f5; a8_wheelfit's cross-side fit is unsound until then", "kind": "text" }
+        { "label": "First divergent quantity", "value": "d(bodyH)/frame: -0.04249 port vs -0.04462 original = 100/105, constant across both bands", "kind": "text" },
+        { "label": "Cause + fix", "value": "_DAT_00613108 is 105.0 live (9 --peek samples); the port hardcoded 100.0. g_handlingTorque now published; table completed with the measured tags 6/12/18", "kind": "text" },
+        { "label": "Prediction held", "value": "d(bodyH)/frame and the axis-minus-forward offset now match the original exactly", "kind": "text" },
+        { "label": "Residual", "value": "the VELOCITY heading — port turns 6.4% / 4.0% slower at the same body rate; both sides are still building slip, so the window is a transient", "kind": "text" },
+        { "label": "Cleared by measurement", "value": ["A6a block #4 per-wheel law: 0.7-1.9% per wheel", "block #5 yaw torque: 1.1-1.7%", "clamp #6 k_vel: +/-3%, opposite signs per band", "wheel geometry: 0.002 rad", "g_suspScale measured 692.3021850585938 = the port's exactly"], "kind": "list" }
       ]
     },
     {
       "heading": "Done this session",
       "fields": [
-        { "label": "U-9149", "value": "DECODED; .asi fixed + verified (154 samples, 66 airborne)", "kind": "text" },
-        { "label": "Levels", "value": ["0x00468980 A6b C2->C4 (.asi copy)", "0x00470670 A4 C2->C3 (.asi copy)"], "kind": "list" },
-        { "label": "New uncertainties", "value": ["U-9151 exe A6b blocked on RwMatrixMultiply 0x004c4600", "U-9152 +0x928 vs g_bodyBasis storage split"], "kind": "list" },
-        { "label": "Guards", "value": ["criterion (e) PASS 3/3", "AI (b) FAIL 3/3 (unchanged)", "power-ups 11/11 CLEAN, g3 contact diverges", "oracle rule 3 GREEN", "build rva-lint NEW=0"], "kind": "list" }
+        { "label": "U-9151", "value": "RESOLVED — 0x004c4600 is a dispatcher; the multiply 0x005cb2a0 was measured live and ported naked-x87; exe A6b bound", "kind": "text" },
+        { "label": "Diffs", "value": ["rw_matrix_multiply_cpu 12/12 GREEN", "rw_matrix_rotate_inner_cpu 10/10 GREEN (the exe branch, modes 0/1/2)"], "kind": "list" },
+        { "label": "Levels", "value": ["0x005cb2a0 RwDeviceMatrixMultiply C2->C3 (msvc-crt-tail band label refuted)"], "kind": "list" },
+        { "label": "Exe A6b witness", "value": "7 runs of 7 exit 0 (was 3 of 3 crashing 0xC0000005); 25 natural samples, xfok=1 on all", "kind": "text" },
+        { "label": "New tooling", "value": ["MASHED_A6ADUMP + re/tools/statediff/a6a_replay.py (self-checks first)", "scenario_launch.py --peek (globals, no Interceptor)", "MASHED_A6BTEST", "arg_type matrix_multiply"], "kind": "list" },
+        { "label": "Guards", "value": ["criterion (e) PASS 3/3", "AI (b) FAIL 3/3 (unchanged class)", "power-ups 11/11 CLEAN, g3 contact diverges", "oracle rule 3 GREEN", "build rva-lint NEW=0"], "kind": "list" }
       ]
     }
   ]

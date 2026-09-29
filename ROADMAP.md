@@ -480,6 +480,73 @@ opinion is an opinion about the scaffold, not about the port.
 > **Order: D2 must close again BEFORE the D3 modes 3/7 port starts.** §D3's closure path
 > (`FUN_00414c30` + `FUN_00484c70`) is on hold until then.
 
+> #### Re-close attempt 2 — 2026-09-29 (third session that day). **STILL REOPENED, but U-9147 is now LOCALIZED and U-9151 is CLOSED.**
+>
+> Write-up: [`re/analysis/D2_REOPEN_2026-09-29.md`](re/analysis/D2_REOPEN_2026-09-29.md)
+> §9-§11. Commits `73784dc7` (localization), `bb074e62` (fix), `4004a5c8` (U-9151).
+> **The §3 bounds are untouched.**
+>
+> | metric | PASS interval | attempt 1 | **attempt 2** | verdict |
+> |---|---|---:|---:|---|
+> | slip 1500-2000 | 0.18855 .. 0.19635 | 0.1332 | **0.1445** | **FAIL** (-24.9%, was -30.8%) |
+> | slip 2000-2600 | 0.24488 .. 0.25487 | 0.2179 | **0.2557** | **FAIL** (+2.3% — **0.00083 over the upper bound**) |
+> | driving-median | 1904.70 .. 1982.44 | 1818.42 | **1740.54** | **FAIL** (-10.4%, was -6.4% — moved the WRONG way) |
+>
+> §3b satisfied: 4 of 5 runs identical on every column; run 3 hit the known U-9148 second
+> attractor (`0.1557 / 0.2493 / 1554.50`) and is reported, not dropped.
+>
+> **U-9147's first divergent quantity, found by instrumentation rather than by fitting.**
+> `d(bodyH)/frame` is a single *speed-independent* constant on each side:
+> **-0.04249 (port) vs -0.04462 (original)**, identical across both scored bands to five
+> decimals, ratio **0.9523 = 100/105**. `_DAT_00613108` is **105.0** in the running
+> original (nine live `--peek` samples over 30 s); the port hardcoded `100.0f` at
+> `BodyOrientationIntegrate.cpp:218` and `VehicleInit` discarded the handling-table result.
+> The table was harvested live: tag 0 -> 100, **tag 6 -> 105**, tag 12 -> 95, tag 18 -> 100,
+> and the original's selector resolves to 6 on the reference scenario. Fixed by publishing
+> `g_handlingTorque`; `MASHED_HANDLING_TYPE=0` reverts. **The pre-registered §9.6
+> prediction held exactly**: `d(bodyH)/frame` -> -0.04462 and the axis-minus-forward offset
+> +0.0425 -> **+0.0446**, both now equal to the original's.
+>
+> **This withdraws §6.2's handling-globals elimination.** `[0x00613140]` is 0, but the A3
+> walk chains through `e[3]` and matches tag 6. The elimination also argued on magnitude
+> ("cannot produce 30%"); the quantity it had to produce is 4.77%, and it produces it.
+>
+> **A6a is CLEARED by measurement, not by argument.** New `MASHED_A6ADUMP` logs A6a's own
+> `lac/la8/la4`, `f5`, `le`, `lbc`, `dF`, `l60`, `grip`, `k`, and
+> `re/tools/statediff/a6a_replay.py` validates its transcription against those values
+> before touching the original (self-check 1 worst relative error **7.8e-07**; `f5 <= lbc`
+> 0 violations in 4300 samples; the clamp-6 transcription exact). Then: recovered
+> `g_suspScale` agrees **0.993 / 0.992 / 1.019 / 1.017** per wheel — and the original's real
+> value was measured at **692.3021850585938**, the port's to the last digit; block-#5 yaw
+> torque agrees **1.1-1.7%**; clamp #6's applied `k_vel` agrees to ±3% with *opposite* signs
+> in the two bands; wheel geometry to 0.002 rad. The old `a8_wheelfit.py` cross-side fit
+> stays withdrawn.
+>
+> **U-9151 CLOSED.** Its blocker was mis-stated: `RwMatrixMultiply 0x004c4600` is a
+> dispatcher and does no arithmetic. The multiply it calls was measured live
+> (`--peek i007d4028+007d3ff8+8:u` = **`0x005cb2a0`**; `+4` = `0x00020000`, matching the
+> `and eax, 0x20000` at `0x004c4622`) and ported as a naked verbatim x87 transcription.
+> Two GREEN diffs against the live original: `rw_matrix_multiply_cpu` 12/12 and
+> `rw_matrix_rotate_inner_cpu` (the exe's exact branch, modes 0/1/2) 10/10, both 0
+> mismatches. `VehicleControl.cpp` now passes `xform`: **7 runs of 7 exit 0** where 3 of 3
+> previously exited `0xC0000005`, with **25 natural samples**, `xfok=1` on all 25.
+> It does **not** promote the exe copy of `0x00468980` (the witness covers the binding, not
+> bit-identity of the body) and all 25 samples are `state=0` at spawn. D2 unmoved by it,
+> exactly as §4.7 predicted.
+>
+> **Guards, nothing tuned:** criterion (e) **PASS 3/3**; AI (b) **FAIL 3/3**, `c1_median`
+> 52.5 / 38.0 / 49.0 (same class as 49 / 45 / 52.5); power-ups **11/11 decision CLEAN**,
+> contact CLEAN 10/11 with the known `g3` divergence; modes oracle rule 3 **GREEN**,
+> MISMATCH=0; build clean with the dual-copy guard at **NEW=0**.
+>
+> **Still blocking re-closure: U-9147's residual.** With the body half now exact, the whole
+> gap is in the velocity heading — the port's turns **6.4% / 4.0%** slower than the
+> original's at the same body rate, and `|d(velH)| < |d(bodyH)|` on *both* sides, so the
+> scored window is a spin-up transient, not a steady state. The next question is the
+> transient (how far each side is into it when the band is scored: port n=227 vs original
+> n=312 in the low band), not the tire law. `RecoverOffMesh` and U-9152 are still open and
+> still unmeasured against this. The D3 modes 3/7 hold is unchanged.
+
 > #### Re-close attempt 1 — 2026-09-29 (later the same day). **STILL REOPENED.**
 >
 > Full write-up: [`re/analysis/D2_REOPEN_2026-09-29.md`](re/analysis/D2_REOPEN_2026-09-29.md).
