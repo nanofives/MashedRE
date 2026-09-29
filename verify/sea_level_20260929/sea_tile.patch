@@ -2,10 +2,10 @@
 # (another session owns mashedmod/src). Rationale + every RVA:
 # re/analysis/SEA_LEVEL_2026-09-29.md
 # Apply from the repo root:  git apply verify/sea_level_20260929/sea_tile.patch
-# Base: TrackRenderer.cpp as of git 83a7b6ea.
+# Regenerated against TrackRenderer.cpp as of git c0b34ce6.
 --- a/mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp
 +++ b/mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp
-@@ -1697,15 +1697,55 @@
+@@ -1697,15 +1697,65 @@
              static const bool s_skip_excluded =
                  std::getenv("MASHED_TRACK_SKIP_EXCLUDED") != nullptr;
              for (const auto& c : clumps) {
@@ -27,17 +27,27 @@
 +                    //   0x0042709f with push 0x646e58 (the course object).
 +                    // FUN_00448940, for clump index 2 ([course+0x10118] @ 0x0044899d):
 +                    //   0x004489bb  mov [esp+0x4c], 0xc0833333   ; translation.y = -4.1
-+                    //   0x00448a47  call 0x004e6ab0 x24          ; RpClumpClone; the tile
-+                    //               array 0x008963e0..0x00896440 is 1 base + 24 clones
++                    //   0x00448a47  call 0x004e6ab0 x24          ; clump clone (clones the
++                    //               frame via FUN_004c0870(clump+4)); the tile array
++                    //               0x008963e0..0x00896440 is 1 base + 24 clones
 +                    //   0x00448a65  mov [esp+0x10], 0xc3160000   ; X start = -150.0
 +                    //   0x00448a80  mov [esp+0x18], 0xc3160000   ; Z start = -150.0
 +                    //   0x00448a6f/0x00448a88  mov ebp,5 / mov ebx,5   ; 5x5
-+                    //   0x00448aa2  call 0x004c1340(frame,&v,0)  ; translate, REPLACE
++                    //   0x00448aa2  call 0x004c1340(frame,&v,0)  ; RwFrameTranslate --
++                    //               it forwards to RwMatrixTranslate 0x004c51a0 on
++                    //               frame+0x10 (the modelling matrix), combine op 0 =
++                    //               rwCOMBINEREPLACE
 +                    //   0x00448aab/0x00448ac1  fadd [0x005cc728]  ; step = +60.0
 +                    // => 25 tiles at X,Z in {-150,-90,-30,30,90}, all at Y = -4.1.
 +                    // Confirmed live: the original's clump[2] frame carries modelling ==
 +                    // LTM == translate(-150,-4.1,-150) -- tile 0 of that grid
 +                    // (verify/sea_level_20260929/orig_sea_matrix.json).
++                    // Placed ONCE, at load: a whole-.text sweep for the tile array finds
++                    // only slot 0 (place+clone), slot 2 0x00449030 (render, 0x004e6680
++                    // per tile) and slot 5 0x004490d0 (RpClumpDestroy on the 24 clones,
++                    // from 0x008963e4 -- it skips the base). Neither transforms a frame,
++                    // and the per-frame slot 1 0x00448ef0 bobs DAT_008962e0, a DIFFERENT
++                    // array. So a static instance list is the complete placement model.
 +                    // At identity the sheet landed on the road (GRAPH.BSP median Y under
 +                    // the start grid = 0.250) and covered 70.39% of the s8 frame.
 +                    // re/analysis/SEA_LEVEL_2026-09-29.md
