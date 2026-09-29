@@ -125,10 +125,24 @@ int VehicleInit(int slot, int trackType)
         for (int i = 0; i < 4; ++i, w += 0x31 * 4)
             WF(w, 2 * 4, FSqrt(RF(w,1*4)*RF(w,1*4) + RF(w,0)*RF(w,0) + RF(w,-1*4)*RF(w,-1*4)));
     }
-    // loop3: 4 attach points from +0x64, out at +0x4bc stride 0x10
+    // loop3: 4 attach points from +0x64, out at +0x4bc, OUTPUT STRIDE 0x40
+    //
+    // [U-9147 2026-09-29] The output stride was 0x10 here and in loops 4/5 below. SETTLED
+    // FROM THE DISASSEMBLY of the original, not from symmetry: all three loops advance the
+    // output pointer by 0x40, and the counts and source stride match this port exactly.
+    //     loop3  0x0046b8b6  lea ebx, [esi + 0x4bc]   0x0046b8bc  mov ebp, 4
+    //            0x0046b903  add edi, 0xc             0x0046b906  add ebx, 0x40
+    //            0x0046b90a  fstp dword ptr [ebx - 0x40]
+    //     loop4  0x0046b90f  lea ebx, [esi + 0x5bc]   0x0046b91b  mov ebp, 8
+    //            0x0046b97f  add edi, 0xc             0x0046b982  add ebx, 0x40
+    //     loop5  0x0046b988  lea ebx, [esi + 0x7bc]   0x0046b994  mov ebp, 6
+    //            0x0046b9e2  add edi, 0xc             0x0046b9e5  add ebx, 0x40
+    // The base spacing agrees independently: 0x5bc - 0x4bc = 0x100 = 4 x 0x40 and
+    // 0x7bc - 0x5bc = 0x200 = 8 x 0x40. The .asi C4 copy is also 0x40
+    // (`PhysicsChainHooks.cpp:3003`/`:3011`, `float*` += 0x10 = 0x40 bytes).
     {
         char* p = rec + 0x64; char* o = rec + 0x4bc;
-        for (int i = 0; i < 4; ++i, p += 3 * 4, o += 0x10) {
+        for (int i = 0; i < 4; ++i, p += 3 * 4, o += 0x40) {
             float dx = RF(p,-1*4) - RF(rec,0x15c), dy = RF(p,0) - RF(rec,0x160), dz = RF(p,1*4) - RF(rec,0x164);
             WF(o, 0, FSqrt(dx*dx + dy*dy + dz*dz) * kDistMul);
         }
@@ -136,7 +150,7 @@ int VehicleInit(int slot, int trackType)
     // loop4: 8 points from +0x94, out at +0x5bc; updates max
     {
         char* p = rec + 0x94; char* o = rec + 0x5bc;
-        for (int i = 0; i < 8; ++i, p += 3 * 4, o += 0x10) {
+        for (int i = 0; i < 8; ++i, p += 3 * 4, o += 0x40) {   // stride: see loop3
             float dx = RF(p,-1*4) - RF(rec,0x15c), dy = RF(p,0) - RF(rec,0x160), dz = RF(p,1*4) - RF(rec,0x164);
             float r = FSqrt(dx*dx + dy*dy + dz*dz);
             WF(o, 0, r * kDistMul);
@@ -146,7 +160,7 @@ int VehicleInit(int slot, int trackType)
     // loop5: 6 points from +0xf4, out at +0x7bc
     {
         char* p = rec + 0xf4; char* o = rec + 0x7bc;
-        for (int i = 0; i < 6; ++i, p += 3 * 4, o += 0x10) {
+        for (int i = 0; i < 6; ++i, p += 3 * 4, o += 0x40) {   // stride: see loop3
             float dx = RF(p,-1*4) - RF(rec,0x15c), dy = RF(p,0) - RF(rec,0x160), dz = RF(p,1*4) - RF(rec,0x164);
             WF(o, 0, FSqrt(dx*dx + dy*dy + dz*dz) * kDistMul);
         }

@@ -28,23 +28,33 @@ constexpr float kSpinScale = 0.01f;       // _DAT_005cc328
 constexpr float kQuarter   = 0.25f;       // _DAT_005cc564
 constexpr float k0p6       = 0.6f;        // _DAT_005cc318
 constexpr float k0p05      = 0.05f;       // _DAT_00613138
-constexpr float kDt        = 3.33268e-4f; // _DAT_005cc948 (0x39aec33e) substep ms->s
-constexpr float kDraftDot  = 0.989999f;   // _DAT_005cc9b4 (0x3f7d70a4) draft cos thresh
+// [U-9147 2026-09-29] EIGHT constants in this header were 6-significant-digit DECIMALS of
+// the `_DAT_` they cite, not the value the original holds. Read straight out of
+// `original/MASHED.exe` (`.rdata`, PE mapping from `re/tools/disasm_va.py`): every one of
+// the eight originals is an exact round number — 1/3000, 0.99, 1/3, 1e-4, 2^-31, 5e-6,
+// 1/300, -1/30000 — and every declared decimal was low by 1e-6 to 1e-3 relative. The two
+// that matter are `kDt` (-1.96e-4 relative; it scales the whole drive-drag term at
+// `ForceIntegrator.cpp:90`) and `kSteerOut` (-1.00e-3; all four steer-scratch writes).
+// They are now written with `asFb(bits)`, the EXACT-bits idiom this header already uses for
+// `k3000` and `kAngScale`, so the literal cannot drift from the comment again. The `.asi`
+// C4 copy bit-pins the same four it covers (`PhysicsChainHooks.cpp:127-139`).
+const     float kDt        = asFb(0x39aec33e);  // _DAT_005cc948 = 1/3000   substep ms->s
+const     float kDraftDot  = asFb(0x3f7d70a4);  // _DAT_005cc9b4 = 0.99     draft cos thresh
 constexpr float kRubberThr = 7.0f;        // _DAT_005cc9b8 (rubber-band activate)
-constexpr float kThird     = 0.333333f;   // _DAT_005ccac8
+const     float kThird     = asFb(0x3eaaaaab);  // _DAT_005ccac8 = 1/3
 const     float k3000      = asFb(0x453b8000);  // _DAT_005ccd08 = 3000.0 (EXACT bits)
 constexpr float k20        = 20.0f;       // _DAT_005ccd6c
-constexpr float kSpeedMin  = 9.99999e-5f; // _DAT_005cd03c
+const     float kSpeedMin  = asFb(0x38d1b717);  // _DAT_005cd03c = 1e-4
 constexpr float kDraft0p125= 0.125f;      // _DAT_005cd050
 constexpr float kDraftDist = 6.0f;        // _DAT_005cd0a0
-constexpr float kPrngScale = 4.65661e-10f;// _DAT_005cd314 (0x30000000) 1/2^31
+const     float kPrngScale = asFb(0x30000000);  // _DAT_005cd314 = 2^-31
 constexpr float kNeg20     = -20.0f;      // _DAT_005cd61c
 constexpr float kSteerProj = 0.002f;      // _DAT_005ce018 (0x3b03126f)
 constexpr float kAirThr    = 65536.0f;    // _DAT_005cea64 (airborne vel threshold)
-constexpr float kRandScale = 4.99955e-6f; // _DAT_005cea68
-constexpr float kSteerOut  = 0.00333f;    // _DAT_005cea6c (0x3b5a740e)
+const     float kRandScale = asFb(0x36a7c5ac);  // _DAT_005cea68 = 5e-6
+const     float kSteerOut  = asFb(0x3b5a740e);  // _DAT_005cea6c = 1/300
 constexpr float kGripCntNeg= -0.15f;      // _DAT_005cea70
-constexpr float kGripRampK = -3.33287e-5f;// _DAT_005cea74 (0xb80bcf65)
+const     float kGripRampK = asFb(0xb80bcf65);  // _DAT_005cea74 = -1/30000
 constexpr float kGripRampLo= -30000.0f;   // _DAT_005cea78
 constexpr float kGripRampHi= 60000.0f;    // _DAT_005cea7c
 constexpr float k2         = 2.0f;        // _DAT_005cc574

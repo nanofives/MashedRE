@@ -128,7 +128,17 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     Wf(v, 0x9e4, Vec3Mag3((const float*)((char*)v + 0x9b0)));   // linear speed -> +0x9e4
     Wf(v, 0x9e8, Vec3Mag3((const float*)((char*)v + 0x9bc)));   // angular speed -> +0x9e8
 
-    float local_54[6] = {0,0,0,0,0,0};
+    // [U-9147 2026-09-29] FIVE entries, not six. The original declares `float local_54 [5]`
+    // (`re/analysis/data/A6a_FUN_00467650_decomp_20260824.txt:62`) and its unrolled body
+    // writes exactly `local_54[iVar9 .. iVar9+4]` (`:101`,`:115`,`:129`,`:142`,`:156`), then
+    // reads `local_cc = local_54[iVar9]` at `:175` with NO bounds check at all. The sixth
+    // slot here was never written by the loop below (`j < 5`), so the `gear < 6` clamp that
+    // used to be at :155 let `gear == 5` read a 0.0f that ZEROES `local_cc`, the gear speed
+    // cap on the whole drive force. Currently inert — `gear` took only 0..4 over 79,356
+    // captured standalone frames this session, and the only writers of `+0x490` are the
+    // init at `VehiclePhysicsRun.cpp:523` and :151/:152 below, which cannot exceed
+    // `iVar11 <= 4` — so this is a latent defect closed, not a measured behaviour change.
+    float local_54[5] = {0,0,0,0,0};
     float l_b0=0,l_b4=0,l_b8=0, l_64=0,l_68=0,l_6c=0, l_70=0,l_74=0,l_78=0;
     double l_d0=0.0, l_60=0.0;
 
@@ -152,7 +162,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
         if (iVar11 < Ri(v, 0x490)) { Wi(v, 0x494, (int)0xfffff448); Wi(v, 0x490, iVar11); }
     }
     gear = Ri(v, 0x490);
-    float local_cc = local_54[(gear >= 0 && gear < 6) ? gear : 0];
+    float local_cc = local_54[(gear >= 0 && gear < 5) ? gear : 0];   // bound 5: see :131
     // GEARBOX SHIFT-TIMER COUNTDOWN — REAL LAW, 2026-08-25. These two lines used to
     // call Vc_RoundST0() (our stub for FUN_004a2c48) which returns 0, so the 3000
     // armed above was overwritten with 0 on the very next frame and the shift lockout

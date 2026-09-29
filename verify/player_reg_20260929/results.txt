@@ -74,3 +74,64 @@ power-ups      pu_replay/sweep.ps1        11/11 decision CLEAN; contact 10/11, g
 modes rule 3   scenario_launch --oracle    GREEN 3064/3064, 2 segment-ends, 2/2, 3967/3967
 modes rule 0   scenario_launch --oracle    GREEN 1448/1448, segment-end 0, m1Max=-1
 build          mashedmod\build.bat         both targets clean; .asi untouched (418 up to date)
+
+===== I. DUAL-COPY LEADS (aa4795af), judged against the ORIGINAL 2026-09-29b =====
+1 A6b 0x00468980 rotation-apply dead    CONFIRMED, NOT FIXED -> U-9149
+    0x00470934  mov esi, edi                    <- A6a ESI = record
+    0x00470936  call 0x467650
+    0x0047093b  mov esi, dword ptr [esp + 0x3c] <- A6b ESI from the STACK, never null
+    0x00470941  mov ecx, edi
+    0x00470943  call 0x468980
+  So VehicleControl.cpp:195 passing nullptr kills both if(orient) applications. AND the
+  .asi C4 forwarder (PhysicsChainHooks.cpp:220, "ECX=ESI=record", mov esi,ecx) disagrees
+  with that instruction -- neither copy is established. Not fixed: guessing a matrix would
+  be inventing physics.
+
+2 A3 0x0046b540 output stride           CONFIRMED = 0x40, FIXED (VehicleInit.cpp)
+    loop3 0x0046b8b6 lea ebx,[esi+0x4bc] / mov ebp,4 / add edi,0xc / add ebx,0x40
+                     0x0046b90a fstp dword ptr [ebx - 0x40]
+    loop4 0x0046b90f lea ebx,[esi+0x5bc] / mov ebp,8 / add edi,0xc / 0x0046b982 add ebx,0x40
+    loop5 0x0046b988 lea ebx,[esi+0x7bc] / mov ebp,6 / add edi,0xc / 0x0046b9e5 add ebx,0x40
+  Bases agree independently: 0x5bc-0x4bc = 0x100 = 4x0x40, 0x7bc-0x5bc = 0x200 = 8x0x40.
+  MEASURED INERT: default arm bit-identical; no exe-side record access in 0x4c0..0x8c0 by
+  literal offset or dword index. Caveat: a computed-base read is invisible to that grep --
+  the same blind spot that made findoffset.py report only an unrelated [esp+0x4bc] at
+  0x0042e0f0 for A3's own stores.
+
+3 A5 0x0046ddb0 .rdata constants        CONFIRMED and FIXED -- EIGHT, not four
+  const        VA          ORIGINAL                    declared      rel err
+  kDt          0x005cc948  0x39aec33e = 1/3000         0x39aeba79    -1.96e-04
+  kSteerOut    0x005cea6c  0x3b5a740e = 1/300          0x3b5a3c21    -1.00e-03
+  kGripRampK   0x005cea74  0xb80bcf65 = -1/30000       0xb80bca6b    -1.39e-04
+  kRandScale   0x005cea68  0x36a7c5ac = 5e-6           0x36a7c1cf    -9.00e-05
+  kThird       0x005ccac8  0x3eaaaaab = 1/3            0x3eaaaa9f    -1.07e-06
+  kDraftDot    0x005cc9b4  0x3f7d70a4 = 0.99           0x3f7d7093    -1.02e-06
+  kSpeedMin    0x005cd03c  0x38d1b717 = 1e-4           0x38d1b70a    -9.46e-07
+  kPrngScale   0x005cd314  0x30000000 = 2^-31          0x2ffffff6    -5.96e-07
+  Now asFb(bits). Re-audited against the binary: 30 exact, 0 MISMATCH.
+
+4 A6a 0x00467650 gear clamp 6 vs 5      CONFIRMED and FIXED, currently INERT
+  Original declares loat local_54 [5] (A6a decomp :62), writes 5 entries, reads
+  local_54[iVar9] UNCLAMPED at :175. Port had [6] + gear < 6, so gear==5 read a
+  never-written 0.0f and zeroed local_cc (the gear speed cap on the whole drive force).
+  MEASURED: gear took only 0..4 over 79,356 captured frames (5746/26888/7099/3636/35987).
+
+5 CarCarContacts.cpp:192-195 as U-9145  REFUTED
+  VehicleCarCarContact 0x00469df0 has ZERO call sites in the whole mashedmod/ tree (4 hits:
+  definition, declaration, 2 comments), so :192-195 never executes. U-9145's two channels
+  are established by direct per-sim-step measurement and neither touches Collision. The
+  empty Rw_MatrixDerive is a real but LATENT defect (dead code) -- audit section 8.2 item 6.
+
+===== J. GUARDS AFTER THE FOUR FIXES =====
+solo arm        2/2 identical   0.1332 / 0.2179 / 1818.42   (was 1818.47)
+default arm                     0.1424 / 0.2993 / 2519.82   bit-identical
+criterion (e)   PASS 3/3        launch 1426.4 / 2053.0 / 2055.2
+                                ft_median_m0 2550.6 / 2053.0 / 2278.2 (was .7 / .0 / .3)
+AI (b)          FAIL 3/3        same bands; c1_median 48/42/46.5 -> 49/45/52.5
+power-ups       11/11 decision CLEAN; contact 10/11, g3 DIVERGES (known R_FLAME residue)
+modes rule 3    GREEN 3257/3257 MISMATCH 0, 1 segment-end, 1/1, 3856/3856
+build           both targets clean; .asi untouched (418 objects up to date)
+
+NONE of the four moves U-9147's ~28% slip gap. The constants ARE live (e moved 0.1 on two
+cars, ~4e-5 relative, the order of kDt's -1.96e-4). Lead 1 is the only one of the five still
+capable of explaining U-9147, and it is unfixed.

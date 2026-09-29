@@ -560,6 +560,148 @@ over.
 | **modes oracle rule 0** (new, §5) | **GREEN.** 1448/1448 MISMATCH 0, segment-end 0, `m1Max = -1` |
 | `mashedmod\build.bat` | both targets clean; **the .asi is untouched** (all 418 objects up to date) — every file changed is exe-only |
 
+## 7.3 The five dual-copy leads, each judged against the ORIGINAL
+
+Handed by the orchestrator from `re/analysis/DUAL_COPY_AUDIT_2026-09-29.md` (`aa4795af`) as
+**leads, not conclusions**. Every one is checked against `original/MASHED.exe` before acting.
+The other audit items are out of scope here (their re-classify is a separate, user-gated pass).
+
+| # | lead | verdict |
+|---|---|---|
+| 1 | `0x00468980` A6b — rotation-apply dead in the exe | **CONFIRMED, NOT FIXED** (new row U-9149) |
+| 2 | `0x0046b540` A3 — output stride 16 vs 64 | **CONFIRMED (64) and FIXED**; measured inert |
+| 3 | `0x0046ddb0` A5 — `.rdata` constants as decimals | **CONFIRMED and FIXED — and it is EIGHT, not four** |
+| 4 | `0x00467650` A6a — gear clamp bound 6 vs 5 | **CONFIRMED and FIXED**; measured currently inert |
+| 5 | `CarCarContacts.cpp:192-195` as the U-9145 coupling | **REFUTED** |
+
+### 7.3.1 Lead 1 — A6b: CONFIRMED against the original, and it indicts the `.asi` too
+
+`VehicleControl.cpp:195` passes `nullptr`, so both `if (orient)` applications in
+`AeroStabilize.cpp` are dead. Disassembling the original's A4 at its A6b call site settles
+whether that can be right:
+
+```
+0x00470934  8b f7               mov esi, edi                    <- A6a: ESI = the record
+0x00470936  e8 15 6d ff ff      call 0x467650                      (A6a)
+0x0047093b  8b 74 24 3c         mov esi, dword ptr [esp + 0x3c] <- A6b: ESI from the STACK
+0x0047093f  55                  push ebp
+0x00470940  53                  push ebx
+0x00470941  8b cf               mov ecx, edi                       ECX = the record
+0x00470943  e8 38 80 ff ff      call 0x468980                      (A6b)
+```
+
+Two instructions apart, the original sets A6b's ESI from a **stack slot** where it sets A6a's
+from EDI. So A6b's implicit context is a **caller-supplied pointer that is never null**, and
+the exe's `nullptr` is wrong: airborne auto-level (pitch + roll) and the velocity-align
+rotation never execute in the shipping build. (`unaff_ESI` in the C1 plate
+`re/analysis/vehicle_update_d3/00468980.md` is exactly this register — the
+register-argument blind spot.)
+
+**NOT fixed, and the reason is a second finding the audit did not have.** The `.asi` C4
+copy's own forwarder disagrees with that instruction: `PhysicsChainHooks.cpp:220` documents
+`FUN_00468980(dt, input)` with `ECX=ESI=record` and `Call_A6b` does `mov esi, ecx`, i.e. it
+assumes ESI **is** the record. The disassembly says it is `[esp+0x3c]`. Either that slot
+happens to hold the record, or the `.asi`'s A6b evidence is taken with the wrong ESI — and
+A6b's ESI use is inside the fully-airborne branch (`+0x9e0 == 0`), which a held-lock donut
+barely exercises, so a C4 diff could pass without covering it. **So neither copy is
+established here**, and guessing an orientation matrix to pass would be inventing physics.
+Filed `[UNCERTAIN] U-9149`.
+
+### 7.3.2 Lead 2 — A3: the stride is 0x40, settled from the disassembly
+
+Not picked by symmetry. All three loops, read out of `original/MASHED.exe`:
+
+```
+loop3  0x0046b8b6 lea ebx,[esi+0x4bc]  0x0046b8bc mov ebp,4
+       0x0046b903 add edi,0xc          0x0046b906 add ebx,0x40
+       0x0046b90a fstp dword ptr [ebx - 0x40]
+loop4  0x0046b90f lea ebx,[esi+0x5bc]  0x0046b91b mov ebp,8
+       0x0046b97f add edi,0xc          0x0046b982 add ebx,0x40
+loop5  0x0046b988 lea ebx,[esi+0x7bc]  0x0046b994 mov ebp,6
+       0x0046b9e2 add edi,0xc          0x0046b9e5 add ebx,0x40
+```
+
+Counts 4/8/6 and the source stride `0xc` match the port exactly; only the **output** stride
+differed. Independent agreement from the bases: `0x5bc - 0x4bc = 0x100 = 4 × 0x40` and
+`0x7bc - 0x5bc = 0x200 = 8 × 0x40`. Fixed to `0x40` in all three loops
+(`VehicleInit.cpp`).
+
+**Measured: inert on this recipe.** The default arm is bit-identical before and after
+(`0.1424 / 0.2993 / 2519.82`), and no exe-side source reads the record in `0x4c0..0x8c0` at
+all — neither by literal offset nor in dword-index form (`0x12f`/`0x16f`/`0x1ef`). Stated
+caveat: a computed-base read would be invisible to that grep, which is the same blind spot
+that hid A3's *own* stores from `findoffset.py` (it reports one unrelated `[esp+0x4bc]`
+hit at `0x0042e0f0` and nothing else, because the store is `[ebx - 0x40]`). The widened
+writes now reach `0x8bc`, still below the wheel block at `+0x928`.
+
+### 7.3.3 Lead 3 — A5 constants: confirmed, and there are EIGHT
+
+Read straight out of `.rdata` in `original/MASHED.exe` (PE mapping reused verbatim from
+`re/tools/disasm_va.py`, whose section-header field order is correct):
+
+| const | `.rdata` VA | ORIGINAL | declared | rel. error |
+|---|---|---|---|---:|
+| `kDt` | `0x005cc948` | `0x39aec33e` = **1/3000** | `0x39aeba79` | **-1.96e-04** |
+| `kSteerOut` | `0x005cea6c` | `0x3b5a740e` = **1/300** | `0x3b5a3c21` | **-1.00e-03** |
+| `kGripRampK` | `0x005cea74` | `0xb80bcf65` = -1/30000 | `0xb80bca6b` | -1.39e-04 |
+| `kRandScale` | `0x005cea68` | `0x36a7c5ac` = 5e-6 | `0x36a7c1cf` | -9.00e-05 |
+| `kThird` | `0x005ccac8` | `0x3eaaaaab` = 1/3 | `0x3eaaaa9f` | -1.07e-06 |
+| `kDraftDot` | `0x005cc9b4` | `0x3f7d70a4` = 0.99 | `0x3f7d7093` | -1.02e-06 |
+| `kSpeedMin` | `0x005cd03c` | `0x38d1b717` = 1e-4 | `0x38d1b70a` | -9.46e-07 |
+| `kPrngScale` | `0x005cd314` | `0x30000000` = 2^-31 | `0x2ffffff6` | -5.96e-07 |
+
+Every original is an exact round number and every declaration was a 6-significant-digit
+truncation of it. The audit named four; the binary says **eight**. All are now `asFb(bits)`,
+the EXACT-bits idiom this header already used for `k3000` and `kAngScale`, so the literal
+cannot drift from its own comment again. Re-audited: **30 exact, 0 mismatch.**
+
+### 7.3.4 Lead 4 — A6a gear clamp: bound 5, and currently inert
+
+The original declares `float local_54 [5]`
+(`re/analysis/data/A6a_FUN_00467650_decomp_20260824.txt:62`), writes exactly five entries
+(`:101`,`:115`,`:129`,`:142`,`:156`) and reads `local_cc = local_54[iVar9]` at `:175` with
+**no bounds check at all**. The exe's `[6]` + `gear < 6` let `gear == 5` read a never-written
+`0.0f`, which zeroes `local_cc`, the gear speed cap on the whole drive force. Fixed to five
+entries and bound 5.
+
+**Measured: `gear == 5` is not currently reachable.** Over **79,356** frames across every
+standalone capture of this session, `gear` takes only 0,1,2,3,4 (5746 / 26888 / 7099 / 3636 /
+35987 frames). The only writers of `+0x490` in the exe are the init at
+`VehiclePhysicsRun.cpp:523` and `Integrate2.cpp:151`/`:152`, which cannot exceed
+`iVar11 <= 4`. So this closes a latent defect, not an active one.
+
+### 7.3.5 Lead 5 — CarCarContacts as the U-9145 coupling: REFUTED
+
+`VehicleCarCarContact` (`0x00469df0`) has **zero call sites** in the whole `mashedmod/` tree.
+A full-tree grep returns exactly four hits — the definition (`CarCarContacts.cpp:32`), the
+declaration (`ContactSolvers.h:22`) and two comments. So `CarCarContacts.cpp:192-195` never
+executes in `mashed_re.exe`, and the uninitialised `local_40[64]` fed through
+`Rw_TransformPoints` cannot reach the player. Independently, U-9145's two channels are
+already established by direct per-sim-step measurement (§4) and neither touches `Collision`.
+
+The defect itself is **real but latent**: the empty `Rw_MatrixDerive`
+(`ContactStubs.cpp:93`) will produce a garbage transform the moment a call site is added.
+That is the audit's own §8.2 item 6 and is left to the separate pass.
+
+### 7.3.6 What the four fixes did NOT do
+
+Re-measured on both deterministic arms and all four guards:
+
+| | before | after |
+|---|---|---|
+| solo arm (2/2 identical) | 0.1332 / 0.2179 / **1818.47** | 0.1332 / 0.2179 / **1818.42** |
+| default arm | 0.1424 / 0.2993 / 2519.82 | **bit-identical** |
+| criterion (e) | PASS 3/3, `ft_median_m0` 2550.7 / 2053.0 / 2278.3 | **PASS 3/3**, 2550.6 / 2053.0 / 2278.2 |
+| AI (b) | FAIL 3/3 | **FAIL 3/3**, same bands (`c1_median` 48/42/46.5 → 49/45/52.5) |
+| power-ups | 11/11 decision CLEAN, `g3` contact DIVERGES | **unchanged** |
+| modes oracle rule 3 | GREEN 3064/3064, 2 segment-ends | **GREEN 3257/3257, 1 segment-end** |
+
+The constants are demonstrably live — (e) moved by 0.1 on two cars and the solo median by
+0.05, i.e. ~4e-5 relative, exactly the order of `kDt`'s -1.96e-4. But **none of the four
+moves U-9147's ~28% `slip 1500-2000` gap.** That is a useful negative: the gap is not A5's
+constants, not A3's table offsets and not A6a's gear clamp. Lead 1 (A6b's dead rotation
+apply) is the only one of the five still capable of explaining it, and it is unfixed.
+
 ## 8. Open
 
 - **[UNCERTAIN] U-9146 — the port ELIMINATES the player at `race_time_` 2.1-2.6 s in the a8
@@ -589,6 +731,19 @@ over.
   on the HEAD side only. Evidence missing: which field diverges first. Next command: two
   `MASHED_PLAYERTRACE=1 MASHED_MEASURE_SOLO=1` runs at HEAD until the two attractors are both
   sampled, then diff the traces for the first differing field.
+- **[UNCERTAIN] U-9149 — what the original passes to A6b in ESI, and therefore what
+  `VehicleControl.cpp:195` should pass instead of `nullptr`.** §7.3.1: the original's A4 does
+  `mov esi, dword ptr [esp + 0x3c]` at `0x0047093b`, two instructions after setting A6a's ESI
+  from EDI at `0x00470934` — so A6b's context is a caller-supplied pointer, never null, and
+  the exe's `nullptr` makes the whole rotation-apply dead. The `.asi` C4 forwarder assumes
+  `ESI = record` (`PhysicsChainHooks.cpp:220`), which that instruction does not support, so
+  **neither copy is established.** Evidence missing: which object `[esp+0x3c]` holds at that
+  point — A4's stack frame has to be reconstructed (five prologue pushes at
+  `0x00470670-0x00470678`, and the `add esp, 0x24` at `0x0047094e` does not balance the two
+  calls' eight bytes plus sixteen, so there is a `sub esp` or further pushes to account for).
+  Next command: decompile `FUN_00470670` and read the third argument of its `FUN_00468980`
+  call, then re-check `Call_A6b`'s ESI. This is the **only one of the five dual-copy leads
+  still capable of explaining U-9147**, because the other four are measured inert (§7.3.6).
 - The player's **off-mesh recovery loop** (`RecoverOffMesh`, `TrackRenderer.cpp:2142-2164`)
   fires 11-59 times per 1080 frames depending on configuration and **halves `car_speed_`
   every time**. It is a standalone scaffold with no original counterpart, and it is the
