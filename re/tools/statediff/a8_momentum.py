@@ -159,8 +159,13 @@ RE_FTOT = re.compile(r"ftot=\[([^\]]*)\]")
 RE_KV = re.compile(r"\b(reseed|gnd|sp|horiz|velH|bodyH|slip|steer)=([-+0-9.eE]+)")
 
 
-def samples_port(path):
-    """-> list of dicts, one per motion_diag line, in file order."""
+def samples_port(path, max_lines=0):
+    """-> list of dicts, one per motion_diag line, in file order.
+
+    max_lines: keep only the first N parsed FRAMES (0 = all). [U-9141 2026-09-29]
+    the D2 gate's controlled arm -- see a8_slip_axis.port_rows() for why the frame
+    count has to be pinned and why it equals a fixed simulated duration here.
+    """
     out = []
     with open(path, "r", errors="replace") as fh:
         for lineno, line in enumerate(fh):
@@ -186,6 +191,8 @@ def samples_port(path):
                 sp=kv.get("sp", 0.0), gnd=kv.get("gnd", 0.0),
                 steer=kv.get("steer", 0.0), reseed=int(kv.get("reseed", 0)),
             ))
+            if max_lines and len(out) >= max_lines:
+                break
     return out
 
 
@@ -281,6 +288,10 @@ def main():
     ap.add_argument("--orig", help="original-side MSD1 capture (.msd)")
     ap.add_argument("--port", help="port-side motion_diag.log (MASHED_MOTION_DIAG=1)")
     ap.add_argument("--min-speed", type=float, default=500.0)
+    ap.add_argument("--max-lines", type=int, default=0,
+                    help="[U-9141] keep only the first N logged frames of --port "
+                         "(0 = all). The D2 controlled arm. The --orig side is "
+                         "deliberately not truncated; see a8_slip_axis.py.")
     ap.add_argument("--no-grounded-filter", action="store_true")
     ap.add_argument("--orig-steer-min", type=float, default=None,
                     help="keep original frames with steerAng0 (+0x1a8, DEGREES) >= this."
@@ -298,7 +309,7 @@ def main():
         o = measure(samples_original(args.orig), f"ORIGINAL  {args.orig}",
                     args.min_speed, grounded, False, args.orig_steer_min)
     if args.port:
-        p = measure(samples_port(args.port), f"PORT      {args.port}",
+        p = measure(samples_port(args.port, args.max_lines), f"PORT      {args.port}",
                     args.min_speed, grounded, True, args.port_steer_min)
 
     if o and p:

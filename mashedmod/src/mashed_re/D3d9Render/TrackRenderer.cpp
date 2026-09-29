@@ -2891,7 +2891,35 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         Ai::Ai_Standalone_Tick();
         AiStepDump();
         const bool phys = Vehicle::VehiclePhysics_Enabled();
-        for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci) {
+        // [U-9141 2026-09-29] MASHED_MEASURE_NOOPP=1 — MEASUREMENT HARNESS ONLY. Skips the
+        // whole per-opponent update below (nothing else), so the three AI cars stay parked
+        // on the grid and never enter the shared physics/collision world.
+        //
+        // It COMMANDS THE SCENARIO and changes no computed value, exactly as
+        // MASHED_STEER_HOLD does for the player's input (exe_main.cpp:2933-2935: "MEASUREMENT
+        // HARNESS ONLY; it commands input, it changes no computed value"). It is default-OFF
+        // and is NOT a default-path change: with it unset this line is
+        // `ci < (int)ai_cars_.size()`, byte-for-byte the previous behaviour. Every law above
+        // and below it — the AI clock advance, AiBridgeSnapshot, Ai_Standalone_Tick,
+        // AiStepDump, the player's own solver — is untouched.
+        //
+        // WHY IT EXISTS: U-9141. D3_DRIVE_2026-09-28.md §3.4 CONFIRMED that the `a8`
+        // held-full-lock D2 recipe stopped being a controlled instrument at `09a73dc6`,
+        // because three RNG-driven opponents began sharing the player's world during a 50 s
+        // donut taken at the start line. With them not updated, HEAD was stable to four
+        // decimals on 3/3 runs (slip 1500-2000 = 0.1427) and `09a73dc6` gave the identical
+        // 0.1427 on 3/3; with them updated HEAD spans 0.128..0.177. That session created the
+        // knob as a temporary diag and DELETED it afterwards; the D2 gate needs it
+        // permanently, so it is re-added here as a named harness knob rather than re-invented
+        // each time. Pre-registered pass rule and results:
+        // re/analysis/D2_CONTROLLED_ARM_2026-09-29.md.
+        //
+        // NOT a way to make a number look better: it may only be used on the D2 controlled
+        // arm, where BOTH ends of the comparison run with it (at `56ad3806` the opponents
+        // never entered the chain at all, so that end needs no knob and gets the same state).
+        static const bool s_measureNoOpp = (std::getenv("MASHED_MEASURE_NOOPP") != nullptr);
+        const int aiCarN = s_measureNoOpp ? 0 : static_cast<int>(ai_cars_.size());
+        for (int ci = 0; ci < aiCarN; ++ci) {
             AiCar& a = ai_cars_[static_cast<std::size_t>(ci)];
             const int v = ci + 1;
             if (round_mode_ && !race_[ci + 1].alive) {
