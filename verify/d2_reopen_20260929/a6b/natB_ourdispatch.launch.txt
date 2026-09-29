@@ -1,0 +1,32 @@
+  [keep-awake] display-sleep suppressed + wake nudge sent
+=== scenario_launch  pid=33344  track=11 mode=10 cars=4 ===
+  attaching ASAP...
+  [agent] ready
+    phase=0  (waiting for menu (phase 1))
+    phase=1  (waiting for menu (phase 1))
+  [setup] set track=11 mode=10 cars=4 car=0 rule=0 team=0
+  [launch] poke DAT_00771968 = 2 -> 1
+    phase=2  (waiting for race running (phase 3))
+    phase=3  (waiting for race running (phase 3))
+
+  *** RACE RUNNING (phase 3) ***
+  [ctrl-slots] ctrl slot table was [0,0,0,0] -> [0,1,2,3]
+  car spawn fired: 12   grounded=4  airflag=0
+  vel=[0, 0, 0]  fwd=[-0.9999872446060181, 0, 0.004321083426475525]
+
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+
+  racing 60s — pulsing control 4 (confirm/accel) to skip the start intro + continue rounds...
+
+    +  4s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    +  9s  ph=3  spawnFired=16  p0.grounded=4 airflag=0  vel=[-1497.4, -0.3, -578.0]   
+    + 13s  ph=3  spawnFired=16  p0.grounded=4 airflag=0  vel=[-206.3, 9.1, -28.5]   
+    + 18s  ph=3  spawnFired=16  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 23s  ph=3  spawnFired=20  p0.grounded=4 airflag=1  vel=[378.9, -84.0, -0.5]   
+    + 28s  ph=3  spawnFired=24  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 33s  ph=3  spawnFired=28  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 37s  ph=3  spawnFired=32  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 42s  ph=3  spawnFired=36  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 47s  ph=3  spawnFired=36  p0.grounded=4 airflag=1  vel=[803.6, -134.8, 199.8]   
+    + 52s  ph=3  spawnFired=40  p0.grounded=4 airflag=0  vel=[728.1, 0.0, 546.6]   
+    + 57s  ph=5  spawnFired=40  p0.grounded=3 airflag=1  vel=[0, 0, 0]   

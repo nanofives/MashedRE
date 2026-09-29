@@ -1,8 +1,66 @@
 # Next session kickoff
 
-Updated 2026-09-29 at the close of the **player-regression (U-9141 / U-9145)** session.
-Branch `race/first-frame-parity`, HEAD is that session's tracker commit. Nothing is pushed.
-Superseded kickoff: the 2026-09-28 one (U-9140 / U-9142 are both closed below).
+Updated 2026-09-29 at the close of the **D2 re-close attempt 1** session (U-9149 / U-9147).
+Branch `race/first-frame-parity`. Nothing is pushed.
+Superseded kickoff: the earlier 2026-09-29 one (player-regression U-9141 / U-9145).
+
+> ## START HERE — D2 re-close attempt 1 is DONE and D2 is STILL REOPENED
+>
+> Read [`re/analysis/D2_REOPEN_2026-09-29.md`](analysis/D2_REOPEN_2026-09-29.md) and
+> ROADMAP §D2's "Re-close attempt 1" block. **Do not re-derive any of it.**
+>
+> **The bounds are pre-registered and must not be renegotiated** (that note §3, committed in
+> `d81a8df6` *before* any fix, from four original solo captures). PASS intervals:
+> `slip 1500-2000` **0.18855 .. 0.19635**, `slip 2000-2600` **0.24488 .. 0.25487**,
+> `driving-median` **1904.70 .. 1982.44**, plus ≥3 port runs agreeing within the original's
+> own half-range. Current port, 3/3 identical: **0.1332 / 0.2179 / 1818.42** — FAIL, FAIL,
+> FAIL. If you think a bound is wrong, change it **in writing with the reason, before the
+> next measurement**, never after seeing a result.
+>
+> **DONE, do not redo:**
+> - **U-9149 decoded.** `[esp+0x3c]` at `0x0047093b` is `E+0x0c` = A4's `param_3` slot,
+>   reused at `0x004706a2` to hold `record + [record+0x9a8]*0x40 + 0x928`, an `RwMatrix`.
+>   Same pointer A5 gets as arg 2. The `.asi` `Call_A6b` is **fixed and verified** (144
+>   self-test samples, 64 airborne, `ndiff=0` and `xfok=1` on every one).
+> - **A6b is NOT U-9147.** Disjoint gates: A6b needs `+0x9e0 == 0`, the metric scores
+>   `+0x9e0 >= 3.5` (`a8_slip_axis.py:35`). All five dual-copy leads are now eliminated.
+> - **Eliminated with reasons** (don't re-try): A6a's matrix argument (never read, 0 reads
+>   at `E+0xc`); the four handling globals `0x00613108/14/30/3c` (A3 seeds them to exactly
+>   the port's hardcoded values and the override key `[0x00613140]` is 0 = the default
+>   entry; max variant ±5%); "the port chases the velocity heading"
+>   (`BodyOrient_IntegrateStep` **is** wired at `VehiclePhysicsRun.cpp:812`).
+>
+> **PICK UP HERE — U-9147's first divergent channel is the REAR-WHEEL lateral force.**
+> `a8_wheelfit.py` port/original lateral coefficient: front **1.019 / 1.021**, rear
+> **1.371 / 1.360**. The rears carry ~36% too much lateral grip, which is the right sign and
+> size for the slip deficit. Original rear `|lat|` 0.184/0.184 (equal) vs port 0.272/0.241;
+> original rear fit residual 0.31-0.33 vs port 0.09-0.11, so the original's rear law is
+> nonlinear where the port's is nearly `constant * lat`. `p1b` (+0x6c) matches on all four
+> wheels, so the input is right and the law is not.
+>
+> **Next command, and it decides the leading hypothesis:** the port reports `le4 = 1024.0`
+> in every wheel and band — `min(le4, 1024)` is saturated throughout — while the original's
+> `le4` is unmeasured (`re/tools/statediff/a8_wheelfit.py:48` sets it NaN). Recover `le4` on
+> the original side (the field A6a `FUN_00467650` feeds `min(le4,1024)` from; see
+> `Integrate2.cpp` block #4), add it to `samples_original`, and re-run:
+> ```
+> py -3.12 re/tools/statediff/a8_wheelfit.py --orig verify/a8_steer_20260824/orig_steerR.msd \
+>     --port verify/d2_reopen_20260929/solo_post1/motion_diag.log
+> ```
+> If the original's rear `le4 < 1024`, the clamp is the defect and the fix is in the port's
+> `le4` producer, not the coefficient. **This is a hypothesis, not a finding.**
+>
+> Then, in order: **U-9152** (the `+0x928` vs `g_bodyBasis` storage split),
+> **`RecoverOffMesh`** (`TrackRenderer.cpp:2142-2164`, halves `car_speed_` 11-59x per 1080
+> frames — bears on driving-median, the metric closest to its bound at -6.4%), and
+> **U-9151** (the exe A6b binding, blocked on a CPU port of `RwMatrixMultiply 0x004c4600`;
+> binding it as-is crashes the exe with `0xC0000005`).
+>
+> **Guards as of this session** (re-run them, don't assume): criterion (e) PASS 3/3; AI (b)
+> FAIL 3/3 with `c1_median` 49/45/52.5; power-ups 11/11 decision CLEAN with `g3` contact
+> diverging; oracle rule 3 GREEN; build with `rva-lint NEW=0`.
+>
+> **The D3 modes 3/7 hold stands.** D2 must close before it starts.
 
 > ## ORDER OF WORK CHANGED 2026-09-29 (user decision): **D2 IS REOPENED**
 >

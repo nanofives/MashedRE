@@ -1,205 +1,36 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-09-29T23:40:00Z",
+  "updatedAt": "2026-09-29T17:05:00Z",
   "sections": [
     {
-      "heading": "Session 2026-09-29c — dual-copy: demote + exe_file + guard",
+      "heading": "Phase",
       "fields": [
-        {
-          "label": "Confidence tally",
-          "value": "C4 175 (was 184) / C3 1009 (was 1029) / C2 3894 — 5899 rows",
-          "kind": "text"
-        },
-        {
-          "label": "Demoted to C2",
-          "value": "29 rows — 9x C4->C2, 20x C3->C2 (two transactions)",
-          "kind": "number"
-        },
-        {
-          "label": "Why",
-          "value": "C3/C4 gates are defined over the .asi; the exe compiles a different source list, so 5 defects shipped while the tracker said C4",
-          "kind": "text"
-        },
-        {
-          "label": "hooks.csv schema",
-          "value": "new LAST column exe_file — of 1213 C3/C4 rows only 203 have exe_file == file",
-          "kind": "text"
-        },
-        {
-          "label": "Build guard",
-          "value": "scripts/lint_rva_bodies.py in build.bat — 110 known pairs allowlisted, FAILS on anything new",
-          "kind": "text"
-        },
-        {
-          "label": "Guard proof",
-          "value": [
-            "warn run: both targets build, exit 0",
-            "forced duplicate: exit 1 before any compile line"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Bears on D3 (b)",
-          "value": "8 of the 25 are the AI rows criterion (b) runs on; the exe copies pin rate1=0 and mode=0",
-          "kind": "text"
-        },
-        {
-          "label": "Filed",
-          "value": "U-9150 — an RVA comment on MenuNavSM::RecordsZero claims 0x0042d3e0, which it does not implement",
-          "kind": "text"
-        },
-        {
-          "label": "Allowlist burn-down",
-          "value": "named ROADMAP D4 item; D4's gate now includes an empty allowlist",
-          "kind": "text"
-        },
-        {
-          "label": "53 UNREVIEWED candidates",
-          "value": "all classified: 21 no-exe-copy, 20 not-a-pair, 8 both-shared, 3 differs-behaviour, 1 cosmetic",
-          "kind": "text"
-        },
-        {
-          "label": "Flagged for reversal",
-          "value": "0x0040e180 C4->C2 is a relabel of the audit's COSMETIC verdict — exe uses std::sqrt where the original uses the LUT, 7.8% different pair",
-          "kind": "text"
-        }
+        { "label": "Active phase", "value": "D2 REOPENED (re-close attempt 1 FAILED)", "kind": "text" },
+        { "label": "D3 modes 3/7", "value": "ON HOLD until D2 re-closes", "kind": "text" },
+        { "label": "Branch", "value": "race/first-frame-parity (unpushed)", "kind": "text" }
       ]
     },
     {
-      "heading": "Roadmap",
+      "heading": "D2 solo arm vs the original",
       "fields": [
-        {
-          "label": "Phase",
-          "value": "D2 REOPENED 2026-09-29 — D3 on hold until it re-closes",
-          "kind": "text"
-        },
-        {
-          "label": "Why D2 reopened",
-          "value": "closing evidence was a 3-opponent port run vs a ONE-car original capture",
-          "kind": "text"
-        },
-        {
-          "label": "D3 status",
-          "value": "BLOCKED — modes 3/7 port does not start until D2 closes again",
-          "kind": "text"
-        },
-        {
-          "label": "Sole blocker",
-          "value": "D2: port vs ORIGINAL on the solo arm — slip -30% / -13%, median -6%",
-          "kind": "text"
-        },
-        {
-          "label": "Closure path (user decision)",
-          "value": "D2 first (solo arm, bounds pre-registered), then D3 modes 3 and 7",
-          "kind": "text"
-        },
-        {
-          "label": "Branch",
-          "value": "race/first-frame-parity (not pushed)",
-          "kind": "text"
-        },
-        {
-          "label": "D2 blockers",
-          "value": [
-            "U-9149 A6b context pointer (0x0047093b)",
-            "U-9147 standing slip gap"
-          ],
-          "kind": "list"
-        }
+        { "label": "Pass rule", "value": "pre-registered 2026-09-29 (d81a8df6), 4 original captures", "kind": "text" },
+        { "label": "Scored (3/3 identical)", "value": ["slip 1500-2000: 0.1332 vs 0.18855-0.19635 FAIL", "slip 2000-2600: 0.2179 vs 0.24488-0.25487 FAIL", "driving-median: 1818.42 vs 1904.70-1982.44 FAIL"], "kind": "list" }
       ]
     },
     {
-      "heading": "D3 gate",
+      "heading": "U-9147 — localized",
       "fields": [
-        {
-          "label": "Met",
-          "value": [
-            "Powerups (c): all 9 types",
-            "Modes (a)-(d): oracle GREEN",
-            "AI (a), (c), (d)",
-            "AI (e): within 0.05%"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Not met",
-          "value": "AI (b) — fails on all 3 cars at correct speed; D3-R1 dropped as a residue",
-          "kind": "text"
-        }
+        { "label": "First divergent channel", "value": "rear-wheel lateral force", "kind": "text" },
+        { "label": "Lateral coeff port/orig", "value": ["front w0/w1: 1.019 / 1.021 (match)", "rear  w2/w3: 1.371 / 1.360 (~36% too much grip)"], "kind": "list" },
+        { "label": "Next command", "value": "recover le4 on the original side, re-run a8_wheelfit.py", "kind": "text" }
       ]
     },
     {
-      "heading": "Session 2026-09-29b — player regression (U-9141 / U-9145)",
+      "heading": "This session",
       "fields": [
-        {
-          "label": "Verdict",
-          "value": "NO player-car physics regression since D2 closed",
-          "kind": "text"
-        },
-        {
-          "label": "Matched-scenario arm",
-          "value": "HEAD vs 56ad3806 = -3.1% / -0.1% / +3.3% (was -16 / -14 / -64)",
-          "kind": "text"
-        },
-        {
-          "label": "Why the old number was wrong",
-          "value": [
-            "the arm applied its knob at HEAD only",
-            "the D2 reference is a ONE-CAR race (cars=1, segment-end 0)"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "U-9145 coupling",
-          "value": [
-            "A: steer-hold onset was on the real clock — FIXED, now sim steps",
-            "B: opponents get the PLAYER eliminated at rt 2.1-2.6 s"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Resolved",
-          "value": [
-            "U-9141",
-            "U-9145"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Filed",
-          "value": [
-            "U-9146 player elimination -> gate freeze -> off-mesh re-aim",
-            "U-9147 ~28% slip gap vs the original at BOTH commits",
-            "U-9148 one HEAD solo run in five in a 2nd attractor"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Guards",
-          "value": "(e) PASS 3/3, (b) FAIL 3/3 unchanged, powerups 11/11, modes rule 3 + rule 0 GREEN",
-          "kind": "text"
-        },
-        {
-          "label": "New D2 arm",
-          "value": "MASHED_MEASURE_SOLO=1 + --max-lines 1080",
-          "kind": "text"
-        },
-        {
-          "label": "Dual-copy leads (aa4795af)",
-          "value": [
-            "A5 consts FIXED - 8 of them, not 4",
-            "A3 stride FIXED to 0x40 (disasm)",
-            "A6a gear clamp FIXED to 5",
-            "CarCarContacts REFUTED - 0 call sites",
-            "A6b 0x00468980 CONFIRMED, open as U-9149"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Negative result",
-          "value": "none of the 4 fixes moves U-9147 ~28% slip gap",
-          "kind": "text"
-        }
+        { "label": "U-9149", "value": "DECODED; .asi fixed + verified (144 samples, 64 airborne)", "kind": "text" },
+        { "label": "New uncertainties", "value": ["U-9151 exe A6b blocked on RwMatrixMultiply 0x004c4600", "U-9152 +0x928 vs g_bodyBasis storage split"], "kind": "list" },
+        { "label": "Guards", "value": ["criterion (e) PASS 3/3", "AI (b) FAIL 3/3 (unchanged)", "power-ups 11/11 CLEAN, g3 contact diverges", "oracle rule 3 GREEN", "build rva-lint NEW=0"], "kind": "list" }
       ]
     }
   ]
