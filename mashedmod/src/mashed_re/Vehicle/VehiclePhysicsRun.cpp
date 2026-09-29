@@ -74,7 +74,10 @@ long long* PerfBatchTestCounter() { return prof::g_on ? &prof::f_batchTests : nu
 
 // Chain entry points (defined in their .cpp; declared here to avoid a header churn).
 int  VehicleInit(int slot, int trackType);                                       // A3 0x0046b540
-void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xf); // A4 0x00470670
+void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xf, int car); // A4 0x00470670
+// U-D3-DRIVE-FORCE: the A6a start-boost order/participant bindings (ForceIntegratorStubs.cpp).
+extern int g_participantCount;   // DAT_008a94d0 (FUN_0040e340)
+void Fi_UpdateBoostOrder();      // FUN_00470c70 0x00470e2e..0x00470f0a
 
 // A8 body-orientation integrator (BodyOrientationIntegrate.cpp = FUN_0046e9e0's
 // orientation half + the 0x004c4680 ortho-normalize). Wired 2026-08-25.
@@ -139,6 +142,15 @@ bool          g_bodyBasisReseed[16] = { false };
 // [U-D3-DRIVE 2026-09-28] one-shot spawn-settle flag per slot; cleared by
 // VehiclePhysics_Init. See the SPAWN SETTLE block in VehiclePhysics_StepCar.
 bool          g_settled[16] = { false };
+// [U-D3-DRIVE-FORCE 2026-09-29] one-shot start-boost arm flag per slot; cleared by
+// VehiclePhysics_Init. See the START BOOST ARM block in VehiclePhysics_StepCar.
+bool          g_startBoosted[16] = { false };
+// Re-entrancy marker for the spawn settle's inner VehiclePhysics_StepCar call. The
+// settle deliberately steps the chain once with an all-zero input block and then
+// DISCARDS what it produced, so the start boost must not be armed inside it (that
+// call runs with the post-memset wheel states, where A6a's drive/boost gate
+// `p[-0xf] == 2` is false, so the boost would be armed and then sit unconsumed).
+bool          g_inSpawnSettle = false;
 
 // A8 position law constants (re/analysis/data/A8_position_law_20260825.md).
 // FUN_0046e9e0 builds the per-substep position increment as
@@ -220,6 +232,10 @@ void VehiclePhysics_Init(int carCount, int trackType) {
     std::memset(g_records, 0, sizeof(g_records));
     for (int s = 0; s < 16; ++s) g_bodyBasisOk[s] = false;   // A8: basis reseeds at first step
     for (int s = 0; s < 16; ++s) g_settled[s] = false;       // U-D3-DRIVE spawn settle
+    for (int s = 0; s < 16; ++s) g_startBoosted[s] = false;  // U-D3-DRIVE-FORCE start boost
+    // DAT_008a94d0 stand-in for FUN_0040e340: the A6a start-boost 8e6 arm tests it == 4.
+    g_participantCount = carCount;
+    Fi_UpdateBoostOrder();                                   // seed DAT_0088e668/66c
     // The integrator's "other cars" base (DAT_008815a0) -> our standalone array.
     g_vehicleArrayBase = reinterpret_cast<int*>(g_records);
     if (carCount < 1)  carCount = 1;
@@ -494,7 +510,9 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         s.steer = 0.f; s.raw_steer = 1;  // raw_steer so the zero bytes are used verbatim
         s.vel[0] = s.vel[1] = s.vel[2] = 0.f;
         s.speed = 0.f;
+        g_inSpawnSettle = true;          // keep the START BOOST ARM out of this call
         VehiclePhysics_StepCar(slot, dt, s);
+        g_inSpawnSettle = false;
         for (std::size_t o = 0; o < 12; o += 4) {
             F(r, off::kVelocity + o) = 0.f;   // +0x9b0..+0x9b8 linear
             F(r, 0x9bc + o)          = 0.f;   // +0x9bc..+0x9c4 angular
@@ -543,6 +561,74 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         input[0] = (st > 0.f) ? m : 0;
         input[1] = (st < 0.f) ? m : 0;
     }
+
+    // =====================================================================
+    // START BOOST ARM — U-D3-DRIVE-FORCE, 2026-09-29. MEASURED, not inferred.
+    //
+    // A6a's +0xbf8 == 1 arm (Integrate2.cpp, ported today) is what produces the
+    // original's launch: 5e6 of force on each state-2 driving wheel for as long as the
+    // +0xbf4 timer lasts. NOTHING in the standalone arms that state machine, and the
+    // upstream writer is NOT LOCATED — see [UNCERTAIN] U-D3-BOOST-ARM below. So the
+    // ARMED STATE is reproduced from the original's own captures instead.
+    //
+    // What the captures show, identically in all 10 regime-0 originals (e3, e4 of
+    // verify/d3_drive_20260928/ and p1,p2,p3,p4,p8,p10,p11,p12 of
+    // verify/d3_ai_20260927b/), read with re/tools/statediff/msd_fields.py:
+    //   - during the last 5 countdown frames: +0xbf8 == 0, +0xbf4 == 50,100,150,200,250
+    //     and the AI accel byte is still 0 (+0xb20 == 0 on every one of them);
+    //   - on the FIRST frame the accel byte is 255: +0xbf8 == 1 and +0xbf4 == 1100;
+    //   - then +0xbf4 == 900, 700, 500, 300, 100, 0 — exactly -200 per frame, which is
+    //     A6a's own two decrement sites x two qualifying wheels x dt 50.
+    // The render-tick snapshot is taken AFTER A6a has run, so the value A6a SEES on the
+    // arming frame is 1100 + 200 = 1300, and seeding 1300 here (before A4/A6a run below)
+    // reproduces the original's whole 1100/900/700/500/300/100/0 trajectory and therefore
+    // the exact set of frames on which the 5e6 is applied.
+    //
+    // WHICH CARS, and WHEN — and the one place this is a DEVIATION not a transcription.
+    // The arm happens at the green light, once per car. It is armed on all three AI cars in
+    // every capture and on the PLAYER in NONE of them:
+    //   - verify/a8_steer_20260824/orig_steerR.msd (player, D2 held-lock): +0xbf4 counts UP
+    //     50/frame to 3000 and saturates, +0xbf8 == 0 on all 2210 frames. That recipe holds
+    //     the throttle from before the lights.
+    //   - verify/d3_force_20260929/o_c0.msd (player, D3 recipe, 2725 frames): +0xbf4 and
+    //     +0xbf8 are 0 on EVERY frame. That recipe never gives the player throttle at all.
+    // So the original's arm is gated on something the countdown measures about the car's own
+    // throttle timing, and there is NO original observation of an armed player. The
+    // standalone simulates no countdown, so it cannot represent "held the throttle too
+    // early". This port therefore arms exactly the slots the captures show armed — the AI
+    // cars, slot != 0 — and leaves the player unarmed. Consequences, stated:
+    //   + it reproduces the measured state for all three AI cars, which is what criterion
+    //     (e) is scored on, and
+    //   + it leaves the D2 player guard bit-untouched (no player force changes at all), but
+    //   - a human player who does not jump the lights presumably IS boosted in the real
+    //     game, and this port will not boost them. That is unported, not decided: it needs
+    //     the arming writer, i.e. U-D3-BOOST-ARM below.
+    //
+    // [UNCERTAIN] U-D3-BOOST-ARM — which function writes +0xbf8 = 1 / +0xbf4 = 1300, and
+    // whether 1300 is a constant or a value the countdown computes. Evidence missing: the
+    // writer. `py -3.12 re/tools/findoffset.py --writes 0xbf8 0xbf4 0xbf0` finds FOUR
+    // +0xbf8 accesses and SEVEN +0xbf4 accesses in the whole of .text and every one of them
+    // is inside FUN_00467650 (0x00467d08..0x00467e44); +0xbf0 has no writer at all. So the
+    // arming store does not use a `[reg + 0xbf8]` displacement and the sweep is blind to it
+    // (the dword-index-off-a-computed-base blind spot). Next command, in order:
+    //   1. Frida write-watchpoint on &rec[car]+0xbf8 armed during the countdown. A6a is the
+    //      only writer and its two bf8 stores are both inside `bf8 == 1` / `== 2` arms, so
+    //      while bf8 == 0 NOTHING in A6a writes it and the first fault is the arming
+    //      instruction. Report the faulting EIP, then decomp its containing function.
+    //   2. If the watchpoint API is unavailable, a Ghidra script that walks stores whose
+    //      base is DAT_008815a0 + k and whose displacement is 0xbf8 - k.
+    // Until then the FORCE law is transcribed (Integrate2.cpp cites 0x00467d3a..0x00467e44)
+    // and only the SEED is measured. MASHED_NO_START_BOOST=1 reverts the seed.
+    static const bool s_noStartBoost = (std::getenv("MASHED_NO_START_BOOST") != nullptr);
+    if (slot != 0 && !g_startBoosted[slot] && !s_noStartBoost && !g_inSpawnSettle) {
+        g_startBoosted[slot] = true;
+        I(r, 0xbf8) = 1;      // boost state 1 (Integrate2.cpp +0xbf8 == 1 arm)
+        I(r, 0xbf4) = 1300;   // pre-A6a value; A6a's two sites leave the measured 1100
+    }
+    // Refresh DAT_0088e668/66c once per frame, as FUN_00470c70 does before its
+    // per-vehicle A4 loop (slot 0 steps first, so slot 0 is the frame boundary).
+    if (slot == 0 && !g_inSpawnSettle) Fi_UpdateBoostOrder();
+    // =====================================================================
 
     // The chain works in the ORIGINAL's millisecond time base: FUN_00470c70 passes
     // A4 a dt that is the integer ms chunk count (local_24 = min(remaining,0x32)),
@@ -679,7 +765,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     }();
     if (s_a4First) {
         g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
-        VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis);
+        VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis, slot);
         ReassertContacts(r);
     }
 
@@ -760,7 +846,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // since its contacts are solved in the loop that follows A4.
     if (!s_a4First) {   // [A8-ORDER] see the knob above the substep loop
         g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
-        VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis);
+        VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis, slot);
         // A6a's drive block can clear wheel states in some branches; re-assert from the
         // cached contact result (no re-broadphase) so the next frame stays engaged.
         ReassertContacts(r);

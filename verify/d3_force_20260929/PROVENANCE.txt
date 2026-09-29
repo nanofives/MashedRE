@@ -1,0 +1,35 @@
+U-D3-DRIVE-FORCE, 2026-09-29, branch race/first-frame-parity.
+Note: re/analysis/D3_DRIVE_FORCE_2026-09-29.md.
+
+ORIGINAL captures (MASHED.exe, the diffing reference; original/ never modified):
+  py -3.12 re/frida/scenario_launch.py --track 0 --mode 10 --cars 4 --car 0 \
+      --poke-ctrl-slots --statediff-out verify/d3_force_20260929/o_c2.msd \
+      --statediff-car 2 --statediff-aistep --hold 60
+  ... same with --statediff-car 3 --hold 45  -> o_c3.msd
+  ... same with --statediff-car 0 --hold 45  -> o_c0.msd   (no --statediff-aistep)
+  The *.msd / *.aistep.csv payloads are gitignored (.gitignore:140); the distilled
+  evidence is orig_boost_launch.txt, which is committed. Car 1 is reused from
+  verify/d3_drive_20260928/e3.msd (2026-09-28 session).
+
+STANDALONE captures (mashed_re.exe, built in place at this branch's HEAD):
+  py -3.12 re/tools/sa_capture.py verify/d3_force_20260929/<tag> 8,30,60 MASHED_MUTE=1 \
+      MASHED_TRACK_VIEW=Training MASHED_CAR=1 MASHED_ROUND=1 MASHED_WIN_POS=left-bl \
+      MASHED_TITLE="D3 drive-force <tag>" \
+      MASHED_AI_STEPDUMP=verify/d3_force_20260929/<tag>.csv
+    sa_b1  first boost port, before the per-car 5e6/8e6 arm was bound (car 1 only passed)
+    sa_b2  default build
+    sa_b3  sa_b2 repeated -- determinism control, identical to every printed digit
+    sa_ns  + MASHED_NO_SPAWN_SETTLE=1
+    sa_nb  + MASHED_NO_START_BOOST=1
+
+CADENCE check (cad1/): the step-1 question of D3_DRIVE_2026-09-28.md section 4.4.
+  py -3.12 re/tools/statediff/a8_run_port.py verify/d3_force_20260929/cad1 20 \
+      MASHED_COUPLING_DIAG=1 MASHED_TITLE="D3 drive-force cadence step1"
+  friction_diag.log was removed before the run and moved in afterwards by hand
+  (a8_run_port.py only moves motion_diag.log). cad1/cadence.txt is the comparison.
+
+Scorer output: e_b_check.txt (both criteria, all four arms).
+
+PID hygiene: every mashed_re.exe was spawned and killed by sa_capture.py / a8_run_port.py
+by PID; every MASHED.exe by scenario_launch.py. No blanket kill by name was issued.
+No worktree was created. mashedmod/ was built in place; no old-commit probe was run.

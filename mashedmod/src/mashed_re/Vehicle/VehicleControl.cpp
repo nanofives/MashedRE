@@ -90,7 +90,7 @@ int  Vc_InputFilter();
 //   xform   = vehicle world-transform context (original: param_4, to A5)
 // Verbatim of FUN_00470670 (body 0x00470670..0x00470991).
 // ===========================================================================
-void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xform)
+void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xform, int car)
 {
     void* v = self;
     const int gameMode = Fi_GameMode();                              // FUN_0040e350
@@ -184,7 +184,14 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     // the car's real heading; passing the zeroed +0x928 wheelBlock zeroed it -> no
     // drive direction -> no motion (root cause, WS-A-VERIFY-3).
     VehicleWheelForceIntegrate(self, dt, xform);                  // A5 0x0046ddb0 (ported)
-    Vehicle_Integrate2(self, 0, dt, wheelBlock, input);            // A6a 0x00467650 (param_1=0 [UNCERTAIN])
+    // A6a 0x00467650. param_1 is the CAR INDEX, decoded 2026-09-29 (was passed 0 with an
+    // [UNCERTAIN] note): the dispatcher FUN_00470c70 calls A4 as
+    // `FUN_00470670(iVar6, fVar4, puVar18, param_2)` at 0x00471071 where iVar6 is the
+    // 0..0xf slot counter of its per-vehicle loop, and A4 forwards its own param_1
+    // unchanged as A6a's first argument (0x0047094c `FUN_00467650(param_1, param_2,
+    // iVar1, param_3)`). A6a's only use of it is the boost-state-1 comparison against
+    // DAT_0088e668 / DAT_0088e66c (0x00467d62 / 0x00467d6a), which are car indices.
+    Vehicle_Integrate2(self, car, dt, wheelBlock, input);
     Vehicle_AeroStabilize(self, nullptr, dt);                    // A6b 0x00468980 (orient bound at A8)
 
     if (Ib(v, 0x9f0) == 2) {                                       // parked/stopped state

@@ -47,6 +47,12 @@ namespace Vehicle {
 
 int  Fi_GameMode();        // FUN_0040e350
 int  Vc_RoundST0();        // FUN_004a2c48 (round ST0 -> long) — input implicit [U-A6A-ST0]
+// A6a boost-state-1 comparands (ForceIntegratorStubs.cpp): the two least-progressed
+// car indices FUN_00470c70 sorts into DAT_0088e668 / DAT_0088e66c. Maintained by
+// Fi_UpdateBoostOrder() (ForceIntegratorStubs.cpp), called once per frame.
+extern int g_modeCarA;     // DAT_0088e668
+extern int g_modeCarB;     // DAT_0088e66c
+int  Fi_ParticipantCount();  // FUN_0040e340 = DAT_008a94d0
 
 // exact-bit float constructor — the decimal literals below mis-round vs the
 // original's .rdata (e.g. 299488.0f -> 0x48923c00 != the real 0x48927c00). Cf()
@@ -107,6 +113,9 @@ const     float k3p0518e5  = Cf(0x38000000);  // 005ce9f0 3.0518e-5 low-grip slo
 constexpr float k16=16.0f;              // 005cc750
 const     float k1p745329  = Cf(0x3fdf6715);  // 005cea24 1.745329 per-wheel spin divisor
 const     float k256       = Cf(0x43800000);  // 005cea20 256.0 brake-branch bias
+// start/turbo boost (+0xbf8 state 1) — U-D3-DRIVE-FORCE, 2026-09-29
+const     float k5e6       = Cf(0x4a989680);  // 5e6 non-player boost force (literal @0x00467d74)
+const     float k8e6       = Cf(0x4af42400);  // 005cea28 8e6 player boost force
 } // namespace a6
 
 // 0x00467650 — Vehicle_Integrate2(self, param_1, dt, wheelBlock(unused by body), input)
@@ -243,7 +252,106 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 int r = (int)((float)Ri(v, 0xbf4) - dt);   // _ftol2 truncates toward zero
                 if (r > 3000) r = 3000; if (r < 0) r = 0; Wi(v, 0xbf4, r);
             }
-            // [U-A6A-ST0] boost-state machine (+0xbf8 == 1 / == 2) gated on Vc_RoundST0 — shape only.
+            // ===== START/TURBO BOOST (+0xbf8 state machine) — PORTED 2026-09-29 =====
+            // U-D3-DRIVE-FORCE. This block used to be the one line
+            //   "[U-A6A-ST0] boost-state machine (+0xbf8 == 1 / == 2) ... shape only"
+            // i.e. it was NOT ported at all, and that is the whole of the 8-9x drive-force
+            // gap D3_DRIVE_2026-09-28.md §4.4 localised to +0xb14/+0xb1c.
+            //
+            // MEASURED, not inferred. In the ORIGINAL's own captures the launch force is
+            // dominated by this term, and the port's b1c accounts for its OWN speed gain
+            // exactly, so the gap is entirely this missing block. Read out of
+            // verify/d3_drive_20260928/e3.msd (AI car 1, Training, mode 10, 4 cars) with
+            // re/tools/statediff/msd_fields.py — and identically out of e4.msd and
+            // verify/d3_ai_20260927b/p1.msd, p2.msd:
+            //
+            //   frame   +0xbf8  +0xbf4   +0x9e4     +0xb1c        drive-only prediction
+            //   855-859    0    50..250   0.000      0            (accel byte still 0)
+            //   860        1    1100    180.000  -1.08000e+07     -8.000e+05
+            //   861        1     900    370.513  -1.14331e+07     -1.4336e+06
+            //   862        1     700    558.512  -1.13023e+07     -1.3042e+06
+            //   863        1     500    756.751  -1.19614e+07     -1.9659e+06
+            //   864        1     300    960.666  -1.23745e+07     -2.3755e+06
+            //   865        1     100   1164.378  -1.24392e+07     -2.4407e+06
+            //   866        0       0   1283.994  -7.50365e+06     -2.5059e+06
+            //   867        0       0   1319.782  -2.54182e+06     -2.5442e+06
+            //
+            // The residual (measured minus the drive-only prediction of :216-235) is
+            // -1.0000e+07 on frames 860..865, -5.000e+06 on 866 and 0 from 867 on. That is
+            // exactly 2 x 5e6 while +0xbf8 == 1 on both state-2 wheels, 1 x 5e6 on the frame
+            // the timer runs out mid-loop, and 0 afterwards. Frame 867-868 confirm the
+            // drive-only law is already right: -2.54182e+06 measured vs -2.5442e+06.
+            //
+            // The timer cadence is measured too: +0xbf4 steps -200 per frame (1100, 900, 700,
+            // 500, 300, 100, 0), which is 2 qualifying wheels x 2 decrement sites x dt=50 —
+            // the FUN_0040e350()==6 site at :243 and this block's own site. Both have to run;
+            // see the Fi_GameMode() note in ForceIntegratorStubs.cpp.
+            //
+            // Verbatim from FUN_00467650, decomp
+            // re/analysis/data/A6a_FUN_00467650_decomp_20260824.txt:276-317, disasm sites
+            // 0x00467d3a (bf8==1 test) .. 0x00467e44; force accumulate 0x00467d7e..0x00467db1
+            // (the .asi's byte-exact form is PhysicsChainHooks.cpp DriveForceAccum with
+            // cc = 1.0, so the product is ff exactly and only w*ff is float10).
+            if (Ri(v, 0xbf8) == 1) {
+                if (Ri(v, 0xbf4) == 0) { Wi(v, 0xbf8, 0); }
+                else {
+                    // The 8e6 arm (_DAT_005cea28) instead of 5e6 when
+                    //   FUN_0040e340() == 4 && (DAT_0088e668 == param_1 ||
+                    //                           DAT_0088e66c == param_1)
+                    // (0x00467d55 / 0x00467d62 / 0x00467d6a). Both operands are decoded:
+                    //   FUN_0040e340 (0x0040e340, 6 bytes) = DAT_008a94d0, the PARTICIPANT
+                    //     count (the port's TrackRenderer::ParticipantCount / exe_main
+                    //     kParticipants already name it that). Bound here to the car count
+                    //     VehiclePhysics_Init was given -> 4 on this recipe.
+                    //   DAT_0088e668 / DAT_0088e66c are the last two entries of the 4-entry
+                    //     car-index array DAT_0088e660..66c, which FUN_00470c70 seeds with
+                    //     0,1,2,3 (0x00470e2e) and then bubble-sorts DESCENDING by
+                    //     FUN_00408a50(car) = *(float*)(0x008a96e8 + car*0x30c), the per-car
+                    //     race-progress float (0x00470e66..0x00470f0a). So they are the two
+                    //     cars with the LEAST progress. Ported in Fi_UpdateBoostOrder().
+                    // MEASURED and it is the per-car difference criterion (e) needs. Same
+                    // recipe, three separate original captures, +0xb1c on the first boosted
+                    // frame (entry speed 0, drive-only part 8.000e+05):
+                    //   car 1  verify/d3_drive_20260928/e3.msd f860  -1.08000e+07
+                    //          residual -1.0000e+07 = 2 wheels x 5e6
+                    //   car 2  verify/d3_force_20260929/o_c2.msd f894 -1.68000e+07
+                    //          residual -1.6000e+07 = 2 wheels x 8e6
+                    //   car 3  verify/d3_force_20260929/o_c3.msd f883 -1.68000e+07
+                    //          residual -1.6000e+07 = 2 wheels x 8e6
+                    // i.e. the two back-of-grid cars take the 8e6 arm and car 1 does not,
+                    // which is exactly this condition with progress all-equal at the lights.
+                    float ff = k5e6;
+                    if (Fi_ParticipantCount() == 4 &&
+                        (g_modeCarA == param_1 || g_modeCarB == param_1)) ff = k8e6;
+                    Wf(v, 0xb14, Rp(p,0x1f) * ff + Rf(v,0xb14));
+                    Wf(v, 0xb18, Rp(p,0x20) * ff + Rf(v,0xb18));
+                    Wf(v, 0xb1c, Rp(p,0x21) * ff + Rf(v,0xb1c));
+                    // 0x00467dc6 CALL _ftol2 on (bf4 - dt), store-then-test, exactly the
+                    // gearbox/boost-timer shape decoded in
+                    // re/analysis/data/A8_ftol_gearbox_timer_20260825.md.
+                    int r = (int)((float)Ri(v, 0xbf4) - dt);
+                    Wi(v, 0xbf4, r);
+                    if (r < 1) { Wi(v, 0xbf8, 0); Wi(v, 0xbf4, 0); }
+                }
+            }
+            // +0xbf8 == 2 arm (0x00467dee..0x00467e44): ZEROES the accumulator instead of
+            // adding to it. Nothing in the standalone sets state 2 (the only writers of
+            // +0xbf8 in the whole image are inside this function — verified with
+            // `py -3.12 re/tools/findoffset.py --writes 0xbf8`, 4 accesses, all in
+            // 0x00467dd7..0x00467e44), so this arm is unreachable today; it is ported
+            // anyway so the state machine is complete rather than half-present.
+            // NOTE the original reads +0xbf4 as a FLOAT here and as an int everywhere else;
+            // that asymmetry is verbatim (decomp line 301, `local_d4 = *(float *)(ESI+0xbf4)`).
+            if (Ri(v, 0xbf8) == 2) {
+                float bf4f = Rf(v, 0xbf4);
+                if (bf4f == kZero) { Wi(v, 0xbf8, 0); }
+                else {
+                    Wi(v, 0xb1c, 0); Wi(v, 0xb18, 0); Wi(v, 0xb14, 0);
+                    int r = (int)((float)Ri(v, 0xbf4) - dt);
+                    Wi(v, 0xbf4, r);
+                    if (r < 1) { Wi(v, 0xbf8, 0); Wi(v, 0xbf4, 0); }
+                }
+            }
         }
         // PER-WHEEL SPIN p[0] — real law, 2026-08-25 (call 0x00467e7e):
         //   (int)( dot(p[0x1f..0x21], vel(+0x9b0..)) / (p[-0xa] * _DAT_005cea24) )
