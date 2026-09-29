@@ -1,0 +1,12 @@
+Frozen standalone binary for the sea-level investigation (2026-09-29).
+Another child session holds mashedmod/build; this copy is the only exe this
+session runs.
+
+source        mashedmod/build/mashed_re.exe   (mtime 2026-09-29 00:36)
+size          1938432
+sha256        8192AB692CFE3CACC62AF5B6DE5F9BAD1E2D53D06F2216A5AE81C26F27A899EE
+git HEAD      83a7b6ea529f9a349da11eacdd30d11a4838f0fb  (race/first-frame-parity)
+dirty at copy M mashedmod/src/mashed_re/Vehicle/VehiclePhysicsRun.cpp (other session)
+DLLs          none -- mashedmod/build contains no .dll; the exe links its deps
+              statically / from the system. Runs with CWD = repo root so it
+              resolves original/TOASTART assets.

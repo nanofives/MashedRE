@@ -1,0 +1,66 @@
+# Arctic sea level + 5x5 tiling. NOT APPLIED by the investigation session
+# (another session owns mashedmod/src). Rationale + every RVA:
+# re/analysis/SEA_LEVEL_2026-09-29.md
+# Apply from the repo root:  git apply verify/sea_level_20260929/sea_tile.patch
+# Base: TrackRenderer.cpp as of git 83a7b6ea.
+--- a/mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp
++++ b/mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp
+@@ -1697,15 +1697,55 @@
+             static const bool s_skip_excluded =
+                 std::getenv("MASHED_TRACK_SKIP_EXCLUDED") != nullptr;
+             for (const auto& c : clumps) {
+                 if (excluded[c.idx] && s_skip_excluded) continue;
+                 Prop p;
+                 if (load_prop(c.dff, &p, &track_light)) {
+-                    D3DMATRIX id;
+-                    MatIdentity(&id);
+-                    p.instances.push_back(id);
++                    // [SEA-TILE 2026-09-29] Arctic's sea is NOT placed by its DFF
++                    // (SEA.DFF frame[0].pos == (0,0,0), verts Y 0.000..0.904) and NOT
++                    // by COURSE.LUA (no placement command exists in the 68-entry Lua
++                    // binding table). The original places it from a PER-TRACK hook:
++                    //   table 0x005f33f8, stride 0x48 = {char name[0x10]; u32 Course_Id;
++                    //   void* slot[13]}; record "arctic" at 0x005f3488 with Course_Id 0
++                    //   at 0x005f3498 and slot 0 at 0x005f349c = 0x00448940. Selector
++                    //   0x0041e870 (called 0x00426eaf) matches Course_Id into
++                    //   DAT_0063d7e4; thunk 0x0041e8b0 (jmp [rec+0x14]) is invoked at
++                    //   0x0042709f with push 0x646e58 (the course object).
++                    // FUN_00448940, for clump index 2 ([course+0x10118] @ 0x0044899d):
++                    //   0x004489bb  mov [esp+0x4c], 0xc0833333   ; translation.y = -4.1
++                    //   0x00448a47  call 0x004e6ab0 x24          ; RpClumpClone; the tile
++                    //               array 0x008963e0..0x00896440 is 1 base + 24 clones
++                    //   0x00448a65  mov [esp+0x10], 0xc3160000   ; X start = -150.0
++                    //   0x00448a80  mov [esp+0x18], 0xc3160000   ; Z start = -150.0
++                    //   0x00448a6f/0x00448a88  mov ebp,5 / mov ebx,5   ; 5x5
++                    //   0x00448aa2  call 0x004c1340(frame,&v,0)  ; translate, REPLACE
++                    //   0x00448aab/0x00448ac1  fadd [0x005cc728]  ; step = +60.0
++                    // => 25 tiles at X,Z in {-150,-90,-30,30,90}, all at Y = -4.1.
++                    // Confirmed live: the original's clump[2] frame carries modelling ==
++                    // LTM == translate(-150,-4.1,-150) -- tile 0 of that grid
++                    // (verify/sea_level_20260929/orig_sea_matrix.json).
++                    // At identity the sheet landed on the road (GRAPH.BSP median Y under
++                    // the start grid = 0.250) and covered 70.39% of the s8 frame.
++                    // re/analysis/SEA_LEVEL_2026-09-29.md
++                    static const bool s_no_sea_tile =
++                        std::getenv("MASHED_NO_SEA_TILE") != nullptr;
++                    if (!s_no_sea_tile && course_id_ == 0 && c.idx == 2) {
++                        for (int ix = 0; ix < 5; ++ix)          // outer loop = X
++                            for (int iz = 0; iz < 5; ++iz) {    // inner loop = Z
++                                D3DMATRIX m;
++                                MatIdentity(&m);
++                                m._41 = -150.f + 60.f * static_cast<float>(ix);
++                                m._42 = -4.1f;
++                                m._43 = -150.f + 60.f * static_cast<float>(iz);
++                                p.instances.push_back(m);
++                            }
++                    } else {
++                        D3DMATRIX id;
++                        MatIdentity(&id);
++                        p.instances.push_back(id);
++                    }
+                     props_.push_back(std::move(p));
+                 }
+             }
+         }
+     }
+ 
