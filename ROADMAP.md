@@ -758,6 +758,52 @@ criteria are all met since 2026-09-26 (`D3_MODES_2026-09-26.md`).
   2026-09-28).** New AI criterion (e): under matched ctrl bytes, AI-car speed gain (full-throttle
   median and the first-11-call launch) matches the original within its own run-to-run spread,
   with the spread measured and written here before the post-fix capture.
+- **AI criterion (e) — the tolerance, written 2026-09-28 BEFORE any post-fix capture.**
+  Derivation, definitions and the reasoning: `re/analysis/D3_DRIVE_2026-09-28.md` §2.
+  Scorer: `py -3.12 re/tools/ai_speed_env.py --check <csv>` (the numbers below are its
+  `REFERENCE` / `BAND_PCT` / `GATED` constants). Window = `ai_ctrl_window.py`'s 220 calls
+  from the first `c4 != 0`, so (b) and (e) score the same span.
+
+  | stat | definition | gated |
+  |---|---|---|
+  | `launch` | `rec_9e4[idx 11] - rec_9e4[idx 0]` | **yes** |
+  | `ft_median_m0` | median `rec_9e4` over window calls `[0,k)` with `c4 == 255` and `c5 == 0`; `k` = index of the ORIGINAL's first `ai_mode != 0` call, measured 100 / 23 / 39 for cars 1 / 2 / 3 | **yes** |
+  | `ft_median` | the same median over all 220 calls | no — reported |
+
+  The full-window median is reported, not gated, because past `k` the original's speed
+  history has run through behaviour modes 3 and 7 that the standalone cannot have while
+  **D3-R1** is open (mode 7 sets `ctrl[4] = 0x40` at `0x0041688d`), so a median taken
+  there scores the missing modes rather than the drive model. `[0,k)` is the only span on
+  which both sides are in mode 0. This is not a weakening: the current gap on
+  `ft_median_m0` (-50 / -90 / -82%) is **larger** than on the full-window median
+  (+25.5 / +6.8 / +5.2%).
+
+  Reference = the original's measured value, from **10 regime-0 captures** (8 committed
+  `verify/d3_ai_20260927b/p{1,2,3,4,8,10,11,12}` + 2 same-day `verify/d3_drive_20260928/e3,e4`).
+  All ten return these to the printed 0.1; only `start_frame` varies. **The original's
+  run-to-run spread is exactly zero**, so the band cannot come from it and is stated as
+  inherited: **±2%**, the speed bound already on record in `U9138_FIX_2026-09-28.md` §5
+  ("driving-median speed: within 2%"), and looser than the 0.74% D2 itself accepted on
+  the player car.
+
+  | car | `launch` ref → band | `ft_median_m0` ref → band | port today | port today |
+  |---|---|---|---:|---:|
+  | 1 | 1425.7 → 1397.2..1454.2 | 2551.6 → 2500.6..2602.6 | 182.1 (-87.2%) | 1264.5 (-50.4%) |
+  | 2 | 2052.5 → 2011.5..2093.6 | 2052.5 → 2011.5..2093.6 | 182.1 (-91.1%) | 210.6 (-89.7%) |
+  | 3 | 2055.0 → 2013.9..2096.1 | 2278.1 → 2232.5..2323.7 | 182.1 (-91.1%) | 407.0 (-82.1%) |
+
+  **(e) PASSES iff both gated stats are inside the band on all three cars.** Regime
+  condition: `flag_a368` (`DAT_0089a368`, `== 1` arm at `0x004169e0`) must be 0 on every
+  window call — it takes 0, 1 and 2 on this recipe, and a capture with `regime0=0` on a
+  car is re-taken, not scored. `e1`/`e2` are the two off-regime originals, committed as
+  evidence and excluded from the envelope.
+- **PHYSICS DRIFT, D2 scope, opened 2026-09-28.** The D2 clean-env recipe on the **player**
+  car now gives slip 1500-2000 `0.1283` and driving-median `2508`, where D2 closed
+  2026-09-14 with `0.1916` / `1887` (original `0.1913` / `1901`). Present in pre-U-9138
+  builds, so a D3 commit landed after 2026-09-14 moved physics. Bisect plan (endpoints,
+  17-commit candidate set, discriminator, classification rule):
+  `re/analysis/D3_DRIVE_2026-09-28.md` §1. **The D2 table has to be back inside its
+  2026-09-14 values before (e) is scored.**
 - **D3 closes** when powerups (c) replays `s2` clean AND U-D3-DRIVE meets (e). Powerups (c)
   is DONE (2026-09-28d, `s2` decision CLEAN and contact CLEAN); **U-D3-DRIVE is now the only
   remaining gate**. D3-R1 (car 1) then carries forward like the D1 residue.
