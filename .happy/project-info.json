@@ -1,42 +1,31 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-09-29T03:55:00Z",
+  "updatedAt": "2026-09-29T02:40:00Z",
   "sections": [
     {
-      "heading": "Phase",
+      "heading": "Roadmap",
       "fields": [
-        { "label": "Active phase", "value": "D3 — default AI, powerups, modes", "kind": "text" },
-        { "label": "D3 status", "value": "NOT CLOSED — AI (e) fails, AI (b) regressed", "kind": "text" },
-        { "label": "Closed phases", "value": ["D0 2026-08-15", "D1 2026-08-19 (residue R1-R3)", "D2 2026-09-14"], "kind": "list" },
+        { "label": "Phase", "value": "D3 — default AI, powerups, modes", "kind": "text" },
+        { "label": "D3 status", "value": "NOT CLOSED — 1 gate failure left", "kind": "text" },
+        { "label": "Sole blocker", "value": "AI criterion (b), steer bands, all 3 cars", "kind": "text" },
         { "label": "Branch", "value": "race/first-frame-parity (not pushed)", "kind": "text" }
       ]
     },
     {
       "heading": "D3 gate",
       "fields": [
-        { "label": "Powerups (c)", "value": "MET — 11/11 decision CLEAN", "kind": "text" },
-        { "label": "Modes (a)-(d)", "value": "MET — rule 3 oracle GREEN", "kind": "text" },
-        { "label": "AI (b)", "value": "REGRESSED — cars 2/3 PASS -> FAIL (U-9142)", "kind": "text" },
-        { "label": "AI (e) speed", "value": "FAILS -46% to -90% on all 3 cars (U-9140)", "kind": "text" }
+        { "label": "Met", "value": ["Powerups (c): all 9 types", "Modes (a)-(d): oracle GREEN", "AI (a), (c), (d)", "AI (e): NEW 2026-09-29, within 0.05%"], "kind": "list" },
+        { "label": "Not met", "value": "AI (b)", "kind": "text" }
       ]
     },
     {
-      "heading": "Open decisions for Mariano",
+      "heading": "Last session — U-D3-DRIVE-FORCE (2026-09-29)",
       "fields": [
-        { "label": "Waiting on you", "value": [
-            "U-9142: keep the spawn settle (faithful) or revert it (keeps AI (b))?",
-            "U-9141: the a8 D2 gate recipe needs a controlled arm — change it?"
-          ], "kind": "list" },
-        { "label": "Next command", "value": "U-9140 cadence check: MASHED_COUPLING_DIAG=1", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "Last session (2026-09-28)",
-      "fields": [
-        { "label": "Fixed", "value": "Spawn settle — first physics step ran with zero suspension load", "kind": "text" },
-        { "label": "Refuted", "value": ["gearbox constants (they match)", "f39747af Collision rebind (inert)", "the AI tick perturbing the player"], "kind": "list" },
-        { "label": "Drift verdict", "value": "first bad 09a73dc6 — the instrument, not a drive law", "kind": "text" },
-        { "label": "Kickoff", "value": "re/NEXT_SESSION.md", "kind": "text" }
+        { "label": "Root cause", "value": "A6a start boost (+0xbf8) never ported", "kind": "text" },
+        { "label": "Criterion (e)", "value": "PASS 3/3 cars, all 6 gated values <0.05% off", "kind": "text" },
+        { "label": "Resolved", "value": ["U-9140 (the 8-9x drive-force gap)", "U-9142 (keep the spawn settle)"], "kind": "list" },
+        { "label": "Filed", "value": ["U-9143 boost-arm writer not located", "U-9144 boost order pinned to {2,3}"], "kind": "list" },
+        { "label": "Commits", "value": "9573f3a3, d165e6b4", "kind": "text" }
       ]
     }
   ]

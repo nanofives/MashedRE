@@ -364,3 +364,23 @@ lights where the original's own progress values are equal too).
 Builds were made in place at this branch's HEAD; no worktree was created, no old-commit probe
 was run, `original/` was never modified, and every `mashed_re.exe` / `MASHED.exe` PID was
 spawned and killed by the harness that spawned it, by PID.
+
+---
+
+## 8. Disclosure — three concurrent commits landed on this branch, and none can confound
+
+The three investigation sessions running alongside this one committed to
+`race/first-frame-parity` while it was measuring. Disclosed here rather than left for
+someone to find in the log:
+
+| commit | subject | files under `mashedmod/` |
+|---|---|---|
+| `883e268e` | U-SEA-ARCTIC: the sea sits at road height … | **0** |
+| `869513ba` | Pickups: the orb is a scaffold billboard … | **0** |
+| `ebbc4c68` | Gray car chassis: 27 non-render atomics … | **0** |
+
+Checked, not assumed: `git show --name-only --format= <sha> -- mashedmod/` is empty for all
+three. Every one touches only `re/analysis/` and `verify/`, so none of them can change
+`mashed_re.exe` or `mashed_re_dev.asi`, and every measurement in this note was taken on a
+build whose source differs from `1bedbf2c` only by this session's own four files. No probe of
+an old commit was made, so nothing needed a `git checkout HEAD -- mashedmod/` restore.
