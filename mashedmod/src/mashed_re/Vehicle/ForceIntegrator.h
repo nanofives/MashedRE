@@ -108,6 +108,11 @@ extern float g_suspScale;       // _DAT_0088e5f0
 // hardcoded 100.0f at BodyOrientationIntegrate.cpp:218, which made the port's body yaw
 // rate a flat 100/105 of the original's.
 extern float g_handlingTorque;  // _DAT_00613108
+// [U-9151 2026-09-29] DIAG ONLY. The matrix pointer VehicleWheelForceIntegrate (A5,
+// 0x0046ddb0) was handed on this frame, recorded so the exe's A6b witness can check the
+// original's invariant that A5 and A6b get the SAME pointer (A4 computes it once at
+// 0x00470699 and passes it at 0x00470918 and 0x0047093b). Not read by any law.
+extern float* g_a6bA5Matrix;
 extern float g_a8WheelLe4[4];   // [A8-ORIENT] per-wheel le4 from Integrate2 block #4 (diag only)
 extern float g_a8WheelLd4[4];   // [A8-ORIENT] per-wheel ld4 from Integrate2 block #4 (diag only)
 

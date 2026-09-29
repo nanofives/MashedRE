@@ -29,6 +29,7 @@ float g_suspScale      = 0.0f;       // _DAT_0088e5f0
 // overwrites it from the handling table on every init, which on the reference
 // scenario gives the original's measured 105.0.
 float g_handlingTorque = 100.0f;     // _DAT_00613108
+float* g_a6bA5Matrix   = nullptr;    // [U-9151] diag only
 float g_a8WheelLe4[4]  = {0,0,0,0};  // [A8-ORIENT] diag only
 float g_a8WheelLd4[4]  = {0,0,0,0};  // [A8-ORIENT] diag only
 A6aWheelDump g_a6aDump[4] = {};      // [U-9147] A6a block-#4 capture, diag only

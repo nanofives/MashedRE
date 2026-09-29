@@ -54,7 +54,28 @@ static constexpr std::uintptr_t kInvalidComboStr = 0x0061811cu;  // "Invalid_com
 
 typedef void (__cdecl *RwMatrixMulFn)(float* out, const float* a, const float* b);
 
+// [U-9151] the standalone stand-in for the device slot at devBase+8 (= 0x005cb2a0).
+namespace mashed_re { namespace Math {
+void __cdecl RwMatrixMultiplyCPU(float* out, const float* a, const float* b);
+} }
+
 static inline void copy16(float* dst, const float* src) { std::memcpy(dst, src, 16 * sizeof(float)); }
+
+// [U-9151 2026-09-29] which source supplies the combine-mode-1/2 matrix multiply.
+//   0 = read the live RW device table at 0x007d4028 / 0x007d3ff8 (the .asi default;
+//       those addresses are mapped only inside MASHED.exe).
+//   1 = the standalone CPU path: identWord = the measured [devBase+4] = 0x00020000,
+//       mul = Math::RwMatrixMultiplyCPU, the verbatim transcription of the measured
+//       [devBase+8] = 0x005cb2a0.
+// It is a variable rather than an #ifdef so the .asi can expose the STANDALONE path as
+// its own export and diff it against 0x004c4a50 directly -- otherwise the exe's branch
+// could only be argued for by composition, never measured.
+static int s_forceCpuMul =
+#ifdef MASHED_STANDALONE
+    1;
+#else
+    0;
+#endif
 
 // 0x004c4a50
 extern "C" __declspec(dllexport)
@@ -156,9 +177,31 @@ float* __cdecl RwMatrixRotateInner(float* matrix, const float* axis_n,
     }
 
     if (mode == 1 || mode == 2) {
-        const std::uint32_t devBase  = *reinterpret_cast<const std::uint32_t*>(kDevTableBase)
-                                     + *reinterpret_cast<const std::uint32_t*>(kRwGlobalsBase);
-        const std::uint32_t identWord = *reinterpret_cast<const std::uint32_t*>(devBase + 4);
+        // [U-9151 2026-09-29] STANDALONE PATH. kDevTableBase / kRwGlobalsBase are MASHED
+        // image addresses: mapped in the injected dev .asi, NOT in mashed_re.exe, so this
+        // block used to exit the standalone with 0xC0000005 the first time A6b went
+        // airborne (D2_REOPEN_2026-09-29.md 4.6, 3 runs of 3). Both values the block reads
+        // are now supplied without the table:
+        //   identWord  the measured [devBase+4] = 0x00020000, which is also the
+        //              `and eax, 0x20000` literal at 0x004c4622 in RwMatrixMultiply --
+        //              two independent witnesses for the same constant.
+        //   mul        the measured [devBase+8] = 0x005cb2a0, ported verbatim as
+        //              Math::RwMatrixMultiplyCPU. Bit-identical to the original on 12 of
+        //              12 matrix pairs including the untouched pads
+        //              (log/diff_rw_matrix_multiply_cpu.csv, hook rw_matrix_multiply_cpu).
+        // The .asi keeps reading the live table, so the dev target is unchanged.
+        std::uint32_t identWord;
+        RwMatrixMulFn mul;
+        if (s_forceCpuMul) {
+            identWord = kIdentityMask;
+            mul       = &mashed_re::Math::RwMatrixMultiplyCPU;
+        } else {
+            const std::uint32_t devBase =
+                  *reinterpret_cast<const std::uint32_t*>(kDevTableBase)
+                + *reinterpret_cast<const std::uint32_t*>(kRwGlobalsBase);
+            identWord = *reinterpret_cast<const std::uint32_t*>(devBase + 4);
+            mul       = *reinterpret_cast<RwMatrixMulFn*>(devBase + 8);
+        }
 
         std::uint32_t mflags;
         std::memcpy(&mflags, &matrix[3], 4);
@@ -170,7 +213,6 @@ float* __cdecl RwMatrixRotateInner(float* matrix, const float* axis_n,
         }
 
         float temp[16];
-        RwMatrixMulFn mul = *reinterpret_cast<RwMatrixMulFn*>(devBase + 8);
         if (mode == 1) mul(temp, m, matrix);   // preconcat:  R · matrix
         else           mul(temp, matrix, m);   // postconcat: matrix · R
         const std::uint32_t tf = mflags & 3u;
@@ -189,3 +231,18 @@ float* __cdecl RwMatrixRotateInner(float* matrix, const float* axis_n,
 }
 
 RH_ScopedInstall(RwMatrixRotateInner, 0x004c4a50);
+
+// [U-9151] The .asi-side handle on the STANDALONE branch: same body, forced onto the
+// CPU multiply, exported so `re/frida/run_diff.py rw_matrix_rotate_inner_cpu` can compare
+// it against the original 0x004c4a50 running its real device path. Not used by any
+// game code -- the exe reaches the same branch through s_forceCpuMul's initialiser.
+extern "C" __declspec(dllexport)
+float* __cdecl RwMatrixRotateInnerCPU_C(float* matrix, const float* axis_n,
+                                        float one_minus_cos, float sin_a, int mode)
+{
+    const int save = s_forceCpuMul;
+    s_forceCpuMul = 1;
+    float* r = RwMatrixRotateInner(matrix, axis_n, one_minus_cos, sin_a, mode);
+    s_forceCpuMul = save;
+    return r;
+}

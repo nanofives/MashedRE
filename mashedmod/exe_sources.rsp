@@ -54,6 +54,7 @@
 "Math\RwV3dTransformPointsCPU.cpp"
 "Math\RwMatrixRotate.cpp"
 "Math\RwMatrixRotateInner.cpp"
+"Math\RwMatrixMultiplyCpu.cpp"
 "Math\RwV3dNormalize.cpp"
 "Math\Vec3.cpp"
 "D3d9Render\RwWorldLoad.cpp"

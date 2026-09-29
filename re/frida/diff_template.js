@@ -172,6 +172,7 @@ let xfdBufs   = null;   // device_transform_dispatch: { out, mat, in }
 let matsBufs  = null;   // matrix_scale:    { mat, scale }
 let matrBufs  = null;   // matrix_rotate:   { mat, axis }
 let mriBufs   = null;   // matrix_rotate_inner: { mat, axis }
+let mmulBufs  = null;   // matrix_multiply: { out, a, b }
 let tmpF32    = null;   // 4-byte scratch for float→U32 extraction
 
 function readLutRoot(delta) {
@@ -1398,6 +1399,25 @@ function callFn(fn, input, buf) {
         return out.join(',');
     }
 
+    // MECHANISM: fn(out_ptr, a_ptr, b_ptr) cdecl, three 16-float RwMatrix buffers; seeds
+    // input.a[16] and input.b[16], fills `out` with 0xCD bytes first so an unwritten slot is
+    // visible rather than inheriting the previous test, calls fn, then reads ALL 16 output
+    // floats as u32. Unlike matrix_rotate/_inner the pad slots [3]/[7]/[11]/[15] ARE observed:
+    // 0x005cb2a0 never writes them, so they must still read 0xCDCDCDCD on both sides -- that is
+    // the check that the transcription writes exactly the 12 slots the original writes and no
+    // more. No CONFIG keys; tests=[{a:[16], b:[16]}].
+    if (CONFIG.arg_type === 'matrix_multiply') {
+        for (let j = 0; j < 16; j++) {
+            mmulBufs.a.add(j * 4).writeFloat(input.a[j]);
+            mmulBufs.b.add(j * 4).writeFloat(input.b[j]);
+            mmulBufs.out.add(j * 4).writeU32(0xCDCDCDCD);
+        }
+        fn(mmulBufs.out, mmulBufs.a, mmulBufs.b);
+        const out = [];
+        for (let j = 0; j < 16; j++) out.push(mmulBufs.out.add(j * 4).readU32());
+        return out.join(',');
+    }
+
     // MECHANISM: fn(mat_buf, scale_buf, mode_int); harness writes input.mat[16 floats] into
     // matsBufs.mat and input.scale[3 floats] into matsBufs.scale, calls fn in-place, reads back 13
     // of 16 dwords (skips indices 3/7/11 as flags) as comma-joined u32 fingerprint; return value
@@ -1591,6 +1611,9 @@ function runDiff() {
     }
     if (CONFIG.arg_type === 'matrix_rotate_inner') {
         mriBufs = { mat: Memory.alloc(64), axis: Memory.alloc(12) };
+    }
+    if (CONFIG.arg_type === 'matrix_multiply') {
+        mmulBufs = { out: Memory.alloc(64), a: Memory.alloc(64), b: Memory.alloc(64) };
     }
     if (CONFIG.arg_type === 'matrix_scale') {
         matsBufs = { mat: Memory.alloc(64), scale: Memory.alloc(12) };

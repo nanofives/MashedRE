@@ -48,6 +48,7 @@
 "Math\RwV3dTransformPointsCPU.cpp"
 "Math\RwMatrixRotate.cpp"
 "Math\RwMatrixRotateInner.cpp"
+"Math\RwMatrixMultiplyCpu.cpp"
 "Math\RwV2d.cpp"
 "Math\RwMatrixScale.cpp"
 "Frontend\TimerReset.cpp"

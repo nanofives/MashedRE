@@ -35,6 +35,8 @@
 #include <cstdint>
 #include <cstring>
 #include <cmath>
+#include <cstdio>    // [U-9151] MASHED_A6BTEST witness
+#include <cstdlib>
 
 namespace mashed_re {
 namespace Vehicle {
@@ -81,6 +83,47 @@ void Vehicle_AeroStabilize(int* self, float* orient, float dt)
     using namespace a6b;
     void* v = self;
     if (Rf(v, 0x9e0) != 0.0f) return;                 // grounded -> not airborne
+
+    // [U-9151 2026-09-29] exe-copy witness, DIAG ONLY, default-OFF, writes nothing when
+    // unset. MASHED_A6BTEST=<path> logs one line per call that gets past the airborne
+    // gate: whether `orient` is bound at all, whether it is the SAME pointer A5 was
+    // handed (the original's invariant — A4 computes the matrix once at 0x00470699 and
+    // gives the identical pointer to A5 at 0x00470918 and to A6b at 0x0047093b), the
+    // motion state that picks the branch, and the 16 matrix floats BEFORE and AFTER so
+    // `ndiff` says the rotation actually landed. This is the exe analogue of the .asi's
+    // `xf=%08x exp=%08x xfok=%d` self-test: `exp` cannot be the original's
+    // record+[record+0x9a8]*0x40+0x928 here, because the port keeps the basis in
+    // g_bodyBasis (U-9152), so the checkable invariant is A5-pointer equality instead.
+    // That difference is the point of the CONFIDENCE.md copy clause: this is the exe
+    // copy's OWN evidence, not the .asi's.
+    static const char* s_a6bt = std::getenv("MASHED_A6BTEST");
+    float before[16];
+    if (s_a6bt && orient) std::memcpy(before, orient, sizeof(before));
+    struct Witness {
+        const char* path; int* self; float* orient; float* bef; bool on; int state;
+        ~Witness() {
+            if (!on) return;
+            std::FILE* f = std::fopen(path, "a");
+            if (!f) return;
+            std::fprintf(f, "A6B slot_rec=%p orient=%p a5=%p xfok=%d state=%d bound=%d",
+                         (void*)self, (void*)orient, (void*)g_a6bA5Matrix,
+                         (orient && orient == g_a6bA5Matrix) ? 1 : 0,
+                         state, orient ? 1 : 0);
+            int nd = 0;
+            if (orient) {
+                for (int i = 0; i < 16; ++i) {
+                    std::uint32_t a, b;
+                    std::memcpy(&a, &bef[i], 4); std::memcpy(&b, &orient[i], 4);
+                    if (a != b) ++nd;
+                }
+                std::fprintf(f, " ndiff=%d after=[", nd);
+                for (int i = 0; i < 16; ++i) std::fprintf(f, "%s%.9g", i ? "," : "", orient[i]);
+                std::fprintf(f, "]");
+            }
+            std::fprintf(f, "\n");
+            std::fclose(f);
+        }
+    } w{ s_a6bt, self, orient, before, s_a6bt != nullptr, Ri(v, 0x9f0) };
 
     if (Ri(v, 0x9f0) == 0) {                           // motion state 0: auto-level
         const float dts = dt * kDtScale;

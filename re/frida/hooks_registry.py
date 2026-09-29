@@ -3356,6 +3356,77 @@ HOOKS = {
         ],
     },
 
+    # 0x004c4a50 through the STANDALONE branch (U-9151, 2026-09-29).
+    #
+    # Same body as rw_matrix_rotate_inner, but forced onto the CPU multiply instead of the
+    # RW device table -- i.e. exactly the code path mashed_re.exe runs. It exists so the
+    # exe's branch is MEASURED against the original rather than argued for by composing
+    # two other GREENs. Modes 1 and 2 are the point of the vector list: mode 0 never
+    # touches either multiply.
+    'rw_matrix_rotate_inner_cpu': {
+        'rva':            0x004c4a50,
+        'export':         'RwMatrixRotateInnerCPU_C',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'pointer', 'float', 'float', 'int32']},
+        'arg_type':       'matrix_rotate_inner',
+        'lut_root_delta': 0,   # device-table readiness poll (the ORIGINAL side still needs it)
+        'path1_tests': [
+            {'matrix': _MIXED, 'axis': [0.0, 0.0, 1.0],                     'omc': 1.0,        'sin': 1.0,        'mode': 1},
+            {'matrix': _MIXED, 'axis': [1.0, 0.0, 0.0],                     'omc': 0.5,        'sin': 0.8660254,  'mode': 2},
+            {'matrix': _ROTA,  'axis': [0.0, 1.0, 0.0],                     'omc': 0.5,        'sin': 0.8660254,  'mode': 1},
+            {'matrix': _ROTA,  'axis': [0.57735027, 0.57735027, 0.57735027],'omc': 0.5,        'sin': 0.8660254,  'mode': 2},
+            {'matrix': _TRANS, 'axis': [0.0, 0.0, 1.0],                     'omc': 1.0,        'sin': 1.0,        'mode': 1},
+            {'matrix': _ROTZ45,'axis': [1.0, 0.0, 0.0],                     'omc': 0.29289323, 'sin': 0.70710677, 'mode': 2},
+            {'matrix': _SCALE2,'axis': [0.0, 1.0, 0.0],                     'omc': 0.13397461, 'sin': 0.5,        'mode': 1},
+            {'matrix': _IDENT, 'axis': [0.0, 0.0, 1.0],                     'omc': 1.0,        'sin': 1.0,        'mode': 1},
+            {'matrix': _IDENT, 'axis': [1.0, 0.0, 0.0],                     'omc': 1.0,        'sin': 1.0,        'mode': 0},
+            {'matrix': _MIXED, 'axis': [0.6, 0.8, 0.0],                     'omc': 1.5,        'sin': 0.8660254,  'mode': 2},
+        ],
+        'path2_tests': [
+            {'matrix': _MIXED, 'axis': [0.0, 0.0, 1.0], 'omc': 1.0, 'sin': 1.0, 'mode': 1},
+            {'matrix': _ROTA,  'axis': [1.0, 0.0, 0.0], 'omc': 0.5, 'sin': 0.8660254, 'mode': 2},
+        ],
+    },
+
+    # 0x005cb2a0  the RenderWare DEVICE matrix multiply (U-9151, 2026-09-29).
+    #
+    # This is NOT reached through RwMatrixMultiply 0x004c4600 -- that RVA is a dispatcher
+    # (identity short-circuits, then `call [ecx+ebp+8]`). The address here is the function
+    # that pointer actually holds, read live off the running anchored original with
+    # `scenario_launch.py --peek i007d4028+007d3ff8+8:u` during a race: 0x005cb2a0, stable
+    # across samples. RET at 0x005cb402.
+    #
+    # cdecl void(out, A, B); out = A * B in RenderWare's row-vector 4x3-at-stride-0x10
+    # layout, x87 accumulation rounded to f32 once per component. The port side is the
+    # naked verbatim transcription in Math/RwMatrixMultiplyCpu.cpp, which exists so that
+    # `mashed_re.exe` can run RwMatrixRotate combine modes 1/2 without the device table
+    # (U-9151 / D2_REOPEN_2026-09-29.md 4.6: binding A6b's orient without it exits
+    # 0xC0000005). Pads [3]/[7]/[11]/[15] are DELIBERATELY observed -- neither side writes
+    # them, so they must both read back the 0xCDCDCDCD the harness pre-fills.
+    'rw_matrix_multiply_cpu': {
+        'rva':            0x005cb2a0,
+        'export':         'RwMatrixMultiplyCPU_C',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'pointer', 'pointer']},
+        'arg_type':       'matrix_multiply',
+        'path1_tests': [
+            {'a': _IDENT,  'b': _IDENT},
+            {'a': _IDENT,  'b': _MIXED},
+            {'a': _MIXED,  'b': _IDENT},
+            {'a': _MIXED,  'b': _MIXED},
+            {'a': _ROTZ90, 'b': _TRANS},
+            {'a': _TRANS,  'b': _ROTZ90},
+            {'a': _ROTZ45, 'b': _ROTZ45},
+            {'a': _ROTA,   'b': _MIXED},
+            {'a': _MIXED,  'b': _ROTA},
+            {'a': _SCALE2, 'b': _ROTY90},
+            {'a': _ROTA,   'b': _ROTA},
+            {'a': _ROTY90, 'b': _TRANS},
+        ],
+        'path2_tests': [
+            {'a': _MIXED, 'b': _MIXED},
+            {'a': _ROTA,  'b': _ROTZ45},
+        ],
+    },
+
     # 0x004c4a50  RwMatrixRotateInner  (WS-A2 follow-up; Rodrigues builder, RwMatrixRotate callee)
     # fn(matrix, axis_n, one_minus_cos, sin, mode). mode 0 (replace) is pure (no device);
     # modes 1/2 (pre/postconcat) dispatch the RW device matrix-mult. axis must be unit.

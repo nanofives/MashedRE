@@ -203,6 +203,7 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     // `xform` IS g_bodyBasis[slot], the port's stand-in for the original's +0x928
     // matrix. Passing the zeroed +0x928 instead zeroed forward -> no motion
     // (WS-A-VERIFY-3). Reconciling the two storage locations is [UNCERTAIN U-9152].
+    g_a6bA5Matrix = static_cast<float*>(xform);   // [U-9151] diag: A5's matrix pointer
     VehicleWheelForceIntegrate(self, dt, xform);                  // A5 0x0046ddb0 (ported)
     // A6a 0x00467650. param_1 is the CAR INDEX, decoded 2026-09-29 (was passed 0 with an
     // [UNCERTAIN] note): the dispatcher FUN_00470c70 calls A4 as
@@ -235,8 +236,21 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     // pointer, so whatever object plays A5's matrix role must also play A6b's. In
     // this build that object would be `xform` (g_bodyBasis[slot]) — see the A5 note.
     //
-    // STILL nullptr HERE, AND THAT IS NOW A MEASURED BLOCKER, NOT AN OVERSIGHT
-    // [UNCERTAIN U-9151]. Passing `xform` was tried 2026-09-29 and CRASHES the
+    // U-9151 UNBLOCKED 2026-09-29 (later the same day) — `xform` IS NOW BOUND.
+    // The blocker below was real and is recorded verbatim; what removed it is
+    // Math/RwMatrixMultiplyCpu.cpp, a naked verbatim transcription of the device
+    // multiply the pointer actually holds. Which function that is was MEASURED, not
+    // guessed: `scenario_launch.py --peek i007d4028+007d3ff8+8:u` on the running
+    // anchored original reads 0x005cb2a0 (and +4 reads 0x00020000, the identity mask),
+    // stable across samples. The transcription is bit-identical to the original on
+    // 12 of 12 matrix pairs, pads included — log/diff_rw_matrix_multiply_cpu.csv,
+    // hook `rw_matrix_multiply_cpu`, GREEN. RwMatrixRotateInner.cpp now uses it under
+    // #ifdef MASHED_STANDALONE, so the exe no longer touches the device table and the
+    // 0xC0000005 below cannot recur. The .asi is unchanged (it still reads the live
+    // table). Historical record of the blocker follows.
+    //
+    // WAS: STILL nullptr HERE, AND THAT IS A MEASURED BLOCKER, NOT AN OVERSIGHT
+    // [UNCERTAIN U-9151]. Passing `xform` was tried 2026-09-29 and CRASHED the
     // standalone: exit code 0xC0000005 at ~3 s of the a8 solo recipe, 3 runs of 3
     // (verify/d2_reopen_20260929/solo_a6bfix{1,2,3}/PROVENANCE.txt). Cause, not
     // guessed — read from the code path: A6b's entire effect is two
@@ -259,7 +273,7 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     // The two conditions are disjoint. The .asi copy's dispatch IS fixed and verified
     // (Call_A6b, 144 samples incl. 64 airborne bit-identical) — see
     // re/analysis/D2_REOPEN_2026-09-29.md §4.
-    Vehicle_AeroStabilize(self, nullptr, dt);                    // A6b 0x00468980
+    Vehicle_AeroStabilize(self, static_cast<float*>(xform), dt);  // A6b 0x00468980
 
     if (Ib(v, 0x9f0) == 2) {                                       // parked/stopped state
         Fb(v, 0x9b0) *= vc::kParkedDamp;

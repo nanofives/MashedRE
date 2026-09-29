@@ -1501,10 +1501,28 @@ rpc.exports = {
     for (const part of spec.split(',')) {
       if (!part) continue;
       const bits = part.split(':');
-      const rva = parseInt(bits[0], 16);
+      // a leading '@' means the hex is an ABSOLUTE address (a heap pointer read out
+      // of an earlier peek), not an image RVA. Needed for the RenderWare device
+      // table: [0x007d4028] and [0x007d3ff8] are an offset and a runtime base, and
+      // the function pointers live at base+offset, off-image.
+      // 'i<rvaA>+<rvaB>+<off>' is the RenderWare device-table form: read the u32 at
+      // each of rvaA and rvaB, add them and `off`, then read THAT absolute address.
+      // RwMatrixMultiply 0x004c4600 does exactly this -- ecx=[0x007d4028],
+      // ebp=[0x007d3ff8], then [ecx+ebp+4] (caps) and [ecx+ebp+8] (the mul fn ptr).
+      const abs = bits[0][0] === '@';
+      const ind = bits[0][0] === 'i';
+      const rva = parseInt(abs || ind ? bits[0].slice(1) : bits[0], 16);
       const ty = (bits[1] || 'f');
       try {
-        const p = ga(rva);
+        let p;
+        if (ind) {
+          const t = bits[0].slice(1).split('+');
+          const b = ga(parseInt(t[0], 16)).readU32() + ga(parseInt(t[1], 16)).readU32()
+                  + parseInt(t[2] || '0', 16);
+          p = ptr(b);
+        } else {
+          p = abs ? ptr(rva) : ga(rva);
+        }
         out[bits[0]] = ty === 'f' ? p.readFloat()
                      : ty === 'd' ? p.readDouble()
                      : ty === 'u' ? p.readU32() : p.readS32();
