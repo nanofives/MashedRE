@@ -1490,6 +1490,28 @@ rpc.exports = {
       return 'ctrl slot table was [' + out.join(',') + '] -> [0,1,2,3]';
     } catch(e){ return 'ERR ' + e; }
   },
+  // [U-9147 2026-09-29] --peek: read image globals by RVA. NO Interceptor, no hook,
+  // no write -- a plain Memory read, so it is exempt from the hot-path rule in
+  // CLAUDE.md ("Frida overhead on hot paths"). Spec is "rva:type[,...]" with type in
+  // {f=float32, d=float64, i=int32, u=uint32}. Added because g_suspScale-class
+  // globals (_DAT_0088e5f0, _DAT_00613108) are NOT in the 0xd04 statediff record and
+  // a cross-side law comparison needs their ORIGINAL values measured, not assumed.
+  peek: function(spec){
+    const out = {};
+    for (const part of spec.split(',')) {
+      if (!part) continue;
+      const bits = part.split(':');
+      const rva = parseInt(bits[0], 16);
+      const ty = (bits[1] || 'f');
+      try {
+        const p = ga(rva);
+        out[bits[0]] = ty === 'f' ? p.readFloat()
+                     : ty === 'd' ? p.readDouble()
+                     : ty === 'u' ? p.readU32() : p.readS32();
+      } catch(e){ out[bits[0]] = 'ERR ' + e; }
+    }
+    return JSON.stringify(out);
+  },
   aiStepArm: function(withLocals){ return aiStepArm(withLocals); },
   aiStepDrain: function(){ return aiStepDrain(); },
   aiStepStats: function(){ return JSON.stringify({armed:AS.armed, calls:AS.calls, pending:AS.rows.length, err:AS.err,
@@ -1931,6 +1953,12 @@ def main():
                          "must STILL pass (no-regression) — that is how the load-dispatcher hooks "
                          "get their booted-race verification. Exits shortly after the assert "
                          "(no long hold needed); combine with --hold 0.")
+    ap.add_argument("--peek", default="",
+                    help="[U-9147] comma-separated image globals to READ periodically, "
+                         "'rva:type' with type f/d/i/u (default f). No Interceptor, no "
+                         "hook, no write. Use for globals that are not in the 0xd04 "
+                         "statediff record, e.g. 0088e5f0:f (g_suspScale) or "
+                         "00613108:f (the steer-torque constant).")
     ap.add_argument("--spike-telemetry", default="",
                     help="tag: sample the player car at 10 Hz (render pos/vel/speed/yaw-rate/"
                          "heading/grounded) and write log/d1_spike_<tag>.json. In control "
@@ -2186,6 +2214,9 @@ def main():
                             sched_i += 1
                 except Exception as ex:
                     print(f"\n  [schedule] step failed: {ex}")
+            if args.peek and n % 6 == 0:   # [U-9147] plain global reads, no hook
+                try: print(f"\n  [peek] +{time.time()-t0:.1f}s", E.peek(args.peek))
+                except Exception as ex: print(f"\n  [peek] failed: {ex}")
             if args.bypass_proxy and not bypass_armed and time.time() - t0 >= args.bypass_at:
                 bypass_armed = True
                 print(f"\n  [spike] +{time.time()-t0:.1f}s", E.arm_bypass())

@@ -1033,6 +1033,84 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         }
     }
 
+    // [U-9147 2026-09-29] MASHED_A6ADUMP=<path> -> one line per FRAME for slot 0 with
+    // BOTH phases of A6a block #4, at %.17g. DIAG ONLY, default-OFF, writes nothing
+    // when unset.
+    //
+    //   act.*   A6a's OWN values, captured at the instruction that computes them
+    //           (Integrate2.cpp block #4). This is the ground truth the replay tool
+    //           re/tools/statediff/a6a_replay.py validates itself against.
+    //   snap.*  the SAME record fields read here, i.e. at the render-tick phase the
+    //           original's .msd capture sees them.
+    //
+    // Both are needed because the original side only ever gives the snapshot phase.
+    // Replaying the law from `snap` and comparing the prediction to `act` measures how
+    // much the phase difference costs; only if that cost is small is a snapshot-driven
+    // cross-side comparison (this tool's predecessor a8_wheelfit.py) sound at all.
+    {
+        static const char* s_a6ad = std::getenv("MASHED_A6ADUMP");
+        static long s_a6f = 0;
+        if (s_a6ad && slot == 0) {
+            ++s_a6f;
+            if (std::FILE* lf = std::fopen(s_a6ad, "a")) {
+                std::fprintf(lf, "f=%ld", s_a6f);
+                std::fprintf(lf, " snap.vel=%.17g,%.17g,%.17g snap.av=%.17g,%.17g,%.17g"
+                                 " snap.bf=%.17g,%.17g,%.17g snap.sp=%.17g snap.angsp=%.17g"
+                                 " snap.gc=%.17g snap.susp=%.17g snap.steer=%.17g",
+                             F(r,0x9b0), F(r,0x9b4), F(r,0x9b8),
+                             F(r,0x9bc), F(r,0x9c0), F(r,0x9c4),
+                             F(r,0x9d4), F(r,0x9d8), F(r,0x9dc),
+                             F(r,0x9e4), F(r,0x9e8), F(r,0x9e0), g_suspScale, F(r,0x1a8));
+                std::fprintf(lf, " act.vel=%.17g,%.17g,%.17g act.av=%.17g,%.17g,%.17g"
+                                 " act.bf=%.17g,%.17g,%.17g act.sp=%.17g act.angsp=%.17g"
+                                 " act.gc=%.17g act.susp=%.17g",
+                             g_a6aFrame.vel[0], g_a6aFrame.vel[1], g_a6aFrame.vel[2],
+                             g_a6aFrame.av[0],  g_a6aFrame.av[1],  g_a6aFrame.av[2],
+                             g_a6aFrame.bf[0],  g_a6aFrame.bf[1],  g_a6aFrame.bf[2],
+                             g_a6aFrame.sp, g_a6aFrame.angSp, g_a6aFrame.gc,
+                             g_a6aFrame.suspScale);
+                // clamp #6: the record inputs at the snapshot phase, then A6a's own
+                // l_60 / grip / k. m18c/m2c/m34/tid/d00 are record fields the .msd
+                // also carries, so the same chain is computable on the original.
+                std::fprintf(lf, " snap.m18c=%.17g snap.m2c=%d snap.m34=%d snap.tid=%d"
+                                 " snap.d00=%d act.l60=%.17g act.m18c=%.17g act.speed=%.17g"
+                                 " act.grip=%.17g act.kvel=%.17g act.kav=%.17g act.arm=%d"
+                                 " act.clamp=%d",
+                             F(r,0x18c), I(r,0x2c), I(r,0x34), I(r,0x1f0), I(r,0xd00),
+                             g_a6aFrame.l60, g_a6aFrame.m18c, g_a6aFrame.speed,
+                             g_a6aFrame.grip, g_a6aFrame.kVel, g_a6aFrame.kAv,
+                             g_a6aFrame.arm, g_a6aFrame.clampRan);
+                for (int w = 0; w < 4; ++w) {
+                    const int b = 0x1a4 + w * 0xc4;
+                    const Vehicle::A6aWheelDump& D = g_a6aDump[w];
+                    std::fprintf(lf,
+                        " |w%d fired=%d spin=%d"
+                        " s.off=%.17g,%.17g,%.17g s.ax=%.17g,%.17g,%.17g"
+                        " s.p15=%.17g s.p16=%.17g s.p1b=%.17g s.pm1=%d s.pm3=%d s.pmb=%.17g"
+                        " s.F=%.17g,%.17g,%.17g"
+                        " a.off=%.17g,%.17g,%.17g a.ax=%.17g,%.17g,%.17g"
+                        " a.p15=%.17g a.p16=%.17g a.p1b=%.17g a.pm1=%d"
+                        " a.le=%.17g,%.17g,%.17g a.le4raw=%.17g a.le4=%.17g"
+                        " a.lat=%.17g,%.17g,%.17g a.ld4=%.17g a.lbc=%.17g a.f5=%.17g"
+                        " a.dF=%.17g,%.17g,%.17g",
+                        w, D.fired, D.spin,
+                        F(r,b-0x24), F(r,b-0x20), F(r,b-0x1c),
+                        F(r,b+0x7c), F(r,b+0x80), F(r,b+0x84),
+                        F(r,b+0x54), F(r,b+0x58), F(r,b+0x6c), I(r,b-0x04),
+                        I(r,b-0x0c), F(r,b-0x2c),
+                        F(r,b+0x70), F(r,b+0x74), F(r,b+0x78),
+                        D.off[0], D.off[1], D.off[2], D.ax[0], D.ax[1], D.ax[2],
+                        D.p15, D.p16, D.p1b, D.pm1,
+                        D.le[0], D.le[1], D.le[2], D.le4raw, D.le4,
+                        D.lat[0], D.lat[1], D.lat[2], D.ld4, D.lbc, D.f5,
+                        D.dF[0], D.dF[1], D.dF[2]);
+                }
+                std::fprintf(lf, "\n");
+                std::fclose(lf);
+            }
+        }
+    }
+
     // [U-D3-DRIVE 2026-09-28] MASHED_MOTION_DIAG_AI=1 -> the same gearbox/launch fields
     // for the OPPONENT slots, in their own file so the a8 reducers (which key on
     // `reseed=` ... `wax=[...]` and assume slot 0) are untouched. Criterion (e) is scored

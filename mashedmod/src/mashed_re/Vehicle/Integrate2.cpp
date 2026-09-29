@@ -228,6 +228,16 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     // A6a never reads the steer slots; steer can only arrive here as a rotation A5
     // already applied to these axes. If all four are identical, it did not arrive.
     float g7_ax[4][3] = {};
+    // [U-9147 2026-09-29] A6a block-#4 capture (diag only, see ForceIntegrator.h).
+    // Captured at A6a ENTRY so the frame-level inputs are the ones block #4 reads,
+    // NOT the post-frame snapshot the .msd sees. The port-side replay self-check
+    // needs both phases to be distinguishable.
+    for (int w = 0; w < 4; ++w) { g_a6aDump[w] = A6aWheelDump(); }
+    g_a6aFrame.vel[0] = Rf(v,0x9b0); g_a6aFrame.vel[1] = Rf(v,0x9b4); g_a6aFrame.vel[2] = Rf(v,0x9b8);
+    g_a6aFrame.av[0]  = Rf(v,0x9bc); g_a6aFrame.av[1]  = Rf(v,0x9c0); g_a6aFrame.av[2]  = Rf(v,0x9c4);
+    g_a6aFrame.bf[0]  = Rf(v,0x9d4); g_a6aFrame.bf[1]  = Rf(v,0x9d8); g_a6aFrame.bf[2]  = Rf(v,0x9dc);
+    g_a6aFrame.sp = Rf(v,0x9e4); g_a6aFrame.angSp = Rf(v,0x9e8); g_a6aFrame.gc = Rf(v,0x9e0);
+    g_a6aFrame.suspScale = g_suspScale;
     int* p = self + (0x1a4 / 4);
     for (int wheel = 0; wheel < 4; ++wheel, p += 0x31) {
         g7_ax[wheel][0] = Rp(p,0x1f); g7_ax[wheel][1] = Rp(p,0x20); g7_ax[wheel][2] = Rp(p,0x21);  // [G7-AXDIAG]
@@ -400,8 +410,10 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
             }
             // orientation/spin check: any ang-vel component outside [kAngLo, kAngHi]
             float le0, ldc, ld8, le4;
+            int d_spin = 0;   // [U-9147] which arm of :414 ran
             float avx = Rf(v,0x9bc), avy = Rf(v,0x9c0), avz = Rf(v,0x9c4);
             if (avx < kAngLo || kAngHi < avx || avy < kAngLo || kAngHi < avy || avz < kAngLo || kAngHi < avz) {
+                d_spin = 1;
                 float m40[16]; Rw_MatrixFromAxisAngle(m40, (const float*)((char*)v + 0x9bc), k270, 0);  // FUN_004c4d20 mode 0
                 float src[3] = { Rp(p,-9), Rp(p,-8), Rp(p,-7) }, dst[3];
                 Rw_TransformPoints(dst, src, 1, m40);          // FUN_004c3df0 (CPU device-transform)
@@ -437,6 +449,18 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 // same way it is fitted on the original's record fields.
                 if (wheel >= 0 && wheel < 4) { g_a8WheelLe4[wheel] = le4; g_a8WheelLd4[wheel] = ld4; }
                 unsigned l94 = (unsigned)p[-1];
+                // [U-9147 2026-09-29] capture A6a's OWN lateral basis and scale. `lat`
+                // here is lac/la8/la4 (:437) -- the quantity a8_wheelfit.py used to
+                // rebuild from a 2-D velocity heading, which is why its cross-side fit
+                // was withdrawn. dF/f5 are filled below, after the branch picks them.
+                A6aWheelDump& D = g_a6aDump[wheel];
+                D.off[0]=Rp(p,-9); D.off[1]=Rp(p,-8); D.off[2]=Rp(p,-7);
+                D.ax[0]=Rp(p,0x1f); D.ax[1]=Rp(p,0x20); D.ax[2]=Rp(p,0x21);
+                D.p15=Rp(p,0x15); D.p16=Rp(p,0x16); D.p1b=Rp(p,0x1b); D.pm1=p[-1];
+                D.le[0]=le0; D.le[1]=ldc; D.le[2]=ld8;
+                D.le4raw = Mag3(le0, ldc, ld8); D.le4 = le4;
+                D.lat[0]=lac; D.lat[1]=la8; D.lat[2]=la4; D.ld4=ld4;
+                D.lbc = lbc; D.spin = d_spin; D.fired = 1;
                 l_60 = (double)ld4 * (double)le4 + l_60;             // [U-A6A-FLOAT10]
                 if ((l94 & 0x100) == 0) {
                     float f5 = lbc;
@@ -446,13 +470,17 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                         float f4 = ld4 * Rf(v,0x9e4);
                         if (f4 < k50) f5 = f4 * k0p02 * lbc;
                     }
+                    D.f5 = f5;   // [U-9147] the APPLIED lateral scale, before f5 is reused
                     la0 = lac * f5 + la0; l9c = la8 * f5 + l9c; f5 = f5 * la4 + l98;
+                    D.dF[0]=la0; D.dF[1]=l9c; D.dF[2]=f5;   // [U-9147]
                     Wp(p, 0x1c, la0 + Rp(p,0x1c)); Wp(p, 0x1d, l9c + Rp(p,0x1d)); Wp(p, 0x1e, f5 + Rp(p,0x1e));
                 } else {
                     float f5 = lbc * k0p85;
                     float f4 = Rp(p,0x1b) * k3 * g_suspScale * (float)(int)l94 * k0p0019531 * k1p1;
                     if (bGrip) f4 = f4 * kHalf;
+                    D.f5 = f5;   // [U-9147]
                     la0 = lc8 * f4 + lac * f5; l9c = lc4 * f4 + la8 * f5; f5 = lc0 * f4 + f5 * la4;
+                    D.dF[0]=la0; D.dF[1]=l9c; D.dF[2]=f5;   // [U-9147]
                     Wp(p, 0x1c, la0 + Rp(p,0x1c)); Wp(p, 0x1d, l9c + Rp(p,0x1d)); Wp(p, 0x1e, f5 + Rp(p,0x1e));
                 }
             }
@@ -621,6 +649,10 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     if (Ri(v, 0x34) != 0) grip = ((float)Ri(v,0x34) * k0p1  + 1.0f) * grip;   // 005cc56c
 
     // ===== trailing speed-limit grip-clamp #6 (all-grounded) =====
+    // [U-9147 2026-09-29] clamp-#6 capture for MASHED_A6ADUMP (diag only)
+    g_a6aFrame.l60 = l_60; g_a6aFrame.m18c = Rf(v,0x18c); g_a6aFrame.speed = speed;
+    g_a6aFrame.grip = 0.f; g_a6aFrame.kVel = 0.f; g_a6aFrame.kAv = 1.f;
+    g_a6aFrame.arm = -1; g_a6aFrame.clampRan = 0;
     if (speed != 0.0f && Ri(v, 0x9e0) == 0x40800000) {
         float fwdDot = Rf(v,0x9dc)*Rf(v,0x9b8) + Rf(v,0x9d4)*Rf(v,0x9b0) + Rf(v,0x9d8)*Rf(v,0x9b4);
         float fx = Rf(v,0x9b0) - fwdDot*Rf(v,0x9d4);   // lateral velocity
@@ -677,20 +709,25 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 }
             }
         }
+        g_a6aFrame.grip = grip; g_a6aFrame.clampRan = 1;   // [U-9147]
         if (k32768 < grip) {
             float k = (k1e7 - grip) * k9p9998e8;
             if (k < 0.0f) k = 0.0f;
             k = k * k0p1 + k * k0p1;                    // *0.2
+            g_a6aFrame.kVel = k; g_a6aFrame.arm = 1;    // [U-9147]
             Wf(v,0x9b0, Rf(v,0x9b0) - fx*k); Wf(v,0x9b4, Rf(v,0x9b4) - fy*k); Wf(v,0x9b8, Rf(v,0x9b8) - fz*k);
             k = 1.0f - k;
+            g_a6aFrame.kAv = k;                         // [U-9147]
             Wf(v,0x9bc, k*Rf(v,0x9bc)); Wf(v,0x9c0, k*Rf(v,0x9c0)); Wf(v,0x9c4, k*Rf(v,0x9c4));
             return;
         }
         float k = (k32768 - grip) * k3p0518e5;
         if (k < k0p1) k = k0p1;
+        g_a6aFrame.kVel = k; g_a6aFrame.arm = 0;        // [U-9147]
         Wf(v,0x9b0, Rf(v,0x9b0) - fx*k); Wf(v,0x9b4, Rf(v,0x9b4) - fy*k); Wf(v,0x9b8, Rf(v,0x9b8) - fz*k);
         if (k < kHalf) k = kHalf;
         k = 1.0f - k;
+        g_a6aFrame.kAv = k;                             // [U-9147]
         Wf(v,0x9bc, k*Rf(v,0x9bc)); Wf(v,0x9c0, k*Rf(v,0x9c0)); Wf(v,0x9c4, k*Rf(v,0x9c4));
         if (Ri(v,0xb20) == 0 && speed < k16) {         // parked at low speed -> full stop
             Wf(v,0x9b0,0.0f); Wf(v,0x9b4,0.0f); Wf(v,0x9b8,0.0f);

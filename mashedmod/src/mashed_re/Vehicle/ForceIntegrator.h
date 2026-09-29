@@ -103,6 +103,49 @@ extern float g_suspDtTerm;      // _DAT_0088e610 (gravity*dt per frame)
 extern float g_suspScale;       // _DAT_0088e5f0
 extern float g_a8WheelLe4[4];   // [A8-ORIENT] per-wheel le4 from Integrate2 block #4 (diag only)
 extern float g_a8WheelLd4[4];   // [A8-ORIENT] per-wheel ld4 from Integrate2 block #4 (diag only)
+
+// [U-9147 2026-09-29] A6a block-#4 per-wheel capture, DIAG ONLY, written by
+// Integrate2.cpp block #4 (0x00467650) on every call, printed for slot 0 only by
+// VehiclePhysicsRun.cpp under MASHED_A6ADUMP. It exists because the previous
+// cross-side lateral-coefficient comparison (re/tools/statediff/a8_wheelfit.py) was
+// unsound in BOTH modes -- it rebuilt the port's `lat` from a 2-D velocity heading
+// instead of reading A6a's own vector -- and was withdrawn
+// (re/analysis/D2_REOPEN_2026-09-29.md §6.0 third correction). These are the actual
+// values A6a computed, so a replay of the law can be validated against them before
+// the same replay is trusted on the original's .msd record fields.
+struct A6aWheelDump {
+    float off[3];      // p[-9..-7]     wheel offset            (b-0x24/-0x20/-0x1c)
+    float ax[3];       // p[0x1f..0x21] wheel forward axis       (b+0x7c/+0x80/+0x84)
+    float p15, p16, p1b;  // b+0x54, b+0x58, b+0x6c
+    int   pm1;         // p[-1]         b-0x04 (the (l94 & 0x100) gate)
+    float le[3];       // the wheel-point relative velocity, Integrate2.cpp:412/415
+    float le4raw;      // |le| BEFORE the 1024 cap
+    float le4;         // le4 AFTER the cap (what lbc consumes)
+    float lat[3];      // lac/la8/la4, Integrate2.cpp:427
+    float ld4;         // |lat|,       Integrate2.cpp:428
+    float lbc;         // Integrate2.cpp:424
+    float f5;          // the APPLIED lateral scale, :442/:447/:452
+    float dF[3];       // the block-#4 delta actually added to p[0x1c..0x1e]
+    int   spin;        // 1 = the Integrate2.cpp:404 spin branch was taken
+    int   fired;       // 1 = block #4 ran (:418 gate passed) this call
+};
+extern A6aWheelDump g_a6aDump[4];
+// frame-level A6a inputs, captured at A6a ENTRY (before its tail touches +0x9b0..)
+struct A6aFrameDump {
+    float vel[3], av[3], bf[3];   // +0x9b0.., +0x9bc.., +0x9d4..
+    float sp, angSp, gc;          // +0x9e4, +0x9e8, +0x9e0
+    float suspScale;              // g_suspScale as block #4 read it
+    // trailing grip-clamp #6 (Integrate2.cpp:635-722): the DIRECT slip suppressor.
+    // It removes `lateral_velocity * kVel` from +0x9b0.. and scales +0x9bc.. by kAv.
+    double l60;                   // sum(ld4*le4) over the wheels block #4 fired on
+    float  m18c;                  // +0x18c, the l_60 divisor at :635
+    float  speed;                 // the speed :633 recomputed and :657 multiplies by
+    float  grip;                  // AFTER the track/modifier scaling and the *speed
+    float  kVel, kAv;             // the applied bleed and the angular scale (1-k)
+    int    arm;                   // 1 = the `32768 < grip` hi arm, 0 = lo
+    int    clampRan;              // the :652 gate passed
+};
+extern A6aFrameDump g_a6aFrame;
 extern float g_rubberBand[16];  // DAT_008989b0 (per-player catch-up float)
 extern int   g_rubberRefCar;    // DAT_008989c8
 extern int*  g_vehicleArrayBase;// DAT_008815a0 (16-car array; other cars' contact summary + drafting)
