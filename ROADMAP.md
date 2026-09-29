@@ -519,16 +519,32 @@ opinion is an opinion about the scaffold, not about the port.
 > `PLAYER_REGRESSION_2026-09-29.md` §7.3.6's "the only one of the five still capable of
 > explaining it" — all five dual-copy leads are now eliminated.
 >
-> **U-9147's first divergent channel is identified: the REAR-WHEEL lateral force.**
-> `a8_wheelfit.py` on the matched solo arm gives a port/original lateral-coefficient ratio
-> of **1.02 / 1.02** on the front wheels and **1.37 / 1.36** on the rears. The original's
-> two rear `|lat|` are equal at 0.184; the port's are 0.272 / 0.241. The original's rear
-> fit residual is 0.31-0.33 against the port's 0.09-0.11, so the original's rear law is
-> nonlinear where the port's is nearly a constant times `lat`. Leading hypothesis, **not
-> established**: the port reports `le4 = 1024.0` in every wheel and band, i.e. the
-> `min(le4, 1024)` clamp is saturated throughout, and the original's `le4` is unmeasured
-> (the reducer sets it NaN). Next command is to recover `le4` on the original side and
-> re-run the table.
+> **U-9147's first divergent channel is identified: the REAR-WHEEL lateral coefficient
+> `p[0x15]`.** (This paragraph was rewritten later the same day — the first version's
+> headline "the rears carry ~36% too much lateral grip" was an artifact of the measuring
+> tool. Full correction: `D2_REOPEN_2026-09-29.md` §6.0.)
+>
+> `a8_wheelfit.py` built the original side's `u` from the BODY velocity while the port
+> side logs A6a's own internal value, which on this scenario is the WHEEL-POINT velocity —
+> A6a's spin branch (`Integrate2.cpp:404`) is taken in **853 of 853** scored frames
+> (max `|av.y|` = 1.858 against a 1e-5 band). Tool fixed (`--lat-mode wheelpoint`, default;
+> `--lat-mode body` reproduces the artifact).
+>
+> The fix self-validates: with the correct `u`, the original's `a/p1b` becomes near-constant
+> across wheels (**105.4 / 106.3 / 105.9 / 108.6**, against **-97.8 / -96.4 / -139.0 /
+> -121.6** before), and the implied `p[0x15]` it recovers (**0.1484 / 0.1496 / 0.1491 /
+> 0.1529**) matches the value **read directly from the record** at `b+0x54` — **0.15 on all
+> four wheels, one distinct value over 853 frames** — to within 2%.
+>
+> **Corrected finding:** implied `p[0x15]` port vs original is **0.945 / 0.925** on the
+> fronts and **1.802 / 1.523** on the rears. The original's lateral coefficient is uniform
+> across all four wheels; the port's rears are ~1.8x and ~1.5x too large. `p[0x1b]` matches
+> on both sides, `le4` is capped at 1024 on **both** sides (so the clamp-saturation
+> hypothesis is **refuted**), and `g_suspScale` is a global that would scale all four wheels
+> equally — so the divergence is in the per-wheel field itself. Next command: find the
+> port's writer of that slot (`rec + 0x170 + i*0xc4 + 0x88` in the port's addressing) and
+> compare against the original's constant 0.15. A3 `0x0046b540` is the suspect, not yet
+> established.
 >
 > **Guards after the change** (reported, not gates — the shipping exe is behaviourally
 > unchanged, since the only exe edit was reverted): criterion (e) `ai_speed_env.py --check`

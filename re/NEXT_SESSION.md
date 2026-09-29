@@ -30,25 +30,36 @@ Superseded kickoff: the earlier 2026-09-29 one (player-regression U-9141 / U-914
 >   entry; max variant ±5%); "the port chases the velocity heading"
 >   (`BodyOrient_IntegrateStep` **is** wired at `VehiclePhysicsRun.cpp:812`).
 >
-> **PICK UP HERE — U-9147's first divergent channel is the REAR-WHEEL lateral force.**
-> `a8_wheelfit.py` port/original lateral coefficient: front **1.019 / 1.021**, rear
-> **1.371 / 1.360**. The rears carry ~36% too much lateral grip, which is the right sign and
-> size for the slip deficit. Original rear `|lat|` 0.184/0.184 (equal) vs port 0.272/0.241;
-> original rear fit residual 0.31-0.33 vs port 0.09-0.11, so the original's rear law is
-> nonlinear where the port's is nearly `constant * lat`. `p1b` (+0x6c) matches on all four
-> wheels, so the input is right and the law is not.
+> **PICK UP HERE — U-9147's first divergent channel is the REAR-WHEEL lateral coefficient
+> `p[0x15]`.** The port has ~**0.269 / 0.233** on the rear wheels where the original has a
+> **uniform 0.15 on all four**. Full analysis: `D2_REOPEN_2026-09-29.md` §6.0.
 >
-> **Next command, and it decides the leading hypothesis:** the port reports `le4 = 1024.0`
-> in every wheel and band — `min(le4, 1024)` is saturated throughout — while the original's
-> `le4` is unmeasured (`re/tools/statediff/a8_wheelfit.py:48` sets it NaN). Recover `le4` on
-> the original side (the field A6a `FUN_00467650` feeds `min(le4,1024)` from; see
-> `Integrate2.cpp` block #4), add it to `samples_original`, and re-run:
+> Two things were settled getting here, so don't redo them:
+> - **`a8_wheelfit.py` was measuring two different quantities** and its first answer
+>   ("rears carry 36% too much grip") was an artifact. A6a's spin branch
+>   (`Integrate2.cpp:404`) builds `u` from the WHEEL-POINT velocity and is taken in
+>   **853/853** scored frames; the tool's original side used body velocity. **Fixed** —
+>   `--lat-mode wheelpoint` is the default, `--lat-mode body` reproduces the artifact.
+> - **The `min(le4,1024)` clamp hypothesis is REFUTED.** The original's `le4` is also 1024
+>   in every wheel and band.
+>
+> The corrected tool self-validates: the original's `a/p1b` is now near-constant
+> (105.4 / 106.3 / 105.9 / 108.6) and the `p[0x15]` it implies (0.1484 / 0.1496 / 0.1491 /
+> 0.1529) matches the value read straight out of the record at `b+0x54` (0.15, one distinct
+> value over 853 frames) to within 2%. Trust these numbers.
+>
+> **Next command:** find the port's writer of that per-wheel slot and compare it to 0.15.
+> Address: reducer `b + 0x54` with `b = 0x1a4 + w*0xc4`; in the port's own wheel-block
+> addressing (`rec + 0x170 + i*0xc4`, `VehicleInit.cpp:111`) the same slot is **`+0x88`**
+> (`0x1a4 - 0x170 = 0x34`). It is **not** the `WB(rec, 0x54, ...)` at `VehicleInit.cpp:106`
+> — that one is record-relative and a different slot; don't confuse them. A3 `0x0046b540`
+> is the suspect (spawn-time wheel init, already carrying `[UNCERTAIN U-A3-TABLE]` at
+> `VehicleInit.cpp:36`) but **is not established** — establish it from the original's
+> disassembly, not from the port. Re-run to confirm a fix:
 > ```
 > py -3.12 re/tools/statediff/a8_wheelfit.py --orig verify/a8_steer_20260824/orig_steerR.msd \
 >     --port verify/d2_reopen_20260929/solo_post1/motion_diag.log
 > ```
-> If the original's rear `le4 < 1024`, the clamp is the defect and the fix is in the port's
-> `le4` producer, not the coefficient. **This is a hypothesis, not a finding.**
 >
 > Then, in order: **U-9152** (the `+0x928` vs `g_bodyBasis` storage split),
 > **`RecoverOffMesh`** (`TrackRenderer.cpp:2142-2164`, halves `car_speed_` 11-59x per 1080
