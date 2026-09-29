@@ -742,6 +742,17 @@ int main(int argc, char** argv) {
             std::fclose(pf);
         }
     }
+    // MEASURED TRAP, 2026-09-28: with MASHED_PU_CONTACTDUMP unset the port column
+    // is all zeros and every armed row reads DIVERGES -- a confident RED produced
+    // by a missing output channel, not by a defect. Refuse to print a verdict
+    // rather than print a false one.
+    if (!std::getenv("MASHED_PU_CONTACTDUMP")) {
+        std::printf("\nCONTACT CALL SITES: NOT TESTED -- MASHED_PU_CONTACTDUMP is"
+                    " unset, so the port emitted no rows to count. Re-run with it"
+                    " pointed at a path; an all-zero port column reads as DIVERGES"
+                    " on every armed row.\n");
+        return 0;
+    }
 
     bool misBad = false;
     if (haveMis) {
