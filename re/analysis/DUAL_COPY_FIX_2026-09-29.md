@@ -232,7 +232,36 @@ and **before either compile step**. `MASHED_SKIP_RVA_LINT=1` skips it.
 |---|---|---|
 | `DUP-IN-TARGET` | **72** | one RVA, two bodies in the SAME target (exe 18, asi 54). Only one can run. |
 | `CROSS-TARGET` | **11** | a body in an exe-only TU **and** in an asi-only TU — the dual-copy class |
-| `DUP-INSTALL` | **27** | one RVA, two **active** `RH_ScopedInstall` in `.asi` TUs. Kept as a **separate list**: it is the U-9065 defect (one body silently dead), not a body-count defect. **Six are C4** — `0x00407a20`, `0x004098a0`, `0x0040b9a0`, `0x0040ba60`, `0x0046cbb0`, `0x00498bf0`. 27 matches the audit §6 exactly. |
+| `DUP-INSTALL` | **27** | one RVA, two **active** `RH_ScopedInstall` in `.asi` TUs. Kept as a **separate list** (§4.0): it is the U-9065 defect (one body silently dead), not a body-count defect. 27 matches the audit §6 exactly. |
+
+### 4.0 The 27 double-installed RVAs, as a separate list
+
+Two active `RH_ScopedInstall` for one RVA means one body is silently dead in the `.asi`, and
+the row cannot say which — the U-9065 failure (`path1-green-does-not-prove-install`). Counts
+and membership re-derived here independently and they match the audit §6 exactly: **21 C3 + 6
+C4**.
+
+**Six at C4** (each `install A | install B`):
+
+| RVA | name on the row | the two installing TUs |
+|---|---|---|
+| `0x00407a20` | `Table8a9648Get` | `Gameplay/RangeTable_ah1.cpp` \| `Util/PromoLoop_round42.cpp` |
+| `0x004098a0` | `Ret63a5f0` | `Gameplay/RangeTable_ah1.cpp` \| `Util/PromoLoop_round40.cpp` |
+| `0x0040b9a0` | `MaxScoreFlags40b9a0` | `Gameplay/ScoreMasks_ah3.cpp` \| `Util/PromoLoop_sessionB.cpp` |
+| `0x0040ba60` | `Active4Slots40ba60` | `Gameplay/ScoreMasks_ah3.cpp` \| `Util/PromoLoop_sessionB.cpp` |
+| `0x0046cbb0` | `CarStatePairGet` | `Util/PromoLoop_round25.cpp` \| `Vehicle/VehicleState.cpp` |
+| `0x00498bf0` | `DisplayActiveFlagGet` | `Boot/FrameDispatch.cpp` \| `Boot/VideoConfig.cpp` |
+
+**Twenty-one at C3:** `0x00407640`, `0x004077e0`, `0x0040b970`, `0x0040ba00`, `0x00415d00`,
+`0x00416060`, `0x00426cb0`, `0x004298c0`, `0x0042af50`, `0x0042bde0`, `0x00431f30`,
+`0x0046c730`, `0x0046c750`, `0x0046cbe0`, `0x004955b0`, `0x00496930`, `0x004f8660`,
+`0x004f8690`, `0x00556cc0`, `0x00556cd0`, `0x005b3580`.
+
+**None of these 27 was demoted.** The audit examined the bodies and found them to agree in
+every case it read, so this is tracker hygiene rather than behaviour — but it is exactly what
+cost U-9065 a round, and the C4 rows cannot say which of their two installs won (the winner is
+decided by static-init, i.e. **link order**, so it can flip when a source list changes). The
+fix is deleting one `RH_ScopedInstall` per pair; it is item (3) in the D4 attack order.
 
 Shared scanner `scripts/rva_body_scan.py` restates the audit §2 method mechanically so the
 guard and the backfill cannot drift apart. Two refinements the audit did not need:
