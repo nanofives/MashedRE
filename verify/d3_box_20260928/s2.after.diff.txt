@@ -1,0 +1,4 @@
+  [0] MISSILE  frames=  33 CLEAN          checked=ammo:32,canfire_rets:33,code_post:33,deact_ra:33,fire_modes:33,jet:32,life:32,prev3:33
+  [1] MORTAR   frames= 119 CLEAN          checked=ammo:118,canfire_rets:119,code_post:119,cooldown:118,deact_ra:119,fire_modes:119,prev3:119
+  [2] MISSILE  frames=  72 CLEAN          checked=ammo:71,canfire_rets:72,code_post:72,deact_ra:72,fire_modes:72,jet:71,life:71,prev3:72
+VERDICT: CLEAN

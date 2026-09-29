@@ -1,0 +1,25 @@
+sweep after the fix (MASHED_PU_FORCE unset)
+o3  decision=CLEAN            contact=
+o4  decision=CLEAN            contact=
+c2  decision=CLEAN            contact=CLEAN  (not-armed rows had no Frida list
+c3  decision=CLEAN            contact=CLEAN  (not-armed rows had no Frida list
+g2  decision=CLEAN            contact=CLEAN  (not-armed rows had no Frida list
+g3  decision=CLEAN            contact=DIVERGES  (not-armed rows had no Frida l
+g4  decision=CLEAN            contact=CLEAN  (no --puhook-aim channel: the AIM
+m1  decision=CLEAN            contact=CLEAN  (not-armed rows had no Frida list
+m2  decision=CLEAN            contact=CLEAN  (not-armed rows had no Frida list
+s1  decision=CLEAN            contact=CLEAN
+s2  decision=CLEAN            contact=CLEAN
+
+sweep with MASHED_PU_FORCE=nobox (non-degeneracy control)
+o3  decision=CLEAN            contact=
+o4  decision=CLEAN            contact=
+c2  decision=CLEAN            contact=CLEAN  (not-armed rows had no Frida list
+c3  decision=CLEAN            contact=CLEAN  (not-armed rows had no Frida list
+g2  decision=CLEAN            contact=CLEAN  (not-armed rows had no Frida list
+g3  decision=CLEAN            contact=DIVERGES  (not-armed rows had no Frida l
+g4  decision=CLEAN            contact=CLEAN  (no --puhook-aim channel: the AIM
+m1  decision=CLEAN            contact=CLEAN  (not-armed rows had no Frida list
+m2  decision=CLEAN            contact=CLEAN  (not-armed rows had no Frida list
+s1  decision=CLEAN            contact=CLEAN
+s2  decision=181 mismatches   contact=DIVERGES

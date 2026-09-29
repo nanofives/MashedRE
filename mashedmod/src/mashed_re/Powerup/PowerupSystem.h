@@ -204,6 +204,23 @@ public:
     int  ActiveCode(int s) const { return slots_[s].activeCode; }
     Slot&       slot(int s)       { return slots_[s]; }
 
+    // --- per-slot BOX STATE, the original's DAT_0068d1f0[slot] ----------------
+    // The dispatcher reads it at 0x0045bc6b, BEFORE the armed test at 0x0045bcab,
+    // and three of its values short-circuit the whole per-slot pass (see Tick).
+    // The only writer outside the dispatcher is the bare setter FUN_0045ba00
+    // (0x0045ba00: `MOV [ECX*4+0x68d1f0],EAX`, cdecl idx/value), called with:
+    //   1  FUN_004111c0 @0x004111c0 (race start, slot has a car)
+    //      FUN_0040e590 @0x0040e590, FUN_00424eb0 @0x00424eb0 (x2)
+    //   4  FUN_004111c0 @0x004111c0 (race start, slot has NO car)
+    //   2  FUN_00422fd0 @0x00422fd0, FUN_0040be50 @0x0040be50
+    // Those five callers are NOT ported; 1 is the initial value here and the
+    // host supplies the rest through SetBoxState (pu_replay feeds the capture's
+    // `boxstate` column). MEASURED: on verify/d3_contact_20260928b/s2 slot 0 the
+    // original sits at 3 for the whole third activation and never calls CANFIRE
+    // or FIRE, while the port fired -- 181 decision mismatches.
+    void SetBoxState(int s, int v) { boxState_[s] = v; }   // FUN_0045ba00
+    int  BoxState(int s) const     { return boxState_[s]; }
+
     // Cook-equivalent input latch for one slot: prev := cur, then cur := new
     // (FUN_00496530 0x00496552 copy, then the rewrite). Call once per frame per
     // slot BEFORE Tick.
@@ -234,6 +251,9 @@ public:
 private:
     IPowerupBackend* be_ = nullptr;
     Slot             slots_[kSlots];
+    // DAT_0068d1f0[0..3]. 1 = what FUN_004111c0 @0x004111c0 writes for a slot
+    // that has a car; the non-1 values have no producer in this build.
+    int              boxState_[kSlots] = {1, 1, 1, 1};
     HostCar          owners_[kSlots];
     int              cur_ = 0;
     std::uint32_t    frame_ = 0;

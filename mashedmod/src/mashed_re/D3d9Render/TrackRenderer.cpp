@@ -3499,6 +3499,14 @@ void TrackRenderer::TickPowerupDispatch(float dt) {
         if (static_cast<std::size_t>(s - 1) < pu_ai_.size()) cars[s] = pu_ai_[static_cast<std::size_t>(s - 1)];
         else { cars[s] = Powerup::HostCar(); cars[s].owner = s; cars[s].alive = false; }
     }
+    // Box state DAT_0068d1f0[slot], the dispatcher's gate at 0x0045bc6b. Only the
+    // race-start assignment of FUN_004111c0 @0x004111c0 is mirrored here (1 when
+    // the slot has a car, 4 when it does not); the wreck value 2 has no producer
+    // in this build -- FUN_00422fd0 / FUN_0040be50 are not ported -- so it is left
+    // unwritten rather than invented. Slots without a car were already skipped by
+    // the armed test, so 4 changes nothing observable today.
+    for (int s = 0; s < Powerup::PowerupSystem::kSlots; ++s)
+        pw_.SetBoxState(s, cars[s].alive ? 1 : 4);
 
     // slot 0 ownership: the HUD held orb stays until the armed type deactivates.
     if (!pw_.Armed(0)) {

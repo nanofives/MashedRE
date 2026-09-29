@@ -8,6 +8,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 namespace mashed_re {
 namespace Powerup {
@@ -41,6 +42,21 @@ static const int s_count = (int)(sizeof(s_table) / sizeof(s_table[0]));  // == 9
 
 const TypeEntry* PowerupSystem::Table()      { return s_table; }
 int              PowerupSystem::TableCount() { return s_count; }
+
+// NON-DEGENERACY CONTROL (harness only; unset in every real run).
+//   MASHED_PU_FORCE=nobox -> the box-state gate at 0x0045bc67..0x0045bca5 is
+//                            skipped, i.e. exactly the build that predates it.
+// MEASURED 2026-09-28: with it set, verify/d3_contact_20260928b/s2 goes back to
+// 181 decision mismatches and its SWEEP row back to 152 vs 185 -- so the gate is
+// what carries the fix, not some incidental change alongside it.
+static bool NoBoxGate() {
+    static int m = -1;
+    if (m < 0) {
+        const char* e = std::getenv("MASHED_PU_FORCE");
+        m = (e && std::strcmp(e, "nobox") == 0) ? 1 : 0;
+    }
+    return m != 0;
+}
 
 // ---- MASHED_PU_STEPDUMP (D3 WS-D measurement, 2026-09-26) -----------------
 // Same columns as scenario_launch.py --statediff-puhook so re/tools/pu_diff.py
@@ -140,12 +156,12 @@ void PowerupSystem::DumpRow(int s, int state, int codePre, int mode, int canf, i
     if (mode != kFireNone) std::snprintf(modes, sizeof modes, "%d", mode);
     char cf[8] = "";
     if (canf >= 0) std::snprintf(cf, sizeof cf, "%d", canf);
-    std::fprintf(f, "%u,%u,%d,%d,%d,%d,%d,%d,%d,0,%.9g,%s%s,%d,0,%d,0,%s,%s,%s,%s,%s\n",
+    std::fprintf(f, "%u,%u,%d,%d,%d,%d,%d,%d,%d,%d,%.9g,%s%s,%d,0,%d,0,%s,%s,%s,%s,%s\n",
                  frame_, frame_, state, s, s, k.fireCur ? 255 : 0, k.firePrev ? 255 : 0,
-                 k.discCur ? 255 : 0, k.discPrev ? 255 : 0, dt, act ? "A" : "",
+                 k.discCur ? 255 : 0, k.discPrev ? 255 : 0, boxState_[s], dt, act ? "A" : "",
                  act ? act : "", codePre, k.activeCode, modes, cf,
                  deact == 1 ? "0x45bd67" : deact == 2 ? "0x45be52"
-                            : deact == 3 ? "0x45bcfc" : "",
+                            : deact == 3 ? "0x45bcfc" : deact == 4 ? "0x45bc9d" : "",
                  dumpPre_[s], post);
 }
 
@@ -166,9 +182,12 @@ void PowerupSystem::DumpRow(int s, int state, int codePre, int mode, int canf, i
 // build the query returns 0 and the branch is inert. MEASURED under injection of
 // the original's own verdicts: verify/d3_contact_20260928 c2/c3/g2/g3, sweep
 // counts 280/309/207/309 exact and the one c2 deactivation reproduced.
-// NOT PORTED (recorded, not faked): the per-slot box state DAT_0068d1f0[slot]
-// (0x0045bc6b; states 2/3/4)
-// and the unarmed pickup branch (0x0045bd24..0x0045bd47, FUN_0045c010(slot,0x10)).
+// PORTED 2026-09-28 (D3 powerups): the per-slot BOX-STATE gate DAT_0068d1f0[slot]
+// (0x0045bc67..0x0045bca5; states 2/3/4 each short-circuit the pass). Its five
+// PRODUCERS are still not ported -- see SetBoxState in the header for the caller
+// list -- so the host supplies the value (pu_replay feeds the capture column,
+// TickPowerupDispatch mirrors FUN_004111c0's 1-or-4).
+// NOT PORTED (recorded, not faked): the unarmed pickup branch (0x0045bd24..0x0045bd47, FUN_0045c010(slot,0x10)).
 // Pickups arrive through Activate() from the host instead. Per-type mode pass
 // (entry+0x38/+0x3c, 0x0045be11) and the tail FUN_0045a190/FUN_00459000 likewise.
 void PowerupSystem::Tick(float dt, const HostCar cars[kSlots], int raceState) {
@@ -186,7 +205,32 @@ void PowerupSystem::Tick(float dt, const HostCar cars[kSlots], int raceState) {
     for (int s = 0; s < kSlots; ++s) {
         Slot& k = slots_[s];
         codePre[s] = k.activeCode; modeOut[s] = kFireNone; canfOut[s] = -1; deactOut[s] = 0;
-        if (raceState != 6) continue;             // 0x0045bc2b
+        if (raceState != 6) continue;             // 0x0045bc2b CMP EAX,6 / JNE 0x45bdc1
+        // BOX-STATE GATE, 0x0045bc67..0x0045bca5 (D3 powerups, 2026-09-28).
+        // Disassembled from the pinned anchor; EDI = slot+0x90, so [EDI+0x18] is
+        // the active ENTRY (+0xa8) and [EDI+0x1c] the armed handle (+0xac):
+        //   0x0045bc6b  MOV EAX,[ECX*4+0x68d1f0]  ; ECX = slot index
+        //   0x0045bc72  CMP EAX,4 / JE  0x45bdc1  ; 4 -> whole pass skipped
+        //   0x0045bc7b  CMP EAX,2 / JNE 0x45bca2
+        //   0x0045bc80  MOV EAX,[EDI+0x18]        ; the +0xa8 ENTRY, not +0xac
+        //   0x0045bc85  MOV [ECX*4+0x68d1f0],3    ; unconditional in this arm
+        //   0x0045bc90  JE  0x45bdc1              ; entry == 0 -> out
+        //   0x0045bc98  CALL 0x45bac0             ; deactivate, RA 0x45bc9d
+        //   0x0045bca2  CMP EAX,3 / JE  0x45bdc1  ; 3 -> whole pass skipped
+        // A skipped pass calls neither CANFIRE nor FIRE, which is exactly the
+        // empty canfire_rets/fire_modes the capture shows.
+        if (!NoBoxGate()) {
+            const int bs = boxState_[s];
+            if (bs == 4) continue;                                 // 0x0045bc75
+            if (bs == 2) {                                         // 0x0045bc7e
+                boxState_[s] = 3;                                  // 0x0045bc85
+                if (k.activeCode != kCodeNone) {                   // 0x0045bc83
+                    cur_ = s; Deactivate(s); deactOut[s] = 4;      // 0x0045bc98
+                }
+                continue;                                          // 0x0045bc9d
+            }
+            if (bs == 3) continue;                                 // 0x0045bca5
+        }
         if (!k.armed) continue;                   // 0x0045bcab MOV EAX,[EDI+0x1c] / JE 0x45bd1b
         // ARMED SWEEP, 0x0045bcb2..0x0045bd11 (D3 criterion (c), 2026-09-28).
         // Order matters: the original runs it BEFORE CANFIRE and RE-TESTS the

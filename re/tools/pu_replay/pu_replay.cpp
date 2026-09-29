@@ -51,6 +51,12 @@ namespace {
 
 struct Row {
     int state = 0, slot = 0, cur3 = 0, cur4 = 0, codePre = -1;
+    // DAT_0068d1f0[slot], the dispatcher's box-state gate (0x0045bc6b). It is an
+    // INPUT here: its five producers (FUN_004111c0 / FUN_00422fd0 / FUN_0040be50 /
+    // FUN_0040e590 / FUN_00424eb0) are not ported, so the value comes from the
+    // capture's `boxstate` column, carried forward across the quiet-gap rows the
+    // capture does not emit.
+    int box = 1;
     float dt = 0.f;
     int act = -1;
     bool oilDue = false;
@@ -273,6 +279,7 @@ int main(int argc, char** argv) {
     // Dispatcher calls where the slot held nothing produce no row in the capture;
     // they still ran (the slot was idle), so replay a quiet frame for each gap.
     long lastCall = -1;
+    int lastBox = 1;
     // code -> the set of slots that ever held it. A mode-1 (projectile) site can
     // only be attributed by call range when this set is exactly {want}.
     std::map<int, std::set<int> > heldBy;
@@ -293,9 +300,14 @@ int main(int argc, char** argv) {
         r.state = std::atoi(col("state").c_str());
         if (r.state != 6) continue;
         const long call = std::atol(col("call").c_str());
-        if (lastCall >= 0) for (long g = lastCall + 1; g < call; ++g) { Row q; q.state = 6; q.dt = rows.empty() ? 1.f / 60.f : rows.back().dt; rows.push_back(q); }
+        if (lastCall >= 0) for (long g = lastCall + 1; g < call; ++g) { Row q; q.state = 6; q.box = lastBox; q.dt = rows.empty() ? 1.f / 60.f : rows.back().dt; rows.push_back(q); }
         lastCall = call;
         r.slot = want;
+        {   // captures taken before the column existed leave it empty -> keep 1
+            const std::string b = col("boxstate");
+            if (!b.empty()) r.box = std::atoi(b.c_str());
+            lastBox = r.box;
+        }
         r.cur3 = std::atoi(col("cur3").c_str());
         r.cur4 = std::atoi(col("cur4").c_str());
         {   // dt: exact float bits "0x..." (captures from 2026-09-26 on) or decimal
@@ -636,6 +648,7 @@ int main(int argc, char** argv) {
     float mtrDrift = 0.f, mtrAgeDrift = 0.f;
     for (const Row& r : rows) {
         g_inj.curCall = r.call;
+        sys.SetBoxState(want, r.box);       // FUN_0045ba00, the un-ported producers
         if (r.act >= 0) sys.Activate(want, r.act);
         sys.SetInput(want, r.cur3 != 0, r.cur4 != 0);
         be.due = r.oilDue;
