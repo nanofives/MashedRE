@@ -481,7 +481,13 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // exactly one step, matching the original's 1083.3 / 541.7), then discard the
     // velocity that step injected and reset the gearbox pair. No position is touched —
     // StepCar returns motion through io.drive_delta, which the settle call discards.
-    if (!g_settled[slot]) {
+    // A/B revert only, per the v3 default-build rule that a flag may only turn the
+    // PORTED behaviour off: MASHED_NO_SPAWN_SETTLE=1 restores the pre-fix first step.
+    // It exists because the settle REGRESSES AI criterion (b) on cars 2 and 3 (see
+    // re/analysis/D3_DRIVE_2026-09-28.md section 4.3), so the two arms have to stay
+    // measurable against each other until that is adjudicated.
+    static const bool s_noSettle = (std::getenv("MASHED_NO_SPAWN_SETTLE") != nullptr);
+    if (!g_settled[slot] && !s_noSettle) {
         g_settled[slot] = true;          // set BEFORE the call: the inner step must not re-enter
         PlayerCarIO s = io;
         for (int k = 0; k < 8; ++k) s.input[k] = 0;
