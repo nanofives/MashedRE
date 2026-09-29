@@ -424,6 +424,29 @@ printed digit.
 
 On the scenario the original actually ran, HEAD is **-25.6% / +19.8% / +29.8%**.
 
-## 6. The fix, and the re-measurement
+## 6. The SOLO bisect — the real regression, on the reference's own scenario
 
-*(filled in last)*
+### 6.1 Pre-registered before the first solo probe
+
+`56ad3806` on the solo arm gives **`0.1916 / 0.2669 / 1931.36`** — identical to its
+three-opponent arm, and matching the reference (`0.1913 / 0.2498 / 1940.59`) and the D2 row.
+HEAD solo gives `0.1424 / 0.2993 / 2519.82`, deterministic on 2/2. So **HEAD vs `56ad3806`
+on the faithful, deterministic arm is `-25.7% / +12.1% / +30.5%`** — this is the real
+player regression, and the solo arm is a sound instrument for bisecting it.
+
+Classification rule, fixed here before any solo probe, same shape as §2.3 with the solo
+arm's own endpoints and one run per commit (the arm is deterministic):
+
+| verdict | `slip 1500-2000` | driving-median |
+|---|---|---|
+| **GOOD** | ≥ 0.185 | ≤ 2100 |
+| **BAD** | ≤ 0.160 | ≥ 2300 |
+| **INDETERMINATE** | anything else, or the two disagree → second run, then reported as a partial mover with its numbers | |
+
+The 1080-frame discard rule and the continue-past-first-bad rule of §2.3 carry over
+unchanged. The knob is applied at **every** commit including `56ad3806`, so unlike §2.2
+the treatment does not change across the search boundary.
+
+### 6.2 MEASURED
+
+*(filled in below)*
