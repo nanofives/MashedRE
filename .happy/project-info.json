@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-09-29T17:05:00Z",
+  "updatedAt": "2026-09-29T18:40:00Z",
   "sections": [
     {
       "heading": "Phase",
@@ -18,17 +18,18 @@
       ]
     },
     {
-      "heading": "U-9147 — localized",
+      "heading": "U-9147",
       "fields": [
-        { "label": "First divergent channel", "value": "rear-wheel lateral force", "kind": "text" },
-        { "label": "Lateral coeff port/orig", "value": ["front w0/w1: 1.019 / 1.021 (match)", "rear  w2/w3: 1.371 / 1.360 (~36% too much grip)"], "kind": "list" },
-        { "label": "Next command", "value": "recover le4 on the original side, re-run a8_wheelfit.py", "kind": "text" }
+        { "label": "Status", "value": "NOT localized — 3 attempts today, all withdrawn", "kind": "text" },
+        { "label": "Sound so far", "value": ["all lbc inputs match (p15 0.15, p16 0.0125, p1b, p[-1]=0, suspScale, le4)", "A6a |lat| agrees 1.001/1.003/0.948/0.960", "min(le4,1024) clamp hypothesis REFUTED"], "kind": "list" },
+        { "label": "Next step", "value": "port must log A6a's lac/la8/la4 + f5; a8_wheelfit's cross-side fit is unsound until then", "kind": "text" }
       ]
     },
     {
-      "heading": "This session",
+      "heading": "Done this session",
       "fields": [
-        { "label": "U-9149", "value": "DECODED; .asi fixed + verified (144 samples, 64 airborne)", "kind": "text" },
+        { "label": "U-9149", "value": "DECODED; .asi fixed + verified (154 samples, 66 airborne)", "kind": "text" },
+        { "label": "Levels", "value": ["0x00468980 A6b C2->C4 (.asi copy)", "0x00470670 A4 C2->C3 (.asi copy)"], "kind": "list" },
         { "label": "New uncertainties", "value": ["U-9151 exe A6b blocked on RwMatrixMultiply 0x004c4600", "U-9152 +0x928 vs g_bodyBasis storage split"], "kind": "list" },
         { "label": "Guards", "value": ["criterion (e) PASS 3/3", "AI (b) FAIL 3/3 (unchanged)", "power-ups 11/11 CLEAN, g3 contact diverges", "oracle rule 3 GREEN", "build rva-lint NEW=0"], "kind": "list" }
       ]
