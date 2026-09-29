@@ -13,10 +13,17 @@
 //        RwMatrixRotate(orient, dir, dt*0.05, 1)
 // dts = dt*0.001 (005cc558). acos = FUN_004a3384 = std::acos. Consts memory_read 2026-06-17.
 //
-// CAVEAT: RwMatrixRotate mode 1 (PRECONCAT) dispatches the RW DEVICE matrix-mult — it is
-// standalone-correct only once RW device init lands (WS-E); in the dev .asi (A-VERIFY-2) it
-// hits the real device. `orient==nullptr` guards the standalone-inert case until A8 binds
-// the vehicle transform matrix.
+// ORIENT IS NOW BOUND (2026-09-29, U-9149). The old caveat here read "`orient==nullptr`
+// guards the standalone-inert case until A8 binds the vehicle transform matrix". A8 landed
+// and nothing ever bound it, so BOTH `if (orient)` legs below were dead in mashed_re.exe
+// for the whole of D2. VehicleControl.cpp now passes the matrix. Which matrix: the original
+// loads ESI at 0x0047093b from stack slot E+0x0c, the slot A4 filled at 0x004706a2 with
+// LEA [EAX+EDI+0x928] (EAX = [EDI+0x9a8]<<6) — i.e. the SAME pointer it hands A5 as A5's
+// second argument. The port's stand-in for that object is g_bodyBasis[slot], which is what
+// it also hands A5, so the two stay the one object the original has.
+// RwMatrixRotate mode 1 (PRECONCAT) resolves to the CPU port (Math/RwMatrixRotate.cpp +
+// RwMatrixRotateInner.cpp, both in exe_sources.rsp) in the standalone, and to the live RW
+// device builder FUN_004c4d20 in the dev .asi.
 // Anchored MASHED.exe SHA-256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E.
 #include "ForceIntegrator.h"
 #include <cstdint>

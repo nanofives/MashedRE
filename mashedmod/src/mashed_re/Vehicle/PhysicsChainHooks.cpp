@@ -217,12 +217,27 @@ __declspec(naked) void Call_A6a(void* /*record*/, int /*param_1*/, float /*dt*/,
         ret
     }
 }
-// A6b FUN_00468980(dt, input) with ECX = ESI = record.
-__declspec(naked) void Call_A6b(void* /*record*/, float /*dt*/, void* /*input*/) {
+// A6b FUN_00468980(dt, input) with ECX = record and ESI = wheelBlock (the +0x928
+// RwMatrix). CORRECTED 2026-09-29 (U-9149): this forwarder set ESI = record, which
+// the dispatch site does not support. From the anchored image:
+//   0047093b  MOV ESI,[ESP+0x3c]   ; ESP = E-0x30 here -> E+0x0c
+//   00470941  MOV ECX,EDI          ; record
+//   00470943  CALL 0x468980
+// and E+0x0c is the slot A4 filled at 0x004706a2 with LEA [EAX+EDI+0x928]
+// (EAX = [EDI+0x9a8]<<6, 0x0047068e/0x00470696) — i.e. wheelBlock, the very same
+// pointer Call_A5 gets as arg 2 (MOV EDX,[ESP+0x20] @0x00470918) and Call_A6a as
+// arg 3 (MOV EAX,[ESP+0x2c] @0x00470928). A6b passes ESI straight to RwMatrixRotate
+// (0x00468a31 / 0x00468aaf / 0x00468b29) and reads [ESI+0x24] / [ESI+4], so it is an
+// RwMatrix; 0x40 == sizeof(RwMatrix).
+// NOTE the two readings this replaces were BOTH wrong: `mov esi, ecx` (record), and
+// the claim at the A6b self-test block below that ESI is A4's param_4 / xform —
+// param_4 lives at E+0x10 and A5 never reads it (balanced ESP walk 0x0046ddb0 ->
+// RET 0x0046e9d0: caller-frame refs are E5+0x4 and E5+0x8 only).
+__declspec(naked) void Call_A6b(void* /*record*/, float /*dt*/, void* /*input*/, int* /*wheelBlock*/) {
     __asm {
         push esi
-        mov  ecx, dword ptr [esp+8]    // record -> ECX (A6b reads [ECX+0x9e0])
-        mov  esi, ecx                  // record -> ESI (A6b reads [ESI+0x24])
+        mov  ecx, dword ptr [esp+8]    // record     -> ECX (A6b reads [ECX+0x9e0])
+        mov  esi, dword ptr [esp+20]   // wheelBlock -> ESI (A6b reads [ESI+0x24])
         push dword ptr [esp+16]        // input
         push dword ptr [esp+16]        // dt
         call dword ptr [PCH_Fwd_468980]
@@ -528,7 +543,7 @@ void A4_Body(void* record, int param_1, float dt, std::uint8_t* input, void* xfo
 
     Call_A5(v, dt, wheelBlock, xform);                              // 0x00470923 (EDI=record)
     Call_A6a(v, param_1, dt, wheelBlock, input);                   // 0x00470936 (ESI=record)
-    Call_A6b(v, dt, input);                                        // 0x00470943 (ECX=ESI=record)
+    Call_A6b(v, dt, input, wheelBlock);                            // 0x00470943 (ECX=record, ESI=wheelBlock)
 
     if (Ib(v, 0x9f0) == 2) {                                        // 0x00470948 parked damp
         Fb(v, 0x9b0) *= _DAT_005cc9c8;
@@ -2401,12 +2416,27 @@ __declspec(naked) void A6a_Entry() {
 //   != 0 : zero ang-vel (+0x9bc/0x9c0/0x9c4), normalize linear-vel (FUN_004c39b0)
 //          to a dir, then RwMatrixRotate(xform, dir, dt*0.05, 1) (_DAT_005cc9a0).
 //
-// ABI: confirmed at the A4 dispatch site 0x00470943 — MOV ECX,EDI (record);
-// MOV ESI,[ESP+0x3c] (xform = A4's param_4 world matrix); PUSH EBP(input,UNUSED);
-// PUSH EBX(dt). So A6b is effectively __thiscall-with-ESI: ECX=record, ESI=xform,
-// one float stack arg (dt). The lane's own A4_Body Call_A6b set ESI=record — that
-// is a latent dispatch bug there (A4 is C4 via its body-math self-test which stops
-// BEFORE the dispatch tail), NOT used by this A6b self-test.
+// ABI: read at the A4 dispatch site 0x00470943 — MOV ECX,EDI (record);
+// MOV ESI,[ESP+0x3c]; PUSH EBP(input,UNUSED); PUSH EBX(dt). So A6b is effectively
+// __thiscall-with-ESI: ECX=record, ESI=<the matrix>, one float stack arg (dt).
+//
+// WHICH matrix — CORRECTED 2026-09-29 (U-9149). This block used to say ESI is
+// "A4's param_4 world matrix". It is not. A4's frame is 5 prologue pushes
+// (0x00470670..0x00470678) with NO `sub esp`, so at 0x0047093b — after A5's 3 and
+// A6a's 4 pushed args — ESP is E-0x30 and [ESP+0x3c] is E+0x0c. A4's param_4 is at
+// E+0x10. E+0x0c is A4's param_3 SLOT, overwritten at 0x004706a2 with
+// `LEA ECX,[EAX+EDI+0x928]` (EAX = [EDI+0x9a8]<<6). So ESI = wheelBlock — the same
+// pointer A5 receives as arg 2 (MOV EDX,[ESP+0x20] @0x00470918) and A6a as arg 3
+// (MOV EAX,[ESP+0x2c] @0x00470928). Cross-check: ADD ESP,0x24 at 0x0047094e
+// balances exactly 3+4+2 = 9 pushed dwords, and 5 pops restore the 5 prologue
+// pushes, so the frame is fully accounted for with no hidden allocation.
+// Corroboration that param_4 is not the matrix: a balanced ESP walk through A5
+// (0x0046ddb0 -> RET 0x0046e9d0) finds caller-frame references at E5+0x4 (dt, 6x)
+// and E5+0x8 (the matrix, 2x: 0x0046ddb0 and 0x0046de01, both feeding
+// RwV3dTransformVectors) and NONE at E5+0xc (param_4).
+// A4_Body's Call_A6b set ESI=record; that latent dispatch bug is FIXED (it now
+// passes wheelBlock). A4's C4 evidence came from its body-math self-test, which
+// stops BEFORE the dispatch tail, so it never covered this.
 //
 // Bit-identity strategy: the angle math keeps the acos result in ST0 as float10
 // across (*180/pi)(double FMUL), (-90)(double/float FSUB), FCHS, (*dts)(float FMUL)
@@ -2704,19 +2734,36 @@ void A6b_SelfTest(int* record, void* xform, float dt) {
     if (airborne) g_a6bAir++;
     else          g_a6bGnd++;
 
-    char hdr[200];
+    char hdr[280];
     int state = *reinterpret_cast<int*>((char*)record + 0x9f0);
     // slot = (record - DAT_008815a0) / 0xd04 : 0=player, 1..3=AI opponents
     int slot = (int)(((std::uintptr_t)record - 0x008815a0) / 0xd04);
-    wsprintfA(hdr, "[%d] slot=%d dt=%08x air=%d state=%d xform=%d ndiff=%d%s\r\n",
+    // U-9149 DISPATCH WITNESS (2026-09-29). The self-test compares two runs that share
+    // the SAME ESI, so it can go green on a WRONG ESI (memory: inherited-green-may-be-
+    // guard-only). Log the pointer we were actually handed against the one the original
+    // computes at 0x0047068e/0x00470696/0x00470699 and stores to A4's E+0x0c slot at
+    // 0x004706a2 — the slot 0x0047093b reloads into ESI. xfok=1 means the dispatch that
+    // reached us matches the original's. With A4 NOT hooked this witnesses the ORIGINAL's
+    // dispatch; with A4 hooked it witnesses Call_A6b.
+    const void* expectXf = (const void*)((char*)record
+                            + *reinterpret_cast<int*>((char*)record + 0x9a8) * 0x40 + 0x928);
+    wsprintfA(hdr, "[%d] slot=%d dt=%08x air=%d state=%d xform=%d xf=%08x exp=%08x xfok=%d ndiff=%d%s\r\n",
               g_a6bCount, slot, *reinterpret_cast<std::uint32_t*>(&dt), airborne ? 1 : 0,
-              state, haveXform ? 1 : 0, mism, mism ? "" : " OK");
+              state, haveXform ? 1 : 0, (unsigned)(std::uintptr_t)xform,
+              (unsigned)(std::uintptr_t)expectXf, (xform == expectXf) ? 1 : 0,
+              mism, mism ? "" : " OK");
     A6b_SelfTestLog(hdr);
     if (mism) { line[p] = 0; A6b_SelfTestLog("   "); A6b_SelfTestLog(line); A6b_SelfTestLog("\r\n"); }
     g_a6bCount++;
 }
 
 // ── entry trampoline installed at 0x00468980 ────────────────────────────────
+// NAMING (2026-09-29, U-9149): everything in this A6b self-test block calls the
+// ESI object `xform`. That name is retained because it is only ever used as an
+// opaque 64-byte RwMatrix (snapshot/restore/compare), which is correct — but it is
+// NOT A4's param_4. It is A4's wheelBlock, record + [record+0x9a8]*0x40 + 0x928.
+// See the U-9149 note above Call_A6b and in the A6b_BodyAsm header.
+//
 // A6b ABI: ECX=record, ESI=xform, [esp+4]=dt. The original saves only ESI (PUSH ESI
 // at 0x468543... actually 0x468985 is SUB; the body PUSHes nothing — it uses ESP-relative
 // scratch and `RET` no-imm). We preserve ESI (the caller relies on it) + EBX/EBP/EDI

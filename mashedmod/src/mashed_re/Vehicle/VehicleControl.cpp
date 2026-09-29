@@ -64,8 +64,10 @@ extern int g_torqueRingPhase;   // DAT_007f101c (& 0xf each frame); provided by 
 // ---- callees (see header note) ---------------------------------------------
 // A6a 0x00467650 — velocity/angular integration step (ported: Integrate2.cpp, PENDING C4).
 void Vehicle_Integrate2(int* self, int param_1, float dt, void* wheelBlock, std::uint8_t* input);
-// A6b 0x00468980 — aerodynamic stabilization (ported: AeroStabilize.cpp, PENDING C4).
-// orient = vehicle world-transform RwMatrix (nullptr until A8 binds it; .asi supplies ESI).
+// A6b 0x00468980 — aerodynamic stabilization (ported: AeroStabilize.cpp).
+// orient = the RwMatrix the original loads into ESI at 0x0047093b, which is the SAME
+// pointer it gives A5 as A5's second argument (both read stack slot E+0x0c). Bound
+// 2026-09-29 (U-9149); it was `nullptr`, i.e. dead. See the call site below.
 void Vehicle_AeroStabilize(int* self, float* orient, float dt);
 // FUN_004a2c48 — per-input smoother/accumulator [UNCERTAIN signature] (pending).
 int  Vc_InputFilter();
@@ -175,14 +177,32 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
         Fb(v, 0x270 + phase * 4) = force;
     }
 
-    // the per-frame integration chain (callee arg binding finalized at A8)
-    // A5 transforms the body-forward/wheel axes by the vehicle WORLD matrix. The
-    // original passes A4's param_4 (the xform) here, NOT iVar1/wheelBlock:
-    //   FUN_00470670: FUN_0046ddb0(param_2 /*dt*/, iVar1 /*wheelBlock*/, param_4 /*xform*/)
-    // (decomp 0x004708.., Ghidra pool11 2026-06-17). The standalone supplies a
-    // yaw world-rotation matrix as `xform` (StepPlayer) so forward = M*(0,0,1) is
-    // the car's real heading; passing the zeroed +0x928 wheelBlock zeroed it -> no
-    // drive direction -> no motion (root cause, WS-A-VERIFY-3).
+    // the per-frame integration chain.
+    //
+    // A5's MATRIX ARGUMENT — CORRECTED 2026-09-29 (U-9149 decode). This block used
+    // to read "the original passes A4's param_4 (the xform) here, NOT iVar1/
+    // wheelBlock". That is wrong about which argument A5 CONSUMES. The original
+    // pushes all three (asm 0x00470914..0x00470923, anchored MASHED.exe.unpatched):
+    //   00470914  MOV ECX,[ESP+0x24]   ; = E+0x10 = A4 param_4
+    //   00470918  MOV EDX,[ESP+0x20]   ; = E+0x0c = wheelBlock (set at 0x004706a2)
+    //   0047091c  MOV EBX,[ESP+0x1c]   ; = E+0x08 = dt
+    //   00470920  PUSH ECX / PUSH EDX / PUSH EBX / CALL 0x46ddb0
+    // so cdecl A5(dt, wheelBlock, param_4). Inside A5 (balanced ESP walk from
+    // 0x0046ddb0 to its RET at 0x0046e9d0) the caller-frame references are:
+    //   E5+0x04 (dt)        read 6x: 0x0046df2a 0x0046e2dc 0x0046e3d1/e0/eb 0x0046e92a
+    //   E5+0x08 (wheelBlock) read 2x: 0x0046ddb0 0x0046de01 — and BOTH feed the
+    //                        matrix argument of RwV3dTransformVectors
+    //                        (0x0046ddc9, 0x0046de1f)
+    //   E5+0x0c (param_4)   read ZERO times.
+    // So the original's transform matrix is the record's +0x928 RwMatrix, and A4's
+    // param_4 is dead inside A5.
+    //
+    // We nonetheless keep passing `xform` here, deliberately: the port does NOT keep
+    // the body orientation in +0x928 (that block is our contact ring — see
+    // BodyOrientationIntegrate.cpp's BodyOrient_Init comment and VehiclePhysicsRun.cpp:128).
+    // `xform` IS g_bodyBasis[slot], the port's stand-in for the original's +0x928
+    // matrix. Passing the zeroed +0x928 instead zeroed forward -> no motion
+    // (WS-A-VERIFY-3). Reconciling the two storage locations is [UNCERTAIN U-9150].
     VehicleWheelForceIntegrate(self, dt, xform);                  // A5 0x0046ddb0 (ported)
     // A6a 0x00467650. param_1 is the CAR INDEX, decoded 2026-09-29 (was passed 0 with an
     // [UNCERTAIN] note): the dispatcher FUN_00470c70 calls A4 as
@@ -192,7 +212,29 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     // iVar1, param_3)`). A6a's only use of it is the boost-state-1 comparison against
     // DAT_0088e668 / DAT_0088e66c (0x00467d62 / 0x00467d6a), which are car indices.
     Vehicle_Integrate2(self, car, dt, wheelBlock, input);
-    Vehicle_AeroStabilize(self, nullptr, dt);                    // A6b 0x00468980 (orient bound at A8)
+    // A6b 0x00468980. U-9149 FIXED 2026-09-29: this was `nullptr`, which made BOTH
+    // `if (orient)` legs of AeroStabilize.cpp dead in the shipping exe — airborne
+    // auto-level (pitch+roll) and the velocity-align rotation never ran.
+    // A6b takes its matrix in ESI, and the original loads it from the SAME STACK
+    // SLOT it gave A5 as A5's second argument:
+    //   004706a2  MOV [ESP+0x20],ECX   ; ESP=E-0x14 -> E+0x0c  := wheelBlock,
+    //                                  ;   ECX = LEA [EAX+EDI+0x928] @0x00470699,
+    //                                  ;   EAX = [EDI+0x9a8] << 6 (0x0047068e/96)
+    //   00470918  MOV EDX,[ESP+0x20]   ; ESP=E-0x14 -> E+0x0c   (A5 arg 2)
+    //   0047093b  MOV ESI,[ESP+0x3c]   ; ESP=E-0x30 -> E+0x0c   (A6b's ESI)
+    // E+0x0c is A4's param_3 SLOT, reused as a local at 0x004706a2 — which is why
+    // reading it as "param_3/input" or as "param_4/xform" both mis-identify it.
+    // A6b then hands ESI straight to RwMatrixRotate (0x00468a31, 0x00468aaf,
+    // 0x00468b29 -> 0x004c4d20) and reads at.y = [ESI+0x24] and right.y = [ESI+4],
+    // so ESI is an RwMatrix, and 0x40 is exactly sizeof(RwMatrix) — matching A3's
+    // corrected stride. Frame proof: 5 prologue pushes (0x00470670..0x00470678),
+    // no SUB ESP, and ADD ESP,0x24 at 0x0047094e == A5's 3 + A6a's 4 + A6b's 2
+    // pushed args (9 dwords), then 5 pops -> balanced. (U-9149's "there is a SUB ESP
+    // or further pushes unaccounted for" is resolved: there is neither.)
+    // Binding: in the original A5's matrix and A6b's ESI are LITERALLY the same
+    // pointer, so whatever object plays A5's matrix role must also play A6b's. In
+    // this build that object is `xform` (g_bodyBasis[slot]) — see the A5 note above.
+    Vehicle_AeroStabilize(self, static_cast<float*>(xform), dt);
 
     if (Ib(v, 0x9f0) == 2) {                                       // parked/stopped state
         Fb(v, 0x9b0) *= vc::kParkedDamp;
