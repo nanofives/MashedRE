@@ -1,0 +1,18 @@
+  [0] MORTAR   frames= 154 CLEAN          checked=ammo:153,canfire_rets:154,code_post:154,cooldown:153,deact_ra:154,fire_modes:154,prev3:154
+  [1] MISSILE  frames= 265 374 MISMATCH   checked=ammo:32,canfire_rets:33,code_post:33,deact_ra:33,fire_modes:33,jet:32,life:32,prev3:33
+        t+0: canfire_rets orig='' port='0'
+        t+1: fire_modes orig='' port='2'
+        t+1: canfire_rets orig='' port='0'
+        t+1: ammo orig=1 port=0
+        t+1: jet orig=0 port=1
+        t+1: life orig=0.0 port=0.4833333492279053
+        t+2: fire_modes orig='' port='1'
+        t+2: canfire_rets orig='' port='0'
+        t+2: ammo orig=1 port=0
+        t+2: jet orig=0 port=1
+        t+2: life orig=0.0 port=0.46666669845581055
+        t+3: canfire_rets orig='' port='0'
+        ... 362 more
+VERDICT: 374 mismatches
+        ... (374 total; full run reproduces from b3.msd.puhook.csv)
+VERDICT: 374 mismatches

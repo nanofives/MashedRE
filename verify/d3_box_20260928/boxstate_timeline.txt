@@ -1,0 +1,23 @@
+DAT_0068d1f0[slot] (the boxstate column) per capture, subject slot 0.
+b1/b2 are NATURAL runs: neither reached a non-1 value, which is why the
+--pu-box instrument was added. b3 forces 2 once through FUN_0045ba00.
+
+s2  slot0 rows 224  boxstate {'1': 152, '3': 71, '2': 1}
+    acts (code, frame, boxstate at activation): [('A11', '917', '1'), ('A7', '980', '1'), ('A11', '1129', '3')]
+    box -> 1 at frame 917 (code_pre 11, deact_ra -)
+    box -> 3 at frame 1129 (code_pre 11, deact_ra -)
+    box -> 2 at frame 1200 (code_pre 11, deact_ra 0x45bc9d)
+
+b1  slot0 rows 222  boxstate {'1': 222}
+    acts (code, frame, boxstate at activation): [('A7', '914', '1'), ('A11', '1098', '1'), ('A11', '1161', '1'), ('A11', '1224', '1')]
+    box -> 1 at frame 914 (code_pre 7, deact_ra -)
+
+b2  slot0 rows 221  boxstate {'1': 221}
+    acts (code, frame, boxstate at activation): [('A11', '844', '1'), ('A7', '907', '1'), ('A11', '1091', '1'), ('A7', '1154', '1')]
+    box -> 1 at frame 844 (code_pre 11, deact_ra -)
+
+b3  slot0 rows 6206  boxstate {'1': 154, '3': 6052}
+    acts (code, frame, boxstate at activation): [('A7', '857', '1'), ('A11', '1042', '3')]
+    box -> 1 at frame 857 (code_pre 7, deact_ra -)
+    box -> 3 at frame 1042 (code_pre 11, deact_ra -)
+

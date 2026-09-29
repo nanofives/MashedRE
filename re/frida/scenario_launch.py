@@ -868,6 +868,7 @@ function aiStepDrain(){ const r = AS.rows; AS.rows = []; return r; }
 // activates each type through the ORIGINAL's own activate path FUN_0045c010 and
 // writes the ctrl byte the dispatcher reads; everything downstream is the original.
 const PU_DISP = 0x0045bba0, PU_ACT = 0x0045c010, PU_DEACT = 0x0045bac0;
+const PU_BOX = 0x0045ba00;            // FUN_0045ba00, DAT_0068d1f0[idx] = value
 const PU_SLOT0 = 0x0088fbe0, PU_SSTRIDE = 0xb4, PU_STATE = 0x0063ba8c;
 const PU_FIRE = {0x004561c0:9, 0x00454740:10, 0x00455150:11, 0x00457ef0:12, 0x0045a850:16,
                  0x0045b6e0:17, 0x00454db0:18, 0x00457800:19, 0x004533b0:7};
@@ -879,7 +880,7 @@ const PU_CANF = [0x004566d0, 0x00457ab0, 0x00455360, 0x0045a890, 0x0045b260, 0x0
 const PU_STRIDE = {9:0x48, 10:0x2c, 11:0x2c, 12:0x18, 16:0x68, 17:0x24, 18:0x14, 19:0x10, 7:0x1c};
 const PU = { armed:false, n:0, calls:0, rows:[], err:null, cap:200000, cur:null,
              plan:[], subj:0, warm:120, pi:0, st:'warm', t:0, acts:[], lastArmed:0,
-             pat:[], held:0 };
+             pat:[], held:0, boxAt:-1, boxDone:false };
 function puCode(e){ try { return e.isNull() ? -1 : e.readS32(); } catch(_){ return -2; } }
 function puRec(h, code){
   const n = PU_STRIDE[code]; if (!n || h.isNull()) return '';
@@ -900,13 +901,19 @@ function puSnap(){
 // fire pattern for the scripted subject: [on,off] frame pairs, exercised in order.
 // Covers the press edge (mode 2), holds of 1/5/29 frames (mode 3) and release (mode 1).
 const PU_PATTERN = [[1,6],[2,6],[6,6],[30,8],[1,6],[1,6],[2,10],[60,10]];
-function puArm(planCsv, subj, warm){
+function puArm(planCsv, subj, warm, boxAt){
   if (PU.armed) return 'already armed';
   try {
     PU.plan = planCsv ? planCsv.split(',').map(x => parseInt(x, 10)) : [];
-    PU.subj = subj|0; PU.warm = warm|0;
+    PU.subj = subj|0; PU.warm = warm|0; PU.boxAt = (boxAt === undefined) ? -1 : (boxAt|0);
     const act = new NativeFunction(ga(PU_ACT), 'void', ['int', 'int'], 'mscdecl');
     globalThis._puAct = act;
+    // FUN_0045ba00 @0x0045ba00: the bare `DAT_0068d1f0[idx] = value` setter
+    // (MOV [ECX*4+0x68d1f0],EAX, cdecl idx/value). --pu-box calls it with 2, the
+    // value FUN_00422fd0 @0x00422fd0 and FUN_0040be50 @0x0040be50 write. CONTRIVED
+    // state, same class as --pu-plan's FUN_0045c010 call: the VALUE is forced, and
+    // everything the dispatcher then does with it is the original's own code.
+    globalThis._puBox = new NativeFunction(ga(PU_BOX), 'void', ['int', 'int'], 'mscdecl');
     const ph = ga(PHASE), stg = ga(PU_STATE), dtp = ga(0x007f100c);
     for (const k in PU_FIRE) {
       const code = PU_FIRE[k];
@@ -948,6 +955,14 @@ function puArm(planCsv, subj, warm){
             if (PU.st === 'arm') {
               if (PU.pi >= PU.plan.length) { PU.st = 'done'; }
               else if (held) { disc = (PU.t++ % 2 === 0) ? 1 : 0; }   // discard a natural pickup
+              else if (PU.pi === PU.boxAt && !PU.boxDone) {
+                // one dispatcher call BEFORE the activation, force the box state
+                // to 2. The dispatcher's own 0x0045bc7b arm then latches it to 3
+                // (0x0045bc85) with nothing held, and the NEXT call activates
+                // under state 3 -- the shape s2 reached by accident.
+                PU.boxDone = true;
+                try { globalThis._puBox(subj, 2); } catch(e){ PU.err = 'box ' + e; }
+              }
               else {
                 const code = PU.plan[PU.pi];
                 act = 'A' + code;
@@ -1013,7 +1028,8 @@ function puArm(planCsv, subj, warm){
     });
     PU.armed = true;
     return 'puhook armed (FUN_0045bba0 + 9 FIRE + 8 CANFIRE + FUN_0045bac0; plan=['
-           + PU.plan.join(',') + '] subj slot ' + PU.subj + ' warm ' + PU.warm + ')';
+           + PU.plan.join(',') + '] subj slot ' + PU.subj + ' warm ' + PU.warm
+           + (PU.boxAt >= 0 ? ' box2-before-act ' + PU.boxAt : '') + ')';
   } catch(e){ return 'ERR ' + e; }
 }
 function puDrain(){ const r = PU.rows; PU.rows = []; return r; }
@@ -1478,7 +1494,7 @@ rpc.exports = {
   aiStepDrain: function(){ return aiStepDrain(); },
   aiStepStats: function(){ return JSON.stringify({armed:AS.armed, calls:AS.calls, pending:AS.rows.length, err:AS.err,
                                                   locals:AS.locals, curv:AS.curv, localsErr:AS.localsErr, noLocals:AS.noLocals, joinMiss:AS.joinMiss, recp:Object.keys(AS_RECP).length}); },
-  puArm: function(plan, subj, warm){ return puArm(plan, subj, warm); },
+  puArm: function(plan, subj, warm, boxAt){ return puArm(plan, subj, warm, boxAt); },
   puDrain: function(){ return puDrain(); },
   puStats: function(){ return JSON.stringify({armed:PU.armed, calls:PU.calls, n6:PU.n, st:PU.st,
                                               pi:PU.pi, acts:PU.acts, pending:PU.rows.length, err:PU.err}); },
@@ -1799,6 +1815,15 @@ def main():
                          "scripted fire pattern on ctrl byte 0x007f103f (CONTRIVED, C3-grade). "
                          "Empty = observe natural pickups only.")
     ap.add_argument("--pu-subj", type=int, default=0, help="slot the --pu-plan drives (default 0)")
+    ap.add_argument("--pu-box", type=int, default=-1,
+                    help="[D3 powerups] plan index before which the subject slot's box state "
+                         "DAT_0068d1f0[subj] is forced to 2 through the original's own setter "
+                         "FUN_0045ba00 (0x0045ba00). The dispatcher then latches it to 3 at "
+                         "0x0045bc85 and skips the whole per-slot pass (0x0045bca5) for that "
+                         "activation. CONTRIVED state (C3-grade, same class as --pu-plan): it "
+                         "forces the VALUE and nothing else -- every branch taken on it is the "
+                         "original's. Use it to exercise the box gate on demand instead of "
+                         "waiting for a wreck.")
     ap.add_argument("--puhook-missile", action="store_true",
                     help="[D3-CONTACT] with --statediff-puhook, ALSO hook the MISSILE "
                          "tick FUN_00455c90 and write <out>.pumissile.csv: one row per "
@@ -2038,7 +2063,8 @@ def main():
             if args.statediff_aistep:
                 print("  [statediff]", E.ai_step_arm(os.environ.get("MASHED_AISTEP_LOCALS", "1") != "0"))
             if args.statediff_puhook:
-                print("  [statediff]", E.pu_arm(args.pu_plan, args.pu_subj, args.pu_warm))
+                print("  [statediff]", E.pu_arm(args.pu_plan, args.pu_subj, args.pu_warm,
+                                                 args.pu_box))
                 if args.puhook_contacts:
                     print("  [statediff]", E.pu_cx_arm(args.puhook_contacts))
                 if args.puhook_aim:
