@@ -1144,8 +1144,29 @@ Named D4 work items (added 2026-09-26, previously implicit):
 - **Link the Save TUs.** `Save/`, 16 files, 28 C4, unlinked and RVA-tunneled (D0.7). The
   standalone must read and write a `gamesave.bin` the original accepts.
 - **D1-residue R1-R3** if they are not already closed during D3.
+- **Burn the dual-copy allowlist down to zero** (added 2026-09-29). `re/tools/dual_copy_allowlist.txt`
+  currently holds **110** entries — 72 `DUP-IN-TARGET`, 27 `DUP-INSTALL`, 11 `CROSS-TARGET`. Each is
+  an RVA with more than one body, which is how five defects shipped in `mashed_re.exe` while
+  `hooks.csv` said C4 (`re/analysis/DUAL_COPY_AUDIT_2026-09-29.md`,
+  `re/analysis/DUAL_COPY_FIX_2026-09-29.md`).
+  **The fix per entry is consolidation, not re-verification:** collapse the pair into ONE shared TU
+  judged against `original/MASHED.exe`, so `exe_file == file` and the same body serves both targets.
+  Where the two copies genuinely need different wrappers (a register-ABI naked thunk for the `.asi`,
+  standalone state for the exe), put the arithmetic core in the shared TU and keep only the thunks
+  target-specific — the audit's P4. `scripts/lint_rva_bodies.py` fails the build on any NEW pair, so
+  the list can only shrink.
+  Order of attack, by shipping risk: (1) the physics A-chain `0x00467650`, `0x00468980`, `0x0046b540`,
+  `0x0046ddb0`, `0x00470670` — all on the default race path, all demoted 2026-09-29;
+  (2) the AI copies in `Ai/AiStandalone.cpp`, which D3 criterion (b) depends on;
+  (3) the 27 `DUP-INSTALL` rows, where the fix is deleting one `RH_ScopedInstall` (six are C4; this
+  is the U-9065 class and it is tracker hygiene, not behaviour);
+  (4) everything else.
+  **Each consolidation re-earns the row's C-level through the normal gates** — the exe copy has no
+  evidence of its own, and a copy fixed by reading is a C2-grade statement (`re/CONFIDENCE.md`,
+  "Which copy the evidence covers").
 
-**Gate:** every subsystem S-DONE under the clarified S-DoD.
+**Gate:** every subsystem S-DONE under the clarified S-DoD, **and
+`re/tools/dual_copy_allowlist.txt` is empty**.
 
 ### D5 — v1.0 ship
 

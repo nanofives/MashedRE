@@ -22,6 +22,45 @@ re-derive either. **U-9141 and U-9145 are RESOLVED.**
    `FUN_00484c70`). **D3-R1 is no longer a carried residue** — AI (b) now fails on all three
    cars at correct speed, so there is one open criterion on three cars, not a car-1 residue.
 
+## READ FIRST — the tracker changed shape on 2026-09-29 (dual-copy session)
+
+A separate 2026-09-29 session actioned the user's decision on the dual-copy audit. Three
+things are different from every kickoff before it. **Do not re-derive any of them.**
+
+1. **`hooks.csv` has a tenth column, `exe_file`** (last, so positional readers still work).
+   `file` names the copy the evidence measured — by convention the `.asi`. `exe_file` names
+   the TU compiled into `mashed_re.exe`. Empty = the exe has no port. Regenerate with
+   `py -3.12 scripts/backfill_exe_file.py`. Four repair scripts that asserted a literal 9
+   columns were fixed; everything else was already header-keyed.
+   **The number to keep in mind: of 1213 C3/C4 rows only 203 have `exe_file == file`.**
+
+2. **`re/CONFIDENCE.md` has a new clause, "Which copy the evidence covers".** A row is C3/C4
+   **for the shipping exe** only if `exe_file` is empty or `== file`, or the exe copy has its
+   own evidence. When `exe_file != file` the level describes the `.asi` copy and **may not be
+   cited in a parity, D3-criterion or DoD argument.** Fixing an exe copy by reading is
+   C2-grade; a fixed copy does not restore the row.
+
+3. **25 rows were demoted to C2** (8 × C4→C2, 17 × C3→C2) — `C4 184 → 176`, `C3 1029 → 1012`.
+   **Eight of them are AI rows that D3 criterion (b) runs on**: `0x004177b0`, `0x00415e20`,
+   `0x00416250`, `0x00416a30`, `0x00417da0`, `0x00418560`, `0x00418860`, `0x00443080`. Five
+   more are the physics A-chain. This does **not** change the (b) measurement or the D3 gate
+   table below — it changes what the trackers are allowed to claim about the bodies (b) runs
+   on. Full record: `re/analysis/DUAL_COPY_FIX_2026-09-29.md`.
+
+**And this is the part that bears on D3 (b) directly:** the AI copies the exe runs are
+`Ai/AiStandalone.cpp`, not the `.asi` TUs the C3s were earned on, and they differ in ways that
+plausibly *cause* (b) — `rate1` pinned `0.0f` (`AiStandalone.cpp:983`, `:1102`) makes the brake
+gate permanently false and fires the curvature multiplier unconditionally; `int mode = 0`
+(`:844`) kills eight targeting modes; `SteerAngleError` takes heading from velocity (`:175`)
+while its own sibling at `:215` uses body-forward. Those are named in the audit's §8.2 as the
+most direct levers on (b). Nobody has tried them yet — **this session changed no game code.**
+
+A build guard now stops new pairs appearing: `scripts/lint_rva_bodies.py`, called from
+`mashedmod/build.bat` before the compile step. It WARNs on the 110 known pairs in
+`re/tools/dual_copy_allowlist.txt` and **FAILS the build on anything new**. If a build stops
+with `[rva-lint] FAILED`, you have added a second body for an RVA — share one TU, do not
+silence it. Burning that list to zero is a named ROADMAP D4 item.
+
 ## Where D3 stands
 
 **D3 is NOT closed, and there is now exactly ONE gate failure left: AI criterion (b).**

@@ -1,7 +1,60 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-09-29T20:15:00Z",
+  "updatedAt": "2026-09-29T21:40:00Z",
   "sections": [
+    {
+      "heading": "Session 2026-09-29c — dual-copy: demote + exe_file + guard",
+      "fields": [
+        {
+          "label": "Confidence tally",
+          "value": "C4 176 (was 184) / C3 1012 (was 1029) / C2 3890 — 5899 rows",
+          "kind": "text"
+        },
+        {
+          "label": "Demoted to C2",
+          "value": "25 rows — 8x C4->C2, 17x C3->C2",
+          "kind": "number"
+        },
+        {
+          "label": "Why",
+          "value": "C3/C4 gates are defined over the .asi; the exe compiles a different source list, so 5 defects shipped while the tracker said C4",
+          "kind": "text"
+        },
+        {
+          "label": "hooks.csv schema",
+          "value": "new LAST column exe_file — of 1213 C3/C4 rows only 203 have exe_file == file",
+          "kind": "text"
+        },
+        {
+          "label": "Build guard",
+          "value": "scripts/lint_rva_bodies.py in build.bat — 110 known pairs allowlisted, FAILS on anything new",
+          "kind": "text"
+        },
+        {
+          "label": "Guard proof",
+          "value": [
+            "warn run: both targets build, exit 0",
+            "forced duplicate: exit 1 before any compile line"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Bears on D3 (b)",
+          "value": "8 of the 25 are the AI rows criterion (b) runs on; the exe copies pin rate1=0 and mode=0",
+          "kind": "text"
+        },
+        {
+          "label": "Filed",
+          "value": "U-9150 — an RVA comment on MenuNavSM::RecordsZero claims 0x0042d3e0, which it does not implement",
+          "kind": "text"
+        },
+        {
+          "label": "Allowlist burn-down",
+          "value": "named ROADMAP D4 item; D4's gate now includes an empty allowlist",
+          "kind": "text"
+        }
+      ]
+    },
     {
       "heading": "Roadmap",
       "fields": [
