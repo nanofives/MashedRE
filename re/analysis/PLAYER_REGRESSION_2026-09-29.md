@@ -184,9 +184,132 @@ Fixed here so they cannot be chosen afterwards:
 
 ---
 
-## 3. MEASURED — the bisect
+## 3. MEASURED — the bisect, and the correction it forces
 
-*(filled in after §1-§2 were committed)*
+Nothing above this line changed after the first run. Evidence `verify/player_reg_20260929/`.
+
+### 3.1 The bisect as pre-registered — first-bad is `09a73dc6`
+
+Reproduction control first: HEAD, controlled arm as §2.1, on the build this session started
+from. `0.1609 / 0.2296 / 682.24` against `4938adba`'s `0.1609 / 0.2296 / 691.01` — the two
+slip statistics to four decimals, the median -1.3%. The arm reproduces.
+
+| # | commit | knob | lines | slip 1500-2000 | slip 2000-2600 | driving-median | verdict |
+|---|---|---|---:|---:|---:|---:|---|
+| — | `56ad3806` (D2 close) | none, as §2.2 | 1085 | 0.1916 | 0.2668 | 1932.09 | GOOD (inherited) |
+| 2 | `38dfeb17` | none | 1085 | **0.1916** | **0.2669** | **1932.37** | **GOOD** |
+| 3 | `647a5e24` | none | 1086 | **0.1916** | **0.2668** | **1931.36** | **GOOD** |
+| 4 | `09a73dc6` | patched | 1266 | **0.1718** | **0.2372** | **697.36** | **BAD** |
+| 6 | `286d99a2` | patched | 1266 | 0.1726 | 0.2372 | 692.07 | BAD |
+| 12 | `7f6b44d3` | patched | 1265 | 0.1726 | 0.2372 | 692.07 | BAD |
+| 23 | HEAD | committed knob | 1268 | 0.1609 | 0.2296 | 682.24 | BAD |
+
+Read literally, that names `09a73dc6` — the commit where the opponents begin to drive from
+the ctrl bytes — as the first bad commit. **It is wrong**, and §3.2 is why.
+
+One discard, reported per the rule: `286d99a2`'s first two boots produced no
+`motion_diag.log` at all (the run stalled in the frontend at `NAV_DEMO phase=0
+00_challengeselect`, `mashed_re.log` tail). The third boot, given 90 s instead of 50 s,
+exited on its own with 1266 lines. Every probe from there on uses 90 s with one automatic
+retry.
+
+### 3.2 THE CONTROL THAT INVERTS IT — the arm is not symmetric, and that is the whole -64%
+
+§2.2 carried forward, from `D2_CONTROLLED_ARM_2026-09-29.md` §2.1/§3.5, that the knob is
+applied at HEAD and **not** at `56ad3806`, where the opponents "never entered the chain".
+That note also flagged the residual asymmetry — *"at `56ad3806` the opponents are not merely
+un-stepped, they are moved by the pre-D3 kinematic Option B model, whereas
+`MASHED_MEASURE_NOOPP=1` at HEAD leaves them parked"* — and carried it into the bisect as
+something to watch. **It is not a detail. It is the entire finding.**
+
+Two controls, each one run, each decisive because the arm's spread is 0:
+
+| control | slip 1500-2000 | slip 2000-2600 | driving-median | lines |
+|---|---:|---:|---:|---:|
+| `647a5e24` (i3), **no knob** — opponents move | 0.1916 | 0.2668 | 1931.36 | 1086 |
+| `647a5e24` (i3), **knob patched in** — opponents parked | **0.1726** | **0.2372** | **692.07** | 1265 |
+| `56ad3806`, **no knob** (the arm as run at `4938adba`) | 0.1916 | 0.2669 | 1932.09 | 1085 |
+| `56ad3806`, **knob patched in** — opponents parked | **0.1713** | **0.2372** | **705.03** | 1266 |
+
+`647a5e24` is *the same commit* measured both ways and it moves `1931.36 → 692.07`. The knob,
+not any commit, produces the collapse. And `56ad3806` — the D2 close itself, three months of
+commits before any D3 work — collapses the same way, `1932.09 → 705.03`.
+
+**So the symmetric controlled arm, knob at BOTH ends:**
+
+| | slip 1500-2000 | slip 2000-2600 | driving-median |
+|---|---:|---:|---:|
+| `56ad3806`, knob | 0.1713 | 0.2372 | 705.03 |
+| HEAD, knob | 0.1609 | 0.2296 | 691.01 |
+| **HEAD vs `56ad3806`, symmetric** | **-6.1%** | **-3.2%** | **-2.0%** |
+
+against the asymmetric arm's `-16.0% / -14.0% / -64.2%`.
+
+**Corrections to the inherited record, stated rather than glossed:**
+
+1. **`4938adba`'s C2 failure is dominated by the arm's own asymmetry, not by a player
+   regression.** The driving-median's `-64.2%` is **0%** of it: `56ad3806` measured the same
+   way is 705, not 1932. The `-64%` is the knob.
+2. **`09a73dc6` is NOT the first bad commit.** It is only the oldest commit in the range at
+   which the plan's §2.2 rule *applies the knob*. The bisect as designed could not have
+   found anything else, because the treatment changes at exactly that boundary. This is the
+   batch/group-attribution hazard in a different costume: the probe's own configuration
+   changed with the independent variable.
+3. **What survives is small and real**: on a symmetric arm, HEAD is `-6.1% / -3.2% / -2.0%`
+   off `56ad3806`. Only `slip 1500-2000` is outside the ±2% C2 bound, and the driving-median
+   — the statistic that looked like a 3.7x catastrophe — is inside it.
+4. **U-9145 is older than D3.** The opponents move the player's median `1932 → 705` at
+   `56ad3806`, where they are kinematic scaffold cars that never call
+   `VehiclePhysics_StepCar` at all. So the coupling cannot be `g_torqueRingPhase`
+   (`DAT_007f101c`) or `Collision::g_suspScratch` (`DAT_00881560`) — both of those need the
+   opponents to run the physics chain, and at `56ad3806` they do not. Nor is it the
+   power-ups: `MASHED_NO_PICKUPS=1` at HEAD gives `0.1609 / 0.2296 / 689.82`, unchanged
+   (§3.3), and `56ad3806`'s demo race has no orbs at all
+   (`g_track.InitPickups()` was added to that path at `09a73dc6`, `exe_main.cpp`).
+
+### 3.3 The A/B matrix at HEAD — what the opponents actually do to the player
+
+One run each, same build (`235e964a`), controlled arm unless stated:
+
+| arm | opponents | AI tick | slip 1500-2000 | slip 2000-2600 | driving-median | player reseeds in 1080 |
+|---|---|---|---:|---:|---:|---:|
+| `MASHED_MEASURE_NOOPP=1` | **parked** | runs | 0.1609 | 0.2296 | 682.24 | **72** |
+| `MASHED_MEASURE_NOOPP=1 MASHED_NO_PICKUPS=1` | parked | runs | 0.1609 | 0.2296 | 689.82 | — |
+| `MASHED_GATE_RIBBON_AI=1` | **gate-ribbon scaffold** | **off** | 0.1354 | 0.2993 | **2539.80** | 23 |
+| default (`4938adba` `g_d2_*`) | **ported chain** | runs | 0.1323-0.1411 | 0.2993 | **2538** | — |
+| `647a5e24`, no knob | Option B scaffold | off | 0.1916 | 0.2668 | 1931.36 | **11** |
+| ORIGINAL (archived) | real | real | 0.1913 | 0.2498 | 1940.59 | n/a |
+
+The discriminator for the median is **whether the opponents move at all**, not how they are
+driven: ribbon-scaffold (2539.80) and ported-chain (2538) agree, and both are 3.7x the parked
+arm. And the mechanism is visible in the logs: the count of player body-basis reseeds
+(`reseed=1`, set only by `VehiclePhysics_ResetOrientation(0, …)`, i.e. the player's own
+off-mesh recovery at `TrackRenderer.cpp:2805-2829`) is **11** on the good arm, **23** on the
+ribbon arm and **71-72** on the parked arms. With the opponents parked the player falls into a
+repeated off-mesh relocate loop during the full-lock donut and never gets up to speed. The
+first divergence between `647a5e24` no-knob and `09a73dc6` knob is at frame **149**, which is
+a `reseed=1` frame: the 148 frames before it are byte-identical, and at 149 the speed is
+identical (`sp=595.13`) while the velocity heading differs (`velH` 1.7416 vs 1.6825).
+
+### 3.4 Where that leaves the question the session was asked
+
+The `-64%` is an instrument artefact. But a player-side fidelity gap **does** exist and the
+symmetric arm is not where to read it, because parking the opponents is not what the original
+does — the original's `orig_steerR.msd` was captured with three opponents driving. On the arm
+that matches the original's scenario:
+
+| | driving-median | vs ORIGINAL 1940.59 |
+|---|---:|---|
+| ORIGINAL | 1940.59 | — |
+| `56ad3806`, opponents driving | 1932.09 / 1931.36 / 1932.37 | **-0.4%** |
+| HEAD, opponents driving | 2538 | **+31%** |
+| HEAD, `MASHED_NO_START_BOOST=1` (`4938adba`) | 2488.6 / 2507.9 | +28% |
+| HEAD, `MASHED_GATE_RIBBON_AI=1` | 2539.80 | +31% |
+
+**That** is the player regression: on the original's own scenario the port's player has gone
+from -0.4% to +31% on the donut median. It is not the start boost (the `NO_START_BOOST`
+control is still +28%) and it is not the opponents' new drive model (the gate-ribbon arm,
+which has no AI tick and no ported opponent physics, is +31% as well). §4 bisects it.
 
 ## 4. Which side is faithful — from the ORIGINAL
 
