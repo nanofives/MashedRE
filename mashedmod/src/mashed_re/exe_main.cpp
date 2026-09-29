@@ -496,14 +496,6 @@ constexpr float         kTitleQuadCenterX = 400.f;
 constexpr float         kTitleQuadCenterY = 300.f;
 constexpr float         kTitleQuadSize    = 512.f;
 
-// B12 — keyboard-driven offset applied to the title quad. Arrow keys
-// translate the quad in 4-px steps; Enter resets to (0, 0). The center+offset
-// is clamped to keep the half-quad on-screen (so its center can range from
-// kTitleQuadSize/2 to kWidth-kTitleQuadSize/2 horizontally, ditto vertically).
-float g_titleQuadOffsetX = 0.f;
-float g_titleQuadOffsetY = 0.f;
-constexpr float kTitleQuadStep = 4.f;
-
 // B13 — currently-displayed atlas slot in title mode. PgUp/PgDn cycle through
 // all uploaded textures (0..g_atlas_slot_count-1). Wraps around. Lets the user
 // visually verify every Frontend.piz TEXTURES.TXD entry decodes + uploads
@@ -1619,101 +1611,69 @@ bool RunRaceDemoStep(int /*phase*/) {
     }
 }
 
-// B11 — per-frame title refresh showing current arrow/Enter/Esc state. This
-// is the proof-of-concept: keystrokes change the window title in real time.
-// Updates only when the key set changes (avoids SetWindowText spam).
-void UpdateTitleFromKeyboard() {
-    if (!g_kbd || !g_hwnd) return;
-    const bool up    = (g_keys[DIK_UP]    & 0x80) != 0;
-    const bool down  = (g_keys[DIK_DOWN]  & 0x80) != 0;
-    const bool left  = (g_keys[DIK_LEFT]  & 0x80) != 0;
-    const bool right = (g_keys[DIK_RIGHT] & 0x80) != 0;
-    const bool enter = (g_keys[DIK_RETURN]& 0x80) != 0;
-    const bool esc   = (g_keys[DIK_ESCAPE]& 0x80) != 0;
-    // Pack into an int so we only refresh title on transitions OR quad
-    // position changes (which happen while arrows are held) OR slot pick
-    // changes (B13 PgUp/PgDn cycling). Without these, the title would freeze
-    // mid-action.
-    static int           s_last_packed = -1;
-    static int           s_last_qx     = INT_MIN;
-    static int           s_last_qy     = INT_MIN;
-    static std::uint32_t s_last_slot   = UINT32_MAX;
-    const int packed = (up<<0)|(down<<1)|(left<<2)|(right<<3)|(enter<<4)|(esc<<5);
-    const int qx = static_cast<int>(g_titleQuadOffsetX);
-    const int qy = static_cast<int>(g_titleQuadOffsetY);
-    const std::uint32_t slot = g_titlePickedSlot;
-    if (packed == s_last_packed && qx == s_last_qx && qy == s_last_qy
-        && slot == s_last_slot) return;
-    s_last_packed = packed;
-    s_last_qx = qx;
-    s_last_qy = qy;
-    s_last_slot = slot;
+// Window title = what this run is testing (2026-09-29, user request; replaces
+// the B11/B13 held-key/slot debug title). Format:
+//   Mashed RE | <label> | <game state>
+// <label> is MASHED_TITLE when set (a harness or session names its test
+// explicitly, e.g. "D3 U-D3-DRIVE bisect c5bcf71c"); otherwise every MASHED_*
+// variable in this process's environment as NAME=value, which is exactly the
+// run's test configuration (MASHED_MUTE and MASHED_TITLE are left out). No
+// variables = "manual play". The environment is fixed for the process, so the
+// label is built once. <game state> is the GameFlow mode, plus the frame index
+// under MASHED_DETERMINISTIC (refreshed every 30 frames). SetWindowTextA runs
+// only when the text changes.
+void UpdateWindowTitle() {
+    if (!g_hwnd) return;
+    static char s_label[192] = {};
+    static bool s_label_built = false;
+    if (!s_label_built) {
+        s_label_built = true;
+        DWORD n = GetEnvironmentVariableA("MASHED_TITLE", s_label, sizeof s_label);
+        if (n == 0 || n >= sizeof s_label) {
+            s_label[0] = '\0';
+            size_t len = 0;
+            if (LPCH env = GetEnvironmentStringsA()) {
+                for (LPCH p = env; *p; p += std::strlen(p) + 1) {
+                    if (std::strncmp(p, "MASHED_", 7) != 0) continue;
+                    if (std::strncmp(p, "MASHED_MUTE=", 12) == 0) continue;
+                    if (std::strncmp(p, "MASHED_TITLE=", 13) == 0) continue;
+                    const char* item = p + 7;             // drop the MASHED_ prefix
+                    const size_t il = std::strlen(item);
+                    const size_t need = il + (len ? 1 : 0);
+                    if (len + need + 4 >= sizeof s_label) {
+                        std::strcpy(s_label + len, " ...");
+                        break;
+                    }
+                    if (len) s_label[len++] = ' ';
+                    std::memcpy(s_label + len, item, il);
+                    len += il;
+                    s_label[len] = '\0';
+                }
+                FreeEnvironmentStringsA(env);
+            }
+            if (len == 0) std::strcpy(s_label, "manual play");
+        }
+    }
+    const char* state = "menu";
+    switch (mashed_re::Race::GameFlow_Mode()) {
+        case mashed_re::Race::GameMode::Frontend:    state = "menu"; break;
+        case mashed_re::Race::GameMode::LoadingRace: state = "loading race"; break;
+        case mashed_re::Race::GameMode::InRace:
+            state = mashed_re::Race::GameFlow_IsPaused() ? "race (paused)" : "race";
+            break;
+        case mashed_re::Race::GameMode::Results:     state = "results"; break;
+    }
     char buf[256];
-    std::snprintf(buf, sizeof(buf),
-                  "Mashed RE (B11 keys: %s%s%s%s%s%s)",
-                  up    ? "UP "    : "",
-                  down  ? "DOWN "  : "",
-                  left  ? "LEFT "  : "",
-                  right ? "RIGHT " : "",
-                  enter ? "ENTER " : "",
-                  esc   ? "ESC "   : "");
-    const char* slot_name = "(none)";
-    if (g_titlePickedSlot < g_txd.count()) {
-        slot_name = g_txd.texture(g_titlePickedSlot).name;
-    }
-    if (!up && !down && !left && !right && !enter && !esc) {
-        std::snprintf(buf, sizeof(buf),
-                      "Mashed RE (B13 idle; slot %u/'%s' quad@%+d,%+d)",
-                      g_titlePickedSlot, slot_name,
-                      static_cast<int>(g_titleQuadOffsetX),
-                      static_cast<int>(g_titleQuadOffsetY));
+    if (g_det_clock) {
+        std::snprintf(buf, sizeof buf, "Mashed RE | %s | %s | frame %u",
+                      s_label, state, (g_det_frame / 30u) * 30u);
     } else {
-        std::snprintf(buf, sizeof(buf),
-                      "Mashed RE (B13 slot %u/'%s'; keys: %s%s%s%s%s%s; quad@%+d,%+d)",
-                      g_titlePickedSlot, slot_name,
-                      up    ? "UP "    : "",
-                      down  ? "DOWN "  : "",
-                      left  ? "LEFT "  : "",
-                      right ? "RIGHT " : "",
-                      enter ? "ENTER " : "",
-                      esc   ? "ESC "   : "",
-                      static_cast<int>(g_titleQuadOffsetX),
-                      static_cast<int>(g_titleQuadOffsetY));
+        std::snprintf(buf, sizeof buf, "Mashed RE | %s | %s", s_label, state);
     }
+    static char s_last[256] = {};
+    if (std::strcmp(buf, s_last) == 0) return;
+    std::memcpy(s_last, buf, sizeof s_last);
     SetWindowTextA(g_hwnd, buf);
-}
-
-// B12 — translate the title quad based on held arrow keys. Enter resets. The
-// clamp keeps the quad fully on the 800x600 backbuffer; without it, holding an
-// arrow eventually walks the quad off-screen, leaving an empty teal frame
-// (technically correct, visually misleading). 4-px step at 60 Hz = ~240 px/s.
-void UpdateQuadFromKeyboard() {
-    if (!g_kbd) return;
-    const bool up    = (g_keys[DIK_UP]    & 0x80) != 0;
-    const bool down  = (g_keys[DIK_DOWN]  & 0x80) != 0;
-    const bool left  = (g_keys[DIK_LEFT]  & 0x80) != 0;
-    const bool right = (g_keys[DIK_RIGHT] & 0x80) != 0;
-    if (left)  g_titleQuadOffsetX -= kTitleQuadStep;
-    if (right) g_titleQuadOffsetX += kTitleQuadStep;
-    if (up)    g_titleQuadOffsetY -= kTitleQuadStep;
-    if (down)  g_titleQuadOffsetY += kTitleQuadStep;
-    // Reset on Enter rising edge so a held Enter doesn't pin offset at zero.
-    const bool enter      = (g_keys[DIK_RETURN]      & 0x80) != 0;
-    const bool enter_prev = (g_keys_prev[DIK_RETURN] & 0x80) != 0;
-    if (enter && !enter_prev) {
-        g_titleQuadOffsetX = 0.f;
-        g_titleQuadOffsetY = 0.f;
-    }
-    // Clamp so the quad center stays within [half, dim-half] (half-quad-on-screen).
-    const float halfQuad = kTitleQuadSize * 0.5f;
-    const float minX = halfQuad - kTitleQuadCenterX;
-    const float maxX = (static_cast<float>(kWidth)  - halfQuad) - kTitleQuadCenterX;
-    const float minY = halfQuad - kTitleQuadCenterY;
-    const float maxY = (static_cast<float>(kHeight) - halfQuad) - kTitleQuadCenterY;
-    if (g_titleQuadOffsetX < minX) g_titleQuadOffsetX = minX;
-    if (g_titleQuadOffsetX > maxX) g_titleQuadOffsetX = maxX;
-    if (g_titleQuadOffsetY < minY) g_titleQuadOffsetY = minY;
-    if (g_titleQuadOffsetY > maxY) g_titleQuadOffsetY = maxY;
 }
 
 // B13 — PgUp / PgDn cycle through uploaded atlas slots (the 8 Frontend.piz
@@ -2898,8 +2858,10 @@ bool RenderFrame() {
         static const int s_simHz = []{ char b[16];
             DWORD n = GetEnvironmentVariableA("MASHED_SIM_HZ", b, sizeof b);
             return n ? atoi(b) : 60; }();
-        // Free camera: WASD move, Q/E down/up, arrows OR right-button mouse
-        // look, R = back to auto-orbit.
+        // The placeholder free-fly dev camera (WASD move, Q/E down/up, arrows /
+        // right-mouse look, R = auto-orbit) was REMOVED 2026-09-29 (user
+        // request): `ci` is left at its zero default, so TrackRenderer never
+        // enters its free mode and the race camera drives the view.
         // #6 (user review): the in-race driving/camera input below reads GLOBAL
         // DirectInput key + mouse state, which stays live even when our window
         // is unfocused (the device is DISCL_BACKGROUND|DISCL_NONEXCLUSIVE) --
@@ -2924,31 +2886,6 @@ bool RenderFrame() {
         // a chase-cam frame and a high-orbit frame of the same simulation instant.
         // The demo drivers inject their own input, so suppressing live input here
         // costs the capture nothing.
-        if (g_kbd && !g_det_clock && s_live_input_ok) {   // #6: no unfocused cam
-            auto dn = [&](int k) { return (g_keys[k] & 0x80) != 0; };
-            ci.move_fwd    = (dn(DIK_W) ? 1.f : 0.f) - (dn(DIK_S) ? 1.f : 0.f);
-            ci.move_strafe = (dn(DIK_D) ? 1.f : 0.f) - (dn(DIK_A) ? 1.f : 0.f);
-            ci.move_up     = (dn(DIK_E) ? 1.f : 0.f) - (dn(DIK_Q) ? 1.f : 0.f);
-            ci.yaw_delta   = ((dn(DIK_RIGHT) ? 1.f : 0.f) -
-                              (dn(DIK_LEFT)  ? 1.f : 0.f)) * 1.6f * dt;
-            ci.pitch_delta = ((dn(DIK_UP)   ? 1.f : 0.f) -
-                              (dn(DIK_DOWN) ? 1.f : 0.f)) * 1.0f * dt;
-            ci.reset_orbit = dn(DIK_R);
-        }
-        if (!g_det_clock && s_live_input_ok) {   // #6: no unfocused mouse-look
-            static POINT s_last{};
-            static bool  s_had = false;
-            if (GetAsyncKeyState(VK_RBUTTON) & 0x8000) {
-                POINT p; GetCursorPos(&p);
-                if (s_had) {
-                    ci.yaw_delta   += static_cast<float>(p.x - s_last.x) * 0.005f;
-                    ci.pitch_delta -= static_cast<float>(p.y - s_last.y) * 0.005f;
-                }
-                s_last = p; s_had = true;
-            } else {
-                s_had = false;
-            }
-        }
         // R5: drive the car. Arrow keys steer/accelerate; MASHED_DRIVE_DEMO
         // injects a scripted run (accelerate, then weave) and captures shots
         // proving motion + ground snap.
@@ -2992,8 +2929,6 @@ bool RenderFrame() {
                 auto dn = [&](int k) { return (g_keys[k] & 0x80) != 0; };
                 di.accel = (dn(DIK_UP) ? 1.f : 0.f) - (dn(DIK_DOWN) ? 1.f : 0.f);
                 di.steer = (dn(DIK_RIGHT) ? 1.f : 0.f) - (dn(DIK_LEFT) ? 1.f : 0.f);
-                // arrows belong to the car now; keep camera-look on the mouse
-                ci.yaw_delta = 0.f; ci.pitch_delta = 0.f;
             }
             // A8 (2026-08-26): MASHED_STEER_HOLD — a HELD steer, full accel, for the
             // whole run. MEASUREMENT HARNESS ONLY; it commands input, it changes no
@@ -4152,9 +4087,7 @@ bool RenderFrame() {
                 (g_titlePickedSlot < g_atlas_slot_count)
                     ? g_titlePickedSlot
                     : 0u;
-            g_quad_renderer.RenderAt(slot,
-                                     kTitleQuadCenterX + g_titleQuadOffsetX,
-                                     kTitleQuadCenterY + g_titleQuadOffsetY,
+            g_quad_renderer.RenderAt(slot, kTitleQuadCenterX, kTitleQuadCenterY,
                                      kTitleQuadSize, kTitleQuadSize);
         }
     } else {
@@ -8876,9 +8809,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
             if (RunConfigEditDemo(nav_demo_phase)) { PostQuitMessage(0); }
             ++nav_demo_phase;
         }
-        UpdateTitleFromKeyboard();
-        // B12: arrow keys translate title quad; Enter resets.
-        UpdateQuadFromKeyboard();
+        UpdateWindowTitle();
         // B13: PgUp/PgDn cycle through uploaded atlas slots; Home -> 0.
         UpdateTitleSlotFromKeyboard();
         // State-machine-driven nav: Up/Down move the cursor, Enter pushes the
