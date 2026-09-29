@@ -163,6 +163,34 @@ the closure path is now decision 3 above — port behaviour modes 3 and 7. Then,
   input survives the sim-clock fix on the HEAD side. Next command: two
   `MASHED_PLAYERTRACE=1 MASHED_MEASURE_SOLO=1` runs until both attractors are sampled, then
   diff the two `player_trace.log` files for the first differing FIELD.
+- **U-9149 — take this one WITH U-9147; it is the live lead for it.** A4 loads A6b's ESI from
+  `[esp+0x3c]` (`0x0047093b`) two instructions after loading A6a's from EDI (`0x00470934`),
+  so A6b's context is never null and the exe's `nullptr` at `VehicleControl.cpp:195` makes
+  the whole rotation-apply dead — airborne auto-level and the velocity-align rotation never
+  run. The `.asi` C4 forwarder's `ESI = record` assumption is **also** unsupported by that
+  instruction. Next command: decompile `FUN_00470670` and read the third argument of its
+  `FUN_00468980` call at `0x00470943`. **Do not invent a matrix to pass.**
+
+### 3b. The dual-copy leads (`aa4795af`) — four are DONE, one is open
+
+Judged against the original 2026-09-29b, `PLAYER_REGRESSION_2026-09-29.md` §7.3, commit
+`3e4fba77`. **Do not re-do these four**; the fifth is U-9149 above.
+
+- **A5 `0x0046ddb0` constants — FIXED, and there were EIGHT, not the four the audit named.**
+  All were 6-significant-digit truncations of exact round numbers (1/3000, 1/300, -1/30000,
+  5e-6, 1/3, 0.99, 1e-4, 2^-31), now `asFb(bits)`. Re-audit with
+  `audit_consts.py`-style bit comparison against `original/MASHED.exe`: **30 exact, 0
+  mismatch**. Worth running the same check on any other header that annotates `_DAT_`
+  addresses — this class of slip is invisible to review and trivial to detect.
+- **A3 `0x0046b540` output stride — FIXED to `0x40`**, settled from `add ebx, 0x40` in all
+  three loops, not from symmetry. Measured inert on this recipe.
+- **A6a `0x00467650` gear clamp — FIXED to bound 5** (the original declares `local_54[5]` and
+  reads it unclamped). Measured currently inert: `gear` took only 0..4 over 79,356 frames.
+- **`CarCarContacts.cpp:192-195` — REFUTED as the U-9145 coupling.** `0x00469df0` has **zero
+  call sites** in the whole tree. The empty `Rw_MatrixDerive` is latent dead-code damage and
+  belongs to the audit's own §8.2 item 6 pass.
+- **None of the four moves U-9147's ~28% slip gap**, though the constants are demonstrably
+  live ((e) moved 0.1 on two cars). That is a useful negative — do not re-search there.
 
 ---
 

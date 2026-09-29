@@ -494,6 +494,21 @@ opinion is an opinion about the scaffold, not about the port.
 >
 > **The recipe from here:** use `MASHED_MEASURE_SOLO=1` for any D2 gate comparison. The
 > `MASHED_MEASURE_NOOPP=1` arm is deterministic but measures a scenario neither side ran.
+>
+> **6. The five dual-copy leads (`aa4795af`), judged against the original** (§7.3 of the note,
+> commit `3e4fba77`). Three exe-copy physics defects are **FIXED**: A5 `0x0046ddb0`'s `.rdata`
+> constants (**eight** of them, not the four the audit named — every one a 6-digit truncation
+> of an exact round number; now `asFb(bits)`, re-audited 30 exact / 0 mismatch), A3
+> `0x0046b540`'s output stride (**0x40**, settled from `add ebx, 0x40` in all three loops, not
+> from symmetry), and A6a `0x00467650`'s gear clamp (bound **5**; the original declares
+> `local_54[5]` and reads it unclamped). The `CarCarContacts` lead is **REFUTED** —
+> `0x00469df0` has zero call sites. **A6b `0x00468980` is CONFIRMED and NOT fixed**: A4 loads
+> its ESI from `[esp+0x3c]` (`0x0047093b`), so the exe's `nullptr` kills the whole
+> rotation-apply — *and* the `.asi` C4 forwarder's `ESI = record` assumption is unsupported by
+> the same instruction, so neither copy is established (**U-9149**). **None of the four fixes
+> moves U-9147's ~28% gap**, so U-9149 is its only surviving lead among the five. Guards after
+> the fixes: (e) PASS 3/3, (b) FAIL 3/3 on the same bands, power-ups 11/11 decision CLEAN,
+> modes oracle rule 3 GREEN 3257/3257, **.asi untouched**.
 
 > #### AMENDMENT 2026-09-29 — the gate recipe gains a CONTROLLED arm; the D2 verdict is re-checked against it
 >
