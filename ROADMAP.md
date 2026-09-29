@@ -722,6 +722,14 @@ criteria are all met since 2026-09-26 (`D3_MODES_2026-09-26.md`).
 
 #### D3 STATUS 2026-09-27 (AI row re-measured 2026-09-27; powerups + modes rows 2026-09-26) — NOT CLOSED (AI (b) open). Gate table:
 
+> **AI row update 2026-09-29** (`D3_DRIVE_FORCE_2026-09-29.md`, and the closure block above):
+> criterion **(e) is now MET on all three AI cars to within 0.05%** — the unported A6a start-boost
+> block was the whole of U-9140's 8-9x drive-force gap. **(b) is the sole remaining D3 blocker**,
+> and it is now measured under matched speed for the first time, where it fails wider
+> (`c1_median` 42-48 against a band of `[0,0]`, `abs_steer_median` 46.5-58 against a ceiling of 23).
+> The (b) prose in the AI row below was scored on cars running 46-90% slower than the original
+> over the same window; treat its band numbers as superseded, not its cause analysis.
+
 | Third | Default path today | Measured against the original | Verdict |
 |---|---|---|---|
 | **AI (WS-C)** | **ported tick FUN_00418860 every frame; its ctrl bytes drive the opponents through the ported physics chain** (2026-09-26) | control-byte diff vs the (b) tolerance, re-captured 2026-09-27 on the post-`4ff428ad` `MASHED_ROUND` route (`verify/d3_ai_20260927/s6rng.csv` vs `o4.msd.aistep.csv`): **identical window result**, steer 80-96 distinct per car (original 29-96). Step INPUTS now captured on both sides (`D3_AI_RESIDUE_2026-09-27.md`) | **(a) met, (b) NOT met - unchanged: cars 2/3 pass all 10 bands, car 1 fails the same 2 (`c0`/`c1` distinct 7/82 vs 13..37/17..70), (c) met, (d) met.** Cause LOCALISED 2026-09-27: `DAT_0089a368` is 0 for the whole standalone window and 1 for 159 of the original's 220 calls (one-shot 20% roll at `0x00417c43`), which changes the spline bank -> curvature (median 10 vs 106) -> the `curv>20` steer multiplier at `0x0041665c` -> the `c0`/`c1` distinct split, and the accel byte at `0x004169e0`. REFUTED: the lookahead target (a zeroed `own_x` faked it) and the phase-8 wall-march. `FUN_00534870` RNG now ported verbatim (U-D3-AIRAND resolved) and it does NOT close (b). Targeting modes 1..10 still stubbed, blocked on the world-object query `FUN_00484c70` |
@@ -807,6 +815,73 @@ criteria are all met since 2026-09-26 (`D3_MODES_2026-09-26.md`).
 - **D3 closes** when powerups (c) replays `s2` clean AND U-D3-DRIVE meets (e). Powerups (c)
   is DONE (2026-09-28d, `s2` decision CLEAN and contact CLEAN); **U-D3-DRIVE is now the only
   remaining gate**. D3-R1 (car 1) then carries forward like the D1 residue.
+
+#### D3 closure state 2026-09-29 — **D3 is NOT CLOSED**; criterion (e) is MET, AI (b) is the sole remaining blocker
+
+Session note: `re/analysis/D3_DRIVE_FORCE_2026-09-29.md`. Commits `9573f3a3` (the port +
+criterion (e)), and this block's commit (guards + note). The §2.4 band of
+`D3_DRIVE_2026-09-28.md` was NOT touched.
+
+- **Criterion (e): PASSES on all three AI cars, on both gated statistics, all six values
+  inside 0.05% of the reference** against a ±2% band (`re/tools/ai_speed_env.py --check`,
+  `verify/d3_force_20260929/e_b_check.txt`): `launch` **1426.4 / 2053.0 / 2055.2** against
+  1425.7 / 2052.5 / 2055.0; `ft_median_m0` **2550.7 / 2053.0 / 2278.3** against 2551.6 /
+  2052.5 / 2278.1. Was -85.9/-90.2/-90.2% and -46.5/-90.2/-84.5% on 2026-09-28. `sa_b3`
+  repeats `sa_b2` to every printed digit.
+- **Root cause of U-9140's 8-9x: A6a's START BOOST block was never ported.**
+  `Integrate2.cpp` carried one line, "[U-A6A-ST0] boost-state machine (+0xbf8 == 1 / == 2)
+  ... shape only". Ported verbatim from `FUN_00467650` `0x00467d3a..0x00467e44`: while
+  `+0xbf8 == 1` each state-2 active wheel adds `ff` × its forward axis into `+0xb14/18/1c`
+  and decrements `+0xbf4` by `dt`; `ff` = 5e6, or `_DAT_005cea28` = 8e6 when
+  `FUN_0040e340() == 4` and the car index is `DAT_0088e668`/`66c`. MEASURED on three
+  separate original captures (`verify/d3_force_20260929/orig_boost_launch.txt`): the residual
+  after the drive-only law is **2 × 5e6 for car 1 and 2 × 8e6 for cars 2 and 3**, exactly
+  while `+0xbf8 == 1`, one wheel's worth on the run-out frame and 0.02-0.9% of the drive term
+  after. The player is boosted in **neither** player recipe.
+- **The cadence question of §4.4 is SETTLED and it does not differ**, both sides, with no new
+  probe. Port: render-tick `+0xb14` equals the consumption-time value on 898/899 frames
+  (`cad1/cadence.txt`). Original: A4 `FUN_00470670` zeroes the accumulator at entry
+  (`0x004706af/b5/bb`) and calls A6a exactly once (`0x0047094c`, no loop, one chunk at budget
+  50) — **and** `dt·(+0x54)·kDt × captured +0xb1c` reproduces the original's own per-frame
+  speed gain on 9 consecutive frames, which a multi-pass accumulation cannot do. So
+  `[A8-B14CADENCE]` is refuted for this comparison, and the force→velocity conversion was
+  never the defect. **U-9140 RESOLVED.**
+- **U-9142 answered by measurement: KEEP the spawn settle.** With `MASHED_NO_SPAWN_SETTLE=1`
+  and the boost on, (e) FAILS on all three cars by -2.1% to -6.9%. The settle is required.
+- **AI criterion (b): still NOT met, and now WIDER — the sole D3 blocker.**
+  `MASHED_NO_START_BOOST=1` reproduces the 2026-09-28 (b) numbers exactly, so no new defect
+  was introduced; the default arm adds `c1_median` 42-48 against a band of `[0,0]` and
+  `abs_steer_median` 46.5-58 against a ceiling of 23. **And the framing changes: the previous
+  (b) numbers were scored on cars running 46-90% slower than the original over the same
+  window, so they were not a measurement of the AI law. (b) is now measured under matched
+  speed for the first time.**
+- Also decoded here, each replacing an `[UNCERTAIN]` or a wrong constant: A6a `param_1` is the
+  CAR INDEX (dispatcher `0x00471071` → A4 `0x0047094c`; was passed 0);
+  `FUN_0040e340` = `DAT_008a94d0` the participant count; `DAT_0088e668/66c` are the two
+  least-progressed cars (`FUN_00470c70` `0x00470e2e` seed + descending sort by
+  `FUN_00408a50` = `*(float*)(0x008a96e8 + car*0x30c)`, `0x00470e66..0x00470f0a`), ported as
+  `Fi_UpdateBoostOrder()`; and `Fi_GameMode()` corrected **0 → 6** (`FUN_0040e350` =
+  `DAT_0063ba8c`; in-race value 6 on two independent witnesses), audited call-site by
+  call-site to have exactly one live consequence. Reverts: `MASHED_NO_START_BOOST=1`,
+  `MASHED_GAMEMODE_STUB=0`.
+- **Open:** `[UNCERTAIN] U-D3-BOOST-ARM` — the writer of `+0xbf8 = 1` / `+0xbf4 = 1300` is not
+  located (`findoffset.py --writes 0xbf8 0xbf4 0xbf0` puts every `.text` access inside
+  `FUN_00467650`, so the arming store uses a base the displacement sweep cannot see). Only the
+  SEED is measured; the force law is transcribed. Next command in the note §2.5. Consequence:
+  the arm is restricted to `slot != 0`, which is what every capture shows, so a human player
+  who does not jump the lights is not boosted — unported, not decided. Plus
+  `[UNCERTAIN] U-D3-BOOST-ORDER` (the progress float has no writer in the standalone, so the
+  8e6 pair cannot evolve with race order; no effect on (e)).
+- Guards: power-up sweep **11/11 decision CLEAN**, contact CLEAN 10/11 with `g3` DIVERGES
+  unchanged; modes oracle rule 3 **GREEN** (2468/2468, 2/2, 3382/3382, MISMATCH 0, and this
+  run *did* produce 2 segment-ends so the rule-3 tail arm is covered); both build targets
+  clean and the **.asi untouched** (418 objects up to date — every edited file is exe-only).
+  **D2 clean-env MOVES +2..10%** (slip 1500-2000 0.128 → 0.132-0.141, driving-median 2489 →
+  2539) and is **attributed by a same-session `MASHED_NO_START_BOOST=1` control** that
+  reproduces the 2026-09-28 row to four decimals. The player's force path is unchanged by
+  construction (arm gated `slot != 0`); the move is the three opponents launching correctly
+  into the shared world — the mechanism §3.4 CONFIRMED and **U-9141** already filed as "this
+  recipe is no longer a controlled instrument".
 
 #### D3 closure state 2026-09-28e — **D3 is NOT CLOSED**, measured strictly against the gate
 

@@ -132,17 +132,26 @@ int  Vc_RoundST0()    { return 0; }                          // FUN_004a2c48 (ST
 // FUN_00408a50 (0x00408a50) = *(float*)(0x008a96e8 + car*0x30c).
 int  g_modeCarA = 2;                                         // DAT_0088e668
 int  g_modeCarB = 3;                                         // DAT_0088e66c
-// Participant count — FUN_0040e340 (0x0040e340, 6 bytes) = DAT_008a94d0. Set from the
-// car count VehiclePhysics_Init is given; 4 on the D3 recipe. (ForceIntegrator.h's
-// `void Fi_GameModeTick()` is the SAME original function mis-typed as void; that decl
-// is left alone because ForceIntegrator.cpp:294 calls it only for its side effect.)
+// Participant count — FUN_0040e340 (0x0040e340, 5 bytes) = `MOV EAX,[0x008a94d0] / RETN`.
+// Already ported at C4 as Util/UtilLeaves.cpp `GetLiveCarCount` (hooks.csv row 0040e340),
+// which reads the global directly — correct in-process, useless in the standalone, because
+// 0x008a94d0 has NO WRITER in mashed_re.exe (grep: Race/ScoringHooks.cpp:41/236/245/325 and
+// UtilLeaves.cpp:54 only READ it, and ScoringHooks.cpp is asi-only). So this is set from the
+// car count VehiclePhysics_Init is given — 4 on the D3 recipe, which is the measured value.
+// (ForceIntegrator.h's `void Fi_GameModeTick()` is the SAME original function mis-typed as
+// void; that decl is left alone because ForceIntegrator.cpp:294 calls it only for its side
+// effect.)
 int  g_participantCount = 4;                                 // DAT_008a94d0
 int  Fi_ParticipantCount() { return g_participantCount; }
 // Ported form of the FUN_00470c70 sort above. In the STANDALONE the per-car progress
-// float at 0x008a96e8 + car*0x30c has NO WRITER (the only port-side reference is the
-// read-only accessor Frontend/Leaves.cpp PerCarRaceProgressGet, 0x00408a50; the
-// original's writer FUN_00408a70 is unported), so every comparand is 0.0, every `<` is
-// false, no swap happens and the pair stays at the seeded grid order {2, 3}. That is
+// float at 0x008a96e8 + car*0x30c has NO REACHABLE WRITER — checked, not assumed: the
+// original's writer FUN_00408a70 IS ported (Frontend/MenuMixed.cpp FrontendC2RoundI,
+// RH_ScopedInstall at MenuMixed.cpp:634, hooks.csv C3) but MenuMixed.cpp is in
+// asi_sources.rsp only, so it is an .asi export with no call site on the mashed_re.exe
+// race path; the only exe-side reference to the field is the read-only accessor
+// Frontend/Leaves.cpp PerCarRaceProgressGet (0x00408a50). So every comparand is 0.0,
+// every `<` is false, no swap happens and the pair stays at the seeded grid order {2, 3}.
+// That is
 // exactly the MEASURED value at the lights — verify/d3_force_20260929/o_c2.msd and
 // o_c3.msd take the 8e6 arm and verify/d3_drive_20260928/e3.msd (car 1) does not.
 // [UNCERTAIN] U-D3-BOOST-ORDER: because the progress float is never written, the pair

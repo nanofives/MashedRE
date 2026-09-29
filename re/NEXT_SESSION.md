@@ -1,63 +1,109 @@
 # Next session kickoff
 
-Written 2026-09-28 at the close of the U-D3-DRIVE / physics-drift session.
-Branch `race/first-frame-parity`, HEAD `b5923d20` (+ the tracker commit that follows it).
-Nothing is pushed.
+Written 2026-09-29 at the close of the U-D3-DRIVE-FORCE session.
+Branch `race/first-frame-parity`, HEAD is this session's tracker commit. Nothing is pushed.
+Superseded kickoff: the 2026-09-28 one (U-9140 / U-9142 are both closed below).
 
 ## Where D3 stands
 
-**D3 is NOT closed, and the reason is one measured gate failure plus two open user
-decisions.** Full record: `re/analysis/D3_DRIVE_2026-09-28.md`. ROADMAP §D3 "D3 closure
-state 2026-09-28e" is the authoritative summary; do not re-derive either.
+**D3 is NOT closed, and there is now exactly ONE gate failure left: AI criterion (b).**
+Full record: `re/analysis/D3_DRIVE_FORCE_2026-09-29.md` and, for the session before it,
+`D3_DRIVE_2026-09-28.md`. ROADMAP §D3 "D3 closure state 2026-09-29" is the authoritative
+summary; do not re-derive either.
 
 | third | state |
 |---|---|
-| Powerups (c) | **MET** 2026-09-28d. Sweep re-run this session: 11 of 11 decision CLEAN, contact CLEAN on 10 of 11, `g3` DIVERGES unchanged (the known 2-query-of-546 R_FLAME residue). |
-| Modes (a)-(d) | MET. Rule 3 oracle spot-checked GREEN this session. |
+| Powerups (c) | **MET** 2026-09-28d. Sweep re-run 2026-09-29: 11 of 11 decision CLEAN, contact CLEAN on 10 of 11, `g3` DIVERGES unchanged (the known 2-query-of-546 R_FLAME residue). |
+| Modes (a)-(d) | MET. Rule 3 oracle GREEN 2026-09-29, and that run *did* produce 2 segment-ends, so the rule-3 tail arm is covered. |
 | AI (a), (c), (d) | MET. |
-| AI (b) | **REGRESSED to FAIL on cars 2 and 3** by this session's spawn-settle fix — U-9142. |
-| AI (e) | **FAILS on all three cars**, -46 to -90% — U-9140. |
+| AI (e) | **MET 2026-09-29** — all six gated values inside 0.05% of the reference against a ±2% band. U-9140 resolved: the cause was A6a's unported START BOOST block. |
+| AI (b) | **NOT MET on all three cars, and now measured under matched speed for the first time.** This is the only thing between here and D3 CLOSED. |
 
-## The three things owed, in the order they should be taken
+### What is CLOSED and must not be re-opened or re-measured
 
-### 1. U-9140 — the remaining criterion (e) blocker. START WITH THE CADENCE CHECK.
+- **U-9140 RESOLVED.** The 8-9x drive-force gap was A6a's `+0xbf8` start-boost block, never
+  ported. Ported verbatim (`Integrate2.cpp`, cites `0x00467d3a..0x00467e44`), 5e6/wheel or
+  8e6/wheel for the two least-progressed cars, measured on three separate original captures.
+- **The `[A8-B14CADENCE]` question is SETTLED and the answer is "they do not differ".** The
+  port's render-tick `+0xb14` equals its consumption-time value on 898/899 frames, and the
+  original's snapshot is provably a single-pass value (A4 zeroes at entry and calls A6a once;
+  plus `linTerm × captured +0xb1c` reproduces the original's own per-frame Δspeed on 9
+  consecutive frames). Do **not** re-run a cadence probe.
+- **U-9142 ANSWERED by measurement: KEEP the spawn settle.** `MASHED_NO_SPAWN_SETTLE=1` fails
+  (e) on all three cars by -2.1% to -6.9%. It is no longer a user decision.
+- The force→velocity conversion, the gear law, the gearbox constants, the wheel states and
+  the drive-only accumulator law are all confirmed faithful. The launch is not a physics
+  question any more.
 
-Do **not** start by chasing the 8-9x drive-accumulator gap. It may not be real. The
-`[A8-B14CADENCE]` comment at `VehiclePhysicsRun.cpp:849-855` already warns that a
-render-tick snapshot of `+0xb14` can be a residue after the whole substep loop, and A4
-zeroes it at entry (`VehicleControl.cpp:102`). Settle that first:
+## What is owed, in the order it should be taken
+
+### 1. AI criterion (b) — the ONLY D3 blocker. Start here.
+
+`re/tools/ai_ctrl_window.py --check <csv>` on a fresh standalone capture:
 
 ```
-py -3.12 re/tools/statediff/a8_run_port.py verify/<tag> 20 -MASHED_REAL_PHYSICS \
-    MASHED_COUPLING_DIAG=1
+py -3.12 re/tools/sa_capture.py verify/<tag> 8,30,60 MASHED_MUTE=1     MASHED_TRACK_VIEW=Training MASHED_CAR=1 MASHED_ROUND=1 MASHED_WIN_POS=left-bl     MASHED_TITLE="D3 AI (b) <what>" MASHED_AI_STEPDUMP=verify/<tag>.csv
+py -3.12 re/tools/ai_ctrl_window.py --check verify/<tag>.csv
+py -3.12 re/tools/ai_speed_env.py   --check verify/<tag>.csv   # (e) must stay PASS
 ```
 
-and compare the `ctrl=` consumption-time `+0xb14` (`Integrate2.cpp:461`) against the same
-run's render-tick value in `motion_diag.log`. If they differ, every figure derived from the
-original's captured `+0xb14` — including §4.4's table — is invalid and the comparison has
-to move to a Frida probe at the A6a drive block. Observe the CLAUDE.md hot-path rule
-there: hook a callee entry, one function, short run, **not** an Interceptor trace.
+Where it stands on the default build (2026-09-29, `verify/d3_force_20260929/sa_b2.csv`):
 
-What is already nailed down and must not be re-measured: after the spawn settle the gear,
-the input bytes (`c4 = 255`), the four wheel contacts, the wheel states `2/2/1/1` and the
-gearbox constants `+0x498` = 40000 / `+0x49c` = 4000 all MATCH on both sides. The launch is
-still 13.3 / 13.6 / 14.4 / 15.2 per frame against the original's 180 / 190 / 188 / 198.
+| car | failing bands |
+|---|---|
+| 1 | `c0_distinct` 7 (floor 13), `c1_distinct` 106 (ceil 70), `steer_distinct` 112 (ceil 96), `c1_median` 48.0 (band `[0,0]`), `abs_steer_median` 48.0 (ceil 23) |
+| 2 | `c1_distinct` 93, `steer_distinct` 121, `c1_median` 42.0, `abs_steer_median` 58.0 |
+| 3 | `c1_distinct` 98, `steer_distinct` 116, `c1_median` 46.5, `abs_steer_median` 46.5, `accel_distinct` 1 (floor 2), `brake_distinct` 1 (needs 2) |
 
-### 2. U-9142 — a user decision, not an investigation
+**Read the `c1_median` / `abs_steer_median` rows first — they are the NEW information and the
+biggest ones.** The band is `[0,0]` for `c1_median`, i.e. the original's AI issues its steer
+on the `c0` byte with `c1` at zero for at least half the window, and the port issues 42-48 on
+`c1`. That is a sign/channel asymmetry, not a magnitude tuning problem: `c0` and `c1` are the
+mutually exclusive steer pair (`+steer -> input[0]`, `-steer -> input[1]`,
+`VehiclePhysicsRun.cpp` WS-A8-STEER block), so the port is steering one way far more than the
+original. `c0_distinct` 7 on car 1 has been the standing symptom since 2026-09-26 and is
+diagnosed in `D3_AI_RESIDUE_2026-09-27.md` (the `DAT_0089a368` spline-bank roll → curvature →
+the `curv>20` multiplier at `0x0041665c`). Check whether the same chain explains the
+`c1`-side pile-up before opening a new hypothesis.
 
-The spawn settle (commit `83a7b6ea`) makes the port's rest state equal a state read out of
-the original, and it costs AI criterion (b) on cars 2 and 3. It ships default-ON with
-`MASHED_NO_SPAWN_SETTLE=1` as the A/B revert, both arms measured and deterministic. **Ask
-before changing either the default or the (b) bands.** The two facts that bear on it:
+Two things that must NOT be used as an excuse:
 
-- the `accel_distinct` / `brake_distinct` failures are the removal of an artefact — pre-fix
-  the port's only non-255 accel call in the 220-call window was the one the spawn transient
-  produced, so those bands were being satisfied by the defect;
-- the `c1_distinct` / `steer_distinct` failures are 2-8 counts of margin, and `c1` is a
-  function of the speed trace that U-9140 is 8-9x wrong about — so U-9140 may move it.
+- These numbers are **worse** than the 2026-09-28 ones, and that is not a regression from the
+  boost port: `MASHED_NO_START_BOOST=1` reproduces the 2026-09-28 (b) table exactly. What
+  changed is that the cars now go the right speed, so the steer bands are for the first time
+  scored on a car whose lookahead/curvature inputs are in the right regime. The older (b)
+  numbers were not a measurement of the AI law.
+- `accel_distinct` / `brake_distinct` = 1 is the D3-R1 story (unported behaviour modes 3 and 7,
+  `FUN_00414c30` / `FUN_00484c70`), i.e. the port genuinely never lifts or brakes. It is a
+  real band failure and it is *not* fixable inside the steer chain.
 
-That ordering argument says **do U-9140 first and re-score (b) afterwards** rather than
-adjudicate U-9142 cold.
+### 2. U-D3-BOOST-ARM — find the writer that arms the boost
+
+The A6a boost FORCE law is transcribed and RVA-cited. The **arming** is a measured seed:
+`+0xbf8 = 1`, `+0xbf4 = 1300`, once per AI slot, at its first real post-settle step
+(`VehiclePhysicsRun.cpp`, the START BOOST ARM block). `MASHED_NO_START_BOOST=1` reverts.
+
+`py -3.12 re/tools/findoffset.py --writes 0xbf8 0xbf4 0xbf0` puts **every** `.text` access to
+those fields inside `FUN_00467650`, so the real arming store uses a base the displacement
+sweep cannot see. Next commands, in order:
+
+```
+# 1. Frida WRITE watchpoint on &rec[car]+0xbf8, armed during the COUNTDOWN. A6a's two
+#    +0xbf8 stores are both inside `bf8 == 1` / `== 2` arms, so while bf8 == 0 nothing in
+#    A6a writes it and the first fault IS the arming instruction. Report the faulting EIP,
+#    then decomp its containing function.
+# 2. If the watchpoint API is unavailable: a Ghidra script walking stores whose base is
+#    DAT_008815a0 + k and whose displacement is 0xbf8 - k.
+```
+
+Two things the writer would settle: whether 1300 is a constant or a value the countdown
+computes from the throttle timing (`+0xbf4` rises +150/frame net through the last five
+countdown frames and stops at the green), and therefore whether a human player who does not
+jump the lights is boosted — the port currently does not boost slot 0, because no original
+capture shows an armed player. Also open, and cheap once the writer is known:
+`[UNCERTAIN] U-D3-BOOST-ORDER`, the per-car race-progress float at `0x008a96e8 + car*0x30c`
+has no writer in the standalone (`FUN_00408a70` unported), so the 8e6 pair is pinned to the
+grid order `{2,3}` instead of tracking race order. No effect on (e).
 
 ### 3. U-9141 — the `a8` gate recipe needs a controlled arm
 
@@ -80,7 +126,29 @@ So do not try to "restore the D2 table" by changing physics. What is owed:
 decide. The same build at `09a73dc6` produced slip 0.1840 and 0.1283. Require three runs,
 and treat a single run that reaches the 0.1283 attractor as BAD.
 
-## Tools added this session
+## Added 2026-09-29 (U-D3-DRIVE-FORCE)
+
+- `MASHED_NO_START_BOOST=1` — revert arm for the A6a start boost. Reproduces the 2026-09-28
+  criterion (e) and (b) numbers exactly, which is what makes any before/after here legitimate.
+- `MASHED_GAMEMODE_STUB=0` — revert arm for `Fi_GameMode()` 6 → 0. Its only live consequence
+  is A6a's `+0xbf4` timer site; audited call-site by call-site in `ForceIntegratorStubs.cpp`.
+- `Fi_UpdateBoostOrder()` (`ForceIntegratorStubs.cpp`) — ported `FUN_00470c70`
+  `0x00470e2e..0x00470f0a`: seeds `DAT_0088e660..66c` with 0,1,2,3 and sorts descending by
+  the per-car progress float. Pinned to `{2,3}` in the standalone because that float has no
+  writer (see U-D3-BOOST-ORDER above).
+- `VehicleControlIntegrate` gained a `car` argument, so A6a's `param_1` is the real car index
+  instead of a hardcoded 0. That resolves the `[UNCERTAIN]` that was on `VehicleControl.cpp:187`.
+- `re/tools/findoffset.py` is the right tool for "who writes struct field +0xNN" and it was
+  what proved the boost arming writer is NOT reachable by a displacement sweep. Read its two
+  CAVEATS before citing a hit.
+- **`MASHED_AI_STEPDUMP` needs `MASHED_TRACK_VIEW=Training`.** Without it the standalone sits
+  in the frontend, never calls `AiStepDump()`, and you get three screenshots and no CSV with
+  no error. Cost this session one capture. The full recipe is in
+  `verify/d3_force_20260929/PROVENANCE.txt`.
+- `a8_run_port.py` moves `motion_diag.log` but **not** `friction_diag.log`. If you run with
+  `MASHED_COUPLING_DIAG=1`, delete `friction_diag.log` first and move it yourself afterwards.
+
+## Tools added in the 2026-09-28 session
 
 - `re/tools/ai_speed_env.py` — the criterion (e) scorer. Holds the band as `REFERENCE` /
   `BAND_PCT` / `GATED`. `--check <csv>`, `--envelope`, `--json`.

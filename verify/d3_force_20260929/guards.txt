@@ -1,0 +1,114 @@
+# U-D3-DRIVE-FORCE 2026-09-29 -- regression guards.
+#
+# 1. D2 clean-env (a8 held-lock). 3 runs of the default build and 3 of a same-session
+#    MASHED_NO_START_BOOST=1 control, so the movement is ATTRIBUTED, not assumed.
+#      py -3.12 re/tools/statediff/a8_run_port.py verify/d3_force_20260929/<tag> 50 \
+#          -MASHED_REAL_PHYSICS [MASHED_NO_START_BOOST=1]
+
+########## g_d2_1 ##########
+=== ORIGINAL verify/a8_steer_20260824/orig_steerR.msd: n=853  axis-minus-forward offset median +0.0446 rad ===
+  1500-2000: n=312  slip vs fwd 0.1913  slip vs AXIS 0.1467  av.y +1.143
+  2000-2600: n=541  slip vs fwd 0.2498  slip vs AXIS 0.2052  av.y +1.464
+=== PORT verify/d3_force_20260929/g_d2_1/motion_diag.log (spike/reseed-excluded 0 rows): n=1176  axis-minus-forward offset median +0.0425 rad ===
+  1500-2000: n= 86  slip vs fwd 0.1411  slip vs AXIS 0.0986  av.y +1.058
+  2000-2600: n=1025  slip vs fwd 0.2993  slip vs AXIS 0.2569  av.y +1.833
+
+  driving-only horiz median 1940.59   n=1153
+  steer over driving frames: min +33.867  median +33.867  max +33.867
+  driving-only horiz median 2539.40   n=1422
+  steer over driving frames: min +1.000  median +1.000  max +1.000
+
+
+########## g_d2_2 ##########
+=== ORIGINAL verify/a8_steer_20260824/orig_steerR.msd: n=853  axis-minus-forward offset median +0.0446 rad ===
+  1500-2000: n=312  slip vs fwd 0.1913  slip vs AXIS 0.1467  av.y +1.143
+  2000-2600: n=541  slip vs fwd 0.2498  slip vs AXIS 0.2052  av.y +1.464
+=== PORT verify/d3_force_20260929/g_d2_2/motion_diag.log (spike/reseed-excluded 0 rows): n=1186  axis-minus-forward offset median +0.0425 rad ===
+  1500-2000: n= 61  slip vs fwd 0.1323  slip vs AXIS 0.0898  av.y +0.996
+  2000-2600: n=1078  slip vs fwd 0.2992  slip vs AXIS 0.2567  av.y +1.830
+
+  driving-only horiz median 1940.59   n=1153
+  steer over driving frames: min +33.867  median +33.867  max +33.867
+  driving-only horiz median 2538.21   n=1420
+  steer over driving frames: min +1.000  median +1.000  max +1.000
+
+
+########## g_d2_3 ##########
+=== ORIGINAL verify/a8_steer_20260824/orig_steerR.msd: n=853  axis-minus-forward offset median +0.0446 rad ===
+  1500-2000: n=312  slip vs fwd 0.1913  slip vs AXIS 0.1467  av.y +1.143
+  2000-2600: n=541  slip vs fwd 0.2498  slip vs AXIS 0.2052  av.y +1.464
+=== PORT verify/d3_force_20260929/g_d2_3/motion_diag.log (spike/reseed-excluded 0 rows): n=1175  axis-minus-forward offset median +0.0425 rad ===
+  1500-2000: n= 86  slip vs fwd 0.1411  slip vs AXIS 0.0986  av.y +1.058
+  2000-2600: n=1024  slip vs fwd 0.2993  slip vs AXIS 0.2569  av.y +1.833
+
+  driving-only horiz median 1940.59   n=1153
+  steer over driving frames: min +33.867  median +33.867  max +33.867
+  driving-only horiz median 2539.39   n=1421
+  steer over driving frames: min +1.000  median +1.000  max +1.000
+
+
+########## g_d2nb_1 ##########
+=== ORIGINAL verify/a8_steer_20260824/orig_steerR.msd: n=853  axis-minus-forward offset median +0.0446 rad ===
+  1500-2000: n=312  slip vs fwd 0.1913  slip vs AXIS 0.1467  av.y +1.143
+  2000-2600: n=541  slip vs fwd 0.2498  slip vs AXIS 0.2052  av.y +1.464
+=== PORT verify/d3_force_20260929/g_d2nb_1/motion_diag.log (spike/reseed-excluded 0 rows): n=1217  axis-minus-forward offset median +0.0425 rad ===
+  1500-2000: n=175  slip vs fwd 0.1281  slip vs AXIS 0.0856  av.y +1.097
+  2000-2600: n=806  slip vs fwd 0.2928  slip vs AXIS 0.2503  av.y +1.802
+
+  driving-only horiz median 1940.59   n=1153
+  steer over driving frames: min +33.867  median +33.867  max +33.867
+  driving-only horiz median 2488.60   n=1522
+  steer over driving frames: min +1.000  median +1.000  max +1.000
+
+
+########## g_d2nb_2 ##########
+=== ORIGINAL verify/a8_steer_20260824/orig_steerR.msd: n=853  axis-minus-forward offset median +0.0446 rad ===
+  1500-2000: n=312  slip vs fwd 0.1913  slip vs AXIS 0.1467  av.y +1.143
+  2000-2600: n=541  slip vs fwd 0.2498  slip vs AXIS 0.2052  av.y +1.464
+=== PORT verify/d3_force_20260929/g_d2nb_2/motion_diag.log (spike/reseed-excluded 0 rows): n=1209  axis-minus-forward offset median +0.0425 rad ===
+  1500-2000: n=161  slip vs fwd 0.1266  slip vs AXIS 0.0841  av.y +1.095
+  2000-2600: n=786  slip vs fwd 0.2947  slip vs AXIS 0.2522  av.y +1.810
+
+  driving-only horiz median 1940.59   n=1153
+  steer over driving frames: min +33.867  median +33.867  max +33.867
+  driving-only horiz median 2507.94   n=1526
+  steer over driving frames: min +1.000  median +1.000  max +1.000
+
+
+########## g_d2nb_3 ##########
+=== ORIGINAL verify/a8_steer_20260824/orig_steerR.msd: n=853  axis-minus-forward offset median +0.0446 rad ===
+  1500-2000: n=312  slip vs fwd 0.1913  slip vs AXIS 0.1467  av.y +1.143
+  2000-2600: n=541  slip vs fwd 0.2498  slip vs AXIS 0.2052  av.y +1.464
+=== PORT verify/d3_force_20260929/g_d2nb_3/motion_diag.log (spike/reseed-excluded 0 rows): n=1217  axis-minus-forward offset median +0.0425 rad ===
+  1500-2000: n=175  slip vs fwd 0.1281  slip vs AXIS 0.0856  av.y +1.097
+  2000-2600: n=806  slip vs fwd 0.2928  slip vs AXIS 0.2503  av.y +1.802
+
+  driving-only horiz median 1940.59   n=1153
+  steer over driving frames: min +33.867  median +33.867  max +33.867
+  driving-only horiz median 2488.60   n=1522
+  steer over driving frames: min +1.000  median +1.000  max +1.000
+
+
+# 2. power-up 9-type decision+contact replay sweep: pwsh re/tools/pu_replay/sweep.ps1
+
+capture decision contact
+------- -------- -------
+o3      CLEAN    (none)
+o4      CLEAN    (none)
+c2      CLEAN    CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --puh…
+c3      CLEAN    CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --puh…
+g2      CLEAN    CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --puh…
+g3      CLEAN    DIVERGES  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --…
+g4      CLEAN    CLEAN  (no --puhook-aim channel: the AIM rows are NOT tested by this capture)
+m1      CLEAN    CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)
+m2      CLEAN    CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)
+s1      CLEAN    CLEAN
+s2      CLEAN    CLEAN
+
+
+# 3. modes oracle, rule 3: py -3.12 re/frida/scenario_launch.py --track 0 --mode 10
+#    --cars 4 --car 0 --poke-ctrl-slots --oracle --rule 3 --hold 50
+#  SegmentCheck  0x00410d10: calls=2468 agree=2468 MISMATCH=0 segment-end(ret!=0)=2
+#  EvaluateResult 0x00410510: calls=2 agree=2 MISMATCH=0
+#  FinishOrder   0x004177b0: calls=3382 agree=3382 MISMATCH=0 appends=0
+#  ORACLE VERDICT: GREEN  (log/rules_oracle_rule3.json)
