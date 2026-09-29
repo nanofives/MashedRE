@@ -480,6 +480,65 @@ opinion is an opinion about the scaffold, not about the port.
 > **Order: D2 must close again BEFORE the D3 modes 3/7 port starts.** §D3's closure path
 > (`FUN_00414c30` + `FUN_00484c70`) is on hold until then.
 
+> #### Re-close attempt 1 — 2026-09-29 (later the same day). **STILL REOPENED.**
+>
+> Full write-up: [`re/analysis/D2_REOPEN_2026-09-29.md`](re/analysis/D2_REOPEN_2026-09-29.md).
+>
+> **The bounds are now pre-registered** (that note §3, committed **before** any fix, in
+> `d81a8df6`). Two original solo captures existed; a run-to-run spread needs three, so two
+> more were taken (`verify/d2_reopen_20260929/orig_solo{3,4}.msd`). Four originals give
+> mean / half-range `h`: `0.19245 / 0.0013`, `0.249875 / 0.00015`, `1943.57 / 10.005`.
+> Runs 3 and 4 are bit-identical on every column, so the original is deterministic for a
+> fixed argv. Rule: per metric `|port - mean| <= max(3h, 2% of mean)`, i.e.
+>
+> | metric | PASS interval | port (3/3 runs identical) | verdict |
+> |---|---|---:|---|
+> | slip 1500-2000 | 0.18855 .. 0.19635 | **0.1332** | **FAIL** (-30.8%) |
+> | slip 2000-2600 | 0.24488 .. 0.25487 | **0.2179** | **FAIL** (-12.8%) |
+> | driving-median | 1904.70 .. 1982.44 | **1818.42** | **FAIL** (-6.4%) |
+>
+> **U-9149 is DECODED and the `.asi` half is FIXED** (`e8ebefa3`). `[esp+0x3c]` at
+> `0x0047093b` is `E+0x0c`, A4's `param_3` **slot**, reused as a local at `0x004706a2` to
+> hold `record + [record+0x9a8]*0x40 + 0x928` — so A6b's ESI is the same pointer A5 gets as
+> arg 2 and A6a as arg 3, and it is an `RwMatrix` (it goes straight to `RwMatrixRotate`).
+> Both prior readings in the tree were wrong. Verified live on the anchored original over
+> 144 self-test samples (64 airborne, `ndiff=0`, `xfok=1` on every one; the two dispatch
+> arms are byte-identical). U-9149's "there is a `sub esp` unaccounted for" is closed —
+> the frame balances exactly.
+>
+> **The exe half is BLOCKED, newly as U-9151.** Binding the matrix at
+> `VehicleControl.cpp:195` crashes `mashed_re.exe` with `0xC0000005`, 3 runs of 3: A6b's
+> only effect is two `RwMatrixRotate(..., mode 1)` calls, and mode 1 resolves through the RW
+> **device** table at `0x007d4028` / `0x007d3ff8`, unmapped in the standalone
+> (`Math/RwMatrixRotateInner.cpp:169-176`). Unblocker: a CPU port of
+> `RwMatrixMultiply 0x004c4600`, which does not exist.
+>
+> **A6b is NOT the cause of U-9147, and that is now settled rather than pending.** A6b
+> returns unless `+0x9e0 == 0`; the metric scores only `+0x9e0 >= 3.5`
+> (`re/tools/statediff/a8_slip_axis.py:35`). Disjoint. This retires
+> `PLAYER_REGRESSION_2026-09-29.md` §7.3.6's "the only one of the five still capable of
+> explaining it" — all five dual-copy leads are now eliminated.
+>
+> **U-9147's first divergent channel is identified: the REAR-WHEEL lateral force.**
+> `a8_wheelfit.py` on the matched solo arm gives a port/original lateral-coefficient ratio
+> of **1.02 / 1.02** on the front wheels and **1.37 / 1.36** on the rears. The original's
+> two rear `|lat|` are equal at 0.184; the port's are 0.272 / 0.241. The original's rear
+> fit residual is 0.31-0.33 against the port's 0.09-0.11, so the original's rear law is
+> nonlinear where the port's is nearly a constant times `lat`. Leading hypothesis, **not
+> established**: the port reports `le4 = 1024.0` in every wheel and band, i.e. the
+> `min(le4, 1024)` clamp is saturated throughout, and the original's `le4` is unmeasured
+> (the reducer sets it NaN). Next command is to recover `le4` on the original side and
+> re-run the table.
+>
+> **Guards after the change** (reported, not gates — the shipping exe is behaviourally
+> unchanged, since the only exe edit was reverted): criterion (e) `ai_speed_env.py --check`
+> **PASS 3/3**; AI criterion (b) **FAIL 3/3**, `c1_median` 49 / 45 / 52.5 — identical to the
+> prior recorded column; power-ups **11/11 decision CLEAN**, contact CLEAN 10/11 with the
+> known `g3` divergence; `mashedmod\build.bat` clean with the dual-copy guard at **NEW=0**.
+>
+> **Still blocking re-closure:** U-9147 (now with a localized channel), and U-9151 for the
+> exe copy of A6b. The D3 modes 3/7 hold is unchanged.
+
 ---
 
 #### History — **CLOSED 2026-09-14** (gate RECIPE amended 2026-09-29, verdict re-checked)

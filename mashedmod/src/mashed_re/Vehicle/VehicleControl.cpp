@@ -202,7 +202,7 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     // BodyOrientationIntegrate.cpp's BodyOrient_Init comment and VehiclePhysicsRun.cpp:128).
     // `xform` IS g_bodyBasis[slot], the port's stand-in for the original's +0x928
     // matrix. Passing the zeroed +0x928 instead zeroed forward -> no motion
-    // (WS-A-VERIFY-3). Reconciling the two storage locations is [UNCERTAIN U-9150].
+    // (WS-A-VERIFY-3). Reconciling the two storage locations is [UNCERTAIN U-9152].
     VehicleWheelForceIntegrate(self, dt, xform);                  // A5 0x0046ddb0 (ported)
     // A6a 0x00467650. param_1 is the CAR INDEX, decoded 2026-09-29 (was passed 0 with an
     // [UNCERTAIN] note): the dispatcher FUN_00470c70 calls A4 as
@@ -233,8 +233,33 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     // or further pushes unaccounted for" is resolved: there is neither.)
     // Binding: in the original A5's matrix and A6b's ESI are LITERALLY the same
     // pointer, so whatever object plays A5's matrix role must also play A6b's. In
-    // this build that object is `xform` (g_bodyBasis[slot]) — see the A5 note above.
-    Vehicle_AeroStabilize(self, static_cast<float*>(xform), dt);
+    // this build that object would be `xform` (g_bodyBasis[slot]) — see the A5 note.
+    //
+    // STILL nullptr HERE, AND THAT IS NOW A MEASURED BLOCKER, NOT AN OVERSIGHT
+    // [UNCERTAIN U-9151]. Passing `xform` was tried 2026-09-29 and CRASHES the
+    // standalone: exit code 0xC0000005 at ~3 s of the a8 solo recipe, 3 runs of 3
+    // (verify/d2_reopen_20260929/solo_a6bfix{1,2,3}/PROVENANCE.txt). Cause, not
+    // guessed — read from the code path: A6b's entire effect is two
+    // `RwMatrixRotate(orient, axis, ang, 1)` calls (AeroStabilize.cpp), and mode 1
+    // (rwCOMBINEPRECONCAT) in Math/RwMatrixRotateInner.cpp:169-176 dereferences the
+    // RW DEVICE table at the absolute MASHED addresses 0x007d4028 and 0x007d3ff8 and
+    // then calls the device matrix-mult through `devBase + 8`. Those addresses are
+    // mapped in the injected .asi and NOT in mashed_re.exe. That file's own header
+    // says so ("Modes 1/2 are thus device-state dependent ... in the standalone they
+    // require RW device init"); only mode 0 is self-contained. The unblocker is a
+    // standalone CPU port of RwMatrixMultiply 0x004c4600, which does not exist —
+    // today it is only a function pointer into the original image (HUD/FontCtx.cpp:42,
+    // C1). This is the same RVA-tunnel class as the kDegToRad fix in
+    // Math/RwMatrixRotate.cpp and the U-9138 device-slot rebind.
+    //
+    // Scope note so nobody re-opens this expecting a D2 metric move: A6b CANNOT
+    // affect the D2 slip statistics either way. It returns immediately unless
+    // +0x9e0 == 0 (AeroStabilize.cpp, from 0x00468980/0x00468994), and
+    // re/tools/statediff/a8_slip_axis.py:35 scores only frames with +0x9e0 >= 3.5.
+    // The two conditions are disjoint. The .asi copy's dispatch IS fixed and verified
+    // (Call_A6b, 144 samples incl. 64 airborne bit-identical) — see
+    // re/analysis/D2_REOPEN_2026-09-29.md §4.
+    Vehicle_AeroStabilize(self, nullptr, dt);                    // A6b 0x00468980
 
     if (Ib(v, 0x9f0) == 2) {                                       // parked/stopped state
         Fb(v, 0x9b0) *= vc::kParkedDamp;

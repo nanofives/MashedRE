@@ -1,0 +1,46 @@
+===== PORT SOLO solo_post1 =====
+spawned PID 44244 at HEAD e8ebefa3; waiting 90s
+exe exited on its own rc 0
+moved -> verify\d2_reopen_20260929\solo_post1\motion_diag.log lines 1627
+===== PORT SOLO solo_post2 =====
+spawned PID 47432 at HEAD e8ebefa3; waiting 90s
+exe exited on its own rc 0
+moved -> verify\d2_reopen_20260929\solo_post2\motion_diag.log lines 1627
+===== PORT SOLO solo_post3 =====
+spawned PID 44676 at HEAD e8ebefa3; waiting 90s
+exe exited on its own rc 0
+moved -> verify\d2_reopen_20260929\solo_post3\motion_diag.log lines 1626
+
+########## REDUCTION ##########
+----- solo_post1 -----
+
+  1500-2000: n=312  slip vs fwd 0.1913  slip vs AXIS 0.1467  av.y +1.143
+  2000-2600: n=541  slip vs fwd 0.2498  slip vs AXIS 0.2052  av.y +1.464
+=== PORT verify/d2_reopen_20260929/solo_post1/motion_diag.log [first 1080 frames] (spike/reseed-excluded 0 rows): 
+n=578  axis-minus-forward offset median +0.0425 rad ===
+  1500-2000: n=212  slip vs fwd 0.1332  slip vs AXIS 0.0907  av.y +1.075
+  2000-2600: n=267  slip vs fwd 0.2179  slip vs AXIS 0.1754  av.y +1.342
+  driving-only horiz median 1940.59   n=1153
+  driving-only horiz median 1818.42   n=908
+----- solo_post2 -----
+  1500-2000: n=312  slip vs fwd 0.1913  slip vs AXIS 0.1467  av.y +1.143
+  2000-2600: n=541  slip vs fwd 0.2498  slip vs AXIS 0.2052  av.y +1.464
+=== PORT verify/d2_reopen_20260929/solo_post2/motion_diag.log [first 1080 frames] (spike/reseed-excluded 0 rows): 
+n=578  axis-minus-forward offset median +0.0425 rad ===
+  1500-2000: n=212  slip vs fwd 0.1332  slip vs AXIS 0.0907  av.y +1.075
+  2000-2600: n=267  slip vs fwd 0.2179  slip vs AXIS 0.1754  av.y +1.342
+  driving-only horiz median 1940.59   n=1153
+  driving-only horiz median 1818.42   n=908
+----- solo_post3 -----
+  1500-2000: n=312  slip vs fwd 0.1913  slip vs AXIS 0.1467  av.y +1.143
+  2000-2600: n=541  slip vs fwd 0.2498  slip vs AXIS 0.2052  av.y +1.464
+=== PORT verify/d2_reopen_20260929/solo_post3/motion_diag.log [first 1080 frames] (spike/reseed-excluded 0 rows): 
+n=578  axis-minus-forward offset median +0.0425 rad ===
+  1500-2000: n=212  slip vs fwd 0.1332  slip vs AXIS 0.0907  av.y +1.075
+  2000-2600: n=267  slip vs fwd 0.2179  slip vs AXIS 0.1754  av.y +1.342
+  driving-only horiz median 1940.59   n=1153
+  driving-only horiz median 1818.42   n=908
+ALLDONE
+
+
+[exited with code 0]

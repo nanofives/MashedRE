@@ -1,0 +1,48 @@
+########## GUARD 1+2: criterion (e) + AI (b) ##########
+  [shot] verify\d2_reopen_20260929\guards\g_e1_t08.png
+  [shot] verify\d2_reopen_20260929\guards\g_e1_t30.png
+  [shot] verify\d2_reopen_20260929\guards\g_e1_t60.png
+--- criterion (e) ---
+
+      v1 (e) PASS
+      v2 (e) PASS
+      v3 (e) PASS
+--- AI criterion (b) ---
+      (b) FAIL: c0_distinct=7 not in [13,37]; c1_distinct=109 not in [17,70]; steer_distinct=115 not in [29,96]; 
+c1_median=49.0 not in [0,0]; abs_steer_median=49.0 not in [0,23]
+      (b) FAIL: c1_distinct=95 not in [17,70]; steer_distinct=123 not in [29,96]; c1_median=45.0 not in [0,0]; 
+abs_steer_median=60.5 not in [0,23]
+      (b) FAIL: c1_distinct=102 not in [17,70]; steer_distinct=120 not in [29,96]; c1_median=52.5 not in [0,0]; 
+abs_steer_median=52.5 not in [0,23]; accel_distinct=1 not in [2,4]; brake_distinct=1 not in [2,2]
+
+########## GUARD 3: power-up sweep ##########
+
+capture decision contact
+------- -------- -------
+o3      CLEAN    (none)
+o4      CLEAN    (none)
+c2      CLEAN    CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --puh…
+c3      CLEAN    CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --puh…
+g2      CLEAN    CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --puh…
+g3      CLEAN    DIVERGES  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --…
+g4      CLEAN    CLEAN  (no --puhook-aim channel: the AIM rows are NOT tested by this capture)
+m1      CLEAN    CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)
+m2      CLEAN    CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)
+s1      CLEAN    CLEAN
+s2      CLEAN    CLEAN
+
+
+########## GUARD 4: modes oracle rule 3 ##########
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+  SegmentCheck  0x00410d10: calls=3042 agree=3042 MISMATCH=0 segment-end(ret!=0)=2 byRule={'3': {'calls': 3042, 
+'agree': 3042, 'mis': 0, 'ret1': 2}}
+  EvaluateResult 0x00410510: calls=2 agree=2 MISMATCH=0 byRule={'3': {'calls': 2, 'agree': 2, 'mis': 0}}
+  FinishOrder   0x004177b0: calls=3952 agree=3952 MISMATCH=0 appends=0 round-resets=0
+  inputs seen (per rule, every SegmentCheck entry): {'3': {'n': 3042, 'collTotMax': 0, 'collDoneMax': 0, 'timerMin': 
+0, 'timerMax': 0, 'snap1': {'0': 995, '1000': 2047}, 'm0Max': 0.6908442378044128, 'm1Max': 2.0416595935821533, 
+'motion0Nz': 0, 'deadMax': 2}}
+  ORACLE VERDICT: GREEN   -> C:\Users\maria\Desktop\Proyectos\Mashed\log\rules_oracle_rule3.json
+ALLDONE
+
+
+[exited with code 0]
