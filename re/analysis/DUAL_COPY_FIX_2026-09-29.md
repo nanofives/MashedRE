@@ -122,7 +122,7 @@ behaviour from the copy the evidence measured.*
 
 ---
 
-## 3. Demotions (commits `7c178945`, `dc1e2f00`)
+## 3. Demotions (commits `7c178945`, `f75ea717`)
 
 **29 rows demoted to C2 across two transactions — 9 × C4→C2, 20 × C3→C2.**
 `C4 184 → 175`, `C3 1029 → 1009`, `C2 3865 → 3894`, 5899 rows throughout.
@@ -130,7 +130,7 @@ behaviour from the copy the evidence measured.*
 | transaction | scope | demoted |
 |---|---|---|
 | 1 — `7c178945` | the audit's 26 **DIFFERS-BEHAVIOUR** pairs | **25** (8 × C4, 17 × C3) |
-| 2 — `dc1e2f00` | the audit's 53 **UNREVIEWED** worklist, + 1 relabel | **4** (1 × C4, 3 × C3) |
+| 2 — `f75ea717` | the audit's 53 **UNREVIEWED** worklist, + 1 relabel | **4** (1 × C4, 3 × C3) |
 
 ### 3.1 Re-verification came first
 

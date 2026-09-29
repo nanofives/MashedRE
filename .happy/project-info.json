@@ -1,18 +1,18 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-09-29T21:40:00Z",
+  "updatedAt": "2026-09-29T23:05:00Z",
   "sections": [
     {
       "heading": "Session 2026-09-29c — dual-copy: demote + exe_file + guard",
       "fields": [
         {
           "label": "Confidence tally",
-          "value": "C4 176 (was 184) / C3 1012 (was 1029) / C2 3890 — 5899 rows",
+          "value": "C4 175 (was 184) / C3 1009 (was 1029) / C2 3894 — 5899 rows",
           "kind": "text"
         },
         {
           "label": "Demoted to C2",
-          "value": "25 rows — 8x C4->C2, 17x C3->C2",
+          "value": "29 rows — 9x C4->C2, 20x C3->C2 (two transactions)",
           "kind": "number"
         },
         {
@@ -51,6 +51,16 @@
         {
           "label": "Allowlist burn-down",
           "value": "named ROADMAP D4 item; D4's gate now includes an empty allowlist",
+          "kind": "text"
+        },
+        {
+          "label": "53 UNREVIEWED candidates",
+          "value": "all classified: 21 no-exe-copy, 20 not-a-pair, 8 both-shared, 3 differs-behaviour, 1 cosmetic",
+          "kind": "text"
+        },
+        {
+          "label": "Flagged for reversal",
+          "value": "0x0040e180 C4->C2 is a relabel of the audit's COSMETIC verdict — exe uses std::sqrt where the original uses the LUT, 7.8% different pair",
           "kind": "text"
         }
       ]

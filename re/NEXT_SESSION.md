@@ -40,7 +40,7 @@ things are different from every kickoff before it. **Do not re-derive any of the
    cited in a parity, D3-criterion or DoD argument.** Fixing an exe copy by reading is
    C2-grade; a fixed copy does not restore the row.
 
-3. **25 rows were demoted to C2** (8 × C4→C2, 17 × C3→C2) — `C4 184 → 176`, `C3 1029 → 1012`.
+3. **29 rows were demoted to C2** (9 × C4→C2, 20 × C3→C2) — `C4 184 → 175`, `C3 1029 → 1009`.
    **Eight of them are AI rows that D3 criterion (b) runs on**: `0x004177b0`, `0x00415e20`,
    `0x00416250`, `0x00416a30`, `0x00417da0`, `0x00418560`, `0x00418860`, `0x00443080`. Five
    more are the physics A-chain. This does **not** change the (b) measurement or the D3 gate
