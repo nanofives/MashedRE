@@ -4,6 +4,13 @@ Written 2026-09-29 at the close of the U-D3-DRIVE-FORCE session.
 Branch `race/first-frame-parity`, HEAD is this session's tracker commit. Nothing is pushed.
 Superseded kickoff: the 2026-09-28 one (U-9140 / U-9142 are both closed below).
 
+**Two user decisions were taken 2026-09-29 and are already actioned** — do not re-ask them:
+1. **U-9142: KEEP the spawn settle, default-ON**, `MASHED_NO_SPAWN_SETTLE=1` stays as the A/B revert.
+   **AI criterion (b) is re-baselined with the settle ON** (ROADMAP §D3), and the (b) bands are NOT moved.
+2. **U-9141: the D2 gate recipe now has a CONTROLLED arm** (`MASHED_MEASURE_NOOPP=1` + `--max-lines 1080`),
+   pre-registered at `1d0ca916` and measured at `4938adba`. ROADMAP §D2 carries a dated amendment.
+   **U-9141 did NOT close** — see item 3 below, and the reason is the opposite of what was expected.
+
 ## Where D3 stands
 
 **D3 is NOT closed, and there is now exactly ONE gate failure left: AI criterion (b).**
@@ -105,28 +112,73 @@ capture shows an armed player. Also open, and cheap once the writer is known:
 has no writer in the standalone (`FUN_00408a70` unported), so the 8e6 pair is pinned to the
 grid order `{2,3}` instead of tracking race order. No effect on (e).
 
-### 3. U-9141 — the `a8` gate recipe needs a controlled arm
+### 3. U-9141 — the controlled arm EXISTS and it found something. Redo the bisect on it.
 
-ROADMAP §D2's table cannot be reproduced at HEAD, and the bisect showed why: **no commit in
-`56ad3806..HEAD` edits the player's solver.** The table moved because three RNG-driven
-opponents now share the player's world (`09a73dc6`) and the race got longer (`4ff428ad`),
-both of which are the port becoming more like the original. Today's build of `56ad3806`
-still reproduces the D2 table 4 runs of 4, so this is not drift in the drive laws.
+**Read `re/analysis/D2_CONTROLLED_ARM_2026-09-29.md` §3 before touching this.** The arm and
+its pass rule were pre-registered at `1d0ca916` before any run; the results are at `4938adba`.
+Do not re-derive either, and do not move the bounds.
 
-So do not try to "restore the D2 table" by changing physics. What is owed:
+**The arm works.** `MASHED_MEASURE_NOOPP=1` (opponents not updated) plus `--max-lines 1080`
+gives a run-to-run spread on `slip 1500-2000` of **exactly 0** on 3/3 runs at both HEAD and
+`56ad3806`, where the uncontrolled arm still spreads 0.0088. The knob is proved inert when
+unset (a default run on the build containing it reproduces the pre-knob build to every
+printed digit). So the instrument question is settled.
 
-```
-# 1. give the reducers a --max-lines arm so both ends reduce over the same frame count
-#    (a8_slip_axis.py, a8_momentum.py); race length alone repopulates the speed bands
-# 2. then, if still needed, bisect commits #5..#16 of D3_DRIVE section 1.2 using
-#    MASHED_D3_NOOPP=1 -- the only deterministic instrument found (3/3 to four decimals)
-```
+**What it found, and it inverts the 2026-09-28 conclusion.** With the opponents absent at
+BOTH ends, HEAD is `-16.0% / -14.0% / -64.2%` off `56ad3806`
+(slip 1500-2000 0.1609 vs 0.1916, slip 2000-2600 0.2296 vs 0.2669, driving-median 691.0 vs
+1932.1). The 2026-09-28 bisect concluded *"no commit in `56ad3806..HEAD` edits the player's
+solver, therefore the drift is the instrument"* — **on a controlled instrument that does not
+hold.** There is a real player-side difference, and the uncontrolled recipe could not have
+seen it: its 0.128..0.177 spread brackets both 0.1609 and 0.1916.
 
-**Note the refuted premise before planning any bisect:** one run per commit does NOT
-decide. The same build at `09a73dc6` produced slip 0.1840 and 0.1283. Require three runs,
-and treat a single run that reaches the 0.1283 attractor as BAD.
+`56ad3806`'s controlled arm reproduces the ROADMAP §D2 row on 2 of 3 gated statistics plus
+`av.y` to four decimals (slip 0.00%, slip +0.04%, av.y exact) and misses the driving-median
+by +2.39% against a ±2% bound. **D2 is not reopened** — that overshoot is already in the
+record at §3.1 of the 2026-09-28 note, so the row's `1887` is itself ~2% low at its own
+commit. Re-baselining that figure is a **user decision**; do not do it unasked.
 
-## Added 2026-09-29 (U-D3-DRIVE-FORCE)
+**What is owed, in order.**
+
+1. **Resolve U-9145 first — it may be the whole of U-9141.** The opponents move the PLAYER's
+   driving-median 691 → 2538 (3.7x) on the same build and recipe, and `VehicleCarCarContact`
+   (`0x00469df0`) has **zero callers** in the port, so no car-car path exists to do it with.
+   The coupling is shared mutable state. Per-global A/B on the controlled arm, one temporary
+   env-gated diag at a time, removed afterwards; candidates and citations in §3.5 of the note
+   (`g_torqueRingPhase` `DAT_007f101c` and A4's steer ring `+0x1ac`/`+0x270` at `0x00470670`
+   is the first one to try). **One run per configuration decides**, at a spread of 0.
+2. **Then re-bisect `56ad3806..HEAD` on the controlled arm**, one run per commit, over the 17
+   `mashedmod/`-touching commits of `D3_DRIVE_2026-09-28.md` §1.2:
+   ```
+   py -3.12 re/tools/statediff/a8_run_port.py verify/<tag> 50 -MASHED_REAL_PHYSICS \
+       MASHED_MEASURE_NOOPP=1 MASHED_TITLE="U-9141 controlled bisect <sha>"
+   py -3.12 re/tools/statediff/a8_slip_axis.py --orig verify/a8_steer_20260824/orig_steerR.msd \
+       --port verify/<tag>/motion_diag.log --max-lines 1080
+   ```
+   Classification fixed in §3.5: `slip 1500-2000` `>= 0.185` GOOD, `<= 0.170` BAD, between =
+   INDETERMINATE and gets a second run. Commits before `09a73dc6` have no opponent loop, so
+   the knob is a no-op there.
+
+**Two premises to carry, both already paid for.** The §1.3 one-run-decides rule was refuted on
+the UNCONTROLLED arm (0.1840 and 0.1283 from one build) and is sound on this one — do not
+re-litigate it in either direction without citing which arm you mean. And one asymmetry
+remains in the arm: at `56ad3806` the opponents are moved by the pre-D3 kinematic Option B
+model, whereas the knob leaves them PARKED; if U-9145 is real, the HEAD end should use the
+Option B treatment instead (§3.4's `NOAIPHYS`, measured 0.1736 / 0.1561 / 0.1774).
+
+## Added 2026-09-29 (U-D3-DRIVE-FORCE + the D2 controlled arm)
+
+- `MASHED_MEASURE_NOOPP=1` (`D3d9Render/TrackRenderer.cpp`) — MEASUREMENT HARNESS ONLY, on the
+  `MASHED_STEER_HOLD` precedent: sets the per-opponent update loop's bound to 0 and does nothing else.
+  Default-OFF and proved inert when unset. **Only legitimate on the D2 controlled arm, where BOTH ends
+  of the comparison run it.** Do not use it to make any other number look better.
+- `--max-lines N` on `a8_slip_axis.py` and `a8_momentum.py` — truncates the PORT side to the first N
+  logged frames, before the regime filter and before the spike median. The ORIGINAL side is
+  deliberately never truncated. N = 1080 is the D2 controlled arm's fixed 18.0 s window.
+- Frame count == simulated time in the standalone: the chain dt is pinned at `frameMs = 50`, measured as
+  a single distinct `linTerm=1.66667e-05` over all 3596 samples of
+  `verify/d3_force_20260929/cad1/friction_diag.log`. Frame COUNT varies with machine load (25 vs 30 fps
+  gave 1268 vs 1497 frames in the same 50 s wall clock), which is why pinning it is the right control.
 
 - `MASHED_NO_START_BOOST=1` — revert arm for the A6a start boost. Reproduces the 2026-09-28
   criterion (e) and (b) numbers exactly, which is what makes any before/after here legitimate.

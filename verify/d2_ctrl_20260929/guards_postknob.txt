@@ -1,0 +1,40 @@
+# Guards re-run 2026-09-29 AFTER the MASHED_MEASURE_NOOPP knob commit (1d0ca916).
+# The knob is default-OFF; these confirm it perturbs nothing on the default path.
+
+## criterion (e), fresh default capture sa_b4 -- must reproduce sa_b2/sa_b3
+verify/d3_force_20260929/sa_b4.csv
+  v1 start=0 n=220 flag=[0] regime0=1 k_own=220 launch=1426.4 ft_median_m0=2550.7 (n=100) ft_median=3422.9 (n=216) wmax=3813.6
+  v2 start=0 n=220 flag=[0] regime0=1 k_own=220 launch=2053.0 ft_median_m0=2053.0 (n=23) ft_median=3425.6 (n=215) wmax=3836.2
+  v3 start=0 n=220 flag=[0] regime0=1 k_own=220 launch=2055.2 ft_median_m0=2278.3 (n=39) ft_median=3525.1 (n=220) wmax=3858.8
+      v1 (e) PASS
+      v2 (e) PASS
+      v3 (e) PASS
+
+## AI criterion (b), same capture (settle-ON baseline per user decision 1)
+verify/d3_force_20260929/sa_b4.csv
+  v1 start=0 n=220 steerD=112 steerMed=48.0 |steer|Med=48.0 accel=[0, 255] a255=0.982 brake=[0, 255] b255=0.018
+      (b) FAIL: c0_distinct=7 not in [13,37]; c1_distinct=106 not in [17,70]; steer_distinct=112 not in [29,96]; c1_median=48.0 not in [0,0]; abs_steer_median=48.0 not in [0,23]
+  v2 start=0 n=220 steerD=121 steerMed=42.0 |steer|Med=58.0 accel=[0, 255] a255=0.977 brake=[0, 255] b255=0.023
+      (b) FAIL: c1_distinct=93 not in [17,70]; steer_distinct=121 not in [29,96]; c1_median=42.0 not in [0,0]; abs_steer_median=58.0 not in [0,23]
+  v3 start=0 n=220 steerD=116 steerMed=46.5 |steer|Med=46.5 accel=[255] a255=1.000 brake=[0] b255=0.000
+      (b) FAIL: c1_distinct=98 not in [17,70]; steer_distinct=116 not in [29,96]; c1_median=46.5 not in [0,0]; abs_steer_median=46.5 not in [0,23]; accel_distinct=1 not in [2,4]; brake_distinct=1 not in [2,2]
+
+## power-up 9-type decision + contact replay sweep
+
+capture decision contact
+------- -------- -------
+o3      CLEAN    (none)
+o4      CLEAN    (none)
+c2      CLEAN    CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --puh…
+c3      CLEAN    CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --puh…
+g2      CLEAN    CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --puh…
+g3      CLEAN    DIVERGES  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --…
+g4      CLEAN    CLEAN  (no --puhook-aim channel: the AIM rows are NOT tested by this capture)
+m1      CLEAN    CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)
+m2      CLEAN    CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)
+s1      CLEAN    CLEAN
+s2      CLEAN    CLEAN
+
+
+## knob-off inertness on the a8 recipe: see results.txt knoboff_1 -- reproduces the
+## pre-knob build's g_d2_2 exactly (0.1323 / 0.2992 / 2538.13, 1497 lines).
