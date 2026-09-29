@@ -434,6 +434,67 @@ opinion is an opinion about the scaffold, not about the port.
 
 ### D2 — Default physics — **CLOSED 2026-09-14** (gate RECIPE amended 2026-09-29, verdict re-checked)
 
+> #### AMENDMENT 2026-09-29 (second pass) — the controlled arm was ASYMMETRIC; the reference is a SOLO race; there is NO player regression
+>
+> Supersedes the operative conclusions of the amendment below. Full note:
+> [`re/analysis/PLAYER_REGRESSION_2026-09-29.md`](re/analysis/PLAYER_REGRESSION_2026-09-29.md)
+> — §1-§2 were written and committed (`235e964a`) before the first run. Verdict commit
+> `2348614e`.
+>
+> **1. The `-16.0% / -14.0% / -64.2%` below is the arm's own asymmetry, not a commit.**
+> `MASHED_MEASURE_NOOPP=1` was applied at HEAD and not at `56ad3806`. Applied at BOTH ends,
+> `56ad3806` gives `0.1713 / 0.2372 / 705.03`, and `647a5e24` — the *same commit* measured
+> both ways — moves `0.1916 / 0.2668 / 1931.36` → `0.1726 / 0.2372 / 692.07`. The
+> driving-median's `-64%` is **0%** attributable to any commit. The bisect below that names
+> `09a73dc6` first-bad is invalid for the same reason: the plan's rule changed the treatment
+> at exactly the commit the search was hunting.
+>
+> **2. The gate's ORIGINAL-side reference is a ONE-CAR race, and the port arm spawns three.**
+> `verify/a8_steer_20260824/orig_steerR.msd.provenance.json` carries no `--cars`;
+> `re/frida/scenario_launch.py:1739` defaults it to **1**. Re-run live on the identical
+> recipe with `--oracle --rule 0` (`log/rules_oracle_rule0.json`): `cars=1`,
+> `SegmentCheck 0x00410d10` **1448/1448 MISMATCH 0 with segment-end = 0**, `m1Max = -1`. So
+> no second car exists and no elimination ever runs on the reference side, while
+> `TrackRenderer.cpp:2441-2473` / `StartRound` hard-spawn three on the port side.
+> `MASHED_MEASURE_NOOPP=1` does not fix that — it only *parks* them. A third harness knob,
+> **`MASHED_MEASURE_SOLO=1`** (default-OFF, both spawn sites, `0d889eee`), runs the
+> reference's scenario.
+>
+> **3. On that matched scenario there is NO player-car physics regression.**
+>
+> | arm | runs | slip 1500-2000 | slip 2000-2600 | driving-median |
+> |---|---|---:|---:|---:|
+> | ORIGINAL (the reference) | archived | **0.1913** | **0.2498** | **1940.59** |
+> | `56ad3806` solo | 3/3 identical | 0.1374 | 0.2181 | 1760.49 |
+> | HEAD solo | 4/5 identical | 0.1332 | 0.2179 | 1818.47 |
+> | **HEAD vs `56ad3806`** | | **-3.1%** | **-0.1%** | **+3.3%** |
+>
+> and the mechanism is proved rather than argued: on a per-sim-step `%.17g` player trace,
+> `MASHED_GAMEMODE_STUB=0`, `MASHED_NO_START_BOOST=1`, `MASHED_MEASURE_NOAITICK=1` and
+> `MASHED_MEASURE_SOLO=1` each leave the player's own `pos`/`yaw`/`vel`/`+0xb14`/`+0xb1c`/
+> `+0x9e4` **bit-identical for 156 sim steps**, and the first field that ever differs is
+> `race_[0].alive`. The only knob that changes the player from frame 1 is
+> `MASHED_NO_SPAWN_SETTLE=1` — deliberate, closed by user decision at U-9142, and required
+> by criterion (e).
+>
+> **4. What IS real, and it is a D2-era question, not a D3 one.** On matched scenarios the
+> port is **~28% short on `slip 1500-2000` at BOTH commits** (0.1374 and 0.1332 against the
+> original's 0.1913). The row below's `0.1916` vs `0.1913` was a three-opponent port arm
+> measured against a one-car original, so the port has never reproduced that statistic
+> like-for-like. Filed **U-9147**; re-baselining the row on the matched arm is a user
+> decision.
+>
+> **5. U-9141 and U-9145 are RESOLVED.** U-9145's coupling is two channels and neither is a
+> shared physics global: (A) the harness's steer-hold onset was on the real clock while the
+> sim runs on a real-time accumulator — **fixed**, onset now counted in sim steps; (B) the
+> opponents get the PLAYER eliminated at `race_time_` 2.1-2.6 s through the ported
+> `0x00410d10` zoom-saturation path, which freezes `race_[0].gate` into the player's own
+> off-mesh re-aim at `TrackRenderer.cpp:2808` — carried as **U-9146**. Also open:
+> **U-9148** (one HEAD solo run in five lands in a second attractor).
+>
+> **The recipe from here:** use `MASHED_MEASURE_SOLO=1` for any D2 gate comparison. The
+> `MASHED_MEASURE_NOOPP=1` arm is deterministic but measures a scenario neither side ran.
+
 > #### AMENDMENT 2026-09-29 — the gate recipe gains a CONTROLLED arm; the D2 verdict is re-checked against it
 >
 > **User decision (2) of 2026-09-29.** The `a8` held-full-lock recipe below stopped being a
@@ -865,6 +926,35 @@ criteria are all met since 2026-09-26 (`D3_MODES_2026-09-26.md`).
 - **D3 closes** when powerups (c) replays `s2` clean AND U-D3-DRIVE meets (e). Powerups (c)
   is DONE (2026-09-28d, `s2` decision CLEAN and contact CLEAN); **U-D3-DRIVE is now the only
   remaining gate**. D3-R1 (car 1) then carries forward like the D1 residue.
+
+#### D3 closure state 2026-09-29b — the CLOSURE PATH is fixed by user decision, and the "player regression" is refuted
+
+Session note: `re/analysis/PLAYER_REGRESSION_2026-09-29.md`. Commits `235e964a` →
+`2348614e`.
+
+- **USER DECISION (Mariano, 2026-09-29): D3 CLOSES BY PORTING BEHAVIOUR MODES 3 AND 7** —
+  `FUN_00414c30` plus the world-object query `FUN_00484c70` — once the player-regression
+  question below is settled. That is the closure path; AI criterion (b) is expected to move
+  with it, because modes 3 and 7 are what make the original brake and lift where the port
+  holds the throttle pinned.
+- **USER DECISION (same): D3-R1 IS NO LONGER A CARRIED RESIDUE.** It was filed 2026-09-28 as
+  "car 1 only" against a band scored on cars running 46-90% slower than the original. With
+  criterion (e) met to 0.05%, **AI (b) now fails on ALL THREE cars at correct speed**
+  (`c1_median` 42-48 against `[0,0]`, `abs_steer_median` 46.5-58 against a ceiling of 23), so
+  there is no car-1-specific residue to carry — there is one open criterion, (b), on three
+  cars. The 2026-09-28 block below is left as history; this bullet supersedes its D3-R1
+  framing.
+- **The "player-car physics regression since D2" is REFUTED.** On the D2 reference's own
+  scenario (`MASHED_MEASURE_SOLO=1` at both ends) HEAD reproduces `56ad3806` to
+  `-3.1% / -0.1% / +3.3%`, and per-sim-step traces show the player's own state is
+  bit-identical for 156 sim steps under every D3 knob. Nothing in D3 touches the player's
+  force path. Detail and the two new rows (U-9146, U-9147, U-9148) are in the §D2 amendment
+  above; **U-9141 and U-9145 are RESOLVED.**
+- Guards unchanged by this session: criterion (e) **PASS 3/3** and identical to `sa_b2` to
+  every printed digit; AI (b) **FAIL 3/3**, byte-identical to the row below; power-up sweep
+  **11/11 decision CLEAN** with `g3` the known R_FLAME contact residue; modes oracle rule 3
+  **GREEN 3064/3064 with 2 segment-ends** (wider than the previous 2468) and the new rule 0
+  **GREEN 1448/1448**; both build targets clean with the **.asi untouched**.
 
 #### D3 closure state 2026-09-29 — **D3 is NOT CLOSED**; criterion (e) is MET, AI (b) is the sole remaining blocker
 

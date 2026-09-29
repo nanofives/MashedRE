@@ -1,15 +1,26 @@
 # Next session kickoff
 
-Written 2026-09-29 at the close of the U-D3-DRIVE-FORCE session.
-Branch `race/first-frame-parity`, HEAD is this session's tracker commit. Nothing is pushed.
+Updated 2026-09-29 at the close of the **player-regression (U-9141 / U-9145)** session.
+Branch `race/first-frame-parity`, HEAD is that session's tracker commit. Nothing is pushed.
 Superseded kickoff: the 2026-09-28 one (U-9140 / U-9142 are both closed below).
 
-**Two user decisions were taken 2026-09-29 and are already actioned** — do not re-ask them:
+**THE HEADLINE: there is NO player-car physics regression since D2 closed.** The
+`-16% / -14% / -64%` the previous kickoff item 3 described was the controlled arm's own
+asymmetry, and the D2 reference turns out to be a **one-car race**. On the reference's own
+scenario HEAD reproduces `56ad3806` to `-3.1% / -0.1% / +3.3%`. Read
+`re/analysis/PLAYER_REGRESSION_2026-09-29.md` and ROADMAP §D2's **second** amendment; do not
+re-derive either. **U-9141 and U-9145 are RESOLVED.**
+
+**Three user decisions are in force from 2026-09-29 and are already actioned** — do not re-ask them:
 1. **U-9142: KEEP the spawn settle, default-ON**, `MASHED_NO_SPAWN_SETTLE=1` stays as the A/B revert.
    **AI criterion (b) is re-baselined with the settle ON** (ROADMAP §D3), and the (b) bands are NOT moved.
-2. **U-9141: the D2 gate recipe now has a CONTROLLED arm** (`MASHED_MEASURE_NOOPP=1` + `--max-lines 1080`),
-   pre-registered at `1d0ca916` and measured at `4938adba`. ROADMAP §D2 carries a dated amendment.
-   **U-9141 did NOT close** — see item 3 below, and the reason is the opposite of what was expected.
+2. **U-9141: the D2 gate recipe has a CONTROLLED arm.** Corrected 2026-09-29b: the arm to use
+   is **`MASHED_MEASURE_SOLO=1`** (no opponents — the reference's own scenario), not
+   `MASHED_MEASURE_NOOPP=1` (opponents parked, a scenario neither side ran). `--max-lines 1080`
+   stays. ROADMAP §D2 carries both amendments; the second supersedes the first's conclusions.
+3. **D3 CLOSES BY PORTING BEHAVIOUR MODES 3 AND 7** (`FUN_00414c30` + the world-object query
+   `FUN_00484c70`). **D3-R1 is no longer a carried residue** — AI (b) now fails on all three
+   cars at correct speed, so there is one open criterion on three cars, not a car-1 residue.
 
 ## Where D3 stands
 
@@ -112,7 +123,52 @@ capture shows an armed player. Also open, and cheap once the writer is known:
 has no writer in the standalone (`FUN_00408a70` unported), so the 8e6 pair is pinned to the
 grid order `{2,3}` instead of tracking race order. No effect on (e).
 
-### 3. U-9141 — the controlled arm EXISTS and it found something. Redo the bisect on it.
+### 3. U-9141 / U-9145 — **RESOLVED 2026-09-29b.** Everything below this line is HISTORY.
+
+Do **not** run the bisect the old item 3 asks for; it was run, and its premise was wrong.
+Authoritative record: `re/analysis/PLAYER_REGRESSION_2026-09-29.md` (plan pre-registered at
+`235e964a`, verdict at `2348614e`) and ROADMAP §D2's second amendment. In one paragraph:
+
+- The arm was **asymmetric** — the knob was applied at HEAD and not at `56ad3806`. Applied at
+  both ends, `647a5e24` (the *same commit*, both ways) moves `1931.36 → 692.07`, so the
+  `-64%` is 0% a commit.
+- The D2 reference is a **SOLO race**: `orig_steerR.msd.provenance.json` carries no `--cars`
+  and `scenario_launch.py:1739` defaults it to 1; re-run live, `cars=1`, `SegmentCheck`
+  1448/1448 with **segment-end 0** and `m1Max = -1`.
+- With **`MASHED_MEASURE_SOLO=1`** at both ends: original `0.1913 / 0.2498 / 1940.59`,
+  `56ad3806` `0.1374 / 0.2181 / 1760.49` (3/3), HEAD `0.1332 / 0.2179 / 1818.47` (4/5) —
+  **HEAD vs `56ad3806` = `-3.1% / -0.1% / +3.3%`. No regression.**
+- U-9145's coupling was two channels, **neither a shared physics global**: (A) the harness's
+  steer-hold onset was on the real clock while the sim runs on a real-time accumulator —
+  **fixed**, it now counts sim steps; (B) the opponents get the PLAYER eliminated at
+  `race_time_` 2.1-2.6 s, which freezes `race_[0].gate` into the player's own off-mesh
+  re-aim. `g_torqueRingPhase`, `g_suspScratch` and the pickup field are all REFUTED.
+
+**What is newly owed, and where it sits in the order.** Item 1 (AI (b)) is still first, and
+the closure path is now decision 3 above — port behaviour modes 3 and 7. Then, in this order:
+
+- **U-9147** — on the matched (solo) arm the port is **~28% short on `slip 1500-2000` at BOTH
+  commits** (0.1374 / 0.1332 against 0.1913). Not a regression; a D2-era gap the recipe's
+  scenario mismatch concealed. Next command: `MASHED_MEASURE_SOLO=1` + `MASHED_COUPLING_DIAG=1`
+  and a per-frame per-wheel lateral-force diff against `orig_steerR.msd`, the way
+  `A8_velocity_vector_motion_20260825.md` follow-up 27 does. Re-baselining the ROADMAP §D2 row
+  on this arm is a **user decision** — do not do it unasked.
+- **U-9146** — does the ORIGINAL also eliminate a stationary player at ~2.5 s with three
+  opponents? The reference is solo, so it cannot say. Next command:
+  `py -3.12 re/frida/scenario_launch.py --oracle --rule 0 --cars 4 --poke-ctrl-slots --statediff-drive --statediff-drive-late --statediff-steer 1 --hold 38`,
+  then read `segment-end` / `deadMax` from `log/rules_oracle_rule0.json`. Regardless of the
+  answer, `race_[0].alive → race_[0].gate → the off-mesh re-aim` (`TrackRenderer.cpp:2808`)
+  has no original counterpart.
+- **U-9148** — one HEAD solo run in five lands in a second attractor, so a real-time-keyed
+  input survives the sim-clock fix on the HEAD side. Next command: two
+  `MASHED_PLAYERTRACE=1 MASHED_MEASURE_SOLO=1` runs until both attractors are sampled, then
+  diff the two `player_trace.log` files for the first differing FIELD.
+
+---
+
+**HISTORY (2026-09-29, first pass). Superseded — kept for the audit trail.**
+
+### 3-old. U-9141 — the controlled arm EXISTS and it found something. Redo the bisect on it.
 
 **Read `re/analysis/D2_CONTROLLED_ARM_2026-09-29.md` §3 before touching this.** The arm and
 its pass rule were pre-registered at `1d0ca916` before any run; the results are at `4938adba`.
@@ -165,6 +221,33 @@ re-litigate it in either direction without citing which arm you mean. And one as
 remains in the arm: at `56ad3806` the opponents are moved by the pre-D3 kinematic Option B
 model, whereas the knob leaves them PARKED; if U-9145 is real, the HEAD end should use the
 Option B treatment instead (§3.4's `NOAIPHYS`, measured 0.1736 / 0.1561 / 0.1774).
+
+## Added 2026-09-29b (the player-regression session)
+
+- **`MASHED_MEASURE_SOLO=1`** (`D3d9Render/TrackRenderer.cpp`, **both** spawn sites — the
+  car-load spawn AND `StartRound`'s `ai_cars_.assign`) — MEASUREMENT HARNESS ONLY, default-OFF:
+  spawns **no** opponents, so `ai_cars_` stays empty and `UpdateRace`, the `RaceCamera`
+  framing, `ParticipantCount()` and the rule engine all see a one-car race. **This is the arm
+  the D2 gate should use**, because the original-side reference was captured that way. Verify
+  it took: `mashed_re.log` must log `MATCH-SEED … participants=1`. Gating only one of the two
+  sites leaves it silently inert — that mistake cost a whole bisect's worth of mislabelled
+  runs this session.
+- **The steer-hold onset is counted in SIM STEPS, not real seconds** (`exe_main.cpp`,
+  `steerHoldApply()`). It used to be decided once per RENDER frame from a real clock while the
+  car sim runs on a real-time fixed-timestep accumulator, so the sim step at which the held
+  lock began tracked CPU load. Same 4 s threshold. This is what made the default `a8` arm
+  deterministic — four consecutive commits now reduce bit-equal.
+- **`MASHED_PLAYERTRACE=1`** (`D3d9Render/TrackRenderer.cpp`) — default-OFF per-sim-step
+  `%.17g` dump to `./player_trace.log`: world position, `in.dt`,
+  `race_[0].gate/laps/progress/alive`, and record floats `+0xb14` / `+0xb1c` / `+0x9e4`, one
+  line before and one after `UpdateRace`. **Diff two of these and read the first differing
+  FIELD** — that single recipe found both U-9145 channels and refuted four named suspects. It
+  is far cheaper than a per-global A/B and it cannot be fooled by a knob that is inert.
+- **A `git checkout HEAD -- mashedmod/` restore inside a bisect script will silently delete
+  your uncommitted edits.** It ate two of them this session. Commit before probing.
+- `a8_run_port.py` at 50 s discarded two boots that stalled in the frontend (`NAV_DEMO
+  phase=0 00_challengeselect` in `mashed_re.log`); at **90 s** the exe exits on its own with a
+  complete race. Use 90 and re-run once on an empty log.
 
 ## Added 2026-09-29 (U-D3-DRIVE-FORCE + the D2 controlled arm)
 
