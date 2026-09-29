@@ -721,6 +721,16 @@ frame the armed sweep fired. §3.3 closed them.
 
 ### 4.4b A NEW decision-half defect, found by a new capture and NOT caused here
 
+> **RESOLVED 2026-09-28d — `re/analysis/D3_BOX_STATE_2026-09-28.md`.** The cause is
+> NOT below. The "next command" at the end of this section named the aim record
+> `0x006885d0 + slot*0x2c`, and that hypothesis was **REFUTED**: `FUN_00455150` does
+> consult it at `0x00455163` and the port already matched it verbatim — the original
+> never reached the FIRE call. The real gate is the dispatcher's per-slot BOX STATE
+> `DAT_0068d1f0[slot]`, read at `0x0045bc6b` BEFORE the armed test at `0x0045bcab`,
+> whose values 4 / 2 / 3 short-circuit the whole per-slot pass. `s2` now replays
+> **CLEAN** on both halves (sweep `0x45bcd8` 152 / 152), so this section's stated
+> consequence for the contact table is also gone. Commits `2e7a2b92` + `be06d381`.
+
 `s2` (plan `11,7,11,11` — MISSILE, MORTAR, MISSILE, MISSILE) is the first capture
 to put a MISSILE pickup *after* a MORTAR one. Its **9-type decision** replay
 reports **181 mismatches**, all on the THIRD activation; the first MISSILE and the
@@ -940,7 +950,12 @@ MISSILE, MORTAR and AIM row on that capture clean.
    (`FUN_00455610` / `FUN_004556f0`), which is a closed loop through the
    projectile's RW frame matrix and would need `FUN_004c1520` / `FUN_004c1340`
    ported first.
-3b. **THE NEXT SLICE IS NOT criterion (c).** It is the decision-half defect of
+3b. ~~**THE NEXT SLICE IS NOT criterion (c).**~~ — **DONE 2026-09-28d**, and it WAS
+   criterion (c) after all: (c)'s own text gates on ammo / cooldown / fire-mode, which
+   is exactly what the 181 mismatches were. Cause and fix in
+   `re/analysis/D3_BOX_STATE_2026-09-28.md` — the dispatcher's box-state gate, not the
+   MISSILE chain. Original text follows:
+   It is the decision-half defect of
    §4.4b: on a MORTAR-then-MISSILE sequence the port fires a MISSILE the original
    refuses, 181 mismatches on `s2`, reproduced by a control build against the
    pre-R_FLAME effects so it is older than this note. Next command in §4.4b.

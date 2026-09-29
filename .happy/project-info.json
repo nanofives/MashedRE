@@ -1,6 +1,6 @@
 {
-  "title": "Mashed RE (ROADMAP v3: D3 \u2014 default game systems)",
-  "updatedAt": "2026-09-29T02:40:00Z",
+  "title": "Mashed RE (ROADMAP v3: D3 — default game systems)",
+  "updatedAt": "2026-09-28T22:30:00Z",
   "sections": [
     {
       "heading": "Roadmap phases",
@@ -18,7 +18,7 @@
         },
         {
           "label": "Last roadmap audit",
-          "value": "2026-09-28c: D3 powerups (c) CLOSED at 8 clean + sweep + shared acquisition / 1 near-clean, D3_CONTACT_PORT_2026-09-28.md",
+          "value": "2026-09-28d: D3 powerups (c) MET -- the s2 decision defect FIXED (dispatcher box-state gate DAT_0068d1f0[slot], 0x0045bc6b). U-D3-DRIVE is now the only gate on D3. D3_BOX_STATE_2026-09-28.md",
           "kind": "text"
         }
       ]
@@ -38,12 +38,12 @@
         },
         {
           "label": "Powerups (WS-D)",
-          "value": "(a)(b) met; (c) CLOSED 2026-09-28c -- all 9 types ported and measured. CLEAN: OIL, P_MINE, SHOTGUN, DRUM, FLASH, GUN, MORTAR, MISSILE + the dispatcher sweep + the shared acquisition FUN_00459620. NEAR-CLEAN: R_FLAME, exact on 2 of 3 captures, 2-of-546 residue pinned to the unported sort FUN_0045ac40. NEXT (criterion (b), not (c)): a MORTAR-then-MISSILE decision defect, 181 mismatches on s2, proven older than this work by a control build",
+          "value": "(a)(b)(c) ALL MET 2026-09-28d. The last blocker -- 181 decision mismatches on capture s2 -- was the dispatcher's per-slot BOX STATE DAT_0068d1f0[slot] (read 0x0045bc6b before the armed test at 0x0045bcab; 4/2/3 short-circuit the pass), NOT the MISSILE chain. s2: decision 181->0, contact DIVERGES->CLEAN (sweep 152/152). Other 10 captures unchanged; g3 keeps its known R_FLAME 2-of-546 residue. Control MASHED_PU_FORCE=nobox reproduces 181; second witness b3 via the new scenario_launch.py --pu-box",
           "kind": "text"
         },
         {
           "label": "Next task",
-          "value": "1 powerups (c): port the contact chain, OIL first (10 exact triples), then P_MINE's two gates; 2 AI (b) car 1 (mode 7 / FUN_00414c30); 3 brake fraction; 4 targeting modes 1..10",
+          "value": "1 U-D3-DRIVE (criterion (e)): AI-car speed gain under matched ctrl -- measure the original's run-to-run spread and write it to ROADMAP BEFORE the post-fix capture; gearbox +0x490/+0x494 is the first suspect; 2 D3-R1 (AI car 1, FUN_00414c30 + FUN_00484c70), due before D5; 3 D1 residue block",
           "kind": "text"
         }
       ]

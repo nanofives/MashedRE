@@ -1,6 +1,56 @@
 # Next session — kickoff prompt
 
-## => KICKOFF PROMPT - D3 powerups (b), the MORTAR->MISSILE decision defect, written 2026-09-28c, paste verbatim
+## => KICKOFF PROMPT - D3: U-D3-DRIVE, the last gate on D3, written 2026-09-28d, paste verbatim
+
+```
+Session goal: close U-D3-DRIVE, which is now the ONLY thing gating ROADMAP D3
+(user decision 2026-09-28). Read ROADMAP.md section D3 "D3 closure state
+2026-09-28" and re/analysis/D3_SPEED_GAP_2026-09-28.md section 6.3. Do NOT
+re-derive them.
+
+SETTLED 2026-09-28d - POWERUPS (c) IS DONE. Do not re-open it.
+- The 181 s2 decision mismatches are fixed. The cause was NOT the MISSILE chain:
+  the dispatcher FUN_0045bba0 reads a per-slot BOX STATE DAT_0068d1f0[slot] at
+  0x0045bc6b, BEFORE the armed test at 0x0045bcab, and values 4/2/3
+  short-circuit the whole per-slot pass (0x0045bc75 / 0x0045bc85+0x0045bc98 RA
+  0x45bc9d / 0x0045bca5). Ported into Powerup/PowerupSystem.cpp.
+- The 2026-09-28c kickoff's hypothesis (the aim record 0x006885d0 + slot*0x2c)
+  was REFUTED: FUN_00455150 does consult it at 0x00455163 and the port already
+  matched that verbatim. The original never reached the FIRE call.
+- Measured over all 11 captures: s2 decision 181 -> 0, contact DIVERGES -> CLEAN
+  (sweep 0x45bcd8 152-vs-185 -> 152/152); the other ten unchanged; g3 still on
+  exactly its R_FLAME 2-query residue. Control MASHED_PU_FORCE=nobox reproduces
+  181. Second witness b3 via the new scenario_launch.py --pu-box.
+- Record: re/analysis/D3_BOX_STATE_2026-09-28.md, verify/d3_box_20260928/,
+  commits 2e7a2b92 + be06d381. New tool: re/tools/pu_replay/sweep.ps1 replays
+  every capture and prints both verdicts in one table -- use it as the powerups
+  regression guard from now on, it is one command.
+
+THE REMAINING GATE, D3 criterion (e): under byte-identical ctrl bytes the ported
+physics accelerates AI cars differently -- +25.5% / +6.8% / +5.2% full-throttle
+median gain (cars 1/2/3) and a slow launch (+182 vs +1542/+2053 over the first 11
+calls, all wheels grounded). D2's gate was measured on the PLAYER car only. First
+suspect: the gearbox pair +0x490 / +0x494. The criterion requires the original's
+OWN run-to-run spread to be measured and WRITTEN INTO ROADMAP.md BEFORE the
+post-fix capture -- do that first, it is the part that is easy to skip.
+
+ALSO CARRIED, not this session: D3-R1 (AI car 1, due before D5, route = port
+FUN_00414c30 + FUN_00484c70) and the D1 residue block.
+
+STILL OPEN on powerups, small, listed so they are not lost (D3_BOX_STATE
+section 11): the box state's own MEANING is [UNCERTAIN U-9139] (naming only,
+blocks nothing); the box gate's `== 2` arm is ported but only witnessed with an
+EMPTY slot -- forcing the box to 2 while the subject HOLDS a type is a one-line
+change to --pu-box; every capture in the lane is track 0.
+
+RULES: NO-GUESSING, cite RVAs, [UNCERTAIN] + the next command. Trackers only via
+re-classify. Launch muted (MASHED_MUTE=1), MASHED_WIN_POS=left-bl, always
+--poke-ctrl-slots. Track the PIDs you spawn and kill ONLY those. Commit cited
+evidence after each step (git add -f for small files; never commit a .msd, they
+are 22 MB). Do not push.
+```
+
+## => HISTORY: KICKOFF PROMPT - D3 powerups, the MORTAR->MISSILE decision defect, written 2026-09-28c, SUPERSEDED (FIXED 2026-09-28d, and its stated hypothesis was REFUTED - see D3_BOX_STATE_2026-09-28.md)
 
 ```
 Session goal: fix the ONE open powerup defect. It is in the DECISION half
