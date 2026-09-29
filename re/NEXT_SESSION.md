@@ -4,12 +4,38 @@ Updated 2026-09-29 at the close of the **player-regression (U-9141 / U-9145)** s
 Branch `race/first-frame-parity`, HEAD is that session's tracker commit. Nothing is pushed.
 Superseded kickoff: the 2026-09-28 one (U-9140 / U-9142 are both closed below).
 
+> ## ORDER OF WORK CHANGED 2026-09-29 (user decision): **D2 IS REOPENED**
+>
+> **Do the D2 re-close first. The D3 modes 3/7 port does not start until D2 closes again.**
+>
+> **Why.** The evidence that closed D2 compared a **three-opponent port run** against a
+> **ONE-car original capture** (`orig_steerR.msd.provenance.json` has no `--cars`;
+> `re/frida/scenario_launch.py:1739` defaults to 1). On the matched solo arm the port has
+> **never** reproduced the original: slip 1500-2000 `0.1332` vs **`0.1913`** (**-30%**),
+> slip 2000-2600 `0.2179` vs **`0.2498`** (**-13%**), driving-median `1818` vs **`1941`**
+> (**-6%**). Evidence: `re/analysis/PLAYER_REGRESSION_2026-09-29.md` §5-§6.
+>
+> **This does not overturn the headline below.** There is still no player physics *regression
+> between commits*. The port is short against the **original** at both commits — that is the
+> D2 question the three-vs-one asymmetry hid.
+>
+> **The gate is now:** D2 metrics on the **SOLO arm** (`MASHED_MEASURE_SOLO=1`) against the
+> original's **solo** capture, within bounds **pre-registered before the fix**. Pre-register
+> first — `a-band-scored-off-regime-is-not-a-measurement` is a live precedent on this lane.
+>
+> **Blocking:** **U-9149** (A6b `0x00468980`'s context pointer from the stack slot at
+> `0x0047093b` — dead in the exe, contradicted in the `.asi` forwarder; both `0x00468980` and
+> `0x00470670` are now C2) and **U-9147** (the standing slip gap).
+>
+> ROADMAP §D2 carries the REOPENED block; the CLOSED block is kept below it as history.
+
 **THE HEADLINE: there is NO player-car physics regression since D2 closed.** The
 `-16% / -14% / -64%` the previous kickoff item 3 described was the controlled arm's own
 asymmetry, and the D2 reference turns out to be a **one-car race**. On the reference's own
 scenario HEAD reproduces `56ad3806` to `-3.1% / -0.1% / +3.3%`. Read
 `re/analysis/PLAYER_REGRESSION_2026-09-29.md` and ROADMAP §D2's **second** amendment; do not
-re-derive either. **U-9141 and U-9145 are RESOLVED.**
+re-derive either. **U-9141 and U-9145 are RESOLVED.** (Still true — but see the REOPENED
+block above: "no regression between commits" is not "matches the original".)
 
 **Three user decisions are in force from 2026-09-29 and are already actioned** — do not re-ask them:
 1. **U-9142: KEEP the spawn settle, default-ON**, `MASHED_NO_SPAWN_SETTLE=1` stays as the A/B revert.
@@ -21,6 +47,8 @@ re-derive either. **U-9141 and U-9145 are RESOLVED.**
 3. **D3 CLOSES BY PORTING BEHAVIOUR MODES 3 AND 7** (`FUN_00414c30` + the world-object query
    `FUN_00484c70`). **D3-R1 is no longer a carried residue** — AI (b) now fails on all three
    cars at correct speed, so there is one open criterion on three cars, not a car-1 residue.
+   **ON HOLD from 2026-09-29: this port does not start until D2 re-closes** (see the ORDER
+   block at the top). The decision about *how* D3 closes stands; only its start is deferred.
 
 ## READ FIRST — the tracker changed shape on 2026-09-29 (dual-copy session)
 
@@ -32,7 +60,10 @@ things are different from every kickoff before it. **Do not re-derive any of the
    the TU compiled into `mashed_re.exe`. Empty = the exe has no port. Regenerate with
    `py -3.12 scripts/backfill_exe_file.py`. Four repair scripts that asserted a literal 9
    columns were fixed; everything else was already header-keyed.
-   **The number to keep in mind: of 1213 C3/C4 rows only 203 have `exe_file == file`.**
+   **The number to keep in mind: after the demotions, of 1184 C3/C4 rows only 203 have
+   `exe_file == file`** — 183 name a different exe TU, and 798 are empty (the exe has no port
+   at all, so the evidence does not cover the default build). Before the demotions the same
+   split was 203 / 212 / 798 of 1213.
 
 2. **`re/CONFIDENCE.md` has a new clause, "Which copy the evidence covers".** A row is C3/C4
    **for the shipping exe** only if `exe_file` is empty or `== file`, or the exe copy has its

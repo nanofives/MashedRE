@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-09-29T23:05:00Z",
+  "updatedAt": "2026-09-29T23:40:00Z",
   "sections": [
     {
       "heading": "Session 2026-09-29c — dual-copy: demote + exe_file + guard",
@@ -70,28 +70,41 @@
       "fields": [
         {
           "label": "Phase",
-          "value": "D3 — default AI, powerups, modes",
+          "value": "D2 REOPENED 2026-09-29 — D3 on hold until it re-closes",
+          "kind": "text"
+        },
+        {
+          "label": "Why D2 reopened",
+          "value": "closing evidence was a 3-opponent port run vs a ONE-car original capture",
           "kind": "text"
         },
         {
           "label": "D3 status",
-          "value": "NOT CLOSED — 1 gate failure left",
+          "value": "BLOCKED — modes 3/7 port does not start until D2 closes again",
           "kind": "text"
         },
         {
           "label": "Sole blocker",
-          "value": "AI criterion (b), steer bands, all 3 cars",
+          "value": "D2: port vs ORIGINAL on the solo arm — slip -30% / -13%, median -6%",
           "kind": "text"
         },
         {
           "label": "Closure path (user decision)",
-          "value": "port behaviour modes 3 and 7 — FUN_00414c30 + FUN_00484c70",
+          "value": "D2 first (solo arm, bounds pre-registered), then D3 modes 3 and 7",
           "kind": "text"
         },
         {
           "label": "Branch",
           "value": "race/first-frame-parity (not pushed)",
           "kind": "text"
+        },
+        {
+          "label": "D2 blockers",
+          "value": [
+            "U-9149 A6b context pointer (0x0047093b)",
+            "U-9147 standing slip gap"
+          ],
+          "kind": "list"
         }
       ]
     },

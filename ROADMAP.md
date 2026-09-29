@@ -7,9 +7,15 @@ are carried forward below and remain the unit of work; what changes is the **gat
 > **Naming, 2026-09-26.** In this file, D0–D5 are **phases**. The four user decisions of
 > 2026-07-31 in `RE_MASTER_PLAN_2026-07.md` §5 are **DEC-2/4/6/7**. Older text that says "Gate
 > D2 (2026-07-31)" means DEC-2 (librw ships), not phase D2 (default physics).
-> **State 2026-09-26:** D0 ✓, D1 ✓ (default flip, residue R1-R3 open), D2 ✓, **D3 active**
-> (AI: ported tick drives the opponents, (b) 2 of 3 cars in tolerance; powerups (a)(b) met,
-> (c) met on decisions; modes GREEN on 3/11 rules), D4-D5 not started.
+> **State 2026-09-29 (supersedes the 2026-09-26 line below):** D0 ✓, D1 ✓ (default flip,
+> residue R1-R3 open), **D2 REOPENED 2026-09-29** (user decision — the closing evidence
+> compared a three-opponent port run against a ONE-car original capture; see §D2), D3 active
+> but **blocked on D2 re-closing** — the modes 3/7 port does not start until then. D4-D5 not
+> started.
+>
+> *Superseded — **State 2026-09-26:** D0 ✓, D1 ✓ (default flip, residue R1-R3 open), D2 ✓,
+> **D3 active** (AI: ported tick drives the opponents, (b) 2 of 3 cars in tolerance; powerups
+> (a)(b) met, (c) met on decisions; modes GREEN on 3/11 rules), D4-D5 not started.*
 
 ---
 
@@ -432,7 +438,51 @@ reviewer real time for no new information.
 renderer, AND D1's default-renderer question settled. Until both hold, an in-race
 opinion is an opinion about the scaffold, not about the port.
 
-### D2 — Default physics — **CLOSED 2026-09-14** (gate RECIPE amended 2026-09-29, verdict re-checked)
+### D2 — Default physics — **REOPENED 2026-09-29** (user decision)
+
+> #### REOPENED 2026-09-29 (user decision) — the closing evidence was not like-for-like
+>
+> **Status: REOPENED.** The **CLOSED 2026-09-14** block below is retained as history, not
+> deleted. Its amendments remain accurate about what they measured; what changed is the
+> verdict that D2 was closeable on that evidence.
+>
+> **Why.** The closing evidence compared a **three-opponent port run** against a **ONE-car
+> original capture**. `verify/a8_steer_20260824/orig_steerR.msd.provenance.json` carries no
+> `--cars`, and `re/frida/scenario_launch.py:1739` defaults it to **1**, while the port arm
+> hard-spawns three (`TrackRenderer.cpp:2441-2473` / `StartRound`). On the **matched solo
+> scenario** (`MASHED_MEASURE_SOLO=1`) the port has **never** reproduced the original:
+>
+> | metric | ORIGINAL (solo) | port (HEAD solo) | delta |
+> |---|---:|---:|---:|
+> | slip 1500-2000 | **0.1913** | 0.1332 | **-30%** |
+> | slip 2000-2600 | **0.2498** | 0.2179 | **-13%** |
+> | driving-median | **1941** | 1818 | **-6%** |
+>
+> Evidence: [`re/analysis/PLAYER_REGRESSION_2026-09-29.md`](re/analysis/PLAYER_REGRESSION_2026-09-29.md)
+> §5-§6. Note what this does **not** overturn: that note's finding that there is no player
+> physics *regression between commits* stands (HEAD vs `56ad3806` is `-3.1% / -0.1% / +3.3%`
+> on the matched arm). The port is short against the **original** at both commits, which is a
+> D2 question that the three-vs-one asymmetry hid.
+>
+> **The gate is now:** the D2 metrics on the **SOLO arm** (`MASHED_MEASURE_SOLO=1`) measured
+> against the **original's solo capture**, within bounds **pre-registered before the fix**.
+> Pre-registering the bounds first is not ceremony here — `a-band-scored-off-regime-is-not-a-measurement`
+> and `pre-register-the-decision-not-the-diagnosis` are both live precedents on this exact lane.
+>
+> **Open items blocking re-closure:**
+> - **U-9149** — A6b `0x00468980`'s context pointer comes from the stack slot at
+>   `0x0047093b` in the original. It is **dead in the exe** (`VehicleControl.cpp:195` passes
+>   `nullptr`) and **contradicted in the `.asi` forwarder** (`PhysicsChainHooks.cpp:220`
+>   `mov esi, ecx`), so neither copy is established. Both `0x00468980` and `0x00470670` were
+>   demoted C4→C2 on 2026-09-29 (`re/analysis/DUAL_COPY_FIX_2026-09-29.md`).
+> - **U-9147** — the standing slip gap above.
+>
+> **Order: D2 must close again BEFORE the D3 modes 3/7 port starts.** §D3's closure path
+> (`FUN_00414c30` + `FUN_00484c70`) is on hold until then.
+
+---
+
+#### History — **CLOSED 2026-09-14** (gate RECIPE amended 2026-09-29, verdict re-checked)
 
 > #### AMENDMENT 2026-09-29 (second pass) — the controlled arm was ASYMMETRIC; the reference is a SOLO race; there is NO player regression
 >
@@ -762,6 +812,14 @@ D2 prerequisite. Keep the trap: it is env-gated and is the cheapest way to re-de
 Closes v2's **R5**.
 
 ### D3 — Default AI, powerups, modes
+
+> **BLOCKED 2026-09-29 (user decision): D2 is REOPENED and must close again before the modes
+> 3/7 port (`FUN_00414c30` + `FUN_00484c70`) starts.** See §D2's REOPENED block. Everything
+> below still records D3's measured state accurately; what is on hold is starting the next
+> port leg. Note also that 8 of the AI rows criterion (b) runs on were demoted C3→C2 on
+> 2026-09-29 (`re/analysis/DUAL_COPY_FIX_2026-09-29.md`) — the exe copies differ from the
+> bodies the C3s were earned on, which is a live candidate explanation for (b) and is not yet
+> tested.
 
 The remaining scaffolds that the default build still runs. WS-C (AI: the FUN_00418860
 family replacing the gate-ribbon lane-follower), WS-D (powerup effects: the FUN_0045bba0
