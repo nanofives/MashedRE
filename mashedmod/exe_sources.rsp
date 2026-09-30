@@ -161,7 +161,6 @@
 "Vehicle\VehicleSeed.cpp"
 "Vehicle\SubStripUV.cpp"
 "Vehicle\SplineCubicBlend.cpp"
-"Vehicle\VehicleSlotAabbExpand.cpp"
 "Vehicle\GhostSetupRender.cpp"
 "Camera\CameraPathPredicates.cpp"
 "Ai\VehicleVelocityWorldGet.cpp"

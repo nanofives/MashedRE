@@ -95,7 +95,7 @@ constexpr float kDistMul   = 3.6f;       // _DAT_005cc754 (0x40666666) attach-di
 constexpr float kRecip1    = 1.0f;       // _DAT_005cc320 (0x3f800000)
 
 // ---------------------------------------------------------------------------
-// 0x0046b1c0 — VehicleBuildContactHull(slot, box)
+// FUN_0046b1c0 — VehicleBuildContactHull(slot, box)
 //
 // [U-9155 2026-09-29] The 18 contact points at record +0x60..+0x137 are what the
 // car<->world contact scan (0x00469aa0 -> 0x00468d80) tests against the terrain.
@@ -123,17 +123,31 @@ constexpr float kRecip1    = 1.0f;       // _DAT_005cc320 (0x3f800000)
 // slot. All four cars agreed on the reference scenario, so this is exact there and
 // unverified elsewhere. NEXT COMMAND: `py -3.12 re/tools/findoffset.py --writes 0x2ac`
 // scoped to the DAT_0063dc10 base, or peek the table across several car selections.
+// DUAL COPY, DELIBERATE — read this before touching either side.
+// `Vehicle/VehicleSlotAabbExpand.cpp` already carries a C3, Frida-GREEN, naked-x87
+// transcription of this same RVA. The standalone CANNOT call it: that body writes the
+// ORIGINAL's absolute record array (`0x008815a0 + slot*0xd04`) and reads the image
+// constants at `ds:[05CC32Ch]`/`ds:[05CE034h]`, none of which is mapped in
+// `mashed_re.exe`, whose records live in `g_records`. So the split is by TARGET:
+// the naked copy stays `.asi`-only (its `RH_ScopedInstall` at :215 is its only
+// consumer) and this record-base-relative copy is the exe's. Registered in
+// `re/tools/dual_copy_allowlist.txt` as CROSS-TARGET, the same shape as the
+// 0x0046b540 pair already there. Cross-check that makes the split safe: the naked
+// port's own header states it writes "rec[+0x90 .. +0x134] (42 dwords, 0xa8 bytes)
+// derived ENTIRELY from in6[0..5] plus 0x005cc32c (=0.5f) and 0x005ce034" -- exactly
+// the field range, count and constants below.
 static const float kContactHullBox[6] = {
-    +0.21879999339580536f,   // 0x0063dc10
-    +0.30860000848770140f,   // 0x0063dc14
-    +0.45379999279975890f,   // 0x0063dc18
-    -0.21879999339580536f,   // 0x0063dc1c
-    +0.03739999979734421f,   // 0x0063dc20
-    -0.52329999208450320f,   // 0x0063dc24
+    +0.21879999339580536f,   // measured @0x0063dc10
+    +0.30860000848770140f,   // measured @0x0063dc14
+    +0.45379999279975890f,   // measured @0x0063dc18
+    -0.21879999339580536f,   // measured @0x0063dc1c
+    +0.03739999979734421f,   // measured @0x0063dc20
+    -0.52329999208450320f,   // measured @0x0063dc24
 };
-static const float kHullHalf  = 0.5f;          // _DAT_005cc32c  0x0046b2d6
-static const float kHullThird = 0.33333298563957214f;  // _DAT_005ce034 (0x3eaaaa9f) 0x0046b343
+static const float kHullHalf  = 0.5f;                  // _DAT_005cc32c, FMUL @0x0046b2d6
+static const float kHullThird = 0.33333298563957214f;  // _DAT_005ce034 = 0x3eaaaa9f, FMUL @0x0046b343
 
+// 0x0046b1c0  VehicleBuildContactHull
 void VehicleBuildContactHull(int slot, const float* b)
 {
     if ((unsigned)slot >= 16) return;                       // 0x0046b1c7
