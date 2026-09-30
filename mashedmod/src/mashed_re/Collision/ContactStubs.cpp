@@ -71,11 +71,63 @@ void Rw_TransformPoints(float* dst, const float* src, int count, void* mtx) {
     mashed_re::Math::RwV3dTransformVectorsCPU(dst, src, count,
                                               reinterpret_cast<const float*>(mtx));
 }
-// FUN_004c3d90 — RW vtable contact query (indirect through DAT_007d3ffc table).
-// STILL STUBBED: this is device slot +0xc (hooks.csv 004c3d90, C2 "42b dispatch
-// shim"), whose method contract is not decoded. Unlike slot +0x14 there is no ported
-// CPU equivalent to bind to. Live at WheelContactSolver.cpp:83-84.
-void Rw_VtableDispatch(void* /*dst*/, void* /*src*/, int /*count*/, void* /*mtxBlock*/) {}
+// FUN_004c3d90 — RW indirect vtable dispatch.  BOUND 2026-09-29 (U-9154).
+//
+// WHICH VTABLE, WHICH SLOT, with RVAs — read from the anchored binary, not inferred
+// (`py -3.12 re/tools/disasm_fn.py 0x004c3d90 0x004c3df0`, RET at 0x004c3dba):
+//     0x004c3d90  mov eax,[esp+0x10]      ; arg4 = matrix
+//     0x004c3d94  mov ecx,[esp+0x0c]      ; arg3 = count
+//     0x004c3d98  mov edx,[esp+0x08]      ; arg2 = src
+//     0x004c3d9d  mov esi,[esp+0x08]      ; arg1 = dst   (after `push esi`)
+//     0x004c3da2  mov eax,[0x007d3ff8]    ; RW device table base
+//     0x004c3da8  mov ecx,[0x007d3ffc]    ; per-device offset
+//     0x004c3db0  call [ecx+eax+0xc]      ; DEVICE SLOT +0xc, cdecl (dst,src,count,mtx)
+//     0x004c3db4  add esp,0x10            ; caller cleanup, 4 dwords
+//     0x004c3db7  mov eax,esi             ; returns arg1
+// `0x004c3df0` is the same thunk through **+0x14**. The two slots are NOT
+// interchangeable and the
+// difference was MEASURED, not reasoned (the measurement is already in this file,
+// two entries up): slot **+0x14 IGNORES the matrix translation row** — it is
+// `RwV3dTransformVectors` — while slot **+0xc ADDS it** — it is
+// `RwV3dTransformPoints`.
+//   evidence: `log/diff_rw_v3d_transform_points_cpu.csv` is RED on exactly the 4 of
+//   10 vectors with a nonzero pos row when the POINTS impl is run against +0x14, and
+//   `log/diff_rw_device_dispatch_0c_points.csv` puts that same POINTS impl 9/10
+//   bit-identical (1 ULP on the 10th, a summation-order difference) against +0xc.
+// So the correct standalone stand-in for `Rw_VtableDispatch` is the POINTS one,
+// `Math::RwV3dTransformPointsCPU` — the mirror image of `Rw_TransformPoints` above,
+// which binds the VECTORS one to the +0x14 thunk.
+//
+// WHY IT MATTERS HERE. `CarWorldContacts.cpp:407` is
+//     Rw_VtableDispatch(self + 0x27e, self + 0x18, 0x12, self + sel*0x10 + 0x24a)
+// i.e. the 18 body contact points at rec+0x60 transformed by the rec+0x928 RwMatrix
+// into rec+0x9f8, which `VehicleTerrainContactSolver` (0x00468d80) then tests against
+// the terrain batch (it reads them at `vFP(param_1, 0x27f)`, stride 3, 18 slots, and
+// their untransformed source at `local_98[-0x267]` = rec+0x60). With the no-op stub
+// those 18 points were all zero, so the car-vs-world half of the chain could never
+// report a contact and the standalone drove through every wall. U-9154 /
+// re/analysis/D2_REOPEN_2026-09-29.md §14.5-§14.6.
+//
+// The transform needs a real rotation in rec+0x928; the port's ring previously held
+// only the translation row. VehiclePhysicsRun.cpp mirrors g_bodyBasis into it (see
+// `SyncContactRingMatrix` there) so the ring is what the original's ring is.
+//
+// [UNCERTAIN U-9155] rec+0x60..+0x137 holds 18 contact points; the port's A3
+// (VehicleInit.cpp:151-157) writes only the FIRST FOUR (the wheel points) and leaves
+// points 4..17 zero, because the original does not write them in 0x0046b540 either —
+// that function READS them (loops at 0x0046b915 `lea edi,[esi+0x94]` x8 and
+// 0x0046b98e `lea edi,[esi+0xf4]` x6) to build the per-slot radii at +0x5bc/+0x7bc.
+// Their producer is NOT yet identified. Consequence, stated rather than hidden: the
+// standalone's hull slots 4..17 all transform to the car origin, so the car-vs-world
+// contact is a POINT at the body centre rather than a 14-point hull. The fixup
+// (FUN_0046ef70) divides by the active-contact count [rec+0x9ec], so the duplicates do
+// not multiply the impulse — but the contact fires ~half a car-length late.
+void Rw_VtableDispatch(void* dst, void* src, int count, void* mtxBlock) {
+    mashed_re::Math::RwV3dTransformPointsCPU(reinterpret_cast<float*>(dst),
+                                             reinterpret_cast<const float*>(src),
+                                             count,
+                                             reinterpret_cast<const float*>(mtxBlock));
+}
 // FUN_004c4d20 — RwMatrix from axis+angle (degrees).  BOUND 2026-09-27 to the ported
 // Math/RwMatrixRotate.cpp (hooks.csv 004c4d20, C4 verified). Disasm of the original
 // 0x004c4d20..0x004c4dba: `FLD [esp+0x18]; FMUL [0x5cd7a8]` (pi/180) at

@@ -22,6 +22,7 @@
 #include "ContactConstants.h"
 #include "ContactDeps.h"
 #include "ContactSolvers.h"
+#include <cstdlib>   // getenv (MASHED_RW_WHEELPOS A/B, see the query block below)
 
 namespace mashed_re {
 namespace Collision {
@@ -79,9 +80,30 @@ void WheelContactSolver(int* self, void* world, int substep)
         puVar7  += 3;
     }
 
-    // --- RW contact queries (residual: stubbed vtable dispatch) ---
+    // --- RW contact queries ---
+    // `Rw_VtableDispatch` is LIVE since 2026-09-29 / U-9154 (ContactStubs.cpp: device
+    // slot +0xc = RwV3dTransformPoints). The first query is harmless and stays wired.
     Rw_VtableDispatch(g_contactQueryScratch, local_98, 1, iVar12);          // &DAT_0088e600
-    Rw_VtableDispatch(g_wheelContactPos, g_suspScratch, 4, iVar12);         // &DAT_0088e620 <- transform susp pos
+    // DEVIATION, STATED (U-9154). The second query transforms the 4 suspension points
+    // into DAT_0088e620, which the classifier FUN_0046cc40 reads as the wheel
+    // positions. In the STANDALONE those positions are produced upstream instead, by
+    // VehiclePhysicsRun.cpp's SolveWheelContacts, which seats each wheel's Y at
+    // `groundY - kPenetration` so the classifier's depth band can be satisfied at all
+    // (ContactSolvers.h:38-42 has recorded this since the contact wiring landed; the
+    // no-op stub merely made it invisible). Letting the now-live dispatch overwrite
+    // them would hand the classifier the true suspension-point Y, which sits ABOVE the
+    // triangle and is outside the depth band, i.e. it would un-ground every wheel.
+    // The car-vs-WORLD half of the chain (CarWorldContacts.cpp:407) is what U-9154
+    // wires; the wheel half is a separately calibrated substitute and is NOT changed
+    // by this session.
+    // RE-PICKUP: once the standalone's suspension travel feeds the real depth, drop
+    // the scratch and write straight to g_wheelContactPos. `MASHED_RW_WHEELPOS=1`
+    // runs that arm now, for measurement.
+    static const bool s_rwWheelPos = (std::getenv("MASHED_RW_WHEELPOS") != nullptr);
+    float rwWheelPos[12];
+    Rw_VtableDispatch(s_rwWheelPos ? g_wheelContactPos : rwWheelPos,
+                      g_suspScratch, 4, iVar12);                           // &DAT_0088e620 <- transform susp pos
+    (void)rwWheelPos;
     // FUN_0046c5f0() — register-arg TriangleFaceNormal (wheel normal); args not
     // resolvable from the decomp, residual for full fidelity (no effect on states).
 

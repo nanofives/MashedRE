@@ -350,6 +350,32 @@ static void ReassertContacts(unsigned char* r) {
     F(r, off::kGroundedCnt) = gc;   // +0x9e0; 4.0 (0x40800000) == all-grounded sentinel
 }
 
+// [U-9154 2026-09-29] Mirror the integrated body basis into the record's +0x928
+// contact ring, so the ring holds what the ORIGINAL's ring holds.
+//
+// The original's +0x928 block IS the body RwMatrix: A4 computes
+// `record + [record+0x9a8]*0x40 + 0x928` at 0x0047068e/0x00470696/0x00470699 and hands
+// that one pointer to A5 (0x00470918) and A6b (0x0047093b), and A6b feeds it to
+// RwMatrixRotate as the matrix argument (0x00468a31 etc.) — decode and live witness in
+// re/analysis/D2_REOPEN_2026-09-29.md §4.1/§4.2, and §13.1 witness 4 reads the
+// original's WORLD POSITION out of its translation row (+0x958/+0x95c/+0x960).
+// The port keeps the basis in g_bodyBasis (U-9152, the storage split) and until now
+// wrote ONLY the ring's translation row, leaving rows 0..11 zero.
+//
+// That zero rotation is why the car-vs-world query could not work even with the
+// dispatch bound: `Rw_VtableDispatch(self+0x27e, self+0x18, 0x12, ring)`
+// (CarWorldContacts.cpp:407) would map all 18 body points onto the translation.
+// This does NOT move the storage — g_bodyBasis stays the authority — it publishes it,
+// which is the minimum U-9152 owes the contact chain.
+static void SyncContactRingMatrix(unsigned char* r, const float* basis, const float* pos) {
+    const int sel = I(r, 0x9ac);                    // self[0x26b]; the ring index
+    if (sel < 0 || sel > 1) return;
+    float* m = reinterpret_cast<float*>(r + (std::size_t)sel * 0x40 + 0x928);
+    for (int i = 0; i < 12; ++i) m[i] = basis[i];   // right / up / at rows
+    m[12] = pos[0]; m[13] = pos[1]; m[14] = pos[2]; // translation (+0x30)
+    m[15] = 0.f;
+}
+
 // Run the ported FUN_0046f6c0 over the track tris (replaces SetGrounded).
 static void SolveWheelContacts(unsigned char* r, const PlayerCarIO& io, int substep) {
     int* self = reinterpret_cast<int*>(r);
@@ -769,10 +795,55 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         ReassertContacts(r);
     }
 
+    // [U-9154 2026-09-29] The car<->WORLD contact chain. The original's substep body
+    // (FUN_004709a0, 0x00470ab0..0x00470b0b, disassembled from MASHED.exe.unpatched) is
+    //     0x00470ab0  cmp ebp,2 / jge          ; at most 2 executions of this body
+    //     0x00470ad3  call 0x0046e9e0          ; A9: integrate pos + basis
+    //     0x00470ae0  call 0x0046f6c0          ; wheel contact solver
+    //     0x00470ae8  call 0x00469aa0          ; contact scan -> [rec+0x9ec], returns a flag
+    //     0x00470aef  mov eax,[esi+0x9ec] / test / je 0x470b0d
+    //     0x00470afe  call 0x0046ef70          ; the fixup (writes +0x9b0 / +0x144)
+    //     0x00470b06  test ebx,ebx / je 0x470b0d
+    //     0x00470b0a  inc ebp / jmp 0x470ab0   ; a REPORTED contact re-runs the substep
+    // The port's substep already runs A9's two halves (position from the velocity
+    // vector, basis from BodyOrient_*) and FUN_0046f6c0; what it never ran is the
+    // 0x00469aa0 -> 0x0046ef70 pair, so nothing ever wrote the corrective velocity.
+    // `MASHED_WORLD_CONTACT=0` reverts to the pre-U-9154 substep for A/B (ROADMAP v3
+    // default-build rule: a flag may only turn the ported behaviour OFF).
+    static const bool s_worldContact = [] {
+        const char* e = std::getenv("MASHED_WORLD_CONTACT");
+        return !(e && e[0] == '0');
+    }();
+    // Diagnostic, default-OFF: one line per fixup, so a wall bounce can be read back
+    // frame by frame without a Frida attach.
+    static const char* const s_wcLog = std::getenv("MASHED_WORLD_CONTACT_LOG");
+    static int s_wcLines = 0;
+
     float remMs = frameMs;
     int guard = 0;
     while (remMs > 0.0f && guard++ < 64) {
         float chunkMs = (remMs < (float)kMaxSubstep) ? remMs : (float)kMaxSubstep;
+
+        // 0x00470ab0's retry needs the substep to be REDOABLE. The original gets that
+        // for free: A9 writes dst = src + delta into the OTHER half of the +0x928
+        // double buffer, so re-running it recomputes the step from the same source with
+        // the corrected velocity. The port's position/basis advance is cumulative in
+        // place, so snapshot what the body mutates and restore it before a retry.
+        // The record is deliberately NOT snapshotted — the fixup's velocity write is
+        // exactly what the retry is supposed to see, as in the original.
+        float savedPos[3]   = { io.pos[0], io.pos[1], io.pos[2] };
+        float savedDelta[3] = { posDelta[0], posDelta[1], posDelta[2] };
+        float savedBasis[16];
+        std::memcpy(savedBasis, basis, sizeof(savedBasis));
+        const float savedYaw = io.yaw;
+
+        for (int pass = 0; pass < 2; ++pass) {   // 0x00470ab0: `cmp ebp,2`
+        if (pass != 0) {
+            io.pos[0] = savedPos[0]; io.pos[1] = savedPos[1]; io.pos[2] = savedPos[2];
+            posDelta[0] = savedDelta[0]; posDelta[1] = savedDelta[1]; posDelta[2] = savedDelta[2];
+            std::memcpy(basis, savedBasis, sizeof(savedBasis));
+            io.yaw = savedYaw;
+        }
 
         // --- FUN_0046e9e0 (0x0046e9e0) runs FIRST in the original's substep
         // (FUN_004709a0 order: FUN_0046e9e0 -> FUN_0046f6c0 -> FUN_00469aa0), so
@@ -821,6 +892,38 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         const double tp0 = prof::g_on ? prof::NowMs() : 0.0;
         SolveWheelContacts(r, io, guard);
         if (prof::g_on) { prof::f_probeMs += prof::NowMs() - tp0; ++prof::f_substeps; }
+
+        // --- 0x00470ae8 / 0x00470aef / 0x00470afe: the car<->world contact pair ---
+        if (!s_worldContact) break;
+        // Publish the integrated basis + the true world position into the +0x928 ring
+        // the scan transforms the 18 body contact points by. AFTER the wheel solver,
+        // because the wheel solver's broadphase reads the ring's +0x30 as its query
+        // centre and SolveWheelContacts deliberately seats that at ground level.
+        SyncContactRingMatrix(r, basis, io.pos);
+        int* const wcSelf = reinterpret_cast<int*>(r);
+        const int contacted = Collision::VehicleContactHistoryUpdate(wcSelf); // 0x00470ae8
+        if (I(r, 0x9ec) != 0) {                                              // 0x00470aef
+            const float pv[3] = { F(r, off::kVelocity + 0), F(r, off::kVelocity + 4),
+                                  F(r, off::kVelocity + 8) };
+            Collision::VehicleContactFixup(wcSelf);                          // 0x00470afe
+            if (s_wcLog && s_wcLines < 4000) {
+                if (std::FILE* lf = std::fopen(s_wcLog, "a")) {
+                    std::fprintf(lf,
+                        "slot=%d pass=%d n=%d ret=%d pos=(%.4f,%.4f,%.4f) "
+                        "vel=(%.4f,%.4f,%.4f)->(%.4f,%.4f,%.4f)\n",
+                        slot, pass, I(r, 0x9ec), contacted,
+                        io.pos[0], io.pos[1], io.pos[2],
+                        pv[0], pv[1], pv[2],
+                        F(r, off::kVelocity + 0), F(r, off::kVelocity + 4),
+                        F(r, off::kVelocity + 8));
+                    std::fclose(lf);
+                }
+                ++s_wcLines;
+            }
+            if (contacted != 0) continue;    // 0x00470b06/0x00470b0a: re-run the substep
+        }
+        break;
+        }   // end retry
         remMs -= chunkMs;
     }
 

@@ -17,6 +17,11 @@ void WheelTerrainContactClassifier(int* veh, float* batchEntry);                
 void VehicleTerrainContactSolver(int* veh, void* batchBase);                                // 0x00468d80
 void VehicleObjectContactSolver(int* veh);                                                  // 0x004694e0
 int  VehicleContactHistoryUpdate(int* veh);                                                 // 0x00469aa0
+// 0x0046ef70 — the post-contact fixup: reduces the 18 contact slots into the
+// corrective linear velocity at +0x9b0 and the angular impulse at +0x144. The
+// original also pushes the +0x928 matrix (0x00470afd) and NEVER READS IT — see the
+// balanced-ESP walk in ContactFixup.cpp's header — so the port takes only the record.
+void VehicleContactFixup(int* veh);                                                         // 0x0046ef70
 
 // --- B3: car<->car ----------------------------------------------------------
 bool VehicleCarCarContact(int* vehA, int* vehB, int pass);                                  // 0x00469df0

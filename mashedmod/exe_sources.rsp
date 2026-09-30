@@ -20,6 +20,7 @@
 "Collision\ContactStubs.cpp"
 "Collision\ContactProducer.cpp"
 "Collision\CarWorldContacts.cpp"
+"Collision\ContactFixup.cpp"
 "Collision\CarCarContacts.cpp"
 "Collision\WheelContactSolver.cpp"
 "Collision\RwpIntegrator.cpp"
