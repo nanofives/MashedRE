@@ -1,8 +1,99 @@
 # Next session kickoff
 
-Updated 2026-09-29 at the close of the **D2 re-close attempt 4** session (U-9154 CLOSED,
-U-9155 / U-9156 filed). Branch `race/first-frame-parity`. Nothing is pushed.
-Superseded kickoff: the 2026-09-29 "re-close attempt 3" one (kept below).
+Updated 2026-09-30 at the close of the **D2 re-close attempt 5** session (U-9156 root-caused
+and half fixed, U-9157 filed+resolved, U-9158 filed, U-9155 structure corrected).
+Branch `race/first-frame-parity`. Nothing is pushed.
+Superseded kickoff: the 2026-09-29 "re-close attempt 4" one (kept below).
+
+> ## START HERE — D2 is STILL REOPENED, and the residual is TWO NAMED STUB FUNCTIONS
+>
+> Read [`re/analysis/D2_REOPEN_2026-09-29.md`](analysis/D2_REOPEN_2026-09-29.md) **§16-§18**
+> and U-9156. **Do not re-derive any of it.**
+>
+> **The §3 bounds are unchanged and are not renegotiable.** PASS intervals:
+> `slip 1500-2000` **0.18855 .. 0.19635**, `slip 2000-2600` **0.24488 .. 0.25487**,
+> `driving-median` **1904.70 .. 1982.44**.
+>
+> ### The one thing to change in your muscle memory
+>
+> **The port arm now also carries `MASHED_STEER_HOLD_AFTER=0`:**
+>
+> ```
+> py -3.12 re/tools/statediff/a8_run_port.py <dir> 90 MASHED_MEASURE_SOLO=1 \
+>         MASHED_TRACK_SEL=12 MASHED_STEER_HOLD_AFTER=0 "MASHED_TITLE=<label>"
+> ```
+>
+> Why (U-9157, third arm mismatch of the same class as three-cars-vs-one and Arctic-vs-Training):
+> the port held ZERO steer at full accel for **60 sim steps** while the original arms accel and
+> steer together in one `E.drive(1,+1)` (`scenario_launch.py:2180-2182`) and turns from its first
+> moving frame at speed 1.8. With it corrected the two cars arrive at the **same wall**, 0.034
+> world units and 0.24% apart.
+>
+> | metric | attempt 4 | **attempt 5** | n | verdict |
+> |---|---:|---:|---:|---|
+> | slip 1500-2000 | 0.1605 | **0.2031** | 20 | FAIL, 3.4% past the upper bound |
+> | slip 2000-2600 | 0.2497 | **no samples** | 0 | UNSCORABLE |
+> | driving-median | 1938.68 | **1355.64** | 54 | FAIL -30.2% |
+>
+> 3 of 3 runs bit-identical. **Median speed over all 1080 frames is 24.5 — the car does not
+> drive**, so nothing in that table is a pass.
+>
+> **DONE, do not redo:**
+> - **U-9156 is root-caused and HALF fixed.** `0x0046ef70`'s last-contact damp guard read the
+>   wrong slot against the wrong sentinel. The original saves SLOT 0's base once before the loop
+>   (`0x0046f013`/`0x0046f016`), reloads it at `0x0046f522`, reads `[rec+0x4ac]` = slot 0's KEY
+>   at `0x0046f5ae`, and `0x0046f5b1 cmp ecx,-2` / `0x0046f5b4 je` skips the damp ONLY on `-2`.
+>   The port tested SLOT 17's key against `-1`. Fixed; prediction MET (`+698.16` -> **`+194.39`**
+>   vs the original's `+176.47`).
+> - **The loop question is ANSWERED and the old reading is WITHDRAWN.** §16.1's "the port's loop
+>   is larger and 3.31 units away" was an artefact of the 60 straight steps. At matched speed the
+>   cornering law agrees to 6.5% (radius) / 3.6% (`d(velH)`) / 0.04% (`d(bodyH)`).
+> - **§15.7's "the ORIGINAL touches the plane once in 2332 frames" is WITHDRAWN.** It hits walls
+>   **twelve** times, alternating `pos.x ≈ -2.0` and `pos.x ≈ +2.0`.
+> - **U-9155's STRUCTURE is corrected** (address unchanged): the box is field `+0x230..+0x247`
+>   of a 0x2ac-stride record based at **`DAT_0063d9e0`**. The writer is still unidentified and
+>   the static search is exhausted — §18.5 lists all six probes. **It does NOT bear on the trap**:
+>   the original's live hull equals the seeded box to every printed digit.
+> - **The dual-copy guard blind spot is fixed and proven** (`c231b116`): `scripts/rva_body_scan.py`
+>   second pass + `scripts/test_rva_body_scan.py` 6/6 + an end-to-end re-run on the pre-fix tree.
+>   13 new pairs exposed (U-9158), allowlisted `audit=UNREVIEWED-U9156`, 111 -> 122, NEW=0.
+>
+> ### PICK UP HERE — port the two contact solvers
+>
+> `0x0046ef70` is verbatim now, so what is wrong is its **INPUT**:
+>
+> | RVA | name | today |
+> |---|---|---|
+> | `0x00468d80` | `VehicleTerrainContactSolver` | **C2, `status stub`** |
+> | `0x004694e0` | `VehicleObjectContactSolver` | **C2, `status stub`** |
+>
+> Measured symptom: the scan reports slot 5 at depths down to `d=-0.0000` **216 times in 1628
+> sim steps**, so the car is damped back to ~10 every time it reaches ~55 and never leaves
+> Training's wall. The ORIGINAL slides ALONG that wall at `vel.z +119..+320`, `pos.z` advancing
+> `-3.51 -> -2.71`, `bodyH` rotating `+2.605 -> +2.058` (frames 1000-1100), and reaches 1311 by
+> frame ~1150. `MASHED_WORLD_CONTACT_LOG=<relative path>` logs every fixup with its reporting
+> slots, depths, normals and magnitudes; `MASHED_WORLD_CONTACT=0` reverts the chain for A/B.
+>
+> Two smaller things, both registered rather than done:
+> - **[UNCERTAIN]** the original's `vel.y` is **exactly `+0.0000`** on every pre-contact grounded
+>   frame 976-980 where the port carries `+74.8..+77.9`. Next command: dump `+0x9b4` across a
+>   grounded stretch on both sides and find the writer the port does not zero.
+> - **`0x0046b1c0` is NOT consolidated to one body**, deliberately: the asi-only copy is the C3
+>   Frida-GREEN naked-x87 one and the exe-only C++ copy has no `run_diff` of its own. The
+>   precondition is now met (§16.6), so the burn-down step is one command:
+>   `py -3.12 re/frida/run_diff.py vehicle_slot_aabb_expand` against the C++ body, then delete the
+>   naked copy and drop the allowlist line.
+>
+> **Guards on the final build** (re-run them, don't assume): criterion (e) **PASS 3/3**;
+> AI (b) **FAIL 3/3**, `c1_median` 52.5 / 38.0 / 49.0; power-ups **decision CLEAN 11/11** with
+> `g3` contact diverging; oracle rule 3 **GREEN** MISMATCH=0; rva-lint **`allowlisted=122 NEW=0`**;
+> Arctic non-regression **2044.85 (n=34)**. **Gotcha:** `MASHED_AI_STEPDUMP` must be a **relative**
+> path — an absolute one silently produced no CSV this session.
+>
+> **The D3 modes 3/7 hold stands.** D2 must close before it starts.
+
+
+## SUPERSEDED kickoff — D2 re-close attempt 4 (kept as history)
 
 > ## START HERE — D2 is STILL REOPENED, but the wall now holds and the residual has ONE name
 >

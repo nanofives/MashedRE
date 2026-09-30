@@ -1,39 +1,41 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-09-30T01:40:00Z",
+  "updatedAt": "2026-09-30T05:20:00Z",
   "sections": [
     {
       "heading": "Phase",
       "fields": [
-        { "label": "Active phase", "value": "D2 REOPENED (re-close attempt 4 done)", "kind": "text" },
-        { "label": "Blocked", "value": "D3 modes 3/7 port — waits on D2", "kind": "text" },
-        { "label": "Branch", "value": "race/first-frame-parity (nothing pushed)", "kind": "text" }
+        { "label": "Current phase", "value": "D2 REOPENED — re-close attempt 5 failed", "kind": "text" },
+        { "label": "Branch", "value": "race/first-frame-parity (nothing pushed)", "kind": "text" },
+        { "label": "Kickoff", "value": "re/NEXT_SESSION.md — port 0x00468d80 + 0x004694e0", "kind": "text" }
       ]
     },
     {
-      "heading": "D2 solo arm vs pre-registered bounds",
+      "heading": "D2 solo arm vs pre-registered bounds (attempt 5, 3/3 identical)",
       "fields": [
-        { "label": "slip 1500-2000", "value": "0.1605 n=13  (need 0.18855..0.19635)  FAIL", "kind": "text" },
-        { "label": "slip 2000-2600", "value": "0.2497 n=28  (need 0.24488..0.25487)  inside", "kind": "text" },
-        { "label": "driving-median", "value": "1938.68 n=66 (need 1904.70..1982.44)  inside", "kind": "text" },
-        { "label": "Runs agreeing", "value": 4, "kind": "number" },
-        { "label": "Caveat", "value": "the two 'inside' values are medians over 28 and 66 rows — not a pass (U-9156)", "kind": "text" }
+        { "label": "slip 1500-2000", "value": "0.2031 (n=20) — FAIL, bound 0.18855..0.19635", "kind": "text" },
+        { "label": "slip 2000-2600", "value": "no samples — UNSCORABLE", "kind": "text" },
+        { "label": "driving-median", "value": "1355.64 (n=54) — FAIL, bound 1904.70..1982.44", "kind": "text" },
+        { "label": "Median speed, all 1080 frames", "value": 24.5, "kind": "number" }
       ]
     },
     {
-      "heading": "Open",
+      "heading": "Residual",
       "fields": [
-        { "label": "Residual root cause", "value": "U-9156 — with the wall solid, the port's car gets TRAPPED against it (all 73 fixups at x=-2.02..-2.06, median speed 93)", "kind": "text" },
-        { "label": "Closed today", "value": "U-9154 — the car-vs-world contact chain is wired and the wall holds on Training's x=-2.500 plane", "kind": "text" },
-        { "label": "Also filed", "value": "U-9155 — the writer of the per-car contact box DAT_0063dc10 is unidentified; one measured box is seeded for all slots", "kind": "text" },
-        { "label": "Next", "value": ["plot both loops on Training's COLLISIONS.BSP (loop_plot.py)", "larger port loop = U-9147 residue, upstream of contacts", "matching loops = instrument 0x0046ef70 vs the original at frame 980", "then U-9152 (the +0x928 storage split)"], "kind": "list" }
+        { "label": "Blocker", "value": ["0x00468d80 VehicleTerrainContactSolver — status stub", "0x004694e0 VehicleObjectContactSolver — status stub"], "kind": "list" },
+        { "label": "Fixed this session", "value": "0x0046ef70 damp guard (slot 0 key vs -2, not slot 17 vs -1)", "kind": "text" },
+        { "label": "Open uncertainties", "value": ["U-9155 writer of DAT_0063d9e0+0x230", "U-9156 the wall trap", "U-9158 13 unreviewed dual-copy pairs"], "kind": "list" }
       ]
     },
     {
       "heading": "Guards (final build)",
       "fields": [
-        { "label": "Status", "value": "(e) PASS 3/3 · AI (b) FAIL 3/3 (unchanged) · power-ups 11/11 CLEAN, g3 contact diverges · oracle rule 3 GREEN · rva-lint allowlisted=111 NEW=0", "kind": "text" },
-        { "label": "RecoverOffMesh scaffold", "value": "KEPT — Arctic fires 46 → 0, Training 0 → 0, but 2 tracks of 12 is not unreachability", "kind": "text" }
+        { "label": "criterion (e)", "value": "PASS 3/3", "kind": "text" },
+        { "label": "AI criterion (b)", "value": "FAIL 3/3 (unchanged)", "kind": "text" },
+        { "label": "power-ups", "value": "decision CLEAN 11/11, g3 contact diverges", "kind": "text" },
+        { "label": "oracle rule 3", "value": "GREEN, MISMATCH=0", "kind": "text" },
+        { "label": "rva-lint", "value": "allowlisted=122 NEW=0", "kind": "text" },
+        { "label": "Arctic non-regression", "value": "2044.85 (n=34), no collapse", "kind": "text" }
       ]
     }
   ]

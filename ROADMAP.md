@@ -480,6 +480,58 @@ opinion is an opinion about the scaffold, not about the port.
 > **Order: D2 must close again BEFORE the D3 modes 3/7 port starts.** §D3's closure path
 > (`FUN_00414c30` + `FUN_00484c70`) is on hold until then.
 
+> #### Re-close attempt 5 — 2026-09-30. **STILL REOPENED. The arm was commanding a different manoeuvre, the 4x bounce was a transcription error, and the residual is now two `status stub` functions.**
+>
+> Full record: `re/analysis/D2_REOPEN_2026-09-29.md` §16-§18. Commits `30cca402`, `d9e8fd24`,
+> `c231b116`, `21563b39`. **The §3 bounds were not touched.**
+>
+> **The arm is corrected again (third mismatch of the same class, U-9157).** Every D2 solo run
+> is now
+>
+> ```
+> py -3.12 re/tools/statediff/a8_run_port.py <dir> 90 MASHED_MEASURE_SOLO=1 \
+>         MASHED_TRACK_SEL=12 MASHED_STEER_HOLD_AFTER=0 "MASHED_TITLE=<label>"
+> ```
+>
+> Why: the port held ZERO steer at full accel for **60 sim steps** (`a8_run_port.py:16`
+> `MASHED_STEER_HOLD_AFTER=4` -> `exe_main.cpp:3011-3012`/`:3024`; first yaw change at sim step
+> 61, yaw bit-identical for 60 steps) while the original arms accel and steer in ONE
+> `E.drive(1,+1)` call (`scenario_launch.py:2180-2182`) and turns from its first moving frame at
+> speed 1.8 (`orig_solo3.msd` frame 897). With that corrected the two cars arrive at the **same
+> wall**: original frame 980 `pos (-1.95345,-3.62606)` `vel.x -1716.69` `speed 1815.4` vs port
+> `f=80 pos (-1.98725,-3.62189)` `vel.x -1720.85` `speed 1839.7` — **0.034 world units and
+> 0.24% apart**.
+>
+> | metric | ORIGINAL mean | attempt 4 | **attempt 5 (corrected arm)** | n | PASS interval | verdict |
+> |---|---:|---:|---:|---:|---|---|
+> | slip 1500-2000 | 0.19245 | 0.1605 | **0.2031** | 20 | 0.18855 .. 0.19635 | **FAIL** (+3.4% past the upper bound) |
+> | slip 2000-2600 | 0.249875 | 0.2497 | **no samples** | 0 | 0.24488 .. 0.25487 | **UNSCORABLE** |
+> | driving-median | 1943.57 | 1938.68 | **1355.64** | 54 | 1904.70 .. 1982.44 | **FAIL** (-30.2%) |
+>
+> 3 of 3 runs bit-identical, so §3b holds. **Median speed over all 1080 frames is 24.5 — the car
+> does not drive**, so no figure above may be read as a pass.
+>
+> **U-9156 root-caused and half fixed.** `0x0046ef70`'s last-contact damp read the wrong slot
+> against the wrong sentinel: the original saves SLOT 0's base once before the loop
+> (`0x0046f013`/`0x0046f016`), reloads it at `0x0046f522`, reads `[rec+0x4ac]` = slot 0's KEY at
+> `0x0046f5ae`, and `0x0046f5b1 cmp ecx,-2` / `0x0046f5b4 je` skips the damp ONLY on `-2`. The
+> port tested SLOT 17's key against `-1`, so the damp never ran. Pre-registered prediction MET:
+> the first fixup's x output `+698.16` -> **`+194.39`** (predicted `+186 ± 10`) against the
+> original's `+176.47`.
+>
+> **The residual, named with RVAs:** `VehicleTerrainContactSolver` `0x00468d80` and
+> `VehicleObjectContactSolver` `0x004694e0` are both `status stub`, so the fixup's INPUTS are a
+> hand-written stand-in. Measured: the scan reports slot 5 down to `d=-0.0000` **216 times in
+> 1628 sim steps**, so the car is damped back to ~10 every time it reaches ~55, where the
+> original slides ALONG the same wall at `vel.z +119..+320` and leaves by frame ~1150.
+> **Porting those two is the condition for attempt 6.**
+>
+> Guards on the final build: criterion (e) **PASS 3/3**; AI (b) **FAIL 3/3**, `c1_median`
+> 52.5 / 38.0 / 49.0 (identical to attempts 1-4); power-ups **decision CLEAN 11/11**, `g3`
+> contact diverges; oracle rule 3 **GREEN** MISMATCH=0; rva-lint **`allowlisted=122 NEW=0`**;
+> Arctic non-regression **2044.85 (n=34)** vs 2060.40 (n=42), no collapse, 0 `RecoverOffMesh`
+> fires.
+
 > #### Re-close attempt 4 — 2026-09-29 (fifth session that day). **STILL REOPENED. The wall now holds, and the residual is one named behaviour.**
 >
 > Full record: `re/analysis/D2_REOPEN_2026-09-29.md` §15. Commits `35f418dc`, `b6a5cd1c`,
