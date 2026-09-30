@@ -1,13 +1,13 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-01T01:15:00Z",
+  "updatedAt": "2026-09-30T23:40:00Z",
   "sections": [
     {
       "heading": "Roadmap (v3)",
       "fields": [
         {
           "label": "Status",
-          "value": "D0 done | D1 done (residue R1-R3 open) | D2 REOPENED — re-close attempt 9 failed | D3 blocked on D2",
+          "value": "D0 done | D1 done (residue R1-R3 open) | D2 REOPENED — re-close attempt 9 failed | D3 blocked on D2 | render lane: car-brightness defect (d) FIXED",
           "kind": "text"
         },
         {
@@ -17,7 +17,58 @@
         },
         {
           "label": "Kickoff",
-          "value": "re/NEXT_SESSION.md — read D2_REOPEN section 22.4 first; six routes are now CLOSED by measurement",
+          "value": "re/NEXT_SESSION.md — render lane at the top; then the D2 block (read D2_REOPEN section 22.4 first; six routes are CLOSED by measurement)",
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "heading": "Render lane — car brightness, defect (d): FIXED 2026-09-30",
+      "fields": [
+        {
+          "label": "Root cause",
+          "value": "ParseLightsDffFaithful composed the track directional light's world at-vector ONE FRAME TOO MANY — it seeds from rot[6..8], already the parent-space at-axis, then walked from the light's own frame. Wrong sun on 13 of 13 shipped tracks. The original computes no direction at all (FUN_00479330 @ 0x00479330 adds the LIGHTS.DFF lights with RpWorldAddLight as-is).",
+          "kind": "text"
+        },
+        {
+          "label": "Fix",
+          "value": "TrackRenderer.cpp:853 + twin :751 — parent-start the frame-chain walk. One token each. Both renderers read the same sun_dir_ (RwRaceSubmit.cpp:571), so one change covers librw and the legacy D3D9 path. No RVA, no hooks.csv row. rva-lint allowlisted=122 NEW=0.",
+          "kind": "text"
+        },
+        {
+          "label": "Acceptance (pre-registered before the fix existed)",
+          "value": [
+            "A1 PASS — 13/13 tracks log the shipped asset's at-vector exactly",
+            "A2 PASS — TRAINING up-facing deck 0.5000 -> 0.8517 (n=1329) vs the arithmetic prediction 0.8522",
+            "A4 PASS — terrain / Arctic ice / sky and both frontend frames BIT-IDENTICAL; only cars, copters and lit props move",
+            "A3 FAIL as written — floor fraction 70.4% -> 12.8% where the band is 25-40%. NOT amended."
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Why A3's failure did not revert the fix",
+          "value": "The band's own \"from\" endpoint (~60-65%) does not reproduce either — 64.4 / 70.4 / 81.4 / 81.7% on the UNCHANGED pre-fix binary — so the statistic is not portable between poses even with no code change, which is the framing caveat the note attached to A3 when it wrote it. A2, the criterion the note named as binding, passes. Closing A3 needs U-9161 / note item O6: an original-side TRAINING capture at a known heading and camera. Same capture O4 needs, and a concrete instance of what D1-residue R1 owes.",
+          "kind": "text"
+        },
+        {
+          "label": "Exe SHA-256 (post-fix)",
+          "value": "E24D9C28990FC01E3316D32EC8D1F869E0124C2B315E1058A5128C985D2BF516",
+          "kind": "text"
+        },
+        {
+          "label": "Reusable harness",
+          "value": [
+            "run_race.py — drives the standalone's own MASHED_RACE_DEMO=1 MASHED_GOTO=6 flow: no external keystrokes, NEVER takes the foreground, dumps the real backbuffer",
+            "MASHED_DETERMINISTIC=1 gives pose-identical pre/post pairs, so a regression guard is exact rather than jitter-bounded",
+            "GOTCHA: that clock FREEZES the car (heading -1.57603 on every capture) — drop it if the car must turn",
+            "GOTCHA: point MASHED_VERIFY_OUT somewhere private; verify/race1/ holds nine tracked, cited stills",
+            "a4_scope.py — connected components of the differing-pixel mask; turns an imgdiff cell grid into a statement about WHICH surfaces moved"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Still open",
+          "value": "O2 original-side half (the 4 tracks that darken — Egypt 0.886x, rouabout 0.890x, Storm 0.773x, sands 0.771x — all within 2.3% of prediction, but no original reference exists for them) | O3 props/copters not measured cross-side | O6 = U-9161 | U-9162 (the donut heading windows cite a shots.json that no longer exists)",
           "kind": "text"
         }
       ]

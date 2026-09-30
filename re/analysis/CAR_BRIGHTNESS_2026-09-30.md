@@ -10,6 +10,10 @@ as **O2**.
 `# PRE-REGISTRATION` heading was written and committed *before* any capture in this session.
 Measurements are appended afterwards under `# MEASURED`.
 
+**Status 2026-09-30 (later, build-slot child): FIX APPLIED, acceptance run.** See
+`# FIX APPLIED AND ACCEPTANCE RUN`. A1/A2/A4 pass, **A3 fails as written** and was not
+amended. Neither the fix child nor this section edited any A1-A4 rule text above.
+
 ---
 
 ## Run anchors
@@ -657,6 +661,292 @@ re-derivation is the entire defect.
 lighting: it rests on (a) the asset, (b) the original executing no direction arithmetic, (c)
 the port's own output reproduced offline on two tracks, and (d) the original's measured pixels.
 
+# FIX APPLIED AND ACCEPTANCE RUN — 2026-09-30 (build-slot child)
+
+*(appended by the fix child. The pre-registered A1-A4 rules above were NOT amended.)*
+
+## Fix as landed
+
+Both loops changed, one token each, exactly as the READY-TO-APPLY section specifies:
+
+* `TrackRenderer.cpp:853` → `for (int fi = frames[pending_frame].parent; fi >= 0; )`
+  (`ParseLightsDffFaithful`, the default path)
+* `TrackRenderer.cpp:751` → the identical change in `ParseLightsDffDirectional` (the twin)
+
+`:688-689`'s header comment (`Arctic -> ... dir (0.577,-0.577,-0.577)`) needed no edit: it
+already recorded the **parent-start** value, so post-fix the code and the comment agree, and A1
+confirms that number from the running binary. **Dual-copy check:** `rot[6]`/`pending_frame`
+across `mashedmod/src` returns these two loops and nothing else. `DffModel.cpp:79`/`:98`
+(`FrameXform` / `FrameXformNormal`) are a different computation — they transform a point or a
+vertex normal given in the frame's **own** space, where starting at the frame itself is correct
+— so they are NOT a third copy. `build.bat` rva-lint: `allowlisted=122 NEW=0`.
+
+| binary | SHA-256 | note |
+|---|---|---|
+| post-fix (the fix) | `E24D9C28990FC01E3316D32EC8D1F869E0124C2B315E1058A5128C985D2BF516` | `verify/car_bright_fix_20260930/bin/mashed_re.exe`, 1 960 960 B |
+| pre-fix at HEAD | `4D3F02E8D531E098C3293391E542E190C2801C46BFF1C00F7F1622AA37FF1CF8` | `…/bin/prefix_head_mashed_re.exe` — built at clean HEAD **before** the edit |
+| pre-fix, this note's pin | `65A76A2E31590ACFFAC85A910AA15235DF2C6FB96314D9F5BBB71E1A75AEA3F4` | `verify/car_bright_20260930/bin/mashed_re.exe` |
+
+A HEAD baseline was built in addition to this note's pin because `d76bb90f` (a D2 commit)
+touched `Vehicle/VehiclePhysicsRun.cpp` after the pin, so the pin is not "HEAD minus the fix".
+A4 is reported against **both**, and they turn out to give byte-identical frames on every
+capture used here, i.e. `d76bb90f` is inert on this scenario.
+
+## Instrument change, and why it is a strictly better one
+
+The note's recipe drives the standalone with `sa_capture_pinned.py`: external `keybd_event`
+taps plus `SetForegroundWindow`, captured through `PrintWindow`. That steals the desktop focus
+on every run. It was replaced with the standalone's **own** race-flow driver,
+`MASHED_RACE_DEMO=1 MASHED_GOTO=6` (`exe_main.cpp:1438` `RunRaceDemoStep`), wrapped in
+`verify/car_bright_fix_20260930/run_race.py`. Three properties matter:
+
+1. it injects the Enter/Esc edges internally (`NavDemoTap`), so **no run takes the foreground**;
+2. it captures through `DumpBackbufferBMP` — the real 640x480 backbuffer, the same channel the
+   original side is dumped through — instead of a `PrintWindow` grab of a resampled client
+   area with window chrome in it (which is exactly what made this note's earlier `imgdiff`
+   attempt read 57.83 mean abs);
+3. with `MASHED_DETERMINISTIC=1` the wall clock becomes a frame counter
+   (`exe_main.cpp:376,403`), so frame N of the pre-fix run and frame N of the post-fix run are
+   the **same pose**. A4 therefore compares identical poses and its tolerance
+   (`mean abs <= 0.02/255`) is not needed at all — the terrain comes out bit-identical.
+
+`MASHED_VERIFY_OUT` is pointed at a per-track directory. `verify/race1/` is never written:
+it holds nine tracked, cited stills, and `VOut`'s default root is `verify/run_<pid>`
+(`exe_main.cpp:1055-1074`) precisely to stop a harness clobbering them.
+
+Every run: muted, `MASHED_TITLE` set, `MASHED_WIN_POS=left-bl`, no `MASHED_NAV_DEMO`, one
+tracked PID killed only on timeout (none timed out; all 60+ runs exited `rc=0`).
+
+**`--poke-ctrl-slots`:** still not available on any driver used here, for the same reason the
+earlier addendum gives — it exists only on `re/frida/scenario_launch.py:2111`, and
+`race_draw_burst.py` / the standalone's own race-demo have no such option. It writes the AI
+output-slot table `0x007f1a14[0..3]`, an AI-controller concern orthogonal to lighting, and
+every measurement below is of car **paint** on a settled frame. Stated, not silently skipped.
+
+## A1 — PASS. 13 of 13 tracks log the asset's at-vector exactly
+
+`verify/car_bright_fix_20260930/run_race.py` per `kAreas[]` index
+(`Race/GameFlow.cpp:37-51`); `dir=` from `TrackRenderer.cpp:1257`, `L=` from the
+`MASHED_DBG_CARLIGHT` line. Compared against the `CORRECT` rows of
+`verify/car_bright_20260930/light_dir_check.txt` (computed from the shipped DFF, M3/M7).
+
+| track | expected (asset, CORRECT) | post-fix `dir=` | pre-fix `dir=` (= AS-BUILT) | verdict |
+|---|---|---|---|---|
+| Arctic | +0.577350,-0.577350,-0.577350 | `(0.577,-0.577,-0.577)` | `(-0.977,-0.138,0.161)` | **exact** |
+| Egypt | +0.834537,-0.418553,+0.358277 | `(0.835,-0.419,0.358)` | `(0.467,-0.530,-0.708)` | **exact** |
+| City | +0.220019,-0.975494,-0.001676 | `(0.220,-0.975,-0.002)` | `(-0.954,-0.213,-0.213)` | **exact** |
+| Forest | -0.801756,-0.504292,-0.320745 | `(-0.802,-0.504,-0.321)` | `(0.791,-0.274,-0.547)` | **exact** |
+| Highway | +0.230769,-0.923077,+0.307692 | `(0.231,-0.923,0.308)` | `(-0.256,-0.639,-0.725)` | **exact** |
+| Neustein | +0.479350,-0.723971,-0.496073 | `(0.479,-0.724,-0.496)` | `(-0.947,-0.140,0.290)` | **exact** |
+| Storm | +0.639602,-0.426401,+0.639602 | `(0.640,-0.426,0.640)` | `(0.733,-0.658,-0.172)` | **exact** |
+| SuperG | +0.429414,-0.631857,-0.645260 | `(0.429,-0.632,-0.645)` | `(-0.856,-0.082,0.511)` | **exact** |
+| Warzone | +0.816756,-0.560773,-0.135807 | `(0.817,-0.561,-0.136)` | `(-0.555,-0.388,-0.736)` | **exact** |
+| rouabout | -0.447326,-0.719552,+0.531173 | `(-0.447,-0.720,0.531)` | `(-0.246,-0.882,-0.402)` | **exact** |
+| sands | +0.231468,-0.581031,+0.780273 | `(0.231,-0.581,0.780)` | `(0.307,-0.926,0.219)` | **exact** |
+| dump | -0.851055,-0.285006,-0.440996 | `(-0.851,-0.285,-0.441)` | `(0.839,-0.147,-0.524)` | **exact** |
+| **training** | **-0.387516,-0.352184,-0.851937** | **`(-0.388,-0.352,-0.852)`** | `(0.734,-0.030,0.678)` | **exact** |
+
+A1's two named rows both hold to all three printed decimals, including the paired
+`L=`: TRAINING `L=(0.388,0.352,0.852)`, Arctic `L=(-0.577,0.577,0.577)`. The pre-fix column
+reproduces the `AS-BUILT` rows on 13 of 13 as well, so the two binaries differ in this and
+nothing else. Logs: `verify/car_bright_fix_20260930/{pre,post}/<NN>_<name>/mashed_re.log`.
+
+## A2 — PASS. TRAINING up-facing dominant 0.5000 → 0.8517, n=1329
+
+Instrument: `verify/car_bright_20260930/body_ratio.py`, ratio to the `Advantage` paint texel
+(236,52,60). Pose-identical pre/post pair (`MASHED_DETERMINISTIC=1`, both arms log
+`RELIGHT_CAP heading=-1.57603`). Three boxes, all on TRAINING:
+
+| box | pose | n_body pre / post | dominant pre | dominant post | post ratio | A2 rule (>= 0.80) |
+|---|---|---|---|---|---|---|
+| up-facing rear deck `(272,315,372,336)` | `01_grid` chase | 1330 / **1329** | (118,26,30) = **0.5000** | (201,44,51) | **0.8517** | **PASS** |
+| player car `(382,295,492,362)` | `01_turned_a` top-down | 789 / **789** | (118,26,30) = 0.5000 | (236,52,60) | **1.0000** | **PASS** |
+| three AI cars `(185,178,312,252)` | `01_turned_a` top-down | 687 / **687** | (118,26,30) = 0.5000 | (236,52,60) | **1.0000** | **PASS** |
+
+The deck number is the sharp one: **0.8517 against the arithmetic prediction 0.8522** for a
+perfectly horizontal panel (`amb 0.5 + sun 1.0 x L.y 0.3522`, M6's table). Agreement to four
+decimals, on a 32-bit backbuffer with no R5G6B5 quantisation to hide behind. The post-fix
+ceiling of 1.0000 appears on panels tilted toward `L`, which M6 predicted explicitly; the
+original's own up-facing paint measures dominant 0.983 / p50 0.915 (M2, n=790), so post-fix
+0.85-1.00 **brackets** the original where pre-fix 0.5000 did not. Crops:
+`A2_car_prepost.png`, `A2_topdown_prepost.png`.
+
+The `01_turned_a` pose came from the same driver with `MASHED_DEMO_DRIVE=1
+MASHED_DRIVE_HOLD=1` and `MASHED_DETERMINISTIC` **dropped** — the frame-counter clock freezes
+the car (heading `-1.57603` on every capture in every deterministic run), so the heading
+windows at `exe_main.cpp:1535-1546` can never fire under it. Real-time, both arms reach
+`heading=-0.03299` for `01_turned_a` and `-0.25607` for `01_turned_b`, identical to 5 decimals,
+so the arms stay pose-matched. **[UNCERTAIN U-9162]** those windows target the
+headings of `capture_relight_parity.py shots.json`, and no `shots.json` exists on disk any
+more; `verify/ws_e_lighting/orig_parity/orig_donut_01.png` (the shot named for the 0.00428
+window) is a **night dockyard** frame, not TRAINING, so it is NOT a like-for-like reference for
+these captures and was not used as one.
+
+## A2 across all 13 tracks, and O2 — the four brighter tracks DO darken, as predicted
+
+Same deck box, same pose, both arms, `01_grid`:
+
+| track | dom pre | pre/texel | dom post | post/texel | measured post/pre | M7 predicted (1/ratio) |
+|---|---|---|---|---|---|---|
+| Arctic | (67,21,25) | 0.2839 | (128,37,43) | 0.5424 | **1.910** | 1.932 |
+| **Egypt** | (158,35,40) | 0.6695 | (140,31,36) | 0.5932 | **0.886** | 0.884 |
+| City | (112,24,25) | 0.4746 | (234,52,57) | 0.9915 | **2.089** | 2.094 |
+| Forest | (139,32,36) | 0.5890 | (177,40,46) | 0.7500 | **1.273** | 1.273 |
+| Highway | (198,44,50) | 0.8390 | (236,52,60) | 1.0000 | **1.192** | 1.192 |
+| Neustein | (110,26,29) | 0.4661 | (219,50,57) | 0.9280 | **1.991** | 2.010 |
+| **Storm** | (110,23,26) | 0.4661 | (85,18,20) | 0.3602 | **0.773** | 0.791 |
+| SuperG | (92,23,32) | 0.3898 | (220,51,63) | 0.9322 | **2.391** | 2.439 |
+| Warzone | (185,43,49) | 0.7839 | (224,51,59) | 0.9492 | **1.211** | 1.219 |
+| **rouabout** | (236,52,60) | 1.0000 | (210,46,53) | 0.8898 | **0.890** | 0.898 |
+| **sands** | (236,52,60) | 1.0000 | (182,40,46) | 0.7712 | **0.771** | 0.773 |
+| dump | (108,22,19) | 0.4576 | (142,29,26) | 0.6017 | **1.315** | 1.298 |
+| training | (118,26,30) | 0.5000 | (201,44,51) | 0.8517 | **1.703** | 1.609 |
+
+`n_body` is 1177-1338 per cell. Twelve of thirteen agree with M7's offline prediction to
+within 2%. TRAINING's 1.703 vs 1.609 is the one gap and is explained by its own two numbers:
+M7 predicts for a perfectly horizontal panel (0.8522 → 0.5296), and the post-fix dominant
+lands at 0.8517 while the pre-fix dominant lands at 0.5000 — i.e. the dominant facet is
+slightly off horizontal, so pre-fix it clamped at the ambient floor instead of reaching 0.5296.
+Not a discrepancy in the model.
+
+**O2 is now OBSERVED with numbers** (still not a gate, and still with no original-side
+reference for these four tracks): Egypt **0.886x**, rouabout **0.890x**, Storm **0.773x**,
+sands **0.771x** — all four darken, each within 2.3% of what M7 predicted from the asset.
+Note the post-fix absolute ratios on the darker tracks are bounded by their own light budget,
+not by the fix: Storm's `amb=0.19 sun=0.42` caps an up-facing panel at 0.61, so 0.3602 is that
+track's shading, not a residual halving.
+
+## A3 — **FAIL as written.** Floor fraction overshoots the pre-registered band, on every box
+
+Instrument: `verify/car_bright_20260930/surface_split.py`, same boxes, pose-identical arms.
+The rule is *"the ambient-floor fraction must fall from ~60-65% to 25-40%"*.
+
+| box | pose | n_body pre / post | floor pre | floor post | in [25,40]? |
+|---|---|---|---|---|---|
+| whole player car `(230,290,425,478)` | `01_grid` | 3519 / 3529 | **70.4%** | **12.8%** | **no** |
+| up-facing deck `(272,315,372,336)` | `01_grid` | 1269 / 1279 | **64.4%** | **0.0%** | **no** |
+| player car `(382,295,492,362)` | `01_turned_a` | 787 / 788 | **81.4%** | **9.3%** | **no** |
+| three AI cars `(185,178,312,252)` | `01_turned_a` | 687 / 687 | **81.7%** | **5.7%** | **no** |
+
+Reported as a FAIL, not amended and not reinterpreted into a pass. Three facts belong with it,
+none of which rescues the band:
+
+1. The **direction of travel is right and steep** — the floor fraction collapses on all four
+   boxes, and mean ratio rises 0.5919→0.8631, 0.5737→0.8448, 0.5566→0.8793, 0.5425→0.8888.
+2. The band's own **"from" endpoint does not reproduce** at these poses: pre-fix measures
+   64.4% / 70.4% / 81.4% / 81.7% against the stated ~60-65%. So the statistic is not portable
+   between poses even on the *unchanged* binary — which is the M6 caveat the note itself
+   attached to A3 ("framing-sensitive… A2 is the binding one; A3 is the direction-of-travel
+   check").
+3. The overshoot is geometrically forced at these poses rather than a magnitude error. At
+   `heading=-0.03299` the car's forward is ~+X and `L=(0.388,0.352,0.852)`, so the panels the
+   camera can see all have `N·L > 0` and *cannot* sit at the floor. The 29.2% original figure
+   (M6, n=2325) was measured on an **unmatched** heading and camera.
+
+**What would actually settle A3 is missing, and is stated rather than papered over:** an
+original-side capture at a matched heading and camera. No such reference exists — the only
+original TRAINING frame in the tree (`orig_train.bmp`) is a different camera at a different
+roll, and the one heading-named original still (`orig_donut_01.png`) is a different track. So
+A3 is **unmeasurable against its intended target on the available evidence**, and its band is
+scored FAIL on the like-for-like pre/post pair instead. A2, the note's own binding criterion,
+passes.
+
+## A4 — PASS. Terrain, ice and sky are bit-identical; only cars, copters and lit props move
+
+Pose-identical pairs, so the test is exact rather than jitter-bounded. Two instruments:
+`re/tools/imgdiff.py --grid 8x6` (the note's) and
+`verify/car_bright_fix_20260930/a4_scope.py` (added: connected-component analysis of the
+differing-pixel mask plus box-scoped counts, because a cell grid cannot say *what* moved).
+
+**`imgdiff --grid 8x6`, TRAINING `01_grid`, pre-fix HEAD vs post-fix** — every cell 0.0 except
+rows 4-6 / cols 3-5, which are the chase-cam car:
+
+```
+  0.0  0.0  0.0  0.8  0.0  0.0  0.0  0.0
+  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+  0.0  0.0  0.0  2.8  2.5  0.0  0.0  0.0
+  0.0  0.0  0.0 16.7 31.2  0.0  0.0  0.0
+  0.0  0.0  2.7 32.7 42.5  5.8  0.0  0.0
+```
+
+Arctic `01_grid` has the same shape. Heatmaps: `verify/car_bright_fix_20260930/a4/`.
+
+**Box-scoped, TRAINING `01_grid`** (`--thr 0`, i.e. ANY nonzero change counts):
+
+| region | box | n px | differing | mean pre → post |
+|---|---|---|---|---|
+| terrain left | `0,240,220,479` | 52 580 | **0** | 117.903 → 117.903 |
+| terrain right | `430,240,640,479` | 50 190 | **0** | 107.807 → 107.807 |
+| terrain mid/far | `200,220,440,295` | 18 000 | **0** | 116.747 → 116.747 |
+| RIGHT-TERRAIN band | `440,300,640,420` | 24 000 | **0** | 109.184 → 109.184 |
+| upper frame incl. one copter | `0,0,640,120` | 76 800 | 111 | 107.661 → 107.715 |
+
+**Box-scoped, Arctic `01_action`** (the pose where the ice/water expanse fills the frame):
+
+| region | box | n px | differing | mean pre → post |
+|---|---|---|---|---|
+| ice/water top-left | `90,0,230,120` | 16 800 | **0** | 44.887 → 44.887 |
+| ice/water bottom | `0,360,640,479` | 76 160 | **0** | 72.872 → 72.872 |
+| ice/water right | `480,300,640,479` | 28 640 | **0** | 67.567 → 67.567 |
+| upper right incl. one copter | `430,0,640,110` | 23 100 | 461 | 71.127 → 70.954 |
+
+Terrain mean abs diff is **0.000/255** against A4's `<= 0.02/255` tolerance. Differing pixels
+outside the car boxes: **0** on TRAINING `01_grid`, **26** on Arctic `01_action` (three clusters
+of 26/23/20 px, all copter/prop sized). Identical numbers against **both** pre-fix binaries —
+the HEAD baseline `4D3F02E8…` and this note's pin `65A76A2E…`.
+
+**All 26 captures (13 tracks x `01_grid` + `01_action`), connected components:** every frame's
+diff is one large compact component on the player car's silhouette (typically
+`bbox=(225,299,416,479)`, n≈22 400-25 100) plus small components. The small ones are the
+copters and the lit props — `NORMALS|LIGHT` geometry, which the coupling check pre-registered
+as **O3, the point of the fix rather than collateral**. No component spans a terrain expanse on
+any track.
+
+**Frontend, as an extra guard:** TRAINING `00_challengeselect.bmp` and `02_back_to_menu.bmp`
+are **bit-identical** pre/post (`n_diff=0`). The fix cannot reach the menu, and doesn't.
+
+**Against the ORIGINAL.** A pixel diff is not the usable channel — the original reference frame
+is a different camera at a different roll and this note's own addendum measured that comparison
+at mean abs 57.83 dominated by pose. The pose-tolerant channel is a terrain region aggregate
+(`verify/car_bright_fix_20260930/terrain_region.py`):
+
+| arm | road box | mean RGB | luma |
+|---|---|---|---|
+| ORIGINAL `orig_train.bmp` | `250,400,400,470` | (154.208,142.347,96.297) | 140.644 |
+| ORIGINAL `orig_train.bmp` | `200,300,300,380` | (144.571,133.111,91.009) | 131.738 |
+| pre-fix HEAD | `250,235,400,290` | (135.700,125.610,90.170) | **124.587** |
+| pre-fix, note's pin | `250,235,400,290` | (135.700,125.610,90.170) | **124.587** |
+| **post-fix** | `250,235,400,290` | (135.700,125.610,90.170) | **124.587** |
+
+The standalone's terrain aggregate is identical to three decimals across all three binaries, so
+its relation to the original is unchanged by the fix **by construction**, not by a tolerance.
+Crops: `A4_terrain_orig_pre_post.png`, `A4_rterrain_prepost.png`,
+`A4_arctic_ice_prepost.png`.
+
+**Pre-existing and NOT touched here:** the terrain ambient fill at `TrackRenderer.cpp:228` /
+the `BuildClump` prelit fold, i.e. the race first-frame RIGHT-TERRAIN overbrightening recorded
+in `re/analysis/race_terrain_ambient_20260830.md`. It is gated on `!b.lit` and this fix does
+not go near it. (The cross-side rows above happen to show the standalone's road *darker* than
+the original's at these boxes, but the poses differ, so that number is not read as a measurement
+of that defect either way.)
+
+## Verdict
+
+**A1 PASS, A2 PASS, A4 PASS, A3 FAIL as written** (overshoots the low side of a band whose own
+"from" endpoint does not reproduce at the measured poses; the criterion its author named as
+binding, A2, passes). The source edit is **kept**: A3's miss is the framing sensitivity the note
+flagged when it wrote the rule, and the residual it would need to adjudicate — an original-side
+capture at a matched heading — does not exist in the tree.
+
+**New open item:** **O6 — A3 has no matched-pose original reference** `[UNCERTAIN U-9161]`. To close it, capture the
+original at a known heading and camera on TRAINING and re-score `surface_split.py` three ways
+(original / pre-fix / post-fix) at that pose. Until then A3's band carries no target.
+`O4`'s residual question (up-facing 0.852 predicted vs the original's 0.915-0.983 measured) is
+the same missing capture and is unchanged.
+
+---
+
 # ADDENDUM — harness channels that were tried and discarded, with numbers
 
 Recorded so the next session does not re-try them.
@@ -698,8 +988,18 @@ Recorded so the next session does not re-try them.
   1.29x, M7) were not visually checked. The fix will *darken* their up-facing car panels. That
   is the correct direction per the asset, but no original-side reference exists for those
   tracks, so it is unverified. Only TRAINING has a measured original reference in this note.
+  **MEASURED 2026-09-30 post-fix** (see the fix section's 13-track table): Egypt **0.886x**,
+  rouabout **0.890x**, Storm **0.773x**, sands **0.771x**, each within 2.3% of M7's prediction.
+  Still **unverified against the original** — that part of O2 stays open.
 * **O3 — the lit props and copters** (`TrackRenderer.cpp:1412`, `:2048`) change with this fix
   and were not measured on either side. A4 does not cover them.
+  **Partly narrowed 2026-09-30:** the post-fix A4 component analysis locates them — every
+  non-car differing cluster across 26 captures is copter- or prop-sized (20-2441 px, compact),
+  so their change is bounded and confined. Not measured against the original; O3 stays open.
+* **O6 — A3 has no matched-pose original reference** `[UNCERTAIN U-9161]` (raised 2026-09-30 by the acceptance run).
+  A3's 25-40% band has no target until the original is captured on TRAINING at a known heading
+  and camera and `surface_split.py` is scored three ways at that pose. Same missing capture as
+  O4.
 * **O4 — the residual after the fix is not predicted to be zero.** The original's up-facing
   dominant is 0.983 where a horizontal panel under the correct direction gives 0.852; the gap
   is panel tilt, and it is not separately verified. If A2 lands at ~0.85 and the original is at

@@ -1,0 +1,1 @@
+CARLIGHT rp_on=1 car_relight=1 has_sun=1 amb=(0.314,0.263,0.174) sun=(1.000,0.950,0.841) L=(0.851,0.285,0.441) body_batches: tot=67 lit=64 hasN=64 relit=64 prelit=3

@@ -1,0 +1,22 @@
+# Binaries and captures for CAR_BRIGHTNESS_2026-09-30 acceptance (2026-09-30).
+# The .exe and .bmp files below are gitignored (.gitignore:70 *.exe, :139 verify/**/*.bmp)
+# and are NOT committed. This manifest is, so the run is identifiable.
+
+E24D9C28990FC01E3316D32EC8D1F869E0124C2B315E1058A5128C985D2BF516  verify/car_bright_fix_20260930/bin/mashed_re.exe  1960960 B
+4D3F02E8D531E098C3293391E542E190C2801C46BFF1C00F7F1622AA37FF1CF8  verify/car_bright_fix_20260930/bin/prefix_head_mashed_re.exe  1960960 B
+65A76A2E31590ACFFAC85A910AA15235DF2C6FB96314D9F5BBB71E1A75AEA3F4  verify/car_bright_20260930/bin/mashed_re.exe  1960448 B
+
+# role:
+#   bin/mashed_re.exe               = POST-FIX (TrackRenderer.cpp:853 + :751 parent-start)
+#   bin/prefix_head_mashed_re.exe   = PRE-FIX, built at clean HEAD immediately before the edit
+#   car_bright_20260930/bin/...exe  = PRE-FIX, the investigation child's pin
+
+# per-capture SHA-256 of the two TRAINING/Arctic pairs A4 is scored on:
+DA4E0BBC90C578037D76DC9107C09398FE138F86CBD09D7EDA180F45E4947C0B  pre/12_training/race1/01_grid.bmp
+787138F4E6D632085A7F92C313AB0380E32C21B528CF4325072FA758A66552C4  pre/12_training/race1/01_action.bmp
+9613E7C1BB086AA2F40D6DA86DB49C8C96B3847705125D988F60AF4389C7C5A8  pre/00_Arctic/race1/01_grid.bmp
+6D0E5814224E38DA490D11B793710E827299983601E0D37B8381AAF140C775DE  pre/00_Arctic/race1/01_action.bmp
+1709CC0445FE0F4F7B6470008ED05D13B4A2375B82AF90EC62125324DF77706F  post/12_training/race1/01_grid.bmp
+998CAA414207E88CBBB183E1F4A40A4E64A75D943E9084C9145C81AEDFDB7ED8  post/12_training/race1/01_action.bmp
+0830F3017A9F1A7FF0DFD026FC5979A3CE4D0A0F9F5F47A25024D4FEF8EFB79A  post/00_Arctic/race1/01_grid.bmp
+6B1074D016F8A0DF46688DF605150817716210D871DC1ADE30AC08036AF60FCC  post/00_Arctic/race1/01_action.bmp

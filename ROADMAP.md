@@ -278,6 +278,18 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
 >   cited); (R2) the verbatim race-camera pose from `Race/RaceCamera.cpp` drives the renderer
 >   (Camera subsection below); (R3) the legacy D3D9 race renderer and the
 >   `MASHED_RENDER_LIBRW=0` revert are deleted.
+>
+> **Render-faithfulness defect closed 2026-09-30 (counts toward R1, does not close it):**
+> **car brightness, defect (d)** — `ParseLightsDffFaithful` composed the track directional
+> light's world at-vector one frame too many, mis-aiming the sun on **13 of 13** shipped
+> tracks. Fixed at `D3d9Render/TrackRenderer.cpp:853` and its twin `:751` (parent-start the
+> frame-chain walk). Both renderers are fed from the same `sun_dir_`
+> (`LibRw/RwRaceSubmit.cpp:571`), so one change covers librw and the legacy D3D9 path.
+> Acceptance A1/A2/A4 pass, A3 fails as written; full evidence and the surviving open items
+> (O2 original-side, O3 props/copters, O6 A3's missing matched-pose reference) in
+> [`re/analysis/CAR_BRIGHTNESS_2026-09-30.md`](re/analysis/CAR_BRIGHTNESS_2026-09-30.md).
+> **R1 itself is untouched** — it still wants the frame-synced original-side draw-list
+> adjudication, and the A3/O6 gap is a concrete instance of what R1 is missing.
 
 Invert `MASHED_RENDER_LIBRW`. librw becomes the shipping path; the hand-written D3D9
 renderer becomes the fallback, then goes away.

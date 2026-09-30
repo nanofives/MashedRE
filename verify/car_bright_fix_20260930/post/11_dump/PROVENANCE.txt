@@ -1,0 +1,13 @@
+exe=C:\Users\maria\Desktop\Proyectos\Mashed\verify\car_bright_fix_20260930\bin\mashed_re.exe
+pid=17536
+rc=0
+seconds=4.8
+MASHED_DBG_CARLIGHT=1
+MASHED_DETERMINISTIC=1
+MASHED_GOTO=6
+MASHED_MUTE=1
+MASHED_RACE_DEMO=1
+MASHED_TITLE=car-bright acceptance 11=dump
+MASHED_TRACK_SEL=11
+MASHED_VERIFY_OUT=verify/car_bright_fix_20260930/post/11_dump
+MASHED_WIN_POS=left-bl

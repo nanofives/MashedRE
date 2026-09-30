@@ -7,7 +7,45 @@ own pre-registered rule; and a new fidelity defect was banked as measured-inert)
 Branch `race/first-frame-parity`. Nothing is pushed.
 Superseded kickoffs: the attempt-8, attempt-7, attempt-6, attempt-5 and attempt-4 ones, kept below.
 
-> ## START HERE — D2 is STILL REOPENED. Six routes are now CLOSED by measurement. Do not start the next attempt inside A6a or inside `0x0046ef70`.
+## RENDER LANE — car brightness, defect (d): FIX LANDED 2026-09-30. Nothing owed to pick this up.
+
+Separate lane from the D2 block below; both live on this branch. **Do not re-derive the
+diagnosis** — read [`re/analysis/CAR_BRIGHTNESS_2026-09-30.md`](analysis/CAR_BRIGHTNESS_2026-09-30.md)
+(`# FIX APPLIED AND ACCEPTANCE RUN` is the newest section).
+
+`ParseLightsDffFaithful` composed the track directional light's world at-vector one frame too
+many (seeded from `rot[6..8]`, which is already the parent-space at-axis, then walked from the
+light's own frame). Fixed by parent-starting the walk at
+`mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp:853` and its twin `:751`. One token each.
+Both renderers read the same `sun_dir_` (`LibRw/RwRaceSubmit.cpp:571`), so one change covers
+librw and the legacy D3D9 path. There is no RVA: the original performs **no** direction
+arithmetic at all (`FUN_00479330` @ `0x00479330` adds the LIGHTS.DFF lights with
+`RpWorldAddLight` as-is and lets `RwFrameGetLTM` supply the direction).
+
+* **A1 PASS** — 13/13 tracks log the shipped asset's at-vector exactly.
+* **A2 PASS** — TRAINING up-facing deck dominant **0.5000 → 0.8517** (n=1329) against the
+  arithmetic prediction 0.8522.
+* **A4 PASS** — terrain / ice / sky and both frontend frames **bit-identical** pre/post; only
+  cars, copters and lit props move.
+* **A3 FAIL as written** — floor fraction 70.4% → **12.8%** where the band is 25-40%. Not
+  amended. The band's own "from" endpoint (~60-65%) does not reproduce at the measured poses
+  either, and closing it needs **O6**: an original-side TRAINING capture at a known heading
+  and camera, scored three ways with `surface_split.py`. That capture is the same one **O4**
+  needs, and it is a concrete instance of what ROADMAP **D1-residue R1** still owes.
+
+**Harness worth reusing** (in `verify/car_bright_fix_20260930/`): `run_race.py` drives the
+standalone's own `MASHED_RACE_DEMO=1 MASHED_GOTO=6` flow — **no external keystrokes, never
+takes the foreground**, dumps the real backbuffer, and with `MASHED_DETERMINISTIC=1` gives
+pose-identical pre/post pairs so a regression guard is exact rather than jitter-bounded. Two
+gotchas found: the frame-counter clock **freezes the car** (heading `-1.57603` on every
+capture), so anything needing the car to turn must drop `MASHED_DETERMINISTIC`; and
+`MASHED_VERIFY_OUT` must be pointed somewhere private — `verify/race1/` holds nine tracked,
+cited stills. `a4_scope.py` (connected components of the differing-pixel mask) is what turns
+an `imgdiff` cell grid into a statement about *which surfaces* moved.
+
+---
+
+> ## START HERE (D2 lane) — D2 is STILL REOPENED. Six routes are now CLOSED by measurement. Do not start the next attempt inside A6a or inside `0x0046ef70`.
 >
 > Read [`re/analysis/D2_REOPEN_2026-09-29.md`](analysis/D2_REOPEN_2026-09-29.md) **§22**
 > (§22.4 first, then §22.2, then §22.1/§22.3 for the two rules). **Do not re-derive any of it.**
