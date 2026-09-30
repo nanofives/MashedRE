@@ -37,6 +37,8 @@
 #include "ContactConstants.h"
 #include "ContactDeps.h"
 #include "ContactSolvers.h"
+#include <cstdio>
+#include <cstdlib>
 
 namespace mashed_re {
 namespace Collision {
@@ -62,6 +64,12 @@ static const float kFx_Half     =  0.5f;    // _DAT_005cc32c  0x0046f526
 static const float kFx_Three    =  3.0f;    // _DAT_005cc31c  0x0046f5ba
 static const float kFx_Slide    =  0.1f;    // _DAT_005cc56c  0x0046f658
 static const int   kFx_Grounded4 = 0x40800000;  // 4.0f as an int cmp @0x0046f5f3
+
+// [U-9156] diagnostic sink, resolved once; nullptr (and so inert) when unset.
+static const char* FixupLogPath() {
+    static const char* s_p = std::getenv("MASHED_FIXUP_LOG");
+    return s_p;
+}
 
 // Record field views (byte offsets; the record base is the 0xd04 struct).
 static inline float& Rf(int* v, int byteOff) {
@@ -229,6 +237,22 @@ void VehicleContactFixup(int* self)
     }
     for (int k = 0; k < 3; ++k) local_6c[k] *= kFx_Half;   // 0x0046f526
 
+    // [U-9156 2026-09-30] MASHED_FIXUP_LOG=<relative path> -> the reduced torque
+    // local_6c and the accumulator before/after, DIAGNOSTIC ONLY, default-OFF.
+    // Why it exists: the accumulator's YAW component also receives the steer torque and
+    // the `(w + accum) * damp` update inside BodyOrient_OmegaFromSteer in the same
+    // frame, so d(+0x148) across a contact frame CANNOT be read as the contact torque.
+    // Its ROLL component can (the steer axis is (0,1,0), so w.z == 0 and the port's
+    // pre-contact +0x14c is exactly 0). This log removes the inference on both.
+    if (const char* fl = FixupLogPath()) {
+        if (std::FILE* f = std::fopen(fl, "a")) {
+            std::fprintf(f, "t6c=(%.9g,%.9g,%.9g) acc=(%.9g,%.9g,%.9g) cnt=%d sp=%.9g\n",
+                         local_6c[0], local_6c[1], local_6c[2],
+                         Rf(self, 0x144), Rf(self, 0x148), Rf(self, 0x14c),
+                         Ri(self, 0x9ec), Rf(self, 0x9e4));
+            std::fclose(f);
+        }
+    }
     Rf(self, 0x144) += local_6c[0];                 // 0x0046f552/558
     Rf(self, 0x148) += local_6c[1];
     Rf(self, 0x14c) += local_6c[2];

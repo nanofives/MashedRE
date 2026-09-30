@@ -1,41 +1,121 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-09-30T02:40:00Z",
+  "updatedAt": "2026-09-30T03:20:00Z",
   "sections": [
     {
       "heading": "Roadmap (v3)",
       "fields": [
-        { "label": "Status", "value": "D0 done | D1 done (residue R1-R3 open) | D2 REOPENED — re-close attempt 6 failed | D3 blocked on D2", "kind": "text" },
-        { "label": "Branch", "value": "race/first-frame-parity (nothing pushed)", "kind": "text" },
-        { "label": "Kickoff", "value": "re/NEXT_SESSION.md — read D2_REOPEN section 20 before picking up", "kind": "text" }
+        {
+          "label": "Status",
+          "value": "D0 done | D1 done (residue R1-R3 open) | D2 REOPENED — re-close attempt 6 failed | D3 blocked on D2",
+          "kind": "text"
+        },
+        {
+          "label": "Branch",
+          "value": "race/first-frame-parity (nothing pushed)",
+          "kind": "text"
+        },
+        {
+          "label": "Kickoff",
+          "value": "re/NEXT_SESSION.md — read D2_REOPEN section 20 before picking up",
+          "kind": "text"
+        }
       ]
     },
     {
       "heading": "D2 solo arm vs pre-registered bounds (attempt 6, 3/3 identical)",
       "fields": [
-        { "label": "slip 1500-2000", "value": "0.2033 (n=20) — FAIL, bound 0.18855..0.19635", "kind": "text" },
-        { "label": "slip 2000-2600", "value": "no samples — UNSCORABLE", "kind": "text" },
-        { "label": "driving-median", "value": "1355.66 (n=54) — FAIL, bound 1904.70..1982.44", "kind": "text" },
-        { "label": "Median speed, all 1080 frames", "value": 33.14, "kind": "number" }
+        {
+          "label": "slip 1500-2000",
+          "value": "0.2033 (n=20) — FAIL, bound 0.18855..0.19635",
+          "kind": "text"
+        },
+        {
+          "label": "slip 2000-2600",
+          "value": "no samples — UNSCORABLE",
+          "kind": "text"
+        },
+        {
+          "label": "driving-median",
+          "value": "1355.66 (n=54) — FAIL, bound 1904.70..1982.44",
+          "kind": "text"
+        },
+        {
+          "label": "Median speed, all 1080 frames",
+          "value": 33.14,
+          "kind": "number"
+        }
       ]
     },
     {
       "heading": "U-9156 — the wall trap",
       "fields": [
-        { "label": "Fixed", "value": ["0x0046ef70 damp guard — slot 0 key vs -2, not slot 17 vs -1", "record +0x9c8 is the BODY UP AXIS, not the averaged terrain normal"], "kind": "list" },
-        { "label": "Closed", "value": "section 17.4 vel.y — the original's is 0 because its forward axis is exactly horizontal; it was 0.08% of the contact magnitude, never fed the damp", "kind": "text" },
-        { "label": "Open — one number", "value": "the contact ARM's a.y/a.z: 3.961 original vs 9.763 port (8.3 deg direction error) at CarWorldContacts.cpp:196", "kind": "text" }
+        {
+          "label": "Fixed",
+          "value": [
+            "0x0046ef70 damp guard — slot 0 key vs -2, not slot 17 vs -1",
+            "record +0x9c8 is the BODY UP AXIS, not the averaged terrain normal"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Closed",
+          "value": "section 17.4 vel.y — the original's is 0 because its forward axis is exactly horizontal; it was 0.08% of the contact magnitude, never fed the damp",
+          "kind": "text"
+        },
+        {
+          "label": "Withdrawn (same session)",
+          "value": [
+            "the contact-arm a.y/a.z deficit — the arm is sound; the port's real torque is (0, +0.118183, -0.310108)",
+            "a drive-force deficit — binned by speed the port gains 14.77/frame vs 13.46"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Open — 5-8 deg of approach angle",
+          "value": "0x0046ef70's damp knees at |m|/speed = 0.7. Original approaches at 0.690 / 0.553 and keeps 90%; port at 0.773 / 0.798 and keeps 68% / 61%. Same 12-frame limit cycle on both sides.",
+          "kind": "text"
+        },
+        {
+          "label": "Exact single-frame lead",
+          "value": "at the contact frame the original's bodyH is BITWISE unchanged (2.605234 both); the port reverses one step (+0.0446). Test --peek against the running original first.",
+          "kind": "text"
+        }
       ]
     },
     {
       "heading": "Guards (final build) — all six identical to attempt 5",
       "fields": [
-        { "label": "criterion (e)", "value": "PASS 3/3", "kind": "text" },
-        { "label": "AI criterion (b)", "value": "FAIL 3/3, c1_median 52.5 / 38.0 / 49.0", "kind": "text" },
-        { "label": "power-ups", "value": "decision CLEAN 11/11, g3 contact diverges", "kind": "text" },
-        { "label": "oracle rule 3", "value": "GREEN, MISMATCH=0", "kind": "text" },
-        { "label": "rva-lint", "value": "allowlisted=122 NEW=0", "kind": "text" },
-        { "label": "Arctic non-regression", "value": "2044.85 (n=34), no collapse", "kind": "text" }
+        {
+          "label": "criterion (e)",
+          "value": "PASS 3/3",
+          "kind": "text"
+        },
+        {
+          "label": "AI criterion (b)",
+          "value": "FAIL 3/3, c1_median 52.5 / 38.0 / 49.0",
+          "kind": "text"
+        },
+        {
+          "label": "power-ups",
+          "value": "decision CLEAN 11/11, g3 contact diverges",
+          "kind": "text"
+        },
+        {
+          "label": "oracle rule 3",
+          "value": "GREEN, MISMATCH=0",
+          "kind": "text"
+        },
+        {
+          "label": "rva-lint",
+          "value": "allowlisted=122 NEW=0",
+          "kind": "text"
+        },
+        {
+          "label": "Arctic non-regression",
+          "value": "2044.85 (n=34), no collapse",
+          "kind": "text"
+        }
       ]
     }
   ]

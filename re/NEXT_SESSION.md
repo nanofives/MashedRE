@@ -15,126 +15,59 @@ Superseded kickoffs: the attempt-5 and attempt-4 ones, both kept below.
 > `driving-median` **1904.70 .. 1982.44**. The arm is still §16.7
 > (`MASHED_STEER_HOLD_AFTER=0`).
 >
-> ### PICK UP HERE — make the contact arm's `a.y/a.z` equal 3.961
+> ### PICK UP HERE — 5-8 degrees of approach angle, either side of the `cos = 0.7` knee
 >
-> `0x0046ef70`'s torque axis is **closed-form**, derived in §20.5 from its own
-> arithmetic with the wall normal `n = (1,0,0)`:
+> **Two of this session's own readings are WITHDRAWN (§20.9, §20.10). Do not act on them
+> if you see them quoted anywhere:** there is NO 2.46x contact-arm z deficit
+> (`a.y/a.z = 3.961 vs 9.763` came from inverting a frame-boundary accumulator delta that
+> also carries the steer torque and the damp; the port's ACTUAL torque, now instrumented,
+> is `(0, +0.118183404, -0.310108006)`), and there is NO drive-force deficit (binned by
+> speed, the port gains 14.77/frame against the original's 13.46 in the 100-200 band).
 >
-> ```
-> local_30 = cross(local_18, local_c) = M^2 * a.x * (0, a.z, -a.y),   a = normalize(arm)
-> ```
+> **What the trap is, measured.** Both sides run the SAME limit cycle off Training's wall
+> with the SAME 12-frame period (original bounces at d = 19, 32, 44; port at d = 21, 33,
+> 45, nearly in phase). `0x0046ef70`'s damp `fVar5 = min(0.9, 3*(1 - |m|/speed))` has a
+> **knee at `|m|/speed = 0.7`**, and:
 >
-> so the axis depends ONLY on the arm's y and z, and the measured impulses invert
-> directly to an arm ratio:
+> | bounce | ORIGINAL `|m|/speed` -> kept | PORT `|m|/speed` -> kept |
+> |---|---|---|
+> | 2nd | **0.690 -> 0.9 clamped -> 90%** | 0.773 -> 0.681 -> 68% |
+> | 3rd | **0.553 -> 0.9 clamped -> 90%** | 0.798 -> 0.606 -> 61% |
 >
-> | | `d(+0x148)` yaw | `d(+0x14c)` roll | implied `a.y / a.z` |
-> |---|---:|---:|---:|
-> | ORIGINAL frame 980->981 | +0.0754629 | -0.2988508 | **3.961** |
-> | PORT `f=80->81`, after the fix | +0.02968 | -0.28978 | **9.763** |
+> The original sits BELOW the knee from its second bounce on and keeps 90% every time; the
+> port sits above and keeps 61-68%. Along-wall velocity follows: at d = 43 the original
+> carries `|vel.z| = 153.3` against the port's `76.2`, and it is gone by d = 130 (514.6)
+> while the port is at 29.1. Drops over 20%: original **10** in the 130 frames after the
+> first contact and still **10** over 260; port **25** then **58**. **The whole residual
+> is about 0.08 in the approach cosine, i.e. 5-8 degrees.**
 >
-> The port's ARM (slot field `S+0x2c..0x34`) has **2.46x too little z relative to y**;
-> its magnitude is only -5.5% out, so this is a DIRECTION error of **8.3 deg**. The arm
-> is written by `Rw_TransformPoints(pfVar8 + 5, local_a, 1, local_50)` at
-> `Collision/CarWorldContacts.cpp:196` (the original's `0x00468d80`), where
-> `local_a = (contactPoint - vF(param_1, 0x57..0x59)) * kArm_SandSpWheel` and
-> `local_50 = param_1 + param_1[0x26b]*0x10 + 0x24a` is the `+0x928` ring matrix.
-> **Start by dumping the port's own arm** (`pfVar8[5..7]`) next to the depth/normal in
-> `MASHED_WORLD_CONTACT_LOG`, then check the three inputs in order: the contact point
-> (`local_98[-0x267..]`, record `+0x60..`), the centre (`+0x15c..`), and whether
-> `Rw_TransformPoints` through `local_50` is rotation-only or also adds the translation
-> row (`SyncContactRingMatrix` writes a translation there).
+> **The one exact, single-frame lead (§20.12).** At the contact frame the ORIGINAL's body
+> heading is **BITWISE UNCHANGED** (`+0x9d4`/`+0x9dc` bit-identical between frames 980 and
+> 981, `bodyH` 2.605234 both), while the PORT **reverses one whole step** (`car_yaw_`
+> 2.6280 -> 2.5834 -> 2.6280, i.e. `+0.0446` exactly negating the preceding `-0.0446`).
+> The candidate is `BodyOrientationIntegrate.cpp:287`'s reverse-flip
+> `dot = fwd . vel; if (dot < -0.1 && !bothPedals) w = -w`, which a bounce triggers — but
+> it does NOT explain the original's EXACT zero, which needs omega identically zero that
+> frame, not negated.
 >
-> **DONE this session, do not redo:**
-> - **Record `+0x9c8/+0x9cc/+0x9d0` is the BODY UP AXIS, not the averaged terrain
->   normal.** Fixed (`5ec297fa`). Measured on the anchored original over all six
->   Training solo `.msd` captures (1441..1444 driving frames each): `+0x9c8` and `+0x9d0`
->   are NUMERICALLY ZERO on every frame (`max|x| = max|z| = 0.000e+00`) and `+0x9cc` is
->   in `[0.999923, 1.000077]` — while the surface there has a measured **1.58 deg
->   z-tilt** (the original's own `pos.y` climbs `0.38063 -> 0.38864` over `pos.z
->   -3.741 -> -3.452`), so it cannot be the ground normal. It is not hardcoded either
->   (`orig_ramp.msd` reaches `max|x| = 1.000`). `FUN_0046d700` is its getter
->   (`0x0046d716 mov edx,[eax+0x881f68]`, `0x881f68 - 0x8815a0 = 0x9c8`).
->   `MASHED_STEER_AXIS_TERRAIN=1` reverts for A/B.
-> - **§17.4's `vel.y` [UNCERTAIN] is CLOSED, both halves.** No law zeroes it: the
->   original's `vel.y` is exactly zero because its forward axis is exactly horizontal
->   (`+0x9d8` BITWISE ZERO on 2333/2333 frames). The port's tilted steer axis pitched the
->   basis 2.63 deg, so `ForceIntegrator.cpp:40`'s `forward = xform*(0,0,1)` gave the
->   drive force a vertical component -> `+0x9b4 = +74.84`. And **no**, it was not feeding
->   the damp: 74.84 against `|vel| = 1831.6` is **0.08%** of the contact magnitude.
-> - **The §19.3 cross-side dump is BUILT and RUN.** `MASHED_PLAYERTRACE` now logs
->   `+0x144/148/14c`, `+0x9bc/c0/c4`, `+0x9ec` (via the new `VehiclePhysics_RecordI32`),
->   `+0x9e0`, `+0x9d4..dc`, `+0x9c8..d0` and ring-0's up/at rows. Align on ORIGINAL frame
->   **981** = PORT `f=81`. Scratch reducers were used; the durable artefacts are
->   `verify/u9156b_20260930/{p1,p2,x1,s1,s2,s3}`.
-> - **`+0x144` is zero on BOTH sides and that is now explained**, not a coincidence: the
->   torque axis's x component is identically 0 (§20.5).
-> - **The accumulator is inert under held steer.** `BodyOrient_OmegaFromSteer` adds
->   `+0x144..14c` into omega only `if (in[0] == 0 && in[1] == 0)`, and this arm holds full
->   lock. So `+0x144..14c` is a *witness* of the contact torque, not the channel that
->   rotates the car on this arm. Do not "fix" the car by feeding it.
+> **Next command, and TEST IT AGAINST THE RUNNING ORIGINAL FIRST (§19.2 is the model):**
+> `scenario_launch.py --peek` the original's `+0x9d4`/`+0x9dc` and its ctrl bytes across a
+> wall contact on the D2 arm, and decide between (a) omega really is zero for one frame,
+> (b) the `.msd` render-tick sample lands on a different substep phase (the original runs
+> 2x25 substeps), or (c) the flip fires on the original too and something in the same
+> frame cancels it. Only (a) and (c) are port defects; **(b) would mean §20.12 is a
+> capture artefact and not evidence at all.**
 >
-> ### The scored table (3 of 3 runs bit-identical, §3b satisfied)
+> **New diagnostics, both default-OFF:** `MASHED_FIXUP_LOG=<relative path>` logs
+> `local_6c` and the accumulator before/after every fixup;
+> `MASHED_WORLD_CONTACT_LOG` now also dumps each reporting slot's arm (`S+0x2c..0x34`),
+> its scale (`S+0x14`) and `arm.y/arm.z`.
 >
-> | metric | attempt 5 | **attempt 6** | n | verdict |
-> |---|---:|---:|---:|---|
-> | slip 1500-2000 | 0.2031 | **0.2033** | 20 | FAIL, 3.4% past the upper bound |
-> | slip 2000-2600 | no samples | **no samples** | 0 | UNSCORABLE |
-> | driving-median | 1355.64 | **1355.66** | 54 | FAIL -30.2% |
-> | median speed, all 1080 frames | 24.5 | **33.14** (p90 104.2) | — | **the car still does not drive** |
->
-> The fix moved the physics it was measured against and left the scored metrics where
-> they were. It is faithful and it is kept (§3d).
->
-> **Guards on the final build** (re-run them, don't assume): criterion (e) **PASS 3/3**;
-> AI (b) **FAIL 3/3**, `c1_median` 52.5 / 38.0 / 49.0; power-ups **decision CLEAN 11/11**
-> with `g3` contact diverging; oracle rule 3 **GREEN** MISMATCH=0 (3073/3073, 2/2,
-> 3925/3925); rva-lint **`allowlisted=122 NEW=0`**; Arctic non-regression **2044.85
-> (n=34)**, 2 runs identical, 0 `RecoverOffMesh`. All six identical to §18.7.
-> **Gotcha:** `MASHED_AI_STEPDUMP` must be a **relative** path.
->
-> **Still open, unchanged and NOT on U-9156's path:** U-9155's writer (static search
-> exhausted, §18.5; the seed is exact where the trap happens), U-9158's 13 duplicate-body
-> pairs, `ct.surfaceKey = 0`, and `0x0046b1c0`'s deliberate two-body split (burn-down is
-> one command: `py -3.12 re/frida/run_diff.py vehicle_slot_aabb_expand` against the C++
-> body, then delete the naked copy and drop the allowlist line).
->
-> **The D3 modes 3/7 hold stands.** D2 must close before it starts.
-
-
-## SUPERSEDED kickoff — D2 re-close attempt 5 (kept as history)
-
-> ## START HERE — D2 is STILL REOPENED, and the residual is TWO NAMED STUB FUNCTIONS
->
-> Read [`re/analysis/D2_REOPEN_2026-09-29.md`](analysis/D2_REOPEN_2026-09-29.md) **§16-§18**
-> and U-9156. **Do not re-derive any of it.**
->
-> **The §3 bounds are unchanged and are not renegotiable.** PASS intervals:
-> `slip 1500-2000` **0.18855 .. 0.19635**, `slip 2000-2600` **0.24488 .. 0.25487**,
-> `driving-median` **1904.70 .. 1982.44**.
->
-> ### The one thing to change in your muscle memory
->
-> **The port arm now also carries `MASHED_STEER_HOLD_AFTER=0`:**
->
-> ```
-> py -3.12 re/tools/statediff/a8_run_port.py <dir> 90 MASHED_MEASURE_SOLO=1 \
->         MASHED_TRACK_SEL=12 MASHED_STEER_HOLD_AFTER=0 "MASHED_TITLE=<label>"
-> ```
->
-> Why (U-9157, third arm mismatch of the same class as three-cars-vs-one and Arctic-vs-Training):
-> the port held ZERO steer at full accel for **60 sim steps** while the original arms accel and
-> steer together in one `E.drive(1,+1)` (`scenario_launch.py:2180-2182`) and turns from its first
-> moving frame at speed 1.8. With it corrected the two cars arrive at the **same wall**, 0.034
-> world units and 0.24% apart.
->
-> | metric | attempt 4 | **attempt 5** | n | verdict |
-> |---|---:|---:|---:|---|
-> | slip 1500-2000 | 0.1605 | **0.2031** | 20 | FAIL, 3.4% past the upper bound |
-> | slip 2000-2600 | 0.2497 | **no samples** | 0 | UNSCORABLE |
-> | driving-median | 1938.68 | **1355.64** | 54 | FAIL -30.2% |
->
-> 3 of 3 runs bit-identical. **Median speed over all 1080 frames is 24.5 — the car does not
-> drive**, so nothing in that table is a pass.
+> **The arm is sound, do not re-derive it:** `arm = R_basis * (hullPoint * 3.6)` with no
+> translation; the two reporting slots are the two ends of ONE vertical hull edge at local
+> `x = -0.2188, z = +0.4538`, and `arm.y/3.6` is exactly U-9155's box y-min `0.03740` and
+> y-max `0.30860`. `S+0x14` equals `|arm|` on both, which is worth knowing because the
+> port's terrain solver never writes that field.
 >
 > **DONE, do not redo:**
 > - **U-9156 is root-caused and HALF fixed.** `0x0046ef70`'s last-contact damp guard read the

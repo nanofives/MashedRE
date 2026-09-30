@@ -971,9 +971,18 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                     for (int si = 0; si < 0x12; ++si) {
                         const std::size_t S = 0x4a8 + (std::size_t)si * 0x40;
                         if (I(r, S + 4) == -1) continue;
-                        std::fprintf(lf, " | s%d d=%.4f n=(%.3f,%.3f,%.3f) m=%.1f",
+                        // [U-9156 2026-09-30] +0x2c..+0x34 is the contact ARM and
+                        // +0x14 its per-slot scale. 0x0046ef70's torque axis is
+                        // (0, a.z, -a.y) with a = normalize(arm) when the normal is
+                        // (1,0,0) (D2_REOPEN §20.5), so arm.y/arm.z is the quantity
+                        // that has to match 3.961 at the first Training contact.
+                        const float ay = F(r, S + 0x30), az = F(r, S + 0x34);
+                        std::fprintf(lf, " | s%d d=%.4f n=(%.3f,%.3f,%.3f) m=%.1f"
+                                         " arm=(%.6f,%.6f,%.6f) sl=%.6f ayz=%.4f",
                             si, F(r, S + 0), F(r, S + 8), F(r, S + 0xc),
-                            F(r, S + 0x10), F(r, S + 0x38));
+                            F(r, S + 0x10), F(r, S + 0x38),
+                            F(r, S + 0x2c), ay, az, F(r, S + 0x14),
+                            (az != 0.f) ? (ay / az) : 0.f);
                     }
                     std::fprintf(lf, "\n");
                     std::fclose(lf);
