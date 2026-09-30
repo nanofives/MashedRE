@@ -480,6 +480,58 @@ opinion is an opinion about the scaffold, not about the port.
 > **Order: D2 must close again BEFORE the D3 modes 3/7 port starts.** §D3's closure path
 > (`FUN_00414c30` + `FUN_00484c70`) is on hold until then.
 
+> #### Re-close attempt 7 — 2026-09-30. **STILL REOPENED. The registered test fired, three readings are withdrawn, grip-clamp #6 is proven byte-faithful, and the defect is its INPUT `l_60`.**
+>
+> Full record: `re/analysis/D2_REOPEN_2026-09-29.md` §21. Commits `914465e6` (pre-registered
+> rule), `1239c0be`, `4be7af5e`, `86ee9efa`, `d2ad9ec0`, `340fbf2f`, `ff90586b`.
+> **No physics change was authored** — this attempt was measurement and a comment correction.
+>
+> **Scored, 3 of 3 port runs bit-identical (§3b satisfied), HEAD:**
+>
+> | metric | port | n | median speed | PASS interval | verdict |
+> |---|---:|---:|---:|---|---|
+> | slip 1500-2000 | **0.2033** | 20 | 1683.53 (in band) | 0.18855 .. 0.19635 | **FAIL** (+3.4% past the bound) |
+> | slip 2000-2600 | **—** | 0 | — | 0.24488 .. 0.25487 | **UNSCORABLE** |
+> | driving-median | **1355.66** | 54 | 1355.66 | 1904.70 .. 1982.44 | **FAIL** (-30.2%) |
+>
+> Median horizontal speed over the 1080-frame window **26.36**, 1080/1080 grounded — the car
+> does not drive. Build gate met: `allowlisted=122 NEW=0`.
+>
+> **Withdrawn (three readings, one of them from this session's own §21.4):**
+> - §20.15's "an over-strong bleed is refused; the lateral is never GENERATED" — the
+>   registered test gives `R = |dlat| port/orig = 1.3387` with the yaw rate 2.8% apart, so
+>   §21.1's branch 3 fired and no fix was authored on either candidate.
+> - §21.4's "the original is on the HIGH arm" — the `|av|` fingerprint is confounded by A6a's
+>   own angular-velocity integration, which runs before the clamp (`|av|` ratio 1.0103 at
+>   800-2000: av GREW, which a multiply by `1-k` cannot do).
+> - §20.15's `lat(n+1)/lat(n)` median of 1.0590 — it averaged a two-phase structure (the
+>   port's lateral collapses in 6 frames after each bounce, then regrows) and the two cancel.
+>
+> **Established, all by measurement:** the lateral is removed **inside A6a** and nowhere else
+> below 150 speed (`I_a6b` and `I_s1` are exactly `0.0000`, 0 pos / 0 neg, up to n=606);
+> **grip-clamp #6 is byte-faithful** (`0x004687f0..0x0046897b` vs `Integrate2.cpp:713-736`,
+> both arms, six constants, two floors, the `0.1` bound confirmed a FLOOR); `+0x18c` is `1.0`
+> on both sides so `grip == l_60`; and the port's `grip*speed` at 100-150 is **17 992**
+> against the **>= 29 491** that puts `k` on its floor and reproduces the original's measured
+> `I_a6a / L = 0.1019` (n=46). At 40-70 the port's `k` is **0.9084**.
+>
+> **Why no fix:** `l_60 = sum ld4 * le4` and `ld4` is the sine of a wheel slip angle — the
+> quantity being explained — so raising it would fit the cause to the symptom. `le4` is
+> measured to agree in form on both sides.
+>
+> **New hard fact that may reframe the lane:** a 6658-frame original control returns the same
+> `n = 2` at 40-70 and `n = 6` at 70-100 as a 2335-frame one. **The original passes below 100
+> horizontal once per race, for 6-8 frames; the port spends 238 of 1352 frames at 40-70
+> alone.** Residency in that band is itself the defect, so a low-speed-bleed-only fix may not
+> move the scored table.
+>
+> **Next:** measure the ORIGINAL's `l_60` directly (entry hooks on A6a's `Mag3` call sites, if
+> they are calls and not inlined). Kickoff: `re/NEXT_SESSION.md`.
+>
+> **Note on numbering:** there is no attempt-6 block below. Attempt 6 (the `+0x9c8` body-up-axis
+> decode and fix, commit `5ec297fa`) is recorded only in `D2_REOPEN_2026-09-29.md` §19-§20; it
+> left the scored table at `0.2033 / — / 1355.66`, which is where attempt 7 found it.
+
 > #### Re-close attempt 5 — 2026-09-30. **STILL REOPENED. The arm was commanding a different manoeuvre, the 4x bounce was a transcription error, and the residual is now two `status stub` functions.**
 >
 > Full record: `re/analysis/D2_REOPEN_2026-09-29.md` §16-§18. Commits `30cca402`, `d9e8fd24`,

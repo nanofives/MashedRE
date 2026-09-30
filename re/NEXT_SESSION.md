@@ -1,11 +1,88 @@
 # Next session kickoff
 
-Updated 2026-09-30 at the close of the **D2 re-close attempt 6** session (`+0x9c8` decoded and
-fixed, §17.4's `vel.y` item CLOSED, the remaining defect reduced to ONE number).
+Updated 2026-09-30 at the close of the **D2 re-close attempt 7** session (the registered
+lateral-increment test ran, §20.15's fork resolution is withdrawn, grip-clamp #6 is proven
+byte-faithful, and the defect is localised to its INPUT `l_60`).
 Branch `race/first-frame-parity`. Nothing is pushed.
-Superseded kickoffs: the attempt-5 and attempt-4 ones, both kept below.
+Superseded kickoffs: the attempt-6, attempt-5 and attempt-4 ones, all kept below.
 
-> ## START HERE — D2 is STILL REOPENED, and the residual is ONE NUMBER: the contact ARM's y/z ratio
+> ## START HERE — D2 is STILL REOPENED. The defect is clamp #6's INPUT `l_60`, and the only non-circular way in is to measure the ORIGINAL's `l_60`.
+>
+> Read [`re/analysis/D2_REOPEN_2026-09-29.md`](analysis/D2_REOPEN_2026-09-29.md) **§21**
+> (§21.6 first, then §21.5 and §21.2). **Do not re-derive any of it.** §21 withdraws three
+> readings — §20.15's "the lateral is never GENERATED", §21.4's "the original is on the HIGH
+> arm", and two of my own intermediate ones. Do not act on any of them.
+>
+> **The §3 bounds are unchanged and are not renegotiable.** PASS intervals:
+> `slip 1500-2000` **0.18855 .. 0.19635**, `slip 2000-2600` **0.24488 .. 0.25487**,
+> `driving-median` **1904.70 .. 1982.44**. The arm is still §16.7
+> (`MASHED_STEER_HOLD_AFTER=0`), `MASHED_MEASURE_SOLO=1`, `MASHED_TRACK_SEL=12`.
+>
+> ### Scored at HEAD, 3 of 3 runs bit-identical (§21.6)
+>
+> | metric | port | n | median speed | interval | verdict |
+> |---|---:|---:|---:|---|---|
+> | slip 1500-2000 | **0.2033** | 20 | 1683.53 (in band) | 0.18855..0.19635 | **FAIL** +3.4% past the bound |
+> | slip 2000-2600 | **—** | 0 | — | 0.24488..0.25487 | **UNSCORABLE** |
+> | driving-median | **1355.66** | 54 | 1355.66 | 1904.70..1982.44 | **FAIL** -30.2% |
+>
+> Median horizontal speed over the whole 1080-frame window: **26.36**, 1080/1080 grounded.
+> The car does not drive. Build gate met: `allowlisted=122 NEW=0`.
+>
+> ### PICK UP HERE — measure the ORIGINAL's `l_60`. Everything else in this chain is closed or circular.
+>
+> **The chain, all measured, nothing inferred:**
+> 1. The lateral is removed **inside A6a** and nowhere else below 150 speed. The three-site
+>    bracket (`scenario_launch.py --lat-bracket`, new) gives `I_a6b = +0.0000` with **0 pos /
+>    0 neg in all six bands up to n=606**, `I_s1 = +0.0000` likewise, and `I_s2 / L` of
+>    0.0020 (70-100) / 0.0045 (100-150) against A6a's **0.1019**.
+> 2. **Grip-clamp #6 is BYTE-FAITHFUL** — disassembled `0x004687f0..0x0046897b` against
+>    `Integrate2.cpp:713-736`, both arms, all six constants, the two floors, the `1 - k`, the
+>    early return, the full-stop block. The `0.1` bound is a **FLOOR** (`fcom`+`jp` at
+>    `0x0046889b`/`0x004688a6`), as ported. **Do not go looking for a transcription bug there.**
+> 3. `grip = l_60 / Rf(v,0x18c)` and **`+0x18c` is `1.0` on both sides** (1 distinct value
+>    over 1352 original frames; `m18c=1` on every port `G6` line). So `grip == l_60`.
+> 4. **The number to hit:** the port's `grip*speed` at 100-150 horizontal is **17 992**
+>    (n=30) and must reach **>= 29 491** to put `k` on its `0.1` floor, which is what
+>    reproduces the original's measured `I_a6a / L = 0.1019` (n=46). At 40-70 the port's `k`
+>    runs to **0.9084** (grip*speed 3 006, n=457) — that is §21.2's 62%-per-frame collapse.
+> 5. **`l_60 = sum ld4 * le4` and the `ld4` path is CIRCULAR** — `ld4` is the sine of a wheel
+>    slip angle (`Integrate2.cpp:437-440`), the quantity being explained. `le4` is measured to
+>    **agree in form on both sides** (`le4 ~ speed`, cap 1024; the original's `f` multiplier
+>    from its own `+0x9e8` is 2.34 / 2.82 / 91.1 at 70-100 / 100-150 / 800-2000 against a
+>    `|dst|` of order 1). **So no fix may be authored from the port side alone.**
+>
+> **Next command.** Get the ORIGINAL's `l_60` as a measurement. It is a local `double` in
+> `0x00467650`, so the record does not carry it; the candidates are the `Mag3` call sites
+> inside A6a's wheel loop (`Integrate2.cpp:425` `le4` and `:440` `ld4`) — if the original
+> calls out for those magnitudes, an **entry** hook on the callee yields both vectors
+> directly, which is the sanctioned technique (memory `frida-interceptor-is-entry-only`).
+> Disassemble A6a's wheel loop first to find out whether they are calls or inlined `fsqrt`.
+> If inlined, `l_60` is not reachable with entry hooks and the next best witness is the
+> per-wheel force at record wheel base `+0x70/+0x78`, which is linear in `le4` through
+> `lbc = p[0x15]*p[0x1b]*g_suspScale*le4*0.0009766` (`Integrate2.cpp:436`) — but note
+> `re/tools/statediff/a8_wheelfit.py` has a withdrawn finding on exactly that route, so read
+> memory `cross-side-fit-needs-both-sides-checked` before trusting it.
+>
+> **And weigh this first, because it may make the whole lane secondary.** The 110-second
+> control (`orig_lb2`, **6658** frames) returns **the same n=2 at 40-70 and n=6 at 70-100** as
+> the 2335-frame one. **The original passes below 100 horizontal once per race, for 6-8
+> frames, and never returns; the port spends 238 of 1352 frames at 40-70 alone.** The port's
+> residency in that band is itself the defect, and its runaway `k` there is coupled to it. A
+> fix that only corrects the low-speed bleed may not move the scored table at all.
+>
+> ### New tooling this session (all default-OFF / read-only)
+> - `re/frida/scenario_launch.py --lat-bracket` — entry-only samples of the player record at
+>   A6a `0x00467650`, A6b `0x00468980` and the substep loop `0x004709a0`, ~180 calls/s. Prints
+>   `latBracketStats` before the rows and writes the CSV even when empty.
+> - `re/tools/statediff/a8_latinc.py` — per-frame velocity increment decomposed on the body
+>   forward/right axes, with coherence, retention and signed slip, per speed band.
+> - `re/tools/statediff/a8_latbracket.py` — reduces a bracket capture on the verified
+>   `0,2,1,1` pattern; `--legacy3` for the older two-site captures.
+>
+> Artefacts: `verify/d2_latbr_20260930/orig_lb{1,2,3}`, `verify/d2_score_20260930/s{1,2,3}`.
+
+> ## SUPERSEDED (attempt 6) — the contact ARM's y/z ratio
 >
 > Read [`re/analysis/D2_REOPEN_2026-09-29.md`](analysis/D2_REOPEN_2026-09-29.md) **§20**
 > (and §16-§19 for the history). **Do not re-derive any of it.**
