@@ -660,10 +660,19 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
         float fz = Rf(v,0x9b8) - fwdDot*Rf(v,0x9dc);
         grip = grip * speed;
         // [G6-AVDIAG] env MASHED_A6_DIAG: the av collapse. The damping below is a
-        // faithful transcription of the original tail (decomp 555-583), so if av is
-        // being annihilated the cause is `grip` arriving near zero: at grip==0 the
-        // low arm gives k=(32768-0)*3.0518e-5=1.00003, which clears the 0.5 floor,
-        // so 1-k is a small NEGATIVE (~-3e-5) and av is scaled by that every frame.
+        // faithful transcription of the original tail (decomp 555-583) -- confirmed
+        // byte-for-byte on 2026-09-30, see D2_REOPEN_2026-09-29.md section 21.5: both
+        // arms, all six constants, the two floors, the `1 - k`, the early return and
+        // the full-stop block are what 0x004687f0..0x0046897b does. So if av is being
+        // annihilated the cause is `grip` arriving too small, not this arithmetic.
+        //
+        // [CORRECTED 2026-09-30] The earlier note here said "at grip==0 the low arm
+        // gives k=(32768-0)*3.0518e-5=1.00003, which clears the 0.5 floor, so 1-k is a
+        // small NEGATIVE (~-3e-5)". That was a decimal-print artefact. `_DAT_005ce9f0`
+        // is `0x38000000` = EXACTLY 2^-15, so 32768 * it is exactly 1.0: at grip==0
+        // k is 1.0, `max(k, 0.5)` is 1.0, and `1 - k` is exactly 0.0. av is ZEROED,
+        // never sign-flipped. The lateral is still removed in full, so the failure mode
+        // is real -- only the sign-flip mechanism was not.
         // Print the inputs (l_60, +0x18c, grip) and the resulting k per arm.
         {
             static const bool g6_on = (std::getenv("MASHED_A6_DIAG") != nullptr);
