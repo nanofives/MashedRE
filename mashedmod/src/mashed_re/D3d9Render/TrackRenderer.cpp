@@ -2821,7 +2821,45 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             // the mesh and this branch cannot re-fire indefinitely), then re-aim
             // toward the gate ahead ONLY IF a short probe in that direction is itself
             // on-mesh — otherwise keep the heading RecoverOffMesh verified.
-            RecoverOffMesh();
+            // [U-9147 2026-09-29] MASHED_OFFMESH_LOG=<path> -> one line per recovery,
+            // DIAGNOSTIC ONLY, default-OFF, writes nothing when unset.
+            //
+            // Why it exists: RecoverOffMesh writes car_vel_ = (cos ry, sin ry) * sp, i.e.
+            // it puts the velocity EXACTLY along the body heading, so it sets the slip
+            // angle the D2 metric measures to ZERO by construction. Measured on the
+            // shipping build: it fires 35 times in the 1080-frame scored window (one per
+            // ~31 frames), and slip rebuilds from ~0.08 at d=8 to ~0.26 only at d>=41 --
+            // longer than the interval between fires, so the car essentially never
+            // reaches its own steady-state slip. Dropping a 30-frame shadow after each
+            // fire raises slip 1500-2000 from 0.1445 to 0.2006 at a CONSTANT median speed
+            // (1776 -> 1807). See re/analysis/D2_REOPEN_2026-09-29.md section 12.
+            //
+            // What this log is for: telling "the car is genuinely driving off the track"
+            // from "the collision mesh has holes and the car is off-MESH while still on
+            // the track". Positions that cluster say mesh; positions spread around the
+            // donut say physics.
+            {
+                static const char* s_oml = std::getenv("MASHED_OFFMESH_LOG");
+                static long s_omn = 0;
+                if (s_oml) {
+                    ++s_omn;
+                    const float px = car_pos_[0], py = car_pos_[1], pz = car_pos_[2];
+                    const float sp0 = car_speed_, yaw0 = car_yaw_;
+                    RecoverOffMesh();
+                    if (std::FILE* lf = std::fopen(s_oml, "a")) {
+                        std::fprintf(lf,
+                            "OFFMESH n=%ld want=(%.17g,%.17g) from=(%.17g,%.17g,%.17g) "
+                            "to=(%.17g,%.17g,%.17g) sp=%.17g->%.17g yaw=%.17g->%.17g "
+                            "gate=%d\n",
+                            s_omn, nx, nz, px, py, pz,
+                            car_pos_[0], car_pos_[1], car_pos_[2],
+                            sp0, car_speed_, yaw0, car_yaw_, race_[0].gate);
+                        std::fclose(lf);
+                    }
+                } else {
+                    RecoverOffMesh();
+                }
+            }
             if (!gates_.empty()) {
                 const int n = static_cast<int>(gates_.size());
                 const float* g = gates_[static_cast<std::size_t>((race_[0].gate + 3) % n)].center;  // a few AHEAD
