@@ -843,6 +843,68 @@ function aiStepArm(withLocals){
 function aiStepDrain(){ const r = AS.rows; AS.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
+// --- LATERAL BRACKET (U-9156, 2026-09-30) ----------------------------------
+// [D2 section 21.3] Measures WHERE the original's lateral velocity goes inside one
+// frame, so the port's 40-100-speed lateral collapse (section 21.2: retention 0.8897
+// against the original's 0.9989 at matched speed/slide/yaw) can be attributed to a
+// stage instead of inferred from a clamp's arithmetic.
+//
+// The frame order, from VehiclePhysicsRun.cpp:1003-1008 (decode of FUN_00470c70):
+//   step 3  FUN_00470670 (A4) -> A5 FUN_0046ddb0, A6a FUN_00467650, A6b FUN_00468980
+//   step 5  FUN_004709a0 substep loop, called TWICE with 25.0
+// So sampling at A6a ENTRY and at FUN_004709a0 ENTRY splits each frame into
+//   [A6a + A6b]  and  [the 2 x 25 contact substeps].
+// Grip-clamp #6 lives at A6a's tail (Integrate2.cpp:651-737), so the first interval
+// is the one that carries it.
+//
+// ENTRY HOOKS ONLY, per memory `frida-interceptor-is-entry-only` and CLAUDE.md's
+// hot-path rule: no onLeave, no mid-function probe, no write. Rate is 1/frame for
+// A6a and 2/frame for the substep loop = ~180/s at 60 fps, well under the ~1000/s
+// where Interceptor destabilises Mashed.
+//
+// The record is read from its STATIC base (the statediff base_va, car 0 =
+// 0x008815a0, stride 0xd04), not from a register, so neither site needs a
+// context-pointer contract -- U-9149 records that A6b's is contested. The A6a site
+// still filters on ESI == the record ("0x00467650 - A6a body. self=ESI record",
+// PhysicsChainHooks.cpp:1877) so a multi-car run cannot mix vehicles in.
+const LB_A6A     = 0x00467650;
+const LB_SUBSTEP = 0x004709a0;
+const LB = { armed:false, rows:[], nA6a:0, nSub:0, err:null, skipped:0 };
+let LB_REC = null, LB_SEQ = 0;
+function lbSample(site){
+  try {
+    const r = LB_REC;
+    LB.rows.push([LB_SEQ++, site,
+                  r.add(0x9b0).readFloat(), r.add(0x9b4).readFloat(), r.add(0x9b8).readFloat(),
+                  r.add(0x9d4).readFloat(), r.add(0x9d8).readFloat(), r.add(0x9dc).readFloat(),
+                  r.add(0x9e4).readFloat(), r.add(0x9e0).readFloat(),
+                  r.add(0x9bc).readFloat(), r.add(0x9c0).readFloat(), r.add(0x9c4).readFloat()]);
+  } catch(e){ if (!LB.err) LB.err = 'sample' + site + ' ' + e; }
+}
+function latBracketArm(recBaseHex, car){
+  if (LB.armed) return 'already armed';
+  try {
+    LB_REC = ptr(parseInt(recBaseHex, 16) + car * 0xd04);
+    Interceptor.attach(ga(LB_A6A), { onEnter(){
+      try {
+        // self=ESI; ignore any other vehicle's call so the series stays car-pure.
+        if (!this.context.esi.equals(LB_REC)) { LB.skipped++; return; }
+        LB.nA6a++; lbSample(0);
+      } catch(e){ if (!LB.err) LB.err = 'a6aEnter ' + e; }
+    }});
+    Interceptor.attach(ga(LB_SUBSTEP), { onEnter(){
+      try { LB.nSub++; lbSample(1); }
+      catch(e){ if (!LB.err) LB.err = 'subEnter ' + e; }
+    }});
+    LB.armed = true;
+    return 'lat-bracket armed: A6a @0x' + LB_A6A.toString(16)
+         + ' + substep @0x' + LB_SUBSTEP.toString(16)
+         + ' rec=' + LB_REC;
+  } catch(e){ return 'ERR ' + e; }
+}
+function latBracketDrain(){ const r = LB.rows; LB.rows = []; return r; }
+// ---------------------------------------------------------------------------
+
 // --- POWERUP DISPATCHER capture (D3 WS-D, 2026-09-26) ----------------------
 // Ground truth for the power-up DECISION logic, taken around the per-frame
 // dispatcher FUN_0045bba0 (sole caller 0x0040fcd0). Byte-level facts this block
@@ -1532,6 +1594,11 @@ rpc.exports = {
   },
   aiStepArm: function(withLocals){ return aiStepArm(withLocals); },
   aiStepDrain: function(){ return aiStepDrain(); },
+  latBracketArm: function(recBaseHex, car){ return latBracketArm(recBaseHex, car); },
+  latBracketDrain: function(){ return latBracketDrain(); },
+  latBracketStats: function(){ return JSON.stringify({armed:LB.armed, a6a:LB.nA6a, sub:LB.nSub,
+                                                      pending:LB.rows.length, skipped:LB.skipped,
+                                                      err:LB.err}); },
   aiStepStats: function(){ return JSON.stringify({armed:AS.armed, calls:AS.calls, pending:AS.rows.length, err:AS.err,
                                                   locals:AS.locals, curv:AS.curv, localsErr:AS.localsErr, noLocals:AS.noLocals, joinMiss:AS.joinMiss, recp:Object.keys(AS_RECP).length}); },
   puArm: function(plan, subj, warm, boxAt){ return puArm(plan, subj, warm, boxAt); },
@@ -1971,6 +2038,13 @@ def main():
                          "must STILL pass (no-regression) — that is how the load-dispatcher hooks "
                          "get their booted-race verification. Exits shortly after the assert "
                          "(no long hold needed); combine with --hold 0.")
+    ap.add_argument("--lat-bracket", action="store_true",
+                    help="[U-9156 / D2 section 21.3] sample the player record's velocity, "
+                         "forward axis and angular velocity at A6a ENTRY (0x00467650) and "
+                         "at the substep-loop ENTRY (0x004709a0), so one frame's lateral "
+                         "change splits into [A6a+A6b] and [the 2x25 contact substeps]. "
+                         "Entry hooks only, ~180 calls/s. Writes <statediff-out>."
+                         "latbracket.csv. Requires --statediff-out.")
     ap.add_argument("--peek", default="",
                     help="[U-9147] comma-separated image globals to READ periodically, "
                          "'rva:type' with type f/d/i/u (default f). No Interceptor, no "
@@ -2108,6 +2182,8 @@ def main():
             print("  [statediff]", E.sd_arm(args.statediff_car, args.statediff_aictrl))
             if args.statediff_aistep:
                 print("  [statediff]", E.ai_step_arm(os.environ.get("MASHED_AISTEP_LOCALS", "1") != "0"))
+            if args.lat_bracket:
+                print("  [statediff]", E.lat_bracket_arm("0x008815a0", args.statediff_car))
             if args.statediff_puhook:
                 print("  [statediff]", E.pu_arm(args.pu_plan, args.pu_subj, args.pu_warm,
                                                  args.pu_box))
@@ -2375,6 +2451,28 @@ def main():
                 # discipline as the .msd above: a ctrl trace whose bytes never move
                 # tells you the AI never commanded anything, which is a capture
                 # failure, not a measurement — so it is reported, not hidden.
+                if args.lat_bracket:
+                    # [U-9156 / D2 section 21.3] Report the counters BEFORE the rows, and
+                    # report them even when the drain is empty: memory
+                    # `absent-log-proves-nothing-run-a-control` -- a zero-row file cannot
+                    # tell "the sites never fired" from "the probe is broken", and the
+                    # counters can.
+                    try: print("  [statediff] lat-bracket agent:", E.lat_bracket_stats())
+                    except Exception as _e: print("  [statediff] lat-bracket stats failed:", _e)
+                    lb_rows = []
+                    try: lb_rows = E.lat_bracket_drain()
+                    except Exception as _e: print("  [statediff] lat-bracket drain failed:", _e)
+                    lbp = outp.with_suffix(outp.suffix + ".latbracket.csv")
+                    with open(lbp, "w", newline="") as f:
+                        f.write("seq,site,velx,vely,velz,fwdx,fwdy,fwdz,speed,gnd,avx,avy,avz"
+                                + chr(10))
+                        for r in lb_rows:
+                            f.write(",".join(repr(x) if isinstance(x, float) else str(x)
+                                             for x in r) + chr(10))
+                    n0 = sum(1 for r in lb_rows if r[1] == 0)
+                    n1 = sum(1 for r in lb_rows if r[1] == 1)
+                    print(f"  [statediff] lat-bracket {len(lb_rows)} samples "
+                          f"(A6a {n0}, substep {n1}) -> {lbp}")
                 if args.statediff_aistep:
                     try: print("  [statediff] aistep agent:", E.ai_step_stats())
                     except Exception: pass
