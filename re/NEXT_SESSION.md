@@ -15,59 +15,70 @@ Superseded kickoffs: the attempt-5 and attempt-4 ones, both kept below.
 > `driving-median` **1904.70 .. 1982.44**. The arm is still §16.7
 > (`MASHED_STEER_HOLD_AFTER=0`).
 >
-> ### PICK UP HERE — 5-8 degrees of approach angle, either side of the `cos = 0.7` knee
+> ### PICK UP HERE — the port's LOW-SPEED slip is 6.7x too small, and the lateral is never GENERATED
 >
-> **Two of this session's own readings are WITHDRAWN (§20.9, §20.10). Do not act on them
-> if you see them quoted anywhere:** there is NO 2.46x contact-arm z deficit
-> (`a.y/a.z = 3.961 vs 9.763` came from inverting a frame-boundary accumulator delta that
-> also carries the steer torque and the damp; the port's ACTUAL torque, now instrumented,
-> is `(0, +0.118183404, -0.310108006)`), and there is NO drive-force deficit (binned by
-> speed, the port gains 14.77/frame against the original's 13.46 in the 100-200 band).
+> Read **§20.15 first**, then §20.11 and §20.14 for how the chain hangs together. **Three
+> readings from the attempt-6 session are WITHDRAWN (§20.9, §20.10, §20.14) — do not act on
+> them if you see them quoted anywhere:** there is no contact-arm `a.y/a.z` deficit (the
+> port's real torque, instrumented, is `(0, +0.118183404, -0.310108006)`), no drive-force
+> deficit (binned by speed the port gains 14.77/frame against 13.46), and the original's
+> body heading is NOT "bitwise unchanged" at the contact frame (`d(bodyH)` is `+0.000001`,
+> and the forward vector is bitwise unchanged on 0 of 1403 consecutive driving-frame pairs).
 >
-> **What the trap is, measured.** Both sides run the SAME limit cycle off Training's wall
-> with the SAME 12-frame period (original bounces at d = 19, 32, 44; port at d = 21, 33,
-> 45, nearly in phase). `0x0046ef70`'s damp `fVar5 = min(0.9, 3*(1 - |m|/speed))` has a
-> **knee at `|m|/speed = 0.7`**, and:
+> **THE MEASUREMENT TO WORK FROM.** Slip `|wrap(velH - bodyH)|`, grounded, by horizontal
+> speed band — ORIGINAL frames 981-1120 against PORT `f = 81..220`. This regime has never
+> been scored: `a8_slip_axis.py`'s floor is 1500.
 >
-> | bounce | ORIGINAL `|m|/speed` -> kept | PORT `|m|/speed` -> kept |
-> |---|---|---|
-> | 2nd | **0.690 -> 0.9 clamped -> 90%** | 0.773 -> 0.681 -> 68% |
-> | 3rd | **0.553 -> 0.9 clamped -> 90%** | 0.798 -> 0.606 -> 61% |
+> | band | ORIGINAL median (n) | PORT median (n) |
+> |---|---:|---:|
+> | 50-100 | 1.2949 (4) | 1.3761 (52) |
+> | **100-200** | **0.7816 (81)** | **0.1162 (19)** |
+> | 200-400 | 0.3540 (39) | 1.0476 (4) |
 >
-> The original sits BELOW the knee from its second bounce on and keeps 90% every time; the
-> port sits above and keeps 61-68%. Along-wall velocity follows: at d = 43 the original
-> carries `|vel.z| = 153.3` against the port's `76.2`, and it is gone by d = 130 (514.6)
-> while the port is at 29.1. Drops over 20%: original **10** in the 130 frames after the
-> first contact and still **10** over 260; port **25** then **58**. **The whole residual
-> is about 0.08 in the approach cosine, i.e. 5-8 degrees.**
+> **6.7x less slip.** The original slides at 45 degrees to its nose; the port drives within
+> 6.7 degrees of it. That is upstream of everything else and it explains the trap: a
+> velocity 45 degrees off the nose meets Training's wall at `cos` 0.55-0.69, BELOW the
+> `0.7` knee in `0x0046ef70`'s damp `min(0.9, 3*(1 - |m|/speed))`, so the original keeps
+> the clamped **90%** on every bounce after the first; the port arrives at 0.77-0.80 and
+> keeps **61-68%**, and its velocity reverses relative to its nose so the `-0.1` reverse
+> gate latches (port below the gate on **625/1352** frames against the original's
+> **25/1352** — 25x) and the negated steer torque turns the nose INTO the wall.
 >
-> **The one exact, single-frame lead (§20.12).** At the contact frame the ORIGINAL's body
-> heading is **BITWISE UNCHANGED** (`+0x9d4`/`+0x9dc` bit-identical between frames 980 and
-> 981, `bodyH` 2.605234 both), while the PORT **reverses one whole step** (`car_yaw_`
-> 2.6280 -> 2.5834 -> 2.6280, i.e. `+0.0446` exactly negating the preceding `-0.0446`).
-> The candidate is `BodyOrientationIntegrate.cpp:287`'s reverse-flip
-> `dot = fwd . vel; if (dot < -0.1 && !bothPedals) w = -w`, which a bounce triggers — but
-> it does NOT explain the original's EXACT zero, which needs omega identically zero that
-> frame, not negated.
+> **THE FORK IS ALREADY RESOLVED — do not re-run it.** Per-frame lateral
+> `lat = |vel - (vel . fwd) fwd|` in the 100-200 band: ORIGINAL median `lat` **87.413**
+> with ratio `lat(n+1)/lat(n)` **0.8939**; PORT **14.144** with ratio **1.0590**. The port
+> is NOT bleeding the lateral away faster — its ratio is above one. **An over-strong bleed
+> is refused; the lateral is never GENERATED.** A6a's grip-clamp #6 is cleared with it:
+> `MASHED_A6_DIAG` measures the lateral-path `k` at **0.366** (100-200) and **0.694**
+> (50-100), nowhere near the 1.0 that would annihilate it.
 >
-> **Next command, and TEST IT AGAINST THE RUNNING ORIGINAL FIRST (§19.2 is the model):**
-> `scenario_launch.py --peek` the original's `+0x9d4`/`+0x9dc` and its ctrl bytes across a
-> wall contact on the D2 arm, and decide between (a) omega really is zero for one frame,
-> (b) the `.msd` render-tick sample lands on a different substep phase (the original runs
-> 2x25 substeps), or (c) the flip fires on the original too and something in the same
-> frame cancels it. Only (a) and (c) are port defects; **(b) would mean §20.12 is a
-> capture artefact and not evidence at all.**
+> **Two sub-candidates, and one is circular.** (1) the wheel/steer force that makes lateral
+> velocity directly — `WheelContactSolver.cpp:280`/`:286`, i.e. `0x0046f6c0`'s friction
+> impulse, plus A5's steer-force path; measurable without reference to the body's rotation.
+> (2) the body yaw rate, since slip IS the body-vs-velocity lag and the port's pinned-phase
+> `d(yaw)` is POSITIVE (`+0.0018..+0.0078`) against the original's `-0.0035/frame` — but
+> that is coupled to the gate §20.14 attributes to the low slip, so **(2) must not be
+> "fixed" before (1) is measured.**
 >
-> **New diagnostics, both default-OFF:** `MASHED_FIXUP_LOG=<relative path>` logs
-> `local_6c` and the accumulator before/after every fixup;
-> `MASHED_WORLD_CONTACT_LOG` now also dumps each reporting slot's arm (`S+0x2c..0x34`),
-> its scale (`S+0x14`) and `arm.y/arm.z`.
+> **Next command:** the per-frame lateral INCREMENT (not the ratio) on both sides in the
+> 100-200 band, split by sign along the body right axis, next to the wheel-friction impulse
+> `0x0046f6c0` writes. Small increment at near-zero yaw rate -> (2) dominates and the gate
+> is the lever; small increment at a comparable yaw rate -> (1) is the defect and the
+> friction impulse is the lever. `MASHED_A6ADUMP` and `MASHED_A6_DIAG`'s G7 lines already
+> carry everything needed on the port side, and `MASHED_PLAYERTRACE` now carries
+> `+0x9d4..dc`, so no new instrumentation is required.
 >
-> **The arm is sound, do not re-derive it:** `arm = R_basis * (hullPoint * 3.6)` with no
-> translation; the two reporting slots are the two ends of ONE vertical hull edge at local
-> `x = -0.2188, z = +0.4538`, and `arm.y/3.6` is exactly U-9155's box y-min `0.03740` and
-> y-max `0.30860`. `S+0x14` equals `|arm|` on both, which is worth knowing because the
-> port's terrain solver never writes that field.
+> **New diagnostics this session, all default-OFF:** `MASHED_FIXUP_LOG=<relative path>`
+> (`local_6c` plus the accumulator before/after every fixup), the arm/scale/`arm.y/arm.z`
+> columns in `MASHED_WORLD_CONTACT_LOG`, and the eight extra channels in
+> `MASHED_PLAYERTRACE` (`+0x144/148/14c`, `+0x9bc/c0/c4`, `+0x9ec`, `+0x9e0`, `+0x9d4..dc`,
+> `+0x9c8..d0`, ring-0 up/at). `MASHED_STEER_AXIS_TERRAIN=1` reverts the §20.2 fix for A/B.
+>
+> **The contact arm is sound, do not re-derive it:** `arm = R_basis * (hullPoint * 3.6)`
+> with no translation; the two reporting slots are the two ends of ONE vertical hull edge at
+> local `x = -0.2188, z = +0.4538`, and `arm.y/3.6` is exactly U-9155's box y-min `0.03740`
+> and y-max `0.30860`. `S+0x14` equals `|arm|` on both, which matters because the port's
+> terrain solver never writes that field.
 >
 > **DONE, do not redo:**
 > - **U-9156 is root-caused and HALF fixed.** `0x0046ef70`'s last-contact damp guard read the

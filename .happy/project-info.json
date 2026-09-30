@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-09-30T03:20:00Z",
+  "updatedAt": "2026-09-30T04:05:00Z",
   "sections": [
     {
       "heading": "Roadmap (v3)",
@@ -60,25 +60,31 @@
         },
         {
           "label": "Closed",
-          "value": "section 17.4 vel.y — the original's is 0 because its forward axis is exactly horizontal; it was 0.08% of the contact magnitude, never fed the damp",
+          "value": "section 17.4 vel.y — the original's is 0 because its forward axis is exactly horizontal; 0.08% of the contact magnitude, never fed the damp",
           "kind": "text"
         },
         {
-          "label": "Withdrawn (same session)",
+          "label": "Withdrawn (my own, same session)",
           "value": [
-            "the contact-arm a.y/a.z deficit — the arm is sound; the port's real torque is (0, +0.118183, -0.310108)",
-            "a drive-force deficit — binned by speed the port gains 14.77/frame vs 13.46"
+            "the contact-arm a.y/a.z deficit — the arm is sound",
+            "a drive-force deficit — a speed-mix artefact",
+            "\"bitwise unchanged\" body heading — the reverse-flip fires on the original too"
           ],
           "kind": "list"
         },
         {
-          "label": "Open — 5-8 deg of approach angle",
-          "value": "0x0046ef70's damp knees at |m|/speed = 0.7. Original approaches at 0.690 / 0.553 and keeps 90%; port at 0.773 / 0.798 and keeps 68% / 61%. Same 12-frame limit cycle on both sides.",
+          "label": "Root-cause candidate",
+          "value": "low-speed slip 6.7x too small: 100-200 band, original 0.7816 (n=81) vs port 0.1162 (n=19). That is why one meets the wall below the cos=0.7 damp knee and the other above it.",
           "kind": "text"
         },
         {
-          "label": "Exact single-frame lead",
-          "value": "at the contact frame the original's bodyH is BITWISE unchanged (2.605234 both); the port reverses one step (+0.0446). Test --peek against the running original first.",
+          "label": "Fork resolved",
+          "value": "the lateral is never GENERATED, not over-bled — port lat 14.1 with ratio 1.059 vs original 87.4 with 0.894; A6a clamp #6 k measures 0.366, not 1.0",
+          "kind": "text"
+        },
+        {
+          "label": "Next (non-circular first)",
+          "value": "per-frame lateral INCREMENT both sides, 100-200 band, next to 0x0046f6c0's friction impulse — before touching the yaw rate",
           "kind": "text"
         }
       ]
