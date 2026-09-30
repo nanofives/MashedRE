@@ -287,6 +287,23 @@ void VehicleContactFixup(int* self)
     if (Ri(self, 0x4ac) != -2) {
         float fVar5 = local_74 * kFx_Three;                    // 0x0046f5ba
         if (kFx_NyThresh < fVar5) fVar5 = kFx_NyThresh;        // 0x0046f5c0
+        // [D2 section 22.2] the damp factor itself, on the same MASHED_FIXUP_LOG sink.
+        // The line above is printed BEFORE the damp, so it cannot witness it; and the
+        // damp is the whole of section 22.1's first diverging term (C4 at d = 0, port
+        // 251.48 vs original 219.89). It has a KNEE: local_74 = 1 - min(1, |m|/+0x9e4),
+        // so |m|/+0x9e4 <= 0.7 saturates fVar5 at the 0.9 cap and keeps 90%, while above
+        // the knee retention falls as 3*(1 - |m|/+0x9e4). The ORIGINAL is on that cap on
+        // 15 of its 23 fixups; the port on 0 of 211.
+        if (const char* fl = FixupLogPath()) {
+            if (std::FILE* f = std::fopen(fl, "a")) {
+                std::fprintf(f, "   damp l74=%.9g damp=%.9g cap=%d key0=%d "
+                                "pre=(%.9g,%.9g,%.9g) preDamp=(%.9g,%.9g,%.9g)\n",
+                             local_74, fVar5, (fVar5 >= kFx_NyThresh) ? 1 : 0,
+                             Ri(self, 0x4ac), v0, vel[1] - local_54[1], vel[2] - local_54[2],
+                             local_54[0] + v0, v1, v2);
+                std::fclose(f);
+            }
+        }
         vel[0] = (local_54[0] + v0) * fVar5;
         vel[1] = v1 * fVar5;
         vel[2] = v2 * fVar5;

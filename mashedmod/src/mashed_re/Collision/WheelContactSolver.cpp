@@ -30,6 +30,22 @@ namespace Collision {
 const CollTriangle* g_worldTris    = nullptr;
 int                 g_worldTriCount = 0;
 
+// [D2 section 22.2] DIAGNOSTIC counters for this function's three VELOCITY (+0x9b0,
+// dword index 0x26c) write sites. Three increments, no I/O, no branch on an env var.
+//
+// Why they exist: on the ORIGINAL the player's velocity is **bitwise unchanged** across
+// 0x0046f6c0 on 2945 of 2945 entry-probe samples of the section-16.7 arm, and across
+// 0x00469aa0 on 2945 of 2945, and across the substep entry 0x004709a0 on 2932 of 2932
+// (verify/d2_bounce_20260930/orig_fp3.msd.fixupprobe.csv, scenario_launch.py
+// --fixup-probe). The original writes the velocity in exactly two places per frame: A6a
+// 0x00467650 and VehicleContactFixup 0x0046ef70. So any nonzero count here is a
+// divergence from the original on this arm, and the count says which of the three.
+// Read back by MASHED_SUBSTEP_VELPROBE (VehiclePhysicsRun.cpp).
+//   [0] = the kFricVel site   (pf[-6] == kSentSurf arm)
+//   [1] = the kFricImp site   (pf[-1] < kLowSpeed arm)
+//   [2] = the airborne lateral-drift site
+unsigned g_wcsVelWrites[3] = { 0u, 0u, 0u };
+
 // constants (raw value @ address)
 static const float kWTorque   = 0.277779f;  // _DAT_005cea60
 static const float kReset10   = 10.0f;      // literal 0x41200000
@@ -276,6 +292,7 @@ void WheelContactSolver(int* self, void* world, int substep)
             if (pf[-0x1c] == kSentActive) {
                 if (pf[-6] == kSentSurf) {
                     pf[-0x1c] = 0.0f;
+                    ++g_wcsVelWrites[0];
                     vF(self, 0x26c) = pf[-2] * kFricVel + vF(self, 0x26c);
                     vF(self, 0x26d) = pf[-1] * kFricVel + vF(self, 0x26d);
                     vF(self, 0x26e) = pf[0]  * kFricVel + vF(self, 0x26e);
@@ -283,6 +300,7 @@ void WheelContactSolver(int* self, void* world, int substep)
                 if (pf[-1] < kLowSpeed) {
                     pf[-0x1c] = 0.0f;
                     float e0 = pf[-2] * kFricImp, e1 = pf[-1] * kFricImp, e2 = pf[0] * kFricImp;
+                    ++g_wcsVelWrites[1];
                     vF(self, 0x26c) += e0; vF(self, 0x26d) += e1; vF(self, 0x26e) += e2;
                     // orig: normalize VELOCITY (+0x9b0) into local_ec/e8/e4 (overwriting
                     // the impulse), then cross(velNorm, contactDir) * speed*angScale.
@@ -316,6 +334,7 @@ void WheelContactSolver(int* self, void* world, int substep)
         d[2] = vF(self, 0x258) - f * v2;
         Vec3Normalize(d, d);
         d[0] *= kDrift; d[1] = 0.0f; d[2] *= kDrift;
+        ++g_wcsVelWrites[2];
         vF(self, 0x26c) = d[0] + vF(self, 0x26c);
         vF(self, 0x26e) = d[2] + vF(self, 0x26e);
         Vec3Normalize(d, d);

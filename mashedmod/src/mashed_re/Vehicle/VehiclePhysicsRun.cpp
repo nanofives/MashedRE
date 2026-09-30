@@ -170,6 +170,13 @@ std::vector<Collision::CollTriangle> g_worldTriStore;
 inline float& F(unsigned char* r, std::size_t o) { return *reinterpret_cast<float*>(r + o); }
 inline int&   I(unsigned char* r, std::size_t o) { return *reinterpret_cast<int*>(r + o); }
 inline unsigned char* rec(int slot) { return g_records + static_cast<std::size_t>(slot) * kRec; }
+// [D2 section 22.2] |velocity| for MASHED_SUBSTEP_VELPROBE. Double accumulation so the
+// probe's own rounding cannot be mistaken for the drift it is measuring.
+inline float SvpVelMag(unsigned char* r) {
+    const double x = F(r, off::kVelocity + 0), y = F(r, off::kVelocity + 4),
+                 z = F(r, off::kVelocity + 8);
+    return static_cast<float>(std::sqrt(x * x + y * y + z * z));
+}
 }  // namespace
 
 // [terrain] Build the wheel solver's contact soup from the track collision tris
@@ -865,6 +872,19 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // frame by frame without a Frida attach.
     static const char* const s_wcLog = std::getenv("MASHED_WORLD_CONTACT_LOG");
     static int s_wcLines = 0;
+    // [D2 section 22.2] MASHED_SUBSTEP_VELPROBE=<relative path> -> one line per substep
+    // with |velocity| at the FOUR points the original's --fixup-probe samples, plus the
+    // 0x0046f6c0 velocity-write counters and +0x9e4. DIAGNOSTIC ONLY, default-OFF.
+    //
+    // Why: on the ORIGINAL the velocity is BITWISE unchanged across the substep entry
+    // 0x004709a0 (2932/2932), across 0x0046f6c0 (2945/2945) and across 0x00469aa0
+    // (2945/2945) -- it is written in exactly two places per frame, A6a 0x00467650 and
+    // VehicleContactFixup 0x0046ef70. The port's +0x9e4 / |velocity| at the fixup entry
+    // is 1.017098 median (n=211) where the original's is 1.000000 (n=23, 0 samples
+    // deviating by more than 1e-3), so something in the port's substep moves the velocity
+    // after +0x9e4 was written. This log says what, and by how much.
+    static const char* const s_svpLog = std::getenv("MASHED_SUBSTEP_VELPROBE");
+    static int s_svpLines = 0;
 
     float remMs = frameMs;
     int guard = 0;
@@ -937,6 +957,17 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         // track tris instead of the flat SetGrounded substitute -> per-wheel slope normals
         // (+0x200) + per-wheel grounding (-> A5's mass/grounded_count load = weight transfer).
         const double tp0 = prof::g_on ? prof::NowMs() : 0.0;
+        // [D2 section 22.2] substep velocity probe, points 1 and 2 (substep top / just
+        // before the wheel solver). Held in locals; emitted after the fixup below.
+        float svpV[4] = { 0.f, 0.f, 0.f, 0.f };
+        unsigned svpW0[3] = { 0u, 0u, 0u };
+        if (s_svpLog && s_svpLines < 4000) {
+            svpV[0] = SvpVelMag(r);
+            svpV[1] = svpV[0];
+            svpW0[0] = Collision::g_wcsVelWrites[0];
+            svpW0[1] = Collision::g_wcsVelWrites[1];
+            svpW0[2] = Collision::g_wcsVelWrites[2];
+        }
         // basis + 4 = the `up` row of the integrated body basis (BodyOrient_Init's
         // m[4..6]); it is what record +0x9c8/+0x9cc/+0x9d0 holds on the original.
         SolveWheelContacts(r, io, guard, basis + 4);
@@ -948,6 +979,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         // the scan transforms the 18 body contact points by. AFTER the wheel solver,
         // because the wheel solver's broadphase reads the ring's +0x30 as its query
         // centre and SolveWheelContacts deliberately seats that at ground level.
+        if (s_svpLog && s_svpLines < 4000) svpV[2] = SvpVelMag(r);   // after the wheel solver
         SyncContactRingMatrix(r, basis, io.pos);
         int* const wcSelf = reinterpret_cast<int*>(r);
         const int contacted = Collision::VehicleContactHistoryUpdate(wcSelf); // 0x00470ae8
@@ -990,6 +1022,26 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                 ++s_wcLines;
             }
             if (contacted != 0) continue;    // 0x00470b06/0x00470b0a: re-run the substep
+        }
+        // [D2 section 22.2] emit the substep velocity probe. Point 3 is the fixup entry
+        // (the point at which the original's `+0x9e4 / |velocity|` is 1.000000) and the
+        // deltas 0->2 and 2->3 say which stage moved the velocity after A6a wrote +0x9e4.
+        if (s_svpLog && s_svpLines < 4000) {
+            svpV[3] = SvpVelMag(r);
+            if (std::FILE* lf = std::fopen(s_svpLog, "a")) {
+                std::fprintf(lf, "slot=%d pass=%d dt=%.4f vTop=%.6f vPreWheel=%.6f "
+                                 "vPostWheel=%.6f vEnd=%.6f r9e4=%.6f r9e4_over_v=%.6f "
+                                 "wr=[%u,%u,%u] c9ec=%d gnd=%.1f\n",
+                             slot, pass, chunkMs, svpV[0], svpV[1], svpV[2], svpV[3],
+                             F(r, off::kSpeed),
+                             (svpV[3] > 1e-3f ? F(r, off::kSpeed) / svpV[3] : 0.f),
+                             Collision::g_wcsVelWrites[0] - svpW0[0],
+                             Collision::g_wcsVelWrites[1] - svpW0[1],
+                             Collision::g_wcsVelWrites[2] - svpW0[2],
+                             I(r, 0x9ec), F(r, 0x9e0));
+                std::fclose(lf);
+            }
+            ++s_svpLines;
         }
         break;
         }   // end retry

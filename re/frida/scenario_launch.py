@@ -938,6 +938,12 @@ function latBracketDrain(){ const r = LB.rows; LB.rows = []; return r; }
 //            is the POST-fixup velocity (between the fixup and the next substep entry
 //            nothing writes +0x9b0: the original's substep order is 0x0046e9e0 ->
 //            0x0046f6c0 -> 0x00469aa0 -> 0x0046ef70, FUN_004709a0's own body).
+//   site 2 = A6a entry 0x00467650 -> the FRAME marker. A6a runs once per frame before the
+//            substep loop and DOES write velocity, so a site-2 row between a site-0 and the
+//            next site-1 means a frame boundary intervened and that pair's post-velocity is
+//            NOT the fixup's output. The reducer must check this rather than assume it.
+//            Counting site-2 rows also gives every row a frame index, so a probe row can be
+//            matched to a .msd frame.
 // Not hot: the port's equivalent log fires 211 times in a 27 s race.
 //
 // SELF-CHECK, not an assumption: the first FP_SELFCHECK site-0 rows also carry ESI/ECX/EDI
@@ -946,8 +952,14 @@ function latBracketDrain(){ const r = LB.rows; LB.rows = []; return r; }
 // sample itself always reads the STATIC record, so the probe does not depend on the answer.
 const FP_FIXUP   = 0x0046ef70;
 const FP_SUBSTEP = 0x004709a0;
+const FP_A6A     = 0x00467650;
+// [D2 section 22.2] the other two substep members, so the +0x9e4 == |velocity| invariant can
+// be located at a point in the substep rather than guessed. FUN_004709a0's body order is
+// 0x0046e9e0 -> 0x0046f6c0 -> 0x00469aa0 -> 0x0046ef70.
+const FP_WHEEL   = 0x0046f6c0;
+const FP_WORLDC  = 0x00469aa0;
 const FP_SELFCHECK = 8;
-const FP = { armed:false, rows:[], nFix:0, nSub:0, err:null, chk:[] };
+const FP = { armed:false, rows:[], nFix:0, nSub:0, nFrm:0, nWh:0, nWc:0, err:null, chk:[] };
 let FP_REC = null, FP_SEQ = 0;
 function fpSlots(r){
   // Slot base S = 0x4a8 + i*0x40: +0x00 depth, +0x04 key (-1 = empty), +0x08..+0x10 normal,
@@ -968,7 +980,7 @@ function fpSlots(r){
 function fpSample(site){
   try {
     const r = FP_REC;
-    const base = [FP_SEQ++, site,
+    const base = [FP_SEQ++, site, FP.nFrm,
                   r.add(0x9b0).readFloat(), r.add(0x9b4).readFloat(), r.add(0x9b8).readFloat(),
                   r.add(0x9e4).readFloat(), r.add(0x9e0).readFloat(), r.add(0x9ec).readS32(),
                   r.add(0x144).readFloat(), r.add(0x148).readFloat(), r.add(0x14c).readFloat(),
@@ -1006,9 +1018,23 @@ function contactFixupProbeArm(recBaseHex, car){
       try { FP.nSub++; fpSample(1); }
       catch(e){ if (!FP.err) FP.err = 'subEnter ' + e; }
     }});
+    Interceptor.attach(ga(FP_A6A), { onEnter(){
+      try {
+        // ESI filter, as latBracketArm does: keep the frame count car-pure.
+        if (!this.context.esi.equals(FP_REC)) return;
+        FP.nFrm++; fpSample(2);
+      } catch(e){ if (!FP.err) FP.err = 'a6aEnter ' + e; }
+    }});
+    Interceptor.attach(ga(FP_WHEEL),  { onEnter(){
+      try { FP.nWh++;  fpSample(3); } catch(e){ if (!FP.err) FP.err = 'whEnter ' + e; }
+    }});
+    Interceptor.attach(ga(FP_WORLDC), { onEnter(){
+      try { FP.nWc++;  fpSample(4); } catch(e){ if (!FP.err) FP.err = 'wcEnter ' + e; }
+    }});
     FP.armed = true;
     return 'fixup-probe armed: fixup @0x' + FP_FIXUP.toString(16)
-         + ' + substep @0x' + FP_SUBSTEP.toString(16) + ' rec=' + FP_REC;
+         + ' + substep @0x' + FP_SUBSTEP.toString(16)
+         + ' + A6a @0x' + FP_A6A.toString(16) + ' rec=' + FP_REC;
   } catch(e){ return 'ERR ' + e; }
 }
 function contactFixupProbeDrain(){ const r = FP.rows; FP.rows = []; return r; }
@@ -1781,7 +1807,8 @@ rpc.exports = {
   contactFixupProbeArm: function(recBaseHex, car){ return contactFixupProbeArm(recBaseHex, car); },
   contactFixupProbeDrain: function(){ return contactFixupProbeDrain(); },
   contactFixupProbeStats: function(){ return JSON.stringify({armed:FP.armed, fixup:FP.nFix,
-                                                             sub:FP.nSub, pending:FP.rows.length,
+                                                             sub:FP.nSub, frames:FP.nFrm, wheel:FP.nWh, worldc:FP.nWc,
+                                                             pending:FP.rows.length,
                                                              selfcheck:FP.chk, err:FP.err}); },
   magProbeArm: function(sites, limit, recBaseHex, car){ return magProbeArm(sites, limit, recBaseHex, car); },
   magProbeDrain: function(){ return magProbeDrain(); },
@@ -2702,8 +2729,8 @@ def main():
                     try: fp_rows = E.contact_fixup_probe_drain()
                     except Exception as _e: print("  [statediff] fixup-probe drain failed:", _e)
                     fpp = outp.with_suffix(outp.suffix + ".fixupprobe.csv")
-                    _hdr = ("seq,site,velx,vely,velz,speed,gnd,c9ec,a144,a148,a14c,fwdx,fwdz,"
-                            "nslot,slotidx")
+                    _hdr = ("seq,site,frame,velx,vely,velz,speed,gnd,c9ec,a144,a148,a14c,"
+                            "fwdx,fwdz,nslot,slotidx")
                     for _k in range(2):
                         _hdr += (",s%d_i,s%d_depth,s%d_nx,s%d_ny,s%d_nz,s%d_scale,"
                                  "s%d_armx,s%d_army,s%d_armz,s%d_mag") % tuple([_k] * 10)
@@ -2715,8 +2742,9 @@ def main():
                                              for x in r) + chr(10))
                     _n0 = sum(1 for r in fp_rows if r[1] == 0)
                     _n1 = sum(1 for r in fp_rows if r[1] == 1)
+                    _n2 = sum(1 for r in fp_rows if r[1] == 2)
                     print(f"  [statediff] fixup-probe {len(fp_rows)} samples "
-                          f"(fixup {_n0}, substep {_n1}) -> {fpp}")
+                          f"(fixup {_n0}, substep {_n1}, A6a/frame {_n2}) -> {fpp}")
                 if args.mag_probe:
                     # Counters BEFORE the rows, and the CSV is written even when empty:
                     # memory `absent-log-proves-nothing-run-a-control`.

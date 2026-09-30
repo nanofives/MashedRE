@@ -40,6 +40,12 @@ int  ProduceTerrainBatch(const float* center, float radius,
 extern const CollTriangle* g_worldTris;
 extern int                 g_worldTriCount;
 
+// [D2 section 22.2] DIAGNOSTIC counters for WheelContactSolver's three VELOCITY
+// (+0x9b0) write sites: [0] kFricVel, [1] kFricImp, [2] airborne lateral drift.
+// The ORIGINAL's velocity is bitwise unchanged across 0x0046f6c0 on 2945/2945
+// entry-probe samples of the section-16.7 arm, so any nonzero count is a divergence.
+extern unsigned g_wcsVelWrites[3];
+
 // The 4 transformed wheel-contact world positions (DAT_0088e620; the classifier
 // FUN_0046cc40 reads them). In the original these are filled by the RW device
 // transform FUN_004c3d90 (stubbed inert standalone), so the WS-A contact wiring
