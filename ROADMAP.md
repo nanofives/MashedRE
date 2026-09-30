@@ -480,6 +480,67 @@ opinion is an opinion about the scaffold, not about the port.
 > **Order: D2 must close again BEFORE the D3 modes 3/7 port starts.** §D3's closure path
 > (`FUN_00414c30` + `FUN_00484c70`) is on hold until then.
 
+> #### Re-close attempt 4 — 2026-09-29 (fifth session that day). **STILL REOPENED. The wall now holds, and the residual is one named behaviour.**
+>
+> Full record: `re/analysis/D2_REOPEN_2026-09-29.md` §15. Commits `35f418dc`, `b6a5cd1c`,
+> `7908af78`. **The §3 bounds were not touched.**
+>
+> | metric | ORIGINAL mean | attempt 3 | **attempt 4** | PASS interval | verdict |
+> |---|---:|---:|---:|---|---|
+> | slip 1500-2000 | 0.19245 | 0.1605 | **0.1605** (n=13) | 0.18855 .. 0.19635 | **FAIL** (-16.6%) |
+> | slip 2000-2600 | 0.249875 | 0.3086 | **0.2497** (n=28) | 0.24488 .. 0.25487 | inside |
+> | driving-median | 1943.57 | 2437.93 | **1938.68** (n=66) | 1904.70 .. 1982.44 | inside |
+>
+> 4 of 4 runs bit-identical on every column (§3b satisfied). **D2 does NOT re-close** — §3c
+> requires all three — and **the two that land inside are NOT a pass**: they are medians over
+> 28 and 66 rows, for the reason below.
+>
+> **U-9154 CLOSED.** The car-vs-world contact chain runs. `Collision/ContactFixup.cpp` is a new
+> verbatim port of `FUN_0046ef70` (and its pushed matrix argument is DEAD — balanced-ESP walk,
+> no read of `[esp+0x90]` in 485 instructions); `Rw_VtableDispatch` is bound to the measured RW
+> device slot `+0xc` (`call [ecx+eax+0xc]` at `0x004c3db0`) = `RwV3dTransformPointsCPU`; the
+> substep runs `0x00470ae8` -> `0x00470aef` -> `0x00470afe` with the `0x00470ab0`/`0x00470b0a`
+> retry; and `SyncContactRingMatrix` publishes `g_bodyBasis` into the `rec+0x928` ring, whose
+> rotation rows were zero. `0x0046e9e0` was deliberately NOT re-ported — both halves already
+> have bodies, so a third copy is a new dual body; §14.6's "three unported functions" was wrong
+> on that one.
+>
+> **The wall holds on the right plane.** Reporting slots are 5 and 9, the hull corners at
+> `x = box[3]`, normal `(1.000,0.000,0.000)`, depth `-0.037` — Training's `x = -2.500` plane,
+> the one the original bounces off at frame 980.
+>
+> **U-9155 filed and half-resolved.** The 14 non-wheel contact points at `rec+0x90..+0x137` were
+> ZERO; the first build of this session therefore fabricated 14 coincident contacts at the body
+> centre, which improved Training and **collapsed Arctic** (median speed 1740 -> 102). Their
+> producer is `FUN_0046b1c0`, called at `0x0040ed62` immediately before A3, fed by `FUN_0041f000`
+> from `DAT_0063dc10 + car*0x2ac` — unreadable from the file, so the box was MEASURED live
+> (`--peek`, 7 identical samples, cars 0/1/2/3 equal). The writer of `DAT_0063dc10` is still
+> unidentified, so the port seeds one box for every slot.
+>
+> **A dual-copy hazard the guard did not catch.** `0x0046b1c0` already had a C3 Frida-GREEN
+> naked-x87 port the exe cannot call (absolute `0x008815a0` base, `ds:` literals).
+> `scripts/lint_rva_bodies.py` anchored NEITHER body and reported `NEW=0` with both in the exe.
+> Found by hand during the tracker pass, split by target, registered CROSS-TARGET with the
+> reason (allowlisted 110 -> 111, NEW=0). **Check for an existing port before writing one.**
+>
+> **`RecoverOffMesh` is KEPT**, now with direct evidence rather than an argument: Arctic fires
+> **46 -> 0**, Training 0 -> 0. That is 2 tracks of 12, which is not unreachability, and U-9156
+> shows the car can still end up pinned. Re-pickup: 0 fires across all 12 tracks.
+>
+> **PICK UP HERE — U-9156.** With the wall solid the port's car gets **TRAPPED** against it: all
+> 73 fixups at `x = -2.02 .. -2.06`, median speed over 1080 frames **93**. The original touches
+> that plane once in 2332 frames and recovers after 18 pinned frames. The difference is the
+> approach — the port arrives at **2283** where the original arrives at **1717**. Next command:
+> plot both loops on Training's `COLLISIONS.BSP` with `re/tools/statediff/loop_plot.py` and
+> compare radius and centre. Larger port loop = U-9147's residue, upstream of contacts; matching
+> loops = instrument `0x0046ef70`'s per-slot terms against the original at frame 980.
+>
+> **Guards on the final build** (reported, not scored; nothing tuned): criterion (e) **PASS 3/3**;
+> AI (b) **FAIL 3/3**, `c1_median` 52.5 / 38.0 / 49.0, identical to attempts 1-3; power-ups
+> **11/11 decision CLEAN**, contact CLEAN 10/11 with the known `g3` divergence; modes oracle
+> rule 3 **GREEN** (FinishOrder 2717/2717, MISMATCH=0); build both targets clean,
+> `rva-lint allowlisted=111 NEW=0`.
+
 > #### Re-close attempt 3 — 2026-09-29 (fourth session that day). **STILL REOPENED. The arm itself was cross-track, and the residual is now a named unported function.**
 >
 > Write-up: [`re/analysis/D2_REOPEN_2026-09-29.md`](re/analysis/D2_REOPEN_2026-09-29.md)

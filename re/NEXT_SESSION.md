@@ -1,8 +1,89 @@
 # Next session kickoff
 
-Updated 2026-09-29 at the close of the **D2 re-close attempt 3** session (U-9153 / U-9154).
-Branch `race/first-frame-parity`. Nothing is pushed.
-Superseded kickoff: the 2026-09-29 "re-close attempt 2" one (kept below).
+Updated 2026-09-29 at the close of the **D2 re-close attempt 4** session (U-9154 CLOSED,
+U-9155 / U-9156 filed). Branch `race/first-frame-parity`. Nothing is pushed.
+Superseded kickoff: the 2026-09-29 "re-close attempt 3" one (kept below).
+
+> ## START HERE — D2 is STILL REOPENED, but the wall now holds and the residual has ONE name
+>
+> Read [`re/analysis/D2_REOPEN_2026-09-29.md`](analysis/D2_REOPEN_2026-09-29.md) **§15**
+> and U-9156. **Do not re-derive any of it.**
+>
+> **The §3 bounds are unchanged and are not renegotiable.** PASS intervals:
+> `slip 1500-2000` **0.18855 .. 0.19635**, `slip 2000-2600` **0.24488 .. 0.25487**,
+> `driving-median` **1904.70 .. 1982.44**. Port arm is still
+> `a8_run_port.py <dir> 90 MASHED_MEASURE_SOLO=1 MASHED_TRACK_SEL=12` (Training).
+>
+> | metric | attempt 3 | **attempt 4** | verdict |
+> |---|---:|---:|---|
+> | slip 1500-2000 | 0.1605 (n=13) | **0.1605** (n=13) | FAIL -16.6% |
+> | slip 2000-2600 | 0.3086 | **0.2497** (n=28) | inside |
+> | driving-median | 2437.93 | **1938.68** (n=66) | inside |
+>
+> 4 of 4 runs bit-identical on every column. **D2 does NOT close** (§3c needs all three), and
+> **the two that land inside are NOT a pass** — they are medians over 28 and 66 rows. Read
+> §15.7 before quoting either.
+>
+> **DONE, do not redo:**
+> - **U-9154 RESOLVED.** The car-vs-world contact chain runs: `Collision/ContactFixup.cpp` is a
+>   new verbatim port of `FUN_0046ef70` (and its pushed matrix argument is DEAD — balanced-ESP
+>   walk, no read of `[esp+0x90]` in 485 instructions); `Rw_VtableDispatch` is bound to the
+>   measured device slot `+0xc` (`call [ecx+eax+0xc]` @`0x004c3db0`) = `RwV3dTransformPointsCPU`;
+>   the substep runs `0x00470ae8` -> `0x00470aef` -> `0x00470afe` with the `0x00470ab0` retry;
+>   `SyncContactRingMatrix` publishes `g_bodyBasis` into the `rec+0x928` ring.
+>   `MASHED_WORLD_CONTACT=0` reverts the chain for A/B; `MASHED_WORLD_CONTACT_LOG=<path>` logs
+>   every fixup with its reporting slots, normals and depths.
+> - **`0x0046e9e0` is NOT to be re-ported.** Both halves already have bodies
+>   (`BodyOrientationIntegrate.cpp` + `VehiclePhysicsRun.cpp`'s position accumulator); a third
+>   copy is a new dual body. §14.6's "three unported functions" was wrong on that one.
+> - **U-9155: the hull producer is found and its data measured.** `FUN_0046b1c0` (called at
+>   `0x0040ed62`, immediately before A3) builds the 14 non-wheel contact points at
+>   `rec+0x90..+0x137` from a 6-float box that `FUN_0041f000` copies out of
+>   `DAT_0063dc10 + car*0x2ac`. That address is past `.data`'s raw size, so it was `--peek`ed
+>   live: `+0.2188 +0.3086 +0.4538 -0.2188 +0.0374 -0.5233`, identical on cars 0/1/2/3.
+>   Open half: nobody has found the WRITER of `DAT_0063dc10`, so the port seeds one box for all
+>   slots.
+> - **`0x0046b1c0` already had a C3 Frida-GREEN port** (`VehicleSlotAabbExpand.cpp`) that the
+>   exe cannot call, and `scripts/lint_rva_bodies.py` anchored NEITHER body — it said `NEW=0`
+>   with both in the exe. Split by target + allowlisted CROSS-TARGET. **Check for an existing
+>   port before writing one; the guard will not tell you.**
+> - **`RecoverOffMesh` is KEPT**, with new evidence: Arctic fires **46 -> 0**, Training 0 -> 0.
+>   That is 2 tracks of 12, which is not unreachability. Re-pickup: 0 fires on all 12.
+>
+> ### PICK UP HERE — U-9156, and it decides whether D2 is a physics problem or a trajectory one
+>
+> With the wall solid, **the port's car gets TRAPPED against it.** All 73 fixups in the run sit
+> at `x = -2.02 .. -2.06`; median speed over 1080 frames is **93**. The ORIGINAL touches the
+> same `x = -2.500` plane **once in 2332 frames** (`orig_solo3.msd` frames 980-998, `pos.x`
+> pinned for 18 frames at speed 85..212) and then drives away.
+>
+> The contact itself is right: reporting slots 5 and 9 are the hull corners at `x = box[3]`,
+> normal `(1.000,0.000,0.000)`, depth `-0.037`. What differs is the approach — the port reaches
+> the wall at **2283** where the original reaches it at **1717**.
+>
+> **The one command that decides it:** plot both loops on **Training's** `COLLISIONS.BSP` with
+> `re/tools/statediff/loop_plot.py` (the tool §13.2 already used cross-track) and compare radius
+> and centre.
+> - If the port's loop is LARGER, this is U-9147's residue (drives too fast -> bigger radius ->
+>   into the wall) and the fix is upstream of contacts. `slip 1500-2000` failing at -16.6% is the
+>   same story.
+> - If the loops match, instrument `0x0046ef70`'s per-slot terms and diff them against a Frida
+>   capture of the original at frame 980. A hand estimate on the original's own numbers
+>   reproduces its `+1893` delta at `-1716.69`, which argues AGAINST a restitution error — but
+>   that is an estimate, not a measurement.
+>
+> Then **U-9152** (the `+0x928` vs `g_bodyBasis` storage split) — note `SyncContactRingMatrix`
+> now publishes one into the other every substep, so half of it is already paid for.
+>
+> **Guards on the final build** (re-run them, don't assume): criterion (e) **PASS 3/3**;
+> AI (b) **FAIL 3/3**, `c1_median` 52.5 / 38.0 / 49.0 (identical to attempts 1-3); power-ups
+> **11/11 decision CLEAN** with `g3` contact diverging; oracle rule 3 **GREEN**
+> (FinishOrder 2717/2717, MISMATCH=0); build with `rva-lint allowlisted=111 NEW=0`.
+>
+> **The D3 modes 3/7 hold stands.** D2 must close before it starts.
+
+
+## SUPERSEDED kickoff — D2 re-close attempt 3 (kept as history)
 
 > ## START HERE — D2 is STILL REOPENED. The arm was measuring the wrong track, and the residual is now one named unported function.
 >
@@ -100,6 +181,7 @@ Superseded kickoff: the 2026-09-29 "re-close attempt 2" one (kept below).
 > (3059/3059, 2/2, 3963/3963, MISMATCH=0); build with `rva-lint allowlisted=110 NEW=0`.
 >
 > **The D3 modes 3/7 hold stands.** D2 must close before it starts.
+
 
 ## SUPERSEDED kickoff — D2 re-close attempt 2 (kept as history)
 
