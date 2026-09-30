@@ -920,6 +920,100 @@ function latBracketArm(recBaseHex, car){
 function latBracketDrain(){ const r = LB.rows; LB.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
+// --- CONTACT-FIXUP probe (U-9156, D2 section 22.2) -------------------------
+// [D2 section 22.1] The registered rule named C4 (the post-bounce horizontal speed) as the
+// first diverging term at d = 0, and reading 4 points at the last-contact damp
+// `min(0.9, 3*(1 - min(1, |m|/speed)))` at 0x0046f5ba/0x0046f5c0 inside
+// VehicleContactFixup 0x0046ef70.
+//
+// The .msd cannot answer it: the 18 contact slots at +0x4a8 + i*0x40 have key (+0x04) == -1
+// on 2332 of orig_solo3.msd's 2333 frames and +0x9ec is 0 on every frame, because the
+// render-tick snapshot lands after the substep loop has cleared them. This probe reads the
+// slots at the ONE point in the frame where they are live: the ENTRY of 0x0046ef70.
+//
+// ENTRY HOOKS ONLY (memory `frida-interceptor-is-entry-only`). Two sites with one shared
+// sequence, exactly the lat-bracket shape:
+//   site 0 = 0x0046ef70 entry -> the PRE-fixup velocity + the live slot set
+//   site 1 = 0x004709a0 entry -> the substep entry, so the sample that FOLLOWS a site-0 row
+//            is the POST-fixup velocity (between the fixup and the next substep entry
+//            nothing writes +0x9b0: the original's substep order is 0x0046e9e0 ->
+//            0x0046f6c0 -> 0x00469aa0 -> 0x0046ef70, FUN_004709a0's own body).
+// Not hot: the port's equivalent log fires 211 times in a 27 s race.
+//
+// SELF-CHECK, not an assumption: the first FP_SELFCHECK site-0 rows also carry ESI/ECX/EDI
+// so the reduction can confirm which register holds `self` and that it equals the static
+// player record 0x008815a0 + car*0xd04, rather than assuming a calling convention. The
+// sample itself always reads the STATIC record, so the probe does not depend on the answer.
+const FP_FIXUP   = 0x0046ef70;
+const FP_SUBSTEP = 0x004709a0;
+const FP_SELFCHECK = 8;
+const FP = { armed:false, rows:[], nFix:0, nSub:0, err:null, chk:[] };
+let FP_REC = null, FP_SEQ = 0;
+function fpSlots(r){
+  // Slot base S = 0x4a8 + i*0x40: +0x00 depth, +0x04 key (-1 = empty), +0x08..+0x10 normal,
+  // +0x14 scale, +0x2c..+0x34 arm, +0x38 magnitude (ContactFixup.cpp:85-92).
+  const idx = []; const s = [];
+  for (let i = 0; i < 0x12; i++){
+    const S = 0x4a8 + i * 0x40;
+    if (r.add(S + 4).readS32() === -1) continue;
+    idx.push(i);
+    if (s.length < 20) s.push([i, r.add(S).readFloat(),
+                               r.add(S + 8).readFloat(), r.add(S + 0xc).readFloat(),
+                               r.add(S + 0x10).readFloat(), r.add(S + 0x14).readFloat(),
+                               r.add(S + 0x2c).readFloat(), r.add(S + 0x30).readFloat(),
+                               r.add(S + 0x34).readFloat(), r.add(S + 0x38).readFloat()]);
+  }
+  return [idx, s];
+}
+function fpSample(site){
+  try {
+    const r = FP_REC;
+    const base = [FP_SEQ++, site,
+                  r.add(0x9b0).readFloat(), r.add(0x9b4).readFloat(), r.add(0x9b8).readFloat(),
+                  r.add(0x9e4).readFloat(), r.add(0x9e0).readFloat(), r.add(0x9ec).readS32(),
+                  r.add(0x144).readFloat(), r.add(0x148).readFloat(), r.add(0x14c).readFloat(),
+                  r.add(0x9d4).readFloat(), r.add(0x9dc).readFloat()];
+    const sl = fpSlots(r);
+    base.push(sl[0].length);
+    base.push(sl[0].join('|'));
+    // two fixed slot columns (the port's Training bounce reports exactly two), then the
+    // full set as a packed string so nothing is silently dropped.
+    for (let k = 0; k < 2; k++){
+      const q = sl[1][k];
+      for (let j = 0; j < 10; j++) base.push(q ? q[j] : '');
+    }
+    base.push(sl[1].map(function(q){ return q.join(':'); }).join('|'));
+    FP.rows.push(base);
+  } catch(e){ if (!FP.err) FP.err = 'sample' + site + ' ' + e; }
+}
+function contactFixupProbeArm(recBaseHex, car){
+  if (FP.armed) return 'already armed';
+  try {
+    FP_REC = ptr(parseInt(recBaseHex, 16) + car * 0xd04);
+    Interceptor.attach(ga(FP_FIXUP), { onEnter(){
+      try {
+        if (FP.chk.length < FP_SELFCHECK){
+          let a4 = '?';
+          try { a4 = this.context.esp.add(4).readPointer().toString(); } catch(e){ }
+          FP.chk.push({seq:FP_SEQ, esi:this.context.esi.toString(),
+                       ecx:this.context.ecx.toString(), edi:this.context.edi.toString(),
+                       esp4:a4, rec:FP_REC.toString()});
+        }
+        FP.nFix++; fpSample(0);
+      } catch(e){ if (!FP.err) FP.err = 'fixEnter ' + e; }
+    }});
+    Interceptor.attach(ga(FP_SUBSTEP), { onEnter(){
+      try { FP.nSub++; fpSample(1); }
+      catch(e){ if (!FP.err) FP.err = 'subEnter ' + e; }
+    }});
+    FP.armed = true;
+    return 'fixup-probe armed: fixup @0x' + FP_FIXUP.toString(16)
+         + ' + substep @0x' + FP_SUBSTEP.toString(16) + ' rec=' + FP_REC;
+  } catch(e){ return 'ERR ' + e; }
+}
+function contactFixupProbeDrain(){ const r = FP.rows; FP.rows = []; return r; }
+// ---------------------------------------------------------------------------
+
 // --- RwV3dLength ARGUMENT probe (U-9156, D2 section 21.7) ------------------
 // [D2 section 21.7] Gets the ORIGINAL's `l_60 = sum ld4 * le4` (Integrate2.cpp:464) as a
 // MEASUREMENT instead of an inference. Section 21.5 closed every other route: clamp #6 is
@@ -1684,6 +1778,11 @@ rpc.exports = {
   latBracketStats: function(){ return JSON.stringify({armed:LB.armed, a6a:LB.nA6a, a6b:LB.nA6b,
                                                       sub:LB.nSub, pending:LB.rows.length,
                                                       skipped:LB.skipped, err:LB.err}); },
+  contactFixupProbeArm: function(recBaseHex, car){ return contactFixupProbeArm(recBaseHex, car); },
+  contactFixupProbeDrain: function(){ return contactFixupProbeDrain(); },
+  contactFixupProbeStats: function(){ return JSON.stringify({armed:FP.armed, fixup:FP.nFix,
+                                                             sub:FP.nSub, pending:FP.rows.length,
+                                                             selfcheck:FP.chk, err:FP.err}); },
   magProbeArm: function(sites, limit, recBaseHex, car){ return magProbeArm(sites, limit, recBaseHex, car); },
   magProbeDrain: function(){ return magProbeDrain(); },
   magProbeStats: function(){ return JSON.stringify({armed:MP.armed, calls:MP.n, other:MP.other,
@@ -2135,6 +2234,16 @@ def main():
                          "change splits into [A6a+A6b] and [the 2x25 contact substeps]. "
                          "Entry hooks only, ~180 calls/s. Writes <statediff-out>."
                          "latbracket.csv. Requires --statediff-out.")
+    ap.add_argument("--fixup-probe", action="store_true",
+                    help="[U-9156 / D2 section 22.1] entry-hook VehicleContactFixup "
+                         "0x0046ef70 and the substep loop 0x004709a0 with one shared "
+                         "sequence, and log the player record's velocity, speed, grounded, "
+                         "+0x9ec, the +0x144 accumulator and the LIVE 18-slot contact set "
+                         "(depth/normal/scale/arm/magnitude). The .msd cannot see the slots "
+                         "-- they are cleared by the time the render tick snapshots the "
+                         "record. Entry hooks only; the port's equivalent fires 211 times in "
+                         "a 27 s race, so this is not a hot path. Writes <statediff-out>."
+                         "fixupprobe.csv. Requires --statediff-out.")
     ap.add_argument("--mag-probe", default="",
                     help="[U-9156 / D2 section 21.7] entry-hook RwV3dLength 0x004c3ac0 and log "
                          "the VECTOR it was passed, tagged by call site via the return "
@@ -2285,6 +2394,9 @@ def main():
                 print("  [statediff]", E.ai_step_arm(os.environ.get("MASHED_AISTEP_LOCALS", "1") != "0"))
             if args.lat_bracket:
                 print("  [statediff]", E.lat_bracket_arm("0x008815a0", args.statediff_car))
+            if args.fixup_probe:
+                print("  [statediff]", E.contact_fixup_probe_arm("0x008815a0",
+                                                                 args.statediff_car))
             if args.mag_probe:
                 _sites = "" if args.mag_probe == "count" else args.mag_probe
                 print("  [statediff]", E.mag_probe_arm(_sites, args.mag_probe_limit,
@@ -2579,6 +2691,32 @@ def main():
                     n2 = sum(1 for r in lb_rows if r[1] == 2)
                     print(f"  [statediff] lat-bracket {len(lb_rows)} samples "
                           f"(A6a {n0}, A6b {n2}, substep {n1}) -> {lbp}")
+                if args.fixup_probe:
+                    # Counters and the register self-check BEFORE the rows, and the CSV is
+                    # written even when empty: memory
+                    # `absent-log-proves-nothing-run-a-control` -- a zero-row file cannot
+                    # tell "0x0046ef70 never fired" from "the probe is broken".
+                    try: print("  [statediff] fixup-probe agent:", E.contact_fixup_probe_stats())
+                    except Exception as _e: print("  [statediff] fixup-probe stats failed:", _e)
+                    fp_rows = []
+                    try: fp_rows = E.contact_fixup_probe_drain()
+                    except Exception as _e: print("  [statediff] fixup-probe drain failed:", _e)
+                    fpp = outp.with_suffix(outp.suffix + ".fixupprobe.csv")
+                    _hdr = ("seq,site,velx,vely,velz,speed,gnd,c9ec,a144,a148,a14c,fwdx,fwdz,"
+                            "nslot,slotidx")
+                    for _k in range(2):
+                        _hdr += (",s%d_i,s%d_depth,s%d_nx,s%d_ny,s%d_nz,s%d_scale,"
+                                 "s%d_armx,s%d_army,s%d_armz,s%d_mag") % tuple([_k] * 10)
+                    _hdr += ",slots_all"
+                    with open(fpp, "w", newline="") as f:
+                        f.write(_hdr + chr(10))
+                        for r in fp_rows:
+                            f.write(",".join(repr(x) if isinstance(x, float) else str(x)
+                                             for x in r) + chr(10))
+                    _n0 = sum(1 for r in fp_rows if r[1] == 0)
+                    _n1 = sum(1 for r in fp_rows if r[1] == 1)
+                    print(f"  [statediff] fixup-probe {len(fp_rows)} samples "
+                          f"(fixup {_n0}, substep {_n1}) -> {fpp}")
                 if args.mag_probe:
                     # Counters BEFORE the rows, and the CSV is written even when empty:
                     # memory `absent-log-proves-nothing-run-a-control`.
