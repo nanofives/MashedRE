@@ -42,43 +42,38 @@ Superseded kickoff: the 2026-09-29 "re-close attempt 1" one (kept below).
 > - `a8_wheelfit.py`'s cross-side fit stays withdrawn. Do not quote a lateral-coefficient
 >   ratio from it.
 >
-> **PICK UP HERE — the residual is the VELOCITY heading, and the scored window is a
-> TRANSIENT.** With `d(bodyH)/frame` now exact on both sides:
+> **PICK UP HERE — the residual is `RecoverOffMesh`, and its mechanism is MEASURED.**
+> Read `re/analysis/D2_REOPEN_2026-09-29.md` §12. This **supersedes** §10.4's "the suspect
+> is the transient" framing, and it **clears the cornering law**.
 >
-> | | ORIG 1500-2000 | PORT | ORIG 2000-2600 | PORT |
-> |---|---:|---:|---:|---:|
-> | `d(bodyH)/frame` | -0.04462 | **-0.04462** | -0.04462 | **-0.04462** |
-> | `d(velH)/frame` | -0.04238 | -0.03965 | -0.04307 | -0.04135 |
-> | `beta` | 0.1929 | 0.1345 | 0.2498 | 0.2290 |
+> `TrackRenderer.cpp:2161` writes `car_vel_ = (cos ry, sin ry) * sp` — velocity exactly
+> along the heading — so every fire sets the scored slip angle to **zero by construction**.
+> `:2160`'s reseed makes the reducer drop that one frame and score every frame after it.
+> Measured: slip rebuilds monotonically **0.083 at d=8 → 0.261 at d≥41** frames since the
+> last reseed, and the port fires **35 times in the 1080-frame window** — one per ~31
+> frames, **shorter than the ~40-frame rebuild**, so the car never reaches its own steady
+> slip. At d≥41 the port's slip is **0.2608**, *higher* than the original's 0.2498, so the
+> ported law does not produce too little slip.
 >
-> `|d(velH)| < |d(bodyH)|` on **both** sides, so neither car is in steady state inside the
-> scored window — both are still building slip. And the band populations differ (port
-> n=227 vs original n=312 at 1500-2000). So the next question is **how far into the
-> spin-up each side is when the band is scored**, not the tire law:
-> `a8_momentum`'s effective-dt already matches to 0.3-5.7%, and every local law in A6a is
-> cleared above. Suggested first move: plot slip against *time since the steer-hold onset*
-> rather than against speed, on both sides, and see whether the port's curve is the same
-> curve sampled earlier — if it is, the defect is in how fast the car reaches the band
-> (acceleration / `RecoverOffMesh`), not in the cornering law.
+> Diagnostic `a8_slip_axis.py --reseed-shadow` (**NOT the gate**): a 30-frame shadow raises
+> slip 1500-2000 **0.1445 → 0.2006** at a **flat** median speed (1776 → 1807). Limits, do
+> not over-read: n falls 227 → 67, and the 2000-2600 rows ARE regime-shifted (n 325 → 150,
+> speed 2374 → 2462).
 >
-> Then, in order: **`RecoverOffMesh`** (`TrackRenderer.cpp:2142-2164`, halves `car_speed_`
-> 11-59x per 1080 frames, no original counterpart — it bears directly on driving-median,
-> which is now the *worst* of the three at -10.4%), and **U-9152** (the `+0x928` vs
-> `g_bodyBasis` storage split).
+> **Root cause is upstream of the recovery.** New `MASHED_OFFMESH_LOG` (default-OFF): 46
+> fires in 1630 frames, bearings spread evenly over the whole circle around the centroid
+> (−178..+177°, radius 9.99..45.42) — **not** one hole in `col_tris_`. The car genuinely
+> leaves the drivable surface, with an explicit speed staircase (2276→1138, 1601→800,
+> 1342→671, … 798→399) that *is* the −10.4% driving median.
 >
-> **New tooling this session, reuse it rather than rebuilding it:**
-> - `MASHED_A6ADUMP=<path>` — A6a's own per-wheel `lac/la8/la4 / f5 / le / lbc / dF` plus
->   `l60 / grip / k_vel / arm`, at `%.17g`, in **two phases** (`act.*` = what A6a computed,
->   `snap.*` = the render-tick record the `.msd` sees). Default-OFF.
-> - `re/tools/statediff/a6a_replay.py` — the replay, four self-checks, and the
->   CROSS / GEOMETRY / HEADINGS / CLAMP #6 / ANGULAR tables. **Run the self-checks before
->   believing any table.**
-> - `re/frida/scenario_launch.py --peek "<rva>:<f|d|i|u>,..."` — plain `Memory` reads of
->   image globals, no `Interceptor`, no hook, no write. Forms: bare RVA, `@<abs>`, and
->   `i<rvaA>+<rvaB>+<off>` (the RW device-table pattern). This is how `_DAT_00613108`,
->   `_DAT_0088e5f0` and the device multiply were all pinned.
-> - `MASHED_A6BTEST=<path>` — the exe-side A6b witness.
-> - arg_type `matrix_multiply`; hooks `rw_matrix_multiply_cpu`, `rw_matrix_rotate_inner_cpu`.
+> **[UNCERTAIN]** trajectory vs collision-mesh coverage. **Next command** (§12.4): plot the
+> two world loops — port via `a8_run_port.py <dir> 90 MASHED_MEASURE_SOLO=1
+> MASHED_PLAYERTRACE=1`, original via a `--statediff-out` capture read through the `+0x928`
+> RwMatrix translation row `m[12..14]`. If the original's loop lies **inside** the port's,
+> the trajectory is the defect; if they overlap and only the port reports off-mesh, the
+> mesh is.
+>
+> Then **U-9152** (the `+0x928` vs `g_bodyBasis` storage split).
 >
 > **Guards as of this session** (re-run them, don't assume): criterion (e) **PASS 3/3**;
 > AI (b) **FAIL 3/3** with `c1_median` 52.5 / 38.0 / 49.0; power-ups **11/11 decision
