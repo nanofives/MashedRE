@@ -290,6 +290,25 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
 > [`re/analysis/CAR_BRIGHTNESS_2026-09-30.md`](re/analysis/CAR_BRIGHTNESS_2026-09-30.md).
 > **R1 itself is untouched** — it still wants the frame-synced original-side draw-list
 > adjudication, and the A3/O6 gap is a concrete instance of what R1 is missing.
+>
+> **Second render-faithfulness defect closed 2026-09-30 (counts toward R1, does not close
+> it): grey car chassis, defect (a)** — both car loaders handed the WHOLE vehicle clump
+> downstream, so the standalone drew all 71 of `ADVANTAGE0.DFF`'s atomics. 27 of them are
+> not body geometry (4 untextured car-sized collision hulls + 23 one-triangle locators,
+> material `(102,102,102)`), and drawing them covered the painted body with a grey shell.
+> Fixed by `CarDropNonRenderAtomics` in `TrackRenderer::LoadCar` / `::LoadCarLiveries`
+> (`5ddc0384`); one filtered model feeds the wheel heuristic and both renderers'
+> batch builders. Pre-registered acceptance `2179ed1a`, results in
+> [`re/analysis/CAR_GRAY_FIX_ACCEPTANCE_2026-09-30.md`](re/analysis/CAR_GRAY_FIX_ACCEPTANCE_2026-09-30.md):
+> G1/G2/G3 and G4b/G4c PASS (car-box grey fraction 0.8487 → 0.0782, hull tone
+> `(102,102,102)` 1999 px → 0, textured batch count unchanged at 176 = 44 x 4, all nine
+> A4 terrain/sea boxes and both frontend frames bit-identical); **G1d unmeasurable as
+> written** and **G4a fails as written**, both from instrument defects that are pinned
+> there. This is a **measured equivalent** of the original's per-part-code selection
+> (`FUN_00420420` @ `0x00420420`), **not a verbatim port** — the part code is blocked on
+> **U-9079** — so it carries no `hooks.csv` row and no C-level. Note items O3/O4/O5
+> (duplicate LOD sets both drawn, `MASHED_RPLIGHT=0` renders the car black, props not
+> swept) remain OPEN.
 
 Invert `MASHED_RENDER_LIBRW`. librw becomes the shipping path; the hand-written D3D9
 renderer becomes the fallback, then goes away.

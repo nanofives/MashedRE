@@ -1,0 +1,26 @@
+[audio] Init: MASHED_MUTE=1 — audio disabled (no DirectSound)
+[audio] RwsBankLoad original/toastaudio/pc/audio/pcdics/permdict.rws: 43 waves
+[audio] MusicSetState -> 1
+[gameflow] progress loaded: 2/13 tracks unlocked (save counter 9)
+[gameflow] RequestRace -> LoadingRace
+[race-scaffold] RaceSession::Begin
+R5 car atomics: ADVANTAGE0.DFF atoms=71 kept=71 dropped=0 untex_kept=27
+R6 car spawn at REAL start line: gate0=(0.02, 0.47, -2.00) yaw=-1.58 (gates=30) wheels=4 [-0.18,0.09,-0.35 r=0.09] [0.18,0.09,-0.35 r=0.09] [-0.17,0.09,0.27 r=0.09 F] [0.17,0.09,0.27 r=0.09 F]
+R5 car atomics: ADVANTAGE1.DFF atoms=71 kept=71 dropped=0 untex_kept=27
+R5 car atomics: ADVANTAGE2.DFF atoms=71 kept=71 dropped=0 untex_kept=27
+R5 car atomics: ADVANTAGE3.DFF atoms=71 kept=71 dropped=0 untex_kept=27
+R6 car liveries: original/TOASTART/VEHICLES/Advantag.piz base=ADVANTAGE loaded=3/3
+[race] Begin: track ready, vehicle=ADVANTAGE player_car=1 liveries=1 -> StartMatch particles=2 pickups=on gameMode=3 raceRule=0 mode=elim laps=3 [real sim active]
+[race] ambience: audio engine unavailable
+[audio] MusicSetState -> 2
+[gameflow] LoadingRace -> InRace
+[race-scaffold] AiController: REAL via TrackRenderer::UpdateCar (ported FUN_00418860 tick -> ctrl bytes -> physics chain; targeting modes 1..10 stubbed)
+[race-scaffold] VehicleSim: REAL via TrackRenderer::UpdateCar (handling integrator)
+[race-scaffold] CollisionWorld: REAL via TrackRenderer::GroundHeight (ground snap)
+[race-scaffold] RaceCamera: REAL via Race/RaceCamera verbatim port (0x00446520)
+[race-scaffold] PowerupSystem: PARTIAL via TrackRenderer (orb collect/respawn + ported per-frame dispatcher over 4 slots, AI fire via FUN_00415220; effect leaves scaffold)
+[race-scaffold] ParticleSystem: REAL via D3d9Render/ParticleSystem (snow/dust billboards)
+[race-scaffold] RaceAudio: REAL via Audio/AudioEngine DirectSound (RWS ambience; engine-RPM TODO)
+[race-scaffold] RaceSession::End
+[audio] MusicSetState -> 1
+[gameflow] RequestExit -> Frontend

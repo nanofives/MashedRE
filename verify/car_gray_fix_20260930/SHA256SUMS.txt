@@ -1,0 +1,39 @@
+# Binaries and captures for CAR_GRAY_FIX_ACCEPTANCE_2026-09-30 (2026-09-30).
+# The .exe and .bmp files below are gitignored (.gitignore *.exe, verify/**/*.bmp)
+# and are NOT committed. This manifest is, so the run is identifiable.
+#
+# role:
+#   prefix_head_mashed_re.exe   = clean HEAD 2179ed1a, no edits at all
+#   prefix_instr_mashed_re.exe  = HEAD + the load-time census log ONLY (no filter).
+#                                 This is the PRE arm: it is what makes G1a an armed
+#                                 control instead of an absent channel.
+#   postfix_mashed_re.exe       = + CarDropNonRenderAtomics (the fix)
+#
+# NOTE: the MSVC link embeds a PE timestamp, so two builds of identical sources do
+# NOT hash equal. Binary identity is therefore NOT claimed from these hashes; the
+# pre/post render equivalence is established by the capture diffs instead.
+F77055CD397946AC7554013B0AF0D21A5C9299828C1BC427C2A9B7B47E8C2099  verify/car_gray_fix_20260930/bin/postfix_mashed_re.exe  1961472 B
+795A1927A788052DB4D6251BCE81E964D2A411DB922E14FC63FF4ED0080261B6  verify/car_gray_fix_20260930/bin/prefix_head_mashed_re.exe  1960960 B
+4D206591FAB74E15CC21685DA96301B3AF865B37E42A4AE2BE2D96E51F13A3E4  verify/car_gray_fix_20260930/bin/prefix_instr_mashed_re.exe  1961472 B
+
+# per-capture SHA-256 of the frames the rules are scored on:
+9506E85A8B4437F511F3871A0F3BA0237A5AF2F9E68775CA86EE85FCBF02F25F  pre/12_training/race1/00_challengeselect.bmp
+998CAA414207E88CBBB183E1F4A40A4E64A75D943E9084C9145C81AEDFDB7ED8  pre/12_training/race1/01_action.bmp
+1709CC0445FE0F4F7B6470008ED05D13B4A2375B82AF90EC62125324DF77706F  pre/12_training/race1/01_grid.bmp
+04FF5E1EF0195879E3AC8CC00F2CFB5F5BAA78733BD96B61F79AB91E5AED4891  pre/12_training/race1/01_inrace_track.bmp
+A8B07B81A2E58270A88304248B3CB0A4DF03CB154283DADF4052285B5C51120A  pre/12_training/race1/02_back_to_menu.bmp
+9506E85A8B4437F511F3871A0F3BA0237A5AF2F9E68775CA86EE85FCBF02F25F  pre/00_Arctic/race1/00_challengeselect.bmp
+6B1074D016F8A0DF46688DF605150817716210D871DC1ADE30AC08036AF60FCC  pre/00_Arctic/race1/01_action.bmp
+0830F3017A9F1A7FF0DFD026FC5979A3CE4D0A0F9F5F47A25024D4FEF8EFB79A  pre/00_Arctic/race1/01_grid.bmp
+ACFCFFC8612C8E1A1D08A073D42923C6398E8E016569778907A0688D4379C6E6  pre/00_Arctic/race1/01_inrace_track.bmp
+A8B07B81A2E58270A88304248B3CB0A4DF03CB154283DADF4052285B5C51120A  pre/00_Arctic/race1/02_back_to_menu.bmp
+9506E85A8B4437F511F3871A0F3BA0237A5AF2F9E68775CA86EE85FCBF02F25F  post/12_training/race1/00_challengeselect.bmp
+4D2D0C936A2E4D4A206195C6DECA597CE97104B42365AE14700EFE9850BAE648  post/12_training/race1/01_action.bmp
+2408ADDB33C29C4232D89D6B01B822C26CBF9C0BB08617A2565FA94D38CB4BCB  post/12_training/race1/01_grid.bmp
+445B00D76FBB4D5209C75DC3A080EA672D1D483B802C938CC8801B3AC2543A47  post/12_training/race1/01_inrace_track.bmp
+A8B07B81A2E58270A88304248B3CB0A4DF03CB154283DADF4052285B5C51120A  post/12_training/race1/02_back_to_menu.bmp
+9506E85A8B4437F511F3871A0F3BA0237A5AF2F9E68775CA86EE85FCBF02F25F  post/00_Arctic/race1/00_challengeselect.bmp
+A4FEF06C84B419D9BA48635D62D87FDE0CA1CD4C27A6CE2FDFCA52861264DE0C  post/00_Arctic/race1/01_action.bmp
+DD7249C630A133C12CA05322A43BB6DE5133BBA4564711EDFCCECB6CC98A9546  post/00_Arctic/race1/01_grid.bmp
+93E6138E5174F2A5E14935C837355F26427D219BAAC58C2E17E4207FFEC542B4  post/00_Arctic/race1/01_inrace_track.bmp
+A8B07B81A2E58270A88304248B3CB0A4DF03CB154283DADF4052285B5C51120A  post/00_Arctic/race1/02_back_to_menu.bmp

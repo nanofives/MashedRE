@@ -7,10 +7,53 @@ own pre-registered rule; and a new fidelity defect was banked as measured-inert)
 Branch `race/first-frame-parity`. Nothing is pushed.
 Superseded kickoffs: the attempt-8, attempt-7, attempt-6, attempt-5 and attempt-4 ones, kept below.
 
-## RENDER LANE — car brightness, defect (d): FIX LANDED 2026-09-30. Nothing owed to pick this up.
+## RENDER LANE — two defects fixed 2026-09-30: (a) grey chassis and (d) car brightness. Nothing owed to pick either up.
 
-Separate lane from the D2 block below; both live on this branch. **Do not re-derive the
-diagnosis** — read [`re/analysis/CAR_BRIGHTNESS_2026-09-30.md`](analysis/CAR_BRIGHTNESS_2026-09-30.md)
+Separate lane from the D2 block below; both live on this branch.
+
+### (a) grey car chassis — FIX LANDED 2026-09-30 (`5ddc0384`)
+
+**Do not re-derive the diagnosis** — read
+[`re/analysis/CAR_GRAY_CHASSIS_2026-09-29.md`](analysis/CAR_GRAY_CHASSIS_2026-09-29.md) for the
+root cause and [`re/analysis/CAR_GRAY_FIX_ACCEPTANCE_2026-09-30.md`](analysis/CAR_GRAY_FIX_ACCEPTANCE_2026-09-30.md)
+for the pre-registered rules (`2179ed1a`) and the `# RESULTS` section.
+
+`LoadCar` / `LoadCarLiveries` handed the whole vehicle clump to the wheel heuristic,
+`BuildDffBatches` and `RaceSubmit_RegisterModel`, so all 71 `ADVANTAGE0.DFF` atomics were
+drawn. 27 are non-render (4 untextured car-sized collision hulls + 23 one-triangle locators,
+material `(102,102,102)`). `CarDropNonRenderAtomics` erases every batch with
+`(geo_flags & 0x84) == 0` right after `model.Parse`, so one filtered model feeds all three
+consumers. `model.bbox` is deliberately not recomputed (it feeds `car_ground_off_` /
+`car_len_` / `car_height_`).
+
+* **G1/G2/G3 PASS, G4b/G4c PASS.** Car-box grey fraction **0.8487 → 0.0782**; hull tone
+  `(102,102,102)` **1999 px → 0**; `kept=44` on all four ADVANTAGE DFFs; `CARLIGHT
+  body_batches tot 67 → 40`; `wheels=4` with identical pivots; A2's deck-box dominant
+  unchanged at **0.8517**; all nine A4 terrain/sea boxes and both frontend frames
+  **bit-identical**.
+* **G1d UNMEASURABLE as written** — `MASHED_DBG_DRAWSTREAM3D` emits no `"cars"` record on the
+  **default librw build** (the tally lives in `RenderCarsRelit`, `TrackRenderer.cpp:4856`,
+  reachable only via the `else if (relit_cars)` arm at `:5705`). Measured on the
+  `MASHED_RENDER_LIBRW=0` arm instead and reported separately: cars `batches 284 → 176`,
+  `textured 176 → 176`, every other category unchanged. **If you want a camera-invariant
+  per-category tally on the default path, that instrument does not exist yet.**
+* **G4a FAILS as written** (879 + 22 px outside the declared regions on the two Arctic
+  captures). Its region-declaration procedure keys on the same achromatic GREY class the G2
+  counter uses, and Arctic's tinted light (`amb (0.2,0.3,0.3)`) pushes the hull to
+  `(21,31,31)` / `(55,70,70)`, each missing a threshold by **1**. Every one of the 901 pixels
+  is a hull pixel inside a car's single diff component. The edit is **kept**; the reason is
+  written down, not implied.
+
+**Open, deliberately not touched:** note items **O3** (the duplicate low/high LOD sets are
+still both drawn), **O4** (`MASHED_RPLIGHT=0` renders the car solid black), **O5** (props not
+swept for the same over-draw), and the `[UNCERTAIN]` on whether the four hulls should feed our
+collision path the way the original's part codes `0x3b..0x3e` feed `FUN_0053d400` @
+`0x0053d400`. **U-9079** (the part code is not derivable from the DFF) is what keeps this a
+measured equivalent rather than a verbatim port.
+
+### (d) car brightness — FIX LANDED 2026-09-30
+
+**Do not re-derive the diagnosis** — read [`re/analysis/CAR_BRIGHTNESS_2026-09-30.md`](analysis/CAR_BRIGHTNESS_2026-09-30.md)
 (`# FIX APPLIED AND ACCEPTANCE RUN` is the newest section).
 
 `ParseLightsDffFaithful` composed the track directional light's world at-vector one frame too
@@ -33,7 +76,11 @@ arithmetic at all (`FUN_00479330` @ `0x00479330` adds the LIGHTS.DFF lights with
   and camera, scored three ways with `surface_split.py`. That capture is the same one **O4**
   needs, and it is a concrete instance of what ROADMAP **D1-residue R1** still owes.
 
-**Harness worth reusing** (in `verify/car_bright_fix_20260930/`): `run_race.py` drives the
+**Harness worth reusing** (in `verify/car_bright_fix_20260930/`, plus the grey-lane additions in
+`verify/car_gray_fix_20260930/`: `run_race.py` there also collects `log/mashed_re.log` — a
+DIFFERENT file from `./mashed_re.log`, and the one the car-load lines go to — and arms
+`MASHED_DBG_DRAWSTREAM3D`; `dff_atomic_census.py` re-derives the per-vehicle atomic split from
+the assets; `gray_frac.py` counts hull-grey vs paint): `run_race.py` drives the
 standalone's own `MASHED_RACE_DEMO=1 MASHED_GOTO=6` flow — **no external keystrokes, never
 takes the foreground**, dumps the real backbuffer, and with `MASHED_DETERMINISTIC=1` gives
 pose-identical pre/post pairs so a regression guard is exact rather than jitter-bounded. Two
