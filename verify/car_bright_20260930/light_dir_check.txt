@@ -1,0 +1,55 @@
+Arctic     frame=3 parent=1
+   dir CORRECT  = (+0.577350,-0.577350,-0.577350)   -> L=(-0.5774,+0.5774,+0.5774)  sun_elev_y=+0.5774
+   dir AS-BUILT = (-0.977284,-0.138071,+0.160787)   -> L=(+0.9773,+0.1381,-0.1608)  sun_elev_y=+0.1381   *** DIVERGES ***
+   up-facing panel (N=+Y): amb=0.200 sun=0.600  correct=0.5464  as-built=0.2828  ratio(as-built/correct)=0.5176
+City       frame=2 parent=1
+   dir CORRECT  = (+0.220019,-0.975494,-0.001676)   -> L=(-0.2200,+0.9755,+0.0017)  sun_elev_y=+0.9755
+   dir AS-BUILT = (-0.953606,-0.212999,-0.212761)   -> L=(+0.9536,+0.2130,+0.2128)  sun_elev_y=+0.2130   *** DIVERGES ***
+   up-facing panel (N=+Y): amb=0.264 sun=1.000  correct=1.0000  as-built=0.4775  ratio(as-built/correct)=0.4775
+dump       frame=2 parent=1
+   dir CORRECT  = (-0.851055,-0.285006,-0.440996)   -> L=(+0.8511,+0.2850,+0.4410)  sun_elev_y=+0.2850
+   dir AS-BUILT = (+0.838984,-0.147499,-0.523784)   -> L=(-0.8390,+0.1475,+0.5238)  sun_elev_y=+0.1475   *** DIVERGES ***
+   up-facing panel (N=+Y): amb=0.314 sun=1.000  correct=0.5990  as-built=0.4615  ratio(as-built/correct)=0.7705
+Egypt      frame=2 parent=1
+   dir CORRECT  = (+0.834537,-0.418553,+0.358277)   -> L=(-0.8345,+0.4186,-0.3583)  sun_elev_y=+0.4186
+   dir AS-BUILT = (+0.467236,-0.530084,-0.707602)   -> L=(-0.4672,+0.5301,+0.7076)  sun_elev_y=+0.5301   *** DIVERGES ***
+   up-facing panel (N=+Y): amb=0.300 sun=0.700  correct=0.5930  as-built=0.6711  ratio(as-built/correct)=1.1317
+Forest     frame=2 parent=1
+   dir CORRECT  = (-0.801756,-0.504292,-0.320745)   -> L=(+0.8018,+0.5043,+0.3207)  sun_elev_y=+0.5043
+   dir AS-BUILT = (+0.791074,-0.273724,-0.547062)   -> L=(-0.7911,+0.2737,+0.5471)  sun_elev_y=+0.2737   *** DIVERGES ***
+   up-facing panel (N=+Y): amb=0.400 sun=0.700  correct=0.7530  as-built=0.5916  ratio(as-built/correct)=0.7857
+Highway    frame=3 parent=1
+   dir CORRECT  = (+0.230769,-0.923077,+0.307692)   -> L=(-0.2308,+0.9231,-0.3077)  sun_elev_y=+0.9231
+   dir AS-BUILT = (-0.255621,-0.639053,-0.725444)   -> L=(+0.2556,+0.6391,+0.7254)  sun_elev_y=+0.6391   *** DIVERGES ***
+   up-facing panel (N=+Y): amb=0.200 sun=1.000  correct=1.0000  as-built=0.8391  ratio(as-built/correct)=0.8391
+Neustein   frame=3 parent=1
+   dir CORRECT  = (+0.479350,-0.723971,-0.496073)   -> L=(-0.4794,+0.7240,+0.4961)  sun_elev_y=+0.7240
+   dir AS-BUILT = (-0.946717,-0.140274,+0.289914)   -> L=(+0.9467,+0.1403,-0.2899)  sun_elev_y=+0.1403   *** DIVERGES ***
+   up-facing panel (N=+Y): amb=0.350 sun=0.800  correct=0.9292  as-built=0.4622  ratio(as-built/correct)=0.4975
+rouabout   frame=3 parent=1
+   dir CORRECT  = (-0.447326,-0.719552,+0.531173)   -> L=(+0.4473,+0.7196,-0.5312)  sun_elev_y=+0.7196
+   dir AS-BUILT = (-0.246250,-0.881891,-0.402031)   -> L=(+0.2463,+0.8819,+0.4020)  sun_elev_y=+0.8819   *** DIVERGES ***
+   up-facing panel (N=+Y): amb=0.250 sun=0.900  correct=0.8976  as-built=1.0000  ratio(as-built/correct)=1.1141
+sands      frame=3 parent=1
+   dir CORRECT  = (+0.231468,-0.581031,+0.780273)   -> L=(-0.2315,+0.5810,-0.7803)  sun_elev_y=+0.5810
+   dir AS-BUILT = (+0.306506,-0.926253,+0.219340)   -> L=(-0.3065,+0.9263,-0.2193)  sun_elev_y=+0.9263   *** DIVERGES ***
+   up-facing panel (N=+Y): amb=0.250 sun=0.900  correct=0.7729  as-built=1.0000  ratio(as-built/correct)=1.2938
+Storm      frame=3 parent=1
+   dir CORRECT  = (+0.639602,-0.426401,+0.639602)   -> L=(-0.6396,+0.4264,-0.6396)  sun_elev_y=+0.4264
+   dir AS-BUILT = (+0.732793,-0.658422,-0.171741)   -> L=(-0.7328,+0.6584,+0.1717)  sun_elev_y=+0.6584   *** DIVERGES ***
+   up-facing panel (N=+Y): amb=0.190 sun=0.420  correct=0.3691  as-built=0.4665  ratio(as-built/correct)=1.2640
+SuperG     frame=3 parent=1
+   dir CORRECT  = (+0.429414,-0.631857,-0.645260)   -> L=(-0.4294,+0.6319,+0.6453)  sun_elev_y=+0.6319
+   dir AS-BUILT = (-0.855761,-0.082031,+0.510827)   -> L=(+0.8558,+0.0820,-0.5108)  sun_elev_y=+0.0820   *** DIVERGES ***
+   up-facing panel (N=+Y): amb=0.300 sun=1.000  correct=0.9319  as-built=0.3820  ratio(as-built/correct)=0.4100
+training   frame=2 parent=1
+   dir CORRECT  = (-0.387516,-0.352184,-0.851937)   -> L=(+0.3875,+0.3522,+0.8519)  sun_elev_y=+0.3522
+   dir AS-BUILT = (+0.734235,-0.029581,+0.678251)   -> L=(-0.7342,+0.0296,-0.6783)  sun_elev_y=+0.0296   *** DIVERGES ***
+   up-facing panel (N=+Y): amb=0.500 sun=1.000  correct=0.8522  as-built=0.5296  ratio(as-built/correct)=0.6214
+Warzone    frame=3 parent=1
+   dir CORRECT  = (+0.816756,-0.560773,-0.135807)   -> L=(-0.8168,+0.5608,+0.1358)  sun_elev_y=+0.5608
+   dir AS-BUILT = (-0.555096,-0.388146,-0.735671)   -> L=(+0.5551,+0.3881,+0.7357)  sun_elev_y=+0.3881   *** DIVERGES ***
+   up-facing panel (N=+Y): amb=0.400 sun=1.000  correct=0.9608  as-built=0.7881  ratio(as-built/correct)=0.8203
+
+SUMMARY: 13 directional lights, 13 diverge between CORRECT and AS-BUILT.
+  suns below the horizon (L.y<=0): CORRECT=0  AS-BUILT=0
