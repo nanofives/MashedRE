@@ -240,9 +240,27 @@ void VehicleContactFixup(int* self)
     const float v1 = local_54[1] + vel[1]; vel[1] = v1;
     const float v2 = local_54[2] + vel[2]; vel[2] = v2;
 
-    // Last-slot guard: the ORIGINAL re-tests the pointer the loop left behind
-    // (slot 17's key), not a fresh scan. Verbatim.
-    if (pfVar7 && *reinterpret_cast<int*>(reinterpret_cast<char*>(pfVar7) - 8) != -1) {
+    // LAST-CONTACT DAMP. [U-9156 2026-09-30] CORRECTED — the guard used to read
+    // slot 17's key against -1 and so never fired; the original reads SLOT 0's key
+    // against -2 and so almost always fires. Both errors skipped the damp, which is
+    // why the port bounced off Training's wall at 4x the original's outgoing speed
+    // and never got away from it (re/analysis/D2_REOPEN_2026-09-29.md §17.3).
+    //
+    //   0046f00d  lea esi,[edi+0x4b4]     ; once, BEFORE the loop
+    //   0046f013  lea eax,[esi-0xc]       ; EAX = rec+0x4a8 = SLOT 0's base
+    //   0046f016  mov [esp+0x1c],eax      ; = [S+0x1c], written once, never rewritten
+    //   0046f522  mov eax,[esp+0x1c]      ; ESP is back at S here
+    //   0046f5ae  mov ecx,[eax+4]         ; = [rec+0x4ac] = SLOT 0's key
+    //   0046f5b1  cmp ecx,-2
+    //   0046f5b4  je  0x46f5f3            ; skip the damp ONLY on -2
+    //
+    // The same displacement `[esp+0x1c]` at 0x0046f347/0x0046f34b is a DIFFERENT
+    // slot: two pushes are live there (0x0046f2cd, 0x0046f342), so it resolves to
+    // [S+0x14] = local_78. Balanced-ESP walk in §17.3.
+    // [UNCERTAIN U-9156] what the -2 sentinel means; its writer is not identified.
+    // The transcription does not depend on knowing.
+    (void)pfVar7;
+    if (Ri(self, 0x4ac) != -2) {
         float fVar5 = local_74 * kFx_Three;                    // 0x0046f5ba
         if (kFx_NyThresh < fVar5) fVar5 = kFx_NyThresh;        // 0x0046f5c0
         vel[0] = (local_54[0] + v0) * fVar5;
