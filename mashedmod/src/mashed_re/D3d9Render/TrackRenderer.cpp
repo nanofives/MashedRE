@@ -748,7 +748,14 @@ bool ParseLightsDffDirectional(const std::uint8_t* d, std::uint32_t len,
                     float v[3] = {frames[pending_frame].rot[6],
                                   frames[pending_frame].rot[7],
                                   frames[pending_frame].rot[8]};
-                    for (int fi = pending_frame; fi >= 0; ) {
+                    // rot[6..8] is the frame's own at-axis ALREADY expressed in
+                    // its parent's space (RW row-vector: at_world =
+                    // (0,0,1)*M_self*M_parent... = row2(M_self)*M_parent...), so
+                    // the parent-chain walk must START AT THE PARENT. Starting at
+                    // pending_frame applied M_self twice and mis-aimed the sun on
+                    // 13/13 tracks -- TRAINING L.y +0.352 -> +0.030.
+                    // re/analysis/CAR_BRIGHTNESS_2026-09-30.md
+                    for (int fi = frames[pending_frame].parent; fi >= 0; ) {
                         const float* m = frames[fi].rot;
                         const float x = m[0]*v[0] + m[3]*v[1] + m[6]*v[2];
                         const float y = m[1]*v[0] + m[4]*v[1] + m[7]*v[2];
@@ -850,7 +857,12 @@ void ParseLightsDffFaithful(const std::uint8_t* d, std::uint32_t len,
                         float v[3] = {frames[pending_frame].rot[6],
                                       frames[pending_frame].rot[7],
                                       frames[pending_frame].rot[8]};
-                        for (int fi = pending_frame; fi >= 0; ) {
+                        // Parent-start, for the same reason as the twin in
+                        // ParseLightsDffDirectional above: rot[6..8] is already
+                        // in the parent's space, so seeding the walk at
+                        // pending_frame composed M_self a second time.
+                        // re/analysis/CAR_BRIGHTNESS_2026-09-30.md
+                        for (int fi = frames[pending_frame].parent; fi >= 0; ) {
                             const float* m = frames[fi].rot;
                             const float x = m[0]*v[0] + m[3]*v[1] + m[6]*v[2];
                             const float y = m[1]*v[0] + m[4]*v[1] + m[7]*v[2];
