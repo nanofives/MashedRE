@@ -128,6 +128,10 @@ void VehiclePhysics_ResetOrientation(int slot, float yaw);
 // of DAT_008815a0 + slot*0xd04): the AI reads +0x9e4 (FUN_0046d6d0) and +0xb0c
 // (FUN_0046d6a0). 0 before VehiclePhysics_Init or for an out-of-range slot/offset.
 float VehiclePhysics_RecordF32(int slot, int off);
+// [U-9156 2026-09-30] int32 at byte offset `off` of the same record. Needed because
+// +0x9ec (the active-contact count the fixup divides by, `fild [edi+0x9ec]` at
+// 0x0046f3cd) is an INTEGER, so reading it as a float gives a denormal, not a count.
+int VehiclePhysics_RecordI32(int slot, int off);
 
 }  // namespace Vehicle
 }  // namespace mashed_re

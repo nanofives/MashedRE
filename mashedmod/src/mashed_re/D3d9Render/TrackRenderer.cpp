@@ -2939,15 +2939,53 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         if (s_ptrace) {
             ++s_pf;
             if (std::FILE* pf = std::fopen("player_trace.log", "a")) {
+                // [U-9156 2026-09-30] a144/a148/a14c = the persistent angular
+                // accumulator ESI[0x51..0x53] that ContactFixup writes at
+                // 0x0046f552/558/55e and BodyOrientationIntegrate integrates
+                // (BodyOrientationIntegrate.cpp:304-315); av = +0x9bc/9c0/9c4 angular
+                // velocity; c9ec = the integer active-contact count [rec+0x9ec] the
+                // fixup divides by (0x0046f3cd). These are the four channels the
+                // ORIGINAL's .msd already carries, so adding them here makes the
+                // cross-side window of §19.3 computable. DIAGNOSTIC ONLY.
                 std::fprintf(pf, "f=%ld dt=%.17g pos=(%.17g,%.17g,%.17g) yaw=%.17g sp=%.17g "
                                  "vel=(%.17g,%.17g,%.17g) gate=%d lap=%d prog=%.17g "
-                                 "b14=%.17g b1c=%.17g v9e4=%.17g\n",
+                                 "b14=%.17g b1c=%.17g v9e4=%.17g "
+                                 "a144=(%.17g,%.17g,%.17g) av=(%.17g,%.17g,%.17g) "
+                                 "c9ec=%d gnd=%.17g bodyfwd=(%.17g,%.17g,%.17g) "
+                                 "n9c8=(%.17g,%.17g,%.17g) r0up=(%.17g,%.17g,%.17g) "
+                                 "r0at=(%.17g,%.17g,%.17g)\n",
                              s_pf, in.dt, car_pos_[0], car_pos_[1], car_pos_[2],
                              car_yaw_, car_speed_, car_vel_[0], car_vel_[1], car_vel_[2],
                              race_[0].gate, race_[0].laps, race_[0].progress,
                              Vehicle::VehiclePhysics_RecordF32(0, 0xb14),
                              Vehicle::VehiclePhysics_RecordF32(0, 0xb1c),
-                             Vehicle::VehiclePhysics_RecordF32(0, 0x9e4));
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x9e4),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x144),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x148),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x14c),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x9bc),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x9c0),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x9c4),
+                             Vehicle::VehiclePhysics_RecordI32(0, 0x9ec),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x9e0),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x9d4),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x9d8),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x9dc),
+                             // +0x9c8/9cc/9d0: BodyOrient_OmegaFromSteer's rotation
+                             // axis. The ORIGINAL's is exactly (0, ~1, 0) on 2333/2333
+                             // frames of orig_solo3.msd (max|x| = max|z| = 0).
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x9c8),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x9cc),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x9d0),
+                             // ring buffer 0's up and at rows (the mirrored body basis,
+                             // SyncContactRingMatrix): matrix at r+0x928, up row +0x938,
+                             // at row +0x948.
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x938),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x93c),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x940),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x948),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x94c),
+                             Vehicle::VehiclePhysics_RecordF32(0, 0x950));
                 std::fclose(pf);
             }
         }

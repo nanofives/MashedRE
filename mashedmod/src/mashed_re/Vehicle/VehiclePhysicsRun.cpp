@@ -377,7 +377,8 @@ static void SyncContactRingMatrix(unsigned char* r, const float* basis, const fl
 }
 
 // Run the ported FUN_0046f6c0 over the track tris (replaces SetGrounded).
-static void SolveWheelContacts(unsigned char* r, const PlayerCarIO& io, int substep) {
+static void SolveWheelContacts(unsigned char* r, const PlayerCarIO& io, int substep,
+                               const float* bodyUp) {
     int* self = reinterpret_cast<int*>(r);
 
     // PERF A/B (MASHED_PHYS_NOCONTACT): skip the terrain probe + solver entirely
@@ -437,10 +438,51 @@ static void SolveWheelContacts(unsigned char* r, const PlayerCarIO& io, int subs
     centre[1] = (nGY > 0) ? (sumGY / nGY) : io.pos[1];
     centre[2] = io.pos[2];
     // +0x9c8/+0x9cc/+0x9d0: the classifier's approach direction (FUN_0046cc40 gate
-    // _DAT_005cc99c=0.3 < faceNormal . this). No first-party writer for it exists in the
-    // ported A5/A6 chain ([UNCERTAIN] which original fn fills it); seed it with the
-    // averaged ground normal so the ground triangle passes the approach test.
-    F(r, 0x9c8) = avgN[0]; F(r, 0x9cc) = avgN[1]; F(r, 0x9d0) = avgN[2];
+    // _DAT_005cc99c=0.3 < faceNormal . this) AND `BodyOrient_OmegaFromSteer`'s steer
+    // ROTATION AXIS (it reads &Fb(rec,0x9c8)) AND the slide term in 0x0046ef70's tail
+    // (`fmul [edi+0x9c8]` @0x0046f644/0x0046f666). Read back by FUN_0046d700, which is a
+    // pure getter: 0x0046d710 `imul eax,eax,0xd04` / 0x0046d716 `mov edx,[eax+0x881f68]`
+    // + the two following dwords, and 0x00881f68 - 0x008815a0 (the record base) = 0x9c8.
+    //
+    // [U-9156 2026-09-30] IT IS THE BODY'S OWN UP AXIS, NOT THE AVERAGED TERRAIN NORMAL.
+    // The old line below seeded it with the averaged per-wheel ground normal, which its
+    // own comment marked [UNCERTAIN]. Measured against the anchored original, that is
+    // wrong on the D2 reference scenario:
+    //   * On all six Training solo captures (verify/d2_reopen_20260929/orig_solo{3,4}.msd,
+    //     verify/a8_steer_20260824/orig_steer{R,L}.msd, orig_a8_elim.msd, peek1.msd;
+    //     1441..1444 driving frames each) +0x9c8 and +0x9d0 are NUMERICALLY ZERO on
+    //     EVERY frame (max|x| = max|z| = 0.000e+00) and +0x9cc lies in
+    //     [0.999923, 1.000077].
+    //   * The surface there is NOT flat: the original's own pos.y (+0x95c) climbs
+    //     0.38063 -> 0.38864 while pos.z goes -3.741 -> -3.452 (orig_solo3 frames
+    //     973..1010), a 1.58 deg z-tilt. So the field cannot be the local ground normal.
+    //   * The port's probe returns the real tri normal there, (0, 0.99951, -0.031236)
+    //     = a 1.79 deg z-tilt, constant over the whole run, and the port's own pos.y
+    //     range 0.42028..0.47480 over pos.z -3.748..-2.003 confirms the tri really is
+    //     tilted. So the two sides disagree about the FIELD, not about the geometry.
+    //   * The off-unit magnitude (0.99992..1.00008) is the signature of an
+    //     ortho-normalized matrix row, and the original's +0x928 `up` row carries the
+    //     same character (0.99990..1.00006) with x/z also zero.
+    //   * It does tilt on other captures (orig_ramp.msd max|x| = 1.000, c2.msd 0.996),
+    //     i.e. it is not hardcoded — it tracks the body, which on a gentle incline the
+    //     suspension keeps level and on a ramp does not.
+    // Consequences of the old value, all measured on verify/u9156b_20260930/p1:
+    // the steer torque w = axis * t acquired a world-Z component every step, so the
+    // integrated basis pitched (record +0x9d8 = +0.04587 where the original's is BITWISE
+    // ZERO on 2333/2333 frames), so ForceIntegrator.cpp:40's forward = xform*(0,0,1)
+    // pointed 2.63 deg above horizontal and the drive force grew a vertical component
+    // (record +0x9b4 = +74.84 at the first wall contact where the original's is BITWISE
+    // ZERO on all 981 pre-contact frames -- this closes §17.4's open [UNCERTAIN]).
+    // MASHED_STEER_AXIS_TERRAIN=1 reverts to the averaged terrain normal for A/B only.
+    static const bool s_axisTerrain = [] {
+        const char* e = std::getenv("MASHED_STEER_AXIS_TERRAIN");
+        return e && e[0] == '1';
+    }();
+    if (s_axisTerrain || !bodyUp) {
+        F(r, 0x9c8) = avgN[0]; F(r, 0x9cc) = avgN[1]; F(r, 0x9d0) = avgN[2];
+    } else {
+        F(r, 0x9c8) = bodyUp[0]; F(r, 0x9cc) = bodyUp[1]; F(r, 0x9d0) = bodyUp[2];
+    }
 
     // 4. the real first-party solver: 3-state machine + broadphase + classifier +
     //    velocity-friction impulse + airborne drift + grounded count. `world` is unused
@@ -475,6 +517,11 @@ void VehiclePhysics_ResetOrientation(int slot, float yaw) {
 float VehiclePhysics_RecordF32(int slot, int off) {
     if (!g_inited || slot < 0 || slot >= 16 || off < 0 || off > static_cast<int>(kRec) - 4) return 0.f;
     return F(rec(slot), static_cast<std::size_t>(off));
+}
+
+int VehiclePhysics_RecordI32(int slot, int off) {
+    if (!g_inited || slot < 0 || slot >= 16 || off < 0 || off > static_cast<int>(kRec) - 4) return 0;
+    return I(rec(slot), static_cast<std::size_t>(off));
 }
 
 void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
@@ -890,7 +937,9 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         // track tris instead of the flat SetGrounded substitute -> per-wheel slope normals
         // (+0x200) + per-wheel grounding (-> A5's mass/grounded_count load = weight transfer).
         const double tp0 = prof::g_on ? prof::NowMs() : 0.0;
-        SolveWheelContacts(r, io, guard);
+        // basis + 4 = the `up` row of the integrated body basis (BodyOrient_Init's
+        // m[4..6]); it is what record +0x9c8/+0x9cc/+0x9d0 holds on the original.
+        SolveWheelContacts(r, io, guard, basis + 4);
         if (prof::g_on) { prof::f_probeMs += prof::NowMs() - tp0; ++prof::f_substeps; }
 
         // --- 0x00470ae8 / 0x00470aef / 0x00470afe: the car<->world contact pair ---
