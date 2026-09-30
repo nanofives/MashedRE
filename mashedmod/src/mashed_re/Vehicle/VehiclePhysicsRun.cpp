@@ -885,6 +885,30 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // after +0x9e4 was written. This log says what, and by how much.
     static const char* const s_svpLog = std::getenv("MASHED_SUBSTEP_VELPROBE");
     static int s_svpLines = 0;
+    // [D2 section 22.3] One emitter, called from BOTH exits of the retry loop, so the
+    // contact substeps cannot be skipped the way section 22.2's version skipped them.
+    // `contacted` is -1 when the world-contact block did not run at all, which keeps
+    // "no contact scan" distinguishable from "scan said zero" -- memory
+    // `all-zero-field-reads-prove-nothing-on-their-own`.
+    auto svpEmit = [&](int pass_, float dt_, const float* v, const unsigned* w0,
+                       int contacted_, int fixups_) {
+        if (!s_svpLog || s_svpLines >= 4000) return;
+        const float vEnd = SvpVelMag(r);
+        if (std::FILE* lf = std::fopen(s_svpLog, "a")) {
+            std::fprintf(lf, "slot=%d pass=%d dt=%.6f vTop=%.6f vPreWheel=%.6f "
+                             "vPostWheel=%.6f vEnd=%.6f r9e4=%.6f r9e4_over_v=%.6f "
+                             "wr=[%u,%u,%u] c9ec=%d contacted=%d fixups=%d gnd=%.1f\n",
+                         slot, pass_, dt_, v[0], v[1], v[2], vEnd,
+                         F(r, off::kSpeed),
+                         (vEnd > 1e-3f ? F(r, off::kSpeed) / vEnd : 0.f),
+                         Collision::g_wcsVelWrites[0] - w0[0],
+                         Collision::g_wcsVelWrites[1] - w0[1],
+                         Collision::g_wcsVelWrites[2] - w0[2],
+                         I(r, 0x9ec), contacted_, fixups_, F(r, 0x9e0));
+            std::fclose(lf);
+        }
+        ++s_svpLines;
+    };
 
     float remMs = frameMs;
     int guard = 0;
@@ -959,8 +983,10 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         const double tp0 = prof::g_on ? prof::NowMs() : 0.0;
         // [D2 section 22.2] substep velocity probe, points 1 and 2 (substep top / just
         // before the wheel solver). Held in locals; emitted after the fixup below.
-        float svpV[4] = { 0.f, 0.f, 0.f, 0.f };
+        float svpV[3] = { 0.f, 0.f, 0.f };
         unsigned svpW0[3] = { 0u, 0u, 0u };
+        int svpFixups = 0;
+        bool svpEmitted = false;
         if (s_svpLog && s_svpLines < 4000) {
             svpV[0] = SvpVelMag(r);
             svpV[1] = svpV[0];
@@ -987,6 +1013,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
             const float pv[3] = { F(r, off::kVelocity + 0), F(r, off::kVelocity + 4),
                                   F(r, off::kVelocity + 8) };
             Collision::VehicleContactFixup(wcSelf);                          // 0x00470afe
+            ++svpFixups;   // [D2 section 22.3] fixups this substep, for the cadence count
             if (s_wcLog && s_wcLines < 4000) {
                 if (std::FILE* lf = std::fopen(s_wcLog, "a")) {
                     std::fprintf(lf,
@@ -1021,28 +1048,18 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                 }
                 ++s_wcLines;
             }
+            // [D2 section 22.3] CORRECTED emit point. It used to sit BELOW the `continue`
+            // on the next line, so every substep that CONTACTED was skipped and the log
+            // read `c9ec == 0` on 4000 of 4000 lines while `world_contact.log` from the
+            // same run held 211 fixups. Emitting here, before the retry `continue`, is
+            // what makes the contact substeps visible at all.
+            svpEmit(pass, chunkMs, svpV, svpW0, contacted, svpFixups);
+            svpEmitted = true;
             if (contacted != 0) continue;    // 0x00470b06/0x00470b0a: re-run the substep
         }
-        // [D2 section 22.2] emit the substep velocity probe. Point 3 is the fixup entry
-        // (the point at which the original's `+0x9e4 / |velocity|` is 1.000000) and the
-        // deltas 0->2 and 2->3 say which stage moved the velocity after A6a wrote +0x9e4.
-        if (s_svpLog && s_svpLines < 4000) {
-            svpV[3] = SvpVelMag(r);
-            if (std::FILE* lf = std::fopen(s_svpLog, "a")) {
-                std::fprintf(lf, "slot=%d pass=%d dt=%.4f vTop=%.6f vPreWheel=%.6f "
-                                 "vPostWheel=%.6f vEnd=%.6f r9e4=%.6f r9e4_over_v=%.6f "
-                                 "wr=[%u,%u,%u] c9ec=%d gnd=%.1f\n",
-                             slot, pass, chunkMs, svpV[0], svpV[1], svpV[2], svpV[3],
-                             F(r, off::kSpeed),
-                             (svpV[3] > 1e-3f ? F(r, off::kSpeed) / svpV[3] : 0.f),
-                             Collision::g_wcsVelWrites[0] - svpW0[0],
-                             Collision::g_wcsVelWrites[1] - svpW0[1],
-                             Collision::g_wcsVelWrites[2] - svpW0[2],
-                             I(r, 0x9ec), F(r, 0x9e0));
-                std::fclose(lf);
-            }
-            ++s_svpLines;
-        }
+        // Not-contacted path (and the `!s_worldContact` A/B revert never reaches here,
+        // it breaks out above): emit once so a non-contact substep still appears.
+        if (!svpEmitted) svpEmit(pass, chunkMs, svpV, svpW0, -1, svpFixups);
         break;
         }   // end retry
         remMs -= chunkMs;
