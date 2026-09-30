@@ -480,6 +480,94 @@ opinion is an opinion about the scaffold, not about the port.
 > **Order: D2 must close again BEFORE the D3 modes 3/7 port starts.** §D3's closure path
 > (`FUN_00414c30` + `FUN_00484c70`) is on hold until then.
 
+> #### Re-close attempt 8 — 2026-09-30. **STILL REOPENED. The first diverging term is NAMED and traced to an RVA; both code-level hypotheses it generated are REFUTED, so no fix was authored.**
+>
+> Full record: `re/analysis/D2_REOPEN_2026-09-29.md` **§22** (§22.1 is the rule, pre-registered
+> and committed before any run; §22.2 is the result). Commits `74287459` (pre-registration),
+> `a7311790` (tooling), `e0177628` (§22.2), `a3bd4ce6` (artefacts).
+> **No physics change was authored** — this attempt was measurement plus default-OFF
+> instrumentation. `MASHED_A6_FORCE_HIGHARM` was **not** added (user decision: no deliberately
+> unfaithful knob).
+>
+> **FIRST DIVERGING TERM: `d = +0`, channel C4 — the post-bounce horizontal speed.**
+> ORIGINAL `219.89064`, PORT `251.47744`, `|delta| 31.5868` against `tol 25.1477`, with every
+> channel earlier in the registered scan order inside tolerance. **RVA: the last-contact damp
+> at `0x0046f5ba` / `0x0046f5c0` inside `VehicleContactFixup` `0x0046ef70`.** Frames are aligned
+> on each side's own first-bounce frame (`B_orig = 981`, `B_port = 81`, both inside the
+> registered windows).
+>
+> **The decomposition, measured against the RUNNING original** (new entry-only
+> `scenario_launch.py --fixup-probe`, which reads the live 18-slot contact set at the one point
+> in the frame where it exists — the `.msd` cannot, its slots are `-1` on 2332 of 2333 frames):
+> - **`0x0046ef70`'s impulse is FAITHFUL.** `local_54` = `(2417.77, -324.51, -141.34)` original
+>   against `(2424.47, -325.4, -141.19)` port = **0.28% / 0.27% / 0.11%**. The slot producer is
+>   faithful too: arm, scale, normal and magnitude agree to 4-5 digits.
+> - **The whole divergence is the damp**, `0.2475405` against `0.2756187` = **+11.34%**, and the
+>   damp **amplifies its `+0x9e4` input 11.1x**.
+> - contact counts: **23 in 2332 frames** (original) against **211 in 1625** (port) — 13x.
+>
+> **Both hypotheses refused, by measurement, before any code was written:**
+> - **`+0x9e4` is not `|velocity|`** on the port (median **1.017098**, n=211) where the original
+>   holds it at **1.000000** (n=23 fixup entries, 0 samples off by >1e-3; also 1.0000022 at 1157
+>   `0x0046f6c0` and 1157 `0x00469aa0` entries). **Circular, not independent:** a capstone sweep
+>   of `0x00467650..0x00468990` (1243 instructions, reached `0x00468989`) finds the only two
+>   `+0x9e4` stores at `0x00467673` and `0x004686cc`, and **`0x004686cc` precedes grip-clamp #6
+>   at `0x004687f0`** — the original writes it before the clamp too, so the gap is the port
+>   clamp's own excess bleed read out downstream.
+> - **the port's substep writes velocity where the original's does not** — **REFUTED bitwise on
+>   both sides.** The original's velocity is bitwise unchanged across `0x0046f6c0` on
+>   **2945/2945**, `0x00469aa0` on **2945/2945** and the substep entry `0x004709a0` on
+>   **2932/2932**; the port's three `WheelContactSolver` velocity-write sites fire **0 times in
+>   4000 substeps** with the velocity bitwise unchanged **4000/4000**.
+>
+> **THE BASIN MECHANISM — this is what attempt 8 was sent to find, and it is a threshold.** The
+> damp has a knee: `|m|/+0x9e4 <= 0.7` saturates it at the `0.9` cap (keep 90%), above the knee
+> retention falls as `3*(1 - |m|/+0x9e4)`. `|m|` is the slot impulse along the wall normal, so
+> the quantity is `|cos(velocity, wall normal)|`.
+>
+> > **The ORIGINAL is on the 0.9 cap on 15 of its 23 fixups (65.2%). The PORT is on it 0 of 211
+> > (0.0%).** The original's `|cos|` falls monotonically across its 10-contact post-bounce train
+> > (frames 978, 997, 1010, 1022, 1034, 1046, 1059, 1071, 1083, 1096: `0.918, 0.700, 0.596,
+> > 0.557, 0.556, 0.542, 0.513, 0.465, 0.406, 0.328`), crosses under the knee at contact 1 and
+> > escapes — a 158-frame gap to the next contact, at speed 2290. The port's **rises** (`0.908,
+> > 0.766, 0.788, 0.781, 0.788, 0.809, 0.815, 0.815, 0.817`) and locks on a **fixed point**:
+> > `|cos| ~ 0.827`, damp `~0.55`, `pre_h ~ 55`, `post_h/pre_h ~ 1.11`. **`pre_h ~ 55` is
+> > exactly §21.5's 40-70 residency band** (238 of 1352 frames).
+>
+> **Scored 3 of 3 as a NO-CHANGE control on the instrumentation added, HEAD:**
+>
+> | metric | port | n | median speed | PASS interval | verdict |
+> |---|---:|---:|---:|---|---|
+> | slip 1500-2000 | **0.2033** | 20 | 1683.53 (in band) | 0.18855 .. 0.19635 | **FAIL** (+3.4% past the bound) |
+> | slip 2000-2600 | **—** | 0 | — | 0.24488 .. 0.25487 | **UNSCORABLE** |
+> | driving-median | **1355.66** | 54 | 1355.66 | 1904.70 .. 1982.44 | **FAIL** (-30.2%) |
+>
+> Identical to §21.6 to every printed digit on 3 of 3 runs; whole-window median horizontal
+> speed **26.36**, 1080/1080 grounded. Build gate met: `allowlisted=122 NEW=0`.
+>
+> **A near-miss is on the record rather than hidden:** pairing the original's post-fixup
+> velocity with the next substep entry produced a false "71% tangential-impulse deficit". A6a
+> `0x00467650` runs once per frame before the substep loop and writes `+0x9b0`, so that pair
+> crosses a frame boundary. Adding A6a as probe site 2 flags those pairs and the impulse then
+> agrees to 0.11-0.28%.
+>
+> **NEXT, and it is NOT inside A6a.** Both sides leave the first bounce with nearly the same
+> velocity direction (`0.7739` original, `0.7475` port — the port's is the *more* tangential)
+> and nearly the same nose. What differs is the **time between contacts**: 19 frames on the
+> original against 1-2 on the port, so the original gets an order of magnitude more free flight
+> to rotate its velocity before the wall is asked again. **That is a contact-CADENCE question**,
+> and it is the first framing in this re-open that is neither inside A6a nor slip-coupled. The
+> per-contact depth series rules out penetration depth (both graze: original `-0.02056,
+> -0.00038, -0.00123, -0.00011`; port `-0.0159, -0.0040, -0.0023, -0.0006`), so the question is
+> how often the hull returns to the plane: `VehicleContactHistoryUpdate` `0x00470ae8` /
+> `ContactHistoryLookup` `0x00468b40` and the 32-slot history at `veh+0xbfc`. §19 tested "the
+> original re-latches too" and that stands; it did **not** test "how often it re-penetrates".
+>
+> **Do NOT re-open:** the fixup impulse (faithful to 0.11-0.28%), the substep velocity chain
+> (bitwise faithful), the `+0x9e4` write order (`0x004686cc` before `0x004687f0` on the original
+> too), grip-clamp #6 (§21.5, byte-faithful), or the `l_60` / `ld4` lane (§21.10, measured out).
+
+
 > #### Re-close attempt 7 — 2026-09-30. **STILL REOPENED. The registered test fired, three readings are withdrawn, grip-clamp #6 is proven byte-faithful, and the defect is its INPUT `l_60`.**
 >
 > Full record: `re/analysis/D2_REOPEN_2026-09-29.md` §21. Commits `914465e6` (pre-registered
