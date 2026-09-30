@@ -1,15 +1,117 @@
 # Next session kickoff
 
-Updated 2026-09-30 at the close of the **D2 re-close attempt 8** session (the post-bounce
-divergence rule was pre-registered and run without amendment; the first diverging term is
-named and traced to an RVA; `0x0046ef70`'s impulse and the whole substep velocity chain are
-proven faithful; the `+0x9e4` gap is proven circular; and the basin's mechanism is now a
-measured threshold with a cap-residency statistic. No fix was authored, because both
-hypotheses the named term generated were refused by measurement).
+Updated 2026-09-30 at the close of the **D2 re-close attempt 9** session (an audit of attempt 8
+rather than an extension of it: a blind spot in attempt 8's own instrument was found and fixed,
+which STRENGTHENED one of its claims and WITHDREW another; the cadence lane was refuted by its
+own pre-registered rule; and a new fidelity defect was banked as measured-inert).
 Branch `race/first-frame-parity`. Nothing is pushed.
-Superseded kickoffs: the attempt-7, attempt-6, attempt-5 and attempt-4 ones, all kept below.
+Superseded kickoffs: the attempt-8, attempt-7, attempt-6, attempt-5 and attempt-4 ones, kept below.
 
-> ## START HERE — D2 is STILL REOPENED. The basin is the fixed point of a damp KNEE, and the open question is CONTACT CADENCE, not force.
+> ## START HERE — D2 is STILL REOPENED. Six routes are now CLOSED by measurement. Do not start the next attempt inside A6a or inside `0x0046ef70`.
+>
+> Read [`re/analysis/D2_REOPEN_2026-09-29.md`](analysis/D2_REOPEN_2026-09-29.md) **§22**
+> (§22.4 first, then §22.2, then §22.1/§22.3 for the two rules). **Do not re-derive any of it.**
+>
+> **The §3 bounds are unchanged and are not renegotiable.** PASS intervals:
+> `slip 1500-2000` **0.18855 .. 0.19635**, `slip 2000-2600` **0.24488 .. 0.25487**,
+> `driving-median` **1904.70 .. 1982.44**. The arm is still §16.7
+> (`MASHED_STEER_HOLD_AFTER=0`), `MASHED_MEASURE_SOLO=1`, `MASHED_TRACK_SEL=12`.
+>
+> ### Scored at HEAD, 3 of 3 — a NO-CHANGE control (attempts 8 and 9 added no physics)
+>
+> | metric | port | n | median speed | interval | verdict |
+> |---|---:|---:|---:|---|---|
+> | slip 1500-2000 | **0.2033** | 20 | 1683.53 (in band) | 0.18855..0.19635 | **FAIL** +3.4% |
+> | slip 2000-2600 | **—** | 0 | — | 0.24488..0.25487 | **UNSCORABLE** |
+> | driving-median | **1355.66** | 54 | 1355.66 | 1904.70..1982.44 | **FAIL** -30.2% |
+>
+> Whole-window median horizontal speed **26.36**, 1080/1080 grounded. `allowlisted=122 NEW=0`.
+>
+> ### PICK UP HERE — read the CLOSED list first, because it is most of the map now
+>
+> **SIX routes are closed by measurement. Re-opening any of them is wasted effort:**
+> 1. **`0x0046ef70`'s impulse** — `local_54` = `(2417.77, -324.51, -141.34)` original against
+>    `(2424.47, -325.4, -141.19)` port = **0.28% / 0.27% / 0.11%** (§22.2). The slot producer
+>    agrees to 4-5 digits on arm, scale, normal and magnitude.
+> 2. **the substep velocity chain, on BOTH contact and non-contact substeps.** The ORIGINAL is
+>    bitwise unchanged across `0x0046f6c0` on 2945/2945, `0x00469aa0` on 2945/2945 and
+>    `0x004709a0` on 2932/2932; the PORT's three `WheelContactSolver` write sites fire **0
+>    times in 4000 substeps including all 160 that contact**, `vTop == vPostWheel` 160/160
+>    (§22.2 + §22.4). Both sides write `+0x9b0` in exactly two places per frame.
+> 3. **`+0x9e4`'s write order** — `0x004686cc` precedes grip-clamp #6 at `0x004687f0` on the
+>    original too (capstone, 1243 instructions, reached `0x00468989`), so the port's
+>    `+0x9e4/|velocity|` of **1.017098** against the original's **1.000000** is the port
+>    clamp's own excess bleed read out downstream. Circular (§22.2).
+> 4. **grip-clamp #6** — byte-faithful, both arms, six constants, two floors (§21.5).
+> 5. **the `l_60` / `ld4` lane** — measured out; every factor agrees cross-side or is
+>    slip-coupled, and the one independent defect is worth 10.9% (§21.10).
+> 6. **the contact CADENCE** — **REFUTED** (§22.4, U-9159 struck). Inter-contact interval over
+>    the ten contacts after each side's own first bounce: ORIGINAL **median 12**
+>    (19,13,12,12,12,13,12,12,13) against PORT **median 10** (21,12,12,12,10,9,8,8,8,8),
+>    ratio **0.833** against the pre-registered 0.5 floor. 1 fixup per contacting frame on
+>    **160 of 160** — no doubling. §22.2's "19 frames against 1-2" was an inference and is
+>    **WITHDRAWN**.
+>
+> **WHAT IS OPEN, stated as precisely as it can be.** The damp at `0x0046f5ba`/`0x0046f5c0` has
+> a knee at `|m|/+0x9e4 = 0.7`, saturating at the `0.9` cap. **The original is on that cap on
+> 15 of 23 fixups (65.2%); the port on 0 of 211 (0.0%).** With the cadence now known to AGREE,
+> the whole difference is the speed trajectory through the post-bounce contact train:
+>
+> | | gains | median per gap | net over 10 contacts |
+> |---|---:|---:|---:|
+> | ORIGINAL | 7 of 9 | **+17.84** | **+338.74** (219.89 -> 405.82) |
+> | PORT | 2 of 9 | **-17.84** | **-105.00** (251.48 -> 42.13) |
+>
+> **Gap 0 is the like-for-like one and it is the tightest number in the lane:** matched speed
+> (219.89 against 251.48), matched free flight (19 frames against 21), full throttle on both,
+> and the original nets **+11.63** while the port nets **-14.54** — a 26-unit swing. The port
+> then locks on a fixed point at `|cos| ~ 0.827`, damp `~0.55`, speed `~55`, which is §21.5's
+> 40-70 residency band.
+>
+> **[UNCERTAIN U-9156] That is a statement of the residual, not a term.** "The port loses speed
+> between contacts where the original gains" is the `driving-median` failure restated in the
+> post-bounce regime, and its mechanism is the bleed §21.2 measured at 100x and §21.10 then
+> measured out from inside the loop. **So do NOT open the next attempt inside A6a or inside
+> `0x0046ef70`** — both are exhausted. What has never been measured cross-side is the
+> BETWEEN-CONTACT longitudinal dynamics as its own budget: the drive force actually applied per
+> frame against the drag/grip actually removed, at matched speed, over gap 0's 19-21 frames.
+> §20.10's "no drive-force deficit" was withdrawn and re-measured in a different band
+> (100-200, gains-only), so it does **not** cover this.
+>
+> ### Banked, real, and measured NOT to be on the trap's path — U-9160
+> The port runs **3** substeps per frame and **4** on a contacting frame, against the original's
+> fixed **2**. `dt` over 4000 substeps: **2720 at `25.000000`, 1280 at `0.000004`**; the residue
+> is `3.8146973e-06`, exactly `frameMs = (1.0f/60.0f)*3000.0f = 50.000004f` minus two 25s
+> (`VehiclePhysicsRun.cpp:891`). Original: `0x00469ad4 mov ebx,2`, measured `4662/2331` and
+> `2932/1466`. **The residue pass contacts 0 of 1280 and writes velocity 0 of 1280.** Target
+> invariant if it is fixed: substeps per frame == 2, no contacting-frame exception beyond the
+> documented `0x00470ab0` retry.
+>
+> ### The instrument lesson this attempt paid for — read before trusting any coverage claim
+> `MASHED_SUBSTEP_VELPROBE`'s emit sat **after** `if (contacted != 0) continue;`, so it was
+> skipped on exactly the substeps that contact, and the log read **`c9ec == 0` on 4000 of
+> 4000** while `world_contact.log` from the SAME run held **211 fixups**. A "0 of N" result is
+> only evidence if the instrument can be shown to cover the N. Cross-check every coverage
+> claim against a second channel from the same run before committing it.
+>
+> ### Tooling (attempts 8-9, all read-only or default-OFF)
+> - `scenario_launch.py --fixup-probe` — entry hooks on `0x0046ef70` (site 0), `0x004709a0` (1),
+>   `0x00467650` (2, the FRAME marker), `0x0046f6c0` (3), `0x00469aa0` (4), with a register
+>   self-check and the **live 18-slot contact set**. The only way to see the slots: the `.msd`
+>   has them key `-1` on 2332 of 2333 frames and `+0x9ec` is 0 on every frame.
+> - `MASHED_SUBSTEP_VELPROBE` — **corrected**; per-substep `|velocity|` at four points plus
+>   `c9ec`, `contacted`, `fixups` and the three velocity-write counters, emitted from both
+>   exits of the retry loop.
+> - `re/tools/statediff/a9_bounce.py` — bounce-aligned cross-side comparator (measures its own
+>   `player_trace`/`motion_diag` join offset: `md_line = pt_f + 1`, 0 of 1625 mismatches).
+> - `re/tools/statediff/a9_fixup.py` — per-contact damp/knee table with the frame-boundary flag.
+>
+> Artefacts: `verify/d2_bounce_20260930/` and `verify/d2_cadence_20260930/`.
+>
+> **The D3 modes 3/7 hold stands. D2 must close before it starts.**
+
+
+> ## SUPERSEDED (attempt 8) — the first diverging term named; the cadence claim in it is WITHDRAWN by attempt 9
 >
 > Read [`re/analysis/D2_REOPEN_2026-09-29.md`](analysis/D2_REOPEN_2026-09-29.md) **§22**
 > (§22.2 first, then §22.1 for the rule it was measured under). **Do not re-derive any of it.**

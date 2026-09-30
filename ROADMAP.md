@@ -480,6 +480,88 @@ opinion is an opinion about the scaffold, not about the port.
 > **Order: D2 must close again BEFORE the D3 modes 3/7 port starts.** §D3's closure path
 > (`FUN_00414c30` + `FUN_00484c70`) is on hold until then.
 
+> #### Re-close attempt 9 — 2026-09-30. **STILL REOPENED. The cadence lane is REFUTED by its own pre-registered rule, and two of attempt 8's claims are corrected — one withdrawn, one strengthened.**
+>
+> Full record: `re/analysis/D2_REOPEN_2026-09-29.md` **§22.3** (the rule + the correction,
+> committed before any run) and **§22.4** (the result). Commits `cc5d376b`, `d76bb90f`.
+> **No physics change** — the only non-comment source edit is a default-OFF probe restructure
+> plus one local counter.
+>
+> **This attempt audited attempt 8 instead of extending it, and that was the right call twice.**
+>
+> **1. A blind spot in attempt 8's own instrument, found by re-reading the log it committed.**
+> `MASHED_SUBSTEP_VELPROBE`'s emit sat after the world-contact block's
+> `if (contacted != 0) continue;`, so it was skipped on exactly the substeps that contact. The
+> signature was already in the committed data: **`c9ec == 0` on all 4000 logged substeps while
+> `world_contact.log` from the same run held 211 fixups.** Corrected to one emitter called from
+> both exits of the retry loop; it now sees **160 contact substeps** where the old one saw 0 of
+> 4000, and the two paths cover 4000/4000.
+>
+> **That STRENGTHENED attempt 8 rather than weakening it.** §22.3 had to narrow §22.2's
+> hypothesis-B refutation to non-contact substeps. Measured on the 160 contact substeps the
+> corrected log exposes: `kFricVel` **0**, `kFricImp` **0**, drift **0**, and
+> `vTop == vPostWheel` on **160 of 160**. So the claim now stands **unqualified** at 4000/4000
+> including every contacting substep, and — with the original's bitwise 2945/2945, 2945/2945 and
+> 2932/2932 — **both sides write `+0x9b0` in exactly two places per frame**, A6a `0x00467650`
+> and `VehicleContactFixup` `0x0046ef70`.
+>
+> **2. §22.2's cadence claim is WITHDRAWN and U-9159 is REFUTED.** "19 frames on the original
+> against 1-2 on the port" was an **inference** from fixup ordinals matched against per-frame
+> speeds, never a frame index. Measured with the corrected probe:
+>
+> | inter-contact interval, the ten contacts after each side's own first bounce | values | n | median |
+> |---|---|---:|---:|
+> | ORIGINAL | 19, 13, 12, 12, 12, 13, 12, 12, 13 | 9 | **12** |
+> | PORT | 21, 12, 12, 12, 10, 9, 8, 8, 8, 8 | 10 | **10** |
+>
+> `I_port / I_orig = 0.833`, clearing the pre-registered `0.5`, so §22.3's branch 1 fired:
+> **the cadence is not the mechanism**, U-9159 is struck as resolved-by-refutation, and no fix
+> was authored on it. The port's fixups do not double either — **1 per contacting frame on 160
+> of 160**. The 13x whole-race ratio (23 of 2332 against 211 of 1625) is real but is the
+> **consequence** of not escaping: the original stops contacting after its tenth (158-frame gap,
+> next contact at speed 2290) while the port continues at a median interval of 7 (n=159).
+>
+> **3. U-9160 opened — a real fidelity defect, measured NOT to be on the trap's path.** The
+> port runs **3** substeps per frame and **4** on a contacting frame, against the original's
+> fixed **2**: `dt` takes exactly two values over 4000 substeps, **2720 at `25.000000` and 1280
+> at `0.000004`**, and the residue is `3.8146973e-06` — exactly what
+> `frameMs = (1.0f/60.0f)*3000.0f = 50.000004f` minus two 25s leaves at
+> `VehiclePhysicsRun.cpp:891`. The original's count is the fixed `0x00469ad4 mov ebx,2`
+> (`4662/2331` and `2932/1466` measured). **Inert here:** the residue pass contacts **0 of
+> 1280** and writes velocity **0 of 1280**, and all 160 fixups land on `dt = 25` substeps.
+> Banked with a clean target invariant rather than fixed opportunistically.
+>
+> **4. The sharpest matched statement of the residual, recorded and NOT offered as a lever.**
+> Per contact gap, horizontal speed at the contact frame against the frame before the next:
+> the **ORIGINAL gains on 7 of 9** (median `+17.84`, net `+338.74`, 219.89 -> 405.82) and the
+> **PORT loses on 7 of 9** (median `-17.84`, net `-105.00`, 251.48 -> 42.13). **Gap 0 is
+> like-for-like** — matched speed 219.89 against 251.48, matched free flight 19 frames against
+> 21, full throttle both — and the original nets **`+11.63`** where the port nets **`-14.54`**.
+> That is the `driving-median` failure restated in the post-bounce regime; its mechanism is the
+> bleed §21.10 already measured out, so it names no term. `[UNCERTAIN U-9156]`
+>
+> **Scored 3 of 3 as a no-change control:**
+>
+> | metric | port | n | median speed | PASS interval | verdict |
+> |---|---:|---:|---:|---|---|
+> | slip 1500-2000 | **0.2033** | 20 | 1683.53 (in band) | 0.18855 .. 0.19635 | **FAIL** (+3.4%) |
+> | slip 2000-2600 | **—** | 0 | — | 0.24488 .. 0.25487 | **UNSCORABLE** |
+> | driving-median | **1355.66** | 54 | 1355.66 | 1904.70 .. 1982.44 | **FAIL** (-30.2%) |
+>
+> Identical to §21.6 and §22.2 to every printed digit. `allowlisted=122 NEW=0`.
+>
+> **CLOSED by measurement — six routes, do not re-open:** the fixup impulse (§22.2,
+> 0.11-0.28%); the substep velocity chain on **both** contact and non-contact substeps (§22.2 +
+> §22.4); `+0x9e4`'s write order (§22.2, `0x004686cc` precedes `0x004687f0`); grip-clamp #6
+> (§21.5); the `l_60` / `ld4` lane (§21.10); the contact cadence (§22.4).
+>
+> **OPEN — the same loop from a third angle.** The original's post-bounce contact train
+> accelerates and sits on the `0.9` damp cap for 15 of 23 fixups; the port's decelerates and is
+> on the cap 0 of 211; and the cadence agrees. Every route into that from inside A6a and from
+> inside `0x0046ef70` is now measured and faithful, so **the next attempt should not start in
+> either.**
+
+
 > #### Re-close attempt 8 — 2026-09-30. **STILL REOPENED. The first diverging term is NAMED and traced to an RVA; both code-level hypotheses it generated are REFUTED, so no fix was authored.**
 >
 > Full record: `re/analysis/D2_REOPEN_2026-09-29.md` **§22** (§22.1 is the rule, pre-registered
