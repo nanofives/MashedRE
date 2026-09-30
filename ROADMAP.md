@@ -480,6 +480,84 @@ opinion is an opinion about the scaffold, not about the port.
 > **Order: D2 must close again BEFORE the D3 modes 3/7 port starts.** §D3's closure path
 > (`FUN_00414c30` + `FUN_00484c70`) is on hold until then.
 
+> #### Re-close attempt 3 — 2026-09-29 (fourth session that day). **STILL REOPENED. The arm itself was cross-track, and the residual is now a named unported function.**
+>
+> Write-up: [`re/analysis/D2_REOPEN_2026-09-29.md`](re/analysis/D2_REOPEN_2026-09-29.md)
+> §13-§14. Commits `36600fe5` (the registration + the loop plot), `639ae31c` (the corrected
+> arm + the root cause). **The §3 bounds are untouched.**
+>
+> **The two arms were racing DIFFERENT TRACKS.** The ORIGINAL arm raced **Training**; the
+> PORT arm raced **Arctic**. Four witnesses: `scenario_launch.py:1773-1777` defaults
+> `--track` to **0 = Training** and none of the four reference captures passes `--track`;
+> `a8_run_port.py:16` fixes `MASHED_TRACK_SEL=0` and `GameFlow.cpp:38` `kAreas[0]` is
+> **Arctic**; `mashed_re.log` under the port argv reads `R4 track load OK:
+> original/TOASTART/TRACKS/Arctic.piz`; and the spawn points are 33 world units apart —
+> original `(+0.5009, +0.4374, -1.9990)` (= Training's `gate0`) vs port
+> `(-26.5640, +0.0375, +17.0107)`. **Same class of defect as the three-cars-vs-one that
+> reopened D2.** `exe_main.cpp:2071-2079` already carried the lesson in a comment; the a8
+> recipe was never moved onto the `kAreas`-wide override. Filed and closed as **U-9153**;
+> the corrected port arm is `MASHED_TRACK_SEL=12` (§13.3), registered **before** measuring.
+>
+> **This answers §12.4's open trajectory-vs-mesh question as NEITHER.** Both loops plotted
+> on their track's `COLLISIONS.BSP` soup (new read-only `re/tools/statediff/loop_plot.py`,
+> plot `verify/d2_offmesh_20260929/loops_crosstrack.png`): the ORIGINAL loop is 212/212
+> on-mesh on Training and 151/212 on Arctic; the PORT loop is 203/203 on-mesh on Arctic and
+> 143/203 on Training. No area exists where the original drives and the port's mesh is
+> missing, and the port's trajectory cannot be called wrong from fires the reference never
+> reached. **§12.4's "bearings cover the whole circle, not a hole in `col_tris_`" is
+> withdrawn as a reading** — the 46 fires lie on three straight axis-aligned road edges
+> (`x = -24.25`, `z = +35.95`, `x = -0.40`), which a bearing histogram about their centroid
+> cannot see.
+>
+> **The corrected arm, 3 of 3 runs bit-identical (§3b satisfied; the U-9148 second
+> attractor did not appear):**
+>
+> | metric | PASS interval | attempt 2 (Arctic) | **attempt 3 (Training)** | verdict |
+> |---|---|---:|---:|---|
+> | slip 1500-2000 | 0.18855 .. 0.19635 | 0.1445 | **0.1605** | **FAIL** (-16.6%; **n=13**, fragile) |
+> | slip 2000-2600 | 0.24488 .. 0.25487 | 0.2557 | **0.3086** | **FAIL** (+23.5%) |
+> | driving-median | 1904.70 .. 1982.44 | 1740.54 | **2437.93** | **FAIL** (+25.4%) |
+>
+> Two of the three moved further out. Reported as-is: correcting the arm was not a tuning
+> step and its job was to make the comparison legitimate, not to improve a number.
+> `RecoverOffMesh` fires **46 -> 0** on the corrected arm, so §12's whole mechanism (35 slip
+> resets per 1080 frames) was a consequence of the wrong track and is not a factor.
+>
+> **The residual is NOT a 25%-too-fast car.** Driving-frame speed quantiles agree at the top
+> and diverge only at the bottom: p95 **0.99x**, p99 **0.97x**, max **0.97x**, but p25
+> **1.65x** and p10 **2.47x**. The original's low tail is **wall impacts** (frame 980->981:
+> `vel.x` `-1716.69` -> `+176.47`, `pos.x` pinned 18 frames, speed 1832 -> 191). Training's
+> `COLLISIONS.BSP` has the wall — 41 of the 69 triangles in that box are XZ-degenerate,
+> including planes at `x = -3.000` and `x = -2.500` — and `HeightOnSoup`
+> (`TrackRenderer.cpp:2098`) discards exactly those, so the port drives through both (its
+> loop reaches `x = -4.721`).
+>
+> **ROOT CAUSE, with RVAs — U-9154.** `VehicleContactScanUpdate` `0x00469aa0` is ported
+> (`Collision/CarWorldContacts.cpp:387`) and **has no caller**. Its only call site in the
+> image is `0x00470ae8` (new `re/tools/callsites.py`, which confirms each byte-pattern hit
+> by disassembling it; control on A6b `0x00468980` returns its one known site `0x00470943`),
+> inside **`VehicleCollisionBroadPhase` `0x004709a0`** (C2, `mapped`): integrate
+> `0x0046e9e0` -> wheel contacts `0x0046f6c0` -> `0x00469aa0` -> fixup `0x0046ef70`, with the
+> whole substep **re-run** while a contact is reported (`0x00470ab0` / `0x00470b0a`).
+> Blockers named rather than guessed: `Rw_VtableDispatch` is a no-op stub
+> (`ContactStubs.cpp:78`), A9 `0x0046e9e0` is unported so nothing reads `+0x4c0`, and the
+> retry needs `0x004709a0`.
+>
+> **`RecoverOffMesh` is KEPT, and the reason is now evidence, not preference.** The original
+> has **no off-world respawn** on this path — the car cannot leave the surface because the
+> contact chain reports, fixes and re-runs. So that chain IS the scaffold's faithful
+> replacement, and removing the scaffold first would only restore the
+> freeze-against-an-edge loop (`TrackRenderer.cpp:2806-2817`). It is off the D2 measurement
+> path (0 fires, 3 of 3 runs).
+>
+> **Guards on the final build, nothing tuned:** criterion (e) **PASS 3/3**; AI (b) **FAIL
+> 3/3**, `c1_median` 52.5 / 38.0 / 49.0 — **identical** to attempts 1 and 2; power-ups
+> **11/11 decision CLEAN**, contact CLEAN 10/11 with the known `g3` divergence; modes oracle
+> rule 3 **GREEN** (SegmentCheck 3059/3059, EvaluateResult 2/2, FinishOrder 3963/3963,
+> MISMATCH=0); build clean with the dual-copy guard at **`allowlisted=110 NEW=0`**.
+>
+> The D3 modes 3/7 hold is unchanged.
+
 > #### Re-close attempt 2 — 2026-09-29 (third session that day). **STILL REOPENED, but U-9147 is now LOCALIZED and U-9151 is CLOSED.**
 >
 > Write-up: [`re/analysis/D2_REOPEN_2026-09-29.md`](re/analysis/D2_REOPEN_2026-09-29.md)

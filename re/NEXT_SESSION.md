@@ -1,8 +1,107 @@
 # Next session kickoff
 
-Updated 2026-09-29 at the close of the **D2 re-close attempt 2** session (U-9147 / U-9151).
+Updated 2026-09-29 at the close of the **D2 re-close attempt 3** session (U-9153 / U-9154).
 Branch `race/first-frame-parity`. Nothing is pushed.
-Superseded kickoff: the 2026-09-29 "re-close attempt 1" one (kept below).
+Superseded kickoff: the 2026-09-29 "re-close attempt 2" one (kept below).
+
+> ## START HERE — D2 is STILL REOPENED. The arm was measuring the wrong track, and the residual is now one named unported function.
+>
+> Read [`re/analysis/D2_REOPEN_2026-09-29.md`](analysis/D2_REOPEN_2026-09-29.md) **§13-§14**
+> and ROADMAP §D2's "Re-close attempt 3" block. **Do not re-derive any of it.**
+>
+> **The §3 bounds are unchanged and are not renegotiable.** PASS intervals:
+> `slip 1500-2000` **0.18855 .. 0.19635**, `slip 2000-2600` **0.24488 .. 0.25487**,
+> `driving-median` **1904.70 .. 1982.44**.
+>
+> ### The one thing to change in your muscle memory
+>
+> **The port arm is now `MASHED_TRACK_SEL=12`.** Every D2 solo run:
+>
+> ```
+> py -3.12 re/tools/statediff/a8_run_port.py <dir> 90 MASHED_MEASURE_SOLO=1 \
+>         MASHED_TRACK_SEL=12 "MASHED_TITLE=<label>"
+> ```
+>
+> Why: `a8_run_port.py:16` hardcodes `MASHED_TRACK_SEL=0` = `kAreas[0]` = **Arctic**, while
+> `scenario_launch.py` defaults `--track` to **0 = Training** and **no** reference capture
+> passes `--track`. Every port-vs-original solo comparison before today compared **Arctic
+> against Training** (U-9153, RESOLVED). `a8_run_port.py` itself was deliberately left
+> alone so the archived runs stay reproducible from their own PROVENANCE — pass the override.
+>
+> | metric | attempt 2 (Arctic) | **attempt 3 (Training)** | verdict |
+> |---|---:|---:|---|
+> | slip 1500-2000 | 0.1445 | **0.1605** | FAIL -16.6% — **n=13 only**, do not quote as a precise deficit |
+> | slip 2000-2600 | 0.2557 | **0.3086** | FAIL +23.5% |
+> | driving-median | 1740.54 | **2437.93** | FAIL +25.4% |
+>
+> 3 of 3 runs bit-identical on every column; the U-9148 second attractor did not appear.
+> Two metrics moved *further* out — kept as-is, because correcting the arm was not tuning.
+>
+> **DONE, do not redo:**
+> - **U-9153 RESOLVED** — the cross-track arm, four witnesses, §13.1.
+> - **§12.4's trajectory-vs-mesh question is ANSWERED: neither.** Both loops plotted on
+>   their own track's `COLLISIONS.BSP` (`re/tools/statediff/loop_plot.py`, new, read-only;
+>   `verify/d2_offmesh_20260929/loops_crosstrack.png`): ORIGINAL 212/212 on-mesh on Training,
+>   151/212 on Arctic; PORT 203/203 on Arctic, 143/203 on Training.
+> - **§12's `RecoverOffMesh` mechanism is an artefact of the wrong track.** 46 fires -> **0**
+>   on the corrected arm, 3 of 3 runs. Do not re-chase the 35-resets-per-1080-frames story.
+> - **§12.4's "bearings cover the whole circle" is WITHDRAWN as a reading.** The 46 Arctic
+>   fires lie on three straight axis-aligned road edges (`x=-24.25`, `z=+35.95`, `x=-0.40`).
+> - The original's world position is readable from an `.msd`: it is the **+0x928 RwMatrix
+>   translation row**, record `+0x958/+0x95c/+0x960`. `loop_plot.py --check` validates the
+>   basis first (0 of 6996 rows off unit norm). There is **no** large-range world position
+>   anywhere else in the 0xd04 record.
+>
+> ### PICK UP HERE — U-9154, and it is a port job with a named target
+>
+> `VehicleContactScanUpdate` **`0x00469aa0`** is ported (`Collision/CarWorldContacts.cpp:387`)
+> and **has no caller**. Its only call site in the image is **`0x00470ae8`**, inside
+> **`VehicleCollisionBroadPhase` `0x004709a0`** (hooks.csv C2, `mapped`):
+>
+> ```
+> 0x00470ab0  cmp ebp, 2 / jge            ; at most 2 retries
+> 0x00470ad3  call 0x0046e9e0             ; A9 integrate       (C2, mapped — UNPORTED)
+> 0x00470ae0  call 0x0046f6c0             ; wheel contacts     (ported)
+> 0x00470ae8  call 0x00469aa0             ; contact scan        <-- never called by the port
+> 0x00470afe  call 0x0046ef70             ; fixup, gated on [record+0x9ec] != 0
+> 0x00470b0a  inc ebp / jmp 0x470ab0      ; a reported contact RE-RUNS the substep
+> ```
+>
+> **Why it is the residual.** The port's driving-speed quantiles match the original's at the
+> **top** (p95 0.99x, p99 0.97x, max 0.97x) and diverge only at the **bottom** (p25 1.65x,
+> p10 2.47x). The original's low tail is **wall impacts** — `orig_solo3.msd` frame 980->981:
+> `vel.x` `-1716.69` -> `+176.47`, `pos.x` pinned for 18 frames, speed 1832 -> 191. Training's
+> `COLLISIONS.BSP` has the wall (41 of 69 triangles in that box are XZ-degenerate, planes at
+> `x=-3.000` and `x=-2.500`), and `HeightOnSoup` (`TrackRenderer.cpp:2098`) discards exactly
+> the degenerate ones, so the port drives through both (loop reaches `x=-4.721`).
+>
+> **Three blockers, all named:** `Rw_VtableDispatch` is a no-op stub
+> (`Collision/ContactStubs.cpp:78`); A9 `0x0046e9e0` is `mapped`, not ported, so nothing
+> reads the corrective velocity at record dword `+0x130` (byte `+0x4c0`) or the 18 contact
+> slots at byte `+0x4ac`; the retry needs `0x004709a0` itself. Order: `0x0046e9e0`, then
+> `0x004709a0` + the retry, then a real `Rw_VtableDispatch`. Re-run the §13.3 arm after each.
+>
+> [UNCERTAIN] whether that closes the whole +25.4%. The quantile agreement at p95/p99/max is
+> consistent with it and is quantitative, but **nothing yet runs the chain** — it is an
+> attribution, not a measured fix.
+>
+> **`RecoverOffMesh` (`TrackRenderer.cpp:2142-2164`) is KEPT.** The original has **no
+> off-world respawn** on this path; the contact chain above IS its faithful replacement, so
+> removing the scaffold before that chain lands would only restore the
+> freeze-against-an-edge loop (`TrackRenderer.cpp:2806-2817`). It is already off the D2
+> measurement path (0 fires).
+>
+> Then **U-9152** (the `+0x928` vs `g_bodyBasis` storage split) — and note U-9154 touches the
+> same block, since the contact ring lives at `+0x928 + sel*0x40`.
+>
+> **Guards on the final build** (re-run them, don't assume): criterion (e) **PASS 3/3**;
+> AI (b) **FAIL 3/3**, `c1_median` 52.5 / 38.0 / 49.0 (identical to attempts 1 and 2);
+> power-ups **11/11 decision CLEAN** with `g3` contact diverging; oracle rule 3 **GREEN**
+> (3059/3059, 2/2, 3963/3963, MISMATCH=0); build with `rva-lint allowlisted=110 NEW=0`.
+>
+> **The D3 modes 3/7 hold stands.** D2 must close before it starts.
+
+## SUPERSEDED kickoff — D2 re-close attempt 2 (kept as history)
 
 > ## START HERE — D2 is STILL REOPENED, but the map changed
 >
