@@ -867,9 +867,15 @@ function aiStepDrain(){ const r = AS.rows; AS.rows = []; return r; }
 // context-pointer contract -- U-9149 records that A6b's is contested. The A6a site
 // still filters on ESI == the record ("0x00467650 - A6a body. self=ESI record",
 // PhysicsChainHooks.cpp:1877) so a multi-car run cannot mix vehicles in.
+// [D2 section 21.5, 2026-09-30] A6b's entry was ADDED after section 21.4 over-claimed on
+// the two-site version. With only A6a and the substep loop, the first interval is
+// [A6a + A6b] -- and A6b (FUN_00468980) also writes the angular velocity, so the `|av|`
+// ratio across it is NOT a clean fingerprint of which arm A6a's clamp #6 took. The third
+// site makes [A6a entry -> A6b entry] contain A6a and nothing else.
 const LB_A6A     = 0x00467650;
+const LB_A6B     = 0x00468980;
 const LB_SUBSTEP = 0x004709a0;
-const LB = { armed:false, rows:[], nA6a:0, nSub:0, err:null, skipped:0 };
+const LB = { armed:false, rows:[], nA6a:0, nA6b:0, nSub:0, err:null, skipped:0 };
 let LB_REC = null, LB_SEQ = 0;
 function lbSample(site){
   try {
@@ -892,12 +898,21 @@ function latBracketArm(recBaseHex, car){
         LB.nA6a++; lbSample(0);
       } catch(e){ if (!LB.err) LB.err = 'a6aEnter ' + e; }
     }});
+    // A6b: no ESI filter. U-9149 records that A6b's context-pointer contract is
+    // contested, and this probe does not depend on it -- it reads the static record. With
+    // one active car there is one A6b call per frame, which the `0,2,1,1` pattern check
+    // in a8_latbracket.py verifies per frame rather than assuming.
+    Interceptor.attach(ga(LB_A6B), { onEnter(){
+      try { LB.nA6b++; lbSample(2); }
+      catch(e){ if (!LB.err) LB.err = 'a6bEnter ' + e; }
+    }});
     Interceptor.attach(ga(LB_SUBSTEP), { onEnter(){
       try { LB.nSub++; lbSample(1); }
       catch(e){ if (!LB.err) LB.err = 'subEnter ' + e; }
     }});
     LB.armed = true;
     return 'lat-bracket armed: A6a @0x' + LB_A6A.toString(16)
+         + ' + A6b @0x' + LB_A6B.toString(16)
          + ' + substep @0x' + LB_SUBSTEP.toString(16)
          + ' rec=' + LB_REC;
   } catch(e){ return 'ERR ' + e; }
@@ -1596,9 +1611,9 @@ rpc.exports = {
   aiStepDrain: function(){ return aiStepDrain(); },
   latBracketArm: function(recBaseHex, car){ return latBracketArm(recBaseHex, car); },
   latBracketDrain: function(){ return latBracketDrain(); },
-  latBracketStats: function(){ return JSON.stringify({armed:LB.armed, a6a:LB.nA6a, sub:LB.nSub,
-                                                      pending:LB.rows.length, skipped:LB.skipped,
-                                                      err:LB.err}); },
+  latBracketStats: function(){ return JSON.stringify({armed:LB.armed, a6a:LB.nA6a, a6b:LB.nA6b,
+                                                      sub:LB.nSub, pending:LB.rows.length,
+                                                      skipped:LB.skipped, err:LB.err}); },
   aiStepStats: function(){ return JSON.stringify({armed:AS.armed, calls:AS.calls, pending:AS.rows.length, err:AS.err,
                                                   locals:AS.locals, curv:AS.curv, localsErr:AS.localsErr, noLocals:AS.noLocals, joinMiss:AS.joinMiss, recp:Object.keys(AS_RECP).length}); },
   puArm: function(plan, subj, warm, boxAt){ return puArm(plan, subj, warm, boxAt); },
@@ -2471,8 +2486,9 @@ def main():
                                              for x in r) + chr(10))
                     n0 = sum(1 for r in lb_rows if r[1] == 0)
                     n1 = sum(1 for r in lb_rows if r[1] == 1)
+                    n2 = sum(1 for r in lb_rows if r[1] == 2)
                     print(f"  [statediff] lat-bracket {len(lb_rows)} samples "
-                          f"(A6a {n0}, substep {n1}) -> {lbp}")
+                          f"(A6a {n0}, A6b {n2}, substep {n1}) -> {lbp}")
                 if args.statediff_aistep:
                     try: print("  [statediff] aistep agent:", E.ai_step_stats())
                     except Exception: pass
