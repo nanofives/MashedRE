@@ -1,0 +1,36 @@
+replayed 429 frames on slot 0
+
+CONTACT CALL SITES (original capture vs port), slot 0
+  site                     ret_addr       orig   port port-only orig-only  status
+  OIL    query 0x004b4cd0  0x4578d1         10     10         0         0  clean
+  OIL    gate  0x0045c110  0x45790e         10     10         0         0  clean
+  OIL    lerp  0x004b4650  0x457932         10     10         0         0  clean
+  OIL    basis 0x004b5080  0x45797f         10     10         0         0  clean
+  P_MINE query 0x004b4cd0  0x457ca5          0      0         0         0  clean
+  P_MINE gate  0x0045c110  0x457cf9          0      0         0         0  clean
+  P_MINE lerp  0x004b4650  0x457d1f          0      0         0         0  clean
+  P_MINE basis 0x004b5080  0x457db2          0      0         0         0  clean
+  SHOTGN query 0x004b4b20  0x45b4c2          0      8         8         0  not-armed
+  SHOTGN basis 0x004b5080  0x45b582          1      0         0         0  not-armed
+  DRUM   query 0x004b4cd0  0x45444f          0      0         0         0  clean
+  DRUM   lerp  0x004b4650  0x45448a          0      0         0         0  clean
+  DRUM   basis 0x004b5080  0x4544e0          0      0         0         0  clean
+  RFLAME query 0x004b4cd0  0x45afcc        546    548         2         0  DIVERGES
+  RFLAME lerp  0x004b4650  0x45aff3         23     23         0         0  clean
+  RFLAME basis 0x004b5080  0x45b04c         23     23         0         0  clean
+  SWEEP  query 0x004b4b60  0x45bcd8        309    309         0         0  clean
+  SWEEP  confirm 0x45c350  0x45bcea          0      0         0         0  clean
+  AIM    fallback query    0x459c19          0      0         0         0  not-armed
+  AIM    fallback lerp     0x459c3c          0      0         0         0  not-armed
+  AIM    los      query    0x459d54          0      0         0         0  not-armed
+  AIM    los      lerp     0x459db5          0      0         0         0  not-armed
+  MORTAR query 0x004b4cd0  0x453789          0      0         0         0  not-armed
+  MORTAR gate  0x0045c350  0x4537bb          0      0         0         0  not-armed
+  MORTAR lerp  0x004b4650  0x4537df          0      0         0         0  not-armed
+  MORTAR basis 0x004b5080  0x45382c          0      0         0         0  not-armed
+  MISSIL sphere 0x004b4d10 0x455de0          0      0         0         0  not-armed
+  MISSIL gate   0x0045c350 0x455df9          0      0         0         0  not-armed
+  MISSIL ground 0x004b4cd0 0x455e59          0      0         0         0  not-armed
+CONTACT VERDICT: DIVERGES  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --puhook-aim channel: the AIM rows are NOT tested by this capture)
+         (no --puhook-mortar channel: the MORTAR rows are NOT tested by this capture)
+         (no --puhook-missile channel: the MISSILE rows are NOT tested by this capture)
