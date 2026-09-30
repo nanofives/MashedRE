@@ -134,3 +134,23 @@ DUP-INSTALL:00556cc0:Frontend/BatchAA_s3.cpp,Frontend/Cluster_v1.cpp   # audit=U
 DUP-INSTALL:00556cd0:Frontend/BatchAA_s6.cpp,Frontend/Cluster_v1.cpp   # audit=UNREVIEWED; installed from 2 files: Frontend/BatchAA_s6.cpp:56 GetDat00912a20, Frontend/Cluster_v1.cpp:85 FontAtlasSlotGet
 DUP-INSTALL:005b3580:Audio/AudioLeaves_ab2.cpp,Audio/AudioList_ag.cpp   # audit=UNREVIEWED; installed from 2 files: Audio/AudioLeaves_ab2.cpp:55 AudioListHeaderInit, Audio/AudioList_ag.cpp:20 AudioListInit
 CROSS-TARGET:0046b1c0:Vehicle/VehicleInit.cpp,Vehicle/VehicleSlotAabbExpand.cpp   # U-9155 2026-09-29: DELIBERATE, split by target. asi-only Vehicle/VehicleSlotAabbExpand.cpp is the C3 Frida-GREEN naked-x87 transcription and writes the ORIGINAL's absolute record array 0x008815a0+slot*0xd04 with ds:[05CC32Ch]/ds:[05CE034h] literals -- none of that is mapped in mashed_re.exe. exe-only Vehicle/VehicleInit.cpp:VehicleBuildContactHull is the same computation over g_records. Same shape as the 0046b540 pair below. Removed VehicleSlotAabbExpand.cpp from exe_sources.rsp (dead there: its RH_ScopedInstall at :215 was its only consumer) so neither target has two bodies.
+
+# --- ADDED 2026-09-30 (U-9156): exposed by the SECOND ANCHORING PASS in
+# scripts/rva_body_scan.py, which binds a body whose `// <rva> <Name>` header
+# comment is NOT directly above the definition. Every line below is a body the
+# guard could not see before, i.e. the 0x0046b1c0 blind spot repeating. They are
+# audit=UNREVIEWED-U9156: STRUCTURAL CANDIDATES, nobody has compared them
+# body-to-body. Allowlisted so the guard stays live; burn-down is ROADMAP D4.
+DUP-IN-TARGET:0041eda0:Util/TimerInit.cpp,Util/TimerSlot.cpp   # audit=UNREVIEWED-U9156; [exe] two bodies: Util/TimerInit.cpp:55 (TimerBitFieldSet), Util/TimerSlot.cpp:72 (SlotBitSet)
+DUP-IN-TARGET:0041f000:Util/TimerInit.cpp,Util/TimerSlot.cpp   # audit=UNREVIEWED-U9156; [exe] two bodies: Util/TimerInit.cpp:78 (TimerSlotDataCopy), Util/TimerSlot.cpp:50 (SlotDataCopy)
+DUP-IN-TARGET:00420d40:Util/TimerInit.cpp,Util/TimerSlot.cpp   # audit=UNREVIEWED-U9156; [exe] two bodies: Util/TimerInit.cpp:110 (TimerStructArrayClear), Util/TimerSlot.cpp:96 (SlotArrayClear)
+DUP-IN-TARGET:0040e350:Ai/PromoLoop_round1.cpp,Vehicle/PhysicsChainHooks.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Ai/PromoLoop_round1.cpp:153 (GetRenderSubMode), Vehicle/PhysicsChainHooks.cpp:113 (Fi_GameMode)
+DUP-IN-TARGET:0040e480:Ai/AiStandalone.cpp,Frontend/RaceResults.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Ai/AiStandalone.cpp:1404 (CarSlotStateSet), Frontend/RaceResults.cpp:33 (SlotStateAddr)
+DUP-IN-TARGET:00417180:Ai/AiControllerAB.cpp,Ai/AiPreTick.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Ai/AiControllerAB.cpp:657 (AbAiBank), Ai/AiPreTick.cpp:91 ()
+DUP-IN-TARGET:00417640:Ai/AiController.cpp,Ai/AiControllerAB.cpp,Ai/AiStandalone.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Ai/AiController.cpp:120 (), Ai/AiControllerAB.cpp:266 (AbAiPost), Ai/AiStandalone.cpp:1356 (PostStepPowerupBrake)
+DUP-IN-TARGET:00418560:Ai/AiController.cpp,Ai/AiControllerAB.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Ai/AiController.cpp:162 (), Ai/AiControllerAB.cpp:412 (AbAiVehStep)
+DUP-IN-TARGET:00418860:Ai/AiController.cpp,Ai/AiControllerAB.cpp,HUD/ScenarioLeaves_sa2.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Ai/AiController.cpp:316 (), Ai/AiControllerAB.cpp:476 (AbAiTick), HUD/ScenarioLeaves_sa2.cpp:438 (AiPerFrameTick)
+DUP-IN-TARGET:0041eda0:Util/TimerInit.cpp,Util/TimerSlot.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Util/TimerInit.cpp:55 (TimerBitFieldSet), Util/TimerSlot.cpp:72 (SlotBitSet)
+DUP-IN-TARGET:0041f000:Util/TimerInit.cpp,Util/TimerSlot.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Util/TimerInit.cpp:78 (TimerSlotDataCopy), Util/TimerSlot.cpp:50 (SlotDataCopy)
+DUP-IN-TARGET:00420d40:Util/TimerInit.cpp,Util/TimerSlot.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Util/TimerInit.cpp:110 (TimerStructArrayClear), Util/TimerSlot.cpp:96 (SlotArrayClear)
+CROSS-TARGET:00442c80:Util/UtilMid.cpp,Vehicle/ForceIntegrator.cpp   # audit=UNREVIEWED-U9156; exe-only Vehicle/ForceIntegrator.cpp  vs  asi-only Util/UtilMid.cpp
