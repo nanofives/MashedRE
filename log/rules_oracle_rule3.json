@@ -2,34 +2,34 @@
  "armed": true,
  "err": null,
  "seg": {
-  "calls": 2155,
-  "agree": 2155,
+  "calls": 2904,
+  "agree": 2904,
   "mis": 0,
-  "ret1": 1,
+  "ret1": 2,
   "byRule": {
    "3": {
-    "calls": 2155,
-    "agree": 2155,
+    "calls": 2904,
+    "agree": 2904,
     "mis": 0,
-    "ret1": 1
+    "ret1": 2
    }
   }
  },
  "ev": {
-  "calls": 1,
-  "agree": 1,
+  "calls": 2,
+  "agree": 2,
   "mis": 0,
   "byRule": {
    "3": {
-    "calls": 1,
-    "agree": 1,
+    "calls": 2,
+    "agree": 2,
     "mis": 0
    }
   }
  },
  "ord": {
-  "calls": 2717,
-  "agree": 2717,
+  "calls": 3827,
+  "agree": 3827,
   "mis": 0,
   "appends": 0,
   "resets": 0
@@ -45,10 +45,10 @@
     "rule": 3,
     "participants": 4,
     "metric": [
-     0.18583746254444122,
-     1.2758517265319824,
-     0.20125554502010345,
-     1.1791629791259766
+     0.10680532455444336,
+     1.2610437870025635,
+     0.20123369991779327,
+     1.156259536743164
     ],
     "score": [
      4,
@@ -74,7 +74,7 @@
      -1,
      -1
     ],
-    "snapshot1": 1003,
+    "snapshot1": 0,
     "timer": 0,
     "collectTotal": 0,
     "collectDone": 0,
@@ -113,10 +113,10 @@
     "rule": 3,
     "participants": 4,
     "metric": [
-     0.18583746254444122,
-     1.2758517265319824,
-     0.20125554502010345,
-     1.1791629791259766
+     0.10680532455444336,
+     1.2610437870025635,
+     0.20123369991779327,
+     1.156259536743164
     ],
     "score": [
      4,
@@ -128,6 +128,127 @@
      false,
      true,
      false,
+     false
+    ],
+    "motion": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 0,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "fn": "seg",
+   "rule": 3,
+   "got": 1,
+   "want": 1,
+   "en": {
+    "rule": 3,
+    "participants": 4,
+    "metric": [
+     0.3032084107398987,
+     2.6363165378570557,
+     1.7325481176376343,
+     2.084486961364746
+    ],
+    "score": [
+     2,
+     8,
+     5,
+     6
+    ],
+    "alive": [
+     false,
+     true,
+     true,
+     false
+    ],
+    "motion": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "order": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "snapshot1": 1003,
+    "timer": 0,
+    "collectTotal": 0,
+    "collectDone": 0,
+    "teams": false,
+    "declRaw": 0,
+    "mode": 10,
+    "active": [
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "exActive": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "exAlive": [
+    false,
+    false,
+    true,
+    false
+   ]
+  },
+  {
+   "fn": "ev",
+   "rule": 3,
+   "got": 0,
+   "fccGot": 0,
+   "pred": {
+    "ret": 0
+   },
+   "en": {
+    "rule": 3,
+    "participants": 4,
+    "metric": [
+     0.3032084107398987,
+     2.6363165378570557,
+     1.7325481176376343,
+     2.084486961364746
+    ],
+    "score": [
+     2,
+     9,
+     7,
+     6
+    ],
+    "alive": [
+     false,
+     false,
+     true,
      false
     ],
     "motion": [
@@ -166,18 +287,19 @@
  ],
  "seen": {
   "3": {
-   "n": 2155,
+   "n": 2904,
    "collTotMax": 0,
    "collDoneMax": 0,
    "timerMin": 0,
    "timerMax": 0,
    "snap1": {
-    "0": 499,
-    "1002": 637,
-    "1003": 1019
+    "0": 982,
+    "1000": 246,
+    "1002": 211,
+    "1003": 1465
    },
-   "m0Max": 0.23333333432674408,
-   "m1Max": 2.522188901901245,
+   "m0Max": 0.7693653702735901,
+   "m1Max": 3.218085289001465,
    "motion0Nz": 0,
    "deadMax": 2
   }
@@ -189,8 +311,8 @@
   "cars": 4,
   "rule": 3,
   "hold": 60,
-  "pid": 31316,
+  "pid": 52036,
   "hooks": null,
-  "ts": "2026-09-29 23:15:44"
+  "ts": "2026-09-30 00:44:22"
  }
 }
