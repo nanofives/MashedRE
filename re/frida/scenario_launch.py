@@ -920,6 +920,76 @@ function latBracketArm(recBaseHex, car){
 function latBracketDrain(){ const r = LB.rows; LB.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
+// --- RwV3dLength ARGUMENT probe (U-9156, D2 section 21.7) ------------------
+// [D2 section 21.7] Gets the ORIGINAL's `l_60 = sum ld4 * le4` (Integrate2.cpp:464) as a
+// MEASUREMENT instead of an inference. Section 21.5 closed every other route: clamp #6 is
+// byte-faithful, +0x18c is 1.0 on both sides so grip == l_60, and the `ld4` path is circular
+// from the port side.
+//
+// Why this function. A6a `0x00467650`'s body (4908 bytes, 1236 instructions, FULL capstone
+// coverage) contains **zero `fsqrt`** and 22 CALLs, nine of them to `0x004c3ac0`. That
+// function is RwV3dLength: `mov eax,[esp+4]` then it squares `[eax]`/`[eax+4]`/`[eax+8]` and
+// dispatches the root through the RW globals table `[0x007d3ff8]`/`[0x007d3ffc]` (memory
+// `rwglobals-is-dat-007d3ff8`). It takes a POINTER, so an ENTRY hook yields the exact vector
+// whose magnitude is being taken -- `le4` (Integrate2.cpp:425) and `ld4` (:440) among them.
+// That is the sanctioned technique: hook a callee's entry, never probe mid-function
+// (memory `frida-interceptor-is-entry-only`).
+//
+// Call sites are told apart by `this.returnAddress`, so one hook serves all nine. The nine
+// A6a return addresses are 0x00467673, 0x00467685, 0x004680fb, 0x0046820f, 0x00468343,
+// 0x004684c0, 0x004684dc, 0x004685bc, 0x004686a9 (the last is Integrate2.cpp:633's `speed`,
+// which sits AFTER the force integration at :630-632 and BEFORE the clamp at :656 -- so it
+// also splits A6a's own two halves, which section 21.5's `I_a6a` could not).
+//
+// HOT-PATH DISCIPLINE. `0x004c3ac0` has **120 confirmed call sites image-wide**
+// (`re/tools/callsites.py`), so it is exactly the class CLAUDE.md warns about (>1000 calls/s
+// destabilises Mashed in ~6 s). Mitigations, all three:
+//   1. COUNT-FIRST. With an empty site list the callback body is `MP.n++` and nothing else,
+//      so the rate can be measured before any run reads memory.
+//   2. ONE object lookup on the hot path (`MP_SITES[rv]`), then an immediate return.
+//   3. HARD ROW LIMIT with AUTO-DETACH, so exposure is bounded even if the rate is high.
+const MP_FN = 0x004c3ac0;
+const MP = { armed:false, rows:[], n:0, other:0, err:null, limit:0, detached:false };
+let MP_L = null, MP_SITES = null, MP_REC = null, MP_SEQ = 0;
+function magProbeArm(sitesCsv, limit, recBaseHex, car){
+  if (MP.armed) return 'already armed';
+  try {
+    MP.limit = limit | 0;
+    MP_REC = ptr(parseInt(recBaseHex, 16) + car * 0xd04);
+    if (sitesCsv) {
+      MP_SITES = {};
+      for (const s of sitesCsv.split(',')) {
+        if (!s) continue;
+        MP_SITES[ga(parseInt(s, 16)).toUInt32()] = s;
+      }
+    }
+    MP_L = Interceptor.attach(ga(MP_FN), { onEnter(){
+      MP.n++;
+      if (MP_SITES === null) return;              // count-only: cheapest possible body
+      const tag = MP_SITES[this.returnAddress.toUInt32()];
+      if (tag === undefined) { MP.other++; return; }
+      try {
+        const v = this.context.esp.add(4).readPointer();
+        const r = MP_REC;
+        MP.rows.push([MP_SEQ++, tag,
+                      v.readFloat(), v.add(4).readFloat(), v.add(8).readFloat(),
+                      r.add(0x9b0).readFloat(), r.add(0x9b8).readFloat(),
+                      r.add(0x9e4).readFloat(), r.add(0x9e0).readFloat(),
+                      r.add(0x18c).readFloat()]);
+        if (MP.limit && MP.rows.length >= MP.limit && MP_L && !MP.detached) {
+          MP_L.detach(); MP_L = null; MP.detached = true;   // bound the exposure
+        }
+      } catch(e){ if (!MP.err) MP.err = 'magEnter ' + e; }
+    }});
+    MP.armed = true;
+    return 'mag-probe armed @0x' + MP_FN.toString(16)
+         + (MP_SITES === null ? ' COUNT-ONLY' : ' sites=' + Object.keys(MP_SITES).length)
+         + ' limit=' + MP.limit + ' rec=' + MP_REC;
+  } catch(e){ return 'ERR ' + e; }
+}
+function magProbeDrain(){ const r = MP.rows; MP.rows = []; return r; }
+// ---------------------------------------------------------------------------
+
 // --- POWERUP DISPATCHER capture (D3 WS-D, 2026-09-26) ----------------------
 // Ground truth for the power-up DECISION logic, taken around the per-frame
 // dispatcher FUN_0045bba0 (sole caller 0x0040fcd0). Byte-level facts this block
@@ -1614,6 +1684,11 @@ rpc.exports = {
   latBracketStats: function(){ return JSON.stringify({armed:LB.armed, a6a:LB.nA6a, a6b:LB.nA6b,
                                                       sub:LB.nSub, pending:LB.rows.length,
                                                       skipped:LB.skipped, err:LB.err}); },
+  magProbeArm: function(sites, limit, recBaseHex, car){ return magProbeArm(sites, limit, recBaseHex, car); },
+  magProbeDrain: function(){ return magProbeDrain(); },
+  magProbeStats: function(){ return JSON.stringify({armed:MP.armed, calls:MP.n, other:MP.other,
+                                                    pending:MP.rows.length, limit:MP.limit,
+                                                    detached:MP.detached, err:MP.err}); },
   aiStepStats: function(){ return JSON.stringify({armed:AS.armed, calls:AS.calls, pending:AS.rows.length, err:AS.err,
                                                   locals:AS.locals, curv:AS.curv, localsErr:AS.localsErr, noLocals:AS.noLocals, joinMiss:AS.joinMiss, recp:Object.keys(AS_RECP).length}); },
   puArm: function(plan, subj, warm, boxAt){ return puArm(plan, subj, warm, boxAt); },
@@ -2060,6 +2135,17 @@ def main():
                          "change splits into [A6a+A6b] and [the 2x25 contact substeps]. "
                          "Entry hooks only, ~180 calls/s. Writes <statediff-out>."
                          "latbracket.csv. Requires --statediff-out.")
+    ap.add_argument("--mag-probe", default="",
+                    help="[U-9156 / D2 section 21.7] entry-hook RwV3dLength 0x004c3ac0 and log "
+                         "the VECTOR it was passed, tagged by call site via the return "
+                         "address. Value is a comma list of hex RETURN addresses, or the "
+                         "literal 'count' to measure the call RATE only (callback body is a "
+                         "single increment -- run this FIRST, the function has 120 call sites "
+                         "image-wide). Writes <statediff-out>.magprobe.csv. Requires "
+                         "--statediff-out.")
+    ap.add_argument("--mag-probe-limit", type=int, default=20000,
+                    help="[U-9156] hard row cap; the hook DETACHES itself on reaching it, so "
+                         "hot-path exposure is bounded. 0 = no cap (not recommended).")
     ap.add_argument("--peek", default="",
                     help="[U-9147] comma-separated image globals to READ periodically, "
                          "'rva:type' with type f/d/i/u (default f). No Interceptor, no "
@@ -2199,6 +2285,10 @@ def main():
                 print("  [statediff]", E.ai_step_arm(os.environ.get("MASHED_AISTEP_LOCALS", "1") != "0"))
             if args.lat_bracket:
                 print("  [statediff]", E.lat_bracket_arm("0x008815a0", args.statediff_car))
+            if args.mag_probe:
+                _sites = "" if args.mag_probe == "count" else args.mag_probe
+                print("  [statediff]", E.mag_probe_arm(_sites, args.mag_probe_limit,
+                                                        "0x008815a0", args.statediff_car))
             if args.statediff_puhook:
                 print("  [statediff]", E.pu_arm(args.pu_plan, args.pu_subj, args.pu_warm,
                                                  args.pu_box))
@@ -2489,6 +2579,26 @@ def main():
                     n2 = sum(1 for r in lb_rows if r[1] == 2)
                     print(f"  [statediff] lat-bracket {len(lb_rows)} samples "
                           f"(A6a {n0}, A6b {n2}, substep {n1}) -> {lbp}")
+                if args.mag_probe:
+                    # Counters BEFORE the rows, and the CSV is written even when empty:
+                    # memory `absent-log-proves-nothing-run-a-control`.
+                    try: print("  [statediff] mag-probe agent:", E.mag_probe_stats())
+                    except Exception as _e: print("  [statediff] mag-probe stats failed:", _e)
+                    mp_rows = []
+                    try: mp_rows = E.mag_probe_drain()
+                    except Exception as _e: print("  [statediff] mag-probe drain failed:", _e)
+                    mpp = outp.with_suffix(outp.suffix + ".magprobe.csv")
+                    with open(mpp, "w", newline="") as f:
+                        f.write("seq,site,vx,vy,vz,rec_velx,rec_velz,rec_speed,gnd,rec_18c"
+                                + chr(10))
+                        for r in mp_rows:
+                            f.write(",".join(repr(x) if isinstance(x, float) else str(x)
+                                             for x in r) + chr(10))
+                    _bysite = {}
+                    for r in mp_rows:
+                        _bysite[r[1]] = _bysite.get(r[1], 0) + 1
+                    print(f"  [statediff] mag-probe {len(mp_rows)} rows -> {mpp}")
+                    print(f"  [statediff] mag-probe per-site: {_bysite}")
                 if args.statediff_aistep:
                     try: print("  [statediff] aistep agent:", E.ai_step_stats())
                     except Exception: pass
