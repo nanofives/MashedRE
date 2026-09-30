@@ -1,13 +1,13 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-09-30T04:05:00Z",
+  "updatedAt": "2026-09-30T18:40:00Z",
   "sections": [
     {
       "heading": "Roadmap (v3)",
       "fields": [
         {
           "label": "Status",
-          "value": "D0 done | D1 done (residue R1-R3 open) | D2 REOPENED — re-close attempt 6 failed | D3 blocked on D2",
+          "value": "D0 done | D1 done (residue R1-R3 open) | D2 REOPENED — re-close attempt 7 failed | D3 blocked on D2",
           "kind": "text"
         },
         {
@@ -17,80 +17,96 @@
         },
         {
           "label": "Kickoff",
-          "value": "re/NEXT_SESSION.md — read D2_REOPEN section 20 before picking up",
+          "value": "re/NEXT_SESSION.md — read D2_REOPEN section 21 (21.6 first) before picking up",
           "kind": "text"
         }
       ]
     },
     {
-      "heading": "D2 solo arm vs pre-registered bounds (attempt 6, 3/3 identical)",
+      "heading": "D2 solo arm vs pre-registered bounds (attempt 7, 3/3 identical, no physics change)",
       "fields": [
         {
           "label": "slip 1500-2000",
-          "value": "0.2033 (n=20) — FAIL, bound 0.18855..0.19635",
+          "value": "0.2033 (n=20, median speed in band 1683.53) — FAIL, bound 0.18855..0.19635",
           "kind": "text"
         },
         {
           "label": "slip 2000-2600",
-          "value": "no samples — UNSCORABLE",
+          "value": "no samples (n=0) — UNSCORABLE, bound 0.24488..0.25487",
           "kind": "text"
         },
         {
           "label": "driving-median",
-          "value": "1355.66 (n=54) — FAIL, bound 1904.70..1982.44",
+          "value": "1355.66 (n=54) — FAIL -30.2%, bound 1904.70..1982.44",
           "kind": "text"
         },
         {
-          "label": "Median speed, all 1080 frames",
-          "value": 33.14,
+          "label": "Median horizontal speed, all 1080 frames",
+          "value": 26.36,
           "kind": "number"
+        },
+        {
+          "label": "Verdict",
+          "value": "The car does not drive. Build gate met (allowlisted=122 NEW=0).",
+          "kind": "text"
         }
       ]
     },
     {
-      "heading": "U-9156 — the wall trap",
+      "heading": "U-9156 — the wall trap (attempt 7)",
       "fields": [
         {
-          "label": "Fixed",
+          "label": "Established by measurement",
           "value": [
-            "0x0046ef70 damp guard — slot 0 key vs -2, not slot 17 vs -1",
-            "record +0x9c8 is the BODY UP AXIS, not the averaged terrain normal"
+            "the lateral is removed INSIDE A6a: I_a6b and I_s1 are exactly 0.0000 (0 pos / 0 neg, n up to 606)",
+            "grip-clamp #6 is BYTE-FAITHFUL: 0x004687f0..0x0046897b, both arms, 6 constants, the 0.1 bound is a FLOOR",
+            "+0x18c is 1.0 on both sides, so grip == l_60 and the lever is that accumulator",
+            "the original passes below 100 horizontal ONCE per race (6-8 frames); the port spends 238 of 1352 at 40-70"
           ],
           "kind": "list"
         },
         {
-          "label": "Closed",
-          "value": "section 17.4 vel.y — the original's is 0 because its forward axis is exactly horizontal; 0.08% of the contact magnitude, never fed the damp",
-          "kind": "text"
-        },
-        {
-          "label": "Withdrawn (my own, same session)",
+          "label": "Withdrawn this attempt",
           "value": [
-            "the contact-arm a.y/a.z deficit — the arm is sound",
-            "a drive-force deficit — a speed-mix artefact",
-            "\"bitwise unchanged\" body heading — the reverse-flip fires on the original too"
+            "section 20.15's \"the lateral is never GENERATED\" — R = |dlat| port/orig = 1.3387, yaw 2.8% apart",
+            "my own \"the original is on the HIGH arm\" — the av fingerprint is confounded by A6a's own integration",
+            "section 20.15's lat ratio 1.0590 — it averaged a collapse and a regrowth that cancel"
           ],
           "kind": "list"
         },
         {
-          "label": "Root-cause candidate",
-          "value": "low-speed slip 6.7x too small: 100-200 band, original 0.7816 (n=81) vs port 0.1162 (n=19). That is why one meets the wall below the cos=0.7 damp knee and the other above it.",
+          "label": "The number to hit",
+          "value": "port grip*speed at 100-150 is 17 992 (n=30) and must reach >= 29 491 to put k on its 0.1 floor, which reproduces the original's measured I_a6a/L = 0.1019 (n=46). At 40-70 the port's k is 0.9084.",
           "kind": "text"
         },
         {
-          "label": "Fork resolved",
-          "value": "the lateral is never GENERATED, not over-bled — port lat 14.1 with ratio 1.059 vs original 87.4 with 0.894; A6a clamp #6 k measures 0.366, not 1.0",
+          "label": "Why no fix was authored",
+          "value": "l_60 = sum ld4*le4 and ld4 is the sine of a wheel slip angle — the quantity being explained. le4 is measured to agree in form on both sides.",
           "kind": "text"
         },
         {
-          "label": "Next (non-circular first)",
-          "value": "per-frame lateral INCREMENT both sides, 100-200 band, next to 0x0046f6c0's friction impulse — before touching the yaw rate",
+          "label": "Next",
+          "value": "measure the ORIGINAL's l_60 directly — entry hooks on A6a's Mag3 call sites, if they are calls and not inlined fsqrt",
           "kind": "text"
         }
       ]
     },
     {
-      "heading": "Guards (final build) — all six identical to attempt 5",
+      "heading": "New tooling (attempt 7, read-only or default-OFF)",
+      "fields": [
+        {
+          "label": "Instruments",
+          "value": [
+            "scenario_launch.py --lat-bracket — entry-only record samples at A6a / A6b / substep loop, ~180 calls/s",
+            "re/tools/statediff/a8_latinc.py — per-frame velocity increment on the body fwd/right axes",
+            "re/tools/statediff/a8_latbracket.py — reduces a bracket capture on the verified 0,2,1,1 pattern"
+          ],
+          "kind": "list"
+        }
+      ]
+    },
+    {
+      "heading": "Guards — carried over from attempt 6 (scored behaviour identical to 6 s.f.)",
       "fields": [
         {
           "label": "criterion (e)",
@@ -114,7 +130,7 @@
         },
         {
           "label": "rva-lint",
-          "value": "allowlisted=122 NEW=0",
+          "value": "allowlisted=122 NEW=0 (re-run this session)",
           "kind": "text"
         },
         {
