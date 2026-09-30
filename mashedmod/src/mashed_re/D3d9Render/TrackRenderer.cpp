@@ -2214,6 +2214,64 @@ float TrackRenderer::GroundProbe(float x, float z, bool* ok,
     return best;
 }
 
+// Drop a vehicle DFF's NON-RENDER atomics, and log the census at load so the
+// two acceptance arms are comparable.
+//
+// A vehicle DFF ships non-render atomics alongside the painted body: four
+// coarse untextured car-sized hulls plus 16-24 one- and two-triangle locator
+// quads. Every one of them has no rpGEOMETRYTEXTURED (0x04) and no
+// rpGEOMETRYTEXTURED2 (0x80) and material colour (102,102,102); the body,
+// livery and glass atomics all declare one or two UV sets, so the predicate
+// `(geo_flags & 0x84) == 0` selects exactly the non-render set. Measured on
+// all 13 vehicle DFFs and all 3 liveries each
+// (re/analysis/CAR_GRAY_CHASSIS_2026-09-29.md M2/M4, re-derived by
+// verify/car_gray_fix_20260930/dff_atomic_census.py): ADVANTAGE0..3 = 71
+// atomics, 44 textured, 27 untextured (4 hulls of 40-60 tris + 23 one-tri
+// locators). Rendering them covered the painted body with a faceted grey
+// shell and ringed it with dark spikes.
+//
+// The ORIGINAL never renders the vehicle clump wholesale: FUN_00420420 @
+// 0x00420420 enumerates the atomics (FUN_004b3fc0 @ 0x004b3fc0 ->
+// RpClumpForAllAtomics @ 0x004e66d0) and scatters each into the per-player
+// table at DAT_0063d9e0 + player*0x2AC indexed by the PART CODE from
+// FUN_004b5190 @ 0x004b5190; parts the game never looks up are never drawn,
+// and the four hulls (part codes 0x3b..0x3e) go to the BVH build at
+// FUN_0053d090 @ 0x0053d090 / FUN_0053d400 @ 0x0053d400, i.e. they are
+// collision geometry.
+//
+// [UNCERTAIN] This is a MEASURED data-driven equivalent of that selection,
+// NOT a verbatim port: the part code is produced at runtime by a mechanism
+// that is not derivable from the DFF (every frame/atomic extension chunk in
+// ADVANTAGE0.DFF is zero length), which is tracker row U-9079. No hooks.csv
+// row and no C-level follows from this function.
+//
+// model.bbox is deliberately NOT recomputed: the locator atomics extend it,
+// and it feeds car_ground_off_ / car_len_ / car_height_ below, i.e. the chase
+// camera rig and the ground offset. Leaving it alone keeps this purely visual.
+//
+// `kept`/`dropped` report what this loader hands downstream, NOT what the
+// predicate merely selects, so an arm with the filter removed logs
+// kept == atoms and dropped == 0.
+static void CarDropNonRenderAtomics(Track::DffModel& model, const char* tag,
+                                    std::FILE* log) {
+    const std::size_t total = model.batches.size();
+    model.batches.erase(
+        std::remove_if(model.batches.begin(), model.batches.end(),
+                       [](const Track::DffBatch& b) {
+                           return (b.geo_flags & 0x84u) == 0;
+                       }),
+        model.batches.end());
+    if (!log) return;
+    std::size_t untex = 0;
+    for (const auto& b : model.batches)
+        if ((b.geo_flags & 0x84u) == 0) ++untex;
+    std::fprintf(log,
+                 "R5 car atomics: %s atoms=%zu kept=%zu dropped=%zu "
+                 "untex_kept=%zu\n",
+                 tag, total, model.batches.size(),
+                 total - model.batches.size(), untex);
+}
+
 bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
                             const char* dff_entry, const char* log_path) {
     std::FILE* log = log_path ? std::fopen(log_path, "a") : nullptr;
@@ -2241,6 +2299,9 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
 
     Track::DffModel model;
     if (!model.Parse(dff, dff_len)) return fail(model.last_error());
+    // Before the wheel heuristic, before BuildDffBatches and before
+    // RaceSubmit_RegisterModel: one filtered `model` feeds all three.
+    CarDropNonRenderAtomics(model, dff_entry, log);
 
     std::vector<Txd::Dictionary> dicts(txds.size());
     for (std::size_t di = 0; di < txds.size(); ++di)
@@ -2649,6 +2710,7 @@ bool TrackRenderer::LoadCarLiveries(IDirect3DDevice9* dev,
         if (!dff) continue;
         Track::DffModel model;
         if (!model.Parse(dff, dl)) continue;
+        CarDropNonRenderAtomics(model, want, log);
         CarVariant& v = car_variants_[static_cast<std::size_t>(li - 1)];
         BuildDffBatches(dev, model, dicts, &v.batches, &v.textures, &car_light,
                         rp_light_on_ ? &v.relit : nullptr);
