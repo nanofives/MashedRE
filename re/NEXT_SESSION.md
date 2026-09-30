@@ -2,7 +2,9 @@
 
 Updated 2026-09-30 at the close of the **D2 re-close attempt 7** session (the registered
 lateral-increment test ran, §20.15's fork resolution is withdrawn, grip-clamp #6 is proven
-byte-faithful, and the defect is localised to its INPUT `l_60`).
+byte-faithful, the original's `l_60` was measured directly and confirmed a 1.84x deficit, and
+then the whole `l_60` lane was **measured out** — every remaining factor either agrees
+cross-side or is slip-coupled. One real independent defect found, worth 10.9%.).
 Branch `race/first-frame-parity`. Nothing is pushed.
 Superseded kickoffs: the attempt-6, attempt-5 and attempt-4 ones, all kept below.
 
@@ -29,7 +31,68 @@ Superseded kickoffs: the attempt-6, attempt-5 and attempt-4 ones, all kept below
 > Median horizontal speed over the whole 1080-frame window: **26.36**, 1080/1080 grounded.
 > The car does not drive. Build gate met: `allowlisted=122 NEW=0`.
 >
-> ### PICK UP HERE — measure the ORIGINAL's `l_60`. Everything else in this chain is closed or circular.
+> ### PICK UP HERE — the clamp-#6 / `l_60` lane is MEASURED OUT. The two sides are in different basins of one feedback loop, and the basin is entered UPSTREAM of A6a.
+>
+> **§21.7-§21.10 finished the lane the block below opened. Do not re-run any of it.** The
+> original's `l_60` was measured directly (not inferred) with an entry hook on RwV3dLength
+> `0x004c3ac0`, whose argument is a POINTER — `scenario_launch.py --mag-probe`, reduced by
+> `re/tools/statediff/a8_l60.py`. Gate 1 passed with a known-answer self-check: site
+> `004686a9`'s vector equals the record's own `+0x9b0`/`+0x9b8` on **1424/1424** rows.
+>
+> | band 100-150 | ORIGINAL (n=35, med speed 132.73) | PORT (n=30) | ratio |
+> |---|---:|---:|---:|
+> | `grip*speed` | **33 157.4** | 17 992 | **1.84x** |
+> | `l_60` | 285.243 | 141.24 | 2.02x |
+> | `ld4` | 0.81376 | 0.3005 | **2.71x** |
+> | `le4` (capped) | 119.972 | 100.28 | 1.20x |
+> | above the 32768 knee | **18/35** | 8/30 | — |
+>
+> **The deficit is real and the original sits ON the knee.** But every factor feeding it now
+> has a cross-side measurement, and each one either **agrees** or is **slip-coupled**:
+> - `le4` **1.20x** — agrees.
+> - `+0x9e8` / the spin factor `f`: **1.09x at 150-250 (AGREE)** while `ld4` there still
+>   differs 1.93x, so `f` does not carry it; and its 100-150 ratio **6.75x** is §20.15's slip
+>   ratio **6.73x** to two figures, i.e. the same measurement in another channel — circular.
+> - the wheel forward axis: **the write is present on 100% of frames** (`Integrate2.cpp:692`'s
+>   named failure mode fires on 0/1334 and 0/1628), so A5's rotation does reach the slots.
+>
+> **One real independent defect was found, and it is quantified as insufficient.** The
+> ORIGINAL's front-axis deflection is **`-33.867` deg in every band — exactly its own steer
+> angle, speed-INDEPENDENT**. The PORT's is `-30.480` / `-28.646` / `-26.812` at 100-150 /
+> 150-250 / 1500-2000, i.e. **10.0% / 15.4% / 20.8% short and speed-DEPENDENT**. Rear pairs
+> agree on both sides, so the error is purely front. Closing it moves `ld4` from `0.30050` to
+> `0.35632` = **10.9% of the gap**, so it **cannot close D2** and no fix was authored on it.
+> **Its target invariant is clean if you do fix it: front deflection EQUALS the steer angle,
+> exactly, at every speed.** Its writer is **not located** — grep finds no write to
+> `p[0x1f..0x21]` anywhere in `mashedmod/src` and A5's own port has no reference to those
+> indices, which is what memory `offset-grep-misses-dword-index` predicts for a dword-index
+> store off a computed base. **It needs Ghidra xrefs.**
+>
+> **So: the causality cannot be broken from inside this loop.** It is self-consistent in both
+> directions — small slip -> small `ld4` -> small `l_60` -> large clamp `k` -> lateral and `av`
+> bled -> small slip — and the two sides sit in **different basins** of it.
+>
+> **NEXT, in this order, and NEITHER is a fix:**
+> 1. **Test bistability with a deliberately unfaithful knob.** Add default-OFF
+>    `MASHED_A6_FORCE_HIGHARM=1` forcing clamp #6's high arm (`k <= 0.2`) regardless of
+>    `grip*speed`, and run the §16.7 arm. If the port escapes to the original's basin (slip,
+>    `ld4`, `l_60` all rising together) the loop is bistable and the question becomes what sets
+>    the initial condition. If it does not, the loop is not the mechanism and all of §21 is
+>    downstream of something else. **This is a diagnostic; do not ship it.**
+> 2. **Find what puts the port in the low-speed basin.** That is a question about the first
+>    contact and the ~5 frames after it, NOT about A6a: §20.14 measured that both first bounces
+>    already AGREE (`cos` `-0.366` vs `-0.361`) and that the sides separate over the following
+>    5-6 frames. Combined with §21.5's residency fact — **the original passes below 100
+>    horizontal once per race, 6-8 frames of 6658, while the port spends 238 of 1352 at 40-70
+>    alone** — that 5-frame window is the target.
+>
+> **New tooling in §21.7-§21.10** (read-only or default-OFF): `--mag-probe` /
+> `--mag-probe-limit` on `scenario_launch.py` (entry-hook RwV3dLength and log its argument,
+> tagged by return address; **count-first**, the function has 120 call sites image-wide),
+> `re/tools/statediff/a8_l60.py`, `re/tools/statediff/a8_wheelaxis.py`.
+> Artefacts `verify/d2_magpr_20260930/{count,read1}`.
+>
+> ### SUPERSEDED — the block that opened the lane §21.7-§21.10 closed
 >
 > **The chain, all measured, nothing inferred:**
 > 1. The lateral is removed **inside A6a** and nowhere else below 150 speed. The three-site

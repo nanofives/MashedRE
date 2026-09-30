@@ -525,8 +525,46 @@ opinion is an opinion about the scaffold, not about the port.
 > alone.** Residency in that band is itself the defect, so a low-speed-bleed-only fix may not
 > move the scored table.
 >
-> **Next:** measure the ORIGINAL's `l_60` directly (entry hooks on A6a's `Mag3` call sites, if
-> they are calls and not inlined). Kickoff: `re/NEXT_SESSION.md`.
+> **Then, same session (§21.7-§21.10): the ORIGINAL's `l_60` WAS measured, and the lane is now
+> MEASURED OUT.** A6a's body has **zero `fsqrt`** and calls RwV3dLength `0x004c3ac0` nine
+> times; that function takes its vector **by pointer**, so an **entry** hook reads the exact
+> argument. `scenario_launch.py --mag-probe` (count-first: the function has 120 call sites
+> image-wide) + `re/tools/statediff/a8_l60.py`. Gate 1 passed with a known-answer self-check —
+> site `004686a9`'s vector equals the record's own `+0x9b0`/`+0x9b8` on **1424/1424** rows.
+>
+> | band 100-150 | ORIGINAL (n=35, med speed 132.73) | PORT (n=30) | ratio |
+> |---|---:|---:|---:|
+> | `grip*speed` | **33 157.4** | 17 992 | **1.84x** |
+> | `l_60` | 285.243 | 141.24 | 2.02x |
+> | `ld4` | 0.81376 | 0.3005 | **2.71x** |
+> | `le4` | 119.972 | 100.28 | 1.20x |
+> | above the 32768 knee | **18/35** | 8/30 | — |
+>
+> The deficit is real and the original sits ON the knee — but every factor feeding it now has a
+> cross-side measurement and each one either **agrees** (`le4` 1.20x; `+0x9e8`/`f` **1.09x at
+> 150-250** while `ld4` there still differs 1.93x; the wheel-axis write present on 100% of
+> frames, `Integrate2.cpp:692`'s failure mode 0/1334 and 0/1628) or is **slip-coupled** (the
+> wheel-point velocity direction, and `+0x9e8` at 100-150 whose **6.75x** is §20.15's slip
+> ratio **6.73x** — the same measurement in another channel).
+>
+> **One real independent defect, quantified as insufficient before anything was built on it:**
+> the ORIGINAL's front-axis deflection is **`-33.867` deg in every band, exactly its own steer
+> angle and speed-INDEPENDENT**; the PORT's is **10.0% / 15.4% / 20.8% short and
+> speed-DEPENDENT** (100-150 / 150-250 / 1500-2000), with the rear pairs agreeing on both
+> sides. Closing it moves `ld4` `0.30050 -> 0.35632` = **10.9%** of the gap, so it cannot close
+> D2 and no fix was authored. Target invariant if it is fixed later: front deflection EQUALS
+> the steer angle, exactly, at every speed. **Its writer is not located** and needs Ghidra
+> xrefs (memory `offset-grep-misses-dword-index`).
+>
+> **Verdict:** the causality cannot be broken from inside the loop — it is self-consistent both
+> ways and the two sides are in **different basins**. That promotes §21.5's residency finding
+> to the primary hypothesis: the original passes below 100 horizontal **once per race, 6-8
+> frames of 6658**, the port spends **238 of 1352** at 40-70 alone.
+>
+> **Next, in order, neither a fix:** (1) a default-OFF `MASHED_A6_FORCE_HIGHARM` diagnostic to
+> test bistability (deliberately unfaithful, do not ship); (2) find what puts the port in the
+> low-speed basin, which §20.14 localises to the ~5 frames after the first bounce since both
+> first bounces already agree. Kickoff: `re/NEXT_SESSION.md`.
 >
 > **Note on numbering:** there is no attempt-6 block below. Attempt 6 (the `+0x9c8` body-up-axis
 > decode and fix, commit `5ec297fa`) is recorded only in `D2_REOPEN_2026-09-29.md` §19-§20; it
