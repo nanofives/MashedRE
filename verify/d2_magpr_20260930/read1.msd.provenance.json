@@ -1,0 +1,57 @@
+{
+  "msd": "read1.msd",
+  "captured_utc": "2026-09-30T16:20:54Z",
+  "argv": [
+    "re/frida/scenario_launch.py",
+    "--statediff-out",
+    "verify/d2_magpr_20260930/read1.msd",
+    "--statediff-drive",
+    "--statediff-drive-late",
+    "--statediff-steer",
+    "1",
+    "--hold",
+    "38",
+    "--poke-ctrl-slots",
+    "--mag-probe",
+    "00467673,00467685,004680fb,0046820f,00468343,004684c0,004684dc,004685bc,004686a9",
+    "--mag-probe-limit",
+    "20000"
+  ],
+  "cwd": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed",
+  "git_head": "a6c2d148f7f9c80bd35af4d0ad4417027ec61904",
+  "host": "MARIANO-PC",
+  "statediff": {
+    "car": 0,
+    "base_va": "0x8815a0",
+    "rec_size": "0xd04",
+    "drive": true,
+    "drive_late": true,
+    "steer": 1,
+    "aictrl": false,
+    "aistep": false,
+    "steer_schedule": "",
+    "steer_schedule_applied": null,
+    "steer_schedule_t0_offset_s": null,
+    "noop_cook": false,
+    "hooks": ""
+  },
+  "capture": {
+    "frames": 2334,
+    "distinct_payloads": 1516,
+    "nonzero_frames": 2334
+  },
+  "descriptor_writes": {
+    "block_base": "0x007f1038",
+    "accel_byte": 4,
+    "steer_bytes": [
+      0,
+      1
+    ],
+    "legacy_steer_bytes": [
+      2,
+      3,
+      14,
+      15
+    ]
+  }
+}
