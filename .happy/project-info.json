@@ -1,13 +1,13 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-09-30T20:15:00Z",
+  "updatedAt": "2026-09-30T23:55:00Z",
   "sections": [
     {
       "heading": "Roadmap (v3)",
       "fields": [
         {
           "label": "Status",
-          "value": "D0 done | D1 done (residue R1-R3 open) | D2 REOPENED — re-close attempt 7 failed | D3 blocked on D2",
+          "value": "D0 done | D1 done (residue R1-R3 open) | D2 REOPENED — re-close attempt 8 failed | D3 blocked on D2",
           "kind": "text"
         },
         {
@@ -17,13 +17,13 @@
         },
         {
           "label": "Kickoff",
-          "value": "re/NEXT_SESSION.md — read D2_REOPEN section 21 (21.6 first) before picking up",
+          "value": "re/NEXT_SESSION.md — read D2_REOPEN section 22 (22.2 first, then 22.1) before picking up",
           "kind": "text"
         }
       ]
     },
     {
-      "heading": "D2 solo arm vs pre-registered bounds (attempt 7, 3/3 identical, no physics change)",
+      "heading": "D2 solo arm vs pre-registered bounds (attempt 8, 3/3 identical, NO physics change)",
       "fields": [
         {
           "label": "slip 1500-2000",
@@ -47,63 +47,90 @@
         },
         {
           "label": "Verdict",
-          "value": "The car does not drive. Build gate met (allowlisted=122 NEW=0).",
+          "value": "Identical to attempt 7 to every printed digit — a no-change control on the added default-OFF diagnostics. Build gate met (allowlisted=122 NEW=0).",
           "kind": "text"
         }
       ]
     },
     {
-      "heading": "U-9156 — the wall trap (attempt 7, sections 21.1-21.10)",
+      "heading": "U-9156 — attempt 8: the first diverging term is NAMED and traced to an RVA",
       "fields": [
         {
-          "label": "ORIGINAL l_60 — MEASURED, not inferred",
-          "value": "band 100-150: grip*speed 33 157.4 (n=35, med speed 132.73) vs port 17 992 (n=30) = 1.84x. l_60 285.24 vs 141.24. Entry hook on RwV3dLength 0x004c3ac0, whose argument is a POINTER.",
+          "label": "First diverging term",
+          "value": "d = +0, channel C4 (post-bounce horizontal speed). ORIGINAL 219.89064 vs PORT 251.47744, |delta| 31.5868 vs tol 25.1477, every earlier channel inside tolerance. RVA: the last-contact damp 0x0046f5ba / 0x0046f5c0 inside VehicleContactFixup 0x0046ef70.",
           "kind": "text"
         },
         {
-          "label": "Lane verdict",
-          "value": "clamp-#6 / l_60 lane MEASURED OUT — every factor either agrees cross-side (le4 1.20x; +0x9e8 1.09x at 150-250; the axis write present on 100% of frames) or is slip-coupled.",
-          "kind": "text"
-        },
-        {
-          "label": "One real independent defect",
-          "value": "port FRONT-axis deflection 10.0 / 15.4 / 20.8% short and speed-DEPENDENT (100-150 / 150-250 / 1500-2000) where the original's EQUALS its steer angle -33.867 deg at every speed. Closes only 10.9% of the ld4 gap. Writer not located — needs Ghidra xrefs.",
-          "kind": "text"
-        },
-        {
-          "label": "Withdrawn across the session",
+          "label": "Decomposition (measured on the running original)",
           "value": [
-            "section 20.15's “the lateral is never GENERATED” (R = 1.3387)",
-            "my own “the original is on the HIGH arm” (av confounded by A6a's own integration)",
-            "section 20.15's lat ratio 1.0590 (averaged a collapse and a regrowth)",
-            "section 21.9's wheel-axis hypothesis (the write is present on 100% of frames)"
+            "0x0046ef70's impulse local_54 is FAITHFUL: 0.28% / 0.27% / 0.11% on x/y/z",
+            "the whole divergence is the damp: 0.2475405 vs 0.2756187 = +11.34%",
+            "the damp amplifies its +0x9e4 input 11.1x",
+            "contact counts: 23 in 2332 frames (original) vs 211 in 1625 (port) = 13x"
           ],
           "kind": "list"
         },
         {
-          "label": "Primary hypothesis now",
-          "value": "RESIDENCY: the original passes below 100 horizontal once per race (6-8 frames of 6658); the port spends 238 of 1352 at 40-70. The basin is entered UPSTREAM of A6a.",
+          "label": "BASIN MECHANISM (what the session was sent to find)",
+          "value": "The damp has a knee at |m|/+0x9e4 = 0.7 (saturates at the 0.9 cap). The ORIGINAL is on that cap on 15 of 23 fixups (65.2%); the PORT on 0 of 211 (0.0%). The original's |cos(velocity, wall normal)| falls monotonically across its 10-contact post-bounce train (frames 978..1096) and escapes after a 158-frame gap; the port's rises and LOCKS on a fixed point at |cos| ~ 0.827, damp ~0.55, speed ~55 — exactly section 21.5's 40-70 residency band.",
           "kind": "text"
         },
         {
-          "label": "Next (neither is a fix)",
+          "label": "Both generated hypotheses REFUTED, so no fix authored",
           "value": [
-            "default-OFF MASHED_A6_FORCE_HIGHARM diagnostic to test bistability — do not ship",
-            "find what puts the port in the low-speed basin: the ~5 frames after the first bounce, which already agree"
+            "+0x9e4 is not |velocity| (orig 1.000000 n=23, port 1.017098 n=211) — CIRCULAR: 0x004686cc writes it BEFORE grip-clamp #6 at 0x004687f0 on the original too (capstone, 1243 instructions)",
+            "the port's substep writes velocity — REFUTED bitwise: original unchanged 2945/2945 and 2932/2932, port's three write sites fire 0 of 4000 substeps"
           ],
           "kind": "list"
+        },
+        {
+          "label": "CLOSED OFF — do not re-open",
+          "value": [
+            "the fixup impulse (faithful to 0.11-0.28%)",
+            "the substep velocity chain (bitwise faithful both sides)",
+            "+0x9e4's write order (0x004686cc precedes 0x004687f0 on the original)",
+            "grip-clamp #6 (byte-faithful, 21.5) and the l_60 / ld4 lane (measured out, 21.10)"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Near-miss caught by a frame marker",
+          "value": "Pairing the original's post-fixup velocity with the next substep entry produced a false \"71% tangential-impulse deficit\". A6a runs once per frame before the substep loop and writes +0x9b0, so the pair crossed a frame boundary. Adding A6a as probe site 2 flags those pairs; with the correct pairing the impulse agrees.",
+          "kind": "text"
         }
       ]
     },
     {
-      "heading": "New tooling (attempt 7, read-only or default-OFF)",
+      "heading": "U-9159 OPENED — contact CADENCE, and it is D2's remaining third",
+      "fields": [
+        {
+          "label": "The question",
+          "value": "The original asks Training's wall once every ~19 frames after its first bounce; the port once every 1-2. Both leave the first bounce at nearly the same velocity direction (0.7739 vs 0.7475, the port's the MORE tangential) and the same nose, so the cadence is not explained by the outgoing state.",
+          "kind": "text"
+        },
+        {
+          "label": "Already ruled out",
+          "value": "Penetration depth — both graze (original -0.02056, -0.00038, -0.00123, -0.00011; port -0.0159, -0.0040, -0.0023, -0.0006). Same two hull slots, same (1,0,0) normal.",
+          "kind": "text"
+        },
+        {
+          "label": "Next",
+          "value": "What RE-ARMS the contact: VehicleContactHistoryUpdate 0x00470ae8 / ContactHistoryLookup 0x00468b40 and the 32-slot history at veh+0xbfc. Section 19 tested \"the original re-latches too\" and that stands; it did NOT test \"how often it re-penetrates\".",
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "heading": "New tooling (attempt 8, read-only or default-OFF)",
       "fields": [
         {
           "label": "Instruments",
           "value": [
-            "scenario_launch.py --lat-bracket — entry-only record samples at A6a / A6b / substep loop",
-            "scenario_launch.py --mag-probe — entry-hook RwV3dLength, log its argument by call site (count-first: 120 call sites image-wide)",
-            "a8_latinc.py / a8_latbracket.py / a8_l60.py / a8_wheelaxis.py"
+            "scenario_launch.py --fixup-probe — entry hooks on 0x0046ef70 / 0x004709a0 / 0x00467650 (frame marker) / 0x0046f6c0 / 0x00469aa0, with a register self-check and the LIVE 18-slot contact set (the .msd cannot see it: keys -1 on 2332 of 2333 frames)",
+            "MASHED_SUBSTEP_VELPROBE — per-substep |velocity| at four matching points + WheelContactSolver's three velocity-write counters",
+            "a9_bounce.py — first-bounce-aligned cross-side comparator; the first tool here that aligns a .msd against a port log on a physical EVENT",
+            "a9_fixup.py — per-contact damp/knee table with the frame-boundary flag",
+            "MASHED_FIXUP_LOG now also emits local_74, the damp and the cap flag"
           ],
           "kind": "list"
         }
