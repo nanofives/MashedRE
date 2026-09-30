@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-09-30T18:40:00Z",
+  "updatedAt": "2026-09-30T20:15:00Z",
   "sections": [
     {
       "heading": "Roadmap (v3)",
@@ -53,41 +53,45 @@
       ]
     },
     {
-      "heading": "U-9156 — the wall trap (attempt 7)",
+      "heading": "U-9156 — the wall trap (attempt 7, sections 21.1-21.10)",
       "fields": [
         {
-          "label": "Established by measurement",
+          "label": "ORIGINAL l_60 — MEASURED, not inferred",
+          "value": "band 100-150: grip*speed 33 157.4 (n=35, med speed 132.73) vs port 17 992 (n=30) = 1.84x. l_60 285.24 vs 141.24. Entry hook on RwV3dLength 0x004c3ac0, whose argument is a POINTER.",
+          "kind": "text"
+        },
+        {
+          "label": "Lane verdict",
+          "value": "clamp-#6 / l_60 lane MEASURED OUT — every factor either agrees cross-side (le4 1.20x; +0x9e8 1.09x at 150-250; the axis write present on 100% of frames) or is slip-coupled.",
+          "kind": "text"
+        },
+        {
+          "label": "One real independent defect",
+          "value": "port FRONT-axis deflection 10.0 / 15.4 / 20.8% short and speed-DEPENDENT (100-150 / 150-250 / 1500-2000) where the original's EQUALS its steer angle -33.867 deg at every speed. Closes only 10.9% of the ld4 gap. Writer not located — needs Ghidra xrefs.",
+          "kind": "text"
+        },
+        {
+          "label": "Withdrawn across the session",
           "value": [
-            "the lateral is removed INSIDE A6a: I_a6b and I_s1 are exactly 0.0000 (0 pos / 0 neg, n up to 606)",
-            "grip-clamp #6 is BYTE-FAITHFUL: 0x004687f0..0x0046897b, both arms, 6 constants, the 0.1 bound is a FLOOR",
-            "+0x18c is 1.0 on both sides, so grip == l_60 and the lever is that accumulator",
-            "the original passes below 100 horizontal ONCE per race (6-8 frames); the port spends 238 of 1352 at 40-70"
+            "section 20.15's “the lateral is never GENERATED” (R = 1.3387)",
+            "my own “the original is on the HIGH arm” (av confounded by A6a's own integration)",
+            "section 20.15's lat ratio 1.0590 (averaged a collapse and a regrowth)",
+            "section 21.9's wheel-axis hypothesis (the write is present on 100% of frames)"
           ],
           "kind": "list"
         },
         {
-          "label": "Withdrawn this attempt",
+          "label": "Primary hypothesis now",
+          "value": "RESIDENCY: the original passes below 100 horizontal once per race (6-8 frames of 6658); the port spends 238 of 1352 at 40-70. The basin is entered UPSTREAM of A6a.",
+          "kind": "text"
+        },
+        {
+          "label": "Next (neither is a fix)",
           "value": [
-            "section 20.15's \"the lateral is never GENERATED\" — R = |dlat| port/orig = 1.3387, yaw 2.8% apart",
-            "my own \"the original is on the HIGH arm\" — the av fingerprint is confounded by A6a's own integration",
-            "section 20.15's lat ratio 1.0590 — it averaged a collapse and a regrowth that cancel"
+            "default-OFF MASHED_A6_FORCE_HIGHARM diagnostic to test bistability — do not ship",
+            "find what puts the port in the low-speed basin: the ~5 frames after the first bounce, which already agree"
           ],
           "kind": "list"
-        },
-        {
-          "label": "The number to hit",
-          "value": "port grip*speed at 100-150 is 17 992 (n=30) and must reach >= 29 491 to put k on its 0.1 floor, which reproduces the original's measured I_a6a/L = 0.1019 (n=46). At 40-70 the port's k is 0.9084.",
-          "kind": "text"
-        },
-        {
-          "label": "Why no fix was authored",
-          "value": "l_60 = sum ld4*le4 and ld4 is the sine of a wheel slip angle — the quantity being explained. le4 is measured to agree in form on both sides.",
-          "kind": "text"
-        },
-        {
-          "label": "Next",
-          "value": "measure the ORIGINAL's l_60 directly — entry hooks on A6a's Mag3 call sites, if they are calls and not inlined fsqrt",
-          "kind": "text"
         }
       ]
     },
@@ -97,9 +101,9 @@
         {
           "label": "Instruments",
           "value": [
-            "scenario_launch.py --lat-bracket — entry-only record samples at A6a / A6b / substep loop, ~180 calls/s",
-            "re/tools/statediff/a8_latinc.py — per-frame velocity increment on the body fwd/right axes",
-            "re/tools/statediff/a8_latbracket.py — reduces a bracket capture on the verified 0,2,1,1 pattern"
+            "scenario_launch.py --lat-bracket — entry-only record samples at A6a / A6b / substep loop",
+            "scenario_launch.py --mag-probe — entry-hook RwV3dLength, log its argument by call site (count-first: 120 call sites image-wide)",
+            "a8_latinc.py / a8_latbracket.py / a8_l60.py / a8_wheelaxis.py"
           ],
           "kind": "list"
         }
