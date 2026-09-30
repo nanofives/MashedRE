@@ -589,19 +589,111 @@ A failing A4 with a passing A1 is the interesting case and must be reported, not
 
 ---
 
+# ADDENDUM — O1 CLOSED: the original computes no direction at all
+
+*(appended after the root-cause commit `e42aff99`; no new game runs were needed.)*
+
+O1 asked for confirmation that the original's runtime directional-light direction equals the
+asset's at-vector. It is answered **statically and completely**, which is stronger than the
+Frida read O1 proposed: **the original performs no direction arithmetic whatsoever.**
+
+`FUN_00479330` @ **`0x00479330`** (`Course::CreateFromDescription`, the master course asset
+loader — already carried as C2 in Ghidra), decompiled this session from a read-only pool slot.
+The branch taken when the course declares a `Lights_Filename` (all 13 tracks do —
+`RwSceneBuild.cpp:458`, `re/prior_art/notes/rw_lighting_research_2026-07.md:496`) is, verbatim:
+
+```c
+  else {
+    uVar2 = FUN_0042a5d0(param_2 + 0x2640,0,0);          // 0x0042a5d0: stream-read LIGHTS.DFF
+    *(undefined4 *)(param_1 + 0x105dc) = uVar2;          // keep the clump
+    iVar1 = FUN_004e6650(uVar2);                         // 0x004e6650: light count in the clump
+    FUN_004b4010(*(undefined4 *)(param_1 + 0x105dc),aiStack_420);  // 0x004b4010: collect RpLight*
+    iVar4 = 0;
+    if (0 < iVar1) {
+      do {
+        iVar3 = aiStack_420[iVar4];
+        if (*(char *)(iVar3 + 1) == '\x01') {            // RwObject.subType @ +0x01
+          *(int *)(param_1 + 0x105e4) = iVar3;           //   1 -> DIRECTIONAL slot
+        }
+        else if (*(char *)(iVar3 + 1) == '\x02') {
+          *(int *)(param_1 + 0x105e0) = iVar3;           //   2 -> AMBIENT slot
+        }
+        *(undefined1 *)(iVar3 + 2) = 1;                  // RwObject.flags = 1
+        RpWorldAddLight(*(undefined4 *)(param_1 + 0x105d4),iVar3);
+        iVar4 = iVar4 + 1;
+      } while (iVar4 < iVar1);
+    }
+```
+
+The lights that `RpClumpStreamRead` produced are added to the world **as-is**. Each already
+carries the frame the stream attached to it, so the direction the renderer uses is whatever
+`RwFrameGetLTM` yields from the frame hierarchy RenderWare itself built — by construction the
+asset's at-vector, `(-0.387516, -0.352184, -0.851937)` for TRAINING (frames 0 and 1 are
+identity, M3). **There is no original-side computation that could be mis-ported here.** Our
+`ParseLightsDffFaithful` is a hand re-derivation of something RW does for free, and the
+re-derivation is the entire defect.
+
+**Two bonus confirmations from the same decompilation:**
+
+1. **The subtype mapping is settled: 1 = DIRECTIONAL, 2 = AMBIENT.** The default branch
+   (`param_2[0x2640] == '\0'`) creates `RpLightCreate(2)` and gives it a colour but **no
+   frame**, while `RpLightCreate(1)` gets a frame created (`FUN_004c0b30` @ `0x004c0b30`),
+   attached (`FUN_004c0740` @ `0x004c0740`) and rotated (`FUN_004c1520` @ `0x004c1520`) — only
+   a directional light needs a frame. That matches the DFF branch's slot assignment above, and
+   matches the stream mapping the port uses at `TrackRenderer.cpp:839-843`.
+   This **resolves the conflict** flagged between
+   `re/prior_art/notes/rw_lighting_research_2026-07.md` §8.1 and
+   `re/analysis/render_lighting_d2/render_lighting_d2-20260503.md:96-97` (the latter's
+   "0x01=ambient, 0x02=directional" is **wrong**). Recorded here as evidence; no tracker row
+   was touched for it.
+2. **The port's DEFAULT-lights branch is faithful, and only the DFF branch is broken.** The
+   original's default rotation is `FUN_004c1520(frame, &uStack_434, 0x42700000, 0)` with
+   `uStack_434 = {0x3f800000, 0, 0}` = axis `(1,0,0)` and angle `0x42700000` = **60.0f**. The
+   port's default branch uses `dir = (0, -sin60, cos60)` (`TrackRenderer.cpp:1190-1195`) — the
+   same 60 degrees about X. So the port gets the no-`Lights_Filename` case right and the
+   `Lights_Filename` case wrong, which is exactly the split this note describes.
+
+**O1 is closed.** The root cause no longer rests on any inference about the original's
+lighting: it rests on (a) the asset, (b) the original executing no direction arithmetic, (c)
+the port's own output reproduced offline on two tracks, and (d) the original's measured pixels.
+
+# ADDENDUM — harness channels that were tried and discarded, with numbers
+
+Recorded so the next session does not re-try them.
+
+* **`MASHED_DBG_DRAWSTREAM3D` / `drawlist_diff.py` — NOT USABLE for this defect.** The
+  standalone's 3D draw-stream dump is **counts only**, no per-batch colour: the existing
+  captures `verify/car_gray_20260929/drawstream3d_sa.json` and `…_sa600.json` contain
+  `{"batches":N,"verts":N,"textured":N}` per bucket and nothing else, and the original-side
+  sibling `orig_bb_a.bmp.draw3d.json` is a 95-byte totals record
+  (`{"draw_calls":348,"prims":40162,"verts":25422,…}`). Neither side carries a material
+  colour, a light, or a vertex colour, so there is no channel for a brightness diff.
+  `parity_tooling.md:90-91` says so directly: *"In-race TrackRenderer paths are out of scope
+  (menu parity only)"*.
+* **`imgdiff.py` on the pose-matched pair — RUN, and dominated by non-lighting differences.**
+  `py -3.12 re/tools/imgdiff.py verify/car_bright_20260930/orig_train.bmp verify/car_bright_20260930/sapose_t30.png --grid 8x6`
+  gives **mean abs 57.83, 85.6% of pixels over threshold 16**. That number measures the window
+  chrome (512x384 client capture resampled to the 640x480 backbuffer) and the race-phase
+  difference (original settled at the grid with four cars; standalone already driving with the
+  cars scattered), not the shading. A whole-frame statistic cannot isolate car paint. The
+  camera-basis transplant itself **did** work — `sapose_t30.png` reproduces the original's
+  view — it is the frame content that is not time-aligned.
+  **The usable instrument is the ratio-to-texel measurement** (`body_ratio.py`,
+  `surface_split.py`), because it normalises each side against the same source texel and can
+  be scoped to one panel orientation.
+* **`--poke-ctrl-slots` — not applicable to the driver the recipe prescribes.** The flag
+  exists only on `re/frida/scenario_launch.py:2111`; `re/frida/race_draw_burst.py` (the
+  original-side driver named by `NEXT_SESSION_race_parity_20260830.md`) has no such option.
+  Its documented purpose is to write the **AI output-slot table** `0x007f1a14[0..3]` so the
+  four AI cars do not all write controller 0's ctrl block — an AI-controller concern,
+  orthogonal to lighting. The measurement here is of the **player** car's paint on a settled
+  frame, so its absence cannot affect the result. Stated rather than silently skipped.
+
 # OPEN / [UNCERTAIN]
 
-* **O1 [UNCERTAIN] — no direct runtime read of the ORIGINAL's `RpLight` direction.** The
-  original-side evidence here is (a) the shipped asset and (b) the original's measured
-  per-surface pixel brightness, which is impossible under the as-built direction (M6). I did
-  **not** enumerate the original's `RpWorld` lights at race time and read the light frame's
-  LTM at-vector — that needs an `RpWorldForAllLights`/`RwFrameGetLTM` RVA this session did not
-  establish. What is missing: a direct confirmation that the original's runtime direction
-  equals the asset at-vector. Nothing measured contradicts it, and RW composes the LTM
-  correctly by construction, but it is inferred rather than read.
-  *Next command*: `py -3.12 re/tools/decomp_pc.py 0x00479330 --callees --strings` to find the
-  `RpWorldAddLight` call after the `LIGHTS.DFF` `RpClumpStreamRead` at `FUN_0042a5d0`, then a
-  one-shot Frida read of the light frame's LTM `+0x50`, matrix at-row `+0x20`.
+* ~~**O1** — no direct runtime read of the ORIGINAL's `RpLight` direction.~~
+  **CLOSED** by the addendum above: the original performs no direction arithmetic
+  (`FUN_00479330` @ `0x00479330`).
 * **O2 — the four tracks that get BRIGHTER** (Egypt 1.13x, rouabout 1.11x, Storm 1.26x, sands
   1.29x, M7) were not visually checked. The fix will *darken* their up-facing car panels. That
   is the correct direction per the asset, but no original-side reference exists for those
