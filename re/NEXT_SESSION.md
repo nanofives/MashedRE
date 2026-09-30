@@ -58,20 +58,39 @@ Superseded kickoff: the 2026-09-29 "re-close attempt 4" one (kept below).
 >   second pass + `scripts/test_rva_body_scan.py` 6/6 + an end-to-end re-run on the pre-fix tree.
 >   13 new pairs exposed (U-9158), allowlisted `audit=UNREVIEWED-U9156`, 111 -> 122, NEW=0.
 >
-> ### PICK UP HERE — port the two contact solvers
+> ### PICK UP HERE — find the first DIVERGING TERM inside the feedback loop
 >
-> `0x0046ef70` is verbatim now, so what is wrong is its **INPUT**:
+> **Read §19 first — it withdraws the obvious next step.** "Port `0x00468d80` and `0x004694e0`"
+> was written here at the close of attempt 5 and is **WRONG**: both already have full
+> transcriptions (`Collision/CarWorldContacts.cpp:160-253` and `:262-377`) and `STUBS.md`
+> S-3440/S-3441 are struck through as resolved. `hooks.csv`'s `status stub` was stale and is
+> now `impl`. **Do not port them.**
 >
-> | RVA | name | today |
-> |---|---|---|
-> | `0x00468d80` | `VehicleTerrainContactSolver` | **C2, `status stub`** |
-> | `0x004694e0` | `VehicleObjectContactSolver` | **C2, `status stub`** |
+> A second obvious step was also tried and **refuted by measurement**: nothing in the port
+> writes the 32-slot contact history at `veh+0xbfc` that `ContactHistoryLookup` `0x00468b40`
+> scans, so every contact re-latches every substep — which matches the symptom exactly. But
+> `--peek` on the running original shows slot 0's **32 keys and 32 active flags all zero on 22
+> samples over two 40 s live races**, so the original re-latches too. **The port is faithful
+> there.**
 >
-> Measured symptom: the scan reports slot 5 at depths down to `d=-0.0000` **216 times in 1628
-> sim steps**, so the car is damped back to ~10 every time it reaches ~55 and never leaves
-> Training's wall. The ORIGINAL slides ALONG that wall at `vel.z +119..+320`, `pos.z` advancing
-> `-3.51 -> -2.71`, `bodyH` rotating `+2.605 -> +2.058` (frames 1000-1100), and reaches 1311 by
-> frame ~1150. `MASHED_WORLD_CONTACT_LOG=<relative path>` logs every fixup with its reporting
+> What IS a stand-in, and neither is on the trap's path today: `Rw_BroadphaseWalk`
+> `FUN_00538c80` (no-op, replaced by `ProduceTerrainBatch`'s plane-distance filter) and
+> `Obj_ListCount()==0`. The batch entry layout was checked index by index and is correct.
+>
+> **The trap's shape is understood; the diverging term is not.** `0x0046ef70`'s damp is
+> `min(0.9, 3*(1 - min(1, abs(m)/speed)))` over all three velocity components, and `0x00468d80`
+> builds `abs(m)` from `abs(vel + spin) * dot(norm, faceNormal)` — so `abs(m)/speed` is
+> `abs(cos(velocity, wall normal))`: head-on annihilates the velocity, tangential costs 10%.
+> The original rotates tangential and leaves; the port cannot, because the yaw rate scales with
+> speed and it is pinned at ~25 (yaw frozen at `2.59..2.60` over 210 steps). **Both first
+> bounces now agree closely** (tangential retained 22% vs 23%) and the two sides separate over
+> the following ~20 frames.
+>
+> **Next command:** per-frame cross-side dump of record `+0x9b0` (velocity), `+0x144` (angular
+> accumulator), `+0x9e4` (speed) and `+0x9ec` (active-contact count) over ORIGINAL frames
+> 980-1100 against the same window on the corrected port arm, and find the first frame the
+> **angular accumulator** diverges — that is the channel that decides whether the car rotates
+> tangential. `MASHED_WORLD_CONTACT_LOG=<relative path>` logs every fixup with its reporting
 > slots, depths, normals and magnitudes; `MASHED_WORLD_CONTACT=0` reverts the chain for A/B.
 >
 > Two smaller things, both registered rather than done:

@@ -519,12 +519,24 @@ opinion is an opinion about the scaffold, not about the port.
 > the first fixup's x output `+698.16` -> **`+194.39`** (predicted `+186 ± 10`) against the
 > original's `+176.47`.
 >
-> **The residual, named with RVAs:** `VehicleTerrainContactSolver` `0x00468d80` and
-> `VehicleObjectContactSolver` `0x004694e0` are both `status stub`, so the fixup's INPUTS are a
-> hand-written stand-in. Measured: the scan reports slot 5 down to `d=-0.0000` **216 times in
-> 1628 sim steps**, so the car is damped back to ~10 every time it reaches ~55, where the
-> original slides ALONG the same wall at `vel.z +119..+320` and leaves by frame ~1150.
-> **Porting those two is the condition for attempt 6.**
+> **The residual.** *(First attribution WITHDRAWN the same day — see §19.)* It was recorded here
+> as "`0x00468d80` and `0x004694e0` are both `status stub`". **They are not stubs**: both have
+> full transcriptions (`Collision/CarWorldContacts.cpp:160-253` and `:262-377`) and `STUBS.md`
+> S-3440/S-3441 are struck through as resolved; the status column was stale and is now `impl`.
+> A follow-up re-latch hypothesis (nothing writes the contact history at `veh+0xbfc`, so every
+> contact is "new" every substep) was **refuted by measurement** — the original's 32 keys and 32
+> active flags are all zero on 22 `--peek` samples over two 40 s live races, so it re-latches
+> too.
+>
+> What is measured and stands: the scan reports slot 5 down to `d=-0.0000` **216 times in 1628
+> sim steps**, the car is damped back to ~10 every time it reaches ~55, and the original slides
+> ALONG the same wall at `vel.z +119..+320` and leaves by frame ~1150. The damp
+> (`min(0.9, 3*(1 - min(1, abs(m)/speed)))`, all three components) with
+> `abs(m)/speed = abs(cos(velocity, wall normal))` makes this a positive-feedback trap: head-on
+> annihilates the velocity, and the port cannot rotate tangential because its yaw rate scales
+> with speed. **The condition for attempt 6 is to find the first diverging term inside that
+> loop** — the registered command is a cross-side per-frame dump of `+0x9b0` / `+0x144` /
+> `+0x9e4` / `+0x9ec` over frames 980-1100.
 >
 > Guards on the final build: criterion (e) **PASS 3/3**; AI (b) **FAIL 3/3**, `c1_median`
 > 52.5 / 38.0 / 49.0 (identical to attempts 1-4); power-ups **decision CLEAN 11/11**, `g3`

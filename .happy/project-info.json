@@ -1,13 +1,13 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-09-30T05:20:00Z",
+  "updatedAt": "2026-09-30T07:05:00Z",
   "sections": [
     {
-      "heading": "Phase",
+      "heading": "Roadmap (v3)",
       "fields": [
-        { "label": "Current phase", "value": "D2 REOPENED — re-close attempt 5 failed", "kind": "text" },
+        { "label": "Status", "value": "D0 done | D1 done (residue R1-R3 open) | D2 REOPENED — re-close attempt 5 failed | D3 blocked on D2", "kind": "text" },
         { "label": "Branch", "value": "race/first-frame-parity (nothing pushed)", "kind": "text" },
-        { "label": "Kickoff", "value": "re/NEXT_SESSION.md — port 0x00468d80 + 0x004694e0", "kind": "text" }
+        { "label": "Kickoff", "value": "re/NEXT_SESSION.md — read D2_REOPEN section 19 before picking up", "kind": "text" }
       ]
     },
     {
@@ -20,18 +20,18 @@
       ]
     },
     {
-      "heading": "Residual",
+      "heading": "U-9156 — the wall trap",
       "fields": [
-        { "label": "Blocker", "value": ["0x00468d80 VehicleTerrainContactSolver — status stub", "0x004694e0 VehicleObjectContactSolver — status stub"], "kind": "list" },
-        { "label": "Fixed this session", "value": "0x0046ef70 damp guard (slot 0 key vs -2, not slot 17 vs -1)", "kind": "text" },
-        { "label": "Open uncertainties", "value": ["U-9155 writer of DAT_0063d9e0+0x230", "U-9156 the wall trap", "U-9158 13 unreviewed dual-copy pairs"], "kind": "list" }
+        { "label": "Fixed", "value": "0x0046ef70 damp guard — slot 0 key vs -2, not slot 17 vs -1", "kind": "text" },
+        { "label": "Withdrawn", "value": ["0x00468d80 / 0x004694e0 are NOT stubs (status was stale)", "the contact re-latch is faithful — original's history is all zero, 22 live samples"], "kind": "list" },
+        { "label": "Open", "value": "first diverging term inside the damp feedback loop (frames 980-1100)", "kind": "text" }
       ]
     },
     {
       "heading": "Guards (final build)",
       "fields": [
         { "label": "criterion (e)", "value": "PASS 3/3", "kind": "text" },
-        { "label": "AI criterion (b)", "value": "FAIL 3/3 (unchanged)", "kind": "text" },
+        { "label": "AI criterion (b)", "value": "FAIL 3/3 (unchanged from attempts 1-4)", "kind": "text" },
         { "label": "power-ups", "value": "decision CLEAN 11/11, g3 contact diverges", "kind": "text" },
         { "label": "oracle rule 3", "value": "GREEN, MISMATCH=0", "kind": "text" },
         { "label": "rva-lint", "value": "allowlisted=122 NEW=0", "kind": "text" },
