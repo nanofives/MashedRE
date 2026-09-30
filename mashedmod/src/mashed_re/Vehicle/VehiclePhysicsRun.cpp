@@ -910,12 +910,23 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                 if (std::FILE* lf = std::fopen(s_wcLog, "a")) {
                     std::fprintf(lf,
                         "slot=%d pass=%d n=%d ret=%d pos=(%.4f,%.4f,%.4f) "
-                        "vel=(%.4f,%.4f,%.4f)->(%.4f,%.4f,%.4f)\n",
+                        "vel=(%.4f,%.4f,%.4f)->(%.4f,%.4f,%.4f)",
                         slot, pass, I(r, 0x9ec), contacted,
                         io.pos[0], io.pos[1], io.pos[2],
                         pv[0], pv[1], pv[2],
                         F(r, off::kVelocity + 0), F(r, off::kVelocity + 4),
                         F(r, off::kVelocity + 8));
+                    // which of the 18 slots reported, and with what normal/depth.
+                    // Slot base S = 0x4a8 + i*0x40: +0x00 depth, +0x04 key (-1 empty),
+                    // +0x08..+0x10 normal, +0x38 magnitude.
+                    for (int si = 0; si < 0x12; ++si) {
+                        const std::size_t S = 0x4a8 + (std::size_t)si * 0x40;
+                        if (I(r, S + 4) == -1) continue;
+                        std::fprintf(lf, " | s%d d=%.4f n=(%.3f,%.3f,%.3f) m=%.1f",
+                            si, F(r, S + 0), F(r, S + 8), F(r, S + 0xc),
+                            F(r, S + 0x10), F(r, S + 0x38));
+                    }
+                    std::fprintf(lf, "\n");
                     std::fclose(lf);
                 }
                 ++s_wcLines;
