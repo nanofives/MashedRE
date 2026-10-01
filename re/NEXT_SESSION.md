@@ -3,19 +3,56 @@
 Updated 2026-10-01 at the close of the **D2 re-close attempt 13** session: the `l_60` call-site
 attribution is **VERIFIED** by disassembly, attempt 12's `l_60 >= 79 240` is **WITHDRAWN** (the
 original is on clamp #6's **LOW** arm, where `k` is pinned at its 0.1 floor and can never be 0),
-`l_60` is measured on both sides at **2.15x** at 100-150, and a new **three-way inconsistency**
-[U-9173] stands in U-9172's place. **No fix authored**: the registered gate G4 failed, so the
-decision rule did not execute. Branch `race/first-frame-parity`. Nothing is pushed.
+and then step 2 found that **every cross-side band above 100 speed in this lane is OFF-REGIME** —
+the two sides share **five** frames of common regime — which withdraws §21.9's `ld4` 2.71x,
+§21.10's front-axis defect and this attempt's own `l_60` ratio. **No fix authored.** Branch
+`race/first-frame-parity`. Nothing is pushed.
 
-> ## START HERE (D2 lane) — attempt 13. D2 is STILL REOPENED. **ONE measurement closes the clamp-#6 lane, and it is an entry hook on `0x00468980`.**
+> ## START HERE (D2 lane) — attempt 13. D2 is STILL REOPENED. **STOP MEASURING INSIDE A6a. The port collapses from 1831 to a median of 22 inside its first 121 frames, and nothing above 100 speed is comparable on this arm.**
 >
-> Read [`verify/d2_l60_20261001/RESULT_STEP1.md`](../verify/d2_l60_20261001/RESULT_STEP1.md)
-> (§4 and §5 first), then [`RESULT_STEP0.md`](../verify/d2_l60_20261001/RESULT_STEP0.md), then
-> `ROADMAP.md` §D2's attempt-13 block. **Do not re-derive any of it.** Pre-registration
-> [`PREREG_STEP1.md`](../verify/d2_l60_20261001/PREREG_STEP1.md), committed before any
-> reduction run and **not amended**. New uncertainties: **U-9173** (the live one),
-> **U-9172 WITHDRAWN** to the resolved audit trail, **U-9156** amended with step 0's `+0x1a8`
-> row.
+> Read [`verify/d2_l60_20261001/RESULT_STEP2.md`](../verify/d2_l60_20261001/RESULT_STEP2.md)
+> **first** (§2.4 and §2.5), then
+> [`RESULT_STEP1.md`](../verify/d2_l60_20261001/RESULT_STEP1.md) §4, then
+> [`RESULT_STEP0.md`](../verify/d2_l60_20261001/RESULT_STEP0.md) (whose §0d row is
+> **withdrawn** — the correction banner is at the top). `ROADMAP.md` §D2's attempt-13 block
+> and `D2_REOPEN_2026-09-29.md` **§26** carry the same record. **Do not re-derive any of it.**
+> Pre-registration [`PREREG_STEP1.md`](../verify/d2_l60_20261001/PREREG_STEP1.md), committed
+> before any reduction run and **not amended**. Trackers: **U-9172 WITHDRAWN** to the resolved
+> audit trail, **U-9173** opened then caveated, **U-9156** amended twice.
+>
+> ### THE ONE NUMBER THAT MATTERS, and it reframes the whole lane
+>
+> Regime = steer saturated (`+0x1a8 >= 33.8`) **and** speed `>= 100` **and** grounded:
+>
+> | | frames | steer saturates | frames after | speed >= 100 after | median speed after | peak |
+> |---|---:|---:|---:|---|---:|---:|
+> | **ORIGINAL** | 2332 | frame 1003 | 1329 | **1329 (100.0%)** | **1847.0** | 2562.5 |
+> | **PORT** | 1627 | frame 121 | 1507 | **5 (0.3%)** | **22.2** | 118.6 |
+>
+> **The two sides share exactly FIVE frames of common regime.** The port reaches **1831.5**
+> peak during its steer ramp (the original 1815.4) and then collapses to a median of **22.2**
+> inside its first ~121 frames and never recovers. **That collapse is D2's defect.** Everything
+> measured inside A6a for three attempts — `l_60`, `ld4`, `grip*speed`, the clamp arms, the
+> wheel axes — is downstream scenery, and every cross-side band above 100 compared the
+> ORIGINAL at full lock (median frame 1017-1801) against the PORT mid-ramp (median frame
+> 22-112).
+>
+> ### WITHDRAWN by step 2 — do not carry these forward
+>
+> 1. **Step 0's `+0x1a8` steer row.** Both sides are identical: start `17.07471`, step
+>    `+0.141113`/frame, saturate at `33.86719` on the 120th steering frame.
+>    `ramp = (min(+0xb24, 6000) + 6000)/6000` at A4 `0x0047080c..0x0047082f` — it ramps in
+>    **time**, not speed.
+> 2. **§21.10's "the port's front-axis deflection is 10.0 / 15.4 / 20.8% short" and its 10.9%
+>    of the `ld4` gap.** Scored against the port's OWN `+0x1a8`, `(front − rear) + steer` has
+>    median residual **+0.000002** on both sides (n=1626 port, n=1448 original, identical
+>    p05/p95). The port's wheel axes are **exact**. U-9156's "its writer is not located" is
+>    **moot**.
+> 3. **§21.9's `ld4` 2.71x / `grip*speed` 1.84x, §25.3's per-band net table, and attempt 13
+>    step 1's own `l_60` 2.15x..1.11x** — all off-regime.
+>
+> **NOT withdrawn** (banding-independent): step 1's **attribution** and **arm selection**,
+> below.
 >
 > **The §3 bounds are unchanged and are not renegotiable.** `slip 1500-2000`
 > **0.18855 .. 0.19635**, `slip 2000-2600` **0.24488 .. 0.25487**, `driving-median`
@@ -52,33 +89,32 @@ decision rule did not execute. Branch `race/first-frame-parity`. Nothing is push
 > | 1500-2000 | 1936.219 (84, 1742.8) | 1751.259 (20, 1676.5) | **1.11x** |
 >
 >    The port's side is **read directly** from `act.l60` (gate G3: `act.l60*act.speed ==
->    act.grip` on 1626 of 1626), not reconstructed. At 100-150 **both sides are on the LOW arm
->    and the port's `k` is 5.41x the original's** (0.540954 against the 0.1 floor).
+>    act.grip` on 1626 of 1626), not reconstructed. **This table is OFF-REGIME and is kept only
+>    for its ORIGINAL column** — step 2 withdrew the cross-side ratio.
 >
-> ### NEXT COMMAND — ONE capture, entry-only, and it decides the lane
+> ### NEXT COMMAND — the COLLAPSE, not the clamp
 >
-> **Resolve [U-9173].** Three measurements of the ORIGINAL cannot all be true:
-> **(i)** LOW arm ⇒ `k = 0.1` (n=45); **(ii)** `s` = **0.729** at the first site-1 sample after
-> A6a returns (n=45, unit check 1448/1448); **(iii)** §25.3's `+0x9e4/|v'|` = **0.999991 ..
-> 1.000020** (2331/2331). (i)+(ii) predict **1.0547**, a 5.5% per-frame speed cut; (iii)
-> measures **0.002%**.
+> **The target is the port's first ~121 frames**, where it goes from 1831.5 peak to a median of
+> 22.2. §20.14 already measured that both first bounces AGREE (`cos` −0.366 vs −0.361) and that
+> the sides separate over the following ~5 frames, so that window is the target and it is
+> upstream of A6a.
 >
-> 1. Add a `--fixup-probe` site at **A6b's entry `0x00468980`** — the first function boundary
->    after the clamp — sampling `+0x9b0..0x9b8`, `+0x9d4..0x9dc`, `+0x9e0` and `+0x9e4`, beside
->    the existing site 2 (`0x00467650`, A6a entry). Entry hooks only
->    (memory `frida-interceptor-is-entry-only`).
-> 2. **Its first gate must be proving `0x00468980` is called once per A6a call.** That is
->    assumed, not established. Disassemble A6a's caller: the gap nobody has read is whatever
->    runs between A6a's `ret` and `FUN_004709a0`'s entry.
-> 3. Already RULED OUT statically, do not redo it: A6b `0x00468980..0x00468b34` is **132
->    instructions** and writes **no** `+0x9b0..0x9b8`, **no** `+0x9d4/+0x9d8/+0x9dc`, **no**
->    `+0x9e4`, **no** `+0x928` block — only `+0x9bc`/`+0x9c0`/`+0x9c4` through ECX at
->    `0x00468abb`/`0x00468ac1`/`0x00468ac7`. "The forward axis rotated after the clamp" is not
->    A6b.
-> 4. The collision resolves to exactly one of: **the clamp does not run** (instrument the two
->    gates `0x0046874c` `|vel| != 0` and `0x00468761` `+0x9e0 == 0x40800000` at the clamp, not
->    from the record); **`s` is small AT the clamp and grows after it**; or **`+0x9e4` is
->    refreshed downstream of A6b**.
+> 1. **Build a common-regime arm, or admit there is none.** Every band table in this lane is
+>    void above 100 because the port is never there at full lock. Either (a) find a scenario
+>    where the port sustains >100 with saturated steer, or (b) score the collapse itself —
+>    speed against **frame index** on both sides, aligned on the first bounce, which needs no
+>    band at all.
+> 2. **Use the off-regime guard.** `collateral.py --mode banded` now prints the median frame
+>    index per arm per band and flags any band whose two medians differ by >50%. Re-running
+>    step 0's table flags **every** band from 100-150 to 1500-2000. Do not read a flagged row.
+> 3. **[U-9173] is still open but is now a side question**, not the lane. Three measurements of
+>    the ORIGINAL cannot all be true: LOW arm ⇒ `k = 0.1` (n=45); `s` = **0.729** at the first
+>    site-1 sample after A6a returns (n=45, unit check 1448/1448); §25.3's `+0x9e4/|v'|` =
+>    0.999991..1.000020 (2331/2331). The first two predict **1.0547** against a measured
+>    0.002%. The registered next measurement is a `--fixup-probe` site at **A6b's entry
+>    `0x00468980`**, entry-only, whose first gate must be proving that site runs once per A6a
+>    call. Already ruled out statically: A6b (132 instructions) writes no velocity, no forward
+>    axis, no `+0x9e4`.
 >
 > ### THE STANDING COLLATERAL TOOL — use it, do not write another `aN_*.py`
 >
@@ -100,23 +136,19 @@ decision rule did not execute. Branch `race/first-frame-parity`. Nothing is push
 > over 2332 frames, first real divergence at frame 771, led by the per-wheel `+0x70`/`+0x78`
 > force slots — which independently confirms A6a's extracted write set.
 >
-> ### ONE EXPLORATORY ROW, and it must be PRE-REGISTERED before anything is built on it
+> ### THE INSTRUMENT LESSON THIS ATTEMPT PAID FOUR FINDINGS FOR
 >
-> Record **`+0x1a8`**, the wheel-0 steer angle A4 `0x00470670` writes and A6a **never touches**
-> (no `esi+0x1a8` store in `0x00467650..0x00468989`). Both sides read the same offset
-> (`VehiclePhysicsRun.cpp:1304` logs `snap.steer = F(r,0x1a8)`).
+> **Banding on speed compares two different MOMENTS whenever the arms traverse the band at
+> different times.** Any quantity that ramps in **time** — a steer ramp, a gear, a warm-up
+> counter — then produces a textbook fake: a cross-side deficit that is monotone in speed,
+> reproducible across runs, and entirely an artefact. §21.9's `ld4`, §21.10's front axis,
+> §25.3's net table and attempt 13's `l_60` were all this one thing. Print the **median frame
+> index** next to the median speed, and refuse to read a row whose two medians are far apart.
 >
-> | band | n o/p | med spd o/p | ORIG | PORT | short |
-> |---|---|---|---:|---:|---:|
-> | 100-150 | 45/30 | 126.2/110.8 | **33.867** | 32.527 | −4.0% |
-> | 260-500 | 60/15 | 371.1/340.8 | **33.867** | 19.897 | **−41.2%** |
-> | 1500-2000 | 339/22 | 1778.8/1683.8 | **33.867** | 26.882 | −20.6% |
->
-> The original is **33.867 flat over a 14x speed range with a noise floor of exactly 0**.
-> §21.10 never compared this: its port steer column was `motion_diag`'s `steer=` **input
-> command** (saturated at +1.000), not an angle — and `a8_momentum.py`'s scored
-> "steer over driving frames" line has the same mismatch, so **the scored output's steer line
-> compares an input against an angle**. Not fixed; recorded so it is not re-read.
+> One real instrument defect, **not fixed**, recorded so it is not re-read: `a8_momentum.py`'s
+> scored `steer over driving frames` line prints the ORIGINAL's `+0x1a8` **angle** (33.867) and
+> the PORT's `motion_diag` `steer=` **input byte** (saturated at +1.000). They are different
+> quantities, and reading them as a pair is what produced §21.10's front-axis defect.
 >
 > **Still open:** U-9173 (the clamp-#6 collision); U-9156 (the trap, now carrying the `+0x1a8`
 > row); U-9160 (substep budget 3-4 against the original's fixed 2 at `0x00469ad4`); U-9171 (the

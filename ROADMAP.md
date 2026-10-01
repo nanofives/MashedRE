@@ -610,7 +610,28 @@ opinion is an opinion about the scaffold, not about the port.
 > **Order: D2 must close again BEFORE the D3 modes 3/7 port starts.** §D3's closure path
 > (`FUN_00414c30` + `FUN_00484c70`) is on hold until then.
 
-> #### Re-close attempt 13 — 2026-10-01. **STILL REOPENED. The `l_60` call-site attribution is VERIFIED by disassembly, and attempt 12's `l_60 >= 79 240` is WITHDRAWN: the ORIGINAL is on clamp #6's LOW arm at 100-150, where `k` is pinned at its 0.1 floor and can never be 0. `l_60` diverges 2.15x at 100-150 with n and median speed on both sides. NO fix authored: the registered gate G4 failed, so the decision rule did not execute.**
+> #### Re-close attempt 13 — 2026-10-01. **STILL REOPENED. The `l_60` call-site attribution is VERIFIED and attempt 12's `l_60 >= 79 240` is WITHDRAWN (the ORIGINAL is on clamp #6's LOW arm, where `k` is pinned at its 0.1 floor) — and then step 2 found that EVERY cross-side band above 100 speed in this lane is OFF-REGIME. The two sides share FIVE frames of common regime. That withdraws §21.9's `ld4` 2.71x, §21.10's front-axis defect and this attempt's own `l_60` ratio. NO fix authored.**
+>
+> **STOP MEASURING INSIDE A6a.** Regime = steer saturated (`+0x1a8 >= 33.8`) and speed `>= 100`
+> and grounded: the ORIGINAL has **1329 of 1329** frames after saturation (100.0%, median speed
+> **1847.0**, peak 2562.5); the PORT has **5 of 1507** (0.3%, median speed after saturation
+> **22.2**, max 118.6). The port peaks at **1831.5** during its steer ramp — the original at
+> 1815.4 — then **collapses inside its first ~121 frames and never recovers**. That collapse is
+> D2's defect; `l_60`, `ld4`, `grip*speed`, the clamp arms and the wheel axes are downstream
+> scenery. Detail: `verify/d2_l60_20261001/RESULT_STEP2.md`, `D2_REOPEN_2026-09-29.md` §26.9.
+>
+> **Three withdrawals from step 2.** (1) Step 0's `+0x1a8` row — both sides' steer ramps are
+> identical (start 17.07471, +0.141113/frame, saturate 33.86719 on the 120th steering frame;
+> `ramp = (min(+0xb24,6000)+6000)/6000` at A4 `0x0047080c..0x0047082f`, so it ramps in **time**).
+> (2) §21.10's "front-axis 10.0/15.4/20.8% short" and its 10.9% of the `ld4` gap — scored
+> against the port's OWN `+0x1a8`, `(front − rear) + steer` has median residual **+0.000002** on
+> both sides (n=1626 / n=1448), so the port's wheel axes are **exact** and U-9156's "its writer
+> is not located" is moot. (3) Every cross-side band above 100 in §21.9 / §21.10 / §25.3 and in
+> this attempt's own step 1.
+>
+> **Instrument fix:** `collateral.py --mode banded` now prints the median **frame index** per arm
+> per band, flags bands whose two medians differ by >50%, and prints an OFF-REGIME block. It
+> flags every band from 100-150 to 1500-2000 on step 0's own table.
 >
 > Full record: `verify/d2_l60_20261001/` — `PREREG_STEP1.md` (committed before any reduction
 > run, **not amended**), `RESULT_STEP0.md` (the retroactive collateral review), `RESULT_STEP1.md`.

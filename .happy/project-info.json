@@ -22,10 +22,12 @@
     {
       "heading": "Attempt 13 result",
       "fields": [
-        { "label": "Headline", "value": "l_60 attribution VERIFIED; attempt 12's l_60 >= 79240 WITHDRAWN (original is on clamp #6's LOW arm, k pinned at 0.1)", "kind": "text" },
-        { "label": "l_60 cross-side", "value": "2.15x short on the port at 100-150 (268.587 n=45 vs 124.737 n=19), falling to 1.11x at 1500-2000", "kind": "text" },
-        { "label": "Next lane", "value": "U-9173 — one entry-only probe at A6b's entry 0x00468980", "kind": "text" },
-        { "label": "New standing tool", "value": "re/tools/statediff/collateral.py (whole-state two-arm collateral diff)", "kind": "text" }
+        { "label": "Headline", "value": "Every cross-side band above 100 speed in the clamp-#6 lane is OFF-REGIME — the two sides share 5 frames of common regime", "kind": "text" },
+        { "label": "The collapse", "value": "PORT peaks 1831.5 then holds median 22.2 after its steer saturates at frame 121 (5 of 1507 frames >= 100). ORIGINAL holds median 1847.0 on 1329 of 1329.", "kind": "text" },
+        { "label": "Withdrawn", "value": ["step 0's +0x1a8 steer row (both ramps identical)", "21.10's front-axis defect and its 10.9% (port axes exact, residual +0.000002)", "21.9's ld4 2.71x and this attempt's l_60 2.15x (off-regime)"], "kind": "list" },
+        { "label": "Still standing", "value": "l_60 attribution VERIFIED (frame -96, 4 accesses, known-answer 1424/1424); original on clamp #6's LOW arm so attempt 12's l_60 >= 79240 stays withdrawn", "kind": "text" },
+        { "label": "Next lane", "value": "The collapse in the port's first ~121 frames — upstream of A6a. Stop measuring inside A6a.", "kind": "text" },
+        { "label": "New standing tool", "value": "re/tools/statediff/collateral.py — now flags OFF-REGIME bands by median frame index", "kind": "text" }
       ]
     },
     {
