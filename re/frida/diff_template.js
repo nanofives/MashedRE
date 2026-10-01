@@ -691,6 +691,16 @@ function callFn(fn, input, buf) {
     // name: fits any fn whose observable is scattered non-contiguous globals, not just cache/queue
     // setters; CONFIG: obs_globals; per-test: seed, args, obs.
     if (CONFIG.arg_type === 'cache_setter_observe') {
+        // CONFIG.fold_ret (added 2026-10-01, retrofit lane, DEFAULTED OFF): also fold
+        // fn's return value into the fingerprint, prepended as 8 hex digits. Without
+        // it the observable is the written globals ONLY, so a function whose primary
+        // output is its RETURN -- e.g. 0x00458e00, which returns the pool index it
+        // stored at, or -1 -- could return the wrong index on every accept and still
+        // compare GREEN. Additive and defaulted, per the ARG_TYPES.md rule preferring
+        // a defaulted config field over a new handler; the 14 existing users do not
+        // set it and are unaffected. MUST stay mirrored in
+        // verify_hook_install_template.js (a handler in one template only has cost
+        // this project three rows already).
         const seeds = input.seed || [];
         const obs   = input.obs || CONFIG.obs_globals || [];
         const seedSaved = seeds.map(s => ptr(s.addr).readU32() >>> 0);
@@ -699,7 +709,13 @@ function callFn(fn, input, buf) {
         const callArgs = (input.args || []).map(a => (a === null ? buf : (a >>> 0)));
         let result = '';
         try {
-            fn.apply(null, callArgs);
+            const r = fn.apply(null, callArgs);
+            if (CONFIG.fold_ret) {
+                const rv = (r === null || r === undefined) ? 0
+                         : (typeof r === 'object') ? (parseInt(r.toString(), 16) >>> 0)
+                         : (r >>> 0);
+                result += ('00000000' + rv.toString(16)).slice(-8);
+            }
             for (let o = 0; o < obs.length; o++)
                 result += ('00000000' + (ptr(obs[o]).readU32() >>> 0).toString(16)).slice(-8);
         } finally {

@@ -243,6 +243,11 @@ def main():
                          "FUN_0042fe30 @0x0042fe30 returns, and that gates "
                          "placement entirely at 0 -- FUN_004264d0 0x004265a6). "
                          "Printed as hex+signed and stored in the JSON.")
+    ap.add_argument("--hooks", default="", metavar="NAME[,NAME...]",
+                    help="install ONLY these mashed_re_dev.asi hooks (sets "
+                         "MASHED_HOOK_ONLY and clears MASHED_RE_NO_AUTO_HOOK). "
+                         "Default: no hooks at all, i.e. the stock original. Use "
+                         "this to take the SAME capture hook-ON and hook-OFF.")
     ap.add_argument("--poke", default="", metavar="A=V[,A=V...]",
                     help="write dword V at address A just before the confirm "
                          "that loads the track (in-memory only, nothing is "
@@ -274,7 +279,19 @@ def main():
     # Display Settings, EnumDisplayMonitors and Screen.AllScreens on this machine.
     # Caller can override by exporting MASHED_WIN_POS.
     env.setdefault("MASHED_WIN_POS", "left-bl")
-    env["MASHED_RE_NO_AUTO_HOOK"] = "1"
+    # --hooks (2026-10-01, retrofit lane): by DEFAULT this probe runs the stock
+    # original with every hook off, which is what a reference read needs. Passing
+    # --hooks <list> flips it into an ARM-ON run: the named hooks (and only those)
+    # are installed, so the same capture can be taken hook-ON vs hook-OFF and the
+    # two compared. That is the canonical-scenario witness for a function whose
+    # side effects make a path1 A/B impossible -- the hook is actually installed
+    # and the GAME calls it, in context. Precedent: the ability_select_render note
+    # in hooks_registry.py, which accepts exactly this evidence for the same reason.
+    if args.hooks:
+        env.pop("MASHED_RE_NO_AUTO_HOOK", None)
+        env["MASHED_HOOK_ONLY"] = args.hooks
+    else:
+        env["MASHED_RE_NO_AUTO_HOOK"] = "1"
     env["MASHED_ORIG_BBDUMP_REQ"] = str(req)   # arms the shim's draw counters + dump
 
     dev = frida.get_local_device()
@@ -414,6 +431,33 @@ rpc.exports = {
                 batch: u(ptr(0x0068b968)),
                 txd:   u(ptr(0x0068b9ac)),
                 snap:  __SNAP__.map(function (a) { return u(ptr(a)); }),
+                // --- sea tiles (2026-10-01, retrofit lane) -------------------
+                // The arctic node 0x00448940 publishes its 25 sea-tile clumps at
+                // 0x008963e0 (1 base + 24 clones; the clone loop's bound is the
+                // ADDRESS test `cmp edi,0x896444` at 0x00448a5d) and translates
+                // each one with FUN_004c1340(clump+4, &v, 0) at 0x00448aa2.
+                // clump+4 is RwObject.parent == the clump's RwFrame; the frame's
+                // MODELLING matrix translation sits at frame+0x40 and the LTM's at
+                // frame+0x80 -- both read empirically off the pinned reference
+                // verify/sea_level_20260929/orig_sea_matrix.json, where tile 0
+                // carries translate(-150, -4.1, -150) at BOTH offsets.
+                // Read-only. No Interceptor. Emitted always; it costs one pointer
+                // chase per tile and is `null` on any track without the array.
+                tiles: (function () {
+                  var a = [], TB = ptr(0x008963e0);
+                  for (var t = 0; t < 25; t++) {
+                    var cp = u(TB.add(t * 4));
+                    if (!cp) { a.push(null); continue; }
+                    var fr = u(ptr(cp).add(4));
+                    if (!fr) { a.push({clump: cp, frame: 0}); continue; }
+                    a.push({ clump: cp, frame: fr,
+                             model: [f(ptr(fr).add(0x40)), f(ptr(fr).add(0x44)),
+                                     f(ptr(fr).add(0x48))],
+                             ltm:   [f(ptr(fr).add(0x80)), f(ptr(fr).add(0x84)),
+                                     f(ptr(fr).add(0x88))] });
+                  }
+                  return a;
+                })(),
                 recs: [] };
     for (var i = 0; i < N; i++) {
       var r = BASE.add(i * STRIDE);

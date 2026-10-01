@@ -1,0 +1,25 @@
+=== verify_hook_install report (vehicle_vec3_at_6e4_set) ===
+
+target address: 0x0046d740  export: VehicleVec3At6E4Set
+PRE  bytes:     e9 db e7 4e 68 f8 10 72
+asi base:       0x68930000
+reimpl addr:    0x6895bf20
+POST bytes:     e9 db e7 4e 68 f8 10 72
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x684ee7db  expected 0x684ee7db  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2
+
+per-input results:
+  [OK] input={'seed': [{'addr': '0x0088da20', 'val': 2863267841}, {'addr': '0x0088da24', 'val': 2863267842}, {'addr': '0x0088da28', 'val': 2863267843}, {'addr': '0x008816e4', 'val': 1592590336}, {'addr': '0x008816e8', 'val': 1592590337}, {'addr': '0x008816ec', 'val': 1592590338}], 'args': [8968736, 0], 'obs': ['0x008816e4', '0x008816e8', '0x008816ec']}  got=0xaaaa0001aaaa0002aaaa0003  err=
+  [OK] input={'seed': [{'addr': '0x0088da20', 'val': 3722248193}, {'addr': '0x0088da24', 'val': 3722248194}, {'addr': '0x0088da28', 'val': 3722248195}, {'addr': '0x008816e4', 'val': 1592590336}, {'addr': '0x008816e8', 'val': 1592590337}, {'addr': '0x008816ec', 'val': 1592590338}], 'args': [8968736, 16], 'obs': ['0x008816e4', '0x008816e8', '0x008816ec']}  got=0x5eed00005eed00015eed0002  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

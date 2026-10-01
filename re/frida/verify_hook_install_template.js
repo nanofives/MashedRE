@@ -320,6 +320,13 @@ function callFn(fn, input, buf) {
         // the JMP correctly installed. This is the SAME one-template-only class that already
         // cost two rows (fmt_desc_pair_compare, draw_quad_observe): a new arg_type must land in
         // BOTH templates or the install check silently tests nothing.
+        //
+        // CONFIG.fold_ret (added 2026-10-01, retrofit lane, DEFAULTED OFF) — mirror of
+        // the diff_template.js change landed in the same commit. Folds fn's return into
+        // the fingerprint for functions whose primary output IS the return (0x00458e00
+        // returns the pool index it stored at, or -1). `fold_ret` is already in
+        // run_diff.py's forwarding whitelist; run_verify_hook.py's config builder is a
+        // SEPARATE whitelist and had to be taught it too.
         const seeds = input.seed || [];
         const obs   = input.obs || CONFIG.obs_globals || [];
         const seedSaved = seeds.map(s => ptr(s.addr).readU32() >>> 0);
@@ -328,7 +335,13 @@ function callFn(fn, input, buf) {
         const callArgs = (input.args || []).map(a => (a === null ? buf : (a >>> 0)));
         let result = '';
         try {
-            fn.apply(null, callArgs);
+            const r = fn.apply(null, callArgs);
+            if (CONFIG.fold_ret) {
+                const rv = (r === null || r === undefined) ? 0
+                         : (typeof r === 'object') ? (parseInt(r.toString(), 16) >>> 0)
+                         : (r >>> 0);
+                result += ('00000000' + rv.toString(16)).slice(-8);
+            }
             for (let o = 0; o < obs.length; o++)
                 result += ('00000000' + (ptr(obs[o]).readU32() >>> 0).toString(16)).slice(-8);
         } finally {

@@ -21897,3 +21897,132 @@ HOOKS = {
 
 
 }
+
+
+# ---------------------------------------------------------------------------
+# 0x00458e00  PickupPoolSpawn        (retrofit lane, 2026-10-01)
+#
+# Appended after the dict literal and built with a small helper, because the
+# vectors seed and observe 23 strided pool addresses each and spelling them out
+# by hand is how an off-by-0x50 gets in.
+#
+# THE SHAPE. `int FUN_00458e00(const float* pos, int type)` writes into the
+# 25-entry pool at 0x0068b198 (stride 0x50, 0x00458e6f) under the count at
+# 0x0068b9a8 (0x00458e06), and returns the index it stored at, or -1. So the
+# observable is scattered output GLOBALS plus the RETURN -- exactly
+# cache_setter_observe, with the `fold_ret` flag added in the same commit.
+# Without fold_ret a port that returned the wrong index on every accept would
+# still compare GREEN; the written fields alone cannot see the return.
+#
+# THE INPUT POINTER IS AN ABSOLUTE ADDRESS, NOT THE HARNESS BUFFER, for the same
+# reason the vehicle_vec3_at_6e4_set entry gives: a `null` arg hands both sides
+# the same unseeded scratch, so every vector would read the same (zero) position
+# and the dedupe could never be exercised. The scratch chosen is pool entry 24's
+# position field (0x0068b944). It is only ever READ here: the dedupe loop walks
+# entries [0, count) and no vector sets count above 1 except the cap vector,
+# which returns before touching any entry. It is seeded and restored like every
+# other address.
+#
+# WHY scenario='race'. The ACCEPT path calls FUN_00458dd0(entry) at 0x00458eb2,
+# which re-skins the entry's RenderWare object from *(entry+0), and then
+# FUN_004c15c0(*(entry+0)+4) at 0x00458ebd. At a menu attach *(entry+0) is 0 and
+# that second call dereferences 0+4. Driven into a live Quick Battle the pool
+# entries carry real handles, so the accept vectors run against a populated pool.
+# That is why path2_tests are the REJECT vectors only -- path2 attaches at boot,
+# where no handle exists. Path2's job is to prove the inline JMP is installed and
+# the site is call-through-able, and the reject paths exercise the cap test, the
+# dedupe loop and the entry-address arithmetic without touching RenderWare.
+#
+# NON-DEGENERACY, by construction (6 path1 vectors, 4 distinct outcomes):
+#   accept      ret 0,  count 0->1, pos lands at BOTH +0x2c and +0x38,
+#               +0x24=9, +0x28=0, +0x20=1, +0x18=0x42f00000, +0x1c=0
+#   blank       ret -1, count stays 0, but +0x24=0x15 and +0x28=0 ARE written --
+#               0x00458e7e/0x00458e85 run BEFORE the type test at 0x00458e96, so
+#               a reject still leaves a trace, and a port that checked the type
+#               first would fail this vector
+#   dedupe hit  ret -1, count stays 1, entry 1 untouched
+#   dedupe near 1.02 vs 1.00 -> d^2 = 0.00039999924 < eps -> REJECT
+#   dedupe far  1.05 vs 1.00 -> d^2 = 0.0024999952 > eps -> ACCEPT at index 1
+#               (the two straddle _DAT_005cc558 = 0.0010000000474974513 by ~2.5x
+#               either way, so no float-model difference can flip them)
+#   cap         count seeded 25 -> ret -1 immediately, nothing written
+#
+# NOT COVERED, and not claimed: the rank-2 arm. FUN_0042fe30 is seeded to 1 via
+# DAT_0067ea74 on every vector precisely so it is NOT 2, because that arm calls
+# FUN_00458d00, which draws its type from FUN_00472690(0,8) at 0x00458d47. A
+# random callee cannot appear in a bit-identity A/B. Pre-registered as blocker
+# A-B1 in verify/retrofit_20261001/PREREG.md.
+#
+# SAFE: cache_setter_observe snapshots and restores every seeded AND observed
+# address, so the live pool is byte-identical after the run.
+def _pu_pool_entry(i, off):
+    return '0x%08x' % (0x0068b198 + i * 0x50 + off)
+
+
+_PU_COUNT   = '0x0068b9a8'            # 0x00458e06
+_PU_RANK    = '0x0067ea74'            # read by FUN_0042fe30 @0x0042fe3c
+_PU_IN      = 0x0068b944              # entry 24's +0x2c, used as the input vector
+_PU_FIELDS  = (0x18, 0x1c, 0x20, 0x24, 0x28, 0x2c, 0x30, 0x34, 0x38, 0x3c, 0x40)
+_PU_OBS     = ([_PU_COUNT]
+               + [_pu_pool_entry(0, o) for o in _PU_FIELDS]
+               + [_pu_pool_entry(1, o) for o in _PU_FIELDS])
+
+
+def _pu_seed(count, e0_pos=None):
+    # Sentinel-fill entries 0 and 1, seed the input vector (1,2,3), the count and
+    # the rank. e0_pos overrides entry 0's +0x2c..+0x34 so the dedupe loop has
+    # something specific to compare against.
+    seed = [{'addr': _PU_COUNT, 'val': count},
+            {'addr': _PU_RANK,  'val': 1},
+            {'addr': '0x%08x' % (_PU_IN + 0), 'val': 0x3f800000},   # 1.0f
+            {'addr': '0x%08x' % (_PU_IN + 4), 'val': 0x40000000},   # 2.0f
+            {'addr': '0x%08x' % (_PU_IN + 8), 'val': 0x40400000}]   # 3.0f
+    for e in (0, 1):
+        for n, o in enumerate(_PU_FIELDS):
+            seed.append({'addr': _pu_pool_entry(e, o),
+                         'val': 0x5eed0000 + e * 0x100 + n})
+    if e0_pos is not None:
+        for n, o in enumerate((0x2c, 0x30, 0x34)):
+            for s in seed:
+                if s['addr'] == _pu_pool_entry(0, o):
+                    s['val'] = e0_pos[n]
+    return seed
+
+
+HOOKS['pickup_pool_spawn'] = {
+    'rva':            0x00458e00,
+    'export':         'PickupPoolSpawn',
+    'signature':      {'ret': 'int', 'args': ['uint32', 'uint32']},
+    'arg_type':       'cache_setter_observe',
+    'fold_ret':       True,
+    'lut_root_delta': 0,
+    'scenario':       'race',
+    'obs_globals':    _PU_OBS,
+    'path1_tests': [
+        # accept: empty pool, non-BLANK type
+        {'seed': _pu_seed(0),                      'args': [_PU_IN, 9]},
+        # BLANK reject, but the two pre-check writes still land
+        {'seed': _pu_seed(0),                      'args': [_PU_IN, 0x15]},
+        # dedupe exact hit (entry 0 holds the same position)
+        {'seed': _pu_seed(1, (0x3f800000, 0x40000000, 0x40400000)),
+                                                   'args': [_PU_IN, 9]},
+        # dedupe just INSIDE eps: 1.02 vs 1.00 -> d^2 = 0.00039999924
+        {'seed': _pu_seed(1, (0x3f828f5c, 0x40000000, 0x40400000)),
+                                                   'args': [_PU_IN, 9]},
+        # dedupe just OUTSIDE eps: 1.05 vs 1.00 -> d^2 = 0.0024999952 -> index 1
+        {'seed': _pu_seed(1, (0x3f866666, 0x40000000, 0x40400000)),
+                                                   'args': [_PU_IN, 9]},
+        # cap: count 25 -> signed `cmp 0x19` + `jl` rejects before anything else
+        {'seed': _pu_seed(25),                     'args': [_PU_IN, 9]},
+    ],
+    # Boot attach: REJECT vectors only (see the note above -- the accept path
+    # needs a live RenderWare handle at entry+0x00, which does not exist there).
+    'path2_tests': [
+        {'seed': _pu_seed(0),                      'args': [_PU_IN, 0x15]},
+        {'seed': _pu_seed(1, (0x3f800000, 0x40000000, 0x40400000)),
+                                                   'args': [_PU_IN, 9]},
+        {'seed': _pu_seed(1, (0x3f828f5c, 0x40000000, 0x40400000)),
+                                                   'args': [_PU_IN, 9]},
+        {'seed': _pu_seed(25),                     'args': [_PU_IN, 9]},
+    ],
+}

@@ -101,6 +101,14 @@ def main():
         'num_bufs':       hook.get('num_bufs', 0),
         'buf_size':       hook.get('buf_size', 0),
         'stub_abi':       hook.get('stub_abi', None),
+        # Same whitelist trap as arg_layout/stub_at above (2026-10-01): run_diff.py
+        # already forwards `fold_ret`, this builder did not, so a path1 fingerprint
+        # that folded the return would silently stop folding it in path2 and the two
+        # paths would be measuring different things. `obs_globals` rides along for
+        # the cache_setter_observe entries that put the observe list in CONFIG rather
+        # than per-test.
+        'fold_ret':       hook.get('fold_ret', False),
+        'obs_globals':    hook.get('obs_globals', []),
         'tests':          hook['path2_tests'],
     }
 
