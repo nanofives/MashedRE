@@ -1,13 +1,13 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-01T05:10:00Z",
+  "updatedAt": "2026-10-01T18:40:00Z",
   "sections": [
     {
       "heading": "Roadmap (v3)",
       "fields": [
         {
           "label": "Status",
-          "value": "D0 done | D1 done (residue R1-R3 open) | D2 REOPENED — re-close attempt 9 failed | D3 blocked on D2 | render lane: defects (a) grey chassis, (b) Arctic sea and (d) car brightness ALL THREE FIXED",
+          "value": "D0 done | D1 done (residue R1-R3 open) | D2 REOPENED — re-close attempt 9 failed | D3 blocked on D2 | render lane: (a) grey chassis, (b) Arctic sea, (d) car brightness FIXED; (c) pickups PLACEMENT fixed 2026-10-01, LOOK not started",
           "kind": "text"
         },
         {
@@ -117,6 +117,62 @@
           "label": "Still open",
           "value": "U1b the original renders the 25 tiles from a DEDICATED Arctic pass 0x00449030 whose eight RwGlobals+0x20 state pairs are [UNCERTAIN], so draw order / blend mode vs our generic prop pass is unestablished | U2 the original's per-clone world registration at 0x004e45b0 — effect on culling not established | the geomlight-waterfold \"Arctic sea FIXED, delta 1.8\" verdict compared the original's ROAD against our WATER over the same mask | not a verbatim port of FUN_00448940: no hook, no Frida diff, no hooks.csv row, no C-level",
           "kind": "text"
+        }
+      ]
+    },
+    {
+      "heading": "Render lane — pickups, defect (c): PLACEMENT FIXED 2026-10-01 (stage 1 of 2)",
+      "fields": [
+        {
+          "label": "Root cause",
+          "value": "The port parsed POWERUPS_GOLD.LUA. The original never opens it on shipping data: FUN_004264d0 @0x004264d0 pushes \"powerups_gold.dff\" (0x005cd4e4) at 0x004265bd, loads the clump at 0x004265c2 and calls the live placement path FUN_00426460 @0x00426460 at 0x004265d2; the Lua arm behind JE 0x004265df needs a null clump and all 13 track pizzes carry the DFF. The two files disagree — on Forest they share ZERO positions. The port also had no BLANK filter, an invented worldR_*0.012 Y lift, and an invented \"every 8th AI gate gets an orb\" fallback.",
+          "kind": "text"
+        },
+        {
+          "label": "Fix",
+          "value": "New Track/PowerupMarkers.{h,cpp} reproduces FUN_00426460: per atomic the frame modelling-matrix translation (frame+0x40) and the geometry's RW USERDATA 0x011f ARRAY 0 ELEMENT 0, split type = v & 0xff, respawn = (float)(v >> 8), returned in the original's enumeration order (measured: reverse of file atomic order). PickupField::InitReal ports FUN_00458e00 @0x00458e00's normal-race arm verbatim — cap 25, dedupe < _DAT_005cc558 = 0.00100000005, reject type 0x15 — and stores the position verbatim. Gate-ribbon fallback off the race path. Commit c9615225; rva-lint allowlisted=122 NEW=0.",
+          "kind": "text"
+        },
+        {
+          "label": "Acceptance (pre-registered at b2649833, before the edit existed)",
+          "value": [
+            "P1 PASS — bit-identical vs the LIVE-READ original pool: TRAINING 5/5, ARCTIC 7/7, same order, n = 6 agreeing original samples per track, 2 standalone boots",
+            "P2 MATCH — keep/drop sets on all 13 tracks (TRAINING + ARCTIC live; the other 11 vs the reference reader, labelled as such)",
+            "P3 PASS — 0 differing pixels OUTSIDE the projected pickup regions on 3 Arctic frames (888 / 854 / 59 inside); UNMEASURABLE on TRAINING, where a MASHED_NO_PICKUPS control shows the pickup draw contributes 0 px in BOTH arms",
+            "P3 guards — instrumentation control A vs B = 0 px whole-frame on every in-race frame; projector cross-check max |d| = 0.002 px; two-boot identity 0 px on all 6 track x frame pairs",
+            "P4 PASS — no diff hunk inside Update / CollectAt, PickRadius still worldR_ * 0.04f, and collection still fires post-fix"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Real defect found in the CHECKER, not the port",
+          "value": "sands first reported P2 DIFFER on 2 of 9 markers. Cause: sands geos 8/18/23 and 14 of rouabout's carry TWO RW user-data arrays with the SAME name — array 0 with one element, array 1 with twelve. The Python reference reader keyed them by name, so array 1 shadowed array 0. The original reads FUN_004b5190(atomic,0,0) = array 0 POSITIONALLY, which is what the C++ does. Confirmed at byte level and by an isolated harness build. This also closes the rouabout/sands [UNCERTAIN] in the diagnosis note's 2.3.",
+          "kind": "text"
+        },
+        {
+          "label": "Exe SHA-256",
+          "value": "post-fix (C) B7184CE2D84690BA183263C7469547D6B3C4246BA31FF6566784E76B8EB2BEDD | log-only control (B) 862CC617D1939EBF4F50FF86267A18755CB19EEAF91B7F0EFE074FFC31B710DD | pre-stage HEAD f7ab571b (A) B685C9BCAE814B2EA6F26F3C33CEFBF093E5A0F4BAD371F79A7C4E379F6EE74A",
+          "kind": "text"
+        },
+        {
+          "label": "STAGE 2 (the look) NOT STARTED — blocker is the instrument, not the code",
+          "value": "ICONCUBE.DFF (14 verts, 12 tris, one material), the 11 icons (resident, reachable via g_quad_renderer.slot_texture) and PUGLOW.PNG all load through paths the port already has, and the blend is KNOWN (FUN_004770c0 writes 5/6 = SRCALPHA/INVSRCALPHA, so the port's additive glow is wrong). But stage 2 rule (i) wants the original's per-pickup batches by count, TEXTURE NAME and blend state, and the only original-side draw instrument — the d3d9 shim — records aggregate counters only (d3d9_shim.cpp:612-638). Measuring it needs a per-draw ring buffer in the shim, a texture-pointer->name resolution that does not exist yet (RwTexture/RwRaster layout + the D3D9 raster-extension offset, then a read-only Memory walk — NOT an Interceptor, that is the hot path), and draw-to-pass attribution. Rules (ii) and (iii) are measurable today. The rule was not amended.",
+          "kind": "text"
+        },
+        {
+          "label": "Still open",
+          "value": "Collection radius is still worldR_ * 0.04f (1.101 TRAINING, 1.968 Storm) where the original uses a 0.5 sphere (FUN_00484cf0 at 0x00459228, literal 0x3f000000) — deliberately out of scope, it is collection logic | [UNCERTAIN] only the normal-race rank arm is wired; rank 0 places nothing (0x004265a6), rank 2 is BLANK-only via FUN_00458d00; DAT_0067ea74 measured 1 on Quick Battle and Challenge Cup entry 3, 0 on two other routes, driver underived | [UNCERTAIN] no pickup is visible on any captured TRAINING frame in EITHER arm, cause not established",
+          "kind": "text"
+        },
+        {
+          "label": "Reusable harness added",
+          "value": [
+            "re/tools/powerups_gold_dump.py — all 13 tracks' markers, proper chunk walk (FRAMELIST 0x0e, GEOMETRYLIST 0x1a, per-geometry EXTENSION 0x03 -> USERDATA 0x011f)",
+            "MASHED_DBG_PICKUPDUMP — the ENGINE's own per-orb screen disc from the live D3DTS_VIEW * D3DTS_PROJECTION, dumped beside each captured frame, so a pickup region is PROJECTED GEOMETRY and never a colour class",
+            "verify/pickups_fix_20261001/{run_race,pu_check,pu_placement_check}.py",
+            "pickup_pos_probe2.py gained --snap / --poke, and now presses the challenge index until it REACHES the target — a fixed 3 presses silently loaded TRAINING instead of ARCTIC"
+          ],
+          "kind": "list"
         }
       ]
     },

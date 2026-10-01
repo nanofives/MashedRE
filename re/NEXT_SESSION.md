@@ -7,9 +7,75 @@ own pre-registered rule; and a new fidelity defect was banked as measured-inert)
 Branch `race/first-frame-parity`. Nothing is pushed.
 Superseded kickoffs: the attempt-8, attempt-7, attempt-6, attempt-5 and attempt-4 ones, kept below.
 
-## RENDER LANE — three defects fixed 2026-09-30: (a) grey chassis, (b) Arctic sea, (d) car brightness. Nothing owed to pick any up.
+## RENDER LANE — four defects addressed: (a) grey chassis, (b) Arctic sea, (d) car brightness (all 2026-09-30), and (c) pickups STAGE 1 of 2 (2026-10-01). Nothing owed to pick any up.
 
-Separate lane from the D2 block below; all three live on this branch.
+Separate lane from the D2 block below; all four live on this branch.
+
+### (c) pickups — PLACEMENT FIX LANDED 2026-10-01 (`c9615225`). **LOOK (stage 2) NOT STARTED, and here is why.**
+
+**Do not re-derive the diagnosis** — read
+[`re/analysis/PICKUPS_LOOK_PLACEMENT_2026-09-29.md`](analysis/PICKUPS_LOOK_PLACEMENT_2026-09-29.md),
+then the pre-registered rules (`b2649833`,
+[`verify/pickups_fix_20261001/PREREG_STAGE1.md`](../verify/pickups_fix_20261001/PREREG_STAGE1.md))
+and every number in
+[`verify/pickups_fix_20261001/RESULT_STAGE1.md`](../verify/pickups_fix_20261001/RESULT_STAGE1.md).
+
+Stage 1 (placement) is done and clean. The port read `POWERUPS_GOLD.LUA`; the original places
+from `POWERUPS_GOLD.DFF` (`FUN_004264d0` `0x004265bd`..`0x004265d2` -> `FUN_00426460`
+`0x00426460`) and applies `FUN_00458e00` `0x00458e00`'s filter. New
+`Track/PowerupMarkers.{h,cpp}`; `PickupField::InitReal` now ports the cap/dedupe/BLANK-reject
+predicates and stores the position verbatim; the invented gate-ribbon fallback is off the race
+path. **P1 bit-identical vs the live original** on TRAINING (5/5) and ARCTIC (7/7), **P2 matches
+on all 13 tracks**, **P3 0 differing pixels outside the projected pickup regions** on 3 Arctic
+frames, **P4** collection code untouched.
+
+**Start stage 2 here, and expect to build an instrument first.** Everything the LOOK needs on the
+source side exists and is cheap: `ICONCUBE.DFF` is 14 verts / 12 tris / one material `Oil` and
+loads through `Track::DffModel` + `BuildDffBatches` like any prop; the 11 icon textures are
+already resident and reachable via `g_quad_renderer.slot_texture(kSlotPowerup0 + i)` with the
+type->icon map already transcribed at `exe_main.cpp:851`; `PUGLOW.PNG` (6 328 B) decodes through
+the existing `PngLoader`; the blend is **known** (5/6 = SRCALPHA/INVSRCALPHA, written in
+`FUN_004770c0`, i.e. **not** the port's additive); spin, cull and respawn constants are all cited
+in the note. **No RW pipeline is unported and no blend state is unknown.**
+
+What blocks it is the pre-registered acceptance, not the code. Stage 2 rule (i) wants the
+original's per-pickup **mesh / texture / glow batches** by **count, texture name and blend
+state**. The only original-side draw instrument is the d3d9 shim, and it records
+**aggregate counters only** — `d3d9_shim.cpp:612-638` tallies `draw_calls / prims / verts` and the
+four `dp/di/dpup/diup` kinds, with **no** per-draw texture, blend state or batch breakdown.
+Measuring rule (i) therefore needs, in order:
+
+1. a per-draw ring buffer in the shim capturing `{texture ptr, SRCBLEND, DESTBLEND, primType,
+   primCount}` for one frame;
+2. a **texture pointer -> name** resolution on the original side, which D3D cannot give: it needs
+   the RwTexture/RwRaster layout and the D3D9 raster-extension offset established and cited, then
+   a read-only `Memory` walk of the live TXD dictionaries (NOT an `Interceptor` — the 3D submit
+   path is exactly the hot path the shim counters were built to avoid);
+3. attribution of the captured draws to the pickup pass (`FUN_004770a0` glow sprite batch at
+   `0x00458b25`, clump render `FUN_004e6680` at `0x00458b34`).
+
+Rules (ii) matched-pose pixel comparison and (iii) non-pickup pixels unchanged ARE measurable
+today with the stage-1 harness. Rule (i) is not. It was not amended.
+
+**Also owed / known-open from stage 1:**
+- The **collection radius** is still `worldR_ * 0.04f` (1.101 on TRAINING, 1.968 on Storm); the
+  original uses a **0.5** sphere (`FUN_00484cf0` at `0x00459228`, literal `0x3f000000`). A 2x-4x
+  divergence, deliberately out of stage 1's scope because it is collection logic.
+- [UNCERTAIN] rank. Only the normal-race arm is wired. `rank == 0` places nothing
+  (`0x004265a6`), `rank == 2` is BLANK-only via `FUN_00458d00` `0x00458d00`. Measured
+  `DAT_0067ea74` = 1 on Quick Battle and on Challenge Cup entry 3, 0 on two other routes; what
+  drives it is still underived.
+- [UNCERTAIN] On **TRAINING** no pickup is visible in any captured frame in **either** arm —
+  measured with a `MASHED_NO_PICKUPS=1` control (0 px contributed; the same control gives 877 px
+  on Arctic `01_grid`). Not a stage-1 regression, cause not established.
+
+Harness added and reusable: `re/tools/powerups_gold_dump.py` (all 13 tracks),
+`verify/pickups_fix_20261001/{run_race,pu_check,pu_placement_check}.py`, and
+`MASHED_DBG_PICKUPDUMP` — the engine's own per-orb screen disc, dumped beside each captured
+frame, so a pickup region is projected geometry rather than a colour class.
+`re/frida/pickup_pos_probe2.py` gained `--snap` / `--poke` and a challenge-index press loop that
+presses until the index REACHES the target (a fixed 3 presses silently loaded TRAINING instead of
+ARCTIC).
 
 ### (b) Arctic sea at road height — FIX LANDED 2026-09-30 (`a0f3004c`)
 

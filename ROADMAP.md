@@ -336,6 +336,44 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
 > carries no `hooks.csv` row and no C-level. **U1b** (the dedicated Arctic sea pass `0x00449030`
 > and its eight `RwGlobals+0x20` state pairs, hence draw order / blend mode) and **U2** (the
 > original's per-clone world registration at `0x004e45b0`) remain OPEN.
+>
+> **Fourth render-faithfulness defect, STAGE 1 OF 2 closed 2026-10-01 (counts toward R1, does
+> not close it): power-up pickup PLACEMENT, defect (c)** — the port parsed
+> `POWERUPS_GOLD.LUA`. The original never opens it on shipping data: `FUN_004264d0`
+> @`0x004264d0` pushes `"powerups_gold.dff"` (`0x005cd4e4`) at `0x004265bd`, loads the clump at
+> `0x004265c2` and calls the live placement path `FUN_00426460` @`0x00426460` at `0x004265d2`;
+> the Lua arm behind `JE 0x004265df` needs a null clump and all 13 track pizzes carry the DFF.
+> The two files genuinely disagree — on Forest they share **zero** positions. Reproduced in new
+> `Track/PowerupMarkers.{h,cpp}` (frame modelling-matrix translation `frame+0x40`; RW USERDATA
+> `0x011f` **array 0, element 0** as `FUN_004b5190(atomic,0,0)` reads it; `type = v & 0xff`,
+> `respawn = v >> 8`; enumeration order measured to be the reverse of the file's atomic order),
+> plus `FUN_00458e00` @`0x00458e00`'s normal-race filter in `PickupField::InitReal` (cap 25,
+> dedupe `< _DAT_005cc558` = 0.00100000005, reject type `0x15`, position stored **verbatim** —
+> the invented `worldR_*0.012` Y lift and the "every 8th AI gate" fallback are gone). Commit
+> `c9615225`; pre-registered acceptance `b2649833`, results in
+> [`verify/pickups_fix_20261001/RESULT_STAGE1.md`](verify/pickups_fix_20261001/RESULT_STAGE1.md):
+> **P1 PASS** bit-identical against the **live-read original pool** on TRAINING (5/5) and ARCTIC
+> (7/7), n = 6 agreeing samples per track; **P2 MATCH** on all 13 tracks; **P3 PASS** 0 differing
+> pixels outside the projected pickup regions on 3 Arctic frames (888/854/59 inside), with the
+> instrumentation control at 0 px whole-frame, a 0.002 px projector cross-check and two-boot
+> identity; **P4 PASS** (collection code carries no diff hunk, `PickRadius` still
+> `worldR_ * 0.04f`). Unlike (a), (b) and (d) this one **is** a verbatim transcription of a
+> named function's predicates, but it is still a standalone-side reimplementation with no hook
+> and no Frida A/B, so it carries no `hooks.csv` row and no C-level.
+>
+> **STAGE 2 (the LOOK) NOT STARTED, and the blocker is the instrument, not the code.** The real
+> `ICONCUBE.DFF` (14 verts, 12 tris, one material), the 11 per-type icons (already resident,
+> reachable via `g_quad_renderer.slot_texture`) and `PUGLOW.PNG` all load through paths the port
+> already has, and the blend is known (`FUN_004770c0` writes 5/6 = SRCALPHA/INVSRCALPHA, so the
+> port's additive glow is wrong). But stage 2 rule (i) wants the original's per-pickup batches by
+> **count, texture name and blend state**, and the only original-side draw instrument — the d3d9
+> shim — records **aggregate counters only** (`d3d9_shim.cpp:612-638`). Measuring it needs a
+> per-draw ring buffer in the shim, a texture-pointer→name resolution that does not exist yet
+> (RwTexture/RwRaster layout + the D3D9 raster-extension offset, then a read-only `Memory` walk —
+> not an `Interceptor`, that is the hot path), and draw-to-pass attribution. Rules (ii) and (iii)
+> are measurable today. The rule was not amended. Also still OPEN from stage 1: the collection
+> radius is `worldR_ * 0.04f` where the original uses a **0.5** sphere (`0x00459228`), and the
+> rank-0 / rank-2 arms of `FUN_00458e00` are unwired with `DAT_0067ea74`'s driver [UNCERTAIN].
 
 Invert `MASHED_RENDER_LIBRW`. librw becomes the shipping path; the hand-written D3D9
 renderer becomes the fallback, then goes away.

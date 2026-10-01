@@ -1,5 +1,26 @@
 # Power-up pickups: why the standalone draws glowing blobs, and why they sit in the wrong places
 
+> **STATUS 2026-10-01.** Part B (placement) is FIXED and verified — commit `c9615225`,
+> acceptance `verify/pickups_fix_20261001/RESULT_STAGE1.md`. Part A (the look) is NOT started;
+> the blocker is the acceptance instrument, not the code (see that RESULT and
+> `re/NEXT_SESSION.md`). Two claims below were corrected by measurement while landing it:
+>
+> 1. **§2.1's user-data decode.** The dword is read from RW USERDATA (`0x011f`) **array 0,
+>    element 0**, positionally, exactly as `FUN_004b5190(atomic, 0, 0)` does — never by name.
+>    Many geometries carry a **second** array (`FVF.UserData` on training and Warzone), and on
+>    `sands` and `rouabout` the second array has the **same name** as the first, with twelve
+>    elements. A name lookup lets it shadow array 0 and returns the wrong type for 3 of sands's
+>    25 markers and 14 of rouabout's 25. Byte-level evidence: `sands` geo 8 has
+>    `numUserDatas = 2`, array 0 `nameLen=13 '0.tv_part_id' dtype=1 count=1 v0=0x0507`.
+> 2. **§2.3's `rouabout` / `sands` [UNCERTAIN] is CLOSED** by the same finding — the "39
+>    user-data elements vs 25 geometries" was that duplicate array, not a mapping ambiguity.
+>    With array-0 indexing all 13 tracks parse clean (`re/tools/powerups_gold_dump.py --all`):
+>    rouabout 25 atomics, 18 BLANK, **7 non-blank**; sands 25, 16 BLANK, **9 non-blank**.
+>
+> Also measured 2026-10-01, closing part of §5's first [UNCERTAIN]: `DAT_0067ea74` reads **1**
+> on Quick Battle (TRAINING) and on Challenge Cup entry 3 (ARCTIC), and **0** on two other
+> routes, which place nothing at all. What *drives* it is still underived.
+
 Session 2026-09-29, branch `race/first-frame-parity`. INVESTIGATION only — no source under
 `mashedmod/src` was touched and `mashedmod\build.bat` was not run (another session holds the build).
 
