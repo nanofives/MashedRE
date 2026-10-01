@@ -237,6 +237,16 @@ def main():
                          "2026-08-31). Bronze Cup 1 map: 0=TRAINING, 1=EGYPT, "
                          "2=NEUSTEIN, 3=ARCTIC. Requires cup row N unlocked in the "
                          "swapped gamesave (run under run_with_unlocked_save.py).")
+    ap.add_argument("--snap", default="", metavar="A[,A...]",
+                    help="extra read-only dword addresses to sample alongside "
+                         "the pickup pool, e.g. 0x0067ea74 (the rank DAT that "
+                         "FUN_0042fe30 @0x0042fe30 returns, and that gates "
+                         "placement entirely at 0 -- FUN_004264d0 0x004265a6). "
+                         "Printed as hex+signed and stored in the JSON.")
+    ap.add_argument("--poke", default="", metavar="A=V[,A=V...]",
+                    help="write dword V at address A just before the confirm "
+                         "that loads the track (in-memory only, nothing is "
+                         "written to disk). See the comment at the call site.")
     args = ap.parse_args()
 
     out_bmp = Path(args.out).resolve()
@@ -332,16 +342,45 @@ def main():
             # presses; the on-screen highlight + preview follow it (verified with
             # nav_shots/chall_step{0..3}.bmp on race/arctic-cap). Then fall through
             # to the shared confirm-to-launch loop below.
-            time.sleep(0.5)
-            for _ in range(args.challenge):
-                E.press(12, 180); time.sleep(0.5)
+            time.sleep(1.5)
+            # Press until the index REACHES the target rather than pressing a
+            # fixed N times: the first presses are dropped while the panel is
+            # still animating in (measured 2026-10-01, a fixed 3 presses left
+            # the index at 0 and loaded TRAINING instead of ARCTIC).
+            for _try in range(args.challenge * 4 + 8):
+                if E.snap([0x0067f17c])[0] >= args.challenge:
+                    break
+                E.press(12, 180); time.sleep(0.55)
             sel = E.snap([0x0067f17c])[0]
             print(f"  challenge index 0x67f17c={sel} (wanted {args.challenge})")
+            if sel != args.challenge:
+                sys.exit(f"challenge index stuck at {sel} — aborting")
         # Track select. setsel() writes the cursor at the CURRENT depth, so this
         # must happen after confirm_to(5) and before the confirm that loads.
         elif args.track_sel is not None:
             E.setsel(args.track_sel); time.sleep(0.3)
             print(f"  track-sel cursor set to {args.track_sel} at depth={E.depth()}")
+        # --poke: write a dword into the running original immediately before the
+        # confirm that triggers the track load. Used to hold the placement RANK
+        # (DAT_0067ea74, returned by FUN_0042fe30 @0x0042fe30) at the value a
+        # normal Quick-Battle race uses, so FUN_004264d0's rank==0 early-out at
+        # 0x004265a6 does not suppress placement on a route that reaches a track
+        # other than TRAINING. This is a controlled in-memory probe, not a patch:
+        # nothing is written to disk and the value is re-read after the race
+        # starts so the run can prove the poke took.
+        pokes = []
+        for tok in [t for t in args.poke.split(",") if t.strip()]:
+            a, _, v = tok.partition("=")
+            pokes.append((int(a, 0), int(v, 0)))
+        if pokes:
+            pk = sess.create_script(
+                "rpc.exports={poke:function(l){l.forEach(function(p){"
+                "ptr(p[0]).writeU32(p[1]);});}};")
+            pk.on("message", lambda m, d: None)
+            pk.load()
+            pk.exports_sync.poke([[a, v] for a, v in pokes])
+            for a, v in pokes:
+                print(f"  POKE {a:#010x} <- {v:#x}")
         press(4); time.sleep(1.5)
         for _ in range(5):
             if E.phase() != 3: break
@@ -374,6 +413,7 @@ rpc.exports = {
     var out = { count: u(ptr(0x0068b9a8)),
                 batch: u(ptr(0x0068b968)),
                 txd:   u(ptr(0x0068b9ac)),
+                snap:  __SNAP__.map(function (a) { return u(ptr(a)); }),
                 recs: [] };
     for (var i = 0; i < N; i++) {
       var r = BASE.add(i * STRIDE);
@@ -394,6 +434,9 @@ rpc.exports = {
   }
 };
 """
+            snap_addrs = [int(t, 0) for t in args.snap.split(",") if t.strip()]
+            PROBE_JS = PROBE_JS.replace(
+                "__SNAP__", "[" + ",".join(str(a) for a in snap_addrs) + "]")
             pscr = sess.create_script(PROBE_JS)
             pscr.on("message", lambda m, d: None)
             pscr.load()
@@ -408,6 +451,9 @@ rpc.exports = {
             pp.write_text(_json.dumps(samples))
             s0 = samples[0]
             print(f"  PICKUPRECS count={s0.get('count')} -> {pp}")
+            for a, v in zip(snap_addrs, s0.get("snap", []) or []):
+                sv = v - 0x100000000 if v is not None and v >= 0x80000000 else v
+                print(f"    SNAP {a:#010x} = {v:#010x} ({sv})")
             for r in s0.get("recs", []):
                 if r["obj"]:
                     print("    rec[%2d] state=%s type=%s angle=%.3f origin=(%.3f,%.3f,%.3f) pos=(%.3f,%.3f,%.3f)"
