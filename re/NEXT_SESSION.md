@@ -1,13 +1,116 @@
 # Next session kickoff
 
-Updated 2026-10-01 at the close of the **D2 re-close attempt 11** session: the ORIGINAL's force
-accumulator is now **measured** and it is **not** the carrier; §23's `T_rest` is **88–96% a
-velocity change OUTSIDE A6a**; the port's whole share of it is **A5's Phase-4 drag at
-`0x0046ddb0`**; and a **further sub-500 sink on the original** is now the live target.
-**No fix authored** — two registered thresholds failed on the original and both refusal branches
-fired. Branch `race/first-frame-parity`. Nothing is pushed.
-Superseded kickoffs: the attempt-10, attempt-9, attempt-8, attempt-7, attempt-6, attempt-5 and
-attempt-4 ones, kept below, plus the retrofit and render lane blocks.
+Updated 2026-10-01 at the close of the **D2 re-close attempt 12** session: the ORIGINAL has
+**no sub-500 velocity sink** — attempt 11's was a **back-out artefact, 198x wrong** — and the
+**named** sink is the **PORT's own trailing clamp-#6 velocity write** inside A6a `0x00467650`,
+whose **sole remaining lever is `l_60`**. **No fix authored**: the lever's value on the original
+is two conflicting numbers (U-9172). Branch `race/first-frame-parity`. Nothing is pushed.
+Superseded kickoffs: the attempt-11, attempt-10, attempt-9, attempt-8, attempt-7, attempt-6,
+attempt-5 and attempt-4 ones, kept below, plus the retrofit and render lane blocks.
+
+> ## START HERE (D2 lane) — attempt 12. D2 is STILL REOPENED. **SEVENTEEN routes are now CLOSED, and five readings from §21/§24 are WITHDRAWN.** The next lane is ONE measurement.
+>
+> Read [`re/analysis/D2_REOPEN_2026-09-29.md`](analysis/D2_REOPEN_2026-09-29.md) **§25**
+> (§25.5 first, then §25.2 and §25.3) and the three result sheets in
+> [`verify/d2_sink_20261001/`](../verify/d2_sink_20261001/). **Do not re-derive any of it.**
+> Pre-registrations `PREREG.md` (`26b859fd`), `PREREG_2.md` (`0d5ff8b7`), `PREREG_3.md`
+> (`a17cf0c0`) — **none amended**.
+>
+> **The §3 bounds are unchanged and are not renegotiable.** `slip 1500-2000`
+> **0.18855 .. 0.19635**, `slip 2000-2600` **0.24488 .. 0.25487**, `driving-median`
+> **1904.70 .. 1982.44**. Arm: §16.7 (`MASHED_STEER_HOLD_AFTER=0`), `MASHED_MEASURE_SOLO=1`,
+> `MASHED_TRACK_SEL=12`. Scored 3 of 3 at `a17cf0c0`, identical to every digit and to attempt 11:
+> slip 1500-2000 **0.2033** (n=20, median speed 1676.53) **FAIL**; slip 2000-2600 **UNSCORABLE**
+> (n=0); driving-median **1355.66** (n=54) **FAIL** −30.2%. `participants=1`,
+> `allowlisted=122 NEW=0`.
+>
+> ### THE FINDING: the sink is the PORT's, it is named by RVA, and it has ONE lever left
+>
+> The frame-to-frame net — `|snapVel(f)| - |snapVel(f-1)|`, the only statistic immune to where
+> `+0x9e4` is latched:
+>
+> | band | ORIG net/frame | PORT net/frame | med speed o/p |
+> |---|---:|---:|---|
+> | **100-150** | **+6.148** | **−14.940** | 126.2 / 115.3 |
+> | 260-500 | +19.782 | +18.890 | 371.1 / 349.8 |
+> | 1000-1500 | +27.326 | +27.406 | 1280.9 / 1275.5 |
+> | 1500-2000 | +15.056 | +17.094 | 1778.7 / 1676.5 |
+>
+> **Opposite sign at 100-150, and agreeing 0.82x..1.05x everywhere at and above 260.** The
+> carrier is A6a's **trailing grip-clamp #6**: multiplicand `0x004687db`, arm select
+> `0x004687df` (FCOM `0x005ce9fc` = 32768) / `0x004687ea`, gates `0x0046874c` + `0x00468761`,
+> HIGH-arm stores `0x00468833`/`0x00468840`/`0x00468854`, LOW-arm stores
+> `0x004688ca`/`0x004688d4`/`0x004688e8`, full stop `0x00468939`..`0x00468954`.
+> Port counterpart `Integrate2.cpp:655-745`.
+>
+> **On the running original the clamp is a NO-OP at every speed** — `+0x9e4 / |+0x9b0..0x9b8|`
+> at the substep entry `0x004709a0` (the first sample after A6a returns) is
+> **0.999991 .. 1.000020** in every band, n=12..678, **coverage 2331 of 2331, 0 misses**; per
+> sample it removes **0.0012 .. 0.0056** of speed against speeds of **126 .. 1779**. Nothing can
+> refresh `+0x9e4` in between: A6a has exactly **two** `+0x9e4` writers (`0x00467673`,
+> `0x004686cc`) and A6b `0x00468980..0x00468b34` has **none**. The port's clamp loss of
+> **18.58** accounts for **0.881** of the **21.09** divergence at 100-150.
+>
+> **`l_60` is the SOLE remaining lever.** `+0x18c` = 1.0 both sides; `+0x2c` = `+0x34` = 0 both
+> sides; no track scaling fires on either side; the multiplicand is the post-W1 `|vel|` on both
+> sides (Ghidra: `fVar5`, one assignment, `pcaddr=004686a9`, so the port's binding is
+> **faithful**); the arithmetic is byte-faithful. `k = 0` is reachable only in the high arm at
+> `grip >= 1e7`, so the no-op forces the original's `l_60 >= 1e7/speed` = **79 240** at speed
+> 126 and **5 622** at 1779 — against §21.9's reconstructed **285.2**.
+>
+> ### NEXT COMMAND — one measurement, and it decides D2
+>
+> **Resolve [U-9172].** Measure the ORIGINAL's `l_60` with a **verified** call-site attribution.
+> §21.9's 285.2 comes from `--mag-probe`, which sees **nine** distinct `RwV3dLength` return
+> sites (`00468343` 5696, `004684c0` 2172, `004684dc` 2172, `0046820f` 2164, `004680fb` 2100,
+> `00467673`/`00467685`/`004685bc`/`004686a9` 1424 each) — three with more samples than the one
+> `a8_l60.py` used — and the attribution decides the answer. So:
+>
+> 1. In Ghidra, identify the variable the clamp divides at `0x004686b3`..`0x004686be`
+>    (`FLD [ESP+0x94]` / `FDIV [ESI+0x18c]`) and **every** site that writes it.
+> 2. Hook those sites on the running original (entry-only), band by speed, and compare against
+>    `1e7/speed`.
+> 3. **If `l_60 >= 1e7/speed`**, the port's `l_60` is short by **278x** at low speed and that is
+>    D2's defect; the fix lands in A6a's per-wheel loop, with the promotion leg.
+>    **If it is ~285**, the clamp no-op has a cause not yet proposed and the arithmetic must be
+>    re-read — in which case say so and do not fit.
+>
+> ### SEVENTEEN routes closed. §23.4's ten, §24.6's four (11-14), plus:
+> 15. **A sub-500 velocity sink on the ORIGINAL** — it does not exist (`sigma_orig` 0.999481 at
+>     100-150; the pre-A6a scalar agrees 0.92x..1.16x across sides over 14x in speed).
+> 16. **The clamp's multiplicand / gate / full-stop binding as a defect** — the post-W1 `|vel|`
+>     on both sides.
+> 17. **`+0x18c`, `+0x2c`, `+0x34` and the track grip scaling as the cross-side lever** —
+>     measured identical or inert on both sides.
+>
+> ### FIVE readings WITHDRAWN. Do not carry them forward.
+> §24.3's **ORIGINAL `resid` column**; §24.4's **`local_70` of 182.5 / 54.2 / 5.95**; §24.6's
+> **closed route 13** as a both-sides claim (`residA → 0.0000` is a PORT fact); §24.6's **closed
+> route 14's premise**; and §21.10's **"the clamp-#6 / `l_60` lane is MEASURED OUT"**.
+> **U-9170** is withdrawn in full and moved to the resolved audit trail.
+>
+> ### Instrument lessons worth carrying
+> **A back-out is not a measurement.** The `a11_accum` estimator was verified *exact on the port*
+> (cosine 1.000000000 on 1628/1628) and was still 198x wrong on the original, because only the
+> port had a channel pinning it. Verify a cross-side estimator on the side you will trust it on.
+> **The hook you need may already be armed in a capture you already have** — `--fixup-probe`
+> site 2 **is** `0x00467650`, and step 2 cost no game run. Grep the harness for the RVA first.
+> **A hand ESP walk needs a second witness.** `off - delta` instead of `delta + off` produced a
+> confident, specific, wrong claim that survived self-consistency; Ghidra caught it.
+> **A no-op with a coverage count is strong evidence** — it is what collapsed this lane onto a
+> single quantity.
+>
+> ### Tooling added (all read-only, none executes a game)
+> `re/tools/statediff/a12_g.py` (step-1 gates), `a12_entry.py` (the original's A6a-entry
+> channel), `a12_split.py` (the PRE/IN-A6a budget split + BAR-3), `a12_clamp.py` (the per-site
+> `+0x9e4 / |vel|` map and the port's clamp arms), `a12_mult.py` (the ESP walk, with the sign
+> convention documented in its header).
+>
+> **The D3 modes 3/7 hold stands. D2 must close before it starts.**
+
+---
+
+## SUPERSEDED — attempt 11's kickoff (kept for its numbers; §25 withdraws its headline)
 
 > ## START HERE (D2 lane) — attempt 11. D2 is STILL REOPENED. **FOURTEEN routes are now CLOSED.** The target has MOVED OUT of A6a: stop looking inside it.
 >

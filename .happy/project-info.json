@@ -1,32 +1,47 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-01T16:40:00Z",
+  "updatedAt": "2026-10-01T22:30:00Z",
   "sections": [
     {
-      "heading": "D2 re-close (attempt 11, 2026-10-01) — the force accumulator",
+      "heading": "D2 re-close (attempt 12, 2026-10-01) — the sink is NAMED, and it is the PORT's",
       "fields": [
         {
           "label": "Verdict",
-          "value": "STILL REOPENED, FAIL, NO fix authored — S3+S5 failed on the original and both refusal branches fired. Nothing amended.",
+          "value": "STILL REOPENED, FAIL, NO fix authored — the named writer's arithmetic is byte-faithful, so a fix must change its input, and the input's value on the original is two conflicting numbers. Three pre-registrations, none amended.",
           "kind": "text"
         },
         {
           "label": "The finding",
-          "value": "accum is MEASURED on both sides and AGREES (0.99x at 1500-2000). Section 23's T_rest is 88-96% a velocity change OUTSIDE A6a — proven by residA -> 0.0000 on the port's act.vel channel.",
+          "value": "The ORIGINAL has NO sub-500 velocity sink — attempt 11's was a back-out artefact, 198x wrong at 100-150. The named sink is the PORT's own trailing clamp-#6 velocity write inside A6a 0x00467650.",
           "kind": "text"
         },
         {
-          "label": "Writer named on the port",
-          "value": "A5 Phase-4 drag, RVA 0x0046ddb0 (ForceIntegrator.cpp:164-168). Pure scalar multiply, quadratic in speed, l70G constant to 1.053 over 8 bands and a 20x speed range.",
+          "label": "The one number",
+          "value": "Frame-to-frame net at 100-150: ORIGINAL +6.148/frame, PORT -14.940/frame. Opposite sign. At and above 260 the net agrees 0.82x..1.05x at matched median speed.",
           "kind": "text"
         },
         {
-          "label": "The new target",
-          "value": "A further pre-A6a sink on the ORIGINAL below ~500 speed that C1 cannot produce (needs local_70 up to 182.5 against a legal [0,2]) and the port lacks entirely. ORIG/PORT resid 240x at 70-100, 1.18x at 1000-1500.",
+          "label": "Named writer (all three naming-bar parts met)",
+          "value": [
+            "multiplicand 0x004687db; arm select 0x004687df (FCOM 0x005ce9fc = 32768) / 0x004687ea",
+            "gates 0x0046874c + 0x00468761; HIGH arm 0x00468833/0x00468840/0x00468854",
+            "LOW arm 0x004688ca/0x004688d4/0x004688e8; full stop 0x00468939..0x00468954",
+            "port counterpart Integrate2.cpp:655-745"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Running-original witness",
+          "value": "The original's clamp is a NO-OP at every speed: +0x9e4 / |vel| at the substep entry 0x004709a0 is 0.999991..1.000020 in every band, n=12..678, coverage 2331 of 2331 with 0 misses. Per sample it removes 0.0012..0.0056 of speed against speeds of 126..1779. The port's clamp loss of 18.58 accounts for 0.881 of the 21.09 divergence.",
           "kind": "text"
         },
         {
-          "label": "Scored 3 of 3 (no-change control, HEAD 37220f4d)",
+          "label": "The sole remaining lever",
+          "value": "l_60. +0x18c = 1.0 both sides, +0x2c = +0x34 = 0 both sides, no track scaling on either side, the multiplicand is the post-W1 |vel| on both sides, and the arithmetic is byte-faithful. k = 0 forces grip >= 1e7, i.e. the original's l_60 >= 79 240 at speed 126 against section 21.9's 285.2 — 278x.",
+          "kind": "text"
+        },
+        {
+          "label": "Scored 3 of 3 (no-change control, HEAD a17cf0c0)",
           "value": [
             "slip 1500-2000  0.2033  n=20  median speed 1676.53  (band 0.18855..0.19635)  FAIL +3.5%",
             "slip 2000-2600  —       n=0                         (band 0.24488..0.25487)  UNSCORABLE",
@@ -37,31 +52,36 @@
         {
           "label": "Gates",
           "value": [
-            "S1 estimator vs verbatim accum: cosine 1.000000000 on 1628/1628  PASS",
-            "S2 KA2 control (true accum): 1.278e-04  PASS",
-            "S3 KA2 on the ORIGINAL: 1.281e-02 vs 1e-3  FAIL",
-            "S5 pred vs measured T_rest, both sides, every band  FAIL",
-            "T1 port l70G constant: max/min 1.053  PASS",
-            "T2/T3 orig local_70 1.000..182.5, max/min 182.4  FAIL"
+            "Step 1 channel control: C-CTL / C-ARM 1627 lines / C-CNT exact  PASS",
+            "Step 1 KA-1 1.814e-05 (bar 1e-3), KA-2 0.0533 (bar 0.10)  PASS",
+            "Step 2 G1 2331 vs 2332, G2 join bit-exact 0.000e+00, G3 1432/1432  PASS",
+            "Step 2 M3 known-answer vs section 24.3: worst 0.995 vs 0.25  FAIL -> R3",
+            "Step 3 T-C port |residA| 0.0001  PASS",
+            "Step 3 T-A / T-B / T-D  FAIL, one band only (100-150)"
           ],
           "kind": "list"
         },
         {
           "label": "Routes closed by measurement",
-          "value": "14 (section 23.4's ten, plus accum, its inputs frac/l_d0/m78/cMag/tangential, the whole of A6a, and C1 as a divergence at speed)",
+          "value": 17,
+          "kind": "number"
+        },
+        {
+          "label": "Readings withdrawn this attempt",
+          "value": 5,
           "kind": "number"
         },
         {
           "label": "Tracker",
-          "value": "U-9170 filed (speed-coupled vs slip-coupled undecided). No C-level change. Correction recorded: section 22.2's \"only writer of +0x9b0\" is true of the FUNCTION, not of the snapshot phase gap.",
+          "value": "U-9170 WITHDRAWN in full (moved to the resolved audit trail). U-9171 filed (the port's local_70 0.850 vs the original's 1.000). U-9172 filed (the clamp-#6 l_60 conflict; it gates D2's closure). No C-level change.",
           "kind": "text"
         },
         {
-          "label": "Next, in order",
+          "label": "Next — one measurement, and it decides D2",
           "value": [
-            "1. Log the port's G (bytes 0x150/0x154/0x158) + A5's fVar4 and local_70 — one default-OFF line, one port run",
-            "2. Entry hook on 0x00467650 so the original's sigma becomes a measurement, not a back-out",
-            "3. Resolve U-9170, then name the sub-500 sink by RVA"
+            "1. In Ghidra, identify the variable the clamp divides at 0x004686b3..0x004686be and every site that writes it",
+            "2. Hook those sites on the running original (entry-only), band by speed, compare against 1e7/speed",
+            "3. If l_60 >= 1e7/speed the port is short by 278x and that is D2's defect; if it is ~285, re-read the arithmetic and do not fit"
           ],
           "kind": "list"
         },
@@ -96,7 +116,7 @@
         },
         {
           "label": "Kickoff",
-          "value": "re/NEXT_SESSION.md — START HERE (D2 lane), attempt 11",
+          "value": "re/NEXT_SESSION.md — START HERE (D2 lane), attempt 12",
           "kind": "text"
         }
       ]

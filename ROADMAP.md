@@ -610,7 +610,49 @@ opinion is an opinion about the scaffold, not about the port.
 > **Order: D2 must close again BEFORE the D3 modes 3/7 port starts.** §D3's closure path
 > (`FUN_00414c30` + `FUN_00484c70`) is on hold until then.
 
-> #### Re-close attempt 11 — 2026-10-01. **STILL REOPENED. `accum` is MEASURED and is NOT the carrier; §23's `T_rest` is 88-96% a velocity change OUTSIDE A6a; the port's whole share of it is A5's Phase-4 drag at `0x0046ddb0`; and a further sub-500 sink on the ORIGINAL is the new target. NO fix authored — two registered thresholds failed and both refusal branches fired.**
+> #### Re-close attempt 12 — 2026-10-01. **STILL REOPENED. The ORIGINAL has NO sub-500 sink — attempt 11's was a back-out artefact, 198x wrong — and the NAMED sink is the PORT's own clamp-#6 velocity write inside A6a `0x00467650`, whose sole remaining lever is `l_60`. NO fix authored: the lever's value on the original is two conflicting numbers.**
+>
+> Full record: `re/analysis/D2_REOPEN_2026-09-29.md` **§25** (§25.5 first, then §25.2/§25.3).
+> Pre-registered three times, each before the thing it governs ran, **none amended**:
+> `verify/d2_sink_20261001/PREREG.md` (`26b859fd`), `PREREG_2.md` (`0d5ff8b7`), `PREREG_3.md`
+> (`a17cf0c0`). Results: `RESULT_STEP1.md`, `RESULT_STEP2.md`, `RESULT_STEP3.md` in the same
+> directory.
+>
+> - **Step 1 (R4).** One default-OFF `MASHED_A5GDIAG` line in A5 Phase 4 logs the port's `G` and
+>   `local_70` directly. Channel control passed all three gates (unarmed run: **no** log; armed:
+>   **1627** lines, matching `a6a_dump.log` exactly) and the pairing is proven at median rel
+>   **7.6e-09** against **11.0** one frame off. KA-1 **1.814e-05** (bar 1e-3), KA-2 **0.0533**
+>   (bar 0.10). **The port's `G` is `0.290250033` — the original's to every digit** — so §24.4's
+>   0.85 `l70G` ratio is **all** `local_70` (0.850 vs 1.000, **U-9171**, and its sign makes the
+>   port *faster*, so it is not the trap).
+> - **Step 2 (R3).** The entry hook §24.6 asked for **already existed** (`--fixup-probe` site 2
+>   **is** `0x00467650`) and the attempt-10 capture already carried **2331** of its rows from the
+>   same run as the reference `.msd`. No hook added, no game run. Join **bit-exact** (median rel
+>   `0.000e+00` on 1443 frames, runner-up 9.9e-03). The original's pre-A6a change is a **pure
+>   scalar** (spread 3.813e-08, n=1432). **M3 failed in 5 of 6 bands, worst 0.995 against a 0.25
+>   bar: the direct `resid` at 100-150 is −0.0655 where §24.3's back-out said −12.9566.**
+>   §24.3's ORIGINAL `resid` column, §24.4's `local_70` of 182.5, and **U-9170** are withdrawn.
+>   The pre-A6a scalar **agrees** across sides, 0.92x..1.16x over 14x in speed.
+> - **Step 3. SINK NAMED**, all three parts of the registered naming bar met. The frame-to-frame
+>   net at 100-150 is **ORIGINAL +6.148 per frame against PORT −14.940** — opposite sign — while
+>   at and above 260 it agrees 0.82x..1.05x. On the running original the clamp is a **no-op at
+>   every speed** (`+0x9e4 / |vel|` = 0.999991..1.000020 at the substep entry, n=12..678,
+>   coverage **2331 of 2331**), and the port's clamp loss of 18.58 accounts for **0.881** of the
+>   21.09 divergence. RVAs: multiplicand `0x004687db`, arms `0x00468833` / `0x004688ca`, gates
+>   `0x0046874c` + `0x00468761`, full stop `0x00468939`..`0x00468954`.
+> - **An ESP-walk sign error was caught and corrected before the conclusion landed** (Ghidra:
+>   the multiplicand is `fVar5`, the post-W1 `|vel|`, so the port's binding is **faithful**).
+>   With every other input measured identical, **`l_60` is the sole lever**, and the no-op forces
+>   the original's `l_60 >= 79 240` at speed 126 against §21.9's **285.2** — **278x**.
+>   **[U-9172]**, and **§21.10's "the clamp-#6 / `l_60` lane is MEASURED OUT" is WITHDRAWN.**
+> - **Scored 3 of 3** at `a17cf0c0`, identical to every digit and to attempt 11, `participants=1`,
+>   `allowlisted=122 NEW=0`: slip 1500-2000 **0.2033** (n=20, median speed 1676.53) **FAIL**;
+>   slip 2000-2600 **UNSCORABLE** (n=0); driving-median **1355.66** (n=54) **FAIL** −30.2%.
+> - **NEXT LANE, one measurement:** resolve **U-9172** — measure the ORIGINAL's `l_60` with a
+>   **verified** call-site attribution (identify the accumulator divided at
+>   `0x004686b3`..`0x004686be` in Ghidra first, then hook it on the running original and band it).
+
+> #### Re-close attempt 11 — 2026-10-01 (SUPERSEDED by attempt 12 on its headline; §25.5 lists exactly what is withdrawn). **STILL REOPENED. `accum` is MEASURED and is NOT the carrier; §23's `T_rest` is 88-96% a velocity change OUTSIDE A6a; the port's whole share of it is A5's Phase-4 drag at `0x0046ddb0`; and a further sub-500 sink on the ORIGINAL is the new target. NO fix authored — two registered thresholds failed and both refusal branches fired.**
 >
 > Full record: `re/analysis/D2_REOPEN_2026-09-29.md` **§24** (§24.6 first, then §24.3/§24.4).
 > Pre-registered twice before any run and **neither amended**:
