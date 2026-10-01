@@ -11,6 +11,12 @@ any edit under `mashedmod/src`). Fix commit `c9615225`. Pre-stage HEAD
 | A | pre-stage HEAD `f7ab571b`, unmodified | `B685C9BCAE814B2EA6F26F3C33CEFBF093E5A0F4BAD371F79A7C4E379F6EE74A` |
 | B | HEAD + the P3 projection dump ONLY (no placement change) | `862CC617D1939EBF4F50FF86267A18755CB19EEAF91B7F0EFE074FFC31B710DD` |
 | C | B + the placement fix | `B7184CE2D84690BA183263C7469547D6B3C4246BA31FF6566784E76B8EB2BEDD` |
+| C' | **rebuilt from the committed source** (C plus two comment-only edits) | `F3052EE99D587FE52FB965B04F43BC5A04D04EB6467ED81561BD8F48D6121680` |
+
+C' exists because the only source changes made after C was pinned were comment
+text in `Track/PowerupMarkers.{h,cpp}`. Verified rather than asserted: C' is
+**0 differing pixels** against C on all 6 track x in-race-frame pairs, and P1
+re-passes bit-identical on both tracks from C's logs.
 
 Files: `bin/A_head_f7ab571b.exe`, `bin/B_logonly.exe`, `bin/C_placement.exe`.
 Built with `mashedmod\build.bat` from PowerShell. One-RVA-one-body lint:
