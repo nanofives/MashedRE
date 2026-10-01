@@ -14,6 +14,7 @@
 #include "../Track/TrackWorld.h"
 #include "../Track/DffModel.h"
 #include "../Track/PowerupMarkers.h"  // POWERUPS_GOLD.DFF placement (FUN_00426460)
+#include "../Render/ArcticTrackNodeSlot0.h"  // the real 0x00448940 body + its sea grid
 #include "../Track/LapLogic.h"      // F4 lap-line crossing sequence (shared w/ test)
 #include "../Txd/TxdDecoder.h"
 #include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
@@ -1754,30 +1755,11 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     // [SEA-TILE 2026-09-29] Arctic's sea is NOT placed by its DFF
                     // (SEA.DFF frame[0].pos == (0,0,0), verts Y 0.000..0.904) and NOT
                     // by COURSE.LUA (no placement command exists in the 68-entry Lua
-                    // binding table). The original places it from a PER-TRACK hook:
-                    //   table 0x005f33f8, stride 0x48 = {char name[0x10]; u32 Course_Id;
-                    //   void* slot[13]}; record "arctic" at 0x005f3488 with Course_Id 0
-                    //   at 0x005f3498 and slot 0 at 0x005f349c = 0x00448940. Selector
-                    //   0x0041e870 (called 0x00426eaf) matches Course_Id into
-                    //   DAT_0063d7e4; thunk 0x0041e8b0 (jmp [rec+0x14]) is invoked at
-                    //   0x0042709f with push 0x646e58 (the course object).
-                    // FUN_00448940, for clump index 2 ([course+0x10118] @ 0x0044899d):
-                    //   0x004489bb  mov [esp+0x4c], 0xc0833333   ; translation.y = -4.1
-                    //   0x00448a47  call 0x004e6ab0 x24          ; clump clone (clones the
-                    //               frame via FUN_004c0870(clump+4)); the tile array
-                    //               0x008963e0..0x00896440 is 1 base + 24 clones
-                    //   0x00448a65  mov [esp+0x10], 0xc3160000   ; X start = -150.0
-                    //   0x00448a80  mov [esp+0x18], 0xc3160000   ; Z start = -150.0
-                    //   0x00448a6f/0x00448a88  mov ebp,5 / mov ebx,5   ; 5x5
-                    //   0x00448aa2  call 0x004c1340(frame,&v,0)  ; RwFrameTranslate --
-                    //               it forwards to RwMatrixTranslate 0x004c51a0 on
-                    //               frame+0x10 (the modelling matrix), combine op 0 =
-                    //               rwCOMBINEREPLACE
-                    //   0x00448aab/0x00448ac1  fadd [0x005cc728]  ; step = +60.0
-                    // => 25 tiles at X,Z in {-150,-90,-30,30,90}, all at Y = -4.1.
-                    // Confirmed live: the original's clump[2] frame carries modelling ==
-                    // LTM == translate(-150,-4.1,-150) -- tile 0 of that grid
-                    // (verify/sea_level_20260929/orig_sea_matrix.json).
+                    // binding table). The original places it from the per-track node
+                    // table 0x005f33f8: record "arctic" at 0x005f3488, slot 0 at
+                    // 0x005f349c = 0x00448940. Confirmed live: the original's clump[2]
+                    // frame carries modelling == LTM == translate(-150,-4.1,-150) --
+                    // tile 0 of that grid (verify/sea_level_20260929/orig_sea_matrix.json).
                     // Placed ONCE, at load: a whole-.text sweep for the tile array finds
                     // only slot 0 (place+clone), slot 2 0x00449030 (render, 0x004e6680
                     // per tile) and slot 5 0x004490d0 (RpClumpDestroy on the 24 clones,
@@ -1786,19 +1768,32 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     // array. So a static instance list is the complete placement model.
                     // At identity the sheet landed on the road (GRAPH.BSP median Y under
                     // the start grid = 0.250) and covered 70.39% of the s8 frame.
-                    // re/analysis/SEA_LEVEL_2026-09-29.md
+                    //
+                    // THE PER-INSTRUCTION TRANSCRIPTION IS NOT REPEATED HERE. It lives
+                    // once, with the body, in Render/ArcticTrackNodeSlot0.cpp -- two
+                    // copies of the same citation drift (memory
+                    // `duplicate-rva-implementations-drift`).
+                    // Diagnosis: re/analysis/SEA_LEVEL_2026-09-29.md
                     static const bool s_no_sea_tile =
                         std::getenv("MASHED_NO_SEA_TILE") != nullptr;
+                    // RETROFIT 2026-10-01: the 5x5 loop that used to sit here was
+                    // a second body for the grid. It now comes from the REAL port
+                    // of the node, Render/ArcticTrackNodeSlot0.cpp
+                    // (`ArcticTrackNodeSlot0`, 0x00448940) -- one TU, in both
+                    // mashedmod/exe_sources.rsp and asi_sources.rsp. The node's
+                    // own translate loop and this renderer call the SAME
+                    // ArcticSeaTileGrid; no second copy of the grid remains.
                     if (!s_no_sea_tile && course_id_ == 0 && c.idx == 2) {
-                        for (int ix = 0; ix < 5; ++ix)          // outer loop = X
-                            for (int iz = 0; iz < 5; ++iz) {    // inner loop = Z
-                                D3DMATRIX m;
-                                MatIdentity(&m);
-                                m._41 = -150.f + 60.f * static_cast<float>(ix);
-                                m._42 = -4.1f;
-                                m._43 = -150.f + 60.f * static_cast<float>(iz);
-                                p.instances.push_back(m);
-                            }
+                        float grid[mashed_re::Render::kArcticSeaTileCount][3];
+                        mashed_re::Render::ArcticSeaTileGrid(grid);
+                        for (int k = 0; k < mashed_re::Render::kArcticSeaTileCount; ++k) {
+                            D3DMATRIX m;
+                            MatIdentity(&m);
+                            m._41 = grid[k][0];
+                            m._42 = grid[k][1];
+                            m._43 = grid[k][2];
+                            p.instances.push_back(m);
+                        }
                         // Rule 1 of verify/sea_fix_20260930/PREREG.md is a
                         // per-instance assertion, so print every instance --
                         // a count alone cannot show the grid is the original's.

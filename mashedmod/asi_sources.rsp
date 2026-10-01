@@ -417,3 +417,5 @@
 "Render\PromoLoop_round254.cpp"
 "Render\PromoLoop_round255.cpp"
 "Render\PromoLoop_round256.cpp"
+"Gameplay\PickupPoolSpawn.cpp"
+"Render\ArcticTrackNodeSlot0.cpp"

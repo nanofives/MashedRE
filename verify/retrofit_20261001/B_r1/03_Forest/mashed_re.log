@@ -1,0 +1,247 @@
+
+=== B17 region map [winmain-entry] 0x00400000..0x009FFFFF ===
+  0x00400000 +0x007DF000  COMMIT  IMAGE   protect=0x008
+  --- totals: free=0KB commit=8060KB reserve=0KB ---
+  B17-GRAN [winmain-entry] 0x00420000 COMMIT   .text getters (0x0042b8b0/c0, credits 0x0042d5a0)
+  B17-GRAN [winmain-entry] 0x00470000 COMMIT   .text Im2D draws (0x00472c60/2f40, 0x004730b0)
+  B17-GRAN [winmain-entry] 0x005C0000 COMMIT   .rdata scale consts (1/640 @5cd5a8, 1/480 @5cc560)
+  B17-GRAN [winmain-entry] 0x00630000 COMMIT   .data boot params (0x00636ae8) + timer (0x0063d558)
+  B17-GRAN [winmain-entry] 0x00670000 COMMIT   .data race-state array (0x0067ea10)
+  B17-GRAN [winmain-entry] 0x007D0000 COMMIT   .data RW device slot (*(0x007d3ff8)) — B15 bridge
+  B17-GRAN [winmain-entry] 0x007F0000 COMMIT   .bss big buffer (0x007f0f60) + input (0x007f1044)
+  B17-GRAN [winmain-entry] 0x00890000 COMMIT   .bss menu-entry array + vtx buffer (0x00898a20/ac0)
+B17-TLS: reserved 0/0 needed granules at TLS time (seen-free; the rest were already occupied by kernel-early NLS)
+B17-PAD: image-pad arena [0x001DF600 .. 0x00BDF5FF] (exe owns the MASHED RVA range)
+Frontend.piz loaded OK
+  path:    original/TOASTART/Common/Frontend.piz
+  size:    1257472 bytes
+  version: 3
+  entries: 2
+  mode:    raw
+
+  name                                                             offset     length         id
+  ------------------------------------------------------------ ---------- ---------- ----------
+  TEXTURES.TXD                                                 0x00001000 0x000FBCE8 0x00001AC2
+  MAIN.BSP                                                     0x000FD000 0x00035BF8 0x00000AE1
+
+TEXTURES.TXD extracted to extracted/TEXTURES.TXD (1031400 bytes)
+RWS chunk tree:
+[0] 0x00000023 (?) size=0x000FBCDC version=0x1803FFFF @ 0x00000000
+
+  total chunks: 1 (containers: 0)
+
+TXD decode (Milestone B3):
+  OK: 8 textures, deviceId=1
+
+  #   name                     w     h  bpp fmt   mips palette
+  --- -------------------- ----- ----- ---- ----- ---- -------
+  0   skydomegs               32    32    8 PAL8     6 yes    
+  1   Shad_groundgs          128   128    8 PAL8     8 yes    
+  2   Shad_car               256   256   32 ARGB     9 -      
+  3   Shad_bild              256   256   32 ARGB     9 -      
+  4   rendergs                64    32   32 ARGB     7 -      
+  5   main                   256   256    8 PAL8     9 yes    
+  6   Gravel                 128   128   32 ARGB     8 -      
+  7   carbase                256   256    8 PAL8     9 yes    
+
+=== B17 region map [pre-initd3d9] 0x00400000..0x009FFFFF ===
+  0x00400000 +0x007DF000  COMMIT  IMAGE   protect=0x008
+  --- totals: free=0KB commit=8060KB reserve=0KB ---
+  B17-GRAN [pre-initd3d9] 0x00420000 COMMIT   .text getters (0x0042b8b0/c0, credits 0x0042d5a0)
+  B17-GRAN [pre-initd3d9] 0x00470000 COMMIT   .text Im2D draws (0x00472c60/2f40, 0x004730b0)
+  B17-GRAN [pre-initd3d9] 0x005C0000 COMMIT   .rdata scale consts (1/640 @5cd5a8, 1/480 @5cc560)
+  B17-GRAN [pre-initd3d9] 0x00630000 COMMIT   .data boot params (0x00636ae8) + timer (0x0063d558)
+  B17-GRAN [pre-initd3d9] 0x00670000 COMMIT   .data race-state array (0x0067ea10)
+  B17-GRAN [pre-initd3d9] 0x007D0000 COMMIT   .data RW device slot (*(0x007d3ff8)) — B15 bridge
+  B17-GRAN [pre-initd3d9] 0x007F0000 COMMIT   .bss big buffer (0x007f0f60) + input (0x007f1044)
+  B17-GRAN [pre-initd3d9] 0x00890000 COMMIT   .bss menu-entry array + vtx buffer (0x00898a20/ac0)
+InitD3D9: adapter mode 2560x1440 fmt=22 refresh=165
+InitD3D9: CreateDevice(HAL/HW,depthA,vsdef) -> OK hr=0x00000000 OK
+
+=== B17 region map [post-initd3d9] 0x00400000..0x009FFFFF ===
+  0x00400000 +0x007DF000  COMMIT  IMAGE   protect=0x008
+  --- totals: free=0KB commit=8060KB reserve=0KB ---
+  B17-GRAN [post-initd3d9] 0x00420000 COMMIT   .text getters (0x0042b8b0/c0, credits 0x0042d5a0)
+  B17-GRAN [post-initd3d9] 0x00470000 COMMIT   .text Im2D draws (0x00472c60/2f40, 0x004730b0)
+  B17-GRAN [post-initd3d9] 0x005C0000 COMMIT   .rdata scale consts (1/640 @5cd5a8, 1/480 @5cc560)
+  B17-GRAN [post-initd3d9] 0x00630000 COMMIT   .data boot params (0x00636ae8) + timer (0x0063d558)
+  B17-GRAN [post-initd3d9] 0x00670000 COMMIT   .data race-state array (0x0067ea10)
+  B17-GRAN [post-initd3d9] 0x007D0000 COMMIT   .data RW device slot (*(0x007d3ff8)) — B15 bridge
+  B17-GRAN [post-initd3d9] 0x007F0000 COMMIT   .bss big buffer (0x007f0f60) + input (0x007f1044)
+  B17-GRAN [post-initd3d9] 0x00890000 COMMIT   .bss menu-entry array + vtx buffer (0x00898a20/ac0)
+
+Milestone B7: granule walk over 0x00500000..0x009FFFFF — 0 granules covered, 80 blocked (first blocked at 0x
+Milestone B7: first blocked granule = 0x00500000
+Milestone B7: g_mashed_data_mapped = false
+
+Milestone B7: wedge status = INACTIVE (VirtualAlloc failed)
+
+Milestone B10: frontend boot chain start
+  [1] DataZeroFill (page-granular): zeroed 226212, skipped 0 bytes
+  [2-pre] 0x00630000 state=0x00001000 protect=0x00000008
+  [2] BootDefaultParamsInit OK
+  [3] DefaultParam_SetField00/04/08 OK; readback 0x007f0f00=0x3F333333 04=0x3F333333 08=0x3F333333 (expect 0x3f333333)
+  [4] RaceStateArrayZero OK; readback 0x0067ea10=0x00000000 0x0067ea14=0x00000000 (expect 0)
+  [5] MenuEntryArrayInit OK; readback 0x00898ac0=0x00000000 (expect 0)
+  [6] TimerSlotClear OK; readback 0x0063d558=0x00000000 (expect 0)
+  [7] MainLoopInit AV'd (expected: tunnels into MASHED code section via FUN_00495110 etc.)
+Milestone B10: frontend boot chain complete
+
+Milestone B11: DirectInput8 + keyboard device acquired (cooperative = background+nonexclusive)
+
+Milestone B14: MASHED input-globals wedge probe = OK (wrote 0xA5 to 0x007f1044, readback=0xA5)
+
+Milestone B5: uploading 8 textures for atlas
+  slot 0: 'skydomegs' 32x32 PAL8 mips=6 OK
+  slot 1: 'Shad_groundgs' 128x128 PAL8 mips=8 OK
+  slot 2: 'Shad_car' 256x256 ARGB mips=9 OK
+  slot 3: 'Shad_bild' 256x256 ARGB mips=9 OK
+  slot 4: 'rendergs' 64x32 ARGB mips=7 OK
+  slot 5: 'main' 256x256 PAL8 mips=9 OK
+  slot 6: 'Gravel' 128x128 ARGB mips=8 OK
+  slot 7: 'carbase' 256x256 PAL8 mips=9 OK
+  Milestone B5: 8/8 textures uploaded into atlas
+
+Milestone B15: RW Im2D->D3D9 bridge install = OK (fake RW device at *(0x007d3ff8); HudIm2DQuad routes to D3D9)
+
+Milestone B16: standalone RVA thunks — map_text=1 map_scale=1 scale_ok=1 thunks=6/6 (b8b0=1 b8c0=1 d5a0=1 f40=1 30b0=1 2c60=1)
+Milestone B16: MenuChromeShellA ready = YES (real MASHED menu chrome via the B15 bridge)
+
+B19a: original/TOASTART/Common/Perm.piz :: BACKGROUND.PNG decode+upload OK (340x240) -> slot 8 handle 2
+
+B19a: original/TOASTART/Common/Font36.piz :: MASHEDNEWLOGO.PNG decode+upload OK (256x128) -> slot 9 handle 3
+
+B19b: message table original/TOASTART/Common/Font36.piz/ENGLISH.DAT loaded (33626 bytes)
+B19b: menu item id=33 "Single Player" 195x39 -> slot 10 handle 4
+B19b: menu item id=34 "Multi Player" 175x39 -> slot 11 handle 5
+B19b: menu item id=35 "Championship" 214x39 -> slot 12 handle 6
+B19b: menu item id=36 "Time Trial" 148x39 -> slot 13 handle 7
+B19b: menu item id=39 "Options" 120x39 -> slot 14 handle 8
+B19b: 5 menu items ready
+
+R2-5: badges.txd 'Button' 16x32 upload OK (dict has 23 textures)
+R2-5: badges.txd 'Arrow' 16x16 upload OK
+F38: badges.txd 'lock' 16x16 fmt=PAL4 upload OK (ok)
+F38: badges.txd 'check' 16x16 fmt=PAL4 upload OK (ok)
+F38: badges.txd 'dot' 16x16 fmt=PAL4 upload OK (ok)
+F2 track previews: 24/24 loaded; veh 8/8
+powerup icons: dict=11 loaded=11 ready=1
+standings assets: iface=6/6 epp=5/5 panel=2/2 ready=1
+F38: interface.txd 'MultiPlayer' 64x64 upload OK
+
+#25 color-select: INTERFACE.TXD cars 10/10, vs OK, star OK (dict has 30 textures)
+
+#10 input icons: PC.TXD decode OK, 2/2 (kbd+joypad)
+
+loadicon: 256x128 decode+upload OK
+
+B19a: original/TOASTART/Common/Font36.piz :: BIGE.BMP decode+upload OK (32x32) -> slot 57 handle 48
+F1 frontend.mpg: RUNNING (512x512)
+R2-2 gamesave load: LOADED (DEADBEEF save) (original/gamesave.bin)
+
+B19 faithful font (FGDC20): load OK (height=33.0)
+
+MenuStringTable (id->glyph-string): load OK size=33626 ids=677
+  self-check id 0x21 len=13 "Single Player"
+  self-check id 0x22 len=12 "Multi Player"
+  self-check id 0x23 len=12 "Championship"
+  self-check id 0x24 len=10 "Time Trial"
+  self-check id 0x27 len=7 "Options"
+
+B17-SUMMARY reached-main-loop chrome=YES thunks=6/6
+CAPMODE tag=00_challengeselect.bmp mode=Frontend
+NAV_DEMO phase=0 00_challengeselect ok=1 depth=1 screen=6 cur=0 nrec=3
+  WS-E lights: ambient=0xFF666666 (RGB 102,102,102) sun=0xFFB3B3B3 dir=(-0.802,-0.504,-0.321)
+D3D9 world.tris mat[0]=1699 tex=1
+D3D9 world.tris mat[1]=513 tex=1
+D3D9 world.tris mat[2]=462 tex=1
+D3D9 world.tris mat[3]=421 tex=1
+D3D9 world.tris mat[4]=1089 tex=1
+D3D9 world.tris mat[5]=85 tex=1
+D3D9 world.tris mat[6]=181 tex=1
+D3D9 world.tris mat[7]=61 tex=1
+D3D9 world.tris mat[8]=32 tex=1
+D3D9 world.tris mat[9]=1136 tex=1
+D3D9 world.tris mat[10]=24 tex=1
+D3D9 world.tris mat[11]=102 tex=1
+D3D9 world.tris mat[12]=461 tex=1
+D3D9 world.tris mat[13]=10 tex=1
+D3D9 world.tris mat[14]=50 tex=1
+D3D9 world.tris mat[15]=927 tex=0
+D3D9 world.tris mat[16]=14 tex=1
+D3D9 world.tris mat[17]=146 tex=1
+D3D9 world.tris mat[18]=34 tex=1
+D3D9 world.tris mat[19]=64 tex=1
+D3D9 world.tris mat[20]=49 tex=1
+D3D9 world.tris mat[21]=228 tex=1
+D3D9 world.tris mat[22]=232 tex=1
+D3D9 world.tris mat[23]=39 tex=1
+D3D9 world.tris mat[24]=305 tex=1
+D3D9 world.tris mat[25]=282 tex=0
+D3D9 world.tris mat[26]=11 tex=1
+D3D9 world.tris mat[27]=196 tex=1
+PU-SRC dff=1 bytes=19950 markers=30 err=-
+D-S3-6 bake: dff=skydome.dff lt=no batch=0 baked_v0=0xFFFFFFFF
+D-S3-6 bake: dff=Water.dff lt=YES batch=0 baked_v0=0xFFFFF8F0
+D-S3-6 bake: dff=FarTree.dff lt=YES batch=0 baked_v0=0xFFFFFFFF
+  SEA-TILE-OFF course_id=34 clump=2 dff=FarTree.dff instances=1 (identity) sea_tile_instances=0
+D-S3-6 bake: dff=NearTree.dff lt=YES batch=0 baked_v0=0xFFFFFFFF
+D-S3-6 bake: dff=NearTree.dff lt=YES batch=1 baked_v0=0xFFFFFFFF
+D-S3-6 bake: dff=Bushes.dff lt=YES batch=0 baked_v0=0xFFFFFFFF
+D-S3-6 bake: dff=MidTree.dff lt=YES batch=0 baked_v0=0xFFFFFFFF
+D-S3-6 bake: dff=CamMan.dff lt=YES batch=0 baked_v0=0xFFFFFFFF
+  F3 UV-anim: 1 .UVA rate(s); scrolling materials world=0 props=0 sky=0
+  F2 copters: 2 flying, 2 models from original/TOASTART/Common\Perm.piz (0 gameplay/rule-5)
+R4 track load OK: original/TOASTART/TRACKS/Forest.piz — tris=8853 verts=9616 sectors=28 mats=28 textured=26 radius=91.36 props=6 (instances=6) gates=81
+  CAM-DIAG bbox=[66.0,11.1,8.0 .. -73.7,-17.0,-109.8] bbox_center=(-3.9,-2.9,-50.9) bbox_R=91.4 | gate_center=(-1.6,-2.2,-39.0) gate_R=61.0
+MATCH-SEED rule=0 participants=4 teams=0 seed=6 engine=1
+MATCH-SEED rule=4 participants=4 teams=0 seed=6 engine=1
+R4 pickups: 30 real powerup spawns (POWERUPS_GOLD.DFF)
+PUPLACE i=0 atomic=29 type=16 respawn=5.000000 pos=-51.20000076,0.41000000,-71.57121277 bits=c24ccccd,3ed1eb85,c28f2476
+PUPLACE i=1 atomic=28 type=11 respawn=5.000000 pos=-9.71491909,-3.40000010,-67.66926575 bits=c11b704f,c059999a,c28756aa
+PUDROP atomic=27 type=21 reason=blank
+PUDROP atomic=26 type=21 reason=blank
+PUDROP atomic=25 type=21 reason=blank
+PUDROP atomic=24 type=21 reason=blank
+PUPLACE i=2 atomic=23 type=12 respawn=5.000000 pos=51.65856552,0.59951955,-38.12176895 bits=424ea25f,3f197a1d,c2187cb1
+PUPLACE i=3 atomic=22 type=16 respawn=5.000000 pos=32.90340042,-2.46474457,-0.51943624 bits=42039d15,c01dbe60,bf04f9c6
+PUDROP atomic=21 type=21 reason=blank
+PUDROP atomic=20 type=21 reason=blank
+PUDROP atomic=19 type=21 reason=blank
+PUDROP atomic=18 type=21 reason=blank
+PUPLACE i=4 atomic=17 type=9 respawn=5.000000 pos=21.00141144,-5.00826311,-22.83162117 bits=41a802e4,c0a043b1,c1b6a729
+PUPLACE i=5 atomic=16 type=11 respawn=5.000000 pos=-25.65451813,-2.52047229,-17.36996460 bits=c1cd3c74,c0214f6b,c18af5b0
+PUDROP atomic=15 type=21 reason=blank
+PUDROP atomic=14 type=21 reason=blank
+PUDROP atomic=13 type=21 reason=blank
+PUDROP atomic=12 type=21 reason=blank
+PUPLACE i=6 atomic=11 type=12 respawn=5.000000 pos=-26.99478149,-1.17822218,-71.38242340 bits=c1d7f550,bf96cffc,c28ec3cd
+PUPLACE i=7 atomic=10 type=9 respawn=5.000000 pos=33.48552322,-1.03416765,-46.23847580 bits=4205f12d,bf845f9b,c238f433
+PUDROP atomic=9 type=21 reason=blank
+PUDROP atomic=8 type=21 reason=blank
+PUDROP atomic=7 type=21 reason=blank
+PUDROP atomic=6 type=21 reason=blank
+PUPLACE i=8 atomic=5 type=10 respawn=5.000000 pos=-51.18803787,-0.64373821,-24.18053627 bits=c24cc08d,bf24cc07,c1c171bd
+PUPLACE i=9 atomic=4 type=10 respawn=5.000000 pos=-47.15269852,-0.64373821,-27.49940491 bits=c23c9c5d,bf24cc07,c1dbfec8
+PUDROP atomic=3 type=21 reason=blank
+PUDROP atomic=2 type=21 reason=blank
+PUDROP atomic=1 type=21 reason=blank
+PUDROP atomic=0 type=21 reason=blank
+PUINIT placed=10 of 30 spawns worldR=60.955700
+CAPMODE tag=car_1_spawn.bmp mode=InRace
+CAPMODE tag=01_grid.bmp mode=InRace
+NAV_DEMO phase=1 01_grid ok=1 depth=1 screen=6 cur=0 nrec=3
+RELIGHT_CAP tag=01_grid heading=-1.67634
+CAPMODE tag=car_2_drive.bmp mode=InRace
+CAPMODE tag=round1_go.bmp mode=InRace
+CAPMODE tag=car_3_weave.bmp mode=InRace
+CAPMODE tag=01_inrace_track.bmp mode=InRace
+NAV_DEMO phase=1 01_inrace_track ok=1 depth=1 screen=6 cur=0 nrec=3
+RELIGHT_CAP tag=01_inrace_track heading=-1.67634
+R5 drive t=5.7s pos=(-47.94, 0.04, -46.05) speed=0.00
+CAPMODE tag=01_action.bmp mode=InRace
+NAV_DEMO phase=1 01_action ok=1 depth=1 screen=6 cur=0 nrec=3
+RELIGHT_CAP tag=01_action heading=-1.67634
+CAPMODE tag=02_back_to_menu.bmp mode=Frontend
+NAV_DEMO phase=2 02_back_to_menu ok=1 depth=1 screen=6 cur=0 nrec=3
+NAV_DEMO phase=3 race-demo done ok=1 depth=1 screen=6 cur=0 nrec=3

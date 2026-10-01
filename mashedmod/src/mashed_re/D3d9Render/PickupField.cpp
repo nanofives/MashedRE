@@ -1,5 +1,6 @@
 // PickupField impl — see PickupField.h.
 #include "PickupField.h"
+#include "../Gameplay/PickupPoolSpawn.h"   // the real 0x00458e00 body
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -163,73 +164,66 @@ void PickupField::Init(const std::vector<std::array<float, 3>>& spots, float wor
     }
 }
 
-// Spawn the pool, applying the original's accept/reject predicates verbatim.
+// Spawn the pool through the REAL port of the original's spawn function.
 //
-// FUN_00458e00 @0x00458e00, normal-race arm, in its own order:
+// RETROFIT 2026-10-01. This used to carry its own inline transcription of
+// FUN_00458e00's normal-race arm. That was a second body for an RVA that now has
+// a real one: Gameplay/PickupPoolSpawn.cpp (`PickupPoolSpawn`, 0x00458e00), a
+// single TU listed in BOTH mashedmod/exe_sources.rsp and asi_sources.rsp, so the
+// evidence covers the copy that ships (re/CONFIDENCE.md L43+). EVERY accept and
+// reject decision below is now that function's return value; nothing here
+// re-derives a predicate. The pool cap, the squared-distance dedupe, the BLANK
+// rejection and the verbatim position store all live there, RVA-cited.
 //
-//     iVar2 = FUN_0042fe30();                       // placement rank
-//     if (0x18 < DAT_0068b9a8) return -1;           // pool cap: 25 entries
-//     ... for each existing entry:                  // dedupe against +0x2c..0x34
-//         if (dx*dx + dy*dy + dz*dz < _DAT_005cc558) return -1;
-//     if (iVar2 == 2) { ... }                       // BLANK-only arm, not wired
-//     else if (param_2 == 0x15) return -1;          // reject BLANK (type 21)
-//     ... position written to BOTH +0x2c..0x34 and +0x38..0x40, verbatim
+// The pool count is reset to 0 before the run. That reset is NOT part of the
+// ported function — the original clears the pool elsewhere, on track load — so
+// it is written here, in the caller, and labelled rather than smuggled in.
 //
-// _DAT_005cc558 = 0x3a83126f = 0.00100000005, a SQUARED distance.
-//
-// Rank. FUN_0042fe30 @0x0042fe30 is `FUN_0042f6a0() != 0xb ? DAT_0067ea74 : 1`.
-// Measured live: a normal race reads 1 (Quick Battle on TRAINING, Challenge Cup
-// on ARCTIC), and the rank-0 routes place NOTHING at all (FUN_004264d0's early
-// return at 0x004265a6, live count 0). Only the rank-1 arm is wired here, which
-// is the arm the standalone's race flow corresponds to and the only one with
-// live evidence; rank 0 and the rank-2 BLANK randomiser (FUN_00458d00
-// @0x00458d00) are [UNCERTAIN] because what drives DAT_0067ea74 has not been
-// derived. See verify/pickups_fix_20261001/PREREG_STAGE1.md.
-//
-// NOTE the original stores the position VERBATIM into both the live position
-// and the anchor. The port's old `worldR_ * 0.012f` Y lift was invented and is
-// gone; the boxes sit where the DFF frame puts them.
+// `reason` is a LOG-ONLY classification of a decision already made: it reports
+// which precondition held, in the original's own rejection order, for the index
+// PickupPoolSpawn already returned as -1. It is not consulted by any branch.
 void PickupField::InitReal(const std::vector<Spawn>& spawns, float worldRadius) {
+    using mashed_re::Gameplay::PickupPool_CountPtr;
+    using mashed_re::Gameplay::PickupPool_EntryPos;
+    using mashed_re::Gameplay::PickupPool_EntryType;
+    using mashed_re::Gameplay::kPickupPoolMax;
+
     orbs_.clear();
     collected_ = 0; held_ = -1; held_type_ = -1; phase_ = 0.f;
     worldR_ = worldRadius > 1.f ? worldRadius : 100.f;
-    const float kDedupeEps2 = 0.00100000005f;   // _DAT_005cc558 = 0x3a83126f
-    const int   kPoolCap    = 25;               // 0x18 < DAT_0068b9a8 -> reject
+    std::int32_t* const pool_count = PickupPool_CountPtr();
+    *pool_count = 0;                      // caller-side pool reset, not 0x00458e00
     std::FILE* lf = std::fopen("mashed_re.log", "a");
     for (const Spawn& s : spawns) {
-        const char* reject = nullptr;
-        if (static_cast<int>(orbs_.size()) > kPoolCap - 1) {
-            reject = "cap";
-        } else {
-            for (const Orb& e : orbs_) {
-                const float dx = e.pos[0] - s.pos[0];
-                const float dy = e.pos[1] - s.pos[1];
-                const float dz = e.pos[2] - s.pos[2];
-                if (dx*dx + dy*dy + dz*dz < kDedupeEps2) { reject = "dedupe"; break; }
-            }
-            if (!reject && s.type == 0x15) reject = "blank";
-        }
-        if (reject) {
+        const std::int32_t before = *pool_count;
+        const std::int32_t idx    = PickupPoolSpawn(s.pos, s.type);
+        if (idx < 0) {
+            const char* reject = (before >= kPickupPoolMax) ? "cap"
+                               : (s.type == 0x15)           ? "blank"
+                                                            : "dedupe";
             if (lf) std::fprintf(lf, "PUDROP atomic=%d type=%d reason=%s\n",
                                  s.atomic, s.type, reject);
             continue;
         }
+        // Read the orb back OUT of the pool the port just wrote, so the visible
+        // position is the stored one and not a second copy of the input.
+        const float* const stored = PickupPool_EntryPos(idx);
         Orb o{};
-        o.pos[0] = s.pos[0];
-        o.pos[1] = s.pos[1];
-        o.pos[2] = s.pos[2];
+        o.pos[0] = stored[0];
+        o.pos[1] = stored[1];
+        o.pos[2] = stored[2];
         o.active = true;
         o.respawn = s.respawn > 0.f ? s.respawn : 5.0f;
         o.cooldown = 0.f;
-        o.gameType = s.type;
-        o.col = ColForType(s.type);
+        o.gameType = PickupPool_EntryType(idx);
+        o.col = ColForType(o.gameType);
         if (lf) {
             std::uint32_t b[3];
             std::memcpy(b, o.pos, sizeof(b));
             std::fprintf(lf,
                          "PUPLACE i=%d atomic=%d type=%d respawn=%.6f "
                          "pos=%.8f,%.8f,%.8f bits=%08x,%08x,%08x\n",
-                         static_cast<int>(orbs_.size()), s.atomic, s.type,
+                         idx, s.atomic, o.gameType,
                          o.respawn, o.pos[0], o.pos[1], o.pos[2],
                          b[0], b[1], b[2]);
         }

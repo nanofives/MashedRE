@@ -1,0 +1,12 @@
+exe=C:\Users\maria\Desktop\Proyectos\Mashed\verify\retrofit_20261001\bin\B_ported.exe
+pid=20428
+rc=0
+seconds=8.9
+MASHED_DETERMINISTIC=1
+MASHED_GOTO=6
+MASHED_MUTE=1
+MASHED_RACE_DEMO=1
+MASHED_TITLE=pickups stage1 B_r1 0=Arctic
+MASHED_TRACK_SEL=0
+MASHED_VERIFY_OUT=verify/retrofit_20261001/B_r1/00_Arctic
+MASHED_WIN_POS=left-bl

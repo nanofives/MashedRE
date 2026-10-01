@@ -1,0 +1,12 @@
+exe=C:\Users\maria\Desktop\Proyectos\Mashed\verify\retrofit_20261001\bin\A_head_e8140023.exe
+pid=16928
+rc=0
+seconds=5.0
+MASHED_DETERMINISTIC=1
+MASHED_GOTO=6
+MASHED_MUTE=1
+MASHED_RACE_DEMO=1
+MASHED_TITLE=pickups stage1 A_r1 1=Egypt
+MASHED_TRACK_SEL=1
+MASHED_VERIFY_OUT=verify/retrofit_20261001/A_r1/01_Egypt
+MASHED_WIN_POS=left-bl
