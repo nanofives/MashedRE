@@ -1,0 +1,90 @@
+{
+  "label": "T5_ctrl",
+  "pid": 7196,
+  "env_applied": {
+    "MASHED_MUTE": "1",
+    "MASHED_WIN_POS": "left-bl",
+    "MASHED_TITLE": "T5 ctrl",
+    "MASHED_RACE_DEMO": "1",
+    "MASHED_GOTO": "6",
+    "MASHED_DETERMINISTIC": "1",
+    "MASHED_DET_FRAMES": "900",
+    "MASHED_VERIFY_OUT": "verify/freecam_title_20261001/t5_ctrl"
+  },
+  "duration_s": 100.0,
+  "titles": [
+    [
+      0.21,
+      "Mashed RE (Milestone B3 - 8 textures decoded)"
+    ],
+    [
+      0.61,
+      "Mashed RE | T5 ctrl | menu | frame 0"
+    ],
+    [
+      0.81,
+      "Mashed RE | T5 ctrl | loading race | frame 30"
+    ],
+    [
+      1.01,
+      "Mashed RE | T5 ctrl | loading race | frame 60"
+    ],
+    [
+      1.61,
+      "Mashed RE | T5 ctrl | race | frame 60"
+    ],
+    [
+      1.81,
+      "Mashed RE | T5 ctrl | race | frame 90"
+    ],
+    [
+      2.01,
+      "Mashed RE | T5 ctrl | race | frame 120"
+    ],
+    [
+      2.21,
+      "Mashed RE | T5 ctrl | race | frame 150"
+    ],
+    [
+      2.41,
+      "Mashed RE | T5 ctrl | race | frame 180"
+    ],
+    [
+      2.61,
+      "Mashed RE | T5 ctrl | race | frame 210"
+    ],
+    [
+      2.81,
+      "Mashed RE | T5 ctrl | race | frame 270"
+    ],
+    [
+      3.01,
+      "Mashed RE | T5 ctrl | race | frame 300"
+    ],
+    [
+      3.21,
+      "Mashed RE | T5 ctrl | race | frame 330"
+    ],
+    [
+      3.41,
+      "Mashed RE | T5 ctrl | race | frame 360"
+    ],
+    [
+      3.61,
+      "Mashed RE | T5 ctrl | race | frame 390"
+    ],
+    [
+      3.81,
+      "Mashed RE | T5 ctrl | race | frame 420"
+    ],
+    [
+      4.01,
+      "Mashed RE | T5 ctrl | menu | frame 450"
+    ]
+  ],
+  "hwnd_found_at": 0.2,
+  "hwnd": 1249868,
+  "exited_early_at": 4.21,
+  "exit_code": 0,
+  "killed_pid": 7196
+}

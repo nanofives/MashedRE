@@ -1,0 +1,27 @@
+{
+  "label": "T1",
+  "pid": 41224,
+  "env_applied": {
+    "MASHED_MUTE": "1",
+    "MASHED_WIN_POS": "left-bl",
+    "MASHED_TITLE": "T1 freecam title verify"
+  },
+  "duration_s": 20.0,
+  "titles": [
+    [
+      0.2,
+      "Mashed RE (Milestone B3 - 8 textures decoded)"
+    ],
+    [
+      3.01,
+      "Mashed RE (Milestone B5 - atlas: 8 textures)"
+    ],
+    [
+      4.21,
+      "Mashed RE | T1 freecam title verify | menu"
+    ]
+  ],
+  "hwnd_found_at": 0.2,
+  "hwnd": 7344718,
+  "killed_pid": 41224
+}

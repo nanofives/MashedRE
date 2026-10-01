@@ -1459,7 +1459,20 @@ Option B treatment instead (§3.4's `NOAIPHYS`, measured 0.1736 / 0.1561 / 0.177
 - `MASHED_MOTION_DIAG_AI=1` logs the gearbox and launch fields for the **opponent** slots to
   `motion_diag_ai.log` — the widening `D3_SPEED_GAP` §6.3 asked for. Separate file on
   purpose: the `a8` reducers key on `reseed=` … `wax=[…]` and assume slot 0.
-- **`MASHED_TITLE` (from `a9da810a`, another session) — use it on every run.** The standalone
+- **`MASHED_TITLE` (from `a9da810a`, another session) — use it on every run.
+  VERIFIED IN A BUILT EXE 2026-10-01; do not re-derive.** Results:
+  [`verify/freecam_title_20261001/RESULTS.md`](../verify/freecam_title_20261001/RESULTS.md)
+  (pre-registration `3e8ee34c`, exe SHA-256 `9FF13F27…D986E5F9`). T1-T4 and T6 PASS, no
+  defect. Two legs are **UNMEASURABLE without taking focus** and were reported, not worked
+  around: the `race (paused)` title state (its only writer is an Esc rising edge, skipped
+  whenever `g_race_demo`/`g_det_clock` is set, `exe_main.cpp:1869-1878`), and delivery of
+  real keys at all — every keyboard read goes through DirectInput `GetDeviceState`
+  (`:1023`), which `PostMessage` does not write. **So do not "test input" with
+  PostMessage**: it produces a null-channel GREEN that passes a broken build. The free
+  camera's removal is instead proven statically — `ci.dt` is the only `CamInput` write
+  (`:2887`) and the consumer needs a nonzero motion field to enter free mode
+  (`D3d9Render/TrackRenderer.cpp:5176-5187`), so `free_` is unreachable.
+  The standalone
   window title is now `Mashed RE | <label> | <state>`, where the label is `MASHED_TITLE` if
   set and otherwise the run's `MASHED_*` env vars. Both harnesses forward bare `KEY=VAL`
   arguments into the child env, so it needs no code change:

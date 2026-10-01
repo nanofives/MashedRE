@@ -1,0 +1,41 @@
+{
+  "label": "T4_states",
+  "pid": 2204,
+  "env_applied": {
+    "MASHED_MUTE": "1",
+    "MASHED_WIN_POS": "left-bl",
+    "MASHED_TITLE": "T4 states",
+    "MASHED_RACE_DEMO": "1",
+    "MASHED_GOTO": "6",
+    "MASHED_RESULT_DEMO": "1",
+    "MASHED_VERIFY_OUT": "verify/freecam_title_20261001/t4_run"
+  },
+  "duration_s": 170.0,
+  "titles": [
+    [
+      0.2,
+      "Mashed RE (Milestone B3 - 8 textures decoded)"
+    ],
+    [
+      0.6,
+      "Mashed RE | T4 states | menu"
+    ],
+    [
+      1.4,
+      "Mashed RE | T4 states | loading race"
+    ],
+    [
+      2.21,
+      "Mashed RE | T4 states | race"
+    ],
+    [
+      10.02,
+      "Mashed RE | T4 states | results"
+    ]
+  ],
+  "hwnd_found_at": 0.2,
+  "hwnd": 201578,
+  "exited_early_at": 10.82,
+  "exit_code": 0,
+  "killed_pid": 2204
+}

@@ -1,0 +1,449 @@
+{
+  "label": "T4_detframe",
+  "pid": 37188,
+  "env_applied": {
+    "MASHED_MUTE": "1",
+    "MASHED_WIN_POS": "left-bl",
+    "MASHED_TITLE": "T4 det",
+    "MASHED_DETERMINISTIC": "1",
+    "MASHED_VERIFY_OUT": "verify/freecam_title_20261001/t4det_run"
+  },
+  "duration_s": 22.0,
+  "titles": [
+    [
+      0.2,
+      "Mashed RE (Milestone B3 - 8 textures decoded)"
+    ],
+    [
+      0.6,
+      "Mashed RE | T4 det | menu | frame 0"
+    ],
+    [
+      0.8,
+      "Mashed RE | T4 det | menu | frame 30"
+    ],
+    [
+      1.0,
+      "Mashed RE | T4 det | menu | frame 60"
+    ],
+    [
+      1.21,
+      "Mashed RE | T4 det | menu | frame 90"
+    ],
+    [
+      1.41,
+      "Mashed RE | T4 det | menu | frame 120"
+    ],
+    [
+      1.61,
+      "Mashed RE | T4 det | menu | frame 150"
+    ],
+    [
+      1.81,
+      "Mashed RE | T4 det | menu | frame 210"
+    ],
+    [
+      2.01,
+      "Mashed RE | T4 det | menu | frame 240"
+    ],
+    [
+      2.21,
+      "Mashed RE | T4 det | menu | frame 270"
+    ],
+    [
+      2.41,
+      "Mashed RE | T4 det | menu | frame 300"
+    ],
+    [
+      2.61,
+      "Mashed RE | T4 det | menu | frame 330"
+    ],
+    [
+      2.81,
+      "Mashed RE | T4 det | menu | frame 360"
+    ],
+    [
+      3.01,
+      "Mashed RE | T4 det | menu | frame 390"
+    ],
+    [
+      3.21,
+      "Mashed RE | T4 det | menu | frame 420"
+    ],
+    [
+      3.41,
+      "Mashed RE | T4 det | menu | frame 450"
+    ],
+    [
+      3.61,
+      "Mashed RE | T4 det | menu | frame 480"
+    ],
+    [
+      3.81,
+      "Mashed RE | T4 det | menu | frame 510"
+    ],
+    [
+      4.01,
+      "Mashed RE | T4 det | menu | frame 570"
+    ],
+    [
+      4.21,
+      "Mashed RE | T4 det | menu | frame 600"
+    ],
+    [
+      4.41,
+      "Mashed RE | T4 det | menu | frame 630"
+    ],
+    [
+      4.61,
+      "Mashed RE | T4 det | menu | frame 660"
+    ],
+    [
+      4.81,
+      "Mashed RE | T4 det | menu | frame 690"
+    ],
+    [
+      5.01,
+      "Mashed RE | T4 det | menu | frame 720"
+    ],
+    [
+      5.21,
+      "Mashed RE | T4 det | menu | frame 750"
+    ],
+    [
+      5.41,
+      "Mashed RE | T4 det | menu | frame 780"
+    ],
+    [
+      5.61,
+      "Mashed RE | T4 det | menu | frame 810"
+    ],
+    [
+      5.81,
+      "Mashed RE | T4 det | menu | frame 840"
+    ],
+    [
+      6.01,
+      "Mashed RE | T4 det | menu | frame 870"
+    ],
+    [
+      6.21,
+      "Mashed RE | T4 det | menu | frame 930"
+    ],
+    [
+      6.41,
+      "Mashed RE | T4 det | menu | frame 960"
+    ],
+    [
+      6.62,
+      "Mashed RE | T4 det | menu | frame 990"
+    ],
+    [
+      6.82,
+      "Mashed RE | T4 det | menu | frame 1020"
+    ],
+    [
+      7.02,
+      "Mashed RE | T4 det | menu | frame 1050"
+    ],
+    [
+      7.22,
+      "Mashed RE | T4 det | menu | frame 1080"
+    ],
+    [
+      7.42,
+      "Mashed RE | T4 det | menu | frame 1110"
+    ],
+    [
+      7.62,
+      "Mashed RE | T4 det | menu | frame 1140"
+    ],
+    [
+      7.82,
+      "Mashed RE | T4 det | menu | frame 1170"
+    ],
+    [
+      8.02,
+      "Mashed RE | T4 det | menu | frame 1200"
+    ],
+    [
+      8.22,
+      "Mashed RE | T4 det | menu | frame 1260"
+    ],
+    [
+      8.42,
+      "Mashed RE | T4 det | menu | frame 1290"
+    ],
+    [
+      8.62,
+      "Mashed RE | T4 det | menu | frame 1320"
+    ],
+    [
+      8.82,
+      "Mashed RE | T4 det | menu | frame 1350"
+    ],
+    [
+      9.02,
+      "Mashed RE | T4 det | menu | frame 1380"
+    ],
+    [
+      9.22,
+      "Mashed RE | T4 det | menu | frame 1410"
+    ],
+    [
+      9.42,
+      "Mashed RE | T4 det | menu | frame 1440"
+    ],
+    [
+      9.62,
+      "Mashed RE | T4 det | menu | frame 1470"
+    ],
+    [
+      9.82,
+      "Mashed RE | T4 det | menu | frame 1500"
+    ],
+    [
+      10.02,
+      "Mashed RE | T4 det | menu | frame 1530"
+    ],
+    [
+      10.22,
+      "Mashed RE | T4 det | menu | frame 1590"
+    ],
+    [
+      10.42,
+      "Mashed RE | T4 det | menu | frame 1620"
+    ],
+    [
+      10.62,
+      "Mashed RE | T4 det | menu | frame 1650"
+    ],
+    [
+      10.82,
+      "Mashed RE | T4 det | menu | frame 1680"
+    ],
+    [
+      11.02,
+      "Mashed RE | T4 det | menu | frame 1710"
+    ],
+    [
+      11.22,
+      "Mashed RE | T4 det | menu | frame 1740"
+    ],
+    [
+      11.42,
+      "Mashed RE | T4 det | menu | frame 1770"
+    ],
+    [
+      11.62,
+      "Mashed RE | T4 det | menu | frame 1800"
+    ],
+    [
+      11.83,
+      "Mashed RE | T4 det | menu | frame 1830"
+    ],
+    [
+      12.03,
+      "Mashed RE | T4 det | menu | frame 1860"
+    ],
+    [
+      12.23,
+      "Mashed RE | T4 det | menu | frame 1920"
+    ],
+    [
+      12.43,
+      "Mashed RE | T4 det | menu | frame 1950"
+    ],
+    [
+      12.63,
+      "Mashed RE | T4 det | menu | frame 1980"
+    ],
+    [
+      12.83,
+      "Mashed RE | T4 det | menu | frame 2010"
+    ],
+    [
+      13.03,
+      "Mashed RE | T4 det | menu | frame 2040"
+    ],
+    [
+      13.23,
+      "Mashed RE | T4 det | menu | frame 2070"
+    ],
+    [
+      13.43,
+      "Mashed RE | T4 det | menu | frame 2100"
+    ],
+    [
+      13.63,
+      "Mashed RE | T4 det | menu | frame 2130"
+    ],
+    [
+      13.83,
+      "Mashed RE | T4 det | menu | frame 2160"
+    ],
+    [
+      14.03,
+      "Mashed RE | T4 det | menu | frame 2190"
+    ],
+    [
+      14.23,
+      "Mashed RE | T4 det | menu | frame 2250"
+    ],
+    [
+      14.43,
+      "Mashed RE | T4 det | menu | frame 2280"
+    ],
+    [
+      14.63,
+      "Mashed RE | T4 det | menu | frame 2310"
+    ],
+    [
+      14.83,
+      "Mashed RE | T4 det | menu | frame 2340"
+    ],
+    [
+      15.03,
+      "Mashed RE | T4 det | menu | frame 2370"
+    ],
+    [
+      15.23,
+      "Mashed RE | T4 det | menu | frame 2400"
+    ],
+    [
+      15.43,
+      "Mashed RE | T4 det | menu | frame 2430"
+    ],
+    [
+      15.63,
+      "Mashed RE | T4 det | menu | frame 2460"
+    ],
+    [
+      15.83,
+      "Mashed RE | T4 det | menu | frame 2490"
+    ],
+    [
+      16.03,
+      "Mashed RE | T4 det | menu | frame 2520"
+    ],
+    [
+      16.23,
+      "Mashed RE | T4 det | menu | frame 2580"
+    ],
+    [
+      16.43,
+      "Mashed RE | T4 det | menu | frame 2610"
+    ],
+    [
+      16.63,
+      "Mashed RE | T4 det | menu | frame 2640"
+    ],
+    [
+      16.83,
+      "Mashed RE | T4 det | menu | frame 2670"
+    ],
+    [
+      17.03,
+      "Mashed RE | T4 det | menu | frame 2700"
+    ],
+    [
+      17.23,
+      "Mashed RE | T4 det | menu | frame 2730"
+    ],
+    [
+      17.43,
+      "Mashed RE | T4 det | menu | frame 2760"
+    ],
+    [
+      17.64,
+      "Mashed RE | T4 det | menu | frame 2790"
+    ],
+    [
+      17.84,
+      "Mashed RE | T4 det | menu | frame 2820"
+    ],
+    [
+      18.04,
+      "Mashed RE | T4 det | menu | frame 2850"
+    ],
+    [
+      18.24,
+      "Mashed RE | T4 det | menu | frame 2880"
+    ],
+    [
+      18.44,
+      "Mashed RE | T4 det | menu | frame 2940"
+    ],
+    [
+      18.64,
+      "Mashed RE | T4 det | menu | frame 2970"
+    ],
+    [
+      18.84,
+      "Mashed RE | T4 det | menu | frame 3000"
+    ],
+    [
+      19.04,
+      "Mashed RE | T4 det | menu | frame 3030"
+    ],
+    [
+      19.24,
+      "Mashed RE | T4 det | menu | frame 3060"
+    ],
+    [
+      19.44,
+      "Mashed RE | T4 det | menu | frame 3090"
+    ],
+    [
+      19.64,
+      "Mashed RE | T4 det | menu | frame 3120"
+    ],
+    [
+      19.84,
+      "Mashed RE | T4 det | menu | frame 3150"
+    ],
+    [
+      20.04,
+      "Mashed RE | T4 det | menu | frame 3180"
+    ],
+    [
+      20.24,
+      "Mashed RE | T4 det | menu | frame 3210"
+    ],
+    [
+      20.44,
+      "Mashed RE | T4 det | menu | frame 3270"
+    ],
+    [
+      20.64,
+      "Mashed RE | T4 det | menu | frame 3300"
+    ],
+    [
+      20.84,
+      "Mashed RE | T4 det | menu | frame 3330"
+    ],
+    [
+      21.04,
+      "Mashed RE | T4 det | menu | frame 3360"
+    ],
+    [
+      21.24,
+      "Mashed RE | T4 det | menu | frame 3390"
+    ],
+    [
+      21.44,
+      "Mashed RE | T4 det | menu | frame 3420"
+    ],
+    [
+      21.64,
+      "Mashed RE | T4 det | menu | frame 3450"
+    ],
+    [
+      21.84,
+      "Mashed RE | T4 det | menu | frame 3480"
+    ]
+  ],
+  "hwnd_found_at": 0.2,
+  "hwnd": 922448,
+  "killed_pid": 37188
+}

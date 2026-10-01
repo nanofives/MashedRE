@@ -1,0 +1,95 @@
+{
+  "label": "t6_drive",
+  "pid": 38692,
+  "env_applied": {
+    "MASHED_MUTE": "1",
+    "MASHED_WIN_POS": "left-bl",
+    "MASHED_TITLE": "t6_drive",
+    "MASHED_RACE_DEMO": "1",
+    "MASHED_GOTO": "6",
+    "MASHED_DETERMINISTIC": "1",
+    "MASHED_DET_FRAMES": "900",
+    "MASHED_PLAY_DEMO": "1",
+    "MASHED_VERIFY_OUT": "verify/freecam_title_20261001/t6_drive"
+  },
+  "duration_s": 110.0,
+  "titles": [
+    [
+      0.2,
+      "Mashed RE (Milestone B3 - 8 textures decoded)"
+    ],
+    [
+      0.6,
+      "Mashed RE (Milestone B5 - atlas: 8 textures)"
+    ],
+    [
+      0.8,
+      "Mashed RE | t6_drive | menu | frame 30"
+    ],
+    [
+      1.0,
+      "Mashed RE | t6_drive | loading race | frame 30"
+    ],
+    [
+      1.2,
+      "Mashed RE | t6_drive | loading race | frame 60"
+    ],
+    [
+      1.81,
+      "Mashed RE | t6_drive | race | frame 60"
+    ],
+    [
+      2.01,
+      "Mashed RE | t6_drive | race | frame 90"
+    ],
+    [
+      2.21,
+      "Mashed RE | t6_drive | race | frame 150"
+    ],
+    [
+      2.41,
+      "Mashed RE | t6_drive | race | frame 180"
+    ],
+    [
+      2.61,
+      "Mashed RE | t6_drive | race | frame 210"
+    ],
+    [
+      2.81,
+      "Mashed RE | t6_drive | race | frame 240"
+    ],
+    [
+      3.01,
+      "Mashed RE | t6_drive | race | frame 270"
+    ],
+    [
+      3.21,
+      "Mashed RE | t6_drive | race | frame 300"
+    ],
+    [
+      3.41,
+      "Mashed RE | t6_drive | race | frame 330"
+    ],
+    [
+      3.61,
+      "Mashed RE | t6_drive | race | frame 360"
+    ],
+    [
+      3.81,
+      "Mashed RE | t6_drive | race | frame 390"
+    ],
+    [
+      4.01,
+      "Mashed RE | t6_drive | race | frame 420"
+    ],
+    [
+      4.21,
+      "Mashed RE | t6_drive | menu | frame 480"
+    ]
+  ],
+  "hwnd_found_at": 0.2,
+  "hwnd": 1642628,
+  "exited_early_at": 4.41,
+  "exit_code": 0,
+  "killed_pid": 38692
+}

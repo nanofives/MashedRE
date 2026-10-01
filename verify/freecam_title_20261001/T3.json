@@ -1,0 +1,21 @@
+{
+  "label": "T3",
+  "pid": 36448,
+  "env_applied": {
+    "MASHED_MUTE": "1"
+  },
+  "duration_s": 20.0,
+  "titles": [
+    [
+      0.2,
+      "Mashed RE (Milestone B3 - 8 textures decoded)"
+    ],
+    [
+      0.6,
+      "Mashed RE | manual play | menu"
+    ]
+  ],
+  "hwnd_found_at": 0.2,
+  "hwnd": 725558,
+  "killed_pid": 36448
+}

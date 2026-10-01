@@ -1,0 +1,91 @@
+{
+  "label": "T5_campose",
+  "pid": 37508,
+  "env_applied": {
+    "MASHED_MUTE": "1",
+    "MASHED_WIN_POS": "left-bl",
+    "MASHED_TITLE": "T5 campose",
+    "MASHED_RACE_DEMO": "1",
+    "MASHED_GOTO": "6",
+    "MASHED_DETERMINISTIC": "1",
+    "MASHED_DET_FRAMES": "900",
+    "MASHED_CAM_POSE": "-15,150,-8,-15,4.4,-7.9",
+    "MASHED_VERIFY_OUT": "verify/freecam_title_20261001/t5_campose"
+  },
+  "duration_s": 100.0,
+  "titles": [
+    [
+      0.2,
+      "Mashed RE (Milestone B3 - 8 textures decoded)"
+    ],
+    [
+      0.4,
+      "Mashed RE (Milestone B5 - atlas: 8 textures)"
+    ],
+    [
+      0.6,
+      "Mashed RE | T5 campose | menu | frame 0"
+    ],
+    [
+      0.8,
+      "Mashed RE | T5 campose | loading race | frame 30"
+    ],
+    [
+      1.0,
+      "Mashed RE | T5 campose | loading race | frame 60"
+    ],
+    [
+      1.61,
+      "Mashed RE | T5 campose | race | frame 60"
+    ],
+    [
+      1.81,
+      "Mashed RE | T5 campose | race | frame 120"
+    ],
+    [
+      2.01,
+      "Mashed RE | T5 campose | race | frame 150"
+    ],
+    [
+      2.21,
+      "Mashed RE | T5 campose | race | frame 180"
+    ],
+    [
+      2.41,
+      "Mashed RE | T5 campose | race | frame 210"
+    ],
+    [
+      2.61,
+      "Mashed RE | T5 campose | race | frame 240"
+    ],
+    [
+      2.81,
+      "Mashed RE | T5 campose | race | frame 270"
+    ],
+    [
+      3.01,
+      "Mashed RE | T5 campose | race | frame 300"
+    ],
+    [
+      3.21,
+      "Mashed RE | T5 campose | race | frame 330"
+    ],
+    [
+      3.41,
+      "Mashed RE | T5 campose | race | frame 360"
+    ],
+    [
+      3.61,
+      "Mashed RE | T5 campose | race | frame 390"
+    ],
+    [
+      3.81,
+      "Mashed RE | T5 campose | race | frame 450"
+    ]
+  ],
+  "hwnd_found_at": 0.2,
+  "hwnd": 987268,
+  "exited_early_at": 4.21,
+  "exit_code": 0,
+  "killed_pid": 37508
+}
