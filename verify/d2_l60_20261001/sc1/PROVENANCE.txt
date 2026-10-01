@@ -1,0 +1,1 @@
+2026-10-01 a8_run_port.py HEAD=e26b6d39 attempt-13 scored control run 1; env extras MASHED_MEASURE_SOLO=1 MASHED_TRACK_SEL=12 MASHED_STEER_HOLD_AFTER=0 MASHED_TITLE=d2-a13-sc1; muted; MASHED_WIN_POS=primary-bl; no physics source changed this attempt

@@ -1,0 +1,79 @@
+
+G1  mag-probe capture integrity  (..\..\..\verify\d2_magpr_20260930\read1.msd.magprobe.csv)
+-------------------------------------------------------------------------------------------
+  rows 20000
+    site 00467673  n=  1424
+    site 00467685  n=  1424
+    site 004680fb  n=  2100
+    site 0046820f  n=  2164
+    site 00468343  n=  5696
+    site 004684c0  n=  2172
+    site 004684dc  n=  2172
+    site 004685bc  n=  1424
+    site 004686a9  n=  1424
+  known-answer: site 004686a9 vector == record +0x9b0/+0x9b8 on 1424 of 1424 rows (1.0000)
+  G1 PASS  (all nine sites populated=True, n@selfcheck=1424, frac=1.0000)
+
+G2  pairing, by count
+---------------------
+  frames delimited by 00467673: 1424
+  le4 (004680fb) per frame: [(0, 899), (4, 525)]
+  ld4 (0046820f) per frame: [(0, 883), (4, 541)]
+  frames where the two counts DISAGREE: 16 of 1424
+  frames with zero ld4 rows: 883
+  G2 reported (no bar; the distribution is the result)
+
+G4  the horizontal projection, and the first-after-A6a coverage  (..\..\..\verify\d2_bounce_20260930\orig_fp2.msd.fixupprobe.csv)
+---------------------------------------------------------------------------------------------------------------------------------
+  probe rows 7016   site-2 rows with a following site-1: 2331   without: 0
+  grounded nonzero rows 1448   fwdx^2+fwdz^2 in [0.99,1.01] on 1448 (1.0000)   n in band 100-150: 45
+  G4 FAIL
+  !! s_o does NOT clear the gate, so the registered decision rule D1/D2/D3 does NOT execute.
+     The s table is still PRINTED below, labelled as an OBSERVATION. It is not a
+     decision input and nothing in this section is branched on it. The gate is not amended.
+
+G3  the PORT channel is direct, known-answer  (..\..\..\verify\d2_sink_20261001\arm\a6a_dump.log)
+-------------------------------------------------------------------------------------------------
+  rows 1627   clamp ran on 1626   act.l60*act.speed == act.grip on 1626 (1.0000)
+  G3 PASS
+
+ORIGINAL  l_60 and grip*speed, per band
+---------------------------------------
+band          n | med speed | med ld4  med le4(cap) |     med l_60 |  med l_60*spd | wheels/frame
+-------------------------------------------------------------------------------------------------
+100-150         45 |     126.2 |  0.62572      125.747 |      268.587 |       30785.1 |  4.0
+150-260         71 |     193.0 |  0.36935      188.483 |      264.712 |       57145.1 |  4.0
+260-500         50 |     345.7 |  0.30092      343.817 |      381.285 |      136087.1 |  4.0
+500-1000        72 |     755.2 |  0.32815      744.374 |      808.633 |      619007.1 |  4.0
+1000-1500       74 |    1243.6 |  0.34218     1024.000 |     1515.331 |     1879055.8 |  4.0
+1500-2000       84 |    1742.8 |  0.59653     1024.000 |     1936.219 |     3357068.6 |  4.0
+  frames where +0x18c != 1.0: 0 of 525
+
+ORIGINAL  s = |lateral| / |v|, first sample after A6a returns   [OBSERVATION ONLY - G4 FAILED, not a decision input]
+--------------------------------------------------------------------------------------------------------------------
+band          n | med speed |     med s |     p05 s |     p95 s
+---------------------------------------------------------------
+100-150         45 |     126.2 |  0.729443 |  0.024505 |  0.991619
+150-260         71 |     193.0 |  0.426218 |  0.073528 |  0.993943
+260-500         60 |     371.1 |  0.197817 |  0.040942 |  0.802240
+500-1000       153 |     821.3 |  0.088862 |  0.006716 |  0.747493
+1000-1500      197 |    1281.5 |  0.054774 |  0.007221 |  0.143073
+1500-2000      339 |    1778.7 |  0.145669 |  0.051032 |  0.187894
+
+PORT  act.l60 / act.grip / act.kvel / arm histogram, per band
+-------------------------------------------------------------
+band          n | med speed |   med l60 |  med grip |  med kVel | arm hi/lo/none | clampRan |     med s
+-------------------------------------------------------------------------------------------------------
+70-100          38 |      83.5 |   281.197 |   27033.6 |  0.199269 |    8/  30/   0 |       38 |  0.874589
+100-150         19 |     115.3 |   124.737 |   15042.0 |  0.540954 |    5/  14/   0 |       19 |  0.083887
+150-260         13 |     194.9 |   166.193 |   31363.4 |  0.198908 |    6/   6/   1 |       12 |  0.127042
+260-500         14 |     349.8 |   213.205 |   78699.1 |  0.198426 |   14/   0/   0 |       14 |  0.031351
+500-1000        15 |     735.8 |   548.309 |  403435.7 |  0.191931 |   15/   0/   0 |       15 |  0.011181
+1000-1500       19 |    1275.5 |  1281.922 | 1636959.5 |  0.167261 |   19/   0/   0 |       19 |  0.110146
+1500-2000       20 |    1676.5 |  1751.259 | 2948873.4 |  0.141023 |   20/   0/   0 |       20 |  0.200669
+40-70          269 |      47.8 |    38.929 |    1786.8 |  0.945473 |    0/ 269/   0 |      269 |  0.651439
+
+THE REGISTERED DECISION RULE  (PREREG_STEP1.md section 7)
+---------------------------------------------------------
+  D1 / D2 / D3 are NOT EVALUATED: G4 FAILED, so `s_o` is not a measured quantity
+  under the registered bar. The gate is not amended and no branch is taken.

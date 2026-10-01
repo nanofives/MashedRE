@@ -1,0 +1,13 @@
+# arm A: kv:verify/d2_sink_20261001/sc1/motion_diag.log(1598 frames)
+# arm B: kv:verify/d2_l60_20261001/sc1/motion_diag.log(1627 frames)
+# noise floor: 69 fields, from 1598 A-pair frames and 1627 B-pair frames
+# aligned frames 1598 [1..1598]   paired fields 69   A-only 0   B-only 0
+
+=== DIVERGENT FIELDS, ranked by first frame past the noise floor (0 of 69 paired) ===
+field                  scope       first      n |      med A      med B    med|A-B|      floor
+----------------------------------------------------------------------------------------------
+
+=== WITHIN THE NOISE FLOOR on every aligned frame: 69 fields ===
+  av[0]  av[1]  av[2]  b0c  b14[0]  b14[1]  b14[2]  bodyH  d[0]  d[1]  fl[0]  fl[1]  fl[2]  fl[3]  ftot[0]  ftot[1]  ftot[2]  gb498  gb49c  gear  gnd  gt[0]  gt[1]  gt[2] ...
+
+csv -> verify\d2_l60_20261001\collateral_step3_prepost.csv
