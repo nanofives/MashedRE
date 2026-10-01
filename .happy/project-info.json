@@ -1,124 +1,38 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-01T22:30:00Z",
+  "updatedAt": "2026-10-01T18:40:00Z",
   "sections": [
     {
-      "heading": "D2 re-close (attempt 12, 2026-10-01) — the sink is NAMED, and it is the PORT's",
+      "heading": "Phase",
       "fields": [
-        {
-          "label": "Verdict",
-          "value": "STILL REOPENED, FAIL, NO fix authored — the named writer's arithmetic is byte-faithful, so a fix must change its input, and the input's value on the original is two conflicting numbers. Three pre-registrations, none amended.",
-          "kind": "text"
-        },
-        {
-          "label": "The finding",
-          "value": "The ORIGINAL has NO sub-500 velocity sink — attempt 11's was a back-out artefact, 198x wrong at 100-150. The named sink is the PORT's own trailing clamp-#6 velocity write inside A6a 0x00467650.",
-          "kind": "text"
-        },
-        {
-          "label": "The one number",
-          "value": "Frame-to-frame net at 100-150: ORIGINAL +6.148/frame, PORT -14.940/frame. Opposite sign. At and above 260 the net agrees 0.82x..1.05x at matched median speed.",
-          "kind": "text"
-        },
-        {
-          "label": "Named writer (all three naming-bar parts met)",
-          "value": [
-            "multiplicand 0x004687db; arm select 0x004687df (FCOM 0x005ce9fc = 32768) / 0x004687ea",
-            "gates 0x0046874c + 0x00468761; HIGH arm 0x00468833/0x00468840/0x00468854",
-            "LOW arm 0x004688ca/0x004688d4/0x004688e8; full stop 0x00468939..0x00468954",
-            "port counterpart Integrate2.cpp:655-745"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Running-original witness",
-          "value": "The original's clamp is a NO-OP at every speed: +0x9e4 / |vel| at the substep entry 0x004709a0 is 0.999991..1.000020 in every band, n=12..678, coverage 2331 of 2331 with 0 misses. Per sample it removes 0.0012..0.0056 of speed against speeds of 126..1779. The port's clamp loss of 18.58 accounts for 0.881 of the 21.09 divergence.",
-          "kind": "text"
-        },
-        {
-          "label": "The sole remaining lever",
-          "value": "l_60. +0x18c = 1.0 both sides, +0x2c = +0x34 = 0 both sides, no track scaling on either side, the multiplicand is the post-W1 |vel| on both sides, and the arithmetic is byte-faithful. k = 0 forces grip >= 1e7, i.e. the original's l_60 >= 79 240 at speed 126 against section 21.9's 285.2 — 278x.",
-          "kind": "text"
-        },
-        {
-          "label": "Scored 3 of 3 (no-change control, HEAD a17cf0c0)",
-          "value": [
-            "slip 1500-2000  0.2033  n=20  median speed 1676.53  (band 0.18855..0.19635)  FAIL +3.5%",
-            "slip 2000-2600  —       n=0                         (band 0.24488..0.25487)  UNSCORABLE",
-            "driving-median  1355.66 n=54  median speed 1355.66  (band 1904.70..1982.44)  FAIL -30.2%"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Gates",
-          "value": [
-            "Step 1 channel control: C-CTL / C-ARM 1627 lines / C-CNT exact  PASS",
-            "Step 1 KA-1 1.814e-05 (bar 1e-3), KA-2 0.0533 (bar 0.10)  PASS",
-            "Step 2 G1 2331 vs 2332, G2 join bit-exact 0.000e+00, G3 1432/1432  PASS",
-            "Step 2 M3 known-answer vs section 24.3: worst 0.995 vs 0.25  FAIL -> R3",
-            "Step 3 T-C port |residA| 0.0001  PASS",
-            "Step 3 T-A / T-B / T-D  FAIL, one band only (100-150)"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Routes closed by measurement",
-          "value": 17,
-          "kind": "number"
-        },
-        {
-          "label": "Readings withdrawn this attempt",
-          "value": 5,
-          "kind": "number"
-        },
-        {
-          "label": "Tracker",
-          "value": "U-9170 WITHDRAWN in full (moved to the resolved audit trail). U-9171 filed (the port's local_70 0.850 vs the original's 1.000). U-9172 filed (the clamp-#6 l_60 conflict; it gates D2's closure). No C-level change.",
-          "kind": "text"
-        },
-        {
-          "label": "Next — one measurement, and it decides D2",
-          "value": [
-            "1. In Ghidra, identify the variable the clamp divides at 0x004686b3..0x004686be and every site that writes it",
-            "2. Hook those sites on the running original (entry-only), band by speed, compare against 1e7/speed",
-            "3. If l_60 >= 1e7/speed the port is short by 278x and that is D2's defect; if it is ~285, re-read the arithmetic and do not fit"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Branch",
-          "value": "race/first-frame-parity — nothing pushed",
-          "kind": "text"
-        }
+        { "label": "Roadmap phase", "value": "D3 (default AI, powerups, modes) — ON HOLD", "kind": "text" },
+        { "label": "Blocker", "value": "D2 REOPENED — re-close attempt 13 closed 2026-10-01, no fix", "kind": "text" },
+        { "label": "Branch", "value": "race/first-frame-parity (nothing pushed)", "kind": "text" }
       ]
     },
     {
-      "heading": "Phase status",
+      "heading": "D2 scored arm (3 of 3, unchanged since attempt 11)",
       "fields": [
-        {
-          "label": "Current phase",
-          "value": "D2 REOPENED (since 2026-09-29) — must close before D3 modes 3/7 starts",
-          "kind": "text"
-        },
-        {
-          "label": "Bounds (never renegotiated)",
-          "value": [
-            "slip 1500-2000   0.18855 .. 0.19635",
-            "slip 2000-2600   0.24488 .. 0.25487",
-            "driving-median   1904.70 .. 1982.44"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Dual-copy guard",
-          "value": "allowlisted=122 NEW=0",
-          "kind": "text"
-        },
-        {
-          "label": "Kickoff",
-          "value": "re/NEXT_SESSION.md — START HERE (D2 lane), attempt 12",
-          "kind": "text"
-        }
+        { "label": "slip 1500-2000", "value": "0.2033 (n=20, med speed 1676.5) — FAIL, bound 0.18855..0.19635", "kind": "text" },
+        { "label": "slip 2000-2600", "value": "UNSCORABLE (n=0) — bound 0.24488..0.25487", "kind": "text" },
+        { "label": "driving-median", "value": "1355.66 (n=54) — FAIL -30.2%, bound 1904.70..1982.44", "kind": "text" },
+        { "label": "Build guard", "value": "Build OK; participants=1; allowlisted=122 NEW=0", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Attempt 13 result",
+      "fields": [
+        { "label": "Headline", "value": "l_60 attribution VERIFIED; attempt 12's l_60 >= 79240 WITHDRAWN (original is on clamp #6's LOW arm, k pinned at 0.1)", "kind": "text" },
+        { "label": "l_60 cross-side", "value": "2.15x short on the port at 100-150 (268.587 n=45 vs 124.737 n=19), falling to 1.11x at 1500-2000", "kind": "text" },
+        { "label": "Next lane", "value": "U-9173 — one entry-only probe at A6b's entry 0x00468980", "kind": "text" },
+        { "label": "New standing tool", "value": "re/tools/statediff/collateral.py (whole-state two-arm collateral diff)", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Open uncertainties on the D2 path",
+      "fields": [
+        { "label": "Live", "value": ["U-9173 clamp-#6 three-way inconsistency", "U-9156 the trap (+ the new +0x1a8 steer-angle row)", "U-9160 substep budget 3-4 vs the original's fixed 2", "U-9171 port local_70 0.850 vs 1.000"], "kind": "list" },
+        { "label": "Withdrawn 2026-10-01", "value": "U-9172 (premise refuted: the original is not on the HIGH arm)", "kind": "text" }
       ]
     }
   ]

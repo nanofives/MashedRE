@@ -610,7 +610,55 @@ opinion is an opinion about the scaffold, not about the port.
 > **Order: D2 must close again BEFORE the D3 modes 3/7 port starts.** §D3's closure path
 > (`FUN_00414c30` + `FUN_00484c70`) is on hold until then.
 
-> #### Re-close attempt 12 — 2026-10-01. **STILL REOPENED. The ORIGINAL has NO sub-500 sink — attempt 11's was a back-out artefact, 198x wrong — and the NAMED sink is the PORT's own clamp-#6 velocity write inside A6a `0x00467650`, whose sole remaining lever is `l_60`. NO fix authored: the lever's value on the original is two conflicting numbers.**
+> #### Re-close attempt 13 — 2026-10-01. **STILL REOPENED. The `l_60` call-site attribution is VERIFIED by disassembly, and attempt 12's `l_60 >= 79 240` is WITHDRAWN: the ORIGINAL is on clamp #6's LOW arm at 100-150, where `k` is pinned at its 0.1 floor and can never be 0. `l_60` diverges 2.15x at 100-150 with n and median speed on both sides. NO fix authored: the registered gate G4 failed, so the decision rule did not execute.**
+>
+> Full record: `verify/d2_l60_20261001/` — `PREREG_STEP1.md` (committed before any reduction
+> run, **not amended**), `RESULT_STEP0.md` (the retroactive collateral review), `RESULT_STEP1.md`.
+> **No game was launched for the measurement**: `--mag-probe` and `--fixup-probe` had already
+> captured every channel it needs (memory `grep-the-harness-for-the-rva-before-writing-a-probe`).
+>
+> - **Step 0 — a standing collateral instrument.** `re/tools/statediff/collateral.py` (new):
+>   `msd:`/`a6a:`/`kv:`/`csv:` channels, a noise floor measured from a same-arm repeat pair,
+>   `--anchor` bounce alignment, speed banding, and two modes — `paired` (same side) and
+>   `banded` (cross-side; frame-pairing two separated trajectories reports the alignment, not
+>   the field). Checked first that `statediff.py` / `field_trace.py` / `msd_fields.py` do not
+>   already do it. Measured: the **PORT's noise floor is EXACTLY ZERO** (205 of 205 fields
+>   bit-identical on 1627 of 1627 frames); the ORIGINAL's is 533 of 833 record dwords
+>   bit-identical over 2332 frames. A6a's write set (20 slots, 22 CALL sites, 7 callees) is
+>   committed as `re/tools/statediff/scope_a6a.txt`. One outside-scope row, **exploratory**:
+>   record `+0x1a8` (the steer angle A4 `0x00470670` writes, which A6a never touches) is
+>   **33.867 flat on the original in every band** and short on the port in all six, worst
+>   **41.2% at 260-500**. §21.10 never compared this — its port column was the input command.
+> - **Step 1 — the attribution.** `l_60`'s slot is frame **−96** with **exactly four**
+>   accesses in all 1243 instructions of A6a; its one accumulate is
+>   `l_60 += mag@0x0046820f * [frame −228]` written by `0x004680fb`, i.e. **exactly the two of
+>   the nine `RwV3dLength` return sites `a8_l60.py` used**. Known-answer re-run, not inherited:
+>   **1424 of 1424** exact. Value reproduces at **268.587** (n=45, median speed 126.2) against
+>   §21.9's 285.243 (n=35).
+> - **The withdrawal.** The ORIGINAL's `grip × |vel|` at 100-150 is **30 785.1**, below the
+>   `_DAT_005ce9fc = 32768` knee, so it takes the LOW arm where
+>   `k = max((32768 − G) · 2^-15, 0.1) = 0.1` and can never be 0. §25.3's chain
+>   "no-op ⇒ `k = 0` ⇒ only the HIGH arm ⇒ `l_60 ≥ 79 240` ⇒ 278x" **does not start**.
+>   **U-9172 is withdrawn to the resolved audit trail.**
+> - **The cross-side number U-9172 asked for**, verified on both sides, n and median speed on
+>   every row: `l_60` **2.15x** short on the port at 100-150 (268.587 n=45 spd 126.2 against
+>   the directly-logged 124.737 n=19 spd 115.3), then 1.59x / 1.79x / 1.47x / 1.18x / **1.11x**
+>   at 1500-2000. At 100-150 **both sides are on the LOW arm and the port's `k` is 5.41x the
+>   original's** (0.540954 against the 0.1 floor).
+> - **What replaces U-9172: [U-9173].** Clamp #6 is a **LATERAL damper**, not a speed clamp
+>   (`0x00468771..0x004687d7` builds `vel − dot(fwd,vel)·fwd`; both arms write `vel −= k·lat`),
+>   so `|v'|/|v| = sqrt(1 − (2k − k²)s²)`. Three measurements then collide: LOW arm ⇒ `k = 0.1`;
+>   the original's measured `s` = **0.729** (n=45); §25.3's `+0x9e4/|v'|` = **1.000000**
+>   (2331/2331). The first two predict **1.0547**. A6b `0x00468980..0x00468b34` is ruled out
+>   statically as the explanation (132 instructions, no velocity / forward-axis / `+0x9e4`
+>   write). Next: ONE entry-only probe at **A6b's entry `0x00468980`**.
+> - **Scored 3 of 3, no physics source changed**, identical to every digit and to attempts
+>   11/12: slip 1500-2000 **0.2033** (n=20, median speed 1676.5) FAIL; slip 2000-2600
+>   **UNSCORABLE** (n=0); driving-median **1355.66** (n=54) FAIL −30.2%. `participants=1`,
+>   `allowlisted=122 NEW=0` (re-run fresh — the lint log on disk was stale from 29/09).
+>   Collateral on this run's arms: **0 of 69** `motion_diag` fields divergent on 1598 frames.
+
+> #### Re-close attempt 12 — 2026-10-01 (SUPERSEDED by attempt 13 on its `l_60 >= 79 240` conclusion). **STILL REOPENED. The ORIGINAL has NO sub-500 sink — attempt 11's was a back-out artefact, 198x wrong — and the NAMED sink is the PORT's own clamp-#6 velocity write inside A6a `0x00467650`, whose sole remaining lever is `l_60`. NO fix authored: the lever's value on the original is two conflicting numbers.**
 >
 > Full record: `re/analysis/D2_REOPEN_2026-09-29.md` **§25** (§25.5 first, then §25.2/§25.3).
 > Pre-registered three times, each before the thing it governs ran, **none amended**:

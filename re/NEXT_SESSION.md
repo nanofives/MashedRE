@@ -1,5 +1,134 @@
 # Next session kickoff
 
+Updated 2026-10-01 at the close of the **D2 re-close attempt 13** session: the `l_60` call-site
+attribution is **VERIFIED** by disassembly, attempt 12's `l_60 >= 79 240` is **WITHDRAWN** (the
+original is on clamp #6's **LOW** arm, where `k` is pinned at its 0.1 floor and can never be 0),
+`l_60` is measured on both sides at **2.15x** at 100-150, and a new **three-way inconsistency**
+[U-9173] stands in U-9172's place. **No fix authored**: the registered gate G4 failed, so the
+decision rule did not execute. Branch `race/first-frame-parity`. Nothing is pushed.
+
+> ## START HERE (D2 lane) — attempt 13. D2 is STILL REOPENED. **ONE measurement closes the clamp-#6 lane, and it is an entry hook on `0x00468980`.**
+>
+> Read [`verify/d2_l60_20261001/RESULT_STEP1.md`](../verify/d2_l60_20261001/RESULT_STEP1.md)
+> (§4 and §5 first), then [`RESULT_STEP0.md`](../verify/d2_l60_20261001/RESULT_STEP0.md), then
+> `ROADMAP.md` §D2's attempt-13 block. **Do not re-derive any of it.** Pre-registration
+> [`PREREG_STEP1.md`](../verify/d2_l60_20261001/PREREG_STEP1.md), committed before any
+> reduction run and **not amended**. New uncertainties: **U-9173** (the live one),
+> **U-9172 WITHDRAWN** to the resolved audit trail, **U-9156** amended with step 0's `+0x1a8`
+> row.
+>
+> **The §3 bounds are unchanged and are not renegotiable.** `slip 1500-2000`
+> **0.18855 .. 0.19635**, `slip 2000-2600` **0.24488 .. 0.25487**, `driving-median`
+> **1904.70 .. 1982.44**. Arm: §16.7 (`MASHED_STEER_HOLD_AFTER=0`), `MASHED_MEASURE_SOLO=1`,
+> `MASHED_TRACK_SEL=12`. Scored 3 of 3 with no physics source changed, identical to every digit
+> and to attempts 11/12: slip 1500-2000 **0.2033** (n=20, median speed 1676.5) **FAIL**; slip
+> 2000-2600 **UNSCORABLE** (n=0); driving-median **1355.66** (n=54) **FAIL** −30.2%.
+> `participants=1`, `allowlisted=122 NEW=0`.
+>
+> ### WHAT IS NOW SETTLED, and must not be re-litigated
+>
+> 1. **The attribution.** `l_60`'s stack slot is frame **−96** (`0x004686b3 fld [esp+0x94]`,
+>    esp_delta −244). Over all **1243** instructions of A6a it has **exactly four** accesses:
+>    init `0x00467b34`, accumulate `0x00468220`/`0x0046822b`, read `0x004686b3`. The one
+>    accumulate is `l_60 += mag@0x0046820f * [frame −228]`, and frame −228 is written by
+>    `0x004680fb` — **exactly the two of the nine `RwV3dLength` return sites `a8_l60.py` used**.
+>    No register is aliased to ESP near `+0x90`/`+0x94`. Known-answer **re-run, not inherited**:
+>    site `004686a9`'s vector equals the record's own `+0x9b0`/`+0x9b8` on **1424 of 1424**.
+> 2. **Clamp #6 is a LATERAL damper, not a speed clamp.** `0x00468771..0x004687d7` builds
+>    `lat = vel − dot(fwd,vel)·fwd`; both arms write `vel −= k·lat`. Hence
+>    `|v'|/|v| = sqrt(1 − (2k − k²)s²)` with `s = |lat|/|v|`. All six constants were read out of
+>    `MASHED.exe.unpatched`: knee 32768, HIGH `k = max(0, (1e7 − G)·1e−7)·0.2`, LOW
+>    `k = max((32768 − G)·2^-15, 0.1)`.
+> 3. **The original is on the LOW arm at 100-150.** `grip × |vel|` = **30 785.1** (n=45, median
+>    speed 126.2) against the 32768 knee. So `k = 0.1`, on the floor, and **can never be 0** —
+>    §25.3's "no-op ⇒ `k = 0` ⇒ only the HIGH arm ⇒ `l_60 ≥ 79 240` ⇒ 278x" **does not start**.
+> 4. **`l_60`, both sides, verified attribution**, n and median speed on every row:
+>
+> | band | ORIG (n, med spd) | PORT (n, med spd) | ratio |
+> |---|---|---|---:|
+> | 100-150 | 268.587 (45, 126.2) | 124.737 (19, 115.3) | **2.15x** |
+> | 260-500 | 381.285 (50, 345.7) | 213.205 (14, 349.8) | 1.79x |
+> | 1000-1500 | 1515.331 (74, 1243.6) | 1281.922 (19, 1275.5) | 1.18x |
+> | 1500-2000 | 1936.219 (84, 1742.8) | 1751.259 (20, 1676.5) | **1.11x** |
+>
+>    The port's side is **read directly** from `act.l60` (gate G3: `act.l60*act.speed ==
+>    act.grip` on 1626 of 1626), not reconstructed. At 100-150 **both sides are on the LOW arm
+>    and the port's `k` is 5.41x the original's** (0.540954 against the 0.1 floor).
+>
+> ### NEXT COMMAND — ONE capture, entry-only, and it decides the lane
+>
+> **Resolve [U-9173].** Three measurements of the ORIGINAL cannot all be true:
+> **(i)** LOW arm ⇒ `k = 0.1` (n=45); **(ii)** `s` = **0.729** at the first site-1 sample after
+> A6a returns (n=45, unit check 1448/1448); **(iii)** §25.3's `+0x9e4/|v'|` = **0.999991 ..
+> 1.000020** (2331/2331). (i)+(ii) predict **1.0547**, a 5.5% per-frame speed cut; (iii)
+> measures **0.002%**.
+>
+> 1. Add a `--fixup-probe` site at **A6b's entry `0x00468980`** — the first function boundary
+>    after the clamp — sampling `+0x9b0..0x9b8`, `+0x9d4..0x9dc`, `+0x9e0` and `+0x9e4`, beside
+>    the existing site 2 (`0x00467650`, A6a entry). Entry hooks only
+>    (memory `frida-interceptor-is-entry-only`).
+> 2. **Its first gate must be proving `0x00468980` is called once per A6a call.** That is
+>    assumed, not established. Disassemble A6a's caller: the gap nobody has read is whatever
+>    runs between A6a's `ret` and `FUN_004709a0`'s entry.
+> 3. Already RULED OUT statically, do not redo it: A6b `0x00468980..0x00468b34` is **132
+>    instructions** and writes **no** `+0x9b0..0x9b8`, **no** `+0x9d4/+0x9d8/+0x9dc`, **no**
+>    `+0x9e4`, **no** `+0x928` block — only `+0x9bc`/`+0x9c0`/`+0x9c4` through ECX at
+>    `0x00468abb`/`0x00468ac1`/`0x00468ac7`. "The forward axis rotated after the clamp" is not
+>    A6b.
+> 4. The collision resolves to exactly one of: **the clamp does not run** (instrument the two
+>    gates `0x0046874c` `|vel| != 0` and `0x00468761` `+0x9e0 == 0x40800000` at the clamp, not
+>    from the record); **`s` is small AT the clamp and grows after it**; or **`+0x9e4` is
+>    refreshed downstream of A6b**.
+>
+> ### THE STANDING COLLATERAL TOOL — use it, do not write another `aN_*.py`
+>
+> **`re/tools/statediff/collateral.py`**. Channels `msd:` (every dword of the 0xd04 record),
+> `a6a:` (`MASHED_A6ADUMP`), `kv:` (motion/friction/a5g diag logs), `csv:` (site-aware probe
+> CSVs). `--floor-a`/`--floor-b` take a **same-arm repeat** and measure the noise floor from
+> it; `--anchor FIELD:OP:VALUE` bounce-aligns; `--speed FIELD` bands everything;
+> `--scope re/tools/statediff/scope_a6a.txt` classifies writeset / downstream / outside.
+>
+> **Pick the mode or the table is meaningless.** `--mode paired` (frame-by-frame, ranked by
+> first frame past the floor) is for **same-side** A/B only. `--mode banded` (each arm on its
+> own speed) is **required cross-side**: frame-pairing two separated trajectories reports the
+> alignment, not the field. The first run of this review demonstrated it — frame-paired, the
+> port's `+0x9e4` read 31.9 against the original's 1281.6 "in the 1000-1500 band".
+>
+> Two floors are now measured and are worth knowing before any future claim:
+> **the PORT's noise floor is EXACTLY ZERO** (205 of 205 fields bit-identical on 1627 of 1627
+> frames across two boots), and the ORIGINAL's is **533 of 833** record dwords bit-identical
+> over 2332 frames, first real divergence at frame 771, led by the per-wheel `+0x70`/`+0x78`
+> force slots — which independently confirms A6a's extracted write set.
+>
+> ### ONE EXPLORATORY ROW, and it must be PRE-REGISTERED before anything is built on it
+>
+> Record **`+0x1a8`**, the wheel-0 steer angle A4 `0x00470670` writes and A6a **never touches**
+> (no `esi+0x1a8` store in `0x00467650..0x00468989`). Both sides read the same offset
+> (`VehiclePhysicsRun.cpp:1304` logs `snap.steer = F(r,0x1a8)`).
+>
+> | band | n o/p | med spd o/p | ORIG | PORT | short |
+> |---|---|---|---:|---:|---:|
+> | 100-150 | 45/30 | 126.2/110.8 | **33.867** | 32.527 | −4.0% |
+> | 260-500 | 60/15 | 371.1/340.8 | **33.867** | 19.897 | **−41.2%** |
+> | 1500-2000 | 339/22 | 1778.8/1683.8 | **33.867** | 26.882 | −20.6% |
+>
+> The original is **33.867 flat over a 14x speed range with a noise floor of exactly 0**.
+> §21.10 never compared this: its port steer column was `motion_diag`'s `steer=` **input
+> command** (saturated at +1.000), not an angle — and `a8_momentum.py`'s scored
+> "steer over driving frames" line has the same mismatch, so **the scored output's steer line
+> compares an input against an angle**. Not fixed; recorded so it is not re-read.
+>
+> **Still open:** U-9173 (the clamp-#6 collision); U-9156 (the trap, now carrying the `+0x1a8`
+> row); U-9160 (substep budget 3-4 against the original's fixed 2 at `0x00469ad4`); U-9171 (the
+> port's `local_70` 0.850 vs 1.000); the 40-70 residency and the `-0.1` reverse-gate duty cycle
+> of §20.14; D1-residue R1.
+>
+> **The D3 modes 3/7 hold stands. D2 must close before it starts.**
+
+---
+
+## SUPERSEDED — attempt 12's kickoff (kept for its numbers; attempt 13 withdraws its `l_60 >= 79 240`)
+
 Updated 2026-10-01 at the close of the **D2 re-close attempt 12** session: the ORIGINAL has
 **no sub-500 velocity sink** — attempt 11's was a **back-out artefact, 198x wrong** — and the
 **named** sink is the **PORT's own trailing clamp-#6 velocity write** inside A6a `0x00467650`,
