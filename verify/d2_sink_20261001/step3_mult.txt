@@ -1,30 +1,35 @@
-=== every A6a access resolving to frame slot +0x110 (the clamp's) ===
+=== every A6a access resolving to frame -208 (the clamp's slot, read at 0x004687db) ===
   0x004676a0  esp_delta  -240  mov dword ptr [esp + 0x20], 0
-  0x004680c4  esp_delta  -244  fld dword ptr [esp + 0x1c]
-  0x004680ca  esp_delta  -244  fstp dword ptr [esp + 0x1c]
-  0x004680e8  esp_delta  -244  fld dword ptr [esp + 0x1c]
-  0x004680f2  esp_delta  -244  fstp dword ptr [esp + 0x1c]
-  0x004684b7  esp_delta  -244  fstp dword ptr [esp + 0x1c]
+  0x004684cf  esp_delta  -248  fadd dword ptr [esp + 0x28]
+  0x004684d3  esp_delta  -248  fstp dword ptr [esp + 0x28]
+  0x004685bc  esp_delta  -244  fsubr dword ptr [esp + 0x24]
   0x004685d0  esp_delta  -240  fdiv dword ptr [esp + 0x20]
+  0x00468664  esp_delta  -244  fst dword ptr [esp + 0x24]
+  0x0046866e  esp_delta  -244  fld dword ptr [esp + 0x24]
+  0x0046867a  esp_delta  -244  fld dword ptr [esp + 0x24]
+  0x004686a9  esp_delta  -244  fstp dword ptr [esp + 0x24]
+  0x004686ba  esp_delta  -244  mov edx, dword ptr [esp + 0x24]
   0x0046874c  esp_delta  -240  fld dword ptr [esp + 0x20]
   0x004687db  esp_delta  -240  fmul dword ptr [esp + 0x20]
 
-=== the same for frame slot +0x114 (what 0x0046820f actually writes) ===
-  0x004676c1  esp_delta  -240  fstp dword ptr [esp + 0x24]
-  0x0046772f  esp_delta  -240  fld dword ptr [esp + 0x24]
-  0x00467739  esp_delta  -240  fstp dword ptr [esp + 0x24]
-  0x0046778c  esp_delta  -240  fld dword ptr [esp + 0x24]
-  0x004677fa  esp_delta  -240  fld dword ptr [esp + 0x24]
-  0x00467868  esp_delta  -240  fld dword ptr [esp + 0x24]
-  0x004678c7  esp_delta  -240  fld dword ptr [esp + 0x24]
-  0x00467935  esp_delta  -240  fld dword ptr [esp + 0x24]
-  0x004679b5  esp_delta  -240  fstp dword ptr [esp + 0x24]
-  0x00467a4b  esp_delta  -240  fld dword ptr [esp + 0x24]
-  0x00467b1b  esp_delta  -240  fld dword ptr [esp + 0x24]
-  0x00467b30  esp_delta  -240  fstp dword ptr [esp + 0x24]
-  0x00467ca8  esp_delta  -240  fmul dword ptr [esp + 0x24]
-  0x00467f40  esp_delta  -240  fld dword ptr [esp + 0x24]
+=== every A6a access resolving to frame -212 (what 0x0046820f actually writes) ===
+  0x00467a1b  esp_delta  -240  mov dword ptr [esp + 0x1c], ecx
+  0x00467a26  esp_delta  -240  fild dword ptr [esp + 0x1c]
+  0x00467b69  esp_delta  -240  mov dword ptr [esp + 0x1c], eax
+  0x00467b75  esp_delta  -240  fild dword ptr [esp + 0x1c]
+  0x00467b91  esp_delta  -240  mov dword ptr [esp + 0x1c], ecx
+  0x00467b95  esp_delta  -240  fild dword ptr [esp + 0x1c]
+  0x00467e00  esp_delta  -240  mov dword ptr [esp + 0x1c], eax
+  0x00467e06  esp_delta  -240  fild dword ptr [esp + 0x1c]
+  0x00467f0c  esp_delta  -240  mov dword ptr [esp + 0x1c], edx
+  0x00467f10  esp_delta  -240  fild dword ptr [esp + 0x1c]
+  0x00467f1d  esp_delta  -240  mov dword ptr [esp + 0x1c], ecx
+  0x00467f21  esp_delta  -240  fimul dword ptr [esp + 0x1c]
+  0x00467f85  esp_delta  -240  mov dword ptr [esp + 0x1c], eax
+  0x00467f89  esp_delta  -240  fild dword ptr [esp + 0x1c]
   0x0046820f  esp_delta  -244  fst dword ptr [esp + 0x20]
+  0x004682d3  esp_delta  -240  fld dword ptr [esp + 0x1c]
+
 
 === running original: RwV3dLength results by RETURN site ===
    [('00468343', 5696), ('004684c0', 2172), ('004684dc', 2172), ('0046820f', 2164), ('004680fb', 2100), ('00467673', 1424), ('00467685', 1424), ('004685bc', 1424), ('004686a9', 1424)]

@@ -8,9 +8,16 @@
 
 This exists because the candidate "the clamp's multiplicand at 0x004687db is the
 length computed at 0x0046820a" was raised from an ESP-NAIVE grep and is REFUTED
-by (1): 0x0046820f sits one push deeper, so it writes frame+0x114, while
-0x004687db reads frame+0x110. Both numbers are kept so the refutation is
-reproducible rather than asserted.
+by (1): with the frame address formed correctly as `esp_delta + displacement`,
+0x0046820f writes frame -212 while the clamp reads frame -208. Both numbers are
+kept so the refutation is reproducible rather than asserted.
+
+SIGN NOTE, and it cost one wrong conclusion. The frame address of `[esp+N]` is
+`esp_delta + N`, NOT `N - esp_delta`. The first version of this file used the
+latter and so reported 0x004686a9 (the post-W1 RwV3dLength result) as a
+DIFFERENT slot from the clamp's read at 0x004687db. They are the same slot: at
+0x004686a9 the address is ESP+0x24, and the `add esp,4` at 0x004686c4 re-labels
+it ESP+0x20. Ghidra agrees (`fVar5`, one assignment, pcaddr=004686a9).
 
 Usage:
   a12_mult.py --dis <a6a.txt from re/tools/disasm_va.py> [--mag <...magprobe.csv>]
@@ -48,18 +55,15 @@ def main(argv):
 
     rows = esp_walk(a['dis'])
     REF = re.compile(r'\[esp(?: \+ (0x[0-9a-f]+))?\]')
-    print('=== every A6a access resolving to frame slot +0x110 (the clamp\'s) ===')
-    for addr, d, ins in rows:
-        for mm in REF.finditer(ins):
-            off = int(mm.group(1), 16) if mm.group(1) else 0
-            if off - d == 0x110:
-                print('  0x%08x  esp_delta %5d  %s' % (addr, d, ins))
-    print('\n=== the same for frame slot +0x114 (what 0x0046820f actually writes) ===')
-    for addr, d, ins in rows:
-        for mm in REF.finditer(ins):
-            off = int(mm.group(1), 16) if mm.group(1) else 0
-            if off - d == 0x114:
-                print('  0x%08x  esp_delta %5d  %s' % (addr, d, ins))
+    for target, name in ((-208, "the clamp's slot, read at 0x004687db"),
+                         (-212, 'what 0x0046820f actually writes')):
+        print('=== every A6a access resolving to frame %d (%s) ===' % (target, name))
+        for addr, d, ins in rows:
+            for mm in REF.finditer(ins):
+                off = int(mm.group(1), 16) if mm.group(1) else 0
+                if d + off == target:
+                    print('  0x%08x  esp_delta %5d  %s' % (addr, d, ins))
+        print('')
 
     if 'mag' not in a:
         return

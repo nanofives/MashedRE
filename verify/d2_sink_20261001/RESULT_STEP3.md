@@ -147,39 +147,70 @@ capped at 0.2 and reaches 0 only at `grip >= 1e7`, which the port never approach
   (`0xffa08080`, `0xffaa8080`, `0xff961e5a`, `0xff1e80b4`, `0xffc81e5a`, read at
   `0x004686c7`..`0x00468707`).
 
-**[UNCERTAIN U-12A] What the original's clamp multiplicand actually is.** An ESP-delta walk over
-A6a puts `0x004685d0` / `0x0046874c` / `0x004687db` all at frame slot **`+0x110`**, whose only
-writers are the entry init `0x004676a0 MOV [ESP+0x20],0` and three `FSTP` sites **inside the
-per-wheel loop** (`0x004680ca`, `0x004680f2`, `0x004684b7`, loop bounds `0x00467b45`..`0x00468544`
-by the `ADD EDI,0xc4` / `JL 0x467b45` back edge). **No instruction writes frame+0x110 from the
-post-W1 length computed at `0x004686a4`**, which is the value stored to `+0x9e4`. The port binds
-all three sites to `speed = Vec3Mag3(+0x9b0)` (`Integrate2.cpp:633`, used at `:655`, `:660`,
-`:742`). Missing evidence: a decompiler-level resolution of frame+0x110's identity — the linear
-ESP walk is unreliable across the loop's branches and cannot be trusted for the writers'
-operands.
+### The multiplicand IS the velocity magnitude — the port's binding is FAITHFUL
 
-**[REFUTED, this session] The candidate "the multiplicand is the length latched at
-`0x0046820f`".** Raised from an **ESP-naive** grep for `[esp+0x20]`. `0x0046820f` sits one push
-deeper (`ADD ESP,4` at `0x0046821a`), so it writes frame **+0x114**, not +0x110. Kept because the
-running-original numbers are informative: the magprobe (`--mag-probe` records the RETURN site)
-shows that call returning **0.043 .. 0.752** where `+0x9e4` is **126 .. 1743** — 3 to 4 orders of
-magnitude apart — and firing exactly 4 times per frame on 541 of 1424 frames and 0 times on 883.
+A first pass of this section claimed the original's clamp multiplicand was **not** the body speed,
+on the strength of an ESP-delta walk. **That claim is WITHDRAWN. It was a sign error**, and the
+decompiler settles it. The frame address of `[esp+N]` is `esp_delta + N`, not `N - esp_delta`;
+with the sign right, `0x004686a9 FSTP [ESP+0x24]` (delta -244) and `0x004687db FMUL [ESP+0x20]`
+(delta -240) are **the same address**, frame **-208** — the `ADD ESP,4` at `0x004686c4` re-labels
+`+0x24` as `+0x20`. Ghidra's decompilation of `FUN_00467650` agrees independently (pool slot
+`Mashed_pool0`, `-readOnly`): the multiplier is `float fVar5`, **one** assignment,
+`pcaddr=004686a9`, i.e.
 
-**[UNCERTAIN U-12B] Conflict with §21.9.** §21.9 measured the ORIGINAL's `grip*speed` at
-**33 157.4** at band 100-150 (n=35, `verify/d2_magpr_20260930/`). The clamp's own arithmetic plus
-the measured no-op force `k ~ 0`, which the high arm reaches only at `grip >= 1e7` and the low
-arm (floor 0.1) can never reach. **33 157 and ">= 1e7" cannot both be true.** §21.9's figure is
-an inference about one of the clamp's inputs from a shared-callee probe; this session's is a
-direct observation of the clamp's net effect with 2331/2331 coverage. Neither is discarded here.
-Resolving it is the first job of the next lane.
+```
+520 004686a4 | fVar14 = (float10)FUN_004c3ac0(pfVar1);   // pfVar1 == ESI+0x9b0, post-W1
+521 004686a9 | fVar5  = (float)fVar14;
+524 004686cc | *(float *)(ESI + 0x9e4) = fVar5;
+549 00468750 | if ((fVar5 != 0.0) && (*(int *)(ESI + 0x9e0) == 0x40800000)) {
+556 004687db | local_60 = local_60 * fVar5;
+587 00468909 | if ((*(int *)(ESI + 0xb20) == 0) && (fVar5 < 16.0)) {
+```
+
+So the clamp's multiplicand, its gate and its full-stop test all use the **post-W1 velocity
+magnitude**, bit-identical to what `0x004686cc` writes to `+0x9e4` — exactly the port's
+`speed = Vec3Mag3(+0x9b0)` at `Integrate2.cpp:633`, used at `:655`, `:660`, `:742`. **No defect
+here.** The candidate "the multiplicand is the length latched at `0x0046820f`" is likewise
+**REFUTED** (that site is frame **-212**); its running-original values are kept in
+`step3_mult.txt` because they are what the ESP-naive grep was pointing at: **0.043 .. 0.752**
+where `+0x9e4` is 126 .. 1743.
+
+### Therefore `l_60` is the SOLE remaining lever, and the measured no-op quantifies it
+
+`grip` at `0x004687db` is `l_60 / +0x18c`, then the track scalings, then `* fVar5`. Measured:
+`+0x18c` is **1.0** on both sides, `+0x2c` and `+0x34` are **0** on both sides, no track scaling
+fires on either side, `fVar5` is the same quantity on both sides, and the arithmetic is
+byte-faithful. **Nothing is left but `l_60`.**
+
+`k = 0` is reachable **only** in the high arm at `grip >= 1e7` (the low arm's floor is 0.1), so
+the measured no-op forces, on the original:
+
+| band | med speed | required `l_60 = 1e7 / speed` | §21.9's reconstructed `l_60` | factor |
+|---|---:|---:|---:|---:|
+| 100-150 | 126.2 | **>= 79 240** | **285.2** | **278x** |
+| 1500-2000 | 1778.7 | **>= 5 622** | — (port's is 1 759) | **3.2x** |
+
+**[UNCERTAIN U-12B] This contradicts §21.9 and withdraws §21.10's closure.** §21.9 measured the
+ORIGINAL's `grip*speed` at **33 157.4** at 100-150 (n=35, `verify/d2_magpr_20260930/`) and §21.10
+concluded "the clamp-#6 / `l_60` lane is MEASURED OUT" on a 1.84x deficit of which `ld4` carried
+10.9%. **33 157 and ">= 1e7" cannot both be true.** §21.9's figure is a reconstruction of one of
+the clamp's inputs from a shared-callee probe whose return-site attribution decides the answer
+(the magprobe sees nine distinct return sites, three of them with more samples than the one it
+used); this session's is a direct observation of the clamp's net effect with 2331/2331 coverage
+and an independent decompiler confirmation of the arithmetic. **Neither is discarded here, and
+§21.10's "measured out" is withdrawn either way**: a 1.84x deficit cannot be the reason the
+lane was closed if the required factor is 278x.
 
 ## 6. No fix is authored, and why
 
-The naming bar is met, so the **writer** is named. The **input** is not. §21.5 proved clamp #6's
-arithmetic byte-faithful and this session re-read it instruction by instruction and agrees, so
-there is nothing faithful to change **at** the named RVA: a correct fix must change what reaches
-`0x004687db`, and that quantity is U-12A. Forcing `k` to 0, or gating the clamp off, would be a
-deliberately unfaithful knob. **No speculative fix.**
+The naming bar is met, so the **writer** is named and the **lever** is isolated to a single
+quantity. But the lever's value on the original is now **two conflicting numbers** (285 from
+§21.9's reconstruction, `>= 79 240` forced by this session's measurement), and §21.5 plus this
+session's instruction-by-instruction re-read agree the clamp's own arithmetic is byte-faithful,
+so there is nothing faithful to change **at** the named RVA. Changing `l_60` to whichever number
+one prefers would be fitting to an unresolved conflict; forcing `k` to 0 or gating the clamp off
+would be a deliberately unfaithful knob. **No speculative fix.** Resolving U-12B is the whole of
+the next lane, and it is a single measurement.
 
 ## 7. A second, separate port defect recorded in passing
 
