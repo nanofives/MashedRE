@@ -1,13 +1,13 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-01T18:40:00Z",
+  "updatedAt": "2026-10-01T06:30:00Z",
   "sections": [
     {
-      "heading": "Roadmap (v3)",
+      "heading": "Roadmap (v3) — default-build fidelity",
       "fields": [
         {
-          "label": "Status",
-          "value": "D0 done | D1 done (residue R1-R3 open) | D2 REOPENED — re-close attempt 9 failed | D3 blocked on D2 | render lane: (a) grey chassis, (b) Arctic sea, (d) car brightness FIXED; (c) pickups PLACEMENT fixed 2026-10-01, LOOK not started",
+          "label": "Phase status",
+          "value": "D0 ✓ | D1 ✓ (residue R1-R3 open) | D2 REOPENED — attempt 9 failed, no physics change | D3 blocked on D2 close",
           "kind": "text"
         },
         {
@@ -16,348 +16,144 @@
           "kind": "text"
         },
         {
-          "label": "Kickoff",
-          "value": "re/NEXT_SESSION.md — render lane at the top; then the D2 block (read D2_REOPEN section 22.4 first; six routes are CLOSED by measurement)",
+          "label": "Hooks progress",
+          "value": "5,932 rows | 29.9% C3+ (first-party only) | 4.6% C4 | C2 3,890 C3 1,013 C4 176",
+          "kind": "text"
+        },
+        {
+          "label": "Next kickoff",
+          "value": "re/NEXT_SESSION.md — RETROFIT LANE (closed 2026-10-01) at top, then the render lane, then the D2 block (read section 22.4 first)",
           "kind": "text"
         }
       ]
     },
     {
-      "heading": "Render lane — grey car chassis, defect (a): FIXED 2026-09-30",
+      "heading": "Retrofit lane — CLOSED 2026-10-01",
       "fields": [
         {
-          "label": "Root cause",
-          "value": "LoadCar and LoadCarLiveries handed the WHOLE vehicle clump to the wheel heuristic, BuildDffBatches and RaceSubmit_RegisterModel, so the standalone drew all 71 of ADVANTAGE0.DFF's atomics. 27 are not body geometry: 4 coarse untextured car-sized collision hulls (40/44/56/60 tris, material (102,102,102)) and 23 one-triangle locator quads. They covered the painted body with a faceted grey shell and ringed it with dark spikes.",
+          "label": "What it was",
+          "value": "First use of the standing workflow: a fix that is a real port must also produce promotion evidence. Two exe-only fixes retrofitted into bodies at their RVAs.",
           "kind": "text"
         },
         {
-          "label": "Fix",
-          "value": "CarDropNonRenderAtomics erases every batch with (geo_flags & 0x84) == 0 right after model.Parse in both loaders, so ONE filtered model feeds all three consumers. model.bbox deliberately NOT recomputed (it feeds car_ground_off_ / car_len_ / car_height_). Commit 5ddc0384. rva-lint allowlisted=122 NEW=0.",
-          "kind": "text"
-        },
-        {
-          "label": "NOT a verbatim port — recorded as such",
-          "value": "The original scatters atomics into DAT_0063d9e0 + player*0x2AC by the PART CODE from FUN_004b5190 @ 0x004b5190 (FUN_00420420 @ 0x00420420), and the four hulls (codes 0x3b..0x3e) go to the BVH build at FUN_0053d400 @ 0x0053d400. That part code is not derivable from the DFF — OPEN row U-9079 — so this is a MEASURED data-driven equivalent. No hooks.csv row, no C-level.",
-          "kind": "text"
-        },
-        {
-          "label": "Acceptance (pre-registered at 2179ed1a, before the edit existed)",
+          "label": "Promotions",
           "value": [
-            "G1 PASS — pre arm atoms=71 kept=71 dropped=0, post arm atoms=71 kept=44 dropped=27, all four ADVANTAGE DFFs on both tracks; CARLIGHT body_batches tot 67 -> 40",
-            "G2 PASS — car-box grey fraction 0.8487 -> 0.0782 (rule <= 0.30); hull tone (102,102,102) 1999 px -> 0 (rule <= 50); the ORIGINAL measures 0.1459 on its own car box",
-            "G3 PASS — kept=44 per car, wheels=4 with identical pivots, A2's deck box holds its dominant at 0.8517 with n_body 1329 -> 1767",
-            "G4b/G4c PASS — all NINE A4 terrain/sea boxes 0 differing px, means equal to 3 decimals; both frontend frames bit-identical",
-            "G1d UNMEASURABLE as written — no \"cars\" drawstream3d record exists on the default librw build",
-            "G4a FAIL as written — 879 + 22 px outside the declared regions on Arctic"
+            "0x00458e00 PickupPoolSpawn  gameplay  C2 -> C3",
+            "0x00448940 ArcticTrackNodeSlot0  render  C0 -> C3 (no row existed; not defined in Ghidra)"
           ],
           "kind": "list"
         },
         {
-          "label": "Why the two misses did not revert the fix",
-          "value": "Both are instrument defects, pinned. G1d's tally is written from RenderCarsRelit (TrackRenderer.cpp:4856), reachable only via the else-if (relit_cars) arm at :5705; the librw default submits via RaceSubmit_AddInstance at :5703. Measured on a separate MASHED_RENDER_LIBRW=0 arm instead, labelled not substituted: cars batches 284 -> 176 (=71x4 -> 44x4, difference 108 = 27x4) with textured IDENTICAL at 176. G4a's region declaration keys on the achromatic GREY class, and Arctic's tinted light renders the hull at (21,31,31) / (55,70,70) — missing the luma>=30 floor and the max-min<=14 cut by ONE each. All 901 pixels are hull pixels inside a car's single diff component, and the independent G4b boxes are 0.",
+          "label": "Evidence",
+          "value": "path1 GREEN 6/6 non-degen + path2 PASS 4/4 on 0x00458e00; path1 BLOCKED (pre-registered) on 0x00448940, canonical hook-live Arctic run instead; 0 differing pixels on 65+10 frame pairs vs the pre-retrofit build; rva-lint NEW=0",
           "kind": "text"
         },
         {
-          "label": "Exe SHA-256",
-          "value": "post-fix F77055CD397946AC7554013B0AF0D21A5C9299828C1BC427C2A9B7B47E8C2099 | pre-arm (census log, no filter) 4D206591FAB74E15CC21685DA96301B3AF865B37E42A4AE2BE2D96E51F13A3E4 | clean HEAD 795A1927A788052DB4D6251BCE81E964D2A411DB922E14FC63FF4ED0080261B6",
+          "label": "C4",
+          "value": "NOT claimed for either — CONFIDENCE.md L37 wants a diff-original CSV and run_diff.py is hook-bypassed; U-9167 / U-9168 / U-9169 block it independently",
           "kind": "text"
         },
         {
-          "label": "Two-boot rule earned its keep",
-          "value": "The first clean-HEAD boot produced Arctic/frontend frames differing by 161515 / 293098 / 45803 px from every other boot. Its SECOND boot is bit-identical to the instrument build on 8/8 captures, and both acceptance arms are 0/6 same-binary. A single boot would have shipped a confident and wrong \"adding an fprintf changed the Arctic render\" claim.",
+          "label": "Trackers",
+          "value": "U-8325 resolved; U-9163..U-9169 and S-5713..S-5716 filed; CHANGELOG +2 lines, exact-line insert",
           "kind": "text"
         },
         {
-          "label": "Still open",
-          "value": "O3 the duplicate low/high LOD sets are still BOTH drawn | O4 MASHED_RPLIGHT=0 renders the car solid black | O5 props not swept for the same over-draw | [UNCERTAIN] whether the four hulls should feed our collision path the way part codes 0x3b..0x3e feed FUN_0053d400 | U-9079 blocks any verbatim port",
+          "label": "Commits",
+          "value": "e570a7df (prereg) | 60af8ace (ports) | 37cb0d11 (evidence) | 46bf1453 (promotions)",
           "kind": "text"
         }
       ]
     },
     {
-      "heading": "Render lane — Arctic sea at road height, defect (b): FIXED 2026-09-30",
+      "heading": "Render lane — four defects; (b) and (c) are now real ports with hooks.csv rows",
       "fields": [
         {
-          "label": "Root cause",
-          "value": "The Clump_Filename prop loop pushed ONE IDENTITY instance per clump, on the assumption that a world clump's frame carries its own placement. SEA.DFF carries none (frame[0].pos == (0,0,0)), so Arctic's sea rendered as a single 60x60 m patch at road height and covered 77.96% of the start-grid view with water where the original has road.",
+          "label": "(a) grey chassis",
+          "value": "FIXED 2026-09-30 (commit 5ddc0384) | Non-render atomics removed from DFF load | Acceptance: G1/G2/G3/G4b/G4c PASS | Pre/post exe hash on file",
           "kind": "text"
         },
         {
-          "label": "What the original does (per-track hook, not the asset, not COURSE.LUA)",
-          "value": "Table 0x005f33f8, stride 0x48 = {char name[0x10]; u32 Course_Id; void* slot[13]}; record \"arctic\" at 0x005f3488 with Course_Id 0 at 0x005f3498, slot 0 at 0x005f349c = 0x00448940. FUN_00448940 on course clump[2] ([course+0x10118] @ 0x0044899d): 0x004489bb sets translation.y = -4.1; 0x00448a47 clones 24 (RpClumpClone); 0x00448a65 / 0x00448a80 start X and Z at -150.0; 0x00448a6f / 0x00448a88 are 5x5; 0x00448aa2 is RwFrameTranslate; 0x00448aab / 0x00448ac1 step +60.0. => 25 tiles, X,Z in {-150,-90,-30,30,90}, Y = -4.1.",
+          "label": "(b) Arctic sea at road height",
+          "value": "FIXED 2026-09-30 (a0f3004c), RETROFITTED INTO A REAL PORT 2026-10-01 (60af8ace) | whole 880-byte body of 0x00448940 ported as ArcticTrackNodeSlot0, C0 -> C3, one TU in both .rsp lists | path1 BLOCKED (pre-registered: an A/B would clone 24 RpClumps twice) | canonical Arctic hook-ON vs hook-OFF: 25 tile transforms element-wise identical, install witness read in process",
           "kind": "text"
         },
         {
-          "label": "Fix",
-          "value": "TrackRenderer.cpp:1715-1790 (commit a0f3004c), scoped to course_id_ == 0 && c.idx == 2 — the original's own Course_Id-keyed scope, so no other track can regress by construction. MASHED_NO_SEA_TILE=1 is the A/B revert. rva-lint allowlisted=122 NEW=0.",
+          "label": "(c) pickups placement",
+          "value": "STAGE 1 FIXED 2026-10-01 (c9615225), RETROFITTED INTO A REAL PORT the same day (60af8ace) | 0x00458e00 ported as PickupPoolSpawn, C2 -> C3, one TU in both .rsp lists; InitReal's inline copy gone | path1 GREEN 6/6 non-degen, path2 PASS 4/4, plus a canonical Arctic run with the hook live | P1/P2 re-run unchanged | STAGE 2 (look/glow) still blocked on d3d9 shim per-draw instrumentation",
           "kind": "text"
         },
         {
-          "label": "Acceptance (pre-registered at 548ac7ce, before the edit existed)",
-          "value": [
-            "Rule 1 PASS — 25 instances logged at exactly {-150+60ix, -4.1, -150+60iz}, every one listed",
-            "Rule 2a PASS 6/6 — relative gradient over six FIXED road boxes at the committed s8/s14 original poses: 0.22-0.49x the original's -> 0.59-0.88x",
-            "Rule 2b PASS — tile 0 equals the original's LIVE-READ translate(-150, -4.1, -150), decoded from raw bytes, 4/4 samples",
-            "Rule 3 PASS 12/12 — every other track bit-identical at 0/307200, with a passing pre->pre determinism control",
-            "Rule 4 FAIL as written — 509+475+417 px in three s8 car boxes. NOT amended."
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Why rule 4's failure did not revert the fix",
-          "value": "A geometry-scoped sea mask (pre-fix arm re-run with MASHED_LIBRW_AMBFOLD_SEA=1, which re-shades water-class batches ONLY — asset name ANDed with the geometry-flag class) shows all 1401 changed pixels lie INSIDE it: 100.0%, 0 outside. Those boxes held 13-53% sea by area, so they were never \"outside the sea region\" as the rule assumed. ZERO car-body pixels changed. Reproduces exactly on a second boot (509/475/417 both times, and the two post-fix boots are bit-identical whole-frame). Next time: derive car boxes from the projected silhouette (orig_carproj.txt has the geometry) instead of eyeballing them.",
-          "kind": "text"
-        },
-        {
-          "label": "Exe SHA-256",
-          "value": "post-fix 0FF413EA33264B6D9F6F3437E3529AAB03DAC1E0ADFA0B1233DF560D3B223154 | pre-fix HEAD 0166167e 5327511B605A8DE4A580974AF15011DFE7A13C56BB71EDEE1030065A334F71F3",
-          "kind": "text"
-        },
-        {
-          "label": "Still open",
-          "value": "U1b the original renders the 25 tiles from a DEDICATED Arctic pass 0x00449030 whose eight RwGlobals+0x20 state pairs are [UNCERTAIN], so draw order / blend mode vs our generic prop pass is unestablished | U2 the original's per-clone world registration at 0x004e45b0 — effect on culling not established | the geomlight-waterfold \"Arctic sea FIXED, delta 1.8\" verdict compared the original's ROAD against our WATER over the same mask | not a verbatim port of FUN_00448940: no hook, no Frida diff, no hooks.csv row, no C-level",
+          "label": "(d) car brightness",
+          "value": "FIXED 2026-09-30 (commit 90bd38c6) | Parent-start light frame-chain walk | Acceptance: A1/A2/A4 PASS (13 tracks, deck brightness 0.8517 vs 0.8522 prediction, terrain/sky bit-identical) | A3 fail due to non-portable statistic, A2 is binding criterion | No RVA, no hooks.csv row",
           "kind": "text"
         }
       ]
     },
     {
-      "heading": "Render lane — pickups, defect (c): PLACEMENT FIXED 2026-10-01 (stage 1 of 2)",
+      "heading": "D2 re-close (attempt 9, 2026-09-30) — physics block",
       "fields": [
         {
-          "label": "Root cause",
-          "value": "The port parsed POWERUPS_GOLD.LUA. The original never opens it on shipping data: FUN_004264d0 @0x004264d0 pushes \"powerups_gold.dff\" (0x005cd4e4) at 0x004265bd, loads the clump at 0x004265c2 and calls the live placement path FUN_00426460 @0x00426460 at 0x004265d2; the Lua arm behind JE 0x004265df needs a null clump and all 13 track pizzes carry the DFF. The two files disagree — on Forest they share ZERO positions. The port also had no BLANK filter, an invented worldR_*0.012 Y lift, and an invented \"every 8th AI gate gets an orb\" fallback.",
+          "label": "Result",
+          "value": "No physics change from attempt 7/8 — identical to every printed digit on default-OFF probe | Pre-registered bounds: slip 1500-2000 FAIL, slip 2000-2600 n=0 UNSCORABLE, driving-median FAIL -30.2%",
           "kind": "text"
         },
         {
-          "label": "Fix",
-          "value": "New Track/PowerupMarkers.{h,cpp} reproduces FUN_00426460: per atomic the frame modelling-matrix translation (frame+0x40) and the geometry's RW USERDATA 0x011f ARRAY 0 ELEMENT 0, split type = v & 0xff, respawn = (float)(v >> 8), returned in the original's enumeration order (measured: reverse of file atomic order). PickupField::InitReal ports FUN_00458e00 @0x00458e00's normal-race arm verbatim — cap 25, dedupe < _DAT_005cc558 = 0.00100000005, reject type 0x15 — and stores the position verbatim. Gate-ribbon fallback off the race path. Commit c9615225; rva-lint allowlisted=122 NEW=0.",
+          "label": "U-9156 first diverging term",
+          "value": "Channel C4 (post-bounce speed): original 219.89 vs port 251.48, delta 31.59 vs tolerance 25.15 | RVA: VehicleContactFixup 0x0046ef70 last-contact damp 0x0046f5ba/0x0046f5c0 | Damp 11.34% high, amplifies input 11.1×",
           "kind": "text"
         },
         {
-          "label": "Acceptance (pre-registered at b2649833, before the edit existed)",
+          "label": "Basin mechanism (found but unfixed)",
+          "value": "Damp knee at |m|/+0x9e4 = 0.7 (saturates 0.9): original 65.2% on cap, port 0.0% | Original post-bounce train gains (net +338.74), port loses (net -105.00) | Both generated hypotheses refuted (circularity, velocity writes)",
+          "kind": "text"
+        },
+        {
+          "label": "U-9159 refuted",
+          "value": "Cadence is NOT the mechanism — inter-contact median 0.833× (within tolerance), not divergent | Instrument corrected and it STRENGTHENED attempt 8 (substep vel probe fixed)",
+          "kind": "text"
+        },
+        {
+          "label": "U-9160 banked",
+          "value": "Port substeps 3→4 on contact vs original fixed 2; residue pass contacts 0 of 1280, measured inert",
+          "kind": "text"
+        },
+        {
+          "label": "Routes CLOSED (no fix path forward)",
           "value": [
-            "P1 PASS — bit-identical vs the LIVE-READ original pool: TRAINING 5/5, ARCTIC 7/7, same order, n = 6 agreeing original samples per track, 2 standalone boots",
-            "P2 MATCH — keep/drop sets on all 13 tracks (TRAINING + ARCTIC live; the other 11 vs the reference reader, labelled as such)",
-            "P3 PASS — 0 differing pixels OUTSIDE the projected pickup regions on 3 Arctic frames (888 / 854 / 59 inside); UNMEASURABLE on TRAINING, where a MASHED_NO_PICKUPS control shows the pickup draw contributes 0 px in BOTH arms",
-            "P3 guards — instrumentation control A vs B = 0 px whole-frame on every in-race frame; projector cross-check max |d| = 0.002 px; two-boot identity 0 px on all 6 track x frame pairs",
-            "P4 PASS — no diff hunk inside Update / CollectAt, PickRadius still worldR_ * 0.04f, and collection still fires post-fix"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Real defect found in the CHECKER, not the port",
-          "value": "sands first reported P2 DIFFER on 2 of 9 markers. Cause: sands geos 8/18/23 and 14 of rouabout's carry TWO RW user-data arrays with the SAME name — array 0 with one element, array 1 with twelve. The Python reference reader keyed them by name, so array 1 shadowed array 0. The original reads FUN_004b5190(atomic,0,0) = array 0 POSITIONALLY, which is what the C++ does. Confirmed at byte level and by an isolated harness build. This also closes the rouabout/sands [UNCERTAIN] in the diagnosis note's 2.3.",
-          "kind": "text"
-        },
-        {
-          "label": "Exe SHA-256",
-          "value": "post-fix (C) B7184CE2D84690BA183263C7469547D6B3C4246BA31FF6566784E76B8EB2BEDD | log-only control (B) 862CC617D1939EBF4F50FF86267A18755CB19EEAF91B7F0EFE074FFC31B710DD | pre-stage HEAD f7ab571b (A) B685C9BCAE814B2EA6F26F3C33CEFBF093E5A0F4BAD371F79A7C4E379F6EE74A",
-          "kind": "text"
-        },
-        {
-          "label": "STAGE 2 (the look) NOT STARTED — blocker is the instrument, not the code",
-          "value": "ICONCUBE.DFF (14 verts, 12 tris, one material), the 11 icons (resident, reachable via g_quad_renderer.slot_texture) and PUGLOW.PNG all load through paths the port already has, and the blend is KNOWN (FUN_004770c0 writes 5/6 = SRCALPHA/INVSRCALPHA, so the port's additive glow is wrong). But stage 2 rule (i) wants the original's per-pickup batches by count, TEXTURE NAME and blend state, and the only original-side draw instrument — the d3d9 shim — records aggregate counters only (d3d9_shim.cpp:612-638). Measuring it needs a per-draw ring buffer in the shim, a texture-pointer->name resolution that does not exist yet (RwTexture/RwRaster layout + the D3D9 raster-extension offset, then a read-only Memory walk — NOT an Interceptor, that is the hot path), and draw-to-pass attribution. Rules (ii) and (iii) are measurable today. The rule was not amended.",
-          "kind": "text"
-        },
-        {
-          "label": "Still open",
-          "value": "Collection radius is still worldR_ * 0.04f (1.101 TRAINING, 1.968 Storm) where the original uses a 0.5 sphere (FUN_00484cf0 at 0x00459228, literal 0x3f000000) — deliberately out of scope, it is collection logic | [UNCERTAIN] only the normal-race rank arm is wired; rank 0 places nothing (0x004265a6), rank 2 is BLANK-only via FUN_00458d00; DAT_0067ea74 measured 1 on Quick Battle and Challenge Cup entry 3, 0 on two other routes, driver underived | [UNCERTAIN] no pickup is visible on any captured TRAINING frame in EITHER arm, cause not established",
-          "kind": "text"
-        },
-        {
-          "label": "Reusable harness added",
-          "value": [
-            "re/tools/powerups_gold_dump.py — all 13 tracks' markers, proper chunk walk (FRAMELIST 0x0e, GEOMETRYLIST 0x1a, per-geometry EXTENSION 0x03 -> USERDATA 0x011f)",
-            "MASHED_DBG_PICKUPDUMP — the ENGINE's own per-orb screen disc from the live D3DTS_VIEW * D3DTS_PROJECTION, dumped beside each captured frame, so a pickup region is PROJECTED GEOMETRY and never a colour class",
-            "verify/pickups_fix_20261001/{run_race,pu_check,pu_placement_check}.py",
-            "pickup_pos_probe2.py gained --snap / --poke, and now presses the challenge index until it REACHES the target — a fixed 3 presses silently loaded TRAINING instead of ARCTIC"
+            "Fixup impulse — faithful 0.11–0.28%",
+            "Substep velocity chain — bitwise faithful both sides",
+            "+0x9e4 write order — 0x004686cc precedes 0x004687f0 on original",
+            "Grip-clamp #6 — byte-faithful",
+            "l_60 / ld4 lane — measured out",
+            "Cadence — post-bounce train gains/losses are the consequence, not a cause"
           ],
           "kind": "list"
         }
       ]
     },
     {
-      "heading": "Render lane — car brightness, defect (d): FIXED 2026-09-30",
+      "heading": "Instruments & tools (read-only, attempts 8-9)",
       "fields": [
         {
-          "label": "Root cause",
-          "value": "ParseLightsDffFaithful composed the track directional light's world at-vector ONE FRAME TOO MANY — it seeds from rot[6..8], already the parent-space at-axis, then walked from the light's own frame. Wrong sun on 13 of 13 shipped tracks. The original computes no direction at all (FUN_00479330 @ 0x00479330 adds the LIGHTS.DFF lights with RpWorldAddLight as-is).",
+          "label": "scenario_launch.py",
+          "value": "--fixup-probe entry hooks on five RVAs with frame marker | live 18-slot contact set (invisible in .msd)",
           "kind": "text"
         },
         {
-          "label": "Fix",
-          "value": "TrackRenderer.cpp:853 + twin :751 — parent-start the frame-chain walk. One token each. Both renderers read the same sun_dir_ (RwRaceSubmit.cpp:571), so one change covers librw and the legacy D3D9 path. No RVA, no hooks.csv row. rva-lint allowlisted=122 NEW=0.",
+          "label": "MASHED_SUBSTEP_VELPROBE",
+          "value": "per-substep |velocity| at four matching points + three write counters",
           "kind": "text"
         },
         {
-          "label": "Acceptance (pre-registered before the fix existed)",
-          "value": [
-            "A1 PASS — 13/13 tracks log the shipped asset's at-vector exactly",
-            "A2 PASS — TRAINING up-facing deck 0.5000 -> 0.8517 (n=1329) vs the arithmetic prediction 0.8522",
-            "A4 PASS — terrain / Arctic ice / sky and both frontend frames BIT-IDENTICAL; only cars, copters and lit props move",
-            "A3 FAIL as written — floor fraction 70.4% -> 12.8% where the band is 25-40%. NOT amended."
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Why A3's failure did not revert the fix",
-          "value": "The band's own \"from\" endpoint (~60-65%) does not reproduce either — 64.4 / 70.4 / 81.4 / 81.7% on the UNCHANGED pre-fix binary — so the statistic is not portable between poses even with no code change, which is the framing caveat the note attached to A3 when it wrote it. A2, the criterion the note named as binding, passes. Closing A3 needs U-9161 / note item O6: an original-side TRAINING capture at a known heading and camera. Same capture O4 needs, and a concrete instance of what D1-residue R1 owes.",
-          "kind": "text"
-        },
-        {
-          "label": "Exe SHA-256 (post-fix)",
-          "value": "E24D9C28990FC01E3316D32EC8D1F869E0124C2B315E1058A5128C985D2BF516",
-          "kind": "text"
-        },
-        {
-          "label": "Reusable harness",
-          "value": [
-            "run_race.py — drives the standalone's own MASHED_RACE_DEMO=1 MASHED_GOTO=6 flow: no external keystrokes, NEVER takes the foreground, dumps the real backbuffer",
-            "MASHED_DETERMINISTIC=1 gives pose-identical pre/post pairs, so a regression guard is exact rather than jitter-bounded",
-            "GOTCHA: that clock FREEZES the car (heading -1.57603 on every capture) — drop it if the car must turn",
-            "GOTCHA: point MASHED_VERIFY_OUT somewhere private; verify/race1/ holds nine tracked, cited stills",
-            "a4_scope.py — connected components of the differing-pixel mask; turns an imgdiff cell grid into a statement about WHICH surfaces moved"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Still open",
-          "value": "O2 original-side half (the 4 tracks that darken — Egypt 0.886x, rouabout 0.890x, Storm 0.773x, sands 0.771x — all within 2.3% of prediction, but no original reference exists for them) | O3 props/copters not measured cross-side | O6 = U-9161 | U-9162 (the donut heading windows cite a shots.json that no longer exists)",
+          "label": "a9_bounce.py & a9_fixup.py",
+          "value": "first-bounce-aligned cross-side comparator, per-contact damp/knee table with frame-boundary flag",
           "kind": "text"
         }
       ]
     },
     {
-      "heading": "D2 solo arm vs pre-registered bounds (attempt 9, 3/3 identical, NO physics change)",
-      "fields": [
-        {
-          "label": "slip 1500-2000",
-          "value": "0.2033 (n=20, median speed in band 1683.53) — FAIL, bound 0.18855..0.19635",
-          "kind": "text"
-        },
-        {
-          "label": "slip 2000-2600",
-          "value": "no samples (n=0) — UNSCORABLE, bound 0.24488..0.25487",
-          "kind": "text"
-        },
-        {
-          "label": "driving-median",
-          "value": "1355.66 (n=54) — FAIL -30.2%, bound 1904.70..1982.44",
-          "kind": "text"
-        },
-        {
-          "label": "Median horizontal speed, all 1080 frames",
-          "value": 26.36,
-          "kind": "number"
-        },
-        {
-          "label": "Verdict",
-          "value": "Identical to attempts 7 and 8 to every printed digit — a no-change control on a default-OFF probe restructure. Build gate met (allowlisted=122 NEW=0).",
-          "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "U-9156 — attempt 8: the first diverging term is NAMED and traced to an RVA",
-      "fields": [
-        {
-          "label": "First diverging term",
-          "value": "d = +0, channel C4 (post-bounce horizontal speed). ORIGINAL 219.89064 vs PORT 251.47744, |delta| 31.5868 vs tol 25.1477, every earlier channel inside tolerance. RVA: the last-contact damp 0x0046f5ba / 0x0046f5c0 inside VehicleContactFixup 0x0046ef70.",
-          "kind": "text"
-        },
-        {
-          "label": "Decomposition (measured on the running original)",
-          "value": [
-            "0x0046ef70's impulse local_54 is FAITHFUL: 0.28% / 0.27% / 0.11% on x/y/z",
-            "the whole divergence is the damp: 0.2475405 vs 0.2756187 = +11.34%",
-            "the damp amplifies its +0x9e4 input 11.1x",
-            "contact counts: 23 in 2332 frames (original) vs 211 in 1625 (port) = 13x"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "BASIN MECHANISM (what the session was sent to find)",
-          "value": "The damp has a knee at |m|/+0x9e4 = 0.7 (saturates at the 0.9 cap). The ORIGINAL is on that cap on 15 of 23 fixups (65.2%); the PORT on 0 of 211 (0.0%). The original's |cos(velocity, wall normal)| falls monotonically across its 10-contact post-bounce train (frames 978..1096) and escapes after a 158-frame gap; the port's rises and LOCKS on a fixed point at |cos| ~ 0.827, damp ~0.55, speed ~55 — exactly section 21.5's 40-70 residency band.",
-          "kind": "text"
-        },
-        {
-          "label": "Both generated hypotheses REFUTED, so no fix authored",
-          "value": [
-            "+0x9e4 is not |velocity| (orig 1.000000 n=23, port 1.017098 n=211) — CIRCULAR: 0x004686cc writes it BEFORE grip-clamp #6 at 0x004687f0 on the original too (capstone, 1243 instructions)",
-            "the port's substep writes velocity — REFUTED bitwise: original unchanged 2945/2945 and 2932/2932, port's three write sites fire 0 of 4000 substeps"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "CLOSED OFF — do not re-open",
-          "value": [
-            "the fixup impulse (faithful to 0.11-0.28%)",
-            "the substep velocity chain (bitwise faithful both sides)",
-            "+0x9e4's write order (0x004686cc precedes 0x004687f0 on the original)",
-            "grip-clamp #6 (byte-faithful, 21.5) and the l_60 / ld4 lane (measured out, 21.10)"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Near-miss caught by a frame marker",
-          "value": "Pairing the original's post-fixup velocity with the next substep entry produced a false \"71% tangential-impulse deficit\". A6a runs once per frame before the substep loop and writes +0x9b0, so the pair crossed a frame boundary. Adding A6a as probe site 2 flags those pairs; with the correct pairing the impulse agrees.",
-          "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "U-9159 REFUTED (attempt 9) — the cadence is NOT the mechanism",
-      "fields": [
-        {
-          "label": "The pre-registered rule fired branch 1",
-          "value": "Inter-contact interval over the ten contacts after each side's own first bounce: ORIGINAL median 12 (19,13,12,12,12,13,12,12,13, n=9) vs PORT median 10 (21,12,12,12,10,9,8,8,8,8, n=10). I_port/I_orig = 0.833 against the registered 0.5 floor. 1 fixup per contacting frame on 160 of 160 — no doubling.",
-          "kind": "text"
-        },
-        {
-          "label": "Attempt 8's cadence claim is WITHDRAWN",
-          "value": "\"19 frames against 1-2\" was an inference from fixup ordinals matched to per-frame speeds, never a frame index. The 13x whole-race ratio (23 of 2332 vs 211 of 1625) is the consequence of not escaping, not a cause.",
-          "kind": "text"
-        },
-        {
-          "label": "Corrected instrument, and it STRENGTHENED attempt 8",
-          "value": "MASHED_SUBSTEP_VELPROBE's emit sat after `if (contacted != 0) continue;` so it skipped every contacting substep — the log read c9ec == 0 on 4000 of 4000 while world_contact.log from the same run held 211 fixups. Fixed; it now sees 160 contact substeps, and on 160 of 160 the three velocity-write sites are 0 and vTop == vPostWheel. So attempt 8's hypothesis-B refutation stands UNQUALIFIED at 4000/4000.",
-          "kind": "text"
-        },
-        {
-          "label": "U-9160 banked — real but measured inert",
-          "value": "The port runs 3 substeps/frame (2720 at dt=25.000000, 1280 at dt=0.000004 = the float residue of frameMs 50.000004f) and 4 on contacting frames, vs the original's fixed 2 (0x00469ad4 mov ebx,2; 4662/2331 and 2932/1466). The residue pass contacts 0 of 1280 and writes velocity 0 of 1280.",
-          "kind": "text"
-        },
-        {
-          "label": "What is OPEN — the residual, at matched cadence",
-          "value": [
-            "ORIGINAL post-bounce train: gains on 7 of 9 gaps, median +17.84, net +338.74 (219.89 -> 405.82), on the 0.9 damp cap 15 of 23 fixups",
-            "PORT: loses on 7 of 9, median -17.84, net -105.00 (251.48 -> 42.13), on the cap 0 of 211",
-            "Gap 0 is like-for-like: matched speed 219.89 vs 251.48, matched free flight 19 vs 21 frames, original +11.63 vs port -14.54",
-            "[UNCERTAIN] this restates driving-median; do NOT start the next attempt inside A6a or 0x0046ef70 — both are exhausted"
-          ],
-          "kind": "list"
-        }
-      ]
-    },
-    {
-      "heading": "New tooling (attempts 8-9, read-only or default-OFF)",
-      "fields": [
-        {
-          "label": "Instruments",
-          "value": [
-            "scenario_launch.py --fixup-probe — entry hooks on 0x0046ef70 / 0x004709a0 / 0x00467650 (frame marker) / 0x0046f6c0 / 0x00469aa0, with a register self-check and the LIVE 18-slot contact set (the .msd cannot see it: keys -1 on 2332 of 2333 frames)",
-            "MASHED_SUBSTEP_VELPROBE — per-substep |velocity| at four matching points + WheelContactSolver's three velocity-write counters",
-            "a9_bounce.py — first-bounce-aligned cross-side comparator; the first tool here that aligns a .msd against a port log on a physical EVENT",
-            "a9_fixup.py — per-contact damp/knee table with the frame-boundary flag",
-            "MASHED_FIXUP_LOG now also emits local_74, the damp and the cap flag"
-          ],
-          "kind": "list"
-        }
-      ]
-    },
-    {
-      "heading": "Guards — carried over from attempt 6 (scored behaviour identical to 6 s.f.)",
+      "heading": "Carried guards (identical to attempt 6)",
       "fields": [
         {
           "label": "criterion (e)",
@@ -366,12 +162,12 @@
         },
         {
           "label": "AI criterion (b)",
-          "value": "FAIL 3/3, c1_median 52.5 / 38.0 / 49.0",
+          "value": "FAIL 3/3",
           "kind": "text"
         },
         {
-          "label": "power-ups",
-          "value": "decision CLEAN 11/11, g3 contact diverges",
+          "label": "power-ups decision",
+          "value": "CLEAN 11/11 (g3 contact diverges)",
           "kind": "text"
         },
         {
@@ -381,7 +177,7 @@
         },
         {
           "label": "rva-lint",
-          "value": "allowlisted=122 NEW=0 (re-run this session)",
+          "value": "allowlisted=122 NEW=0",
           "kind": "text"
         },
         {

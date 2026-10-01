@@ -1,5 +1,52 @@
 # Next session kickoff
 
+Updated 2026-10-01 at the close of the **retrofit lane** session (below), on top of
+the 2026-09-30 **D2 re-close attempt 9** text that follows it.
+
+## RETROFIT LANE — CLOSED 2026-10-01. Two exe-only fixes are now real ports with rows.
+
+Commits `e570a7df` (pre-registration), `60af8ace` (the ports), `37cb0d11` (the evidence),
+`46bf1453` (the promotions). Results: [`verify/retrofit_20261001/RESULT.md`](../verify/retrofit_20261001/RESULT.md).
+**Do not re-derive any of it.**
+
+First use of the standing workflow **"a fix that is a real port must also produce promotion
+evidence"**. Both fixes had shipped as exe-only code with NO body at the RVA; each is now ONE TU
+listed in BOTH `.rsp` lists (`exe_file == file`), with the exe-only copy replaced by a call into
+it, `rva-lint NEW=0` plus a manual unanchored-duplicate grep.
+
+| RVA | name | level | path1 | path2 |
+|---|---|---|---|---|
+| `0x00458e00` | `PickupPoolSpawn` (gameplay) | **C2 → C3** | GREEN 6/6, 6/6 distinct | PASS 4/4 |
+| `0x00448940` | `ArcticTrackNodeSlot0` (render) | **C0 → C3** (no row existed, not defined in Ghidra) | **BLOCKED**, pre-registered B-B1 | n/a — in-process byte witness instead |
+
+**C4 is NOT claimed for either**, and the reason is written down rather than hand-waved:
+`re/CONFIDENCE.md` L37 words C4 as a clean CSV from the `diff-original` skill, and `run_diff.py`
+is hook-bypassed by construction. A canonical Arctic run WITH each hook live was done anyway and
+is recorded in both plates for a later C4 ruling — the install witness is read **in process**
+(`[0x00448940] = 0xa5e05be9` ON vs `0x5324ec83` OFF), and the 25 sea tiles' frame modelling and
+LTM translations come back element-wise identical to the stock arms. `U-9167` (the uncovered tail
+branch) and `U-9168`/`U-9169` (the random rank-2 arm; the standalone stub pair) block C4
+independently of the wording.
+
+**Three things worth carrying forward:**
+
+1. **The pixel channel is VOID on `pickup_pos_probe2.py` captures.** It does not pin the pose:
+   the OFF-vs-OFF control differs by 204503 of 307200 pixels. Any ON-vs-OFF pixel number from
+   that probe is meaningless. Use the tile/pool dumps it now emits instead.
+2. **The Arctic challenge-select screen is BISTABLE between boots** (`00_challengeselect` 45803 px,
+   `02_back_to_menu` 44580 px). The same build produced both states. If a future run shows exactly
+   those two frames differing with exactly those counts, it is this, not a regression.
+3. **`run_verify_hook.py`'s config builder is a separate whitelist from `run_diff.py`'s.** It now
+   forwards `fold_ret` and `obs_globals`; it already had the same class of bug for `arg_layout`
+   and `stub_at`. Check it before concluding a path2 failure is the port.
+
+**U2 from the sea lane is now partly answered**: the `0x004e45b0` call at `0x00448a1f` is a single
+`RwFrameRemoveChild(course+0x105d4, tiles[0])` — a detach of the base clump BEFORE cloning, not a
+per-clone world registration. U1b (the `0x00449030` sea pass and its eight `RwGlobals+0x20` state
+pairs) is untouched.
+
+---
+
 Updated 2026-09-30 at the close of the **D2 re-close attempt 9** session (an audit of attempt 8
 rather than an extension of it: a blind spot in attempt 8's own instrument was found and fixed,
 which STRENGTHENED one of its claims and WITHDREW another; the cadence lane was refuted by its

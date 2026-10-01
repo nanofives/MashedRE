@@ -323,7 +323,7 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
 > the 5×5, `0x00448aa2` `RwFrameTranslate`, `0x00448aab`/`0x00448ac1` the +60.0 step).
 > Reproduced at `D3d9Render/TrackRenderer.cpp:1715-1790` (`a0f3004c`), scoped to
 > `course_id_ == 0 && c.idx == 2` — the original's own `Course_Id`-keyed scope, so no other track
-> can regress by construction. Pre-registered acceptance `548ac7ce`, results in
+> can regress by construction. **RETROFITTED INTO A REAL PORT 2026-10-01** (see the note below). Pre-registered acceptance `548ac7ce`, results in
 > [`verify/sea_fix_20260930/RESULT.md`](verify/sea_fix_20260930/RESULT.md): rules 1/2a/2b/3
 > **PASS** (25 instances at exactly the original's grid; relative gradient over six fixed road
 > boxes 0.22–0.49× → 0.59–0.88× the original's at the committed s8/s14 poses; tile 0 equal to the
@@ -336,6 +336,28 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
 > carries no `hooks.csv` row and no C-level. **U1b** (the dedicated Arctic sea pass `0x00449030`
 > and its eight `RwGlobals+0x20` state pairs, hence draw order / blend mode) and **U2** (the
 > original's per-clone world registration at `0x004e45b0`) remain OPEN.
+>
+> > **SUPERSEDED 2026-10-01 — it IS a verbatim port now, and it carries a row.** Retrofit lane,
+> > first use of the standing workflow "a fix that is a real port must also produce promotion
+> > evidence". The whole 880-byte body (`0x00448940..0x00448caf`) is transcribed in
+> > `Render/ArcticTrackNodeSlot0.cpp`, in **both** `.rsp` lists, with
+> > `RH_ScopedInstall(ArcticTrackNodeSlot0, 0x00448940)`. `TrackRenderer`'s inline 5×5 loop is
+> > gone: it and the node's own translate loop now call the **same** `ArcticSeaTileGrid`.
+> > `hooks.csv` **`0x00448940 ArcticTrackNodeSlot0 render C3`** (C0 → C3; there was no row at all
+> > before, and the function was not even defined in Ghidra). Caller gate:
+> > `TrackNodeDispatch14` `0x0041e8b0` **C3**, read from the bytes —
+> > `mov ecx,[0x0063d7e4] / jmp dword ptr [ecx+0x14]`, and `+0x14` **is** slot 0.
+> > **path1 is BLOCKED and was pre-registered as such** (`verify/retrofit_20261001/PREREG.md`
+> > B-B1): an A/B calls the function twice and it clones 24 `RpClump`s, so no save/restore exists.
+> > Run instead: Arctic hook-ON vs hook-OFF with the install witness read **in process**
+> > (`[0x00448940] = 0xa5e05be9` ON vs `0x5324ec83` OFF) — the 25 live tiles' frame modelling and
+> > LTM translations are element-wise identical and equal to the predicted grid in order. Two
+> > Ghidra arities were wrong and are corrected in the port (`0x004671a0` takes one argument,
+> > `0x004c1b10` takes two). Commits `e570a7df` (pre-registration), `60af8ace` (the ports), `37cb0d11` (the evidence), `46bf1453` (the promotions).
+> >
+> > **U2 is now partly answered**: the per-clone registration at `0x004e45b0` is a single
+> > `RwFrameRemoveChild(course+0x105d4, tiles[0])` at `0x00448a1f` — a **detach of the base clump
+> > before cloning**, not a per-clone registration. U1b is untouched.
 >
 > **Fourth render-faithfulness defect, STAGE 1 OF 2 closed 2026-10-01 (counts toward R1, does
 > not close it): power-up pickup PLACEMENT, defect (c)** — the port parsed
@@ -360,6 +382,18 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
 > `worldR_ * 0.04f`). Unlike (a), (b) and (d) this one **is** a verbatim transcription of a
 > named function's predicates, but it is still a standalone-side reimplementation with no hook
 > and no Frida A/B, so it carries no `hooks.csv` row and no C-level.
+>
+> > **SUPERSEDED 2026-10-01 — it has a hook, a Frida A/B and a row.** Retrofit lane. The inline
+> > copy inside `PickupField::InitReal` is gone; the body lives at
+> > `Gameplay/PickupPoolSpawn.cpp`, in **both** `.rsp` lists, with
+> > `RH_ScopedInstall(PickupPoolSpawn, 0x00458e00)`, and `InitReal` now derives every
+> > accept/reject from that function's **return value** and reads each placed orb back out of the
+> > pool it wrote. `hooks.csv` **`0x00458e00 PickupPoolSpawn gameplay C2 → C3`**. path1 **GREEN
+> > 6/6 NON-DEGEN** (`log/diff_pickup_pool_spawn.csv`), path2 **PASS 4/4**, plus a canonical
+> > Arctic run with the hook live. P1/P2 re-run on the retrofitted build and unchanged.
+> > `U-8325` RESOLVED (`FUN_0042fe30` is `RaceEndFlagIfEndMode`, C4, not a "game-mode getter").
+> > Commits `e570a7df` (pre-registration), `60af8ace` (the ports), `37cb0d11` (the evidence), `46bf1453` (the promotions). The rank-2 arm stays [UNCERTAIN U-9168] and the collection
+> > radius is still open, exactly as the paragraph above says.
 >
 > **STAGE 2 (the LOOK) NOT STARTED, and the blocker is the instrument, not the code.** The real
 > `ICONCUBE.DFF` (14 verts, 12 tris, one material), the 11 per-type icons (already resident,
