@@ -1,0 +1,8 @@
+|ctrl.y| med 0.009  p75 0.0097  p95 0.0216  max 1.30001e+07
+|ctrl.x| med 388849   |ctrl.z| med 786534
+S2 joined steps 1627
+  ALL           n=1627  med snap  +11.4777  med act  +11.4777  within 10%: 1627 (100.0%)   med T_accum   -0.7880  med T_2nd   +1.6194
+  BAND 150-260  n=  12  med snap  +22.3416  med act  +22.3417  within 10%: 12 (100.0%)   med T_accum   -0.8826  med T_2nd   +0.0559
+  40-70         n= 269  med snap   -3.7718  med act   -3.7719  within 10%: 269 (100.0%)   med T_accum   -0.0987  med T_2nd   +2.5275
+  70-100        n=  38  med snap  +14.8848  med act  +14.8848  within 10%: 38 (100.0%)   med T_accum   -0.7373  med T_2nd   +0.4924
+  1500-2000     n=  20  med snap  +34.6907  med act  +34.6908  within 10%: 20 (100.0%)   med T_accum   -1.3396  med T_2nd  -11.3666
