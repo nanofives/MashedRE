@@ -209,10 +209,13 @@ score2/score3 with none) returning the same digits confirms it end to end.
    and the port's `|ctrl.y|` median is 0.009 against `|ctrl.z|` 786534.
 3. **`linTerm`.** Identical on both sides: `+0x54` constant on 2332/2332 and 1628/1628,
    `kDt = 1/3000` exactly, the port prints `linTerm=1.66667e-05`.
-4. **The "gain between contacts" framing itself.** It decomposes into exactly three terms, two
-   of which agree cross-side, and the third is grip-clamp #6 — a route closed by §21.5. So
-   **U-9156 is not an independent lever**, confirming §22.4's own `[UNCERTAIN]` rather than
-   overturning it. **U-9156 can be closed as "resolved: not a lever".**
+4. **The "gain between contacts" FRAMING itself.** It decomposes into exactly three terms, two
+   of which agree cross-side, and the third is grip-clamp #6 — a route closed by §21.5. So the
+   framing §22.4 tagged `[UNCERTAIN U-9156]` is **not an independent lever**, which confirms
+   §22.4's own tag rather than overturning it. **The U-9156 TRACKER ROW ITSELF STAYS OPEN** —
+   that row is the trap ("the port's car is TRAPPED against Training's wall where the original
+   grazes it and drives away"), not the gain framing, and the trap is not resolved by this lane.
+   Only the framing is closed.
 
 **The one clean target invariant this lane produces** (derived, not guessed, and robust to
 <= 13% fixup contamination by construction):

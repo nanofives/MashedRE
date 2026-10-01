@@ -1,7 +1,97 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-01T15:40:00Z",
+  "updatedAt": "2026-10-01T19:05:00Z",
   "sections": [
+    {
+      "heading": "D2 re-close (attempt 10, 2026-10-01) — the between-contact speed budget",
+      "fields": [
+        {
+          "label": "Verdict",
+          "value": "STILL REOPENED, FAIL, and NO fix authored — branch 5 of the pre-registered rule is a refusal branch",
+          "kind": "text"
+        },
+        {
+          "label": "Scored 3 of 3 (no-change control: this lane changed no source)",
+          "value": [
+            "slip 1500-2000  0.2033  n=20  median speed 1683.53  (band 0.18855..0.19635)  FAIL +3.4%",
+            "slip 2000-2600  —      n=0                          (band 0.24488..0.25487)  UNSCORABLE",
+            "driving-median  1355.66 n=54  median speed 1355.66  (band 1904.70..1982.44)  FAIL -30.2%",
+            "whole-window median horiz speed 26.33, grounded 1080/1080, rva-lint allowlisted=122 NEW=0"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "The diverging term",
+          "value": "T_clamp = grip-clamp #6 (0x004687f0..0x0046897b, Integrate2.cpp:727/:736). median(+0x9e4 / |+0x9b0..b8|) = 0.999998 ORIGINAL (n=1447) against 1.172734 PORT (n=1628) — the port loses a median 14.7% of its speed per frame to the clamp where the original loses 0.0002%; by band 70-100 it is +0.003% against -15.782%. Detector-free and contamination-proof (fixups touch <=13% of port frames).",
+          "kind": "text"
+        },
+        {
+          "label": "Why no fix",
+          "value": "Section 21.5 already proved that code byte-faithful, so this is the SAME loop 21.2/21.5/21.10 closed, in its most direct channel yet — not a new term. Two registered safety thresholds also failed on the port (S1 91.3% vs >=99%, S6 1324 detected contact frames vs 212 actual fixups), so the gap-aligned table is VOID and is not reported as a verdict.",
+          "kind": "text"
+        },
+        {
+          "label": "FOUR routes newly CLOSED (ten total)",
+          "value": [
+            "the drive/control force +0xb14/+0xb18/+0xb1c — T_drive ratio 0.899..1.055 on six of seven matched-speed bands (the measurement section 20.10's withdrawn reading did NOT cover)",
+            "a hidden vertical control force — +0xb18 exactly 0.0 on 2332/2332 original; port |ctrl.y| median 0.009 vs |ctrl.z| 786534",
+            "linTerm — +0x54 constant on 2332/2332 and 1628/1628, kDt exactly 1/3000, port prints 1.66667e-05",
+            "the \"gain between contacts\" FRAMING as an independent lever (the U-9156 ROW stays OPEN: it is the trap, not the framing)"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Target invariant produced",
+          "value": "median(+0x9e4 / |+0x9b0..0x9b8|) over race frames == 1.000 to 1e-3",
+          "kind": "text"
+        },
+        {
+          "label": "NEXT LANE (not A6a, not 0x0046ef70, not the clamp)",
+          "value": "The ORIGINAL's T_rest split — the only unmeasured term. It reaches -42.6/frame after the bounce and DECAYS 6x AT CONSTANT SPEED as the car straightens (-34.5 at s_from 190.6 down, -5.5 at 193.5 up) while the port's is -0.43/frame. Fit accum from the per-wheel forces at record wheelbase+0x70..0x78 on the PORT first (friction_diag.log is the known-answer self-check), then apply it to orig_fp2.msd.",
+          "kind": "text"
+        },
+        {
+          "label": "Instrument lesson",
+          "value": "A detector validated on ONE side can be swamped on the other, and the swamping is the finding. The 1.02-ratio contact detector passed 23 of 23 on the original and still failed on the port. Validate cross-side detectors on both sides, and look for the contamination-proof statistic instead of discarding the channel.",
+          "kind": "text"
+        },
+        {
+          "label": "Commits",
+          "value": "bccaf40b (pre-registration, before any run) | 6d664146 (results) | trackers + kickoff this session",
+          "kind": "text"
+        },
+        {
+          "label": "Evidence",
+          "value": "verify/d2_gain_20261001/{PREREG.md,RESULT.md} | re/analysis/D2_REOPEN_2026-09-29.md section 23 | tools re/tools/statediff/a10_gain.py + a10_clampcost.py",
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "heading": "Roadmap (v3) — default-build fidelity",
+      "fields": [
+        {
+          "label": "Phase status",
+          "value": "D0 ok | D1 ok (residue R1-R3 open) | D2 REOPENED — attempt 10 failed, no physics change, ten routes now closed | D3 blocked on D2 close",
+          "kind": "text"
+        },
+        {
+          "label": "Branch",
+          "value": "race/first-frame-parity (nothing pushed)",
+          "kind": "text"
+        },
+        {
+          "label": "Hooks progress",
+          "value": "5,932 rows | 29.9% C3+ (first-party only) | 4.6% C4 | C2 3,890 C3 1,013 C4 176",
+          "kind": "text"
+        },
+        {
+          "label": "Next kickoff",
+          "value": "re/NEXT_SESSION.md — RETROFIT LANE (closed 2026-10-01) at top, then the render lane, then the D2 block (read section 22.4 first)",
+          "kind": "text"
+        }
+      ]
+    },
     {
       "heading": "Verification lane — a9da810a (free-fly camera removal + window title), 2026-10-01",
       "fields": [
@@ -36,31 +126,6 @@
         {
           "label": "Commits",
           "value": "3e8ee34c (pre-registration, before any run) | 91bc05c4 (evidence + results)",
-          "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "Roadmap (v3) — default-build fidelity",
-      "fields": [
-        {
-          "label": "Phase status",
-          "value": "D0 ✓ | D1 ✓ (residue R1-R3 open) | D2 REOPENED — attempt 9 failed, no physics change | D3 blocked on D2 close",
-          "kind": "text"
-        },
-        {
-          "label": "Branch",
-          "value": "race/first-frame-parity (nothing pushed)",
-          "kind": "text"
-        },
-        {
-          "label": "Hooks progress",
-          "value": "5,932 rows | 29.9% C3+ (first-party only) | 4.6% C4 | C2 3,890 C3 1,013 C4 176",
-          "kind": "text"
-        },
-        {
-          "label": "Next kickoff",
-          "value": "re/NEXT_SESSION.md — RETROFIT LANE (closed 2026-10-01) at top, then the render lane, then the D2 block (read section 22.4 first)",
           "kind": "text"
         }
       ]
@@ -125,48 +190,6 @@
           "label": "(d) car brightness",
           "value": "FIXED 2026-09-30 (commit 90bd38c6) | Parent-start light frame-chain walk | Acceptance: A1/A2/A4 PASS (13 tracks, deck brightness 0.8517 vs 0.8522 prediction, terrain/sky bit-identical) | A3 fail due to non-portable statistic, A2 is binding criterion | No RVA, no hooks.csv row",
           "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "D2 re-close (attempt 9, 2026-09-30) — physics block",
-      "fields": [
-        {
-          "label": "Result",
-          "value": "No physics change from attempt 7/8 — identical to every printed digit on default-OFF probe | Pre-registered bounds: slip 1500-2000 FAIL, slip 2000-2600 n=0 UNSCORABLE, driving-median FAIL -30.2%",
-          "kind": "text"
-        },
-        {
-          "label": "U-9156 first diverging term",
-          "value": "Channel C4 (post-bounce speed): original 219.89 vs port 251.48, delta 31.59 vs tolerance 25.15 | RVA: VehicleContactFixup 0x0046ef70 last-contact damp 0x0046f5ba/0x0046f5c0 | Damp 11.34% high, amplifies input 11.1×",
-          "kind": "text"
-        },
-        {
-          "label": "Basin mechanism (found but unfixed)",
-          "value": "Damp knee at |m|/+0x9e4 = 0.7 (saturates 0.9): original 65.2% on cap, port 0.0% | Original post-bounce train gains (net +338.74), port loses (net -105.00) | Both generated hypotheses refuted (circularity, velocity writes)",
-          "kind": "text"
-        },
-        {
-          "label": "U-9159 refuted",
-          "value": "Cadence is NOT the mechanism — inter-contact median 0.833× (within tolerance), not divergent | Instrument corrected and it STRENGTHENED attempt 8 (substep vel probe fixed)",
-          "kind": "text"
-        },
-        {
-          "label": "U-9160 banked",
-          "value": "Port substeps 3→4 on contact vs original fixed 2; residue pass contacts 0 of 1280, measured inert",
-          "kind": "text"
-        },
-        {
-          "label": "Routes CLOSED (no fix path forward)",
-          "value": [
-            "Fixup impulse — faithful 0.11–0.28%",
-            "Substep velocity chain — bitwise faithful both sides",
-            "+0x9e4 write order — 0x004686cc precedes 0x004687f0 on original",
-            "Grip-clamp #6 — byte-faithful",
-            "l_60 / ld4 lane — measured out",
-            "Cadence — post-bounce train gains/losses are the consequence, not a cause"
-          ],
-          "kind": "list"
         }
       ]
     },

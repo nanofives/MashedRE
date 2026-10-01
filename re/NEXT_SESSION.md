@@ -1,7 +1,151 @@
 # Next session kickoff
 
-Updated 2026-10-01 at the close of the **retrofit lane** session (below), on top of
-the 2026-09-30 **D2 re-close attempt 9** text that follows it.
+Updated 2026-10-01 at the close of the **D2 re-close attempt 10** session (the between-contact
+speed budget: decomposed completely, four more routes closed, two registered safety thresholds
+failed on the port, and **no fix authored** because the surviving term is one §21.5 already
+proved byte-faithful). Branch `race/first-frame-parity`. Nothing is pushed.
+Superseded kickoffs: the attempt-9, attempt-8, attempt-7, attempt-6, attempt-5 and attempt-4
+ones, kept below, plus the retrofit and render lane blocks.
+
+> ## START HERE (D2 lane) — D2 is STILL REOPENED. **TEN routes are now CLOSED by measurement.** Do not start inside A6a, inside `0x0046ef70`, or inside grip-clamp #6.
+>
+> Read [`re/analysis/D2_REOPEN_2026-09-29.md`](analysis/D2_REOPEN_2026-09-29.md) **§23**
+> (§23.4 first, then §23.2), and
+> [`verify/d2_gain_20261001/RESULT.md`](../verify/d2_gain_20261001/RESULT.md) for every number.
+> **Do not re-derive any of it.**
+>
+> **The §3 bounds are unchanged and are not renegotiable.** PASS intervals:
+> `slip 1500-2000` **0.18855 .. 0.19635**, `slip 2000-2600` **0.24488 .. 0.25487**,
+> `driving-median` **1904.70 .. 1982.44**. The arm is still §16.7
+> (`MASHED_STEER_HOLD_AFTER=0`), `MASHED_MEASURE_SOLO=1`, `MASHED_TRACK_SEL=12`.
+>
+> ### Scored at HEAD, 3 of 3 — a NO-CHANGE control (attempt 10 changed no source)
+>
+> | metric | port | n | median speed | interval | verdict |
+> |---|---:|---:|---:|---|---|
+> | slip 1500-2000 | **0.2033** | 20 | 1683.53 (in band) | 0.18855..0.19635 | **FAIL** +3.4% |
+> | slip 2000-2600 | **—** | 0 | — | 0.24488..0.25487 | **UNSCORABLE** |
+> | driving-median | **1355.66** | 54 | 1355.66 | 1904.70..1982.44 | **FAIL** -30.2% |
+>
+> Whole-window median horizontal speed **26.33**, 1080/1080 grounded. `allowlisted=122 NEW=0`.
+>
+> ### PICK UP HERE — the ONE term in the per-frame budget that is still unmeasured on the original
+>
+> The free-flight per-frame velocity budget is now **complete, not an enumeration**. On a
+> non-contact frame A6a `0x00467650` is the only writer of `+0x9b0`, and inside it there are
+> exactly three velocity writes: **W1** `v += linTerm*(ctrl + accum)`
+> (`Integrate2.cpp:630-632`) and **grip-clamp #6's two arms** (`0x004687f0..0x0046897b`,
+> `Integrate2.cpp:727`/`:736`). A6a's own `+0x9e4` store sits BETWEEN them
+> (`Integrate2.cpp:636`, original `0x004686cc`), and `+0x9e4` is a record field, so
+>
+> ```
+> T_W1    = +0x9e4(f) - |vel|(f-1)        T_clamp = |vel|(f) - +0x9e4(f)
+> T_drive = linTerm * (ctrl . u)          T_rest  = T_W1 - T_drive
+> T_drive + T_rest + T_clamp == |vel|(f) - |vel|(f-1)      (identity, residual 3.6e-15)
+> ```
+>
+> **Three of the four terms are now measured cross-side. `T_rest` on the ORIGINAL is the only
+> one that is not, and it is where the difference must live.**
+>
+> | | right after the bounce | same speed, on the way back up | port, same band |
+> |---|---:|---:|---:|
+> | ORIGINAL `T_rest` | **−42.586** (f=980, s 231.5) | **−5.475** (f=996, s 193.5) | — |
+> | | −34.508 (f=981, s 190.6) | | **−0.43** (150-260) |
+>
+> **The original's `T_rest` decays 6x AT CONSTANT SPEED** as the car straightens — it is a slip
+> drag, not a speed drag — and the port's is two orders of magnitude smaller. Nothing in the ten
+> closed routes explains a drag that large or that decay, and `T_drive` is now excluded.
+>
+> **NEXT COMMAND.** Get the ORIGINAL's `accum` (`l_b8 / l_b4 / lin_b0`) and its blend
+> `frac = (l_d0 - m78)/l_d0` (`Integrate2.cpp:489-512`, `:543-565`) as a **measurement**. They
+> are A6a locals so the `.msd` cannot carry them, **but the four per-wheel force vectors
+> `p[0x1c..0x1e]` (record `wheelbase+0x70..0x78`) and the wheel offsets `p[-9..-7]` ARE record
+> fields the `.msd` already has**, and `accum` is a blend of their normal and tangential parts.
+> - **Fit it from the record on the PORT first**, where `friction_diag.log`
+>   (`MASHED_COUPLING_DIAG=1`, default-OFF) gives the true `accum` verbatim as a known-answer
+>   self-check. A validated join already exists: `friction_diag` line `i` pairs with
+>   `player_trace` list index `i-2` (offset `-2` matched 1557/1627 = 95.7%, every other offset in
+>   `-4..+4` under 0.3%).
+> - Memory `cross-side-fit-needs-both-sides-checked` applies directly — `a8_wheelfit.py` has a
+>   WITHDRAWN finding on exactly this route. Check **both** samplers, not one.
+> - If the fit will not validate on the port, the fallback is an entry hook on whatever callee
+>   A6a uses for the per-wheel cross product — the technique §21.9 used for `l_60` via
+>   `RwV3dLength`'s pointer argument (`scenario_launch.py --mag-probe`).
+>
+> ### TEN routes are closed by measurement. Re-opening any of them is wasted effort.
+> 1. **`0x0046ef70`'s impulse** — 0.11-0.28% cross-side (§22.2).
+> 2. **the substep velocity chain**, contact AND non-contact substeps (§22.2 + §22.4).
+> 3. **`+0x9e4`'s write order** — `0x004686cc` precedes the clamp on the original too (§22.2).
+> 4. **grip-clamp #6's transcription** — byte-faithful, both arms, six constants (§21.5).
+> 5. **the `l_60` / `ld4` lane** — measured out, the one real defect is worth 10.9% (§21.10).
+> 6. **the contact CADENCE** — REFUTED, 10 against 12 frames, ratio 0.833 (§22.4, U-9159 struck).
+> 7. **the drive / control force `+0xb14/+0xb18/+0xb1c`** — NEW §23.2. `T_drive` agrees at
+>    matched speed, ratio **0.899..1.055 on six of seven bands**; the one outlier is 260-500 at
+>    0.757. **This is the measurement §20.10's withdrawn reading did not cover.**
+> 8. **a hidden vertical control force** — NEW §23.2. `+0xb18` exactly `0.0` on **2332/2332**
+>    original frames; port `|ctrl.y|` median **0.009** against `|ctrl.z|` **786534**. (The
+>    `ctrl=(0,-13000103,0)` on `friction_diag.log`'s FIRST line is the stationary pre-race frame.)
+> 9. **`linTerm`** — NEW §23.2. `+0x54` constant on 2332/2332 and 1628/1628, `kDt` exactly
+>    1/3000, port prints `linTerm=1.66667e-05`.
+> 10. **the "gain between contacts" FRAMING as an independent lever** — NEW §23.2. Its third
+>    term is grip-clamp #6, so it restates the same loop, exactly as §22.4's own
+>    `[UNCERTAIN U-9156]` tag said. **The U-9156 ROW ITSELF STAYS OPEN** — it is the trap, not
+>    the framing.
+>
+> ### The sharpest cross-side number in the whole re-open, and it needs no detector
+> `median(+0x9e4 / |+0x9b0..0x9b8|)`: **ORIGINAL 0.999998 (n=1447) against PORT 1.172734
+> (n=1628)**. The port loses a median **14.7%** of its linear speed per frame to grip-clamp #6
+> where the original loses **0.0002%**; by band, 70-100 is **+0.003% against −15.782%**. It is
+> contamination-proof by construction: the fixup touches at most 13% of port frames and 1.6% of
+> original frames, so the median is immune. **That is also the target invariant:
+> `median(+0x9e4/|+0x9b0..b8|) == 1.000` to 1e-3.**
+>
+> This is the W2/W3 row, i.e. grip-clamp #6, which is **branch 5** of §23.1's pre-registered
+> rule — a **refusal** branch, because §21.5 proved that code byte-faithful. So **no fix was
+> authored** and the gap-aligned cross-side table is **void**, not a verdict.
+>
+> ### Banked, real, and measured NOT to be on the trap's path — U-9160
+> The port runs **3** substeps per frame and **4** on a contacting frame, against the original's
+> fixed **2** (`0x00469ad4 mov ebx,2`). `dt` over 4000 substeps: 2720 at `25.000000`, 1280 at
+> `0.000004`. **The residue pass contacts 0 of 1280 and writes velocity 0 of 1280.** Target
+> invariant if it is fixed: substeps per frame == 2.
+>
+> ### Also banked, NOT a cross-side divergence, do not act on it alone
+> At **40-70** — where the port spends **270 of 1628** frames and the original **2** — the port's
+> `T_drive` is **−3.7718**, i.e. its control force points AGAINST its own velocity. That is
+> §20.14's `-0.1` reverse gate (port below it on 625/1352 frames against the original's 25/1352)
+> in speed units for the first time. **There is no original sample to compare** (n=2), so it is
+> a consequence of the trap's residency, not a term. §21.5: the original passes below 100
+> horizontal once per race, 6-8 frames of 6658.
+>
+> ### The instrument lesson this attempt paid for — read it before registering any detector
+> **A detector validated on one side can be swamped on the other, and the swamping is the
+> finding.** The 1.02-ratio contact detector was validated **23 of 23** against the original's
+> own fixup probe before being registered, and it still failed on the port (1324 against 212)
+> because the port's clamp removes more speed per frame than the original's fixups do. So:
+> (1) validate a cross-side detector on **both** sides before registering it, not just on the
+> reference; (2) when it fails because the other side differs in kind, look for the
+> **contamination-proof statistic** (here the median, immune by the `1 - N_fixup/N_frames`
+> bound) rather than discarding the channel.
+>
+> Also worth knowing: **§22.4's "the original gains +11.63 over gap 0" is in HORIZONTAL speed.**
+> In full `|v|` the original's gap 0 is net **+0.059** (231.471 → 231.529) and strongly
+> non-monotonic — down to **85.4** at frame 985, back up. A median over that window mixes two
+> regimes, which is why the gap-median framing could not name a term.
+>
+> ### Tooling (attempt 10, both read-only, neither executes the game)
+> - `re/tools/statediff/a10_gain.py` — the per-frame budget on either side from the record
+>   snapshot alone (`--orig <msd> --port <player_trace.log>`), with the contact detector, the
+>   gap decomposition, the registered divergence test and S1/S3/S4 inline.
+> - `re/tools/statediff/a10_clampcost.py` — the **detector-free** clamp-cost and `T_drive`
+>   comparison by speed band, with the contamination bound printed.
+>
+> Artefacts: `verify/d2_gain_20261001/` (`PREREG.md`, `RESULT.md`, `p1/` with
+> `friction_diag.log` + `player_trace.log`, `score2/`, `score3/`, `gap_{orig,port}.csv`).
+>
+> **The D3 modes 3/7 hold stands. D2 must close before it starts.**
+
+---
 
 ## RETROFIT LANE — CLOSED 2026-10-01. Two exe-only fixes are now real ports with rows.
 
@@ -243,7 +387,7 @@ an `imgdiff` cell grid into a statement about *which surfaces* moved.
 
 ---
 
-> ## START HERE (D2 lane) — D2 is STILL REOPENED. Six routes are now CLOSED by measurement. Do not start the next attempt inside A6a or inside `0x0046ef70`.
+> ## SUPERSEDED (attempt 9) — the six-closed-routes list and the U-9156 gain framing; attempt 10 closes four more and the framing itself
 >
 > Read [`re/analysis/D2_REOPEN_2026-09-29.md`](analysis/D2_REOPEN_2026-09-29.md) **§22**
 > (§22.4 first, then §22.2, then §22.1/§22.3 for the two rules). **Do not re-derive any of it.**
@@ -1502,3 +1646,4 @@ Option B treatment instead (§3.4's `NOAIPHYS`, measured 0.1736 / 0.1561 / 0.177
 - Four of this session's `a8` runs produced 38-, 79-, 302- and 361-line logs, i.e. races
   that ended in under a second. Those are truncated boots, not samples; the shortest complete
   race observed is 1023 lines. Discard below ~900 and say so.
+

@@ -610,6 +610,77 @@ opinion is an opinion about the scaffold, not about the port.
 > **Order: D2 must close again BEFORE the D3 modes 3/7 port starts.** §D3's closure path
 > (`FUN_00414c30` + `FUN_00484c70`) is on hold until then.
 
+> #### Re-close attempt 10 — 2026-10-01. **STILL REOPENED. The between-contact budget is decomposed completely, FOUR more routes close, and NO fix was authored because two registered safety thresholds failed and the surviving term is one §21.5 already proved byte-faithful.**
+>
+> Full record: `re/analysis/D2_REOPEN_2026-09-29.md` **§23.1** (the rule, committed before any
+> run, `bccaf40b`) and **§23.2-§23.4** (the result). Results sheet with every number:
+> `verify/d2_gain_20261001/RESULT.md`. Commits `bccaf40b`, `6d664146`.
+>
+> **Scored 3 of 3, a no-change control — this lane changed no source:**
+>
+> | metric | port | n | median speed | PASS interval | verdict |
+> |---|---:|---:|---:|---|---|
+> | slip 1500-2000 | **0.2033** | 20 | 1683.53 (in band) | 0.18855 .. 0.19635 | **FAIL** +3.4% |
+> | slip 2000-2600 | **—** | 0 | — | 0.24488 .. 0.25487 | **UNSCORABLE** |
+> | driving-median | **1355.66** | 54 | 1355.66 | 1904.70 .. 1982.44 | **FAIL** −30.2% |
+>
+> Whole-window median horizontal speed **26.33**, 1080/1080 grounded. `allowlisted=122 NEW=0`.
+> Bounds unchanged and not renegotiable.
+>
+> **What was done.** The per-frame velocity budget on a free-flight frame was decomposed
+> **completely rather than by enumerating physics**: A6a `0x00467650` is the only writer of
+> `+0x9b0` there, and inside it there are exactly three velocity writes — W1
+> (`Integrate2.cpp:630-632`) and grip-clamp #6's two arms (`0x004687f0..0x0046897b`) — with
+> A6a's own `+0x9e4` store (`Integrate2.cpp:636`, original `0x004686cc`) sitting between them as
+> an in-frame probe of the post-W1 pre-clamp speed. `+0x9e4` is a record field, so the budget
+> closes with no unknown and needed **no new instrument and no source change on either side**.
+>
+> **FOUR routes now CLOSED (added to the six from attempts 7-9):**
+> 1. **the drive / control force `+0xb14/+0xb18/+0xb1c`** — `T_drive = linTerm*(ctrl·u)` agrees
+>    cross-side at matched speed, ratio **0.899..1.055 on six of seven comparable bands** (the
+>    one outlier is 260-500 at 0.757). This is the matched-band measurement §20.10's withdrawn
+>    reading did **not** cover, and it comes back agreeing.
+> 2. **a hidden vertical control force** — `+0xb18` is exactly `0.0` on **2332 of 2332** original
+>    frames; the port's `|ctrl.y|` median is **0.009** against `|ctrl.z|` **786534**.
+> 3. **`linTerm`** — `+0x54` constant on 2332/2332 and 1628/1628, `kDt` exactly 1/3000, port
+>    prints `linTerm=1.66667e-05`.
+> 4. **the "gain between contacts" FRAMING as an independent lever** — the budget's third term is
+>    grip-clamp #6, so the framing restates the same loop, exactly as §22.4's own
+>    `[UNCERTAIN U-9156]` tag said. **The U-9156 row itself stays OPEN**: it is the trap, not the
+>    framing.
+>
+> **Two registered safety thresholds FAILED on the port, and the failure's cause is the sharpest
+> cross-side number in the whole re-open.** S1 **91.3%** against the registered >= 99%; S6
+> **1324** detected contact frames against **212** actual fixups. Both come from one fact, which
+> is detector-free and contamination-proof because the fixup touches at most 13% of port frames
+> and 1.6% of original frames, so the MEDIAN is immune:
+>
+> > **`median(+0x9e4 / |+0x9b0..0x9b8|)` is `0.999998` on the ORIGINAL (n=1447) against
+> > `1.172734` on the PORT (n=1628)** — the port loses a median **14.7%** of its linear speed
+> > per frame to grip-clamp #6 where the original loses **0.0002%**. By band, 70-100:
+> > **+0.003% against −15.782%**.
+>
+> That lands on the W2/W3 row, i.e. grip-clamp #6 — **branch 5 of the pre-registered rule, which
+> is a refusal branch**, because §21.5 proved that code byte-faithful. So **no fix was authored**
+> and the gap-aligned cross-side table is reported as **void**, not as a verdict.
+>
+> **Target invariant this lane produces** (derived, falsifiable, robust to <= 13% contamination
+> by construction): `median(+0x9e4 / |+0x9b0..0x9b8|)` over race frames **== 1.000 to 1e-3**.
+>
+> **NEXT LANE, and it is not inside A6a, not inside `0x0046ef70`, and not the clamp.** Every term
+> in the budget is now measured except the ORIGINAL's `T_rest` split. The original's `T_rest`
+> reaches **−42.6/frame** right after the bounce and **decays 6x AT CONSTANT SPEED** as the car
+> straightens (−34.5 at `s_from` 190.6 on the way down, −5.5 at 193.5 on the way up) while the
+> port's is **−0.43/frame** in the same band. No closed route explains a drag that large or that
+> decay, and `T_drive` is now excluded, so `T_rest` is the only remaining home for the
+> difference. Get the ORIGINAL's `accum` (`l_b8/l_b4/lin_b0`) and its blend
+> `frac = (l_d0 - m78)/l_d0` as a measurement: fit it from the per-wheel forces at record
+> `wheelbase+0x70..0x78` on the PORT first, where `friction_diag.log` gives the true answer as a
+> known-answer self-check, then apply the validated estimator to `orig_fp2.msd`.
+>
+> New tooling, both read-only and neither executing the game:
+> `re/tools/statediff/a10_gain.py` (the budget) and `re/tools/statediff/a10_clampcost.py` (the
+> detector-free clamp cost). Artefacts `verify/d2_gain_20261001/`.
 > #### Re-close attempt 9 — 2026-09-30. **STILL REOPENED. The cadence lane is REFUTED by its own pre-registered rule, and two of attempt 8's claims are corrected — one withdrawn, one strengthened.**
 >
 > Full record: `re/analysis/D2_REOPEN_2026-09-29.md` **§22.3** (the rule + the correction,
