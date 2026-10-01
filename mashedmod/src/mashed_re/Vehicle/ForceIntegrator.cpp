@@ -16,6 +16,8 @@
 // C-LEVEL: C2 faithful transcription. Gate = installed-hook scenario telemetry vs
 // the captured contact baseline (re/analysis/wsb_contact_baseline.json), once
 // wired (B4). Residual RW-math / PRNG / runtime-global deps stubbed inert.
+#include <cstdio>                           // [A5GDIAG] default-OFF D2 diagnostic
+#include <cstdlib>                          // [A5GDIAG] getenv
 #include <cstring>                          // memset (D2 steered-forward diagnostic)
 #include "ForceIntegrator.h"
 #include "../Collision/ContactSolvers.h"   // reuse TriangleFaceNormal (0x0046c5f0)
@@ -33,6 +35,18 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
     static const float kUpAxis[3]  = { 0.0f, 1.0f, 0.0f };  // DAT_006146fc
     static const float kFwdAxis[3] = { 0.0f, 0.0f, 1.0f };  // DAT_00614708
     char* gb = reinterpret_cast<char*>(g_vehicleArrayBase);  // DAT_008815a0
+
+    // [A5GDIAG] D2 attempt 12 step 1 — default-OFF. Registered in
+    // verify/d2_sink_20261001/PREREG.md (commit 26b859fd). Reads only; changes no
+    // value A5 computes. §24.4 could only BACK OUT local_70 and G from the .msd;
+    // this logs both directly, plus the exact scalar A5 applies at :166-168.
+    static const bool s_a5g = (std::getenv("MASHED_A5GDIAG") != nullptr);
+    static int s_a5gN = 0;
+    float a5g_sEnt = 0.0f;
+    if (s_a5g) {
+        const float* ev = reinterpret_cast<const float*>(self) + 0x26c;   // +0x9b0
+        a5g_sEnt = (float)Vec3Mag3(ev);
+    }
     auto carActive = [&](int c) { return *reinterpret_cast<int*>(gb + 4 + c * 0xd04); };
     auto carCount  = [&](int c) { return *reinterpret_cast<int*>(gb + 8 + c * 0xd04); };
 
@@ -161,8 +175,23 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
     }
 
     // ---- Phase 4: drive-drag + gravity applied to linear velocity ----
+    const float a5g_base = fVar4;            // [A5GDIAG] fVar4 as of :90
     fVar4 = kOne - local_70 * fVar4;
     if ((fVar4 < kZero) || (kOne < fVar4)) fVar4 = kZero;
+    if (s_a5g && s_a5gN < 40000) {
+        ++s_a5gN;
+        if (std::FILE* lf = std::fopen("a5g_diag.log", "a")) {
+            std::fprintf(lf,
+                "i=%d sEnt=%.6f sp=%.6f g0=%.9g g1=%.9g g2=%.9g G=%.9g "
+                "m54=%.9g dt=%.6f base=%.9g l70=%.9g sigma=%.9g gnd=0x%08X\n",
+                s_a5gN, a5g_sEnt, vF(self, 0x279),
+                vF(self, 0x54), vF(self, 0x55), vF(self, 0x56),
+                vF(self, 0x54) * vF(self, 0x55) * vF(self, 0x56),
+                vF(self, 0x15), dt, a5g_base, local_70, fVar4,
+                (unsigned)self[0x278]);
+            std::fclose(lf);
+        }
+    }
     vF(self, 0x26c) = fVar4 * vF(self, 0x26c);
     vF(self, 0x26d) = fVar4 * vF(self, 0x26d);
     vF(self, 0x26e) = fVar4 * vF(self, 0x26e);
