@@ -1,0 +1,14 @@
+exe=C:\Users\maria\Desktop\Proyectos\Mashed\verify\sea_fix_20260930\bin\mashed_re_prefix.exe
+pid=16192
+rc=0
+seconds=22.3
+MASHED_CAM_POSE=-24.72314,4.48565,16.75757,-0.87708,0.09408,0.47105,-0.38027,0.46315,-0.80056,-0.29348,-0.88127,-0.37044
+MASHED_DETERMINISTIC=1
+MASHED_GOTO=6
+MASHED_LIBRW_AMBFOLD_SEA=1
+MASHED_MUTE=1
+MASHED_RACE_DEMO=1
+MASHED_TITLE=sea-tile acceptance pre-fold-s8 0=Arctic
+MASHED_TRACK_SEL=0
+MASHED_VERIFY_OUT=verify/sea_fix_20260930/pre_fold_s8/00_Arctic
+MASHED_WIN_POS=left-bl
