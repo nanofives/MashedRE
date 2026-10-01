@@ -1712,9 +1712,82 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 if (excluded[c.idx] && s_skip_excluded) continue;
                 Prop p;
                 if (load_prop(c.dff, &p, &track_light)) {
-                    D3DMATRIX id;
-                    MatIdentity(&id);
-                    p.instances.push_back(id);
+                    // [SEA-TILE 2026-09-29] Arctic's sea is NOT placed by its DFF
+                    // (SEA.DFF frame[0].pos == (0,0,0), verts Y 0.000..0.904) and NOT
+                    // by COURSE.LUA (no placement command exists in the 68-entry Lua
+                    // binding table). The original places it from a PER-TRACK hook:
+                    //   table 0x005f33f8, stride 0x48 = {char name[0x10]; u32 Course_Id;
+                    //   void* slot[13]}; record "arctic" at 0x005f3488 with Course_Id 0
+                    //   at 0x005f3498 and slot 0 at 0x005f349c = 0x00448940. Selector
+                    //   0x0041e870 (called 0x00426eaf) matches Course_Id into
+                    //   DAT_0063d7e4; thunk 0x0041e8b0 (jmp [rec+0x14]) is invoked at
+                    //   0x0042709f with push 0x646e58 (the course object).
+                    // FUN_00448940, for clump index 2 ([course+0x10118] @ 0x0044899d):
+                    //   0x004489bb  mov [esp+0x4c], 0xc0833333   ; translation.y = -4.1
+                    //   0x00448a47  call 0x004e6ab0 x24          ; clump clone (clones the
+                    //               frame via FUN_004c0870(clump+4)); the tile array
+                    //               0x008963e0..0x00896440 is 1 base + 24 clones
+                    //   0x00448a65  mov [esp+0x10], 0xc3160000   ; X start = -150.0
+                    //   0x00448a80  mov [esp+0x18], 0xc3160000   ; Z start = -150.0
+                    //   0x00448a6f/0x00448a88  mov ebp,5 / mov ebx,5   ; 5x5
+                    //   0x00448aa2  call 0x004c1340(frame,&v,0)  ; RwFrameTranslate --
+                    //               it forwards to RwMatrixTranslate 0x004c51a0 on
+                    //               frame+0x10 (the modelling matrix), combine op 0 =
+                    //               rwCOMBINEREPLACE
+                    //   0x00448aab/0x00448ac1  fadd [0x005cc728]  ; step = +60.0
+                    // => 25 tiles at X,Z in {-150,-90,-30,30,90}, all at Y = -4.1.
+                    // Confirmed live: the original's clump[2] frame carries modelling ==
+                    // LTM == translate(-150,-4.1,-150) -- tile 0 of that grid
+                    // (verify/sea_level_20260929/orig_sea_matrix.json).
+                    // Placed ONCE, at load: a whole-.text sweep for the tile array finds
+                    // only slot 0 (place+clone), slot 2 0x00449030 (render, 0x004e6680
+                    // per tile) and slot 5 0x004490d0 (RpClumpDestroy on the 24 clones,
+                    // from 0x008963e4 -- it skips the base). Neither transforms a frame,
+                    // and the per-frame slot 1 0x00448ef0 bobs DAT_008962e0, a DIFFERENT
+                    // array. So a static instance list is the complete placement model.
+                    // At identity the sheet landed on the road (GRAPH.BSP median Y under
+                    // the start grid = 0.250) and covered 70.39% of the s8 frame.
+                    // re/analysis/SEA_LEVEL_2026-09-29.md
+                    static const bool s_no_sea_tile =
+                        std::getenv("MASHED_NO_SEA_TILE") != nullptr;
+                    if (!s_no_sea_tile && course_id_ == 0 && c.idx == 2) {
+                        for (int ix = 0; ix < 5; ++ix)          // outer loop = X
+                            for (int iz = 0; iz < 5; ++iz) {    // inner loop = Z
+                                D3DMATRIX m;
+                                MatIdentity(&m);
+                                m._41 = -150.f + 60.f * static_cast<float>(ix);
+                                m._42 = -4.1f;
+                                m._43 = -150.f + 60.f * static_cast<float>(iz);
+                                p.instances.push_back(m);
+                            }
+                        // Rule 1 of verify/sea_fix_20260930/PREREG.md is a
+                        // per-instance assertion, so print every instance --
+                        // a count alone cannot show the grid is the original's.
+                        if (log) {
+                            std::fprintf(log,
+                                "  SEA-TILE course_id=%d clump=%d dff=%s "
+                                "instances=%zu grid=5x5 origin=-150 step=60 y=-4.1\n",
+                                course_id_, c.idx, c.dff, p.instances.size());
+                            for (std::size_t si = 0; si < p.instances.size(); ++si)
+                                std::fprintf(log,
+                                    "  SEA-TILE[%02zu] pos=(%.6f, %.6f, %.6f)\n",
+                                    si, p.instances[si]._41,
+                                    p.instances[si]._42, p.instances[si]._43);
+                        }
+                    } else {
+                        D3DMATRIX id;
+                        MatIdentity(&id);
+                        p.instances.push_back(id);
+                        // Rule 1(4): the branch must NOT fire off Arctic. Print
+                        // the negative for clump 2 on every track so "0 sea-tile
+                        // instances" is an observed line, not a missing one
+                        // (memory `absent-log-proves-nothing-run-a-control`).
+                        if (log && c.idx == 2)
+                            std::fprintf(log,
+                                "  SEA-TILE-OFF course_id=%d clump=%d dff=%s "
+                                "instances=1 (identity) sea_tile_instances=0\n",
+                                course_id_, c.idx, c.dff);
+                    }
                     props_.push_back(std::move(p));
                 }
             }
