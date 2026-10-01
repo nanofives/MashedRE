@@ -42,7 +42,10 @@ public:
     // Real powerup placement from POWERUPS_GOLD.LUA: world pos + game type
     // (MASHED ids: MINE=6 MORTAR=7 DETONATOR=8 GUN=9 DRUM=10 MISSILE=11 P_MINE=12
     // R_FLAME=16 SHOTGUN=17 FLASH=18 OIL=19 BLANK=21) + respawn seconds.
-    struct Spawn { float pos[3]; int type; float respawn; };
+    // `atomic` is the POWERUPS_GOLD.DFF atomic index this spawn came from
+    // (-1 from the Lua fallback), carried only so the accept/reject decisions
+    // can be logged per atomic and diffed against the original's.
+    struct Spawn { float pos[3]; int type; float respawn; int atomic = -1; };
 
     bool EnsureTexture(IDirect3DDevice9* dev);
     // Place orbs at a subset of the supplied world positions (e.g. gate centers).
@@ -95,7 +98,15 @@ private:
     std::uint32_t      rng_    = 0x51ed270bu;
     std::vector<PV>    verts_;
     float Frand();
+    // P3 acceptance instrumentation (pickups stage 1). Records this frame's
+    // per-orb screen-space disc from the live D3DTS_VIEW * D3DTS_PROJECTION and
+    // viewport. Inert unless MASHED_DBG_PICKUPDUMP is set; writes no pixels.
+    void RecordProjDump(IDirect3DDevice9* dev, float bob, float s);
 };
+
+// Flush the last recorded pickup projection dump beside a captured frame, as
+// "<bmp_path>.pudump.txt". No-op unless MASHED_DBG_PICKUPDUMP is set.
+void PickupField_WriteProjDump(const char* bmp_path);
 
 }  // namespace D3d9Render
 }  // namespace mashed_re

@@ -160,6 +160,7 @@
 #include "D3d9Render/QuadRenderer.h"
 #include "D3d9Render/TrackRenderer.h"
 #include "D3d9Render/RwIm2DBridge.h"        // B15: RW Im2D -> D3D9 bridge
+#include "D3d9Render/PickupField.h"         // pickup acceptance projection dump
 #include "D3d9Render/PngLoader.h"           // B19a: WIC PNG decode (bg/logo assets)
 #include "D3d9Render/MpegVideoTexture.h"    // F1: frontend.mpg backdrop (DirectShow)
 #include "D3d9Render/TextRenderer.h"        // B19b: GDI text -> BGRA (menu item strings, fallback)
@@ -1465,6 +1466,12 @@ bool RunRaceDemoStep(int /*phase*/) {
         char path[160];
         std::snprintf(path, sizeof(path), "%s", VOut2("race1/%s.bmp", tag));
         NavDemoLog(step, tag, DumpBackbufferBMP(path));
+        // Pickup acceptance (stage 1, rule P3): write the pickup draw's own
+        // screen-space projection for the frame just captured, beside the BMP.
+        // The acceptance mask is built from THESE discs, i.e. from geometry the
+        // renderer projected through the matrices it drew with, never from a
+        // colour class. No-op unless MASHED_DBG_PICKUPDUMP is set.
+        mashed_re::D3d9Render::PickupField_WriteProjDump(path);
         // (GameFlow mode is logged for every capture inside DumpBackbufferBMP, so
         // no per-driver logging is needed here.)
         // WS-E lighting acceptance: log the player heading at capture time so

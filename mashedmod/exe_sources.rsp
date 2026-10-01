@@ -4,6 +4,7 @@
 "Txd\TxdDecoder.cpp"
 "Track\TrackWorld.cpp"
 "Track\DffModel.cpp"
+"Track\PowerupMarkers.cpp"
 "Track\TrackData.cpp"
 "D3d9Render\TrackRenderer.cpp"
 "D3d9Render\RwWorldRender.cpp"

@@ -167,7 +167,7 @@ private:
     void EmitCarFx(int slot, const float pos[3], const float vel[3],
                    float speed, float yaw, float dt);
     PickupField    pickups_;        // in-race power-up orbs
-    std::vector<PickupField::Spawn> powerup_spawns_;  // POWERUPS_GOLD.LUA placement
+    std::vector<PickupField::Spawn> powerup_spawns_;  // POWERUPS_GOLD.DFF markers
 
 public:
     // Enable + place power-up pickups along the gate ribbon (called when a race

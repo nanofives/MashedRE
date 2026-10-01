@@ -70,14 +70,22 @@ def find_child(d, off, end, want):
 
 
 def parse_userdata(d, off, end):
-    """Return {name: [values]} for the USERDATA chunk at `off` (chunk header)."""
+    """Return [(name, dataType, [values]), ...] for the USERDATA chunk at `off`,
+    in STREAM ORDER.
+
+    A list, not a dict, and this is load-bearing: some geometries carry TWO
+    arrays with the SAME name `0.tv_part_id` — array 0 with one element and
+    array 1 with twelve. Keying by name let array 1 clobber array 0 and gave
+    the wrong type for 3 of sands's 25 markers and 14 of rouabout's 25.
+    FUN_004b5190(atomic, 0, 0) reads ARRAY 0, ELEMENT 0, so position is what
+    matters and the name is only a guard."""
     t, sz, _, p = rc(d, off)
     assert t == ID_USERDATA, f"{t:#x} != USERDATA"
     lim = p + sz
     assert lim <= end, "userdata overruns extension"
     n = struct.unpack_from("<i", d, p)[0]
     q = p + 4
-    out = {}
+    out = []
     for _ in range(n):
         ln = struct.unpack_from("<i", d, q)[0]
         q += 4
@@ -100,7 +108,7 @@ def parse_userdata(d, off, end):
                 q += sl
             else:
                 raise AssertionError(f"userdata dataType {dtype}")
-        out[name] = (dtype, vals)
+        out.append((name, dtype, vals))
     assert q <= lim, "userdata element overrun"
     return out
 
@@ -202,23 +210,28 @@ def markers(piz_path):
         loc = frames[fi]["pos"]
         wld = world_pos(frames, fi)
         ud = geos[gi]["ud"]
-        key = None
-        for k in ud:
-            if k.lower().endswith("part_id"):
-                key = k
-                break
+        # ARRAY 0, ELEMENT 0 — exactly FUN_004b5190(atomic, 0, 0). Never a
+        # name lookup: see parse_userdata's docstring for the duplicate-name
+        # trap that a name lookup walks straight into.
         raw = None
-        if key is not None:
-            dtype, vals = ud[key]
-            if dtype == 1 and len(vals) == 1:
-                raw = vals[0] & 0xFFFFFFFF
-            else:
-                warn.append(f"atomic {ai}: {key} dtype={dtype} count={len(vals)}")
+        key = None
+        nel = 0
+        if not ud:
+            warn.append(f"atomic {ai}/geo {gi}: no USERDATA")
         else:
-            warn.append(f"atomic {ai}/geo {gi}: no *part_id userdata "
-                        f"(keys={sorted(ud)})")
+            key, dtype, vals = ud[0]
+            nel = len(vals)
+            if dtype != 1 or nel < 1:
+                warn.append(f"atomic {ai}: array0 {key} dtype={dtype} count={nel}")
+            elif not key.lower().endswith("part_id"):
+                warn.append(f"atomic {ai}: array0 is {key!r}, not a *part_id")
+            else:
+                raw = vals[0] & 0xFFFFFFFF
+            if len(ud) > 1:
+                warn.append(f"atomic {ai}/geo {gi}: {len(ud)} user-data arrays "
+                            f"{[(e[0], len(e[2])) for e in ud]} — array 0 taken")
         rows.append(dict(atomic=ai, frame=fi, geo=gi, local=loc, world=wld,
-                         raw=raw, udkey=key,
+                         raw=raw, udkey=key, nelem=nel,
                          type=(raw & 0xFF) if raw is not None else None,
                          respawn=float(raw >> 8) if raw is not None else None,
                          nverts=geos[gi]["nverts"], ntris=geos[gi]["ntris"]))

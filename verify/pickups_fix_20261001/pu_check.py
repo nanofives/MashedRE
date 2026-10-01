@@ -54,7 +54,8 @@ def load_dump(p):
                 elif k in ("worldR", "bound_r"):
                     out[k] = float(v)
                 elif k in ("orbs", "active"):
-                    out[k] = int(v)
+                    # NOT out["orbs"] � that key holds the per-orb list.
+                    out["n_" + k] = int(v)
         elif t[0] == "ORB":
             d = {"i": int(t[1])}
             for kv in t[2:]:
@@ -127,9 +128,9 @@ def cmd_diff(a):
         if d["vp"] != (W, H):
             print(f"VIEWPORT MISMATCH {nm} dump {d['vp']} vs bmp {W}x{H}")
             return 2
-        if d.get("active") != d.get("orbs"):
-            print(f"COLLECTION OCCURRED in {nm}: active={d.get('active')} "
-                  f"of {d.get('orbs')} — frame not comparable (P3 guard)")
+        if d.get("n_active") != d.get("n_orbs"):
+            print(f"COLLECTION OCCURRED in {nm}: active={d.get('n_active')} "
+                  f"of {d.get('n_orbs')} - frame not comparable (P3 guard)")
             return 2
     ds = discs(dpre, a.dilate) + discs(dpost, a.dilate)
     m = mask_from(ds, W, H)
@@ -141,8 +142,8 @@ def cmd_diff(a):
             else:
                 outside += 1
     area = sum(m)
-    print(f"pre  orbs={dpre.get('orbs')} on-screen={len(discs(dpre,0))}")
-    print(f"post orbs={dpost.get('orbs')} on-screen={len(discs(dpost,0))}")
+    print(f"pre  orbs={dpre.get('n_orbs')} on-screen={len(discs(dpre,0))}")
+    print(f"post orbs={dpost.get('n_orbs')} on-screen={len(discs(dpost,0))}")
     print(f"mask discs={len(ds)} dilate={a.dilate} area={area} px "
           f"({100.0*area/(W*H):.3f}% of frame)")
     print(f"differing pixels: INSIDE mask = {inside}   OUTSIDE mask = {outside}")
@@ -188,7 +189,14 @@ def cmd_xcheck(a):
             continue
         w = o["w"]
         dx = [w[k] - P[k] for k in range(3)]
-        ex = sum(dx[k] * R[k] for k in range(3))
+        # NEGATED right axis: MatViewFromBasis (TrackRenderer.cpp:950-955)
+        # negates it, because RenderWare's camera space and D3D's disagree on
+        # which way right points on screen (the 2026-08-16 mirror fix,
+        # verify/d1_basis/RESULT.md). The basis in MASHED_CAM_POSE is RW's,
+        # straight off the RwCamera frame, so it needs the same treatment.
+        # Omitting this mirrors every x about W/2 and leaves ez and sy exact,
+        # which is precisely the signature the first run of this check showed.
+        ex = -sum(dx[k] * R[k] for k in range(3))
         ey = sum(dx[k] * U[k] for k in range(3))
         ez = sum(dx[k] * A[k] for k in range(3))
         if ez <= 1e-4:

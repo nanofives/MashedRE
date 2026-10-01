@@ -13,6 +13,7 @@
 #include "../Piz/PizReader.h"
 #include "../Track/TrackWorld.h"
 #include "../Track/DffModel.h"
+#include "../Track/PowerupMarkers.h"  // POWERUPS_GOLD.DFF placement (FUN_00426460)
 #include "../Track/LapLogic.h"      // F4 lap-line crossing sequence (shared w/ test)
 #include "../Txd/TxdDecoder.h"
 #include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
@@ -1357,11 +1358,49 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 break;
             }
         }
-        // POWERUPS_GOLD.LUA -> real power-up placement (pos/type/respawn). The
-        // type ids are local consts in the LUA; we read the numeric arg from
-        // Set_Current_Type and resolve via a name->id alias table.
+        // POWER-UP PLACEMENT. The original places from the track piz's
+        // POWERUPS_GOLD.DFF, not from POWERUPS_GOLD.LUA: FUN_004264d0
+        // @0x004264d0 pushes "powerups_gold.dff" (0x005cd4e4) at 0x004265bd,
+        // loads the clump (FUN_0042a5d0, 0x004265c2) and calls the live
+        // placement path FUN_00426460 @0x00426460 at 0x004265d2. The Lua arm
+        // below is the original's FALLBACK (JE 0x004265df, taken only when the
+        // clump is null) and is unreachable on shipping data — all 13 track
+        // pizzes carry the DFF. Keeping it mirrors the original's structure;
+        // it does not run.
+        //
+        // The two files genuinely disagree, which is why this mattered: on
+        // Forest they share ZERO positions, on Arctic and City 4 of 18. Live
+        // reads of the original's pool on TRAINING (5 boxes) and ARCTIC (7)
+        // match the DFF bit-for-bit — see
+        // re/analysis/PICKUPS_LOOK_PLACEMENT_2026-09-29.md and
+        // verify/pickups_fix_20261001/.
         powerup_spawns_.clear();
+        {
+            std::uint32_t pdl = 0;
+            const std::uint8_t* pdb = find_entry("POWERUPS_GOLD.DFF", &pdl);
+            std::vector<mashed_re::Track::PowerupMarker> marks;
+            const char* perr = nullptr;
+            if (pdb && pdl &&
+                mashed_re::Track::ParsePowerupMarkers(pdb, pdl, &marks, &perr)) {
+                for (const auto& m : marks) {
+                    if (!m.has_raw) continue;     // FUN_004b5190 found no user data
+                    PickupField::Spawn s{};
+                    s.pos[0] = m.pos[0];
+                    s.pos[1] = m.pos[1];
+                    s.pos[2] = m.pos[2];
+                    s.type = m.type;
+                    s.respawn = m.respawn;
+                    s.atomic = m.atomic;
+                    powerup_spawns_.push_back(s);
+                }
+            }
+            if (log)
+                std::fprintf(log, "PU-SRC dff=%d bytes=%u markers=%zu err=%s\n",
+                             pdb ? 1 : 0, pdl, marks.size(),
+                             perr ? perr : "-");
+        }
         for (std::uint32_t i = 0; i < piz.count(); ++i) {
+            if (!powerup_spawns_.empty()) break;   // DFF won; Lua arm not taken
             if (_strnicmp(piz.entry(i).name, "POWERUPS", 8) != 0) continue;
             std::uint32_t pl = 0;
             const std::uint8_t* pb = piz.blob(i, &pl);
@@ -4130,19 +4169,19 @@ void TrackRenderer::SeedMatchScores() {
 void TrackRenderer::InitPickups() {
     const float R = track_radius_ > 1.f ? track_radius_ : radius_;
     if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
-        std::fprintf(lf, "R4 pickups: %zu real powerup spawns (POWERUPS_GOLD.LUA)\n",
+        std::fprintf(lf, "R4 pickups: %zu real powerup spawns (POWERUPS_GOLD.DFF)\n",
                      powerup_spawns_.size());
         std::fclose(lf);
     }
-    if (!powerup_spawns_.empty()) {
-        pickups_.InitReal(powerup_spawns_, R);    // REAL POWERUPS_GOLD.LUA placement
-        return;
-    }
-    std::vector<std::array<float, 3>> spots;       // fallback: gate-stride orbs
-    spots.reserve(gates_.size());
-    for (const auto& g : gates_)
-        spots.push_back({g.center[0], g.center[1], g.center[2]});
-    pickups_.Init(spots, R);
+    // No gate-ribbon fallback. The original has no such behaviour: it places
+    // from POWERUPS_GOLD.DFF, falls back to the Lua only when the clump is null
+    // (FUN_004264d0 JE 0x004265df), and otherwise places nothing. The old
+    // "every 8th AI gate gets an orb" path was invented, and it is what put
+    // orbs on Neustein / sands / Storm / SuperG, where the authored boxes sit
+    // somewhere else entirely (Storm measured: 7 gate-centre orbs standalone vs
+    // 7 authored boxes in the original). PickupField::Init() is kept for dev
+    // use but is no longer on the race path.
+    pickups_.InitReal(powerup_spawns_, R);
 }
 
 // [D-11052] arm the per-rule win-condition engine for the race that is about
