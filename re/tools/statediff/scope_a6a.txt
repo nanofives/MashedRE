@@ -1,0 +1,84 @@
+# scope_a6a.txt - which vehicle-record fields A6a 0x00467650 is ALLOWED to move.
+# Consumed by re/tools/statediff/collateral.py --scope. Format: glob<TAB>class,
+# first match wins, unmatched = outside.
+#
+# WRITE SET, extracted mechanically from verify/d2_sink_20261001/a6a_disasm.txt
+# (1243 instructions, 0x00467650..0x00468989, full capstone coverage): every
+# store whose destination is a memory operand based on ESI (the record base,
+# proven by `lea eax,[esi+0x9b0]` at 0x00467660) or on the EDI aliases. 20
+# distinct slots, 22 CALL sites to 7 distinct callees.
+#
+# CALLEES BY RVA (in scope for anything they write):
+#   0x004c3ac0 x9   RwV3dLength (vector arg by pointer; reads only)
+#   0x004a2c48 x7
+#   0x0040e350 x2   0x0040e340 x1   0x004c39b0 x1   0x004c4d20 x1   0x004c3df0 x1
+#
+# EDI ALIASES. `edi+0x00` resolves to TWO different bases inside A6a, so it is
+# listed under both: the velocity alias `lea edi,[esi+0x9b0]` at 0x00468633
+# (stores 0x00468688 / 0x00468833 / 0x004688ca / 0x0046894a) and a per-wheel
+# base for the `edi+0x70/0x74/0x78` stores (0x00467f56..0x00467f70,
+# 0x00468327..0x00468337), which land on record offsets 0x1a4 + w*0xc4 + 0x70
+# (wheel stride and base cited in a8_wheelaxis.py:34).
+
+# --- velocity / angular velocity, written by clamp #6 and by block W1 ---
+msd+0x9b0	writeset
+msd+0x9b4	writeset
+msd+0x9b8	writeset
+msd+0x9bc	writeset
+msd+0x9c0	writeset
+msd+0x9c4	writeset
+# --- the two scalars latched from them (0x00467673, 0x004686cc, 0x00467685) ---
+msd+0x9e4	writeset
+msd+0x9e8	writeset
+# --- integer slots (0x00467978..0x00467a07, 0x00467982..0x0046799a) ---
+msd+0x490	writeset
+msd+0x494	writeset
+# --- 0x00467cb7..0x00467e1f and the 0x00467c8f/0x00467eea flag ---
+msd+0xb14	writeset
+msd+0xb18	writeset
+msd+0xb1c	writeset
+msd+0xb20	writeset
+# --- 0x00467d08..0x00467e44 ---
+msd+0xbf4	writeset
+msd+0xbf8	writeset
+# --- per-wheel edi+0x70/0x74/0x78, w = 0..3 at 0x1a4 + w*0xc4 ---
+msd+0x214	writeset
+msd+0x218	writeset
+msd+0x21c	writeset
+msd+0x2d8	writeset
+msd+0x2dc	writeset
+msd+0x2e0	writeset
+msd+0x39c	writeset
+msd+0x3a0	writeset
+msd+0x3a4	writeset
+msd+0x460	writeset
+msd+0x464	writeset
+msd+0x468	writeset
+
+# --- DOWNSTREAM, chain cited ---
+# world position: the +0x928 matrix block words [0xc..0xe], advanced from the
+# velocity A6a writes (memory msd-world-position-is-the-0x928-matrix-row;
+# scenario_launch.py:187-190).
+msd+0x958	downstream
+msd+0x95c	downstream
+msd+0x960	downstream
+# body forward axis +0x9d4/+0x9dc: the orientation integrated from the angular
+# velocity at +0x9bc..+0x9c4 (scenario_launch.py:189).
+msd+0x9d4	downstream
+msd+0x9d8	downstream
+msd+0x9dc	downstream
+# the rest of the +0x928 orientation matrix, same chain.
+msd+0x928	downstream
+msd+0x92c	downstream
+msd+0x930	downstream
+msd+0x934	downstream
+msd+0x938	downstream
+msd+0x93c	downstream
+msd+0x940	downstream
+msd+0x944	downstream
+msd+0x948	downstream
+msd+0x94c	downstream
+msd+0x950	downstream
+msd+0x954	downstream
+
+# everything else falls through to `outside`.

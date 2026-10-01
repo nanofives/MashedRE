@@ -1,0 +1,14 @@
+# arm A: a6a:verify/d2_sink_20261001/ctl/a6a_dump.log(1629 frames)
+# arm B: a6a:verify/d2_sink_20261001/arm/a6a_dump.log(1627 frames)
+# !! NO NOISE FLOOR supplied. Every field will read as divergent on its first
+#    aligned frame; the first-frame column below is NOT a measurement.
+# aligned frames 1627 [1..1627]   paired fields 205   A-only 0   B-only 0
+
+=== DIVERGENT FIELDS, ranked by first frame past the noise floor (0 of 205 paired) ===
+field                  scope       first      n |      med A      med B    med|A-B|      floor
+----------------------------------------------------------------------------------------------
+
+=== WITHIN THE NOISE FLOOR on every aligned frame: 205 fields ===
+  act.angsp  act.arm  act.av[0]  act.av[1]  act.av[2]  act.bf[0]  act.bf[1]  act.bf[2]  act.clamp  act.gc  act.grip  act.kav  act.kvel  act.l60  act.m18c  act.sp  act.speed  act.susp  act.vel[0]  act.vel[1]  act.vel[2]  f  snap.angsp  snap.av[0] ...
+
+csv -> verify\d2_l60_20261001\collateral_step0_portpair.csv
