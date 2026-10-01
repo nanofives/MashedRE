@@ -1,0 +1,31 @@
+msd frames 2332   site-2 rows 2331
+[G1] n>=1000 PASS   within +/-2% of msd frames PASS  (|2331-2332| = 1, bar 46.6)
+[G2] shift scan (median rel of site2.speed vs msd[k+d-1].s_mid):
+      d=+2  median rel 0.000e+00  n=1443
+      d=+3  median rel 9.896e-03  n=1443
+      d=+1  median rel 9.985e-03  n=1442
+      d=+4  median rel 1.990e-02  n=1443
+      d=+0  median rel 2.030e-02  n=1441
+[G2] best d=+2  0.000e+00   runner-up 9.896e-03   ratio infx   bar <=1e-5 and >=100x   PASS
+[G3] entry vel differs from snapshot vel on 1432 of 1432 live frames (100.0%)  bar >=50%  PASS
+
+[M1] per-component ratio spread  n=1432  median 3.813e-08  p95 7.498e-08  max 1.060e-07   bar median<=1e-5 -> PURE
+
+=== per band (grounded both frames, banded by |msd[f-1].vel|) ===
+band            n |   sigma_o     resid_dir   s24.3_resid    rel |   slip    med_s
+----------------------------------------------------------------------------------
+100-150         45 |  0.999481     -0.0655     -12.9566  0.995 |  0.727    126.2
+150-260         73 |  0.999200     -0.1531      -8.5290  0.982 |  0.478    189.5
+260-500         60 |  0.998422     -0.5826      -4.0489  0.856 |  0.199    371.1
+500-1000       159 |  0.996500     -2.9222      -4.3643  0.330 |  0.080    821.6
+1000-1500      200 |  0.994600     -6.9934      -7.8728  0.112 |  0.083   1280.9
+1500-2000      339 |  0.992359    -13.5587     -19.4471  0.303 |  0.189   1778.7
+
+[M3] known-answer vs section 24.3  bar rel <= 0.25
+      100-150    rel 0.995  n=45  OVER
+      150-260    rel 0.982  n=73  OVER
+      260-500    rel 0.856  n=60  OVER
+      500-1000   rel 0.330  n=159  OVER
+      1000-1500  rel 0.112  n=200  ok
+      1500-2000  rel 0.303  n=339  OVER
+      worst 100-150 0.995  ->  R3 (DISAGREES)
