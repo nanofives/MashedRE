@@ -1,0 +1,80 @@
+ORIGINAL orig_solo3.msd  rec=0xd04  frames=2333
+
+--- G1 instrument: +0xb24 as int ---
+  frame0 +0xb24 = 0   lastframe +0xb24 = 72350
+  nonzero frames = 1447 / 2333 ; max = 72350 ; min = 0
+  G1 = PASS
+
+--- E_orig (control enable) ---
+  E_orig = 891
+    f= 887  h=     0.63689  sp=     0.63690  b24=    100  a1a8=    17.21582
+    f= 888  h=     0.75272  sp=     0.75276  b24=    150  a1a8=    17.35693
+    f= 889  h=     0.86822  sp=     0.86828  b24=    200  a1a8=    17.49805
+    f= 890  h=     0.98338  sp=     0.98338  b24=    250  a1a8=    17.63916
+    f= 891  h=     1.09815  sp=     1.09821  b24=    300  a1a8=    17.78027
+    f= 892  h=     1.21260  sp=     1.21252  b24=    350  a1a8=    17.92139
+    f= 893  h=     1.32663  sp=     1.32656  b24=    400  a1a8=    18.06250
+    f= 894  h=     1.44031  sp=     1.44021  b24=    450  a1a8=    18.20361
+    f= 895  h=     1.55363  sp=     1.55373  b24=    500  a1a8=    18.34473
+
+--- G2: +0xb24 == 0 for every f < E_orig ---
+  first +0xb24 > 0 at frame 886 ; pre-E nonzero frames = 5 [886, 887, 888, 889, 890]
+  |f_b24 - E_orig| = 5
+  G2 = FAIL
+
+--- G3: first +0x1a8 != 0 within 3 of E_orig, and reproduces 884 ---
+  first +0x1a8 != 0 at frame 886, value 17.07471
+  |f_1a8 - E_orig| = 5 ; |f_1a8 - 884| = 2
+  G3 = FAIL
+
+--- ORIGINAL ramp shape (context for MATCH clause 4) ---
+  first value 17.07471 at f=886 ; step f+1 = 0.141113 ; saturation (>=33.8) at f=1005 value 33.86719
+  saturation is the 120-th steering frame
+
+--- X3: does +0xb24 ever reset to 0 after E_orig? ---
+  frames with +0xb24 == 0 after E_orig: 0 []
+
+--- X2: the frame before E_orig ---
+  f=890  h=0.983382  sp=0.983382  +0x1a8=17.639160  +0xb24=250
+
+--- X1: how many record dwords change over frames 0..E_orig-1 ---
+  record dwords = 833 ; dwords that change over 0..890 = 221
+  frames bit-identical to frame 0 in that window: 0 / 890
+
+==============================================================================
+PORT sc1  frames=1627  E_port=1
+    f=   0  in=(0, 0, 0, 0)  sp=  216.6700  horiz=    0.0000
+    f=   1  in=(255, 0, 255, 0)  sp=   13.9700  horiz=   13.3800
+    f=   2  in=(255, 0, 255, 0)  sp=   27.3100  horiz=   26.9800
+    f=   3  in=(255, 0, 255, 0)  sp=   41.5700  horiz=   41.3300
+    f=   4  in=(255, 0, 255, 0)  sp=   56.6600  horiz=   56.4600
+    f=   5  in=(255, 0, 255, 0)  sp=   72.5900  horiz=   72.4100
+    clause1 in[0]!=255 after E: 0 []
+    clause1 in[1]!=0   after E: 0 []
+    clause2 in[2]!=255 after E: 0 []
+    first nonzero in[0] (steer) at f=1 ; first nonzero in[2] (accel) at f=1
+    X2 frame before E: f=0 sp=216.6700 horiz=0.0000 in=(0, 0, 0, 0)
+PORT sc2  frames=1627  E_port=1
+    f=   0  in=(0, 0, 0, 0)  sp=  216.6700  horiz=    0.0000
+    f=   1  in=(255, 0, 255, 0)  sp=   13.9700  horiz=   13.3800
+    f=   2  in=(255, 0, 255, 0)  sp=   27.3100  horiz=   26.9800
+    f=   3  in=(255, 0, 255, 0)  sp=   41.5700  horiz=   41.3300
+    f=   4  in=(255, 0, 255, 0)  sp=   56.6600  horiz=   56.4600
+    f=   5  in=(255, 0, 255, 0)  sp=   72.5900  horiz=   72.4100
+    clause1 in[0]!=255 after E: 0 []
+    clause1 in[1]!=0   after E: 0 []
+    clause2 in[2]!=255 after E: 0 []
+    first nonzero in[0] (steer) at f=1 ; first nonzero in[2] (accel) at f=1
+    X2 frame before E: f=0 sp=216.6700 horiz=0.0000 in=(0, 0, 0, 0)
+PORT sc3  frames=1626  E_port=1
+    f=   0  in=(0, 0, 0, 0)  sp=  216.6700  horiz=    0.0000
+    f=   1  in=(255, 0, 255, 0)  sp=   13.9700  horiz=   13.3800
+    f=   2  in=(255, 0, 255, 0)  sp=   27.3100  horiz=   26.9800
+    f=   3  in=(255, 0, 255, 0)  sp=   41.5700  horiz=   41.3300
+    f=   4  in=(255, 0, 255, 0)  sp=   56.6600  horiz=   56.4600
+    f=   5  in=(255, 0, 255, 0)  sp=   72.5900  horiz=   72.4100
+    clause1 in[0]!=255 after E: 0 []
+    clause1 in[1]!=0   after E: 0 []
+    clause2 in[2]!=255 after E: 0 []
+    first nonzero in[0] (steer) at f=1 ; first nonzero in[2] (accel) at f=1
+    X2 frame before E: f=0 sp=216.6700 horiz=0.0000 in=(0, 0, 0, 0)
