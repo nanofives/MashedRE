@@ -102,10 +102,10 @@
 // so nothing installs it there either.
 //
 // STUBS (recorded in STUBS.md):
-//   S-C  the whole 22-callee body is not executed in the standalone. The grid is
+//   S-5713  the whole 22-callee body is not executed in the standalone. The grid is
 //        the part the standalone needs and it is shared, not duplicated.
 //
-// [UNCERTAIN] the semantics of the course-object fields this body reads are NOT
+// [UNCERTAIN U-9163] the semantics of the course-object fields this body reads are NOT
 // established and are deliberately left as cited offsets:
 //   +0x10004 / +0x10008 / +0x1000c  three counts, each `test eax,eax` + `jle`,
 //                                    so SIGNED and <= 0 skips the loop
@@ -181,7 +181,7 @@ extern "C" __declspec(dllexport) void __cdecl ArcticTrackNodeSlot0(void* course)
     using mashed_re::Render::ArcticSeaTileGrid;
 
 #ifdef MASHED_STANDALONE
-    // DEAD EXPORT in mashed_re.exe. See the header comment: every callee below is
+    // STUB S-5713 -- DEAD EXPORT in mashed_re.exe. See the header comment: every callee below is
     // a MASHED code address that, in this target, is our own .data. Returning
     // here is the guard, not an implementation choice.
     (void)course;

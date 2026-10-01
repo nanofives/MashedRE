@@ -104,7 +104,7 @@
 // original reads rank 1 on the race path (verify/pickups_fix_20261001/
 // RESULT_STAGE1.md P1), so the standalone's arm is the arm the original runs.
 //
-// [UNCERTAIN] The rank-2 arm is NOT covered by any bit-identity evidence and is
+// [UNCERTAIN U-9168] The rank-2 arm is NOT covered by any bit-identity evidence and is
 // not claimed. FUN_00458d00 picks its type with FUN_00472690(0,8) at 0x00458d47
 // — a random draw, so it can never appear in an A/B that demands bit-identity.
 // What drives DAT_0067ea74 to 2 has not been derived either. Recorded as a
@@ -217,7 +217,8 @@ PickupPoolSpawn(const float* pos, std::int32_t type) {
         if (type != 0x15)
             return -1;                                         // 0x00458e8d -> 0x00458e8f
 #ifdef MASHED_STANDALONE
-        // S-B: unreachable here (the standalone reads rank 0; see the header
+        // STUB S-5716 -- FUN_00458d00 (0x00458d00), the rank-2 random replacement
+        // type, is unreachable here: the standalone reads rank 0 (see the header
         // comment). Left as an explicit no-op rather than an invented draw.
 #else
         const std::int32_t picked = reinterpret_cast<PickFn>(0x00458d00u)();
@@ -229,9 +230,12 @@ PickupPoolSpawn(const float* pos, std::int32_t type) {
     }
 
 #ifndef MASHED_STANDALONE
-    // 0x00458eb1 — re-skin from the +0x24 type that was just written, then reset
-    // the object's frame matrix. S-A in the standalone (see the header comment).
-    reinterpret_cast<EntryFn>(0x00458dd0u)(entry);
+    // STUB S-5714 + S-5715 in mashed_re.exe ONLY: this whole block is skipped
+    // there. 0x00458eb1 re-skins the entry from the +0x24 type that was just
+    // written (FUN_00458dd0), then 0x00458ebd resets the object's frame matrix
+    // (FUN_004c15c0). They are a PAIR -- the standalone binds no RenderWare
+    // object to +0x00, so FUN_004c15c0 would dereference 0+4.
+    reinterpret_cast<EntryFn>(0x00458dd0u)(entry);                        // 0x00458eb2
     const std::uint32_t obj = *reinterpret_cast<std::uint32_t*>(entry);   // 0x00458eb7
     reinterpret_cast<FrameFn>(0x004c15c0u)(
         *reinterpret_cast<std::uint32_t*>(obj + 4));                      // 0x00458eb9
