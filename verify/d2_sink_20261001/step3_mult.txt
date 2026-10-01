@@ -1,0 +1,38 @@
+=== every A6a access resolving to frame slot +0x110 (the clamp's) ===
+  0x004676a0  esp_delta  -240  mov dword ptr [esp + 0x20], 0
+  0x004680c4  esp_delta  -244  fld dword ptr [esp + 0x1c]
+  0x004680ca  esp_delta  -244  fstp dword ptr [esp + 0x1c]
+  0x004680e8  esp_delta  -244  fld dword ptr [esp + 0x1c]
+  0x004680f2  esp_delta  -244  fstp dword ptr [esp + 0x1c]
+  0x004684b7  esp_delta  -244  fstp dword ptr [esp + 0x1c]
+  0x004685d0  esp_delta  -240  fdiv dword ptr [esp + 0x20]
+  0x0046874c  esp_delta  -240  fld dword ptr [esp + 0x20]
+  0x004687db  esp_delta  -240  fmul dword ptr [esp + 0x20]
+
+=== the same for frame slot +0x114 (what 0x0046820f actually writes) ===
+  0x004676c1  esp_delta  -240  fstp dword ptr [esp + 0x24]
+  0x0046772f  esp_delta  -240  fld dword ptr [esp + 0x24]
+  0x00467739  esp_delta  -240  fstp dword ptr [esp + 0x24]
+  0x0046778c  esp_delta  -240  fld dword ptr [esp + 0x24]
+  0x004677fa  esp_delta  -240  fld dword ptr [esp + 0x24]
+  0x00467868  esp_delta  -240  fld dword ptr [esp + 0x24]
+  0x004678c7  esp_delta  -240  fld dword ptr [esp + 0x24]
+  0x00467935  esp_delta  -240  fld dword ptr [esp + 0x24]
+  0x004679b5  esp_delta  -240  fstp dword ptr [esp + 0x24]
+  0x00467a4b  esp_delta  -240  fld dword ptr [esp + 0x24]
+  0x00467b1b  esp_delta  -240  fld dword ptr [esp + 0x24]
+  0x00467b30  esp_delta  -240  fstp dword ptr [esp + 0x24]
+  0x00467ca8  esp_delta  -240  fmul dword ptr [esp + 0x24]
+  0x00467f40  esp_delta  -240  fld dword ptr [esp + 0x24]
+  0x0046820f  esp_delta  -244  fst dword ptr [esp + 0x20]
+
+=== running original: RwV3dLength results by RETURN site ===
+   [('00468343', 5696), ('004684c0', 2172), ('004684dc', 2172), ('0046820f', 2164), ('004680fb', 2100), ('00467673', 1424), ('00467685', 1424), ('004685bc', 1424), ('004686a9', 1424)]
+  frames 1424   calls/frame [(0, 883), (4, 541)]
+  band          n | med LAST |v| @0046820f | med +0x9e4 | ratio
+  100-150         45 |                 0.752 |     126.24 | 0.0060
+  150-260         71 |                 0.481 |     193.00 | 0.0025
+  260-500         50 |                 0.145 |     345.73 | 0.0004
+  500-1000        72 |                 0.043 |     755.23 | 0.0001
+  1000-1500       74 |                 0.139 |    1243.57 | 0.0001
+  1500-2000       84 |                 0.249 |    1742.75 | 0.0001
