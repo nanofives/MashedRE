@@ -1,0 +1,22 @@
+a6a_dump frames 1629   friction_diag lines 1629
+
+[KA1-a] join scan, median rel-err of fMag by offset (friction_diag[i+off] vs estimator[i])
+  off -4  n= 1624  median rel-err 8.855e-01
+  off -3  n= 1625  median rel-err 8.847e-01
+  off -2  n= 1626  median rel-err 7.433e-01
+  off -1  n= 1627  median rel-err 9.177e-02
+  off +0  n= 1628  median rel-err 5.339e-07
+  off +1  n= 1628  median rel-err 9.226e-02
+  off +2  n= 1627  median rel-err 7.440e-01
+  off +3  n= 1626  median rel-err 8.852e-01
+  off +4  n= 1625  median rel-err 8.856e-01
+  offset 0 median rel-err = 5.339e-07
+
+[KA1-b..d] offset 0, grounded, fMag>1   n=1628
+  cMag  median rel-err 7.873e-07   p95 2.316e-06   max 4.045e-06
+  fMag  median rel-err 5.339e-07   p95 2.104e-06   max 3.926e-06
+  ld0   median rel-err 8.457e-07   p95 2.093e-06   max 4.793e-06
+  m78   median rel-err 4.085e-07   p95 2.115e-06   max 4.340e-06
+  frac  median abs-err 2.564e-07   p95 4.893e-07   max 6.079e-07
+  |accum| median rel-err 1.375e-08   p95 1.250e-07   max 4.280e-07
+  accum  median cosine  1.000000000   min 1.000000000

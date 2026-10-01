@@ -1,0 +1,2 @@
+ORIGINAL verify/d2_bounce_20260930/orig_fp2.msd   frames 2332   median +0x54 0.0010000000474974513   linTerm 1.66667e-05
+[KA2-orig] n=1446   median |err|/s_prev 1.281e-02   p75 1.514e-02   p95 9.604e-02
