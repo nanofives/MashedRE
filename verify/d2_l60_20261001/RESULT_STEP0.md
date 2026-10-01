@@ -1,5 +1,23 @@
 # D2 attempt 13, STEP 0 — retroactive collateral review of attempt 12
 
+> ## CORRECTION, 2026-10-01, added after step 2 — §0d's `+0x1a8` ROW IS WITHDRAWN
+>
+> The `+0x1a8` steer-angle row below is **an off-regime artefact, not a defect**,
+> and step 2 refuted it: the two sides' steer ramps are **identical** — both start
+> at `17.07471`, step `+0.141113` per frame, and saturate at `33.86719` on their
+> 120th steering frame (`ramp = (min(+0xb24,6000)+6000)/6000`, A4 `0x0047080c..0x0047082f`).
+> The band medians differ only because the port is at median frame **22-112** in
+> those bands while the original is at **1017-1555**: different moments, matched
+> speed. Full refutation and the three further withdrawals it forced:
+> [`RESULT_STEP2.md`](RESULT_STEP2.md).
+>
+> **The rest of this sheet stands** — the tool, the two measured noise floors, the
+> A6a write set, and §0c. The step-0 charter is what contained the damage: the row
+> was recorded as exploratory and nothing was built on it before it was tested.
+> `collateral.py` now prints the median frame index per band and flags off-regime
+> rows, so this class of row cannot be read as a defect again.
+
+
 Read-only. No game was launched, no capture was re-taken, nothing in `original/`
 was touched. Every number below comes from files that already existed at
 `2f2bf51f`.

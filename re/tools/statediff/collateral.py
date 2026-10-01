@@ -300,19 +300,31 @@ def band_meds(arm, fields, spd, bands, min_n):
             for n, d in acc.items()}
 
 
-def band_speeds(arm, spd, bands, ):
-    """{(lo,hi): median |speed|} for the arm, so no row prints without it."""
+def band_speeds(arm, spd, bands):
+    """{(lo,hi): (median |speed|, median FRAME INDEX)} for the arm.
+
+    The frame index is not decoration. Banding on speed silently compares
+    different POINTS IN TIME whenever the two arms traverse a band at different
+    moments -- and anything that ramps in time (a steer ramp, a gear, a warm-up
+    counter) then shows a fake, speed-dependent cross-side defect. Measured
+    2026-10-01: in the 260-500 band the port's median frame was 22 (still on a
+    120-frame steer ramp, angle 19.9 deg) and the original's was 1102
+    (saturated, 33.867 deg). Four separately-reported "defects" were that one
+    artefact. If the two median frames below are far apart, the row is
+    OFF-REGIME and is not a measurement -- filter to a common regime first.
+    """
     acc = {}
-    for row in arm.values():
+    for fi, row in arm.items():
         s = row.get(spd)
         if s is None:
             continue
         s = abs(s)
         for b in bands:
             if b[0] <= s < b[1]:
-                acc.setdefault(b, []).append(s)
+                acc.setdefault(b, []).append((s, fi))
                 break
-    return {b: med(v) for b, v in acc.items()}
+    return {b: (med([x[0] for x in v]), med([x[1] for x in v]))
+            for b, v in acc.items()}
 
 
 def scope_table(path):
@@ -393,9 +405,10 @@ def banded_report(A, B, A2, B2, fields, spd, bands, rules, args, onlyA, onlyB):
           "(%d of %d paired fields exceed their floor in some band) ==="
           % (len(div), len(rows)))
     hdr = ("field                  scope      band          nA   nB | medSpd A"
-           "  medSpd B |        med A        med B   gap/floor")
+           "  medSpd B | medFrm A medFrm B |        med A        med B   gap/floor")
     print(hdr)
     print("-" * len(hdr))
+    offreg = set()
     for worst, name, cls, ent in rows[:args.top]:
         first = True
         for b, na, nb, va, vb, gap, floor, mult in ent:
@@ -405,12 +418,28 @@ def banded_report(A, B, A2, B2, fields, spd, bands, rules, args, onlyA, onlyB):
                 tag = "0-floor" if gap > 0 else "exact"
             else:
                 tag = "%.1fx" % mult
-            print("%-22s %-10s %-11s %4d %4d | %8.1f %9.1f | %12.5g %12.5g %11s"
+            spa, fra = sA.get(b, (float('nan'),) * 2)
+            spb, frb = sB.get(b, (float('nan'),) * 2)
+            # off-regime flag: the two arms sit in this band at very different
+            # times, so the row compares two moments, not two implementations.
+            far = (fra == fra and frb == frb
+                   and abs(fra - frb) > 0.5 * max(fra, frb, 1))
+            if far:
+                offreg.add(b)
+            print("%-22s %-10s %-11s %4d %4d | %8.1f %9.1f | %8.0f %8.0f%s| "
+                  "%12.5g %12.5g %11s"
                   % (name[:22] if first else "", cls if first else "",
-                     "%g-%g" % b, na, nb, sA.get(b, float('nan')),
-                     sB.get(b, float('nan')), va, vb, tag))
+                     "%g-%g" % b, na, nb, spa, spb, fra, frb,
+                     " !! " if far else " ", va, vb, tag))
             first = False
         print("")
+    if offreg:
+        print("!! OFF-REGIME BANDS (median frame indices differ by >50%%): %s"
+              % ", ".join("%g-%g" % b for b in sorted(offreg)))
+        print("   Those rows compare two different MOMENTS at a matched speed, "
+              "not two implementations.")
+        print("   Filter both arms to a common regime before reading any number "
+              "from them.")
     if len(rows) > args.top:
         print("  ... %d more fields (raise --top)" % (len(rows) - args.top))
 
@@ -433,13 +462,16 @@ def banded_report(A, B, A2, B2, fields, spd, bands, rules, args, onlyA, onlyB):
         with open(args.out, "w", newline="") as fh:
             w = _csv.writer(fh)
             w.writerow(["field", "scope", "band_lo", "band_hi", "n_A", "n_B",
-                        "med_speed_A", "med_speed_B", "med_A", "med_B",
+                        "med_speed_A", "med_speed_B", "med_frame_A",
+                        "med_frame_B", "med_A", "med_B",
                         "gap", "noise_floor", "gap_over_floor"])
             for worst, name, cls, ent in rows:
                 for b, na, nb, va, vb, gap, floor, mult in ent:
+                    spa, fra = sA.get(b, (float('nan'),) * 2)
+                    spb, frb = sB.get(b, (float('nan'),) * 2)
                     w.writerow([name, cls, b[0], b[1], na, nb,
-                                "%.6g" % sA.get(b, float('nan')),
-                                "%.6g" % sB.get(b, float('nan')),
+                                "%.6g" % spa, "%.6g" % spb,
+                                "%.6g" % fra, "%.6g" % frb,
                                 "%.9g" % va, "%.9g" % vb, "%.9g" % gap,
                                 "" if floor is None else "%.9g" % floor,
                                 "%.6g" % mult])
