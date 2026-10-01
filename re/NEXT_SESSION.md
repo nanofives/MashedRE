@@ -7,9 +7,47 @@ own pre-registered rule; and a new fidelity defect was banked as measured-inert)
 Branch `race/first-frame-parity`. Nothing is pushed.
 Superseded kickoffs: the attempt-8, attempt-7, attempt-6, attempt-5 and attempt-4 ones, kept below.
 
-## RENDER LANE — two defects fixed 2026-09-30: (a) grey chassis and (d) car brightness. Nothing owed to pick either up.
+## RENDER LANE — three defects fixed 2026-09-30: (a) grey chassis, (b) Arctic sea, (d) car brightness. Nothing owed to pick any up.
 
-Separate lane from the D2 block below; both live on this branch.
+Separate lane from the D2 block below; all three live on this branch.
+
+### (b) Arctic sea at road height — FIX LANDED 2026-09-30 (`a0f3004c`)
+
+**Do not re-derive the diagnosis** — read
+[`re/analysis/SEA_LEVEL_2026-09-29.md`](analysis/SEA_LEVEL_2026-09-29.md) (U4 is now closed
+there) and [`verify/sea_fix_20260930/RESULT.md`](../verify/sea_fix_20260930/RESULT.md) for the
+pre-registered rules (`548ac7ce`) and every number.
+
+The `Clump_Filename` prop loop pushed one **identity** instance per clump, on the assumption
+that a world clump's frame carries its own placement. `SEA.DFF` carries none
+(`frame[0].pos == (0,0,0)`), so Arctic's sea rendered as a single 60×60 m patch at road height
+and covered **77.96%** of the start-grid view. The original places it from a **per-track hook**:
+table `0x005f33f8`, record `"arctic"` at `0x005f3488` / `Course_Id 0` at `0x005f3498`, slot 0 at
+`0x005f349c` = `0x00448940`, which lays 25 tiles 5×5 at 60 m spacing anchored at
+`(−150, −4.1, −150)`. Reproduced at `TrackRenderer.cpp:1715-1790`, scoped to
+`course_id_ == 0 && c.idx == 2` — the original's own scope, so no other track can regress by
+construction. `MASHED_NO_SEA_TILE=1` is the A/B revert.
+
+* **Rules 1, 2a, 2b, 3 PASS.** 25 instances logged at exactly
+  `{−150+60·ix, −4.1, −150+60·iz}`; relative gradient over six fixed road boxes at the committed
+  s8/s14 original poses rises from **0.22–0.49×** the original's to **0.59–0.88×**; tile 0 equals
+  the original's **live-read** `translate(−150, −4.1, −150)` (decoded from raw bytes, 4/4
+  samples); all **12** other tracks **bit-identical** (`0/307 200`, with a passing pre→pre
+  determinism control).
+* **Rule 4 FAILS as written** (509 + 475 + 417 px in three s8 car boxes). **The edit is kept.**
+  All 1 401 changed pixels lie **inside** a geometry-scoped pre-fix sea mask
+  (`MASHED_LIBRW_AMBFOLD_SEA=1`, water-class batches only) — **100.0%, 0 outside** — so those
+  boxes held 13–53% sea and were never "outside the sea region" as the rule assumed. **Zero
+  car-body pixels changed.** Reproduces exactly on a second boot. The rule was not amended.
+  **To make rule 4 a real test next time**, derive the car boxes from the projected silhouette
+  (`orig_carproj.txt` has the geometry) instead of eyeballing them, or subtract the sea mask.
+
+**Open, deliberately not touched:** note items **U1b** (the original renders the tiles from a
+dedicated Arctic pass `0x00449030` whose eight `RwGlobals+0x20` state pairs are `[UNCERTAIN]`,
+so draw order / blend mode vs our generic prop pass is unestablished) and **U2** (the original
+clones 24 clumps and world-registers each at `0x004e45b0`; whether that changes culling is not
+established). Also still true: the `geomlight-waterfold` "Arctic sea FIXED, Δ1.8" verdict
+compared the original's **road** against our **water** over the same mask.
 
 ### (a) grey car chassis — FIX LANDED 2026-09-30 (`5ddc0384`)
 

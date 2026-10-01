@@ -1,13 +1,13 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-01T02:35:00Z",
+  "updatedAt": "2026-10-01T05:10:00Z",
   "sections": [
     {
       "heading": "Roadmap (v3)",
       "fields": [
         {
           "label": "Status",
-          "value": "D0 done | D1 done (residue R1-R3 open) | D2 REOPENED — re-close attempt 9 failed | D3 blocked on D2 | render lane: defects (a) grey chassis and (d) car brightness BOTH FIXED",
+          "value": "D0 done | D1 done (residue R1-R3 open) | D2 REOPENED — re-close attempt 9 failed | D3 blocked on D2 | render lane: defects (a) grey chassis, (b) Arctic sea and (d) car brightness ALL THREE FIXED",
           "kind": "text"
         },
         {
@@ -70,6 +70,52 @@
         {
           "label": "Still open",
           "value": "O3 the duplicate low/high LOD sets are still BOTH drawn | O4 MASHED_RPLIGHT=0 renders the car solid black | O5 props not swept for the same over-draw | [UNCERTAIN] whether the four hulls should feed our collision path the way part codes 0x3b..0x3e feed FUN_0053d400 | U-9079 blocks any verbatim port",
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "heading": "Render lane — Arctic sea at road height, defect (b): FIXED 2026-09-30",
+      "fields": [
+        {
+          "label": "Root cause",
+          "value": "The Clump_Filename prop loop pushed ONE IDENTITY instance per clump, on the assumption that a world clump's frame carries its own placement. SEA.DFF carries none (frame[0].pos == (0,0,0)), so Arctic's sea rendered as a single 60x60 m patch at road height and covered 77.96% of the start-grid view with water where the original has road.",
+          "kind": "text"
+        },
+        {
+          "label": "What the original does (per-track hook, not the asset, not COURSE.LUA)",
+          "value": "Table 0x005f33f8, stride 0x48 = {char name[0x10]; u32 Course_Id; void* slot[13]}; record \"arctic\" at 0x005f3488 with Course_Id 0 at 0x005f3498, slot 0 at 0x005f349c = 0x00448940. FUN_00448940 on course clump[2] ([course+0x10118] @ 0x0044899d): 0x004489bb sets translation.y = -4.1; 0x00448a47 clones 24 (RpClumpClone); 0x00448a65 / 0x00448a80 start X and Z at -150.0; 0x00448a6f / 0x00448a88 are 5x5; 0x00448aa2 is RwFrameTranslate; 0x00448aab / 0x00448ac1 step +60.0. => 25 tiles, X,Z in {-150,-90,-30,30,90}, Y = -4.1.",
+          "kind": "text"
+        },
+        {
+          "label": "Fix",
+          "value": "TrackRenderer.cpp:1715-1790 (commit a0f3004c), scoped to course_id_ == 0 && c.idx == 2 — the original's own Course_Id-keyed scope, so no other track can regress by construction. MASHED_NO_SEA_TILE=1 is the A/B revert. rva-lint allowlisted=122 NEW=0.",
+          "kind": "text"
+        },
+        {
+          "label": "Acceptance (pre-registered at 548ac7ce, before the edit existed)",
+          "value": [
+            "Rule 1 PASS — 25 instances logged at exactly {-150+60ix, -4.1, -150+60iz}, every one listed",
+            "Rule 2a PASS 6/6 — relative gradient over six FIXED road boxes at the committed s8/s14 original poses: 0.22-0.49x the original's -> 0.59-0.88x",
+            "Rule 2b PASS — tile 0 equals the original's LIVE-READ translate(-150, -4.1, -150), decoded from raw bytes, 4/4 samples",
+            "Rule 3 PASS 12/12 — every other track bit-identical at 0/307200, with a passing pre->pre determinism control",
+            "Rule 4 FAIL as written — 509+475+417 px in three s8 car boxes. NOT amended."
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Why rule 4's failure did not revert the fix",
+          "value": "A geometry-scoped sea mask (pre-fix arm re-run with MASHED_LIBRW_AMBFOLD_SEA=1, which re-shades water-class batches ONLY — asset name ANDed with the geometry-flag class) shows all 1401 changed pixels lie INSIDE it: 100.0%, 0 outside. Those boxes held 13-53% sea by area, so they were never \"outside the sea region\" as the rule assumed. ZERO car-body pixels changed. Reproduces exactly on a second boot (509/475/417 both times, and the two post-fix boots are bit-identical whole-frame). Next time: derive car boxes from the projected silhouette (orig_carproj.txt has the geometry) instead of eyeballing them.",
+          "kind": "text"
+        },
+        {
+          "label": "Exe SHA-256",
+          "value": "post-fix 0FF413EA33264B6D9F6F3437E3529AAB03DAC1E0ADFA0B1233DF560D3B223154 | pre-fix HEAD 0166167e 5327511B605A8DE4A580974AF15011DFE7A13C56BB71EDEE1030065A334F71F3",
+          "kind": "text"
+        },
+        {
+          "label": "Still open",
+          "value": "U1b the original renders the 25 tiles from a DEDICATED Arctic pass 0x00449030 whose eight RwGlobals+0x20 state pairs are [UNCERTAIN], so draw order / blend mode vs our generic prop pass is unestablished | U2 the original's per-clone world registration at 0x004e45b0 — effect on culling not established | the geomlight-waterfold \"Arctic sea FIXED, delta 1.8\" verdict compared the original's ROAD against our WATER over the same mask | not a verbatim port of FUN_00448940: no hook, no Frida diff, no hooks.csv row, no C-level",
           "kind": "text"
         }
       ]

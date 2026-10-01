@@ -309,6 +309,33 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
 > **U-9079** — so it carries no `hooks.csv` row and no C-level. Note items O3/O4/O5
 > (duplicate LOD sets both drawn, `MASHED_RPLIGHT=0` renders the car black, props not
 > swept) remain OPEN.
+>
+> **Third render-faithfulness defect closed 2026-09-30 (counts toward R1, does not close it):
+> Arctic sea at road height, defect (b)** — the `Clump_Filename` prop loop pushed one
+> **identity** instance per clump, on the assumption that a world clump's frame carries its own
+> placement. `SEA.DFF` carries none (`frame[0].pos == (0,0,0)`), so Arctic's sea rendered as a
+> single 60×60 m patch at road height, covering **77.96%** of the start-grid view with water
+> where the original has road. The original places it from a **per-track hook**, not from the
+> asset and not from `COURSE.LUA`: table `0x005f33f8` (stride `0x48`), record `"arctic"` at
+> `0x005f3488` with `Course_Id 0` at `0x005f3498`, slot 0 at `0x005f349c` = `0x00448940`, which
+> lays **25 tiles, 5×5 at 60 m spacing, anchored at `(−150, −4.1, −150)`**
+> (`0x004489bb` the −4.1, `0x00448a65`/`0x00448a80` the −150.0 starts, `0x00448a6f`/`0x00448a88`
+> the 5×5, `0x00448aa2` `RwFrameTranslate`, `0x00448aab`/`0x00448ac1` the +60.0 step).
+> Reproduced at `D3d9Render/TrackRenderer.cpp:1715-1790` (`a0f3004c`), scoped to
+> `course_id_ == 0 && c.idx == 2` — the original's own `Course_Id`-keyed scope, so no other track
+> can regress by construction. Pre-registered acceptance `548ac7ce`, results in
+> [`verify/sea_fix_20260930/RESULT.md`](verify/sea_fix_20260930/RESULT.md): rules 1/2a/2b/3
+> **PASS** (25 instances at exactly the original's grid; relative gradient over six fixed road
+> boxes 0.22–0.49× → 0.59–0.88× the original's at the committed s8/s14 poses; tile 0 equal to the
+> original's live-read `translate(−150, −4.1, −150)`; all 12 other tracks bit-identical at
+> `0/307 200` with a passing determinism control). **Rule 4 fails as written** on three s8 car
+> boxes and the **edit is kept**: all 1 401 changed pixels lie inside a geometry-scoped pre-fix
+> sea mask (100.0%, 0 outside), so the boxes held 13–53% sea and were never "outside the sea
+> region"; zero car-body pixels changed. Like (a) and (d) this is a **measured equivalent** of the
+> original's placement, **not a verbatim port** of `FUN_00448940` — no hook, no Frida diff — so it
+> carries no `hooks.csv` row and no C-level. **U1b** (the dedicated Arctic sea pass `0x00449030`
+> and its eight `RwGlobals+0x20` state pairs, hence draw order / blend mode) and **U2** (the
+> original's per-clone world registration at `0x004e45b0`) remain OPEN.
 
 Invert `MASHED_RENDER_LIBRW`. librw becomes the shipping path; the hand-written D3D9
 renderer becomes the fallback, then goes away.
