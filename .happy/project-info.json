@@ -1,7 +1,45 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-01T06:30:00Z",
+  "updatedAt": "2026-10-01T15:40:00Z",
   "sections": [
+    {
+      "heading": "Verification lane — a9da810a (free-fly camera removal + window title), 2026-10-01",
+      "fields": [
+        {
+          "label": "Verdict",
+          "value": "PASS, no defect — T1/T2/T3/T4/T5/T6 all pass in a built exe",
+          "kind": "text"
+        },
+        {
+          "label": "Exe under test",
+          "value": "SHA-256 9FF13F27…D986E5F9 (rebuilt: the on-disk exe predated the last mashedmod/src commit)",
+          "kind": "text"
+        },
+        {
+          "label": "UNMEASURABLE (reported, not worked around)",
+          "value": [
+            "race (paused) title state — only writer is an Esc rising edge, skipped under g_race_demo/g_det_clock",
+            "real key delivery — all keyboard reads go through DirectInput GetDeviceState, which PostMessage cannot write"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Standing gotcha this lane paid for",
+          "value": "Do NOT test standalone input with PostMessage — it is a null input channel and yields a GREEN that passes a broken build. T5 rests on a static argument instead (ci.dt is the only CamInput write, so free_ is unreachable).",
+          "kind": "text"
+        },
+        {
+          "label": "Promotions",
+          "value": "None — a9da810a is standalone glue with no original RVA",
+          "kind": "text"
+        },
+        {
+          "label": "Commits",
+          "value": "3e8ee34c (pre-registration, before any run) | 91bc05c4 (evidence + results)",
+          "kind": "text"
+        }
+      ]
+    },
     {
       "heading": "Roadmap (v3) — default-build fidelity",
       "fields": [
