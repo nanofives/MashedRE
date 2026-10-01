@@ -83,7 +83,7 @@ def main():
     # Directional selector on purpose: monitor NUMBERS disagree between Windows
     # Display Settings, EnumDisplayMonitors and Screen.AllScreens on this machine.
     # Caller can override by exporting MASHED_WIN_POS.
-    env.setdefault("MASHED_WIN_POS", "left-bl")
+    env.setdefault("MASHED_WIN_POS", "primary-bl")
     enter_at = None
     keys = []
     for kv in sys.argv[3:]:

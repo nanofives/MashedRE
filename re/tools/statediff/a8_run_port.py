@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[3]
 EXE = ROOT / "mashedmod" / "build" / "mashed_re.exe"
 RECIPE = dict(MASHED_REAL_PHYSICS="1", MASHED_RACE_DEMO="1", MASHED_PLAY_DEMO="1",
               MASHED_GOTO="6", MASHED_TRACK_SEL="0", MASHED_CAR_SEL="0",
-              MASHED_DRIVE_HOLD="1", MASHED_WIN_POS="left-bl", MASHED_MOTION_DIAG="1",
+              MASHED_DRIVE_HOLD="1", MASHED_WIN_POS="primary-bl", MASHED_MOTION_DIAG="1",
               MASHED_STEER_HOLD="1", MASHED_STEER_HOLD_AFTER="4", MASHED_MUTE="1")
 
 def main():

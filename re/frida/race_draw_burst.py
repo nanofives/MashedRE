@@ -263,7 +263,7 @@ def main():
     # Directional selector on purpose: monitor NUMBERS disagree between Windows
     # Display Settings, EnumDisplayMonitors and Screen.AllScreens on this machine.
     # Caller can override by exporting MASHED_WIN_POS.
-    env.setdefault("MASHED_WIN_POS", "left-bl")
+    env.setdefault("MASHED_WIN_POS", "primary-bl")
     env["MASHED_RE_NO_AUTO_HOOK"] = "1"
     env["MASHED_ORIG_BBDUMP_REQ"] = str(req)   # arms the shim's draw counters + dump
 

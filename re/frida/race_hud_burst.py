@@ -582,7 +582,7 @@ def main():
     env = dict(os.environ)
     env["MASHED_RE_NO_AUTO_HOOK"] = "1"       # stock original, no .asi
     env["MASHED_FPS_CAP"] = "60"
-    env.setdefault("MASHED_WIN_POS", "left-bl")  # memory: game-window-on-left-monitor
+    env.setdefault("MASHED_WIN_POS", "primary-bl")  # memory: game-window-on-main-monitor
 
     bb_out = bb_req = None
     if args.bbdump:

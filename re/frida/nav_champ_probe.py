@@ -89,7 +89,7 @@ def boot(env_extra=None):
     if canon.exists():
         shutil.copy2(str(canon), str(ORIG / "videocfg.bin"))
     env = dict(os.environ)
-    env.setdefault("MASHED_WIN_POS", "left-bl")
+    env.setdefault("MASHED_WIN_POS", "primary-bl")
     env["MASHED_RE_NO_AUTO_HOOK"] = "1"
     if env_extra:
         env.update(env_extra)

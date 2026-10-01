@@ -1477,7 +1477,7 @@ summary; do not re-derive either.
 `re/tools/ai_ctrl_window.py --check <csv>` on a fresh standalone capture:
 
 ```
-py -3.12 re/tools/sa_capture.py verify/<tag> 8,30,60 MASHED_MUTE=1     MASHED_TRACK_VIEW=Training MASHED_CAR=1 MASHED_ROUND=1 MASHED_WIN_POS=left-bl     MASHED_TITLE="D3 AI (b) <what>" MASHED_AI_STEPDUMP=verify/<tag>.csv
+py -3.12 re/tools/sa_capture.py verify/<tag> 8,30,60 MASHED_MUTE=1     MASHED_TRACK_VIEW=Training MASHED_CAR=1 MASHED_ROUND=1 MASHED_WIN_POS=primary-bl     MASHED_TITLE="D3 AI (b) <what>" MASHED_AI_STEPDUMP=verify/<tag>.csv
 py -3.12 re/tools/ai_ctrl_window.py --check verify/<tag>.csv
 py -3.12 re/tools/ai_speed_env.py   --check verify/<tag>.csv   # (e) must stay PASS
 ```

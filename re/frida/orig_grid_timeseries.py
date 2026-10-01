@@ -99,7 +99,7 @@ def main():
         sys.exit(f"original MASHED.exe not found at {EXE}")
 
     env = dict(os.environ)
-    env.setdefault("MASHED_WIN_POS", "left-bl")
+    env.setdefault("MASHED_WIN_POS", "primary-bl")
     env["MASHED_RE_NO_AUTO_HOOK"] = "1"
 
     dev = frida.get_local_device()

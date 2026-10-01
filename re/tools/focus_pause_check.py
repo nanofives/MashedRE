@@ -52,7 +52,7 @@ def arm(label, boot=12, observe=15):
         LOG.unlink()
     env = dict(os.environ)
     env["MASHED_FPS_LOG"] = "1"
-    env["MASHED_WIN_POS"] = "left-bl"
+    env["MASHED_WIN_POS"] = "primary-bl"
     print(f"\n--- ARM {label}")
     proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
     print(f"    pid {proc.pid}, booting {boot}s")

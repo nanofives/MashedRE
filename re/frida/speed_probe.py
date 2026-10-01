@@ -112,7 +112,7 @@ def run(speed, hold, fps_cap, maxpress=26):
     env["MASHED_QOL_LOG"] = "1"
     env["MASHED_FPS_LOG"] = "1"
     env["MASHED_DECOUPLE"] = "1"
-    env["MASHED_WIN_POS"] = "left-bl"
+    env["MASHED_WIN_POS"] = "primary-bl"
     env["MASHED_FPS_CAP"] = str(fps_cap)
     env["MASHED_FPS_CAP_RACE"] = str(fps_cap)
     if speed is not None:

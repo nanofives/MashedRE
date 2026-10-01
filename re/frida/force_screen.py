@@ -230,7 +230,7 @@ def main():
 
     env = dict(**__import__("os").environ)
     env["MASHED_ORIG_BBDUMP_REQ"] = str(REQ_FILE)
-    env["MASHED_WIN_POS"] = "left-bl"
+    env["MASHED_WIN_POS"] = "primary-bl"
     env["MASHED_RE_NO_AUTO_HOOK"] = "1"
     if args.speed:
         # MASHED_SPEED only works with the qol asi AND with the dev hooks off --

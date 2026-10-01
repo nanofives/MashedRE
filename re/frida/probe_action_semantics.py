@@ -192,7 +192,7 @@ def main():
 
     env = dict(os.environ)
     env["MASHED_ORIG_BBDUMP_REQ"] = str(REQ_FILE)
-    env["MASHED_WIN_POS"] = "left-bl"      # memory: directional selector, not monitor number
+    env["MASHED_WIN_POS"] = "primary-bl"      # memory: directional selector, not monitor number
     env["MASHED_RE_NO_AUTO_HOOK"] = "1"    # stock behaviour only, no port hooks
 
     REQ_FILE.parent.mkdir(parents=True, exist_ok=True)

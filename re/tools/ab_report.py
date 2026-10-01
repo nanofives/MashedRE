@@ -61,7 +61,7 @@ CAPTURE_ENV = {
     "MASHED_GOTO": "6",
     "MASHED_DRIVE_HOLD": "1",
     "MASHED_DRIVE_DEMO": "1",
-    "MASHED_WIN_POS": "left-bl",
+    "MASHED_WIN_POS": "primary-bl",
 }
 
 EXE = REPO / "mashedmod" / "build" / "mashed_re.exe"

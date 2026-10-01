@@ -278,7 +278,7 @@ def main():
     # Directional selector on purpose: monitor NUMBERS disagree between Windows
     # Display Settings, EnumDisplayMonitors and Screen.AllScreens on this machine.
     # Caller can override by exporting MASHED_WIN_POS.
-    env.setdefault("MASHED_WIN_POS", "left-bl")
+    env.setdefault("MASHED_WIN_POS", "primary-bl")
     # --hooks (2026-10-01, retrofit lane): by DEFAULT this probe runs the stock
     # original with every hook off, which is what a reference read needs. Passing
     # --hooks <list> flips it into an ARM-ON run: the named hooks (and only those)

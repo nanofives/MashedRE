@@ -90,7 +90,7 @@ def dump_live(out_path, settle, slot=0):
     file never being read.
     """
     env = dict(os.environ)
-    env["MASHED_WIN_POS"] = "left-bl"
+    env["MASHED_WIN_POS"] = "primary-bl"
     env["MASHED_RE_NO_AUTO_HOOK"] = "1"
     dev = frida.get_local_device()
     pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
@@ -141,7 +141,7 @@ def run(cfg_path, key, control_key, settle, dwell, keep, slot=0):
     file_bytes = installed.read_bytes()
 
     env = dict(os.environ)
-    env["MASHED_WIN_POS"] = "left-bl"
+    env["MASHED_WIN_POS"] = "primary-bl"
     env["MASHED_RE_NO_AUTO_HOOK"] = "1"
 
     dev = frida.get_local_device()

@@ -69,7 +69,7 @@ def main():
     dev = frida.get_local_device()
     env = dict(os.environ)
     env["MASHED_RE_NO_AUTO_HOOK"] = "1"        # stock behaviour, no .asi hooks
-    env["MASHED_WIN_POS"] = "left-bl"
+    env["MASHED_WIN_POS"] = "primary-bl"
     pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
     print(f"spawned pid {pid}")
     sess = dev.attach(pid)

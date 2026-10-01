@@ -211,7 +211,7 @@ def main():
 
     env = dict(os.environ)
     env['MASHED_RE_NO_AUTO_HOOK'] = '1'      # stock binary; we only observe
-    env.setdefault('MASHED_WIN_POS', 'left-bl')
+    env.setdefault('MASHED_WIN_POS', 'primary-bl')
 
     lock = MashedLock('probe_save_globals')
     lock.acquire()

@@ -270,7 +270,7 @@ def main():
 
     env = dict(os.environ)
     env.setdefault("MASHED_RE_NO_AUTO_HOOK", "1")   # stock original, none of our hooks
-    env.setdefault("MASHED_WIN_POS", "left-bl")
+    env.setdefault("MASHED_WIN_POS", "primary-bl")
 
     dev = frida.get_local_device()
     pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
