@@ -1,11 +1,147 @@
 # Next session kickoff
 
-Updated 2026-10-01 at the close of the **D2 re-close attempt 10** session (the between-contact
-speed budget: decomposed completely, four more routes closed, two registered safety thresholds
-failed on the port, and **no fix authored** because the surviving term is one §21.5 already
-proved byte-faithful). Branch `race/first-frame-parity`. Nothing is pushed.
-Superseded kickoffs: the attempt-9, attempt-8, attempt-7, attempt-6, attempt-5 and attempt-4
-ones, kept below, plus the retrofit and render lane blocks.
+Updated 2026-10-01 at the close of the **D2 re-close attempt 11** session: the ORIGINAL's force
+accumulator is now **measured** and it is **not** the carrier; §23's `T_rest` is **88–96% a
+velocity change OUTSIDE A6a**; the port's whole share of it is **A5's Phase-4 drag at
+`0x0046ddb0`**; and a **further sub-500 sink on the original** is now the live target.
+**No fix authored** — two registered thresholds failed on the original and both refusal branches
+fired. Branch `race/first-frame-parity`. Nothing is pushed.
+Superseded kickoffs: the attempt-10, attempt-9, attempt-8, attempt-7, attempt-6, attempt-5 and
+attempt-4 ones, kept below, plus the retrofit and render lane blocks.
+
+> ## START HERE (D2 lane) — attempt 11. D2 is STILL REOPENED. **FOURTEEN routes are now CLOSED.** The target has MOVED OUT of A6a: stop looking inside it.
+>
+> Read [`re/analysis/D2_REOPEN_2026-09-29.md`](analysis/D2_REOPEN_2026-09-29.md) **§24**
+> (§24.6 first, then §24.3 and §24.4) and
+> [`verify/d2_accum_20261001/RESULT.md`](../verify/d2_accum_20261001/RESULT.md) for every number.
+> **Do not re-derive any of it.** Pre-registrations: `verify/d2_accum_20261001/PREREG.md`
+> (`51531edf`) and `PREREG_C.md` (`5667dbc2`), neither amended.
+>
+> **The §3 bounds are unchanged and are not renegotiable.** `slip 1500-2000`
+> **0.18855 .. 0.19635**, `slip 2000-2600` **0.24488 .. 0.25487**, `driving-median`
+> **1904.70 .. 1982.44**. Arm: §16.7 (`MASHED_STEER_HOLD_AFTER=0`), `MASHED_MEASURE_SOLO=1`,
+> `MASHED_TRACK_SEL=12`. Scored 3 of 3 at `37220f4d`, no source changed, identical to every digit:
+> slip 1500-2000 **0.2033** (n=20, median speed 1676.53) **FAIL**; slip 2000-2600 **UNSCORABLE**
+> (n=0); driving-median **1355.66** (n=54) **FAIL** −30.2%. `participants=1` confirmed,
+> `allowlisted=122 NEW=0`.
+>
+> ### THE FINDING, and it relocates the whole lane
+>
+> `a11_accum.py` replays A6a's block #5 + the blend + W1 **from the render-tick snapshot alone**
+> (no hook, no probe, no source change) and reproduces `friction_diag.log`'s verbatim `accum`
+> with **cosine 1.000000000 on 1628/1628** frames. So `accum` is measured on **both** sides —
+> and it **AGREES** (`T_accum` ORIG **−1.3468** vs PORT **−1.3396** at 1500-2000, n=339/20).
+> It is **−0.59 .. −1.35** where `T_rest` is **−4.8 .. −20.4**: too small by 4x–15x.
+>
+> With `accum` known, `T_rest` splits **exactly** (identity residual **1.776e-14**, `curv < 0` on
+> **0 of 3074** as convexity requires):
+>
+> ```
+> T_rest == T_accum + curv + resid
+>   T_accum = linTerm*(accum.u)      curv = |v+w| - |v| - w.u >= 0,  w = linTerm*(ctrl+accum)
+>   resid   = s_mid - |v_post(f-1) + w|        <-- 88-96% of T_rest on the ORIGINAL, every band
+> ```
+>
+> **`resid` is OUTSIDE A6a, proven.** Rebasing on the port's `act.vel` channel (A6a's own entry
+> velocity, `Integrate2.cpp:235-239`) gives **`residA` = −0.0000 / −0.0001 in EVERY band**. W1 +
+> `accum` + curvature exhaust A6a's contribution. It is a **pure scalar multiply** of the velocity
+> (per-component ratio spread **3.8e-08** median / **1.0e-07** max on 1628/1628, `dvPerp` exactly
+> **0.0000**, `dvy ≈ 0` so not gravity), **not** clamp #6's `kVel` (`σ/kVel` 1.057..7.042), and
+> **quadratic in speed** (`(1−σ)s/s²` = **4.1e-6 .. 4.8e-6** over a 20x range).
+>
+> | band | ORIG `resid` | PORT `resid` | ORIG/PORT |
+> |---|---:|---:|---:|
+> | 70-100 | −7.8859 | −0.0328 | **240x** |
+> | 150-260 | −8.5290 | −0.1706 | **50x** |
+> | 1000-1500 | −7.8728 | −6.6963 | **1.18x** |
+> | 1500-2000 | −19.4471 | −11.6064 | **1.68x** |
+>
+> ### Sub-lane C: the writer is NAMED on the port and REFUTED as the whole story on the original
+>
+> **C1 = A5 `VehicleWheelForceIntegrate` `0x0046ddb0` Phase 4** (`ForceIntegrator.cpp:86-90` +
+> `:164-168`; A5 at `VehicleControl.cpp:207`, A6a at `:215`; gravity add exactly zero so the change
+> stays collinear). The only other in-window candidate, `Integrate2.cpp:215-216`, is gated on
+> `Ri(v,0x1f0)` and speed-**independent**, so it cannot make a `v²` law.
+>
+> | gate | bar | result |
+> |---|---|---|
+> | KA4 σ(resid) vs σ(act.vel) | med ≤ 1e-5 | **7.125e-06** PASS |
+> | **T1** port `l70G` constant | max/min ≤ 2.0 | **1.053** PASS |
+> | **T2** orig `local_70` ∈ [0,2] | — | **1.000 .. 182.5** FAIL |
+> | **T3** orig `local_70` constant | max/min ≤ 2.0 | **182.4** FAIL |
+>
+> `l70G = (1−σ)/(linTerm·s_mid_prev)`, `G = f(0x150)·f(0x154)·f(0x158)`, `local_70 = l70G/G`.
+> The back-out is falsifiable because `local_70`'s construction (`:93-161`) has **no speed term**
+> and cannot leave `[0,2]`. The original's `G` is **exactly constant** at
+> `0.15 × 1.5 × 1.29 = 0.29025` on **1446/1446** steps.
+>
+> - **T1 confirms C1 is the PORT's entire pre-A6a sink** (constant to 5.3% over 20x in speed).
+> - **Above ~1000 the ORIGINAL obeys C1 too, with `local_70` = 1.000 exactly** (n=200), and the
+>   cross-side `l70G` ratio is **0.85** / **0.66** — **inside** the registered [0.5, 2.0], so
+>   **not** a divergence.
+> - **Below ~500 the original has a FURTHER sink C1 cannot produce** (would need `local_70` up to
+>   **182.5**) **and the port has none of it.** `local_70` goes 1.000 → 1.288 → 1.560 → 5.95 →
+>   54.2 → **182.5** as speed falls.
+>
+> **[U-9170, filed]** speed-coupled or slip-coupled is **UNDECIDED**: every original sample below
+> 500 in `orig_fp2.msd` is its single post-bounce pass (§21.5 — below 100 horizontal once per race,
+> 6–8 frames of 6658), so "low speed" and "heavily sideways" are the **same frames**.
+>
+> ### NEXT COMMANDS, three, in this order
+>
+> 1. **Log the port's `G`** — record bytes `0x150/0x154/0x158` — plus A5's actual `fVar4` and
+>    `local_70`, as one default-OFF diagnostic line. Splits `l70G`'s 0.85 at 1000-1500 into `G` and
+>    `local_70`, and is a known-answer check on T1's back-out. One source change, one port run,
+>    **no original run.** Cheapest real step available.
+> 2. **Entry hook on `0x00467650`** snapshotting `+0x9b0..0x9b8` before any write, so the
+>    original's `σ` stops being a back-out (§21.9's `RwV3dLength`-argument technique; entry-only,
+>    one function, short run — memory `frida-interceptor-is-entry-only`). Also decides whether the
+>    original's pre-A6a change is a **pure** scalar, which the `.msd` cannot answer.
+> 3. **Resolve U-9170, then name the sub-500 sink by RVA.** It is not A6a (`residA → 0.0000`), not
+>    `0x0046ef70`'s impulse (`resid < 0` on **1446 of 1446** steps against 23 fixup frames), and
+>    not C1 alone. If it turns out slip-coupled it is the loop §21.10 measured out; if
+>    speed-coupled it is a new independent term.
+>
+> ### FOURTEEN routes closed by measurement. §23.4's ten, plus these four from §24.6:
+> 11. **`accum` as the diverging input** — agrees 0.99x at 1500-2000 (n=339/20), 4x–15x too small.
+> 12. **`frac`, `l_d0`, `m78`, `cMag`, the tangential force `Sf − Sc`** — all reconstructed exactly;
+>     none can matter because the term they feed is too small.
+> 13. **The whole of A6a as the home of `T_rest`** — `residA → 0.0000`.
+> 14. **C1 as a cross-side divergence AT SPEED** — `l70G` ratio 0.85 / 0.66, inside [0.5, 2.0].
+>
+> ### A load-bearing reading is CORRECTED, not just added to
+> §22.2's **"A6a is the only writer of `+0x9b0` on a non-contact frame"** is true **of the
+> function** but was used for three attempts as a claim about the **snapshot phase gap**, which it
+> is not. `residA → 0.0000` separates the two. **Any budget built across a snapshot gap must
+> measure the gap, not the function.**
+>
+> ### Instrument lessons worth carrying
+> **A global median can pass a gate that every band fails.** KA2 passed on the port at `1.278e-04`
+> while S5 failed there by 4x–7x per band — the port's whole-window median horizontal speed is
+> **26.33**, so a whole-run median describes the trap and says nothing about the 20 frames at
+> 1500-2000. Band-resolve every gate whose subject is speed-dependent.
+> **A verified-exact estimator is worth more as a subtraction than as a measurement** — S1 named
+> nothing alone; its value was making `T_rest = T_accum + curv + resid` exact.
+> **Convexity is a free witness** — `|v+w| ≥ |v| + w·u` proved an unmodelled term existed before
+> any mechanism was proposed.
+>
+> ### Tooling (all read-only, none executes a game)
+> - `re/tools/statediff/a11_accum.py` — the registered estimator (`selftest` / `w1` / `orig` /
+>   `compare`).
+> - `re/tools/statediff/a11_resid.py` — the exact `T_accum + curv + resid` split, the `act.vel`
+>   rebase, and the axis decomposition.
+> - `re/tools/statediff/a11_drag.py` — the C1 back-out and its gates.
+>
+> Artefacts: `verify/d2_accum_20261001/` (`PREREG.md`, `PREREG_C.md`, `RESULT.md`,
+> `s1_selftest.txt`, `s2s3_port.txt`, `s3_orig.txt`, `diag_compare.txt`, `diag_resid.txt`,
+> `diag_scale.txt`, `c1_drag.txt`, `scored.txt`, `sc1/`–`sc3/`). Inputs unchanged and not re-run:
+> `verify/d2_gain_20261001/p1/`, `verify/d2_bounce_20260930/orig_fp2.msd`.
+>
+> **The D3 modes 3/7 hold stands. D2 must close before it starts.**
+
+---
+
+## SUPERSEDED — attempt 10's kickoff (kept for its numbers; §24 supersedes its NEXT COMMAND)
 
 > ## START HERE (D2 lane) — D2 is STILL REOPENED. **TEN routes are now CLOSED by measurement.** Do not start inside A6a, inside `0x0046ef70`, or inside grip-clamp #6.
 >

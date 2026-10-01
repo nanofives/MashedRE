@@ -1,249 +1,102 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-01T19:05:00Z",
+  "updatedAt": "2026-10-01T16:40:00Z",
   "sections": [
     {
-      "heading": "D2 re-close (attempt 10, 2026-10-01) — the between-contact speed budget",
+      "heading": "D2 re-close (attempt 11, 2026-10-01) — the force accumulator",
       "fields": [
         {
           "label": "Verdict",
-          "value": "STILL REOPENED, FAIL, and NO fix authored — branch 5 of the pre-registered rule is a refusal branch",
+          "value": "STILL REOPENED, FAIL, NO fix authored — S3+S5 failed on the original and both refusal branches fired. Nothing amended.",
           "kind": "text"
         },
         {
-          "label": "Scored 3 of 3 (no-change control: this lane changed no source)",
+          "label": "The finding",
+          "value": "accum is MEASURED on both sides and AGREES (0.99x at 1500-2000). Section 23's T_rest is 88-96% a velocity change OUTSIDE A6a — proven by residA -> 0.0000 on the port's act.vel channel.",
+          "kind": "text"
+        },
+        {
+          "label": "Writer named on the port",
+          "value": "A5 Phase-4 drag, RVA 0x0046ddb0 (ForceIntegrator.cpp:164-168). Pure scalar multiply, quadratic in speed, l70G constant to 1.053 over 8 bands and a 20x speed range.",
+          "kind": "text"
+        },
+        {
+          "label": "The new target",
+          "value": "A further pre-A6a sink on the ORIGINAL below ~500 speed that C1 cannot produce (needs local_70 up to 182.5 against a legal [0,2]) and the port lacks entirely. ORIG/PORT resid 240x at 70-100, 1.18x at 1000-1500.",
+          "kind": "text"
+        },
+        {
+          "label": "Scored 3 of 3 (no-change control, HEAD 37220f4d)",
           "value": [
-            "slip 1500-2000  0.2033  n=20  median speed 1683.53  (band 0.18855..0.19635)  FAIL +3.4%",
-            "slip 2000-2600  —      n=0                          (band 0.24488..0.25487)  UNSCORABLE",
-            "driving-median  1355.66 n=54  median speed 1355.66  (band 1904.70..1982.44)  FAIL -30.2%",
-            "whole-window median horiz speed 26.33, grounded 1080/1080, rva-lint allowlisted=122 NEW=0"
+            "slip 1500-2000  0.2033  n=20  median speed 1676.53  (band 0.18855..0.19635)  FAIL +3.5%",
+            "slip 2000-2600  —       n=0                         (band 0.24488..0.25487)  UNSCORABLE",
+            "driving-median  1355.66 n=54  median speed 1355.66  (band 1904.70..1982.44)  FAIL -30.2%"
           ],
           "kind": "list"
         },
         {
-          "label": "The diverging term",
-          "value": "T_clamp = grip-clamp #6 (0x004687f0..0x0046897b, Integrate2.cpp:727/:736). median(+0x9e4 / |+0x9b0..b8|) = 0.999998 ORIGINAL (n=1447) against 1.172734 PORT (n=1628) — the port loses a median 14.7% of its speed per frame to the clamp where the original loses 0.0002%; by band 70-100 it is +0.003% against -15.782%. Detector-free and contamination-proof (fixups touch <=13% of port frames).",
-          "kind": "text"
-        },
-        {
-          "label": "Why no fix",
-          "value": "Section 21.5 already proved that code byte-faithful, so this is the SAME loop 21.2/21.5/21.10 closed, in its most direct channel yet — not a new term. Two registered safety thresholds also failed on the port (S1 91.3% vs >=99%, S6 1324 detected contact frames vs 212 actual fixups), so the gap-aligned table is VOID and is not reported as a verdict.",
-          "kind": "text"
-        },
-        {
-          "label": "FOUR routes newly CLOSED (ten total)",
+          "label": "Gates",
           "value": [
-            "the drive/control force +0xb14/+0xb18/+0xb1c — T_drive ratio 0.899..1.055 on six of seven matched-speed bands (the measurement section 20.10's withdrawn reading did NOT cover)",
-            "a hidden vertical control force — +0xb18 exactly 0.0 on 2332/2332 original; port |ctrl.y| median 0.009 vs |ctrl.z| 786534",
-            "linTerm — +0x54 constant on 2332/2332 and 1628/1628, kDt exactly 1/3000, port prints 1.66667e-05",
-            "the \"gain between contacts\" FRAMING as an independent lever (the U-9156 ROW stays OPEN: it is the trap, not the framing)"
+            "S1 estimator vs verbatim accum: cosine 1.000000000 on 1628/1628  PASS",
+            "S2 KA2 control (true accum): 1.278e-04  PASS",
+            "S3 KA2 on the ORIGINAL: 1.281e-02 vs 1e-3  FAIL",
+            "S5 pred vs measured T_rest, both sides, every band  FAIL",
+            "T1 port l70G constant: max/min 1.053  PASS",
+            "T2/T3 orig local_70 1.000..182.5, max/min 182.4  FAIL"
           ],
           "kind": "list"
         },
         {
-          "label": "Target invariant produced",
-          "value": "median(+0x9e4 / |+0x9b0..0x9b8|) over race frames == 1.000 to 1e-3",
+          "label": "Routes closed by measurement",
+          "value": "14 (section 23.4's ten, plus accum, its inputs frac/l_d0/m78/cMag/tangential, the whole of A6a, and C1 as a divergence at speed)",
+          "kind": "number"
+        },
+        {
+          "label": "Tracker",
+          "value": "U-9170 filed (speed-coupled vs slip-coupled undecided). No C-level change. Correction recorded: section 22.2's \"only writer of +0x9b0\" is true of the FUNCTION, not of the snapshot phase gap.",
           "kind": "text"
         },
         {
-          "label": "NEXT LANE (not A6a, not 0x0046ef70, not the clamp)",
-          "value": "The ORIGINAL's T_rest split — the only unmeasured term. It reaches -42.6/frame after the bounce and DECAYS 6x AT CONSTANT SPEED as the car straightens (-34.5 at s_from 190.6 down, -5.5 at 193.5 up) while the port's is -0.43/frame. Fit accum from the per-wheel forces at record wheelbase+0x70..0x78 on the PORT first (friction_diag.log is the known-answer self-check), then apply it to orig_fp2.msd.",
-          "kind": "text"
-        },
-        {
-          "label": "Instrument lesson",
-          "value": "A detector validated on ONE side can be swamped on the other, and the swamping is the finding. The 1.02-ratio contact detector passed 23 of 23 on the original and still failed on the port. Validate cross-side detectors on both sides, and look for the contamination-proof statistic instead of discarding the channel.",
-          "kind": "text"
-        },
-        {
-          "label": "Commits",
-          "value": "bccaf40b (pre-registration, before any run) | 6d664146 (results) | trackers + kickoff this session",
-          "kind": "text"
-        },
-        {
-          "label": "Evidence",
-          "value": "verify/d2_gain_20261001/{PREREG.md,RESULT.md} | re/analysis/D2_REOPEN_2026-09-29.md section 23 | tools re/tools/statediff/a10_gain.py + a10_clampcost.py",
-          "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "Roadmap (v3) — default-build fidelity",
-      "fields": [
-        {
-          "label": "Phase status",
-          "value": "D0 ok | D1 ok (residue R1-R3 open) | D2 REOPENED — attempt 10 failed, no physics change, ten routes now closed | D3 blocked on D2 close",
-          "kind": "text"
+          "label": "Next, in order",
+          "value": [
+            "1. Log the port's G (bytes 0x150/0x154/0x158) + A5's fVar4 and local_70 — one default-OFF line, one port run",
+            "2. Entry hook on 0x00467650 so the original's sigma becomes a measurement, not a back-out",
+            "3. Resolve U-9170, then name the sub-500 sink by RVA"
+          ],
+          "kind": "list"
         },
         {
           "label": "Branch",
-          "value": "race/first-frame-parity (nothing pushed)",
-          "kind": "text"
-        },
-        {
-          "label": "Hooks progress",
-          "value": "5,932 rows | 29.9% C3+ (first-party only) | 4.6% C4 | C2 3,890 C3 1,013 C4 176",
-          "kind": "text"
-        },
-        {
-          "label": "Next kickoff",
-          "value": "re/NEXT_SESSION.md — RETROFIT LANE (closed 2026-10-01) at top, then the render lane, then the D2 block (read section 22.4 first)",
+          "value": "race/first-frame-parity — nothing pushed",
           "kind": "text"
         }
       ]
     },
     {
-      "heading": "Verification lane — a9da810a (free-fly camera removal + window title), 2026-10-01",
+      "heading": "Phase status",
       "fields": [
         {
-          "label": "Verdict",
-          "value": "PASS, no defect — T1/T2/T3/T4/T5/T6 all pass in a built exe",
+          "label": "Current phase",
+          "value": "D2 REOPENED (since 2026-09-29) — must close before D3 modes 3/7 starts",
           "kind": "text"
         },
         {
-          "label": "Exe under test",
-          "value": "SHA-256 9FF13F27…D986E5F9 (rebuilt: the on-disk exe predated the last mashedmod/src commit)",
-          "kind": "text"
-        },
-        {
-          "label": "UNMEASURABLE (reported, not worked around)",
+          "label": "Bounds (never renegotiated)",
           "value": [
-            "race (paused) title state — only writer is an Esc rising edge, skipped under g_race_demo/g_det_clock",
-            "real key delivery — all keyboard reads go through DirectInput GetDeviceState, which PostMessage cannot write"
+            "slip 1500-2000   0.18855 .. 0.19635",
+            "slip 2000-2600   0.24488 .. 0.25487",
+            "driving-median   1904.70 .. 1982.44"
           ],
           "kind": "list"
         },
         {
-          "label": "Standing gotcha this lane paid for",
-          "value": "Do NOT test standalone input with PostMessage — it is a null input channel and yields a GREEN that passes a broken build. T5 rests on a static argument instead (ci.dt is the only CamInput write, so free_ is unreachable).",
-          "kind": "text"
-        },
-        {
-          "label": "Promotions",
-          "value": "None — a9da810a is standalone glue with no original RVA",
-          "kind": "text"
-        },
-        {
-          "label": "Commits",
-          "value": "3e8ee34c (pre-registration, before any run) | 91bc05c4 (evidence + results)",
-          "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "Retrofit lane — CLOSED 2026-10-01",
-      "fields": [
-        {
-          "label": "What it was",
-          "value": "First use of the standing workflow: a fix that is a real port must also produce promotion evidence. Two exe-only fixes retrofitted into bodies at their RVAs.",
-          "kind": "text"
-        },
-        {
-          "label": "Promotions",
-          "value": [
-            "0x00458e00 PickupPoolSpawn  gameplay  C2 -> C3",
-            "0x00448940 ArcticTrackNodeSlot0  render  C0 -> C3 (no row existed; not defined in Ghidra)"
-          ],
-          "kind": "list"
-        },
-        {
-          "label": "Evidence",
-          "value": "path1 GREEN 6/6 non-degen + path2 PASS 4/4 on 0x00458e00; path1 BLOCKED (pre-registered) on 0x00448940, canonical hook-live Arctic run instead; 0 differing pixels on 65+10 frame pairs vs the pre-retrofit build; rva-lint NEW=0",
-          "kind": "text"
-        },
-        {
-          "label": "C4",
-          "value": "NOT claimed for either — CONFIDENCE.md L37 wants a diff-original CSV and run_diff.py is hook-bypassed; U-9167 / U-9168 / U-9169 block it independently",
-          "kind": "text"
-        },
-        {
-          "label": "Trackers",
-          "value": "U-8325 resolved; U-9163..U-9169 and S-5713..S-5716 filed; CHANGELOG +2 lines, exact-line insert",
-          "kind": "text"
-        },
-        {
-          "label": "Commits",
-          "value": "e570a7df (prereg) | 60af8ace (ports) | 37cb0d11 (evidence) | 46bf1453 (promotions)",
-          "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "Render lane — four defects; (b) and (c) are now real ports with hooks.csv rows",
-      "fields": [
-        {
-          "label": "(a) grey chassis",
-          "value": "FIXED 2026-09-30 (commit 5ddc0384) | Non-render atomics removed from DFF load | Acceptance: G1/G2/G3/G4b/G4c PASS | Pre/post exe hash on file",
-          "kind": "text"
-        },
-        {
-          "label": "(b) Arctic sea at road height",
-          "value": "FIXED 2026-09-30 (a0f3004c), RETROFITTED INTO A REAL PORT 2026-10-01 (60af8ace) | whole 880-byte body of 0x00448940 ported as ArcticTrackNodeSlot0, C0 -> C3, one TU in both .rsp lists | path1 BLOCKED (pre-registered: an A/B would clone 24 RpClumps twice) | canonical Arctic hook-ON vs hook-OFF: 25 tile transforms element-wise identical, install witness read in process",
-          "kind": "text"
-        },
-        {
-          "label": "(c) pickups placement",
-          "value": "STAGE 1 FIXED 2026-10-01 (c9615225), RETROFITTED INTO A REAL PORT the same day (60af8ace) | 0x00458e00 ported as PickupPoolSpawn, C2 -> C3, one TU in both .rsp lists; InitReal's inline copy gone | path1 GREEN 6/6 non-degen, path2 PASS 4/4, plus a canonical Arctic run with the hook live | P1/P2 re-run unchanged | STAGE 2 (look/glow) still blocked on d3d9 shim per-draw instrumentation",
-          "kind": "text"
-        },
-        {
-          "label": "(d) car brightness",
-          "value": "FIXED 2026-09-30 (commit 90bd38c6) | Parent-start light frame-chain walk | Acceptance: A1/A2/A4 PASS (13 tracks, deck brightness 0.8517 vs 0.8522 prediction, terrain/sky bit-identical) | A3 fail due to non-portable statistic, A2 is binding criterion | No RVA, no hooks.csv row",
-          "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "Instruments & tools (read-only, attempts 8-9)",
-      "fields": [
-        {
-          "label": "scenario_launch.py",
-          "value": "--fixup-probe entry hooks on five RVAs with frame marker | live 18-slot contact set (invisible in .msd)",
-          "kind": "text"
-        },
-        {
-          "label": "MASHED_SUBSTEP_VELPROBE",
-          "value": "per-substep |velocity| at four matching points + three write counters",
-          "kind": "text"
-        },
-        {
-          "label": "a9_bounce.py & a9_fixup.py",
-          "value": "first-bounce-aligned cross-side comparator, per-contact damp/knee table with frame-boundary flag",
-          "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "Carried guards (identical to attempt 6)",
-      "fields": [
-        {
-          "label": "criterion (e)",
-          "value": "PASS 3/3",
-          "kind": "text"
-        },
-        {
-          "label": "AI criterion (b)",
-          "value": "FAIL 3/3",
-          "kind": "text"
-        },
-        {
-          "label": "power-ups decision",
-          "value": "CLEAN 11/11 (g3 contact diverges)",
-          "kind": "text"
-        },
-        {
-          "label": "oracle rule 3",
-          "value": "GREEN, MISMATCH=0",
-          "kind": "text"
-        },
-        {
-          "label": "rva-lint",
+          "label": "Dual-copy guard",
           "value": "allowlisted=122 NEW=0",
           "kind": "text"
         },
         {
-          "label": "Arctic non-regression",
-          "value": "2044.85 (n=34), no collapse",
+          "label": "Kickoff",
+          "value": "re/NEXT_SESSION.md — START HERE (D2 lane), attempt 11",
           "kind": "text"
         }
       ]

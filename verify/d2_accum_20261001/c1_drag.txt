@@ -1,0 +1,33 @@
+ORIGINAL steps 1446   PORT steps 1628
+[KA4] port sigma(resid) vs sigma(act.vel)  n=1628  median abs diff 7.125e-06  p95 8.841e-05  max 6.241e-02
+
+=== C1 back-out, both sides. l70G = (1-sigma)/(linTerm*s_mid_prev) ===
+band          side    n |    sigma  s_mid_prev     resid      l70*G        G     local_70   med_s
+-------------------------------------------------------------------------------------------------
+70-100        ORIG     6 | 0.914152       89.61   -7.8859      56.14   0.2903      193.4    89.6
+70-100        PORT    38 | 0.999604       97.45   -0.0328     0.2456      nan        nan    83.5
+100-150       ORIG    45 | 0.892122      126.24  -12.9566      52.96   0.2903      182.5   126.2
+100-150       PORT    19 | 0.999475      129.42   -0.0599     0.2462      nan        nan   115.3
+150-260       ORIG    73 | 0.950692      193.37   -8.5290      15.74   0.2903      54.23   189.5
+150-260       PORT    13 | 0.999113      216.59   -0.1706     0.2465      nan        nan   194.9
+260-500       ORIG    60 | 0.988507      379.53   -4.0489      1.728   0.2903      5.952   371.1
+260-500       PORT    14 | 0.998483      368.86   -0.5596     0.2467      nan        nan   349.8
+500-1000      ORIG   159 | 0.995100      824.27   -4.3643     0.4529   0.2903       1.56   821.6
+500-1000      PORT    15 | 0.996975      735.78   -2.2256     0.2467      nan        nan   735.8
+1000-1500     ORIG   200 | 0.993795     1283.20   -7.8728     0.2904   0.2903          1  1280.9
+1000-1500     PORT    19 | 0.994750     1276.96   -6.6963     0.2467      nan        nan  1275.5
+1500-2000     ORIG   339 | 0.989006     1778.81  -19.4471      0.374   0.2903      1.288  1778.7
+1500-2000     PORT    20 | 0.993077     1683.83  -11.6064     0.2467      nan        nan  1676.5
+40-70         ORIG     2 | 0.994851       50.21   -0.2519      6.454   0.2903      22.23    50.2
+40-70         PORT   269 | 0.999820       45.90   -0.0086     0.2342      nan        nan    47.8
+
+=== gate tests ===
+  ORIG l70G      bands=6  min 0.2904  max 52.96  max/min 182.4   in [0,2]? NO
+  PORT l70G      bands=8  min 0.2342  max 0.2467  max/min 1.053   in [0,2]? YES
+  ORIG local_70  bands=6  min 1  max 182.5  max/min 182.4   in [0,2]? NO
+
+=== ORIGINAL: are G's three fields constant? ===
+  g0  distinct values over 1446 steps: 1   [0.15]
+  g1  distinct values over 1446 steps: 1   [1.5]
+  g2  distinct values over 1446 steps: 1   [1.29]
+  G   distinct values over 1446 steps: 1   [0.29025]

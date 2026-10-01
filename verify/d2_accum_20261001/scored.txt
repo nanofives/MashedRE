@@ -1,0 +1,30 @@
+########## run 1 : slip ##########
+  1500-2000: n=314  slip vs fwd 0.1937  slip vs AXIS 0.1491  av.y +1.142
+  2000-2600: n=540  slip vs fwd 0.2498  slip vs AXIS 0.2052  av.y +1.466
+  1500-2000: n= 20  slip vs fwd 0.2033  slip vs AXIS 0.1586  av.y +0.847
+  2000-2600: n=0
+########## run 1 : momentum ##########
+  driving-only horiz median 1937.89   n=1154
+  steer over driving frames: min +33.867  median +33.867  max +33.867
+  driving-only horiz median 1355.66   n=54
+  steer over driving frames: min +1.000  median +1.000  max +1.000
+########## run 2 : slip ##########
+  1500-2000: n=314  slip vs fwd 0.1937  slip vs AXIS 0.1491  av.y +1.142
+  2000-2600: n=540  slip vs fwd 0.2498  slip vs AXIS 0.2052  av.y +1.466
+  1500-2000: n= 20  slip vs fwd 0.2033  slip vs AXIS 0.1586  av.y +0.847
+  2000-2600: n=0
+########## run 2 : momentum ##########
+  driving-only horiz median 1937.89   n=1154
+  steer over driving frames: min +33.867  median +33.867  max +33.867
+  driving-only horiz median 1355.66   n=54
+  steer over driving frames: min +1.000  median +1.000  max +1.000
+########## run 3 : slip ##########
+  1500-2000: n=314  slip vs fwd 0.1937  slip vs AXIS 0.1491  av.y +1.142
+  2000-2600: n=540  slip vs fwd 0.2498  slip vs AXIS 0.2052  av.y +1.466
+  1500-2000: n= 20  slip vs fwd 0.2033  slip vs AXIS 0.1586  av.y +0.847
+  2000-2600: n=0
+########## run 3 : momentum ##########
+  driving-only horiz median 1937.89   n=1154
+  steer over driving frames: min +33.867  median +33.867  max +33.867
+  driving-only horiz median 1355.66   n=54
+  steer over driving frames: min +1.000  median +1.000  max +1.000

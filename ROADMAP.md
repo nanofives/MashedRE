@@ -610,7 +610,67 @@ opinion is an opinion about the scaffold, not about the port.
 > **Order: D2 must close again BEFORE the D3 modes 3/7 port starts.** §D3's closure path
 > (`FUN_00414c30` + `FUN_00484c70`) is on hold until then.
 
-> #### Re-close attempt 10 — 2026-10-01. **STILL REOPENED. The between-contact budget is decomposed completely, FOUR more routes close, and NO fix was authored because two registered safety thresholds failed and the surviving term is one §21.5 already proved byte-faithful.**
+> #### Re-close attempt 11 — 2026-10-01. **STILL REOPENED. `accum` is MEASURED and is NOT the carrier; §23's `T_rest` is 88-96% a velocity change OUTSIDE A6a; the port's whole share of it is A5's Phase-4 drag at `0x0046ddb0`; and a further sub-500 sink on the ORIGINAL is the new target. NO fix authored — two registered thresholds failed and both refusal branches fired.**
+>
+> Full record: `re/analysis/D2_REOPEN_2026-09-29.md` **§24** (§24.6 first, then §24.3/§24.4).
+> Pre-registered twice before any run and **neither amended**:
+> `verify/d2_accum_20261001/PREREG.md` (`51531edf`) and `PREREG_C.md` (`5667dbc2`). Results sheet
+> with every number: `verify/d2_accum_20261001/RESULT.md`. Commits `51531edf`, `37220f4d`,
+> `5667dbc2`.
+>
+> **Scored 3 of 3 at `37220f4d`, a no-change control — this lane changed no source:**
+>
+> | metric | port | n | median speed | PASS interval | verdict |
+> |---|---:|---:|---:|---|---|
+> | slip 1500-2000 | **0.2033** | 20 | 1676.53 (in band) | 0.18855 .. 0.19635 | **FAIL** +3.5% |
+> | slip 2000-2600 | **—** | 0 | — | 0.24488 .. 0.25487 | **UNSCORABLE** |
+> | driving-median | **1355.66** | 54 | 1355.66 | 1904.70 .. 1982.44 | **FAIL** −30.2% |
+>
+> Identical to every printed digit 3/3; bounds unchanged; `participants=1` confirmed;
+> dual-copy guard `allowlisted=122 NEW=0`.
+>
+> **What moved.** `a11_accum.py` replays A6a's block #5 (`0x0046833a..0x00468544`), the blend
+> (`0x004685b2..0x00468625`) and W1 (`0x0046862d..0x004686a2`) **from the render-tick snapshot
+> alone** — no hook, no probe, no source change — and reproduces `friction_diag.log`'s verbatim
+> `accum` with **cosine 1.000000000 on 1628/1628** frames (S1 passed by three orders). So §23.4's
+> one unmeasured term is measured on both sides, **and it agrees**: `T_accum` is ORIG **−1.3468**
+> vs PORT **−1.3396** at 1500-2000 (n=339/20), i.e. **−0.59..−1.35** where `T_rest` is
+> **−4.8..−20.4**. S3 failed on the original (1.281e-02 vs 1e-3) and S5 failed on **both** sides
+> in **every** band, so the registered rule did not execute: **no input named, no fix authored,
+> no threshold amended.**
+>
+> With `accum` known, `T_rest` splits exactly (`T_accum + curv + resid`, identity residual
+> **1.776e-14**, `curv < 0` on **0 of 3074**), and **`resid` is 88-96% of `T_rest`** on the
+> original. **`resid` is outside A6a, proven**: rebasing on the port's `act.vel` entry channel
+> gives `residA` = **−0.0000/−0.0001 in every band**. It is a **pure scalar multiply** of the
+> velocity (per-component spread **3.8e-08** median on 1628/1628, `dvPerp` exactly **0.0000**),
+> **not** clamp #6's `kVel`, and **quadratic in speed** (**4.1e-6..4.8e-6** over a 20x range).
+> Cross-side ORIG/PORT: **240x** at 70-100, **50x** at 150-260, **1.18x** at 1000-1500.
+>
+> **Sub-lane C.** C1 = A5 `VehicleWheelForceIntegrate` **`0x0046ddb0`** Phase 4
+> (`ForceIntegrator.cpp:86-90` + `:164-168`). **T1 PASSED at 1.053** — the port's
+> `l70G = (1−σ)/(linTerm·s_mid_prev)` is constant to 5.3% over 8 bands, so **C1 is the port's
+> entire pre-A6a velocity sink**. **T2/T3 FAILED** — the original's backed-out `local_70` runs
+> **1.000..182.5** against the legal `[0,2]` its own construction permits (no speed term
+> anywhere), with `G` **exactly constant** at `0.29025` on 1446/1446 steps. Above ~1000 the
+> original obeys C1 with `local_70` = **1.000 exactly** (n=200) and the cross-side ratio is
+> **0.85 / 0.66**, inside the registered [0.5,2.0]; **below ~500 there is a further sink C1 cannot
+> produce and the port lacks entirely.** D4 fired, and D3 had refused a fix in advance because the
+> port's `G` is in no existing log. **U-9170 filed** — speed-coupled vs slip-coupled is undecided
+> because every original sample below 500 is its single post-bounce pass.
+>
+> **Routes closed, added to §23.4's ten:** (11) `accum` as the diverging input; (12) `frac`,
+> `l_d0`, `m78`, `cMag`, `Sf − Sc`; (13) the whole of A6a as the home of `T_rest`; (14) C1 as a
+> cross-side divergence **at speed**. **Correction:** §22.2's "A6a is the only writer of `+0x9b0`
+> on a non-contact frame" is true of the **function** but was used for three attempts as a claim
+> about the **snapshot phase gap**, which it is not.
+>
+> **Next, in order:** (1) log the port's `G` (bytes `0x150/0x154/0x158`) + A5's actual `fVar4` and
+> `local_70`, one default-OFF line, one port run, no original run; (2) an **entry hook** on
+> `0x00467650` so the original's `σ` becomes a measurement; (3) resolve U-9170, then name the
+> sub-500 sink by RVA.
+
+> #### Re-close attempt 10 — 2026-10-01 (SUPERSEDED by attempt 11 on its NEXT COMMAND; its numbers stand). **STILL REOPENED. The between-contact budget is decomposed completely, FOUR more routes close, and NO fix was authored because two registered safety thresholds failed and the surviving term is one §21.5 already proved byte-faithful.**
 >
 > Full record: `re/analysis/D2_REOPEN_2026-09-29.md` **§23.1** (the rule, committed before any
 > run, `bccaf40b`) and **§23.2-§23.4** (the result). Results sheet with every number:
