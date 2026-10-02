@@ -1,0 +1,50 @@
+# arm A: kv:verify/d2_sched_20261001/s1/motion_diag.log(1629 frames)
+# arm B: kv:verify/d2_sched_20261001/bh1/motion_diag.log(1627 frames)
+# noise floor: 69 fields, from 1626 A-pair frames and 1626 B-pair frames
+# aligned frames 1627 [1..1627]   paired fields 69   A-only 0   B-only 0
+
+=== DIVERGENT FIELDS, ranked by first frame past the noise floor (47 of 69 paired) ===
+field                  scope       first      n |      med A      med B    med|A-B|      floor
+----------------------------------------------------------------------------------------------
+b14[0]                 outside          2   1627 | -3.888e+05  5.985e+05   9.944e+05          0
+b14[2]                 outside          2   1627 |  7.843e+05  7.437e+05   1.247e+05          0
+horiz                  outside          2   1627 |      23.05      54.31       37.17          0
+sp                     outside          2   1627 |      31.43      51.96       32.51          0
+slip                   outside          2   1627 |    -0.0368    -0.0039       2.352          0
+bodyH                  outside          2   1627 |       2.62       1.41       1.139          0
+b14[1]                 outside          2   1627 |   0.009007   -0.02775     0.03705          0
+d[1]                   outside          2   1627 |    0.00026    0.00015     0.00192          0
+ftot[0]                outside          3   1627 |  3.557e+04      -2080   3.076e+04          0
+ftot[2]                outside          3   1627 | -4.428e+04 -1.566e+04    2.62e+04          0
+wf[2]                  outside          3   1627 |       7970      -1599        9789          0
+wf[0]                  outside          3   1627 |       7970      -1598        9756          0
+wf[3]                  outside          3   1627 | -1.673e+04      -3091        8728          0
+wf[1]                  outside          3   1627 | -1.673e+04      -3100        8719          0
+wf[4]                  outside          3   1627 |  1.181e+04     -353.4        8211          0
+wf[5]                  outside          3   1627 |      -6992      -7418        6209          0
+wf[6]                  outside          3   1627 |       5886     -145.3        4077          0
+wf[7]                  outside          3   1627 |      -3496      -2779        3761          0
+wle4[3]                outside          3   1627 |      23.19      54.41       35.97          0
+wle4[2]                outside          3   1627 |      23.01      54.33       35.92          0
+wle4[0]                outside          3   1627 |      22.94      54.33       35.74          0
+wle4[1]                outside          3   1627 |      23.06      54.42       35.58          0
+b0c                    outside          3   1627 |      7.034      2.264       11.39          0
+ftot[1]                outside          3   1627 | -0.0001282   0.002088       4.914          0
+w1b[2]                 outside          3   1627 |       1082       1082        1.79          0
+velH                   outside          3   1627 |       2.12     -1.158       1.752          0
+w1b[1]                 outside          3   1627 |       1084       1084        1.42          0
+w1b[0]                 outside          3   1627 |       1084       1084        1.41          0
+wax[0]                 outside          3   1627 |    -0.4442     0.6486       1.065          0
+wax[2]                 outside          3   1627 |    -0.4442     0.6486       1.065          0
+wax[4]                 outside          3   1627 |    -0.8671     0.1144      0.9642          0
+wax[6]                 outside          3   1627 |    -0.8671     0.1144      0.9642          0
+w1b[3]                 outside          3   1627 |      540.8      540.8        0.91          0
+wax[5]                 outside          3   1627 |     0.4961      0.986      0.4852          0
+wax[7]                 outside          3   1627 |     0.4961      0.986      0.4852          0
+wld4[2]                outside          3   1627 |    0.04662     0.1228      0.2197          0
+wld4[3]                outside          3   1627 |     0.0467      0.115      0.2164          0
+wld4[0]                outside          3   1627 |     0.5827     0.5792      0.2008          0
+wld4[1]                outside          3   1627 |     0.5827     0.5792      0.1989          0
+wax[1]                 outside          3   1627 |     0.8955     0.7301      0.1642          0
+  ... 7 more (raise --top)
+

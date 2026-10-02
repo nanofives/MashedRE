@@ -312,6 +312,51 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
             // 0x00467d3a (bf8==1 test) .. 0x00467e44; force accumulate 0x00467d7e..0x00467db1
             // (the .asi's byte-exact form is PhysicsChainHooks.cpp DriveForceAccum with
             // cc = 1.0, so the product is ff exactly and only w*ff is float10).
+
+            // ================= MASHED_D2_BOOSTHOLD — DIAGNOSTIC, default OFF =================
+            // [U-9174, D2 attempt 14 step 2C] MEASUREMENT HARNESS ONLY. Supplies the ONE thing
+            // the port is missing: the TRIGGER that puts the car into boost state 2 at the
+            // green light. The 15-frame hold that follows is produced entirely by the
+            // original's own transcribed `+0xbf8 == 2` arm below (:365-372, from
+            // 0x00467def..0x00467e44) — this block adds no law and no constant of its own.
+            //
+            // THE TRIGGER IS FITTED, NOT TRANSCRIBED, AND MUST NEVER SHIP. Measured on three
+            // ORIGINAL captures (orig_solo3 / orig_solo4 / orig_fp1, every digit identical):
+            // +0xbf8 is 2 on exactly 14 frames starting at the release frame, +0xbf4 counts
+            // 3000 down by 200/frame to 0 at d=14, +0xb14/+0xb18/+0xb1c are exactly 0 on
+            // d=0..14 and engage at d=15, and (+0xbf8==2) <=> (+0xb14==0) holds on 1446 of
+            // 1447 frames after release. 3000/200 = 15.
+            //
+            // But EVERY literal-displacement writer of +0xbf8 in MASHED.exe.unpatched writes
+            // ZERO — 0x00467dd7 and 0x00467e36 are `mov [esi+0xbf8], eax` with `xor eax,eax`
+            // one instruction earlier at 0x00467dd5 / 0x00467e34, and 0x00467de5 / 0x00467e44
+            // write 0 immediately — so the real writer uses a computed base and is NOT LOCATED
+            // (U-9174; memories findoffset-blind-to-computed-bases, offset-grep-misses-dword-index).
+            // Keying the write to "the first frame input[0] != 0" reproduces the ORIGINAL's
+            // observed onset but is a GUESSED condition, which is why this is env-gated,
+            // default-OFF, excluded from every scored arm, and earns no C-level.
+            //
+            // Purpose: separate H1 (the port's non-recovery is downstream of the 15-frame
+            // latency, via a 15*0.141113 = 2.12 deg smaller steer angle at matched speed
+            // through the whole approach) from H2 (a separate recovery defect).
+            // Pre-registration + thresholds: verify/d2_sched_20261001/PREREG_STEP2C.md.
+            {
+                static const bool s_d2BoostHold = [] {
+                    const char* e = std::getenv("MASHED_D2_BOOSTHOLD");
+                    return e && e[0] == '1';
+                }();
+                if (s_d2BoostHold) {
+                    static bool s_fired[8] = {};
+                    const int ci = (param_1 >= 0 && param_1 < 8) ? param_1 : 0;
+                    if (!s_fired[ci] && input && input[0] != 0) {
+                        s_fired[ci] = true;
+                        Wi(v, 0xbf8, 2);
+                        Wi(v, 0xbf4, 3000);
+                    }
+                }
+            }
+            // ========================= end MASHED_D2_BOOSTHOLD ==============================
+
             if (Ri(v, 0xbf8) == 1) {
                 if (Ri(v, 0xbf4) == 0) { Wi(v, 0xbf8, 0); }
                 else {

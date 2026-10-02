@@ -1,0 +1,9 @@
+=== SCORED METRICS with n, median speed AND median frame index ===
+  ORIG slip 1500-2000                n= 315  median speed   1789.91  median frame   1605 (median d    719)
+  PORT slip 1500-2000                n=  19  median speed   1665.05  median frame     86 (median d     85)
+  ORIG slip 2000-2600                n= 529  median speed   2227.05  median frame   1794 (median d    908)
+  PORT slip 2000-2600                n=   0  median speed       nan  median frame    nan (median d    nan)
+  ORIG driving-median (horiz>=500)   n=1208  median speed   1896.74  median frame   1683 (median d    797)
+  PORT driving-median (horiz>=500)   n=  76  median speed   1019.77  median frame     80 (median d     79)
+
+  R_orig=886  R_port=1
