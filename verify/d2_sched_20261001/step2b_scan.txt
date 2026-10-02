@@ -1,0 +1,42 @@
+R_orig3=886 R_orig4=886 R_port=1   frames 2333/2333/1628
+
+--- GE known-answer anchor ---
+  ORIG peak d=95 ; B = frame 982 (d=96)  [known answer 980]  delta 2
+  PORT peak d=80 ; B = frame 82 (d=81)  [known answer  81]  delta 1
+  GE = PASS
+
+--- C1 steer angle at B (the reason the window is NOT bounce-aligned) ---
+  ORIG +0x1a8 at B = 30.62158 ; PORT = 28.50488 ; gap -6.91%
+
+--- GH saturation across d[119,300] ---
+  ORIG frames off 33.86719: 0 [] ; PORT: 0 []
+  GH = PASS
+
+=== BUCKET OCCUPANCY, window d[119,300], grounded ===
+  cos-band          speed-band   |  ORIG n  medSpd  medFrm(d) | PORT n  medSpd  medFrm(d) | readable
+  [-1.01,-0.50)  [   0,  50)   |      0     nan        - |    42    29.7      238 | 
+  [-1.01,-0.50)  [  50, 150)   |      0     nan        - |    38    58.4      220 | 
+  [-0.50,-0.10)  [  50, 150)   |      0     nan        - |     6   103.4      137 | 
+  [-0.50,-0.10)  [ 150, 400)   |      1   198.2      127 |     0     nan        - | 
+  [-0.10, 0.30)  [  50, 150)   |      5   133.2      141 |     4    89.1      140 | 
+  [-0.10, 0.30)  [ 150, 400)   |      8   194.0      152 |     0     nan        - | 
+  [ 0.30, 0.70)  [  50, 150)   |     12   120.5      144 |     4    98.6      130 | 
+  [ 0.30, 0.70)  [ 150, 400)   |      8   203.6      189 |     0     nan        - | 
+  [ 0.70, 0.95)  [  50, 150)   |     15   131.8      145 |     4    98.8      133 | 
+  [ 0.70, 0.95)  [ 150, 400)   |     33   187.3      182 |     0     nan        - | 
+  [ 0.70, 0.95)  [ 400,1000)   |      1   427.9      213 |     0     nan        - | 
+  [ 0.95, 1.01)  [   0,  50)   |      0     nan        - |    74    21.3      224 | 
+  [ 0.95, 1.01)  [  50, 150)   |      0     nan        - |    10   102.6      136 | 
+  [ 0.95, 1.01)  [ 150, 400)   |     17   292.0      198 |     0     nan        - | 
+  [ 0.95, 1.01)  [ 400,1000)   |     24   670.8      231 |     0     nan        - | 
+  [ 0.95, 1.01)  [1000,3000)   |     58  1637.9      272 |     0     nan        - | 
+
+  GF readable buckets (n>=20 BOTH sides): 0  -> FAIL
+
+=== GG CONTROL: arm B = orig_solo4 ===
+  diverging response channels in the control: 0
+  GG = PASS
+
+=== THE RULE: arm B = PORT ===
+
+  FIRST DIVERGING TERM: NONE -- every readable, non-confounded bucket AGREES
