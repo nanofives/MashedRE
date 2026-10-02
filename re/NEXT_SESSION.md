@@ -1,13 +1,85 @@
 # Next session kickoff
 
-Updated 2026-10-01 at the close of the **D2 re-close attempt 15** session. **U-9174 is
-RESOLVED and D2's LAUNCH is CLOSED in the default build.** The `+0xbf8 = 2` writer is
-`0x0046d7a2` inside `FUN_0046d780`; it is confirmed live on the running original on two
-boots, ported at its own RVA with both Frida legs green, and `MASHED_D2_BOOSTHOLD` is
-gone. The three scored metrics still **FAIL 3 of 3** and the recovery is still short, so
-**D2 does NOT close**. Branch `race/first-frame-parity`. Nothing is pushed.
+Updated 2026-10-02 at the close of the **D2 re-close attempt 16** session. **U-9175 is
+RESOLVED.** The drive-force Y `+0xb18` is a **STRUCTURAL zero on the original** (forward-Y
+`+0x9d8` is bit-exact `0.0` on every frame, live-tested) and a **physically-negligible
+float-epsilon on the port** (~`3.05e-08`, from `~5e-10` FP noise in `omega.x/z`). It is
+**NOT the recovery defect** and has **no faithful single-producer fix**, so STEP 2 was not
+entered and nothing in the build changed. The three scored metrics still **FAIL 3 of 3** and
+the recovery is still short, so **D2 does NOT close**. Branch `race/first-frame-parity`.
+Nothing is pushed.
 
-> ## START HERE (D2 lane) — attempt 15. D2 is STILL REOPENED, but for a different reason than before. **The launch is now FAITHFUL, not fitted: lag 0, the peak on the original's own frame, and the port computing the original's own charge of 3000 for itself. What remains is one downstream defect, and for the first time it is MEASURABLE.**
+> ## START HERE (D2 lane) — attempt 16. D2 is STILL REOPENED. **The `+0xb18` lead is now CLOSED as a red herring: it is a real binary divergence (`0.0` vs epsilon) of zero physical consequence. The recovery gap lives in the X/Z plane, not the Y channel.**
+>
+> Read [`verify/d2_b18_20261002/RESULT_STEP1.md`](../verify/d2_b18_20261002/RESULT_STEP1.md)
+> **first**, then its `PREREG_STEP1.md` (committed `7e9cbf7c` before any run, not amended).
+> `UNCERTAINTIES.md` U-9175 is now struck through with the full finding. **Do not re-derive
+> any of it.**
+>
+> ### WHAT `+0xb18` TURNED OUT TO BE
+>
+> `+0xb18 = Σ_wheels axisY * force` (A6a `0x00467cc5`/`0x00467d97`). The wheel axis-Y comes
+> from the body forward-Y `+0x9d8` (A5 `0x0046de74` <- `0x0046ddc9` = `xform*(0,0,1)`), i.e.
+> the car matrix at-row Y. On the original that is **bit-exact `0.0`** (one distinct value
+> across 2179 A6a frames) because `BodyOrientationIntegrate FUN_0046e9e0` keeps `at.y = 0`
+> whenever `omega.x == omega.z == 0`, and the original's omega.x/z are exactly 0 on flat
+> ground (no pitch/roll torque). The port's `omega.x/z` (`+0x9bc/+0x9c4`) carry a **~5e-10
+> median** FP epsilon (max 0.013) from the contact/suspension torque sum, which drifts `at.y`
+> to ~`3e-08`. The snapshot `+0xb18` median `0.0282` is that epsilon amplified by the large
+> drive/boost multipliers (`ff = 5e6`) — which *confirms* the logic (a zero axis-Y zeroes
+> `+0xb18` at any force), it does not contradict it. Velocity-Y effect: `linTerm*+0xb18` ~
+> `5e-7`/frame (`Integrate2.cpp:640`). **That cannot be the ~10x X/Z-plane recovery deficit.**
+>
+> ### WHY STEP 2 WAS NOT ENTERED (and must not be re-tried as a knob)
+>
+> The divergence is **diffuse float noise** accumulated across the whole contact-force torque
+> chain into `omega.x/z`; there is **no single faithfully-portable producer** whose fix zeros
+> it. The only ways to force `at.y == 0` are a **clamp** (a forbidden single-constant/knob
+> fix) or a bit-identical re-port of the angular chain (infeasible, and the epsilon survives
+> FP-order differences). `AeroStabilize.cpp:144` / `Integrate2.cpp:752` already zero omega.x/z
+> but only in the `state != 0` (airborne/aligned) branch, which does not run during grounded
+> driving. **Do not add a clamp to chase a 3e-08.**
+>
+> ### THE SCORE, default build, byte-identical to attempt 15 (no `mashedmod/src` change)
+>
+> | gate | result |
+> |---|---|
+> | **a** `+0xb18 == 0` | **FAIL** — nonzero 1618/1633, median 0.0282 (no fix applied) |
+> | **b** launch | **PASS** — L=0 (0.19%), `+0xb14` at `d`=15, peak **1835.50 at `d`=95** vs 1832.40 |
+> | **c** recovery | **INCONCLUSIVE** — **243/400 = 60.8%** (fraction passes), median **132.8** (median fails ≥900) |
+> | **d** metrics | **FAIL 3/3** — slip 1500-2000 **0.1983** (n=19, `d`=85), slip 2000-2600 **UNSCORABLE** (n=0), driving-median **1019.77** (n=76, `d`=79) |
+>
+> Reproduces attempt 15's STEP 3 to every digit (determinism confirmed).
+>
+> ### NEXT COMMAND — the recovery gap is an X/Z-plane problem
+>
+> 1. **The Y channel is closed.** Stop measuring `+0xb18`, forward-Y, axis-Y, `omega.x/z`.
+>    They are all confirmed structural-0-on-original / negligible-epsilon-on-port.
+> 2. **The next first-diverging term frame-aligned at the same `d` is `+0xb0c`**
+>    (`RESULT_STEP4.md` §3a): diverges at `d`=1, but errs in **both** directions (too high
+>    early, 64x too low later), so **no single-constant fix**. Test any hypothesis on the
+>    running original FIRST (the `--axis-probe`/`--boost-probe`/`--fixup-probe`/`--lat-bracket`
+>    shape is proven). `+0xb14`/`+0xb1c` (the X/Z drive force) first diverge at the engagement
+>    frame `d`=15 by only 1.57%/1.03% — the right size on the right frame — so the launch
+>    force is faithful; the collapse is downstream in the velocity/clamp integration.
+> 3. **The recovery is a SPEED collapse in `+0x9e4`** (median 132.8 vs 1333.9) driven by the
+>    X/Z velocity integration and the lateral/clamp chain — the regime attempts 12-14 probed
+>    and withdrew as off-regime. With `L=0` the arms are now comparable at the same `d`; use
+>    that, do **not** open a speed-banded table.
+> 4. **AI slots 1+ still carry the fitted seed** at `VehiclePhysicsRun.cpp:702`; that is D3.
+>
+> ### TOOLS THIS ATTEMPT ADDED
+>
+> `re/frida/scenario_launch.py --axis-probe` (two entry hooks A6a-PRE/A6b-POST, ESI-filtered,
+> reading forward/axis-Y/`+0xb14/18/1c`/`+0xbf8`/trackId, with a known-answer self-check on
+> `DAT_00614708` and coverage counters). Reuse it for any A6a-input question.
+>
+> **Still open:** `+0xb0c`; the recovery gap (X/Z plane); U-9173; U-9156; U-9160; U-9171;
+> §20.14's `-0.1` duty cycle; D1-residue R1.
+>
+> **The D3 modes 3/7 hold stands. D2 must close before it starts.**
+
+> ## SUPERSEDED START HERE (D2 lane) — attempt 15. D2 is STILL REOPENED, but for a different reason than before. **The launch is now FAITHFUL, not fitted: lag 0, the peak on the original's own frame, and the port computing the original's own charge of 3000 for itself. What remains is one downstream defect, and for the first time it is MEASURABLE.**
 >
 > Read [`verify/d2_writer_20261001/RESULT_STEP3.md`](../verify/d2_writer_20261001/RESULT_STEP3.md)
 > **first**, then [`RESULT_STEP4.md`](../verify/d2_writer_20261001/RESULT_STEP4.md) §3b, then

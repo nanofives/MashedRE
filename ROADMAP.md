@@ -570,6 +570,16 @@ opinion is an opinion about the scaffold, not about the port.
 
 ### D2 — Default physics — **REOPENED 2026-09-29** (user decision)
 
+> #### Re-close attempt 16 — 2026-10-02. **U-9175 RESOLVED and CLOSED as a red herring. The drive-force Y `+0xb18` is a STRUCTURAL zero on the original (forward-Y `+0x9d8` is bit-exact `0.0` on every frame, live-tested) and a physically-negligible float-epsilon on the port (~`3.05e-08`). It is NOT the recovery defect and has no faithful single-producer fix, so STEP 2 was not entered, no value changed, and D2 does NOT close.**
+>
+> Live test on the running original (`--axis-probe`, two entry hooks A6a `0x00467650`-PRE ESI-filtered + A6b `0x00468980`-POST; known-answer self-check `DAT_00614708 == [0,0,1]`; 2179 A6a frames, 1275 active-drive, `err=null`; `PREREG_STEP1.md` committed `7e9cbf7c` before any run, no gate amended): the original's body forward-Y `+0x9d8` has **exactly one distinct value `0`** on every frame, all four wheel axis-Ys `+0x224/2e8/3ac/470` are `0.0`, and A6a leaves `+0xb18 == 0` at A6b entry. Since `+0xb18 = Σ axisY*force`, a zero axis-Y zeroes it at any force — **STRUCTURAL**, H-later refuted. Writers: `+0xb18` by A6a `0x00467cc5`/`0x00467d97`; axis-Y by A5 `FUN_0046ddb0` `0x0046de74` from body forward written `0x0046ddc9` (`xform*(0,0,1)`); A4 zeroes b14/18/1c each frame at `0x0047072c`.
+>
+> The PORT's forward-Y is a `~3.05e-08` median epsilon because `omega.x/z` (`+0x9bc/+0x9c4`) carry `~5e-10` median FP noise (max 0.013) from the contact/suspension torque sum, which `BodyOrientationIntegrate FUN_0046e9e0` (`at.y += omega.z*at.x - omega.x*at.z`) drifts into the matrix at-row Y; the original's omega.x/z are exactly 0 on flat ground. The snapshot `+0xb18` median `0.0282` is that epsilon amplified by the large drive/boost multipliers (`ff = 5e6`) — confirming the logic. Velocity-Y effect `~5e-7`/frame (`Integrate2.cpp:640`) — it cannot be the ~10x X/Z-plane recovery deficit. There is **no single faithfully-portable producer** (diffuse FP noise across the torque chain); forcing `at.y = 0` would be a forbidden clamp. STEP 2 NOT entered per `PREREG_STEP1.md` §5.
+>
+> **Build byte-identical to attempt 15** (`git diff 29bd7619..HEAD -- mashedmod/src` empty; only the read-only `--axis-probe` + docs). STEP 3 reproduces attempt 15 to every digit: **a** FAIL (`+0xb18` nonzero 1618/1633, median 0.0282); **b** PASS (L=0 at 0.19%, `+0xb14` at `d`=15, peak **1835.50 at `d`=95** vs 1832.40); **c** INCONCLUSIVE (**243/400 = 60.8%**, median **132.8** vs 99.5% / 1333.9); **d** FAIL 3/3 (slip 1500-2000 **0.1983** n=19 `d`=85, slip 2000-2600 UNSCORABLE n=0, driving-median **1019.77** n=76 `d`=79). The recovery gap lives in the **X/Z plane**, not the Y channel; `+0xb14`/`+0xb1c` first diverge at the engagement frame `d`=15 by only 1.57%/1.03%, so the launch force is faithful and the collapse is downstream in the velocity/clamp integration. `RESULT_STEP1.md`.
+>
+> **Still open:** `+0xb0c` (next first-diverging term, errs both directions, no single-constant fix); the recovery gap (X/Z plane); U-9173; U-9156; U-9160; U-9171; D1-residue R1.
+
 > #### REOPENED 2026-09-29 (user decision) — the closing evidence was not like-for-like
 >
 > **Status: REOPENED.** The **CLOSED 2026-09-14** block below is retained as history, not
