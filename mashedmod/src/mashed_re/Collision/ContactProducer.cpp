@@ -62,8 +62,11 @@ void FillBatchEntry(ContactBatchEntry* e,
 // triangle: the face normal must be consistent with the winding ((v1-v0)×(v2-v0)
 // direction) so the SAT half-plane signs match the solvers' `>=0`-is-inside test.
 
-// Broadphase: append every triangle whose plane is within `radius` of the query
-// centre (the standalone's stand-in for FUN_00538c80's BSP walk over COLLI*.BSP).
+// Broadphase: append every triangle whose AABB, grown by `radius`, contains the
+// query centre (the standalone's stand-in for FUN_00538c80's BSP walk over
+// COLLI*.BSP). [D2 attempt 20 / U-9179] This was a PLANE-distance test until
+// 2026-10-02; see the block comment inside the function for why that was wrong
+// and what it cost.
 // Resets + sets DAT_0088e60c, points g_terrainBatch at the batch storage.
 // Returns the number of entries produced.
 int ProduceTerrainBatch(const float* center, float radius,
@@ -73,25 +76,38 @@ int ProduceTerrainBatch(const float* center, float radius,
     if (long long* pc = Vehicle::PerfBatchTestCounter()) *pc += triCount;  // PERF: scan size
     int count = 0;
     const int cap = (int)(sizeof(s_batchStorage) / sizeof(s_batchStorage[0]));
-    // [D2 attempt 20 STEP 2 / U-9179] DIAGNOSTIC A/B, default-OFF. The admission test
-    // below is a PLANE-distance test, and the loop STOPS SCANNING at `cap`, so on a
-    // largely coplanar track the 256 slots fill with triangles from anywhere on the
-    // surface and the triangles actually under a wheel are never offered to the
-    // classifier 0x0046cc40. Measured at d = 222..250: the batch is saturated at 256 on
-    // 3565 of 3565 calls, and 99 of 356 wheel-rows are left unfilled (52 + 31 of them
-    // failing SAT half-plane 3, i.e. "no admitted triangle contains this wheel").
-    // The ORIGINAL has NO cap: its collector LAB_00468b80 increments DAT_0088e60c
-    // unconditionally at 0x00468d6c..0x00468d73 with no bound test anywhere in
-    // 0x00468b80..0x00468d7c; the locality comes from the BSP walk FUN_00538c80, which
-    // this function stands in for. MASHED_D2_BATCHMODE separates the two candidates:
-    //   unset / "plane"  legacy: plane test, scan stops at cap   (the measured baseline)
-    //   "planefull"      plane test, FULL scan (fill stops at cap) -> isolates truncation
-    //   "local"          AABB(tri) expanded by `radius` contains the centre, FULL scan
-    //                    -> a spatial admission test, which is what a BSP walk yields
+    // [D2 attempt 20 / U-9179] THE ADMISSION TEST IS SPATIAL. It used to be a
+    // PLANE-distance test, and because a plane is unbounded that is not a locality test at
+    // all: on a largely coplanar track it admitted ground triangles from anywhere on the
+    // surface, the 256-entry store saturated (measured: on 3565 of 3565 solver calls), the
+    // loop stopped scanning, and the triangles actually under wheels 0 and 1 were never
+    // offered to the classifier 0x0046cc40. The classifier then left those wheels' records
+    // unfilled, so `key` (+0x1ec) stayed at the init loop's -1 and 0x0046f6c0's state
+    // machine demoted them to state 0 at 0x0046f91a/0x0046f91f -- which opened the
+    // `0 < count <= 2.0` gate at 0x004701e8 and fired the airborne lateral drift 47 times
+    // in 29 frames. That was U-9179, and 84.33 % of D2's T_post sink.
+    //
+    // THE ORIGINAL HAS NO CAP: collector LAB_00468b80 increments DAT_0088e60c
+    // unconditionally at 0x00468d6c..0x00468d73, with no bound test anywhere in
+    // 0x00468b80..0x00468d7c. Its locality comes entirely from the BSP walk FUN_00538c80
+    // that this function stands in for, and the standard broadphase admission test for
+    // that is sphere-vs-triangle. The AABB form below is a conservative SUPERSET of it, so
+    // it cannot drop a triangle the narrow phase would have used, and it introduces no new
+    // constant -- same `center`, same `radius` (the record's own +0x4a4) as before.
+    // Measured at d = 222..250: 17 entries instead of 256, all 348 wheel-rows FILLED,
+    // K = 4 and S1 = 4 (the ORIGINAL's own numbers at matched d), wcs_drift 0 firings.
+    // Evidence: verify/d2_wheelstate_20261002/RESULT_STEP2.md sections 4 and 4.2.
+    //
+    // MASHED_D2_BATCHMODE is kept as the DIAGNOSTIC pre-fix arm, so the paired collateral
+    // and any future A/B has a legacy side. It is not a shipping path:
+    //   unset / "local"  the spatial test above (DEFAULT)
+    //   "plane"          the old plane test, scan stops at cap  (pre-fix baseline)
+    //   "planefull"      the old plane test, full scan           (isolates truncation)
     static const char* const s_mode = std::getenv("MASHED_D2_BATCHMODE");
-    static const bool s_local = s_mode && std::strcmp(s_mode, "local") == 0;
-    static const bool s_full  = s_local || (s_mode && std::strcmp(s_mode, "planefull") == 0);
-    const bool full = s_full, local = s_local;
+    static const bool s_plane = s_mode && (std::strcmp(s_mode, "plane") == 0 ||
+                                           std::strcmp(s_mode, "planefull") == 0);
+    static const bool s_full  = !s_plane || (s_mode && std::strcmp(s_mode, "planefull") == 0);
+    const bool full = s_full, local = !s_plane;
     int pass = 0;
     for (int t = 0; t < triCount && (full || count < cap); ++t) {
         const CollTriangle& tr = tris[t];
