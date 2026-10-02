@@ -1,30 +1,45 @@
 {
-  "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-02T13:45:00Z",
+  "title": "Mashed RE — source port",
+  "updatedAt": "2026-10-02T14:40:00Z",
   "sections": [
     {
-      "heading": "Phase",
+      "heading": "Current phase",
       "fields": [
         { "label": "Roadmap phase", "value": "D3 active; D2 REOPENED and blocking", "kind": "text" },
-        { "label": "D2 re-close attempts", "value": 16, "kind": "number" },
-        { "label": "Branch", "value": "race/first-frame-parity (nothing pushed)", "kind": "text" }
+        { "label": "Branch", "value": "race/first-frame-parity (nothing pushed)", "kind": "text" },
+        { "label": "Last D2 attempt", "value": "17 — +0xb0c closed as a symptom", "kind": "text" },
+        { "label": "D2 closes?", "value": "No — metrics FAIL 3 of 3", "kind": "text" }
       ]
     },
     {
-      "heading": "D2 attempt 16 — 2026-10-02",
+      "heading": "D2 attempt 17 (2026-10-02)",
       "fields": [
-        { "label": "Verdict", "value": "U-9175 RESOLVED and closed as a red herring. D2 does NOT close — the recovery gap is an X/Z-plane problem, not the Y channel.", "kind": "text" },
-        { "label": "U-9175", "value": "+0xb18 (drive-force Y) is a STRUCTURAL zero on the original (forward-Y +0x9d8 is bit-exact 0.0 on every frame, live-tested) and a physically-negligible float-epsilon on the port (~3.05e-08).", "kind": "text" },
-        { "label": "Root", "value": "The port's omega.x/z (+0x9bc/+0x9c4) carry ~5e-10 FP noise from the contact torque sum, which BodyOrientationIntegrate drifts into the matrix at-row Y. The original's omega.x/z are exactly 0 on flat ground.", "kind": "text" },
-        { "label": "Why no fix", "value": "Diffuse FP noise, no single faithfully-portable producer. Forcing at.y=0 is a forbidden clamp. Velocity-Y effect ~5e-7/frame — cannot be the ~10x recovery deficit. STEP 2 not entered per PREREG.", "kind": "text" },
-        { "label": "Live test", "value": "--axis-probe (A6a-PRE + A6b-POST entry hooks, ESI-filtered), self-check DAT_00614708==[0,0,1], 2179 frames, err=null, PREREG committed before any run.", "kind": "text" },
-        { "label": "STEP 3 (build byte-identical to attempt 15)", "value": [
-            "a +0xb18==0 : FAIL (nonzero 1618/1633, median 0.0282)",
-            "b launch    : PASS (L=0, b14 d=15, peak 1835.50 d=95)",
-            "c recovery  : INCONCLUSIVE (243/400=60.8%, median 132.8)",
-            "d metrics   : FAIL 3/3 (0.1983 / UNSCORABLE / 1019.77)"
+        { "label": "+0xb0c verdict", "value": "SYMPTOM — law reproduces 2332/2332 at 4 ulps on the running original", "kind": "text" },
+        { "label": "Defect relocated to", "value": "d = 222 — velocity integration (U-9177)", "kind": "text" },
+        { "label": "Key measurement", "value": [
+            "d 222-250, n=28: per-frame speed gain +27.87 (orig) vs +4.86 (port), a 5.7x deficit",
+            "drive force agrees to 6.2%; all four wheels grounded on both sides",
+            "d 200-222: the PORT is faster (+19.06 vs +17.59)"
           ], "kind": "list" },
-        { "label": "Next lead", "value": "+0xb0c (next first-diverging term at d=1, errs both directions — no single-constant fix) and the X/Z-plane velocity/clamp collapse. The Y channel is closed.", "kind": "text" }
+        { "label": "Gates", "value": "KA FAIL both routes (retired, not amended); KA2 PASS; D-0 PASS; DR names speed +0x9e4 at d=0; CB-LARGE (3.99% restricted to d=0..101)", "kind": "text" },
+        { "label": "Fix authored", "value": "None — no knob, no clamp, no fitted constant; NEW=0", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Scored D2 metrics (3 runs, identical to every digit)",
+      "fields": [
+        { "label": "Launch", "value": "PASS — L=0 at 0.19%, peak 1835.50 vs 1832.40 both at d=95", "kind": "text" },
+        { "label": "Recovery", "value": "INCONCLUSIVE — 243/400 = 60.8%, median 132.8 vs 99.5% / 1333.9", "kind": "text" },
+        { "label": "slip 1500-2000", "value": "0.1983 (n=19, d=85) vs 0.18855..0.19635 — FAIL", "kind": "text" },
+        { "label": "slip 2000-2600", "value": "UNSCORABLE (n=0) — FAIL", "kind": "text" },
+        { "label": "driving-median", "value": "1019.77 (n=76, d=79) vs 1904.70..1982.44 — FAIL", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Open",
+      "fields": [
+        { "label": "Blocking D2", "value": "U-9177 — which term in the velocity integration loses the gain", "kind": "text" },
+        { "label": "Other open rows", "value": ["U-9176 (b0c dot-product association order)", "U-9173", "U-9156", "U-9160", "U-9171", "D1-residue R1"], "kind": "list" }
       ]
     }
   ]

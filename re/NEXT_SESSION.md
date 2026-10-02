@@ -1,6 +1,88 @@
 # Next session kickoff
 
-Updated 2026-10-02 at the close of the **D2 re-close attempt 16** session. **U-9175 is
+Updated 2026-10-02 at the close of the **D2 re-close attempt 17** session. **`+0xb0c` is
+CLOSED as a SYMPTOM.** Its law reproduces **2332/2332** at a 4-ulp budget on the running
+original, the port computes the same expression, and through `d = 0..101` the two arms'
+median speed differs by **0.06 %** with `+0xb0c`'s whole A6a channel bounded at **3.99 %**.
+D2's recovery gap is **relocated to `d = 222`**: a per-frame speed-gain deficit of **5.7x**
+measured where the drive force agrees to 6.2 % and both cars are fully grounded. No fix was
+authored; the three scored metrics still **FAIL 3 of 3** and **D2 does NOT close**. Branch
+`race/first-frame-parity`. Nothing is pushed.
+
+> ## START HERE (D2 lane) — attempt 17. D2 is STILL REOPENED. **Stop measuring `+0xb0c`. It is not a defect and there is nothing to fix in it. The defect is the VELOCITY INTEGRATION, and it has a 28-frame window with a 6.2 %-matched drive force in which to catch it.**
+>
+> Read [`verify/d2_b0c_20261002/RESULT_STEP2.md`](../verify/d2_b0c_20261002/RESULT_STEP2.md)
+> **first** (§4, §5, §5.1 are the whole result), then `RESULT_STEP1.md` §2.1 for the
+> transcribed writer. Pre-registrations `PREREG_STEP2.md` (`78314357`) and
+> `PREREG_STEP2B.md` (`683833a2`), **both committed unrun, neither amended**.
+> `UNCERTAINTIES.md` U-9176 and U-9177 carry the findings. **Do not re-derive any of it.**
+>
+> ### WHAT `+0xb0c` TURNED OUT TO BE
+>
+> A **symptom**. It is written only by A4 `FUN_00470670` as `0` when `+0x9e4 == 0`
+> (`0x0047072c`) and otherwise `(1.0 - |dot|/speed) * speed` (`0x00470724`), i.e.
+> algebraically `speed - |dot|`, over seven record fields and nothing else. It has exactly
+> **two** readers: A6a `0x004676de` (`fVar5 = max(1500.0 - b0c, 500.0)`) and the AI accessor
+> `FUN_0046d6a0` `0x0046d6b6`. The port computes the same expression. **So it cannot diverge
+> on its own arithmetic.**
+>
+> Gate KA (recompute to `rel <= 1e-4`) **FAILED on both the snapshot and the live route**
+> (0.9488/0.9401/0.9453, then 0.971698) and was **retired, not amended** — a
+> result-relative tolerance on a difference of near-equal float32 numbers scores the
+> cancellation, and KA's worst miss is **0.24 of one ulp**. KA2 (4 ulps of `max(speed,1)`,
+> separately pre-registered) **PASSES 2332/2332, max 2.034 ulps.**
+>
+> ### THE DEFECT, AND THE WINDOW TO CATCH IT IN
+>
+> | window | n | median `dspeed` O | median `dspeed` P | median speed O / P | median &#124;b14<sub>xz</sub>&#124; O / P | gnd |
+> |---|---:|---:|---:|---|---|---|
+> | `d` 200-222 | 22 | +17.59 | **+19.06** | 335.5 / 346.6 | 1.679e6 / 1.678e6 | 4 / 4 |
+> | **`d` 222-250** | **28** | **+27.87** | **+4.86** | **805.7 / 660.9** | **2.381e6 / 2.233e6** | **4 / 4** |
+> | `d` 250-300 | 50 | +14.51 | **-5.40** | 1669.5 / 231.9 | 2.617e6 / 1.405e6 | 4 / 4 |
+>
+> The port is **faster** right up to `d = 222`, then loses 5.7x of its per-frame gain while
+> the force into the integrator still matches to 6.2 % and all four wheels are grounded on
+> both sides. That isolates the defect to what CONSUMES `+0xb14`/`+0xb1c`: the velocity
+> integration and its clamp chain in `Integrate2.cpp`. **[U-9177]**
+>
+> ### NEXT COMMAND
+>
+> 1. **Entry-hook the original's velocity-integration site**, pre-registered, reading the
+>    accumulator and the resulting velocity across `d = 200..260`. The `--slide-probe` shape
+>    (`re/frida/scenario_launch.py`, A4 entry, record base in `EAX`, count-first cap,
+>    coverage counters, static known-answer constants, per-row frame + release markers) is
+>    proven and reusable — **grep the harness before writing a new one.**
+> 2. **Compare at matched `d`, never speed-banded.** All six cross-side speed bands are
+>    `!!` off-regime (median frame A 1023-1556 vs B 68-381); the banded collateral table
+>    produced **zero readable rows** this attempt. `re/tools/statediff/a17_slide.py --cross`
+>    is the matched-`d` instrument.
+> 3. **Derive the release frame from the capture, not from `886`.** `a8_launch.py`'s 886 is
+>    capture-specific; `orig_sl1.msd` carries `+0xbf8 != 0` at **890** and only `R = 890`
+>    reproduces the published launch numbers.
+> 4. **The gearbox is downstream** — gear and timer track exactly through `d = 0..250`, and
+>    gear 0 at 180 speed is correct behaviour. Do not chase it.
+> 5. **U-9176** (the `+0xb0c` dot-product association order, both port copies) is a
+>    faithfulness debt with an RVA and two file:lines. Take it only with the full promotion
+>    leg on A4 `0x00470670`; it is float-rounding sized and cannot move a metric.
+> 6. **AI slots 1+ still carry the fitted seed** at `VehiclePhysicsRun.cpp:702`; that is D3.
+>
+> ### TOOLS THIS ATTEMPT ADDED
+>
+> `re/frida/scenario_launch.py --slide-probe` (A4-entry hook on `0x00470670`),
+> `re/tools/statediff/a17_slide.py` (gates KA/KA2/DR/CB + the matched-`d` cross table),
+> `re/tools/fold_sweep.py` (folded-base capstone sweep with a known-answer self-check — its
+> first version returned 0 hits for the KNOWN `+0xbf8` and that negative was discarded).
+> `MASHED_MOTION_DIAG` now also prints `vel=[..] fwd=[..]`, appended at the end of the line
+> so every pre-existing token stays byte-identical (verified: 0 differing tokens over 1625
+> shared lines against attempt 15's `r1`).
+>
+> **Still open:** U-9177 (D2's blocker); U-9176; U-9173; U-9156; U-9160; U-9171; §20.14's
+> `-0.1` duty cycle; D1-residue R1.
+>
+> **The D3 modes 3/7 hold stands. D2 must close before it starts.**
+
+> ## SUPERSEDED START HERE — attempt 16 (`+0xb18`, U-9175 RESOLVED as a red herring).
+> Updated 2026-10-02 at the close of the **D2 re-close attempt 16** session. **U-9175 is
 RESOLVED.** The drive-force Y `+0xb18` is a **STRUCTURAL zero on the original** (forward-Y
 `+0x9d8` is bit-exact `0.0` on every frame, live-tested) and a **physically-negligible
 float-epsilon on the port** (~`3.05e-08`, from `~5e-10` FP noise in `omega.x/z`). It is
