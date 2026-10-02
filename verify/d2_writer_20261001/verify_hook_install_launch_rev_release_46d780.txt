@@ -1,0 +1,25 @@
+=== verify_hook_install report (launch_rev_release_46d780) ===
+
+target address: 0x0046d780  export: LaunchRevRelease46d780
+PRE  bytes:     e9 fb 9a 68 6d fa 10 7c
+asi base:       0x6dad0000
+reimpl addr:    0x6daf7280
+POST bytes:     e9 fb 9a 68 6d fa 10 7c
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6d689afb  expected 0x6d689afb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2
+
+per-input results:
+  [OK] input={'seed': [{'addr': '0x00882194', 'val': 3000}, {'addr': '0x00882198', 'val': 0}], 'args': [0], 'obs': ['0x00882194', '0x00882198']}  got=0x00000bb800000002  err=
+  [OK] input={'seed': [{'addr': '0x00882194', 'val': 1000}, {'addr': '0x00882198', 'val': 0}], 'args': [0], 'obs': ['0x00882194', '0x00882198']}  got=0x000007d000000001  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

@@ -1,0 +1,25 @@
+=== verify_hook_install report (bounded_table_signclamp_46d7f0) ===
+
+target address: 0x0046d7f0  export: BoundedTableSignClamp46d7f0
+PRE  bytes:     e9 1b 9a 68 6d f9 10 7c
+asi base:       0x6dad0000
+reimpl addr:    0x6daf7210
+POST bytes:     e9 1b 9a 68 6d f9 10 7c
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6d689a1b  expected 0x6d689a1b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2
+
+per-input results:
+  [OK] input={'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f103c', 'val': 200}, {'addr': '0x00882194', 'val': 500}], 'args': [0, 100], 'obs': ['0x00882194']}  got=0x00000258  err=
+  [OK] input={'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f103c', 'val': 50}, {'addr': '0x00882194', 'val': 500}], 'args': [0, 100], 'obs': ['0x00882194']}  got=0x00000190  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)
