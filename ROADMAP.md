@@ -610,6 +610,60 @@ opinion is an opinion about the scaffold, not about the port.
 > **Order: D2 must close again BEFORE the D3 modes 3/7 port starts.** §D3's closure path
 > (`FUN_00414c30` + `FUN_00484c70`) is on hold until then.
 
+> #### Re-close attempt 14 — 2026-10-01. **STILL REOPENED. The two arms DO share their input schedule — the ORIGINAL begins steering from EXACTLY 0.000000 speed — and release-aligned the port's LAUNCH is faithful to 1.44 % fifteen frames early. Both sides then peak within 1.3 % and crash to the same trough; the ORIGINAL recovers to a median of 1828.5 and the PORT's ceiling is 91.4. D2's defect is the RECOVERY. NO fix authored: the mechanism behind the 15 frames is proven but its trigger is unlocated [U-9174].**
+>
+> **Step 1 refuted the input-schedule hypothesis.** Over frames 0-885 the ORIGINAL's horizontal
+> speed is **exactly `0.000000` on every frame**; its release is frame **886**, witnessed three
+> ways in the record (`+0xbf4` holds 3000 then counts down -200/frame; `+0xb24` first ticks 50;
+> `+0x1a8` first reads 17.07471). `+0x190` is `34.0000` on all 2333 frames, so
+> `255/256 * 34 * 0.5 * (6050/6000) = 17.074707` identifies the consumed steer byte as **255**.
+> Release-aligned **every** input channel agrees to **0.000 %** — byte, throttle, sign, ramp
+> start, step `+0.141113`, saturation on the 120th steering frame — and the port holds
+> `in=(255,0,255,0)` on **4880 of 4880** frames. **The arm needs no change and there is no
+> proposal for the user.** Steps 1 and 2 each had a gate FAIL AS WRITTEN (G2/G3 on a 5-vs-3
+> frame proxy lag; GA on phase), neither was amended, and GA's own registered remedy measured
+> `phi = 0`.
+>
+> **The named first diverging term: T2 `+0xb14`/`+0xb18`/`+0xb1c` at `d = 0`** — an **engagement
+> latency**, not a magnitude error (`port(d=0)/orig(d=15)` = x 0.8985, z **1.0014**). The lag fit
+> has a single sharp minimum at **L = 15** (median 1.44 %, p90 1.65 %, n=80), flat across the
+> whole launch, and it explains **nothing** after the crash (97.4 %, n=391). Mechanism, proven on
+> `orig_solo3`/`solo4`/`fp1` identically: `+0xbf8 == 2` for exactly 14 frames from release,
+> `+0xbf4` counts 3000 down by 200/frame to 0 at `d = 14`, `b14` engages at `d = 15`, and
+> `(+0xbf8 == 2) <=> (b14 == 0)` on **1446 of 1447** frames. `3000/200 = 15`. The arm is
+> `0x00467def..0x00467e44`.
+>
+> **THE REFRAMING, release-aligned and frame-indexed:**
+>
+> | | peak | at `d` | trough | at `d` | frames after | `>= 100` | median | max |
+> |---|---:|---:|---:|---:|---:|---|---:|---:|
+> | **ORIGINAL** | **1832.40** | 95 | 85.45 | 101 | 1346 | **1313 (97.5 %)** | **1828.5** | 2562.8 |
+> | **PORT** | **1856.57** | 80 | 85.81 | 139 | 1488 | **0 (0.0 %)** | **24.7** | **91.4** |
+>
+> Both arms accelerate the same, reach the same speed and hit the wall (ORIG `d = 94`, PORT
+> `d = 80`). **The original drives away; the port does not.** This is §20.14's loop with a hard
+> frame count attached — it is **quantified**, not superseded. Everything three attempts measured
+> inside A6a on this arm was measured at or after the crash, where the port holds a median of
+> 24.7; the only common-regime stretch is the **80-frame launch**, and there the port is faithful
+> to 1.44 %.
+>
+> **NO fix authored.** All six literal-displacement writers of `+0xbf8` in the image write
+> **ZERO** (`xor eax,eax` at `0x00467dd5`/`0x00467e34`); the 7th byte hit decodes as
+> `mov [ebp-8], 0xb` and is discarded. **[U-9174]** the trigger uses a computed base and is not
+> located, and fitting one would violate NO-GUESSING. Ghidra MCP was **down for the whole
+> session**.
+>
+> **Scored control 3 of 3, identical to attempts 11/12/13** (`participants=1`, muted, own PIDs,
+> no source edited so no build): slip 1500-2000 **0.2033** (n=20, median speed 1683.5, **median
+> frame 71 = `d` 70**) FAIL; slip 2000-2600 **UNSCORABLE** (n=0) FAIL; driving-median **1355.66**
+> (n=54, **median frame 54 = `d` 53**) FAIL −30.2 %. **The scored metrics themselves fail
+> §26.10's median-frame guard** — the ORIGINAL populates them at `d` 719/908/797. The §3 bounds
+> are untouched.
+>
+> **Collateral: the cross-side banded review has ZERO readable rows** — all 7 bands of all 45
+> paired fields `!!`-flagged. Detail: `verify/d2_sched_20261001/RESULT_STEP{1,2}.md`,
+> `D2_REOPEN_2026-09-29.md` §27.
+
 > #### Re-close attempt 13 — 2026-10-01. **STILL REOPENED. The `l_60` call-site attribution is VERIFIED and attempt 12's `l_60 >= 79 240` is WITHDRAWN (the ORIGINAL is on clamp #6's LOW arm, where `k` is pinned at its 0.1 floor) — and then step 2 found that EVERY cross-side band above 100 speed in this lane is OFF-REGIME. The two sides share FIVE frames of common regime. That withdraws §21.9's `ld4` 2.71x, §21.10's front-axis defect and this attempt's own `l_60` ratio. NO fix authored.**
 >
 > **STOP MEASURING INSIDE A6a.** Regime = steer saturated (`+0x1a8 >= 33.8`) and speed `>= 100`

@@ -1,5 +1,153 @@
 # Next session kickoff
 
+Updated 2026-10-01 at the close of the **D2 re-close attempt 14** session: the two arms
+**DO** share their input schedule (the orchestrator's "the original steers already fast" is
+**refuted** — it steers from **exactly `0.000000`** speed), and release-aligned the port's
+**launch is faithful to 1.44 %, fifteen frames early**. Both sides then peak within **1.3 %**
+and crash to the same trough; the ORIGINAL recovers to a median of **1828.5** and the PORT's
+ceiling is **91.4**. **D2's defect is the RECOVERY.** **No fix authored** — the mechanism
+behind the 15 frames is proven and its trigger is unlocated (**U-9174**). Branch
+`race/first-frame-parity`. Nothing is pushed.
+
+> ## START HERE (D2 lane) — attempt 14. D2 is STILL REOPENED. **The launch is FAITHFUL. Stop treating "the port is slow" as the defect — the port reaches the original's speed, hits the same wall, and then cannot get up. Target the RECOVERY.**
+>
+> Read [`verify/d2_sched_20261001/RESULT_STEP2.md`](../verify/d2_sched_20261001/RESULT_STEP2.md)
+> **first** (§2 and §3), then
+> [`RESULT_STEP1.md`](../verify/d2_sched_20261001/RESULT_STEP1.md) §2.
+> `ROADMAP.md` §D2's attempt-14 block and `D2_REOPEN_2026-09-29.md` **§27** carry the same
+> record. **Do not re-derive any of it.** Pre-registrations
+> [`PREREG_STEP1.md`](../verify/d2_sched_20261001/PREREG_STEP1.md) and
+> [`PREREG_STEP2.md`](../verify/d2_sched_20261001/PREREG_STEP2.md), both committed before their
+> first run and **neither amended**. Trackers: **U-9174 OPENED**.
+>
+> ### THE TABLE THAT REFRAMES THE LANE
+>
+> Release-aligned (`R` = the first frame the vehicle consumed a nonzero steer byte;
+> `R_orig = 886`, `R_port = 1`), frame-indexed, **no band anywhere**:
+>
+> | | peak `+0x9e4` | at `d` | trough | at `d` | frames after | `>= 100` | median | max |
+> |---|---:|---:|---:|---:|---:|---|---:|---:|
+> | **ORIGINAL** | **1832.40** | 95 | 85.45 | 101 | 1346 | **1313 (97.5 %)** | **1828.5** | 2562.8 |
+> | **PORT** | **1856.57** | 80 | 85.81 | 139 | 1488 | **0 (0.0 %)** | **24.7** | **91.4** |
+>
+> Both arms accelerate identically, reach the same speed, and hit the wall (ORIG `d = 94` —
+> its frame 980, §16.6's twelve-hit list; PORT `d = 80` — its frame 81, §20.14). **The original
+> drives away. The port does not.** That is §20.14's loop (`bounce -> velocity anti-parallel ->
+> the `-0.1` gate latches -> steer inverted -> nose into the wall -> bounce`, duty cycle
+> **25x**) with a hard frame count attached for the first time. §20.14 is **quantified**, not
+> superseded, and it is the next lane.
+>
+> ### WHAT IS NOW SETTLED, and must not be re-litigated
+>
+> 1. **The input schedule MATCHES.** Over frames 0-885 the ORIGINAL's horizontal speed is
+>    **exactly `0.000000` on every frame**. Its release is frame **886**, witnessed three ways
+>    in the record: `+0xbf4` holds `3000` through 885 then counts **down** `-200`/frame;
+>    `+0xb24` is 0 for 886 frames then first ticks `50`; `+0x1a8` first reads `17.07471`.
+>    `+0x190` is `34.0000` on **all 2333** frames, so
+>    `255/256 * 34 * 0.5 * (6050/6000) = 17.074707` identifies the consumed steer byte as
+>    **255**. Release-aligned every channel agrees to **0.000 %** — steer byte, throttle byte,
+>    opposite-steer byte, sign, ramp start, step `+0.141113`, saturation on the **120th**
+>    steering frame — and the port holds `in=(255,0,255,0)` on **4880 of 4880** frames across
+>    three runs. **The §16.7 arm needs no change.**
+> 2. **The LAUNCH is faithful to 1.44 %, 15 frames early.** Best-fit integer lag over the
+>    original's monotone accelerating phase (`d = 16..95`, n=80) has a **single sharp minimum at
+>    L = 15**: median `|rel err|` **1.44 %**, p90 1.65 % (L=14 is 5.17 %, L=16 is 1.83 %), flat
+>    across the whole launch (`+0.18 %` at `d=26`, `+1.32 %` at the peak). Same `L` on
+>    `w1b[0]` **0.01 %**, `horiz` **1.20 %**, `wf[5]` **1.96 %**. It explains **nothing** after
+>    the crash: n=391, median **97.4 %**.
+> 3. **The 15 frames are a drive-force hold, and the mechanism is proven** on `orig_solo3`,
+>    `orig_solo4` and `orig_fp1` — every digit identical. `+0xbf8` takes exactly two values in a
+>    2333-frame capture (`0`, `2`); it is **2 on exactly 14 frames** from the release; `+0xbf4`
+>    counts `3000` down by `200`/frame to `0` at `d = 14`; `+0xb14`/`+0xb18`/`+0xb1c` are
+>    exactly `0` on `d = 0..14` and engage at `d = 15` at `(-265866, 0, -762420)`; and
+>    **`(+0xbf8 == 2) <=> (+0xb14 == 0)` holds on 1446 of 1447 frames** after release (the one
+>    exception is `d = 14`, the store-then-test at `0x00467e2c`/`0x00467e32`). `3000/200 = 15`.
+>    The arm `0x00467def..0x00467e44` zeroes the accumulator at
+>    `0x00467e0c`/`0x00467e12`/`0x00467e1f`, already transcribed at `Integrate2.cpp:357-372`.
+>    The port's magnitude is right: `port(d=0)/orig(d=15)` = x **0.8985**, z **1.0014**.
+> 4. **[U-9174] the trigger is NOT located, and that is why no fix was authored.** All six
+>    literal-displacement writers of `+0xbf8` in `MASHED.exe.unpatched` write **ZERO**
+>    (`0x00467dd7`/`0x00467e36` are `mov [esi+0xbf8], eax` with `xor eax,eax` one instruction
+>    earlier at `0x00467dd5`/`0x00467e34`; `0x00467de5`/`0x00467e44` write `0`). The 7th byte
+>    hit, `0x0050312e`, decodes as `mov dword [ebp-8], 0xb` and is **not** a `+0xbf8` reference.
+>    The writer must use a computed base (memories `findoffset-blind-to-computed-bases`,
+>    `offset-grep-misses-dword-index`). **Ghidra MCP was DOWN for the whole attempt-14
+>    session.**
+>
+> ### WHAT THIS COSTS THE PREVIOUS THREE ATTEMPTS
+>
+> Everything measured inside A6a on this arm — `l_60`, `ld4`, `grip*speed`, the clamp arms, the
+> wheel axes — was measured **at or after the crash**, where the port holds a median of
+> **24.7**. The only stretch in which the two sides are in the same regime is the **80-frame
+> launch**, and there the port is faithful to **1.44 %**. Attempt 13 §26.9 called those bands
+> off-regime; attempt 14 says **what the regime is**.
+>
+> ### THE §3 BOUNDS AND THE ARM ARE UNCHANGED, and the scored control is unmoved
+>
+> `slip 1500-2000` **0.18855 .. 0.19635**, `slip 2000-2600` **0.24488 .. 0.25487**,
+> `driving-median` **1904.70 .. 1982.44**. Arm §16.7 (`MASHED_STEER_HOLD_AFTER=0`,
+> `MASHED_MEASURE_SOLO=1`, `MASHED_TRACK_SEL=12`). Scored 3 of 3, identical to every digit and
+> to attempts 11/12/13, `participants=1`, no source edited so no build: slip 1500-2000
+> **0.2033** (n=20, median speed 1683.5, **median frame 71 = `d` 70**) **FAIL**; slip 2000-2600
+> **UNSCORABLE** (n=0); driving-median **1355.66** (n=54, **median frame 54 = `d` 53**)
+> **FAIL** −30.2 %.
+>
+> > **The scored metrics themselves fail §26.10's median-frame guard.** The ORIGINAL populates
+> > them at median `d` **719 / 908 / 797**; the PORT at `d` **70 / — / 53**, i.e. **only during
+> > its 15-frame-early launch**. The bounds are not renegotiable and were not touched, but the
+> > next attempt has to confront this: on this arm the three scored metrics are not comparing
+> > the same moment either.
+>
+> ### NEXT COMMAND — the RECOVERY, and it is §20.14's loop
+>
+> 1. **Frame-index the recovery, both sides, anchored on each arm's own first bounce.** The
+>    original is back over 2000 by `d = 300`; the port's ceiling over the 400 frames after its
+>    trough is **91.36**. Measure what the original does in `d = 95..300` that the port does not
+>    in `d = 80..480`, per frame, with the §20.14 channels (`cos(fwd, vel)`, the `-0.1` gate's
+>    duty cycle, `d(yaw)` sign at bounce frames).
+> 2. **Do NOT open another band table on this arm.** `collateral.py --mode banded` cross-side
+>    produced **zero readable rows** this attempt: 35 of 45 fields exceed their floor and
+>    **every band of every field is `!!`-flagged** (median frame A 988-1554 against B 22-130).
+>    Use `--mode paired` with an `--anchor`; the lag-anchored run
+>    (`--anchor msd+0xb14:ne:0`) rebases A at 901 and B at 2 and reproduced `L = 15` from a
+>    third direction.
+> 3. **[U-9174] is resolvable the moment Ghidra MCP is back** — a data-xref pass over `+0xbf8`.
+>    The alternative is a **hardware write-watchpoint** on `record + 0xbf8` across the green
+>    light, which is **not** an `Interceptor` entry hook, so the standing "Frida entry hooks
+>    only" constraint has to be settled with the user first.
+> 4. **`+0xb0c`** is the first T1 divergence (`d = 1`; ORIG `~1e-5` vs PORT `0.59` through the
+>    launch) and is the one outside-scope collateral row bearing on the named term. EXPLORATORY
+>    — pre-register before acting.
+>
+> ### THE INSTRUMENT LESSONS THIS ATTEMPT PAID FOR
+>
+> **A gate written on a proxy must be sized against the proxy's own measured lag.** Step 1's
+> alignment `E` was `h > 1.0` standing in for control enable; from rest that crossing takes
+> **5** frames and the bar was **3**, so G2/G3 failed and the registered MATCH rule did not
+> execute. The capture already carried **three** direct witnesses of the release and the
+> registration used none of them. **Check whether the capture carries the event itself before
+> writing a threshold on a proxy for it.**
+>
+> **A tolerance has no concept of latency.** The registered rule named `b14` at `d = 0` and was
+> right to, but "diverges" was all it could say — the port's value there is the original's
+> value 15 frames later, to **0.14 %** on z. The mechanism came from reading the named field's
+> **trajectory**. Read a first-divergence verdict as "look here", never as "this is the error".
+>
+> **A byte search finds candidates; only a decode finds instructions.** One of the seven
+> `F8 0B 00 00` hits was `mov [ebp-8], 0xb`. Counting it would have published "`+0xbf8` is
+> written outside A6a".
+>
+> **Still open:** U-9174 (the `+0xbf8` trigger); U-9173 (the clamp-#6 three-way collision);
+> U-9156; U-9160 (substep budget 3-4 against the original's fixed 2 at `0x00469ad4`); U-9171
+> (`local_70` 0.850 vs 1.000); the 40-70 residency and the `-0.1` reverse-gate duty cycle of
+> §20.14; D1-residue R1.
+>
+> **The D3 modes 3/7 hold stands. D2 must close before it starts.**
+
+---
+
+## SUPERSEDED — attempt 13's kickoff (kept for its numbers; attempt 14 reframes its "the port collapses and never recovers" into "BOTH sides crash and only the original recovers")
+
 Updated 2026-10-01 at the close of the **D2 re-close attempt 13** session: the `l_60` call-site
 attribution is **VERIFIED** by disassembly, attempt 12's `l_60 >= 79 240` is **WITHDRAWN** (the
 original is on clamp #6's **LOW** arm, where `k` is pinned at its 0.1 floor and can never be 0),
@@ -8,7 +156,7 @@ the two sides share **five** frames of common regime — which withdraws §21.9'
 §21.10's front-axis defect and this attempt's own `l_60` ratio. **No fix authored.** Branch
 `race/first-frame-parity`. Nothing is pushed.
 
-> ## START HERE (D2 lane) — attempt 13. D2 is STILL REOPENED. **STOP MEASURING INSIDE A6a. The port collapses from 1831 to a median of 22 inside its first 121 frames, and nothing above 100 speed is comparable on this arm.**
+> ## SUPERSEDED START HERE (D2 lane) — attempt 13. D2 is STILL REOPENED. **STOP MEASURING INSIDE A6a. The port collapses from 1831 to a median of 22 inside its first 121 frames, and nothing above 100 speed is comparable on this arm.**
 >
 > Read [`verify/d2_l60_20261001/RESULT_STEP2.md`](../verify/d2_l60_20261001/RESULT_STEP2.md)
 > **first** (§2.4 and §2.5), then
