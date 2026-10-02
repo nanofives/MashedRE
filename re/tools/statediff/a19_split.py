@@ -327,6 +327,33 @@ def main():
               f"{M('D_fixup'):>+12.6f} {M('D_fx_bounce'):>+12.6f} {M('D_fx_damp'):>+12.6f} "
               f"{M('D_fx_slide'):>+12.6f}")
 
+    # ---------------- per-CODE-SITE aggregate
+    # PREREG 2.1 defines D_orient[s] / D_wheel[s] / D_fixup[s] as per-site legs; the
+    # decision list above indexes them by SUBSTEP, which splits one code site across rows.
+    # This block sums each site over the substeps WITHIN a frame and then takes the median,
+    # so a site's share is readable. Same quantities, different grouping.
+    print()
+    print("PER CODE SITE (summed over the frame's substeps, then median)")
+    print(f"{'site':<24} {'RVA':<26} {'n':>5} {'median':>14} {'share':>9}")
+    site_rows = [
+        ("clamp #6", "0x004687f0..0x0046897b", [r["D_clamp6"] for r in sel]),
+        ("A6b", "0x00468980", [r["D_a6b"] for r in sel]),
+        ("A4 parked damp", "0x00470948", [r["D_damp"] for r in sel]),
+        ("A9 pos+orient", "0x0046e9e0",
+         [sum(p["D_orient"] for p in r["per_sub"]) for r in sel]),
+        ("SolveWheelContacts", "0x0046f6c0",
+         [sum(p["D_wheel"] for p in r["per_sub"]) for r in sel]),
+        ("VehicleContactFixup", "0x0046ef70",
+         [sum(p["D_fixup"] for p in r["per_sub"]) for r in sel]),
+        ("gap + tail", "-", [r["D_gap"] + r["D_tail"] for r in sel]),
+    ]
+    site_med = {}
+    for name, rva, vals in site_rows:
+        m = med(vals)
+        site_med[name] = m
+        sh = (m / Tp) if Tp else float("nan")
+        print(f"{name:<24} {rva:<26} {len(vals):>5} {m:>+14.6f} {sh:>8.2%}")
+
     # ---------------- decision rule, PREREG 3
     s2plus = 0.0
     for s in range(2, maxsub):
