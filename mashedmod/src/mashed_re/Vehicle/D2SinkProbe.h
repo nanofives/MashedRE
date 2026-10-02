@@ -27,6 +27,11 @@ void Begin(int slot);
 // ms chunk and the remaining budget, 0 outside the loop.
 void Mark(const char* tag, const void* rec, int sub, int pass, float chunk, float rem);
 
+// [STEP 1B] same line plus a wheel index and four site-local floats, so the three
+// velocity write sites inside 0x0046f6c0 are separable by site AND by wheel.
+void MarkWheel(const char* tag, const void* rec, int wheel,
+               float a, float b, float c, float d);
+
 // Called from the substep loop so Mark() can tag lines without threading the index through
 // ContactFixup's call chain.
 void SetSubstep(int sub, int pass, float chunk, float rem);

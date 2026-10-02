@@ -55,7 +55,8 @@ LINE = re.compile(
     r"f=(?P<f>-?\d+) tag=(?P<tag>\w+) sub=(?P<sub>-?\d+) pass=(?P<pass>-?\d+) "
     r"v=\((?P<vx>[^,]+),(?P<vy>[^,]+),(?P<vz>[^)]+)\) mag=(?P<mag>\S+) r9e4=(?P<r9e4>\S+) "
     r"r9e0=(?P<r9e0>\S+) r9f0=(?P<r9f0>-?\d+) r9ec=(?P<r9ec>-?\d+) key0=(?P<key0>-?\d+) "
-    r"chunk=(?P<chunk>\S+) rem=(?P<rem>\S+) fx=(?P<fx>-?\d+)")
+    r"chunk=(?P<chunk>\S+) rem=(?P<rem>\S+) fx=(?P<fx>-?\d+)"
+    r"(?: w=(?P<w>-?\d+) a=(?P<a>\S+) b=(?P<b>\S+) c=(?P<c>\S+) d=(?P<d>\S+))?")
 RE_VEL = re.compile(r"\bvel=\[([^\]]*)\]")
 RE_SP = re.compile(r"\bsp=([-+0-9.eE]+)")
 RE_GND = re.compile(r"\bgnd=([-+0-9.eE]+)")
@@ -89,7 +90,10 @@ def load_sink(path):
                        v=(_f(g["vx"]), _f(g["vy"]), _f(g["vz"])), mag=_f(g["mag"]),
                        r9e4=_f(g["r9e4"]), r9e0=_f(g["r9e0"]), r9f0=int(g["r9f0"]),
                        r9ec=int(g["r9ec"]), key0=int(g["key0"]),
-                       chunk=_f(g["chunk"]), rem=_f(g["rem"]), fx=int(g["fx"]))
+                       chunk=_f(g["chunk"]), rem=_f(g["rem"]), fx=int(g["fx"]),
+                       w=int(g["w"]) if g.get("w") is not None else -1,
+                       a=_f(g.get("a")), b=_f(g.get("b")), c=_f(g.get("c")),
+                       d=_f(g.get("d")))
             fr = frames.setdefault(f, dict(once={}, sub={}, seq=[]))
             fr["seq"].append(row)
             if row["tag"] in ONCE_TAGS:
@@ -203,6 +207,7 @@ def main():
     ap.add_argument("--lo", type=int, default=222)
     ap.add_argument("--hi", type=int, default=250)
     ap.add_argument("--csv")
+    ap.add_argument("--sites", action="store_true")
     a = ap.parse_args()
 
     frames, bad = load_sink(a.sink)
@@ -378,6 +383,86 @@ def main():
         print(f"  CARRIER = {top_name}")
     else:
         print("  NO CARRIER DOMINATES -> report the split and STOP (PREREG 3 rule 4)")
+
+    if a.sites:
+        print()
+        print("STEP 1B -- the three velocity write sites inside 0x0046f6c0")
+        SITES = ("wcs_fric", "wcs_imp", "wcs_drift")
+        kb1_ok = kb1_n = 0
+        kb2 = []
+        miss_in = 0
+        per_site = {t: [] for t in SITES}
+        hits = {t: 0 for t in SITES}
+        wheels = {t: {} for t in SITES}
+        inputs = {t: [[], [], [], []] for t in SITES}
+        for r in sel:
+            fr = frames[r["frame"]]
+            tot = {t: 0.0 for t in SITES}
+            for s_i in sorted(k for k in fr["sub"] if k >= 0):
+                t = fr["sub"][s_i]
+                ins = t.get("wcs_in")
+                ori = t.get("sub_orient")
+                whe = t.get("sub_wheel")
+                if not ins:
+                    miss_in += 1
+                    continue
+                kb1_n += 1
+                if ori and ins[0]["mag"] == ori[-1]["mag"]:
+                    kb1_ok += 1
+                # site deltas, in emission order within this solver call
+                seq = [row for row in fr["seq"]
+                       if row["sub"] == s_i and row["tag"] in ("wcs_in",) + SITES]
+                prev = ins[0]["mag"]
+                acc = 0.0
+                for row in seq:
+                    if row["tag"] == "wcs_in":
+                        prev = row["mag"]
+                        continue
+                    dmag = row["mag"] - prev
+                    prev = row["mag"]
+                    tot[row["tag"]] += dmag
+                    acc += dmag
+                    hits[row["tag"]] += 1
+                    wheels[row["tag"]][row["w"]] = wheels[row["tag"]].get(row["w"], 0) + 1
+                    for j, k in enumerate(("a", "b", "c", "d")):
+                        inputs[row["tag"]][j].append(row[k])
+                if whe:
+                    kb2.append((acc, whe[-1]["mag"] - ins[0]["mag"]))
+            for t in SITES:
+                per_site[t].append(tot[t])
+        kb1f = kb1_ok / kb1_n if kb1_n else 0.0
+        kb2f = (sum(1 for a_, b_ in kb2
+                    if abs(a_ - b_) <= 1e-5 * max(abs(a_), abs(b_), 1e-9)) / len(kb2)) if kb2 else 0.0
+        print(f"KB1 m(wcs_in) == m(sub_orient) exact: {kb1_ok}/{kb1_n} = {kb1f:.4%}  "
+              f"{'PASS' if kb1f >= 1.0 else 'FAIL'}")
+        print(f"KB2 site deltas telescope to D_wheel: {kb2f:.4%} within 1e-5 "
+              f"(n={len(kb2)})  {'PASS' if kb2f >= 0.99 else 'FAIL'}")
+        print(f"KB3 substeps missing wcs_in: {miss_in}  "
+              f"{'PASS' if miss_in == 0 else 'FAIL'}")
+        dw = med([sum(p["D_wheel"] for p in r["per_sub"]) for r in sel])
+        print()
+        print(f"{'site':<12} {'hits':>7} {'median/frame':>14} {'share D_wheel':>14} "
+              f"{'share T_post':>13}  wheels")
+        for t in SITES:
+            m = med(per_site[t])
+            print(f"{t:<12} {hits[t]:>7} {m:>+14.6f} "
+                  f"{(m / dw if dw else float('nan')):>13.2%} "
+                  f"{(m / Tp if Tp else float('nan')):>12.2%}  "
+                  f"{dict(sorted(wheels[t].items()))}")
+        print()
+        for t in SITES:
+            if hits[t]:
+                print(f"{t} inputs (median): a={med(inputs[t][0]):.6g} b={med(inputs[t][1]):.6g} "
+                      f"c={med(inputs[t][2]):.6g} d={med(inputs[t][3]):.6g}")
+        print()
+        print(f"REGISTERED PREDICTION (PREREG_STEP1B section 4.3): wcs_drift fires 0 times "
+              f"-> measured {hits['wcs_drift']}  "
+              f"{'MET' if hits['wcs_drift'] == 0 else 'NOT MET'}")
+        best = max(SITES, key=lambda t: abs(med(per_site[t])))
+        bm = med(per_site[best])
+        print(f"NAMED SITE (>= 80 % of D_wheel): {best} at "
+              f"{(bm / dw if dw else float('nan')):.2%}  "
+              f"{'NAMED' if dw and abs(bm) >= 0.80 * abs(dw) else 'NO SITE REACHES 80 % -> STOP'}")
 
     if a.csv:
         import csv as _csv

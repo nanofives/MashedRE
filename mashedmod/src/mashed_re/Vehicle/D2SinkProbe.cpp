@@ -74,5 +74,24 @@ void Mark(const char* tag, const void* rec, int sub, int pass, float chunk, floa
     ++s_lines;
 }
 
+void MarkWheel(const char* tag, const void* rec, int wheel,
+               float a, float b, float c, float d) {
+    const char* const path = Path();
+    if (!path || !s_active || s_lines >= kLineCap || !rec) return;
+    const float vx = Rf(rec, 0x9b0), vy = Rf(rec, 0x9b4), vz = Rf(rec, 0x9b8);
+    const float mag = std::sqrt(vx * vx + vy * vy + vz * vz);
+    std::FILE* f = std::fopen(path, "a");
+    if (!f) return;
+    std::fprintf(f,
+        "f=%d tag=%s sub=%d pass=%d v=(%.9g,%.9g,%.9g) mag=%.9g r9e4=%.9g "
+        "r9e0=%.9g r9f0=%d r9ec=%d key0=%d chunk=%.9g rem=%.9g fx=%d "
+        "w=%d a=%.9g b=%.9g c=%.9g d=%.9g\n",
+        s_frame, tag, s_sub, s_pass, vx, vy, vz, mag, Rf(rec, 0x9e4),
+        Rf(rec, 0x9e0), Ri(rec, 0x9f0), Ri(rec, 0x9ec), Ri(rec, 0x4ac),
+        s_chunk, s_rem, s_fx, wheel, a, b, c, d);
+    std::fclose(f);
+    ++s_lines;
+}
+
 }  // namespace D2Sink
 }  // namespace mashed_re

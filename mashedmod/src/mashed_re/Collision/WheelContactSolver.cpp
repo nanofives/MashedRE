@@ -23,6 +23,7 @@
 #include "ContactDeps.h"
 #include "ContactSolvers.h"
 #include <cstdlib>   // getenv (MASHED_RW_WHEELPOS A/B, see the query block below)
+#include "../Vehicle/D2SinkProbe.h"   // [D2 attempt 19] diagnostic, default-OFF
 
 namespace mashed_re {
 namespace Collision {
@@ -72,6 +73,11 @@ static const float kSentActive= asF(0x00000001);  // 1.4013e-45 (contact-active 
 // 0x0046f6c0
 void WheelContactSolver(int* self, void* world, int substep)
 {
+    // [D2 attempt 19 STEP 1B] this function is 84.33 % of the port's T_post sink at
+    // d = 222..250 while the ORIGINAL leaves the velocity bitwise unchanged across the
+    // same RVA on 2945 of 2945 samples (see the g_wcsVelWrites note above). The three
+    // Marks below separate the three write sites. Diagnostic, default-OFF.
+    mashed_re::D2Sink::MarkWheel("wcs_in", self, -1, 0.f, 0.f, 0.f, 0.f);
     char cVar13 = 0;
     int* iVar12 = self + self[0x26b] * 0x10 + 0x24a;   // wheel-ring matrix block
     g_activeContactCount = 0;                          // DAT_0088e650
@@ -296,12 +302,16 @@ void WheelContactSolver(int* self, void* world, int substep)
                     vF(self, 0x26c) = pf[-2] * kFricVel + vF(self, 0x26c);
                     vF(self, 0x26d) = pf[-1] * kFricVel + vF(self, 0x26d);
                     vF(self, 0x26e) = pf[0]  * kFricVel + vF(self, 0x26e);
+                    mashed_re::D2Sink::MarkWheel("wcs_fric", self, 4 - k,
+                                                 pf[-2], pf[-1], pf[0], pf[-6]);
                 }
                 if (pf[-1] < kLowSpeed) {
                     pf[-0x1c] = 0.0f;
                     float e0 = pf[-2] * kFricImp, e1 = pf[-1] * kFricImp, e2 = pf[0] * kFricImp;
                     ++g_wcsVelWrites[1];
                     vF(self, 0x26c) += e0; vF(self, 0x26d) += e1; vF(self, 0x26e) += e2;
+                    mashed_re::D2Sink::MarkWheel("wcs_imp", self, 4 - k,
+                                                 pf[-2], pf[-1], pf[0], pf[-6]);
                     // orig: normalize VELOCITY (+0x9b0) into local_ec/e8/e4 (overwriting
                     // the impulse), then cross(velNorm, contactDir) * speed*angScale.
                     float vn[3];
@@ -337,6 +347,7 @@ void WheelContactSolver(int* self, void* world, int substep)
         ++g_wcsVelWrites[2];
         vF(self, 0x26c) = d[0] + vF(self, 0x26c);
         vF(self, 0x26e) = d[2] + vF(self, 0x26e);
+        mashed_re::D2Sink::MarkWheel("wcs_drift", self, -1, d[0], gc, d[2], 0.f);
         Vec3Normalize(d, d);
         float bc[3];
         bc[0] = d[1] * kUpZ - d[2] * kUpY;
