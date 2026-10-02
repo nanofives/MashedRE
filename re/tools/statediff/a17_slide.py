@@ -113,6 +113,125 @@ def samples_port(path):
     return out
 
 
+def samples_probe(path):
+    """-> list of per-frame dicts from <out>.slideprobe.csv (the LIVE A4-entry hook).
+
+    `b0c_entry` is the value standing in the record when A4 was entered, i.e. the one
+    A4 stored on the PREVIOUS call. So the known-answer check is cross-call and the
+    row's own inputs are the ones the writer actually used, with no phase question.
+    """
+    import csv
+    out = []
+    with open(path, newline="") as fh:
+        for r in csv.DictReader(fh):
+            out.append(dict(
+                frame=int(r["sdframe"]),
+                seq=int(r["seq"]),
+                tick=int(r["tick"]),
+                vel=(float(r["velx"]), float(r["vely"]), float(r["velz"])),
+                fwd=(float(r["fwdx"]), float(r["fwdy"]), float(r["fwdz"])),
+                speed=float(r["speed"]),
+                b0c_entry=float(r["b0c_entry"]),
+                bf8=int(r["bf8"]), bf4=int(r["bf4"]),
+            ))
+    return out
+
+
+def ka_probe(rows, label):
+    """GATE KA on the LIVE probe. Cross-call: pred(row i) must equal row i+1's b0c_entry.
+
+    `b0c` on each row is then set to the value this row's own inputs produced, so the
+    rest of the tool sees a per-frame (inputs, stored value) pair in the WRITER's phase.
+    """
+    hits = scored = skip_zero = skip_gap = skip_nan = 0
+    worst = (0.0, None)
+    for i in range(len(rows) - 1):
+        a, b = rows[i], rows[i + 1]
+        if b["seq"] != a["seq"] + 1:
+            skip_gap += 1
+            continue
+        vals = list(a["vel"]) + list(a["fwd"]) + [a["speed"], b["b0c_entry"]]
+        if any(not math.isfinite(v) for v in vals):
+            skip_nan += 1
+            continue
+        pred = predict_b0c(a["fwd"], a["vel"], a["speed"])
+        if a["speed"] == 0.0:
+            skip_zero += 1
+            # still scored: the writer's zero branch is part of the law
+        rel = abs(pred - b["b0c_entry"]) / max(abs(b["b0c_entry"]), 1e-3)
+        scored += 1
+        if rel <= 1e-4:
+            hits += 1
+        elif rel > worst[0]:
+            worst = (rel, (a["seq"], a["speed"], pred, b["b0c_entry"]))
+    f = (hits / scored) if scored else 0.0
+    print(f"--- GATE KA (live probe)  {label}   rows={len(rows)}")
+    print(f"    cross-call hit {hits}/{scored} = {f:.6f}"
+          f"   skipped: seq gap {skip_gap}, non-finite {skip_nan}"
+          f"   (speed==0 branch frames scored: {skip_zero})")
+    if worst[1]:
+        s, sp, pr, st = worst[1]
+        print(f"    worst miss: seq={s} speed={sp:.6g} pred={pr:.8g} stored={st:.8g}"
+              f" rel={worst[0]:.4g}")
+    print(f"    -> {'PASS' if f >= 0.99 else 'FAIL'} at the 0.99 threshold")
+    # attach each row's OWN produced value for downstream use
+    for i in range(len(rows) - 1):
+        rows[i]["b0c"] = rows[i + 1]["b0c_entry"] \
+            if rows[i + 1]["seq"] == rows[i]["seq"] + 1 else float("nan")
+    rows[-1]["b0c"] = float("nan")
+    return f
+
+
+def ka2_probe(rows, label, ulps=4.0):
+    """GATE KA2 (PREREG_STEP2B.md). Scale-aware: the budget is ulps of the WRITER's own
+    operands, because +0xb0c is algebraically `speed - |dot|` and loses its significant
+    figures to cancellation whenever the car is near-aligned with its velocity.
+
+        ulp_i = 2^-24 * max(speed_i, 1.0)      hit iff |pred - stored| <= ulps * ulp_i
+    """
+    EPS = 2.0 ** -24
+    hits = scored = 0
+    ratios = []
+    worst = (0.0, None)
+    n_zero = n_pos = 0
+    for i in range(len(rows) - 1):
+        a, b = rows[i], rows[i + 1]
+        if b["seq"] != a["seq"] + 1:
+            continue
+        vals = list(a["vel"]) + list(a["fwd"]) + [a["speed"], b["b0c_entry"]]
+        if any(not math.isfinite(v) for v in vals):
+            continue
+        pred = predict_b0c(a["fwd"], a["vel"], a["speed"])
+        ulp = EPS * max(a["speed"], 1.0)
+        ratio = abs(pred - b["b0c_entry"]) / ulp
+        ratios.append(ratio)
+        scored += 1
+        if a["speed"] == 0.0:
+            n_zero += 1
+        else:
+            n_pos += 1
+        if ratio <= ulps:
+            hits += 1
+        if ratio > worst[0]:
+            worst = (ratio, (a["seq"], a["frame"], a["speed"], pred, b["b0c_entry"]))
+    f = (hits / scored) if scored else 0.0
+    ratios.sort()
+    q = lambda p: ratios[min(len(ratios) - 1, int(p * len(ratios)))] if ratios else float("nan")  # noqa: E731
+    sp = sorted(r["speed"] for r in rows[:-1])
+    print(f"--- GATE KA2 (live probe, {ulps:g} ulp budget)  {label}")
+    print(f"    hit {hits}/{scored} = {f:.6f}"
+          f"   -> {'PASS' if f >= 0.99 else 'FAIL'} at the 0.99 threshold")
+    print(f"    |pred-stored| / ulp(speed):  median {q(0.5):.4g}   p99 {q(0.99):.4g}"
+          f"   max {worst[0]:.4g}")
+    if worst[1]:
+        s, fr, spd, pr, st = worst[1]
+        print(f"    max at seq={s} sdframe={fr} speed={spd:.6g}"
+              f" pred={pr:.8g} stored={st:.8g}")
+    print(f"    regime split: speed==0 branch {n_zero} rows, speed>0 {n_pos} rows;"
+          f"  n={scored}  median speed={sp[len(sp)//2]:.6g}")
+    return f
+
+
 def ka(rows, label):
     """GATE KA. -> (best_lam, {lam: (hits, scored)}) ; prints the table.
 
@@ -268,11 +387,15 @@ def main():
     ap.add_argument("--cross", action="store_true")
     ap.add_argument("--orig", nargs="*", default=[])
     ap.add_argument("--port", nargs="*", default=[])
+    ap.add_argument("--probe", nargs="*", default=[],
+                    help="<out>.slideprobe.csv from --slide-probe (the LIVE A4-entry hook)")
     ap.add_argument("--orig-release", type=int, default=886)
     ap.add_argument("--port-release", type=int, default=1)
     ap.add_argument("--lag", type=int, default=0)
     ap.add_argument("--dmax", type=int, default=400)
     ap.add_argument("--tol", type=float, default=0.02)
+    ap.add_argument("--ulps", type=float, default=4.0,
+                    help="GATE KA2 budget, in float32 ulps of the writer's own operands")
     ap.add_argument("--dump", default="", help="write the matched-d table to this CSV")
     a = ap.parse_args()
 
@@ -284,6 +407,10 @@ def main():
         for p in a.port:
             best, f, _ = ka(samples_port(p), f"PORT {p}")
             fracs.append((p, best, f))
+        for p in a.probe:
+            rows = samples_probe(p)
+            ka_probe(rows, f"PROBE {os.path.basename(p)}")
+            ka2_probe(rows, f"PROBE {os.path.basename(p)}", a.ulps)
         if len(fracs) > 1:
             lams = {b for _, b, _ in fracs}
             allpass = all(f >= 0.99 for _, _, f in fracs)
