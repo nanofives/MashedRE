@@ -1,17 +1,125 @@
 # Next session kickoff
 
-Updated 2026-10-02 at the close of the **D2 re-close attempt 18** session. **The per-frame
-velocity budget names `T_post`, and then the instrument that measures `T_post` is shown to be
-PHASE-BIASED in opposite directions on the two sides — 51x understated on the original, 10.3x
-overstated on the port.** Grip-clamp #6 is measured CONSISTENT with its own transcription at
-its own phase on the running original (measured/demanded **1.63**), so **§23.2's attribution
-of the port's 14.7 %/frame loss to clamp #6 is REFUTED** and `k`/`l_60` is not the carrier.
-U-9173 is RESOLVED as a banding artefact by a pre-registered prediction, and U-9160's
-original side is confirmed live at **exactly 2.0000 substeps/frame**. No fix authored, no
-source change (`NEW = 0` by construction); the three scored metrics still **FAIL 3 of 3** and
-**D2 does NOT close**. Branch `race/first-frame-parity`. Nothing is pushed.
+Updated 2026-10-02 at the close of the **D2 re-close attempt 19** session. **`T_post` is now
+SPLIT, and the carrier is named to the individual write: `0x0046f6c0`'s airborne lateral-drift
+velocity store (`WheelContactSolver.cpp:337`), 84.33 % of the port's sink.** Grip-clamp #6 is
+**9.70 %** (which independently reproduces attempt 18's `l_60` route), and A6b, A4's parked
+damp, A9 and the contact fixup are **exactly 0.000000 on all 29 frames**. The site and its gate
+are **byte-faithful**; the defect is the gate's **input** — two wheels sitting at state 0, so
+the port's grounded count is **2** where `0 < count <= 2.0` opens the drift. The substep budget
+is a **1.5x multiplier (26.03 %), not the carrier**. New row **U-9179**. No fix authored, by
+the attempt's own registered rule; the three metrics still **FAIL 3 of 3** and **D2 does NOT
+close**. Branch `race/first-frame-parity`. Nothing is pushed.
 
-> ## START HERE (D2 lane) — attempt 18. D2 is STILL REOPENED. **Do NOT quote any cross-side clamp-#6 or `T_post` magnitude off the `+0x9e4`-vs-snapshot split. It is phase-biased 51x one way on the original and 10.3x the other on the port. Build the port-side diagnostic at A6b's phase FIRST — the original side of it already exists.**
+> ## START HERE (D2 lane) — attempt 19. D2 is STILL REOPENED. **The carrier is `0x0046f6c0`'s drift write and its gate is byte-faithful — do NOT re-measure the split, and do NOT touch the gate's condition. The one open question is why two wheels sit at state 0. And `gnd`/`+0x9e0` CANNOT answer it: the original's own tail `0x0047044b..0x004704b0` recomputes that field and masks the gate's input on BOTH sides.**
+>
+> Read [`verify/d2_sink_20261002/RESULT.md`](../verify/d2_sink_20261002/RESULT.md) — §1.1, §1.2
+> and §1.3 are the whole result — then `RESULT_STEP1.md` §6 for the **transcribed original
+> substep loop**. Pre-registrations `PREREG_STEP1.md` (`3837cfe5`), `PREREG_STEP1B.md`
+> (`4bbb5db7`), `PREREG_STEP1C.md` (`cd41ca04`), `PREREG_STEP23.md` (`d9d9750e`) — **all
+> committed unrun**. `UNCERTAINTIES.md` **U-9179** is the new blocker. **Do not re-derive any
+> of it.**
+>
+> ### THE SPLIT (do not re-run it)
+>
+> Instrument `MASHED_D2SINK` (`mashedmod/src/mashed_re/Vehicle/D2SinkProbe.cpp`, default-OFF,
+> exe-only), reducer `re/tools/statediff/a19_split.py`. `d = 222..250`, **n = 29**, median speed
+> **633.2**, median frame **237**, R = 1, `L = 0`. Telescoping identity **100.0000 %**, worst
+> **2.030e-15**.
+>
+> | site | RVA | median | share of `T_post` |
+> |---|---|---:|---:|
+> | **`SolveWheelContacts`** | **`0x0046f6c0`** | **-23.194031** | **84.33 %** |
+> | grip-clamp #6 | `0x004687f0..0x0046897b` | -2.668457 | 9.70 % |
+> | A6b / parked damp / A9 / fixup / gap+tail | — | **+0.000000** | 0.00 % each |
+>
+> Within `0x0046f6c0`: `wcs_fric` **0** hits, `wcs_imp` **0** hits, **`wcs_drift` 47** hits =
+> **100.00 %** of the site. ORIGINAL, already on disk: velocity **bitwise unchanged across
+> `0x0046f6c0` on 2945 of 2945** samples of the same arm, so none of its three sites fires
+> there.
+>
+> ### THE ONE OPEN QUESTION — U-9179
+>
+> `wcs_cnt` over the window, 87 solver calls, `(bVar16, states, bVar4, iVar8)`:
+>
+> ```
+> (4, 1111, 0, 4) x 37   -> drop fires, gate sees 3 > 2, drift SKIPPED
+> (3, 0111, 0, 3) x  5   ->            gate sees 3 > 2, drift SKIPPED
+> (2, 0011, 0, 2) x 31   ->            gate sees 2 <= 2, drift RUNS
+> (2, 0110, 0, 2) x 16   ->            gate sees 2 <= 2, drift RUNS
+> ```
+>
+> **`bVar4 == 0` on all 87 calls**, so the `(kState2Lo < fv) && bVar4` arm of the demotion at
+> `WheelContactSolver.cpp:170` is **eliminated**. **Two arms remain:** the state-0 -> state-2
+> latch at `:163` (`-2 < fv <= 0`) failing, and `piVar9[0x15] == -1` at `:170`.
+>
+> ### NEXT COMMAND
+>
+> 1. **Extend `MASHED_D2SINK`, do not rebuild it.** One per-wheel line at the state machine
+>    (`WheelContactSolver.cpp:160-175`) carrying **old state, `fv` (= `piVar9[-1]`),
+>    `piVar9[0x15]`, new state**, default-OFF, with the same channel control (armed vs unarmed
+>    `motion_diag` byte-identity — it passed at 0 of 75 fields past the floor over 1627 frames).
+>    `D2Sink::MarkWheel` already takes four floats and a wheel index.
+> 2. **Then the ORIGINAL side, ENTRY HOOKS ONLY** (memory `frida-interceptor-is-entry-only`):
+>    the same per-wheel fields at `0x0046f6c0`'s entry. Register it before running it.
+> 3. **Compare at matched `d` and fix whichever condition, constant or offset differs from the
+>    disassembly.** Target invariant, stated as the original's own measurement: the velocity is
+>    **bitwise unchanged across `0x0046f6c0`** on the scored arm, as the original's is on
+>    2945/2945.
+> 4. **THEN port the substep loop**, not before — it is fully transcribed and is one edit:
+>    `rem = min(remaining, 0x32)` as an **INTEGER** (`0x00470f50..0x00470f61`), then
+>    `while (rem) { sub = min(rem, 0x19); substep((float)sub); rem -= sub; }`
+>    (`0x00471106..0x00471141`, inside `FUN_00470c70`). `50 -> 25, 25` is exactly 2. The port's
+>    float `while (remMs > 0.0f)` over `frameMs = 50.0000038` is the whole of the difference, and
+>    it buys **26.03 %**. Doing it before U-9179 closes would move the launch and recovery
+>    statistics while ~58 % of the sink still stands, confounding the measurement.
+> 5. **Do NOT use `gnd` / `+0x9e0` to witness anything about the grounded count.** The
+>    original's own tail `0x0047044b..0x004704b0` recomputes it as *the count of wheels with
+>    `state != 0`* — which is exactly what `VehiclePhysicsRun.cpp:343-357` `ReassertContacts`
+>    does, **so `ReassertContacts` is NOT a port-only construct**. Both sides publish `4.0`
+>    while the gate consumed `2`.
+> 6. **Do NOT use `fold_sweep.py` to find writers of a register-relative field.** It matches
+>    folded absolutes only and returned *7 reads / 0 writes* for `+0x9e0` while **9** writers
+>    exist. Use the new **`re/tools/dispsweep.py`** (x87 stores classified by mnemonic; its own
+>    known answer is `+0x9e4`'s `0x00467673` + `0x004686cc`). `findoffset.py --writes` is still
+>    blind to x87 stores.
+> 7. **`0x00469ad4 mov ebx,2` is NOT the substep count.** It is inside `FUN_00469aa0`'s
+>    contact-history shift loop. `FUN_004709a0` has no time loop either — its
+>    `0x00470ab0 cmp ebp,2` is the **retry** cap and it is a **16-vehicle** loop. Corrected
+>    wherever the trackers carried it.
+> 8. **AI slots 1+ still carry the fitted seed** at `VehiclePhysicsRun.cpp:702` — D3. The
+>    substep port will move them when it lands; report it, do not tune it.
+>
+> ### TOOLS THIS ATTEMPT ADDED
+>
+> `mashedmod/src/mashed_re/Vehicle/D2SinkProbe.{h,cpp}` (`MASHED_D2SINK`, default-OFF, 13 call
+> sites across `Integrate2.cpp`, `VehicleControl.cpp`, `VehiclePhysicsRun.cpp`,
+> `ContactFixup.cpp` and `WheelContactSolver.cpp` — all exe-only),
+> `re/tools/statediff/a19_split.py` (the split, `--sites` for the per-write attribution), and
+> `re/tools/dispsweep.py` (register-relative displacement sweep with x87 stores, with a known
+> answer). **The probe is KEPT and justified** (`RESULT.md` §8): default-OFF, CH-verified inert,
+> and it is what step 1 above extends.
+>
+> ### GATES THAT FAILED, ALL REPORTED AS FAILURES
+>
+> **KA3** 70.3499 % — `motion_diag` prints `vel=` at `%g` six significant digits; re-rounding
+> the probe's own vector through `%g` scores **99.9386 %**. The bar was tighter than the channel
+> it compared against. **Not re-thresholded**, and it cannot touch the reading (KA2 is 100 % in
+> the probe's own channel; the two `T_post` medians agree to 8.0e-06). **KB1/KB2** 97.7011 %
+> (85/87) — the 2 misses are the two retry frames, a first-to-last pairing error in the reducer,
+> attempt 18's KA-B class. **WS** — asked for one writer of `+0x9e0`, there are nine, and that
+> failure is what exposed the masking tail. **ONE DECISION RULE REPLACED**, stated in
+> `RESULT.md` §4: `PREREG_STEP1.md` §3's list indexed one code site by substep ordinal so no row
+> could clear 50 %; rule 1' sums each site over the frame's substeps first — a regrouping of
+> quantities the same PREREG §2.1 already defined, same bar.
+>
+> **Still open:** **U-9179** (D2's blocker); U-9178 (re-shaped, only U-9179 remains under it);
+> U-9160 (re-scoped, loop transcribed); U-9177; U-9176; U-9156; U-9171; §20.14's `-0.1` duty
+> cycle; D1-residue R1.
+>
+> **The D3 modes 3/7 hold stands. D2 must close before it starts.**
+
+> ## SUPERSEDED START HERE (D2 lane) — attempt 18. D2 is STILL REOPENED. **Do NOT quote any cross-side clamp-#6 or `T_post` magnitude off the `+0x9e4`-vs-snapshot split. It is phase-biased 51x one way on the original and 10.3x the other on the port. Build the port-side diagnostic at A6b's phase FIRST — the original side of it already exists.**
 >
 > Read [`verify/d2_budget_20261002/RESULT.md`](../verify/d2_budget_20261002/RESULT.md) then
 > `RESULT_STEP2.md` §3 (the one measurement that changes the map) and `RESULT_STEP1B.md` §4
