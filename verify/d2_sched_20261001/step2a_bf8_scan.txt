@@ -1,0 +1,18 @@
+imagebase 0x00400000
+  .text    va=0x00001000 vsz=0x1c98e0 rptr=0x001000 rsz=0x1ca000
+  _rwcseg  va=0x001cb000 vsz=0x000451 rptr=0x1cb000 rsz=0x001000
+  .rdata   va=0x001cc000 vsz=0x01d044 rptr=0x1cc000 rsz=0x01e000
+  .data    va=0x001ea000 vsz=0x32a704 rptr=0x1ea000 rsz=0x04d000
+  _rwdseg  va=0x00515000 vsz=0x000008 rptr=0x237000 rsz=0x001000
+  .rsrc    va=0x00516000 vsz=0x07eb18 rptr=0x238000 rsz=0x07f000
+
+raw occurrences of F8 0B 00 00 in the file: 7
+  va 0x00467d2e  cmp      dword ptr [esi + 0xbf8], 1
+  va 0x00467dd7  mov      dword ptr [esi + 0xbf8], eax
+  va 0x00467de5  mov      dword ptr [esi + 0xbf8], 0
+  va 0x00467def  cmp      dword ptr [esi + 0xbf8], 2
+  va 0x00467e36  mov      dword ptr [esi + 0xbf8], eax
+  va 0x00467e44  mov      dword ptr [esi + 0xbf8], 0
+  va 0x0050312e  [no decode aligned to this displacement]  00007309c745f80b000000eb
+
+.text candidates: 7

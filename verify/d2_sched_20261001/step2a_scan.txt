@@ -1,0 +1,65 @@
+ORIG solo3 frames=2333 R=886 | ORIG solo4 frames=2333 R=886 | PORT frames=1627 R=1
+GD (>=131 frames at d>=0 on both arms): PASS   orig=1447 solo4=1447 port=1626
+GB (finite floor on >=90% of fields): PASS   48/48 finite
+   nonzero floors: {}
+GC control (arm B = orig_solo4): NO divergence anywhere in d[0,130]  -> PASS
+
+=== PORT scan, phi=0 : first divergence at d=0 ===
+   T2 b14[2]    d=0 (orig f=886, port f=1)  orig=0  port=-763499  ratio=432386.50
+   T2 b14[0]    d=0 (orig f=886, port f=1)  orig=0  port=-238892  ratio=94682.91
+   T2 b14[1]    d=0 (orig f=886, port f=1)  orig=0  port=0.0216498  ratio=21649.80
+   all divergent fields at that d (tier,name): [(2, 'b14[2]'), (2, 'b14[0]'), (2, 'b14[1]'), (3, 'wax[4]'), (3, 'wax[6]'), (4, 'wf[7]'), (4, 'wf[5]'), (4, 'wf[3]'), (4, 'wf[1]'), (4, 'wf[2]'), (4, 'wf[0]'), (4, 'wf[6]'), (4, 'wf[4]'), (7, 'sp'), (7, 'horiz')]
+
+=== PORT scan, phi=1 : first divergence at d=0 ===
+   T1 b0c       d=0 (orig f=886, port f=2)  orig=0  port=0.590203  ratio=5037.61
+   all divergent fields at that d (tier,name): [(1, 'b0c'), (2, 'b14[2]'), (2, 'b14[0]'), (2, 'b14[1]'), (3, 'wax[4]'), (3, 'wax[6]'), (3, 'wax[0]'), (3, 'wax[2]'), (4, 'wf[7]'), (4, 'wf[5]'), (4, 'wf[3]'), (4, 'wf[1]'), (4, 'wf[2]'), (4, 'wf[0]'), (4, 'wf[6]'), (4, 'wf[4]'), (6, 'av[1]'), (7, 'sp'), (7, 'horiz')]
+
+GA (same tier AND same field set under phi=0 and phi=1): FAIL
+
+--- per-field first divergent d (phi=0), by tier ---
+  T1 gear     first-divergent d = 14   (orig@d0=0 port@d0=0)
+  T1 gtmr     first-divergent d = 14   (orig@d0=0 port@d0=0)
+  T1 gt[0]    first-divergent d = None   (orig@d0=4 port@d0=4)
+  T1 gt[1]    first-divergent d = None   (orig@d0=3 port@d0=3)
+  T1 gt[2]    first-divergent d = None   (orig@d0=2.4 port@d0=2.4)
+  T1 gt[3]    first-divergent d = None   (orig@d0=2.1 port@d0=2.1)
+  T1 gt[4]    first-divergent d = None   (orig@d0=1.8 port@d0=1.8)
+  T1 gt[5]    first-divergent d = None   (orig@d0=6 port@d0=6)
+  T1 gb498    first-divergent d = None   (orig@d0=40000 port@d0=40000)
+  T1 gb49c    first-divergent d = None   (orig@d0=4000 port@d0=4000)
+  T1 b0c      first-divergent d = 1   (orig@d0=0 port@d0=0)
+  T2 b14[0]   first-divergent d = 0   (orig@d0=0 port@d0=-238892)
+  T2 b14[1]   first-divergent d = 0   (orig@d0=0 port@d0=0.0216498)
+  T2 b14[2]   first-divergent d = 0   (orig@d0=0 port@d0=-763499)
+  T3 fl[0]    first-divergent d = None   (orig@d0=0 port@d0=0)
+  T3 fl[1]    first-divergent d = None   (orig@d0=0 port@d0=0)
+  T3 fl[2]    first-divergent d = None   (orig@d0=0 port@d0=0)
+  T3 fl[3]    first-divergent d = None   (orig@d0=0 port@d0=0)
+  T3 p15      first-divergent d = None   (orig@d0=0.15 port@d0=0.15)
+  T3 p16      first-divergent d = None   (orig@d0=0.0125 port@d0=0.0125)
+  T3 w1b[0]   first-divergent d = 81   (orig@d0=1083.34 port@d0=1082.81)
+  T3 w1b[1]   first-divergent d = 81   (orig@d0=1083.34 port@d0=1082.81)
+  T3 w1b[2]   first-divergent d = 81   (orig@d0=1083.34 port@d0=1082.81)
+  T3 w1b[3]   first-divergent d = 81   (orig@d0=541.671 port@d0=541.407)
+  T3 wax[0]   first-divergent d = 2   (orig@d0=-0.293618 port@d0=-0.298615)
+  T3 wax[1]   first-divergent d = 14   (orig@d0=-0.955923 port@d0=-0.954374)
+  T3 wax[2]   first-divergent d = 2   (orig@d0=-0.293618 port@d0=-0.298615)
+  T3 wax[3]   first-divergent d = 14   (orig@d0=-0.955923 port@d0=-0.954374)
+  T3 wax[4]   first-divergent d = 0   (orig@d0=-8.74228e-08 port@d0=-0.00523116)
+  T3 wax[5]   first-divergent d = 27   (orig@d0=-1 port@d0=-0.999986)
+  T3 wax[6]   first-divergent d = 0   (orig@d0=-8.74228e-08 port@d0=-0.00523116)
+  T3 wax[7]   first-divergent d = 27   (orig@d0=-1 port@d0=-0.999986)
+  T4 wf[0]    first-divergent d = 0   (orig@d0=0 port@d0=-3338.1)
+  T4 wf[1]    first-divergent d = 0   (orig@d0=0 port@d0=-10668.6)
+  T4 wf[2]    first-divergent d = 0   (orig@d0=0 port@d0=-3338.1)
+  T4 wf[3]    first-divergent d = 0   (orig@d0=0 port@d0=-10668.6)
+  T4 wf[4]    first-divergent d = 0   (orig@d0=0 port@d0=-61.275)
+  T4 wf[5]    first-divergent d = 0   (orig@d0=0 port@d0=-11713.3)
+  T4 wf[6]    first-divergent d = 0   (orig@d0=0 port@d0=-30.6375)
+  T4 wf[7]    first-divergent d = 0   (orig@d0=0 port@d0=-5856.65)
+  T5 gnd      first-divergent d = None   (orig@d0=4 port@d0=4)
+  T6 av[0]    first-divergent d = 81   (orig@d0=0 port@d0=-0)
+  T6 av[1]    first-divergent d = 1   (orig@d0=0 port@d0=0)
+  T6 av[2]    first-divergent d = 81   (orig@d0=0 port@d0=0)
+  T7 sp       first-divergent d = 0   (orig@d0=0 port@d0=13.97)
+  T7 horiz    first-divergent d = 0   (orig@d0=0 port@d0=13.38)

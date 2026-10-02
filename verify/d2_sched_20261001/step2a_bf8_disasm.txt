@@ -1,0 +1,68 @@
+00467d20  85c0                   test eax, eax
+00467d22  7d0a                   jge 0x467d2e
+00467d24  c786f40b000000000000   mov dword ptr [esi + 0xbf4], 0
+00467d2e  83bef80b000001         cmp dword ptr [esi + 0xbf8], 1
+00467d35  0f85b4000000           jne 0x467def
+00467d3b  8b86f40b0000           mov eax, dword ptr [esi + 0xbf4]
+00467d41  85c0                   test eax, eax
+00467d43  0f849c000000           je 0x467de5
+00467d49  c744240c8096984a       mov dword ptr [esp + 0xc], 0x4a989680
+00467d51  e8ea65faff             call 0x40e340
+00467d56  83f804                 cmp eax, 4
+00467d59  751f                   jne 0x467d7a
+00467d5b  8b8424f4000000         mov eax, dword ptr [esp + 0xf4]
+00467d62  390568e68800           cmp dword ptr [0x88e668], eax
+00467d68  7408                   je 0x467d72
+00467d6a  39056ce68800           cmp dword ptr [0x88e66c], eax
+00467d70  7508                   jne 0x467d7a
+00467d72  d90528ea5c00           fld dword ptr [0x5cea28]
+00467d78  eb04                   jmp 0x467d7e
+00467d7a  d944240c               fld dword ptr [esp + 0xc]
+00467d7e  d9477c                 fld dword ptr [edi + 0x7c]
+00467d81  d8c9                   fmul st(1)
+00467d83  d886140b0000           fadd dword ptr [esi + 0xb14]
+00467d89  d99e140b0000           fstp dword ptr [esi + 0xb14]
+00467d8f  d98780000000           fld dword ptr [edi + 0x80]
+00467d95  d8c9                   fmul st(1)
+00467d97  d886180b0000           fadd dword ptr [esi + 0xb18]
+00467d9d  d99e180b0000           fstp dword ptr [esi + 0xb18]
+00467da3  d98784000000           fld dword ptr [edi + 0x84]
+00467da9  d8c9                   fmul st(1)
+00467dab  d8861c0b0000           fadd dword ptr [esi + 0xb1c]
+00467db1  d99e1c0b0000           fstp dword ptr [esi + 0xb1c]
+00467db7  ddd8                   fstp st(0)
+00467db9  db86f40b0000           fild dword ptr [esi + 0xbf4]
+00467dbf  d8a424f8000000         fsub dword ptr [esp + 0xf8]
+00467dc6  e87dae0300             call 0x4a2c48
+00467dcb  85c0                   test eax, eax
+00467dcd  8986f40b0000           mov dword ptr [esi + 0xbf4], eax
+00467dd3  7f1a                   jg 0x467def
+00467dd5  33c0                   xor eax, eax
+00467dd7  8986f80b0000           mov dword ptr [esi + 0xbf8], eax
+00467ddd  8986f40b0000           mov dword ptr [esi + 0xbf4], eax
+00467de3  eb0a                   jmp 0x467def
+00467de5  c786f80b000000000000   mov dword ptr [esi + 0xbf8], 0
+00467def  83bef80b000002         cmp dword ptr [esi + 0xbf8], 2
+00467df6  7556                   jne 0x467e4e
+00467df8  8b86f40b0000           mov eax, dword ptr [esi + 0xbf4]
+00467dfe  85c0                   test eax, eax
+00467e00  8944241c               mov dword ptr [esp + 0x1c], eax
+00467e04  743e                   je 0x467e44
+00467e06  db44241c               fild dword ptr [esp + 0x1c]
+00467e0a  33c0                   xor eax, eax
+00467e0c  89861c0b0000           mov dword ptr [esi + 0xb1c], eax
+00467e12  8986180b0000           mov dword ptr [esi + 0xb18], eax
+00467e18  d8a424f8000000         fsub dword ptr [esp + 0xf8]
+00467e1f  8986140b0000           mov dword ptr [esi + 0xb14], eax
+00467e25  e81eae0300             call 0x4a2c48
+00467e2a  85c0                   test eax, eax
+00467e2c  8986f40b0000           mov dword ptr [esi + 0xbf4], eax
+00467e32  7f1a                   jg 0x467e4e
+00467e34  33c0                   xor eax, eax
+00467e36  8986f80b0000           mov dword ptr [esi + 0xbf8], eax
+00467e3c  8986f40b0000           mov dword ptr [esi + 0xbf4], eax
+00467e42  eb0a                   jmp 0x467e4e
+00467e44  c786f80b000000000000   mov dword ptr [esi + 0xbf8], 0
+00467e4e  d98780000000           fld dword ptr [edi + 0x80]
+00467e54  d88eb4090000           fmul dword ptr [esi + 0x9b4]
+00467e5a  d9477c                 fld dword ptr [edi + 0x7c]
