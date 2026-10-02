@@ -920,6 +920,99 @@ function latBracketArm(recBaseHex, car){
 function latBracketDrain(){ const r = LB.rows; LB.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
+// --- AXIS probe (U-9175, D2 attempt 16) ------------------------------------
+// The drive-force accumulator's Y component +0xb18 is exactly 0.0 on 9336/9336
+// original frames (RESULT_STEP4.md §3b) and non-zero on the port. +0xb18 is
+// written ONLY by A6a FUN_00467650's drive arms (0x00467cc5/ccb active-drive,
+// 0x00467d97/d9d boost) as `wheelAxisY * drive + b18`, where the wheel forward
+// axis Y lives at wheel-block +0xb8 (record +0x224/+0x2e8/+0x3ac/+0x470 for the
+// four wheels). That axis is set by A5 FUN_0046ddb0 at 0x0046de74
+// (`mov [esi+0xb8], ecx` from `[edi+0x9d8]`, the body world-forward Y) in the
+// steer==0 branch, or via the rotation transform 0x4c3df0 at 0x0046de5b in the
+// steer!=0 branch. The body forward +0x9d4/d8/dc is itself `xform*(0,0,1)`,
+// written at 0x0046ddc9. A4 FUN_00470670 zeroes b14/18/1c every frame at
+// 0x0047072c (PhysicsChainHooks.cpp:292) BEFORE A5/A6a run.
+//
+// The question U-9175 poses: is the original's +0xb18 zero because its producer
+// writes 0 (a STRUCTURAL zero -- forward-Y is 0 on this flat arm) or because a
+// LATER step zeroes a non-zero A6a output? Two ENTRY hooks bracket A6a exactly,
+// the sanctioned technique (memory `frida-interceptor-is-entry-only`):
+//   site 0 = A6a entry 0x00467650 (ESI-filtered)  -> PRE  (A4 just zeroed b14/18/1c)
+//   site 1 = A6b entry 0x00468980                  -> POST (what A6a itself left)
+// A6a -> A6b is the immediate dispatch (A4_Body: Call_A5; Call_A6a; Call_A6b), and
+// A6b does not write b14/18/1c, so POST == A6a's own output. If forward-Y and the
+// four axis-Ys are exactly 0.0 at PRE and b18 is exactly 0.0 at POST, the zero is
+// STRUCTURAL. If b18 is non-zero at POST but 0 at the .msd snapshot, a later step
+// zeroes it.
+//
+// Rate: 1/frame each site = ~120/s at 60 fps, well under the ~1000/s destabilise
+// floor. Reads only; no writes; no onLeave; no mid-function probe.
+const AX_A6A = 0x00467650;
+const AX_A6B = 0x00468980;
+// wheel-block forward-axis Y, record byte offsets (wheelN base = 0x16c + N*0xc4,
+// axis Y = +0xb8): w0 0x224, w1 0x2e8, w2 0x3ac, w3 0x470.
+const AX_WHEEL_AXY = [0x224, 0x2e8, 0x3ac, 0x470];
+const AX_FWD_CONST = 0x00614708;   // DAT_00614708 = (0,0,1), A5's forward input
+const AX = { armed:false, rows:[], nA6a:0, nA6b:0, skipped:0, err:null,
+             chk:null, nFwdYnz:0, nAxYnz:0, nB18nzPre:0, nB18nzPost:0, nDrive:0 };
+let AX_REC = null, AX_SEQ = 0;
+function axSample(site){
+  try {
+    const r = AX_REC;
+    const row = [AX_SEQ++, site,
+                 r.add(0x9d4).readFloat(), r.add(0x9d8).readFloat(), r.add(0x9dc).readFloat(),
+                 r.add(0xb14).readFloat(), r.add(0xb18).readFloat(), r.add(0xb1c).readFloat(),
+                 r.add(0x9e4).readFloat(), r.add(0x9e0).readFloat(),
+                 r.add(0xbf8).readS32(), r.add(0x1f0).readS32()];
+    for (let w = 0; w < 4; w++) row.push(r.add(AX_WHEEL_AXY[w]).readFloat());
+    // coverage counters, computed from the row (not from an assumption that a
+    // site fired): a probe that reports 0 of N must also prove it covered N.
+    if (site === 0) {
+      AX.nA6a++;
+      const fwdY = row[3], b18pre = row[6], bf8 = row[10], sp = row[8];
+      if (fwdY !== 0.0) AX.nFwdYnz++;
+      if (b18pre !== 0.0) AX.nB18nzPre++;
+      // "active drive" = post-launch driving (bf8==0) with real speed, the regime
+      // where the accumulation actually adds a non-zero drive term.
+      if (bf8 === 0 && sp > 1.0) AX.nDrive++;
+      for (let w = 0; w < 4; w++) if (row[12 + w] !== 0.0) { AX.nAxYnz++; break; }
+    } else {
+      AX.nA6b++;
+      if (row[6] !== 0.0) AX.nB18nzPost++;
+    }
+    AX.rows.push(row);
+  } catch(e){ if (!AX.err) AX.err = 'sample' + site + ' ' + e; }
+}
+function axisProbeArm(recBaseHex, car){
+  if (AX.armed) return 'already armed';
+  try {
+    AX_REC = ptr(parseInt(recBaseHex, 16) + car * 0xd04);
+    // KNOWN-ANSWER self-check: the static forward-axis constant A5 feeds to
+    // Rw_TransformPoints must read (0,0,1), proving the probe reads the image at
+    // the right VA before any verdict rests on its float reads.
+    AX.chk = { fwdConst: [ga(AX_FWD_CONST).readFloat(),
+                          ga(AX_FWD_CONST).add(4).readFloat(),
+                          ga(AX_FWD_CONST).add(8).readFloat()],
+               rec: AX_REC.toString() };
+    Interceptor.attach(ga(AX_A6A), { onEnter(){
+      try {
+        if (!this.context.esi.equals(AX_REC)) { AX.skipped++; return; }
+        axSample(0);
+      } catch(e){ if (!AX.err) AX.err = 'a6aEnter ' + e; }
+    }});
+    Interceptor.attach(ga(AX_A6B), { onEnter(){
+      try { axSample(1); }
+      catch(e){ if (!AX.err) AX.err = 'a6bEnter ' + e; }
+    }});
+    AX.armed = true;
+    return 'axis-probe armed: A6a @0x' + AX_A6A.toString(16)
+         + ' + A6b @0x' + AX_A6B.toString(16)
+         + ' rec=' + AX_REC + ' fwdConst=' + JSON.stringify(AX.chk.fwdConst);
+  } catch(e){ return 'ERR ' + e; }
+}
+function axisProbeDrain(){ const r = AX.rows; AX.rows = []; return r; }
+// ---------------------------------------------------------------------------
+
 // --- CONTACT-FIXUP probe (U-9156, D2 section 22.2) -------------------------
 // [D2 section 22.1] The registered rule named C4 (the post-bounce horizontal speed) as the
 // first diverging term at d = 0, and reading 4 points at the last-contact damp
@@ -1896,6 +1989,13 @@ rpc.exports = {
   latBracketStats: function(){ return JSON.stringify({armed:LB.armed, a6a:LB.nA6a, a6b:LB.nA6b,
                                                       sub:LB.nSub, pending:LB.rows.length,
                                                       skipped:LB.skipped, err:LB.err}); },
+  axisProbeArm: function(recBaseHex, car){ return axisProbeArm(recBaseHex, car); },
+  axisProbeDrain: function(){ return axisProbeDrain(); },
+  axisProbeStats: function(){ return JSON.stringify({armed:AX.armed, a6a:AX.nA6a, a6b:AX.nA6b,
+                                                     skipped:AX.skipped, drive:AX.nDrive,
+                                                     fwdYnz:AX.nFwdYnz, axYnz:AX.nAxYnz,
+                                                     b18nzPre:AX.nB18nzPre, b18nzPost:AX.nB18nzPost,
+                                                     pending:AX.rows.length, chk:AX.chk, err:AX.err}); },
   contactFixupProbeArm: function(recBaseHex, car){ return contactFixupProbeArm(recBaseHex, car); },
   contactFixupProbeDrain: function(){ return contactFixupProbeDrain(); },
   contactFixupProbeStats: function(){ return JSON.stringify({armed:FP.armed, fixup:FP.nFix,
@@ -2358,6 +2458,16 @@ def main():
                          "change splits into [A6a+A6b] and [the 2x25 contact substeps]. "
                          "Entry hooks only, ~180 calls/s. Writes <statediff-out>."
                          "latbracket.csv. Requires --statediff-out.")
+    ap.add_argument("--axis-probe", action="store_true",
+                    help="[U-9175 / D2 attempt 16] entry-hook A6a 0x00467650 (PRE, "
+                         "ESI-filtered) and A6b 0x00468980 (POST) and log the player "
+                         "record's body forward +0x9d4/d8/dc, drive accumulator "
+                         "+0xb14/18/1c, speed, grounded, boost-state +0xbf8, trackId "
+                         "+0x1f0 and the four wheels' forward-axis Y (+0x224/2e8/3ac/470). "
+                         "Brackets A6a's write of +0xb18 to distinguish a STRUCTURAL zero "
+                         "(forward-Y == 0) from a later-step zero. Entry hooks only, "
+                         "~120 calls/s. Writes <statediff-out>.axisprobe.csv. Requires "
+                         "--statediff-out.")
     ap.add_argument("--fixup-probe", action="store_true",
                     help="[U-9156 / D2 section 22.1] entry-hook VehicleContactFixup "
                          "0x0046ef70 and the substep loop 0x004709a0 with one shared "
@@ -2528,6 +2638,8 @@ def main():
                 print("  [statediff]", E.ai_step_arm(os.environ.get("MASHED_AISTEP_LOCALS", "1") != "0"))
             if args.lat_bracket:
                 print("  [statediff]", E.lat_bracket_arm("0x008815a0", args.statediff_car))
+            if args.axis_probe:
+                print("  [statediff]", E.axis_probe_arm("0x008815a0", args.statediff_car))
             if args.fixup_probe:
                 print("  [statediff]", E.contact_fixup_probe_arm("0x008815a0",
                                                                  args.statediff_car))
@@ -2828,6 +2940,25 @@ def main():
                     n2 = sum(1 for r in lb_rows if r[1] == 2)
                     print(f"  [statediff] lat-bracket {len(lb_rows)} samples "
                           f"(A6a {n0}, A6b {n2}, substep {n1}) -> {lbp}")
+                if args.axis_probe:
+                    # Counters + known-answer self-check BEFORE the rows, CSV written even
+                    # when empty: memory `absent-log-proves-nothing-run-a-control`.
+                    try: print("  [statediff] axis-probe agent:", E.axis_probe_stats())
+                    except Exception as _e: print("  [statediff] axis-probe stats failed:", _e)
+                    ax_rows = []
+                    try: ax_rows = E.axis_probe_drain()
+                    except Exception as _e: print("  [statediff] axis-probe drain failed:", _e)
+                    axp = outp.with_suffix(outp.suffix + ".axisprobe.csv")
+                    with open(axp, "w", newline="") as f:
+                        f.write("seq,site,fwdx,fwdy,fwdz,b14,b18,b1c,speed,gnd,bf8,tid,"
+                                "axy0,axy1,axy2,axy3" + chr(10))
+                        for r in ax_rows:
+                            f.write(",".join(repr(x) if isinstance(x, float) else str(x)
+                                             for x in r) + chr(10))
+                    _n0 = sum(1 for r in ax_rows if r[1] == 0)
+                    _n1 = sum(1 for r in ax_rows if r[1] == 1)
+                    print(f"  [statediff] axis-probe {len(ax_rows)} samples "
+                          f"(A6a-PRE {_n0}, A6b-POST {_n1}) -> {axp}")
                 if args.fixup_probe:
                     # Counters and the register self-check BEFORE the rows, and the CSV is
                     # written even when empty: memory
