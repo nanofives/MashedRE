@@ -206,6 +206,13 @@ void WheelContactSolver(int* self, void* world, int substep)
     if (self[0xc8] == 1) { fVar2 += local_bc[2]; bVar16++; local_f0 += local_100v[2]; local_110 += local_a8[2]; }
     if (self[0xf9] == 1) { fVar2 += local_bc[3]; bVar16++; local_f0 += local_100v[3]; local_110 += local_a8[3]; }
 
+    // [D2 attempt 19 STEP 1C] the grounded count BEFORE the bVar16 == 4 drop, with the
+    // four wheel states packed, so the 0x004701e8 gate's input is readable. The gate
+    // itself is byte-faithful (PREREG_STEP1C). Diagnostic, default-OFF.
+    const int d2sStates = (self[0x66] & 0xf) * 1000 + (self[0x97] & 0xf) * 100 +
+                          (self[0xc8] & 0xf) * 10 + (self[0xf9] & 0xf);
+    mashed_re::D2Sink::MarkWheel("wcs_cnt", self, -1, (float)bVar16, (float)d2sStates,
+                                 bVar4 ? 1.f : 0.f, (float)iVar8);
     bool goLAB_0047001f = false;
     float local_e0[3] = {0,0,0};   // {local_e0, local_dc, local_d8} contiguous
     if (bVar16 == 4) {
@@ -347,7 +354,9 @@ void WheelContactSolver(int* self, void* world, int substep)
         ++g_wcsVelWrites[2];
         vF(self, 0x26c) = d[0] + vF(self, 0x26c);
         vF(self, 0x26e) = d[2] + vF(self, 0x26e);
-        mashed_re::D2Sink::MarkWheel("wcs_drift", self, -1, d[0], gc, d[2], 0.f);
+        mashed_re::D2Sink::MarkWheel("wcs_drift", self, -1, d[0], gc, d[2],
+            (float)((self[0x66] & 0xf) * 1000 + (self[0x97] & 0xf) * 100 +
+                    (self[0xc8] & 0xf) * 10 + (self[0xf9] & 0xf)));
         Vec3Normalize(d, d);
         float bc[3];
         bc[0] = d[1] * kUpZ - d[2] * kUpY;
