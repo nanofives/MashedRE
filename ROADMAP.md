@@ -664,6 +664,57 @@ opinion is an opinion about the scaffold, not about the port.
 > paired fields `!!`-flagged. Detail: `verify/d2_sched_20261001/RESULT_STEP{1,2}.md`,
 > `D2_REOPEN_2026-09-29.md` §27.
 
+> ##### Attempt 14, steps 2B / 2C — 2026-10-01. **STILL REOPENED, and the map changed. Supplying ONLY the missing `+0xbf8 = 2` trigger makes the port's launch the ORIGINAL's to 0.15 % with the peak on the SAME frame, and moves it from NEVER recovering to PARTIALLY recovering. The registered discriminator returned INCONCLUSIVE. U-9174 is now ON D2's critical path. NO fix authored — the trigger is still unlocated and a fitted one may not ship.**
+>
+> **Step 2B.** GE/GH/GG **passed**; **GF FAILED** with **zero** readable buckets, so the
+> registered first-divergence rule did not execute and was not amended. The occupancy table is
+> the result: in the matched-steer window `d`[119,300], **182 grounded frames each**, the
+> ORIGINAL spends **1 of 182** at `cos(fwd,vel) < -0.1` and the PORT **86 of 182**; the ORIGINAL
+> is at speed `>= 150` on **150 of 182** and the PORT on **0 of 182**. **Not one bucket is
+> shared.** That is the **third** instrument this attempt to return "no overlap", after §26.9's
+> 5 common frames and step 2A's zero readable bands.
+>
+> **Step 2C — the experiment.** `MASHED_D2_BOOSTHOLD=1`, **default OFF**
+> (`Integrate2.cpp:316-352`): one write per car per race, `+0xbf8 = 2` and `+0xbf4 = 3000`, on
+> the first frame `input[0] != 0`. The hold itself comes from the original's **own transcribed**
+> `+0xbf8 == 2` arm (`0x00467def..0x00467e44`). **The trigger is FITTED** — labelled, no
+> C-level, absent from every scored arm, and barred from shipping while U-9174 is open.
+> `=== Build OK ===`, `allowlisted=122 **NEW=0**`; **D-0** the knob-OFF run is **bit-identical
+> to `s1` on all 1629 shared lines**; **D-1** `b14` is exactly 0 on `d`=0..14 and engages at
+> `d`=15 at `(-270030, 0.0218758, -761363)` against the ORIGINAL's `(-265866, 0, -762420)` —
+> **x 1.57 %, z 0.14 %**; **D-2** three runs identical; `participants=1` throughout.
+>
+> | best-fit lag over `d`=16..95, n=80 | L=0 | L=15 | **BEST** |
+> |---|---:|---:|---|
+> | PORT knob OFF | 89.07 % | **1.44 %** | **L = 15** |
+> | PORT knob ON | **0.15 %** | 49.21 % | **L = 0** |
+>
+> **The lag goes to zero and the launch error improves tenfold.** Peak **1835.50 at `d = 95`**
+> against the original's **1832.40 at `d = 95`** — same frame, 0.17 % apart. Fourth independent
+> confirmation of `3000 / 200 = 15`, and the strongest.
+>
+> **The discriminator**, 400 frames after the trough: ORIGINAL **397/400 (99.2 %)**, median
+> **1333.9**; PORT knob ON **243/400 (60.8 %)**, median **132.8**; PORT knob OFF **0/400
+> (0.0 %)**, median 31.5. Registered rule H1 iff `>= 50 %` **and** median `>= 900`, H2 iff
+> `< 10 %`. **60.8 % passes, median 132.8 fails -> INCONCLUSIVE**, no third branch added.
+> **Both surviving hypotheses have support and neither is complete.**
+>
+> **Scored DIAGNOSTIC arm, 3 of 3 identical, all three still FAIL** (labelled diagnostic; a
+> fitted trigger can never re-close D2): slip 1500-2000 **0.1983** (n=19, median speed 1665.1,
+> **median frame 86 = `d` 85**) — error halves from **+5.6 % to +3.0 %**, missing the bound by
+> **0.00195**; slip 2000-2600 **UNSCORABLE** (n=0); driving-median **1019.77** (n=76, **median
+> frame 80 = `d` 79**), which moves the **wrong** way while its `n` rises **54 -> 76**, because a
+> partially-recovering car adds frames just above the 500 floor.
+>
+> **Collateral** (same-side paired, `s1` vs `bh1`, floors on both sides): 47 of 69 divergent,
+> **22 within floor including all four input bytes and `io.steer`** — **no input channel moved**.
+> First divergence `b14` at frame 2, alone; everything else at frame 3. **No outside-scope rows.**
+>
+> **What changed in the map.** U-9174 is **amended onto D2's critical path**. The knob gives the
+> next attempt the **overlapping state** every instrument this session lacked. The **residual
+> recovery gap is a real second defect** and is the remaining D2 lane. Detail:
+> `verify/d2_sched_20261001/RESULT_STEP2BC.md`, `D2_REOPEN_2026-09-29.md` §28.
+
 > #### Re-close attempt 13 — 2026-10-01. **STILL REOPENED. The `l_60` call-site attribution is VERIFIED and attempt 12's `l_60 >= 79 240` is WITHDRAWN (the ORIGINAL is on clamp #6's LOW arm, where `k` is pinned at its 0.1 floor) — and then step 2 found that EVERY cross-side band above 100 speed in this lane is OFF-REGIME. The two sides share FIVE frames of common regime. That withdraws §21.9's `ld4` 2.71x, §21.10's front-axis defect and this attempt's own `l_60` ratio. NO fix authored.**
 >
 > **STOP MEASURING INSIDE A6a.** Regime = steer saturated (`+0x1a8 >= 33.8`) and speed `>= 100`
