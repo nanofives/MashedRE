@@ -41,6 +41,7 @@
 #include <cmath>
 #include <cstdio>     // [G2-A6DIAG] env-gated angular-velocity production diag
 #include <cstdlib>
+#include "D2SinkProbe.h"   // [D2 attempt 19] diagnostic, default-OFF
 
 namespace mashed_re {
 namespace Vehicle {
@@ -643,6 +644,10 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     int tId = Ri(v, 0x1f0);
     float grip = (float)(l_60 / (double)Rf(v, 0x18c));
     Wf(v, 0x9e4, speed);
+    // [D2 attempt 19] T_post's LEFT endpoint. a18_budget.py defines s_mid = +0x9e4, so
+    // this is the one phase where |v| and +0x9e4 are the same number by construction
+    // (gate KA1). Diagnostic, default-OFF.
+    D2Sink::Mark("w1", v, -1, 0, 0.f, 0.f);
     // track-id grip scaling
     if (tId == -0x5f7f80) {
         grip = grip * k1p5;

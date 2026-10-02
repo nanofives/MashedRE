@@ -17,6 +17,7 @@
 #include <cmath>
 #include <cstdio>
 #include <vector>
+#include "D2SinkProbe.h"                     // [D2 attempt 19] diagnostic, default-OFF
 #include <chrono>     // WS-A s3 perf profiler (steady_clock == QPC on MSVC)
 // #define MASHED_PHYS_DIAG 1   /* enable the steer-chain diag block (G2 drive debug) */
 
@@ -843,6 +844,10 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         const char* e = std::getenv("MASHED_A8_A4_FIRST");
         return !(e && e[0] == '0');
     }();
+    // [D2 attempt 19] arm the T_post split for this frame. Slot 0 only; any other slot
+    // disarms the channel so ContactFixup's sites (which never see `slot`) stay slot-0.
+    // Diagnostic, default-OFF (MASHED_D2SINK). verify/d2_sink_20261002/PREREG_STEP1.md.
+    D2Sink::Begin(slot);
     if (s_a4First) {
         g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
         VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis, slot);
@@ -912,8 +917,10 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
 
     float remMs = frameMs;
     int guard = 0;
+    int d2sSub = 0;   // [D2 attempt 19] substep ordinal for the diagnostic only
     while (remMs > 0.0f && guard++ < 64) {
         float chunkMs = (remMs < (float)kMaxSubstep) ? remMs : (float)kMaxSubstep;
+        D2Sink::Mark("sub_top", r, d2sSub, 0, chunkMs, remMs);
 
         // 0x00470ab0's retry needs the substep to be REDOABLE. The original gets that
         // for free: A9 writes dst = src + delta into the OTHER half of the +0x928
@@ -976,6 +983,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
             F(r, off::kForward + 0) = std::cos(io.yaw);
             F(r, off::kForward + 8) = std::sin(io.yaw);
         }
+        D2Sink::Mark("sub_orient", r, d2sSub, pass, chunkMs, remMs);   // 0x0046e9e0
 
         // WS-A contacts: run the REAL ported wheel-contact solver (FUN_0046f6c0) over the
         // track tris instead of the flat SetGrounded substitute -> per-wheel slope normals
@@ -997,6 +1005,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         // basis + 4 = the `up` row of the integrated body basis (BodyOrient_Init's
         // m[4..6]); it is what record +0x9c8/+0x9cc/+0x9d0 holds on the original.
         SolveWheelContacts(r, io, guard, basis + 4);
+        D2Sink::Mark("sub_wheel", r, d2sSub, pass, chunkMs, remMs);    // 0x0046f6c0
         if (prof::g_on) { prof::f_probeMs += prof::NowMs() - tp0; ++prof::f_substeps; }
 
         // --- 0x00470ae8 / 0x00470aef / 0x00470afe: the car<->world contact pair ---
@@ -1062,8 +1071,11 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         if (!svpEmitted) svpEmit(pass, chunkMs, svpV, svpW0, -1, svpFixups);
         break;
         }   // end retry
+        D2Sink::Mark("sub_end", r, d2sSub, 0, chunkMs, remMs);
+        ++d2sSub;
         remMs -= chunkMs;
     }
+    D2Sink::ClearSubstep();
 
     // A4 (FUN_00470670) RUNS ONCE PER FRAME, OUTSIDE THE SUBSTEP LOOP — corrected
     // 2026-08-25. It used to be called inside the loop above, which at the corrected
@@ -1198,6 +1210,10 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // steer was 0 on 58 of 60 frames, i.e. a regime filter masquerading as a
     // measurement. Slot 0 only, uncapped so the cap cannot become a regime filter.
     {
+        // [D2 attempt 19] T_post's RIGHT endpoint. Emitted from the SAME block as the
+        // motion_diag line whose `vel=[..]` a18_budget.py reads as s_post, so `snap` and
+        // s_post are the same phase by construction (gate KA3). Default-OFF.
+        D2Sink::Mark("snap", r, -1, 0, 0.f, 0.f);
         static const bool s_md = (std::getenv("MASHED_MOTION_DIAG") != nullptr);
         if (s_md && slot == 0) {
             if (std::FILE* lf = std::fopen("motion_diag.log", "a")) {

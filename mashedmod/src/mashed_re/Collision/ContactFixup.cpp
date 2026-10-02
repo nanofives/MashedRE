@@ -39,6 +39,7 @@
 #include "ContactSolvers.h"
 #include <cstdio>
 #include <cstdlib>
+#include "../Vehicle/D2SinkProbe.h"   // [D2 attempt 19] diagnostic, default-OFF
 
 namespace mashed_re {
 namespace Collision {
@@ -263,6 +264,10 @@ void VehicleContactFixup(int* self)
     vel[0] = local_54[0] + v0;
     const float v1 = local_54[1] + vel[1]; vel[1] = v1;
     const float v2 = local_54[2] + vel[2]; vel[2] = v2;
+    // [D2 attempt 19] the three anchored velocity writes of 0x0046ef70, each sampled at
+    // its own exit, so T_post's substep share splits by write. Diagnostic, default-OFF.
+    D2Sink::NoteFixup();
+    D2Sink::Mark("fx_bounce", self, -1, 0, 0.f, 0.f);   // 0x0046f52c
 
     // LAST-CONTACT DAMP. [U-9156 2026-09-30] CORRECTED — the guard used to read
     // slot 17's key against -1 and so never fired; the original reads SLOT 0's key
@@ -308,6 +313,7 @@ void VehicleContactFixup(int* self)
         vel[1] = v1 * fVar5;
         vel[2] = v2 * fVar5;
     }
+    D2Sink::Mark("fx_damp", self, -1, 0, 0.f, 0.f);     // 0x0046f5ba / 0x0046f5c0
 
     // 0x0046f5f3: only when all four wheels are grounded (+0x9e0 == 4.0f as an int).
     if (Ri(self, 0x9e0) == kFx_Grounded4) {
@@ -329,6 +335,7 @@ void VehicleContactFixup(int* self)
             (void)Vec3Mag(local_54);    // 0x0046f6ac: result discarded by the original
         }
     }
+    D2Sink::Mark("fx_slide", self, -1, 0, 0.f, 0.f);    // 0x0046f5f3
 }
 
 }  // namespace Collision

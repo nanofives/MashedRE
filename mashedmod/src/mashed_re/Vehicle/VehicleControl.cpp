@@ -29,6 +29,7 @@
 #include "ForceIntegrator.h"
 #include <cstdint>
 #include <cstring>
+#include "D2SinkProbe.h"   // [D2 attempt 19] diagnostic, default-OFF
 
 namespace mashed_re {
 namespace Vehicle {
@@ -273,13 +274,20 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     // The two conditions are disjoint. The .asi copy's dispatch IS fixed and verified
     // (Call_A6b, 144 samples incl. 64 airborne bit-identical) — see
     // re/analysis/D2_REOPEN_2026-09-29.md §4.
+    // [D2 attempt 19] grip-clamp #6's own exit phase: A6a has returned, nothing else has
+    // run. m(a6a_out) - m(w1) IS clamp #6's cost. Diagnostic, default-OFF.
+    D2Sink::Mark("a6a_out", v, -1, 0, 0.f, 0.f);
     Vehicle_AeroStabilize(self, static_cast<float*>(xform), dt);  // A6b 0x00468980
+    D2Sink::Mark("a6b_out", v, -1, 0, 0.f, 0.f);
 
     if (Ib(v, 0x9f0) == 2) {                                       // parked/stopped state
         Fb(v, 0x9b0) *= vc::kParkedDamp;
         Fb(v, 0x9b4) *= vc::kParkedDamp;
         Fb(v, 0x9b8) *= vc::kParkedDamp;
     }
+    // [D2 attempt 19] A4's exit. m(a4_out) - m(a6b_out) is the parked damp 0x00470948,
+    // whose gate value +0x9f0 the line itself carries. Diagnostic, default-OFF.
+    D2Sink::Mark("a4_out", v, -1, 0, 0.f, 0.f);
 }
 
 } // namespace Vehicle
