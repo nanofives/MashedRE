@@ -610,6 +610,26 @@ opinion is an opinion about the scaffold, not about the port.
 > **Order: D2 must close again BEFORE the D3 modes 3/7 port starts.** §D3's closure path
 > (`FUN_00414c30` + `FUN_00484c70`) is on hold until then.
 
+> #### Re-close attempt 15 — 2026-10-01. **U-9174 RESOLVED and D2's LAUNCH CLOSED IN THE DEFAULT BUILD. The `+0xbf8 = 2` writer is `0x0046d7a2` inside `FUN_0046d780`, the 15-frame hold is the LOSING branch of a start-line rev-charge mini-game, and with it ported at its own RVA — no knob anywhere — the port's lag goes to 0 and its peak lands on the original's own frame. The three scored metrics STILL FAIL 3 of 3, so D2 does NOT close.**
+> 
+> **The writer, and why three attempts missed it.** The vehicle array is `0x008815a0` stride `0xd04`, so MSVC folds `&veh[i].+0xbf8` into `i*0xd04 + 0x00882198` and the instruction contains **no `0xbf8` at all** (stride witness `imul eax,eax,0xd04` at `0x0046d78e`). A capstone sweep for the folded absolute operands found it; a Ghidra decompile of **all 6239 defined functions**, 0 failures, grepped for `0xbf[048c]` returns `FUN_00467650` alone and would **not** have found it. Both instruments were needed — the second is why no other writer is claimed. CONFIRMED on the RUNNING original, **two boots, entry hooks only**: entered exactly once for car 0, `bf8 0 -> 2` with `bf4` 3000 unchanged, 112 charge ticks before it rising `+50`/tick, and the same run's `.msd` carrying `bf8 == 2` on exactly 14 frames at `-200`/frame. `verify/d2_writer_20261001/PREREG_STEP1.md` + `RESULT_STEP1.md`.
+> 
+> **The mechanic.** `FUN_0046d7f0` (`0x0046d7f0`) adds **50** per pre-race state-tick to `veh+0xbf4` while the accel byte exceeds `160.0`, clamped `[0,3000]`; the 50 is the `push 0x32` at `0x0042c980`/`0x00492d83`. At the 1.86 s mark (`_DAT_005ccdf4`, test `0x00410460`) `FUN_0046d780` converts it: charge **> 1000** gives state **2**, an OVER-REV BOG whose countdown is the measured **3000 / 200 = 15** frames; charge <= 1000 gives state 1. The D2 arm holds full accel through the countdown, so the original **always** takes the losing branch.
+> 
+> **The port.** ONE body per RVA in the new `Vehicle/LaunchRevCharge.cpp`, in **both** `exe_sources.rsp` and `asi_sources.rsp`; `0x0046d7f0`'s body MOVED there out of asi-only `PromoLoop_sessionB.cpp`. `0x0046d780` **C2 -> C3** (path1 GREEN 8/8 non-degenerate + path2 install PASS), `0x0046d7f0` C3 re-affirmed — and a LATENT GAP closed: its `arg_type` had no handler in `diff_template.js`, so `run_diff.py` refused the row outright and it could not be re-verified at all. **`MASHED_D2_BOOSTHOLD` is REMOVED from the code.** Build OK, `rva-lint NEW=0`, no duplicate body by hand grep.
+> 
+> | gate | result |
+> |---|---|
+> | **a** launch | **PASS 3/3** — lag **L = 0** (0.19 %, against 49-53 % at L=14/15/16), `+0xb14` engages at **`d` = 15**, peak **1835.50 at `d` = 95** against **1832.40 at `d` = 95** |
+> | **b** recovery | **INCONCLUSIVE** as registered — **243/400 = 60.8 %**, median **132.8**, against **398/400 = 99.5 %** and **1333.9** |
+> | **c** metrics | **FAIL 3/3** — slip 1500-2000 **0.1983** (n=19, med spd 1665.05, med frame `d` 85), slip 2000-2600 **UNSCORABLE** (n=0), driving-median **1019.77** (n=76, med frame `d` 79) |
+> 
+> The port computes the original's own saturated charge of **3000** for itself. **These are attempt 14's knob-ON numbers to every digit**, so the fitted trigger was a faithful stand-in and the residual gap **survives the real fix**. §26.10's median-frame guard fires on every scored row (ORIG median `d` **720 / 909 / 824**), so the magnitudes are not readable as physics errors — the bounds are still scored and not met. D-0: the control arm is bit-identical to attempt 14's `s1` on all 1625 shared lines. One VOID run disclosed (null record array during the countdown; fixed by hoisting the physics init above it, which is the original's own ordering).
+> 
+> **The downstream term, NAMED and WITNESSED but NOT fixed.** With `L = 0` the arms can be compared at the same `d` for the first time in four attempts. **[U-9175]** the drive-force **Y component `+0xb18` is exactly `0.0` on 9336 of 9336 frames across FOUR original captures** while the port writes it non-zero on **385 of 400** post-release frames — **pre-existing**, binary rather than a magnitude. `+0xb0c` is confirmed as the first diverging term (`d` = 1) and is **NOT CLEAN**: too high early, **64x too low** later. No fix authored: `PREREG_STEP3.md` §3 requires a live original-side test first. `RESULT_STEP3.md` + `RESULT_STEP4.md`.
+> 
+> **Still open:** U-9175; `+0xb0c`; the recovery gap; U-9173; U-9156; U-9160; U-9171; D1-residue R1.
+
 > #### Re-close attempt 14 — 2026-10-01. **STILL REOPENED. The two arms DO share their input schedule — the ORIGINAL begins steering from EXACTLY 0.000000 speed — and release-aligned the port's LAUNCH is faithful to 1.44 % fifteen frames early. Both sides then peak within 1.3 % and crash to the same trough; the ORIGINAL recovers to a median of 1828.5 and the PORT's ceiling is 91.4. D2's defect is the RECOVERY. NO fix authored: the mechanism behind the 15 frames is proven but its trigger is unlocated [U-9174].**
 >
 > **Step 1 refuted the input-schedule hypothesis.** Over frames 0-885 the ORIGINAL's horizontal

@@ -1,132 +1,98 @@
 # Next session kickoff
 
-Updated 2026-10-01 at the close of the **D2 re-close attempt 14** session. Three findings, in
-order of what they change: the two arms **DO** share their input schedule (the original steers
-from **exactly `0.000000`** speed); the port's **launch is faithful**, and supplying only the
-one missing trigger `+0xbf8 = 2` makes it the original's to **0.15 %** with the peak on the
-**same frame**; and that same knob moves the port from **never** recovering to **partially**
-recovering — **60.8 %** of post-trough frames above 100 against the original's 99.2 % — so the
-registered discriminator returned **INCONCLUSIVE** and **U-9174 is now on D2's critical path**.
-**No fix authored**: the trigger is still unlocated and a fitted one may not ship. Branch
-`race/first-frame-parity`. Nothing is pushed.
+Updated 2026-10-01 at the close of the **D2 re-close attempt 15** session. **U-9174 is
+RESOLVED and D2's LAUNCH is CLOSED in the default build.** The `+0xbf8 = 2` writer is
+`0x0046d7a2` inside `FUN_0046d780`; it is confirmed live on the running original on two
+boots, ported at its own RVA with both Frida legs green, and `MASHED_D2_BOOSTHOLD` is
+gone. The three scored metrics still **FAIL 3 of 3** and the recovery is still short, so
+**D2 does NOT close**. Branch `race/first-frame-parity`. Nothing is pushed.
 
-> ## START HERE (D2 lane) — attempt 14. D2 is STILL REOPENED. **Two things to internalise: the LAUNCH is faithful, and after the first bounce the two arms share NO state at all. Three instruments said so. The next move is not another reduction.**
+> ## START HERE (D2 lane) — attempt 15. D2 is STILL REOPENED, but for a different reason than before. **The launch is now FAITHFUL, not fitted: lag 0, the peak on the original's own frame, and the port computing the original's own charge of 3000 for itself. What remains is one downstream defect, and for the first time it is MEASURABLE.**
 >
-> Read [`verify/d2_sched_20261001/RESULT_STEP2BC.md`](../verify/d2_sched_20261001/RESULT_STEP2BC.md)
-> **first**, then [`RESULT_STEP2.md`](../verify/d2_sched_20261001/RESULT_STEP2.md) §2-§3, then
-> [`RESULT_STEP1.md`](../verify/d2_sched_20261001/RESULT_STEP1.md) §2. `ROADMAP.md` §D2's
-> attempt-14 blocks and `D2_REOPEN_2026-09-29.md` **§27 and §28** carry the same record.
-> **Do not re-derive any of it.** Pre-registrations `PREREG_STEP1.md`, `PREREG_STEP2.md`,
-> `PREREG_STEP2B.md`, `PREREG_STEP2C.md` — all four committed before their first run, **none
-> amended**. Trackers: **U-9174 OPENED then AMENDED onto D2's critical path**.
+> Read [`verify/d2_writer_20261001/RESULT_STEP3.md`](../verify/d2_writer_20261001/RESULT_STEP3.md)
+> **first**, then [`RESULT_STEP4.md`](../verify/d2_writer_20261001/RESULT_STEP4.md) §3b, then
+> [`RESULT_STEP1.md`](../verify/d2_writer_20261001/RESULT_STEP1.md) §2 for the mechanic.
+> Pre-registrations `PREREG_STEP1.md` and `PREREG_STEP3.md`, both committed before their
+> first run, **neither amended**. **Do not re-derive any of it.**
 >
-> ### THE ONE EXPERIMENT THAT MOVED THE MAP
+> ### WHAT THE WRITER TURNED OUT TO BE
 >
-> `MASHED_D2_BOOSTHOLD=1` (**default OFF**, `Integrate2.cpp:316-352`) writes `+0xbf8 = 2` and
-> `+0xbf4 = 3000` **once per car per race**, on the first frame `input[0] != 0`. Nothing else.
-> The 15-frame hold that follows comes from the **original's own transcribed `+0xbf8 == 2`
-> arm** (`0x00467def..0x00467e44`).
+> A **start-line rev-charge mini-game**, and the 15-frame hold is its LOSING branch.
 >
-> | | best lag vs ORIG (`d`=16..95, n=80) | launch err | peak | at `d` | post-trough `>=100` | median |
-> |---|---|---:|---:|---:|---:|---:|
-> | **ORIGINAL** | — | — | 1832.40 | **95** | **397/400 (99.2 %)** | **1333.9** |
-> | **PORT knob ON** | **L = 0** | **0.15 %** | 1835.50 | **95** | **243/400 (60.8 %)** | **132.8** |
-> | PORT knob OFF | L = 15 | 1.44 % | 1856.57 | 80 | **0/400 (0.0 %)** | 31.5 |
+> | | where | what |
+> |---|---|---|
+> | charge | `FUN_0046d7f0` `0x0046d7f0` | `veh+0xbf4 += 50` per pre-race state-tick while the accel byte exceeds `160.0` (`_DAT_005cea3c`), clamped `[0,3000]` |
+> | delta | `push 0x32` at `0x0042c980` / `0x00492d83` | **50**, a hard constant; the caller loops `(frameMs-1)/50 + 1` times |
+> | release | `FUN_0046d780` `0x0046d780`, called at `0x0041049b` | charge **> 1000** -> **`+0xbf8 = 2` at `0x0046d7a2`** with the charge UNTOUCHED; else charge > 0 -> `+0xbf8 = 1` and charge += 1000 |
+> | consume | A6a `0x00467def` | the `== 2` arm zeroes `+0xb14/18/1c` and counts the charge down at 200/frame. **3000 / 200 = 15** |
 >
-> **The trigger is FITTED, not transcribed.** It earns no C-level, enters no scored arm, and
-> **may not ship while U-9174 is open**. `D-0` proves the default build is untouched: the
-> knob-OFF run is **bit-identical to `s1` on all 1629 shared lines**.
+> **Why three attempts missed it:** the base is FOLDED. `&veh[i].+0xbf8` encodes as
+> `i*0xd04 + 0x00882198`, so the instruction contains no `0xbf8` at all. A capstone sweep
+> for the absolute operands found it; a Ghidra decompile of **all 6239** functions grepped
+> for `0xbf[048c]` returns `FUN_00467650` alone and would **not** have. Neither instrument
+> alone sufficed. The new `GrepDecompAll.java` is the second one.
 >
-> ### WHAT IS SETTLED, and must not be re-litigated
+> ### THE SCORE, default build, 3 of 3 runs identical, NO knob
 >
-> 1. **The input schedule MATCHES.** Over frames 0-885 the ORIGINAL's horizontal speed is
->    **exactly `0.000000` on every frame**; release is frame **886**, witnessed three ways
->    (`+0xbf4` holds 3000 then `-200`/frame; `+0xb24` first ticks 50; `+0x1a8` first reads
->    `17.07471`). `+0x190` is `34.0000` on all 2333 frames, so
->    `255/256 * 34 * 0.5 * (6050/6000) = 17.074707` identifies the consumed steer byte as 255.
->    Release-aligned every channel agrees to **0.000 %**; the port holds `in=(255,0,255,0)` on
->    **4880 of 4880** frames. **The §16.7 arm needs no change.**
-> 2. **The 15 frames are ENTIRELY the `+0xbf8 == 2` gate.** Proven four ways: the countdown
->    arithmetic (`3000/200 = 15`), the `b14` engagement frame, the knob-OFF lag fit (L=15), and
->    now the knob-ON reproduction (**L=0, 0.15 %, same peak frame**). On three ORIGINAL captures
->    `(+0xbf8 == 2) <=> (+0xb14 == 0)` holds on **1446 of 1447** frames after release.
-> 3. **[U-9174] the trigger is NOT located.** Every literal-displacement writer of `+0xbf8` in
->    `MASHED.exe.unpatched` writes **ZERO** (`xor eax,eax` at `0x00467dd5` / `0x00467e34`); the
->    7th byte hit `0x0050312e` decodes as `mov [ebp-8], 0xb`. The writer uses a computed base.
->    **Ghidra MCP was DOWN for the whole attempt-14 session.**
-> 4. **After the first bounce the two arms share NO state.** In the matched-steer window
->    `d`[119,300], 182 grounded frames each: the ORIGINAL is at `cos(fwd,vel) < -0.1` on **1**
->    frame and the PORT on **86**; the ORIGINAL is at speed `>= 150` on **150** and the PORT on
->    **0**. Zero buckets have `n >= 20` on both sides. Together with §26.9's five common frames
->    and step 2A's zero readable bands, **that is three instruments agreeing that no cross-side
->    comparison on this arm can have power.**
+> | gate | result |
+> |---|---|
+> | **a** launch | **PASS** — best-fit lag **L = 0** (0.19 %, against 49-53 % at L=14/15/16), `+0xb14` engages at **`d` = 15**, peak **1835.50 at `d` = 95** against the original's **1832.40 at `d` = 95** |
+> | **b** recovery | **INCONCLUSIVE** as registered — **243/400 = 60.8 %**, median **132.8**, against **398/400 = 99.5 %** and **1333.9** |
+> | **c** metrics | **FAIL 3 of 3**: slip 1500-2000 **0.1983** (n=19, median speed 1665.05, median frame 86 = `d` 85), slip 2000-2600 **UNSCORABLE** (n=0), driving-median **1019.77** (n=76, median frame 80 = `d` 79) |
+> | W, D-0 | PASS — witness `bf4 3000 -> 3000  bf8 0 -> 2` on all three; control bit-identical to attempt 14's `s1` on all 1625 shared lines |
 >
-> ### THE §3 BOUNDS AND THE ARM ARE UNCHANGED
+> §26.10's median-frame guard fires on every scored row: the ORIGINAL populates them at
+> median `d` **720 / 909 / 824**. The magnitudes are not readable as physics errors; the
+> bounds are still scored and are not met.
 >
-> `slip 1500-2000` **0.18855 .. 0.19635**, `slip 2000-2600` **0.24488 .. 0.25487**,
-> `driving-median` **1904.70 .. 1982.44**. Arm §16.7. **Default (knob OFF) scored 3 of 3,
-> identical to attempts 11/12/13**: slip 1500-2000 **0.2033** (n=20, median speed 1683.5,
-> **median frame 71 = `d` 70**) FAIL; slip 2000-2600 **UNSCORABLE** (n=0); driving-median
-> **1355.66** (n=54, **median frame 54 = `d` 53**) FAIL −30.2 %.
-> **DIAGNOSTIC (knob ON) scored 3 of 3, all three still FAIL**: slip 1500-2000 **0.1983**
-> (n=19, median speed 1665.1, **median frame 86 = `d` 85**) — error halves from +5.6 % to
-> +3.0 %, missing by **0.00195**; slip 2000-2600 **UNSCORABLE** (n=0); driving-median
-> **1019.77** (n=76, **median frame 80 = `d` 79**), which moves the **wrong** way while its `n`
-> rises 54 → 76.
->
-> > The scored metrics still fail §26.10's median-frame guard: the ORIGINAL populates them at
-> > median `d` **719 / 908 / 797**.
+> **These are attempt 14's knob-ON numbers to every digit.** The fitted trigger was a
+> faithful stand-in — and the residual gap therefore **survives the real fix**.
 >
 > ### NEXT COMMAND — in this order
 >
-> 1. **Locate the `+0xbf8 = 2` writer [U-9174].** This is now the highest-value single task in
->    the lane and it is cheap the moment **Ghidra MCP is reachable** — a data-xref pass over
->    `+0xbf8`. A literal-displacement scan is exhausted and will not find it. The alternative is
->    a **hardware write-watchpoint** on `record + 0xbf8` across the green light, which is **not**
->    an `Interceptor` entry hook, so the standing "Frida entry hooks only" rule must be settled
->    with the user before it is run. With the writer cited, the hold becomes a **real fix** with
->    a promotion leg instead of a fitted knob.
-> 2. **Re-run the state-matched response test on `bh1`, not `s1`.** The knob is what finally
->    gives the two arms overlapping state — they now share the whole launch and much of
->    `d`[95,250]. `PREREG_STEP2B.md` §5-§7 is reusable verbatim; **pre-register the re-run
->    before executing it**, and carry the fitted-trigger caveat in every number it produces.
->    This is the first instrument in four attempts that would have readable buckets.
-> 3. **The residual recovery gap is a real second defect.** Even with a matched line the port
->    reaches 60.8 % / median 132.8 against 99.2 % / median 1333.9. §20.14's loop (the `-0.1`
->    gate, `_DAT_005cd0fc` = `0xbdcccccd`, `BodyOrientationIntegrate.cpp:287`, duty cycle 25x)
->    is the standing hypothesis and is now testable with overlapping state.
-> 4. **Do NOT open another cross-side band table on this arm.** `--mode banded` returned **zero
->    readable rows** this attempt. Use `--mode paired` with an `--anchor`, or the knob.
-> 5. **`+0xb0c`** — step 2A's EXPLORATORY T1 row (`d`=1; ORIG `~1e-5` vs PORT `0.59` through the
->    launch). Pre-register before acting.
+> 1. **[U-9175] `+0xb18`, and run the live test FIRST.** The drive-force **Y component is
+>    exactly `0.0` on 9336 of 9336 frames across FOUR original captures**; the port writes
+>    it non-zero on **385 of 400** post-release frames. **PRE-EXISTING** — the pre-fix arm
+>    `s1` reads it `0.009007`. Binary, not a magnitude, which makes it better-formed than
+>    `+0xb0c`. The test is cheap and already proven on this arm: an **entry hook on A6a
+>    `0x00467650`** reading `[edi+0x80]` and `+0xb18` before/after, §16.7 arm,
+>    pre-registered — the same shape as attempt 15's STEP 1. Only then look for the port's
+>    `Rp(p,0x20)` producer.
+> 2. **`+0xb0c` is confirmed as the first diverging term (`d` = 1) and is NOT CLEAN.** It is
+>    too HIGH early (0 vs 0.0083) and **64x too LOW** later (44.305 vs 0.697 in the one
+>    readable band). A term that errs in both directions is not one scale error; do not
+>    propose a single-constant fix for it.
+> 3. **Cross-side frame-alignment WORKS NOW.** With `L = 0` the arms can be compared at the
+>    same `d`. That is the capability attempts 12-14 lacked and the reason both leads above
+>    exist. Use it; do not open another speed-banded table (6 of 7 bands are still
+>    `!!`-flagged, and only `70-100` was readable).
+> 4. **The AI slots are NOT on the real law.** The launch chain is wired for **slot 0 only**;
+>    slots 1+ keep the separate fitted U-D3-DRIVE-FORCE seed in `VehiclePhysicsRun.cpp:702`
+>    (`+0xbf8 = 1`, `+0xbf4 = 1300`). That seed is now DERIVABLE — a charge of 300 — and
+>    replacing it is **D3** work. Nothing in D2's solo arm touches it.
 >
-> ### THE INSTRUMENT LESSONS THIS ATTEMPT PAID FOR
+> ### TOOLS THIS ATTEMPT ADDED, so they are not rebuilt a third time
 >
-> **When three instruments all say "no overlap", stop instrumenting and run an experiment.**
-> The information was not in the captures. A default-OFF knob supplying one unlocated trigger
-> produced more in three runs than three reductions did.
+> `re/tools/statediff/a8_launch.py` (lag / peak / trough / 400-frame recovery / `b14`
+> engagement, `--selftest` against attempt 14's published table) and
+> `re/tools/statediff/a8_medframe.py` (n + median speed + **median frame** for the three
+> scored metrics). Attempt 14 computed both in scratchpad scripts that were lost.
+> `scenario_launch.py --boost-probe` is the original-side entry-hook probe.
+> `re/tools/ghidra_scripts/GrepDecompAll.java` decompiles every defined function and greps.
 >
-> **A fitted trigger is a legitimate instrument and an illegitimate fix.** It worked *because*
-> it was labelled, default-OFF, and excluded from the default build by a measured gate (`D-0`),
-> not by intention.
+> **Two facts the reducer rebuild pinned:** the speed channel is the record's own `+0x9e4`
+> (the port's `sp=`), **not** `hypot(velx,velz)` — they diverge hard at the bounce (`d` = 95:
+> 1832.40 vs 219.89) — and "peak" is the **first local maximum**, not the global one.
 >
-> **Register the "in between" branch before you run.** The discriminator landed between its two
-> thresholds; having INCONCLUSIVE pre-committed is what kept 60.8 % from being written up as a
-> confirmation.
->
-> **A tolerance has no concept of latency.** Step 2A's rule named `b14` at `d = 0` and was right
-> to, but the port's value there was the original's own value 15 frames later, to **0.14 %** on
-> z. Read a first-divergence verdict as "look here", never "this is the error".
->
-> **A gate written on a proxy must be sized against the proxy's measured lag**, and **a metric
-> can move the wrong way for a right reason** (`driving-median` fell while its `n` rose).
->
-> **Still open:** U-9174 (now critical-path); the residual recovery gap; `+0xb0c`; U-9173;
-> U-9156; U-9160; U-9171; §20.14's 40-70 residency and `-0.1` duty cycle; D1-residue R1.
+> **Still open:** U-9175 (new, the lead); `+0xb0c`; the recovery gap; U-9173; U-9156;
+> U-9160; U-9171; §20.14's `-0.1` duty cycle; D1-residue R1.
 >
 > **The D3 modes 3/7 hold stands. D2 must close before it starts.**
 
 ---
+
+## SUPERSEDED — attempt 14's kickoff (kept for its numbers; attempt 15 resolves its U-9174 and replaces its fitted knob with the real port)
+
 
 ## SUPERSEDED — attempt 13's kickoff (kept for its numbers; attempt 14 reframes its "the port collapses and never recovers" into "BOTH sides crash and only the original recovers")
 

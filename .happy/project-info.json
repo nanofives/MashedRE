@@ -1,53 +1,32 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-02T01:45:00Z",
+  "updatedAt": "2026-10-01T23:55:00Z",
   "sections": [
     {
       "heading": "Phase",
       "fields": [
         { "label": "Roadmap phase", "value": "D3 active; D2 REOPENED and blocking", "kind": "text" },
-        { "label": "D2 re-close attempts", "value": 14, "kind": "number" },
+        { "label": "D2 re-close attempts", "value": 15, "kind": "number" },
         { "label": "Branch", "value": "race/first-frame-parity (nothing pushed)", "kind": "text" }
       ]
     },
     {
-      "heading": "D2 attempt 14 — 2026-10-01",
+      "heading": "D2 attempt 15 — 2026-10-01",
       "fields": [
-        { "label": "Verdict", "value": "STILL REOPENED. No fix authored.", "kind": "text" },
-        { "label": "Input schedule", "value": "MATCH — the original steers from exactly 0.000000 speed; every channel agrees to 0.000%", "kind": "text" },
-        { "label": "Launch", "value": "FAITHFUL. 1.44% at a 15-frame lag; 0.15% with the +0xbf8=2 trigger supplied, peak on the SAME frame", "kind": "text" },
-        { "label": "Recovery", "value": "INCONCLUSIVE as registered — the trigger moves the port from 0.0% to 60.8% of post-trough frames above 100, against the original's 99.2%", "kind": "text" },
-        { "label": "Critical path", "value": "U-9174 — the writer of +0xbf8 = 2 is not located (all six literal sites write 0)", "kind": "text" },
-        { "label": "State overlap", "value": "NONE after the first bounce — 3 instruments agree (5 common frames, 0 readable bands, 0 readable buckets)", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "Scored arm (default, knob OFF, 3 of 3)",
-      "fields": [
-        { "label": "slip 1500-2000", "value": "0.2033 — FAIL (bound 0.18855..0.19635), n=20, med frame d=70", "kind": "text" },
-        { "label": "slip 2000-2600", "value": "UNSCORABLE n=0 — FAIL", "kind": "text" },
-        { "label": "driving-median", "value": "1355.66 — FAIL -30.2% (bound 1904.70..1982.44), n=54, med frame d=53", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "DIAGNOSTIC arm (MASHED_D2_BOOSTHOLD=1, fitted trigger, 3 of 3)",
-      "fields": [
-        { "label": "Status", "value": "Cannot re-close D2 — the trigger is fitted, not transcribed", "kind": "text" },
-        { "label": "slip 1500-2000", "value": "0.1983 — FAIL by 0.00195; error halves from +5.6% to +3.0%, n=19, med frame d=85", "kind": "text" },
-        { "label": "slip 2000-2600", "value": "UNSCORABLE n=0 — FAIL", "kind": "text" },
-        { "label": "driving-median", "value": "1019.77 — FAIL; moves the wrong way while n rises 54->76, n=76, med frame d=79", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "Next",
-      "fields": [
-        { "label": "Next lane", "value": [
-            "U-9174: Ghidra data-xref on +0xbf8 the moment the MCP is back",
-            "Re-run the state-matched response test on bh1, not s1 — the knob finally gives overlapping state",
-            "The residual recovery gap is a real second defect (section 20.14's -0.1 gate loop)",
-            "No more cross-side band tables: --mode banded returned zero readable rows"
+        { "label": "Verdict", "value": "LAUNCH CLOSED in the default build. D2 does NOT close — the three metrics still fail 3 of 3.", "kind": "text" },
+        { "label": "U-9174", "value": "RESOLVED. The +0xbf8 = 2 writer is 0x0046d7a2 in FUN_0046d780, confirmed live on two boots, entry hooks only.", "kind": "text" },
+        { "label": "The mechanic", "value": "A start-line rev-charge mini-game. Charge +50/tick while accel > 160, clamped 3000; at the green light charge > 1000 gives state 2 — the over-rev bog A6a counts down at 200/frame. 3000/200 = 15.", "kind": "text" },
+        { "label": "Why 3 attempts missed it", "value": "The base is FOLDED: &veh[i].+0xbf8 encodes as i*0xd04 + 0x00882198, so the instruction contains no 0xbf8 at all.", "kind": "text" },
+        { "label": "Launch gate", "value": "PASS 3/3 — lag L = 0, +0xb14 engages at d = 15, peak 1835.50 at d=95 vs the original's 1832.40 at d=95", "kind": "text" },
+        { "label": "Recovery gate", "value": "INCONCLUSIVE as registered — 243/400 = 60.8%, median 132.8, vs 398/400 = 99.5% and 1333.9", "kind": "text" },
+        { "label": "Scored metrics (3 runs, identical)", "value": [
+            "slip 1500-2000  0.1983  n=19  med frame d 85   FAIL by 0.00195",
+            "slip 2000-2600  UNSCORABLE  n=0               FAIL",
+            "driving-median  1019.77  n=76  med frame d 79  FAIL -47.5%"
           ], "kind": "list" },
-        { "label": "Known blocker", "value": "Ghidra MCP was down for the whole attempt-14 session", "kind": "text" }
+        { "label": "Promotions", "value": "0x0046d780 C2 -> C3 (path1 GREEN 8/8 + path2 PASS); 0x0046d7f0 C3 re-affirmed after its body moved to the shared TU", "kind": "text" },
+        { "label": "Knob removed", "value": "MASHED_D2_BOOSTHOLD is gone from the code — the measurement it was built for is done", "kind": "text" },
+        { "label": "Next lead", "value": "U-9175 — the drive-force Y component +0xb18 is exactly 0.0 on 9336 of 9336 frames across four original captures; the port writes it non-zero on 385 of 400. Pre-existing. Live test first.", "kind": "text" }
       ]
     }
   ]
