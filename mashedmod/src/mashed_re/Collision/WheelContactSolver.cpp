@@ -78,6 +78,18 @@ void WheelContactSolver(int* self, void* world, int substep)
     // same RVA on 2945 of 2945 samples (see the g_wcsVelWrites note above). The three
     // Marks below separate the three write sites. Diagnostic, default-OFF.
     mashed_re::D2Sink::MarkWheel("wcs_in", self, -1, 0.f, 0.f, 0.f, 0.f);
+    // [D2 attempt 20 STEP 2 / U-9179] the state machine's three per-wheel inputs as they
+    // stand at ENTRY, i.e. BEFORE the init loop below resets fv to 10.0f and key to -1.
+    // This is the exact channel the original-side --wheelstate-probe reads at the same RVA
+    // (PREREG_STEP2.md 1.3), so one replay serves both sides. Diagnostic, default-OFF and
+    // behind the second env var MASHED_D2SINK_SM.
+    if (mashed_re::D2Sink::ArmedSM()) {
+        for (int w = 0; w < 4; ++w) {
+            int* pw = self + 0x66 + w * 0x31;               // +0x198 + w*0xc4
+            mashed_re::D2Sink::MarkWheel("wcs_ent", self, w, (float)pw[0],
+                                         vF(pw, -1), (float)pw[0x15], 0.f);
+        }
+    }
     char cVar13 = 0;
     int* iVar12 = self + self[0x26b] * 0x10 + 0x24a;   // wheel-ring matrix block
     g_activeContactCount = 0;                          // DAT_0088e650
@@ -163,6 +175,7 @@ void WheelContactSolver(int* self, void* world, int substep)
     int* piVar9 = self + 0x66;     // wheel-0 state
     for (int wi = 0; wi < 4; ++wi) {
         float fv = vF(piVar9, -1);                 // spring load (piVar9[-1])
+        const int d2sStateIn = piVar9[0];          // [D2 attempt 20] before any write
         bool latched = false;
         if (piVar9[0] == 0) {
             if ((kSpring2 < fv) && ((fv < kZero) != (fv == kZero))) {
@@ -195,6 +208,13 @@ void WheelContactSolver(int* self, void* world, int substep)
             *reinterpret_cast<float*>(reinterpret_cast<char*>(local_70) + byteoff + 8) =
                 g_wheelContactPos[byteoff / 4 + 2] - f2;
         }
+        // [D2 attempt 20 STEP 2 / U-9179] the state machine's own transition, per wheel:
+        // stateIn, the two inputs it branched on, and stateOut. The arm that fired is
+        // derivable from these plus bVar4 (already on the wcs_cnt line). Diagnostic,
+        // default-OFF, behind MASHED_D2SINK_SM.
+        if (mashed_re::D2Sink::ArmedSM())
+            mashed_re::D2Sink::MarkWheel("wcs_sm", self, wi, (float)d2sStateIn, fv,
+                                         (float)piVar9[0x15], (float)piVar9[0]);
         iVar14 += 4; byteoff += 0xc; piVar9 += 0x31;
     }
 

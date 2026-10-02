@@ -1216,6 +1216,84 @@ function contactFixupProbeArm(recBaseHex, car){
 function contactFixupProbeDrain(){ const r = FP.rows; FP.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
+// --- WHEEL-STATE probe (U-9179, D2 attempt 20) -----------------------------
+// [D2 attempt 20] U-9179 asks which branch of 0x0046f6c0's per-wheel 3-state machine
+// leaves two wheels at state 0 on the PORT, and what the ORIGINAL's per-wheel inputs are at
+// the same `d`. The state machine's complete input set is three per-wheel fields
+// (verify/d2_wheelstate_20261002/RESULT_STEP1.md section 1):
+//     state  +0x198 + w*0xc4     (written only by 0x0046f6c0 itself)
+//     fv     +0x194 + w*0xc4     (init loop -> 10.0f, then classifier 0x0046cc40 -> depth)
+//     key    +0x1ec + w*0xc4     (init loop -> -1,    then classifier 0x0046cc40)
+// `--fixup-probe` already hooks this RVA (site 3, FP_WHEEL) but its sample carries
+// +0x9b0/+0x9e0/+0x9e4 and the 18 contact slots and NOT ONE per-wheel field, so it cannot
+// answer this (memory `grep-the-harness-for-the-rva-before-writing-a-probe`: checked first).
+//
+// ENTRY HOOKS ONLY (memory `frida-interceptor-is-entry-only`). At the entry of call N the
+// init loop has not run yet, so the row carries the state AFTER call N-1's whole body and
+// the fv/key call N-1's classifier left -- i.e. a CONSECUTIVE PAIR of rows is the complete
+// input/output record of call N-1. PREREG_STEP2.md section 1.3.
+//
+// Two sites:
+//   site 0 = 0x0046f6c0 entry -> the per-wheel sample
+//   site 1 = 0x00467650 A6a entry, ESI-filtered to the player record -> the FRAME marker,
+//            so every row carries a frame index and can be matched to a .msd frame.
+// EDI is NOT used as a filter (that would turn a wrong register assumption into zero rows);
+// instead every row carries `edi_is_rec` and the first rows carry the raw registers, so the
+// reduction confirms the convention rather than depending on it.
+//
+// COUNT-FIRST safety gate: with countOnly the site-0 body is `nWh++` and nothing else, so
+// the rate is measured before any run reads memory. Expected ~2/frame (the original runs 2
+// substeps per frame), ~70/s, two orders under the ~1000/s destabilise floor.
+const WS_WHEEL = 0x0046f6c0;
+const WS_A6A   = 0x00467650;
+const WS = { armed:false, countOnly:false, rows:[], nWh:0, nFrm:0, nOther:0, err:null, chk:[] };
+let WS_REC = null, WS_SEQ = 0;
+function wsSample(isRec){
+  try {
+    const r = WS_REC;
+    const row = [WS_SEQ++, 0, WS.nFrm, isRec ? 1 : 0,
+                 r.add(0x9e4).readFloat(), r.add(0x9e0).readFloat(),
+                 r.add(0xbf8).readS32(),
+                 r.add(0x9b0).readFloat(), r.add(0x9b4).readFloat(), r.add(0x9b8).readFloat()];
+    for (let w = 0; w < 4; w++){
+      const B = w * 0xc4;
+      row.push(r.add(0x198 + B).readS32());       // state
+      row.push(r.add(0x194 + B).readFloat());     // fv
+      row.push(r.add(0x1ec + B).readS32());       // key
+    }
+    WS.rows.push(row);
+  } catch(e){ if (!WS.err) WS.err = 'wsSample ' + e; }
+}
+function wheelStateProbeArm(recBaseHex, car, countOnly){
+  if (WS.armed) return 'already armed';
+  try {
+    WS_REC = ptr(parseInt(recBaseHex, 16) + car * 0xd04);
+    WS.countOnly = !!countOnly;
+    Interceptor.attach(ga(WS_WHEEL), { onEnter(){
+      try {
+        WS.nWh++;
+        const isRec = this.context.edi.equals(WS_REC);
+        if (!isRec) WS.nOther++;
+        if (WS.chk.length < 8)
+          WS.chk.push({seq:WS_SEQ, edi:this.context.edi.toString(),
+                       esi:this.context.esi.toString(), ecx:this.context.ecx.toString(),
+                       rec:WS_REC.toString()});
+        if (!WS.countOnly) wsSample(isRec);
+      } catch(e){ if (!WS.err) WS.err = 'wsEnter ' + e; }
+    }});
+    Interceptor.attach(ga(WS_A6A), { onEnter(){
+      try { if (!this.context.esi.equals(WS_REC)) return; WS.nFrm++; }
+      catch(e){ if (!WS.err) WS.err = 'wsA6a ' + e; }
+    }});
+    WS.armed = true;
+    return 'wheelstate-probe armed: solver @0x' + WS_WHEEL.toString(16)
+         + ' + A6a @0x' + WS_A6A.toString(16) + ' rec=' + WS_REC
+         + (WS.countOnly ? ' COUNT-ONLY' : '');
+  } catch(e){ return 'ERR ' + e; }
+}
+function wheelStateProbeDrain(){ const r = WS.rows; WS.rows = []; return r; }
+// ---------------------------------------------------------------------------
+
 // --- RwV3dLength ARGUMENT probe (U-9156, D2 section 21.7) ------------------
 // [D2 section 21.7] Gets the ORIGINAL's `l_60 = sum ld4 * le4` (Integrate2.cpp:464) as a
 // MEASUREMENT instead of an inference. Section 21.5 closed every other route: clamp #6 is
@@ -2086,6 +2164,13 @@ rpc.exports = {
                                                       zeroSpeed:SL.nZeroSpeed, b0cNz:SL.nB0cNz,
                                                       pending:SL.rows.length, cap:SL.cap,
                                                       capped:SL.capped, chk:SL.chk, err:SL.err}); },
+  wheelStateProbeArm: function(recBaseHex, car, countOnly){ return wheelStateProbeArm(recBaseHex, car, countOnly); },
+  wheelStateProbeDrain: function(){ return wheelStateProbeDrain(); },
+  wheelStateProbeStats: function(){ return JSON.stringify({armed:WS.armed, countOnly:WS.countOnly,
+                                                           solver:WS.nWh, frames:WS.nFrm,
+                                                           otherEdi:WS.nOther,
+                                                           pending:WS.rows.length,
+                                                           chk:WS.chk, err:WS.err}); },
   contactFixupProbeArm: function(recBaseHex, car){ return contactFixupProbeArm(recBaseHex, car); },
   contactFixupProbeDrain: function(){ return contactFixupProbeDrain(); },
   contactFixupProbeStats: function(){ return JSON.stringify({armed:FP.armed, fixup:FP.nFix,
@@ -2581,6 +2666,14 @@ def main():
                          "record. Entry hooks only; the port's equivalent fires 211 times in "
                          "a 27 s race, so this is not a hot path. Writes <statediff-out>."
                          "fixupprobe.csv. Requires --statediff-out.")
+    ap.add_argument("--wheelstate-probe", action="store_true",
+                    help="[U-9179, D2 attempt 20] entry-hook-only per-wheel sample at "
+                         "0x0046f6c0 (state +0x198, fv +0x194, key +0x1ec, stride 0xc4) "
+                         "plus the A6a frame marker; writes <out>.wheelstate.csv")
+    ap.add_argument("--wheelstate-probe-count", action="store_true",
+                    help="count-first safety gate for --wheelstate-probe: arm the hooks "
+                         "with an n++ body and take no sample, so the rate is measured "
+                         "before any run reads memory")
     ap.add_argument("--mag-probe", default="",
                     help="[U-9156 / D2 section 21.7] entry-hook RwV3dLength 0x004c3ac0 and log "
                          "the VECTOR it was passed, tagged by call site via the return "
@@ -2749,6 +2842,10 @@ def main():
             if args.fixup_probe:
                 print("  [statediff]", E.contact_fixup_probe_arm("0x008815a0",
                                                                  args.statediff_car))
+            if args.wheelstate_probe or args.wheelstate_probe_count:
+                print("  [statediff]", E.wheel_state_probe_arm(
+                    "0x008815a0", args.statediff_car,
+                    bool(args.wheelstate_probe_count)))
             if args.mag_probe:
                 _sites = "" if args.mag_probe == "count" else args.mag_probe
                 print("  [statediff]", E.mag_probe_arm(_sites, args.mag_probe_limit,
@@ -3110,6 +3207,28 @@ def main():
                     _n2 = sum(1 for r in fp_rows if r[1] == 2)
                     print(f"  [statediff] fixup-probe {len(fp_rows)} samples "
                           f"(fixup {_n0}, substep {_n1}, A6a/frame {_n2}) -> {fpp}")
+                if args.wheelstate_probe or args.wheelstate_probe_count:
+                    # Counters and the register self-check BEFORE the rows, and the CSV is
+                    # written even when empty: memory
+                    # `absent-log-proves-nothing-run-a-control`.
+                    try: print("  [statediff] wheelstate-probe agent:",
+                               E.wheel_state_probe_stats())
+                    except Exception as _e:
+                        print("  [statediff] wheelstate-probe stats failed:", _e)
+                    ws_rows = []
+                    try: ws_rows = E.wheel_state_probe_drain()
+                    except Exception as _e:
+                        print("  [statediff] wheelstate-probe drain failed:", _e)
+                    wsp = outp.with_suffix(outp.suffix + ".wheelstate.csv")
+                    _h = "seq,site,frame,edi_is_rec,speed,gnd,bf8,velx,vely,velz"
+                    for _w in range(4):
+                        _h += ",w%d_state,w%d_fv,w%d_key" % (_w, _w, _w)
+                    with open(wsp, "w", newline="") as f:
+                        f.write(_h + chr(10))
+                        for r in ws_rows:
+                            f.write(",".join(repr(x) if isinstance(x, float) else str(x)
+                                             for x in r) + chr(10))
+                    print(f"  [statediff] wheelstate-probe {len(ws_rows)} samples -> {wsp}")
                 if args.mag_probe:
                     # Counters BEFORE the rows, and the CSV is written even when empty:
                     # memory `absent-log-proves-nothing-run-a-control`.

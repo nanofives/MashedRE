@@ -35,6 +35,7 @@ float g_contactQueryScratch[16] = {0};         // DAT_0088e600
 float g_wheelContactPos[12]     = {0};         // DAT_0088e624
 int   g_activeContactCount      = 0;           // DAT_0088e650
 int   g_terrainEntryCount       = 0;           // DAT_0088e60c
+int   g_terrainPassCount        = 0;           // [D2 attempt 20] uncapped admissions
 int*  g_terrainBatch            = nullptr;     // batch base (B4 sets)
 float g_suspScratch[12]         = {0};         // DAT_00881560 (shared w/ ForceIntegrator)
 int   g_playerCount             = 0;           // DAT_00803320 (B4/A sets)

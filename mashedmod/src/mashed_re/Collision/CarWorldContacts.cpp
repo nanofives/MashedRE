@@ -30,6 +30,7 @@
 //    scenario trace once the WS-A consumer (FUN_0046ddb0) drives them.
 #include "ContactConstants.h"
 #include "ContactDeps.h"
+#include "../Vehicle/D2SinkProbe.h"   // [D2 attempt 20] diagnostic, default-OFF
 
 namespace mashed_re {
 namespace Collision {
@@ -93,6 +94,28 @@ int ContactHistoryLookup(const void* entry, int* veh)
 // ---------------------------------------------------------------------------
 void WheelTerrainContactClassifier(int* param_1, float* param_2)
 {
+    // [D2 attempt 20 STEP 2 / U-9179] per-wheel REJECTION STAGE, default-OFF behind
+    // MASHED_D2SINK_SM. The state machine at 0x0046f6c0 demotes a wheel to state 0 on
+    // `key == -1` (arm `A-demote-key`, 99 of 356 wheel-rows at d = 222..250), and
+    // `key == -1` means exactly "this function did not reach :130 for that wheel".
+    // These counters say WHICH gate stopped it. The highest stage reached over the whole
+    // batch is kept per wheel, because a wheel only needs ONE entry to pass.
+    //   0 nothing     1 SAT 1/2 (:114-115)   2 SAT 3 (:116)    3 depth band (:118)
+    //   4 approach (:119)   5 first-frame sentinel (:121)   6 history hit (:124)
+    //   7 FILLED (:126-131)
+    const bool d2sOn = mashed_re::D2Sink::ArmedSM();
+    int   d2sStage[4] = { 0, 0, 0, 0 };
+    float d2sDepth[4] = { 0.f, 0.f, 0.f, 0.f };
+    struct D2sEmit {
+        const bool on; int* st; float* dp; int* rec;
+        ~D2sEmit() {
+            if (!on) return;
+            for (int w = 0; w < 4; ++w)
+                mashed_re::D2Sink::MarkWheel("wcs_cls", rec, w, (float)st[w], dp[w],
+                                             (float)g_terrainEntryCount,
+                                             (float)g_terrainPassCount);
+        }
+    } d2sEmit{ d2sOn, d2sStage, d2sDepth, param_1 };   // fires on EVERY return path
     if (g_terrainEntryCount == 0) return;
     unsigned int local_74 = 0;
     do {
@@ -113,16 +136,34 @@ void WheelTerrainContactClassifier(int* param_1, float* param_2)
                 float fVar16 = local_8c[1];        // wheel pos z
                 if ((kZero <= (fVar14 - fVar2) * param_2[0x1b] + (fVar15 - fVar3) * param_2[0x1c] + (fVar16 - fVar4) * param_2[0x1d]) &&
                     (kZero <= (fVar14 - fVar5) * param_2[0x1e] + (fVar15 - fVar6) * param_2[0x1f] + (fVar16 - fVar7) * param_2[0x20])) {
+                    if (d2sOn && d2sStage[w] < 1) d2sStage[w] = 1;
                     if (kZero <= (fVar14 - fVar8) * param_2[0x21] + (fVar15 - fVar9) * param_2[0x22] + (fVar16 - fVar10) * param_2[0x23]) {
                         float depth = (fVar14 - fVar8) * fVar11 + (fVar15 - fVar9) * fVar12 + (fVar16 - fVar10) * fVar13;
+                        if (d2sOn) {
+                            // DIAGNOSTIC-ONLY re-read of the two halves of the combined
+                            // gate below, so a depth-band rejection is distinguishable from
+                            // an approach-speed rejection. Side-effect free; the shipping
+                            // path is the untouched `if` that follows.
+                            if (d2sStage[w] < 2) { d2sStage[w] = 2; d2sDepth[w] = depth; }
+                            if (kCls_DepthLo <= depth && depth < kCls_DepthHi) {
+                                if (d2sStage[w] < 3) { d2sStage[w] = 3; d2sDepth[w] = depth; }
+                                if (kCls_ApproachThr < fVar11 * vF(param_1, 0x272) +
+                                                       fVar12 * vF(param_1, 0x273) +
+                                                       fVar13 * vF(param_1, 0x274))
+                                    if (d2sStage[w] < 4) { d2sStage[w] = 4; d2sDepth[w] = depth; }
+                            }
+                        }
                         if ((kCls_DepthLo <= depth && depth < kCls_DepthHi) &&
                             (kCls_ApproachThr < fVar11 * vF(param_1, 0x272) + fVar12 * vF(param_1, 0x273) + fVar13 * vF(param_1, 0x274))) {
                             float sentinel = param_2[0xd];
                             if (sentinel == kSentFirstFrame) {
+                                if (d2sOn && d2sStage[w] < 5) d2sStage[w] = 5;
                                 // [0x0046cd.. debug-event ring (type 6, white) — dev-viz only; omitted]
                             } else {
                                 int found = ContactHistoryLookup(param_2, param_1);
+                                if (d2sOn && d2sStage[w] < 6) d2sStage[w] = 6;
                                 if (found == 0) {
+                                    if (d2sOn) { d2sStage[w] = 7; d2sDepth[w] = depth; }
                                     local_90[0x1b] = param_2[9];
                                     local_90[0x1c] = param_2[10];
                                     local_90[0x1d] = param_2[0xb];

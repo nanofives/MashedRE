@@ -17,6 +17,12 @@ namespace D2Sink {
 // true only when MASHED_D2SINK is set (resolved once, on first use).
 bool Armed();
 
+// [D2 attempt 20 / U-9179] SECOND channel control for the per-wheel state-machine lines
+// (`wcs_ent` / `wcs_sm`). True only when MASHED_D2SINK_SM is ALSO set, so a run with
+// MASHED_D2SINK alone reproduces attempt 19's channel byte for byte (gate CH,
+// verify/d2_wheelstate_20261002/PREREG_STEP2.md section 1.1).
+bool ArmedSM();
+
 // Frame ordinal, bumped once per slot-0 frame. Called at the top of EVERY slot's frame:
 // slot 0 arms the channel and bumps the ordinal, any other slot disarms it, so the
 // downstream Mark() sites (which do not know the slot — ContactFixup's do not receive it)

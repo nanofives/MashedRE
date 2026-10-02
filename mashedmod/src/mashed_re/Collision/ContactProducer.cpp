@@ -17,6 +17,8 @@
 #include "ContactConstants.h"
 #include "ContactDeps.h"
 #include "ContactSolvers.h"
+#include <cstdlib>   // getenv (MASHED_D2_BATCHMODE A/B, see ProduceTerrainBatch)
+#include <cstring>   // strcmp
 
 namespace mashed_re {
 namespace Vehicle { long long* PerfBatchTestCounter(); }  // WS-A s3 perf (VehiclePhysicsRun.cpp)
@@ -71,19 +73,61 @@ int ProduceTerrainBatch(const float* center, float radius,
     if (long long* pc = Vehicle::PerfBatchTestCounter()) *pc += triCount;  // PERF: scan size
     int count = 0;
     const int cap = (int)(sizeof(s_batchStorage) / sizeof(s_batchStorage[0]));
-    for (int t = 0; t < triCount && count < cap; ++t) {
+    // [D2 attempt 20 STEP 2 / U-9179] DIAGNOSTIC A/B, default-OFF. The admission test
+    // below is a PLANE-distance test, and the loop STOPS SCANNING at `cap`, so on a
+    // largely coplanar track the 256 slots fill with triangles from anywhere on the
+    // surface and the triangles actually under a wheel are never offered to the
+    // classifier 0x0046cc40. Measured at d = 222..250: the batch is saturated at 256 on
+    // 3565 of 3565 calls, and 99 of 356 wheel-rows are left unfilled (52 + 31 of them
+    // failing SAT half-plane 3, i.e. "no admitted triangle contains this wheel").
+    // The ORIGINAL has NO cap: its collector LAB_00468b80 increments DAT_0088e60c
+    // unconditionally at 0x00468d6c..0x00468d73 with no bound test anywhere in
+    // 0x00468b80..0x00468d7c; the locality comes from the BSP walk FUN_00538c80, which
+    // this function stands in for. MASHED_D2_BATCHMODE separates the two candidates:
+    //   unset / "plane"  legacy: plane test, scan stops at cap   (the measured baseline)
+    //   "planefull"      plane test, FULL scan (fill stops at cap) -> isolates truncation
+    //   "local"          AABB(tri) expanded by `radius` contains the centre, FULL scan
+    //                    -> a spatial admission test, which is what a BSP walk yields
+    static const char* const s_mode = std::getenv("MASHED_D2_BATCHMODE");
+    static const bool s_local = s_mode && std::strcmp(s_mode, "local") == 0;
+    static const bool s_full  = s_local || (s_mode && std::strcmp(s_mode, "planefull") == 0);
+    const bool full = s_full, local = s_local;
+    int pass = 0;
+    for (int t = 0; t < triCount && (full || count < cap); ++t) {
         const CollTriangle& tr = tris[t];
-        // plane distance of the query centre from the triangle plane
-        float d = (center[0] - tr.v2[0]) * tr.normal[0] +
-                  (center[1] - tr.v2[1]) * tr.normal[1] +
-                  (center[2] - tr.v2[2]) * tr.normal[2];
-        if (d < 0.0f) d = -d;
-        if (d <= radius) {
-            FillBatchEntry(&s_batchStorage[count], tr.v0, tr.v1, tr.v2,
-                           tr.normal, tr.material, tr.surfaceKey);
-            ++count;
+        bool admit;
+        if (local) {
+            // spatial: the triangle's AABB grown by `radius` (the record's own +0x4a4
+            // query radius) must contain the query centre. A conservative superset of
+            // the sphere-vs-triangle test, which is the right semantics for a
+            // broadphase: it cannot drop a triangle the narrow phase would have used.
+            admit = true;
+            for (int k = 0; k < 3 && admit; ++k) {
+                float lo = tr.v0[k], hi = tr.v0[k];
+                if (tr.v1[k] < lo) lo = tr.v1[k];
+                if (tr.v1[k] > hi) hi = tr.v1[k];
+                if (tr.v2[k] < lo) lo = tr.v2[k];
+                if (tr.v2[k] > hi) hi = tr.v2[k];
+                admit = (center[k] >= lo - radius) && (center[k] <= hi + radius);
+            }
+        } else {
+            // plane distance of the query centre from the triangle plane
+            float d = (center[0] - tr.v2[0]) * tr.normal[0] +
+                      (center[1] - tr.v2[1]) * tr.normal[1] +
+                      (center[2] - tr.v2[2]) * tr.normal[2];
+            if (d < 0.0f) d = -d;
+            admit = (d <= radius);
+        }
+        if (admit) {
+            ++pass;
+            if (count < cap) {
+                FillBatchEntry(&s_batchStorage[count], tr.v0, tr.v1, tr.v2,
+                               tr.normal, tr.material, tr.surfaceKey);
+                ++count;
+            }
         }
     }
+    g_terrainPassCount = pass;     // uncapped admissions (diagnostic; == count when unsaturated)
     g_terrainEntryCount = count;   // DAT_0088e60c (collector increments per entry)
     return count;
 }

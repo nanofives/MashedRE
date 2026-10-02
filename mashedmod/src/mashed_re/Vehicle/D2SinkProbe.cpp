@@ -36,6 +36,11 @@ inline int Ri(const void* r, unsigned off) {
 
 bool Armed() { return Path() != nullptr; }
 
+bool ArmedSM() {
+    static const bool on = (Path() != nullptr) && (std::getenv("MASHED_D2SINK_SM") != nullptr);
+    return on;
+}
+
 void Begin(int slot) {
     if (!Armed()) return;
     s_active = (slot == 0);

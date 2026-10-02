@@ -102,6 +102,9 @@ extern float g_wheelContactPos[12]; // DAT_0088e620 base (4 × vec3 transformed 
                                     // classifier reads from +1 float = DAT_0088e624)
 extern int   g_activeContactCount;  // DAT_0088e650  (filled this tick, max 4)
 extern int   g_terrainEntryCount;   // DAT_0088e60c
+// [D2 attempt 20] DIAGNOSTIC: uncapped admissions in ProduceTerrainBatch. Equals
+// g_terrainEntryCount when the 256-entry batch is not saturated; greater when it is.
+extern int   g_terrainPassCount;
 // Base of the per-tick terrain triangle batch the broadphase callback appends
 // to (the byte-address the solvers iterate; first entry's data at +8). In the
 // original this is a register-passed global; the standalone wiring (B4) sets it.
