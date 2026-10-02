@@ -1138,7 +1138,15 @@ const BP_CHG = 0x0046d7f0;        // FUN_0046d7f0 charge
 const BP_TICK = 0x007f101c;       // frame counter, ++ at the top of FUN_004111c0
 const BP_STATE = 0x0063ba8c;      // race state (FUN_0040e350 returns this)
 const BP_CTRL = 0x007f1a14;       // per-car control index, stride 4 dwords
-const BP_ACCEL = 0x007f103c;      // accel byte = 0x007f1038 + 4, stride 0x13
+// accel byte = 0x007f1038 + 4, control-block stride 0x4c BYTES. The decompiler
+// renders FUN_0046d7f0's read as `(&DAT_007f103c)[ctrl * 0x13]`, which is a DWORD
+// index (0x13 * 4 = 0x4c); `Ai/AiState.h:38` and `Ai/AiController.cpp:170` use the
+// same 0x4c byte stride. CORRECTED 2026-10-01 after the STEP 1 runs, which both used
+// ctrl index 0 (`--poke-ctrl-slots` -> [0,1,2,3], car 0 -> ctrl 0) where 0x13 and
+// 0x4c give the same address 0 -- so neither run's accel column is affected, and the
+// STEP 1 verdict never read this column.
+const BP_ACCEL = 0x007f103c;
+const BP_CTRL_STRIDE = 0x4c;
 const BP = { armed:false, rows:[], nRel:0, nChg:0, err:null, limit:0, detached:false };
 let BP_L1 = null, BP_L2 = null, BP_BASE = 0, BP_SEQ = 0;
 function bpRead(car){
@@ -1147,7 +1155,7 @@ function bpRead(car){
   let acc = -1;
   try {
     const c = ga(BP_CTRL).add(car * 0x10).readS32();
-    acc = ga(BP_ACCEL).add(c * 0x13).readU8();
+    acc = ga(BP_ACCEL).add(c * BP_CTRL_STRIDE).readU8();
   } catch(e){ acc = -1; }
   return [r.add(0xbf4).readS32(), r.add(0xbf8).readS32(),
           ga(BP_STATE).readS32(), acc];
