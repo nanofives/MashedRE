@@ -1110,6 +1110,90 @@ function magProbeArm(sitesCsv, limit, recBaseHex, car){
 function magProbeDrain(){ const r = MP.rows; MP.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
+// --- LAUNCH REV-CHARGE probe (D2 attempt 15, U-9174, 2026-10-01) -----------
+// Confirms on the RUNNING original which instruction sets the vehicle record's
+// `+0xbf8` to 2 at the green light. U-9174 recorded that every LITERAL-displacement
+// writer of `+0xbf8` writes ZERO; the real writer folds the base, so it encodes
+// `0x00882198` (= 0x008815a0 + 0xbf8) and no `+0xbf8` scan can see it:
+//
+//   0x0046d780  FUN_0046d780(int car)            -- the RELEASE
+//       0x0046d794  mov ecx,[eax+0x882194]       charge  = veh[car].+0xbf4
+//       0x0046d79a  cmp ecx,0x3e8                > 1000 ?
+//       0x0046d7a2  mov [eax+0x882198],2         <== the write under test
+//       0x0046d7cf  mov [eax+0x882198],1         the other arm
+//       0x0046d7d9  mov [eax+0x882194],ecx       charge += 1000 on that arm
+//   0x0046d7f0  FUN_0046d7f0(int car, int delta) -- the per-tick CHARGE
+//       gate `160.0 < accel_byte` (_DAT_005cea3c), clamp [0,3000] (0xbb8)
+//   both are called only from 0x004103a0, the pre-race countdown tick, which
+//   releases when DAT_0063d588 >= 1.86 and then sets DAT_0063ba8c = 6.
+//
+// ENTRY HOOKS ONLY -- two `Interceptor.attach` at the two function entries, with
+// onEnter/onLeave on the same attach. No mid-function probe, no watchpoint, no
+// page guard (memory `frida-interceptor-is-entry-only`).
+// RATE: both fire only inside the pre-race state, once per active car per tick,
+// so far below the ~1000 calls/s that destabilises Mashed. A hard row limit with
+// auto-detach bounds the exposure anyway, matching magProbeArm's discipline.
+const BP_REL = 0x0046d780;        // FUN_0046d780 release
+const BP_CHG = 0x0046d7f0;        // FUN_0046d7f0 charge
+const BP_TICK = 0x007f101c;       // frame counter, ++ at the top of FUN_004111c0
+const BP_STATE = 0x0063ba8c;      // race state (FUN_0040e350 returns this)
+const BP_CTRL = 0x007f1a14;       // per-car control index, stride 4 dwords
+const BP_ACCEL = 0x007f103c;      // accel byte = 0x007f1038 + 4, stride 0x13
+const BP = { armed:false, rows:[], nRel:0, nChg:0, err:null, limit:0, detached:false };
+let BP_L1 = null, BP_L2 = null, BP_BASE = 0, BP_SEQ = 0;
+function bpRead(car){
+  // [charge, state, accel] for one car, all reads, no writes.
+  const r = ptr(BP_BASE + car * 0xd04);
+  let acc = -1;
+  try {
+    const c = ga(BP_CTRL).add(car * 0x10).readS32();
+    acc = ga(BP_ACCEL).add(c * 0x13).readU8();
+  } catch(e){ acc = -1; }
+  return [r.add(0xbf4).readS32(), r.add(0xbf8).readS32(),
+          ga(BP_STATE).readS32(), acc];
+}
+function boostProbeArm(recBaseHex, limit){
+  if (BP.armed) return 'already armed';
+  try {
+    BP_BASE = parseInt(recBaseHex, 16);
+    BP.limit = limit | 0;
+    const mk = (fn, tag) => Interceptor.attach(ga(fn), {
+      onEnter(args){
+        try {
+          this.bpCar = this.context.esp.add(4).readS32();
+          if (tag === 'rel') BP.nRel++; else BP.nChg++;
+          const t = ga(BP_TICK).readS32();
+          const v = bpRead(this.bpCar);
+          this.bpEnter = [BP_SEQ++, tag, 'enter', t, this.bpCar,
+                          v[0], v[1], v[2], v[3]];
+        } catch(e){ if (!BP.err) BP.err = 'bpEnter ' + e; this.bpEnter = null; }
+      },
+      onLeave(){
+        if (!this.bpEnter) return;
+        try {
+          const t = ga(BP_TICK).readS32();
+          const v = bpRead(this.bpCar);
+          // one row per call: enter-side then leave-side, so a write is visible
+          // as a change across the pair without ever probing mid-function.
+          BP.rows.push(this.bpEnter.concat([v[0], v[1], v[2], v[3]]));
+          if (BP.limit && BP.rows.length >= BP.limit && !BP.detached) {
+            if (BP_L1) { BP_L1.detach(); BP_L1 = null; }
+            if (BP_L2) { BP_L2.detach(); BP_L2 = null; }
+            BP.detached = true;
+          }
+        } catch(e){ if (!BP.err) BP.err = 'bpLeave ' + e; }
+      }
+    });
+    BP_L1 = mk(BP_REL, 'rel');
+    BP_L2 = mk(BP_CHG, 'chg');
+    BP.armed = true;
+    return 'boost-probe armed @0x' + BP_REL.toString(16) + ' +0x' + BP_CHG.toString(16)
+         + ' rec=0x' + BP_BASE.toString(16) + ' limit=' + BP.limit;
+  } catch(e){ return 'ERR ' + e; }
+}
+function boostProbeDrain(){ const r = BP.rows; BP.rows = []; return r; }
+// ---------------------------------------------------------------------------
+
 // --- POWERUP DISPATCHER capture (D3 WS-D, 2026-09-26) ----------------------
 // Ground truth for the power-up DECISION logic, taken around the per-frame
 // dispatcher FUN_0045bba0 (sole caller 0x0040fcd0). Byte-level facts this block
@@ -1812,6 +1896,11 @@ rpc.exports = {
                                                              selfcheck:FP.chk, err:FP.err}); },
   magProbeArm: function(sites, limit, recBaseHex, car){ return magProbeArm(sites, limit, recBaseHex, car); },
   magProbeDrain: function(){ return magProbeDrain(); },
+  boostProbeArm: function(recBaseHex, limit){ return boostProbeArm(recBaseHex, limit); },
+  boostProbeDrain: function(){ return boostProbeDrain(); },
+  boostProbeStats: function(){ return JSON.stringify({armed:BP.armed, rel:BP.nRel, chg:BP.nChg,
+                                                      pending:BP.rows.length, limit:BP.limit,
+                                                      detached:BP.detached, err:BP.err}); },
   magProbeStats: function(){ return JSON.stringify({armed:MP.armed, calls:MP.n, other:MP.other,
                                                     pending:MP.rows.length, limit:MP.limit,
                                                     detached:MP.detached, err:MP.err}); },
@@ -2279,6 +2368,16 @@ def main():
                          "single increment -- run this FIRST, the function has 120 call sites "
                          "image-wide). Writes <statediff-out>.magprobe.csv. Requires "
                          "--statediff-out.")
+    ap.add_argument("--boost-probe", action="store_true",
+                    help="[U-9174] entry hooks on 0x0046d780 (launch rev-charge RELEASE, "
+                         "writes veh+0xbf8 = 1 or 2 at 0x0046d7cf / 0x0046d7a2) and "
+                         "0x0046d7f0 (the per-tick charge on veh+0xbf4). Records "
+                         "charge/state/race-state/accel-byte on entry AND on return, so a "
+                         "write is visible across the pair with no mid-function probe. "
+                         "Writes <out>.boostprobe.csv.")
+    ap.add_argument("--boost-probe-limit", type=int, default=20000,
+                    help="hard row limit for --boost-probe; auto-detaches at the limit "
+                         "(a run that hits it is VOID, not a result).")
     ap.add_argument("--mag-probe-limit", type=int, default=20000,
                     help="[U-9156] hard row cap; the hook DETACHES itself on reaching it, so "
                          "hot-path exposure is bounded. 0 = no cap (not recommended).")
@@ -2428,6 +2527,9 @@ def main():
                 _sites = "" if args.mag_probe == "count" else args.mag_probe
                 print("  [statediff]", E.mag_probe_arm(_sites, args.mag_probe_limit,
                                                         "0x008815a0", args.statediff_car))
+            if args.boost_probe:
+                print("  [statediff]", E.boost_probe_arm("0x008815a0",
+                                                          args.boost_probe_limit))
             if args.statediff_puhook:
                 print("  [statediff]", E.pu_arm(args.pu_plan, args.pu_subj, args.pu_warm,
                                                  args.pu_box))
@@ -2765,6 +2867,26 @@ def main():
                         _bysite[r[1]] = _bysite.get(r[1], 0) + 1
                     print(f"  [statediff] mag-probe {len(mp_rows)} rows -> {mpp}")
                     print(f"  [statediff] mag-probe per-site: {_bysite}")
+                if args.boost_probe:
+                    # Counters BEFORE the rows, CSV written even when empty:
+                    # memory `absent-log-proves-nothing-run-a-control`.
+                    try: print("  [statediff] boost-probe agent:", E.boost_probe_stats())
+                    except Exception as _e: print("  [statediff] boost-probe stats failed:", _e)
+                    bp_rows = []
+                    try: bp_rows = E.boost_probe_drain()
+                    except Exception as _e: print("  [statediff] boost-probe drain failed:", _e)
+                    bpp = outp.with_suffix(outp.suffix + ".boostprobe.csv")
+                    with open(bpp, "w", newline="") as f:
+                        f.write("seq,site,phase,tick,car,bf4_in,bf8_in,state_in,accel_in,"
+                                "bf4_out,bf8_out,state_out,accel_out" + chr(10))
+                        for r in bp_rows:
+                            f.write(",".join(str(x) for x in r) + chr(10))
+                    _rel = [r for r in bp_rows if r[1] == "rel"]
+                    print(f"  [statediff] boost-probe {len(bp_rows)} rows -> {bpp}")
+                    for r in _rel:
+                        print(f"  [statediff] boost-probe RELEASE tick={r[3]} car={r[4]} "
+                              f"bf4 {r[5]}->{r[9]}  bf8 {r[6]}->{r[10]}  "
+                              f"state {r[7]}->{r[11]}  accel {r[8]}->{r[12]}")
                 if args.statediff_aistep:
                     try: print("  [statediff] aistep agent:", E.ai_step_stats())
                     except Exception: pass
