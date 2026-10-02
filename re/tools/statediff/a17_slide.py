@@ -96,9 +96,14 @@ def samples_port(path):
     """
     out = []
     with open(path, "r", errors="replace") as fh:
-        for i, line in enumerate(fh):
+        i = -1
+        for line in fh:
             if "sp=" not in line:
                 continue
+            # index over MATCHING lines only, 0-based -- the same ordinal a8_launch.py's
+            # port_series() uses, so `--port-release 1` means the same frame in both
+            # tools. Indexing by raw line number instead puts every d one frame early.
+            i += 1
             mv = RE_FIELD["vel"].search(line)
             mf = RE_FIELD["fwd"].search(line)
             ms = RE_FIELD["sp"].search(line)
@@ -419,7 +424,23 @@ def main():
                   f" ; all fractions >= 0.99 = {allpass}")
 
     if a.cross:
-        orows = samples_orig(a.orig[0])
+        if a.probe:
+            orows = samples_probe(a.probe[0])
+            ka2_probe(orows, f"PROBE {os.path.basename(a.probe[0])}", a.ulps)
+            # the row's OWN produced value, from the next call's entry read
+            for i in range(len(orows) - 1):
+                orows[i]["b0c"] = orows[i + 1]["b0c_entry"] \
+                    if orows[i + 1]["seq"] == orows[i]["seq"] + 1 else float("nan")
+            orows[-1]["b0c"] = float("nan")
+            # RELEASE MARKER carried by the capture itself, not assumed:
+            # +0xbf8 leaves 0 at the rev-charge release (attempt 15, 0x0046d7a2).
+            rel = next((r["frame"] for r in orows if r["bf8"] != 0), None)
+            mov = next((r["frame"] for r in orows if r["speed"] > 0.0), None)
+            print(f"--- ORIG release markers in the probe: first bf8 != 0 at sdframe={rel}"
+                  f"   first speed > 0 at sdframe={mov}"
+                  f"   (--orig-release = {a.orig_release})")
+        else:
+            orows = samples_orig(a.orig[0])
         prows = samples_port(a.port[0])
         rows = cross(orows, prows, a.orig_release, a.port_release,
                      a.lag, a.dmax, a.tol)
