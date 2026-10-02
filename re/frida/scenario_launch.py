@@ -1013,6 +1013,89 @@ function axisProbeArm(recBaseHex, car){
 function axisProbeDrain(){ const r = AX.rows; AX.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
+// --- SLIDE probe (+0xb0c, D2 attempt 17) -----------------------------------
+// +0xb0c is written ONLY by A4 FUN_00470670 per frame, from SEVEN record fields
+// and nothing else (transcribed byte-exact, verify/d2_b0c_20261002/
+// RESULT_STEP1.md section 2.1):
+//
+//   speed == 0.0 ->  +0xb0c = 0                                     0x0047072c
+//   otherwise    ->  +0xb0c = (1.0 - |dot| / speed) * speed         0x00470724
+//     dot = (fwd.y*vel.y + fwd.x*vel.x) + fwd.z*vel.z   0x004706db..0x00470701
+//     1.0 = _DAT_005cc320 = 0x3f800000, read from the anchored exe
+//     vel = +0x9b0/+0x9b4/+0x9b8     fwd = +0x9d4/+0x9d8/+0x9dc     speed = +0x9e4
+//
+// WHY A LIVE HOOK AND NOT THE .msd. The capture is a RENDER-TICK snapshot and vel
+// is integrated later in the same frame, so the snapshot's inputs are not the
+// inputs A4 used. That is not an assumption: gate KA of PREREG_STEP2.md recomputed
+// +0xb0c from the snapshot on three original captures and got 0.9488 / 0.9401 /
+// 0.9453 at the best lag (-1) against a 0.99 threshold -- a FAIL, which the
+// pre-registration answers by requiring this hook rather than by moving the bar.
+//
+// The record base arrives in EAX (0x00470679 `mov edi, eax`; `in_EAX` in the
+// decompilation), so the ESI filter the other probes use does not apply here.
+//
+// Rate: A4 is one call per car per frame = ~60/s on the solo arm, far under the
+// ~1000/s destabilise floor. Entry only -- no onLeave, no mid-function probe, no
+// write (memory `frida-interceptor-is-entry-only`).
+//
+// Each row carries its own frame marker and its own release marker, so pairing
+// never depends on an external clock (memory `next-sample-pairing-needs-a-frame-
+// marker`, `check-the-capture-carries-the-event-itself`):
+//   [seq, SD.frames, tick 0x007f101c, velx,vely,velz, fwdx,fwdy,fwdz, speed,
+//    b0c_stale, bf8, bf4]
+// `b0c_stale` is the value standing in the record AT ENTRY, i.e. the one A4 wrote
+// on the PREVIOUS call. The known-answer check is therefore a CROSS-CALL one:
+// predict from row i's seven inputs and compare to row i+1's b0c_stale. Nothing is
+// trusted until that reproduces the original's own stored value.
+const SL_A4   = 0x00470670;
+const SL_TICK = 0x007f101c;
+const SL = { armed:false, rows:[], calls:0, mine:0, skipped:0, err:null, chk:null,
+             cap:20000, capped:false, nZeroSpeed:0, nB0cNz:0 };
+let SL_REC = null, SL_SEQ = 0;
+function slideProbeArm(recBaseHex, car, cap){
+  if (SL.armed) return 'already armed';
+  try {
+    SL_REC = ptr(parseInt(recBaseHex, 16) + car * 0xd04);
+    SL.cap = cap || 20000;
+    // KNOWN-ANSWER self-check #1, static: the literal the writer folds in at
+    // 0x00470718 (`fsubr dword ptr [0x5cc320]`) must read 1.0 in the live image.
+    // If it does not, the probe is reading the wrong image and no float it
+    // reports means anything.
+    SL.chk = { one: ga(0x005cc320).readFloat(),
+               zero: ga(0x005d757c).readFloat(),
+               k1500: ga(0x005cd0ac).readFloat(),
+               k500: ga(0x005ccd04).readFloat(),
+               rec: SL_REC.toString() };
+    Interceptor.attach(ga(SL_A4), { onEnter(){
+      try {
+        SL.calls++;
+        if (!this.context.eax.equals(SL_REC)) { SL.skipped++; return; }
+        SL.mine++;
+        if (SL.rows.length >= SL.cap) { SL.capped = true; return; }
+        const r = SL_REC;
+        let tick = 0; try { tick = ga(SL_TICK).readS32(); } catch(_){}
+        const sp = r.add(0x9e4).readFloat();
+        const b0c = r.add(0xb0c).readFloat();
+        if (sp === 0.0) SL.nZeroSpeed++;
+        if (b0c !== 0.0) SL.nB0cNz++;
+        SL.rows.push([SL_SEQ++, SD.frames, tick,
+                      r.add(0x9b0).readFloat(), r.add(0x9b4).readFloat(),
+                      r.add(0x9b8).readFloat(),
+                      r.add(0x9d4).readFloat(), r.add(0x9d8).readFloat(),
+                      r.add(0x9dc).readFloat(),
+                      sp, b0c,
+                      r.add(0xbf8).readS32(), r.add(0xbf4).readS32()]);
+      } catch(e){ if (!SL.err) SL.err = 'a4Enter ' + e; }
+    }});
+    SL.armed = true;
+    return 'slide-probe armed: A4 @0x' + SL_A4.toString(16)
+         + ' rec=' + SL_REC + ' cap=' + SL.cap
+         + ' consts=' + JSON.stringify(SL.chk);
+  } catch(e){ return 'ERR ' + e; }
+}
+function slideProbeDrain(){ const r = SL.rows; SL.rows = []; return r; }
+// ---------------------------------------------------------------------------
+
 // --- CONTACT-FIXUP probe (U-9156, D2 section 22.2) -------------------------
 // [D2 section 22.1] The registered rule named C4 (the post-bounce horizontal speed) as the
 // first diverging term at d = 0, and reading 4 points at the last-contact damp
@@ -1996,6 +2079,13 @@ rpc.exports = {
                                                      fwdYnz:AX.nFwdYnz, axYnz:AX.nAxYnz,
                                                      b18nzPre:AX.nB18nzPre, b18nzPost:AX.nB18nzPost,
                                                      pending:AX.rows.length, chk:AX.chk, err:AX.err}); },
+  slideProbeArm: function(recBaseHex, car, cap){ return slideProbeArm(recBaseHex, car, cap); },
+  slideProbeDrain: function(){ return slideProbeDrain(); },
+  slideProbeStats: function(){ return JSON.stringify({armed:SL.armed, calls:SL.calls,
+                                                      mine:SL.mine, skipped:SL.skipped,
+                                                      zeroSpeed:SL.nZeroSpeed, b0cNz:SL.nB0cNz,
+                                                      pending:SL.rows.length, cap:SL.cap,
+                                                      capped:SL.capped, chk:SL.chk, err:SL.err}); },
   contactFixupProbeArm: function(recBaseHex, car){ return contactFixupProbeArm(recBaseHex, car); },
   contactFixupProbeDrain: function(){ return contactFixupProbeDrain(); },
   contactFixupProbeStats: function(){ return JSON.stringify({armed:FP.armed, fixup:FP.nFix,
@@ -2458,6 +2548,19 @@ def main():
                          "change splits into [A6a+A6b] and [the 2x25 contact substeps]. "
                          "Entry hooks only, ~180 calls/s. Writes <statediff-out>."
                          "latbracket.csv. Requires --statediff-out.")
+    ap.add_argument("--slide-probe", action="store_true",
+                    help="[D2 attempt 17] entry-hook A4 0x00470670 (record base in EAX) "
+                         "and log the SEVEN inputs the +0xb0c writer reads -- vel "
+                         "+0x9b0/b4/b8, fwd +0x9d4/d8/dc, speed +0x9e4 -- plus the "
+                         "+0xb0c standing in the record at entry (i.e. the value the "
+                         "PREVIOUS call stored), the frame marker SD.frames, the game "
+                         "tick 0x007f101c and the launch markers +0xbf8/+0xbf4. The "
+                         "known-answer check is cross-call: predict from row i's inputs, "
+                         "compare to row i+1's b0c. Entry only, ~60 calls/s. Writes "
+                         "<statediff-out>.slideprobe.csv. Requires --statediff-out.")
+    ap.add_argument("--slide-probe-limit", type=int, default=20000,
+                    help="hard row limit for --slide-probe; stops appending at the limit "
+                         "and reports capped=true rather than growing without bound.")
     ap.add_argument("--axis-probe", action="store_true",
                     help="[U-9175 / D2 attempt 16] entry-hook A6a 0x00467650 (PRE, "
                          "ESI-filtered) and A6b 0x00468980 (POST) and log the player "
@@ -2638,6 +2741,9 @@ def main():
                 print("  [statediff]", E.ai_step_arm(os.environ.get("MASHED_AISTEP_LOCALS", "1") != "0"))
             if args.lat_bracket:
                 print("  [statediff]", E.lat_bracket_arm("0x008815a0", args.statediff_car))
+            if args.slide_probe:
+                print("  [statediff]", E.slide_probe_arm("0x008815a0", args.statediff_car,
+                                                          args.slide_probe_limit))
             if args.axis_probe:
                 print("  [statediff]", E.axis_probe_arm("0x008815a0", args.statediff_car))
             if args.fixup_probe:
@@ -2959,6 +3065,24 @@ def main():
                     _n1 = sum(1 for r in ax_rows if r[1] == 1)
                     print(f"  [statediff] axis-probe {len(ax_rows)} samples "
                           f"(A6a-PRE {_n0}, A6b-POST {_n1}) -> {axp}")
+                if args.slide_probe:
+                    # Counters and the static known-answer constants BEFORE the rows, and
+                    # the CSV is written even when empty: memory
+                    # `absent-log-proves-nothing-run-a-control` -- a zero-row file cannot
+                    # tell "A4 never fired for this record" from "the probe is broken".
+                    try: print("  [statediff] slide-probe agent:", E.slide_probe_stats())
+                    except Exception as _e: print("  [statediff] slide-probe stats failed:", _e)
+                    sl_rows = []
+                    try: sl_rows = E.slide_probe_drain()
+                    except Exception as _e: print("  [statediff] slide-probe drain failed:", _e)
+                    slp = outp.with_suffix(outp.suffix + ".slideprobe.csv")
+                    with open(slp, "w", newline="") as f:
+                        f.write("seq,sdframe,tick,velx,vely,velz,fwdx,fwdy,fwdz,"
+                                "speed,b0c_entry,bf8,bf4" + chr(10))
+                        for r in sl_rows:
+                            f.write(",".join(repr(x) if isinstance(x, float) else str(x)
+                                             for x in r) + chr(10))
+                    print(f"  [statediff] slide-probe {len(sl_rows)} rows -> {slp}")
                 if args.fixup_probe:
                     # Counters and the register self-check BEFORE the rows, and the CSV is
                     # written even when empty: memory

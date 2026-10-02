@@ -1223,7 +1223,15 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                     // (verify/d3_drive_20260928/e3.msd via re/tools/statediff/msd_fields.py),
                     // and upshifts out of gear 0 only once +0x9e4 passes 250 -- which is
                     // exactly (speed+250)*4 crossing fVar5 = 2000.
-                    "wle4=[%g,%g,%g,%g] wld4=[%g,%g,%g,%g] b0c=%g gb498=%g gb49c=%g\n",
+                    // [D2 attempt 17 2026-10-02] the SEVEN inputs A4 FUN_00470670
+                    // reads to compute +0xb0c, and nothing else: vel +0x9b0/b4/b8,
+                    // fwd +0x9d4/d8/dc (speed +0x9e4 is already `sp=` above).
+                    // Transcribed at verify/d2_b0c_20261002/RESULT_STEP1.md §2.1.
+                    // APPENDED AT THE END so every pre-existing name=value token is
+                    // byte-identical and a8_launch.py / a8_medframe.py are unaffected
+                    // (PREREG_STEP2.md §3, gate D-0).
+                    "wle4=[%g,%g,%g,%g] wld4=[%g,%g,%g,%g] b0c=%g gb498=%g gb49c=%g"
+                    " vel=[%g,%g,%g] fwd=[%g,%g,%g]\n",
                     g_bodyBasisReseed[slot] ? 1 : 0,
                     I(r, 0x490), I(r, 0x494),   // gearbox state (Integrate2.cpp:137-143)
                     // [A8-FTOTDIR] the SUMMED per-wheel force VECTOR, p[0x1c..0x1e]
@@ -1267,7 +1275,9 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                     F(r,0x32c+0x7c), F(r,0x32c+0x84), F(r,0x3f0+0x7c), F(r,0x3f0+0x84),
                     g_a8WheelLe4[0], g_a8WheelLe4[1], g_a8WheelLe4[2], g_a8WheelLe4[3],
                     g_a8WheelLd4[0], g_a8WheelLd4[1], g_a8WheelLd4[2], g_a8WheelLd4[3],
-                    F(r, 0xb0c), F(r, 0x498), F(r, 0x49c));
+                    F(r, 0xb0c), F(r, 0x498), F(r, 0x49c),
+                    F(r, 0x9b0), F(r, 0x9b4), F(r, 0x9b8),
+                    F(r, 0x9d4), F(r, 0x9d8), F(r, 0x9dc));
                 std::fclose(lf);
                 g_bodyBasisReseed[slot] = false;
             }
