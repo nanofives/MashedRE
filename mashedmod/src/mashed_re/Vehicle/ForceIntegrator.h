@@ -161,6 +161,15 @@ extern A6aFrameDump g_a6aFrame;
 extern float g_rubberBand[16];  // DAT_008989b0 (per-player catch-up float)
 extern int   g_rubberRefCar;    // DAT_008989c8
 extern int*  g_vehicleArrayBase;// DAT_008815a0 (16-car array; other cars' contact summary + drafting)
+#ifdef MASHED_STANDALONE
+// [U-9174] start-line launch rev-charge wiring — Vehicle\LaunchRevCharge.cpp.
+// The standalone equivalent of FUN_004103a0's two launch loops (0x00410441 charge,
+// 0x0041049b release). Called from TrackRenderer's countdown branch, slot 0 only.
+// Standalone binding for the original's cooked accel byte at 0x007f103c+ctrl*0x4c.
+extern unsigned char g_launchAccelByte[16];
+void LaunchRev_PreRaceTick(float dt, float accel01);
+void LaunchRev_Release();
+#endif
 // DAT_00881560 (per-wheel suspension/steer scratch) lives in the Collision module
 // (Collision::g_suspScratch) since the wheel solver writes it; ForceIntegrator.cpp
 // references it qualified.

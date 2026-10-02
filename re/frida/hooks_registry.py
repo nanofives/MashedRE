@@ -523,17 +523,117 @@ HOOKS = {
     # 0x0046d7f0 BoundedTableSignClamp46d7f0 (ai) - PURE LEAF int f(uint idx, int val):
     # if(idx>=0x10) ret 0; b=*(u8*)(0x7f103c + (*(int*)(0x7f1a14+idx*16))*0x4c);
     # slot=&[0x882194+idx*0xd04]; *slot += (float)b>160.0 ? +val : -val; clamp[0,0xbb8]; ret 1.
-    'bounded_table_signclamp_46d7f0': {'rva': 0x0046d7f0, 'export': 'BoundedTableSignClamp46d7f0', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32']}, 'arg_type': 'bounded_table_signselect_clamp',
-        't1Tbl': 0x007f1a14, 't2Tbl': 0x007f103c, 't3Tbl': 0x00882194, 't3Stride': 0xd04,
-        'scenarios': [
-            {'idx': 0, 'val': 100, 'byte': 200, 'slot': 500},   # b>160 -> +100 -> 600
-            {'idx': 0, 'val': 100, 'byte': 50,  'slot': 500},   # b<=160 -> -100 -> 400
-            {'idx': 1, 'val': 50,  'byte': 200, 'slot': 1000},  # idx indexing -> 1050
-            {'idx': 0, 'val': 5000,'byte': 200, 'slot': 0},     # high clamp -> 0xbb8 (3000)
-            {'idx': 0, 'val': 5000,'byte': 50,  'slot': 100},   # low clamp -> 0
-            {'idx': 0x10,'val': 1, 'byte': 0,   'slot': 0},     # bounds -> ret 0
+    # arg_type CHANGED 2026-10-01 (D2 attempt 15) from 'bounded_table_signselect_clamp',
+    # which has NO handler in diff_template.js -- run_diff.py refuses it outright, so the
+    # row could not actually be re-verified. 'cache_setter_observe' expresses the same
+    # test exactly (scatter-seed the ctrl table + accel byte + the slot, call, observe the
+    # slot) and is an existing, exercised handler. The six original scenarios are carried
+    # over verbatim and two 160-boundary vectors are added.
+    'bounded_table_signclamp_46d7f0': {
+        'rva':            0x0046d7f0,
+        'export':         'BoundedTableSignClamp46d7f0',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'uint32']},
+        'arg_type':       'cache_setter_observe',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # ctrl index at 0x7f1a14 + idx*16; accel byte at 0x7f103c + ctrl*0x4c;
+            # charge slot at 0x882194 + idx*0xd04.
+            # b > 160 -> +val
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f103c', 'val': 200},
+                      {'addr': '0x00882194', 'val': 500}],
+             'args': [0, 100], 'obs': ['0x00882194']},                       # -> 600
+            # b <= 160 -> -val
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f103c', 'val': 50},
+                      {'addr': '0x00882194', 'val': 500}],
+             'args': [0, 100], 'obs': ['0x00882194']},                       # -> 400
+            # idx indexing: idx 1 reads ctrl at 0x7f1a24 and writes 0x882e98
+            {'seed': [{'addr': '0x007f1a24', 'val': 0}, {'addr': '0x007f103c', 'val': 200},
+                      {'addr': '0x00882e98', 'val': 1000}, {'addr': '0x00882194', 'val': 77}],
+             'args': [1, 50], 'obs': ['0x00882e98', '0x00882194']},          # -> 1050, 77
+            # high clamp
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f103c', 'val': 200},
+                      {'addr': '0x00882194', 'val': 0}],
+             'args': [0, 5000], 'obs': ['0x00882194']},                      # -> 0xbb8
+            # low clamp
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f103c', 'val': 50},
+                      {'addr': '0x00882194', 'val': 100}],
+             'args': [0, 5000], 'obs': ['0x00882194']},                      # -> 0
+            # signed bound -> ret 0, slot untouched
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f103c', 'val': 0},
+                      {'addr': '0x00882194', 'val': 777}],
+             'args': [16, 1], 'obs': ['0x00882194']},                        # -> 777
+            # the 160.0 boundary, both sides of the fcomp at 0x0046d81e
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f103c', 'val': 160},
+                      {'addr': '0x00882194', 'val': 500}],
+             'args': [0, 100], 'obs': ['0x00882194']},                       # 160 -> -100 -> 400
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f103c', 'val': 161},
+                      {'addr': '0x00882194', 'val': 500}],
+             'args': [0, 100], 'obs': ['0x00882194']},                       # 161 -> +100 -> 600
         ],
-        'path1_tests': [0, 1, 2, 3, 4, 5], 'path2_tests': [0, 1, 2, 3, 4, 5]},
+        'path2_tests': [
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f103c', 'val': 200},
+                      {'addr': '0x00882194', 'val': 500}],
+             'args': [0, 100], 'obs': ['0x00882194']},
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f103c', 'val': 50},
+                      {'addr': '0x00882194', 'val': 500}],
+             'args': [0, 100], 'obs': ['0x00882194']},
+        ],
+    },
+
+    # 0x0046d780 LaunchRevRelease46d780 (ai) - int f(int car): the START-LINE LAUNCH
+    # RELEASE, and the thing U-9174 spent three attempts looking for. charge =
+    # veh[car]+0xbf4 (= 0x882194 + car*0xd04); if charge > 1000 -> veh+0xbf8 = 2 at
+    # 0x0046d7a2 with the charge UNTOUCHED (the over-rev bog A6a then counts down at
+    # 200/frame); else if charge > 0 -> +0xbf8 = 1 at 0x0046d7cf and charge += 1000 at
+    # 0x0046d7d9; else nothing. Signed bound jl 0x10 at 0x0046d784 -> ret 0.
+    # Both arms also call FUN_00422b50(car, signed amount), which perturbs the per-car
+    # counter at 0x008995bc + car*0x138 - identically on both sides, and it is not
+    # observed here. Confirmed live on the original, two boots:
+    # verify/d2_writer_20261001/RESULT_STEP1.md.
+    # Non-degeneracy: the eight vectors cover BOTH write arms, the no-write arm, the
+    # 1000/1001 boundary on each side, car indexing (car 1 writes 0x882e98/0x882e9c,
+    # not car 0's slots), and the bounds reject - so a pass witnesses the branch
+    # selection and the asymmetric charge update, not an inert store.
+    'launch_rev_release_46d780': {
+        'rva':            0x0046d780,
+        'export':         'LaunchRevRelease46d780',
+        'signature':      {'ret': 'int', 'args': ['int']},
+        'arg_type':       'cache_setter_observe',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # car 0: charge 3000 -> bog arm, bf8 = 2, bf4 unchanged (the measured case)
+            {'seed': [{'addr': '0x00882194', 'val': 3000}, {'addr': '0x00882198', 'val': 0}],
+             'args': [0], 'obs': ['0x00882194', '0x00882198']},
+            # car 0: charge 1001 -> bog arm at the boundary
+            {'seed': [{'addr': '0x00882194', 'val': 1001}, {'addr': '0x00882198', 'val': 0}],
+             'args': [0], 'obs': ['0x00882194', '0x00882198']},
+            # car 0: charge 1000 -> boost arm (jle), bf8 = 1, bf4 = 2000
+            {'seed': [{'addr': '0x00882194', 'val': 1000}, {'addr': '0x00882198', 'val': 0}],
+             'args': [0], 'obs': ['0x00882194', '0x00882198']},
+            # car 0: charge 1 -> boost arm, bf4 = 1001
+            {'seed': [{'addr': '0x00882194', 'val': 1}, {'addr': '0x00882198', 'val': 0}],
+             'args': [0], 'obs': ['0x00882194', '0x00882198']},
+            # car 0: charge 0 -> NEITHER arm; seeded bf8 = 7 must survive untouched
+            {'seed': [{'addr': '0x00882194', 'val': 0}, {'addr': '0x00882198', 'val': 7}],
+             'args': [0], 'obs': ['0x00882194', '0x00882198']},
+            # car 0: charge negative -> NEITHER arm (test ecx,ecx / jle)
+            {'seed': [{'addr': '0x00882194', 'val': 0xfffffffb}, {'addr': '0x00882198', 'val': 7}],
+             'args': [0], 'obs': ['0x00882194', '0x00882198']},
+            # car 1: indexing - writes 0x882e98/0x882e9c; car 0's slots must not move
+            {'seed': [{'addr': '0x00882e98', 'val': 2000}, {'addr': '0x00882e9c', 'val': 0},
+                      {'addr': '0x00882194', 'val': 1234}, {'addr': '0x00882198', 'val': 5}],
+             'args': [1], 'obs': ['0x00882e98', '0x00882e9c', '0x00882194', '0x00882198']},
+            # car 16: signed bound -> ret 0, nothing written anywhere
+            {'seed': [{'addr': '0x00882194', 'val': 3000}, {'addr': '0x00882198', 'val': 9}],
+             'args': [16], 'obs': ['0x00882194', '0x00882198']},
+        ],
+        'path2_tests': [
+            {'seed': [{'addr': '0x00882194', 'val': 3000}, {'addr': '0x00882198', 'val': 0}],
+             'args': [0], 'obs': ['0x00882194', '0x00882198']},
+            {'seed': [{'addr': '0x00882194', 'val': 1000}, {'addr': '0x00882198', 'val': 0}],
+             'args': [0], 'obs': ['0x00882194', '0x00882198']},
+        ],
+    },
 
     # 0x0046bda0 IndexedFloatAccum16_46bda0 (gameplay) - PURE LEAF int f(float* out,
     # uint i, uint j): if(i>=0x10||j>=4) ret 0; else acc = *0x5d757c(0.0) + 16 floats

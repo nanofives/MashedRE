@@ -26,6 +26,7 @@
                                     // [D3 2026-09-26] the ported TICK Ai_Standalone_Tick runs every
                                     // race frame and its ctrl bytes drive the opponents.
 #include "../Vehicle/VehiclePhysicsRun.h"  // WS-A8: ported physics chain (behind MASHED_REAL_PHYSICS)
+#include "../Vehicle/ForceIntegrator.h"    // U-9174: LaunchRev_PreRaceTick / _Release
 #include "../Ai/AiState.h"          // WS-AI-BRIDGE: ctrl-block / slot-table / spline addrs
 #include "../Ai/AiData.h"           // WS-AI-BRIDGE: .AI loader (AiData_LoadInto)
 
@@ -2868,7 +2869,18 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         countdown_ -= in.dt;
         car_speed_ = 0.f; car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
         for (auto& a : ai_cars_) a.cur_speed = 0.f;
-        if (countdown_ <= 0.f) Audio::SfxPlay("go", 0.9f);   // real "GO!" SFX
+        // [U-9174, D2 attempt 15] START-LINE LAUNCH REV-CHARGE. The original runs
+        // FUN_0046d7f0(car, 50) per active car on every pre-race state-tick
+        // (0x00410441) and FUN_0046d780(car) once when the 1.86 s timer elapses
+        // (0x0041049b) — the writer of veh+0xbf8 is 0x0046d7a2 inside the latter.
+        // The cars are still frozen above; this only accumulates the integer charge
+        // at veh+0xbf4, which A6a reads after GO. Confirmed on the running original,
+        // two boots: verify/d2_writer_20261001/RESULT_STEP1.md.
+        Vehicle::LaunchRev_PreRaceTick(in.dt, in.accel);
+        if (countdown_ <= 0.f) {
+            Audio::SfxPlay("go", 0.9f);                      // real "GO!" SFX
+            Vehicle::LaunchRev_Release();
+        }
         if (countdown_ > 0.f) return;
     }
 

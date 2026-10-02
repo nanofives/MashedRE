@@ -3913,29 +3913,12 @@ extern "C" __declspec(dllexport) int __cdecl IndexedFloatAccum16_46bda0(float* o
 }
 RH_ScopedInstall(IndexedFloatAccum16_46bda0, 0x0046bda0);
 
-// 0x0046d7f0  FUN_0046d7f0 (ai, BoundedTableSignClamp) — PURE LEAF (no calls)
-// int f(uint idx, int val): if(idx>=0x10) return 0;
-//   t1 = *(int*)(0x7f1a14 + idx*16); b = *(u8*)(0x7f103c + t1*0x4c);
-//   slot = (int*)(0x882194 + idx*0xd04);
-//   *slot += ((float)b > *(float*)0x5cea3c(=160.0)) ? +val : -val;   // net per byte>C
-//   clamp *slot to [0, 0xbb8]; return 1.
-// capstone-verified (byte>C path does +val*2 then the shared -val = net +val).
-// Integer output; only the sign is float-selected -> bit-identity exact.
-extern "C" __declspec(dllexport) int __cdecl BoundedTableSignClamp46d7f0(unsigned idx, int val)
-{
-    if (idx >= 0x10u) return 0;
-    const int t1 = *reinterpret_cast<const int*>(0x007f1a14u + idx * 16u);
-    const unsigned char b = *reinterpret_cast<const unsigned char*>(
-        0x007f103cu + static_cast<unsigned>(t1) * 0x4cu);
-    const float C = *reinterpret_cast<const float*>(0x005cea3cu);
-    int* const slot = reinterpret_cast<int*>(0x00882194u + idx * 0xd04u);
-    if (static_cast<float>(b) > C) *slot = *slot + val;
-    else                          *slot = *slot - val;
-    if (*slot > 0xbb8) *slot = 0xbb8;
-    if (*slot < 0)     *slot = 0;
-    return 1;
-}
-RH_ScopedInstall(BoundedTableSignClamp46d7f0, 0x0046d7f0);
+// 0x0046d7f0  FUN_0046d7f0 (ai, BoundedTableSignClamp) — MOVED 2026-10-01.
+// The body now lives in Vehicle\LaunchRevCharge.cpp, which is in BOTH
+// exe_sources.rsp and asi_sources.rsp. It had to move because the STANDALONE
+// needs it: U-9174 resolved this function as the per-tick CHARGE half of the
+// start-line launch mechanic whose release (0x0046d780, writer 0x0046d7a2) sets
+// veh+0xbf8, and this TU is asi-only. ONE RVA, ONE BODY — do not re-add it here.
 
 // 0x004d7100  FUN_004d7100 (render, EventEnqueueCascade) — PURE LEAF (no calls)
 // void f(int param): one-shot guarded event-enqueue cascade over global flags +
