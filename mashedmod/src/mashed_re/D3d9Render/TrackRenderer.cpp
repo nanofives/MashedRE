@@ -2864,6 +2864,28 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     const float kSteer    = 2.2f;
     const float kGravity  = radius_ * 0.12f;
 
+    // [U-9174, D2 attempt 15] PHYSICS INIT HOISTED ABOVE THE COUNTDOWN. It used to sit
+    // inside the VehiclePhysics_Enabled() block below, which the countdown branch
+    // `return`s before reaching — so for the whole pre-race the 0xd04 record array did
+    // not exist yet (`g_vehicleArrayBase` nullptr) and the launch rev-charge AV'd on its
+    // first tick. The original has the records long before its pre-race state: the race
+    // state machine's case 1 ("start of race", `FUN_004111c0`) runs the per-car init
+    // (`FUN_0046b1c0` / `FUN_0046b540`) and only then advances toward the countdown, which
+    // is state 5. Hoisting matches that ordering. The init is idempotent and one-shot, and
+    // the first physics STEP still happens after the countdown — only the memset + world
+    // handoff move earlier by the countdown's length.
+    if (Vehicle::VehiclePhysics_Enabled()) {
+        static bool s_pinit_pre = false;
+        if (!s_pinit_pre) {
+            Vehicle::VehiclePhysics_Init(1 + static_cast<int>(ai_cars_.size()), course_id_);
+            Vehicle::VehiclePhysics_SetWorld(
+                col_verts_.data(), static_cast<int>(col_verts_.size() / 3),
+                col_tris_.data(),  static_cast<int>(col_tris_.size()  / 3),
+                col_mat_.size() == col_tris_.size() / 3 ? col_mat_.data() : nullptr);
+            s_pinit_pre = true;
+        }
+    }
+
     // Countdown freeze (3-2-1-GO): cars are held still until it elapses.
     if (countdown_ > 0.f) {
         countdown_ -= in.dt;
@@ -2932,17 +2954,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // through the ported chain (A3 init -> A4 control -> A5 -> A6a -> A6b) instead
     // of the kinematic scaffold. PENDING runtime-smoke + C4 (WS-A-VERIFY-3).
     if (Vehicle::VehiclePhysics_Enabled()) {
-        static bool s_pinit = false;
-        if (!s_pinit) {
-            Vehicle::VehiclePhysics_Init(1 + static_cast<int>(ai_cars_.size()), course_id_);
-            // WS-A8-GAPS: feed the track collision soup so the wheel solver finds
-            // ground -> A5 suspension force is live (was the empty-terrain gap).
-            Vehicle::VehiclePhysics_SetWorld(
-                col_verts_.data(), static_cast<int>(col_verts_.size() / 3),
-                col_tris_.data(),  static_cast<int>(col_tris_.size()  / 3),
-                col_mat_.size() == col_tris_.size() / 3 ? col_mat_.data() : nullptr);
-            s_pinit = true;
-        }
+        // Init + SetWorld (WS-A8-GAPS: the track collision soup, so the wheel solver
+        // finds ground) MOVED above the countdown branch, see the U-9174 note there.
         Vehicle::PlayerCarIO io;
         io.pos[0] = car_pos_[0]; io.pos[1] = car_pos_[1]; io.pos[2] = car_pos_[2];
         io.vel[0] = car_vel_[0]; io.vel[1] = car_vel_[1]; io.vel[2] = car_vel_[2];
