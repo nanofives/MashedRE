@@ -570,6 +570,104 @@ opinion is an opinion about the scaffold, not about the port.
 
 ### D2 — Default physics — **REOPENED 2026-09-29** (user decision)
 
+> #### Re-close attempt 20 — 2026-10-02. **U-9179 RESOLVED, its producer FIXED, and the sink is GONE. `wcs_drift` fires 0 times (was 47), `0x0046f6c0`'s share of `T_post` is -0.00 % (was 84.33 %), `T_post` is INSIDE BOTH of attempt 18's bars for the first time in the re-open, recovery H1 PASSES BOTH LEGS (was FAIL), and 2 OF THE 3 D2 METRICS are inside their unchanged `d81a8df6` bounds — the 2000-2600 slip band scored at all for the first time. The transcribed integer substep loop was also ported, so the port runs 2 substeps per frame like the original. `driving-median` is still 1.3 % below its lower bound, so D2 does NOT close. New rows U-9180, U-9181. NO C-level moved.**
+>
+> **THE CHAIN, measured end to end.** `ProduceTerrainBatch`'s admission test
+> (`ContactProducer.cpp:77-81`) was a **plane-distance** test, and a plane is unbounded — so
+> it was never a locality test. On a largely coplanar track it admitted ground triangles from
+> anywhere on the surface, the 256-entry store **saturated on 3565 of 3565 solver calls**, the
+> loop stopped scanning, and the triangles under wheels 0 and 1 were never offered to the
+> classifier `0x0046cc40`. Their `key` (`+0x1ec`) therefore stayed at the init loop's `-1`
+> (`fv == 10.0` exactly on all 99 rows), `0x0046f6c0`'s state machine demoted them to state 0
+> at `0x0046f91a`/`0x0046f91f` — **arm `A-demote-key`, 99 of 356 wheel-rows at `d = 222..250`**
+> — `bVar16` became 2, the byte-faithful `0 < count <= 2.0` gate at `0x004701e8` opened, and
+> the airborne lateral drift fired 47 times in 29 frames. **The `:163` latch arm fires 0 times
+> and `bVar4 == 0` on every call, so U-9179's second candidate arm is eliminated by
+> measurement.**
+>
+> **STEP 1, no transcription defect.** `WheelContactSolver.cpp:140-207` diffed line by line
+> against `0x0046f827..0x0046fae6`; every condition, constant and offset matches, with
+> `[0x005d757c] = 0x00000000 = 0.0f` confirmed by byte read and the two "assumed zero" values
+> cited as writes (`0x0046f6d3`, `0x0046f70e`). Confirmed **behaviourally** by gate KA-O: the
+> transcribed rule — including the 4-wheel drop and the `bVar16 == 3` promotion — reproduces
+> the **running original's** own four wheel states on **4686 of 4687** consecutive entry pairs.
+>
+> **THE ORIGINAL HAS NO CAP.** `LAB_00468b80` increments `DAT_0088e60c` unconditionally at
+> `0x00468d6c..0x00468d73`, with no bound test anywhere in `0x00468b80..0x00468d7c`; its
+> locality comes entirely from the BSP walk `FUN_00538c80` this function stands in for.
+>
+> **THE FIX.** The admission test is now **spatial** (the triangle's AABB grown by the same
+> `radius` must contain the same query centre, a conservative superset of
+> sphere-vs-triangle), and it is the **default**. **No new numeric constant**, no knob on the
+> shipping path, no clamp, no fitted value. `MASHED_D2_BATCHMODE=plane` is retained as the
+> **diagnostic pre-fix arm**, and it reproduces attempt 19 **bit-for-bit** (0.1983 n=19 /
+> UNSCORABLE n=0 / 1019.77 n=76), so the A/B is a verified control.
+>
+> **THREE-ARM A/B** at `d = 222..250`, n = 89 / 89 / 87 solver calls over 29 frames:
+> `plane` 256 entries, K = 2, drift **47**; `planefull` (full scan) 256/379, K = 2, drift
+> **47**; `local` (spatial) **17** entries, **K = 4**, **S1 = 4**, all 348 wheel-rows FILLED,
+> drift **0**. So the cap alone is not demonstrated to be sufficient — the admission test is
+> what fixes it.
+>
+> **STEP 5, separately pre-registered and KEPT by its own rule.** The integer loop
+> `chunk = min(remaining, 0x32)` (`0x00470f50..0x00470f61`) + `sub = min(rem, 0x19)`
+> (`0x00471110`/`0x00471117`) + `fild` (`0x00471126`) + `rem -= sub` / `jne`
+> (`0x0047113f`/`0x00471141`) is ported: `nsub` went from `{3: 1626}` to **`{2: 1626}`** with
+> chunks `25.000000 / 25.000000` and **no residue step**, against the ORIGINAL's own measured
+> **2.012 solver calls/frame** (4672 over 2321 A6a frames, histogram `{2: 2308, 3: 24}`).
+> Gates G5-1 / G5-2 / G5-3 all PASSED. The driving-median was **excluded from its own gate**
+> by pre-registration, so improving one metric could not justify keeping the change.
+> **Stated residual:** the outer chunk loop `0x00471143..0x00471151` is NOT ported; at
+> `dt = 1/60` `remI == 50` so it iterates once and cannot be distinguished.
+>
+> **THE SCOREBOARD, 3 runs, against the UNCHANGED `d81a8df6` bounds:**
+>
+> | metric | bound | PORT | n | median `d` | PORT pre-fix | ORIG | verdict |
+> |---|---|---:|---:|---:|---:|---:|---|
+> | slip 1500-2000 | 0.18855..0.19635 | **0.1943** | 353 | 605 | 0.1983 (n=19) | 0.1937 (n=314, `d` 720) | **PASS** |
+> | slip 2000-2600 | 0.24488..0.25487 | **0.2524** | 557-562 | 718 | UNSCORABLE (n=0) | 0.2498 (n=540, `d` 909) | **PASS** |
+> | driving-median | 1904.70..1982.44 | **1852.66 / 1861.43 / 1854.65** | 1367/1340/1364 | 637 | 1019.77 (n=76) | 1937.89 (n=1154, `d` 824) | **FAIL ~1.3 %** |
+>
+> `T_post` at `d = 222..250`: ORIG **-0.00464** vs PORT **-0.61485**, `|delta| 0.61021`,
+> **inside both bars 5.5560 / 8.6373** (n = 29, median speed 737.3, median frame 237,
+> `L = 0`, `participants=1` from the game's own `MATCH-SEED` line). launch `L = 0` at
+> **0.19 %**, peak 1835.50 at `d` = 95 vs ORIG 1832.40 at `d` = 95, `+0xb14` at `d` = 15 both
+> — **no regression**. recovery H1 **398/400 = 99.5 %** and median **1362.7** against the
+> original's 398/400 and 1333.9, from a pre-fix 60.8 % / 132.8. §26.10's median-frame guard:
+> the port's scored populations moved from median `d` 79-85 to **605 / 718 / 637** against the
+> original's 720 / 909 / 824, so the guard no longer disqualifies the readings.
+>
+> **GATES THAT FAILED, reported as failures and not re-thresholded.** KA-P's entry-pair leg
+> **67.2957 %** — cause measured, and it **corrects attempt 19 `RESULT.md` §1.3**:
+> `ReassertContacts` is only **partly** the original's tail `0x0047044b..0x004704b0`. The
+> counting half is faithful; the **promotion of state-0 wheels back to 1**
+> (`VehiclePhysicsRun.cpp:347`) and the normal writes (`:350-352`) are **port-only**, and that
+> promotion is why the port's entry-pair replay disagrees while KA-O reproduces the original's
+> own states. KA3 **52.7060 %** — the `%g` six-digit channel limit attempt 19 already
+> diagnosed; it forms no producer delta. **No decision rule was replaced.** One rule was
+> **added** and is named in `RESULT.md` §8: a port boot producing no `motion_diag.log` is
+> retried up to 3 times before being called a failure — two boots failed transiently this
+> session and the identical control succeeded on the next boot, so without it two diagnostic
+> arms would have been misrecorded as knob-induced crashes.
+>
+> **PROMOTION: none requested, none granted.** `ProduceTerrainBatch` is **port-only
+> scaffolding with no RVA**, so `run_diff` path1 and `run_verify_hook` path2 have nothing to
+> install and nothing to call. `0x0046f6c0` C2 -> C2, `0x0046cc40` C2 -> C2, `0x00468d80`
+> C2 -> C2, `0x00538c80` C1 -> C1, `0x00470c70` C2 -> C2, `0x004709a0` C2 -> C2.
+> `rva-lint allowlisted=122 NEW=0`; `[asi] all 422 objects up to date`; all six edited TUs
+> exe-only. **AI slots 1+ are mechanically in the blast radius** (shared producer, called per
+> car at `VehiclePhysicsRun.cpp:1007`) but the magnitude is **[UNCERTAIN]** — every run was
+> `participants=1`. Nothing was tuned; D3 must re-baseline against the post-fix build.
+>
+> **ONE OUTSIDE-SCOPE ROW, inherited not introduced:** `msd+0x4a4` reads **0.67804** on the
+> original and **692.302** on the port in every band, identical pre- and post-fix — and it is
+> where this fix's own `radius` comes from. Filed as **U-9181**.
+>
+> **Open:** **U-9180** (which term carries the remaining 1.3 %; grip-clamp #6's -0.612549 is
+> the only non-zero `T_post` producer left and is too small on its own, so the carrier is
+> **not** assumed), U-9181, and the unported outer chunk loop. Full result:
+> `verify/d2_wheelstate_20261002/RESULT.md`.
+>
 > #### Re-close attempt 19 — 2026-10-02. **`T_post` is SPLIT, and the carrier is `0x0046f6c0`'s airborne lateral-drift velocity write — 84.33 % of the port's sink. It is NOT grip-clamp #6 (9.70 %), NOT A6b, NOT the parked damp, NOT the contact fixup (all exactly 0.000000), and NOT the substep budget (26.03 %, a 1.5x multiplier). The site and its gate are BYTE-FAITHFUL; the defect is the gate's INPUT. New row U-9179. No fix authored, by the attempt's own registered rule; D2 does NOT close.**
 >
 > **STEP 1 — the split, per producer and per substep.** New default-OFF probe `MASHED_D2SINK` (`mashedmod/src/mashed_re/Vehicle/D2SinkProbe.cpp`, exe-only — all five instrumented TUs are absent from `asi_sources.rsp`, so the `.asi` relinked with **all 422 objects up to date**) samples `|v|` at every producer's own phase inside `[the +0x9e4 store 0x004686cc, the render tick]`, which is exactly `a18_budget.py`'s `T_post` interval. Reducer `re/tools/statediff/a19_split.py`. `d = 222..250`, **n = 29**, median speed **633.2**, median frame index **237**, R = 1, `L = 0`:

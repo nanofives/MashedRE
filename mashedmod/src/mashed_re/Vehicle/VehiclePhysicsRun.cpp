@@ -915,11 +915,32 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         ++s_svpLines;
     };
 
-    float remMs = frameMs;
+    // [D2 attempt 20 STEP 5 / U-9160] THE SUBSTEP BUDGET IS INTEGER, as the original's is.
+    // Transcribed from MASHED.exe.unpatched (attempt 19 RESULT.md section 2):
+    //   0x00470f50..0x00470f61  chunk = min(remaining, 0x32)        INTEGER
+    //   0x00471110 / 0x00471117 sub   = min(rem, 0x19)              INTEGER
+    //   0x00471126 fild [esp+0x20]     -> (float)sub, INTEGER-sourced
+    //   0x0047113f / 0x00471141 rem -= sub; while (rem != 0)
+    // so 50 -> 25, 25 is EXACTLY TWO substeps. The float form this replaces
+    // (`while (remMs > 0.0f)` over `frameMs = dt*3000.0f = 50.0000038f`) ran THREE --
+    // 25.000000, 25.000000 and a 0.0000038147 ms residue step, measured at nsub {3: 1626}
+    // on verify/d2_wheelstate_20261002/a1. The original's own count, measured this attempt
+    // with scenario_launch.py --wheelstate-probe-count: 4672 solver calls over 2321 frames
+    // = 2.012/frame, histogram {2: 2308, 3: 24}.
+    //
+    // STATED RESIDUAL, NOT ported: the original's OUTER chunk loop
+    // 0x00471143..0x00471151 (`remaining -= chunk; if (remaining) goto 0x470f50`), which
+    // re-runs A4 for all 16 vehicles per 50 ms chunk. At dt = 1/60 remI is 50, so
+    // chunkI == remI and that loop iterates exactly once -- it cannot be distinguished on
+    // this arm. [UNCERTAIN] for any dt that makes remI > 50.
+    const int remI   = (int)frameMs;                              // integer ms budget
+    int       chunkI = (remI < 0x32) ? remI : 0x32;               // 0x00470f50..0x00470f61
     int guard = 0;
     int d2sSub = 0;   // [D2 attempt 19] substep ordinal for the diagnostic only
-    while (remMs > 0.0f && guard++ < 64) {
-        float chunkMs = (remMs < (float)kMaxSubstep) ? remMs : (float)kMaxSubstep;
+    float remMs = (float)chunkI;   // reported on the diagnostic lines only
+    while (chunkI > 0 && guard++ < 64) {
+        const int subI = (chunkI < kMaxSubstep) ? chunkI : kMaxSubstep;  // 0x00471110/17
+        float chunkMs = (float)subI;                                     // 0x00471126 fild
         D2Sink::Mark("sub_top", r, d2sSub, 0, chunkMs, remMs);
 
         // 0x00470ab0's retry needs the substep to be REDOABLE. The original gets that
@@ -1073,7 +1094,8 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         }   // end retry
         D2Sink::Mark("sub_end", r, d2sSub, 0, chunkMs, remMs);
         ++d2sSub;
-        remMs -= chunkMs;
+        chunkI -= subI;                // 0x0047113f / 0x00471141
+        remMs = (float)chunkI;
     }
     D2Sink::ClearSubstep();
 
