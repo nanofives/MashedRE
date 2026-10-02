@@ -1,15 +1,128 @@
 # Next session kickoff
 
-Updated 2026-10-02 at the close of the **D2 re-close attempt 17** session. **`+0xb0c` is
-CLOSED as a SYMPTOM.** Its law reproduces **2332/2332** at a 4-ulp budget on the running
-original, the port computes the same expression, and through `d = 0..101` the two arms'
-median speed differs by **0.06 %** with `+0xb0c`'s whole A6a channel bounded at **3.99 %**.
-D2's recovery gap is **relocated to `d = 222`**: a per-frame speed-gain deficit of **5.7x**
-measured where the drive force agrees to 6.2 % and both cars are fully grounded. No fix was
-authored; the three scored metrics still **FAIL 3 of 3** and **D2 does NOT close**. Branch
-`race/first-frame-parity`. Nothing is pushed.
+Updated 2026-10-02 at the close of the **D2 re-close attempt 18** session. **The per-frame
+velocity budget names `T_post`, and then the instrument that measures `T_post` is shown to be
+PHASE-BIASED in opposite directions on the two sides — 51x understated on the original, 10.3x
+overstated on the port.** Grip-clamp #6 is measured CONSISTENT with its own transcription at
+its own phase on the running original (measured/demanded **1.63**), so **§23.2's attribution
+of the port's 14.7 %/frame loss to clamp #6 is REFUTED** and `k`/`l_60` is not the carrier.
+U-9173 is RESOLVED as a banding artefact by a pre-registered prediction, and U-9160's
+original side is confirmed live at **exactly 2.0000 substeps/frame**. No fix authored, no
+source change (`NEW = 0` by construction); the three scored metrics still **FAIL 3 of 3** and
+**D2 does NOT close**. Branch `race/first-frame-parity`. Nothing is pushed.
 
-> ## START HERE (D2 lane) — attempt 17. D2 is STILL REOPENED. **Stop measuring `+0xb0c`. It is not a defect and there is nothing to fix in it. The defect is the VELOCITY INTEGRATION, and it has a 28-frame window with a 6.2 %-matched drive force in which to catch it.**
+> ## START HERE (D2 lane) — attempt 18. D2 is STILL REOPENED. **Do NOT quote any cross-side clamp-#6 or `T_post` magnitude off the `+0x9e4`-vs-snapshot split. It is phase-biased 51x one way on the original and 10.3x the other on the port. Build the port-side diagnostic at A6b's phase FIRST — the original side of it already exists.**
+>
+> Read [`verify/d2_budget_20261002/RESULT.md`](../verify/d2_budget_20261002/RESULT.md) then
+> `RESULT_STEP2.md` §3 (the one measurement that changes the map) and `RESULT_STEP1B.md` §4
+> (why §23.2 is refuted). Pre-registrations `PREREG_STEP1.md` (`5cc22d0c`),
+> `PREREG_STEP1B.md` (`d14dcc54`), `PREREG_STEP2.md` (`3c3e72f4`) — **all committed unrun**.
+> `UNCERTAINTIES.md` **U-9178** is the new row and the blocker's new shape. **Do not
+> re-derive any of it.**
+>
+> ### WHAT THE BUDGET FOUND (STEP 1)
+>
+> Terms in call order by RVA, matched `d`, attempt 10's thresholds reused verbatim
+> (`a18_budget.py`). Over `d = 222..250`, n = 29 each arm, `gnd == 4.0` on 29/29 both,
+> `|ctrl_xz| > 0` on 29/29 both, median speed O **790.9** / P **633.2**:
+>
+> | term | RVA span | ORIG | PORT | OUT? |
+> |---|---|---:|---:|---|
+> | `T_drive` | `0x0046862d..0x004686a2` | +33.20455 | +27.08079 | (a) only → **no** |
+> | `T_rest` | `0x00470670` + `0x0046ddb0` + `0x0046833a..0x00468625` | -3.95911 | -2.50577 | neither → **no** |
+> | **`T_post`** | `0x004687f0..0x0046897b` + `0x00468980` + `0x004709a0`×N | **-0.00464** | **-27.50393** | **(a) AND (b)** |
+> | `dS` | | +27.74798 | -1.04312 | |
+>
+> **`T_post` is a STANDING divergence, not an onset at `d = 222`.** It is OUT at
+> `d = 200..222` too (-0.00401 vs -6.73326); the port's sink **triples** (-6.73 / -27.50 /
+> -41.47) while its `T_W1` stays flat (+24.75 / +25.07 / +18.27) and is within **9.7 %** of
+> the original's. `d = 222` is where `|T_post|` crosses `T_W1`. **U-9177's framing is
+> corrected.** And `T_rest` being in tolerance means **U-9171's A5 drag is not the carrier
+> here.**
+>
+> ### WHAT CHANGES THE MAP (STEP 2) — read this before anything else
+>
+> A6b entry is the first sample after A6a returns, and `+0x9e4` is written **only
+> pre-clamp** (two literal writers `0x004686cc`/`0x0046bc36` plus A6a's entry `fstp`
+> `0x00467673`; the folded-base sweep over 622 511 instructions gives 4 reads / 0 writes,
+> with its `+0xbf8` known answer PASSING). So
+>
+> ```
+> R_c = |v| @A6b_entry / (+0x9e4) @A6b_entry        IS clamp #6's own ratio, own axis
+> ```
+>
+> | | `1-R_c^2` at the clamp's phase | structural floor at `k >= 0.1249` | ratio |
+> |---|---:|---:|---:|
+> | `d` 200..222 (n=23) | 3.4453e-02 | 1.5075e-02 | **2.29** |
+> | **`d` 222..250 (n=29)** | **6.2431e-04** | **3.8398e-04** | **1.63** |
+> | `d` 250..260 (n=11) | 2.4712e-03 | 1.3794e-03 | **1.79** |
+>
+> **The original's clamp #6 costs MORE than its own arithmetic demands, in every window. It
+> behaves exactly as transcribed. There is nothing in it to fix.** And on the *same capture*
+> the render-tick split reports `1 - R^2 = 1.2194e-05` — **51x smaller** (`R > 1` on **14 of
+> 29** at the snapshot against **2 of 29** at the clamp's phase). Meanwhile
+> `RESULT_STEP1B.md` §4 shows the same split **overstates the port by 10.3x**: fed with the
+> port's own measured `l_60` = **676.82** (from its own `wle4`/`wld4`) the port is on the
+> **HIGH** arm on 29/29 with `k = 0.190822`, so the clamp costs 7.2038e-03 of a measured
+> 7.4031e-02. **Both sides' `k` are within 1.5x. `k` and `l_60` are NOT the carrier, and
+> §26.3's LOW-arm `k = 0.540954` does not describe the port at matched `d`.**
+>
+> ### NEXT COMMAND — one port-side diagnostic, and then re-read everything
+>
+> 1. **Build the port half of the A6b-phase instrument.** One **default-OFF** `fprintf` at
+>    A6a's exit / A6b's entry logging `|v|`, `+0x9e4`, `+0x9e0`, `+0x9f0`, `+0x9ec`, the fwd
+>    axis and the substep index — with a **channel control** (armed / unarmed / count) as
+>    `MASHED_A5GDIAG` had (§25.1), and gate D-0 on the existing `motion_diag.log` tokens.
+>    Pre-register it; it is a source edit. The original half already exists:
+>    `scenario_launch.py --lat-bracket` + `re/tools/statediff/a18_gate.py`.
+> 2. **Then find the port's remaining ~90 % of `T_post`** (6.68e-02 of 7.40e-02 at
+>    `d = 222..250`). Its candidates, all in the interval: clamp #6, A6b `0x00468980`, A4's
+>    tail parked damp `0x00470948` / `VehicleControl.cpp:278-282` (gate `+0x9f0 == 2`), and
+>    the **3-or-4** substeps of `VehiclePhysicsRun.cpp:915` each reaching
+>    `VehicleContactFixup`'s three anchored writes (`ContactFixup.cpp:261-265` `0x0046f52c`,
+>    `:307-309` `0x0046f5ba`/`0x0046f5c0`, `:326-328` `0x0046f5f3`). **The port's `+0x9f0`
+>    and `+0x9ec` are not in `motion_diag.log` — that is the gap.**
+> 3. **And explain the ORIGINAL's own 51x.** At `d = 222..250` the original's interval
+>    provably contains clamp #6 and nothing else (`+0x9f0 == 0`, `+0x9ec == 0`,
+>    `+0xb20 == 1`, `+0x2c`/`+0x34` == 0, `+0x18c` == 1.0, `+0x1f0` matching none of the
+>    five track literals, all 29/29; A6b writes no velocity per §26.4) — **so one of §22.2's
+>    four "velocity bitwise unchanged across the substep members" statements does not hold
+>    at this `d`.** Find which.
+> 4. **Do not re-run the snapshot-split reductions.** `a18_sink.py` and `a18_clampinv.py`
+>    are committed and their numbers are in `RESULT_STEP1B.md`; `a18_clampinv.py`'s `(k, s)`
+>    inversion is **WITHDRAWN** (§3) and must not be quoted.
+> 5. **U-9160's original side is CLOSED live**: `4666/2333` = exactly **2.0000** substeps per
+>    frame, pattern `0,2,1,1` on 2333/2333. Only the port's 3-or-4 remains.
+> 6. **U-9176 now has two RVAs**: A4 `0x004706db..0x00470701` and clamp #6's
+>    `0x00468771..0x00468793` vs `Integrate2.cpp:666`. Both float-rounding sized. Take them
+>    only with the full promotion leg.
+> 7. **AI slots 1+ still carry the fitted seed** at `VehiclePhysicsRun.cpp:702`; that is D3.
+>
+> ### TOOLS THIS ATTEMPT ADDED
+>
+> `re/tools/statediff/a18_budget.py` (the 3-term budget at matched `d`, imports a10_gain's
+> `linTerm` and thresholds rather than restating them), `a18_clampinv.py` (its `(k, s)`
+> inversion is **withdrawn**; its `R` and `s'` survive), `a18_sink.py` (the gate-field,
+> body-yaw and port-`l_60` checks), `a18_gate.py` (CV / KA-B / EV / `G4` + the clamp-phase
+> diagnostic). **No new Frida probe was written — `--lat-bracket` already carried every field
+> STEP 2 needed. Grep the harness first; it paid off twice this attempt.**
+>
+> ### TWO GATES FAILED, BOTH REPORTED AS FAILURES
+>
+> **KA-R** (97.22 % vs a 99 % bar) was **retired, not loosened**: its own published prior
+> (§23.2's 23/1447 = 1.59 % above 1.02) makes a 99 % bar unsatisfiable. **KA-R2**, a
+> different question on the complement of a counted fixup population, PASSES on the original.
+> **KA-B** (37.76 % within 4 ulps) failed because it paired the probe's A6a-call ordinal with
+> the `.msd`'s render-tick frame index as one counter; it does not touch the registered
+> reading, because `+0x9e0` at A6a entry has exactly **one** distinct value, `4`, on all 2333
+> frames.
+>
+> **Still open:** **U-9178** (D2's blocker's new shape); U-9177; U-9176; U-9160 (port half);
+> U-9156; U-9171; §20.14's `-0.1` duty cycle; D1-residue R1. **U-9173 is RESOLVED.**
+>
+> **The D3 modes 3/7 hold stands. D2 must close before it starts.**
+
+> ## SUPERSEDED START HERE (D2 lane) — attempt 17. D2 was STILL REOPENED. **Stop measuring `+0xb0c`. It is not a defect and there is nothing to fix in it. The defect is the VELOCITY INTEGRATION, and it has a 28-frame window with a 6.2 %-matched drive force in which to catch it.**
 >
 > Read [`verify/d2_b0c_20261002/RESULT_STEP2.md`](../verify/d2_b0c_20261002/RESULT_STEP2.md)
 > **first** (§4, §5, §5.1 are the whole result), then `RESULT_STEP1.md` §2.1 for the

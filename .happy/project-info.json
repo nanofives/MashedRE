@@ -1,45 +1,58 @@
 {
   "title": "Mashed RE — source port",
-  "updatedAt": "2026-10-02T14:40:00Z",
+  "updatedAt": "2026-10-02T21:10:00Z",
   "sections": [
     {
       "heading": "Current phase",
       "fields": [
         { "label": "Roadmap phase", "value": "D3 active; D2 REOPENED and blocking", "kind": "text" },
         { "label": "Branch", "value": "race/first-frame-parity (nothing pushed)", "kind": "text" },
-        { "label": "Last D2 attempt", "value": "17 — +0xb0c closed as a symptom", "kind": "text" },
+        { "label": "Last D2 attempt", "value": "18 — budget names T_post; the instrument that measures it is phase-biased", "kind": "text" },
         { "label": "D2 closes?", "value": "No — metrics FAIL 3 of 3", "kind": "text" }
       ]
     },
     {
-      "heading": "D2 attempt 17 (2026-10-02)",
+      "heading": "D2 attempt 18 (2026-10-02)",
       "fields": [
-        { "label": "+0xb0c verdict", "value": "SYMPTOM — law reproduces 2332/2332 at 4 ulps on the running original", "kind": "text" },
-        { "label": "Defect relocated to", "value": "d = 222 — velocity integration (U-9177)", "kind": "text" },
-        { "label": "Key measurement", "value": [
-            "d 222-250, n=28: per-frame speed gain +27.87 (orig) vs +4.86 (port), a 5.7x deficit",
-            "drive force agrees to 6.2%; all four wheels grounded on both sides",
-            "d 200-222: the PORT is faster (+19.06 vs +17.59)"
+        { "label": "Diverging term", "value": "T_post — the interval 0x004686cc → the render-tick snapshot (U-9177)", "kind": "text" },
+        { "label": "Budget at d 222-250, n=29 each", "value": [
+            "T_drive 0x0046862d..0x004686a2: +33.20455 vs +27.08079 — OUT on (a) only",
+            "T_rest 0x00470670+0x0046ddb0+0x0046833a..0x00468625: -3.95911 vs -2.50577 — in tolerance",
+            "T_post 0x004687f0..0x0046897b+0x00468980+0x004709a0xN: -0.00464 vs -27.50393 — OUT on (a) AND (b)",
+            "dS +27.74798 vs -1.04312; median speed O 790.9 / P 633.2"
           ], "kind": "list" },
-        { "label": "Gates", "value": "KA FAIL both routes (retired, not amended); KA2 PASS; D-0 PASS; DR names speed +0x9e4 at d=0; CB-LARGE (3.99% restricted to d=0..101)", "kind": "text" },
-        { "label": "Fix authored", "value": "None — no knob, no clamp, no fitted constant; NEW=0", "kind": "text" }
+        { "label": "T_post is a STANDING divergence", "value": "Also OUT at d 200-222 (-0.00401 vs -6.73326); the port's sink triples (-6.73/-27.50/-41.47) while T_W1 stays flat (+24.75/+25.07/+18.27). d=222 is a crossing point, not an onset — U-9177 reframed.", "kind": "text" },
+        { "label": "Section 23.2 REFUTED", "value": "Fed with the PORT's own l_60=676.82, it is on the HIGH arm 29/29 with k=0.190822, so clamp #6 costs 7.2038e-03 of a measured 7.4031e-02 — one tenth. Both sides' k within 1.5x; k/l_60 is not the carrier.", "kind": "text" },
+        { "label": "The clamp is CONSISTENT at its own phase", "value": "Live --lat-bracket, A6b entry: 1-R_c^2 = 6.2431e-04 at d 222-250 (n=29) against a structural floor of 3.8398e-04 — measured/demanded 1.63 (2.29 and 1.79 in the other windows).", "kind": "text" },
+        { "label": "U-9178 — the instrument is phase-biased", "value": "The +0x9e4-vs-snapshot split UNDERSTATES the original 51x (6.2431e-04 vs 1.2194e-05, same capture) and OVERSTATES the port 10.3x. Section 23.2's 14.7%-vs-0.0002% and the 6072x factor are artefacts in unknown part.", "kind": "text" },
+        { "label": "Gates", "value": "KA-M PASS; EV PASS; CO PASS; CV PASS; KA-R FAIL (retired, not loosened — its own prior makes a 99% bar unsatisfiable); KA-R2 PASS on the original; INV leg 1 PASS, legs 2/3 FAIL (the inversion is invalid and is withdrawn); KA-B FAIL (frame-pairing)", "kind": "text" },
+        { "label": "Fix authored", "value": "None — no knob, no clamp, no fitted constant. No source change at all: NEW=0 by construction.", "kind": "text" }
       ]
     },
     {
-      "heading": "Scored D2 metrics (3 runs, identical to every digit)",
+      "heading": "Resolved this attempt",
       "fields": [
-        { "label": "Launch", "value": "PASS — L=0 at 0.19%, peak 1835.50 vs 1832.40 both at d=95", "kind": "text" },
-        { "label": "Recovery", "value": "INCONCLUSIVE — 243/400 = 60.8%, median 132.8 vs 99.5% / 1333.9", "kind": "text" },
-        { "label": "slip 1500-2000", "value": "0.1983 (n=19, d=85) vs 0.18855..0.19635 — FAIL", "kind": "text" },
+        { "label": "U-9173 RESOLVED", "value": "A banding artefact, by a pre-registered prediction: ORIG s' = 0.044451 at matched d 222-250 (predicted < 0.05, MET) against 0.727146 at band 100-150 where the median d is 133.", "kind": "text" },
+        { "label": "U-9160 original side, live", "value": "4666/2333 = exactly 2.0000 substeps per frame, pattern 0,2,1,1 on 2333/2333 — the first live witness for 0x00469ad4 mov ebx,2. Only the port's 3-or-4 remains.", "kind": "text" },
+        { "label": "U-9176 second instance", "value": "Clamp #6's lateral construction 0x00468771..0x00468793 vs Integrate2.cpp:666 — outside section 21.5's audit scope because it precedes the arm split.", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Scored D2 metrics (3 runs, build byte-identical to attempt 17)",
+      "fields": [
+        { "label": "Launch", "value": "PASS — L=0 at 0.19%, +0xb14 at d=15, peak 1835.50 vs 1832.40 both at d=95", "kind": "text" },
+        { "label": "Recovery (H1)", "value": "INCONCLUSIVE — 243/400 = 60.8% passes, median 132.8 fails, vs 99.5% / 1333.9", "kind": "text" },
+        { "label": "slip 1500-2000", "value": "0.1983 (n=19, median d 85) vs 0.18855..0.19635 — FAIL", "kind": "text" },
         { "label": "slip 2000-2600", "value": "UNSCORABLE (n=0) — FAIL", "kind": "text" },
-        { "label": "driving-median", "value": "1019.77 (n=76, d=79) vs 1904.70..1982.44 — FAIL", "kind": "text" }
+        { "label": "driving-median", "value": "1019.77 (n=76, median d 79) vs 1904.70..1982.44 — FAIL", "kind": "text" },
+        { "label": "Median-frame guard", "value": "Fires on all three — the ORIGINAL populates them at median d 722 / 916 / 844", "kind": "text" }
       ]
     },
     {
       "heading": "Open",
       "fields": [
-        { "label": "Blocking D2", "value": "U-9177 — which term in the velocity integration loses the gain", "kind": "text" },
-        { "label": "Other open rows", "value": ["U-9176 (b0c dot-product association order)", "U-9173", "U-9156", "U-9160", "U-9171", "D1-residue R1"], "kind": "list" }
+        { "label": "Blocking D2", "value": "U-9178 — build the PORT half of the A6b-phase instrument, then find the port's unidentified ~90% of T_post", "kind": "text" },
+        { "label": "Other open rows", "value": ["U-9177 (T_post named, decomposition blocked by U-9178)", "U-9176 (two RVAs, float-rounding sized)", "U-9160 (port half: 3-or-4 substeps)", "U-9156", "U-9171 (not the carrier at matched d)", "section 20.14's -0.1 duty cycle", "D1-residue R1"], "kind": "list" }
       ]
     }
   ]
