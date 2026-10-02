@@ -35,7 +35,10 @@ def orig_rows(path):
         if f(p, 0x9e4) < 1500 or f(p, 0x1a8) < 33.0 or f(p, 0x9e0) < 3.5: continue
         b2 = 0x1a4 + 2 * 0xc4
         fwdH = math.atan2(f(p, 0x9dc), f(p, 0x9d4)); axH = math.atan2(f(p, b2 + 0x84), f(p, b2 + 0x7c)); velH = math.atan2(f(p, 0x9b8), f(p, 0x9b0))
-        out.append(dict(sp=f(p, 0x9e4), s_fwd=abs(wrap(velH - fwdH)), s_ax=abs(wrap(velH - axH)), off=wrap(axH - fwdH), avy=f(p, 0x9c0)))
+        # i = the capture's own frame index, carried so a8_medframe.py can report
+        # the MEDIAN FRAME of every scored band (memory band-on-speed-compares-
+        # different-moments). Purely additive; no existing reader looks at it.
+        out.append(dict(i=idx, sp=f(p, 0x9e4), s_fwd=abs(wrap(velH - fwdH)), s_ax=abs(wrap(velH - axH)), off=wrap(axH - fwdH), avy=f(p, 0x9c0)))
     return out
 
 
@@ -76,7 +79,7 @@ def port_rows(path, max_lines=0):
     out = []
     for k, r in enumerate(rows):
         if k in bad or r['rs'] or r['sp'] < 1500 or r['steer'] < 0.9 or r['gnd'] < 3.5: continue
-        out.append(dict(sp=r['sp'], s_fwd=abs(wrap(r['velH'] - r['bodyH'])), s_ax=abs(wrap(r['velH'] - r['axH'])), off=wrap(r['axH'] - r['bodyH']), avy=r['avy']))
+        out.append(dict(i=k, sp=r['sp'], s_fwd=abs(wrap(r['velH'] - r['bodyH'])), s_ax=abs(wrap(r['velH'] - r['axH'])), off=wrap(r['axH'] - r['bodyH']), avy=r['avy']))
     return out, len(bad)
 
 

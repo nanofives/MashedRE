@@ -52,6 +52,7 @@
 #include "../Core/HookSystem.h"
 
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 
 namespace mashed_re {
@@ -279,7 +280,19 @@ void LaunchRev_PreRaceTick(float dt, float accel01) {
 // 0x0041049b, immediately before DAT_0063ba8c = 6.
 void LaunchRev_Release() {
     if (!LaunchRevEnabled()) return;
+    const int c0 = *LrcCharge(0), s0 = *LrcState(0);
     LaunchRevRelease46d780(0);
+    // DIRECT in-capture witness of the event itself, not a proxy for it
+    // (memory check-the-capture-carries-the-event-itself). Goes into the SAME
+    // motion_diag.log the D2 reducers read; they all require `ftot=[` and `velH=`
+    // on a line, so this one is skipped by every parser.
+    if (std::getenv("MASHED_MOTION_DIAG")) {
+        if (std::FILE* lf = std::fopen("motion_diag.log", "a")) {
+            std::fprintf(lf, "launchrev release car=0 bf4 %d -> %d  bf8 %d -> %d\n",
+                         c0, *LrcCharge(0), s0, *LrcState(0));
+            std::fclose(lf);
+        }
+    }
 }
 
 #endif // MASHED_STANDALONE
