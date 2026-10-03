@@ -1,0 +1,259 @@
+{
+ "orig": "verify/d3_modes37_20261002/o1.msd.aistep.csv",
+ "port": "verify/d3_rebase_20261002/r1.csv",
+ "B": {
+  "car": 1,
+  "ka": {
+   "orig": {
+    "side": "orig",
+    "KA_B1_ff30": {
+     "n": 2505,
+     "violations": 0,
+     "examples": [],
+     "pass": true
+    },
+    "KA_B2_mag": {
+     "n": 151,
+     "exact": 148,
+     "frac": 0.9801,
+     "examples": [
+      {
+       "frame": "870",
+       "v": "2",
+       "err": 13.441,
+       "speed": 1164.817626953125,
+       "curv": 0.99737548828125,
+       "c0": 46,
+       "c0_hat": 47
+      },
+      {
+       "frame": "872",
+       "v": "2",
+       "err": 12.2453,
+       "speed": 1768.126708984375,
+       "curv": 0.90283203125,
+       "c0": 64,
+       "c0_hat": 65
+      },
+      {
+       "frame": "937",
+       "v": "1",
+       "err": 1.4272,
+       "speed": 3033.0869140625,
+       "curv": 9.651702880859375,
+       "c0": 12,
+       "c0_hat": 13
+      }
+     ],
+     "pass": true
+    },
+    "pass": true
+   },
+   "port": {
+    "side": "port",
+    "KA_B1_ff30": {
+     "n": 26,
+     "violations": 0,
+     "examples": [],
+     "pass": true
+    },
+    "KA_B2_mag": {
+     "n": 586,
+     "exact": 586,
+     "frac": 1.0,
+     "examples": [],
+     "pass": true
+    },
+    "pass": true
+   }
+  },
+  "split": {
+   "orig": {
+    "start_index": 752,
+    "n": 220,
+    "c0_distinct": 13,
+    "c0_set": [
+     0,
+     1,
+     2,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13
+    ],
+    "labels": {
+     "CTR1": {
+      "n": 32,
+      "c0_set": [
+       0
+      ],
+      "c1_distinct": 1,
+      "err_med": 1.256,
+      "err_min": 1.256,
+      "err_max": 2.298,
+      "spd_med": 1708.2,
+      "curv_med": 127.72,
+      "mode_set": [
+       0,
+       7
+      ],
+      "ovr_nonzero": 0
+     },
+     "DEAD": {
+      "n": 54,
+      "c0_set": [
+       0
+      ],
+      "c1_distinct": 1,
+      "err_med": 0.779,
+      "err_min": 0.002,
+      "err_max": 0.998,
+      "spd_med": 3069.3,
+      "curv_med": 18.37,
+      "mode_set": [
+       0,
+       7
+      ],
+      "ovr_nonzero": 0
+     },
+     "MAG": {
+      "n": 72,
+      "c0_set": [
+       1,
+       2,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9,
+       10,
+       11,
+       12,
+       13
+      ],
+      "c1_distinct": 1,
+      "err_med": 1.335,
+      "err_min": 1.004,
+      "err_max": 2.572,
+      "spd_med": 2372.0,
+      "curv_med": 2.61,
+      "mode_set": [
+       0,
+       7
+      ],
+      "ovr_nonzero": 0
+     },
+     "MAGHI": {
+      "n": 62,
+      "c0_set": [
+       0
+      ],
+      "c1_distinct": 21,
+      "err_med": 349.951,
+      "err_min": 273.442,
+      "err_max": 359.96,
+      "spd_med": 1762.4,
+      "curv_med": 115.63,
+      "mode_set": [
+       0,
+       3,
+       7
+      ],
+      "ovr_nonzero": 0
+     }
+    }
+   },
+   "port": {
+    "start_index": 0,
+    "n": 220,
+    "c0_distinct": 6,
+    "c0_set": [
+     0,
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    "labels": {
+     "CTR1": {
+      "n": 3,
+      "c0_set": [
+       0
+      ],
+      "c1_distinct": 1,
+      "err_med": 2.199,
+      "err_min": 2.195,
+      "err_max": 2.199,
+      "spd_med": 180.6,
+      "curv_med": 1.15,
+      "mode_set": [
+       0
+      ],
+      "ovr_nonzero": 0
+     },
+     "DEAD": {
+      "n": 22,
+      "c0_set": [
+       0
+      ],
+      "c1_distinct": 1,
+      "err_med": 0.45,
+      "err_min": 0.014,
+      "err_max": 0.949,
+      "spd_med": 2254.0,
+      "curv_med": 1.85,
+      "mode_set": [
+       0
+      ],
+      "ovr_nonzero": 0
+     },
+     "MAG": {
+      "n": 24,
+      "c0_set": [
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "c1_distinct": 1,
+      "err_med": 1.627,
+      "err_min": 1.01,
+      "err_max": 2.197,
+      "spd_med": 1547.4,
+      "curv_med": 0.95,
+      "mode_set": [
+       0
+      ],
+      "ovr_nonzero": 0
+     },
+     "MAGHI": {
+      "n": 171,
+      "c0_set": [
+       0
+      ],
+      "c1_distinct": 103,
+      "err_med": 358.45,
+      "err_min": 349.495,
+      "err_max": 359.956,
+      "spd_med": 3541.9,
+      "curv_med": 78.52,
+      "mode_set": [
+       0
+      ],
+      "ovr_nonzero": 0
+     }
+    }
+   }
+  },
+  "ka_pass": true
+ }
+}
