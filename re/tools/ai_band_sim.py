@@ -70,14 +70,20 @@ def decode(rows, i):
     return None
 
 def simulate(rows, i0, speeds, n=N_DEFAULT, errseq=None, mode=0,
-             modeseq=None, curvseq=None):
+             modeseq=None, curvseq=None, rateseq=None):
     """modeseq — [D3 STEP 2 / G2-SIM] per-call committed behaviour mode
     (DAT_0089a52c + v*0x74, written 0x00416590), replacing the scalar `mode`.
     The shipping exe pins it to 0 at AiStandalone.cpp:844, so the `mode == 0`
     conjunct of the 0x0041665c curvature multiplier is always true there.
     curvseq — [D3 STEP 2, arm added after G2-STEER, see RESULT_STEP2.md] per-call
     `curv`, the multiplier's other input. Declared as an addition to the
-    pre-registration; it changes no decision rule."""
+    pre-registration; it changes no decision rule.
+    rateseq — [D3 2026-10-03 STEP 2] per-call `rec_b0c` (+0xb0c), the input to the
+    R_B0C brake rule at 0x004167eb. Declared in
+    verify/d3_elim_20261003/PREREG_STEP2.md section 2.4 BEFORE it was run, in the
+    same form and with the same status as curvseq: it substitutes a MEASURED
+    sequence from the other side, adds no free parameter and changes no decision
+    rule."""
     dirst = 0; lastf = 0; stored = 0; prev_b0c = None
     out = []
     for j in range(n):
@@ -93,6 +99,8 @@ def simulate(rows, i0, speeds, n=N_DEFAULT, errseq=None, mode=0,
         if modeseq is not None:
             mode = modeseq[j]
         frame = int(rows[i]["clk_0ff4"]); rate0 = float(rows[i]["rec_b0c"])
+        if rateseq is not None and rateseq[j] is not None:
+            rate0 = rateseq[j]
         c0 = 0; c1 = 0; X = 0.0
         if br == "lo":
             if h < err: X = h
