@@ -1,0 +1,48 @@
+### LINK 1 — AI ctrl bytes over the 220-call window
+src                          v   c4 set                 c4=255  c5 set         c5=255 
+o1.msd.aistep.csv            1   [0, 64, 255]           0.636   [0, 255]       0.214  
+o1.msd.aistep.csv            2   [0, 255]               0.918   [0, 255]       0.186  
+o1.msd.aistep.csv            3   [0, 255]               0.709   [0, 255]       0.300  
+b1.csv                       1   [255]                  1.000   [0]            0.000  
+b1.csv                       2   [0, 255]               0.964   [0, 255]       0.036  
+b1.csv                       3   [0, 255]               0.968   [0, 255]       0.032  
+
+### LINK 3 — speed under MATCHED ctrl (c4=255 and c5=0 on the side quoted)
+src                          v   med(all)   n(full)  med(full) 
+o1.msd.aistep.csv            1   2420       124      2255      
+o1.msd.aistep.csv            2   2397       179      2648      
+o1.msd.aistep.csv            3   2618       154      2691      
+b1.csv                       1   3169       220      3169      
+b1.csv                       2   2905       212      2883      
+b1.csv                       3   3011       213      3002      
+
+### VALIDATION GATE — simulator vs OBSERVED standalone (its own speed)
+  car 1: all four bytes exact 220/220 = 1.000  PASS
+  car 2: all four bytes exact 220/220 = 1.000  PASS
+  car 3: all four bytes exact 220/220 = 1.000  PASS
+
+### COUNTERFACTUAL — scored against the PURE regime-0 K=220 envelope
+  NOTE: err and speed are COUPLED in the live loop (a speed change moves the
+  trajectory and therefore next call's err). Holding one fixed is a BOUND, not
+  a prediction of what a rebuilt binary would do.
+  car 1 [own speed, own err   ] c0D=  7 c1D= 80 stD= 86 |st|Med=  6.0 -> FAIL c0_distinct=7 not in [13,35]; c1_distinct=80 not in [21,70]; abs_steer_median=6.0 not in [7,23]; accel_distinct=1 not in [2,3]; brake_distinct=1 not in [2,2]
+  car 1 [ORIG speed, own err  ] c0D= 12 c1D= 50 stD= 61 |st|Med= 12.0 -> FAIL c0_distinct=12 not in [13,35]; accel_distinct=1 not in [2,3]; brake_distinct=1 not in [2,2]
+  car 1 [own speed, ORIG err  ] c0D= 42 c1D= 10 stD= 52 |st|Med=  5.0 -> FAIL c0_distinct=42 not in [13,35]; c1_distinct=10 not in [21,70]; abs_steer_median=5.0 not in [7,23]; accel_distinct=1 not in [2,3]
+  car 1 [ORIG speed, ORIG err ] c0D= 43 c1D= 14 stD= 57 |st|Med=  9.0 -> FAIL c0_distinct=43 not in [13,35]; c1_distinct=14 not in [21,70]; accel_distinct=1 not in [2,3]
+  car 1 [G2-SIM ORIG modeseq  ] c0D=  7 c1D= 52 stD= 58 |st|Med=  6.0 -> FAIL c0_distinct=7 not in [13,35]; abs_steer_median=6.0 not in [7,23]; accel_distinct=1 not in [2,3]; brake_distinct=1 not in [2,2]
+  car 1 [ADDED ORIG curvseq   ] c0D=  7 c1D= 83 stD= 89 |st|Med=  6.0 -> FAIL c0_distinct=7 not in [13,35]; c1_distinct=83 not in [21,70]; abs_steer_median=6.0 not in [7,23]; accel_distinct=1 not in [2,3]; brake_distinct=1 not in [2,2]
+  car 1 [ADDED ORIG mode+curv ] c0D=  7 c1D= 53 stD= 59 |st|Med=  6.0 -> FAIL c0_distinct=7 not in [13,35]; abs_steer_median=6.0 not in [7,23]; accel_distinct=1 not in [2,3]; brake_distinct=1 not in [2,2]
+  car 2 [own speed, own err   ] c0D= 33 c1D= 71 stD=103 |st|Med= 21.0 -> FAIL c1_distinct=71 not in [21,70]; steer_distinct=103 not in [33,96]
+  car 2 [ORIG speed, own err  ] c0D= 49 c1D= 73 stD=121 |st|Med= 38.0 -> FAIL c0_distinct=49 not in [13,35]; c1_distinct=73 not in [21,70]; steer_distinct=121 not in [33,96]; abs_steer_median=38.0 not in [7,23]
+  car 2 [own speed, ORIG err  ] c0D= 18 c1D= 43 stD= 62 |st|Med=  8.5 -> PASS
+  car 2 [ORIG speed, ORIG err ] c0D= 34 c1D= 45 stD= 79 |st|Med= 22.0 -> PASS
+  car 2 [G2-SIM ORIG modeseq  ] c0D= 33 c1D= 57 stD= 89 |st|Med= 16.0 -> PASS
+  car 2 [ADDED ORIG curvseq   ] c0D= 33 c1D= 69 stD=101 |st|Med= 21.0 -> FAIL steer_distinct=101 not in [33,96]
+  car 2 [ADDED ORIG mode+curv ] c0D= 33 c1D= 56 stD= 88 |st|Med= 17.0 -> PASS
+  car 3 [own speed, own err   ] c0D= 21 c1D= 43 stD= 63 |st|Med=  9.0 -> PASS
+  car 3 [ORIG speed, own err  ] c0D= 35 c1D= 47 stD= 81 |st|Med= 16.5 -> PASS
+  car 3 [own speed, ORIG err  ] c0D= 12 c1D= 80 stD= 91 |st|Med= 47.5 -> FAIL c0_distinct=12 not in [13,35]; c1_distinct=80 not in [21,70]; c1_median=41.5 not in [0,0]; abs_steer_median=47.5 not in [7,23]
+  car 3 [ORIG speed, ORIG err ] c0D= 24 c1D= 96 stD=119 |st|Med= 55.0 -> FAIL c1_distinct=96 not in [21,70]; steer_distinct=119 not in [33,96]; c1_median=51.0 not in [0,0]; abs_steer_median=55.0 not in [7,23]
+  car 3 [G2-SIM ORIG modeseq  ] c0D= 21 c1D= 32 stD= 52 |st|Med=  9.0 -> PASS
+  car 3 [ADDED ORIG curvseq   ] c0D= 21 c1D= 56 stD= 76 |st|Med=  9.5 -> PASS
+  car 3 [ADDED ORIG mode+curv ] c0D= 21 c1D= 48 stD= 68 |st|Med=  9.5 -> PASS

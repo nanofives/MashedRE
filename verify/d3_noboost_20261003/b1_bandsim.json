@@ -1,0 +1,526 @@
+{
+ "n": 220,
+ "orig": [
+  "verify/d3_modes37_20261002/o1.msd.aistep.csv"
+ ],
+ "sa": [
+  "verify/d3_noboost_20261003/b1.csv"
+ ],
+ "link1": {
+  "o1.msd.aistep.csv": {
+   "1": {
+    "accel_set": [
+     0,
+     64,
+     255
+    ],
+    "accel255": 0.6363636363636364,
+    "brake_set": [
+     0,
+     255
+    ],
+    "brake255": 0.21363636363636362
+   },
+   "2": {
+    "accel_set": [
+     0,
+     255
+    ],
+    "accel255": 0.9181818181818182,
+    "brake_set": [
+     0,
+     255
+    ],
+    "brake255": 0.18636363636363637
+   },
+   "3": {
+    "accel_set": [
+     0,
+     255
+    ],
+    "accel255": 0.7090909090909091,
+    "brake_set": [
+     0,
+     255
+    ],
+    "brake255": 0.3
+   }
+  },
+  "b1.csv": {
+   "1": {
+    "accel_set": [
+     255
+    ],
+    "accel255": 1.0,
+    "brake_set": [
+     0
+    ],
+    "brake255": 0.0
+   },
+   "2": {
+    "accel_set": [
+     0,
+     255
+    ],
+    "accel255": 0.9636363636363636,
+    "brake_set": [
+     0,
+     255
+    ],
+    "brake255": 0.03636363636363636
+   },
+   "3": {
+    "accel_set": [
+     0,
+     255
+    ],
+    "accel255": 0.9681818181818181,
+    "brake_set": [
+     0,
+     255
+    ],
+    "brake255": 0.031818181818181815
+   }
+  }
+ },
+ "link3": {
+  "o1.msd.aistep.csv": {
+   "1": {
+    "med_all": 2419.5458984375,
+    "n_full": 124,
+    "med_full": 2254.7684326171875
+   },
+   "2": {
+    "med_all": 2397.00732421875,
+    "n_full": 179,
+    "med_full": 2648.08447265625
+   },
+   "3": {
+    "med_all": 2617.5518798828125,
+    "n_full": 154,
+    "med_full": 2691.42041015625
+   }
+  },
+  "b1.csv": {
+   "1": {
+    "med_all": 3169.4445800000003,
+    "n_full": 220,
+    "med_full": 3169.4445800000003
+   },
+   "2": {
+    "med_all": 2904.69568,
+    "n_full": 212,
+    "med_full": 2883.349365
+   },
+   "3": {
+    "med_all": 3010.980465,
+    "n_full": 213,
+    "med_full": 3001.60547
+   }
+  }
+ },
+ "gate": {
+  "1": 1.0,
+  "2": 1.0,
+  "3": 1.0
+ },
+ "counterfactual": {
+  "1": {
+   "own speed, own err": {
+    "bands": {
+     "c0_distinct": 7,
+     "c0_median": 0.0,
+     "c1_distinct": 80,
+     "c1_median": 0.0,
+     "steer_distinct": 86,
+     "steer_median": 0.0,
+     "abs_steer_median": 6.0,
+     "accel_distinct": 1,
+     "accel_median": 255.0,
+     "brake_distinct": 1,
+     "brake_median": 0.0
+    },
+    "fails": [
+     "c0_distinct=7 not in [13,35]",
+     "c1_distinct=80 not in [21,70]",
+     "abs_steer_median=6.0 not in [7,23]",
+     "accel_distinct=1 not in [2,3]",
+     "brake_distinct=1 not in [2,2]"
+    ]
+   },
+   "ORIG speed, own err": {
+    "bands": {
+     "c0_distinct": 12,
+     "c0_median": 0.0,
+     "c1_distinct": 50,
+     "c1_median": 0.0,
+     "steer_distinct": 61,
+     "steer_median": 0.0,
+     "abs_steer_median": 12.0,
+     "accel_distinct": 1,
+     "accel_median": 255.0,
+     "brake_distinct": 1,
+     "brake_median": 0.0
+    },
+    "fails": [
+     "c0_distinct=12 not in [13,35]",
+     "accel_distinct=1 not in [2,3]",
+     "brake_distinct=1 not in [2,2]"
+    ]
+   },
+   "own speed, ORIG err": {
+    "bands": {
+     "c0_distinct": 42,
+     "c0_median": 0.0,
+     "c1_distinct": 10,
+     "c1_median": 0.0,
+     "steer_distinct": 52,
+     "steer_median": 0.0,
+     "abs_steer_median": 5.0,
+     "accel_distinct": 1,
+     "accel_median": 255.0,
+     "brake_distinct": 2,
+     "brake_median": 0.0
+    },
+    "fails": [
+     "c0_distinct=42 not in [13,35]",
+     "c1_distinct=10 not in [21,70]",
+     "abs_steer_median=5.0 not in [7,23]",
+     "accel_distinct=1 not in [2,3]"
+    ]
+   },
+   "ORIG speed, ORIG err": {
+    "bands": {
+     "c0_distinct": 43,
+     "c0_median": 0.0,
+     "c1_distinct": 14,
+     "c1_median": 0.0,
+     "steer_distinct": 57,
+     "steer_median": 0.0,
+     "abs_steer_median": 9.0,
+     "accel_distinct": 1,
+     "accel_median": 255.0,
+     "brake_distinct": 2,
+     "brake_median": 0.0
+    },
+    "fails": [
+     "c0_distinct=43 not in [13,35]",
+     "c1_distinct=14 not in [21,70]",
+     "accel_distinct=1 not in [2,3]"
+    ]
+   },
+   "G2-SIM ORIG modeseq": {
+    "bands": {
+     "c0_distinct": 7,
+     "c0_median": 0.0,
+     "c1_distinct": 52,
+     "c1_median": 0.0,
+     "steer_distinct": 58,
+     "steer_median": 0.0,
+     "abs_steer_median": 6.0,
+     "accel_distinct": 1,
+     "accel_median": 255.0,
+     "brake_distinct": 1,
+     "brake_median": 0.0
+    },
+    "fails": [
+     "c0_distinct=7 not in [13,35]",
+     "abs_steer_median=6.0 not in [7,23]",
+     "accel_distinct=1 not in [2,3]",
+     "brake_distinct=1 not in [2,2]"
+    ]
+   },
+   "ADDED ORIG curvseq": {
+    "bands": {
+     "c0_distinct": 7,
+     "c0_median": 0.0,
+     "c1_distinct": 83,
+     "c1_median": 0.0,
+     "steer_distinct": 89,
+     "steer_median": 0.0,
+     "abs_steer_median": 6.0,
+     "accel_distinct": 1,
+     "accel_median": 255.0,
+     "brake_distinct": 1,
+     "brake_median": 0.0
+    },
+    "fails": [
+     "c0_distinct=7 not in [13,35]",
+     "c1_distinct=83 not in [21,70]",
+     "abs_steer_median=6.0 not in [7,23]",
+     "accel_distinct=1 not in [2,3]",
+     "brake_distinct=1 not in [2,2]"
+    ]
+   },
+   "ADDED ORIG mode+curv": {
+    "bands": {
+     "c0_distinct": 7,
+     "c0_median": 0.0,
+     "c1_distinct": 53,
+     "c1_median": 0.0,
+     "steer_distinct": 59,
+     "steer_median": 0.0,
+     "abs_steer_median": 6.0,
+     "accel_distinct": 1,
+     "accel_median": 255.0,
+     "brake_distinct": 1,
+     "brake_median": 0.0
+    },
+    "fails": [
+     "c0_distinct=7 not in [13,35]",
+     "abs_steer_median=6.0 not in [7,23]",
+     "accel_distinct=1 not in [2,3]",
+     "brake_distinct=1 not in [2,2]"
+    ]
+   }
+  },
+  "2": {
+   "own speed, own err": {
+    "bands": {
+     "c0_distinct": 33,
+     "c0_median": 0.0,
+     "c1_distinct": 71,
+     "c1_median": 0.0,
+     "steer_distinct": 103,
+     "steer_median": 0.0,
+     "abs_steer_median": 21.0,
+     "accel_distinct": 2,
+     "accel_median": 255.0,
+     "brake_distinct": 2,
+     "brake_median": 0.0
+    },
+    "fails": [
+     "c1_distinct=71 not in [21,70]",
+     "steer_distinct=103 not in [33,96]"
+    ]
+   },
+   "ORIG speed, own err": {
+    "bands": {
+     "c0_distinct": 49,
+     "c0_median": 0.0,
+     "c1_distinct": 73,
+     "c1_median": 0.0,
+     "steer_distinct": 121,
+     "steer_median": 0.0,
+     "abs_steer_median": 38.0,
+     "accel_distinct": 2,
+     "accel_median": 255.0,
+     "brake_distinct": 2,
+     "brake_median": 0.0
+    },
+    "fails": [
+     "c0_distinct=49 not in [13,35]",
+     "c1_distinct=73 not in [21,70]",
+     "steer_distinct=121 not in [33,96]",
+     "abs_steer_median=38.0 not in [7,23]"
+    ]
+   },
+   "own speed, ORIG err": {
+    "bands": {
+     "c0_distinct": 18,
+     "c0_median": 0.0,
+     "c1_distinct": 43,
+     "c1_median": 0.0,
+     "steer_distinct": 62,
+     "steer_median": 0.0,
+     "abs_steer_median": 8.5,
+     "accel_distinct": 2,
+     "accel_median": 255.0,
+     "brake_distinct": 2,
+     "brake_median": 0.0
+    },
+    "fails": []
+   },
+   "ORIG speed, ORIG err": {
+    "bands": {
+     "c0_distinct": 34,
+     "c0_median": 0.0,
+     "c1_distinct": 45,
+     "c1_median": 0.0,
+     "steer_distinct": 79,
+     "steer_median": 0.0,
+     "abs_steer_median": 22.0,
+     "accel_distinct": 2,
+     "accel_median": 255.0,
+     "brake_distinct": 2,
+     "brake_median": 0.0
+    },
+    "fails": []
+   },
+   "G2-SIM ORIG modeseq": {
+    "bands": {
+     "c0_distinct": 33,
+     "c0_median": 0.0,
+     "c1_distinct": 57,
+     "c1_median": 0.0,
+     "steer_distinct": 89,
+     "steer_median": 0.0,
+     "abs_steer_median": 16.0,
+     "accel_distinct": 2,
+     "accel_median": 255.0,
+     "brake_distinct": 2,
+     "brake_median": 0.0
+    },
+    "fails": []
+   },
+   "ADDED ORIG curvseq": {
+    "bands": {
+     "c0_distinct": 33,
+     "c0_median": 0.0,
+     "c1_distinct": 69,
+     "c1_median": 0.0,
+     "steer_distinct": 101,
+     "steer_median": 0.0,
+     "abs_steer_median": 21.0,
+     "accel_distinct": 2,
+     "accel_median": 255.0,
+     "brake_distinct": 2,
+     "brake_median": 0.0
+    },
+    "fails": [
+     "steer_distinct=101 not in [33,96]"
+    ]
+   },
+   "ADDED ORIG mode+curv": {
+    "bands": {
+     "c0_distinct": 33,
+     "c0_median": 0.0,
+     "c1_distinct": 56,
+     "c1_median": 0.0,
+     "steer_distinct": 88,
+     "steer_median": 0.0,
+     "abs_steer_median": 17.0,
+     "accel_distinct": 2,
+     "accel_median": 255.0,
+     "brake_distinct": 2,
+     "brake_median": 0.0
+    },
+    "fails": []
+   }
+  },
+  "3": {
+   "own speed, own err": {
+    "bands": {
+     "c0_distinct": 21,
+     "c0_median": 0.0,
+     "c1_distinct": 43,
+     "c1_median": 0.0,
+     "steer_distinct": 63,
+     "steer_median": 0.0,
+     "abs_steer_median": 9.0,
+     "accel_distinct": 2,
+     "accel_median": 255.0,
+     "brake_distinct": 2,
+     "brake_median": 0.0
+    },
+    "fails": []
+   },
+   "ORIG speed, own err": {
+    "bands": {
+     "c0_distinct": 35,
+     "c0_median": 0.0,
+     "c1_distinct": 47,
+     "c1_median": 0.0,
+     "steer_distinct": 81,
+     "steer_median": 0.0,
+     "abs_steer_median": 16.5,
+     "accel_distinct": 2,
+     "accel_median": 255.0,
+     "brake_distinct": 2,
+     "brake_median": 0.0
+    },
+    "fails": []
+   },
+   "own speed, ORIG err": {
+    "bands": {
+     "c0_distinct": 12,
+     "c0_median": 0.0,
+     "c1_distinct": 80,
+     "c1_median": 41.5,
+     "steer_distinct": 91,
+     "steer_median": 41.5,
+     "abs_steer_median": 47.5,
+     "accel_distinct": 2,
+     "accel_median": 255.0,
+     "brake_distinct": 2,
+     "brake_median": 0.0
+    },
+    "fails": [
+     "c0_distinct=12 not in [13,35]",
+     "c1_distinct=80 not in [21,70]",
+     "c1_median=41.5 not in [0,0]",
+     "abs_steer_median=47.5 not in [7,23]"
+    ]
+   },
+   "ORIG speed, ORIG err": {
+    "bands": {
+     "c0_distinct": 24,
+     "c0_median": 0.0,
+     "c1_distinct": 96,
+     "c1_median": 51.0,
+     "steer_distinct": 119,
+     "steer_median": 51.0,
+     "abs_steer_median": 55.0,
+     "accel_distinct": 2,
+     "accel_median": 255.0,
+     "brake_distinct": 2,
+     "brake_median": 0.0
+    },
+    "fails": [
+     "c1_distinct=96 not in [21,70]",
+     "steer_distinct=119 not in [33,96]",
+     "c1_median=51.0 not in [0,0]",
+     "abs_steer_median=55.0 not in [7,23]"
+    ]
+   },
+   "G2-SIM ORIG modeseq": {
+    "bands": {
+     "c0_distinct": 21,
+     "c0_median": 0.0,
+     "c1_distinct": 32,
+     "c1_median": 0.0,
+     "steer_distinct": 52,
+     "steer_median": 0.0,
+     "abs_steer_median": 9.0,
+     "accel_distinct": 2,
+     "accel_median": 255.0,
+     "brake_distinct": 2,
+     "brake_median": 0.0
+    },
+    "fails": []
+   },
+   "ADDED ORIG curvseq": {
+    "bands": {
+     "c0_distinct": 21,
+     "c0_median": 0.0,
+     "c1_distinct": 56,
+     "c1_median": 0.0,
+     "steer_distinct": 76,
+     "steer_median": 0.0,
+     "abs_steer_median": 9.5,
+     "accel_distinct": 2,
+     "accel_median": 255.0,
+     "brake_distinct": 2,
+     "brake_median": 0.0
+    },
+    "fails": []
+   },
+   "ADDED ORIG mode+curv": {
+    "bands": {
+     "c0_distinct": 21,
+     "c0_median": 0.0,
+     "c1_distinct": 48,
+     "c1_median": 0.0,
+     "steer_distinct": 68,
+     "steer_median": 0.0,
+     "abs_steer_median": 9.5,
+     "accel_distinct": 2,
+     "accel_median": 255.0,
+     "brake_distinct": 2,
+     "brake_median": 0.0
+    },
+    "fails": []
+   }
+  }
+ }
+}

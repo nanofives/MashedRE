@@ -21,18 +21,31 @@ so ASLR is OFF and the linker map's "Rva+Base" column is the runtime VA:
 Both are file-static arrays of THIS exe; they are NOT the original's DAT_008815a0.
 Pass --map to re-read them out of a map file instead of trusting the constants.
 
-SELF-CHECK (a base that is wrong must not produce a quiet answer): the original
-writes the slot index into the record's first dword, `(&DAT_008815a0)[p*0x341] = p`
-(0x0046bab8, Util/PromoLoop_round80.cpp:31), and the port keeps that. A sample is
-only counted when record[v]+0x000 == v for every slot 0..3. The run reports how
-many samples passed the self-check; zero passing samples makes the witness VOID
-and the tool says so rather than printing zeros.
+BASE VALIDATION (a base that is wrong must not produce a quiet answer). The first
+attempt used `record[v] + 0x000 == v`, the original's self-ref index written at
+0x0046bab8 (Util/PromoLoop_round80.cpp:31). **That check is FALSE in the port** and
+was replaced 2026-10-03 after it voided a run: `g_records` is a port-local mirror
+memset to 0 by VehiclePhysics_Init (VehiclePhysicsRun.cpp:240), and the self-ref
+store belongs to the original's absolute DAT_008815a0 array, which the standalone
+does not route through. Measured head of every slot: `00 00 00 00 01 00 00 00 ...`.
+
+The replacement, all three legs reported by this tool:
+  1. `g_startBoosted[0..3]` must contain only 0/1 (it is `bool[16]`).
+  2. the `+0x9e4` samples must land inside the same run's MASHED_AI_STEPDUMP
+     `rec_9e4` range for that slot -- an independently produced channel, so
+     agreement validates base + stride + offset together.
+  3. the arm A vs arm B contrast on `g_startBoosted` is itself the live/inert
+     control: a wrong base cannot give [0,1,1,1] in one arm and [0,0,0,0] in the
+     other.
+`selfref_samples` is still counted and reported, as a disclosed zero.
 
 Usage:
   py -3.12 re/tools/sa_boostwatch.py <out_prefix> <seconds> [ENV=VAL ...]
             [--hz 50] [--map mashedmod/build/mashed_re.map]
 
-Writes <out_prefix>.json (summary) and <out_prefix>.csv (every self-checked sample).
+Writes <out_prefix>.json (summary) and <out_prefix>.watch.csv (every sample).
+The ".watch.csv" suffix is deliberate: "<prefix>.csv" would collide with a
+MASHED_AI_STEPDUMP path built from the same prefix, and did once on 2026-10-03.
 The process is spawned and killed BY PID; no blanket kill by name.
 """
 import ctypes, json, os, re, subprocess, sys, time
@@ -125,14 +138,14 @@ def main():
                 ints = [int.from_bytes(blob[v * REC_STRIDE:v * REC_STRIDE + 4], "little", signed=True)
                         for v in range(NSLOT)]
                 if all(ints[v] == v for v in range(NSLOT)):
-                    n_ok += 1
-                    t = round(time.time() - t0, 3)
-                    for v in range(NSLOT):
-                        o = v * REC_STRIDE
-                        bf8 = int.from_bytes(blob[o + 0xbf8:o + 0xbfc], "little", signed=True)
-                        bf4 = int.from_bytes(blob[o + 0xbf4:o + 0xbf8], "little", signed=True)
-                        sp = ctypes.c_float.from_buffer_copy(blob[o + 0x9e4:o + 0x9e8]).value
-                        rows.append((t, v, sbb[v], bf8, bf4, sp))
+                    n_ok += 1          # legacy self-ref check, reported as a disclosed 0
+                t = round(time.time() - t0, 3)
+                for v in range(NSLOT):
+                    o = v * REC_STRIDE
+                    bf8 = int.from_bytes(blob[o + 0xbf8:o + 0xbfc], "little", signed=True)
+                    bf4 = int.from_bytes(blob[o + 0xbf4:o + 0xbf8], "little", signed=True)
+                    sp = ctypes.c_float.from_buffer_copy(blob[o + 0x9e4:o + 0x9e8]).value
+                    rows.append((t, v, sbb[v], bf8, bf4, sp))
             time.sleep(1.0 / hz)
     finally:
         try: proc.kill()
@@ -140,8 +153,9 @@ def main():
 
     out = {"pid": proc.pid, "seconds": secs, "hz": hz,
            "g_records": "0x%08x" % g_rec, "g_startBoosted": "0x%08x" % g_sb,
-           "samples_attempted": n_try, "samples_selfchecked": n_ok,
-           "selfcheck": "VOID (0 samples passed record[v]+0x000 == v)" if n_ok == 0 else "OK",
+           "samples_attempted": n_try, "samples_read_ok": len(rows) // NSLOT,
+           "selfref_samples": n_ok,   # legacy record[v]+0x000 == v; 0 is expected, see header
+           "sb_only_0_or_1": all(int(x[2]) in (0, 1) for x in rows),
            "env": {k: env[k] for k in sorted(env) if k.startswith("MASHED_")},
            "slots": {}}
     for v in range(NSLOT):
@@ -158,15 +172,17 @@ def main():
             "bf4_max": max((x[4] for x in r), default=None),
             "bf4_at_bf8_first": nz[0][4] if nz else None,
             "bf4_values_while_bf8": sorted({x[4] for x in nz}) if nz else [],
+            "v9e4_min": round(min((x[5] for x in r), default=0.0), 3),
             "v9e4_max": round(max((x[5] for x in r), default=0.0), 3),
         }
     Path(prefix + ".json").write_text(json.dumps(out, indent=1), encoding="utf-8")
-    with open(prefix + ".csv", "w", newline="", encoding="utf-8") as f:
+    with open(prefix + ".watch.csv", "w", newline="", encoding="utf-8") as f:
         f.write("t,v,sb,bf8,bf4,v9e4\n")
         for t, v, sb, bf8, bf4, sp in rows:
             f.write("%.3f,%d,%d,%d,%d,%.6f\n" % (t, v, sb, bf8, bf4, sp))
     print(json.dumps(out["slots"], indent=1))
-    print("selfcheck: %s  (%d/%d samples)" % (out["selfcheck"], n_ok, n_try))
+    print("read_ok=%d/%d  selfref_samples=%d  sb_only_0_or_1=%s"
+          % (out["samples_read_ok"], n_try, n_ok, out["sb_only_0_or_1"]))
     return 0
 
 

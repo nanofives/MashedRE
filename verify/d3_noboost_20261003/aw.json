@@ -1,0 +1,115 @@
+{
+ "pid": 8268,
+ "seconds": 40.0,
+ "hz": 100.0,
+ "g_records": "0x00c09b88",
+ "g_startBoosted": "0x00c16ff8",
+ "samples_attempted": 3572,
+ "samples_read_ok": 3572,
+ "selfref_samples": 0,
+ "sb_only_0_or_1": true,
+ "env": {
+  "MASHED_AI_STEPDUMP": "verify/d3_noboost_20261003/awstep.csv",
+  "MASHED_CAR": "1",
+  "MASHED_MUTE": "1",
+  "MASHED_PLAYERTRACE": "1",
+  "MASHED_ROUND": "1",
+  "MASHED_TITLE": "D3 noboost aw",
+  "MASHED_TRACK_VIEW": "Training",
+  "MASHED_WIN_POS": "primary-bl"
+ },
+ "slots": {
+  "0": {
+   "n": 3572,
+   "sb_values": [
+    0
+   ],
+   "sb_first_t": null,
+   "bf8_values": [
+    0
+   ],
+   "bf8_nonzero_samples": 0,
+   "bf8_first_t": null,
+   "bf4_max": 0,
+   "bf4_at_bf8_first": null,
+   "bf4_values_while_bf8": [],
+   "v9e4_min": 0.0,
+   "v9e4_max": 0.638
+  },
+  "1": {
+   "n": 3572,
+   "sb_values": [
+    0,
+    1
+   ],
+   "sb_first_t": 5.019,
+   "bf8_values": [
+    0,
+    1
+   ],
+   "bf8_nonzero_samples": 11,
+   "bf8_first_t": 5.019,
+   "bf4_max": 1100,
+   "bf4_at_bf8_first": 1100,
+   "bf4_values_while_bf8": [
+    100,
+    300,
+    500,
+    700,
+    1100
+   ],
+   "v9e4_min": 0.0,
+   "v9e4_max": 4476.997
+  },
+  "2": {
+   "n": 3572,
+   "sb_values": [
+    0,
+    1
+   ],
+   "sb_first_t": 5.019,
+   "bf8_values": [
+    0,
+    1
+   ],
+   "bf8_nonzero_samples": 11,
+   "bf8_first_t": 5.019,
+   "bf4_max": 1100,
+   "bf4_at_bf8_first": 1100,
+   "bf4_values_while_bf8": [
+    100,
+    300,
+    500,
+    700,
+    1100
+   ],
+   "v9e4_min": 0.0,
+   "v9e4_max": 4476.417
+  },
+  "3": {
+   "n": 3572,
+   "sb_values": [
+    0,
+    1
+   ],
+   "sb_first_t": 5.019,
+   "bf8_values": [
+    0,
+    1
+   ],
+   "bf8_nonzero_samples": 11,
+   "bf8_first_t": 5.019,
+   "bf4_max": 1100,
+   "bf4_at_bf8_first": 1100,
+   "bf4_values_while_bf8": [
+    100,
+    300,
+    500,
+    700,
+    1100
+   ],
+   "v9e4_min": 0.0,
+   "v9e4_max": 4476.888
+  }
+ }
+}

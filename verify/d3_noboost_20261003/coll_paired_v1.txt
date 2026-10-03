@@ -1,0 +1,97 @@
+# arm A: csv:verify/d3_noboost_20261003/a1_v1.csv(3319 frames)
+# arm B: csv:verify/d3_noboost_20261003/b1_v1.csv(3195 frames)
+# noise floor: 35 fields, from 3270 A-pair frames and 3195 B-pair frames
+# anchor A: c4 ge 1 first at frame 0 -> rebased to 0
+# anchor B: c4 ge 1 first at frame 0 -> rebased to 0
+# aligned frames 3195 [0..3194]   paired fields 35   A-only 0   B-only 0
+
+=== DIVERGENT FIELDS, ranked by first frame past the noise floor (20 of 35 paired) ===
+field                  scope       first      n |      med A      med B    med|A-B|      floor
+----------------------------------------------------------------------------------------------
+rec_9e4                downstream       1   3195 |       3842       3824       169.4          0
+curv                   downstream       1   3195 |      36.17      33.81       19.25          0
+own_z                  downstream       1   3195 |     0.7975     0.1834         5.6          0
+look_z                 downstream       1   3195 |      0.238    -0.0319       4.612          0
+own_x                  downstream       1   3195 |       7.84      7.749       1.371          0
+look_x                 downstream       1   3195 |      7.867      7.719       1.088          0
+hist_dc                downstream       1   3195 |          0          0   0.0004349          0
+rec_b0c                downstream       2   3195 |      4.272       3.55       11.92          0
+c0                     downstream       3   3195 |          0          0           0          0
+look_best              downstream      15   3195 |          4          5           3          0
+look_idx               downstream      15   3195 |          4          5           3          0
+hist_d8                downstream      46   3195 |      358.6      358.6       1.524          0
+c1                     downstream      66   3195 |         31         26          43          0
+c4                     downstream     209   3195 |        255        255           0          0
+c5                     downstream     209   3195 |          0          0           0          0
+look_blk               downstream     332   3195 |          0          0           0          0
+march_n                downstream     332   3195 |          1          1           0          0
+seq                    outside       1290   3195 |       4483       4518          35          0
+march_idx0             downstream    2660   3195 |          0          0           0          0
+ai_spline_idx          outside       2661   3195 |          0          0           0          0
+
+=== WITHIN THE NOISE FLOOR on every aligned frame: 15 fields ===
+  ai_mode  ai_override  ai_type  block  c3  c7  clk_0ff4  diff_a360  flag_a368  frame  spline  step_1008  substate  tgt_7ffc  v
+
+=== PER-BAND medians for the top 20 divergent fields (banded on rec_9e4) ===
+  rec_9e4                1500-2000   n=  15  med speed   1763.9  A       1763.9  B       394.89  B/A   0.2239
+                         2000-2600   n=  89  med speed   2482.0  A         2482  B       4191.7  B/A   1.6888
+
+  curv                   1500-2000   n=  15  med speed   1763.9  A      0.67661  B       1.0455  B/A   1.5452
+                         2000-2600   n=  89  med speed   2482.0  A       42.503  B       73.104  B/A   1.7200
+
+  own_z                  1500-2000   n=  15  med speed   1763.9  A      -2.1401  B      -1.0881  B/A   0.5084
+                         2000-2600   n=  89  med speed   2482.0  A      -2.8457  B      -1.2773  B/A   0.4488
+
+  look_z                 1500-2000   n=  15  med speed   1763.9  A      -8.3452  B      -7.5886  B/A   0.9093
+                         2000-2600   n=  89  med speed   2482.0  A      -8.5672  B       -7.629  B/A   0.8905
+
+  own_x                  1500-2000   n=  15  med speed   1763.9  A      -1.1083  B      -1.0944  B/A   0.9875
+                         2000-2600   n=  89  med speed   2482.0  A      0.64368  B      0.99925  B/A   1.5524
+
+  look_x                 1500-2000   n=  15  med speed   1763.9  A      -1.3937  B      -1.3787  B/A   0.9893
+                         2000-2600   n=  89  med speed   2482.0  A     -0.58171  B       2.0266  B/A  -3.4839
+
+  hist_dc                1500-2000   n=  15  med speed   1763.9  A       1.2212  B       2.1722  B/A   1.7788
+                         2000-2600   n=  89  med speed   2482.0  A            0  B            0  B/A      nan
+
+  rec_b0c                1500-2000   n=  15  med speed   1763.9  A     0.020284  B  -3.3632e-05  B/A  -0.0017
+                         2000-2600   n=  89  med speed   2482.0  A       90.798  B       2.3565  B/A   0.0260
+
+  c0                     1500-2000   n=  15  med speed   1763.9  A            6  B            2  B/A   0.3333
+                         2000-2600   n=  89  med speed   2482.0  A            0  B            0  B/A      nan
+
+  look_best              1500-2000   n=  15  med speed   1763.9  A            8  B            9  B/A   1.1250
+                         2000-2600   n=  89  med speed   2482.0  A            9  B            1  B/A   0.1111
+
+  look_idx               1500-2000   n=  15  med speed   1763.9  A            8  B            9  B/A   1.1250
+                         2000-2600   n=  89  med speed   2482.0  A            9  B            1  B/A   0.1111
+
+  hist_d8                1500-2000   n=  15  med speed   1763.9  A          360  B          360  B/A   1.0000
+                         2000-2600   n=  89  med speed   2482.0  A       357.98  B       359.12  B/A   1.0032
+
+  c1                     1500-2000   n=  15  med speed   1763.9  A            0  B            0  B/A      nan
+                         2000-2600   n=  89  med speed   2482.0  A           62  B            0  B/A   0.0000
+
+  c4                     1500-2000   n=  15  med speed   1763.9  A          255  B          255  B/A   1.0000
+                         2000-2600   n=  89  med speed   2482.0  A          255  B          255  B/A   1.0000
+
+  c5                     1500-2000   n=  15  med speed   1763.9  A            0  B            0  B/A      nan
+                         2000-2600   n=  89  med speed   2482.0  A            0  B            0  B/A      nan
+
+  look_blk               1500-2000   n=  15  med speed   1763.9  A            0  B            0  B/A      nan
+                         2000-2600   n=  89  med speed   2482.0  A            0  B            0  B/A      nan
+
+  march_n                1500-2000   n=  15  med speed   1763.9  A            1  B            1  B/A   1.0000
+                         2000-2600   n=  89  med speed   2482.0  A            1  B            1  B/A   1.0000
+
+  seq                    1500-2000   n=  15  med speed   1763.9  A           63  B           63  B/A   1.0000
+                         2000-2600   n=  89  med speed   2482.0  A         4079  B         4114  B/A   1.0086
+
+  march_idx0             1500-2000   n=  15  med speed   1763.9  A            0  B            0  B/A      nan
+                         2000-2600   n=  89  med speed   2482.0  A            0  B            0  B/A      nan
+
+  ai_spline_idx          1500-2000   n=  15  med speed   1763.9  A            0  B            0  B/A      nan
+                         2000-2600   n=  89  med speed   2482.0  A            0  B            0  B/A      nan
+
+
+csv -> verify/d3_noboost_20261003/coll_paired_v1.csv
