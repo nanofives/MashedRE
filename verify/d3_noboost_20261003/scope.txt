@@ -1,0 +1,14 @@
+rec_9e4	downstream
+rec_b0c	downstream
+own_x	downstream
+own_z	downstream
+c0	downstream
+c1	downstream
+c3	downstream
+c4	downstream
+c5	downstream
+curv	downstream
+look_*	downstream
+march_*	downstream
+hist_*	downstream
+*	outside
