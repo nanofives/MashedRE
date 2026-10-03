@@ -2333,6 +2333,29 @@ criteria are all met since 2026-09-26 (`D3_MODES_2026-09-26.md`).
   is DONE (2026-09-28d, `s2` decision CLEAN and contact CLEAN); **U-D3-DRIVE is now the only
   remaining gate**. D3-R1 (car 1) then carries forward like the D1 residue.
 
+#### D3 USER DECISION 2026-10-03 (Mariano) — **KEEP the AI start boost. The open decision below is CLOSED, option 3.**
+
+The decision recorded by the user on 2026-10-03, after reading
+`verify/d3_noboost_20261003/RESULT.md`:
+
+> **KEEP the AI start boost** (`mashedmod/src/mashed_re/Vehicle/VehiclePhysicsRun.cpp:703-707`),
+> because it reproduces the original's launch: criterion **(e) is MET 3/3, within 0.05 %**
+> of the original's own `launch` of 1425.7 / 2052.5 / 2055.0.
+
+Consequences, which are what the next work is:
+
+1. **Option 2 (remove the seed) is REJECTED.** It trades a MET criterion for a still-NOT-MET
+   one. `MASHED_NO_START_BOOST` stays in the tree as a measurement knob only; the default
+   build keeps the seed.
+2. **Control the player-elimination confound** filed in the 2026-10-03 D2 WATCH row, so that
+   any (b)/(e) number is single-cause.
+3. **Attack the surviving +15..31 % AI over-speed** (option 3), which is the only route that
+   does not trade (e) against (b). Per `ai_band_sim.py`'s counterfactual, closing it moves
+   car 1's `c1_distinct` 80 → 50 and `steer_distinct` 86 → 61, both into band; car 2's
+   residual is `err`, not speed.
+
+**No band is moved by this decision and no C-level changes.** U-9185 remains the carrier row.
+
 #### D3 closure state 2026-10-03 — **the start-boost A/B is DONE. (b) improves 13 → 6 bands, (e) regresses 6/6. D3 is still NOT CLOSED and there is now an OPEN USER DECISION.**
 
 Session record: `verify/d3_noboost_20261003/RESULT.md`. Pre-registration committed **unrun**

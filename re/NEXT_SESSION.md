@@ -6,6 +6,26 @@ session**; the only code changes are analysis tools.
 
 ## The headline
 
+> **USER DECISION 2026-10-03 (Mariano) — the decision the block below left open is MADE:
+> KEEP the AI start boost.**
+>
+> `mashedmod/src/mashed_re/Vehicle/VehiclePhysicsRun.cpp:703-707` stays in the default
+> build, because it reproduces the original's launch: **(e) is MET 3/3, within 0.05 %** of
+> the original's own 1425.7 / 2052.5 / 2055.0. Removing it is **rejected** — that trades a
+> MET criterion for a still-NOT-MET one. `MASHED_NO_START_BOOST` remains a measurement knob
+> only.
+>
+> The work that follows from it, in order:
+> 1. **Control the player-elimination confound** (`race_[0].alive` differing at
+>    `rt = 1.8667 s`, inside the scored window) so that every (b)/(e) number is single-cause.
+> 2. **Attack the surviving +15..31 % AI over-speed** with the boost ON — the only route
+>    that does not trade (e) against (b). Counterfactually it moves car 1's `c1_distinct`
+>    80 → 50 and `steer_distinct` 86 → 61, both into band. Car 2's residual is `err`, not
+>    speed.
+>
+> Recorded in `ROADMAP.md` §D3 ("D3 USER DECISION 2026-10-03"). No band moved, no C-level
+> moved.
+
 > **UPDATE 2026-10-03 (D3 START-BOOST A/B session, commits `2b3e2f47` .. `c79a3619`):
 > the `MASHED_NO_START_BOOST=1` A/B that the START-HERE block below asked for is DONE.
 > It did NOT close (b) and it REGRESSED (e) 6/6. There is now a USER DECISION open.**
