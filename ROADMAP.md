@@ -2333,6 +2333,59 @@ criteria are all met since 2026-09-26 (`D3_MODES_2026-09-26.md`).
   is DONE (2026-09-28d, `s2` decision CLEAN and contact CLEAN); **U-D3-DRIVE is now the only
   remaining gate**. D3-R1 (car 1) then carries forward like the D1 residue.
 
+#### D3 closure state 2026-10-03 (second session) — **the confound is ZERO, and the surviving over-speed is a COMMAND defect with all 149 of its calls accounted for. D3 is NOT CLOSED.**
+
+Session record: `verify/d3_elim_20261003/RESULT_STEP1.md` and `RESULT_STEP2.md`.
+Pre-registrations committed **unrun** at `e8d038ab` (STEP 1) and `23cb9d7d` (STEP 2B).
+**No function changed C-level, no band moved, no scorer was edited**, and the only game-code
+change is a default-OFF measurement knob.
+
+- **The elimination confound's share is ZERO, measured.** New default-OFF `MASHED_NO_ELIM`
+  (`TrackRenderer.cpp` `NoElim()`, read at exactly the two elimination blocks), proved live
+  on two independent channels. Arm C vs arm A over the 220-call window: **0 of 2640 scored
+  byte-slots** and **0 of 660** speed/position slots differ; all six arms print the same
+  (b)/(e) digits; `ea1` reproduces `verify/d3_noboost_20261003/a1` with 0 differing slots.
+  **U-9185 evidence item (a) is RESOLVED and every 2026-10-03 number stands unchanged.**
+- **Two corrections, the first registered BEFORE the run.** `VehicleStep(0)` runs in
+  **neither** port arm and not on the original either (`aib_veh_type(0)` = 0 at
+  `TrackRenderer.cpp:86`, `aib_ai_target_enable()` = 0 at `:96`; live `FUN_00418560` per-slot
+  tally `[0, 1230, 1230, 2062]`). And **both** port arms eliminate the player — arm A at
+  window call 112, arm B at 146; the earlier "arm B leaves it alive" was a line-alignment
+  artefact. On the **ORIGINAL** the player is alive on every frame of the window and dies on
+  the **first frame after it**, when `0x00898980` hits exactly 10.0 (`FUN_00442df0() == 10.0`,
+  `0x00410ee3`). Elimination call index is monotone in window speed (220 / 146 / 112 at
+  2419 / 3169 / 3421) — **a readout of the over-speed, not an independent variable.**
+- **A PRE-REGISTERED GATE FAILED and its analysis did not run.** `PREREG_STEP2.md` §2.0
+  required the accel/brake model to reproduce the **ORIGINAL's** logged `c4`/`c5` on ≥ 95 %;
+  it reproduces the **port** 220/220 and the original **0.636 / 0.936 / 0.750**. §2.1–§2.5
+  are reported nowhere. `PREREG_STEP2B.md` replaced them **unrun**.
+- **THE OVER-SPEED IS A COMMAND DEFECT.** Before the port first disagrees with the original's
+  commanded throttle, its whole force chain reproduces the original's speed to
+  **0.98 / 0.23 / 0.23 %** — so drive force `+0xb14`/`+0xb1c` (A4 `0x00470670`), A5 drag
+  `0x0046ddb0`, A6a's clamps incl. grip-clamp #6 (`0x00467650`), the contact solver
+  `0x0046f6c0` and the `+0xb0c` channel are **jointly exonerated** over those spans, and
+  §2.5's per-term budget is **superseded, not skipped**. The onset is **COMMAND on all three
+  cars** at all three registered thresholds.
+- **All 149 of 660 diverging window calls are accounted for by THREE unported branches of
+  `FUN_00416250`**, split by live targeting-return signature, cell-identical across three
+  independent runs: **448** no producer fired (the port's mode-0 tail is bit-exact), **63**
+  `FUN_00414a70 == 1` → mode 3 (agrees), **36** `FUN_00414a70 == 2` → the immediate return at
+  `0x00416405`, **49** `FUN_00414c30 == 2` → mode 7 → `ctrl[4] = 0x40`, **64**
+  `FUN_004148b0 != 0 && FUN_00416060 != 0` → a second immediate return. **0 unexplained.**
+- **G2B-LIVE FAILED AS WRITTEN** (49/80 = 61.3 % against a registered 99 %) and is reported,
+  not re-thresholded; the exact relation is the converse, 49/49 on four runs.
+- **STEP 3 is NOT landed, deliberately.** The largest source (64 calls) needs no new
+  reversing — `0x004148b0` is C3 `impl` and `0x00416060` is C3 `impl` with a committed
+  `frida_diff` — but all three TUs are `asi_sources.rsp`-only and `LeaderTimer`'s inputs may
+  be `.bss` zeros in the standalone, the trap `FUN_00484c70` already fell into. Mode 7 — car
+  1's entire carrier — is structurally blocked on the standalone owning no world-object list.
+- **Re-score unchanged: (e) 6/6 PASS, (b) 13 failing bands, window speed +41.4/+39.6/+33.6 %.**
+  Guards at baseline: powerups 11/11 decision CLEAN (`g3` the known R_FLAME residue), rule-3
+  oracle **GREEN**, MISMATCH 0. **D2 WATCH: no REOPEN CANDIDATE** — player physics
+  bit-identical over 6614 trace lines, and all three onsets are COMMAND.
+
+U-9186 carries the three sources. U-9185 keeps only item (b), the heading candidate.
+
 #### D3 USER DECISION 2026-10-03 (Mariano) — **KEEP the AI start boost. The open decision below is CLOSED, option 3.**
 
 The decision recorded by the user on 2026-10-03, after reading

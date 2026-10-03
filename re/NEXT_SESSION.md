@@ -6,6 +6,70 @@ session**; the only code changes are analysis tools.
 
 ## The headline
 
+> **UPDATE 2026-10-03 (D3 ELIMINATION + OVER-SPEED session, commits `e0b35ff9` ..
+> `46cd19df`): the confound is ZERO and the over-speed is a COMMAND defect with all 149 of
+> its calls accounted for. START HERE.**
+>
+> **No function changed C-level, no band moved, no scorer was edited.** The only game-code
+> change is a default-OFF measurement knob (`MASHED_NO_ELIM`).
+>
+> - **The elimination confound explains 0 % of the arm A vs arm B delta.** Arm C
+>   (`MASHED_NO_ELIM=1`) vs arm A: **0 of 2640 scored byte-slots** differ over the window,
+>   **0 of 660** on speed/position, all six arms print the same (b)/(e) digits. U-9185 item
+>   (a) RESOLVED; every number in `verify/d3_noboost_20261003/RESULT.md` stands.
+> - **Two corrections.** `VehicleStep(0)` runs in **neither** port arm and not on the original
+>   either. **Both** port arms eliminate the player (arm A window call 112, arm B 146). On the
+>   **original** the player is alive through the whole window and dies on the first frame
+>   after it, when the camera-zoom gate `FUN_00442df0() == 10.0` saturates — so the
+>   elimination time is a **readout of the over-speed**, not an independent variable.
+> - **A PRE-REGISTERED GATE FAILED** (`PREREG_STEP2.md` §2.0: the accel/brake model
+>   reproduces the **port** 220/220 and the **original** only 0.636/0.936/0.750), so §2.1–§2.5
+>   **did not run and are reported nowhere**. `PREREG_STEP2B.md` replaced them unrun.
+> - **THE OVER-SPEED IS A COMMAND DEFECT.** Pre-onset, the port's whole force chain
+>   reproduces the original's speed to **0.98 / 0.23 / 0.23 %** — drive force, A5 drag, A6a's
+>   clamps incl. grip-clamp #6, the contact solver and `+0xb0c` are jointly **exonerated**.
+> - **All 149 of 660 diverging calls = three unported branches of `FUN_00416250`**, by live
+>   targeting-return signature, identical across three runs:
+>   **36** `FUN_00414a70 == 2` → immediate return `0x00416405`;
+>   **49** `FUN_00414c30 == 2` → mode 7 → `ctrl[4] = 0x40`;
+>   **64** `FUN_004148b0 != 0 && FUN_00416060 != 0` → a second immediate return.
+>   **0 unexplained.** (448 calls have no producer firing and the port's mode-0 tail is
+>   bit-exact; 63 are mode 3 and agree.)
+>
+> ### START HERE — the next session's first job, in order
+>
+> 1. **Wire `FUN_004148b0` into the standalone — 64 of 149 calls, and NO new reversing is
+>    needed.** `0x004148b0` is **C3 `impl` `Ai/AiLeaderTimer.cpp`** and `0x00416060` is
+>    **C3 `impl` `Ai/AiTargeting.cpp`** with a committed `frida_diff`. What is missing: all
+>    three TUs (`AiLeaderTimer.cpp`, `AiTargeting.cpp`, `AiLineOfSight.cpp`) are in
+>    **`asi_sources.rsp` only**, and `AiStandalone.cpp:846` carries the comment
+>    *"FUN_004148b0 / FUN_00415020 are stubbed (return 0)"* where the call belongs. The
+>    decompiled arm to transcribe is quoted verbatim in
+>    `verify/d3_elim_20261003/RESULT_STEP2.md`.
+>    **MANDATORY FIRST: a pre-registered knob-took witness proving it is NOT inert.**
+>    `LeaderTimer` reads per-car rank/progress tables that may be `.bss` zeros in the
+>    standalone — the exact trap `verify/d3_modes37_20261002/RESULT_STEP2.md:201-203` already
+>    measured for `FUN_00484c70` (*"seeding the globals would not be a port"*). Memory:
+>    `verify-the-harness-knob-actually-took`.
+>    The committed captures `o_t1`/`o_t2`/`o_t3` carry the **exact 64 calls** the fix must
+>    change, so it is checkable call-by-call rather than only through a band.
+> 2. Then `FUN_00414a70` (C2 `mapped`, no body) + its C2 callee `FUN_00414300` — 36 calls.
+> 3. Mode 7 (49 calls, **car 1's entire carrier**) is **structurally blocked** until the
+>    standalone owns a world-object list: `FUN_00414c30` iterates `FUN_00484c70` objects.
+> 4. U-9185's item (b) — separate the two port-side heading candidates
+>    (`TrackRenderer.cpp:3327` physics yaw vs the `(cos, sin)` reconstruction at `:3729`) at
+>    matched position on car 2 — is untouched and still open.
+>
+> Trackers: **U-9186** filed, carrying the three sources. **U-9185** amended, keeping only
+> item (b). Read `verify/d3_elim_20261003/RESULT_STEP1.md` and `RESULT_STEP2.md`.
+>
+> **One gate failed in each step and both are stated prominently rather than re-thresholded:**
+> `PREREG_STEP2.md` §2.0 (above) and `PREREG_STEP2B.md`'s **G2B-LIVE**, whose registered
+> *"≥ 99 % of mode-7 calls carry `c4 == 0x40`"* measures **61.3 %**; the exact relation is the
+> converse, **49/49** on four runs.
+
+The block below is the PREVIOUS session's headline, left as history.
+
 > **USER DECISION 2026-10-03 (Mariano) — the decision the block below left open is MADE:
 > KEEP the AI start boost.**
 >
