@@ -1,59 +1,79 @@
 {
   "title": "Mashed RE — source port",
-  "updatedAt": "2026-10-02T21:40:00Z",
+  "updatedAt": "2026-10-03T01:05:00Z",
   "sections": [
     {
       "heading": "Current phase",
       "fields": [
-        { "label": "Roadmap phase", "value": "D3 active; D2 REOPENED and still blocking", "kind": "text" },
+        { "label": "Roadmap phase", "value": "D3 active and UNBLOCKED; D2 PARKED (re-openable)", "kind": "text" },
         { "label": "Branch", "value": "race/first-frame-parity (nothing pushed)", "kind": "text" },
-        { "label": "Last D2 attempt", "value": "20 — U-9179 RESOLVED and FIXED; the sink is gone", "kind": "text" },
-        { "label": "D2 closes?", "value": "No — but metrics are now 2 of 3 PASS (was 0 of 3)", "kind": "text" }
+        { "label": "D3 closes?", "value": "No — AI criterion (b) is the sole blocker, failing on all 3 cars", "kind": "text" },
+        { "label": "Latest session", "value": "2026-10-02 — D3 re-baseline + the modes-3/7 test. No game code edited.", "kind": "text" }
       ]
     },
     {
-      "heading": "D2 attempt 20 (2026-10-02) — the fix",
+      "heading": "User decisions recorded 2026-10-02",
       "fields": [
-        { "label": "The chain, measured end to end", "value": [
-            "ProduceTerrainBatch's admission test (ContactProducer.cpp:77-81) was a PLANE-distance test; a plane is unbounded, so it was never a locality test.",
-            "The 256-entry batch saturated on 3565 of 3565 solver calls and the loop stopped scanning, so the triangles under wheels 0 and 1 never reached the classifier 0x0046cc40.",
-            "Their contact key +0x1ec therefore stayed at the init loop's -1 (fv == 10.0 exactly on all 99 rows).",
-            "0x0046f6c0's state machine demoted them at 0x0046f91a/0x0046f91f — arm A-demote-key, 99 of 356 wheel-rows.",
-            "bVar16 became 2, the byte-faithful 0 < count <= 2.0 gate at 0x004701e8 opened, and the airborne drift fired 47 times in 29 frames = 84.33% of T_post."
-          ], "kind": "list" },
-        { "label": "The ORIGINAL has no cap", "value": "LAB_00468b80 increments DAT_0088e60c unconditionally at 0x00468d6c..0x00468d73, with no bound test anywhere in 0x00468b80..0x00468d7c. Its locality comes entirely from the BSP walk FUN_00538c80 that ProduceTerrainBatch stands in for.", "kind": "text" },
-        { "label": "The fix", "value": "The admission test is now SPATIAL (the triangle's AABB grown by the same radius must contain the same query centre) and is the default. No new numeric constant, no knob on the shipping path, no clamp, no fitted value. MASHED_D2_BATCHMODE=plane is the diagnostic pre-fix arm and reproduces attempt 19 bit-for-bit.", "kind": "text" },
-        { "label": "Three-arm A/B, d 222-250", "value": [
-            "plane (legacy): 256 entries, K=2, wcs_drift 47",
-            "planefull (full scan): 256/379 entries, K=2, wcs_drift 47",
-            "local (spatial): 17 entries, K=4, S1=4, all 348 wheel-rows FILLED, wcs_drift 0"
-          ], "kind": "list" },
-        { "label": "Also ported (STEP 5)", "value": "The transcribed INTEGER substep loop 0x00471106..0x00471141 with chunk = min(remaining, 0x32). nsub went from {3: 1626} to {2: 1626}, chunks 25.000000/25.000000, no residue step — matching the original's own measured 2.012 solver calls per frame. All three of its gates passed; the driving-median was excluded from its gate by pre-registration.", "kind": "text" }
+        { "label": "D2", "value": "PARKED, not closed, and stays re-openable. 2 of 3 metrics inside their unchanged d81a8df6 bounds; driving-median ~1.3% under with its carrier NOT identified. Residuals filed as DEFERRED D-11071 with a re-pickup condition.", "kind": "text" },
+        { "label": "D3", "value": "UNBLOCKED.", "kind": "text" },
+        { "label": "D2 re-pickup trigger", "value": "Any finding touching +0x4a4, the contact collector / FUN_00538c80, grip-clamp #6, the substep/chunk loop, ReassertContacts, or player-car speed on Training. Report a 'D2 REOPEN CANDIDATE' row; do not change D2 code in that session.", "kind": "text" }
       ]
     },
     {
-      "heading": "Scoreboard — 3 runs, UNCHANGED d81a8df6 bounds",
+      "heading": "Headline — the 2026-09-29 D3 closure path is REFUTED",
       "fields": [
-        { "label": "slip 1500-2000", "value": "PORT 0.1943 (n=353) in 0.18855..0.19635 — PASS (ORIG 0.1937, n=314)", "kind": "text" },
-        { "label": "slip 2000-2600", "value": "PORT 0.2524 (n=557-562) in 0.24488..0.25487 — PASS, and scored at all for the first time in the re-open (was n=0)", "kind": "text" },
-        { "label": "driving-median", "value": "PORT 1852.66 / 1861.43 / 1854.65 (n=1367/1340/1364) vs 1904.70..1982.44 — FAIL by ~1.3% (ORIG 1937.89, n=1154). Was 1019.77, n=76.", "kind": "text" },
-        { "label": "T_post, d 222-250", "value": "ORIG -0.00464 vs PORT -0.61485, |delta| 0.61021 against bars 5.5560/8.6373 — INSIDE BOTH for the first time in the re-open. 0x0046f6c0's share is -0.00% (was 84.33%).", "kind": "text" },
-        { "label": "launch", "value": "PASS — L=0 at 0.19%, peak 1835.50 at d=95 vs ORIG 1832.40 at d=95. No regression.", "kind": "text" },
-        { "label": "recovery (H1)", "value": "PASS both legs, having failed before — 398/400 = 99.5% and median 1362.7, against the original's 398/400 and 1333.9. Pre-fix was 60.8% and 132.8.", "kind": "text" }
+        { "label": "Verdict", "value": "Porting behaviour modes 3 and 7 would NOT close criterion (b). Tested on the running original before any code, and the port was NOT written.", "kind": "text" },
+        { "label": "The gate", "value": "G2-SIM, registered unrun at a317d25c. Splicing the ORIGINAL's own per-call mode sequence into the port moves abs_steer_median 52.5->15.0 / 57.5->47.0 / 49.0->24.5, but car 2's c1_distinct moves AWAY (94->99), so the registered 'all three cars' conjunct fails.", "kind": "text" },
+        { "label": "Not a tooling artefact", "value": "ai_band_sim.py's own validation gate was kept at >=95% and PASSED at 220/220 = 1.000 on all three cars.", "kind": "text" },
+        { "label": "The stronger statement", "value": "NO arm anywhere in the counterfactual matrix — mode, curvature, speed, error, or any combination — passes (b) on any car.", "kind": "text" },
+        { "label": "Dual-copy hypothesis", "value": "ANSWERED, and it is the SAME hypothesis. Of the 8 rows demoted 2026-09-29, exactly one bears on (b) here: 0x00416250's 'int mode = 0;'.", "kind": "text" }
       ]
     },
     {
-      "heading": "Open, and what the next session does",
+      "heading": "D3 criteria",
       "fields": [
-        { "label": "U-9180 — D2's only remaining metric failure", "value": "Which term carries the last 1.3% of driving-median. Grip-clamp #6 at -0.612549 is the only non-zero T_post producer left and is too small on its own, so the carrier is NOT assumed. Re-run the split on a window inside the scored population (median d ~637), not the retired d=222..250.", "kind": "text" },
-        { "label": "U-9181 — cheap and upstream", "value": "The record's +0x4a4 query radius reads 0.67804 on the original and 692.302 on the port in every band, identical pre- and post-fix — and it now drives the new spatial admission test. Start with dispsweep.py 0x4a4.", "kind": "text" },
-        { "label": "Corrections banked this attempt", "value": [
-            "ReassertContacts is only PARTLY the original's tail 0x0047044b..0x004704b0: the counting half is faithful, the state-0 -> 1 promotion at VehiclePhysicsRun.cpp:347 and the normal writes at :350-352 are PORT-ONLY.",
-            "A port boot that produces no motion_diag.log is retried up to 3 times before being called a failure — two boots failed transiently this session and the identical control succeeded next boot."
+        { "label": "Modes", "value": "MET (a)(b)(c)(d) — rule-3 oracle GREEN today: 2447/2447, 2/2, 3389/3389, MISMATCH 0", "kind": "text" },
+        { "label": "Powerups", "value": "MET (a)(b)(c) — sweep 11/11 decision CLEAN today; g3 the known R_FLAME 2-of-546 residue", "kind": "text" },
+        { "label": "AI (e) speed", "value": "MET 3/3 — launch 1426.4/2053.0/2055.2, ft_median_m0 2550.6/2053.0/2278.2, all inside band", "kind": "text" },
+        { "label": "AI (b) steering", "value": "NOT MET — 13 of 30 bands fail across 3 cars, and ALL five distinct failing bands are STEER bands. accel, brake and c0_median pass on all three.", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "What D2 attempt 20 moved for the AI: exactly zero",
+      "fields": [
+        { "label": "Result", "value": "MASHED_D2_BATCHMODE=plane reproduces the default arm on EVERY printed digit of both scorers, all three cars.", "kind": "text" },
+        { "label": "Proved live, not assumed", "value": "The full-CSV diff first differs at AI-step call 455 — 235 calls after the scored window closes — then diverges on own_x/own_z 2824 rows, rec_9e4 2823, c1 1765. The knob IS live for AI cars; it just moves nothing inside the window.", "kind": "text" },
+        { "label": "Stated limit", "value": "The integer substep loop landed with no revert knob, so its share is not separable. The HEAD-vs-2026-09-29 delta is a 3-day, 30-commit delta and is attributed to nothing.", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Criterion (b), decomposed — four carriers, the mode is one of them",
+      "fields": [
+        { "label": "1. mode pinned 0", "value": "AiStandalone.cpp:844 — the 0x0041665c multiplier (m *= curv*0.05 when mode==0 && curv>20) never switches off. The original's mode!=0 calls carry curv medians 125.8/91.3/132.9: it stops amplifying exactly where curvature is extreme. Real, large, NOT sufficient.", "kind": "text" },
+        { "label": "2. curv 2-8x high (U-9183)", "value": "mode==0 vs mode==0: port 52.04/52.81/50.08 against original 6.61/9.05/23.64. Best single arm on car 2. CONFOUNDED by position — needs a position-matched re-measure.", "kind": "text" },
+        { "label": "3. speed +33..52% in-window", "value": "3421.7/3346.2/3495.9 vs 2254.8/2524.1/2554.6; m = err*speed*0.0030034 makes speed a linear multiplier of steer. Bounded by (e) passing on [0,k).", "kind": "text" },
+        { "label": "4. c0_distinct = 6 on car 1 (U-9182)", "value": "Identical in all seven counterfactual arms against a floor of 13. Unexplained.", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Next — measurements, not a port",
+      "fields": [
+        { "label": "Start here", "value": [
+            "U-9183: re-measure curv POSITION-matched (bin by look_idx / look_blk / ai_spline_idx) instead of index-matched. Offline on committed captures.",
+            "U-9182: count the c0 branch split (0x00416697 low vs 0x004167b1 high) on both sides. Offline; the decode rule is in ai_band_sim.py:63-71.",
+            "Do both BEFORE spending a session on the FUN_00414c30 + producer-chain port."
           ], "kind": "list" },
-        { "label": "Promotion / levels", "value": "None requested, none granted. ProduceTerrainBatch is port-only scaffolding with no RVA, so run_diff path1 and run_verify_hook path2 have nothing to install. 0x0046f6c0 C2, 0x0046cc40 C2, 0x00468d80 C2, 0x00538c80 C1, 0x00470c70 C2, 0x004709a0 C2. rva-lint allowlisted=122 NEW=0.", "kind": "text" },
-        { "label": "AI slots 1+ (D3)", "value": "Mechanically in the fix's blast radius — the producer is shared and called per car at VehiclePhysicsRun.cpp:1007 — but the magnitude is [UNCERTAIN] because every run was participants=1. Nothing was tuned. D3 must re-baseline modes 3/7 against the post-fix build.", "kind": "text" },
-        { "label": "Resolved this attempt", "value": "U-9179, U-9178, U-9160", "kind": "text" }
+        { "label": "If the port is written anyway", "value": "FUN_00484c70 is already C3 with a GREEN diff but in the asi-only PromoLoop_round20.cpp. Porting it ALONE is INERT: DAT_006e70d8 / DAT_006dccb8 are .bss zeros in the standalone, so the count is 0 and no mode is ever set. Its producer is FUN_00484c90 / the registrar FUN_00484cf0 (13 callers). Seeding the globals is not a port.", "kind": "text" },
+        { "label": "Dead ends — do not re-open", "value": "The pinned rate1 (0x00416a30/0x00417da0) and the velocity-derived heading (0x00415e20) are unreachable on this recipe: they live in ControlStepM49/M8 (fd0 in {4,8,9}). U-9184 records this and corrects DUAL_COPY_FIX_2026-09-29.md:177-180.", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Trackers",
+      "fields": [
+        { "label": "Filed this session", "value": "U-9182, U-9183, U-9184, DEFERRED D-11071", "kind": "text" },
+        { "label": "C-levels moved", "value": 0, "kind": "number" },
+        { "label": "Open D3", "value": "criterion (b) on all 3 cars", "kind": "text" },
+        { "label": "Open D2 (parked)", "value": "U-9180, U-9181", "kind": "text" }
       ]
     }
   ]

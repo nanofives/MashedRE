@@ -2333,6 +2333,88 @@ criteria are all met since 2026-09-26 (`D3_MODES_2026-09-26.md`).
   is DONE (2026-09-28d, `s2` decision CLEAN and contact CLEAN); **U-D3-DRIVE is now the only
   remaining gate**. D3-R1 (car 1) then carries forward like the D1 residue.
 
+#### D3 closure state 2026-10-02 — **D3 is NOT CLOSED, and the 2026-09-29 closure path is REFUTED by its own pre-registered gate.** (b) is now decomposed, not attributed to one cause.
+
+Session records: `verify/d3_rebase_20261002/RESULT_STEP1.md`,
+`verify/d3_modes37_20261002/RESULT_STEP2.md`, `.../RESULT_STEP2B_DUALCOPY.md`.
+Pre-registrations committed **unrun** at `867de577` and `a317d25c`.
+**No band was moved, no decision rule was replaced, no C-level moved, and NO GAME CODE WAS
+EDITED.**
+
+- **The re-baseline: D2 attempt 20 moved the AI window by EXACTLY ZERO.** (e) **PASSES
+  3/3** on the post-attempt-20 build (`launch` 1426.4 / 2053.0 / 2055.2;
+  `ft_median_m0` 2550.6 / 2053.0 / 2278.2, n = 100 / 23 / 39), (b) **FAILS 3/3** on 13
+  bands. Three repeats are byte-identical to every printed digit.
+  `MASHED_D2_BATCHMODE=plane` reproduces the default arm on **every digit of both
+  scorers**, and the knob was **proved live by a positive control**: the full-CSV diff
+  first differs at AI-step call **455** (`own_x`/`own_z` 2824 rows, `rec_9e4` 2823,
+  **`c1` 1765**), 235 calls after the scored window closes. The HEAD-vs-2026-09-29 delta
+  is reported as a **3-day, 30-commit** delta and attributed to nothing.
+- **THE 2026-09-29 CLOSURE PATH IS REFUTED. Porting modes 3 and 7 would not close (b),
+  and the port was NOT written.** Tested on the **running original** before any code, as
+  the user decision required. `ai_band_sim.py`'s own validation gate was **kept at ≥95 %
+  and passed at 220/220 = 1.000 on all three cars**, so the refutation is not a tooling
+  artefact. Splicing the **original's own per-call mode sequence** into the port moves
+  `abs_steer_median` 52.5→15.0 / 57.5→47.0 / 49.0→24.5 and `c1_distinct` 103→58 /
+  **94→99** / 100→97. **Car 2's `c1_distinct` moves AWAY**, so the registered "all three
+  cars" conjunct fails. The matrix's strongest arm (original mode **and** curvature) still
+  leaves (b) failing on all three cars, and **no arm anywhere — mode, curvature, speed,
+  error, or any combination — passes (b) on any car.**
+- **G2-JOINT FAILED and is recorded as a failure, not re-thresholded.** "Modes 3 and 7 are
+  what make the original brake and lift where the port holds throttle" is **true for car
+  2, mostly true for car 1, and FALSE for car 3** — on car 3, **52 of 66**
+  non-full-throttle window calls are **mode-0** calls. It bears on the accel/brake bands,
+  which already pass.
+- **(b) is DECOMPOSED. It has at least four carriers and the mode is one of them, not the
+  one.** All five failing bands are **steer** bands; accel, brake and `c0_median` pass on
+  all three cars.
+
+  | carrier | measurement | status |
+  |---|---|---|
+  | `int mode = 0;` (`Ai/AiStandalone.cpp:844`) — the `0x0041665c` multiplier never switches off | best single arm on cars 1 and 3; the original's `mode != 0` calls carry `curv` medians **125.8 / 91.3 / 132.9**, i.e. the original stops amplifying steer by curvature exactly where curvature is extreme | real, large, **not sufficient** |
+  | `curv` **2-8x** high — `FUN_00443440` @ `0x004162b0` | `mode==0` vs `mode==0`: **52.04 / 52.81 / 50.08** against **6.61 / 9.05 / 23.64**; best single arm on car 2 | **U-9183** — confounded by position, needs a position-matched re-measure |
+  | speed **+33..52 %** inside the window — a linear multiplier of steer magnitude | 3421.7 / 3346.2 / 3495.9 against 2254.8 / 2524.1 / 2554.6 | real; bounded by (e) passing on `[0,k)` |
+  | `c0_distinct = 6` on car 1 | **identical in all seven counterfactual arms** against a floor of 13 | **U-9182**, unexplained |
+- **The dual-copy hypothesis is ANSWERED, and it is the SAME hypothesis.** The window
+  provably runs `ControlStep` (`FUN_00416250`) — proved because the original's window
+  carries `ai_mode == 7` on **80 of car 1's 220 calls** and mode 7 is committed **only** at
+  `0x0041642f` inside `FUN_00416250`, while `ControlStepM49` never commits a mode at all.
+  So of the 8 rows demoted 2026-09-29, **exactly one bears on (b) here**: `0x00416250`,
+  defect `int mode = 0;` — the same defect modes-3/7 needed.
+  **`DUAL_COPY_FIX_2026-09-29.md:177-180` is CORRECTED (U-9184):** its claim that (b)
+  "runs on" the pinned `rate1` and the velocity-derived heading is wrong — both live only
+  in `ControlStepM49`/`M8` (`fd0 ∈ {4,8,9}`), and `ControlStep` calls the **correct**
+  body-forward `SteerAngleErrorFwd` at `:858`. **The demotions stand**; only their stated
+  bearing on (b) is corrected. `0x00443080`'s exe literal is re-confirmed harmless
+  (`tgt_7ffc` within the noise floor in every shared band).
+- **Scope facts for whoever does write the modes port** (read-only Ghidra pool clone; the
+  master project was not written): `FUN_00484c70` is **already ported and C3 with a GREEN
+  Frida diff**, but in the **asi-only** `Util/PromoLoop_round20.cpp` — the exe has no copy.
+  `DAT_006e70d8` is written only by `FUN_00484c90` (`0x00484cd4`) and `FUN_00485070`
+  (`0x0048508a`); `DAT_006dccb8` by `FUN_00484c90` (`0x00484ca4`), indexed by the registrar
+  `FUN_00484cf0` (`0x00484d2d`/`0x00484d35`), which has **13 callers**, most in the
+  already-ported power-up range including the dispatcher `0x0045bba0`. **Porting
+  `FUN_00484c70` alone is therefore INERT** — both globals are `.bss` zeros in the
+  standalone, the count is 0 and no mode is ever set. **Seeding them would not be a port.**
+  `FUN_00414c30` (704 bytes) has no port at all; the only reference is the asi-side
+  call-through at `AiControlStep.cpp:92`.
+- **Guards, both unchanged:** power-up sweep **11/11 decision CLEAN**, contact CLEAN 10/11
+  with `g3` the known R_FLAME 2-of-546 residue; modes oracle rule 3 **GREEN**
+  (`SegmentCheck` 2447/2447 with 2 segment-ends, `EvaluateResult` 2/2,
+  `FinishOrder` 3389/3389, MISMATCH 0). Build clean, both targets.
+- **No D2 REOPEN CANDIDATE except one informational row**, filed to honour D-11071:
+  attempt 20's spatial admission test **does** change AI-car trajectories (2823 rows of
+  `rec_9e4`, 1765 of `c1`, first at call 455) — the **first measurement of attempt 20 on
+  AI slots**, which attempt 20 itself left `[UNCERTAIN]` at `participants=1`. It is **not
+  a defect** and moves nothing in D3's scored window.
+- **Next, and it is a measurement rather than a port:** resolve **U-9183** by comparing
+  `curv` and `err` **position-matched** instead of index-matched. The committed captures
+  already carry `look_idx`, `look_blk` and `ai_spline_idx`, so it is offline work on
+  existing data with no new run. **U-9182**'s branch-split count is likewise offline
+  (`ai_band_sim.py:63-71` has the decode rule). Do both before spending a session on the
+  `FUN_00414c30` + producer-chain port, which this session's evidence says would not close
+  (b) on its own.
+
 #### D3 closure state 2026-09-29b — the CLOSURE PATH is fixed by user decision, and the "player regression" is refuted
 
 Session note: `re/analysis/PLAYER_REGRESSION_2026-09-29.md`. Commits `235e964a` →
