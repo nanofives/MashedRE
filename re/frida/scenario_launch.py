@@ -724,6 +724,32 @@ const AS_RECP     = {};
 let AS_RECL       = null;
 const STEER_ANGLE = 0x00415e20;
 const CURV_FN     = 0x00443440;
+// [D3 2026-10-03, PREREG_STEP2B.md 2B.5/2B.6] the two TARGETING producers whose
+// return values decide `mode` at 0x004162f7..0x0041645e and, for FUN_00414a70 == 2,
+// take the IMMEDIATE-RETURN arm at 0x00416405 that writes ctrl[4]=0, ctrl[5]=0xff
+// and leaves FUN_00416250 before the steer-history stores at 0x004165cc /
+// 0x0041670c. Both are stubbed in the port (AiControlStep.cpp:91 / no body at all),
+// which is the hypothesis under test. Both are called at most once per
+// FUN_00416250 call and are strictly nested inside it, so one pending slot each is
+// enough on the single-threaded game loop; CTRL_STEP's onEnter clears them so a
+// stale value can never be attributed to the next call.
+const TGT_14A70   = 0x00414a70;   // closest-vehicle   (1 = chase, 2 = brake)
+const TGT_14C30   = 0x00414c30;   // obstacle avoidance (1 -> mode 3, 2 -> mode 7)
+const TGT_150E0   = 0x004150e0;   // track-wall lateral-zone query (the mode-9 arm,
+                                  // reached only when 14c30 returns 0)
+const TGT_16060   = 0x00416060;   // line-of-sight ray-march; every mode commit is
+                                  // conjoined with it (0x004163ab / 0x004163da /
+                                  // 0x00416423), so a 0 here is a committed-mode veto
+const TGT_148B0   = 0x004148b0;   // leader-ranking timer. In the `local_48 == 0` arm of
+                                  // the `gameMode == 6 && FUN_00443080() == 0` block
+                                  // (0x0041649b..), `FUN_004148b0 != 0 && LOS != 0` takes
+                                  // a SECOND immediate return: ctrl[5] = 0xff, ctrl[0] =
+                                  // ctrl[1] = 0, return -- before the mode commit at
+                                  // 0x00416590 and before the steer-history stores, and
+                                  // WITHOUT touching ctrl[4], which therefore keeps its
+                                  // entry value (hence the c4_in column).
+let AS_TGT = [-1, -1, -1, -1, -1, 0, 0, 0, 0, 0];
+//           [ret 14a70, ret 14c30, ret 150e0, ret 16060, ret 148b0, calls x5]
 let AS_PEND = null;      // [tgt_x, tgt_z, curv, v_of_steer_call]
 let AS_MARCH = [0, -1];  // [passes since the last CTRL_STEP entry, last idx0 flag]
 const AS = { armed:false, rows:[], calls:0, err:null, cap:200000,
@@ -769,6 +795,13 @@ function aiStepArm(withLocals){
           AS_MARCH[1] = sp.add(8).readS32();
         } catch(e){ if (!AS.localsErr) AS.localsErr = 'marchEnter ' + e; }
       }});
+      [[TGT_14A70, 0], [TGT_14C30, 1], [TGT_150E0, 2], [TGT_16060, 3], [TGT_148B0, 4]]
+        .forEach(function(pair){
+          Interceptor.attach(ga(pair[0]), { onLeave(ret){
+            try { AS_TGT[pair[1]] = ret.toInt32(); AS_TGT[pair[1] + 5]++; }
+            catch(e){ if (!AS.localsErr) AS.localsErr = 'tgt' + pair[0] + ' ' + e; }
+          }});
+        });
       Interceptor.attach(ga(STEER_ANGLE), { onEnter(){
         try {
           const sp = this.context.esp;
@@ -785,12 +818,21 @@ function aiStepArm(withLocals){
       onEnter(a){
         AS_PEND = null;          // so a stale inner probe can never be attributed
         AS_MARCH = [0, -1];
+        AS_TGT = [-1, -1, -1, -1, -1,
+                  AS_TGT[5], AS_TGT[6], AS_TGT[7], AS_TGT[8], AS_TGT[9]];
         this.skip = (ph.readU8() !== 3);
         if (this.skip) return;
         const sp = this.context.esp;
         this.spline = sp.add(4).readU32();
         this.v      = sp.add(8).readS32();
         this.blk    = sp.add(12).readPointer();
+        // [D3 2026-10-03, PREREG_STEP2B.md 2B.6] the ctrl block ON ENTRY. The tail at
+        // 0x004167d5 writes ctrl[4] = 0xff unconditionally but never zeroes ctrl[5],
+        // so a logged (c4, c5) at onLeave cannot by itself tell "this call set the
+        // brake" from "this call inherited it". Two extra reads in the hook that is
+        // already here; appended columns, so every existing reader is unaffected.
+        try { this.c4in = this.blk.add(4).readU8(); this.c5in = this.blk.add(5).readU8(); }
+        catch(e){ this.c4in = -1; this.c5in = -1; }
       },
       onLeave(){
         if (this.skip || AS.rows.length >= AS.cap) return;
@@ -832,6 +874,11 @@ function aiStepArm(withLocals){
           const h = ga(0x008032d8).add(this.v * 0x14);
           r.push(h.readFloat(), h.add(4).readFloat());   // 0x004165cc/0x004165f7, 0x004166db/0x0041670c
           r.push(AS_MARCH[0], AS_MARCH[1]);              // 0x00444a2c call count, last 0x0041623b arg
+          // [D3 2026-10-03] the two targeting returns of THIS call, and the ctrl
+          // block as it was ON ENTRY (ctrl[5] is never zeroed by the tail).
+          r.push(AS_TGT[0], AS_TGT[1], AS_TGT[2], AS_TGT[3], AS_TGT[4],
+                 this.c4in === undefined ? -1 : this.c4in,
+                 this.c5in === undefined ? -1 : this.c5in);
           AS_PEND = null;
         } catch(e){ if (!AS.err) AS.err = '' + e; }
       }
@@ -2283,7 +2330,8 @@ rpc.exports = {
                                                     pending:MP.rows.length, limit:MP.limit,
                                                     detached:MP.detached, err:MP.err}); },
   aiStepStats: function(){ return JSON.stringify({armed:AS.armed, calls:AS.calls, pending:AS.rows.length, err:AS.err,
-                                                  locals:AS.locals, curv:AS.curv, localsErr:AS.localsErr, noLocals:AS.noLocals, joinMiss:AS.joinMiss, recp:Object.keys(AS_RECP).length}); },
+                                                  locals:AS.locals, curv:AS.curv, localsErr:AS.localsErr, noLocals:AS.noLocals, joinMiss:AS.joinMiss, recp:Object.keys(AS_RECP).length,
+                                                  tgt14a70:AS_TGT[5], tgt14c30:AS_TGT[6], tgt150e0:AS_TGT[7], tgt16060:AS_TGT[8], tgt148b0:AS_TGT[9]}); },
   puArm: function(plan, subj, warm, boxAt){ return puArm(plan, subj, warm, boxAt); },
   puDrain: function(){ return puDrain(); },
   puStats: function(){ return JSON.stringify({armed:PU.armed, calls:PU.calls, n6:PU.n, st:PU.st,
@@ -3422,7 +3470,11 @@ def main():
                                 # 0x00416596) + the two steer-history globals
                                 # 0x008032d8/0x008032dc + v*0x14, which carry the error
                                 # and which of the two steering bands took it.
-                                "look_x,look_z,curv,own_x,own_z,hist_d8,hist_dc,march_n,march_idx0"
+                                "look_x,look_z,curv,own_x,own_z,hist_d8,hist_dc,march_n,march_idx0,"
+                                # [D3 2026-10-03] the targeting returns that decide
+                                # `mode` (0x004162f7..0x0041645e) and the 0x00416405
+                                # immediate-brake return, plus ctrl[4]/[5] on entry.
+                                "ret14a70,ret14c30,ret150e0,ret16060,ret148b0,c4_in,c5_in"
                                 + chr(10))
                         for r in step_rows:
                             f.write(",".join(str(x) for x in r) + chr(10))
