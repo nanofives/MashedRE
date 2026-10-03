@@ -82,6 +82,13 @@ void aib_own_vel_xz(int v, float* vx, float* vz) {
     if (v < 0 || v > 3) { *vx = *vz = 0.f; return; }
     *vx = g_aib.vel[v][0]; *vz = g_aib.vel[v][1];
 }
+// [D3 2026-10-03] MEASUREMENT CONTROL, default OFF. See the comment at the
+// elimination block in TrackRenderer::UpdateRaceRules for what it suppresses and
+// why. Read once; unset, every caller is `if (... && true)` on the old condition.
+static bool NoElim() {
+    static const char* s_p = std::getenv("MASHED_NO_ELIM");
+    return s_p && s_p[0] && s_p[0] != '0';
+}
 int aib_alive(int v)       { return (v >= 0 && v <= 3) ? g_aib.alive[v] : 0; }
 int aib_veh_type(int v)    { return v == 0 ? 0 : 2; }   // 0 = player(human); else AI
 int aib_game_sub_mode()    { return 6; }                // race (FUN_0040e350)
@@ -4556,6 +4563,14 @@ void TrackRenderer::UpdateRace(float dt) {
     if (!round_mode_) return;   // race rules only run during a match (both modes
                                 // update the shared camera below).
 
+    // [D3 2026-10-03] MEASUREMENT CONTROL, default OFF, no effect on the default
+    // build. MASHED_NO_ELIM=1 makes the two elimination blocks below (:4661 and
+    // :4716) a no-op and changes nothing else, so that an A/B can attribute the
+    // scored (b)/(e) window to a cause other than "the port eliminated a car and
+    // the reference arm did not". Registered in
+    // verify/d3_elim_20261003/PREREG_STEP1.md STEP 1C before it was run.
+    // NOT a fix and NOT a scoring knob: it is never set in a scored default arm.
+
     // [D-11056] rule-5 collectible feed: a KTC_NewCopter gameplay copter
     // "collects" by completing one traversal of its bound flight path —
     // mirrors FUN_004064c0's per-object completion tick (unconditional on
@@ -4658,7 +4673,7 @@ void TrackRenderer::UpdateRace(float dt) {
         bool runElim = false;
         const int seg = RE::SegmentCheck(rule_, rc, rulep_,
                                          /*resultDeclared=*/false, &runElim);
-        if (runElim && countdown_ <= 0.f) {
+        if (runElim && countdown_ <= 0.f && !NoElim()) {
             const int victim = race_cam_.EliminationCheck(cc);
             if (victim >= 0 && race_[victim].alive) {
                 race_[victim].alive = false;
@@ -4713,7 +4728,7 @@ void TrackRenderer::UpdateRace(float dt) {
     }
     if (round_winner_ >= 0) return;            // elimination round-end hold
 
-    if (countdown_ <= 0.f) {
+    if (countdown_ <= 0.f && !NoElim()) {
         const int victim = race_cam_.EliminationCheck(cc);
         if (victim >= 0 && race_[victim].alive) {
             race_[victim].alive = false;

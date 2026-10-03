@@ -1,0 +1,13 @@
+# arm A: csv:verify/d3_elim_20261003/ea1_v2.csv(1289 frames)
+# arm B: csv:verify/d3_elim_20261003/ec1_v2.csv(3319 frames)
+# noise floor: 35 fields, from 1289 A-pair frames and 1969 B-pair frames
+# anchor A: c4 ge 1 first at frame 0 -> rebased to 0
+# anchor B: c4 ge 1 first at frame 0 -> rebased to 0
+# aligned frames 1289 [0..1288]   paired fields 35   A-only 0   B-only 0
+
+=== DIVERGENT FIELDS, ranked by first frame past the noise floor (0 of 35 paired) ===
+field                  scope       first      n |      med A      med B    med|A-B|      floor
+----------------------------------------------------------------------------------------------
+
+=== WITHIN THE NOISE FLOOR on every aligned frame: 35 fields ===
+  ai_mode  ai_override  ai_spline_idx  ai_type  block  c0  c1  c3  c4  c5  c7  clk_0ff4  curv  diff_a360  flag_a368  frame  hist_d8  hist_dc  look_best  look_blk  look_idx  look_x  look_z  march_idx0 ...
