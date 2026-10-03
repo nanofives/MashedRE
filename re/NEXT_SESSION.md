@@ -6,6 +6,34 @@ session**; the only code changes are two analysis tools.
 
 ## The headline
 
+> **UPDATE 2026-10-02 (D3 OFFLINE session, commits `31fa2fe3` .. `077fc43c`): both
+> START-HERE measurements below are DONE. `U-9183` and `U-9182` are RESOLVED, every
+> pre-registered gate PASSED, and the recommended next target has CHANGED.**
+>
+> - **`curv` is faithful.** Position-matched, median `|dcurv|` is **0.0197 / 0.0131 /
+>   0.0296** deg on n = 105 / 68 / 104. The 2-8x was a position artefact, on top of a
+>   conditioning artefact (`mode == 0` selects the original's low-curvature calls; the
+>   FULL-window `curv` medians are **94.14 / 11.40 / 38.28** original vs **52.04 / 52.81
+>   / 50.08** port, and on car 1 the ORIGINAL is higher). **Do not port the curvature
+>   chain, and `SelectSpline` is not a lead** — the original's `spline` argument equals
+>   `0x801aa0 + ai_spline_idx*0x204` on 5463 of 5463 rows.
+> - **`c0`'s arithmetic is bit-faithful** (recompute matches the logged byte **586/586**
+>   on the port, **148/151** on the original). `c0_distinct` comes from ONE branch, MAG
+>   `0x00416697`; everything else contributes only `0`. Car 1 split: **MAG 72 vs 24**,
+>   MAGHI 62 vs 171, DEAD 54 vs 22, CTR1 32 vs 3, FF30 **0 vs 0**, CTRHI **0 vs 0**.
+> - **What is left is a SUB-DEGREE residual across a HARD split.** At matched position the
+>   median `|d signed err|` is only **0.945 / 1.296 / 0.466** deg, but the LO/HI split is a
+>   discontinuity at `err = 0/360` and `|err|` is a 1-2 deg oscillation about it, so that
+>   bias flips the band on **43 % / 24 % / 13 %** of matched calls. On car 1 it persists at
+>   MATCHED SPEED (2606.0 vs 2606.8). New row **U-9185** carries it.
+>
+> Read [`re/analysis/D3_B_OFFLINE_2026-10-02.md`](analysis/D3_B_OFFLINE_2026-10-02.md)
+> and [`verify/d3_offline_20261002/RESULT.md`](../verify/d3_offline_20261002/RESULT.md).
+> **One gate was replaced, declared BEFORE the run** (`PREREG.md` A.0): the known-answer
+> check could not run offline because the spline point array is runtime memory.
+
+The paragraph below is the PREVIOUS session's headline, left as history.
+
 > **D3 does NOT close, and the 2026-09-29 closure path is REFUTED by its own
 > pre-registered gate.** Porting behaviour modes 3 and 7 would not close AI criterion (b),
 > so **the port was not written**. (b) is now **decomposed into four measured carriers**
@@ -53,11 +81,54 @@ committed **unrun**. New rows **U-9182**, **U-9183**, **U-9184**.
 | carrier | best evidence | next move |
 |---|---|---|
 | **`int mode = 0;`** (`Ai/AiStandalone.cpp:844`) — the `0x0041665c` multiplier never switches off. The original's `mode != 0` calls carry `curv` medians **125.8 / 91.3 / 132.9**, i.e. it stops amplifying exactly where curvature is extreme | best single arm on cars **1 and 3**: `abs_steer_median` 52.5→15.0 and 49.0→24.5 | **real, large, NOT sufficient — do not re-test it** |
-| **`curv` 2-8x high** — `FUN_00443440` @ `0x004162b0` (`AiStandalone.cpp:837`) | `mode==0` vs `mode==0`: **52.04 / 52.81 / 50.08** vs **6.61 / 9.05 / 23.64**; best single arm on **car 2** | **U-9183 — START HERE** |
-| **speed +33..52 %** inside the window (a linear multiplier of steer magnitude) | 3421.7 / 3346.2 / 3495.9 vs 2254.8 / 2524.1 / 2554.6 | bounded by (e) passing on `[0,k)`; not independently actionable yet |
-| **`c0_distinct = 6`** on car 1 | **identical in all seven counterfactual arms**, floor 13 | **U-9182** |
+| ~~**`curv` 2-8x high**~~ — `FUN_00443440` @ `0x004162b0` (`AiStandalone.cpp:837`) | **CLOSED 2026-10-02.** Position-matched median `|dcurv|` **0.0197 / 0.0131 / 0.0296** deg (n = 105 / 68 / 104); full-window medians **94.14 / 11.40 / 38.28** orig vs **52.04 / 52.81 / 50.08** port | **U-9183 RESOLVED — do NOT re-open, and do not port the curvature chain** |
+| **speed, now the lead carrier** — a linear multiplier of steer magnitude via `m = err*speed*0.0030034` (`0x00416656`) | window medians **3421.7 / 3346.2 / 3495.9** vs **2419.5 / 2397.0 / 2617.6** (**+41 / +40 / +34 %**), and the port carries a **port-only start boost on `slot != 0`** (`VehiclePhysicsRun.cpp:703`) | **START HERE: the `MASHED_NO_START_BOOST=1` A/B, below. U-9185** |
+| **sub-degree steering-error bias across a HARD split** — `SteerAngleErrorFwd` `0x00416596`; LO/HI split at `err = 0/360` (`0x004165c0` / `0x004166cf`) | at matched position median `|d signed err|` **0.945 / 1.296 / 0.466** deg (target dir 0.28/0.48/0.45, **body heading 0.98/0.91/0.65**); flips the band on **43 / 24 / 13 %** of matched calls, and persists on car 1 at **matched speed** (2606.0 vs 2606.8) | **U-9185** — second, after the start-boost A/B |
+| ~~**`c0_distinct = 6`** on car 1~~ | **ANSWERED 2026-10-02.** `c0` comes from ONE branch, MAG `0x00416697`; car 1 split **MAG 72 vs 24**, MAGHI 62 vs 171. The arithmetic reproduces the logged byte **586/586** (port), **148/151** (orig) | **U-9182 RESOLVED — do NOT port the `c0` magnitude path, it is bit-faithful** |
 
-### START HERE — two OFFLINE measurements, no new run, no build
+### START HERE — the ONE next move, and it is NOT a port
+
+> The two offline measurements this section used to list are **DONE** (`U-9183` and
+> `U-9182`, both RESOLVED 2026-10-02). Do not re-run them. The old text is kept below
+> the rule as history.
+
+**1. Run the start-boost A/B first. One environment variable, no code change.**
+`VehiclePhysicsRun.cpp:703-707` applies a **port-only start boost to `slot != 0`, i.e. to
+exactly the cars criterion (b) scores** — `+0xbf8 = 1`, `+0xbf4 = 1300`, guarded by
+`MASHED_NO_START_BOOST`. The port's window speed is **3421.7 / 3346.2 / 3495.9** against
+the original's **2419.5 / 2397.0 / 2617.6** (**+41 / +40 / +34 %**), and
+`m = err*speed*0.0030034` (`0x00416656`) makes speed a linear multiplier on the steer byte
+while the extra distance travelled pushes the port into higher-curvature track inside the
+same 220 calls. Suspect the port-only scaffold before re-suspecting a byte-faithful
+transcription.
+
+> Re-capture the port side with `MASHED_NO_START_BOOST=1` and re-score **BOTH (b) and
+> (e)**. (e) passes today **with** the boost, so the seed cannot be removed on (b)'s
+> evidence alone — if (e) regresses, that is a trade-off for the user, **not** a fix.
+> Pre-register the decision rule before the run, as every D3 session has.
+
+**2. Only if that does not close (b): the AI cars' body heading.** It is the larger median
+share of the matched-position residual (**0.9796 / 0.9085 / 0.6506** deg). It reaches
+`SteerAngleErrorFwd` as `(cos(a.yaw), sin(a.yaw))` from `TrackRenderer.cpp:3729`, with
+`a.yaw` round-tripped through `Vehicle::VehiclePhysics_StepCar` (`:3315` in, `:3327` out)
+— **not** from `rec+0x9d4`/`+0x9dc`, which is what `AiStandalone.cpp:939`'s comment claims
+and which nothing in the standalone reads. Two separable candidates: the physics' own yaw
+(a D2 surface measured through the AI) and the scalar reconstruction standing in for the
+record's forward basis row (a port-only bridge, cheaper to test). The
+`yerr * (6.0f*dt)` turn-rate limiter at `TrackRenderer.cpp:3416` / `:3676` is **not** a
+suspect — it is in the legacy "AI v2" `else` branch, which the ported path does not take.
+
+**3. `FUN_00414c30` + producer chain is RULED OUT for this carrier.** Its effect on (b) is
+through `ai_mode`, already refuted as sufficient by the modes-3/7 arms, and `curv` and
+`c0`'s arithmetic are now proved faithful — so that chain cannot reach what is left.
+
+**One question for the USER, deliberately not decided.** Criterion (b)'s `c0_distinct`,
+`c1_distinct` and `steer_distinct` count which side of a hard discontinuity a 1-2 deg
+oscillation lands on; a faithful port can fail them. Whether to re-specify (b) on a
+band-invariant statistic is a ROADMAP decision. **No band was moved.**
+
+<details><summary>History: the two offline measurements, now both DONE</summary>
+
 
 1. **U-9183, position-matched curvature.** The index-matched comparison above is **partly
    circular**: the two sides traverse at different speeds, so at the same within-window
@@ -74,6 +145,9 @@ committed **unrun**. New rows **U-9182**, **U-9183**, **U-9184**.
 
 **Do both before spending a session on the `FUN_00414c30` + producer-chain port.** This
 session's evidence says that port would not close (b) on its own.
+
+
+</details>
 
 ### If you do write the modes port, the scope is already measured
 
@@ -121,6 +195,11 @@ py -3.12 re/tools/ai_speed_env.py   --check <csv>      # (e)
 py -3.12 re/tools/ai_mode_split.py <csv>               # G2-MODE / G2-JOINT / G2-STEER
 py -3.12 re/tools/ai_band_sim.py --orig <o.aistep.csv> --sa <sa.csv> --out <report.txt>
 #   now carries modeseq + curvseq counterfactual arms; its >=95% validation gate stands
+py -3.12 re/tools/ai_posmatch.py --orig <o.aistep.csv> --port <r.csv> --part A|B|COLL
+#   NEW 2026-10-02. Implements verify/d3_offline_20261002/PREREG.md verbatim: the
+#   position-matched curvature test (A), the c0 branch split with both known-answer
+#   checks (B), and a DESCRIPTIVE collateral/err-decomposition leg (COLL, no pass/fail).
+#   Its constants and bands are pre-registered and ARE NOT TO BE MOVED.
 # guards
 pwsh -NoProfile -File re/tools/pu_replay/sweep.ps1
 py -3.12 re/frida/scenario_launch.py --track 0 --mode 10 --cars 4 --car 0 \
@@ -140,7 +219,15 @@ STOP, and state prominently any gate or rule you replace.
 
 ## Still open
 
-**D3:** criterion (b) on all three cars — **U-9182**, **U-9183**, **U-9184**.
-**D2 (parked, D-11071):** U-9180, U-9181.
-**Elsewhere:** U-9177, U-9176, U-9156, U-9171, §20.14's `-0.1` duty cycle, D1-residue R1,
-the unported outer chunk loop.
+- **D3 (b) is still NOT MET** and is the phase's sole blocker. `U-9183` and `U-9182` are
+  RESOLVED; **`U-9185`** now carries the remainder (the start-boost scaffold, the
+  sub-degree heading residual, the knife-edge band split). `U-9184` stands as filed.
+- `[UNCERTAIN]` the `look_z` tail on car 1 (matched-position median **0.7678**, p90
+  **5.1128**) — below defect size at the median, but the only matched-position field
+  other than speed with a non-trivial tail.
+- **D2 parked, D-11071:** `U-9180`, `U-9181`. Two informational **D2 WATCH** rows were
+  filed 2026-10-02 (`D3_B_OFFLINE_2026-10-02.md` §6): AI-slot speed is **+34..41 %** on
+  track 0 / mode 10 with the start-boost scaffold in place (D-11071's parked metric was
+  the **player** 1.3 % **short** on Training — opposite sign, different car class,
+  different scenario, so it neither confirms nor refutes that carrier), and the body
+  heading is a physics output. **No D2 code was read or changed.**
