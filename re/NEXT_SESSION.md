@@ -1,10 +1,45 @@
 # Next session kickoff
 
-Updated 2026-10-02 at the close of the **D3 re-baseline + modes-3/7 test** session.
+Updated 2026-10-03 at the close of the **D3 start-boost A/B** session.
 Branch `race/first-frame-parity`. Nothing is pushed. **No game code was edited this
-session**; the only code changes are two analysis tools.
+session**; the only code changes are analysis tools.
 
 ## The headline
+
+> **UPDATE 2026-10-03 (D3 START-BOOST A/B session, commits `2b3e2f47` .. `c79a3619`):
+> the `MASHED_NO_START_BOOST=1` A/B that the START-HERE block below asked for is DONE.
+> It did NOT close (b) and it REGRESSED (e) 6/6. There is now a USER DECISION open.**
+>
+> Arm A = default, arm B = `MASHED_NO_START_BOOST=1`, three repeats each, every repeat
+> digit-identical, no failed boot, recipe/scorers/bands unchanged and both band files
+> proven unedited. Fresh arm A reproduces `r1/r2/r3` on every printed digit.
+>
+> - **(b) 13 → 6 failing bands.** Car 1 5→4, car 2 4→2, **car 3 4→0 (passes outright)**.
+>   `c1_median` 52.5/38.0/49.0 → **0.0** and `abs_steer_median` 52.5/57.5/49.0 →
+>   **6.0/21.0/9.0**, all in band on all three cars. **But car 1 gains TWO NEW failing
+>   bands**, `accel_distinct` and `brake_distinct`: it takes only `c4 = 255` and only
+>   `c5 = 0` over the window. **(b) is still NOT MET on 2 of 3 cars.**
+> - **(e) regresses 6/6, −46 % to −90 %.** `launch` 1426.4/2053.0/2055.2 → **200.5** on
+>   every car, against the **ORIGINAL's own** 1425.7/2052.5/2055.0. **The original
+>   demonstrably HAS a launch and arm A reproduces it to 0.05 %** — removing the seed
+>   removes the port's only reproduction of a real original behaviour.
+> - **Window speed +41/+40/+34 % → +31/+21/+15 %.** The seed is worth about HALF the
+>   over-speed. A sustained **+15..31 %** survives the knob and is a **separate carrier**.
+> - **The knob is proven live in flight**, not inferred: slots 1..3 read
+>   `g_startBoosted` 0→1 with `+0xbf8 == 1` and `+0xbf4` decaying
+>   **1100/900/700/500/300/100**; arm B never seeds them; **slot 0 is never seeded in
+>   either arm**. `re/tools/sa_boostwatch.py`, `ReadProcessMemory`, no injection.
+> - **Player physics is BIT-IDENTICAL between arms** over 4198 `player_trace` lines —
+>   **no D2 REOPEN CANDIDATE on player physics.** One confound IS filed: `race_[0].alive`
+>   differs at `rt = 1.8667 s`, **inside** the scored window, so the arm A vs arm B deltas
+>   are the seed PLUS that divergence and this step did **not** separate them.
+>
+> Read [`verify/d3_noboost_20261003/RESULT.md`](../verify/d3_noboost_20261003/RESULT.md).
+> **One gate was replaced and is stated prominently there**: the pre-registered base
+> self-check `record[v] + 0x000 == v` is FALSE in the port and voided the first witness
+> run; it was replaced by three stronger legs.
+
+The block below is the PREVIOUS session's headline, left as history.
 
 > **UPDATE 2026-10-02 (D3 OFFLINE session, commits `31fa2fe3` .. `077fc43c`): both
 > START-HERE measurements below are DONE. `U-9183` and `U-9182` are RESOLVED, every
@@ -82,15 +117,52 @@ committed **unrun**. New rows **U-9182**, **U-9183**, **U-9184**.
 |---|---|---|
 | **`int mode = 0;`** (`Ai/AiStandalone.cpp:844`) — the `0x0041665c` multiplier never switches off. The original's `mode != 0` calls carry `curv` medians **125.8 / 91.3 / 132.9**, i.e. it stops amplifying exactly where curvature is extreme | best single arm on cars **1 and 3**: `abs_steer_median` 52.5→15.0 and 49.0→24.5 | **real, large, NOT sufficient — do not re-test it** |
 | ~~**`curv` 2-8x high**~~ — `FUN_00443440` @ `0x004162b0` (`AiStandalone.cpp:837`) | **CLOSED 2026-10-02.** Position-matched median `|dcurv|` **0.0197 / 0.0131 / 0.0296** deg (n = 105 / 68 / 104); full-window medians **94.14 / 11.40 / 38.28** orig vs **52.04 / 52.81 / 50.08** port | **U-9183 RESOLVED — do NOT re-open, and do not port the curvature chain** |
-| **speed, now the lead carrier** — a linear multiplier of steer magnitude via `m = err*speed*0.0030034` (`0x00416656`) | window medians **3421.7 / 3346.2 / 3495.9** vs **2419.5 / 2397.0 / 2617.6** (**+41 / +40 / +34 %**), and the port carries a **port-only start boost on `slot != 0`** (`VehiclePhysicsRun.cpp:703`) | **START HERE: the `MASHED_NO_START_BOOST=1` A/B, below. U-9185** |
+| **speed — SPLIT IN TWO 2026-10-03.** A linear multiplier of steer magnitude via `m = err*speed*0.0030034` (`0x00416656`) | **(i) the start seed** (`VehiclePhysicsRun.cpp:703-707`) is worth about HALF: removing it takes the window medians from **3421.7 / 3346.2 / 3495.9** (+41/+40/+34 %) to **3169.4 / 2904.7 / 3011.0** (+31/+21/+15 %) vs the original's **2419.5 / 2397.0 / 2617.6**. **(ii) the remaining +15..31 % is a DIFFERENT, UNIDENTIFIED carrier** | **(i) MEASURED — the A/B is DONE, see the headline; removing it costs (e) 6/6. (ii) is now the open speed lead. U-9185** |
 | **sub-degree steering-error bias across a HARD split** — `SteerAngleErrorFwd` `0x00416596`; LO/HI split at `err = 0/360` (`0x004165c0` / `0x004166cf`) | at matched position median `|d signed err|` **0.945 / 1.296 / 0.466** deg (target dir 0.28/0.48/0.45, **body heading 0.98/0.91/0.65**); flips the band on **43 / 24 / 13 %** of matched calls, and persists on car 1 at **matched speed** (2606.0 vs 2606.8) | **U-9185** — second, after the start-boost A/B |
 | ~~**`c0_distinct = 6`** on car 1~~ | **ANSWERED 2026-10-02.** `c0` comes from ONE branch, MAG `0x00416697`; car 1 split **MAG 72 vs 24**, MAGHI 62 vs 171. The arithmetic reproduces the logged byte **586/586** (port), **148/151** (orig) | **U-9182 RESOLVED — do NOT port the `c0` magnitude path, it is bit-faithful** |
 
 ### START HERE — the ONE next move, and it is NOT a port
 
 > The two offline measurements this section used to list are **DONE** (`U-9183` and
-> `U-9182`, both RESOLVED 2026-10-02). Do not re-run them. The old text is kept below
-> the rule as history.
+> `U-9182`, both RESOLVED 2026-10-02), and **the start-boost A/B below is DONE too**
+> (2026-10-03, `verify/d3_noboost_20261003/RESULT.md`). Do not re-run any of the three.
+> The old text is kept below the rule as history.
+
+### THE DECISION THAT IS NOW THE USER'S, and nothing should be ported until it is made
+
+The A/B measured a real and **adverse** trade. Three options, none taken:
+
+1. **Keep the seed (status quo).** (e) MET 3/3, (b) 13 failing bands. The AI third stays
+   blocked on (b).
+2. **Remove the seed.** (b) 6 failing bands with car 3 passing outright, (e) fails 6/6 by
+   46-90 %. **This trades a MET criterion for a still-NOT-MET one.**
+3. **Keep the seed and attack the surviving +15..31 % over-speed instead.** Per the
+   counterfactual matrix (`ai_band_sim.py`, validation 220/220 = 1.000 on all three cars)
+   closing it would move car 1's `c1_distinct` 80→50 and `steer_distinct` 86→61 **into
+   band**. **The only option that does not trade one criterion against the other**, and it
+   is not costed yet.
+
+### THE NEXT MOVE, if the user wants more measurement before deciding
+
+**1. Separate the seed from the player-elimination confound. Cheapest thing left.**
+With the seed ON the player is eliminated at `rt = 1.8667 s`, **inside** the scored window
+(`race_[0].alive` 0 vs 1, written at `TrackRenderer.cpp:4664` via `RE::SegmentCheck` +
+`EliminationCheck`, which read the **AI cars'** positions). `round_mode_` is true,
+`g_aib.alive[0]` is cleared at `TrackRenderer.cpp:3722`, and the AI tick loop at
+`AiStandalone.cpp:1708` runs `for (v = 0; v < 4; ++v)` gated on `car_alive(v)` — so
+`VehicleStep(0)` runs in arm B and does not in arm A. **Until that is controlled, no arm A
+vs arm B delta is single-cause.**
+
+**2. Then the body heading, and car 2 is the car to probe.** It is still the larger median
+share on all three cars in both arms, and on **car 2** it **GROWS** 0.9085 → **1.6059** deg
+when the seed is removed — car 2 is also the car whose remaining (b) failure the
+counterfactual attributes to `err`, not speed. The two separable candidates are unchanged
+(see item 2 of the history block below).
+
+**3. Separately: find what carries the +15..31 % over-speed that survives the knob.** It is
+**not** the seed. This is option 3 above.
+
+<details><summary>History: the start-boost A/B as it was briefed, now DONE</summary>
 
 **1. Run the start-boost A/B first. One environment variable, no code change.**
 `VehiclePhysicsRun.cpp:703-707` applies a **port-only start boost to `slot != 0`, i.e. to
@@ -121,6 +193,8 @@ suspect — it is in the legacy "AI v2" `else` branch, which the ported path doe
 **3. `FUN_00414c30` + producer chain is RULED OUT for this carrier.** Its effect on (b) is
 through `ai_mode`, already refuted as sufficient by the modes-3/7 arms, and `curv` and
 `c0`'s arithmetic are now proved faithful — so that chain cannot reach what is left.
+
+</details>
 
 **One question for the USER, deliberately not decided.** Criterion (b)'s `c0_distinct`,
 `c1_distinct` and `steer_distinct` count which side of a hard discontinuity a 1-2 deg

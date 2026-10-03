@@ -2333,6 +2333,59 @@ criteria are all met since 2026-09-26 (`D3_MODES_2026-09-26.md`).
   is DONE (2026-09-28d, `s2` decision CLEAN and contact CLEAN); **U-D3-DRIVE is now the only
   remaining gate**. D3-R1 (car 1) then carries forward like the D1 residue.
 
+#### D3 closure state 2026-10-03 — **the start-boost A/B is DONE. (b) improves 13 → 6 bands, (e) regresses 6/6. D3 is still NOT CLOSED and there is now an OPEN USER DECISION.**
+
+Session record: `verify/d3_noboost_20261003/RESULT.md`. Pre-registration committed **unrun**
+at `2b3e2f47`. **No band was moved, no C-level moved, NO GAME CODE WAS EDITED, no build was
+run** (the exe `a6b07bd1…` is not stale versus `015537a2`, the last commit touching
+`mashedmod/src`).
+
+Arm A = default, arm B = `MASHED_NO_START_BOOST=1`; three repeats each; **every repeat
+digit-identical on both scorers (G-DET-A and G-DET-B PASS)**; **no failed boot**; recipe,
+scorers and bands unchanged from `verify/d3_rebase_20261002` and both band files proven
+unedited. Fresh arm A reproduces `r1/r2/r3` on every printed digit, so the 2026-10-02
+baseline stands.
+
+- **(b): 13 → 6 failing bands.** Car 1 **5 → 4**, car 2 **4 → 2**, car 3 **4 → 0 (passes
+  outright)**. `c1_median` 52.5 / 38.0 / 49.0 → **0.0** and `abs_steer_median`
+  52.5 / 57.5 / 49.0 → **6.0 / 21.0 / 9.0**, in band on all three cars — the expected sign
+  of `m = err * speed * 0.0030034` (`0x00416656`) with a lower `speed`. **Car 1 gains TWO
+  NEW failing bands**, `accel_distinct` and `brake_distinct`: it takes only `c4 = 255` and
+  only `c5 = 0` across the window, against the original's `c4 ∈ {0, 64, 255}` (255 on
+  63.6 %) and `c5 ∈ {0, 255}` (255 on 21.4 %). **(b) remains NOT MET on 2 of 3 cars.**
+- **(e): 6/6 PASS → 6/6 FAIL, −46 % to −90 %.** `launch` 1426.4 / 2053.0 / 2055.2 →
+  **200.5** on every car, against the **ORIGINAL's own** 1425.7 / 2052.5 / 2055.0;
+  `ft_median_m0` 2550.6 / 2053.0 / 2278.2 → 1364.3 / 200.5 / 353.2. **The original
+  demonstrably HAS a launch and arm A reproduces it to 0.05 %**, so the seed is not a pure
+  artefact — removing it removes the port's only reproduction of a real original behaviour.
+- **Window speed vs the original: +41 / +40 / +34 % → +31 / +21 / +15 %** (median call index
+  109.5 on both sides). **The seed is worth about HALF of the over-speed; a sustained
+  +15..31 % survives the knob and is a SEPARATE, unidentified carrier.**
+- **The knob was proved live IN FLIGHT**, not inferred: `re/tools/sa_boostwatch.py`
+  (`ReadProcessMemory`, no injection, no Frida) reads slots 1..3 going `g_startBoosted`
+  0 → 1 with `+0xbf8 == 1` and `+0xbf4` decaying **1100 / 900 / 700 / 500 / 300 / 100** (the
+  −200/frame law, `ForceIntegratorStubs.cpp:86`) in arm A, never seeded in arm B, and **slot
+  0 never seeded in either arm**. `MASHED_NO_START_BOOST` has **exactly one read site** in
+  the port, `VehiclePhysicsRun.cpp:703`.
+- **ONE GATE WAS REPLACED, stated prominently in the RESULT:** the pre-registered base
+  self-check `record[v] + 0x000 == v` is **FALSE in the port** (`g_records` is a port-local
+  mirror `memset` to 0, `VehiclePhysicsRun.cpp:122` / `:240`) and voided the first witness
+  run; replaced by three stronger legs (bool-domain check, agreement of the witness's
+  `+0x9e4` with the same run's stepdump `rec_9e4`, and the arm A vs arm B contrast itself).
+- **D2 WATCH:** the knob touches **none** of D-11071's five triggers and no D2 code was
+  changed. **Player physics is BIT-IDENTICAL between arms** over 4198 `player_trace` lines —
+  **no D2 REOPEN CANDIDATE on player physics.** One **confound** is filed: `race_[0].alive`
+  differs at `rt = 1.8667 s`, **inside** the scored window, so the arm A vs arm B deltas are
+  the seed **plus** that divergence and this step did **not** separate the two shares.
+  `[UNCERTAIN]`, U-9185.
+
+**OPEN USER DECISION — nothing should be ported until it is made.** (1) keep the seed:
+(e) MET, (b) 13 bands; (2) remove it: (b) 6 bands, (e) fails 6/6 — **trades a MET criterion
+for a still-NOT-MET one**; (3) keep it and attack the surviving +15..31 % over-speed, the
+only route that does not trade one criterion against the other, and not costed yet. Full
+statement in the RESULT's last section. U-9185 carries the remainder.
+
+
 #### D3 closure state 2026-10-02 — **D3 is NOT CLOSED, and the 2026-09-29 closure path is REFUTED by its own pre-registered gate.** (b) is now decomposed, not attributed to one cause.
 
 Session records: `verify/d3_rebase_20261002/RESULT_STEP1.md`,

@@ -1,43 +1,43 @@
 {
   "title": "Mashed RE — source port",
-  "updatedAt": "2026-10-03T04:05:00Z",
+  "updatedAt": "2026-10-03T05:40:00Z",
   "sections": [
     {
       "heading": "Current phase",
       "fields": [
         { "label": "Roadmap phase", "value": "D3 active and UNBLOCKED; D2 PARKED (re-openable)", "kind": "text" },
         { "label": "Branch", "value": "race/first-frame-parity (nothing pushed)", "kind": "text" },
-        { "label": "D3 closes?", "value": "No — AI criterion (b) is the sole blocker, failing on all 3 cars", "kind": "text" },
-        { "label": "Latest session", "value": "2026-10-02 — D3 OFFLINE: U-9183 and U-9182 both RESOLVED. No game run, no build, no game code edited.", "kind": "text" }
+        { "label": "D3 closes?", "value": "No — AI criterion (b) is the sole blocker, and there is now an OPEN USER DECISION", "kind": "text" },
+        { "label": "Latest session", "value": "2026-10-03 — D3 START-BOOST A/B: (b) 13 → 6 failing bands, (e) 6/6 PASS → 6/6 FAIL. No code change, no build.", "kind": "text" }
       ]
     },
     {
-      "heading": "Headline — the AI control function is FAITHFUL where it can be measured",
+      "heading": "Headline — the start-boost A/B is DONE, and the trade is adverse",
       "fields": [
-        { "label": "U-9183 CLOSES", "value": "The 2-8x curvature gap was a POSITION artefact. Position-matched (same car, same ai_spline_idx, within R = 0.12), median |dcurv| is 0.0197 / 0.0131 / 0.0296 deg on n = 105 / 68 / 104, against a pre-registered band of median <=2 and p90 <=10. FUN_00443440's look-ahead is the LITERAL 10.0f at 0x004162a1 — it does not scale with speed.", "kind": "text" },
-        { "label": "...and a second artefact on top", "value": "The FULL-window curv medians are 94.14 / 11.40 / 38.28 (original) vs 52.04 / 52.81 / 50.08 (port) — on car 1 the ORIGINAL is higher. The 2-8x came from the mode==0 subset, which on the original selects its low-curvature calls.", "kind": "text" },
-        { "label": "U-9182 ANSWERED", "value": "c0 comes from ONE branch, MAG at 0x00416697. Car 1 window split: MAG 72 vs 24, MAGHI 62 vs 171, DEAD 54 vs 22, CTR1 32 vs 3, FF30 0 vs 0, CTRHI 0 vs 0. Everything but MAG contributes only 0, so c0_distinct = 1 + |MAG set| = 13 (orig) vs 6 (port).", "kind": "text" },
-        { "label": "The c0 arithmetic is bit-faithful", "value": "Recomputing c0 = trunc(min(255, err*speed*0.0030034 * (curv*0.05 if mode==0 and curv>20))) reproduces the logged byte 586/586 on the port and 148/151 on the original (the 3 misses are +1 at the truncation boundary). Do NOT port the magnitude path.", "kind": "text" },
-        { "label": "Every gate passed", "value": "KA-A1 4,088,708 / 0 violations (orig) and 1,596 / 0 (port); KA-A2 median 0.0000 and 0.0313; KA-B1 2505/2505 and 26/26, zero violations.", "kind": "text" },
-        { "label": "One gate replaced, declared BEFORE the run", "value": "The kickoff's 'recompute curv from the spline' check cannot run offline — the spline point array at 0x801aa0 + idx*0x204 is runtime memory and no committed capture carries it. Replaced by KA-A1 + KA-A2, both sides.", "kind": "text" }
+        { "label": "(b) improves", "value": "13 → 6 failing bands. Car 1 5→4, car 2 4→2, car 3 4→0 (passes outright). c1_median 52.5/38.0/49.0 → 0.0 and abs_steer_median 52.5/57.5/49.0 → 6.0/21.0/9.0, in band on all three cars. STILL NOT MET on 2 of 3 cars.", "kind": "text" },
+        { "label": "...but car 1 gains TWO new failures", "value": "accel_distinct and brake_distinct: in arm B car 1 takes only c4=255 and only c5=0 over the window, against the original's c4 in {0,64,255} (255 on 63.6%) and c5 in {0,255} (255 on 21.4%). Reported rather than netted out of the count.", "kind": "text" },
+        { "label": "(e) regresses 6/6", "value": "−46% to −90%. launch 1426.4/2053.0/2055.2 → 200.5 on every car, against the ORIGINAL's own 1425.7/2052.5/2055.0. The original demonstrably HAS a launch and arm A reproduces it to 0.05%, so removing the seed removes the port's only reproduction of a real original behaviour.", "kind": "text" },
+        { "label": "The seed is worth HALF the over-speed", "value": "Window speed vs the original +41/+40/+34% → +31/+21/+15% (median call index 109.5 on both sides). A sustained +15..31% SURVIVES the knob and is a separate, unidentified carrier.", "kind": "text" },
+        { "label": "Knob proved live in flight", "value": "re/tools/sa_boostwatch.py (ReadProcessMemory, no injection, no Frida): slots 1..3 read g_startBoosted 0→1 with +0xbf8 == 1 and +0xbf4 decaying 1100/900/700/500/300/100 (the −200/frame law) in arm A, never seeded in arm B. Slot 0 never seeded in either arm. One read site in the whole port: VehiclePhysicsRun.cpp:703.", "kind": "text" },
+        { "label": "One gate REPLACED, stated prominently", "value": "The pre-registered base self-check record[v]+0x000 == v is FALSE in the port (g_records is a port-local mirror memset to 0) and voided the first witness run. Replaced by three stronger legs: bool-domain check on g_startBoosted, agreement of the witness's +0x9e4 with the same run's stepdump rec_9e4, and the arm A vs arm B contrast itself.", "kind": "text" }
       ]
     },
     {
-      "heading": "What is LEFT of criterion (b) — U-9185",
+      "heading": "THE OPEN USER DECISION — nothing should be ported until it is made",
       "fields": [
-        { "label": "A sub-degree residual across a HARD split", "value": "At matched position the median |d signed err| is only 0.945 / 1.296 / 0.466 deg. But the LO/HI band split is a discontinuity at err = 0/360 and |err| is a 1-2 deg oscillation about it, so a 1.15 deg bias (port median -0.128 vs orig +1.024) flips the band on 43% / 24% / 13% of matched calls and re-routes the steer byte between ctrl[0] and ctrl[1].", "kind": "text" },
-        { "label": "Not just position or speed", "value": "On car 1 the occupancy shift persists at MATCHED SPEED (2606.0 vs 2606.8): port LO 49 / HI 56 against orig LO 92 / HI 13.", "kind": "text" },
-        { "label": "Where the residual comes from", "value": "Decomposed: target direction 0.28 / 0.48 / 0.45 deg, body heading 0.98 / 0.91 / 0.65 deg. The heading is a vehicle-physics output, reaching the AI as (cos(a.yaw), sin(a.yaw)) at TrackRenderer.cpp:3729 with a.yaw round-tripped through VehiclePhysics_StepCar — NOT from rec+0x9d4/+0x9dc as AiStandalone.cpp:939 claims.", "kind": "text" },
-        { "label": "The port-only scaffold", "value": "VehiclePhysicsRun.cpp:703-707 gives every slot != 0 — i.e. exactly the cars (b) scores — a start boost (+0xbf8=1, +0xbf4=1300), guarded by MASHED_NO_START_BOOST. Port window speed 3421.7 / 3346.2 / 3495.9 vs the original's 2419.5 / 2397.0 / 2617.6 (+41 / +40 / +34%).", "kind": "text" }
+        { "label": "1. Keep the seed (status quo)", "value": "(e) MET 3/3, (b) 13 failing bands. The AI third stays blocked on (b).", "kind": "text" },
+        { "label": "2. Remove the seed", "value": "(b) 6 failing bands with car 3 passing outright, (e) fails 6/6 by 46-90%. Trades a MET criterion for a still-NOT-MET one.", "kind": "text" },
+        { "label": "3. Keep it, attack the residual over-speed", "value": "Closing the surviving +15..31% would move car 1's c1_distinct 80→50 and steer_distinct 86→61 INTO band (ai_band_sim.py, validation 220/220 = 1.000 on all three cars). The only route that does not trade one criterion against the other. Not costed yet.", "kind": "text" },
+        { "label": "Standing question, still undecided", "value": "(b)'s c0_distinct / c1_distinct / steer_distinct count which side of a hard discontinuity a 1-2 deg oscillation lands on, so a faithful port can fail them. Whether to re-specify (b) on a band-invariant statistic is a ROADMAP decision. No band was moved.", "kind": "text" }
       ]
     },
     {
-      "heading": "Next — and it is NOT a port",
+      "heading": "What is LEFT of criterion (b) — U-9185, three named holes",
       "fields": [
-        { "label": "1. Start-boost A/B", "value": "One environment variable, no code change: re-capture with MASHED_NO_START_BOOST=1 and re-score BOTH (b) and (e). (e) passes today WITH the boost, so the seed cannot be removed on (b)'s evidence alone — an (e) regression is a trade-off for the user, not a fix. Pre-register the rule first.", "kind": "text" },
-        { "label": "2. Only if that fails", "value": "The AI cars' body heading — two separable candidates: the physics' own io.yaw (a D2 surface measured through the AI) and the scalar reconstruction standing in for the record's forward basis row (a port-only bridge, cheaper to test).", "kind": "text" },
-        { "label": "RULED OUT", "value": "FUN_00414c30 + producer chain. Its effect on (b) is through ai_mode, already refuted as sufficient by the modes-3/7 arms, and curv and c0's arithmetic are now proved faithful — that chain cannot reach what is left. SelectSpline is also not a lead: the original's spline arg equals 0x801aa0 + ai_spline_idx*0x204 on 5463 of 5463 rows.", "kind": "text" },
-        { "label": "A QUESTION FOR THE USER", "value": "(b)'s c0_distinct / c1_distinct / steer_distinct count which side of a hard discontinuity a 1-2 deg oscillation lands on, so a faithful port can fail them. Whether to re-specify (b) on a band-invariant statistic is a ROADMAP decision. No band was moved.", "kind": "text" }
+        { "label": "(a) the elimination confound", "value": "With the seed ON the player is eliminated at rt = 1.8667 s, INSIDE the scored window (race_[0].alive 0 vs 1, TrackRenderer.cpp:4664). round_mode_ is true and the AI tick loop at AiStandalone.cpp:1708 runs v = 0..3 gated on car_alive, so VehicleStep(0) runs in arm B and not in arm A. Until that is controlled no arm A vs arm B delta is single-cause. CHEAPEST NEXT MOVE.", "kind": "text" },
+        { "label": "(b) which heading candidate", "value": "At matched position the body heading is still the larger median share on all three cars in both arms, and on car 2 it GROWS 0.9085 → 1.6059 deg when the seed is removed. Two separable candidates: the physics' own io.yaw (TrackRenderer.cpp:3327) and the (cos, sin) reconstruction at :3729. Car 2 is the car to probe.", "kind": "text" },
+        { "label": "(c) the surviving over-speed", "value": "+15..31% is NOT the seed. Carrier unidentified.", "kind": "text" },
+        { "label": "Two different per-car carriers", "value": "ai_band_sim.py counterfactuals on arm B: car 1's residual is SPEED (ORIG speed closes c1_distinct 80→50, steer_distinct 86→61, lifts c0_distinct 7→12 against a floor of 13); car 2's residual is ERR (ORIG speed makes car 2 worse on every statistic).", "kind": "text" }
       ]
     },
     {
@@ -45,26 +45,26 @@
       "fields": [
         { "label": "Modes", "value": "MET (a)(b)(c)(d)", "kind": "text" },
         { "label": "Powerups", "value": "MET (a)(b)(c) — g3 the known R_FLAME 2-of-546 residue", "kind": "text" },
-        { "label": "AI (e) speed", "value": "MET 3/3 — launch 1426.4/2053.0/2055.2, ft_median_m0 2550.6/2053.0/2278.2, all inside band (WITH the start boost)", "kind": "text" },
-        { "label": "AI (b) steering", "value": "NOT MET — 13 of 30 bands across 3 cars; all five distinct failing bands are STEER bands", "kind": "text" }
+        { "label": "AI (e) speed", "value": "MET 3/3 with the start boost ON (arm A). FAILS 6/6 with it off (arm B).", "kind": "text" },
+        { "label": "AI (b) steering", "value": "NOT MET either way — 13 of 30 bands with the boost, 6 of 30 without it (car 3 passes)", "kind": "text" }
       ]
     },
     {
-      "heading": "User decisions recorded 2026-10-02",
+      "heading": "D2 WATCH (D-11071)",
       "fields": [
-        { "label": "D2", "value": "PARKED, not closed, re-openable. Residuals filed as DEFERRED D-11071.", "kind": "text" },
-        { "label": "D3", "value": "UNBLOCKED.", "kind": "text" },
-        { "label": "D2 re-pickup trigger", "value": "Any finding touching +0x4a4, the contact collector / FUN_00538c80, grip-clamp #6, the substep/chunk loop, ReassertContacts, or player-car speed on Training. Report a 'D2 REOPEN CANDIDATE' row; do not change D2 code in that session.", "kind": "text" },
-        { "label": "D2 WATCH filed 2026-10-02 (offline)", "value": "Two informational rows, NOT one of the five named triggers and no D2 code read or changed: (1) AI-slot speed is +34..41% on track 0 / mode 10 with the start-boost scaffold in place, against D-11071's parked player metric of 1.3% SHORT on Training — opposite sign, different car class, different scenario, so it neither confirms nor refutes that carrier; (2) the body-heading residual is a physics output.", "kind": "text" }
+        { "label": "Player physics", "value": "BIT-IDENTICAL between arms over 4198 player_trace lines — pos, yaw, sp, vel, dt, a144, av, c9ec, gnd, bodyfwd, n9c8, r0up, r0at, b14, b1c, v9e4, gate, lap, prog, rt all identical on every line. NO D2 REOPEN CANDIDATE on player physics.", "kind": "text" },
+        { "label": "Triggers touched", "value": "None. The knob's entire effect is VehiclePhysicsRun.cpp:703-707 writing +0xbf8 and +0xbf4. No D2 code was changed.", "kind": "text" },
+        { "label": "One confound filed", "value": "race_[0].alive differs at rt = 1.8667 s, inside the scored window. Filed as a measurement confound, not a physics move. [UNCERTAIN].", "kind": "text" },
+        { "label": "D2 status", "value": "PARKED, not closed, re-openable. Residuals filed as DEFERRED D-11071.", "kind": "text" }
       ]
     },
     {
       "heading": "Trackers",
       "fields": [
+        { "label": "Amended 2026-10-03", "value": "U-9185 — carries the remainder of (b); three named holes and a new cheapest-next-step", "kind": "text" },
         { "label": "Resolved 2026-10-02 (offline)", "value": "U-9183, U-9182", "kind": "text" },
-        { "label": "Filed 2026-10-02 (offline)", "value": "U-9185 — carries the remainder of (b)", "kind": "text" },
         { "label": "C-levels moved", "value": 0, "kind": "number" },
-        { "label": "hooks.csv", "value": "untouched; 0x00443440 stays C2 — position-matched agreement on committed captures is not the C3 gate (no build, no RH_ScopedInstall, no Frida diff)", "kind": "text" },
+        { "label": "hooks.csv", "value": "untouched", "kind": "text" },
         { "label": "Open D3", "value": "criterion (b), U-9185 (+ U-9184 as filed)", "kind": "text" },
         { "label": "Open D2 (parked)", "value": "U-9180, U-9181", "kind": "text" }
       ]
