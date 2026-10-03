@@ -1456,6 +1456,95 @@ function boostProbeArm(recBaseHex, limit){
 function boostProbeDrain(){ const r = BP.rows; BP.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
+// --- ALIVE / ELIMINATION probe (D3 STEP 1, 2026-10-03) ---------------------
+// The port eliminates the PLAYER at rt = 1.8667 s on the (b)/(e) recipe
+// (verify/d3_noboost_20261003/RESULT.md, D2 WATCH row). Nothing in the repo
+// records what the ORIGINAL does in the same scenario, and the --statediff-aistep
+// stream structurally cannot carry it (it hooks FUN_00416250, which the original
+// never calls for slot 0). So take it live, in the SAME run as the aistep capture
+// so the two streams join on `frame`.
+//
+// Three ENTRY hooks only (memory frida-interceptor-is-entry-only); ~360 calls/s
+// at 4 cars, well under the 1000/s ceiling in CLAUDE.md:
+//   0x00410d10  FUN_00410d10  SegmentCheck   -- the race-rule update, 1/frame
+//   0x00418560  FUN_00418560  AiVehicleStep  -- 1 per STEPPED slot (<= 4/frame)
+//   0x00418860  FUN_00418860  AiTickLoop     -- 1 per AI tick
+// alive[i] is read where FUN_0046c7b0 reads it: *(i32*)(0x008815a4 + i*0xd04).
+// hooks_registry 'vehicle_slot_getter' records `DAT_008815a4[idx*0x341]` and
+// 0x341*4 == 0xd04; re/frida/camera_probe.py:128-137 reads the same address.
+// KA-1 validates that read against the function itself every sample.
+const AL_REC   = 0x008815a0;   // vehicle record base; +0x04 is the slot-alive word
+const AL_SEG   = 0x00410d10;
+const AL_VSTEP = 0x00418560;
+const AL_TICK  = 0x00418860;
+const AL_ZOOM  = 0x00898980;   // FUN_00442df0's backing float; 0x00410d10 cmp vs 10.0
+const AL_PCT   = 0x008a96ec;   // + i*0x30c, the progress % EliminationCheck reads
+const AL = { armed:false, rows:[], ev:[], err:null, vstep:[0,0,0,0], tick:0,
+             seq:0, last:null, ka1n:0, ka1ok:0, ka1bad:null };
+let AL_FN = null;
+function alAlive(i){ return ptr(AL_REC + i*0xd04 + 4).readS32(); }
+function aliveProbeArm(){
+  if (AL.armed) return 'already armed';
+  try {
+    AL_FN = new NativeFunction(ga(0x0046c7b0), 'int', ['int'], 'mscdecl');
+    Interceptor.attach(ga(AL_VSTEP), { onEnter(){
+      try { const v = this.context.esp.add(4).readS32();
+            if (v >= 0 && v < 4) AL.vstep[v]++; }
+      catch(e){ if (!AL.err) AL.err = 'vstep ' + e; } } });
+    Interceptor.attach(ga(AL_TICK), { onEnter(){ AL.tick++; } });
+    Interceptor.attach(ga(AL_SEG), {
+      onEnter(){
+        try {
+          this.alIn = [alAlive(0), alAlive(1), alAlive(2), alAlive(3)];
+          // KA-1, every sample for the first 200 calls: the direct read must equal
+          // what FUN_0046c7b0 itself returns. This is the probe's liveness control
+          // (memory absent-log-proves-nothing-run-a-control): an all-ones vector
+          // means "nobody died" ONLY if this passes.
+          if (AL.ka1n < 200) {
+            AL.ka1n++;
+            let ok = true;
+            for (let i = 0; i < 4; i++) if (AL_FN(i) !== this.alIn[i]) ok = false;
+            if (ok) AL.ka1ok++;
+            else if (AL.ka1bad === null)
+              AL.ka1bad = [AL.seq, this.alIn[0], this.alIn[1], this.alIn[2], this.alIn[3],
+                           AL_FN(0), AL_FN(1), AL_FN(2), AL_FN(3)];
+          }
+        } catch(e){ if (!AL.err) AL.err = 'segEnter ' + e; this.alIn = null; }
+      },
+      onLeave(ret){
+        if (!this.alIn) return;
+        try {
+          const o = [alAlive(0), alAlive(1), alAlive(2), alAlive(3)];
+          const clk = ga(0x007f0ff4).readS32();
+          const row = [AL.seq++, SD.frames, AL.tick, clk,
+                       ga(0x0063ba8c).readS32(), ga(0x007f0fd0).readS32(),
+                       ga(0x008a94d0).readS32(), ga(AL_ZOOM).readFloat(),
+                       ret.toInt32(),
+                       this.alIn[0], this.alIn[1], this.alIn[2], this.alIn[3],
+                       o[0], o[1], o[2], o[3],
+                       AL.vstep[0], AL.vstep[1], AL.vstep[2], AL.vstep[3]];
+          for (let i = 0; i < 4; i++) row.push(ga(AL_PCT).add(i*0x30c).readFloat());
+          AL.rows.push(row);
+          // event list: every change of the alive vector, entry-side or across the call
+          const key = o.join('/');
+          if (AL.last !== key) {
+            if (AL.ev.length < 200)
+              AL.ev.push([AL.seq - 1, SD.frames, AL.tick, clk, AL.last, key,
+                          this.alIn.join('/'), ret.toInt32(),
+                          AL.vstep[0], AL.vstep[1], AL.vstep[2], AL.vstep[3]]);
+            AL.last = key;
+          }
+        } catch(e){ if (!AL.err) AL.err = 'segLeave ' + e; }
+      }
+    });
+    AL.armed = true;
+    return 'alive-probe armed (0x00410d10 + 0x00418560 + 0x00418860, rec 0x'
+         + AL_REC.toString(16) + ')';
+  } catch(e){ return 'ERR ' + e; }
+}
+function aliveProbeDrain(){ const r = AL.rows; AL.rows = []; return r; }
+// ---------------------------------------------------------------------------
+
 // --- POWERUP DISPATCHER capture (D3 WS-D, 2026-09-26) ----------------------
 // Ground truth for the power-up DECISION logic, taken around the per-frame
 // dispatcher FUN_0045bba0 (sole caller 0x0040fcd0). Byte-level facts this block
@@ -2184,6 +2273,12 @@ rpc.exports = {
   boostProbeStats: function(){ return JSON.stringify({armed:BP.armed, rel:BP.nRel, chg:BP.nChg,
                                                       pending:BP.rows.length, limit:BP.limit,
                                                       detached:BP.detached, err:BP.err}); },
+  aliveProbeArm: function(){ return aliveProbeArm(); },
+  aliveProbeDrain: function(){ return aliveProbeDrain(); },
+  aliveProbeStats: function(){ return JSON.stringify({armed:AL.armed, seg:AL.seq, tick:AL.tick,
+                                                      vstep:AL.vstep, pending:AL.rows.length,
+                                                      events:AL.ev, ka1n:AL.ka1n, ka1ok:AL.ka1ok,
+                                                      ka1bad:AL.ka1bad, err:AL.err}); },
   magProbeStats: function(){ return JSON.stringify({armed:MP.armed, calls:MP.n, other:MP.other,
                                                     pending:MP.rows.length, limit:MP.limit,
                                                     detached:MP.detached, err:MP.err}); },
@@ -2692,6 +2787,13 @@ def main():
     ap.add_argument("--boost-probe-limit", type=int, default=20000,
                     help="hard row limit for --boost-probe; auto-detaches at the limit "
                          "(a run that hits it is VOID, not a result).")
+    ap.add_argument("--alive-probe", action="store_true",
+                    help="[D3 2026-10-03] per-race-update ALIVE / ELIMINATION record on the "
+                         "ORIGINAL. Entry hooks on FUN_00410d10 (SegmentCheck), FUN_00418560 "
+                         "(AiVehicleStep, per-slot tally) and FUN_00418860 (AiTickLoop). "
+                         "Writes <out>.alive.csv and prints the alive-vector change events "
+                         "plus KA-1 (the direct read of 0x008815a4 + i*0xd04 against "
+                         "FUN_0046c7b0 itself). Requires --statediff-out.")
     ap.add_argument("--mag-probe-limit", type=int, default=20000,
                     help="[U-9156] hard row cap; the hook DETACHES itself on reaching it, so "
                          "hot-path exposure is bounded. 0 = no cap (not recommended).")
@@ -2853,6 +2955,8 @@ def main():
             if args.boost_probe:
                 print("  [statediff]", E.boost_probe_arm("0x008815a0",
                                                           args.boost_probe_limit))
+            if args.alive_probe:
+                print("  [statediff]", E.alive_probe_arm())
             if args.statediff_puhook:
                 print("  [statediff]", E.pu_arm(args.pu_plan, args.pu_subj, args.pu_warm,
                                                  args.pu_box))
@@ -3269,6 +3373,39 @@ def main():
                         print(f"  [statediff] boost-probe RELEASE tick={r[3]} car={r[4]} "
                               f"bf4 {r[5]}->{r[9]}  bf8 {r[6]}->{r[10]}  "
                               f"state {r[7]}->{r[11]}  accel {r[8]}->{r[12]}")
+                if args.alive_probe:
+                    # Counters and KA-1 BEFORE the rows; CSV written even when empty
+                    # (memory `absent-log-proves-nothing-run-a-control`).
+                    import json
+                    _al = None
+                    try:
+                        _al = json.loads(E.alive_probe_stats())
+                        print("  [statediff] alive-probe agent:", json.dumps(
+                            {k: v for k, v in _al.items() if k != "events"}))
+                    except Exception as _e:
+                        print("  [statediff] alive-probe stats failed:", _e)
+                    al_rows = []
+                    try: al_rows = E.alive_probe_drain()
+                    except Exception as _e: print("  [statediff] alive-probe drain failed:", _e)
+                    alp = outp.with_suffix(outp.suffix + ".alive.csv")
+                    with open(alp, "w", newline="") as f:
+                        f.write("seq,frame,tick,clk_0ff4,substate,rule,participants,zoom,ret,"
+                                "a0_in,a1_in,a2_in,a3_in,a0_out,a1_out,a2_out,a3_out,"
+                                "vstep0,vstep1,vstep2,vstep3,"
+                                "pct0,pct1,pct2,pct3" + chr(10))
+                        for r in al_rows:
+                            f.write(",".join(repr(x) if isinstance(x, float) else str(x)
+                                             for x in r) + chr(10))
+                    print(f"  [statediff] alive-probe {len(al_rows)} rows -> {alp}")
+                    if _al:
+                        print(f"  [statediff] alive-probe KA-1 (direct read vs FUN_0046c7b0): "
+                              f"{_al.get('ka1ok')}/{_al.get('ka1n')} bad={_al.get('ka1bad')}")
+                        print(f"  [statediff] alive-probe VehicleStep per slot "
+                              f"(FUN_00418560): {_al.get('vstep')}  ticks={_al.get('tick')}")
+                        for _e2 in (_al.get("events") or []):
+                            print(f"  [statediff] alive-probe EVENT seq={_e2[0]} frame={_e2[1]} "
+                                  f"tick={_e2[2]} clk={_e2[3]} {_e2[4]} -> {_e2[5]} "
+                                  f"(enter {_e2[6]}, ret {_e2[7]}, vstep {_e2[8:12]})")
                 if args.statediff_aistep:
                     try: print("  [statediff] aistep agent:", E.ai_step_stats())
                     except Exception: pass
