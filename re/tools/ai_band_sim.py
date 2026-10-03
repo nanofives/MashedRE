@@ -69,7 +69,15 @@ def decode(rows, i):
     if dc == 0.0 and d8 != 0.0: return ("hi", d8, pd8)
     return None
 
-def simulate(rows, i0, speeds, n=N_DEFAULT, errseq=None, mode=0):
+def simulate(rows, i0, speeds, n=N_DEFAULT, errseq=None, mode=0,
+             modeseq=None, curvseq=None):
+    """modeseq — [D3 STEP 2 / G2-SIM] per-call committed behaviour mode
+    (DAT_0089a52c + v*0x74, written 0x00416590), replacing the scalar `mode`.
+    The shipping exe pins it to 0 at AiStandalone.cpp:844, so the `mode == 0`
+    conjunct of the 0x0041665c curvature multiplier is always true there.
+    curvseq — [D3 STEP 2, arm added after G2-STEER, see RESULT_STEP2.md] per-call
+    `curv`, the multiplier's other input. Declared as an addition to the
+    pre-registration; it changes no decision rule."""
     dirst = 0; lastf = 0; stored = 0; prev_b0c = None
     out = []
     for j in range(n):
@@ -80,6 +88,10 @@ def simulate(rows, i0, speeds, n=N_DEFAULT, errseq=None, mode=0):
         if errseq is not None and errseq[j] is not None:
             br, err, h = errseq[j]
         curv = float(rows[i]["curv"]); speed = speeds[j]
+        if curvseq is not None and curvseq[j] is not None:
+            curv = curvseq[j]
+        if modeseq is not None:
+            mode = modeseq[j]
         frame = int(rows[i]["clk_0ff4"]); rate0 = float(rows[i]["rec_b0c"])
         c0 = 0; c1 = 0; X = 0.0
         if br == "lo":
@@ -228,10 +240,23 @@ def main(argv):
         if oerr_src:
             orows,oi0=car_rows(oerr_src,v)
             if oi0 is not None: oerr=[decode(orows,oi0+j) for j in range(n)]
-        variants=[("own speed, own err",own,None),("ORIG speed, own err",otr[v],None)]
-        if oerr: variants += [("own speed, ORIG err",own,oerr),("ORIG speed, ORIG err",otr[v],oerr)]
-        for lbl,spv,ev in variants:
-            b=bands(simulate(rows,i0,spv,n,errseq=ev)); f=score(b)
+        # [D3 STEP 2 / G2-SIM] the ORIGINAL's own per-call committed mode and curv,
+        # taken from the same window index. oerr_src is the original capture.
+        omode = ocurv = None
+        if oerr_src:
+            orows,oi0=car_rows(oerr_src,v)
+            if oi0 is not None:
+                omode=[int(orows[oi0+j]["ai_mode"]) for j in range(n)]
+                ocurv=[float(orows[oi0+j]["curv"]) for j in range(n)]
+        variants=[("own speed, own err",own,None,None,None),
+                  ("ORIG speed, own err",otr[v],None,None,None)]
+        if oerr: variants += [("own speed, ORIG err",own,oerr,None,None),
+                              ("ORIG speed, ORIG err",otr[v],oerr,None,None)]
+        if omode: variants += [("G2-SIM ORIG modeseq",own,None,omode,None)]
+        if ocurv: variants += [("ADDED ORIG curvseq",own,None,None,ocurv),
+                               ("ADDED ORIG mode+curv",own,None,omode,ocurv)]
+        for lbl,spv,ev,mv,cv in variants:
+            b=bands(simulate(rows,i0,spv,n,errseq=ev,modeseq=mv,curvseq=cv)); f=score(b)
             cf.setdefault(v,{})[lbl]={"bands":b,"fails":f}
             P("  car %d [%-21s] c0D=%3d c1D=%3d stD=%3d |st|Med=%5s -> %s" % (
                 v,lbl,b["c0_distinct"],b["c1_distinct"],b["steer_distinct"],
