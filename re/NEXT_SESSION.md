@@ -1,5 +1,60 @@
 # Next session kickoff
 
+> ## UPDATE 2026-10-03 (D3 LEADER-WITNESS session, commits `3988dbf0` .. `27041abb`): **item 1 below was tested BEFORE being built, and it is INERT. The wiring was NOT performed, and its recorded scope was wrong. START HERE.**
+>
+> **No C-level moved, no band moved, no game code and no `.rsp` was edited.** New rows:
+> **U-9187**. Read
+> [`verify/d3_leader_20261003/RESULT_WITNESS.md`](../verify/d3_leader_20261003/RESULT_WITNESS.md);
+> the pre-registration `PREREG_WITNESS.md` was committed **unrun** at `3988dbf0`.
+>
+> - **W-GATE = INERT.** Adding `AiLeaderTimer.cpp` / `AiTargeting.cpp` / `AiLineOfSight.cpp`
+>   to `exe_sources.rsp` would be **both unsafe and inert**. **UNSAFE:** the body calls
+>   `0x0040e470` (`:94`,`:104`), `0x00442cc0` (`:101`,`:106`) and `0x0046d4a0` (`:109`), all
+>   inside `0x00400000..0x004fffff`, which `Compat/StandaloneRvaThunks.h:7` records as
+>   **entirely unmapped** in the standalone and `MenuButtonDetect.cpp:71` records as an AV;
+>   no thunk covers them. **INERT:** even thunked, the limit table `0x005f2dd8` reads
+>   **0 of 64 non-zero** on the port against **14 of 64** on the original, so `:99`'s
+>   `limit (0) <= RankAt (0)` returns 0 **before `Prog` is read at `:101`**.
+> - **Root cause, and it generalises:** `exe_main.cpp:56` VirtualAlloc-maps
+>   `0x00500000..0x009fffff` **BLANK**. So in `mashed_re.exe` every **runtime-written**
+>   global is populated and **every initialised-image value reads zero**. Expect this for
+>   any future port that reads a `_DAT_005*` table or constant.
+> - **Measured both sides.** `Prog[0..3]` is **0.0 on all four slots in all 1089 port
+>   samples** against non-zero on **464 / 125 / 486 / 461 of 512** original calls;
+>   `TimerAt` **0** vs a live **0..1250 stepping by 50**; thresholds **0.0 ×4** vs
+>   **6.5 / 5.5 / 6.0 / 4.0**. W-BASE passed every leg, so "all zeros" is a finding and not
+>   a bad base.
+> - **THE RECORDED SCOPE WAS WRONG.** "NO new reversing is needed" misses
+>   **`FUN_00442a60`** (`0x00442a60`, `Spectator::ComputeDistances`), the producer of
+>   `0x008989b0`, which is **C2 `new` with no body anywhere**. `AiStandalone.cpp:707` had
+>   already named it unported.
+>
+> ### START HERE — the corrected order for the 64-call branch (U-9187)
+>
+> 1. **Port `FUN_00442a60` first.** Without the `0x008989b0` producer every other item stays
+>    inert, and it is the **only** one needing new reversing.
+> 2. Give `0x0040e470`, `0x00442cc0`, `0x0046d4a0` exe-side bodies (all three are **C3
+>    `impl`** with an **empty `exe_file`** — no reversing, just a home the exe links).
+> 3. **Do not re-measure these two — they are resolved in U-9187.** Limit table: only index
+>    **10** is ever used and its value is **1** (head of 64
+>    `[2,1,1,0,0,1,1,0,0,0,1,0,0,0,0,0]`). Thresholds: **6.5 / 5.5 / 6.0 / 4.0**.
+> 4. Then settle the two upstream disagreements that survive all of the above, because they
+>    decide whether the 64 calls are **reproduced** or merely made **reachable**:
+>    `idx364` (**-1** orig vs **0** port) and `bias374` (**0** vs **{0,1,2,3}**).
+> 5. Check call-by-call against the committed `o_t1`/`o_t2`/`o_t3`, which carry the exact 64.
+>
+> **Do not seed a global to make the arm fire** —
+> `verify/d3_modes37_20261002/RESULT_STEP2.md`: *"seeding the globals would not be a port."*
+>
+> New read-only tooling: `re/tools/sa_leaderwatch.py` (`ReadProcessMemory`, no injection)
+> and `scenario_launch.py --leader-probe` (**one entry hook** on `0x004148b0`, with a
+> threshold known-answer check).
+>
+> Items **2, 3 and 4** of the previous START-HERE block below are **unchanged and still
+> open**.
+
+The block below is the PREVIOUS session's headline, left as history.
+
 Updated 2026-10-03 at the close of the **D3 start-boost A/B** session.
 Branch `race/first-frame-parity`. Nothing is pushed. **No game code was edited this
 session**; the only code changes are analysis tools.
