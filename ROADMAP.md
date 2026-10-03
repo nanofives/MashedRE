@@ -568,6 +568,31 @@ reviewer real time for no new information.
 renderer, AND D1's default-renderer question settled. Until both hold, an in-race
 opinion is an opinion about the scaffold, not about the port.
 
+### D2 — Default physics — **PARKED 2026-10-02 (user decision, Mariano). NOT closed, NOT abandoned — re-openable.**
+
+> **USER DECISION (Mariano, 2026-10-02): D2 is PARKED, not closed.** After re-close attempt 20
+> (`015537a2`), **2 of the 3 metrics pass** inside their unchanged `d81a8df6` bounds — slip
+> 1500-2000 **0.1943** (bound 0.18855..0.19635) and slip 2000-2600 **0.2524** (bound
+> 0.24488..0.25487). **Launch and recovery both PASS** (`L = 0` at 0.19 %; recovery H1
+> 398/400 = 99.5 %, median 1362.7 against the original's 398/400 and 1333.9). The third
+> metric, `driving-median`, reads **1852.66 / 1861.43 / 1854.65** against a lower bound of
+> **1904.70** — about **1.3 % under** — and its carrier is NOT identified. **The `d81a8df6`
+> bounds are UNCHANGED and were not moved to accommodate this.**
+>
+> **D2 stays re-openable.** Its residuals are filed as **`DEFERRED.md` D-11071**: U-9180 (the
+> 1.3 % gap), U-9181 (`+0x4a4` reads 0.67804 on the original and 692.302 on the port, and that
+> value is now the radius of `ContactProducer.cpp:67`'s admission test), `ProduceTerrainBatch`
+> as a **port-only stand-in** for the BSP walk `FUN_00538c80`, and the unported outer chunk
+> loop `0x00471143..0x00471151`.
+>
+> **RE-PICKUP CONDITION:** any later finding that touches `+0x4a4`, the contact collector /
+> `FUN_00538c80`, grip-clamp #6 (`0x004687f0..0x0046897b`), the substep/chunk loop
+> (`0x00470c70`), `ReassertContacts`, or player-car speed on Training. A session that finds
+> one reports it as a **“D2 REOPEN CANDIDATE”** row in its RESULT with evidence, and does
+> **not** change D2 code for it in that session.
+>
+> The REOPENED block below is left intact as history.
+
 ### D2 — Default physics — **REOPENED 2026-09-29** (user decision)
 
 > #### Re-close attempt 20 — 2026-10-02. **U-9179 RESOLVED, its producer FIXED, and the sink is GONE. `wcs_drift` fires 0 times (was 47), `0x0046f6c0`'s share of `T_post` is -0.00 % (was 84.33 %), `T_post` is INSIDE BOTH of attempt 18's bars for the first time in the re-open, recovery H1 PASSES BOTH LEGS (was FAIL), and 2 OF THE 3 D2 METRICS are inside their unchanged `d81a8df6` bounds — the 2000-2600 slip band scored at all for the first time. The transcribed integer substep loop was also ported, so the port runs 2 substeps per frame like the original. `driving-median` is still 1.3 % below its lower bound, so D2 does NOT close. New rows U-9180, U-9181. NO C-level moved.**
@@ -2109,6 +2134,17 @@ D2 prerequisite. Keep the trap: it is env-gated and is the cheapest way to re-de
 Closes v2's **R5**.
 
 ### D3 — Default AI, powerups, modes
+
+> **UNBLOCKED 2026-10-02 (user decision, Mariano).** D2 is **PARKED** (see §D2's PARKED
+> block), so the hold on this phase is lifted and the modes 3/7 port (`FUN_00414c30` +
+> `FUN_00484c70`) may start. The BLOCKED note below is left as history.
+>
+> **Carry-over that D3 must account for:** D2 attempt 20 (`015537a2`) changed **every car's**
+> contacts (`ContactProducer.cpp`'s admission test went plane-distance → spatial) and the
+> substep loop (now **2** substeps/frame, was 3). `ProduceTerrainBatch` is called per car at
+> `VehiclePhysicsRun.cpp:1007`, so **AI slots are in the blast radius and were never measured**
+> — every attempt-20 run was `participants=1`. D3 therefore **re-baselines (b) and (e)**
+> against the post-fix build before any port leg, with the bands UNCHANGED.
 
 > **BLOCKED 2026-09-29 (user decision): D2 is REOPENED and must close again before the modes
 > 3/7 port (`FUN_00414c30` + `FUN_00484c70`) starts.** See §D2's REOPENED block. Everything
