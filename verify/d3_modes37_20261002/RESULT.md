@@ -21,10 +21,8 @@ code changes are two read-only analysis tools.
 | 1 — result | `verify/d3_rebase_20261002/RESULT_STEP1.md` | `409cd086` |
 | 2 — pre-registration | `verify/d3_modes37_20261002/PREREG_STEP2.md` (unrun) | `a317d25c` |
 | 2 — result | `verify/d3_modes37_20261002/RESULT_STEP2.md` | `7815c882` |
-| 2B — dual-copy + collateral | `.../RESULT_STEP2B_DUALCOPY.md` | `d12a6fd6`¹ |
-| 3 — trackers, roadmap, handoff | this file | final |
-
-¹ hash as committed; see `git log`.
+| 2B — dual-copy + collateral | `.../RESULT_STEP2B_DUALCOPY.md` | `fff61ba7` |
+| 3 — trackers, roadmap, handoff | this file | `7c07c9c8` |
 
 ## STEP 0 — the two user decisions, recorded (`1cbd4678`)
 
