@@ -1,0 +1,33 @@
+{
+ "samples": 1089,
+ "tries": 1089,
+ "ok": 1089,
+ "W_BASE_frame_advanced": true,
+ "W_BASE_frame_range": [
+  0,
+  142150
+ ],
+ "W_BASE_nonzero_fields": [
+  "bias374",
+  "flt360",
+  "frame",
+  "framedt",
+  "mode368"
+ ],
+ "limittbl_nonzero_any": false,
+ "limittbl_head_last": [
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "prog_nonzero_any": false,
+ "thresholds_nonzero_any": false,
+ "aimode_seen": [
+  0
+ ]
+}

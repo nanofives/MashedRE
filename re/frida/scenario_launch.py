@@ -1592,6 +1592,70 @@ function aliveProbeArm(){
 function aliveProbeDrain(){ const r = AL.rows; AL.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
+// --- LEADER-TIMER input probe (D3, 2026-10-03) -----------------------------
+// verify/d3_leader_20261003/PREREG_WITNESS.md, leg W-DATA, ORIGINAL side.
+// Question: when FUN_004148b0 actually runs on the ORIGINAL, what are the values
+// of the globals `Ai/AiLeaderTimer.cpp`'s LeaderTimer reads? The port side of the
+// same question is measured without Frida by re/tools/sa_leaderwatch.py.
+//
+// ONE ENTRY HOOK (memory frida-interceptor-is-entry-only). FUN_004148b0 is called
+// once per mode-0 AI call -- ~180/s at 3 AI cars, far under the 1000/s ceiling,
+// and the elimination session already ran this exact hook safely as o_t3's fifth.
+// Nothing is written and no return value is touched, so the probe cannot perturb
+// the arm it is measuring.
+//
+// Addresses, each cited to the line of Ai/AiLeaderTimer.cpp that reads it:
+const LP_MODE368 = 0x0089a368;  // :91   mode gate (== 2 -> return 0)
+const LP_FLT360  = 0x0089a360;  // :92   float, __ftol'd -> iVar1
+const LP_IDX364  = 0x0089a364;  // :93   idx364
+const LP_BIAS374 = 0x0089a374;  // :98   table bias
+const LP_LIMITTB = 0x005f2dd8;  // :98   int limit table          [INITIALISED .data]
+const LP_RANK    = 0x0089a4c4;  // :99   RankAt  = base + v*0x74
+const LP_TIMER   = 0x0089a4c8;  // :108  TimerAt = base + v*0x74
+const LP_PROG    = 0x008989b0;  // :101/:106 via FUN_00442cc0, stride 4
+const LP_FRAMEDT = 0x007f1008;  // :108  frame delta
+const LP_THR_A8  = 0x005cd0a8;  // :107                           [INITIALISED .rdata]
+const LP_THR_A4  = 0x005cd0a4;  // :116                           [INITIALISED .rdata]
+const LP_THR_A0  = 0x005cd0a0;  // :118                           [INITIALISED .rdata]
+const LP_THR_35C = 0x005cc35c;  // :119  (4.0)                    [INITIALISED .rdata]
+const LP_FN      = 0x004148b0;  // FUN_004148b0 itself
+const LP = { armed:false, rows:[], err:null, n:0, limit:20000, ka:null };
+function leaderProbeArm(limit){
+  if (LP.armed) return 'already armed';
+  try {
+    LP.limit = limit || 20000;
+    // KA: the four thresholds are initialised .rdata, so their values are fixed in
+    // the image and knowable before the run. AiLeaderTimer.cpp:61 states
+    // _DAT_005cc35c == 4.0. Record all four once at arm time; the RESULT checks
+    // them against the file image read independently with the PE section table.
+    LP.ka = [ptr(LP_THR_A8).readFloat(), ptr(LP_THR_A4).readFloat(),
+             ptr(LP_THR_A0).readFloat(), ptr(LP_THR_35C).readFloat()];
+    Interceptor.attach(ga(LP_FN), { onEnter(args){
+      try {
+        if (LP.rows.length >= LP.limit) return;
+        LP.n++;
+        const v = args[3].toInt32();                 // param_4 = vehicle index
+        const row = [LP.n, ga(0x007f0ff4).readS32(), v,
+                     ga(LP_MODE368).readS32(), ga(LP_FLT360).readFloat(),
+                     ga(LP_IDX364).readS32(), ga(LP_BIAS374).readS32(),
+                     ga(LP_FRAMEDT).readS32(),
+                     ga(LP_RANK).add(v*0x74).readS32(),
+                     ga(LP_TIMER).add(v*0x74).readS32()];
+        for (let i = 0; i < 4; i++) row.push(ga(LP_PROG).add(i*4).readFloat());
+        // the limit table entry this call will actually index, plus a nonzero count
+        let nz = 0; for (let i = 0; i < 64; i++) if (ga(LP_LIMITTB).add(i*4).readS32() !== 0) nz++;
+        row.push(nz);
+        LP.rows.push(row);
+      } catch(e){ if (!LP.err) LP.err = 'lpEnter ' + e; }
+    }});
+    LP.armed = true;
+    return 'leader-probe armed (entry-only 0x' + LP_FN.toString(16)
+         + ', thresholds a8/a4/a0/35c = ' + LP.ka.join('/') + ')';
+  } catch(e){ return 'ERR ' + e; }
+}
+function leaderProbeDrain(){ const r = LP.rows; LP.rows = []; return r; }
+// ---------------------------------------------------------------------------
+
 // --- POWERUP DISPATCHER capture (D3 WS-D, 2026-09-26) ----------------------
 // Ground truth for the power-up DECISION logic, taken around the per-frame
 // dispatcher FUN_0045bba0 (sole caller 0x0040fcd0). Byte-level facts this block
@@ -2322,6 +2386,11 @@ rpc.exports = {
                                                       detached:BP.detached, err:BP.err}); },
   aliveProbeArm: function(){ return aliveProbeArm(); },
   aliveProbeDrain: function(){ return aliveProbeDrain(); },
+  leaderProbeArm: function(l){ return leaderProbeArm(l); },
+  leaderProbeDrain: function(){ return leaderProbeDrain(); },
+  leaderProbeStats: function(){ return JSON.stringify({armed:LP.armed, calls:LP.n,
+                                                       pending:LP.rows.length,
+                                                       ka:LP.ka, err:LP.err}); },
   aliveProbeStats: function(){ return JSON.stringify({armed:AL.armed, seg:AL.seq, tick:AL.tick,
                                                       vstep:AL.vstep, pending:AL.rows.length,
                                                       events:AL.ev, ka1n:AL.ka1n, ka1ok:AL.ka1ok,
@@ -2842,6 +2911,16 @@ def main():
                          "Writes <out>.alive.csv and prints the alive-vector change events "
                          "plus KA-1 (the direct read of 0x008815a4 + i*0xd04 against "
                          "FUN_0046c7b0 itself). Requires --statediff-out.")
+    ap.add_argument("--leader-probe", action="store_true",
+                    help="[D3 2026-10-03] ONE ENTRY HOOK on FUN_004148b0 that logs every "
+                         "global Ai/AiLeaderTimer.cpp's LeaderTimer reads, so the "
+                         "'would wiring it into mashed_re.exe be inert?' question is "
+                         "answered from the ORIGINAL's own values. Reads nothing back and "
+                         "writes nothing, so it cannot perturb the arm it measures. "
+                         "Pre-registration verify/d3_leader_20261003/PREREG_WITNESS.md. "
+                         "Writes <out>.leaderprobe.csv. Requires --statediff-out.")
+    ap.add_argument("--leader-probe-limit", type=int, default=20000,
+                    help="hard row limit for --leader-probe; a run that hits it is VOID.")
     ap.add_argument("--mag-probe-limit", type=int, default=20000,
                     help="[U-9156] hard row cap; the hook DETACHES itself on reaching it, so "
                          "hot-path exposure is bounded. 0 = no cap (not recommended).")
@@ -3005,6 +3084,8 @@ def main():
                                                           args.boost_probe_limit))
             if args.alive_probe:
                 print("  [statediff]", E.alive_probe_arm())
+            if args.leader_probe:
+                print("  [statediff]", E.leader_probe_arm(args.leader_probe_limit))
             if args.statediff_puhook:
                 print("  [statediff]", E.pu_arm(args.pu_plan, args.pu_subj, args.pu_warm,
                                                  args.pu_box))
@@ -3454,6 +3535,30 @@ def main():
                             print(f"  [statediff] alive-probe EVENT seq={_e2[0]} frame={_e2[1]} "
                                   f"tick={_e2[2]} clk={_e2[3]} {_e2[4]} -> {_e2[5]} "
                                   f"(enter {_e2[6]}, ret {_e2[7]}, vstep {_e2[8:12]})")
+                if args.leader_probe:
+                    import json
+                    _lp = None
+                    try:
+                        _lp = json.loads(E.leader_probe_stats())
+                        print("  [statediff] leader-probe agent:", json.dumps(_lp))
+                    except Exception as _e:
+                        print("  [statediff] leader-probe stats failed:", _e)
+                    lp_rows = []
+                    try: lp_rows = E.leader_probe_drain()
+                    except Exception as _e: print("  [statediff] leader-probe drain failed:", _e)
+                    lpp = outp.with_suffix(outp.suffix + ".leaderprobe.csv")
+                    with open(lpp, "w", newline="") as f:
+                        f.write("n,clk_0ff4,v,mode368,flt360,idx364,bias374,framedt,"
+                                "rank,timer,prog0,prog1,prog2,prog3,"
+                                "limittbl_nonzero_of64" + chr(10))
+                        for r in lp_rows:
+                            f.write(",".join(repr(x) if isinstance(x, float) else str(x)
+                                             for x in r) + chr(10))
+                    print(f"  [statediff] leader-probe {len(lp_rows)} rows -> {lpp}")
+                    if _lp:
+                        print(f"  [statediff] leader-probe KA thresholds "
+                              f"a8/a4/a0/35c = {_lp.get('ka')}  (AiLeaderTimer.cpp:61 "
+                              f"states _DAT_005cc35c == 4.0)")
                 if args.statediff_aistep:
                     try: print("  [statediff] aistep agent:", E.ai_step_stats())
                     except Exception: pass
