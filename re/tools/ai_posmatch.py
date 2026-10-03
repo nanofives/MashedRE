@@ -294,11 +294,139 @@ def part_b(orig, port, car=1):
     return out
 
 
+# ===========================================================================
+# COLLATERAL -- DESCRIPTIVE ONLY. Added 2026-10-02 AFTER part_a/part_b produced
+# their verdicts, and declared as such in the RESULT. It carries NO pass/fail rule,
+# changes no constant and no gate, and part_a/part_b are untouched by construction.
+# Answers only "which fields differ at matched position beyond the two targets".
+# ===========================================================================
+SIGNED_ERR_NOTE = "signed err = hist_dc (LO band) or hist_d8-360 (HI band), degrees"
+
+NUMERIC_FIELDS = ["curv", "rec_9e4", "rec_b0c", "look_x", "look_z", "diff_a360"]
+INT_FIELDS = ["c0", "c1", "c3", "c4", "c5", "c7", "ai_mode", "ai_spline_idx",
+              "ai_type", "ai_override", "flag_a368", "tgt_7ffc", "substate",
+              "march_n", "march_idx0"]
+
+
+def signed_err(r):
+    band, err = classify(r)
+    if band == "LO":
+        return err
+    if band == "HI":
+        return err - WRAP
+    return None
+
+
+def collateral(orig, port, radius=R_MATCH):
+    out = {"R": radius, "note": SIGNED_ERR_NOTE, "cars": {}}
+    for v in (1, 2, 3):
+        pw, _ = window(port, v)
+        cand = defaultdict(list)
+        for r in orig:
+            if int(r["v"]) == v and r["own_x"] != "":
+                cand[r["ai_spline_idx"]].append(r)
+        pairs = []
+        for pr in pw:
+            if pr["own_x"] == "":
+                continue
+            px, pz = _f(pr, "own_x"), _f(pr, "own_z")
+            best, bd = None, 1e9
+            for orow in cand.get(pr["ai_spline_idx"], ()):
+                dd = math.hypot(_f(orow, "own_x") - px, _f(orow, "own_z") - pz)
+                if dd < bd:
+                    bd, best = dd, orow
+            if best is not None and bd <= radius:
+                pairs.append((pr, best))
+        f = {}
+        for k in NUMERIC_FIELDS:
+            d = [abs(_f(p, k) - _f(o, k)) for p, o in pairs
+                 if p[k] != "" and o[k] != ""]
+            if d:
+                d.sort()
+                f[k] = {"n": len(d), "median": round(statistics.median(d), 4),
+                        "p90": round(d[int(0.9 * (len(d) - 1))], 4),
+                        "max": round(d[-1], 4)}
+        for k in INT_FIELDS:
+            n = sum(1 for p, o in pairs if p[k] != "" and o[k] != "")
+            neq = sum(1 for p, o in pairs
+                      if p[k] != "" and o[k] != "" and int(p[k]) != int(o[k]))
+            f[k] = {"n": n, "differ": neq,
+                    "frac": round(neq / n, 4) if n else None}
+        se = [(signed_err(p), signed_err(o)) for p, o in pairs]
+        se = [(a, b) for a, b in se if a is not None and b is not None]
+        if se:
+            d = sorted(abs(a - b) for a, b in se)
+            f["signed_err"] = {
+                "n": len(se), "median_abs_diff": round(statistics.median(d), 4),
+                "p90": round(d[int(0.9 * (len(d) - 1))], 4), "max": round(d[-1], 4),
+                "port_median": round(statistics.median(a for a, _ in se), 4),
+                "orig_median": round(statistics.median(b for _, b in se), 4),
+                "sign_disagree": sum((a < 0) != (b < 0) for a, b in se)}
+        out["cars"][v] = {"n_matched": len(pairs), "fields": f,
+                          "err_decomposition": _decompose(pairs)}
+    return out
+
+
+# --- err decomposition (descriptive, same post-hoc collateral leg) ----------
+# SteerAngleErrorFwd (FUN_00415e20 @0x00416596, AiStandalone.cpp:858):
+#   err = angOf(target - own) - angOf(forward),  wrapped into (0, 360]
+# angOf is computable from the logged (own_x, own_z, look_x, look_z), so the
+# forward heading is recoverable as head = angOf(target-own) - err (mod 360).
+# That splits the matched-position err difference into a TARGET-DIRECTION part
+# and a BODY-HEADING part. The heading comes from rec+0x9d4/+0x9dc
+# (FUN_0046d510), i.e. from the ported vehicle physics, not from the AI.
+STEER_SCALE = 57.2957802      # _DAT_005cc970
+
+
+def _ang_of(x, z):
+    n = math.sqrt(x * x + z * z)
+    nx, nz = (x / n, z / n) if n > 0.0 else (x, z)
+    d = max(-1.0, min(1.0, nx))               # _DAT_005cd0d0 / _DAT_005cd0c8
+    a = math.acos(d) * STEER_SCALE            # FUN_004a3384 * 0x005cc970
+    if nz < 0.0:
+        a = -a
+    while a <= 0.0:
+        a += WRAP
+    return a
+
+
+def _wrap180(a):
+    while a > 180.0:
+        a -= WRAP
+    while a <= -180.0:
+        a += WRAP
+    return a
+
+
+def _decompose(pairs):
+    dt, dh, de = [], [], []
+    for p, o in pairs:
+        if "" in (p["look_x"], o["look_x"]):
+            continue
+        ep, eo = signed_err(p), signed_err(o)
+        if ep is None or eo is None:
+            continue
+        tp = _ang_of(_f(p, "look_x") - _f(p, "own_x"), -(_f(p, "look_z") - _f(p, "own_z")))
+        to = _ang_of(_f(o, "look_x") - _f(o, "own_x"), -(_f(o, "look_z") - _f(o, "own_z")))
+        hp, ho = tp - (ep % WRAP), to - (eo % WRAP)
+        dt.append(_wrap180(tp - to))
+        dh.append(_wrap180(hp - ho))
+        de.append(_wrap180(ep - eo))
+    if not dt:
+        return None
+    def s(x):
+        x = sorted(x)
+        return {"median": round(statistics.median(x), 4),
+                "median_abs": round(statistics.median([abs(y) for y in x]), 4),
+                "p90_abs": round(sorted(abs(y) for y in x)[int(0.9 * (len(x) - 1))], 4)}
+    return {"n": len(dt), "d_target_dir": s(dt), "d_body_heading": s(dh), "d_err": s(de)}
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--orig", required=True)
     ap.add_argument("--port", required=True)
-    ap.add_argument("--part", choices=["A", "B", "AB"], default="AB")
+    ap.add_argument("--part", choices=["A", "B", "AB", "COLL"], default="AB")
     ap.add_argument("--car", type=int, default=1)
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args(argv)
@@ -308,6 +436,8 @@ def main(argv=None):
         res["A"] = part_a(orig, port)
     if a.part in ("B", "AB"):
         res["B"] = part_b(orig, port, a.car)
+    if a.part == "COLL":
+        res["COLLATERAL"] = collateral(orig, port)
     print(json.dumps(res, indent=1))
 
 
