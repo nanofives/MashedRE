@@ -1,0 +1,73 @@
+{
+ "samples": 1622,
+ "g_records": "0x00c09b90",
+ "g_aib": "0x00c09460",
+ "slot0": {
+  "n": 933,
+  "dang_max_deg": 0.0,
+  "dang_median_deg": 0.0,
+  "dang_mean_deg": 0.0,
+  "jitter_max_units": 0.0,
+  "H_BASE_moved": true,
+  "H_BASE_speed_nonzero": true,
+  "speed_range": [
+   0.0,
+   0.6380385160446167
+  ],
+  "pos_range_x": [
+   0.0,
+   0.500918447971344
+  ]
+ },
+ "slot1": {
+  "n": 933,
+  "dang_max_deg": 2.5564057327035954,
+  "dang_median_deg": 0.5213882942512137,
+  "dang_mean_deg": 0.7411416930599735,
+  "jitter_max_units": 0.15892868165475732,
+  "H_BASE_moved": true,
+  "H_BASE_speed_nonzero": true,
+  "speed_range": [
+   0.0,
+   4476.9970703125
+  ],
+  "pos_range_x": [
+   -1.8141436576843262,
+   17.09416961669922
+  ]
+ },
+ "slot2": {
+  "n": 933,
+  "dang_max_deg": 176.6534754491183,
+  "dang_median_deg": 1.1430126640285254,
+  "dang_mean_deg": 24.825930049106862,
+  "jitter_max_units": 0.14156024910417378,
+  "H_BASE_moved": true,
+  "H_BASE_speed_nonzero": true,
+  "speed_range": [
+   0.0,
+   4476.41748046875
+  ],
+  "pos_range_x": [
+   -1.6777751445770264,
+   17.097164154052734
+  ]
+ },
+ "slot3": {
+  "n": 933,
+  "dang_max_deg": 2.556404709594502,
+  "dang_median_deg": 0.42996074069392853,
+  "dang_mean_deg": 0.6810001819939419,
+  "jitter_max_units": 0.19323695020347592,
+  "H_BASE_moved": true,
+  "H_BASE_speed_nonzero": true,
+  "speed_range": [
+   0.0,
+   4476.5830078125
+  ],
+  "pos_range_x": [
+   -1.68657648563385,
+   17.0930233001709
+  ]
+ }
+}
