@@ -1,6 +1,6 @@
 # Next session kickoff
 
-> ## UPDATE 2026-10-04 (D3 HEADING session, commits `ed2eba34` .. `e0a9a2b1`): **U-9185 item (b) is ANSWERED — the body-heading residual is a PORT-ONLY BRIDGE defect, not a physics one. START HERE.**
+> ## UPDATE 2026-10-04 (D3 HEADING session, commits `ed2eba34` .. `ef09fe40`): **U-9185 item (b) is ANSWERED — the body-heading residual is a PORT-ONLY BRIDGE defect, not a physics one. START HERE.**
 >
 > **No C-level moved, no band moved, no game code / `.rsp` / build.** New row: **U-9188**.
 > Read [`verify/d3_heading_20261004/RESULT_HEADING.md`](../verify/d3_heading_20261004/RESULT_HEADING.md);
