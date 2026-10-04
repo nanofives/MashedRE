@@ -1,5 +1,58 @@
 # Next session kickoff
 
+> ## UPDATE 2026-10-04 (D3 HEADING session, commits `ed2eba34` .. `e0a9a2b1`): **U-9185 item (b) is ANSWERED — the body-heading residual is a PORT-ONLY BRIDGE defect, not a physics one. START HERE.**
+>
+> **No C-level moved, no band moved, no game code / `.rsp` / build.** New row: **U-9188**.
+> Read [`verify/d3_heading_20261004/RESULT_HEADING.md`](../verify/d3_heading_20261004/RESULT_HEADING.md);
+> `PREREG_HEADING.md` was committed **unrun** at `ed2eba34`.
+>
+> - **The port carries TWO heading values per AI car and they disagree inside the same
+>   frame.** `g_aib.fwd[v]` (what `SteerAngleErrorFwd` reads) vs the record's
+>   `+0x9d4`/`+0x9dc` (the field the ORIGINAL's `FUN_0046d510` returns): median
+>   **0.5214 / 1.1430 / 0.4300** deg on cars 1/2/3, against a **same-instrument floor of
+>   exactly 0.0000 deg on the player at every lag**. Same band as U-9185's matched-position
+>   heading share (0.9796 / 0.9085 / 0.6506), and **car 2 is the largest on both**.
+> - **Car 2 is qualitatively different**, not just larger: **327 of 933** samples above
+>   10 deg and **16 above 90** (max 176.65), where cars 1 and 3 never exceed **2.5564** and
+>   share a near-identical hard cap with only 5 distinct values above 2.5 — a quantised
+>   rate limit.
+> - **Staleness is REFUTED** by an integer-lag fit: the minimum is at L=0 and never
+>   approaches the floor at any lag 0..4.
+> - **Mechanism.** `TrackRenderer.cpp:3334` sets `a.yaw = io.yaw` straight out of
+>   `VehiclePhysics_StepCar`, which wrote `+0x9d4`/`+0x9dc` from that **same** `io.yaw` — at
+>   that instant they **agree**. `a.yaw` is then rewritten by port-only scaffold code before
+>   `:3729` rebuilds the bridge value. `:3351` **resyncs** the record
+>   (`VehiclePhysics_ResetOrientation` at `:3355`); `:3283`, `:3393`, `:3423`, `:3717` do
+>   **not**. The disagreement **persists** rather than snapping back, so the firing writer
+>   is a non-resyncing one.
+> - **U-9185's limiter claim is HALF-CONFIRMED.** Correct for `:3683` (inside
+>   `AiOptionBStep`, reached at `:3313` only when `!phys`), but a **second copy exists at
+>   `:3423` inside `UpdateCar` itself**, in the gate-ribbon block.
+>
+> ### START HERE — cheap, and it is a count, not a port
+>
+> 1. **Add one default-OFF counter at each of `:3283` / `:3393` / `:3423` / `:3717`** and
+>    count per AI slot over the (b) window. No behaviour change. **Watch car 2 separately.**
+> 2. If **`:3423`** fires → stop the gate-ribbon limiter running on the ported path.
+>    If **`:3717`** fires → add the `VehiclePhysics_ResetOrientation` its sibling at `:3351`
+>    already does.
+> 3. Re-run `py -3.12 re/tools/sa_headwatch.py` after any fix. **The slot-0 floor of
+>    0.0000 is the acceptance target** and the tool prints it every run.
+> 4. Only then re-score (b) — and **do not assume closing this closes (b)**. The 2026-10-02
+>    counterfactual matrix had **no arm passing (b) on any car**.
+>
+> **Two self-corrections from this session, recorded so they are not repeated:** the
+> pre-registered prediction that the bridge/record pair agrees "by construction" was **wrong
+> by five orders of magnitude**, and the pre-registered `H-JITTER` gate was **ill-posed**
+> (position units against degrees) and was replaced by the player-slot floor. A third,
+> methodological: a lag fit that includes zero vectors silently agrees, because
+> `atan2(0,0) = 0` — filter first.
+>
+> **C1 (the physics basis) was NOT reached**, so there is **no D2 WATCH row** from this
+> session.
+
+The block below is the PREVIOUS session's headline, left as history.
+
 > ## UPDATE 2026-10-03 (D3 LEADER-WITNESS session, commits `3988dbf0` .. `27041abb`): **item 1 below was tested BEFORE being built, and it is INERT. The wiring was NOT performed, and its recorded scope was wrong. START HERE.**
 >
 > **No C-level moved, no band moved, no game code and no `.rsp` was edited.** New rows:
