@@ -1,6 +1,47 @@
 # Next session kickoff
 
-> ## UPDATE 2026-10-05 (D3 OMEGA session, commit `0af828b1`): **`+0x9c0` is NOT the yaw rate — proved at a known program point. The next step is STATIC: read what `FUN_0046e9e0` reads. START HERE.**
+> ## UPDATE 2026-10-05 (D3 RATEFIELD, commit `38450632`): **U-9193 RESOLVED — `+0x9c0` is the yaw TORQUE. The yaw rate is `+0x148`, and it was documented here since 2026-05-12. START HERE.**
+>
+> **No C-level moved, no band moved, no code changed, no game run, no D2 WATCH.** Read
+> [`verify/d3_omega_20261005/RESULT_RATEFIELD.md`](../verify/d3_omega_20261005/RESULT_RATEFIELD.md).
+>
+> - **`+0x9bc`/`+0x9c0`/`+0x9c4` is the TORQUE triple. `+0x144`/`+0x148`/`+0x14c` is the angular
+>   velocity.** Already stated in `re/analysis/vehicle_promote_c2/0046e9e0.md:27-28` (committed
+>   **2026-05-12**) and in `vehicle_dynamics/0046e9e0.md:30,49-51`. Confirmed by an independent static
+>   read of `FUN_0046e9e0`.
+> - **READ THE PLATE BEFORE BUILDING A PROBE.** Two of this session's legs (leg 3's `.msd` KA-1 and the
+>   Frida entry-hook probe) tested `+0x9c0` as a rate and were measuring the wrong field. One grep of
+>   `re/analysis/**/0046e9e0.md` would have prevented both.
+> - **It explains everything that looked strange:** `+0x9c0` tracks turning exactly but is not
+>   proportional to Δheading because a **torque is not a rate**; `+0x9bc`/`+0x9c4` being exactly 0.0 is
+>   the **pitch/roll torque** on flat ground — **U-9175's physics was right, only its label was wrong.**
+> - **U-9175's naming is corrected, scoped:** its label and mechanism are wrong; **all its numbers and
+>   its conclusion stand.** Same mislabel in `BodyOrientationIntegrate.cpp:63` (`kAngVel`) — owed a
+>   **comment-only** fix, because the port's **behaviour** is faithful (both omega arms, the `+0x144`
+>   accumulator with the right gate, the y-term omission).
+> - **For U-9191 this REMOVES a candidate, it does not supply one.** The port's rate construction is
+>   structurally faithful, so car 1's **0.9866 deg** divergence is **not** a wrong-input bug.
+>
+> ### START HERE — compare the accumulator, but establish the arm first
+>
+> 1. **Add `+0x144`/`+0x148`/`+0x14c` to the port's `AiStepDump`** (one more triple; the inert-knob
+>    pattern is proven twice over). The original's `.msd` **already carries them**, so **no new
+>    original-side run is needed**.
+> 2. **First establish which omega arm each side takes per frame** — `ESI[4]` (`+0x10`) `== 0` vs
+>    `!= 0`. `BodyOrientationIntegrate.cpp:30` already records this fork as unresolved. **Comparing the
+>    accumulator without knowing the arm would repeat exactly the error of comparing a torque to a
+>    rate.**
+> 3. **Then** answer U-9191: is car 1's 0.9866 deg **GENERATED** or **ACCUMULATED**?
+> 4. **Do not assume closing it closes (b).** The 2026-10-02 matrix had **no arm passing (b) on any
+>    car**.
+>
+> **Ghidra MCP was unreachable this session.** `re/tools/decomp_pc.py` is the sanctioned no-MCP path
+> (`-readOnly` against a pool clone, still Ghidra on the anchored binary). Constants were read from
+> `original/MASHED.exe.unpatched` bits-first, not from Ghidra's `_DAT_` rendering.
+
+The block below is the PREVIOUS session's headline, left as history.
+
+> ## UPDATE 2026-10-05 (D3 OMEGA session, commit `0af828b1`): **`+0x9c0` is NOT the yaw rate — proved at a known program point.** — the field it *is* was identified the same day, see above.
 >
 > **No C-level moved, no band moved, no port code changed, no D2 WATCH.** Read
 > [`verify/d3_omega_20261005/RESULT_OMEGA.md`](../verify/d3_omega_20261005/RESULT_OMEGA.md);
