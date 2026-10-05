@@ -1001,9 +1001,12 @@ const AX_A6B = 0x00468980;
 const AX_WHEEL_AXY = [0x224, 0x2e8, 0x3ac, 0x470];
 const AX_FWD_CONST = 0x00614708;   // DAT_00614708 = (0,0,1), A5's forward input
 const AX = { armed:false, rows:[], nA6a:0, nA6b:0, skipped:0, err:null,
-             chk:null, nFwdYnz:0, nAxYnz:0, nB18nzPre:0, nB18nzPost:0, nDrive:0 };
+             chk:null, nFwdYnz:0, nAxYnz:0, nB18nzPre:0, nB18nzPost:0, nDrive:0,
+             // [U-9193 2026-10-05] angular velocity at a KNOWN phase, plus KA-B, the
+             // A6b car-attribution check. PREREG verify/d3_omega_20261005/PREREG_OMEGA.md.
+             nWxNz:0, nWyNz:0, nWzNz:0, nDriveWyNz:0, nA6bEsiRec:0, recPtrs:null };
 let AX_REC = null, AX_SEQ = 0;
-function axSample(site){
+function axSample(site, esiPtr){
   try {
     const r = AX_REC;
     const row = [AX_SEQ++, site,
@@ -1012,8 +1015,28 @@ function axSample(site){
                  r.add(0x9e4).readFloat(), r.add(0x9e0).readFloat(),
                  r.add(0xbf8).readS32(), r.add(0x1f0).readS32()];
     for (let w = 0; w < 4; w++) row.push(r.add(AX_WHEEL_AXY[w]).readFloat());
+    // [U-9193] APPENDED so every existing consumer of .axisprobe.csv keeps its
+    // columns. +0x9bc/+0x9c0/+0x9c4 is the angular velocity U-9193 is about, read
+    // here at a KNOWN program point instead of at a per-render-frame .msd snapshot
+    // phase, which leg 3's KA-1 showed is not a usable rate. +0x958/+0x960 is the
+    // record's position. `esi` is recorded RAW at both sites because whether ESI
+    // holds the record pointer at A6b is NOT established and is not assumed -- the
+    // analysis checks it (KA-B) instead of this hook pretending to know.
+    const esis = esiPtr ? esiPtr.toString() : '';
+    row.push(r.add(0x9bc).readFloat(), r.add(0x9c0).readFloat(), r.add(0x9c4).readFloat(),
+             r.add(0x958).readFloat(), r.add(0x960).readFloat(), esis);
     // coverage counters, computed from the row (not from an assumption that a
     // site fired): a probe that reports 0 of N must also prove it covered N.
+    if (site === 0) {
+      const wx = row[16], wy = row[17], wz = row[18];
+      if (wx !== 0.0) AX.nWxNz++;
+      if (wy !== 0.0) AX.nWyNz++;
+      if (wz !== 0.0) AX.nWzNz++;
+      // G-OMEGA's denominator is the ACTIVE-DRIVE regime, not every call.
+      if (row[10] === 0 && row[8] > 1.0 && wy !== 0.0) AX.nDriveWyNz++;
+    } else if (AX.recPtrs && AX.recPtrs.indexOf(esis) >= 0) {
+      AX.nA6bEsiRec++;   // KA-B: does ESI hold a record pointer at A6b at all?
+    }
     if (site === 0) {
       AX.nA6a++;
       const fwdY = row[3], b18pre = row[6], bf8 = row[10], sp = row[8];
@@ -1034,6 +1057,10 @@ function axisProbeArm(recBaseHex, car){
   if (AX.armed) return 'already armed';
   try {
     AX_REC = ptr(parseInt(recBaseHex, 16) + car * 0xd04);
+    // KA-B's reference set: the four record pointers. Built here so the A6b check
+    // compares against addresses derived the same way AX_REC is, not a literal.
+    AX.recPtrs = [0, 1, 2, 3].map(function(n){
+      return ptr(parseInt(recBaseHex, 16) + n * 0xd04).toString(); });
     // KNOWN-ANSWER self-check: the static forward-axis constant A5 feeds to
     // Rw_TransformPoints must read (0,0,1), proving the probe reads the image at
     // the right VA before any verdict rests on its float reads.
@@ -1044,11 +1071,16 @@ function axisProbeArm(recBaseHex, car){
     Interceptor.attach(ga(AX_A6A), { onEnter(){
       try {
         if (!this.context.esi.equals(AX_REC)) { AX.skipped++; return; }
-        axSample(0);
+        axSample(0, this.context.esi);
       } catch(e){ if (!AX.err) AX.err = 'a6aEnter ' + e; }
     }});
     Interceptor.attach(ga(AX_A6B), { onEnter(){
-      try { axSample(1); }
+      // DELIBERATELY still unfiltered, and that is now VISIBLE rather than silent.
+      // A6b's ESI is not established to hold the record pointer, so filtering on it
+      // would be a guess; instead the raw ESI is recorded and KA-B decides whether
+      // POST rows are attributable at all. With >1 car live, an unfiltered A6b
+      // samples the TARGET car's record on every car's call -- see PREREG section 1.
+      try { axSample(1, this.context.esi); }
       catch(e){ if (!AX.err) AX.err = 'a6bEnter ' + e; }
     }});
     AX.armed = true;
@@ -2356,6 +2388,11 @@ rpc.exports = {
                                                      skipped:AX.skipped, drive:AX.nDrive,
                                                      fwdYnz:AX.nFwdYnz, axYnz:AX.nAxYnz,
                                                      b18nzPre:AX.nB18nzPre, b18nzPost:AX.nB18nzPost,
+                                                     // [U-9193] G-OMEGA / G-ZERO / KA-B counters,
+                                                     // printed BEFORE the rows are drained.
+                                                     wxNz:AX.nWxNz, wyNz:AX.nWyNz, wzNz:AX.nWzNz,
+                                                     driveWyNz:AX.nDriveWyNz,
+                                                     a6bEsiRec:AX.nA6bEsiRec,
                                                      pending:AX.rows.length, chk:AX.chk, err:AX.err}); },
   slideProbeArm: function(recBaseHex, car, cap){ return slideProbeArm(recBaseHex, car, cap); },
   slideProbeDrain: function(){ return slideProbeDrain(); },
@@ -2867,7 +2904,15 @@ def main():
                          "Brackets A6a's write of +0xb18 to distinguish a STRUCTURAL zero "
                          "(forward-Y == 0) from a later-step zero. Entry hooks only, "
                          "~120 calls/s. Writes <statediff-out>.axisprobe.csv. Requires "
-                         "--statediff-out.")
+                         "--statediff-out. NOT player-only: the record is picked by "
+                         "--statediff-car, so --statediff-car 1 samples AI car 1 (and with "
+                         "4 cars live the call rate is ~4x the single-car figure above). "
+                         "[U-9193 2026-10-05] also logs angular velocity "
+                         "+0x9bc/+0x9c0/+0x9c4 (wx,wy,wz), record position "
+                         "+0x958/+0x960 (px,pz) and the RAW esi at both sites. A6b is "
+                         "deliberately left UNFILTERED because its ESI is not established "
+                         "to hold the record pointer; `esi` makes POST-row attribution "
+                         "checkable instead of assumed (KA-B).")
     ap.add_argument("--fixup-probe", action="store_true",
                     help="[U-9156 / D2 section 22.1] entry-hook VehicleContactFixup "
                          "0x0046ef70 and the substep loop 0x004709a0 with one shared "
@@ -3387,7 +3432,9 @@ def main():
                     axp = outp.with_suffix(outp.suffix + ".axisprobe.csv")
                     with open(axp, "w", newline="") as f:
                         f.write("seq,site,fwdx,fwdy,fwdz,b14,b18,b1c,speed,gnd,bf8,tid,"
-                                "axy0,axy1,axy2,axy3" + chr(10))
+                                "axy0,axy1,axy2,axy3,"
+                                # [U-9193] appended; existing columns unmoved.
+                                "wx,wy,wz,px,pz,esi" + chr(10))
                         for r in ax_rows:
                             f.write(",".join(repr(x) if isinstance(x, float) else str(x)
                                              for x in r) + chr(10))
