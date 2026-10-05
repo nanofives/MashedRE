@@ -118,13 +118,25 @@ static const char* GameSaveFilename() {
 }
 #define kGameSaveFilename (GameSaveFilename())
 
+// [D4 2026-10-05 PREREG_WIRE] How many bytes the last read actually got.
+//
+// The ORIGINAL has no such thing — SaveLoad discards its I/O result and always
+// returns 0 — so this is exe-build-only and part of the declared deviation, with
+// NO C-level claimed for it. It exists so Race/GameFlow.cpp can keep its exact
+// `n == kSaveSize` load gate after being rerouted through SaveLoad. Weakening that
+// gate to magic-only would let a TRUNCATED file carrying a valid magic parse a
+// partly-zero span, which is a behaviour change dressed up as a simplification.
+static std::uint32_t g_lastReadBytes = 0;
+
 // Substitute for 0x004b3b70. Reads up to `size` bytes; short reads leave the
 // remainder of the buffer as it was, which is what a partial read does.
 static int gFileRead(const char* path, void* buf, std::uint32_t size) {
+    g_lastReadBytes = 0;
     std::FILE* f = std::fopen(path, "rb");
     if (!f) return 0;
     const std::size_t n = std::fread(buf, 1, size, f);
     std::fclose(f);
+    g_lastReadBytes = static_cast<std::uint32_t>(n);
     return static_cast<int>(n);
 }
 
@@ -146,6 +158,19 @@ static int gFileExists(const char* path) {
     std::fclose(f);
     return 1;
 }
+
+// ── by-name binds for Race/GameFlow.cpp, exe build only ─────────────────────
+//
+// The ORIGINAL has ONE save image, at 0x00803358, which both SAVE_LOAD_FN and
+// SAVE_WRITE_FN address directly. Before this, GameFlow kept its OWN file-static
+// `img[kSaveSize]` and did its own file I/O, so the standalone had two images and
+// neither was this TU's. Exposing the buffer by name collapses that back to one,
+// which is the same reasoning GameFlow_SaveCounterPtr() (GameFlow.cpp:133-139)
+// already records for the save counter: bind to real engine state "rather than a
+// private duplicate".
+extern "C" unsigned char* GameSave_BufferPtr()   { return g_saveBuf; }
+extern "C" std::uint32_t  GameSave_BufferSize()  { return kGameSaveSize; }
+extern "C" std::uint32_t  GameSave_LastReadBytes() { return g_lastReadBytes; }
 #endif  // MASHED_STANDALONE
 
 // ─────────────────────────────────────────────────────────────────────────────

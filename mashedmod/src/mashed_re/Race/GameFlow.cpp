@@ -6,6 +6,8 @@
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
+#include <cstdlib>                          // [D4 2026-10-05] getenv, for the
+                                            // default-OFF save self-test
 
 namespace mashed_re {
 namespace Race {
@@ -117,16 +119,71 @@ void ApplyProgressFromSpan(const unsigned char span[mashed_re::Save::kSpanBytes]
     }
 }
 
+// ── [D4 2026-10-05 PREREG_WIRE] the save image, and who does the file I/O ─────
+//
+// In the exe build these route through the PORTED pair instead of GameFlow's own
+// fopen/fwrite/fread:
+//   * the image lives in Save/GameSave.cpp's buffer — the ONE image, modelling the
+//     original's single buffer at 0x00803358. Before this, GameFlow kept its own
+//     file-static img[] and the ported writer had no caller at all.
+//   * the write is Save::SaveWrite (0x00404f50) and the read is
+//     Save::SaveFileExists (0x00404f80) then Save::SaveLoad (0x00404e50). That
+//     ORDER is how the original's pair is meant to be used: SaveLoad discards its
+//     I/O result and always returns 0, which is exactly why 0x00404f80 exists.
+//   * SaveStatusClear(0) runs inside both, as in the original.
+// The `n == kSaveSize` gate is PRESERVED via GameSave_LastReadBytes(); relaxing it
+// to magic-only would let a truncated file with a valid magic parse a partly-zero
+// span. Those accessors are exe-build-only, part of GameSave.cpp's declared
+// deviation, and carry no C-level claim.
+//
+// The .asi arm below is the previous behaviour, unchanged.
+#ifdef MASHED_STANDALONE
+// Save/GameSave.cpp exports these with C linkage at global scope, not in a
+// namespace (extern "C" __declspec(dllexport) ... __cdecl), so they are declared
+// here exactly as defined.
+extern "C" unsigned char* GameSave_BufferPtr();
+extern "C" std::uint32_t  GameSave_LastReadBytes();
+extern "C" int __cdecl SaveWrite();
+extern "C" int __cdecl SaveLoad();
+extern "C" int __cdecl SaveFileExists();
+
+static unsigned char* SaveImageBuffer() { return GameSave_BufferPtr(); }
+static void WriteSaveImage(unsigned char*) { SaveWrite(); }
+static size_t ReadSaveImage(unsigned char* img) {
+    std::memset(img, 0, mashed_re::Save::kSaveSize);   // a missing file must not
+                                                       // read as stale bytes
+    if (!SaveFileExists()) return 0;
+    SaveLoad();
+    return GameSave_LastReadBytes();
+}
+#else
+static unsigned char* SaveImageBuffer() {
+    static unsigned char img[mashed_re::Save::kSaveSize];
+    return img;
+}
+static void WriteSaveImage(unsigned char* img) {
+    if (std::FILE* f = std::fopen(kSavePath, "wb")) {
+        std::fwrite(img, 1, mashed_re::Save::kSaveSize, f);
+        std::fclose(f);
+    }
+}
+static size_t ReadSaveImage(unsigned char* img) {
+    if (std::FILE* f = std::fopen(kSavePath, "rb")) {
+        const size_t n = std::fread(img, 1, mashed_re::Save::kSaveSize, f);
+        std::fclose(f);
+        return n;
+    }
+    return 0;
+}
+#endif
+
 void SaveProgress() {
     using namespace mashed_re::Save;
     unsigned char span[kSpanBytes];
     BuildSpanFromProgress(span);
-    static unsigned char img[kSaveSize];
+    unsigned char* img = SaveImageBuffer();
     BuildImage(span, ++g_saveCounter, img);            // bump the save-state counter
-    if (std::FILE* f = std::fopen(kSavePath, "wb")) {
-        std::fwrite(img, 1, kSaveSize, f);
-        std::fclose(f);
-    }
+    WriteSaveImage(img);
 }
 }  // namespace
 
@@ -255,14 +312,13 @@ void Campaign_LoadProgress() {
     if (g_progLoaded) return;
     g_progLoaded = true;
     g_progUnlock[0] = 1;                          // track 0 always available
-    static unsigned char img[kSaveSize];
-    if (std::FILE* f = std::fopen(kSavePath, "rb")) {
-        size_t n = std::fread(img, 1, kSaveSize, f);
-        std::fclose(f);
+    unsigned char* img = SaveImageBuffer();
+    const size_t nRead = ReadSaveImage(img);
+    {
         unsigned char span[kSpanBytes];
         std::uint32_t counter = 0;
         // Magic gate (DEADBEEF) + size check; a blank/short file keeps defaults.
-        if (n == kSaveSize && ParseImage(img, kSaveSize, span, &counter)) {
+        if (nRead == kSaveSize && ParseImage(img, kSaveSize, span, &counter)) {
             ApplyProgressFromSpan(span);
             g_saveCounter = counter;
             // DISABLED 2026-08-28 — second of the two boot-time span restores
@@ -349,6 +405,118 @@ int Campaign_TrackCourseId(int trackIdx) {
     if (trackIdx < 0 || trackIdx >= kAreaCount) trackIdx = 0;
     return kAreas[trackIdx].courseId;
 }
+
+#ifdef MASHED_STANDALONE
+// ─────────────────────────────────────────────────────────────────────────────
+// [D4 2026-10-05 PREREG_WIRE] G-BYTES / G-LIVE / G-ROUNDTRIP-LIVE.
+//
+// DEFAULT-OFF (MASHED_SAVE_SELFTEST). Exercises the LIVE GameFlow path, not the
+// primitives — Save/GameSave.cpp's own self-test already covers those.
+//
+// G-LIVE is the gate that matters and it is why GameSave_LastReadBytes() is read
+// here: that counter is written ONLY inside the exe-build gFileRead, so a value
+// of 151456 is positive evidence the load genuinely went through SaveLoad. The
+// session that produced this found a byte-faithful 0x00469df0 and a written
+// BodyOrient_OmegaFromAngVel both sitting with ZERO call sites, so "linked" is
+// not taken as "called".
+namespace {
+
+int GameFlowSaveSelfTest(char* out, int outSize) {
+    char line[200];
+    #define sayf(...) do { std::snprintf(line, sizeof line, __VA_ARGS__); \
+                           if (out && outSize > 0) { \
+                               const std::size_t u = std::strlen(out); \
+                               if (u + 1 < static_cast<std::size_t>(outSize)) \
+                                   std::strncpy(out + u, line, \
+                                                static_cast<std::size_t>(outSize) - u - 1); \
+                               out[outSize - 1] = '\0'; } } while (0)
+    if (out && outSize > 0) out[0] = '\0';
+    int pass = 0;
+
+    // ---- G-BYTES: SaveWrite's bytes vs a direct fwrite of the same image ----
+    unsigned char* img = SaveImageBuffer();
+    for (std::uint32_t i = 0; i < mashed_re::Save::kSaveSize; ++i)
+        img[i] = static_cast<unsigned char>((i * 17u + 3u) & 0xffu);
+    WriteSaveImage(img);                       // through Save::SaveWrite
+    const char* pathA = std::getenv("MASHED_SAVE_PATH");
+    if (!pathA || !pathA[0]) pathA = "mashed_re_gamesave.bin";
+    static unsigned char ref[mashed_re::Save::kSaveSize];
+    std::memcpy(ref, img, mashed_re::Save::kSaveSize);
+    char pathB[512];
+    std::snprintf(pathB, sizeof pathB, "%s.fwriteref", pathA);
+    if (std::FILE* f = std::fopen(pathB, "wb")) {
+        std::fwrite(ref, 1, mashed_re::Save::kSaveSize, f);
+        std::fclose(f);
+    }
+    std::uint32_t same = 0, szA = 0, szB = 0;
+    {
+        static unsigned char a[mashed_re::Save::kSaveSize];
+        static unsigned char b[mashed_re::Save::kSaveSize];
+        if (std::FILE* f = std::fopen(pathA, "rb")) {
+            szA = static_cast<std::uint32_t>(std::fread(a, 1, sizeof a, f)); std::fclose(f); }
+        if (std::FILE* f = std::fopen(pathB, "rb")) {
+            szB = static_cast<std::uint32_t>(std::fread(b, 1, sizeof b, f)); std::fclose(f); }
+        for (std::uint32_t i = 0; i < mashed_re::Save::kSaveSize; ++i)
+            if (a[i] == b[i]) ++same;
+    }
+    const bool bytesOk = (same == mashed_re::Save::kSaveSize &&
+                          szA == mashed_re::Save::kSaveSize &&
+                          szB == mashed_re::Save::kSaveSize);
+    if (bytesOk) ++pass;
+    sayf("G-BYTES  SaveWrite vs fwrite: %u of %u matching, sizes %u / %u (want %u)\n",
+         same, mashed_re::Save::kSaveSize, szA, szB, mashed_re::Save::kSaveSize);
+    std::remove(pathB);
+
+    // ---- G-ROUNDTRIP-LIVE: through Campaign_SaveNow / Campaign_ReloadFromSave --
+    int wantUnlock[kAreaCount], wantTrophy[kAreaCount];
+    for (int i = 0; i < kAreaCount; ++i) {
+        wantUnlock[i] = (i % 3 == 0) ? 1 : 0;
+        wantTrophy[i] = (i % 4);
+        g_progUnlock[i] = wantUnlock[i];
+        g_progTrophy[i] = wantTrophy[i];
+    }
+    g_progLoaded = true;                       // the state above IS the loaded state
+    Campaign_SaveNow();
+
+    for (int i = 0; i < kAreaCount; ++i) {     // clobber with a recognisable pattern
+        g_progUnlock[i] = 1 - wantUnlock[i];
+        g_progTrophy[i] = 3 - wantTrophy[i];
+    }
+    Campaign_ReloadFromSave();
+
+    // ---- G-LIVE: only the exe-build gFileRead writes this counter ----
+    const std::uint32_t lastRead = GameSave_LastReadBytes();
+    const bool liveOk = (lastRead == mashed_re::Save::kSaveSize);
+    if (liveOk) ++pass;
+    sayf("G-LIVE   GameSave_LastReadBytes=%u (want %u) -> load %s through SaveLoad\n",
+         lastRead, mashed_re::Save::kSaveSize, liveOk ? "WENT" : "did NOT go");
+
+    int match = 0;
+    for (int i = 0; i < kAreaCount; ++i)
+        if (g_progUnlock[i] == wantUnlock[i] && g_progTrophy[i] == wantTrophy[i]) ++match;
+    if (match == kAreaCount) ++pass;
+    sayf("G-ROUNDTRIP-LIVE  %d of %d areas restored (unlock+trophy)\n", match, kAreaCount);
+
+    sayf("RESULT %d of 3 gates passed\n", pass);
+    #undef sayf
+    return pass;
+}
+
+struct GameFlowSaveSelfTestRunner {
+    GameFlowSaveSelfTestRunner() {
+        const char* on = std::getenv("MASHED_SAVE_SELFTEST");
+        if (!on || !on[0] || on[0] == '0') return;
+        char buf[1024] = {};
+        GameFlowSaveSelfTest(buf, static_cast<int>(sizeof buf));
+        const char* p = std::getenv("MASHED_SAVE_SELFTEST_OUT2");
+        if (!p || !p[0]) p = "gameflow_selftest.txt";
+        if (std::FILE* f = std::fopen(p, "w")) { std::fputs(buf, f); std::fclose(f); }
+    }
+};
+GameFlowSaveSelfTestRunner s_gameFlowSaveSelfTestRunner;
+
+}  // namespace
+#endif  // MASHED_STANDALONE
 
 }  // namespace Race
 }  // namespace mashed_re

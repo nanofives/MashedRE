@@ -1,0 +1,4 @@
+G-BYTES  SaveWrite vs fwrite: 151456 of 151456 matching, sizes 151456 / 151456 (want 151456)
+G-LIVE   GameSave_LastReadBytes=151456 (want 151456) -> load WENT through SaveLoad
+G-ROUNDTRIP-LIVE  13 of 13 areas restored (unlock+trophy)
+RESULT 3 of 3 gates passed

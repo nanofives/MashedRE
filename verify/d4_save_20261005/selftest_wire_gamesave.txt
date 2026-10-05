@@ -1,0 +1,6 @@
+step1 exists_before=0 (want 0)
+step2 on_disk=151456 (want 151456)
+step3 exists_after=1 (want 1)
+step4 roundtrip 151456 of 151456 matching
+step5 status=0x1234 (want 0x1234)
+RESULT 5 of 5 steps passed
