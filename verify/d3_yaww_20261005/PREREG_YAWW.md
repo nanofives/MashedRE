@@ -154,6 +154,129 @@ needs its own pre-registration. This session measures.
 
 ---
 
+## 3b. AMENDMENT, committed before anything ran: candidate 5 is REFUTED, and so is U-9188's mechanism
+
+Everything in §1–§3 above was committed at `49fc1ca0` and is left standing as written. This section
+was added before any code was written, any build was run, or any game was started. It is an
+amendment by **static reading only** — no measurement has been taken. Per memory
+`pre-register-the-decision-not-the-diagnosis`, the registered **decision** (count the writers, then
+measure the published-vs-record angle in-process at two program points) is honoured unchanged; what
+is corrected is the **rationale**.
+
+### Correction 3 — candidate 5 (frame order) is REFUTED
+
+The record's forward row has **exactly three writers in the whole tree**, and all three are the same
+expression inside the physics run:
+
+- `VehiclePhysicsRun.cpp:621-623` — `F(r, kForward+0) = cos(io.yaw)`, `+4 = 0.f`, `+8 = sin(io.yaw)`
+- `VehiclePhysicsRun.cpp:820-821` — same, x and z
+- `VehiclePhysicsRun.cpp:1004-1005` — same, x and z
+
+`off::kForward == 0x9d4` (`VehicleStruct.h:105`). Nothing outside `VehiclePhysics_StepCar`'s call
+tree writes it. So the record's forward **is** `cos/sin` of the same `io.yaw` that `:3334` assigns to
+`a.yaw`, it is **frozen between one `StepCar` and the next**, and `a.yaw` is frozen over the same
+interval unless a writer moves it. A one-frame read offset over an interval on which **both**
+operands are constant produces **zero** disagreement.
+
+**Candidate 5 as committed in §1 is wrong.** I registered it as the leading hypothesis and it does
+not survive its own first check. Recorded rather than quietly dropped.
+
+### Correction 4 — `VehiclePhysics_ResetOrientation` does not touch the record
+
+U-9188 states that `:3351` "resyncs the record (`VehiclePhysics_ResetOrientation` at `:3355`)", and
+Correction 1 above reused that same reading for `:3285`. **Both are wrong.** The function is five
+lines (`VehiclePhysicsRun.cpp:518-523`):
+
+```
+518:  void VehiclePhysics_ResetOrientation(int slot, float yaw) {
+519:      if (slot < 0 || slot >= 16) return;
+520:      BodyOrient_Init(g_bodyBasis[slot], yaw);
+521:      g_bodyBasisOk[slot] = true;
+522:      g_bodyBasisReseed[slot] = true;   // heading discontinuity — see the decl comment
+523:  }
+```
+
+It writes `g_bodyBasis[slot]`, `g_bodyBasisOk[slot]` and `g_bodyBasisReseed[slot]`. **It never writes
+the record, and it never writes `+0x9d4`.** What it resyncs is the **body basis**, not the record's
+forward row. Every use of the word "resync" in U-9188 and in Correction 1 is therefore about a
+different piece of state than the one being compared.
+
+This does not restore the disagreement, because of the comment at `VehiclePhysicsRun.cpp:516-517`:
+"the integrated basis keeps the pre-teleport heading — **the basis is now the authority for
+`io.yaw`**". `StepCar` overwrites `io.yaw` from the basis, writes the record's forward from that, and
+`:3334` assigns it back into `a.yaw`. So a scaffold rewrite of `a.yaw` that does not re-seed the
+basis is **discarded** on the next step rather than carried into the record.
+
+### Correction 5 — the writer enumeration is incomplete: nine, not five
+
+`a.yaw` writers in `TrackRenderer.cpp`, by grep for `\.yaw\s*(=|\+=|-=|\*=)`, excluding `io.yaw`,
+`car_yaw_`, `pu_player_.yaw` and `pu_ai_[i].yaw`:
+
+| line | site | re-seeds the basis? | reachable on the (b) arm? |
+|---|---|---|---|
+| `:2690` | `a.yaw = baseYaw` (grid placement) | **no** | yes, one-shot |
+| `:3283` | `a.yaw += 12.0f * in.dt` (spin scaffold) | yes, `:3285` when `phys` | yes |
+| `:3304` | `a.yaw = atan2(...)` (respawn relocation) | yes, `:3307` when `phys` | yes |
+| `:3334` | `a.yaw = io.yaw` | n/a, it is the sync | yes, every frame |
+| `:3351` | `a.yaw = ry` (off-mesh re-aim) | yes, `:3355` | yes |
+| `:3393` | `a.yaw += 12.0f * in.dt` (v2 spin) | no | no, legacy branch |
+| `:3423` | `a.yaw += yerr * …` (v2 ribbon limiter) | no | no, legacy branch |
+| `:3683` | `a.yaw += yerr * …` (`AiOptionBStep` limiter) | no | no, `!phys` only |
+| `:3717` | `a.yaw = ry` (`AiOptionBStep` off-mesh) | no | no, `!phys` only |
+
+**`:2690` and `:3304` appear in no prior enumeration.** U-9188's list of five omits both. Leg A
+counts all nine.
+
+### What this does to the session, stated plainly
+
+Taking Corrections 2–5 together, **static reading predicts the port-side published-vs-record heading
+angle is ZERO on the (b) arm at every program point**: the five reachable writers are `:2690`
+(one-shot, self-healing on the next step), `:3283`/`:3304`/`:3351` (basis re-seeded, so carried
+rather than discarded) and `:3334` (the sync itself), and the four non-re-seeding writers are all
+unreachable.
+
+That **contradicts U-9188's measured medians of 0.5214 / 1.1430 / 0.4300 deg.** Both cannot stand.
+So exactly one of the following is true, and leg B as reformulated separates them:
+
+- **H1 — a writer outside the static picture.** Something not found by the grep above moves `a.yaw`,
+  `g_aib.fwd[v]`, or the record's forward. Leg A's counters plus leg B's in-process angle at two
+  program points localise it.
+- **H2 — U-9188's measurement is a POLL ARTIFACT.** `sa_headwatch.py` reads `g_aib.fwd[v]` and the
+  record non-atomically via `ReadProcessMemory` at `--hz 30` against a faster game. If the
+  in-process angle is zero on the same build while `sa_headwatch.py` reports 0.5+ deg, the poll is
+  the source. **This would retract U-9188's central conclusion** — "the body-heading residual is a
+  PORT-ONLY BRIDGE defect" — and send D3 (b) back to the physics basis that the 2026-10-04 session
+  recorded as NOT REACHED.
+
+**Registered prediction, before running: H2.** The reason is the player floor. U-9188 reads the
+player's floor as exactly `0.0000` deg at every lag and treats that as the instrument's noise floor,
+licensing the AI cars' non-zero values as real. But `g_aib.fwd[0]` is `cos/sin(car_yaw_)` (`:3728`)
+and the player's record forward is `cos/sin(io.yaw)` with `car_yaw_ = io.yaw` at `:3003` — the player
+agrees **by construction**, so a hard zero there is guaranteed and is **not** evidence that the
+instrument can resolve a small angle. H-JITTER was checked as a position bound, which §3 of
+`PREREG_HEADING.md` registered, but a position bound does not bound an angle
+(memory `a-bound-on-a-product-is-not-a-bound-on-a-factor`).
+
+I may be wrong about this. The gate below is written so that it is decided by the run and not by me.
+
+### Added gate
+
+| gate | claim | PASS | FAIL |
+|---|---|---|---|
+| **B-INPROC** | the in-process angle reproduces U-9188 | every car's median inside `[0.25x, 4x]` of its U-9188 value → **H1**, the residual is real and leg A localises the writer | all three medians below **0.05** deg → **H2**, U-9188's result is a poll artifact; file the retraction and do not fix a defect that is not there |
+
+Between those two outcomes (some car in band, others at zero) is neither — it is reported as
+INCONCLUSIVE with the per-car numbers, and no conclusion is drawn. Registered now so a split result
+cannot be read as whichever answer is convenient.
+
+**Leg B therefore measures three angles per frame per slot, in-process, at two program points:**
+`ang_pub_rec` (published `g_aib.fwd[v]` vs the record's forward, at `:3244`), `ang_post_rec`
+(`cos/sin(a.yaw)` vs the record's forward, immediately after `:3334`), and `ang_pub_post` (the two
+headings against each other). Slot 0 is recorded for completeness and is **labelled
+construction-zero**, not treated as a floor.
+
+---
+
 ## 4. Honest statement of what could make this whole file wrong
 
 - If `phys` is **false** on the (b) window — not read, assumed from `MASHED_REAL_PHYSICS`'s default
