@@ -21,9 +21,10 @@
     {
       "heading": "Last session (2026-10-05)",
       "fields": [
-        { "label": "Result", "value": "U-9188 RESOLVED and RETRACTED — its heading residual was a poll artifact", "kind": "text" },
-        { "label": "Consequence", "value": "U-9185 item (b) REOPENED at the physics basis", "kind": "text" },
-        { "label": "New rows", "value": ["U-9189 stale bridge heading on eliminated cars", "U-9190 sa_headwatch.py not fit for purpose"], "kind": "list" },
+        { "label": "Result", "value": "(b)'s heading share re-attributed: car 1 REAL at the physics basis (0.8918 deg, n=31, survives command + speed matching); cars 2 and 3 NO-VERDICT", "kind": "text" },
+        { "label": "Also", "value": "U-9188 RESOLVED and RETRACTED — its heading residual was a poll artifact", "kind": "text" },
+        { "label": "New rows", "value": ["U-9189 stale bridge heading on eliminated cars", "U-9190 sa_headwatch.py not fit for purpose", "U-9191 car 1 physics heading divergence", "U-9192 d_body_heading is an identity"], "kind": "list" },
+        { "label": "Next step", "value": "Leg 3 — add 5 record fields to AiStepDump, compare yaw RATE vs o_t1.msd", "kind": "text" },
         { "label": "C-levels moved", "value": 0, "kind": "number" }
       ]
     },
