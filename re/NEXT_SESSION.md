@@ -1,6 +1,47 @@
 # Next session kickoff
 
-> ## UPDATE 2026-10-05 (D3 ARM, commit `d0ce578e`): **The port and the original take DIFFERENT omega arms — 70.60 % vs 0 % — and the port cannot be fixed at the call site. U-9191's question is still open, and now for a measured reason. START HERE.**
+> ## UPDATE 2026-10-05 (D3 ARM RETRACTION, commit `95c0db13`): **U-9194 is RETRACTED hours after being filed. The port's omega arm is CORRECT for a driving car — 222 of 222 moving frames on three captures. START HERE.**
+>
+> **Read [`verify/d3_arm_20261005/RESULT_ARMRETRACT.md`](../verify/d3_arm_20261005/RESULT_ARMRETRACT.md)
+> BEFORE the ARM block below, which it supersedes on every arm claim.** No C-level moved, no band
+> moved, no code behaviour changed (the only source edit is comment-only). Tool
+> `re/tools/ai_armregime.py`.
+>
+> - **`+0x10` is NOT a per-frame fork. It has exactly ONE transition.** 0 for frames 0..1064, then 1
+>   for 1065..3622. `+0x4` is its exact complement, `+0x2c`/`+0x30` go `0 -> 50`, four per-wheel pairs
+>   go `(0.15, 0.0125) -> (0.25, 0.25)`, and that single step moves **135 of 833** record dwords with
+>   an **identical fingerprint on all three captures**.
+> - **The 70.60 % figure measured a PARKED CAR.** The capture is `--mode 10`; car 1 is **eliminated**
+>   at the transition and never moves again — 23.548 of distance in frames 800..1199, then **0.000**
+>   across the remaining 2423 frames. `+0x10` flips to 1 exactly when it stops.
+> - **The right denominator, with a held-out confirmation** (criterion fixed in writing before
+>   `o_t2`/`o_t3` were opened): `+0x10 == 0` on **222 of 222 = 100.000 %** of moving frames on
+>   `o_t1`, `o_t2` **and** `o_t3`. **Zero** moving frames take the other arm. Inside the (b) window
+>   (frame_idx 845..1064): **220 of 220**. So where U-9191's 0.9866 deg is measured, **the arms agree.**
+> - **Do NOT port a `+0x10` producer.** An always-zero `+0x10` selects exactly the arm the original
+>   uses while the car moves. `BodyOrient_OmegaFromAngVel` having no call site is **not** a defect.
+> - **KEEP THIS:** **do not lengthen the (b) window past frame_idx 1064.** The existing refusal was
+>   statistical; it now has a mechanism — a longer window averages a driving car with a parked one.
+> - **The lesson, and it is the session's real output:** *stating a denominator is not the same as
+>   checking it is the right population.* G-ARM spelled its denominator out and still chose the wrong
+>   one.
+>
+> ### START HERE — U-9191 is unchanged, and neither remaining path is "add a column"
+>
+> 1. **Close the 1.3258x distance over-run** (U-9185 / `verify/d3_noboost_20261003`, the +15..31 %
+>    speed defect), so frame-matched and distance-matched comparisons stop returning opposite signs.
+>    **This is now the only substantive physics path of the two.**
+> 2. **Or build a frame-marked join** (memory `next-sample-pairing-needs-a-frame-marker`). This is
+>    instrument work: the position join's measured **median** induced heading error is **0.087865 deg**,
+>    which caps any admissible claim at ~0.88 deg and so rules out the sub-degree tercile test.
+>
+> **Do not assume closing either closes (b).** The 2026-10-02 counterfactual matrix had **no arm
+> passing (b) on any car**.
+
+The block below is this session's EARLIER headline. **Its arm claims are RETRACTED** by the block
+above; its G-INERT, G-ONSET and G-SPAN results stand.
+
+> ## UPDATE 2026-10-05 (D3 ARM, commit `d0ce578e`): ~~The port and the original take DIFFERENT omega arms — 70.60 % vs 0 %~~ — **RETRACTED, see above.**
 >
 > **No C-level moved, no band moved, no hooks.csv change, no D2 WATCH.** Read
 > [`verify/d3_arm_20261005/RESULT_ARM.md`](../verify/d3_arm_20261005/RESULT_ARM.md);
@@ -40,15 +81,14 @@
 > - **Chased and NOT filed:** the exactly-90.0000 deg start-heading gap is `atan2(0,0)` on the port's
 >   first windowed row; its second reads -90.2997 against -90.0000. Guarded, nothing affected.
 >
-> ### START HERE — pick ONE of two, and pre-register it
+> ### ~~START HERE~~ — SUPERSEDED. Item 1 below is RETRACTED; use the block at the top of this file.
 >
 > U-9191 cannot be settled by another column or a tighter radius. The two viable paths:
 >
-> 1. **Port the `+0x10` producer (U-9194).** This is the only item that is both new reversing and
->    gating: it unblocks the arm fork, `BodyOrient_OmegaFromAngVel` (already written, body needs no
->    work), and eventually a well-posed cross-side `+0x148` comparison. Validate any candidate against
->    the 2558 / 1065 of 3623 series. **Do NOT seed `+0x10` to make the arm fire** —
->    `verify/d3_modes37_20261002/RESULT_STEP2.md`: *"seeding the globals would not be a port"*.
+> 1. ~~**Port the `+0x10` producer (U-9194).**~~ **RETRACTED 2026-10-05 — DO NOT DO THIS.** The arms
+>    agree on every frame where the car drives (222 of 222, three captures), so an always-zero `+0x10`
+>    is already the correct arm and no producer is owed. The "2558 / 1065 of 3623 series" named here as
+>    a validation target is a **parked, eliminated car**. See `RESULT_ARMRETRACT.md`.
 > 2. **Or close the 1.3258x distance over-run first** (U-9185 / `verify/d3_noboost_20261003`, the
 >    +15..31 % speed defect), so frame-matched and distance-matched comparisons stop returning
 >    opposite signs and G-SPAN-shaped evidence becomes readable at all.
