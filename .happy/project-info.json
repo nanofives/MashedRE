@@ -24,9 +24,9 @@
         { "label": "Result", "value": "(b)'s heading share re-attributed and CONFIRMED: car 1 is REAL at the physics basis — 0.9866 deg measured directly, vs 0.9796 published, two derivations 0.7% apart", "kind": "text" },
         { "label": "Also", "value": "U-9188 RESOLVED and RETRACTED — its heading residual was a poll artifact", "kind": "text" },
         { "label": "Still open", "value": "Is car 1's residual GENERATED or ACCUMULATED? Rate field now NAMED: +0x148 (+0x9bc/9c0/9c4 is torque). Next: establish which omega arm each side takes, then compare the accumulator", "kind": "text" },
-        { "label": "New rows", "value": ["U-9189 stale bridge heading on eliminated cars", "U-9190 sa_headwatch.py not fit for purpose", "U-9191 car 1 physics heading divergence (confirmed)", "U-9192 d_body_heading is an identity", "U-9193 +0x9c0 is not a per-frame yaw rate"], "kind": "list" },
+        { "label": "New rows", "value": ["U-9189 stale bridge heading on eliminated cars", "U-9190 sa_headwatch.py not fit for purpose", "U-9191 car 1 physics heading divergence (confirmed)", "U-9192 d_body_heading is an identity", "U-9193 RESOLVED: +0x9c0 is torque, +0x148 is the yaw rate"], "kind": "list" },
+        { "label": "Also corrected", "value": "U-9175's field naming (label only — all its numbers and its conclusion stand)", "kind": "text" },
         { "label": "Next step", "value": "Add +0x144/+0x148/+0x14c to the port dump; establish the omega arm (ESI[4]) first, then compare cross-side", "kind": "text" },
-        { "label": "New rows (cont.)", "value": ["U-9193 amended: zeroed-phase candidate refuted"], "kind": "list" },
         { "label": "C-levels moved", "value": 0, "kind": "number" }
       ]
     },
@@ -36,7 +36,7 @@
         { "label": "hooks.csv", "value": "C1 821 / C2 3889 / C3 1014 / C4 176", "kind": "text" },
         { "label": "STUBS open", "value": 1111, "kind": "number" },
         { "label": "UNCERTAINTIES open", "value": 3132, "kind": "number" },
-        { "label": "Next session", "value": "re/NEXT_SESSION.md — re-attribute (b)'s heading share at the physics basis", "kind": "text" }
+        { "label": "Next session", "value": "re/NEXT_SESSION.md — compare the +0x148 angular-velocity accumulator cross-side, omega arm first", "kind": "text" }
       ]
     }
   ]
