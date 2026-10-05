@@ -37,7 +37,38 @@ If the original tolerates a zeroed tail, D4's save item may already be substanti
 because the magic and the whole profile block already agree. I do **not** predict that the tail is
 semantically harmless — that is what G-TAIL tests separately.
 
-## 1. Safety — the one action that writes into `original/`
+## 1. AMENDMENT, registered UNRUN — `original/` is NOT touched at all
+
+**The §1 backup/restore discipline below is SUPERSEDED and is not executed.** A strictly safer
+mechanism already exists and I found it before running anything: `scenario_launch.py:29-31` resolves
+the game install through an env override —
+
+```python
+GAME_ROOT = Path(os.environ.get("MASHED_ROOT", ROOT))
+EXE  = GAME_ROOT / "original" / "MASHED.exe"
+```
+
+— which is the pattern memory `mashed-root-asset-ab` records ("copy `original/` and repoint").
+`original/` is **0.46 GB across 263 files** with 488 GB free, so a full copy is cheap.
+
+**Revised procedure:**
+
+1. Copy `original/` to `<scratch>/saveab/original/` (a session scratch path, outside the repo).
+2. Write the subject save to **`<scratch>/saveab/original/gamesave.bin`** only.
+3. Launch with `MASHED_ROOT=<scratch>/saveab`.
+4. **Nothing under the repo's `original/` is read-modify-written, created, moved or deleted.** It is
+   read only to make the copy. The pre-run SHA-256 of `original/gamesave.bin`
+   (`BD18788182B2343E5203EB983FDDD8BD…`) is re-verified at the end and reported, as a check that the
+   copy step did not mutate the source.
+
+**This removes the permission question** that §1 below raised, and it is a better experiment anyway:
+two independent install copies can hold arm C and arm S simultaneously, so the arms cannot
+contaminate each other through a shared file.
+
+**The gates are UNCHANGED** — G-BOOT, G-MAGIC, G-DISTINGUISH and G-TAIL keep their thresholds and
+denominators exactly as registered. Only the mechanism by which the game sees the file changes.
+
+## 1b. SUPERSEDED — the original backup/restore plan, left as history
 
 `CLAUDE.md`: *"Do not move or delete anything in `original\` without explicit user permission."*
 KA-ACCEPT requires the original to read a save file, and the original reads `gamesave.bin` from its
