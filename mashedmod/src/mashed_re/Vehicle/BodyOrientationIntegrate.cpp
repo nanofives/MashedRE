@@ -26,33 +26,47 @@
 //   EBX[1] = (omega.z*EDI[0] - omega.x*EDI[2]) + EDI[1]
 //   EBX[2] = (omega.x*EDI[1] - omega.y*EDI[0]) + EDI[2]
 //
-// STATUS — WIRED, AND ON THE ARM THE ORIGINAL TAKES LESS THAN A THIRD OF THE TIME.
+// STATUS — WIRED, AND ON THE ARM THE ORIGINAL TAKES WHENEVER THE CAR IS DRIVING.
 //
-// [2026-10-05 U-9191, comment-only correction] The note that stood here —
-// "DELIBERATELY NOT WIRED YET. Nothing calls these functions, so this file cannot
-// change behaviour" — is STALE. These functions are live:
-// VehiclePhysicsRun.cpp:1001-1003 calls BodyOrient_OmegaFromSteer,
-// BodyOrient_IntegrateStep and BodyOrient_Heading every substep, and :520/:816
-// call BodyOrient_Init.
+// [2026-10-05 U-9191] Two comment-only corrections, in opposite directions. Both
+// are recorded because the second one retracts a claim this header carried for a
+// few hours on the same day.
 //
-// THE ARM FORK, now measured instead of guessed. FUN_0046e9e0 gates on ESI[4]
-// (record +0x10): non-zero KEEPS the +0x9bc/+0x9c0/+0x9c4 seed (which is the
-// TORQUE triple, not angular velocity — U-9193), zero REBUILDS omega from the
-// steer/throttle chain. The old note here said "our own A6_DIAG measured record
-// +0x10 == 0 on every sample, so the wheel-force arm may well be the live one".
-// On the ORIGINAL that is wrong: +0x10 is 1 on 2558 of 3623 frames (70.60%) and 0
-// on 1065 of 3623 (29.40%) in verify/d3_elim_20261003/o_t1.msd, car 1, an AI car.
-// Meanwhile VehiclePhysicsRun.cpp:1001 calls BodyOrient_OmegaFromSteer
-// UNCONDITIONALLY and BodyOrient_OmegaFromAngVel below has ZERO call sites, so
-// the port takes the +0x10 == 0 arm on 100% of substeps.
-// Evidence and gates: verify/d3_arm_20261005/PREREG_ARM.md + RESULT_ARM.md.
+// (1) STALE CLAIM REMOVED. The note that stood here — "DELIBERATELY NOT WIRED YET.
+// Nothing calls these functions, so this file cannot change behaviour" — was
+// stale. These functions are live: VehiclePhysicsRun.cpp:1001-1003 calls
+// BodyOrient_OmegaFromSteer, BodyOrient_IntegrateStep and BodyOrient_Heading every
+// substep, and :520/:816 call BodyOrient_Init.
 //
-// NOT FIXED HERE, and the reason is measured, not stylistic: no file under
-// mashedmod/src/ WRITES record +0x10 (the only two sites are reads,
-// Integrate2.cpp:527 and PhysicsChainHooks.cpp:2139), so simply honouring the gate
-// at the caller would still select the steer arm on every substep. The omega
-// vector stays a PARAMETER of BodyOrient_IntegrateStep so that when the +0x10
-// producer is ported, only the caller changes.
+// (2) THE A6_DIAG CLAIM WAS RIGHT AND I BRIEFLY REPLACED IT WITH A WRONG ONE.
+// FUN_0046e9e0 gates on ESI[4] (record +0x10): non-zero KEEPS the
+// +0x9bc/+0x9c0/+0x9c4 seed (the TORQUE triple, not angular velocity — U-9193),
+// zero REBUILDS omega from the steer/throttle chain. This header originally said
+// "our own A6_DIAG measured record +0x10 == 0 on every sample, so the wheel-force
+// arm may well be the live one". That is CONFIRMED, and the port's unconditional
+// choice of BodyOrient_OmegaFromSteer is CORRECT for a driving car:
+//
+//   On every frame where car 1's POSITION CHANGES, +0x10 == 0 — 222 of 222,
+//   100.000%, on each of three independent captures (o_t1/o_t2/o_t3.msd in
+//   verify/d3_elim_20261003). Zero moving frames take the other arm.
+//
+// An intermediate version of this comment claimed the original takes the non-zero
+// arm on "2558 of 3623 frames (70.60%)" and that the port was therefore on the
+// wrong arm. That figure is real but its DENOMINATOR is all frames, and car 1
+// drives for only ~220 of them: it is eliminated at frame 1065 and sits at a fixed
+// position for the remaining 2558. +0x10 flips to 1 exactly when it stops, in a
+// single transition that moves 135 of 833 record dwords at once. So the 70.60%
+// measured a PARKED car. Retraction: verify/d3_arm_20261005/RESULT_ARMRETRACT.md.
+//
+// CONSEQUENCE FOR BodyOrient_OmegaFromAngVel BELOW: it has no call site, and on
+// this evidence it needs none for a driving car. It is kept because it is the
+// transcription of a real branch of FUN_0046e9e0, not because anything is owed.
+// Likewise nothing under mashedmod/src/ writes record +0x10 (the only two sites
+// are reads, Integrate2.cpp:527 and PhysicsChainHooks.cpp:2139), and on this
+// evidence no producer is owed either: an always-zero +0x10 selects exactly the
+// arm the original uses while the car moves. The omega vector stays a PARAMETER of
+// BodyOrient_IntegrateStep so the caller remains the only place that would change
+// if a non-driving regime ever has to be reproduced.
 
 #include "ForceIntegrator.h"   // [U-9147] g_handlingTorque (_DAT_00613108)
 #include <cmath>

@@ -1,0 +1,58 @@
+verify\d3_elim_20261003\o_t1.msd  frames 3623  rec 0xd04  base 0x008822a4  frame_idx 0..3622
+  +0x10 transitions: 1   runs: 0 x1065, 1 x2558
+  THE WRONG DENOMINATOR  -- all frames:    == 0 on 1065 of 3623 = 29.3955%
+  THE RIGHT DENOMINATOR -- MOVING frames: == 0 on 222 of 222 = 100.0000%  (need >= 99.0%: PASS)
+  distance travelled 24.971; non-zero-speed frames 442 in 845..1286
+  single transition at frame_idx 1064 -> 1065 changes 135 of 833 record dwords
+      +0x004  0x00000001 -> 0x00000000   i 1 -> 0   f 1.4013e-45 -> 0
+      +0x010  0x00000000 -> 0x00000001   i 0 -> 1   f 0 -> 1.4013e-45
+      +0x02c  0x00000000 -> 0x00000032   i 0 -> 50   f 0 -> 7.00649e-44
+      +0x030  0x00000000 -> 0x00000032   i 0 -> 50   f 0 -> 7.00649e-44
+      +0x148  0xbed2b547 -> 0xbec5974f   i -1093487289 -> -1094346929   f -0.411539 -> -0.38592
+      +0x180  0x3f9541e7 -> 0x3f975cfc   i 1066746343 -> 1066884348   f 1.16607 -> 1.18253
+      +0x188  0xbed5dac2 -> 0xbebcab51   i -1093281086 -> -1094931631   f -0.417685 -> -0.368495
+      +0x1a4  0x00000b33 -> 0x00000b5e   i 2867 -> 2910   f 4.01752e-42 -> 4.07778e-42
+      +0x1d0  0xc1a3b100 -> 0x00000000   i -1046236928 -> 0   f -20.4614 -> 0
+      +0x1f8  0x3e19999a -> 0x3e800000   i 1041865114 -> 1048576000   f 0.15 -> 0.25
+      +0x1fc  0x3c4ccccd -> 0x3e800000   i 1011666125 -> 1048576000   f 0.0125 -> 0.25
+      +0x20c  0x4487a3e7 -> 0x4487b640   i 1149740007 -> 1149744704   f 1085.12 -> 1085.7
+
+verify\d3_elim_20261003\o_t2.msd  frames 3614  rec 0xd04  base 0x008822a4  frame_idx 0..3613
+  +0x10 transitions: 1   runs: 0 x999, 1 x2615
+  THE WRONG DENOMINATOR  -- all frames:    == 0 on 999 of 3614 = 27.6425%
+  THE RIGHT DENOMINATOR -- MOVING frames: == 0 on 222 of 222 = 100.0000%  (need >= 99.0%: PASS)
+  distance travelled 24.971; non-zero-speed frames 443 in 779..1221
+  single transition at frame_idx 998 -> 999 changes 135 of 833 record dwords
+      +0x004  0x00000001 -> 0x00000000   i 1 -> 0   f 1.4013e-45 -> 0
+      +0x010  0x00000000 -> 0x00000001   i 0 -> 1   f 0 -> 1.4013e-45
+      +0x02c  0x00000000 -> 0x00000032   i 0 -> 50   f 0 -> 7.00649e-44
+      +0x030  0x00000000 -> 0x00000032   i 0 -> 50   f 0 -> 7.00649e-44
+      +0x148  0xbed2b547 -> 0xbec5974f   i -1093487289 -> -1094346929   f -0.411539 -> -0.38592
+      +0x180  0x3f9541e7 -> 0x3f975cfc   i 1066746343 -> 1066884348   f 1.16607 -> 1.18253
+      +0x188  0xbed5dac2 -> 0xbebcab51   i -1093281086 -> -1094931631   f -0.417685 -> -0.368495
+      +0x1a4  0x00000b33 -> 0x00000b5e   i 2867 -> 2910   f 4.01752e-42 -> 4.07778e-42
+      +0x1c8  0xc1a3b100 -> 0x00000000   i -1046236928 -> 0   f -20.4614 -> 0
+      +0x1f8  0x3e19999a -> 0x3e800000   i 1041865114 -> 1048576000   f 0.15 -> 0.25
+      +0x1fc  0x3c4ccccd -> 0x3e800000   i 1011666125 -> 1048576000   f 0.0125 -> 0.25
+      +0x20c  0x4487a3e7 -> 0x4487b640   i 1149740007 -> 1149744704   f 1085.12 -> 1085.7
+
+verify\d3_elim_20261003\o_t3.msd  frames 3624  rec 0xd04  base 0x008822a4  frame_idx 0..3623
+  +0x10 transitions: 1   runs: 0 x1017, 1 x2607
+  THE WRONG DENOMINATOR  -- all frames:    == 0 on 1017 of 3624 = 28.0629%
+  THE RIGHT DENOMINATOR -- MOVING frames: == 0 on 222 of 222 = 100.0000%  (need >= 99.0%: PASS)
+  distance travelled 24.971; non-zero-speed frames 443 in 797..1239
+  single transition at frame_idx 1016 -> 1017 changes 135 of 833 record dwords
+      +0x004  0x00000001 -> 0x00000000   i 1 -> 0   f 1.4013e-45 -> 0
+      +0x010  0x00000000 -> 0x00000001   i 0 -> 1   f 0 -> 1.4013e-45
+      +0x02c  0x00000000 -> 0x00000032   i 0 -> 50   f 0 -> 7.00649e-44
+      +0x030  0x00000000 -> 0x00000032   i 0 -> 50   f 0 -> 7.00649e-44
+      +0x148  0xbed2b547 -> 0xbec5974f   i -1093487289 -> -1094346929   f -0.411539 -> -0.38592
+      +0x180  0x3f9541e7 -> 0x3f975cfc   i 1066746343 -> 1066884348   f 1.16607 -> 1.18253
+      +0x188  0xbed5dac2 -> 0xbebcab51   i -1093281086 -> -1094931631   f -0.417685 -> -0.368495
+      +0x1a4  0x00000b33 -> 0x00000b5e   i 2867 -> 2910   f 4.01752e-42 -> 4.07778e-42
+      +0x1d0  0xc1a3b100 -> 0x00000000   i -1046236928 -> 0   f -20.4614 -> 0
+      +0x1f8  0x3e19999a -> 0x3e800000   i 1041865114 -> 1048576000   f 0.15 -> 0.25
+      +0x1fc  0x3c4ccccd -> 0x3e800000   i 1011666125 -> 1048576000   f 0.0125 -> 0.25
+      +0x20c  0x4487a3e7 -> 0x4487b640   i 1149740007 -> 1149744704   f 1085.12 -> 1085.7
+
+3 of 3 captures PASS (field == 0 on >= 99.0% of moving frames)
