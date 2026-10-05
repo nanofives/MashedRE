@@ -26,16 +26,33 @@
 //   EBX[1] = (omega.z*EDI[0] - omega.x*EDI[2]) + EDI[1]
 //   EBX[2] = (omega.x*EDI[1] - omega.y*EDI[0]) + EDI[2]
 //
-// STATUS — DELIBERATELY NOT WIRED YET. Nothing calls these functions, so this
-// file cannot change behaviour. The omega SOURCE is still forked and I will not
-// guess it: FUN_0046e9e0 gates on ESI[4] (record +0x10), keeping the
-// +0x9bc/+0x9c0/+0x9c4 seed when it is nonzero and REBUILDING omega from wheel
-// forces when it is zero. Which arm a normal driving car takes is recorded as
-// [UNCERTAIN] in the notes file (its line 127) and is under a follow-up Ghidra
-// query. Our own A6_DIAG measured record +0x10 == 0 on every sample, so the
-// wheel-force arm may well be the live one — which is exactly why the omega
-// vector is a PARAMETER here rather than being computed in this file. When the
-// query lands, only the caller changes.
+// STATUS — WIRED, AND ON THE ARM THE ORIGINAL TAKES LESS THAN A THIRD OF THE TIME.
+//
+// [2026-10-05 U-9191, comment-only correction] The note that stood here —
+// "DELIBERATELY NOT WIRED YET. Nothing calls these functions, so this file cannot
+// change behaviour" — is STALE. These functions are live:
+// VehiclePhysicsRun.cpp:1001-1003 calls BodyOrient_OmegaFromSteer,
+// BodyOrient_IntegrateStep and BodyOrient_Heading every substep, and :520/:816
+// call BodyOrient_Init.
+//
+// THE ARM FORK, now measured instead of guessed. FUN_0046e9e0 gates on ESI[4]
+// (record +0x10): non-zero KEEPS the +0x9bc/+0x9c0/+0x9c4 seed (which is the
+// TORQUE triple, not angular velocity — U-9193), zero REBUILDS omega from the
+// steer/throttle chain. The old note here said "our own A6_DIAG measured record
+// +0x10 == 0 on every sample, so the wheel-force arm may well be the live one".
+// On the ORIGINAL that is wrong: +0x10 is 1 on 2558 of 3623 frames (70.60%) and 0
+// on 1065 of 3623 (29.40%) in verify/d3_elim_20261003/o_t1.msd, car 1, an AI car.
+// Meanwhile VehiclePhysicsRun.cpp:1001 calls BodyOrient_OmegaFromSteer
+// UNCONDITIONALLY and BodyOrient_OmegaFromAngVel below has ZERO call sites, so
+// the port takes the +0x10 == 0 arm on 100% of substeps.
+// Evidence and gates: verify/d3_arm_20261005/PREREG_ARM.md + RESULT_ARM.md.
+//
+// NOT FIXED HERE, and the reason is measured, not stylistic: no file under
+// mashedmod/src/ WRITES record +0x10 (the only two sites are reads,
+// Integrate2.cpp:527 and PhysicsChainHooks.cpp:2139), so simply honouring the gate
+// at the caller would still select the steer arm on every substep. The omega
+// vector stays a PARAMETER of BodyOrient_IntegrateStep so that when the +0x10
+// producer is ported, only the caller changes.
 
 #include "ForceIntegrator.h"   // [U-9147] g_handlingTorque (_DAT_00613108)
 #include <cmath>
@@ -60,7 +77,12 @@ inline float Cf(std::uint32_t bits) { float f; std::memcpy(&f, &bits, 4); return
 inline float&        Fb(void* v, std::size_t o) { return *reinterpret_cast<float*>(static_cast<char*>(v) + o); }
 inline std::int32_t& Ib(void* v, std::size_t o) { return *reinterpret_cast<std::int32_t*>(static_cast<char*>(v) + o); }
 
-constexpr std::size_t kAngVel = 0x9bc;   // angular velocity triple (+0x9bc/+0x9c0/+0x9c4)
+// [2026-10-05 U-9193] NAME CORRECTED, comment-only, no behaviour change. This triple is
+// the TORQUE, not the angular velocity: re/analysis/vehicle_promote_c2/0046e9e0.md:27
+// (committed 2026-05-12) gives ESI[0x26f..0x271] = +0x9bc..+0x9c4 = torque XYZ, and
+// ESI[0x51..0x53] = +0x144..+0x14c = angular velocity XYZ. The identifier keeps its old
+// spelling so no call site moves; see verify/d3_omega_20261005/RESULT_RATEFIELD.md.
+constexpr std::size_t kAngVel = 0x9bc;   // TORQUE triple (+0x9bc/+0x9c0/+0x9c4)
 
 // 0x004c4680  thunk_FUN_004c4680 — the matrix re-orthonormalize FUN_0046e9e0 calls
 // immediately after the row integration (a first-order dR = omega x R is not

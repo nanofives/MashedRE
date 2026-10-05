@@ -1,0 +1,202 @@
+{
+ "prereg": "verify/d3_arm_20261005/PREREG_ARM.md",
+ "msd": "verify/d3_elim_20261003/o_t1.msd",
+ "msd_rec_size": "0xd04",
+ "msd_base_va": "0x008822a4",
+ "orig_aistep": "verify/d3_elim_20261003/o_t1.msd.aistep.csv",
+ "port": "verify/d3_arm_20261005/A1.csv",
+ "car": 1,
+ "R": 0.12,
+ "min_n": 30,
+ "g_arm": {
+  "N_frames": 3623,
+  "n_zero": 1065,
+  "n_nonzero": 2558,
+  "frac_zero": 0.29395528567485507,
+  "distinct": [
+   {
+    "count": 2558,
+    "frac": 0.7060447143251449,
+    "u32": "0x00000001",
+    "i32": 1,
+    "f32": 1.401298464324817e-45
+   },
+   {
+    "count": 1065,
+    "frac": 0.29395528567485507,
+    "u32": "0x00000000",
+    "i32": 0,
+    "f32": 0.0
+   }
+  ],
+  "constant": false,
+  "pass_needs_zero_at_least": 3442,
+  "fail_if_nonzero_above": 181,
+  "pass": false,
+  "fail": true
+ },
+ "g_inert": {
+  "ref": "verify/d3_leg3_20261005/L1.csv",
+  "ref_cols": 42,
+  "M_common_rows": 7691,
+  "cells_compared": 323022,
+  "mismatching_cells": 0,
+  "examples": [],
+  "pass": true
+ },
+ "g_portarm": {
+  "n_windowed_rows": 220,
+  "n_zero": 220,
+  "n_nonzero": 0,
+  "distinct": [
+   {
+    "count": 220,
+    "frac": 1.0,
+    "u32": "0x00000000",
+    "i32": 0,
+    "f32": 0.0
+   }
+  ],
+  "data_needs_nonzero_at_least": 110,
+  "upstream_needs_zero_at_least": 209,
+  "verdict": "MISMATCH-UPSTREAM"
+ },
+ "g_acc": "NOT RUN -- G-ARM FAILED. Comparing the +0x144/+0x148/+0x14c accumulator across sides that provably take DIFFERENT omega arms is the torque-vs-rate error in another costume.",
+ "n_matched": 105,
+ "pair_dist": {
+  "median": 0.029290557569513757,
+  "max": 0.11961314056255525
+ },
+ "g_onset": {
+  "n_pairs": 105,
+  "tercile_size": 35,
+  "min_n": 30,
+  "all_pairs_median_abs_deg": 0.9866064239315477,
+  "induced": {
+   "n": 105,
+   "median_deg": 0.08786487041361113,
+   "n_moving": 103,
+   "median_moving_deg": 0.08891961958360639,
+   "void_above": 0.025,
+   "admissible": false
+  },
+  "thresholds": {
+   "T1_accumulated_at_most": 0.25,
+   "T3_accumulated_at_least": 0.5,
+   "T1_generated_at_least": 0.5,
+   "generated_ratio_at_most": 2.0
+  },
+  "verdict": "VOID -- the join's median induced heading error 0.0879 deg exceeds the registered 0.025 deg"
+ },
+ "g_span": {
+  "orig_frame_range": [
+   845,
+   1064
+  ],
+  "orig_aistep_rows": 220,
+  "orig_msd_frames": 220,
+  "orig_steps": 219,
+  "port_rows": 220,
+  "port_steps": 218,
+  "dH_orig_deg": 101.7306954702267,
+  "dH_port_deg": 159.3576101497668,
+  "abs_diff_deg": 57.62691467954009,
+  "max_step_orig_deg": 3.834016605359004,
+  "max_step_port_deg": 2.556401090211537,
+  "alias_void_above": 90.0,
+  "accumulated_at_least": 0.5,
+  "inherited_at_most": 0.25,
+  "verdict": "ACCUMULATED-consistent"
+ },
+ "combined": "INCONCLUSIVE (G-ONSET VOID -- the join's median induced heading error 0.0879 deg exceeds the registered 0.025 deg / G-SPAN ACCUMULATED-consistent)",
+ "collateral": {
+  "declared": "POST-HOC, UNREGISTERED, DESCRIPTIVE -- cannot change any gate",
+  "arclength_orig": 23.53935925233888,
+  "arclength_port": 31.20750517007624,
+  "arclength_ratio": 1.3257584811691698,
+  "dH_orig": 101.7306954702267,
+  "dH_port": 159.3576101497668,
+  "dH_ratio": 1.5664653565295406,
+  "dH_per_arclength_orig": 4.321727468436453,
+  "dH_per_arclength_port": 5.1063873667982,
+  "dH_per_arclength_ratio": 1.1815616334191537,
+  "common_span_L": 23.539359252338873,
+  "profile_over_common_span": [
+   {
+    "frac": 0.2,
+    "arclength": 4.707871850467774,
+    "dH_orig": -1.6246220818598502,
+    "dH_port": -2.2881639109405993,
+    "diff": -0.6635418290807491
+   },
+   {
+    "frac": 0.4,
+    "arclength": 9.415743700935549,
+    "dH_orig": -0.9290138456333817,
+    "dH_port": -0.3732691827098001,
+    "diff": 0.5557446629235816
+   },
+   {
+    "frac": 0.6,
+    "arclength": 14.123615551403324,
+    "dH_orig": 3.0288315898447116,
+    "dH_port": 10.410992410618535,
+    "diff": 7.382160820773823
+   },
+   {
+    "frac": 0.8,
+    "arclength": 18.831487401871097,
+    "dH_orig": 1.443048920862218,
+    "dH_port": 40.1444640356633,
+    "diff": 38.70141511480108
+   },
+   {
+    "frac": 1.0,
+    "arclength": 23.539359252338873,
+    "dH_orig": 101.7306954702267,
+    "dH_port": 91.93201050498739,
+    "diff": -9.798684965239318
+   }
+  ],
+  "terciles_orig": [
+   {
+    "arclength": 7.192821062103314,
+    "dH": -1.0076600450197475,
+    "dH_per_arclength": -0.14009246668581646
+   },
+   {
+    "arclength": 10.63630219048595,
+    "dH": 3.1169589262532327,
+    "dH_per_arclength": 0.2930491133508144
+   },
+   {
+    "arclength": 5.435327591070288,
+    "dH": 99.82193881524204,
+    "dH_per_arclength": 18.365395119742136
+   }
+  ],
+  "terciles_port": [
+   {
+    "arclength": 7.064006852217245,
+    "dH": -2.066132199573545,
+    "dH_per_arclength": -0.29248728700270565
+   },
+   {
+    "arclength": 11.892198918371099,
+    "dH": 44.50155679015159,
+    "dH_per_arclength": 3.7420797529215117
+   },
+   {
+    "arclength": 11.932899807097412,
+    "dH": 115.17764140725001,
+    "dH_per_arclength": 9.652108311405163
+   }
+  ],
+  "start_heading_orig": -90.00000500895614,
+  "start_fwd_port": [
+   0.0,
+   0.0
+  ],
+  "note": "tercile and dH-per-arclength comparisons are CONFOUNDED: at the same tercile or the same total arclength the two sides are on different stretches of road, because the port covers 1.3258x the distance in the same 220 frames"
+ }
+}

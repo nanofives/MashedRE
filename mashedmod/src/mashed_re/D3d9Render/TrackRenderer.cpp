@@ -4011,7 +4011,27 @@ void TrackRenderer::AiStepDump() {
                          //                  the PLAYER and is checked for an AI car by leg 3's
                          //                  KA-1 before any cross-side number is read.
                          // PREREG: verify/d3_leg3_20261005/PREREG_LEG3.md
-                         "rec_958,rec_960,rec_9d4,rec_9dc,rec_9bc,rec_9c0,rec_9c4\n");
+                         "rec_958,rec_960,rec_9d4,rec_9dc,rec_9bc,rec_9c0,rec_9c4"
+                         // [D3 2026-10-05] U-9191/U-9193. APPENDED again, so the 42
+                         // columns above keep their positions and ai_posmatch.py /
+                         // ai_headattrib.py / ai_yawrate.py stay unaffected. Four more
+                         // raw record reads, no derived value:
+                         //   +0x144/+0x148/+0x14c  the ANGULAR VELOCITY triple
+                         //     (ESI[0x51..0x53], re/analysis/vehicle_promote_c2/
+                         //     0046e9e0.md:28). This is the yaw rate; the +0x9bc triple
+                         //     appended above it is the TORQUE, not a rate --
+                         //     verify/d3_omega_20261005/RESULT_RATEFIELD.md. The
+                         //     player_trace at :3375-3377 already reads these three for
+                         //     car 0; this is the same three for an AI slot.
+                         //   +0x10  the omega-ARM gate FUN_0046e9e0 branches on
+                         //     (ESI[4]): non-zero keeps the torque seed, zero rebuilds
+                         //     omega from the steer chain. Dumped because the ORIGINAL
+                         //     takes the non-zero arm on 2558 of 3623 o_t1.msd frames
+                         //     (70.60%) while VehiclePhysicsRun.cpp:1001 calls
+                         //     BodyOrient_OmegaFromSteer unconditionally. No plate
+                         //     assigns +0x10 a semantic name, so it is logged raw.
+                         // PREREG: verify/d3_arm_20261005/PREREG_ARM.md sections 3/3b
+                         ",rec_144,rec_148,rec_14c,rec_10\n");
     }
     for (int v = 1; v <= 3; ++v) {
         if (!g_aib.alive[v]) continue;
@@ -4024,7 +4044,8 @@ void TrackRenderer::AiStepDump() {
         const Ai::StepLocals& sl = Ai::Ai_LastStepLocals(v);
         std::fprintf(lf, "%d,%ld,%d,%lu,0,%u,%u,%u,%u,%u,%d,%d,%d,%d,%d,%d,%g,%d,%d,%d,%.9g,%.9g,%u,"
                          "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d,%d,%d,%d,"
-                         "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g\n",
+                         "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,"
+                         "%.9g,%.9g,%.9g,%d\n",
                      frame, seq++, v, static_cast<unsigned long>(blk),
                      Ai::U8(blk + 0), Ai::U8(blk + 1), Ai::U8(blk + 3),
                      Ai::U8(blk + 4), Ai::U8(blk + 5),
@@ -4049,7 +4070,12 @@ void TrackRenderer::AiStepDump() {
                      static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x9dc)),
                      static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x9bc)),
                      static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x9c0)),
-                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x9c4)));
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x9c4)),
+                     // U-9191 PREREG_ARM sections 3/3b, appended. Raw reads only.
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x144)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x148)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x14c)),
+                     Vehicle::VehiclePhysics_RecordI32(v, 0x10));
     }
     std::fflush(lf);
     ++frame;
