@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-05T11:20:00Z",
+  "updatedAt": "2026-10-05T13:05:00Z",
   "sections": [
     {
       "heading": "Phase",
@@ -19,14 +19,15 @@
       ]
     },
     {
-      "heading": "Last session (2026-10-05)",
+      "heading": "Last session (2026-10-05, D3 ARM)",
       "fields": [
-        { "label": "Result", "value": "(b)'s heading share re-attributed and CONFIRMED: car 1 is REAL at the physics basis — 0.9866 deg measured directly, vs 0.9796 published, two derivations 0.7% apart", "kind": "text" },
-        { "label": "Also", "value": "U-9188 RESOLVED and RETRACTED — its heading residual was a poll artifact", "kind": "text" },
-        { "label": "Still open", "value": "Is car 1's residual GENERATED or ACCUMULATED? Rate field now NAMED: +0x148 (+0x9bc/9c0/9c4 is torque). Next: establish which omega arm each side takes, then compare the accumulator", "kind": "text" },
-        { "label": "New rows", "value": ["U-9189 stale bridge heading on eliminated cars", "U-9190 sa_headwatch.py not fit for purpose", "U-9191 car 1 physics heading divergence (confirmed)", "U-9192 d_body_heading is an identity", "U-9193 RESOLVED: +0x9c0 is torque, +0x148 is the yaw rate"], "kind": "list" },
-        { "label": "Also corrected", "value": "U-9175's field naming (label only — all its numbers and its conclusion stand)", "kind": "text" },
-        { "label": "Next step", "value": "Add +0x144/+0x148/+0x14c to the port dump; establish the omega arm (ESI[4]) first, then compare cross-side", "kind": "text" },
+        { "label": "Result", "value": "The port and the original take DIFFERENT omega arms. FUN_0046e9e0 forks on record +0x10: the original takes the torque-seed arm on 2558 of 3623 frames (70.60%), the port takes the steer arm on 100% of substeps, and BodyOrient_OmegaFromAngVel has ZERO call sites", "kind": "text" },
+        { "label": "Not fixable at the caller", "value": "The port's rec_10 is 0 on 220 of 220 rows and nothing under mashedmod/src writes record +0x10, so the missing port is the +0x10 PRODUCER — new reversing (U-9194)", "kind": "text" },
+        { "label": "Still open", "value": "Is car 1's 0.9866 deg GENERATED or ACCUMULATED? Still unanswered. The position join's median induced heading error is 0.087865 deg, so any gate on it needs a threshold above ~0.88 deg", "kind": "text" },
+        { "label": "Why no verdict", "value": "G-ONSET VOID on the join floor; G-SPAN's clause passed (57.63 deg) but the port covers 1.3258x the distance in the same 220 frames and the difference reverses sign under the distance control. COMBINED = INCONCLUSIVE, as pre-registered", "kind": "text" },
+        { "label": "New rows", "value": ["U-9194 omega-arm divergence, +0x10 producer unported", "U-9191 amended — magnitude stands, path superseded", "U-9192 item 2 discharged (D3_B_OFFLINE §3.5 needs no correction)"], "kind": "list" },
+        { "label": "Comment-only fixes", "value": "kAngVel relabelled TORQUE; the stale \"not wired yet\" header replaced with the measured arm fork", "kind": "text" },
+        { "label": "Next step", "value": "Pick ONE and pre-register it: port the +0x10 producer (U-9194), or close the 1.3258x distance over-run (U-9185) first", "kind": "text" },
         { "label": "C-levels moved", "value": 0, "kind": "number" }
       ]
     },
@@ -35,10 +36,9 @@
       "fields": [
         { "label": "hooks.csv", "value": "C1 821 / C2 3889 / C3 1014 / C4 176", "kind": "text" },
         { "label": "STUBS open", "value": 1111, "kind": "number" },
-        { "label": "UNCERTAINTIES open", "value": 3132, "kind": "number" },
-        { "label": "Next session", "value": "re/NEXT_SESSION.md — compare the +0x148 angular-velocity accumulator cross-side, omega arm first", "kind": "text" }
+        { "label": "UNCERTAINTIES open", "value": 3133, "kind": "number" },
+        { "label": "Next session", "value": "re/NEXT_SESSION.md — U-9194's +0x10 producer, or the distance over-run. Not another dump column.", "kind": "text" }
       ]
     }
   ]
 }
-
