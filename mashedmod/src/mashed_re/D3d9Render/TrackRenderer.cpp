@@ -105,6 +105,204 @@ void aib_own_fwd_xz(int v, float* fx, float* fz) {
     if (v < 0 || v > 3) { *fx = *fz = 0.f; return; }
     *fx = g_aib.fwd[v][0]; *fz = g_aib.fwd[v][1];
 }
+// ---------------------------------------------------------------------------
+// [D3 2026-10-05] U-9188 legs A and B. DEFAULT OFF: with MASHED_AI_YAWW unset
+// every entry point here returns on its first line and nothing is written.
+// Counters and file output only — no game value is derived from any of it.
+// Pre-registration: verify/d3_yaww_20261005/PREREG_YAWW.md.
+//
+// Leg A counts all NINE `a.yaw` writers per vehicle slot, plus whether each
+// site's VehiclePhysics_ResetOrientation was reached, plus faithful_nav / phys,
+// so "unreachable by control flow" is WITNESSED and not inferred. U-9188
+// enumerates five writers; `:2690` and `:3304` are missing from it (PREREG
+// Correction 5). `W_3334` is the mandatory coverage control — a zero there means
+// this block never executed, which VOIDs the leg rather than proving a negative
+// (memories arm-coverage-counters-before-first-run,
+// absent-log-proves-nothing-run-a-control).
+//
+// Leg B measures, IN-PROCESS at two known program points on the same frame, the
+// angle between the heading AiBridgeSnapshot publishes and the record's forward
+// row (+0x9d4/+0x9dc). sa_headwatch.py measures that same quantity by
+// ReadProcessMemory poll; this has no poll and so no H-JITTER term, which is
+// what separates H1 (a real writer) from H2 (a poll artifact) in the PREREG.
+// ---------------------------------------------------------------------------
+namespace yaww {
+
+enum Site {
+    W_2690 = 0,   // a.yaw = baseYaw          grid placement        (no basis reseed)
+    W_3283,       // a.yaw += 12.0f * dt      spin scaffold, phys path
+    R_3285,       //    .. its VehiclePhysics_ResetOrientation
+    W_3304,       // a.yaw = atan2(...)       respawn relocation
+    R_3307,       //    .. its VehiclePhysics_ResetOrientation
+    W_3334,       // a.yaw = io.yaw           THE SYNC — coverage control
+    W_3351,       // a.yaw = ry               off-mesh re-aim
+    R_3355,       //    .. its VehiclePhysics_ResetOrientation
+    W_3393,       // a.yaw += 12.0f * dt      legacy v2 spin        (unreachable, (b) arm)
+    W_3423,       // a.yaw += yerr * ..       legacy v2 ribbon limiter   ("      ")
+    W_3683,       // a.yaw += yerr * ..       AiOptionBStep limiter      ("      ")
+    W_3717,       // a.yaw = ry               AiOptionBStep off-mesh     ("      ")
+    SITE_N
+};
+
+const char* const kSite[SITE_N] = {
+    "w2690_grid",    "w3283_spin",     "r3285_reset",   "w3304_respawn",
+    "r3307_reset",   "w3334_sync",     "w3351_offmesh", "r3355_reset",
+    "w3393_v2spin",  "w3423_v2ribbon", "w3683_oblimit", "w3717_oboffmesh",
+};
+
+static const char* Path() {
+    static const char* s_p = std::getenv("MASHED_AI_YAWW");
+    return (s_p && s_p[0]) ? s_p : nullptr;
+}
+static bool On() { static const bool s_on = (Path() != nullptr); return s_on; }
+
+struct State {
+    long   frame;
+    int    nav, phys;
+    long   count[SITE_N][4];
+    // per-frame scratch, reset by Frame()
+    double pubYaw[4];   bool pubOk[4];
+    double pubRec[4];   bool pubRecOk[4];
+    double postYaw[4];  bool postOk[4];
+    double postRec[4];  bool postRecOk[4];
+    // accumulated samples, for the medians the gates are written against
+    std::vector<float> sPubRec[4], sPostRec[4], sPubPost[4];
+    std::FILE* fp;
+};
+static State& S() { static State s = {}; return s; }
+
+// |wrap(b - a)| in degrees. Both arguments are headings, so this is exactly the
+// angle between the unit vectors cos/sin of them.
+static double AngDeg(double a, double b) {
+    const double kPi = 3.14159265358979323846;
+    double d = b - a;
+    while (d >  kPi) d -= 2.0 * kPi;
+    while (d < -kPi) d += 2.0 * kPi;
+    return (d < 0.0 ? -d : d) * (180.0 / kPi);
+}
+
+// atan2 of the record's forward row. off::kForward = 0x9d4 is fwd.x (VehicleStruct.h:105),
+// +8 = 0x9dc is fwd.z. Written ONLY as cos/sin(io.yaw) at VehiclePhysicsRun.cpp:621-623,
+// :820-821 and :1004-1005 (PREREG Correction 3). Returns ok=false on an all-zero row,
+// which is the uninitialised record and must not be fitted as a heading of 0.
+static double RecYaw(int v, bool* ok) {
+    const float fx = Vehicle::VehiclePhysics_RecordF32(v, 0x9d4);
+    const float fz = Vehicle::VehiclePhysics_RecordF32(v, 0x9dc);
+    const bool nz = (fx != 0.f) || (fz != 0.f);
+    if (ok) *ok = nz;
+    return nz ? std::atan2(static_cast<double>(fz), static_cast<double>(fx)) : 0.0;
+}
+
+void Hit(int site, int v) {
+    if (!On() || v < 0 || v > 3 || site < 0 || site >= SITE_N) return;
+    ++S().count[site][v];
+}
+
+void Flags(bool nav, bool phys) {
+    if (!On()) return;
+    S().nav = nav ? 1 : 0;
+    S().phys = phys ? 1 : 0;
+}
+
+// called from AiBridgeSnapshot, with the yaw that slot is about to publish
+void Pub(int v, double yaw) {
+    if (!On() || v < 0 || v > 3) return;
+    State& s = S();
+    s.pubYaw[v] = yaw; s.pubOk[v] = true;
+    bool rok = false; const double ry = RecYaw(v, &rok);
+    s.pubRecOk[v] = rok;
+    if (rok) s.pubRec[v] = AngDeg(yaw, ry);
+}
+
+// called immediately after `a.yaw = io.yaw`, with the freshly synced yaw
+void Post(int v, double yaw) {
+    if (!On() || v < 0 || v > 3) return;
+    State& s = S();
+    s.postYaw[v] = yaw; s.postOk[v] = true;
+    bool rok = false; const double ry = RecYaw(v, &rok);
+    s.postRecOk[v] = rok;
+    if (rok) s.postRec[v] = AngDeg(yaw, ry);
+}
+
+static double Median(std::vector<float>& x) {
+    if (x.empty()) return -1.0;
+    std::vector<float> t(x);
+    std::sort(t.begin(), t.end());
+    const std::size_t n = t.size();
+    return (n & 1) ? static_cast<double>(t[n / 2])
+                   : 0.5 * (static_cast<double>(t[n / 2 - 1]) + static_cast<double>(t[n / 2]));
+}
+
+static void WriteSummary() {
+    State& s = S();
+    std::string sp = std::string(Path()) + ".summary.txt";
+    std::FILE* f = std::fopen(sp.c_str(), "w");
+    if (!f) return;
+    std::fprintf(f, "U-9188 leg A/B summary   frames=%ld  faithful_nav=%d  phys=%d\n",
+                 s.frame, s.nav, s.phys);
+    std::fprintf(f, "PREREG verify/d3_yaww_20261005/PREREG_YAWW.md\n\n");
+    std::fprintf(f, "LEG A — a.yaw writer counts per slot (slot0=player, 1..3=AI)\n");
+    std::fprintf(f, "%-18s %10s %10s %10s %10s\n", "site", "slot0", "slot1", "slot2", "slot3");
+    for (int i = 0; i < SITE_N; ++i)
+        std::fprintf(f, "%-18s %10ld %10ld %10ld %10ld\n", kSite[i],
+                     s.count[i][0], s.count[i][1], s.count[i][2], s.count[i][3]);
+    std::fprintf(f, "\nA-COV: w3334_sync must be > 0 on every live AI slot, else leg A is VOID.\n");
+    std::fprintf(f, "A-REACH: w3393/w3423/w3683/w3717 predicted 0 with faithful_nav=1 phys=1.\n\n");
+    std::fprintf(f, "LEG B — in-process angle, degrees. pub_rec is sa_headwatch's quantity\n");
+    std::fprintf(f, "with no poll. Slot 0 is CONSTRUCTION-ZERO, not a floor (PREREG 3b).\n");
+    std::fprintf(f, "%-6s %8s %12s %12s %12s %12s %12s\n",
+                 "slot", "n", "pub_rec_med", "pub_rec_max", "post_rec_med",
+                 "post_rec_max", "pub_post_med");
+    for (int v = 0; v < 4; ++v) {
+        double a = Median(s.sPubRec[v]), b = Median(s.sPostRec[v]), c = Median(s.sPubPost[v]);
+        float ma = 0.f, mb = 0.f;
+        for (std::size_t j = 0; j < s.sPubRec[v].size(); ++j)  if (s.sPubRec[v][j]  > ma) ma = s.sPubRec[v][j];
+        for (std::size_t j = 0; j < s.sPostRec[v].size(); ++j) if (s.sPostRec[v][j] > mb) mb = s.sPostRec[v][j];
+        std::fprintf(f, "%-6d %8d %12.6f %12.6f %12.6f %12.6f %12.6f\n",
+                     v, static_cast<int>(s.sPubRec[v].size()), a, (double)ma, b, (double)mb, c);
+    }
+    std::fprintf(f, "\nB-INPROC: U-9188 medians to reproduce are 0.5214 / 1.1430 / 0.4300 deg\n");
+    std::fprintf(f, "on slots 1/2/3. In band [0.25x,4x] on all three = H1. All three below\n");
+    std::fprintf(f, "0.05 = H2 (poll artifact). Anything else = INCONCLUSIVE, by PREREG.\n");
+    std::fclose(f);
+}
+
+// one call per frame, after both Pub and Post have run
+void Frame() {
+    if (!On()) return;
+    State& s = S();
+    if (!s.fp) {
+        s.fp = std::fopen(Path(), "w");
+        if (s.fp) std::fprintf(s.fp, "frame,nav,phys,slot,pub_yaw,post_yaw,rec_ok,"
+                                     "ang_pub_rec,ang_post_rec,ang_pub_post\n");
+    }
+    for (int v = 0; v < 4; ++v) {
+        if (s.pubRecOk[v]) s.sPubRec[v].push_back(static_cast<float>(s.pubRec[v]));
+        if (s.postRecOk[v]) s.sPostRec[v].push_back(static_cast<float>(s.postRec[v]));
+        double pp = -1.0;
+        if (s.pubOk[v] && s.postOk[v]) {
+            pp = AngDeg(s.pubYaw[v], s.postYaw[v]);
+            s.sPubPost[v].push_back(static_cast<float>(pp));
+        }
+        if (s.fp && (s.pubOk[v] || s.postOk[v])) {
+            std::fprintf(s.fp, "%ld,%d,%d,%d,%.9g,%.9g,%d,%.9g,%.9g,%.9g\n",
+                         s.frame, s.nav, s.phys, v,
+                         s.pubOk[v]  ? s.pubYaw[v]  : -999.0,
+                         s.postOk[v] ? s.postYaw[v] : -999.0,
+                         (s.pubRecOk[v] ? 1 : 0) + (s.postRecOk[v] ? 2 : 0),
+                         s.pubRecOk[v]  ? s.pubRec[v]  : -1.0,
+                         s.postRecOk[v] ? s.postRec[v] : -1.0,
+                         pp);
+        }
+        s.pubOk[v] = s.postOk[v] = s.pubRecOk[v] = s.postRecOk[v] = false;
+    }
+    ++s.frame;
+    // flushed on an interval, not at exit: the capture harness kills by PID, so an
+    // atexit dump would never run (memory race-capture-wait-for-exit).
+    if ((s.frame % 120) == 0) { if (s.fp) std::fflush(s.fp); WriteSummary(); }
+}
+
+}  // namespace yaww
 // rec+0x9e4 / +0xb0c of slot v, read from the ported physics record (the standalone
 // mirror of 0x008815a0 + v*0xd04). Opponents are stepped through it since D3 2026-09-26.
 float aib_veh_f32(int v, int off) { return Vehicle::VehiclePhysics_RecordF32(v, off); }
@@ -2688,6 +2886,7 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
                     a.target = 1;
                     a.speed  = radius_ * (0.10f + 0.02f * static_cast<float>(i));
                     a.yaw    = baseYaw;
+                    yaww::Hit(yaww::W_2690, static_cast<int>(i) + 1);
                     ai_cars_.push_back(a);
                 }
             }
@@ -3245,6 +3444,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         Ai::Ai_Standalone_Tick();
         AiStepDump();
         const bool phys = Vehicle::VehiclePhysics_Enabled();
+        yaww::Flags(faithful_nav, phys);   // A-REACH witnesses the branch, not prose
         // [U-9141 2026-09-29] MASHED_MEASURE_NOOPP=1 — MEASUREMENT HARNESS ONLY. Skips the
         // whole per-opponent update below (nothing else), so the three AI cars stay parked
         // on the grid and never enter the shared physics/collision world.
@@ -3281,8 +3481,10 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             }
             if (a.spin > 0.f) {   // spun out by a missile/mine (scaffold leaf effect)
                 a.spin -= in.dt; a.yaw += 12.0f * in.dt;
+                yaww::Hit(yaww::W_3283, v);
                 a.cur_speed = 0.f; a.vel[0] = a.vel[1] = a.vel[2] = 0.f;
-                if (phys) Vehicle::VehiclePhysics_ResetOrientation(v, a.yaw);
+                if (phys) { Vehicle::VehiclePhysics_ResetOrientation(v, a.yaw);
+                            yaww::Hit(yaww::R_3285, v); }
                 continue;
             }
             if (a.slow > 0.f) a.slow -= in.dt;
@@ -3303,8 +3505,10 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                         a.pos[0] = gp[0]; a.pos[2] = gp[2]; a.pos[1] = gy2 + car_ground_off_;
                         a.yaw = std::atan2(gates_[static_cast<std::size_t>(gB)].center[2] - gp[2],
                                            gates_[static_cast<std::size_t>(gB)].center[0] - gp[0]);
+                        yaww::Hit(yaww::W_3304, v);
                         a.vel[0] = a.vel[1] = a.vel[2] = 0.f; a.cur_speed = 0.f;
-                        if (phys) Vehicle::VehiclePhysics_ResetOrientation(v, a.yaw);
+                        if (phys) { Vehicle::VehiclePhysics_ResetOrientation(v, a.yaw);
+                                    yaww::Hit(yaww::R_3307, v); }
                         Ai::Ai_ResetVehicleIndex(v);
                     }
                     a.stuck_t = 0.f;
@@ -3332,6 +3536,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             a.vel[0] = io.vel[0]; a.vel[1] = io.vel[1]; a.vel[2] = io.vel[2];
             a.cur_speed = io.speed;
             a.yaw = io.yaw;
+            yaww::Hit(yaww::W_3334, v);        // A-COV: the mandatory coverage control
+            yaww::Post(v, a.yaw);              // leg B, second program point
             const float nx = a.pos[0] + io.drive_delta[0];
             const float nz = a.pos[2] + io.drive_delta[2];
             bool nok = false;
@@ -3349,10 +3555,12 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                                 my = GroundHeight(mx, mz, &mok); }
                     if (mok) { a.pos[0] = mx; a.pos[2] = mz; a.pos[1] = my + car_ground_off_; }
                     a.yaw = ry;
+                    yaww::Hit(yaww::W_3351, v);
                     const float sp = a.cur_speed * 0.5f;
                     a.vel[0] = std::cos(ry) * sp; a.vel[1] = 0.f; a.vel[2] = std::sin(ry) * sp;
                     a.cur_speed = sp;
                     Vehicle::VehiclePhysics_ResetOrientation(v, a.yaw);
+                    yaww::Hit(yaww::R_3355, v);
                 } else {
                     a.vel[0] = a.vel[1] = a.vel[2] = 0.f; a.cur_speed = 0.f;
                 }
@@ -3391,6 +3599,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         if (a.spin > 0.f) {
             a.spin -= in.dt;
             a.yaw += 12.0f * in.dt;
+            yaww::Hit(yaww::W_3393, ci + 1);
             a.cur_speed = 0.f;
             continue;
         }
@@ -3421,6 +3630,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         while (yerr >  3.14159f) yerr -= 6.28318f;
         while (yerr < -3.14159f) yerr += 6.28318f;
         a.yaw += yerr * (6.0f * in.dt > 1.f ? 1.f : 6.0f * in.dt);   // turn rate
+        yaww::Hit(yaww::W_3423, ci + 1);
         // brake into corners: target speed scaled by corner straightness
         const float brake = 0.45f + 0.55f * (corner < 0.f ? 0.f : corner);
         float tgt = a.speed * brake;
@@ -3438,6 +3648,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         }
     }
     }
+    yaww::Frame();   // U-9188 leg A/B per-frame emit; no-op unless MASHED_AI_YAWW
 
     // visual wheels: spin by distance/radius, steer toward the input
     const float wr = wheels_.empty() ? 0.3f : wheels_[0].radius;
@@ -3681,6 +3892,7 @@ void TrackRenderer::AiOptionBStep(AiCar& a, int v, float dt, int ng) {
     while (yerr >  3.14159265f) yerr -= 6.28318531f;
     while (yerr < -3.14159265f) yerr += 6.28318531f;
     a.yaw += yerr * (6.0f * dt > 1.f ? 1.f : 6.0f * dt);
+    yaww::Hit(yaww::W_3683, v);
     float ae = (yerr < 0.f ? -yerr : yerr);
     float align = 1.f - ae / 1.5707963f;      // 1 aligned -> 0 at >=90deg off
     if (align < 0.f) align = 0.f;
@@ -3715,6 +3927,7 @@ void TrackRenderer::AiOptionBStep(AiCar& a, int v, float dt, int ng) {
             }
             if (mok) { a.pos[0] = mx; a.pos[2] = mz; a.pos[1] = my + car_ground_off_; }
             a.yaw = ry;
+            yaww::Hit(yaww::W_3717, v);
         }
     }
     a.vel[0] = std::cos(a.yaw) * a.cur_speed;
@@ -3726,6 +3939,7 @@ void TrackRenderer::AiBridgeSnapshot() {
     g_aib.pos[0][0] = car_pos_[0];  g_aib.pos[0][1] = car_pos_[2];
     g_aib.vel[0][0] = car_vel_[0];  g_aib.vel[0][1] = car_vel_[2];
     g_aib.fwd[0][0] = std::cos(car_yaw_);  g_aib.fwd[0][1] = std::sin(car_yaw_);
+    yaww::Pub(0, car_yaw_);   // CONSTRUCTION-ZERO, not a floor — PREREG §3b
     g_aib.alive[0]  = (round_mode_ && !race_[0].alive) ? 0 : 1;
     for (int i = 0; i < 3; ++i) {
         const int v = i + 1;
@@ -3734,6 +3948,7 @@ void TrackRenderer::AiBridgeSnapshot() {
             g_aib.pos[v][0] = a.pos[0];  g_aib.pos[v][1] = a.pos[2];
             g_aib.vel[v][0] = a.vel[0];  g_aib.vel[v][1] = a.vel[2];
             g_aib.fwd[v][0] = std::cos(a.yaw);  g_aib.fwd[v][1] = std::sin(a.yaw);
+            yaww::Pub(v, a.yaw);               // leg B, first program point
             g_aib.alive[v]  = (round_mode_ && !race_[v].alive) ? 0 : 1;
         } else {
             g_aib.pos[v][0] = g_aib.pos[v][1] = 0.f;

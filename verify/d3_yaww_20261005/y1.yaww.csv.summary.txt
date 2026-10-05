@@ -1,0 +1,32 @@
+U-9188 leg A/B summary   frames=2520  faithful_nav=1  phys=1
+PREREG verify/d3_yaww_20261005/PREREG_YAWW.md
+
+LEG A — a.yaw writer counts per slot (slot0=player, 1..3=AI)
+site                    slot0      slot1      slot2      slot3
+w2690_grid                  0          1          1          1
+w3283_spin                  0          0         57          0
+r3285_reset                 0          0         57          0
+w3304_respawn               0          0          0          0
+r3307_reset                 0          0          0          0
+w3334_sync                  0       2520       1232       2520
+w3351_offmesh               0          0          0          0
+r3355_reset                 0          0          0          0
+w3393_v2spin                0          0          0          0
+w3423_v2ribbon              0          0          0          0
+w3683_oblimit               0          0          0          0
+w3717_oboffmesh             0          0          0          0
+
+A-COV: w3334_sync must be > 0 on every live AI slot, else leg A is VOID.
+A-REACH: w3393/w3423/w3683/w3717 predicted 0 with faithful_nav=1 phys=1.
+
+LEG B — in-process angle, degrees. pub_rec is sa_headwatch's quantity
+with no poll. Slot 0 is CONSTRUCTION-ZERO, not a floor (PREREG 3b).
+slot          n  pub_rec_med  pub_rec_max post_rec_med post_rec_max pub_post_med
+0          2520     0.000000     0.000000    -1.000000     0.000000    -1.000000
+1          2519     0.000000     0.000002     0.000000     0.000002     0.511363
+2          2519    66.828354   178.580170     0.000000     0.000002     0.491309
+3          2519     0.000000     0.000002     0.000000     0.000002     0.441176
+
+B-INPROC: U-9188 medians to reproduce are 0.5214 / 1.1430 / 0.4300 deg
+on slots 1/2/3. In band [0.25x,4x] on all three = H1. All three below
+0.05 = H2 (poll artifact). Anything else = INCONCLUSIVE, by PREREG.
