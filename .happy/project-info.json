@@ -23,9 +23,10 @@
       "fields": [
         { "label": "Result", "value": "(b)'s heading share re-attributed and CONFIRMED: car 1 is REAL at the physics basis — 0.9866 deg measured directly, vs 0.9796 published, two derivations 0.7% apart", "kind": "text" },
         { "label": "Also", "value": "U-9188 RESOLVED and RETRACTED — its heading residual was a poll artifact", "kind": "text" },
-        { "label": "Still open", "value": "Is car 1's residual GENERATED or ACCUMULATED? Rate legs failed their KA — needs a Frida entry hook", "kind": "text" },
+        { "label": "Still open", "value": "Is car 1's residual GENERATED or ACCUMULATED? Blocked: +0x9c0 is NOT the yaw rate (proved at a known program point), so the original's rate field is unlocated", "kind": "text" },
         { "label": "New rows", "value": ["U-9189 stale bridge heading on eliminated cars", "U-9190 sa_headwatch.py not fit for purpose", "U-9191 car 1 physics heading divergence (confirmed)", "U-9192 d_body_heading is an identity", "U-9193 +0x9c0 is not a per-frame yaw rate"], "kind": "list" },
-        { "label": "Next step", "value": "Frida entry hook for the original's AI-car yaw rate (--axis-probe shape, needs an AI-slot filter)", "kind": "text" },
+        { "label": "Next step", "value": "STATIC: read what FUN_0046e9e0 (BodyOrientationIntegrate) reads — let the disassembly name the rate input", "kind": "text" },
+        { "label": "New rows (cont.)", "value": ["U-9193 amended: zeroed-phase candidate refuted"], "kind": "list" },
         { "label": "C-levels moved", "value": 0, "kind": "number" }
       ]
     },
