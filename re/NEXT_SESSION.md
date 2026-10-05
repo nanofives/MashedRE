@@ -1,6 +1,68 @@
 # Next session kickoff
 
-> ## UPDATE 2026-10-05 (D3 RATEFIELD, commit `38450632`): **U-9193 RESOLVED — `+0x9c0` is the yaw TORQUE. The yaw rate is `+0x148`, and it was documented here since 2026-05-12. START HERE.**
+> ## UPDATE 2026-10-05 (D3 ARM, commit `d0ce578e`): **The port and the original take DIFFERENT omega arms — 70.60 % vs 0 % — and the port cannot be fixed at the call site. U-9191's question is still open, and now for a measured reason. START HERE.**
+>
+> **No C-level moved, no band moved, no hooks.csv change, no D2 WATCH.** Read
+> [`verify/d3_arm_20261005/RESULT_ARM.md`](../verify/d3_arm_20261005/RESULT_ARM.md);
+> `PREREG_ARM.md` was committed **unrun** at `5f3d2bdd` and **amended unrun** at `87531150` (G-PORTARM
+> added after G-ARM failed and before the capture ran). New row **U-9194**; **U-9191 amended**.
+> New tool `re/tools/ai_armrate.py`. Anchor verified before arming.
+>
+> - **G-ARM FAIL, and the failure is the finding.** `FUN_0046e9e0` forks on record `+0x10` (the
+>   plate's `ESI[4]`). The **original** takes the non-zero **torque-seed** arm on **2558 of 3623**
+>   frames (**70.60 %**) and the zero **steer** arm on 1065 of 3623 (29.40 %), measured offline on the
+>   committed `o_t1.msd`, car 1, an AI car. `VehiclePhysicsRun.cpp:1001` calls
+>   `BodyOrient_OmegaFromSteer` **unconditionally**, so the **port** takes the zero arm on **100 %** of
+>   substeps — and `BodyOrient_OmegaFromAngVel` has **ZERO call sites anywhere**.
+> - **G-PORTARM MISMATCH-UPSTREAM — do not "fix" this at the caller.** The port's `rec_10` is `0` on
+>   **220 of 220** windowed rows and **no file under `mashedmod/src/` writes record `+0x10`** (both
+>   sites are reads: `Integrate2.cpp:527`, `PhysicsChainHooks.cpp:2139`). Wiring the gate against an
+>   always-zero field reproduces exactly what the port already does. **The missing port is the `+0x10`
+>   PRODUCER, and that is new reversing.** `o_t1.msd` gives a per-frame expected series to validate a
+>   candidate producer against: **2558 / 1065 of 3623**.
+> - **G-ACC was NOT run**, per G-ARM's own registered FAIL clause. **Do not compare `+0x144`/`+0x148`/
+>   `+0x14c` cross-side until U-9194 is resolved** — the arms provably differ, so it is the
+>   torque-vs-rate error in another costume.
+> - **The position join is 3.5x too coarse for a sub-degree gate, and this is now measured.** Its
+>   **median** induced heading error is **0.087865 deg** over the 105 matched pairs (0.088920 on the
+>   103 that move, so not a construction zero). **Any future gate on this join needs a threshold above
+>   ~0.88 deg.** Leg 3 is unaffected — its 0.9866 deg clears it at **11.2x**. Recorded but **not
+>   adjudicated**: `PREREG_LEG3.md` §5c's *"median 0.0000 deg"* for the same quantity lands within
+>   2.5 % of `RESULT_LEG3`'s own **p90 of 0.0902**.
+> - **G-SPAN passed its clause and must NOT be quoted as a finding.** 57.6269 deg against >= 0.50,
+>   frame-count matched — but the port covers **1.3258x** the arclength in the same 220 frames, and
+>   over the common spatial span the difference is non-monotonic and **ends at the opposite sign**
+>   (-9.7987 deg). Per-tercile ratios swing **2.09 / 12.77 / 0.53** because at the same tercile the two
+>   sides are on **different stretches of road**. **COMBINED = INCONCLUSIVE**, as the pre-registered
+>   rule requires.
+> - **Instrument inert:** four appended columns (`rec_144`, `rec_148`, `rec_14c`, `rec_10`),
+>   **0 mismatching cells of 323022** (42 cols x 7691 rows) against the committed `L1.csv`.
+> - **Chased and NOT filed:** the exactly-90.0000 deg start-heading gap is `atan2(0,0)` on the port's
+>   first windowed row; its second reads -90.2997 against -90.0000. Guarded, nothing affected.
+>
+> ### START HERE — pick ONE of two, and pre-register it
+>
+> U-9191 cannot be settled by another column or a tighter radius. The two viable paths:
+>
+> 1. **Port the `+0x10` producer (U-9194).** This is the only item that is both new reversing and
+>    gating: it unblocks the arm fork, `BodyOrient_OmegaFromAngVel` (already written, body needs no
+>    work), and eventually a well-posed cross-side `+0x148` comparison. Validate any candidate against
+>    the 2558 / 1065 of 3623 series. **Do NOT seed `+0x10` to make the arm fire** —
+>    `verify/d3_modes37_20261002/RESULT_STEP2.md`: *"seeding the globals would not be a port"*.
+> 2. **Or close the 1.3258x distance over-run first** (U-9185 / `verify/d3_noboost_20261003`, the
+>    +15..31 % speed defect), so frame-matched and distance-matched comparisons stop returning
+>    opposite signs and G-SPAN-shaped evidence becomes readable at all.
+>
+> **A frame-marked join** is the third option and it is instrument work, not physics: it is what a
+> sub-degree generated-vs-accumulated test needs, since the position join caps admissible claims at
+> ~0.88 deg.
+>
+> **Do not assume closing any of these closes (b).** The 2026-10-02 counterfactual matrix had **no
+> arm passing (b) on any car**.
+
+The block below is the PREVIOUS session's headline, left as history.
+
+> ## UPDATE 2026-10-05 (D3 RATEFIELD, commit `38450632`): **U-9193 RESOLVED — `+0x9c0` is the yaw TORQUE. The yaw rate is `+0x148`, and it was documented here since 2026-05-12.**
 >
 > **No C-level moved, no band moved, no code changed, no game run, no D2 WATCH.** Read
 > [`verify/d3_omega_20261005/RESULT_RATEFIELD.md`](../verify/d3_omega_20261005/RESULT_RATEFIELD.md).
