@@ -1,6 +1,55 @@
 # Next session kickoff
 
-> ## UPDATE 2026-10-05 (D3 HEADATTRIB session, commits `225ee06f` .. `b204e34d`): **item (b)'s heading share is RE-ATTRIBUTED and it splits per car. Car 1 is REAL at the physics basis. LEG 3 IS THE NEXT STEP. START HERE.**
+> ## UPDATE 2026-10-05 (D3 LEG3 session, commits `52599239` .. `d717a713`): **U-9191 is CONFIRMED by an independent instrument. The rate legs failed their KA, so generated-vs-accumulated is still OPEN and needs a FRIDA ENTRY HOOK. START HERE.**
+>
+> **No C-level moved, no band moved, no D2 WATCH.** New row: **U-9193**. Read
+> [`verify/d3_leg3_20261005/RESULT_LEG3.md`](../verify/d3_leg3_20261005/RESULT_LEG3.md);
+> `PREREG_LEG3.md` was committed **unrun** at `52599239` and amended **unrun** at `01ada11e` and
+> `4429c0ec`.
+>
+> - **G-DIRECT PASS — U-9191's residual is real.** Measured **directly** from the record's forward
+>   row on both sides, no `err` inversion, no poll: **0.9866 deg (n 105)** against U-9185's published
+>   **0.9796** on the same-size population. Two different derivations, **0.7 %** apart. The gate was
+>   written so it could kill the parent row; it confirms it. **U-9192's identity finding still stands
+>   as a methodological correction — the number it produced just happened to be right.**
+> - **Only medians are admissible from leg 3.** The pairing's p90 induced error (0.0902 deg) sits on
+>   the registered 10x line (0.0892). No tail statistic is reported, and none should be quoted.
+> - **KA-1 FAILED (corr 0.068251).** `+0x9c0` is **not** a per-frame yaw rate at snapshot phase, so
+>   **the rate legs are abandoned and no cross-side rate number exists.** Finding: the original's
+>   `+0x9bc` and `+0x9c4` are **exactly 0.0 on all 3623 frames** (extends U-9175 from the player to
+>   an AI car), `+0x9c0` is non-zero on only **317**, its support matches turning exactly but
+>   `Δheading / +0x9c0` scatters over six orders of magnitude, sign-inverted. **U-9193.**
+> - **The port's dump now carries seven more record fields** (`rec_958`, `rec_960`, `rec_9d4`,
+>   `rec_9dc`, `rec_9bc`, `rec_9c0`, `rec_9c4`), appended so nothing moved, proven inert at
+>   **6479/6479** byte-identical pre-existing columns.
+> - **Do not re-use these two assumptions:** the port writes `+0x958`/`+0x960` as **identically 0.0**
+>   (it keeps position in `a.pos[]`), and a per-frame `.msd` snapshot cannot be paired to a per-call
+>   dump without a measured phase term.
+>
+> ### START HERE — the open question needs a Frida entry hook, not an offline pass
+>
+> 1. **Read the original's AI-car yaw rate at a known program point.** `scenario_launch.py`'s
+>    `--axis-probe` and `--lat-bracket` already sample `+0x9d4`/`+0x9dc` and
+>    `+0x9bc`/`+0x9c0`/`+0x9c4` **at entry hooks** and are the proven shape — but **both target the
+>    PLAYER** and need an AI-slot filter. Entry hooks only (memory
+>    `frida-interceptor-is-entry-only`).
+> 2. **Settle what `+0x9c0` is before using it** — U-9193's two candidates are "not `omega.y`" and
+>    "sampled at a zeroed phase". Do not guess between them.
+> 3. **Then answer U-9191's question:** is car 1's 0.9866 deg **generated** at the matched instant or
+>    **accumulated** before it? The port side already has the fields in its dump.
+> 4. **A D2 WATCH becomes owed only if the rate turns out to diverge** — the angular velocity is a D2
+>    surface. Nothing is owed yet.
+> 5. **Do not assume closing this closes (b).** The 2026-10-02 counterfactual matrix had **no arm
+>    passing (b) on any car**.
+>
+> **Three assumptions in my pre-registration were wrong** (`+0x9c0` as a rate, the port writing
+> `+0x958`, and pairing without a phase term) and **one gate was mis-scoped by me**. All are recorded
+> in the result. A better-informed registration would check the port's **field coverage** before
+> registering a pairing key — do that next time.
+
+The block below is the PREVIOUS session's headline, left as history.
+
+> ## UPDATE 2026-10-05 (D3 HEADATTRIB session, commits `225ee06f` .. `b204e34d`): **item (b)'s heading share is RE-ATTRIBUTED and it splits per car. Car 1 is REAL at the physics basis.**
 >
 > **No C-level moved, no band moved, no game code, no build, no game run** — legs 1, 2 and 2b are
 > entirely offline on committed captures. New rows: **U-9191**, **U-9192**. Read
