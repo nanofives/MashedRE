@@ -1,6 +1,59 @@
 # Next session kickoff
 
-> ## UPDATE 2026-10-04 (D3 HEADING session, commits `ed2eba34` .. `ef09fe40`): **U-9185 item (b) is ANSWERED — the body-heading residual is a PORT-ONLY BRIDGE defect, not a physics one. START HERE.**
+> ## UPDATE 2026-10-05 (D3 YAWW session, commits `49fc1ca0` .. `927304d9`): **U-9188 is RESOLVED and its answer is RETRACTED. U-9185 item (b) is REOPENED. START HERE.**
+>
+> **No C-level moved, no band moved, no scorer edited.** Only game-code change is one default-OFF
+> knob. New rows: **U-9189**, **U-9190**. Read
+> [`verify/d3_yaww_20261005/RESULT_YAWW.md`](../verify/d3_yaww_20261005/RESULT_YAWW.md);
+> `PREREG_YAWW.md` was committed **unrun** at `49fc1ca0` and **amended unrun** at `5f6f49c4`.
+>
+> - **The 2026-10-04 heading residual does not exist.** Measured in-process at two program points
+>   with no poll, the port's published `g_aib.fwd[v]` against the record's forward is **0.000000 deg,
+>   max 2e-6, on all three AI slots on every frame a car is stepped**. `post_rec` is 0.000000 too, so
+>   the sync is exact and the bridge has **no drift term**.
+> - **What U-9188 measured was the per-frame heading TURN**, banked by a non-atomic
+>   `ReadProcessMemory` poll straddling the record-write / `a.yaw`-sync boundary. Its claimed
+>   **0.5214 / 1.1430 / 0.4300** against this run's per-frame turn **0.491309 / 0.491309 / 0.421121**
+>   (cars 1 and 3 to 5.7 % and 2.1 %), and its own reported cap of **2.5564** against this run's turn
+>   maxima **2.556407 / 2.556403**. Right cap, wrong quantity.
+> - **A-REACH PASSED.** `:3393` = `:3423` = `:3683` = `:3717` = **0** with `faithful_nav=1` and
+>   `phys=1` witnessed in the same dump. **Both of U-9188's conditional remedies are dead.** Items 1
+>   and 2 of the previous handoff are **done and void** respectively.
+> - **The writer enumeration was wrong at five — there are NINE.** `:2690` (grid placement, witnessed
+>   1/1/1) and `:3304` were missing. And **`VehiclePhysics_ResetOrientation` never touches the
+>   record** (`VehiclePhysicsRun.cpp:518-523`) — it resyncs the body **basis**.
+> - **A real, separate defect exists: U-9189.** An eliminated-while-spinning car publishes a
+>   permanently stale heading, pinned at **66.828354 deg** for ~1300 frames. It **cannot** carry (b):
+>   `ai_ctrl_window.py:25-29` scores the first 220 calls with `c4 != 0` and this starts at frame 1232
+>   on a non-racing car. Do not fix it to move (b), and each candidate repair needs its own
+>   pre-registration.
+> - **U-9190: `re/tools/sa_headwatch.py` is not fit for this question.** Its `H-JITTER` control bounds
+>   a position while the claim is an angle, and its slot-0 floor agrees by construction. **Do not use
+>   that floor as an acceptance target.** Retire it or add a frame marker, and re-derive or withdraw
+>   any other result taken from it.
+>
+> ### START HERE — item (b) goes back to the physics basis
+>
+> 1. **Re-attribute U-9185 item (b)'s matched-position heading share** (`0.9796 / 0.9085 / 0.6506`) at
+>    the **physics basis**, which the 2026-10-04 session recorded as **NOT REACHED**. Item (b)'s two
+>    candidates are now **one**: the `(cos, sin)` reconstruction is exonerated, leaving the physics'
+>    own `io.yaw`.
+> 2. **Use the in-process pattern, not a poller.** A default-OFF knob reading both operands at known
+>    program points costs one build and has **no sampling term**. `MASHED_AI_YAWW` is the worked
+>    example and is proven inert (**6480/6480** byte-identical AI-step rows knob ON vs OFF).
+> 3. **Do not assume closing anything here closes (b).** The 2026-10-02 counterfactual matrix had
+>    **no arm passing (b) on any car**.
+>
+> **Three self-corrections, all registered before the run so none is hindsight:** candidate 5 (frame
+> order) was my own registered leading hypothesis and was refuted by static reading; PREREG
+> Correction 1 reused U-9188's misreading of `ResetOrientation`; and the writer enumeration was
+> corrected from five to nine before counting, which is why `:2690` was instrumented at all.
+>
+> **No D2 WATCH row** — no D2 code was read or changed.
+
+The block below is the PREVIOUS session's headline, left as history.
+
+> ## UPDATE 2026-10-04 (D3 HEADING session, commits `ed2eba34` .. `ef09fe40`): **U-9185 item (b) is ANSWERED — the body-heading residual is a PORT-ONLY BRIDGE defect, not a physics one.** — **RETRACTED 2026-10-05, see above.**
 >
 > **No C-level moved, no band moved, no game code / `.rsp` / build.** New row: **U-9188**.
 > Read [`verify/d3_heading_20261004/RESULT_HEADING.md`](../verify/d3_heading_20261004/RESULT_HEADING.md);
