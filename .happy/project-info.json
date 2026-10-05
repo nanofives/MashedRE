@@ -1,73 +1,39 @@
 {
-  "title": "Mashed RE — source port",
-  "updatedAt": "2026-10-03T12:00:00Z",
+  "title": "Mashed RE — greenfield source port",
+  "updatedAt": "2026-10-05T11:20:00Z",
   "sections": [
     {
-      "heading": "Current phase",
+      "heading": "Phase",
       "fields": [
-        { "label": "Roadmap phase", "value": "D3 active and UNBLOCKED; D2 PARKED (re-openable)", "kind": "text" },
-        { "label": "Branch", "value": "race/first-frame-parity (nothing pushed)", "kind": "text" },
-        { "label": "D3 closes?", "value": "No — AI criterion (b) is the sole blocker. The user decision is MADE: keep the start boost.", "kind": "text" },
-        { "label": "Latest session", "value": "2026-10-03 — D3 ELIMINATION + OVER-SPEED. Confound share = ZERO. The over-speed is a COMMAND defect with all 149 of its calls accounted for. No C-level move, no band moved.", "kind": "text" },
-        { "label": "Commits", "value": ["e0b35ff9 decision record", "e8d038ab STEP 1 prereg (unrun) + --alive-probe", "5e39160c STEP 1 result", "23cb9d7d STEP 2 gate failure + amendment (unrun)", "46cd19df STEP 2B result"], "kind": "list" }
+        { "label": "Active", "value": "D3 — default AI, powerups, modes", "kind": "text" },
+        { "label": "Closed", "value": ["D0 (truth)", "D1 (librw default, residue R1-R3 owed)", "D2 (ported physics default)"], "kind": "list" },
+        { "label": "D2", "value": "PARKED by user decision 2026-10-02", "kind": "text" }
       ]
     },
     {
-      "heading": "USER DECISION 2026-10-03 — KEEP the AI start boost",
+      "heading": "D3 gates",
       "fields": [
-        { "label": "The decision", "value": "VehiclePhysicsRun.cpp:703-707 stays in the default build: it reproduces the original's launch, criterion (e) MET 3/3 within 0.05% of the original's own 1425.7/2052.5/2055.0.", "kind": "text" },
-        { "label": "Rejected", "value": "Removing the seed. It trades a MET criterion for a still-NOT-MET one. MASHED_NO_START_BOOST stays a measurement knob only.", "kind": "text" }
+        { "label": "(b) AI steer bands", "value": "FAILS 3/3 — 13 of 30 bands, all STEER", "kind": "text" },
+        { "label": "(e) launch / speed", "value": "PASSES 3/3, within 0.05%", "kind": "text" },
+        { "label": "modes 3/7", "value": "blocked — no world-object list (U-9186)", "kind": "text" }
       ]
     },
     {
-      "heading": "STEP 1 — the elimination confound's share is ZERO (measured)",
+      "heading": "Last session (2026-10-05)",
       "fields": [
-        { "label": "The control", "value": "New default-OFF knob MASHED_NO_ELIM, read at exactly the two elimination blocks. Proved live on two independent channels. Arm C vs arm A: 0 of 2640 scored byte-slots differ over the 220-call window, and 0 of 660 on speed/position. All six arms print the same (b)/(e) digits.", "kind": "text" },
-        { "label": "So", "value": "The arm A vs arm B delta WAS single-cause. U-9185 evidence item (a) RESOLVED; every number in verify/d3_noboost_20261003/RESULT.md stands unchanged.", "kind": "text" },
-        { "label": "Correction 1 (registered BEFORE the run)", "value": "VehicleStep(0) runs in NEITHER port arm and not on the original either: aib_veh_type(0)=0 (TrackRenderer.cpp:86) and aib_ai_target_enable()=0 (:96) make AiStandalone.cpp:1709 false. Live FUN_00418560 per-slot tally on the original: [0, 1230, 1230, 2062].", "kind": "text" },
-        { "label": "Correction 2", "value": "BOTH port arms eliminate the player — arm A at window call 112, arm B at 146. The earlier 'arm B leaves it alive' was a line-alignment artefact of comparing trace line 223.", "kind": "text" },
-        { "label": "What the ORIGINAL does", "value": "The player is alive on every frame of the scored window and dies on the FIRST FRAME AFTER it, when 0x00898980 reaches exactly 10.0 — the FUN_00442df0()==10.0 gate at 0x00410ee3. Elimination call index is monotone in window speed (220 / 146 / 112 at 2419 / 3169 / 3421): a READOUT of the over-speed, not an independent variable.", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "STEP 2 — the over-speed is a COMMAND defect, 149/149 accounted for",
-      "fields": [
-        { "label": "A pre-registered gate FAILED", "value": "PREREG_STEP2.md section 2.0 required the accel/brake model to reproduce the ORIGINAL's logged c4/c5 on >=95%. It reproduces the PORT 220/220 and the ORIGINAL 0.636/0.936/0.750. Sections 2.1-2.5 DID NOT RUN and are reported nowhere. PREREG_STEP2B.md replaced them unrun.", "kind": "text" },
-        { "label": "Physics EXONERATED", "value": "Pre-onset the port's whole force chain reproduces the original's speed to 0.98 / 0.23 / 0.23% (median |dspeed| 0.873 / 0.715 / 0.473 units). Drive force +0xb14/+0xb1c (A4 0x00470670), A5 drag 0x0046ddb0, A6a's clamps incl. grip-clamp #6 (0x00467650), the contact solver 0x0046f6c0 and the +0xb0c channel are jointly cleared. Section 2.5's per-term budget is SUPERSEDED, not skipped.", "kind": "text" },
-        { "label": "Onset = COMMAND on all three cars", "value": "car 1 call 102 (c4 64 vs 255), car 2 call 24 (c5 255 vs 0), car 3 call 41 ((c4,c5) (0,255) vs (255,0)) — at all three registered thresholds.", "kind": "text" },
-        { "label": "The three unported branches of FUN_00416250", "value": ["36 calls — FUN_00414a70 == 2 -> immediate return at 0x00416405 (ctrl[4]=0, ctrl[5]=0xff)", "49 calls — FUN_00414c30 == 2 -> mode 7 -> ctrl[4]=0x40 (MOV EBX,7 @ 0x0041643f)", "64 calls — FUN_004148b0 != 0 AND FUN_00416060 != 0 -> a SECOND immediate return", "448 calls — no producer fired: the port's mode-0 tail is BIT-EXACT", "63 calls — FUN_00414a70 == 1 -> mode 3: the model agrees"], "kind": "list" },
-        { "label": "Zero unexplained", "value": "149 of 660 window calls diverge and 149 are explained. Cell-identical across three independent live runs with 2, 4 and 5 inner hooks.", "kind": "text" },
-        { "label": "Command gap, orig vs port", "value": "c4==255 on 63.6 / 91.8 / 70.9% vs 97.7 / 95.5 / 97.7%. c5==255 on 21.4 / 18.6 / 30.0% vs 2.3 / 4.5 / 2.3%. c4==0x40 is emitted on 49 calls, all mode-7; the port never emits it.", "kind": "text" },
-        { "label": "G2B-LIVE FAILED as written", "value": "The registered '>=99% of mode-7 calls carry c4==0x40' measures 49/80 = 61.3%. Reported, not re-thresholded. The exact relation is the converse: 49/49 on four runs, plus FUN_00414a70==2 => the 0x00416405 signature 36/36.", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "STEP 3 — NOT landed, deliberately. What the next session does first.",
-      "fields": [
-        { "label": "1. Wire FUN_004148b0 (64 calls) — NO new reversing", "value": "0x004148b0 is C3 impl (Ai/AiLeaderTimer.cpp) and 0x00416060 is C3 impl (Ai/AiTargeting.cpp) with a committed frida_diff. Missing: all three TUs are asi_sources.rsp-only, and AiStandalone.cpp:846 has the 'stubbed (return 0)' comment where the call belongs. MANDATORY FIRST: a pre-registered knob-took witness proving it is not INERT — LeaderTimer's rank/progress inputs may be .bss zeros in the standalone, the exact trap FUN_00484c70 already fell into.", "kind": "text" },
-        { "label": "2. FUN_00414a70 + FUN_00414300", "value": "36 calls. Both C2 mapped, no body. A real port.", "kind": "text" },
-        { "label": "3. Mode 7 — BLOCKED", "value": "49 calls, car 1's entire carrier. FUN_00414c30 iterates FUN_00484c70 world-objects, which the standalone does not own.", "kind": "text" },
-        { "label": "Why not landed now", "value": "Wiring a possibly-inert AI change into the default build at the end of a long session would produce a build whose (b)/(e) numbers mix a partial fix with two unfixed sources — the exact non-single-cause measurement STEP 1 existed to remove.", "kind": "text" },
-        { "label": "Checkable call-by-call", "value": "The committed captures o_t1 / o_t2 / o_t3 carry the exact 149 calls each fix must change.", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "STEP 4 — re-score and guards, all at baseline",
-      "fields": [
-        { "label": "(e)", "value": "6/6 PASS. launch 1426.4 / 2053.0 / 2055.2; ft_median_m0 2550.6 / 2053.0 / 2278.2 (n = 100 / 23 / 39); regime0 = 1; median call index 109.5. No regression.", "kind": "text" },
-        { "label": "(b)", "value": "13 failing bands of 30 (car 1 five, car 2 four, car 3 four). Unchanged. Still NOT MET.", "kind": "text" },
-        { "label": "Window speed vs the original", "value": "+41.4% / +39.6% / +33.6% (2419.5 / 2397.0 / 2617.6 against 3421.7 / 3346.2 / 3495.9).", "kind": "text" },
-        { "label": "Guards", "value": "Powerups 11/11 decision CLEAN, contact CLEAN on 10 of 11 with g3 the known R_FLAME 2-of-546 residue. Rule-3 oracle GREEN, MISMATCH 0 on 2478 SegmentCheck / 2 EvaluateResult / 3381 FinishOrder calls.", "kind": "text" },
-        { "label": "Collateral", "value": "Paired over the WHOLE run, floors from same-arm repeats (floors are 0): 1 / 0 / 1 of 35 fields diverge on cars 1 / 2 / 3, and the only one is `seq`, the dump's own row counter. One outside-scope row.", "kind": "text" },
-        { "label": "D2 WATCH", "value": "NO REOPEN CANDIDATE. Player physics bit-identical over 6614 trace lines (the only differing field anywhere is `alive`), and all three onsets are COMMAND, so the shared physics terms are exonerated rather than implicated.", "kind": "text" }
+        { "label": "Result", "value": "U-9188 RESOLVED and RETRACTED — its heading residual was a poll artifact", "kind": "text" },
+        { "label": "Consequence", "value": "U-9185 item (b) REOPENED at the physics basis", "kind": "text" },
+        { "label": "New rows", "value": ["U-9189 stale bridge heading on eliminated cars", "U-9190 sa_headwatch.py not fit for purpose"], "kind": "list" },
+        { "label": "C-levels moved", "value": 0, "kind": "number" }
       ]
     },
     {
       "heading": "Trackers",
       "fields": [
-        { "label": "U-9186 FILED", "value": "Carries the three unported command sources, with each one's port state, blocker and the exact call counts.", "kind": "text" },
-        { "label": "U-9185 AMENDED", "value": "Item (a) RESOLVED (confound share zero). Item (c) ANSWERED (command defect) and moved to U-9186. Item (b) — which heading candidate carries the steering residual — is all that is left.", "kind": "text" },
-        { "label": "C-levels", "value": "Unchanged. No promotion, no demotion.", "kind": "text" }
+        { "label": "hooks.csv", "value": "C1 821 / C2 3889 / C3 1014 / C4 176", "kind": "text" },
+        { "label": "STUBS open", "value": 1111, "kind": "number" },
+        { "label": "UNCERTAINTIES open", "value": 3132, "kind": "number" },
+        { "label": "Next session", "value": "re/NEXT_SESSION.md — re-attribute (b)'s heading share at the physics basis", "kind": "text" }
       ]
     }
   ]
