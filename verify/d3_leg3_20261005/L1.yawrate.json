@@ -1,0 +1,40 @@
+{
+ "R": 0.12,
+ "min_n": 30,
+ "prereg": "verify/d3_leg3_20261005/PREREG_LEG3.md",
+ "ka1": {
+  "status": "ok",
+  "n": 2777,
+  "corr": 0.0682511324089785,
+  "k": 0.044077753184269576,
+  "resid_deg": {
+   "median": 1.8480731327485955e-06,
+   "p90": 0.017553028365444506,
+   "max": 3.856376019470381
+  },
+  "wx_nonzero": 0,
+  "wz_nonzero": 0,
+  "frames": 3623,
+  "pass": false
+ },
+ "rate_legs": "ABANDONED -- KA-1 did not pass; +0x9c0 is not usable as a per-frame yaw rate and no cross-side rate number is reported",
+ "n_matched": 105,
+ "pair_dist": {
+  "median": 0.029290557569513757,
+  "max": 0.11961314056255525
+ },
+ "g_direct": {
+  "n": 105,
+  "median_abs_deg": 0.9866064239315477,
+  "band": [
+   0.45,
+   1.8
+  ],
+  "pass": true
+ },
+ "g_floor": "ABANDONED -- KA-1 did not pass; +0x9c0 is not usable as a per-frame yaw rate and no cross-side rate number is reported",
+ "g_rate": "ABANDONED -- KA-1 did not pass; +0x9c0 is not usable as a per-frame yaw rate and no cross-side rate number is reported",
+ "msd": "verify/d3_elim_20261003/o_t1.msd",
+ "port": "verify/d3_leg3_20261005/L1.csv",
+ "car": 1
+}

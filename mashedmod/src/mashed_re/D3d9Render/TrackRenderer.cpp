@@ -3993,7 +3993,25 @@ void TrackRenderer::AiStepDump() {
                          "look_x,look_z,curv,own_x,own_z,hist_d8,hist_dc,march_n,march_idx0,"
                          // standalone-only: the phase-8 walk index before and after the
                          // wall-march, and whether any pass blocked.
-                         "look_best,look_idx,look_blk\n");
+                         "look_best,look_idx,look_blk,"
+                         // [D3 2026-10-05] U-9191 leg 3. APPENDED, so every column above
+                         // keeps its position and ai_posmatch.py / ai_headattrib.py are
+                         // unaffected. Seven raw record reads, no derived value:
+                         //   +0x958/+0x960  the record's own world X / Z. Pairing against the
+                         //                  original's o_t1.msd uses THESE and not own_x/own_z,
+                         //                  so it cannot be contaminated by any difference
+                         //                  between what the AI believes its position is and
+                         //                  where the physics record puts it.
+                         //   +0x9d4/+0x9dc  body forward X / Z, so the heading can be measured
+                         //                  DIRECTLY instead of inverted out of signed_err --
+                         //                  the inversion U-9192 records as an identity.
+                         //   +0x9bc/+0x9c0/+0x9c4  angular velocity x/y/z. +0x9c0 IS the yaw
+                         //                  rate, so it is read directly and never differenced.
+                         //                  That identification comes from U-9175's notes about
+                         //                  the PLAYER and is checked for an AI car by leg 3's
+                         //                  KA-1 before any cross-side number is read.
+                         // PREREG: verify/d3_leg3_20261005/PREREG_LEG3.md
+                         "rec_958,rec_960,rec_9d4,rec_9dc,rec_9bc,rec_9c0,rec_9c4\n");
     }
     for (int v = 1; v <= 3; ++v) {
         if (!g_aib.alive[v]) continue;
@@ -4005,7 +4023,8 @@ void TrackRenderer::AiStepDump() {
         // [D3 2026-09-26] same trailing input columns as scenario_launch.py --statediff-aistep
         const Ai::StepLocals& sl = Ai::Ai_LastStepLocals(v);
         std::fprintf(lf, "%d,%ld,%d,%lu,0,%u,%u,%u,%u,%u,%d,%d,%d,%d,%d,%d,%g,%d,%d,%d,%.9g,%.9g,%u,"
-                         "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d,%d,%d,%d\n",
+                         "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d,%d,%d,%d,"
+                         "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g\n",
                      frame, seq++, v, static_cast<unsigned long>(blk),
                      Ai::U8(blk + 0), Ai::U8(blk + 1), Ai::U8(blk + 3),
                      Ai::U8(blk + 4), Ai::U8(blk + 5),
@@ -4022,7 +4041,15 @@ void TrackRenderer::AiStepDump() {
                      static_cast<double>(sl.own_x), static_cast<double>(sl.own_z),
                      static_cast<double>(Ai::F32(0x008032d8u + static_cast<std::uintptr_t>(v) * 0x14u)),
                      static_cast<double>(Ai::F32(0x008032dcu + static_cast<std::uintptr_t>(v) * 0x14u)),
-                     sl.march_n, sl.march_idx0, sl.look_best, sl.look_idx, sl.look_blk);
+                     sl.march_n, sl.march_idx0, sl.look_best, sl.look_idx, sl.look_blk,
+                     // U-9191 leg 3, appended. Raw reads only.
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x958)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x960)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x9d4)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x9dc)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x9bc)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x9c0)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x9c4)));
     }
     std::fflush(lf);
     ++frame;
