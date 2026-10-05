@@ -161,6 +161,48 @@ original — an entry hook, not a per-frame record snapshot.
 
 ---
 
+## 5c. AMENDMENT: the registered pairing key does not exist on the port. Substitute measured, band untouched. G-DIRECT still UNRUN.
+
+**§2 registered pairing on `+0x958`/`+0x960` "on BOTH sides". That is impossible: the PORT writes
+those offsets as identically `0.0`** on all 3201 car-1 rows of the new capture. The port keeps
+vehicle position in `a.pos[]`, not in the record. The memory
+`msd-world-position-is-the-0x928-matrix-row` is about the **original's** record and I over-extended it
+to the port.
+
+**This is the third factual assumption in this pre-registration to fail, and that is a weakness of my
+registration, not a strength of the process.** For the record: (1) `+0x9c0` is not a usable per-frame
+yaw rate (KA-1, §5b); (2) the port does not write `+0x958`/`+0x960`; (3) implicitly, that a per-frame
+record snapshot could be paired to a per-call dump without a phase term. All three were caught by
+gates or controls rather than by publishing a wrong number, which is the system working — but a
+better-informed registration would have checked the port's field coverage first, and the next leg
+should.
+
+**Substitute key: `own_x` / `own_z` on the port against the original's `.msd` `+0x958`/`+0x960`.**
+Justified by measurement, not assertion. Joining the original's `.msd` to its **own** aistep rows by
+frame index (951 rows, exact overlap, 0 aistep-only frames):
+
+| | median | p90 | p99 | max |
+|---|---|---|---|---|
+| `\|+0x958 - own_x, +0x960 - own_z\|` phase offset | **0.000000** | 0.123502 | 0.158960 | 0.163141 |
+
+So the two are the **same quantity** sampled at slightly different instants — exactly `0` on the
+median, with a tail because the `.msd` snapshots once per render frame while the aistep row is logged
+at the AI call. 100 of 951 offsets exceed `R = 0.12`; those rows simply fail to match and are
+**excluded**, not mispaired.
+
+**Validity against the already-registered 10x rule, in the units of the claim.** One frame of pairing
+slip costs, on the original's own car 1, a heading change of **median 0.0000 deg, p90 0.0902, max
+3.8340**. The claim under test is **0.8918 deg**, so the registered 10x margin requires an induced
+error ≤ **0.0892 deg**. The median induced error is **0.0000** — the margin is satisfied at the
+median and sits essentially **exactly on the line at p90 (0.0902 vs 0.0892)**. Stated as a borderline
+rather than rounded in my favour: **G-DIRECT's median verdict is admissible; any p90 or tail statistic
+from it is NOT**, and none is reported.
+
+**Unchanged:** G-DIRECT's band **[0.45, 1.80] deg**, the radius `R = 0.12`, the car (1), and the
+window (`ai_posmatch.window`, first 220 calls with `c4 != 0`). The rate legs stay **abandoned**.
+
+---
+
 ## 6. No-behaviour-change requirement
 
 The seven columns are added inside a dump that is already default-OFF (`MASHED_AI_STEPDUMP` unset →
