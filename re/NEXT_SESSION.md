@@ -1,6 +1,54 @@
 # Next session kickoff
 
-> ## UPDATE 2026-10-05 (D3 LEG3 session, commits `52599239` .. `d717a713`): **U-9191 is CONFIRMED by an independent instrument. The rate legs failed their KA, so generated-vs-accumulated is still OPEN and needs a FRIDA ENTRY HOOK. START HERE.**
+> ## UPDATE 2026-10-05 (D3 OMEGA session, commit `0af828b1`): **`+0x9c0` is NOT the yaw rate — proved at a known program point. The next step is STATIC: read what `FUN_0046e9e0` reads. START HERE.**
+>
+> **No C-level moved, no band moved, no port code changed, no D2 WATCH.** Read
+> [`verify/d3_omega_20261005/RESULT_OMEGA.md`](../verify/d3_omega_20261005/RESULT_OMEGA.md);
+> `PREREG_OMEGA.md` was committed **unrun**. Anchor verified before arming.
+>
+> - **Reading `+0x9c0` at A6a ENTRY changed NOTHING.** Matched denominators, car 1: active-drive
+>   **312 of 437 = 71.40 %** at the hook against **312 of 436 = 71.56 %** on the `.msd`; all rows
+>   **317/2433** against **317/3623**. The **same 312 and the same 317**. So U-9193's
+>   "zeroed phase" candidate is **dead** and **`+0x9c0` is not `omega.y`** — do not use it as a rate
+>   anywhere.
+> - **G-RATEID fails at the known phase too**: Pearson **0.057699** against 0.068251 from the
+>   snapshot. 288 turning pairs, `+0x9c0` zero on **0** of them (support matches turning perfectly),
+>   ratio median **-6.8962**, p10 -1.276e4, p90 +73.73, sign-inverted.
+> - **G-ZERO extends U-9175:** `+0x9bc` and `+0x9c4` are **exactly 0.0 on all 2433** A6a-PRE rows, so
+>   "the original's omega.x/z are exactly 0" holds for an **AI car at a known phase** and is not a
+>   phase artifact.
+> - **`--axis-probe` was NOT player-only** — it is parameterised by `--statediff-car`. It now also
+>   logs `wx`,`wy`,`wz`,`px`,`pz`,`esi`, appended so existing consumers are unaffected.
+> - **KA-B FAILED — a defect in the inherited probe.** `a6bEsiRec = 0 of 9672`: ESI does **not** hold
+>   a record pointer at A6b, so its POST rows are **redundant duplicates of one record** (3.98x the
+>   PRE count). Harmless for U-9175's one-car arm; it would **4x over-weight any per-row POST
+>   statistic on a multi-car arm**. Fix or document before using POST rows.
+>
+> ### START HERE — stop probing offsets, read the writer
+>
+> 1. **The body forward row `+0x9d4`/`+0x9dc` demonstrably DOES rotate, so the rate exists
+>    somewhere.** `BodyOrientationIntegrate` (`FUN_0046e9e0`) is **already named as its writer**.
+>    **Read what that function actually READS** in Ghidra (use the `ghidra-pool` skill) and let the
+>    disassembly name the rate input. Do **not** probe more offsets by trial — that is what just
+>    failed twice.
+> 2. That same read settles U-9193's second question: **what drives the original's orientation when
+>    `omega.x`/`omega.z` are identically zero**, and whether the port's `BodyOrientationIntegrate`
+>    inputs correspond to the original's at all.
+> 3. **Only then** return to U-9191's open question — is car 1's confirmed **0.9866 deg** heading
+>    residual **GENERATED** at the matched instant or **ACCUMULATED** before it? The port side already
+>    carries the fields in its dump.
+> 4. **Do not assume closing this closes (b).** The 2026-10-02 counterfactual matrix had **no arm
+>    passing (b) on any car**.
+>
+> **Two drafting failures of mine today, both recorded in the results:** leg 3's KA-1 was mis-scoped
+> (it gated a leg that did not use the field it tested) and this session's **G-OMEGA was ill-posed** —
+> its PASS clause used the active-drive denominator while the figure it was to be compared against was
+> computed over all frames, so its nominal PASS is **void**. Check a gate's denominator against the
+> number it will be compared to **before** committing it.
+
+The block below is the PREVIOUS session's headline, left as history.
+
+> ## UPDATE 2026-10-05 (D3 LEG3 session, commits `52599239` .. `d717a713`): **U-9191 is CONFIRMED by an independent instrument. The rate legs failed their KA, so generated-vs-accumulated is still OPEN.**
 >
 > **No C-level moved, no band moved, no D2 WATCH.** New row: **U-9193**. Read
 > [`verify/d3_leg3_20261005/RESULT_LEG3.md`](../verify/d3_leg3_20261005/RESULT_LEG3.md);
