@@ -95,6 +95,32 @@ py -3.12 re/tools/sa_capture.py verify/d3_arm_20261005/A1 8,30,60 MASHED_MUTE=1 
     MASHED_AI_STEPDUMP=verify/d3_arm_20261005/A1.csv
 ```
 
+## 3b. AMENDMENT — G-PORTARM. Registered UNRUN, after G-ARM FAILED and before any port run.
+
+**G-ARM FAILED**: the original's `+0x10` is `1` on **2558 of 3623** frames (**70.60 %**) and `0` on
+**1065 of 3623** (29.40 %), against the registered PASS clause `Z >= 3442 of 3623`. Per §2 that
+means **G-ACC is NOT run** and the arm divergence is the finding.
+
+That changes which number step 2's columns are read for first, so the new gate is registered here
+**before the capture runs**. The columns themselves are **unchanged** from §3 — nothing is added,
+nothing is renamed, and `rec_10` was already on the registered list.
+
+**G-PORTARM.** The port's `rec_10` over car 1's `ai_posmatch.window` rows in the new capture
+(`n_w` = that row count, printed). Distinct-value histogram with counts, raw `u32`/`i32`/`f32`.
+
+- **MISMATCH-DATA** if `rec_10 != 0` on **>= 0.50 * n_w** rows: the port's record **carries** the
+  gate's input and the orientation caller ignores it. The remedy is then local to
+  `VehiclePhysicsRun.cpp:1001` plus the already-written `BodyOrient_OmegaFromAngVel`.
+- **MISMATCH-UPSTREAM** if `rec_10 == 0` on **>= 0.95 * n_w** rows: the port's record never carries
+  the gate value, so wiring the gate alone would still take the steer arm on every substep, and the
+  **writer** of `+0x10` is the missing port. Supporting static fact, already grepped: **no file under
+  `mashedmod/src/` writes vehicle record `+0x10`** — the only two sites are reads, `Integrate2.cpp:527`
+  and `PhysicsChainHooks.cpp:2139`.
+- Between 0.05 and 0.50 non-zero: **INCONCLUSIVE**, histogram reported.
+
+G-PORTARM does **not** revive G-ACC. Comparing an accumulator across sides that provably take
+different arms stays out of scope for this leg, in either branch of G-PORTARM.
+
 ## 4. STEP 3 — generated vs accumulated. Three gates, and what each can and cannot say.
 
 Population throughout: **car 1**, the `ai_posmatch.window` window (first 220 calls from the first
