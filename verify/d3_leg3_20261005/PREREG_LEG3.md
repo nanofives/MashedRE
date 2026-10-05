@@ -115,6 +115,52 @@ the sampled instant should track the instantaneous inputs; one that is inherited
 wrong about H-STALE yesterday on this same row**, so this is offered with low confidence, and
 G-DIRECT is deliberately written so it can kill the parent row rather than confirm it.
 
+## 5b. AMENDMENT after KA-1 FAILED: separate G-DIRECT from KA-1. Thresholds unchanged.
+
+**KA-1 has run and FAILED** (correlation **0.068251** against the required 0.95). The rate legs
+(G-FLOOR, G-RATE) are therefore **abandoned**, not re-thresholded: no cross-side yaw-rate number is
+reported anywhere in this session. That part of the registration is honoured exactly as written.
+
+**What is amended is which legs KA-1 gates, and only that.** §3 says KA-1 must pass "before any
+cross-side number is read" and §5 says a FAIL stops the whole leg. That was **over-broad drafting on
+my part**: **G-DIRECT does not use `+0x9c0`.** It compares `atan2(+0x9dc, +0x9d4)` on the two sides
+and is independent of the field KA-1 tested. Suppressing it because an unrelated field
+identification failed would discard the one gate written to be able to **kill the parent row**.
+
+**This is a change of scope, not of a threshold, and the distinction is the whole defence.**
+G-DIRECT's band **[0.45, 1.80] deg** was fixed in §5 before anything ran and is **not touched**. Its
+pairing, radius, car and population are unchanged. Nothing about what counts as a pass has moved. I
+am aware this is the shape of an after-the-fact relaxation and am recording it as a scope correction
+precisely so the record shows which one it is; a reader who disagrees can discount G-DIRECT entirely
+and the rate verdict is unaffected, because there is none.
+
+**KA-1's failure is itself a finding and is reported, not buried.** Measured on `o_t1.msd`, car 1,
+3623 frames:
+
+- `+0x9bc` and `+0x9c4` are **exactly 0.0 on all 3623 frames** — consistent with U-9175's measurement
+  for the **player** (no pitch/roll torque on flat ground), now also true for an AI car.
+- `+0x9c0` is non-zero on only **317 of 3623** frames, and the heading moves (`|dheading| > 0.01`
+  deg) on **289 of 3620** frame pairs. The **support matches**: on **0 of those 289** is `+0x9c0`
+  exactly zero.
+- But it is **not proportional**. `dheading / +0x9c0` has median **-8.868**, p10 **-1.44e6**, p90
+  **+73.2** — scattered over six orders of magnitude and predominantly **sign-inverted**.
+
+So `+0x9c0` co-occurs with turning but is **not a per-frame yaw rate** readable from a per-frame
+snapshot. Either it is not `omega.y`, or the `.msd` samples it at a phase where it has been zeroed or
+only partly accumulated (the record is known to zero per-frame accumulators elsewhere — U-9177 on
+`+0xb14`/`+0xb18`/`+0xb1c`). **Which of those is true is not established here** and is filed as its
+own row rather than guessed.
+
+This matters beyond leg 3: U-9175 describes the port's `BodyOrientationIntegrate` as driven by
+`omega.x` / `omega.z` (`at.y += omega.z*at.x - omega.x*at.z`), and **both are identically zero on the
+original across every frame measured.** That is recorded as a question, not a conclusion.
+
+**Consequence for the generated-vs-accumulated question: it remains OPEN.** No instrument in this
+session can answer it, and the next attempt needs a yaw rate sampled at a known program point on the
+original — an entry hook, not a per-frame record snapshot.
+
+---
+
 ## 6. No-behaviour-change requirement
 
 The seven columns are added inside a dump that is already default-OFF (`MASHED_AI_STEPDUMP` unset →
