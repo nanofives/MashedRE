@@ -1,6 +1,58 @@
 # Next session kickoff
 
-> ## UPDATE 2026-10-05 (D3 YAWW session, commits `49fc1ca0` .. `927304d9`): **U-9188 is RESOLVED and its answer is RETRACTED. U-9185 item (b) is REOPENED. START HERE.**
+> ## UPDATE 2026-10-05 (D3 HEADATTRIB session, commits `225ee06f` .. `b204e34d`): **item (b)'s heading share is RE-ATTRIBUTED and it splits per car. Car 1 is REAL at the physics basis. LEG 3 IS THE NEXT STEP. START HERE.**
+>
+> **No C-level moved, no band moved, no game code, no build, no game run** — legs 1, 2 and 2b are
+> entirely offline on committed captures. New rows: **U-9191**, **U-9192**. Read
+> [`verify/d3_headattrib_20261005/RESULT_HEADATTRIB.md`](../verify/d3_headattrib_20261005/RESULT_HEADATTRIB.md);
+> `PREREG_HEADATTRIB.md` was committed **unrun** at `225ee06f` and **amended unrun** at `d5da030e`.
+>
+> - **U-9185's framing of the heading share as one phenomenon across "2 of 3 cars" does not hold.**
+>   `d_body_heading` median_abs, matched position → + identical `(c0,c1)` → + speed within 5 %:
+>   **car 1 0.9796 (n 105) → 0.9417 (n 36) → 0.8918 (n 31) = REAL**; car 2 0.9085 → 0.1067 → 0.1064
+>   (n 17) = **NO-VERDICT**; car 3 0.6506 → 0.2328 → 0.208 (n 18) = **NO-VERDICT**.
+> - **Car 1 is a genuine physics divergence.** Its residual is stable across the whole registered
+>   tolerance ladder (0.790 / 0.8918 / 0.9764 at 1/5/10 %) and does **not** collapse under speed
+>   matching. Staleness, command and speed are each excluded on car 1. Carried by **U-9191**.
+> - **Cars 2 and 3 look like U-9186's command defect** — their `d_err` collapses alongside their
+>   heading term (1.2964 → 0.0468, 0.4661 → 0.0878) — but both are below the pre-registered n floor of
+>   30 and are **NO-VERDICT, not artifact**. Do **not** loosen the match radius or lengthen the window
+>   to reach a verdict on numbers already seen; either needs its own pre-registration.
+> - **`ai_posmatch.py`'s `d_body_heading` is an ALGEBRAIC IDENTITY** on the other two reported
+>   quantities (`:411`; max residual **5.684e-14** deg). It is **not** an independent measurement of
+>   the body heading, so stop citing it as evidence that a residual is *in the physics*. The tool and
+>   its committed numbers are fine and reproduce exactly — only the inference was wrong. **U-9192**.
+> - **Staleness was tested and refuted.** U-9186's 100-of-660 frozen calls land almost entirely
+>   outside the matched population: cars 1 and 2 have **zero** frozen pairs on either side, and
+>   excluding car 3's 26 moves it **up** to 0.7269.
+>
+> ### START HERE — leg 3, already scoped, promoted by the registered gates
+>
+> 1. **Add `+0x9d4`/`+0x9dc` and `+0x9bc`/`+0x9c0`/`+0x9c4` to the port's `AiStepDump`** — five more
+>    `VehiclePhysics_RecordF32` calls beside the `+0x9e4` and `+0xb0c` it already reads. The
+>    inert-knob pattern is proven (`MASHED_AI_YAWW`, **6480/6480** byte-identical rows).
+> 2. **Compare against `o_t1.msd` / `o_t2.msd`** via `re/tools/statediff/msd_fields.py` — they carry
+>    the same offsets for **car slot 1, an AI car**, so **no new original-side run is needed**.
+> 3. **Compare the yaw RATE, not the heading.** This is the entire point: a heading is an **integral**
+>    of past yaw rate, and matched position + command + speed still does not match **history**, so car
+>    1's 0.8918 deg may be **accumulated before** the matched instant rather than generated at it.
+> 4. **VOID condition, not a caveat:** the `.msd` is one snapshot per render frame while the aistep
+>    CSV has several AI calls per frame. Leg 3 must report its pairing residual and is **VOID** unless
+>    that residual is at least **10x smaller** than the difference it claims.
+> 5. **Do not assume closing this closes (b).** The 2026-10-02 counterfactual matrix had **no arm
+>    passing (b) on any car**.
+>
+> **My registered prediction (H-STALE) was WRONG** — excluding the staleness made the residual
+> slightly worse. Two defects in my own work are disclosed in the result: the tool first conflated "no
+> `ret14a70` column" with "no qualifying row" (fixed, numbers unaffected), and the delegated capture
+> inventory wrongly reported that `o_t3` does not exist.
+>
+> **No D2 WATCH** — this is a D2 surface seen through the AI, but C1 was not reached and no D2 code
+> was read or changed.
+
+The block below is the PREVIOUS session's headline, left as history.
+
+> ## UPDATE 2026-10-05 (D3 YAWW session, commits `49fc1ca0` .. `927304d9`): **U-9188 is RESOLVED and its answer is RETRACTED. U-9185 item (b) is REOPENED.**
 >
 > **No C-level moved, no band moved, no scorer edited.** Only game-code change is one default-OFF
 > knob. New rows: **U-9189**, **U-9190**. Read
