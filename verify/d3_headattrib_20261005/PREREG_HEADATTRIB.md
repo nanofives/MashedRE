@@ -147,6 +147,44 @@ H-STALE leaves (b) failing and merely moves its attribution onto U-9186.
 
 ---
 
+## 4b. AMENDMENT, registered before it ran: add a speed-conditioned leg (leg 2b)
+
+Legs 1 and 2 have run; their numbers are in `RESULT_HEADATTRIB.md` and are **not** revised by this
+section. This amendment adds **one new filter** and is committed **before** that filter is executed.
+It exists because §5's third bullet — "matched position is not matched state" — turned out to be the
+live objection to the one result that passed a gate, and leaving it unanswered would publish a
+physics claim with a named, untested alternative explanation.
+
+**Leg 2b.** Recompute the three medians on matched pairs that have matched position, identical
+`(c0, c1)`, **and** matched speed `rec_9e4`.
+
+**Tolerance ladder, fixed here so it cannot be fitted to the answer.** Speed cannot be matched
+exactly — U-9185 measures the port **+15..31 %** faster — so the filter is a relative tolerance and
+is run at **1 %, 5 % and 10 %** of the original's `rec_9e4`. All three are reported with their n. The
+**verdict is taken at the tightest tolerance whose n reaches the already-registered floor of 30**,
+and is **NO-VERDICT** if no tolerance reaches it. The thresholds themselves are unchanged
+(`ARTIFACT < 0.25`, `REAL > 0.5`, the band between them INCONCLUSIVE).
+
+| gate | PASS | FAIL |
+|---|---|---|
+| **G-SPEED** | `d_body_heading` median_abs stays **above 0.5** deg with **n ≥ 30** at the chosen tolerance → the heading divergence is **not** explained by the speed difference, and leg 3's direct yaw-rate measurement is promoted | drops **below 0.25** deg → the residual is a **speed** artifact, which points back upstream at the command defect already filed as **U-9186** and leg 3 is **not** run |
+
+**Registered prediction: the residual survives on car 1.** Reasoning, stated so it can be held
+against me: car 1 is the one car whose `d_err` already fell (0.945 -> 0.4555) under the command match
+while its heading term barely moved (0.9796 -> 0.9417), which is the signature of a term that is not
+tracking the command. If speed were carrying it I would expect the heading term to have moved with
+`d_err`. **I was wrong about H-STALE on this same row today**, so this prediction is offered with
+correspondingly low confidence.
+
+**Honest limit, registered now.** Even a G-SPEED PASS is **not** proof of a physics defect. Matched
+position, command and speed still do not match *history*, and a body heading is an integral of past
+yaw rate — so a surviving difference may be accumulated from before the matched instant rather than
+generated at it. That is precisely what leg 3's **rate** comparison exists to separate, and it is why
+G-SPEED's PASS only **promotes** leg 3 rather than concluding anything. No C-level moves on this leg
+either.
+
+---
+
 ## 5. What could make this file wrong
 
 - **The frozen detector can false-positive** on a genuinely stationary error — a car tracking the
