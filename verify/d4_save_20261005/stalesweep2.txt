@@ -1,0 +1,26 @@
+UNCERTAINTIES.md rows: 3125
+  resolved by SECTION filing : 60  (highest confidence)
+  resolved by Type MARKER    : 1362  (high)
+  reads resolved in PROSE    : 170  (LOW -- needs a human read)
+  no resolution signal       : 1533
+roots scanned: re/tools, re/frida, scripts   (code only; --all adds re/analysis)
+
+=== citations framing a RESOLVED-SECTION row as OPEN: 0 ===
+
+=== citations framing a MARKER-RESOLVED row as OPEN: 8 ===
+  re/frida/cam_frame_writer_watch.py
+     :1     U-9058   # cam_frame_writer_watch.py — U-9058. Find WHO writes the RwCamera frame matrix # during a TRAINING race (Quick Battle). # # [2026-10-05] THE QUESTION IN THE LINE ABOVE IS ANSWERED. U-9058 was RES
+     :8     U-9058   16-dword copy of a matrix # composed at 0x0089650c by FUN_00445aa0 (already C2); Camera::Apply also writes # frame+0x10 and its output is OVERWRITTEN. Read the U-9058 row before using this # script — it is kept as a live instrumen
+  re/frida/hooks_registry.py
+     :4676  U-1552   ical readback of DAT_00899140 (same code path must have run). # Pure leaf â€” leaf-function exemption applies (CONFIDENCE.md, 2026-05-09). # [UNCERTAIN U-1552] DAT_00898ab0 = 0x40 semantic unknown (non-blocking). 'post_trophy_even
+     :13877 U-5551   << 2 | (b[0] >> 3) # Source layout: b[0]=B (5 bits), b[1]=G (5 bits), b[2]=R (6 bits at top). # Decoder match: D3DFORMAT 0x3d (non-standard; [UNCERTAIN U-5551] internal RW id). # ref: re/analysis/bucket_004ddfb0/0x004df9b0.md 'pix
+     :18338 U-6621   dent: AudioWaveVtableSlot1cDispatch (0x005abf80) — same crash_equal_ok # strategy for a comparable null-guarded fn-ptr dispatch pattern. # [UNCERTAIN U-6621]: semantic of literal 0 arg and +0x3c callback contract. 'audio_output_no
+  re/frida/probe_save_globals.py
+     :3     U-3558   # Runtime observation of the two open save-subsystem uncertainties. # # U-3558 identity of the 12 bytes stride-gathered from 0x007F105C (stride # 0x4C) into DAT_007F0F54[0..11]. SerializeToBuffer (0x00404EE0) # takes
+  re/frida/scenario_launch.py
+     :3188  U-9066   # NOT asserted: raw state-machine values, printed so baseline and hooked # runs can be diffed by eye without the verdict depending on them (U-9066). print(f" obs {k} = {v} (not asserted)") if res.get("err"): print(f" agent err: {r
+  re/tools/stale_uncertain_refs.py
+     :90    U-8000   e__', '.git', 'build', 'obj', 'prior_art', 'archive'} # A SYSTEMATIC BENIGN CLASS, measured: scripts/reclassify_batch_*.py carry lines like # "Mint U-IDs from U-8000 for every bare [UNCERTAIN] marker in the 156 plates". That # is 
+
+=== citations framing a PROSE-ONLY (LOW CONFIDENCE) row as OPEN: 4 ===
+    this is the bucket the first version dropped; U-3559 lives here

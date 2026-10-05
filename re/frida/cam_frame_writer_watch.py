@@ -1,5 +1,16 @@
 # cam_frame_writer_watch.py — U-9058. Find WHO writes the RwCamera frame matrix
-# during a TRAINING race (Quick Battle). Drives the ORIGINAL into a race (same
+# during a TRAINING race (Quick Battle).
+#
+# [2026-10-05] THE QUESTION IN THE LINE ABOVE IS ANSWERED. U-9058 was RESOLVED on
+# 2026-08-30, the same day it was filed: the frame basis is written by
+# Camera::InitWithMatrix (0x00442a20 @ 0x00442a4e), a 16-dword copy of a matrix
+# composed at 0x0089650c by FUN_00445aa0 (already C2); Camera::Apply also writes
+# frame+0x10 and its output is OVERWRITTEN. Read the U-9058 row before using this
+# script — it is kept as a live instrument for the camera frame, not as an open
+# investigation. Found by re/tools/stale_uncertain_refs.py; see
+# verify/d4_save_20261005/RESULT_STALESWEEP2.md for why that sweep exists.
+#
+# Drives the ORIGINAL into a race (same
 # nav recipe as race_draw_burst.py), resolves the live frame object
 #   cam    = *(DAT_00897fe0 + 0x84)     (RwCamera*)
 #   frame  = *(cam + 0x04)              (RwFrame*)

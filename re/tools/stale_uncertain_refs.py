@@ -14,8 +14,23 @@ citation is stale; it finds citations whose SURROUNDING WORDS frame the row as o
 while the row itself carries a resolution marker. Every hit needs a human read.
 Stated before running so the output cannot be presented as a verdict.
 
-┌───────────────────────────────────────────────────────────────────────────────┐
-│ THIS TOOL FAILS ITS OWN KNOWN-ANSWER CHECK. READ BEFORE USING ITS OUTPUT.     │
+[FIXED 2026-10-05, same day. The KA now PASSES — see the box below for what was
+wrong and `verify/d4_save_20261005/RESULT_STALESWEEP2.md` for the survey that
+produced the fix. No schema change was needed: UNCERTAINTIES.md already carries TWO
+status mechanisms and the fix was to read both, plus report a third bucket the
+first version silently dropped.
+
+  * a RESOLVED SECTION exists (header `| ID | Type | Resolved date | Resolution |`)
+    — but holds only 60 of 3125 rows, so it is ~98 % unused.
+  * a marker-in-the-Type-cell convention (`~~structural~~ **RESOLVED …**`) — 1362
+    ACTIVE rows carry one.
+  * and 168 further ACTIVE rows read as resolved IN PROSE ONLY, with no marker.
+    **U-3559 is one of those, which is precisely why the first version missed it.**
+    These are now reported as a separate LOW-CONFIDENCE bucket instead of being
+    dropped.]
+
+┌───── ORIGINAL FAILURE, KEPT SO THE MISTAKE IS NOT REPEATED ───────────────────┐
+│ THE FIRST VERSION FAILED ITS OWN KNOWN-ANSWER CHECK.                          │
 │                                                                               │
 │ Run against the PRE-FIX `gamesave_parse.py` (git e3e60fec~1), the exact case  │
 │ it was written for, it reports **0 hits**.                                    │
@@ -32,11 +47,8 @@ Stated before running so the output cannot be presented as a verdict.
 │ says "unresolved", is exactly what it misses. Do not read a clean run as      │
 │ "no stale citations".                                                         │
 │                                                                               │
-│ THE REAL FIX IS A SCHEMA CHANGE, not a better regex: UNCERTAINTIES.md has no  │
-│ machine-readable status field. 1369 of 3125 rows carry a marker word; the     │
-│ rest cannot be classified by any text rule that does not also mis-fire. A     │
-│ `status:` column (open / narrowed / resolved / retracted) would make this     │
-│ sweep reliable and is an owner decision, not a mechanical edit.               │
+│ I concluded "the real fix is a schema change". **That was wrong** — see the   │
+│ note above. The file already had the mechanisms; I had not surveyed it.       │
 └───────────────────────────────────────────────────────────────────────────────┘
 
 DETECTION RULE, fixed before the first run:
@@ -74,19 +86,60 @@ RESOLVED_WORDS = re.compile(
 EXT = ('.py', '.cpp', '.h', '.hpp', '.bat', '.ps1', '.js', '.md')
 SKIP_DIRS = {'__pycache__', '.git', 'build', 'obj', 'prior_art', 'archive'}
 
+# A SYSTEMATIC BENIGN CLASS, measured: scripts/reclassify_batch_*.py carry lines like
+# "Mint U-IDs from U-8000 for every bare [UNCERTAIN] marker in the 156 plates". That
+# is MINT-TIME PROVENANCE describing what the batch created, not a claim that the row
+# is still open. It accounted for 9 of 19 hits on the first clean run — nearly half
+# the output, all noise. Skipped by default; --include-batch-scripts keeps them.
+BATCH_PROVENANCE = re.compile(r'reclassify_batch_\w+\.py$')
+
+
+# A row resolved in PROSE with no marker. Deliberately narrow and deliberately
+# low-confidence: these phrases are how U-3559 ("Tail [...] IS written by ...") and
+# U-3560 ("HEX CORRECTED") state an answer without any marker word. Hits from this
+# bucket are reported SEPARATELY and must not be mixed with marker hits.
+PROSE_RESOLVED = re.compile(
+    r'\bIS written by\b|\bANSWERED\b|\bNARROWED\b|\bCONFIRMED\b|\bREFUTED\b|'
+    r'\bno second writer\b|\bHEX CORRECTED\b|\bCORRECTED\b', re.I)
+
+# the Resolved-section header; rows after it are resolved by filing, not by wording
+RESOLVED_SECTION_HDR = re.compile(r'^\|\s*ID\s*\|\s*Type\s*\|\s*Resolved date\s*\|')
+
 
 def load_rows():
+    """Classify every U-row into one of three states.
+
+    UNCERTAINTIES.md carries TWO status mechanisms already (surveyed 2026-10-05):
+    a Resolved SECTION holding 60 of 3125 rows, and a marker-in-Type convention on
+    1362 ACTIVE rows. A third group, 168 ACTIVE rows, states its answer in prose
+    only. The first version of this tool read only the marker and so missed U-3559
+    and its whole class.
+    """
     p = os.path.join(ROOT, 'UNCERTAINTIES.md')
     rows = {}
+    in_resolved_section = False
     for line in io.open(p, encoding='utf-8', errors='replace'):
+        if RESOLVED_SECTION_HDR.match(line):
+            in_resolved_section = True
+            continue
         m = re.match(r'\|\s*U-(\d{3,5})\s*\|', line)
-        if m:
-            rows[m.group(1)] = {'resolved_marked': bool(RESOLVED_MARK.search(line)),
-                                'line': line.rstrip('\n')}
+        if not m:
+            continue
+        if in_resolved_section:
+            state = 'section'          # highest confidence: filed as resolved
+        elif RESOLVED_MARK.search(line):
+            state = 'marker'           # high: explicit RESOLVED/CLOSED/~~ marker
+        elif PROSE_RESOLVED.search(line):
+            state = 'prose'            # LOW: reads resolved, no marker. Needs a human.
+        else:
+            state = 'open'
+        rows[m.group(1)] = {'state': state,
+                            'resolved_marked': state in ('section', 'marker'),
+                            'line': line.rstrip('\n')}
     return rows
 
 
-def scan(roots, rows, include_md):
+def scan(roots, rows, include_md, include_batch=False):
     hits = []
     for root in roots:
         base = os.path.join(ROOT, root)
@@ -103,6 +156,8 @@ def scan(roots, rows, include_md):
                 rel = os.path.relpath(path, ROOT).replace('\\', '/')
                 if rel == 'UNCERTAINTIES.md':
                     continue
+                if not include_batch and BATCH_PROVENANCE.search(rel):
+                    continue
                 try:
                     txt = io.open(path, encoding='utf-8', errors='replace').read()
                 except OSError:
@@ -110,7 +165,7 @@ def scan(roots, rows, include_md):
                 for m in UREF.finditer(txt):
                     uid = m.group(1)
                     row = rows.get(uid)
-                    if not row or not row['resolved_marked']:
+                    if not row or row['state'] == 'open':
                         continue
                     ctx = txt[max(0, m.start() - 160): m.end() + 160]
                     framed_open = bool(OPEN_WORDS.search(ctx))
@@ -120,6 +175,7 @@ def scan(roots, rows, include_md):
                     line_no = txt.count('\n', 0, m.start()) + 1
                     snippet = re.sub(r'\s+', ' ', ctx).strip()
                     hits.append({'file': rel, 'line': line_no, 'uid': 'U-' + uid,
+                                 'row_state': row['state'],
                                  'snippet': snippet[:230]})
     return hits
 
@@ -128,6 +184,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--roots', default='re/tools,re/frida,mashedmod/src,scripts')
     ap.add_argument('--all', action='store_true', help='also scan re/analysis/*.md')
+    ap.add_argument('--include-batch-scripts', action='store_true',
+                    help='keep scripts/reclassify_batch_*.py mint-time provenance (noise)')
     ap.add_argument('--json', action='store_true')
     a = ap.parse_args(argv)
 
@@ -135,26 +193,37 @@ def main(argv=None):
     roots = [r.strip() for r in a.roots.split(',') if r.strip()]
     if a.all:
         roots.append('re/analysis')
-    hits = scan(roots, rows, include_md=a.all)
+    hits = scan(roots, rows, include_md=a.all, include_batch=a.include_batch_scripts)
 
-    nres = sum(1 for r in rows.values() if r['resolved_marked'])
+    import collections
+    st = collections.Counter(r['state'] for r in rows.values())
     if a.json:
-        print(json.dumps({'rows_total': len(rows), 'rows_resolved_marked': nres,
+        print(json.dumps({'rows_total': len(rows), 'row_states': dict(st),
                           'roots': roots, 'hits': hits}, indent=1))
         return 0
 
-    print('UNCERTAINTIES.md rows: %d, of which RESOLVED-marked: %d' % (len(rows), nres))
-    print('roots scanned: %s%s' % (', '.join(roots), '' if a.all else '   (code only; --all adds re/analysis)'))
-    print('\ncitations that frame a RESOLVED-marked row as OPEN: %d' % len(hits))
-    print('(a search, not a verdict -- every hit needs a human read)\n')
-    byf = {}
-    for h in hits:
-        byf.setdefault(h['file'], []).append(h)
-    for f in sorted(byf):
-        print('%s' % f)
-        for h in byf[f]:
-            print('   :%-5d %-8s %s' % (h['line'], h['uid'], h['snippet']))
-        print()
+    print('UNCERTAINTIES.md rows: %d' % len(rows))
+    print('  resolved by SECTION filing : %d  (highest confidence)' % st['section'])
+    print('  resolved by Type MARKER    : %d  (high)' % st['marker'])
+    print('  reads resolved in PROSE    : %d  (LOW -- needs a human read)' % st['prose'])
+    print('  no resolution signal       : %d' % st['open'])
+    print('roots scanned: %s%s' % (', '.join(roots),
+                                   '' if a.all else '   (code only; --all adds re/analysis)'))
+
+    for state, label in (('section', 'RESOLVED-SECTION'), ('marker', 'MARKER-RESOLVED'),
+                         ('prose', 'PROSE-ONLY (LOW CONFIDENCE)')):
+        sub = [h for h in hits if h['row_state'] == state]
+        print('\n=== citations framing a %s row as OPEN: %d ===' % (label, len(sub)))
+        if state == 'prose' and sub:
+            print('    this is the bucket the first version dropped; U-3559 lives here')
+        byf = {}
+        for h in sub:
+            byf.setdefault(h['file'], []).append(h)
+        for f in sorted(byf):
+            print('  %s' % f)
+            for h in byf[f]:
+                print('     :%-5d %-8s %s' % (h['line'], h['uid'], h['snippet']))
+    print('\n(a search, not a verdict -- every hit needs a human read)')
     return 0
 
 
