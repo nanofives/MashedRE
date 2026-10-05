@@ -43,11 +43,40 @@ LO_CODE, HI_CODE = 0x00400000, 0x004fffff      # original .text -- unmapped, AV
 LO_BLANK, HI_BLANK = 0x00500000, 0x009fffff    # blank-mapped -- reads zero
 
 ADDR = re.compile(r'0[xX]00[0-9a-fA-F]{6}\b')
-# a function-pointer cast onto an absolute address == a CALL into the original image
-FNCAST = re.compile(r'reinterpret_cast\s*<[^>]*\(\s*\*\s*\)[^>]*>\s*\(\s*(0[xX]00[0-9a-fA-F]{6})',
-                    re.S)
-FNCAST2 = re.compile(r'reinterpret_cast\s*<\s*fn[_A-Za-z0-9]*\s*>\s*\(\s*(0[xX]00[0-9a-fA-F]{6})',
-                     re.S)
+
+# A function-pointer cast onto an absolute address is a CALL into the original image.
+#
+# [FIXED 2026-10-05, found by using this tool on a concrete TU] The first version
+# matched only an inline `(*)` signature or a type whose name begins `fn`. This
+# codebase's prevailing style is a NAMED ALIAS --
+#     using FileReadFn_t = int(__cdecl*)(const char*, void*, std::uint32_t);
+#     static FileReadFn_t const gFileRead = reinterpret_cast<FileReadFn_t>(0x004b3b70u);
+# -- so `Save/GameSave.cpp`'s three callouts (0x004b3b70, 0x004b3bb0, 0x00550b00) were
+# reported as ZERO and the TU was misclassified NEEDS-STORAGE. Consequence: the old
+# BLOCKED-CALLOUT count was an UNDERCOUNT and CHEAP / NEEDS-STORAGE were overcounts.
+FNCAST_INLINE = re.compile(
+    r'reinterpret_cast\s*<[^>]*\(\s*\*\s*\)[^>]*>\s*\(\s*(0[xX]00[0-9a-fA-F]{6})', re.S)
+# function-pointer type ALIASES declared in the same TU
+FNALIAS = re.compile(
+    r'(?:using\s+([A-Za-z_]\w*)\s*=[^;]*\(\s*(?:__cdecl|__stdcall|__thiscall|__fastcall)?\s*\*\s*\)'
+    r'|typedef[^;(]*\(\s*(?:__cdecl|__stdcall|__thiscall|__fastcall)?\s*\*\s*([A-Za-z_]\w*)\s*\))')
+
+
+def _callouts(code):
+    """Absolute addresses this TU casts to something CALLABLE."""
+    out = set(int(m, 16) for m in FNCAST_INLINE.findall(code))
+    aliases = {a or b for a, b in FNALIAS.findall(code) if (a or b)}
+    for name in aliases:
+        for m in re.finditer(r'reinterpret_cast\s*<\s*%s\s*>\s*\(\s*(0[xX]00[0-9a-fA-F]{6})'
+                             % re.escape(name), code, re.S):
+            out.add(int(m.group(1), 16))
+    # ANY cast onto a .text address is a call: a data pointer does not point into .text
+    for m in re.finditer(r'reinterpret_cast\s*<[^>]{0,120}?>\s*\(\s*(0[xX]00[0-9a-fA-F]{6})',
+                         code, re.S):
+        a = int(m.group(1), 16)
+        if LO_CODE <= a <= HI_CODE:
+            out.add(a)
+    return sorted(out)
 # markers that a TU exists to observe the ORIGINAL, not to replace it
 DEVONLY = (
     'asi-only', 'asi only', 'dev-only', 'dev only', 'never shipped',
@@ -112,8 +141,7 @@ def classify(path):
     addrs = [int(a, 16) for a in ADDR.findall(code)]
     codeb, installs = code_addrs(code)
     blank = sorted({a for a in addrs if LO_BLANK <= a <= HI_BLANK})
-    calls = sorted({int(m, 16) for m in FNCAST.findall(code) + FNCAST2.findall(code)
-                    if LO_CODE <= int(m, 16) <= HI_CODE})
+    calls = _callouts(code)
 
     guarded = 'MASHED_STANDALONE' in code
     devonly = any(k in low for k in DEVONLY)
