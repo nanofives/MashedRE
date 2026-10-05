@@ -1,3 +1,49 @@
+# The exe/asi gap, triaged — and the triage's own headline is CORRECTED below
+
+> ## CORRECTION, same day, before this document was used for anything
+>
+> **The original headline — "280 verified functions are plausibly a build-list change away" — was
+> wrong in its implication, and the project had already rejected the strategy it points at.** Two
+> things I measured on the wrong field:
+>
+> 1. **`RH_ScopedInstall` is a NO-OP in the exe.** `HookSystem::Register` resolves to
+>    `Stubs/HookSystemNoOp.cpp:19` — a file in `exe_sources.rsp` **only**. So in the standalone a
+>    linked reimplementation registers nothing and is a **dead export unless the standalone call
+>    graph invokes it by name** (`ROADMAP.md:226-228`, `:235-237`). **Adding a TU to
+>    `exe_sources.rsp` makes its body PRESENT, not LIVE.** My `CHEAP` class measured "nothing stops
+>    it linking", which is not the same question.
+> 2. **`hooks.csv` has an `exe_file` column I did not use.** I keyed on `file` plus the `.rsp`
+>    lists; `exe_file` is the authoritative "has an exe-side body" field. Re-measured on it:
+>
+>    | | C3 | C4 | **C3+C4** |
+>    |---|---:|---:|---:|
+>    | ported, **has** exe body | 319 | 74 | **393** |
+>    | ported, **no** exe body | 695 | 102 | **797** |
+>
+>    Shipped share of verified work by subsystem: RenderWare-Physics **99 %**, frontend **69 %**,
+>    boot 49 %, hud 40 %, vehicle 38 %, util 31 %, ai 29 %, render 23 %, save 17 %, particle **8 %**,
+>    gameplay **5 %**, audio **1 %** (1 of 142), input **0 %** (0 of 9).
+>
+> **And the bulk-link strategy is already settled against**, in writing: *"the real blocker is not
+> linkage, it is that this code is hook-shaped … Bulk-adding the class-B files would grow the binary
+> and the tracker without shipping one working feature"* (`ROADMAP.md:235-240`).
+>
+> **So there are THREE states, not two**, and the record already names them: (i) not reversed,
+> (ii) reversed and ported but no exe body, (iii) **exe body present with zero call sites**. My
+> triage conflated (ii) and (iii). The proof that (iii) is real and not hypothetical:
+> `Collision/CarCarContacts.cpp` **is** in `exe_sources.rsp` with a byte-faithful body for
+> `0x00469df0`, and that RVA has **zero call sites** (`ROADMAP.md:1876-1877`, `:1931`) — the same
+> shape as `BodyOrient_OmegaFromAngVel`, found earlier in this session.
+>
+> **What survives below:** the `.rsp` counts (221 / 422 / 255), the `/DMASHED_STANDALONE`
+> mechanism, the address-range table, the `RH_ScopedInstall` miscount fix, and the
+> `NEEDS-STORAGE` / `BLOCKED-*` classes as a map of *linkage* obstacles. **What does not survive:**
+> the reading of `CHEAP` as "ready to ship", and the suggestion to bulk-add it.
+>
+> **The real lever is CALL SITES, not build-list entries.**
+
+## Original document follows, with the headline above superseding its framing.
+
 # The exe/asi gap, triaged — 280 verified functions are plausibly a build-list change away
 
 **MEASURED 2026-10-05.** Tool `re/tools/asi_only_triage.py`, data
