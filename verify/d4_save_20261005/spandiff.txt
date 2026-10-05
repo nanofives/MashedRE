@@ -1,0 +1,37 @@
+ref     original\gamesave.bin
+subject mashed_re_gamesave.bin
+span    0x24a40..0x24cb0, 13 rows x 0x30, 12 cols   (gamesave_edit.py:10)
+
+KA-LAYOUT on the REFERENCE file (must pass before anything is read across)
+   col4 == 2 on 13 of 13  PASS
+   col3 == 2 on rows 0..3: 4 of 4 PASS
+   col1 non-zero on 1 of 13   PASS (want exactly 1)
+   col11 non-zero on 1 of 13  PASS (want exactly 1)
+   KA-LAYOUT PASS
+
+G-REGION (descriptive)
+   345 differing bytes / 169 differing dwords, 0x24a44..0x24f5b
+   inside the span:  18 of 345
+   outside the span: 327 of 345  range 0x24cb0..0x24f5b
+
+G-PROG  the four DOCUMENTED columns (unnamed columns deliberately not interpreted)
+   row |      col1      |      col3      |      col4      |     col11      
+       |  ref    subj   |  ref    subj   |  ref    subj   |  ref    subj   
+     0 |     1      0   |     2      0   |     2      2   |     1      0  *
+     1 |     0      0   |     2      0   |     2      2   |     0      0  *
+     2 |     0      0   |     2      0   |     2      0   |     0      0  *
+     3 |     0      0   |     2      0   |     2      0   |     0      0  *
+     4 |     0      0   |     0      0   |     2      0   |     0      0  *
+     5 |     0      0   |     0      0   |     2      0   |     0      0  *
+     6 |     0      0   |     0      0   |     2      0   |     0      0  *
+     7 |     0      0   |     0      0   |     2      0   |     0      0  *
+     8 |     0      0   |     0      0   |     2      0   |     0      0  *
+     9 |     0      0   |     0      0   |     2      0   |     0      0  *
+    10 |     0      0   |     0      0   |     2      0   |     0      0  *
+    11 |     0      0   |     0      0   |     2      0   |     0      0  *
+    12 |     0      0   |     0      0   |     2      0   |     0      0  *
+   rows non-zero, reference: {'col1 challenge-cup launch gate': 1, 'col3 cup membership': 4, 'col4 track known': 13, 'col11 quick-battle launch gate': 1}
+   rows non-zero, subject  : {'col1 challenge-cup launch gate': 0, 'col3 cup membership': 0, 'col4 track known': 2, 'col11 quick-battle launch gate': 0}
+
+G-VERDICT  subject rows with all four named columns zero: 11 of 13
+   INCONCLUSIVE
