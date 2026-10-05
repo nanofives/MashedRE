@@ -86,20 +86,31 @@ class TestFileStructure:
         assert len(parsed.profile_block) == gp.PROFILE_SIZE
 
     def test_tail_size(self, parsed):
-        """Tail region (offset 0x24440) must be 0xB60 bytes."""
+        """Tail region (offset 0x24A40) must be 0x560 bytes."""
         assert len(parsed.tail) == gp.TAIL_SIZE
 
     def test_tail_first_nonzero_offset(self, parsed):
-        """First non-zero byte in tail must be at tail-relative offset 0x604
-        (file offset 0x24A44), per gamesave_layout.md observation."""
-        for i in range(0x604):
-            assert parsed.tail[i] == 0, (
-                f"expected tail[{i:#x}] == 0, got {parsed.tail[i]:#x}"
-            )
-        # Byte at tail offset 0x604 should be non-zero.
-        assert parsed.tail[0x604] != 0, (
-            "expected first non-zero byte at tail[0x604] but it is zero"
+        """First non-zero byte in the tail must be at FILE offset 0x24A44.
+
+        [CORRECTED 2026-10-05] This asserted tail-relative 0x604 while its own
+        docstring named file offset 0x24A44 — both were true only because
+        TAIL_OFFSET was 0x600 too low. The file offset is the real observation and
+        is unchanged; it is now asserted directly, so the test no longer encodes
+        the boundary it is meant to be independent of.
+
+        That the old tail began with exactly 0x604 guaranteed-zero bytes WAS the
+        bug's signature: 0x600 of those were mis-attributed profile, and the
+        remaining 4 are championship row 0 column 0.
+        """
+        first_nonzero_file_off = gp.TAIL_OFFSET + next(
+            i for i, b in enumerate(parsed.tail) if b != 0
         )
+        assert first_nonzero_file_off == 0x24A44, (
+            f"first non-zero tail byte at file {first_nonzero_file_off:#x}, "
+            f"expected 0x24A44"
+        )
+        # and it is championship row 0, column 1 — the challenge-cup launch gate
+        assert gp.TAIL_OFFSET == 0x24A40, "tail must start at the champ-table base"
 
 
 class TestRoundTrip:
