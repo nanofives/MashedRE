@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-06T02:10:00Z",
+  "updatedAt": "2026-10-06T04:30:00Z",
   "sections": [
     {
       "heading": "Phase",
@@ -8,25 +8,23 @@
         { "label": "Active phase", "value": "D3 — default AI, powerups, modes", "kind": "text" },
         { "label": "Closed", "value": ["D0 truth 2026-08-15", "D1 librw 2026-08-19", "D2 physics 2026-09-14 (PARKED)"], "kind": "list" },
         { "label": "Criterion (e)", "value": "PASS 3/3 — launch 1426.4/2053.0/2055.2", "kind": "text" },
-        { "label": "Criterion (b)", "value": "FAIL — 13 of 30 bands (5/4/4)", "kind": "text" }
+        { "label": "Criterion (b)", "value": "13 bands default; 5 with car<->car contact ON (U-9196, unconfirmed)", "kind": "text" }
       ]
     },
     {
       "heading": "Car<->car lane (2026-10-05/06)",
       "fields": [
-        { "label": "Legs done", "value": "1 and 2 — 6 of 6 gates each", "kind": "text" },
+        { "label": "Legs done", "value": "1, 2, 3 — all gates PASS", "kind": "text" },
         { "label": "C-levels moved", "value": 0, "kind": "number" },
-        { "label": "Bands moved", "value": 0, "kind": "number" },
-        { "label": "Leg 2 shipped", "value": "ring slot [+0x9a8] now published (MASHED_RING_SLOT0=0 reverts); proven live at 0.9996 of rows, (e)/(b) digit-identical", "kind": "text" },
-        { "label": "Why inert", "value": "A5 Phase 2's drafting term is the only live consumer and ForceIntegrator.cpp:137 discards it at participants=4 — predicted, not lucky", "kind": "text" },
-        { "label": "New uncertainty", "value": "U-9195 — outside g_playerCount in {4,8,9} that reader is live, so leg 2 is not inert there", "kind": "text" }
+        { "label": "Leg 3 shipped", "value": "the pair loop is wired (MASHED_CARCAR_CONTACT=0 reverts); 358 calls, 24 overlaps, 0 under NOOPP; OTHER car first", "kind": "text" },
+        { "label": "Surprise", "value": "(b) 13->5 bands deterministically; cars 1&3 enter the original steer envelope, not a stuck-car artifact", "kind": "text" },
+        { "label": "Open", "value": ["U-9196 — cross-side steering check decides if the (b) drop is real", "U-9195 — ring publish inert only at participants in {4,8,9}"], "kind": "list" }
       ]
     },
     {
       "heading": "Next",
       "fields": [
-        { "label": "START HERE", "value": "re/NEXT_SESSION.md — run LEG 3 of verify/d3_carcar_20261005/PREREG_CARCAR.md", "kind": "text" },
-        { "label": "Leg 3", "value": "the pair loop at VehiclePhysicsRun.cpp:1142, calling VehicleCarCarContact(recJ, recI, pass) — OTHER car first", "kind": "text" },
+        { "label": "START HERE", "value": "re/NEXT_SESSION.md — close U-9196: cross-side per-frame steering-series check (ON arm vs o_t*.msd)", "kind": "text" },
         { "label": "Alternatives", "value": ["U-9185: the 1.3258x distance over-run", "recover the 0x00409b0e jumptable (save acceptance)"], "kind": "list" }
       ]
     }

@@ -1,6 +1,48 @@
 # Next session kickoff
 
-> ## UPDATE 2026-10-06 (CAR<->CAR LEG 2, commits `283758b7`+): **ring slot `[+0x9a8]` is published, 6 of 6 gates PASS, (e) and (b) did not move a digit — and LEG 3 IS NOW UNBLOCKED. START HERE.**
+> ## UPDATE 2026-10-06 (CAR<->CAR LEG 3, commits `523cc5d9`+): **the pair loop is WIRED, 8 of 8 gates PASS, and the contact deterministically moves (b) from 13 failing bands to 5. START HERE — the next step is the cross-side check that decides whether that is a real (b) win.**
+>
+> **No C-level moved** — `0x00469df0` is still C2; a call site is not a behavioural diff.
+> **`original/` untouched.** 73 insertions / 0 deletions in one file. exe SHA-256
+> `9C09212FD227F6906C546DE9117EF57E4464A4F8C6F0AC5E639B6A5DD853CFDC`. Default-ON, revert
+> `MASHED_CARCAR_CONTACT=0`. Read
+> [`verify/d3_carcar_20261005/RESULT_LEG3.md`](../verify/d3_carcar_20261005/RESULT_LEG3.md).
+>
+> - **8 gates PASS:** G-CALLED (358 entries, 24 non-zero returns), G-PAIR (j>i 358/358),
+>   **G-NOOPP (exactly 0 under `MASHED_MEASURE_NOOPP=1`** — opponents unstepped → their
+>   `[+0x9a8]` slot stays zero → proximity fails), G-NOREG-E (gated (e) digit-identical 3/3),
+>   G-NOREG-B (5 bands, ≤13), G-BANDS-UNEDITED, G-KNOBOFF (reverts to 13 bands + baseline
+>   digits), G-DET (3 ON runs identical).
+> - **THE SURPRISE:** (b) 13→5 bands, deterministic. Cars 1 and 3 enter the original's
+>   `abs_steer_median` envelope `[0,23]` (52.5→7.0, 49.0→11.5); car 2 stays out (57.5→44.5,
+>   4→5 bands). **Not a stuck-car artifact** — window speed 3057/3254, near-stopped 2/1 of 220,
+>   same as OFF; the cars race ~90% speed while steering ~7x less (cleaner line).
+> - **It is NOT a (b) claim yet (U-9196).** Mechanism unknown; a median in the envelope is not
+>   the per-frame distribution matching it; the 2026-10-02 matrix tested AI *command* levers,
+>   never this *physics* lever. **The one thing that decides it: a cross-side per-frame
+>   comparison of the ON arm's steering series against the original's
+>   `verify/d3_elim_20261003/o_t*.msd.aistep.csv`.**
+>
+> ### START HERE — close U-9196, which is the live question behind a possible (b) win
+>
+> 1. **Cross-side steering-series check.** Compare the ON arm (`verify/d3_carcar_20261005/L3on1.csv`,
+>    cars 1 & 3) per-frame against the original's `o_t*.msd.aistep.csv` at matched position
+>    (`ai_posmatch.py`), not just the median. If the *distribution* matches, this is a real (b)
+>    movement on two cars from the car<->car physics; if only the median coincides, it is not.
+>    Memory `score-the-bands-from-endpoint-first`, `a-band-scored-off-regime-is-not-a-measurement`.
+> 2. **Mechanism probe.** A default-OFF probe on which record field the contact writes
+>    (`+0x144/+0x148/+0x14c` angular, `+0x9b0..` linear) that changes the heading the AI steers
+>    from — reasoned story is not a measurement.
+> 3. **Then the keep/revert decision on `MASHED_CARCAR_CONTACT` default-ON is the user's**, given
+>    a possible (b) improvement on 2 of 3 cars with car 2 slightly worse.
+>
+> **Open caveat from leg 2 (U-9195):** the ring-slot publication leg 3 relies on is inert on
+> the 4-participant recipe only; outside `g_playerCount` ∈ {4,8,9} the drafting term is live.
+> Leg 3 ran at 4 participants, so that is untested here too.
+
+The block below is the previous headline, left as history.
+
+> ## UPDATE 2026-10-06 (CAR<->CAR LEG 2, commits `283758b7`+): **ring slot `[+0x9a8]` is published, 6 of 6 gates PASS, (e) and (b) did not move a digit — and LEG 3 IS NOW UNBLOCKED.**
 >
 > **No C-level moved. No band moved. `original/` untouched.** 49 insertions / 0 deletions in
 > one file; the pre-existing `[+0x9ac]` write is byte-for-byte unchanged. exe SHA-256
