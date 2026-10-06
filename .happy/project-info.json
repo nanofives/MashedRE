@@ -1,45 +1,32 @@
 {
-  "title": "Mashed RE — D3 active, D4 save path live",
+  "title": "Mashed RE — greenfield source port",
   "updatedAt": "2026-10-05T23:30:00Z",
   "sections": [
     {
-      "heading": "Status",
+      "heading": "Phase",
       "fields": [
-        { "label": "Phase", "value": "D3 — default AI, powerups, modes", "kind": "text" },
-        { "label": "Blocker", "value": "(b) criterion FAILS 3/3 — 13 steer bands", "kind": "text" },
-        { "label": "Closed phases", "value": ["D0 (truth/confidence)", "D1 (librw default renderer)", "D2 (physics default, PARKED 2026-10-02)"], "kind": "list" }
+        { "label": "Active phase", "value": "D3 — default AI, powerups, modes", "kind": "text" },
+        { "label": "Closed", "value": ["D0 truth 2026-08-15", "D1 librw 2026-08-19", "D2 physics 2026-09-14 (PARKED)"], "kind": "list" },
+        { "label": "Criterion (e)", "value": "PASS 3/3 — launch 1426.4/2053.0/2055.2", "kind": "text" },
+        { "label": "Criterion (b)", "value": "FAIL — 13 of 30 bands (5/4/4)", "kind": "text" }
       ]
     },
     {
-      "heading": "Shipped 2026-10-05",
+      "heading": "Last session (2026-10-05, car<->car call site)",
       "fields": [
-        { "label": "Save path LIVE in the exe", "value": "Save/GameSave.cpp builds into mashed_re.exe and its four functions are CALLED — SaveStatusClear / SaveLoad / SaveWrite / SaveFileExists. GameFlow routes save+load through them. 4/4 then 5/5 gates, (b) and (e) digit-identical", "kind": "text" },
-        { "label": "Live bug fixed", "value": "gamesave_parse.py PROFILE_SIZE was 0x2443C, should be 0x24A3C — the profile/tail boundary sat 0x600 too low. 16/16 tests", "kind": "text" },
-        { "label": "C-levels moved", "value": 0, "kind": "number" }
+        { "label": "Commits", "value": "3404612d..749f60ab (3)", "kind": "text" },
+        { "label": "C-levels moved", "value": 0, "kind": "number" },
+        { "label": "Bands moved", "value": 0, "kind": "number" },
+        { "label": "Leg 1 gates", "value": "6 of 6 PASS", "kind": "text" },
+        { "label": "Result", "value": "0x00469df0's single call site (0x00470bcd) fully decoded; hull chain already live in the exe and exact to <=1.9e-07; wiring blocked on ring slot [+0x9a8] being unpublished", "kind": "text" }
       ]
     },
     {
-      "heading": "Strategic finding",
+      "heading": "Next",
       "fields": [
-        { "label": "exe/asi gap", "value": "619 of 888 verified (C3/C4) functions build ONLY into the dev .asi, which never ships", "kind": "text" },
-        { "label": "But do NOT bulk-link", "value": "RH_ScopedInstall is a no-op in the exe, so a linked body is a dead export unless called by name. The lever is CALL SITES — 0x00469df0 sits in the exe with zero callers", "kind": "text" },
-        { "label": "Unshipped by subsystem", "value": ["render 247", "audio 142 (1 shipping)", "gameplay 129 (7 shipping)", "save 29 (5 shipping)"], "kind": "list" }
-      ]
-    },
-    {
-      "heading": "Retracted / voided, do not rebuild",
-      "fields": [
-        { "label": "U-9194", "value": "RETRACTED same day. The port's omega arm is CORRECT — +0x10 == 0 on 222 of 222 moving frames; the 70.60% figure counted 2558 frames of a parked, eliminated car", "kind": "text" },
-        { "label": "U-9191", "value": "Still OPEN. The position join's median induced heading error is 0.087865 deg, so any gate on it needs a threshold above ~0.88 deg", "kind": "text" },
-        { "label": "Save acceptance", "value": "UNANSWERED after 8 measured steps. Bounded to one unknown: the 0x00409b0e jumptable and its caller. The save flow is a six-variable state cluster", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "Next session",
-      "fields": [
-        { "label": "Pick one", "value": ["Give an already-ported body a call site (0x00469df0 is the worked example)", "Close the 1.3258x distance over-run (U-9185)", "Recover the 0x00409b0e jumptable"], "kind": "list" },
-        { "label": "Handoff", "value": "re/NEXT_SESSION.md — START HERE block dated 2026-10-05", "kind": "text" },
-        { "label": "Lesson", "value": "Four confident claims needed retracting; every one was caught by a second instrument or a control, never by re-reading. Write the control that can fail", "kind": "text" }
+        { "label": "START HERE", "value": "re/NEXT_SESSION.md — run LEG 2 of verify/d3_carcar_20261005/PREREG_CARCAR.md", "kind": "text" },
+        { "label": "Leg 2", "value": "publish ring slot [+0x9a8], gated ALONE; registered in advance as NOT inert (3 A4/A6b readers get a zero matrix today)", "kind": "text" },
+        { "label": "Alternatives", "value": ["U-9185: the 1.3258x distance over-run", "recover the 0x00409b0e jumptable (save acceptance)"], "kind": "list" }
       ]
     }
   ]

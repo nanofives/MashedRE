@@ -1,6 +1,75 @@
 # Next session kickoff
 
-> ## UPDATE 2026-10-05 (LONG SESSION, 38 commits, `cc79f0ba..da9ac1ea`): **two things shipped, four retracted or voided, and one strategic map built. START HERE.**
+> ## UPDATE 2026-10-05 (CAR<->CAR CALL SITE, 3 commits `3404612d..749f60ab`): **the call site is fully decoded, leg 1 passed 6 of 6, and the wiring is blocked on ONE unpublished ring slot. START HERE.**
+>
+> **No C-level moved. No band moved. No (e)/(b) run. `original/` untouched.** The only
+> source change that ships is 19 **appended** columns on the default-OFF
+> `MASHED_AI_STEPDUMP` plus comment corrections. Both builds clean.
+>
+> Read, in order: [`re/analysis/CARCAR_CALLSITE_2026-10-05.md`](analysis/CARCAR_CALLSITE_2026-10-05.md),
+> then [`verify/d3_carcar_20261005/PREREG_CARCAR.md`](../verify/d3_carcar_20261005/PREREG_CARCAR.md)
+> and [`RESULT_LEG1.md`](../verify/d3_carcar_20261005/RESULT_LEG1.md). **Do not re-derive
+> what they establish**, in particular do not hunt the hull producer again.
+>
+> ### Settled, with citations
+>
+> - **One call site**: `FUN_004709a0` @ `0x00470bcd`. `--callers` and `--datarefs` agree
+>   (both were run; `--callers` returns `(none)` for Ghidra-missed callers).
+> - **Argument order is the trap.** `ECX` is the `__thiscall` `this` and holds the **self**
+>   car; `EAX` holds the **other** car. The port binds `vehA` to `in_EAX`, so the call is
+>   **`VehicleCarCarContact(rec(j), rec(i), pass)` — other car FIRST.** `param_2` (the `j`
+>   index) is unused. The TU header and both plates said `in_EAX` was `this`; corrected.
+> - **Insertion point: one statement**, `Vehicle/VehiclePhysicsRun.cpp:1093`'s `break;`.
+>   Both of the original's fall-through paths into the `j` loop converge there; its third
+>   path already matches the port's `continue;` at `:1088`.
+> - **The hull chain is ALREADY LIVE in `mashed_re.exe`** and is exact. `+0xa28..+0xa54` is
+>   world points 4..7 of the 18-point array `FUN_00469aa0` transforms into `+0x9f8`,
+>   body-sourced from `FUN_0046b1c0`'s AABB top face — so its three edge lengths are
+>   invariants of the 6-float box: `0.437600 / 0.977100 / 1.070616`. New tool
+>   `re/tools/hull_invariants.py`: **10,278 of 10,278** original frames (4 captures, 2 cars)
+>   and **7772 of 7772** port rows within `1e-3`, median deviations `<= 1.9e-07`.
+>   `Collision/ContactStubs.cpp`'s "producer is NOT yet identified" was a **stale comment**
+>   and is fixed; **U-9155's own row is a different producer (the box) and stays OPEN.**
+>
+> ### THE BLOCKER, and it is the whole next session
+>
+> **Ring slot `[+0x9a8]` is never published in the port.** Written once at
+> `Vehicle/VehicleInit.cpp:252`; `SyncContactRingMatrix` publishes through `[0x9ac]`
+> instead. Measured: slot 0 all-zero on **7775 of 7775** rows of `P1.csv` (and `rec_958`
+> was already 0.0 on 7705 of 7705 rows of `verify/d3_arm_20261005/A1.csv`;
+> `re/tools/ai_yawrate.py:71-73` already says so, so **U-9191 leg 3 is unaffected — do not
+> re-file this**). Consequence: the proximity gate at `0x00470b44..0x00470ba9` compares two
+> `(0,0,0)` centroids and reduces to `0 < radSum²` — **true for every pair at every
+> substep** — and `CarCarContacts.cpp:93`/`:97`'s angular lever arms become absolute world
+> positions. **So leg 3 is not startable before leg 2, and that is a result, not a
+> scheduling note.**
+>
+> ### START HERE — run LEG 2, which is pre-registered and unrun
+>
+> `PREREG_CARCAR.md` §3. Publish the ring into **both** slots in `SyncContactRingMatrix`,
+> default-ON with the revert `MASHED_RING_SLOT0=0`, **and gate it ALONE with no car<->car
+> call added.** It is **registered in advance as NOT inert**: `Vehicle/VehicleControl.cpp:103`,
+> `Vehicle/PhysicsChainHooks.cpp:536` and `:2749` all read `[0x9a8]*0x40 + 0x928` and
+> currently receive a **zero matrix**, so A4's and A6b's `wheelBlock` input changes inside
+> the D2-certified player solver (`Vehicle/BodyOrientationIntegrate.cpp:171-179` already
+> flags that reconciliation as owed).
+>
+> Five gates plus the inverse control `G-SLOT0-LIVE`, whose "before" value leg 1 has
+> already established: `G-NOREG-E` (`launch` 1426.4 / 2053.0 / 2055.2 and `ft_median_m0`
+> 2550.6 / 2053.0 / 2278.2, 3 of 3 cars), `G-NOREG-B` (<= 13 of 30 bands), `G-BANDS-UNEDITED`,
+> `G-KNOBOFF`, `G-DET` (3 repeats). **Registered FAIL clause: if `G-NOREG-E` or `G-NOREG-B`
+> fails, revert the commit and report — do not flip the default or widen a threshold.
+> Leg 3 does not run.** Port capture recipe is `re/tools/sa_capture.py` as used for
+> `P1`/`B1` in `RESULT_LEG1.md` §1.
+>
+> **Do not assume any of this closes (b).** The 2026-10-02 matrix had no arm passing (b) on
+> any car, and `ROADMAP.md:1929-1932` records the opponents already moving the player's
+> median speed **2538 → 691** with `0x00469df0` never running — that coupling is shared
+> mutable state and is a different question.
+
+The block below is the previous headline, left as history.
+
+> ## UPDATE 2026-10-05 (LONG SESSION, 38 commits, `cc79f0ba..da9ac1ea`): **two things shipped, four retracted or voided, and one strategic map built.**
 >
 > **No C-level moved all session. No band moved. `original/` clean throughout.** The one
 > behaviour-changing edit is in the exe's save path and passed 5 of 5 gates.
