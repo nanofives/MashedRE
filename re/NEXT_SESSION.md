@@ -1,5 +1,37 @@
 # Next session kickoff
 
+> ## UPDATE 2026-10-06 (D-11072 leg A monotone metric BUILT, commit `201ab935`): **the monotonicity blocker is CLEARED — the port now has a monotone, physical-arc-length race-progress metric (`race_[].arcprog`/`arcpct`, 0 backward-midlap on all 3 cars vs the old 484/669/1273), deterministic and INERT on (e)/(b). The leg-A scale map is now a registrable near-identity. START HERE: run the §4 bridge-write pre-registration. NO C-level moved, nothing default-ON, `0x008a96ec` not written, `original/` untouched.**
+>
+> Read [`verify/d3_racepos_20261006/RESULT_LEGA_MONOTONE.md`](../verify/d3_racepos_20261006/RESULT_LEGA_MONOTONE.md). Commit `201ab935`.
+>
+> - **The metric.** New parallel field `race_[].arcprog` = physical arc length along the gate
+>   ring: a forward-only `arcseg` pointer advanced at each gate's perpendicular crossing, within-
+>   segment along-track projection `t`, weighted by a per-track cumulative-length table built once
+>   from `gates_`. Dumped as `arcpct` (0..100 per lap). Read ONLY by `MASHED_AI_STEPDUMP` and the
+>   future bridge — it does **not** feed finish order (`progress` still does), so it is inert.
+> - **Acceptance met:** backward-midlap **0/0/0** (matching the original's 0), deterministic over
+>   3 repeats, criterion (e) **bit-identical** to baseline and (b) the same 5 bands.
+> - **One residual, declared:** a small **forward** jump (max 1.9%) per gate crossing from
+>   polyline corners (the original's Catmull path is smooth). Monotone-preserving; a fidelity
+>   ripple for ordering/threshold consumers, removable only via spline projection — not done.
+>
+> ### START HERE — run the §4 bridge-write pre-registration (the leg-A deliverable is ready)
+>
+> `RESULT_LEGA_MONOTONE.md` §4 registers the candidate map UNRUN: `arcpct` and the original
+> `race_pct` are both physical-arc 0..100 per lap, so the bridge write is a near-identity
+> `*(float*)(0x008a96ec + v*0x30c) = arcpct(v)` for AI cars, behind a default-OFF knob. Its
+> inert-first gate (scope-doc §3/§5): a default-OFF probe confirms `FUN_00408ad0(v)` /
+> `FUN_00408a50(v)` go non-zero and monotone, and the bridged ordering of the 4 cars matches the
+> original's on a matched capture, **before** any consumer is trusted; then car<->car
+> no-regression (G-NOREG-E/-B, G-DET, G-KNOBOFF) + modes oracle rule 3 (leg A reaches the
+> elimination tiebreak) + the power-up sweep (it reaches the fire gates). Pre-register UNRUN,
+> commit, then run. **Do NOT start leg B before the bridge write.**
+>
+> Alternatives if you'd rather redirect (the over-speed is not urgent): U-9191 item (b) car-1
+> body-heading residual; U-9195 participant-count inertness; or the `0x00409b0e` jumptable.
+>
+> The block below is the previous headline, left as history.
+
 > ## UPDATE 2026-10-06 (D-11072 legs C+A RAN, commits `69e207b9..2708befc`): **fidelity decision YES; leg C is DONE and INERT by design (8/8 gates); leg A finds the port's progress metric is NON-MONOTONE and so NOT bridge-able into the original's spline `race_pct` as-is. The new blocking prerequisite is a monotone, arc-length port progress metric. DO NOT start leg B. NO C-level moved, nothing default-ON, no bridge code, `original/` untouched.**
 >
 > Read [`verify/d3_racepos_20261006/RESULT_LEGC_LEGA.md`](../verify/d3_racepos_20261006/RESULT_LEGC_LEGA.md).
