@@ -1,0 +1,25 @@
+  [keep-awake] display-sleep suppressed + wake nudge sent
+=== scenario_launch  pid=24512  track=0 mode=10 cars=1 ===
+  attaching ASAP...
+  [agent] ready
+    phase=0  (waiting for menu (phase 1))
+    phase=1  (waiting for menu (phase 1))
+  [setup] set track=0 mode=10 cars=1 car=0 rule=0 team=0
+  [launch] --no-warp: NOT poking DAT_00771968; holding at the menu
+
+  *** HOLDING AT MENU (no warp) ***
+
+  [peek] +0.0s {"008a9588":0,"00803358":0}
+
+  [peek] +3.6s {"008a9588":0,"00803358":0}
+
+  [poke-u32] +6.0s CONTRIVED -> {'008a9588': 13}
+
+  [peek] +7.2s {"008a9588":13,"00803358":0}
+
+  [peek] +10.8s {"008a9588":13,"00803358":0}
+
+  [peek] +14.4s {"008a9588":13,"00803358":0}
+
+  [peek] +18.0s {"008a9588":13,"00803358":0}
+  [no-warp] hold elapsed; detaching

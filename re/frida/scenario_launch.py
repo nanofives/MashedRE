@@ -3218,8 +3218,10 @@ def main():
                 if (args.poke_u32 and not poked
                         and time.time() - t0nw >= args.poke_delay):
                     poked = True
+                    # frida-python maps the JS export pokeU32 -> poke_u32, the same
+                    # convention this file already uses for poke_ctrl_slots.
                     print(f"\n  [poke-u32] +{time.time()-t0nw:.1f}s CONTRIVED ->",
-                          E.pokeU32(args.poke_u32))
+                          E.poke_u32(args.poke_u32))
                 if args.peek and n % 6 == 0:
                     try:
                         print(f"\n  [peek] +{time.time()-t0nw:.1f}s", E.peek(args.peek))
