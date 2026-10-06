@@ -211,7 +211,23 @@ not a failure — two per capture.
 This gate could have failed: if the hull were any other four of the 18 points, or the box
 were wrong, the edge lengths would not land on 0.437600 / 0.977100 to eight decimals.
 
-### Consequence for the trackers: U-9155's "producer not identified" is STALE
+### Consequence: one STALE CODE COMMENT — and U-9155's own row is NOT the stale thing
+
+**Read this distinction before quoting the next paragraph.** U-9155 names **two**
+producers and only one of them is open:
+
+- the producer of the record's 14 body points at `+0x90..+0x137` — **`FUN_0046b1c0`,
+  identified, C3, and called by the exe build.** The paragraph below is about this one.
+- the producer of the **6-float box** at `DAT_0063d9e0 + slot*0x2ac + 0x230` that
+  `FUN_0046b1c0` consumes — **still open**, and `UNCERTAINTIES.md`'s U-9155 row is
+  correct and current on it (structure corrected 2026-09-30, search bounded to
+  `0x0041ec0f..0x0042089b`). **Nothing here closes it.**
+
+The §4 measurement is a **third** independent witness for the box seed, after the
+`--peek` samples that measured it and `re/analysis/D2_REOPEN_2026-09-29.md` §16.6's read
+of `rec+0x90..+0x137` out of `orig_solo3.msd`. It adds a different kind of evidence — a
+geometric invariant over 10,278 world-space frames rather than a byte comparison of the
+body-space points — and it still does not name the box's writer.
 
 `mashedmod/src/mashed_re/Collision/ContactStubs.cpp:100-110` still says *"the port's A3
 … writes only the FIRST FOUR (the wheel points) and leaves points 4..17 zero … Their
@@ -224,8 +240,9 @@ in `re/tools/dual_copy_allowlist.txt` as CROSS-TARGET.
 
 **So the port DOES populate body points 4..17 and DOES run the transform**
 (`CarWorldContacts.cpp:448`, bound to `Math::RwV3dTransformPointsCPU` at
-`ContactStubs.cpp:126-131`). The ContactStubs paragraph is a stale citation, not a gap.
-Correcting it is a tracker edit for `re-classify`, not something to patch in passing.
+`ContactStubs.cpp:126-131`). The ContactStubs paragraph is a **stale code comment**, not a
+gap, and not a stale tracker row. Correcting it goes through `re-classify` with the
+U-9155 row left OPEN on the box-producer question, not closed.
 
 ## 5. The ONE thing the port cannot supply: ring slot `[+0x9a8]`
 

@@ -6,11 +6,27 @@
 //   re/analysis/WSB2_B3_CONTACT_PORT_MAP.md
 //
 // Original: bool __thiscall FUN_00469df0(int* param_1, undefined4, int param_3)
-//   in_EAX  = vehicle A ("this", register)   -> vehA
-//   param_1 = vehicle B                       -> vehB
+//   in_EAX  = EAX  -> vehA
+//   param_1 = ECX  -> vehB
 //   param_3 = substep pass index              -> pass   (returns pass == 0)
+//   param_2 = the j index; UNUSED (it occurs exactly once in the whole
+//             decompilation, in the declaration line), so the port drops it.
 // Called from FUN_004709a0 only when game-mode in {6,7,10,0xb} and the two car
 // centroids are within (radiusA+radiusB)*0.75 (_DAT_005cc950).
+//
+// CALL SITE AND ARGUMENT ORDER — CORRECTED 2026-10-05. This header used to say
+// `in_EAX = vehicle A ("this", register)`. **in_EAX is NOT the `__thiscall` this; ECX
+// is**, read from the only call site (`0x00470bcd`, the sole caller FUN_004709a0,
+// confirmed by both `decomp_pc.py --callers` and `--datarefs`):
+//     0x00470bc5  lea eax, [edi + 0x8815a0]   ; EAX = &records[j]  (edi = j*0xd04)
+//     0x00470bcb  mov ecx, esi                ; ECX = &records[i]  (the SELF car)
+//     0x00470bcd  call 0x469df0
+// So `param_1`/ECX is the SELF car and `in_EAX` is the OTHER car. The parameter MAPPING
+// below was always right — `vehA` is `in_EAX`, `vehB` is `param_1` — only the word
+// "this" was misplaced. Consequence for anyone wiring this:
+//     the call is VehicleCarCarContact(rec(j), rec(i), pass)  -- OTHER car FIRST.
+// Full decode of the five gates and the retry semantics:
+// re/analysis/CARCAR_CALLSITE_2026-10-05.md.
 //
 // FIDELITY NOTES:
 //  * Vehicle records are explicit int* (DAT_008815a0 + car*0xd04). vF() = float

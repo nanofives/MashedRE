@@ -113,16 +113,31 @@ void Rw_TransformPoints(float* dst, const float* src, int count, void* mtx) {
 // only the translation row. VehiclePhysicsRun.cpp mirrors g_bodyBasis into it (see
 // `SyncContactRingMatrix` there) so the ring is what the original's ring is.
 //
-// [UNCERTAIN U-9155] rec+0x60..+0x137 holds 18 contact points; the port's A3
-// (VehicleInit.cpp:151-157) writes only the FIRST FOUR (the wheel points) and leaves
-// points 4..17 zero, because the original does not write them in 0x0046b540 either —
-// that function READS them (loops at 0x0046b915 `lea edi,[esi+0x94]` x8 and
-// 0x0046b98e `lea edi,[esi+0xf4]` x6) to build the per-slot radii at +0x5bc/+0x7bc.
-// Their producer is NOT yet identified. Consequence, stated rather than hidden: the
-// standalone's hull slots 4..17 all transform to the car origin, so the car-vs-world
-// contact is a POINT at the body centre rather than a 14-point hull. The fixup
-// (FUN_0046ef70) divides by the active-contact count [rec+0x9ec], so the duplicates do
-// not multiply the impulse — but the contact fires ~half a car-length late.
+// rec+0x60..+0x137 holds 18 contact points. A3 (0x0046b540) writes only the FIRST FOUR
+// (the wheel points) and the original does not write them in 0x0046b540 either — that
+// function READS them (loops at 0x0046b915 `lea edi,[esi+0x94]` x8 and 0x0046b98e
+// `lea edi,[esi+0xf4]` x6) to build the per-slot radii at +0x5bc/+0x7bc.
+//
+// CORRECTED 2026-10-05 — this paragraph used to end "Their producer is NOT yet
+// identified. Consequence … the standalone's hull slots 4..17 all transform to the car
+// origin, so the car-vs-world contact is a POINT at the body centre rather than a
+// 14-point hull." BOTH halves were already false when written, and the second was the
+// load-bearing one. The producer of points 4..17 is **0x0046b1c0** (C3 `impl`,
+// `Vehicle/VehicleSlotAabbExpand.cpp`, `frida_diff log/diff_vehicle_slot_aabb_expand.csv`),
+// and the exe build has its own record-base-relative copy at
+// `Vehicle/VehicleInit.cpp:151` which `VehicleInit.cpp:196` CALLS — so the standalone
+// does populate all 14. MEASURED on the port's own capture: the three edge invariants of
+// the hull's top face are within 1e-3 of 0.437600 / 0.977100 / 1.070616 on 7772 of 7772
+// non-degenerate rows of `verify/d3_carcar_20261005/P1.csv`, median deviations
+// <= 1.9e-07, and on 10,278 of 10,278 frames across four original captures and two cars
+// (`re/tools/hull_invariants.py`). Full chain:
+// `re/analysis/CARCAR_CALLSITE_2026-10-05.md` section 4.
+//
+// [UNCERTAIN U-9155] what remains open is one level further out and is NOT this: the
+// producer of the SIX-FLOAT BOX at `DAT_0063d9e0 + slot*0x2ac + 0x230` that 0x0046b1c0
+// consumes. The port seeds one measured box for every slot. U-9155's row in
+// `UNCERTAINTIES.md` is current on that question (structure corrected 2026-09-30, search
+// bounded to 0x0041ec0f..0x0042089b); nothing above closes it.
 void Rw_VtableDispatch(void* dst, void* src, int count, void* mtxBlock) {
     mashed_re::Math::RwV3dTransformPointsCPU(reinterpret_cast<float*>(dst),
                                              reinterpret_cast<const float*>(src),
