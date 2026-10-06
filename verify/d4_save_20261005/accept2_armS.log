@@ -1,0 +1,33 @@
+  [keep-awake] display-sleep suppressed + wake nudge sent
+=== scenario_launch  pid=36996  track=0 mode=10 cars=1 ===
+  attaching ASAP...
+  [agent] ready
+    phase=0  (waiting for menu (phase 1))
+    phase=1  (waiting for menu (phase 1))
+  [setup] set track=0 mode=10 cars=1 car=0 rule=0 team=0
+  [launch] poke DAT_00771968 = 2 -> 1
+    phase=2  (waiting for race running (phase 3))
+    phase=3  (waiting for race running (phase 3))
+
+  *** RACE RUNNING (phase 3) ***
+  car spawn fired: 3   grounded=4  airflag=0
+  vel=[0, 0, 0]  fwd=[-8.742277657347586e-08, 0, -1]
+
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+
+  racing 22s — pulsing control 4 (confirm/accel) to skip the start intro + continue rounds...
+
+  [peek] +0.0s {"007f0a44":1,"007f0a50":2,"007f0ab0":2,"007f0a6c":1}
+
+  [peek] +3.6s {"007f0a44":1,"007f0a50":2,"007f0ab0":2,"007f0a6c":1}
+
+    +  4s  ph=3  spawnFired=3  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+  [peek] +7.4s {"007f0a44":1,"007f0a50":2,"007f0ab0":2,"007f0a6c":1}
+
+    +  9s  ph=3  spawnFired=3  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+  [peek] +11.2s {"007f0a44":1,"007f0a50":2,"007f0ab0":2,"007f0a6c":1}
+
+    + 14s  ph=3  spawnFired=3  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+  [peek] +14.9s {"007f0a44":1,"007f0a50":2,"007f0ab0":2,"007f0a6c":1}
+
+  [peek] +18.7s {"007f0a44":1,"007f0a50":2,"007f0ab0":2,"007f0a6c":1}
