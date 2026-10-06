@@ -2691,6 +2691,14 @@ def main():
                          "(grounded->0 => A6b airborne body runs). 0=off. Contrived state (C3-grade).")
     ap.add_argument("--fps", default="60")
     ap.add_argument("--hold", type=int, default=20, help="seconds to hold in the race after spawn")
+    ap.add_argument("--no-warp", action="store_true",
+                    help="[D4 2026-10-05] boot to the MENU and hold there for --hold "
+                         "seconds instead of poking DAT_00771968=2 to warp into a race. "
+                         "The frontend save-load path only runs on the way through the "
+                         "menus, so this is the only mode in which gamesave.bin is "
+                         "actually READ -- a warp-launched run leaves the save buffer "
+                         "empty and the championship table at code defaults. Everything "
+                         "downstream that needs phase 3 is skipped.")
     ap.add_argument("--hooks", default="",
                     help="comma .asi hook RVAs/names to install LIVE + turn on the physics A/B "
                          "self-test (MASHED_PHYS_C4_SELFTEST -> original/phys_c4_*_selftest.log). "
@@ -3153,6 +3161,46 @@ def main():
                 # D2 isolation control: instrumentation without the drive.
                 print("  [statediff]", E.arm_cook_noop())
         time.sleep(0.2)
+        # [D4 2026-10-05] --no-warp: boot to the MENU and hold there, skipping the
+        # one poke that warps into a race.
+        #
+        # WHY THIS EXISTS. The warp is exactly one call, and it is what made the save
+        # subsystem unobservable. verify/d4_save_20261005 spent three legs on "does
+        # the original accept the standalone's gamesave.bin" and all three were VOID
+        # or inconclusive for the SAME reason, found from three directions:
+        #   * 0x00803358 (the serialization buffer) read 0 on every sample
+        #     (RESULT_SAVE.md) -- the buffer is only live during a save/load call;
+        #   * *0x008a94a8 was never reached;
+        #   * the live championship table 0x007F0A40 showed CODE DEFAULTS, proven by
+        #     a positive-control save whose edited row never appeared
+        #     (RESULT_ACCEPT2.md).
+        # Root cause: a warp-launched run never executes the frontend path that reads
+        # gamesave.bin. The file is only loaded on the way through the menus.
+        #
+        # So this flag gates ONE line and changes nothing else. With it set the script
+        # holds at the menu for --hold seconds, which is all --peek needs; everything
+        # downstream that assumes phase 3 is skipped and said so.
+        if args.no_warp:
+            print("  [launch] --no-warp: NOT poking DAT_00771968; holding at the menu")
+            if args.oracle:
+                print("  [oracle] SKIPPED -- needs a running race")
+            print("\n  *** HOLDING AT MENU (no warp) ***")
+            # Same --peek cadence and same call as the race hold loop below
+            # (every 6th 0.6 s tick), so menu-side and race-side peek output are
+            # directly comparable.
+            t0nw = time.time()
+            t_end = t0nw + args.hold
+            n = 0
+            while time.time() < t_end:
+                if args.peek and n % 6 == 0:
+                    try:
+                        print(f"\n  [peek] +{time.time()-t0nw:.1f}s", E.peek(args.peek))
+                    except Exception as ex:
+                        print(f"\n  [peek] failed: {ex}")
+                time.sleep(0.6)
+                n += 1
+            print("  [no-warp] hold elapsed; detaching")
+            raise SystemExit(0)
         # 3) poke the state machine into load+spawn
         print("  [launch] poke DAT_00771968 = 2 ->", E.launch())
         if args.oracle:
