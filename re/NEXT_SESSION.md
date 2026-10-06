@@ -35,10 +35,22 @@
 > + point `0x005f2770` + fill). A sizeable dedicated effort, pre-registered on its own, with a
 > default-OFF gate-fire counter proving `RefDist` goes non-zero before any behaviour wiring.
 >
-> ### Pick another lane — the over-speed needs a race-position reconstruction first
+> ### The race-position reconstruction is now SCOPED — DEFERRED D-11072
 >
-> It is a command defect blocked two layers deep, and the car<->car ship already took a third
-> out of it ((e) MET, (b) 5 bands). Alternatives:
+> `re/analysis/RACE_POSITION_RECON_SCOPE_2026-10-06.md` (`33633860`) lays out the effort as
+> three legs with per-leg inert-first checkpoints: **C** slot-state table (CHEAP — boot-seed
+> `*(u32*)0x005f2770=0x005f2728`), **A** progress bridge (MEDIUM — the port already has
+> `race_[].progress`, but it is a gate ordinal vs the original's spline `race_pct`, so a
+> pre-registered scale map and a **USER fidelity decision** are needed), **B** reference
+> distance (EXPENSIVE — build on A+C). Payoff is wider than the over-speed: live RefDist
+> unblocks the whole AI powerup fire-gate chain and the mode-3/7 producer. **To execute it:**
+> make the §1 fidelity decision, then start with leg C's liveness probe + leg A's scale
+> measurement (one session, no behaviour risk) before committing to leg B.
+>
+> ### Or pick a different lane — the over-speed is not urgent
+>
+> The command defect is blocked two legs deep behind D-11072, and the car<->car ship already
+> took a third out of it ((e) MET, (b) 5 bands). Alternatives:
 > 1. **U-9191 item (b)** — car 1's body-heading physics residual (~0.89 deg at matched
 >    position), the genuinely-physics path left on (b).
 > 2. **U-9195** — is the car<->car change inert outside 4 participants? (a bounded re-measure).
