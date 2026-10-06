@@ -2478,6 +2478,21 @@ rpc.exports = {
            'fwdx','fwdz','grounded','airflag','stepCalls','bypass','worldPtr',
            'suspDtTerm','suspScale','wheel0Load','mass'],
     rows: TEL.rows }); },
+  // [D4 2026-10-05] generic u32 poke, "rva=val[,rva=val]" with both in hex.
+  // CONTRIVED STATE (C3-grade), same class as pokeLap / pokeCtrlSlots below: it
+  // writes a value the game's own code writes, to drive a state the harness cannot
+  // otherwise reach. Added to enter the save state machine at 0x00409b0e, whose
+  // selector DAT_008a9588 is read at 0x00409b00 and whose case 0xd calls SaveLoad.
+  pokeU32: function(spec){
+    const out={};
+    for (const part of spec.split(',')){
+      if(!part) continue;
+      const kv=part.split('='); const rva=parseInt(kv[0],16); const val=parseInt(kv[1],16);
+      try { ga(rva).writeU32(val); out[kv[0]]=ga(rva).readU32(); }
+      catch(e){ out[kv[0]]='ERR '+e; }
+    }
+    return out;
+  },
   pokeTimer: function(v){ try { ga(0x007f0fe4).writeFloat(v); return 1; } catch(e){ return 'ERR '+e; } },
   // lap counter row 0x008a9620 stride 0x30c field +0x28 (U-8988 resolution);
   // FUN_004177b0 recomputes metric[car] from it next tick -> finisher edges
@@ -2691,6 +2706,13 @@ def main():
                          "(grounded->0 => A6b airborne body runs). 0=off. Contrived state (C3-grade).")
     ap.add_argument("--fps", default="60")
     ap.add_argument("--hold", type=int, default=20, help="seconds to hold in the race after spawn")
+    ap.add_argument("--poke-u32", default="",
+                    help="[D4 2026-10-05] CONTRIVED STATE (C3-grade). 'rva=val[,...]' "
+                         "both hex, written once --poke-delay seconds into the hold. "
+                         "Added to drive the save state machine at 0x00409b0e via its "
+                         "selector DAT_008a9588 (read at 0x00409b00; case 0xd calls "
+                         "SaveLoad 0x00404e50). Proves a path CAN run; it does not show "
+                         "the game reaches that state on its own.")
     ap.add_argument("--no-warp", action="store_true",
                     help="[D4 2026-10-05] boot to the MENU and hold there for --hold "
                          "seconds instead of poking DAT_00771968=2 to warp into a race. "
@@ -3191,7 +3213,13 @@ def main():
             t0nw = time.time()
             t_end = t0nw + args.hold
             n = 0
+            poked = False
             while time.time() < t_end:
+                if (args.poke_u32 and not poked
+                        and time.time() - t0nw >= args.poke_delay):
+                    poked = True
+                    print(f"\n  [poke-u32] +{time.time()-t0nw:.1f}s CONTRIVED ->",
+                          E.pokeU32(args.poke_u32))
                 if args.peek and n % 6 == 0:
                     try:
                         print(f"\n  [peek] +{time.time()-t0nw:.1f}s", E.peek(args.peek))
