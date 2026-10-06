@@ -1,6 +1,63 @@
 # Next session kickoff
 
-> ## UPDATE 2026-10-05 (CAR<->CAR CALL SITE, 3 commits `3404612d..749f60ab`): **the call site is fully decoded, leg 1 passed 6 of 6, and the wiring is blocked on ONE unpublished ring slot. START HERE.**
+> ## UPDATE 2026-10-06 (CAR<->CAR LEG 2, commits `283758b7`+): **ring slot `[+0x9a8]` is published, 6 of 6 gates PASS, (e) and (b) did not move a digit — and LEG 3 IS NOW UNBLOCKED. START HERE.**
+>
+> **No C-level moved. No band moved. `original/` untouched.** 49 insertions / 0 deletions in
+> one file; the pre-existing `[+0x9ac]` write is byte-for-byte unchanged. exe SHA-256
+> `ABE7BA36035B94C8294158B2071FE2E7FD6D3160D99EC6EB10AECD8F8D31E3A2`. Read
+> [`verify/d3_carcar_20261005/RESULT_LEG2.md`](../verify/d3_carcar_20261005/RESULT_LEG2.md).
+>
+> - **Gates:** `G-NOREG-E` PASS (`launch` 1426.4 / 2053.0 / 2055.2 and `ft_median_m0`
+>   2550.6 / 2053.0 / 2278.2 identical on every digit, 3 of 3 cars x 3 of 3 runs);
+>   `G-NOREG-B` PASS (**exactly 13 of 30**, 5/4/4, same band names); `G-BANDS-UNEDITED`,
+>   `G-KNOBOFF`, `G-DET` PASS; **`G-SLOT0-LIVE` PASS** — slot 0 goes from **0 of 7775** rows
+>   agreeing with `own_x`/`own_z` to **0.999618 / 0.999624 / 0.999625**. The knob
+>   (`MASHED_RING_SLOT0=0`, one read site) is a true revert.
+> - **My pre-registered "this is NOT inert" expectation FAILED, and that is the real output.**
+>   The prereg named three readers; there are **four**. Two (`PhysicsChainHooks.cpp:536`,
+>   `:2749`) are in an **asi-only TU** and never execute in the exe. One
+>   (`VehicleControl.cpp:103`) forwards the pointer to `Vehicle_Integrate2`, whose exe body
+>   declares it **unused** (`Integrate2.cpp:123`). The fourth — **`ForceIntegrator.cpp:112-118`,
+>   A5 Phase 2's drafting grip term, never named in the prereg** — is live and its `delta`
+>   really did go from identically `(0,0,0)` to real inter-car vectors, but its only output
+>   `local_70` is unconditionally overwritten by the original's own law at
+>   `ForceIntegrator.cpp:137` (`if (g_playerCount == 4) local_70 = 1.0f`), and this recipe has
+>   `participants=4`. **So the no-change gates are predicted, not lucky.**
+> - **New row U-9195**: outside `g_playerCount` ∈ {4, 8, 9} that fourth reader is LIVE and leg 2
+>   is **not** inert. It does **not** block leg 3 (same 4-participant recipe). Its path to
+>   resolution starts with a default-OFF counter on the `kDraftDot <` branch, so "did not fire"
+>   is distinguishable from "fired and was overwritten".
+>
+> ### START HERE — run LEG 3, the pair loop. It is pre-registered and unrun.
+>
+> [`PREREG_CARCAR.md`](../verify/d3_carcar_20261005/PREREG_CARCAR.md) §4. Insert the pair loop
+> **immediately before the `break;` that ends the `for (int pass = 0; pass < 2; ++pass)` retry
+> in `Vehicle/VehiclePhysics_StepCar`** — it was `Vehicle/VehiclePhysicsRun.cpp:1093` before
+> leg 2 and is **`:1142`** after it (re-locate it by the `// Not-contacted path` comment two
+> lines above rather than by the number), calling
+>
+> ```
+> Collision::VehicleCarCarContact(recJ, recI, pass)   // 0x00469df0 via 0x00470bcd
+> ```
+>
+> **with `recJ` FIRST** — the other car, `in_EAX`; `recI` second — the self car, `param_1`.
+> Default-ON with the revert `MASHED_CARCAR_CONTACT=0`. The five gates of `0x00470b23..0x00470bc1`
+> in order, `Fi_GameMode()` returns 6 which is in `{6,7,10,0xb}`, and `g_participantCount` is
+> the count. Gates: `G-CALLED` (>= 1 entry **and** >= 1 non-zero return, with the `(i,j)`
+> histogram), **`G-NOOPP` (exactly 0 entries under `MASHED_MEASURE_NOOPP=1` — the control that
+> can fail)**, `G-PAIR`, then `G-NOREG-E` / `G-NOREG-B` / `G-BANDS-UNEDITED` / `G-KNOBOFF` /
+> `G-DET` re-run against **leg 2's** numbers, not the pre-leg-2 ones. **Registered: a call site
+> is not a behavioural diff, so NO C-level moves on `0x00469df0`.**
+>
+> **Do not assume it closes (b).** The 2026-10-02 matrix had no arm passing (b) on any car, and
+> `ROADMAP.md:1929-1932` records the opponents already moving the player's median speed
+> **2538 → 691** with `0x00469df0` never running — shared mutable state, a different question.
+> And read `RESULT_LEG1.md` §4 / this block before suspecting the C2 transcription: memory
+> `broadphase-standin-plane-test-was-the-sink`.
+
+The block below is the previous headline, left as history.
+
+> ## UPDATE 2026-10-05 (CAR<->CAR CALL SITE, 3 commits `3404612d..749f60ab`): **the call site is fully decoded, leg 1 passed 6 of 6, and the wiring is blocked on ONE unpublished ring slot.**
 >
 > **No C-level moved. No band moved. No (e)/(b) run. `original/` untouched.** The only
 > source change that ships is 19 **appended** columns on the default-OFF

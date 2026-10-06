@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-05T23:30:00Z",
+  "updatedAt": "2026-10-06T02:10:00Z",
   "sections": [
     {
       "heading": "Phase",
@@ -12,20 +12,21 @@
       ]
     },
     {
-      "heading": "Last session (2026-10-05, car<->car call site)",
+      "heading": "Car<->car lane (2026-10-05/06)",
       "fields": [
-        { "label": "Commits", "value": "3404612d..749f60ab (3)", "kind": "text" },
+        { "label": "Legs done", "value": "1 and 2 — 6 of 6 gates each", "kind": "text" },
         { "label": "C-levels moved", "value": 0, "kind": "number" },
         { "label": "Bands moved", "value": 0, "kind": "number" },
-        { "label": "Leg 1 gates", "value": "6 of 6 PASS", "kind": "text" },
-        { "label": "Result", "value": "0x00469df0's single call site (0x00470bcd) fully decoded; hull chain already live in the exe and exact to <=1.9e-07; wiring blocked on ring slot [+0x9a8] being unpublished", "kind": "text" }
+        { "label": "Leg 2 shipped", "value": "ring slot [+0x9a8] now published (MASHED_RING_SLOT0=0 reverts); proven live at 0.9996 of rows, (e)/(b) digit-identical", "kind": "text" },
+        { "label": "Why inert", "value": "A5 Phase 2's drafting term is the only live consumer and ForceIntegrator.cpp:137 discards it at participants=4 — predicted, not lucky", "kind": "text" },
+        { "label": "New uncertainty", "value": "U-9195 — outside g_playerCount in {4,8,9} that reader is live, so leg 2 is not inert there", "kind": "text" }
       ]
     },
     {
       "heading": "Next",
       "fields": [
-        { "label": "START HERE", "value": "re/NEXT_SESSION.md — run LEG 2 of verify/d3_carcar_20261005/PREREG_CARCAR.md", "kind": "text" },
-        { "label": "Leg 2", "value": "publish ring slot [+0x9a8], gated ALONE; registered in advance as NOT inert (3 A4/A6b readers get a zero matrix today)", "kind": "text" },
+        { "label": "START HERE", "value": "re/NEXT_SESSION.md — run LEG 3 of verify/d3_carcar_20261005/PREREG_CARCAR.md", "kind": "text" },
+        { "label": "Leg 3", "value": "the pair loop at VehiclePhysicsRun.cpp:1142, calling VehicleCarCarContact(recJ, recI, pass) — OTHER car first", "kind": "text" },
         { "label": "Alternatives", "value": ["U-9185: the 1.3258x distance over-run", "recover the 0x00409b0e jumptable (save acceptance)"], "kind": "list" }
       ]
     }
