@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-06T08:00:00Z",
+  "updatedAt": "2026-10-06T09:30:00Z",
   "sections": [
     {
       "heading": "Phase",
@@ -23,7 +23,7 @@
       "fields": [
         { "label": "Finding", "value": "the surviving +24-28% over-speed is a COMMAND defect (reconfirmed on the shipped build); physics exonerated <1% pre-onset", "kind": "text" },
         { "label": "Measure-inert-first", "value": "porting the two FUN_00416250 branches is INERT — reads blank-zero race-progress with no port writer; NO code shipped", "kind": "text" },
-        { "label": "Prerequisite", "value": "port FUN_00442a60 (Spectator::ComputeDistances, C2) -> writes 0x008989b0 progress, then gate-fire counter before any wiring", "kind": "text" }
+        { "label": "Prerequisite", "value": "porting FUN_00442a60 is ALSO inert (reads unloaded 0x005f2728 slot-state table + unwritten 0x008a96ec); the fix is a race-position reconstruction, not a producer port", "kind": "text" }
       ]
     },
     {

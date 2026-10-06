@@ -1,6 +1,6 @@
 # Next session kickoff
 
-> ## UPDATE 2026-10-06 (U-9185 re-baseline + U-9186 measure-inert-first, commits `19e6b2e1..37ed351f`): **car<->car kept default-ON; the ship already cut the over-speed ~a third; and porting the over-speed COMMAND branches is INERT — blocked on an unported producer. START HERE: the over-speed fix needs `FUN_00442a60` ported FIRST, or pick another lane.**
+> ## UPDATE 2026-10-06 (U-9185 re-baseline + U-9186 measure-inert-first, commits `19e6b2e1..dea053ba`): **car<->car kept default-ON; the ship already cut the over-speed ~a third; porting the over-speed COMMAND branches is INERT, AND so is porting their producer — the fix recedes two layers into a race-position reconstruction. START HERE: pick another lane, or scope that reconstruction deliberately.**
 >
 > No C-level moved anywhere in this run. No code shipped by the U-9185/U-9186 work (the
 > car<->car KEEP was a decision only; the knob already defaulted ON).
@@ -19,19 +19,26 @@
 >   `0x0089a364`, catch-up `0x0089a4c4/4c8`) — all blank-mapped zeros, documented in the port's
 >   own header `AiStandalone.cpp:704-709`.
 >
-> ### THE PREREQUISITE for the over-speed, if you pursue it
+> ### THE PREREQUISITE recedes TWO layers — it is a race-position reconstruction, not a producer port
 >
-> Port **`FUN_00442a60`** (`Spectator::ComputeDistances`, C2) — it writes the per-car progress
-> at `0x008989b0` that `RefDist` and the whole LeaderTimer / closest-in-race chain read (today
-> the array is blank zeros). **Then** re-run a default-OFF gate-fire counter (ctrl unchanged) to
-> confirm the branches would fire near the original's 36 / 64 before wiring any behaviour. Only
-> then port the branches behind a default-ON knob, gated on (e)/(b)/over-speed. Do NOT wire the
-> branches before the producer is live — it ships dead code (ROADMAP.md:235-240).
+> Checked 2026-10-06 (`verify/d3_overspeed_20261006/RESULT_U9186_PRODUCER.md`, `dea053ba`):
+> porting **`FUN_00442a60`** (`Spectator::ComputeDistances`) does **not** unblock it. Its call
+> site exists (the race camera `FUN_00446520` = `Race/RaceCamera.cpp` calls it) and its distance
+> math uses live positions, but its reference-car **selection** reads state the standalone never
+> produces — `FUN_0040e180` reads the `0x005f2770 → 0x005f2728` slot-state table (a load-time
+> `.data` pointer the standalone never loads; base 0 → AV/guarded-zero, documented
+> `AiStandalone.cpp:1387-1403`) and `FUN_00408ad0` reads per-car progress `0x008a96ec` (writer
+> `FUN_00408610`, unported). So it writes **zeros** → `RefDist` stays 0 → the branches still
+> never fire. **The real requirement:** reconstruct the standalone's race-position bookkeeping —
+> (a) per-car progress `0x008a96ec` (`FUN_00408610`, or a spline-derived standalone progress
+> since the AI already drives the splines), AND (b) the `0x005f2728` slot-state table (allocate
+> + point `0x005f2770` + fill). A sizeable dedicated effort, pre-registered on its own, with a
+> default-OFF gate-fire counter proving `RefDist` goes non-zero before any behaviour wiring.
 >
-> ### Or pick another lane — the over-speed is no longer the obvious choice
+> ### Pick another lane — the over-speed needs a race-position reconstruction first
 >
-> It is a command defect blocked on an upstream port, and the car<->car ship already took a
-> third out of it. Alternatives:
+> It is a command defect blocked two layers deep, and the car<->car ship already took a third
+> out of it ((e) MET, (b) 5 bands). Alternatives:
 > 1. **U-9191 item (b)** — car 1's body-heading physics residual (~0.89 deg at matched
 >    position), the genuinely-physics path left on (b).
 > 2. **U-9195** — is the car<->car change inert outside 4 participants? (a bounded re-measure).
