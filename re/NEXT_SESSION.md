@@ -1,6 +1,42 @@
 # Next session kickoff
 
-> ## UPDATE 2026-10-06 (CAR<->CAR LEG 3, commits `523cc5d9`+): **the pair loop is WIRED, 8 of 8 gates PASS, and the contact deterministically moves (b) from 13 failing bands to 5. START HERE — the next step is the cross-side check that decides whether that is a real (b) win.**
+> ## UPDATE 2026-10-06 (U-9196 RESOLVED, commits `94485a1c`+): **the car<->car (b) movement is GENUINE behaviour, not a shallow coincidence — verdict PARTIAL. The car<->car lane is COMPLETE. One USER DECISION is owed; otherwise pick a new lane.**
+>
+> **No C-level moved** — `0x00469df0` stays C2. No game run, no build. Read
+> [`verify/d3_carcar_20261005/RESULT_U9196.md`](../verify/d3_carcar_20261005/RESULT_U9196.md).
+>
+> - The feared failure (low median WITHOUT the original's correction tail — "smooth-but-not-
+>   cornering") is **REFUTED on both cars**. The original steers bimodally (low median + fat
+>   rail-correction tail); both port cars reproduce that shape. New tool `re/tools/ai_steerdist.py`.
+> - Verdict **PARTIAL**: **car 1 GENUINE** (exact median match 7=7, both tail gates pass);
+>   **car 3 SHALLOW on `G-SHAPE-MED` alone** (median 11 vs 23) — but its tail passes in full,
+>   so it corners for real and merely under-steers its reference by ~half. Car 1 also jitters
+>   more between corrections (distinct 83 vs 33). Position-matched collateral (R=0.12): median
+>   steering diff 7.0 (car 1) / 10.0 (car 3).
+> - **Does NOT close (b)**: car 2 still fails entirely, one Training recipe, U-9195's
+>   participant-count caveat untouched, C2 unchanged.
+>
+> ### THE ONE OWED ITEM — a USER DECISION, not more analysis
+>
+> **Keep or revert `MASHED_CARCAR_CONTACT` default-ON.** It is a genuine step toward the
+> original's AI steering on 2 of 3 cars (exact on car 1), regresses no gated (e) statistic, and
+> costs car 2 one band (4 → 5). It ships in the default build today. The RESULT lays out the
+> trade; the call is the user's.
+>
+> ### The car<->car lane is otherwise COMPLETE — pick a new lane
+>
+> Legs 1–3 + U-9196 all landed (`3404612d..94485a1c`). The remaining D3/physics options:
+> 1. **U-9185 — the 1.3258x distance over-run** (`verify/d3_noboost_20261003`), the +15..31 %
+>    AI over-speed inside the window. The only substantive physics path left on (b), and it is
+>    a separate carrier from the steering U-9196 just addressed.
+> 2. **U-9195 — is leg 2/3 inert outside 4 participants?** Re-run the car<->car arms at a
+>    participant count outside {4,8,9}, with a default-OFF counter on the drafting branch first
+>    (so "did not fire" separates from "fired and was overwritten").
+> 3. **Recover the `0x00409b0e` jumptable** and finish the save-acceptance question.
+
+The block below is the previous headline, left as history.
+
+> ## UPDATE 2026-10-06 (CAR<->CAR LEG 3, commits `523cc5d9`+): **the pair loop is WIRED, 8 of 8 gates PASS, and the contact deterministically moves (b) from 13 failing bands to 5.**
 >
 > **No C-level moved** — `0x00469df0` is still C2; a call site is not a behavioural diff.
 > **`original/` untouched.** 73 insertions / 0 deletions in one file. exe SHA-256
