@@ -359,8 +359,26 @@ bool Ai_BridgeLoad(int course, const char* trackPizPath) {
     if (!Ai::AiData_LoadInto(raw, len, reinterpret_cast<void*>(0x007f1a9cu))) return false;
 
     // slot table: vehicle v -> ctrl slot v (image-pad is zeroed; make it explicit).
+    // NOTE kSlotTableBase is 0x007f1a14, the AI ctrl-SLOT-INDEX table. It is NOT the
+    // slot-STATE table seeded just below; the two are unrelated despite the names.
     for (int v = 0; v < 4; ++v)
         Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride) = v;
+    // [D-11072 leg C 2026-10-06] slot-STATE table self-pointer. 0x005f2770 is a
+    // load-time .data constant whose value is 0x005f2728 and which NOTHING writes at
+    // runtime (decomp_pc.py 0x005f2770 --datarefs: "type pointer len 4 value 005f2728",
+    // "WRITES: (none)"; second witness, the same dword read out of MASHED.exe.unpatched
+    // at file offset 0x1f2770, Ai/AiStandalone.cpp:1388-1390). The standalone does not
+    // load the original's .data, so its image-pad owns the RVA zero-filled and
+    // CarSlotStateSet (AiStandalone.cpp:1404-1409) early-returns on base == 0. Writing
+    // the constant back reproduces a static initializer the binary itself carries -- it
+    // is not a bridge and no C-level follows. Default-OFF while leg C is being measured;
+    // predicted behaviourally INERT because the standalone's only consumer of the
+    // concept, Ai::Host::veh_type, is the synthesized constant at :93 rather than a read
+    // of this table. PREREG: verify/d3_racepos_20261006/PREREG_LEGC_LEGA.md section 3a.
+    {
+        static const bool s_slotStateSeed = (std::getenv("MASHED_SLOTSTATE_SEED") != nullptr);
+        if (s_slotStateSeed) Ai::I32(0x005f2770u) = 0x005f2728;
+    }
     // per-vehicle behaviour record -> race line (type 0, index 0).
     for (int v = 0; v < 4; ++v) {
         Ai::I32(Ai::kAiLineType    + static_cast<std::uintptr_t>(v) * Ai::kAiStateDwords * 4u) = 0;
@@ -4060,7 +4078,36 @@ void TrackRenderer::AiStepDump() {
                          //     assigns +0x9ac a semantic name.
                          // PREREG: verify/d3_carcar_20261005/PREREG_CARCAR.md section 2
                          ",h4x,h4y,h4z,h5x,h5y,h5z,h6x,h6y,h6z,h7x,h7y,h7z"
-                         ",rec_95c,rec_998,rec_99c,rec_9a0,rec_4a4,sel_9a8,sel_9ac\n");
+                         ",rec_95c,rec_998,rec_99c,rec_9a0,rec_4a4,sel_9a8,sel_9ac"
+                         // [D-11072 legs C+A 2026-10-06] APPENDED again, so the 65
+                         // columns above keep their positions and ai_speed_env.py /
+                         // ai_ctrl_window.py / ai_posmatch.py / ai_yawrate.py /
+                         // ai_armregime.py / hull_invariants.py stay unaffected.
+                         // LEG C -- three witnesses for the slot-STATE table:
+                         //   ss_base  *(u32*)0x005f2770, read RAW with no deref. The
+                         //            seed at Ai_BridgeLoad makes this 0x005f2728.
+                         //   ss_v     the exact FUN_0040e470(v) expression, which is
+                         //            `*(u32*)(PTR_PTR_005f2770 + v*4 + 0x34)` read at
+                         //            0x0040e474 (15-byte function, no branches).
+                         //            GUARDED: reports -1 when ss_base == 0, because
+                         //            the literal expression at base 0 dereferences
+                         //            0x34 and AVs -- the measured 0xC0000005 that
+                         //            AiStandalone.cpp:1385-1393 records.
+                         //   ss_raw   the same slot read ABSOLUTELY at
+                         //            0x005f2728 + 0x34 + v*4, no pointer involved, so
+                         //            it cannot AV and cannot be an artefact of the
+                         //            guard. This is the control: the null hypothesis
+                         //            "the seed changes nothing" predicts 0 in BOTH arms.
+                         // LEG A -- the port's race-position metric, for the scale
+                         // measurement against the original's race_pct 0x008a96ec:
+                         //   prog/lap/gate  race_[v].progress / .laps / .gate
+                         //                  (Race/RaceSceneState.h:231-242), written at
+                         //                  :4860 as laps*n + gate + frac.
+                         //   racepct        TrackRenderer::RacePct(v) =
+                         //                  fmod(progress,n)/n*100, the port's existing
+                         //                  0..100 per-lap analogue (:4616-4619).
+                         // PREREG: verify/d3_racepos_20261006/PREREG_LEGC_LEGA.md section 3b
+                         ",ss_base,ss_v,ss_raw,prog,lap,gate,racepct\n");
     }
     for (int v = 1; v <= 3; ++v) {
         if (!g_aib.alive[v]) continue;
@@ -4077,7 +4124,10 @@ void TrackRenderer::AiStepDump() {
                          "%.9g,%.9g,%.9g,%d,"
                          // PREREG_CARCAR leg 1, appended. Raw reads only.
                          "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,"
-                         "%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d\n",
+                         "%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d,"
+                         // D-11072 legs C+A, appended. ss_base/ss_v/ss_raw as
+                         // signed decimal; prog/racepct raw.
+                         "%lu,%d,%d,%.9g,%d,%d,%.9g\n",
                      frame, seq++, v, static_cast<unsigned long>(blk),
                      Ai::U8(blk + 0), Ai::U8(blk + 1), Ai::U8(blk + 3),
                      Ai::U8(blk + 4), Ai::U8(blk + 5),
@@ -4127,7 +4177,23 @@ void TrackRenderer::AiStepDump() {
                      static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x9a0)),
                      static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x4a4)),
                      Vehicle::VehiclePhysics_RecordI32(v, 0x9a8),
-                     Vehicle::VehiclePhysics_RecordI32(v, 0x9ac));
+                     Vehicle::VehiclePhysics_RecordI32(v, 0x9ac),
+                     // D-11072 leg C: three slot-STATE witnesses. ss_base is the raw
+                     // pointer dword (no deref); ss_v is the literal FUN_0040e470(v)
+                     // expression, GUARDED to -1 when the pointer is 0 (that deref AVs
+                     // at base 0 -- AiStandalone.cpp:1385-1393); ss_raw reads the slot
+                     // absolutely at 0x005f2728+0x34+v*4, so it never AVs and is the
+                     // control the null hypothesis cannot pass (0 in both arms).
+                     static_cast<unsigned long>(Ai::U32(0x005f2770u)),
+                     (Ai::U32(0x005f2770u) == 0u) ? -1
+                         : static_cast<std::int32_t>(*reinterpret_cast<std::uint32_t*>(
+                               static_cast<std::uintptr_t>(Ai::U32(0x005f2770u))
+                               + static_cast<std::uintptr_t>(v) * 4u + 0x34u)),
+                     Ai::I32(0x005f2728u + 0x34u + static_cast<std::uintptr_t>(v) * 4u),
+                     // D-11072 leg A: the port's race-position metric.
+                     static_cast<double>(race_[v].progress),
+                     race_[v].laps, race_[v].gate,
+                     static_cast<double>(RacePct(v)));
     }
     std::fflush(lf);
     ++frame;
