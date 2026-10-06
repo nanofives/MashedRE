@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-06T06:00:00Z",
+  "updatedAt": "2026-10-06T08:00:00Z",
   "sections": [
     {
       "heading": "Phase",
@@ -8,23 +8,29 @@
         { "label": "Active phase", "value": "D3 — default AI, powerups, modes", "kind": "text" },
         { "label": "Closed", "value": ["D0 truth 2026-08-15", "D1 librw 2026-08-19", "D2 physics 2026-09-14 (PARKED)"], "kind": "list" },
         { "label": "Criterion (e)", "value": "PASS 3/3 — launch 1426.4/2053.0/2055.2", "kind": "text" },
-        { "label": "Criterion (b)", "value": "13 bands default; 5 with car<->car contact ON (genuine on cars 1&3, PARTIAL)", "kind": "text" }
+        { "label": "Criterion (b)", "value": "5 failing bands (car<->car ON, default); AI over-speed +26/+28/+24% (was +41/+40/+34)", "kind": "text" }
       ]
     },
     {
-      "heading": "Car<->car lane — COMPLETE (2026-10-05/06)",
+      "heading": "Car<->car — COMPLETE + KEPT (2026-10-05/06)",
       "fields": [
-        { "label": "Legs", "value": "1, 2, 3 + U-9196 — all landed (3404612d..94485a1c)", "kind": "text" },
-        { "label": "C-levels moved", "value": 0, "kind": "number" },
-        { "label": "Shipped", "value": "0x00469df0's call site is live (MASHED_CARCAR_CONTACT=0 reverts); the (b) movement 13->5 is GENUINE behaviour (verdict PARTIAL: car 1 exact, car 3 under-steers)", "kind": "text" },
-        { "label": "OWED — user decision", "value": "keep or revert MASHED_CARCAR_CONTACT default-ON (helps cars 1&3, costs car 2 one band)", "kind": "text" }
+        { "label": "Legs", "value": "1,2,3 + U-9196 landed; kept default-ON by user", "kind": "text" },
+        { "label": "Side effect", "value": "cut the AI over-speed ~a third (41%->26%), the largest single reduction on that metric", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "U-9185 / U-9186 over-speed (2026-10-06)",
+      "fields": [
+        { "label": "Finding", "value": "the surviving +24-28% over-speed is a COMMAND defect (reconfirmed on the shipped build); physics exonerated <1% pre-onset", "kind": "text" },
+        { "label": "Measure-inert-first", "value": "porting the two FUN_00416250 branches is INERT — reads blank-zero race-progress with no port writer; NO code shipped", "kind": "text" },
+        { "label": "Prerequisite", "value": "port FUN_00442a60 (Spectator::ComputeDistances, C2) -> writes 0x008989b0 progress, then gate-fire counter before any wiring", "kind": "text" }
       ]
     },
     {
       "heading": "Next lane",
       "fields": [
-        { "label": "START HERE", "value": "re/NEXT_SESSION.md — pick a lane; U-9185 (1.3258x distance over-run) is the main physics path left on (b)", "kind": "text" },
-        { "label": "Options", "value": ["U-9185: AI +15..31% over-speed in window", "U-9195: is car<->car inert outside 4 participants", "recover 0x00409b0e jumptable (save acceptance)"], "kind": "list" }
+        { "label": "START HERE", "value": "re/NEXT_SESSION.md — over-speed needs FUN_00442a60 first; or U-9191 item (b) body-heading physics residual", "kind": "text" },
+        { "label": "Options", "value": ["port FUN_00442a60 then re-check the over-speed branches", "U-9191 item (b): car-1 body heading ~0.89deg", "U-9195: car<->car inert outside 4 participants", "recover 0x00409b0e jumptable (save)"], "kind": "list" }
       ]
     }
   ]

@@ -1,6 +1,45 @@
 # Next session kickoff
 
-> ## UPDATE 2026-10-06 (U-9196 RESOLVED, commits `94485a1c`+): **the car<->car (b) movement is GENUINE behaviour, not a shallow coincidence — verdict PARTIAL. The car<->car lane is COMPLETE. One USER DECISION is owed; otherwise pick a new lane.**
+> ## UPDATE 2026-10-06 (U-9185 re-baseline + U-9186 measure-inert-first, commits `19e6b2e1..37ed351f`): **car<->car kept default-ON; the ship already cut the over-speed ~a third; and porting the over-speed COMMAND branches is INERT — blocked on an unported producer. START HERE: the over-speed fix needs `FUN_00442a60` ported FIRST, or pick another lane.**
+>
+> No C-level moved anywhere in this run. No code shipped by the U-9185/U-9186 work (the
+> car<->car KEEP was a decision only; the knob already defaulted ON).
+>
+> - **KEEP decision (Mariano):** `MASHED_CARCAR_CONTACT` stays default-ON (ROADMAP §D3,
+>   `19e6b2e1`). No code change — it already shipped that way.
+> - **U-9185 re-baselined** (`verify/d3_overspeed_20261006/REBASELINE.md`, `a9fce015`): the
+>   shipped car<->car contact cut the AI window over-speed from +41/+40/+34 % to **+26/+28/+24 %**
+>   — ~a third, the largest single reduction on this metric, a side effect of the steering gain.
+>   U-9185's `3421/3346/3496` is stale. The **COMMAND attribution is reconfirmed on the shipped
+>   build** (`ai_speed_onset.py`): onset COMMAND on all 3 cars, physics exonerated <1 % pre-onset.
+> - **U-9186 measure-inert-first** (`verify/d3_overspeed_20261006/RESULT_U9186_INERT.md`,
+>   `37ed351f`): **porting the two portable `FUN_00416250` branches would be INERT and no code was
+>   written.** Both read per-car progress/rank state that has NO standalone writer (BRANCH 1
+>   `FUN_00408a50` @ `0x008a96e8`; BRANCH 2 `RefDist`/`FUN_00442cc0` @ `0x008989b0`, leader
+>   `0x0089a364`, catch-up `0x0089a4c4/4c8`) — all blank-mapped zeros, documented in the port's
+>   own header `AiStandalone.cpp:704-709`.
+>
+> ### THE PREREQUISITE for the over-speed, if you pursue it
+>
+> Port **`FUN_00442a60`** (`Spectator::ComputeDistances`, C2) — it writes the per-car progress
+> at `0x008989b0` that `RefDist` and the whole LeaderTimer / closest-in-race chain read (today
+> the array is blank zeros). **Then** re-run a default-OFF gate-fire counter (ctrl unchanged) to
+> confirm the branches would fire near the original's 36 / 64 before wiring any behaviour. Only
+> then port the branches behind a default-ON knob, gated on (e)/(b)/over-speed. Do NOT wire the
+> branches before the producer is live — it ships dead code (ROADMAP.md:235-240).
+>
+> ### Or pick another lane — the over-speed is no longer the obvious choice
+>
+> It is a command defect blocked on an upstream port, and the car<->car ship already took a
+> third out of it. Alternatives:
+> 1. **U-9191 item (b)** — car 1's body-heading physics residual (~0.89 deg at matched
+>    position), the genuinely-physics path left on (b).
+> 2. **U-9195** — is the car<->car change inert outside 4 participants? (a bounded re-measure).
+> 3. **Recover the `0x00409b0e` jumptable** and finish save-acceptance.
+
+The block below is the previous headline, left as history.
+
+> ## UPDATE 2026-10-06 (U-9196 RESOLVED, commits `94485a1c`+): **the car<->car (b) movement is GENUINE behaviour, not a shallow coincidence — verdict PARTIAL. The car<->car lane is COMPLETE.**
 >
 > **No C-level moved** — `0x00469df0` stays C2. No game run, no build. Read
 > [`verify/d3_carcar_20261005/RESULT_U9196.md`](../verify/d3_carcar_20261005/RESULT_U9196.md).
