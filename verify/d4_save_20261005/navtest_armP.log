@@ -1,0 +1,7 @@
+EXE C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\cf873686-1b58-4512-b8b9-891012558399\scratchpad\saveab\P\original\MASHED.exe
+READY 39552 phase=3 (wanted 1)
+SCAN baseline {'00803358': 0} depth=1
+SCAN 1 depth before=1 afterpush=2 afterpop=1 no-change
+SCAN 2 depth before=1 afterpush=2 afterpop=1 no-change
+SCAN 3 depth before=1 afterpush=2 afterpop=1 no-change
+SCAN RESULT first-change=None

@@ -24,16 +24,30 @@
 #                 warp-launched run NOR at the top menu, so the load must be
 #                 deeper, and guessing screen ids is worse than scanning them.
 #
-#                 *** --scan IS NOT VALIDATED. DO NOT TRUST ITS OUTPUT YET. ***
-#                 First run (2026-10-05, arm P, ids 1..24) reported "no-change" on
-#                 every id -- but `depth` read a CONSTANT 2 immediately after every
-#                 push, so push() never navigated and the sweep proves nothing
-#                 about screens. Whoever picks this up must first establish that
-#                 push() moves `depth`; until then a clean --scan run is an absence
-#                 of navigation, not an absence of a trigger. The script also
-#                 reported phase=3 while waiting for 1, so this agent's RVA_PHASE
-#                 (0x0067eca4) does NOT mean what scenario_launch.py's phase means
-#                 -- do not compare the two.
+#                 NAVIGATION IS VALIDATED (2026-10-05, second attempt): depth goes
+#                 1 -> 2 on push and 2 -> 1 on pop, on every id tried. push() works.
+#
+#                 *** CORRECTION of this header's first version. *** It claimed
+#                 "push() never navigated" because the first run showed depth as a
+#                 CONSTANT 2 after every push. That was MY error, not the game's: I
+#                 printed only the post-push value and never a baseline, so I could
+#                 not see that the baseline was 1 and 2 WAS the incremented value.
+#                 The plate (re/analysis/frontend_c1_to_c2_followup_s2/
+#                 FUN_0043d2a0.md:70) says push increments DAT_0067e9f8 at the end
+#                 of the function -- it was doing exactly that all along. The scan
+#                 now reports depth before / after-push / after-pop so the same
+#                 mistake cannot recur.
+#
+#                 WHAT THE SCAN ACTUALLY SHOWS: single pushes from the ROOT screen
+#                 over ids 1..24 do NOT cause the save buffer at 0x00803358 to be
+#                 populated. Depth only ever reaches 2, so nothing deeper than one
+#                 level has been tried, and dwell is 0.45 s. A save-load site at
+#                 depth 3+, or one needing a longer dwell, is NOT excluded.
+#
+#                 Also recorded: the script reports phase=3 while waiting for 1, so
+#                 this agent's RVA_PHASE (0x0067eca4) does NOT mean what
+#                 scenario_launch.py's phase means -- do not compare the two, and
+#                 the original wait-for-3 was right for this global.
 #   --peek        plain Memory reads, no Interceptor, same spec as
 #                 scenario_launch.py --peek (rva:type, type in f/d/i/u).
 import argparse, os, sys, time
@@ -99,11 +113,17 @@ def scan_mode(E, dev, pid, lo, hi, spec):
     the top menu. A scan finds the trigger without inventing a screen map.
     """
     base = E.peek(spec)
-    emit(f"SCAN baseline {base}")
+    emit(f"SCAN baseline {base} depth={E.depth()}")
     first = None
     for scr in range(lo, hi + 1):
+        # [D4] report depth at THREE points. The plate
+        # (re/analysis/frontend_c1_to_c2_followup_s2/FUN_0043d2a0.md:66,70) says push
+        # increments DAT_0067e9f8 at the END of the function while pop decrements it
+        # EARLY -- so "push does not move depth, pop does" localises the failure to
+        # the push path's later section rather than to the call itself.
+        d0 = E.depth()
         try:
-            d = E.push(scr)
+            d1 = E.push(scr)
         except Exception as e:
             emit(f"SCAN {scr} push-ERR {e}")
             break
@@ -114,13 +134,14 @@ def scan_mode(E, dev, pid, lo, hi, spec):
             emit(f"SCAN {scr} peek-ERR {e} (process likely gone)")
             break
         changed = {k: (base[k], v[k]) for k in v if v[k] != base[k]}
-        emit(f"SCAN {scr} depth={d} {'CHANGED ' + str(changed) if changed else 'no-change'}")
+        try:
+            d2 = E.pop()
+        except Exception:
+            d2 = None
+        emit(f"SCAN {scr} depth before={d0} afterpush={d1} afterpop={d2} "
+             f"{'CHANGED ' + str(changed) if changed else 'no-change'}")
         if changed and first is None:
             first = (scr, changed)
-        try:
-            E.pop()
-        except Exception:
-            pass
         time.sleep(0.25)
     emit(f"SCAN RESULT first-change={first}")
     return first
