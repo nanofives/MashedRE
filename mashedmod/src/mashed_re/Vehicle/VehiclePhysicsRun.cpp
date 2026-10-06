@@ -375,6 +375,46 @@ static void ReassertContacts(unsigned char* r) {
 // (CarWorldContacts.cpp:407) would map all 18 body points onto the translation.
 // This does NOT move the storage — g_bodyBasis stays the authority — it publishes it,
 // which is the minimum U-9152 owes the contact chain.
+//
+// [PREREG_CARCAR leg 2, 2026-10-06] IT ALSO PUBLISHES THE OTHER SLOT, +0x9a8's.
+//
+// The +0x928 block is a DOUBLE buffer with two selectors, +0x9a8 and +0x9ac. The
+// ORIGINAL keeps BOTH halves live: measured over four committed captures and two cars
+// (verify/d2_b0c_20261002/orig_sl1.msd, verify/d2_wheelstate_20261002/orig_ws1.msd,
+// verify/d2_writer_20261001/orig_bp1.msd, verify/d3_spect_20261005/s1.msd) +0x9a8 == 0
+// and +0x9ac == 1 on every frame, and each slot's translation row is all-zero on exactly
+// 1 of 2334 / 2332 / 2334 / 3286 frames. At orig_sl1 frame 1167 slot 0 reads
+// (-0.9237, 0.4913, -0.2017) and slot 1 (-0.9611, 0.4910, -0.2139).
+//
+// The port wrote slot +0x9ac's half only, so slot +0x9a8's was the memset zero for the
+// whole run -- measured 0.0 on 7775 of 7775 rows of verify/d3_carcar_20261005/P1.csv.
+// THREE sites already read it and were therefore handed a ZERO MATRIX:
+//     Vehicle/VehicleControl.cpp:103          A4's wheelBlock   (0x0047068e)
+//     Vehicle/PhysicsChainHooks.cpp:536       same expression   (0x0047068e)
+//     Vehicle/PhysicsChainHooks.cpp:2749      A6b's wheelBlock
+// So this is NOT an inert addition and was pre-registered as not inert before it ran;
+// it changes what A4 and A6b are handed. BodyOrientationIntegrate.cpp:171-179 already
+// flagged the reconciliation as owed.
+//
+// DEVIATION, STATED, NOT HIDDEN. The original's two halves differ by one substep,
+// because A9 (0x0046e9e0) writes `dst = src + delta` into the half the selectors do not
+// currently point at. The port keeps ONE pose in caller-owned storage (U-9152), so it
+// publishes the SAME pose into both halves: the port's two slots are identical where the
+// original's are one substep apart. Closing that needs A9's double-buffer write, which
+// is a different and much larger change. What this does achieve is that every reader of
+// either selector gets a real basis + position instead of zeros.
+//
+// Default-ON with the A/B revert MASHED_RING_SLOT0=0, per the v3 flag rule (a flag may
+// only turn the ported behaviour OFF). The existing +0x9ac write below is left EXACTLY
+// as it was so the knob-off path is byte-identical to the pre-leg build.
+static bool RingSlot0Enabled() {
+    static const bool s_on = [] {
+        const char* e = std::getenv("MASHED_RING_SLOT0");
+        return !(e && e[0] == '0');
+    }();
+    return s_on;
+}
+
 static void SyncContactRingMatrix(unsigned char* r, const float* basis, const float* pos) {
     const int sel = I(r, 0x9ac);                    // self[0x26b]; the ring index
     if (sel < 0 || sel > 1) return;
@@ -382,6 +422,15 @@ static void SyncContactRingMatrix(unsigned char* r, const float* basis, const fl
     for (int i = 0; i < 12; ++i) m[i] = basis[i];   // right / up / at rows
     m[12] = pos[0]; m[13] = pos[1]; m[14] = pos[2]; // translation (+0x30)
     m[15] = 0.f;
+
+    // [PREREG_CARCAR leg 2] the other half, self[0x26a].
+    if (!RingSlot0Enabled()) return;
+    const int sel0 = I(r, 0x9a8);
+    if (sel0 < 0 || sel0 > 1 || sel0 == sel) return;
+    float* m0 = reinterpret_cast<float*>(r + (std::size_t)sel0 * 0x40 + 0x928);
+    for (int i = 0; i < 12; ++i) m0[i] = basis[i];
+    m0[12] = pos[0]; m0[13] = pos[1]; m0[14] = pos[2];
+    m0[15] = 0.f;
 }
 
 // Run the ported FUN_0046f6c0 over the track tris (replaces SetGrounded).
