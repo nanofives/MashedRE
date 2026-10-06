@@ -108,6 +108,7 @@ static void BuildYawMatrix(float yaw, float* m /*[16]*/) {
 namespace {
 constexpr std::size_t kRec   = 0xd04;          // record stride (== sizeof, vehicle.md)
 constexpr float       kSuspDtK = 0.0027778f;   // _DAT_005cea80 = 0x3b360bc0 (= 1/360)
+constexpr float       kCarCarProx = 0.75f;     // _DAT_005cc950 (car<->car proximity gate, 0x00470b70)
                                                // was 0.0027809f -> 0x3b363fc3, WRONG BITS
 constexpr float       kSuspNum = 3000.0f;      // _DAT_005ccd08
 // [U-A8-SUBSTEP] CORRECTED 2026-08-25. The dispatcher FUN_00470c70 takes a budget
@@ -926,6 +927,17 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // frame by frame without a Frida attach.
     static const char* const s_wcLog = std::getenv("MASHED_WORLD_CONTACT_LOG");
     static int s_wcLines = 0;
+    // [PREREG_CARCAR leg 3] the original's car<->car inner loop (FUN_004709a0's
+    // j = i+1..15, calling 0x00469df0 at 0x00470bcd). Default-ON, revert
+    // MASHED_CARCAR_CONTACT=0 per the v3 rule. The witness log MASHED_CARCAR_LOG
+    // (default-OFF) emits one line per VehicleCarCarContact ENTRY so G-CALLED /
+    // G-NOOPP / G-PAIR can be scored straight from a file.
+    static const bool s_carCarContact = [] {
+        const char* e = std::getenv("MASHED_CARCAR_CONTACT");
+        return !(e && e[0] == '0');
+    }();
+    static const char* const s_ccLog = std::getenv("MASHED_CARCAR_LOG");
+    static int s_ccLines = 0;
     // [D2 section 22.2] MASHED_SUBSTEP_VELPROBE=<relative path> -> one line per substep
     // with |velocity| at the FOUR points the original's --fixup-probe samples, plus the
     // 0x0046f6c0 velocity-write counters and +0x9e4. DIAGNOSTIC ONLY, default-OFF.
@@ -1139,6 +1151,67 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         // Not-contacted path (and the `!s_worldContact` A/B revert never reaches here,
         // it breaks out above): emit once so a non-contact substep still appears.
         if (!svpEmitted) svpEmit(pass, chunkMs, svpV, svpW0, -1, svpFixups);
+
+        // --- [PREREG_CARCAR leg 3] the car<->car inner loop, 0x00470b0d..0x00470c2b ---
+        // FUN_004709a0's outer vehicle loop reaches its j = i+1..15 inner loop ONLY after
+        // the car<->world half settles -- its `while(true)` breaks on scan==0. In the
+        // port that is exactly this fall-through to the `break` below: the contacted
+        // `continue` above re-ran the substep, and the third original path (9ec!=0 AND
+        // scan!=0) already matches that `continue`. So the pair loop belongs here, and a
+        // car<->car contact re-runs the whole substep via the same `continue`, matching
+        // the original's `do { ... } while (!bVar4)`.
+        //
+        // ABI, from the only call site 0x00470bcd (re/analysis/CARCAR_CALLSITE_2026-10-05.md
+        // section 2): ECX = &records[i] = SELF car = param_1 (vehB); EAX = &records[j] =
+        // OTHER car = in_EAX (vehA). So the call is VehicleCarCarContact(rec(j), r, pass)
+        // -- OTHER CAR FIRST. param_2 (the j index) is unused; param_3 is the pass, and
+        // the body returns `pass == 0`, so a contact triggers a retry only on pass 0.
+        if (s_carCarContact) {
+            const int   mode = Fi_GameMode();                  // FUN_0040e350 @0x004709a0
+            const float radI = F(r, 0x4a4);                    // recI radius (+0x4a4)
+            const int   selI = I(r, 0x9a8);                    // recI active ring slot
+            const float* cI  = reinterpret_cast<const float*>(
+                                   r + (std::size_t)selI * 0x40 + 0x958);
+            bool anyCarCar = false;
+            int  ccPass    = pass;                             // iVar10; ++ per contact
+            for (int j = slot + 1; j < 16; ++j) {              // 0x00470b11/0x00470b12
+                if (j >= g_participantCount) continue;         // 0x00470b23
+                unsigned char* rj = rec(j);
+                if (!(I(rj, 0x4) != 0 || I(rj, 0x10) == 1)) continue;  // 0x00470b2d/0x00470b37
+                const float radSum = (F(rj, 0x4a4) + radI) * kCarCarProx; // 0x00470b44/50/70
+                const int   selJ = I(rj, 0x9a8);
+                const float* cJ  = reinterpret_cast<const float*>(
+                                       rj + (std::size_t)selJ * 0x40 + 0x958);
+                const float dx = cI[0] - cJ[0], dy = cI[1] - cJ[1], dz = cI[2] - cJ[2];
+                if (!(dx * dx + dy * dy + dz * dz < radSum * radSum)) continue;  // 0x00470b76..b9
+                if (mode != 6 && mode != 7 && mode != 10 && mode != 0xb) continue; // 0x00470baf..c1
+                int* const recJ = reinterpret_cast<int*>(rj);  // in_EAX (other)
+                int* const recI = reinterpret_cast<int*>(r);   // param_1 (self)
+                const bool ret = Collision::VehicleCarCarContact(recJ, recI, ccPass); // 0x00469df0
+                if (s_ccLog && s_ccLines < 8000) {
+                    if (std::FILE* lf = std::fopen(s_ccLog, "a")) {
+                        std::fprintf(lf,
+                            "i=%d j=%d pass=%d ret=%d cI=(%.4f,%.4f,%.4f) "
+                            "cJ=(%.4f,%.4f,%.4f) radSum=%.4f noopp=%d\n",
+                            slot, j, ccPass, (int)ret,
+                            cI[0], cI[1], cI[2], cJ[0], cJ[1], cJ[2], radSum,
+                            (g_participantCount <= 1) ? 1 : 0);
+                        std::fclose(lf);
+                    }
+                    ++s_ccLines;
+                }
+                if (ret) {                                     // 0x00470bd5 test eax,eax
+                    ++ccPass;                                  // 0x00470bde inc ebp
+                    anyCarCar = true;                          // 0x00470be2 bVar4=false
+                    // 0x00470bd9..0x00470c0f: FUN_00467300 (the 1-player collision-win
+                    // event, FUN_00413c70 x4) is gated DAT_007f0fd0==1 and is OMITTED --
+                    // not ported, and g_playerCount != 1 on any race recipe, so it is
+                    // inert here. RVA cited.
+                }
+            }
+            if (anyCarCar) continue;                           // 0x00470c25/0x00470c2b: re-run
+        }
+
         break;
         }   // end retry
         D2Sink::Mark("sub_end", r, d2sSub, 0, chunkMs, remMs);
