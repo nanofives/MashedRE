@@ -4107,7 +4107,13 @@ void TrackRenderer::AiStepDump() {
                          //                  fmod(progress,n)/n*100, the port's existing
                          //                  0..100 per-lap analogue (:4616-4619).
                          // PREREG: verify/d3_racepos_20261006/PREREG_LEGC_LEGA.md section 3b
-                         ",ss_base,ss_v,ss_raw,prog,lap,gate,racepct\n");
+                         ",ss_base,ss_v,ss_raw,prog,lap,gate,racepct"
+                         // [D-11072 leg A follow-up 2026-10-06] the MONOTONE
+                         // arc-length analogue and its 0..100 per-lap view, for the
+                         // monotonicity re-measure. APPENDED, positions preserved.
+                         //   arcprog  race_[v].arcprog (laps*n + gate-1 + segment t)
+                         //   arcpct   fmod(arcprog, n)/n*100, the bridge candidate
+                         ",arcprog,arcpct\n");
     }
     for (int v = 1; v <= 3; ++v) {
         if (!g_aib.alive[v]) continue;
@@ -4127,7 +4133,9 @@ void TrackRenderer::AiStepDump() {
                          "%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d,"
                          // D-11072 legs C+A, appended. ss_base/ss_v/ss_raw as
                          // signed decimal; prog/racepct raw.
-                         "%lu,%d,%d,%.9g,%d,%d,%.9g\n",
+                         "%lu,%d,%d,%.9g,%d,%d,%.9g,"
+                         // D-11072 leg A follow-up: arcprog, arcpct.
+                         "%.9g,%.9g\n",
                      frame, seq++, v, static_cast<unsigned long>(blk),
                      Ai::U8(blk + 0), Ai::U8(blk + 1), Ai::U8(blk + 3),
                      Ai::U8(blk + 4), Ai::U8(blk + 5),
@@ -4193,7 +4201,13 @@ void TrackRenderer::AiStepDump() {
                      // D-11072 leg A: the port's race-position metric.
                      static_cast<double>(race_[v].progress),
                      race_[v].laps, race_[v].gate,
-                     static_cast<double>(RacePct(v)));
+                     static_cast<double>(RacePct(v)),
+                     // D-11072 leg A follow-up: the monotone arc-length analogue.
+                     static_cast<double>(race_[v].arcprog),
+                     static_cast<double>(
+                         (total_len_ > 1e-3f)
+                         ? std::fmod(race_[v].arcprog, total_len_) / total_len_ * 100.f
+                         : 0.f));
     }
     std::fflush(lf);
     ++frame;
@@ -4867,6 +4881,23 @@ void TrackRenderer::NextRoundOrEnd() {
 void TrackRenderer::UpdateRace(float dt) {
     if (gates_.empty()) return;
     const int n = static_cast<int>(gates_.size());
+    // [D-11072 leg A] (re)build the physical arc-length table when it does not
+    // match the current gate ring (first race, or a track reload).
+    if (static_cast<int>(gate_seglen_.size()) != n) {
+        gate_seglen_.assign(static_cast<std::size_t>(n), 0.f);
+        gate_cumlen_.assign(static_cast<std::size_t>(n), 0.f);
+        float acc = 0.f;
+        for (int a = 0; a < n; ++a) {
+            gate_cumlen_[static_cast<std::size_t>(a)] = acc;
+            const float* ga = gates_[static_cast<std::size_t>(a)].center;
+            const float* gb = gates_[static_cast<std::size_t>((a + 1) % n)].center;
+            const float dxs = gb[0] - ga[0], dzs = gb[2] - ga[2];
+            const float sl = std::sqrt(dxs * dxs + dzs * dzs);
+            gate_seglen_[static_cast<std::size_t>(a)] = sl;
+            acc += sl;
+        }
+        total_len_ = acc;
+    }
     if (countdown_ <= 0.f) race_time_ += dt;   // F4 race clock (seconds since GO)
     auto step = [&](int i, const float* pos) {
         RaceCar& r = race_[i];
@@ -4924,6 +4955,43 @@ void TrackRenderer::UpdateRace(float dt) {
         const float d = std::sqrt(dx * dx + dz * dz);
         const float frac = (d > 8.f) ? 0.f : (1.f - d / 8.f);
         r.progress = static_cast<float>(r.laps * n + r.gate) + frac;
+
+        // [D-11072 leg A] MONOTONE arc-length analogue. The car traverses segment
+        // [gate arcseg -> gate arcseg+1]; the along-track projection parameter t of
+        // its XZ onto that segment is the sub-gate fraction. t grows with forward
+        // motion and ignores lateral weave, so it does not run backward the way the
+        // radial `frac` above does. arcseg/arclaps are advanced forward-only the
+        // instant the car crosses a gate perpendicular (t >= 1), independent of
+        // r.gate -- which lags because it tracks nearest-gate-CENTER, making the
+        // first formulation pin arcprog at 1 and then jump ~0.5 at each gate
+        // (RESULT measured flat_frac 0.47). Uses only gate centers, no spline load.
+        // INERT: writes arcprog/arcseg/arclaps, read only by the stepdump / the
+        // future bridge; does NOT feed finish order (that stays on `progress`).
+        {
+            auto projT = [&](int a) -> float {   // clamped [0,1] projection on seg [a,a+1]
+                const float* ga = gates_[static_cast<std::size_t>(a)].center;
+                const float* gb = gates_[static_cast<std::size_t>((a + 1) % n)].center;
+                const float sx = gb[0] - ga[0], sz = gb[2] - ga[2];
+                const float l2 = sx * sx + sz * sz;
+                if (l2 <= 1e-6f) return 1.f;     // degenerate seg: treat as crossed
+                float t = ((pos[0] - ga[0]) * sx + (pos[2] - ga[2]) * sz) / l2;
+                return (t < 0.f) ? 0.f : (t > 1.f ? 1.f : t);
+            };
+            float t = projT(r.arcseg);
+            int adv = 0;
+            while (t >= 1.f && adv++ < W + 2) {  // car past gate arcseg+1: advance
+                const int nb = (r.arcseg + 1) % n;
+                if (nb == 0) ++r.arclaps;        // crossed start/finish
+                r.arcseg = nb;
+                t = projT(r.arcseg);
+            }
+            // Weight by PHYSICAL segment length so a gate crossing does not jump:
+            // position-in-lap (world units) = cumlen[arcseg] + t * seglen[arcseg];
+            // arcprog adds arclaps*total_len_ so it is cumulative and monotone.
+            const float inLap = gate_cumlen_[static_cast<std::size_t>(r.arcseg)]
+                              + t * gate_seglen_[static_cast<std::size_t>(r.arcseg)];
+            r.arcprog = static_cast<float>(r.arclaps) * total_len_ + inLap;
+        }
     };
     step(0, car_pos_);
     for (int i = 0; i < 3 && i < static_cast<int>(ai_cars_.size()); ++i)

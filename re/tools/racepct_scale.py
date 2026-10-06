@@ -139,11 +139,12 @@ def lega(args):
     port_rows = []
     for p in args.port:
         port_rows.extend(read_rows(p))
-    print("\nM2  port metric (racepct, moving = rec_9e4 > 200)")
+    pcol = getattr(args, "portcol", "racepct")
+    print(f"\nM2  port metric ({pcol}, moving = rec_9e4 > 200)")
     port_flat = {}
     for v in (1, 2, 3):
         pr = [r for r in port_rows if int(r["v"]) == v]
-        vals = [float(r["racepct"]) for r in pr]
+        vals = [float(r[pcol]) for r in pr]
         mv = [float(r["rec_9e4"]) > 200.0 for r in pr]
         mn, mx = (min(vals), max(vals)) if vals else (0, 0)
         num, den = _flat_frac(list(zip(vals, mv)))
@@ -175,7 +176,7 @@ def lega(args):
           " must be monotone within a lap like it is.")
     for label, rows, pcol, movecol, movethr in (
         ("orig", orig_rows, None, None, None),
-        ("port", port_rows, "racepct", "rec_9e4", 200.0),
+        ("port", port_rows, pcol, "rec_9e4", 200.0),
     ):
         cars = range(4) if label == "orig" else (1, 2, 3)
         for c in cars:
@@ -193,14 +194,17 @@ def lega(args):
                     continue
                 d = vals[i] - vals[i - 1]
                 if d < 0:
-                    neg += 1
-                    if abs(d) > 50:
+                    # A negative step is a lap WRAP or a round RESET (not a defect)
+                    # when it lands near 0 (0..100 metric wrapping) or is a >50 jump.
+                    # A genuine backward is a small negative step landing mid-lap.
+                    if abs(d) > 50 or vals[i] < 2.0:
                         wraps += 1
+                    else:
+                        neg += 1
                 else:
                     fwd += 1
-            small_back = neg - wraps
-            print(f"  {label} car{c}  fwd={fwd}  small_backward={small_back}  wraps={wraps}"
-                  f"  (small_backward is the defect: original should be 0)")
+            print(f"  {label} car{c}  fwd={fwd}  backward_midlap={neg}  wrap/reset={wraps}"
+                  f"  (backward_midlap is the defect: original should be 0)")
     return 0 if ok else 1
 
 
@@ -214,6 +218,8 @@ def main():
     a = sub.add_parser("lega")
     a.add_argument("--orig", nargs="+", required=True)
     a.add_argument("--port", nargs="+", required=True)
+    a.add_argument("--portcol", default="racepct",
+                   help="port metric column to score (racepct | arcpct)")
     a.set_defaults(fn=lega)
     args = ap.parse_args()
     sys.exit(args.fn(args))

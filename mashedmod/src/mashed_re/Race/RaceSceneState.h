@@ -114,6 +114,17 @@ struct RaceSceneState {
     };
     std::vector<Gate> gates_;
 
+    // [D-11072 leg A 2026-10-06] Physical arc-length table over the gate ring, for
+    // the monotone race-progress analogue (race_[].arcprog). gate_seglen_[a] =
+    // XZ distance gate a -> gate (a+1)%n; gate_cumlen_[a] = sum of seglen[0..a-1]
+    // (cumlen[0]=0); total_len_ = full ring length. Weighting arcprog by real
+    // segment length (not a flat 1.0 per gate) removes the ~0.5 jump at each gate
+    // crossing that an equal-weight metric produces on unevenly spaced gates.
+    // Rebuilt lazily in UpdateRace when it does not match gates_.size().
+    std::vector<float> gate_seglen_;
+    std::vector<float> gate_cumlen_;
+    float total_len_ = 0.f;
+
     // F4 LAPDATA.LUA: real lap lines, split sectors, safe-start ranges.
     Track::LapData lap_data_;
 
@@ -232,6 +243,21 @@ struct RaceSceneState {
         int   gate = 1;        // next gate to cross
         int   laps = 0;
         float progress = 0.f;  // gate + fraction (ranking metric)
+        // [D-11072 leg A 2026-10-06] MONOTONE arc-length analogue of `progress`.
+        // Same integer backbone (laps*n + gate), but the sub-gate fraction is the
+        // along-track PROJECTION of the car onto the current gate-to-gate segment
+        // rather than radial proximity to the next gate center, so it does not run
+        // backward when the off-center racing line passes a gate (the defect
+        // RESULT_LEGC_LEGA.md measured: 484/681/1287 reversals on `progress`).
+        // INERT: nothing reads this but MASHED_AI_STEPDUMP and (later) the
+        // race-position bridge; it does NOT feed finish order / elimination, which
+        // still use `progress`. arcseg/arclaps are its OWN forward-only pointers
+        // (independent of r.gate, which lags behind the real crossing because it is
+        // driven by nearest-gate-CENTER), advanced the instant the car crosses a
+        // gate's perpendicular so arcprog neither pins at 1 nor jumps at a gate.
+        float arcprog = 0.f;
+        int   arcseg  = 0;     // current segment start gate (0..n-1), forward-only
+        int   arclaps = 0;     // laps counted by the arcprog pointer
         bool  alive = true;
         // F4 (FUN_00408610): bitmask of LAPDATA Lap_Line gates crossed since
         // the last lap. A lap completes on the primary line once every declared
