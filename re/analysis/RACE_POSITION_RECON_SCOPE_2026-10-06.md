@@ -45,6 +45,37 @@ C-level promotion follows"). Recommended answer: yes, gated behind a default-ON 
 car<->car discipline (reverts cleanly, no gated-(e) regression) — but it is the user's call and
 must be recorded before any leg lands.
 
+> ### DECISION — 2026-10-06, Mariano: **YES**
+>
+> A bridged, non-bit-identical race-position substrate **is acceptable in the default build**,
+> **knob-gated**, and **no C-level promotion follows** from any bridge. Every leg below
+> inherits this. Recorded here and in
+> [`verify/d3_racepos_20261006/PREREG_LEGC_LEGA.md`](../../verify/d3_racepos_20261006/PREREG_LEGC_LEGA.md) §0.
+>
+> **Scope corrections made when the decision was taken, all established statically before any
+> run:**
+>
+> 1. **Leg C does not consume this decision.** `0x005f2770` is a load-time `.data` constant
+>    with value `0x005f2728` and **no runtime writer** (Ghidra `--datarefs`:
+>    `WRITES: (none)`; second witness, the port's own file-image read at
+>    `AiStandalone.cpp:1388-1390`), so seeding it reproduces a static initializer the binary
+>    itself carries — bit-faithful, not a bridge. Only legs A and B are bridges.
+> 2. **Leg C's listed consumers are unreachable standalone.** `FUN_0040e470`'s 29 callers,
+>    including `FUN_00415190` and the `0x0040ff40` loop, are original-side; the standalone
+>    never calls into `0x00400000..0x004fffff` (`Compat/StandaloneRvaThunks.h:7`). The
+>    standalone's only consumer of the concept, `Ai::Host::veh_type`, is a **synthesized
+>    constant** `v == 0 ? 0 : 2` (`TrackRenderer.cpp:93`). So the seed alone is predicted
+>    **behaviourally inert**, and the death-aware behaviour is a separate step **C2**
+>    (re-point `veh_type` at the table, where an unmarked car reads 0).
+> 3. **Name collision.** `Ai::kSlotTableBase` = `0x007f1a14` (`Ai/AiState.h:41`) is the AI
+>    *ctrl-slot index* table, already seeded at `TrackRenderer.cpp:363`. It is **not** the
+>    slot-**state** table at `0x005f2728 + 0x34 + v*4` that leg C targets.
+> 4. **Leg A's original-side data already exists**, so leg A needs no original run:
+>    `verify/d3_elim_20261003/o_e{1,2}.msd.alive.csv` carry `pct0..pct3` = `0x008a96ec + v*0x30c`
+>    (`scenario_launch.py:1560,1605`). And the port already has a 0..100 per-lap analogue,
+>    `TrackRenderer::RacePct` = `fmod(progress, n)/n*100` (`TrackRenderer.cpp:4616-4619`),
+>    which is the candidate bridge value rather than raw `progress`.
+
 ## 2. LEG C — the slot-state table (CHEAP; do first)
 
 **Change:** seed `*(u32*)0x005f2770 = 0x005f2728` once at boot (both addresses are in the
