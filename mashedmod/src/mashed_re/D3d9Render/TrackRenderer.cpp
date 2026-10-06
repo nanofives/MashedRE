@@ -4031,7 +4031,36 @@ void TrackRenderer::AiStepDump() {
                          //     BodyOrient_OmegaFromSteer unconditionally. No plate
                          //     assigns +0x10 a semantic name, so it is logged raw.
                          // PREREG: verify/d3_arm_20261005/PREREG_ARM.md sections 3/3b
-                         ",rec_144,rec_148,rec_14c,rec_10\n");
+                         ",rec_144,rec_148,rec_14c,rec_10"
+                         // [D3 2026-10-05] PREREG_CARCAR leg 1 (G-PORTHULL / G-RADIUS /
+                         // G-SEL / G-SLOT0-ZERO). APPENDED again, so the 46 columns above
+                         // keep their positions and ai_posmatch.py / ai_headattrib.py /
+                         // ai_yawrate.py / ai_armregime.py stay unaffected. Nineteen RAW
+                         // record reads, no derived value:
+                         //   +0xa28/+0xa34/+0xa40/+0xa4c (4 x vec3)  the four world-space
+                         //     points VehicleCarCarContact (0x00469df0) runs its
+                         //     4-halfplane SAT over, read there at 0x00469e58 /
+                         //     0x00469e73 / 0x00469e86 / 0x00469e91 and again from
+                         //     0x0046a0ab. Both plates name them "vehicle bounding-hull
+                         //     vertices (4 x vec3)" and neither names a producer; it is
+                         //     world points 4..7 of the 18-point array FUN_00469aa0
+                         //     transforms into +0x9f8 (CarWorldContacts.cpp:448), whose
+                         //     body source is FUN_0046b1c0's AABB top face.
+                         //     re/analysis/CARCAR_CALLSITE_2026-10-05.md section 4.
+                         //   +0x95c, +0x998/+0x99c/+0x9a0  the OTHER two components of
+                         //     ring slot [+0x9a8]'s translation row and the whole of ring
+                         //     slot [+0x9ac]'s. rec_958/rec_960 above already carry slot
+                         //     0's x and z; these complete the pair so G-SLOT0-ZERO can
+                         //     compare one slot against the other rather than against an
+                         //     expectation.
+                         //   +0x4a4  the per-car radius the proximity gate at 0x00470b44
+                         //     sums. The original's value is 0.6780367493629456 and
+                         //     constant on 4 of 4 captures and 2 cars.
+                         //   +0x9a8, +0x9ac  the two ring selectors, logged raw. No plate
+                         //     assigns +0x9ac a semantic name.
+                         // PREREG: verify/d3_carcar_20261005/PREREG_CARCAR.md section 2
+                         ",h4x,h4y,h4z,h5x,h5y,h5z,h6x,h6y,h6z,h7x,h7y,h7z"
+                         ",rec_95c,rec_998,rec_99c,rec_9a0,rec_4a4,sel_9a8,sel_9ac\n");
     }
     for (int v = 1; v <= 3; ++v) {
         if (!g_aib.alive[v]) continue;
@@ -4045,7 +4074,10 @@ void TrackRenderer::AiStepDump() {
         std::fprintf(lf, "%d,%ld,%d,%lu,0,%u,%u,%u,%u,%u,%d,%d,%d,%d,%d,%d,%g,%d,%d,%d,%.9g,%.9g,%u,"
                          "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d,%d,%d,%d,"
                          "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,"
-                         "%.9g,%.9g,%.9g,%d\n",
+                         "%.9g,%.9g,%.9g,%d,"
+                         // PREREG_CARCAR leg 1, appended. Raw reads only.
+                         "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,"
+                         "%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d\n",
                      frame, seq++, v, static_cast<unsigned long>(blk),
                      Ai::U8(blk + 0), Ai::U8(blk + 1), Ai::U8(blk + 3),
                      Ai::U8(blk + 4), Ai::U8(blk + 5),
@@ -4075,7 +4107,27 @@ void TrackRenderer::AiStepDump() {
                      static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x144)),
                      static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x148)),
                      static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x14c)),
-                     Vehicle::VehiclePhysics_RecordI32(v, 0x10));
+                     Vehicle::VehiclePhysics_RecordI32(v, 0x10),
+                     // PREREG_CARCAR leg 1, appended. Raw reads only.
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0xa28)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0xa2c)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0xa30)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0xa34)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0xa38)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0xa3c)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0xa40)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0xa44)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0xa48)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0xa4c)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0xa50)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0xa54)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x95c)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x998)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x99c)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x9a0)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, 0x4a4)),
+                     Vehicle::VehiclePhysics_RecordI32(v, 0x9a8),
+                     Vehicle::VehiclePhysics_RecordI32(v, 0x9ac));
     }
     std::fflush(lf);
     ++frame;
