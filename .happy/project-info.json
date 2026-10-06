@@ -1,43 +1,45 @@
 {
-  "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-05T14:10:00Z",
+  "title": "Mashed RE — D3 active, D4 save path live",
+  "updatedAt": "2026-10-05T23:30:00Z",
   "sections": [
     {
-      "heading": "Phase",
+      "heading": "Status",
       "fields": [
-        { "label": "Active", "value": "D3 — default AI, powerups, modes", "kind": "text" },
-        { "label": "Closed", "value": ["D0 (truth)", "D1 (librw default, residue R1-R3 owed)", "D2 (ported physics default)"], "kind": "list" },
-        { "label": "D2", "value": "PARKED by user decision 2026-10-02", "kind": "text" }
+        { "label": "Phase", "value": "D3 — default AI, powerups, modes", "kind": "text" },
+        { "label": "Blocker", "value": "(b) criterion FAILS 3/3 — 13 steer bands", "kind": "text" },
+        { "label": "Closed phases", "value": ["D0 (truth/confidence)", "D1 (librw default renderer)", "D2 (physics default, PARKED 2026-10-02)"], "kind": "list" }
       ]
     },
     {
-      "heading": "D3 gates",
+      "heading": "Shipped 2026-10-05",
       "fields": [
-        { "label": "(b) AI steer bands", "value": "FAILS 3/3 — 13 of 30 bands, all STEER", "kind": "text" },
-        { "label": "(e) launch / speed", "value": "PASSES 3/3, within 0.05%", "kind": "text" },
-        { "label": "modes 3/7", "value": "blocked — no world-object list (U-9186)", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "Last session (2026-10-05, D3 ARM + RETRACTION)",
-      "fields": [
-        { "label": "Net result", "value": "Filed U-9194 (omega-arm divergence) and RETRACTED it the same day. The port's arm is CORRECT for a driving car: +0x10 == 0 on 222 of 222 moving frames, on three independent captures", "kind": "text" },
-        { "label": "The error", "value": "G-ARM's denominator was all 3623 frames. Car 1 is eliminated at frame 1065 and never moves again, so 2558 of them are a PARKED car. The 70.60% figure was arithmetically right and materially misleading", "kind": "text" },
-        { "label": "Inside the (b) window", "value": "+0x10 == 0 on 220 of 220 frames — the arms AGREE exactly where U-9191's 0.9866 deg is measured", "kind": "text" },
-        { "label": "Still open", "value": "U-9191 unchanged: is car 1's 0.9866 deg GENERATED or ACCUMULATED? Position join's median induced error is 0.087865 deg, capping admissible claims at ~0.88 deg", "kind": "text" },
-        { "label": "Keep", "value": "Do not lengthen the (b) window past frame_idx 1064 — a longer window averages a driving car with a parked one", "kind": "text" },
-        { "label": "Lesson", "value": "Stating a denominator is not the same as checking it is the right population", "kind": "text" },
-        { "label": "Next step", "value": "Close the 1.3258x distance over-run (U-9185) — now the only substantive physics path — or build a frame-marked join. NOT a +0x10 producer", "kind": "text" },
+        { "label": "Save path LIVE in the exe", "value": "Save/GameSave.cpp builds into mashed_re.exe and its four functions are CALLED — SaveStatusClear / SaveLoad / SaveWrite / SaveFileExists. GameFlow routes save+load through them. 4/4 then 5/5 gates, (b) and (e) digit-identical", "kind": "text" },
+        { "label": "Live bug fixed", "value": "gamesave_parse.py PROFILE_SIZE was 0x2443C, should be 0x24A3C — the profile/tail boundary sat 0x600 too low. 16/16 tests", "kind": "text" },
         { "label": "C-levels moved", "value": 0, "kind": "number" }
       ]
     },
     {
-      "heading": "Trackers",
+      "heading": "Strategic finding",
       "fields": [
-        { "label": "hooks.csv", "value": "C1 821 / C2 3889 / C3 1014 / C4 176", "kind": "text" },
-        { "label": "STUBS open", "value": 1111, "kind": "number" },
-        { "label": "UNCERTAINTIES open", "value": 3133, "kind": "number" },
-        { "label": "Next session", "value": "re/NEXT_SESSION.md — read the RETRACTION block first; it supersedes the ARM block's arm claims", "kind": "text" }
+        { "label": "exe/asi gap", "value": "619 of 888 verified (C3/C4) functions build ONLY into the dev .asi, which never ships", "kind": "text" },
+        { "label": "But do NOT bulk-link", "value": "RH_ScopedInstall is a no-op in the exe, so a linked body is a dead export unless called by name. The lever is CALL SITES — 0x00469df0 sits in the exe with zero callers", "kind": "text" },
+        { "label": "Unshipped by subsystem", "value": ["render 247", "audio 142 (1 shipping)", "gameplay 129 (7 shipping)", "save 29 (5 shipping)"], "kind": "list" }
+      ]
+    },
+    {
+      "heading": "Retracted / voided, do not rebuild",
+      "fields": [
+        { "label": "U-9194", "value": "RETRACTED same day. The port's omega arm is CORRECT — +0x10 == 0 on 222 of 222 moving frames; the 70.60% figure counted 2558 frames of a parked, eliminated car", "kind": "text" },
+        { "label": "U-9191", "value": "Still OPEN. The position join's median induced heading error is 0.087865 deg, so any gate on it needs a threshold above ~0.88 deg", "kind": "text" },
+        { "label": "Save acceptance", "value": "UNANSWERED after 8 measured steps. Bounded to one unknown: the 0x00409b0e jumptable and its caller. The save flow is a six-variable state cluster", "kind": "text" }
+      ]
+    },
+    {
+      "heading": "Next session",
+      "fields": [
+        { "label": "Pick one", "value": ["Give an already-ported body a call site (0x00469df0 is the worked example)", "Close the 1.3258x distance over-run (U-9185)", "Recover the 0x00409b0e jumptable"], "kind": "list" },
+        { "label": "Handoff", "value": "re/NEXT_SESSION.md — START HERE block dated 2026-10-05", "kind": "text" },
+        { "label": "Lesson", "value": "Four confident claims needed retracting; every one was caught by a second instrument or a control, never by re-reading. Write the control that can fail", "kind": "text" }
       ]
     }
   ]

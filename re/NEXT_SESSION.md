@@ -1,6 +1,86 @@
 # Next session kickoff
 
-> ## UPDATE 2026-10-05 (D3 ARM RETRACTION, commit `95c0db13`): **U-9194 is RETRACTED hours after being filed. The port's omega arm is CORRECT for a driving car — 222 of 222 moving frames on three captures. START HERE.**
+> ## UPDATE 2026-10-05 (LONG SESSION, 38 commits, `cc79f0ba..da9ac1ea`): **two things shipped, four retracted or voided, and one strategic map built. START HERE.**
+>
+> **No C-level moved all session. No band moved. `original/` clean throughout.** The one
+> behaviour-changing edit is in the exe's save path and passed 5 of 5 gates.
+>
+> ### What SHIPPED, and is the only thing to build on
+>
+> 1. **`Save/GameSave.cpp` is in `mashed_re.exe` and its four functions are LIVE** —
+>    `0x004099e0` `SaveStatusClear`, `0x00404e50` `SaveLoad`, `0x00404f50` `SaveWrite`,
+>    `0x00404f80` `SaveFileExists`. `RESULT_GAMESAVE_EXE.md` (4/4 gates) then `RESULT_WIRE.md`
+>    (5/5). `Race/GameFlow.cpp` now routes its save/load through them; the standalone had **two**
+>    save images and now has one. **G-LIVE proved they are called**, not merely linked —
+>    `GameSave_LastReadBytes() == 151456`.
+>    **Deviation, registered:** the exe build substitutes CRT file ops and private storage for three
+>    callees that live in unmapped space. **The four rows keep the C4 they earned on the `.asi`; no
+>    C4 is claimed for the exe copy.**
+> 2. **A live bug fixed in `re/tools/gamesave_parse.py`:** `PROFILE_SIZE` was `0x2443C` (148,540)
+>    with a comment saying 150,076. The right value is **`0x24A3C`**. The sizes still summed to the
+>    file size, so nothing failed — the profile/tail boundary just sat `0x600` too low and every
+>    caller got 600 hex bytes of profile prepended to `tail`. 16/16 tests pass.
+>
+> ### THE STRATEGIC FINDING — read this before planning any port work
+>
+> **`re/analysis/ASI_ONLY_TRIAGE_2026-10-05.md`.** Of 888 C3/C4 rows with a source file, **619 build
+> only into the dev `.asi`**, which never ships. By subsystem the unshipped verified work is
+> render 247, audio 142 (1 shipping), gameplay 129 (7 shipping), save 29 (5).
+>
+> **But do NOT bulk-add them to `exe_sources.rsp`.** `RH_ScopedInstall` is a **no-op in the exe**
+> (`Stubs/HookSystemNoOp.cpp:19`), so a linked body is a **dead export unless something calls it by
+> name** — and `ROADMAP.md:235-240` already rejected the bulk-link idea. **The lever is CALL SITES.**
+> Proof it is real: `Collision/CarCarContacts.cpp` is in the exe with a byte-faithful `0x00469df0`
+> and **zero call sites**.
+>
+> ### What was RETRACTED or VOIDED, so it is not rebuilt
+>
+> - **U-9194 (omega-arm divergence) — RETRACTED the same day it was filed.** The port's arm is
+>   **correct**: `+0x10 == 0` on **222 of 222 moving frames** across three captures, and **220 of
+>   220** inside the (b) window. The "70.60 %" came from a denominator dominated by **2558 frames of
+>   a parked, eliminated car**. `RESULT_ARMRETRACT.md`.
+> - **U-9191's generated-vs-accumulated: still OPEN**, and now for a measured reason — the position
+>   join's **median** induced heading error is **0.087865 deg**, so any gate on it needs a threshold
+>   above ~0.88 deg. Leg 3's 0.9866 deg still clears at 11.2x.
+> - **The save-acceptance question is UNANSWERED after eight steps.** Bounded to one named unknown:
+>   the **`0x00409b0e` jumptable** (`switchdataD_00409e40`, "Too many branches") **and its caller**.
+>   `RESULT_TICKCHAIN.md` has the full chain; the save flow is a **six-variable state cluster**
+>   (`DAT_008a9584/9588/958c/9590/9594/9598`), not one selector.
+>
+> ### Harness and tracker changes you can rely on
+>
+> - `scenario_launch.py --no-warp` (boot to menu, hold) and `--poke-u32 rva=val` (contrived, C3).
+> - `orig_nav_hold.py` honours `MASHED_ROOT`, has a `peek`, and a `--scan`. **Nav IS validated**
+>   (depth 1→2 on push); the earlier "push doesn't navigate" note was my missing-baseline error.
+> - `re/tools/`: `ai_armrate.py`, `ai_armregime.py`, `asi_only_triage.py`, `gamesave_spandiff.py`,
+>   `stale_uncertain_refs.py`.
+> - **`UNCERTAINTIES.md`: 34 struck-ID rows moved to Resolved**, 6/6 gates including a byte-identical
+>   multiset check. Active 3099→3065. **The "1362 marker-resolved" figure I published mid-session was
+>   a regex artefact** — the real Type-cell count is **18**, and **no automatic rule is safe**
+>   (`U-9191`'s Type cell matches "RESOLVED" while the row is open).
+>
+> ### START HERE — pick one
+>
+> 1. **Give an already-ported body a call site.** The highest-leverage item in the triage, and
+>    `0x00469df0` is the worked example sitting in the exe doing nothing.
+> 2. **Close the 1.3258x distance over-run** (U-9185) — the only substantive physics path left on
+>    (b), and the reason U-9191's comparisons return opposite signs under different controls.
+> 3. **Recover the `0x00409b0e` jumptable** and finish the save-acceptance question.
+>
+> **Do not assume any of these closes (b).** The 2026-10-02 counterfactual matrix had **no arm
+> passing (b) on any car**.
+>
+> ### The methodological thread, because it cost most of the day
+>
+> Four separate confident claims of mine needed retracting, and **every one was caught by a second
+> instrument or a control, never by re-reading**: a denominator over the wrong population; a gate
+> whose LIVE branch was unsatisfiable at the instrument's sampling rate; a control whose expected
+> value was indistinguishable from the default; and a regex matching anywhere in a row.
+> **Write the control that can fail, and run it before believing the main arm.**
+
+The block below is the previous headline, left as history.
+
+> ## UPDATE 2026-10-05 (D3 ARM RETRACTION, commit `95c0db13`): **U-9194 is RETRACTED hours after being filed. The port's omega arm is CORRECT for a driving car — 222 of 222 moving frames on three captures.**
 >
 > **Read [`verify/d3_arm_20261005/RESULT_ARMRETRACT.md`](../verify/d3_arm_20261005/RESULT_ARMRETRACT.md)
 > BEFORE the ARM block below, which it supersedes on every arm claim.** No C-level moved, no band
