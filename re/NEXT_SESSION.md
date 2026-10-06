@@ -1,5 +1,45 @@
 # Next session kickoff
 
+> ## UPDATE 2026-10-06 (D-11072 legs C+A RAN, commits `69e207b9..2708befc`): **fidelity decision YES; leg C is DONE and INERT by design (8/8 gates); leg A finds the port's progress metric is NON-MONOTONE and so NOT bridge-able into the original's spline `race_pct` as-is. The new blocking prerequisite is a monotone, arc-length port progress metric. DO NOT start leg B. NO C-level moved, nothing default-ON, no bridge code, `original/` untouched.**
+>
+> Read [`verify/d3_racepos_20261006/RESULT_LEGC_LEGA.md`](../verify/d3_racepos_20261006/RESULT_LEGC_LEGA.md).
+> Pre-registered UNRUN at `69e207b9`; RAN result `2708befc`. New tool `re/tools/racepct_scale.py`.
+>
+> - **USER DECISION (Mariano):** a bridged, non-bit-identical race-position substrate is
+>   acceptable in the default build, knob-gated, **no C-level** follows. Recorded in the scope
+>   doc §1 and the prereg §0.
+> - **Leg C — DONE, 8/8 gates, behaviourally INERT (as predicted).** `MASHED_SLOTSTATE_SEED=1`
+>   seeds `*(u32*)0x005f2770 = 0x005f2728` once at boot; the literal `FUN_0040e470(v)` then reads
+>   the poked `2` on every seeded row and the deref-free control `ss_raw` refutes the null. It
+>   changes **no** (e)/(b) behaviour because the standalone's only consumer of the concept is the
+>   synthesized constant `aib_veh_type` = `v==0?0:2` (`TrackRenderer.cpp:93`). The seed is
+>   bit-faithful (it restores a `.data` initializer the binary carries) and safe default-ON, but
+>   buys nothing alone. **The behavioural step is C2** — re-point `aib_veh_type` at the table so an
+>   unmarked car reads 0 (death-aware) — **not written, not run.**
+> - **Leg A — the pre-registered NOT-COMMON verdict stands, via a corrected (stronger) rationale.**
+>   The flat-frac gate I registered is degenerate (original flat_frac is 0 exactly, so `5×0` is an
+>   impossible threshold) and the staircase prediction was refuted. The real obstruction, measured
+>   as declared collateral: **within-lap monotonicity** — the original `race_pct` has **0** backward
+>   steps per car; the port `racepct` = `fmod(laps*n+gate+frac, n)/n*100` runs **backward on
+>   484/681/1287 moving steps** per car because `frac` keys on euclidean distance to the gate
+>   **center** off the racing line. A non-monotone metric can't feed the original's spline
+>   `race_pct` consumers.
+>
+> ### START HERE — the one lane that unblocks D-11072, or pick another
+>
+> 1. **Build a monotone, arc-length-proportional port progress metric** (project the car onto the
+>    AI spline the port already drives, instead of blending distance to gate centers), then re-run
+>    `re/tools/racepct_scale.py lega` — if its collateral monotonicity shows ~0 backward steps,
+>    leg A's scale map becomes registrable and leg B is unblocked. This is now the gate for the
+>    whole race-position bridge (and its wider payoff: the AI powerup fire-gate chain + mode-3/7).
+> 2. **Ship step C2** (re-point `aib_veh_type` at the seeded table, default-ON knob) — small, and
+>    it is the only behavioural content leg C has. Gate it on (e)/(b) + determinism like car<->car.
+> 3. **Or a different lane entirely** (the over-speed is not urgent — (e) MET, (b) 5 bands):
+>    U-9191 item (b) car-1 body-heading residual; U-9195 participant-count inertness re-measure;
+>    or recover the `0x00409b0e` jumptable and finish save-acceptance.
+>
+> The block below is the previous headline, left as history.
+
 > ## UPDATE 2026-10-06 (U-9185 re-baseline + U-9186 measure-inert-first, commits `19e6b2e1..dea053ba`): **car<->car kept default-ON; the ship already cut the over-speed ~a third; porting the over-speed COMMAND branches is INERT, AND so is porting their producer — the fix recedes two layers into a race-position reconstruction. START HERE: pick another lane, or scope that reconstruction deliberately.**
 >
 > No C-level moved anywhere in this run. No code shipped by the U-9185/U-9186 work (the
