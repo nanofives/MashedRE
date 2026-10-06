@@ -2386,6 +2386,21 @@ change is a default-OFF measurement knob.
 
 U-9186 carries the three sources. U-9185 keeps only item (b), the heading candidate.
 
+#### D3 USER DECISION 2026-10-06 (Mariano) — **KEEP `MASHED_CARCAR_CONTACT` default-ON.**
+
+After reading `verify/d3_carcar_20261005/RESULT_U9196.md` (the car<->car (b) movement is
+GENUINE behaviour, verdict PARTIAL — car 1 an exact steering-distribution match, car 3 a
+real-but-under-steered one, car 2 still failing): **keep the car<->car contact live in the
+default build.** It is a genuine step toward the original's AI steering on 2 of 3 cars, it
+regresses no gated (e) statistic (`launch` 1426.4 / 2053.0 / 2055.2, `ft_median_m0`
+2550.6 / 2053.0 / 2278.2 unchanged, 3/3), it drops criterion (b) from **13 failing bands to
+5**, and it costs car 2 one band (4 → 5). `MASHED_CARCAR_CONTACT=0` stays in the tree as the
+A/B revert only. **No code change follows — the knob already defaults ON** (the decision
+confirms the shipped state). `0x00469df0` stays **C2**; a call site plus a distribution match
+is not a behavioural diff. The U-9195 participant-count caveat (the ring publication the
+contact relies on is only proven inert at `g_playerCount` ∈ {4,8,9}) is untouched by this
+decision and remains open.
+
 #### D3 USER DECISION 2026-10-03 (Mariano) — **KEEP the AI start boost. The open decision below is CLOSED, option 3.**
 
 The decision recorded by the user on 2026-10-03, after reading
