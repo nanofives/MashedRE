@@ -66,23 +66,36 @@ def main():
     # ---- E2-WROTE ----------------------------------------------------------
     # ON  arm: rmetric == lap + arcpct  * 0.01   on 100% of rows
     # OFF arm: rmetric == lap + racepct * 0.01   on 100% of rows
+    # AMEND_E2.md A7: the denominator is rows whose rtick ROSE since that car's
+    # previous dumped row. A slot the engine stopped writing keeps its tick and
+    # drops out by measurement — no frame threshold appears anywhere below.
     print("\n== E2-WROTE (does rmetric carry the formula the arm claims?) ==")
     wrote_fail = []
     for n in OFF + ON:
         src = "arcpct" if n in ON else "racepct"
-        tot = good = 0
+        prev_tick = {}
+        tot = scope = good = 0
         worst = 0.0
         for r in runs[n]:
             tot += 1
+            v = r["v"]
+            tick = int(r["rtick"])
+            rose = v not in prev_tick or tick > prev_tick[v]
+            prev_tick[v] = tick
+            if not rose:
+                continue
+            scope += 1
             want = float(r["lap"]) + float(r[src]) * 0.01
             err = abs(float(r["rmetric"]) - want)
             worst = max(worst, err)
             if err <= WROTE_TOL:
                 good += 1
-        pct = 100.0 * good / tot if tot else 0.0
-        ok = good == tot
-        print(f"  {n}: lap + {src}*0.01 matches rmetric on {good}/{tot} "
-              f"({pct:.4f}%)  max|err|={worst:.3e}{'   ok' if ok else '   FAIL'}")
+        pct = 100.0 * good / scope if scope else 0.0
+        ok = scope > 0 and good == scope
+        print(f"  {n}: in scope {scope}/{tot} dumped rows "
+              f"({100.0 * scope / tot:.2f}%); lap + {src}*0.01 matches rmetric on "
+              f"{good}/{scope} ({pct:.4f}%)  max|err|={worst:.3e}"
+              f"{'   ok' if ok else '   FAIL'}")
         if not ok:
             wrote_fail.append(n)
     print("  E2-WROTE " + ("PASS" if not wrote_fail else f"FAIL: {', '.join(wrote_fail)}"))

@@ -4135,7 +4135,13 @@ void TrackRenderer::AiStepDump() {
                          //            race_[v].laps) it scores E2-LAPAGREE, which
                          //            measures the two-lap-counter mismatch baked
                          //            into the pre-registered ON-arm formula.
-                         ",rmetric,arclaps\n");
+                         //   rtick    rule_metric_tick_ (AMEND_E2.md A7): bumped
+                         //            once per rule-engine write. A row is in
+                         //            E2-WROTE's denominator only when rtick rose
+                         //            since that car's previous dumped row, so a
+                         //            frozen slot is excluded by measurement
+                         //            rather than by a frame threshold.
+                         ",rmetric,arclaps,rtick\n");
     }
     for (int v = 1; v <= 3; ++v) {
         if (!g_aib.alive[v]) continue;
@@ -4159,8 +4165,8 @@ void TrackRenderer::AiStepDump() {
                          // D-11072 leg A follow-up: arcprog, arcpct;
                          // bridge witnesses: ra_ec, val_880, lap_9648.
                          "%.9g,%.9g,%.9g,%.9g,%d,"
-                         // leg E2: rmetric, arclaps.
-                         "%.9g,%d\n",
+                         // leg E2: rmetric, arclaps, rtick.
+                         "%.9g,%d,%lu\n",
                      frame, seq++, v, static_cast<unsigned long>(blk),
                      Ai::U8(blk + 0), Ai::U8(blk + 1), Ai::U8(blk + 3),
                      Ai::U8(blk + 4), Ai::U8(blk + 5),
@@ -4243,7 +4249,8 @@ void TrackRenderer::AiStepDump() {
                      // leg E2 (AMEND_E2.md A2/A4): what the rule engine consumed,
                      // and the arc lap counter it disagrees with.
                      static_cast<double>(rule_metric_[v]),
-                     race_[v].arclaps);
+                     race_[v].arclaps,
+                     static_cast<unsigned long>(rule_metric_tick_));
     }
     std::fflush(lf);
     ++frame;
@@ -5173,6 +5180,7 @@ void TrackRenderer::UpdateRace(float dt) {
             // frame's value, not a stale one. Written for every i each tick.
             rule_metric_[i] = rc.metric[i];
         }
+        ++rule_metric_tick_;   // [AMEND_E2.md A7] in-scope witness for E2-WROTE
         RE::UpdateFinishOrder(rule_, rc, rulep_);
 
         // Rule-10 countdown (FUN_004039f0): -= dt; checkpoint award once per

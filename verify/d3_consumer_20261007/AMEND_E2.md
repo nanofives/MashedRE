@@ -89,6 +89,41 @@ Six runs, all under `MASHED_DETERMINISTIC=1 MASHED_DET_FRAMES=14400` with E1's s
 repeats; G-TOOK's corrected witness (`step_1008 == 50` on every row, `RESULT_F2.md` §1) is checked
 on all six before any other gate is read.
 
+## A7. `E2-WROTE`'s denominator — ADDED 2026-10-07 after the first run, BEFORE the re-run
+
+**The first E2 run scored `E2-WROTE` FAIL at 60.1040% on all six captures** (`E2_GATES.txt`, run 1,
+preserved). The diagnosis is mechanical and is recorded here before any re-scoring:
+
+- All 7,747 non-matching rows in `E2off_1` are **car `v=2`, frames 5751..13497**, and every one
+  carries the same `rmetric` value `1.49606395`. The slot is **frozen**, not wrong.
+- Cars 1 and 3 stop being dumped at frames 4590 and 5568; `rule_metric_` stops being written after
+  frame 5750, while car 2 keeps being dumped to 13497.
+- On frames 0..5750 the gate is **11671/11671 = 100.0000%**.
+
+So the gate was scored over rows where the rule engine was not running, and a slot nothing had
+written since frame 5750 was read as a formula error. Same family as
+`zero-of-n-needs-a-coverage-check`: the denominator was never established.
+
+**Restricting the denominator to "frames ≤ 5750" would be cutting it after seeing the result.**
+Instead the in-scope set is made *measurable*:
+
+| change | detail |
+|---|---|
+| new appended column `rtick` | `rule_metric_tick_`, a monotone counter bumped once each time the rule-engine block writes `rule_metric_[]` (`TrackRenderer.cpp:5134` region). APPENDED after `arclaps`; all earlier columns keep their index |
+| `E2-WROTE` denominator | rows whose `rtick` is **strictly greater** than the `rtick` of the same car's previous dumped row. A frozen slot keeps its `rtick` and is excluded by construction, with no frame threshold anywhere in the scorer |
+| reported alongside | the in-scope count and its percentage of all dumped rows, so the exclusion is visible rather than silent |
+
+Threshold is unchanged: **100%** of in-scope rows.
+
+**What this does NOT change.** `E2-DIFF` was already computed only on frames where all three cars
+are dumped; measured, all 1,078 such frames lie in 0..4590, entirely inside the live region, so its
+29.4991% stands on live data and is not affected by A7. `E2-EFFECT` reads `RULE-EVAL` from the log
+and never touches `rmetric`. `E2-LAPAGREE` compares two dumped lap counters and never touches
+`rmetric`.
+
+Run 1's captures and `E2_GATES.txt` are kept as `*_r1` so the FAIL and the re-run are both on the
+record.
+
 ## A6. Unchanged and still binding
 
 `E2-WROTE`, `E2-DIFF` (the control that can fail, ≥ 1% ordering change), `E2-NOREG-E`,

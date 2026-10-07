@@ -281,6 +281,10 @@ struct RaceSceneState {
     // the stepdump can log what the engine actually consumed. Nothing reads this
     // but AiStepDump; it feeds no law and changes no behaviour.
     float rule_metric_[kRaceCars] = {};
+    // [AMEND_E2.md A7] Bumped once per rule-engine write of rule_metric_[]. Lets the
+    // scorer tell "the engine did not run this frame" from "the formula is wrong":
+    // a frozen slot keeps its tick. MEASUREMENT ONLY, read by AiStepDump alone.
+    std::uint32_t rule_metric_tick_ = 0;
     int   elim_order_[kRaceCars]  = {-1, -1, -1, -1};  // DAT_008a94c0
     // Per-car Player Colour index 0..5 (RED/BLUEJAY/MELON/GOLD/PINK/SHADOW).
     // This IS what the original carries per car: the array at 0x007f1a14

@@ -1,0 +1,56 @@
+== G-TOOK (dt pinned to 1/60 on every frame?) ==
+  E2off_1: rows=19418 step_1008=['50']   ok
+  E2off_2: rows=19418 step_1008=['50']   ok
+  E2off_3: rows=19418 step_1008=['50']   ok
+  E2on_1: rows=19418 step_1008=['50']   ok
+  E2on_2: rows=19418 step_1008=['50']   ok
+  E2on_3: rows=19418 step_1008=['50']   ok
+  G-TOOK PASS
+
+== E2-WROTE (does rmetric carry the formula the arm claims?) ==
+  E2off_1: lap + racepct*0.01 matches rmetric on 11671/19418 (60.1040%)  max|err|=9.971e+00   FAIL
+  E2off_2: lap + racepct*0.01 matches rmetric on 11671/19418 (60.1040%)  max|err|=9.971e+00   FAIL
+  E2off_3: lap + racepct*0.01 matches rmetric on 11671/19418 (60.1040%)  max|err|=9.971e+00   FAIL
+  E2on_1: lap + arcpct*0.01 matches rmetric on 11671/19418 (60.1040%)  max|err|=9.967e+00   FAIL
+  E2on_2: lap + arcpct*0.01 matches rmetric on 11671/19418 (60.1040%)  max|err|=9.967e+00   FAIL
+  E2on_3: lap + arcpct*0.01 matches rmetric on 11671/19418 (60.1040%)  max|err|=9.967e+00   FAIL
+  E2-WROTE FAIL: E2off_1, E2off_2, E2off_3, E2on_1, E2on_2, E2on_3
+
+== E2-LAPAGREE (does the ON formula mix two lap counters?) ==
+  E2on_1: lap != arclaps on 214/19418 rows (1.1021%)
+  E2on_2: lap != arclaps on 214/19418 rows (1.1021%)
+  E2on_3: lap != arclaps on 214/19418 rows (1.1021%)
+  E2off_1: lap != arclaps on 214/19418 rows (1.1021%)
+  E2off_2: lap != arclaps on 214/19418 rows (1.1021%)
+  E2off_3: lap != arclaps on 214/19418 rows (1.1021%)
+  (>0% means the pre-registered ON formula is internally inconsistent;
+   any E2-EFFECT result then carries that caveat - AMEND_E2.md A4)
+
+== E2-DIFF (does the swap change car ordering?) ==
+  E2off_1 vs E2on_1: ordering of cars 1..3 differs on 318/1078 3-car frames (29.4991%)   bar = 1%
+  E2-DIFF PASS - the swap is NOT inert.
+
+== E2-EFFECT (does the match outcome change?) ==
+  --- E2off_1 ---
+      RULE-EVAL rule=4 round=1 participants=4 r=0 timer=30.00 scores=4,7,5,8
+      RULE-EVAL rule=4 round=2 participants=4 r=0 timer=30.00 scores=2,6,6,10
+      RULE-EVAL rule=4 round=3 participants=4 r=0 timer=30.00 scores=1,4,8,11
+      RULE-EVAL rule=4 round=4 participants=4 r=0 timer=30.00 scores=0,2,10,11
+      RULE-EVAL rule=4 round=5 participants=4 r=0 timer=30.00 scores=0,0,12,11
+  --- E2on_1 ---
+      RULE-EVAL rule=4 round=1 participants=4 r=0 timer=30.00 scores=4,7,5,8
+      RULE-EVAL rule=4 round=2 participants=4 r=0 timer=30.00 scores=2,6,6,10
+      RULE-EVAL rule=4 round=3 participants=4 r=0 timer=30.00 scores=1,4,8,11
+      RULE-EVAL rule=4 round=4 participants=4 r=0 timer=30.00 scores=0,2,10,11
+      RULE-EVAL rule=4 round=5 participants=4 r=0 timer=30.00 scores=0,0,12,11
+  E2-EFFECT: arms produced IDENTICAL R-ROUND -> the swap is INERT at the outcome level.
+
+== E2-KNOBOFF / E2-DET (run det_prefix.py) ==
+  E2-KNOBOFF, cross-build on the PRE-EXISTING columns (F2a is the previous build, same knobs, same scenario):
+    py -3.12 re/tools/det_prefix.py verify/d3_determinism_20261007/F2a.csv verify/d3_consumer_20261007/E2off_1.csv --common-cols
+  E2-DET, within each arm:
+    py -3.12 re/tools/det_prefix.py verify/d3_consumer_20261007/E2off_1.csv verify/d3_consumer_20261007/E2off_2.csv
+    py -3.12 re/tools/det_prefix.py verify/d3_consumer_20261007/E2off_1.csv verify/d3_consumer_20261007/E2off_3.csv
+    py -3.12 re/tools/det_prefix.py verify/d3_consumer_20261007/E2on_1.csv verify/d3_consumer_20261007/E2on_2.csv
+    py -3.12 re/tools/det_prefix.py verify/d3_consumer_20261007/E2on_1.csv verify/d3_consumer_20261007/E2on_3.csv
+  E2-NOREG-E / E2-NOREG-B: ai_speed_env.py --check / ai_ctrl_window.py --check on the OFF arm.
