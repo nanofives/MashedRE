@@ -1,0 +1,10 @@
+=== L0 rule='' ===
+  [shot] verify\d3_consumer_20261007\L0_t08.png
+  [shot] verify\d3_consumer_20261007\L0_t120.png
+  [shot] verify\d3_consumer_20261007\L0_t240.png
+rc=0
+=== L4b rule='4' ===
+  [shot] verify\d3_consumer_20261007\L4b_t08.png
+exe exited early (rc=0)
+rc=1
+E1b DONE

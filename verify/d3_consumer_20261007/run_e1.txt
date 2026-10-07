@@ -1,0 +1,11 @@
+=== L4 rule='4' ===
+  [shot] verify\d3_consumer_20261007\L4_t08.png
+  [shot] verify\d3_consumer_20261007\L4_t120.png
+  [shot] verify\d3_consumer_20261007\L4_t240.png
+rc=0
+=== L10 rule='10' ===
+  [shot] verify\d3_consumer_20261007\L10_t08.png
+  [shot] verify\d3_consumer_20261007\L10_t120.png
+  [shot] verify\d3_consumer_20261007\L10_t240.png
+rc=0
+=== L0 rule='' ===
