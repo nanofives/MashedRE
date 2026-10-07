@@ -1,5 +1,50 @@
 # Next session kickoff
 
+> ## UPDATE 2026-10-07 (D-11072 legs F1+F2 RAN, commits `79e7e2eb`/`11eea794`/`87433a24`/`e832eaf8`): **the reproducibility blocker is CLEARED. A 240 s standalone race is bit-reproducible under `MASHED_DETERMINISTIC=1 MASHED_DET_FRAMES=14400` — three repeats gave BYTE-IDENTICAL stepdumps. E1's blocker was a missing harness knob, not a code defect: `run_e1.ps1` never set it. Leg E2 is UNBLOCKED. NO C-level, zero source change, `original/` untouched.**
+>
+> Read [`RESULT_F2.md`](../verify/d3_determinism_20261007/RESULT_F2.md), then
+> [`RESULT_F1.md`](../verify/d3_determinism_20261007/RESULT_F1.md).
+>
+> - **F1 (`79e7e2eb`) reported a control failure, not a localization.** `R-PREFIX`'s registered
+>   control `L4`-vs-`L10` came out at 1306, equal to the identical-knob pairs. Cause, measured:
+>   `L4c` and `L10` differ in 38 of 7411 shared rows while identical-knob `L4b`/`L4c` differ in
+>   4488. `MASHED_ROUND_RULE` is near-inert on driving state, so nothing paired against it is an
+>   early-divergence control. F1 also found `L4` shares **zero** rows with `L4b`/`L4c` between
+>   frames 1306 and 2306 — per-car dump membership is itself a run-to-run variable.
+> - **F2 (`87433a24`) passed every gate.** `F2a`/`F2b`/`F2c` are byte-identical (SHA-256
+>   `506A210F…`) across 103 s / 183 s / 91 s of wall clock. `R-ROUND` identical, 5 rounds each,
+>   where E1's three identical-knob runs gave 5/3/3 rounds and three different matches.
+> - **`R-PREFIX` is rehabilitated.** The control F1 lacked now exists: `MASHED_SIM_HZ=59` changes
+>   `kSimStep` itself, gives `R-PREFIX` **0** against full overlap, and diverges at frame 0 on
+>   exactly the predicted quantity — `round(3000/59)=51` vs `round(3000/60)=50`.
+> - **One registered deviation, on the record.** `G-TOOK` FAILED as written: it read the stepdump's
+>   `frame` column, which is a dump-local static (`TrackRenderer.cpp:3994`), not `g_det_frame`.
+>   Corrected witness: `step_1008` is exactly 50 on all 19,418 rows of every repeat. Reading the
+>   remaining gates after that failure departs from `PREREG_F2.md` §4; see `RESULT_F2.md` §1.
+> - **Scope limit that carries forward.** Standalone side, scripted-capture regime only.
+>   `MASHED_DETERMINISTIC` stays OFF by default and suppresses live input. **E1's captures are not
+>   comparable to deterministic ones** — any baseline must be re-taken under the same knobs.
+>
+> ### START HERE — run leg E2 (`PREREG_CONSUMER.md` §4)
+>
+> E2's precondition is now satisfied by measurement. Two things must happen first:
+>
+> 1. **`MASHED_RACEMETRIC_ARC` does not exist in source yet** — grep finds it only in
+>    `PREREG_CONSUMER.md` and this file. Implement the default-OFF knob at
+>    `TrackRenderer.cpp:5132-5134` (`rc.metric[i] = race_[i].laps + race_[i].arcpct * 0.01f`),
+>    rebuild, then run both arms × 3 repeats under the F2 knobs.
+> 2. **`E2-KNOBOFF` needs an amendment, pre-registered before running.** As written it compares the
+>    knob-OFF arm against "the committed baseline stepdump" — that baseline is E1's
+>    non-deterministic capture and is **not** comparable (`RESULT_F2.md` §4). Take a fresh OFF-arm
+>    baseline under `MASHED_DETERMINISTIC=1 MASHED_DET_FRAMES=14400` and compare against that. This
+>    is a correction to the reference, not a loosened threshold — state it in the amendment.
+>
+> `E2-EFFECT` is now measurable and must NOT be declared unmeasurable. Reuse
+> `verify/d3_determinism_20261007/run_f2.ps1` (waits for the `DET_FRAMES` self-exit, stops only the
+> PID it spawned) and `check_f2.py` / `re/tools/det_prefix.py` for the determinism gates.
+>
+> **Do NOT start leg B.** The block below is the previous headline, left as history.
+
 > ## UPDATE 2026-10-07 (D-11072 leg E1 RAN, commits `bcdd3fcb`/`4a0efcc2`/`6ade0f85`): **the race-position metric already has a LIVE consumer and it was never behind `0x007f0fd0` — it is the rule engine, gated on `TrackRenderer::rule_`, reachable today with `MASHED_ROUND_RULE` and no code change. Swapping it to leg A's monotone `arcpct` is NOT inert (28.6–38.6 % ordering change). NEW BLOCKER: round-level match outcomes do not reproduce across repeats, so E2's registered outcome gate is unmeasurable as written. NO C-level, zero source change, `original/` untouched.**
 >
 > Read [`verify/d3_consumer_20261007/RESULT_E1.md`](../verify/d3_consumer_20261007/RESULT_E1.md). Pre-registered UNRUN `bcdd3fcb`, RAN `4a0efcc2`.

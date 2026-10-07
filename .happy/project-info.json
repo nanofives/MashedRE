@@ -1,37 +1,33 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-06T10:30:00Z",
+  "updatedAt": "2026-10-08T01:05:00Z",
   "sections": [
     {
       "heading": "Phase",
       "fields": [
-        { "label": "Active phase", "value": "D3 — default AI, powerups, modes", "kind": "text" },
-        { "label": "Closed", "value": ["D0 truth 2026-08-15", "D1 librw 2026-08-19", "D2 physics 2026-09-14 (PARKED)"], "kind": "list" },
+        { "label": "Roadmap", "value": "D0 ✓, D1 ✓, D2 REOPENED 2026-09-29, D3 active (WAITING)", "kind": "text" },
         { "label": "Criterion (e)", "value": "PASS 3/3 — launch 1426.4/2053.0/2055.2", "kind": "text" },
-        { "label": "Criterion (b)", "value": "5 failing bands (car<->car ON, default); AI over-speed +26/+28/+24% (was +41/+40/+34)", "kind": "text" }
+        { "label": "Criterion (b)", "value": "5 failing bands (car<->car ON); AI over-speed +24-28% (was +41%)", "kind": "text" }
       ]
     },
     {
-      "heading": "Car<->car — COMPLETE + KEPT (2026-10-05/06)",
+      "heading": "D-11072 race position (D3) — legs F1+F2 RAN 2026-10-07",
       "fields": [
-        { "label": "Legs", "value": "1,2,3 + U-9196 landed; kept default-ON by user", "kind": "text" },
-        { "label": "Side effect", "value": "cut the AI over-speed ~a third (41%->26%), the largest single reduction on that metric", "kind": "text" }
+        { "label": "Blocker", "value": "CLEARED — 240 s race is bit-reproducible under MASHED_DETERMINISTIC=1 MASHED_DET_FRAMES=14400", "kind": "text" },
+        { "label": "Evidence", "value": "3 repeats byte-identical (SHA-256 506A210F) across 103/183/91 s wall clock; R-ROUND identical, 5 rounds each", "kind": "text" },
+        { "label": "Cause", "value": "a missing harness knob, not a code defect — run_e1.ps1 never set MASHED_DETERMINISTIC", "kind": "text" },
+        { "label": "Gates", "value": ["G-REPRO PASS, G-PREFIX PASS (full overlap x3)", "G-CTRL PASS: SIM_HZ=59 gives R-PREFIX 0, diverging at frame 0 on round(3000/59)=51 vs 50", "G-TOOK FAILED as written (read a dump-local counter); corrected witness passes — deviation recorded in RESULT_F2 §1"], "kind": "list" },
+        { "label": "E2", "value": "UNBLOCKED. Needs MASHED_RACEMETRIC_ARC implemented (not in source yet) + an E2-KNOBOFF baseline amendment", "kind": "text" },
+        { "label": "Scope limit", "value": "standalone scripted-capture regime only; E1's non-deterministic captures are NOT comparable", "kind": "text" }
       ]
     },
     {
-      "heading": "U-9185 / U-9186 over-speed (2026-10-06)",
+      "heading": "Recent wins (2026-10-05/07)",
       "fields": [
-        { "label": "Finding", "value": "the surviving +24-28% over-speed is a COMMAND defect (reconfirmed on the shipped build); physics exonerated <1% pre-onset", "kind": "text" },
-        { "label": "Measure-inert-first", "value": "porting the two FUN_00416250 branches is INERT — reads blank-zero race-progress with no port writer; NO code shipped", "kind": "text" },
-        { "label": "Prerequisite", "value": "SCOPED as DEFERRED D-11072 (re/analysis/RACE_POSITION_RECON_SCOPE_2026-10-06.md): a 3-leg race-position reconstruction (slot-state table / progress bridge / reference distance), gated on a USER fidelity decision (bridge is faithful-by-algorithm, not C4)", "kind": "text" }
-      ]
-    },
-    {
-      "heading": "Next lane",
-      "fields": [
-        { "label": "START HERE", "value": "re/NEXT_SESSION.md — over-speed needs FUN_00442a60 first; or U-9191 item (b) body-heading physics residual", "kind": "text" },
-        { "label": "Options", "value": ["port FUN_00442a60 then re-check the over-speed branches", "U-9191 item (b): car-1 body heading ~0.89deg", "U-9195: car<->car inert outside 4 participants", "recover 0x00409b0e jumptable (save)"], "kind": "list" }
+        { "label": "Car<->car", "value": "3 legs complete, default-ON, cut AI over-speed from 41% to 26%", "kind": "text" },
+        { "label": "race_pct bridge", "value": "correct + proven consumed (G-LIVE), inert at fd0=0", "kind": "text" }
       ]
     }
   ]
 }
+
