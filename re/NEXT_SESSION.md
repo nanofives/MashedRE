@@ -1,5 +1,41 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-08 (commit `1cb89a5a`): **U-9186 `GATEFIRE` is PRE-REGISTERED, UNRUN, both branches, by USER DECISION. Read [`PREREG_GATEFIRE.md`](../verify/d3_gatefire_20261008/PREREG_GATEFIRE.md) and run LEG 0 FIRST.**
+>
+> **Do not re-derive the scope.** Three prior measurements already answer most of "what is
+> missing", and re-deriving them is the recorded failure mode
+> (`read-the-tracker-row-before-starting-its-work`): `UNCERTAINTIES.md:61` (U-9186, per-branch
+> blockers), `UNCERTAINTIES.md:63` + `verify/d3_leader_20261003/RESULT_WITNESS.md` (U-9187 — the
+> `.rsp` wiring is **unsafe AND inert**), and H1a/H1b/H3.
+>
+> - **The scope shrank.** Of the witness's six missing inputs, `FUN_0040e470` (exe body exists),
+>   `FUN_0046d4a0` (H1b) and `FUN_00442a60` (H3 — the one it called "a real port, new reversing")
+>   have landed; the limit table and the four thresholds `6.5/5.5/6.0/4.0` were resolved *by* that
+>   witness. **Only `FUN_00442cc0` is open, and it reads `0x008989b0[v]`, which H3 made live.**
+> - **The mechanism is a standalone body, NOT an `exe_sources.rsp` addition.** `exe_main.cpp:56`
+>   leaves `0x00400000..0x004fffff` unmapped, so adding those TUs access-violates — measured.
+>   U-9186's standing instruction says otherwise and is **flagged for `re-classify`**; its
+>   *ordering* (branch 2 then branch 1) is kept.
+> - **Leg 0 is a RUNTIME census and gates everything.** `AMEND_H3.md`'s census was static. Its
+>   decision rules are pre-committed: `GF0-PROG1` zero → branch 1 deferred with its blocker named;
+>   `GF0-TIMER` dead → the body still lands and `GF1-FIRE` is reported structurally-0. **Seeding a
+>   global is a non-goal.**
+> - **Two upstream disagreements are the real branch-2 risk**: `idx364` (original `-1` on all 512
+>   calls, port `0` — it decides whether `E470` runs at all) and `bias374` (original `0`, port
+>   `{0,1,2,3}`; writer `FUN_004177b0`'s exe copy is C2).
+> - **Branch 1 carries a plate conflict**: `_DAT_005cc320` is **`+1.0f`** per
+>   `bucket_ai_00407a40_00415880/0x00414300.md:33`; `ai_update_d3/0x00414300.md:33`/`:73` says
+>   `-1.0` and is **wrong**. Calling convention is plate-silent for both functions.
+> - Acceptance is **per-call**: `o_t1`/`o_t2`/`o_t3` carry a live `ret14a70` column, so all 149
+>   diverging calls are checkable one by one.
+>
+> **Tracker defect to fix via `re-classify`:** `hooks.csv` row `004148b0` claims
+> `exe_file = Ai/AiStandalone.cpp`, which holds no body for it (comments only at `:82`/`:846`/
+> `:968`/`:1086`). Ground truth for exe-side coverage is **`.rsp` membership**, not that column.
+>
+> Still open and independent: **H2** (`MASHED_SLOTSTATE_SEED` default-ON), **U-9191** item (b),
+> **U-9195**, the `0x00409b0e` jumptable. **Do NOT ship the `MASHED_RACEMETRIC_ARC` ON arm.**
+
 > ## UPDATE 2026-10-08 (U-9186 leg H3 stepdump arm RAN, commit `e06c9451`): **the three gates H3 left unrun all PASS — the default build is bit-identical across three builds (one SHA-256 for all four captures). `H3-GATEFIRE` is WITHDRAWN: it is a PORT leg, not instrumentation, and the two branches are NOT equally blocked. NO C-level, nothing default-ON, `original/` untouched, `.asi` untouched.**
 >
 > Read [`RESULT_H3_STEP.md`](../verify/d3_u9186_20261008/RESULT_H3_STEP.md), then
