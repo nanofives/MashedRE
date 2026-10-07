@@ -1,5 +1,46 @@
 # Next session kickoff
 
+> ## UPDATE 2026-10-07 (D-11072 leg E1 RAN, commits `bcdd3fcb`/`4a0efcc2`/`6ade0f85`): **the race-position metric already has a LIVE consumer and it was never behind `0x007f0fd0` — it is the rule engine, gated on `TrackRenderer::rule_`, reachable today with `MASHED_ROUND_RULE` and no code change. Swapping it to leg A's monotone `arcpct` is NOT inert (28.6–38.6 % ordering change). NEW BLOCKER: round-level match outcomes do not reproduce across repeats, so E2's registered outcome gate is unmeasurable as written. NO C-level, zero source change, `original/` untouched.**
+>
+> Read [`verify/d3_consumer_20261007/RESULT_E1.md`](../verify/d3_consumer_20261007/RESULT_E1.md). Pre-registered UNRUN `bcdd3fcb`, RAN `4a0efcc2`.
+>
+> - **The finding.** The port never writes `DAT_007f0fd0` (`aib_game_mode_fd0()` is a hard
+>   `return 0`, `TrackRenderer.cpp:96`), but it carries the same rule as `TrackRenderer::rule_`
+>   (`exe_main.cpp:2185` → `RaceModes::RaceRule`, the verbatim `FUN_0043dfd0` cup-event table).
+>   The rule engine runs default-ON every frame (`TrackRenderer.cpp:5119`) and feeds
+>   `UpdateFinishOrder`/`SegmentCheck`/`EvaluateResult` a metric built at `TrackRenderer.cpp:5132`
+>   from the **non-monotone** `race_[].progress` — exactly what leg A's `arcpct` replaces.
+>   `MASHED_ROUND_RULE=<n>` (`exe_main.cpp:8508-8515`) reaches rule 4/10 on the existing Training
+>   recipe.
+> - **It executes.** 5 `RULE-EVAL` evaluations per 240 s run, rule-specific: `L0` (rule 0)
+>   concludes the match (`r=4`), `L4` does not, `L10`'s timer varies per round.
+> - **The swap has content.** Ordering of the 3 AI cars differs between `lap+racepct/100` and
+>   `lap+arcpct/100` on 37.75/38.64/38.31/35.41/28.60 % of 3-car frames across the five runs
+>   (max per-car delta 0.0499), vs the pre-registered `E2-DIFF` bar of 1 %.
+> - **Two gates failed, reported as written.** `E1-EVAL` failed because the control discriminated
+>   in the opposite direction to the prediction. `E1-DET` failed outright: three rule-4 runs with
+>   identical knobs gave three different matches (round-2/3 scores, 5 vs 3 rounds, max lap 8/1/4).
+>   Aggregate scorers stay stable — it is **round-level outcomes** that are wall-clock-sensitive.
+> - **`0x007f0fd0` mirror sub-lane is cheap if wanted:** a worker survey found only three readers
+>   that execute in a standalone race, all in `AiPreTickRubberBand`
+>   (`AiStandalone.cpp:1469/1501/1541`), plus one frontend-only `ModeCodeLookup`
+>   (`Frontend/BatchAA_s4.cpp:64`, `[UNCERTAIN]` reachability). It reaches the mode-4/9
+>   `GearConstSet` AI-speed scaling, which bears on criterion (e).
+>
+> ### START HERE — pick one; the fork is real
+>
+> 1. **Make long-run outcomes reproducible**, then run E2 with its registered outcome gate.
+>    This is the blocker E1 found and it unblocks every future behaviour claim over a full match.
+> 2. **Run E2's measurable subset now** (`MASHED_RACEMETRIC_ARC=1`, `PREREG_CONSUMER.md` §4):
+>    `E2-WROTE`, `E2-DIFF`, `E2-KNOBOFF`, `E2-NOREG-E/-B`, `E2-DET` on the deterministic 60 s
+>    scenario. `E2-EFFECT` must be declared unmeasurable, not restated.
+> 3. **The `0x007f0fd0` mirror** (`PREREG_CONSUMER.md` §5) — small blast radius, touches (e),
+>    which has a deterministic scorer. Note it scales AI speed and could move (e) either way.
+> 4. **Redirect**: U-9191 item (b) car-1 body-heading residual; U-9195 participant-count;
+>    the `0x00409b0e` jumptable.
+>
+> **Do NOT start leg B.** The block below is the previous headline, left as history.
+
 > ## UPDATE 2026-10-07 (D-11072 race_pct bridge write RAN, commit `275d9b26`): **the bridge is CORRECT and consumed by a LIVE reader, but behaviourally INERT at `fd0=0`. The race-position STATE problem is SOLVED (state live + proven consumed); the next blocker is the game-mode gate on the consumer, NOT the progress substrate. NO C-level, nothing default-ON, only `0x008a96ec` written, `original/` untouched.**
 >
 > Read [`verify/d3_racepos_20261006/RESULT_BRIDGE.md`](../verify/d3_racepos_20261006/RESULT_BRIDGE.md). Pre-registered UNRUN `257fcd39`, RAN `275d9b26`.
