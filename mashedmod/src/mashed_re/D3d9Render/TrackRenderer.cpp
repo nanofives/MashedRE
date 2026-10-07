@@ -4011,6 +4011,8 @@ extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);
 extern "C" int __cdecl VehicleCarStateRead(std::uint32_t carIdx,
                                            std::uint32_t* outState,
                                            std::uint32_t* outSecondary);
+// [H1b] the standalone body of FUN_0046d4a0 (Vehicle/VehicleState.cpp).
+extern "C" std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint32_t idx);
 
 void TrackRenderer::U9186GateDump() {
     static const char* s_path = std::getenv("MASHED_U9186_GATES");
@@ -4041,6 +4043,12 @@ void TrackRenderer::U9186GateDump() {
                          // never show the rebind — they are retained as the control
                          // (they must stay dead, proving no memory moved).
                          "veh_type_fn,state0_fn,"
+                         // [H1b] the exe body of FUN_0046d4a0, CALLED. ptr_ok is its
+                         // return; ptr_x/ptr_z are +0x30/+0x38 off the pointer it
+                         // yields. They must equal rec_x_rec/rec_z_rec, which is the
+                         // only evidence this exe copy has (the .asi copy's Frida
+                         // diff exercised the absolute form, not this one).
+                         "ptr_ok,ptr_x,ptr_z,"
                          "racepct_ec,refdist\n");
     }
     const std::uint32_t p = Ai::U32(0x005f2770u);
@@ -4062,10 +4070,18 @@ void TrackRenderer::U9186GateDump() {
         std::uint32_t fn_state = 0u, fn_sec = 0u;
         VehicleCarStateRead(static_cast<std::uint32_t>(v), &fn_state, &fn_sec);
         const std::uint32_t fn_type = VehicleSlotGetter(static_cast<std::uint32_t>(v));
+        // [H1b] call the exe body of FUN_0046d4a0 and read x/z off what it returns.
+        std::uint32_t ptr = 0u;
+        const std::uint32_t ptr_ok = PtrCompute881ec8(&ptr, static_cast<std::uint32_t>(v));
+        const float ptr_x = (ptr_ok && ptr) ? *reinterpret_cast<const float*>(
+                                static_cast<std::uintptr_t>(ptr) + 0x30u) : 0.f;
+        const float ptr_z = (ptr_ok && ptr) ? *reinterpret_cast<const float*>(
+                                static_cast<std::uintptr_t>(ptr) + 0x38u) : 0.f;
         std::fprintf(gf, "%d,%d,0x%08lx,%d,"
                          "%d,%d,%lu,%.9g,%.9g,"
                          "%d,%d,%d,%.9g,%.9g,"
                          "%lu,%lu,"
+                         "%lu,%.9g,%.9g,"
                          "%.9g,%.9g\n",
                      gframe, v,
                      static_cast<unsigned long>(p),
@@ -4085,6 +4101,10 @@ void TrackRenderer::U9186GateDump() {
                      // --- the rebound readers, CALLED (H1a's only altered path) ---
                      static_cast<unsigned long>(fn_type),
                      static_cast<unsigned long>(fn_state),
+                     // --- H1b: FUN_0046d4a0's standalone body, called ---
+                     static_cast<unsigned long>(ptr_ok),
+                     static_cast<double>(ptr_x),
+                     static_cast<double>(ptr_z),
                      static_cast<double>(Ai::F32(0x008a96ecu +
                          static_cast<std::uintptr_t>(v) * 0x30cu)),
                      static_cast<double>(Ai::F32(0x008989b0u +

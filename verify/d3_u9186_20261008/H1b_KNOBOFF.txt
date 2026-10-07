@@ -1,0 +1,4 @@
+A = verify\d3_consumer_20261007\E2off_1.csv
+B = verify\d3_u9186_20261008\H1step.csv
+shared (frame,seq,v) keys: 19418   max frame: 13497
+R-PREFIX = 13498 (IDENTICAL over the whole overlap)

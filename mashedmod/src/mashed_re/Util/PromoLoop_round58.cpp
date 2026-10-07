@@ -39,15 +39,17 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl CondGet691500(std::int32_
 }
 RH_ScopedInstall(CondGet691500, 0x00472500);
 
-// 0x0046d4a0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint32_t idx) {
-    if (idx > 0xfu) return 0;                                                   // CMP 0x10 / JC
-    std::uint32_t b = idx * 0xd04u;                                            // IMUL 0xd04
-    std::uint32_t t = *reinterpret_cast<std::uint32_t*>(0x00881f48u + b);       // MOV [EAX+0x881f48]
-    *out = 0x00881ec8u + b + t * 0x40u;                                        // SHL 6 ; LEA +0x881ec8
-    return 1;
-}
-RH_ScopedInstall(PtrCompute881ec8, 0x0046d4a0);
+// 0x0046d4a0 — MOVED 2026-10-08 (U-9186 leg H1b) to Vehicle/VehicleRecordPtr.cpp,
+// a TU shared by both targets, so the standalone gets a body at this RVA without
+// creating a CROSS-TARGET dual copy. scripts/lint_rva_bodies.py rejects new pairs
+// and its policy note says the allowlist is a burn-down list that ROADMAP D4
+// takes to zero "by consolidating each pair into one shared TU".
+//
+// The move is behaviour-preserving for the .asi: the shared body resolves the
+// record base through Vehicle/VehicleRecordBase.h, which yields
+// 0x008815a0 + idx*0xd04 when MASHED_STANDALONE is not defined, and the two field
+// offsets 0x9a8 / 0x928 reproduce 0x00881f48 / 0x00881ec8 exactly. The disassembly
+// transcription above is retained because it is this RVA's primary citation.
 
 // 0x0045caf0
 extern "C" __declspec(dllexport) std::uint32_t __cdecl EqPredicate7f1a18(std::int32_t p1, std::int32_t p2) {

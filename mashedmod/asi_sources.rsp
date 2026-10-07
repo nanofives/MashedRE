@@ -11,6 +11,7 @@
 "Render\RwAtomicDirtyFlag.cpp"
 "GameState\StateAccessors.cpp"
 "Vehicle\VehicleState.cpp"
+"Vehicle\VehicleRecordPtr.cpp"
 "Vehicle\ShapeOwnerHandlePool.cpp"
 "Vehicle\VehicleSeed.cpp"
 "Vehicle\SubStripUV.cpp"

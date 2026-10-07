@@ -5,6 +5,7 @@
 //
 // Binary anchor: MASHED.exe size=2,846,720 sha256=BDCAE093...EFD3C0E
 #include "../Core/HookSystem.h"
+#include "VehicleRecordBase.h"
 #include <cstdint>
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -42,30 +43,14 @@ static constexpr std::uintptr_t kVehicleBase_881f94 = 0x00881f94u;
 // the same array. The #else branch keeps the absolute so the .asi is unchanged
 // and its Frida evidence (taken on the absolute form) still applies.
 //
-// OFFSET CONVENTION: these are differences from the ARRAY BASE 0x008815a0, not
-// from the field constants above. The comment block at the top of this file
-// states offsets relative to 0x008815a4, so its "+0x00" is "+0x04" here.
-// Mixing the two conventions is the obvious way to get this wrong.
-//   0x008815a4 -> +0x004   0x00881f90 -> +0x9F0   0x00881f94 -> +0x9F4
+// The base resolution, the offsets and the OFFSET CONVENTION note now live in
+// Vehicle/VehicleRecordBase.h, shared with the exe-only body of FUN_0046d4a0
+// (Vehicle/VehicleRecordPtr.cpp) so the two cannot drift apart.
 // PREREG: verify/d3_u9186_20261008/PREREG_H1.md
-constexpr std::uintptr_t kVehRecordArray = 0x008815a0u;
-constexpr std::size_t    kOff_Alive      = 0x004u;   // 0x008815a4
-constexpr std::size_t    kOff_State      = 0x9F0u;   // 0x00881f90
-constexpr std::size_t    kOff_Secondary  = 0x9F4u;   // 0x00881f94
-
-#ifdef MASHED_STANDALONE
-namespace mashed_re { namespace Vehicle { extern int* g_vehicleArrayBase; } }
-#endif
-
-static inline const char* VehRecord(std::uint32_t idx) {
-#ifdef MASHED_STANDALONE
-    const char* base = reinterpret_cast<const char*>(mashed_re::Vehicle::g_vehicleArrayBase);
-    if (!base) return nullptr;              // array not allocated yet (pre-race)
-#else
-    const char* base = reinterpret_cast<const char*>(kVehRecordArray);
-#endif
-    return base + static_cast<std::size_t>(idx) * kByteStride;
-}
+using mashed_re::Vehicle::VehRecord;
+using mashed_re::Vehicle::kOff_Alive;
+using mashed_re::Vehicle::kOff_State;
+using mashed_re::Vehicle::kOff_Secondary;
 
 // NOT rebound in this leg, deliberately — PREREG_H1.md section 1:
 //   0x0046c770 / 0x0046dbe0 / 0x0046d700 index the SAME record (+0x10, +0x08,
@@ -196,6 +181,7 @@ extern "C" __declspec(dllexport) int __cdecl VehicleCarStateRead(std::uint32_t c
     return 1;
 }
 RH_ScopedInstall(VehicleCarStateRead, 0x0046cbb0);  // re-enabled 2026-05-24 phase-a2 GREEN (9/9 2 distinct)
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00417730  VehicleRaceAngleGet
