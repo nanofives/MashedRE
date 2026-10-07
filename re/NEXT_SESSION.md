@@ -1,5 +1,36 @@
 # Next session kickoff
 
+> ## UPDATE 2026-10-07 (D-11072 race_pct bridge write RAN, commit `275d9b26`): **the bridge is CORRECT and consumed by a LIVE reader, but behaviourally INERT at `fd0=0`. The race-position STATE problem is SOLVED (state live + proven consumed); the next blocker is the game-mode gate on the consumer, NOT the progress substrate. NO C-level, nothing default-ON, only `0x008a96ec` written, `original/` untouched.**
+>
+> Read [`verify/d3_racepos_20261006/RESULT_BRIDGE.md`](../verify/d3_racepos_20261006/RESULT_BRIDGE.md). Pre-registered UNRUN `257fcd39`, RAN `275d9b26`.
+>
+> - **What landed:** a default-OFF knob `MASHED_RACEPCT_BRIDGE` writes the monotone `arcpct` into
+>   the original per-car race_pct slot `*(float*)(0x008a96ec + v*0x30c)` in `UpdateRace` (which runs
+>   before the AI tick, so the read at `AiStandalone.cpp:1468` sees it same-frame).
+> - **8/8 gates PASS.** The one that matters, `G-LIVE` (control): `val_880` (= `AiPreTickRubberBand`'s
+>   `ra*0.01+lap` store) tracks `arcpct*0.01+lap` at 1.0000 on the Y arm and is **0 on every N row** —
+>   the port's live AI code demonstrably consumes the bridged race position. `G-EFFECT`: (e)
+>   bit-identical, (b) same 5 bands → inert. `G-INERT` 0 of 374,662 cells.
+> - **Why inert:** `ra → val → 0x0089a880` drives behaviour only through `fd0 ∈ {4,7,8,9}` gates
+>   (`AiStandalone.cpp:1472/1492/1505`), and the standalone's `fd0` (global `0x007f0fd0`) is 0.
+>
+> ### START HERE — reach the consumer (this is a game-mode-wiring problem now, not a progress one)
+>
+> The race position is live and consumed; to make it *do* something, the `fd0`-gated consumer must
+> be reached. Two sub-lanes:
+> 1. **Set `0x007f0fd0` to a championship/elimination mode (`fd0 ∈ {4,7,8,9}`)** — investigate what
+>    the original writes there for a real round and whether a standalone recipe/knob can reach it,
+>    then re-run the bridge arm and see if the finish-order slots / mode-4/9 scaling now move. A
+>    default-OFF liveness counter on the `:1472` block first (did it fire), per the discipline.
+> 2. **The `0x008a96e8` boost-order path (U-9186, a *different* field):** `Fi_UpdateBoostOrder`
+>    (`ForceIntegratorStubs.cpp:176`) reads it ungated to pick the start-boost pair — but its
+>    lights-window effect is predicted null (equal progress at the grid). Measure before investing.
+>
+> **Do NOT start leg B.** Alternatives if redirecting (over-speed not urgent): U-9191 item (b)
+> car-1 body-heading residual; U-9195 participant-count; `0x00409b0e` jumptable.
+>
+> The block below is the previous headline, left as history.
+
 > ## UPDATE 2026-10-06 (D-11072 leg A monotone metric BUILT, commit `201ab935`): **the monotonicity blocker is CLEARED — the port now has a monotone, physical-arc-length race-progress metric (`race_[].arcprog`/`arcpct`, 0 backward-midlap on all 3 cars vs the old 484/669/1273), deterministic and INERT on (e)/(b). The leg-A scale map is now a registrable near-identity. START HERE: run the §4 bridge-write pre-registration. NO C-level moved, nothing default-ON, `0x008a96ec` not written, `original/` untouched.**
 >
 > Read [`verify/d3_racepos_20261006/RESULT_LEGA_MONOTONE.md`](../verify/d3_racepos_20261006/RESULT_LEGA_MONOTONE.md). Commit `201ab935`.
