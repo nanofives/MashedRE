@@ -4011,8 +4011,13 @@ extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);
 extern "C" int __cdecl VehicleCarStateRead(std::uint32_t carIdx,
                                            std::uint32_t* outState,
                                            std::uint32_t* outSecondary);
-// [H1b] the standalone body of FUN_0046d4a0 (Vehicle/VehicleState.cpp).
+// [H1b] the standalone body of FUN_0046d4a0 (Vehicle/VehicleRecordPtr.cpp).
 extern "C" std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint32_t idx);
+// [H3] FUN_00442a60's default-OFF tick (Race/SpectatorDistances.cpp). Declared
+// extern "C" like its neighbours above: this TU is inside
+// namespace mashed_re::D3d9Render, so a `namespace mashed_re { namespace Race ...`
+// block here would declare mashed_re::D3d9Render::mashed_re::Race instead.
+extern "C" void __cdecl RaceComputeDistancesTick();
 
 void TrackRenderer::U9186GateDump() {
     static const char* s_path = std::getenv("MASHED_U9186_GATES");
@@ -4049,6 +4054,14 @@ void TrackRenderer::U9186GateDump() {
                          // only evidence this exe copy has (the .asi copy's Frida
                          // diff exercised the absolute form, not this one).
                          "ptr_ok,ptr_x,ptr_z,"
+                         // [H3] witnesses. ref_idx/other_idx are the two slots
+                         // FUN_0040e180 selected (the original stores them at
+                         // 0x008989a8/0x008989c8 before the guard chain) — gate
+                         // H3-PAIR. exp_dist recomputes the expected distance
+                         // from VehiclePhysics_RecordF32 WITHOUT calling the
+                         // ported function, so H3-WROTE does not compare the
+                         // port against itself.
+                         "ref_idx,other_idx,exp_dist,"
                          "racepct_ec,refdist\n");
     }
     const std::uint32_t p = Ai::U32(0x005f2770u);
@@ -4077,11 +4090,28 @@ void TrackRenderer::U9186GateDump() {
                                 static_cast<std::uintptr_t>(ptr) + 0x30u) : 0.f;
         const float ptr_z = (ptr_ok && ptr) ? *reinterpret_cast<const float*>(
                                 static_cast<std::uintptr_t>(ptr) + 0x38u) : 0.f;
+        // [H3] independent recomputation: the distance from the reference car's
+        // position to this car's, both read through VehiclePhysics_RecordF32 and
+        // never through Race::ComputeDistances.
+        const std::int32_t h3_ref   = Ai::I32(0x008989a8u);
+        const std::int32_t h3_other = Ai::I32(0x008989c8u);
+        double exp_dist = 0.0;
+        if (h3_ref >= 0 && h3_ref < 4) {
+            const std::int32_t rt = Vehicle::VehiclePhysics_RecordI32(h3_ref, 0x9a8);
+            const std::size_t rrow = 0x928u + static_cast<std::size_t>(rt) * 0x40u;
+            const float rx = Vehicle::VehiclePhysics_RecordF32(h3_ref, rrow + 0x30u);
+            const float rz = Vehicle::VehiclePhysics_RecordF32(h3_ref, rrow + 0x38u);
+            const float cx = Vehicle::VehiclePhysics_RecordF32(v, mrow + 0x30u);
+            const float cz = Vehicle::VehiclePhysics_RecordF32(v, mrow + 0x38u);
+            const float dx = rx - cx, dz = rz - cz;
+            exp_dist = static_cast<double>(std::sqrt(dx * dx + dz * dz) * 0.8f);
+        }
         std::fprintf(gf, "%d,%d,0x%08lx,%d,"
                          "%d,%d,%lu,%.9g,%.9g,"
                          "%d,%d,%d,%.9g,%.9g,"
                          "%lu,%lu,"
                          "%lu,%.9g,%.9g,"
+                         "%d,%d,%.9g,"
                          "%.9g,%.9g\n",
                      gframe, v,
                      static_cast<unsigned long>(p),
@@ -4105,6 +4135,8 @@ void TrackRenderer::U9186GateDump() {
                      static_cast<unsigned long>(ptr_ok),
                      static_cast<double>(ptr_x),
                      static_cast<double>(ptr_z),
+                     // --- H3: pair selection + independent expected distance ---
+                     h3_ref, h3_other, exp_dist,
                      static_cast<double>(Ai::F32(0x008a96ecu +
                          static_cast<std::uintptr_t>(v) * 0x30cu)),
                      static_cast<double>(Ai::F32(0x008989b0u +
@@ -5166,6 +5198,14 @@ void TrackRenderer::UpdateRace(float dt) {
     step(0, car_pos_);
     for (int i = 0; i < 3 && i < static_cast<int>(ai_cars_.size()); ++i)
         step(i + 1, ai_cars_[static_cast<std::size_t>(i)].pos);
+
+    // [U-9186 leg H3 2026-10-08] FUN_00442a60: write the reference-distance array
+    // 0x008989b0[v], which the AI fire gates read via FUN_00442cc0 and which has
+    // held 0 standalone until now. Default-OFF behind MASHED_REFDIST. Placed here
+    // in UpdateRace (:3423), which runs before Ai_Standalone_Tick (:3462), so a
+    // consumer sees this frame's value — the same ordering the race_pct bridge
+    // below relies on. PREREG: verify/d3_u9186_20261008/PREREG_H3.md
+    RaceComputeDistancesTick();
 
     // [D-11072 bridge write] Mirror the monotone arcpct into the original per-car
     // race_pct slot 0x008a96ec + v*0x30c, behind a default-OFF knob. UpdateRace runs

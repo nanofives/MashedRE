@@ -161,6 +161,7 @@
 "Math\MatrixOrthoResidual.cpp"
 "Vehicle\VehicleState.cpp"
 "Vehicle\VehicleRecordPtr.cpp"
+"Race\SpectatorDistances.cpp"
 "Vehicle\ShapeOwnerHandlePool.cpp"
 "Vehicle\VehicleSeed.cpp"
 "Vehicle\SubStripUV.cpp"
