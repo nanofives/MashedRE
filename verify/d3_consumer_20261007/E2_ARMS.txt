@@ -1,0 +1,8 @@
+A = verify\d3_consumer_20261007\E2off_1.csv
+B = verify\d3_consumer_20261007\E2on_1.csv
+shared (frame,seq,v) keys: 19418   max frame: 13497
+R-PREFIX = 0  (0.00 % of the run)
+first differing key: frame=0 seq=0 v=1  (1 differing columns)
+    rmetric       A=0.0449098982           B=0
+columns differing anywhere (top 10 by row count):
+    rmetric       19418 rows

@@ -1,0 +1,30 @@
+##### E2-KNOBOFF (cross-build, pre-existing columns) #####
+--common-cols: comparing 77 shared columns; dropped 3: rmetric, arclaps, rtick
+A = verify\d3_determinism_20261007\F2a.csv
+B = verify\d3_consumer_20261007\E2off_1.csv
+shared (frame,seq,v) keys: 19418   max frame: 13497
+R-PREFIX = 13498 (IDENTICAL over the whole overlap)
+
+##### E2-DET E2off_1 vs E2off_2 #####
+A = verify\d3_consumer_20261007\E2off_1.csv
+B = verify\d3_consumer_20261007\E2off_2.csv
+shared (frame,seq,v) keys: 19418   max frame: 13497
+R-PREFIX = 13498 (IDENTICAL over the whole overlap)
+
+##### E2-DET E2off_1 vs E2off_3 #####
+A = verify\d3_consumer_20261007\E2off_1.csv
+B = verify\d3_consumer_20261007\E2off_3.csv
+shared (frame,seq,v) keys: 19418   max frame: 13497
+R-PREFIX = 13498 (IDENTICAL over the whole overlap)
+
+##### E2-DET E2on_1 vs E2on_2 #####
+A = verify\d3_consumer_20261007\E2on_1.csv
+B = verify\d3_consumer_20261007\E2on_2.csv
+shared (frame,seq,v) keys: 19418   max frame: 13497
+R-PREFIX = 13498 (IDENTICAL over the whole overlap)
+
+##### E2-DET E2on_1 vs E2on_3 #####
+A = verify\d3_consumer_20261007\E2on_1.csv
+B = verify\d3_consumer_20261007\E2on_3.csv
+shared (frame,seq,v) keys: 19418   max frame: 13497
+R-PREFIX = 13498 (IDENTICAL over the whole overlap)
