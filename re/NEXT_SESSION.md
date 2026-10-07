@@ -1,5 +1,46 @@
 # Next session kickoff
 
+> ## UPDATE 2026-10-08 (U-9186 leg H3 RAN = DEFERRED leg B, commits `1560986e` + the decision record): **the `0x008989b0` producer WORKS — live per-car distances for the first time (26,994/53,992 rows non-zero, 19,562 distinct) — and is INERT at the behaviour level. The leg-B prohibition was LIFTED by USER DECISION (Mariano 2026-10-08). Default-OFF behind `MASHED_REFDIST`. NO C-level, `original/` untouched, `.asi` untouched.**
+>
+> Read [`RESULT_H3.md`](../verify/d3_u9186_20261008/RESULT_H3.md), then
+> [`VEHICLE_TABLE_BIND_SCOPE_2026-10-08.md`](analysis/VEHICLE_TABLE_BIND_SCOPE_2026-10-08.md).
+>
+> - `H3-CONSTS` PASS — 80.0 / 20.0 / 100.0 / 0.8 read from `MASHED.exe.unpatched` (`.rdata`
+>   `0x1cc730`/`0x1ccd6c`/`0x1cc568`/`0x1cc9bc`). `race_pct` is 0..100 per lap, so ">80 and <20"
+>   is the pair straddling the line and `-100.0` un-wraps it.
+> - `H3-PAIR` live (7 distinct `(ref,other)` pairs vs 1 on OFF). `H3-DET` identical per arm.
+> - `H3-WROTE` **FAILED as registered** (100% required, 74.9963% measured). Cause is the scorer:
+>   13,497 of 13,500 mismatches are car 0, which the gate chain correctly skips while the probe
+>   computed a distance for every car. On the gate-passing denominator: **40,491/40,494 =
+>   99.9926%**. The 3 residual rows are all **frame 0** and the port is the side that is right.
+>
+> ### START HERE — three things are owed before anything new
+>
+> 1. **`H3-GATEFIRE` was registered as "the one that matters" and was NOT BUILT.** Nothing is
+>    claimed about whether U-9186's branches fire. Build the default-OFF counter on
+>    `FUN_00414a70 == 2` and `FUN_004148b0 != 0 && FUN_00416060 != 0` and confirm they approach the
+>    original's **36 / 64** calls. The committed captures `o_t1`/`o_t2`/`o_t3` carry the exact 149
+>    diverging calls.
+> 2. **`H3-INERT` is expected, not a defect.** `ControlStep` still hardcodes `mode = 0`
+>    (`AiStandalone.cpp:844`), so the branches cannot fire whatever `0x008989b0` holds. H3 removed
+>    the *input* blocker, not the stub. Do not read inertness as the port failing.
+> 3. **`H3-KNOBOFF` / `-NOREG-E` / `-NOREG-B` were not run** — the gates dump is a different schema
+>    from the stepdump those scorers take. Add a stepdump arm to `run_h3.ps1`.
+>
+> Only after 1-3 does wiring the `FUN_00416250` branches to `ctrl` make sense; that is a separate
+> registered leg. **H2** (the `MASHED_SLOTSTATE_SEED` default-ON question) is still open and is
+> cheap. Also still open and independent: **U-9191** item (b), **U-9195**, the `0x00409b0e`
+> jumptable.
+>
+> **Standing notes earned this session.** (a) A gate's instrument must touch the path the change
+> alters — `G-TOOK`, `H1-CONVERGE` and `H3-WROTE` all failed on this, each costing a rebuild and a
+> re-run for a subject that had passed (`PREREG_H1.md` §A2). (b) `scripts/lint_rva_bodies.py`
+> binds a function to the **first RVA token in the comment above it**; a comment that merely
+> *mentions* an RVA will be read as a body declaration. (c) The lint's allowlist is a burn-down
+> list — prefer consolidating a pair into one shared TU over adding a new one.
+>
+> Blocks below are previous headlines, left as history.
+
 > ## UPDATE 2026-10-08 (U-9186 leg H1a RAN, commits `714a97e1`/`6e805552`): **the vehicle-record rebind LANDED, all gates pass. `VehicleSlotGetter`/`VehicleCarStateRead` now return the port's live record standalone (100% of 53,992 rows), and the default build is byte-for-byte unchanged. H1a is a PRECONDITION for H3, not a behaviour change. NO C-level, nothing default-ON, `original/` untouched, `.asi` unedited.**
 >
 > Read [`RESULT_H1.md`](../verify/d3_u9186_20261008/RESULT_H1.md), then the scope

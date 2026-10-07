@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-08T06:20:00Z",
+  "updatedAt": "2026-10-08T08:30:00Z",
   "sections": [
     {
       "heading": "Phase",
@@ -11,14 +11,14 @@
       ]
     },
     {
-      "heading": "U-9186 leg H1a LANDED 2026-10-08 — vehicle-record rebind, all gates pass",
+      "heading": "U-9186 leg H3 RAN 2026-10-08 — 0x008989b0 producer LIVE, behaviourally inert",
       "fields": [
-        { "label": "Verdict", "value": "VehicleSlotGetter / VehicleCarStateRead now return the port's live record standalone; default build byte-for-byte unchanged", "kind": "text" },
-        { "label": "Gates", "value": ["H1-CONVERGE 100.0000% (3 arms); H1-GATE2 veh_type==1 100% (was 0)", "H1-ALL 75.0000% with MASHED_SLOTSTATE_SEED — the three AI cars", "H1-KNOBOFF byte-identical to E2off_1; NOREG-E 3/3; NOREG-B unchanged", "control held: _abs stayed dead, so the BINDING moved, not memory"], "kind": "list" },
-        { "label": "Honest caveat", "value": "H1-CALLERS = 0 — no standalone caller yet, so H1a is a PRECONDITION and H1-KNOBOFF's byte-identity is weak evidence", "kind": "text" },
-        { "label": "Diagnosis that unlocked it", "value": "G1's 'dead substrate' was wrong: the port's records live at g_vehicleArrayBase, not 0x008815a0. It was a binding gap, not a missing substrate — so no fidelity decision was owed", "kind": "text" },
-        { "label": "Next", "value": ["H1b: 0x0046d4a0 exe body (duplicate-RVA, needs re-classify)", "H2: MASHED_SLOTSTATE_SEED default-ON question", "H3 (FUN_00442a60) STILL under DEFERRED.md:15 'DO NOT start leg B' — a USER call to lift"], "kind": "list" },
-        { "label": "Earlier today", "value": "F1+F2 cleared the reproducibility blocker; E2 closed the rule engine as a route (inert, rmetric the only differing column)", "kind": "text" }
+        { "label": "Verdict", "value": "FUN_00442a60 ported (default-OFF MASHED_REFDIST). refdist non-zero on 26,994/53,992 rows, 19,562 distinct — live for the first time", "kind": "text" },
+        { "label": "Leg B", "value": "prohibition LIFTED by USER DECISION (Mariano 2026-10-08); basis changed because G1 run 2 refuted the 'substrate must be synthesized' premise", "kind": "text" },
+        { "label": "Gates", "value": ["H3-CONSTS PASS: 80.0/20.0/100.0/0.8 read from the unpatched image", "H3-PAIR live (7 distinct pairs vs 1 on OFF); H3-DET identical per arm", "H3-WROTE FAILED as registered (74.9963%); 99.9926% on the gate-passing denominator, 3 residual rows all frame 0 and the port is right", "H3-INERT: arms differ only in the four output columns"], "kind": "list" },
+        { "label": "NOT claimed", "value": "H3-GATEFIRE was registered as 'the one that matters' and was NOT built — nothing is claimed about whether U-9186's branches fire. KNOBOFF/NOREG not run (schema mismatch)", "kind": "text" },
+        { "label": "Why inert is expected", "value": "ControlStep still hardcodes mode = 0 (AiStandalone.cpp:844), so the branches cannot fire whatever 0x008989b0 holds. H3 removed the input blocker, not the stub", "kind": "text" },
+        { "label": "Session chain", "value": ["F1+F2 cleared the reproducibility blocker (a missing harness knob)", "E2 closed the rule engine as a route (inert)", "G1 found the binding gap; H1a rebound two readers; H1b consolidated a third and REMOVED a dual-copy pair", "H3 ported leg B"], "kind": "list" }
       ]
     },
     {
@@ -30,6 +30,7 @@
     }
   ]
 }
+
 
 
 
