@@ -1,5 +1,46 @@
 # Next session kickoff
 
+> ## UPDATE 2026-10-08 (U-9186 leg H3 stepdump arm RAN, commit `e06c9451`): **the three gates H3 left unrun all PASS — the default build is bit-identical across three builds (one SHA-256 for all four captures). `H3-GATEFIRE` is WITHDRAWN: it is a PORT leg, not instrumentation, and the two branches are NOT equally blocked. NO C-level, nothing default-ON, `original/` untouched, `.asi` untouched.**
+>
+> Read [`RESULT_H3_STEP.md`](../verify/d3_u9186_20261008/RESULT_H3_STEP.md), then
+> [`AMEND_H3.md`](../verify/d3_u9186_20261008/AMEND_H3.md) §3.1 for the census.
+>
+> - `H3-KNOBOFF` **PASS** and **not** the near-tautology H1a's was (`H1-CALLERS = 0`): H3's call
+>   site runs 14,400 times in the default build and still changes nothing. `E2off_1`, `H1step`,
+>   `H3step`, `H3step_r2` all hash to `86b7b2bb`. `--common-cols` dropped no column (no schema
+>   drift). `H3-NOREG-E` 3/3. `H3-DET` PASS. `G-BANDS-UNEDITED` empty before and after.
+> - `H3-NOREG-B` **PASS as UNCHANGED**, which is not "(b) passes": `v2` still fails the same five
+>   bands with the same numbers (`c0_distinct=39`, `c1_distinct=75`, `steer_distinct=113`,
+>   `c1_median=5.5`, `abs_steer_median=44.5`). That failure is the point of U-9186.
+> - **`H3-GATEFIRE` withdrawn.** `ControlStep` calls none of the three predicates —
+>   `AiStandalone.cpp:844` is a hardcoded `mode = 0` with the chain elided at source level, not
+>   stubs returning 0. `FUN_00414a70` has **no body anywhere** (`hooks.csv:645`); `FUN_004148b0` /
+>   `FUN_00416060` are `.asi`-only and RVA-saturated.
+>
+> ### START HERE — the branch-scope question is a USER call
+>
+> 1. **The 64-branch is the cheap half and the registration did not know it.** Its LOS input is
+>    already live: `TrackRenderer.cpp:359` loads the `.AI` tile grid to `0x007f1a9c` and
+>    `AiStandalone.cpp:282-288` already implements `FUN_00416060`'s exact tile test. What is left is
+>    `FUN_004148b0`'s substrate — `0x0089a4c4` / `0x00442cc0` / `0x0040e470` have exe-side
+>    references, **`0x0089a4c8` and `0x005f2dd8` have none**. `0x005f2dd8` is the `0x005f2770`
+>    class: extract it from `MASHED.exe.unpatched` as `H3-CONSTS` did.
+> 2. **The 36-branch is a port from zero** — `FUN_00414a70` plus its unported callee `FUN_00414300`.
+> 3. **[UNCERTAIN], and it gates both:** the census above is **static**. An exe-side reference
+>    proves the address is addressed by compiled code, **not** that the value is live in a race.
+>    `RESULT_STEP2.md:223`'s risk that `LeaderTimer` reads `.bss` zeros is narrowed, not closed.
+>    **Open whichever leg wins with a RUNTIME substrate census**, or the counter reports a number
+>    with no meaning (the `_abs`-column failure mode).
+> 4. Still open and independent: **H2** (`MASHED_SLOTSTATE_SEED` default-ON, priced by `H1-ALL` at
+>    75% of rows), **U-9191** item (b), **U-9195**, the `0x00409b0e` jumptable.
+>
+> **Standing note earned here:** a gate can be registered as *instrumentation* when the thing it
+> counts does not exist on the measured side. Before registering a counter, check the predicate has
+> a body **and** a live substrate on the side being measured — the same discipline as "the
+> instrument must touch the changed path", one level earlier.
+>
+> **Do NOT ship the `MASHED_RACEMETRIC_ARC` ON arm.** Blocks below are previous headlines.
+
 > ## UPDATE 2026-10-08 (U-9186 leg H3 RAN = DEFERRED leg B, commits `1560986e` + the decision record): **the `0x008989b0` producer WORKS — live per-car distances for the first time (26,994/53,992 rows non-zero, 19,562 distinct) — and is INERT at the behaviour level. The leg-B prohibition was LIFTED by USER DECISION (Mariano 2026-10-08). Default-OFF behind `MASHED_REFDIST`. NO C-level, `original/` untouched, `.asi` untouched.**
 >
 > Read [`RESULT_H3.md`](../verify/d3_u9186_20261008/RESULT_H3.md), then

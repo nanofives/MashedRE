@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-08T08:30:00Z",
+  "updatedAt": "2026-10-08T21:05:00Z",
   "sections": [
     {
       "heading": "Phase",
@@ -16,7 +16,8 @@
         { "label": "Verdict", "value": "FUN_00442a60 ported (default-OFF MASHED_REFDIST). refdist non-zero on 26,994/53,992 rows, 19,562 distinct — live for the first time", "kind": "text" },
         { "label": "Leg B", "value": "prohibition LIFTED by USER DECISION (Mariano 2026-10-08); basis changed because G1 run 2 refuted the 'substrate must be synthesized' premise", "kind": "text" },
         { "label": "Gates", "value": ["H3-CONSTS PASS: 80.0/20.0/100.0/0.8 read from the unpatched image", "H3-PAIR live (7 distinct pairs vs 1 on OFF); H3-DET identical per arm", "H3-WROTE FAILED as registered (74.9963%); 99.9926% on the gate-passing denominator, 3 residual rows all frame 0 and the port is right", "H3-INERT: arms differ only in the four output columns"], "kind": "list" },
-        { "label": "NOT claimed", "value": "H3-GATEFIRE was registered as 'the one that matters' and was NOT built — nothing is claimed about whether U-9186's branches fire. KNOBOFF/NOREG not run (schema mismatch)", "kind": "text" },
+        { "label": "Stepdump arm (2026-10-08, e06c9451)", "value": ["H3-KNOBOFF PASS — E2off_1 / H1step / H3step / H3step_r2 all hash to 86b7b2bb: default build bit-identical across 3 builds", "H3-NOREG-E PASS 3/3; H3-DET PASS; --common-cols dropped no column (no schema drift)", "H3-NOREG-B PASS as UNCHANGED — v2 still fails the SAME 5 bands, which is not '(b) passes'"], "kind": "list" },
+        { "label": "H3-GATEFIRE", "value": "WITHDRAWN — a PORT leg, not instrumentation. ControlStep calls none of the 3 predicates; FUN_00414a70 has no body anywhere. 64-branch is the cheap half (LOS input already live); 36-branch is a port from zero. Census is STATIC [UNCERTAIN]", "kind": "text" },
         { "label": "Why inert is expected", "value": "ControlStep still hardcodes mode = 0 (AiStandalone.cpp:844), so the branches cannot fire whatever 0x008989b0 holds. H3 removed the input blocker, not the stub", "kind": "text" },
         { "label": "Session chain", "value": ["F1+F2 cleared the reproducibility blocker (a missing harness knob)", "E2 closed the rule engine as a route (inert)", "G1 found the binding gap; H1a rebound two readers; H1b consolidated a third and REMOVED a dual-copy pair", "H3 ported leg B"], "kind": "list" }
       ]
