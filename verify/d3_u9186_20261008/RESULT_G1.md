@@ -1,5 +1,45 @@
 # RESULT — U-9186 leg G1: are `FUN_00442a60`'s gates live standalone?
 
+> ## CORRECTION 2026-10-08 (run 2) — the gate verdict stands, the CAUSE in §3 was WRONG
+>
+> §3 below concluded "the standalone does not own this substrate". **It does.** Run 1's probe read
+> only the ORIGINAL's absolute addresses, and under `MASHED_STANDALONE` the vehicle record array is
+> rebound to `Vehicle::g_vehicleArrayBase`, not `0x008815a0` (`LaunchRevCharge.cpp:42,62,81`;
+> stride witness `imul eax,eax,0xd04` at `0x0046d78e`).
+>
+> Run 2 logs both addressings side by side. On the port's own record, through
+> `VehiclePhysics_Record*`:
+>
+> | | `_abs` (what the ported consumers read) | `_rec` (the port's live record) |
+> |---|---|---|
+> | GATE2 `veh_type == 1` | **0%** | **100.0000%** |
+> | GATE3 `state0 == 0` | 100% | 100% |
+> | `G1-POS` `rec_x` distinct | 1 — **FAIL** | **22,031** — **PASS** |
+> | `G1-ALL`, `G1base` | 0 | 0 (slot-state still null) |
+> | **`G1-ALL`, `G1seed` / `G1both`** | 0 | **40,494/53,992 = 75.0000%** |
+>
+> **With the slot-state seed on, the full gate chain passes on 75% of rows — exactly the three AI
+> cars — when read through the port's record.** Every input `FUN_00442a60` needs is live.
+>
+> **What this does and does not overturn.** The gate *verdict* is unchanged and §0's "`G1-ALL` = 0"
+> is still true **of the shipped code**, because the ported consumers read the same absolutes the
+> run-1 probe did — `Vehicle/VehicleState.cpp:18,39` hardcodes `kVehicleBase_8815a4 = 0x008815a4`
+> with no `MASHED_STANDALONE` rebinding. What is overturned is the **cause and the remedy**: the
+> blocker is a missing **binding**, not missing **state**, so the fix is the rebinding pattern
+> `LaunchRevCharge.cpp:40-42` and `Save/GameSaveBuffer.cpp` already use — not substrate synthesis.
+>
+> Corroborating, independent of this probe: the per-slot init that writes `alive = 1`
+> (`PhysicsChainHooks.cpp:2988`) and the `t` selector (`:3016`) is **`.asi`-only**, so the
+> standalone never runs it.
+>
+> Caveat on one figure: "cars at one frame occupy 2 distinct (x,z) of 4" is sampled at **frame 0**,
+> the starting grid. The substantive control figure is the 22,031 distinct `rec_x` over the run;
+> an independent mid-run sample (`E2off_1.csv`, frame 2576) shows all three AI cars at three
+> distinct positions.
+>
+> Run 1's captures and gate output are preserved as `*_r1`. Scope: `re/analysis/VEHICLE_TABLE_BIND_SCOPE_2026-10-08.md`.
+
+
 Date 2026-10-08. Pre-registration: `PREREG_G1.md`, committed at `ef420bfc` before the runs.
 **RAN.** Measurement only — no port written. No C-level. Nothing default-ON. `original/` untouched.
 

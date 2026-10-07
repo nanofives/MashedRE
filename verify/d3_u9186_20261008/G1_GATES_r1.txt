@@ -1,0 +1,39 @@
+
+########## G1base  (53992 rows) ##########
+  G1-PTR   p5f2770 values: {'0x00000000': 53992}
+  G1-GATE1 slot_state != 0 : 0/53992 (0.0000%)   [unevaluable (ptr null): 53992]
+           slot_state values: {'-1': 53992}
+  G1-GATE2 veh_type  == 1 : 0/53992 (0.0000%)   values: {'0': 53992}
+  G1-GATE3 state0    == 0 : 53992/53992 (100.0000%)   values: {'0': 53992}
+  G1-ALL   all three pass : 0/53992 (0.0000%)   <- rows a ported FUN_00442a60 would write
+  G1-OUT   refdist distinct values: 1  {'0': 53992}
+  G1-POS   rec_x distinct 1, rec_z distinct 1, per-car rec_x distinct {'0': 1, '1': 1, '2': 1, '3': 1}
+           cars at a single frame occupy 1 distinct (x,z) of 4
+           G1-POS FAIL - the position source is dead; gate counts say nothing about FUN_00442a60 specifically (PREREG_G1 section 4)
+  input    racepct_ec distinct values: 1  {'0': 53992}
+
+########## G1seed  (53992 rows) ##########
+  G1-PTR   p5f2770 values: {'0x005f2728': 53992}
+  G1-GATE1 slot_state != 0 : 40494/53992 (75.0000%)   [unevaluable (ptr null): 0]
+           slot_state values: {'0': 13498, '2': 40494}
+  G1-GATE2 veh_type  == 1 : 0/53992 (0.0000%)   values: {'0': 53992}
+  G1-GATE3 state0    == 0 : 53992/53992 (100.0000%)   values: {'0': 53992}
+  G1-ALL   all three pass : 0/53992 (0.0000%)   <- rows a ported FUN_00442a60 would write
+  G1-OUT   refdist distinct values: 1  {'0': 53992}
+  G1-POS   rec_x distinct 1, rec_z distinct 1, per-car rec_x distinct {'0': 1, '1': 1, '2': 1, '3': 1}
+           cars at a single frame occupy 1 distinct (x,z) of 4
+           G1-POS FAIL - the position source is dead; gate counts say nothing about FUN_00442a60 specifically (PREREG_G1 section 4)
+  input    racepct_ec distinct values: 1  {'0': 53992}
+
+########## G1both  (53992 rows) ##########
+  G1-PTR   p5f2770 values: {'0x005f2728': 53992}
+  G1-GATE1 slot_state != 0 : 40494/53992 (75.0000%)   [unevaluable (ptr null): 0]
+           slot_state values: {'0': 13498, '2': 40494}
+  G1-GATE2 veh_type  == 1 : 0/53992 (0.0000%)   values: {'0': 53992}
+  G1-GATE3 state0    == 0 : 53992/53992 (100.0000%)   values: {'0': 53992}
+  G1-ALL   all three pass : 0/53992 (0.0000%)   <- rows a ported FUN_00442a60 would write
+  G1-OUT   refdist distinct values: 1  {'0': 53992}
+  G1-POS   rec_x distinct 1, rec_z distinct 1, per-car rec_x distinct {'0': 1, '1': 1, '2': 1, '3': 1}
+           cars at a single frame occupy 1 distinct (x,z) of 4
+           G1-POS FAIL - the position source is dead; gate counts say nothing about FUN_00442a60 specifically (PREREG_G1 section 4)
+  input    racepct_ec distinct values: 17924  {'6.16010709e-08': 2628, '0': 2423, '0.0535829701': 1, '0.121518657': 1}

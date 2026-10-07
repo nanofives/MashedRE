@@ -42,47 +42,42 @@ def main():
         ptrs = Counter(r["p5f2770"] for r in rows)
         print(f"  G1-PTR   p5f2770 values: {dict(ptrs)}")
 
-        # ---- G1-GATE1/2/3 ----
-        g1 = sum(1 for r in rows if int(r["slot_state"]) != 0 and int(r["slot_state"]) != -1)
+        # ---- G1-GATE1 (slot-state; one base, no abs/rec split) ----
+        g1 = sum(1 for r in rows if int(r["slot_state"]) not in (0, -1))
         unev = sum(1 for r in rows if int(r["slot_state"]) == -1)
-        g2 = sum(1 for r in rows if int(r["veh_type"]) == 1)
-        g3 = sum(1 for r in rows if int(r["state0"]) == 0)
         print(f"  G1-GATE1 slot_state != 0 : {g1}/{n} ({100.0*g1/n:.4f}%)"
               f"   [unevaluable (ptr null): {unev}]")
         print(f"           slot_state values: {dict(Counter(r['slot_state'] for r in rows))}")
-        print(f"  G1-GATE2 veh_type  == 1 : {g2}/{n} ({100.0*g2/n:.4f}%)"
-              f"   values: {dict(Counter(r['veh_type'] for r in rows))}")
-        print(f"  G1-GATE3 state0    == 0 : {g3}/{n} ({100.0*g3/n:.4f}%)"
-              f"   values: {dict(Counter(r['state0'] for r in rows))}")
 
-        # ---- G1-ALL ----
-        allp = sum(1 for r in rows
-                   if int(r["slot_state"]) not in (0, -1)
-                   and int(r["veh_type"]) == 1
-                   and int(r["state0"]) == 0)
-        print(f"  G1-ALL   all three pass : {allp}/{n} ({100.0*allp/n:.4f}%)"
-              f"   <- rows a ported FUN_00442a60 would write")
+        # ---- GATE2/3 and the position, scored on BOTH addressings ----
+        # _abs is what the ported consumers actually read (hardcoded absolutes,
+        # e.g. VehicleState.cpp:18,39). _rec is the port's own live record via
+        # VehiclePhysics_Record*. Divergence between them IS the finding.
+        for tag, suffix in (("abs (what the ported consumers read)", "_abs"),
+                            ("rec (the port's live record)", "_rec")):
+            g2 = sum(1 for r in rows if int(r["veh_type" + suffix]) == 1)
+            g3 = sum(1 for r in rows if int(r["state0" + suffix]) == 0)
+            allp = sum(1 for r in rows
+                       if int(r["slot_state"]) not in (0, -1)
+                       and int(r["veh_type" + suffix]) == 1
+                       and int(r["state0" + suffix]) == 0)
+            xs = {r["rec_x" + suffix] for r in rows}
+            frame0 = [r for r in rows if r["frame"] == rows[0]["frame"]]
+            samef = len({(r["rec_x" + suffix], r["rec_z" + suffix]) for r in frame0})
+            print(f"  -- {tag}")
+            print(f"     GATE2 veh_type == 1 : {g2}/{n} ({100.0*g2/n:.4f}%)"
+                  f"   values: {dict(Counter(r['veh_type'+suffix] for r in rows))}")
+            print(f"     GATE3 state0   == 0 : {g3}/{n} ({100.0*g3/n:.4f}%)"
+                  f"   values: {dict(Counter(r['state0'+suffix] for r in rows))}")
+            print(f"     G1-ALL              : {allp}/{n} ({100.0*allp/n:.4f}%)")
+            print(f"     G1-POS rec_x distinct {len(xs)}; cars at one frame occupy "
+                  f"{samef} distinct (x,z) of {len(frame0)}"
+                  f"   -> {'PASS' if (len(xs) > 1 and samef > 1) else 'FAIL'}")
 
         # ---- G1-OUT ----
         out = Counter(r["refdist"] for r in rows)
         print(f"  G1-OUT   refdist distinct values: {len(out)}  "
               f"{dict(list(out.items())[:6])}")
-
-        # ---- G1-POS control ----
-        xs = {r["rec_x"] for r in rows}
-        zs = {r["rec_z"] for r in rows}
-        percar = {v: len({r["rec_x"] for r in rows if r["v"] == v}) for v in "0123"}
-        frame0 = [r for r in rows if r["frame"] == rows[0]["frame"]]
-        samef = len({(r["rec_x"], r["rec_z"]) for r in frame0})
-        print(f"  G1-POS   rec_x distinct {len(xs)}, rec_z distinct {len(zs)}, "
-              f"per-car rec_x distinct {percar}")
-        print(f"           cars at a single frame occupy {samef} distinct (x,z) "
-              f"of {len(frame0)}")
-        if len(xs) <= 1 or samef <= 1:
-            print("           G1-POS FAIL - the position source is dead; gate counts "
-                  "say nothing about FUN_00442a60 specifically (PREREG_G1 section 4)")
-        else:
-            print("           G1-POS PASS - positions vary over time and between cars")
 
         # ---- the race_pct input ----
         rp = Counter(r["racepct_ec"] for r in rows)

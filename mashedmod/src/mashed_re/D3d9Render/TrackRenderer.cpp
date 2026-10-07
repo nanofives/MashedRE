@@ -4013,8 +4013,22 @@ void TrackRenderer::U9186GateDump() {
     if (!gf) {
         gf = std::fopen(s_path, "w");
         if (!gf) { s_path = nullptr; return; }
-        std::fprintf(gf, "frame,v,p5f2770,slot_state,veh_type,state0,rec_t,"
-                         "rec_x,rec_z,racepct_ec,refdist\n");
+        // [G1 CORRECTION 2026-10-08] The *_abs columns read the ORIGINAL's absolute
+        // addresses (0x008815a4 / 0x00881f90 / 0x00881ec8 + v*0xd04). Under
+        // MASHED_STANDALONE those are the blank image-pad: the port's vehicle record
+        // array is rebound to Vehicle::g_vehicleArrayBase, NOT 0x008815a0
+        // (LaunchRevCharge.cpp:42,62,81; stride witness imul 0xd04 at 0x0046d78e).
+        // G1 run 1 read only the absolutes and so measured the pad, not the port.
+        // The *_rec columns read the SAME fields through the port's own accessor at
+        // the record-relative offsets the absolutes correspond to:
+        //   0x008815a4 = record + 0x004     0x00881f90 = record + 0x9f0
+        //   0x00881f48 = record + 0x9a8     0x00881ec8 = record + 0x928
+        // (record base 0x008815a0 + v*0xd04; +0x928 + 0x30/0x38 = +0x958/+0x960,
+        //  the body-matrix translation row the stepdump already logs as rec_958/960).
+        std::fprintf(gf, "frame,v,p5f2770,slot_state,"
+                         "veh_type_abs,state0_abs,rec_t_abs,rec_x_abs,rec_z_abs,"
+                         "veh_type_rec,state0_rec,rec_t_rec,rec_x_rec,rec_z_rec,"
+                         "racepct_ec,refdist\n");
     }
     const std::uint32_t p = Ai::U32(0x005f2770u);
     for (int v = 0; v < 4; ++v) {
@@ -4028,15 +4042,29 @@ void TrackRenderer::U9186GateDump() {
               : -1;
         const std::uint32_t t = Ai::U32(0x00881f48u + vb);
         const std::uintptr_t rec = 0x00881ec8u + vb + static_cast<std::uintptr_t>(t) * 0x40u;
-        std::fprintf(gf, "%d,%d,0x%08lx,%d,%d,%d,%lu,%.9g,%.9g,%.9g,%.9g\n",
+        // Record-relative reads through the port's own accessor, which resolves to
+        // g_vehicleArrayBase standalone and to 0x008815a0 in the .asi.
+        const std::int32_t t_rec = Vehicle::VehiclePhysics_RecordI32(v, 0x9a8);
+        const std::size_t mrow = 0x928u + static_cast<std::size_t>(t_rec) * 0x40u;
+        std::fprintf(gf, "%d,%d,0x%08lx,%d,"
+                         "%d,%d,%lu,%.9g,%.9g,"
+                         "%d,%d,%d,%.9g,%.9g,"
+                         "%.9g,%.9g\n",
                      gframe, v,
                      static_cast<unsigned long>(p),
                      slot_state,
+                     // --- the original's absolute addresses (blank pad standalone) ---
                      Ai::I32(0x008815a4u + vb),
                      Ai::I32(0x00881f90u + vb),
                      static_cast<unsigned long>(t),
                      static_cast<double>(Ai::F32(rec + 0x30u)),
                      static_cast<double>(Ai::F32(rec + 0x38u)),
+                     // --- the same fields on the port's own record ---
+                     Vehicle::VehiclePhysics_RecordI32(v, 0x004),
+                     Vehicle::VehiclePhysics_RecordI32(v, 0x9f0),
+                     t_rec,
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, mrow + 0x30u)),
+                     static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, mrow + 0x38u)),
                      static_cast<double>(Ai::F32(0x008a96ecu +
                          static_cast<std::uintptr_t>(v) * 0x30cu)),
                      static_cast<double>(Ai::F32(0x008989b0u +
