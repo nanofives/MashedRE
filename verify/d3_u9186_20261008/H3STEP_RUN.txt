@@ -1,0 +1,9 @@
+=== H3step  step=True refdist= ===
+    pid=42424
+    exit=0  self_exited=True
+    rows = 19419
+=== H3step_r2  step=True refdist= ===
+    pid=40588
+    exit=0  self_exited=True
+    rows = 19419
+H3 DONE
