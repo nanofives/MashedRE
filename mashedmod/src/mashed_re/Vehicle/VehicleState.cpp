@@ -29,6 +29,55 @@ static constexpr std::uintptr_t kVehicleBase_881f90 = 0x00881f90u;
 static constexpr std::uintptr_t kVehicleBase_881f94 = 0x00881f94u;
 
 // ─────────────────────────────────────────────────────────────────────────────
+// [U-9186 leg H1a 2026-10-08] Record-base rebinding for the STANDALONE target.
+//
+// The constants above are the ORIGINAL's absolute addresses. Under
+// /DMASHED_STANDALONE the per-vehicle record array is not there: it is
+// Vehicle::g_vehicleArrayBase (= g_records, set at VehiclePhysicsRun.cpp:249),
+// so every absolute read above returns blank image-pad. Measured in
+// verify/d3_u9186_20261008/RESULT_G1.md: the alive field reads 0 at the absolute
+// and 1 on the port's own record, on 100% of 53,992 rows.
+//
+// Same shape as Vehicle/LaunchRevCharge.cpp:77-83, which already does this for
+// the same array. The #else branch keeps the absolute so the .asi is unchanged
+// and its Frida evidence (taken on the absolute form) still applies.
+//
+// OFFSET CONVENTION: these are differences from the ARRAY BASE 0x008815a0, not
+// from the field constants above. The comment block at the top of this file
+// states offsets relative to 0x008815a4, so its "+0x00" is "+0x04" here.
+// Mixing the two conventions is the obvious way to get this wrong.
+//   0x008815a4 -> +0x004   0x00881f90 -> +0x9F0   0x00881f94 -> +0x9F4
+// PREREG: verify/d3_u9186_20261008/PREREG_H1.md
+constexpr std::uintptr_t kVehRecordArray = 0x008815a0u;
+constexpr std::size_t    kOff_Alive      = 0x004u;   // 0x008815a4
+constexpr std::size_t    kOff_State      = 0x9F0u;   // 0x00881f90
+constexpr std::size_t    kOff_Secondary  = 0x9F4u;   // 0x00881f94
+
+#ifdef MASHED_STANDALONE
+namespace mashed_re { namespace Vehicle { extern int* g_vehicleArrayBase; } }
+#endif
+
+static inline const char* VehRecord(std::uint32_t idx) {
+#ifdef MASHED_STANDALONE
+    const char* base = reinterpret_cast<const char*>(mashed_re::Vehicle::g_vehicleArrayBase);
+    if (!base) return nullptr;              // array not allocated yet (pre-race)
+#else
+    const char* base = reinterpret_cast<const char*>(kVehRecordArray);
+#endif
+    return base + static_cast<std::size_t>(idx) * kByteStride;
+}
+
+// NOT rebound in this leg, deliberately — PREREG_H1.md section 1:
+//   0x0046c770 / 0x0046dbe0 / 0x0046d700 index the SAME record (+0x10, +0x08,
+//     +0x9C8/9CC/9D0) and carry the identical defect, but each currently returns
+//     pad-zero to its own consumers, so each rebind is a separate potential
+//     behaviour change that deserves its own measurement.
+//   0x0046c6d0 MUST NOT be rebound: 0x008820b0 is a separate entity table
+//     (see the header block above) and 0x008820b0 - 0x008815a0 = 0x1110, past
+//     the 0xd04 stride, so it is not a field of this record.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ─────────────────────────────────────────────────────────────────────────────
 // 0x0046c7b0  VehicleSlotGetter
 // Ghidra decomp:
 //   if (0xf < param_1) return 0xffffffff;
@@ -36,7 +85,10 @@ static constexpr std::uintptr_t kVehicleBase_881f94 = 0x00881f94u;
 // ─────────────────────────────────────────────────────────────────────────────
 extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx) {
     if (vehicleIdx > 0xfu) return 0xffffffffu;
-    return reinterpret_cast<const std::uint32_t*>(kVehicleBase_8815a4)[vehicleIdx * kDWordStride];
+    // [H1a] record-base rebind; .asi resolves to the original absolute.
+    const char* rec = VehRecord(vehicleIdx);
+    if (!rec) return 0u;                    // standalone pre-race: no array yet
+    return *reinterpret_cast<const std::uint32_t*>(rec + kOff_Alive);
 }
 RH_ScopedInstall(VehicleSlotGetter, 0x0046c7b0);  // re-enabled 2026-05-24 c3-vehicle
 
@@ -136,8 +188,11 @@ RH_ScopedInstall(VehicleVec3At9C8Get, 0x0046d700);  // re-enabled 2026-05-24 c3-
 // ─────────────────────────────────────────────────────────────────────────────
 extern "C" __declspec(dllexport) int __cdecl VehicleCarStateRead(std::uint32_t carIdx, std::uint32_t* outState, std::uint32_t* outSecondary) {
     if (carIdx > 0xfu) return 0;
-    *outState     = reinterpret_cast<const std::uint32_t*>(kVehicleBase_881f90)[carIdx * kDWordStride];
-    *outSecondary = *reinterpret_cast<const std::uint32_t*>(kVehicleBase_881f94 + carIdx * kByteStride);
+    // [H1a] record-base rebind; .asi resolves to the original absolutes.
+    const char* rec = VehRecord(carIdx);
+    if (!rec) { *outState = 0u; *outSecondary = 0u; return 1; }  // pre-race
+    *outState     = *reinterpret_cast<const std::uint32_t*>(rec + kOff_State);
+    *outSecondary = *reinterpret_cast<const std::uint32_t*>(rec + kOff_Secondary);
     return 1;
 }
 RH_ScopedInstall(VehicleCarStateRead, 0x0046cbb0);  // re-enabled 2026-05-24 phase-a2 GREEN (9/9 2 distinct)
