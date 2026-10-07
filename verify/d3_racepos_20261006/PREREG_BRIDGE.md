@@ -63,7 +63,7 @@ where `arcpct(v) = fmod(race_[v].arcprog, total_len_)/total_len_*100`. Writes al
 original writes race_pct for every participant and `AiPreTickRubberBand` loops v=0..3).
 
 **(b) Witnesses.** Two columns APPENDED to the default-OFF `MASHED_AI_STEPDUMP` (positions of the
-67 existing columns preserved):
+74 existing columns preserved):
 
 | column | expression | proves |
 |---|---|---|
@@ -84,7 +84,7 @@ committed build with the instrument stashed out and rebuilt, for `G-INERT`. Scor
 | `G-WROTE` | `ra_ec` == `arcpct` on **100 %** of `Y` rows; == 0 on **100 %** of `N` rows | the write itself; per car, print `ok/rows` |
 | `G-LIVE` (**the liveness gate; the control that can fail**) | on `Y`, `val_880` within `1e-3` of `arcpct*0.01 + lap_a9648` on **≥ 95 %** of rows AND differs from the `N` arm's `val_880`; on `N`, `val_880` does not track arcpct | null "no live reader consumes the write" predicts `val_880` identical in both arms; the finding predicts `Y`'s `val_880` tracks the bridged `ra`. Distinguishable by inspection. `lap_a9648` = `I32(0x008a9648 + v*0x30c)` dumped or 0 |
 | `G-EFFECT` | criterion (e) six digits and (b) per-car bands, `Y` vs `N` | **prediction: IDENTICAL (inert at fd0=0)**; (e) ref `launch` 1426.4/2053.0/2055.2, `ft_median_m0` 2550.6/2053.0/2278.2; (b) 5 bands (car 2) |
-| `G-INERT` | 0 differing cells over the 67 pre-existing columns | `B1R`; print `cols × shared (frame,seq,v) keys` |
+| `G-INERT` | 0 differing cells over the 74 pre-existing columns | `B1R`; print `cols × shared (frame,seq,v) keys` |
 | `G-DET` | (e) digits + band counts identical across 3 repeats each arm | each arm's repeats |
 | `G-BANDS-UNEDITED` | both scorers' `git diff`/`status` empty | before first, after last run |
 

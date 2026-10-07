@@ -208,9 +208,62 @@ def lega(args):
     return 0 if ok else 1
 
 
+def bridge(args):
+    """D-11072 bridge-write gates: G-WROTE, G-LIVE (control), from the ra_ec/val_880/
+    lap_9648 witnesses. Y = bridge ON, N = bridge OFF."""
+    def scan(paths):
+        rows = []
+        for p in paths:
+            rows.extend(read_rows(p))
+        return rows
+    Y = scan(args.on)
+    N = scan(args.off)
+    ok = True
+
+    # G-WROTE: ra_ec == arcpct on Y (write took), == 0 on N.
+    print("G-WROTE  threshold: Y ra_ec==arcpct (|d|<1e-3) 100%, N ra_ec==0 100%")
+    gw = True
+    for v in (1, 2, 3):
+        yv = [r for r in Y if int(r["v"]) == v]
+        nv = [r for r in N if int(r["v"]) == v]
+        y_ok = sum(1 for r in yv if abs(float(r["ra_ec"]) - float(r["arcpct"])) < 1e-3)
+        n_ok = sum(1 for r in nv if float(r["ra_ec"]) == 0.0)
+        car = (y_ok == len(yv)) and (n_ok == len(nv))
+        gw &= car
+        print(f"         v{v}  Y {y_ok}/{len(yv)}  N {n_ok}/{len(nv)}  -> {'PASS' if car else 'FAIL'}")
+    ok &= gw
+
+    # G-LIVE (control): on Y, val_880 ~= ra*0.01 + lap (the live reader consumed it) and
+    # differs from N. The null "no live reader" predicts val_880 identical in both arms.
+    print("G-LIVE   threshold (CONTROL): Y val_880 ~= arcpct*0.01+lap_9648 (|d|<1e-2) >=95%,"
+          " and Y!=N in distribution")
+    gl = True
+    for v in (1, 2, 3):
+        yv = [r for r in Y if int(r["v"]) == v]
+        nv = [r for r in N if int(r["v"]) == v]
+        exp_ok = sum(1 for r in yv
+                     if abs(float(r["val_880"])
+                            - (float(r["arcpct"]) * 0.01 + int(r["lap_9648"]))) < 1e-2)
+        f = pct(exp_ok, len(yv))
+        y_nz = sum(1 for r in yv if float(r["val_880"]) != 0.0)
+        n_nz = sum(1 for r in nv if float(r["val_880"]) != 0.0)
+        car = (f >= 0.95) and (y_nz > 0) and (y_nz != n_nz)
+        gl &= car
+        print(f"         v{v}  Y val_880~=expr {exp_ok}/{len(yv)}={f:.4f}"
+              f"  Y nonzero {y_nz}/{len(yv)}  N nonzero {n_nz}/{len(nv)}"
+              f"  -> {'PASS' if car else 'FAIL'}")
+    ok &= gl
+    print(f"\nBRIDGE WROTE+LIVE: {'PASS' if ok else 'FAIL'}")
+    return 0 if ok else 1
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
+    b2 = sub.add_parser("bridge")
+    b2.add_argument("--on", nargs="+", required=True)
+    b2.add_argument("--off", nargs="+", required=True)
+    b2.set_defaults(fn=bridge)
     c = sub.add_parser("legc")
     c.add_argument("--seeded", nargs="+", required=True)
     c.add_argument("--unseeded", nargs="+", required=True)

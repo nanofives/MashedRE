@@ -4113,7 +4113,17 @@ void TrackRenderer::AiStepDump() {
                          // monotonicity re-measure. APPENDED, positions preserved.
                          //   arcprog  race_[v].arcprog (laps*n + gate-1 + segment t)
                          //   arcpct   fmod(arcprog, n)/n*100, the bridge candidate
-                         ",arcprog,arcpct\n");
+                         // [D-11072 bridge write 2026-10-06] witnesses for the
+                         // 0x008a96ec write. APPENDED, positions preserved.
+                         //   ra_ec    F32(0x008a96ec + v*0x30c) read back: proves the
+                         //            write took (== arcpct with the knob on, 0 off).
+                         //   val_880  F32(0x0089a880 + v*4): AiPreTickRubberBand:1471
+                         //            stores ra*0.01 + lap here, so it tracking arcpct
+                         //            proves the LIVE reader at :1468 consumed the write.
+                         //   lap_9648 I32(0x008a9648 + v*0x30c): the a20 lap term in
+                         //            that same expression, so val_880 can be checked.
+                         // PREREG: verify/d3_racepos_20261006/PREREG_BRIDGE.md section 3b
+                         ",arcprog,arcpct,ra_ec,val_880,lap_9648\n");
     }
     for (int v = 1; v <= 3; ++v) {
         if (!g_aib.alive[v]) continue;
@@ -4134,8 +4144,9 @@ void TrackRenderer::AiStepDump() {
                          // D-11072 legs C+A, appended. ss_base/ss_v/ss_raw as
                          // signed decimal; prog/racepct raw.
                          "%lu,%d,%d,%.9g,%d,%d,%.9g,"
-                         // D-11072 leg A follow-up: arcprog, arcpct.
-                         "%.9g,%.9g\n",
+                         // D-11072 leg A follow-up: arcprog, arcpct;
+                         // bridge witnesses: ra_ec, val_880, lap_9648.
+                         "%.9g,%.9g,%.9g,%.9g,%d\n",
                      frame, seq++, v, static_cast<unsigned long>(blk),
                      Ai::U8(blk + 0), Ai::U8(blk + 1), Ai::U8(blk + 3),
                      Ai::U8(blk + 4), Ai::U8(blk + 5),
@@ -4207,7 +4218,14 @@ void TrackRenderer::AiStepDump() {
                      static_cast<double>(
                          (total_len_ > 1e-3f)
                          ? std::fmod(race_[v].arcprog, total_len_) / total_len_ * 100.f
-                         : 0.f));
+                         : 0.f),
+                     // D-11072 bridge witnesses (raw reads of the original slots).
+                     static_cast<double>(*reinterpret_cast<const float*>(
+                         0x008a96ecu + static_cast<std::uintptr_t>(v) * 0x30cu)),
+                     static_cast<double>(*reinterpret_cast<const float*>(
+                         0x0089a880u + static_cast<std::uintptr_t>(v) * 4u)),
+                     *reinterpret_cast<const int*>(
+                         0x008a9648u + static_cast<std::uintptr_t>(v) * 0x30cu));
     }
     std::fflush(lf);
     ++frame;
@@ -4996,6 +5014,26 @@ void TrackRenderer::UpdateRace(float dt) {
     step(0, car_pos_);
     for (int i = 0; i < 3 && i < static_cast<int>(ai_cars_.size()); ++i)
         step(i + 1, ai_cars_[static_cast<std::size_t>(i)].pos);
+
+    // [D-11072 bridge write] Mirror the monotone arcpct into the original per-car
+    // race_pct slot 0x008a96ec + v*0x30c, behind a default-OFF knob. UpdateRace runs
+    // before Ai_Standalone_Tick (:3462), so AiPreTickRubberBand's live read at
+    // AiStandalone.cpp:1468 sees this value the same frame. Writes all 4 cars (the
+    // original writes race_pct for every participant; AiPreTickRubberBand loops v=0..3).
+    // NOT a C-level change: a bridged write is not a behavioural diff.
+    // PREREG: verify/d3_racepos_20261006/PREREG_BRIDGE.md section 3a.
+    {
+        static const bool s_racepctBridge =
+            (std::getenv("MASHED_RACEPCT_BRIDGE") != nullptr);
+        if (s_racepctBridge && total_len_ > 1e-3f) {
+            for (int v = 0; v < kRaceCars; ++v) {
+                const float ap =
+                    std::fmod(race_[v].arcprog, total_len_) / total_len_ * 100.f;
+                *reinterpret_cast<float*>(
+                    0x008a96ecu + static_cast<std::uintptr_t>(v) * 0x30cu) = ap;
+            }
+        }
+    }
 
     // [G4] lap-progress diagnostic (env MASHED_LAP_DIAG -> mashed_re.log, ~1/s).
     {
