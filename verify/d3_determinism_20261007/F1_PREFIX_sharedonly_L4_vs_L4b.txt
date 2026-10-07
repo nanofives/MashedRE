@@ -1,0 +1,27 @@
+A = verify\d3_consumer_20261007\L4.csv
+B = verify\d3_consumer_20261007\L4b.csv
+shared (frame,seq,v) keys: 4600   max frame: 13792
+R-PREFIX = 2306  (16.72 % of the run)
+first differing key: frame=2306 seq=4882 v=3  (39 differing columns)
+    c0            A=67                     B=68
+    rec_9e4       A=4387.64404             B=4389.08008
+    rec_b0c       A=13.4130888             B=13.2908945
+    look_x        A=13.5546751             B=13.5248766
+    look_z        A=2.98414969             B=2.89269805
+    curv          A=4.36001587             B=4.19979858
+    own_x         A=12.3962688             B=12.3775682
+    own_z         A=-0.313821971           B=-0.41095522
+    hist_dc       A=5.1388855              B=5.23150635
+    rec_958       A=12.3962688             B=12.3775673
+    ... and 29 more
+columns differing anywhere (top 10 by row count):
+    rec_9e4       1887 rows
+    look_x        1887 rows
+    look_z        1887 rows
+    curv          1887 rows
+    own_x         1887 rows
+    own_z         1887 rows
+    rec_958       1887 rows
+    rec_960       1887 rows
+    rec_9d4       1887 rows
+    rec_9bc       1887 rows

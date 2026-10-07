@@ -1,0 +1,19 @@
+A = verify\d3_consumer_20261007\L4.csv
+B = verify\d3_consumer_20261007\L10.csv
+shared (frame,seq,v) keys: 4777   max frame: 13408
+R-PREFIX = 1306  (9.74 % of the run)
+first differing key: frame=1306 seq=2713 v=1  (1 differing columns)
+    <row missing>  A=present                B=-
+columns differing anywhere (top 12 by row count):
+    rec_9e4       2064 rows
+    look_x        2064 rows
+    look_z        2064 rows
+    curv          2064 rows
+    own_x         2064 rows
+    own_z         2064 rows
+    rec_958       2064 rows
+    rec_960       2064 rows
+    rec_9d4       2064 rows
+    rec_9bc       2064 rows
+    rec_9c0       2064 rows
+    rec_9c4       2064 rows
