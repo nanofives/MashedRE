@@ -4089,9 +4089,55 @@ void TrackRenderer::U9186GateDump() {
                          // tbl10 is the ONLY limit-table index the original ever uses
                          // (value 1, RESULT_WITNESS.md:106) and thr_a8 is the first of
                          // the four thresholds (6.5 in the original image, :107).
-                         "tbl10,thr_a8\n");
+                         "tbl10,thr_a8,"
+                         // [GATEFIRE idx364 2026-10-08] PREDICTION of what a ported
+                         // FUN_00414060 would compute, measured WITHOUT porting it —
+                         // the H3-WROTE lesson applied before the code is written
+                         // rather than after. Every input is a plain global read, so
+                         // nothing here calls the function under test:
+                         //   FUN_0042f6a0 = *(u32*)0x0067e9fc  (GameStateGetters.cpp:12)
+                         //   FUN_00430790 = *(u32*)0x0067f17c  (SmallLeaves_o6.cpp:22)
+                         //   FUN_00413fa0 = FUN_00430790()*3 + (mode==4?1:mode==5?2:0)
+                         //   FUN_00431d80 = *(u32*)0x0067ea7c  (SplashGameMode_t5.cpp:118)
+                         // and FUN_00414060's own arithmetic, with the four image
+                         // constants read from MASHED.exe.unpatched, NOT guessed:
+                         //   0x005cc32c = 0x3f000000 = 0.5   (scale on 0x0089a37c)
+                         //   0x005cd088 = 0x40200000 = 2.5   (mode-6/10 multiplier)
+                         //   0x005d757c = 0x00000000 = 0.0   (init + lower clamp)
+                         //   0x005cc55c = 0x41200000 = 10.0  (upper clamp)
+                         // pred_360 is the value 0x0089a360 WOULD take. The port
+                         // currently hardcodes 2.5 there (TrackRenderer.cpp:397) with
+                         // U-D3-DIFF360 open; if pred_360 != 2.5 then porting
+                         // FUN_00414060 whole REGRESSES that global, and the real
+                         // blocker is 0x0067ea7c's write-site (U-1305), not this body.
+                         "m42f6a0,g30790,idx413fa0,tie67ea7c,a37c,a384i,pred_360\n");
     }
     const std::uint32_t p = Ai::U32(0x005f2770u);
+    // [GATEFIRE idx364] Predict FUN_00414060's output without porting it. Scalar,
+    // so computed once per frame outside the per-car loop. Transcribed from
+    // re/analysis/bucket_util_0040e4b0_0042f790/0x00414060.md steps 1-5; step 6
+    // (the 0x0089a364 = -1 sentinel and the four -1.0f writes) has no inputs and
+    // so needs no prediction.
+    const std::int32_t m42f6a0  = Ai::I32(0x0067e9fcu);   // FUN_0042f6a0
+    const std::int32_t g30790   = Ai::I32(0x0067f17cu);   // FUN_00430790
+    const std::int32_t idx413fa0 =                         // FUN_00413fa0
+        g30790 * 3 + (m42f6a0 == 4 ? 1 : (m42f6a0 == 5 ? 2 : 0));
+    const std::int32_t tie67ea7c = Ai::I32(0x0067ea7cu);  // FUN_00431d80
+    const float        a37c      = Ai::F32(0x0089a37cu);
+    // The table index is FUN_00413fa0's result; guard it, because a blank-mapped
+    // g30790 could make it large and this is a measurement probe, not game code.
+    const bool idx_ok = (idx413fa0 >= 0 && idx413fa0 < 64);
+    const std::int32_t a384i = idx_ok
+        ? Ai::I32(0x0089a384u + static_cast<std::uintptr_t>(idx413fa0) * 4u) : 0;
+    // step 2: fVar2 = _DAT_0089a37c * 0.5 + (float)(int)(&DAT_0089a384)[iVar1]
+    float fVar2 = a37c * 0.5f + static_cast<float>(a384i);
+    // steps 3-4: the mode overrides, each * 2.5 (0x005cd088)
+    if (m42f6a0 == 6)  fVar2 = static_cast<float>(tie67ea7c) * 2.5f;
+    // FUN_0042fe80 = GetRaceEndFlag = *(u32*)0x0067ea90 (MenuInit.cpp:28)
+    if (m42f6a0 == 10) fVar2 = static_cast<float>(Ai::I32(0x0067ea90u)) * 2.5f;
+    // step 5: init 0.0, take fVar2 if >= 0.0, then clamp above at 10.0
+    float pred360 = 0.0f;
+    if (0.0f <= fVar2) { pred360 = fVar2; if (10.0f < fVar2) pred360 = 10.0f; }
     for (int v = 0; v < 4; ++v) {
         const std::uintptr_t vb = static_cast<std::uintptr_t>(v) * 0xd04u;
         // GATE 1 is only reachable when the pointer is non-null; -1 records
@@ -4143,7 +4189,9 @@ void TrackRenderer::U9186GateDump() {
                          // [GATEFIRE LEG 0] census columns, append-only
                          "%d,%d,%.9g,"
                          "%d,%d,%d,%.9g,%d,"
-                         "%d,%.9g\n",
+                         "%d,%.9g,"
+                         // [GATEFIRE idx364] FUN_00414060 prediction
+                         "%d,%d,%d,%d,%.9g,%d,%.9g\n",
                      gframe, v,
                      static_cast<unsigned long>(p),
                      slot_state,
@@ -4190,7 +4238,11 @@ void TrackRenderer::U9186GateDump() {
                      // bias374 + iVar1*5 resolves to 10 there), and 0x005cd0a8 is
                      // the first threshold. Both expected 0 standalone.
                      Ai::I32(0x005f2dd8u + 10u * 4u),
-                     static_cast<double>(Ai::F32(0x005cd0a8u)));
+                     static_cast<double>(Ai::F32(0x005cd0a8u)),
+                     // --- [GATEFIRE idx364] FUN_00414060 prediction, inputs first ---
+                     m42f6a0, g30790, idx413fa0, tie67ea7c,
+                     static_cast<double>(a37c), a384i,
+                     static_cast<double>(pred360));
     }
     std::fflush(gf);
     ++gframe;
