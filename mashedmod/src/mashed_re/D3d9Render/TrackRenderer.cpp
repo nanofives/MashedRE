@@ -4005,6 +4005,13 @@ void TrackRenderer::AiBridgeSnapshot() {
 // (`[v*0x341]`, `t*0x10`). The byte strides are v*0xd04 and t*0x40 — the decode
 // PromoLoop_round58.cpp:21 already established. Using the decompiler's literals
 // here would read the wrong addresses (memory offset-grep-misses-dword-index).
+// [H1a AMEND A1] the rebound readers, declared at global scope so the probe can
+// CALL them — the only code path H1a alters. Bodies: Vehicle/VehicleState.cpp.
+extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);
+extern "C" int __cdecl VehicleCarStateRead(std::uint32_t carIdx,
+                                           std::uint32_t* outState,
+                                           std::uint32_t* outSecondary);
+
 void TrackRenderer::U9186GateDump() {
     static const char* s_path = std::getenv("MASHED_U9186_GATES");
     if (!s_path || !s_path[0]) return;
@@ -4028,6 +4035,12 @@ void TrackRenderer::U9186GateDump() {
         std::fprintf(gf, "frame,v,p5f2770,slot_state,"
                          "veh_type_abs,state0_abs,rec_t_abs,rec_x_abs,rec_z_abs,"
                          "veh_type_rec,state0_rec,rec_t_rec,rec_x_rec,rec_z_rec,"
+                         // [H1a AMEND A1] the *_fn columns CALL the rebound readers,
+                         // which is the only path H1a actually alters. The *_abs
+                         // columns read the absolutes as raw memory and so could
+                         // never show the rebind — they are retained as the control
+                         // (they must stay dead, proving no memory moved).
+                         "veh_type_fn,state0_fn,"
                          "racepct_ec,refdist\n");
     }
     const std::uint32_t p = Ai::U32(0x005f2770u);
@@ -4046,9 +4059,13 @@ void TrackRenderer::U9186GateDump() {
         // g_vehicleArrayBase standalone and to 0x008815a0 in the .asi.
         const std::int32_t t_rec = Vehicle::VehiclePhysics_RecordI32(v, 0x9a8);
         const std::size_t mrow = 0x928u + static_cast<std::size_t>(t_rec) * 0x40u;
+        std::uint32_t fn_state = 0u, fn_sec = 0u;
+        VehicleCarStateRead(static_cast<std::uint32_t>(v), &fn_state, &fn_sec);
+        const std::uint32_t fn_type = VehicleSlotGetter(static_cast<std::uint32_t>(v));
         std::fprintf(gf, "%d,%d,0x%08lx,%d,"
                          "%d,%d,%lu,%.9g,%.9g,"
                          "%d,%d,%d,%.9g,%.9g,"
+                         "%lu,%lu,"
                          "%.9g,%.9g\n",
                      gframe, v,
                      static_cast<unsigned long>(p),
@@ -4065,6 +4082,9 @@ void TrackRenderer::U9186GateDump() {
                      t_rec,
                      static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, mrow + 0x30u)),
                      static_cast<double>(Vehicle::VehiclePhysics_RecordF32(v, mrow + 0x38u)),
+                     // --- the rebound readers, CALLED (H1a's only altered path) ---
+                     static_cast<unsigned long>(fn_type),
+                     static_cast<unsigned long>(fn_state),
                      static_cast<double>(Ai::F32(0x008a96ecu +
                          static_cast<std::uintptr_t>(v) * 0x30cu)),
                      static_cast<double>(Ai::F32(0x008989b0u +

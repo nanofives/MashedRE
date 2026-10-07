@@ -62,6 +62,49 @@ Checkpoint instrument is the already-built default-OFF probe `MASHED_U9186_GATES
   requirement.
 - `H1-NOREG-E`/`-B` fail while `H1-KNOBOFF` passes → contradictory; re-run both before concluding.
 
+## A1. AMENDMENT 2026-10-08, after run 1 — `H1-CONVERGE`'s instrument was wrong
+
+**Run 1 scored `H1-CONVERGE` 0/53,992 on all three arms.** The rebind is not what failed: the
+gate's instrument never touched it.
+
+The probe's `_abs` columns read the absolute addresses **directly as memory**
+(`Ai::I32(0x008815a4u + vb)`). H1a rebinds the **functions** `VehicleSlotGetter` /
+`VehicleCarStateRead`, not the memory. A raw absolute read sees the blank pad whatever those
+functions do, so `_abs == _rec` was unreachable by construction. Same failure family as
+`PREREG_F2.md`'s `G-TOOK`, which read a dump-local counter instead of `g_det_frame` — **second
+occurrence this session**, hence the note in §A2.
+
+**A second fact run 1 established, and it changes what H1a means.** Grepped: the only callers of
+`VehicleSlotGetter` are `ScoreMasks_ah3.cpp:108,129`, and that TU is in `asi_sources.rsp:214`
+**only**. `VehicleCarStateRead` has no caller at all outside comments. So on the standalone target
+**neither rebound function is called today** — H1a is a *precondition* for H3's port of
+`FUN_00442a60`, not a change with any present effect. Behaviour-neutrality stops being a prediction
+and becomes near-tautological; `H1-KNOBOFF` is correspondingly weak evidence and is reported as
+such.
+
+**Revised gates.** The subject is unchanged — *does the rebind make the readers return live values
+standalone?* Only the instrument changes:
+
+| gate | revised definition |
+|---|---|
+| `H1-CONVERGE` | two new probe columns, `veh_type_fn` and `state0_fn`, obtained by **calling** `VehicleSlotGetter(v)` and `VehicleCarStateRead(v,…)`. Passes when `veh_type_fn == veh_type_rec` and `state0_fn == state0_rec` on **100%** of rows |
+| `H1-GATE2` | `veh_type_fn == 1` on **100%** of rows |
+| `H1-ALL` | with the seed, `slot_state != 0 && veh_type_fn == 1 && state0_fn == 0` on **75%** of rows |
+| `H1-CALLERS` (**new, records the §A1 finding**) | the count of standalone callers of each rebound function, from the source. Expected **0**. If non-zero, `H1-KNOBOFF` regains its force and must be read |
+
+`_abs` columns are retained and still reported — they are now the *control*: they must stay at
+`0`/dead, proving the rebind did not move the underlying memory.
+
+`H1-KNOBOFF`, `H1-NOREG-E`, `H1-NOREG-B`, `H1-ASI` are unchanged in definition but, per
+`H1-CALLERS`, carry little evidential weight for this leg.
+
+## A2. Standing note for future gates in this lane
+
+Twice in one session a gate failed because its instrument did not touch the thing under test
+(`G-TOOK`: dump-local counter vs `g_det_frame`; `H1-CONVERGE`: raw memory read vs a function
+return). Before registering a gate, state in one line **which code path the change alters** and
+**which code path the instrument exercises**, and require them to be the same path.
+
 ## 4. Non-goals
 
 H3 / leg B (`FUN_00442a60`) — still under the `DEFERRED.md:15` prohibition. Any default-ON change.
