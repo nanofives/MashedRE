@@ -1,5 +1,37 @@
 # Next session kickoff
 
+> ## UPDATE 2026-10-08 (U-9186 leg H1a RAN, commits `714a97e1`/`6e805552`): **the vehicle-record rebind LANDED, all gates pass. `VehicleSlotGetter`/`VehicleCarStateRead` now return the port's live record standalone (100% of 53,992 rows), and the default build is byte-for-byte unchanged. H1a is a PRECONDITION for H3, not a behaviour change. NO C-level, nothing default-ON, `original/` untouched, `.asi` unedited.**
+>
+> Read [`RESULT_H1.md`](../verify/d3_u9186_20261008/RESULT_H1.md), then the scope
+> [`VEHICLE_TABLE_BIND_SCOPE_2026-10-08.md`](analysis/VEHICLE_TABLE_BIND_SCOPE_2026-10-08.md).
+>
+> - `H1-CONVERGE` **100.0000%** (3 arms), `H1-GATE2` `veh_type_fn == 1` **100%** (was `0`),
+>   `H1-ALL` **75.0000%** with `MASHED_SLOTSTATE_SEED=1` — the three AI cars.
+> - `H1-KNOBOFF` byte-identical to `E2off_1.csv`; `H1-NOREG-E` 3/3; `H1-NOREG-B` unchanged.
+> - **Control held**: the `_abs` columns stayed dead, so the rebind moved the *binding*, not memory.
+> - **`H1-CALLERS` = 0.** Neither function has a standalone caller (`ScoreMasks_ah3.cpp` is
+>   `.asi`-only), so `H1-KNOBOFF`'s byte-identity is near-tautological and **weak evidence**. The
+>   evidence the rebind works is `H1-CONVERGE` + `H1-GATE2`.
+>
+> ### START HERE
+>
+> 1. **H1b** — `0x0046d4a0` exe body. `.asi`-only today with an empty `exe_file`, so it needs a
+>    second body at one RVA: duplicate-RVA hazard, `hooks.csv` entry through `re-classify`.
+> 2. **H2** — the `MASHED_SLOTSTATE_SEED` default-ON question. `H1-ALL` now shows what it buys.
+>    It stops being inert once H3 exists, so the scope's §5 gates run at that point, not before.
+> 3. **H3** (`FUN_00442a60`) is **still under the `DEFERRED.md:15` "DO NOT start leg B"
+>    prohibition.** H1a does not lift it. The scope argues the prohibition's risk basis has changed
+>    — it assumed synthesis was needed, which G1 run 2 refuted — but lifting it is a USER call.
+> 4. Also still open and independent of this lane: **U-9191** item (b), **U-9195**, the
+>    `0x00409b0e` jumptable.
+>
+> **Gate-writing note, earned twice this session** (`PREREG_H1.md` §A2): `G-TOOK` and
+> `H1-CONVERGE` both failed because the instrument did not touch the thing under test. Before
+> registering a gate, name the code path the change alters and the path the instrument exercises,
+> and require them to be the same.
+>
+> **Do NOT ship the `MASHED_RACEMETRIC_ARC` ON arm.** Blocks below are previous headlines.
+
 > ## UPDATE 2026-10-08 (U-9186 leg G1 RAN, commits `ef420bfc`/`b8f6d1de`): **`FUN_00442a60` is unportable-to-effect today and the blocker is the PER-VEHICLE TABLE SUBSTRATE (`0x008815a4` / `0x00881f90` / `0x00881ec8`), not any one function. The registered control `G1-POS` FAILED; no port was written, by the pre-registration's own decision rule. NO C-level, nothing default-ON, `original/` untouched.**
 >
 > Read [`RESULT_G1.md`](../verify/d3_u9186_20261008/RESULT_G1.md).

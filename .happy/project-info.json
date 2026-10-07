@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-08T04:10:00Z",
+  "updatedAt": "2026-10-08T06:20:00Z",
   "sections": [
     {
       "heading": "Phase",
@@ -11,13 +11,13 @@
       ]
     },
     {
-      "heading": "U-9186 leg G1 RAN 2026-10-08 — blocker is the vehicle-table substrate",
+      "heading": "U-9186 leg H1a LANDED 2026-10-08 — vehicle-record rebind, all gates pass",
       "fields": [
-        { "label": "Verdict", "value": "FUN_00442a60 is unportable-to-effect today; G1-ALL = 0 on all 3 arms. No port written, per the prereg's own rule", "kind": "text" },
-        { "label": "Control", "value": "G1-POS FAILED — the vehicle record reads ONE (x,z) for all 4 cars on every one of 53,992 rows, every arm", "kind": "text" },
-        { "label": "Three gates", "value": ["slot-state: SOLVABLE today via MASHED_SLOTSTATE_SEED (3 of 4 cars read state 2)", "veh_type 0x008815a4: 0 on 100% of rows in EVERY arm, seed-independent — the hard gate, never measured before", "position 0x00881ec8: dead, no knob", "GATE3's 100% pass is VACUOUS — blank table passes == 0 for the wrong reason"], "kind": "list" },
-        { "label": "Standing prohibitions", "value": "DEFERRED.md:15 says DO NOT start leg B; UNCERTAINTIES.md:61 recorded the static blockage 2026-10-06. Do not re-derive a third time", "kind": "text" },
-        { "label": "Next (USER call)", "value": "Can the standalone synthesize 0x008815a4 / 0x00881ec8 from race_[] + ai_cars_, as 0x008a96ec was from arcprog? If NO, D3 (b) has no live route", "kind": "text" },
+        { "label": "Verdict", "value": "VehicleSlotGetter / VehicleCarStateRead now return the port's live record standalone; default build byte-for-byte unchanged", "kind": "text" },
+        { "label": "Gates", "value": ["H1-CONVERGE 100.0000% (3 arms); H1-GATE2 veh_type==1 100% (was 0)", "H1-ALL 75.0000% with MASHED_SLOTSTATE_SEED — the three AI cars", "H1-KNOBOFF byte-identical to E2off_1; NOREG-E 3/3; NOREG-B unchanged", "control held: _abs stayed dead, so the BINDING moved, not memory"], "kind": "list" },
+        { "label": "Honest caveat", "value": "H1-CALLERS = 0 — no standalone caller yet, so H1a is a PRECONDITION and H1-KNOBOFF's byte-identity is weak evidence", "kind": "text" },
+        { "label": "Diagnosis that unlocked it", "value": "G1's 'dead substrate' was wrong: the port's records live at g_vehicleArrayBase, not 0x008815a0. It was a binding gap, not a missing substrate — so no fidelity decision was owed", "kind": "text" },
+        { "label": "Next", "value": ["H1b: 0x0046d4a0 exe body (duplicate-RVA, needs re-classify)", "H2: MASHED_SLOTSTATE_SEED default-ON question", "H3 (FUN_00442a60) STILL under DEFERRED.md:15 'DO NOT start leg B' — a USER call to lift"], "kind": "list" },
         { "label": "Earlier today", "value": "F1+F2 cleared the reproducibility blocker; E2 closed the rule engine as a route (inert, rmetric the only differing column)", "kind": "text" }
       ]
     },
@@ -30,6 +30,7 @@
     }
   ]
 }
+
 
 
 
