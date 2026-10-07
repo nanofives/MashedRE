@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-08T02:40:00Z",
+  "updatedAt": "2026-10-08T04:10:00Z",
   "sections": [
     {
       "heading": "Phase",
@@ -11,14 +11,14 @@
       ]
     },
     {
-      "heading": "D-11072 race position (D3) — leg E2 RAN 2026-10-07, lane CLOSED",
+      "heading": "U-9186 leg G1 RAN 2026-10-08 — blocker is the vehicle-table substrate",
       "fields": [
-        { "label": "Verdict", "value": "INERT at the outcome level — the swap reorders cars on 29.50% of frames and changes nothing else", "kind": "text" },
-        { "label": "Evidence", "value": "rmetric is the ONLY differing column between arms across all 19,418 rows; all six logs share one hash", "kind": "text" },
-        { "label": "Gates", "value": ["E2-WROTE PASS 11671/11671 in-scope, both arms", "E2-DIFF PASS 29.4991% vs a 1% bar", "E2-KNOBOFF PASS: OFF arm identical to F2a over all 77 pre-existing columns", "E2-DET PASS; E2-NOREG-E PASS 3/3; E2-NOREG-B unchanged", "E2-LAPAGREE NON-ZERO 1.1021% — A4's hazard is real, blocks any ON-arm ship"], "kind": "list" },
-        { "label": "Reproducibility", "value": "CLEARED by F1+F2: bit-reproducible under MASHED_DETERMINISTIC=1 MASHED_DET_FRAMES=14400 (E1's blocker was a missing harness knob)", "kind": "text" },
-        { "label": "Next", "value": "U-9186 / FUN_00442a60 — E2 removes the rule engine as an alternative route to the AI over-speed COMMAND defect", "kind": "text" },
-        { "label": "Scope limit", "value": "standalone, scripted-capture, Training, rule 4 only; rules 0 and 10 UNCERTAIN", "kind": "text" }
+        { "label": "Verdict", "value": "FUN_00442a60 is unportable-to-effect today; G1-ALL = 0 on all 3 arms. No port written, per the prereg's own rule", "kind": "text" },
+        { "label": "Control", "value": "G1-POS FAILED — the vehicle record reads ONE (x,z) for all 4 cars on every one of 53,992 rows, every arm", "kind": "text" },
+        { "label": "Three gates", "value": ["slot-state: SOLVABLE today via MASHED_SLOTSTATE_SEED (3 of 4 cars read state 2)", "veh_type 0x008815a4: 0 on 100% of rows in EVERY arm, seed-independent — the hard gate, never measured before", "position 0x00881ec8: dead, no knob", "GATE3's 100% pass is VACUOUS — blank table passes == 0 for the wrong reason"], "kind": "list" },
+        { "label": "Standing prohibitions", "value": "DEFERRED.md:15 says DO NOT start leg B; UNCERTAINTIES.md:61 recorded the static blockage 2026-10-06. Do not re-derive a third time", "kind": "text" },
+        { "label": "Next (USER call)", "value": "Can the standalone synthesize 0x008815a4 / 0x00881ec8 from race_[] + ai_cars_, as 0x008a96ec was from arcprog? If NO, D3 (b) has no live route", "kind": "text" },
+        { "label": "Earlier today", "value": "F1+F2 cleared the reproducibility blocker; E2 closed the rule engine as a route (inert, rmetric the only differing column)", "kind": "text" }
       ]
     },
     {
@@ -30,5 +30,6 @@
     }
   ]
 }
+
 
 

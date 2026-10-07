@@ -1,5 +1,44 @@
 # Next session kickoff
 
+> ## UPDATE 2026-10-08 (U-9186 leg G1 RAN, commits `ef420bfc`/`b8f6d1de`): **`FUN_00442a60` is unportable-to-effect today and the blocker is the PER-VEHICLE TABLE SUBSTRATE (`0x008815a4` / `0x00881f90` / `0x00881ec8`), not any one function. The registered control `G1-POS` FAILED; no port was written, by the pre-registration's own decision rule. NO C-level, nothing default-ON, `original/` untouched.**
+>
+> Read [`RESULT_G1.md`](../verify/d3_u9186_20261008/RESULT_G1.md).
+>
+> - **Measured, 53,992 rows per arm, three arms.** `G1-ALL` = **0** on all three: no row exists
+>   where a ported `FUN_00442a60` would write a non-zero distance.
+> - **`G1-POS` FAILED.** The per-vehicle record at `0x00881ec8 + v*0xd04 + t*0x40` reads **one
+>   (x,z) for all four cars on every row**, in every arm. So the gate counts indict the substrate,
+>   not `FUN_00442a60`.
+> - **Three gates, three states.** Slot-state: **solvable today** via `MASHED_SLOTSTATE_SEED`
+>   (3 of 4 cars read state `2`, player slot 0 stays `0`). `veh_type` (`0x008815a4 + v*0xd04`):
+>   **`0` on 100% of rows in every arm, seed-independent** — the hard gate, and it had never been
+>   measured before. Position: dead, no knob.
+> - **`GATE3`'s 100% pass is vacuous** — a blank table passes an `== 0` test for the wrong reason.
+>   Any future gate chain over this substrate must not count it.
+> - **The probe is sound**: on `G1both` it reads 17,924 distinct values from `0x008a96ec` (bridge
+>   on) while reading one constant from the vehicle record in the same run.
+>
+> ### START HERE — read the standing prohibitions first
+>
+> `DEFERRED.md:15` (D-11072) says **"DO NOT start leg B"** (the `FUN_00442a60` port) and
+> `RACE_POSITION_RECON_SCOPE_2026-10-06.md` §4 says "Risk: high. Do not start Leg B first."
+> `UNCERTAINTIES.md:61` had already recorded the static blockage on 2026-10-06. G1 re-confirmed it
+> in-game and added the two gates that record never tested. **Do not re-derive this a third time.**
+>
+> Options, in priority order:
+>
+> 1. **Decide the substrate question, which is a USER call, not an analysis one.** Can the
+>    standalone synthesize `0x008815a4` / `0x00881ec8` from `race_[]` + `ai_cars_`, the way
+>    `0x008a96ec` was synthesized from `arcprog`? That is a bridge of the same shape and the same
+>    fidelity trade-off Mariano already decided YES on for race position (`RACE_POSITION_RECON_SCOPE`
+>    §1). If YES, U-9186 becomes reachable; if NO, D3 criterion (b) has no live route and should be
+>    re-scoped. **[UNCERTAIN]** — nothing measures this yet.
+> 2. **U-9191** item (b): car-1 body-heading residual, independent of this substrate.
+> 3. **U-9195** participant-count; the `0x00409b0e` jumptable.
+>
+> **Do NOT start leg B.** **Do NOT ship the `MASHED_RACEMETRIC_ARC` ON arm.** The blocks below are
+> previous headlines, left as history.
+
 > ## UPDATE 2026-10-07 (D-11072 leg E2 RAN, commits `ae906890`/`ee98e0ab`/`3dcfa32e`): **the monotone metric reaches the rule engine, reorders the cars on 29.50% of frames, and changes NOTHING else — `rmetric` is the only column that differs between arms across all 19,418 rows. The swap is INERT at the outcome level. The race-position STATE lane is FINISHED; D3's criterion (b) blocker does NOT recede into this consumer. NO C-level, nothing default-ON, `original/` untouched.**
 >
 > Read [`RESULT_E2.md`](../verify/d3_consumer_20261007/RESULT_E2.md). Gates:
