@@ -1,0 +1,10 @@
+##### GF0-CTL: default build still hashes to 86b7b2bb?
+86b7b2bbc88f808cd0f853c744a9a51a7b0bbd11162117bd955cba5043981457 *verify/d3_gatefire_20261008/GF0step.csv
+86b7b2bbc88f808cd0f853c744a9a51a7b0bbd11162117bd955cba5043981457 *verify/d3_u9186_20261008/H3step.csv
+86b7b2bbc88f808cd0f853c744a9a51a7b0bbd11162117bd955cba5043981457 *verify/d3_consumer_20261007/E2off_1.csv
+
+##### GF0-CTL cell-for-cell
+A = verify/d3_u9186_20261008/H3step.csv
+B = verify/d3_gatefire_20261008/GF0step.csv
+shared (frame,seq,v) keys: 19418   max frame: 13497
+R-PREFIX = 13498 (IDENTICAL over the whole overlap)

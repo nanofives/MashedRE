@@ -1,0 +1,107 @@
+
+========================================================================
+ARM OFF   rows=53992
+
+-- scalars (one value per frame, repeated on all 4 rows) --
+  idx364     port: '0'x53992
+             orig: -1 on all 512 calls   [RESULT_WITNESS.md:66]
+  bias374    port: '4'x39336, '2'x4804, '3'x4804, '0'x2644, '1'x2404
+             orig: 0 on all 512 calls   [RESULT_WITNESS.md:67]
+  mode368    port: '1'x44140, '0'x9852
+             orig: 0   [RESULT_WITNESS.md:64]
+  flt360     port: '2.5'x53992
+             orig: 2.5   [RESULT_WITNESS.md:65]
+  framedt    port: '50'x53992
+             orig: 50   [RESULT_WITNESS.md:68]
+  tbl10      port: '0'x53992
+             orig: 1 (the only index ever used)   [RESULT_WITNESS.md:106]
+  thr_a8     port: '0'x53992
+             orig: 6.5   [RESULT_WITNESS.md:107]
+
+-- per-car --
+  timer_4c8   orig: 0..1250, stepping by 50   [RESULT_WITNESS.md:70]
+    v0: non-zero 0/13498  distinct=1  '0'x13498
+    v1: non-zero 0/13498  distinct=1  '0'x13498
+    v2: non-zero 0/13498  distinct=1  '0'x13498
+    v3: non-zero 0/13498  distinct=1  '0'x13498
+  rank_4c4   orig: 0   [RESULT_WITNESS.md:69]
+    v0: non-zero 0/13498  distinct=1  '0'x13498
+    v1: non-zero 0/13498  distinct=1  '0'x13498
+    v2: non-zero 0/13498  distinct=1  '0'x13498
+    v3: non-zero 0/13498  distinct=1  '0'x13498
+  prog_96e8   orig: [no original-side capture]   [UNCERTAINTIES.md:61 says no writer in the port]
+    v0: non-zero 0/13498  distinct=1  '0'x13498
+    v1: non-zero 0/13498  distinct=1  '0'x13498
+    v2: non-zero 0/13498  distinct=1  '0'x13498
+    v3: non-zero 0/13498  distinct=1  '0'x13498
+  refdist   orig: non-zero on 464/125/486/461 of 512   [RESULT_WITNESS.md:73]
+    v0: non-zero 0/13498  distinct=1  '0'x13498
+    v1: non-zero 0/13498  distinct=1  '0'x13498
+    v2: non-zero 0/13498  distinct=1  '0'x13498
+    v3: non-zero 0/13498  distinct=1  '0'x13498
+
+-- GF0-CTL: the *_abs control family must stay dead --
+  veh_type_abs   DEAD (ok)
+  state0_abs     DEAD (ok)
+  rec_x_abs      DEAD (ok)
+  rec_z_abs      DEAD (ok)
+
+========================================================================
+ARM ON   rows=53992
+
+-- scalars (one value per frame, repeated on all 4 rows) --
+  idx364     port: '0'x53992
+             orig: -1 on all 512 calls   [RESULT_WITNESS.md:66]
+  bias374    port: '4'x39336, '2'x4804, '3'x4804, '0'x2644, '1'x2404
+             orig: 0 on all 512 calls   [RESULT_WITNESS.md:67]
+  mode368    port: '1'x44140, '0'x9852
+             orig: 0   [RESULT_WITNESS.md:64]
+  flt360     port: '2.5'x53992
+             orig: 2.5   [RESULT_WITNESS.md:65]
+  framedt    port: '50'x53992
+             orig: 50   [RESULT_WITNESS.md:68]
+  tbl10      port: '0'x53992
+             orig: 1 (the only index ever used)   [RESULT_WITNESS.md:106]
+  thr_a8     port: '0'x53992
+             orig: 6.5   [RESULT_WITNESS.md:107]
+
+-- per-car --
+  timer_4c8   orig: 0..1250, stepping by 50   [RESULT_WITNESS.md:70]
+    v0: non-zero 0/13498  distinct=1  '0'x13498
+    v1: non-zero 0/13498  distinct=1  '0'x13498
+    v2: non-zero 0/13498  distinct=1  '0'x13498
+    v3: non-zero 0/13498  distinct=1  '0'x13498
+  rank_4c4   orig: 0   [RESULT_WITNESS.md:69]
+    v0: non-zero 0/13498  distinct=1  '0'x13498
+    v1: non-zero 0/13498  distinct=1  '0'x13498
+    v2: non-zero 0/13498  distinct=1  '0'x13498
+    v3: non-zero 0/13498  distinct=1  '0'x13498
+  prog_96e8   orig: [no original-side capture]   [UNCERTAINTIES.md:61 says no writer in the port]
+    v0: non-zero 0/13498  distinct=1  '0'x13498
+    v1: non-zero 0/13498  distinct=1  '0'x13498
+    v2: non-zero 0/13498  distinct=1  '0'x13498
+    v3: non-zero 0/13498  distinct=1  '0'x13498
+  refdist   orig: non-zero on 464/125/486/461 of 512   [RESULT_WITNESS.md:73]
+    v0: non-zero 0/13498  distinct=1  '0'x13498
+    v1: non-zero 6784/13498  distinct=2973  '0'x6714, '14.1152067'x3285, '30.6466274'x252, '13.8751268'x158, '14.8513994'x118, ... (2973 distinct total)
+    v2: non-zero 10578/13498  distinct=10441  '0'x2920, '13.8751268'x75, '4.59323645'x33, '4.24244499'x29, '36.3102226'x2, ... (10441 distinct total)
+    v3: non-zero 9632/13498  distinct=6160  '0'x3866, '14.1152067'x3093, '8.15622807'x216, '9.19780922'x89, '14.8513994'x65, ... (6160 distinct total)
+
+-- GF0-CTL: the *_abs control family must stay dead --
+  veh_type_abs   DEAD (ok)
+  state0_abs     DEAD (ok)
+  rec_x_abs      DEAD (ok)
+  rec_z_abs      DEAD (ok)
+
+========================================================================
+Reminder: a port-side value being non-zero does NOT by itself mean the
+substrate is correct — compare against the orig line printed above, and
+read PREREG_GATEFIRE.md s3's decision rules before acting on any row.
+
+##### GF0-DET
+9e7f370f48cec8e54c489ab51cac5e6a98114e9de0ce10bc9097e16b14f4347c *verify/d3_gatefire_20261008/GF0off_1.gates.csv
+9e7f370f48cec8e54c489ab51cac5e6a98114e9de0ce10bc9097e16b14f4347c *verify/d3_gatefire_20261008/GF0off_2.gates.csv
+9e7f370f48cec8e54c489ab51cac5e6a98114e9de0ce10bc9097e16b14f4347c *verify/d3_gatefire_20261008/GF0off_3.gates.csv
+8732b3bcd2c216787410087713d8804f2043b9d69e398d24adcfb3b0b8433d75 *verify/d3_gatefire_20261008/GF0on_1.gates.csv
+8732b3bcd2c216787410087713d8804f2043b9d69e398d24adcfb3b0b8433d75 *verify/d3_gatefire_20261008/GF0on_2.gates.csv
+8732b3bcd2c216787410087713d8804f2043b9d69e398d24adcfb3b0b8433d75 *verify/d3_gatefire_20261008/GF0on_3.gates.csv

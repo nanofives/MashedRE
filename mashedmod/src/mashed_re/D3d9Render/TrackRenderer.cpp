@@ -4062,7 +4062,34 @@ void TrackRenderer::U9186GateDump() {
                          // ported function, so H3-WROTE does not compare the
                          // port against itself.
                          "ref_idx,other_idx,exp_dist,"
-                         "racepct_ec,refdist\n");
+                         "racepct_ec,refdist,"
+                         // [GATEFIRE LEG 0 2026-10-08] RUNTIME substrate census for
+                         // U-9186's two branches. PREREG: verify/d3_gatefire_20261008/
+                         // PREREG_GATEFIRE.md section 3. APPEND-ONLY: every column above
+                         // keeps its position so the H3-era scorers still key on it.
+                         // MEASUREMENT ONLY — nothing here is read by game logic, and
+                         // nothing is seeded (verify/d3_modes37_20261002: "seeding the
+                         // globals would not be a port").
+                         //
+                         // Per-car. timer_4c8 is GF0-TIMER: the witness measured the port
+                         // DEAD at 0 vs the original's 0..1250 stepping by 50
+                         // (RESULT_WITNESS.md:70). prog_96e8 is GF0-PROG1, branch 1's
+                         // input — U-9186 (UNCERTAINTIES.md:61) says it has no writer.
+                         // Note it is 0x008a96e8, FOUR BYTES BELOW the racepct_ec column
+                         // above (0x008a96ec), in the same 0x30c per-car stride.
+                         "timer_4c8,rank_4c4,prog_96e8,"
+                         // Scalars, repeated on each of the 4 rows. idx364 (GF0-IDX364)
+                         // and bias374 (GF0-BIAS374) are the two upstream DISAGREEMENTS
+                         // the witness left open (RESULT_WITNESS.md:109-113): the
+                         // original reads -1 and 0 on all 512 calls, the port read 0 and
+                         // {0,1,2,3}. idx364 decides whether E470 is called at all.
+                         "idx364,bias374,mode368,flt360,framedt,"
+                         // Image-initialised values the standalone never loads, so these
+                         // are expected to read 0 and are the census's negative control:
+                         // tbl10 is the ONLY limit-table index the original ever uses
+                         // (value 1, RESULT_WITNESS.md:106) and thr_a8 is the first of
+                         // the four thresholds (6.5 in the original image, :107).
+                         "tbl10,thr_a8\n");
     }
     const std::uint32_t p = Ai::U32(0x005f2770u);
     for (int v = 0; v < 4; ++v) {
@@ -4112,7 +4139,11 @@ void TrackRenderer::U9186GateDump() {
                          "%lu,%lu,"
                          "%lu,%.9g,%.9g,"
                          "%d,%d,%.9g,"
-                         "%.9g,%.9g\n",
+                         "%.9g,%.9g,"
+                         // [GATEFIRE LEG 0] census columns, append-only
+                         "%d,%d,%.9g,"
+                         "%d,%d,%d,%.9g,%d,"
+                         "%d,%.9g\n",
                      gframe, v,
                      static_cast<unsigned long>(p),
                      slot_state,
@@ -4140,7 +4171,26 @@ void TrackRenderer::U9186GateDump() {
                      static_cast<double>(Ai::F32(0x008a96ecu +
                          static_cast<std::uintptr_t>(v) * 0x30cu)),
                      static_cast<double>(Ai::F32(0x008989b0u +
-                         static_cast<std::uintptr_t>(v) * 4u)));
+                         static_cast<std::uintptr_t>(v) * 4u)),
+                     // --- [GATEFIRE LEG 0] runtime substrate census ---
+                     // Per-car, stride 0x74 (AiLeaderTimer.cpp:53,:54).
+                     Ai::I32(0x0089a4c8u + static_cast<std::uintptr_t>(v) * 0x74u),
+                     Ai::I32(0x0089a4c4u + static_cast<std::uintptr_t>(v) * 0x74u),
+                     // Branch 1's input, stride 0x30c (UNCERTAINTIES.md:61).
+                     static_cast<double>(Ai::F32(0x008a96e8u +
+                         static_cast<std::uintptr_t>(v) * 0x30cu)),
+                     // Scalars (AiLeaderTimer.cpp:48-55).
+                     Ai::I32(0x0089a364u),
+                     Ai::I32(0x0089a374u),
+                     Ai::I32(0x0089a368u),
+                     static_cast<double>(Ai::F32(0x0089a360u)),
+                     Ai::I32(0x007f1008u),
+                     // Image-initialised negative control: index 10 is the only
+                     // limit-table entry the original uses (AiLeaderTimer.cpp:98's
+                     // bias374 + iVar1*5 resolves to 10 there), and 0x005cd0a8 is
+                     // the first threshold. Both expected 0 standalone.
+                     Ai::I32(0x005f2dd8u + 10u * 4u),
+                     static_cast<double>(Ai::F32(0x005cd0a8u)));
     }
     std::fflush(gf);
     ++gframe;

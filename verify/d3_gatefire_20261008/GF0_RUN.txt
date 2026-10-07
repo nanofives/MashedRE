@@ -1,0 +1,29 @@
+=== GF0off_1  step=False refdist= ===
+    pid=35352
+    exit=0  self_exited=True
+    rows (incl header) = 53993
+=== GF0off_2  step=False refdist= ===
+    pid=3136
+    exit=0  self_exited=True
+    rows (incl header) = 53993
+=== GF0off_3  step=False refdist= ===
+    pid=42116
+    exit=0  self_exited=True
+    rows (incl header) = 53993
+=== GF0on_1  step=False refdist=1 ===
+    pid=34220
+    exit=0  self_exited=True
+    rows (incl header) = 53993
+=== GF0on_2  step=False refdist=1 ===
+    pid=14100
+    exit=0  self_exited=True
+    rows (incl header) = 53993
+=== GF0on_3  step=False refdist=1 ===
+    pid=39140
+    exit=0  self_exited=True
+    rows (incl header) = 53993
+=== GF0step  step=True refdist= ===
+    pid=12364
+    exit=0  self_exited=True
+    rows (incl header) = 19419
+GF0 DONE
