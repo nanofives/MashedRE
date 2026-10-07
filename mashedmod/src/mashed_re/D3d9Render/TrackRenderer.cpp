@@ -4123,7 +4123,19 @@ void TrackRenderer::AiStepDump() {
                          //   lap_9648 I32(0x008a9648 + v*0x30c): the a20 lap term in
                          //            that same expression, so val_880 can be checked.
                          // PREREG: verify/d3_racepos_20261006/PREREG_BRIDGE.md section 3b
-                         ",arcprog,arcpct,ra_ec,val_880,lap_9648\n");
+                         ",arcprog,arcpct,ra_ec,val_880,lap_9648"
+                         // [D-11072 leg E2 2026-10-07] AMEND_E2.md A2/A4.
+                         // APPENDED, positions preserved.
+                         //   rmetric  rule_metric_[v]: the rc.metric[v] actually
+                         //            handed to RE::UpdateFinishOrder at :5134 this
+                         //            same frame (UpdateRace :3423 precedes this
+                         //            dump at :3463). Scores E2-WROTE / E2-DIFF.
+                         //   arclaps  race_[v].arclaps, the forward-only lap counter
+                         //            arcprog is built from. Paired with lap (=
+                         //            race_[v].laps) it scores E2-LAPAGREE, which
+                         //            measures the two-lap-counter mismatch baked
+                         //            into the pre-registered ON-arm formula.
+                         ",rmetric,arclaps\n");
     }
     for (int v = 1; v <= 3; ++v) {
         if (!g_aib.alive[v]) continue;
@@ -4146,7 +4158,9 @@ void TrackRenderer::AiStepDump() {
                          "%lu,%d,%d,%.9g,%d,%d,%.9g,"
                          // D-11072 leg A follow-up: arcprog, arcpct;
                          // bridge witnesses: ra_ec, val_880, lap_9648.
-                         "%.9g,%.9g,%.9g,%.9g,%d\n",
+                         "%.9g,%.9g,%.9g,%.9g,%d,"
+                         // leg E2: rmetric, arclaps.
+                         "%.9g,%d\n",
                      frame, seq++, v, static_cast<unsigned long>(blk),
                      Ai::U8(blk + 0), Ai::U8(blk + 1), Ai::U8(blk + 3),
                      Ai::U8(blk + 4), Ai::U8(blk + 5),
@@ -4225,7 +4239,11 @@ void TrackRenderer::AiStepDump() {
                      static_cast<double>(*reinterpret_cast<const float*>(
                          0x0089a880u + static_cast<std::uintptr_t>(v) * 4u)),
                      *reinterpret_cast<const int*>(
-                         0x008a9648u + static_cast<std::uintptr_t>(v) * 0x30cu));
+                         0x008a9648u + static_cast<std::uintptr_t>(v) * 0x30cu),
+                     // leg E2 (AMEND_E2.md A2/A4): what the rule engine consumed,
+                     // and the arc lap counter it disagrees with.
+                     static_cast<double>(rule_metric_[v]),
+                     race_[v].arclaps);
     }
     std::fflush(lf);
     ++frame;
@@ -5129,9 +5147,31 @@ void TrackRenderer::UpdateRace(float dt) {
             rc.alive[i]  = race_[i].alive && rc.active[i];
             rc.score[i]  = scores_[i];
             // DAT_0089a880[i] = lapCounter + lapFrac% * 0.01 (FUN_004177b0).
-            const float pct = std::fmod(race_[i].progress, static_cast<float>(n))
-                              / static_cast<float>(n);
-            rc.metric[i] = static_cast<float>(race_[i].laps) + pct;
+            // [D-11072 leg E2] MASHED_RACEMETRIC_ARC=1 feeds the engine the
+            // MONOTONE arc-length fraction instead of the radial one. The radial
+            // `progress` runs backward mid-lap (484/681/1287 reversals measured vs
+            // the original's 0); `arcprog` is forward-only by construction
+            // (:5000-5011). DEFAULT-OFF: with the env unset the two statements
+            // below are byte-for-byte the previous behaviour.
+            // The formula is PREREG_CONSUMER.md section 4 verbatim, including its
+            // use of race_[].laps rather than race_[].arclaps — AMEND_E2.md A4
+            // registers E2-LAPAGREE to measure that mismatch rather than silently
+            // "fixing" a pre-registered expression.
+            static const bool s_arcMetric =
+                (std::getenv("MASHED_RACEMETRIC_ARC") != nullptr);
+            if (s_arcMetric && total_len_ > 1e-3f) {
+                const float arcpct =
+                    std::fmod(race_[i].arcprog, total_len_) / total_len_ * 100.f;
+                rc.metric[i] = static_cast<float>(race_[i].laps) + arcpct * 0.01f;
+            } else {
+                const float pct = std::fmod(race_[i].progress, static_cast<float>(n))
+                                  / static_cast<float>(n);
+                rc.metric[i] = static_cast<float>(race_[i].laps) + pct;
+            }
+            // AMEND_E2.md A2: hand rc.metric to the stepdump. UpdateCar calls
+            // UpdateRace at :3423 and AiStepDump at :3463, so the dump reads THIS
+            // frame's value, not a stale one. Written for every i each tick.
+            rule_metric_[i] = rc.metric[i];
         }
         RE::UpdateFinishOrder(rule_, rc, rulep_);
 

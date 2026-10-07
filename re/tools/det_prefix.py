@@ -35,11 +35,27 @@ def main():
     # This is NOT the registered R-PREFIX definition; report it separately.
     shared_only = "--shared-only" in sys.argv
 
+    # --common-cols compares only the columns present in BOTH files, in A's order.
+    # Added 2026-10-07 for leg E2, whose dump appends rmetric/arclaps: it is what
+    # lets a new-build capture be checked against an older-schema one on the
+    # PRE-EXISTING columns, which is exactly the denominator E2-KNOBOFF names
+    # (PREREG_CONSUMER.md section 4). Without it any appended column makes two
+    # generations of capture incomparable. Columns dropped are always listed.
+    common_cols = "--common-cols" in sys.argv
+
     cols_a, a, _ = load(pa)
     cols_b, b, _ = load(pb)
     if cols_a != cols_b:
-        print("COLUMN MISMATCH — not comparable")
-        return 1
+        if not common_cols:
+            print("COLUMN MISMATCH — not comparable (pass --common-cols to compare "
+                  "the shared columns only)")
+            return 1
+        sb = set(cols_b)
+        dropped = [c for c in cols_a if c not in sb] + \
+                  [c for c in cols_b if c not in set(cols_a)]
+        cols_a = [c for c in cols_a if c in sb]
+        print(f"--common-cols: comparing {len(cols_a)} shared columns; "
+              f"dropped {len(dropped)}: {', '.join(dropped)}")
     cols = [c for c in cols_a if c not in ("frame", "seq", "v")]
 
     keys = sorted(set(a) | set(b))

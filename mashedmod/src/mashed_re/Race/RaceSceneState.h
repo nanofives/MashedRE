@@ -276,6 +276,11 @@ struct RaceSceneState {
     int   score_prev_[kRaceCars]  = {};            // DAT_008a9570
     int   score_delta_[kRaceCars] = {};            // DAT_008a9520
     float delta_timer_[kRaceCars] = {};            // DAT_008a9510 (ms)
+    // [D-11072 leg E2, AMEND_E2.md A2] MEASUREMENT ONLY: the last rc.metric[i]
+    // handed to Race::RuleEngine::UpdateFinishOrder (TrackRenderer.cpp:5134), so
+    // the stepdump can log what the engine actually consumed. Nothing reads this
+    // but AiStepDump; it feeds no law and changes no behaviour.
+    float rule_metric_[kRaceCars] = {};
     int   elim_order_[kRaceCars]  = {-1, -1, -1, -1};  // DAT_008a94c0
     // Per-car Player Colour index 0..5 (RED/BLUEJAY/MELON/GOLD/PINK/SHADOW).
     // This IS what the original carries per car: the array at 0x007f1a14
