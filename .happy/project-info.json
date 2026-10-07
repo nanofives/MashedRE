@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-08T01:05:00Z",
+  "updatedAt": "2026-10-08T02:40:00Z",
   "sections": [
     {
       "heading": "Phase",
@@ -11,14 +11,14 @@
       ]
     },
     {
-      "heading": "D-11072 race position (D3) — legs F1+F2 RAN 2026-10-07",
+      "heading": "D-11072 race position (D3) — leg E2 RAN 2026-10-07, lane CLOSED",
       "fields": [
-        { "label": "Blocker", "value": "CLEARED — 240 s race is bit-reproducible under MASHED_DETERMINISTIC=1 MASHED_DET_FRAMES=14400", "kind": "text" },
-        { "label": "Evidence", "value": "3 repeats byte-identical (SHA-256 506A210F) across 103/183/91 s wall clock; R-ROUND identical, 5 rounds each", "kind": "text" },
-        { "label": "Cause", "value": "a missing harness knob, not a code defect — run_e1.ps1 never set MASHED_DETERMINISTIC", "kind": "text" },
-        { "label": "Gates", "value": ["G-REPRO PASS, G-PREFIX PASS (full overlap x3)", "G-CTRL PASS: SIM_HZ=59 gives R-PREFIX 0, diverging at frame 0 on round(3000/59)=51 vs 50", "G-TOOK FAILED as written (read a dump-local counter); corrected witness passes — deviation recorded in RESULT_F2 §1"], "kind": "list" },
-        { "label": "E2", "value": "UNBLOCKED. Needs MASHED_RACEMETRIC_ARC implemented (not in source yet) + an E2-KNOBOFF baseline amendment", "kind": "text" },
-        { "label": "Scope limit", "value": "standalone scripted-capture regime only; E1's non-deterministic captures are NOT comparable", "kind": "text" }
+        { "label": "Verdict", "value": "INERT at the outcome level — the swap reorders cars on 29.50% of frames and changes nothing else", "kind": "text" },
+        { "label": "Evidence", "value": "rmetric is the ONLY differing column between arms across all 19,418 rows; all six logs share one hash", "kind": "text" },
+        { "label": "Gates", "value": ["E2-WROTE PASS 11671/11671 in-scope, both arms", "E2-DIFF PASS 29.4991% vs a 1% bar", "E2-KNOBOFF PASS: OFF arm identical to F2a over all 77 pre-existing columns", "E2-DET PASS; E2-NOREG-E PASS 3/3; E2-NOREG-B unchanged", "E2-LAPAGREE NON-ZERO 1.1021% — A4's hazard is real, blocks any ON-arm ship"], "kind": "list" },
+        { "label": "Reproducibility", "value": "CLEARED by F1+F2: bit-reproducible under MASHED_DETERMINISTIC=1 MASHED_DET_FRAMES=14400 (E1's blocker was a missing harness knob)", "kind": "text" },
+        { "label": "Next", "value": "U-9186 / FUN_00442a60 — E2 removes the rule engine as an alternative route to the AI over-speed COMMAND defect", "kind": "text" },
+        { "label": "Scope limit", "value": "standalone, scripted-capture, Training, rule 4 only; rules 0 and 10 UNCERTAIN", "kind": "text" }
       ]
     },
     {
@@ -30,4 +30,5 @@
     }
   ]
 }
+
 

@@ -1,5 +1,43 @@
 # Next session kickoff
 
+> ## UPDATE 2026-10-07 (D-11072 leg E2 RAN, commits `ae906890`/`ee98e0ab`/`3dcfa32e`): **the monotone metric reaches the rule engine, reorders the cars on 29.50% of frames, and changes NOTHING else — `rmetric` is the only column that differs between arms across all 19,418 rows. The swap is INERT at the outcome level. The race-position STATE lane is FINISHED; D3's criterion (b) blocker does NOT recede into this consumer. NO C-level, nothing default-ON, `original/` untouched.**
+>
+> Read [`RESULT_E2.md`](../verify/d3_consumer_20261007/RESULT_E2.md). Gates:
+> `PREREG_CONSUMER.md` §4 as amended by [`AMEND_E2.md`](../verify/d3_consumer_20261007/AMEND_E2.md).
+>
+> - **Every gate scored.** `E2-WROTE` PASS (11671/11671 in-scope rows, both arms). `E2-DIFF` PASS
+>   (318/1078 3-car frames = 29.4991% vs a 1% bar). `E2-KNOBOFF` PASS — the new build's OFF arm is
+>   identical to `F2a` over all 77 pre-existing columns, so the knob perturbed the default path by
+>   exactly nothing. `E2-DET` PASS. `E2-NOREG-E` PASS 3/3. `E2-NOREG-B` unchanged (`v2`'s 5 bands
+>   are the pre-existing baseline, guaranteed by `E2-KNOBOFF` — not a regression).
+> - **`E2-EFFECT` INERT, with stronger evidence than the gate asked for.** A cell-for-cell diff of
+>   the arms names `rmetric` as the *only* differing column, on all 19,418 rows; all six
+>   `mashed_re.log` copies share one hash. `UpdateFinishOrder`'s output is read by nothing that
+>   affects state under `rule=4`. **[UNCERTAIN]** for rules 0 and 10 — untested.
+> - **`E2-LAPAGREE` NON-ZERO: 214/19418 = 1.1021%.** `AMEND_E2.md` A4's registered hazard is real —
+>   the pre-registered formula pairs `race_[].laps` with a fraction derived from the separate
+>   `race_[].arclaps`. Implemented as registered rather than quietly corrected. No consequence while
+>   the swap is inert, but it **blocks any future ship of the ON arm**.
+> - **Run 1 failed `E2-WROTE` at 60.10% on a defective witness** (a frozen slot read as a formula
+>   error) and is preserved as `*_r1`. A7's `rtick` counter replaced an inferred denominator with a
+>   measured one. Worth reading before writing the next witness.
+>
+> ### START HERE
+>
+> The D-11072 lane is closed as a route to criterion (b). **The named carrier is unchanged: the
+> three unported `FUN_00416250` branches (U-9186).** Options, in priority order:
+>
+> 1. **U-9186 / `FUN_00442a60`.** E2 removes the rule engine as an alternative route, so the
+>    progress-producer port is now the only live path to the AI over-speed COMMAND defect.
+>    Everything it needed from the race-position substrate exists and is proven consumed.
+> 2. **Re-run E2 under `rule=0` and `rule=10`** if the inertness needs generalising. Cheap: the
+>    harness is built (`run_e2.ps1`, `check_e2.py`), one knob change, ~12 min for six runs.
+> 3. **Redirect**: U-9191 item (b) car-1 body-heading residual; U-9195 participant-count; the
+>    `0x00409b0e` jumptable.
+>
+> **Do NOT start leg B.** **Do NOT ship the `MASHED_RACEMETRIC_ARC` ON arm** — inert, and A4's
+> formula inconsistency is unresolved. The blocks below are previous headlines, left as history.
+
 > ## UPDATE 2026-10-07 (D-11072 legs F1+F2 RAN, commits `79e7e2eb`/`11eea794`/`87433a24`/`e832eaf8`): **the reproducibility blocker is CLEARED. A 240 s standalone race is bit-reproducible under `MASHED_DETERMINISTIC=1 MASHED_DET_FRAMES=14400` — three repeats gave BYTE-IDENTICAL stepdumps. E1's blocker was a missing harness knob, not a code defect: `run_e1.ps1` never set it. Leg E2 is UNBLOCKED. NO C-level, zero source change, `original/` untouched.**
 >
 > Read [`RESULT_F2.md`](../verify/d3_determinism_20261007/RESULT_F2.md), then
