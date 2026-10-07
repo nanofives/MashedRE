@@ -3461,6 +3461,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         AiBridgeSnapshot();
         Ai::Ai_Standalone_Tick();
         AiStepDump();
+        U9186GateDump();   // [U-9186 G1] default-OFF measurement probe
         const bool phys = Vehicle::VehiclePhysics_Enabled();
         yaww::Flags(faithful_nav, phys);   // A-REACH witnesses the branch, not prose
         // [U-9141 2026-09-29] MASHED_MEASURE_NOOPP=1 — MEASUREMENT HARNESS ONLY. Skips the
@@ -3987,6 +3988,64 @@ void TrackRenderer::AiBridgeSnapshot() {
 //   bytes [0],[1] steer pair, [3] fire, [4] accel, [5] brake
 // The standalone already commits slot = v in Ai_BridgeLoad, which is what the
 // original's own allocator writes at 0x0043f895.
+// [U-9186 leg G1 2026-10-08] MEASUREMENT ONLY. Dumps every input FUN_00442a60
+// (0x00442a60) reads, so its gate chain can be scored offline without porting it.
+// Default-OFF via MASHED_U9186_GATES=<path>. PREREG: PREREG_G1.md section 1.
+//
+// The gate chain, from the headless decompilation:
+//   FUN_0040e370(v)  : *(int*)(PTR_PTR_005f2770 + v*4 + 0x34) != 0        GATE 1
+//   FUN_0046c7b0(v)  : (&DAT_008815a4)[v*0x341] == 1                      GATE 2
+//   FUN_0046cbb0(v)  : (&DAT_00881f90)[v*0x341] == 0                      GATE 3
+//   FUN_0046d4a0(v)  : rec = 0x00881ec8 + v*0xd04 + t*0x40,
+//                      t = *(u32*)(0x00881f48 + v*0xd04); reads +0x30/+0x38
+//   FUN_00408ad0(v)  : *(float*)(0x008a96ec + v*0x30c)
+//   output           : *(float*)(0x008989b0 + v*4)
+//
+// STRIDE NOTE: the decompiler renders the per-vehicle tables dword-indexed
+// (`[v*0x341]`, `t*0x10`). The byte strides are v*0xd04 and t*0x40 — the decode
+// PromoLoop_round58.cpp:21 already established. Using the decompiler's literals
+// here would read the wrong addresses (memory offset-grep-misses-dword-index).
+void TrackRenderer::U9186GateDump() {
+    static const char* s_path = std::getenv("MASHED_U9186_GATES");
+    if (!s_path || !s_path[0]) return;
+    static std::FILE* gf = nullptr;
+    static int gframe = 0;
+    if (!gf) {
+        gf = std::fopen(s_path, "w");
+        if (!gf) { s_path = nullptr; return; }
+        std::fprintf(gf, "frame,v,p5f2770,slot_state,veh_type,state0,rec_t,"
+                         "rec_x,rec_z,racepct_ec,refdist\n");
+    }
+    const std::uint32_t p = Ai::U32(0x005f2770u);
+    for (int v = 0; v < 4; ++v) {
+        const std::uintptr_t vb = static_cast<std::uintptr_t>(v) * 0xd04u;
+        // GATE 1 is only reachable when the pointer is non-null; -1 records
+        // "could not be evaluated", which is NOT the same as "evaluated to 0"
+        // (memory all-zero-reads-prove-nothing-alone).
+        const std::int32_t slot_state =
+            p ? Ai::I32(static_cast<std::uintptr_t>(p) + 0x34u +
+                        static_cast<std::uintptr_t>(v) * 4u)
+              : -1;
+        const std::uint32_t t = Ai::U32(0x00881f48u + vb);
+        const std::uintptr_t rec = 0x00881ec8u + vb + static_cast<std::uintptr_t>(t) * 0x40u;
+        std::fprintf(gf, "%d,%d,0x%08lx,%d,%d,%d,%lu,%.9g,%.9g,%.9g,%.9g\n",
+                     gframe, v,
+                     static_cast<unsigned long>(p),
+                     slot_state,
+                     Ai::I32(0x008815a4u + vb),
+                     Ai::I32(0x00881f90u + vb),
+                     static_cast<unsigned long>(t),
+                     static_cast<double>(Ai::F32(rec + 0x30u)),
+                     static_cast<double>(Ai::F32(rec + 0x38u)),
+                     static_cast<double>(Ai::F32(0x008a96ecu +
+                         static_cast<std::uintptr_t>(v) * 0x30cu)),
+                     static_cast<double>(Ai::F32(0x008989b0u +
+                         static_cast<std::uintptr_t>(v) * 4u)));
+    }
+    std::fflush(gf);
+    ++gframe;
+}
+
 void TrackRenderer::AiStepDump() {
     static const char* s_path = std::getenv("MASHED_AI_STEPDUMP");
     if (!s_path || !s_path[0]) return;

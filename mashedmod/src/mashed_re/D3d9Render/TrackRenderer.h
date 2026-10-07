@@ -303,6 +303,11 @@ private:
     // See re/analysis/D3_AUDIT_2026-09-14.md section 1.
     void  AiBridgeSnapshot();
     void  AiStepDump();
+    // [U-9186 leg G1] MEASUREMENT ONLY, default-OFF (MASHED_U9186_GATES=<path>).
+    // Dumps every input FUN_00442a60 reads so its gate chain can be evaluated
+    // offline without porting it. All reads; writes nothing the game uses.
+    // PREREG: verify/d3_u9186_20261008/PREREG_G1.md section 1.
+    void  U9186GateDump();
     void  AiOptionBStep(AiCar& a, int v, float dt, int ng);   // MASHED_REAL_PHYSICS=0 revert only
     void  EnsurePowerupBackend();                     // lazy Init(this)
     void  SyncHostCar();                              // fill pu_player_/pu_ai_
