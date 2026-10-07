@@ -1,0 +1,51 @@
+== inputs ==
+  F2a: csv=19418 rows, max frame 13497   RULE-EVAL lines=5
+  F2b: csv=19418 rows, max frame 13497   RULE-EVAL lines=5
+  F2c: csv=19418 rows, max frame 13497   RULE-EVAL lines=5
+  F2x: csv=23474 rows, max frame 13454   RULE-EVAL lines=4
+  (max frame is the DUMP-LOCAL counter, TrackRenderer.cpp:3994 - not g_det_frame)
+
+== G-TOOK (did MASHED_DETERMINISTIC pin the timestep?) ==
+  F2a: frames=13498 step_1008 values=['50'] last clk_0ff4=674900 clk/frames=50.0000   ok
+  F2b: frames=13498 step_1008 values=['50'] last clk_0ff4=674900 clk/frames=50.0000   ok
+  F2c: frames=13498 step_1008 values=['50'] last clk_0ff4=674900 clk/frames=50.0000   ok
+  F2x: frames=13455 step_1008 values=['51'] last clk_0ff4=686205 clk/frames=51.0000   (control - exempt)
+  G-TOOK PASS - every repeat frame advanced the AI clock by exactly 50 units (dt == 1/60, exe_main.cpp:2864).
+
+== VOID-ROUNDS (did the match progress?) ==
+  F2a: 5 RULE-EVAL lines
+  F2b: 5 RULE-EVAL lines
+  F2c: 5 RULE-EVAL lines
+  F2x: 4 RULE-EVAL lines
+  no VOID-ROUNDS - every run reached at least 2 rounds.
+
+== G-REPRO (R-ROUND identical across 3 repeats) ==
+  --- F2a ---
+      RULE-EVAL rule=4 round=1 participants=4 r=0 timer=30.00 scores=4,7,5,8
+      RULE-EVAL rule=4 round=2 participants=4 r=0 timer=30.00 scores=2,6,6,10
+      RULE-EVAL rule=4 round=3 participants=4 r=0 timer=30.00 scores=1,4,8,11
+      RULE-EVAL rule=4 round=4 participants=4 r=0 timer=30.00 scores=0,2,10,11
+      RULE-EVAL rule=4 round=5 participants=4 r=0 timer=30.00 scores=0,0,12,11
+  --- F2b ---
+      RULE-EVAL rule=4 round=1 participants=4 r=0 timer=30.00 scores=4,7,5,8
+      RULE-EVAL rule=4 round=2 participants=4 r=0 timer=30.00 scores=2,6,6,10
+      RULE-EVAL rule=4 round=3 participants=4 r=0 timer=30.00 scores=1,4,8,11
+      RULE-EVAL rule=4 round=4 participants=4 r=0 timer=30.00 scores=0,2,10,11
+      RULE-EVAL rule=4 round=5 participants=4 r=0 timer=30.00 scores=0,0,12,11
+  --- F2c ---
+      RULE-EVAL rule=4 round=1 participants=4 r=0 timer=30.00 scores=4,7,5,8
+      RULE-EVAL rule=4 round=2 participants=4 r=0 timer=30.00 scores=2,6,6,10
+      RULE-EVAL rule=4 round=3 participants=4 r=0 timer=30.00 scores=1,4,8,11
+      RULE-EVAL rule=4 round=4 participants=4 r=0 timer=30.00 scores=0,2,10,11
+      RULE-EVAL rule=4 round=5 participants=4 r=0 timer=30.00 scores=0,0,12,11
+
+G-REPRO PASS: all three repeats produced identical R-ROUND (5 rounds).
+
+== G-PREFIX / G-CTRL ==
+Run det_prefix.py (registered definition, membership differences included):
+  py -3.12 re/tools/det_prefix.py verify/d3_determinism_20261007/F2a.csv verify/d3_determinism_20261007/F2b.csv
+  py -3.12 re/tools/det_prefix.py verify/d3_determinism_20261007/F2a.csv verify/d3_determinism_20261007/F2c.csv
+  py -3.12 re/tools/det_prefix.py verify/d3_determinism_20261007/F2b.csv verify/d3_determinism_20261007/F2c.csv
+  py -3.12 re/tools/det_prefix.py verify/d3_determinism_20261007/F2a.csv verify/d3_determinism_20261007/F2x.csv
+G-PREFIX passes on full overlap for the three repeat pairs.
+G-CTRL passes when R-PREFIX(F2a,F2x) < 1440 (10% of the run) AND is materially below the repeat pairs.

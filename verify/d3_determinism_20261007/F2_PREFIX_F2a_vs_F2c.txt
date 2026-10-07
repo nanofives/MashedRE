@@ -1,0 +1,4 @@
+A = verify\d3_determinism_20261007\F2a.csv
+B = verify\d3_determinism_20261007\F2c.csv
+shared (frame,seq,v) keys: 19418   max frame: 13497
+R-PREFIX = 13498 (IDENTICAL over the whole overlap)

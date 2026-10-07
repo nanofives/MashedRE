@@ -1,0 +1,14 @@
+A = verify\d3_determinism_20261007\F2a.csv
+B = verify\d3_determinism_20261007\F2x.csv
+shared (frame,seq,v) keys: 855   max frame: 13497
+R-PREFIX = 0  (0.00 % of the run)
+first differing key: frame=0 seq=0 v=1  (2 differing columns)
+    clk_0ff4      A=50                     B=51
+    step_1008     A=50                     B=51
+columns differing anywhere (top 6 by row count):
+    clk_0ff4      855 rows
+    step_1008     855 rows
+    rec_9e4       852 rows
+    own_x         852 rows
+    own_z         852 rows
+    rec_958       852 rows
