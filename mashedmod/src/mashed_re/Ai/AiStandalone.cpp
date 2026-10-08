@@ -835,6 +835,16 @@ extern "C" {
 int g_wireReached[4] = {0,0,0,0};
 int g_wireRet[4]     = {0,0,0,0};
 int g_wireFire[4]    = {0,0,0,0};
+// [GF1-CALLWISE 2026-10-08] PER-CALL branch-2 outcome, the port's analogue of the
+// original aistep's ret148b0 / ret16060 columns. The counters above are cumulative
+// and cannot be paired call-by-call; these are overwritten on every ControlStep call
+// and read by AiStepDump in the SAME frame (Ai_Standalone_Tick runs at
+// TrackRenderer.cpp:3511, AiStepDump at :3512).
+// CONVENTION MATCHES THE ORIGINAL: -1 = "not evaluated on this call", which is how
+// o_t3's columns encode a branch the control flow never reached. Using 0 for that
+// would collide with a real "predicate returned 0".
+int g_b2Ret[4] = {-1,-1,-1,-1};
+int g_b2Los[4] = {-1,-1,-1,-1};
 }
 #endif
 
@@ -896,14 +906,17 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
             if (s_wireB2) {
                 int candXZ[2] = {0, 0};
                 int tgtXZ[2]  = {0, 0};          // &local_24, the param the body ignores
-                if (v >= 0 && v < 4) ++g_wireReached[v];
+                if (v >= 0 && v < 4) { ++g_wireReached[v]; g_b2Ret[v] = -1; g_b2Los[v] = -1; }
                 const int ltr = AiLeaderTimerProbe2(spline, tgtXZ, candXZ, v);
+                if (v >= 0 && v < 4) g_b2Ret[v] = ltr;
                 if (ltr != 0 && v >= 0 && v < 4) ++g_wireRet[v];
                 if (ltr != 0) {
                     float cx, cz;
                     std::memcpy(&cx, &candXZ[0], 4);
                     std::memcpy(&cz, &candXZ[1], 4);
-                    if (s_host.los_clear(ownX, ownZ, cx, cz) != 0) {
+                    const int losr = s_host.los_clear(ownX, ownZ, cx, cz);
+                    if (v >= 0 && v < 4) g_b2Los[v] = losr;
+                    if (losr != 0) {
                         if (v >= 0 && v < 4) ++g_wireFire[v];
                         ctrl[5] = 0xff;          // param_3[5] = 0xff
                         ctrl[0] = 0;             // *param_3   = 0

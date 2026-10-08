@@ -4076,6 +4076,8 @@ extern "C" int __cdecl AiLeaderTimerExitSite(void);
 // ControlStep (Ai/AiStandalone.cpp), distinct from the gates probe above.
 extern "C" int g_wireReached[4]; extern "C" int g_wireRet[4];
 extern "C" int g_wireFire[4];
+// [GF1-CALLWISE] per-call branch-2 outcome, -1 = not evaluated.
+extern "C" int g_b2Ret[4]; extern "C" int g_b2Los[4];
 
 void TrackRenderer::U9186GateDump() {
     static const char* s_path = std::getenv("MASHED_U9186_GATES");
@@ -4515,7 +4517,14 @@ void TrackRenderer::AiStepDump() {
                          //            since that car's previous dumped row, so a
                          //            frozen slot is excluded by measurement
                          //            rather than by a frame threshold.
-                         ",rmetric,arclaps,rtick\n");
+                         ",rmetric,arclaps,rtick"
+                         // [GF1-CALLWISE 2026-10-08] PER-CALL branch-2 outcome, the
+                         // port's analogue of the original aistep's ret148b0 / ret16060.
+                         // APPENDED, so every column above keeps its position. -1 means
+                         // "not evaluated on this call", matching how o_t3 encodes a
+                         // branch the control flow never reached -- 0 would collide with
+                         // a real "the predicate returned 0".
+                         ",b2_ret,b2_los\n");
     }
     for (int v = 1; v <= 3; ++v) {
         if (!g_aib.alive[v]) continue;
@@ -4540,7 +4549,9 @@ void TrackRenderer::AiStepDump() {
                          // bridge witnesses: ra_ec, val_880, lap_9648.
                          "%.9g,%.9g,%.9g,%.9g,%d,"
                          // leg E2: rmetric, arclaps, rtick.
-                         "%.9g,%d,%lu\n",
+                         "%.9g,%d,%lu,"
+                         // [GF1-CALLWISE] b2_ret, b2_los
+                         "%d,%d\n",
                      frame, seq++, v, static_cast<unsigned long>(blk),
                      Ai::U8(blk + 0), Ai::U8(blk + 1), Ai::U8(blk + 3),
                      Ai::U8(blk + 4), Ai::U8(blk + 5),
@@ -4624,7 +4635,12 @@ void TrackRenderer::AiStepDump() {
                      // and the arc lap counter it disagrees with.
                      static_cast<double>(rule_metric_[v]),
                      race_[v].arclaps,
-                     static_cast<unsigned long>(rule_metric_tick_));
+                     static_cast<unsigned long>(rule_metric_tick_),
+                     // [GF1-CALLWISE] branch 2's per-call outcome, written by the wired
+                     // site in ControlStep earlier in THIS frame (Ai_Standalone_Tick at
+                     // :3511 runs before AiStepDump at :3512). -1 when the wired block
+                     // did not evaluate -- knob off, or the mode-6 gate not taken.
+                     g_b2Ret[v], g_b2Los[v]);
     }
     std::fflush(lf);
     ++frame;
