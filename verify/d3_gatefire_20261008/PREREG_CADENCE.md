@@ -51,3 +51,19 @@ HARNESS-TRUNCATED. Run 2 measures the natural hold: same argv plus
 |---|---|
 | G-NOPRESS | `in0..in7` == 0 on every sub-state-3 sample (verifies the knob took) |
 | G-NATURAL | report the sub-state-3 length (samples and clk span), and at the flag 1->0 sample the entry-0 distance to (`tgt_fe4`,`tgt_fec`) and all eight input bytes. All inputs 0 => clear attributed to site (a) (or to a type-0 entry other than entry 0, which is not sampled). If the flag never clears inside `--hold`, report "no clear within hold" |
+
+## ADDENDUM 2 (2026-10-08, before run 3): entry-type census
+
+Question: which `FUN_004464c0` arms run during phase 3. Types: 0 -> `FUN_00445aa0`,
+1 -> `FUN_00441d40`, 2 -> `FUN_00442440` (`0x004464d7..0x004464f8`). Run 3 = run 2's argv
+(`--statediff-out`, no presses), `--cam` now samples entries 0..6 (`e<k>_type`, `e<k>_a8`,
+`e<k>_x`, `e<k>_z`, base `0x008964c0 + k*0xd8`).
+
+| id | registered threshold |
+|---|---|
+| G-NOPRESS3 | `in0..in7` == 0 on every sub-state-3 sample |
+| G-COUNT | `n994` on sub-state-3 samples, reported as a distribution; entries k >= n994 are NOT dispatched and are excluded from the census |
+| G-TYPES | per entry k < n994: distribution of `e<k>_type` over sub-state-3 samples. Any value 1 or 2 => that arm is live in phase 3 and joins D-11073's cost; only 0 => types 1/2 are not needed for phase 3 in this scenario. Values outside {0,1,2} reported raw (no arm dispatches them) |
+| G-CLEARER | at the flag 1->0 sample: which type-0 entries have planar distance to (`tgt_fe4`,`tgt_fec`) < 0.05 (raw target, offset not applied; poll non-atomic) |
+
+Blind spots: one track, one scenario; a type that changes for under one poll interval is invisible.

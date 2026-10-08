@@ -103,3 +103,25 @@ non-statediff `scenario_launch` run is truncated the same way.**
   injected input existed in run 2.
 - `CALLWISE2`'s original anchor `i0 = 683` calls and this 652-frame hold are not the same unit.
   No claim is made that they match.
+
+## 6. Run 3: entry-type census (PREREG addendum 2)
+
+Raw: `o_cadence_types.csv` (2,384 samples, 60 Hz, `--statediff-out`, `--hold 30`, PID 19144, not
+killed by this tool). `--cam` now samples entries 0..6.
+
+| gate | verdict | evidence |
+|---|---|---|
+| G-NOPRESS3 | PASS | `in0..in7` = 0 on 626/626 sub-state-3 samples |
+| G-COUNT | `n994 = 7` on 626/626 | all seven entries are dispatched |
+| G-TYPES | **types 1 AND 2 are LIVE** | constant across all 626 sub-state-3 samples (and all 1,765 rows where read): e0 = **0**, e1/e2/e3 = **1**, e4/e5 = **2**, e6 = **3** (raw; no `FUN_004464c0` arm dispatches 3) |
+| G-CLEARER | **entry 0** | at the 1->0 sample (1244) entry 0 is 0.0279 from the raw target; entries 1..6 are 4.45-31.30 away. Entry 0 is the ONLY type-0 entry, so it is the only entry that can reach `FUN_00445aa0` |
+
+Replication: phase 3 = **625** flag-1 samples, clk 0 -> 32,550 (run 2: 628, 0 -> 32,600). One frame
+apart.
+
+**What this means for D-11073.** `FUN_004430a0` has exactly two callers (`FUN_004102f0` sets,
+`FUN_00445aa0` clears), so the **hold and its end depend only on entry 0 and type 0**. The type-1
+(`FUN_00441d40`) and type-2 (`FUN_00442440`) arms run on every phase-3 frame. They are needed for
+the fly-in's **visual** parity, not for its length or its release. Static basis: `FUN_00445aa0`
+reads only its own entry, `param_2` (the `0x00897fe0` struct), the input bytes, and
+`DAT_007f1008` / `DAT_007f101c`. **Checked, not uncertain:** neither arm writes the `0x00897fe0` struct. `FUN_00441d40` (1,730 B) touches `param_2` only twice, both reads: it passes it to `FUN_00441c80` (line 47 of the decomp), which only reads `+0x1c` / `+0x20`, and it reads `+0x20` at line 190. `FUN_00442440` (391 B) never references its `param_2`. The rest of both arms' callees are RW math on entry-local pointers, plus `FUN_00408a50` / `FUN_0040dc90` / `FUN_0046d4a0`, and none of them is passed the struct.

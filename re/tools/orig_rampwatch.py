@@ -106,10 +106,12 @@ A_CD29B8 = 0x005f29b8
 A_RULE0FD0 = 0x007f0fd0
 A_BA88 = 0x0063ba88
 A_F1A50 = 0x007f1a50
+CAM_N, CAM_STRIDE = 7, 0xd8   # entries 1..6 sampled too (PREREG_CADENCE.md addendum 2)
 CAM_COLS = (["flag_fe0", "tgt_fe4", "tgt_fe8", "tgt_fec", "ffc", "f800",
              "d70", "d74", "d78", "h657448", "n994",
              "e0_type", "e0_x", "e0_z", "e0_a8", "cd_29b8", "rule_0fd0", "ba88", "f1a50"]
-            + ["in%d" % k for k in range(IN_N)])
+            + ["in%d" % k for k in range(IN_N)]
+            + ["e%d_%s" % (k, f) for k in range(1, CAM_N) for f in ("type", "a8", "x", "z")])
 
 PROCESS_VM_READ = 0x0010
 PROCESS_QUERY_INFORMATION = 0x0400
@@ -264,6 +266,12 @@ def main():
                 for k in range(IN_N):
                     b = read(h, A_IN0 + k * IN_STRIDE, 1)
                     r["in%d" % k] = None if b is None else b[0]
+                for k in range(1, CAM_N):
+                    e = A_CAM0 + k * CAM_STRIDE
+                    r["e%d_type" % k] = i32(h, e + 4)
+                    r["e%d_a8" % k] = i32(h, e + 0xa8)
+                    r["e%d_x" % k] = f32(h, e + 0x3c)
+                    r["e%d_z" % k] = f32(h, e + 0x44)
             rows.append(r)
             time.sleep(1.0 / hz)
     finally:

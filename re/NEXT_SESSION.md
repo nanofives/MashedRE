@@ -13,10 +13,12 @@
 > forever. Site (a) needs `FUN_00445aa0`'s flag-set branch, `FUN_00442600`, and the target copy at
 > `0x004481c9` in `FUN_00446520` (computed base, 0 static refs).
 >
-> **2. D-11073 row corrected via re-classify.** The camera-module inference is struck, and the new
-> open read is whether `Race/RaceCamera.cpp` carries the `0x004481c9` copy plus the type-0 entry
-> state. **That is the next thing to read before costing D-11073**, and it is a source survey
-> for the worker.
+> **2. D-11073 row corrected and then UPDATED, both via re-classify. Cost is now listed in the row.**
+> The standalone carries NONE of clear site (a) (`SURVEY_RACECAM.md`). Live census: 7 entries,
+> types 0/1/1/1/2/2/3. Only entry 0 (type 0) can clear the flag, and types 1/2 serve visual parity only
+> (RESULT_CADENCE.md s6). To port: seed + coordinator + flag, `FUN_00442600`, a real entry record,
+> the `FUN_00445aa0` flag-set branch, the `0x004481c9` copy (split `pos_out_`), the sub-mode != 6
+> path with `FUN_004464c0`, and an offset-0 flag on `RaceCamera`.
 >
 > **3. `DAT_00657448` / `DAT_00639d70` / `d78` = 0 on 656/656 live sub-state-3 samples.**
 >
