@@ -1,0 +1,105 @@
+# RESULT: D-11073 exit-flag cadence (task 1) + clip-handle liveness (task 3)
+
+Date 2026-10-08. Pre-registration: `PREREG_CADENCE.md` (main table before run 1, addendum
+before run 2). READ-ONLY on the game: `ReadProcessMemory` poll, `re/tools/orig_rampwatch.py
+--cam` (new opt-in column set; default output unchanged). No build, no port change, no C-level.
+Process hygiene: zero MASHED running before either run; one new PID adopted each time
+(18184, 35344); neither was killed by this tool.
+
+Raw: `o_cadence.csv` / `.log` (run 1, 4,099 samples), `o_cadence_nopress.csv` / `.log`
+(run 2, 4,125 samples). Both at 60 Hz, `--track 0 --mode 10 --cars 4 --car 0
+--poke-ctrl-slots --hold 60`; run 2 adds `--statediff-out` (scratch .msd, not kept).
+
+## 0. Verdict first
+
+> **The exit flag HOLDS, and its natural release is the camera-entry DISTANCE test, not input
+> and not the clip module.** Run 2, with no injected input: flag = 1 on **628/630** sub-state-3
+> samples, for clk **0 -> 32,600 = 652 frames** (50 ticks/frame). It clears on the sample where
+> entry 0 is **0.0207** from the target. That is clear site (a), `fVar3 < 0.02f`. All eight input
+> bytes read 0 on every sub-state-3 sample.
+>
+> **`FUN_00445aa0` runs every frame of sub-state 3, but its clears are conditional.** It is not an
+> immediate cancel, so the hold survives. **The cheap estimate's END condition was wrong,
+> though.** In an unattended run, the hold ends only through site (a). Site (a) needs the
+> type-0 entry motion (`FUN_00445aa0`'s flag-set branch) and the target copy in
+> `FUN_00446520`. Porting the coordinator plus the flag alone would **hold forever** in a
+> no-input deterministic run.
+>
+> **Task 3: the clip handles are ZERO throughout phase 3 on both runs.** `DAT_00657448`,
+> `DAT_00639d70` and `DAT_00639d78` all read 0 on **656/656** sub-state-3 samples. So
+> `FUN_00405430` returns 0, `FUN_0040d470` is not gated off, and `FUN_00405460` returns 0. The
+> camera-path module plays no part in this scenario's phase 3.
+
+## 1. Static chain (Ghidra, pool clone, read-only)
+
+- **Per-frame route in sub-state 3.** `FUN_004111c0` case 3 calls `FUN_004102f0` and then
+  `FUN_0040fc00`. `FUN_0040fc00` calls `FUN_0040d470(0)` unconditionally. `FUN_0040d470`
+  returns early only when `DAT_0063ba8c==3 && FUN_00405430()!=0`, which is clip-gated. It then
+  calls `FUN_00448220`, which reaches `LAB_004483a3` when sub-state is not 6, 7 or -1.
+  That label calls `FUN_00446520(&DAT_00897fe0)`. The site at `0x004468e2..0x004468f9` reaches
+  `FUN_004464c0([ebp+8])` when sub-mode != 6. `FUN_004464c0` runs `FUN_00445aa0(entry,
+  &DAT_00897fe0)` for each entry with `entry+4 == 0`. Entries live at `0x008964c0`, stride
+  0xd8, count `DAT_00898994` (writer `FUN_00442600` at `0x004426b7`).
+- **`*param_2` IS the exit flag.** `FUN_00448700` pushes `0x897fe0` at `0x00448706`. Both
+  `FUN_004430a0(0)` sites are in the `*param_2 != 0` branch and need `entry+0xa8 == 0`:
+  - (a) `fVar3 < _DAT_005ce18c`, which is **0.02f** (`0ad7a33c`). `fVar3` is the horizontal
+    distance from entry `+0x3c/+0x44` to `param_2[1]/[3]`, the latter offset by
+    `min(d,4)*_DAT_005ccac8` (0.3333).
+  - (b) any byte `0x007f1042 + k*0x4c != 0`, k=0..7. That byte is per-player input block
+    +0x0a, written by the cook `FUN_00496530` at `0x004965b7`.
+- **The target `param_2[1..3]` has a writer the reference count cannot see.**
+  `FUN_00446520` at `0x004481c9..0x004481e2` copies `[ebp+8]+0x40..+0x48` into
+  `[ebp+8]+4..+0xc`, with `[ebp+8] = &DAT_00897fe0`. Ghidra reports **0 references** to
+  `0x00897fe4..ec` (computed base). This is the same addressing-mode trap as the
+  standing caution.
+- **Order inside `FUN_004102f0`** (`0x004102fc..0x00410313`): `FUN_00448700(0,0)` runs 100
+  dispatch ticks with the flag still 0. Then `FUN_004430a0(1)`, `FUN_0040e590`,
+  `FUN_0040d470(1)`.
+
+## 2. Gates, as registered
+
+| gate | verdict | evidence |
+|---|---|---|
+| G-ARM | PASS | 1 new PID per run; sub-state 3 on 26 (run 1) / 630 (run 2) samples; `flag_fe0` readable on every clocked sample |
+| G-PATH | PASS | sub-state 3: `n994 = 7` (run 2: 629/630; one sample 0 on the 2->3 edge), `e0_type = 0` on all, `f1a50 = 0` on all, `rule_0fd0 = 0` |
+| G-CLIP | **ZERO-ALL** | `h657448`, `d70`, `d78` = 0 on 26/26 + 630/630 sub-state-3 samples. Blind to a write-then-clear inside one frame |
+| G-HOLD | **PASS (flag holds)** | run 1: 25/26 = 96%; run 2: 628/630 = 99.7% |
+| G-CAUSE (run 1) | **NOT the distance branch** | at the 1->0 sample `in0 = 255` and entry-0 distance = 29.36. Run 1 was cut short by the harness, see §3 |
+| G-NOPRESS (run 2) | PASS | `in0..in7 = 0` on 630/630 sub-state-3 samples |
+| G-NATURAL (run 2) | **site (a)** | 652 frames; at the 1->0 sample all inputs 0, distance 0.0207 (0.0280 and 0.0368 on the two samples before). Distance falls monotonically, 29.4 -> 0.02, at these sampled points: 684: 27.49, 810: 16.41, 936: 6.23, 1062: 2.14, 1188: 0.63 |
+
+## 3. Harness finding: run 1's phase 3 was truncated by the harness
+
+`scenario_launch.py:3347` calls `E.press(4, 250)` every loop iteration unless `--statediff-out`
+is set. The comment says "to skip the start intro". In run 1, `in0` follows a ~14-on / ~20-off
+sample square wave from sample 612 onward. The first edge lands on the flag-clear sample, so
+run 1's 25-frame phase 3 is **harness-truncated**. **Any phase-3 measurement from a
+non-statediff `scenario_launch` run is truncated the same way.**
+
+## 4. What this changes in D-11073's estimate
+
+- **Needed for the HOLD:** the `DAT_005f29b8 = 100000` seed (FUN_004111c0 case 1), the
+  172 B `FUN_004102f0` coordinator, and the flag `FUN_004430a0`/`FUN_004430b0`. This part is
+  unchanged.
+- **Needed for the hold to END without input:** clear site (a). That means
+  `FUN_004464c0` dispatch (C2, hook-only file `Util/CameraEntryDispatch.cpp`, which calls the
+  original's `0x00445aa0`), `FUN_00445aa0`'s flag-set branch (2,579 B, C2), the type-0 entry
+  set-up (`FUN_00442600`, writes `DAT_00898994`), and the target copy at
+  `0x004481c9` inside the sub-mode != 6 path of `FUN_00446520`. The port's
+  `Race/RaceCamera.cpp` is labelled the "0x00446520 race branch". **[UNCERTAIN]** whether it
+  carries that copy and the entry state. That is unread, and it is a source survey.
+- **NOT needed:** the camera-path clip module `0x004053d0..0x00405540`. Its handles are 0
+  for the whole of phase 3 in this scenario.
+- **Length to reproduce:** 652 frames in this scenario, set by the entry-0 approach dynamics
+  (29.4 -> 0.02). Not measured: other tracks, and the six other entries (only entry 0 is
+  sampled).
+
+## 5. Residuals, named
+
+- Entries 1..6 are not sampled. Site (a) can fire from any type-0 entry. Run 2 attributes the
+  clear to site (a) because site (b) is entry-independent and read 0, not specifically to
+  entry 0.
+- The 60 Hz poll is non-atomic. A 1-frame input pulse between polls is not excluded. No
+  injected input existed in run 2.
+- `CALLWISE2`'s original anchor `i0 = 683` calls and this 652-frame hold are not the same unit.
+  No claim is made that they match.

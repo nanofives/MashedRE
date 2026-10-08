@@ -86,6 +86,31 @@ ALIVE_STRIDE = 0xd04
 
 kTickScale = 1.0 / 3000.0   # _DAT_005cc948, Ai/AiStandalone.cpp:611
 
+# [D-11073 CADENCE 2026-10-08, opt-in --cam] phase-3 exit flag + camera-path state.
+# Pre-registration: verify/d3_gatefire_20261008/PREREG_CADENCE.md.
+#   DAT_00897fe0 exit flag (FUN_004430a0 writes, FUN_004430b0 reads); it is ALSO the
+#   head of the struct FUN_00445aa0 receives as param_2: [1..3] f32 target, [7]/[8]
+#   written by FUN_00448700 at 0x0044871e/0x00448723.
+#   DAT_00639d70/74/78 clip handle / cursor / view (FUN_00405430, FUN_00405460).
+#   DAT_00657448 clip-handle source read at 0x004270bd; zero static writers.
+#   Camera entries: base 0x008964c0, stride 0xd8, count DAT_00898994 (FUN_004464c0);
+#   entry+4 type (0 -> FUN_00445aa0), +0x3c/+0x44 x/z, +0xa8 the clear-site guard.
+#   Input bytes 0x007f1042 + k*0x4c, k=0..7 (FUN_00445aa0 clear site (b)).
+A_FLAG = 0x00897fe0
+A_CLIP70, A_CLIP74, A_CLIP78 = 0x00639d70, 0x00639d74, 0x00639d78
+A_H657448 = 0x00657448
+A_NCAM = 0x00898994
+A_CAM0 = 0x008964c0
+A_IN0, IN_STRIDE, IN_N = 0x007f1042, 0x4c, 8
+A_CD29B8 = 0x005f29b8
+A_RULE0FD0 = 0x007f0fd0
+A_BA88 = 0x0063ba88
+A_F1A50 = 0x007f1a50
+CAM_COLS = (["flag_fe0", "tgt_fe4", "tgt_fe8", "tgt_fec", "ffc", "f800",
+             "d70", "d74", "d78", "h657448", "n994",
+             "e0_type", "e0_x", "e0_z", "e0_a8", "cd_29b8", "rule_0fd0", "ba88", "f1a50"]
+            + ["in%d" % k for k in range(IN_N)])
+
 PROCESS_VM_READ = 0x0010
 PROCESS_QUERY_INFORMATION = 0x0400
 
@@ -143,6 +168,9 @@ def main():
         i = argv.index("--hz"); hz = float(argv[i + 1]); del argv[i:i + 2]
     if "--wait" in argv:
         i = argv.index("--wait"); wait_s = float(argv[i + 1]); del argv[i:i + 2]
+    cam = "--cam" in argv
+    if cam:
+        argv.remove("--cam")
     out = Path(argv[0]); argv = argv[1:]
     if argv and argv[0] == "--":
         argv = argv[1:]
@@ -185,6 +213,8 @@ def main():
             "substate", "ord0", "ord1", "ord2", "ord3",
             "slotptr", "e470_0", "e470_1", "e470_2", "e470_3",
             "alive_0", "alive_1", "alive_2", "alive_3"]
+    if cam:
+        cols += CAM_COLS
     rows = []
     try:
         while proc.poll() is None:
@@ -220,6 +250,20 @@ def main():
                                     if base else None)
             for s in range(4):
                 r["alive_%d" % s] = i32(h, A_ALIVE + s * ALIVE_STRIDE)
+            if cam:
+                r.update({
+                    "flag_fe0": i32(h, A_FLAG), "tgt_fe4": f32(h, A_FLAG + 4),
+                    "tgt_fe8": f32(h, A_FLAG + 8), "tgt_fec": f32(h, A_FLAG + 0xc),
+                    "ffc": i32(h, A_FLAG + 0x1c), "f800": i32(h, A_FLAG + 0x20),
+                    "d70": i32(h, A_CLIP70), "d74": f32(h, A_CLIP74), "d78": i32(h, A_CLIP78),
+                    "h657448": i32(h, A_H657448), "n994": i32(h, A_NCAM),
+                    "e0_type": i32(h, A_CAM0 + 4), "e0_x": f32(h, A_CAM0 + 0x3c),
+                    "e0_z": f32(h, A_CAM0 + 0x44), "e0_a8": i32(h, A_CAM0 + 0xa8),
+                    "cd_29b8": i32(h, A_CD29B8), "rule_0fd0": i32(h, A_RULE0FD0),
+                    "ba88": i32(h, A_BA88), "f1a50": i32(h, A_F1A50)})
+                for k in range(IN_N):
+                    b = read(h, A_IN0 + k * IN_STRIDE, 1)
+                    r["in%d" % k] = None if b is None else b[0]
             rows.append(r)
             time.sleep(1.0 / hz)
     finally:

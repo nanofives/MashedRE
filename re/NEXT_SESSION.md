@@ -1,5 +1,33 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-08 (tasks 1-3): **The exit flag HOLDS for 652 frames and ends on a DISTANCE test, not input, not the clip module. Clip handles are ZERO live. D-11073 row corrected.**
+>
+> Read [`RESULT_CADENCE.md`](../verify/d3_gatefire_20261008/RESULT_CADENCE.md) (prereg `PREREG_CADENCE.md`).
+>
+> **1. `FUN_00445aa0` cadence.** Runs every sub-state-3 frame (`FUN_004111c0` case 3 -> `FUN_0040fc00`
+> -> `FUN_0040d470(0)` -> `FUN_00448220` -> `FUN_00446520` -> `0x004468f9` -> `FUN_004464c0`), with
+> `param_2 = &DAT_00897fe0`, i.e. the flag itself. Both clears are CONDITIONAL: (a) entry within
+> **0.02f** of the target, (b) any input byte `0x007f1042+k*0x4c`. **Live, no injected input: flag
+> = 1 on 628/630 samples, 652 frames, cleared by (a)** (entry 0 29.4 -> 0.0207, all inputs 0).
+> So the hold survives. **But its END is not cheap.** Without site (a) a no-input port holds
+> forever. Site (a) needs `FUN_00445aa0`'s flag-set branch, `FUN_00442600`, and the target copy at
+> `0x004481c9` in `FUN_00446520` (computed base, 0 static refs).
+>
+> **2. D-11073 row corrected via re-classify.** The camera-module inference is struck, and the new
+> open read is whether `Race/RaceCamera.cpp` carries the `0x004481c9` copy plus the type-0 entry
+> state. **That is the next thing to read before costing D-11073**, and it is a source survey
+> for the worker.
+>
+> **3. `DAT_00657448` / `DAT_00639d70` / `d78` = 0 on 656/656 live sub-state-3 samples.**
+>
+> **HARNESS TRAP, NEW:** every `scenario_launch.py` run WITHOUT `--statediff-out` pulses control 4
+> (`:3347`, "skip the start intro"), which **truncates phase 3 to ~25 frames**. Any phase-3 or
+> early-race measurement needs `--statediff-out`. `orig_rampwatch.py --cam` is the new opt-in
+> column set; default output unchanged.
+>
+> Still open, independent: (4) `MASHED_SLOT_PLAYER` with `MASHED_WIRE_B2` in a car-0 leg,
+> U-9191 (b), U-9195, the `0x00409b0e` jumptable.
+
 > ## START HERE 2026-10-08 (tasks W-SHAPE / B / C): **W-SHAPE is CLOSED NEGATIVE. D-11073 is CHEAPER than its row says. The slot seed is now DEFAULT-ON.**
 >
 > Read [`RESULT_WSHAPE.md`](../verify/d3_gatefire_20261008/RESULT_WSHAPE.md) →
