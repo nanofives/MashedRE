@@ -4031,6 +4031,11 @@ extern "C" std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint3
 // namespace mashed_re::D3d9Render, so a `namespace mashed_re { namespace Race ...`
 // block here would declare mashed_re::D3d9Render::mashed_re::Race instead.
 extern "C" void __cdecl RaceComputeDistancesTick();
+// [GATEFIRE GF1] FUN_004148b0's standalone arm (Ai/AiLeaderTimer.cpp, now a shared TU
+// rather than a second body at that RVA -- rva-lint's allowlist is a burn-down list).
+extern "C" int __cdecl AiLeaderTimerProbe(int* outXZ, int vehIdx);
+// [GATEFIRE GF1b] which early return the call above actually took.
+extern "C" int __cdecl AiLeaderTimerExitSite(void);
 
 void TrackRenderer::U9186GateDump() {
     static const char* s_path = std::getenv("MASHED_U9186_GATES");
@@ -4103,6 +4108,16 @@ void TrackRenderer::U9186GateDump() {
                          // (value 1, RESULT_WITNESS.md:106) and thr_a8 is the first of
                          // the four thresholds (6.5 in the original image, :107).
                          "tbl10,thr_a8,"
+                         // [GATEFIRE GF1 2026-10-08] branch 2 itself, default-OFF via
+                         // MASHED_GF1=1. lt_ret is FUN_004148b0's return; lt_los is
+                         // FUN_00416060 over (own XZ -> the leader XZ lt_ret wrote);
+                         // lt_fire is the conjunction the original takes 64 times in
+                         // the 220-call window (RESULT_STEP2.md:108). GF1-REACH is
+                         // "lt_ret was evaluated at all" and is deliberately SEPARATE
+                         // from GF1-FIRE, because FUN_004148b0 is stateful and a zero
+                         // count must not be read as "the port is wrong" when the
+                         // scenario may simply not reach the path.
+                         "lt_ran,lt_ret,lt_los,lt_fire,lt_x,lt_z,lt_exit,"
                          // [GATEFIRE idx364 2026-10-08] PREDICTION of what a ported
                          // FUN_00414060 would compute, measured WITHOUT porting it —
                          // the H3-WROTE lesson applied before the code is written
@@ -4131,6 +4146,8 @@ void TrackRenderer::U9186GateDump() {
                          "a870,a874,a878,a87c\n");
     }
     const std::uint32_t p = Ai::U32(0x005f2770u);
+    // [GATEFIRE GF1] branch-2 counter, default-OFF and independent of the other knobs.
+    static const bool s_gf1 = (std::getenv("MASHED_GF1") != nullptr);
     // [GATEFIRE idx364] Predict FUN_00414060's output without porting it. Scalar,
     // so computed once per frame outside the per-car loop. Transcribed from
     // re/analysis/bucket_util_0040e4b0_0042f790/0x00414060.md steps 1-5; step 6
@@ -4181,6 +4198,29 @@ void TrackRenderer::U9186GateDump() {
                                 static_cast<std::uintptr_t>(ptr) + 0x30u) : 0.f;
         const float ptr_z = (ptr_ok && ptr) ? *reinterpret_cast<const float*>(
                                 static_cast<std::uintptr_t>(ptr) + 0x38u) : 0.f;
+        // [GATEFIRE GF1] branch 2, default-OFF. Evaluated per car per frame here
+        // rather than inside ControlStep: this is a COUNTER, and wiring the branch to
+        // ctrl is a separate registered leg. lt_ran separates "did not run" from
+        // "ran and returned 0" (memory absent-log-proves-nothing-run-a-control).
+        int lt_ran = 0, lt_ret = 0, lt_los = 0, lt_fire = 0, lt_exit = -1;
+        float lt_x = 0.f, lt_z = 0.f;
+        if (s_gf1) {
+            int outXZ[2] = {0, 0};
+            lt_ret = AiLeaderTimerProbe(outXZ, v);
+            lt_exit = AiLeaderTimerExitSite();
+            lt_ran = 1;
+            // FUN_004148b0 writes param_3[0]/[1] as the raw 4-byte patterns of the
+            // leader's world x/z (rec+0x30 / rec+0x38), so reinterpret, do not cast.
+            std::memcpy(&lt_x, &outXZ[0], 4);
+            std::memcpy(&lt_z, &outXZ[1], 4);
+            if (lt_ret != 0) {
+                // the second conjunct: LOS from this car to the XZ the timer yielded
+                const float ox = Vehicle::VehiclePhysics_RecordF32(v, mrow + 0x30u);
+                const float oz = Vehicle::VehiclePhysics_RecordF32(v, mrow + 0x38u);
+                lt_los = aib_los_clear(ox, oz, lt_x, lt_z);
+                lt_fire = (lt_los != 0) ? 1 : 0;
+            }
+        }
         // [H3] independent recomputation: the distance from the reference car's
         // position to this car's, both read through VehiclePhysics_RecordF32 and
         // never through Race::ComputeDistances.
@@ -4208,6 +4248,8 @@ void TrackRenderer::U9186GateDump() {
                          "%d,%d,%.9g,"
                          "%d,%d,%d,%.9g,%d,"
                          "%d,%.9g,"
+                         // [GATEFIRE GF1] branch 2 + exit site
+                         "%d,%d,%d,%d,%.9g,%.9g,%d,"
                          // [GATEFIRE idx364] FUN_00414060 prediction + step-6 quartet
                          "%d,%d,%d,%d,%.9g,%d,%.9g,"
                          "%.9g,%.9g,%.9g,%.9g\n",
@@ -4258,6 +4300,9 @@ void TrackRenderer::U9186GateDump() {
                      // the first threshold. Both expected 0 standalone.
                      Ai::I32(0x005f2dd8u + 10u * 4u),
                      static_cast<double>(Ai::F32(0x005cd0a8u)),
+                     // --- [GATEFIRE GF1] branch 2: FUN_004148b0 && FUN_00416060 ---
+                     lt_ran, lt_ret, lt_los, lt_fire,
+                     static_cast<double>(lt_x), static_cast<double>(lt_z), lt_exit,
                      // --- [GATEFIRE idx364] FUN_00414060 prediction, inputs first ---
                      m42f6a0, g30790, idx413fa0, tie67ea7c,
                      static_cast<double>(a37c), a384i,

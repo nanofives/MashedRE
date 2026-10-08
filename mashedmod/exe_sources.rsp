@@ -163,6 +163,7 @@
 "Vehicle\VehicleRecordPtr.cpp"
 "Race\SpectatorDistances.cpp"
 "Race\AiDifficultyReset.cpp"
+"Ai\AiLeaderTimer.cpp"
 "Vehicle\ShapeOwnerHandlePool.cpp"
 "Vehicle\VehicleSeed.cpp"
 "Vehicle\SubStripUV.cpp"
