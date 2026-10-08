@@ -1,6 +1,50 @@
 # Next session kickoff
 
-> ## START HERE 2026-10-08 (commit `1cb89a5a`): **U-9186 `GATEFIRE` is PRE-REGISTERED, UNRUN, both branches, by USER DECISION. Read [`PREREG_GATEFIRE.md`](../verify/d3_gatefire_20261008/PREREG_GATEFIRE.md) and run LEG 0 FIRST.**
+> ## START HERE 2026-10-08 (commits `c41cd645` → `170245be`): **GATEFIRE leg 0 RAN and the lane narrowed to ONE open question — `bias374`. Branch 1 is DEFERRED (input-blocked). `idx364` is FIXED via a PARTIAL port of `FUN_00414060` step 6, default-OFF behind `MASHED_A364_RESET`. Default build bit-identical across SIX builds.**
+>
+> Read [`RESULT_GF0.md`](../verify/d3_gatefire_20261008/RESULT_GF0.md) →
+> [`RESULT_IDX364.md`](../verify/d3_gatefire_20261008/RESULT_IDX364.md) →
+> [`RESULT_A360.md`](../verify/d3_gatefire_20261008/RESULT_A360.md) →
+> [`RESULT_A364.md`](../verify/d3_gatefire_20261008/RESULT_A364.md).
+>
+> - **Branch 1 (36 calls) is DEFERRED, input-blocked.** `GF0-PROG1`: `0x008a96e8 + v*0x30c` is
+>   `0.0` on 100% of rows. The coverage check is what makes it a finding — `racepct_ec` at
+>   `0x008a96ec`, 4 bytes higher, same stride, same loop iteration, is live with up to 11,620
+>   distinct values. Needs a producer; that is a `DEFERRED.md` row, not a leg.
+> - **`idx364` RESOLVED and FIXED.** Writers are `FUN_00414060` step 6 (unconditional `-1` reset)
+>   and `FUN_00414220` step 2 (early-returns all race). Step 6 is ported bit-faithfully; all five
+>   gates PASS; INERT by design (the only consumer, `AiLeaderTimer.cpp:94`, is `.asi`-only).
+> - **Porting `FUN_00414060` WHOLE is measured-blocked** — every input of steps 1-5 reads `0`, so a
+>   faithful port would regress `0x0089a360` from `2.5` to `0`. Blocker is upstream of all four
+>   callees: `U-1305` (`0x0067ea7c`) plus `0x0067e9fc`. `0x005cd088` reads exactly **2.5**, so the
+>   original's value is almost certainly `TiebreakFlag * 2.5` and the port's seed has been the right
+>   number for the wrong reason. Which arm the original takes is **[UNCERTAIN]** — a Frida entry
+>   probe on `0x00414060` would close it.
+>
+> ### START HERE
+>
+> 1. **`bias374` is the ONLY thing left before branch 2 is measurable.** Port `{0,1,2,3,4}` vs
+>    original `0`; `4` is new since the 2026-10-03 witness and is the majority at 72.9%. With
+>    `bias374=4, iVar1=2` the limit-table index is **14**, not the original's **10**. Writer is
+>    `FUN_004177b0`, exe copy C2-demoted 2026-09-29 (`Race/RuleEngine.cpp`) — start there.
+>    NOTE `AiStandalone.cpp:1577` **does** write `0x0089a374`, so this has a DIFFERENT shape from
+>    `idx364` and must not be assumed to resolve the same way.
+> 2. **`re-classify` transactions owed** (all flagged, none hand-edited): `hooks.csv` `00414060` →
+>    C2 "partial (step 6), steps 1-5 blocked", `exe_file = Race/AiDifficultyReset.cpp`;
+>    `hooks.csv` `004148b0`'s `exe_file` is **stale** (claims `Ai/AiStandalone.cpp`, which has no
+>    body); U-9186's standing instruction is superseded by U-9187 (`PREREG_GATEFIRE.md` §1).
+> 3. **Cheap and open:** should `MASHED_A364_RESET` go default-ON? Inert today, so it can ride with
+>    **H2**'s `MASHED_SLOTSTATE_SEED` question. Also **U-9191** item (b), **U-9195**, `0x00409b0e`.
+>
+> **Standing note earned here:** a gate can be registered as *instrumentation* when the thing it
+> counts has no body and no live substrate on the measured side — census per branch BEFORE
+> registering a counter. And measure a function's **inputs** before porting it: `FUN_00414060` was
+> authorized whole and the measurement, taken before a line was written, showed that porting it
+> whole was a regression.
+>
+> **Do NOT ship the `MASHED_RACEMETRIC_ARC` ON arm.** Blocks below are previous headlines.
+
+> ## 2026-10-08 (commit `1cb89a5a`): **U-9186 `GATEFIRE` is PRE-REGISTERED, UNRUN, both branches, by USER DECISION. Read [`PREREG_GATEFIRE.md`](../verify/d3_gatefire_20261008/PREREG_GATEFIRE.md) and run LEG 0 FIRST.**
 >
 > **Do not re-derive the scope.** Three prior measurements already answer most of "what is
 > missing", and re-deriving them is the recorded failure mode

@@ -1,38 +1,84 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-08T21:05:00Z",
+  "updatedAt": "2026-10-08T23:40:00Z",
   "sections": [
     {
       "heading": "Phase",
       "fields": [
-        { "label": "Roadmap", "value": "D0 ✓, D1 ✓, D2 REOPENED 2026-09-29, D3 active (WAITING)", "kind": "text" },
-        { "label": "Criterion (e)", "value": "PASS 3/3 — launch 1426.4/2053.0/2055.2", "kind": "text" },
-        { "label": "Criterion (b)", "value": "5 failing bands (car<->car ON); AI over-speed +24-28% (was +41%)", "kind": "text" }
+        {
+          "label": "Roadmap",
+          "value": "D0 ✓, D1 ✓, D2 REOPENED 2026-09-29, D3 active (WAITING)",
+          "kind": "text"
+        },
+        {
+          "label": "Criterion (e)",
+          "value": "PASS 3/3 — launch 1426.4/2053.0/2055.2",
+          "kind": "text"
+        },
+        {
+          "label": "Criterion (b)",
+          "value": "5 failing bands (car<->car ON); AI over-speed +24-28% (was +41%)",
+          "kind": "text"
+        }
       ]
     },
     {
-      "heading": "U-9186 leg H3 RAN 2026-10-08 — 0x008989b0 producer LIVE, behaviourally inert",
+      "heading": "U-9186 / GATEFIRE 2026-10-08 — leg 0 run, idx364 fixed, lane down to one open question",
       "fields": [
-        { "label": "Verdict", "value": "FUN_00442a60 ported (default-OFF MASHED_REFDIST). refdist non-zero on 26,994/53,992 rows, 19,562 distinct — live for the first time", "kind": "text" },
-        { "label": "Leg B", "value": "prohibition LIFTED by USER DECISION (Mariano 2026-10-08); basis changed because G1 run 2 refuted the 'substrate must be synthesized' premise", "kind": "text" },
-        { "label": "Gates", "value": ["H3-CONSTS PASS: 80.0/20.0/100.0/0.8 read from the unpatched image", "H3-PAIR live (7 distinct pairs vs 1 on OFF); H3-DET identical per arm", "H3-WROTE FAILED as registered (74.9963%); 99.9926% on the gate-passing denominator, 3 residual rows all frame 0 and the port is right", "H3-INERT: arms differ only in the four output columns"], "kind": "list" },
-        { "label": "Stepdump arm (2026-10-08, e06c9451)", "value": ["H3-KNOBOFF PASS — E2off_1 / H1step / H3step / H3step_r2 all hash to 86b7b2bb: default build bit-identical across 3 builds", "H3-NOREG-E PASS 3/3; H3-DET PASS; --common-cols dropped no column (no schema drift)", "H3-NOREG-B PASS as UNCHANGED — v2 still fails the SAME 5 bands, which is not '(b) passes'"], "kind": "list" },
-        { "label": "H3-GATEFIRE", "value": "WITHDRAWN as a gate, RE-REGISTERED as a port leg (1cb89a5a, UNRUN, both branches, user decision). Scope shrank: 3 of the witness's 6 missing inputs landed via H1b/H3; only FUN_00442cc0 is open. Mechanism is a standalone body, NOT an .rsp addition (that AVs). LEG 0 = runtime census, gates all", "kind": "text" },
-        { "label": "Why inert is expected", "value": "ControlStep still hardcodes mode = 0 (AiStandalone.cpp:844), so the branches cannot fire whatever 0x008989b0 holds. H3 removed the input blocker, not the stub", "kind": "text" },
-        { "label": "Session chain", "value": ["F1+F2 cleared the reproducibility blocker (a missing harness knob)", "E2 closed the rule engine as a route (inert)", "G1 found the binding gap; H1a rebound two readers; H1b consolidated a third and REMOVED a dual-copy pair", "H3 ported leg B"], "kind": "list" }
+        {
+          "label": "Lane status",
+          "value": "Branch 1 (36 calls) DEFERRED, input-blocked. Branch 2 (64 calls) blocked on ONE remaining item: bias374.",
+          "kind": "text"
+        },
+        {
+          "label": "idx364",
+          "value": "RESOLVED + FIXED. FUN_00414060 step 6 ported (PARTIAL, default-OFF MASHED_A364_RESET). All 5 gates PASS, INERT by design.",
+          "kind": "text"
+        },
+        {
+          "label": "Measured blockers",
+          "value": [
+            "GF0-PROG1: 0x008a96e8 = 0 on 100% of rows (coverage-checked against the live neighbour 4 bytes up)",
+            "Porting FUN_00414060 WHOLE would regress 0x0089a360 from 2.5 to 0 - every input of steps 1-5 reads 0",
+            "bias374: port {0,1,2,3,4} vs original 0; '4' is NEW since the 2026-10-03 witness, 72.9% of rows"
+          ],
+          "kind": "list"
+        },
+        {
+          "label": "Default build",
+          "value": "bit-identical across SIX builds (86b7b2bb): E2off_1 / H1step / H3step / GF0step / A360step / A364step",
+          "kind": "text"
+        },
+        {
+          "label": "Next",
+          "value": "bias374 (FUN_004177b0, exe copy C2-demoted) -> then branch 2 is measurable",
+          "kind": "text"
+        },
+        {
+          "label": "re-classify owed",
+          "value": [
+            "hooks.csv 00414060 -> C2 'partial (step 6)'",
+            "hooks.csv 004148b0 exe_file is STALE",
+            "U-9186 instruction superseded by U-9187"
+          ],
+          "kind": "list"
+        }
       ]
     },
     {
       "heading": "Recent wins (2026-10-05/07)",
       "fields": [
-        { "label": "Car<->car", "value": "3 legs complete, default-ON, cut AI over-speed from 41% to 26%", "kind": "text" },
-        { "label": "race_pct bridge", "value": "correct + proven consumed (G-LIVE), inert at fd0=0", "kind": "text" }
+        {
+          "label": "Car<->car",
+          "value": "3 legs complete, default-ON, cut AI over-speed from 41% to 26%",
+          "kind": "text"
+        },
+        {
+          "label": "race_pct bridge",
+          "value": "correct + proven consumed (G-LIVE), inert at fd0=0",
+          "kind": "text"
+        }
       ]
     }
   ]
 }
-
-
-
-
-
