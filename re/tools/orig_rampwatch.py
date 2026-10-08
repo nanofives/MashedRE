@@ -107,11 +107,20 @@ A_RULE0FD0 = 0x007f0fd0
 A_BA88 = 0x0063ba88
 A_F1A50 = 0x007f1a50
 CAM_N, CAM_STRIDE = 7, 0xd8   # entries 1..6 sampled too (PREREG_CADENCE.md addendum 2)
+# [D-11073 LEG 0 2026-10-08] PREREG_LEG0.md. All three globals are BSS.
+#   DAT_00644158 track id, FUN_00426c00's return (0x00426c01); FUN_00442600 switches on it.
+#   DAT_0089898c FUN_00442600's once-guard.
+#   DAT_0063d588 phase-5 timer (FUN_0041da90 reads it; FUN_0041d930 adds _DAT_007f100c);
+#   DAT_0063d584 the int counter FUN_0041d930 bumps in the same call (frame witness).
+A_TRK = 0x00644158
+A_G898C = 0x0089898c
+A_T588, A_N584 = 0x0063d588, 0x0063d584
 CAM_COLS = (["flag_fe0", "tgt_fe4", "tgt_fe8", "tgt_fec", "ffc", "f800",
              "d70", "d74", "d78", "h657448", "n994",
              "e0_type", "e0_x", "e0_z", "e0_a8", "cd_29b8", "rule_0fd0", "ba88", "f1a50"]
             + ["in%d" % k for k in range(IN_N)]
-            + ["e%d_%s" % (k, f) for k in range(1, CAM_N) for f in ("type", "a8", "x", "z")])
+            + ["e%d_%s" % (k, f) for k in range(1, CAM_N) for f in ("type", "a8", "x", "z")]
+            + ["trk_644158", "g_898c", "t_d588", "n_d584", "e0_y"])
 
 PROCESS_VM_READ = 0x0010
 PROCESS_QUERY_INFORMATION = 0x0400
@@ -272,6 +281,9 @@ def main():
                     r["e%d_a8" % k] = i32(h, e + 0xa8)
                     r["e%d_x" % k] = f32(h, e + 0x3c)
                     r["e%d_z" % k] = f32(h, e + 0x44)
+                r.update({"trk_644158": i32(h, A_TRK), "g_898c": i32(h, A_G898C),
+                          "t_d588": f32(h, A_T588), "n_d584": i32(h, A_N584),
+                          "e0_y": f32(h, A_CAM0 + 0x40)})
             rows.append(r)
             time.sleep(1.0 / hz)
     finally:
