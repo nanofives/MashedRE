@@ -1,0 +1,178 @@
+// FUN_00405460 @ 0x00405460  size=223  (MASHED.exe)
+// undefined FUN_00405460(void)
+// callers: FUN_004102f0@0x004102f0
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-06-01] `undefined4 FUN_00405460(int param_1 /*signed step*/)` — advances a playback
+   cursor and applies the… */
+
+undefined4 FUN_00405460(int param_1)
+
+{
+  undefined4 uVar1;
+  float fVar2;
+  float local_48 [2];
+  undefined1 local_40 [64];
+  
+  if ((DAT_00639d70 != 0) && (DAT_00639d78 != 0)) {
+    local_48[0] = _DAT_005cc950 / DAT_00803344;
+    local_48[1] = 0.75;
+    FUN_004c1c80(DAT_00639d78,local_48);
+    uVar1 = *(undefined4 *)(DAT_00639d78 + 4);
+    if (DAT_00639d74 <= *(float *)(DAT_00639d70 + 0xc)) {
+      FUN_00404fa0(local_40,DAT_00639d70,DAT_00639d74);
+      if (DAT_005d757c == DAT_00639d74) {
+        FUN_004c1480(uVar1,local_40,0);
+      }
+      FUN_004c1480(uVar1,local_40,0);
+      fVar2 = (float)param_1;
+      if (param_1 < 0) {
+        fVar2 = fVar2 + _DAT_005cc94c;
+      }
+      DAT_00639d74 = fVar2 * _DAT_005cc948 + DAT_00639d74;
+      return 1;
+    }
+  }
+  return 0;
+}
+
+
+
+// FUN_004430b0 @ 0x004430b0  size=6  (MASHED.exe)
+// undefined FUN_004430b0(void)
+// callers: FUN_004102f0@0x004102f0
+
+/* [C1 2026-06-01] `undefined4 FUN_004430b0(void)` — getter. Returns `DAT_00897fe0`. Body 5 bytes.
+    */
+
+undefined4 FUN_004430b0(void)
+
+{
+  return DAT_00897fe0;
+}
+
+
+
+// FUN_0046baa0 @ 0x0046baa0  size=569  (MASHED.exe)
+// undefined FUN_0046baa0(void)
+// callers: FUN_0040e590@0x0040e590, FUN_004102f0@0x004102f0, FUN_004103a0@0x004103a0, FUN_00424eb0@0x00424eb0, FUN_004704c0@0x004704c0
+
+/* [C1 2026-06-01] `undefined4 FUN_0046baa0(uint param_1 /*player slot*/)` — initializes one
+   per-player */
+
+undefined4 FUN_0046baa0(uint param_1)
+
+{
+  int iVar1;
+  undefined4 *puVar2;
+  int iVar3;
+  
+  if (0xf < param_1) {
+    return 0;
+  }
+  iVar1 = param_1 * 0xd04;
+  (&DAT_008815a0)[param_1 * 0x341] = param_1;
+  *(undefined4 *)(&DAT_00881740 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00881744 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00881748 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00881734 + iVar1) = 0;
+  *(undefined4 *)(&DAT_008817a0 + iVar1) = 0;
+  *(undefined4 *)(&DAT_008817a8 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00881804 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00881808 + iVar1) = 0;
+  *(undefined4 *)(&DAT_0088180c + iVar1) = 0;
+  *(undefined4 *)(&DAT_008817f8 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00881864 + iVar1) = 0;
+  *(undefined4 *)(&DAT_0088186c + iVar1) = 0;
+  *(undefined4 *)(&DAT_008818c8 + iVar1) = 0;
+  *(undefined4 *)(&DAT_008818cc + iVar1) = 0;
+  *(undefined4 *)(&DAT_008818d0 + iVar1) = 0;
+  *(undefined4 *)(&DAT_008818bc + iVar1) = 0;
+  *(undefined4 *)(&DAT_00881928 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00881930 + iVar1) = 0;
+  *(undefined4 *)(&DAT_008817a4 + iVar1) = 0x3f800000;
+  *(undefined4 *)(&DAT_00881868 + iVar1) = 0x3f800000;
+  *(undefined4 *)(&DAT_0088192c + iVar1) = 0x3f800000;
+  *(undefined4 *)(&DAT_00881738 + iVar1) = 1;
+  *(undefined4 *)(&DAT_008817fc + iVar1) = 1;
+  *(undefined4 *)(&DAT_008818c0 + iVar1) = 1;
+  *(undefined4 *)(&DAT_008819f0 + iVar1) = 0x3f800000;
+  *(undefined4 *)(&DAT_0088198c + iVar1) = 0;
+  *(undefined4 *)(&DAT_00881990 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00881994 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00881984 + iVar1) = 1;
+  *(undefined4 *)(&DAT_00881980 + iVar1) = 0;
+  *(undefined4 *)(&DAT_008819ec + iVar1) = 0;
+  *(undefined4 *)(&DAT_008819f4 + iVar1) = 0;
+  (&DAT_00881f80)[param_1 * 0x341] = 0x40800000;
+  *(undefined4 *)(&DAT_008820bc + iVar1) = 0;
+  *(undefined4 *)(&DAT_008820b8 + iVar1) = 0;
+  *(undefined4 *)(&DAT_008820b4 + iVar1) = 0;
+  (&DAT_00882090)[param_1 * 0x341] = 0;
+  (&DAT_00882094)[param_1 * 0x341] = 0;
+  (&DAT_00882098)[param_1 * 0x341] = 0xbf800000;
+  (&DAT_0088209c)[param_1 * 0x341] = 0;
+  puVar2 = &DAT_008820d0 + param_1 * 0x341;
+  iVar3 = 0x10;
+  do {
+    puVar2[-1] = 0;
+    *puVar2 = 0xbf800000;
+    puVar2[1] = 0;
+    puVar2 = puVar2 + 3;
+    iVar3 = iVar3 + -1;
+  } while (iVar3 != 0);
+  *(undefined4 *)(&DAT_0088218c + iVar1) = 0;
+  *(undefined4 *)(&DAT_00881f64 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00881f60 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00881f5c + iVar1) = 0;
+  (&DAT_00881f58)[param_1 * 0x341] = 0;
+  (&DAT_00881f54)[param_1 * 0x341] = 0;
+  (&DAT_00881f50)[param_1 * 0x341] = 0;
+  *(undefined4 *)(&DAT_00882088 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00882084 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00882080 + iVar1) = 0;
+  *(undefined4 *)(&DAT_0088207c + iVar1) = 0;
+  *(undefined4 *)(&DAT_00882078 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00882074 + iVar1) = 0;
+  (&DAT_00881f88)[param_1 * 0x341] = 0;
+  (&DAT_00881f84)[param_1 * 0x341] = 0;
+  *(undefined4 *)(&DAT_008820a8 + iVar1) = 0;
+  *(undefined4 *)(&DAT_008820a4 + iVar1) = 0;
+  *(undefined4 *)(&DAT_008820a0 + iVar1) = 0;
+  (&DAT_00881f8c)[param_1 * 0x341] = 0;
+  (&DAT_00881f90)[param_1 * 0x341] = 0;
+  *(undefined4 *)(&DAT_00881f94 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00882070 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00881a30 + iVar1) = 0;
+  *(undefined4 *)(&DAT_00881a34 + iVar1) = 0;
+  *(undefined4 *)(&DAT_008820c4 + iVar1) = 0;
+  *(undefined4 *)(&DAT_008820c8 + iVar1) = 0;
+  (&DAT_0088208c)[param_1 * 0x341] = 0;
+  *(undefined4 *)(&DAT_008820ac + iVar1) = 0;
+  *(undefined4 *)(&DAT_008820b0 + iVar1) = 0;
+  puVar2 = (undefined4 *)(&DAT_00881a4c + iVar1);
+  iVar3 = 0x12;
+  do {
+    *puVar2 = 0xffffffff;
+    puVar2 = puVar2 + 0x10;
+    iVar3 = iVar3 + -1;
+  } while (iVar3 != 0);
+  (&DAT_008815b4)[param_1 * 0x341] = 0;
+  (&DAT_008815b8)[param_1 * 0x341] = 0;
+  *(undefined4 *)(&DAT_008815bc + iVar1) = 0;
+  (&DAT_008815d4)[param_1 * 0x341] = 0;
+  (&DAT_008815d0)[param_1 * 0x341] = 0;
+  (&DAT_008815cc)[param_1 * 0x341] = 0;
+  (&DAT_008815c8)[param_1 * 0x341] = 0;
+  (&DAT_008815c4)[param_1 * 0x341] = 0;
+  (&DAT_008815c0)[param_1 * 0x341] = 0;
+  (&DAT_008815ec)[param_1 * 0x341] = 0;
+  (&DAT_008815e8)[param_1 * 0x341] = 0;
+  (&DAT_008815e4)[param_1 * 0x341] = 0;
+  (&DAT_008815e0)[param_1 * 0x341] = 0;
+  (&DAT_008815dc)[param_1 * 0x341] = 0;
+  (&DAT_008815d8)[param_1 * 0x341] = 0;
+  return 1;
+}
+
+
